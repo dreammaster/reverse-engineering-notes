@@ -252,11 +252,11 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"targetCell",	0X148,	0x20000400,	-1,	4);
 	
 	id = get_struc_id("Disk1");
-	mid = add_struc_member(id,"field_0",	0,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"field_2",	0X2,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"field_4",	0X4,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"saveCounterLo",	0,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"saveCounterHi",	0X2,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"regionAndSpeed",	0X4,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_gfxMode",	0X6,	0x00000400,	-1,	1);
-	mid = add_struc_member(id,"field_7",	0X7,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"uniqueItems",	0X7,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_timeHours",	0X8,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_timeMinutes",	0X9,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_mapPosX",	0XA,	0x10000400,	-1,	2);
@@ -269,7 +269,7 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_partyCount",	0X31,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_partyIndexes",	0X32,	0x00000400,	-1,	5);
 	mid = add_struc_member(id,"_timeWeekday",	0X37,	0x00000400,	-1,	1);
-	mid = add_struc_member(id,"field_38",	0X38,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"facing",	0X38,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_roster",	0X3A,	0x60000400,	get_struc_id("PartyMember"),	1660);
 	mid = add_struc_member(id,"field_6B6",	0X6B6,	0x00000400,	-1,	250);
 	mid = add_struc_member(id,"field_7B0",	0X7B0,	0x00000400,	-1,	5);

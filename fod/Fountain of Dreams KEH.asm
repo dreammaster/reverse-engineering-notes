@@ -271,7 +271,7 @@ handle          = word ptr -2
                 add     sp, 2
                 mov     al, _disk1._gfxMode
                 mov     byte_2B166, al
-                mov     al, byte ptr _disk1.field_4
+                mov     al, byte ptr _disk1.regionAndSpeed
                 sub     ah, ah
                 or      ax, ax
                 jz      short loc_1022B
@@ -281,7 +281,7 @@ handle          = word ptr -2
 loc_10214:                              ; CODE XREF: loadSaveState+7B↓j
                                         ; loadSaveState+107↓j
                 call    initVideoAndCriticalHandler ; clears dirty list, calls the video-mode init and installs the critical-error handler; clears the screen buffer
-                mov     bl, byte ptr _disk1.field_4
+                mov     bl, byte ptr _disk1.regionAndSpeed
                 sub     bh, bh
                 shl     bx, 1
                 shl     bx, 1
@@ -362,7 +362,7 @@ loc_102C8:                              ; CODE XREF: loadSaveState+15E↓j
                 inc     _curRegion      ; current region/disk index (selects the file set)
 
 loc_102CC:                              ; CODE XREF: loadSaveState+6A↑j
-                mov     bl, byte ptr _disk1.field_4
+                mov     bl, byte ptr _disk1.regionAndSpeed
                 sub     bh, bh
                 shl     bx, 1
                 shl     bx, 1
@@ -412,7 +412,7 @@ loc_1033A:                              ; CODE XREF: loadSaveState+11F↑j
                 mov     _curRegion, ax  ; current region/disk index (selects the file set)
                 add     word_2132E, 1
                 adc     word_21330, 0
-                cmp     byte ptr _disk1.field_4, 0
+                cmp     byte ptr _disk1.regionAndSpeed, 0
                 jz      short loc_10384
                 mov     ax, 0Ah
                 imul    _curRegion      ; current region/disk index (selects the file set)
@@ -457,7 +457,7 @@ loc_103AB:                              ; CODE XREF: loadSaveState+1D1↑j
                 sub     ah, ah
                 cmp     [bp+var_A], ax
                 jb      short loc_10391
-                mov     ax, _disk1.field_38
+                mov     ax, _disk1.facing
                 mov     word_22C86, ax
                 mov     sp, bp
                 pop     bp
@@ -12014,7 +12014,7 @@ loc_1570B:                              ; CODE XREF: runCombat+6E↑j
                 add     sp, 2
                 mov     byte_2E4BE, 1
                 call    markMapDirty    ; sets bit 0x80 of the map header flags (dword_22C6E+5)
-                mov     al, byte ptr _disk1.field_4+1
+                mov     al, byte ptr _disk1.regionAndSpeed+1
                 sub     ah, ah
                 mov     _textSpeed, ax  ; scroll delay level 1-8
                 jmp     loc_168E8
@@ -14187,7 +14187,7 @@ loc_168E8:                              ; CODE XREF: runCombat+9A↑j
 
 loc_168F1:                              ; CODE XREF: runCombat+125B↑j
                 mov     al, byte ptr _textSpeed ; scroll delay level 1-8
-                mov     byte ptr _disk1.field_4+1, al
+                mov     byte ptr _disk1.regionAndSpeed+1, al
                 mov     _textSpeed, 0   ; scroll delay level 1-8
                 call    clearCombatCommands ; sets the 5 party command bytes (197Ah) to 0FFh
                 call    tickMonsterStates ; decays the monster state byte (+5Dh) each tick
@@ -14934,7 +14934,7 @@ arg_0           = word ptr  4
                 mov     cl, [bx+si+41h]
                 mov     al, 1
                 shl     al, cl
-                or      _disk1.field_7, al
+                or      _disk1.uniqueItems, al
                 pop     si
                 pop     bp
                 retn
@@ -14961,7 +14961,7 @@ arg_0           = word ptr  4
                 mov     al, 1
                 shl     al, cl
                 not     al
-                and     _disk1.field_7, al
+                and     _disk1.uniqueItems, al
                 pop     si
                 pop     bp
                 retn
@@ -18551,13 +18551,13 @@ handle          = word ptr -2
                 mov     [bp+var_6], ax
                 mov     [bp+var_4], ds
                 mov     ax, word_22C86
-                mov     _disk1.field_38, ax
+                mov     _disk1.facing, ax
                 mov     ax, word_2132E
                 mov     dx, word_21330
                 add     word_2132E, 1
                 adc     word_21330, 0
-                mov     _disk1.field_0, ax
-                mov     _disk1.field_2, dx
+                mov     _disk1.saveCounterLo, ax
+                mov     _disk1.saveCounterHi, dx
                 push    word_2DFEC
                 call    openGameFile    ; opens a file read-only, looping on 'Please insert %s.' prompts until it succeeds
                 add     sp, 2
@@ -21736,7 +21736,7 @@ opcode10:                               ; CODE XREF: doScript+135↑j
                 mov     cl, [bx+si+41h]
                 mov     al, 1
                 shl     al, cl
-                and     al, _disk1.field_7
+                and     al, _disk1.uniqueItems
 
 loc_19D31:                              ; CODE XREF: doScript+D7F↓j
                                         ; doScript+E27↓j
@@ -29018,7 +29018,7 @@ arg_0           = byte ptr  4
                 push    ax              ; win
                 call    setWindow
                 add     sp, 4
-                mov     al, _disk1.field_7
+                mov     al, _disk1.uniqueItems
                 sub     ah, ah
                 push    ax
                 call    drawUniqueItemIcons ; draws a 16x16 icon for each bit set in disk1.field_7 (up to 4)

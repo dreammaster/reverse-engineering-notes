@@ -1,266 +1,3 @@
-; ---------------------------------------------------------------------------
-
-FILE            struc ; (sizeof=0xC, align=0x2, copyof_1)
-_ptr            dd ?                    ; offset
-_cnt            dw ?
-_base           dd ?                    ; offset
-_flag           db ?
-_file           db ?
-FILE            ends
-
-; ---------------------------------------------------------------------------
-
-AttributeText   struc ; (sizeof=0x4, mappedto_3)
-                                        ; XREF: dseg:ATTRIBUTE_TEXT/r
-_x              db ?                    ; base 10
-_y              db ?                    ; base 10
-_text           dw ?                    ; XREF: writeClassesAndAttributes+8E/r ; offset
-AttributeText   ends
-
-; ---------------------------------------------------------------------------
-
-WindowAttr      struc ; (sizeof=0x8, mappedto_9) ; XREF: Window/r
-_x              dw ?
-_y              dw ?
-_w              dw ?                    ; XREF: writeCenteredString+1C/r
-                                        ; writeCenteredString+46/r
-_h              dw ?
-WindowAttr      ends
-
-; ---------------------------------------------------------------------------
-
-Window          struc ; (sizeof=0x1C, mappedto_4)
-                                        ; XREF: dseg:_windowParty/r
-                                        ; dseg:_windowSkills/r ...
-_x1             dw ?                    ; base 10
-_y1             dw ?                    ; base 10
-_x2             dw ?                    ; base 10
-_y2             dw ?                    ; base 10
-_textX          dw ?                    ; XREF: writeString_1+14/w
-                                        ; writeChar+20/r ; base 10
-_textY          dw ?                    ; XREF: writeChar+C/r ; base 10
-_attr           WindowAttr ?            ; XREF: writeCenteredString+1C/r
-                                        ; writeCenteredString+46/r
-field_14        dw ?                    ; XREF: sub_1089E+10/w
-                                        ; sub_1089E+3F/w ...
-_fnFocus        dw ?                    ; XREF: setWindow+22/r
-                                        ; setWindow+28/r ; offset
-field_18        dw ?                    ; XREF: setWindow+19/w
-field_1A        dw ?
-Window          ends
-
-; ---------------------------------------------------------------------------
-
-Disk1           struc ; (sizeof=0xEC0, mappedto_5) ; XREF: dseg:_disk1/r
-field_0         dw ?                    ; XREF: loadDisk1+4F/r
-                                        ; sub_103E0+6/w
-field_2         dw ?                    ; XREF: loadDisk1+48/r
-                                        ; sub_103E0+C/w
-field_4         dw ?
-_gfxMode        db ?                    ; XREF: _main+16/r
-field_7         db ?                    ; XREF: loadDisk1+1AB/w
-field_8         db ?                    ; XREF: loadDisk1+19C/w
-field_9         db ?                    ; XREF: loadDisk1+1A1/w
-field_A         dw ?                    ; XREF: loadDisk1+1B3/w
-field_C         dw ?                    ; XREF: loadDisk1+1B9/w
-field_E         dw ?                    ; XREF: loadDisk1:loc_10298/w
-field_10        dw ?                    ; XREF: loadDisk1+199/w
-field_12        db ?                    ; XREF: loadDisk1+1C4/w
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-field_1C        db ?                    ; XREF: loadDisk1+1C9/w
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-field_26        db ?                    ; XREF: loadDisk1+1CE/w
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-field_30        db ?                    ; XREF: loadDisk1+1BF/w
-_partyCount     db ?                    ; XREF: loadDisk1+1D6/w
-                                        ; sub_103E0:loc_10415/r ...
-_partyIndexes   db 5 dup(?)
-field_37        db ?                    ; XREF: loadDisk1+1A6/w
-field_38        dw ?                    ; XREF: loadDisk1+1B0/w
-_party          PartyMember 5 dup(?)    ; XREF: createNewMember+1B/o
-field_6B6       db 250 dup(?)
-field_7B0       db ?
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-field_7B6       dw ?                    ; XREF: loadDisk1+1D3/w
-field_7B8       db 1799 dup(?)
-field_EBF       db ?
-Disk1           ends
-
-; ---------------------------------------------------------------------------
-
-PartyMember     struc ; (sizeof=0x14C, mappedto_6)
-                                        ; XREF: createNewMember+15/o
-                                        ; Disk1/r
-field_0         db 24 dup(?)
-_attributes     db 7 dup(?)             ; XREF: createNewMember+2C/w
-                                        ; createNewMember+4A/w
-field_1F        db ?
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-field_23        db ?                    ; XREF: createNewMember+5F/w
-field_24        db 16 dup(?)            ; XREF: createNewMember+73/w
-field_34        db 16 dup(?)            ; XREF: createNewMember+8D/w
-_con            dw ?
-                db ? ; undefined
-                db ? ; undefined
-_profession     db ?                    ; XREF: createNewMember+B1/w
-field_49        db ?
-field_4A        db ?
-_array2         db 3 dup(?)
-field_4E        db ?
-field_4F        db ?
-_sex            db ?                    ; XREF: createNewMember+C3/w
-field_51        db ?                    ; XREF: createNewMember+BD/w
-field_52        db ?
-field_53        db ?
-field_54        db ?
-field_55        db ?
-field_56        db ?
-field_57        db ?
-field_58        db ?                    ; XREF: createNewMember+A7/w
-field_59        db ?
-field_5A        dw ?
-field_5C        dw ?
-field_5E        dw ?
-field_60        dw ?
-_array1         MemberArray1Entry 32 dup(?)
-                db ? ; undefined
-                db ? ; undefined
-field_124       db 16 dup(?)            ; XREF: createNewMember+7C/w
-field_134       db 16 dup(?)            ; XREF: createNewMember+96/w
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-field_14B       db ?
-PartyMember     ends
-
-; ---------------------------------------------------------------------------
-
-MemberArray1Entry struc ; (sizeof=0x6, mappedto_7) ; XREF: PartyMember/r
-field_0         db ?
-field_1         db ?
-field_2         db ?
-field_3         db ?
-field_4         db ?
-field_5         db ?
-MemberArray1Entry ends
-
-; ---------------------------------------------------------------------------
-
-Profession      struc ; (sizeof=0x80, mappedto_10)
-_name           db 16 dup(?)
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-_attributes     db 7 dup(?)             ; XREF: createNewMember+44/r
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-field_33        db ?
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-_activeSkills   db 16 dup(?)            ; XREF: createNewMember+6D/r
-_passiveSkills  db 16 dup(?)            ; XREF: createNewMember+87/r
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-field_7B        db ?                    ; XREF: createNewMember+BA/r
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-field_7F        db ?
-Profession      ends
-
-
 ;
 ; +-------------------------------------------------------------------------+
 ; |      This file was generated by The Interactive Disassembler (IDA)      |
@@ -329,8 +66,8 @@ t               = word ptr  6
                 mov     [bp+si+buffer], 0
                 push    [bp+t]          ; t
                 lea     ax, [bp+buffer]
-                push    ax
-                call    sub_132C2
+                push    ax              ; char *
+                call    _strlen         ; matched by mnemonic signature to KEH 1FBBC
                 add     sp, 2
                 mov     bx, _currentWindow
                 mov     cx, ax
@@ -409,19 +146,19 @@ loc_100AD:                              ; CODE XREF: fontOpen+18↑j
                 push    dx
                 push    ax
                 push    [bp+var_8]
-                call    sub_11902
+                call    fileRead        ; matched by mnemonic signature to KEH 1E3F8
                 add     sp, 0Ah
                 mov     ax, [bp+var_2]
                 mov     cl, 5
                 shl     ax, cl
                 push    ax
-                call    sub_12FE4
+                call    unknown_libname_2 ; matched by mnemonic signature to KEH 1F8DE
                 add     sp, 2
                 mov     _fontData, ax
                 or      ax, ax
                 jnz     short loc_100E2
                 push    [bp+var_8]
-                call    sub_118F1
+                call    fileClose       ; matched by mnemonic signature to KEH 1E3E7
                 add     sp, 2
                 call    error
 ; ---------------------------------------------------------------------------
@@ -432,14 +169,14 @@ loc_100E2:                              ; CODE XREF: fontOpen+44↑j
                 mov     ax, [bp+var_2]
                 cwd
                 mov     cl, 5
-                call    sub_13BFA
+                call    __aNlshl        ; matched by mnemonic signature to KEH 1FFA6
                 push    dx
                 push    ax
                 push    [bp+var_8]
-                call    sub_11902
+                call    fileRead        ; matched by mnemonic signature to KEH 1E3F8
                 add     sp, 0Ah
                 push    [bp+var_8]
-                call    sub_118F1
+                call    fileClose       ; matched by mnemonic signature to KEH 1E3E7
                 mov     sp, bp
                 pop     bp
                 retn
@@ -477,7 +214,7 @@ var_2           = word ptr -2
 
 loc_10123:                              ; CODE XREF: loadDisk1+19↑j
                 push    [bp+var_6]
-                call    sub_119BE
+                call    fileGetSize     ; matched by mnemonic signature to KEH 1E4B4
                 add     sp, 2
                 mov     [bp+var_4], ax
                 mov     [bp+var_2], dx
@@ -487,14 +224,14 @@ loc_10123:                              ; CODE XREF: loadDisk1+19↑j
                 push    dx
                 push    [bp+var_4]
                 push    [bp+var_6]
-                call    sub_11902
+                call    fileRead        ; matched by mnemonic signature to KEH 1E3F8
                 add     sp, 0Ah
                 push    [bp+var_6]
-                call    sub_118F1
+                call    fileClose       ; matched by mnemonic signature to KEH 1E3E7
                 add     sp, 2
-                cmp     _disk1.field_2, 0
+                cmp     _disk1.saveCounterHi, 0
                 jnz     short loc_1015B
-                cmp     _disk1.field_0, 0
+                cmp     _disk1.saveCounterLo, 0
                 jz      short loc_10161
 
 loc_1015B:                              ; CODE XREF: loadDisk1+4D↑j
@@ -605,13 +342,13 @@ loc_1022E:                              ; CODE XREF: loadDisk1+13A↓j
 ; ---------------------------------------------------------------------------
 
 loc_10298:                              ; CODE XREF: loadDisk1+18E↑j
-                mov     _disk1.field_E, 64h ; 'd'
+                mov     _disk1.cash, 64h ; 'd'
                 mov     _disk1.field_10, ax
                 mov     _disk1.field_8, 9
                 mov     _disk1.field_9, 0
                 mov     _disk1.field_37, 1
-                mov     _disk1.field_7, 0
-                mov     _disk1.field_38, ax
+                mov     _disk1.uniqueItems, 0
+                mov     _disk1.facing, ax
                 mov     _disk1.field_A, 0Ah
                 mov     _disk1.field_C, 6
                 mov     _disk1.field_30, 0
@@ -657,7 +394,7 @@ arg_0           = byte ptr  4
                 push    dx
                 push    ax
                 push    [bp+var_6]
-                call    sub_119A2
+                call    fileSeek        ; matched by mnemonic signature to KEH 1E498
                 add     sp, 8
                 push    ds
                 push    dst
@@ -666,10 +403,10 @@ arg_0           = byte ptr  4
                 push    dx
                 push    ax
                 push    [bp+var_6]
-                call    sub_11902
+                call    fileRead        ; matched by mnemonic signature to KEH 1E3F8
                 add     sp, 0Ah
                 push    [bp+var_6]
-                call    sub_118F1
+                call    fileClose       ; matched by mnemonic signature to KEH 1E3E7
                 add     sp, 2
                 cmp     [bp+arg_0], 0
                 jz      short loc_10333
@@ -691,18 +428,18 @@ loc_10333:                              ; CODE XREF: loadClasses+49↑j
 
 loc_1034A:                              ; CODE XREF: loadClasses+60↑j
                 push    [bp+var_6]
-                call    sub_119BE
+                call    fileGetSize     ; matched by mnemonic signature to KEH 1E4B4
                 add     sp, 2
                 mov     [bp+var_4], ax
                 mov     [bp+var_2], dx
                 push    ax
-                call    sub_12FE4
+                call    unknown_libname_2 ; matched by mnemonic signature to KEH 1F8DE
                 add     sp, 2
                 mov     _professionsData, ax
                 or      ax, ax
                 jnz     short loc_10375
                 push    [bp+var_6]
-                call    sub_118F1
+                call    fileClose       ; matched by mnemonic signature to KEH 1E3E7
                 add     sp, 2
                 call    error
 ; ---------------------------------------------------------------------------
@@ -715,10 +452,10 @@ loc_10375:                              ; CODE XREF: loadClasses+80↑j
                 push    [bp+var_2]
                 push    [bp+var_4]
                 push    [bp+var_6]
-                call    sub_11902
+                call    fileRead        ; matched by mnemonic signature to KEH 1E3F8
                 add     sp, 0Ah
                 push    [bp+var_6]
-                call    sub_118F1
+                call    fileClose       ; matched by mnemonic signature to KEH 1E3E7
                 add     sp, 2
                 mov     bx, _professionsData
                 mov     ax, [bx+4]
@@ -747,10 +484,10 @@ loc_103B5:                              ; CODE XREF: loadClasses+CB↑j
                 push    dx
                 push    ax
                 push    [bp+var_6]
-                call    sub_11902
+                call    fileRead        ; matched by mnemonic signature to KEH 1E3F8
                 add     sp, 0Ah
                 push    [bp+var_6]
-                call    sub_118F1
+                call    fileClose       ; matched by mnemonic signature to KEH 1E3E7
                 add     sp, 2
 
 loc_103DC:                              ; CODE XREF: loadClasses+4B↑j
@@ -763,9 +500,10 @@ loadClasses     endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; new game: save counter=1, per-member roster ids (-6), writes DISK1 (0EC0h bytes)
 ; Attributes: bp-based frame
 
-sub_103E0       proc near               ; CODE XREF: _main+207↓p
+writeInitialDisk1 proc near             ; CODE XREF: _main+207↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -773,13 +511,13 @@ var_2           = word ptr -2
                 push    bp
                 mov     bp, sp
                 sub     sp, 4
-                mov     _disk1.field_0, 1
-                mov     _disk1.field_2, 0
+                mov     _disk1.saveCounterLo, 1
+                mov     _disk1.saveCounterHi, 0
                 mov     [bp+var_4], 0
                 jmp     short loc_10415
 ; ---------------------------------------------------------------------------
 
-loc_103F9:                              ; CODE XREF: sub_103E0+3D↓j
+loc_103F9:                              ; CODE XREF: writeInitialDisk1+3D↓j
                 mov     ax, 14Ch
                 imul    [bp+var_4]
                 mov     bx, ax
@@ -790,7 +528,7 @@ loc_103F9:                              ; CODE XREF: sub_103E0+3D↓j
                 mov     byte ptr [bx+2ACEh], 1
                 inc     [bp+var_4]
 
-loc_10415:                              ; CODE XREF: sub_103E0+17↑j
+loc_10415:                              ; CODE XREF: writeInitialDisk1+17↑j
                 mov     al, _disk1._partyCount
                 sub     ah, ah
                 cmp     [bp+var_4], ax
@@ -810,14 +548,14 @@ loc_10415:                              ; CODE XREF: sub_103E0+17↑j
                 push    dx
                 push    ax
                 push    [bp+var_2]
-                call    sub_11952
+                call    fileWrite       ; matched by mnemonic signature to KEH 1E3F8
                 add     sp, 0Ah
                 push    [bp+var_2]
-                call    sub_118F1
+                call    fileClose       ; matched by mnemonic signature to KEH 1E3E7
                 mov     sp, bp
                 pop     bp
                 retn
-sub_103E0       endp
+writeInitialDisk1 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -848,7 +586,7 @@ arg_0           = word ptr  4
                 add     sp, 4
                 mov     [bp+var_6], ax
                 push    ax
-                call    sub_119BE
+                call    fileGetSize     ; matched by mnemonic signature to KEH 1E4B4
                 add     sp, 2
                 mov     [bp+var_4], ax
                 mov     [bp+var_2], dx
@@ -857,16 +595,16 @@ arg_0           = word ptr  4
                 push    dx
                 push    ax
                 push    [bp+var_6]
-                call    sub_11902
+                call    fileRead        ; matched by mnemonic signature to KEH 1E3F8
                 add     sp, 0Ah
                 push    [bp+var_6]
-                call    sub_118F1
+                call    fileClose       ; matched by mnemonic signature to KEH 1E3E7
                 add     sp, 2
                 push    word ptr _pictArray2+2
                 push    word ptr _pictArray2
                 push    word ptr _pictWelcome+2
                 push    word ptr _pictWelcome
-                call    sub_11AC7
+                call    lzssDecodeSegs  ; matched by mnemonic signature to KEH 1E5BD
                 add     sp, 8
                 mov     ax, word ptr _pictArray2
                 mov     dx, word ptr _pictArray2+2
@@ -891,9 +629,10 @@ displayWelcomePortrait endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; draws the animated frames of the welcome portrait
 ; Attributes: bp-based frame
 
-sub_104EA       proc near               ; CODE XREF: displayWelcomePortrait_2+1E↓p
+drawWelcomePortraitFrames proc near     ; CODE XREF: displayWelcomePortrait_2+1E↓p
 
 var_E           = byte ptr -0Eh
 var_C           = dword ptr -0Ch
@@ -924,7 +663,7 @@ arg_0           = byte ptr  4
                 jmp     short loc_1054B
 ; ---------------------------------------------------------------------------
 
-loc_10523:                              ; CODE XREF: sub_104EA+69↓j
+loc_10523:                              ; CODE XREF: drawWelcomePortraitFrames+69↓j
                 mov     bx, [bp+var_2]
                 push    word ptr [bx+2]
                 mov     ax, [bx]
@@ -937,11 +676,11 @@ loc_10523:                              ; CODE XREF: sub_104EA+69↓j
                 mov     al, es:[bx]
                 sub     ah, ah
                 push    ax
-                call    sub_14BDD
+                call    blitPicFrame    ; matched by mnemonic signature to KEH 210DD
                 add     sp, 0Ah
                 inc     [bp+var_8]
 
-loc_1054B:                              ; CODE XREF: sub_104EA+37↑j
+loc_1054B:                              ; CODE XREF: drawWelcomePortraitFrames+37↑j
                 mov     al, [bp+var_E]
                 sub     ah, ah
                 cmp     [bp+var_8], ax
@@ -950,21 +689,21 @@ loc_1054B:                              ; CODE XREF: sub_104EA+37↑j
                 jnz     short loc_10567
                 mov     bx, _welcomePotraitId
                 push    word ptr [bx+1Ah]
-                call    sub_114D5
+                call    refreshBounds   ; matched by mnemonic signature to KEH 1DA17
                 add     sp, 2
 
-loc_10567:                              ; CODE XREF: sub_104EA+6E↑j
+loc_10567:                              ; CODE XREF: drawWelcomePortraitFrames+6E↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_104EA       endp
+drawWelcomePortraitFrames endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-getKeypress     proc near               ; CODE XREF: sub_10A65:loc_10B15↓p
+getKeypress     proc near               ; CODE XREF: chooseProfessionMenu:loc_10B15↓p
                                         ; editPartyMember+92↓p ...
 
 result          = byte ptr -6
@@ -979,7 +718,7 @@ var_2           = byte ptr -2
 ; ---------------------------------------------------------------------------
 
 loc_10577:                              ; CODE XREF: getKeypress+14↓j
-                call    sub_11729
+                call    idleRngTick     ; called from getKeypress while idle: advances the RNG
 
 loc_1057A:                              ; CODE XREF: getKeypress+A↑j
                                         ; getKeypress+A2↓j
@@ -1187,7 +926,7 @@ loc_106CF:                              ; CODE XREF: listParty+B0↑j
                 mov     ax, _currentWindow
                 add     ax, 0Ch
                 push    ax
-                call    sub_114B3
+                call    addDirtyRectFromBounds ; matched by mnemonic signature to KEH 1D9F5
                 add     sp, 2
 
 loc_106DC:                              ; CODE XREF: listParty+B5↑j
@@ -1203,9 +942,10 @@ listParty       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; validates an F1-F5 key against partyCount, returns the slot
 ; Attributes: bp-based frame
 
-sub_106E9       proc near               ; CODE XREF: editPartyMember+EE↓p
+selectMemberByFKey proc near            ; CODE XREF: editPartyMember+EE↓p
                                         ; _main+177↓p
 
 var_2           = word ptr -2
@@ -1231,15 +971,15 @@ arg_2           = word ptr  6
                 jmp     short loc_10717
 ; ---------------------------------------------------------------------------
 
-loc_10715:                              ; CODE XREF: sub_106E9+A↑j
-                                        ; sub_106E9+17↑j
+loc_10715:                              ; CODE XREF: selectMemberByFKey+A↑j
+                                        ; selectMemberByFKey+17↑j
                 sub     ax, ax
 
-loc_10717:                              ; CODE XREF: sub_106E9+2A↑j
+loc_10717:                              ; CODE XREF: selectMemberByFKey+2A↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_106E9       endp
+selectMemberByFKey endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1265,7 +1005,7 @@ str             = word ptr  6
                 add     sp, 2
                 mov     ax, 1
                 push    ax
-                call    sub_104EA
+                call    drawWelcomePortraitFrames ; draws the animated frames of the welcome portrait
                 add     sp, 2
                 mov     ax, 0Bh
                 push    ax              ; y
@@ -1280,9 +1020,10 @@ displayWelcomePortrait_2 endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; writes "Con:%d" of a member in the skills window
 ; Attributes: bp-based frame
 
-sub_10751       proc near               ; CODE XREF: writeClassesAndAttributes+15B↓p
+drawConValue    proc near               ; CODE XREF: writeClassesAndAttributes+15B↓p
 
 arg_0           = word ptr  4
 
@@ -1322,15 +1063,15 @@ arg_0           = word ptr  4
                 add     sp, 4
                 pop     bp
                 retn
-sub_10751       endp
+drawConValue    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-displaySkills   proc near               ; CODE XREF: sub_10C58+78↓p
-                                        ; sub_10CE5+7B↓p ...
+displaySkills   proc near               ; CODE XREF: increaseAttribute+78↓p
+                                        ; decreaseAttribute+7B↓p ...
 
 var_C           = byte ptr -0Ch
 var_A           = byte ptr -0Ah
@@ -1458,9 +1199,10 @@ displaySkills   endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; writes the remaining attribute points ("%2.2d->")
 ; Attributes: bp-based frame
 
-sub_1089E       proc near               ; CODE XREF: writeClassesAndAttributes+164↓p
+drawPointsRemaining proc near           ; CODE XREF: writeClassesAndAttributes+164↓p
 
 arg_0           = word ptr  4
 
@@ -1502,7 +1244,7 @@ arg_0           = word ptr  4
                 add     sp, 4
                 pop     bp
                 retn
-sub_1089E       endp
+drawPointsRemaining endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1510,8 +1252,8 @@ sub_1089E       endp
 ; Attributes: bp-based frame
 
 ; void __cdecl writeClassesAndAttributes(int partyNum, int hiliteAtrib)
-writeClassesAndAttributes proc near     ; CODE XREF: sub_10C58+81↓p
-                                        ; sub_10CE5+84↓p ...
+writeClassesAndAttributes proc near     ; CODE XREF: increaseAttribute+81↓p
+                                        ; decreaseAttribute+84↓p ...
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1670,10 +1412,10 @@ loc_10A2A:                              ; CODE XREF: writeClassesAndAttributes+1
                 add     sp, 8
                 mov     _inverseText, 0
                 push    [bp+partyNum]
-                call    sub_10751
+                call    drawConValue    ; writes "Con:%d" of a member in the skills window
                 add     sp, 2
                 push    [bp+var_4]
-                call    sub_1089E
+                call    drawPointsRemaining ; writes the remaining attribute points ("%2.2d->")
                 add     sp, 2
                 pop     si
                 pop     di
@@ -1685,9 +1427,10 @@ writeClassesAndAttributes endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Choose a Profession:" numbered menu of the 8? professions
 ; Attributes: bp-based frame
 
-sub_10A65       proc near               ; CODE XREF: addPartyMember:loc_1102C↓p
+chooseProfessionMenu proc near          ; CODE XREF: addPartyMember:loc_1102C↓p
 
 var_6           = word ptr -6
 var_4           = byte ptr -4
@@ -1712,7 +1455,7 @@ var_2           = byte ptr -2
                 add     sp, 4
                 mov     [bp+var_6], 0
 
-loc_10A92:                              ; CODE XREF: sub_10A65+A9↓j
+loc_10A92:                              ; CODE XREF: chooseProfessionMenu+A9↓j
                 mov     ax, [bp+var_6]
                 mov     cl, 7
                 shl     ax, cl
@@ -1765,7 +1508,7 @@ loc_10A92:                              ; CODE XREF: sub_10A65+A9↓j
                 call    writeStringAt
                 add     sp, 8
 
-loc_10B07:                              ; CODE XREF: sub_10A65+66↑j
+loc_10B07:                              ; CODE XREF: chooseProfessionMenu+66↑j
                 inc     [bp+var_6]
                 cmp     [bp+var_6], 3
                 jl      short loc_10A92
@@ -1773,7 +1516,7 @@ loc_10B07:                              ; CODE XREF: sub_10A65+66↑j
                 jmp     short loc_10B37
 ; ---------------------------------------------------------------------------
 
-loc_10B15:                              ; CODE XREF: sub_10A65+D6↓j
+loc_10B15:                              ; CODE XREF: chooseProfessionMenu+D6↓j
                 call    getKeypress
                 mov     [bp+var_2], al
                 cmp     al, 0FFh
@@ -1782,7 +1525,7 @@ loc_10B15:                              ; CODE XREF: sub_10A65+D6↓j
                 jmp     short loc_10B3D
 ; ---------------------------------------------------------------------------
 
-loc_10B22:                              ; CODE XREF: sub_10A65+B8↑j
+loc_10B22:                              ; CODE XREF: chooseProfessionMenu+B8↑j
                 cmp     [bp+var_2], 30h ; '0'
                 jle     short loc_10B37
                 cmp     [bp+var_2], 36h ; '6'
@@ -1793,24 +1536,25 @@ loc_10B22:                              ; CODE XREF: sub_10A65+B8↑j
                 jmp     short loc_10B3D
 ; ---------------------------------------------------------------------------
 
-loc_10B37:                              ; CODE XREF: sub_10A65+AE↑j
-                                        ; sub_10A65+C1↑j ...
+loc_10B37:                              ; CODE XREF: chooseProfessionMenu+AE↑j
+                                        ; chooseProfessionMenu+C1↑j ...
                 cmp     [bp+var_4], 0
                 jz      short loc_10B15
 
-loc_10B3D:                              ; CODE XREF: sub_10A65+BB↑j
-                                        ; sub_10A65+D0↑j
+loc_10B3D:                              ; CODE XREF: chooseProfessionMenu+BB↑j
+                                        ; chooseProfessionMenu+D0↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_10A65       endp
+chooseProfessionMenu endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; random(profession min,max) -> hpMax, hp, lastHurt
 ; Attributes: bp-based frame
 
-sub_10B41       proc near               ; CODE XREF: editPartyMember+1CC↓p
+rollMemberHitPoints proc near           ; CODE XREF: editPartyMember+1CC↓p
                                         ; addPartyMember+3F↓p
 
 var_2           = word ptr -2
@@ -1828,7 +1572,7 @@ arg_0           = word ptr  4
                 mov     bx, ax
                 push    word ptr [bx+72h]
                 push    word ptr [bx+70h]
-                call    sub_116FF
+                call    randomRange     ; matched by mnemonic signature to KEH 1DEB1
                 add     sp, 4
                 mov     bx, [bp+arg_0]
                 mov     [bx+46h], ax
@@ -1844,7 +1588,7 @@ arg_0           = word ptr  4
                 mov     sp, bp
                 pop     bp
                 retn
-sub_10B41       endp
+rollMemberHitPoints endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1939,9 +1683,10 @@ createNewMember endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; attribute +1 (if points left and below the profession max) or toggle sex when the hilite is >=7
 ; Attributes: bp-based frame
 
-sub_10C58       proc near               ; CODE XREF: editPartyMember+176↓p
+increaseAttribute proc near             ; CODE XREF: editPartyMember+176↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1981,7 +1726,7 @@ hiliteAtrib     = word ptr  6
                 jmp     short loc_10CD3
 ; ---------------------------------------------------------------------------
 
-loc_10CA7:                              ; CODE XREF: sub_10C58+26↑j
+loc_10CA7:                              ; CODE XREF: increaseAttribute+26↑j
                 mov     bx, [bp+var_4]
                 inc     byte ptr [bx+50h]
                 mov     bx, [bp+var_4]
@@ -1989,7 +1734,7 @@ loc_10CA7:                              ; CODE XREF: sub_10C58+26↑j
                 jbe     short loc_10CBA
                 mov     byte ptr [bx+50h], 1
 
-loc_10CBA:                              ; CODE XREF: sub_10C58+5C↑j
+loc_10CBA:                              ; CODE XREF: increaseAttribute+5C↑j
                 mov     bx, [bp+var_4]
                 mov     al, [bx+50h]
                 and     al, 3
@@ -1999,34 +1744,35 @@ loc_10CBA:                              ; CODE XREF: sub_10C58+5C↑j
                 jmp     short loc_10CCD
 ; ---------------------------------------------------------------------------
 
-loc_10CCA:                              ; CODE XREF: sub_10C58+6C↑j
+loc_10CCA:                              ; CODE XREF: increaseAttribute+6C↑j
                 mov     ax, 5
 
-loc_10CCD:                              ; CODE XREF: sub_10C58+70↑j
+loc_10CCD:                              ; CODE XREF: increaseAttribute+70↑j
                 mov     word_14CA6, ax
                 call    displaySkills
 
-loc_10CD3:                              ; CODE XREF: sub_10C58+4D↑j
+loc_10CD3:                              ; CODE XREF: increaseAttribute+4D↑j
                 push    [bp+hiliteAtrib] ; hiliteAtrib
                 push    [bp+partyNum]   ; partyNum
                 call    writeClassesAndAttributes
                 add     sp, 4
 
-loc_10CDF:                              ; CODE XREF: sub_10C58+2F↑j
-                                        ; sub_10C58+43↑j
+loc_10CDF:                              ; CODE XREF: increaseAttribute+2F↑j
+                                        ; increaseAttribute+43↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_10C58       endp
+increaseAttribute endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; attribute -1 (above the profession min), refunds a point; or toggles sex
 ; Attributes: bp-based frame
 
-sub_10CE5       proc near               ; CODE XREF: editPartyMember+181↓p
+decreaseAttribute proc near             ; CODE XREF: editPartyMember+181↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -2068,7 +1814,7 @@ hiliteAtrib     = word ptr  6
                 jmp     short loc_10D63
 ; ---------------------------------------------------------------------------
 
-loc_10D39:                              ; CODE XREF: sub_10CE5+26↑j
+loc_10D39:                              ; CODE XREF: decreaseAttribute+26↑j
                 mov     bx, [bp+var_4]
                 mov     si, bx
                 mov     al, [si+50h]
@@ -2085,27 +1831,27 @@ loc_10D39:                              ; CODE XREF: sub_10CE5+26↑j
                 jmp     short loc_10D5D
 ; ---------------------------------------------------------------------------
 
-loc_10D5A:                              ; CODE XREF: sub_10CE5+6F↑j
+loc_10D5A:                              ; CODE XREF: decreaseAttribute+6F↑j
                 mov     ax, 5
 
-loc_10D5D:                              ; CODE XREF: sub_10CE5+73↑j
+loc_10D5D:                              ; CODE XREF: decreaseAttribute+73↑j
                 mov     word_14CA6, ax
                 call    displaySkills
 
-loc_10D63:                              ; CODE XREF: sub_10CE5+52↑j
+loc_10D63:                              ; CODE XREF: decreaseAttribute+52↑j
                 push    [bp+hiliteAtrib] ; hiliteAtrib
                 push    [bp+partyNum]   ; partyNum
                 call    writeClassesAndAttributes
                 add     sp, 4
 
-loc_10D6F:                              ; CODE XREF: sub_10CE5+33↑j
-                                        ; sub_10CE5+48↑j
+loc_10D6F:                              ; CODE XREF: decreaseAttribute+33↑j
+                                        ; decreaseAttribute+48↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_10CE5       endp
+decreaseAttribute endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2144,8 +1890,8 @@ t               = word ptr  4
                 push    [bp+t]
                 call    listParty
                 add     sp, 6
-                push    word ptr [bp+str]
-                call    sub_132C2
+                push    word ptr [bp+str] ; char *
+                call    _strlen         ; matched by mnemonic signature to KEH 1FBBC
                 add     sp, 2
                 mov     [bp+var_8], ax
                 mov     bx, ax
@@ -2169,7 +1915,7 @@ loc_10DD3:                              ; CODE XREF: editPartyMember+59↑j
 ; ---------------------------------------------------------------------------
 
 loc_10DD5:                              ; CODE XREF: editPartyMember+90↓j
-                call    sub_1185F
+                call    getBiosTicks    ; matched by mnemonic signature to KEH 1E08C
                 and     al, 7
                 cmp     al, 4
                 jnb     short loc_10DE2
@@ -2254,7 +2000,7 @@ loc_10E5A:                              ; CODE XREF: editPartyMember+298↓j
                 mov     al, [bp+var_4]
                 cbw
                 push    ax
-                call    sub_106E9
+                call    selectMemberByFKey ; validates an F1-F5 key against partyCount, returns the slot
                 add     sp, 4
                 or      al, al
                 jnz     short loc_10E70
@@ -2299,8 +2045,8 @@ loc_10E91:                              ; CODE XREF: editPartyMember+117↑j
                 shl     bx, 1
                 mov     ax, [bx+3D88h]
                 mov     word ptr [bp+str], ax
-                push    ax
-                call    sub_132C2
+                push    ax              ; char *
+                call    _strlen         ; matched by mnemonic signature to KEH 1FBBC
                 add     sp, 2
                 mov     [bp+var_8], ax
                 mov     bx, ax
@@ -2315,14 +2061,14 @@ loc_10E91:                              ; CODE XREF: editPartyMember+117↑j
 loc_10EE5:                              ; CODE XREF: editPartyMember+AB↑j
                 push    [bp+hiliteAtrib]
                 push    [bp+t]
-                call    sub_10C58
+                call    increaseAttribute ; attribute +1 (if points left and below the profession max) or toggle sex when the hilite is >=7
                 jmp     short loc_10F6B
 ; ---------------------------------------------------------------------------
 
 loc_10EF0:                              ; CODE XREF: editPartyMember+B3↑j
                 push    [bp+hiliteAtrib]
                 push    [bp+t]
-                call    sub_10CE5
+                call    decreaseAttribute ; attribute -1 (above the profession min), refunds a point; or toggles sex
                 jmp     short loc_10F6B
 ; ---------------------------------------------------------------------------
 
@@ -2364,7 +2110,7 @@ loc_10F38:                              ; CODE XREF: editPartyMember+1B1↑j
                 mov     bx, [bp+t]
                 shl     bx, 1
                 push    word ptr [bx+3D88h]
-                call    sub_10B41
+                call    rollMemberHitPoints ; random(profession min,max) -> hpMax, hp, lastHurt
                 add     sp, 2
                 push    [bp+hiliteAtrib] ; hiliteAtrib
                 push    [bp+t]          ; partyNum
@@ -2507,7 +2253,7 @@ loc_11028:                              ; CODE XREF: addPartyMember+18↓j
 ; ---------------------------------------------------------------------------
 
 loc_1102C:                              ; CODE XREF: addPartyMember+B↑j
-                call    sub_10A65
+                call    chooseProfessionMenu ; "Choose a Profession:" numbered menu of the 8? professions
                 mov     [bp+var_2], ax
                 inc     ax
                 jz      short loc_11028
@@ -2524,7 +2270,7 @@ loc_1102C:                              ; CODE XREF: addPartyMember+B↑j
                 mov     bx, [bp+var_4]
                 shl     bx, 1
                 push    word ptr [bx+3D88h]
-                call    sub_10B41
+                call    rollMemberHitPoints ; random(profession min,max) -> hpMax, hp, lastHurt
                 add     sp, 2
                 mov     ax, 181h
                 push    ax
@@ -2724,7 +2470,7 @@ envp            = dword ptr  0Ah
                 push    bp
                 mov     bp, sp
                 sub     sp, 10h
-                push    si              ; add
+                push    si              ; char *
                 mov     [bp+var_10], 0
                 mov     [bp+var_A], 0
                 call    loadDisk1
@@ -2733,7 +2479,7 @@ envp            = dword ptr  0Ah
                 mov     _gfxMode, al
                 mov     ax, 3E8h
                 push    ax
-                call    sub_12FE4
+                call    unknown_libname_2 ; matched by mnemonic signature to KEH 1F8DE
                 add     sp, 2
                 mov     dst, ax
                 mov     al, [bp+var_E]
@@ -2753,7 +2499,7 @@ envp            = dword ptr  0Ah
                 add     sp, 4
                 mov     [bp+var_6], ax
                 push    ax
-                call    sub_119BE
+                call    fileGetSize     ; matched by mnemonic signature to KEH 1E4B4
                 add     sp, 2
                 mov     [bp+var_4], ax
                 mov     [bp+var_2], dx
@@ -2762,10 +2508,10 @@ envp            = dword ptr  0Ah
                 push    dx
                 push    ax
                 push    [bp+var_6]
-                call    sub_11902
+                call    fileRead        ; matched by mnemonic signature to KEH 1E3F8
                 add     sp, 0Ah
                 push    [bp+var_6]
-                call    sub_118F1
+                call    fileClose       ; matched by mnemonic signature to KEH 1E3E7
                 add     sp, 2
                 cmp     [bp+var_E], 0
                 jz      short loc_11222
@@ -2780,17 +2526,17 @@ loc_11222:                              ; CODE XREF: _main+88↑j
                 push    word ptr _pictArray1
                 push    word ptr _pictData+2
                 push    word ptr _pictData
-                call    sub_11AC7
+                call    lzssDecodeSegs  ; matched by mnemonic signature to KEH 1E5BD
                 add     sp, 8
                 mov     ax, offset word_14ECE
                 push    ax
-                call    sub_114D5
+                call    refreshBounds   ; matched by mnemonic signature to KEH 1DA17
                 add     sp, 2
                 call    getKeypress
-                call    sub_11548
+                call    clearTextWindow ; writeString with empty text (clears pending text)
                 mov     ax, offset word_14ECE
                 push    ax
-                call    sub_114D5
+                call    refreshBounds   ; matched by mnemonic signature to KEH 1DA17
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -2888,7 +2634,7 @@ loc_112FF:                              ; CODE XREF: _main+169↑j
                 mov     al, [bp+var_8]
                 cbw
                 push    ax
-                call    sub_106E9
+                call    selectMemberByFKey ; validates an F1-F5 key against partyCount, returns the slot
                 add     sp, 4
                 or      al, al
                 jnz     short loc_11315
@@ -2974,7 +2720,7 @@ loc_1138C:                              ; CODE XREF: _main+1DB↑j
 loc_11391:                              ; CODE XREF: _main+23C↓j
                 cmp     _disk1._partyCount, 0
                 jz      short loc_1139E
-                call    sub_103E0
+                call    writeInitialDisk1 ; new game: save counter=1, per-member roster ids (-6), writes DISK1 (0EC0h bytes)
                 jmp     loc_1121B
 ; ---------------------------------------------------------------------------
 
@@ -3019,20 +2765,20 @@ loc_113E0:                              ; CODE XREF: _main+24A↑j
                 push    word ptr _pictArray1
                 push    word ptr _pictData+2
                 push    word ptr _pictData
-                call    sub_11AC7
+                call    lzssDecodeSegs  ; matched by mnemonic signature to KEH 1E5BD
                 add     sp, 8
                 mov     ax, 29Eh
                 push    ax
-                call    sub_114D5
+                call    refreshBounds   ; matched by mnemonic signature to KEH 1DA17
                 add     sp, 2
-                call    sub_1141A
+                call    freePictMemory  ; DOS free of the picture arena
                 sub     ax, ax
                 push    ax
                 mov     ax, 26Ch
-                push    ax
+                push    ax              ; char *
                 mov     ax, 274h
-                push    ax
-                call    sub_139FE
+                push    ax              ; int
+                call    _spawnl         ; spawn child program (used to start KEH.EXE)
                 add     sp, 6
                 pop     si
                 mov     sp, bp
@@ -3045,8 +2791,9 @@ _main           endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; DOS free of the picture arena
 
-sub_1141A       proc near               ; CODE XREF: _main+26F↑p
+freePictMemory  proc near               ; CODE XREF: _main+26F↑p
                 push    es
                 mov     ax, word ptr _pictArray1+2
                 mov     ah, 49h
@@ -3055,7 +2802,7 @@ sub_1141A       proc near               ; CODE XREF: _main+26F↑p
                 pop     es
                 assume es:nothing
                 retn
-sub_1141A       endp
+freePictMemory  endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR gfxInit
@@ -3156,10 +2903,11 @@ gfxInit         endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1D9F5
 ; Attributes: bp-based frame
 
-sub_114B3       proc near               ; CODE XREF: listParty+BE↑p
-                                        ; sub_114D5+C↓p
+addDirtyRectFromBounds proc near        ; CODE XREF: listParty+BE↑p
+                                        ; refreshBounds+C↓p
 
 arg_0           = word ptr  4
 
@@ -3175,7 +2923,7 @@ arg_0           = word ptr  4
                 mov     di, [si+4]
                 mov     cx, [si+6]
                 mov     si, [si+2]
-                call    sub_13CC0
+                call    addDirtyRect    ; matched by mnemonic signature to KEH 2077F
                 pop     bp
                 pop     es
                 pop     ds
@@ -3183,14 +2931,15 @@ arg_0           = word ptr  4
                 pop     si
                 pop     bp
                 retn
-sub_114B3       endp
+addDirtyRectFromBounds endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1DA17
 ; Attributes: bp-based frame
 
-sub_114D5       proc near               ; CODE XREF: sub_104EA+77↑p
+refreshBounds   proc near               ; CODE XREF: drawWelcomePortraitFrames+77↑p
                                         ; _main+AB↑p ...
 
 arg_0           = word ptr  4
@@ -3204,9 +2953,9 @@ arg_0           = word ptr  4
                 push    bp
                 mov     si, [bp+arg_0]
                 push    si
-                call    sub_114B3
+                call    addDirtyRectFromBounds ; matched by mnemonic signature to KEH 1D9F5
                 add     sp, 2
-                call    sub_13F5D
+                call    flushDirtyRects ; matched by mnemonic signature to KEH 208E2
                 pop     bp
                 pop     es
                 pop     ds
@@ -3214,13 +2963,13 @@ arg_0           = word ptr  4
                 pop     si
                 pop     bp
                 retn
-sub_114D5       endp
+refreshBounds   endp
 
 ; ---------------------------------------------------------------------------
                 push    si
                 push    di
                 push    bp
-                call    sub_13F5D
+                call    flushDirtyRects ; matched by mnemonic signature to KEH 208E2
                 pop     bp
                 pop     di
                 pop     si
@@ -3228,8 +2977,9 @@ sub_114D5       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; former writeString?
 
-writeString?    proc near               ; CODE XREF: sub_11548+A↓p
+writeStringAlt  proc near               ; CODE XREF: clearTextWindow+A↓p
                 push    di
                 push    si
                 push    es
@@ -3241,18 +2991,18 @@ writeString?    proc near               ; CODE XREF: sub_11548+A↓p
                 push    ax
                 mov     _textY, 0
 
-loc_11516:                              ; CODE XREF: writeString?+3B↓j
+loc_11516:                              ; CODE XREF: writeStringAlt+3B↓j
                 mov     _xPos, 0
 
-loc_1151C:                              ; CODE XREF: writeString?+30↓j
+loc_1151C:                              ; CODE XREF: writeStringAlt+30↓j
                 lodsb
                 or      al, al
                 jz      short loc_11526
                 push    si
-                call    writeChar?
+                call    writeCharAlt    ; former writeChar?
                 pop     si
 
-loc_11526:                              ; CODE XREF: writeString?+20↑j
+loc_11526:                              ; CODE XREF: writeStringAlt+20↑j
                 inc     _xPos
                 cmp     _xPos, 40
                 jnz     short loc_1151C
@@ -3267,13 +3017,14 @@ loc_11526:                              ; CODE XREF: writeString?+20↑j
                 pop     si
                 pop     di
                 retn
-writeString?    endp
+writeStringAlt  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; writeString with empty text (clears pending text)
 
-sub_11548       proc near               ; CODE XREF: _main+B4↑p
+clearTextWindow proc near               ; CODE XREF: _main+B4↑p
                 push    si
                 push    di
                 push    bx
@@ -3283,7 +3034,7 @@ sub_11548       proc near               ; CODE XREF: _main+B4↑p
                 push    es
                 push    bp
                 xor     ax, ax
-                call    writeString?
+                call    writeStringAlt  ; former writeString?
                 pop     bp
                 pop     es
                 pop     ds
@@ -3294,7 +3045,7 @@ sub_11548       proc near               ; CODE XREF: _main+B4↑p
                 pop     di
                 pop     si
                 retn
-sub_11548       endp
+clearTextWindow endp
 
                 assume ds:dseg
 
@@ -3353,7 +3104,7 @@ winClearCurrent proc near               ; CODE XREF: listParty+19↑p
                                         ; writeClassesAndAttributes+21↑p ...
                 mov     si, _currentWindow
                 add     si, 0Ch
-                call    sub_117C4
+                call    winClear        ; zero-fills the window rectangle in the picture buffer
                 retn
 winClearCurrent endp
 
@@ -3372,12 +3123,12 @@ loc_115AA:                              ; CODE XREF: writeString+45↓j
                 mov     si, _currentWindow
                 mov     al, es:[di]
                 or      al, al
-                jz      short sub_11602
+                jz      short writeString_markBreak ; mis-split entry of writeString
                 cmp     al, 0Dh
                 jnz     short loc_115C4
-                call    sub_11602
+                call    writeString_markBreak ; mis-split entry of writeString
                 push    di
-                call    sub_1164F
+                call    newLine         ; CR in the current window; pages or scrolls on overflow
                 pop     di
                 inc     di
                 jmp     short writeString
@@ -3394,7 +3145,7 @@ loc_115C4:                              ; CODE XREF: writeString+19↑j
                 pop     ax
                 cmp     al, 20h ; ' '
 
-loc_115D8:                              ; CODE XREF: sub_11D34-19A↓p
+loc_115D8:                              ; CODE XREF: __chkstk-19A↓p
                                         ; DATA XREF: dseg:off_16A40↓o
                 jnz     short loc_115E5
                 mov     _writeStringPtr3, di
@@ -3417,8 +3168,8 @@ loc_115E8:                              ; CODE XREF: writeString+35↑j
                 mov     _writeStringPtr2, di
 
 loc_115F6:                              ; CODE XREF: writeString+4D↑j
-                call    sub_11606
-                call    sub_1164F
+                call    writeStringFlushRun ; matched by mnemonic signature to KEH 1DBFD
+                call    newLine         ; CR in the current window; pages or scrolls on overflow
                 mov     di, _writeStringPtr2
                 jmp     short writeString
 writeString     endp
@@ -3426,31 +3177,33 @@ writeString     endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; mis-split entry of writeString
 
-sub_11602       proc near               ; CODE XREF: writeString+15↑j
+writeString_markBreak proc near         ; CODE XREF: writeString+15↑j
                                         ; writeString+1B↑p
                 mov     _writeStringPtr3, di
-sub_11602       endp
+writeString_markBreak endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1DBFD
 
-sub_11606       proc near               ; CODE XREF: writeString:loc_115F6↑p
+writeStringFlushRun proc near           ; CODE XREF: writeString:loc_115F6↑p
                 mov     cx, _writeStringPtr3
                 sub     cx, _writeStringPtr1
                 jz      short locret_11613
                 call    writeString_1
 
-locret_11613:                           ; CODE XREF: sub_11606+8↑j
+locret_11613:                           ; CODE XREF: writeStringFlushRun+8↑j
                 retn
-sub_11606       endp
+writeStringFlushRun endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-writeString_1   proc near               ; CODE XREF: sub_11606+A↑p
+writeString_1   proc near               ; CODE XREF: writeStringFlushRun+A↑p
                 mov     di, _writeStringPtr1
 
 loc_11618:                              ; CODE XREF: writeString_1+1A↓j
@@ -3485,7 +3238,7 @@ winField1A      proc near               ; CODE XREF: listParty+B2↑p
 
 loc_11644:                              ; CODE XREF: winField1A+E↑j
                 push    di
-                call    sub_114D5
+                call    refreshBounds   ; matched by mnemonic signature to KEH 1DA17
                 add     sp, 2
                 pop     bp
                 pop     di
@@ -3496,8 +3249,9 @@ winField1A      endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; CR in the current window; pages or scrolls on overflow
 
-sub_1164F       proc near               ; CODE XREF: writeString+1F↑p
+newLine         proc near               ; CODE XREF: writeString+1F↑p
                                         ; writeString+5B↑p
                 push    es
                 mov     si, _currentWindow
@@ -3521,14 +3275,14 @@ sub_1164F       proc near               ; CODE XREF: writeString+1F↑p
                 call    winField1A
                 call    getKeypress
 
-loc_1168B:                              ; CODE XREF: sub_1164F+21↑j
-                                        ; sub_1164F+2F↑j
+loc_1168B:                              ; CODE XREF: newLine+21↑j
+                                        ; newLine+2F↑j
                 pop     si
 
-loc_1168C:                              ; CODE XREF: sub_1164F+13↑j
+loc_1168C:                              ; CODE XREF: newLine+13↑j
                 pop     es
                 retn
-sub_1164F       endp
+newLine         endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -3619,9 +3373,10 @@ writeStringAt   endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1DEB1
 ; Attributes: bp-based frame
 
-sub_116FF       proc near               ; CODE XREF: sub_10B41+1D↑p
+randomRange     proc near               ; CODE XREF: rollMemberHitPoints+1D↑p
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -3640,15 +3395,15 @@ arg_2           = word ptr  6
                 cmp     ax, [bp+arg_2]
                 jge     short loc_1171F
 
-loc_11712:                              ; CODE XREF: sub_116FF+19↓j
-                                        ; sub_116FF+1E↓j
-                call    sub_1173D
+loc_11712:                              ; CODE XREF: randomRange+19↓j
+                                        ; randomRange+1E↓j
+                call    rngByte         ; matched by mnemonic signature to KEH 1DEE7
                 cmp     ax, [bp+arg_0]
                 jl      short loc_11712
                 cmp     ax, [bp+arg_2]
                 jg      short loc_11712
 
-loc_1171F:                              ; CODE XREF: sub_116FF+11↑j
+loc_1171F:                              ; CODE XREF: randomRange+11↑j
                 pop     bp
                 pop     es
                 pop     ds
@@ -3659,13 +3414,14 @@ loc_1171F:                              ; CODE XREF: sub_116FF+11↑j
                 pop     si
                 pop     bp
                 retn
-sub_116FF       endp
+randomRange     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; called from getKeypress while idle: advances the RNG
 
-sub_11729       proc near               ; CODE XREF: getKeypress:loc_10577↑p
+idleRngTick     proc near               ; CODE XREF: getKeypress:loc_10577↑p
                 push    si
                 push    di
                 push    bx
@@ -3674,7 +3430,7 @@ sub_11729       proc near               ; CODE XREF: getKeypress:loc_10577↑p
                 push    ds
                 push    es
                 push    bp
-                call    sub_1173D
+                call    rngByte         ; matched by mnemonic signature to KEH 1DEE7
                 pop     bp
                 pop     es
                 pop     ds
@@ -3684,21 +3440,22 @@ sub_11729       proc near               ; CODE XREF: getKeypress:loc_10577↑p
                 pop     di
                 pop     si
                 retn
-sub_11729       endp
+idleRngTick     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1DEE7
 
-sub_1173D       proc near               ; CODE XREF: sub_116FF:loc_11712↑p
-                                        ; sub_11729+8↑p
+rngByte         proc near               ; CODE XREF: randomRange:loc_11712↑p
+                                        ; idleRngTick+8↑p
                 lea     si, ds:27Eh
                 mov     cx, 0Fh
                 mov     dl, [si+0Fh]
                 mov     bx, 0Eh
                 clc
 
-loc_1174B:                              ; CODE XREF: sub_1173D+15↓j
+loc_1174B:                              ; CODE XREF: rngByte+15↓j
                 mov     al, [bx+si]
                 adc     dl, al
                 mov     [bx+si], dl
@@ -3707,13 +3464,13 @@ loc_1174B:                              ; CODE XREF: sub_1173D+15↓j
                 mov     cx, 10h
                 mov     bx, 10h
 
-loc_1175A:                              ; CODE XREF: sub_1173D+20↓j
+loc_1175A:                              ; CODE XREF: rngByte+20↓j
                 dec     bx
                 inc     byte ptr [bx+si]
                 loopne  loc_1175A
                 mov     al, [si]
                 retn
-sub_1173D       endp
+rngByte         endp
 
 ; ---------------------------------------------------------------------------
                 push    bx
@@ -3738,8 +3495,9 @@ sub_1173D       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; former writeChar?
 
-writeChar?      proc near               ; CODE XREF: writeString?+23↑p
+writeCharAlt    proc near               ; CODE XREF: writeStringAlt+23↑p
                 push    si
                 push    di
                 push    ds
@@ -3769,7 +3527,7 @@ writeChar?      proc near               ; CODE XREF: writeString?+23↑p
                 add     si, ax
                 mov     bx, 8
 
-loc_117B2:                              ; CODE XREF: writeChar?+44↓j
+loc_117B2:                              ; CODE XREF: writeCharAlt+44↓j
                 mov     cx, 2
                 rep movsw
                 add     di, 156
@@ -3781,13 +3539,14 @@ loc_117B2:                              ; CODE XREF: writeChar?+44↓j
                 pop     di
                 pop     si
                 retn
-writeChar?      endp
+writeCharAlt    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; zero-fills the window rectangle in the picture buffer
 
-sub_117C4       proc near               ; CODE XREF: winClearCurrent+7↑p
+winClear        proc near               ; CODE XREF: winClearCurrent+7↑p
                 push    si
                 push    di
                 push    es
@@ -3800,17 +3559,17 @@ sub_117C4       proc near               ; CODE XREF: winClearCurrent+7↑p
                 xor     ax, ax
                 mov     cx, [si+6]
 
-loc_117DC:                              ; CODE XREF: sub_117C4+27↓j
+loc_117DC:                              ; CODE XREF: winClear+27↓j
                 push    cx
 
-loc_117DD:                              ; DATA XREF: sub_13A14+110↓w
+loc_117DD:                              ; DATA XREF: _spawnve+110↓w
                 push    di
                 mov     cx, [si+4]
                 sar     cx, 1
                 rep stosw
                 pop     di
 
-loc_117E6:                              ; DATA XREF: sub_13A14+116↓w
+loc_117E6:                              ; DATA XREF: _spawnve+116↓w
                 add     di, 0A0h
                 pop     cx
                 loop    loc_117DC
@@ -3819,7 +3578,7 @@ loc_117E6:                              ; DATA XREF: sub_13A14+116↓w
                 pop     di
                 pop     si
                 retn
-sub_117C4       endp
+winClear        endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -3840,7 +3599,7 @@ writeChar       proc near               ; CODE XREF: writeString_1+D↑p
                 mov     ax, [si+Window._textY]
                 shl     ax, 1
 
-loc_11803:                              ; DATA XREF: sub_139FE+3↓r
+loc_11803:                              ; DATA XREF: _spawnl+3↓r
                 shl     ax, 1
                 shl     ax, 1
                 shl     ax, 1
@@ -3904,8 +3663,9 @@ writeChar       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1E08C
 
-sub_1185F       proc near               ; CODE XREF: editPartyMember:loc_10DD5↑p
+getBiosTicks    proc near               ; CODE XREF: editPartyMember:loc_10DD5↑p
                 push    cx
                 push    dx
                 xor     ah, ah
@@ -3918,7 +3678,7 @@ sub_1185F       proc near               ; CODE XREF: editPartyMember:loc_10DD5�
                 pop     dx
                 pop     cx
                 retn
-sub_1185F       endp
+getBiosTicks    endp
 
 ; ---------------------------------------------------------------------------
                 push    cx
@@ -4045,9 +3805,10 @@ loc_118EF:                              ; CODE XREF: sg0138:1F8C↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1E3E7
 ; Attributes: bp-based frame
 
-sub_118F1       proc near               ; CODE XREF: fontOpen+49↑p
+fileClose       proc near               ; CODE XREF: fontOpen+49↑p
                                         ; fontOpen+6E↑p ...
 
 arg_0           = word ptr  4
@@ -4062,17 +3823,18 @@ arg_0           = word ptr  4
                 jb      short loc_11900
                 inc     ax
 
-loc_11900:                              ; CODE XREF: sub_118F1+C↑j
+loc_11900:                              ; CODE XREF: fileClose+C↑j
                 pop     bp
                 retn
-sub_118F1       endp
+fileClose       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1E3F8
 ; Attributes: bp-based frame
 
-sub_11902       proc near               ; CODE XREF: fontOpen+2B↑p
+fileRead        proc near               ; CODE XREF: fontOpen+2B↑p
                                         ; fontOpen+65↑p ...
 
 arg_0           = word ptr  4
@@ -4089,14 +3851,14 @@ arg_8           = word ptr  0Ch
                 mov     ds, ax
                 mov     dx, [bp+arg_6]
 
-loc_11911:                              ; CODE XREF: sub_11902+3D↓j
-                                        ; sub_11902+43↓j
+loc_11911:                              ; CODE XREF: fileRead+3D↓j
+                                        ; fileRead+43↓j
                 mov     cx, [bp+arg_2]
                 cmp     [bp+arg_4], 0
                 jz      short loc_1191D
                 mov     cx, 0FFFFh
 
-loc_1191D:                              ; CODE XREF: sub_11902+16↑j
+loc_1191D:                              ; CODE XREF: fileRead+16↑j
                 mov     ah, 3Fh
                 int     21h             ; DOS - 2+ - READ FROM FILE WITH HANDLE
                                         ; BX = file handle, CX = number of bytes to read
@@ -4115,7 +3877,7 @@ loc_1191D:                              ; CODE XREF: sub_11902+16↑j
                 mov     ds, ax
                 assume ds:nothing
 
-loc_1193B:                              ; CODE XREF: sub_11902+30↑j
+loc_1193B:                              ; CODE XREF: fileRead+30↑j
                 cmp     [bp+arg_4], 0
                 jnz     short loc_11911
                 cmp     [bp+arg_2], 0
@@ -4127,20 +3889,21 @@ loc_1193B:                              ; CODE XREF: sub_11902+30↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1194D:                              ; CODE XREF: sub_11902+1F↑j
-                                        ; sub_11902+23↑j
+loc_1194D:                              ; CODE XREF: fileRead+1F↑j
+                                        ; fileRead+23↑j
                 xor     ax, ax
                 pop     ds
                 pop     bp
                 retn
-sub_11902       endp
+fileRead        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1E3F8
 ; Attributes: bp-based frame
 
-sub_11952       proc near               ; CODE XREF: sub_103E0+5E↑p
+fileWrite       proc near               ; CODE XREF: writeInitialDisk1+5E↑p
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -4157,14 +3920,14 @@ arg_8           = word ptr  0Ch
                 assume ds:nothing
                 mov     dx, [bp+arg_6]
 
-loc_11961:                              ; CODE XREF: sub_11952+3D↓j
-                                        ; sub_11952+43↓j
+loc_11961:                              ; CODE XREF: fileWrite+3D↓j
+                                        ; fileWrite+43↓j
                 mov     cx, [bp+arg_2]
                 cmp     [bp+arg_4], 0
                 jz      short loc_1196D
                 mov     cx, 0FFF0h
 
-loc_1196D:                              ; CODE XREF: sub_11952+16↑j
+loc_1196D:                              ; CODE XREF: fileWrite+16↑j
                 mov     ah, 40h
                 int     21h             ; DOS - 2+ - WRITE TO FILE WITH HANDLE
                                         ; BX = file handle, CX = number of bytes to write, DS:DX -> buffer
@@ -4182,7 +3945,7 @@ loc_1196D:                              ; CODE XREF: sub_11952+16↑j
                 mov     ds, ax
                 assume ds:nothing
 
-loc_1198B:                              ; CODE XREF: sub_11952+30↑j
+loc_1198B:                              ; CODE XREF: fileWrite+30↑j
                 cmp     [bp+arg_4], 0
                 jnz     short loc_11961
                 cmp     [bp+arg_2], 0
@@ -4194,20 +3957,21 @@ loc_1198B:                              ; CODE XREF: sub_11952+30↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1199D:                              ; CODE XREF: sub_11952+1F↑j
-                                        ; sub_11952+23↑j
+loc_1199D:                              ; CODE XREF: fileWrite+1F↑j
+                                        ; fileWrite+23↑j
                 xor     ax, ax
                 pop     ds
                 pop     bp
                 retn
-sub_11952       endp
+fileWrite       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1E498
 ; Attributes: bp-based frame
 
-sub_119A2       proc near               ; CODE XREF: loadClasses+22↑p
+fileSeek        proc near               ; CODE XREF: loadClasses+22↑p
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -4228,17 +3992,18 @@ arg_6           = byte ptr  0Ah
                 mov     ax, 0FFFFh
                 mov     dx, ax
 
-loc_119BC:                              ; CODE XREF: sub_119A2+13↑j
+loc_119BC:                              ; CODE XREF: fileSeek+13↑j
                 pop     bp
                 retn
-sub_119A2       endp
+fileSeek        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1E4B4
 ; Attributes: bp-based frame
 
-sub_119BE       proc near               ; CODE XREF: loadDisk1+21↑p
+fileGetSize     proc near               ; CODE XREF: loadDisk1+21↑p
                                         ; loadClasses+68↑p ...
 
 arg_0           = word ptr  4
@@ -4261,13 +4026,14 @@ arg_0           = word ptr  4
                 pop     dx
                 pop     bp
                 retn
-sub_119BE       endp
+fileGetSize     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1E4D0
 
-sub_119DA       proc near               ; CODE XREF: sub_11AC7+17↓p
+lzssDecode      proc near               ; CODE XREF: lzssDecodeSegs+17↓p
                 cld
                 mov     ax, seg dseg
                 mov     es, ax
@@ -4297,21 +4063,21 @@ sub_119DA       proc near               ; CODE XREF: sub_11AC7+17↓p
                 mov     bx, 0FEEh
                 mov     byte_15A2A, 1
 
-loc_11A21:                              ; CODE XREF: sub_119DA+9C↓j
-                                        ; sub_119DA+E9↓j
+loc_11A21:                              ; CODE XREF: lzssDecode+9C↓j
+                                        ; lzssDecode+E9↓j
                 cmp     si, 40h ; '@'
                 jb      short loc_11A2E
                 sub     si, 40h ; '@'
                 add     _pictPtr, 4
 
-loc_11A2E:                              ; CODE XREF: sub_119DA+4A↑j
+loc_11A2E:                              ; CODE XREF: lzssDecode+4A↑j
                 cmp     di, 40h ; '@'
                 jb      short loc_11A3F
                 sub     di, 40h ; '@'
                 add     word_15A28, 4
                 mov     es, word_15A28
 
-loc_11A3F:                              ; CODE XREF: sub_119DA+57↑j
+loc_11A3F:                              ; CODE XREF: lzssDecode+57↑j
                 dec     byte_15A2A
                 jnz     short loc_11A53
                 push    ds
@@ -4323,7 +4089,7 @@ loc_11A3F:                              ; CODE XREF: sub_119DA+57↑j
                 assume ds:dseg
                 mov     byte_15A2A, 8
 
-loc_11A53:                              ; CODE XREF: sub_119DA+69↑j
+loc_11A53:                              ; CODE XREF: lzssDecode+69↑j
                 shr     ah, 1
                 jnb     short loc_11A78
                 push    ds
@@ -4340,14 +4106,14 @@ loc_11A53:                              ; CODE XREF: sub_119DA+69↑j
                 or      cx, cx
                 jz      short locret_11AC6
 
-loc_11A6D:                              ; CODE XREF: sub_119DA+8D↑j
+loc_11A6D:                              ; CODE XREF: lzssDecode+8D↑j
                 mov     byte_15A2B[bx], al
                 inc     bx
                 and     bx, 0FFFh
                 jmp     short loc_11A21
 ; ---------------------------------------------------------------------------
 
-loc_11A78:                              ; CODE XREF: sub_119DA+7B↑j
+loc_11A78:                              ; CODE XREF: lzssDecode+7B↑j
                 mov     bp, cx
                 push    ds
                 mov     ds, _pictPtr
@@ -4368,7 +4134,7 @@ loc_11A78:                              ; CODE XREF: sub_119DA+7B↑j
                 mov     cl, al
                 xor     ch, ch
 
-loc_11A99:                              ; CODE XREF: sub_119DA+E4↓j
+loc_11A99:                              ; CODE XREF: lzssDecode+E4↓j
                 mov     al, [si+0DFBh]
                 stosb
                 inc     si
@@ -4385,8 +4151,8 @@ loc_11A99:                              ; CODE XREF: sub_119DA+E4↓j
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_11AB5:                              ; CODE XREF: sub_119DA+D1↑j
-                                        ; sub_119DA+D5↑j
+loc_11AB5:                              ; CODE XREF: lzssDecode+D1↑j
+                                        ; lzssDecode+D5↑j
                 mov     [bx+0DFBh], al
                 inc     bx
                 and     bx, 0FFFh
@@ -4396,17 +4162,18 @@ loc_11AB5:                              ; CODE XREF: sub_119DA+D1↑j
                 jmp     loc_11A21
 ; ---------------------------------------------------------------------------
 
-locret_11AC6:                           ; CODE XREF: sub_119DA+91↑j
-                                        ; sub_119DA+D8↑j
+locret_11AC6:                           ; CODE XREF: lzssDecode+91↑j
+                                        ; lzssDecode+D8↑j
                 retn
-sub_119DA       endp
+lzssDecode      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1E5BD
 ; Attributes: bp-based frame
 
-sub_11AC7       proc near               ; CODE XREF: displayWelcomePortrait+64↑p
+lzssDecodeSegs  proc near               ; CODE XREF: displayWelcomePortrait+64↑p
                                         ; _main+A1↑p ...
 
 arg_2           = word ptr  6
@@ -4426,7 +4193,7 @@ arg_6           = word ptr  0Ah
                 mov     ds:0DF6h, ax
                 mov     ax, [bp+arg_6]
                 mov     ds:0DF8h, ax
-                call    sub_119DA
+                call    lzssDecode      ; matched by mnemonic signature to KEH 1E4D0
                 pop     bp
                 pop     es
                 assume es:nothing
@@ -4438,7 +4205,7 @@ arg_6           = word ptr  0Ah
                 pop     si
                 pop     bp
                 retn
-sub_11AC7       endp
+lzssDecodeSegs  endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -4478,7 +4245,7 @@ loc_11B08:                              ; CODE XREF: start+17↑j
                 call    __FF_MSGBANNER
                 xor     ax, ax
                 push    ax
-                call    sub_11F93
+                call    __NMSG_WRITE    ; matched by mnemonic signature to KEH 1EB2F
                 mov     ax, 4CFFh
                 int     21h             ; DOS - 2+ - QUIT WITH EXIT CODE (EXIT)
                                         ; AL = exit code
@@ -4514,10 +4281,10 @@ loc_11B22:                              ; CODE XREF: start+24↑j
                 rep stosb
                 push    ss
                 pop     ds
-                call    sub_11B9E
+                call    __cinit         ; matched by mnemonic signature to KEH 1E73A
                 push    ss
                 pop     ds
-                call    sub_11EFA
+                call    __setenvp       ; matched by mnemonic signature to KEH 1EA96
                 call    loc_11D6C
                 xor     bp, bp
                 push    word_16AD4
@@ -4533,12 +4300,13 @@ start           endp ; sp-analysis failed
                 mov     ds, ax
                 mov     ax, 3
                 mov     ss:off_16A40, 1C62h
-; [0000000F BYTES: COLLAPSED CHUNK OF FUNCTION sub_11D34. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [0000000F BYTES: COLLAPSED CHUNK OF FUNCTION __chkstk. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1E73A
 
-sub_11B9E       proc near               ; CODE XREF: start+74↑p
+__cinit         proc near               ; CODE XREF: start+74↑p
 
 ; FUNCTION CHUNK AT 222F SIZE 0000000F BYTES
 ; FUNCTION CHUNK AT 23CE SIZE 00000006 BYTES
@@ -4579,7 +4347,7 @@ sub_11B9E       proc near               ; CODE XREF: start+74↑p
                 jmp     loc_11D2E
 ; ---------------------------------------------------------------------------
 
-loc_11BE1:                              ; CODE XREF: sub_11B9E+3C↑j
+loc_11BE1:                              ; CODE XREF: __cinit+3C↑j
                 lds     ax, ss:dword_16D88
                 assume ds:nothing
                 mov     dx, ds
@@ -4589,14 +4357,14 @@ loc_11BE1:                              ; CODE XREF: sub_11B9E+3C↑j
                 pop     ds
                 assume ds:dseg
 
-loc_11BF2:                              ; CODE XREF: sub_11B9E+24↑j
+loc_11BF2:                              ; CODE XREF: __cinit+24↑j
                 mov     es, word_16AB3
                 mov     cx, es:2Ch
                 jcxz    short loc_11C33
                 mov     es, cx
                 xor     di, di
 
-loc_11C01:                              ; CODE XREF: sub_11B9E+7C↓j
+loc_11C01:                              ; CODE XREF: __cinit+7C↓j
                 cmp     byte ptr es:[di], 0
                 jz      short loc_11C33
                 mov     cx, 0Ch
@@ -4610,7 +4378,7 @@ loc_11C01:                              ; CODE XREF: sub_11B9E+7C↓j
                 jmp     short loc_11C01
 ; ---------------------------------------------------------------------------
 
-loc_11C1C:                              ; CODE XREF: sub_11B9E+71↑j
+loc_11C1C:                              ; CODE XREF: __cinit+71↑j
                 push    es
                 push    ds
                 pop     es
@@ -4623,24 +4391,24 @@ loc_11C1C:                              ; CODE XREF: sub_11B9E+71↑j
                 cbw
                 xchg    ax, cx
 
-loc_11C28:                              ; CODE XREF: sub_11B9E+91↓j
+loc_11C28:                              ; CODE XREF: __cinit+91↓j
                 lodsb
                 inc     al
                 jz      short loc_11C2E
                 dec     ax
 
-loc_11C2E:                              ; CODE XREF: sub_11B9E+8D↑j
+loc_11C2E:                              ; CODE XREF: __cinit+8D↑j
                 stosb
                 loop    loc_11C28
                 push    ss
                 pop     ds
                 assume ds:dseg
 
-loc_11C33:                              ; CODE XREF: sub_11B9E+5D↑j
-                                        ; sub_11B9E+67↑j ...
+loc_11C33:                              ; CODE XREF: __cinit+5D↑j
+                                        ; __cinit+67↑j ...
                 mov     bx, 4
 
-loc_11C36:                              ; CODE XREF: sub_11B9E+AF↓j
+loc_11C36:                              ; CODE XREF: __cinit+AF↓j
                 and     byte_16ABC[bx], 0BFh
                 mov     ax, 4400h
                 int     21h             ; DOS - 2+ - IOCTL - GET DEVICE INFORMATION
@@ -4650,18 +4418,18 @@ loc_11C36:                              ; CODE XREF: sub_11B9E+AF↓j
                 jz      short loc_11C4C
                 or      byte ptr [bx+1E8Ch], 40h
 
-loc_11C4C:                              ; CODE XREF: sub_11B9E+A2↑j
-                                        ; sub_11B9E+A7↑j
+loc_11C4C:                              ; CODE XREF: __cinit+A2↑j
+                                        ; __cinit+A7↑j
                 dec     bx
                 jns     short loc_11C36
                 mov     si, 215Ch
                 mov     di, 215Ch
-                call    sub_11CFA
+                call    _callExitProcs2 ; matched by mnemonic signature to KEH 1E896
                 mov     si, 215Ch
                 mov     di, 215Ch
-                call    sub_11CEB
+                call    _callExitProcs1 ; matched by mnemonic signature to KEH 1E887
                 retn
-sub_11B9E       endp ; sp-analysis failed
+__cinit         endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -4678,10 +4446,10 @@ arg_0           = word ptr  4
                 mov     bp, sp
                 mov     si, 2302h
                 mov     di, 2302h
-                call    sub_11CEB
+                call    _callExitProcs1 ; matched by mnemonic signature to KEH 1E887
                 mov     si, 215Ch
                 mov     di, 215Eh
-                call    sub_11CEB
+                call    _callExitProcs1 ; matched by mnemonic signature to KEH 1E887
                 jmp     short loc_11C7C
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -4690,10 +4458,10 @@ arg_0           = word ptr  4
 loc_11C7C:                              ; CODE XREF: _exit+15↑j
                 mov     si, 215Eh
                 mov     di, 215Eh
-                call    sub_11CEB
+                call    _callExitProcs1 ; matched by mnemonic signature to KEH 1E887
                 mov     si, 215Eh
                 mov     di, 215Eh
-                call    sub_11CFA
+                call    _callExitProcs2 ; matched by mnemonic signature to KEH 1E896
                 call    __nullcheck
                 or      ax, ax
                 jz      short loc_11CA0
@@ -4764,42 +4532,44 @@ __ctermsub      endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1E887
 
-sub_11CEB       proc near               ; CODE XREF: sub_11B9E+C0↑p
+_callExitProcs1 proc near               ; CODE XREF: __cinit+C0↑p
                                         ; _exit+9↑p ...
                 cmp     si, di
                 jnb     short locret_11CF9
                 dec     di
                 dec     di
                 mov     cx, [di]
-                jcxz    short sub_11CEB
+                jcxz    short _callExitProcs1 ; matched by mnemonic signature to KEH 1E887
                 call    cx
-                jmp     short sub_11CEB
+                jmp     short _callExitProcs1 ; matched by mnemonic signature to KEH 1E887
 ; ---------------------------------------------------------------------------
 
-locret_11CF9:                           ; CODE XREF: sub_11CEB+2↑j
+locret_11CF9:                           ; CODE XREF: _callExitProcs1+2↑j
                 retn
-sub_11CEB       endp
+_callExitProcs1 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1E896
 
-sub_11CFA       proc near               ; CODE XREF: sub_11B9E+B7↑p
+_callExitProcs2 proc near               ; CODE XREF: __cinit+B7↑p
                                         ; _exit+29↑p ...
                 cmp     si, di
                 jnb     short locret_11D0C
                 sub     di, 4
                 mov     ax, [di]
                 or      ax, [di+2]
-                jz      short sub_11CFA
+                jz      short _callExitProcs2 ; matched by mnemonic signature to KEH 1E896
                 call    dword ptr [di]
-                jmp     short sub_11CFA
+                jmp     short _callExitProcs2 ; matched by mnemonic signature to KEH 1E896
 ; ---------------------------------------------------------------------------
 
-locret_11D0C:                           ; CODE XREF: sub_11CFA+2↑j
+locret_11D0C:                           ; CODE XREF: _callExitProcs2+2↑j
                 retn
-sub_11CFA       endp
+_callExitProcs2 endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -4809,12 +4579,12 @@ sub_11CFA       endp
 ; Attributes: bp-based frame info_from_lumina
 
 __FF_MSGBANNER  proc near               ; CODE XREF: start+28↑p
-                                        ; sub_11D34-1A4↑p ...
+                                        ; __chkstk-1A4↑p ...
                 push    bp
                 mov     bp, sp
                 mov     ax, 0FCh
                 push    ax
-                call    sub_11F93
+                call    __NMSG_WRITE    ; matched by mnemonic signature to KEH 1EB2F
                 cmp     word_16AE4, 0
                 jz      short loc_11D23
                 call    word_16AE4
@@ -4822,25 +4592,26 @@ __FF_MSGBANNER  proc near               ; CODE XREF: start+28↑p
 loc_11D23:                              ; CODE XREF: __FF_MSGBANNER+F↑j
                 mov     ax, 0FFh
                 push    ax
-                call    sub_11F93
+                call    __NMSG_WRITE    ; matched by mnemonic signature to KEH 1EB2F
                 mov     sp, bp
                 pop     bp
                 retn
 __FF_MSGBANNER  endp
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_11B9E
+; START OF FUNCTION CHUNK FOR __cinit
 
-loc_11D2E:                              ; CODE XREF: sub_11B9E+40↑j
+loc_11D2E:                              ; CODE XREF: __cinit+40↑j
                 mov     ax, 2
                 jmp     loc_11B8F
-; END OF FUNCTION CHUNK FOR sub_11B9E
+; END OF FUNCTION CHUNK FOR __cinit
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1E8D0
 
-sub_11D34       proc near               ; CODE XREF: sub_122B4+6↓p
-                                        ; sub_13A14+6↓p
+__chkstk        proc near               ; CODE XREF: __output+6↓p
+                                        ; _spawnve+6↓p
 
 ; FUNCTION CHUNK AT 222F SIZE 0000000F BYTES
 
@@ -4854,11 +4625,11 @@ sub_11D34       proc near               ; CODE XREF: sub_122B4+6↓p
                 jmp     cx
 ; ---------------------------------------------------------------------------
 
-loc_11D45:                              ; CODE XREF: sub_11D34+5↑j
-                                        ; sub_11D34+B↑j
+loc_11D45:                              ; CODE XREF: __chkstk+5↑j
+                                        ; __chkstk+B↑j
                 xor     ax, ax
                 jmp     loc_11B8F
-sub_11D34       endp ; sp-analysis failed
+__chkstk        endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -4881,7 +4652,7 @@ loc_11D53:                              ; CODE XREF: __nullcheck+C↓j
                 call    __FF_MSGBANNER
                 mov     ax, 1
                 push    ax
-                call    sub_11F93
+                call    __NMSG_WRITE    ; matched by mnemonic signature to KEH 1EB2F
                 mov     ax, 1
 
 loc_11D6A:                              ; CODE XREF: __nullcheck+11↑j
@@ -5162,7 +4933,7 @@ loc_11ED0:                              ; CODE XREF: sg0138:2574↓j
                 mov     al, 5Ch ; '\'
                 rep stosb
 ; ---------------------------------------------------------------------------
-jpt_12429       dw 0D9EBh               ; DATA XREF: sub_122B4+175↓r
+jpt_12429       dw 0D9EBh               ; DATA XREF: __output+175↓r
                                         ; jump table for switch statement
 ; ---------------------------------------------------------------------------
 
@@ -5191,9 +4962,10 @@ loc_11EF0:                              ; CODE XREF: sg0138:250E↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1EA96
 ; Attributes: bp-based frame
 
-sub_11EFA       proc near               ; CODE XREF: start+79↑p
+__setenvp       proc near               ; CODE XREF: start+79↑p
 
 var_s0          = word ptr  0
 
@@ -5215,14 +4987,14 @@ var_s0          = word ptr  0
                 cmp     byte ptr es:0, 0
                 jz      short loc_11F23
 
-loc_11F1D:                              ; CODE XREF: sub_11EFA+27↓j
+loc_11F1D:                              ; CODE XREF: __setenvp+27↓j
                 repne scasb
                 inc     bp
                 scasb
                 jnz     short loc_11F1D
 
-loc_11F23:                              ; CODE XREF: sub_11EFA+17↑j
-                                        ; sub_11EFA+21↑j
+loc_11F23:                              ; CODE XREF: __setenvp+17↑j
+                                        ; __setenvp+21↑j
                 inc     bp
                 xchg    ax, di
                 inc     ax
@@ -5235,7 +5007,7 @@ loc_11F23:                              ; CODE XREF: sub_11EFA+17↑j
                 assume ds:dseg
                 push    di
                 mov     di, 9
-                call    sub_11FBC
+                call    __myalloc       ; matched by mnemonic signature to KEH 1EB58
                 pop     di
                 mov     cx, di
                 mov     di, bp
@@ -5250,22 +5022,22 @@ loc_11F23:                              ; CODE XREF: sub_11EFA+17↑j
                 dec     cx
                 jcxz    short loc_11F5E
 
-loc_11F4B:                              ; CODE XREF: sub_11EFA+62↓j
+loc_11F4B:                              ; CODE XREF: __setenvp+62↓j
                 cmp     word ptr [si], 433Bh
                 jz      short loc_11F56
                 mov     [bp+var_s0], di
                 inc     bp
                 inc     bp
 
-loc_11F56:                              ; CODE XREF: sub_11EFA+55↑j
-                                        ; sub_11EFA+60↓j
+loc_11F56:                              ; CODE XREF: __setenvp+55↑j
+                                        ; __setenvp+60↓j
                 lodsb
                 stosb
                 or      al, al
                 jnz     short loc_11F56
                 loop    loc_11F4B
 
-loc_11F5E:                              ; CODE XREF: sub_11EFA+4F↑j
+loc_11F5E:                              ; CODE XREF: __setenvp+4F↑j
                 mov     [bp+var_s0], cx
                 push    ss
                 pop     ds
@@ -5274,14 +5046,15 @@ loc_11F5E:                              ; CODE XREF: sub_11EFA+4F↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_11EFA       endp
+__setenvp       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1EB04
 ; Attributes: bp-based frame
 
-sub_11F68       proc near               ; CODE XREF: sub_11F93+7↓p
+__NMSG_TEXT     proc near               ; CODE XREF: __NMSG_WRITE+7↓p
                                         ; __doexec+5D↓p
 
 arg_0           = word ptr  4
@@ -5295,7 +5068,7 @@ arg_0           = word ptr  4
                 mov     dx, [bp+arg_0]
                 mov     si, 2168h
 
-loc_11F75:                              ; CODE XREF: sub_11F68+20↓j
+loc_11F75:                              ; CODE XREF: __NMSG_TEXT+20↓j
                 lodsw
                 cmp     ax, dx
                 jz      short loc_11F8A
@@ -5310,23 +5083,24 @@ loc_11F75:                              ; CODE XREF: sub_11F68+20↓j
                 jmp     short loc_11F75
 ; ---------------------------------------------------------------------------
 
-loc_11F8A:                              ; CODE XREF: sub_11F68+10↑j
-                                        ; sub_11F68+14↑j
+loc_11F8A:                              ; CODE XREF: __NMSG_TEXT+10↑j
+                                        ; __NMSG_TEXT+14↑j
                 xchg    ax, si
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn    2
-sub_11F68       endp
+__NMSG_TEXT     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1EB2F
 ; Attributes: bp-based frame
 
-sub_11F93       proc near               ; CODE XREF: start+2E↑p
-                                        ; sub_11D34-1A1↑p ...
+__NMSG_WRITE    proc near               ; CODE XREF: start+2E↑p
+                                        ; __chkstk-1A1↑p ...
 
 arg_0           = word ptr  4
 
@@ -5334,7 +5108,7 @@ arg_0           = word ptr  4
                 mov     bp, sp
                 push    di
                 push    [bp+arg_0]
-                call    sub_11F68
+                call    __NMSG_TEXT     ; matched by mnemonic signature to KEH 1EB04
                 or      ax, ax
                 jz      short loc_11FB5
                 xchg    ax, dx
@@ -5349,18 +5123,19 @@ arg_0           = word ptr  4
                 int     21h             ; DOS - 2+ - WRITE TO FILE WITH HANDLE
                                         ; BX = file handle, CX = number of bytes to write, DS:DX -> buffer
 
-loc_11FB5:                              ; CODE XREF: sub_11F93+C↑j
+loc_11FB5:                              ; CODE XREF: __NMSG_WRITE+C↑j
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn    2
-sub_11F93       endp
+__NMSG_WRITE    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1EB58
 
-sub_11FBC       proc near               ; CODE XREF: sub_11EFA+3A↑p
+__myalloc       proc near               ; CODE XREF: __setenvp+3A↑p
 
 ; FUNCTION CHUNK AT 222F SIZE 0000000F BYTES
 
@@ -5391,23 +5166,23 @@ sub_11FBC       proc near               ; CODE XREF: sub_11EFA+3A↑p
                 dec     ax
                 mov     word_16A3C, ax
 
-loc_11FEF:                              ; CODE XREF: sub_11FBC+C↑j
+loc_11FEF:                              ; CODE XREF: __myalloc+C↑j
                 xchg    ax, bp
                 mov     bp, word_16A42
                 add     word_16A42, dx
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11FF9:                              ; CODE XREF: sub_11FBC+6↑j
-                                        ; sub_11FBC+2B↑j
+loc_11FF9:                              ; CODE XREF: __myalloc+6↑j
+                                        ; __myalloc+2B↑j
                 mov     ax, di
                 jmp     loc_11B8F
-sub_11FBC       endp ; sp-analysis failed
+__myalloc       endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_12B7C
+; START OF FUNCTION CHUNK FOR _close
 
-loc_11FFE:                              ; CODE XREF: sub_12B7C:loc_12B99↓j
+loc_11FFE:                              ; CODE XREF: _close:loc_12B99↓j
                 jb      short loc_12013
 
 loc_12000:                              ; CODE XREF: sg0138:26A6↓j
@@ -5415,27 +5190,28 @@ loc_12000:                              ; CODE XREF: sg0138:26A6↓j
                 mov     sp, bp
                 pop     bp
                 retn
-; END OF FUNCTION CHUNK FOR sub_12B7C
+; END OF FUNCTION CHUNK FOR _close
 ; ---------------------------------------------------------------------------
                 jnb     short loc_12000
                 push    ax
-                call    sub_12024
+                call    __dosmaperr_helper ; matched by mnemonic signature to KEH 1EBC0
                 pop     ax
                 mov     sp, bp
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
-; [0000000D BYTES: COLLAPSED CHUNK OF FUNCTION sub_12B9C. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [0000000D BYTES: COLLAPSED CHUNK OF FUNCTION _lseek. PRESS NUMPAD+ TO EXPAND]
 ; ---------------------------------------------------------------------------
                 xor     ah, ah
-                call    sub_12024
+                call    __dosmaperr_helper ; matched by mnemonic signature to KEH 1EBC0
                 retn
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1EBC0
 
-sub_12024       proc near               ; CODE XREF: sg0138:26A9↑p
-                                        ; sub_12B9C:loc_12013↑p ...
+__dosmaperr_helper proc near            ; CODE XREF: sg0138:26A9↑p
+                                        ; _lseek:loc_12013↑p ...
                 mov     byte ptr word_16AB8, al
                 or      ah, ah
                 jnz     short loc_1204E
@@ -5451,29 +5227,29 @@ sub_12024       proc near               ; CODE XREF: sg0138:26A9↑p
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_1203F:                              ; CODE XREF: sub_12024+C↑j
-                                        ; sub_12024+14↑j
+loc_1203F:                              ; CODE XREF: __dosmaperr_helper+C↑j
+                                        ; __dosmaperr_helper+14↑j
                 cmp     al, 13h
                 jbe     short loc_12045
 
-loc_12043:                              ; CODE XREF: sub_12024+10↑j
+loc_12043:                              ; CODE XREF: __dosmaperr_helper+10↑j
                 mov     al, 13h
 
-loc_12045:                              ; CODE XREF: sub_12024+18↑j
-                                        ; sub_12024+1D↑j
+loc_12045:                              ; CODE XREF: __dosmaperr_helper+18↑j
+                                        ; __dosmaperr_helper+1D↑j
                 mov     bx, 1EBAh
                 xlat
 
-loc_12049:                              ; CODE XREF: sub_12024+2C↓j
+loc_12049:                              ; CODE XREF: __dosmaperr_helper+2C↓j
                 cbw
                 mov     word_16AAD, ax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1204E:                              ; CODE XREF: sub_12024+5↑j
+loc_1204E:                              ; CODE XREF: __dosmaperr_helper+5↑j
                 mov     al, ah
                 jmp     short loc_12049
-sub_12024       endp
+__dosmaperr_helper endp
 
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -5491,7 +5267,7 @@ loc_12062:                              ; CODE XREF: sg0138:271A↓j
                 test    byte ptr [si+6], 83h
                 jz      short loc_12073
                 push    si
-                call    sub_12246
+                call    _fflush         ; matched by mnemonic signature to KEH 1EDE2
                 add     sp, 2
                 inc     ax
                 jz      short loc_12073
@@ -5513,23 +5289,25 @@ loc_12076:                              ; CODE XREF: sg0138:26FF↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1EC20
 ; Attributes: bp-based frame
 
-sub_12084       proc near               ; CODE XREF: sub_128AC+26↓p
-                                        ; sub_128EA+20↓p ...
+; int __cdecl _flsbuf(int, FILE *)
+__flsbuf        proc near               ; CODE XREF: _outc+26↓p
+                                        ; putpad+20↓p ...
 
 var_8           = word ptr -8
 var_6           = word ptr -6
 var_4           = word ptr -4
-arg_0           = byte ptr  4
-arg_2           = word ptr  6
+arg_0           = word ptr  4
+arg_2           = dword ptr  6
 
                 push    bp
                 mov     bp, sp
                 sub     sp, 8
                 push    di
-                push    si
-                mov     si, [bp+arg_2]
+                push    si              ; unsigned int
+                mov     si, word ptr [bp+arg_2]
                 mov     al, [si+7]
                 cbw
                 mov     [bp+var_6], ax
@@ -5548,15 +5326,15 @@ arg_2           = word ptr  6
                 test    byte ptr [si+6], 40h
                 jz      short loc_120C4
 
-loc_120B9:                              ; CODE XREF: sub_12084+2D↑j
-                                        ; sub_12084+44↓j ...
+loc_120B9:                              ; CODE XREF: __flsbuf+2D↑j
+                                        ; __flsbuf+44↓j ...
                 or      byte ptr [si+6], 20h
                 mov     ax, 0FFFFh
                 jmp     loc_121D3
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_120C4:                              ; CODE XREF: sub_12084+33↑j
+loc_120C4:                              ; CODE XREF: __flsbuf+33↑j
                 test    byte ptr [si+6], 1
                 jnz     short loc_120B9
                 or      byte ptr [si+6], 2
@@ -5582,7 +5360,7 @@ loc_120C4:                              ; CODE XREF: sub_12084+33↑j
                 cmp     si, 1EE0h
                 jnz     short loc_1213A
 
-loc_12107:                              ; CODE XREF: sub_12084+7B↑j
+loc_12107:                              ; CODE XREF: __flsbuf+7B↑j
                 push    [bp+var_6]      ; int
                 call    _isatty
                 add     sp, 2
@@ -5596,10 +5374,10 @@ loc_12107:                              ; CODE XREF: sub_12084+7B↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_12124:                              ; CODE XREF: sub_12084+98↑j
+loc_12124:                              ; CODE XREF: __flsbuf+98↑j
                 mov     ax, 3E68h
 
-loc_12127:                              ; CODE XREF: sub_12084+9D↑j
+loc_12127:                              ; CODE XREF: __flsbuf+9D↑j
                 mov     [si+4], ax
                 mov     [si], ax
                 mov     bx, [bp+var_8]
@@ -5609,13 +5387,13 @@ loc_12127:                              ; CODE XREF: sub_12084+9D↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1213A:                              ; CODE XREF: sub_12084+81↑j
+loc_1213A:                              ; CODE XREF: __flsbuf+81↑j
                 push    si
-                call    sub_121DA
+                call    __getbuf        ; matched by mnemonic signature to KEH 1ED76
                 add     sp, 2
 
-loc_12141:                              ; CODE XREF: sub_12084+5C↑j
-                                        ; sub_12084+75↑j ...
+loc_12141:                              ; CODE XREF: __flsbuf+5C↑j
+                                        ; __flsbuf+75↑j ...
                 test    byte ptr [si+6], 8
                 jnz     short loc_12160
                 mov     bx, si
@@ -5629,7 +5407,7 @@ loc_12141:                              ; CODE XREF: sub_12084+5C↑j
                 test    byte ptr [bx+1F70h], 1
                 jz      short loc_121B0
 
-loc_12160:                              ; CODE XREF: sub_12084+C1↑j
+loc_12160:                              ; CODE XREF: __flsbuf+C1↑j
                 mov     di, [si]
                 sub     di, [si+4]
                 mov     ax, [si+4]
@@ -5642,74 +5420,75 @@ loc_12160:                              ; CODE XREF: sub_12084+C1↑j
                 or      di, di
                 jle     short loc_1218C
                 push    di
-                push    word ptr [si+4]
-                push    [bp+var_6]
-                call    sub_12E98
+                push    word ptr [si+4] ; void *
+                push    [bp+var_6]      ; int
+                call    _write          ; matched by mnemonic signature to KEH 1F792
                 add     sp, 6
                 mov     [bp+var_4], ax
                 jmp     short loc_121A5
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1218C:                              ; CODE XREF: sub_12084+F3↑j
+loc_1218C:                              ; CODE XREF: __flsbuf+F3↑j
                 mov     bx, [bp+var_6]
                 test    byte ptr [bx+1E8Ch], 20h
                 jz      short loc_121A5
                 mov     ax, 2
-                push    ax
+                push    ax              ; int
                 sub     ax, ax
                 push    ax
-                push    ax
-                push    bx
-                call    sub_12B9C
+                push    ax              ; __int32
+                push    bx              ; int
+                call    _lseek          ; matched by mnemonic signature to KEH 1F718
                 add     sp, 8
 
-loc_121A5:                              ; CODE XREF: sub_12084+105↑j
-                                        ; sub_12084+110↑j
+loc_121A5:                              ; CODE XREF: __flsbuf+105↑j
+                                        ; __flsbuf+110↑j
                 mov     bx, [si+4]
-                mov     al, [bp+arg_0]
+                mov     al, byte ptr [bp+arg_0]
                 mov     [bx], al
                 jmp     short loc_121C6
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_121B0:                              ; CODE XREF: sub_12084+DA↑j
+loc_121B0:                              ; CODE XREF: __flsbuf+DA↑j
                 mov     di, 1
                 mov     ax, di
                 push    ax
                 lea     ax, [bp+arg_0]
-                push    ax
-                push    [bp+var_6]
-                call    sub_12E98
+                push    ax              ; void *
+                push    [bp+var_6]      ; int
+                call    _write          ; matched by mnemonic signature to KEH 1F792
                 add     sp, 6
                 mov     [bp+var_4], ax
 
-loc_121C6:                              ; CODE XREF: sub_12084+129↑j
+loc_121C6:                              ; CODE XREF: __flsbuf+129↑j
                 cmp     [bp+var_4], di
                 jz      short loc_121CE
                 jmp     loc_120B9
 ; ---------------------------------------------------------------------------
 
-loc_121CE:                              ; CODE XREF: sub_12084+145↑j
-                mov     al, [bp+arg_0]
+loc_121CE:                              ; CODE XREF: __flsbuf+145↑j
+                mov     al, byte ptr [bp+arg_0]
                 sub     ah, ah
 
-loc_121D3:                              ; CODE XREF: sub_12084+3C↑j
+loc_121D3:                              ; CODE XREF: __flsbuf+3C↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_12084       endp
+__flsbuf        endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1ED76
 ; Attributes: bp-based frame
 
-sub_121DA       proc near               ; CODE XREF: sub_12084+B7↑p
+__getbuf        proc near               ; CODE XREF: __flsbuf+B7↑p
 
 var_2           = word ptr -2
 arg_0           = word ptr  4
@@ -5730,7 +5509,7 @@ arg_0           = word ptr  4
                 mov     [bp+var_2], ax
                 mov     ax, 200h
                 push    ax
-                call    sub_12FE4
+                call    unknown_libname_2 ; matched by mnemonic signature to KEH 1F8DE
                 add     sp, 2
                 mov     bx, [bp+arg_0]
                 mov     [bx+4], ax
@@ -5743,7 +5522,7 @@ arg_0           = word ptr  4
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1221C:                              ; CODE XREF: sub_121DA+31↑j
+loc_1221C:                              ; CODE XREF: __getbuf+31↑j
                 mov     bx, [bp+arg_0]
                 or      byte ptr [bx+6], 4
                 mov     ax, [bp+var_2]
@@ -5752,7 +5531,7 @@ loc_1221C:                              ; CODE XREF: sub_121DA+31↑j
                 mov     bx, [bp+var_2]
                 mov     word ptr [bx+2], 1
 
-loc_12232:                              ; CODE XREF: sub_121DA+3F↑j
+loc_12232:                              ; CODE XREF: __getbuf+3F↑j
                 mov     bx, [bp+arg_0]
                 mov     si, bx
                 mov     ax, [si+4]
@@ -5762,24 +5541,26 @@ loc_12232:                              ; CODE XREF: sub_121DA+3F↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_121DA       endp
+__getbuf        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1EDE2
 ; Attributes: bp-based frame
 
-sub_12246       proc near               ; CODE XREF: sg0138:2709↑p
+; int __cdecl fflush(FILE *)
+_fflush         proc near               ; CODE XREF: sg0138:2709↑p
 
 var_4           = word ptr -4
-arg_0           = word ptr  4
+arg_0           = dword ptr  4
 
                 push    bp
                 mov     bp, sp
                 sub     sp, 4
                 push    di
-                push    si
-                mov     si, [bp+arg_0]
+                push    si              ; unsigned int
+                mov     si, word ptr [bp+arg_0]
                 sub     di, di
                 mov     al, [si+6]
                 and     al, 3
@@ -5798,26 +5579,26 @@ arg_0           = word ptr  4
                 test    byte ptr [bx+1F70h], 1
                 jz      short loc_122A2
 
-loc_1227B:                              ; CODE XREF: sub_12246+1A↑j
+loc_1227B:                              ; CODE XREF: _fflush+1A↑j
                 mov     ax, [si]
                 sub     ax, [si+4]
                 mov     [bp+var_4], ax
                 or      ax, ax
                 jle     short loc_122A2
                 push    ax
-                push    word ptr [si+4]
+                push    word ptr [si+4] ; void *
                 mov     al, [si+7]
                 cbw
-                push    ax
-                call    sub_12E98
+                push    ax              ; int
+                call    _write          ; matched by mnemonic signature to KEH 1F792
                 add     sp, 6
                 cmp     ax, [bp+var_4]
                 jz      short loc_122A2
                 or      byte ptr [si+6], 20h
                 mov     di, 0FFFFh
 
-loc_122A2:                              ; CODE XREF: sub_12246+14↑j
-                                        ; sub_12246+33↑j ...
+loc_122A2:                              ; CODE XREF: _fflush+14↑j
+                                        ; _fflush+33↑j ...
                 mov     ax, [si+4]
                 mov     [si], ax
                 mov     word ptr [si+2], 0
@@ -5827,14 +5608,15 @@ loc_122A2:                              ; CODE XREF: sub_12246+14↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_12246       endp
+_fflush         endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; CRT printf engine (format parser)
 ; Attributes: bp-based frame
 
-sub_122B4       proc near               ; CODE XREF: _sprintf+2C↓p
+__output        proc near               ; CODE XREF: _sprintf+2C↓p
 
 var_164         = word ptr -164h
 var_162         = byte ptr -162h
@@ -5846,7 +5628,7 @@ arg_4           = word ptr  8
                 push    bp
                 mov     bp, sp
                 mov     ax, 164h
-                call    sub_11D34
+                call    __chkstk        ; matched by mnemonic signature to KEH 1E8D0
                 push    di
                 push    si
                 mov     si, [bp+arg_2]
@@ -5861,13 +5643,13 @@ arg_4           = word ptr  8
                 jmp     loc_12560
 ; ---------------------------------------------------------------------------
 
-loc_122E4:                              ; CODE XREF: sub_122B4+2B1↓j
+loc_122E4:                              ; CODE XREF: __output+2B1↓j
                 cmp     byte ptr [si], 25h ; '%'
                 jz      short loc_122EC
                 jmp     loc_12544
 ; ---------------------------------------------------------------------------
 
-loc_122EC:                              ; CODE XREF: sub_122B4+33↑j
+loc_122EC:                              ; CODE XREF: __output+33↑j
                 mov     t, 1
                 sub     ax, ax
                 mov     word_16F16, ax
@@ -5887,7 +5669,7 @@ loc_122EC:                              ; CODE XREF: sub_122B4+33↑j
                 jmp     short loc_12357
 ; ---------------------------------------------------------------------------
 
-loc_12324:                              ; CODE XREF: sub_122B4+9D↓j
+loc_12324:                              ; CODE XREF: __output+9D↓j
                 cmp     byte ptr [si], 2Bh ; '+'
                 jnz     short loc_12336
                 inc     word_16F16
@@ -5896,7 +5678,7 @@ loc_12324:                              ; CODE XREF: sub_122B4+9D↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_12336:                              ; CODE XREF: sub_122B4+73↑j
+loc_12336:                              ; CODE XREF: __output+73↑j
                 cmp     byte ptr [si], 20h ; ' '
                 jnz     short loc_12348
                 cmp     word_16F16, 0
@@ -5905,30 +5687,30 @@ loc_12336:                              ; CODE XREF: sub_122B4+73↑j
                 jmp     short loc_12357
 ; ---------------------------------------------------------------------------
 
-loc_12348:                              ; CODE XREF: sub_122B4+85↑j
+loc_12348:                              ; CODE XREF: __output+85↑j
                 inc     word_16F0C
                 jmp     short loc_12357
 ; ---------------------------------------------------------------------------
 
-loc_1234E:                              ; CODE XREF: sub_122B4+B0↓j
+loc_1234E:                              ; CODE XREF: __output+B0↓j
                 cmp     byte ptr [si], 2Dh ; '-'
                 jnz     short loc_12324
                 inc     word_16F18
 
-loc_12357:                              ; CODE XREF: sub_122B4+65↑j
-                                        ; sub_122B4+6E↑j ...
+loc_12357:                              ; CODE XREF: __output+65↑j
+                                        ; __output+6E↑j ...
                 inc     si
                 mov     al, [si]
                 cbw
                 push    ax
-                call    sub_12B54
+                call    flagchar        ; matched by mnemonic signature to KEH 1F6F0
                 add     sp, 2
                 or      ax, ax
                 jnz     short loc_1234E
                 push    si
                 mov     ax, 22FCh
                 push    ax
-                call    sub_12AD4
+                call    getnum          ; matched by mnemonic signature to KEH 1F670
                 add     sp, 4
                 mov     si, ax
                 cmp     word_16F2C, 0
@@ -5938,7 +5720,7 @@ loc_12357:                              ; CODE XREF: sub_122B4+65↑j
                 neg     ax
                 mov     word_16F2C, ax
 
-loc_12386:                              ; CODE XREF: sub_122B4+C4↑j
+loc_12386:                              ; CODE XREF: __output+C4↑j
                 cmp     byte ptr [si], 2Eh ; '.'
                 jnz     short loc_123AE
                 inc     word_16F1E
@@ -5946,7 +5728,7 @@ loc_12386:                              ; CODE XREF: sub_122B4+C4↑j
                 push    si
                 mov     ax, 22F6h
                 push    ax
-                call    sub_12AD4
+                call    getnum          ; matched by mnemonic signature to KEH 1F670
                 add     sp, 4
                 mov     si, ax
                 cmp     t, 0
@@ -5954,8 +5736,8 @@ loc_12386:                              ; CODE XREF: sub_122B4+C4↑j
                 mov     t, 1
                 dec     word_16F1E
 
-loc_123AE:                              ; CODE XREF: sub_122B4+D5↑j
-                                        ; sub_122B4+EE↑j
+loc_123AE:                              ; CODE XREF: __output+D5↑j
+                                        ; __output+EE↑j
                 mov     al, [si]
                 cbw
                 cmp     ax, 46h ; 'F'
@@ -5968,38 +5750,38 @@ loc_123AE:                              ; CODE XREF: sub_122B4+D5↑j
                 jnz     short loc_123CB
                 mov     word_16F14, 2
 
-loc_123CB:                              ; CODE XREF: sub_122B4+10F↑j
-                                        ; sub_122B4+132↓j ...
+loc_123CB:                              ; CODE XREF: __output+10F↑j
+                                        ; __output+132↓j ...
                 cmp     word_16F14, 0
                 jnz     short loc_123D7
                 cmp     byte ptr [si], 4Ch ; 'L'
                 jnz     short loc_123D8
 
-loc_123D7:                              ; CODE XREF: sub_122B4+11C↑j
+loc_123D7:                              ; CODE XREF: __output+11C↑j
                 inc     si
 
-loc_123D8:                              ; CODE XREF: sub_122B4+121↑j
+loc_123D8:                              ; CODE XREF: __output+121↑j
                 cmp     byte ptr [si], 0
                 jnz     short loc_123F8
                 jmp     loc_12568
 ; ---------------------------------------------------------------------------
 
-loc_123E0:                              ; CODE XREF: sub_122B4+10A↑j
+loc_123E0:                              ; CODE XREF: __output+10A↑j
                 mov     word_16F14, 1
                 jmp     short loc_123CB
 ; ---------------------------------------------------------------------------
 
-loc_123E8:                              ; CODE XREF: sub_122B4+100↑j
+loc_123E8:                              ; CODE XREF: __output+100↑j
                 mov     word_16F14, 10h
                 jmp     short loc_123CB
 ; ---------------------------------------------------------------------------
 
-loc_123F0:                              ; CODE XREF: sub_122B4+105↑j
+loc_123F0:                              ; CODE XREF: __output+105↑j
                 mov     word_16F14, 8
                 jmp     short loc_123CB
 ; ---------------------------------------------------------------------------
 
-loc_123F8:                              ; CODE XREF: sub_122B4+127↑j
+loc_123F8:                              ; CODE XREF: __output+127↑j
                 mov     al, [si]
                 cbw
                 mov     [bp+var_164], ax
@@ -6010,12 +5792,12 @@ loc_123F8:                              ; CODE XREF: sub_122B4+127↑j
                 cmp     ax, 58h ; 'X'
                 jnz     short loc_12417
 
-loc_1240E:                              ; CODE XREF: sub_122B4+14E↑j
-                                        ; sub_122B4+153↑j
+loc_1240E:                              ; CODE XREF: __output+14E↑j
+                                        ; __output+153↑j
                 inc     word_16F12
                 add     [bp+var_164], 20h ; ' '
 
-loc_12417:                              ; CODE XREF: sub_122B4+158↑j
+loc_12417:                              ; CODE XREF: __output+158↑j
                 mov     ax, [bp+var_164]
                 sub     ax, 63h ; 'c'   ; switch with an invalid jump table
                 cmp     ax, 15h
@@ -6023,7 +5805,7 @@ loc_12417:                              ; CODE XREF: sub_122B4+158↑j
                 jmp     def_12429       ; jumptable 00012429 default case
 ; ---------------------------------------------------------------------------
 
-loc_12426:                              ; CODE XREF: sub_122B4+16D↑j
+loc_12426:                              ; CODE XREF: __output+16D↑j
                 add     ax, ax
                 xchg    ax, bx
                 jmp     cs:jpt_12429[bx] ; switch jump
@@ -6033,7 +5815,7 @@ loc_12426:                              ; CODE XREF: sub_122B4+16D↑j
                 mov     ax, word_16F22
                 mov     [bx], ax
 
-loc_12439:                              ; CODE XREF: sub_122B4+263↓j
+loc_12439:                              ; CODE XREF: __output+263↓j
                 add     word_16F1A, 2
                 jmp     loc_125AA
 ; ---------------------------------------------------------------------------
@@ -6042,13 +5824,13 @@ loc_12439:                              ; CODE XREF: sub_122B4+263↓j
                 mov     word_16F0C, 0
                 mov     ax, 0Ah
 
-loc_1244F:                              ; CODE XREF: sub_122B4+1A9↓j
-                                        ; sub_122B4+269↓j
+loc_1244F:                              ; CODE XREF: __output+1A9↓j
+                                        ; __output+269↓j
                 push    ax
-                call    sub_125D2
+                call    iprint          ; matched by mnemonic signature to KEH 1F16E
 
-loc_12453:                              ; CODE XREF: sub_122B4+272↓j
-                                        ; sub_122B4+283↓j
+loc_12453:                              ; CODE XREF: __output+272↓j
+                                        ; __output+283↓j
                 add     sp, 2
                 jmp     loc_125AA
 ; ---------------------------------------------------------------------------
@@ -6066,10 +5848,10 @@ loc_12453:                              ; CODE XREF: sub_122B4+272↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_12478:                              ; CODE XREF: sub_122B4+1B9↑j
+loc_12478:                              ; CODE XREF: __output+1B9↑j
                 mov     word_16F28, 0
 
-loc_1247E:                              ; CODE XREF: sub_122B4+1C1↑j
+loc_1247E:                              ; CODE XREF: __output+1C1↑j
                 inc     word_16F1E
                 mov     t, 4
                 cmp     word_16F14, 8
@@ -6077,7 +5859,7 @@ loc_1247E:                              ; CODE XREF: sub_122B4+1C1↑j
                 jmp     loc_1251A
 ; ---------------------------------------------------------------------------
 
-loc_12492:                              ; CODE XREF: sub_122B4+1D9↑j
+loc_12492:                              ; CODE XREF: __output+1D9↑j
                 sub     ax, ax
                 mov     word_16F14, ax
                 mov     [bp+var_4], ax
@@ -6092,26 +5874,26 @@ loc_12492:                              ; CODE XREF: sub_122B4+1D9↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_124B6:                              ; CODE XREF: sub_122B4+1F7↑j
+loc_124B6:                              ; CODE XREF: __output+1F7↑j
                 sub     word_16F2C, 5
                 mov     ax, word_16F2C
                 or      ax, ax
                 jge     short loc_124C4
                 sub     ax, ax
 
-loc_124C4:                              ; CODE XREF: sub_122B4+20C↑j
+loc_124C4:                              ; CODE XREF: __output+20C↑j
                 mov     word_16F2C, ax
 
-loc_124C7:                              ; CODE XREF: sub_122B4+1EA↑j
-                                        ; sub_122B4+1FF↑j
+loc_124C7:                              ; CODE XREF: __output+1EA↑j
+                                        ; __output+1FF↑j
                 add     word_16F1A, 2
                 mov     ax, 10h
                 push    ax
-                call    sub_125D2
+                call    iprint          ; matched by mnemonic signature to KEH 1F16E
                 add     sp, 2
                 mov     ax, 3Ah ; ':'
                 push    ax
-                call    sub_128AC
+                call    _outc           ; matched by mnemonic signature to KEH 1F448
                 add     sp, 2
                 cmp     [bp+var_4], 0
                 jz      short loc_12508
@@ -6124,34 +5906,34 @@ loc_124C7:                              ; CODE XREF: sub_122B4+1EA↑j
                 jge     short loc_124FC
                 sub     ax, ax
 
-loc_124FC:                              ; CODE XREF: sub_122B4+244↑j
+loc_124FC:                              ; CODE XREF: __output+244↑j
                 mov     word_16F2C, ax
                 jmp     short loc_12508
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_12502:                              ; CODE XREF: sub_122B4+237↑j
+loc_12502:                              ; CODE XREF: __output+237↑j
                 mov     word_16F2C, 0
 
-loc_12508:                              ; CODE XREF: sub_122B4+230↑j
-                                        ; sub_122B4+24B↑j
+loc_12508:                              ; CODE XREF: __output+230↑j
+                                        ; __output+24B↑j
                 sub     word_16F1A, 4
                 mov     ax, 10h
                 push    ax
-                call    sub_125D2
+                call    iprint          ; matched by mnemonic signature to KEH 1F16E
                 add     sp, 2
                 jmp     loc_12439
 ; ---------------------------------------------------------------------------
 
-loc_1251A:                              ; CODE XREF: sub_122B4+1DB↑j
+loc_1251A:                              ; CODE XREF: __output+1DB↑j
                 mov     ax, 10h
                 jmp     loc_1244F
 ; ---------------------------------------------------------------------------
                 sub     ax, ax
 
-loc_12522:                              ; CODE XREF: sub_122B4+279↓j
+loc_12522:                              ; CODE XREF: __output+279↓j
                 push    ax
-                call    sub_12708
+                call    sprint          ; matched by mnemonic signature to KEH 1F2A4
                 jmp     loc_12453
 ; ---------------------------------------------------------------------------
                 align 2
@@ -6160,53 +5942,53 @@ loc_12522:                              ; CODE XREF: sub_122B4+279↓j
 ; ---------------------------------------------------------------------------
                 align 2
                 push    [bp+var_164]
-                call    sub_127F0
+                call    _output_float   ; CRT printf: %e/%f/%g conversion via the float hooks
                 jmp     loc_12453
 ; ---------------------------------------------------------------------------
 
-def_12429:                              ; CODE XREF: sub_122B4+16F↑j
+def_12429:                              ; CODE XREF: __output+16F↑j
                 cmp     word_16F14, 0   ; jumptable 00012429 default case
                 jz      short loc_12544
                 mov     ax, si
                 dec     si
 
-loc_12544:                              ; CODE XREF: sub_122B4+35↑j
-                                        ; sub_122B4+28B↑j
+loc_12544:                              ; CODE XREF: __output+35↑j
+                                        ; __output+28B↑j
                 mov     di, si
 
-loc_12546:                              ; CODE XREF: sub_122B4+29B↓j
+loc_12546:                              ; CODE XREF: __output+29B↓j
                 inc     di
                 cmp     byte ptr [di], 0
                 jz      short loc_12551
                 cmp     byte ptr [di], 25h ; '%'
                 jnz     short loc_12546
 
-loc_12551:                              ; CODE XREF: sub_122B4+296↑j
+loc_12551:                              ; CODE XREF: __output+296↑j
                 mov     ax, di
                 sub     ax, si
                 push    ax
                 push    ds
                 push    si
-                call    sub_12948
+                call    putbuf          ; matched by mnemonic signature to KEH 1F4E4
                 add     sp, 6
                 mov     si, di
 
-loc_12560:                              ; CODE XREF: sub_122B4+2D↑j
-                                        ; sub_122B4+311↓j
+loc_12560:                              ; CODE XREF: __output+2D↑j
+                                        ; __output+311↓j
                 cmp     byte ptr [si], 0
                 jz      short loc_12568
                 jmp     loc_122E4
 ; ---------------------------------------------------------------------------
 
-loc_12568:                              ; CODE XREF: sub_122B4+129↑j
-                                        ; sub_122B4+2AF↑j
+loc_12568:                              ; CODE XREF: __output+129↑j
+                                        ; __output+2AF↑j
                 cmp     word_16F22, 0
                 jnz     short loc_125C8
                 mov     bx, word_16F0E
                 test    byte ptr [bx+6], 20h
                 jz      short loc_125C8
 
-loc_12579:                              ; CODE XREF: sub_122B4+30C↓j
+loc_12579:                              ; CODE XREF: __output+30C↓j
                 mov     ax, 0FFFFh
                 jmp     short loc_125CB
 ; ---------------------------------------------------------------------------
@@ -6233,8 +6015,8 @@ loc_12579:                              ; CODE XREF: sub_122B4+30C↓j
                 and     ax, 253Ah
                 sbb     ah, [di]
 
-loc_125AA:                              ; CODE XREF: sub_122B4+18A↑j
-                                        ; sub_122B4+1A2↑j
+loc_125AA:                              ; CODE XREF: __output+18A↑j
+                                        ; __output+1A2↑j
                 cmp     word_16F24, 0
                 jz      short loc_125C4
                 cmp     word_16F22, 0
@@ -6245,33 +6027,34 @@ loc_125AA:                              ; CODE XREF: sub_122B4+18A↑j
                 jmp     short loc_125C8
 ; ---------------------------------------------------------------------------
 
-loc_125C4:                              ; CODE XREF: sub_122B4+2FB↑j
+loc_125C4:                              ; CODE XREF: __output+2FB↑j
                 inc     si
                 jmp     short loc_12560
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_125C8:                              ; CODE XREF: sub_122B4+2B9↑j
-                                        ; sub_122B4+2C3↑j ...
+loc_125C8:                              ; CODE XREF: __output+2B9↑j
+                                        ; __output+2C3↑j ...
                 mov     ax, word_16F22
 
-loc_125CB:                              ; CODE XREF: sub_122B4+2C8↑j
+loc_125CB:                              ; CODE XREF: __output+2C8↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_122B4       endp
+__output        endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1F16E
 ; Attributes: bp-based frame
 
-sub_125D2       proc near               ; CODE XREF: sub_122B4+19C↑p
-                                        ; sub_122B4+21C↑p ...
+iprint          proc near               ; CODE XREF: __output+19C↑p
+                                        ; __output+21C↑p ...
 
 var_18          = byte ptr -18h
 var_C           = word ptr -0Ch
@@ -6288,13 +6071,13 @@ arg_0           = word ptr  4
                 jz      short loc_125E4
                 inc     word_16F20
 
-loc_125E4:                              ; CODE XREF: sub_125D2+C↑j
+loc_125E4:                              ; CODE XREF: iprint+C↑j
                 cmp     word_16F14, 2
                 jz      short loc_125F2
                 cmp     word_16F14, 10h
                 jnz     short loc_12608
 
-loc_125F2:                              ; CODE XREF: sub_125D2+17↑j
+loc_125F2:                              ; CODE XREF: iprint+17↑j
                 mov     bx, word_16F1A
                 mov     ax, [bx]
                 mov     dx, [bx+2]
@@ -6304,7 +6087,7 @@ loc_125F2:                              ; CODE XREF: sub_125D2+17↑j
                 jmp     short loc_12632
 ; ---------------------------------------------------------------------------
 
-loc_12608:                              ; CODE XREF: sub_125D2+1E↑j
+loc_12608:                              ; CODE XREF: iprint+1E↑j
                 cmp     word_16F20, 0
                 jz      short loc_12620
                 mov     bx, word_16F1A
@@ -6315,17 +6098,17 @@ loc_12608:                              ; CODE XREF: sub_125D2+1E↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_12620:                              ; CODE XREF: sub_125D2+3B↑j
+loc_12620:                              ; CODE XREF: iprint+3B↑j
                 mov     bx, word_16F1A
                 mov     ax, [bx]
                 cwd
                 mov     word ptr [bp+var_4], ax
                 mov     word ptr [bp+var_4+2], dx
 
-loc_1262D:                              ; CODE XREF: sub_125D2+4B↑j
+loc_1262D:                              ; CODE XREF: iprint+4B↑j
                 add     word_16F1A, 2
 
-loc_12632:                              ; CODE XREF: sub_125D2+34↑j
+loc_12632:                              ; CODE XREF: iprint+34↑j
                 cmp     word_16F0C, 0
                 jz      short loc_12646
                 mov     ax, word ptr [bp+var_4]
@@ -6335,11 +6118,11 @@ loc_12632:                              ; CODE XREF: sub_125D2+34↑j
                 jmp     short loc_12648
 ; ---------------------------------------------------------------------------
 
-loc_12646:                              ; CODE XREF: sub_125D2+65↑j
-                                        ; sub_125D2+6D↑j
+loc_12646:                              ; CODE XREF: iprint+65↑j
+                                        ; iprint+6D↑j
                 sub     ax, ax
 
-loc_12648:                              ; CODE XREF: sub_125D2+72↑j
+loc_12648:                              ; CODE XREF: iprint+72↑j
                 mov     word_16F2E, ax
                 mov     si, word_16F2A
                 cmp     word_16F20, 0
@@ -6358,16 +6141,16 @@ loc_12648:                              ; CODE XREF: sub_125D2+72↑j
                 mov     word ptr [bp+var_4], ax
                 mov     word ptr [bp+var_4+2], dx
 
-loc_12679:                              ; CODE XREF: sub_125D2+8E↑j
+loc_12679:                              ; CODE XREF: iprint+8E↑j
                 mov     [bp+var_8], 1
                 jmp     short loc_12685
 ; ---------------------------------------------------------------------------
 
-loc_12680:                              ; CODE XREF: sub_125D2+82↑j
-                                        ; sub_125D2+88↑j
+loc_12680:                              ; CODE XREF: iprint+82↑j
+                                        ; iprint+88↑j
                 mov     [bp+var_8], 0
 
-loc_12685:                              ; CODE XREF: sub_125D2+AC↑j
+loc_12685:                              ; CODE XREF: iprint+AC↑j
                 lea     ax, [bp+var_18]
                 mov     di, ax
                 push    [bp+arg_0]
@@ -6378,8 +6161,8 @@ loc_12685:                              ; CODE XREF: sub_125D2+AC↑j
                 add     sp, 8
                 cmp     word_16F1E, 0
                 jz      short loc_126C2
-                push    di
-                call    sub_132C2
+                push    di              ; char *
+                call    _strlen         ; matched by mnemonic signature to KEH 1FBBC
                 add     sp, 2
                 mov     cx, t
                 sub     cx, ax
@@ -6388,21 +6171,21 @@ loc_12685:                              ; CODE XREF: sub_125D2+AC↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_126B4:                              ; CODE XREF: sub_125D2+EB↓j
+loc_126B4:                              ; CODE XREF: iprint+EB↓j
                 mov     byte ptr [si], 30h ; '0'
                 inc     si
 
-loc_126B8:                              ; CODE XREF: sub_125D2+DF↑j
+loc_126B8:                              ; CODE XREF: iprint+DF↑j
                 mov     ax, cx
                 dec     cx
                 or      ax, ax
                 jg      short loc_126B4
                 mov     [bp+var_C], cx
 
-loc_126C2:                              ; CODE XREF: sub_125D2+CD↑j
+loc_126C2:                              ; CODE XREF: iprint+CD↑j
                 mov     cx, word_16F12
 
-loc_126C6:                              ; CODE XREF: sub_125D2+109↓j
+loc_126C6:                              ; CODE XREF: iprint+109↓j
                 mov     al, [di]
                 mov     [si], al
                 or      cx, cx
@@ -6411,8 +6194,8 @@ loc_126C6:                              ; CODE XREF: sub_125D2+109↓j
                 jl      short loc_126D5
                 sub     byte ptr [si], 20h ; ' '
 
-loc_126D5:                              ; CODE XREF: sub_125D2+FA↑j
-                                        ; sub_125D2+FE↑j
+loc_126D5:                              ; CODE XREF: iprint+FA↑j
+                                        ; iprint+FE↑j
                 inc     si
                 inc     di
                 cmp     byte ptr [di-1], 0
@@ -6428,29 +6211,30 @@ loc_126D5:                              ; CODE XREF: sub_125D2+FA↑j
                 jmp     short loc_126FA
 ; ---------------------------------------------------------------------------
 
-loc_126F8:                              ; CODE XREF: sub_125D2+110↑j
-                                        ; sub_125D2+119↑j ...
+loc_126F8:                              ; CODE XREF: iprint+110↑j
+                                        ; iprint+119↑j ...
                 sub     ax, ax
 
-loc_126FA:                              ; CODE XREF: sub_125D2+124↑j
+loc_126FA:                              ; CODE XREF: iprint+124↑j
                 push    ax
-                call    sub_129B0
+                call    _out            ; matched by mnemonic signature to KEH 1F54C
                 add     sp, 2
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_125D2       endp
+iprint          endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1F2A4
 ; Attributes: bp-based frame
 
-sub_12708       proc near               ; CODE XREF: sub_122B4+26F↑p
+sprint          proc near               ; CODE XREF: __output+26F↑p
 
 var_E           = dword ptr -0Eh
 var_8           = word ptr -8
@@ -6473,7 +6257,7 @@ arg_0           = word ptr  4
                 jmp     loc_127BB
 ; ---------------------------------------------------------------------------
 
-loc_1272A:                              ; CODE XREF: sub_12708+C↑j
+loc_1272A:                              ; CODE XREF: sprint+C↑j
                 cmp     word_16F14, 10h
                 jnz     short loc_12748
                 mov     bx, word_16F1A
@@ -6486,7 +6270,7 @@ loc_1272A:                              ; CODE XREF: sub_12708+C↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_12748:                              ; CODE XREF: sub_12708+27↑j
+loc_12748:                              ; CODE XREF: sprint+27↑j
                 mov     bx, word_16F1A
                 mov     ax, [bx]
                 mov     [bp+var_4], ax
@@ -6494,7 +6278,7 @@ loc_12748:                              ; CODE XREF: sub_12708+27↑j
                 mov     [bp+var_6], ds
                 add     word_16F1A, 2
 
-loc_1275C:                              ; CODE XREF: sub_12708+3D↑j
+loc_1275C:                              ; CODE XREF: sprint+3D↑j
                 cmp     word_16F14, 10h
                 jnz     short loc_12770
                 mov     ax, [bp+var_8]
@@ -6504,17 +6288,17 @@ loc_1275C:                              ; CODE XREF: sub_12708+3D↑j
                 jmp     short loc_12779
 ; ---------------------------------------------------------------------------
 
-loc_12770:                              ; CODE XREF: sub_12708+59↑j
+loc_12770:                              ; CODE XREF: sprint+59↑j
                 cmp     [bp+var_4], 0
                 jnz     short loc_1277F
                 mov     ax, 1FF1h
 
-loc_12779:                              ; CODE XREF: sub_12708+66↑j
+loc_12779:                              ; CODE XREF: sprint+66↑j
                 mov     [bp+var_8], ax
                 mov     [bp+var_6], ds
 
-loc_1277F:                              ; CODE XREF: sub_12708+61↑j
-                                        ; sub_12708+6C↑j
+loc_1277F:                              ; CODE XREF: sprint+61↑j
+                                        ; sprint+6C↑j
                 mov     ax, [bp+var_8]
                 mov     dx, [bp+var_6]
                 mov     word ptr [bp+var_E], ax
@@ -6527,65 +6311,66 @@ loc_1277F:                              ; CODE XREF: sub_12708+61↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1279A:                              ; CODE XREF: sub_12708+A3↓j
+loc_1279A:                              ; CODE XREF: sprint+A3↓j
                 les     bx, [bp+var_E]
                 inc     word ptr [bp+var_E]
                 cmp     byte ptr es:[bx], 0
                 jz      short loc_127BB
                 inc     si
 
-loc_127A7:                              ; CODE XREF: sub_12708+8F↑j
+loc_127A7:                              ; CODE XREF: sprint+8F↑j
                 cmp     cx, si
                 jle     short loc_127BB
                 jmp     short loc_1279A
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_127AE:                              ; CODE XREF: sub_12708+B1↓j
+loc_127AE:                              ; CODE XREF: sprint+B1↓j
                 inc     si
 
-loc_127AF:                              ; CODE XREF: sub_12708+89↑j
+loc_127AF:                              ; CODE XREF: sprint+89↑j
                 les     bx, [bp+var_E]
                 inc     word ptr [bp+var_E]
                 cmp     byte ptr es:[bx], 0
                 jnz     short loc_127AE
 
-loc_127BB:                              ; CODE XREF: sub_12708+1F↑j
-                                        ; sub_12708+9C↑j ...
+loc_127BB:                              ; CODE XREF: sprint+1F↑j
+                                        ; sprint+9C↑j ...
                 mov     di, word_16F2C
                 sub     di, si
                 cmp     word_16F18, 0
                 jnz     short loc_127CF
                 push    di
-                call    sub_128EA
+                call    putpad          ; matched by mnemonic signature to KEH 1F486
                 add     sp, 2
 
-loc_127CF:                              ; CODE XREF: sub_12708+BE↑j
+loc_127CF:                              ; CODE XREF: sprint+BE↑j
                 push    si
                 push    [bp+var_6]
                 push    [bp+var_8]
-                call    sub_12948
+                call    putbuf          ; matched by mnemonic signature to KEH 1F4E4
                 add     sp, 6
                 cmp     word_16F18, 0
                 jz      short loc_127EA
                 push    di
-                call    sub_128EA
+                call    putpad          ; matched by mnemonic signature to KEH 1F486
                 add     sp, 2
 
-loc_127EA:                              ; CODE XREF: sub_12708+D9↑j
+loc_127EA:                              ; CODE XREF: sprint+D9↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_12708       endp
+sprint          endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; CRT printf: %e/%f/%g conversion via the float hooks
 ; Attributes: bp-based frame
 
-sub_127F0       proc near               ; CODE XREF: sub_122B4+280↑p
+_output_float   proc near               ; CODE XREF: __output+280↑p
 
 var_4           = byte ptr -4
 str             = dword ptr -2
@@ -6601,29 +6386,29 @@ x               = word ptr  4
                 cmp     [bp+x], 47h ; 'G'
                 jnz     short loc_1280C
 
-loc_12808:                              ; CODE XREF: sub_127F0+10↑j
+loc_12808:                              ; CODE XREF: _output_float+10↑j
                 mov     al, 1
                 jmp     short loc_1280E
 ; ---------------------------------------------------------------------------
 
-loc_1280C:                              ; CODE XREF: sub_127F0+16↑j
+loc_1280C:                              ; CODE XREF: _output_float+16↑j
                 sub     al, al
 
-loc_1280E:                              ; CODE XREF: sub_127F0+1A↑j
+loc_1280E:                              ; CODE XREF: _output_float+1A↑j
                 mov     [bp+var_4], al
                 cmp     word_16F1E, 0
                 jnz     short loc_1281E
                 mov     t, 6
 
-loc_1281E:                              ; CODE XREF: sub_127F0+26↑j
+loc_1281E:                              ; CODE XREF: _output_float+26↑j
                 cmp     [bp+var_4], 0
                 jz      short loc_12831
                 cmp     t, 0
                 jnz     short loc_12831
                 mov     t, 1
 
-loc_12831:                              ; CODE XREF: sub_127F0+32↑j
-                                        ; sub_127F0+39↑j
+loc_12831:                              ; CODE XREF: _output_float+32↑j
+                                        ; _output_float+39↑j
                 push    word_16F12
                 push    t               ; t
                 push    [bp+x]          ; x
@@ -6639,8 +6424,8 @@ loc_12831:                              ; CODE XREF: sub_127F0+32↑j
                 call    off_16C48
                 add     sp, 2
 
-loc_12862:                              ; CODE XREF: sub_127F0+5E↑j
-                                        ; sub_127F0+65↑j
+loc_12862:                              ; CODE XREF: _output_float+5E↑j
+                                        ; _output_float+65↑j
                 cmp     word_16F0C, 0
                 jz      short loc_1287B
                 cmp     t, 0
@@ -6649,8 +6434,8 @@ loc_12862:                              ; CODE XREF: sub_127F0+5E↑j
                 call    off_16C4C
                 add     sp, 2
 
-loc_1287B:                              ; CODE XREF: sub_127F0+77↑j
-                                        ; sub_127F0+7E↑j
+loc_1287B:                              ; CODE XREF: _output_float+77↑j
+                                        ; _output_float+7E↑j
                 add     word_16F1A, 8
                 mov     word_16F2E, 0
                 mov     ax, word_16F16
@@ -6665,25 +6450,26 @@ loc_1287B:                              ; CODE XREF: sub_127F0+77↑j
                 jmp     short loc_128A4
 ; ---------------------------------------------------------------------------
 
-loc_128A2:                              ; CODE XREF: sub_127F0+9D↑j
-                                        ; sub_127F0+AB↑j
+loc_128A2:                              ; CODE XREF: _output_float+9D↑j
+                                        ; _output_float+AB↑j
                 sub     ax, ax
 
-loc_128A4:                              ; CODE XREF: sub_127F0+B0↑j
+loc_128A4:                              ; CODE XREF: _output_float+B0↑j
                 push    ax
-                call    sub_129B0
+                call    _out            ; matched by mnemonic signature to KEH 1F54C
                 mov     sp, bp
                 pop     bp
                 retn
-sub_127F0       endp
+_output_float   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1F448
 ; Attributes: bp-based frame
 
-sub_128AC       proc near               ; CODE XREF: sub_122B4+226↑p
-                                        ; sub_129B0+5C↓p ...
+_outc           proc near               ; CODE XREF: __output+226↑p
+                                        ; _out+5C↓p ...
 
 arg_0           = word ptr  4
 
@@ -6704,13 +6490,13 @@ arg_0           = word ptr  4
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_128CE:                              ; CODE XREF: sub_128AC+12↑j
-                push    bx
-                push    [bp+arg_0]
-                call    sub_12084
+loc_128CE:                              ; CODE XREF: _outc+12↑j
+                push    bx              ; FILE *
+                push    [bp+arg_0]      ; int
+                call    __flsbuf        ; matched by mnemonic signature to KEH 1EC20
                 add     sp, 4
 
-loc_128D8:                              ; CODE XREF: sub_128AC+1F↑j
+loc_128D8:                              ; CODE XREF: _outc+1F↑j
                 inc     ax
                 jnz     short loc_128E2
                 inc     word_16F24
@@ -6718,25 +6504,26 @@ loc_128D8:                              ; CODE XREF: sub_128AC+1F↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_128E2:                              ; CODE XREF: sub_128AC+2D↑j
+loc_128E2:                              ; CODE XREF: _outc+2D↑j
                 inc     word_16F22
 
-loc_128E6:                              ; CODE XREF: sub_128AC+9↑j
-                                        ; sub_128AC+33↑j
+loc_128E6:                              ; CODE XREF: _outc+9↑j
+                                        ; _outc+33↑j
                 pop     si
                 pop     bp
                 retn
-sub_128AC       endp
+_outc           endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1F486
 ; Attributes: bp-based frame
 
-sub_128EA       proc near               ; CODE XREF: sub_12708+C1↑p
-                                        ; sub_12708+DC↑p ...
+putpad          proc near               ; CODE XREF: sprint+C1↑p
+                                        ; sprint+DC↑p ...
 
 arg_0           = word ptr  4
 
@@ -6753,19 +6540,19 @@ arg_0           = word ptr  4
                 jmp     short loc_12917
 ; ---------------------------------------------------------------------------
 
-loc_12902:                              ; CODE XREF: sub_128EA+3B↓j
-                push    word_16F0E
-                push    word_16F30
-                call    sub_12084
+loc_12902:                              ; CODE XREF: putpad+3B↓j
+                push    word_16F0E      ; FILE *
+                push    word_16F30      ; int
+                call    __flsbuf        ; matched by mnemonic signature to KEH 1EC20
                 add     sp, 4
 
-loc_12910:                              ; CODE XREF: sub_128EA+48↓j
+loc_12910:                              ; CODE XREF: putpad+48↓j
                 inc     ax
                 jnz     short loc_12917
                 inc     word_16F24
 
-loc_12917:                              ; CODE XREF: sub_128EA+16↑j
-                                        ; sub_128EA+27↑j
+loc_12917:                              ; CODE XREF: putpad+16↑j
+                                        ; putpad+27↑j
                 mov     ax, si
                 dec     si
                 or      ax, ax
@@ -6781,28 +6568,29 @@ loc_12917:                              ; CODE XREF: sub_128EA+16↑j
                 jmp     short loc_12910
 ; ---------------------------------------------------------------------------
 
-loc_12934:                              ; CODE XREF: sub_128EA+32↑j
+loc_12934:                              ; CODE XREF: putpad+32↑j
                 cmp     word_16F24, 0
                 jnz     short loc_12942
                 mov     ax, [bp+arg_0]
                 add     word_16F22, ax
 
-loc_12942:                              ; CODE XREF: sub_128EA+D↑j
-                                        ; sub_128EA+14↑j ...
+loc_12942:                              ; CODE XREF: putpad+D↑j
+                                        ; putpad+14↑j ...
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_128EA       endp
+putpad          endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1F4E4
 ; Attributes: bp-based frame
 
-sub_12948       proc near               ; CODE XREF: sub_122B4+2A4↑p
-                                        ; sub_12708+CE↑p ...
+putbuf          proc near               ; CODE XREF: __output+2A4↑p
+                                        ; sprint+CE↑p ...
 
 arg_0           = dword ptr  4
 arg_4           = word ptr  8
@@ -6818,24 +6606,24 @@ arg_4           = word ptr  8
                 jmp     short loc_12978
 ; ---------------------------------------------------------------------------
 
-loc_1295C:                              ; CODE XREF: sub_12948+3E↓j
-                push    word_16F0E
+loc_1295C:                              ; CODE XREF: putbuf+3E↓j
+                push    word_16F0E      ; FILE *
                 les     bx, [bp+arg_0]
                 mov     al, es:[bx]
                 cbw
-                push    ax
-                call    sub_12084
+                push    ax              ; int
+                call    __flsbuf        ; matched by mnemonic signature to KEH 1EC20
                 add     sp, 4
 
-loc_1296E:                              ; CODE XREF: sub_12948+52↓j
+loc_1296E:                              ; CODE XREF: putbuf+52↓j
                 inc     ax
                 jnz     short loc_12975
                 inc     word_16F24
 
-loc_12975:                              ; CODE XREF: sub_12948+27↑j
+loc_12975:                              ; CODE XREF: putbuf+27↑j
                 inc     word ptr [bp+arg_0]
 
-loc_12978:                              ; CODE XREF: sub_12948+12↑j
+loc_12978:                              ; CODE XREF: putbuf+12↑j
                 mov     ax, si
                 dec     si
                 or      ax, ax
@@ -6853,28 +6641,29 @@ loc_12978:                              ; CODE XREF: sub_12948+12↑j
                 jmp     short loc_1296E
 ; ---------------------------------------------------------------------------
 
-loc_1299C:                              ; CODE XREF: sub_12948+35↑j
+loc_1299C:                              ; CODE XREF: putbuf+35↑j
                 cmp     word_16F24, 0
                 jnz     short loc_129AA
                 mov     ax, [bp+arg_4]
                 add     word_16F22, ax
 
-loc_129AA:                              ; CODE XREF: sub_12948+10↑j
-                                        ; sub_12948+59↑j
+loc_129AA:                              ; CODE XREF: putbuf+10↑j
+                                        ; putbuf+59↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_12948       endp
+putbuf          endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1F54C
 ; Attributes: bp-based frame
 
-sub_129B0       proc near               ; CODE XREF: sub_125D2+129↑p
-                                        ; sub_127F0+B5↑p
+_out            proc near               ; CODE XREF: iprint+129↑p
+                                        ; _output_float+B5↑p
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -6899,14 +6688,14 @@ arg_0           = word ptr  4
                 cmp     word_16F28, ax
                 jnz     short loc_129E3
 
-loc_129DD:                              ; CODE XREF: sub_129B0+25↑j
+loc_129DD:                              ; CODE XREF: _out+25↑j
                 mov     word_16F30, 20h ; ' '
 
-loc_129E3:                              ; CODE XREF: sub_129B0+19↑j
-                                        ; sub_129B0+1F↑j ...
+loc_129E3:                              ; CODE XREF: _out+19↑j
+                                        ; _out+1F↑j ...
                 mov     di, word_16F2C
-                push    si
-                call    sub_132C2
+                push    si              ; char *
+                call    _strlen         ; matched by mnemonic signature to KEH 1FBBC
                 add     sp, 2
                 mov     [bp+var_8], ax
                 sub     di, ax
@@ -6920,12 +6709,12 @@ loc_129E3:                              ; CODE XREF: sub_129B0+19↑j
                 lodsb
                 cbw
                 push    ax
-                call    sub_128AC
+                call    _outc           ; matched by mnemonic signature to KEH 1F448
                 add     sp, 2
                 dec     [bp+var_8]
 
-loc_12A15:                              ; CODE XREF: sub_129B0+4B↑j
-                                        ; sub_129B0+50↑j ...
+loc_12A15:                              ; CODE XREF: _out+4B↑j
+                                        ; _out+50↑j ...
                 cmp     word_16F30, 30h ; '0'
                 jz      short loc_12A27
                 or      di, di
@@ -6933,95 +6722,97 @@ loc_12A15:                              ; CODE XREF: sub_129B0+4B↑j
                 cmp     word_16F18, 0
                 jz      short loc_12A40
 
-loc_12A27:                              ; CODE XREF: sub_129B0+6A↑j
-                                        ; sub_129B0+6E↑j
+loc_12A27:                              ; CODE XREF: _out+6A↑j
+                                        ; _out+6E↑j
                 cmp     [bp+arg_0], 0
                 jz      short loc_12A33
                 inc     [bp+var_6]
-                call    sub_12A92
+                call    putsign         ; matched by mnemonic signature to KEH 1F62E
 
-loc_12A33:                              ; CODE XREF: sub_129B0+7B↑j
+loc_12A33:                              ; CODE XREF: _out+7B↑j
                 cmp     word_16F2E, 0
                 jz      short loc_12A40
                 inc     [bp+var_4]
-                call    sub_12AAA
+                call    putprefix       ; matched by mnemonic signature to KEH 1F646
 
-loc_12A40:                              ; CODE XREF: sub_129B0+75↑j
-                                        ; sub_129B0+88↑j
+loc_12A40:                              ; CODE XREF: _out+75↑j
+                                        ; _out+88↑j
                 cmp     word_16F18, 0
                 jnz     short loc_12A6D
                 push    di
-                call    sub_128EA
+                call    putpad          ; matched by mnemonic signature to KEH 1F486
                 add     sp, 2
                 cmp     [bp+arg_0], 0
                 jz      short loc_12A5D
                 cmp     [bp+var_6], 0
                 jnz     short loc_12A5D
-                call    sub_12A92
+                call    putsign         ; matched by mnemonic signature to KEH 1F62E
 
-loc_12A5D:                              ; CODE XREF: sub_129B0+A2↑j
-                                        ; sub_129B0+A8↑j
+loc_12A5D:                              ; CODE XREF: _out+A2↑j
+                                        ; _out+A8↑j
                 cmp     word_16F2E, 0
                 jz      short loc_12A6D
                 cmp     [bp+var_4], 0
                 jnz     short loc_12A6D
-                call    sub_12AAA
+                call    putprefix       ; matched by mnemonic signature to KEH 1F646
 
-loc_12A6D:                              ; CODE XREF: sub_129B0+95↑j
-                                        ; sub_129B0+B2↑j ...
+loc_12A6D:                              ; CODE XREF: _out+95↑j
+                                        ; _out+B2↑j ...
                 push    [bp+var_8]
                 push    ds
                 push    si
-                call    sub_12948
+                call    putbuf          ; matched by mnemonic signature to KEH 1F4E4
                 add     sp, 6
                 cmp     word_16F18, 0
                 jz      short loc_12A8C
                 mov     word_16F30, 20h ; ' '
                 push    di
-                call    sub_128EA
+                call    putpad          ; matched by mnemonic signature to KEH 1F486
                 add     sp, 2
 
-loc_12A8C:                              ; CODE XREF: sub_129B0+CD↑j
+loc_12A8C:                              ; CODE XREF: _out+CD↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_129B0       endp
+_out            endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1F62E
 
-sub_12A92       proc near               ; CODE XREF: sub_129B0+80↑p
-                                        ; sub_129B0+AA↑p
+putsign         proc near               ; CODE XREF: _out+80↑p
+                                        ; _out+AA↑p
                 cmp     word_16F16, 0
                 jz      short loc_12A9E
                 mov     ax, 2Bh ; '+'
                 jmp     short loc_12AA1
 ; ---------------------------------------------------------------------------
 
-loc_12A9E:                              ; CODE XREF: sub_12A92+5↑j
+loc_12A9E:                              ; CODE XREF: putsign+5↑j
                 mov     ax, 20h ; ' '
 
-loc_12AA1:                              ; CODE XREF: sub_12A92+A↑j
+loc_12AA1:                              ; CODE XREF: putsign+A↑j
                 push    ax
-                call    sub_128AC
+                call    _outc           ; matched by mnemonic signature to KEH 1F448
                 add     sp, 2
                 retn
-sub_12A92       endp
+putsign         endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1F646
 
-sub_12AAA       proc near               ; CODE XREF: sub_129B0+8D↑p
-                                        ; sub_129B0+BA↑p
+putprefix       proc near               ; CODE XREF: _out+8D↑p
+                                        ; _out+BA↑p
                 mov     ax, 30h ; '0'
                 push    ax
-                call    sub_128AC
+                call    _outc           ; matched by mnemonic signature to KEH 1F448
                 add     sp, 2
                 cmp     word_16F2E, 10h
                 jnz     short locret_12AD2
@@ -7032,27 +6823,28 @@ sub_12AAA       proc near               ; CODE XREF: sub_129B0+8D↑p
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_12AC8:                              ; CODE XREF: sub_12AAA+16↑j
+loc_12AC8:                              ; CODE XREF: putprefix+16↑j
                 mov     ax, 78h ; 'x'
 
-loc_12ACB:                              ; CODE XREF: sub_12AAA+1B↑j
+loc_12ACB:                              ; CODE XREF: putprefix+1B↑j
                 push    ax
-                call    sub_128AC
+                call    _outc           ; matched by mnemonic signature to KEH 1F448
                 add     sp, 2
 
-locret_12AD2:                           ; CODE XREF: sub_12AAA+F↑j
+locret_12AD2:                           ; CODE XREF: putprefix+F↑j
                 retn
-sub_12AAA       endp
+putprefix       endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1F670
 ; Attributes: bp-based frame
 
-sub_12AD4       proc near               ; CODE XREF: sub_122B4+B7↑p
-                                        ; sub_122B4+E1↑p
+getnum          proc near               ; CODE XREF: __output+B7↑p
+                                        ; __output+E1↑p
 
 var_2           = word ptr -2
 arg_0           = word ptr  4
@@ -7075,13 +6867,13 @@ arg_2           = word ptr  6
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_12AF8:                              ; CODE XREF: sub_12AD4+13↑j
+loc_12AF8:                              ; CODE XREF: getnum+13↑j
                 cmp     byte ptr [si], 2Dh ; '-'
                 jnz     short loc_12B03
                 mov     [bp+var_2], 0FFFFh
                 inc     si
 
-loc_12B03:                              ; CODE XREF: sub_12AD4+27↑j
+loc_12B03:                              ; CODE XREF: getnum+27↑j
                 sub     di, di
                 cmp     byte ptr [si], 30h ; '0'
                 jl      short loc_12B3F
@@ -7093,8 +6885,8 @@ loc_12B03:                              ; CODE XREF: sub_12AD4+27↑j
                 jnz     short loc_12B20
                 mov     word_16F30, 30h ; '0'
 
-loc_12B20:                              ; CODE XREF: sub_12AD4+3F↑j
-                                        ; sub_12AD4+44↑j ...
+loc_12B20:                              ; CODE XREF: getnum+3F↑j
+                                        ; getnum+44↑j ...
                 mov     al, [si]
                 cbw
                 mov     cx, di
@@ -7111,8 +6903,8 @@ loc_12B20:                              ; CODE XREF: sub_12AD4+3F↑j
                 cmp     byte ptr [si], 39h ; '9'
                 jle     short loc_12B20
 
-loc_12B3F:                              ; CODE XREF: sub_12AD4+21↑j
-                                        ; sub_12AD4+34↑j ...
+loc_12B3F:                              ; CODE XREF: getnum+21↑j
+                                        ; getnum+34↑j ...
                 mov     ax, [bp+var_2]
                 imul    di
                 mov     di, ax
@@ -7124,16 +6916,17 @@ loc_12B3F:                              ; CODE XREF: sub_12AD4+21↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_12AD4       endp
+getnum          endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1F6F0
 ; Attributes: bp-based frame
 
-sub_12B54       proc near               ; CODE XREF: sub_122B4+A8↑p
+flagchar        proc near               ; CODE XREF: __output+A8↑p
 
 arg_0           = byte ptr  4
 
@@ -7147,10 +6940,10 @@ arg_0           = byte ptr  4
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_12B64:                              ; CODE XREF: sub_12B54+18↓j
+loc_12B64:                              ; CODE XREF: flagchar+18↓j
                 inc     si
 
-loc_12B65:                              ; CODE XREF: sub_12B54+D↑j
+loc_12B65:                              ; CODE XREF: flagchar+D↑j
                 cmp     byte ptr [si], 0
                 jz      short loc_12B74
                 cmp     cl, [si]
@@ -7160,25 +6953,27 @@ loc_12B65:                              ; CODE XREF: sub_12B54+D↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_12B74:                              ; CODE XREF: sub_12B54+14↑j
+loc_12B74:                              ; CODE XREF: flagchar+14↑j
                 sub     ax, ax
 
-loc_12B76:                              ; CODE XREF: sub_12B54+1D↑j
+loc_12B76:                              ; CODE XREF: flagchar+1D↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retn
-sub_12B54       endp
+flagchar        endp
 
 ; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
 
+; CRT: close handle (INT21h/3Eh)
 ; Attributes: bp-based frame
 
-sub_12B7C       proc near               ; CODE XREF: sub_13A14+10A↓p
-                                        ; sub_13A14+150↓p
+; int __cdecl close(int)
+_close          proc near               ; CODE XREF: _spawnve+10A↓p
+                                        ; _spawnve+150↓p
 
 arg_0           = word ptr  4
 
@@ -7194,74 +6989,74 @@ arg_0           = word ptr  4
                 jmp     short loc_12B99
 ; ---------------------------------------------------------------------------
 
-loc_12B8E:                              ; CODE XREF: sub_12B7C+A↑j
+loc_12B8E:                              ; CODE XREF: _close+A↑j
                 mov     ah, 3Eh
                 int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
                                         ; BX = file handle
                 jb      short loc_12B99
                 mov     byte ptr [bx+1E8Ch], 0
 
-loc_12B99:                              ; CODE XREF: sub_12B7C+10↑j
-                                        ; sub_12B7C+16↑j
+loc_12B99:                              ; CODE XREF: _close+10↑j
+                                        ; _close+16↑j
                 jmp     loc_11FFE
-sub_12B7C       endp
+_close          endp
 
-; [0000007A BYTES: COLLAPSED FUNCTION sub_12B9C. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [0000007A BYTES: COLLAPSED FUNCTION _lseek. PRESS NUMPAD+ TO EXPAND]
 ; ---------------------------------------------------------------------------
                 push    bp
                 mov     bp, sp
                 sub     sp, 4
                 xor     bh, bh
-; [00000093 BYTES: COLLAPSED CHUNK OF FUNCTION _sopen. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [00000093 BYTES: COLLAPSED CHUNK OF FUNCTION _sopen. PRESS NUMPAD+ TO EXPAND]
                 align 2
-; [00000048 BYTES: COLLAPSED CHUNK OF FUNCTION _sopen. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [00000048 BYTES: COLLAPSED CHUNK OF FUNCTION _sopen. PRESS NUMPAD+ TO EXPAND]
                 db 90h
 ; ---------------------------------------------------------------------------
-; [000000AE BYTES: COLLAPSED CHUNK OF FUNCTION _sopen. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [00000011 BYTES: COLLAPSED FUNCTION sub_12DA9. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [000000DD BYTES: COLLAPSED FUNCTION sub_12DBA. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [000000AE BYTES: COLLAPSED CHUNK OF FUNCTION _sopen. PRESS NUMPAD+ TO EXPAND]
+; [00000011 BYTES: COLLAPSED FUNCTION _sopen_mode. PRESS NUMPAD+ TO EXPAND]
+; [000000DD BYTES: COLLAPSED FUNCTION _read. PRESS NUMPAD+ TO EXPAND]
                 align 2
-; [000000A6 BYTES: COLLAPSED FUNCTION sub_12E98. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [0000004E BYTES: COLLAPSED FUNCTION sub_12F3E. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [000000A6 BYTES: COLLAPSED FUNCTION _write. PRESS NUMPAD+ TO EXPAND]
+; [0000004E BYTES: COLLAPSED FUNCTION _write_flush. PRESS NUMPAD+ TO EXPAND]
 ; ---------------------------------------------------------------------------
-; [00000034 BYTES: COLLAPSED CHUNK OF FUNCTION sub_12E98. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [00000012 BYTES: COLLAPSED FUNCTION sub_12FC0. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [00000012 BYTES: COLLAPSED FUNCTION sub_12FD2. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [00000046 BYTES: COLLAPSED FUNCTION sub_12FE4. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [00000034 BYTES: COLLAPSED CHUNK OF FUNCTION _write. PRESS NUMPAD+ TO EXPAND]
+; [00000012 BYTES: COLLAPSED FUNCTION _stackavail. PRESS NUMPAD+ TO EXPAND]
+; [00000012 BYTES: COLLAPSED FUNCTION unknown_libname_1. PRESS NUMPAD+ TO EXPAND]
+; [00000046 BYTES: COLLAPSED FUNCTION unknown_libname_2. PRESS NUMPAD+ TO EXPAND]
 ; ---------------------------------------------------------------------------
-; [00000003 BYTES: COLLAPSED CHUNK OF FUNCTION sub_1302D. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [000000E3 BYTES: COLLAPSED FUNCTION sub_1302D. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [0000003A BYTES: COLLAPSED FUNCTION sub_13110. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [00000022 BYTES: COLLAPSED FUNCTION sub_1314A. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [0000001F BYTES: COLLAPSED FUNCTION sub_1316C. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [00000003 BYTES: COLLAPSED CHUNK OF FUNCTION __amalloc. PRESS NUMPAD+ TO EXPAND]
+; [000000E3 BYTES: COLLAPSED FUNCTION __amalloc. PRESS NUMPAD+ TO EXPAND]
+; [0000003A BYTES: COLLAPSED FUNCTION __amexpand. PRESS NUMPAD+ TO EXPAND]
+; [00000022 BYTES: COLLAPSED FUNCTION __amlink. PRESS NUMPAD+ TO EXPAND]
+; [0000001F BYTES: COLLAPSED FUNCTION __amallocbrk. PRESS NUMPAD+ TO EXPAND]
                 align 2
-; [0000006E BYTES: COLLAPSED FUNCTION sub_1318C. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [00000056 BYTES: COLLAPSED FUNCTION sub_131FA. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [0000003F BYTES: COLLAPSED FUNCTION _strcat. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [0000006E BYTES: COLLAPSED FUNCTION _brkctl. PRESS NUMPAD+ TO EXPAND]
+; [00000056 BYTES: COLLAPSED FUNCTION __brk_setblock. PRESS NUMPAD+ TO EXPAND]
+; [0000003F BYTES: COLLAPSED FUNCTION _strcat. PRESS NUMPAD+ TO EXPAND]
                 align 2
-; [00000032 BYTES: COLLAPSED FUNCTION _strcpy. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [0000001B BYTES: COLLAPSED FUNCTION sub_132C2. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [00000032 BYTES: COLLAPSED FUNCTION _strcpy. PRESS NUMPAD+ TO EXPAND]
+; [0000001B BYTES: COLLAPSED FUNCTION _strlen. PRESS NUMPAD+ TO EXPAND]
                 align 2
-; [0000000A BYTES: COLLAPSED FUNCTION _ultoa. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [00000023 BYTES: COLLAPSED FUNCTION _isatty. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [0000000A BYTES: COLLAPSED FUNCTION _ultoa. PRESS NUMPAD+ TO EXPAND]
+; [00000023 BYTES: COLLAPSED FUNCTION _isatty. PRESS NUMPAD+ TO EXPAND]
                 align 2
-; [00000010 BYTES: COLLAPSED FUNCTION _kbhit. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [00000010 BYTES: COLLAPSED FUNCTION _kbhit. PRESS NUMPAD+ TO EXPAND]
 ; ---------------------------------------------------------------------------
                 mov     dh, 1
                 jmp     short loc_13322
-; [00000017 BYTES: COLLAPSED FUNCTION _getch. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [00000017 BYTES: COLLAPSED FUNCTION _getch. PRESS NUMPAD+ TO EXPAND]
                 align 2
-; [00000056 BYTES: COLLAPSED FUNCTION _sprintf. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [0000001B BYTES: COLLAPSED FUNCTION _sopen. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [00000056 BYTES: COLLAPSED FUNCTION _sprintf. PRESS NUMPAD+ TO EXPAND]
+; [0000001B BYTES: COLLAPSED FUNCTION _sopen. PRESS NUMPAD+ TO EXPAND]
                 align 2
-; [0000002A BYTES: COLLAPSED FUNCTION _strchr. PRESS CTRL-NUMPAD+ TO EXPAND]
-; [0000002B BYTES: COLLAPSED FUNCTION _strrchr. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [0000002A BYTES: COLLAPSED FUNCTION _strchr. PRESS NUMPAD+ TO EXPAND]
+; [0000002B BYTES: COLLAPSED FUNCTION _strrchr. PRESS NUMPAD+ TO EXPAND]
                 align 2
-; [0000005F BYTES: COLLAPSED CHUNK OF FUNCTION _ultoa. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [0000005F BYTES: COLLAPSED CHUNK OF FUNCTION _ultoa. PRESS NUMPAD+ TO EXPAND]
                 align 2
-; [00000225 BYTES: COLLAPSED FUNCTION __cenvarg. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [00000225 BYTES: COLLAPSED FUNCTION __cenvarg. PRESS NUMPAD+ TO EXPAND]
                 align 4
-; [000002AB BYTES: COLLAPSED FUNCTION __doexec. PRESS CTRL-NUMPAD+ TO EXPAND]
+; [000002AB BYTES: COLLAPSED FUNCTION __doexec. PRESS NUMPAD+ TO EXPAND]
 ; ---------------------------------------------------------------------------
                 push    cs
                 pop     ds
@@ -7412,31 +7207,35 @@ loc_139E5:                              ; CODE XREF: sg0138:4080↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; spawn child program (used to start KEH.EXE)
 ; Attributes: bp-based frame
 
-sub_139FE       proc near               ; CODE XREF: _main+27D↑p
+; int spawnl(int, const char *, const char *, ...)
+_spawnl         proc near               ; CODE XREF: _main+27D↑p
 
 arg_0           = word ptr  4
-arg_2           = byte ptr  6
+arg_2           = dword ptr  6
 
-                push    bp
+                push    bp              ; char **
                 mov     bp, sp
                 push    word ptr loc_11803+1
                 lea     ax, [bp+arg_2]
-                push    ax
-                push    [bp+arg_0]
-                call    sub_13A14
+                push    ax              ; char *
+                push    [bp+arg_0]      ; int
+                call    _spawnve        ; CRT spawn: searches .com/.exe, builds env/args, execs
                 add     sp, 6
                 pop     bp
                 retn
-sub_139FE       endp
+_spawnl         endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; CRT spawn: searches .com/.exe, builds env/args, execs
 ; Attributes: bp-based frame
 
-sub_13A14       proc near               ; CODE XREF: sub_139FE+E↑p
+; int __cdecl spawnve(int, const char *, const char *const *, const char *const *)
+_spawnve        proc near               ; CODE XREF: _spawnl+E↑p
 
 var_B2          = byte ptr -0B2h
 var_32          = word ptr -32h
@@ -7461,9 +7260,9 @@ arg_4           = word ptr  8
                 push    bp
                 mov     bp, sp
                 mov     ax, 0B2h
-                call    sub_11D34
+                call    __chkstk        ; matched by mnemonic signature to KEH 1E8D0
                 push    di
-                push    si              ; int
+                push    si              ; unsigned int
                 mov     [bp+var_2A], 1
                 mov     ax, 5Ch ; '\'
                 push    ax
@@ -7486,17 +7285,17 @@ arg_4           = word ptr  8
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_13A50:                              ; CODE XREF: sub_13A14+30↑j
+loc_13A50:                              ; CODE XREF: _spawnve+30↑j
                 or      si, si
                 jz      short loc_13A58
                 cmp     di, si
                 jbe     short loc_13A5A
 
-loc_13A58:                              ; CODE XREF: sub_13A14+3E↑j
+loc_13A58:                              ; CODE XREF: _spawnve+3E↑j
                 mov     si, di
 
-loc_13A5A:                              ; CODE XREF: sub_13A14+34↑j
-                                        ; sub_13A14+39↑j ...
+loc_13A5A:                              ; CODE XREF: _spawnve+34↑j
+                                        ; _spawnve+39↑j ...
                 sub     di, di
                 mov     ax, 2Eh ; '.'
                 push    ax
@@ -7518,20 +7317,20 @@ loc_13A5A:                              ; CODE XREF: sub_13A14+34↑j
                 jmp     loc_13B07
 ; ---------------------------------------------------------------------------
 
-loc_13A85:                              ; CODE XREF: sub_13A14+6C↑j
-                                        ; sub_13A14+8F↓j ...
+loc_13A85:                              ; CODE XREF: _spawnve+6C↑j
+                                        ; _spawnve+8F↓j ...
                 mov     ax, 0FFFFh
                 jmp     loc_13BF4
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_13A8C:                              ; CODE XREF: sub_13A14+55↑j
-                push    word ptr [bp+arg_0]
-                call    sub_132C2
+loc_13A8C:                              ; CODE XREF: _spawnve+55↑j
+                push    word ptr [bp+arg_0] ; char *
+                call    _strlen         ; matched by mnemonic signature to KEH 1FBBC
                 add     sp, 2
                 add     ax, 5
                 push    ax
-                call    sub_12FE4
+                call    unknown_libname_2 ; matched by mnemonic signature to KEH 1F8DE
                 add     sp, 2
                 mov     di, ax
                 or      di, di
@@ -7576,78 +7375,78 @@ loc_13A8C:                              ; CODE XREF: sub_13A14+55↑j
                 inc     ax
                 jnz     short loc_13B04
 
-loc_13AFA:                              ; CODE XREF: sub_13A14:loc_13B37↓j
+loc_13AFA:                              ; CODE XREF: _spawnve:loc_13B37↓j
                 push    di
-                call    sub_12FD2
+                call    unknown_libname_1 ; matched by mnemonic signature to KEH 1F8CC
                 add     sp, 2
                 jmp     short loc_13A85
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_13B04:                              ; CODE XREF: sub_13A14+B9↑j
-                                        ; sub_13A14+E4↑j
+loc_13B04:                              ; CODE XREF: _spawnve+B9↑j
+                                        ; _spawnve+E4↑j
                 mov     word ptr [bp+arg_0], di
 
-loc_13B07:                              ; CODE XREF: sub_13A14+6E↑j
+loc_13B07:                              ; CODE XREF: _spawnve+6E↑j
                 mov     ax, 18h
                 push    ax
                 lea     ax, [bp+var_20]
-                push    ax
-                push    [bp+var_2C]
-                call    sub_12DBA
+                push    ax              ; void *
+                push    [bp+var_2C]     ; int
+                call    _read           ; CRT: read (INT21h/3Fh)
                 add     sp, 6
                 inc     ax
                 jnz     short loc_13B3A
-                push    [bp+var_2C]
-                call    sub_12B7C
+                push    [bp+var_2C]     ; int
+                call    _close          ; CRT: close handle (INT21h/3Eh)
                 add     sp, 2
                 mov     word ptr loc_117DD, 8
                 mov     word ptr loc_117E6+2, 0Bh
 
-loc_13B30:                              ; CODE XREF: sub_13A14+187↓j
-                                        ; sub_13A14+1DD↓j
+loc_13B30:                              ; CODE XREF: _spawnve+187↓j
+                                        ; _spawnve+1DD↓j
                 or      di, di
                 jnz     short loc_13B37
                 jmp     loc_13A85
 ; ---------------------------------------------------------------------------
 
-loc_13B37:                              ; CODE XREF: sub_13A14+11E↑j
+loc_13B37:                              ; CODE XREF: _spawnve+11E↑j
                 jmp     short loc_13AFA
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_13B3A:                              ; CODE XREF: sub_13A14+105↑j
+loc_13B3A:                              ; CODE XREF: _spawnve+105↑j
                 mov     ax, 2
-                push    ax
+                push    ax              ; int
                 sub     ax, ax
                 push    ax
-                push    ax
-                push    [bp+var_2C]
-                call    sub_12B9C
+                push    ax              ; __int32
+                push    [bp+var_2C]     ; int
+                call    _lseek          ; matched by mnemonic signature to KEH 1F718
                 add     sp, 8
                 add     ax, 0Fh
                 adc     dx, 0
                 mov     cl, 4
 
-loc_13B53:                              ; CODE XREF: sub_13A14+145↓j
+loc_13B53:                              ; CODE XREF: _spawnve+145↓j
                 sar     dx, 1
                 rcr     ax, 1
                 dec     cl
                 jnz     short loc_13B53
                 mov     [bp+var_30], ax
                 mov     [bp+var_2E], dx
-                push    [bp+var_2C]
-                call    sub_12B7C
+                push    [bp+var_2C]     ; int
+                call    _close          ; CRT: close handle (INT21h/3Eh)
                 add     sp, 2
                 cmp     [bp+var_20], 4D5Ah
                 jz      short loc_13B78
                 cmp     [bp+var_20], 5A4Dh
                 jnz     short loc_13B7B
 
-loc_13B78:                              ; CODE XREF: sub_13A14+15B↑j
+loc_13B78:                              ; CODE XREF: _spawnve+15B↑j
                 dec     [bp+var_2A]
 
-loc_13B7B:                              ; CODE XREF: sub_13A14+162↑j
+loc_13B7B:                              ; CODE XREF: _spawnve+162↑j
                 push    word ptr [bp+arg_0]
                 lea     ax, [bp+var_B2]
                 push    ax
@@ -7682,8 +7481,8 @@ loc_13B7B:                              ; CODE XREF: sub_13A14+162↑j
                 push    [bp+var_24]
                 lea     ax, [bp+var_B2]
                 push    ax
-                push    word ptr [bp+arg_0]
-                call    sub_132C2
+                push    word ptr [bp+arg_0] ; char *
+                call    _strlen         ; matched by mnemonic signature to KEH 1FBBC
                 add     sp, 2
                 inc     ax
                 push    ax
@@ -7692,35 +7491,36 @@ loc_13B7B:                              ; CODE XREF: sub_13A14+162↑j
                 call    __doexec
                 add     sp, 18h
                 push    [bp+var_32]
-                call    sub_12FD2
+                call    unknown_libname_1 ; matched by mnemonic signature to KEH 1F8CC
                 add     sp, 2
                 jmp     loc_13B30
 ; ---------------------------------------------------------------------------
 
-loc_13BF4:                              ; CODE XREF: sub_13A14+74↑j
+loc_13BF4:                              ; CODE XREF: _spawnve+74↑j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retn
-sub_13A14       endp
+_spawnve        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 1FFA6
 
-sub_13BFA       proc near               ; CODE XREF: fontOpen+5D↑p
+__aNlshl        proc near               ; CODE XREF: fontOpen+5D↑p
                 xor     ch, ch
                 jcxz    short locret_13C04
 
-loc_13BFE:                              ; CODE XREF: sub_13BFA+8↓j
+loc_13BFE:                              ; CODE XREF: __aNlshl+8↓j
                 shl     ax, 1
                 rcl     dx, 1
                 loop    loc_13BFE
 
-locret_13C04:                           ; CODE XREF: sub_13BFA+2↑j
+locret_13C04:                           ; CODE XREF: __aNlshl+2↑j
                 retn
-sub_13BFA       endp
+__aNlshl        endp
 
 ; ---------------------------------------------------------------------------
                 align 10h
@@ -7787,7 +7587,7 @@ loc_13C45:                              ; CODE XREF: gfxScanlinesSetup+25↓j
                 mov     bl, _gfxMode
                 shl     bx, 1
                 mov     bx, VIDEO_MODE_FNS[bx]
-                call    bx
+                call    bx              ; INT10h mode 4: 320x200 4-colour CGA, scanline table at 2000h interleave
                 pop     es
                 assume es:nothing
                 pop     ds
@@ -7803,17 +7603,18 @@ gfxScanlinesSetup endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; builds the 4 CGA expansion lookup tables from the colour map
 
-sub_13C62       proc near               ; CODE XREF: sub_13D18+5↓p
+buildCgaPixelTables proc near           ; CODE XREF: videoModeCga+5↓p
                 mov     di, 0B76h
                 mov     bx, 0D32h
                 mov     cl, 10h
 
-loc_13C6A:                              ; CODE XREF: sub_13C62+4E↓j
+loc_13C6A:                              ; CODE XREF: buildCgaPixelTables+4E↓j
                 mov     si, 0D32h
                 mov     ch, 10h
 
-loc_13C6F:                              ; CODE XREF: sub_13C62+47↓j
+loc_13C6F:                              ; CODE XREF: buildCgaPixelTables+47↓j
                 mov     ah, [bx]
                 and     ah, 0Ch
                 lodsb
@@ -7843,7 +7644,7 @@ loc_13C6F:                              ; CODE XREF: sub_13C62+47↓j
                 dec     cl
                 jnz     short loc_13C6A
                 retn
-sub_13C62       endp
+buildCgaPixelTables endp
 
 ; ---------------------------------------------------------------------------
                 mov     word_158FE, 74Fh
@@ -7852,8 +7653,9 @@ sub_13C62       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 2077F
 
-sub_13CC0       proc far                ; CODE XREF: sub_114B3+16↑P
+addDirtyRect    proc far                ; CODE XREF: addDirtyRectFromBounds+16↑P
                 mov     bx, word_158FE
                 add     word_158FE, 0Eh
                 inc     word_158FC
@@ -7862,12 +7664,12 @@ sub_13CC0       proc far                ; CODE XREF: sub_114B3+16↑P
                 jz      short loc_13CD5
                 inc     di
 
-loc_13CD5:                              ; CODE XREF: sub_13CC0+12↑j
+loc_13CD5:                              ; CODE XREF: addDirtyRect+12↑j
                 test    di, 1
                 jz      short loc_13CDC
                 inc     di
 
-loc_13CDC:                              ; CODE XREF: sub_13CC0+19↑j
+loc_13CDC:                              ; CODE XREF: addDirtyRect+19↑j
                 mov     dx, 0A0h
                 sub     dx, di
                 mov     [bx+0Ch], dx
@@ -7892,20 +7694,21 @@ loc_13CDC:                              ; CODE XREF: sub_13CC0+19↑j
                 mov     ax, [di+37Ah]
                 mov     [bx+6], ax
                 retf
-sub_13CC0       endp
+addDirtyRect    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; INT10h mode 4: 320x200 4-colour CGA, scanline table at 2000h interleave
 
-sub_13D18       proc near               ; CODE XREF: gfxScanlinesSetup+33↑p
+videoModeCga    proc near               ; CODE XREF: gfxScanlinesSetup+33↑p
                                         ; DATA XREF: dseg:VIDEO_MODE_FNS↓o
                 push    ax
                 push    di
                 push    cx
                 push    ds
                 push    es
-                call    sub_13C62
+                call    buildCgaPixelTables ; builds the 4 CGA expansion lookup tables from the colour map
                 mov     ax, seg dseg
                 mov     es, ax
                 assume es:dseg
@@ -7913,7 +7716,7 @@ sub_13D18       proc near               ; CODE XREF: gfxScanlinesSetup+33↑p
                 mov     cx, 100
                 mov     di, offset unk_1505F
 
-loc_13D2D:                              ; CODE XREF: sub_13D18+1D↓j
+loc_13D2D:                              ; CODE XREF: videoModeCga+1D↓j
                 stosw
                 add     ax, 2000h
                 stosw
@@ -7948,7 +7751,7 @@ loc_13D2D:                              ; CODE XREF: sub_13D18+1D↓j
                 mov     cx, 51h ; 'Q'
                 mov     ax, 944h
 
-loc_13D6A:                              ; CODE XREF: sub_13D18+56↓j
+loc_13D6A:                              ; CODE XREF: videoModeCga+56↓j
                 stosw
                 sub     ax, 0Eh
                 loop    loc_13D6A
@@ -7974,7 +7777,7 @@ loc_13D6A:                              ; CODE XREF: sub_13D18+56↓j
                 pop     di
                 pop     ax
                 retn
-sub_13D18       endp
+videoModeCga    endp
 
 ; ---------------------------------------------------------------------------
                 lodsw
@@ -7988,8 +7791,9 @@ sub_13D18       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; INT10h mode 9: Tandy/PCjr 16 colour, 4-bank interleave
 
-sub_13DA0       proc near               ; CODE XREF: gfxScanlinesSetup+33↑p
+videoModeTandy  proc near               ; CODE XREF: gfxScanlinesSetup+33↑p
                                         ; DATA XREF: dseg:VIDEO_MODE_FNS↓o
                 push    es
                 mov     ax, 9
@@ -8003,7 +7807,7 @@ sub_13DA0       proc near               ; CODE XREF: gfxScanlinesSetup+33↑p
                 xor     ax, ax
                 mov     cx, 32h ; '2'
 
-loc_13DBA:                              ; CODE XREF: sub_13DA0+2A↓j
+loc_13DBA:                              ; CODE XREF: videoModeTandy+2A↓j
                 stosw
                 add     ax, 2000h
                 stosw
@@ -8016,13 +7820,14 @@ loc_13DBA:                              ; CODE XREF: sub_13DA0+2A↓j
                 pop     es
                 assume es:nothing
                 retn
-sub_13DA0       endp
+videoModeTandy  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; INT10h mode 0Eh: EGA planar, sets the plane lookup
 
-sub_13DCE       proc near               ; CODE XREF: gfxScanlinesSetup+33↑p
+videoModeEga    proc near               ; CODE XREF: gfxScanlinesSetup+33↑p
                                         ; DATA XREF: dseg:VIDEO_MODE_FNS↓o
                 mov     word ptr cs:self_modifying_1+1, 0E4h
                 cli
@@ -8067,8 +7872,8 @@ sub_13DCE       proc near               ; CODE XREF: gfxScanlinesSetup+33↑p
                 mov     si, bx
                 mov     bp, 1000h
 
-loc_13E14:                              ; CODE XREF: sub_13DCE+78↓j
-                                        ; sub_13DCE+81↓j ...
+loc_13E14:                              ; CODE XREF: videoModeEga+78↓j
+                                        ; videoModeEga+81↓j ...
                 mov     dx, 3CEh
                 mov     al, 8
                 out     dx, al          ; EGA: graph 1 and 2 addr reg:
@@ -8136,7 +7941,7 @@ loc_13E14:                              ; CODE XREF: sub_13DCE+78↓j
                 assume es:dseg
                 mov     ax, 4000h
 
-loc_13E78:                              ; CODE XREF: sub_13DCE+AE↓j
+loc_13E78:                              ; CODE XREF: videoModeEga+AE↓j
                 stosw
                 add     ax, 50h ; 'P'
                 loop    loc_13E78
@@ -8144,7 +7949,7 @@ loc_13E78:                              ; CODE XREF: sub_13DCE+AE↓j
                 mov     cx, 51h ; 'Q'
                 mov     ax, 994h
 
-loc_13E87:                              ; CODE XREF: sub_13DCE+BD↓j
+loc_13E87:                              ; CODE XREF: videoModeEga+BD↓j
                 stosw
                 sub     ax, 0Fh
                 loop    loc_13E87
@@ -8163,7 +7968,7 @@ loc_13E87:                              ; CODE XREF: sub_13DCE+BD↓j
                 mov     al, 0C3h
                 stosb
                 retn
-sub_13DCE       endp
+videoModeEga    endp
 
 ; ---------------------------------------------------------------------------
                 lodsw
@@ -8178,8 +7983,9 @@ sub_13DCE       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; INT10h mode 13h + DAC palette from MASTER_PALETTE
 
-videoMode3      proc near               ; CODE XREF: gfxScanlinesSetup+33↑p
+videoModeVga    proc near               ; CODE XREF: gfxScanlinesSetup+33↑p
                                         ; DATA XREF: dseg:VIDEO_MODE_FNS↓o
                 mov     word ptr cs:self_modifying_1+1, 136h
                 mov     ax, 13h
@@ -8202,7 +8008,7 @@ videoMode3      proc near               ; CODE XREF: gfxScanlinesSetup+33↑p
                 mov     cx, 16
                 xor     bx, bx
 
-loc_13EE5:                              ; CODE XREF: videoMode3+53↓j
+loc_13EE5:                              ; CODE XREF: videoModeVga+53↓j
                 mov     di, offset _tempPalette
                 lodsb
                 mov     dh, al
@@ -8210,7 +8016,7 @@ loc_13EE5:                              ; CODE XREF: videoMode3+53↓j
                 push    cx
                 mov     cx, 10h
 
-loc_13EF0:                              ; CODE XREF: videoMode3+3C↓j
+loc_13EF0:                              ; CODE XREF: videoModeVga+3C↓j
                 mov     es:[di], dh
                 inc     di
                 stosw
@@ -8235,7 +8041,7 @@ loc_13EF0:                              ; CODE XREF: videoMode3+3C↓j
                 mov     cx, 200
                 xor     ax, ax
 
-loc_13F16:                              ; CODE XREF: videoMode3+61↓j
+loc_13F16:                              ; CODE XREF: videoModeVga+61↓j
                 stosw
                 add     ax, 320
                 loop    loc_13F16
@@ -8243,7 +8049,7 @@ loc_13F16:                              ; CODE XREF: videoMode3+61↓j
                 mov     cx, 81
                 mov     ax, 0B74h
 
-loc_13F25:                              ; CODE XREF: videoMode3+70↓j
+loc_13F25:                              ; CODE XREF: videoModeVga+70↓j
                 stosw
                 sub     ax, 21
                 loop    loc_13F25
@@ -8252,7 +8058,7 @@ loc_13F25:                              ; CODE XREF: videoMode3+70↓j
                 assume ds:sg0563
                 mov     es, ax
                 assume es:sg0563
-                mov     si, offset sub_13F48
+                mov     si, offset unpackPixelsRow ; nibble shuffle helper (no callers)
                 mov     di, offset byte_140F4
                 mov     cx, 21
                 rep movsb
@@ -8262,13 +8068,14 @@ loc_13F25:                              ; CODE XREF: videoMode3+70↓j
                 mov     al, 0C3h
                 stosb
                 retn
-videoMode3      endp
+videoModeVga    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; nibble shuffle helper (no callers)
 
-sub_13F48       proc near               ; DATA XREF: videoMode3+78↑o
+unpackPixelsRow proc near               ; DATA XREF: videoModeVga+78↑o
                 lodsw
                 mov     ch, ah
                 mov     bx, ax
@@ -8281,13 +8088,14 @@ sub_13F48       proc near               ; DATA XREF: videoMode3+78↑o
                 mov     al, ch
                 mov     ah, bh
                 stosw
-sub_13F48       endp
+unpackPixelsRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 208E2
 
-sub_13F5D       proc far                ; CODE XREF: sub_114D5+12↑P
+flushDirtyRects proc far                ; CODE XREF: refreshBounds+12↑P
                                         ; sg0138:1B96↑P
                 push    si
                 push    di
@@ -8295,9 +8103,9 @@ sub_13F5D       proc far                ; CODE XREF: sub_114D5+12↑P
                 push    ds
                 push    bp
 
-self_modifying_1:                       ; DATA XREF: sub_13DA0+6↑w
-                                        ; sub_13DCE↑w ...
-                call    sub_13F77       ; Self-changing code sets to video3Fn1
+self_modifying_1:                       ; DATA XREF: videoModeTandy+6↑w
+                                        ; videoModeEga↑w ...
+                call    blitDirtyRectsCga ; Self-changing code sets to video3Fn1
                 pop     bp
                 pop     ds
                 assume ds:dseg
@@ -8308,25 +8116,26 @@ self_modifying_1:                       ; DATA XREF: sub_13DA0+6↑w
                 mov     word_158FE, 74Fh
                 mov     word_158FC, 0
                 retf
-sub_13F5D       endp
+flushDirtyRects endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; blit loop to B800h through the row routine
 
-sub_13F77       proc near               ; CODE XREF: sub_13F5D:self_modifying_1↑p
+blitDirtyRectsCga proc near             ; CODE XREF: flushDirtyRects:self_modifying_1↑p
                 mov     word_15900, 74Fh
                 mov     ax, 0B800h
                 mov     es, ax
                 assume es:nothing
 
-loc_13F82:                              ; CODE XREF: sub_13F77+7A↓j
+loc_13F82:                              ; CODE XREF: blitDirtyRectsCga+7A↓j
                 cmp     word_158FC, 0
                 jnz     short loc_13F8A
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_13F8A:                              ; CODE XREF: sub_13F77+10↑j
+loc_13F8A:                              ; CODE XREF: blitDirtyRectsCga+10↑j
                 dec     word_158FC
                 mov     bx, word_15900
                 mov     ax, [bx+2]
@@ -8339,7 +8148,7 @@ loc_13F8A:                              ; CODE XREF: sub_13F77+10↑j
                 mov     ax, [bx+6]
                 mov     word_158F7, ax
 
-loc_13FAB:                              ; CODE XREF: sub_13F77+73↓j
+loc_13FAB:                              ; CODE XREF: blitDirtyRectsCga+73↓j
                 mov     di, ds:[bp+0]
                 add     bp, 2
                 add     di, word_158F9
@@ -8364,10 +8173,10 @@ loc_13FAB:                              ; CODE XREF: sub_13F77+73↓j
                 add     si, dx
                 loop    loc_13FAB
 
-loc_13FEC:                              ; CODE XREF: sub_13F77+53↑j
+loc_13FEC:                              ; CODE XREF: blitDirtyRectsCga+53↑j
                 add     word_15900, 0Eh
                 jmp     short loc_13F82
-sub_13F77       endp
+blitDirtyRectsCga endp
 
 ; ---------------------------------------------------------------------------
                 retn
@@ -8452,19 +8261,20 @@ loc_1407C:                              ; CODE XREF: sg0563:0481↓j
 
 ; =============== S U B R O U T I N E =======================================
 
+; blit loop to A000h
 
-video3Fn1       proc near
+blitDirtyRectsVga proc near
                 mov     word_15900, 74Fh
                 mov     ax, 0A000h
                 mov     es, ax
 
-loc_140A6:                              ; CODE XREF: video3Fn1+56↓j
+loc_140A6:                              ; CODE XREF: blitDirtyRectsVga+56↓j
                 cmp     word_158FC, 0
                 jnz     short loc_140AE
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_140AE:                              ; CODE XREF: video3Fn1+10↑j
+loc_140AE:                              ; CODE XREF: blitDirtyRectsVga+10↑j
                 dec     word_158FC
                 mov     bx, word_15900
                 mov     si, [bx+4]
@@ -8479,7 +8289,7 @@ loc_140AE:                              ; CODE XREF: video3Fn1+10↑j
                 mov     bp, [bx]
                 add     bp, ax
 
-loc_140D2:                              ; CODE XREF: video3Fn1+4F↓j
+loc_140D2:                              ; CODE XREF: blitDirtyRectsVga+4F↓j
                 mov     di, bp
                 add     bp, 140h
                 mov     ax, word_158F7
@@ -8492,20 +8302,21 @@ loc_140D2:                              ; CODE XREF: video3Fn1+4F↓j
                 jnz     short loc_140D2
                 add     word_15900, 0Eh
                 jmp     short loc_140A6
-video3Fn1       endp
+blitDirtyRectsVga endp
 
 ; ---------------------------------------------------------------------------
                 retn
 ; ---------------------------------------------------------------------------
 byte_140F4      db 691h dup(0), 0C3h, 40Ah dup(0)
-                                        ; DATA XREF: videoMode3+7B↑o
-                                        ; videoMode3+86↑o
+                                        ; DATA XREF: videoModeVga+7B↑o
+                                        ; videoModeVga+86↑o
 
 ; =============== S U B R O U T I N E =======================================
 
+; far; copy a width/height-prefixed picture to the buffer at (x,y)
 ; Attributes: bp-based frame
 
-sub_14B90       proc far                ; CODE XREF: sub_14BDD+32↓P
+blitPic         proc far                ; CODE XREF: blitPicFrame+32↓P
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -8542,7 +8353,7 @@ arg_6           = word ptr  0Ch
                 sar     ax, 1
                 add     si, 4
 
-loc_14BCA:                              ; CODE XREF: sub_14B90+41↓j
+loc_14BCA:                              ; CODE XREF: blitPic+41↓j
                 mov     cx, ax
                 rep movsw
                 add     di, bx
@@ -8558,14 +8369,15 @@ loc_14BCA:                              ; CODE XREF: sub_14B90+41↓j
                 pop     si
                 pop     bp
                 retf
-sub_14B90       endp
+blitPic         endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; matched by mnemonic signature to KEH 210DD
 ; Attributes: bp-based frame
 
-sub_14BDD       proc far                ; CODE XREF: sub_104EA+56↑P
+blitPicFrame    proc far                ; CODE XREF: drawWelcomePortraitFrames+56↑P
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -8599,7 +8411,7 @@ arg_8           = word ptr  0Eh
                 push    ax
                 push    es
                 push    di
-                call    sub_14B90
+                call    blitPic         ; far; copy a width/height-prefixed picture to the buffer at (x,y)
                 add     sp, 8
                 pop     bp
                 pop     es
@@ -8611,7 +8423,7 @@ arg_8           = word ptr  0Eh
                 pop     si
                 pop     bp
                 retf
-sub_14BDD       endp
+blitPicFrame    endp
 
 ; ---------------------------------------------------------------------------
                 align 10h
@@ -8646,7 +8458,7 @@ aS              db '%s',0               ; DATA XREF: writeCenteredString+A↑o
                 db 0D4h
                 db  2Ah ; *
 word_14CA6      dw 0                    ; DATA XREF: createNewMember+C7↑w
-                                        ; sub_10C58:loc_10CCD↑w ...
+                                        ; increaseAttribute:loc_10CCD↑w ...
 ATTRIBUTE_TEXT  AttributeText <21, 2, offset aSt>
                                         ; DATA XREF: writeClassesAndAttributes+8E↑r ; "ST:"
                 AttributeText <21, 3, offset aIq> ; "IQ:"
@@ -8664,11 +8476,11 @@ filename        db 'DISK1',0            ; DATA XREF: loadDisk1+A↑o
 aBorders        db 'BORDERS',0          ; DATA XREF: loadClasses+9↑o
 aArchtype       db 'ARCHTYPE',0         ; DATA XREF: loadClasses+51↑o
 aHdspct         db 'HDSPCT',0           ; DATA XREF: loadClasses+BC↑o
-aDisk1_0        db 'DISK1',0            ; DATA XREF: sub_103E0+43↑o
+aDisk1_0        db 'DISK1',0            ; DATA XREF: writeInitialDisk1+43↑o
 aGani           db 'GANI',0             ; DATA XREF: displayWelcomePortrait+1E↑o
 aF1d            db 'F%1d>',0            ; DATA XREF: listParty+34↑o
 a1616s1616s     db '%-16.16s - %-16.16s',0 ; DATA XREF: listParty+7D↑o
-aConD           db 'Con:%d',0           ; DATA XREF: sub_10751+1C↑o
+aConD           db 'Con:%d',0           ; DATA XREF: drawConValue+1C↑o
 ; char str[]
 str             db 'Skills',0           ; DATA XREF: displaySkills+3B↑o
 ; char aActivePassive[]
@@ -8676,16 +8488,17 @@ aActivePassive  db 'Active      Passive',0
                                         ; DATA XREF: displaySkills+49↑o
 a1d1010s        db '%1d %-10.10s',0     ; DATA XREF: displaySkills+81↑o
 a1d1010s_0      db '%1d %-10.10s',0     ; DATA XREF: displaySkills+C6↑o
-a22d            db '%2.2d->',0          ; DATA XREF: sub_1089E+1F↑o
+a22d            db '%2.2d->',0          ; DATA XREF: drawPointsRemaining+1F↑o
 a1d1313s        db '%1d)%-13.13s',0     ; DATA XREF: writeClassesAndAttributes+3A↑o
 aAttributePts   db 'Attribute Pts: <-',0
 a3s             db '%3s',0              ; DATA XREF: writeClassesAndAttributes+92↑o
 a2u             db '%2u',0              ; DATA XREF: writeClassesAndAttributes+CA↑o
 aSex            db 'Sex:',0
 ; char aChooseAProfess[]
-aChooseAProfess db 'Choose a Profession:',0 ; DATA XREF: sub_10A65+1E↑o
-a1d1313s_0      db '%1d)%-13.13s',0     ; DATA XREF: sub_10A65+3E↑o
-a1d1313s_1      db '%1d)%-13.13s',0     ; DATA XREF: sub_10A65+7E↑o
+aChooseAProfess db 'Choose a Profession:',0
+                                        ; DATA XREF: chooseProfessionMenu+1E↑o
+a1d1313s_0      db '%1d)%-13.13s',0     ; DATA XREF: chooseProfessionMenu+3E↑o
+a1d1313s_1      db '%1d)%-13.13s',0     ; DATA XREF: chooseProfessionMenu+7E↑o
 aOjnabBob       db 'Ojnab Bob',0
 ; char aReallyRemoveTh[]
 aReallyRemoveTh db 'Really remove this member?',0
@@ -8732,7 +8545,7 @@ aKehExe_0       db 'KEH.EXE',0
                 db 0C4h
                 db  6Eh ; n
                 db  1Bh
-byte_14EBE      db 0                    ; DATA XREF: sub_1164F+1C↑r
+byte_14EBE      db 0                    ; DATA XREF: newLine+1C↑r
 _inverseText    db 0                    ; DATA XREF: listParty+50↑w
                                         ; listParty+66↑w ...
 ; void far *pictWelcome
@@ -8792,12 +8605,12 @@ _windowParty    Window <1, 21, 38, 23, 1, 21, <4, 0ACh, 98h, 18h>, 8, 0, 0, 0>
                                         ; DATA XREF: listParty+F↑o
 ; Window windowSkills
 _windowSkills   Window <14, 1, 38, 12, 14, 1, <38h, 8, 64h, 60h>, 0, 0, 0, 0>
-                                        ; DATA XREF: sub_10751+6↑o
+                                        ; DATA XREF: drawConValue+6↑o
                                         ; displaySkills+2E↑o ...
 ; Window windowMain
 _windowMain     Window <0, 14, 39, 19, 0, 14, <0, 70h, 0A0h, 30h>, 0, 0, 0, 0>
                                         ; DATA XREF: writeClassesAndAttributes+17↑o
-                                        ; sub_10A65+D↑o ...
+                                        ; chooseProfessionMenu+D↑o ...
 ; Window windowPortrait
 _windowPortrait Window <1, 1, 12, 11, 1, 1, <4, 8, 30h, 60h>, 0, 0, 0, 2A6h>
 _writeStringPtr1 dw 0                   ; DATA XREF: writeString↑w
@@ -8809,7 +8622,7 @@ _writeStringPtr3 dw 0                   ; DATA XREF: writeString+8↑w
                                         ; writeString+3C↑w ...
 aYouDoNotHaveEn db 'You do not have enough memory to run Fountain of Dreams.$',0
                                         ; DATA XREF: gfxInit-E↑o
-unk_14FAA       db    0                 ; DATA XREF: videoMode3+63↑o
+unk_14FAA       db    0                 ; DATA XREF: videoModeVga+63↑o
                 db    0
                 db    0
                 db    0
@@ -8971,10 +8784,10 @@ unk_14FAA       db    0                 ; DATA XREF: videoMode3+63↑o
                 db    0
                 db    0
                 db    0
-VIDEO_MODE_FNS  dw offset sub_13D18     ; DATA XREF: gfxScanlinesSetup+2F↑r
-                dw offset sub_13DA0
-                dw offset sub_13DCE
-                dw offset videoMode3
+VIDEO_MODE_FNS  dw offset videoModeCga  ; DATA XREF: gfxScanlinesSetup+2F↑r
+                dw offset videoModeTandy ; INT10h mode 4: 320x200 4-colour CGA, scanline table at 2000h interleave
+                dw offset videoModeEga
+                dw offset videoModeVga
 _gfxMode        db 2                    ; DATA XREF: _main+19↑w
                                         ; gfxInit+F↑r ...
                 db    0
@@ -8985,8 +8798,8 @@ _gfxMode        db 2                    ; DATA XREF: _main+19↑w
                 db    0
 _pictArray1     dd 0                    ; DATA XREF: _main+95↑r
                                         ; _main+253↑r ...
-unk_1505F       db    0                 ; DATA XREF: sub_13D18+12↑o
-                                        ; videoMode3+55↑o
+unk_1505F       db    0                 ; DATA XREF: videoModeCga+12↑o
+                                        ; videoModeVga+55↑o
                 db    0
                 db    0
                 db    0
@@ -9386,7 +9199,7 @@ unk_1505F       db    0                 ; DATA XREF: sub_13D18+12↑o
                 db    0
                 db    0
                 db    0
-_scanlinePtrs?  dw 0C8h dup(0)          ; DATA XREF: writeChar?+13↑r
+_scanlinePtrs?  dw 0C8h dup(0)          ; DATA XREF: writeCharAlt+13↑r
                                         ; writeChar+1C↑r ...
                 db    0
                 db    0
@@ -10788,19 +10601,19 @@ _scanlinePtrs?  dw 0C8h dup(0)          ; DATA XREF: writeChar?+13↑r
                 db    0
                 db    0
                 db    0
-word_158F7      dw 0                    ; DATA XREF: sub_13F77+31↑w
-                                        ; sub_13F77+3F↑r ...
-word_158F9      dw 0                    ; DATA XREF: sub_13F77+20↑w
-                                        ; sub_13F77+3B↑r ...
+word_158F7      dw 0                    ; DATA XREF: blitDirtyRectsCga+31↑w
+                                        ; blitDirtyRectsCga+3F↑r ...
+word_158F9      dw 0                    ; DATA XREF: blitDirtyRectsCga+20↑w
+                                        ; blitDirtyRectsCga+3B↑r ...
 byte_158FB      db 0                    ; DATA XREF: sg0563:0402↑w
                                         ; sg0563:042B↑w
 word_158FC      dw 0                    ; DATA XREF: gfxScanlinesSetup+E↑w
                                         ; sg0563:00A9↑w ...
 word_158FE      dw 74Fh                 ; DATA XREF: gfxScanlinesSetup+8↑w
                                         ; sg0563:00A3↑w ...
-word_15900      dw 0                    ; DATA XREF: sub_13F77↑w
-                                        ; sub_13F77+17↑r ...
-MASTER_PALETTE  db 0, 0, 0              ; DATA XREF: videoMode3+24↑o
+word_15900      dw 0                    ; DATA XREF: blitDirtyRectsCga↑w
+                                        ; blitDirtyRectsCga+17↑r ...
+MASTER_PALETTE  db 0, 0, 0              ; DATA XREF: videoModeVga+24↑o
                 db 0, 0, 27h
                 db 3, 25h, 3
                 db 0, 1Bh, 1Bh
@@ -10816,8 +10629,8 @@ MASTER_PALETTE  db 0, 0, 0              ; DATA XREF: videoMode3+24↑o
                 db 3Fh, 0, 3Fh
                 db 3Fh, 3Fh, 0
                 db 3Fh, 3Fh, 3Fh
-_tempPalette    db 30h dup(0)           ; DATA XREF: videoMode3:loc_13EE5↑o
-                                        ; videoMode3+44↑o
+_tempPalette    db 30h dup(0)           ; DATA XREF: videoModeVga:loc_13EE5↑o
+                                        ; videoModeVga+44↑o
                 db    0
                 db    0
                 db    1
@@ -10856,19 +10669,19 @@ aThereAreRoadsA db 0Dh,'There are roads around here somewhere!',0Dh,0
 aTryUsingTheRoa db 0Dh,'Try using the road, friend.',0Dh,0
 aHic            db 0Dh,'            hic!',0Dh,0
                 db    0
-word_15A1E      dw 0                    ; DATA XREF: sub_119DA+37↑w
-word_15A20      dw 0                    ; DATA XREF: sub_119DA+3B↑w
-word_15A22      dw 0                    ; DATA XREF: sub_119DA+13↑w
-                                        ; sub_119DA+2F↑r
-word_15A24      dw 0                    ; DATA XREF: sub_119DA+17↑w
-                                        ; sub_119DA+33↑r
-_pictPtr        dw 0                    ; DATA XREF: sub_119DA+7↑r
-                                        ; sub_119DA+4F↑w ...
-word_15A28      dw 0                    ; DATA XREF: sub_119DA+2B↑r
-                                        ; sub_119DA+5C↑w ...
-byte_15A2A      db 0                    ; DATA XREF: sub_119DA+42↑w
-                                        ; sub_119DA:loc_11A3F↑w ...
-byte_15A2B      db 0                    ; DATA XREF: sub_119DA:loc_11A6D↑w
+word_15A1E      dw 0                    ; DATA XREF: lzssDecode+37↑w
+word_15A20      dw 0                    ; DATA XREF: lzssDecode+3B↑w
+word_15A22      dw 0                    ; DATA XREF: lzssDecode+13↑w
+                                        ; lzssDecode+2F↑r
+word_15A24      dw 0                    ; DATA XREF: lzssDecode+17↑w
+                                        ; lzssDecode+33↑r
+_pictPtr        dw 0                    ; DATA XREF: lzssDecode+7↑r
+                                        ; lzssDecode+4F↑w ...
+word_15A28      dw 0                    ; DATA XREF: lzssDecode+2B↑r
+                                        ; lzssDecode+5C↑w ...
+byte_15A2A      db 0                    ; DATA XREF: lzssDecode+42↑w
+                                        ; lzssDecode:loc_11A3F↑w ...
+byte_15A2B      db 0                    ; DATA XREF: lzssDecode:loc_11A6D↑w
                 db    0
                 db    0
                 db    0
@@ -14982,12 +14795,12 @@ byte_15A2B      db 0                    ; DATA XREF: sub_119DA:loc_11A6D↑w
                 db    0
                 db    0
 word_16A3C      dw 0                    ; DATA XREF: start+4A↑w
-                                        ; sub_11FBC+8↑r ...
+                                        ; __myalloc+8↑r ...
 word_16A3E      dw 0                    ; DATA XREF: start+3E↑w
 off_16A40       dw offset loc_115D8+1   ; DATA XREF: sg0138:2228↑w
-                                        ; sub_11D34-19A↑r
+                                        ; __chkstk-19A↑r
 word_16A42      dw 0                    ; DATA XREF: start+39↑w
-                                        ; sub_11FBC+2↑r ...
+                                        ; __myalloc+2↑r ...
                 dw seg dseg
                 db    0
                 db    0
@@ -15065,10 +14878,10 @@ word_16A42      dw 0                    ; DATA XREF: start+39↑w
                 db    0
                 db    0
                 db    0
-word_16A92      dw 1E12h                ; DATA XREF: sub_1318C:loc_131AB↑r
-                                        ; sub_1318C+61↑w
+word_16A92      dw 1E12h                ; DATA XREF: _brkctl:loc_131AB↑r
+                                        ; _brkctl+61↑w
 aCFileInfo      db ';C_FILE_INFO',0
-dword_16AA1     dd 0                    ; DATA XREF: sub_11B9E+C↑w
+dword_16AA1     dd 0                    ; DATA XREF: __cinit+C↑w
                                         ; __ctermsub+E↑r ...
                 db    0
                 db    0
@@ -15078,21 +14891,21 @@ dword_16AA1     dd 0                    ; DATA XREF: sub_11B9E+C↑w
                 db    0
                 db    0
                 db    0
-word_16AAD      dw 0                    ; DATA XREF: sub_12024+26↑w
+word_16AAD      dw 0                    ; DATA XREF: __dosmaperr_helper+26↑w
                                         ; __cenvarg+89↑w ...
-word_16AAF      dw 0                    ; DATA XREF: sub_12DA9↑r
+word_16AAF      dw 0                    ; DATA XREF: _sopen_mode↑r
                 db    0
                 db    0
 word_16AB3      dw 0                    ; DATA XREF: start+5E↑w
-                                        ; sub_11B9E+26↑r ...
-word_16AB5      dw 0                    ; DATA XREF: sub_11B9E+4↑w
+                                        ; __cinit+26↑r ...
+word_16AB5      dw 0                    ; DATA XREF: __cinit+4↑w
                                         ; sg0138:2413↑r ...
                 align 2
-word_16AB8      dw 0                    ; DATA XREF: sub_12024↑w
+word_16AB8      dw 0                    ; DATA XREF: __dosmaperr_helper↑w
                                         ; __cenvarg+8F↑w ...
-word_16ABA      dw 14h                  ; DATA XREF: sub_12B7C+6↑r
-                                        ; sub_12B9C+9↑r ...
-byte_16ABC      db 81h                  ; DATA XREF: sub_11B9E:loc_11C36↑w
+word_16ABA      dw 14h                  ; DATA XREF: _close+6↑r
+                                        ; _lseek+9↑r ...
+byte_16ABC      db 81h                  ; DATA XREF: __cinit:loc_11C36↑w
                                         ; _exit:loc_11CA6↑r
                 db  81h
                 db  81h
@@ -15121,7 +14934,7 @@ argv            dw 0                    ; DATA XREF: start+85↑r
                                         ; sg0138:24DC↑w
 ; char **word_16AD4
 word_16AD4      dw 0                    ; DATA XREF: start+81↑r
-                                        ; sub_11EFA+44↑w ...
+                                        ; __setenvp+44↑w ...
 word_16AD6      dw 1EAAh                ; DATA XREF: sg0138:2435↑w
                                         ; sg0138:24EA↑r
 seg_16AD8       dw seg dseg             ; DATA XREF: sg0138:2422↑w
@@ -15134,8 +14947,8 @@ byte_16ADF      db 0                    ; DATA XREF: __ctermsub+20↑r
 dword_16AE0     dd 0                    ; DATA XREF: __ctermsub+23↑r
 word_16AE4      dw 0                    ; DATA XREF: __FF_MSGBANNER+A↑r
                                         ; __FF_MSGBANNER+11↑r
-word_16AE6      dw 4170h                ; DATA XREF: sub_11D34+7↑r
-                                        ; sub_12FC0+1↑r
+word_16AE6      dw 4170h                ; DATA XREF: __chkstk+7↑r
+                                        ; _stackavail+1↑r
 word_16AE8      dw 0                    ; DATA XREF: sg0138:loc_11D6C↑w
                                         ; sg0138:2596↑r
                 db    0
@@ -15158,7 +14971,7 @@ word_16AE8      dw 0                    ; DATA XREF: sg0138:loc_11D6C↑w
                 db  12h
                 db    2
                 db 0FFh
-word_16AFE      dw 0                    ; DATA XREF: sub_12084+90↑w
+word_16AFE      dw 0                    ; DATA XREF: __flsbuf+90↑w
                 db 0E6h
                 db  35h ; 5
                 db    0
@@ -15446,30 +15259,30 @@ aNull_0         db '(null)',0
                 db    0
                 db    0
 byte_16C2F      db 0                    ; DATA XREF: _sopen-75A↑r
-word_16C30      dw 0                    ; DATA XREF: sub_12FE4+1F↑w
-word_16C32      dw 0                    ; DATA XREF: sub_12FE4+22↑w
+word_16C30      dw 0                    ; DATA XREF: unknown_libname_2+1F↑w
+word_16C32      dw 0                    ; DATA XREF: unknown_libname_2+22↑w
                 db    0
                 db    0
-word_16C36      dw 0                    ; DATA XREF: sub_12FE4+32↑w
+word_16C36      dw 0                    ; DATA XREF: unknown_libname_2+32↑w
                 db    0
                 db    0
-word_16C3A      dw 0                    ; DATA XREF: sub_1302D+A2↑r
+word_16C3A      dw 0                    ; DATA XREF: __amalloc+A2↑r
                 db    0
                 db    0
-word_16C3E      dw 0                    ; DATA XREF: sub_1302D+4F↑w
-                                        ; sub_1302D+D6↑w
-word_16C40      dw 2000h                ; DATA XREF: sub_13110:loc_13120↑r
+word_16C3E      dw 0                    ; DATA XREF: __amalloc+4F↑w
+                                        ; __amalloc+D6↑w
+word_16C40      dw 2000h                ; DATA XREF: __amexpand:loc_13120↑r
                                         ; __cenvarg:loc_134FC↑r ...
                 align 4
-byte_16C44      db 0                    ; DATA XREF: sub_1302D:loc_13085↑w
-                                        ; sub_1302D:loc_130C0↑w
+byte_16C44      db 0                    ; DATA XREF: __amalloc:loc_13085↑w
+                                        ; __amalloc:loc_130C0↑w
                 align 2
-off_16C46       dw offset writeStringAt ; DATA XREF: sub_127F0+53↑r
-off_16C48       dw offset writeStringAt ; DATA XREF: sub_127F0+6B↑r
+off_16C46       dw offset writeStringAt ; DATA XREF: _output_float+53↑r
+off_16C48       dw offset writeStringAt ; DATA XREF: _output_float+6B↑r
                 db  2Eh ; .
                 db  1Dh
-off_16C4C       dw offset writeStringAt ; DATA XREF: sub_127F0+84↑r
-off_16C4E       dw offset writeStringAt ; DATA XREF: sub_127F0+A2↑r
+off_16C4C       dw offset writeStringAt ; DATA XREF: _output_float+84↑r
+off_16C4E       dw offset writeStringAt ; DATA XREF: _output_float+A2↑r
 word_16C50      dw 0                    ; DATA XREF: __doexec+16C↑r
                                         ; __doexec+178↑r
 word_16C52      dw 0                    ; DATA XREF: __doexec+174↑r
@@ -15751,13 +15564,13 @@ word_16D72      dw 0                    ; DATA XREF: __doexec+1E5↑w
 aCom            db '.com',0
 aExe            db '.exe',0
                 align 4
-unk_16D80       db    0                 ; DATA XREF: sub_11B9E+37↑r
-                                        ; sub_11B9E+4D↑r ...
+unk_16D80       db    0                 ; DATA XREF: __cinit+37↑r
+                                        ; __cinit+4D↑r ...
                 db    0
-word_16D82      dw 0                    ; DATA XREF: sub_11B9E+20↑r
+word_16D82      dw 0                    ; DATA XREF: __cinit+20↑r
                                         ; __ctermsub↑r
-dword_16D84     dd 0                    ; DATA XREF: sub_11B9E+2F↑r
-dword_16D88     dd 0                    ; DATA XREF: sub_11B9E:loc_11BE1↑r
+dword_16D84     dd 0                    ; DATA XREF: __cinit+2F↑r
+dword_16D88     dd 0                    ; DATA XREF: __cinit:loc_11BE1↑r
                 db  52h ; R
                 db  20h
                 db  14h
@@ -15811,57 +15624,57 @@ aRunTimeErrorR6_1 db 0Dh,0Ah
                 db 0FFh
                 db 0FFh
                 db    0
-word_16F0C      dw 0                    ; DATA XREF: sub_122B4+55↑w
-                                        ; sub_122B4:loc_12348↑w ...
+word_16F0C      dw 0                    ; DATA XREF: __output+55↑w
+                                        ; __output:loc_12348↑w ...
 ; FILE *word_16F0E
-word_16F0E      dw 0                    ; DATA XREF: sub_122B4+1E↑w
-                                        ; sub_122B4+2BB↑r ...
-word_16F10      dw ?                    ; DATA XREF: sub_122B4+52↑w
-                                        ; sub_122B4+1AC↑w ...
-word_16F12      dw ?                    ; DATA XREF: sub_122B4+43↑w
-                                        ; sub_122B4:loc_1240E↑w ...
-word_16F14      dw ?                    ; DATA XREF: sub_122B4+49↑w
-                                        ; sub_122B4+111↑w ...
-word_16F16      dw ?                    ; DATA XREF: sub_122B4+40↑w
-                                        ; sub_122B4+75↑w ...
-word_16F18      dw ?                    ; DATA XREF: sub_122B4+58↑w
-                                        ; sub_122B4+9F↑w ...
-word_16F1A      dw ?                    ; DATA XREF: sub_122B4+18↑w
-                                        ; sub_122B4+17A↑r ...
-word_16F1C      dw ?                    ; DATA XREF: sub_122B4+4F↑w
-                                        ; sub_122B4+79↑w ...
-word_16F1E      dw ?                    ; DATA XREF: sub_122B4+4C↑w
-                                        ; sub_122B4+D7↑w ...
-word_16F20      dw ?                    ; DATA XREF: sub_122B4+46↑w
-                                        ; sub_122B4+18E↑w ...
-word_16F22      dw ?                    ; DATA XREF: sub_122B4+27↑w
-                                        ; sub_122B4+180↑r ...
-word_16F24      dw ?                    ; DATA XREF: sub_122B4+21↑w
-                                        ; sub_122B4:loc_125AA↑r ...
+word_16F0E      dw 0                    ; DATA XREF: __output+1E↑w
+                                        ; __output+2BB↑r ...
+word_16F10      dw ?                    ; DATA XREF: __output+52↑w
+                                        ; __output+1AC↑w ...
+word_16F12      dw ?                    ; DATA XREF: __output+43↑w
+                                        ; __output:loc_1240E↑w ...
+word_16F14      dw ?                    ; DATA XREF: __output+49↑w
+                                        ; __output+111↑w ...
+word_16F16      dw ?                    ; DATA XREF: __output+40↑w
+                                        ; __output+75↑w ...
+word_16F18      dw ?                    ; DATA XREF: __output+58↑w
+                                        ; __output+9F↑w ...
+word_16F1A      dw ?                    ; DATA XREF: __output+18↑w
+                                        ; __output+17A↑r ...
+word_16F1C      dw ?                    ; DATA XREF: __output+4F↑w
+                                        ; __output+79↑w ...
+word_16F1E      dw ?                    ; DATA XREF: __output+4C↑w
+                                        ; __output+D7↑w ...
+word_16F20      dw ?                    ; DATA XREF: __output+46↑w
+                                        ; __output+18E↑w ...
+word_16F22      dw ?                    ; DATA XREF: __output+27↑w
+                                        ; __output+180↑r ...
+word_16F24      dw ?                    ; DATA XREF: __output+21↑w
+                                        ; __output:loc_125AA↑r ...
 ; int t
-t               dw ?                    ; DATA XREF: sub_122B4:loc_122EC↑w
-                                        ; sub_122B4+E9↑r ...
-word_16F28      dw ?                    ; DATA XREF: sub_122B4+1BB↑w
-                                        ; sub_122B4:loc_12478↑w ...
+t               dw ?                    ; DATA XREF: __output:loc_122EC↑w
+                                        ; __output+E9↑r ...
+word_16F28      dw ?                    ; DATA XREF: __output+1BB↑w
+                                        ; __output:loc_12478↑w ...
 ; char *word_16F2A
-word_16F2A      dw ?                    ; DATA XREF: sub_122B4+12↑w
-                                        ; sub_125D2+79↑r ...
-word_16F2C      dw ?                    ; DATA XREF: sub_122B4+BF↑r
-                                        ; sub_122B4+CA↑r ...
-word_16F2E      dw ?                    ; DATA XREF: sub_125D2:loc_12648↑w
-                                        ; sub_127F0+90↑w ...
+word_16F2A      dw ?                    ; DATA XREF: __output+12↑w
+                                        ; iprint+79↑r ...
+word_16F2C      dw ?                    ; DATA XREF: __output+BF↑r
+                                        ; __output+CA↑r ...
+word_16F2E      dw ?                    ; DATA XREF: iprint:loc_12648↑w
+                                        ; _output_float+90↑w ...
 ; int word_16F30
-word_16F30      dw ?                    ; DATA XREF: sub_122B4+5B↑w
-                                        ; sub_122B4+68↑w ...
+word_16F30      dw ?                    ; DATA XREF: __output+5B↑w
+                                        ; __output+68↑w ...
                 align 10h
 _welcomePotraitId dw ?                  ; DATA XREF: displayWelcomePortrait+6↑w
-                                        ; sub_104EA+29↑r ...
+                                        ; drawWelcomePortraitFrames+29↑r ...
 word_16F42      dw ?                    ; DATA XREF: displayWelcomePortrait+8A↑w
-                                        ; sub_104EA+13↑r
+                                        ; drawWelcomePortraitFrames+13↑r
 word_16F44      dw ?                    ; DATA XREF: displayWelcomePortrait+71↑w
-                                        ; sub_104EA+6↑r
+                                        ; drawWelcomePortraitFrames+6↑r
 word_16F46      dw ?                    ; DATA XREF: displayWelcomePortrait+74↑w
-                                        ; sub_104EA+9↑r
+                                        ; drawWelcomePortraitFrames+9↑r
                 db    ? ;
                 db    ? ;
 byte_16F4A      db ?                    ; DATA XREF: displayWelcomePortrait+8D↑w
@@ -15869,7 +15682,7 @@ byte_16F4A      db ?                    ; DATA XREF: displayWelcomePortrait+8D�
 _welcomeImageLoaded dw ?                ; DATA XREF: displayWelcomePortrait:loc_104E0↑w
                                         ; _main+38↑w
 _disk1          Disk1 <?>               ; DATA XREF: loadDisk1+4F↑r
-                                        ; sub_103E0+6↑w ...
+                                        ; writeInitialDisk1+6↑w ...
                 db    ? ;
                 db    ? ;
                 db    ? ;
@@ -16383,7 +16196,7 @@ _disk1          Disk1 <?>               ; DATA XREF: loadDisk1+4F↑r
                 db    ? ;
                 db    ? ;
 _profession     dw ?                    ; DATA XREF: displaySkills+11↑r
-                                        ; sub_10B41+7↑r ...
+                                        ; rollMemberHitPoints+7↑r ...
                 db    ? ;
                 db    ? ;
                 db    ? ;
@@ -16896,10 +16709,10 @@ _profession     dw ?                    ; DATA XREF: displaySkills+11↑r
                 db    ? ;
                 db    ? ;
                 db    ? ;
-_xPos           dw ?                    ; DATA XREF: writeString?+9↑r
-                                        ; writeString?:loc_11516↑w ...
-_textY          dw ?                    ; DATA XREF: writeString?+D↑r
-                                        ; writeString?+11↑w ...
+_xPos           dw ?                    ; DATA XREF: writeStringAlt+9↑r
+                                        ; writeStringAlt:loc_11516↑w ...
+_textY          dw ?                    ; DATA XREF: writeStringAlt+D↑r
+                                        ; writeStringAlt+11↑w ...
 word_18214      dw ?                    ; DATA XREF: displayWelcomePortrait+C↑r
                                         ; displayWelcomePortrait+17↑w ...
                 db    ? ;
@@ -18314,7 +18127,7 @@ _fontData       dw ?                    ; DATA XREF: fontOpen+3F↑w
 sprint_buffer   db 100h dup(?)          ; DATA XREF: listParty+38↑o
                                         ; listParty+5B↑o ...
 _party          dw 5 dup(?)             ; DATA XREF: listParty+28↑r
-                                        ; sub_10751+15↑r ...
+                                        ; drawConValue+15↑r ...
                 db    ? ;
                 db    ? ;
                 db    ? ;
