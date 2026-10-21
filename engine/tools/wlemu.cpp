@@ -146,47 +146,9 @@ int main(int argc, char **argv) {
 				for (auto &o : order) std::printf("%s\n", o.second.c_str());
 			} else if (sub == "clear") { m.callCounts.clear(); m.callOrder = 0; }
 		} else if (cmd == "save" && i + 1 < argc) {
-			FILE *f = std::fopen(argv[++i], "wb");
-			if (f) {
-				const uint16_t regs[14] = {c.ax, c.cx, c.dx, c.bx, c.sp, c.bp, c.si, c.di, c.es, c.cs, c.ss, c.ds, c.ip, c.flags};
-				std::fwrite(regs, sizeof regs, 1, f);
-				std::fwrite(c.mem.data(), 1, c.mem.size(), f);
-				std::fwrite(&m.ega, sizeof m.ega, 1, f);
-				const int cnt = int(m.files.size());
-				std::fwrite(&cnt, sizeof cnt, 1, f);
-				for (auto &kv : m.files) {
-					const int h = kv.first, len = int(m.openNames[h].size());
-					const long pos = std::ftell(kv.second);
-					std::fwrite(&h, sizeof h, 1, f); std::fwrite(&len, sizeof len, 1, f); std::fwrite(m.openNames[h].data(), 1, size_t(len), f); std::fwrite(&pos, sizeof pos, 1, f);
-				}
-				std::fwrite(&m.nextHandle, sizeof m.nextHandle, 1, f);
-				std::fclose(f);
-			}
+			m.saveState(argv[++i]);
 		} else if (cmd == "load" && i + 1 < argc) {
-			FILE *f = std::fopen(argv[++i], "rb");
-			if (f) {
-				uint16_t regs[14];
-				if (std::fread(regs, sizeof regs, 1, f) == 1) {
-					c.ax = regs[0]; c.cx = regs[1]; c.dx = regs[2]; c.bx = regs[3]; c.sp = regs[4]; c.bp = regs[5]; c.si = regs[6]; c.di = regs[7];
-					c.es = regs[8]; c.cs = regs[9]; c.ss = regs[10]; c.ds = regs[11]; c.ip = regs[12]; c.flags = regs[13];
-					if (std::fread(c.mem.data(), 1, c.mem.size(), f) != c.mem.size()) std::fprintf(stderr, "short state file\n");
-					if (std::fread(&m.ega, sizeof m.ega, 1, f) != 1) std::fprintf(stderr, "short state file\n");
-					for (auto &kv : m.files) std::fclose(kv.second);
-					m.files.clear(); m.openNames.clear();
-					int cnt = 0;
-					if (std::fread(&cnt, sizeof cnt, 1, f) == 1)
-						for (int k = 0; k < cnt; ++k) {
-							int h = 0, len = 0; long pos = 0;
-							if (std::fread(&h, sizeof h, 1, f) != 1 || std::fread(&len, sizeof len, 1, f) != 1) break;
-							std::string nm(size_t(len), 0);
-							if (std::fread(nm.data(), 1, size_t(len), f) != size_t(len) || std::fread(&pos, sizeof pos, 1, f) != 1) break;
-							FILE *g = std::fopen((m.gameDir + "/" + nm).c_str(), "rb");
-							if (g) { std::fseek(g, pos, SEEK_SET); m.files[h] = g; m.openNames[h] = nm; }
-						}
-					if (std::fread(&m.nextHandle, sizeof m.nextHandle, 1, f) != 1) std::fprintf(stderr, "short state file\n");
-				}
-				std::fclose(f);
-			}
+			m.loadState(argv[++i]);
 		} else if (cmd == "regs") {
 			std::printf("AX=%04X BX=%04X CX=%04X DX=%04X SI=%04X DI=%04X BP=%04X SP=%04X CS=%04X DS=%04X ES=%04X SS=%04X IP=%04X FL=%04X\n", c.ax, c.bx, c.cx, c.dx, c.si, c.di, c.bp, c.sp, c.cs, c.ds, c.es, c.ss, c.ip, c.flags);
 		} else if (cmd == "bp" && i + 1 < argc) {

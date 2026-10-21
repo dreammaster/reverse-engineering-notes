@@ -11,6 +11,7 @@
 #include "wl/party.h"
 #include "wl/text.h"
 #include <cstdio>
+#include <cstring>
 #include <cstdlib>
 #include <functional>
 #include <map>
@@ -204,13 +205,13 @@ int main(int argc, char **argv) {
 	// original code
 	emu::Machine em(argv[2]);
 	em.boot(fod::readFile(argv[1]));
-	em.cpu.mem = start.mem;
+	std::memcpy(em.cpu.mem, start.mem.data(), start.mem.size());
 	em.ega = start.ega;
 	em.cpu.ax = regs.ax; em.cpu.bx = regs.bx; em.cpu.cx = regs.cx; em.cpu.dx = regs.dx; em.cpu.si = regs.si; em.cpu.di = regs.di;
 	em.cpu.es = 0xA000;
 	const std::string why = em.callNear(uint16_t(t.entry));
 	wl::Machine ref;
-	ref.mem = em.cpu.mem;
+	std::memcpy(ref.mem.data(), em.cpu.mem, ref.mem.size());
 	ref.ega = em.ega;
 
 	// native port

@@ -1,6 +1,6 @@
 // Shared emulator machine for wlemu / wltest: 8086 CPU + DOS, BIOS and EGA stubs.
 #pragma once
-#include "x86.h"
+#include "wl/x86.h"
 #include "wl/ega.h"
 #include "fod/bytes.h"
 #include "fod/gfx.h"
@@ -193,7 +193,7 @@ struct Machine {
 		if (!f) return false;
 		const uint16_t regs[14] = {cpu.ax, cpu.cx, cpu.dx, cpu.bx, cpu.sp, cpu.bp, cpu.si, cpu.di, cpu.es, cpu.cs, cpu.ss, cpu.ds, cpu.ip, cpu.flags};
 		std::fwrite(regs, sizeof regs, 1, f);
-		std::fwrite(cpu.mem.data(), 1, cpu.mem.size(), f);
+		std::fwrite(cpu.mem, 1, (size_t(1) << 20), f);
 		std::fwrite(&ega, sizeof ega, 1, f);
 		const int cnt = int(files.size());
 		std::fwrite(&cnt, sizeof cnt, 1, f);
@@ -215,7 +215,7 @@ struct Machine {
 		if (ok) {
 			cpu.ax = regs[0]; cpu.cx = regs[1]; cpu.dx = regs[2]; cpu.bx = regs[3]; cpu.sp = regs[4]; cpu.bp = regs[5]; cpu.si = regs[6]; cpu.di = regs[7];
 			cpu.es = regs[8]; cpu.cs = regs[9]; cpu.ss = regs[10]; cpu.ds = regs[11]; cpu.ip = regs[12]; cpu.flags = regs[13];
-			ok = std::fread(cpu.mem.data(), 1, cpu.mem.size(), f) == cpu.mem.size() && std::fread(&ega, sizeof ega, 1, f) == 1;
+			ok = std::fread(cpu.mem, 1, (size_t(1) << 20), f) == (size_t(1) << 20) && std::fread(&ega, sizeof ega, 1, f) == 1;
 		}
 		for (auto &kv : files) std::fclose(kv.second);
 		files.clear(); openNames.clear();

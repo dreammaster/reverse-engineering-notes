@@ -14,6 +14,16 @@ bool Machine::loadState(const std::string &path) {
 	return ok;
 }
 
+bool Machine::saveState(const std::string &path) const {
+	FILE *f = std::fopen(path.c_str(), "wb");
+	if (!f) return false;
+	bool ok = std::fwrite(regs, sizeof regs, 1, f) == 1;
+	ok = ok && std::fwrite(mem.data(), 1, mem.size(), f) == mem.size();
+	ok = ok && std::fwrite(&ega, sizeof ega, 1, f) == 1;
+	std::fclose(f);
+	return ok;
+}
+
 size_t Machine::diff(const Machine &o, size_t limit, bool verbose) const {
 	size_t total = 0, shown = 0;
 	auto report = [&](const char *area, size_t off, unsigned a, unsigned b) {

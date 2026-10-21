@@ -12,11 +12,13 @@ enum Flag : uint16_t { CF = 1, PF = 4, AF = 0x10, ZF = 0x40, SF = 0x80, TF = 0x1
 
 class Cpu {
 public:
-	Cpu() : mem(1 << 20, 0) {}
+	Cpu() : own(1 << 20, 0), mem(own.data()) {}
+	explicit Cpu(uint8_t *external) : mem(external) {}   // run on someone else's 1 MB image
 
 	uint16_t ax = 0, cx = 0, dx = 0, bx = 0, sp = 0, bp = 0, si = 0, di = 0;
 	uint16_t es = 0, cs = 0, ss = 0, ds = 0, ip = 0, flags = 0x0002;
-	std::vector<uint8_t> mem;
+	std::vector<uint8_t> own;
+	uint8_t *mem;                                        // 1 MB address space
 	uint64_t steps = 0;
 	bool halted = false;
 	std::string fault;                                   // set when an unsupported opcode is hit
