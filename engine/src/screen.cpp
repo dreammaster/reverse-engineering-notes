@@ -13,6 +13,30 @@ Image Screen::toImage() const {
 	return img;
 }
 
+size_t PictureSet::frameOffset(int frame) const {
+	const size_t at = 3 + 2 * size_t(frame);
+	if (frame < 0 || size_t(frame) >= count() || at + 2 > _d.size()) return 0;
+	const size_t off = _d[at] | (_d[at + 1] << 8);
+	return off + 4 <= _d.size() ? off : 0;
+}
+
+int PictureSet::frameWidth(int frame) const { const size_t o = frameOffset(frame); return o ? _d[o] * 2 : 0; }
+int PictureSet::frameHeight(int frame) const { const size_t o = frameOffset(frame); return o ? _d[o + 1] : 0; }
+
+void PictureSet::blit(Screen &s, int frame, int x, int y) const {
+	const size_t o = frameOffset(frame);
+	if (!o) return;
+	const int wb = _d[o], h = _d[o + 1];
+	const int px = x + _d[o + 2], py = y + _d[o + 3];
+	size_t p = o + 4;
+	for (int row = 0; row < h; ++row)
+		for (int col = 0; col < wb; ++col, ++p) {
+			if (p >= _d.size()) return;
+			s.put(px + col * 2, py + row, _d[p] >> 4);
+			s.put(px + col * 2 + 1, py + row, _d[p] & 15);
+		}
+}
+
 Assets::Assets(const std::string &dir)
     : tiles(lzssDecode(readFile(dir + "/TILES"))), borders(readFile(dir + "/BORDERS")) {
 	Bytes f = readFile(dir + "/FONT");

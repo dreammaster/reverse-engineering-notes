@@ -36,6 +36,7 @@ public:
 	void showMenu(const std::string &text, bool npcMode) override;
 	void log(const std::string &msg) override { _log.push_back(msg); }
 	void gameOver() override { _quit = true; }
+	void ending(int n) override;
 	void sound(int n) override;
 	void beginEncounter(int monsterIndex) override;
 	void useCommandInCombat(int slot) override;

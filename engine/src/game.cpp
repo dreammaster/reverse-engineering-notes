@@ -5,6 +5,8 @@
 #include "fod/savegame.h"
 #include "fod/sound.h"
 #include "fod/creator.h"
+#include "fod/lzss.h"
+#include "fod/archive.h"
 #include <algorithm>
 #include <cstring>
 
@@ -725,6 +727,31 @@ void Game::useCommandInCombat(int slot) {
 	_targetX[slot] = _w.disk.mapX; _targetY[slot] = _w.disk.mapY;
 	_w.lootFlag = false;
 	useCommandOnCell(slot, true);
+}
+
+} // namespace fod
+
+namespace fod {
+
+// Script op 74 (KEH showEndingScreen): full-screen picture from FPICT/DPICT/KPICT/EPICT; picture 3 ends the game.
+void Game::ending(int n) {
+	static const char *files[4] = {"FPICT", "DPICT", "KPICT", "EPICT"};
+	if (n < 0 || n > 3) return;
+	const Bytes pic = lzssDecode(readFile(_data.dir + "/" + files[n]));
+	for (int y = 0; y < 200; ++y)
+		for (int x = 0; x < 160 && size_t(y) * 160 + size_t(x) < pic.size(); ++x) {
+			_screen.put(x * 2, y, pic[size_t(y) * 160 + size_t(x)] >> 4);
+			_screen.put(x * 2 + 1, y, pic[size_t(y) * 160 + size_t(x)] & 15);
+		}
+	_platform.present(_screen);
+	if (_platform.waitKey() < 0) { _quit = true; return; }
+	if (n == 3) {
+		_dialogOpen = false;
+		message("\r\r\r    See you later...!");
+		_quit = true;
+		return;
+	}
+	redraw();
 }
 
 } // namespace fod

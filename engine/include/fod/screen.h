@@ -18,6 +18,20 @@ private:
 	Bytes _px;
 };
 
+// KEH picture set (blitPicFrame): byte count, 2 bytes, then u16 offsets (from the set start) at +3. Each frame is
+// {widthBytes, height, x, y} followed by 4bpp rows; x is added to the blit position in pixels.
+class PictureSet {
+public:
+	explicit PictureSet(Bytes d) : _d(std::move(d)) {}
+	size_t count() const { return _d.empty() ? 0 : _d[0]; }
+	void blit(Screen &s, int frame, int x, int y) const;   // x,y: origin the frame offsets are relative to
+	int frameWidth(int frame) const;                       // pixels
+	int frameHeight(int frame) const;
+private:
+	size_t frameOffset(int frame) const;
+	Bytes _d;
+};
+
 // Static assets needed to draw the game screens.
 class Assets {
 public:

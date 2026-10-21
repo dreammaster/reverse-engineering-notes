@@ -167,6 +167,21 @@ int main(int argc, char **argv) {
 			for (const char *k = argv[5]; *k; ++k) host.keys.push_back(*k);
 			runShop(w, host, std::atoi(argv[4]));
 			std::printf("cash=%u\n", w.disk.cash);
+		} else if (cmd == "chunk" && argc >= 6) {   // chunk <file> <entries> <idx> <out.bin>: decompressed archive chunk
+			Archive ar(path(dir, argv[3]), size_t(std::atoi(argv[4])));
+			const Bytes b = ar.chunkLzss(size_t(std::atoi(argv[5])));
+			if (argc >= 7) { FILE *f = std::fopen(argv[6], "wb"); std::fwrite(b.data(), 1, b.size(), f); std::fclose(f); }
+			std::printf("%zu bytes\n", b.size());
+		} else if (cmd == "pset" && argc >= 7) {   // pset <file> <entries> <idx> <out.png>: draw all frames of a picture set
+			Archive ar(path(dir, argv[3]), size_t(std::atoi(argv[4])));
+			PictureSet ps(ar.chunkLzss(size_t(std::atoi(argv[5]))));
+			Screen scr;
+			std::printf("%zu frames\n", ps.count());
+			for (size_t i = 0; i < ps.count(); ++i) {
+				std::printf("  %zu: %dx%d\n", i, ps.frameWidth(int(i)), ps.frameHeight(int(i)));
+				ps.blit(scr, int(i), 0, 0);
+			}
+			scr.toImage().writePng(argv[6]);
 		} else if (cmd == "borders" && argc >= 5) {   // borders <variant> <out.png>
 			Assets assets(dir);
 			Screen scr;
