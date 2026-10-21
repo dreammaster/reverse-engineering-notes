@@ -142,14 +142,91 @@ void Game::passTime() {
 	_w.passTime(false);
 }
 
+void Game::beginEncounter(int monsterIndex) {
+	_npcMode = true;
+	openDialog();
+	if (size_t(monsterIndex) < _w.map->monsters().size()) _dialog += _w.map->monsters()[size_t(monsterIndex)].name() + "\r";
+}
+
+int Game::pickFromList(const std::string &title, const std::vector<std::string> &items) {
+	openDialog();
+	_dialog += title + "\r";
+	for (size_t i = 0; i < items.size() && i < 9; ++i) _dialog += std::to_string(i + 1) + ". " + items[i] + "\r";
+	for (;;) {
+		const int k = readKey();
+		if (k >= '1' && k < '1' + int(std::min<size_t>(items.size(), 9))) return k - '1';
+		if (k == 0xFF) return -1;
+	}
+}
+
+int Game::chooseUseItem(int member, int &slot) {
+	Member &m = _w.party(member);
+	std::vector<std::string> names;
+	std::vector<int> slots;
+	for (int i = 0; i < m.itemCount() && i < 9; ++i) {
+		names.push_back(_w.item(m.itemId(i)).name);
+		slots.push_back(i);
+	}
+	if (names.empty()) return -1;
+	const int pick = pickFromList(m.name() + " uses:", names);
+	if (pick < 0) return -1;
+	slot = slots[size_t(pick)];
+	return member;
+}
+
+void Game::startPendingFight(int monsterIndex) {
+	_npcMode = false;
+	auto &ms = _w.map->monsters();
+	if (size_t(monsterIndex) >= ms.size()) return;
+	Monster &mo = ms[size_t(monsterIndex)];
+	mo.raw[0x60] = mo.raw[0x5B];
+	mo.raw[0x61] = mo.raw[0x5C];
+	Combat cb(_w, *this);
+	Combatant c;
+	c.type = 1; c.index = uint8_t(monsterIndex); c.sub = 0;
+	c.speed = uint8_t(mo.raw[0x1A] * 2);
+	c.command = 0x0E;
+	c.distance = uint8_t(cb.distanceToParty(int8_t(mo.raw[0x60]), int8_t(mo.raw[0x61])));
+	cb.list.push_back(c);
+	const unsigned speedAttr = (_data.hdspct.at(0x3E8) | (_data.hdspct.at(0x3E9) << 8)) & 7;
+	cb.maxSpeed = mo.raw[0x18 + speedAttr];
+	cb.commands = [this](Combat &cc, int slot, Combatant &rec) {
+		print("\r" + _w.party(slot).name() + ", choose: A)ttack E)vade R)un\r");
+		const int k = readKey();
+		if (k == 'E') { rec.command = 1; rec.speed = uint8_t(rec.speed * 2); return Combat::GroupAction::None; }
+		if (k == 'R') {
+			print("G)et closer  F)lee\r");
+			const int k2 = readKey();
+			if (k2 == 'G') return Combat::GroupAction::GetCloser;
+			if (k2 == 'F') return Combat::GroupAction::Flee;
+		}
+		cc.autoCommand(slot, rec);
+		return Combat::GroupAction::None;
+	};
+	const Combat::Outcome o = cb.run(false);
+	if (o.wiped) { print("\rYour party has been defeated.\r"); _quit = true; }
+	redraw();
+}
+
 void Game::runScriptChain(int script, int event, int arg8) {
-	ScriptCall c;
-	c.cellScript = script;
-	c.event = event;
-	c.member = 0;
-	c.arg8 = arg8;
-	const ScriptResult r = _vm.run(c);
-	if (r.request == 6 || r.request == 8) _log.push_back("combat requested (not implemented yet)");
+	int curScript = script, curEvent = event, curArg = arg8;
+	for (int guard = 0; guard < 32 && !_quit; ++guard) {
+		ScriptCall c;
+		c.cellScript = curScript;
+		c.event = curEvent;
+		c.member = 0;
+		c.arg8 = curArg;
+		const ScriptResult r = _vm.run(c);
+		if (r.request == 8) { startPendingFight(r.monsterIndex); break; }
+		if (r.request == 6) {
+			curScript = r.chainScript;
+			curEvent = kEvMonster;
+			curArg = r.monsterIndex;
+			continue;
+		}
+		break;
+	}
+	_npcMode = false;
 }
 
 void Game::endOfTurn() {

@@ -30,6 +30,10 @@ public:
 	void redrawMap() override { redraw(); }
 	void showMenu(const std::string &text, bool npcMode) override;
 	void log(const std::string &msg) override { _log.push_back(msg); }
+	void beginEncounter(int monsterIndex) override;
+	bool npcMode() const override { return _npcMode; }
+	int pickFromList(const std::string &title, const std::vector<std::string> &items) override;
+	int chooseUseItem(int member, int &slot) override;
 
 	bool movePartyStep(int dir);                    // KEH movePartyStep; false if the game should end
 	void runScriptChain(int script, int event, int arg8 = 0);
@@ -37,6 +41,7 @@ public:
 private:
 	void redraw();
 	void passTime();
+	void startPendingFight(int monsterIndex);   // KEH startPendingFight: combat against one scripted monster
 	void endOfTurn();              // KEH moveMonstersAndCheckEncounter: random encounters and combat
 	void openDialog();
 	void flushDialogPage();
@@ -51,6 +56,7 @@ private:
 	std::string _dialog;           // pending dialog text ('\r' = newline)
 	bool _dialogOpen = false;
 	bool _quit = false;
+	bool _npcMode = false;         // a monster conversation is open (KEH npcDialogMode)
 };
 
 } // namespace fod

@@ -1,4 +1,5 @@
 #include "fod/map.h"
+#include <algorithm>
 
 namespace fod {
 
@@ -59,6 +60,12 @@ Map::Map(const Bytes &chunk) {
 		it.y = r.u8();
 		it.item = r.u8();
 		_items.push_back(it);
+	}
+	const unsigned stored = std::min<unsigned>(chunk[0x1E] | (chunk[0x1F] << 8), 3);
+	for (unsigned i = 0; i < stored; ++i) {
+		const size_t o = 0x20 + 0x14C * size_t(i);
+		if (o + 0x14C > chunk.size()) break;
+		_stored.emplace_back(chunk.begin() + long(o), chunk.begin() + long(o) + 0x14C);
 	}
 }
 

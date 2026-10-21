@@ -430,15 +430,87 @@ void World::dropPacketLoot(int packet, int x, int y, int overrideFirstItem) {
 	if (any && map->inBounds(x, y)) map->cell(x, y).flags |= 0x80;
 }
 
+// ---------------------------------------------------------------- monsters / roster
+Monster *World::findMonsterById(int id, size_t &index) {
+	auto &ms = map->monsters();
+	for (size_t i = 0; i < ms.size(); ++i)
+		if (ms[i].id() == id) { index = i; return &ms[i]; }
+	return nullptr;
+}
+
+int World::findFreeRosterSlot() const {
+	for (int i = 0; i < 5; ++i)
+		if (disk.roster[size_t(i)].b[0] == 0) return i;
+	return 5;
+}
+
+void World::removeMonster(size_t index, bool dropLoot) {
+	auto &ms = map->monsters();
+	if (index >= ms.size()) return;
+	Monster &m = ms[index];
+	const int x = int8_t(m.raw[0x5B]), y = int8_t(m.raw[0x5C]);
+	if (dropLoot) {
+		std::map<int, int> loot;
+		for (int k = 0; k < m.raw[0x52]; ++k) ++loot[m.raw[0x53 + k]];
+		bool added = false;
+		for (const auto &kv : loot) {
+			if (addGroundItem(kv.first, kv.second, x, y)) continue;
+			GroundItem gi;
+			gi.qty = uint16_t(kv.second); gi.x = uint8_t(x); gi.y = uint8_t(y); gi.item = uint8_t(kv.first);
+			map->groundItems().push_back(gi);
+			added = true;
+		}
+		if (added && map->inBounds(x, y)) map->cell(x, y).flags |= 0x80;
+	}
+	if (map->inBounds(x, y)) map->cell(x, y).tile &= 0x07FF;
+	ms.erase(ms.begin() + long(index));
+}
+
+static const uint32_t kRankExp[14] = {0, 1500, 1000, 1500, 4500, 6500, 9500, 11500, 23000, 32000, 44000, 57000, 89000, 118000};
+
+bool World::addNpcToParty(size_t mi) {
+	if (partyCount() >= 5) return false;
+	const int slot = findFreeRosterSlot();
+	if (slot >= 5 || mi >= map->monsters().size()) return false;
+	Monster &mo = map->monsters()[mi];
+	Member &m = disk.roster[size_t(slot)];
+	m = Member{};
+	std::memcpy(m.b.data(), mo.raw.data(), 0x54);
+	disk.partyIds[disk.partyCount] = uint8_t(slot);
+	m.b[0x52] = mo.raw[0x52];
+	for (int k = 0; k < mo.raw[0x52]; ++k) initItemSlot(m, k, mo.raw[0x53 + k]);
+	m.setU32(0x5A, 0);
+	m.setU32(0x5E, m.b[0x4E] > 13 ? 200000u : kRankExp[m.b[0x4E]]);
+	m.b[0x58] = m.b[0x53] = m.b[0x54] = m.b[0x21] = m.b[0x57] = m.b[0x56] = m.b[0x55] = 0;
+	disk.cash += uint32_t(mo.raw[0x14] | (mo.raw[0x15] << 8) | (mo.raw[0x16] << 16) | (uint32_t(mo.raw[0x17]) << 24));
+	++disk.partyCount;
+	disk.tail[mo.id()] |= 1;
+	removeMonster(mi, false);
+	return true;
+}
+
+void World::removeMemberFromParty(int slot) {
+	Member &m = party(slot);
+	disk.tail[m.rosterId()] &= 0xFE;
+	m.b[0] = 0;
+	--disk.partyCount;
+	for (int i = slot; i < disk.partyCount; ++i) disk.partyIds[i] = disk.partyIds[i + 1];
+}
+
 // ---------------------------------------------------------------- maps
 void World::loadMap(int number) {
-	static const char *kinds[2] = {"map", "scr"};
-	Archive maps(data.dir + "/" + std::string(mapFilePrefix(number)) + kinds[0], 28);
-	Archive scr(data.dir + "/" + std::string(mapFilePrefix(number)) + kinds[1], 28);
-	mapNo = number;
-	map = std::make_unique<Map>(maps.chunk(size_t(number - 1)));
+	if (map && mapNo > 0) mapCache.insert_or_assign(mapNo, *map);
+	Archive scr(data.dir + "/" + std::string(mapFilePrefix(number)) + "scr", 28);
 	scripts = std::make_unique<ScriptBank>(scr.chunkLzss(size_t(number - 1)));
+	mapNo = number;
 	loadChangesFromDisk();
+	const auto cached = mapCache.find(number);
+	if (cached != mapCache.end()) {
+		map = std::make_unique<Map>(cached->second);
+		return;
+	}
+	Archive maps(data.dir + "/" + std::string(mapFilePrefix(number)) + "map", 28);
+	map = std::make_unique<Map>(maps.chunk(size_t(number - 1)));
 	for (const MapChange &c : changes)
 		if (c.map == number) applyChange(c);
 }
@@ -490,6 +562,7 @@ void World::recordCellChange(int op, int mapNumber, int x, int y, int val, int e
 		c = &changes.back();
 		c->map = uint8_t(mapNumber); c->x = uint8_t(x); c->y = uint8_t(y);
 	}
+	const auto cachedMap = mapCache.find(mapNumber);
 	switch (op) {
 	case 0x1C: c->kind |= 0x80; c->tile = uint16_t(val & 0x7FF); break;
 	case 0x1D:
@@ -499,6 +572,12 @@ void World::recordCellChange(int op, int mapNumber, int x, int y, int val, int e
 		c->w4 = uint16_t(extra & 0x7FFF);
 		break;
 	case 0x1E: c->kind |= 0x20; c->script = uint16_t(val); break;
+	}
+	if (cachedMap != mapCache.end() && cachedMap->second.inBounds(c->x, c->y)) {
+		MapCell &cell = cachedMap->second.cell(c->x, c->y);
+		if (c->kind & 0x80) cell.tile = uint16_t((cell.tile & 0xF800) | (c->tile & 0x7FF));
+		if (c->kind & 0x40) { cell.b3 = c->b3; cell.w4 = c->w4; cell.flags = uint8_t(c->f2 | (cell.flags & 0x80)); }
+		if (c->kind & 0x20) cell.script = c->script;
 	}
 }
 

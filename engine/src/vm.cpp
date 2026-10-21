@@ -4,6 +4,7 @@
 #include "fod/vm.h"
 #include <algorithm>
 #include <cctype>
+#include <cstring>
 
 namespace fod {
 
@@ -46,6 +47,12 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 	int reg = 0;
 	Cond cond;
 	if (call.event == kEvSkill) cond.val[0] = call.argA != 0;
+	if (!_h.npcMode() && call.event == kEvMonster) _h.beginEncounter(call.arg8);
+	if (_h.npcMode()) {
+		cur = 0;
+		for (int i = 0; i < w.partyCount(); ++i)
+			if (World::conState(w.party(i)) < 1) { cur = i; break; }
+	}
 	std::vector<Frame> frames;
 	int menuDepth = 0;
 	bool done = false;
@@ -284,10 +291,9 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 			_h.print("\r\r");
 			_h.print(strAt(p0));
 			break;
-		case 24: {  // drop loot packet at (p1, p2) -- packet index p0-1 (approx: items go to ground list)
-			_h.log("dropLoot packet " + std::to_string(p0 - 1) + " at " + std::to_string(p1) + "," + std::to_string(p2));
+		case 24:   // drop loot packet p0-1 at (p1, p2)
+			w.dropPacketLoot(p0 - 1, p1, p2);
 			break;
-		}
 		case 25: w.applyCellChange(disk.mapX, disk.mapY, 0x19, p0, 0); _h.redrawMap(); break;
 		case 26: w.applyCellChange(disk.mapX, disk.mapY, 0x1A, p0, p1); break;
 		case 27: w.applyCellChange(disk.mapX, disk.mapY, 0x1B, p0, 0); break;
@@ -368,8 +374,9 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 		case 46: acc = disk.hours * 100 + disk.minutes; break;
 		case 47: {  // menu begin: show text, read a key
 			++menuDepth;
+			const bool npc = _h.npcMode();
 			for (;;) {
-				_h.showMenu(strAt(p0), false);
+				_h.showMenu(strAt(p0), npc);
 				const int k = _h.readKey();
 				if (k >= '1' && k <= '9') { _lastKey = k - '0'; break; }
 				if (k == 0xFF && menuDepth > 1) {
@@ -379,6 +386,45 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 					--menuDepth;
 					_lastKey = 0xFF;
 					break;
+				}
+				if (npc) {
+					if (k == 'A') { res.request = 8; res.monsterIndex = call.arg8; done = true; break; }
+					if (k >= 0x3B && k <= 0x3F) {
+						const int sel = k - 0x3B;
+						if (sel < w.partyCount() && World::conState(w.party(sel)) < 1) cur = sel;
+						continue;
+					}
+					if (k == 'H') {
+						ScriptCall c2 = call;
+						c2.event = kEvHire; c2.member = cur;
+						if (run(c2).ran) { done = true; break; }
+						_h.message("I am not interested in joining up with the likes of you");
+						_lastKey = 0xFF;
+						break;
+					}
+					if (k == 'L') {
+						auto &ms = w.map->monsters();
+						if (size_t(call.arg8) < ms.size() && (ms[size_t(call.arg8)].raw[0x50] & 0x80)) {
+							Monster &m = ms[size_t(call.arg8)];
+							w.setMapCellHighBits(m.x(), m.y(), 0);
+							m.raw[0x5B] = 0x80; m.raw[0x5C] = 0x80;
+						}
+						done = true;
+						break;
+					}
+					if (k == 'U') {
+						int slot = 0;
+						const int mem = _h.chooseUseItem(cur, slot);
+						_lastKey = 0xFF;
+						if (mem >= 0) {
+							cur = mem;
+							ScriptCall c2 = call;
+							c2.event = 2; c2.member = mem; c2.arg8 = slot;
+							if (!run(c2).ran) _h.message("That doesn't affect me!");
+						}
+						break;
+					}
+					continue;
 				}
 				if (k == 'L' || k == 0xFF) { done = true; break; }
 			}
@@ -449,7 +495,39 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 		}
 		case 68: done = true; break;
 		case 69: disk.facing = uint16_t(p0); break;
-		case 72: _h.log("retrieve/store member"); break;
+		case 72: {   // retrieve / store a party member on this map
+			for (bool leave = false; !leave;) {
+				_h.showMenu("What do you wish?\r\r\r1. Retrieve a member\r2. Store a member\r\rL)eave", false);
+				const int k = _h.readKey();
+				auto &stored = w.map->storedMembers();
+				if (k == '1') {
+					if (stored.empty()) { _h.message("\rThere's no one here!"); continue; }
+					if (w.partyCount() >= 5) { _h.message("\rYour party is full!"); continue; }
+					std::vector<std::string> names;
+					for (const Bytes &b : stored) names.push_back(std::string(reinterpret_cast<const char *>(b.data()), strnlen(reinterpret_cast<const char *>(b.data()), 24)));
+					const int pick = _h.pickFromList("Pick up whom?", names);
+					if (pick < 0) continue;
+					const int slot = w.findFreeRosterSlot();
+					std::memcpy(w.disk.roster[size_t(slot)].b.data(), stored[size_t(pick)].data(), 0x14C);
+					w.disk.partyIds[w.disk.partyCount++] = uint8_t(slot);
+					w.disk.tail[w.disk.roster[size_t(slot)].rosterId()] |= 1;
+					stored.erase(stored.begin() + pick);
+				} else if (k == '2') {
+					if (w.partyCount() == 1) { _h.message("\rWith you gone, who's gonna type?"); continue; }
+					if (stored.size() >= 3) { _h.message("\rWe're full right now!"); continue; }
+					std::vector<std::string> names;
+					for (int i = 0; i < w.partyCount(); ++i) names.push_back(w.party(i).name());
+					const int pick = _h.pickFromList("Who will stay?", names);
+					if (pick < 0) continue;
+					stored.emplace_back(w.party(pick).b.begin(), w.party(pick).b.end());
+					w.removeMemberFromParty(pick);
+				} else if (k == 'L' || k == 0xFF) {
+					leave = true;
+				}
+			}
+			_h.redrawMap();
+			break;
+		}
 		case 73:
 			if (w.map->inBounds(p0, p1)) {
 				MapCell &c = w.map->cell(p0, p1);
@@ -467,9 +545,57 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 			done = true;
 			break;
 		}
-		case 53: case 54: case 52: case 75: case 58: case 61:
-			_h.log(std::string("monster/group op ") + scriptOpName(r.opcode) + " not implemented");
+		case 52: case 75: {   // move a monster / start a scripted fight with it
+			size_t mi = 0;
+			Monster *m = w.findMonsterById(p0, mi);
+			if (!m || (disk.tail[m->id()] & 2)) break;
+			if (r.opcode == 52) {
+				w.setMapCellHighBits(m->x(), m->y(), 0);
+				m->raw[0x5B] = uint8_t(p1); m->raw[0x5C] = uint8_t(p2);
+				w.markEntityOnMap(m->raw[0x5F], m->x(), m->y(), m->raw[0x65]);
+			}
+			m->raw[0x60] = 0xFF;
+			if (p3 == 1 || r.opcode == 75) {
+				if (p3 == 1) m->raw[0x50] |= 0x80;
+				res.request = 6;
+				res.chainScript = m->script();
+				res.monsterIndex = int(mi);
+				done = true;
+			}
 			break;
+		}
+		case 54: {   // recruit the monster with this id
+			*cv = false;
+			size_t mi = 0;
+			Monster *m = w.findMonsterById(p0, mi);
+			if (m && !(disk.tail[m->id()] & 3)) w.addNpcToParty(mi);
+			done = true;
+			break;
+		}
+		case 58: {   // give a monster a new script
+			size_t mi = 0;
+			Monster *m = w.findMonsterById(p0, mi);
+			if (m) { m->raw[0x66] = uint8_t(p1); m->raw[0x67] = uint8_t(p1 >> 8); }
+			break;
+		}
+		case 53: {   // spawn the inactive group placed at (p0, p1)
+			if (p0 == disk.mapX && p1 == disk.mapY) break;
+			auto &groups = w.map->groups();
+			const size_t start = (w.map->encounterPct() != 0 && w.map->groupTemplates() != 0) ? size_t(w.map->groupTemplates()) + 8 : 0;
+			for (size_t i = start; i < groups.size(); ++i) {
+				EnemyGroup &g = groups[i];
+				if ((g.raw[9] & 0x0F) || g.raw[0] != p0 || g.raw[1] != p1) continue;
+				w.spawnEnemyGroup(g);
+				break;
+			}
+			break;
+		}
+		case 61: {   // is the group placed at (p0, p1) alive?
+			*cv = false;
+			for (const EnemyGroup &g : w.map->groups())
+				if (g.raw[0] == p0 && g.raw[1] == p1) { *cv = (g.raw[9] & 0x0F) != 0; break; }
+			break;
+		}
 		default:
 			break;     // 33 and 51 are no-ops in the original
 		}

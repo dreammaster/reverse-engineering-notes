@@ -26,6 +26,11 @@ public:
 	virtual void ending(int /*n*/) {}
 	virtual void skillRaised(const std::string & /*member*/, int /*skill*/, int /*level*/) {}
 	virtual void log(const std::string & /*msg*/) {}
+	// monster conversations (KEH npcDialogMode)
+	virtual void beginEncounter(int /*monsterIndex*/) {}
+	virtual bool npcMode() const { return false; }
+	virtual int pickFromList(const std::string & /*title*/, const std::vector<std::string> & /*items*/) { return -1; }
+	virtual int chooseUseItem(int /*member*/, int & /*slot*/) { return -1; }   // returns the member index, or -1 to cancel
 };
 
 struct ScriptCall {
@@ -39,7 +44,9 @@ struct ScriptCall {
 struct ScriptResult {
 	bool ran = false;          // block existed and contained the event class
 	bool changedMap = false;
-	int request = -1;          // KEH _scriptRequest: 8 attack, 6 monster fight, -1 none
+	int request = -1;          // KEH _scriptRequest: 8 start combat, 6 run the monster's own script, 0 redraw, -1 none
+	int monsterIndex = 0;      // monster concerned by request 6 / 8
+	int chainScript = -1;      // script to run next for request 6
 };
 
 class ScriptVM {

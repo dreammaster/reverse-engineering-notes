@@ -6,6 +6,7 @@
 #include "fod/script.h"
 #include "fod/state.h"
 #include <functional>
+#include <map>
 #include <memory>
 
 namespace fod {
@@ -49,6 +50,7 @@ public:
 	Rng rng;
 	int mapNo = 0;                            // current 1-based map number
 	std::unique_ptr<Map> map;
+	std::map<int, Map> mapCache;              // maps visited this session, with their live state (KEH writes them to the save disk)
 	std::unique_ptr<ScriptBank> scripts;
 	std::vector<MapChange> changes;
 
@@ -104,6 +106,12 @@ public:
 	void moveEntityStep(uint8_t &px, uint8_t &py, int reach, int detect, int toward, int overlay);
 	void moveMapEntities();                   // monsters and groups creep toward the party
 	void placeEntitiesOnMap();
+	// monsters / NPCs / roster
+	Monster *findMonsterById(int id, size_t &index);
+	bool addNpcToParty(size_t monsterIndex);  // KEH addNpcToParty; false if the party is full
+	void removeMonster(size_t index, bool dropLoot);
+	void removeMemberFromParty(int slot);
+	int findFreeRosterSlot() const;
 	// loot (KEH addGroundItem / dropPacketLoot / addScratchItemsAtCell)
 	bool addGroundItem(int item, int qty, int x, int y);   // true if it merged into an existing stack
 	void dropPacketLoot(int packet, int x, int y, int overrideFirstItem = -1);                // stamp their overlay ids onto the map

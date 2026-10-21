@@ -298,22 +298,8 @@ void Combat::executeCombatant(size_t idx, bool &fled) {
 void Combat::removeDeadMonsters() {
 	auto &monsters = _w.map->monsters();
 	for (size_t i = 0; i < monsters.size();) {
-		Monster &m = monsters[i];
-		if (rd16(&m.raw[0x44]) >= 1) { ++i; continue; }
-		const int x = int8_t(m.raw[0x5B]), y = int8_t(m.raw[0x5C]);
-		std::map<int, int> loot;
-		for (int k = 0; k < m.raw[0x52]; ++k) ++loot[m.raw[0x53 + k]];
-		bool added = false;
-		for (const auto &kv : loot) {
-			if (_w.addGroundItem(kv.first, kv.second, x, y)) continue;
-			GroundItem gi;
-			gi.qty = uint16_t(kv.second); gi.x = uint8_t(x); gi.y = uint8_t(y); gi.item = uint8_t(kv.first);
-			_w.map->groundItems().push_back(gi);
-			added = true;
-		}
-		if (added && _w.map->inBounds(x, y)) _w.map->cell(x, y).flags |= 0x80;
-		if (_w.map->inBounds(x, y)) _w.map->cell(x, y).tile &= 0x07FF;
-		monsters.erase(monsters.begin() + long(i));
+		if (rd16(&monsters[i].raw[0x44]) >= 1) { ++i; continue; }
+		_w.removeMonster(i, true);
 	}
 }
 
