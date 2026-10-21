@@ -253,14 +253,12 @@ int Combat::rollAttack(const Combatant &c, int &totalDamage, int &wound) {
 int Combat::trySkillImprove(int slot, int skill) {
 	Member &m = _w.party(slot);
 	const int attrIdx = skill > 15 ? 1 : 4;
-	m.b[0x124 + skill] += 1;
-	const int threshold = 20;   // TODO: port the real threshold table from trySkillImprove
+	++m.b[0x124 + skill];
+	if (m.b[0x124 + skill] < _w.data.hdspct.at(0x13A + 0x16 * size_t(skill))) return 0;
 	int raised = 0;
-	if (m.b[0x124 + skill] >= threshold) {
-		const int attr = m.b[0x18 + attrIdx];
-		if (attr > 15 && attr - 15 > m.b[0x24 + skill]) { ++m.b[0x24 + skill]; raised = 1; }
-		m.b[0x124 + skill] = 0;
-	}
+	const int attr = m.b[0x18 + attrIdx];
+	if (attr > 15 && attr - 15 > m.b[0x24 + skill]) { ++m.b[0x24 + skill]; raised = 1; }
+	m.b[0x124 + skill] = 0;
 	return raised;
 }
 

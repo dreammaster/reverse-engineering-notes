@@ -5,7 +5,7 @@ namespace fod {
 
 GameData::GameData(const std::string &gameDir)
     : dir(gameDir), globals(readFile(gameDir + "/GLOBALS")), weapons(readFile(gameDir + "/WEAPONS")),
-      archetypes(readFile(gameDir + "/ARCHTYPE")) {}
+      archetypes(readFile(gameDir + "/ARCHTYPE")), hdspct(readFile(gameDir + "/HDSPCT")) {}
 
 // ---------------------------------------------------------------- Rng
 void Rng::reseed(uint32_t seed) {

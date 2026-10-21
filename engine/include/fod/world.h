@@ -16,6 +16,7 @@ struct GameData {
 	Globals globals;
 	Weapons weapons;
 	Archetypes archetypes;
+	Bytes hdspct;                // skill use thresholds at +0x13A + 0x16*skill
 	GameData(const std::string &gameDir);
 };
 
