@@ -493,7 +493,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X103B0);
 	op_stkvar	(x,	0);
 	create_insn	(0X103BF);
-	set_name	(0X103BF,	"readFileChunk");
+	set_name	(0X103BF,	"fileChunkIO");
 	create_insn	(x=0X103C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X103C6);
@@ -925,6 +925,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X107C3);
 	op_stkvar	(x,	1);
 	create_insn	(0X107CB);
+	set_name	(0X107CB,	"lootPartyCell");
 	create_insn	(x=0X107DD);
 	op_hex		(x,	1);
 	create_insn	(0X107E1);
@@ -2608,6 +2609,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12028);
 	op_stkvar	(x,	1);
 	create_insn	(0X1202D);
+	set_name	(0X1202D,	"itemActionMenu_part2");
 	create_insn	(x=0X1203B);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
@@ -2633,8 +2635,10 @@ static Bytes_0(void) {
 	create_insn	(x=0X12062);
 	op_hex		(x,	1);
 	create_insn	(0X12065);
+	set_name	(0X12065,	"itemActionMenu_part3");
 	create_insn	(x=0X12074);
 	op_hex		(x,	1);
+	set_name	(0X12074,	"itemActionMenu_part4");
 	set_cmt	(0X12090,	"y",	0);
 	set_cmt	(0X12093,	"x",	0);
 	create_insn	(x=0X12094);
@@ -3973,6 +3977,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1370A);
 	op_stkvar	(x,	1);
 	create_insn	(0X13716);
+	set_name	(0X13716,	"postCombatCleanup");
 	create_insn	(x=0X13719);
 	op_hex		(x,	1);
 	create_insn	(x=0X1371E);
@@ -3987,6 +3992,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13825);
 	op_hex		(x,	1);
 	create_insn	(0X13838);
+	set_name	(0X13838,	"postCombatCleanup_part2");
 	create_insn	(0X1383A);
 	create_insn	(x=0X13855);
 	op_hex		(x,	1);
@@ -5567,6 +5573,7 @@ static Bytes_0(void) {
 	create_insn	(0X151D0);
 	create_insn	(0X151DE);
 	create_insn	(0X15220);
+	set_name	(0X15220,	"buildCombatants_part2");
 	create_insn	(x=0X15241);
 	op_hex		(x,	1);
 	create_insn	(x=0X15278);
@@ -5625,6 +5632,7 @@ static Bytes_0(void) {
 	create_byte	(0X1542B);
 	make_array	(0X1542B,	0X2);
 	create_insn	(0X1542D);
+	set_name	(0X1542D,	"sortCombatants_part2");
 	set_cmt	(0X15436,	"size_t",	0);
 	set_cmt	(0X1543A,	"size_t",	0);
 	set_cmt	(0X15442,	"void *",	0);
@@ -6244,6 +6252,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X15DA7);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X15DAF);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15DB5);
@@ -6270,15 +6287,6 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15E41);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X15E46);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X15E52);
@@ -6708,6 +6716,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16861);
 	op_hex		(x,	1);
 	create_insn	(0X16867);
+	set_name	(0X16867,	"printInnocentKillPenalty");
 	create_insn	(x=0X16870);
 	op_hex		(x,	1);
 	create_insn	(x=0X16872);
@@ -7015,6 +7024,7 @@ static Bytes_1(void) {
 	create_insn	(0X16C8E);
 	create_insn	(0X16C96);
 	create_insn	(0X16C9E);
+	set_cmt	(0X16C9F,	"int",	0);
 	create_insn	(x=0X16CA3);
 	op_hex		(x,	1);
 	create_insn	(x=0X16CA6);
@@ -7216,6 +7226,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16F3D);
 	op_stkvar	(x,	0);
 	create_insn	(0X16F43);
+	set_name	(0X16F43,	"attrBonus_part2");
 	create_insn	(0X16F57);
 	create_insn	(0X16F67);
 	create_insn	(0X16F6B);
@@ -7418,6 +7429,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_byte	(0X17260);
 	create_insn	(0X17261);
+	set_name	(0X17261,	"retrieveStoreMember_part2");
 	create_insn	(0X17272);
 	create_insn	(0X172BD);
 	create_insn	(x=0X172C4);
@@ -7875,6 +7887,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17970);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
+	set_name	(0X17970,	"checkTimedEffects_part2");
 	set_cmt	(0X17974,	"text",	0);
 	create_insn	(x=0X17978);
 	op_hex		(x,	1);
@@ -11967,6 +11980,15 @@ static Bytes_1(void) {
 	set_cmt	(0X1AE3D,	"jumptable 00019A29 case 37",	1);
 	create_insn	(x=0X1AE3D);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1AE47,	"jumptable 00019A29 case 45",	1);
 	create_insn	(x=0X1AE47);
 	op_stkvar	(x,	0);
@@ -11989,15 +12011,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X1AE9A);
 	op_stkvar	(x,	1);
 	create_insn	(0X1AEA3);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1AEA6);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1AEB5);
@@ -15314,6 +15327,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DA8C);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
+	set_name	(0X1DA8C,	"drawBorderSetUnused1");
 	set_cmt	(0X1DA93,	"bytes",	0);
 	create_insn	(x=0X1DA93);
 	op_plain_offset	(x,	1,	0X21240);
@@ -15322,6 +15336,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DA9B);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
+	set_name	(0X1DA9B,	"drawBorderSetUnused2");
 	set_cmt	(0X1DAA3,	"dataOffset",	0);
 	create_insn	(x=0X1DAA3);
 	op_dec		(x,	1);
@@ -15368,11 +15383,13 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DAF0);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
+	set_name	(0X1DAF0,	"drawListMenuBorders");
 	set_cmt	(0X1DAF7,	"bytes",	0);
 	create_insn	(x=0X1DAF7);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
 	create_insn	(0X1DAFF);
+	set_name	(0X1DAFF,	"drawCombatListBorders");
 	set_cmt	(0X1DB04,	"bytes",	0);
 	create_insn	(x=0X1DB04);
 	op_plain_offset	(x,	1,	0X21240);
@@ -15418,6 +15435,7 @@ static Bytes_2(void) {
 	create_insn	(0X1DBDF);
 	set_cmt	(0X1DBF3,	"str",	0);
 	create_insn	(0X1DBF9);
+	set_name	(0X1DBF9,	"writeString_markBreak");
 	create_insn	(0X1DBFD);
 	set_name	(0X1DBFD,	"writeStringFlushRun");
 	create_insn	(0X1DC0B);
@@ -15486,6 +15504,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DDC5);
 	op_plain_offset	(x,	1,	0X21240);
 	op_plain_offset	(x,	129,	0X21240);
+	set_name	(0X1DDC5,	"writeStringRow");
 	create_insn	(0X1DDFD);
 	set_name	(0X1DDFD,	"newLine");
 	create_insn	(0X1DE3F);
@@ -15536,8 +15555,10 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DF17);
 	op_hex		(x,	0);
 	create_insn	(0X1DF22);
+	set_name	(0X1DF22,	"readScriptByteFar");
 	create_insn	(0X1DF36);
 	create_insn	(0X1DF48);
+	set_name	(0X1DF48,	"readScriptRecord");
 	create_insn	(x=0X1DF51);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1DF5E);
@@ -15562,6 +15583,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DFB6);
 	op_stkvar	(x,	1);
 	create_insn	(0X1DFC6);
+	set_name	(0X1DFC6,	"setPartyFacing");
 	create_insn	(x=0X1DFCB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1DFDB);
@@ -15571,6 +15593,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1DFE1);
 	op_hex		(x,	1);
 	create_insn	(0X1DFEE);
+	set_name	(0X1DFEE,	"drawPartySprite");
 	create_insn	(x=0X1E001);
 	op_hex		(x,	1);
 	create_insn	(x=0X1E007);
@@ -15802,6 +15825,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1E443);
 	create_insn	(0X1E448);
+	set_name	(0X1E448,	"fileWrite");
 	create_insn	(x=0X1E44C);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1E44F);
@@ -15827,6 +15851,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1E493);
 	create_insn	(0X1E498);
+	set_name	(0X1E498,	"fileSeek");
 	create_insn	(x=0X1E49D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1E4A0);
@@ -15885,6 +15910,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1E5CE);
 	op_stkvar	(x,	1);
 	create_insn	(0X1E5E2);
+	set_name	(0X1E5E2,	"criticalErrorMessage");
 	create_insn	(x=0X1E5E6);
 	op_hex		(x,	1);
 	create_insn	(0X1E5EA);
@@ -16023,8 +16049,10 @@ static Bytes_2(void) {
 	create_insn	(x=0X1E883);
 	op_hex		(x,	0);
 	create_insn	(0X1E887);
+	set_name	(0X1E887,	"_callExitProcs1");
 	create_insn	(0X1E895);
 	create_insn	(0X1E896);
+	set_name	(0X1E896,	"_callExitProcs2");
 	create_insn	(0X1E8A8);
 	create_insn	(0X1E8AA);
 	set_name	(0X1E8AA,	"__FF_MSGBANNER");
@@ -16115,6 +16143,7 @@ static Bytes_2(void) {
 	create_insn	(0X1EBBA);
 	set_name	(0X1EBBA,	"__maperror");
 	create_insn	(0X1EBC0);
+	set_name	(0X1EBC0,	"__dosmaperr_helper");
 	create_byte	(0X1EBDA);
 	create_insn	(0X1EBDB);
 	create_insn	(0X1EBEA);
@@ -16747,6 +16776,7 @@ static Bytes_2(void) {
 	create_insn	(0X1F831);
 	create_insn	(0X1F833);
 	create_insn	(0X1F838);
+	set_name	(0X1F838,	"_write_flush");
 	create_insn	(x=0X1F844);
 	op_hex		(x,	1);
 	set_cmt	(0X1F846,	"DOS - 2+ - WRITE TO FILE WITH HANDLE\nBX = file handle, CX = number of bytes to write, DS:DX -> buffer",	0);
@@ -16843,6 +16873,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1FADD);
 	op_hex		(x,	0);
 	create_insn	(0X1FAF4);
+	set_name	(0X1FAF4,	"__brk_setblock");
 	create_insn	(0X1FB0A);
 	create_insn	(x=0X1FB21);
 	op_hex		(x,	1);
@@ -16886,6 +16917,7 @@ static Bytes_2(void) {
 	create_insn	(0X1FBD8);
 	set_name	(0X1FBD8,	"_ultoa");
 	create_insn	(0X1FBE2);
+	set_name	(0X1FBE2,	"_toupper");
 	create_insn	(x=0X1FBE5);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1FBE8);
@@ -17163,6 +17195,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X1FFF6,	0XA);
 	create_insn	(0X20000);
+	set_name	(0X20000,	"getWeaponRangeBand");
 	create_insn	(x=0X20003);
 	op_hex		(x,	1);
 	create_insn	(x=0X20007);
@@ -17250,6 +17283,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X20101);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X20104);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2010A);
@@ -17341,15 +17383,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X20209);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X20211);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2021C);
@@ -17665,6 +17698,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X2072B);
 	op_hex		(x,	0);
 	create_insn	(0X20734);
+	set_name	(0X20734,	"initVideoScanlines");
 	create_insn	(x=0X20748);
 	op_seg		(x,	1);
 	create_insn	(x=0X20761);
@@ -17905,11 +17939,17 @@ static Bytes_3(void) {
 	set_name	(0X2131E,	"aCom");
 	create_strlit	(0X21322,	0X4);
 	set_name	(0X21322,	"aDed");
+	set_cmt	(0X21326,	"near ptr: persistent map change records (12 bytes each; first word = count)",	1);
 	create_word	(0X21326);
+	set_name	(0X21326,	"_mapChangeList");
 	create_byte	(0X21328);
 	create_byte	(0X21329);
+	set_cmt	(0X2132A,	"current map number",	1);
 	create_byte	(0X2132A);
+	set_name	(0X2132A,	"_curMapNo");
+	set_cmt	(0X2132C,	"current region/disk index (selects the file set)",	1);
 	create_word	(0X2132C);
+	set_name	(0X2132C,	"_curRegion");
 	create_word	(0X2132E);
 	create_word	(0X21330);
 	create_word	(x=0X21332);
@@ -18929,7 +18969,9 @@ static Bytes_3(void) {
 	make_array	(0X2D0F2,	0XE);
 	create_word	(0X2D100);
 	create_word	(0X2D102);
+	set_cmt	(0X2D126,	"number of active map animations",	1);
 	create_word	(0X2D126);
+	set_name	(0X2D126,	"_animCount");
 	create_word	(0X2D128);
 	MakeStruct	(0X2D12A,	"Disk1");
 	set_name	(0X2D12A,	"_disk1");
@@ -18941,8 +18983,12 @@ static Bytes_3(void) {
 	create_word	(0X2DFFC);
 	create_word	(0X2DFFE);
 	create_word	(0X2E002);
+	set_cmt	(0X2E200,	"far ptr: current shop record while shopping (2Ch + 10h*items)",	1);
 	create_dword	(0X2E200);
+	set_name	(0X2E200,	"_curShop");
+	set_cmt	(0X2E204,	"minutes counter incremented by setTime",	1);
 	create_word	(0X2E204);
+	set_name	(0X2E204,	"_timeTicks");
 	create_word	(0X2E206);
 	create_word	(0X2E208);
 	set_name	(0X2E208,	"_weapons");
@@ -18950,18 +18996,24 @@ static Bytes_3(void) {
 	set_name	(0X2E414,	"_textX");
 	create_word	(0X2E416);
 	set_name	(0X2E416,	"_textY");
+	set_cmt	(0X2E418,	"script engine request code returned to the caller (8 = start combat, 6 = fight scripted monster, -1 = none)",	1);
 	create_word	(0X2E418);
+	set_name	(0X2E418,	"_scriptRequest");
 	create_word	(0X2E41A);
 	set_name	(0X2E41A,	"_globals");
 	create_word	(0X2E41C);
+	set_cmt	(0X2E41E,	"far ptr: enemy group records (66h bytes each, up to 8 sub-slots of 16h bytes)",	1);
 	create_dword	(0X2E41E);
+	set_name	(0X2E41E,	"_groups");
 	create_byte	(0X2E422);
 	set_name	(0X2E422,	"_quitGame");
 	create_byte	(0X2E423);
 	create_word	(0X2E424);
 	create_word	(0X2E426);
 	create_byte	(0X2E428);
+	set_cmt	(0X2E42A,	"far ptr to the current target's hit-point word",	1);
 	create_dword	(0X2E42A);
+	set_name	(0X2E42A,	"_targetHpPtr");
 	create_word	(0X2E42E);
 	create_word	(0X2E430);
 	create_word	(0X2E432);
@@ -18977,21 +19029,31 @@ static Bytes_3(void) {
 	create_byte	(0X2E442);
 	create_byte	(0X2E443);
 	create_byte	(0X2E444);
+	set_cmt	(0X2E446,	"far ptr: map's monster records (68h bytes each)",	1);
 	create_dword	(0X2E446);
+	set_name	(0X2E446,	"_monsters");
 	create_word	(0X2E4BA);
 	create_word	(0X2E4BC);
 	create_byte	(0X2E4BE);
 	create_dword	(0X2E4C0);
 	create_word	(0X2E4C4);
+	set_cmt	(0X2E4C6,	"far ptr to the current/target map cell",	1);
 	create_dword	(0X2E4C6);
+	set_name	(0X2E4C6,	"_curCell");
+	set_cmt	(0X2E6D4,	"combatant table: 12-byte records (type,idx,sub,...,command,...), count in _combatantCount",	1);
 	create_byte	(0X2E6D4);
+	set_name	(0X2E6D4,	"_combatants");
 	create_byte	(0X2E6D5);
 	create_byte	(0X2E6D6);
 	create_byte	(0X2E6DA);
 	create_byte	(0X2E6DC);
+	set_cmt	(0X2EBF4,	"far ptr to the script word being run",	1);
 	create_word	(0X2EBF4);
+	set_name	(0X2EBF4,	"_scriptPtr");
 	create_word	(0X2EBF6);
+	set_cmt	(0X2EBF8,	"far ptr: shop table for the map",	1);
 	create_word	(0X2EBF8);
+	set_name	(0X2EBF8,	"_shopsBase");
 	create_word	(0X2EBFA);
 	create_word	(0X2EBFC);
 	make_array	(0X2EBFE,	0X2);
@@ -19004,17 +19066,23 @@ static Bytes_3(void) {
 	set_name	(0X2EC0C,	"_professions");
 	create_word	(0X2EC10);
 	create_word	(0X2EC12);
+	set_cmt	(0X2EC14,	"near ptr: end of monster records / start of group records",	1);
 	create_word	(0X2EC14);
+	set_name	(0X2EC14,	"_monstersEnd");
 	create_word	(0X2EC16);
 	create_word	(0X2EC18);
 	set_name	(0X2EC18,	"_packetsSize");
+	set_cmt	(0X2EC1A,	"far ptr: ground-item records (6 bytes: qty, x, y, item)",	1);
 	create_dword	(0X2EC1A);
+	set_name	(0X2EC1A,	"_groundItems");
 	create_dword	(0X2EC1E);
 	create_byte	(0X2EC26);
 	make_array	(0X2EC26,	0X23);
 	set_name	(0X2EC26,	"sprintf_buffer");
 	create_byte	(0X2EC49);
+	set_cmt	(0X2ED26,	"nonzero while a monster/NPC conversation window (window7) is active",	1);
 	create_byte	(0X2ED26);
+	set_name	(0X2ED26,	"_npcDialogMode");
 	create_word	(0X2ED28);
 	make_array	(0X2ED28,	0X5);
 	set_name	(0X2ED28,	"_party");
@@ -19024,7 +19092,9 @@ static Bytes_3(void) {
 	create_dword	(0X2EE12);
 	create_word	(0X2EE16);
 	create_word	(0X2F018);
+	set_cmt	(0X2F01A,	"number of combatants in the current fight",	1);
 	create_word	(0X2F01A);
+	set_name	(0X2F01A,	"_combatantCount");
 	create_word	(0X2F01C);
 	create_byte	(0X2F01E);
 	create_word	(0X2F020);
@@ -19056,7 +19126,7 @@ static Functions_0(void) {
 	define_local_var(0X101BE, 0X103BF, "[bp-0X2]", "handle");
 	add_func    (0X103BF,0X10444);
 	set_func_flags(0X103BF,0x5410);
-	set_func_cmt(0X103BF,	"args(file, idx, table, mode, dst): opens file (prompting for disk), seeks to table[idx].offset<<4, reads table[idx].size bytes (mode 1: segmented read via sub_1E448)", 1);
+	set_func_cmt(0X103BF,	"args(file, idx, table, mode, buf): seeks to table[idx].offset<<4 and reads (mode 0) or writes (mode 1) table[idx].size bytes", 1);
 	set_frame_size(0X103BF, 0X4, 2, 0);
 	define_local_var(0X103BF, 0X10444, "[bp-0X2]", "handle");
 	define_local_var(0X103BF, 0X10444, "[bp+0X6]", "dst");
@@ -19082,6 +19152,7 @@ static Functions_0(void) {
 	set_frame_size(0X10795, 0X2, 2, 0);
 	add_func    (0X107CB,0X107E1);
 	set_func_flags(0X107CB,0x5400);
+	set_func_cmt(0X107CB,	"if the 'item flag' byte_2EE06 is set, runs lootCell at the party position", 1);
 	set_frame_size(0X107CB, 0, 0, 0);
 	add_func    (0X107E1,0X10A04);
 	set_func_flags(0X107E1,0x5410);
@@ -19225,11 +19296,14 @@ static Functions_0(void) {
 	set_frame_size(0X11FB7, 0X24, 2, 0);
 	add_func    (0X1202D,0X12065);
 	set_func_flags(0X1202D,0x1400);
+	set_func_cmt(0X1202D,	"mis-split fragment of itemActionMenu (prints 'Do what with your %s:')", 1);
 	add_func    (0X12065,0X12074);
 	set_func_flags(0X12065,0x5400);
+	set_func_cmt(0X12065,	"mis-split fragment of itemActionMenu", 1);
 	set_frame_size(0X12065, 0, 0, 0);
 	add_func    (0X12074,0X1207A);
 	set_func_flags(0X12074,0x5400);
+	set_func_cmt(0X12074,	"mis-split fragment of itemActionMenu", 1);
 	set_frame_size(0X12074, 0, 0, 0);
 	add_func    (0X1251E,0X1253F);
 	set_func_flags(0X1251E,0x5410);
@@ -19309,9 +19383,11 @@ static Functions_0(void) {
 	set_frame_size(0X136B8, 0, 2, 0);
 	add_func    (0X13716,0X13726);
 	set_func_flags(0X13716,0x5410);
+	set_func_cmt(0X13716,	"mis-split head of the loop that finalises groups after combat (calls dropPacketLoot / clears map cells)", 1);
 	set_frame_size(0X13716, 0X38, 2, 0);
 	add_func    (0X13838,0X138CA);
 	set_func_flags(0X13838,0x5400);
+	set_func_cmt(0X13838,	"mis-split continuation: for each dead group drops loot and clears its map cell", 1);
 	set_frame_size(0X13838, 0, 0, 0);
 	add_func    (0X138CA,0X13901);
 	set_func_flags(0X138CA,0x5400);
@@ -19400,6 +19476,7 @@ static Functions_0(void) {
 	set_frame_size(0X14F1A, 0X2C, 2, 0);
 	add_func    (0X15220,0X15335);
 	set_func_flags(0X15220,0x5400);
+	set_func_cmt(0X15220,	"mis-split tail of buildCombatants: adds enemy groups, then qsort", 1);
 	set_frame_size(0X15220, 0, 0, 0);
 	add_func    (0X15390,0X153F9);
 	set_func_flags(0X15390,0x5410);
@@ -19407,6 +19484,7 @@ static Functions_0(void) {
 	set_frame_size(0X15390, 0X1A, 2, 0);
 	add_func    (0X1542D,0X154B0);
 	set_func_flags(0X1542D,0x5400);
+	set_func_cmt(0X1542D,	"mis-split tail of sortCombatants: qsort of equal-speed runs", 1);
 	set_frame_size(0X1542D, 0, 0, 0);
 	add_func    (0X154B0,0X154D6);
 	set_func_flags(0X154B0,0x5410);
@@ -19434,6 +19512,7 @@ static Functions_0(void) {
 	set_frame_size(0X16328, 0, 0, 0);
 	add_func    (0X16867,0X168D9);
 	set_func_flags(0X16867,0x1400);
+	set_func_cmt(0X16867,	"'%s loses %ld experience points for killing innocent bystanders.'", 1);
 	add_func    (0X1695C,0X169A3);
 	set_func_flags(0X1695C,0x5410);
 	set_func_cmt(0X1695C,	"plays sound 1 and shows a message (short form in combat); used by the critical-error handler", 1);
@@ -19482,6 +19561,7 @@ static Functions_0(void) {
 	set_frame_size(0X16F3A, 0, 2, 0);
 	add_func    (0X16F43,0X16F6B);
 	set_func_flags(0X16F43,0x5400);
+	set_func_cmt(0X16F43,	"mis-split tail of attrBonus", 1);
 	set_frame_size(0X16F43, 0, 0, 0);
 	add_func    (0X16F6B,0X16F9D);
 	set_func_flags(0X16F6B,0x5410);
@@ -19511,6 +19591,7 @@ static Functions_0(void) {
 	define_local_var(0X17140, 0X17260, "[bp-0X6]", "win");
 	add_func    (0X17261,0X17264);
 	set_func_flags(0X17261,0x1400);
+	set_func_cmt(0X17261,	"mis-split tail of retrieveStoreMember", 1);
 	add_func    (0X1738A,0X173AC);
 	set_func_flags(0X1738A,0x5410);
 	set_func_cmt(0X1738A,	"clears window, writes text at (x,y), waits for a key", 1);
@@ -19540,6 +19621,7 @@ static Functions_0(void) {
 	set_frame_size(0X17854, 0X1A, 2, 0);
 	add_func    (0X17970,0X17AAB);
 	set_func_flags(0X17970,0x5400);
+	set_func_cmt(0X17970,	"mis-split tail of checkTimedEffects (mutation flare-up message loop)", 1);
 	set_frame_size(0X17970, 0, 0, 0);
 	add_func    (0X17AAB,0X17B02);
 	set_func_flags(0X17AAB,0x5410);
@@ -19995,9 +20077,11 @@ static Functions_0(void) {
 	set_frame_size(0X1DA41, 0X4, 0, 0);
 	add_func    (0X1DA8C,0X1DA9B);
 	set_func_flags(0X1DA8C,0x5400);
+	set_func_cmt(0X1DA8C,	"two vertical border segments (unused)", 1);
 	set_frame_size(0X1DA8C, 0, 0, 0);
 	add_func    (0X1DA9B,0X1DAA3);
 	set_func_flags(0X1DA9B,0x5400);
+	set_func_cmt(0X1DA9B,	"horizontal border segment (unused)", 1);
 	set_frame_size(0X1DA9B, 0, 0, 0);
 	add_func    (0X1DAA3,0X1DAAA);
 	set_func_flags(0X1DAA3,0x5400);
@@ -20019,9 +20103,11 @@ static Functions_0(void) {
 	set_frame_size(0X1DAD3, 0, 0, 0);
 	add_func    (0X1DAF0,0X1DAFF);
 	set_func_flags(0X1DAF0,0x5400);
+	set_func_cmt(0X1DAF0,	"draws the two vertical border segments used by list menus", 1);
 	set_frame_size(0X1DAF0, 0, 0, 0);
 	add_func    (0X1DAFF,0X1DB18);
 	set_func_flags(0X1DAFF,0x5400);
+	set_func_cmt(0X1DAFF,	"draws the two vertical border segments used by combat lists", 1);
 	set_frame_size(0X1DAFF, 0XA, 0, 0);
 	add_func    (0X1DB18,0X1DB4D);
 	set_func_flags(0X1DB18,0x5410);
@@ -20040,6 +20126,7 @@ static Functions_0(void) {
 	set_func_flags(0X1DB8B,0x1400);
 	add_func    (0X1DBF9,0X1DBFD);
 	set_func_flags(0X1DBF9,0x1400);
+	set_func_cmt(0X1DBF9,	"mis-split entry inside writeString: records the current position as the end of the word run", 1);
 	add_func    (0X1DBFD,0X1DC0B);
 	set_func_flags(0X1DBFD,0x5400);
 	set_func_cmt(0X1DBFD,	"word-wrap helper of writeString: emits chars from ptr1 up to ptr3", 1);
@@ -20074,6 +20161,7 @@ static Functions_0(void) {
 	set_frame_size(0X1DD92, 0, 0, 0);
 	add_func    (0X1DDC5,0X1DDFD);
 	set_func_flags(0X1DDC5,0x5400);
+	set_func_cmt(0X1DDC5,	"writes a 0FFh-terminated row (x,y,text...) into window3 using attribute 4", 1);
 	set_frame_size(0X1DDC5, 0, 0, 0);
 	add_func    (0X1DDFD,0X1DE3F);
 	set_func_flags(0X1DDFD,0x5400);
@@ -20104,15 +20192,19 @@ static Functions_0(void) {
 	set_frame_size(0X1DEE7, 0, 0, 0);
 	add_func    (0X1DF22,0X1DF36);
 	set_func_flags(0X1DF22,0x5400);
+	set_func_cmt(0X1DF22,	"reads a byte at es:di and advances di with segment carry", 1);
 	set_frame_size(0X1DF22, 0, 0, 0);
 	add_func    (0X1DF48,0X1DFC6);
 	set_func_flags(0X1DF48,0x5410);
+	set_func_cmt(0X1DF48,	"decodes one script record: low nibble of the first byte = event class; if it equals arg2, reads opcode+parameters via the decoder lists (off_22C2E); else skips opcode+length (table 22BC1)", 1);
 	set_frame_size(0X1DF48, 0X8, 2, 0);
 	add_func    (0X1DFC6,0X1DFEE);
 	set_func_flags(0X1DFC6,0x5410);
+	set_func_cmt(0X1DFC6,	"sets party facing 1-4 (5=no change) and the matching sprite index (table at dseg+1A36h)", 1);
 	set_frame_size(0X1DFC6, 0X4, 2, 0);
 	add_func    (0X1DFEE,0X1E017);
 	set_func_flags(0X1DFEE,0x5400);
+	set_func_cmt(0X1DFEE,	"draws the party icon tile at the centre of the map view (9,4) and refreshes", 1);
 	set_frame_size(0X1DFEE, 0X8, 0, 0);
 	add_func    (0X1E017,0X1E045);
 	set_func_flags(0X1E017,0x5400);
@@ -20171,9 +20263,11 @@ static Functions_0(void) {
 	define_local_var(0X1E3F8, 0X1E448, "[bp+0XA]", "dst");
 	add_func    (0X1E448,0X1E498);
 	set_func_flags(0X1E448,0x5410);
+	set_func_cmt(0X1E448,	"DOS write (40h) in 64K-1 chunks across segments; returns 1 on success", 1);
 	set_frame_size(0X1E448, 0, 2, 0);
 	add_func    (0X1E498,0X1E4B4);
 	set_func_flags(0X1E498,0x5410);
+	set_func_cmt(0X1E498,	"DOS lseek (42h): handle, hi, lo, whence", 1);
 	set_frame_size(0X1E498, 0, 2, 0);
 	add_func    (0X1E4B4,0X1E4D0);
 	set_func_flags(0X1E4B4,0x5410);
@@ -20190,6 +20284,7 @@ static Functions_0(void) {
 	set_frame_size(0X1E5BD, 0X6, 2, 0);
 	add_func    (0X1E5E2,0X1E5EA);
 	set_func_flags(0X1E5E2,0x5400);
+	set_func_cmt(0X1E5E2,	"calls showMessageBox for the DOS critical-error handler", 1);
 	set_frame_size(0X1E5E2, 0, 0, 0);
 	add_func    (0X1E5EA,0X1E651);
 	set_func_flags(0X1E5EA,0x1402);
@@ -20218,9 +20313,11 @@ static Functions_0(void) {
 	set_frame_size(0X1E85A, 0, 0, 0);
 	add_func    (0X1E887,0X1E896);
 	set_func_flags(0X1E887,0x5444);
+	set_func_cmt(0X1E887,	"CRT: calls near exit procedures between si and di", 1);
 	set_frame_size(0X1E887, 0, 0, 0);
 	add_func    (0X1E896,0X1E8A9);
 	set_func_flags(0X1E896,0x5444);
+	set_func_cmt(0X1E896,	"CRT: calls far exit procedures between si and di", 1);
 	set_frame_size(0X1E896, 0, 0, 0);
 	add_func    (0X1E8AA,0X1E8CA);
 	set_func_flags(0X1E8AA,0x5454);
@@ -20248,6 +20345,7 @@ static Functions_0(void) {
 	set_frame_size(0X1EB58, 0, 0, 0);
 	add_func    (0X1EBC0,0X1EBEE);
 	set_func_flags(0X1EBC0,0x5400);
+	set_func_cmt(0X1EBC0,	"CRT: maps a DOS error code to errno", 1);
 	set_frame_size(0X1EBC0, 0, 0, 0);
 	add_func    (0X1EBEE,0X1EC20);
 	set_func_flags(0X1EBEE,0x5454);
@@ -20310,6 +20408,7 @@ static Functions_0(void) {
 	set_frame_size(0X1F792, 0X8, 2, 0);
 	add_func    (0X1F838,0X1F886);
 	set_func_flags(0X1F838,0x5444);
+	set_func_cmt(0X1F838,	"CRT: DOS write helper of _write", 1);
 	set_frame_size(0X1F838, 0X4, 0, 0);
 	add_func    (0X1F8BA,0X1F8CC);
 	set_func_flags(0X1F8BA,0x5444);
@@ -20339,6 +20438,7 @@ static Functions_0(void) {
 	set_frame_size(0X1FA86, 0X4, 2, 0);
 	add_func    (0X1FAF4,0X1FB4A);
 	set_func_flags(0X1FAF4,0x5444);
+	set_func_cmt(0X1FAF4,	"CRT: INT 21h 4Ah memory resize helper of _brkctl", 1);
 	set_frame_size(0X1FAF4, 0, 0, 0);
 	add_func    (0X1FB4A,0X1FB89);
 	set_func_flags(0X1FB4A,0x5454);
@@ -20358,6 +20458,8 @@ static Functions_0(void) {
 	set_frame_size(0X1FBD8, 0X4, 2, 0);
 	add_func    (0X1FBE2,0X1FBFA);
 	set_func_flags(0X1FBE2,0x5410);
+	SetType(0X1FBE2, "int __cdecl toupper(int);");
+	set_func_cmt(0X1FBE2,	"table-driven toupper (ctype flag 2 = lowercase)", 1);
 	set_frame_size(0X1FBE2, 0, 2, 0);
 	add_func    (0X1FBFA,0X1FC1D);
 	set_func_flags(0X1FBFA,0x5454);
@@ -20419,6 +20521,7 @@ static Functions_0(void) {
 	set_frame_size(0X1FFD4, 0, 2, 0X6);
 	add_func    (0X20000,0X200D8);
 	set_func_flags(0X20000,0x5412);
+	set_func_cmt(0X20000,	"returns 1+index of the range band (per-distance byte table of the weapon fire mode) used for the target distance", 1);
 	set_frame_size(0X20000, 0XC, 2, 0);
 	add_func    (0X200D8,0X20182);
 	set_func_flags(0X200D8,0x5412);
@@ -20462,6 +20565,7 @@ static Functions_0(void) {
 	set_frame_size(0X20720, 0X4, 0, 0);
 	add_func    (0X20734,0X20772);
 	set_func_flags(0X20734,0x5402);
+	set_func_cmt(0X20734,	"far; resets the dirty list, builds the 200-entry scanline offset table (160 bytes/line) and calls the video-mode routine", 1);
 	set_frame_size(0X20734, 0X4, 0, 0);
 	add_func    (0X20772,0X2077F);
 	set_func_flags(0X20772,0x5402);

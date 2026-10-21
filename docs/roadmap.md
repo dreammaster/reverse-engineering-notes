@@ -32,8 +32,13 @@ effort. Keep this current across sessions.
       `batch_run_and_export.py`), `identify.py`, `rank_unnamed_functions.py`.
 - [ ] FOD.EXE: finish naming the remaining 81 `sub_XXXXX`; document
       `Disk1`/party-member save layout.
-- [ ] KEH.EXE: name the remaining 250; map/script interpreter, combat,
-      inventory, skills, UI.
+- [x] KEH.EXE first naming pass (2026-10-21): all 355 functions; see
+      [keh-engine.md](keh-engine.md).
+- [ ] KEH.EXE second pass: define structs and apply to operands; merge
+      `_partN` mis-splits; verify each opcode of the script VM; document the
+      remaining unknown fields (PartyMember +1F..23, Disk1 tail, weapon/item
+      tables); sound script format; animation (`?ANI`) format; tile/picture
+      decoding.
 - [ ] Data formats (`docs/file-formats.md`): DISK1-4 (savegame/state),
       xMAP, xPICT, xANI, TILES, FONT, BORDERS, ARCHTYPE, GLOBALS, PACKETS,
       SERVICES, WEAPONS, HDSPCT, xSCR (scripts/text?). Cross-check with the
