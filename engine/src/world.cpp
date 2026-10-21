@@ -249,10 +249,10 @@ bool World::isCellPassable(int x, int y) const {
 }
 
 void World::markEntityOnMap(int radius, int x, int y, int overlay) {
-	if (std::abs(x - disk.mapX) > radius || std::abs(y - disk.mapY) > radius) return;
 	if (!map || !map->inBounds(x, y)) return;
 	MapCell &c = map->cell(x, y);
-	c.tile = uint16_t((c.tile & 0x7FF) | (overlay << 11));
+	c.tile &= 0x7FF;
+	if (std::abs(x - disk.mapX) <= radius && std::abs(y - disk.mapY) <= radius) c.tile = uint16_t(c.tile | (overlay << 11));
 }
 
 // KEH spawnEnemyGroup (0x174A0) + rollGroupHp.
@@ -318,6 +318,83 @@ bool World::tryRandomEncounter() {
 		if (groups[size_t(i)].raw[0xD] > 0) --groups[size_t(i)].raw[0xD];
 	inst.raw[0xD] = 0xFF;
 	return true;
+}
+
+int World::partyLevelUnit() const {
+	int sum = 0;
+	for (int i = 0; i < partyCount(); ++i)
+		if (party(i).hp() > 0) sum += party(i).attr(2);
+	return std::max(1, sum / 5);
+}
+
+static const int kStepTable[24][2] = {{0, -1}, {1, -1}, {-1, -1}, {0, 1}, {-1, 1}, {1, 1}, {1, 0}, {1, 1},
+                                      {1, -1}, {1, 1}, {0, 1}, {1, 0}, {1, -1}, {1, 0}, {0, -1}, {-1, 0},
+                                      {-1, -1}, {-1, 1}, {-1, 1}, {0, 1}, {-1, 0}, {-1, -1}, {0, -1}, {-1, 0}};
+
+int World::directionTowards(int x, int y, int px, int py, bool toward) {
+	const int ax = toward ? px : x, ay = toward ? py : y;
+	const int bx = toward ? x : px, by = toward ? y : py;
+	if (ax == bx) return ay < by ? 0 : 3;
+	if (ax > bx) return ay > by ? 9 : (ay < by ? 12 : 6);
+	return ay > by ? 18 : (ay < by ? 21 : 15);
+}
+
+bool World::findFreeCellNear(uint8_t &px, uint8_t &py, int x, int y) {
+	const int dir = directionTowards(x, y, disk.mapX, disk.mapY, true);
+	for (int i = 0; i < 3; ++i) {
+		const int nx = x + kStepTable[dir + i][0], ny = y + kStepTable[dir + i][1];
+		if (!isCellPassable(nx, ny)) continue;
+		if (nx == disk.mapX && ny == disk.mapY) continue;
+		px = uint8_t(nx); py = uint8_t(ny);
+		return true;
+	}
+	return false;
+}
+
+void World::setMapCellHighBits(int x, int y, int v) {
+	if (!map || !map->inBounds(x, y)) return;
+	MapCell &c = map->cell(x, y);
+	c.tile = uint16_t((c.tile & 0x7FF) | (v << 11));
+}
+
+void World::moveEntityStep(uint8_t &px, uint8_t &py, int reach, int detect, int toward, int overlay) {
+	const int x = int8_t(px), y = int8_t(py);
+	if (toward <= 0 || !map || x < 0 || x >= map->width()) return;
+	auto within = [&](int r, int ex, int ey) { return std::abs(ex - disk.mapX) <= r && std::abs(ey - disk.mapY) <= r; };
+	int dist = 1;
+	while (dist < 64 && !within(dist, x, y)) ++dist;
+	if (dist != 1 && within(reach, x, y)) findFreeCellNear(px, py, x, y);
+	setMapCellHighBits(x, y, 0);
+	if (within(detect, int8_t(px), int8_t(py))) setMapCellHighBits(int8_t(px), int8_t(py), overlay);
+}
+
+void World::moveMapEntities() {
+	if (!map) return;
+	const int unit = partyLevelUnit();
+	const unsigned speedAttr = (data.hdspct.at(0x3E8) | (data.hdspct.at(0x3E9) << 8)) & 7;
+	for (Monster &m : map->monsters()) {
+		if (m.raw[0x5D] < 0x79 || m.raw[0x60] == 0xFF) continue;
+		m.raw[0x64] = uint8_t(m.raw[0x64] + m.raw[0x18 + speedAttr]);
+		while (m.raw[0x64] >= unit) {
+			moveEntityStep(m.raw[0x5B], m.raw[0x5C], m.raw[0x5E], m.raw[0x5F], m.hp(), m.raw[0x65]);
+			m.raw[0x64] = uint8_t(m.raw[0x64] - unit);
+		}
+	}
+	for (EnemyGroup &g : map->groups()) {
+		if (!(g.raw[9] & 0x0F) || (g.raw[9] & 0xF0)) continue;
+		g.raw[0xA] = uint8_t(g.raw[0xA] + g.raw[0xB]);
+		while (g.raw[0xA] >= unit) {
+			moveEntityStep(g.raw[2], g.raw[3], g.raw[4], g.raw[5], 1, g.raw[0xC]);
+			g.raw[0xA] = uint8_t(g.raw[0xA] - unit);
+		}
+	}
+}
+
+void World::placeEntitiesOnMap() {
+	if (!map) return;
+	for (Monster &m : map->monsters()) markEntityOnMap(m.raw[0x5F], m.x(), m.y(), m.raw[0x65]);
+	for (EnemyGroup &g : map->groups())
+		if (g.raw[9] & 0x0F) markEntityOnMap(g.raw[5], g.x(), g.y(), g.raw[0xC]);
 }
 
 // ---------------------------------------------------------------- maps

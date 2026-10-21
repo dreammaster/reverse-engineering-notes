@@ -154,6 +154,8 @@ void Game::runScriptChain(int script, int event, int arg8) {
 
 void Game::endOfTurn() {
 	Combat cb(_w, *this);
+	_w.moveMapEntities();
+	_w.placeEntitiesOnMap();
 	int n = cb.buildCombatants(false);
 	if (n <= 0 && _w.tryRandomEncounter()) {
 		message("\r\rUh oh! Here comes trouble!");

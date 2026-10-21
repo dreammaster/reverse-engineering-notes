@@ -96,6 +96,13 @@ public:
 	void markEntityOnMap(int radius, int x, int y, int overlay);
 	void spawnEnemyGroup(EnemyGroup &g);
 	bool tryRandomEncounter();                // true if a group appeared next to the party
+	int partyLevelUnit() const;               // KEH getPartyLevelUnit
+	static int directionTowards(int x, int y, int px, int py, bool toward);   // 0,3,..21 (KEH directionTowards)
+	bool findFreeCellNear(uint8_t &px, uint8_t &py, int x, int y);
+	void setMapCellHighBits(int x, int y, int v);
+	void moveEntityStep(uint8_t &px, uint8_t &py, int reach, int detect, int toward, int overlay);
+	void moveMapEntities();                   // monsters and groups creep toward the party
+	void placeEntitiesOnMap();                // stamp their overlay ids onto the map
 
 	// -- persistence list stored in Disk1.tail --
 	void syncChangesToDisk();

@@ -392,6 +392,8 @@ Combat::Outcome Combat::run(bool useMaxRange) {
 		if (!_w.passTime(true)) { out.wiped = true; return out; }
 		removeDeadMonsters();
 		postCombatCleanup();
+		_w.moveMapEntities();
+		_w.placeEntitiesOnMap();
 		const int n = buildCombatants(useMaxRange);
 		if (fled) { out.fled = true; break; }
 		if (n == 0) break;
