@@ -44,9 +44,24 @@ if(MINGW)
     target_link_options(wltest PRIVATE -static)
 endif()
 
-# Statically recompiled WL.EXE (generated from the unpacked image exported by ida_scripts/export_image.py; not committed)
+# Statically recompiled WL.EXE. The image comes from WL.EXE (set -DWL_EXE=path/to/WL.EXE; unpacked and combined with
+# WLA.BIN by wlimage) or from an image exported by ida_scripts/export_image.py. Nothing derived from the original program
+# is committed: the generated C++ is a build artifact.
+set(WL_EXE "" CACHE FILEPATH "path of the original WL.EXE")
+set(WL_GAME_DIR ${CMAKE_SOURCE_DIR}/../wasteland1/game CACHE PATH "directory with WLA.BIN and the data files")
+add_executable(wlimage tools/wlimage.cpp)
+target_link_libraries(wlimage wl)
 set(WL_IMAGE ${CMAKE_SOURCE_DIR}/../ida_scripts/wl_image.bin)
-if(EXISTS ${WL_IMAGE})
+if(WL_EXE AND EXISTS ${WL_EXE})
+    set(WL_IMAGE ${CMAKE_BINARY_DIR}/wl_image.bin)
+    add_custom_command(OUTPUT ${WL_IMAGE}
+        COMMAND wlimage ${WL_EXE} ${WL_GAME_DIR}/WLA.BIN ${WL_IMAGE}
+        DEPENDS wlimage ${WL_EXE} ${WL_GAME_DIR}/WLA.BIN)
+    set(WL_HAVE_IMAGE TRUE)
+elseif(EXISTS ${WL_IMAGE})
+    set(WL_HAVE_IMAGE TRUE)
+endif()
+if(WL_HAVE_IMAGE)
     option(WL_RECOMP_CHECK "wrap recompiled functions with a stack balance check" OFF)
     set(WL_CHECK_ARG "")
     if(WL_RECOMP_CHECK)

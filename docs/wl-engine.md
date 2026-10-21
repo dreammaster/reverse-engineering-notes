@@ -58,3 +58,34 @@ skills at 0x80 (30 pairs id/level), items at 0xBD (30 pairs id/quantity)).
 * 0x11000–0x11C00 `start`, file access (`openFile`, `mainFileRead`, ...), `allPicsRead`, Huffman tree builder/decoder (0x11B83, 0x11C28).
 * 0x11C00–0x16000 game logic (party handling, combat round at 0x12D84, action interpreter, ...).
 * 0x161C0–0x1C000 title/roster/character screens, text output, input, mouse, timers.
+
+## Static recompilation of WL.EXE
+
+The whole game logic is hand written 8086 assembly with register arguments, so instead of re-deriving every routine by
+hand the engine translates it mechanically and verifies the result against the oracle:
+
+* `engine/tools/wlimage.cpp` unpacks WL.EXE (EXEPACK) and overlays WLA.BIN at 1000:0 (the program does the same when it
+  starts). `-DWL_EXE=<path to WL.EXE>` makes CMake do this; alternatively `ida_scripts/export_image.py` exports the image.
+* `engine/tools/recomp/recomp.py <image> entries.txt out.cpp [--interp ...] [--check]` decodes the 8086 instructions
+  from every function start in `entries.txt` (817 IDA functions plus indirect targets such as 9E24/9EAE) and emits one C++
+  function `f_XXXX(Machine&, Regs&)` per entry: registers are variables, flags are booleans, `call` pushes the return
+  address on the emulated stack, local jumps are `goto`. Indirect calls/jumps go through the generated `dispatch` switch;
+  an indirect target that is not a function start falls back to the 8086 interpreter (`x86::Cpu`) and is reported.
+  The routines that rewrite their own code (06C9, 4330, 4388, 43A8, 43D0) are never translated; they always run on the
+  interpreter, which calls back into the generated functions for everything else.
+* `engine/wl/recomp_rt.cpp` is the machine around it: DOS file calls (`open/read/write/create/seek` on the game
+  directory, case insensitive), BIOS keyboard and video calls, the EGA ports, the PIT counter used for speed measurement,
+  and the timer interrupt (delivered at backward branches, either every N branches for deterministic tests or at 18.2 Hz
+  of wall clock time for play).
+* `wlrc <image> <gamedir> key/keys/wait/shot/save/diff ...` runs the recompiled game headless; `wlplay <image|WL.EXE>
+  <gamedir>` is the Win32 front-end (3x window, BIOS key codes).
+* Verification: `wlrctest` runs every function on both the interpreter and the generated code from the same saved states
+  (random register inputs) and compares registers, flags, 1 MB of memory and the EGA planes: about 690 of 817 functions
+  per state compare equal; the rest wait for keys, loop forever on random input, or call through null function pointers
+  (artefacts of the random inputs, explained one by one). `tools/recomp/difftest.py` plays a key script on both and
+  compares screenshots. The title screen and the map are pixel identical; only timer driven sprite animation differs.
+* `--check` wraps every function with a stack balance check (`stackCheck`), which found the one emitter bug that matters
+  here: a function whose entry is not its lowest instruction must start with `goto entry`.
+
+Known gaps: PC speaker sound (ports 42h/43h/61h are ignored), mouse (int 33h reports no driver), absolute disk calls
+(int 25h/26h fail, the game then uses its file based path).
