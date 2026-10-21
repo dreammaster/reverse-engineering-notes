@@ -21,9 +21,11 @@ TMCharacter::TMCharacter(const TVisObjRef &ref) : TManagedObject(ref) {
 	_skipFinalPostExecution = false;
 }
 
-// Confirmed (asm lines 137965-137980)
+// Confirmed (asm lines 137965-137980): the field at +0x1C is the y of the position (+0x18; TGCharacter::WalkWay() stores the
+// position there): a character is sorted among the objects of the scene by where it stands. (It was _center, which a character
+// never sets: it stayed -1 and a character was drawn behind every object of the scene.)
 int TMCharacter::GetCenter() const {
-	return _center;
+	return _position.y;
 }
 
 // Confirmed (asm lines 137981-137999)

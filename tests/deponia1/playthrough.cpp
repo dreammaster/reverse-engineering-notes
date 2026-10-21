@@ -445,6 +445,92 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	if (getenv("PLAY_CHARS")) {
+		// the characters of the data: where each is, and what it shows
+		for (int i = 0; i < 30; i++)
+			frame();
+
+		TVList characters;
+
+		control->GetVisionaire()->GetList(0, characters, false);
+		for (TVisionaireObject *object : characters) {
+			TVisObjRef ref(object);
+			TVisObjRef where = ref.GetLink(kCharacterScene);
+
+			if (!(where == control->GetScene()->GetRef()) && !getenv("PLAY_CHARS_ALL"))
+				continue;
+
+			const wxPoint *position = ref.GetPoint(kCharacterPosition);
+
+			printf("character '%s': scene '%s' active %d visibility %d dest %d alpha %.2f position %d,%d size %.1f scale %.2f state %d animState %d sprite '%s' outfit '%s'\n",
+			       name(ref).c_str(), name(where).c_str(), (int)ref.GetBool(kCharacterActive), ref.GetInt(kCharacterVisibility), ref.GetInt(kCharacterDestVisibility),
+			       ref.GetFloat(kCharacterAlpha), position ? position->x : -1, position ? position->y : -1, ref.GetFloat(kCharacterSize), ref.GetFloat(kCharacterScale),
+			       ref.GetInt(kCharacterState), ref.GetInt(kCharacterAnimState), name(ref.GetLink(kCharacterCurrentSprite)).c_str(), name(ref.GetLink(kCharacterCurrentOutfit)).c_str());
+		}
+
+		TGCharacter *current = control->GetCurrentCharacter();
+
+		printf("current character '%s'\n", current ? name(current->GetRef()).c_str() : "(none)");
+		snapshot("chars", 2);
+		return 0;
+	}
+
+	if (getenv("PLAY_SKIPHOVER")) {
+		// the skip button of the tutorial: the mouse on it, then off it: what runs and what the interfaces are
+		std::set<std::string> ran;
+		auto describe = [&](const char *when) {
+			printf("%s:", when);
+			for (TGInterface *interface : control->GetActiveInterfaces())
+				printf(" [%s visible %d dest alpha %d]", name(interface->GetRef()).c_str(), (int)interface->GetRef().GetBool(kInterfaceVisible),
+				       interface->GetDestAlpha());
+			printf("\n");
+			for (const std::string &actionName : foreground())
+				printf("  running: %s\n", actionName.c_str());
+		};
+
+		for (const Hotspot &hotspot : scanInterface("skipButton")) {
+			printf("skip hotspot %s at %lld,%lld\n", hotspot._name.c_str(), hotspot._x, hotspot._y);
+			describe("before");
+			snapshot("skip_before_" + hotspot._name, 2);
+
+			wxPoint point;
+
+			point.x = static_cast<int>(hotspot._x);
+			point.y = static_cast<int>(hotspot._y);
+			control->ProcessMessage(TMouseMessageEnum::kMove, point);
+			ran.clear();
+			for (int i = 0; i < 30; i++) {
+				frame();
+				for (const std::string &actionName : foreground())
+					ran.insert(actionName);
+			}
+			printf("actions that ran when the mouse came:");
+			for (const std::string &actionName : ran)
+				printf(" %s", actionName.c_str());
+			printf("%c", 10);
+			snapshot("skip_on", 2);
+			describe("mouse on it");
+
+			point.x = 700;
+			point.y = 500;
+			control->ProcessMessage(TMouseMessageEnum::kMove, point);
+			ran.clear();
+			for (int i = 0; i < 60; i++) {
+				frame();
+				for (const std::string &actionName : foreground())
+					ran.insert(actionName);
+			}
+			printf("actions that ran when the mouse left:");
+			for (const std::string &actionName : ran)
+				printf(" %s", actionName.c_str());
+			printf("%c", 10);
+			snapshot("skip_off", 2);
+			describe("mouse off it");
+		}
+
+		return 0;
+	}
+
 	if (getenv("PLAY_SAVE")) {
 		// a savegame of the slot: the snapshot of the game as the menu would make it, the save, and what is in the file
 		const int slot = atoi(getenv("PLAY_SAVE"));

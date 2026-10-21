@@ -251,7 +251,8 @@ int main() {
 		// the cursor
 		run("Cursor");
 
-		// the button: shown not active, and active again
+		// the button: its picture is the inactive one, and the active one again (the command calls SetActiveSprite(): the button is
+		// still shown, asm 200285-200331)
 		TManagedObject *buttonObject = control->GetObject(spare);
 
 		CHECK(buttonObject != nullptr);
@@ -259,9 +260,9 @@ int main() {
 			CHECK(buttonObject->IsActive());
 			TGAction::AddRunningAction(find("ButtonOff", 7));
 			TGAction::ContinueRunningActions(false);
-			CHECK(!buttonObject->IsActive());
+			CHECK(buttonObject->IsActive());
 			frames(5);
-			CHECK(!buttonObject->IsActive());
+			CHECK(buttonObject->IsActive());
 			TGAction::AddRunningAction(find("ButtonOn", 7));
 			TGAction::ContinueRunningActions(false);
 			CHECK(buttonObject->IsActive());

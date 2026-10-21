@@ -307,8 +307,10 @@ void TGActionPartExecutor::cmdIfCurrentObject() {
 		ifFalse();
 }
 
-// Confirmed (asm lines 200285-200331, 206395-206426): a command button (the link) is shown active,
-// or is shown as not active (unless it is the active command of its interface).
+// Confirmed (asm lines 200285-200331, 206395-206426): the picture of a button (the link) is the active one, or
+// the inactive one (unless it is the active command of its interface). The slot that is called is 0x80 of the
+// object's vtable, SetActiveSprite() (0x78 is SetActive(), which shows or hides the whole button); the data
+// names the part "Aktives/Inaktives Bild von Schalter ... setzen" and uses it for the hover of a button.
 void TGActionPartExecutor::cmdSetObjectActive() {
 	TVisObjRef button = link();
 	TManagedObject *object = gameControl()->GetObject(button);
@@ -325,7 +327,7 @@ void TGActionPartExecutor::cmdSetObjectActive() {
 			return;
 	}
 
-	object->SetActive(active);
+	object->SetActiveSprite(active);
 }
 
 // Confirmed (asm lines 203828-203836)
