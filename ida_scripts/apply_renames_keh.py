@@ -120,7 +120,7 @@ RENAMES = [
     # -- pass 2: startup / data loading / world update (chunk 10010-11400) --
     (0x1008C, "loadMap",
      "arg=map number; if the map's region (table at dseg+125h) changed, loads the "
-     "region files, then reads the map (LZSS) and sets the sub-table pointers "
+     "region files, then reads the map (raw, not compressed; the script chunk is LZSS) and sets the sub-table pointers "
      "(map+404h..40Ch -> dword_2EBF8/2E446/2EC14/2E41E/2EC1A) and the party cell pointer"),
     (0x10022, "loadMapPicSet",
      "reads+LZSS-decodes the current region's picture/animation block into dword_2EE12"),
