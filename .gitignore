@@ -14,3 +14,5 @@ ida_scripts/hexdump_*.txt
 engine/build/
 tools/*.png
 engine/*.png
+
+ida_scripts/wl_image.bin
