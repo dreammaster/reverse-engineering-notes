@@ -718,3 +718,13 @@ void Game::run() {
 }
 
 } // namespace fod
+
+namespace fod {
+
+void Game::useCommandInCombat(int slot) {
+	_targetX[slot] = _w.disk.mapX; _targetY[slot] = _w.disk.mapY;
+	_w.lootFlag = false;
+	useCommandOnCell(slot, true);
+}
+
+} // namespace fod

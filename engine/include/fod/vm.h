@@ -29,6 +29,7 @@ public:
 	virtual void gameOver() {}                                  // the whole party is dead (KEH checkPartyWipeAndQuit)
 	// monster conversations (KEH npcDialogMode)
 	virtual void beginEncounter(int /*monsterIndex*/) {}
+	virtual void useCommandInCombat(int /*slot*/) {}           // combat commands 0Ah/0Bh: use skill/item/weapon on the party cell
 	virtual bool npcMode() const { return false; }
 	virtual int pickFromList(const std::string & /*title*/, const std::vector<std::string> & /*items*/) { return -1; }
 	virtual int chooseUseItem(int /*member*/, int & /*slot*/) { return -1; }   // returns the member index, or -1 to cancel

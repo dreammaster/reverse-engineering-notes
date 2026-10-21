@@ -38,6 +38,7 @@ public:
 	void gameOver() override { _quit = true; }
 	void sound(int n) override;
 	void beginEncounter(int monsterIndex) override;
+	void useCommandInCombat(int slot) override;
 	bool npcMode() const override { return _npcMode; }
 	int pickFromList(const std::string &title, const std::vector<std::string> &items) override;
 	int chooseUseItem(int member, int &slot) override;

@@ -313,7 +313,10 @@ void Combat::executeCombatant(size_t idx, bool &fled) {
 			_h.print(m->name() + "'s trade fails.\r\r");
 		break;
 	}
-	default:   // 10/11 use an item on the map: needs the field-command code
+	case 10: case 11:
+		if (active) _h.useCommandInCombat(c.index);
+		break;
+	default:
 		break;
 	}
 }
