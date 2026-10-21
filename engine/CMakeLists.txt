@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(fod STATIC
-    src/lzss.cpp src/archive.cpp src/map.cpp src/script.cpp src/gfx.cpp src/data.cpp src/state.cpp src/world.cpp src/vm.cpp src/screen.cpp src/game.cpp src/combat.cpp src/combat_fight.cpp src/progress.cpp src/shop.cpp src/party.cpp src/charsheet.cpp src/savegame.cpp src/creator.cpp)
+    src/lzss.cpp src/archive.cpp src/map.cpp src/script.cpp src/gfx.cpp src/data.cpp src/state.cpp src/world.cpp src/vm.cpp src/screen.cpp src/game.cpp src/combat.cpp src/combat_fight.cpp src/progress.cpp src/shop.cpp src/party.cpp src/charsheet.cpp src/savegame.cpp src/creator.cpp src/sound.cpp)
 target_include_directories(fod PUBLIC include)
 target_compile_options(fod PRIVATE $<$<CXX_COMPILER_ID:GNU,Clang>:-Wall -Wextra>)
 
@@ -16,6 +16,6 @@ if(MINGW)
 endif()
 if(WIN32)
     add_executable(fodplay platform/win32_main.cpp)
-    target_link_libraries(fodplay fod)
+    target_link_libraries(fodplay fod winmm)
     target_link_options(fodplay PRIVATE -static -mwindows)
 endif()

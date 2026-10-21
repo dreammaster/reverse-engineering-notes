@@ -19,6 +19,7 @@
 #include "fod/savegame.h"
 #include "texthost.h"
 #include <cstdio>
+#include <set>
 #include <iostream>
 
 using namespace fod;
@@ -211,6 +212,39 @@ int main(int argc, char **argv) {
 			(plat.snapped ? plat.snap : plat.last).toImage().writePng(argv[3]);
 			std::printf("played=%d party=%d\n", played, d.partyCount);
 			for (int i = 0; i < d.partyCount; ++i) std::printf("  %s prof=%d hp=%d ST=%d\n", d.roster[size_t(i)].name().c_str(), d.roster[size_t(i)].profession(), d.roster[size_t(i)].hp(), d.roster[size_t(i)].attr(0));
+		} else if (cmd == "scriptall") {   // run every cell/monster script of every map once, looking for crashes
+			GameData gd(dir);
+			int runs = 0, failures = 0;
+			for (int n = 1; n <= 28; ++n) {
+				for (int ev = 0; ev < 8; ++ev) {
+					World w(gd, Game::defaultParty(gd), unsigned(n * 31 + ev));
+					for (int i = 0; i < 4; ++i) { w.party(i).setHp(100); w.party(i).setHpMax(100); }
+					try {
+						w.loadMap(n);
+						struct QuietHost : TextHost {
+							void print(const std::string &) override {}
+							void message(const std::string &) override {}
+							void showMenu(const std::string &, bool) override {}
+							void log(const std::string &) override {}
+							int readKey() override { return 0xFF; }
+						} host;
+						ScriptVM vm(w, host);
+						std::set<int> seen;
+						for (int y = 0; y < w.map->height(); ++y)
+							for (int x = 0; x < w.map->width(); ++x) {
+								const int sc = w.map->cell(x, y).script;
+								if (sc == 0xFFFF || !seen.insert(sc).second) continue;
+								ScriptCall c; c.cellScript = sc; c.event = ev; c.member = 0; c.arg8 = 0;
+								vm.run(c);
+								++runs;
+							}
+					} catch (const std::exception &e) {
+						std::printf("map %d event %d: %s\n", n, ev, e.what());
+						++failures;
+					}
+				}
+			}
+			std::printf("%d script runs, %d failures\n", runs, failures);
 		} else if (cmd == "items") {
 			Globals g(readFile(path(dir, "GLOBALS")));
 			std::printf("range bands %d, unit '%s'\n", g.rangeBands(), g.unit().c_str());

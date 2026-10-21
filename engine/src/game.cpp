@@ -3,6 +3,7 @@
 #include "fod/party.h"
 #include "fod/charsheet.h"
 #include "fod/savegame.h"
+#include "fod/sound.h"
 #include <algorithm>
 #include <cstring>
 
@@ -87,6 +88,8 @@ void Game::redraw() {
 void Game::openDialog() { if (!_dialogOpen) { _dialogOpen = true; _dialog.clear(); } }
 
 // ---------------------------------------------------------------- Host
+void Game::sound(int n) { _platform.playPcm(renderSoundEffect(n), 22050); }
+
 void Game::print(const std::string &text) {
 	openDialog();
 	_dialog += text;

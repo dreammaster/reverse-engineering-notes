@@ -3,6 +3,8 @@
 #include "fod/creator.h"
 #include "fod/savegame.h"
 #include <windows.h>
+#include <mmsystem.h>
+#include <cstring>
 #include <cstdio>
 #include <deque>
 
@@ -108,6 +110,20 @@ private:
 		return DefWindowProcA(h, m, wp, lp);
 	}
 
+	void playPcm(const std::vector<int16_t> &samples, int rate) override {
+		if (samples.empty()) return;
+		std::vector<uint8_t> wav(44 + samples.size() * 2);
+		auto put32 = [&](size_t o, uint32_t v) { for (int i = 0; i < 4; ++i) wav[o + size_t(i)] = uint8_t(v >> (8 * i)); };
+		auto put16 = [&](size_t o, uint16_t v) { wav[o] = uint8_t(v); wav[o + 1] = uint8_t(v >> 8); };
+		std::memcpy(&wav[0], "RIFF", 4); put32(4, uint32_t(wav.size() - 8)); std::memcpy(&wav[8], "WAVEfmt ", 8);
+		put32(16, 16); put16(20, 1); put16(22, 1); put32(24, uint32_t(rate)); put32(28, uint32_t(rate) * 2); put16(32, 2); put16(34, 16);
+		std::memcpy(&wav[36], "data", 4); put32(40, uint32_t(samples.size() * 2));
+		std::memcpy(&wav[44], samples.data(), samples.size() * 2);
+		_wav.swap(wav);   // keep the buffer alive while it plays
+		PlaySoundA(reinterpret_cast<LPCSTR>(_wav.data()), nullptr, SND_MEMORY | SND_ASYNC);
+	}
+
+	std::vector<uint8_t> _wav;
 	HWND _hwnd = nullptr;
 	bool _closed = false;
 	std::deque<int> _keys;

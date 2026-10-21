@@ -14,6 +14,7 @@ public:
 	virtual ~Platform() = default;
 	virtual int waitKey() = 0;                      // KEH key codes (see vm.h); returns -1 when the window closes
 	virtual void present(const Screen &s) = 0;
+	virtual void playPcm(const std::vector<int16_t> & /*samples*/, int /*rate*/) {}   // fire-and-forget sound effect
 };
 
 class Game : public Host {
@@ -35,6 +36,7 @@ public:
 	void showMenu(const std::string &text, bool npcMode) override;
 	void log(const std::string &msg) override { _log.push_back(msg); }
 	void gameOver() override { _quit = true; }
+	void sound(int n) override;
 	void beginEncounter(int monsterIndex) override;
 	bool npcMode() const override { return _npcMode; }
 	int pickFromList(const std::string &title, const std::vector<std::string> &items) override;
