@@ -37,6 +37,7 @@ public:
 	void SetOffset(float x, float y) override;
 	void AfterDrawScene(bool a, bool b) override;
 	void Swap() override;
+	bool ReadScreen(std::vector<unsigned char> &rgb, int &width, int &height) override;
 
 	int GetFrameWidth() const {
 		return _frameWidth;

@@ -148,7 +148,7 @@ void TSceneControl::ToScene(bool fade, TVisObjRef &scene, const TVisObjRef &char
 
 	// a menu is entered: the picture the savegames show is made while the game is still on the screen
 	if (!_currentScene->GetRef().GetBool(kSceneIsMenu) && scene.GetBool(kSceneIsMenu))
-		graphics->CreateSavegameScreenshot(false);
+		graphics->MakeSnapshotForSavegame(false);
 
 	if (effect != 0 && fade) {
 		sounds->FinishSoundFade();

@@ -44,6 +44,7 @@ public:
 	void SetOffset(float x, float y) override;
 	void AfterDrawScene(bool a, bool b) override;
 	void Swap() override;
+	bool ReadScreen(std::vector<unsigned char> &rgb, int &width, int &height) override;
 
 	/** What the window shows now, as the pixels of the window (RGBA); false when it cannot be read. */
 	bool ReadFrame(std::vector<unsigned char> &rgba, int &width, int &height);
@@ -68,6 +69,12 @@ private:
 
 	TGraphicsStartup _startup;
 	SDL_Renderer *_renderer = nullptr;
+	// The game is drawn into one of two textures of its own size (the pictures of the game's coordinates); at Swap() it is copied to the part of
+	// the window that keeps the proportions, and the other one is drawn into next: what the last frame was stays to be read (the snapshots of the
+	// savegames take it between two frames, when the picture of the window is not the one to read any more).
+	SDL_Texture *_frames[2] = {nullptr, nullptr};
+	int _current = 0;
+	bool _hasLast = false;
 	wxSize _renderSize;
 	wxRect _area;
 	int _windowWidth = 0;

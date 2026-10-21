@@ -756,9 +756,9 @@ bool CmdCreateScreenshot::Do() {
 bool CmdCreateScreenshot::Redo() {
 	if (!_saveToFile) {
 		if (_clear)
-			graphics->ClearSavegameScreenshot(true);
+			graphics->ClearSnapshotForSavegame(true);
 		else
-			graphics->CreateSavegameScreenshot(true);
+			graphics->MakeSnapshotForSavegame(true);
 
 		return true;
 	}

@@ -12,6 +12,8 @@
 #include "TTimer.h"
 #include "Tween.h"
 #include "SdlStub.h"
+#include "TPictureMEM.h"
+#include "graphicslib/picture.h"
 #include "graphicslib/preloadedPicManager.h"
 
 TGraphicsInterface *graphics = new TGraphicsInterface();
@@ -20,6 +22,10 @@ int defaultShader = 0;
 
 TGraphicsInterface::TGraphicsInterface() {
 	_matrix.Identity();
+}
+
+TGraphicsInterface::~TGraphicsInterface() {
+	delete _snapshot;
 }
 
 void TGraphicsInterface::MultiplyByMatrix1() {
@@ -84,8 +90,8 @@ TPictureMemBlock *TGraphicsInterface::GetMainMemBlock() {
 	return nullptr;
 }
 
-TPictureMEM *TGraphicsInterface::GetCapturedFrame() {
-	return nullptr;
+TPictureMEM *TGraphicsInterface::GetSnapshotForSavegame() {
+	return _snapshotMade ? _snapshot : nullptr;
 }
 
 TPictureMemBlock *TGraphicsInterface::GetLightMapMemBlock() {
@@ -98,14 +104,69 @@ TPreloadedPicManager *TGraphicsInterface::GetPreloadedPicManager() {
 	return _preloadedPicManager;
 }
 
-bool TGraphicsInterface::CaptureScreen(TPictureIO &/*picture*/) {
+bool TGraphicsInterface::ReadScreen(std::vector<unsigned char> &/*rgb*/, int &/*width*/, int &/*height*/) {
 	return false;
 }
 
-void TGraphicsInterface::CreateSavegameScreenshot(bool /*flag*/) {
+// The pixels are given to a picture (a buffer of its own: the original's go to its main memory block): 3 bytes to a pixel, red first.
+static bool fillPicture(TPictureMEM &picture, const std::vector<unsigned char> &rgb, int width, int height) {
+	if (width <= 0 || height <= 0 || rgb.size() < static_cast<size_t>(width) * height * 3)
+		return false;
+
+	picture.ClearMemData();
+
+	char *copy = new char[rgb.size()];
+
+	std::copy(rgb.begin(), rgb.end(), copy);
+	picture.SetMemoryData(copy, width, height, false, true, true);
+	return true;
 }
 
-void TGraphicsInterface::ClearSavegameScreenshot(bool /*flag*/) {
+// Slot 0xC8 (CmdCreateScreenshot::Redo): the picture of the game as it is shown.
+bool TGraphicsInterface::CaptureScreen(TPictureIO &picture) {
+	std::vector<unsigned char> rgb;
+	int width = 0;
+	int height = 0;
+
+	if (!ReadScreen(rgb, width, height))
+		return false;
+
+	return fillPicture(picture, rgb, width, height);
+}
+
+// Confirmed (asm 710421-710610): a kept snapshot is not replaced by one that is not to be kept; else the picture of the game is read and
+// put in the picture of the snapshot, which is kept when asked.
+void TGraphicsInterface::MakeSnapshotForSavegame(bool keep) {
+	if (_snapshotKept && !keep)
+		return;
+
+	std::vector<unsigned char> rgb;
+	int width = 0;
+	int height = 0;
+
+	if (ReadScreen(rgb, width, height)) {
+		if (!_snapshot)
+			_snapshot = new TPictureMEM();
+
+		_snapshotMade = fillPicture(*_snapshot, rgb, width, height);
+	}
+
+	if (keep)
+		_snapshotKept = true;
+}
+
+// Confirmed (asm 708254-708300): the picture is let go, unless it is kept and `keep` is false; `keep` ends the keeping.
+void TGraphicsInterface::ClearSnapshotForSavegame(bool keep) {
+	if (_snapshotKept && !keep)
+		return;
+
+	if (_snapshot)
+		_snapshot->ClearMemData();
+
+	_snapshotMade = false;
+
+	if (keep)
+		_snapshotKept = false;
 }
 
 void TGraphicsInterface::CalculateDisplayedArea(const wxSize &windowSize, const wxSize &/*renderSize*/,

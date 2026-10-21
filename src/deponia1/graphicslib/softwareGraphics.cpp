@@ -382,3 +382,21 @@ bool TSoftwareGraphics::SavePNG(const char *path, int reduce) const {
 	std::fclose(file);
 	return true;
 }
+
+// The frame that was shown last, as red, green, blue.
+bool TSoftwareGraphics::ReadScreen(std::vector<unsigned char> &rgb, int &width, int &height) {
+	if (_shown.size() < static_cast<size_t>(_frameWidth) * _frameHeight * 4)
+		return false;
+
+	width = _frameWidth;
+	height = _frameHeight;
+	rgb.resize(static_cast<size_t>(width) * height * 3);
+
+	for (size_t i = 0; i < static_cast<size_t>(width) * height; i++) {
+		rgb[i * 3] = _shown[i * 4];
+		rgb[i * 3 + 1] = _shown[i * 4 + 1];
+		rgb[i * 3 + 2] = _shown[i * 4 + 2];
+	}
+
+	return true;
+}

@@ -3953,6 +3953,18 @@ text from a `TGObjectManager` of its own (a member that does not exist in the or
 which never had a current object, so the text ("Yin" next to the cursor) was empty. `playthrough` with `PLAY_HOVER=1` lists, for each hotspot of
 the scene, the object, the cursor and the text, and saves a picture of each.
 
+## The snapshot of a savegame (GetSnapshotForSavegame, MakeSnapshotForSavegame, ClearSnapshotForSavegame)
+
+A real savegame (not a bookmark) stores the picture of the game, and `TMSavegame::SaveSnapShot` failed in the standalone player because no
+backend gave one (the log said `SaveGame: Saving snapshot failed`). The three virtual methods have the names the symbol table gives
+(`TGraphicsOGL::GetSnapshotForSavegame`, asm 707408: the picture at +0x2A0; `MakeSnapshotForSavegame(bool)`, asm 710421; `ClearSnapshotForSavegame(bool)`,
+asm 708254; they were named for their role before). A snapshot that was made with `keep` (the script command, flag at +0x388) is not replaced or let go
+by a call without it (the engine's own, when a menu is entered). What the original reads from the window (g_subSys+0xD0) is `ReadScreen()` here:
+TSoftwareGraphics gives the frame it showed last; TSdlGraphics draws into one of two textures of the game's size and keeps the other, the last
+frame, to read (the window cannot be read between two frames), and copies the frame to the letterboxed part of the window at Swap().
+`playthrough` with `PLAY_SAVE=<slot>` makes a snapshot and writes a savegame file. (`TGameControl::SaveGame(slot)` with a slot makes a bookmark;
+the savegames of the menu come from slot -1, the selected one.)
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the

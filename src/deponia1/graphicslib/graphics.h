@@ -9,6 +9,8 @@
 // recovered).
 #pragma once
 
+#include <vector>
+
 #include "TSpriteHandle.h"
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
@@ -29,7 +31,7 @@ enum class TInterpolationEnum : int {};
 class TGraphicsInterface {
 public:
 	TGraphicsInterface();
-	virtual ~TGraphicsInterface() = default;
+	virtual ~TGraphicsInterface();
 
 	TPreloadedPicManager *GetPreloadedPicManager();
 	/** The sprite cache (see TSpriteCache; the base class keeps it at +0x08 and passes the calls below on to it). */
@@ -58,14 +60,22 @@ public:
 	 *  memory are laid out for the backend: `rgbOrder` (red, green, blue; else the other way round) and `flipped` (the lines
 	 *  begin at the bottom). The OpenGL backend sets them; here they are what a TPictureMEM starts with. */
 	void GetPicsMemSettings(bool &rgbOrder, bool &flipped);
-	virtual TPictureMEM *GetCapturedFrame();
-	// Confirmed call shapes only (CmdCreateScreenshot::Redo(), Deponia_Linux.asm lines 392054-392180): three more
-	// slots of the unmodeled GL backend. Slot 0xC8 captures the screen into a picture (false: it failed); slot
-	// 0x120 makes the screenshot that the next savegames use, and slot 0x130 clears it (the engine makes a new one
-	// by itself when the scene changes from a playable one to a menu); both are called with 1.
+	/** The picture of the game as it was last shown (GetSnapshotForSavegame, asm 707408: the picture at +0x2A0 of TGraphicsOGL); null
+	 *  when none was made. */
+	virtual TPictureMEM *GetSnapshotForSavegame();
+	// Confirmed call shapes (CmdCreateScreenshot::Redo(), Deponia_Linux.asm lines 392054-392180): slot 0xC8 captures the screen into a
+	// picture (false: it failed). The snapshot that the next savegames show is made by MakeSnapshotForSavegame (asm 710421) and let go
+	// by ClearSnapshotForSavegame (asm 708254); both are called with 1 by the script command (the snapshot is then kept), and the
+	// engine makes one by itself, with 0, when the scene changes from a playable one to a menu (a kept one is not replaced then).
 	virtual bool CaptureScreen(class TPictureIO &picture);
-	virtual void CreateSavegameScreenshot(bool flag);
-	virtual void ClearSavegameScreenshot(bool flag);
+	/** Takes the picture of the game as it was last shown, unless a kept one is there and `keep` is false; `keep` keeps it. */
+	virtual void MakeSnapshotForSavegame(bool keep);
+	/** Lets the snapshot go, unless it is kept and `keep` is false; `keep` also lets go of the keeping. */
+	virtual void ClearSnapshotForSavegame(bool keep);
+	/** What a backend gives to the snapshots: the picture of the game that was shown last, as 3 bytes (red, green, blue) to a pixel, the
+	 *  lines from the top (the part of the original's backend that reads the pixels of the window: asm 710421, g_subSys+0xD0). False when
+	 *  it cannot be read (the base class: always). */
+	virtual bool ReadScreen(std::vector<unsigned char> &rgb, int &width, int &height);
 	// Confirmed call shapes only (CmdToggleWindowMode/CmdSetWindowSize/CmdGetWindowMode, asm lines 388874-388967):
 	// slots 0x158 (changes between the window and the full screen), 0x160 (the size of the window, in windowed mode)
 	// and 0x168 (whether the window is a full screen one) of the unmodeled GL backend.
@@ -221,6 +231,9 @@ private:
 	bool _fadeDrawn = false;     // +0x284
 	TSpriteCache _spriteCache;
 	TPreloadedPicManager *_preloadedPicManager = nullptr;
+	TPictureMEM *_snapshot = nullptr;   // +0x2A0 (a picture there in the original)
+	bool _snapshotMade = false;
+	bool _snapshotKept = false;         // +0x388
 	TMatrix4 _matrix;  // +0x43C
 };
 

@@ -199,7 +199,7 @@ wxString TMSavegame::MakeSaveGameName(const TVisObjRef &scene) {
 // with a real size) is rescaled to this slot's size and saved to `file`.
 bool TMSavegame::SaveSnapShot(const wxFileName &file) {
 	TPictureIO snapshot;
-	TPictureMEM *frame = graphics->GetCapturedFrame();
+	TPictureMEM *frame = graphics->GetSnapshotForSavegame();
 	if (!frame || frame->GetWidth() <= 0 || frame->GetHeight() <= 0)
 		return false;
 

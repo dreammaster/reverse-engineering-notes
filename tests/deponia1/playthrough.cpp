@@ -10,7 +10,9 @@
 
 #include "AppGlobals.h"
 #include "SdlStub.h"
+#include "TMSavegame.h"
 #include "TStandardPaths.h"
+#include "baselib/xmlWriter.h"
 #include "THGameControl.h"
 #include "TSceneControl.h"
 #include "TGAction.h"
@@ -441,6 +443,26 @@ int main(int argc, char **argv) {
 			}
 			break;
 		}
+	}
+
+	if (getenv("PLAY_SAVE")) {
+		// a savegame of the slot: the snapshot of the game as the menu would make it, the save, and what is in the file
+		const int slot = atoi(getenv("PLAY_SAVE"));
+
+		snapshot("before_save");
+		graphics->MakeSnapshotForSavegame(false);
+		printf("save: snapshot %s\n", graphics->GetSnapshotForSavegame() ? "made" : "NOT made");
+		control->Save();
+
+		TXMLStringWriter writer;
+
+		control->GetVisionaire()->SaveSaveGame(writer);
+
+		TMSavegame savegame(false, slot, 256, 144, nullptr);
+		bool saved = savegame.SaveGame(writer);
+
+		printf("save: slot %d saved %d, file '%ls' exists %d\n", slot, (int)saved, savegame.GetFileName().c_str(), (int)savegame.Exists());
+		return 0;
 	}
 
 	if (getenv("PLAY_HOVER")) {

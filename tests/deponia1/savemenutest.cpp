@@ -50,7 +50,7 @@ public:
 		_frame.SetLoadedImage();
 	}
 
-	TPictureMEM *GetCapturedFrame() override {
+	TPictureMEM *GetSnapshotForSavegame() override {
 		return &_frame;
 	}
 

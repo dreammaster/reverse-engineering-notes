@@ -55,6 +55,11 @@ TSdlGraphics::~TSdlGraphics() {
 			SDL_DestroyTexture(entry.second.texture);
 	}
 
+	for (SDL_Texture *frame : _frames) {
+		if (frame)
+			SDL_DestroyTexture(frame);
+	}
+
 	if (_renderer)
 		SDL_DestroyRenderer(_renderer);
 }
@@ -103,12 +108,34 @@ bool TSdlGraphics::InitGraphics(const wxSize &windowSize, wxSize &renderSize, wx
 	SetSize(renderSize.width, renderSize.height);
 	SetSurfaceSize(windowSize.width, windowSize.height);
 
+	// (a renderer that cannot draw into textures draws into the window as before, and has no last frame to read)
+	if (SDL_RenderTargetSupported(_renderer)) {
+		for (SDL_Texture *&frame : _frames)
+			frame = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, renderSize.width, renderSize.height);
+
+		if (!_frames[0] || !_frames[1]) {
+			for (SDL_Texture *&frame : _frames) {
+				if (frame)
+					SDL_DestroyTexture(frame);
+
+				frame = nullptr;
+			}
+		}
+	}
+
 	SDL_GetWindowSize(VSPlayerWindow, &_windowWidth, &_windowHeight);
 	fitToWindow();
 	*displayedArea = _area;
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderClear(_renderer);
+
+	if (_frames[0]) {
+		SDL_SetRenderTarget(_renderer, _frames[_current]);
+		SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_NONE);
+		SDL_RenderClear(_renderer);
+	}
+
 	return true;
 }
 
@@ -120,6 +147,13 @@ void TSdlGraphics::fitToWindow() {
 	window.height = _windowHeight;
 	CalculateDisplayedArea(window, _renderSize, &_area);
 
+	g_displayedArea = _area;
+	SetSurfaceSize(_windowWidth, _windowHeight);
+
+	// (the frame is a texture of the game's size: the game's coordinates are its pixels, and the window gets it scaled at Swap())
+	if (_frames[0])
+		return;
+
 	SDL_Rect viewport;
 
 	viewport.x = _area.x;
@@ -129,8 +163,6 @@ void TSdlGraphics::fitToWindow() {
 	SDL_RenderSetViewport(_renderer, &viewport);
 	SDL_RenderSetScale(_renderer, static_cast<float>(_area.width) / static_cast<float>(_renderSize.width),
 	                   static_cast<float>(_area.height) / static_cast<float>(_renderSize.height));
-	g_displayedArea = _area;
-	SetSurfaceSize(_windowWidth, _windowHeight);
 }
 
 void TSdlGraphics::ToggleWindowMode() {
@@ -373,6 +405,23 @@ void TSdlGraphics::Swap() {
 		}
 
 		_shown++;
+
+		if (_frames[0]) {
+			// the frame goes to the part of the window that keeps its proportions (the rest of the window is black)
+			SDL_SetRenderTarget(_renderer, nullptr);
+			SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_NONE);
+			SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+			SDL_RenderClear(_renderer);
+
+			SDL_Rect where;
+
+			where.x = _area.x;
+			where.y = _area.y;
+			where.w = _area.width;
+			where.h = _area.height;
+			SDL_RenderCopy(_renderer, _frames[_current], nullptr, &where);
+		}
+
 		SDL_RenderPresent(_renderer);
 
 		if (std::getenv("DEPONIA_FPS")) {
@@ -393,9 +442,16 @@ void TSdlGraphics::Swap() {
 		PushClicks();
 		_dirty = false;
 
-		// the next frame starts black (the bars round the game's picture too)
-		SDL_RenderSetViewport(_renderer, nullptr);
-		SDL_RenderSetScale(_renderer, 1.0f, 1.0f);
+		// the next frame starts black (the bars round the game's picture too), in the other texture: this one is the last frame
+		if (_frames[0]) {
+			_hasLast = true;
+			_current ^= 1;
+			SDL_SetRenderTarget(_renderer, _frames[_current]);
+		} else {
+			SDL_RenderSetViewport(_renderer, nullptr);
+			SDL_RenderSetScale(_renderer, 1.0f, 1.0f);
+		}
+
 		SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_NONE);
 		SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 		SDL_RenderClear(_renderer);
@@ -463,16 +519,49 @@ void TSdlGraphics::SaveShot(const std::string &path) {
 	}
 }
 
+// What is drawn so far (the game's picture: the whole frame when it is drawn into a texture, else the window).
 bool TSdlGraphics::ReadFrame(std::vector<unsigned char> &rgba, int &width, int &height) {
 	if (!_renderer)
 		return false;
 
-	SDL_Rect none;
+	if (_frames[0]) {
+		width = _renderSize.width;
+		height = _renderSize.height;
+	} else {
+		SDL_GetWindowSize(VSPlayerWindow, &width, &height);
+	}
 
-	SDL_GetWindowSize(VSPlayerWindow, &width, &height);
-	SDL_RenderGetViewport(_renderer, &none);
 	rgba.resize(static_cast<size_t>(width) * height * 4);
 	return SDL_RenderReadPixels(_renderer, nullptr, SDL_PIXELFORMAT_ABGR8888, rgba.data(), width * 4) == 0;
+}
+
+// The frame that was shown last (the texture that was drawn into before this one; the first frame has none: what is drawn so far).
+bool TSdlGraphics::ReadScreen(std::vector<unsigned char> &rgb, int &width, int &height) {
+	if (!_renderer || !_frames[0])
+		return false;
+
+	std::vector<unsigned char> rgba;
+
+	if (_hasLast)
+		SDL_SetRenderTarget(_renderer, _frames[_current ^ 1]);
+
+	bool read = ReadFrame(rgba, width, height);
+
+	if (_hasLast)
+		SDL_SetRenderTarget(_renderer, _frames[_current]);
+
+	if (!read)
+		return false;
+
+	rgb.resize(static_cast<size_t>(width) * height * 3);
+
+	for (size_t i = 0; i < static_cast<size_t>(width) * height; i++) {
+		rgb[i * 3] = rgba[i * 4];
+		rgb[i * 3 + 1] = rgba[i * 4 + 1];
+		rgb[i * 3 + 2] = rgba[i * 4 + 2];
+	}
+
+	return true;
 }
 
 #endif // USE_REAL_SDL
