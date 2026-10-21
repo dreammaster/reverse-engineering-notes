@@ -182,6 +182,21 @@ int main(int argc, char **argv) {
 				ps.blit(scr, int(i), 0, 0);
 			}
 			scr.toImage().writePng(argv[6]);
+		} else if (cmd == "portrait" && argc >= 7) {   // portrait <out.png> <mapNo> <pictureId> <ticks>: a KANI picture beside a dialog
+			GameData gd(dir);
+			Assets assets(dir);
+			struct TickPlatform : Platform {
+				int ticks = 0; Screen last, snap;
+				int waitKey() override { return -1; }
+				int waitKeyTimeout(int) override { if (ticks-- > 0) return -2; snap = last; return 0xFE; }
+				void present(const Screen &s) override { last = s; }
+			} plat;
+			plat.ticks = std::atoi(argv[6]);
+			Game game(gd, assets, plat, Game::defaultParty(gd));
+			game.world().loadMap(std::atoi(argv[4]));
+			game.showPortrait(std::atoi(argv[5]));
+			game.message("Hello, stranger. Care to look at my wares?");
+			plat.snap.toImage().writePng(argv[3]);
 		} else if (cmd == "borders" && argc >= 5) {   // borders <variant> <out.png>
 			Assets assets(dir);
 			Screen scr;

@@ -24,6 +24,8 @@ class PictureSet {
 public:
 	explicit PictureSet(Bytes d) : _d(std::move(d)) {}
 	size_t count() const { return _d.empty() ? 0 : _d[0]; }
+	const Bytes &data() const { return _d; }
+	size_t scriptStart() const { return _d.size() >= 3 ? size_t(_d[1] | (_d[2] << 8)) : 0; }
 	void blit(Screen &s, int frame, int x, int y) const;   // x,y: origin the frame offsets are relative to
 	int frameWidth(int frame) const;                       // pixels
 	int frameHeight(int frame) const;

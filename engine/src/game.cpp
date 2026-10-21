@@ -56,30 +56,41 @@ void Game::redraw() {
 	if (_rosterActive) drawRoster(_screen, _assets, _w);
 	else if (_sheetActive && _sheetMember < _w.partyCount()) drawCharacterSheet(_screen, _assets, _w, _sheetMember, _sheet);
 	else renderMainScreen(_screen, _assets, _w, {});
-	if (_dialogOpen) {
-		// dialog frame (KEH _dialogBorder*) and text area (8,6)-(31,17)
-		for (int y = 5; y <= 18; ++y)
-			for (int x = 7; x <= 32; ++x) {
-				const bool edgeX = x == 7 || x == 32, edgeY = y == 5 || y == 18;
+	// dialog frame (KEH _dialogBorder*): corners 84, edges 80/81 (top/bottom), 82/B5 (sides)
+	auto drawFrame = [&](int fx0, int fy0, int fx1, int fy1) {
+		for (int y = fy0; y <= fy1; ++y)
+			for (int x = fx0; x <= fx1; ++x) {
+				const bool edgeX = x == fx0 || x == fx1, edgeY = y == fy0 || y == fy1;
 				int g = 0;
 				if (edgeX && edgeY) g = 0x84;
-				else if (edgeY) g = (x == 8 || x == 31) ? 0x80 : 0x81;
-				else if (edgeX) g = (y == 6 || y == 17) ? 0x82 : 0xB5;
+				else if (edgeY) g = (x == fx0 + 1 || x == fx1 - 1) ? 0x80 : 0x81;
+				else if (edgeX) g = (y == fy0 + 1 || y == fy1 - 1) ? 0x82 : 0xB5;
 				if (g) drawGlyph(_screen, _assets, x * 8, y * 8, g);
 				else for (int py = 0; py < 8; ++py) for (int px = 0; px < 8; ++px) _screen.put(x * 8 + px, y * 8 + py, 0);
 			}
+	};
+	if (_portraitId >= 0) {
+		drawFrame(0, 0, 12, 13);
+		for (int y = 0; y < 96; ++y)
+			for (int x = 0; x < 96; ++x) _screen.put(8 + x, 8 + y, _portraitCanvas.get(8 + x, 8 + y));
+	}
+	if (_dialogOpen) {
+		const bool side = _portraitId >= 0;
+		const int fx0 = side ? 13 : 7, fy0 = side ? 0 : 5, fx1 = side ? 39 : 32, fy1 = side ? 13 : 18;
+		const int tx = side ? 14 : 8, ty = side ? 1 : 6, tw = side ? 25 : 24, th = side ? 12 : 12;
+		drawFrame(fx0, fy0, fx1, fy1);
 		int row = 0, col = 0;
 		std::string word;
 		auto flushWord = [&]() {
 			if (word.empty()) return;
-			if (col + int(word.size()) > 24) { col = 0; ++row; }
-			if (row < 12) drawText(_screen, _assets, 8 + col, 6 + row, word);
+			if (col + int(word.size()) > tw) { col = 0; ++row; }
+			if (row < th) drawText(_screen, _assets, tx + col, ty + row, word);
 			col += int(word.size());
 			word.clear();
 		};
 		for (char c : _dialog) {
 			if (c == '\r') { flushWord(); col = 0; ++row; }
-			else if (c == ' ') { flushWord(); if (col < 24) ++col; }
+			else if (c == ' ') { flushWord(); if (col < tw) ++col; }
 			else word += c;
 		}
 		flushWord();
@@ -102,7 +113,7 @@ void Game::message(const std::string &text) {
 	_dialog += text;
 	redraw();
 	for (;;) {
-		const int k = _platform.waitKey();
+		const int k = nextKey();
 		if (k < 0) { _quit = true; break; }
 		if (k == 0xFE || k == 0xFF) break;
 	}
@@ -112,7 +123,7 @@ void Game::message(const std::string &text) {
 
 int Game::readKey() {
 	redraw();
-	const int k = _platform.waitKey();
+	const int k = nextKey();
 	if (k < 0) { _quit = true; return 0xFF; }
 	return k;
 }
@@ -122,7 +133,7 @@ bool Game::yesNo(const std::string &prompt) {
 	_dialog += prompt + "\r\rY)es  N)o";
 	redraw();
 	for (;;) {
-		const int k = _platform.waitKey();
+		const int k = nextKey();
 		if (k < 0) { _quit = true; return false; }
 		if (k == 'Y') return true;
 		if (k == 'N' || k == 0xFF) return false;
@@ -134,7 +145,7 @@ std::string Game::readLine() {
 	for (;;) {
 		openDialog();
 		redraw();
-		const int k = _platform.waitKey();
+		const int k = nextKey();
 		if (k < 0) { _quit = true; break; }
 		if (k == 0xFE) break;
 		if (k == 8 && !line.empty()) line.pop_back();
@@ -158,6 +169,7 @@ void Game::passTime() {
 void Game::beginEncounter(int monsterIndex) {
 	_npcMode = true;
 	openDialog();
+	if (size_t(monsterIndex) < _w.map->monsters().size()) showPortrait(_w.map->monsters()[size_t(monsterIndex)].raw[0x63]);
 	if (size_t(monsterIndex) < _w.map->monsters().size()) _dialog += _w.map->monsters()[size_t(monsterIndex)].name() + "\r";
 }
 
@@ -189,6 +201,7 @@ int Game::chooseUseItem(int member, int &slot) {
 
 void Game::startPendingFight(int monsterIndex) {
 	_npcMode = false;
+	hidePortrait();
 	auto &ms = _w.map->monsters();
 	if (size_t(monsterIndex) >= ms.size()) return;
 	Monster &mo = ms[size_t(monsterIndex)];
@@ -233,6 +246,7 @@ void Game::runScriptChain(int script, int event, int arg8) {
 		break;
 	}
 	_npcMode = false;
+	hidePortrait();
 }
 
 std::function<Combat::GroupAction(Combat &, int, Combatant &)> Game::defaultCombatCommands() {
@@ -691,7 +705,7 @@ bool Game::movePartyStep(int dir, bool forced) {
 void Game::run() {
 	redraw();
 	while (!_quit) {
-		const int k = _platform.waitKey();
+		const int k = nextKey();
 		if (k < 0) break;
 		_dialogOpen = false;
 		switch (k) {
@@ -752,6 +766,54 @@ void Game::ending(int n) {
 		return;
 	}
 	redraw();
+}
+
+} // namespace fod
+
+namespace fod {
+
+int Game::nextKey() {
+	for (;;) {
+		if (_portraitId < 0) return _platform.waitKey();
+		const int k = _platform.waitKeyTimeout(165);   // KEH animationTick: every 3 BIOS ticks
+		if (k != -2) return k;
+		stepPortrait();
+		redraw();
+	}
+}
+
+// KEH loadCombatPortraits / animationTick for one picture: the set's script (at the offset in header bytes 1-2) is a list of
+// {count, frame...} entries; each tick draws the next entry's frames over the picture window, 0xFF restarts the list.
+void Game::showPortrait(int pictureId) {
+	hidePortrait();
+	static const char *names[3] = {"KANI", "FANI", "DANI"};
+	const int disk = mapDisk(_w.mapNo);
+	const std::string file = _data.dir + "/" + names[disk == 2 ? 1 : disk == 3 ? 2 : 0];
+	try {
+		Archive ar(file, 53);
+		if (!ar.has(size_t(pictureId))) return;
+		_portraitSet = std::make_unique<PictureSet>(ar.chunkLzss(size_t(pictureId)));
+	} catch (const std::exception &) { return; }
+	_portraitId = pictureId;
+	_portraitCanvas.clear();
+	_portraitPos = _portraitSet->scriptStart();
+	stepPortrait();
+}
+
+void Game::hidePortrait() {
+	_portraitId = -1;
+	_portraitSet.reset();
+}
+
+void Game::stepPortrait() {
+	if (!_portraitSet) return;
+	const Bytes &d = _portraitSet->data();
+	if (_portraitPos >= d.size()) return;
+	if (d[_portraitPos] == 0xFF) _portraitPos = _portraitSet->scriptStart();
+	const size_t n = d[_portraitPos];
+	for (size_t i = 0; i < n && _portraitPos + 1 + i < d.size(); ++i)
+		_portraitSet->blit(_portraitCanvas, d[_portraitPos + 1 + i], 8, 8);
+	_portraitPos += n + 1;
 }
 
 } // namespace fod

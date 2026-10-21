@@ -10,6 +10,12 @@ namespace {
 uint32_t rd32(const uint8_t *p) { return uint32_t(p[0]) | (uint32_t(p[1]) << 8) | (uint32_t(p[2]) << 16) | (uint32_t(p[3]) << 24); }
 std::string fixedStr(const uint8_t *p, size_t n) { return std::string(reinterpret_cast<const char *>(p), strnlen(reinterpret_cast<const char *>(p), n)); }
 
+struct PortraitGuard {   // KEH showShopHeader: the picture stays up while the screen is open
+	Host &h;
+	PortraitGuard(Host &host, int id) : h(host) { h.showPortrait(id); }
+	~PortraitGuard() { h.hidePortrait(); }
+};
+
 std::string pad(const std::string &s, size_t n) { return s.size() >= n ? s.substr(0, n) : s + std::string(n - s.size(), ' '); }
 
 std::string cashLine(const World &w, const Member &m) {
@@ -89,6 +95,7 @@ void runShop(World &w, Host &h, int shopIndex) {
 	auto &shops = w.map->shops();
 	if (size_t(shopIndex) >= shops.size()) return;
 	Bytes &shop = shops[size_t(shopIndex)];
+	PortraitGuard portrait(h, shop[0x28]);
 	h.print("\r" + fixedStr(&shop[0x14], 20) + "\r");
 	int member = 0;
 	for (int i = 0; i < w.partyCount(); ++i)
@@ -112,6 +119,7 @@ void runService(World &w, Host &h, int serviceIndex) {
 	}
 	if (base + 0x2C > file.size()) return;
 	const int count = file[base + 0x2A] | (file[base + 0x2B] << 8);
+	PortraitGuard portrait(h, file[base + 0x28]);
 	h.print("\r" + fixedStr(&file[base + 0x14], 20) + "\r");
 	int member = 0;
 	for (int i = 0; i < w.partyCount(); ++i)

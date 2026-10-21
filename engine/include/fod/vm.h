@@ -28,6 +28,8 @@ public:
 	virtual void log(const std::string & /*msg*/) {}
 	virtual void gameOver() {}                                  // the whole party is dead (KEH checkPartyWipeAndQuit)
 	// monster conversations (KEH npcDialogMode)
+	virtual void showPortrait(int /*pictureId*/) {}              // KANI picture set shown beside the dialog (shops, NPCs)
+	virtual void hidePortrait() {}
 	virtual void beginEncounter(int /*monsterIndex*/) {}
 	virtual void useCommandInCombat(int /*slot*/) {}           // combat commands 0Ah/0Bh: use skill/item/weapon on the party cell
 	virtual bool npcMode() const { return false; }

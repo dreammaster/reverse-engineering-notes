@@ -44,6 +44,23 @@ public:
 		}
 	}
 
+	int waitKeyTimeout(int ms) override {
+		const DWORD end = GetTickCount() + DWORD(ms);
+		for (;;) {
+			if (!_keys.empty()) { const int k = _keys.front(); _keys.pop_front(); return k; }
+			if (_closed) return -1;
+			const DWORD now = GetTickCount();
+			if (int(end - now) <= 0) return -2;
+			MsgWaitForMultipleObjects(0, nullptr, FALSE, end - now, QS_ALLINPUT);
+			MSG msg;
+			while (PeekMessageA(&msg, nullptr, 0, 0, PM_REMOVE)) {
+				if (msg.message == WM_QUIT) { _closed = true; break; }
+				TranslateMessage(&msg);
+				DispatchMessageA(&msg);
+			}
+		}
+	}
+
 	void present(const Screen &s) override {
 		const Rgb *pal = masterPalette();
 		const Bytes &px = s.pixels();

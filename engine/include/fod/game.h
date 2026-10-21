@@ -1,6 +1,7 @@
 #pragma once
 // Top-level game controller: exploration loop, dialog text, script hosting.
 #include "fod/screen.h"
+#include <memory>
 #include "fod/vm.h"
 #include "fod/charsheet.h"
 #include "fod/combat.h"
@@ -13,6 +14,7 @@ class Platform {
 public:
 	virtual ~Platform() = default;
 	virtual int waitKey() = 0;                      // KEH key codes (see vm.h); returns -1 when the window closes
+	virtual int waitKeyTimeout(int /*ms*/) { return waitKey(); }   // -2 when the time ran out with no key
 	virtual void present(const Screen &s) = 0;
 	virtual void playPcm(const std::vector<int16_t> & /*samples*/, int /*rate*/) {}   // fire-and-forget sound effect
 };
@@ -37,6 +39,8 @@ public:
 	void log(const std::string &msg) override { _log.push_back(msg); }
 	void gameOver() override { _quit = true; }
 	void ending(int n) override;
+	void showPortrait(int pictureId) override;
+	void hidePortrait() override;
 	void sound(int n) override;
 	void beginEncounter(int monsterIndex) override;
 	void useCommandInCombat(int slot) override;
@@ -88,6 +92,12 @@ private:
 	int _sheetMember = 0;
 	std::string _saveDir;
 	int _saveSlot = 1;
+	int nextKey();                 // waitKey that keeps the portrait animation running
+	void stepPortrait();
+	int _portraitId = -1;
+	std::unique_ptr<PictureSet> _portraitSet;
+	size_t _portraitPos = 0;
+	Screen _portraitCanvas;
 	bool _npcMode = false;         // a monster conversation is open (KEH npcDialogMode)
 };
 
