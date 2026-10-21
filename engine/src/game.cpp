@@ -6,6 +6,7 @@
 #include "fod/savegame.h"
 #include "fod/sound.h"
 #include "fod/creator.h"
+#include "fod/progress.h"
 #include "fod/lzss.h"
 #include "fod/archive.h"
 #include <algorithm>
@@ -48,6 +49,7 @@ Disk1 Game::defaultParty(const GameData &data) {
 Game::Game(const GameData &data, const Assets &assets, Platform &platform, Disk1 disk,
            std::vector<std::pair<int, Bytes>> maps, std::string saveDir)
     : _data(data), _assets(assets), _platform(platform), _w(data, std::move(disk)), _vm(_w, *this), _saveDir(std::move(saveDir)) {
+	_w.onHourChange = [this]() { checkTimedEffects(_w, *this); };
 	_w.importMaps(maps);
 	_w.loadMap(_w.disk.maps[_w.disk.mapIndex]);
 }

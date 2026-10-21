@@ -204,7 +204,9 @@ bool World::passTime(bool combat) {
 	const int step = combat ? 1 : (map ? map->minutesPerStep() : 1);
 	for (int guard = 0; guard < 100000; ++guard) {
 		++timeTicks;
+		const int hourBefore = disk.hours;
 		advanceMinutes(step);
+		if (!combat && disk.hours != hourBefore && onHourChange) onHourChange();
 		int alive = 0;
 		for (int i = 0; i < partyCount(); ++i) {
 			Member &m = party(i);

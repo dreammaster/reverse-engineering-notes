@@ -90,6 +90,7 @@ public:
 	uint16_t timeTicks = 0;                   // KEH _timeTicks: ticks since the game was loaded
 	void damageMember(Member &m, int damage); // KEH damageMember: subtract hp, track last-hurt, mark the dead below -60
 	bool partyWiped() const;                  // no member above -15 hp (KEH checkPartyWipeAndQuit condition)
+	std::function<void()> onHourChange;       // KEH setTime -> checkTimedEffects (outside combat)
 	bool passTime(bool combat);               // KEH passTime; false if the whole party died while waiting
 
 	// -- maps --
