@@ -1,7 +1,9 @@
 #include "wl/recomp_rt.h"
+#include "wl/exe.h"
 #include "wl/x86.h"
 #include "fod/bytes.h"
 #include <algorithm>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -246,6 +248,15 @@ void backedge(Machine &m, Regs &r, uint16_t site) {
 		for (int i = 0; i < 12; ++i) n += std::snprintf(buf + n, sizeof buf - size_t(n), " %04X", rw(m, r.ss, uint16_t(r.sp + 2 * i)));
 		throw Fault(buf);
 	}
+	if (s.realtime) {
+		if ((++s.edges & 255) != 0) return;
+		const int64_t now = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+		if (now < s.nextTickUs) return;
+		s.nextTickUs = s.nextTickUs == 0 || now - s.nextTickUs > 500000 ? now + 54925 : s.nextTickUs + 54925;
+		deliverTimer(m, r);
+		if (s.onTick) s.onTick();
+		return;
+	}
 	if (++s.edges < s.nextTick) return;
 	s.nextTick = s.edges + s.edgesPerTick;
 	deliverTimer(m, r);
@@ -309,7 +320,12 @@ void boot(Machine &m, const Bytes &image, const std::string &gameDir, Regs &r) {
 	Sys &s = *m.sys;
 	s.gameDir = gameDir;
 	s.indexGameDir();
-	std::memcpy(&m.mem[0x10000], image.data(), image.size());
+	if (image.size() > 2 && image[0] == 'M' && image[1] == 'Z') {   // WL.EXE itself: unpack it
+		const ExeImage exe = loadExePack(image, 0x1000);
+		std::memcpy(&m.mem[0x10000], exe.image.data(), exe.image.size());
+	} else {
+		std::memcpy(&m.mem[0x10000], image.data(), image.size());
+	}
 	m.mem[0xFF00] = 0xCD; m.mem[0xFF01] = 0x20;
 	// IVT -> a single IRET at F000:0000
 	m.mem[0xF0000] = 0xCF;
