@@ -4,6 +4,7 @@
 #include "fod/charsheet.h"
 #include "fod/savegame.h"
 #include "fod/sound.h"
+#include "fod/creator.h"
 #include <algorithm>
 #include <cstring>
 
@@ -23,7 +24,6 @@ Disk1 Game::defaultParty(const GameData &data) {
 		const Profession &p = profs[size_t(i) % profs.size()];
 		std::memcpy(m.b.data(), names[i], std::strlen(names[i]));
 		m.u8(0x48) = uint8_t(i % profs.size());
-		m.u8(0x49) = uint8_t(i + 1);
 		m.u8(0x4A) = 0xFF;   // nothing readied
 		int points = p.attrPoints;
 		for (int a = 0; a < 7; ++a) m.attr(a) = p.attrMin[a];
@@ -36,9 +36,9 @@ Disk1 Game::defaultParty(const GameData &data) {
 		for (int k = 0; k < 16; ++k) { m.activeSkill(k) = p.activeSkills[k]; m.passiveSkill(k) = p.passiveSkills[k]; }
 		const int hp = (p.hpMin + p.hpMax) / 2;
 		m.setHpMax(hp); m.setHp(hp); m.setU16(0x122, uint16_t(hp));
-		d.partyIds[i] = uint8_t(i);
 	}
 	d.partyCount = 4;
+	finishNewParty(d);
 	return d;
 }
 
