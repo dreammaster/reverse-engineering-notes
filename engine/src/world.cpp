@@ -1,12 +1,13 @@
 #include "fod/world.h"
 #include <algorithm>
+#include <map>
 #include <cstdlib>
 
 namespace fod {
 
 GameData::GameData(const std::string &gameDir)
     : dir(gameDir), globals(readFile(gameDir + "/GLOBALS")), weapons(readFile(gameDir + "/WEAPONS")),
-      archetypes(readFile(gameDir + "/ARCHTYPE")), hdspct(readFile(gameDir + "/HDSPCT")) {}
+      archetypes(readFile(gameDir + "/ARCHTYPE")), packets(readFile(gameDir + "/PACKETS")), hdspct(readFile(gameDir + "/HDSPCT")) {}
 
 // ---------------------------------------------------------------- Rng
 void Rng::reseed(uint32_t seed) {
@@ -395,6 +396,38 @@ void World::placeEntitiesOnMap() {
 	for (Monster &m : map->monsters()) markEntityOnMap(m.raw[0x5F], m.x(), m.y(), m.raw[0x65]);
 	for (EnemyGroup &g : map->groups())
 		if (g.raw[9] & 0x0F) markEntityOnMap(g.raw[5], g.x(), g.y(), g.raw[0xC]);
+}
+
+bool World::addGroundItem(int item, int qty, int x, int y) {
+	for (GroundItem &g : map->groundItems()) {
+		if (g.item != item || g.x != x || g.y != y) continue;
+		if (g.qty + qty > 0xFFFF) g.qty = 0xFFFF; else g.qty = uint16_t(g.qty + qty);
+		return true;
+	}
+	return false;
+}
+
+void World::dropPacketLoot(int packet, int x, int y, int overrideFirstItem) {
+	const Bytes &pk = data.packets;
+	auto u16 = [&](size_t o) { return int(pk.at(o) | (pk.at(o + 1) << 8)); };
+	const int count = u16(2 * size_t(packet)), first = u16(0x30 + 2 * size_t(packet));
+	std::map<int, int> scratch;
+	for (int i = first; i < first + count; ++i) {
+		const size_t o = 0x60 + 6 * size_t(i);
+		const int item = (i == first && overrideFirstItem >= 0) ? overrideFirstItem : pk.at(o);
+		if (pk.at(o + 1) < rng.range(1, 100)) continue;
+		const int qty = rng.range(u16(o + 2), u16(o + 4));
+		if (!addGroundItem(item, qty, x, y)) scratch[item] = qty;
+	}
+	bool any = false;
+	for (const auto &kv : scratch) {
+		if (kv.second == 0) continue;
+		GroundItem gi;
+		gi.qty = uint16_t(kv.second); gi.x = uint8_t(x); gi.y = uint8_t(y); gi.item = uint8_t(kv.first);
+		map->groundItems().push_back(gi);
+		any = true;
+	}
+	if (any && map->inBounds(x, y)) map->cell(x, y).flags |= 0x80;
 }
 
 // ---------------------------------------------------------------- maps

@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
 			const int n = cb.buildCombatants(true);
 			std::printf("%d enemy combatants\n", n);
 			const Combat::Outcome o = cb.run(true);
-			std::printf("fled=%d wiped=%d\n", o.fled, o.wiped);
+			std::printf("fled=%d wiped=%d groundItems=%zu\n", o.fled, o.wiped, w.map->groundItems().size());
 			for (int i = 0; i < w.partyCount(); ++i) std::printf("%s hp=%d exp=%u\n", w.party(i).name().c_str(), w.party(i).hp(), w.party(i).exp());
 		} else if (cmd == "items") {
 			Globals g(readFile(path(dir, "GLOBALS")));

@@ -303,11 +303,15 @@ void Combat::removeDeadMonsters() {
 		const int x = int8_t(m.raw[0x5B]), y = int8_t(m.raw[0x5C]);
 		std::map<int, int> loot;
 		for (int k = 0; k < m.raw[0x52]; ++k) ++loot[m.raw[0x53 + k]];
+		bool added = false;
 		for (const auto &kv : loot) {
+			if (_w.addGroundItem(kv.first, kv.second, x, y)) continue;
 			GroundItem gi;
 			gi.qty = uint16_t(kv.second); gi.x = uint8_t(x); gi.y = uint8_t(y); gi.item = uint8_t(kv.first);
 			_w.map->groundItems().push_back(gi);
+			added = true;
 		}
+		if (added && _w.map->inBounds(x, y)) _w.map->cell(x, y).flags |= 0x80;
 		if (_w.map->inBounds(x, y)) _w.map->cell(x, y).tile &= 0x07FF;
 		monsters.erase(monsters.begin() + long(i));
 	}
@@ -317,6 +321,7 @@ void Combat::removeDeadMonsters() {
 void Combat::postCombatCleanup() {
 	for (EnemyGroup &g : _w.map->groups()) {
 		if (!(g.raw[9] & 0x0F)) continue;
+		std::vector<int> packets, weapons;
 		for (int j = 0; j < g.raw[8]; ++j) {
 			if (!(g.raw[9] & (1 << j))) continue;
 			uint8_t *slot = &g.raw[0xE + 0x16 * j];
@@ -331,9 +336,12 @@ void Combat::postCombatCleanup() {
 			slot[0xF] = uint8_t(kept);
 			if (kept == 0) {
 				g.raw[9] &= uint8_t(~(1 << j));
-				if (slot[0x15]) _h.log("loot packet " + std::to_string(slot[0x15] - 1) + " not dropped (PACKETS not ported)");
+				if (slot[0x15]) packets.push_back(slot[0x15] - 1);
+				if (slot[0x13] != 0xFF) weapons.push_back(slot[0x13]);
 			}
 		}
+		for (int w : weapons) _w.dropPacketLoot(23, g.x(), g.y(), w);
+		for (int p : packets) _w.dropPacketLoot(p, g.x(), g.y());
 		if (!(g.raw[9] & 0x0F) && _w.map->inBounds(g.x(), g.y())) _w.map->cell(g.x(), g.y()).tile &= 0x07FF;
 	}
 }

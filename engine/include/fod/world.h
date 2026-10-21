@@ -16,6 +16,7 @@ struct GameData {
 	Globals globals;
 	Weapons weapons;
 	Archetypes archetypes;
+	Bytes packets;               // PACKETS loot tables
 	Bytes hdspct;                // skill use thresholds at +0x13A + 0x16*skill
 	GameData(const std::string &gameDir);
 };
@@ -102,7 +103,10 @@ public:
 	void setMapCellHighBits(int x, int y, int v);
 	void moveEntityStep(uint8_t &px, uint8_t &py, int reach, int detect, int toward, int overlay);
 	void moveMapEntities();                   // monsters and groups creep toward the party
-	void placeEntitiesOnMap();                // stamp their overlay ids onto the map
+	void placeEntitiesOnMap();
+	// loot (KEH addGroundItem / dropPacketLoot / addScratchItemsAtCell)
+	bool addGroundItem(int item, int qty, int x, int y);   // true if it merged into an existing stack
+	void dropPacketLoot(int packet, int x, int y, int overrideFirstItem = -1);                // stamp their overlay ids onto the map
 
 	// -- persistence list stored in Disk1.tail --
 	void syncChangesToDisk();
