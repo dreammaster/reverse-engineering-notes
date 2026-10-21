@@ -81,6 +81,7 @@ public:
 
 	// -- time --
 	void advanceMinutes(int minutes);
+	bool lootFlag = false;                    // KEH byte_2EE06: a script put items on the party's cell
 	uint16_t timeTicks = 0;                   // KEH _timeTicks: ticks since the game was loaded
 	void damageMember(Member &m, int damage); // KEH damageMember: subtract hp, track last-hurt, mark the dead below -60
 	bool partyWiped() const;                  // no member above -15 hp (KEH checkPartyWipeAndQuit condition)

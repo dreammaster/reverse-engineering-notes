@@ -294,6 +294,7 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 			break;
 		case 24:   // drop loot packet p0-1 at (p1, p2)
 			w.dropPacketLoot(p0 - 1, p1, p2);
+			w.lootFlag = true;
 			break;
 		case 25: w.applyCellChange(disk.mapX, disk.mapY, 0x19, p0, 0); _h.redrawMap(); break;
 		case 26: w.applyCellChange(disk.mapX, disk.mapY, 0x1A, p0, p1); break;
@@ -455,6 +456,7 @@ ScriptResult ScriptVM::run(const ScriptCall &call) {
 			for (auto &gi : w.map->groundItems())
 				if ((gi.x & 0x7F) == p0 && gi.y == p1) { gi.x &= 0x7F; any = true; }
 			if (any && w.map->inBounds(p0, p1)) w.map->cell(p0, p1).flags |= 0x80;
+			if (any) w.lootFlag = true;
 			_h.redrawMap();
 			break;
 		}

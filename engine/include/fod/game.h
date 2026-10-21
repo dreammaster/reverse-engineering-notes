@@ -2,6 +2,7 @@
 // Top-level game controller: exploration loop, dialog text, script hosting.
 #include "fod/screen.h"
 #include "fod/vm.h"
+#include "fod/charsheet.h"
 #include "fod/combat.h"
 #include <functional>
 
@@ -44,6 +45,8 @@ private:
 	void redraw();
 	void passTime();
 	void startPendingFight(int monsterIndex);   // KEH startPendingFight: combat against one scripted monster
+	int characterInfo(int partyNum, bool inCombat);   // KEH characterInfo: returns the member with a queued command, or -1
+	void afterRosterScreen(int result);
 	void endOfTurn();
 	std::function<Combat::GroupAction(Combat &, int, Combatant &)> defaultCombatCommands();
 	void useUpAmmoFor(int slot, int itemSlot);
@@ -69,6 +72,9 @@ private:
 	bool _dialogOpen = false;
 	bool _quit = false;
 	int _targetX[5] = {}, _targetY[5] = {};   // per-member command target cell
+	bool _sheetActive = false;
+	SheetState _sheet;
+	int _sheetMember = 0;
 	bool _npcMode = false;         // a monster conversation is open (KEH npcDialogMode)
 };
 

@@ -99,11 +99,11 @@ int main(int argc, char **argv) {
 			GameData gd(dir);
 			Assets assets(dir);
 			struct SimPlatform : Platform {
-				std::string keys; size_t pos = 0; Screen last;
+				std::string keys; size_t pos = 0; Screen last, snap; bool snapped = false;
 				int waitKey() override {
-					if (pos >= keys.size()) return -1;
+					if (pos >= keys.size()) { if (!snapped) { snap = last; snapped = true; } return -1; }
 					const char c = keys[pos++];
-					switch (c) { case 'U': return 0xFD; case 'D': return 0xFC; case 'L': return 0xFB; case 'R': return 0xFA; case '_': return 0xFE; default: return c; }
+					switch (c) { case 'U': return 0xFD; case 'D': return 0xFC; case 'L': return 0xFB; case 'R': return 0xFA; case '_': return 0xFE; case '!': return 0xFF; case 'a': case 'b': case 'c': case 'd': case 'e': return 0x3B + (c - 'a'); default: return c; }
 				}
 				void present(const Screen &s) override { last = s; }
 			} plat;
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
 			Disk1 d = Game::defaultParty(gd);
 			Game game(gd, assets, plat, d);
 			game.run();
-			plat.last.toImage().writePng(argv[3]);
+			(plat.snapped ? plat.snap : plat.last).toImage().writePng(argv[3]);
 			std::printf("pos=(%d,%d) map=%d wrote %s\n", game.world().disk.mapX, game.world().disk.mapY, game.world().mapNo, argv[3]);
 		} else if (cmd == "duel" && argc >= 5) {   // duel <mapNo> <groupIdx> [rounds]: party member 0 attacks a group slot
 			GameData gd(dir);

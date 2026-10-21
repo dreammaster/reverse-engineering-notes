@@ -1,6 +1,7 @@
 #include "fod/game.h"
 #include "fod/combat.h"
 #include "fod/party.h"
+#include "fod/charsheet.h"
 #include <algorithm>
 #include <cstring>
 
@@ -46,7 +47,8 @@ Game::Game(const GameData &data, const Assets &assets, Platform &platform, Disk1
 
 // ---------------------------------------------------------------- drawing
 void Game::redraw() {
-	renderMainScreen(_screen, _assets, _w, {});
+	if (_sheetActive && _sheetMember < _w.partyCount()) drawCharacterSheet(_screen, _assets, _w, _sheetMember, _sheet);
+	else renderMainScreen(_screen, _assets, _w, {});
 	if (_dialogOpen) {
 		// dialog frame (KEH _dialogBorder*) and text area (8,6)-(31,17)
 		for (int y = 5; y <= 18; ++y)
@@ -411,6 +413,106 @@ void Game::useCommandOnCell(int slot, bool inCombat) {
 	}
 }
 
+void Game::afterRosterScreen(int result) {
+	_sheetActive = false;
+	if (result < 0) { redraw(); return; }
+	_w.lootFlag = false;
+	useCommandOnCell(result, false);
+	if (_w.lootFlag) lootCell(_w.disk.mapX, _w.disk.mapY);
+	redraw();
+}
+
+int Game::characterInfo(int partyNum, bool inCombat) {
+	const bool npc = inCombat || _npcMode;
+	int member = -1;
+	_sheetActive = true;
+	_sheet = SheetState{};
+	int result = -1;
+	auto finish = [&](int r) { _sheetActive = false; result = r; };
+	while (_sheetActive && !_quit) {
+		if (member != partyNum) { member = partyNum; _sheet = SheetState{}; }
+		_sheetMember = partyNum;
+		Member &m = _w.party(partyNum);
+		const int total = m.itemCount();
+		const auto active = learnedSkills(_w, m, false), passive = learnedSkills(_w, m, true);
+		const int key = readKey();
+		auto pageKeys = [&](int k, int leftTo, int rightTo) {
+			if (k == 0xFA) { _sheet.page = rightTo; return true; }
+			if (k == 0xFB) { _sheet.page = leftTo; return true; }
+			return false;
+		};
+		auto fkey = [&](int k) {
+			const int s = k - 0x3B;
+			if (s < 0 || s >= _w.partyCount()) return false;
+			partyNum = s;
+			return true;
+		};
+		if (key == 0xFF) { finish(-1); break; }
+		if (_sheet.page == 0) {
+			m.b[0x144] = 0x0A;
+			static const char kLetters[] = "SIDWACL";
+			const char *p = key < 128 && key > 0 ? std::strchr(kLetters, key) : nullptr;
+			if (key == 'V') {
+				if (m.b[0x58]) {
+					_sheet.showConditions = true;
+					readKey();
+					_sheet.showConditions = false;
+				}
+			} else if (p && *p) {
+				m.b[0x145] = uint8_t(p - kLetters);
+				if (!m.hp() || m.hp() < 1) { message(m.name() + " is incapacitated."); continue; }
+				finish(chooseCommandTarget(partyNum) ? partyNum : -1);
+			} else if (key == 0xFC) {
+				const int shown = std::min(8, total - _sheet.invOffset);
+				if (total - _sheet.invOffset > shown) _sheet.invOffset += 8;
+			} else if (key == 0xFD) {
+				if (_sheet.invOffset >= 8) _sheet.invOffset -= 8;
+			} else if (key >= 0x3B && key <= 0x3F) {
+				fkey(key);
+			} else if (pageKeys(key, 2, 1)) {
+			} else if (key >= '1' && key <= '8') {
+				const int shown = std::min(8, total - _sheet.invOffset);
+				const int n = key - '0';
+				if (n > shown) continue;
+				const int slot = _sheet.invOffset + n - 1;
+				m.b[0x145] = uint8_t(slot);
+				if (_npcMode) { finish(partyNum); break; }
+				if (!itemActionMenu(_w, *this, partyNum, slot, inCombat)) continue;
+				if (inCombat && (m.b[0x144] == 0x0D || m.b[0x144] == 0x0C)) { finish(partyNum); break; }
+				if (m.b[0x144] == 6) { finish(partyNum); break; }
+				finish(chooseCommandTarget(partyNum) ? partyNum : -1);
+			}
+		} else if (_sheet.page == 1) {
+			if (key >= 0x3B && key <= 0x3F) { fkey(key); continue; }
+			if (pageKeys(key, 0, 2)) continue;
+			if (key == 0xFC) { if (int(active.size()) - _sheet.activeOffset > 8) _sheet.activeOffset += 8; continue; }
+			if (key == 0xFD) { if (_sheet.activeOffset >= 8) _sheet.activeOffset -= 8; continue; }
+			if (key >= '1' && key <= '8') {
+				const int n = key - '0';
+				if (n > std::min(8, int(active.size()) - _sheet.activeOffset)) continue;
+				const int skill = active[size_t(_sheet.activeOffset + n - 1)];
+				if (m.hp() < 1) { message(m.name() + " is incapacitated."); continue; }
+				m.b[0x145] = uint8_t(skill);
+				if (skill == 0 || skill == 0x0B || skill == 4) {
+					if (_npcMode) continue;
+					if (doctorTreat(_w, *this, partyNum, true, !inCombat)) finish(partyNum);
+					continue;
+				}
+				m.b[0x144] = 0x0A;
+				m.b[0x145] = uint8_t(skill + 0x0C);
+				if (!inCombat) { finish(chooseCommandTarget(partyNum) ? partyNum : -1); continue; }
+				if (m.b[0x145] == 0x1A || m.b[0x145] == 0x19) { finish(partyNum); continue; }
+				finish(chooseCommandTarget(partyNum) ? partyNum : -1);
+			}
+		} else {
+			if (key >= 0x3B && key <= 0x3F) { fkey(key); continue; }
+			pageKeys(key, 1, 0);
+		}
+	}
+	_sheetActive = false;
+	return result;
+}
+
 void Game::lootCell(int x, int y) {
 	if (!_w.map->inBounds(x, y) || !(_w.map->cell(x, y).flags & 0x80)) return;
 	int member = 0;
@@ -529,6 +631,9 @@ void Game::run() {
 			redraw();
 			break;
 		}
+		case 0x3B: case 0x3C: case 0x3D: case 0x3E: case 0x3F:
+			if (k - 0x3B < _w.partyCount()) afterRosterScreen(characterInfo(k - 0x3B, false));
+			break;
 		case 'Q': _quit = true; break;
 		default: redraw(); break;
 		}
