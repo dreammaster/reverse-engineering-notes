@@ -1,5 +1,7 @@
 // Win32 front-end: 320x200 window scaled 3x, KEH key codes.
 #include "fod/game.h"
+#include "fod/creator.h"
+#include "fod/savegame.h"
 #include <windows.h>
 #include <cstdio>
 #include <deque>
@@ -120,7 +122,25 @@ int main(int argc, char **argv) {
 		GameData data(dir);
 		Assets assets(dir);
 		Win32Platform platform;
-		Game game(data, assets, platform, Game::defaultParty(data));
+		const std::string saveDir = argc >= 3 && std::string(argv[2]).rfind("--", 0) != 0 ? argv[2] : "saves";
+		CreateDirectoryA(saveDir.c_str(), nullptr);
+		bool forceNew = false, useDefault = false;
+		for (int i = 1; i < argc; ++i) {
+			if (std::string(argv[i]) == "--new") forceNew = true;
+			if (std::string(argv[i]) == "--default-party") useDefault = true;
+		}
+		Disk1 disk;
+		std::vector<std::pair<int, Bytes>> maps;
+		const int slot = forceNew ? 0 : newestSave(saveDir);
+		if (slot > 0 && loadGame(saveDir, slot, disk, maps)) {
+			// continue the saved game
+		} else if (useDefault) {
+			disk = Game::defaultParty(data);
+		} else {
+			disk = emptyRoster();
+			if (!runPartyCreator(data, assets, platform, disk)) return 0;
+		}
+		Game game(data, assets, platform, disk, maps, saveDir);
 		game.run();
 	} catch (const std::exception &e) {
 		MessageBoxA(nullptr, e.what(), "Fountain of Dreams", MB_OK | MB_ICONERROR);

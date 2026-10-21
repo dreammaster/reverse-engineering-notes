@@ -14,6 +14,8 @@
 #include "fod/game.h"
 #include "fod/combat.h"
 #include "fod/progress.h"
+#include "fod/creator.h"
+#include "fod/lzss.h"
 #include "fod/savegame.h"
 #include "texthost.h"
 #include <cstdio>
@@ -180,6 +182,35 @@ int main(int argc, char **argv) {
 			Disk1 d;
 			std::vector<std::pair<int, Bytes>> maps;
 			std::printf("load %s, %zu maps, newest slot %d\n", loadGame(argv[4], 1, d, maps) ? "ok" : "failed", maps.size(), newestSave(argv[4]));
+		} else if (cmd == "pict" && argc >= 5) {   // pict <file> <out.png>: a full-screen 4bpp picture (LZSS, 320x200)
+			const Bytes px = lzssDecode(readFile(path(dir, argv[3])));
+			Screen scr;
+			for (int y = 0; y < 200; ++y)
+				for (int x = 0; x < 160 && size_t(y) * 160 + size_t(x) < px.size(); ++x) {
+					scr.put(x * 2, y, px[size_t(y) * 160 + size_t(x)] >> 4);
+					scr.put(x * 2 + 1, y, px[size_t(y) * 160 + size_t(x)] & 15);
+				}
+			scr.toImage().writePng(argv[4]);
+			std::printf("%zu bytes\n", px.size());
+		} else if (cmd == "creator" && argc >= 5) {   // creator <out.png> <keys>: drive the FOD party creation screens
+			GameData gd(dir);
+			Assets assets(dir);
+			struct SimPlatform : Platform {
+				std::string keys; size_t pos = 0; Screen last, snap; bool snapped = false;
+				int waitKey() override {
+					if (pos >= keys.size()) { if (!snapped) { snap = last; snapped = true; } return -1; }
+					const char c = keys[pos++];
+					switch (c) { case 'U': return 0xFD; case 'D': return 0xFC; case 'L': return 0xFB; case 'R': return 0xFA; case '_': return 0xFE; case '!': return 0xFF; case '<': return 8;
+					             case 'a': case 'b': case 'c': return 0x3B + (c - 'a'); default: return c; }
+				}
+				void present(const Screen &s) override { last = s; }
+			} plat;
+			plat.keys = argv[4];
+			Disk1 d = emptyRoster();
+			const bool played = runPartyCreator(gd, assets, plat, d);
+			(plat.snapped ? plat.snap : plat.last).toImage().writePng(argv[3]);
+			std::printf("played=%d party=%d\n", played, d.partyCount);
+			for (int i = 0; i < d.partyCount; ++i) std::printf("  %s prof=%d hp=%d ST=%d\n", d.roster[size_t(i)].name().c_str(), d.roster[size_t(i)].profession(), d.roster[size_t(i)].hp(), d.roster[size_t(i)].attr(0));
 		} else if (cmd == "items") {
 			Globals g(readFile(path(dir, "GLOBALS")));
 			std::printf("range bands %d, unit '%s'\n", g.rangeBands(), g.unit().c_str());
