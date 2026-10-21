@@ -12,6 +12,7 @@
 #include "fod/world.h"
 #include "fod/screen.h"
 #include "fod/game.h"
+#include "fod/combat.h"
 #include "texthost.h"
 #include <cstdio>
 #include <iostream>
@@ -111,6 +112,32 @@ int main(int argc, char **argv) {
 			game.run();
 			plat.last.toImage().writePng(argv[3]);
 			std::printf("pos=(%d,%d) map=%d wrote %s\n", game.world().disk.mapX, game.world().disk.mapY, game.world().mapNo, argv[3]);
+		} else if (cmd == "duel" && argc >= 5) {   // duel <mapNo> <groupIdx> [rounds]: party member 0 attacks a group slot
+			GameData gd(dir);
+			World w(gd, Game::defaultParty(gd));
+			w.loadMap(std::atoi(argv[3]));
+			TextHost host;
+			w.party(0).passiveSkill(4) = 30;
+			Combat cb(w, host);
+			Combatant c;
+			c.type = 0; c.index = 0; c.tType = 2; c.tIndex = uint8_t(std::atoi(argv[4])); c.tSub = 0;
+			const int rounds = argc >= 6 ? std::atoi(argv[5]) : 5;
+			{
+				cb.calcOnly = true;
+				int d = 0, wd = 0;
+				Combatant e = c;
+				e.type = 2; e.index = c.tIndex; e.sub = 0; e.tType = 0; e.tIndex = 0;
+				std::printf("hit%% party->group %d, group->party %d\n", cb.rollAttack(c, d, wd), cb.rollAttack(e, d, wd));
+				cb.calcOnly = false;
+			}
+			for (int i = 0; i < rounds; ++i) {
+				cb.selectTarget(c);
+				cb.resolveAttack(c);
+				Combatant e = c;   // enemy strikes back
+				e.type = 2; e.index = c.tIndex; e.sub = 0; e.tType = 0; e.tIndex = 0;
+				cb.selectTarget(e);
+				cb.resolveAttack(e);
+			}
 		} else if (cmd == "items") {
 			Globals g(readFile(path(dir, "GLOBALS")));
 			std::printf("range bands %d, unit '%s'\n", g.rangeBands(), g.unit().c_str());
@@ -120,7 +147,7 @@ int main(int argc, char **argv) {
 		} else if (cmd == "weapons") {
 			Weapons w(readFile(path(dir, "WEAPONS")));
 			for (size_t i = 0; i < w.weapons().size(); ++i) {
-				std::printf("weapon %zu flags=%02X jam=%u modes=%zu\n", i, w.weapons()[i].flags(), w.weapons()[i].jamPct(),
+				std::printf("weapon %zu flags=%02X jam=%u modes=%zu\n", i, w.weapons()[i].flags(), w.weapons()[i].reliability(),
 				            w.weapons()[i].modes.size());
 				for (const auto &m : w.weapons()[i].modes)
 					std::printf("   dmg %u-%u ammoType=%u clip=%u burst=%u hit%%=%u..%u\n", m.dmgMin, m.dmgMax, m.ammoType,
@@ -134,7 +161,7 @@ int main(int argc, char **argv) {
 					            p.baseAC);
 			else
 				for (const auto &e : a.enemies())
-					std::printf("%-30s dmg %u-%u armor=%u hit=%u xp=%u\n", e.name.c_str(), e.dmgMin, e.dmgMax, e.armor, e.hitPct, e.xp);
+					std::printf("%-30s dmg %u-%u armor=%u hit=%u xp=%u\n", e.name.c_str(), e.dmgMin, e.dmgMax, e.armor, e.hitPct, e.xpPerLevel);
 		} else {
 			std::fprintf(stderr, "bad command\n");
 			return 2;

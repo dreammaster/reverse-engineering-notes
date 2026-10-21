@@ -58,6 +58,8 @@ public:
 	static int conState(const Member &m);
 	static int attrBonus(int v);              // KEH attrBonus (can be negative)
 	bool isActive(const Member &m) const;     // KEH isMemberActive
+	int armorClass(const Member &m) const;    // KEH getArmorClass
+	const WeaponDef &weaponOf(int itemId) const { return data.weapons.weapons().at(item(itemId).weaponDef); }
 
 	// -- items --
 	void initItemSlot(Member &m, int slot, int item);

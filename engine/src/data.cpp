@@ -15,7 +15,7 @@ Globals::Globals(const Bytes &file) {
 		it.name = r.cstr(0x14);
 		it.flags = r.u8();
 		it.weaponDef = r.u8();
-		it.b16 = r.u8();
+		it.woundChance = r.u8();
 		it.uniqueBit = r.u8();
 		_items.push_back(std::move(it));
 	}
@@ -70,6 +70,11 @@ Archetypes::Archetypes(const Bytes &file) {
 		pr.seek(0x38);
 		pr.bytes(p.activeSkills, 16);
 		pr.bytes(p.passiveSkills, 16);
+		pr.seek(0x6C);
+		p.xpFactor = pr.u32();
+		pr.seek(0x76);
+		p.dmgMin = pr.u16();
+		p.dmgMax = pr.u16();
 		pr.seek(0x70);
 		p.hpMin = pr.u16();
 		p.hpMax = pr.u16();
@@ -84,14 +89,16 @@ Archetypes::Archetypes(const Bytes &file) {
 		r.seek(enemyOfs + i * 0x40);
 		r.bytes(e.raw.data(), 0x40);
 		Reader er(e.raw);
-		e.name = er.cstr(0x2C);
+		e.name = er.cstr(0x14);
+		e.xpPerLevel = er.u32();
+		e.verb = er.cstr(0x14);
+		er.seek(0x2C);
 		e.dmgMin = er.u16();
 		e.dmgMax = er.u16();
+		er.seek(0x35);
+		e.speed = er.u8(); e.reach = er.u8(); e.radius = er.u8();
 		er.seek(0x39);
-		e.armor = er.u8();
-		e.hitPct = er.u8();
-		er.seek(0x3D);
-		e.xp = er.u8();
+		e.armor = er.u8(); e.hitPct = er.u8(); e.woundChance = er.u8(); e.woundType = er.u8(); e.evasion = er.u8();
 		_e.push_back(std::move(e));
 	}
 }

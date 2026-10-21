@@ -65,6 +65,16 @@ bool World::isActive(const Member &m) const {
 	return hp > 0;
 }
 
+int World::armorClass(const Member &m) const {
+	int sum = 0;
+	for (int i = 0; i < 3; ++i) {
+		const uint8_t slot = m.u8(0x4B + i);
+		if (slot != 0xFF) sum += item(m.b[0x62 + 6 * slot]).weaponDef;
+	}
+	if (sum == 0) sum = data.archetypes.professions().at(m.profession()).baseAC;
+	return sum;
+}
+
 bool World::isUnique(int id) const { return (item(id).flags & 0x1C) == 0x1C; }
 
 void World::initItemSlot(Member &m, int slot, int id) {
