@@ -3965,6 +3965,15 @@ frame, to read (the window cannot be read between two frames), and copies the fr
 `playthrough` with `PLAY_SAVE=<slot>` makes a snapshot and writes a savegame file. (`TGameControl::SaveGame(slot)` with a slot makes a bookmark;
 the savegames of the menu come from slot -1, the selected one.)
 
+## The hover of a button and the depth of a character (found by the standalone player)
+
+Two things of the original that were taken for others. The action command 105 (kCommandSetObjectActive; the data calls the parts 'Aktives/Inaktives
+Bild von Schalter ... setzen', the hover of the skip button) calls slot 0x80 of the object's vtable, SetActiveSprite() (0x78 is SetActive()): it changes
+the picture of a button, not whether the button is shown (the skip button vanished when the mouse left it). And TMCharacter::GetCenter() (asm 137965) reads
++0x1C, the y of the position (+0x18), where it returned a member that a character never sets (-1): the characters were sorted behind every object of the
+scene (Rufus was not to be seen in his hut). playthrough with PLAY_SKIPHOVER=1 (the mouse on the skip button and off it, with pictures) and PLAY_CHARS=1
+(where the characters of the scene are and what they show, with a picture) look at them.
+
 ## Reformatted to ScummVM's code conventions
 
 Since this engine's eventual destination is a ScummVM engine module, the
