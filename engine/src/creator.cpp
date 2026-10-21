@@ -1,4 +1,5 @@
 // Port of FOD.EXE: loadDisk1 (new roster), the title picture and the party creation menu.
+#include <memory>
 #include "fod/creator.h"
 #include "fod/lzss.h"
 #include <algorithm>
@@ -28,7 +29,9 @@ void centered(Screen &s, const Assets &a, const Win &w, int y, const std::string
 
 class Creator {
 public:
-	Creator(const GameData &d, const Assets &a, Platform &p, Disk1 &disk) : _d(d), _a(a), _p(p), _disk(disk) {}
+	Creator(const GameData &d, const Assets &a, Platform &p, Disk1 &disk) : _d(d), _a(a), _p(p), _disk(disk) {
+		try { _welcome = std::make_unique<PictureSet>(lzssDecode(readFile(d.dir + "/GANI"))); } catch (const std::exception &) {}
+	}
 
 	bool run() {
 		// title picture, any key
@@ -130,9 +133,20 @@ private:
 		winWrite(_s, _a, kMain, 36, 0, fmt("%2.2d->", m.b[0x23]));
 	}
 
+	// KEH drawWelcomePortraitFrames: the frames of the first script entry, at the portrait window (8,8)
+	void drawWelcomePortrait() {
+		if (!_welcome) return;
+		const Bytes &d = _welcome->data();
+		size_t p = _welcome->scriptStart();
+		if (p >= d.size()) return;
+		const size_t n = d[p];
+		for (size_t i = 0; i < n && p + 1 + i < d.size(); ++i) _welcome->blit(_s, d[p + 1 + i], 8, 8);
+	}
+
 	void draw(int current, int hilite = 0, bool editing = false) {
 		_s.clear();
 		drawBorders(_s, _a, 5);
+		if (_mode == Mode::Menu || _mode == Mode::Edit) drawWelcomePortrait();
 		(void)editing;
 		switch (_mode) {
 		case Mode::Menu:
@@ -294,6 +308,7 @@ private:
 		return true;
 	}
 
+	std::unique_ptr<PictureSet> _welcome;
 	const GameData &_d;
 	const Assets &_a;
 	Platform &_p;
