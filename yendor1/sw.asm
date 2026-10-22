@@ -28,6 +28,7 @@ seg000          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; Shell main: open data files, run PROG0/1/2/3/4/10/16/17/18 per exit codes (see docs1/program-graph.md)
 ; Attributes: noreturn
 
                 public start
@@ -61,7 +62,7 @@ start           proc near
                 mov     parm_58, 1234h
                 mov     al, 0
                 mov     bx, 9A9h
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jz      short loc_1004A
                 jmp     short loc_100B5
@@ -71,7 +72,7 @@ loc_1004A:                              ; CODE XREF: start+46↑j
                 xor     ax, ax
                 mov     bx, 9A9h
                 mov     di, 86h
-                call    sub_11432
+                call    fileReadRecordTo ; read record AX into the descriptor buffer and copy it to ES:DI
                 mov     ax, word_12349
                 mov     parm_5C, ax
                 mov     bx, word_12349
@@ -140,24 +141,24 @@ loc_100C7:                              ; CODE XREF: start+6A↑j
                                         ; start+93↑j
                 mov     al, 2
                 mov     bx, 9A9h
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 xor     ax, ax
                 mov     bx, 9A9h
                 mov     di, 86h
-                call    sub_11432
+                call    fileReadRecordTo ; read record AX into the descriptor buffer and copy it to ES:DI
                 cmp     byte_11A65, 1
                 jz      short loc_100F1
                 cmp     byte_11A65, 2
                 jnz     short loc_100B5
-                call    sub_108AC
+                call    startDriversSvga ; EXEC VID256.DRV, INT 62h fn00, EXEC VIDP256.DRV (not present in this install)
                 jmp     short loc_100F4
 ; ---------------------------------------------------------------------------
 
 loc_100F1:                              ; CODE XREF: start+E3↑j
-                call    sub_10873
+                call    startDriversEga ; EXEC VID16.DRV, INT 62h fn00, EXEC VIDP16.DRV
 
 loc_100F4:                              ; CODE XREF: start+EF↑j
-                call    sub_10B08
+                call    calibrateDelays ; CPU class -> ctx+8/0Ah/0Ch delay counts
                 mov     al, byte_11A4B
                 mov     parm_0D, al
                 mov     parm_03, 3
@@ -181,8 +182,8 @@ loc_10114:                              ; CODE XREF: start+104↑j
 ; ---------------------------------------------------------------------------
 
 loc_10129:                              ; CODE XREF: start+11B↑j
-                call    sub_105AF
-                call    sub_10984
+                call    openDataFiles   ; open the 15 data files, load palettes/headers; exits with the failing file index in byte_12877
+                call    showClosingMessageA ; closing text screen after PROG17
                 mov     es:byte_122F6, 1
                 mov     es:parm_14, 0
                 mov     es:parm_16, 0
@@ -223,7 +224,7 @@ loc_10187:                              ; CODE XREF: start+17B↑j
 ; ---------------------------------------------------------------------------
 
 loc_101B1:                              ; CODE XREF: start+1A1↑j
-                call    sub_10571
+                call    runPrologue     ; EXEC PROG2 (prologue), reset prologue flags, save party state
                 mov     parm_0D, 1
 
 loc_101B9:                              ; CODE XREF: start+19A↑j
@@ -246,7 +247,7 @@ loc_101D5:                              ; CODE XREF: start+1CC↑j
                 jnz     short loc_101E8
                 mov     parm_03, 1
                 mov     parm_04, 1
-                call    sub_10571
+                call    runPrologue     ; EXEC PROG2 (prologue), reset prologue flags, save party state
                 jmp     short loc_101B9
 ; ---------------------------------------------------------------------------
 
@@ -337,8 +338,8 @@ loc_10265:                              ; CODE XREF: start+1D2↑j
                 assume es:nothing
                 mov     word ptr es:16h, seg seg019
                 mov     word ptr es:18h, 0A71h
-                call    sub_103AB
-                call    sub_10984
+                call    showEndScreen   ; shareware thank-you / register screen built from tiles and text
+                call    showClosingMessageA ; closing text screen after PROG17
                 xor     ax, ax
                 push    ax
                 jmp     loc_10341
@@ -349,7 +350,7 @@ loc_10287:                              ; CODE XREF: start+24C↑j
                 xor     ax, ax
                 mov     bx, 9A9h
                 mov     di, 86h
-                call    sub_11432
+                call    fileReadRecordTo ; read record AX into the descriptor buffer and copy it to ES:DI
                 mov     byte ptr parm_0E, 3
                 mov     al, byte_11A47
                 mov     parm_10, al
@@ -374,7 +375,7 @@ loc_10287:                              ; CODE XREF: start+24C↑j
 loc_102D5:                              ; CODE XREF: start+2CE↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
-                call    sub_1082E
+                call    flushPartyAndRefresh ; write party records back and show page 0
                 mov     parm_03, 0
                 jmp     loc_1021E
 ; ---------------------------------------------------------------------------
@@ -405,7 +406,7 @@ loc_1030B:                              ; CODE XREF: start+240↑j
                 mov     ax, 6
                 mov     dx, 0F57h
                 call    execProgram     ; EXEC PROG16.EXE
-                call    sub_10A46
+                call    showClosingMessageB ; closing text screen after PROG16
                 xor     ax, ax
                 push    ax
                 jmp     short loc_10341
@@ -415,8 +416,8 @@ loc_1031E:                              ; CODE XREF: start+252↑j
                 mov     ax, 6
                 mov     dx, 0F62h
                 call    execProgram     ; EXEC PROG17.EXE
-                call    sub_103AB
-                call    sub_10984
+                call    showEndScreen   ; shareware thank-you / register screen built from tiles and text
+                call    showClosingMessageA ; closing text screen after PROG17
                 xor     ax, ax
                 push    ax
                 jmp     short loc_10341
@@ -432,12 +433,12 @@ loc_10334:                              ; CODE XREF: start+259↑j
 loc_10341:                              ; CODE XREF: start+21B↑j
                                         ; start+25F↑j ...
                 mov     al, 0Ah
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 mov     al, 5
-                call    sub_11716
-                call    sub_111A4
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
+                call    clearTextScreen ; INT 10h scroll-clear the text screen
                 mov     al, 0Bh
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
 
 loc_1035B:                              ; CODE XREF: start+361↓j
                 cmp     byte ptr es:676h, 0
@@ -455,7 +456,7 @@ loc_1035B:                              ; CODE XREF: start+361↓j
                                         ; ES = segment address of area to be freed
 
 loc_10377:                              ; CODE XREF: start+126↑j
-                                        ; sub_105AF+83↓j ...
+                                        ; openDataFiles+83↓j ...
                 mov     ax, 3
                 int     10h             ; - VIDEO - SET VIDEO MODE
                                         ; AL = mode
@@ -503,8 +504,9 @@ loc_1039E:                              ; CODE XREF: seg000:03A2↓j
 
 ; =============== S U B R O U T I N E =======================================
 
+; shareware thank-you / register screen built from tiles and text
 
-sub_103AB       proc near               ; CODE XREF: start+27B↑p
+showEndScreen   proc near               ; CODE XREF: start+27B↑p
                                         ; start+329↑p
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
@@ -516,7 +518,7 @@ sub_103AB       proc near               ; CODE XREF: start+27B↑p
                 jnz     short loc_103DA
                 mov     word ptr es:20h, 18Fh
 
-loc_103DA:                              ; CODE XREF: sub_103AB+26↑j
+loc_103DA:                              ; CODE XREF: showEndScreen+26↑j
                 mov     byte ptr es:30h, 0
                 mov     byte ptr es:31h, 0
                 mov     ah, 7
@@ -526,109 +528,110 @@ loc_103DA:                              ; CODE XREF: sub_103AB+26↑j
                 jmp     loc_10552
 ; ---------------------------------------------------------------------------
 
-loc_103F4:                              ; CODE XREF: sub_103AB+44↑j
+loc_103F4:                              ; CODE XREF: showEndScreen+44↑j
                 mov     byte_1287A, 0
                 mov     word ptr es:1Ah, 50h ; 'P'
                 mov     word ptr es:1Ch, 87h
                 mov     word_12878, 1EBh
                 mov     cx, 7
-                call    sub_1059A
+                call    drawTileRun     ; draw CX consecutive tiles left to right (tile index word_12878 increments)
                 mov     word ptr es:1Ah, 170h
                 mov     ax, 1
                 mov     word_12878, 1F2h
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, 1
                 mov     word_12878, 1ECh
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, 1
                 mov     word_12878, 1F0h
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, 1
                 mov     word_12878, 1F3h
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, 1
                 mov     word_12878, 1FFh
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     word_12878, 226h
                 mov     cx, 2
-                call    sub_1059A
+                call    drawTileRun     ; draw CX consecutive tiles left to right (tile index word_12878 increments)
                 mov     word ptr es:1Ah, 0D0h
                 mov     word ptr es:1Ch, 0B7h
                 mov     ax, 1
                 mov     word_12878, 228h
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, 1
                 mov     word_12878, 1FFh
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, 1
                 mov     word_12878, 226h
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 40h ; '@'
                 mov     ax, 1
                 mov     word_12878, 1F0h
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, 1
                 mov     word_12878, 1FFh
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, 1
                 mov     word_12878, 229h
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ah, 17h
                 int     62h             ; VID fn17 vidRevealEdgesIn0To1
                 mov     al, 0Ah
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 cmp     byte ptr es:33h, 2
                 jz      short loc_10533
                 mov     al, 5
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 mov     ax, 14h
-                call    sub_111F8
+                call    delayTicks      ; wait AX BIOS clock ticks (INT 1Ah)
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_10533:                              ; CODE XREF: sub_103AB+176↑j
+loc_10533:                              ; CODE XREF: showEndScreen+176↑j
                 mov     al, 4
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 mov     ax, 1Eh
-                call    sub_111F8
+                call    delayTicks      ; wait AX BIOS clock ticks (INT 1Ah)
                 mov     al, 0
-                call    sub_114B2
+                call    paletteFade     ; AL=0 fade up from black, 1 fade to black, 2 fade to white (VGA DAC)
                 mov     ax, 5
-                call    sub_111F8
+                call    delayTicks      ; wait AX BIOS clock ticks (INT 1Ah)
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_10552:                              ; CODE XREF: sub_103AB+46↑j
+loc_10552:                              ; CODE XREF: showEndScreen+46↑j
                 mov     al, 0Ah
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 cmp     byte ptr es:33h, 2
                 jz      short loc_10569
                 mov     al, 5
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_10569:                              ; CODE XREF: sub_103AB+1B4↑j
+loc_10569:                              ; CODE XREF: showEndScreen+1B4↑j
                 mov     al, 4
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 retn
-sub_103AB       endp
+showEndScreen   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; EXEC PROG2 (prologue), reset prologue flags, save party state
 
-sub_10571       proc near               ; CODE XREF: start:loc_101B1↑p
+runPrologue     proc near               ; CODE XREF: start:loc_101B1↑p
                                         ; start+1E3↑p
                 mov     ax, 6
                 mov     dx, 0F24h
@@ -639,135 +642,137 @@ sub_10571       proc near               ; CODE XREF: start:loc_101B1↑p
                 mov     ax, 0
                 mov     bx, 9A9h
                 mov     si, 86h
-                call    sub_11658
+                call    fileWriteRecordFrom ; copy [si] into the descriptor buffer as record AX and write it
                 retn
-sub_10571       endp
+runPrologue     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw CX consecutive tiles left to right (tile index word_12878 increments)
 
-sub_1059A       proc near               ; CODE XREF: sub_103AB+65↑p
-                                        ; sub_103AB+DC↑p ...
+drawTileRun     proc near               ; CODE XREF: showEndScreen+65↑p
+                                        ; showEndScreen+DC↑p ...
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word_12878
-                loop    sub_1059A
+                loop    drawTileRun     ; draw CX consecutive tiles left to right (tile index word_12878 increments)
                 retn
-sub_1059A       endp
+drawTileRun     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; open the 15 data files, load palettes/headers; exits with the failing file index in byte_12877
 
-sub_105AF       proc near               ; CODE XREF: start:loc_10129↑p
+openDataFiles   proc near               ; CODE XREF: start:loc_10129↑p
                 mov     byte_12877, 1
                 mov     bx, 0A09h
                 mov     al, 2
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jnz     short loc_1062E
                 inc     byte_12877
                 mov     bx, 9CAh
                 mov     al, 2
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jnz     short loc_1062E
                 inc     byte_12877
                 mov     bx, 9E9h
                 mov     al, 2
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jnz     short loc_1062E
                 inc     byte_12877
                 mov     bx, 0A2Bh
                 mov     al, 0
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jnz     short loc_1062E
                 inc     byte_12877
                 mov     bx, 0A43h
                 mov     al, 0
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jnz     short loc_1062E
                 inc     byte_12877
                 mov     bx, 0A5Ah
                 mov     al, 0
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jz      short loc_10635
 
-loc_1062E:                              ; CODE XREF: sub_105AF+14↑j
-                                        ; sub_105AF+29↑j ...
+loc_1062E:                              ; CODE XREF: openDataFiles+14↑j
+                                        ; openDataFiles+29↑j ...
                 mov     ax, 1067h
                 push    ax
                 jmp     loc_10377
 ; ---------------------------------------------------------------------------
 
-loc_10635:                              ; CODE XREF: sub_105AF+7D↑j
+loc_10635:                              ; CODE XREF: openDataFiles+7D↑j
                 inc     byte_12877
                 mov     bx, 8FAh
                 mov     al, 0
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jnz     short loc_1062E
                 inc     byte_12877
                 mov     bx, 913h
                 mov     al, 0
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jnz     short loc_1062E
                 inc     byte_12877
                 mov     bx, 92Ch
                 mov     al, 0
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jnz     short loc_1062E
                 inc     byte_12877
                 mov     bx, 945h
                 mov     al, 0
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jnz     short loc_1062E
                 inc     byte_12877
                 mov     bx, 95Eh
                 mov     al, 0
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jnz     short loc_1062E
                 inc     byte_12877
                 mov     bx, 977h
                 mov     al, 0
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jz      short loc_106B6
                 jmp     loc_1062E
 ; ---------------------------------------------------------------------------
 
-loc_106B6:                              ; CODE XREF: sub_105AF+102↑j
+loc_106B6:                              ; CODE XREF: openDataFiles+102↑j
                 inc     byte_12877
                 mov     bx, 990h
                 mov     al, 0
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 cmp     byte_1287F, 0
                 jz      short loc_106CE
                 jmp     loc_1062E
 ; ---------------------------------------------------------------------------
 
-loc_106CE:                              ; CODE XREF: sub_105AF+11A↑j
+loc_106CE:                              ; CODE XREF: openDataFiles+11A↑j
                 mov     byte_12877, 0
                 mov     al, 5
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 cmp     byte ptr es:33h, 2
                 jnz     short loc_10717
                 mov     al, 0
                 mov     bx, 0EA5h
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 mov     bx, 0EA5h
                 mov     word ptr [bx+8], 0
-                call    sub_1124F
+                call    fileReadRecord  ; read record into [bx+2]
                 mov     si, 0A71h
                 lea     di, parm_6E
                 mov     cx, 180h
@@ -780,27 +785,27 @@ loc_106CE:                              ; CODE XREF: sub_105AF+11A↑j
                 jmp     loc_107A7
 ; ---------------------------------------------------------------------------
 
-loc_10717:                              ; CODE XREF: sub_105AF+131↑j
+loc_10717:                              ; CODE XREF: openDataFiles+131↑j
                 mov     al, 0
                 mov     bx, 0E71h
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 mov     bx, 0E71h
                 mov     word ptr [bx+8], 1
-                call    sub_1124F
+                call    fileReadRecord  ; read record into [bx+2]
                 mov     si, 0A71h
                 lea     di, parm_7F
                 mov     cx, 11h
                 rep movsb
                 mov     bx, 0E71h
                 mov     word ptr [bx+8], 2
-                call    sub_1124F
+                call    fileReadRecord  ; read record into [bx+2]
                 mov     si, 0A71h
                 lea     di, unk_11A36
                 mov     cx, 11h
                 rep movsb
                 mov     bx, 0E71h
                 mov     word ptr [bx+8], 5
-                call    sub_1124F
+                call    fileReadRecord  ; read record into [bx+2]
                 mov     si, 0A71h
                 lea     di, byte_11A47
                 mov     cx, 11h
@@ -811,10 +816,10 @@ loc_10717:                              ; CODE XREF: sub_105AF+131↑j
                                         ; BX = file handle
                 mov     al, 0
                 mov     bx, 0E8Bh
-                call    sub_1122C
+                call    fileOpen        ; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
                 mov     bx, 0E8Bh
                 mov     word ptr [bx+8], 1
-                call    sub_1124F
+                call    fileReadRecord  ; read record into [bx+2]
                 mov     si, 0A71h
                 lea     di, unk_11A58
                 mov     cx, 8
@@ -826,7 +831,7 @@ loc_10717:                              ; CODE XREF: sub_105AF+131↑j
                                         ; BX = file handle
                 mov     word ptr es:20h, 15Dh
 
-loc_107A7:                              ; CODE XREF: sub_105AF+165↑j
+loc_107A7:                              ; CODE XREF: openDataFiles+165↑j
                 mov     word ptr es:1Ch, 0
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Eh, 27Fh
@@ -865,16 +870,17 @@ loc_107A7:                              ; CODE XREF: sub_105AF+165↑j
                 mov     ax, word_123A9
                 mov     parm_7A, ax
                 cmp     byte_11A4B, 2
-                jnz     short sub_1082E
+                jnz     short flushPartyAndRefresh ; write party records back and show page 0
                 retn
-sub_105AF       endp
+openDataFiles   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; write party records back and show page 0
 
-sub_1082E       proc near               ; CODE XREF: start+2D9↑p
-                                        ; sub_105AF+27C↑j
+flushPartyAndRefresh proc near          ; CODE XREF: start+2D9↑p
+                                        ; openDataFiles+27C↑j
                 mov     bx, word_123A9
                 mov     cx, 0
                 mov     ah, 40h
@@ -883,7 +889,7 @@ sub_1082E       proc near               ; CODE XREF: start+2D9↑p
                 mov     cx, 6
                 mov     si, 0ACh
 
-loc_1083F:                              ; CODE XREF: sub_1082E+3E↓j
+loc_1083F:                              ; CODE XREF: flushPartyAndRefresh+3E↓j
                 mov     bx, 9A9h
                 mov     di, 46Eh
                 mov     ax, [si]
@@ -892,31 +898,32 @@ loc_1083F:                              ; CODE XREF: sub_1082E+3E↓j
                 jmp     short loc_1086E
 ; ---------------------------------------------------------------------------
 
-loc_1084E:                              ; CODE XREF: sub_1082E+1C↑j
+loc_1084E:                              ; CODE XREF: flushPartyAndRefresh+1C↑j
                 push    cx
-                call    sub_11432
-                call    sub_10B64
+                call    fileReadRecordTo ; read record AX into the descriptor buffer and copy it to ES:DI
+                call    drawPartyStrip  ; draw the party/character portrait strip
                 mov     ax, [si]
                 push    si
                 mov     bx, 9A9h
                 mov     si, 46Eh
-                call    sub_11658
+                call    fileWriteRecordFrom ; copy [si] into the descriptor buffer as record AX and write it
                 pop     si
                 pop     cx
                 add     si, 2
                 loop    loc_1083F
 
-loc_1086E:                              ; CODE XREF: sub_1082E+1E↑j
+loc_1086E:                              ; CODE XREF: flushPartyAndRefresh+1E↑j
                 mov     ah, 1Eh
                 int     62h             ; VID fn1E vidCopyScreen1To0AndShow
                 retn
-sub_1082E       endp
+flushPartyAndRefresh endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; EXEC VID16.DRV, INT 62h fn00, EXEC VIDP16.DRV
 
-sub_10873       proc near               ; CODE XREF: start:loc_100F1↑p
+startDriversEga proc near               ; CODE XREF: start:loc_100F1↑p
                 mov     ax, 0
                 mov     dx, 0EE4h
                 call    execProgram     ; EXEC VID16.DRV
@@ -932,13 +939,14 @@ sub_10873       proc near               ; CODE XREF: start:loc_100F1↑p
                 mov     dx, 0EEEh
                 call    execProgram     ; EXEC VIDP16.DRV
                 retn
-sub_10873       endp
+startDriversEga endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; EXEC VID256.DRV, INT 62h fn00, EXEC VIDP256.DRV (not present in this install)
 
-sub_108AC       proc near               ; CODE XREF: start+EC↑p
+startDriversSvga proc near              ; CODE XREF: start+EC↑p
                 mov     word_122AF, 3532h
                 mov     byte_122B1, 36h ; '6'
                 mov     word_122A0, 400h
@@ -974,7 +982,7 @@ sub_108AC       proc near               ; CODE XREF: start+EC↑p
                 jmp     loc_10377
 ; ---------------------------------------------------------------------------
 
-loc_10949:                              ; CODE XREF: sub_108AC+8F↑j
+loc_10949:                              ; CODE XREF: startDriversSvga+8F↑j
                 cmp     ax, 0FFFEh
                 jnz     short loc_1095A
                 mov     byte_12877, 0FEh
@@ -983,7 +991,7 @@ loc_10949:                              ; CODE XREF: sub_108AC+8F↑j
                 jmp     loc_10377
 ; ---------------------------------------------------------------------------
 
-loc_1095A:                              ; CODE XREF: sub_108AC+A0↑j
+loc_1095A:                              ; CODE XREF: startDriversSvga+A0↑j
                 mov     word_12880, ax
                 mov     es, word_12880
                 mov     parm_5A, ax
@@ -994,13 +1002,14 @@ loc_1095A:                              ; CODE XREF: sub_108AC+A0↑j
                 mov     dx, 0F04h
                 call    execProgram     ; EXEC VIDP256.DRV
                 retn
-sub_108AC       endp
+startDriversSvga endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; closing text screen after PROG17
 
-sub_10984       proc near               ; CODE XREF: start+12C↑p
+showClosingMessageA proc near           ; CODE XREF: start+12C↑p
                                         ; start+27E↑p ...
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
@@ -1010,17 +1019,17 @@ sub_10984       proc near               ; CODE XREF: start+12C↑p
                 jnz     short loc_109AF
                 mov     word ptr es:20h, 18Fh
 
-loc_109AF:                              ; CODE XREF: sub_10984+22↑j
+loc_109AF:                              ; CODE XREF: showClosingMessageA+22↑j
                 mov     ah, es:64h
                 mov     es:30h, ah
                 mov     ah, 7
                 int     62h             ; VID fn07 vidFillRect
                 mov     al, 5
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     cx, 1F4h
-                call    sub_11724
+                call    speakerOn       ; program PIT channel 2 for frequency 1193180/CX, enable speaker
                 mov     bl, es:66h
                 mov     es:2Fh, bl
                 mov     bl, es:67h
@@ -1028,40 +1037,41 @@ loc_109AF:                              ; CODE XREF: sub_10984+22↑j
                 jz      short loc_109ED
                 mov     bl, es:6Fh
 
-loc_109ED:                              ; CODE XREF: sub_10984+62↑j
+loc_109ED:                              ; CODE XREF: showClosingMessageA+62↑j
                 mov     es:2Eh, bl
                 mov     ax, 3
-                call    sub_111F8
-                call    sub_11741
+                call    delayTicks      ; wait AX BIOS clock ticks (INT 1Ah)
+                call    speakerOff      ; silence the PC speaker
                 mov     byte ptr es:2Ah, 0Fh
                 mov     byte ptr es:2Bh, 1
                 mov     bx, 108Eh
                 mov     cx, 15h
-                call    sub_114A4
+                call    drawStringLines ; draw CX consecutive text lines from BX
                 cmp     byte ptr es:33h, 2
                 jz      short loc_10A32
                 mov     al, 1
-                call    sub_11716
-                call    sub_112C8
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
+                call    waitInput       ; poll until pollInput reports an event
                 mov     al, 5
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_10A32:                              ; CODE XREF: sub_10984+98↑j
+loc_10A32:                              ; CODE XREF: showClosingMessageA+98↑j
                 mov     al, 1
-                call    sub_114B2
-                call    sub_112C8
+                call    paletteFade     ; AL=0 fade up from black, 1 fade to black, 2 fade to white (VGA DAC)
+                call    waitInput       ; poll until pollInput reports an event
                 mov     al, 0
-                call    sub_114B2
+                call    paletteFade     ; AL=0 fade up from black, 1 fade to black, 2 fade to white (VGA DAC)
                 retn
-sub_10984       endp
+showClosingMessageA endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; closing text screen after PROG16
 
-sub_10A46       proc near               ; CODE XREF: start+316↑p
+showClosingMessageB proc near           ; CODE XREF: start+316↑p
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     word ptr es:1Eh, 27Fh
@@ -1070,17 +1080,17 @@ sub_10A46       proc near               ; CODE XREF: start+316↑p
                 jnz     short loc_10A71
                 mov     word ptr es:20h, 18Fh
 
-loc_10A71:                              ; CODE XREF: sub_10A46+22↑j
+loc_10A71:                              ; CODE XREF: showClosingMessageB+22↑j
                 mov     ah, es:64h
                 mov     es:30h, ah
                 mov     ah, 7
                 int     62h             ; VID fn07 vidFillRect
                 mov     al, 5
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     cx, 1F4h
-                call    sub_11724
+                call    speakerOn       ; program PIT channel 2 for frequency 1193180/CX, enable speaker
                 mov     bl, es:66h
                 mov     es:2Eh, bl
                 mov     bl, es:67h
@@ -1088,42 +1098,43 @@ loc_10A71:                              ; CODE XREF: sub_10A46+22↑j
                 jz      short loc_10AAF
                 mov     bl, es:6Fh
 
-loc_10AAF:                              ; CODE XREF: sub_10A46+62↑j
+loc_10AAF:                              ; CODE XREF: showClosingMessageB+62↑j
                 mov     es:2Fh, bl
                 mov     ax, 3
-                call    sub_111F8
-                call    sub_11741
+                call    delayTicks      ; wait AX BIOS clock ticks (INT 1Ah)
+                call    speakerOff      ; silence the PC speaker
                 mov     byte ptr es:2Ah, 0Fh
                 mov     byte ptr es:2Bh, 1
                 mov     bx, 14FCh
                 mov     cx, 18h
-                call    sub_114A4
+                call    drawStringLines ; draw CX consecutive text lines from BX
                 cmp     byte ptr es:33h, 2
                 jz      short loc_10AF4
                 mov     al, 1
-                call    sub_11716
-                call    sub_112C8
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
+                call    waitInput       ; poll until pollInput reports an event
                 mov     al, 5
-                call    sub_11716
+                call    sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_10AF4:                              ; CODE XREF: sub_10A46+98↑j
+loc_10AF4:                              ; CODE XREF: showClosingMessageB+98↑j
                 mov     al, 1
-                call    sub_114B2
-                call    sub_112C8
+                call    paletteFade     ; AL=0 fade up from black, 1 fade to black, 2 fade to white (VGA DAC)
+                call    waitInput       ; poll until pollInput reports an event
                 mov     al, 0
-                call    sub_114B2
+                call    paletteFade     ; AL=0 fade up from black, 1 fade to black, 2 fade to white (VGA DAC)
                 retn
-sub_10A46       endp
+showClosingMessageB endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; CPU class -> ctx+8/0Ah/0Ch delay counts
 
-sub_10B08       proc near               ; CODE XREF: start:loc_100F4↑p
+calibrateDelays proc near               ; CODE XREF: start:loc_100F4↑p
                 mov     byte ptr es:31h, 0
-                call    sub_111BC
+                call    detectCpuClass  ; returns AX=88h (8088), 186h, 286h, 386h
                 mov     es:0Eh, ax
                 mov     word ptr es:8, 1388h
                 mov     word ptr es:0Ah, 0BB8h
@@ -1133,7 +1144,7 @@ sub_10B08       proc near               ; CODE XREF: start:loc_100F4↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_10B32:                              ; CODE XREF: sub_10B08+27↑j
+loc_10B32:                              ; CODE XREF: calibrateDelays+27↑j
                 mov     word ptr es:8, 1F40h
                 mov     word ptr es:0Ah, 1B58h
                 mov     word ptr es:0Ch, 0FA0h
@@ -1142,12 +1153,12 @@ loc_10B32:                              ; CODE XREF: sub_10B08+27↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_10B4D:                              ; CODE XREF: sub_10B08+42↑j
+loc_10B4D:                              ; CODE XREF: calibrateDelays+42↑j
                 mov     word ptr es:8, 55F0h
                 mov     word ptr es:0Ah, 2328h
                 mov     word ptr es:0Ch, 189Ch
                 retn
-sub_10B08       endp
+calibrateDelays endp
 
 seg000          ends
 
@@ -1162,8 +1173,9 @@ seg001          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw the party/character portrait strip
 
-sub_10B64       proc far                ; CODE XREF: sub_1082E+26↑P
+drawPartyStrip  proc far                ; CODE XREF: flushPartyAndRefresh+26↑P
                 push    ax
                 push    bx
                 push    cx
@@ -1175,12 +1187,12 @@ sub_10B64       proc far                ; CODE XREF: sub_1082E+26↑P
                 cmp     byte ptr ds:489h, 6
                 jnz     short loc_10B7E
 
-loc_10B78:                              ; CODE XREF: sub_10B64+B↑j
+loc_10B78:                              ; CODE XREF: drawPartyStrip+B↑j
                 call    sub_10F33
                 jmp     loc_10CB0
 ; ---------------------------------------------------------------------------
 
-loc_10B7E:                              ; CODE XREF: sub_10B64+12↑j
+loc_10B7E:                              ; CODE XREF: drawPartyStrip+12↑j
                 call    sub_10D3B
                 call    sub_11078
                 mov     word ptr es:1Ah, 0
@@ -1191,7 +1203,7 @@ loc_10B7E:                              ; CODE XREF: sub_10B64+12↑j
                 call    sub_10F9D
                 mov     cx, 4
 
-loc_10BA7:                              ; CODE XREF: sub_10B64+4B↓j
+loc_10BA7:                              ; CODE XREF: drawPartyStrip+4B↓j
                 add     word ptr ds:0ED3h, 20h ; ' '
                 call    sub_10D1F
                 loop    loc_10BA7
@@ -1201,7 +1213,7 @@ loc_10BA7:                              ; CODE XREF: sub_10B64+4B↓j
                 call    sub_10F9D
                 mov     cx, 4
 
-loc_10BC6:                              ; CODE XREF: sub_10B64+6A↓j
+loc_10BC6:                              ; CODE XREF: drawPartyStrip+6A↓j
                 add     word ptr ds:0ED3h, 20h ; ' '
                 call    sub_10D1F
                 loop    loc_10BC6
@@ -1211,7 +1223,7 @@ loc_10BC6:                              ; CODE XREF: sub_10B64+6A↓j
                 call    sub_10F9D
                 mov     cx, 4
 
-loc_10BE5:                              ; CODE XREF: sub_10B64+89↓j
+loc_10BE5:                              ; CODE XREF: drawPartyStrip+89↓j
                 add     word ptr ds:0ED3h, 20h ; ' '
                 call    sub_10D1F
                 loop    loc_10BE5
@@ -1221,7 +1233,7 @@ loc_10BE5:                              ; CODE XREF: sub_10B64+89↓j
                 call    sub_10F9D
                 mov     cx, 3
 
-loc_10C04:                              ; CODE XREF: sub_10B64+A8↓j
+loc_10C04:                              ; CODE XREF: drawPartyStrip+A8↓j
                 add     word ptr ds:0ED3h, 20h ; ' '
                 call    sub_10D1F
                 loop    loc_10C04
@@ -1236,7 +1248,7 @@ loc_10C04:                              ; CODE XREF: sub_10B64+A8↓j
                 mov     ds:0EDAh, al
                 call    sub_10D1F
 
-loc_10C33:                              ; CODE XREF: sub_10B64+BB↑j
+loc_10C33:                              ; CODE XREF: drawPartyStrip+BB↑j
                 mov     ax, ds:1DAEh
                 or      ax, ax
                 jz      short loc_10C46
@@ -1245,20 +1257,20 @@ loc_10C33:                              ; CODE XREF: sub_10B64+BB↑j
                 mov     ds:0EDAh, al
                 call    sub_10D1F
 
-loc_10C46:                              ; CODE XREF: sub_10B64+D4↑j
+loc_10C46:                              ; CODE XREF: drawPartyStrip+D4↑j
                 cmp     word ptr ds:4B0h, 0
                 jnz     short loc_10C4F
                 jmp     short loc_10CB0
 ; ---------------------------------------------------------------------------
 
-loc_10C4F:                              ; CODE XREF: sub_10B64+E7↑j
+loc_10C4F:                              ; CODE XREF: drawPartyStrip+E7↑j
                 call    sub_1101D
                 cmp     word ptr ds:1DB0h, 0
                 jz      short loc_10CB0
                 mov     word ptr ds:0ED5h, 0Eh
                 mov     cx, 4
 
-loc_10C62:                              ; CODE XREF: sub_10B64+14A↓j
+loc_10C62:                              ; CODE XREF: drawPartyStrip+14A↓j
                 push    cx
                 mov     word ptr ds:0ED3h, 30h ; '0'
                 mov     bx, ds:1DB0h
@@ -1266,9 +1278,9 @@ loc_10C62:                              ; CODE XREF: sub_10B64+14A↓j
                 call    sub_1105E
                 mov     cx, 2
 
-loc_10C75:                              ; CODE XREF: sub_10B64+11B↓j
+loc_10C75:                              ; CODE XREF: drawPartyStrip+11B↓j
                 add     word ptr ds:0ED3h, 20h ; ' '
-                call    sub_112D6
+                call    drawTileKeyed   ; colour-keyed copy of a 32x32 tile via vidCopyRectKeyed
                 loop    loc_10C75
                 add     word ptr ds:0ED3h, 20h ; ' '
                 mov     bx, ds:1DB2h
@@ -1284,8 +1296,8 @@ loc_10C75:                              ; CODE XREF: sub_10B64+11B↓j
                 pop     cx
                 loop    loc_10C62
 
-loc_10CB0:                              ; CODE XREF: sub_10B64+17↑j
-                                        ; sub_10B64+E9↑j ...
+loc_10CB0:                              ; CODE XREF: drawPartyStrip+17↑j
+                                        ; drawPartyStrip+E9↑j ...
                 mov     ax, ds
                 mov     es:16h, ax
                 mov     ax, 0A71h
@@ -1297,28 +1309,28 @@ loc_10CB0:                              ; CODE XREF: sub_10B64+17↑j
                 mov     word ptr es:1Ch, 0Eh
                 mov     cx, 4
 
-loc_10CD5:                              ; CODE XREF: sub_10B64+1A8↓j
+loc_10CD5:                              ; CODE XREF: drawPartyStrip+1A8↓j
                 push    cx
                 mov     cx, 5
                 mov     word ptr es:1Ah, 30h ; '0'
 
-loc_10CE0:                              ; CODE XREF: sub_10B64+19F↓j
+loc_10CE0:                              ; CODE XREF: drawPartyStrip+19F↓j
                 push    cx
                 mov     ah, 9
                 int     62h             ; VID fn09 vidGetImageRaw
                 mov     bx, 0A09h
-                call    sub_112A0
+                call    fileWriteRecord ; write record from [bx+2]
                 inc     word ptr ds:0A11h
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     al, 5
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 inc     word ptr ds:0ED8h
                 pop     cx
                 loop    loc_10CE0
                 pop     cx
                 add     word ptr es:1Ch, 20h ; ' '
                 loop    loc_10CD5
-                call    sub_116F2
+                call    drawBackdropTile ; draw tile 0D5h of file 0 at (0,0)
                 and     byte ptr ds:4A3h, 0BFh
                 pop     di
                 pop     si
@@ -1327,19 +1339,19 @@ loc_10CE0:                              ; CODE XREF: sub_10B64+19F↓j
                 pop     bx
                 pop     ax
                 retf
-sub_10B64       endp
+drawPartyStrip  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10D1F       proc near               ; CODE XREF: sub_10B64+48↑p
-                                        ; sub_10B64+67↑p ...
+sub_10D1F       proc near               ; CODE XREF: drawPartyStrip+48↑p
+                                        ; drawPartyStrip+67↑p ...
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1174C
-                call    sub_112D6
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
+                call    drawTileKeyed   ; colour-keyed copy of a 32x32 tile via vidCopyRectKeyed
                 retn
 sub_10D1F       endp
 
@@ -1347,7 +1359,7 @@ sub_10D1F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10D3B       proc near               ; CODE XREF: sub_10B64:loc_10B7E↑p
+sub_10D3B       proc near               ; CODE XREF: drawPartyStrip:loc_10B7E↑p
                 test    byte ptr ds:0B8h, 10h
                 jz      short loc_10D87
                 mov     word ptr es:1Ah, 30h ; '0'
@@ -1363,7 +1375,7 @@ sub_10D3B       proc near               ; CODE XREF: sub_10B64:loc_10B7E↑p
                 mov     ax, 21h ; '!'
                 call    sub_10F9D
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -1376,91 +1388,91 @@ loc_10D87:                              ; CODE XREF: sub_10D3B+5↑j
                 add     ax, 4
                 mov     ds:0ED8h, ax
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:492h
                 add     ax, 8
                 mov     ds:0ED8h, ax
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word ptr ds:0ED8h
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:490h
                 add     ax, 5
                 mov     ds:0ED8h, ax
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 mov     word ptr es:1Ah, 30h ; '0'
                 mov     word ptr es:1Ch, 2Eh ; '.'
                 mov     ax, ds:490h
                 add     ax, 0Eh
                 mov     ds:0ED8h, ax
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:492h
                 add     ax, 0Ah
                 mov     ds:0ED8h, ax
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word ptr ds:0ED8h
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:490h
                 add     ax, 0Fh
                 mov     ds:0ED8h, ax
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 mov     word ptr es:1Ah, 30h ; '0'
                 mov     word ptr es:1Ch, 4Eh ; 'N'
                 mov     ax, ds:490h
                 add     ax, 18h
                 mov     ds:0ED8h, ax
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:492h
                 add     ax, 0Ch
                 mov     ds:0ED8h, ax
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word ptr ds:0ED8h
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:490h
                 add     ax, 19h
                 mov     ds:0ED8h, ax
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 mov     word ptr es:1Ah, 30h ; '0'
                 mov     word ptr es:1Ch, 6Eh ; 'n'
                 mov     ax, ds:490h
                 add     ax, 22h ; '"'
                 mov     ds:0ED8h, ax
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:492h
                 add     ax, 0Eh
                 mov     ds:0ED8h, ax
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word ptr ds:0ED8h
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, 21h ; '!'
                 call    sub_10F9D
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 mov     word ptr es:1Ah, 0B0h
                 mov     word ptr es:1Ch, 0Eh
                 mov     byte ptr ds:0EDAh, 3
@@ -1469,7 +1481,7 @@ loc_10D87:                              ; CODE XREF: sub_10D3B+5↑j
 
 loc_10F22:                              ; CODE XREF: sub_10D3B+1F5↓j
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ch, 20h ; ' '
                 loop    loc_10F22
                 retn
@@ -1479,7 +1491,7 @@ sub_10D3B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10F33       proc near               ; CODE XREF: sub_10B64:loc_10B78↑p
+sub_10F33       proc near               ; CODE XREF: drawPartyStrip:loc_10B78↑p
                 mov     word ptr es:1Ch, 0Eh
                 mov     al, ds:48Fh
                 mov     ds:0EDAh, al
@@ -1495,7 +1507,7 @@ loc_10F4C:                              ; CODE XREF: sub_10F33+3B↓j
 
 loc_10F57:                              ; CODE XREF: sub_10F33+32↓j
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ah, 20h ; ' '
                 loop    loc_10F57
                 add     word ptr es:1Ch, 20h ; ' '
@@ -1509,7 +1521,7 @@ loc_10F57:                              ; CODE XREF: sub_10F33+32↓j
 
 loc_10F8C:                              ; CODE XREF: sub_10F33+67↓j
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 add     word ptr es:1Ch, 20h ; ' '
                 loop    loc_10F8C
                 retn
@@ -1519,8 +1531,8 @@ sub_10F33       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10F9D       proc near               ; CODE XREF: sub_10B64+3D↑p
-                                        ; sub_10B64+5C↑p ...
+sub_10F9D       proc near               ; CODE XREF: drawPartyStrip+3D↑p
+                                        ; drawPartyStrip+5C↑p ...
                 mov     word ptr ds:0ED8h, 30h ; '0'
                 mov     byte ptr ds:0EDAh, 3
                 mov     bx, ds:4AEh
@@ -1579,7 +1591,7 @@ sub_10F9D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1101D       proc near               ; CODE XREF: sub_10B64:loc_10C4F↑p
+sub_1101D       proc near               ; CODE XREF: drawPartyStrip:loc_10C4F↑p
                 mov     word ptr ds:1DB4h, 0
                 mov     word ptr ds:1DB0h, 0
                 mov     byte ptr ds:0EDAh, 3
@@ -1613,8 +1625,8 @@ sub_1101D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1105E       proc near               ; CODE XREF: sub_10B64+10B↑p
-                                        ; sub_10B64+128↑p ...
+sub_1105E       proc near               ; CODE XREF: drawPartyStrip+10B↑p
+                                        ; drawPartyStrip+128↑p ...
                 cmp     ax, 30h ; '0'
                 jz      short loc_11067
                 add     ax, ds:1DB4h
@@ -1622,8 +1634,8 @@ sub_1105E       proc near               ; CODE XREF: sub_10B64+10B↑p
 loc_11067:                              ; CODE XREF: sub_1105E+3↑j
                 mov     ds:0ED8h, ax
                 mov     ax, 1
-                call    sub_1174C
-                call    sub_112D6
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
+                call    drawTileKeyed   ; colour-keyed copy of a 32x32 tile via vidCopyRectKeyed
                 retn
 sub_1105E       endp
 
@@ -1631,7 +1643,7 @@ sub_1105E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11078       proc near               ; CODE XREF: sub_10B64+1D↑p
+sub_11078       proc near               ; CODE XREF: drawPartyStrip+1D↑p
                 mov     word ptr ds:0ECFh, 0
                 mov     word ptr ds:0ED1h, 0
                 mov     word ptr ds:0ED5h, 0FFEEh
@@ -1699,7 +1711,7 @@ loc_110EB:                              ; CODE XREF: sub_11078+B2↓j
                 mov     es:20h, ax
                 inc     word ptr ds:0ED8h
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 mov     ah, 13h
                 int     62h             ; VID fn13 vidCopyRectKeyed
                 loop    loc_110EB
@@ -1725,7 +1737,7 @@ loc_1113D:                              ; CODE XREF: sub_11078+104↓j
                 mov     es:20h, ax
                 inc     word ptr ds:0ED8h
                 mov     ax, 1
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 mov     ah, 13h
                 int     62h             ; VID fn13 vidCopyRectKeyed
                 loop    loc_1113D
@@ -1740,10 +1752,10 @@ sub_11078       endp
                 push    ax
                 push    cx
                 mov     cx, 672h
-                call    sub_11724
+                call    speakerOn       ; program PIT channel 2 for frequency 1193180/CX, enable speaker
                 mov     ax, 5
-                call    sub_111F8
-                call    sub_11741
+                call    delayTicks      ; wait AX BIOS clock ticks (INT 1Ah)
+                call    speakerOff      ; silence the PC speaker
                 pop     cx
                 pop     ax
                 retf
@@ -1759,8 +1771,9 @@ seg002          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; INT 10h scroll-clear the text screen
 
-sub_111A4       proc far                ; CODE XREF: start+34F↑P
+clearTextScreen proc far                ; CODE XREF: start+34F↑P
                 push    ax
                 push    bx
                 push    cx
@@ -1780,7 +1793,7 @@ sub_111A4       proc far                ; CODE XREF: start+34F↑P
                 pop     bx
                 pop     ax
                 retf
-sub_111A4       endp
+clearTextScreen endp
 
 seg002          ends
 
@@ -1795,8 +1808,9 @@ seg003          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; returns AX=88h (8088), 186h, 286h, 386h
 
-sub_111BC       proc far                ; CODE XREF: sub_10B08+6↑P
+detectCpuClass  proc far                ; CODE XREF: calibrateDelays+6↑P
                 push    cx
                 pushf
                 xor     ax, ax
@@ -1818,12 +1832,12 @@ sub_111BC       proc far                ; CODE XREF: sub_10B08+6↑P
                 jmp     short loc_111F5
 ; ---------------------------------------------------------------------------
 
-loc_111DD:                              ; CODE XREF: sub_111BC+1A↑j
+loc_111DD:                              ; CODE XREF: detectCpuClass+1A↑j
                 mov     ax, 286h
                 jmp     short loc_111F5
 ; ---------------------------------------------------------------------------
 
-loc_111E2:                              ; CODE XREF: sub_111BC+E↑j
+loc_111E2:                              ; CODE XREF: detectCpuClass+E↑j
                 mov     ax, 0FFFFh
                 mov     cl, 21h ; '!'
                 shl     ax, cl
@@ -1832,17 +1846,17 @@ loc_111E2:                              ; CODE XREF: sub_111BC+E↑j
                 jmp     short loc_111F5
 ; ---------------------------------------------------------------------------
 
-loc_111F0:                              ; CODE XREF: sub_111BC+2D↑j
+loc_111F0:                              ; CODE XREF: detectCpuClass+2D↑j
                 mov     ax, 186h
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_111F5:                              ; CODE XREF: sub_111BC+1F↑j
-                                        ; sub_111BC+24↑j ...
+loc_111F5:                              ; CODE XREF: detectCpuClass+1F↑j
+                                        ; detectCpuClass+24↑j ...
                 popf
                 pop     cx
                 retf
-sub_111BC       endp
+detectCpuClass  endp
 
 seg003          ends
 
@@ -1856,9 +1870,10 @@ seg004          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; wait AX BIOS clock ticks (INT 1Ah)
 
-sub_111F8       proc far                ; CODE XREF: sub_103AB+182↑P
-                                        ; sub_103AB+192↑P ...
+delayTicks      proc far                ; CODE XREF: showEndScreen+182↑P
+                                        ; showEndScreen+192↑P ...
                 push    bx
                 push    cx
                 push    dx
@@ -1871,7 +1886,7 @@ sub_111F8       proc far                ; CODE XREF: sub_103AB+182↑P
                                         ; Otherwise, AL > 0
                 add     bx, dx
 
-loc_11202:                              ; CODE XREF: sub_111F8+10↓j
+loc_11202:                              ; CODE XREF: delayTicks+10↓j
                 xor     ah, ah
                 int     1Ah             ; CLOCK - GET TIME OF DAY
                                         ; Return: CX:DX = clock count
@@ -1884,7 +1899,7 @@ loc_11202:                              ; CODE XREF: sub_111F8+10↓j
                 pop     cx
                 pop     bx
                 retf
-sub_111F8       endp
+delayTicks      endp
 
 seg004          ends
 
@@ -1898,9 +1913,10 @@ seg005          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; lseek to record number [bx+8] * record size [bx+6]
 
-sub_1120E       proc far                ; CODE XREF: sub_1124F+4↓p
-                                        ; sub_11276+5↓p ...
+fileSeekRecord  proc far                ; CODE XREF: fileReadRecord+4↓p
+                                        ; fileReadToSegment+5↓p ...
                 push    dx
                 push    cx
                 push    bx
@@ -1918,13 +1934,14 @@ sub_1120E       proc far                ; CODE XREF: sub_1124F+4↓p
                 pop     cx
                 pop     dx
                 retf
-sub_1120E       endp
+fileSeekRecord  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; open file descriptor BX (name at +0Eh) with mode AL; byte_1287F = error count
 
-sub_1122C       proc far                ; CODE XREF: start+3C↑P
+fileOpen        proc far                ; CODE XREF: start+3C↑P
                                         ; start+CC↑P ...
                 push    bx
                 mov     cs:byte_1287F, 0
@@ -1942,23 +1959,24 @@ sub_1122C       proc far                ; CODE XREF: start+3C↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_11248:                              ; CODE XREF: sub_1122C+10↑j
+loc_11248:                              ; CODE XREF: fileOpen+10↑j
                 inc     cs:byte_1287F
                 pop     bx
                 retf
-sub_1122C       endp
+fileOpen        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; read record into [bx+2]
 
-sub_1124F       proc far                ; CODE XREF: sub_105AF+145↑P
-                                        ; sub_105AF+17A↑P ...
+fileReadRecord  proc far                ; CODE XREF: openDataFiles+145↑P
+                                        ; openDataFiles+17A↑P ...
                 push    dx
                 push    cx
                 push    bx
                 push    cs
-                call    near ptr sub_1120E
+                call    near ptr fileSeekRecord ; lseek to record number [bx+8] * record size [bx+6]
                 mov     dx, [bx+2]
                 mov     cx, [bx+6]
                 mov     ah, 3Fh ; '?'
@@ -1972,23 +1990,24 @@ sub_1124F       proc far                ; CODE XREF: sub_105AF+145↑P
                 jz      short loc_11273
                 inc     cs:byte_1287F
 
-loc_11273:                              ; CODE XREF: sub_1124F+1D↑j
+loc_11273:                              ; CODE XREF: fileReadRecord+1D↑j
                 pop     cx
                 pop     dx
                 retf
-sub_1124F       endp
+fileReadRecord  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; read record into segment DX:0
 
-sub_11276       proc far                ; CODE XREF: sub_11957+49↓P
+fileReadToSegment proc far              ; CODE XREF: tileLoad+49↓P
                 push    dx
                 push    cx
                 push    ds
                 push    bx
                 push    cs
-                call    near ptr sub_1120E
+                call    near ptr fileSeekRecord ; lseek to record number [bx+8] * record size [bx+6]
                 mov     cx, [bx+6]
                 mov     ah, 3Fh ; '?'
                 mov     bx, [bx]
@@ -2004,23 +2023,24 @@ sub_11276       proc far                ; CODE XREF: sub_11957+49↓P
                 jz      short loc_1129D
                 inc     cs:byte_1287F
 
-loc_1129D:                              ; CODE XREF: sub_11276+20↑j
+loc_1129D:                              ; CODE XREF: fileReadToSegment+20↑j
                 pop     cx
                 pop     dx
                 retf
-sub_11276       endp
+fileReadToSegment endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; write record from [bx+2]
 
-sub_112A0       proc far                ; CODE XREF: sub_10B64+184↑P
-                                        ; sub_11658+19↓P
+fileWriteRecord proc far                ; CODE XREF: drawPartyStrip+184↑P
+                                        ; fileWriteRecordFrom+19↓P
                 push    dx
                 push    cx
                 push    bx
                 push    cs
-                call    near ptr sub_1120E
+                call    near ptr fileSeekRecord ; lseek to record number [bx+8] * record size [bx+6]
                 mov     dx, [bx+2]
                 mov     cx, [bx+6]
                 mov     ah, 40h ; '@'
@@ -2033,11 +2053,11 @@ sub_112A0       proc far                ; CODE XREF: sub_10B64+184↑P
                 jz      short loc_112C4
                 inc     cs:byte_1287F
 
-loc_112C4:                              ; CODE XREF: sub_112A0+1D↑j
+loc_112C4:                              ; CODE XREF: fileWriteRecord+1D↑j
                 pop     cx
                 pop     dx
                 retf
-sub_112A0       endp
+fileWriteRecord endp
 
 seg005          ends
 
@@ -2052,14 +2072,15 @@ seg006          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; poll until pollInput reports an event
 
-sub_112C8       proc far                ; CODE XREF: sub_10984+A1↑P
-                                        ; sub_10984+B5↑P ...
-                call    sub_1134E
+waitInput       proc far                ; CODE XREF: showClosingMessageA+A1↑P
+                                        ; showClosingMessageA+B5↑P ...
+                call    pollInput       ; keyboard (INT 21h/06h) or mouse button -> ctx+2Ch key, byte ds:0EDFh = source
                 cmp     cs:byte_1287F, 0
-                jz      short near ptr sub_112C8
+                jz      short near ptr waitInput ; poll until pollInput reports an event
                 retf
-sub_112C8       endp
+waitInput       endp
 
 seg006          ends
 
@@ -2073,8 +2094,9 @@ seg007          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; colour-keyed copy of a 32x32 tile via vidCopyRectKeyed
 
-sub_112D6       proc far                ; CODE XREF: sub_10B64+116↑P
+drawTileKeyed   proc far                ; CODE XREF: drawPartyStrip+116↑P
                                         ; sub_10D1F+16↑P ...
                 push    word ptr es:22h
                 push    word ptr es:24h
@@ -2105,7 +2127,7 @@ sub_112D6       proc far                ; CODE XREF: sub_10B64+116↑P
                 pop     word ptr es:24h
                 pop     word ptr es:22h
                 retf
-sub_112D6       endp
+drawTileKeyed   endp
 
 seg007          ends
 
@@ -2120,8 +2142,9 @@ seg008          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; keyboard (INT 21h/06h) or mouse button -> ctx+2Ch key, byte ds:0EDFh = source
 
-sub_1134E       proc far                ; CODE XREF: sub_112C8↑P
+pollInput       proc far                ; CODE XREF: waitInput↑P
                 push    ax
                 push    bx
                 push    dx
@@ -2141,14 +2164,14 @@ sub_1134E       proc far                ; CODE XREF: sub_112C8↑P
                 jg      short loc_1136C
                 and     al, 5Fh
 
-loc_1136C:                              ; CODE XREF: sub_1134E+16↑j
-                                        ; sub_1134E+1A↑j
+loc_1136C:                              ; CODE XREF: pollInput+16↑j
+                                        ; pollInput+1A↑j
                 mov     es:2Ch, al
                 mov     byte ptr ds:0EDFh, 1
                 jmp     short loc_113CA
 ; ---------------------------------------------------------------------------
 
-loc_11377:                              ; CODE XREF: sub_1134E+12↑j
+loc_11377:                              ; CODE XREF: pollInput+12↑j
                 mov     ah, 6
                 mov     dl, 0FFh
                 int     21h             ; DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT
@@ -2160,7 +2183,7 @@ loc_11377:                              ; CODE XREF: sub_1134E+12↑j
                 jmp     short loc_113CA
 ; ---------------------------------------------------------------------------
 
-loc_11388:                              ; CODE XREF: sub_1134E+E↑j
+loc_11388:                              ; CODE XREF: pollInput+E↑j
                 mov     byte ptr es:2Ch, 0
                 cmp     byte ptr es:952h, 0
                 jz      short loc_113D6
@@ -2172,27 +2195,27 @@ loc_11388:                              ; CODE XREF: sub_1134E+E↑j
                 jmp     short loc_113CA
 ; ---------------------------------------------------------------------------
 
-loc_113B1:                              ; CODE XREF: sub_1134E+4E↑j
+loc_113B1:                              ; CODE XREF: pollInput+4E↑j
                 test    byte ptr es:953h, 2
                 jz      short loc_113CA
                 mov     byte ptr es:2Ch, 0Dh
                 mov     byte ptr ds:0EDFh, 4
                 and     byte ptr es:953h, 0BDh
 
-loc_113CA:                              ; CODE XREF: sub_1134E+27↑j
-                                        ; sub_1134E+38↑j ...
+loc_113CA:                              ; CODE XREF: pollInput+27↑j
+                                        ; pollInput+38↑j ...
                 test    byte ptr es:953h, 80h
                 jz      short loc_113D6
                 mov     ah, 2Bh ; '+'
                 int     62h             ; VID fn2B vidMouseRefresh
 
-loc_113D6:                              ; CODE XREF: sub_1134E+46↑j
-                                        ; sub_1134E+82↑j
+loc_113D6:                              ; CODE XREF: pollInput+46↑j
+                                        ; pollInput+82↑j
                 pop     dx
                 pop     bx
                 pop     ax
                 retf
-sub_1134E       endp
+pollInput       endp
 
 ; ---------------------------------------------------------------------------
                 push    di
@@ -2260,14 +2283,15 @@ seg009          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; read record AX into the descriptor buffer and copy it to ES:DI
 
-sub_11432       proc far                ; CODE XREF: start+52↑P
+fileReadRecordTo proc far               ; CODE XREF: start+52↑P
                                         ; start+D9↑P ...
                 push    es
                 push    cx
                 push    si
                 mov     [bx+8], ax
-                call    sub_1124F
+                call    fileReadRecord  ; read record into [bx+2]
                 push    ds
                 pop     es
                 cld
@@ -2278,7 +2302,7 @@ sub_11432       proc far                ; CODE XREF: start+52↑P
                 pop     cx
                 pop     es
                 retf
-sub_11432       endp
+fileReadRecordTo endp
 
 seg009          ends
 
@@ -2292,7 +2316,7 @@ seg010          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
-; DOS EXEC (INT 21h AH=4Bh): runs the program whose ASCIZ name is at DS:DX
+; DOS EXEC of the program named at DS:DX; AX = parameter block offset in the command tail
 
 execProgram     proc far                ; CODE XREF: start+78↑P
                                         ; start+190↑P ...
@@ -2349,15 +2373,16 @@ seg011          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw CX consecutive text lines from BX
 
-sub_114A4       proc far                ; CODE XREF: sub_10984+8D↑P
-                                        ; sub_10A46+8D↑P ...
-                call    sub_11678
+drawStringLines proc far                ; CODE XREF: showClosingMessageA+8D↑P
+                                        ; showClosingMessageB+8D↑P ...
+                call    drawString      ; draw the ASCIZ string at BX with the mouse hidden
                 inc     byte ptr es:2Bh
                 inc     bx
-                loop    near ptr sub_114A4
+                loop    near ptr drawStringLines ; draw CX consecutive text lines from BX
                 retf
-sub_114A4       endp
+drawStringLines endp
 
 seg011          ends
 
@@ -2371,15 +2396,16 @@ seg012          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; AL=0 fade up from black, 1 fade to black, 2 fade to white (VGA DAC)
 
-sub_114B2       proc far                ; CODE XREF: sub_103AB+199↑P
-                                        ; sub_10984+B0↑P ...
+paletteFade     proc far                ; CODE XREF: showEndScreen+199↑P
+                                        ; showClosingMessageA+B0↑P ...
                 cmp     byte ptr es:33h, 2
                 jz      short loc_114BB
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_114BB:                              ; CODE XREF: sub_114B2+6↑j
+loc_114BB:                              ; CODE XREF: paletteFade+6↑j
                 cmp     al, 0
                 jz      short loc_114CD
                 cmp     al, 1
@@ -2387,17 +2413,17 @@ loc_114BB:                              ; CODE XREF: sub_114B2+6↑j
                 jmp     short loc_11527
 ; ---------------------------------------------------------------------------
 
-loc_114C5:                              ; CODE XREF: sub_114B2+F↑j
+loc_114C5:                              ; CODE XREF: paletteFade+F↑j
                 cmp     al, 2
                 jnz     short locret_114CC
                 jmp     loc_115A7
 ; ---------------------------------------------------------------------------
 
-locret_114CC:                           ; CODE XREF: sub_114B2+15↑j
+locret_114CC:                           ; CODE XREF: paletteFade+15↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_114CD:                              ; CODE XREF: sub_114B2+B↑j
+loc_114CD:                              ; CODE XREF: paletteFade+B↑j
                 push    bx
                 push    cx
                 push    dx
@@ -2416,18 +2442,18 @@ loc_114CD:                              ; CODE XREF: sub_114B2+B↑j
                 pop     ds
                 pop     es
 
-loc_114E6:                              ; CODE XREF: sub_114B2+6D↓j
+loc_114E6:                              ; CODE XREF: paletteFade+6D↓j
                 mov     di, 0A71h
                 mov     cx, 300h
                 xor     al, al
 
-loc_114EE:                              ; CODE XREF: sub_114B2+46↓j
+loc_114EE:                              ; CODE XREF: paletteFade+46↓j
                 cmp     byte ptr [di], 0
                 jle     short loc_114F7
                 dec     byte ptr [di]
                 mov     al, 1
 
-loc_114F7:                              ; CODE XREF: sub_114B2+3F↑j
+loc_114F7:                              ; CODE XREF: paletteFade+3F↑j
                 inc     di
                 loop    loc_114EE
                 cmp     al, 0
@@ -2437,7 +2463,7 @@ loc_114F7:                              ; CODE XREF: sub_114B2+3F↑j
                 pop     es
                 mov     dx, 3DAh
 
-loc_11504:                              ; CODE XREF: sub_114B2+55↓j
+loc_11504:                              ; CODE XREF: paletteFade+55↓j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -2452,7 +2478,7 @@ loc_11504:                              ; CODE XREF: sub_114B2+55↓j
                 mov     cx, 100h
                 mov     si, 0A71h
 
-loc_11516:                              ; CODE XREF: sub_114B2+6A↓j
+loc_11516:                              ; CODE XREF: paletteFade+6A↓j
                 lodsb
                 out     dx, al
                 lodsb
@@ -2464,7 +2490,7 @@ loc_11516:                              ; CODE XREF: sub_114B2+6A↓j
                 jmp     short loc_114E6
 ; ---------------------------------------------------------------------------
 
-loc_11521:                              ; CODE XREF: sub_114B2+4A↑j
+loc_11521:                              ; CODE XREF: paletteFade+4A↑j
                 pop     di
                 pop     si
                 pop     dx
@@ -2473,7 +2499,7 @@ loc_11521:                              ; CODE XREF: sub_114B2+4A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_11527:                              ; CODE XREF: sub_114B2+11↑j
+loc_11527:                              ; CODE XREF: paletteFade+11↑j
                 push    bx
                 push    cx
                 push    dx
@@ -2483,7 +2509,7 @@ loc_11527:                              ; CODE XREF: sub_114B2+11↑j
                 lea     si, ds:74h
                 mov     cx, 300h
 
-loc_11536:                              ; CODE XREF: sub_114B2+8D↓j
+loc_11536:                              ; CODE XREF: paletteFade+8D↓j
                 mov     al, es:[si]
                 sub     al, 3Fh ; '?'
                 mov     [di], al
@@ -2492,36 +2518,36 @@ loc_11536:                              ; CODE XREF: sub_114B2+8D↓j
                 loop    loc_11536
                 mov     cx, 3Fh ; '?'
 
-loc_11544:                              ; CODE XREF: sub_114B2+E2↓j
+loc_11544:                              ; CODE XREF: paletteFade+E2↓j
                 push    cx
                 mov     di, 0A71h
                 lea     si, ds:74h
                 lea     bx, ds:374h
                 mov     cx, 300h
 
-loc_11553:                              ; CODE XREF: sub_114B2+BA↓j
+loc_11553:                              ; CODE XREF: paletteFade+BA↓j
                 mov     al, [di]
                 test    al, 80h
                 jnz     short loc_1155E
                 cmp     al, es:[si]
                 jz      short loc_11569
 
-loc_1155E:                              ; CODE XREF: sub_114B2+A5↑j
+loc_1155E:                              ; CODE XREF: paletteFade+A5↑j
                 inc     al
                 mov     [di], al
                 test    al, 80h
                 jnz     short loc_11569
                 mov     es:[bx], al
 
-loc_11569:                              ; CODE XREF: sub_114B2+AA↑j
-                                        ; sub_114B2+B2↑j
+loc_11569:                              ; CODE XREF: paletteFade+AA↑j
+                                        ; paletteFade+B2↑j
                 inc     bx
                 inc     di
                 inc     si
                 loop    loc_11553
                 mov     dx, 3DAh
 
-loc_11571:                              ; CODE XREF: sub_114B2+C2↓j
+loc_11571:                              ; CODE XREF: paletteFade+C2↓j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -2538,7 +2564,7 @@ loc_11571:                              ; CODE XREF: sub_114B2+C2↓j
                 push    es
                 pop     ds
 
-loc_11586:                              ; CODE XREF: sub_114B2+DA↓j
+loc_11586:                              ; CODE XREF: paletteFade+DA↓j
                 lodsb
                 out     dx, al
                 lodsb
@@ -2563,7 +2589,7 @@ loc_11586:                              ; CODE XREF: sub_114B2+DA↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_115A7:                              ; CODE XREF: sub_114B2+17↑j
+loc_115A7:                              ; CODE XREF: paletteFade+17↑j
                 push    bx
                 push    cx
                 push    dx
@@ -2573,7 +2599,7 @@ loc_115A7:                              ; CODE XREF: sub_114B2+17↑j
                 lea     si, parm_6E
                 mov     cx, 300h
 
-loc_115B6:                              ; CODE XREF: sub_114B2+10D↓j
+loc_115B6:                              ; CODE XREF: paletteFade+10D↓j
                 mov     al, es:[si]
                 add     al, 3Fh ; '?'
                 mov     [di], al
@@ -2586,7 +2612,7 @@ loc_115B6:                              ; CODE XREF: sub_114B2+10D↓j
                 rep stosw
                 mov     dx, 3DAh
 
-loc_115D0:                              ; CODE XREF: sub_114B2+121↓j
+loc_115D0:                              ; CODE XREF: paletteFade+121↓j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -2604,7 +2630,7 @@ loc_115D0:                              ; CODE XREF: sub_114B2+121↓j
                 pop     ds
                 assume ds:nothing
 
-loc_115E5:                              ; CODE XREF: sub_114B2+139↓j
+loc_115E5:                              ; CODE XREF: paletteFade+139↓j
                 lodsb
                 out     dx, al
                 lodsb
@@ -2617,36 +2643,36 @@ loc_115E5:                              ; CODE XREF: sub_114B2+139↓j
                 assume ds:seg019
                 mov     cx, 3Fh ; '?'
 
-loc_115F5:                              ; CODE XREF: sub_114B2+193↓j
+loc_115F5:                              ; CODE XREF: paletteFade+193↓j
                 push    cx
                 mov     di, 0A71h
                 lea     si, parm_6E
                 lea     bx, unk_11D14
                 mov     cx, 300h
 
-loc_11604:                              ; CODE XREF: sub_114B2+16B↓j
+loc_11604:                              ; CODE XREF: paletteFade+16B↓j
                 mov     al, [di]
                 cmp     al, 3Fh ; '?'
                 jg      short loc_1160F
                 cmp     al, es:[si]
                 jz      short loc_1161A
 
-loc_1160F:                              ; CODE XREF: sub_114B2+156↑j
+loc_1160F:                              ; CODE XREF: paletteFade+156↑j
                 dec     al
                 mov     [di], al
                 cmp     al, 3Fh ; '?'
                 jg      short loc_1161A
                 mov     es:[bx], al
 
-loc_1161A:                              ; CODE XREF: sub_114B2+15B↑j
-                                        ; sub_114B2+163↑j
+loc_1161A:                              ; CODE XREF: paletteFade+15B↑j
+                                        ; paletteFade+163↑j
                 inc     bx
                 inc     di
                 inc     si
                 loop    loc_11604
                 mov     dx, 3DAh
 
-loc_11622:                              ; CODE XREF: sub_114B2+173↓j
+loc_11622:                              ; CODE XREF: paletteFade+173↓j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -2664,7 +2690,7 @@ loc_11622:                              ; CODE XREF: sub_114B2+173↓j
                 pop     ds
                 assume ds:nothing
 
-loc_11637:                              ; CODE XREF: sub_114B2+18B↓j
+loc_11637:                              ; CODE XREF: paletteFade+18B↓j
                 lodsb
                 out     dx, al
                 lodsb
@@ -2687,7 +2713,7 @@ loc_11637:                              ; CODE XREF: sub_114B2+18B↓j
                 pop     cx
                 pop     bx
                 retf
-sub_114B2       endp
+paletteFade     endp
 
 seg012          ends
 
@@ -2701,9 +2727,10 @@ seg013          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; copy [si] into the descriptor buffer as record AX and write it
 
-sub_11658       proc far                ; CODE XREF: sub_10571+23↑P
-                                        ; sub_1082E+34↑P
+fileWriteRecordFrom proc far            ; CODE XREF: runPrologue+23↑P
+                                        ; flushPartyAndRefresh+34↑P
                 push    es
                 cld
                 push    ds
@@ -2716,10 +2743,10 @@ sub_11658       proc far                ; CODE XREF: sub_10571+23↑P
                 mov     cx, [bx+6]
                 mov     di, [bx+2]
                 rep movsb
-                call    sub_112A0
+                call    fileWriteRecord ; write record from [bx+2]
                 pop     es
                 retf
-sub_11658       endp
+fileWriteRecordFrom endp
 
 seg013          ends
 
@@ -2733,8 +2760,9 @@ seg014          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw the ASCIZ string at BX with the mouse hidden
 
-sub_11678       proc far                ; CODE XREF: sub_114A4↑P
+drawString      proc far                ; CODE XREF: drawStringLines↑P
                 push    ax
                 mov     ah, es:2Bh
                 mov     al, es:2Ah
@@ -2742,7 +2770,7 @@ sub_11678       proc far                ; CODE XREF: sub_114A4↑P
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
 
-loc_11687:                              ; CODE XREF: sub_11678+23↓j
+loc_11687:                              ; CODE XREF: drawString+23↓j
                 mov     al, [bx]
                 or      al, al
                 jz      short loc_1169D
@@ -2754,7 +2782,7 @@ loc_11687:                              ; CODE XREF: sub_11678+23↓j
                 jmp     short loc_11687
 ; ---------------------------------------------------------------------------
 
-loc_1169D:                              ; CODE XREF: sub_11678+13↑j
+loc_1169D:                              ; CODE XREF: drawString+13↑j
                 mov     ah, 28h ; '('
                 int     62h             ; VID fn28 vidMouseShow
                 pop     ax
@@ -2762,7 +2790,7 @@ loc_1169D:                              ; CODE XREF: sub_11678+13↑j
                 mov     es:2Ah, al
                 pop     ax
                 retf
-sub_11678       endp
+drawString      endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2828,16 +2856,17 @@ seg015          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw tile 0D5h of file 0 at (0,0)
 
-sub_116F2       proc far                ; CODE XREF: sub_10B64+1AA↑P
+drawBackdropTile proc far               ; CODE XREF: drawPartyStrip+1AA↑P
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     cs:byte_1287A, 0
                 mov     cs:word_12878, 0D5h
                 mov     ax, 101h
-                call    sub_1174C
+                call    tileOp          ; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
                 retf
-sub_116F2       endp
+drawBackdropTile endp
 
 seg015          ends
 
@@ -2851,14 +2880,15 @@ seg016          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
 
-sub_11716       proc far                ; CODE XREF: start+343↑P
+sendPaletteCommand proc far             ; CODE XREF: start+343↑P
                                         ; start+34A↑P ...
                 cmp     byte ptr es:676h, 0
-                jnz     short near ptr sub_11716
+                jnz     short near ptr sendPaletteCommand ; wait for ctx+676h to clear, then store AL there (command mailbox read by VIDP16)
                 mov     es:676h, al
                 retf
-sub_11716       endp
+sendPaletteCommand endp
 
 seg016          ends
 
@@ -2873,9 +2903,10 @@ seg017          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; program PIT channel 2 for frequency 1193180/CX, enable speaker
 
-sub_11724       proc far                ; CODE XREF: sub_10984+48↑P
-                                        ; sub_10A46+48↑P ...
+speakerOn       proc far                ; CODE XREF: showClosingMessageA+48↑P
+                                        ; showClosingMessageB+48↑P ...
                 push    ax
                 push    bx
                 push    cx
@@ -2908,7 +2939,7 @@ sub_11724       proc far                ; CODE XREF: sub_10984+48↑P
                 pop     bx
                 pop     ax
                 retf
-sub_11724       endp
+speakerOn       endp
 
 seg017          ends
 
@@ -2922,9 +2953,10 @@ seg018          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; silence the PC speaker
 
-sub_11741       proc far                ; CODE XREF: sub_10984+76↑P
-                                        ; sub_10A46+76↑P ...
+speakerOff      proc far                ; CODE XREF: showClosingMessageA+76↑P
+                                        ; showClosingMessageB+76↑P ...
                 push    ax
                 in      al, 61h         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═► OR 03H=spkr ON
@@ -2945,7 +2977,7 @@ sub_11741       proc far                ; CODE XREF: sub_10984+76↑P
                                         ; 7: 0=enable kbrd
                 pop     ax
                 retf
-sub_11741       endp
+speakerOff      endp
 
 ; ---------------------------------------------------------------------------
                 retf
@@ -2954,9 +2986,10 @@ sub_11741       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; tile cache dispatcher: AL = 0..5 operation, tile = (byte_1287A file, word_12878 index)
 
-sub_1174C       proc far                ; CODE XREF: sub_103AB+78↑P
-                                        ; sub_103AB+8C↑P ...
+tileOp          proc far                ; CODE XREF: showEndScreen+78↑P
+                                        ; showEndScreen+8C↑P ...
                 push    bx
                 push    cx
                 push    dx
@@ -2976,8 +3009,8 @@ sub_1174C       proc far                ; CODE XREF: sub_103AB+78↑P
                 jmp     ax
 ; ---------------------------------------------------------------------------
 
-loc_11769:                              ; CODE XREF: sub_1174C+9↑j
-                                        ; sub_1174C+19↑j ...
+loc_11769:                              ; CODE XREF: tileOp+9↑j
+                                        ; tileOp+19↑j ...
                 mov     al, 1
 
 loc_1176B:                              ; CODE XREF: seg018:0067↓j
@@ -2994,7 +3027,7 @@ loc_1176B:                              ; CODE XREF: seg018:0067↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1177B:                              ; CODE XREF: sub_1174C+2C↑j
+loc_1177B:                              ; CODE XREF: tileOp+2C↑j
                 push    word ptr es:16h
                 push    word ptr es:18h
                 mov     ah, 2Bh ; '+'
@@ -3002,10 +3035,10 @@ loc_1177B:                              ; CODE XREF: sub_1174C+2C↑j
                 pop     word ptr es:18h
                 pop     word ptr es:16h
                 retf
-sub_1174C       endp
+tileOp          endp
 
 ; ---------------------------------------------------------------------------
-                call    sub_118BD
+                call    tileLookup      ; find tile (type,index) in the ctx+2 directory; on miss pick a free slot (CF-style code in byte_1287F)
                 cmp     cs:byte_1287F, 0
                 jz      short loc_117B6
                 cmp     cs:byte_1287F, 1
@@ -3014,7 +3047,7 @@ sub_1174C       endp
 ; ---------------------------------------------------------------------------
 
 loc_117A9:                              ; CODE XREF: seg018:0065↑j
-                call    sub_11957
+                call    tileLoad        ; load the missing tile from FILEnn.16 into its slot
                 cmp     cs:byte_1287F, 0
                 jz      short loc_117B6
                 jmp     short loc_1176B
@@ -3034,7 +3067,7 @@ loc_117B6:                              ; CODE XREF: seg018:005D↑j
                 xor     al, al
                 jmp     short loc_1176B
 ; ---------------------------------------------------------------------------
-                call    sub_118BD
+                call    tileLookup      ; find tile (type,index) in the ctx+2 directory; on miss pick a free slot (CF-style code in byte_1287F)
                 cmp     cs:byte_1287F, 0
                 jz      short loc_11804
                 cmp     cs:byte_1287F, 1
@@ -3043,7 +3076,7 @@ loc_117B6:                              ; CODE XREF: seg018:005D↑j
 ; ---------------------------------------------------------------------------
 
 loc_117F6:                              ; CODE XREF: seg018:00B1↑j
-                call    sub_11957
+                call    tileLoad        ; load the missing tile from FILEnn.16 into its slot
                 cmp     cs:byte_1287F, 0
                 jz      short loc_11804
                 jmp     loc_1176B
@@ -3054,7 +3087,7 @@ loc_11804:                              ; CODE XREF: seg018:00A9↑j
                 xor     al, al
                 jmp     loc_1176B
 ; ---------------------------------------------------------------------------
-                call    sub_118BD
+                call    tileLookup      ; find tile (type,index) in the ctx+2 directory; on miss pick a free slot (CF-style code in byte_1287F)
                 cmp     cs:byte_1287F, 0
                 jz      short loc_11817
                 jmp     loc_11769
@@ -3073,7 +3106,7 @@ loc_1182A:                              ; CODE XREF: seg018:00E5↑j
                 xor     al, al
                 jmp     loc_1176B
 ; ---------------------------------------------------------------------------
-                call    sub_118BD
+                call    tileLookup      ; find tile (type,index) in the ctx+2 directory; on miss pick a free slot (CF-style code in byte_1287F)
                 cmp     cs:byte_1287F, 0
                 jz      short loc_11845
                 cmp     cs:byte_1287F, 1
@@ -3107,7 +3140,7 @@ loc_1185A:                              ; CODE XREF: seg018:0100↑j
                 xor     al, al
                 jmp     loc_1176B
 ; ---------------------------------------------------------------------------
-                call    sub_118BD
+                call    tileLookup      ; find tile (type,index) in the ctx+2 directory; on miss pick a free slot (CF-style code in byte_1287F)
                 cmp     cs:byte_1287F, 0
                 jz      short loc_1189F
                 jmp     loc_11769
@@ -3128,8 +3161,9 @@ loc_1189F:                              ; CODE XREF: seg018:015A↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; find tile (type,index) in the ctx+2 directory; on miss pick a free slot (CF-style code in byte_1287F)
 
-sub_118BD       proc near               ; CODE XREF: seg018:0054↑p
+tileLookup      proc near               ; CODE XREF: seg018:0054↑p
                                         ; seg018:00A0↑p ...
                 mov     cs:byte_1287F, 0
                 mov     dl, cs:byte_1287A
@@ -3140,19 +3174,19 @@ sub_118BD       proc near               ; CODE XREF: seg018:0054↑p
                 mov     ds, ax
                 xor     si, si
 
-loc_118DB:                              ; CODE XREF: sub_118BD+2B↓j
+loc_118DB:                              ; CODE XREF: tileLookup+2B↓j
                 cmp     dl, [si+1]
                 jnz     short loc_118E5
                 cmp     bx, [si+2]
                 jz      short loc_118EC
 
-loc_118E5:                              ; CODE XREF: sub_118BD+21↑j
+loc_118E5:                              ; CODE XREF: tileLookup+21↑j
                 add     si, 6
                 loop    loc_118DB
                 jmp     short loc_118F8
 ; ---------------------------------------------------------------------------
 
-loc_118EC:                              ; CODE XREF: sub_118BD+26↑j
+loc_118EC:                              ; CODE XREF: tileLookup+26↑j
                 mov     ax, [si+4]
                 pop     ds
                 mov     ds:1DC3h, ax
@@ -3160,7 +3194,7 @@ loc_118EC:                              ; CODE XREF: sub_118BD+26↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_118F8:                              ; CODE XREF: sub_118BD+2D↑j
+loc_118F8:                              ; CODE XREF: tileLookup+2D↑j
                 pop     ds
                 mov     cs:byte_1287F, 1
                 mov     cx, es:0
@@ -3173,7 +3207,7 @@ loc_118F8:                              ; CODE XREF: sub_118BD+2D↑j
                 mov     ax, es:2
                 mov     ds, ax
 
-loc_1191A:                              ; CODE XREF: sub_118BD:loc_11928↓j
+loc_1191A:                              ; CODE XREF: tileLookup:loc_11928↓j
                 cmp     byte ptr [si], 0
                 jle     short loc_11932
                 add     si, 6
@@ -3181,14 +3215,14 @@ loc_1191A:                              ; CODE XREF: sub_118BD:loc_11928↓j
                 jbe     short loc_11928
                 xor     si, si
 
-loc_11928:                              ; CODE XREF: sub_118BD+67↑j
+loc_11928:                              ; CODE XREF: tileLookup+67↑j
                 loop    loc_1191A
                 pop     ds
                 mov     cs:byte_1287F, 2
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11932:                              ; CODE XREF: sub_118BD+60↑j
+loc_11932:                              ; CODE XREF: tileLookup+60↑j
                 mov     ax, [si+4]
                 pop     ds
                 mov     ds:1DC3h, ax
@@ -3199,15 +3233,16 @@ loc_11932:                              ; CODE XREF: sub_118BD+60↑j
                 jbe     short locret_11956
                 mov     word ptr es:6, 0
 
-locret_11956:                           ; CODE XREF: sub_118BD+90↑j
+locret_11956:                           ; CODE XREF: tileLookup+90↑j
                 retn
-sub_118BD       endp
+tileLookup      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; load the missing tile from FILEnn.16 into its slot
 
-sub_11957       proc near               ; CODE XREF: seg018:loc_117A9↑p
+tileLoad        proc near               ; CODE XREF: seg018:loc_117A9↑p
                                         ; seg018:loc_117F6↑p
                 xor     bx, bx
                 mov     bl, cs:byte_1287A
@@ -3219,12 +3254,12 @@ sub_11957       proc near               ; CODE XREF: seg018:loc_117A9↑p
                 cmp     bx, 0
                 jnz     short loc_11977
 
-loc_11970:                              ; CODE XREF: sub_11957+A↑j
+loc_11970:                              ; CODE XREF: tileLoad+A↑j
                 mov     cs:byte_1287F, 1
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11977:                              ; CODE XREF: sub_11957+17↑j
+loc_11977:                              ; CODE XREF: tileLoad+17↑j
                 mov     dx, cs:word_12878
                 mov     [bx+8], dx
                 mov     ch, ds:1DC0h
@@ -3238,9 +3273,9 @@ loc_11977:                              ; CODE XREF: sub_11957+17↑j
                 mov     [si+1], cl
                 pop     ds
                 mov     dx, ds:1DC3h
-                call    sub_11276
+                call    fileReadToSegment ; read record into segment DX:0
                 retn
-sub_11957       endp
+tileLoad        endp
 
 seg018          ends
 
@@ -3256,7 +3291,7 @@ parm_02         db 0                    ; DATA XREF: start:loc_10187↑w
 parm_03         db 0                    ; DATA XREF: start+FD↑w
                                         ; start+106↑w ...
 parm_04         db 0                    ; DATA XREF: start+1DE↑w
-                                        ; sub_10571+10↑w
+                                        ; runPrologue+10↑w
                 db    0
                 db    0
                 db    0
@@ -3342,30 +3377,30 @@ parm_2D         db 0                    ; DATA XREF: start+151↑r
                 db    0
                 db    0
 parm_58         dw 0                    ; DATA XREF: start+31↑w
-parm_5A         dw 0                    ; DATA XREF: sub_10873+16↑w
-                                        ; sub_108AC+B5↑w
+parm_5A         dw 0                    ; DATA XREF: startDriversEga+16↑w
+                                        ; startDriversSvga+B5↑w
 parm_5C         dw 0                    ; DATA XREF: start+5A↑w
-parm_5E         dw 0                    ; DATA XREF: sub_105AF+22C↑w
-parm_60         dw 0                    ; DATA XREF: sub_105AF+232↑w
-parm_62         dw 0                    ; DATA XREF: sub_105AF+238↑w
-parm_64         dw 0                    ; DATA XREF: sub_105AF+23E↑w
-parm_66         dw 0                    ; DATA XREF: sub_105AF+244↑w
-parm_68         dw 0                    ; DATA XREF: sub_105AF+24A↑w
-parm_6A         dw 0                    ; DATA XREF: sub_105AF+250↑w
+parm_5E         dw 0                    ; DATA XREF: openDataFiles+22C↑w
+parm_60         dw 0                    ; DATA XREF: openDataFiles+232↑w
+parm_62         dw 0                    ; DATA XREF: openDataFiles+238↑w
+parm_64         dw 0                    ; DATA XREF: openDataFiles+23E↑w
+parm_66         dw 0                    ; DATA XREF: openDataFiles+244↑w
+parm_68         dw 0                    ; DATA XREF: openDataFiles+24A↑w
+parm_6A         dw 0                    ; DATA XREF: openDataFiles+250↑w
                 align 4
-parm_6E         db    0                 ; DATA XREF: sub_105AF+14D↑o
-                                        ; sub_114B2+FD↑o ...
+parm_6E         db    0                 ; DATA XREF: openDataFiles+14D↑o
+                                        ; paletteFade+FD↑o ...
                 db    0
-parm_70         dw 0                    ; DATA XREF: sub_105AF+256↑w
-parm_72         dw 0                    ; DATA XREF: sub_105AF+25C↑w
-parm_74         dw 0                    ; DATA XREF: sub_105AF+262↑w
-parm_76         dw 0                    ; DATA XREF: sub_105AF+268↑w
-parm_78         dw 0                    ; DATA XREF: sub_105AF+26E↑w
-parm_7A         dw 0                    ; DATA XREF: sub_105AF+274↑w
+parm_70         dw 0                    ; DATA XREF: openDataFiles+256↑w
+parm_72         dw 0                    ; DATA XREF: openDataFiles+25C↑w
+parm_74         dw 0                    ; DATA XREF: openDataFiles+262↑w
+parm_76         dw 0                    ; DATA XREF: openDataFiles+268↑w
+parm_78         dw 0                    ; DATA XREF: openDataFiles+26E↑w
+parm_7A         dw 0                    ; DATA XREF: openDataFiles+274↑w
                 db    0
                 db    0
                 db    0
-parm_7F         db    0                 ; DATA XREF: sub_105AF+182↑o
+parm_7F         db    0                 ; DATA XREF: openDataFiles+182↑o
                 db  0Ah
                 db    0
                 db    0
@@ -3382,7 +3417,7 @@ parm_7F         db    0                 ; DATA XREF: sub_105AF+182↑o
                 db    0
                 db    0
                 db    0
-unk_11A36       db    0                 ; DATA XREF: sub_105AF+19B↑o
+unk_11A36       db    0                 ; DATA XREF: openDataFiles+19B↑o
                 db    0
                 db    0
                 db    0
@@ -3400,7 +3435,7 @@ byte_11A42      db 0                    ; DATA XREF: start+176↑r
                 db    0
                 db    0
 byte_11A47      db 0                    ; DATA XREF: start+299↑r
-                                        ; sub_105AF+1B4↑o
+                                        ; openDataFiles+1B4↑o
                 db    0
                 db    0
                 db    0
@@ -3417,7 +3452,7 @@ word_11A4C      dw 0                    ; DATA XREF: start+1A8↑r
                 db    0
                 db    0
                 db    0
-unk_11A58       db    0                 ; DATA XREF: sub_105AF+1DF↑o
+unk_11A58       db    0                 ; DATA XREF: openDataFiles+1DF↑o
                 db    0
                 db    0
                 db    0
@@ -4118,8 +4153,8 @@ byte_11A65      db 0                    ; DATA XREF: start+DE↑r
                 db    0
                 db    0
                 db    0
-unk_11D14       db    0                 ; DATA XREF: sub_114B2+E4↑o
-                                        ; sub_114B2+10F↑o ...
+unk_11D14       db    0                 ; DATA XREF: paletteFade+E4↑o
+                                        ; paletteFade+10F↑o ...
                 db    0
                 db    0
                 db    0
@@ -5533,12 +5568,12 @@ unk_11D14       db    0                 ; DATA XREF: sub_114B2+E4↑o
                 db    0
                 db    0
                 db    0
-word_1229A      dw 0                    ; DATA XREF: sub_105AF+229↑r
+word_1229A      dw 0                    ; DATA XREF: openDataFiles+229↑r
                 db  71h ; q
                 db  0Ah
                 db 0F4h
                 db    1
-word_122A0      dw 200h                 ; DATA XREF: sub_108AC+B↑w
+word_122A0      dw 200h                 ; DATA XREF: startDriversSvga+B↑w
                 db    1
                 db    0
                 db    0
@@ -5552,15 +5587,15 @@ word_122A0      dw 200h                 ; DATA XREF: sub_108AC+B↑w
                 db  30h ; 0
                 db  30h ; 0
                 db  2Eh ; .
-word_122AF      dw 3631h                ; DATA XREF: sub_108AC↑w
-byte_122B1      db 20h                  ; DATA XREF: sub_108AC+6↑w
+word_122AF      dw 3631h                ; DATA XREF: startDriversSvga↑w
+byte_122B1      db 20h                  ; DATA XREF: startDriversSvga+6↑w
                 db    0
-word_122B3      dw 0                    ; DATA XREF: sub_105AF+22F↑r
+word_122B3      dw 0                    ; DATA XREF: openDataFiles+22F↑r
                 db  71h ; q
                 db  0Ah
                 db 0F4h
                 db    1
-word_122B9      dw 200h                 ; DATA XREF: sub_108AC+1C↑w
+word_122B9      dw 200h                 ; DATA XREF: startDriversSvga+1C↑w
                 db    1
                 db    0
                 db    0
@@ -5574,15 +5609,15 @@ word_122B9      dw 200h                 ; DATA XREF: sub_108AC+1C↑w
                 db  30h ; 0
                 db  31h ; 1
                 db  2Eh ; .
-word_122C8      dw 3631h                ; DATA XREF: sub_108AC+11↑w
-byte_122CA      db 20h                  ; DATA XREF: sub_108AC+17↑w
+word_122C8      dw 3631h                ; DATA XREF: startDriversSvga+11↑w
+byte_122CA      db 20h                  ; DATA XREF: startDriversSvga+17↑w
                 align 2
-word_122CC      dw 0                    ; DATA XREF: sub_105AF+235↑r
+word_122CC      dw 0                    ; DATA XREF: openDataFiles+235↑r
                 db  71h ; q
                 db  0Ah
                 db 0F4h
                 db    1
-word_122D2      dw 200h                 ; DATA XREF: sub_108AC+2D↑w
+word_122D2      dw 200h                 ; DATA XREF: startDriversSvga+2D↑w
                 db    1
                 db    0
                 db    0
@@ -5596,15 +5631,15 @@ word_122D2      dw 200h                 ; DATA XREF: sub_108AC+2D↑w
                 db  30h ; 0
                 db  32h ; 2
                 db  2Eh ; .
-word_122E1      dw 3631h                ; DATA XREF: sub_108AC+22↑w
-byte_122E3      db 20h                  ; DATA XREF: sub_108AC+28↑w
+word_122E1      dw 3631h                ; DATA XREF: startDriversSvga+22↑w
+byte_122E3      db 20h                  ; DATA XREF: startDriversSvga+28↑w
                 db    0
-word_122E5      dw 0                    ; DATA XREF: sub_105AF+23B↑r
+word_122E5      dw 0                    ; DATA XREF: openDataFiles+23B↑r
                 db  71h ; q
                 db  0Ah
                 db 0F4h
                 db    1
-word_122EB      dw 200h                 ; DATA XREF: sub_108AC+3E↑w
+word_122EB      dw 200h                 ; DATA XREF: startDriversSvga+3E↑w
                 db    1
                 db    0
                 db    0
@@ -5618,15 +5653,15 @@ byte_122F6      db 45h                  ; DATA XREF: start+12F↑w
                 db  30h ; 0
                 db  33h ; 3
                 db  2Eh ; .
-word_122FA      dw 3631h                ; DATA XREF: sub_108AC+33↑w
-byte_122FC      db 20h                  ; DATA XREF: sub_108AC+39↑w
+word_122FA      dw 3631h                ; DATA XREF: startDriversSvga+33↑w
+byte_122FC      db 20h                  ; DATA XREF: startDriversSvga+39↑w
                 align 2
-word_122FE      dw 0                    ; DATA XREF: sub_105AF+241↑r
+word_122FE      dw 0                    ; DATA XREF: openDataFiles+241↑r
                 db  71h ; q
                 db  0Ah
                 db 0F4h
                 db    1
-word_12304      dw 200h                 ; DATA XREF: sub_108AC+4F↑w
+word_12304      dw 200h                 ; DATA XREF: startDriversSvga+4F↑w
                 db    1
                 db    0
                 db    0
@@ -5640,15 +5675,15 @@ word_12304      dw 200h                 ; DATA XREF: sub_108AC+4F↑w
                 db  30h ; 0
                 db  34h ; 4
                 db  2Eh ; .
-word_12313      dw 3631h                ; DATA XREF: sub_108AC+44↑w
-byte_12315      db 20h                  ; DATA XREF: sub_108AC+4A↑w
+word_12313      dw 3631h                ; DATA XREF: startDriversSvga+44↑w
+byte_12315      db 20h                  ; DATA XREF: startDriversSvga+4A↑w
                 db    0
-word_12317      dw 0                    ; DATA XREF: sub_105AF+247↑r
+word_12317      dw 0                    ; DATA XREF: openDataFiles+247↑r
                 db  71h ; q
                 db  0Ah
                 db 0F4h
                 db    1
-word_1231D      dw 200h                 ; DATA XREF: sub_108AC+60↑w
+word_1231D      dw 200h                 ; DATA XREF: startDriversSvga+60↑w
                 db    1
                 db    0
                 db    0
@@ -5662,15 +5697,15 @@ word_1231D      dw 200h                 ; DATA XREF: sub_108AC+60↑w
                 db  30h ; 0
                 db  35h ; 5
                 db  2Eh ; .
-word_1232C      dw 3631h                ; DATA XREF: sub_108AC+55↑w
-byte_1232E      db 20h                  ; DATA XREF: sub_108AC+5B↑w
+word_1232C      dw 3631h                ; DATA XREF: startDriversSvga+55↑w
+byte_1232E      db 20h                  ; DATA XREF: startDriversSvga+5B↑w
                 align 2
-word_12330      dw 0                    ; DATA XREF: sub_105AF+24D↑r
+word_12330      dw 0                    ; DATA XREF: openDataFiles+24D↑r
                 db  71h ; q
                 db  0Ah
                 db 0F4h
                 db    1
-word_12336      dw 200h                 ; DATA XREF: sub_108AC+71↑w
+word_12336      dw 200h                 ; DATA XREF: startDriversSvga+71↑w
                 db    1
                 db    0
                 db    0
@@ -5684,8 +5719,8 @@ word_12336      dw 200h                 ; DATA XREF: sub_108AC+71↑w
                 db  30h ; 0
                 db  36h ; 6
                 db  2Eh ; .
-word_12345      dw 3631h                ; DATA XREF: sub_108AC+66↑w
-byte_12347      db 20h                  ; DATA XREF: sub_108AC+6C↑w
+word_12345      dw 3631h                ; DATA XREF: startDriversSvga+66↑w
+byte_12347      db 20h                  ; DATA XREF: startDriversSvga+6C↑w
                 db    0
 word_12349      dw 0                    ; DATA XREF: start+57↑r
                                         ; start+5D↑r
@@ -5720,7 +5755,7 @@ word_12349      dw 0                    ; DATA XREF: start+57↑r
                 db  41h ; A
                 db  54h ; T
                 db    0
-word_1236A      dw 0                    ; DATA XREF: sub_105AF+265↑r
+word_1236A      dw 0                    ; DATA XREF: openDataFiles+265↑r
                 db  71h ; q
                 db  0Ah
                 db 0FFh
@@ -5750,7 +5785,7 @@ word_1236A      dw 0                    ; DATA XREF: sub_105AF+265↑r
                 db  41h ; A
                 db  54h ; T
                 db    0
-word_12389      dw 0                    ; DATA XREF: sub_105AF+26B↑r
+word_12389      dw 0                    ; DATA XREF: openDataFiles+26B↑r
                 db  71h ; q
                 db  0Ah
                 db 0FFh
@@ -5781,13 +5816,13 @@ word_12389      dw 0                    ; DATA XREF: sub_105AF+26B↑r
                 db  41h ; A
                 db  54h ; T
                 db    0
-word_123A9      dw 0                    ; DATA XREF: sub_105AF+271↑r
-                                        ; sub_1082E↑r
+word_123A9      dw 0                    ; DATA XREF: openDataFiles+271↑r
+                                        ; flushPartyAndRefresh↑r
                 db  71h ; q
                 db  0Ah
                 db  78h ; x
                 db    0
-word_123AF      dw 200h                 ; DATA XREF: sub_108AC+77↑w
+word_123AF      dw 200h                 ; DATA XREF: startDriversSvga+77↑w
                 db    0
                 db    0
                 db    0
@@ -5814,7 +5849,7 @@ word_123AF      dw 200h                 ; DATA XREF: sub_108AC+77↑w
                 db  41h ; A
                 db  54h ; T
                 db    0
-word_123CB      dw 0                    ; DATA XREF: sub_105AF+253↑r
+word_123CB      dw 0                    ; DATA XREF: openDataFiles+253↑r
                 db 0FAh
                 db    4
                 db    0
@@ -5837,7 +5872,7 @@ word_123CB      dw 0                    ; DATA XREF: sub_105AF+253↑r
                 db  41h ; A
                 db  54h ; T
                 db    0
-word_123E3      dw 0                    ; DATA XREF: sub_105AF+259↑r
+word_123E3      dw 0                    ; DATA XREF: openDataFiles+259↑r
                 db 0FAh
                 db    4
                 db    0
@@ -5859,7 +5894,7 @@ word_123E3      dw 0                    ; DATA XREF: sub_105AF+259↑r
                 db  41h ; A
                 db  54h ; T
                 db    0
-word_123FA      dw 0                    ; DATA XREF: sub_105AF+25F↑r
+word_123FA      dw 0                    ; DATA XREF: openDataFiles+25F↑r
                 db 0FAh
                 db    4
                 db    0
@@ -6899,7 +6934,7 @@ word_1241D      dw 0                    ; DATA XREF: execProgram+1A↑w
                 db    0
                 db    0
                 db    0
-word_12811      dw 0                    ; DATA XREF: sub_105AF+1BD↑r
+word_12811      dw 0                    ; DATA XREF: openDataFiles+1BD↑r
                 db  71h ; q
                 db  0Ah
                 db  0Ah
@@ -6924,7 +6959,7 @@ word_12811      dw 0                    ; DATA XREF: sub_105AF+1BD↑r
                 db  4Ch ; L
                 db  24h ; $
                 db    0
-word_1282B      dw 0                    ; DATA XREF: sub_105AF+1E9↑r
+word_1282B      dw 0                    ; DATA XREF: openDataFiles+1E9↑r
                 db  71h ; q
                 db  0Ah
                 db  0Ah
@@ -6949,7 +6984,7 @@ word_1282B      dw 0                    ; DATA XREF: sub_105AF+1E9↑r
                 db  4Ch ; L
                 db  24h ; $
                 db    0
-word_12845      dw 0                    ; DATA XREF: sub_105AF+156↑r
+word_12845      dw 0                    ; DATA XREF: openDataFiles+156↑r
                 db  71h ; q
                 db  0Ah
                 db    1
@@ -6990,22 +7025,22 @@ word_12845      dw 0                    ; DATA XREF: sub_105AF+156↑r
                 db    9
                 db    9
                 db  0Ah
-word_1286F      dw 0                    ; DATA XREF: sub_112D6+1E↑r
-word_12871      dw 0                    ; DATA XREF: sub_112D6+2D↑r
-word_12873      dw 0                    ; DATA XREF: sub_112D6+3C↑r
-word_12875      dw 0                    ; DATA XREF: sub_112D6+44↑r
+word_1286F      dw 0                    ; DATA XREF: drawTileKeyed+1E↑r
+word_12871      dw 0                    ; DATA XREF: drawTileKeyed+2D↑r
+word_12873      dw 0                    ; DATA XREF: drawTileKeyed+3C↑r
+word_12875      dw 0                    ; DATA XREF: drawTileKeyed+44↑r
 byte_12877      db 0                    ; DATA XREF: start+11D↑w
                                         ; start:loc_10214↑w ...
-word_12878      dw 0                    ; DATA XREF: sub_103AB+5C↑w
-                                        ; sub_103AB+72↑w ...
-byte_1287A      db 0                    ; DATA XREF: sub_103AB:loc_103F4↑w
-                                        ; sub_116F2+E↑w ...
+word_12878      dw 0                    ; DATA XREF: showEndScreen+5C↑w
+                                        ; showEndScreen+72↑w ...
+byte_1287A      db 0                    ; DATA XREF: showEndScreen:loc_103F4↑w
+                                        ; drawBackdropTile+E↑w ...
                 db    0
                 db    0
                 db    0
                 db    0
 byte_1287F      db 0                    ; DATA XREF: start+41↑r
-                                        ; sub_105AF+F↑r ...
+                                        ; openDataFiles+F↑r ...
 word_12880      dw 0                    ; DATA XREF: start+269↑r
                                         ; start+2B4↑r ...
                 align 4
