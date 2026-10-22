@@ -6772,6 +6772,13 @@ effect id `+0x70`, sound id `+0x62`, ...) -- a later shot at the same member **o
 facing (0x800 facing south ... ) only decides whether the shot is drawn (`PresentTriggeredSideTrapEffects` :32732 animates the projectile and the weapon icon). That routine then plays the first sound in the table and
 applies every nonzero magnitude as the effect `+0x70` with the magnitude as the preset amount through the icon-bar pipeline (`combatApplyPresetEffect`). `session.c` `sessionAmbushShots`.
 
+### Documents in a foreign script (DrawIndentedTextColumn, decoded 2026-10-22)
+
+A readable item's rows are drawn by `DrawIndentedTextColumn` (:44453; Chapter 3 :44270 on) after `ClassifyConversationSkillTier` has set `g_uiScratchFlags1`'s reading bits from the reader's Linguistics (`document.h`): no
+difficulty class (0x20) or a skill past the last threshold (0x2) draws the row in the normal font; below the first threshold the whole row is drawn in the foreign font (`fontOffset` 2, 6 or 4 = fonts 1, 3, 2) -- the foreign
+glyphs are the pictographic fonts of `font.h` -- and in between each row is taken a word at a time (`DrawWordToken`: the word's characters, then the spaces after it, each 6 pixels) in groups of five, counted afresh in every row:
+flag 0x10 draws the **first** word of each five in the normal font and the other four foreign, 0x8 the first **two**, 0x4 the first **four** (not three; `document.c` had 3), then everything. `gameui.c` `drawReadRow`.
+
 ### Group fights: the three combat slots, joining and compaction (decoded 2026-10-22)
 
 The three combat records (`g_monsterSlots` = DS:0x51C0, 0x525C, 0x52F8: **left, middle, right**; the info panels at y = 87 / 123 / 159 follow them) are filled by `ProcessLevelMonsters` (:33366) as monsters step onto

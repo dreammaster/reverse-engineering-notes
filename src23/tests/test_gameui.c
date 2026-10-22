@@ -1022,6 +1022,34 @@ static void testInventoryUi(GameKind game, const char *envName, const char *defa
         gameUiKey(&ui, ' ', false);
         check("Space leaves the merchant's screen", !ui.catalogActive);
     }
+
+    /* a document in the reader's skill (DrawIndentedTextColumn): the first word of every five in the normal font, the rest foreign; a plain text is the normal font throughout */
+    {
+        ui.overlay = UiOverlayTalk;
+        ui.reading = true;
+        ui.talkRowCount = 1;
+        snprintf(ui.talkRows[0], sizeof(ui.talkRows[0]), "AA AA AA AA AA AA");
+        unsigned wordPixels[6][2] = {{0}};
+        for (int pass = 0; pass < 2; pass++) {
+            s->readability.plain = pass == 1;
+            s->readability.fontOffset = 2;
+            s->readability.clearWordsOfFive = pass == 1 ? 5 : 1;
+            gameUiDraw(&ui);
+            for (unsigned word = 0; word < 6; word++) {
+                for (int row = 0; row < 6; row++) {
+                    for (int col = 0; col < 12; col++) {
+                        wordPixels[word][pass] = wordPixels[word][pass] * 31 + ui.screen[(67 + row) * ViewScreenWidth + 22 + 18 * (int)word + col];
+                    }
+                }
+            }
+        }
+        check("a plain document draws every word alike", wordPixels[0][1] == wordPixels[1][1] && wordPixels[1][1] == wordPixels[5][1]);
+        check("with one word of five readable the first is the normal font and the next four are foreign", wordPixels[0][0] == wordPixels[0][1] && wordPixels[1][0] != wordPixels[1][1] &&
+                                                                                                                wordPixels[1][0] == wordPixels[2][0] && wordPixels[4][0] == wordPixels[1][0]);
+        check("... and the sixth word starts the next group of five", wordPixels[5][0] == wordPixels[0][0]);
+        ui.reading = false;
+        ui.overlay = UiOverlayNone;
+    }
     sessionFree(s);
     free(world);
 }

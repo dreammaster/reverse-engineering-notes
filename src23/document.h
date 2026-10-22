@@ -127,7 +127,7 @@ bool documentGetLine(const DocumentCatalog *catalog, DocumentCategory category, 
  * letters (the rest stay in the foreign font):
  *
  *            font   skill <T1      T1..T2    T2..T3    T3..T4    >= T4
- *            offset  (none)        1 of 5    2 of 5    3 of 5    all
+ *            offset  (none)        1 of 5    2 of 5    4 of 5    all
  *   easy      2      Ch2 65,70,75,80   Ch3 80,85,90,95
  *   medium    6      Ch2 75,80,85,90   Ch3 90,95,100,115
  *   hard      4      Ch2 85,90,95,105  Ch3 100,115,120,125
@@ -137,7 +137,7 @@ bool documentGetLine(const DocumentCatalog *catalog, DocumentCategory category, 
 typedef struct {
     bool plain;               /* no difficulty class: always readable */
     unsigned fontOffset;      /* the foreign font (2, 6 or 4); 0 for plain text */
-    unsigned clearWordsOfFive; /* 0..5; 5 = everything readable */
+    unsigned clearWordsOfFive; /* 0, 1, 2, 4 or 5; 5 = everything readable */
 } DocumentReadability;
 
 DocumentReadability documentClassifyReadability(GameKind game, uint16_t entryWord1, int16_t linguistics);

@@ -184,7 +184,7 @@ DocumentReadability documentClassifyReadability(GameKind game, uint16_t entryWor
     } else if (linguistics < t[2]) {
         r.clearWordsOfFive = 2;
     } else if (linguistics < t[3]) {
-        r.clearWordsOfFive = 3;
+        r.clearWordsOfFive = 4; /* DrawIndentedTextColumn's third pattern (flag 0x4) draws four words clear and the fifth in the foreign font */
     } else {
         r.clearWordsOfFive = 5;
     }

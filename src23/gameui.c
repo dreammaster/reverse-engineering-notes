@@ -145,6 +145,28 @@ void gameUiAmbientMusic(GameUi *ui) {
  * the NPC header's first word) at (21, 31); BuildItemUseMessage writes the topic's rows in 0x0D from (22, 67), 6 pixels apart; and, once the greeting has been read (a key or a click),
  * DrawEligibleItemList the topic names to the right of the face in 0x8A: five to a column at x = 58 and x = 142 from y = 32.
  */
+/*
+ * A row of a document in the reader's skill (DrawIndentedTextColumn, yendor2.asm:44453; DrawWordToken draws a word and the spaces after it): plain text and a reader who knows everything see the normal
+ * font; a reader below the first threshold sees every character in the document's foreign font (offset / 2: 1, 3 or 2), and in between the first 1, 2 or 4 words of every five -- counted afresh in each
+ * row -- are in the normal font and the others foreign.
+ */
+static void drawReadRow(GameUi *ui, int x, int y, const char *row) {
+    const GameSession *s = ui->session;
+    const DocumentReadability *r = &s->readability;
+    unsigned foreign = r->fontOffset / 2;
+    unsigned word = 0;
+    for (const char *p = row; *p;) {
+        unsigned font = r->plain || r->clearWordsOfFive >= 5 ? 0 : r->clearWordsOfFive == 0 ? foreign : (word % 5) < r->clearWordsOfFive ? 0 : foreign;
+        for (; *p && *p != ' '; p++) {
+            x = fontDrawChar(s->game, font, ui->screen, ViewScreenWidth, x, y, (unsigned char)*p, 0x0D, 0, FontTransparent);
+        }
+        for (; *p == ' '; p++) {
+            x += 6;
+        }
+        word++;
+    }
+}
+
 static void drawTalk(GameUi *ui) {
     GameSession *s = ui->session;
     const ViewRenderer *r = &ui->renderer;
@@ -153,7 +175,11 @@ static void drawTalk(GameUi *ui) {
         viewDrawPicture(r, 7, dialogGetU16(s->talk.npc, 0), 21, 31, true, 0);
     }
     for (unsigned i = 0; i < ui->talkRowCount; i++) {
-        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 22, 67 + 6 * (int)i, ui->talkRows[i], 0x0D, 0, FontTransparent);
+        if (ui->reading) {
+            drawReadRow(ui, 22, 67 + 6 * (int)i, ui->talkRows[i]);
+        } else {
+            fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 22, 67 + 6 * (int)i, ui->talkRows[i], 0x0D, 0, FontTransparent);
+        }
     }
     for (unsigned i = 0; !ui->reading && ui->talkListShown && i < s->talk.listedCount && i < ConversationListMax; i++) {
         char name[DialogTopicNameSize + 1];
