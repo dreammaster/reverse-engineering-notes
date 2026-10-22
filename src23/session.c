@@ -1554,12 +1554,8 @@ static unsigned swapItemEverywhere(GameSession *s, uint16_t from, uint16_t to) {
     unsigned swapped = 0;
     uint8_t *globalSlots = beltSlots(s);
     for (;;) {
-        ItemRangeAvailability r = itemRangeAvailable(globalSlots, &s->save, from, from);
-        if (!r.found) {
-            return swapped;
-        }
-        uint8_t *record = r.inGlobalTable ? NULL : saveGamePartyRecordById(&s->save, r.partyRecordId);
-        uint8_t *slot = r.inGlobalTable ? globalSlots + r.slotOffset : record ? record + r.slotOffset : NULL;
+        ItemRangeAvailability r = itemRangeAvailableDeep(globalSlots, &s->save, &s->items, from, from);
+        uint8_t *slot = itemRangeSlot(&r, globalSlots, &s->save);
         if (!slot) {
             return swapped;
         }
@@ -1573,20 +1569,18 @@ static unsigned removeItemRange(GameSession *s, uint16_t low, uint16_t high) {
     unsigned removed = 0;
     uint8_t *globalSlots = beltSlots(s);
     for (unsigned guard = 0; guard < 64; guard++) {
-        ItemRangeAvailability r = itemRangeAvailable(globalSlots, &s->save, low, high);
+        ItemRangeAvailability r = itemRangeAvailableDeep(globalSlots, &s->save, &s->items, low, high);
         if (!r.found) {
             break;
         }
-        if (r.inGlobalTable) {
-            itemSlotConsumeGlobalCharge(&s->items, globalSlots + r.slotOffset);
-        } else {
+        if (!r.inGlobalTable) {
             uint8_t *record = saveGamePartyRecordById(&s->save, r.partyRecordId);
             if (!record) {
                 break;
             }
             partyRemoveMultiStatEffect(record, itemEffectEntry(&s->items, itemCatalogRecord(&s->items, r.itemId)));
-            partyConsumeItemCharge(record, &s->items, record + r.slotOffset);
         }
+        itemRangeConsume(&r, globalSlots, &s->save, &s->items);
         removed++;
     }
     return removed;
@@ -2334,20 +2328,6 @@ void sessionBagsClose(GameSession *s, unsigned member) {
     }
 }
 
-/* SyncAllContainers (:45673): before a search of the containers the open ones are written back (and stay open). */
-static void bagsFlush(GameSession *s) {
-    for (unsigned member = 0; member < SavePartyMemberSlots; member++) {
-        uint8_t *record = sessionPartyRecord(s, member);
-        for (unsigned bag = 0; record && bag < 3; bag++) {
-            const uint8_t *marker = partyBagMarker(record, bag);
-            uint8_t *contents = partyGetU16(marker, 0) ? saveGameRecord(&s->save, SaveSectionItemInstances, partyGetU16(marker, 2)) : NULL;
-            if (contents) {
-                memcpy(contents, marker + 4, InventoryGroupSize);
-            }
-        }
-    }
-}
-
 bool sessionDropOnPortrait(GameSession *s, unsigned member) {
     uint8_t *record = sessionPartyRecord(s, member);
     const uint8_t *item = s->heldItem ? itemCatalogRecord(&s->items, s->heldItem) : NULL;
@@ -2693,20 +2673,7 @@ InteractUnlockOutcome sessionUnlockWithRing(GameSession *s) {
 }
 
 bool sessionHasItem(GameSession *s, unsigned lowId, unsigned highId) {
-    if (itemRangeAvailable(beltSlots(s), &s->save, (uint16_t)lowId, (uint16_t)highId).found) {
-        return true;
-    }
-    bagsFlush(s); /* IsItemRangeAvailable's FindItemInInventoryRange goes into the containers (three levels) after SyncAllContainers; the search stops at the first empty party slot */
-    for (unsigned slot = 0; slot < SavePartyMemberSlots; slot++) {
-        const uint8_t *member = sessionPartyRecord(s, slot);
-        if (!member) {
-            break;
-        }
-        if (partyFindItemDeep(member, &s->save, &s->items, (uint16_t)lowId, (uint16_t)highId).itemId) {
-            return true;
-        }
-    }
-    return false;
+    return itemRangeAvailableDeep(beltSlots(s), &s->save, &s->items, (uint16_t)lowId, (uint16_t)highId).found; /* IsItemRangeAvailable: the belt, then each member's slots and the containers in them */
 }
 
 uint8_t *sessionBeltSlot(GameSession *s, unsigned slot) {

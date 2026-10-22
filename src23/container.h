@@ -22,4 +22,7 @@ unsigned containerAllocate(SaveGame *save);
 void containerFree(SaveGame *save, unsigned record);
 unsigned containerWeight(SaveGame *save, unsigned record);
 
+/* SyncAllContainers (yendor2.asm:45673): the bags a member has open are written back to their records (and stay open), so a search of the containers sees what is in them now. */
+void containerFlushOpen(SaveGame *save, uint8_t *partyRecord);
+
 #endif

@@ -6790,7 +6790,9 @@ counter, and clears the record. `PlaceItemOnGround` frees the dropped container'
 +0x17C, +0x1A2, +0x1C8, else the main group at +0x118, so the newest bag is the one on screen. The open bag's icon (item icon + 1) is drawn at (38, 36) -- the ninth cell, region 9 -- and the right button on it closes the newest
 (`SaveAndCloseContainer`: the contents written back to the record, the marker cleared). The container in slot B (code 0xB) opens alone in the third marker with flag 0x1000 (closing the others) -- its icon at (40, 64) -- and
 closes with the same click; it can neither be picked up nor filled while open. `CloseAllAlternateBags` (:39856) closes everything when the screen is left; `SyncAllContainers` writes the open ones back before `IsItemRangeAvailable`
-searches the containers (to three levels, `partyFindItemDeep`).
+searches the containers (to three levels, `partyFindItemDeep`: `itemRangeAvailableDeep`, used by the K / M / T / W item gates, the story events that swap or remove items, and the camping food of a rest). A used-up item inside
+containers (`ConsumeItemChargeResource` :41545 with `SyncItemChargeFieldToCurgame` :41871) leaves its slot of the innermost record and its weight comes off every container's weight word it was in and off the load; a charge only
+spent changes no weight (`itemRangeConsume`).
 
 **Weights.** An item carries its own weight and, for a container, its contents' (the record's first word, `PickUpItemFromSlot`). `PlaceItemInSlot` / `PickUpItemFromSlot` add / take it for the groups the slot is in: in the main
 group the load (+0x118) -- except a MAGIC CONTAINER, which weighs nothing there -- and in an open bag the bag's own weight word, then each bag it is nested in (a MAGIC CONTAINER among them does not take it, and the

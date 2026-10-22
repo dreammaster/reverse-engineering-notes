@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "bcd4.h"
+#include "container.h"
 
 /* Names from the game's 27-entry table at DS:0x7DC7; NULL where the table entry is blank. */
 static const char *const g_statNames[PartyStatCount] = {
@@ -1033,6 +1034,52 @@ ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *s
     return result;
 }
 
+ItemRangeAvailability itemRangeAvailableDeep(uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog, uint16_t lowId, uint16_t highId) {
+    ItemRangeAvailability result = itemRangeAvailable(globalSlots, save, lowId, highId);
+    if (result.found || lowId == 0 || lowId > highId) {
+        return result;
+    }
+    memset(&result, 0, sizeof(result));
+    for (unsigned member = 0; member < SavePartyMemberSlots; member++) {
+        uint16_t id = saveGetPartySlot(save, member);
+        if (id == 0) {
+            break;
+        }
+        uint8_t *record = saveGamePartyRecordById(save, id);
+        if (!record) {
+            continue;
+        }
+        containerFlushOpen(save, record);
+        PartyDeepFind found = partyFindItemDeep(record, save, catalog, lowId, highId);
+        if (found.itemId != 0) {
+            result.found = true;
+            result.itemId = found.itemId;
+            result.inGlobalTable = false;
+            result.slotOffset = found.slotOffset;
+            result.partyRecordId = id;
+            result.depth = found.depth;
+            memcpy(result.containerRecords, found.containerRecords, sizeof(result.containerRecords));
+            return result;
+        }
+    }
+    return result;
+}
+
+uint8_t *itemRangeSlot(const ItemRangeAvailability *found, uint8_t *globalSlots, SaveGame *save) {
+    if (!found->found) {
+        return NULL;
+    }
+    if (found->inGlobalTable) {
+        return globalSlots + found->slotOffset;
+    }
+    if (found->depth > 0) {
+        uint8_t *contents = saveGameRecord(save, SaveSectionItemInstances, found->containerRecords[found->depth - 1]);
+        return contents ? contents + found->slotOffset : NULL;
+    }
+    uint8_t *record = saveGamePartyRecordById(save, found->partyRecordId);
+    return record ? record + found->slotOffset : NULL;
+}
+
 /*
  * The "decrement-or-discard" step both of ConsumeItemChargeResource's
  * default-mode branches share. Returns the item's own id (now cleared
@@ -1068,6 +1115,38 @@ void partyConsumeItemCharge(uint8_t *partyRecord, const ItemCatalog *catalog, ui
     uint8_t *mainGroup = partyInventoryGroup(partyRecord, PartyGroupMain);
     uint16_t weight = record ? itemGetU16(record, ItemFieldWeight) : 0;
     inventoryGroupSetWeight(mainGroup, (uint16_t)(inventoryGroupWeight(mainGroup) - weight));
+}
+
+void itemRangeConsume(const ItemRangeAvailability *found, uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog) {
+    uint8_t *slot = itemRangeSlot(found, globalSlots, save);
+    if (!slot) {
+        return;
+    }
+    if (found->inGlobalTable) {
+        itemSlotSpendCharge(catalog, slot);
+        return;
+    }
+    uint8_t *party = saveGamePartyRecordById(save, found->partyRecordId);
+    if (!party) {
+        return;
+    }
+    if (found->depth == 0) {
+        partyConsumeItemCharge(party, catalog, slot);
+        return;
+    }
+    uint16_t gone = itemSlotSpendCharge(catalog, slot); /* SyncItemChargeFieldToCurgame: the weight goes only when the item does */
+    const uint8_t *item = gone ? itemCatalogRecord(catalog, gone) : NULL;
+    unsigned weight = item ? itemGetU16(item, ItemFieldWeight) : 0;
+    for (unsigned level = 0; weight && level < found->depth; level++) {
+        uint8_t *contents = saveGameRecord(save, SaveSectionItemInstances, found->containerRecords[level]);
+        if (contents) {
+            inventoryGroupSetWeight(contents, (uint16_t)(inventoryGroupWeight(contents) - weight));
+        }
+    }
+    if (weight) {
+        uint8_t *main = partyInventoryGroup(party, PartyGroupMain);
+        inventoryGroupSetWeight(main, (uint16_t)(inventoryGroupWeight(main) - weight));
+    }
 }
 
 static void discardPartySlot(uint8_t *partyRecord, const ItemCatalog *catalog, GameKind game, unsigned slotOffset) {
@@ -1174,16 +1253,11 @@ uint16_t partyDeriveRestRegenPercent(uint8_t *globalSlots, SaveGame *save, const
 
     unsigned consumed = 0;
     for (unsigned i = 0; i < activeCount; i++) {
-        ItemRangeAvailability avail = itemRangeAvailable(globalSlots, save, 0x36, 0x40);
+        ItemRangeAvailability avail = itemRangeAvailableDeep(globalSlots, save, catalog, 0x36, 0x40);
         if (!avail.found) {
             break;
         }
-        if (avail.inGlobalTable) {
-            itemSlotConsumeGlobalCharge(catalog, globalSlots + avail.slotOffset);
-        } else {
-            uint8_t *record = saveGamePartyRecordById(save, avail.partyRecordId);
-            partyConsumeItemCharge(record, catalog, record + avail.slotOffset);
-        }
+        itemRangeConsume(&avail, globalSlots, save, catalog);
         consumed++;
     }
     return (uint16_t)((100 / activeCount) * consumed);

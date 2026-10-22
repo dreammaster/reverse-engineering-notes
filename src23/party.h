@@ -883,21 +883,31 @@ PartyDeepFind partyFindItemDeep(const uint8_t *partyRecord, SaveGame *save, cons
  * `combatApplySavingThrowTrap`/`combatApplyEncodedItemEffectParty`'s
  * own whole-party loops.
  *
- * NOT reimplemented: container recursion (see partyFindItemInRange's
- * own doc comment) and the original's own `SyncAllContainers` call
- * (flushes any open container UI state back to its CURGAME record --
- * moot without container support).
+ * This form does not look inside containers; `itemRangeAvailableDeep`
+ * (below) is the original's full search, with `SyncAllContainers`.
  */
 typedef struct {
     bool found;
     uint16_t itemId;
     bool inGlobalTable;      /* true: globalSlots; false: a party member's own inventory */
-    unsigned slotOffset;     /* inGlobalTable: byte offset into globalSlots (0, 4, ..., 20); else: byte offset into the owning party record */
+    unsigned slotOffset;     /* inGlobalTable: byte offset into globalSlots (0, 4, ..., 20); else: byte offset into the owning party record (depth 0) or into the innermost container's record (depth 1-3) */
     uint16_t partyRecordId;  /* only meaningful when !inGlobalTable */
+    unsigned depth;          /* itemRangeAvailableDeep: how many containers deep the item is (0 = a main slot) */
+    unsigned containerRecords[3]; /* ... and the item-instance records of those containers, outermost first */
 } ItemRangeAvailability;
 
 /* globalSlots: 24 bytes, 6 x 4-byte item slots (itemSlotId/itemSlotExtra shape), matching DS:0x9519. */
 ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *save, uint16_t lowId, uint16_t highId);
+
+/*
+ * The same with the container recursion (FindItemInInventoryRange, partyFindItemDeep): each member's open bags are flushed to their records first (SyncAllContainers), then his or her main slots and the
+ * containers in them (to three levels) are searched in the original's interleaved order. `itemRangeSlot` is the slot a result names (the belt, a member's record, or a container's record), and
+ * `itemRangeConsume` spends one charge of it the way ConsumeItemChargeResource does (:41545, SyncItemChargeFieldToCurgame :41871): a used-up item leaves its slot and its weight comes off the load
+ * and off the weight word of every container it was inside; a charge merely spent changes no weight.
+ */
+ItemRangeAvailability itemRangeAvailableDeep(uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog, uint16_t lowId, uint16_t highId);
+uint8_t *itemRangeSlot(const ItemRangeAvailability *found, uint8_t *globalSlots, SaveGame *save);
+void itemRangeConsume(const ItemRangeAvailability *found, uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog);
 
 /*
  * ConsumeItemChargeResource (yendor2.asm:41546, instruction-identical in

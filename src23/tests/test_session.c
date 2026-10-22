@@ -1350,6 +1350,36 @@ static void testBags(GameKind game, const uint8_t *world, size_t size, const cha
         check("closing everything writes it back and clears the flags", partyGetU16(partyBagMarker(hero, 1), 0) == 0 && partyGetU16(partyBagMarker(hero, 2), 0) == 0 && (partyGetU16(hero, PartyFieldUiFlags) & 0xF000) == 0);
     }
 
+    /* camping food inside a bag is eaten at a rest (ConsumeItemChargeResource's container path): the item leaves the record and its weight leaves the record's weight word and the load */
+    {
+        for (unsigned n = 1; n <= InventorySlotCount; n++) {
+            itemSlotSet(inventoryGroupSlot(main, n), 0, 0);
+        }
+        partySetU16(hero, PartyFieldInventory, 0);
+        sessionBagsClose(s, 0);
+        for (unsigned n = 1; n < SavePartyMemberSlots; n++) { /* one hungry member: the others cannot eat */
+            uint8_t *other = sessionPartyRecord(s, n);
+            if (other) {
+                partySetU16(other, PartyFieldStatusFlags, (uint16_t)(partyGetU16(other, PartyFieldStatusFlags) | PartyStatusIncapacitated));
+                memset(partyInventoryGroup(other, PartyGroupMain), 0, InventoryGroupSize); /* and carry nothing: the search looks at every member */
+            }
+        }
+        unsigned foodId = 0x36;
+        unsigned foodWeight = itemGetU16(itemCatalogRecord(&s->items, foodId), ItemFieldWeight);
+        s->heldItem = (uint16_t)bag;
+        s->heldExtra = 0;
+        sessionInventoryClick(s, 0, 2);
+        unsigned bagRecord = itemSlotExtra(inventoryGroupSlot(main, 2));
+        uint8_t *contents = saveGameRecord(&s->save, SaveSectionItemInstances, bagRecord);
+        itemSlotSet(inventoryGroupSlot(contents, 3), (uint16_t)foodId, 1);
+        partySetU16(contents, 0, (uint16_t)foodWeight);
+        partySetU16(hero, PartyFieldInventory, (uint16_t)(bagWeight + foodWeight));
+        check("food in a closed bag is found by the camping-food search", itemRangeAvailableDeep(sessionBeltSlot(s, 0), &s->save, &s->items, 0x36, 0x40).found);
+        uint16_t percent = partyDeriveRestRegenPercent(sessionBeltSlot(s, 0), &s->save, &s->items);
+        check("... and is eaten at a rest: it leaves the record, whose weight and the load drop by its weight", percent > 0 && itemSlotId(inventoryGroupSlot(contents, 3)) == 0 &&
+                                                                                                                     inventoryGroupWeight(contents) == 0 && inventoryGroupWeight(main) == bagWeight);
+    }
+
     /* a MAGIC CONTAINER's contents weigh nothing */
     if (magic) {
         for (unsigned n = 1; n <= InventorySlotCount; n++) {
