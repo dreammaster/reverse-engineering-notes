@@ -2,7 +2,7 @@
 
 State of the two code bases (October 2026 snapshot of this repository):
 
-| | Fountain of Dreams (`engine/src`, library `fod`) | Wasteland 1 (`engine/wl`, `engine/tools/recomp`) |
+| | Fountain of Dreams (`engine/src/fod`, library `fod`) | Wasteland 1 (`engine/src/wasteland1`) |
 |---|---|---|
 | Original program | KEH.EXE, compiled C, data driven | WL.EXE, hand written 8086 assembly, register calling convention |
 | Game logic | bytecode script VM (76 opcodes), combat, shops, party: ported to readable C++ | 843 routines (map actions, combat, UI): machine translated, verified, not yet ported by hand |
@@ -32,9 +32,9 @@ framework, which would change behaviour.
 ## Recommendation
 
 1. **One engine module, two game back-ends** (what a ScummVM `wasteland` engine can reasonably look like):
-   * `engine/common`: framebuffer + palette, input queue, timer, speaker, file system, text/window helpers.
-   * `engine/fod`: the current `fod` library (already free of platform code behind the `Platform` interface).
-   * `engine/wl`: the Wasteland back-end.
+   * `engine/src/shared`: framebuffer + palette, input queue, timer, speaker, file system, text/window helpers.
+   * `engine/src/fod`: the current `fod` library (already free of platform code behind the `Platform` interface).
+   * `engine/src/wasteland1`: the Wasteland back-end.
    * detection entries for both games (file sets: FoD `KEH.EXE`/`FOD.EXE` + data; WL `WL.EXE`, `GAME1`, `GAME2`, ...).
 2. **Wasteland back-end strategy**: ScummVM cannot ship code machine-translated from the original executable, so the
    recompiler is a *development scaffold*, not the product:
@@ -42,7 +42,7 @@ framework, which would change behaviour.
    * replace generated functions by hand written ports one group at a time, exactly as the `wl` library already does for
      the renderers, text engine, rules and party accessors; `wltest` (per routine) and `wlrctest` (whole program) prove
      each replacement against the original;
-   * the remaining coverage is tracked by the list of `f_XXXX` still used at run time (see `tools/recomp/entries.txt`).
+   * the remaining coverage is tracked by the list of `f_XXXX` still used at run time (see `src/wasteland1/tools/recomp/entries.txt`).
    What is left is most of the 843 routines: movement and the map action classes, combat, the shop/party/roster screens
    and the disk/menu code (the latter partly obsolete on a modern system).
 3. **Do not merge the two games' state and logic layers.** Share only the platform/helper layer; give each game its own
