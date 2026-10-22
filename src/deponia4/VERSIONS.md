@@ -180,6 +180,19 @@ Four checks of the two original executables against each other (`tools/origdiff.
 So the conclusion of the three comparisons (call graph, numbers/texts, source lines) is that, apart from the fonts/text path (HarfBuzz, glyph buffers), `TGraphicsOGL`, the logging overloads, the platform SDK layer and the build options, **Deponia 4 and Deponia 1 are one code base**. The merge needs
 `#if`s (or runtime flags) for those, not two versions of the engine. `src/deponia4` can stay a copy only until the text path is cut back; after that it can be dropped in favour of a build option.
 
+### Floating point constants: the same, and where glm comes from
+
+`tools/floatconsts.py` reads the values that functions load from `.rodata` (`movss 0x...(%rip),%xmm0`), which the numbers check does not see. Over all `T*` code: 62 distinct values in Deponia 1, 54 in Deponia 4; 12 only in Deponia 1, 4 only in Deponia 4. All of them explained:
+
+- **`TGraphicsOGL::SetOffset(float, float)`, the `depthView` branch (a 3D camera: `m_rotate_x/y`, `m_scale`)**: Deponia 4 builds the matrix with glm (`glm::perspective(45, 1.0, 0.3, 10)`, `glm::lookAt`, `glm::ortho`, `operator*=`); Deponia 1 has the same product written out
+  (`createOrtho2D`, its own sin/cos), with the numbers that `perspective` makes: `1.79259`, `-1.06186`, `-0.618557` (checked: `1/tan(45/2)` with 45 taken as **radians** = 1.792591, `-(10+0.3)/(10-0.3)` = -1.061856, `-2*10*0.3/(10-0.3)` = -0.618557). That is the only place **glm** is
+    used in Deponia 4 as far as the constants show, and the reason for its 85 `glm::` symbols; Deponia 1 dropped the library, not the behaviour. The `0.0001` that only Deponia 1 loads in this function is not explained (not in glm's `lookAt`/`perspective`; possibly an epsilon of its own normalization).
+    Whether `depthView` is ever set in a shipped game is not known (it is a global of the graphics layer).
+- **Compiler**: `1/65536` (`1.52588e-05`, `TParticleEmitter::IncTime`) against a division by 65536, `0.125`/`0.25` against a division by 8 and 4 (`ConvertYUVToRGBA`): GCC `-O2` makes a multiplication of a division by a power of two.
+  `99999.9` (`TParticleEmitter` constructor) is in Deponia 1 as the integer immediate `47C34FF3h`. `1e6` in `TMovie::GetTime` is the inlined `get_clock()` of the ffplay code (`av_gettime_relative`) that Deponia 4 calls. `75` in `TPictureWebP::Write` is libwebp's default quality inside its inline
+  `WebPConfigInit`; both builds then set the quality of the encoded picture to **85** (Deponia 4 loads `85.0` from `.rodata`, Deponia 1 has `config.quality = 85` as an immediate; the reconstruction has 85).
+- `TDiagnostic::DrawDiagram` (40, 960): the diagnostics drawing, the same values as immediates in Deponia 1.
+
 ### Other classes with the most functions unlike the reconstruction
 
 From `FUNCDIFF.md` (functions under 0.5 / functions in both): `TTable` 32/49 (most of it editor code the reconstruction does not have), `TArgument` 27/55, `TVisionaire` 19/80, `TSoundBase` 17/39,
