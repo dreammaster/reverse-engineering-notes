@@ -98,6 +98,7 @@ InputEvent Runtime::pollInput() {
 	}
 	if (c.mouseFlags & 0x80)
 		vid(0x2B);                              // the pointer moved: redraw the cursor
+	last = ev;
 	return ev;
 }
 
@@ -112,6 +113,12 @@ InputEvent Runtime::waitInput() {
 			return ev;
 		system.idle();
 	}
+}
+
+// sendPaletteCommand: the helper clears the mailbox when it has taken the command (here it is taken at once)
+void Runtime::sendPaletteCommand(byte command) {
+	video.ctx.paletteCommand = command;
+	video.ctx.paletteCommand = 0;
 }
 
 // drawString (sub_11678)
@@ -148,7 +155,8 @@ void Runtime::delayTicks(uint16 n) {
 	}
 }
 
-// tileOp AL=1: draw a 32x32 tile with putImage (rows 32, 4 bytes wide, mask FFh)
+// tileOp AL=1: draw a 32x32 tile with putImage (rows 32, 4 bytes wide, mask FFh). The caller's image pointer is preserved, and a
+// pending mouse movement is flushed with vidMouseRefresh afterwards, as the original's tileOp epilogue does.
 bool Runtime::drawTile(byte file, uint16 index) {
 	if (file >= Data::kTileFileCount)
 		return false;
@@ -156,11 +164,15 @@ bool Runtime::drawTile(byte file, uint16 index) {
 	if (!raw)
 		return false;
 	Vid::Context &c = video.ctx;
+	const Vid::ImagePtr saved = c.image;
 	c.imgRows = 0x20;
 	c.imgBytes = 4;
 	c.imgMask = 0xFF;
 	c.image.set(const_cast<byte *>(raw), Data::kTileBytes, 0);
 	vid(0x0A);
+	c.image = saved;
+	if (c.mouseFlags & 0x80)
+		vid(0x2B);
 	return true;
 }
 

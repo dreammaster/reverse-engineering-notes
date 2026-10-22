@@ -17,6 +17,7 @@ public:
 	int pumps;
 	ScriptedSystem() : now(0), pumps(0) {}
 	bool pump() { pumps++; return true; }
+	void flushKeys() { keys.clear(); }
 	int pollKey() { if (keys.empty()) return -1; const int k = keys.front(); keys.pop_front(); return k; }
 	Shared::uint32 ticks() { return now++; }       // every read advances the clock by one tick
 	void idle() {}

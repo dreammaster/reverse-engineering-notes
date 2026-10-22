@@ -35,6 +35,7 @@ public:
 
 	/** DOS INT 21h/AH=06h style: next byte of the key queue, or -1. Extended keys arrive as 0 then the scan code. */
 	int pollKey();
+	void flushKeys() { _keys.clear(); }
 	bool quitRequested() const { return _quit; }
 
 	// Vid::Host

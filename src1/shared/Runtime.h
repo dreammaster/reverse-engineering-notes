@@ -23,6 +23,8 @@ public:
 	virtual bool pump() = 0;
 	/** DOS INT 21h/06h style key byte, or -1. Extended keys arrive as 0 followed by the scan code. */
 	virtual int pollKey() = 0;
+	/** Discard any pending key presses (DOS INT 21h/AH=0Ch). */
+	virtual void flushKeys() = 0;
 	/** BIOS clock ticks (18.2 per second) since start. */
 	virtual uint32 ticks() = 0;
 	/** Give the CPU back for a moment (busy-wait loops call this). */
@@ -80,6 +82,10 @@ public:
 	InputEvent pollInput();
 	/** Block until pollInput returns an event (or the platform asks to quit, then returns None). */
 	InputEvent waitInput();
+	/** The result of the most recent pollInput (the original's byte_12DE6 / ctx+2Ch pair). */
+	InputEvent last;
+	/** Write a command for the palette helper (VIDP16) into the driver's mailbox: waits until the previous one was taken. */
+	void sendPaletteCommand(byte command);
 
 	// ---- text (drawString, drawStringLines) ----
 	/** Draw an ASCIZ string at ctx text cell (textCol, textRow) with the mouse hidden; the cell position is restored afterwards. */

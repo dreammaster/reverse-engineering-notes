@@ -467,6 +467,8 @@ int Machine::runChild(const std::string &dosPath, uint16_t paramSeg, uint16_t pa
 void Machine::terminate(uint8_t code, uint8_t type, bool tsr, uint16_t keepParas) {
 	const uint16_t psp = pspSeg();
 	{ char b[64]; snprintf(b, sizeof(b), "exit psp %04X code %02X type %d\n", psp, code, type); log += b; }
+	if (onProgramEnd)
+		onProgramEnd(*this, psp);
 	_childExit = code;
 	_childExitType = type;
 	// close the handles this process owns: the inherited first 20 and anything it opened

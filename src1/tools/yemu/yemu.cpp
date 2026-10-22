@@ -11,6 +11,7 @@
  *   --max <n>         instruction limit (default 400 million)
  *   --trace62         print a histogram of INT 62h calls at the end
  *   --log62 <file>    write one line per INT 62h call (function, context fields, image-data hash); see Trace format below
+ *   --dump <dir>      at every program start and end write <n>_<PROG>_{start,end}.ydmp (parameter block, context, cursor store, EGA planes)
  *   --compare         run Yendor1::Vid in lockstep with the real driver and report any difference
  *
  * Script lines (times are virtual seconds, 1 s = 3 million instructions):
@@ -71,7 +72,7 @@ int main(int argc, char **argv) {
 	std::string fontsDir, workDir, outDir = ".", scriptFile;
 	uint64_t maxInstr = 400000000ULL;
 	bool trace62 = false, compare = false;
-	std::string log62File;
+	std::string log62File, dumpDir;
 	for (int i = 3; i < argc; i++) {
 		const std::string a = argv[i];
 		if (a == "--fonts" && i + 1 < argc) fontsDir = argv[++i];
@@ -81,6 +82,7 @@ int main(int argc, char **argv) {
 		else if (a == "--max" && i + 1 < argc) maxInstr = strtoull(argv[++i], 0, 10);
 		else if (a == "--trace62") trace62 = true;
 		else if (a == "--compare") compare = true;
+		else if (a == "--dump" && i + 1 < argc) dumpDir = argv[++i];
 		else if (a == "--log62" && i + 1 < argc) log62File = argv[++i];
 	}
 	if (workDir.empty())
@@ -119,6 +121,10 @@ int main(int argc, char **argv) {
 	FILE *trace62Out = 0;
 	if (!log62File.empty()) {
 		trace62Out = fopen(log62File.c_str(), "w");
+		m.onProgramStart = [&](Yemu::Machine &mm, int) {
+			if (trace62Out)
+				fprintf(trace62Out, "# start %s\n", mm.programTrace.back().c_str());
+		};
 		auto fnv = [](const uint8_t *p, size_t n) { uint32_t h = 2166136261u; for (size_t i = 0; i < n; i++) { h ^= p[i]; h *= 16777619u; } return h; };
 		m.int62Hook = [&, fnv](Yemu::Machine &mm) {
 			const int ah = mm.cpu.r[Yemu::AX] >> 8, al = mm.cpu.r[Yemu::AX] & 0xFF;
@@ -141,6 +147,38 @@ int main(int argc, char **argv) {
 				b(0x2A), b(0x2B), b(0x2C), b(0x2E), b(0x2F), hash);
 			return false;
 		};
+	}
+	int dumpCount = 0;
+	std::map<int, std::string> dumpName;
+	if (!dumpDir.empty()) {
+		fs::create_directories(dumpDir, ec);
+		auto writeDump = [&](Yemu::Machine &mm, int psp, const char *when, const std::string &name) {
+			char fn[256];
+			snprintf(fn, sizeof(fn), "%s/%02d_%s_%s.ydmp", dumpDir.c_str(), dumpCount, name.c_str(), when);
+			FILE *f = fopen(fn, "wb");
+			if (!f) return;
+			auto w16 = [&](uint16_t v) { fputc(v & 0xFF, f); fputc(v >> 8, f); };
+			fwrite("YDMP", 1, 4, f);
+			const uint16_t cs = mm.ctxSegment;
+			const uint16_t cur = cs ? mm.cpu.rw(cs, 0x96E) : 0;
+			w16(cs); w16(cur);
+			fwrite(&mm.mem[Yemu::Cpu::lin((uint16_t)psp, 0x80)], 1, 128, f);
+			if (cs) fwrite(&mm.mem[Yemu::Cpu::lin(cs, 0)], 1, 0x980, f); else { for (int i = 0; i < 0x980; i++) fputc(0, f); }
+			if (cur) fwrite(&mm.mem[Yemu::Cpu::lin(cur, 0)], 1, 13 * 0x85, f); else { for (int i = 0; i < 13 * 0x85; i++) fputc(0, f); }
+			for (int p = 0; p < 4; p++) fwrite(mm.ega.plane[p], 1, 65536, f);
+			fputc(mm.ega.displayedPage, f);
+			fclose(f);
+		};
+		m.onProgramStart = [&, writeDump](Yemu::Machine &mm, int psp) {
+			std::string name = mm.programTrace.back();
+			const size_t dot = name.find('.');
+			if (dot != std::string::npos) name = name.substr(0, dot);
+			dumpName[psp] = name;
+			++dumpCount;
+			writeDump(mm, psp, "start", name);
+			if (trace62Out) fprintf(trace62Out, "# start %s\n", mm.programTrace.back().c_str());
+		};
+		m.onProgramEnd = [&, writeDump](Yemu::Machine &mm, int psp) { writeDump(mm, psp, "end", dumpName[psp]); };
 	}
 	Yemu::VidCompare vidCompare;
 	if (compare)

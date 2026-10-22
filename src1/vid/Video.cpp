@@ -25,14 +25,16 @@ Context::Context()
 	  imgRows(0x20), imgBytes(4), imgMask(0xFF),
 	  x1(0), y1(0), x2(0), y2(0), x3(0), y3(0),
 	  textCol(0), textRow(0), textChar(0), textFg(0), textBg(0),
-	  colour(0), drawPage(0), destPage(0), videoKind(1), keyColour(0), fontSelect(0),
+	  colour(0), drawPage(0), destPage(0), videoKind(1), keyColour(0), fontSelect(0), iconBarState(0),
 	  paletteCommand(0), viewHalfW(0), viewHalfH(0), hotMarginX(0), hotMarginY(0), viewOffX(0), viewOffY(0),
 	  flags912(0), mousePresent(0), mouseFlags(0), cursorHide(-1), cursorShape(1), cursorPage(0), cursorMode(0),
 	  clipX1(0), clipX2(0x27F), clipY1(0), clipY2(0x15D), curX(0), curY(0), mouseX(0), mouseY(0), hotX(0x130), hotY(0x8E) {
+	for (int i = 0; i < 16; i++)
+		colourMap[i] = (byte)i;
 }
 
 Video::Video()
-	: _font14(0), _font8(0), _host(0), _displayed(0), _scratchRows(0) {
+	: _font14(0), _font8(0), _host(0), _displayed(0), _scratchRows(0), _trace(0) {
 	memset(_vram, 0, sizeof(_vram));
 	memset(_cursorStore, 0, sizeof(_cursorStore));
 	for (int i = 0; i < 16; i++)
@@ -62,7 +64,8 @@ void Video::loadContext(const byte *b) {
 	ctx.x3 = g16(b, 0x22); ctx.y3 = g16(b, 0x24);
 	ctx.textCol = b[0x2A]; ctx.textRow = b[0x2B]; ctx.textChar = b[0x2C]; ctx.textFg = b[0x2E]; ctx.textBg = b[0x2F];
 	ctx.colour = b[0x30]; ctx.drawPage = b[0x31]; ctx.destPage = b[0x32]; ctx.videoKind = b[0x33];
-	ctx.keyColour = b[0x34]; ctx.fontSelect = b[0x35];
+	ctx.keyColour = b[0x34]; ctx.fontSelect = b[0x35]; ctx.iconBarState = b[0x36];
+	for (int i = 0; i < 16; i++) ctx.colourMap[i] = b[0x64 + i];
 	ctx.paletteCommand = b[0x676];
 	ctx.viewHalfW = b[0x678]; ctx.viewHalfH = b[0x679];
 	ctx.hotMarginX = g16(b, 0x67A); ctx.hotMarginY = g16(b, 0x67C); ctx.viewOffX = g16(b, 0x67E); ctx.viewOffY = g16(b, 0x680);
@@ -82,7 +85,8 @@ void Video::storeContext(byte *b) const {
 	p16(b, 0x10, c.imgRows); p16(b, 0x12, c.imgBytes); b[0x14] = c.imgMask;
 	p16(b, 0x1A, c.x1); p16(b, 0x1C, c.y1); p16(b, 0x1E, c.x2); p16(b, 0x20, c.y2); p16(b, 0x22, c.x3); p16(b, 0x24, c.y3);
 	b[0x2A] = c.textCol; b[0x2B] = c.textRow; b[0x2C] = c.textChar; b[0x2E] = c.textFg; b[0x2F] = c.textBg;
-	b[0x30] = c.colour; b[0x31] = c.drawPage; b[0x32] = c.destPage; b[0x33] = c.videoKind; b[0x34] = c.keyColour; b[0x35] = c.fontSelect;
+	b[0x30] = c.colour; b[0x31] = c.drawPage; b[0x32] = c.destPage; b[0x33] = c.videoKind; b[0x34] = c.keyColour; b[0x35] = c.fontSelect; b[0x36] = c.iconBarState;
+	for (int i = 0; i < 16; i++) b[0x64 + i] = c.colourMap[i];
 	b[0x676] = c.paletteCommand;
 	b[0x678] = c.viewHalfW; b[0x679] = c.viewHalfH;
 	p16(b, 0x67A, c.hotMarginX); p16(b, 0x67C, c.hotMarginY); p16(b, 0x67E, c.viewOffX); p16(b, 0x680, c.viewOffY);
@@ -174,6 +178,8 @@ void Video::init(bool mouse) {
 	ctx.videoKind = 1;
 	ctx.cursorHide = -1;
 	ctx.mouseFlags = 0;
+	for (int i = 0; i < 16; i++)
+		ctx.colourMap[i] = (byte)i;
 	ctx.hotX = 0x130;
 	ctx.hotY = 0x8E;
 	for (int i = 0; i < 16; i++)
@@ -1040,6 +1046,8 @@ void Video::cursorUpdateShape() {
 // ----------------------------------------------------------------------------
 
 void Video::call(byte ah, byte al) {
+	if (_trace)
+		_trace->onCall(*this, ah, al);
 	switch (ah) {
 	case 0x00: init(); break;
 	case 0x01: shutdown(); break;

@@ -46,6 +46,7 @@ public:
 	/** Called for every INT 62h before it runs (AH in cpu.r[AX] >> 8). Return true if the hook ran the call itself. */
 	std::function<bool(Machine &)> int62Hook;
 	std::function<void(Machine &, int)> onProgramStart;     // (machine, psp)
+	std::function<void(Machine &, int)> onProgramEnd;       // called when a process terminates, before its memory is freed
 
 	// state
 	std::string console;                 // text printed with INT 21h

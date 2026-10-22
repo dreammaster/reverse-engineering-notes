@@ -73,6 +73,8 @@ struct Context {
 	byte videoKind;        ///< 33h  1 = EGA 640x350 (the only mode implemented), 2 = SVGA
 	byte keyColour;        ///< 34h
 	byte fontSelect;       ///< 35h  0 = 8x14 font, else 8x8
+	byte iconBarState;     ///< 36h  set by the shared icon-bar code (2 while the bar is drawn, 0 after the bottom decorations)
+	byte colourMap[16];    ///< 64h..73h EGA palette-register map: identity 0..15 after init; programs read colours from here
 	byte paletteCommand;   ///< 676h command mailbox read by the palette helper
 	byte viewHalfW;        ///< 678h map view size for the scroll calls
 	byte viewHalfH;        ///< 679h
@@ -95,9 +97,23 @@ struct Context {
 	Context();
 };
 
+class Video;
+
+/** Receives every driver call before it runs (for tracing and tests). */
+class CallTrace {
+public:
+	virtual ~CallTrace() {}
+	virtual void onCall(const Video &video, int ah, int al) = 0;
+};
+
 class Video {
 public:
 	Video();
+
+	/** Attach (or detach with 0) a call trace. Not owned. */
+	void setTrace(CallTrace *trace) { _trace = trace; }
+	/** A busy-wait of `loopCount` loop iterations, forwarded to the host (the original's `mov cx, n / loop $`). */
+	void busyWait(uint16 loopCount) { delay(loopCount); }
 
 	Context ctx;
 
@@ -190,6 +206,7 @@ private:
 	Host *_host;
 	int _displayed;
 	int _scratchRows;
+	CallTrace *_trace;
 
 	// internals (ports of the driver's helper routines)
 	struct Addr {
