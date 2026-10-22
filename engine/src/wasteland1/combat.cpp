@@ -455,6 +455,89 @@ bool attackMonster(Machine &m, uint8_t index, uint8_t monster, bool &killed) {
 	return true;
 }
 
+uint8_t memberTargetsAlive(Machine &m, uint8_t member) {
+	const CombatantId id = splitCombatantIndex(orderLow(m, member));
+	return countAliveMonsters(m, id.group, id.slot, id.member);
+}
+
+uint8_t targetMembersAlive(Machine &m) {
+	const CombatantId id = splitCombatantIndex(m.d8(0xA55B));
+	return countAliveMonsters(m, id.group, id.slot, m.d8(0xA559));
+}
+
+void printWeaponNote(Machine &m) {
+	if (m.d8(g::weaponNoteShown) != 0) printMessage(m, 0x3E);
+}
+
+uint8_t countHitMonsters(Machine &m) {
+	const uint16_t base = uint16_t(g::hitCounts + timesTen(m.d8(0xA55A)));
+	uint8_t count = 0;
+	for (int i = 0; i < 10; ++i)
+		if (m.d8(uint16_t(base + i)) != 0) ++count;
+	m.d8(g::itemQuantity) = count;
+	m.d8(0xA55E) = count;
+	return count;
+}
+
+uint8_t cellDistance(Machine &m, uint8_t x, uint8_t y) {
+	const uint8_t a = absByte(uint8_t(y - m.d8(0x46A7)));
+	m.d8(0xCD41) = a;
+	const unsigned t = uint8_t(a << 3);
+	const unsigned s1 = t + a;
+	const uint8_t row = uint8_t(s1 + a + (s1 > 0xFF ? 1 : 0));
+	const uint8_t b = absByte(uint8_t(x - m.d8(0x46A6)));
+	m.d8(0xCD40) = b;
+	return m.d8(uint16_t(0xCD0D + uint8_t(row + b)));
+}
+
+uint8_t burstHits(Machine &m, uint8_t n) {
+	n >>= 2;
+	if (n == 0) n = 1;
+	uint8_t sum = 0;
+	m.d8(0xA684) = 0;
+	for (uint8_t i = 0; i < n; ++i) {
+		sum = uint8_t(sum + Rules(m).random(4));
+		m.d8(0xA684) = sum;
+	}
+	return sum;
+}
+
+uint8_t burstSize(Machine &m, uint8_t member) {
+	setCurrentCharacter(m, member);
+	return burstHits(m, useAmmunition(m, 0));
+}
+
+bool rollToFire(Machine &m, uint8_t member) {
+	m.d8(0xA551) = member;
+	setCurrentCharacter(m, member);
+	Rules rules(m);
+	rules.setSeed2(0);
+	const uint8_t roll = rules.rollDice();
+	bool normal = roll >= 4;
+	if (!normal) normal = rules.d6(roll) != 1;
+	if (!normal) {
+		const uint8_t type = m.d8(g::weaponType);
+		if (isTypeGroupC(type) || type == 0x0D) { printMessage(m, 0x29); return true; }
+		printMessage(m, 0x2A);
+		m.d8(uint16_t(cur(m) + equippedItemOffset(m, pm::weapon) + 1)) = 0x80;
+		X86Regs x;
+		x.al = member;
+		legacy::call(m, 0x7033, x);   // writePartyMemberCustomHilite
+		return true;
+	}
+	rules.addRoll(roll);
+	rules.addRoll(m.d8(uint16_t(cur(m) + pm::dexterity)));
+	rules.addRoll(weaponSkillBonus(m));
+	uint8_t al;
+	if (m.d8(g::weaponType) == 0x0D) al = 0x0A;
+	else {
+		al = uint8_t((m.d8(uint16_t(m.d16(g::partyOrdersPtr) + member)) >> 4) & 0x0C);
+		if (al == 8) al = useAmmunition(m, 0);
+	}
+	rules.addRoll(al);
+	return false;
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }

@@ -175,3 +175,11 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 57D6 damagePartyMember junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CD49-CD4A,A685-A685,A686-A686,A698-A69D,A687-A687,A67D-A69D,BA6D-BA70,CD3F-CD3F,C059-C059
 5A9D attackMonster junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A670-A683,A597-A597,A59D-A59E,BA08-BA11,4661-4662,CD3F-CD3F,C059-C059
 7AB7 setItemQuantityOne junk=
+3440 memberTargetsAlive junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A59D-A59E,A688-A688
+3079 targetMembersAlive junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A59D-A59E,A688-A688
+306C printWeaponNote junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf
+3086 countHitMonsters junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A582-A582,A55E-A55E
+9D4D cellDistance junk=ah,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=CD40-CD41
+595C burstHits junk=ah,bl,ch,cl,di,dl,es,pf,si,zf scratch=A684-A684,C059-C059
+5956 burstSize junk=ah,bl,ch,cl,di,dl,es,pf,si,zf scratch=A684-A684,C059-C059
+34B2 rollToFire junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A551-A551,CD49-CD4A,C059-C059,BA6D-BA70,CD3F-CD3F,4661-4662

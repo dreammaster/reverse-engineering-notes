@@ -117,6 +117,24 @@ bool damagePartyMember(Machine &m, uint16_t damage, uint8_t member);
 bool attackMonster(Machine &m, uint8_t index, uint8_t monster, bool &killed);
 // 17AB7 / 129D5 / 129DA: itemQuantity = 1; message 43h / 1Ah
 void setItemQuantityOne(Machine &m);
+// ---- the round of one party member -----------------------------------------------------------------------------------------
+// 13440: alive monster count of the target group of party member `member` (0: CF set in the original)
+uint8_t memberTargetsAlive(Machine &m, uint8_t member);
+// 13079: alive monsters in the member `ds:A559` of the combatant `ds:A55B`
+uint8_t targetMembersAlive(Machine &m);
+// 1306C: prints message 3Eh once the special weapon note has been shown
+void printWeaponNote(Machine &m);
+// 13086: number of monsters of this round's target entry `ds:A55A` that were hit; also stored as the item quantity
+uint8_t countHitMonsters(Machine &m);
+// 19D4D: distance table entry between cell (x, y) and the party position
+uint8_t cellDistance(Machine &m, uint8_t x, uint8_t y);
+// 1595C: sum of max(1, n / 4) rolls of 1d4 (rounds of a burst)
+uint8_t burstHits(Machine &m, uint8_t n);
+// 15956: burst size of party member `member`: burstHits of the ammunition accounting result
+uint8_t burstSize(Machine &m, uint8_t member);
+// 134B2: the party member's roll to fire: false (CF clear) when the attack goes ahead with the roll accumulated in seed2;
+// true when the weapon jammed or the attack is aborted
+bool rollToFire(Machine &m, uint8_t member);
 // 15CD1: random 0..9
 uint8_t randomDigit(Machine &m);
 // 15C4A: remembers whether a damage value (dl:al) is below the "overkill" limit in the hit flag
