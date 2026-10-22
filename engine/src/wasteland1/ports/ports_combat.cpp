@@ -120,6 +120,13 @@ PORT(hitMonster) {                                                              
 	r.a.b.l = h.alreadyDead ? r.a.b.l : (h.killed ? 0 : 0xFF);
 }
 PORT(weaponSkillRoll) { weaponSkillRoll(m, r.a.b.l); }                                  // 15A30: al = combatant
+PORT(attackMonster) {                                                                   // 15A9D: al = combatant, bl = monster number
+	bool killed;
+	const bool alive = attackMonster(m, r.a.b.l, r.b.b.l, killed);
+	r.cf = !alive;
+	r.a.b.l = killed ? 1 : 0;
+}
+PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(damagePartyMember) { r.cf = damagePartyMember(m, uint16_t(r.a.b.l | (r.d.b.l << 8)), r.b.b.l); }   // 157D6: dl:al damage, bl = member
 
 } // namespace rc

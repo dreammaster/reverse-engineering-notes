@@ -408,6 +408,53 @@ bool damagePartyMember(Machine &m, uint16_t damage, uint8_t member) {
 	return false;
 }
 
+void setItemQuantityOne(Machine &m) { m.d8(g::itemQuantity) = 1; }
+
+bool attackMonster(Machine &m, uint8_t index, uint8_t monster, bool &killed) {
+	const uint8_t savedQuantity = m.d8(g::itemQuantity);
+	const CombatantId id = splitCombatantIndex(index);
+	selectMember(m, id.group, id.slot, id.member);
+	const uint16_t hpAddr = uint16_t(m.d16(g::monsterPtr) + monster * 2);
+	killed = false;
+	if (m.d16(hpAddr) == 0) return false;
+	if (m.d8(g::weaponType) != 0x0D) printLocationMessageVariant(m, 0x51);
+	else {
+		if (m.d8(g::weaponNoteShown) != 0) printMessage(m, 0x3E);
+		++m.d8(g::weaponNoteShown);
+		printMessage(m, 0x61);
+	}
+	const uint16_t damage = reduceByMonsterArmor(m, Rules(m).seed1(), index);
+	auto finish = [&]() {
+		setItemQuantityOne(m);
+		printMessage(m, 0x43);
+		m.d8(g::itemQuantity) = savedQuantity;
+	};
+	if (damage == 0) {
+		selectMember(m, id.group, id.slot, id.member);
+		finish();
+		printLocationMessage(m, 0x4A);
+	} else {
+		selectMember(m, id.group, id.slot, id.member);
+		const uint16_t hp = m.d16(hpAddr);
+		const uint16_t remaining = uint16_t(hp - damage);
+		killed = damage >= hp;
+		if (killed) m.setD16(hpAddr, 0);
+		else m.setD16(hpAddr, remaining);
+		finish();
+		if (m.d8(g::weaponType) == 0x0D) printLocationMessageVariant(m, 0x57);
+		printMessage(m, 0x21);
+		printDamageNumber(m, damage);
+		if (killed) {
+			setHitFlag(m, remaining);
+			printHitMessage(m, 1);
+		}
+	}
+	printMessage(m, 0x5A);
+	X86Regs x;
+	legacy::call(m, 0x9EFC, x);   // sub_19EFC
+	return true;
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }

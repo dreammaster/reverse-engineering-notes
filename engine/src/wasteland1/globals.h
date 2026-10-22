@@ -74,6 +74,7 @@ constexpr uint16_t hitCounts = 0xAAF4;            // 10 bytes per entry: hits pe
 constexpr uint16_t hitFlags = 0xAB12;             // byte_27932, per entry
 constexpr uint16_t hitStatus = 0xAB15;            // per entry
 constexpr uint16_t quietCombat = 0x4718;         // byte_21538: non-zero suppresses the hit descriptions
+constexpr uint16_t weaponNoteShown = 0x472B;    // byte_2154B: set once the special weapon note has been printed
 constexpr uint16_t armorBypass = 0x46EF;         // byte_2150F: non-zero: armor does not reduce the damage
 constexpr uint16_t conditionMessages = 0xA69E;   // byte_274BE: message id per condition index
 constexpr uint16_t hitIgnoresArmor = 0x4723;   // byte_21543

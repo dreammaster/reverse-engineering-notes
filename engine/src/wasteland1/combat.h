@@ -111,6 +111,12 @@ HitResult hitMonster(Machine &m, uint8_t partyNum, uint8_t index);
 void weaponSkillRoll(Machine &m, uint8_t index);
 // 157D6: damage (16 bit) to party member `member`; true when the member was already dead (nothing happens)
 bool damagePartyMember(Machine &m, uint16_t damage, uint8_t member);
+// 15A9D: combatant `index` (group, slot, member) takes a hit on monster number `monster` (0..9) of the member. Damage is the
+// current seed1 value reduced by the monster's armor. Returns false when that monster was already dead (CF set, nothing
+// happens); `killed` is set when the hit killed it.
+bool attackMonster(Machine &m, uint8_t index, uint8_t monster, bool &killed);
+// 17AB7 / 129D5 / 129DA: itemQuantity = 1; message 43h / 1Ah
+void setItemQuantityOne(Machine &m);
 // 15CD1: random 0..9
 uint8_t randomDigit(Machine &m);
 // 15C4A: remembers whether a damage value (dl:al) is below the "overkill" limit in the hit flag

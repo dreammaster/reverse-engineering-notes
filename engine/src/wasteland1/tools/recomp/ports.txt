@@ -173,3 +173,5 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 9720 selectWriterForRoster junk=al,bl,bp,cl,di,dl,es,pf,si,zf
 5A30 weaponSkillRoll junk=al,bl,ch,cl,di,dl,pf,si,zf scratch=A67A-A67C,A59D-A59D,A598-A599,BA6D-BA70,BA08-BA11,4661-4662,C059-C059
 57D6 damagePartyMember junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CD49-CD4A,A685-A685,A686-A686,A698-A69D,A687-A687,A67D-A69D,BA6D-BA70,CD3F-CD3F,C059-C059
+5A9D attackMonster junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A670-A683,A597-A597,A59D-A59E,BA08-BA11,4661-4662,CD3F-CD3F,C059-C059
+7AB7 setItemQuantityOne junk=
