@@ -16,7 +16,7 @@
  *   ./explore_sdl <2|3> <game dir> [scale]  (the older form: starts in the game, not on the title menu)
  *
  * Keys: Up / Down walk, Left / Right turn, Ctrl+Left / Ctrl+Right strafe (the original's scan codes, through mainCommandForKey), A attacks while a combat is on (C casts the first attack spell the member can, and outside a combat the next support / exploration spell any member can: the party starts with none of the ore the spells cost, so loot a chest first),
- * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, Space (or the right button on the view) use the object ahead (loot the chest, take a road or portal, play the Chapter 2 ending at the Quartz Chamber), S shoot: in Chapter 2 the heroes fire their weapons down the corridor (four rocks fly away), M the local area map, D the pause
+ * R rest (eight hours; monsters can interrupt it), K unlock the door ahead with a skeleton key, Space (or the right button on the view) use the object ahead (loot the chest, take a road or portal, play the Chapter 2 ending at the Quartz Chamber), S shoot: the heroes fire their weapons down the corridor (four rocks or arrows fly away), M the local area map, D the pause
  * dialog, P the paper dolls, F7 saves / F9 loads explore.sav (the original save-file layout; F5 is the top-right panel), F1-F4 the hero's detail sheet, + / - move the clock by 30 minutes (watch the lighting), Escape closes an overlay or quits.
  *
  * EXPLORE_INTRO=opening|story|ending|credits plays a cinematic of the game first (opening = the opening and the story; Chapter 3 has only its opening; EXPLORE_INTRO_MS sets

@@ -432,12 +432,17 @@ SessionStep sessionMove(GameSession *s, MovementAction action) {
     return result;
 }
 
+/*
+ * The ids differ between the chapters (each indexes its own sound list): Chapter 2 launches with _val19 = 0x1D, is deflected with _val33 = 6, hits with word_329E6 = 0x0D and misses with _val43 = 0x1E;
+ * Chapter 3 (HandleRangedOrCombatAction, yendor3.asm:22208) literals 6, 0x0D, 0x22 and 0x23, and waits three BIOS ticks before each member's shot.
+ */
+typedef struct {
+    unsigned launch, deflect, hit, miss, fightWait;
+} ShotSounds;
+static const ShotSounds kShotSounds2 = {0x1D, 6, 0x0D, 0x1E, 0}, kShotSounds3 = {6, 0x0D, 0x22, 0x23, 2};
+
 enum {
     ShotRowCount = 6,
-    ShotSound = 0x1D,      /* _val19 */
-    ShotMissSound = 0x1E,  /* _val43 */
-    ShotHitSound = 0x0D,   /* word_329E6 */
-    ShotDeflectSound = 6,  /* _val33 */
     ShotMessageTicks = 3,  /* ShowCombatMessageOrWait: six BIOS ticks, three of ours */
     ShotWeaponSlot = 0x13A,
     ShotSlingFirst = 0x21E,
@@ -566,7 +571,29 @@ static unsigned shotWeapon(const SessionShot *shot, unsigned slot) {
     return (unsigned)shot->weapon[slot][0] | ((unsigned)shot->weapon[slot][1] << 8);
 }
 
-/* ClassifyObstacleAtViewportRow (yendor2.asm:1936): 0 clear, 1 wall, 2 an object in the way, 3 a feature, 4 a monster (`*monster` then points at it). */
+static const ShotSounds *shotSounds(const GameSession *s) {
+    return s->game == GameYendor2 ? &kShotSounds2 : &kShotSounds3;
+}
+
+/* DrawWeaponSelectIcon (yendor2.asm:50265, yendor3.asm:50095): the picture of category 1 a shooter's slice is taken from. Chapter 2: four rocks for a sling (0x21E-0x223), else four arrows;
+ * Chapter 3 picks by the weapon id: 0x1E4 -> 0x66, 0x10D -> 0x67, 0x20D-0x217 -> 0x9B, 8-0xA -> 9, any other -> 0xA. */
+static uint8_t shotPicture(GameKind game, unsigned weapon) {
+    if (game == GameYendor2) {
+        return weapon >= ShotSlingFirst && weapon <= ShotSlingLast ? 0x51 : 0x50;
+    }
+    if (weapon == 0x1E4) {
+        return 0x66;
+    }
+    if (weapon == 0x10D) {
+        return 0x67;
+    }
+    if (weapon >= 0x20D && weapon <= 0x217) {
+        return 0x9B;
+    }
+    return weapon >= 8 && weapon <= 0xA ? 9 : 0xA;
+}
+
+/* ClassifyObstacleAtViewportRow (yendor2.asm:1936, yendor3.asm:5578): 0 clear, 1 wall, 2 an object in the way, 3 a feature, 4 a monster (`*monster` then points at it). */
 static unsigned shotClassify(GameSession *s, const DungeonGridCell cells[ViewportCellCount], unsigned depth, uint8_t **monster) {
     const DungeonGridCell *cell = &cells[depth];
     *monster = monsterAtDepth(s, cells, depth);
@@ -575,6 +602,12 @@ static unsigned shotClassify(GameSession *s, const DungeonGridCell cells[Viewpor
     }
     if (cell->flags & 0x800) {
         return 3;
+    }
+    if (s->game == GameYendor3) { /* walls are the types 2-0x63 and 0xC8-0x12B, and any floor object stops the shot */
+        if ((cell->wallType >= 2 && cell->wallType <= 0x63) || (cell->wallType >= 0xC8 && cell->wallType <= 0x12B)) {
+            return 1;
+        }
+        return cell->floorType ? 2 : 0;
     }
     if (cell->wallType >= 2 && cell->wallType <= 15) {
         return 1;
@@ -591,7 +624,7 @@ static unsigned shotClassify(GameSession *s, const DungeonGridCell cells[Viewpor
 
 bool sessionShootStart(GameSession *s) {
     SessionShot *shot = &s->shot;
-    if (s->game != GameYendor2 || s->combat.active || s->combat.wiped || shot->active || s->doorOpening) {
+    if (s->combat.active || s->combat.wiped || shot->active || s->doorOpening) {
         return false;
     }
     memset(shot, 0, sizeof(*shot));
@@ -614,7 +647,7 @@ bool sessionShootStart(GameSession *s) {
         }
         shot->weapon[slot][0] = (uint8_t)weapon;
         shot->weapon[slot][1] = (uint8_t)(weapon >> 8);
-        shot->picture[slot] = weapon >= ShotSlingFirst && weapon <= ShotSlingLast ? 0x51 : 0x50;
+        shot->picture[slot] = shotPicture(s->game, weapon);
         shot->pending[slot] = 1;
         shot->attacks++;
     }
@@ -623,7 +656,7 @@ bool sessionShootStart(GameSession *s) {
     }
     shot->active = shot->shown = true;
     shot->row = 0;
-    s->pendingSound = ShotSound;
+    s->pendingSound = shotSounds(s)->launch;
     return true;
 }
 
@@ -679,7 +712,7 @@ bool sessionShootStep(GameSession *s) {
             return true;
         }
         if (found == 1 || found == 2) {
-            s->pendingSound = ShotDeflectSound;
+            s->pendingSound = shotSounds(s)->deflect;
             shotEnd(s);
             return false;
         }
@@ -689,6 +722,7 @@ bool sessionShootStep(GameSession *s) {
         }
         shot->fighting = true;
         shot->target = (unsigned)(monster - s->pool) / MonsterRecordSize;
+        shot->wait = shotSounds(s)->fightWait;
         return true; /* the picture is at the monster; the first shot is fought on the next tick */
     }
     monster = s->pool + (size_t)shot->target * MonsterRecordSize;
@@ -706,8 +740,8 @@ bool sessionShootStep(GameSession *s) {
     }
     bool hit = shotFight(s, slot, monster);
     shot->pending[slot] = 0;
-    shot->wait = ShotMessageTicks;
-    s->pendingSound = hit ? ShotHitSound : ShotMissSound;
+    shot->wait = ShotMessageTicks + shotSounds(s)->fightWait;
+    s->pendingSound = hit ? shotSounds(s)->hit : shotSounds(s)->miss;
     snprintf(s->log, sizeof(s->log), "party member %u %s", slot + 1, hit ? "hits" : "misses");
     if (hit) {
         shot->shown = false; /* the redraw that shows the hit (the monster's flash) takes the picture off the screen */

@@ -171,7 +171,7 @@ void sessionScene(GameSession *session, ViewScene *scene, DungeonGridCell cells[
 /* The current party member's melee attack on the first live monster of the combat; the monsters then act until it is a party member's turn again. */
 bool sessionAttack(GameSession *session);
 
-/* The S key: false when nobody shoots (no weapon, a combat or another shot is on, Chapter 3); else the shot is under way (`shot.active`, sound 0x1D in `pendingSound`). */
+/* The S key: false when nobody shoots (no weapon, a combat or another shot is on); else the shot is under way (`shot.active`, the launch sound -- Chapter 2 0x1D, Chapter 3 6 -- in `pendingSound`). */
 bool sessionShootStart(GameSession *session);
 
 /* One animation tick of the shot (see SessionShot); false once it is over. Sounds go to `pendingSound` one at a time. */

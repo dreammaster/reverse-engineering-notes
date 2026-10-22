@@ -852,7 +852,7 @@ static void testKeyItems(GameKind game, const uint8_t *world, size_t size, const
     sessionFree(s);
 }
 
-/* The S key: the ranged shot (Chapter 2). */
+/* The S key: the ranged shot. */
 static void testShot(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
     if (!s) {
@@ -860,7 +860,20 @@ static void testShot(GameKind game, const uint8_t *world, size_t size, const cha
     }
     char text[200];
     if (game != GameYendor2) {
-        check("Chapter 3's shot is not decoded: S does nothing", !sessionShootStart(s));
+        /* Chapter 3: the heroes start with item 8 in the weapon slot (picture 9 of the table), the launch sound is 6, and the shot ends at the first wall or object */
+        unsigned wear3 = partyGetU16(sessionPartyRecord(s, 0), 0xBE);
+        check("Chapter 3: S starts a shot with its own launch sound (6)", sessionShootStart(s) && s->shot.active && s->pendingSound == 6);
+        check("... a use of each weapon", partyGetU16(sessionPartyRecord(s, 0), 0xBE) == wear3 + 1);
+        ViewScene scene3;
+        DungeonGridCell cells3[ViewportCellCount];
+        sessionScene(s, &scene3, cells3);
+        check("... the first frame is picture 9 (the starting weapons) at the party's cell", scene3.projectileDepth == 49 && scene3.projectilePictures[0] == 9 && scene3.projectilePictures[3] == 9);
+        unsigned steps3 = 0;
+        while (s->shot.active && steps3 < 80) {
+            sessionShootStep(s);
+            steps3++;
+        }
+        check("... and the shot ends", !s->shot.active && steps3 < 80);
         sessionFree(s);
         return;
     }
