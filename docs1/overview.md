@@ -116,3 +116,30 @@ Nothing in `yendor1/game/` is modified: the databases are written under
   prologue (~232,000 calls, 22 functions: pixels, rects, text, image get/put, tile copies, page flips, wipes, mouse
   show/hide/refresh/bounds/position) there are **zero** differences. Not yet exercised by any run: the scroll calls (`0Eh`–`11h`),
   `13h` keyed copy, lines (`05h` only 270 calls, all matched) at other slopes, the `15h`/`17h`/`20h`/`21h` wipes.
+
+## 2026-10-23 — PROG1 and the Sw shell reimplemented and verified
+
+`src/prog1` (the intro/credits program) and `src1/sw` (the shell up to its PROG3/PROG4 dispatch loops) are C++ transliterations
+of the disassembly, with shared furniture in `src1/shared` (`Runtime`: file records, input polling, strings, tile draw;
+`Ui`: book frame, icon bar and its click handling, the pixel dissolve). Texts are read from the original executables at run
+time (`data/ExeImage`), not copied into source.
+
+**How each is verified (the workflow to repeat for every further program):**
+1. `yemu <game> SW.EXE --fonts src1/fonts --script steps.txt --dump <ref> --log62 <ref>/trace.txt` runs the original and writes, per
+   program start/end, a snapshot (`NN_PROG_start.ydmp`: parameter block, driver context, cursor store, EGA planes) and one trace
+   line per `INT 62h` call with the context fields it reads and a hash of any image drawn. Scripts need absolute `moveto`, `click`,
+   `key`, `wait`, `shot`. Variants of the game directory (e.g. `PARTY.DAT` byte 25h = 1 or 2) reach other program modes.
+2. A test (`tests/test_prog1.cpp`, `tests/test_sw.cpp`) starts the C++ code from the start snapshot (or, for the shell, from a fresh
+   machine) and compares every driver call with the trace (`tests/TraceCompare.h`: AL and the drawing colour are masked where the call
+   does not read them; the random-order dissolve is compared as an unordered set; trailing mouse refreshes caused by scripted
+   movement are ignored) and the final EGA planes with the end/next-start snapshot. Tests skip when the env variables
+   (`YENDOR1_REF_DIR`, `YENDOR1_REF2_DIR`, `YENDOR1_REFS1_DIR`, `YENDOR1_REFS2_DIR`) or the game files are absent.
+
+**Results:** PROG1 modes 0/1/2/3 match the original over 223,682 / 223,089 / 595 / 115 calls (modes 0, 1, 3 also compare final video
+memory byte for byte); the shell from a fresh machine up to the first program not yet ported matches over 224,845 (new game, to
+PROG2), 224,252 (state 1, to PROG3) and 1,277 (state 2, to PROG3) calls, with identical video memory at the hand-over.
+
+**Notes found on the way:** the game's random generator (shared_9c11a6) has short cycles (15, 17, 34, 360, 389, 1023 values), so an
+unlucky time seed makes the original dissolve loop forever; the port reseeds after 100,000 misses. `PROG0` is treated as a no-op
+success for now. Unverified (no reference run yet): the shell's end path (`showEndScreen`, PROG16/17/18 hand-overs), the PROG3/PROG4
+dispatch loops (they follow the documented exit-code table), and PROG1's click-on-icon path (only the key path was exercised).

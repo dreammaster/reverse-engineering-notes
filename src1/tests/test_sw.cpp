@@ -49,12 +49,12 @@ public:
 	Shared::uint16 cpuClass() { return 0x386; }
 };
 
-// DefaultLauncher for PROG0/PROG1; the first request for anything else ends the run
-class StopAtProg2 : public Sw::Launcher {
+// DefaultLauncher for PROG0/PROG1; the first request for anything else is recorded (the shell then ends the run)
+class StopAtUnimplemented : public Sw::Launcher {
 public:
 	Sw::DefaultLauncher inner;
 	int stoppedAt;
-	StopAtProg2() : stoppedAt(-1) {}
+	StopAtUnimplemented() : stoppedAt(-1) {}
 	int run(int program, Shared::Params &params, Shared::Runtime &rt) {
 		const int r = inner.run(program, params, rt);
 		if (r == kNotImplemented && stoppedAt < 0)
@@ -84,19 +84,21 @@ bool copyFile(const std::string &from, const std::string &to) {
 
 } // namespace
 
-static void testStartup() {
-	const char *refEnv = getenv("YENDOR1_REF_DIR");
+// refVar: yemu output directory; stopSnap: snapshot taken when the original started the first program the port lacks (named stopProgram,
+// number stopNumber); state: the party header's game state byte to run with (the reference run used a PARTY.DAT patched the same way)
+static void checkShell(const char *refVar, const char *stopSnap, const char *stopProgram, int stopNumber, int state) {
+	const char *refEnv = getenv(refVar);
 	if (!refEnv || !TestUtil::haveGameFiles()) {
-		printf("  skipped (set YENDOR1_REF_DIR to a yemu --dump/--log62 output and have the game files)\n");
+		printf("  skipped %s (set it to a yemu --dump/--log62 output and have the game files)\n", refVar);
 		return;
 	}
 	const std::string ref = refEnv;
-	Tools::Snapshot atProg2;
-	if (!atProg2.load((ref + "/06_PROG2_start.ydmp").c_str())) {
-		printf("  skipped (no 06_PROG2_start.ydmp in %s)\n", refEnv);
+	Tools::Snapshot atStop;
+	if (!atStop.load((ref + "/" + stopSnap).c_str())) {
+		printf("  skipped %s (no %s in %s)\n", refVar, stopSnap, refEnv);
 		return;
 	}
-	std::vector<std::string> want = TraceCompare::until(ref + "/trace.txt", "PROG2.EXE");
+	std::vector<std::string> want = TraceCompare::until(ref + "/trace.txt", stopProgram);
 	CHECK(!want.empty());
 	for (size_t i = 0; i < want.size(); i++)
 		want[i] = TraceCompare::normalise(want[i]);
@@ -108,6 +110,15 @@ static void testStartup() {
 	static const char *files[] = {"PARTY.DAT", "NPC.DAT", "AREA.DAT", "BATPIC.DAT"};
 	for (size_t i = 0; i < 4; i++)
 		CHECK(copyFile(std::string(TestUtil::gameDir()) + "/CURRGAME/" + files[i], work + "/CURRGAME/" + files[i]));
+	{
+		Shared::Blob party;
+		CHECK(party.load((work + "/CURRGAME/PARTY.DAT").c_str()));
+		if (!party.empty()) {
+			party.data()[0x25] = (Shared::byte)state;
+			FILE *f = fopen((work + "/CURRGAME/PARTY.DAT").c_str(), "wb");
+			if (f) { fwrite(party.data(), 1, party.size(), f); fclose(f); }
+		}
+	}
 
 	Vid::Video v;
 	Vid::Fonts fonts;
@@ -117,14 +128,14 @@ static void testStartup() {
 	v.setTrace(&rec);
 	ScriptedSystem sys;
 	Shared::Runtime rt(v, sys);
-	StopAtProg2 launcher;
+	StopAtUnimplemented launcher;
 	Sw::Config cfg;
 	cfg.dataDir = TestUtil::gameDir();
 	cfg.workDir = work;
 	Sw::Shell shell(rt, launcher, cfg);
 	shell.run();
 	v.setTrace(0);
-	CHECK_EQ(launcher.stoppedAt, 2);
+	CHECK_EQ(launcher.stoppedAt, stopNumber);
 
 	for (size_t i = 0; i < rec.lines.size(); i++)
 		rec.lines[i] = TraceCompare::normalise(rec.lines[i]);
@@ -132,12 +143,12 @@ static void testStartup() {
 	if (!diff.empty())
 		printf("  trace mismatch: %s\n", diff.c_str());
 	CHECK(diff.empty());
-	printf("  %zu calls in the original, %zu in the port\n", want.size(), rec.lines.size());
+	printf("  state %d, up to %s: %zu calls in the original, %zu in the port\n", state, stopProgram, want.size(), rec.lines.size());
 
 	int bad = 0, plane = -1, off = -1;
 	for (int p = 0; p < 4; p++)
 		for (int o = 0; o < 65536; o++)
-			if (v.planeData(p)[o] != atProg2.planes[p][o]) {
+			if (v.planeData(p)[o] != atStop.planes[p][o]) {
 				if (!bad) { plane = p; off = o; }
 				bad++;
 			}
@@ -147,5 +158,7 @@ static void testStartup() {
 }
 
 TEST_MAIN_BEGIN("sw shell + prog1 from a fresh machine")
-	testStartup();
+	checkShell("YENDOR1_REF_DIR", "06_PROG2_start.ydmp", "PROG2.EXE", 2, 0);       // new game: ... PROG1, then the prologue
+	checkShell("YENDOR1_REFS1_DIR", "06_PROG3_start.ydmp", "PROG3.EXE", 3, 1);      // state 1: PROG1 (mode 1), then the book menu
+	checkShell("YENDOR1_REFS2_DIR", "05_PROG3_start.ydmp", "PROG3.EXE", 3, 2);      // state 2: PROG1 (mode 3), then the book menu
 TEST_MAIN_END()

@@ -69,17 +69,19 @@ inline std::string compare(const std::vector<std::string> &want, const std::vect
 	return "";
 }
 
-/** Lines of the trace file: between "# start <program>" and the next marker (slice), or from the top up to "# start <stopAt>". */
-inline std::vector<std::string> slice(const std::string &file, const std::string &program) {
+/** Lines of the trace file between the `occurrence`-th (1-based) "# start <program>" marker and the next marker or the end. */
+inline std::vector<std::string> slice(const std::string &file, const std::string &program, int occurrence = 1) {
 	std::ifstream f(file.c_str());
 	std::vector<std::string> out;
 	std::string line;
 	bool on = false;
+	int seen = 0;
 	while (std::getline(f, line)) {
 		if (!line.empty() && line[0] == '#') {
 			if (on)
 				break;
-			on = line == "# start " + program;
+			if (line == "# start " + program && ++seen == occurrence)
+				on = true;
 			continue;
 		}
 		if (on)
