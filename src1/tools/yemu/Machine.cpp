@@ -613,6 +613,17 @@ void Machine::deliverStep(const ScriptStep &st) {
 			callFar(_mouseSeg, _mouseOff, 1, _buttons, (uint16_t)_mouseX, (uint16_t)_mouseY);
 		break;
 	}
+	case ScriptStep::MouseTo: {
+		if (!ctxSegment)
+			break;
+		const int curX = (int16_t)cpu.rw(ctxSegment, 0x966), curY = (int16_t)cpu.rw(ctxSegment, 0x968);
+		const int dx = st.a - curX, dy = st.b - curY;
+		_mouseX += dx; _mouseY += dy;
+		_mickX += dx; _mickY += dy;
+		if ((_mouseMask & 1) && _mouseSeg)
+			callFar(_mouseSeg, _mouseOff, 1, _buttons, (uint16_t)_mouseX, (uint16_t)_mouseY);
+		break;
+	}
 	case ScriptStep::MouseDown: {
 		const int b = st.a;
 		_buttons |= (uint8_t)(1 << b);
@@ -671,6 +682,14 @@ bool Machine::softInt(Cpu &c, uint8_t n) {
 	if (n == 0x62) {
 		if (int62Hook && int62Hook(*this))
 			return true;
+		if ((cpu.r[AX] >> 8) == 0x00 && ctxSegment == 0) {
+			// driver init: run it here so the context segment it returns is known (the script's absolute mouse moves use it)
+			syncInterrupt(0x62);
+			cpu.r[AX] = syncResultAx;
+			if (syncResultAx != 0xFFFF)
+				ctxSegment = syncResultAx;
+			return true;
+		}
 	}
 	(void)c;
 	return false;

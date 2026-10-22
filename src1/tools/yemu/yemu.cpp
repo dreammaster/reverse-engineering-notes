@@ -10,6 +10,7 @@
  *   --script <file>   input script (below)
  *   --max <n>         instruction limit (default 400 million)
  *   --trace62         print a histogram of INT 62h calls at the end
+ *   --log62 <file>    write one line per INT 62h call (function, context fields, image-data hash); see Trace format below
  *   --compare         run Yendor1::Vid in lockstep with the real driver and report any difference
  *
  * Script lines (times are virtual seconds, 1 s = 3 million instructions):
@@ -70,6 +71,7 @@ int main(int argc, char **argv) {
 	std::string fontsDir, workDir, outDir = ".", scriptFile;
 	uint64_t maxInstr = 400000000ULL;
 	bool trace62 = false, compare = false;
+	std::string log62File;
 	for (int i = 3; i < argc; i++) {
 		const std::string a = argv[i];
 		if (a == "--fonts" && i + 1 < argc) fontsDir = argv[++i];
@@ -79,6 +81,7 @@ int main(int argc, char **argv) {
 		else if (a == "--max" && i + 1 < argc) maxInstr = strtoull(argv[++i], 0, 10);
 		else if (a == "--trace62") trace62 = true;
 		else if (a == "--compare") compare = true;
+		else if (a == "--log62" && i + 1 < argc) log62File = argv[++i];
 	}
 	if (workDir.empty())
 		workDir = (fs::temp_directory_path() / "yemu_work").string();
@@ -113,6 +116,32 @@ int main(int argc, char **argv) {
 		};
 	}
 
+	FILE *trace62Out = 0;
+	if (!log62File.empty()) {
+		trace62Out = fopen(log62File.c_str(), "w");
+		auto fnv = [](const uint8_t *p, size_t n) { uint32_t h = 2166136261u; for (size_t i = 0; i < n; i++) { h ^= p[i]; h *= 16777619u; } return h; };
+		m.int62Hook = [&, fnv](Yemu::Machine &mm) {
+			const int ah = mm.cpu.r[Yemu::AX] >> 8, al = mm.cpu.r[Yemu::AX] & 0xFF;
+			if (!mm.ctxSegment || !trace62Out)
+				return false;
+			const uint16_t cs = mm.ctxSegment;
+			auto w = [&](int off) { return (unsigned)mm.cpu.rw(cs, (uint16_t)off); };
+			auto b = [&](int off) { return (unsigned)mm.mem[Yemu::Cpu::lin(cs, (uint16_t)off)]; };
+			unsigned hash = 0, rows = w(0x10), bytes = w(0x12);
+			const uint32_t base = Yemu::Cpu::lin((uint16_t)w(0x16), (uint16_t)w(0x18));
+			if (ah == 0x0A && rows * bytes * 4 < 0x10000)
+				hash = fnv(&mm.mem[base & 0xFFFFF], rows * bytes * 4);
+			else if (ah == 0x0C) {
+				const unsigned hr = mm.mem[base & 0xFFFFF] | (mm.mem[(base + 1) & 0xFFFFF] << 8), hb = mm.mem[(base + 2) & 0xFFFFF] | (mm.mem[(base + 3) & 0xFFFFF] << 8);
+				if (hr * hb * 4 < 0x10000)
+					hash = fnv(&mm.mem[(base + 5) & 0xFFFFF], hr * hb * 4);
+			}
+			fprintf(trace62Out, "%02X %02X x1=%u y1=%u x2=%u y2=%u x3=%u y3=%u col=%u pg=%u dst=%u key=%u rows=%u w=%u mask=%02X font=%u tx=%u ty=%u ch=%u fg=%u bg=%u img=%08X\n",
+				ah, al, w(0x1A), w(0x1C), w(0x1E), w(0x20), w(0x22), w(0x24), b(0x30), b(0x31), b(0x32), b(0x34), rows, bytes, b(0x14), b(0x35),
+				b(0x2A), b(0x2B), b(0x2C), b(0x2E), b(0x2F), hash);
+			return false;
+		};
+	}
 	Yemu::VidCompare vidCompare;
 	if (compare)
 		vidCompare.attach(m, fontsDir);
@@ -142,7 +171,7 @@ int main(int argc, char **argv) {
 				}
 			}
 			else if (cmd == "move") { int dx, dy; ls >> dx >> dy; st.kind = Yemu::ScriptStep::MouseMove; st.a = dx; st.b = dy; mx += dx; my += dy; m.schedule(st); }
-			else if (cmd == "moveto") { int x, y; ls >> x >> y; st.kind = Yemu::ScriptStep::MouseMove; st.a = x - mx; st.b = y - my; mx = x; my = y; m.schedule(st); }
+			else if (cmd == "moveto") { int x, y; ls >> x >> y; st.kind = Yemu::ScriptStep::MouseTo; st.a = x; st.b = y; mx = x; my = y; m.schedule(st); }
 			else if (cmd == "click") {
 				std::string b; ls >> b;
 				st.kind = Yemu::ScriptStep::MouseDown; st.a = (b == "r") ? 1 : 0; m.schedule(st);
@@ -165,6 +194,8 @@ int main(int argc, char **argv) {
 		printf("console output:\n%s\n", m.console.c_str());
 	if (!m.log.empty())
 		printf("log:\n%s", m.log.c_str());
+	if (trace62Out)
+		fclose(trace62Out);
 	if (compare)
 		vidCompare.report(stdout);
 	if (getenv("YEMU_RECENT"))

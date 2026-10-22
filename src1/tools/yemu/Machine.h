@@ -19,7 +19,7 @@ namespace Yemu {
 
 struct ScriptStep {
 	uint64_t at;                 // absolute instruction count
-	enum Kind { Key, MouseMove, MouseDown, MouseUp, Shot, Quit } kind;
+	enum Kind { Key, MouseMove, MouseTo, MouseDown, MouseUp, Shot, Quit } kind;
 	int a, b, c;
 	std::string name;
 };

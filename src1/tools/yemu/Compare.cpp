@@ -42,8 +42,10 @@ bool VidCompare::onCall(Machine &m) {
 		// init / shutdown: just run the real driver and learn the context segment
 		m.syncInterrupt(0x62);
 		m.cpu.r[AX] = m.syncResultAx;
-		if (ah == 0 && m.syncResultAx != 0xFFFF)
+		if (ah == 0 && m.syncResultAx != 0xFFFF) {
 			_ctxSeg = m.syncResultAx;
+			m.ctxSegment = _ctxSeg;
+		}
 		return true;
 	}
 
