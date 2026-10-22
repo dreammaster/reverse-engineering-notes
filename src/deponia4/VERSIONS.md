@@ -122,14 +122,36 @@ Each: what, how it is known, what it means for the code here.
 Spine 228 / 266, libpng+zlib 479 / 536, SDL2 2,476 / 2,476 (the same SDL2 build).
 Most of the larger counts are the `-O0` instantiations (glm is one: Deponia 1 uses it too, `circleLineSegmentIntersection(glm::tvec2<float> const&, ...)` has it in its signature, but `-O2` inlined every glm function so none is a symbol; the users of glm in Deponia 4 are `Model`, `Camera`, `Light`, `Mesh` and `Animator` (the 3D models read with Assimp), `TGraphicsOGL::SetOffset` and the way system geometry: `TGWaySystem::CalculateWayTriangles`, `closesPointOnTriangle`, `toVec2`). One is not: **no HarfBuzz in Deponia 4**.
 
-### Text rendering (fonts)
+### Text rendering (fonts): what Deponia 4 does differently
 
-(symbols) Deponia 1 has `TFreetypeFont::GetCharIndex(unsigned int)` / `CreateCharIndex(unsigned int, TFreetypeFont *)` and `TFontManager::PrintText` / `PrintTextLines` /
-`TCFont::PrintText` / `PrintTextLines` taking a `std::vector<GLCharBuffer*> *` (a buffer of the glyphs drawn; what it is for is not read yet); Deponia 4 has none of the three and the same functions
-without the `GLCharBuffer` parameter (`TFontManager::PrintText(wxString const&, TextAlignmentEnum, wxPoint const&, float)`, `TCFont::PrintText(..., int)`).
-Deponia 4 has 12 more `TFreetypeFont` methods (`SetFontColor`, `SetBackgroundColor`, `SetSpacing`, `SetLCDFiltered`, `LockHeight`, `GetLineHeight` ...), which at `-O0` are most probably the inline accessors of Deponia 1.
-Reading (from the symbols and the library only, the text code is not read): HarfBuzz and the glyph buffers are a **later addition** to the engine; Deponia 4 draws text without them. `TFreetypeFont`, `TFontManager`, `TCFont`, `TTText`, `TGText` are where Deponia 4 is plainer.
-**to do**: `src/deponia4` still has Deponia 1's HarfBuzz text path; strip it back to the `-O0` listing (`TFreetypeFont` has 7 of its 8 functions under 0.5, `TTText` 8 of 15, `TFontManager` 9 of 10).
+Read in both listings (`TFreetypeFont::GetChar`, `CreateChar`/`CreateCharIndex`, `RenderString_i`, `SetSpacing`, `LockHeight`, `TCFont::OnEvent`, `TGraphicsOGL::ResizeScene`/`SetOffset`) and checked against the callers of the library functions in both executables. Everything not listed here is the same in the two builds:
+the width of a character (a space is `size / 4.2 + letter spacing`, a tab two spaces plus the spacing, CR and LF nothing), the stroker border (`FT_Stroker` + `RenderSpans`), the fallback font for a character the font lacks (a second `TFreetypeFont` made on demand,
+warning `character %s / %d not in %s`), the shader hook (`shader_list`, uniforms `mvp_mat`, `texel`, `color`, `offset`), and the whole of `TCFont`, `TFontManager` and `TTText` as far as the call graph, the numbers and the texts show (no engine call, number or text that one has and the other has not; the
+functions differ in size only by what `-O0` does and by the points below).
+
+1. **No text shaping in Deponia 4.** In Deponia 1 `TFreetypeFont::RenderString_i` turns the string into a wide string (`toUTF`), cuts it into runs of one script (`itemize(wxString&)`), and for each run makes a HarfBuzz buffer
+   (`hb_buffer_set_direction`, `hb_buffer_set_script`, `hb_language_from_string`/`hb_buffer_set_language`, `hb_buffer_add_utf32`), a font (`hb_ft_font_create`), calls `hb_shape` and reads `hb_buffer_get_glyph_infos`/`_positions`; the glyph indices
+   go through `TFreetypeFont::GetCharIndex(uint)` (337 bytes). This is the **only code in the executable that calls HarfBuzz**. Deponia 4 reads the string with `decode_utf8_next_char`, one character at a time, and asks `GetChar(code)`: no runs, no direction, no ligatures or letter forms, no right-to-left lines.
+   Right-to-left or joined scripts (Arabic) cannot be laid out correctly by Deponia 4's code; Latin, Cyrillic, Chinese, Japanese and Korean need none of it.
+2. **The glyph cache is keyed by character in Deponia 4, by glyph index in Deponia 1.** Deponia 1: `HashMap<int,int>` (character to glyph index, `FT_Get_Char_Index`) and `CreateChar` (864 bytes) calls `CreateCharIndex(glyph index)` (3,512 bytes, `FT_Load_Glyph`). Deponia 4: a single `CreateChar(code)` (8,698 bytes at `-O0`)
+   with `HashMap<int,Character>` keyed by the character and `FT_Load_Char`. Same bitmaps, same metrics logic.
+3. **A distance field path that is switched off.** Deponia 4's `CreateChar` contains the oversampled glyph code (render at 72x72 units with 10% padding via `FT_Set_Char_Size`, `distance_map` (edtaa3), `resize`/`interpolate` back down) but guards it with a local that is set to 0 in the line before it is tested
+   (`mov [var_59], 0; cmp [var_59], 0; jz`): it never runs. Deponia 1 has `distance_map`, `edtaa3`, `resize` and `interpolate` in the executable and no caller of them. No difference in what is drawn.
+4. **The height lock of the game's fonts (a behaviour change).** Each `TFreetypeFont` has a flag (Deponia 1 `+0xF7`, Deponia 4 `+0xD7`) that stops the highest glyph seen so far (`+0xCC` / `+0xAC`, which sets the top of a line) from being raised when a higher glyph is made
+   (`if (!flag && top > maxBearingY) maxBearingY = top` in `CreateCharIndex`, six sites in `CreateChar`). In **Deponia 1 `TCFont`'s constructor and `OnEvent` for the letter spacing (field 0xFA) measure the text "abc" first (`TFreetypeFont::StringLength`, which makes those glyphs) and then set
+   the flag together with the spacing**: the line height of every game font is fixed from "abc" on. In **Deponia 4 the flag is a method, `LockHeight()`, called only by `SkinManager::LoadSkin` and `CssSkinnedObject::RefreshStyle` (the editor's GUI fonts)**; `TCFont` only calls `SetSpacing(int)`, which stores the spacing.
+   So in Deponia 4 the top of a line follows the highest glyph created so far; a text that first shows a taller glyph (a capital with an accent, a CJK character) than the ones shown before can move the lines of that font from then on. This reads like a fix of Deponia 1: **to do**: confirm with a run (`renderscene` with two texts) once the text path is built.
+   (The reconstruction in `src/deponia4/vscommon/cfont.cpp:154` does what Deponia 1 does.)
+5. **A cache of the rendered game text in Deponia 1.** `TGText` has a `std::vector<GLCharBuffer*>` (made in its constructor, destroyed in its destructor) in Deponia 1; `TGText::Draw` hands it to `TFontManager::PrintTextLines`, `TCFont::PrintTextLines` makes a `GLCharBuffer` per line and passes it to `RenderString`, which can draw from it
+   again. In Deponia 4 `TGText` has none and `PrintTextLines`/`PrintText` have no buffer parameter: the text is laid out again every frame. (The GUI widgets `Label`, `ListBox`, `TextBox`, `Tooltip`, `Button` keep `GLCharBuffer`s in both builds; Deponia 4 has `GLCharBuffer::Clear()` as a method.) Only speed.
+6. **The `outline` shader and `borderColor`.** Deponia 1 has an extra shader file name `outline.bin` (loaded in `TGraphicsOGL::ResizeScene` when the shader object at `+0x6B0` is not valid yet) and sets the uniform `borderColor` (the border colour as r, g, b and the alpha of the font) on the text shader in `RenderString_i` when the font has a border. Deponia 4 has neither string; its shader names have `sht_color.bin`
+   which Deponia 1 lacks. `SetOffset` updates `mvp_mat` of 7 shader objects in Deponia 1 and of 5 in Deponia 4. The other 50 shader names are in both.
+7. **Layout of `TFreetypeFont`**: Deponia 1's is 0x130 bytes, Deponia 4's 0x110 (the allocation of the fallback font in `CreateChar`): Deponia 1 inserted 0x20 bytes ahead of the border flag (`+0xD8`/`+0xB8`; in the reconstruction the HarfBuzz font `_shaper`). Spacing `+0xF0`/`+0xD0`, valid `+0xF4`/`+0xD4`, size `+0x108`/`+0xE8`, fallback font `+0x110`/`+0xF0`.
+8. Signatures: Deponia 1 `TFontManager::PrintText(wxString const&, TextAlignmentEnum, wxPoint const&, float, GLCharBuffer*)`, `TFontManager::PrintTextLines(..., std::vector<GLCharBuffer*>*)`, `TCFont::PrintText(..., int, GLCharBuffer*)`; Deponia 4 the same without the buffer.
+   Deponia 4 has `TFontManager::GetFonts()` (an accessor) that Deponia 1 does not.
+
+**Consequences for `src/deponia4`**: it still has Deponia 1's text path. To make it Deponia 4's: take out `itemize`/HarfBuzz (point 1) and the `GLCharBuffer` argument of the game text (point 5), and do not set the spacing flag for `TCFont` (point 4); points 2, 3 and 7 are internal, 6 is a shader uniform.
+For the merge, 1 and 5 are build options (HarfBuzz yes/no), 4 is a bug fix that the newer behaviour should win, 6 follows the shaders that ship with the data.
 
 ### Platform SDKs and the client interface
 
