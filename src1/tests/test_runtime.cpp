@@ -22,6 +22,7 @@ public:
 	Shared::uint32 ticks() { return now++; }       // every read advances the clock by one tick
 	void idle() {}
 	void speaker(Shared::uint16) {}
+	Shared::uint16 cpuClass() { return 0x386; }
 };
 
 static void testPollInput() {

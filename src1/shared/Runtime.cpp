@@ -59,6 +59,7 @@ Runtime::Runtime(Vid::Video &v, System &s) : video(v), system(s) {
 }
 
 bool Runtime::openGameFiles(const char *gameDir) {
+	_dataDir = gameDir;
 	bool ok = true;
 	for (int i = 0; i < Data::kTileFileCount; i++)
 		ok = tiles[i].load(gameDir, i) && ok;

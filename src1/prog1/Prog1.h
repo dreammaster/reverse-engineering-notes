@@ -5,6 +5,7 @@
 #ifndef YENDOR1_PROG1_PROG1_H
 #define YENDOR1_PROG1_PROG1_H
 
+#include "data/ExeImage.h"
 #include "shared/Params.h"
 #include "shared/Runtime.h"
 #include "shared/Ui.h"
@@ -51,6 +52,9 @@ private:
 	Shared::Params _params;
 	byte _tileFile;      // byte_12DE5: the file number the next tileOp uses
 	byte _exitCode;      // byte_12DDC
+	Data::ExeImage _exe; // PROG1.EXE: the texts are read from the original file (data segment starts 1F50h into its image)
+	const char *_authorLines[17];
+	const char *_copyright;
 };
 
 } // namespace Prog1

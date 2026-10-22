@@ -1,39 +1,36 @@
 #include "prog1/Prog1.h"
 
 #include <stddef.h>
+#include <string.h>
 
 namespace Yendor1 {
 namespace Prog1 {
 
 namespace {
 
-// the credit lines (data at DS:0EB7h in PROG1.EXE): the text of the "About the Authors" page, drawn one per text row
-const char *const kAuthorLines[17] = {
-	"                      bout  the  Authors",
-	" ",
-	" ",
-	"Rodney R. Smith . . . . . . . . .  Programming",
-	"                                   Video Driver Design",
-	" ",
-	" ",
-	"  Timothy Smith . . . . . . . . .  Story Outline",
-	"                                   Art Design and Layout",
-	"                                   Documentation",
-	"                                   Clue Book",
-	" ",
-	" ",
-	"   Rod Smith II . . . . . . . . .  Original Game Design",
-	"                                   Story Outline",
-	"                                   Conversations",
-	"                                   Playability Testing",
-};
-
-const char kCopyrightLine[] = "(c) Copyright SmithWare  1993";
+// PROG1.EXE's data segment starts 1F50h bytes into its load image; the copyright line is at DS:0E99h and the 17
+// credit lines of the "About the Authors" page are consecutive strings from DS:0EB7h
+const uint32_t kDataBase = 0x1F50;
+const uint32_t kCopyrightOffset = 0x0E99;
+const uint32_t kAuthorsOffset = 0x0EB7;
 
 } // namespace
 
 Prog1::Prog1(Shared::Runtime &rt, const Shared::Params &params)
-	: _rt(rt), _c(rt.video.ctx), _ui(rt), _params(params), _tileFile(0), _exitCode(0) {
+	: _rt(rt), _c(rt.video.ctx), _ui(rt), _params(params), _tileFile(0), _exitCode(0), _copyright("") {
+	std::string path = rt.dataDir();
+	if (!path.empty() && path[path.size() - 1] != '/' && path[path.size() - 1] != '\\')
+		path += "/";
+	path += "PROG1.EXE";
+	const bool ok = _exe.load(path.c_str(), kDataBase);
+	uint32_t off = kAuthorsOffset;
+	for (int i = 0; i < 17; i++) {
+		const char *s = ok ? _exe.stringAt(off) : 0;
+		_authorLines[i] = s ? s : "";
+		off += s ? (uint32_t)strlen(s) + 1 : 0;
+	}
+	if (ok && _exe.stringAt(kCopyrightOffset))
+		_copyright = _exe.stringAt(kCopyrightOffset);
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -69,7 +66,7 @@ void Prog1::showCopyrightLine() {
 		_c.textFg = colour(11);
 	_c.textCol = 0x17;
 	_c.textRow = 0x18;
-	_rt.drawString(kCopyrightLine);
+	_rt.drawString(_copyright);
 	_rt.system.speaker(0);
 	_rt.sendPaletteCommand(1);
 }
@@ -116,7 +113,7 @@ void Prog1::drawAuthorsPage() {
 	_c.textRow = 3;
 	_c.textCol = 0x0B;
 	setColours(colour(0), colour(15));
-	_rt.drawStringLines(kAuthorLines, 17);
+	_rt.drawStringLines(_authorLines, 17);
 	_tileFile = 0;
 	tile(0xE8, 0x20, 0xDC);                // the illuminated first letter
 }

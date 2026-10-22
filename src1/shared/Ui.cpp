@@ -1,5 +1,6 @@
 #include "shared/Ui.h"
 
+
 namespace Yendor1 {
 namespace Shared {
 
@@ -217,7 +218,8 @@ void BookUi::dissolve(const DissolveParams &p) {
 		visited[i] = 0;
 	uint16 remaining = 0x400;
 	uint16 counter = 0xFDA6;
-	const uint16 clockSeed = (uint16)_rt.system.ticks();
+	uint16 clockSeed = (uint16)_rt.system.ticks();
+	uint32 misses = 0;
 
 	// shared_33aaab: returns true when the offset pair was already taken, otherwise marks it
 	auto taken = [&](uint16 ox, uint16 oy) {
@@ -237,10 +239,20 @@ void BookUi::dissolve(const DissolveParams &p) {
 			for (;;) {
 				ox = rng.next(0x1F, clockSeed);
 				oy = rng.next(0x1F, clockSeed);
-				if (!taken(ox, oy))
+				if (!taken(ox, oy)) {
+					misses = 0;
 					break;
+				}
 				if (++counter == 0)
 					counter = 0xFDA6;
+				// Deliberate deviation: the generator has short cycles (15, 17, 34, 360, 389 and 1023 values among them), and
+				// a clock seed that lands on one never reaches the remaining pixels. The original then loops forever
+				// (its retry counter only resets a variable nothing reads); here the generator is reseeded from the clock.
+				if (++misses > 100000) {
+					misses = 0;
+					rng.setSeed(0);
+					clockSeed = (uint16)(_rt.system.ticks() + 0x9E37);
+				}
 			}
 		} else {
 			ox = 0; oy = 0;

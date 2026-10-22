@@ -11,6 +11,7 @@
 #include "vid/Video.h"
 
 #include <stdio.h>
+#include <string>
 
 namespace Yendor1 {
 namespace Shared {
@@ -31,6 +32,8 @@ public:
 	virtual void idle() = 0;
 	/** PC speaker tone (frequency in Hz) or silence (0). */
 	virtual void speaker(uint16 hz) = 0;
+	/** SW.EXE's detectCpuClass result: 0x88 (8088), 0x186, 0x286 or 0x386. Selects the busy-wait counts programs use. */
+	virtual uint16 cpuClass() = 0;
 };
 
 /** One of the game's data files: a flat array of fixed-size records (SW.EXE's file descriptor). */
@@ -75,6 +78,8 @@ public:
 
 	/** The game directory (FILE0n.16 etc.). */
 	bool openGameFiles(const char *gameDir);
+	/** The directory given to openGameFiles (programs read their texts from the original executables there). */
+	const std::string &dataDir() const { return _dataDir; }
 	Data::TileFile tiles[Data::kTileFileCount];
 
 	// ---- input (pollInput, waitInput) ----
@@ -107,6 +112,7 @@ public:
 	void vid(byte ah, byte al = 0) { video.call(ah, al); }
 
 private:
+	std::string _dataDir;
 	Runtime(const Runtime &);
 	Runtime &operator=(const Runtime &);
 };
