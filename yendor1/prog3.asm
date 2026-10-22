@@ -152,10 +152,10 @@ loc_1003A:                              ; CODE XREF: start+32↑j
 
 loc_10167:                              ; CODE XREF: start+E8↑j
                 mov     ah, 29h ; ')'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn29 vidMouseHide
                 mov     al, 0
                 mov     ah, 2Dh ; '-'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn2D vidMouseSetCursorMode
                 mov     byte_126D6, 5
                 cmp     byte_12318, 2
                 jz      short loc_10182
@@ -166,7 +166,7 @@ loc_10182:                              ; CODE XREF: start+17B↑j
                 mov     byte_122FF, bl
                 mov     byte_12309, bl
                 mov     ah, 14h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_107EC
                 call    sub_1053F
                 cmp     byte_1230E, 0
@@ -185,22 +185,22 @@ loc_101B8:                              ; CODE XREF: start+1A8↑j
                 mov     al, 4
                 call    sub_110E2
                 mov     ah, 15h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn15 vidRevealCenterOut0To1
                 jmp     short loc_101DA
 ; ---------------------------------------------------------------------------
 
 loc_101CF:                              ; CODE XREF: start+1A0↑j
                 mov     ah, 16h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn16 vidRevealRightToLeft0To1
                 mov     al, 4
                 call    sub_110E2
 
 loc_101DA:                              ; CODE XREF: start+1B6↑j
                                         ; start+1CD↑j
                 mov     ax, 1200h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn12 vidShowPage
                 mov     ah, 28h ; '('
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn28 vidMouseShow
 
 loc_101E3:                              ; CODE XREF: start+235↓j
                                         ; start+2CD↓j ...
@@ -221,16 +221,16 @@ loc_10200:                              ; CODE XREF: start+1F9↑j
                 mov     al, 42h ; 'B'
                 call    sub_109DB
                 mov     ah, 29h ; ')'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn29 vidMouseHide
                 mov     al, 0
                 call    sub_10E76
                 mov     ah, 14h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_107EC
                 mov     ax, 1200h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn12 vidShowPage
                 mov     ah, 28h ; '('
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn28 vidMouseShow
 
 loc_1022F:                              ; CODE XREF: start+1F2↑j
                 cmp     byte ptr es:2Ch, 0Dh
@@ -434,29 +434,29 @@ loc_10415:                              ; CODE XREF: start+3EC↑j
 loc_10441:                              ; CODE XREF: start+2FC↑j
                                         ; start+36A↑j ...
                 mov     ah, 29h ; ')'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn29 vidMouseHide
                 mov     ah, 14h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_110F0
                 pop     bx
                 call    sub_10E40
                 mov     ax, 1200h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn12 vidShowPage
                 mov     ah, 28h ; '('
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn28 vidMouseShow
 
 loc_1045D:                              ; CODE XREF: start+467↓j
                 call    sub_10B8E
                 cmp     byte_12392, 0
                 jz      short loc_1045D
                 mov     ah, 29h ; ')'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn29 vidMouseHide
                 mov     ax, 1201h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn12 vidShowPage
                 mov     ah, 1Eh
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn1E vidCopyScreen1To0AndShow
                 mov     ah, 28h ; '('
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn28 vidMouseShow
                 jmp     loc_101E3
 ; ---------------------------------------------------------------------------
 
@@ -470,7 +470,7 @@ loc_1047D:                              ; CODE XREF: start+267↑j
                 cmp     word_11522, 0
                 jz      short loc_104A0
                 mov     ah, 29h ; ')'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn29 vidMouseHide
                 jmp     loc_10274
 ; ---------------------------------------------------------------------------
 
@@ -537,7 +537,7 @@ sub_1053F       proc near               ; CODE XREF: start+198↑p
                 mov     ah, es:73h
                 mov     es:30h, ah
                 mov     ah, 7
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn07 vidFillRect
                 mov     bl, es:64h
                 mov     es:2Eh, bl
                 mov     bl, es:73h
@@ -1066,18 +1066,18 @@ sub_108BC       proc far                ; CODE XREF: sub_105BB+12↑P
                 cmp     bx, es:1Ch
                 jl      short loc_1091B
                 mov     ah, 29h ; ')'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn29 vidMouseHide
 
 loc_1091B:                              ; CODE XREF: sub_108BC+2E↑j
                                         ; sub_108BC+3E↑j ...
                 mov     ah, 6
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn06 vidRect
                 cmp     byte ptr ds:1234h, 0
                 jb      short loc_10932
                 cmp     byte ptr es:955h, 0
                 jz      short loc_10932
                 mov     ah, 28h ; '('
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn28 vidMouseShow
 
 loc_10932:                              ; CODE XREF: sub_108BC+68↑j
                                         ; sub_108BC+70↑j
@@ -1145,21 +1145,21 @@ loc_1097A:                              ; CODE XREF: sub_10934+37↑j
                 test    [si], ah
                 jz      short loc_10972
                 mov     ah, 29h ; ')'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn29 vidMouseHide
                 mov     ax, [si+2]
                 mov     es:1Ah, ax
                 mov     ax, [si+0Eh]
                 call    sub_10B72
                 mov     ah, 28h ; '('
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn28 vidMouseShow
                 mov     ax, 5
                 call    sub_1071C
                 mov     ah, 29h ; ')'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn29 vidMouseHide
                 mov     ax, [si+0Ch]
                 call    sub_10B72
                 mov     ah, 28h ; '('
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn28 vidMouseShow
                 mov     al, [si+1]
                 mov     cs:byte_12392, 1
                 mov     es:2Ch, al
@@ -1189,7 +1189,7 @@ sub_109DB       proc far                ; CODE XREF: start+20D↑P
                 jnz     short loc_109F3
                 call    sub_107EC
                 mov     ax, 1200h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn12 vidShowPage
                 jmp     loc_10AC0
 ; ---------------------------------------------------------------------------
 
@@ -1322,7 +1322,7 @@ loc_10AD0:                              ; CODE XREF: sub_10AC7+6↑j
                 cmp     byte ptr es:33h, 2
                 jz      short loc_10B2A
                 mov     ah, 7
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn07 vidFillRect
                 mov     word ptr es:1Ch, 135h
                 mov     cs:byte_12391, 5
                 mov     si, 1239h
@@ -1334,7 +1334,7 @@ loc_10B2A:                              ; CODE XREF: sub_10AC7+48↑j
                 mov     word ptr es:1Ch, 135h
                 mov     word ptr es:20h, 179h
                 mov     ah, 7
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn07 vidFillRect
                 mov     word ptr es:1Ch, 148h
                 mov     cs:byte_12391, 5
                 mov     si, 1239h
@@ -1460,7 +1460,7 @@ loc_10C0A:                              ; CODE XREF: sub_10B8E+27↑j
                 test    byte ptr es:953h, 80h
                 jz      short loc_10C16
                 mov     ah, 2Bh ; '+'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn2B vidMouseRefresh
 
 loc_10C16:                              ; CODE XREF: sub_10B8E+46↑j
                                         ; sub_10B8E+82↑j
@@ -1913,7 +1913,7 @@ sub_10E40       proc far                ; CODE XREF: start+44F↑P
                 mov     al, es:2Ah
                 push    ax
                 mov     ah, 29h ; ')'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn29 vidMouseHide
 
 loc_10E4F:                              ; CODE XREF: sub_10E40+23↓j
                 mov     al, [bx]
@@ -1921,7 +1921,7 @@ loc_10E4F:                              ; CODE XREF: sub_10E40+23↓j
                 jz      short loc_10E65
                 mov     es:2Ch, al
                 mov     ah, 8
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn08 vidDrawChar
                 inc     byte ptr es:2Ah
                 inc     bx
                 jmp     short loc_10E4F
@@ -1929,7 +1929,7 @@ loc_10E4F:                              ; CODE XREF: sub_10E40+23↓j
 
 loc_10E65:                              ; CODE XREF: sub_10E40+13↑j
                 mov     ah, 28h ; '('
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn28 vidMouseShow
                 pop     ax
                 mov     es:2Bh, ah
                 mov     es:2Ah, al
@@ -1972,9 +1972,9 @@ locret_10E87:                           ; CODE XREF: sub_10E76+D↑j
 
 loc_10E88:                              ; CODE XREF: sub_10E76+5↑j
                 mov     ah, 29h ; ')'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn29 vidMouseHide
                 mov     ah, 14h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     word ptr es:1Ah, 197h
                 mov     word ptr es:1Ch, 0E9h
                 mov     word ptr es:1Eh, 24Fh
@@ -1982,9 +1982,9 @@ loc_10E88:                              ; CODE XREF: sub_10E76+5↑j
                 mov     ax, cs:word_12393
                 call    sub_114DD
                 mov     ax, 1200h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn12 vidShowPage
                 mov     ah, 28h ; '('
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn28 vidMouseShow
                 retf
 sub_10E76       endp
 
@@ -2030,7 +2030,7 @@ loc_10F0D:                              ; CODE XREF: sub_10E76+92↑j
 
 loc_10F16:                              ; CODE XREF: sub_10E76+87↑j
                 mov     ah, 29h ; ')'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn29 vidMouseHide
                 mov     word ptr es:1Ah, 197h
                 mov     word ptr es:1Ch, 0E9h
                 mov     word ptr es:1Eh, 24Fh
@@ -2038,7 +2038,7 @@ loc_10F16:                              ; CODE XREF: sub_10E76+87↑j
                 mov     ax, cs:word_12393
                 call    sub_114BF
                 mov     ah, 14h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     bx, 146Ah
                 call    sub_110F0
                 mov     byte ptr es:35h, 0
@@ -2093,9 +2093,9 @@ loc_10FE4:                              ; CODE XREF: sub_10E76+13E↑j
 loc_10FE6:                              ; CODE XREF: sub_10E76+16C↑j
                 call    sub_10AC7
                 mov     ax, 1200h
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn12 vidShowPage
                 mov     ah, 28h ; '('
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn28 vidMouseShow
                 retf
 ; END OF FUNCTION CHUNK FOR sub_10E76
 ; ---------------------------------------------------------------------------
@@ -2260,7 +2260,7 @@ sub_110F0       proc far                ; CODE XREF: start+449↑P
                 add     es:1Ch, ax
                 add     es:20h, ax
                 mov     ah, 7
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn07 vidFillRect
                 pop     bx
                 xor     ah, ah
                 mov     al, [bx+9]
@@ -2271,7 +2271,7 @@ sub_110F0       proc far                ; CODE XREF: start+449↑P
                 mov     ah, es:6Bh
                 mov     es:30h, ah
                 mov     ah, 6
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn06 vidRect
                 inc     word ptr es:1Ah
                 inc     word ptr es:1Ch
                 dec     word ptr es:1Eh
@@ -2279,7 +2279,7 @@ sub_110F0       proc far                ; CODE XREF: start+449↑P
                 mov     ah, es:73h
                 mov     es:30h, ah
                 mov     ah, 7
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn07 vidFillRect
                 retf
 sub_110F0       endp
 
@@ -2419,7 +2419,7 @@ loc_111D3:                              ; CODE XREF: sub_111A4+2C↑j
                 push    word ptr es:16h
                 push    word ptr es:18h
                 mov     ah, 2Bh ; '+'
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn2B vidMouseRefresh
                 pop     word ptr es:18h
                 pop     word ptr es:16h
                 retf
@@ -2449,7 +2449,7 @@ loc_1120E:                              ; CODE XREF: seg018:0055↑j
                 mov     ax, ds:1479h
                 mov     es:16h, ax
                 mov     ah, 0Ah
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn0A vidPutImage
                 pop     word ptr es:18h
                 pop     word ptr es:16h
                 xor     al, al
@@ -2800,7 +2800,7 @@ sub_114BF       proc far                ; CODE XREF: sub_10E76+C4↑P
                 mov     es:16h, ax
                 mov     word ptr es:18h, 0
                 mov     ah, 0Bh
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn0B vidGetImage
                 mov     word ptr es:16h, seg seg021
                 mov     word ptr es:18h, 9F7h
                 retf
@@ -2814,7 +2814,7 @@ sub_114DD       proc far                ; CODE XREF: sub_10E76+3A↑P
                 mov     es:16h, ax
                 mov     word ptr es:18h, 0
                 mov     ah, 0Ch
-                int     62h             ; reserved for user interrupt
+                int     62h             ; VID fn0C vidPutImageHdr
                 mov     word ptr es:16h, seg seg021
                 mov     word ptr es:18h, 9F7h
                 retf

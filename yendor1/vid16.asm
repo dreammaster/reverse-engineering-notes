@@ -10,7 +10,6 @@
 ; Input MD5    : 6CB7882391E36E0A5E40759F3833F489
 ; Input CRC32  : 19DC0D9E
 
-; ---------------------------------------------------------------------------
 ; File Name   : C:\dev\yendor\yendor1\game\VID16.DRV
 ; Format      : MS-DOS executable (EXE)
 ; Base Address: 1000h Range: 10000h-11A30h Loaded length: 1827h
@@ -26,6 +25,12 @@
 seg000          segment byte public 'CODE' use16
                 assume cs:seg000
                 assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h service routine. AH<=2Dh indexes the near-offset table at DS:001Bh (vid_dispatchTable); DS=driver data seg, ES=context block (word_117B9). Preserves all regs but AX.
+
+int62_isr       proc far
                 sti
                 push    ds
                 push    es
@@ -38,9 +43,8 @@ seg000          segment byte public 'CODE' use16
                 mov     bx, seg seg001
                 mov     ds, bx
                 assume ds:seg001
-                mov     bx, word_117B9
+                mov     bx, vid_ctxSeg  ; segment of the context block allocated by vidInit (returned in AX)
                 mov     es, bx
-                assume es:nothing
                 cmp     ah, 2Dh ; '-'
                 jg      short loc_1002F
                 xchg    ah, al
@@ -55,11 +59,13 @@ seg000          segment byte public 'CODE' use16
                 jmp     ax
 ; ---------------------------------------------------------------------------
 
-loc_1002F:                              ; CODE XREF: seg000:0017↑j
-                                        ; seg000:0028↑j
+loc_1002F:                              ; CODE XREF: int62_isr+17↑j
+                                        ; int62_isr+28↑j
                 pop     ax
                 jmp     loc_101E7
 ; ---------------------------------------------------------------------------
+
+vidInit:                                ; INT 62h AH=00 vidInit -- reached by 'jmp ax' from int62_isr
                 add     sp, 2
                 mov     bx, 0A1h
                 mov     ah, 48h
@@ -69,10 +75,9 @@ loc_1002F:                              ; CODE XREF: seg000:0017↑j
                 jmp     loc_101EF
 ; ---------------------------------------------------------------------------
 
-loc_10042:                              ; CODE XREF: seg000:003D↑j
-                mov     word_117B9, ax
+loc_10042:                              ; CODE XREF: int62_isr+3D↑j
+                mov     vid_ctxSeg, ax  ; segment of the context block allocated by vidInit (returned in AX)
                 mov     es, ax
-                assume es:nothing
                 push    ax
                 xor     di, di
                 mov     cx, 503h
@@ -95,7 +100,7 @@ loc_10042:                              ; CODE XREF: seg000:003D↑j
                 jmp     loc_101EF
 ; ---------------------------------------------------------------------------
 
-loc_10074:                              ; CODE XREF: seg000:006C↑j
+loc_10074:                              ; CODE XREF: int62_isr+6C↑j
                 mov     es:2, ax
                 mov     ax, 200h
                 mul     word ptr es:0
@@ -110,7 +115,7 @@ loc_10074:                              ; CODE XREF: seg000:006C↑j
                 jmp     loc_101EF
 ; ---------------------------------------------------------------------------
 
-loc_10093:                              ; CODE XREF: seg000:008B↑j
+loc_10093:                              ; CODE XREF: int62_isr+8B↑j
                 mov     es:4, ax
                 mov     dx, ax
                 mov     ax, es:2
@@ -120,7 +125,7 @@ loc_10093:                              ; CODE XREF: seg000:008B↑j
                 mov     bx, 20h ; ' '
                 pop     cx
 
-loc_100A8:                              ; CODE XREF: seg000:00B2↓j
+loc_100A8:                              ; CODE XREF: int62_isr+B2↓j
                 stosw
                 stosw
                 mov     es:[di], dx
@@ -189,12 +194,11 @@ loc_100A8:                              ; CODE XREF: seg000:00B2↓j
                 or      ax, ax
                 jz      short loc_101E4
 
-loc_1017D:                              ; CODE XREF: seg000:0175↑j
+loc_1017D:                              ; CODE XREF: int62_isr+175↑j
                 cmp     byte ptr es:[bx], 0CFh
                 jz      short loc_101E4
-                mov     ax, word_117B9
+                mov     ax, vid_ctxSeg  ; segment of the context block allocated by vidInit (returned in AX)
                 mov     es, ax
-                assume es:nothing
                 mov     ax, 0
                 int     33h             ; - MS MOUSE - RESET DRIVER AND READ STATUS
                                         ; Return: AX = status
@@ -212,7 +216,7 @@ loc_1017D:                              ; CODE XREF: seg000:0175↑j
                 mov     ax, 0Ch
                 int     33h             ; - MS MOUSE - DEFINE INTERRUPT SUBROUTINE PARAMETERS
                                         ; CX = call mask, ES:DX -> FAR routine
-                mov     ax, word_117B9
+                mov     ax, vid_ctxSeg  ; segment of the context block allocated by vidInit (returned in AX)
                 mov     es, ax
                 assume es:nothing
                 mov     bx, 72h ; 'r'
@@ -224,39 +228,38 @@ loc_1017D:                              ; CODE XREF: seg000:0175↑j
                 jmp     short loc_101EF
 ; ---------------------------------------------------------------------------
 
-loc_101C9:                              ; CODE XREF: seg000:01BF↑j
+loc_101C9:                              ; CODE XREF: int62_isr+1BF↑j
                 mov     es:96Eh, ax
                 lea     si, ds:970h
                 mov     ax, 0
                 mov     bx, 85h
                 mov     cx, 0Dh
 
-loc_101DA:                              ; CODE XREF: seg000:01E2↓j
+loc_101DA:                              ; CODE XREF: int62_isr+1E2↓j
                 mov     es:[si], ax
                 add     ax, bx
                 add     si, 2
                 loop    loc_101DA
 
-loc_101E4:                              ; CODE XREF: seg000:017B↑j
-                                        ; seg000:0181↑j ...
-                mov     ax, word_117B9
+loc_101E4:                              ; CODE XREF: int62_isr+17B↑j
+                                        ; int62_isr+181↑j ...
+                mov     ax, vid_ctxSeg  ; segment of the context block allocated by vidInit (returned in AX)
 
-loc_101E7:                              ; CODE XREF: seg000:0030↑j
-                                        ; seg000:023F↓j ...
+loc_101E7:                              ; CODE XREF: int62_isr+30↑j
+                                        ; vidShutdown+45↓j ...
                 pop     bx
                 pop     cx
                 pop     dx
                 pop     di
                 pop     si
                 pop     es
-                assume es:nothing
                 pop     ds
                 assume ds:nothing
                 iret
 ; ---------------------------------------------------------------------------
 
-loc_101EF:                              ; CODE XREF: seg000:003F↑j
-                                        ; seg000:0071↑j ...
+loc_101EF:                              ; CODE XREF: int62_isr+3F↑j
+                                        ; int62_isr+71↑j ...
                 pop     bx
                 pop     cx
                 pop     dx
@@ -266,7 +269,14 @@ loc_101EF:                              ; CODE XREF: seg000:003F↑j
                 pop     ds
                 mov     ax, 0FFFFh
                 iret
-; ---------------------------------------------------------------------------
+int62_isr       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=01: free driver memory, unhook INT 62h
+
+vidShutdown     proc far
                 add     sp, 2
                 cmp     byte ptr es:952h, 0
                 jz      short loc_10216
@@ -282,7 +292,7 @@ loc_101EF:                              ; CODE XREF: seg000:003F↑j
                                         ; ES = segment address of area to be freed
                 pop     es
 
-loc_10216:                              ; CODE XREF: seg000:0203↑j
+loc_10216:                              ; CODE XREF: vidShutdown+9↑j
                 push    es
                 mov     ax, es:4
                 mov     es, ax
@@ -310,26 +320,40 @@ loc_10216:                              ; CODE XREF: seg000:0203↑j
                                         ; DS:DX = new vector to be used for specified interrupt
                 mov     ax, cs
                 jmp     short loc_101E7
-; ---------------------------------------------------------------------------
+vidShutdown     endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=02: INT 10h mode 10h (640x350x16)
+
+vidSetGraphicsMode proc far
                 add     sp, 2
                 mov     ax, 10h
                 int     10h             ; - VIDEO - SET VIDEO MODE
                                         ; AL = mode
                 xor     ax, ax
                 jmp     short loc_101E7
-; ---------------------------------------------------------------------------
+vidSetGraphicsMode endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=03: pixel at (x1,y1) colour ctx+30h
+
+vidPutPixel     proc far
                 add     sp, 2
                 push    es
                 mov     al, es:30h
                 mov     ds:6, al
                 mov     ax, es:1Ch
                 mov     bx, es:1Ah
-                call    sub_112C0
-                call    sub_1142D
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
+                call    vid_putPixelRaw ; write one pixel (GC set/reset) colour ds:6
                 pop     es
 
-loc_10268:                              ; CODE XREF: seg000:029F↓j
-                                        ; seg000:0310↓j ...
+loc_10268:                              ; CODE XREF: vidLine+6↓j
+                                        ; vidRect+6F↓j ...
                 mov     dx, 3CEh
                 mov     ax, 0FF08h
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
@@ -352,21 +376,42 @@ loc_10268:                              ; CODE XREF: seg000:029F↓j
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; enable set/reset
                 jmp     loc_101E7
-; ---------------------------------------------------------------------------
+vidPutPixel     endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=04: colour of pixel (x1,y1) -> ctx+30h
+
+vidGetPixel     proc far
                 add     sp, 2
                 push    es
                 mov     ax, es:1Ch
                 mov     bx, es:1Ah
-                call    sub_112C0
-                call    sub_10DA2
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
+                call    vid_getPixelRaw ; read pixel via the 4 read-map planes; AL=colour
                 pop     es
                 mov     es:30h, al
                 jmp     loc_101E7
-; ---------------------------------------------------------------------------
+vidGetPixel     endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=05: line (x1,y1)-(x2,y2) colour ctx+30h
+
+vidLine         proc far
                 add     sp, 2
-                call    sub_10E5D
+                call    vid_lineImpl    ; Bresenham line (x1,y1)-(x2,y2) colour ctx+30h; vertical/horizontal fast paths
                 jmp     short loc_10268
-; ---------------------------------------------------------------------------
+vidLine         endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=06: rectangle outline (x1,y1)-(x2,y2)
+
+vidRect         proc far
                 add     sp, 2
                 mov     ax, es:1Ah
                 mov     ds:13h, ax
@@ -377,22 +422,22 @@ loc_10268:                              ; CODE XREF: seg000:029F↓j
                 mov     ax, es:1Ch
                 mov     ds:15h, ax
                 mov     es:20h, ax
-                call    sub_10E5D
+                call    vid_lineImpl    ; Bresenham line (x1,y1)-(x2,y2) colour ctx+30h; vertical/horizontal fast paths
                 mov     ax, ds:19h
                 mov     es:1Ch, ax
                 mov     es:20h, ax
-                call    sub_10E5D
+                call    vid_lineImpl    ; Bresenham line (x1,y1)-(x2,y2) colour ctx+30h; vertical/horizontal fast paths
                 mov     ax, ds:13h
                 mov     es:1Eh, ax
                 mov     ax, ds:15h
                 mov     es:1Ch, ax
-                call    sub_10E5D
+                call    vid_lineImpl    ; Bresenham line (x1,y1)-(x2,y2) colour ctx+30h; vertical/horizontal fast paths
                 mov     ax, ds:17h
                 mov     es:1Ah, ax
                 mov     es:1Eh, ax
-                call    sub_10E5D
+                call    vid_lineImpl    ; Bresenham line (x1,y1)-(x2,y2) colour ctx+30h; vertical/horizontal fast paths
 
-loc_102F4:                              ; CODE XREF: seg000:0354↓j
+loc_102F4:                              ; CODE XREF: vidFillRect+41↓j
                 mov     ax, ds:13h
                 mov     es:1Ah, ax
                 mov     ax, ds:17h
@@ -402,7 +447,14 @@ loc_102F4:                              ; CODE XREF: seg000:0354↓j
                 mov     ax, ds:19h
                 mov     es:20h, ax
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidRect         endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=07: filled rectangle (x1,y1)-(x2,y2)
+
+vidFillRect     proc far
                 add     sp, 2
                 mov     ax, es:1Ah
                 mov     ds:13h, ax
@@ -419,32 +471,67 @@ loc_102F4:                              ; CODE XREF: seg000:0354↓j
                 inc     cx
                 mov     es:20h, bx
 
-loc_10345:                              ; CODE XREF: seg000:0352↓j
-                call    sub_10E5D
+loc_10345:                              ; CODE XREF: vidFillRect+3F↓j
+                call    vid_lineImpl    ; Bresenham line (x1,y1)-(x2,y2) colour ctx+30h; vertical/horizontal fast paths
                 inc     word ptr es:1Ch
                 inc     word ptr es:20h
                 loop    loc_10345
                 jmp     short loc_102F4
-; ---------------------------------------------------------------------------
+vidFillRect     endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=08: ROM-font char ctx+2Ch at text cell (ctx+2Ah col, ctx+2Bh row)
+
+vidDrawChar     proc far
                 add     sp, 2
-                call    sub_10C3D
+                call    vid_drawCharCell ; text cell draw: char ctx+2Ch at col ctx+2Ah / row ctx+2Bh, font ctx+35h, masks ctx+2Eh/2Fh
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidDrawChar     endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=09: capture screen rect to ctx+16h:18h, no header
+
+vidGetImageRaw  proc far
                 add     sp, 2
-                call    sub_10D23
+                call    vid_getImageRaw ; screen rect -> memory (ctx+10h rows, ctx+12h bytes wide, mask ctx+14h) at ctx+16h:18h, no header
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidGetImageRaw  endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=0A: draw planar image at ctx+16h:18h, size ctx+10h/12h/14h, at (x1,y1)
+
+vidPutImage     proc far
                 pop     ax
-                call    sub_112EF
+                call    vid_putImageImpl ; draw planar image: rows ctx+10h, w ctx+12h, mask ctx+14h, data ctx+16h:18h at (x1,y1)
                 jmp     loc_101E7
-; ---------------------------------------------------------------------------
+vidPutImage     endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=0B: capture rect (x1,y1,x2,y2) to ctx+16h:18h with 5-byte header
+
+vidGetImage     proc far
                 add     sp, 2
-                call    sub_10DC1
+                call    vid_getImage    ; screen rect (x1,y1,x2,y2) -> memory ctx+16h:18h with 5-byte header (rows,w,mask)
                 mov     word ptr es:10h, 20h ; ' '
                 mov     word ptr es:12h, 4
                 mov     byte ptr es:14h, 0FFh
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidGetImage     endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=0C: draw image from ctx+16h:18h stream (5-byte header) at (x1,y1)
+
+vidPutImageHdr  proc far
                 add     sp, 2
                 push    ds
                 mov     ax, es:16h
@@ -460,12 +547,19 @@ loc_10345:                              ; CODE XREF: seg000:0352↓j
                 lodsb
                 mov     es:14h, al
                 pop     ds
-                call    sub_112EF
+                call    vid_putImageImpl ; draw planar image: rows ctx+10h, w ctx+12h, mask ctx+14h, data ctx+16h:18h at (x1,y1)
                 mov     word ptr es:10h, 20h ; ' '
                 mov     word ptr es:12h, 4
                 mov     byte ptr es:14h, 0FFh
                 jmp     loc_101E7
-; ---------------------------------------------------------------------------
+vidPutImageHdr  endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=0D: VRAM latch-copy AL*32px span (x1,y1,page ctx+31h)->(x3,y3,page ctx+32h)
+
+vidCopyTileRow  proc far
                 mov     cl, 3
                 mov     bx, es:1Ah
                 shr     bx, cl
@@ -476,7 +570,7 @@ loc_10345:                              ; CODE XREF: seg000:0352↓j
                 jz      short loc_103EB
                 add     bx, 8000h
 
-loc_103EB:                              ; CODE XREF: seg000:03E5↑j
+loc_103EB:                              ; CODE XREF: vidCopyTileRow+19↑j
                 mov     si, bx
                 mov     bx, es:22h
                 shr     bx, cl
@@ -487,7 +581,7 @@ loc_103EB:                              ; CODE XREF: seg000:03E5↑j
                 jz      short loc_1040A
                 add     bx, 8000h
 
-loc_1040A:                              ; CODE XREF: seg000:0404↑j
+loc_1040A:                              ; CODE XREF: vidCopyTileRow+38↑j
                 mov     di, bx
                 mov     ax, 105h
                 mov     dx, 3CEh
@@ -506,7 +600,14 @@ loc_1040A:                              ; CODE XREF: seg000:0404↑j
                 mov     cx, ax
                 rep movsb
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidCopyTileRow  endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=0E: scroll the map view content right one 32px step
+
+vidScrollRight  proc far
                 add     sp, 2
                 mov     bx, 8Eh
                 sub     bx, es:680h
@@ -542,7 +643,7 @@ loc_1040A:                              ; CODE XREF: seg000:0404↑j
                 mov     es, ax
                 std
 
-loc_1047A:                              ; CODE XREF: seg000:0489↓j
+loc_1047A:                              ; CODE XREF: vidScrollRight+60↓j
                 pop     cx
                 push    cx
                 push    di
@@ -556,7 +657,14 @@ loc_1047A:                              ; CODE XREF: seg000:0489↓j
                 jnz     short loc_1047A
                 add     sp, 2
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidScrollRight  endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=0F: scroll the map view content left one 32px step
+
+vidScrollLeft   proc far
                 add     sp, 2
                 mov     bx, 8Eh
                 sub     bx, es:680h
@@ -592,7 +700,7 @@ loc_1047A:                              ; CODE XREF: seg000:0489↓j
                 mov     es, ax
                 cld
 
-loc_104E4:                              ; CODE XREF: seg000:04F3↓j
+loc_104E4:                              ; CODE XREF: vidScrollLeft+62↓j
                 pop     cx
                 push    cx
                 push    di
@@ -606,7 +714,14 @@ loc_104E4:                              ; CODE XREF: seg000:04F3↓j
                 jnz     short loc_104E4
                 pop     cx
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidScrollLeft   endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=10: scroll the map view content up one 32px step
+
+vidScrollUp     proc far
                 add     sp, 2
                 mov     bx, 8Eh
                 sub     bx, es:680h
@@ -641,7 +756,7 @@ loc_104E4:                              ; CODE XREF: seg000:04F3↓j
                 mov     es, ax
                 cld
 
-loc_1054A:                              ; CODE XREF: seg000:0559↓j
+loc_1054A:                              ; CODE XREF: vidScrollUp+60↓j
                 pop     cx
                 push    cx
                 push    di
@@ -655,7 +770,14 @@ loc_1054A:                              ; CODE XREF: seg000:0559↓j
                 jnz     short loc_1054A
                 pop     cx
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidScrollUp     endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=11: scroll the map view content down one 32px step
+
+vidScrollDown   proc far
                 add     sp, 2
                 mov     bx, 8Eh
                 add     bx, es:680h
@@ -691,7 +813,7 @@ loc_1054A:                              ; CODE XREF: seg000:0559↓j
                 mov     es, ax
                 cld
 
-loc_105B3:                              ; CODE XREF: seg000:05C2↓j
+loc_105B3:                              ; CODE XREF: vidScrollDown+63↓j
                 pop     cx
                 push    cx
                 push    di
@@ -705,34 +827,48 @@ loc_105B3:                              ; CODE XREF: seg000:05C2↓j
                 jnz     short loc_105B3
                 pop     cx
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidScrollDown   endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=12: AL = page to display (INT 10h/05h), cursor-safe, then delay ctx+8
+
+vidShowPage     proc far
                 cmp     byte ptr es:952h, 0
                 jz      short loc_10602
                 cmp     byte ptr es:955h, 0
                 jl      short loc_10602
                 test    byte ptr es:953h, 80h
                 jz      short loc_105E9
-                call    sub_11208
+                call    vid_cursorRestoreBackground ; put the saved background back at (ctx+962h,964h)
                 and     byte ptr es:953h, 7Fh
 
-loc_105E9:                              ; CODE XREF: seg000:05DE↑j
+loc_105E9:                              ; CODE XREF: vidShowPage+16↑j
                 pop     ax
                 mov     es:957h, al
-                call    sub_110A8
-                call    sub_11145
-                call    sub_10FEF
+                call    vid_cursorSaveBackground ; save the 16x16 under (ctx+966h,968h) into cursor store slot 0
+                call    vid_cursorStageShape ; load cursor shape ctx+956h into the off-screen staging area (0,360)
+                call    vid_cursorBlitKeyed ; draw the staged 16x16 cursor at the drawn position, skipping colour 0
                 mov     cl, es:957h
-                call    sub_1141F
+                call    vid_setPageAndDelay ; INT 10h AH=5 (AL=CL page), then busy-wait ctx+8
                 jmp     loc_101E7
 ; ---------------------------------------------------------------------------
 
-loc_10602:                              ; CODE XREF: seg000:05CE↑j
-                                        ; seg000:05D6↑j
+loc_10602:                              ; CODE XREF: vidShowPage+6↑j
+                                        ; vidShowPage+E↑j
                 pop     cx
                 mov     es:957h, cl
-                call    sub_1141F
+                call    vid_setPageAndDelay ; INT 10h AH=5 (AL=CL page), then busy-wait ctx+8
                 jmp     loc_101E7
-; ---------------------------------------------------------------------------
+vidShowPage     endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=13: copy rect (x1,y1,x2,y2)->(x3,y3), skipping colour ctx+34h
+
+vidCopyRectKeyed proc far
                 add     sp, 2
                 mov     ax, es:1Ah
                 mov     ds:13h, ax
@@ -744,17 +880,17 @@ loc_10602:                              ; CODE XREF: seg000:05CE↑j
                 mov     cx, es:20h
                 sub     cx, es:1Ch
 
-loc_10636:                              ; CODE XREF: seg000:068E↓j
+loc_10636:                              ; CODE XREF: vidCopyRectKeyed+80↓j
                 push    cx
                 mov     cx, ds:7
 
-loc_1063B:                              ; CODE XREF: seg000:0673↓j
+loc_1063B:                              ; CODE XREF: vidCopyRectKeyed+65↓j
                 push    cx
                 mov     ax, es:1Ch
                 mov     bx, es:1Ah
                 push    es
-                call    sub_112C0
-                call    sub_10DA2
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
+                call    vid_getPixelRaw ; read pixel via the 4 read-map planes; AL=colour
                 pop     es
                 assume es:nothing
                 mov     ds:6, al
@@ -763,11 +899,11 @@ loc_1063B:                              ; CODE XREF: seg000:0673↓j
                 mov     ax, es:24h
                 mov     bx, es:22h
                 push    es
-                call    sub_112C0
-                call    sub_1142D
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
+                call    vid_putPixelRaw ; write one pixel (GC set/reset) colour ds:6
                 pop     es
 
-loc_10668:                              ; CODE XREF: seg000:0655↑j
+loc_10668:                              ; CODE XREF: vidCopyRectKeyed+47↑j
                 inc     word ptr es:22h
                 inc     word ptr es:1Ah
                 pop     cx
@@ -781,7 +917,14 @@ loc_10668:                              ; CODE XREF: seg000:0655↑j
                 pop     cx
                 loop    loc_10636
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidCopyRectKeyed endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=14: copy whole page 0 to page 1 and display page 1
+
+vidCopyScreen0To1AndShow proc far
                 add     sp, 2
                 push    es
                 mov     ax, 105h
@@ -797,7 +940,7 @@ loc_10668:                              ; CODE XREF: seg000:0655↑j
                 cld
                 mov     bx, 15Eh
 
-loc_106AF:                              ; CODE XREF: seg000:06BF↓j
+loc_106AF:                              ; CODE XREF: vidCopyScreen0To1AndShow+2C↓j
                 mov     cx, 50h ; 'P'
                 push    di
                 push    si
@@ -811,18 +954,25 @@ loc_106AF:                              ; CODE XREF: seg000:06BF↓j
                 pop     es
                 assume es:nothing
                 mov     cl, 1
-                call    sub_1141F
+                call    vid_setPageAndDelay ; INT 10h AH=5 (AL=CL page), then busy-wait ctx+8
                 cmp     byte ptr es:952h, 0
                 jz      short loc_106DA
                 cmp     byte ptr es:955h, 0
                 jl      short loc_106DA
-                call    sub_11208
+                call    vid_cursorRestoreBackground ; put the saved background back at (ctx+962h,964h)
 
-loc_106DA:                              ; CODE XREF: seg000:06CD↑j
-                                        ; seg000:06D5↑j
+loc_106DA:                              ; CODE XREF: vidCopyScreen0To1AndShow+3A↑j
+                                        ; vidCopyScreen0To1AndShow+42↑j
                 mov     byte ptr es:957h, 1
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidCopyScreen0To1AndShow endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=15: wipe page 0 onto page 1 from the centre columns outward
+
+vidRevealCenterOut0To1 proc far
                 add     sp, 2
                 push    es
                 mov     ax, 105h
@@ -839,12 +989,12 @@ loc_106DA:                              ; CODE XREF: seg000:06CD↑j
                 mov     ds:11h, bx
                 cld
 
-loc_10709:                              ; CODE XREF: seg000:075D↓j
+loc_10709:                              ; CODE XREF: vidRevealCenterOut0To1+7A↓j
                 pop     es
                 mov     cx, es:8
                 push    es
 
-loc_10710:                              ; CODE XREF: seg000:loc_10710↓j
+loc_10710:                              ; CODE XREF: vidRevealCenterOut0To1:loc_10710↓j
                 loop    loc_10710
                 mov     ax, 0A000h
                 mov     es, ax
@@ -855,7 +1005,7 @@ loc_10710:                              ; CODE XREF: seg000:loc_10710↓j
                 mov     ds, ax
                 mov     cx, 15Eh
 
-loc_10725:                              ; CODE XREF: seg000:072C↓j
+loc_10725:                              ; CODE XREF: vidRevealCenterOut0To1+49↓j
                 movsb
                 add     di, 4Fh ; 'O'
                 add     si, 4Fh ; 'O'
@@ -869,7 +1019,7 @@ loc_10725:                              ; CODE XREF: seg000:072C↓j
                 assume ds:nothing
                 mov     cx, 15Eh
 
-loc_1073D:                              ; CODE XREF: seg000:0744↓j
+loc_1073D:                              ; CODE XREF: vidRevealCenterOut0To1+61↓j
                 movsb
                 add     di, 4Fh ; 'O'
                 add     si, 4Fh ; 'O'
@@ -885,7 +1035,14 @@ loc_1073D:                              ; CODE XREF: seg000:0744↓j
                 pop     es
                 assume es:nothing
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidRevealCenterOut0To1 endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=16: wipe page 0 onto page 1 right to left, delay ctx+0Ah
+
+vidRevealRightToLeft0To1 proc far
                 add     sp, 2
                 push    es
                 mov     bx, es:0Ah
@@ -902,16 +1059,16 @@ loc_1073D:                              ; CODE XREF: seg000:0744↓j
                 mov     ds, ax
                 assume ds:nothing
 
-loc_10781:                              ; CODE XREF: seg000:079A↓j
+loc_10781:                              ; CODE XREF: vidRevealRightToLeft0To1+37↓j
                 push    di
                 push    si
                 mov     cx, bx
 
-loc_10785:                              ; CODE XREF: seg000:loc_10785↓j
+loc_10785:                              ; CODE XREF: vidRevealRightToLeft0To1:loc_10785↓j
                 loop    loc_10785
                 mov     cx, 15Eh
 
-loc_1078A:                              ; CODE XREF: seg000:0791↓j
+loc_1078A:                              ; CODE XREF: vidRevealRightToLeft0To1+2E↓j
                 movsb
                 add     di, 4Fh ; 'O'
                 add     si, 4Fh ; 'O'
@@ -925,7 +1082,14 @@ loc_1078A:                              ; CODE XREF: seg000:0791↓j
                 pop     es
                 assume es:nothing
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidRevealRightToLeft0To1 endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=17: wipe page 0 onto page 1 from both edges inward
+
+vidRevealEdgesIn0To1 proc far
                 add     sp, 2
                 push    es
                 mov     ax, 105h
@@ -942,12 +1106,12 @@ loc_1078A:                              ; CODE XREF: seg000:0791↓j
                 mov     ds:11h, bx
                 cld
 
-loc_107C6:                              ; CODE XREF: seg000:081A↓j
+loc_107C6:                              ; CODE XREF: vidRevealEdgesIn0To1+7A↓j
                 pop     es
                 mov     cx, es:8
                 push    es
 
-loc_107CD:                              ; CODE XREF: seg000:loc_107CD↓j
+loc_107CD:                              ; CODE XREF: vidRevealEdgesIn0To1:loc_107CD↓j
                 loop    loc_107CD
                 mov     ax, 0A000h
                 mov     es, ax
@@ -958,7 +1122,7 @@ loc_107CD:                              ; CODE XREF: seg000:loc_107CD↓j
                 mov     ds, ax
                 mov     cx, 15Eh
 
-loc_107E2:                              ; CODE XREF: seg000:07E9↓j
+loc_107E2:                              ; CODE XREF: vidRevealEdgesIn0To1+49↓j
                 movsb
                 add     di, 4Fh ; 'O'
                 add     si, 4Fh ; 'O'
@@ -972,7 +1136,7 @@ loc_107E2:                              ; CODE XREF: seg000:07E9↓j
                 assume ds:nothing
                 mov     cx, 15Eh
 
-loc_107FA:                              ; CODE XREF: seg000:0801↓j
+loc_107FA:                              ; CODE XREF: vidRevealEdgesIn0To1+61↓j
                 movsb
                 add     di, 4Fh ; 'O'
                 add     si, 4Fh ; 'O'
@@ -988,7 +1152,14 @@ loc_107FA:                              ; CODE XREF: seg000:0801↓j
                 pop     es
                 assume es:nothing
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidRevealEdgesIn0To1 endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=19: copy full scanlines y1..y2 of page 0 to page 1 at y3, show page 1
+
+vidCopyRows0To1AndShow proc far
                 add     sp, 2
                 push    es
                 mov     bx, es:20h
@@ -1028,7 +1199,7 @@ loc_107FA:                              ; CODE XREF: seg000:0801↓j
                 assume es:nothing
                 cld
 
-loc_10877:                              ; CODE XREF: seg000:0887↓j
+loc_10877:                              ; CODE XREF: vidCopyRows0To1AndShow+67↓j
                 mov     cx, 50h ; 'P'
                 push    di
                 push    si
@@ -1045,15 +1216,22 @@ loc_10877:                              ; CODE XREF: seg000:0887↓j
                 jz      short loc_1089D
                 cmp     byte ptr es:955h, 0
                 jl      short loc_1089D
-                call    sub_11208
+                call    vid_cursorRestoreBackground ; put the saved background back at (ctx+962h,964h)
 
-loc_1089D:                              ; CODE XREF: seg000:0890↑j
-                                        ; seg000:0898↑j
+loc_1089D:                              ; CODE XREF: vidCopyRows0To1AndShow+70↑j
+                                        ; vidCopyRows0To1AndShow+78↑j
                 mov     cl, 1
                 mov     es:957h, cl
-                call    sub_1141F
+                call    vid_setPageAndDelay ; INT 10h AH=5 (AL=CL page), then busy-wait ctx+8
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidCopyRows0To1AndShow endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=1E: copy whole page 1 to page 0 and display page 0
+
+vidCopyScreen1To0AndShow proc far
                 add     sp, 2
                 push    es
                 mov     ax, 105h
@@ -1069,7 +1247,7 @@ loc_1089D:                              ; CODE XREF: seg000:0890↑j
                 cld
                 mov     bx, 15Eh
 
-loc_108C6:                              ; CODE XREF: seg000:08D6↓j
+loc_108C6:                              ; CODE XREF: vidCopyScreen1To0AndShow+2C↓j
                 mov     cx, 50h ; 'P'
                 push    di
                 push    si
@@ -1083,18 +1261,25 @@ loc_108C6:                              ; CODE XREF: seg000:08D6↓j
                 pop     es
                 assume es:nothing
                 xor     cl, cl
-                call    sub_1141F
+                call    vid_setPageAndDelay ; INT 10h AH=5 (AL=CL page), then busy-wait ctx+8
                 cmp     byte ptr es:952h, 0
                 jz      short loc_108F1
                 cmp     byte ptr es:955h, 0
                 jl      short loc_108F1
-                call    sub_11208
+                call    vid_cursorRestoreBackground ; put the saved background back at (ctx+962h,964h)
 
-loc_108F1:                              ; CODE XREF: seg000:08E4↑j
-                                        ; seg000:08EC↑j
+loc_108F1:                              ; CODE XREF: vidCopyScreen1To0AndShow+3A↑j
+                                        ; vidCopyScreen1To0AndShow+42↑j
                 mov     byte ptr es:957h, 0
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidCopyScreen1To0AndShow endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=1F: wipe page 1 onto page 0 from the centre columns outward
+
+vidRevealCenterOut1To0 proc far
                 add     sp, 2
                 push    es
                 mov     ax, 105h
@@ -1111,12 +1296,12 @@ loc_108F1:                              ; CODE XREF: seg000:08E4↑j
                 mov     ds:11h, bx
                 cld
 
-loc_10920:                              ; CODE XREF: seg000:0973↓j
+loc_10920:                              ; CODE XREF: vidRevealCenterOut1To0+79↓j
                 pop     es
                 mov     cx, es:8
                 push    es
 
-loc_10927:                              ; CODE XREF: seg000:loc_10927↓j
+loc_10927:                              ; CODE XREF: vidRevealCenterOut1To0:loc_10927↓j
                 loop    loc_10927
                 mov     ax, 0A000h
                 mov     es, ax
@@ -1127,7 +1312,7 @@ loc_10927:                              ; CODE XREF: seg000:loc_10927↓j
                 mov     ds, ax
                 mov     cx, 15Eh
 
-loc_1093C:                              ; CODE XREF: seg000:0943↓j
+loc_1093C:                              ; CODE XREF: vidRevealCenterOut1To0+49↓j
                 movsb
                 add     di, 4Fh ; 'O'
                 add     si, 4Fh ; 'O'
@@ -1141,7 +1326,7 @@ loc_1093C:                              ; CODE XREF: seg000:0943↓j
                 assume ds:nothing
                 mov     cx, 15Eh
 
-loc_10954:                              ; CODE XREF: seg000:095B↓j
+loc_10954:                              ; CODE XREF: vidRevealCenterOut1To0+61↓j
                 movsb
                 add     di, 4Fh ; 'O'
                 add     si, 4Fh ; 'O'
@@ -1157,7 +1342,14 @@ loc_10954:                              ; CODE XREF: seg000:095B↓j
                 pop     es
                 assume es:nothing
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidRevealCenterOut1To0 endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=20: wipe page 1 onto page 0 right to left, delay ctx+0Ah
+
+vidRevealRightToLeft1To0 proc far
                 add     sp, 2
                 push    es
                 mov     bx, es:0Ah
@@ -1174,16 +1366,16 @@ loc_10954:                              ; CODE XREF: seg000:095B↓j
                 mov     ds, ax
                 assume ds:nothing
 
-loc_10997:                              ; CODE XREF: seg000:09B1↓j
+loc_10997:                              ; CODE XREF: vidRevealRightToLeft1To0+38↓j
                 push    di
                 push    si
                 mov     cx, bx
 
-loc_1099B:                              ; CODE XREF: seg000:loc_1099B↓j
+loc_1099B:                              ; CODE XREF: vidRevealRightToLeft1To0:loc_1099B↓j
                 loop    loc_1099B
                 mov     cx, 15Eh
 
-loc_109A0:                              ; CODE XREF: seg000:09A7↓j
+loc_109A0:                              ; CODE XREF: vidRevealRightToLeft1To0+2E↓j
                 movsb
                 add     di, 4Fh ; 'O'
                 add     si, 4Fh ; 'O'
@@ -1197,7 +1389,14 @@ loc_109A0:                              ; CODE XREF: seg000:09A7↓j
                 pop     es
                 assume es:nothing
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidRevealRightToLeft1To0 endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=21: wipe page 1 onto page 0 from both edges inward
+
+vidRevealEdgesIn1To0 proc far
                 add     sp, 2
                 push    es
                 mov     ax, 105h
@@ -1214,12 +1413,12 @@ loc_109A0:                              ; CODE XREF: seg000:09A7↓j
                 mov     ds:11h, bx
                 cld
 
-loc_109DD:                              ; CODE XREF: seg000:0A30↓j
+loc_109DD:                              ; CODE XREF: vidRevealEdgesIn1To0+79↓j
                 pop     es
                 mov     cx, es:8
                 push    es
 
-loc_109E4:                              ; CODE XREF: seg000:loc_109E4↓j
+loc_109E4:                              ; CODE XREF: vidRevealEdgesIn1To0:loc_109E4↓j
                 loop    loc_109E4
                 mov     ax, 0A000h
                 mov     es, ax
@@ -1230,7 +1429,7 @@ loc_109E4:                              ; CODE XREF: seg000:loc_109E4↓j
                 mov     ds, ax
                 mov     cx, 15Eh
 
-loc_109F9:                              ; CODE XREF: seg000:0A00↓j
+loc_109F9:                              ; CODE XREF: vidRevealEdgesIn1To0+49↓j
                 movsb
                 add     di, 4Fh ; 'O'
                 add     si, 4Fh ; 'O'
@@ -1244,7 +1443,7 @@ loc_109F9:                              ; CODE XREF: seg000:0A00↓j
                 assume ds:nothing
                 mov     cx, 15Eh
 
-loc_10A11:                              ; CODE XREF: seg000:0A18↓j
+loc_10A11:                              ; CODE XREF: vidRevealEdgesIn1To0+61↓j
                 movsb
                 add     di, 4Fh ; 'O'
                 add     si, 4Fh ; 'O'
@@ -1260,7 +1459,14 @@ loc_10A11:                              ; CODE XREF: seg000:0A18↓j
                 pop     es
                 assume es:nothing
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidRevealEdgesIn1To0 endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=23: copy full scanlines y1..y2 of page 1 to page 0 at y3, show page 0
+
+vidCopyRows1To0AndShow proc far
                 add     sp, 2
                 push    es
                 mov     bx, es:20h
@@ -1300,7 +1506,7 @@ loc_10A11:                              ; CODE XREF: seg000:0A18↓j
                 assume es:nothing
                 cld
 
-loc_10A8D:                              ; CODE XREF: seg000:0A9D↓j
+loc_10A8D:                              ; CODE XREF: vidCopyRows1To0AndShow+67↓j
                 mov     cx, 50h ; 'P'
                 push    di
                 push    si
@@ -1317,89 +1523,117 @@ loc_10A8D:                              ; CODE XREF: seg000:0A9D↓j
                 jz      short loc_10AB3
                 cmp     byte ptr es:955h, 0
                 jl      short loc_10AB3
-                call    sub_11208
+                call    vid_cursorRestoreBackground ; put the saved background back at (ctx+962h,964h)
 
-loc_10AB3:                              ; CODE XREF: seg000:0AA6↑j
-                                        ; seg000:0AAE↑j
+loc_10AB3:                              ; CODE XREF: vidCopyRows1To0AndShow+70↑j
+                                        ; vidCopyRows1To0AndShow+78↑j
                 mov     byte ptr es:31h, 0
                 xor     cl, cl
                 mov     es:957h, cl
-                call    sub_1141F
+                call    vid_setPageAndDelay ; INT 10h AH=5 (AL=CL page), then busy-wait ctx+8
                 jmp     loc_10268
-; ---------------------------------------------------------------------------
+vidCopyRows1To0AndShow endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=28: cursor show (nesting counter ctx+955h, starts at -1 = hidden)
+
+vidMouseShow    proc far
                 pop     ax
                 cmp     byte ptr es:952h, 0
                 jz      short loc_10AE6
                 add     byte ptr es:955h, 1
                 jl      short loc_10AE6
                 mov     byte ptr es:955h, 0
-                call    sub_110A8
-                call    sub_11145
-                call    sub_10FEF
+                call    vid_cursorSaveBackground ; save the 16x16 under (ctx+966h,968h) into cursor store slot 0
+                call    vid_cursorStageShape ; load cursor shape ctx+956h into the off-screen staging area (0,360)
+                call    vid_cursorBlitKeyed ; draw the staged 16x16 cursor at the drawn position, skipping colour 0
 
-loc_10AE6:                              ; CODE XREF: seg000:0ACD↑j
-                                        ; seg000:0AD5↑j
+loc_10AE6:                              ; CODE XREF: vidMouseShow+7↑j
+                                        ; vidMouseShow+F↑j
                 jmp     loc_101E7
-; ---------------------------------------------------------------------------
+vidMouseShow    endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=29: cursor hide (nesting counter)
+
+vidMouseHide    proc far
                 pop     ax
                 cmp     byte ptr es:952h, 0
                 jz      short loc_10B02
                 cmp     byte ptr es:955h, 0
                 jl      short loc_10AFD
-                call    sub_11208
+                call    vid_cursorRestoreBackground ; put the saved background back at (ctx+962h,964h)
 
-loc_10AFD:                              ; CODE XREF: seg000:0AF8↑j
+loc_10AFD:                              ; CODE XREF: vidMouseHide+F↑j
                 dec     byte ptr es:955h
 
-loc_10B02:                              ; CODE XREF: seg000:0AF0↑j
+loc_10B02:                              ; CODE XREF: vidMouseHide+7↑j
                 jmp     loc_101E7
-; ---------------------------------------------------------------------------
+vidMouseHide    endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=2A: mouse clip rect = (x1,y1,x2,y2); clamps position
+
+vidMouseSetBounds proc far
                 pop     ax
                 cmp     byte ptr es:952h, 0
                 jz      short loc_10B76
                 cmp     byte ptr es:955h, 0
                 jl      short loc_10B19
-                call    sub_11208
+                call    vid_cursorRestoreBackground ; put the saved background back at (ctx+962h,964h)
 
-loc_10B19:                              ; CODE XREF: seg000:0B14↑j
+loc_10B19:                              ; CODE XREF: vidMouseSetBounds+F↑j
                 mov     ax, es:1Ah
                 mov     es:95Ah, ax
                 cmp     es:966h, ax
                 jge     short loc_10B2C
                 mov     es:966h, ax
 
-loc_10B2C:                              ; CODE XREF: seg000:0B26↑j
+loc_10B2C:                              ; CODE XREF: vidMouseSetBounds+21↑j
                 mov     ax, es:1Eh
                 mov     es:95Ch, ax
                 cmp     es:966h, ax
                 jle     short loc_10B3F
                 mov     es:966h, ax
 
-loc_10B3F:                              ; CODE XREF: seg000:0B39↑j
+loc_10B3F:                              ; CODE XREF: vidMouseSetBounds+34↑j
                 mov     ax, es:1Ch
                 mov     es:95Eh, ax
                 cmp     es:968h, ax
                 jge     short loc_10B52
                 mov     es:968h, ax
 
-loc_10B52:                              ; CODE XREF: seg000:0B4C↑j
+loc_10B52:                              ; CODE XREF: vidMouseSetBounds+47↑j
                 mov     ax, es:20h
                 mov     es:960h, ax
                 cmp     es:968h, ax
                 jle     short loc_10B65
                 mov     es:968h, ax
 
-loc_10B65:                              ; CODE XREF: seg000:0B5F↑j
+loc_10B65:                              ; CODE XREF: vidMouseSetBounds+5A↑j
                 cmp     byte ptr es:955h, 0
                 jl      short loc_10B76
-                call    sub_110A8
-                call    sub_11145
-                call    sub_10FEF
+                call    vid_cursorSaveBackground ; save the 16x16 under (ctx+966h,968h) into cursor store slot 0
+                call    vid_cursorStageShape ; load cursor shape ctx+956h into the off-screen staging area (0,360)
+                call    vid_cursorBlitKeyed ; draw the staged 16x16 cursor at the drawn position, skipping colour 0
 
-loc_10B76:                              ; CODE XREF: seg000:0B0C↑j
-                                        ; seg000:0B6B↑j
+loc_10B76:                              ; CODE XREF: vidMouseSetBounds+7↑j
+                                        ; vidMouseSetBounds+66↑j
                 jmp     loc_101E7
-; ---------------------------------------------------------------------------
+vidMouseSetBounds endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=2B: redraw cursor if the mouse moved (ctx+953h bit 7)
+
+vidMouseRefresh proc far
                 pop     ax
                 cmp     byte ptr es:952h, 0
                 jz      short loc_10BA4
@@ -1407,90 +1641,107 @@ loc_10B76:                              ; CODE XREF: seg000:0B0C↑j
                 jl      short loc_10B9E
                 test    byte ptr es:953h, 80h
                 jz      short loc_10BA4
-                call    sub_11208
-                call    sub_110A8
-                call    sub_11145
-                call    sub_10FEF
+                call    vid_cursorRestoreBackground ; put the saved background back at (ctx+962h,964h)
+                call    vid_cursorSaveBackground ; save the 16x16 under (ctx+966h,968h) into cursor store slot 0
+                call    vid_cursorStageShape ; load cursor shape ctx+956h into the off-screen staging area (0,360)
+                call    vid_cursorBlitKeyed ; draw the staged 16x16 cursor at the drawn position, skipping colour 0
 
-loc_10B9E:                              ; CODE XREF: seg000:0B88↑j
+loc_10B9E:                              ; CODE XREF: vidMouseRefresh+F↑j
                 and     byte ptr es:953h, 7Fh
 
-loc_10BA4:                              ; CODE XREF: seg000:0B80↑j
-                                        ; seg000:0B90↑j
+loc_10BA4:                              ; CODE XREF: vidMouseRefresh+7↑j
+                                        ; vidMouseRefresh+17↑j
                 jmp     loc_101E7
-; ---------------------------------------------------------------------------
+vidMouseRefresh endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=2C: move mouse to (x1,y1), clamped to bounds
+
+vidMouseSetPos  proc far
                 pop     ax
                 cmp     byte ptr es:952h, 0
                 jnz     short loc_10BB2
                 jmp     short loc_10C10
 ; ---------------------------------------------------------------------------
 
-loc_10BB2:                              ; CODE XREF: seg000:0BAE↑j
+loc_10BB2:                              ; CODE XREF: vidMouseSetPos+7↑j
                 cmp     byte ptr es:955h, 0
                 jl      short loc_10BBD
-                call    sub_11208
+                call    vid_cursorRestoreBackground ; put the saved background back at (ctx+962h,964h)
 
-loc_10BBD:                              ; CODE XREF: seg000:0BB8↑j
+loc_10BBD:                              ; CODE XREF: vidMouseSetPos+11↑j
                 mov     ax, es:1Ah
                 cmp     ax, es:95Ah
                 jge     short loc_10BCC
                 mov     ax, es:95Ah
 
-loc_10BCC:                              ; CODE XREF: seg000:0BC6↑j
+loc_10BCC:                              ; CODE XREF: vidMouseSetPos+1F↑j
                 cmp     ax, es:95Ch
                 jle     short loc_10BD7
                 mov     ax, es:95Ch
 
-loc_10BD7:                              ; CODE XREF: seg000:0BD1↑j
+loc_10BD7:                              ; CODE XREF: vidMouseSetPos+2A↑j
                 mov     es:966h, ax
                 mov     ax, es:1Ch
                 cmp     ax, es:95Eh
                 jge     short loc_10BEA
                 mov     ax, es:95Eh
 
-loc_10BEA:                              ; CODE XREF: seg000:0BE4↑j
+loc_10BEA:                              ; CODE XREF: vidMouseSetPos+3D↑j
                 cmp     ax, es:960h
                 jle     short loc_10BF5
                 mov     ax, es:960h
 
-loc_10BF5:                              ; CODE XREF: seg000:0BEF↑j
+loc_10BF5:                              ; CODE XREF: vidMouseSetPos+48↑j
                 mov     es:968h, ax
                 cmp     byte ptr es:955h, 0
                 jl      short loc_10C0A
-                call    sub_110A8
-                call    sub_11145
-                call    sub_10FEF
+                call    vid_cursorSaveBackground ; save the 16x16 under (ctx+966h,968h) into cursor store slot 0
+                call    vid_cursorStageShape ; load cursor shape ctx+956h into the off-screen staging area (0,360)
+                call    vid_cursorBlitKeyed ; draw the staged 16x16 cursor at the drawn position, skipping colour 0
 
-loc_10C0A:                              ; CODE XREF: seg000:0BFF↑j
+loc_10C0A:                              ; CODE XREF: vidMouseSetPos+58↑j
                 and     byte ptr es:953h, 7Fh
 
-loc_10C10:                              ; CODE XREF: seg000:0BB0↑j
+loc_10C10:                              ; CODE XREF: vidMouseSetPos+9↑j
                 jmp     loc_101E7
-; ---------------------------------------------------------------------------
+vidMouseSetPos  endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 62h AH=2D: AL = cursor mode (ctx+958h): 0 arrow, 1 hotspot box, 2 directional
+
+vidMouseSetCursorMode proc far
                 pop     ax
                 cmp     byte ptr es:952h, 0
                 jl      short loc_10C1F
                 jmp     loc_101E7
 ; ---------------------------------------------------------------------------
 
-loc_10C1F:                              ; CODE XREF: seg000:0C1A↑j
+loc_10C1F:                              ; CODE XREF: vidMouseSetCursorMode+7↑j
                 mov     es:958h, al
-                call    sub_114FD
+                call    vid_mouseUpdateCursorShape ; choose cursor shape ctx+956h from mode ctx+958h and position
                 cmp     byte ptr es:955h, 0
                 jl      short loc_10C3A
-                call    sub_11208
-                call    sub_110A8
-                call    sub_11145
-                call    sub_10FEF
+                call    vid_cursorRestoreBackground ; put the saved background back at (ctx+962h,964h)
+                call    vid_cursorSaveBackground ; save the 16x16 under (ctx+966h,968h) into cursor store slot 0
+                call    vid_cursorStageShape ; load cursor shape ctx+956h into the off-screen staging area (0,360)
+                call    vid_cursorBlitKeyed ; draw the staged 16x16 cursor at the drawn position, skipping colour 0
 
-loc_10C3A:                              ; CODE XREF: seg000:0C2C↑j
+loc_10C3A:                              ; CODE XREF: vidMouseSetCursorMode+19↑j
                 jmp     loc_101E7
+vidMouseSetCursorMode endp ; sp-analysis failed
+
 
 ; =============== S U B R O U T I N E =======================================
 
+; text cell draw: char ctx+2Ch at col ctx+2Ah / row ctx+2Bh, font ctx+35h, masks ctx+2Eh/2Fh
 ; Attributes: bp-based frame
 
-sub_10C3D       proc near               ; CODE XREF: seg000:0359↑p
+vid_drawCharCell proc near              ; CODE XREF: vidDrawChar+3↑p
 
 var_C           = word ptr -0Ch
 var_A           = word ptr -0Ah
@@ -1522,14 +1773,14 @@ var_2           = word ptr -2
                 jmp     short loc_10C92
 ; ---------------------------------------------------------------------------
 
-loc_10C80:                              ; CODE XREF: sub_10C3D+2D↑j
+loc_10C80:                              ; CODE XREF: vid_drawCharCell+2D↑j
                 mov     cx, es:3Eh
                 mov     ax, cx
                 mov     bx, es:40h
                 push    bx
                 mov     bx, es:42h
 
-loc_10C92:                              ; CODE XREF: sub_10C3D+41↑j
+loc_10C92:                              ; CODE XREF: vid_drawCharCell+41↑j
                 mul     byte ptr es:2Bh
                 mov     [bp+var_6], ax
                 mov     ax, [bp+var_8]
@@ -1539,7 +1790,7 @@ loc_10C92:                              ; CODE XREF: sub_10C3D+41↑j
                 push    cx
                 mov     ax, [bp+var_6]
                 mov     bx, [bp+var_4]
-                call    sub_112C0
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
                 inc     cl
                 and     cl, 7
                 mov     ch, 0FFh
@@ -1573,7 +1824,7 @@ loc_10C92:                              ; CODE XREF: sub_10C3D+41↑j
                 jnz     short loc_10CF0
                 mov     al, 8
 
-loc_10CDD:                              ; CODE XREF: sub_10C3D+AF↓j
+loc_10CDD:                              ; CODE XREF: vid_drawCharCell+AF↓j
                 mov     ah, es:[di]
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; set/reset.
@@ -1590,8 +1841,8 @@ loc_10CDD:                              ; CODE XREF: sub_10C3D+AF↓j
                 jmp     short loc_10D1F
 ; ---------------------------------------------------------------------------
 
-loc_10CF0:                              ; CODE XREF: sub_10C3D+9C↑j
-                                        ; sub_10C3D+E0↓j
+loc_10CF0:                              ; CODE XREF: vid_drawCharCell+9C↑j
+                                        ; vid_drawCharCell+E0↓j
                 push    cx
                 mov     cx, [bp+var_2]
                 mov     al, es:[di]
@@ -1626,18 +1877,19 @@ loc_10CF0:                              ; CODE XREF: sub_10C3D+9C↑j
                 pop     cx
                 loop    loc_10CF0
 
-loc_10D1F:                              ; CODE XREF: sub_10C3D+B1↑j
+loc_10D1F:                              ; CODE XREF: vid_drawCharCell+B1↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_10C3D       endp
+vid_drawCharCell endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; screen rect -> memory (ctx+10h rows, ctx+12h bytes wide, mask ctx+14h) at ctx+16h:18h, no header
 ; Attributes: bp-based frame
 
-sub_10D23       proc near               ; CODE XREF: seg000:0362↑p
+vid_getImageRaw proc near               ; CODE XREF: vidGetImageRaw+3↑p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1662,7 +1914,7 @@ var_2           = word ptr -2
                 push    si
                 mov     ax, es:1Ch
                 mov     bx, es:1Ah
-                call    sub_112C0
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
                 push    es
                 pop     ds
                 inc     cl
@@ -1683,18 +1935,18 @@ var_2           = word ptr -2
                                         ; 5: 1=use CGA mid-res map (2-bits/pixel)
                 mov     ax, 304h
 
-loc_10D71:                              ; CODE XREF: sub_10D23+74↓j
+loc_10D71:                              ; CODE XREF: vid_getImageRaw+74↓j
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; unknown register
                 push    ax
                 push    [bp+var_2]
                 push    si
 
-loc_10D77:                              ; CODE XREF: sub_10D23+6B↓j
+loc_10D77:                              ; CODE XREF: vid_getImageRaw+6B↓j
                 mov     bx, [bp+var_4]
                 push    si
 
-loc_10D7B:                              ; CODE XREF: sub_10D23+5E↓j
+loc_10D7B:                              ; CODE XREF: vid_getImageRaw+5E↓j
                 lodsw
                 dec     si
                 rol     ax, cl
@@ -1719,14 +1971,15 @@ loc_10D7B:                              ; CODE XREF: sub_10D23+5E↓j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_10D23       endp
+vid_getImageRaw endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; read pixel via the 4 read-map planes; AL=colour
 
-sub_10DA2       proc near               ; CODE XREF: seg000:028E↑p
-                                        ; seg000:0649↑p ...
+vid_getPixelRaw proc near               ; CODE XREF: vidGetPixel+10↑p
+                                        ; vidCopyRectKeyed+3B↑p ...
                 mov     ch, ah
                 shl     ch, cl
                 mov     si, bx
@@ -1734,7 +1987,7 @@ sub_10DA2       proc near               ; CODE XREF: seg000:028E↑p
                 mov     dx, 3CEh
                 mov     ax, 304h
 
-loc_10DB0:                              ; CODE XREF: sub_10DA2+1A↓j
+loc_10DB0:                              ; CODE XREF: vid_getPixelRaw+1A↓j
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; unknown register
                 mov     bh, es:[si]
@@ -1745,15 +1998,16 @@ loc_10DB0:                              ; CODE XREF: sub_10DA2+1A↓j
                 jge     short loc_10DB0
                 mov     al, bl
                 retn
-sub_10DA2       endp
+vid_getPixelRaw endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; screen rect (x1,y1,x2,y2) -> memory ctx+16h:18h with 5-byte header (rows,w,mask)
 ; Attributes: bp-based frame
 
-sub_10DC1       proc near               ; CODE XREF: seg000:0372↑p
-                                        ; sub_110A8+58↓p
+vid_getImage    proc near               ; CODE XREF: vidGetImage+3↑p
+                                        ; vid_cursorSaveBackground+58↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1787,7 +2041,7 @@ var_2           = word ptr -2
                 push    word ptr es:18h
                 mov     ax, es:1Ch
                 mov     bx, es:1Ah
-                call    sub_112C0
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
                 xor     cl, 7
                 push    es
                 pop     ds
@@ -1814,18 +2068,18 @@ var_2           = word ptr -2
                                         ; 5: 1=use CGA mid-res map (2-bits/pixel)
                 mov     ax, 304h
 
-loc_10E2B:                              ; CODE XREF: sub_10DC1+90↓j
+loc_10E2B:                              ; CODE XREF: vid_getImage+90↓j
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; unknown register
                 push    ax
                 push    [bp+var_2]
                 push    si
 
-loc_10E31:                              ; CODE XREF: sub_10DC1+87↓j
+loc_10E31:                              ; CODE XREF: vid_getImage+87↓j
                 mov     bx, [bp+var_4]
                 push    si
 
-loc_10E35:                              ; CODE XREF: sub_10DC1+7A↓j
+loc_10E35:                              ; CODE XREF: vid_getImage+7A↓j
                 lodsw
                 dec     si
                 rol     ax, cl
@@ -1851,15 +2105,16 @@ loc_10E35:                              ; CODE XREF: sub_10DC1+7A↓j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_10DC1       endp
+vid_getImage    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; Bresenham line (x1,y1)-(x2,y2) colour ctx+30h; vertical/horizontal fast paths
 ; Attributes: bp-based frame
 
-sub_10E5D       proc near               ; CODE XREF: seg000:029C↑p
-                                        ; seg000:02C4↑p ...
+vid_lineImpl    proc near               ; CODE XREF: vidLine+3↑p
+                                        ; vidRect+23↑p ...
 
 var_C           = word ptr -0Ch
 var_A           = word ptr -0Ah
@@ -1903,7 +2158,7 @@ var_6           = word ptr -6
                 xchg    bx, es:1Ch
                 mov     es:20h, bx
 
-loc_10EAD:                              ; CODE XREF: sub_10E5D+2E↑j
+loc_10EAD:                              ; CODE XREF: vid_lineImpl+2E↑j
                 mov     bx, es:20h
                 sub     bx, es:1Ch
                 jz      short loc_10F25
@@ -1911,7 +2166,7 @@ loc_10EAD:                              ; CODE XREF: sub_10E5D+2E↑j
                 neg     bx
                 neg     si
 
-loc_10EBF:                              ; CODE XREF: sub_10E5D+5C↑j
+loc_10EBF:                              ; CODE XREF: vid_lineImpl+5C↑j
                 mov     [bp+var_6], si
                 mov     [bp+var_C], 0F86h
                 cmp     bx, cx
@@ -1919,7 +2174,7 @@ loc_10EBF:                              ; CODE XREF: sub_10E5D+5C↑j
                 mov     [bp+var_C], 0FC5h
                 xchg    bx, cx
 
-loc_10ED2:                              ; CODE XREF: sub_10E5D+6C↑j
+loc_10ED2:                              ; CODE XREF: vid_lineImpl+6C↑j
                 shl     bx, 1
                 mov     [bp+var_8], bx
                 sub     bx, cx
@@ -1929,7 +2184,7 @@ loc_10ED2:                              ; CODE XREF: sub_10E5D+6C↑j
                 push    cx
                 mov     ax, es:1Ch
                 mov     bx, es:1Ah
-                call    sub_112C0
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
                 mov     di, bx
                 shl     ah, cl
                 mov     bl, ah
@@ -1938,7 +2193,7 @@ loc_10ED2:                              ; CODE XREF: sub_10E5D+6C↑j
                 jmp     [bp+var_C]
 ; ---------------------------------------------------------------------------
 
-loc_10EF8:                              ; CODE XREF: sub_10E5D+2C↑j
+loc_10EF8:                              ; CODE XREF: vid_lineImpl+2C↑j
                 mov     ax, es:1Ch
                 mov     bx, es:20h
                 mov     cx, bx
@@ -1947,31 +2202,31 @@ loc_10EF8:                              ; CODE XREF: sub_10E5D+2C↑j
                 neg     cx
                 mov     bx, ax
 
-loc_10F0B:                              ; CODE XREF: sub_10E5D+A8↑j
+loc_10F0B:                              ; CODE XREF: vid_lineImpl+A8↑j
                 inc     cx
                 mov     bx, es:1Ah
                 push    cx
-                call    sub_112C0
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
                 shl     ah, cl
                 mov     al, 8
                 out     dx, ax
                 pop     cx
 
-loc_10F1B:                              ; CODE XREF: sub_10E5D+C3↓j
+loc_10F1B:                              ; CODE XREF: vid_lineImpl+C3↓j
                 or      es:[bx], al
                 add     bx, si
                 loop    loc_10F1B
                 jmp     loc_10FE3
 ; ---------------------------------------------------------------------------
 
-loc_10F25:                              ; CODE XREF: sub_10E5D+5A↑j
+loc_10F25:                              ; CODE XREF: vid_lineImpl+5A↑j
                 push    ds
                 push    word ptr es:1Eh
                 mov     ax, es:1Ch
                 mov     bx, es:1Ah
                 push    bx
                 push    word ptr es:1Eh
-                call    sub_112C0
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
                 mov     di, bx
                 mov     dh, ah
                 not     dh
@@ -2003,7 +2258,7 @@ loc_10F25:                              ; CODE XREF: sub_10E5D+5A↑j
                 jmp     short loc_10F7F
 ; ---------------------------------------------------------------------------
 
-loc_10F75:                              ; CODE XREF: sub_10E5D+112↑j
+loc_10F75:                              ; CODE XREF: vid_lineImpl+112↑j
                 mov     ah, bh
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; set/reset.
@@ -2011,13 +2266,13 @@ loc_10F75:                              ; CODE XREF: sub_10E5D+112↑j
                 movsb
                 dec     cx
 
-loc_10F7A:                              ; CODE XREF: sub_10E5D+10E↑j
+loc_10F7A:                              ; CODE XREF: vid_lineImpl+10E↑j
                 mov     ah, 0FFh
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; unknown register
                 rep movsb
 
-loc_10F7F:                              ; CODE XREF: sub_10E5D+116↑j
+loc_10F7F:                              ; CODE XREF: vid_lineImpl+116↑j
                 mov     ah, bl
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; set/reset.
@@ -2027,11 +2282,11 @@ loc_10F7F:                              ; CODE XREF: sub_10E5D+116↑j
                 jmp     short loc_10FE3
 ; ---------------------------------------------------------------------------
 
-loc_10F86:                              ; CODE XREF: sub_10E5D+14A↓j
-                                        ; sub_10E5D+15A↓j ...
+loc_10F86:                              ; CODE XREF: vid_lineImpl+14A↓j
+                                        ; vid_lineImpl+15A↓j ...
                 mov     ah, bl
 
-loc_10F88:                              ; CODE XREF: sub_10E5D+138↓j
+loc_10F88:                              ; CODE XREF: vid_lineImpl+138↓j
                 or      ah, bl
                 ror     bl, 1
                 jb      short loc_10FAB
@@ -2044,7 +2299,7 @@ loc_10F88:                              ; CODE XREF: sub_10E5D+138↓j
                 jmp     short loc_10FE3
 ; ---------------------------------------------------------------------------
 
-loc_10F9D:                              ; CODE XREF: sub_10E5D+133↑j
+loc_10F9D:                              ; CODE XREF: vid_lineImpl+133↑j
                 add     si, [bp+var_A]
                 out     dx, ax
                 or      es:[di], al
@@ -2053,7 +2308,7 @@ loc_10F9D:                              ; CODE XREF: sub_10E5D+133↑j
                 jmp     short loc_10FE3
 ; ---------------------------------------------------------------------------
 
-loc_10FAB:                              ; CODE XREF: sub_10E5D+12F↑j
+loc_10FAB:                              ; CODE XREF: vid_lineImpl+12F↑j
                 out     dx, ax
                 or      es:[di], al
                 inc     di
@@ -2064,7 +2319,7 @@ loc_10FAB:                              ; CODE XREF: sub_10E5D+12F↑j
                 jmp     short loc_10FE3
 ; ---------------------------------------------------------------------------
 
-loc_10FBB:                              ; CODE XREF: sub_10E5D+155↑j
+loc_10FBB:                              ; CODE XREF: vid_lineImpl+155↑j
                 add     si, [bp+var_A]
                 add     di, [bp+var_6]
                 loop    loc_10F86
@@ -2072,8 +2327,8 @@ loc_10FBB:                              ; CODE XREF: sub_10E5D+155↑j
 ; ---------------------------------------------------------------------------
                 mov     bx, [bp+var_6]
 
-loc_10FC8:                              ; CODE XREF: sub_10E5D+178↓j
-                                        ; sub_10E5D+184↓j
+loc_10FC8:                              ; CODE XREF: vid_lineImpl+178↓j
+                                        ; vid_lineImpl+184↓j
                 out     dx, ax
                 or      es:[di], al
                 add     di, bx
@@ -2084,14 +2339,14 @@ loc_10FC8:                              ; CODE XREF: sub_10E5D+178↓j
                 jmp     short loc_10FE3
 ; ---------------------------------------------------------------------------
 
-loc_10FD9:                              ; CODE XREF: sub_10E5D+173↑j
+loc_10FD9:                              ; CODE XREF: vid_lineImpl+173↑j
                 add     si, [bp+var_A]
                 ror     ah, 1
                 adc     di, 0
                 loop    loc_10FC8
 
-loc_10FE3:                              ; CODE XREF: sub_10E5D+C5↑j
-                                        ; sub_10E5D+127↑j ...
+loc_10FE3:                              ; CODE XREF: vid_lineImpl+C5↑j
+                                        ; vid_lineImpl+127↑j ...
                 add     sp, 8
                 pop     di
                 pop     si
@@ -2101,14 +2356,15 @@ loc_10FE3:                              ; CODE XREF: sub_10E5D+C5↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_10E5D       endp
+vid_lineImpl    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw the staged 16x16 cursor at the drawn position, skipping colour 0
 
-sub_10FEF       proc near               ; CODE XREF: seg000:05F4↑p
-                                        ; seg000:0AE3↑p ...
+vid_cursorBlitKeyed proc near           ; CODE XREF: vidShowPage+2C↑p
+                                        ; vidMouseShow+1D↑p ...
                 mov     al, es:957h
                 mov     ah, es:31h
                 push    ax
@@ -2122,20 +2378,20 @@ sub_10FEF       proc near               ; CODE XREF: seg000:05F4↑p
                 mov     es:24h, ax
                 mov     cx, 10h
 
-loc_11023:                              ; CODE XREF: sub_10FEF+89↓j
+loc_11023:                              ; CODE XREF: vid_cursorBlitKeyed+89↓j
                 mov     word ptr es:1Ah, 0
                 mov     ax, es:962h
                 mov     es:22h, ax
                 push    cx
                 mov     cx, 10h
 
-loc_11036:                              ; CODE XREF: sub_10FEF+7C↓j
+loc_11036:                              ; CODE XREF: vid_cursorBlitKeyed+7C↓j
                 push    cx
                 mov     ax, es:1Ch
                 mov     bx, es:1Ah
                 push    es
-                call    sub_112C0
-                call    sub_10DA2
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
+                call    vid_getPixelRaw ; read pixel via the 4 read-map planes; AL=colour
                 pop     es
                 mov     ds:6, al
                 or      al, al
@@ -2143,11 +2399,11 @@ loc_11036:                              ; CODE XREF: sub_10FEF+7C↓j
                 mov     ax, es:24h
                 mov     bx, es:22h
                 push    es
-                call    sub_112C0
-                call    sub_1142D
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
+                call    vid_putPixelRaw ; write one pixel (GC set/reset) colour ds:6
                 pop     es
 
-loc_11060:                              ; CODE XREF: sub_10FEF+5E↑j
+loc_11060:                              ; CODE XREF: vid_cursorBlitKeyed+5E↑j
                 inc     word ptr es:22h
                 inc     word ptr es:1Ah
                 pop     cx
@@ -2184,14 +2440,15 @@ loc_11060:                              ; CODE XREF: sub_10FEF+5E↑j
                 pop     ax
                 mov     es:31h, ah
                 retn
-sub_10FEF       endp
+vid_cursorBlitKeyed endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; save the 16x16 under (ctx+966h,968h) into cursor store slot 0
 
-sub_110A8       proc near               ; CODE XREF: seg000:05EE↑p
-                                        ; seg000:0ADD↑p ...
+vid_cursorSaveBackground proc near      ; CODE XREF: vidShowPage+26↑p
+                                        ; vidMouseShow+17↑p ...
                 mov     al, es:957h
                 mov     ah, es:31h
                 push    ax
@@ -2214,7 +2471,7 @@ sub_110A8       proc near               ; CODE XREF: seg000:05EE↑p
                 mov     es:16h, ax
                 mov     ax, es:970h
                 mov     es:18h, ax
-                call    sub_10DC1
+                call    vid_getImage    ; screen rect (x1,y1,x2,y2) -> memory ctx+16h:18h with 5-byte header (rows,w,mask)
                 mov     word ptr es:10h, 20h ; ' '
                 mov     word ptr es:12h, 4
                 mov     byte ptr es:14h, 0FFh
@@ -2246,14 +2503,15 @@ sub_110A8       proc near               ; CODE XREF: seg000:05EE↑p
                 pop     ax
                 mov     es:31h, ah
                 retn
-sub_110A8       endp
+vid_cursorSaveBackground endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; load cursor shape ctx+956h into the off-screen staging area (0,360)
 
-sub_11145       proc near               ; CODE XREF: seg000:05F1↑p
-                                        ; seg000:0AE0↑p ...
+vid_cursorStageShape proc near          ; CODE XREF: vidShowPage+29↑p
+                                        ; vidMouseShow+1A↑p ...
                 mov     al, es:957h
                 mov     ah, es:31h
                 push    ax
@@ -2288,7 +2546,7 @@ sub_11145       proc near               ; CODE XREF: seg000:05F1↑p
                 lodsb
                 mov     es:14h, al
                 pop     ds
-                call    sub_112EF
+                call    vid_putImageImpl ; draw planar image: rows ctx+10h, w ctx+12h, mask ctx+14h, data ctx+16h:18h at (x1,y1)
                 mov     word ptr es:10h, 20h ; ' '
                 mov     word ptr es:12h, 4
                 mov     byte ptr es:14h, 0FFh
@@ -2320,14 +2578,15 @@ sub_11145       proc near               ; CODE XREF: seg000:05F1↑p
                 pop     ax
                 mov     es:31h, ah
                 retn
-sub_11145       endp
+vid_cursorStageShape endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; put the saved background back at (ctx+962h,964h)
 
-sub_11208       proc near               ; CODE XREF: seg000:05E0↑p
-                                        ; seg000:06D7↑p ...
+vid_cursorRestoreBackground proc near   ; CODE XREF: vidShowPage+18↑p
+                                        ; vidCopyScreen0To1AndShow+44↑p ...
                 mov     al, es:957h
                 mov     ah, es:31h
                 push    ax
@@ -2361,7 +2620,7 @@ sub_11208       proc near               ; CODE XREF: seg000:05E0↑p
                 lodsb
                 mov     es:14h, al
                 pop     ds
-                call    sub_112EF
+                call    vid_putImageImpl ; draw planar image: rows ctx+10h, w ctx+12h, mask ctx+14h, data ctx+16h:18h at (x1,y1)
                 mov     word ptr es:10h, 20h ; ' '
                 mov     word ptr es:12h, 4
                 mov     byte ptr es:14h, 0FFh
@@ -2393,14 +2652,15 @@ sub_11208       proc near               ; CODE XREF: seg000:05E0↑p
                 pop     ax
                 mov     es:31h, ah
                 retn
-sub_11208       endp
+vid_cursorRestoreBackground endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
 
-sub_112C0       proc near               ; CODE XREF: seg000:0261↑p
-                                        ; seg000:028B↑p ...
+vid_calcVramAddr proc near              ; CODE XREF: vidPutPixel+14↑p
+                                        ; vidGetPixel+D↑p ...
                 push    dx
                 mov     cl, bl
                 mov     dx, 50h ; 'P'
@@ -2422,19 +2682,20 @@ sub_112C0       proc near               ; CODE XREF: seg000:0261↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_112E9:                              ; CODE XREF: sub_112C0+25↑j
+loc_112E9:                              ; CODE XREF: vid_calcVramAddr+25↑j
                 add     bx, 8000h
                 pop     dx
                 retn
-sub_112C0       endp
+vid_calcVramAddr endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw planar image: rows ctx+10h, w ctx+12h, mask ctx+14h, data ctx+16h:18h at (x1,y1)
 ; Attributes: bp-based frame
 
-sub_112EF       proc near               ; CODE XREF: seg000:0369↑p
-                                        ; seg000:03B2↑p ...
+vid_putImageImpl proc near              ; CODE XREF: vidPutImage+1↑p
+                                        ; vidPutImageHdr+26↑p ...
 
 var_C           = word ptr -0Ch
 var_A           = word ptr -0Ah
@@ -2465,7 +2726,7 @@ var_2           = word ptr -2
                 push    si
                 mov     ax, es:1Ch
                 mov     bx, es:1Ah
-                call    sub_112C0
+                call    vid_calcVramAddr ; AX=y BX=x -> BX=A000h offset (+8000h on page 1), CL=bit shift, AH=1, ES=A000h
                 inc     cl
                 and     cl, 7
                 mov     di, bx
@@ -2497,18 +2758,18 @@ var_2           = word ptr -2
                 jnz     short loc_11375
                 mov     cx, [bp+var_4]
 
-loc_11355:                              ; CODE XREF: sub_112EF+81↓j
+loc_11355:                              ; CODE XREF: vid_putImageImpl+81↓j
                 out     dx, ax          ; EGA: sequencer address reg
                                         ; unknown register
                 push    ax
                 push    di
                 mov     bx, [bp+var_2]
 
-loc_1135B:                              ; CODE XREF: sub_112EF+7B↓j
+loc_1135B:                              ; CODE XREF: vid_putImageImpl+7B↓j
                 push    di
                 push    cx
 
-loc_1135D:                              ; CODE XREF: sub_112EF+73↓j
+loc_1135D:                              ; CODE XREF: vid_putImageImpl+73↓j
                 lodsb
                 and     es:[di], al
                 inc     di
@@ -2525,7 +2786,7 @@ loc_1135D:                              ; CODE XREF: sub_112EF+73↓j
                 jmp     loc_113FF
 ; ---------------------------------------------------------------------------
 
-loc_11375:                              ; CODE XREF: sub_112EF+61↑j
+loc_11375:                              ; CODE XREF: vid_putImageImpl+61↑j
                 push    ax
                 mov     bx, 0FFh
                 mov     al, ch
@@ -2536,7 +2797,7 @@ loc_11375:                              ; CODE XREF: sub_112EF+61↑j
                 mov     ah, ch
                 xor     al, al
 
-loc_11388:                              ; CODE XREF: sub_112EF+91↑j
+loc_11388:                              ; CODE XREF: vid_putImageImpl+91↑j
                 shl     ax, cl
                 shl     bx, cl
                 mov     bl, al
@@ -2549,7 +2810,7 @@ loc_11388:                              ; CODE XREF: sub_112EF+91↑j
                 mov     bx, [bp+var_4]
                 pop     ax
 
-loc_113A1:                              ; CODE XREF: sub_112EF+10E↓j
+loc_113A1:                              ; CODE XREF: vid_putImageImpl+10E↓j
                 out     dx, ax          ; EGA: sequencer address reg
                                         ; sequencer reset.
                                         ; Bits of data 0-1 indicate asynchronous/synchronous reset.
@@ -2559,7 +2820,7 @@ loc_113A1:                              ; CODE XREF: sub_112EF+10E↓j
                 mov     ax, [bp+var_2]
                 mov     [bp+var_6], ax
 
-loc_113AC:                              ; CODE XREF: sub_112EF+106↓j
+loc_113AC:                              ; CODE XREF: vid_putImageImpl+106↓j
                 push    di
                 push    si
                 push    bx
@@ -2576,13 +2837,13 @@ loc_113AC:                              ; CODE XREF: sub_112EF+106↓j
                 jmp     short loc_113D9
 ; ---------------------------------------------------------------------------
 
-loc_113BE:                              ; CODE XREF: sub_112EF+C8↑j
+loc_113BE:                              ; CODE XREF: vid_putImageImpl+C8↑j
                 rol     ax, cl
                 and     es:[di], ah
                 inc     di
                 dec     bx
 
-loc_113C5:                              ; CODE XREF: sub_112EF+CB↑j
+loc_113C5:                              ; CODE XREF: vid_putImageImpl+CB↑j
                 push    ax
                 mov     ax, 0FF08h
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
@@ -2591,7 +2852,7 @@ loc_113C5:                              ; CODE XREF: sub_112EF+CB↑j
                 dec     bx
                 jle     short loc_113D9
 
-loc_113CE:                              ; CODE XREF: sub_112EF+E8↓j
+loc_113CE:                              ; CODE XREF: vid_putImageImpl+E8↓j
                 and     es:[di], al
                 inc     di
                 lodsw
@@ -2600,8 +2861,8 @@ loc_113CE:                              ; CODE XREF: sub_112EF+E8↓j
                 dec     bx
                 jnz     short loc_113CE
 
-loc_113D9:                              ; CODE XREF: sub_112EF+CD↑j
-                                        ; sub_112EF+DD↑j
+loc_113D9:                              ; CODE XREF: vid_putImageImpl+CD↑j
+                                        ; vid_putImageImpl+DD↑j
                 mov     bx, ax
                 mov     ax, [bp+var_A]
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
@@ -2626,7 +2887,7 @@ loc_113D9:                              ; CODE XREF: sub_112EF+CD↑j
                 shr     ah, 1
                 jnz     short loc_113A1
 
-loc_113FF:                              ; CODE XREF: sub_112EF+83↑j
+loc_113FF:                              ; CODE XREF: vid_putImageImpl+83↑j
                 mov     ax, 0F02h
                 out     dx, ax          ; EGA: sequencer address reg
                                         ; unknown register
@@ -2661,31 +2922,33 @@ loc_113FF:                              ; CODE XREF: sub_112EF+83↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_112EF       endp
+vid_putImageImpl endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; INT 10h AH=5 (AL=CL page), then busy-wait ctx+8
 
-sub_1141F       proc near               ; CODE XREF: seg000:05FC↑p
-                                        ; seg000:0608↑p ...
+vid_setPageAndDelay proc near           ; CODE XREF: vidShowPage+34↑p
+                                        ; vidShowPage+40↑p ...
                 mov     al, cl
                 mov     ah, 5
                 int     10h             ; - VIDEO - SELECT DISPLAY PAGE
                                         ; AL = display page, 0-7  for modes 0 & 1, 0-3  for modes 2 & 3
                 mov     cx, es:8
 
-loc_1142A:                              ; CODE XREF: sub_1141F:loc_1142A↓j
+loc_1142A:                              ; CODE XREF: vid_setPageAndDelay:loc_1142A↓j
                 loop    loc_1142A
                 retn
-sub_1141F       endp
+vid_setPageAndDelay endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; write one pixel (GC set/reset) colour ds:6
 
-sub_1142D       proc near               ; CODE XREF: seg000:0264↑p
-                                        ; seg000:0664↑p ...
+vid_putPixelRaw proc near               ; CODE XREF: vidPutPixel+17↑p
+                                        ; vidCopyRectKeyed+56↑p ...
                 shl     ah, cl
                 mov     dx, 3CEh
                 mov     al, 8
@@ -2717,9 +2980,14 @@ sub_1142D       proc near               ; CODE XREF: seg000:0264↑p
                                         ; unknown register
                 or      es:[bx], al
                 retn
-sub_1142D       endp
+vid_putPixelRaw endp
 
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+; INT 33h user event handler (mask 0Bh: move, left press, right press)
+
+vid_mouseEventHandler proc far
                 push    cx
                 push    dx
                 push    ds
@@ -2728,14 +2996,12 @@ sub_1142D       endp
                 mov     ax, seg seg001
                 mov     ds, ax
                 assume ds:seg001
-                mov     ax, word_117B9
+                mov     ax, vid_ctxSeg  ; segment of the context block allocated by vidInit (returned in AX)
                 mov     es, ax
-                assume es:nothing
                 pop     ax
                 cmp     byte ptr es:952h, 0
                 jnz     short loc_1146A
                 pop     es
-                assume es:nothing
                 pop     ds
                 assume ds:nothing
                 pop     dx
@@ -2743,7 +3009,7 @@ sub_1142D       endp
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1146A:                              ; CODE XREF: seg000:1463↑j
+loc_1146A:                              ; CODE XREF: vid_mouseEventHandler+16↑j
                 test    al, 2
                 jz      short loc_11481
                 mov     ax, 5
@@ -2758,8 +3024,8 @@ loc_1146A:                              ; CODE XREF: seg000:1463↑j
                 jz      short loc_11481
                 or      byte ptr es:953h, 60h
 
-loc_11481:                              ; CODE XREF: seg000:146C↑j
-                                        ; seg000:1479↑j
+loc_11481:                              ; CODE XREF: vid_mouseEventHandler+1F↑j
+                                        ; vid_mouseEventHandler+2C↑j
                 test    al, 8
                 jz      short loc_11498
                 mov     ax, 5
@@ -2774,15 +3040,15 @@ loc_11481:                              ; CODE XREF: seg000:146C↑j
                 jz      short loc_11498
                 or      byte ptr es:953h, 42h
 
-loc_11498:                              ; CODE XREF: seg000:1483↑j
-                                        ; seg000:1490↑j
+loc_11498:                              ; CODE XREF: vid_mouseEventHandler+36↑j
+                                        ; vid_mouseEventHandler+43↑j
                 test    al, 1
                 jnz     short loc_114A4
                 and     byte ptr es:953h, 7Fh
                 jmp     short loc_114F8
 ; ---------------------------------------------------------------------------
 
-loc_114A4:                              ; CODE XREF: seg000:149A↑j
+loc_114A4:                              ; CODE XREF: vid_mouseEventHandler+4D↑j
                 or      byte ptr es:953h, 80h
                 mov     ax, 0Bh
                 int     33h             ; - MS MOUSE - READ MOTION COUNTERS
@@ -2794,56 +3060,59 @@ loc_114A4:                              ; CODE XREF: seg000:149A↑j
                 jge     short loc_114C3
                 mov     es:966h, ax
 
-loc_114C3:                              ; CODE XREF: seg000:14BD↑j
+loc_114C3:                              ; CODE XREF: vid_mouseEventHandler+70↑j
                 mov     ax, es:95Ch
                 cmp     es:966h, ax
                 jle     short loc_114D2
                 mov     es:966h, ax
 
-loc_114D2:                              ; CODE XREF: seg000:14CC↑j
+loc_114D2:                              ; CODE XREF: vid_mouseEventHandler+7F↑j
                 mov     ax, es:95Eh
                 add     es:968h, dx
                 cmp     es:968h, ax
                 jge     short loc_114E6
                 mov     es:968h, ax
 
-loc_114E6:                              ; CODE XREF: seg000:14E0↑j
+loc_114E6:                              ; CODE XREF: vid_mouseEventHandler+93↑j
                 mov     ax, es:960h
                 cmp     es:968h, ax
                 jle     short loc_114F5
                 mov     es:968h, ax
 
-loc_114F5:                              ; CODE XREF: seg000:14EF↑j
-                call    sub_114FD
+loc_114F5:                              ; CODE XREF: vid_mouseEventHandler+A2↑j
+                call    vid_mouseUpdateCursorShape ; choose cursor shape ctx+956h from mode ctx+958h and position
 
-loc_114F8:                              ; CODE XREF: seg000:14A2↑j
+loc_114F8:                              ; CODE XREF: vid_mouseEventHandler+55↑j
                 pop     es
                 pop     ds
                 pop     dx
                 pop     cx
                 retf
+vid_mouseEventHandler endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
+; choose cursor shape ctx+956h from mode ctx+958h and position
 
-sub_114FD       proc near               ; CODE XREF: seg000:0C23↑p
-                                        ; seg000:loc_114F5↑p
+vid_mouseUpdateCursorShape proc near    ; CODE XREF: vidMouseSetCursorMode+10↑p
+                                        ; vid_mouseEventHandler:loc_114F5↑p
                 cmp     byte ptr es:958h, 0
                 jnz     short loc_1150C
 
-loc_11505:                              ; CODE XREF: sub_114FD+27↓j
-                                        ; sub_114FD+2F↓j ...
+loc_11505:                              ; CODE XREF: vid_mouseUpdateCursorShape+27↓j
+                                        ; vid_mouseUpdateCursorShape+2F↓j ...
                 mov     byte ptr es:956h, 1
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1150C:                              ; CODE XREF: sub_114FD+6↑j
+loc_1150C:                              ; CODE XREF: vid_mouseUpdateCursorShape+6↑j
                 cmp     byte ptr es:958h, 1
                 jz      short loc_11516
                 jmp     short loc_11585
 ; ---------------------------------------------------------------------------
 
-loc_11516:                              ; CODE XREF: sub_114FD+15↑j
+loc_11516:                              ; CODE XREF: vid_mouseUpdateCursorShape+15↑j
                 mov     ax, es:96Ah
                 sub     ax, es:67Ah
                 cmp     ax, es:966h
@@ -2874,24 +3143,24 @@ loc_11516:                              ; CODE XREF: sub_114FD+15↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11585:                              ; CODE XREF: sub_114FD+17↑j
+loc_11585:                              ; CODE XREF: vid_mouseUpdateCursorShape+17↑j
                 cmp     byte ptr es:958h, 2
                 jz      short loc_1159A
                 mov     byte ptr es:958h, 0
 
-loc_11593:                              ; CODE XREF: sub_114FD+AE↓j
-                                        ; sub_114FD+B6↓j ...
+loc_11593:                              ; CODE XREF: vid_mouseUpdateCursorShape+AE↓j
+                                        ; vid_mouseUpdateCursorShape+B6↓j ...
                 mov     byte ptr es:956h, 1
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1159A:                              ; CODE XREF: sub_114FD+8E↑j
+loc_1159A:                              ; CODE XREF: vid_mouseUpdateCursorShape+8E↑j
                 test    byte ptr es:912h, 0C0h
                 jz      short loc_115A5
                 jmp     loc_116AF
 ; ---------------------------------------------------------------------------
 
-loc_115A5:                              ; CODE XREF: sub_114FD+A3↑j
+loc_115A5:                              ; CODE XREF: vid_mouseUpdateCursorShape+A3↑j
                 cmp     word ptr es:966h, 30h ; '0'
                 jl      short loc_11593
                 cmp     word ptr es:968h, 0Eh
@@ -2916,37 +3185,37 @@ loc_115A5:                              ; CODE XREF: sub_114FD+A3↑j
                 cmp     bh, 8
                 jg      short loc_115F4
 
-loc_115ED:                              ; CODE XREF: sub_114FD+124↓j
-                                        ; sub_114FD+170↓j
+loc_115ED:                              ; CODE XREF: vid_mouseUpdateCursorShape+124↓j
+                                        ; vid_mouseUpdateCursorShape+170↓j
                 mov     byte ptr es:956h, 0Ch
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_115F4:                              ; CODE XREF: sub_114FD+EE↑j
-                                        ; sub_114FD+149↓j ...
+loc_115F4:                              ; CODE XREF: vid_mouseUpdateCursorShape+EE↑j
+                                        ; vid_mouseUpdateCursorShape+149↓j ...
                 mov     byte ptr es:956h, 0Ah
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_115FB:                              ; CODE XREF: sub_114FD+E7↑j
+loc_115FB:                              ; CODE XREF: vid_mouseUpdateCursorShape+E7↑j
                 cmp     bh, 8
                 jnz     short loc_11615
                 mov     byte ptr es:956h, 4
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11607:                              ; CODE XREF: sub_114FD+E9↑j
+loc_11607:                              ; CODE XREF: vid_mouseUpdateCursorShape+E9↑j
                 cmp     bh, 8
                 jz      short loc_1160E
                 jmp     short loc_11661
 ; ---------------------------------------------------------------------------
 
-loc_1160E:                              ; CODE XREF: sub_114FD+10D↑j
+loc_1160E:                              ; CODE XREF: vid_mouseUpdateCursorShape+10D↑j
                 mov     byte ptr es:956h, 6
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11615:                              ; CODE XREF: sub_114FD+101↑j
+loc_11615:                              ; CODE XREF: vid_mouseUpdateCursorShape+101↑j
                 jg      short loc_1163C
                 cmp     bl, 3
                 jl      short loc_1162A
@@ -2955,13 +3224,13 @@ loc_11615:                              ; CODE XREF: sub_114FD+101↑j
                 jmp     short loc_115ED
 ; ---------------------------------------------------------------------------
 
-loc_11623:                              ; CODE XREF: sub_114FD+122↑j
-                                        ; sub_114FD+130↓j ...
+loc_11623:                              ; CODE XREF: vid_mouseUpdateCursorShape+122↑j
+                                        ; vid_mouseUpdateCursorShape+130↓j ...
                 mov     byte ptr es:956h, 3
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1162A:                              ; CODE XREF: sub_114FD+11D↑j
+loc_1162A:                              ; CODE XREF: vid_mouseUpdateCursorShape+11D↑j
                 cmp     bh, 5
                 jle     short loc_11623
                 cmp     bx, 602h
@@ -2970,7 +3239,7 @@ loc_1162A:                              ; CODE XREF: sub_114FD+11D↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1163C:                              ; CODE XREF: sub_114FD:loc_11615↑j
+loc_1163C:                              ; CODE XREF: vid_mouseUpdateCursorShape:loc_11615↑j
                 cmp     bl, 3
                 jl      short loc_1164F
                 cmp     bh, 0Bh
@@ -2978,13 +3247,13 @@ loc_1163C:                              ; CODE XREF: sub_114FD:loc_11615↑j
                 jmp     short loc_115F4
 ; ---------------------------------------------------------------------------
 
-loc_11648:                              ; CODE XREF: sub_114FD+147↑j
-                                        ; sub_114FD+155↓j ...
+loc_11648:                              ; CODE XREF: vid_mouseUpdateCursorShape+147↑j
+                                        ; vid_mouseUpdateCursorShape+155↓j ...
                 mov     byte ptr es:956h, 9
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1164F:                              ; CODE XREF: sub_114FD+142↑j
+loc_1164F:                              ; CODE XREF: vid_mouseUpdateCursorShape+142↑j
                 cmp     bh, 0Bh
                 jge     short loc_11648
                 cmp     bx, 0A02h
@@ -2993,7 +3262,7 @@ loc_1164F:                              ; CODE XREF: sub_114FD+142↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11661:                              ; CODE XREF: sub_114FD+10F↑j
+loc_11661:                              ; CODE XREF: vid_mouseUpdateCursorShape+10F↑j
                 jg      short loc_11689
                 cmp     bl, 5
                 jg      short loc_11677
@@ -3002,13 +3271,13 @@ loc_11661:                              ; CODE XREF: sub_114FD+10F↑j
                 jmp     loc_115ED
 ; ---------------------------------------------------------------------------
 
-loc_11670:                              ; CODE XREF: sub_114FD+16E↑j
-                                        ; sub_114FD+17D↓j ...
+loc_11670:                              ; CODE XREF: vid_mouseUpdateCursorShape+16E↑j
+                                        ; vid_mouseUpdateCursorShape+17D↓j ...
                 mov     byte ptr es:956h, 0Bh
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11677:                              ; CODE XREF: sub_114FD+169↑j
+loc_11677:                              ; CODE XREF: vid_mouseUpdateCursorShape+169↑j
                 cmp     bh, 5
                 jle     short loc_11670
                 cmp     bx, 606h
@@ -3017,7 +3286,7 @@ loc_11677:                              ; CODE XREF: sub_114FD+169↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11689:                              ; CODE XREF: sub_114FD:loc_11661↑j
+loc_11689:                              ; CODE XREF: vid_mouseUpdateCursorShape:loc_11661↑j
                 cmp     bl, 5
                 jg      short loc_1169D
                 cmp     bh, 0Bh
@@ -3025,13 +3294,13 @@ loc_11689:                              ; CODE XREF: sub_114FD:loc_11661↑j
                 jmp     loc_115F4
 ; ---------------------------------------------------------------------------
 
-loc_11696:                              ; CODE XREF: sub_114FD+194↑j
-                                        ; sub_114FD+1A3↓j ...
+loc_11696:                              ; CODE XREF: vid_mouseUpdateCursorShape+194↑j
+                                        ; vid_mouseUpdateCursorShape+1A3↓j ...
                 mov     byte ptr es:956h, 5
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1169D:                              ; CODE XREF: sub_114FD+18F↑j
+loc_1169D:                              ; CODE XREF: vid_mouseUpdateCursorShape+18F↑j
                 cmp     bh, 0Bh
                 jge     short loc_11696
                 cmp     bx, 0A06h
@@ -3040,7 +3309,7 @@ loc_1169D:                              ; CODE XREF: sub_114FD+18F↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_116AF:                              ; CODE XREF: sub_114FD+A5↑j
+loc_116AF:                              ; CODE XREF: vid_mouseUpdateCursorShape+A5↑j
                 mov     byte ptr es:956h, 1
                 cmp     word ptr es:966h, 20h ; ' '
                 jl      short locret_116D9
@@ -3053,12 +3322,12 @@ loc_116AF:                              ; CODE XREF: sub_114FD+A5↑j
                 jmp     short loc_116DA
 ; ---------------------------------------------------------------------------
 
-locret_116D9:                           ; CODE XREF: sub_114FD+1BE↑j
-                                        ; sub_114FD+1C6↑j ...
+locret_116D9:                           ; CODE XREF: vid_mouseUpdateCursorShape+1BE↑j
+                                        ; vid_mouseUpdateCursorShape+1C6↑j ...
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_116DA:                              ; CODE XREF: sub_114FD+1DA↑j
+loc_116DA:                              ; CODE XREF: vid_mouseUpdateCursorShape+1DA↑j
                 mov     ax, es:96Ah
                 sub     ax, 20h ; ' '
                 cmp     es:966h, ax
@@ -3088,17 +3357,17 @@ loc_116DA:                              ; CODE XREF: sub_114FD+1DA↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11738:                              ; CODE XREF: sub_114FD+232↑j
+loc_11738:                              ; CODE XREF: vid_mouseUpdateCursorShape+232↑j
                 mov     byte ptr es:956h, 0Bh
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1173F:                              ; CODE XREF: sub_114FD+228↑j
+loc_1173F:                              ; CODE XREF: vid_mouseUpdateCursorShape+228↑j
                 mov     byte ptr es:956h, 3
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11746:                              ; CODE XREF: sub_114FD+221↑j
+loc_11746:                              ; CODE XREF: vid_mouseUpdateCursorShape+221↑j
                 add     ax, 0Dh
                 cmp     es:966h, ax
                 jbe     short loc_11776
@@ -3111,17 +3380,17 @@ loc_11746:                              ; CODE XREF: sub_114FD+221↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11768:                              ; CODE XREF: sub_114FD+262↑j
+loc_11768:                              ; CODE XREF: vid_mouseUpdateCursorShape+262↑j
                 mov     byte ptr es:956h, 5
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1176F:                              ; CODE XREF: sub_114FD+258↑j
+loc_1176F:                              ; CODE XREF: vid_mouseUpdateCursorShape+258↑j
                 mov     byte ptr es:956h, 9
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11776:                              ; CODE XREF: sub_114FD+251↑j
+loc_11776:                              ; CODE XREF: vid_mouseUpdateCursorShape+251↑j
                 sub     bx, 6
                 cmp     es:968h, bx
                 jbe     short loc_11787
@@ -3129,10 +3398,10 @@ loc_11776:                              ; CODE XREF: sub_114FD+251↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11787:                              ; CODE XREF: sub_114FD+281↑j
+loc_11787:                              ; CODE XREF: vid_mouseUpdateCursorShape+281↑j
                 mov     byte ptr es:956h, 4
                 retn
-sub_114FD       endp
+vid_mouseUpdateCursorShape endp
 
                 assume ss:seg002, ds:nothing
 
@@ -3177,8 +3446,9 @@ seg001          segment byte public 'UNK' use16
                 db    0
                 db    0
                 db    0
-word_117B9      dw 0                    ; DATA XREF: seg000:000E↑r
-                                        ; seg000:loc_10042↑w ...
+vid_ctxSeg      dw 0                    ; DATA XREF: int62_isr+E↑r
+                                        ; int62_isr:loc_10042↑w ...
+                                        ; segment of the context block allocated by vidInit (returned in AX)
                 db    0
                 db    0
                 db    0
@@ -3195,7 +3465,7 @@ word_117B9      dw 0                    ; DATA XREF: seg000:000E↑r
                 db    0
                 db    0
                 db    0
-                db  33h ; 3
+vid_dispatchTable db  33h ; 3           ; 46 near offsets indexed by AH (IDA seg000 offsets; +0100h at run time behind the PSP)
                 db    0
                 db 0FAh
                 db    1

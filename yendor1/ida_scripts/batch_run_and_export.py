@@ -23,6 +23,7 @@ appended to the log too.
 import contextlib
 import io
 import os
+import sys
 import traceback
 
 import idc
@@ -32,6 +33,10 @@ import ida_loader
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_PATH = os.path.join(SCRIPT_DIR, "batch_run_and_export.log")
+
+# target scripts may `import vid_api` etc. from this directory
+if SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, SCRIPT_DIR)
 
 
 def log(fh, msg):
