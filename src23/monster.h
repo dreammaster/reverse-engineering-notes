@@ -90,8 +90,10 @@ typedef enum {
     MonsterFieldHitSound = 0x5C,  /* u16 sound id when it hits */
     MonsterFieldIdleSound = 0x5E, /* u16 sound id when it has no target */
     MonsterFieldApproachGate = 0x60, /* u16; ProcessLevelMonsters skips its approach/ambush check entirely when this is 0 -- exact meaning not confirmed */
+    MonsterFieldRangedSound = 0x62,    /* u16 sound id of its ambush shot (TriggerSideTrapForRandomPartyMember copies it to the result table) */
     MonsterFieldRangedAccuracy = 0x64, /* u16 ("RANGED ACC.-") */
     MonsterFieldRangedDamage = 0x66,   /* u16 ("RANGED DAM.-") */
+    MonsterFieldRangedEffect = 0x70,   /* u16 effect id (effect.h) its ambush shot applies; the ambush's magnitude is the preset amount */
     MonsterFieldAttackEffect = 0x6C,   /* u16 effect id (effect.h) of its ordinary attack; always an HP-cost effect */
     MonsterFieldSpecialAttack = 0x6E,  /* u16 effect id of its special attack ("SPECIAL ATTACK-"), 0 = none; chosen 25% of the time */
     MonsterFieldPalette = 0x72,   /* 3 x u16 colour remap, used when MonsterFlagRemapPalette is set */

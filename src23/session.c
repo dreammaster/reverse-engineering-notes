@@ -171,6 +171,69 @@ static void combatStart(GameSession *s, uint8_t *poolRecord) {
     combatRunMonsters(s);
 }
 
+/*
+ * ProcessSideTrapsOnMovement (yendor2.asm:32653), run after every monster pass: each pool monster whose approach check armed an ambush (wound bit 0x1000) shoots at a random member.
+ * TriggerSideTrapForRandomPartyMember picks among the first three party slots (RandomInRange(3), until one is occupied and able to act), rolls
+ * RollTrapAvoidanceMagnitude on the member's EquipRating5 against the monster's ranged accuracy / damage (combatRollTrapAvoidanceMagnitude: Chapter 3 rolls out of 55), keeps the result in the
+ * member's slot of a four-entry table (a later shot at the same member overwrites an earlier one, effect and sound included), and clears the direction bits. PresentTriggeredSideTrapEffects then
+ * plays the first sound and applies every nonzero magnitude as the monster's ranged effect (+0x70) through the icon-bar pipeline. The animation (the direction bit that matches the party's
+ * facing decides whether the shot is seen) is the front end's.
+ */
+bool sessionAmbushShots(GameSession *s) {
+    struct {
+        uint16_t magnitude, effect, sound;
+        uint8_t *member;
+    } table[4];
+    memset(table, 0, sizeof(table));
+    bool any = false;
+    for (unsigned slot = 0; slot < MonsterPoolSize; slot++) {
+        uint8_t *record = s->pool + (size_t)slot * MonsterRecordSize;
+        if (monsterGetU16(record, MonsterFieldType) == 0 || !(monsterGetU16(record, MonsterFieldWound) & MonsterWoundAmbushPending)) {
+            continue;
+        }
+        any = true;
+        unsigned pick = 0;
+        bool found = false;
+        for (unsigned tries = 0; tries < 64 && !found; tries++) { /* the original retries forever; a party with nobody able in the first three slots would hang it */
+            pick = randomInRange(&s->rng, 3);
+            const uint8_t *member = sessionPartyRecord(s, pick);
+            found = member && !(partyGetU16(member, PartyFieldStatusFlags) & PartyStatusIncapacitated);
+        }
+        uint16_t wound = monsterGetU16(record, MonsterFieldWound);
+        monsterSetU16(record, MonsterFieldWound, wound & 0xE0FF);
+        if (!found) {
+            continue;
+        }
+        uint8_t *member = sessionPartyRecord(s, pick);
+        CombatSideTrapOutcome shot = combatResolveSideTrap(s->game, s->facing, wound, partyGetStat(member, PartyStatEquipRating5),
+                                                           monsterGetU16(record, MonsterFieldRangedAccuracy), monsterGetU16(record, MonsterFieldRangedDamage), &s->rng);
+        table[pick].magnitude = shot.magnitude;
+        table[pick].member = member;
+        table[pick].effect = monsterGetU16(record, MonsterFieldRangedEffect);
+        table[pick].sound = monsterGetU16(record, MonsterFieldRangedSound);
+    }
+    if (!any) {
+        return false;
+    }
+    for (unsigned i = 0; i < 4; i++) {
+        if (table[i].sound && !s->pendingSound) {
+            s->pendingSound = table[i].sound;
+        }
+    }
+    bool hit = false;
+    for (unsigned i = 0; i < 4; i++) {
+        if (table[i].magnitude && table[i].member) {
+            combatApplyPresetEffect(table[i].member, &s->save, s->game, table[i].effect, table[i].magnitude, 0, &s->rng);
+            hit = true;
+        }
+    }
+    if (hit) {
+        snprintf(s->log, sizeof(s->log), "an ambush hits the party");
+        combatCheckWipe(s);
+    }
+    return hit;
+}
+
 /* ProcessLevelMonsters: every live monster takes its turn; one that reaches the party engages it and stops the pass. */
 static bool monstersTakeTurns(GameSession *s) {
     MonsterRewardStaging staging;
@@ -185,6 +248,7 @@ static bool monstersTakeTurns(GameSession *s) {
             combatStart(s, record);
         }
     }
+    sessionAmbushShots(s);
     return s->combat.active;
 }
 

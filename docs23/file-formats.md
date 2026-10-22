@@ -6762,6 +6762,16 @@ LOCKED (DS:0x7BCE / 0x7F00); Chapter 3's fixed three lines YOU CANNOT ENTER HERE
 (message ids from the gate table: YENDORIAN PASSWORD?, THIEF'S DEN PASSWORD? ...) and takes up to 12 typed characters at (240, 114) (`EditTextField`, upper case, Enter confirms, Escape gives up). The prompts are
 the executable's own table (`confirmprompt.c`: DS:0xA787, Chapter 3 0xE265); Chapter 3 words the MARK / RETURN question differently (regions 4 and 6).
 
+### Ambush shots after a step (ProcessSideTrapsOnMovement, decoded 2026-10-22)
+
+After every monster pass (`ProcessLevelMonsters`) the original calls `ProcessSideTrapsOnMovement` (:32653), which fast-exits unless the approach check armed an ambush (wound `+0xE` bit 0x1000). Each armed pool
+monster, in slot order, shoots (`TriggerSideTrapForRandomPartyMember` :32888): `RandomInRange(3)` is retried until it lands on an occupied member who is not incapacitated (**only the first three party slots can be
+the target**), `RollTrapAvoidanceMagnitude` runs with the member's `+0x50` (EquipRating5) against the monster's ranged accuracy `+0x64` and damage `+0x66` (margin = accuracy - stat, none if negative; hit when
+`RandomInRange(100)` -- Chapter 3: 55 -- is at least the margin; magnitude = round(damage x margin / 100)), the result goes to the member's entry of a four-entry table (24 bytes each: magnitude, the member,
+effect id `+0x70`, sound id `+0x62`, ...) -- a later shot at the same member **overwrites** an earlier one, a miss included -- and the direction bits are cleared (`& 0xE0FF`). The direction bit that matches the party's
+facing (0x800 facing south ... ) only decides whether the shot is drawn (`PresentTriggeredSideTrapEffects` :32732 animates the projectile and the weapon icon). That routine then plays the first sound in the table and
+applies every nonzero magnitude as the effect `+0x70` with the magnitude as the preset amount through the icon-bar pipeline (`combatApplyPresetEffect`). `session.c` `sessionAmbushShots`.
+
 ### Turn-based combat: turn order (decoded 2026-09-24)
 
 A genuinely separate subsystem from the dungeon-exploration monster AI

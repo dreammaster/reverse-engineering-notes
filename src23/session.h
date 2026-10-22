@@ -183,6 +183,13 @@ bool sessionShootStep(GameSession *session);
  */
 RestOutcome sessionRest(GameSession *session);
 
+/*
+ * ProcessSideTrapsOnMovement, run after every monster pass (`sessionMove`, the rest): each pool monster armed by its approach check (wound bit 0x1000) shoots at a random member of the first three
+ * slots -- the member's EquipRating5 against the monster's ranged accuracy / damage decides whether and how hard (Chapter 3 rolls out of 55) -- and the hits apply the monster's ranged effect as
+ * a preset amount. True when somebody was hit. The sound of the shot goes to `pendingSound`.
+ */
+bool sessionAmbushShots(GameSession *session);
+
 /* UnlockDoorCommand with a key (see interactUnlockFacing); on success the faced cell's door marker is cleared. The sound, `unlockMessage` and (a lock that holds) `lockReport` are set for the front end. */
 InteractUnlockOutcome sessionUnlock(GameSession *session, uint16_t keyWord0, uint16_t heldKeyFlags);
 

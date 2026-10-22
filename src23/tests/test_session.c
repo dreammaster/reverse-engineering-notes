@@ -1112,6 +1112,70 @@ static void testDoorwayEngage(GameKind game, const uint8_t *world, size_t size, 
     sessionFree(s);
 }
 
+/* ProcessSideTrapsOnMovement: an armed monster shoots one of the first three members; the avoidance roll depends on the member's EquipRating5 against the monster's ranged accuracy. */
+static void testAmbush(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    if (game != GameYendor2) {
+        return;
+    }
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    ViewScene scene;
+    DungeonGridCell cells[ViewportCellCount];
+    place(s, 175, 40, SaveFacingSouth);
+    sessionScene(s, &scene, cells);
+    uint8_t *ant = (uint8_t *)antAt(s, 175, 44);
+    check("the ant is there to arm", ant != NULL);
+    if (!ant) {
+        sessionFree(s);
+        return;
+    }
+    check("nobody armed: no shot", !sessionAmbushShots(s));
+    unsigned total = 0;
+    for (unsigned i = 0; i < 4; i++) {
+        uint8_t *member = sessionPartyRecord(s, i);
+        if (member) {
+            partySetStat(member, PartyStatEquipRating5, 0);
+            partySetStat(member, PartyStatHitPoints, 200);
+            total += 200;
+        }
+    }
+    monsterSetU16(ant, MonsterFieldRangedAccuracy, 100); /* margin 100: never avoided */
+    monsterSetU16(ant, MonsterFieldRangedDamage, 30);
+    monsterSetU16(ant, MonsterFieldRangedEffect, monsterGetU16(ant, MonsterFieldAttackEffect));
+    monsterSetU16(ant, MonsterFieldRangedSound, 9);
+    monsterSetU16(ant, MonsterFieldWound, MonsterWoundAmbushPending | 0x100);
+    bool hit = sessionAmbushShots(s);
+    unsigned after = 0, hurt = 0;
+    for (unsigned i = 0; i < 4; i++) {
+        uint8_t *member = sessionPartyRecord(s, i);
+        if (member) {
+            after += partyGetStat(member, PartyStatHitPoints);
+            hurt += partyGetStat(member, PartyStatHitPoints) < 200 ? i + 1 : 0;
+        }
+    }
+    char text[160];
+    snprintf(text, sizeof(text), "%s: the shot hit (200 each before, %u in all after)", label, after);
+    check(text, hit && after < total);
+    check("... one of the first three members took it", hurt >= 1 && hurt <= 3);
+    check("... the arming bits are cleared and the sound is queued", !(monsterGetU16(ant, MonsterFieldWound) & 0x1F00) && s->pendingSound == 9);
+    check("... a second pass shoots nobody", !sessionAmbushShots(s));
+    monsterSetU16(ant, MonsterFieldRangedAccuracy, 0); /* margin never above zero: always avoided */
+    monsterSetU16(ant, MonsterFieldWound, MonsterWoundAmbushPending);
+    unsigned before = 0;
+    for (unsigned i = 0; i < 4; i++) {
+        before += sessionPartyRecord(s, i) ? partyGetStat(sessionPartyRecord(s, i), PartyStatHitPoints) : 0;
+    }
+    check("a shot at a member with enough protection misses", !sessionAmbushShots(s));
+    unsigned now = 0;
+    for (unsigned i = 0; i < 4; i++) {
+        now += sessionPartyRecord(s, i) ? partyGetStat(sessionPartyRecord(s, i), PartyStatHitPoints) : 0;
+    }
+    check("... and costs nothing", now == before);
+    sessionFree(s);
+}
+
 static void testSaveLoad(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *a = sessionNew(game, world, size), *b = sessionNew(game, world, size);
     if (!a || !b) {
@@ -1304,6 +1368,7 @@ int main(void) {
             testDoorwayEngage(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testLockedDoor(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBumpSound(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testAmbush(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBelt(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testInventorySlots(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);
