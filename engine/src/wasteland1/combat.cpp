@@ -5,6 +5,7 @@
 #include "wasteland1/party.h"
 #include "wasteland1/rules.h"
 #include "wasteland1/text.h"
+#include "wasteland1/legacy.h"
 
 namespace wl {
 
@@ -324,6 +325,87 @@ HitResult hitMonster(Machine &m, uint8_t partyNum, uint8_t index) {
 	m.d8(uint16_t(g::hitFlags + entry)) &= flag;
 	m.d8(uint16_t(g::hitStatus + entry)) = marker;
 	return {false, true};
+}
+
+void weaponSkillRoll(Machine &m, uint8_t index) {
+	const uint8_t offset = equippedItemOffset(m, pm::weapon);
+	uint8_t itemId = 0;
+	if (offset) {
+		itemId = m.d8(uint16_t(cur(m) + offset));
+		getItemDetails(m, itemId);
+		if (!hasNoAmmunition(m, getItemType(m)) && useAmmunition(m, 0) == 0) return;
+	}
+	const uint8_t skill = itemSkillId(m, itemId);
+	const CombatantId id = splitCombatantIndex(index);
+	selectMonsterType(m, id.group, id.slot, id.member);
+	trySkillImprovement(m, skill, uint8_t((itemClipSizeNibble(m) >> 1) + 1));
+}
+
+bool damagePartyMember(Machine &m, uint16_t damage, uint8_t member) {
+	auto con = [&](uint8_t off) -> uint8_t & { return m.d8(uint16_t(cur(m) + off)); };
+	setCurrentCharacter(m, member);
+	setWriteCharacterFn(m);
+	const uint8_t dice = itemDamageDice(m);
+	uint8_t savedLo, savedHi;
+	if (!(con(pm::con + 1) & 0x80)) {
+		if ((con(pm::con + 1) | con(pm::con)) == 0) return true;   // already dead
+		writeMemberName(m);
+		savedLo = con(pm::con);
+		savedHi = con(pm::con + 1);
+	} else {   // unconscious
+		savedLo = con(pm::lastCon);
+		savedHi = con(pm::lastCon + 1);
+		if (m.d8(g::quietCombat) == 0) {
+			bool spared = !hasNoAmmunition(m, dice);
+			if (!spared) spared = Rules(m).rollDice() >= itemFlag(m, 3);
+			if (spared) {
+				writeMemberName(m);
+				printMessage(m, 0x5B);
+				return false;
+			}
+		}
+		writeMemberName(m);
+	}
+	uint16_t armorRoll = 0;
+	if (m.d8(g::armorBypass) == 0) {
+		const uint8_t ac = con(pm::armorClass);
+		m.d8(0xA685) = ac;
+		uint8_t al;
+		armorRoll = Rules(m).sumOfD6(0, ac, al);
+	}
+	if (damage <= armorRoll) {   // the armor absorbed everything
+		uint8_t message = 0x64;
+		if (m.d8(g::quietCombat) == 0) {
+			if (dice == 1 && m.d8(0xA685) == 0) { printMessage(m, 0x5B); return false; }
+			message = 0x5E;
+		}
+		printMessage(m, message);
+		printMessage(m, 0x65);
+		return false;
+	}
+	const uint16_t diff = uint16_t(damage - armorRoll);
+	if (m.d8(g::quietCombat) != 0) printMessage(m, 0x63);
+	else printLocationMessage(m, 0x51);
+	printDamageNumber(m, diff);
+	applyDamage(m, diff);
+	const bool negative = con(pm::con + 1) & 0x80;
+	bool knockedOut = negative;
+	if (!negative) {
+		if ((con(pm::con + 1) | con(pm::con)) != 0) knockedOut = false;
+		else { setHitPointBytes(m, 0xFF); knockedOut = true; }
+	}
+	if (knockedOut) {
+		con(pm::lastCon) = savedLo;
+		con(pm::lastCon + 1) = savedHi;
+		if (con(pm::con + 1) != 0xFF || con(pm::con) <= 0xCE) setHitPointBytes(m, 0);   // too far gone: dead
+		printMessage(m, 0x2D);
+		printMessage(m, m.d8(uint16_t(g::conditionMessages + getMemberConditionIndex(m))));
+	}
+	printMessage(m, 0x5A);
+	X86Regs x;
+	x.al = member;
+	legacy::call(m, 0x7033, x);   // writePartyMemberCustomHilite
+	return false;
 }
 
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }

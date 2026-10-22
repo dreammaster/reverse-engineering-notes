@@ -107,6 +107,10 @@ uint16_t attackStrength(Machine &m, uint8_t partyNum, uint8_t threshold);
 // had no hit points (try again); otherwise `killed` is true when the hit killed it
 struct HitResult { bool alreadyDead, killed; };
 HitResult hitMonster(Machine &m, uint8_t partyNum, uint8_t index);
+// 15A30: a combatant was fought with the equipped weapon: maybe improve the weapon skill (needs ammunition left)
+void weaponSkillRoll(Machine &m, uint8_t index);
+// 157D6: damage (16 bit) to party member `member`; true when the member was already dead (nothing happens)
+bool damagePartyMember(Machine &m, uint16_t damage, uint8_t member);
 // 15CD1: random 0..9
 uint8_t randomDigit(Machine &m);
 // 15C4A: remembers whether a damage value (dl:al) is below the "overkill" limit in the hit flag

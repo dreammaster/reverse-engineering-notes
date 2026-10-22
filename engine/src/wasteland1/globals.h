@@ -73,6 +73,9 @@ constexpr uint16_t hitDamage = 0xAAEE;            // 3 words: total damage per e
 constexpr uint16_t hitCounts = 0xAAF4;            // 10 bytes per entry: hits per monster
 constexpr uint16_t hitFlags = 0xAB12;             // byte_27932, per entry
 constexpr uint16_t hitStatus = 0xAB15;            // per entry
+constexpr uint16_t quietCombat = 0x4718;         // byte_21538: non-zero suppresses the hit descriptions
+constexpr uint16_t armorBypass = 0x46EF;         // byte_2150F: non-zero: armor does not reduce the damage
+constexpr uint16_t conditionMessages = 0xA69E;   // byte_274BE: message id per condition index
 constexpr uint16_t hitIgnoresArmor = 0x4723;   // byte_21543
 constexpr uint16_t hitFlag = 0x4725;          // byte_21545
 

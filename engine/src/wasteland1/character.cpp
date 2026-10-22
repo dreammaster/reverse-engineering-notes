@@ -141,6 +141,48 @@ void getItemPrice(Machine &m) {
 	m.d8(uint16_t(g::numberValue + 2)) = 0;
 }
 
+// ---- skills -------------------------------------------------------------------------------------------------------------
+
+uint8_t itemSkillId(Machine &m, uint8_t itemId) {
+	getItemDetails(m, itemId);
+	return itemFlag(m, 5);
+}
+
+uint16_t weaponSkillBonus(Machine &m) {
+	const uint8_t offset = equippedItemOffset(m, pm::weapon);
+	const uint8_t itemId = offset ? field(m, offset) : 0;
+	return uint16_t(getMemberSkillLevel(m, itemSkillId(m, itemId)) * 3);
+}
+
+uint8_t absByte(uint8_t v) { return (v & 0x80) ? uint8_t(0 - v) : v; }
+
+void selectWriterForRoster(Machine &m) {
+	if (m.d8(g::rosterShown) != 0) setWriteCharacterFn(m);
+	else drawInfoWindow(m);   // the routine falls through into 19727
+}
+
+void trySkillImprovement(Machine &m, uint8_t skillId, uint8_t ceiling) {
+	const uint8_t level = getMemberSkillLevel(m, skillId);
+	if (level == 0 || level >= field(m, pm::level) || level >= ceiling) return;
+	const uint8_t needed = uint8_t(((ceiling - level) >> 1) + 1);
+	if (Rules(m).random(10) > needed) return;
+	const uint8_t savedRoster = m.d8(g::rosterShown);
+	selectWriterForRoster(m);
+	writeItemTextNormal(m, 0x9E);
+	// the level byte follows the skill id byte
+	uint16_t slot = cur(m) + pm::skills;
+	while (slot != cur(m) + pm::skillsEnd && m.d8(uint16_t(slot)) != skillId) slot = uint16_t(slot + 2);
+	uint8_t newLevel = m.d8(uint16_t(slot + 1));
+	if (newLevel != 0xFF) m.d8(uint16_t(slot + 1)) = ++newLevel;
+	else newLevel = 0;
+	writeItemText(m, m.d8(uint16_t(slot)));
+	writeItemTextNormal(m, 0x9F);
+	writeNumberLeft(m, newLevel);
+	writeCharacterVia(m, '.');
+	newline(m);
+	if (savedRoster == 0) waitSpaceOrEnter(m);
+}
+
 // ---- hit points ---------------------------------------------------------------------------------------------------------
 
 uint8_t applyDamage(Machine &m, uint16_t damage) {

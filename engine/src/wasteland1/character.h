@@ -36,6 +36,18 @@ bool canAfford(Machine &m);             // 17B3E: money >= numberValue
 bool pay(Machine &m);                   // 17B15: subtracts numberValue from the money if it is affordable
 void getItemPrice(Machine &m);          // 17B5C: numberValue = price of the item described by itemDetailsPtr
 
+// ---- skills -------------------------------------------------------------------------------------------------------------
+// 1830E: skill id of the weapon/item record `itemId`
+uint8_t itemSkillId(Machine &m, uint8_t itemId);
+// 182FA: 3 * the current character's skill level with the equipped weapon (dl:al)
+uint16_t weaponSkillBonus(Machine &m);
+// 18D85: absolute value of a signed byte
+uint8_t absByte(uint8_t v);
+// 1818E: chance to improve a skill that was just used against a difficulty `ceiling`; prints the message when it improves
+void trySkillImprovement(Machine &m, uint8_t skillId, uint8_t ceiling);
+// 19720: selects the buffered text writer while the roster window is shown
+void selectWriterForRoster(Machine &m);
+
 // ---- hit points -------------------------------------------------------------------------------------------------------
 // 19CE9: hit points -= damage (16 bit, no clamping); returns the high byte of the result
 uint8_t applyDamage(Machine &m, uint16_t damage);

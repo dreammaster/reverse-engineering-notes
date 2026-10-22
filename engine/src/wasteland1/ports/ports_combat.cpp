@@ -119,6 +119,8 @@ PORT(hitMonster) {                                                              
 	r.cf = h.alreadyDead;
 	r.a.b.l = h.alreadyDead ? r.a.b.l : (h.killed ? 0 : 0xFF);
 }
+PORT(weaponSkillRoll) { weaponSkillRoll(m, r.a.b.l); }                                  // 15A30: al = combatant
+PORT(damagePartyMember) { r.cf = damagePartyMember(m, uint16_t(r.a.b.l | (r.d.b.l << 8)), r.b.b.l); }   // 157D6: dl:al damage, bl = member
 
 } // namespace rc
 } // namespace wl

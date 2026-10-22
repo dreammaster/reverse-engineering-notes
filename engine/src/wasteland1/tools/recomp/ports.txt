@@ -3,35 +3,35 @@
 00CB6 writeColorCharacter junk=ah,al,bl,bp,cl,di,dl,pf,si,zf
 00762 clearRect junk=al,bl,cl,di,dl,si
 08E6B rngByte junk=cf,pf,sf
-08E41 random junk=ah,cf,pf scratch=C059
+08E41 random junk=ah,cf,pf,sf scratch=C059
 08E5F d6 junk=pf
 09C84 rollDice junk=cf,dl,pf,sf scratch=CD49-CD4A
-07208 setPartyIndexesPtr junk=ah,al,dl,si
-09614 setCurrentCharacter junk=ah,al,bl,cl,di,dl,si
-072BB isMemberUnconscious junk=ah,al,bl,cl,di,dl,pf,si,zf
-072AE conBytesOr junk=bl,di,pf
+07208 setPartyIndexesPtr junk=ah,al,cl,dl,pf,si
+09614 setCurrentCharacter junk=ah,al,cf,cl,dl,sf,si
+072BB isMemberUnconscious junk=ah,al,cl,dl,pf,si,zf
+072AE conBytesOr junk=pf
 09A1D getMemberConditionIndex junk=al,bl,di,pf,si,zf
-098CD getMemberSkillLevel junk=bl,di,pf
-0968C findItemById junk=al,di,pf,zf scratch=CCE1
+098CD getMemberSkillLevel junk=pf
+0968C findItemById junk=al,pf,zf scratch=CCE1
 08DCE convertNumberToBcd junk=al,bl,cf,dl,pf,sf,si
 07696 writeNumber junk=al,bl,dl,pf,si,zf
-09E53 writeCharacter junk=al,bl,dl,pf,si,zf
-09DC3 writeCharacter2 junk=al,bl,ch,cl,di,dl,pf,si,zf
-06CB2 printMessage junk=al,bl,ch,cl,di,dl,pf,si,zf scratch=B263
-089B1 hintOverlay junk=al,bl,bp,di,dl,pf,si,zf
+09E53 writeCharacter junk=al,bl,cl,di,dl,es,pf,si,zf
+09DC3 writeCharacter2 junk=al,bl,ch,cl,di,dl,es,pf,si,zf
+06CB2 printMessage junk=ah,al,bl,bp,ch,cl,di,dl,es,pf,si,zf scratch=B263
+089B1 hintOverlay junk=al,bl,bp,cl,di,dl,pf,si,zf
 09F12 flushLine junk=al,bl,dl,pf,si,zf
 09EFC newline junk=al,bl,dl,pf,si,zf
 # inventory, equipment, money, hit points, skill check accumulators (ports/ports_character.cpp)
-09AB6 removeItem
-09AC8 getInventoryItemIdPtr junk=cf,sf
+09AB6 removeItem junk=pf
+09AC8 getInventoryItemIdPtr junk=cf,pf,sf
 096C9 getMemberWeaponIdPtr junk=pf
 096C4 getMemberArmorIdPtr junk=pf
 096B2 getEquippedWeaponDetails junk=al,bl,ch,cl,di,dl,pf,zf
 09A0F getArmorAC
-0949E equip junk=bl,cf,ch,cl,dl,sf
-094E8 removeWeaponArmor junk=pf
+0949E equip junk=al,bl,cf,ch,cl,dl,pf,sf,zf
+094E8 removeWeaponArmor junk=pf,sf
 096DB reload junk=al,bl,ch,cl,di,dl,pf,zf
-09D2F hasNoAmmunition junk=bl,pf,sf
+09D2F hasNoAmmunition junk=bl,pf,sf,zf
 098BC resetMoney junk=pf
 09A9C getMemberMoney junk=pf
 09895 addMoneyToMember junk=pf,zf
@@ -48,32 +48,32 @@
 09BF0 setRandomSeed2
 09BF8 resetRandomSeed1
 09BFC setRandomSeed1
-09C04 addRoll junk=ah,pf
+09C04 addRoll junk=ah,pf,zf
 09C2C addTarget junk=ah,pf,zf
 09C54 rollMinusTarget junk=pf,zf
 09C69 rollBeatsTarget junk=pf
 09C72 targetBeatsRoll junk=pf,zf
 09C7E axBeatsTarget junk=pf
-09CAC targetBase junk=pf
-09CCC times3 junk=cf scratch=CD47-CD48
-09D86 sumOfD6 junk=pf,zf scratch=CD3F
-07AC8 writeItemText junk=ah,al,bl,cl,di,dl,pf,si,zf
-07ACE writeItemTextNormal
-07AF0 writeItemName
-07AC3 writeSingleCharacter junk=al,bl,cl,di,dl,pf,zf
+09CAC targetBase junk=cf,pf,sf
+09CCC times3 junk=cf,pf,sf scratch=CD47-CD48
+09D86 sumOfD6 junk=cf,pf,zf scratch=CD3F
+07AC8 writeItemText junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf
+07ACE writeItemTextNormal junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf
+07AF0 writeItemName junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf
+07AC3 writeSingleCharacter junk=al,bl,ch,cl,di,dl,es,pf,si,zf
 # map cells (ports/ports_map.cpp)
-07C20 tileClassAt junk=ah,bl,cf,di scratch=BA11-BA11,4661-4662
-07C69 shr4 junk=cf
+07C20 tileClassAt junk=ah,bl,cf,di,pf,zf scratch=BA11-BA11,4661-4662
+07C69 shr4 junk=cf,pf,zf
 07C72 selectActionRow junk=al,bl,di,dl,pf scratch=4661-4662,BA11-BA11
-07CB1 selectLocationRecord junk=ah,al,bl,di scratch=4661-4662
+07CB1 selectLocationRecord junk=ah,al,bl,cf,di,pf,sf scratch=4661-4662
 07CD2 cellAt junk=ah,bl,di,pf scratch=BA0E-BA11,4661-4662
 07CEB actionAt junk=bl,di,pf scratch=BA0E-BA11,4661-4662
-07CFF changeCellFromLocation junk=ah,al,bl,di,dl,pf scratch=BA08-BA11,4661-4662
-07D50 applyCellChange junk=al,bl,di,dl scratch=BA08-BA11,4661-4662
+07CFF changeCellFromLocation junk=ah,al,bl,di,dl,pf,sf scratch=BA08-BA11,4661-4662
+07D50 applyCellChange junk=ah,al,bl,di,dl,pf scratch=BA08-BA11,4661-4662
 07D7A setTileClass junk=ah,al,bl,di,pf,sf scratch=BA08-BA11,4661-4662
 07DBB storeViewPosition junk=pf,zf
 07DC7 partyMapPosition junk=pf,zf
-07DE0 toViewPosition junk=pf
+07DE0 toViewPosition junk=cf,pf,sf,zf
 # text engine and keyboard (ports/ports_text.cpp)
 8E90 waitForKeypress
 8EAD waitSpaceOrEnter
@@ -90,8 +90,8 @@
 785E setWriteCharacterFn
 786E writeString junk=ah,al,bl,di,dl,pf,sf,si
 7877 writeString2 junk=ah,al,bl,di,dl,pf,sf,si
-78A0 printMapMessage junk=al,bl,ch,cl,di,dl,es,pf,si,zf
-78A3 writeEncodedText junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf
+78A0 printMapMessage junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf
+78A3 writeEncodedText junk=ah,al,bl,bp,ch,cl,di,dl,es,pf,si,zf
 71B9 writeMemberName junk=al,bl,di,dl,pf,si
 9083 saveRectBounds junk=al,dl,pf,sp,zf
 9060 restoreRectBounds junk=al,dl,pf,sp,zf scratch=4672-4677
@@ -111,7 +111,7 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 2A92 itemClipSizeNibble
 2A9D itemAmmunitionType junk=bl,di
 2AA2 itemArmorClassByte
-2AAB itemBytes01 junk=di,pf,zf
+2AAB itemBytes01 junk=bl,di,pf,zf
 2ABA itemByte2 junk=bl,di
 2AC5 locationRecordBits2 junk=bl,di,pf
 5C08 locationRecordBits4 junk=bl,cf,di,pf,zf
@@ -121,22 +121,22 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 3561 clearNumberValue
 3787 selectSlotCellRecord junk=ah,al,bl,di,dl,pf,zf scratch=BA08-BA11,4661-4662
 3797 selectCellRecord junk=ah,al,bl,di,dl,pf,zf scratch=BA08-BA11,4661-4662
-379E saveLocationRecord junk=ah,al,bl,cf,di,dl,pf,zf scratch=4661-4662
+379E saveLocationRecord junk=ah,al,bl,cf,di,dl,pf,sf,zf scratch=4661-4662
 37CE selectMember junk=ah,al,bl,pf,zf scratch=A59D-A59E
 37F4 selectSlot junk=ah,al,bl,pf,zf scratch=A59D-A59D
 38B0 clearSlot junk=al,bl,di,pf,zf
 391E markReady
 3924 selectPartyBlock junk=ah,al,bl,pf
-3A37 combatantIndex junk=sf scratch=A590-A591
-3A56 splitCombatantIndex
+3A37 combatantIndex junk=cf,pf,sf scratch=A590-A591
+3A56 splitCombatantIndex junk=pf
 3878 combatReadiness junk=ah,bl,cf,ch,cl,di,dl,pf,sf,si,zf scratch=A598-A599
 38C1 useAmmunitionNone junk=bl,cf,ch,cl,di,dl,pf,sf scratch=A598-A599
 38C3 useAmmunition scratch=A598-A599
-5C4A setHitFlag junk=bl,pf
-5C68 typeGroupAOrB
+5C4A setHitFlag junk=bl,dl,pf,sf
+5C68 typeGroupAOrB junk=pf,sf,zf
 5C6E typeGroupA
-5C7E typeGroupB junk=sf
-5C8C typeGroupC
+5C7E typeGroupB junk=pf,sf
+5C8C typeGroupC junk=pf,sf
 5C96 weaponQuantityByte junk=bl,di,pf
 5CA4 weaponAmmunitionTypeFlags junk=bl,ch,cl,di,dl,pf
 5CB2 timesTen junk=bl,pf,zf
@@ -161,8 +161,15 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 56DE weaponDamageClass
 5672 rollMonsterDamage junk=bl,ch,cl,di,pf,si,zf scratch=A59D-A59D,A670-A670,BA08-BA11,4661-4662,CD3F-CD3F,C059-C059
 5A18 recordWordToNumber junk=di
-597E reduceByMonsterArmor junk=bl,cf,ch,cl,di,sf,si scratch=A680-A683,A59D-A59D,A670-A670,BA08-BA11,4661-4662,CD3F-CD3F,C059-C059
-59C7 monsterExperience junk=al,bl,ch,cl,di,dl,pf,si,zf scratch=A67D-A67F,A59D-A59D,A670-A670,BA08-BA11,4661-4662
-5755 defenseRoll junk=ah,bl,cl,di,pf,si,zf scratch=A689-A68A,A598-A599,CD3F-CD3F,C059-C059
-5738 attackStrength junk=ah,bl,cl,di,pf,sf,si,zf scratch=A689-A68C,A598-A599,CD3F-CD3F,C059-C059
+597E reduceByMonsterArmor junk=bl,cf,ch,cl,di,pf,sf,si scratch=A680-A683,A59D-A59D,A670-A670,BA08-BA11,4661-4662,CD3F-CD3F,C059-C059
+59C7 monsterExperience junk=al,bl,cf,ch,cl,di,dl,pf,si,zf scratch=A67D-A67F,A59D-A59D,A670-A670,BA08-BA11,4661-4662
+5755 defenseRoll junk=ah,bl,ch,cl,di,pf,si,zf scratch=A689-A68A,A598-A599,CD3F-CD3F,C059-C059
+5738 attackStrength junk=ah,bl,cf,ch,cl,di,pf,sf,si,zf scratch=A689-A68C,A598-A599,CD3F-CD3F,C059-C059
 5500 hitMonster junk=ah,al,bl,di,dl,pf,zf scratch=A67D-A69D,A59D-A59E,A598-A599,A670-A670,BA08-BA11,4661-4662,CD3F-CD3F,C059-C059
+830E itemSkillId junk=ch,cl,dl,pf,zf
+82FA weaponSkillBonus junk=bl,ch,cl,di,pf,zf scratch=CD47-CD48
+8D85 absByte junk=pf
+818E trySkillImprovement junk=al,bl,di,pf,zf scratch=BA6D-BA70,C059-C059
+9720 selectWriterForRoster junk=al,bl,bp,cl,di,dl,es,pf,si,zf
+5A30 weaponSkillRoll junk=al,bl,ch,cl,di,dl,pf,si,zf scratch=A67A-A67C,A59D-A59D,A598-A599,BA6D-BA70,BA08-BA11,4661-4662,C059-C059
+57D6 damagePartyMember junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CD49-CD4A,A685-A685,A686-A686,A698-A69D,A687-A687,A67D-A69D,BA6D-BA70,CD3F-CD3F,C059-C059

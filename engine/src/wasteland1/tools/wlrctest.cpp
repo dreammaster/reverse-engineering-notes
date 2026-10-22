@@ -105,7 +105,7 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 	size_t vbad = 0;
 	for (int p = 0; p < 4; ++p)
 		for (size_t i = 0; i < 65536; ++i)
-			if (o.ega.planes[p][i] != n.ega.planes[p][i]) { if (vbad++ < 3) md << " pl" << p << "[" << std::hex << i << "]=" << unsigned(o.ega.planes[p][i]) << "/" << unsigned(n.ega.planes[p][i]); }
+			if (o.ega.planes[p][i] != n.ega.planes[p][i]) { if (vbad++ < (std::getenv("VDUMP") ? 200u : 3u)) md << " pl" << p << "[" << std::hex << i << "]=" << unsigned(o.ega.planes[p][i]) << "/" << unsigned(n.ega.planes[p][i]); }
 	if (!d.str().empty() || bad || vbad) {
 		res.kind = Result::Diff;
 		res.note = d.str() + (bad ? " memdiff " + std::to_string(bad) : "") + (vbad ? " vramdiff " + std::to_string(vbad) : "") + md.str();
@@ -162,7 +162,7 @@ int main(int argc, char **argv) {
 			const Result r = testFunction(o, n, state, gameDir, e, seed);
 			if (r.kind == Result::Ok) ++ok;
 			else if (r.kind == Result::Skip) { ++skip; ++reasons[r.note.substr(0, 40)]; if (only >= 0) std::printf("%04X skipped: %s\n", e, r.note.c_str()); }
-			else { ++diff; std::printf("%04X DIFF%s\n", e, r.note.c_str()); }
+			else { ++diff; std::printf("%04X DIFF%s (seed %u)\n", e, r.note.c_str(), seed); std::fflush(stdout); }
 			if (portedOnly) junkSeen[e].insert(r.regs.begin(), r.regs.end());
 		}
 		std::printf("%s: ok %d skipped %d different %d\n", state.c_str(), ok, skip, diff);

@@ -141,5 +141,12 @@ PORT(writeItemTextNormal) { r.d.b.h = 0; writeItemTextNormal(m, r.a.b.l); }   //
 PORT(writeItemName) { r.d.b.h = 0; writeItemName(m, r.a.b.l); }          // 17AF0
 PORT(writeSingleCharacter) { setWriteCharacterFn2(m); r.d.b.h = 0; writeItemText(m, r.a.b.l); }   // 17AC3 (falls into 17AC8)
 
+// ---- skills ---------------------------------------------------------------------------------------------------------------
+PORT(itemSkillId) { r.a.b.l = itemSkillId(m, r.a.b.l); r.b.b.l = 5; r.di = m.d16(g::itemDetailsPtr); }   // 1830E
+PORT(weaponSkillBonus) { const uint16_t v = weaponSkillBonus(m); r.a.b.l = uint8_t(v); r.d.b.l = uint8_t(v >> 8); }   // 182FA
+PORT(absByte) { r.a.b.l = absByte(r.a.b.l); }                                           // 18D85
+PORT(trySkillImprovement) { trySkillImprovement(m, r.a.b.l, r.d.b.l); }                 // 1818E: al = skill, dl = ceiling
+PORT(selectWriterForRoster) { r.es = 0xA000; selectWriterForRoster(m); }                               // 19720
+
 } // namespace rc
 } // namespace wl

@@ -843,6 +843,8 @@ void writeEncodedText(Machine &m, uint8_t index) {   // 178A3
 	}
 }
 
+void writeCharacterVia(Machine &m, uint8_t ch) { jWriteChar(m, ch); }
+
 void writeItemText(Machine &m, uint8_t index) {   // 17AD3
 	m.setD16(g::textPointer1, 0xB270);   // ITEMS_TEXT
 	writeEncodedText(m, index);
