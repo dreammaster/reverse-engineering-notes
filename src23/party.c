@@ -3,7 +3,6 @@
 #include <string.h>
 
 #include "bcd4.h"
-#include "container.h"
 
 /* Names from the game's 27-entry table at DS:0x7DC7; NULL where the table entry is blank. */
 static const char *const g_statNames[PartyStatCount] = {
@@ -1034,6 +1033,17 @@ ItemRangeAvailability itemRangeAvailable(const uint8_t *globalSlots, SaveGame *s
     return result;
 }
 
+/* SyncAllContainers (yendor2.asm:45673): the bags a member has open are written back to their records (and stay open), so a search of the containers sees what is in them now. */
+static void flushOpenBags(SaveGame *save, uint8_t *partyRecord) {
+    for (unsigned bag = 0; bag < 3; bag++) {
+        const uint8_t *marker = partyBagMarker(partyRecord, bag);
+        uint8_t *contents = partyGetU16(marker, 0) ? saveGameRecord(save, SaveSectionItemInstances, partyGetU16(marker, 2)) : NULL;
+        if (contents) {
+            memcpy(contents, marker + 4, InventoryGroupSize);
+        }
+    }
+}
+
 ItemRangeAvailability itemRangeAvailableDeep(uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog, uint16_t lowId, uint16_t highId) {
     ItemRangeAvailability result = itemRangeAvailable(globalSlots, save, lowId, highId);
     if (result.found || lowId == 0 || lowId > highId) {
@@ -1049,7 +1059,7 @@ ItemRangeAvailability itemRangeAvailableDeep(uint8_t *globalSlots, SaveGame *sav
         if (!record) {
             continue;
         }
-        containerFlushOpen(save, record);
+        flushOpenBags(save, record);
         PartyDeepFind found = partyFindItemDeep(record, save, catalog, lowId, highId);
         if (found.itemId != 0) {
             result.found = true;

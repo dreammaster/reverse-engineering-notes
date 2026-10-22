@@ -32,16 +32,6 @@ void containerFree(SaveGame *save, unsigned record) {
     saveHeaderSetU16(save, ContainerHeaderFreeHead, (uint16_t)record);
 }
 
-void containerFlushOpen(SaveGame *save, uint8_t *partyRecord) {
-    for (unsigned bag = 0; bag < 3; bag++) {
-        const uint8_t *marker = partyBagMarker(partyRecord, bag);
-        uint8_t *contents = partyGetU16(marker, 0) ? saveGameRecord(save, SaveSectionItemInstances, partyGetU16(marker, 2)) : NULL;
-        if (contents) {
-            memcpy(contents, marker + 4, InventoryGroupSize);
-        }
-    }
-}
-
 unsigned containerWeight(SaveGame *save, unsigned record) {
     const uint8_t *contents = record ? saveGameRecord(save, SaveSectionItemInstances, record) : NULL;
     return contents ? partyGetU16(contents, 0) : 0;
