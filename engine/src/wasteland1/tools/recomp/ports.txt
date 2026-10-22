@@ -95,12 +95,12 @@
 71B9 writeMemberName junk=al,bl,di,dl,pf,si
 9083 saveRectBounds junk=al,dl,pf,sp,zf
 9060 restoreRectBounds junk=al,dl,pf,sp,zf scratch=4672-4677
-9727 drawInfoWindow junk=al,bl,bp,cl,di,dl,es,pf,si,zf
-9770 drawRosterWindow junk=al,bl,bp,cl,di,dl,es,pf,si,zf
-97AE clearTextArea junk=al,bl,cl,di,dl,es,si
-9812 drawBox junk=ah,al,bl,bp,cl,di,dl,es,pf,si,zf
+9727 drawInfoWindow junk=al,bl,bp,cl,di,dl,pf,si,zf
+9770 drawRosterWindow junk=al,bl,bp,cl,di,dl,pf,si,zf
+97AE clearTextArea junk=al,bl,cl,di,dl,si
+9812 drawBox junk=ah,al,bl,bp,cl,di,dl,pf,si,zf
 9E2A setInverseText
 9E30 clearInverseText
-A0C5 scrollLine junk=al,dl,es,pf,si,zf
-07D8 scrollWindowUp junk=al,bl,ch,cl,di,dl,es,pf,si,zf
-06C9 eraseToRight junk=al,bl,ch,cl,di,dl,es,pf,zf
+A0C5 scrollLine junk=al,dl,pf,si,zf
+07D8 scrollWindowUp junk=al,bl,ch,cl,di,dl,pf,si,zf
+06C9 eraseToRight junk=al,bl,ch,cl,di,dl,pf,zf

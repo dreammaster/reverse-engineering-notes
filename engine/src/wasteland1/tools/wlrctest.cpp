@@ -91,7 +91,7 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 	reg("cl", o.cpu.cx & 0xFF, r.c.b.l, rc::j_cl); reg("ch", o.cpu.cx >> 8, r.c.b.h, rc::j_ch);
 	reg("dl", o.cpu.dx & 0xFF, r.d.b.l, rc::j_dl); reg("dh", o.cpu.dx >> 8, r.d.b.h, rc::j_dh);
 	reg("si", o.cpu.si, r.si, rc::j_si); reg("di", o.cpu.di, r.di, rc::j_di); reg("bp", o.cpu.bp, r.bp, rc::j_bp);
-	reg("es", o.cpu.es, r.es); reg("ds", o.cpu.ds, r.ds);
+	reg("es", o.cpu.es, r.es, rc::j_es); reg("ds", o.cpu.ds, r.ds);
 	reg("sp", o.cpu.sp, r.sp, rc::j_sp);
 	reg("cf", o.cpu.flag(x86::CF), r.cf, rc::j_cf); reg("zf", o.cpu.flag(x86::ZF), r.zf, rc::j_zf); reg("sf", o.cpu.flag(x86::SF), r.sf, rc::j_sf);
 	reg("pf", o.cpu.flag(x86::PF), r.pf, rc::j_pf); reg("df", o.cpu.flag(x86::DF), r.df, rc::j_df);

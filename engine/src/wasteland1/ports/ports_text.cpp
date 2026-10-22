@@ -30,15 +30,15 @@ PORT(writeMemberName) { writeMemberName(m); }                                   
 
 PORT(saveRectBounds) { saveRectBounds(m); }                                      // 19083
 PORT(restoreRectBounds) { restoreRectBounds(m); }                                // 19060
-PORT(drawInfoWindow) { drawInfoWindow(m); }                                      // 19727
-PORT(drawRosterWindow) { drawRosterWindow(m); }                                  // 19770
-PORT(clearTextArea) { clearTextArea(m); }                                        // 197AE
-PORT(drawBox) { drawBox(m, r.d.b.l, r.b.b.l); }                                  // 19812
+PORT(drawInfoWindow) { r.es = 0xA000; drawInfoWindow(m); }                                      // 19727
+PORT(drawRosterWindow) { r.es = 0xA000; drawRosterWindow(m); }                                  // 19770
+PORT(clearTextArea) { r.es = 0xA000; clearTextArea(m); }                                        // 197AE
+PORT(drawBox) { r.es = 0xA000; drawBox(m, r.d.b.l, r.b.b.l); }                                  // 19812
 PORT(setInverseText) { r.a.b.l = 0xFF; m.d8(g::inverseText) = 0xFF; }            // 19E2A
 PORT(clearInverseText) { r.a.b.l = 0; m.d8(g::inverseText) = 0; }                // 19E30
-PORT(scrollLine) { scrollLine(m); }                                              // 1A0C5
-PORT(scrollWindowUp) { scrollWindowUp(m); }                                      // 107D8
-PORT(eraseToRight) { eraseToRight(m); }                                          // 106C9
+PORT(scrollLine) { r.es = 0; scrollLine(m); }                                              // 1A0C5
+PORT(scrollWindowUp) { r.es = 0xA000; scrollWindowUp(m); }                                      // 107D8
+PORT(eraseToRight) { r.es = 0xA000; eraseToRight(m); }                                          // 106C9
 
 } // namespace rc
 } // namespace wl
