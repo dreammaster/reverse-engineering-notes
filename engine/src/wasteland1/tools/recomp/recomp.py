@@ -530,7 +530,7 @@ class Emitter:
     def emit_function(self, entry):
         name = "f_%04X" % entry
         if entry in PORTS:
-            self.out.append("void %s(Machine &m, Regs &r) { Regs *outer = m.sys->current; m.sys->current = &r; port_%s(m, r); m.sys->current = outer; r.sp = (uint16_t)(r.sp + 2); }\n" % (name, PORTS[entry][0]))
+            self.out.append("void %s(Machine &m, Regs &r) { Regs *outer = m.sys->current; m.sys->current = &r; port_%s(m, r); m.sys->current = outer; if (m.sys->scramble) scrambleJunk(m, r, %s); r.sp = (uint16_t)(r.sp + 2); }\n" % (name, PORTS[entry][0], " | ".join("j_" + j for j in PORTS[entry][1] if j not in ("sp", "es")) or "0"))
             return
         if entry in self.interp:
             self.out.append("void %s(Machine &m, Regs &r) { interpret(m, r, 0x%04X); }\n" % (name, entry))

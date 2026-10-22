@@ -256,6 +256,30 @@ void intr(Machine &m, Regs &r, int n) {
 	}
 }
 
+void scrambleJunk(Machine &m, Regs &r, uint32_t mask) {
+	Sys &s = *m.sys;
+	static const bool all = std::getenv("WL_SCRAMBLE") && std::getenv("WL_SCRAMBLE")[0] == 'a';   // sanity check: scramble everything
+	if (all) mask = 0x7FFFF;
+	auto next = [&s]() { s.scrambleState ^= s.scrambleState << 13; s.scrambleState ^= s.scrambleState >> 17; s.scrambleState ^= s.scrambleState << 5; return s.scrambleState; };
+	if (mask & j_al) r.a.b.l = uint8_t(next());
+	if (mask & j_ah) r.a.b.h = uint8_t(next());
+	if (mask & j_bl) r.b.b.l = uint8_t(next());
+	if (mask & j_bh) r.b.b.h = uint8_t(next());
+	if (mask & j_cl) r.c.b.l = uint8_t(next());
+	if (mask & j_ch) r.c.b.h = uint8_t(next());
+	if (mask & j_dl) r.d.b.l = uint8_t(next());
+	if (mask & j_dh) r.d.b.h = uint8_t(next());
+	if (mask & j_si) r.si = uint16_t(next());
+	if (mask & j_di) r.di = uint16_t(next());
+	if (mask & j_bp) r.bp = uint16_t(next());
+	if (mask & j_cf) r.cf = next() & 1;
+	if (mask & j_zf) r.zf = next() & 1;
+	if (mask & j_sf) r.sf = next() & 1;
+	if (mask & j_pf) r.pf = next() & 1;
+	if (mask & j_of) r.of = next() & 1;
+	if (mask & j_af) r.af = next() & 1;
+}
+
 void deliverTimer(Machine &m, Regs &r) {
 	Sys &s = sys(m);
 	// BIOS tick counter
@@ -391,6 +415,7 @@ void installCallbacks(Machine &m) {
 void boot(Machine &m, const Bytes &image, const std::string &gameDir, Regs &r) {
 	m.sys = std::make_shared<Sys>();
 	Sys &s = *m.sys;
+	s.scramble = std::getenv("WL_SCRAMBLE") != nullptr;
 	s.gameDir = gameDir;
 	s.indexGameDir();
 	if (image.size() > 2 && image[0] == 'M' && image[1] == 'Z') {   // WL.EXE itself: unpack it

@@ -27,6 +27,8 @@ struct Sys {
 	uint64_t edges = 0, nextTick = 0, edgesPerTick = 20000;   // timer IRQ0 every N taken backward branches (deterministic)
 	int emptyPolls = 0, stopOnIdle = 0;                      // stopOnIdle > 0: throw WaitForInput after that many empty polls
 	Regs *current = nullptr;                                 // registers of the port that is running (for callbacks into generated code)
+	bool scramble = false;                                   // WL_SCRAMBLE: overwrite the junk registers of ports with garbage (finds callers that read them)
+	uint32_t scrambleState = 12345;
 	bool realtime = false;                                   // timer IRQ0 from the wall clock (18.2 Hz) instead of counting back edges
 	int64_t nextTickUs = 0;
 	std::function<void(int)> onSpeaker;                      // PC speaker: frequency in Hz, 0 = off
@@ -48,6 +50,7 @@ struct Sys {
 void boot(Machine &m, const Bytes &image, const std::string &gameDir, Regs &r);   // maps the unpacked image (1000:0), sets up the IVT and the start registers
 void run(Machine &m, Regs &r);                                  // runs the program from its entry point
 void deliverTimer(Machine &m, Regs &r);
+void scrambleJunk(Machine &m, Regs &r, uint32_t junkMask);
 void installCallbacks(Machine &m);   // callLegacy / onPortraitTick: lets ported routines call generated ones
 void f_10B6(Machine &m, Regs &r);
 
