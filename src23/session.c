@@ -1215,9 +1215,7 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
             ExploreReveal revealed;
             exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
             sessionRebuild(s);
-            if (!engageMonsterOnPartyCell(s)) { /* a monster on the landing cell is fought at once (loc_2C4F5) */
-                monstersTakeTurns(s);
-            }
+            engageMonsterOnPartyCell(s); /* a monster on the landing cell is fought at once (loc_2C4F5); else the spent turn gives the monsters theirs (turnSpent) */
         }
         done = jump.ok;
         break;
@@ -1258,6 +1256,17 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
     return done ? SessionCastDone : SessionCastNoEffect;
 }
 
+/*
+ * A spent turn outside a fight: ApplyEncodedItemEffect (every spell and scroll), the healing potions' handlers and the repair command set g_uiScratchFlags3 bit 0x20, and the main loop (start :1005A)
+ * answers it with ProcessLevelMonsters and ProcessSideTrapsOnMovement -- the monsters move or shoot while the party casts, drinks or mends.
+ */
+static void turnSpent(GameSession *s) {
+    if (!s->combat.active && !s->combat.wiped) {
+        monstersTakeTurns(s);
+        sessionAmbushShots(s);
+    }
+}
+
 SessionCast sessionCast(GameSession *s, unsigned spellId) {
     SessionCombat *c = &s->combat;
     if (!c->active || c->cursor >= c->count || c->order[c->cursor].isMonster) {
@@ -1289,7 +1298,12 @@ SessionCast sessionCastBy(GameSession *s, unsigned casterSlot, unsigned spellId,
         }
         return sessionCast(s, spellId);
     }
-    return castSpell(s, casterSlot, spellId, returnToMark);
+    SessionCast result = castSpell(s, casterSlot, spellId, returnToMark);
+    const uint8_t *spell = spellRecord(&s->spells, spellId);
+    if ((result == SessionCastDone || result == SessionCastNoEffect) && !(spell && spellSelectBranch(spell) == SpellBranchRest)) { /* a rest runs the monsters itself */
+        turnSpent(s);
+    }
+    return result;
 }
 
 /* TickWorldAilments (yendor2.asm:27798): the light sources burn down one unit -- the global slots, every member's eight main slots, the spell timers. */
@@ -1364,6 +1378,7 @@ SessionCast sessionUseScroll(GameSession *s, unsigned userSlot, unsigned itemSlo
         }
         spellLearn(member, spellId);
         partyConsumeItemCharge(user, &s->items, slot);
+        turnSpent(s);
         return SessionCastDone;
     }
     s->scrollCast = true;
@@ -1375,6 +1390,8 @@ SessionCast sessionUseScroll(GameSession *s, unsigned userSlot, unsigned itemSlo
         if (s->combat.active && s->combat.cursor < s->combat.count && !s->combat.order[s->combat.cursor].isMonster) {
             combatAfterAction(s);
             combatRunMonsters(s);
+        } else {
+            turnSpent(s);
         }
     }
     return result;
@@ -1568,6 +1585,8 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
     if (s->combat.active && s->combat.cursor < s->combat.count && !s->combat.order[s->combat.cursor].isMonster) {
         combatAfterAction(s);
         combatRunMonsters(s);
+    } else {
+        turnSpent(s);
     }
     return SessionUseDone;
 }

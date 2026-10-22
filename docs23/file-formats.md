@@ -6775,6 +6775,13 @@ applies every nonzero magnitude as the effect `+0x70` with the magnitude as the 
 
 **Chapter 3's V** (`start` key table, :0769): `ShowStatusPanelMessage` of the two strings at DS:0x9538, REGISTERED / VER 2.00 -- the version stamp of the registered program.
 
+### A spent turn outside a fight (decoded 2026-10-22)
+
+`ApplyEncodedItemEffect` (:51097) opens with `g_uiScratchFlags3 |= 0x20`; so do the healing potions' handlers (:48594, :48707: HP restoratives), the repair command (:45907) and `InteractWithContainer` (scrolls, study). The
+main loop (`start` :1005A) answers the bit with `ProcessLevelMonsters` -- whose first instruction (:33374) clears it -- then `RedrawDungeonScreen` and `ProcessSideTrapsOnMovement`: the monsters take a step or shoot while the
+party casts, drinks or mends. (In a fight the same bit ends the member's turn, `HandleDungeonInput` loc_16451.) Stat potions (`ApplyMultiStatEffect`), the light sources and keys set nothing: they are free. The jump spell's
+engagement scan (loc_2C4F5) is the only place that fights at once; otherwise it is this pass too. `session.c` `turnSpent`.
+
 ### Sounds of a fight, and the party wipe (decoded 2026-10-22)
 
 The sound driver plays one voice at a time; the original either skips a sound when `WaitForSoundDriverIdle` says it is busy or waits for it (`TriggerSoundEventAfterDriverWait`). The standalone queues them (`GameSession::soundQueue`,

@@ -1192,6 +1192,30 @@ static void testAmbush(GameKind game, const uint8_t *world, size_t size, const c
         now += sessionPartyRecord(s, i) ? partyGetStat(sessionPartyRecord(s, i), PartyStatHitPoints) : 0;
     }
     check("... and costs nothing", now == before);
+
+    /* a spent turn outside a fight (a potion drunk, a spell cast) gives the monsters theirs: the ant walks toward the party */
+    unsigned potion = 0;
+    for (unsigned id = 1; id <= s->items.validItemCount && !potion; id++) {
+        potion = partyRestorativeForItem(game, id) == RestorativeHpHalf || partyRestorativeForItem(game, id) == RestorativeHpFull ? id : 0;
+    }
+    if (potion) {
+        monsterSetU16(ant, MonsterFieldWound, 0);
+        monsterSetU16(ant, MonsterFieldRangedAccuracy, 0);
+        monsterSetU16(ant, MonsterFieldRangedDamage, 0);
+        place(s, 175, 40, SaveFacingSouth);
+        unsigned antY = monsterGetU16(ant, MonsterFieldWorldY);
+        partySetStat(sessionPartyRecord(s, 0), PartyStatHitPoints, 1); /* a potion does nothing for one who is not hurt */
+        itemSlotSet(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, 0), PartyGroupMain), 1), (uint16_t)potion, 1);
+        check("a potion drunk outside a fight", sessionUseItem(s, 0, 1, 0) == SessionUseDone);
+        unsigned antAfter = 0;
+        for (unsigned slot = 0; slot < MonsterPoolSize; slot++) {
+            const uint8_t *m = s->pool + (size_t)slot * MonsterRecordSize;
+            if (monsterGetU16(m, MonsterFieldType) && monsterGetU16(m, MonsterFieldWorldX) == 175 && monsterGetU16(m, MonsterFieldWorldY) != antY && monsterGetU16(m, MonsterFieldWorldY) < 50) {
+                antAfter = monsterGetU16(m, MonsterFieldWorldY);
+            }
+        }
+        check("... is a turn: the monsters had theirs (something near the ant's column moved)", antAfter != 0 || s->combat.active);
+    }
     sessionFree(s);
 }
 
