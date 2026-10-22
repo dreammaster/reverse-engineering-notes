@@ -142,6 +142,8 @@ typedef struct GameSession {
     unsigned worldTickCountdown; /* minutes to the next world tick (word_32954) */
     unsigned pendingMusic;  /* a music track a command asked for (the pan flute); the front end plays it and clears it */
     unsigned pendingSound;  /* the sound event the last command asked for (a travel arrival, a story event); the front end plays it and clears it */
+    unsigned soundQueue[16]; /* the sounds a command asked for one after another (a fight's hits, a spell's cast and strikes): the front end plays them in order, each when the one before it is over (sessionNextSound) */
+    unsigned soundCount;
     uint16_t heldItem, heldExtra; /* the item on the cursor (CREATE FOOD / FORGE put one there when the cursor is empty); 0 = none */
     SessionCombat combat;
     MonsterRewardStaging staged; /* the rewards of monsters whose timers ran out (GrantMonsterRewards stages them in globals): awarded with the next victory, or at the end of the monster pass when they carry experience */
@@ -203,6 +205,9 @@ RestOutcome sessionRest(GameSession *session);
  * a preset amount. True when somebody was hit. The sound of the shot goes to `pendingSound`.
  */
 bool sessionAmbushShots(GameSession *session);
+
+/* The next sound of the queue, 0 when it is empty. */
+unsigned sessionNextSound(GameSession *session);
 
 /* A pool monster steps onto the party's cell (what the monster pass does for one that reaches it): it starts the fight, or joins the fight that is on when its flags and the formation allow it
  * (SessionCombat::formation). True when it was taken into a combat slot (the pool record is cleared then). */

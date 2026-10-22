@@ -541,7 +541,7 @@ int main(int argc, char **argv) {
             sessionRebuild(g_session);
         }
     }
-    GameUiHost uiHost = {NULL, playEffect, playMusic, playIntro, storeSave, fetchSave, slotName, slotWrite, slotRead};
+    GameUiHost uiHost = {NULL, playEffect, playMusic, playIntro, storeSave, fetchSave, slotName, slotWrite, slotRead, introSoundBusy};
     if (!gameUiInit(&g_ui, g_session, g_worldDat, g_worldSize, pictureFileGet, g_pictures, &uiHost)) {
         fprintf(stderr, "the world data lacks the view tables\n");
         return 1;

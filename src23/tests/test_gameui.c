@@ -66,6 +66,21 @@ static void onEffect(void *ctx, unsigned id) {
     g_effects++;
 }
 
+static bool g_soundBusy;
+static unsigned g_lastEffect;
+
+static void onEffectLogged(void *ctx, unsigned id) {
+    (void)ctx;
+    g_effects++;
+    g_lastEffect = id;
+    g_soundBusy = true; /* a sound plays until the test says it is over */
+}
+
+static bool onSoundBusy(void *ctx) {
+    (void)ctx;
+    return g_soundBusy;
+}
+
 static void onMusic(void *ctx, unsigned track) {
     (void)ctx;
     (void)track;
@@ -1360,6 +1375,80 @@ static void testBoot(GameKind game, const char *envName, const char *defaultDir,
     free(world);
 }
 
+/* The party wipe (CheckPartyWipeAndReinitLevel): the sound, the bare frame and the LOAD / NEW GAME / DOS dialog with no way back. */
+static void testWipe(GameKind game, const char *envName, const char *defaultDir, const char *label) {
+    const char *dir = getenv(envName);
+    char path[512];
+    snprintf(path, sizeof(path), "%s/WORLD.DAT", dir ? dir : defaultDir);
+    size_t size;
+    uint8_t *world = readFile(path, &size);
+    if (!world) {
+        return;
+    }
+    char text[200];
+    memset(g_slotSize, 0, sizeof(g_slotSize));
+    GameUiHost host = {NULL, onEffect, onMusic, NULL, onStore, onFetch, onSlotName, onSlotWrite, onSlotRead};
+    static GameUi ui;
+    GameSession *s = sessionNew(game, world, size);
+    gameUiInit(&ui, s, world, size, picture, NULL, &host);
+    for (unsigned member = 0; member < 4; member++) {
+        uint8_t *record = sessionPartyRecord(s, member);
+        if (record) {
+            partySetStat(record, PartyStatHitPoints, 0);
+            partySetU16(record, PartyFieldStatusFlags, (uint16_t)(partyGetU16(record, PartyFieldStatusFlags) | PartyStatusIncapacitated));
+        }
+    }
+    s->combat.wiped = true;
+    unsigned sounds = g_effects;
+    gameUiDraw(&ui);
+    snprintf(text, sizeof(text), "%s: a wiped party gets the sound and the dialog with LOAD, NEW GAME and DOS only", label);
+    check(text, ui.wipe && ui.overlay == UiOverlayDialog && ui.dialogFlags == (GameDialogFlagLoad | GameDialogFlagNewGame | GameDialogFlagDos) && g_effects == sounds + 1);
+    gameUiKey(&ui, UiKeyEscape, false);
+    gameUiKey(&ui, 'r', false);
+    gameUiKey(&ui, 's', false);
+    check("there is no RETURN and no SAVE: the dialog stays as it is", ui.overlay == UiOverlayDialog && ui.dialogMode == UiDialogMenu && ui.wipe);
+    gameUiKey(&ui, 'n', false);
+    gameUiKey(&ui, 'y', false);
+    check("NEW GAME starts over on the title menu with a fresh session", !ui.wipe && !s->combat.wiped && ui.overlay == UiOverlayTitle);
+    sessionFree(s);
+    free(world);
+}
+
+/* Sounds the session asks for one after another are played one at a time, each when the host says the one before it is over (TriggerSoundEventAfterDriverWait). */
+static void testSoundQueue(void) {
+    const char *dir = getenv("YENDOR2_GAME_DIR");
+    char path[512];
+    snprintf(path, sizeof(path), "%s/WORLD.DAT", dir ? dir : "../../yendor2/game");
+    size_t size;
+    uint8_t *world = readFile(path, &size);
+    if (!world) {
+        return;
+    }
+    GameUiHost host = {NULL, onEffectLogged, onMusic, NULL, onStore, onFetch, onSlotName, onSlotWrite, onSlotRead, onSoundBusy};
+    static GameUi ui;
+    GameSession *s = sessionNew(GameYendor2, world, size);
+    gameUiInit(&ui, s, world, size, picture, NULL, &host);
+    ui.driverFlags |= DriverSoundFxAvailable | DriverSoundFxOn;
+    s->soundQueue[0] = 11;
+    s->soundQueue[1] = 12;
+    s->soundQueue[2] = 13;
+    s->soundCount = 3;
+    g_effects = 0;
+    g_soundBusy = false;
+    gameUiAnimate(&ui);
+    check("the first queued sound starts at once", g_effects == 1 && g_lastEffect == 11);
+    gameUiAnimate(&ui);
+    check("the next waits while the host is busy", g_effects == 1);
+    g_soundBusy = false;
+    gameUiAnimate(&ui);
+    check("... and starts when it is over, in order", g_effects == 2 && g_lastEffect == 12);
+    g_soundBusy = false;
+    gameUiAnimate(&ui);
+    check("... and the last after that", g_effects == 3 && g_lastEffect == 13 && ui.soundFifoCount == 0);
+    sessionFree(s);
+    free(world);
+}
+
 int main(void) {
     testGame(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
     testGame(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
@@ -1368,6 +1457,9 @@ int main(void) {
     testPanelAndAlchemy(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
     testInventoryUi(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
     testInventoryUi(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
+    testWipe(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
+    testWipe(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
+    testSoundQueue();
     printf("%s (%d skipped)\n", g_failureCount ? "FAILED" : "ALL PASSED", g_skipCount);
     return g_failureCount ? 1 : 0;
 }

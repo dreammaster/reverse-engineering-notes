@@ -66,6 +66,7 @@ typedef struct {
     bool (*slotName)(void *ctx, unsigned slot, char *name, size_t capacity); /* false when the slot file does not exist, else the name saved in it (the header's first string) */
     bool (*slotWrite)(void *ctx, unsigned slot, const uint8_t *image, size_t size);
     size_t (*slotRead)(void *ctx, unsigned slot, uint8_t *image, size_t capacity); /* 0 when it cannot be read */
+    bool (*soundBusy)(void *ctx); /* optional: a sound effect is still playing (the original's WaitForSoundDriverIdle); without it queued sounds are all started at once */
 } GameUiHost;
 
 /* Where the start-up (gameUiBoot) has got to: the dialog with LOAD / NEW GAME / DOS that opens when there are saves, the title menu when there are none, then the options dialog before the game. */
@@ -99,6 +100,9 @@ typedef struct {
     unsigned lastMusicPage;
     PanelRun panelRuns[UiPanelRunMax]; /* the message area's text: what the last command wrote (a rest's result); cleared by the next key or click */
     unsigned panelRunCount;
+    unsigned soundFifo[16]; /* sounds waiting for the one playing to end (sessionNextSound's queue, drained as the host reports it idle) */
+    unsigned soundFifoCount;
+    bool wipe;             /* the party is dead: the empty frame and the LOAD / NEW GAME / DOS dialog (CheckPartyWipeAndReinitLevel) */
     bool combatPanel;      /* a fight is on: the top-right panel shows the resource icons and belt (RunDungeonGameLoop's ShowResourceDepletedOverlay) ... */
     uint16_t combatPanelSaved; /* ... and the panel bits (0x7000) it replaced, put back when the fight ends */
     bool restPause;        /* an interrupted rest's message stays until a key (the combat's panels wait behind it) */

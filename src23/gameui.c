@@ -289,11 +289,32 @@ static void clueEntryOpen(GameUi *ui) { /* Enter on the selected entry */
 }
 
 /* The sounds a session step asked for (pendingSound), played now. */
-static void playPending(GameUi *ui) {
-    if (ui->session->pendingSound) {
-        effect(ui, ui->session->pendingSound);
-        ui->session->pendingSound = 0;
+/* The sounds waiting their turn: one starts when the host says the last is over (TriggerSoundEventAfterDriverWait); a host that cannot tell starts them all. */
+static void soundPump(GameUi *ui) {
+    while (ui->soundFifoCount) {
+        if (ui->host.soundBusy && ui->host.soundBusy(ui->host.ctx)) {
+            return;
+        }
+        effect(ui, ui->soundFifo[0]);
+        memmove(ui->soundFifo, ui->soundFifo + 1, (ui->soundFifoCount - 1) * sizeof(ui->soundFifo[0]));
+        ui->soundFifoCount--;
+        if (ui->host.soundBusy) {
+            return;
+        }
     }
+}
+
+static void playPending(GameUi *ui) {
+    GameSession *s = ui->session;
+    unsigned id = s->pendingSound;
+    s->pendingSound = 0;
+    do {
+        if (id && ui->soundFifoCount < sizeof(ui->soundFifo) / sizeof(ui->soundFifo[0])) {
+            ui->soundFifo[ui->soundFifoCount++] = id;
+        }
+        id = sessionNextSound(s);
+    } while (id);
+    soundPump(ui);
 }
 
 /* A button of the main screen drawn pressed (the original draws the pressed picture while the command runs: HandleMovementInput's DrawMovementFeedbackIcon, the icon row's own routines). */
@@ -1551,8 +1572,12 @@ void gameUiSettle(GameUi *ui) {
     ui->pressTicks = 0;
 }
 
+static void wipeCheck(GameUi *ui);
+
 bool gameUiAnimate(GameUi *ui) {
     bool changed = false;
+    wipeCheck(ui);
+    playPending(ui); /* the sounds the session has queued, and the next of those waiting */
     ui->cycleTicks += 2; /* one animation tick is two BIOS ticks; the timer interrupt rotates the colours every five */
     while (ui->cycleTicks >= 5) {
         ui->cycleTicks -= 5;
@@ -2032,6 +2057,27 @@ static void dialogDraw(GameUi *ui) {
 }
 
 /* What the original has up behind the dialog while it starts: the frame of the main screen, with the party's panels when a new game has been started and not before. */
+/*
+ * CheckPartyWipeAndReinitLevel (yendor2.asm:38529): when nobody is left standing ShowPartyWipeScreen stops the music, plays the sound (Chapter 2 0x13, Chapter 3 0x32) and clears the screen to the bare frame
+ * with the chapter plate; RunGameDialog then offers LOAD, NEW GAME and DOS (the flags 0x70: no RETURN, no SAVE) until one is chosen.
+ */
+static void wipeCheck(GameUi *ui) {
+    GameSession *s = ui->session;
+    if (!s->combat.wiped || ui->wipe) {
+        return;
+    }
+    ui->wipe = true;
+    ui->combatPanel = false;
+    ui->scrollAsk = ui->pickActive = ui->dropPrompt = ui->targeting = false;
+    ui->panelRunCount = 0;
+    s->heldItem = s->heldExtra = 0;
+    if (ui->host.music) {
+        ui->host.music(ui->host.ctx, 0);
+    }
+    effect(ui, s->game == GameYendor2 ? 0x13 : 0x32);
+    dialogOpen(ui, GameDialogFlagLoad | GameDialogFlagNewGame | GameDialogFlagDos);
+}
+
 static void bootBackdrop(GameUi *ui) {
     memset(ui->screen, 0, sizeof(ui->screen));
     const uint8_t *frame = ui->renderer.picture(ui->renderer.pictureCtx, 0, 1);
@@ -2056,7 +2102,7 @@ static void drawScreen(GameUi *ui) {
         creationWizardDraw(&ui->wizard, &ui->renderer);
         return;
     }
-    if (ui->overlay == UiOverlayDialog && (ui->boot == UiBootSaves || ui->boot == UiBootOptions)) {
+    if (ui->overlay == UiOverlayDialog && (ui->boot == UiBootSaves || ui->boot == UiBootOptions || ui->wipe)) {
         bootBackdrop(ui);
         dialogDraw(ui);
         return;
@@ -2187,6 +2233,7 @@ static void drawScreen(GameUi *ui) {
 }
 
 void gameUiDraw(GameUi *ui) {
+    wipeCheck(ui);
     drawScreen(ui);
     if (ui->catalogActive && ui->overlay != UiOverlayTalk && ui->overlay != UiOverlayDetail) {
         catalogDraw(ui);
@@ -2326,6 +2373,11 @@ static void dialogOpen(GameUi *ui, unsigned flags) {
 static void dialogLeave(GameUi *ui) {
     ui->overlay = UiOverlayNone;
     ui->dialogMode = UiDialogMenu;
+    if (ui->wipe) { /* a load that has been made: back in the game */
+        ui->wipe = false;
+        ui->lastMusicPage = 0xFFFF;
+        gameUiAmbientMusic(ui);
+    }
     if (ui->boot != UiBootNone) {
         ui->boot = UiBootNone;
         ui->lastMusicPage = 0xFFFF;
@@ -2381,6 +2433,7 @@ static void dialogLoad(GameUi *ui) {
 /* ConfirmNewGame's yes: RunTitleScreen starts a new game (InitializeNewGameWorldState) and the title menu is up; its E goes on into the game. */
 static void startNewGame(GameUi *ui) {
     if (sessionNewGame(ui->session, ui->worldDat, ui->worldSize)) {
+        ui->wipe = false;
         paletteSyncToClock(ui);
         ui->dialogMode = UiDialogMenu;
         ui->overlay = UiOverlayTitle;
@@ -2877,7 +2930,16 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     return running;
 }
 
+static bool gameUiKeyInner(GameUi *ui, UiKey key, bool ctrl);
+
 bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
+    bool result = gameUiKeyInner(ui, key, ctrl);
+    playPending(ui); /* whatever the command made the session ask for: a fight's sounds, a trap's */
+    return result;
+}
+
+static bool gameUiKeyInner(GameUi *ui, UiKey key, bool ctrl) {
+    wipeCheck(ui);
     if (ui->passwordActive) { /* typing: the message area is the prompt's */
         return keyDispatch(ui, key, ctrl);
     }
@@ -3375,7 +3437,16 @@ static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
     }
 }
 
+static bool gameUiClickInner(GameUi *ui, int x, int y, bool right);
+
 bool gameUiClick(GameUi *ui, int x, int y, bool right) {
+    bool result = gameUiClickInner(ui, x, y, right);
+    playPending(ui);
+    return result;
+}
+
+static bool gameUiClickInner(GameUi *ui, int x, int y, bool right) {
+    wipeCheck(ui);
     if (ui->restPause) { /* the interrupted rest's message is read: any click lets the combat show */
         ui->restPause = false;
         ui->panelRunCount = 0;

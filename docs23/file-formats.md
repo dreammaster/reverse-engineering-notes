@@ -6775,6 +6775,19 @@ applies every nonzero magnitude as the effect `+0x70` with the magnitude as the 
 
 **Chapter 3's V** (`start` key table, :0769): `ShowStatusPanelMessage` of the two strings at DS:0x9538, REGISTERED / VER 2.00 -- the version stamp of the registered program.
 
+### Sounds of a fight, and the party wipe (decoded 2026-10-22)
+
+The sound driver plays one voice at a time; the original either skips a sound when `WaitForSoundDriverIdle` says it is busy or waits for it (`TriggerSoundEventAfterDriverWait`). The standalone queues them (`GameSession::soundQueue`,
+`sessionNextSound`) and the front end plays one when the host reports the last over (`GameUiHost::soundBusy`, `gameui.c` `soundPump`), so a command's sounds come in order instead of cutting each other off.
+Where they come from: the **player's melee** (`HandleDungeonInput` :10634): a miss `_val43` (Chapter 2 0x1E, Chapter 3 0x23), a hit the weapon's own sound -- word 5 of its target entry (`[bx+0Ah]` after
+`LoadItemCatalogRecord`) -- none when the weapon broke; **a monster's turn** (`ProcessMonsterAttackTurn` :10768): its hit sound `+0x5C` when an attack lands (once for an area attack), else its idle sound `+0x5E`;
+**effects**: `ApplyEffectAndDrawIconBar` (:13788) plays the sound of the effect it applies (`EffectDef.sound`, +0 of the row) once per call unless the driver is busy -- so a trap, an ambush shot with no sound
+of its own (`+0x62`), the ailment sweep (one per pass) and the healing spells (`SpellFieldEffectId`) are heard, a monster's hit is not heard twice; **attack spells** (`ApplyEncodedItemEffect`): in the projectile
+and screen-wide families the record's `+0x20` is the cast sound (word_332DA) and `+0x22` the strike sound (word_332DC) once for each monster hit (the same `+0x22` in the combat-only attack branches).
+
+**The party wipe** (`CheckPartyWipeAndReinitLevel` :38529, `ShowPartyWipeScreen` :49028): when no member is left standing the music stops, sound 0x13 (Chapter 3 0x32) plays, the screen is cleared to the bare frame with
+the chapter plate, and `RunGameDialog` is run with the flags 0x70 -- LOAD, NEW GAME and DOS, no RETURN, no SAVE -- until one is chosen; a load or a new game re-initialises the level. `gameui.c` `wipeCheck`.
+
 ### Containers: bags, boxes and backpacks (decoded 2026-10-22)
 
 A container item (flag 0x2000: BAG 0x2004 accepts items with fit flag 0x2000, BOX 0x2008 0x4000, BACKPACK 0x2010 0x8000, MAGIC CONTAINER 0x2002 anything -- Chapter 2 ids 6 / 5 / 4 / 17, Chapter 3 28 / 29 / 30; the items'

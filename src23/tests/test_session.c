@@ -1178,7 +1178,7 @@ static void testAmbush(GameKind game, const uint8_t *world, size_t size, const c
     snprintf(text, sizeof(text), "%s: the shot hit (200 each before, %u in all after)", label, after);
     check(text, hit && after < total);
     check("... one of the first three members took it", hurt >= 1 && hurt <= 3);
-    check("... the arming bits are cleared and the sound is queued", !(monsterGetU16(ant, MonsterFieldWound) & 0x1F00) && s->pendingSound == 9);
+    check("... the arming bits are cleared and the shot's sound is queued", !(monsterGetU16(ant, MonsterFieldWound) & 0x1F00) && sessionNextSound(s) == 9);
     check("... a second pass shoots nobody", !sessionAmbushShots(s));
     monsterSetU16(ant, MonsterFieldRangedAccuracy, 0); /* margin never above zero: always avoided */
     monsterSetU16(ant, MonsterFieldWound, MonsterWoundAmbushPending);
@@ -1452,8 +1452,16 @@ static void testGroupFight(GameKind game, const uint8_t *world, size_t size, con
     c->cursor = 0;
     c->order[0].isMonster = false;
     c->order[0].index = 0;
+    while (sessionNextSound(s)) { /* the monsters' sounds so far */
+    }
+    uint8_t *attacker = sessionPartyRecord(s, c->order[c->cursor].index);
+    const uint8_t *weapon = itemCatalogRecord(&s->items, partyGetU16(attacker, 0x142));
+    const uint8_t *weaponEntry = weapon ? itemTargetEntry(&s->items, weapon) : NULL;
+    unsigned weaponSound = weaponEntry ? itemTargetWord(weaponEntry, 5) : 0;
     bool attacked = sessionAttack(s);
+    unsigned firstSound = sessionNextSound(s);
     check("a member's turn went by", attacked);
+    check("... with the sound of the weapon's hit or of a miss", firstSound == (game == GameYendor2 ? 0x1E : 0x23) || firstSound == weaponSound);
     check("the dead left monster is gone and the middle one has stepped left", slotTypeOf(c, 0) == middleType && !slotTypeOf(c, 1) && slotTypeOf(c, 2) && monsterGetU16(c->slots, MonsterFieldAnimSet) == 9);
     check("the chosen monster is still the target (the attack fell on it, not on the first in the turn order)", sessionCombatTarget(s) == 2);
     monsterSetU16(c->slots + 2 * MonsterRecordSize, MonsterFieldHealth, 0);

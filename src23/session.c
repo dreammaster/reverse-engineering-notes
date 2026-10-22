@@ -97,6 +97,36 @@ static void say(GameSession *s, const char *format, unsigned a) {
     snprintf(s->log, sizeof(s->log), format, a);
 }
 
+/* A sound for the front end, after those already asked for (TriggerSoundEventAfterDriverWait). */
+static void queueSound(GameSession *s, unsigned id) {
+    if (id && s->soundCount < sizeof(s->soundQueue) / sizeof(s->soundQueue[0])) {
+        s->soundQueue[s->soundCount++] = id;
+    }
+}
+
+unsigned sessionNextSound(GameSession *s) {
+    if (!s->soundCount) {
+        return 0;
+    }
+    unsigned id = s->soundQueue[0];
+    memmove(s->soundQueue, s->soundQueue + 1, (s->soundCount - 1) * sizeof(s->soundQueue[0]));
+    s->soundCount--;
+    return id;
+}
+
+/* ApplyEffectAndDrawIconBar plays the sound of the effect it applies (effect.h: +0 of its row), once per call. */
+static void effectSound(GameSession *s, unsigned effectId) {
+    EffectDef def;
+    if (effectGetDef(s->game, effectId, &def)) {
+        queueSound(s, def.sound);
+    }
+}
+
+/* The sound ids a fight is played with (HandleDungeonInput: a miss `_val43`; ShowPartyWipeScreen is the front end's): Chapter 2 / Chapter 3. */
+static unsigned missSound(const GameSession *s) {
+    return s->game == GameYendor2 ? 0x1E : 0x23;
+}
+
 static void combatNewRound(GameSession *s) {
     SessionCombat *c = &s->combat;
     memset(c->defeated, 0, sizeof(c->defeated)); /* BuildCombatTurnOrder makes fresh entries: nobody is struck off yet */
@@ -247,6 +277,9 @@ static void combatRunMonsters(GameSession *s) {
         uint16_t targetId = c->targets[slot];
         uint8_t *target = targetId ? saveGamePartyRecordById(&s->save, targetId) : NULL;
         CombatMonsterTurnOutcome out = combatProcessMonsterTurn(monster, target, &s->save, &s->items, s->game, &s->rng);
+        if (out.tick == MonsterTickIdle) { /* ProcessMonsterAttackTurn: its hit sound (+0x5C) when an attack lands, else its idle one (+0x5E) */
+            queueSound(s, monsterGetU16(monster, out.attacked ? MonsterFieldHitSound : MonsterFieldIdleSound));
+        }
         say(s, out.attacked ? "monster %u hits the party" : "monster %u misses or waits", monsterGetU16(monster, MonsterFieldType));
         combatCheckWipe(s);
         if (!c->active) {
@@ -367,15 +400,20 @@ bool sessionAmbushShots(GameSession *s) {
     if (!any) {
         return false;
     }
-    for (unsigned i = 0; i < 4; i++) {
-        if (table[i].sound && !s->pendingSound) {
-            s->pendingSound = table[i].sound;
+    bool shotSound = false;
+    for (unsigned i = 0; i < 4 && !shotSound; i++) { /* the first sound of the table plays; the driver is busy then, so the effect's own is skipped */
+        if (table[i].sound) {
+            queueSound(s, table[i].sound);
+            shotSound = true;
         }
     }
     bool hit = false;
     for (unsigned i = 0; i < 4; i++) {
         if (table[i].magnitude && table[i].member) {
             combatApplyPresetEffect(table[i].member, &s->save, s->game, table[i].effect, table[i].magnitude, 0, &s->rng);
+            if (!hit && !shotSound) {
+                effectSound(s, table[i].effect);
+            }
             hit = true;
         }
     }
@@ -474,6 +512,7 @@ static bool applyMapTrigger(GameSession *s) {
             mapTriggerApplyCorrosion(member, &s->items, s->game, &decision);
         }
     }
+    effectSound(s, decision.outcome == MapTriggerApplyEffect ? decision.effectId : (record.flags & 0x0200) ? 0x2B : 1);
     snprintf(s->log, sizeof(s->log), "a trap goes off");
     combatCheckWipe(s);
     return true;
@@ -670,6 +709,13 @@ bool sessionAttack(GameSession *s) {
         return false;
     }
     CombatPlayerMeleeOutcome out = combatPlayerMeleeAttack(member, c->slots + (size_t)monsterSlot * MonsterRecordSize, &s->items, s->game, &s->rng);
+    if (out.hit) { /* the weapon's own sound: word 5 of its target entry */
+        const uint8_t *weapon = itemCatalogRecord(&s->items, partyGetU16(member, 0x142));
+        const uint8_t *entry = weapon ? itemTargetEntry(&s->items, weapon) : NULL;
+        queueSound(s, entry ? itemTargetWord(entry, 5) : 0);
+    } else if (!out.weaponBroke) {
+        queueSound(s, missSound(s));
+    }
     snprintf(s->log, sizeof(s->log), "party member %u %s", c->order[c->cursor].index + 1, out.weaponBroke ? "breaks the weapon" : out.hit ? "hits" : "misses");
     combatAfterAction(s);
     combatRunMonsters(s);
@@ -953,6 +999,7 @@ static bool castProjectile(GameSession *s, uint8_t *caster, const uint8_t *spell
     uint8_t *flags = saveGlobalFlags(&s->save);
     bool splash = (spellGetU16(spell, SpellFieldFlagsB) & SpellFlagsBSplash) != 0, hit = false;
     static const unsigned column[] = {49, 46, 43, 40, 36, 25};
+    queueSound(s, spellGetU16(spell, SpellFieldEffectId)); /* the cast: word_332DA, the record's +0x20 is a sound id in the attack branches */
     for (unsigned i = 0; i < sizeof(column) / sizeof(column[0]); i++) {
         unsigned depth = column[i];
         if (depth != 49 && (cells[depth].flags & ViewportCellHidden)) {
@@ -963,6 +1010,7 @@ static bool castProjectile(GameSession *s, uint8_t *caster, const uint8_t *spell
             continue;
         }
         hit = true;
+        queueSound(s, spellGetU16(spell, SpellFieldInflictedStatus)); /* the strike: word_332DC */
         if (splash) {
             unsigned starts[3] = {42, 45, 48};
             if (depth == 36) {
@@ -1022,6 +1070,10 @@ static bool castColumnAttack(GameSession *s, uint8_t *caster, const uint8_t *spe
     MonsterRewardStaging staging;
     memset(&staging, 0, sizeof(staging));
     uint8_t *flags = saveGlobalFlags(&s->save);
+    queueSound(s, spellGetU16(spell, SpellFieldEffectId)); /* the cast (loc_2CEE7), then a strike sound for each monster hit */
+    for (unsigned n = 0; n < found && n < 4; n++) {
+        queueSound(s, spellGetU16(spell, SpellFieldInflictedStatus));
+    }
     if (beam) {
         if (found) {
             combatApplyDamageToMapMonster(rowMonsters[0], caster, spell, s->scrollCast, &staging, flags, SaveHeaderGlobalFlagsSize, &s->grid, &s->rng);
@@ -1078,9 +1130,15 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
     }
     bool done = true;
     switch (branch) {
-    case SpellBranchAttackAllSlots:
-        combatApplySpellAttackToActiveSlots(c->slots, caster, spell, s->scrollCast, &s->rng);
+    case SpellBranchAttackAllSlots: {
+        CombatSpellAreaAttackOutcome area = combatApplySpellAttackToActiveSlots(c->slots, caster, spell, s->scrollCast, &s->rng);
+        for (unsigned i = 0; i < MonsterActiveSlots; i++) {
+            if (area.hit[i]) {
+                queueSound(s, spellGetU16(spell, SpellFieldInflictedStatus)); /* one strike sound for each monster hit */
+            }
+        }
         break;
+    }
     case SpellBranchAttackActiveMonster:
     case SpellBranchLifeForce: {
         unsigned slot = combatActiveSlot(c);
@@ -1095,6 +1153,7 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
             combatApplySpellAttack(target, spell, result);
             if (result.hasEffect) {
                 combatMarkSpellAttackHit(target, spell);
+                queueSound(s, spellGetU16(spell, SpellFieldInflictedStatus)); /* the strike's sound (word_332DC) */
             }
         }
         break;
@@ -1105,6 +1164,7 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
         if (!effectGetDef(s->game, spellGetU16(spell, SpellFieldEffectId), &def)) {
             done = false;
         } else if (branch == SpellBranchSingleTarget) {
+            queueSound(s, def.sound);
             if (spellGetU16(spell, SpellFieldFlagsA) & (SpellFlagsAPositionReset | SpellFlagsAIconBarPresetAmount)) {
                 uint8_t *recipient = s->scrollCast ? sessionPartyRecord(s, s->scrollTarget) : s->castTarget ? sessionPartyRecord(s, s->castTarget - 1) : NULL;
                 castStatDelta(s, recipient ? recipient : caster, &def, spell);
@@ -1112,6 +1172,7 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
                 done = false;
             }
         } else {
+            queueSound(s, def.sound);
             for (unsigned slot = 0; slot < SavePartyMemberSlots; slot++) {
                 uint16_t id = saveGetPartySlot(&s->save, slot);
                 if (id == 0) {
@@ -1332,6 +1393,9 @@ void sessionTickAilments(GameSession *s) {
             uint16_t amount = passes[p].kind == AilmentPassCold ? stage->magnitude : stage->severity;
             if (member) {
                 combatApplyPresetEffect(member, &s->save, s->game, stage->effectId, amount, 0, &s->rng);
+                if (i == 0) {
+                    effectSound(s, stage->effectId); /* one ApplyEffectAndDrawIconBar a pass: its first effect's sound */
+                }
             }
         }
     }
