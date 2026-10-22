@@ -237,7 +237,12 @@ static bool applyMapTrigger(GameSession *s) {
     return true;
 }
 
-enum { DoorSound = 5 /* _val30, both chapters */ };
+/*
+ * The sounds of a step (HandleMovementInput, Chapter 2 :2338 / Chapter 3 :5973): the door's (id 5 in both chapters) and the bump of a refused step -- Chapter 2's `_val33` (InitGlobals sets it to 6),
+ * Chapter 3's literal 0xD (the ids index each game's own sound list). Only a door cell and a blocked one bump: a refused step into the map's void border band (ClassifyFloorType's code 2), or off the
+ * dungeon grid, is silent.
+ */
+enum { DoorSound = 5 /* _val30, both chapters */, BumpSoundYendor2 = 6, BumpSoundYendor3 = 0x0D };
 
 /* One step in the direction of `move`; the second step of a door is not checked (loc_11598 adds the delta unconditionally) beyond keeping the party on the map. */
 static void stepUnchecked(GameSession *s, MovementResult move) {
@@ -322,6 +327,9 @@ SessionStep sessionMove(GameSession *s, MovementAction action) {
                 movementClassifyCell(s->game, worldMapTileA(&s->map, (unsigned)ny, (unsigned)nx), worldMapTileB(&s->map, (unsigned)ny, (unsigned)nx), isDoor, false);
             if (outcome == MovementCellDoor) {
                 lockStatusLoad(s, nx, ny);
+            }
+            if (outcome == MovementCellDoor || outcome == MovementCellBlocked) {
+                s->pendingSound = s->game == GameYendor2 ? BumpSoundYendor2 : BumpSoundYendor3;
             }
             if (outcome == MovementCellSpecial && action == MovementForward) { /* the door opens first */
                 s->doorOpening = true;

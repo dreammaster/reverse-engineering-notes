@@ -6713,7 +6713,8 @@ first in the party) the current record, runs `TryInteractAtPosition` on the cell
 object at the cell is a door (`0x8000`: `LoadLockState`, the lock record's flags and trap word) or a curgame record (`0x4000`: the same two words), and the message -- in `0x8A`, transparent, at (240, 96),
 6 pixels apart -- depends on them and on the member's record word `+0x6C` (`lockStatusText`): `+0x20` MAGICALLY / LOCKED; `+0x80` NOT LOCKED (with skill >= 55 and a trap word: NOT LOCKED / BUT TRAPPED);
 else LOCKED, and with skill >= 55 LOCKED AND / TRAPPED when there is a trap word, from skill 65 on (or without a trap word) REQUIRES / SPECIAL KEY when a key tier (`0xFE00`) is set, and from skill 80 REQUIRES /
-the tier's key (BRASS first .. GOLD). `sessionMove` loads the words (`lockReport`, `lockFlags`, `lockValue`, `lockSkill`) and `gameui.c`'s `lockReport` writes the lines.
+the tier's key (BRASS first .. GOLD). **The bump sound** (:2338 / :5973) is played for a door cell and for a blocked cell, not for the void border band (`ClassifyFloorType` code 2) nor a step off the
+grid: Chapter 2 plays `_val33` (InitGlobals: 6), Chapter 3 the literal `0xD` (each game's own sound list; `session.c` `BumpSoundYendor2` / `BumpSoundYendor3`, now set by the session, not the front end). `sessionMove` loads the words (`lockReport`, `lockFlags`, `lockValue`, `lockSkill`) and `gameui.c`'s `lockReport` writes the lines.
 
 ### Turn-based combat: turn order (decoded 2026-09-24)
 

@@ -1856,9 +1856,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
                 pressButton(ui, 18 + 2 * pad, pads[pad][0], pads[pad][2], 1);
             }
             SessionStep step = sessionMove(s, command.movement);
-            if (step == SessionStepBlocked && s->game == GameYendor2) {
-                effect(ui, 6); /* the bump sound, _val33 */
-            } else if (step == SessionStepDoorOpening) {
+            if (step == SessionStepDoorOpening) {
                 ui->doorTicks = 2; /* the opening frame stays for two animation ticks */
             }
             if (s->pendingSound) {

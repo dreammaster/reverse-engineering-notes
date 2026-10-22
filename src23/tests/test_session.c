@@ -941,9 +941,35 @@ static void testLockedDoor(GameKind game, const uint8_t *world, size_t size, con
     SessionStep step = sessionMove(s, MovementForward);
     snprintf(text, sizeof(text), "%s: a step into the magically locked door is refused and reports its lock (flag 0x20)", label);
     check(text, step == SessionStepBlocked && s->x == 166 && s->lockReport && (s->lockFlags & LockFlagMagical));
+    check("... with the bump sound (Chapter 2's _val33 = 6)", s->pendingSound == 6);
     s->lockReport = false;
+    s->pendingSound = 0;
     sessionMove(s, MovementTurnLeft);
-    check("a turn reports no lock", !s->lockReport);
+    check("a turn reports no lock and makes no sound", !s->lockReport && s->pendingSound == 0);
+    sessionFree(s);
+}
+
+/* The bump of a refused step: a wall bumps with each game's own sound, a turn does not. */
+static void testBumpSound(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[200];
+    unsigned bumps = 0, wrong = 0;
+    for (int i = 0; i < 30; i++) {
+        s->pendingSound = 0;
+        SessionStep step = sessionMove(s, MovementForward);
+        if (step == SessionStepBlocked && s->pendingSound) {
+            bumps++;
+            wrong += s->pendingSound != (game == GameYendor2 ? 6u : 0x0Du);
+        }
+    }
+    snprintf(text, sizeof(text), "%s: walking into a wall bumps with sound %s", label, game == GameYendor2 ? "6" : "0x0D");
+    check(text, bumps >= 1 && wrong == 0);
+    s->pendingSound = 0;
+    sessionMove(s, MovementTurnRight);
+    check("... and turning does not", s->pendingSound == 0);
     sessionFree(s);
 }
 
@@ -1181,6 +1207,7 @@ int main(void) {
             testShot(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testDoorwayEngage(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testLockedDoor(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testBumpSound(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);
         }
     }
