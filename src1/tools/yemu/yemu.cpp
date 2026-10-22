@@ -10,6 +10,7 @@
  *   --script <file>   input script (below)
  *   --max <n>         instruction limit (default 400 million)
  *   --trace62         print a histogram of INT 62h calls at the end
+ *   --compare         run Yendor1::Vid in lockstep with the real driver and report any difference
  *
  * Script lines (times are virtual seconds, 1 s = 3 million instructions):
  *   wait <s>          advance the script clock        key <hex byte>      press a key (DOS INT 21h/06h byte)
@@ -19,6 +20,7 @@
  *   quit              stop the run
  */
 
+#include "Compare.h"
 #include "Machine.h"
 #include "data/Palette.h"
 #include "tools/Png.h"
@@ -67,7 +69,7 @@ int main(int argc, char **argv) {
 	const std::string gameDir = argv[1], program = argv[2];
 	std::string fontsDir, workDir, outDir = ".", scriptFile;
 	uint64_t maxInstr = 400000000ULL;
-	bool trace62 = false;
+	bool trace62 = false, compare = false;
 	for (int i = 3; i < argc; i++) {
 		const std::string a = argv[i];
 		if (a == "--fonts" && i + 1 < argc) fontsDir = argv[++i];
@@ -76,6 +78,7 @@ int main(int argc, char **argv) {
 		else if (a == "--script" && i + 1 < argc) scriptFile = argv[++i];
 		else if (a == "--max" && i + 1 < argc) maxInstr = strtoull(argv[++i], 0, 10);
 		else if (a == "--trace62") trace62 = true;
+		else if (a == "--compare") compare = true;
 	}
 	if (workDir.empty())
 		workDir = (fs::temp_directory_path() / "yemu_work").string();
@@ -110,6 +113,9 @@ int main(int argc, char **argv) {
 		};
 	}
 
+	Yemu::VidCompare vidCompare;
+	if (compare)
+		vidCompare.attach(m, fontsDir);
 	// script
 	if (!scriptFile.empty()) {
 		std::ifstream sf(scriptFile);
@@ -159,6 +165,8 @@ int main(int argc, char **argv) {
 		printf("console output:\n%s\n", m.console.c_str());
 	if (!m.log.empty())
 		printf("log:\n%s", m.log.c_str());
+	if (compare)
+		vidCompare.report(stdout);
 	if (getenv("YEMU_RECENT"))
 		printf("recent: %s\n", m.dumpRecent(80).c_str());
 	if (trace62) {

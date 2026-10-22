@@ -43,6 +43,57 @@ void Video::setPaletteRegisters(const byte regs[16]) {
 	memcpy(_palette, regs, 16);
 }
 
+void Video::loadPlane(int p, const byte *data) {
+	memcpy(_vram[p], data, kPlaneBytes);
+}
+
+namespace {
+
+inline uint16 g16(const byte *b, int o) { return (uint16)(b[o] | (b[o + 1] << 8)); }
+inline void p16(byte *b, int o, uint16 v) { b[o] = (byte)v; b[o + 1] = (byte)(v >> 8); }
+
+} // namespace
+
+void Video::loadContext(const byte *b) {
+	ctx.tileSlots = g16(b, 0x00);
+	ctx.delayStep = g16(b, 0x08); ctx.delayWipe = g16(b, 0x0A); ctx.delayCpu = g16(b, 0x0C); ctx.cpuClass = g16(b, 0x0E);
+	ctx.imgRows = g16(b, 0x10); ctx.imgBytes = g16(b, 0x12); ctx.imgMask = b[0x14];
+	ctx.x1 = g16(b, 0x1A); ctx.y1 = g16(b, 0x1C); ctx.x2 = g16(b, 0x1E); ctx.y2 = g16(b, 0x20);
+	ctx.x3 = g16(b, 0x22); ctx.y3 = g16(b, 0x24);
+	ctx.textCol = b[0x2A]; ctx.textRow = b[0x2B]; ctx.textChar = b[0x2C]; ctx.textFg = b[0x2E]; ctx.textBg = b[0x2F];
+	ctx.colour = b[0x30]; ctx.drawPage = b[0x31]; ctx.destPage = b[0x32]; ctx.videoKind = b[0x33];
+	ctx.keyColour = b[0x34]; ctx.fontSelect = b[0x35];
+	ctx.paletteCommand = b[0x676];
+	ctx.viewHalfW = b[0x678]; ctx.viewHalfH = b[0x679];
+	ctx.hotMarginX = g16(b, 0x67A); ctx.hotMarginY = g16(b, 0x67C); ctx.viewOffX = g16(b, 0x67E); ctx.viewOffY = g16(b, 0x680);
+	ctx.flags912 = b[0x912];
+	ctx.mousePresent = b[0x952]; ctx.mouseFlags = b[0x953]; ctx.cursorHide = (int8_t)b[0x955];
+	ctx.cursorShape = b[0x956]; ctx.cursorPage = b[0x957]; ctx.cursorMode = b[0x958];
+	ctx.clipX1 = (int16)g16(b, 0x95A); ctx.clipX2 = (int16)g16(b, 0x95C); ctx.clipY1 = (int16)g16(b, 0x95E); ctx.clipY2 = (int16)g16(b, 0x960);
+	ctx.curX = g16(b, 0x962); ctx.curY = g16(b, 0x964);
+	ctx.mouseX = (int16)g16(b, 0x966); ctx.mouseY = (int16)g16(b, 0x968);
+	ctx.hotX = g16(b, 0x96A); ctx.hotY = g16(b, 0x96C);
+}
+
+void Video::storeContext(byte *b) const {
+	const Context &c = ctx;
+	p16(b, 0x00, c.tileSlots);
+	p16(b, 0x08, c.delayStep); p16(b, 0x0A, c.delayWipe); p16(b, 0x0C, c.delayCpu); p16(b, 0x0E, c.cpuClass);
+	p16(b, 0x10, c.imgRows); p16(b, 0x12, c.imgBytes); b[0x14] = c.imgMask;
+	p16(b, 0x1A, c.x1); p16(b, 0x1C, c.y1); p16(b, 0x1E, c.x2); p16(b, 0x20, c.y2); p16(b, 0x22, c.x3); p16(b, 0x24, c.y3);
+	b[0x2A] = c.textCol; b[0x2B] = c.textRow; b[0x2C] = c.textChar; b[0x2E] = c.textFg; b[0x2F] = c.textBg;
+	b[0x30] = c.colour; b[0x31] = c.drawPage; b[0x32] = c.destPage; b[0x33] = c.videoKind; b[0x34] = c.keyColour; b[0x35] = c.fontSelect;
+	b[0x676] = c.paletteCommand;
+	b[0x678] = c.viewHalfW; b[0x679] = c.viewHalfH;
+	p16(b, 0x67A, c.hotMarginX); p16(b, 0x67C, c.hotMarginY); p16(b, 0x67E, c.viewOffX); p16(b, 0x680, c.viewOffY);
+	b[0x912] = c.flags912;
+	b[0x952] = c.mousePresent; b[0x953] = c.mouseFlags; b[0x955] = (byte)c.cursorHide;
+	b[0x956] = c.cursorShape; b[0x957] = c.cursorPage; b[0x958] = c.cursorMode;
+	p16(b, 0x95A, (uint16)c.clipX1); p16(b, 0x95C, (uint16)c.clipX2); p16(b, 0x95E, (uint16)c.clipY1); p16(b, 0x960, (uint16)c.clipY2);
+	p16(b, 0x962, c.curX); p16(b, 0x964, c.curY); p16(b, 0x966, (uint16)c.mouseX); p16(b, 0x968, (uint16)c.mouseY);
+	p16(b, 0x96A, c.hotX); p16(b, 0x96C, c.hotY);
+}
+
 void Video::delay(uint16 n) {
 	if (_host)
 		_host->delay(n);

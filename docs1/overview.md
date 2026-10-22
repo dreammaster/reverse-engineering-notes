@@ -93,3 +93,26 @@ Nothing in `yendor1/game/` is modified: the databases are written under
    strings, then name functions per program.
 3. Decode the data files (`WORLD.DAT`/`TOWN.DAT`/`MINE.DAT`, `.16`/`.PAL`,
    `CURRGAME` records).
+
+## 2026-10-22/23 — analysis, video layer and emulator
+
+- **Analysis (see `video-api.md`, `program-graph.md`, `file-formats.md`, `strategy.md`):** the `INT 62h` driver ABI is
+  documented and every call site in all programs is labelled; the program graph and the parameter-block/handle
+  inheritance protocol are recorded; ~1,100 of 1,700 functions are copies of one shared runtime (names propagated with
+  `shared_names.json`).
+- **`src1/` C++ code:** `Yendor1::Shared`, `Data` (tiles, palettes) and `Vid` (a software EGA transliteration of the driver),
+  plus an SDL2 host and tools (`tilesheet`, `vidshot`, `tilebrowser`).
+- **`yemu` (src1/tools/yemu):** an 8086 + planar EGA + DOS/BIOS/mouse emulator that runs the original executables on a
+  scratch copy of the game directory. The real `VID16.DRV` and `VIDP16.DRV` run inside it as TSRs, so its screen captures are
+  what the original produces. `SW.EXE` boots through `PROG0`, the startup message, `PROG1` (logo, title) and `PROG2`.
+  Needed DOS details: names are cut to 8.3 (`PARTY.DAT$` opens `PARTY.DAT`), the whole 128-byte command tail is copied to the
+  child's PSP, children inherit the first 20 handles, `INT 21h/67h` raises the handle limit, TSR exit keeps memory.
+  Usage: `yemu <gameDir> SW.EXE --fonts <dir> --script steps.txt --out <dir>` (script: `wait`, `key`, `ext`, `text`, `move`,
+  `moveto`, `click`, `shot`, `quit`; 1 virtual second = 3M instructions). Run it from PowerShell (Git bash cannot find
+  the MinGW DLLs and exits 127). Fonts: the BIOS ROM fonts are not game files; `src1/tools/fon2raw.py` makes stand-ins.
+- **Verification of `Vid`:** `yemu --compare` runs `Yendor1::Vid::Video` in lockstep with the real driver: at every `INT 62h` the
+  emulated state is copied into `Video`, the call is made on both, and EGA planes, displayed page, the context block, image
+  buffers and the cursor store are diffed. Over a run through the startup message, the intro, the title screen and the
+  prologue (~232,000 calls, 22 functions: pixels, rects, text, image get/put, tile copies, page flips, wipes, mouse
+  show/hide/refresh/bounds/position) there are **zero** differences. Not yet exercised by any run: the scroll calls (`0Eh`–`11h`),
+  `13h` keyed copy, lines (`05h` only 270 calls, all matched) at other slopes, the `15h`/`17h`/`20h`/`21h` wipes.

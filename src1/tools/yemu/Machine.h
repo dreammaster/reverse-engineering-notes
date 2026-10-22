@@ -62,6 +62,7 @@ public:
 
 	/** Run an interrupt service routine to completion (used by compare mode and mouse callbacks). */
 	void syncInterrupt(uint8_t n);
+	uint16_t syncResultAx = 0;           // AX the interrupt routine returned (the caller's registers are restored)
 
 	// Bus
 	uint8_t in8(uint16_t port);

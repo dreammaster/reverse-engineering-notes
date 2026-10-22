@@ -108,6 +108,16 @@ public:
 	/** EGA palette registers (6-bit rgbRGB) used by render(). */
 	void setPaletteRegisters(const byte regs[16]);
 
+	/** Load / store the context fields from / to a block laid out like the original driver's context
+	 *  segment (docs1/video-api.md). The far pointer at 16h:18h is not part of this; set ctx.image directly.
+	 *  Used by the yemu comparison harness, and handy for cross-checking against the disassembly. */
+	void loadContext(const byte *block);
+	void storeContext(byte *block) const;
+	/** Whole-plane access (64 KB per plane) for the comparison harness. */
+	const byte *planeData(int p) const { return _vram[p]; }
+	void loadPlane(int p, const byte *data);
+	void setDisplayedPage(int page) { _displayed = page; }
+
 	/** The cursor image store: 13 slots of kCursorSlotBytes. Slot 0 holds the saved background;
 	 *  slots 1-12 are the cursor shapes, filled in by the game with the 5-byte header + planar data. */
 	byte *cursorStore() { return _cursorStore; }

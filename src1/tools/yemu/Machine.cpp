@@ -560,6 +560,7 @@ void Machine::syncInterrupt(uint8_t n) {
 	cpu.ip = kReturnMarker;
 	cpu.interrupt(n);
 	runLoop([this] { return cpu.s[CS] == kHleSeg && cpu.ip == kReturnMarker; });
+	syncResultAx = cpu.r[AX];
 	const uint16_t keepAx = cpu.r[AX];
 	const uint16_t keepFlags = cpu.flags;
 	memcpy(cpu.r, r, sizeof(r));
