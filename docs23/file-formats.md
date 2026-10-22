@@ -6775,6 +6775,29 @@ applies every nonzero magnitude as the effect `+0x70` with the magnitude as the 
 
 **Chapter 3's V** (`start` key table, :0769): `ShowStatusPanelMessage` of the two strings at DS:0x9538, REGISTERED / VER 2.00 -- the version stamp of the registered program.
 
+### Containers: bags, boxes and backpacks (decoded 2026-10-22)
+
+A container item (flag 0x2000: BAG 0x2004 accepts items with fit flag 0x2000, BOX 0x2008 0x4000, BACKPACK 0x2010 0x8000, MAGIC CONTAINER 0x2002 anything -- Chapter 2 ids 6 / 5 / 4 / 17, Chapter 3 28 / 29 / 30; the items'
+fit flags (`+0xE`) say which they go in: top nibbles 0x8000 backpacks only, 0xC000 boxes and backpacks, 0xE000 any, 0 none (a backpack itself, the MAGIC CONTAINER)) keeps its contents in an **item-instance record** of the save
+(section 3, 1296 x 34 bytes: a weight word and eight slots) named by the item's extra word. The records come from two header words, `word_36E0D` (+0x1AE, the next never-used number: 2 at a new Chapter 2 game -- the template
+says 1 but `InitializeNewGameWorldState` :49650 overwrites it -- 3 in Chapter 3) and `word_36E0F` (+0x1B0, the head of the free list, 0 at a new game): `LoadNextContainerInChain` (:39144) is run by `HandleInventorySlotClick`
+whenever a container with extra 0 (from a chest or a merchant) is put into a slot, and by `TryLoadNextContainerLink` for a drop on a face; it takes the free list's head (the head becomes the record's first word) else the
+counter, and clears the record. `PlaceItemOnGround` frees the dropped container's record and those of the containers inside it and inside those (three levels, children first) back onto the free list
+(`PrepareGroundItemSlotWrite`: the record cleared, its first word the old head). `container.c`.
+
+**Opening** (`HandleInventoryGridClick` :39580, the right button): a container in a bag slot goes into the first free of the three markers in the order +0x1C8, +0x1A2, +0x17C (flags 0x2000 / 0x4000 / 0x8000 of the UI word
++0x15C; a fourth is refused with the warning) and its record is read into the marker's group (`LoadContainerContents`); `GetInventorySlotPtr` (:40203) then points the slot codes 1-8 at the first open marker in the order
++0x17C, +0x1A2, +0x1C8, else the main group at +0x118, so the newest bag is the one on screen. The open bag's icon (item icon + 1) is drawn at (38, 36) -- the ninth cell, region 9 -- and the right button on it closes the newest
+(`SaveAndCloseContainer`: the contents written back to the record, the marker cleared). The container in slot B (code 0xB) opens alone in the third marker with flag 0x1000 (closing the others) -- its icon at (40, 64) -- and
+closes with the same click; it can neither be picked up nor filled while open. `CloseAllAlternateBags` (:39856) closes everything when the screen is left; `SyncAllContainers` writes the open ones back before `IsItemRangeAvailable`
+searches the containers (to three levels, `partyFindItemDeep`).
+
+**Weights.** An item carries its own weight and, for a container, its contents' (the record's first word, `PickUpItemFromSlot`). `PlaceItemInSlot` / `PickUpItemFromSlot` add / take it for the groups the slot is in: in the main
+group the load (+0x118) -- except a MAGIC CONTAINER, which weighs nothing there -- and in an open bag the bag's own weight word, then each bag it is nested in (a MAGIC CONTAINER among them does not take it, and the
+outermost one that is magic stops it from reaching the load), then the load. A held item put on a **closed container** in a slot (loc_2632B: the load plus the item must fit the capacity; the container's kind must take the item's fit flags;
+the first free slot of its record) goes into the record, adding its weight to the record's weight word and the load -- for a MAGIC CONTAINER both are first reduced by it, so it nets to nothing. A slot code below 0xA with a
+bag open also needs the item to fit the open bag's kind (`IsContainerTypeCompatible`). `session.c` `sessionBagToggle`, `sessionInventoryClick`.
+
 ### Using belt items and spell scrolls (decoded 2026-10-22)
 
 **The right button on a belt slot** of the resource panel (`TryCureAilmentFromIconClick` :41358, called from `start` loc_1056B; the panel must be shown, `word_36C7F` bit 0x1000) uses the item there like one from a bag:

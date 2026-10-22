@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "container.h"
 #include "party.h"
 
 bool inventoryEligibleForSlot(unsigned code, uint16_t itemFlags, uint16_t entryWord1, bool occupiedB, bool shieldSlotOccupied,
@@ -203,7 +204,7 @@ static void discardLevel(const ItemCatalog *catalog, SaveGame *save, unsigned nu
             }
         }
     }
-    memset(contents, 0, InventoryGroupSize);
+    containerFree(save, number); /* the record is let go onto the free list (PrepareGroundItemSlotWrite), children before parents */
 }
 
 void inventoryDiscardDropped(const ItemCatalog *catalog, SaveGame *save, uint16_t itemId, uint16_t contentsRecord) {

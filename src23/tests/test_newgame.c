@@ -103,6 +103,7 @@ static void testReal(int chapter) {
         emptyOk = emptyOk && partyGetU16(saveGameRecord(&save, SaveSectionHeaderAndParty, i), PartyFieldClass) == 0;
     }
     check("slots 1-5 are empty", emptyOk);
+    check("the container counters start at the first never-used record (2 / 3) with an empty free list", saveHeaderGetU16(&save, 0x1AE) == (chapter == 2 ? 2 : 3) && saveHeaderGetU16(&save, 0x1B0) == 0);
     if (chapter == 2) {
         check("Chapter 2 opens at (166, 36) facing west", saveHeaderGetU16(&save, SaveHeaderWorldX) == 166 &&
                                                               saveHeaderGetU16(&save, SaveHeaderWorldY) == 36 &&

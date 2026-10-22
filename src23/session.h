@@ -430,10 +430,23 @@ bool sessionDropOnPortrait(GameSession *session, unsigned member);
  * slots, 9 nothing, 10-15 the weapon / B / C / D slots and the two rings, 16-21 the five worn-clothing slots). With an empty hand the slot's item goes to the cursor; with an item held it must
  * suit the slot (inventory.h inventoryEligibleForSlot) and the carry weight must allow it (the member's +0x118 total against his or her capacity +0x56, the exchange counting only the
  * difference), then it is put in an empty slot or swapped (sound 6; a worn item brings its stat effect, the wear counter is cleared); a key over a key ring in a slot goes on the ring (sound 4).
- * Containers (bags, boxes: their contents live in item-instance records the standalone does not open) are refused.
+ * Containers are worked as the original does: the slots 1-8 address the open bag (sessionBagToggle, below) else the main group; a container put down with no record of its own is given one
+ * (container.h); the slot's own item being a container, the held item goes inside it (the load must take it, the container's kind must accept its fit flags, a slot must be free); the weight of a
+ * container is its own and its contents' (the record's first word), and counts in the group it is in and every one it is nested in -- a MAGIC CONTAINER (0x11) weighs nothing in the main group
+ * and what is put into one weighs nothing either; an equipped container (slot B) cannot be taken off or filled while it is open.
  */
 typedef enum { SessionInvIgnored, SessionInvTook, SessionInvPlaced, SessionInvSwapped, SessionInvKeyRing, SessionInvRefused } SessionInv;
 SessionInv sessionInventoryClick(GameSession *session, unsigned member, unsigned region);
+
+/*
+ * Containers on the inventory screen (HandleInventoryGridClick :39580): the right button on a bag, box or backpack in a bag slot opens it -- its contents (the item-instance record named by its extra word)
+ * become the group the slots 1-8 show, up to three nested, the newest on top (SessionBagRefused: three are open); on the equipped container (region 11) it opens that one alone, closing the others; on an open
+ * one it closes it. The open bag's icon (region 9) closes the newest. SessionBagIgnored: the item is no container (the right button uses it). `sessionBagsClose` closes everything of a member
+ * (CloseAllAlternateBags: leaving the screen), writing the contents back. Items in open bags are searched too (sessionHasItem).
+ */
+typedef enum { SessionBagIgnored, SessionBagOpened, SessionBagClosed, SessionBagRefused } SessionBag;
+SessionBag sessionBagToggle(GameSession *session, unsigned member, unsigned region);
+void sessionBagsClose(GameSession *session, unsigned member);
 
 /* TryDropHeldItem (yendor2.asm:18109): whether the cursor item may be dropped (not a keepsake or a container holding one), and the drop itself (PlaceItemOnGround: the item ceases to exist). */
 bool sessionHeldDroppable(GameSession *session);

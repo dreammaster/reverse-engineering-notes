@@ -40,6 +40,8 @@ bool saveGameNewGame(SaveGame *save, GameKind game, const uint8_t *worldDat, siz
         saveHeaderSetU16(save, SaveHeaderGameYear, 546);
         saveHeaderSetU16(save, SaveHeaderClockMinutes, 420);
         saveHeaderSetU16(save, 0x88, 5);
+        saveHeaderSetU16(save, 0x1AE, 2); /* word_36E0D / word_36E0F: the next never-used container record and the free list (InitializeNewGameWorldState :49650) */
+        saveHeaderSetU16(save, 0x1B0, 0);
     }
     return true;
 }

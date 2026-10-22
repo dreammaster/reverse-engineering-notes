@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_inventory test_inventory.c ../inventory.c ../party.c ../item.c ../bcd4.c ../effect.c ../savegame.c ../random.c && ./test_inventory
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_inventory test_inventory.c ../inventory.c ../container.c ../party.c ../item.c ../bcd4.c ../effect.c ../savegame.c ../random.c && ./test_inventory
  *
  * Real-data checks read WORLD.DAT from yendor2/game (skipped if absent; YENDOR2_GAME_DIR overrides).
  */
@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "container.h"
 #include "inventory.h"
 #include "party.h"
 
@@ -106,12 +107,23 @@ static void testDiscard(void) {
     check("dropping a plain item leaves the save alone", itemSlotId(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 20), 1)) == 1);
     inventoryDiscardDropped(&catalog, &save, 3, 20);
     bool zero20 = true, zero21 = true, zero22 = true;
-    for (unsigned i = 0; i < InventoryGroupSize; i++) {
+    for (unsigned i = 2; i < InventoryGroupSize; i++) { /* all but the free list's link word */
         zero20 = zero20 && saveGameRecord(&save, SaveSectionItemInstances, 20)[i] == 0;
         zero21 = zero21 && saveGameRecord(&save, SaveSectionItemInstances, 21)[i] == 0;
         zero22 = zero22 && saveGameRecord(&save, SaveSectionItemInstances, 22)[i] == 0;
     }
-    check("dropping a container zeroes its record and the two levels of containers below it", zero20 && zero21 && zero22);
+    check("dropping a container clears its record and the two levels of containers below it", zero20 && zero21 && zero22);
+    check("... and lets them go onto the free list, children first: head 20, 20 -> 21 -> 22 -> end",
+          saveHeaderGetU16(&save, ContainerHeaderFreeHead) == 20 && partyGetU16(saveGameRecord(&save, SaveSectionItemInstances, 20), 0) == 21 &&
+              partyGetU16(saveGameRecord(&save, SaveSectionItemInstances, 21), 0) == 22 && partyGetU16(saveGameRecord(&save, SaveSectionItemInstances, 22), 0) == 0);
+    check("the next container put down takes the head of the list and the list shortens",
+          containerAllocate(&save) == 20 && saveHeaderGetU16(&save, ContainerHeaderFreeHead) == 21 && containerAllocate(&save) == 21 && containerAllocate(&save) == 22 &&
+              saveHeaderGetU16(&save, ContainerHeaderFreeHead) == 0);
+    saveHeaderSetU16(&save, ContainerHeaderNextRecord, 7);
+    check("with the list empty the never-used counter hands out numbers", containerAllocate(&save) == 7 && containerAllocate(&save) == 8 && saveHeaderGetU16(&save, ContainerHeaderNextRecord) == 9);
+    itemSlotSet(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 7), 1), 2, 0);
+    partySetU16(saveGameRecord(&save, SaveSectionItemInstances, 7), 0, 55);
+    check("a container's weight is its record's first word", containerWeight(&save, 7) == 55 && containerWeight(&save, 0) == 0 && containerWeight(&save, 5000) == 0);
     check("...but not a fourth level", itemSlotId(inventoryGroupSlot(saveGameRecord(&save, SaveSectionItemInstances, 23), 1)) == 2);
 }
 

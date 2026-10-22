@@ -2,7 +2,7 @@
  * Build and run (from src23/tests):
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c && ./test_session
+ *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../container.c ../maptrigger.c ../ailment.c ../document.c && ./test_session
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override).
  */
@@ -12,6 +12,7 @@
 
 #include "bcd4.h"
 #include "consumable.h"
+#include "container.h"
 #include "lightsource.h"
 #include "dialogservice.h"
 #include "inventory.h"
@@ -1220,6 +1221,153 @@ static void testBeltUse(GameKind game, const uint8_t *world, size_t size, const 
     sessionFree(s);
 }
 
+/* Containers: bags put down get a record, open on the right button (the newest on top), hold what is put in, weigh with their contents and are searched by the item commands. */
+static void testBags(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[200];
+    unsigned bag = 0, thing = 0, magic = 0;
+    for (unsigned id = 1; id <= s->items.validItemCount; id++) {
+        const uint8_t *record = itemCatalogRecord(&s->items, id);
+        if (!record) {
+            continue;
+        }
+        unsigned flags = itemGetU16(record, ItemFieldFlags);
+        if ((flags & ItemFlagEquipCode0B) && (flags & ItemFlagContainerBag)) {
+            if (!bag) {
+                bag = id;
+            }
+        } else if (!(flags & ItemFlagEquipCode0B) && (itemGetU16(record, ItemFieldFitFlags) & ItemFitBag) && itemGetU16(record, ItemFieldWeight) > 0 && !thing) {
+            thing = id;
+        }
+        if (game == GameYendor2 && id == 0x11) {
+            magic = id;
+        }
+    }
+    check("the game has a bag and something that fits it", bag && thing);
+    if (!bag || !thing) {
+        sessionFree(s);
+        return;
+    }
+    saveHeaderSetU16(&s->save, ContainerHeaderNextRecord, 30);
+    saveHeaderSetU16(&s->save, ContainerHeaderFreeHead, 0);
+    uint8_t *hero = sessionPartyRecord(s, 0);
+    for (unsigned n = 1; n <= InventorySlotCount; n++) {
+        itemSlotSet(inventoryGroupSlot(partyInventoryGroup(hero, PartyGroupMain), n), 0, 0);
+    }
+    partySetU16(hero, PartyFieldInventory, 0);
+    partySetU16(hero, 0x56, 5000);
+    unsigned bagWeight = itemGetU16(itemCatalogRecord(&s->items, bag), ItemFieldWeight), thingWeight = itemGetU16(itemCatalogRecord(&s->items, thing), ItemFieldWeight);
+    uint8_t *main = partyInventoryGroup(hero, PartyGroupMain);
+
+    s->heldItem = (uint16_t)bag;
+    s->heldExtra = 0;
+    check("a bag from a chest (no record of its own) is put in a bag slot", sessionInventoryClick(s, 0, 1) == SessionInvPlaced);
+    unsigned record = itemSlotExtra(inventoryGroupSlot(main, 1));
+    snprintf(text, sizeof(text), "%s: ... and gets the next never-used record (30), its weight joins the load", label);
+    check(text, record == 30 && saveHeaderGetU16(&s->save, ContainerHeaderNextRecord) == 31 && inventoryGroupWeight(main) == bagWeight);
+
+    check("the right button on it opens it: the slots now show its (empty) contents", sessionBagToggle(s, 0, 1) == SessionBagOpened && partyActiveInventoryGroup(hero) == partyBagMarker(hero, 2) + 4 &&
+                                                                                         (partyGetU16(hero, PartyFieldUiFlags) & PartyUiBag3Open) && itemSlotId(inventoryGroupSlot(partyActiveInventoryGroup(hero), 1)) == 0);
+    s->heldItem = (uint16_t)thing;
+    s->heldExtra = 0;
+    check("an item put into slot 1 goes into the bag", sessionInventoryClick(s, 0, 1) == SessionInvPlaced && itemSlotId(inventoryGroupSlot(partyBagMarker(hero, 2) + 4, 1)) == thing &&
+                                                           itemSlotId(inventoryGroupSlot(main, 1)) == bag);
+    snprintf(text, sizeof(text), "%s: ... its weight is in the bag's group and in the load", label);
+    check(text, inventoryGroupWeight(partyBagMarker(hero, 2) + 4) == thingWeight && inventoryGroupWeight(main) == bagWeight + thingWeight);
+    check("the item commands find it inside the open bag", sessionHasItem(s, thing, thing));
+    check("the bag's icon (region 9) closes it, writing the contents back to the record", sessionBagToggle(s, 0, 9) == SessionBagClosed && partyGetU16(partyBagMarker(hero, 2), 0) == 0 &&
+                                                                                         !(partyGetU16(hero, PartyFieldUiFlags) & PartyUiBag3Open) &&
+                                                                                         itemSlotId(inventoryGroupSlot(saveGameRecord(&s->save, SaveSectionItemInstances, 30), 1)) == thing &&
+                                                                                         inventoryGroupWeight(saveGameRecord(&s->save, SaveSectionItemInstances, 30)) == thingWeight);
+    check("a closed bag is searched too", sessionHasItem(s, thing, thing));
+    check("with no bag open region 9 does nothing", sessionBagToggle(s, 0, 9) == SessionBagIgnored);
+
+    check("a bag carries what is inside it: taking it up takes both weights off the load", sessionInventoryClick(s, 0, 1) == SessionInvTook && s->heldItem == bag && s->heldExtra == 30 &&
+                                                                                          inventoryGroupWeight(main) == 0);
+    check("... and putting it down puts them back", sessionInventoryClick(s, 0, 3) == SessionInvPlaced && inventoryGroupWeight(main) == bagWeight + thingWeight);
+
+    /* an item dropped on a closed bag goes inside it */
+    s->heldItem = (uint16_t)thing;
+    s->heldExtra = 0;
+    check("an item dropped on a closed bag goes into its contents", sessionInventoryClick(s, 0, 3) == SessionInvPlaced && itemSlotId(inventoryGroupSlot(saveGameRecord(&s->save, SaveSectionItemInstances, 30), 2)) == thing &&
+                                                                       inventoryGroupWeight(saveGameRecord(&s->save, SaveSectionItemInstances, 30)) == 2 * thingWeight &&
+                                                                       inventoryGroupWeight(main) == bagWeight + 2 * thingWeight);
+    /* an item that does not fit the kind of bag is refused */
+    unsigned misfit = 0;
+    for (unsigned id = 1; id <= s->items.validItemCount && !misfit; id++) {
+        const uint8_t *record2 = itemCatalogRecord(&s->items, id);
+        if (record2 && !(itemGetU16(record2, ItemFieldFlags) & ItemFlagEquipCode0B) && !(itemGetU16(record2, ItemFieldFitFlags) & ItemFitBag)) {
+            misfit = id;
+        }
+    }
+    s->heldItem = (uint16_t)misfit;
+    s->heldExtra = 0;
+    check("an item that is not for bags is refused by one", sessionInventoryClick(s, 0, 3) == SessionInvRefused && s->heldItem == misfit);
+    s->heldItem = 0;
+
+    /* nested: a box in a backpack, opened from inside it, goes on top; an item for backpacks only is not for the box */
+    unsigned backpack = 0, box = 0;
+    for (unsigned id = 1; id <= s->items.validItemCount; id++) {
+        const uint8_t *record2 = itemCatalogRecord(&s->items, id);
+        unsigned flags = record2 ? itemGetU16(record2, ItemFieldFlags) : 0;
+        if ((flags & ItemFlagEquipCode0B) && (flags & ItemFlagContainerBackpack) && !backpack) {
+            backpack = id;
+        } else if ((flags & ItemFlagEquipCode0B) && (flags & ItemFlagContainerBox) && !box) {
+            box = id;
+        }
+    }
+    if (backpack && box) {
+        for (unsigned n = 1; n <= InventorySlotCount; n++) {
+            itemSlotSet(inventoryGroupSlot(main, n), 0, 0);
+        }
+        partySetU16(hero, PartyFieldInventory, 0);
+        sessionBagsClose(s, 0);
+        s->heldItem = (uint16_t)backpack;
+        s->heldExtra = 0;
+        sessionInventoryClick(s, 0, 1);
+        sessionBagToggle(s, 0, 1);
+        s->heldItem = (uint16_t)box;
+        s->heldExtra = 0;
+        check("a box goes into an open backpack", sessionInventoryClick(s, 0, 1) == SessionInvPlaced && partyActiveInventoryGroup(hero) == partyBagMarker(hero, 2) + 4);
+        check("opened from inside the backpack it goes on top (the second marker, flag 0x4000)", sessionBagToggle(s, 0, 1) == SessionBagOpened && partyGetU16(partyBagMarker(hero, 1), 0) == box &&
+                                                                                               (partyGetU16(hero, PartyFieldUiFlags) & PartyUiBag2Open) && partyActiveInventoryGroup(hero) == partyBagMarker(hero, 1) + 4);
+        unsigned bagOnly = 0;
+        for (unsigned id = 1; id <= s->items.validItemCount && !bagOnly; id++) {
+            const uint8_t *record2 = itemCatalogRecord(&s->items, id);
+            unsigned fit = record2 ? itemGetU16(record2, ItemFieldFitFlags) : 0;
+            bagOnly = record2 && !(itemGetU16(record2, ItemFieldFlags) & ItemFlagEquipCode0B) && (fit & 0x8000) && !(fit & 0x4000) ? id : 0;
+        }
+        s->heldItem = (uint16_t)bagOnly;
+        s->heldExtra = 0;
+        check("something for backpacks only is not taken by the box on top", bagOnly && sessionInventoryClick(s, 0, 1) == SessionInvRefused && s->heldItem == bagOnly);
+        s->heldItem = 0;
+        check("the box's icon closes the newest only", sessionBagToggle(s, 0, 9) == SessionBagClosed && partyGetU16(partyBagMarker(hero, 1), 0) == 0 && partyGetU16(partyBagMarker(hero, 2), 0) == backpack);
+        sessionBagToggle(s, 0, 1);
+        sessionBagsClose(s, 0);
+        check("closing everything writes it back and clears the flags", partyGetU16(partyBagMarker(hero, 1), 0) == 0 && partyGetU16(partyBagMarker(hero, 2), 0) == 0 && (partyGetU16(hero, PartyFieldUiFlags) & 0xF000) == 0);
+    }
+
+    /* a MAGIC CONTAINER's contents weigh nothing */
+    if (magic) {
+        for (unsigned n = 1; n <= InventorySlotCount; n++) {
+            itemSlotSet(inventoryGroupSlot(main, n), 0, 0);
+        }
+        partySetU16(hero, PartyFieldInventory, 0);
+        s->heldItem = (uint16_t)magic;
+        s->heldExtra = 0;
+        sessionInventoryClick(s, 0, 1);
+        check("a MAGIC CONTAINER weighs nothing in a bag slot", inventoryGroupWeight(main) == 0);
+        s->heldItem = (uint16_t)thing;
+        s->heldExtra = 0;
+        check("... nor does what is put in it", sessionInventoryClick(s, 0, 1) == SessionInvPlaced && inventoryGroupWeight(main) == 0 &&
+                                                   itemSlotId(inventoryGroupSlot(saveGameRecord(&s->save, SaveSectionItemInstances, itemSlotExtra(inventoryGroupSlot(main, 1))), 1)) == thing);
+    }
+    sessionFree(s);
+}
+
 /* Group fights: the first monster stands in the middle slot, others join on the left (the middle one steps right) or, with room for a third, on the left with the left one stepping to the middle;
  * the formation bits say how many; the dead leave gaps that CompactMonsterSlots closes one step at a time. */
 static void testGroupFight(GameKind game, const uint8_t *world, size_t size, const char *label) {
@@ -1501,6 +1649,7 @@ int main(void) {
             testAmbush(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testGroupFight(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBeltUse(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testBags(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBelt(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testInventorySlots(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);

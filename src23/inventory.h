@@ -53,7 +53,7 @@ bool inventoryDropBlocked(GameKind game, const ItemCatalog *catalog, SaveGame *s
 /*
  * PlaceItemOnGround (yendor2.asm:17974): what dropping an item does to the save. The item itself simply ceases to exist (there is no
  * ground inventory); only a container leaves anything to clean up: its instance record `contentsRecord` and the records of the
- * containers directly inside it and inside those (three levels, the same depth the other container walks use) are zeroed. Containers
+ * containers directly inside it and inside those (three levels, the same depth the other container walks use) are let go (container.h: cleared, the free list's head, children first). Containers
  * nested a fourth level down keep their records (the original leaks them). A non-container drops with no effect on the save.
  */
 void inventoryDiscardDropped(const ItemCatalog *catalog, SaveGame *save, uint16_t itemId, uint16_t contentsRecord);

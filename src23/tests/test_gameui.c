@@ -3,7 +3,7 @@
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_gameui test_gameui.c ../gameui.c ../alchemylist.c ../confirmprompt.c ../partyinfo.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../lighting.c \
  *       ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c \
- *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
+ *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../container.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
  *       ../font.c ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../music.c ../paperdoll.c ../statsheet.c ../roster.c ../pictures.c ../palette.c ../cluepaged.c ../cluebook.c ../titlemenu.c ../creationwizard.c ../creation.c ../charcreate.c ../textfield.c ../clueentries.c ../cluetransport.c ../cluemonster.c ../cluespell.c ../cluemap.c ../worldmap_stdio.c ../chargen.c ../clueitem.c ../exedata.c && ./test_gameui
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override). The pictures are synthetic.
@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "container.h"
 #include "gameui.h"
 #include "spellcast.h"
 #include "maininput.h"
@@ -749,6 +750,36 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
     s->heldItem = 0;
     gameUiClick(&ui, 300, 55, false);
     check("a click on an empty slot with an empty hand leaves the resource panel", !(saveHeaderGetU16(&s->save, 0x20) & 0x1000));
+
+    /* a bag on the inventory screen: the right button opens it, its icon (region 9) closes it, leaving the screen writes it back */
+    {
+        unsigned bagId = 0;
+        for (unsigned id = 1; id <= s->items.validItemCount && !bagId; id++) {
+            const uint8_t *record = itemCatalogRecord(&s->items, id);
+            bagId = record && (itemGetU16(record, ItemFieldFlags) & ItemFlagEquipCode0B) && (itemGetU16(record, ItemFieldFlags) & ItemFlagContainerBag) ? id : 0;
+        }
+        uint8_t *hero = sessionPartyRecord(s, 0);
+        if (bagId && hero) {
+            saveHeaderSetU16(&s->save, ContainerHeaderNextRecord, 60);
+            itemSlotSet(inventoryGroupSlot(partyInventoryGroup(hero, PartyGroupMain), 1), (uint16_t)bagId, 60);
+            itemSlotSet(inventoryGroupSlot(saveGameRecord(&s->save, SaveSectionItemInstances, 60), 1), 1, 0);
+            gameUiKey(&ui, 'p', false);
+            gameUiDraw(&ui);
+            unsigned closedSum = sum(ui.screen);
+            gameUiClick(&ui, 8 + 2 + 8, 8 + 2 + 8, true); /* slot 1 */
+            check("the right button on a bag in a slot opens it", partyGetU16(partyBagMarker(hero, 2), 0) == bagId && partyActiveInventoryGroup(hero) == partyBagMarker(hero, 2) + 4);
+            gameUiDraw(&ui);
+            check("... the doll shows its contents and its icon in the ninth cell", sum(ui.screen) != closedSum);
+            itemSlotSet(inventoryGroupSlot(partyActiveInventoryGroup(hero), 2), 1, 0);
+            gameUiClick(&ui, 8 + 45, 8 + 43, true); /* region 9 */
+            check("the open bag's icon closes it and the contents go back to the record", partyGetU16(partyBagMarker(hero, 2), 0) == 0 &&
+                                                                                           itemSlotId(inventoryGroupSlot(saveGameRecord(&s->save, SaveSectionItemInstances, 60), 2)) == 1);
+            gameUiClick(&ui, 8 + 2 + 8, 8 + 2 + 8, true);
+            gameUiKey(&ui, 'p', false);
+            check("leaving the screen closes the bags that are open", ui.overlay == UiOverlayNone && partyGetU16(partyBagMarker(hero, 2), 0) == 0 && !(partyGetU16(hero, PartyFieldUiFlags) & 0xF000));
+            itemSlotSet(inventoryGroupSlot(partyInventoryGroup(hero, PartyGroupMain), 1), 0, 0);
+        }
+    }
 
     /* the combat's monster panels (HandleDungeonInput loc_1667A): the name line chooses the monster, the health bar asks for the HEALTH line */
     if (game == GameYendor2) {

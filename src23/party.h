@@ -168,7 +168,11 @@ typedef enum {
     PartyUiMainGroup = 0x0080,
     PartyUiBag3 = 0x0100,
     PartyUiBag2 = 0x0200,
-    PartyUiBag1 = 0x0400
+    PartyUiBag1 = 0x0400,
+    PartyUiEquippedBagOpen = 0x1000, /* the container in slot B (+0x13E) is open, in the third marker */
+    PartyUiBag3Open = 0x2000,        /* the markers +0x1C8 / +0x1A2 / +0x17C hold an open bag */
+    PartyUiBag2Open = 0x4000,
+    PartyUiBag1Open = 0x8000
 } PartyUiFlags;
 
 uint16_t partyGetU16(const uint8_t *record, unsigned offset);

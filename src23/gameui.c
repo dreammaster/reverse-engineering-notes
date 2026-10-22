@@ -1009,6 +1009,14 @@ static void inventoryOpen(GameUi *ui, unsigned mask) {
     effect(ui, 1);
 }
 
+/* Leaving the inventory screen: every open bag is written back (CloseAllAlternateBags, called as the portraits are redrawn). */
+static void inventoryClose(GameUi *ui) {
+    ui->overlay = UiOverlayNone;
+    for (unsigned member = 0; member < 4; member++) {
+        sessionBagsClose(ui->session, member);
+    }
+}
+
 static unsigned inventoryAllMask(const GameUi *ui) {
     unsigned mask = 0;
     for (unsigned i = 0; i < 4; i++) {
@@ -1074,11 +1082,11 @@ static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipie
     case SessionUseDone:
         break;
     case SessionUseRead:
-        ui->overlay = UiOverlayNone;
+        inventoryClose(ui);
         readOpen(ui);
         break;
     case SessionUseTravelled:
-        ui->overlay = UiOverlayNone;
+        inventoryClose(ui);
         gameUiAmbientMusic(ui);
         break;
     case SessionUseNoEffect:
@@ -2820,7 +2828,7 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
         if (key == ' ' && ui->catalogActive && ui->catalogShop && s->heldItem) { /* TrySellItemForGold: the item on the cursor is sold to the merchant */
             catalogSlotClick(ui, 0);
         } else if (key == 'p' || (key == UiKeyEscape && !s->heldItem)) {
-            ui->overlay = UiOverlayNone;
+            inventoryClose(ui);
             ui->panelRunCount = 0;
             effect(ui, 1);
         } else if (key == UiKeyEscape) { /* an item on the cursor: FlashStatusWarning */
@@ -3250,16 +3258,20 @@ static bool dollsClick(GameUi *ui, int x, int y, bool right) {
             unsigned panel = uiRegionHit(game, UiRegionsPartyPanels, x, y), member = panel / 10;
             if (panel % 10 == 1 && member < 4 && sessionPartyRecord(s, member)) {
                 ui->dollMask ^= 1u << member;
+                sessionBagsClose(s, member);
                 effect(ui, 1);
                 if (!ui->dollMask) {
-                    ui->overlay = UiOverlayNone;
+                    inventoryClose(ui);
                 }
             }
         } else if (region == 1) { /* the right button on a bag slot uses the item */
             unsigned doll = uiRegionHit(game, UiRegionsRosterPortraits, x, y);
             if (doll >= 1 && doll <= 4 && (ui->dollMask & (1u << (doll - 1)))) {
                 unsigned slot = uiRegionHit(game, UiRegionsInventoryGrid, x - (8 + 56 * (int)(doll - 1)), y - 8);
-                if (slot >= 1 && slot <= 8) {
+                SessionBag bag = slot ? sessionBagToggle(s, doll - 1, slot) : SessionBagIgnored; /* HandleInventoryGridClick: a container opens or closes, the open bag's icon closes the newest */
+                if (bag == SessionBagRefused) {
+                    flashWarning(ui);
+                } else if (bag == SessionBagIgnored && slot >= 1 && slot <= 8) {
                     inventoryUse(ui, doll - 1, slot);
                 }
             }

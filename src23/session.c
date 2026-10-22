@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "chest.h"
+#include "container.h"
 #include "explore.h"
 #include "globalflags.h"
 #include "lighting.h"
@@ -35,6 +36,8 @@ static uint8_t *beltSlots(GameSession *s) {
     return saveHeaderBcd4(&s->save, SaveHeaderBeltSlots);
 }
 static void arriveAt(GameSession *s, int x, int y, uint16_t facing);
+static unsigned bagLevel(uint8_t *record);
+static uint8_t *bagGroup(uint8_t *record, unsigned level);
 
 GameSession *sessionNew(GameKind game, const uint8_t *worldDat, size_t size) {
     GameSession *s = calloc(1, sizeof(*s));
@@ -1259,7 +1262,7 @@ static uint8_t *useSlot(GameSession *s, uint8_t *user, unsigned itemSlot) {
     if (itemSlot >= SessionBeltSlotBase) {
         return itemSlot - SessionBeltSlotBase < SaveBeltSlotCount ? beltSlots(s) + 4 * (itemSlot - SessionBeltSlotBase) : NULL;
     }
-    return user ? inventoryGroupSlot(partyInventoryGroup(user, PartyGroupMain), itemSlot) : NULL;
+    return user ? inventoryGroupSlot(bagGroup(user, bagLevel(user)), itemSlot) : NULL;
 }
 
 unsigned sessionSlotItem(GameSession *s, unsigned memberSlot, unsigned itemSlot) {
@@ -2149,6 +2152,202 @@ static uint16_t itemWeightOf(GameSession *s, unsigned id) {
     return item ? (uint16_t)(item[ItemFieldWeight] | (item[ItemFieldWeight + 1] << 8)) : 0;
 }
 
+/* ---- bags: containers open on the inventory screen ---- */
+
+/*
+ * GetInventorySlotPtr (yendor2.asm:40203): the slot codes 1-8 address the contents of the first open bag in the priority bag 1, 2, 3 (the markers +0x17C / +0x1A2 / +0x1C8), else the main inventory.
+ * A level is 0 for the main group and n for the bag whose marker is n - 1; the bags are opened in the order 3, 2, 1, so a higher level is nested inside the lower ones.
+ */
+static unsigned bagLevel(uint8_t *record) {
+    for (unsigned bag = 0; bag < 3; bag++) {
+        if (partyGetU16(partyBagMarker(record, bag), 0) != 0) {
+            return bag + 1;
+        }
+    }
+    return 0;
+}
+
+static uint8_t *bagGroup(uint8_t *record, unsigned level) {
+    return level ? partyBagMarker(record, level - 1) + 4 : partyInventoryGroup(record, PartyGroupMain);
+}
+
+/* The weight an item carries: its own and, for a container, everything inside it (PickUpItemFromSlot: the record's first word is added). An item with no record of its own (extra 0) holds nothing. */
+static unsigned carriedWeight(GameSession *s, unsigned id, unsigned extra) {
+    const uint8_t *item = itemCatalogRecord(&s->items, id);
+    unsigned weight = itemWeightOf(s, id);
+    if (item && (itemGetU16(item, ItemFieldFlags) & ItemFlagEquipCode0B)) {
+        weight += containerWeight(&s->save, extra);
+    }
+    return (uint16_t)weight;
+}
+
+/*
+ * The groups an item's weight counts in (PlaceItemInSlot :39886 / PickUpItemFromSlot :40519, the bag-slot codes and code 0xB): in the main group the load (+0x118) -- a MAGIC CONTAINER (0x11) weighs
+ * nothing there; in an open bag the weight of the group itself, then of every bag it is nested in, then the load -- a bag that is a MAGIC CONTAINER does not take it, and one at the outermost
+ * level stops it from reaching the load at all.
+ */
+static void bagWeight(uint8_t *record, unsigned level, unsigned id, unsigned weight, bool add) {
+    uint8_t *main = partyInventoryGroup(record, PartyGroupMain);
+    int delta = add ? (int)weight : -(int)weight;
+    if (level == 0) {
+        if (id != 0x11) {
+            inventoryGroupSetWeight(main, (uint16_t)(inventoryGroupWeight(main) + delta));
+        }
+        return;
+    }
+    for (unsigned bag = level - 1; bag < 3; bag++) {
+        uint8_t *marker = partyBagMarker(record, bag);
+        if (partyGetU16(marker, 0) == 0x11) {
+            if (bag == 2) {
+                return;
+            }
+            continue;
+        }
+        inventoryGroupSetWeight(marker + 4, (uint16_t)(inventoryGroupWeight(marker + 4) + delta));
+    }
+    inventoryGroupSetWeight(main, (uint16_t)(inventoryGroupWeight(main) + delta));
+}
+
+/* IsContainerTypeCompatible (:40619): with a bag open (the open flags 0x8000 / 0x4000 / 0x2000 / the equipped one 0x1000, in that order) an item for a slot code below 0xA must fit that bag's kind. */
+static bool bagAccepts(GameSession *s, uint8_t *record, unsigned code, unsigned heldId) {
+    unsigned ui = partyGetU16(record, PartyFieldUiFlags), container;
+    if (code >= 0x0A) {
+        return true;
+    }
+    if (ui & PartyUiBag1Open) {
+        container = partyGetU16(partyBagMarker(record, 0), 0);
+    } else if (ui & PartyUiBag2Open) {
+        container = partyGetU16(partyBagMarker(record, 1), 0);
+    } else if (ui & (PartyUiBag3Open | PartyUiEquippedBagOpen)) {
+        container = partyGetU16(partyBagMarker(record, 2), 0);
+    } else {
+        return true;
+    }
+    const uint8_t *bag = itemCatalogRecord(&s->items, container), *held = itemCatalogRecord(&s->items, heldId);
+    return bag && held && inventoryContainerAccepts((uint16_t)itemGetU16(bag, ItemFieldFlags), (uint16_t)itemGetU16(held, ItemFieldFitFlags));
+}
+
+/* SaveAndCloseContainer (:40148): an open bag's contents go back to the record the marker names, and the marker is cleared. */
+static void bagClose(GameSession *s, uint8_t *record, unsigned bag) {
+    uint8_t *marker = partyBagMarker(record, bag);
+    if (partyGetU16(marker, 0) != 0) {
+        uint8_t *contents = saveGameRecord(&s->save, SaveSectionItemInstances, partyGetU16(marker, 2));
+        if (contents) {
+            memcpy(contents, marker + 4, InventoryGroupSize);
+        }
+    }
+    partySetU16(marker, 0, 0);
+    partySetU16(marker, 2, 0);
+}
+
+/* LoadContainerContents (:40069): the record of the container's contents is read into the marker's group. */
+static void bagOpen(GameSession *s, uint8_t *record, unsigned bag, unsigned id, unsigned extra) {
+    uint8_t *marker = partyBagMarker(record, bag);
+    const uint8_t *contents = saveGameRecord(&s->save, SaveSectionItemInstances, extra);
+    partySetU16(marker, 0, (uint16_t)id);
+    partySetU16(marker, 2, (uint16_t)extra);
+    if (contents) {
+        memcpy(marker + 4, contents, InventoryGroupSize);
+    } else {
+        memset(marker + 4, 0, InventoryGroupSize);
+    }
+}
+
+SessionBag sessionBagToggle(GameSession *s, unsigned member, unsigned region) {
+    uint8_t *record = sessionPartyRecord(s, member);
+    if (!record) {
+        return SessionBagIgnored;
+    }
+    unsigned ui = partyGetU16(record, PartyFieldUiFlags);
+    if (region == 9) { /* the open bag's icon is the button that closes the top one (HandleInventoryGridClick loc_264B3) */
+        if (!(ui & (PartyUiBag1Open | PartyUiBag2Open | PartyUiBag3Open))) {
+            return SessionBagIgnored;
+        }
+        if (partyGetU16(partyBagMarker(record, 0), 0)) {
+            bagClose(s, record, 0);
+            ui &= ~(unsigned)PartyUiBag1Open;
+        } else if (partyGetU16(partyBagMarker(record, 1), 0)) {
+            bagClose(s, record, 1);
+            ui &= ~(unsigned)PartyUiBag2Open;
+        } else {
+            bagClose(s, record, 2);
+            ui &= ~(unsigned)PartyUiBag3Open;
+        }
+        partySetU16(record, PartyFieldUiFlags, (uint16_t)ui);
+        return SessionBagClosed;
+    }
+    uint8_t *cell = NULL;
+    unsigned level = 0;
+    if (region >= 1 && region <= 8) {
+        level = bagLevel(record);
+        cell = inventoryGroupSlot(bagGroup(record, level), region);
+    } else if (region == 0x0B) {
+        cell = partyEquipmentSlot(record, 0x0B, s->game);
+    }
+    const uint8_t *item = cell && itemSlotId(cell) ? itemCatalogRecord(&s->items, itemSlotId(cell)) : NULL;
+    if (!item || !(itemGetU16(item, ItemFieldFlags) & ItemFlagEquipCode0B)) {
+        return SessionBagIgnored;
+    }
+    if (itemSlotExtra(cell) == 0) { /* a container always has a record: one that has none yet gets it now */
+        itemSlotSet(cell, itemSlotId(cell), (uint16_t)containerAllocate(&s->save));
+    }
+    if (region == 0x0B) { /* the equipped container: it replaces every other open bag and takes the third marker (loc_26490) */
+        bool wasOpen = (ui & PartyUiEquippedBagOpen) != 0;
+        for (unsigned bag = 0; bag < 3; bag++) {
+            bagClose(s, record, bag);
+        }
+        if (wasOpen) {
+            ui &= 0x0FFF;
+        } else {
+            ui &= 0x1FFF;
+            bagOpen(s, record, 2, itemSlotId(cell), itemSlotExtra(cell));
+            ui |= PartyUiEquippedBagOpen;
+        }
+        partySetU16(record, PartyFieldUiFlags, (uint16_t)ui);
+        return wasOpen ? SessionBagClosed : SessionBagOpened;
+    }
+    if (partyGetU16(partyBagMarker(record, 0), 0)) { /* three are open already (loc_26533: a warning) */
+        return SessionBagRefused;
+    }
+    if (partyGetU16(partyBagMarker(record, 1), 0)) {
+        bagOpen(s, record, 0, itemSlotId(cell), itemSlotExtra(cell));
+        ui |= PartyUiBag1Open;
+    } else if (partyGetU16(partyBagMarker(record, 2), 0)) {
+        bagOpen(s, record, 1, itemSlotId(cell), itemSlotExtra(cell));
+        ui |= PartyUiBag2Open;
+    } else {
+        bagOpen(s, record, 2, itemSlotId(cell), itemSlotExtra(cell));
+        ui |= PartyUiBag3Open;
+    }
+    partySetU16(record, PartyFieldUiFlags, (uint16_t)ui);
+    return SessionBagOpened;
+}
+
+void sessionBagsClose(GameSession *s, unsigned member) {
+    uint8_t *record = sessionPartyRecord(s, member);
+    if (!record) {
+        return;
+    }
+    partySetU16(record, PartyFieldUiFlags, (uint16_t)(partyGetU16(record, PartyFieldUiFlags) & 0x0FFF)); /* CloseAllAlternateBags (:39856) */
+    for (unsigned bag = 0; bag < 3; bag++) {
+        bagClose(s, record, bag);
+    }
+}
+
+/* SyncAllContainers (:45673): before a search of the containers the open ones are written back (and stay open). */
+static void bagsFlush(GameSession *s) {
+    for (unsigned member = 0; member < SavePartyMemberSlots; member++) {
+        uint8_t *record = sessionPartyRecord(s, member);
+        for (unsigned bag = 0; record && bag < 3; bag++) {
+            const uint8_t *marker = partyBagMarker(record, bag);
+            uint8_t *contents = partyGetU16(marker, 0) ? saveGameRecord(&s->save, SaveSectionItemInstances, partyGetU16(marker, 2)) : NULL;
+            if (contents) {
+                memcpy(contents, marker + 4, InventoryGroupSize);
+            }
+        }
+    }
+}
+
 bool sessionDropOnPortrait(GameSession *s, unsigned member) {
     uint8_t *record = sessionPartyRecord(s, member);
     const uint8_t *item = s->heldItem ? itemCatalogRecord(&s->items, s->heldItem) : NULL;
@@ -2156,10 +2355,13 @@ bool sessionDropOnPortrait(GameSession *s, unsigned member) {
         return false;
     }
     const uint8_t *target = itemTargetEntry(&s->items, item);
-    uint16_t weight = itemWeightOf(s, s->heldItem);
+    uint16_t weight = (uint16_t)carriedWeight(s, s->heldItem, s->heldExtra);
     AutoEquipPlan plan = inventoryPlanAutoEquip(s->game, record, s->heldItem, weight, itemGetU16(item, ItemFieldFlags), target ? itemTargetWord(target, ItemTargetSlotFlags) : 0);
     if (plan.kind == AutoEquipRefused) {
         return false;
+    }
+    if (plan.linksContainer && (itemGetU16(item, ItemFieldFlags) & ItemFlagEquipCode0B) && s->heldExtra == 0) { /* TryLoadNextContainerLink */
+        s->heldExtra = (uint16_t)containerAllocate(&s->save);
     }
     uint8_t *slot = record + plan.slotOffset;
     if (plan.storesExtra) {
@@ -2187,7 +2389,8 @@ bool sessionPickUp(GameSession *s, unsigned member, unsigned slotNumber, unsigne
     if (!record || s->heldItem) {
         return false;
     }
-    uint8_t *slot = equipmentCode ? partyEquipmentSlot(record, equipmentCode, s->game) : inventoryGroupSlot(partyInventoryGroup(record, PartyGroupMain), slotNumber);
+    unsigned level = equipmentCode ? 0 : bagLevel(record);
+    uint8_t *slot = equipmentCode ? partyEquipmentSlot(record, equipmentCode, s->game) : inventoryGroupSlot(bagGroup(record, level), slotNumber);
     bool shortSlot = equipmentCode >= PartyEquipmentFirstShort;
     unsigned id = !slot ? 0 : shortSlot ? (unsigned)(slot[0] | (slot[1] << 8)) : itemSlotId(slot);
     if (!id) {
@@ -2201,23 +2404,24 @@ bool sessionPickUp(GameSession *s, unsigned member, unsigned slotNumber, unsigne
         itemSlotSet(slot, 0, 0);
     }
     const uint8_t *item = itemCatalogRecord(&s->items, id);
-    if (equipmentCode && equipmentCode != 0x0B && item) { /* equipped gear carries its stat effect */
-        partyRemoveMultiStatEffect(record, itemEffectEntry(&s->items, item));
-    }
-    uint8_t *group = partyInventoryGroup(record, PartyGroupMain);
-    uint16_t weight = itemWeightOf(s, id);
-    bool weightless = (!equipmentCode || equipmentCode == 0x0B) && id == 0x11; /* the MAGIC CONTAINER in a bag slot weighs nothing (PickUpItemFromSlot) */
-    if (!weightless) {
-        inventoryGroupSetWeight(group, (uint16_t)(inventoryGroupWeight(group) - weight));
+    unsigned weight = carriedWeight(s, id, s->heldExtra);
+    bool worn = equipmentCode && equipmentCode != 0x0B;
+    if (worn) { /* equipped gear carries its stat effect and counts in the load */
+        if (item) {
+            partyRemoveMultiStatEffect(record, itemEffectEntry(&s->items, item));
+        }
+        uint8_t *main = partyInventoryGroup(record, PartyGroupMain);
+        inventoryGroupSetWeight(main, (uint16_t)(inventoryGroupWeight(main) - weight));
+    } else {
+        bagWeight(record, level, id, weight, false);
     }
     partyRecomputeEquipmentStatBonuses(record, &s->items, s->game);
     return true;
 }
 
-/* Puts item `id` into the slot a click named (PlaceItemInSlot): its weight joins the member's load (a weightless MAGIC CONTAINER in a bag slot aside), worn gear takes effect, the wear counter of a weapon slot is cleared. */
-static void placeInSlot(GameSession *s, uint8_t *record, unsigned code, uint8_t *cell, unsigned id, unsigned extra) {
+/* Puts item `id` into the slot a click named (PlaceItemInSlot): its weight joins the groups it is in, worn gear takes effect, the wear counter of a weapon slot is cleared. */
+static void placeInSlot(GameSession *s, uint8_t *record, unsigned code, unsigned level, uint8_t *cell, unsigned id, unsigned extra) {
     const uint8_t *item = itemCatalogRecord(&s->items, id);
-    uint8_t *group = partyInventoryGroup(record, PartyGroupMain);
     if (code >= PartyEquipmentFirstShort) {
         cell[0] = (uint8_t)id;
         cell[1] = (uint8_t)(id >> 8);
@@ -2225,11 +2429,15 @@ static void placeInSlot(GameSession *s, uint8_t *record, unsigned code, uint8_t 
         itemSlotSet(cell, (uint16_t)id, (uint16_t)extra);
     }
     bool worn = code >= 0x0A && code != 0x0B;
-    if (worn || id != 0x11) {
-        inventoryGroupSetWeight(group, (uint16_t)(inventoryGroupWeight(group) + itemWeightOf(s, id)));
-    }
-    if (worn && item) {
-        partyApplyMultiStatEffect(record, itemEffectEntry(&s->items, item));
+    unsigned weight = carriedWeight(s, id, extra);
+    if (worn) {
+        uint8_t *main = partyInventoryGroup(record, PartyGroupMain);
+        inventoryGroupSetWeight(main, (uint16_t)(inventoryGroupWeight(main) + weight));
+        if (item) {
+            partyApplyMultiStatEffect(record, itemEffectEntry(&s->items, item));
+        }
+    } else {
+        bagWeight(record, code == 0x0B ? 0 : level, id, weight, true);
     }
     if (code == 0x0A) {
         partySetU16(record, PartyFieldWearMain, 0);
@@ -2241,6 +2449,11 @@ static void placeInSlot(GameSession *s, uint8_t *record, unsigned code, uint8_t 
     partyRecomputeEquipmentStatBonuses(record, &s->items, s->game);
 }
 
+/* The weight check of a click that puts the held item down: the load, plus what is carried in, less what is taken out, against the capacity (+0x56). */
+static bool carryFits(uint8_t *record, unsigned load, unsigned weight, unsigned taken) {
+    return (uint16_t)(weight + load - taken) <= partyGetU16(record, 0x56);
+}
+
 SessionInv sessionInventoryClick(GameSession *s, unsigned member, unsigned region) {
     uint8_t *record = sessionPartyRecord(s, member);
     if (!record || region == 0 || region == 9 || region > 21) {
@@ -2248,14 +2461,19 @@ SessionInv sessionInventoryClick(GameSession *s, unsigned member, unsigned regio
     }
     unsigned code = region == 21 ? 20 : region; /* the two last regions are the one slot */
     unsigned equipment = code >= 10 ? code : 0;
-    uint8_t *group = partyInventoryGroup(record, PartyGroupMain);
-    uint8_t *cell = equipment ? partyEquipmentSlot(record, equipment, s->game) : inventoryGroupSlot(group, code);
+    unsigned level = equipment ? 0 : bagLevel(record);
+    uint8_t *cell = equipment ? partyEquipmentSlot(record, equipment, s->game) : inventoryGroupSlot(bagGroup(record, level), code);
     if (!cell) {
         return SessionInvIgnored;
     }
+    uint8_t *main = partyInventoryGroup(record, PartyGroupMain);
     bool shortSlot = code >= PartyEquipmentFirstShort;
     unsigned slotId = shortSlot ? (unsigned)(cell[0] | (cell[1] << 8)) : itemSlotId(cell);
+    unsigned ui = partyGetU16(record, PartyFieldUiFlags);
     if (!s->heldItem) {
+        if (code == 0x0B && (ui & PartyUiEquippedBagOpen)) { /* an open equipped container cannot be taken off (loc_2627A) */
+            return slotId ? SessionInvRefused : SessionInvIgnored;
+        }
         return slotId && sessionPickUp(s, member, equipment ? 0 : code, equipment) ? SessionInvTook : SessionInvIgnored;
     }
     const uint8_t *held = itemCatalogRecord(&s->items, s->heldItem);
@@ -2276,31 +2494,68 @@ SessionInv sessionInventoryClick(GameSession *s, unsigned member, unsigned regio
     const uint8_t *target = itemTargetEntry(&s->items, held);
     bool eligible = inventoryEligibleForSlot(code, (uint16_t)flags, target ? (uint16_t)itemTargetWord(target, ItemTargetSlotFlags) : 0, partyGetU16(record, 0x13E) != 0,
                                               partyGetU16(record, 0x146) != 0, (partyGetU16(record, PartyFieldUiFlags) & 0x20) != 0);
-    if (!eligible || (flags & ItemFlagEquipCode0B)) {
+    if (!eligible) {
         return SessionInvRefused;
     }
-    unsigned heldWeight = itemWeightOf(s, s->heldItem), load = inventoryGroupWeight(group), capacity = partyGetU16(record, 0x56);
+    if ((flags & ItemFlagEquipCode0B) && s->heldExtra == 0) { /* LoadNextContainerInChain: a container put down with no record of its own is given one */
+        s->heldExtra = (uint16_t)containerAllocate(&s->save);
+    }
+    unsigned heldWeight = carriedWeight(s, s->heldItem, s->heldExtra), load = inventoryGroupWeight(main), capacity = partyGetU16(record, 0x56);
+    const uint8_t *there = slotId ? itemCatalogRecord(&s->items, slotId) : NULL;
+    if (slotId && there && (itemGetU16(there, ItemFieldFlags) & ItemFlagEquipCode0B)) {
+        /* the slot holds a container: the held item goes inside it (loc_2632B) -- the load must take it, an equipped container must be closed, its kind must take the item, and a slot must be free */
+        if ((int16_t)(uint16_t)(load + heldWeight) > (int16_t)capacity) {
+            return SessionInvRefused;
+        }
+        if (code == 0x0B && (ui & PartyUiEquippedBagOpen)) {
+            return SessionInvIgnored;
+        }
+        if (!inventoryContainerAccepts((uint16_t)itemGetU16(there, ItemFieldFlags), (uint16_t)itemGetU16(held, ItemFieldFitFlags))) {
+            return SessionInvRefused;
+        }
+        uint8_t *contents = saveGameRecord(&s->save, SaveSectionItemInstances, itemSlotExtra(cell));
+        uint8_t *free = NULL;
+        for (unsigned n = 1; contents && n <= InventorySlotCount && !free; n++) {
+            uint8_t *entry = inventoryGroupSlot(contents, n);
+            free = itemSlotId(entry) == 0 ? entry : NULL;
+        }
+        if (!free) {
+            return SessionInvRefused;
+        }
+        if (slotId == 0x11) { /* a MAGIC CONTAINER's contents weigh nothing: what goes in is taken off both the load and its own weight first */
+            inventoryGroupSetWeight(main, (uint16_t)(inventoryGroupWeight(main) - heldWeight));
+            inventoryGroupSetWeight(contents, (uint16_t)(inventoryGroupWeight(contents) - heldWeight));
+        }
+        itemSlotSet(free, s->heldItem, s->heldExtra);
+        inventoryGroupSetWeight(contents, (uint16_t)(inventoryGroupWeight(contents) + heldWeight));
+        bagWeight(record, code == 0x0B ? 0 : level, s->heldItem, heldWeight, true);
+        s->heldItem = s->heldExtra = 0;
+        s->pendingSound = 6;
+        return SessionInvPlaced;
+    }
     if (slotId) {
-        const uint8_t *there = itemCatalogRecord(&s->items, slotId);
-        if (!there || (itemGetU16(there, ItemFieldFlags) & ItemFlagEquipCode0B)) {
+        if (!there) {
             return SessionInvRefused;
         }
         unsigned thereWeight = itemWeightOf(s, slotId);
-        if (heldWeight != thereWeight && (uint16_t)(heldWeight + load - thereWeight) > capacity) {
+        if (heldWeight != thereWeight && !carryFits(record, load, heldWeight, thereWeight)) {
+            return SessionInvRefused;
+        }
+        if (!bagAccepts(s, record, code, s->heldItem)) {
             return SessionInvRefused;
         }
         uint16_t id = s->heldItem, extra = s->heldExtra;
         s->heldItem = 0;
         sessionPickUp(s, member, equipment ? 0 : code, equipment); /* the slot's item to the cursor */
-        cell = equipment ? partyEquipmentSlot(record, equipment, s->game) : inventoryGroupSlot(group, code);
-        placeInSlot(s, record, code, cell, id, extra);
+        cell = equipment ? partyEquipmentSlot(record, equipment, s->game) : inventoryGroupSlot(bagGroup(record, level), code);
+        placeInSlot(s, record, code, level, cell, id, extra);
         s->pendingSound = 6;
         return SessionInvSwapped;
     }
-    if ((uint16_t)(load + heldWeight) > capacity) {
+    if (!carryFits(record, load, heldWeight, 0) || !bagAccepts(s, record, code, s->heldItem)) {
         return SessionInvRefused;
     }
-    placeInSlot(s, record, code, cell, s->heldItem, s->heldExtra);
+    placeInSlot(s, record, code, level, cell, s->heldItem, s->heldExtra);
     s->heldItem = s->heldExtra = 0;
     s->pendingSound = 6;
     return SessionInvPlaced;
@@ -2438,7 +2693,20 @@ InteractUnlockOutcome sessionUnlockWithRing(GameSession *s) {
 }
 
 bool sessionHasItem(GameSession *s, unsigned lowId, unsigned highId) {
-    return itemRangeAvailable(beltSlots(s), &s->save, (uint16_t)lowId, (uint16_t)highId).found;
+    if (itemRangeAvailable(beltSlots(s), &s->save, (uint16_t)lowId, (uint16_t)highId).found) {
+        return true;
+    }
+    bagsFlush(s); /* IsItemRangeAvailable's FindItemInInventoryRange goes into the containers (three levels) after SyncAllContainers; the search stops at the first empty party slot */
+    for (unsigned slot = 0; slot < SavePartyMemberSlots; slot++) {
+        const uint8_t *member = sessionPartyRecord(s, slot);
+        if (!member) {
+            break;
+        }
+        if (partyFindItemDeep(member, &s->save, &s->items, (uint16_t)lowId, (uint16_t)highId).itemId) {
+            return true;
+        }
+    }
+    return false;
 }
 
 uint8_t *sessionBeltSlot(GameSession *s, unsigned slot) {
