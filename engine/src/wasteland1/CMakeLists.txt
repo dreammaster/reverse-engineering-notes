@@ -49,9 +49,11 @@ if(WL_HAVE_IMAGE)
     endif()
     set(WL_GEN ${PROJECT_BINARY_DIR}/wl_gen.cpp)
     add_custom_command(OUTPUT ${WL_GEN}
-        COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/tools/recomp/recomp.py ${WL_IMAGE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/recomp/entries.txt ${WL_GEN} --interp 6C9,6CE,4330,4388,43A8,43D0 ${WL_CHECK_ARG}
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/recomp/recomp.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/recomp/entries.txt ${WL_IMAGE})
-    add_library(wlgen STATIC ${WL_GEN} recomp_rt.cpp)
+        COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/tools/recomp/recomp.py ${WL_IMAGE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/recomp/entries.txt ${WL_GEN} --interp 6C9,6CE,4330,4388,43A8,43D0 --ports ${CMAKE_CURRENT_SOURCE_DIR}/tools/recomp/ports.txt ${WL_CHECK_ARG}
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/recomp/ports.txt ${CMAKE_CURRENT_SOURCE_DIR}/tools/recomp/recomp.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/recomp/entries.txt ${WL_IMAGE})
+    file(GLOB WL_PORTS ports/*.cpp)
+    add_library(wlgen STATIC ${WL_GEN} recomp_rt.cpp ${WL_PORTS})
+    target_include_directories(wlgen PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     target_link_libraries(wlgen wl)
     add_executable(wlrc tools/wlrc.cpp)
     target_link_libraries(wlrc wlgen wl)

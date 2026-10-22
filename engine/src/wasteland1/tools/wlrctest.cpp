@@ -10,6 +10,7 @@
 #include <cstring>
 #include <fstream>
 #include <map>
+#include <set>
 #include <sstream>
 
 using namespace wl;
@@ -21,6 +22,7 @@ uint32_t rng(uint32_t &s) { s = s * 1664525u + 1013904223u; return s >> 8; }
 struct Result {
 	enum Kind { Ok, Skip, Diff } kind = Ok;
 	std::string note;
+	std::set<std::string> regs;   // registers/flags that differ (candidates for the junk list of a port)
 };
 
 Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const std::string &gameDir, uint16_t entry, uint32_t seed) {
@@ -64,20 +66,37 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 		res.kind = Result::Skip; res.note = std::string("native fault: ") + f.what(); return res;
 	}
 	if (!n.sys->unknownTargets.empty()) { res.kind = Result::Skip; res.note = "native: indirect jump to an unknown target"; return res; }
+	uint32_t junk = 0;
+	const uint16_t *scratch = nullptr;
+	for (const rc::PortInfo *p = rc::kPortInfo; p->name; ++p)
+		if (p->address == entry) { junk = p->junk; scratch = p->scratch; }
+	const uint32_t deadStackEnd = 0x39000u + r.sp;   // the stack below sp is dead after the return: callees leave residue there
+	auto isScratch = [&](uint32_t a) {
+		if (a >= 0x39000u && a < deadStackEnd) return true;
+		if (!scratch || a < kDsLinear || a >= kDsLinear + 0x10000) return false;
+		for (const uint16_t *q = scratch; *q != 0xFFFF; q += 2)
+			if (a - kDsLinear >= q[0] && a - kDsLinear <= q[1]) return true;
+		return false;
+	};
 	std::ostringstream d;
-	auto reg = [&](const char *name, unsigned a, unsigned b) { if (a != b) d << " " << name << " " << std::hex << a << "!=" << b; };
-	reg("ax", o.cpu.ax, r.a.x); reg("bx", o.cpu.bx, r.b.x); reg("cx", o.cpu.cx, r.c.x); reg("dx", o.cpu.dx, r.d.x);
-	reg("si", o.cpu.si, r.si); reg("di", o.cpu.di, r.di); reg("bp", o.cpu.bp, r.bp); reg("es", o.cpu.es, r.es); reg("ds", o.cpu.ds, r.ds);
+	auto reg = [&](const char *name, unsigned a, unsigned b, uint32_t bit = 0) { if (a != b && !(junk & bit)) { d << " " << name << " " << std::hex << a << "!=" << b; res.regs.insert(name); } };
+	// 16 bit registers are compared byte-wise so that the junk list can name single bytes
+	reg("al", o.cpu.ax & 0xFF, r.a.b.l, rc::j_al); reg("ah", o.cpu.ax >> 8, r.a.b.h, rc::j_ah);
+	reg("bl", o.cpu.bx & 0xFF, r.b.b.l, rc::j_bl); reg("bh", o.cpu.bx >> 8, r.b.b.h, rc::j_bh);
+	reg("cl", o.cpu.cx & 0xFF, r.c.b.l, rc::j_cl); reg("ch", o.cpu.cx >> 8, r.c.b.h, rc::j_ch);
+	reg("dl", o.cpu.dx & 0xFF, r.d.b.l, rc::j_dl); reg("dh", o.cpu.dx >> 8, r.d.b.h, rc::j_dh);
+	reg("si", o.cpu.si, r.si, rc::j_si); reg("di", o.cpu.di, r.di, rc::j_di); reg("bp", o.cpu.bp, r.bp, rc::j_bp);
+	reg("es", o.cpu.es, r.es); reg("ds", o.cpu.ds, r.ds);
 	reg("sp", o.cpu.sp, r.sp);
-	reg("cf", o.cpu.flag(x86::CF), r.cf); reg("zf", o.cpu.flag(x86::ZF), r.zf); reg("sf", o.cpu.flag(x86::SF), r.sf);
-	reg("pf", o.cpu.flag(x86::PF), r.pf); reg("df", o.cpu.flag(x86::DF), r.df);
+	reg("cf", o.cpu.flag(x86::CF), r.cf, rc::j_cf); reg("zf", o.cpu.flag(x86::ZF), r.zf, rc::j_zf); reg("sf", o.cpu.flag(x86::SF), r.sf, rc::j_sf);
+	reg("pf", o.cpu.flag(x86::PF), r.pf, rc::j_pf); reg("df", o.cpu.flag(x86::DF), r.df, rc::j_df);
 	(void)sp0;
 	size_t bad = 0;
 	std::ostringstream md;
 	for (uint32_t a = 0; a < 0xA0000; ++a)
-		if (o.cpu.mem[a] != n.mem[a]) { if (bad++ < 4) md << " mem[" << std::hex << a << "]=" << unsigned(o.cpu.mem[a]) << "/" << unsigned(n.mem[a]); }
+		if (o.cpu.mem[a] != n.mem[a] && !isScratch(a)) { if (bad++ < 4) md << " mem[" << std::hex << a << "]=" << unsigned(o.cpu.mem[a]) << "/" << unsigned(n.mem[a]); }
 	for (uint32_t a = 0xB0000; a < 0x100000; ++a)
-		if (o.cpu.mem[a] != n.mem[a]) { if (bad++ < 4) md << " mem[" << std::hex << a << "]=" << unsigned(o.cpu.mem[a]) << "/" << unsigned(n.mem[a]); }
+		if (o.cpu.mem[a] != n.mem[a] && !isScratch(a)) { if (bad++ < 4) md << " mem[" << std::hex << a << "]=" << unsigned(o.cpu.mem[a]) << "/" << unsigned(n.mem[a]); }
 	size_t vbad = 0;
 	for (int p = 0; p < 4; ++p)
 		for (size_t i = 0; i < 65536; ++i)
@@ -92,7 +111,7 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 } // namespace
 
 int main(int argc, char **argv) {
-	if (argc < 5) { std::fprintf(stderr, "usage: wlrctest <image.bin> <gamedir> <entries.txt> <state.bin>... [--only ADDR]\n"); return 1; }
+	if (argc < 5) { std::fprintf(stderr, "usage: wlrctest <image.bin> <gamedir> <entries.txt> <state.bin>... [--only ADDR] [--ported]\n"); return 1; }
 	const std::string gameDir = argv[2];
 	const shared::Bytes img = shared::readFile(argv[1]);
 	std::vector<uint16_t> entries;
@@ -106,8 +125,10 @@ int main(int argc, char **argv) {
 	}
 	std::vector<std::string> states;
 	long only = -1;
+	bool portedOnly = false;
 	for (int i = 4; i < argc; ++i) {
 		if (std::string(argv[i]) == "--only" && i + 1 < argc) only = long(std::strtoul(argv[++i], nullptr, 16));
+		else if (std::string(argv[i]) == "--ported") portedOnly = true;
 		else states.push_back(argv[i]);
 	}
 	emu::Machine o(gameDir);
@@ -115,19 +136,34 @@ int main(int argc, char **argv) {
 	std::memcpy(&o.cpu.mem[0x10000], img.data(), img.size());
 	int ok = 0, skip = 0, diff = 0;
 	std::map<std::string, int> reasons;
+	std::map<uint16_t, std::set<std::string>> junkSeen;
 	for (const std::string &state : states) {
 		for (uint16_t e : entries) {
 			if (only >= 0 && e != only) continue;
+			if (portedOnly) {
+				bool ported = false;
+				for (const rc::PortInfo *p = rc::kPortInfo; p->name; ++p) ported |= p->address == e;
+				if (!ported) continue;
+			}
 			uint32_t seed = e * 2654435761u + 12345u;
 			const Result r = testFunction(o, n, state, gameDir, e, seed);
 			if (r.kind == Result::Ok) ++ok;
 			else if (r.kind == Result::Skip) { ++skip; ++reasons[r.note.substr(0, 40)]; if (only >= 0) std::printf("%04X skipped: %s\n", e, r.note.c_str()); }
 			else { ++diff; std::printf("%04X DIFF%s\n", e, r.note.c_str()); }
+			if (portedOnly) junkSeen[e].insert(r.regs.begin(), r.regs.end());
 		}
 		std::printf("%s: ok %d skipped %d different %d\n", state.c_str(), ok, skip, diff);
 		for (auto &kv : reasons) std::printf("  skipped %d: %s", kv.second, kv.first.c_str()), std::puts("");
 		reasons.clear();
 		ok = skip = diff = 0;
+	}
+	if (portedOnly) {
+		std::printf("registers that differ in any run (junk candidates):\n");
+		for (auto &kv : junkSeen) {
+			std::string list;
+			for (const std::string &n : kv.second) list += (list.empty() ? "" : ",") + n;
+			std::printf("%04X %s\n", kv.first, list.c_str());
+		}
 	}
 	return 0;
 }

@@ -4,11 +4,14 @@ Static recompiler for the 16-bit WL.EXE code: reads the unpacked program image a
 writes C++ (one function per entry, labels and gotos for the control flow) that runs against wl::Machine / wl::rc::Regs
 (see recomp.h).
 
-    recomp.py <image.bin> <entries.txt> <out.cpp> [--interp ADDR,...] [--hook ADDR,...]
+    recomp.py <image.bin> <entries.txt> <out.cpp> [--interp ADDR,...] [--ports ports.txt] [--check]
 
 image.bin   linear 0x10000.. of the program (CS = 1000h), e.g. the unpacked WL.EXE with WLA.BIN overlaid
 entries.txt one hex function entry (offset inside CS) per line; '#' comments
 --interp    entries that are executed by the 8086 interpreter instead (self modifying code)
+--ports     hand written replacements: lines "ADDR name [junk=al,bx,cf,...]". The generated f_ADDR calls
+            port_<name>(Machine&, Regs&) (registers in, registers out, no return address handling) and returns. The
+            junk list names the registers/flags the original leaves undefined; wlrctest does not compare those.
 """
 import re
 import sys
@@ -17,6 +20,7 @@ BASE = 0x10000          # linear address of image byte 0 / CS:0000
 CS = 0x1000
 
 CHECK = "--check" in sys.argv
+PORTS = {}              # entry -> (name, junk bit names, scratch data segment ranges)
 REG8 = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"]
 REG16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
 SREG = ["es", "cs", "ss", "ds"]
@@ -525,6 +529,9 @@ class Emitter:
     # --- function emission ---
     def emit_function(self, entry):
         name = "f_%04X" % entry
+        if entry in PORTS:
+            self.out.append("void %s(Machine &m, Regs &r) { Regs *outer = m.sys->current; m.sys->current = &r; port_%s(m, r); m.sys->current = outer; r.sp = (uint16_t)(r.sp + 2); }\n" % (name, PORTS[entry][0]))
+            return
         if entry in self.interp:
             self.out.append("void %s(Machine &m, Regs &r) { interpret(m, r, 0x%04X); }\n" % (name, entry))
             return
@@ -673,6 +680,20 @@ def main():
     for i, a in enumerate(args):
         if a == "--interp":
             interp = set(int(x, 16) for x in args[i + 1].split(",") if x)
+    for i, a in enumerate(args):
+        if a == "--ports":
+            for line in open(args[i + 1]):
+                line = line.split("#")[0].split()
+                if len(line) >= 2:
+                    junk, scratch = [], []
+                    for extra in line[2:]:
+                        if extra.startswith("junk="):
+                            junk = [x for x in extra[5:].split(",") if x]
+                        elif extra.startswith("scratch="):
+                            for rng in extra[8:].split(","):
+                                lo, _, hi = rng.partition("-")
+                                scratch.append((int(lo, 16), int(hi or lo, 16)))
+                    PORTS[int(line[0], 16)] = (line[1], junk, scratch)
     em = Emitter(image, entries, interp)
     em.run()
     allf = sorted(em.done)
@@ -681,12 +702,20 @@ def main():
         f.write('#include "wasteland1/recomp_rt.h"\n\nnamespace wl {\nnamespace rc {\n\n')
         for e in allf:
             f.write("void f_%04X(Machine &m, Regs &r);\n" % e)
+        for e in sorted(PORTS):
+            f.write("void port_%s(Machine &m, Regs &r);\n" % PORTS[e][0])
         f.write("\n")
         f.write("".join(l + "\n" for l in em.out))
         f.write("void dispatch(Machine &m, Regs &r, uint16_t target) {\n    switch (target) {\n")
         for e in allf:
             f.write("    case 0x%04X: f_%04X(m, r); return;\n" % (e, e))
         f.write('    default: unknownTarget(m, r, target); return;\n    }\n}\n\n')
+        for e in sorted(PORTS):
+            f.write("static const uint16_t scratch_%04X[] = {%s0xFFFF};\n" % (e, "".join("0x%04X, 0x%04X, " % r for r in PORTS[e][2])))
+        f.write("const PortInfo kPortInfo[] = {\n")
+        for e in sorted(PORTS):
+            f.write('    {0x%04X, "%s", %s, scratch_%04X},\n' % (e, PORTS[e][0], " | ".join("j_" + j for j in PORTS[e][1]) or "0", e))
+        f.write("    {0, nullptr, 0, nullptr}\n};\n\n")
         f.write("bool isEntry(uint16_t a) {\n    switch (a) {\n")
         for e in allf:
             f.write("    case 0x%04X:\n" % e)

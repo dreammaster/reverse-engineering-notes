@@ -26,6 +26,7 @@ struct Sys {
 	bool exited = false, inTimer = false;
 	uint64_t edges = 0, nextTick = 0, edgesPerTick = 20000;   // timer IRQ0 every N taken backward branches (deterministic)
 	int emptyPolls = 0, stopOnIdle = 0;                      // stopOnIdle > 0: throw WaitForInput after that many empty polls
+	Regs *current = nullptr;                                 // registers of the port that is running (for callbacks into generated code)
 	bool realtime = false;                                   // timer IRQ0 from the wall clock (18.2 Hz) instead of counting back edges
 	int64_t nextTickUs = 0;
 	std::function<void(int)> onSpeaker;                      // PC speaker: frequency in Hz, 0 = off
@@ -60,6 +61,17 @@ void portOut(Machine &m, Regs &r, uint16_t port, uint16_t value, bool wide);
 void intr(Machine &m, Regs &r, int number);                            // DOS / BIOS services
 void backedge(Machine &m, Regs &r, uint16_t site);                                   // counts taken backward branches; delivers timer interrupts
 void farJump(Machine &m, Regs &r, uint16_t seg, uint16_t off);         // far indirect jump (only into the BIOS interrupt stub)
+// Hand written replacements of generated functions (tools/recomp/ports.txt). `junk` names the registers and flags the
+// original leaves undefined, wlrctest does not compare them.
+enum Junk : uint32_t {
+	j_al = 1u << 0, j_ah = 1u << 1, j_bl = 1u << 2, j_bh = 1u << 3, j_cl = 1u << 4, j_ch = 1u << 5, j_dl = 1u << 6, j_dh = 1u << 7,
+	j_si = 1u << 8, j_di = 1u << 9, j_bp = 1u << 10, j_cf = 1u << 11, j_zf = 1u << 12, j_sf = 1u << 13, j_pf = 1u << 14, j_of = 1u << 15,
+	j_af = 1u << 16, j_df = 1u << 17,
+	j_ax = j_al | j_ah, j_bx = j_bl | j_bh, j_cx = j_cl | j_ch, j_dx = j_dl | j_dh,
+};
+struct PortInfo { uint16_t address; const char *name; uint32_t junk; const uint16_t *scratch; };   // scratch: data segment offset ranges (lo, hi pairs, 0xFFFF end) the original uses as temporaries
+extern const PortInfo kPortInfo[];                                     // generated, terminated by a null name
+void callGenerated(Machine &m, Regs &r, uint16_t address);             // runs a function that is not ported yet (registers in/out)
 bool isEntry(uint16_t address);                                        // generated: is `address` the start of a recompiled function
 
 } // namespace rc

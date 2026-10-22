@@ -1,0 +1,23 @@
+# Functions replaced by hand written ports (ports/*.cpp): "ADDR name [junk=regs,flags] [scratch=ds offsets]"
+0060C writeCharacterAt junk=al,bl,ch,cl,di,dl,pf,si,zf
+00CB6 writeColorCharacter junk=ah,al,bl,bp,cl,di,dl,pf,si,zf
+00762 clearRect junk=al,bl,cl,di,dl,si
+08E6B rngByte junk=cf,pf,sf
+08E41 random junk=ah,cf,pf scratch=C059
+08E5F d6 junk=pf
+09C84 rollDice junk=cf,dl,sf scratch=CD49-CD4A
+07208 setPartyIndexesPtr junk=ah,al,dl,si
+09614 setCurrentCharacter junk=ah,al,bl,cl,di,dl,si
+072BB isMemberUnconscious junk=ah,al,bl,cl,di,dl,pf,si,zf
+072AE conBytesOr junk=bl,di,pf
+09A1D getMemberConditionIndex junk=al,bl,di,pf,si,zf
+098CD getMemberSkillLevel junk=bl,di,pf
+0968C findItemById junk=al,di,pf,zf scratch=CCE1
+08DCE convertNumberToBcd junk=al,bl,cf,dl,pf,sf,si
+07696 writeNumber junk=al,bl,dl,pf,si,zf
+09E53 writeCharacter junk=al,bl,dl,pf,si,zf
+09DC3 writeCharacter2 junk=al,bl,ch,cl,di,dl,pf,si,zf
+06CB2 printMessage junk=al,bl,ch,cl,di,dl,pf,si,zf scratch=B263
+089B1 hintOverlay junk=al,bl,bp,di,dl,pf,si,zf
+09F12 flushLine junk=al,bl,dl,pf,si,zf
+09EFC newline junk=al,bl,dl,pf,si,zf
