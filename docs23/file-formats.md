@@ -6812,6 +6812,12 @@ at the moved record follow it. When the round is over (the turn order is used up
 outside walk, shoot and join *between rounds*, not within one. The standalone: `session.c` `combatEngage` / `combatCompact` / `combatAfterAction`. `ProcessLevelMonsters` ends -- with no fight on -- by showing and awarding the
 rewards its timed-out monsters staged (when the staged experience is not zero); during a fight they wait for its victory. (Rests loop `ProcessLevelMonsters` only: no side traps.)
 
+**The target** (`g_activeCombatMonster`, DS:0x5xxx next to the slots): the monster the party's attacks, spells and relics fall on. `BuildCombatTurnOrder` (:11090 on) and `ProcessCombatRound` call
+`SelectActiveMonster` (:11340: the first turn-order entry that is a monster and not struck off) only while it is zero, so a chosen monster stays the target until it dies (the reaping clears it when its slot is the active one),
+and `RelocateActiveMonsterPointer` keeps it on its record when the slots shift. A **left click in the monsters' panels** (`HandleDungeonInput` loc_1667A, `UiRegionsMonsterPanels`: five regions per panel, 240-313 x
+86-98 / 122-134 / 158-170 for the names) on a name line makes that monster the target; on the 45-pixel health bar below it sets state bit 0x40 (the HEALTH line), on the three 8-pixel status icons 0x200 (poison /
+disease), 0x100 (paralysis / frozen) and 0x80 (hex / curse) -- the next draw of the panel shows the line and clears the bit. `session.c` `combatActiveSlot`, `sessionCombatChoose`; `gameui.c` `monsterPanelClick`.
+
 ### Turn-based combat: turn order (decoded 2026-09-24)
 
 A genuinely separate subsystem from the dungeon-exploration monster AI

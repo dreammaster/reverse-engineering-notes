@@ -750,6 +750,38 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
     gameUiClick(&ui, 300, 55, false);
     check("a click on an empty slot with an empty hand leaves the resource panel", !(saveHeaderGetU16(&s->save, 0x20) & 0x1000));
 
+    /* the combat's monster panels (HandleDungeonInput loc_1667A): the name line chooses the monster, the health bar asks for the HEALTH line */
+    if (game == GameYendor2) {
+        int keepX = s->x, keepY = s->y;
+        uint16_t keepFacing = s->facing;
+        s->x = 175;
+        s->y = 40;
+        s->facing = SaveFacingSouth;
+        sessionRebuild(s);
+        ui.overlay = UiOverlayNone;
+        for (unsigned step = 0; step < 6 && !s->combat.active; step++) {
+            gameUiDraw(&ui); /* the ant behind the doorway is spawned as the view is drawn */
+            gameUiKey(&ui, UiKeyUp, false);
+            gameUiSettle(&ui);
+        }
+        if (s->combat.active) {
+            uint8_t *middle = s->combat.slots + MonsterRecordSize;
+            check("a lone monster stands in the middle slot and its name is in the middle panel (y = 123)", monsterGetU16(middle, MonsterFieldType) && !monsterGetU16(s->combat.slots, MonsterFieldType));
+            gameUiClick(&ui, 250, 126, false);
+            check("a click on its name line chooses it as the target", sessionCombatTarget(s) == 1);
+            gameUiClick(&ui, 260, 138, false);
+            check("a click on its health bar sets the HEALTH quality bit (0x40) for the next draw of the panel", (monsterGetU16(middle, MonsterFieldState) & 0x40) != 0);
+            gameUiClick(&ui, 250, 90, false);
+            check("a click on an empty panel does nothing", sessionCombatTarget(s) == 1);
+        }
+        memset(&s->combat, 0, sizeof(s->combat)); /* the later checks are about the quiet map */
+        s->x = keepX;
+        s->y = keepY;
+        s->facing = keepFacing;
+        sessionRebuild(s);
+        ui.panelRunCount = 0;
+    }
+
     /* a spell scroll on the tool belt: the right button on its slot uses it; one that can be studied asks USE ITEM? / LEARN SPELL? first */
     {
         unsigned studyScroll = 0, plainScroll = 0;

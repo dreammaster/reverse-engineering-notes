@@ -1263,6 +1263,11 @@ static void testGroupFight(GameKind game, const uint8_t *world, size_t size, con
                                                                               monsterGetU16(c->slots, MonsterFieldAnimSet) == 9 && monsterGetU16(c->slots + MonsterRecordSize, MonsterFieldAnimSet) == 10);
     check("a fourth is refused and stays in the pool", !sessionCombatEngage(s, spare[3]) && monsterGetU16(spare[3], MonsterFieldType) != 0);
 
+    /* the party's target: the first live one in the turn order until one is chosen (a click on its name), and it stays chosen while it lives */
+    check("a target is chosen from the turn order at first", sessionCombatTarget(s) < CombatMonsterSlotCount);
+    check("a monster can be chosen by slot; an empty slot cannot", sessionCombatChoose(s, 2) && sessionCombatTarget(s) == 2 && !sessionCombatChoose(s, 3));
+    monsterSetU16(c->slots + 2 * MonsterRecordSize, MonsterFieldHealth, 9000);
+
     /* the dead leave a gap: the left monster dies, the middle one steps left (layer - 1) */
     unsigned middleType = slotTypeOf(c, 1);
     monsterSetU16(c->slots, MonsterFieldHealth, 0);
@@ -1272,6 +1277,13 @@ static void testGroupFight(GameKind game, const uint8_t *world, size_t size, con
     bool attacked = sessionAttack(s);
     check("a member's turn went by", attacked);
     check("the dead left monster is gone and the middle one has stepped left", slotTypeOf(c, 0) == middleType && !slotTypeOf(c, 1) && slotTypeOf(c, 2) && monsterGetU16(c->slots, MonsterFieldAnimSet) == 9);
+    check("the chosen monster is still the target (the attack fell on it, not on the first in the turn order)", sessionCombatTarget(s) == 2);
+    monsterSetU16(c->slots + 2 * MonsterRecordSize, MonsterFieldHealth, 0);
+    c->cursor = 0;
+    c->order[0].isMonster = false;
+    c->order[0].index = 0;
+    sessionAttack(s);
+    check("when it dies the one left is the target (it has stepped to the middle slot)", !c->active || (sessionCombatTarget(s) == 1 && slotTypeOf(c, 1)));
     sessionFree(s);
 
     /* a pair-at-most formation (0x4000): the second joins, the third cannot; a monster that does not fight in a group never joins */

@@ -59,6 +59,9 @@ typedef struct {
      * monster stands in the middle one, and a monster's layer (+0xA) says where it is drawn (one less on the left, one more on the right).
      */
     unsigned formation;
+    /* g_activeCombatMonster: the slot the party's attacks fall on (CombatMonsterSlotCount = none chosen). It stays until the monster dies, then the first live one in the turn order (SelectActiveMonster)
+     * takes over; a click on a monster's name in the right-hand panel chooses it. */
+    unsigned target;
 } SessionCombat;
 
 /*
@@ -177,6 +180,10 @@ void sessionScene(GameSession *session, ViewScene *scene, DungeonGridCell cells[
 
 /* The current party member's melee attack on the first live monster of the combat; the monsters then act until it is a party member's turn again. */
 bool sessionAttack(GameSession *session);
+
+/* The slot (0-2) the party's attacks fall on now, or CombatMonsterSlotCount when no monster is left; a click on a monster's name line (HandleDungeonInput :1667A) chooses another (false: no monster there). */
+unsigned sessionCombatTarget(GameSession *session);
+bool sessionCombatChoose(GameSession *session, unsigned slot);
 
 /* The S key: false when nobody shoots (no weapon, a combat or another shot is on); else the shot is under way (`shot.active`, the launch sound -- Chapter 2 0x1D, Chapter 3 6 -- in `pendingSound`). */
 bool sessionShootStart(GameSession *session);

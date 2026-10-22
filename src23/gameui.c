@@ -326,8 +326,7 @@ static unsigned monsterRevealTier(GameSession *s) {
 static void combatPanelsDraw(GameUi *ui) {
     GameSession *s = ui->session;
     SessionCombat *c = &s->combat;
-    unsigned active = CombatMonsterSlotCount;
-    combatSelectActiveMonster(c->order, c->count, c->defeated, &active);
+    unsigned active = sessionCombatTarget(s);
     unsigned tier = monsterRevealTier(s);
     textPanelClear(&ui->renderer, true);
     for (unsigned i = 0; i < MonsterPanelCount && i < CombatMonsterSlotCount; i++) {
@@ -3099,6 +3098,29 @@ static bool catalogClick(GameUi *ui, int x, int y, bool right) {
     return true;
 }
 
+/*
+ * A click on a monster's info panel in a fight (HandleDungeonInput loc_1667A, the table UiRegionsMonsterPanels: five regions a panel): the name lines choose the monster the attacks fall on, the health
+ * bar asks for the HEALTH line (state bit 0x40) and the three status icons for the poison / disease (0x200), paralysis / frozen (0x100) and hex / curse (0x80) lines -- shown by the next draw of the panel.
+ */
+static void monsterPanelClick(GameUi *ui, int x, int y) {
+    SessionCombat *c = &ui->session->combat;
+    unsigned code = uiRegionHit(ui->session->game, UiRegionsMonsterPanels, x, y);
+    if (!code) {
+        return;
+    }
+    unsigned slot = (code - 1) / 5, part = (code - 1) % 5 + 1;
+    uint8_t *monster = c->slots + (size_t)slot * MonsterRecordSize;
+    if (slot >= CombatMonsterSlotCount || !monsterGetU16(monster, MonsterFieldType)) {
+        return;
+    }
+    static const unsigned kBits[5] = {0, 0x40, 0x200, 0x100, 0x80};
+    if (part == 1) {
+        sessionCombatChoose(ui->session, slot);
+    } else {
+        monsterSetU16(monster, MonsterFieldState, (uint16_t)(monsterGetU16(monster, MonsterFieldState) | kBits[part - 1]));
+    }
+}
+
 static bool mainClick(GameUi *ui, int x, int y, bool right) {
     GameSession *s = ui->session;
     GameKind game = s->game;
@@ -3126,6 +3148,10 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
         return gameUiKey(ui, kKeys[pad - 1], pad == 4 || pad == 6);
     }
     unsigned region = uiRegionHit(game, UiRegionsDungeonMain, x, y);
+    if (region == 4 && s->combat.active) { /* the monsters' panels */
+        monsterPanelClick(ui, x, y);
+        return true;
+    }
     if (region == 2) { /* the top-right panel: the plate or the minimap, then the resource panel */
         if (!s->combat.active) {
             panelClick(ui, x, y);

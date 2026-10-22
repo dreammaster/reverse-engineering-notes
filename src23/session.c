@@ -101,6 +101,29 @@ static void combatNewRound(GameSession *s) {
     c->cursor = 0;
 }
 
+/* g_activeCombatMonster: the chosen monster while it lives, else (SelectActiveMonster) the first live one in the turn order. */
+static unsigned combatActiveSlot(SessionCombat *c) {
+    if (c->target < CombatMonsterSlotCount && monsterGetU16(c->slots + (size_t)c->target * MonsterRecordSize, MonsterFieldType) && !c->defeated[c->target]) {
+        return c->target;
+    }
+    unsigned slot = CombatMonsterSlotCount;
+    c->target = combatSelectActiveMonster(c->order, c->count, c->defeated, &slot) ? slot : CombatMonsterSlotCount;
+    return c->target;
+}
+
+unsigned sessionCombatTarget(GameSession *s) {
+    return s->combat.active ? combatActiveSlot(&s->combat) : CombatMonsterSlotCount;
+}
+
+bool sessionCombatChoose(GameSession *s, unsigned slot) {
+    SessionCombat *c = &s->combat;
+    if (!c->active || slot >= CombatMonsterSlotCount || !monsterGetU16(c->slots + (size_t)slot * MonsterRecordSize, MonsterFieldType) || c->defeated[slot]) {
+        return false;
+    }
+    c->target = slot;
+    return true;
+}
+
 static unsigned slotType(const SessionCombat *c, unsigned slot) {
     return monsterGetU16(c->slots + (size_t)slot * MonsterRecordSize, MonsterFieldType);
 }
@@ -122,6 +145,9 @@ static void slotMove(SessionCombat *c, unsigned from, unsigned to) {
     }
     c->defeated[to] = c->defeated[from];
     c->defeated[from] = false;
+    if (c->target == from) {
+        c->target = to;
+    }
     c->targets[to] = c->targets[from];
     c->targets[from] = 0;
 }
@@ -241,6 +267,7 @@ static bool combatEngage(GameSession *s, uint8_t *poolRecord) {
         monsterPoolRemove(poolRecord, &s->grid);
         c->active = true;
         c->formation = flags & 0xE000;
+        c->target = CombatMonsterSlotCount;
         return true;
     }
     if (!(flags & 0x8000) || !(c->formation & 0x8000)) {
@@ -287,6 +314,8 @@ bool sessionCombatEngage(GameSession *s, uint8_t *poolRecord) {
     bool taken = combatEngage(s, poolRecord);
     if (first && taken) {
         combatBegin(s);
+    } else if (taken) { /* a join belongs to a round boundary: the turn order is built afresh with it */
+        combatNewRound(s);
     }
     return taken;
 }
@@ -633,8 +662,8 @@ bool sessionAttack(GameSession *s) {
         return false;
     }
     uint8_t *member = sessionPartyRecord(s, c->order[c->cursor].index);
-    unsigned monsterSlot = 0;
-    if (!member || !combatSelectActiveMonster(c->order, c->count, c->defeated, &monsterSlot)) {
+    unsigned monsterSlot = combatActiveSlot(c);
+    if (!member || monsterSlot >= CombatMonsterSlotCount) {
         return false;
     }
     CombatPlayerMeleeOutcome out = combatPlayerMeleeAttack(member, c->slots + (size_t)monsterSlot * MonsterRecordSize, &s->items, s->game, &s->rng);
@@ -1051,8 +1080,8 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
         break;
     case SpellBranchAttackActiveMonster:
     case SpellBranchLifeForce: {
-        unsigned slot = 0;
-        if (!combatSelectActiveMonster(c->order, c->count, c->defeated, &slot)) {
+        unsigned slot = combatActiveSlot(c);
+        if (slot >= CombatMonsterSlotCount) {
             break;
         }
         uint8_t *target = c->slots + (size_t)slot * MonsterRecordSize;
@@ -1420,8 +1449,8 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
             } else if (id == RelicMassHeal) {
                 relicMassHealAndOverheal(&s->save);
             } else {
-                unsigned monster = 0;
-                if (!s->combat.active || !combatSelectActiveMonster(s->combat.order, s->combat.count, s->combat.defeated, &monster)) {
+                unsigned monster = s->combat.active ? combatActiveSlot(&s->combat) : CombatMonsterSlotCount;
+                if (monster >= CombatMonsterSlotCount) {
                     return SessionUseNoEffect;
                 }
                 relicInstantKill(s->combat.slots + (size_t)monster * MonsterRecordSize);
