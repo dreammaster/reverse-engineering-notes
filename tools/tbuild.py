@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 """Incremental parallel build of the reconstructed sources + one test (tests/deponia1/<name>.cpp).
-Usage: tools/tbuild.py <name.cpp> [-32] [-g] [-c] [-r]   (-> build/tests-<bits>/<name>.exe; -r runs it from tests/deponia1/work;
+Usage: tools/tbuild.py <name.cpp> [-32] [-g] [-c] [-r] [--game NAME]   (-> build/tests-<bits>/<name>.exe; -r runs it from tests/deponia1/work;
+--game NAME builds src/NAME instead of src/deponia1 (into build/tests-<bits>-NAME);
 -c builds with gcov coverage into build/tests-<bits>c, see tools/coverage.py)"""
 import os
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
 
-SRC = r"C:\dev\visionnaire\src\deponia1"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+GAME = sys.argv[sys.argv.index("--game") + 1] if "--game" in sys.argv else "deponia1"
+SRC = os.path.join(ROOT, "src", GAME)
 SCR = os.path.join(ROOT, "tests", "deponia1")
 bits = 32 if "-32" in sys.argv else 64
-OBJ = os.path.join(ROOT, "build", "tests-%d%s" % (bits, "g" if "-g" in sys.argv else "c" if "-c" in sys.argv else ""))
+OBJ = os.path.join(ROOT, "build", "tests-%d%s%s" % (bits, "g" if "-g" in sys.argv else "c" if "-c" in sys.argv else "", "" if GAME == "deponia1" else "-" + GAME))
 CXX = r"C:\mingw64\bin\g++.exe" if bits == 64 else r"C:\mingw32\bin\g++.exe"
 # (the 32-bit build counts in SSE like the 64-bit one and the original: the x87 registers round differently, which changes
 # the results of the comparisons in the geometry)
@@ -23,7 +25,7 @@ LUA_SOURCES = [os.path.join(r"C:\dev\scummvm\common\lua", f) for f in sorted(os.
 
 if not (os.path.exists(os.path.join(TPLIB, "libwebp.a")) and os.path.exists(os.path.join(TPLIB, "libfreetype.a")) and os.path.exists(os.path.join(TPLIB, "libharfbuzz.a")) and os.path.exists(os.path.join(TPLIB, "libvpx.a")) and os.path.exists(os.path.join(TPLIB, "libvorbis.a"))):
     subprocess.run([sys.executable, os.path.join(ROOT, "tools", "build_third_party.py")] + (["-32"] if bits == 32 else []), check=True)
-test = [a for a in sys.argv[1:] if not a.startswith("-")][0]
+test = [a for a in sys.argv[1:] if not a.startswith("-") and a != GAME][0]
 test = os.path.join(SCR, test) if not os.path.isabs(test) else test
 
 sources = []

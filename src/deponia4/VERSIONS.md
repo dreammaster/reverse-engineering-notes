@@ -88,9 +88,17 @@ Each: what, how it is known, what it means for the code here.
   directory entries, loads the project, the interfaces and the scene volumes.
   - `assertion failed: ObjectsHash.size() == Objects.size() (datastruct/table.cpp:650)` and `table 21 not in sync, recreating index` are logged while loading the project. The
     Deponia 1 data logs exactly the same two lines (run of the same test), so this is not a difference of the builds.
-  - The run **ends (the process disappears, no `0 failures` line) right after** `lua_dump not supported: Handling of precompiled LUA scripts has been removed in ScummVM`, while
-    loading the first font (`SourceHanSansCN-Medium.otf`). The Deponia 1 data passes this point. Not diagnosed: it may be the data (a script run at load that Deponia 1's does not have)
-    or a difference in the engine. **to do**: run it under gdb (`tools/tbuild.py realdatatest.cpp -g`).
+  - The run **ended right after** `lua_dump not supported: Handling of precompiled LUA scripts has been removed in ScummVM`, while loading the first font. **Cause (found with gdb, `tools/tbuild.py realdatatest.cpp -g`, a breakpoint on the shim's `error()`):
+    not a crash and not a difference of the engine, but of the game data and of ScummVM's Lua.** `TGameControl::InitScripts()` runs the game's scripts; one of them is the **"Shader Toolkit" module** (`--[VISMODULE,id,version,chksum]`, Simon Scheckel's, 39,296 bytes, chunk name `(30,150)`), which
+    contains a `DataDumper` that runs at load: `for each function in _G, string, table, math, io, os, coroutine, package, debug: if not pcall(string.dump, f) then c_functions[f] = name`. ScummVM's `lua_dump` is `error("lua_dump not supported ...")`, which in ScummVM (and in the test shim) ends the
+    program, where in Lua `pcall(string.dump, <C function>)` just returns false. Deponia 1's data has no such script: none of the 73 chunks that `LuaDoString` runs there (listed with a breakpoint under gdb) contains `VISMODULE` or `Shader Toolkit`; Deponia 4's run listed 72 chunks before it stopped, the last one this module.
+    The original does not need a workaround: `.comment` has `DynASM 1.4.0`, which is LuaJIT's assembler, so the engine most probably links LuaJIT (not checked further).
+    **Fixed in `src/deponia4/vscommon/scripting/visLua.cpp`** (a `WORKAROUND:`): `InitLua` replaces `string.dump` by a function that raises the Lua error `unable to dump given function` (the module only uses `pcall` on it to find the C functions; for Lua functions it now also gets
+    "false", so it takes them for C functions, which only matters for the save functionality of that module). For the merge: this belongs in the common `InitLua` for ScummVM, not only for Deponia 4. Another caller of `lua_dump` is `traverseTable` in `scriptingutils.cpp` (the script variables of the debugger/savegame view,
+    a function value is stored as base64 bytecode): it is not reached in this run, and would end the program the same way in ScummVM. **to do** for the same reason.
+  - With the workaround `realdatatest` built from `src/deponia4` (`python tools/tbuild.py realdatatest.cpp -g --game deponia4`, new option) **runs to the end** on the Deponia 4 data: "Deponia 4", 1920x1080, 168 scene / 328 character / 66 video volumes, 400 pictures decoded without failure, 60 Opus files opened without failure.
+    Its one failing check (`made >= 12` fonts: 3 fonts made) and the lightmap line are the test's own, written for Deponia 1's data: Deponia 1 has the twelve fonts of its Chinese, Korean and Arabic text, Deponia 4 has three (`SourceHanSansCN-Medium.otf` among them); `1001_lightmap.webp#s#000#00002#` (entry 2 of `scenes/scene.vs000`) is "Error reading header" here, the
+    same thing as the open point of Deponia 2 (`src/deponia2/VERSIONS.md`: the name in the data does not lead to a WebP). Two older builds with the same behaviour: it points to how the oldest data names the entries of a volume, not to an error of Deponia 4. **to do**: find out how the original resolves `#s#000#00002#` (with the 2 as an index into the volume it is an Opus sound).
 
 ### Compilation: Deponia 4 is an unoptimized build
 
@@ -182,8 +190,8 @@ None of these has been read yet; the next step is to take them in that order.
 ## Open points / next steps
 
 1. Conditions (a changed `<` or `&&` is not a number or a call): not covered by any check so far. The unlike functions of `FUNCDIFF.md` that call no engine function and have no assert (`TArgument`, `TMatrix3/4`, `TVector3D`, geometry helpers) are the place to look.
-2. Why the run of the reconstruction on the Deponia 4 data stops after `lua_dump not supported`, and the `table 21` assertion.
+2. How `#s#000#00002#` (the lightmap of scene 1001) is resolved in Deponia 2 and Deponia 4 (see the data finding); the `table 21` assertion is the same in Deponia 1.
 3. The build number of the engine (the integer passed to `wxLog::logexpanded("Engine Version ...")`).
-4. Compile the sources here at `-O0` for real (`tools/pbuild.py deponia4`, `tests/`): the tests (`tests/deponia1`) still build `src/deponia1` (`tools/tbuild.py` has the folder fixed); parametrize it before the two code bases diverge.
+4. Compile the sources here at `-O0` for real (`tools/pbuild.py deponia4`): `tools/tbuild.py <test>.cpp --game deponia4` builds a test of `tests/deponia1` against `src/deponia4` (objects in `build/tests-64[g]-deponia4`); the rest of the suite has not been run on it.
 5. Deponia 2 (packaged Dec 2015, in the other thread) is older than this build: most of what Deponia 4 differs from Deponia 1 in should be a stage between Deponia 2 and Deponia 1.
    When Deponia 2 is looked at, use `tools/symdiff.py` and `tools/crosscompare.py --original` as above, and record in which build each difference appears (the engine order is Deponia 2 -> Deponia 4 (Sep 2017) -> Deponia 1 (Feb 2019), not the order of the games).

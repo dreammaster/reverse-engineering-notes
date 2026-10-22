@@ -87,11 +87,23 @@ bool IsInternalGlobalVar(const wxString &name) {
 	return s_internalGlobalVars.count(name.ToStdWstring()) != 0;
 }
 
+// WORKAROUND: ScummVM's Lua has no lua_dump (it calls the fatal error()), and a script that does `pcall(string.dump, f)` to tell the C functions
+// from the others (the DataDumper of the "Shader Toolkit" module of the Deponia 4 data, run at load) ends the program. In the original (LuaJIT),
+// string.dump raises a Lua error for a C function; here it raises one for every function.
+static int stringDumpUnsupported(lua_State *state) {
+	return luaL_error(state, "unable to dump given function");
+}
+
 // Confirmed (asm lines 1406409-1406643)
 void InitLua(TVisionaireGame *game, const wxString &appDir, const wxString &resourcesDir, const wxString &unused) {
 	L = luaL_newstate();
 	luaL_openlibs(L);
 	OpenLuaStdLibs(L);
+
+	lua_getfield(L, LUA_GLOBALSINDEX, "string");
+	lua_pushcclosure(L, stringDumpUnsupported, 0);
+	lua_setfield(L, -2, "dump");
+	lua_settop(L, -2);
 
 	lua_pushcclosure(L, LuaPrint, 0);
 	lua_setfield(L, LUA_GLOBALSINDEX, "print");
