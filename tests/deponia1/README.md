@@ -57,6 +57,7 @@ differently, and the exact comparisons of the geometry (`LineInPolygonSet`) then
 | cmdqueuetest | the commands that can be undone (the editor's): the queue, undo and redo one by one and as a group, deleting, the console text, wrong commands |
 | canimtest | the playing of the pictures of an animation: forwards, backwards, by chance, loops, the pause of each picture, the wait of a loop by chance, the questions |
 | fonttest | the fonts of pictures: letter widths, the space, kerning of pairs and single letters, the size of texts and lines, a font that stands for another, wrong kerning, the manager |
+| ftfonttest | a TrueType font of the game data (needs the game folder as the working directory and `GAME_PASSW`; `tools/tbuild.py ftfonttest.cpp --game deponia4`, which is where it applies): the width of a space with and without letter spacing, a tab, `StringLength` with spacing, the pen of a drawn string at scale 1 and 2, a new line, the top of a line following the highest glyph made so far, the same baseline for mixed heights, and `LockHeight()` |
 | chartest | the walk and stand animations of a character for all directions |
 | texttest | a character says a text: talk animation, skip by click, end by time |
 | charstest | two characters in two scenes: changing the controlled one moves the scene and the interface |
