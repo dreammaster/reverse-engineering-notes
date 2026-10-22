@@ -1090,6 +1090,12 @@ static void testInventoryUi(GameKind game, const char *envName, const char *defa
         gameUiDraw(&ui);
         gameUiClick(&ui, sx, sy, false);
         check("a click on a stocked slot buys it (the item rides the cursor) and shows its value", s->heldItem == stock[slot].itemId && ui.panelRunCount >= 5);
+        bool weightShown = false, valueShown = false;
+        for (unsigned run = 0; run < ui.panelRunCount; run++) {
+            weightShown = weightShown || (strcmp(ui.panelRuns[run].text, "WEIGHT:") == 0 && ui.panelRuns[run].y == 120);
+            valueShown = valueShown || (strcmp(ui.panelRuns[run].text, "VALUE:") == 0 && ui.panelRuns[run].y == 144);
+        }
+        check("... with its WEIGHT: line at y = 120 above the VALUE: at 144", weightShown && valueShown);
         check("... the stock is not used up", sessionShopStock(s, lockId, stock) >= 2 && stock[slot].itemId != 0);
         gameUiClick(&ui, sx, sy, false);
         check("a click with the item in hand sells it back", s->heldItem == 0);

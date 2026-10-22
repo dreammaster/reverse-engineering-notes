@@ -40,4 +40,7 @@ unsigned partyInfoStatBars(const uint8_t *record, PanelRun *out, unsigned max);
 /* FormatNumber's text: up to five digits without leading zeros, a comma after the thousands. */
 void partyInfoFormatNumber(unsigned value, char out[8]);
 
+/* FormatNumber, StripCommasAndSpaces and InsertDecimalPointFromEnd with one digit: a weight in tenths ("71" -> "7.1", "5" -> ".5"). */
+void partyInfoFormatTenths(unsigned value, char out[12]);
+
 #endif

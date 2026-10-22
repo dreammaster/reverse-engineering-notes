@@ -128,6 +128,13 @@ unsigned partyInfoTransports(const uint8_t *record, unsigned clockMinutes, Panel
     return r.count;
 }
 
+void partyInfoFormatTenths(unsigned value, char out[12]) {
+    char digits[8];
+    snprintf(digits, sizeof(digits), "%u", value & 0xFFFF);
+    size_t length = strlen(digits), keep = length > 1 ? length - 1 : 0;
+    snprintf(out, 12, "%.*s.%s", (int)keep, digits, digits + keep);
+}
+
 /* DrawThreeStatBars: the three labels 18 pixels apart (HEALTH, MAGIC, WEIGHT) in their bar colours, the numbers one row above each pair: "n/max" in white -- DEAD for HEALTH of a dead member -- and the
  * weight with one decimal (tenths). A value above its maximum brightens the label by two colours. */
 unsigned partyInfoStatBars(const uint8_t *record, PanelRun *out, unsigned max) {
@@ -152,12 +159,9 @@ unsigned partyInfoStatBars(const uint8_t *record, PanelRun *out, unsigned max) {
     snprintf(text, sizeof(text), "%s/%s", a, b);
     put(&r, InfoX, FirstRow + 24, 0x0F, false, text);
     /* the weight: StripCommasAndSpaces, then InsertDecimalPointFromEnd with one digit */
-    char w1[8], w2[8];
-    snprintf(w1, sizeof(w1), "%u", (unsigned)load & 0xFFFF);
-    snprintf(w2, sizeof(w2), "%u", (unsigned)capacity & 0xFFFF);
     char d1[12], d2[12];
-    snprintf(d1, sizeof(d1), "%.*s.%s", (int)strlen(w1) > 1 ? (int)strlen(w1) - 1 : 0, w1, w1 + (strlen(w1) > 1 ? strlen(w1) - 1 : 0));
-    snprintf(d2, sizeof(d2), "%.*s.%s", (int)strlen(w2) > 1 ? (int)strlen(w2) - 1 : 0, w2, w2 + (strlen(w2) > 1 ? strlen(w2) - 1 : 0));
+    partyInfoFormatTenths((unsigned)load, d1);
+    partyInfoFormatTenths((unsigned)capacity, d2);
     snprintf(text, sizeof(text), "%s/%s", d1, d2);
     put(&r, InfoX, FirstRow + 42, 0x0F, false, text);
     return r.count;

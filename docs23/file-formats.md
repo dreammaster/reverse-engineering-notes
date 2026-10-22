@@ -6755,7 +6755,8 @@ it; a trapped lock opens at once and the trap word (the lock's `+2`) goes throug
 stays. A click takes a slot: a pile (items 1-3) joins the counter at once (sound 7, its label over the amount), anything else goes to the cursor; the slot is taken for good (a persisted bit); with an item held a
 taken slot of the same item takes it back. Space or the right button on the view leaves (sound 6), P opens the inventory over it, the belt and the faces work. A merchant is the same screen with the gold ("$" and the
 amount, `ShowMaterialCounterHud`) in the header: a click on a slot shows its name and VALUE and buys it when the gold allows, a click holding an item sells it back, and in the inventory screen Space sells the cursor item.
-The standalone's merchant shows the name and the value only (not the weight and stat lines the member's Appraise-like skill `+0x6A` unlocks at 65 and 80).
+A click on a merchant's slot writes (`ShowItemPurchaseConfirmPrompt` :31180, whatever the party's skill -- the Bartering gates `+0x6A` of 65 / 80 / 95 apply to the same prompt outside a shop) the item's name, WEIGHT: and the
+weight in tenths at y = 120 / 126, DAMAGE: (item flags 0xC000) or ABSORPTION: (0xE00) with the first word of its target entry at y = 132 / 138, and VALUE: with the price at 144 / 150 (`gameui.c` `merchantLines`).
 
 **Messages in the status panel** (`ShowStatusPanelMessage` :35105: `0x8A`, transparent, from (240, 96), 6 apart): Space with nothing ahead NOTHING HERE (DS:0x7D71, Chapter 3 0x809E); a refused destination
 LOCKED (DS:0x7BCE / 0x7F00); Chapter 3's fixed three lines YOU CANNOT ENTER HERE RIGHT NOW (0x9606); the shareware / ending texts the session names. A destination that asks for a password writes its two-line prompt

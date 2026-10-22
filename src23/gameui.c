@@ -882,6 +882,29 @@ static void catalogLeave(GameUi *ui) { /* TriggerShopExitSoundAndPersist: sound 
 }
 
 /* HandleShopCatalogSlotClick: a pile shows what it added ("GOLD COINS:" over the amount), an item shows its name on the cursor. */
+/*
+ * What ShowItemPurchaseConfirmPrompt (yendor2.asm:31180) writes under a merchant's item name, whatever the party's skill (the skill gates of 65 / 80 / 95 are for the same prompt outside a shop): WEIGHT:
+ * and the weight in tenths at y = 120 / 126, then DAMAGE: for a weapon (item flags 0xC000) or ABSORPTION: for armour and rings (0xE00) with the entry's first word at y = 132 / 138; the VALUE follows at 144.
+ */
+static void merchantLines(GameUi *ui, unsigned itemId) {
+    const ItemCatalog *items = &ui->session->items;
+    const uint8_t *item = itemCatalogRecord(items, itemId);
+    if (!item) {
+        return;
+    }
+    char text[12];
+    panelRun(ui, 240, 120, 0x8A, true, "WEIGHT:");
+    partyInfoFormatTenths(itemGetU16(item, ItemFieldWeight), text);
+    panelRun(ui, 240, 126, 0x0F, true, text);
+    unsigned flags = itemGetU16(item, ItemFieldFlags);
+    const uint8_t *entry = itemTargetEntry(items, item);
+    if (entry && (flags & 0xCE00)) {
+        panelRun(ui, 240, 132, 0x8A, true, (flags & 0xC000) ? "DAMAGE:" : "ABSORPTION:");
+        snprintf(text, sizeof(text), "%u", itemTargetWord(entry, 0));
+        panelRun(ui, 240, 138, 0x0F, true, text);
+    }
+}
+
 static void catalogSlotClick(GameUi *ui, unsigned slot) {
     GameSession *s = ui->session;
     if (ui->catalogShop) { /* a merchant: an item is looked at and, if the gold allows, bought; with one held, sold back */
@@ -900,6 +923,7 @@ static void catalogSlotClick(GameUi *ui, unsigned slot) {
             return;
         }
         panelItemName(ui, stock[slot].itemId);
+        merchantLines(ui, stock[slot].itemId);
         char price[12];
         bcd4Format(stock[slot].price, price);
         panelRun(ui, 240, 144, 0x8A, true, "VALUE:");
