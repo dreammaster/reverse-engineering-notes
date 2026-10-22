@@ -99,6 +99,8 @@ typedef struct {
     unsigned lastMusicPage;
     PanelRun panelRuns[UiPanelRunMax]; /* the message area's text: what the last command wrote (a rest's result); cleared by the next key or click */
     unsigned panelRunCount;
+    bool combatPanel;      /* a fight is on: the top-right panel shows the resource icons and belt (RunDungeonGameLoop's ShowResourceDepletedOverlay) ... */
+    uint16_t combatPanelSaved; /* ... and the panel bits (0x7000) it replaced, put back when the fight ends */
     bool restPause;        /* an interrupted rest's message stays until a key (the combat's panels wait behind it) */
     int mouseX, mouseY;    /* the pointer, from gameUiMouseMove: where the cursor item is drawn */
     bool targeting;        /* K: the crosshair cursor waits for a click on the view (WaitForTargetClick) */

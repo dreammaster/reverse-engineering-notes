@@ -413,6 +413,23 @@ static void panelCycle(GameUi *ui) {
     effect(ui, 2);
 }
 
+/*
+ * A fight starts with the resource panel in the top-right corner (RunDungeonGameLoop :16324: the panel bits 0x7000 are kept, ShowResourceDepletedOverlay clears 0x6000 and sets 0x1000), so the belt
+ * can be worked and its items used while it lasts; the victory puts the bits back (`& 0xEFFF`, then the kept ones).
+ */
+static void combatPanelSync(GameUi *ui) {
+    GameSession *s = ui->session;
+    if (s->combat.active && !ui->combatPanel) {
+        uint16_t flags = panelFlags(ui);
+        ui->combatPanel = true;
+        ui->combatPanelSaved = (uint16_t)(flags & 0x7000);
+        panelEnterResources(ui, flags);
+    } else if (!s->combat.active && ui->combatPanel) {
+        ui->combatPanel = false;
+        panelSet(ui, (uint16_t)((panelFlags(ui) & 0xEFFF) | ui->combatPanelSaved));
+    }
+}
+
 static void panelLeaveResources(GameUi *ui) { /* from the resource panel back to the minimap (a party that can map) or the plate */
     uint16_t flags = (uint16_t)(panelFlags(ui) & 0xEFFF);
     panelSet(ui, (uint16_t)(flags | ((flags & MapFlagLargeCapable) ? MapFlagLarge : MapFlagSmall)));
@@ -2060,6 +2077,7 @@ static void drawScreen(GameUi *ui) {
         memcpy(&ui->screen[(row + 1) * ViewScreenWidth + 1], &frame[row * 318], 318);
     }
     viewRender(&ui->renderer, &scene);
+    combatPanelSync(ui);
     uint16_t panel = panelFlags(ui);
     if ((panel & MapFlagHidden) == 0 && (panel & MapFlagLarge)) {
         MinimapTile tiles[MinimapCells];
@@ -2076,6 +2094,7 @@ static void drawScreen(GameUi *ui) {
     if (ui->overlay == UiOverlayNone) {
         if (s->combat.active) { /* DrawAndCacheStatusIcon: the swords take the shoot icon's place in a combat */
             viewDrawPicture(&ui->renderer, 8, 3, IconShootX, IconRowY, false, 0);
+            resourceIconsDraw(ui);
             if (!ui->restPause) {
                 combatPanelsDraw(ui);
             }
@@ -3153,12 +3172,17 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
     }
     if (right) { /* the right button on the view uses what is ahead (the same as Space); on a belt slot of the resource panel it uses that item (TryCureAilmentFromIconClick) */
         unsigned where = uiRegionHit(game, UiRegionsDungeonMain, x, y);
-        if (where == 2 && !s->combat.active && (panelFlags(ui) & MapFlagHidden)) {
+        if (where == 2 && (panelFlags(ui) & MapFlagHidden)) {
             unsigned icon = uiRegionHit(game, UiRegionsStatusIconBar, x, y);
-            if (icon >= 4 && icon <= 9) {
-                unsigned user = 0;
-                while (user < 3 && sessionPartyRecord(s, user + 1) && (!sessionPartyRecord(s, user) || (partyGetU16(sessionPartyRecord(s, user), PartyFieldStatusFlags) & PartyStatusIncapacitated))) {
-                    user++;
+            bool myTurn = !s->combat.active || (s->combat.cursor < s->combat.count && !s->combat.order[s->combat.cursor].isMonster);
+            if (icon >= 4 && icon <= 9 && myTurn) {
+                unsigned user = 0; /* the member whose turn it is in a fight, else the first who can act */
+                if (s->combat.active) {
+                    user = s->combat.order[s->combat.cursor].index;
+                } else {
+                    while (user < 3 && sessionPartyRecord(s, user + 1) && (!sessionPartyRecord(s, user) || (partyGetU16(sessionPartyRecord(s, user), PartyFieldStatusFlags) & PartyStatusIncapacitated))) {
+                        user++;
+                    }
                 }
                 inventoryUse(ui, user, SessionBeltSlotBase + icon - 4);
             }
@@ -3179,6 +3203,11 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
     if (region == 2) { /* the top-right panel: the plate or the minimap, then the resource panel */
         if (!s->combat.active) {
             panelClick(ui, x, y);
+        } else {
+            unsigned icon = uiRegionHit(game, UiRegionsStatusIconBar, x, y);
+            if (icon >= 4 && icon <= 9) { /* in a fight the panel is the resource panel: its belt slots work, the counters are not shown */
+                beltClick(ui, icon - 4);
+            }
         }
         return true;
     }

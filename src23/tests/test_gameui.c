@@ -773,8 +773,17 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
             check("a click on its health bar sets the HEALTH quality bit (0x40) for the next draw of the panel", (monsterGetU16(middle, MonsterFieldState) & 0x40) != 0);
             gameUiClick(&ui, 250, 90, false);
             check("a click on an empty panel does nothing", sessionCombatTarget(s) == 1);
+            gameUiDraw(&ui);
+            check("a fight shows the resource panel in the top-right corner", ui.combatPanel && (saveHeaderGetU16(&s->save, 0x20) & 0x1000));
+            itemSlotSet(sessionBeltSlot(s, 1), 0, 0);
+            s->heldItem = (uint16_t)mainCommandRequiredItem(game, MainActionClock);
+            gameUiClick(&ui, 270, 35, false);
+            check("... and its belt slots work in the fight (a click puts the cursor item there)", s->heldItem == 0 && itemSlotId(sessionBeltSlot(s, 1)) == mainCommandRequiredItem(game, MainActionClock));
+            itemSlotSet(sessionBeltSlot(s, 1), 0, 0);
         }
         memset(&s->combat, 0, sizeof(s->combat)); /* the later checks are about the quiet map */
+        gameUiDraw(&ui);
+        check("the victory puts the panel bits back", !ui.combatPanel && (saveHeaderGetU16(&s->save, 0x20) & 0x1000) == (ui.combatPanelSaved & 0x1000));
         s->x = keepX;
         s->y = keepY;
         s->facing = keepFacing;

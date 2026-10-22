@@ -6813,6 +6813,10 @@ at the moved record follow it. When the round is over (the turn order is used up
 outside walk, shoot and join *between rounds*, not within one. The standalone: `session.c` `combatEngage` / `combatCompact` / `combatAfterAction`. `ProcessLevelMonsters` ends -- with no fight on -- by showing and awarding the
 rewards its timed-out monsters staged (when the staged experience is not zero); during a fight they wait for its victory. (Rests loop `ProcessLevelMonsters` only: no side traps.)
 
+**The top-right panel in a fight**: `RunDungeonGameLoop` (:16324) keeps the panel bits `word_36C7F & 0x7000` and calls `ShowResourceDepletedOverlay` (the resource panel: `& 0x9FFF`, `| 0x1000`), so the corner shows the belt
+for the whole fight -- its slots work as outside (`HandleStatusPanelItemSlotClick`, loc_1660C) and the right button on one uses the item (`TryCureAilmentFromIconClick`, loc_165A9, then a 10-tick wait) for the member whose
+turn it is -- and the victory (:163B1) restores the kept bits (`& 0xEFFF`, `| kept`). `gameui.c` `combatPanelSync`.
+
 **The target** (`g_activeCombatMonster`, DS:0x5xxx next to the slots): the monster the party's attacks, spells and relics fall on. `BuildCombatTurnOrder` (:11090 on) and `ProcessCombatRound` call
 `SelectActiveMonster` (:11340: the first turn-order entry that is a monster and not struck off) only while it is zero, so a chosen monster stays the target until it dies (the reaping clears it when its slot is the active one),
 and `RelocateActiveMonsterPointer` keeps it on its record when the slots shift. A **left click in the monsters' panels** (`HandleDungeonInput` loc_1667A, `UiRegionsMonsterPanels`: five regions per panel, 240-313 x
