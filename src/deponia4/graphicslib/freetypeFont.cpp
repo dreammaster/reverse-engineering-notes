@@ -205,7 +205,7 @@ static TSpriteHandle *makeSprite(const FT_Bitmap &bitmap) {
 	return sprite;
 }
 
-// Deponia 4 (Deponia_Linux.asm CreateChar of Deponia4_Linux.asm): the glyph of a character is loaded (without a bitmap when there
+// Deponia 4 (CreateChar in Deponia4_Linux.asm): the glyph of a character is loaded (without a bitmap when there
 // is an outline: that is then stroked and drawn as a second bitmap), rendered, its metrics noted (the advance in whole
 // pixels, how far the bitmap is from the pen) and the highest it reaches above the baseline kept, unless the height is locked.
 // The glyphs are kept by the character (Deponia 1 keeps them by the index of the glyph, which its shaping gives).
