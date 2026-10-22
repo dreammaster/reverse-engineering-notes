@@ -750,6 +750,48 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
     gameUiClick(&ui, 300, 55, false);
     check("a click on an empty slot with an empty hand leaves the resource panel", !(saveHeaderGetU16(&s->save, 0x20) & 0x1000));
 
+    /* a spell scroll on the tool belt: the right button on its slot uses it; one that can be studied asks USE ITEM? / LEARN SPELL? first */
+    {
+        unsigned studyScroll = 0, plainScroll = 0;
+        for (unsigned id = 1; id <= s->items.validItemCount && !(studyScroll && plainScroll); id++) {
+            const uint8_t *record = itemCatalogRecord(&s->items, id);
+            const uint8_t *target = record ? itemTargetEntry(&s->items, record) : NULL;
+            if (!target || itemTargetKind(record) != ItemTargetConsumable || !(itemTargetWord(target, ItemTargetSlotFlags) & 0x600) || !spellRecord(&s->spells, itemTargetWord(target, 2))) {
+                continue;
+            }
+            if (itemTargetWord(target, ItemTargetSlotFlags) & 0x200) {
+                studyScroll = studyScroll ? studyScroll : id;
+            } else {
+                plainScroll = plainScroll ? plainScroll : id;
+            }
+        }
+        if (studyScroll) {
+            saveHeaderSetU16(&s->save, 0x20, 0x1000);
+            itemSlotSet(sessionBeltSlot(s, 1), (uint16_t)studyScroll, 1);
+            gameUiClick(&ui, 270, 35, true);
+            check("the right button on a belt slot with a studyable scroll asks USE ITEM? / LEARN SPELL?", ui.scrollAsk && !ui.pickActive);
+            gameUiKey(&ui, UiKeyEscape, false);
+            check("Escape gives the question up", !ui.scrollAsk && !ui.pickActive && itemSlotId(sessionBeltSlot(s, 1)) == studyScroll);
+            gameUiClick(&ui, 270, 35, true);
+            gameUiClick(&ui, 270, 131, false);
+            check("a click on LEARN SPELL? asks who (message 0x21)", !ui.scrollAsk && ui.pickActive && ui.pickScroll == 2 && ui.pickPrompt == 0x21);
+            gameUiClick(&ui, 270, 35, true);
+            check("... and the right button gives that up", !ui.pickActive && ui.pickScroll == 0);
+            SessionScrollInfo info;
+            bool known = sessionScrollInfo(s, 0, SessionBeltSlotBase + 1, &info);
+            gameUiClick(&ui, 270, 35, true);
+            gameUiClick(&ui, 270, 122, false); /* USE ITEM? */
+            bool asked = ui.pickActive ? (ui.pickScroll == 1 && ui.pickPrompt == 0x12) : true;
+            if (ui.pickActive) {
+                gameUiKey(&ui, UiKeyF1, false);
+            }
+            check("USE ITEM? casts it (a single-target spell asks the recipient first, message 0x12) and nothing is left asking", known && asked && ui.pickActive == false && !ui.scrollAsk &&
+                                                                                                                   (info.singleTarget || ui.pickScroll == 0));
+        }
+        saveHeaderSetU16(&s->save, 0x20, 0);
+        itemSlotSet(sessionBeltSlot(s, 1), 0, 0);
+    }
+
     /* a step into the magically locked door: MAGICALLY / LOCKED in the message area */
     s->x = 166;
     s->y = 40;

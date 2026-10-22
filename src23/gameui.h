@@ -111,6 +111,9 @@ typedef struct {
     bool pickActive;       /* an item waits for the member it is used on (ConfirmAndSelectPartyTarget): a click on a face or F1-F4 */
     unsigned pickUser, pickSlot; /* ... the member whose bag slot (1-8) it is in */
     bool reading;          /* the scroll (UiOverlayTalk) shows a readable item's text, not a conversation */
+    bool scrollAsk;        /* a spell scroll that can be studied asks USE ITEM? / LEARN SPELL? (message 0x20) */
+    unsigned scrollUser, scrollSlot; /* ... the member and item slot (1-8 bag, SessionBeltSlotBase + n belt) of the scroll in use */
+    unsigned pickScroll;   /* the member picked is a scroll's: 1 = the cast's recipient (message 0x12), 2 = who learns it (0x21) */
     bool dropPrompt;       /* the cursor item is about to be dropped: DO YOU WANT TO DROP THAT RIGHT NOW? (TryDropHeldItem) */
     bool passwordActive;   /* a destination's password is being typed in the message area (ShowConfirmPrompt, mode 0x2000) */
     unsigned passwordPrompt; /* its message id */

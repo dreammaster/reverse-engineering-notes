@@ -1225,9 +1225,35 @@ bool sessionDocumentLine(GameSession *s, unsigned line, char out[DocumentLineBuf
     return documentGetLine(&s->documents, (DocumentCategory)s->readCategory, s->readId, line, out);
 }
 
+/* The record of a use command's item slot: a bag slot of the member or, from SessionBeltSlotBase, a belt slot. */
+static uint8_t *useSlot(GameSession *s, uint8_t *user, unsigned itemSlot) {
+    if (itemSlot >= SessionBeltSlotBase) {
+        return itemSlot - SessionBeltSlotBase < SaveBeltSlotCount ? beltSlots(s) + 4 * (itemSlot - SessionBeltSlotBase) : NULL;
+    }
+    return user ? inventoryGroupSlot(partyInventoryGroup(user, PartyGroupMain), itemSlot) : NULL;
+}
+
+unsigned sessionSlotItem(GameSession *s, unsigned memberSlot, unsigned itemSlot) {
+    uint8_t *slot = useSlot(s, sessionPartyRecord(s, memberSlot), itemSlot);
+    return slot ? itemSlotId(slot) : 0;
+}
+
+bool sessionScrollInfo(GameSession *s, unsigned userSlot, unsigned itemSlot, SessionScrollInfo *out) {
+    uint8_t *slot = useSlot(s, sessionPartyRecord(s, userSlot), itemSlot);
+    const uint8_t *item = slot && itemSlotId(slot) ? itemCatalogRecord(&s->items, itemSlotId(slot)) : NULL;
+    const uint8_t *target = item ? itemTargetEntry(&s->items, item) : NULL;
+    if (!target || itemTargetKind(item) != ItemTargetConsumable || !(itemTargetWord(target, ItemTargetSlotFlags) & 0x600)) {
+        return false;
+    }
+    const uint8_t *spell = spellRecord(&s->spells, itemTargetWord(target, 2));
+    out->studyable = (itemTargetWord(target, ItemTargetSlotFlags) & 0x200) != 0;
+    out->singleTarget = spell && (spellGetU16(spell, SpellFieldFlagsA) & SpellFlagsASingleTarget);
+    return true;
+}
+
 SessionCast sessionUseScroll(GameSession *s, unsigned userSlot, unsigned itemSlot, bool study, unsigned memberSlot) {
     uint8_t *user = sessionPartyRecord(s, userSlot);
-    uint8_t *slot = user ? inventoryGroupSlot(partyInventoryGroup(user, PartyGroupMain), itemSlot) : NULL;
+    uint8_t *slot = useSlot(s, user, itemSlot);
     const uint8_t *item = slot && itemSlotId(slot) ? itemCatalogRecord(&s->items, itemSlotId(slot)) : NULL;
     const uint8_t *target = item ? itemTargetEntry(&s->items, item) : NULL;
     if (!target || itemTargetKind(item) != ItemTargetConsumable || !(itemTargetWord(target, ItemTargetSlotFlags) & 0x600)) {
@@ -1322,7 +1348,7 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
     if (!user || !recipient) {
         return SessionUseNothing;
     }
-    uint8_t *slot = inventoryGroupSlot(partyInventoryGroup(user, PartyGroupMain), itemSlot);
+    uint8_t *slot = useSlot(s, user, itemSlot);
     unsigned id = slot ? itemSlotId(slot) : 0;
     if (!id) {
         return SessionUseNothing;

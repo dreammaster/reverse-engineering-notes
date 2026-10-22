@@ -1023,6 +1023,8 @@ static void readOpen(GameUi *ui) {
  * Using an item from a bag slot (the right button on it: HandleInventoryGridClick -> HandleGameCommand): the restoratives and stat items first ask whom (ConfirmAndSelectPartyTarget: the
  * crosshair, a face or F1-F4, Escape gives up); an item that would do nothing for that member beeps and asks again. Readable items open the scroll, a key to a destination takes the party there.
  */
+static void scrollStart(GameUi *ui, unsigned user, unsigned slot);
+
 static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipient) {
     GameSession *s = ui->session;
     SessionUse result = sessionUseItem(s, user, slot, recipient);
@@ -1045,6 +1047,9 @@ static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipie
             return;
         }
         break;
+    case SessionUseScroll:
+        scrollStart(ui, user, slot);
+        return;
     default:
         break;
     }
@@ -1052,7 +1057,92 @@ static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipie
 }
 
 /* The member named for a pick prompt: for a chest, the one who opens it (a refusal asks again), else the recipient of the item. */
+static void pickCancel(GameUi *ui) {
+    ui->pickActive = ui->pickChest = false;
+    ui->pickScroll = 0;
+}
+
+/*
+ * A spell scroll (InteractWithContainer, yendor2.asm:53446): one that can be studied first asks USE ITEM? / LEARN SPELL? (a click on a row, the right button or Escape gives up). Using it casts its spell
+ * for nothing, asking for the recipient (message 0x12) when the spell is for a single member; learning asks who (message 0x21) and a member who cannot learn it is refused with the beep and asked again.
+ * A cast the place or the combat does not allow gives the refusal sound (3).
+ */
+static void scrollFinish(GameUi *ui, bool study, unsigned member) {
+    GameSession *s = ui->session;
+    SessionCast result = sessionUseScroll(s, ui->scrollUser, ui->scrollSlot, study, member);
+    playPending(ui);
+    ui->panelRunCount = 0;
+    if (study && result == SessionCastCannot) { /* the member cannot learn it: asked again */
+        flashWarning(ui);
+        return;
+    }
+    if (result != SessionCastDone && result != SessionCastNoEffect) {
+        effect(ui, 3);
+    }
+    pickCancel(ui);
+}
+
+static void scrollPick(GameUi *ui, unsigned mode, unsigned prompt) {
+    ui->pickActive = true;
+    ui->pickChest = false;
+    ui->pickScroll = mode;
+    ui->pickPrompt = prompt;
+}
+
+static void scrollCast(GameUi *ui, const SessionScrollInfo *info) {
+    if (info->singleTarget) {
+        scrollPick(ui, 1, 0x12);
+    } else {
+        scrollFinish(ui, false, ui->scrollUser);
+    }
+}
+
+static void scrollStart(GameUi *ui, unsigned user, unsigned slot) {
+    SessionScrollInfo info;
+    ui->scrollUser = user;
+    ui->scrollSlot = slot;
+    if (!sessionScrollInfo(ui->session, user, slot, &info)) {
+        flashWarning(ui);
+        pickCancel(ui);
+        return;
+    }
+    ui->pickActive = false;
+    if (info.studyable) {
+        ui->scrollAsk = true;
+    } else {
+        scrollCast(ui, &info);
+    }
+}
+
+static void scrollAnswer(GameUi *ui, int row) { /* 1 = USE ITEM?, 0 = LEARN SPELL? */
+    SessionScrollInfo info;
+    ui->scrollAsk = false;
+    if (!sessionScrollInfo(ui->session, ui->scrollUser, ui->scrollSlot, &info)) {
+        return;
+    }
+    if (row == 1) {
+        scrollCast(ui, &info);
+    } else {
+        scrollPick(ui, 2, 0x21);
+    }
+}
+
+static void scrollPromptDraw(GameUi *ui) {
+    ConfirmPrompt prompt;
+    textPanelClear(&ui->renderer, false);
+    if (confirmPromptLoad(ui->exe, ui->session->game, 0x20, &prompt)) {
+        confirmPromptDraw(&ui->renderer, &prompt);
+    } else {
+        fontDrawString(ui->session->game, 0, ui->screen, ViewScreenWidth, 240, 120, "USE ITEM?", 0x8A, 4, FontTransparent);
+        fontDrawString(ui->session->game, 0, ui->screen, ViewScreenWidth, 240, 132, "LEARN SPELL?", 0x8A, 4, FontTransparent);
+    }
+}
+
 static void pickAnswer(GameUi *ui, unsigned member) {
+    if (ui->pickScroll) {
+        scrollFinish(ui, ui->pickScroll == 2, member);
+        return;
+    }
     if (ui->pickChest) {
         if (!sessionChestChooseOpener(ui->session, member)) {
             flashWarning(ui);
@@ -1067,8 +1157,7 @@ static void pickAnswer(GameUi *ui, unsigned member) {
 
 static void inventoryUse(GameUi *ui, unsigned member, unsigned slot) {
     GameSession *s = ui->session;
-    uint8_t *record = sessionPartyRecord(s, member);
-    unsigned id = record ? itemSlotId(inventoryGroupSlot(partyInventoryGroup(record, PartyGroupMain), slot)) : 0;
+    unsigned id = sessionSlotItem(s, member, slot);
     if (!id || s->heldItem) {
         return;
     }
@@ -1077,6 +1166,7 @@ static void inventoryUse(GameUi *ui, unsigned member, unsigned slot) {
     if (partyRestorativeForItem(s->game, id) != RestorativeNone || partyIsPercentRestorativeItem(s->game, id) || (statEffect && itemEffectPairs(statEffect))) {
         ui->pickActive = true;
         ui->pickChest = false;
+        ui->pickScroll = 0;
         ui->pickPrompt = 0;
         ui->pickUser = member;
         ui->pickSlot = slot;
@@ -1978,6 +2068,9 @@ static void drawScreen(GameUi *ui) {
         if (ui->passwordActive) {
             passwordDraw(ui);
         }
+        if (ui->scrollAsk) {
+            scrollPromptDraw(ui);
+        }
         if (ui->pickActive && ui->pickPrompt) {
             ConfirmPrompt prompt;
             textPanelClear(&ui->renderer, false);
@@ -2574,11 +2667,17 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     if (ui->passwordActive) {
         return passwordKey(ui, key);
     }
+    if (ui->scrollAsk) { /* ShowConfirmPrompt 0x20 answers to clicks on its two rows only; Escape gives up */
+        if (key == UiKeyEscape) {
+            ui->scrollAsk = false;
+        }
+        return true;
+    }
     if (ui->pickActive) { /* the member the item is used on (or who opens the chest): F1-F4 name one, Escape gives up */
         if (key >= UiKeyF1 && key <= UiKeyF4 && sessionPartyRecord(s, (unsigned)(key - UiKeyF1))) {
             pickAnswer(ui, (unsigned)(key - UiKeyF1));
         } else if (key == UiKeyEscape) {
-            ui->pickActive = ui->pickChest = false;
+            pickCancel(ui);
         }
         return true;
     }
@@ -3003,8 +3102,20 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
     if (ui->catalogActive) { /* RunShopScreen's own clicks (below), not the walk pad's */
         return catalogClick(ui, x, y, right);
     }
-    if (right) { /* the right button on the view uses what is ahead (the same as Space) */
-        return uiRegionHit(game, UiRegionsDungeonMain, x, y) == 1 ? press(ui, ' ') : true;
+    if (right) { /* the right button on the view uses what is ahead (the same as Space); on a belt slot of the resource panel it uses that item (TryCureAilmentFromIconClick) */
+        unsigned where = uiRegionHit(game, UiRegionsDungeonMain, x, y);
+        if (where == 2 && !s->combat.active && (panelFlags(ui) & MapFlagHidden)) {
+            unsigned icon = uiRegionHit(game, UiRegionsStatusIconBar, x, y);
+            if (icon >= 4 && icon <= 9) {
+                unsigned user = 0;
+                while (user < 3 && sessionPartyRecord(s, user + 1) && (!sessionPartyRecord(s, user) || (partyGetU16(sessionPartyRecord(s, user), PartyFieldStatusFlags) & PartyStatusIncapacitated))) {
+                    user++;
+                }
+                inventoryUse(ui, user, SessionBeltSlotBase + icon - 4);
+            }
+            return true;
+        }
+        return where == 1 ? press(ui, ' ') : true;
     }
     unsigned pad = uiRegionHit(game, UiRegionsDirectionPad, x, y);
     if (pad) { /* the walk pad: turn left, forward, turn right, strafe left, back, strafe right */
@@ -3104,10 +3215,19 @@ static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
     if (ui->passwordActive) { /* EditTextField takes no clicks */
         return true;
     }
+    if (ui->scrollAsk) {
+        int row = gameDialogPromptClick(x, y);
+        if (right) {
+            ui->scrollAsk = false;
+        } else if (row >= 0) {
+            scrollAnswer(ui, row);
+        }
+        return true;
+    }
     if (ui->pickActive) { /* a face is the answer; the right button gives up */
         unsigned panel = uiRegionHit(ui->session->game, UiRegionsPartyPanels, x, y), member = panel / 10;
         if (right) {
-            ui->pickActive = ui->pickChest = false;
+            pickCancel(ui);
         } else if (panel % 10 == 1 && member < 4 && sessionPartyRecord(ui->session, member)) {
             pickAnswer(ui, member);
         }

@@ -6772,6 +6772,20 @@ effect id `+0x70`, sound id `+0x62`, ...) -- a later shot at the same member **o
 facing (0x800 facing south ... ) only decides whether the shot is drawn (`PresentTriggeredSideTrapEffects` :32732 animates the projectile and the weapon icon). That routine then plays the first sound in the table and
 applies every nonzero magnitude as the effect `+0x70` with the magnitude as the preset amount through the icon-bar pipeline (`combatApplyPresetEffect`). `session.c` `sessionAmbushShots`.
 
+### Using belt items and spell scrolls (decoded 2026-10-22)
+
+**The right button on a belt slot** of the resource panel (`TryCureAilmentFromIconClick` :41358, called from `start` loc_1056B; the panel must be shown, `word_36C7F` bit 0x1000) uses the item there like one from a bag:
+with an empty hand and an item that has flag 0x100 or is accepted by the location (`IsItemTypeAcceptedByLocation`), the slot's pointer becomes the current action and `HandleGameCommand` runs -- the same restoratives,
+stat items, readable items, destination keys and scrolls as `inventoryUse`. The weight of an item that is used up is taken off the user's *main* group (`partyConsumeItemCharge`: the original's plain `sub`),
+belt items having no weight there, which can wrap -- reproduced. The standalone names a belt slot as item slot `SessionBeltSlotBase` + n (`session.c` `useSlot`).
+
+**A spell scroll** (`InteractWithContainer` :53446; item target entry flags 0x200 / 0x400, word 2 the spell): with 0x200 (can be studied) message 0x20 comes first -- two rows at y = 120 and 132, "USE ITEM?" (answer
+5) and "LEARN SPELL?" (7); a click on a row, the right button / Escape gives up (anything else beeps with sound 3 and asks again). Using it: with a fight on and the spell flagged not-in-combat (word 1 of the record's
+0x400), or without one and combat-only (0x3000 of word 2), sound 3 and nothing happens; a single-target spell (0x8000) asks whom (message 0x12) first; then `ApplyEncodedItemEffect` runs the spell for no cost and
+the scroll spends a charge. Learning marks the members who cannot (`MarkIneligiblePartyMembers`: already known, wrong class bits, or level below the spell's: their status panels are flagged `+0x15E` 0x8000 and dimmed),
+asks "WHO WILL LEARN?" (0x21), refuses a flagged member with the warning and asks again, then sets the spell's flag in the member's bank and applies effect 3. `gameui.c` `scrollStart` ... `scrollFinish`;
+`sessionScrollInfo`, `sessionUseScroll`. (The dimming of the ineligible faces is not drawn.)
+
 ### Documents in a foreign script (DrawIndentedTextColumn, decoded 2026-10-22)
 
 A readable item's rows are drawn by `DrawIndentedTextColumn` (:44453; Chapter 3 :44270 on) after `ClassifyConversationSkillTier` has set `g_uiScratchFlags1`'s reading bits from the reader's Linguistics (`document.h`): no

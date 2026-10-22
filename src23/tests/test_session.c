@@ -11,6 +11,7 @@
 #include <string.h>
 
 #include "bcd4.h"
+#include "consumable.h"
 #include "lightsource.h"
 #include "dialogservice.h"
 #include "inventory.h"
@@ -1193,9 +1194,36 @@ static void testAmbush(GameKind game, const uint8_t *world, size_t size, const c
     sessionFree(s);
 }
 
+/* The right button on a belt slot uses the item there like one from a bag (TryCureAilmentFromIconClick -> HandleGameCommand): a healing item heals the recipient and is spent. */
+static void testBeltUse(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    unsigned potion = 0;
+    for (unsigned id = 1; id <= s->items.validItemCount && !potion; id++) {
+        if (partyRestorativeForItem(game, id) == RestorativeHpHalf || partyRestorativeForItem(game, id) == RestorativeHpFull) {
+            potion = id;
+        }
+    }
+    char text[160];
+    if (potion) {
+        uint8_t *hero = sessionPartyRecord(s, 1);
+        partySetStat(hero, PartyStatHitPoints, 1);
+        itemSlotSet(sessionBeltSlot(s, 2), (uint16_t)potion, 1);
+        check("a belt slot's item is found by the use commands", sessionSlotItem(s, 0, SessionBeltSlotBase + 2) == potion);
+        SessionUse result = sessionUseItem(s, 0, SessionBeltSlotBase + 2, 1);
+        snprintf(text, sizeof(text), "%s: a healing potion on the belt heals the member it is used on and is spent", label);
+        check(text, result == SessionUseDone && partyGetStat(hero, PartyStatHitPoints) > 1 && sessionSlotItem(s, 0, SessionBeltSlotBase + 2) == 0);
+    }
+    check("an empty belt slot is nothing to use", sessionUseItem(s, 0, SessionBeltSlotBase + 4, 0) == SessionUseNothing && sessionUseItem(s, 0, SessionBeltSlotBase + 9, 0) == SessionUseNothing);
+    sessionFree(s);
+}
+
 /* Group fights: the first monster stands in the middle slot, others join on the left (the middle one steps right) or, with room for a third, on the left with the left one stepping to the middle;
  * the formation bits say how many; the dead leave gaps that CompactMonsterSlots closes one step at a time. */
 static void testGroupFight(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    (void)label;
     if (game != GameYendor2) {
         return;
     }
@@ -1460,6 +1488,7 @@ int main(void) {
             testBumpSound(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testAmbush(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testGroupFight(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testBeltUse(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBelt(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testInventorySlots(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);

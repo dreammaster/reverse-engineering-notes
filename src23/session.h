@@ -344,6 +344,19 @@ void sessionTickAilments(GameSession *session);
  */
 SessionCast sessionUseScroll(GameSession *session, unsigned userSlot, unsigned itemSlot, bool study, unsigned memberSlot);
 
+/*
+ * The item slots the use commands take: 1-8 are the member's bag, `SessionBeltSlotBase` + n (n = 0-5) the tool belt (the right button on a belt slot of the resource panel,
+ * TryCureAilmentFromIconClick -> HandleGameCommand). `sessionSlotItem` is the id in such a slot (0 = empty). What a scroll asks: `studyable` (the entry's flag 0x200: the prompt "USE ITEM? /
+ * LEARN SPELL?" comes first) and `singleTarget` (the spell's own flag: the member the cast is for is chosen).
+ */
+enum { SessionBeltSlotBase = 100 };
+unsigned sessionSlotItem(GameSession *session, unsigned memberSlot, unsigned itemSlot);
+
+typedef struct {
+    bool studyable, singleTarget;
+} SessionScrollInfo;
+bool sessionScrollInfo(GameSession *session, unsigned userSlot, unsigned itemSlot, SessionScrollInfo *out);
+
 /* Line `line` of the document sessionUseItem last opened (spacing kept); false past its end. */
 bool sessionDocumentLine(GameSession *session, unsigned line, char out[DocumentLineBufferSize]);
 
