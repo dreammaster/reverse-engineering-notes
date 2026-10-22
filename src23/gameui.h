@@ -31,7 +31,7 @@
  * Time and the ailment sweep are the platform's to call (sessionAdvanceTime, sessionTickAilments); gameUiKey runs the sweep once per command, like one pass of the loop.
  * Everything that needs a picture file goes through the ViewPictureFn given at init.
  */
-typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayShop, UiOverlayTitle, UiOverlayClue, UiOverlayRoster, UiOverlayCreate, UiOverlayAlchemy, UiOverlayWorldMap } UiOverlay;
+typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayTitle, UiOverlayClue, UiOverlayRoster, UiOverlayCreate, UiOverlayAlchemy, UiOverlayWorldMap } UiOverlay;
 
 typedef enum {
     UiKeyNone = 0,
@@ -95,7 +95,7 @@ typedef struct {
     char talkRows[16][DialogLineChars + 1]; /* the same in the rows the screen draws it in */
     unsigned talkRowCount;
     bool talkListShown;    /* the topic list is up: it comes after the greeting has been read (any key or click) */
-    unsigned shopLock;     /* the lock record of the shop being shown */
+    bool shopFromTalk;     /* the merchant's screen was opened from a conversation, which goes on when it is left */
     unsigned lastMusicPage;
     PanelRun panelRuns[UiPanelRunMax]; /* the message area's text: what the last command wrote (a rest's result); cleared by the next key or click */
     unsigned panelRunCount;
@@ -103,6 +103,11 @@ typedef struct {
     int mouseX, mouseY;    /* the pointer, from gameUiMouseMove: where the cursor item is drawn */
     bool targeting;        /* K: the crosshair cursor waits for a click on the view (WaitForTargetClick) */
     unsigned dollMask;     /* the inventory screen (UiOverlayDolls): bit n = member n's expanded panel is shown */
+    bool catalogActive;    /* a chest's contents screen: the eight slots under the walk pad's place (RunShopScreen) */
+    unsigned catalogLock;  /* its lock record */
+    bool catalogShop;      /* ... a merchant's stock rather than a chest */
+    unsigned pickPrompt;   /* the message shown while a member is picked (0 = none: the blank one): 5 / 6 WHO WILL OPEN? / SEARCH? */
+    bool pickChest;        /* the member is the one who opens the chest ahead, not the recipient of an item */
     bool pickActive;       /* an item waits for the member it is used on (ConfirmAndSelectPartyTarget): a click on a face or F1-F4 */
     unsigned pickUser, pickSlot; /* ... the member whose bag slot (1-8) it is in */
     bool reading;          /* the scroll (UiOverlayTalk) shows a readable item's text, not a conversation */

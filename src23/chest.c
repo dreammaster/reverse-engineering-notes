@@ -50,6 +50,13 @@ void chestSlots(const LockRecord *lock, uint8_t takenMask, const ItemCatalog *ca
     }
 }
 
+void chestRestore(SaveGame *save, unsigned lockId, unsigned slot) {
+    uint8_t *byte = lockId ? saveGameRecord(save, SaveSectionLockAndShopState, lockId - 1) : NULL;
+    if (byte && slot < LockContentSlots) {
+        *byte &= (uint8_t)~(0x80u >> slot);
+    }
+}
+
 bool chestTake(SaveGame *save, unsigned lockId, const LockRecord *lock, const ItemCatalog *catalog, unsigned slot, ChestSlot *taken) {
     uint8_t *byte = lockId ? saveGameRecord(save, SaveSectionLockAndShopState, lockId - 1) : NULL;
     if (!byte || slot >= LockContentSlots) {

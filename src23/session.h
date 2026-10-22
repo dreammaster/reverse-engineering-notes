@@ -333,6 +333,34 @@ bool sessionDocumentLine(GameSession *session, unsigned line, char out[DocumentL
 unsigned sessionLoot(GameSession *session);
 
 /*
+ * Opening what is ahead (the Space command on a lock object: UseAbilityCommand, yendor2.asm:12820): the member who opens is the third role's (header +0xA8; a prompt "WHO WILL OPEN?" -- "SEARCH?"
+ * for a lock with flag 0x2 -- asks when none is chosen, and one who cannot act is refused and asked again). A lock that is not trapped must be unlocked already (sessionUnlock, a key or a spell)
+ * or the way it is locked is reported (`lockReport`). A trapped lock (flag 0x80) opens at the first try and sets its trap off: the opener's Thievery and level can avoid it, the trap word
+ * (the lock's +2) decides the effect on the opener or the party, and a defeated trap says so (TRAP DEFEATED, `trapDefeated`). Then the contents screen opens.
+ */
+typedef enum { SessionChestNothing, SessionChestAskWho, SessionChestLocked, SessionChestOpen } SessionChestResult;
+
+typedef struct {
+    SessionChestResult result;
+    bool askSearch;     /* AskWho: the prompt reads SEARCH? (message 6), else OPEN? (5) */
+    unsigned lockId;    /* Open: the lock record the contents screen shows */
+    bool inexhaustible; /* the lock's flag 0x2 */
+    bool trapDefeated;
+} SessionChest;
+
+SessionChest sessionChestOpen(GameSession *session);
+bool sessionChestChooseOpener(GameSession *session, unsigned memberSlot); /* false when that member cannot act */
+
+/*
+ * The contents screen (RunShopScreen with the chest's flag: HandleShopCatalogSlotClick, yendor2.asm:11895): `slot` 0-7 is a click on one of the eight icons. With an empty hand a pile (GOLD COINS, MAGIC
+ * ORE, NUORE) joins the party's counter at once (sound 7, `taken` says which and how much) and any other item goes to the cursor (its extra its charge); either way the slot is taken for good.
+ * With an item held, a taken slot whose original item is the same takes it back (the slot reads full again). SessionChestRefused: a beep.
+ */
+typedef enum { SessionChestSlotNothing, SessionChestSlotItem, SessionChestSlotPile, SessionChestSlotPutBack, SessionChestSlotRefused } SessionChestSlot;
+unsigned sessionChestSlots(GameSession *session, unsigned lockId, ChestSlot out[LockContentSlots]);
+SessionChestSlot sessionChestClick(GameSession *session, unsigned lockId, unsigned slot, ChestSlot *taken);
+
+/*
  * The shop screen of a "buy" topic (DialogTopicUseKey: UseKeyItem sets the buy mode and runs RunShopScreen on the lock record named by the topic's argument; the
  * same record opened as a chest is free, sessionLoot). Stock is inexhaustible: `sessionShopStock` lists the eight slots with the price of each --
  * shopBuyPrice of the item's base value for the haggling member (the first role assignment, else the first member: Bartering) -- and `sessionShopBuy` pays it and puts

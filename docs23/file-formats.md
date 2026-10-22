@@ -6716,6 +6716,52 @@ else LOCKED, and with skill >= 55 LOCKED AND / TRAPPED when there is a trap word
 the tier's key (BRASS first .. GOLD). **The bump sound** (:2338 / :5973) is played for a door cell and for a blocked cell, not for the void border band (`ClassifyFloorType` code 2) nor a step off the
 grid: Chapter 2 plays `_val33` (InitGlobals: 6), Chapter 3 the literal `0xD` (each game's own sound list; `session.c` `BumpSoundYendor2` / `BumpSoundYendor3`, now set by the session, not the front end). `sessionMove` loads the words (`lockReport`, `lockFlags`, `lockValue`, `lockSkill`) and `gameui.c`'s `lockReport` writes the lines.
 
+### The tool belt, the key ring, the cursor item and the main-screen commands (decoded 2026-10-22)
+
+**The tool belt.** DS:0x9519 -- header `+0x11A`, six 4-byte slots (item id, extra) -- is what `IsItemRangeAvailable` searches first, and what the resource panel shows: category 6 picture 0x14 at
+(0xF8, 9) with a 3 x 3 grid of 16 x 16 item icons (`DrawResourceStatusIcons`, regions `UiRegionsStatusIconBar`): the party's gold coins, magic ore and nuore (items 1-3, shown only while the counter is
+not zero), then the six belt slots. `HandleStatusPanelItemSlotClick` (:41175): with an empty hand a slot's item goes to the cursor; holding a door key (items 0x21-0x2E; Chapter 3 0x24-0x31) over the **key ring**
+(0x2F; Chapter 3 0x32) adds the key's tier to `g_heldKeyFlags` (header `+0x22`: the high byte of the key's target flags unless it is a chest key, bit 0x80) and uses the key up (sound 4); a container is refused;
+anything else is put in an empty slot or swapped (sound 6, no weight involved). An empty slot with an empty hand, or a refusal, leaves the resource panel. The panel's text area shows GOLD COINS / MAGIC ORE
+(Chapter 3: **FOOD**) / NUORE with the counters, or the name of the item just taken. `session.c` `sessionBeltClick`, `gameui.c` `panelClick`.
+
+**K, M, T, W need their item** (`start`, :943-1155; `IsItemRangeAvailable`, silent when missing): K the key ring (a crosshair cursor waits for a click on the view, Escape gives up, then `UnlockDoorCommand` :45960:
+sound 3 when nothing lockable is ahead, NOT LOCKED (DS:0x7BB7) when already unlocked, the unlock sound -- Chapter 2 `word_329EE` 0x2A, Chapter 3 0xB -- and UNLOCKED (0x7BAE) when the ring's tiers open it, else
+`ShowLockStatus`); M the local map (item 0x1E, and a Mapping average of 60: else `ShowMapSkillTooLowMessage`, "YOUR SKILL IS NOT HIGH ENOUGH!", DS:0x7D7E); T the clock (item 7: `ShowGameClockCommand` writes
+"HH:MM AM" and "MM/DD/YYYY", zero padded, white, at (240, 96) and (240, 102); 12:xx AM at midnight, 12:xx PM at noon); W the overview (item 0x1F, Mapping 80; category 0 picture 6 over the screen with the
+position marker, any key leaves).
+
+**The cursor item** is the item's category 8 icon (the catalog record's `+8`) drawn as the mouse cursor (`UpdateCursorForHeldItem`), the crosshair (picture 0xF) while a target is awaited. A left click on the
+view drops it: `IsItemDroppable` (a keepsake or a container holding one beeps), then message 4 "DO YOU WANT TO DROP THAT RIGHT NOW?" with YES / NO rows; `PlaceItemOnGround`. A click on a member's **face** (panel
+region 1) is `HandleItemDropOnPartyPortrait` (worn if it has a free slot, else stowed; the carry weight checked; the beep if refused).
+
+**The party panels' lists** (`HandlePartyStatusPanelInput` :38611, `partyinfo.c`): the icons of a member's panel -- regions 2-4 AFFLICTIONS, 5 TRAINING (CURRENTLY LEVEL n / READY FOR LEVEL m), 6 PROTECTIONS (the nine
+resistances, `+0x20..`), 7 TRANSPORTS (the learned mounts, bright while charges remain and the time of day allows), 8 the name bar HEALTH / MAGIC / WEIGHT with the numbers (weight in tenths: "7.1/54.0") --
+write into the text area under the member's name header (241, 87); the keys 1-4 show the bars. A click on the face stands for the held button: the member's sheet.
+
+**The inventory screen** (`RunPartyInventoryScreen` :14679; the P key shows all four members' expanded panels, a right click on a face shows or hides one). A click on a doll is hit-tested with `UiRegionsRosterPortraits`
+(8 + 56 n, 8 .. 63) and the slot with `UiRegionsInventoryGrid` relative to its corner: 1-8 bag slots, 9 nothing, 10-15 weapon / B / C / D / two rings (codes 0xA-0xF), 16-21 five worn-clothing slots (21 is the slot of
+20). `HandleInventorySlotClick` :39344: an empty hand takes the item (weight off the member's `+0x118`, a worn item's stat effect off); an item held must suit the slot (`IsItemEligibleForCommand` =
+`inventoryEligibleForSlot`), and the weight must fit (`+0x118` + the item's, less a swapped item's, against `+0x56`) else the beep; then it is put down or swapped (sound 6; worn items take effect, a weapon slot's
+wear counter is cleared; a MAGIC CONTAINER is weightless in a bag slot); a key over a key ring in a slot goes on the ring. Containers (bags, boxes: their contents are item-instance records) are not opened by the
+standalone. The right button on a bag slot uses the item (`HandleGameCommand`): restoratives and stat items first ask whom (`ConfirmAndSelectPartyTarget`, message 0x12: the crosshair, a face or F1-F4; an item that would
+do nothing beeps and asks again), readable items open the scroll, a key to a destination takes the party there. Escape does nothing in the original while an item is held (the beep) and is otherwise not a way out
+(P is); the standalone also lets it close the screen when the hand is empty.
+
+**Chests and merchants share `RunShopScreen`** (:12224; chests have the flag 0x80 of `word_328C6` clear). Space on a lock object (`UseAbilityCommand` :12820): the opener is the third role's member (a prompt, message 5
+"WHO WILL OPEN?" or, for a lock with flag 2, 6 "SEARCH?", a click on a face or F1-F4; a member who cannot act beeps and is asked again); a lock without flag 0x80 must be unlocked already or `ShowLockStatus` reports
+it; a trapped lock opens at once and the trap word (the lock's `+2`) goes through `ApplySavingThrowEffect` (the opener's Thievery and level can avoid it: "TRAP DEFEATED", DS:0x7CA8). The screen: the walk pad's place
+(72 x 35 pixels from (241, 160)) is blanked and the eight slots (`UiRegionsCatalogSlots`, two rows of four 17-pixel cells) show the icons of what is left ("EMPTY" at (259, 179), DS:0x7D26), the party's main screen
+stays. A click takes a slot: a pile (items 1-3) joins the counter at once (sound 7, its label over the amount), anything else goes to the cursor; the slot is taken for good (a persisted bit); with an item held a
+taken slot of the same item takes it back. Space or the right button on the view leaves (sound 6), P opens the inventory over it, the belt and the faces work. A merchant is the same screen with the gold ("$" and the
+amount, `ShowMaterialCounterHud`) in the header: a click on a slot shows its name and VALUE and buys it when the gold allows, a click holding an item sells it back, and in the inventory screen Space sells the cursor item.
+The standalone's merchant shows the name and the value only (not the weight and stat lines the member's Appraise-like skill `+0x6A` unlocks at 65 and 80).
+
+**Messages in the status panel** (`ShowStatusPanelMessage` :35105: `0x8A`, transparent, from (240, 96), 6 apart): Space with nothing ahead NOTHING HERE (DS:0x7D71, Chapter 3 0x809E); a refused destination
+LOCKED (DS:0x7BCE / 0x7F00); Chapter 3's fixed three lines YOU CANNOT ENTER HERE RIGHT NOW (0x9606); the shareware / ending texts the session names. A destination that asks for a password writes its two-line prompt
+(message ids from the gate table: YENDORIAN PASSWORD?, THIEF'S DEN PASSWORD? ...) and takes up to 12 typed characters at (240, 114) (`EditTextField`, upper case, Enter confirms, Escape gives up). The prompts are
+the executable's own table (`confirmprompt.c`: DS:0xA787, Chapter 3 0xE265); Chapter 3 words the MARK / RETURN question differently (regions 4 and 6).
+
 ### Turn-based combat: turn order (decoded 2026-09-24)
 
 A genuinely separate subsystem from the dungeon-exploration monster AI

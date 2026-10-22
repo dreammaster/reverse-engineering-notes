@@ -163,32 +163,6 @@ static void drawTalk(GameUi *ui) {
 }
 
 /* The stock of the shop a "buy" topic opened: number, name and price; the gold; the item on the cursor. */
-static void drawShop(GameUi *ui) {
-    GameSession *s = ui->session;
-    SessionShopItem stock[LockContentSlots];
-    sessionShopStock(s, ui->shopLock, stock);
-    char line[160], gold[12], name[ItemNameBufferSize], price[12];
-    bcd4Format(saveHeaderBcd4(&s->save, SaveHeaderGold), gold);
-    snprintf(line, sizeof(line), "SHOP    GOLD %s", gold);
-    fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 8, 10, line, 0x8A, 0, FontTransparent);
-    for (unsigned i = 0; i < LockContentSlots; i++) {
-        if (!stock[i].itemId) {
-            continue;
-        }
-        itemGetName(itemCatalogRecord(&s->items, stock[i].itemId), name);
-        bcd4Format(stock[i].price, price);
-        snprintf(line, sizeof(line), "%u %-28s %s", i + 1, name, price);
-        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 8, 30 + (int)i * 8, line, 0x9B, 0, FontTransparent);
-    }
-    if (s->heldItem) {
-        itemGetName(itemCatalogRecord(&s->items, s->heldItem), name);
-        snprintf(line, sizeof(line), "ON THE CURSOR: %s  (S SELLS IT BACK, 1-4 STOWS IT)", name);
-        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 8, 110, line, 0x8A, 0, FontTransparent);
-    } else {
-        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 8, 110, "1-8 BUY, ESCAPE LEAVES", 0x8A, 0, FontTransparent);
-    }
-}
-
 void gameUiSetExe(GameUi *ui, const ExeData *exe) {
     ui->exe = exe;
 }
@@ -338,6 +312,13 @@ static void combatPanelsDraw(GameUi *ui) {
     }
 }
 
+/* The three counters' labels (DS:0x7C55 / 0x7F87): Chapter 2 gold coins, magic ore, nuore; Chapter 3 gold coins, FOOD, nuore. */
+static const char *materialLabel(const GameUi *ui, unsigned index) {
+    static const char *const kYendor2[3] = {"GOLD COINS:", "MAGIC ORE: ", "NUORE: "};
+    static const char *const kYendor3[3] = {"GOLD COINS:", "FOOD: ", "NUORE: "};
+    return (ui->session->game == GameYendor2 ? kYendor2 : kYendor3)[index % 3];
+}
+
 /* ShowLootAndAwardExperience's panel: GOLD COINS always, MAGIC ORE and NUORE when there are any, EXPERIENCE lower down. */
 static void lootDraw(GameUi *ui) {
     const ViewRenderer *r = &ui->renderer;
@@ -346,18 +327,18 @@ static void lootDraw(GameUi *ui) {
     char number[12];
     int y = 96;
     textPanelClear(r, false);
-    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y, "GOLD COINS:", 0x8A, 4, FontOpaque);
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y, materialLabel(ui, 0), 0x8A, 4, FontOpaque);
     bcd4Format(loot->gold, number);
     fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y + 6, number, 0x0F, 4, FontOpaque);
     y += 18;
     if (memcmp(loot->ore, zero, 4) != 0) {
-        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y, "MAGIC ORE: ", 0x8A, 4, FontOpaque);
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y, materialLabel(ui, 1), 0x8A, 4, FontOpaque);
         bcd4Format(loot->ore, number);
         fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y + 6, number, 0x0F, 4, FontOpaque);
         y += 12;
     }
     if (memcmp(loot->nuore, zero, 4) != 0) {
-        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y, "NUORE: ", 0x8A, 4, FontOpaque);
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y, materialLabel(ui, 2), 0x8A, 4, FontOpaque);
         bcd4Format(loot->nuore, number);
         fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, y + 6, number, 0x0F, 4, FontOpaque);
     }
@@ -442,7 +423,6 @@ static void resourceIconsDraw(GameUi *ui) {
 static void resourcesDraw(GameUi *ui) {
     const ViewRenderer *r = &ui->renderer;
     SaveGame *save = &ui->session->save;
-    static const char *const kLabels[3] = {"GOLD COINS:", "MAGIC ORE: ", "NUORE: "};
     const Bcd4 *amounts[3] = {(const Bcd4 *)saveHeaderBcd4(save, SaveHeaderGold), (const Bcd4 *)saveHeaderBcd4(save, SaveHeaderOreCounter1), (const Bcd4 *)saveHeaderBcd4(save, SaveHeaderOreCounter2)};
     char number[12];
     resourceIconsDraw(ui);
@@ -451,7 +431,7 @@ static void resourcesDraw(GameUi *ui) {
     }
     textPanelClear(r, false);
     for (unsigned i = 0; i < 3; i++) {
-        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, 96 + 18 * (int)i, kLabels[i], 0x8A, 4, FontOpaque);
+        fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, 96 + 18 * (int)i, materialLabel(ui, i), 0x8A, 4, FontOpaque);
         bcd4Format(*amounts[i], number);
         fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, 102 + 18 * (int)i, number, 0x0F, 4, FontOpaque);
     }
@@ -803,6 +783,156 @@ static void dropPromptDraw(GameUi *ui) {
     }
 }
 
+/* ---- a chest's contents (RunShopScreen) ---- */
+
+/*
+ * The screen of a chest or a merchant's stock: the walk pad's place at the lower right (the 72 x 35 pixels from (241, 160)) is blanked and the eight slots -- two rows of four, UiRegionsCatalogSlots --
+ * show the icons of what is left (DrawShopItemSlotGrid, :12161), "EMPTY" at (259, 179) when nothing is. The rest of the main screen stays: the view, the panels, the party.
+ */
+/* The item ids the eight slots hold now (a chest's untaken contents, a merchant's whole stock). */
+static void catalogIds(GameUi *ui, unsigned ids[LockContentSlots]) {
+    GameSession *s = ui->session;
+    memset(ids, 0, sizeof(unsigned) * LockContentSlots);
+    if (ui->catalogShop) {
+        SessionShopItem stock[LockContentSlots];
+        sessionShopStock(s, ui->catalogLock, stock);
+        for (unsigned i = 0; i < LockContentSlots; i++) {
+            ids[i] = stock[i].itemId;
+        }
+    } else {
+        ChestSlot slots[LockContentSlots];
+        sessionChestSlots(s, ui->catalogLock, slots);
+        for (unsigned i = 0; i < LockContentSlots; i++) {
+            ids[i] = slots[i].itemId;
+        }
+    }
+}
+
+static void catalogDraw(GameUi *ui) {
+    GameSession *s = ui->session;
+    unsigned count;
+    const uint16_t(*cells)[5] = uiRegionEntries(s->game, UiRegionsCatalogSlots, &count);
+    unsigned ids[LockContentSlots];
+    catalogIds(ui, ids);
+    for (int row = 0; row < 35; row++) {
+        memset(&ui->screen[(160 + row) * ViewScreenWidth + 241], 4, 72);
+    }
+    if (ui->catalogShop) { /* ShowMaterialCounterHud: "$" and the gold in the header */
+        textPanelGold(&ui->renderer, saveHeaderBcd4(&s->save, SaveHeaderGold));
+    }
+    unsigned shown = 0;
+    for (unsigned i = 0; cells && i < count && i < LockContentSlots; i++) {
+        const uint8_t *item = ids[i] ? itemCatalogRecord(&s->items, ids[i]) : NULL;
+        if (item) {
+            viewDrawPicture(&ui->renderer, 8, item[ItemFieldIcon] | (item[ItemFieldIcon + 1] << 8), cells[i][0], cells[i][2], true, 0);
+            shown++;
+        }
+    }
+    if (!shown) {
+        char empty[16];
+        if (!ui->exe || !exeDataString(ui->exe, s->game == GameYendor2 ? 0x7D26 : 0x8053, empty, sizeof(empty))) {
+            snprintf(empty, sizeof(empty), "EMPTY");
+        }
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 259, 179, empty, 0x0F, 4, FontOpaque);
+    }
+}
+
+static void catalogOpen(GameUi *ui, unsigned lockId, bool shop) {
+    ui->catalogActive = true;
+    ui->catalogLock = lockId;
+    ui->catalogShop = shop;
+    ui->panelRunCount = 0;
+}
+
+static void catalogLeave(GameUi *ui) { /* TriggerShopExitSoundAndPersist: sound 6 (a chest that is not inexhaustible), the screen gives the pad back */
+    ui->catalogActive = false;
+    ui->panelRunCount = 0;
+    if (!ui->catalogShop) {
+        effect(ui, 6);
+    }
+    if (ui->catalogShop && ui->shopFromTalk) { /* back to the conversation */
+        ui->shopFromTalk = false;
+        ui->overlay = UiOverlayTalk;
+    }
+}
+
+/* HandleShopCatalogSlotClick: a pile shows what it added ("GOLD COINS:" over the amount), an item shows its name on the cursor. */
+static void catalogSlotClick(GameUi *ui, unsigned slot) {
+    GameSession *s = ui->session;
+    if (ui->catalogShop) { /* a merchant: an item is looked at and, if the gold allows, bought; with one held, sold back */
+        SessionShopItem stock[LockContentSlots];
+        sessionShopStock(s, ui->catalogLock, stock);
+        ui->panelRunCount = 0;
+        if (s->heldItem) {
+            if (sessionShopSell(s, ui->catalogLock) != SessionShopSold) {
+                flashWarning(ui);
+            } else {
+                effect(ui, 7);
+            }
+            return;
+        }
+        if (slot >= LockContentSlots || !stock[slot].itemId) {
+            return;
+        }
+        panelItemName(ui, stock[slot].itemId);
+        char price[12];
+        bcd4Format(stock[slot].price, price);
+        panelRun(ui, 240, 144, 0x8A, true, "VALUE:");
+        panelRun(ui, 240, 150, 0x0F, true, price);
+        if (sessionShopBuy(s, ui->catalogLock, slot) == SessionShopBought) {
+            effect(ui, 7);
+        }
+        return;
+    }
+    ChestSlot taken;
+    memset(&taken, 0, sizeof(taken));
+    SessionChestSlot result = sessionChestClick(s, ui->catalogLock, slot, &taken);
+    playPending(ui);
+    ui->panelRunCount = 0;
+    switch (result) {
+    case SessionChestSlotItem:
+        panelItemName(ui, s->heldItem);
+        break;
+    case SessionChestSlotPile: {
+        char amount[8];
+        partyInfoFormatNumber(taken.value, amount);
+        panelRun(ui, 240, 96, 0x8A, true, materialLabel(ui, taken.kind == ChestSlotGold ? 0 : taken.kind == ChestSlotOre ? 1 : 2));
+        panelRun(ui, 240, 102, 0x0F, true, amount);
+        break;
+    }
+    case SessionChestSlotRefused:
+        flashWarning(ui);
+        break;
+    default:
+        break;
+    }
+}
+
+/* Space on a lock: who opens it (a prompt), whether it is locked, its trap, then the contents. */
+static void chestOpen(GameUi *ui) {
+    GameSession *s = ui->session;
+    SessionChest chest = sessionChestOpen(s);
+    playPending(ui);
+    switch (chest.result) {
+    case SessionChestAskWho:
+        ui->pickActive = true;
+        ui->pickChest = true;
+        ui->pickPrompt = chest.askSearch ? 6 : 5;
+        break;
+    case SessionChestOpen:
+        if (chest.trapDefeated) {
+            panelMessageExe(ui, s->game == GameYendor2 ? 0x7CA8 : 0x7FD5, 2);
+        }
+        if (!chest.inexhaustible) {
+            effect(ui, 6);
+        }
+        catalogOpen(ui, chest.lockId, false);
+        break;
+    default:
+        break;
+    }
+}
+
 /* ---- the inventory screen (RunPartyInventoryScreen, yendor2.asm:14679) ---- */
 
 /* The members' expanded panels (RefreshPartyPortraits: all four, the P key; HandlePortraitClick: the one whose face was right-clicked). */
@@ -895,6 +1025,20 @@ static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipie
     ui->pickActive = false;
 }
 
+/* The member named for a pick prompt: for a chest, the one who opens it (a refusal asks again), else the recipient of the item. */
+static void pickAnswer(GameUi *ui, unsigned member) {
+    if (ui->pickChest) {
+        if (!sessionChestChooseOpener(ui->session, member)) {
+            flashWarning(ui);
+            return;
+        }
+        ui->pickActive = ui->pickChest = false;
+        chestOpen(ui);
+        return;
+    }
+    useItemOn(ui, ui->pickUser, ui->pickSlot, member);
+}
+
 static void inventoryUse(GameUi *ui, unsigned member, unsigned slot) {
     GameSession *s = ui->session;
     uint8_t *record = sessionPartyRecord(s, member);
@@ -902,8 +1046,12 @@ static void inventoryUse(GameUi *ui, unsigned member, unsigned slot) {
     if (!id || s->heldItem) {
         return;
     }
-    if (partyRestorativeForItem(s->game, id) != RestorativeNone || partyIsPercentRestorativeItem(s->game, id)) {
+    const uint8_t *itemRecord = itemCatalogRecord(&s->items, id);
+    const uint8_t *statEffect = itemRecord && (itemGetU16(itemRecord, ItemFieldFlags) & ItemFlagConsumable) ? itemEffectEntry(&s->items, itemRecord) : NULL;
+    if (partyRestorativeForItem(s->game, id) != RestorativeNone || partyIsPercentRestorativeItem(s->game, id) || (statEffect && itemEffectPairs(statEffect))) {
         ui->pickActive = true;
+        ui->pickChest = false;
+        ui->pickPrompt = 0;
         ui->pickUser = member;
         ui->pickSlot = slot;
         return;
@@ -1804,6 +1952,13 @@ static void drawScreen(GameUi *ui) {
         if (ui->passwordActive) {
             passwordDraw(ui);
         }
+        if (ui->pickActive && ui->pickPrompt) {
+            ConfirmPrompt prompt;
+            textPanelClear(&ui->renderer, false);
+            if (confirmPromptLoad(ui->exe, s->game, ui->pickPrompt, &prompt)) {
+                confirmPromptDraw(&ui->renderer, &prompt);
+            }
+        }
         if (s->shot.active) { /* HandleRangedOrCombatAction: the shoot icon is down while the shot flies */
             viewDrawPicture(&ui->renderer, 8, 2, IconShootX, IconRowY, false, 0);
         } else if (ui->pressTicks > 0) {
@@ -1830,10 +1985,6 @@ static void drawScreen(GameUi *ui) {
         }
         break;
     }
-    case UiOverlayShop:
-        memset(ui->screen, 0, sizeof(ui->screen));
-        drawShop(ui);
-        break;
     case UiOverlayTalk:
         drawTalk(ui);
         break;
@@ -1868,6 +2019,9 @@ static void drawScreen(GameUi *ui) {
 
 void gameUiDraw(GameUi *ui) {
     drawScreen(ui);
+    if (ui->catalogActive && ui->overlay != UiOverlayTalk && ui->overlay != UiOverlayDetail) {
+        catalogDraw(ui);
+    }
     if (ui->dropPrompt) {
         dropPromptDraw(ui);
     }
@@ -1892,8 +2046,9 @@ static void talkStep(GameUi *ui, const ConversationStep *step) {
         sessionTalkResolve(s, true);
     }
     if (service == SessionServiceNeedScreen && (step->flags & DialogTopicUseKey)) { /* a shop: the lock record named by the topic's argument */
-        ui->shopLock = step->arg;
-        ui->overlay = UiOverlayShop;
+        ui->overlay = UiOverlayNone; /* the conversation waits behind the merchant's screen (RunShopScreen is called from it) */
+        ui->shopFromTalk = true;
+        catalogOpen(ui, step->arg, true);
     }
 }
 
@@ -1905,7 +2060,7 @@ static void useAhead(GameUi *ui) {
     SessionInteract use = sessionInteract(s);
     switch (use.kind) {
     case SessionInteractDoor:
-        sessionLoot(s);
+        chestOpen(ui);
         break;
     case SessionInteractTravelled:
     case SessionInteractStoryEvent:
@@ -2233,26 +2388,6 @@ static bool dialogKey(GameUi *ui, UiKey key) {
     return dialogAct(ui, option);
 }
 
-static bool shopKey(GameUi *ui, UiKey key) { /* 1-8 buy a slot, S sells the cursor item back, 1-4 stow it when the hand is full, Escape leaves */
-    GameSession *s = ui->session;
-    if (key == UiKeyEscape) {
-        if (s->heldItem) {
-            sessionStowHeld(s, 0);
-        }
-        ui->overlay = UiOverlayTalk;
-    } else if (key == 's') {
-        sessionShopSell(s, ui->shopLock);
-    } else if (key >= '1' && key <= '8') {
-        unsigned n = (unsigned)(key - '1');
-        if (s->heldItem && n < 4) {
-            sessionStowHeld(s, n);
-        } else {
-            sessionShopBuy(s, ui->shopLock, n);
-        }
-    }
-    return true;
-}
-
 static void talkChoose(GameUi *ui, unsigned number) { /* topic `number` of the list (0 = the last one: the way out) */
     GameSession *s = ui->session;
     ConversationStep step = sessionTalkChoose(s, number);
@@ -2413,11 +2548,24 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     if (ui->passwordActive) {
         return passwordKey(ui, key);
     }
-    if (ui->pickActive) { /* the member the item is used on: F1-F4 name one, Escape gives up */
+    if (ui->pickActive) { /* the member the item is used on (or who opens the chest): F1-F4 name one, Escape gives up */
         if (key >= UiKeyF1 && key <= UiKeyF4 && sessionPartyRecord(s, (unsigned)(key - UiKeyF1))) {
-            useItemOn(ui, ui->pickUser, ui->pickSlot, (unsigned)(key - UiKeyF1));
+            pickAnswer(ui, (unsigned)(key - UiKeyF1));
         } else if (key == UiKeyEscape) {
-            ui->pickActive = false;
+            ui->pickActive = ui->pickChest = false;
+        }
+        return true;
+    }
+    if (ui->catalogActive) { /* RunShopScreen's keys: Space leaves, P the inventory, 1-4 the member bars, F1-F4 the sheets; the rest is ignored */
+        if (key == ' ') {
+            catalogLeave(ui);
+        } else if (key == 'p') {
+            inventoryOpen(ui, inventoryAllMask(ui));
+        } else if (key >= '1' && key <= '4') {
+            partyInfoShow(ui, (unsigned)(key - '1'), 4);
+        } else if (key >= UiKeyF1 && key <= UiKeyF4) {
+            ui->hero = (unsigned)(key - UiKeyF1);
+            ui->overlay = UiOverlayDetail;
         }
         return true;
     }
@@ -2489,9 +2637,6 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     if (ui->overlay == UiOverlayRoster) {
         return rosterKey(ui, key);
     }
-    if (ui->overlay == UiOverlayShop) {
-        return shopKey(ui, key);
-    }
     if (ui->overlay == UiOverlayTalk) {
         return talkKey(ui, key);
     }
@@ -2502,7 +2647,9 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
         return alchemyKey(ui, key);
     }
     if (ui->overlay == UiOverlayDolls) {
-        if (key == 'p' || (key == UiKeyEscape && !s->heldItem)) {
+        if (key == ' ' && ui->catalogActive && ui->catalogShop && s->heldItem) { /* TrySellItemForGold: the item on the cursor is sold to the merchant */
+            catalogSlotClick(ui, 0);
+        } else if (key == 'p' || (key == UiKeyEscape && !s->heldItem)) {
             ui->overlay = UiOverlayNone;
             ui->panelRunCount = 0;
             effect(ui, 1);
@@ -2739,18 +2886,6 @@ static bool talkClick(GameUi *ui, int x, int y) {
     return true;
 }
 
-static bool shopClick(GameUi *ui, int x, int y) { /* the stock rows of drawShop, and the cursor line that sells the item back */
-    for (int i = 0; i < 8; i++) {
-        if (inRect(x, y, 8, 30 + 8 * i, 300, 37 + 8 * i)) {
-            return press(ui, '1' + i);
-        }
-    }
-    if (ui->session->heldItem && inRect(x, y, 8, 110, 300, 117)) {
-        return press(ui, 's');
-    }
-    return true;
-}
-
 /* The alchemy screen's click regions (the table at DS:0x67AC): the 13 rows, 14 the close button, 15 / 16 the arrows; a portrait (the party panel table's regions 1, 11, 21, 31) names a member. */
 static bool alchemyClick(GameUi *ui, int x, int y) {
     GameKind game = ui->session->game;
@@ -2795,9 +2930,53 @@ static bool alchemyClick(GameUi *ui, int x, int y) {
     return true;
 }
 
+/* The contents screen's clicks: a slot works it, the view drops the cursor item (the right button there leaves), the belt, the faces and the party panels work as on the main screen. */
+static bool catalogClick(GameUi *ui, int x, int y, bool right) {
+    GameSession *s = ui->session;
+    GameKind game = s->game;
+    unsigned region = uiRegionHit(game, UiRegionsDungeonMain, x, y);
+    if (right) {
+        if (region == 1) {
+            catalogLeave(ui);
+        } else if (region == 6) {
+            unsigned panel = uiRegionHit(game, UiRegionsPartyPanels, x, y), member = panel / 10;
+            if (panel % 10 == 1 && member < 4 && sessionPartyRecord(s, member)) {
+                inventoryOpen(ui, 1u << member);
+            }
+        }
+        return true;
+    }
+    if (region == 5) {
+        unsigned slot = uiRegionHit(game, UiRegionsCatalogSlots, x, y);
+        if (slot) {
+            catalogSlotClick(ui, slot - 1);
+        }
+    } else if (region == 1) {
+        dropStart(ui);
+    } else if (region == 2) {
+        panelClick(ui, x, y);
+    } else if (region == 6) {
+        unsigned panel = uiRegionHit(game, UiRegionsPartyPanels, x, y), member = panel / 10, part = panel % 10;
+        if (panel && member < 4 && sessionPartyRecord(s, member)) {
+            if (s->heldItem) {
+                part == 1 ? dropOnPortrait(ui, member) : flashWarning(ui);
+            } else if (part == 1) {
+                ui->hero = member;
+                ui->overlay = UiOverlayDetail;
+            } else if (partyInfoKindForRegion(part) >= 0) {
+                partyInfoShow(ui, member, partyInfoKindForRegion(part));
+            }
+        }
+    }
+    return true;
+}
+
 static bool mainClick(GameUi *ui, int x, int y, bool right) {
     GameSession *s = ui->session;
     GameKind game = s->game;
+    if (ui->catalogActive) { /* RunShopScreen's own clicks (below), not the walk pad's */
+        return catalogClick(ui, x, y, right);
+    }
     if (right) { /* the right button on the view uses what is ahead (the same as Space) */
         return uiRegionHit(game, UiRegionsDungeonMain, x, y) == 1 ? press(ui, ' ') : true;
     }
@@ -2868,7 +3047,12 @@ static bool dollsClick(GameUi *ui, int x, int y, bool right) {
         }
         return true;
     }
-    if (region == 1) {
+    if (region == 5 && ui->catalogActive) { /* the chest's slots under the panels */
+        unsigned slot = uiRegionHit(game, UiRegionsCatalogSlots, x, y);
+        if (slot) {
+            catalogSlotClick(ui, slot - 1);
+        }
+    } else if (region == 1) {
         inventorySlotClick(ui, x, y);
     } else if (region == 2) { /* the belt works here too */
         panelClick(ui, x, y);
@@ -2897,9 +3081,9 @@ static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
     if (ui->pickActive) { /* a face is the answer; the right button gives up */
         unsigned panel = uiRegionHit(ui->session->game, UiRegionsPartyPanels, x, y), member = panel / 10;
         if (right) {
-            ui->pickActive = false;
+            ui->pickActive = ui->pickChest = false;
         } else if (panel % 10 == 1 && member < 4 && sessionPartyRecord(ui->session, member)) {
-            useItemOn(ui, ui->pickUser, ui->pickSlot, member);
+            pickAnswer(ui, member);
         }
         return true;
     }
@@ -2935,8 +3119,6 @@ static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
         return dialogClick(ui, x, y);
     case UiOverlayTalk:
         return talkClick(ui, x, y);
-    case UiOverlayShop:
-        return shopClick(ui, x, y);
     case UiOverlayAlchemy:
         return alchemyClick(ui, x, y);
     case UiOverlayLocalMap:

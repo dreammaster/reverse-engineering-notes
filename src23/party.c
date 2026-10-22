@@ -242,6 +242,24 @@ void partyApplyIconBarStatDelta(uint8_t *record, GameKind game, uint16_t modeFla
 
 enum { PartyMultiStatEffectSplit = 0x32 };
 
+void partyUseStatItem(uint8_t *record, const uint8_t *effect) {
+    if (!effect) {
+        return;
+    }
+    unsigned pairs = itemEffectPairs(effect);
+    for (unsigned i = 0; i < pairs; i++) {
+        unsigned field = itemEffectField(effect, i);
+        uint16_t amount = itemEffectAmount(effect, i);
+        if (partyGetU16(record, field) == 0) {
+            continue;
+        }
+        unsigned value = (uint16_t)(partyGetU16(record, field) + amount);
+        unsigned cap = field == 0x52 || field == 0x92 || field == 0x54 || field == 0x94 ? 9999 : 999;
+        partySetU16(record, field, (uint16_t)(value > cap ? cap : value));
+    }
+    partyRefreshCarryCapacityAndAttributeBonuses(record);
+}
+
 void partyApplyMultiStatEffect(uint8_t *record, const uint8_t *effect) {
     if (!effect) {
         return;

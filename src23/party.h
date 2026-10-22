@@ -296,6 +296,13 @@ void partyApplyIconBarStatDelta(uint8_t *record, GameKind game, uint16_t modeFla
  * On addition (both ranges), the result is capped at 999.
  */
 void partyApplyMultiStatEffect(uint8_t *record, const uint8_t *effect);
+
+/*
+ * The consumable's side of the same table (ApplyMultiStatEffect, yendor2.asm:48449: a potion that raises stats): each (field, amount) pair adds to a field that already holds something -- the
+ * hit points and magic points (+0x52, +0x92, +0x54, +0x94) are capped at 9999, every other field at 999 (ClampStatEffectValue) -- then the carry capacity and the attribute bonuses are refreshed.
+ * The caller refuses a recipient who cannot act and spends the charge.
+ */
+void partyUseStatItem(uint8_t *record, const uint8_t *effect);
 void partyRemoveMultiStatEffect(uint8_t *record, const uint8_t *effect);
 
 /*

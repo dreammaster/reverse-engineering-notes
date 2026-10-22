@@ -948,6 +948,80 @@ static void testInventoryUi(GameKind game, const char *envName, const char *defa
     check("a click on a face heals that member and the potion is used up", !ui.pickActive && partyGetStat(patient, PartyStatHitPoints) == partyGetStatMax(patient, PartyStatHitPoints) &&
                                                                           itemSlotId(inventoryGroupSlot(partyInventoryGroup(giver, PartyGroupMain), 1)) == 0);
     gameUiKey(&ui, 'p', false);
+
+    /* a chest: Space asks who opens it, the contents show in the walk pad's place, the slots work, Space leaves */
+    if (game == GameYendor2) {
+        s->heldItem = 0;
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 4, 0);
+        s->x = 163;
+        s->y = 43;
+        s->facing = SaveFacingNorth;
+        sessionRebuild(s);
+        gameUiKey(&ui, ' ', false);
+        check("Space at a chest asks who opens it (the crosshair)", ui.pickActive && ui.pickChest && gameUiCursorShown(&ui));
+        gameUiKey(&ui, UiKeyF1, false);
+        check("a member named opens it: the contents screen is up", !ui.pickActive && ui.catalogActive);
+        gameUiDraw(&ui);
+        check("the eight slots are drawn where the walk pad was", countColour(ui.screen, 241, 160, 311, 194, 4) < 72 * 35);
+        ChestSlot slots[LockContentSlots];
+        unsigned full = sessionChestSlots(s, ui.catalogLock, slots);
+        check("the chest holds something", full > 0);
+        unsigned first = 0;
+        while (first < LockContentSlots && !slots[first].itemId) {
+            first++;
+        }
+        int sx = 245 + 18 * (int)(first % 4), sy = 164 + 19 * (int)(first / 4);
+        gameUiClick(&ui, sx, sy, false);
+        bool pile = slots[first].kind != ChestSlotItem;
+        check("a click on a slot takes it: a pile joins the counters, an item rides the cursor", pile ? s->heldItem == 0 : s->heldItem == slots[first].itemId);
+        check("... and the slot is empty", sessionChestSlots(s, ui.catalogLock, slots) == full - 1);
+        if (!pile) {
+            gameUiClick(&ui, sx, sy, false);
+            check("a click on the empty slot with that item puts it back", s->heldItem == 0 && sessionChestSlots(s, ui.catalogLock, slots) == full);
+            gameUiClick(&ui, sx, sy, false);
+            gameUiClick(&ui, 20, 160, false); /* the first member's face */
+            check("the item dropped on a face is stowed", s->heldItem == 0);
+        }
+        gameUiKey(&ui, ' ', false);
+        check("Space leaves the contents screen", !ui.catalogActive);
+        gameUiKey(&ui, ' ', false);
+        check("the member who opened it is remembered: no second question", !ui.pickActive && ui.catalogActive);
+        gameUiClick(&ui, 100, 60, true); /* the right button on the view */
+        check("the right button on the view leaves it too", !ui.catalogActive);
+    }
+
+    /* a merchant's screen: the stock in the same eight slots, the gold in the header, a click buys, a click with the item in hand sells it back */
+    unsigned lockId = 0;
+    SessionShopItem stock[LockContentSlots];
+    for (unsigned t = 0; t < s->dialogs.topicCount && !lockId; t++) {
+        const uint8_t *topic = dialogTopic(&s->dialogs, t);
+        if (topic && (dialogGetU16(topic, DialogTopicFlags) & DialogTopicUseKey)) {
+            unsigned id = dialogTopicU16(&s->dialogs, topic, DialogTopicArg);
+            lockId = sessionShopStock(s, id, stock) >= 2 ? id : 0;
+        }
+    }
+    if (lockId) {
+        s->heldItem = 0;
+        sessionShopStock(s, lockId, stock);
+        ui.catalogActive = true;
+        ui.catalogShop = true;
+        ui.catalogLock = lockId;
+        bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 9999);
+        bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 9999);
+        unsigned slot = 0;
+        while (slot < LockContentSlots && !stock[slot].itemId) {
+            slot++;
+        }
+        int sx = 245 + 18 * (int)(slot % 4), sy = 164 + 19 * (int)(slot / 4);
+        gameUiDraw(&ui);
+        gameUiClick(&ui, sx, sy, false);
+        check("a click on a stocked slot buys it (the item rides the cursor) and shows its value", s->heldItem == stock[slot].itemId && ui.panelRunCount >= 5);
+        check("... the stock is not used up", sessionShopStock(s, lockId, stock) >= 2 && stock[slot].itemId != 0);
+        gameUiClick(&ui, sx, sy, false);
+        check("a click with the item in hand sells it back", s->heldItem == 0);
+        gameUiKey(&ui, ' ', false);
+        check("Space leaves the merchant's screen", !ui.catalogActive);
+    }
     sessionFree(s);
     free(world);
 }

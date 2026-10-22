@@ -42,4 +42,7 @@ void chestSlots(const LockRecord *lock, uint8_t takenMask, const ItemCatalog *ca
 /* Takes slot `slot` (0-7): sets its bit in the lock's persisted byte and, for a pile, adds the amount to the matching counter. False for an empty or taken slot. */
 bool chestTake(SaveGame *save, unsigned lockId, const LockRecord *lock, const ItemCatalog *catalog, unsigned slot, ChestSlot *taken);
 
+/* Putting an item back into a slot that was taken (the slot reads full again; the item itself is not stored: it shows the record's original content, an original quirk). */
+void chestRestore(SaveGame *save, unsigned lockId, unsigned slot);
+
 #endif

@@ -1092,6 +1092,16 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
     bool done;
     const uint8_t *itemRec = itemCatalogRecord(&s->items, id);
     const uint8_t *target = itemRec ? itemTargetEntry(&s->items, itemRec) : NULL;
+    /* HandleGameCommand's first test: an item with stat bonuses is a stat potion (ApplyMultiStatEffect): the recipient's fields rise, the charge is spent */
+    const uint8_t *statEffect = itemRec && (itemGetU16(itemRec, ItemFieldFlags) & ItemFlagConsumable) ? itemEffectEntry(&s->items, itemRec) : NULL;
+    if (statEffect && itemEffectPairs(statEffect)) {
+        if (partyGetU16(recipient, PartyFieldStatusFlags) & PartyStatusIncapacitated) {
+            return SessionUseNoEffect;
+        }
+        partyUseStatItem(recipient, statEffect);
+        partyConsumeItemCharge(user, &s->items, slot);
+        return SessionUseDone;
+    }
     if (target && itemTargetKind(itemRec) == ItemTargetConsumable && (itemTargetWord(target, 0) & 4) && !(itemTargetWord(target, ItemTargetSlotFlags) & 0x7E00)) {
         /* ExamineTarget: a key to a destination (KEY OF PORT HOPE..., ANKH OF PORTALS, ATHANEUM KEY): the road opens when its gate flag is set */
         uint8_t *globalSlots = beltSlots(s);
@@ -2187,6 +2197,106 @@ SessionBelt sessionBeltClick(GameSession *s, unsigned slot) {
     }
     itemSlotSet(cell, heldId, heldExtra);
     return id ? SessionBeltSwapped : SessionBeltPlaced;
+}
+
+SessionChest sessionChestOpen(GameSession *s) {
+    SessionChest out;
+    memset(&out, 0, sizeof(out));
+    WorldObjectProbeResult probe = worldObjectProbeFacingTile(&s->objects, s->game, s->x, s->y, s->facing);
+    LockRecord lock;
+    if (probe.outcome == WorldObjectProbeNone || !(probe.object.flags & WorldObjectFlagDoor) || !lockCatalogRecord(&s->locks, probe.object.value, &lock)) {
+        return out;
+    }
+    out.lockId = probe.object.value;
+    out.inexhaustible = (lock.flags & 2) != 0;
+    unsigned id = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 4);
+    uint8_t *opener = id ? saveGamePartyRecordById(&s->save, id) : NULL;
+    if (opener && (partyGetU16(opener, PartyFieldStatusFlags) & PartyStatusIncapacitated)) { /* he or she cannot: the beep, and the role is free again */
+        s->pendingSound = RefusalSound;
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 4, 0);
+        opener = NULL;
+    }
+    if (!opener) {
+        out.result = SessionChestAskWho;
+        out.askSearch = out.inexhaustible;
+        return out;
+    }
+    unsigned bit = interactWorldObjectBitIndex(s->game, &probe.object);
+    bool already = interactBitmapTest(&s->save, bit);
+    if (lock.flags & LockFlagTrapped) {
+        if (!already) {
+            interactBitmapSet(&s->save, bit);
+            CombatSavingThrowTrapOutcome trap = combatApplySavingThrowTrap(lock.price, opener, &s->save, s->game, &s->rng);
+            out.trapDefeated = lock.price != 0 && trap == CombatSavingThrowTrapNone;
+            combatCheckWipe(s);
+        }
+    } else if (!already) {
+        lockStatusLoad(s, probe.worldCol, probe.worldRow);
+        out.result = SessionChestLocked;
+        return out;
+    }
+    out.result = SessionChestOpen;
+    return out;
+}
+
+bool sessionChestChooseOpener(GameSession *s, unsigned memberSlot) {
+    const uint8_t *member = sessionPartyRecord(s, memberSlot);
+    if (!member || (partyGetU16(member, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+        return false;
+    }
+    saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 4, saveGetPartySlot(&s->save, memberSlot));
+    return true;
+}
+
+unsigned sessionChestSlots(GameSession *s, unsigned lockId, ChestSlot out[LockContentSlots]) {
+    LockRecord lock;
+    memset(out, 0, sizeof(ChestSlot) * LockContentSlots);
+    if (!lockCatalogRecord(&s->locks, lockId, &lock)) {
+        return 0;
+    }
+    chestSlots(&lock, chestTakenMask(&s->save, lockId), &s->items, out);
+    unsigned count = 0;
+    for (unsigned i = 0; i < LockContentSlots; i++) {
+        count += out[i].itemId != 0;
+    }
+    return count;
+}
+
+SessionChestSlot sessionChestClick(GameSession *s, unsigned lockId, unsigned slot, ChestSlot *taken) {
+    LockRecord lock;
+    ChestSlot slots[LockContentSlots];
+    if (slot >= LockContentSlots || !lockCatalogRecord(&s->locks, lockId, &lock)) {
+        return SessionChestSlotNothing;
+    }
+    chestSlots(&lock, chestTakenMask(&s->save, lockId), &s->items, slots);
+    if (!s->heldItem) {
+        ChestSlot got;
+        if (!slots[slot].itemId || !chestTake(&s->save, lockId, &lock, &s->items, slot, &got)) {
+            return SessionChestSlotNothing;
+        }
+        if (taken) {
+            *taken = got;
+        }
+        if (got.kind == ChestSlotItem) {
+            s->heldItem = got.itemId;
+            s->heldExtra = got.value;
+            return SessionChestSlotItem;
+        }
+        s->pendingSound = 7;
+        return SessionChestSlotPile;
+    }
+    /* putting an item back: the first taken slot whose original item is the same */
+    ChestSlot original[LockContentSlots];
+    chestSlots(&lock, 0, &s->items, original);
+    uint8_t mask = chestTakenMask(&s->save, lockId);
+    for (unsigned i = 0; i < LockContentSlots; i++) {
+        if ((mask & (0x80u >> i)) && original[i].itemId == s->heldItem) {
+            chestRestore(&s->save, lockId, i);
+            s->heldItem = s->heldExtra = 0;
+            return SessionChestSlotPutBack;
+        }
+    }
+    return SessionChestSlotRefused;
 }
 
 unsigned sessionLoot(GameSession *s) {
