@@ -74,3 +74,33 @@
 07DBB storeViewPosition junk=pf,zf
 07DC7 partyMapPosition junk=pf,zf
 07DE0 toViewPosition junk=pf
+# text engine and keyboard (ports/ports_text.cpp)
+8E90 waitForKeypress
+8EAD waitSpaceOrEnter
+8EF9 checkKeypressCaseSensitive junk=bl,bp,cl,di,dl,pf,si,zf scratch=465C-4660
+8EFE checkKeypress junk=bl,bp,cl,di,dl,pf,si,zf scratch=465C-4660
+9004 pollSpeedKeys junk=pf,zf
+769C writeNumberShort junk=al,bl,dl,pf,si,zf
+76A2 writeNumberLeft junk=al,bl,dl,pf,si,zf
+76C5 writeSpaceNumber junk=al,bl,dl,pf,si,zf
+76D0 writeNumber16 junk=al,bl,dl,pf,si,zf
+76A8 setNumberValueShort junk=al,bl,cf,dl,pf,sf,si
+76B6 setNumberValueWord junk=al,bl,cf,dl,pf,sf,si
+7857 setWriteCharacterFn2 junk=ah,al
+785E setWriteCharacterFn
+786E writeString junk=ah,al,bl,di,dl,pf,sf,si
+7877 writeString2 junk=ah,al,bl,di,dl,pf,sf,si
+78A0 printMapMessage junk=al,bl,ch,cl,di,dl,es,pf,si,zf
+78A3 writeEncodedText junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf
+71B9 writeMemberName junk=al,bl,di,dl,pf,si
+9083 saveRectBounds junk=al,dl,pf,sp,zf
+9060 restoreRectBounds junk=al,dl,pf,sp,zf scratch=4672-4677
+9727 drawInfoWindow junk=al,bl,bp,cl,di,dl,es,pf,si,zf
+9770 drawRosterWindow junk=al,bl,bp,cl,di,dl,es,pf,si,zf
+97AE clearTextArea junk=al,bl,cl,di,dl,es,si
+9812 drawBox junk=ah,al,bl,bp,cl,di,dl,es,pf,si,zf
+9E2A setInverseText
+9E30 clearInverseText
+A0C5 scrollLine junk=al,dl,es,pf,si,zf
+07D8 scrollWindowUp junk=al,bl,ch,cl,di,dl,es,pf,si,zf
+06C9 eraseToRight junk=al,bl,ch,cl,di,dl,es,pf,zf

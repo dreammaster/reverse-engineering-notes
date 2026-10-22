@@ -48,6 +48,7 @@ struct Sys {
 void boot(Machine &m, const Bytes &image, const std::string &gameDir, Regs &r);   // maps the unpacked image (1000:0), sets up the IVT and the start registers
 void run(Machine &m, Regs &r);                                  // runs the program from its entry point
 void deliverTimer(Machine &m, Regs &r);
+void installCallbacks(Machine &m);   // callLegacy / onPortraitTick: lets ported routines call generated ones
 void f_10B6(Machine &m, Regs &r);
 
 void unknownTarget(Machine &m, Regs &r, uint16_t target);   // indirect target that is no function start: logged, run on the interpreter
@@ -66,7 +67,7 @@ void farJump(Machine &m, Regs &r, uint16_t seg, uint16_t off);         // far in
 enum Junk : uint32_t {
 	j_al = 1u << 0, j_ah = 1u << 1, j_bl = 1u << 2, j_bh = 1u << 3, j_cl = 1u << 4, j_ch = 1u << 5, j_dl = 1u << 6, j_dh = 1u << 7,
 	j_si = 1u << 8, j_di = 1u << 9, j_bp = 1u << 10, j_cf = 1u << 11, j_zf = 1u << 12, j_sf = 1u << 13, j_pf = 1u << 14, j_of = 1u << 15,
-	j_af = 1u << 16, j_df = 1u << 17,
+	j_af = 1u << 16, j_df = 1u << 17, j_sp = 1u << 18,
 	j_ax = j_al | j_ah, j_bx = j_bl | j_bh, j_cx = j_cl | j_ch, j_dx = j_dl | j_dh,
 };
 struct PortInfo { uint16_t address; const char *name; uint32_t junk; const uint16_t *scratch; };   // scratch: data segment offset ranges (lo, hi pairs, 0xFFFF end) the original uses as temporaries

@@ -370,6 +370,24 @@ void interpret(Machine &m, Regs &r, uint16_t entry) {
 	fromCpu(c, r);
 }
 
+void installCallbacks(Machine &m) {
+	m.callLegacy = [&m](uint16_t address, X86Regs &x) {
+		Sys &sy = *m.sys;
+		Regs t = sy.current ? *sy.current : Regs();
+		t.a.b.l = x.al; t.a.b.h = x.ah; t.b.b.l = x.bl; t.b.b.h = x.bh; t.c.b.l = x.cl; t.c.b.h = x.ch; t.d.b.l = x.dl; t.d.b.h = x.dh;
+		t.si = x.si; t.di = x.di; t.bp = x.bp; t.cf = x.cf; t.zf = x.zf; t.sf = x.sf;
+		callGenerated(m, t, address);
+		x.al = t.a.b.l; x.ah = t.a.b.h; x.bl = t.b.b.l; x.bh = t.b.b.h; x.cl = t.c.b.l; x.ch = t.c.b.h; x.dl = t.d.b.l; x.dh = t.d.b.h;
+		x.si = t.si; x.di = t.di; x.bp = t.bp; x.cf = t.cf; x.zf = t.zf; x.sf = t.sf;
+	};
+	m.onPortraitTick = [&m]() {   // WL.EXE 190F8: the animated location portrait, called from the text engine's wait loops
+		Sys &sy = *m.sys;
+		Regs t = sy.current ? *sy.current : Regs();
+		callGenerated(m, t, 0x90F8);
+		return t.a.b.l;
+	};
+}
+
 void boot(Machine &m, const Bytes &image, const std::string &gameDir, Regs &r) {
 	m.sys = std::make_shared<Sys>();
 	Sys &s = *m.sys;
@@ -385,20 +403,7 @@ void boot(Machine &m, const Bytes &image, const std::string &gameDir, Regs &r) {
 	// IVT -> a single IRET at F000:0000
 	m.mem[0xF0000] = 0xCF;
 	for (int i = 0; i < 256; ++i) { ww(m, 0, uint16_t(i * 4), 0); ww(m, 0, uint16_t(i * 4 + 2), 0xF000); }
-	m.callLegacy = [&m](uint16_t address, X86Regs &x) {
-		Sys &sy = *m.sys;
-		Regs t = sy.current ? *sy.current : Regs();
-		t.a.b.l = x.al; t.a.b.h = x.ah; t.b.b.l = x.bl; t.b.b.h = x.bh; t.c.b.l = x.cl; t.c.b.h = x.ch; t.d.b.l = x.dl; t.d.b.h = x.dh;
-		t.si = x.si; t.di = x.di; t.bp = x.bp; t.cf = x.cf; t.zf = x.zf; t.sf = x.sf;
-		callGenerated(m, t, address);
-		x.al = t.a.b.l; x.ah = t.a.b.h; x.bl = t.b.b.l; x.bh = t.b.b.h; x.cl = t.c.b.l; x.ch = t.c.b.h; x.dl = t.d.b.l; x.dh = t.d.b.h;
-		x.si = t.si; x.di = t.di; x.bp = t.bp; x.cf = t.cf; x.zf = t.zf; x.sf = t.sf;
-	};
-	m.onPortraitTick = [&m]() {   // WL.EXE 190F8: the animated location portrait, called from the text engine's wait loops
-		Sys &sy = *m.sys;
-		Regs t = sy.current ? *sy.current : Regs();
-		callGenerated(m, t, 0x90F8);
-	};
+	installCallbacks(m);
 	r = Regs();
 	r.cs = 0x1000; r.ds = r.es = 0x0FF0; r.ss = 0x3900; r.sp = 0x0200;
 	r.ifl = true;

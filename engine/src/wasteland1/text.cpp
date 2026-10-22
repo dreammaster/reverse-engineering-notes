@@ -1,5 +1,6 @@
 #include "wasteland1/text.h"
 #include "wasteland1/globals.h"
+#include "wasteland1/legacy.h"
 #include "wasteland1/rules.h"
 #include "wasteland1/ui.h"
 #include <algorithm>
@@ -59,9 +60,9 @@ void pollSpeedKeys(Machine &m) {   // 19004
 
 uint8_t checkKeypress(Machine &m, uint8_t caseDelta) {   // 18EFE
 	m.d8(g::keyCaseDelta) = caseDelta;
-	if (m.onPortraitTick) m.onPortraitTick();            // 190F8
+	const uint8_t tick = m.onPortraitTick ? m.onPortraitTick() : 0;   // 190F8
 	hintOverlay(m);
-	Rules(m).rngByte(caseDelta);                         // the generator is stirred on every poll
+	Rules(m).rngByte(tick);                              // the generator is stirred on every poll with whatever 190F8 leaves in al
 	uint8_t al = 0;
 	bool haveKey = false;
 	if (m.d8(g::macroPlaySlot) != 0) {   // playing back a recorded macro
@@ -652,9 +653,9 @@ uint16_t lineOffsetOf(const Machine &m, int line) { return m.d16(uint16_t(g::gfx
 
 void clearScrollRow(Machine &m, uint8_t line) {   // 10879
 	const uint16_t di = lineOffsetOf(m, line);
-	for (int bl = m.d8(g::rectRightCol); bl >= 0; --bl) {
+	for (int bl = m.d8(g::rectRightCol);;) {
 		m.ega.write(0xA0000u + uint16_t(di + bl), 0);
-		if (bl < m.d8(g::rectLeftCol)) break;
+		if (--bl < 0 || bl < m.d8(g::rectLeftCol)) break;
 	}
 }
 
@@ -686,9 +687,9 @@ void scrollWindowUp(Machine &m) {
 	selectPlaneForRead(m);
 	do {
 		const uint16_t di = lineOffsetOf(m, m.d8(0x8FAF)), si = lineOffsetOf(m, m.d8(0x8FAE));
-		for (int bl = m.d8(g::rectRightCol); bl >= 0; --bl) {
+		for (int bl = m.d8(g::rectRightCol);;) {
 			m.ega.write(0xA0000u + uint16_t(di + bl), m.ega.read(0xA0000u + uint16_t(si + bl)));
-			if (bl < m.d8(g::rectLeftCol)) break;
+			if (--bl < 0 || bl < m.d8(g::rectLeftCol)) break;
 		}
 		++m.d8(0x8FAE);
 		++m.d8(0x8FAF);
@@ -758,7 +759,10 @@ void scrollLine(Machine &m) {   // 1A0C5: moves to the next text row, scrolling 
 
 namespace wl {
 
-void morePrompt(Machine &) {}   // 1A1EF: the "MORE" button of the title page paging (not ported yet)
+void morePrompt(Machine &m) {   // 1A1EF: the "MORE" button of the paged text (not ported yet)
+	X86Regs x;
+	legacy::call(m, 0xA1EF, x);
+}
 
 namespace {
 

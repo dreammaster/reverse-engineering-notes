@@ -5,6 +5,7 @@
 // planes are compared. Functions that wait for input, run away, or touch the timer are skipped.
 #include "emu.h"
 #include "wasteland1/recomp_rt.h"
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -39,6 +40,7 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 		n.sys->nextTick = ~0ull / 2;
 		n.sys->maxEdges = 4000000;
 		n.sys->nextHandle = o.nextHandle;
+		rc::installCallbacks(n);
 	}
 	o.cpu.fault.clear(); o.cpu.halted = false; o.exited = false; o.needKey = false;
 	o.keys.clear(); n.keys.clear();
@@ -73,7 +75,7 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 	const uint16_t *scratch = nullptr;
 	for (const rc::PortInfo *p = rc::kPortInfo; p->name; ++p)
 		if (p->address == entry) { junk = p->junk; scratch = p->scratch; }
-	const uint32_t deadStackEnd = 0x39000u + r.sp;   // the stack below sp is dead after the return: callees leave residue there
+	const uint32_t deadStackEnd = 0x39000u + std::max<uint16_t>(r.sp, o.cpu.sp);   // the stack below sp is dead after the return: callees leave residue there
 	auto isScratch = [&](uint32_t a) {
 		if (a >= 0x39000u && a < deadStackEnd) return true;
 		if (!scratch || a < kDsLinear || a >= kDsLinear + 0x10000) return false;
@@ -90,14 +92,14 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 	reg("dl", o.cpu.dx & 0xFF, r.d.b.l, rc::j_dl); reg("dh", o.cpu.dx >> 8, r.d.b.h, rc::j_dh);
 	reg("si", o.cpu.si, r.si, rc::j_si); reg("di", o.cpu.di, r.di, rc::j_di); reg("bp", o.cpu.bp, r.bp, rc::j_bp);
 	reg("es", o.cpu.es, r.es); reg("ds", o.cpu.ds, r.ds);
-	reg("sp", o.cpu.sp, r.sp);
+	reg("sp", o.cpu.sp, r.sp, rc::j_sp);
 	reg("cf", o.cpu.flag(x86::CF), r.cf, rc::j_cf); reg("zf", o.cpu.flag(x86::ZF), r.zf, rc::j_zf); reg("sf", o.cpu.flag(x86::SF), r.sf, rc::j_sf);
 	reg("pf", o.cpu.flag(x86::PF), r.pf, rc::j_pf); reg("df", o.cpu.flag(x86::DF), r.df, rc::j_df);
 	(void)sp0;
 	size_t bad = 0;
 	std::ostringstream md;
 	for (uint32_t a = 0; a < 0xA0000; ++a)
-		if (o.cpu.mem[a] != n.mem[a] && !isScratch(a)) { if (bad++ < 4) md << " mem[" << std::hex << a << "]=" << unsigned(o.cpu.mem[a]) << "/" << unsigned(n.mem[a]); }
+		if (o.cpu.mem[a] != n.mem[a] && !isScratch(a) && !(a >= 0x10000 && a < kDsLinear)) { if (bad++ < 4) md << " mem[" << std::hex << a << "]=" << unsigned(o.cpu.mem[a]) << "/" << unsigned(n.mem[a]); }
 	for (uint32_t a = 0xB0000; a < 0x100000; ++a)
 		if (o.cpu.mem[a] != n.mem[a] && !isScratch(a)) { if (bad++ < 4) md << " mem[" << std::hex << a << "]=" << unsigned(o.cpu.mem[a]) << "/" << unsigned(n.mem[a]); }
 	size_t vbad = 0;

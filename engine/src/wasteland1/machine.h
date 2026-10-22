@@ -47,7 +47,7 @@ struct Machine {
 	std::function<void()> onIdle;           // called while a routine waits for input or time (lets the front end run)
 	std::shared_ptr<rc::Sys> sys;           // DOS/BIOS state of the recompiled program (see recomp_rt.h)
 	std::function<void(uint16_t, X86Regs &)> callLegacy;   // runs the original routine at the given offset of the code segment
-	std::function<void()> onPortraitTick;   // the location portrait animation step (WL.EXE 190F8), called from input/scroll loops
+	std::function<uint8_t()> onPortraitTick;   // the location portrait animation step (WL.EXE 190F8, returns its al), called from input/scroll loops
 
 	// data segment accessors (offset relative to DS)
 	uint8_t &d8(uint16_t off) { return mem[kDsLinear + off]; }
