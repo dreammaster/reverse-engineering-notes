@@ -207,10 +207,10 @@ loc_1018B:                              ; CODE XREF: start+186↑j
                                         ; AL = mode
                 mov     ax, 125Fh
                 mov     dx, 11B6h
-                call    sub_11364
+                call    execProgram     ; EXEC PKUNZIP.EXE
                 mov     ax, 12AFh
                 mov     dx, 11B6h
-                call    sub_11364
+                call    execProgram     ; EXEC PKUNZIP.EXE
                 mov     dx, 1222h
                 mov     cx, 0
                 mov     ah, 3Ch
@@ -225,7 +225,7 @@ loc_1018B:                              ; CODE XREF: start+186↑j
                                         ; DS:DX -> ASCIZ filename (may include drive and path)
                 mov     ax, 12D0h
                 mov     dx, 11B6h
-                call    sub_11364
+                call    execProgram     ; EXEC PKUNZIP.EXE
                 call    sub_10D25
                 mov     dx, 0CC1h
                 mov     byte_12758, 32h ; '2'
@@ -290,7 +290,7 @@ loc_10241:                              ; CODE XREF: start+234↑j
 
 loc_1024E:                              ; CODE XREF: start+249↑j
                 mov     dx, 11B6h
-                call    sub_11364
+                call    execProgram     ; EXEC PKUNZIP.EXE
                 mov     dx, 0D1Bh
                 mov     ah, 9
                 int     21h             ; DOS - PRINT STRING
@@ -666,14 +666,14 @@ loc_105DC:                              ; CODE XREF: start+59B↑j
                 jnz     short loc_105F0
                 mov     ax, 1325h
                 mov     dx, 11B6h
-                call    sub_11364
+                call    execProgram     ; EXEC PKUNZIP.EXE
                 jmp     short loc_105FB
 ; ---------------------------------------------------------------------------
 
 loc_105F0:                              ; CODE XREF: start+5E1↑j
                 mov     ax, 130Fh
                 mov     dx, 11B6h
-                call    sub_11364
+                call    execProgram     ; EXEC PKUNZIP.EXE
 
 loc_105FB:                              ; CODE XREF: start+5EE↑j
                 call    sub_11217
@@ -928,7 +928,7 @@ loc_10812:                              ; CODE XREF: start+7ED↑j
                 mov     byte_12BE6, al
                 mov     ax, 12F3h
                 mov     dx, 11B6h
-                call    sub_11364
+                call    execProgram     ; EXEC PKUNZIP.EXE
                 call    sub_10D25
                 test    byte_123B4, 30h
                 jnz     short loc_10851
@@ -965,14 +965,14 @@ loc_1087A:                              ; CODE XREF: start+875↑j
                 jnz     short loc_10897
                 mov     ax, 1325h
                 mov     dx, 11B6h
-                call    sub_11364
+                call    execProgram     ; EXEC PKUNZIP.EXE
                 jmp     short loc_108A9
 ; ---------------------------------------------------------------------------
 
 loc_10897:                              ; CODE XREF: start+888↑j
                 mov     ax, 130Fh
                 mov     dx, 11B6h
-                call    sub_11364
+                call    execProgram     ; EXEC PKUNZIP.EXE
                 jmp     short loc_108A9
 ; ---------------------------------------------------------------------------
 
@@ -1519,7 +1519,7 @@ sub_10C76       endp
 sub_10C8D       proc near               ; CODE XREF: start+2F↑p
                 mov     ax, 0
                 mov     dx, 11ACh
-                call    sub_11364
+                call    execProgram     ; EXEC VID16.DRV
                 mov     ah, 0
                 int     62h             ; VID fn00 vidInit
                 mov     word_123C3, ax
@@ -2661,8 +2661,9 @@ seg013          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; DOS EXEC (INT 21h AH=4Bh): runs the program whose ASCIZ name is at DS:DX
 
-sub_11364       proc far                ; CODE XREF: start+1A2↑P
+execProgram     proc far                ; CODE XREF: start+1A2↑P
                                         ; start+1AD↑P ...
                 push    cx
                 push    di
@@ -2703,7 +2704,7 @@ sub_11364       proc far                ; CODE XREF: start+1A2↑P
                 pop     di
                 pop     cx
                 retf
-sub_11364       endp
+execProgram     endp
 
 seg013          ends
 
@@ -4945,12 +4946,12 @@ byte_11B37      db 0                    ; DATA XREF: start:loc_10473↑w
                 db    0
                 db    0
                 db    0
-word_11F6E      dw 0                    ; DATA XREF: sub_11364+1F↑w
-word_11F70      dw 0                    ; DATA XREF: sub_11364+12↑w
-word_11F72      dw 0                    ; DATA XREF: sub_11364+26↑w
-word_11F74      dw 0                    ; DATA XREF: sub_11364+16↑w
-word_11F76      dw 0                    ; DATA XREF: sub_11364+2D↑w
-word_11F78      dw 0                    ; DATA XREF: sub_11364+1A↑w
+word_11F6E      dw 0                    ; DATA XREF: execProgram+1F↑w
+word_11F70      dw 0                    ; DATA XREF: execProgram+12↑w
+word_11F72      dw 0                    ; DATA XREF: execProgram+26↑w
+word_11F74      dw 0                    ; DATA XREF: execProgram+16↑w
+word_11F76      dw 0                    ; DATA XREF: execProgram+2D↑w
+word_11F78      dw 0                    ; DATA XREF: execProgram+1A↑w
                 db    0
                 db    0
                 db    0
@@ -8032,8 +8033,8 @@ word_12DAC      dw 0                    ; DATA XREF: start+42↑r
                 db    0
                 db    0
                 db  0Fh
-word_13000      dw 0                    ; DATA XREF: sub_11364+4B↑r
-word_13002      dw 0                    ; DATA XREF: sub_11364+50↑r
+word_13000      dw 0                    ; DATA XREF: execProgram+4B↑r
+word_13002      dw 0                    ; DATA XREF: execProgram+50↑r
                 db    0
                 db    0
                 db    0

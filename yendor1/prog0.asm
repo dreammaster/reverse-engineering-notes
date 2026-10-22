@@ -59,7 +59,7 @@ start           proc near
                 mov     ds, ax
                 assume ds:seg004
                 mov     si, 0
-                cmp     word_105E8, 1234h
+                cmp     parm_58, 1234h
                 jz      short loc_10041
                 mov     byte_11597, 0FFh
                 jmp     loc_10357
@@ -91,15 +91,15 @@ loc_10041:                              ; CODE XREF: start+37↑j
                 mov     ax, seg seg004
                 mov     ds, ax
                 assume ds:seg004
-                cmp     byte_1059E, 1
+                cmp     parm_0E, 1
                 jz      short loc_100A2
-                cmp     byte_1059E, 2
+                cmp     parm_0E, 2
                 jnz     short loc_10090
                 jmp     loc_10286
 ; ---------------------------------------------------------------------------
 
 loc_10090:                              ; CODE XREF: start+8B↑j
-                cmp     byte_1059E, 3
+                cmp     parm_0E, 3
                 jnz     short loc_1009A
                 jmp     loc_1033E
 ; ---------------------------------------------------------------------------
@@ -311,7 +311,7 @@ loc_1025E:                              ; CODE XREF: start+27C↓j
 ; ---------------------------------------------------------------------------
 
 loc_10286:                              ; CODE XREF: start+8D↑j
-                mov     al, byte_105A0
+                mov     al, parm_10
                 mov     byte_110B2, al
                 mov     byte_110D6, al
                 mov     byte_110F8, al
@@ -382,7 +382,7 @@ loc_10317:                              ; CODE XREF: start+335↓j
 ; ---------------------------------------------------------------------------
 
 loc_1033E:                              ; CODE XREF: start+97↑j
-                mov     al, byte_105A0
+                mov     al, parm_10
                 mov     byte_110B2, al
                 mov     byte_110D6, al
                 mov     byte_110F8, al
@@ -450,11 +450,11 @@ sub_1035E       endp
 
 sub_103AC       proc near               ; CODE XREF: start+292↑p
                                         ; start+34A↑p
-                mov     ax, word_105EC
+                mov     ax, parm_5C
                 mov     word_10ABF, ax
-                mov     ax, word_10606
+                mov     ax, parm_76
                 mov     word_10AE0, ax
-                mov     ax, word_10608
+                mov     ax, parm_78
                 mov     word_10AFF, ax
                 jmp     short loc_10407
 sub_103AC       endp
@@ -830,10 +830,10 @@ seg004          segment byte public 'UNK' use16
                 db    0
                 db    0
                 db    0
-byte_1059E      db 0                    ; DATA XREF: start+7F↑r
+parm_0E         db 0                    ; DATA XREF: start+7F↑r
                                         ; start+86↑r ...
                 align 2
-byte_105A0      db 0                    ; DATA XREF: start:loc_10286↑r
+parm_10         db 0                    ; DATA XREF: start:loc_10286↑r
                                         ; start:loc_1033E↑r
                 db    0
                 db    0
@@ -906,9 +906,9 @@ byte_105A0      db 0                    ; DATA XREF: start:loc_10286↑r
                 db    0
                 db    0
                 db    0
-word_105E8      dw 0                    ; DATA XREF: start+31↑r
+parm_58         dw 0                    ; DATA XREF: start+31↑r
                 align 4
-word_105EC      dw 0                    ; DATA XREF: sub_103AC↑r
+parm_5C         dw 0                    ; DATA XREF: sub_103AC↑r
                 db    0
                 db    0
                 db    0
@@ -933,8 +933,8 @@ word_105EC      dw 0                    ; DATA XREF: sub_103AC↑r
                 db    0
                 db    0
                 db    0
-word_10606      dw 0                    ; DATA XREF: sub_103AC+6↑r
-word_10608      dw 0                    ; DATA XREF: sub_103AC+C↑r
+parm_76         dw 0                    ; DATA XREF: sub_103AC+6↑r
+parm_78         dw 0                    ; DATA XREF: sub_103AC+C↑r
                 db    0
                 db    0
                 db    0

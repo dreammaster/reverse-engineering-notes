@@ -56,7 +56,7 @@ start           proc near
                 mov     ax, seg seg021
                 mov     ds, ax
                 assume ds:seg021
-                mov     ax, word_12363
+                mov     ax, parm_58
                 cmp     ax, 1234h
                 jz      short loc_1003A
                 mov     ah, 4Ch ; 'L'
@@ -91,39 +91,39 @@ loc_1003A:                              ; CODE XREF: start+32↑j
                 mov     ax, seg seg021
                 mov     ds, ax
                 assume ds:seg021
-                mov     ax, word_12365
+                mov     ax, parm_5A
                 mov     word_1238B, ax
                 mov     es, ax
                 assume es:nothing
                 mov     word ptr es:16h, seg seg021
                 mov     word ptr es:18h, 9F7h
-                mov     ax, word_12367
+                mov     ax, parm_5C
                 mov     word_11E1F, ax
-                mov     ax, word_12369
+                mov     ax, parm_5E
                 mov     word_11D70, ax
-                mov     ax, word_1236B
+                mov     ax, parm_60
                 mov     word_11D89, ax
-                mov     ax, word_1236D
+                mov     ax, parm_62
                 mov     word_11DA2, ax
-                mov     ax, word_1236F
+                mov     ax, parm_64
                 mov     word_11DBB, ax
-                mov     ax, word_12371
+                mov     ax, parm_66
                 mov     word_11DD4, ax
-                mov     ax, word_12373
+                mov     ax, parm_68
                 mov     word_11DED, ax
-                mov     ax, word_12375
+                mov     ax, parm_6A
                 mov     word_11E06, ax
-                mov     ax, word_1237B
+                mov     ax, parm_70
                 mov     word_11EA1, ax
-                mov     ax, word_1237D
+                mov     ax, parm_72
                 mov     word_11EB9, ax
-                mov     ax, word_1237F
+                mov     ax, parm_74
                 mov     word_11ED0, ax
-                mov     ax, word_12381
+                mov     ax, parm_76
                 mov     word_11E40, ax
-                mov     ax, word_12383
+                mov     ax, parm_78
                 mov     word_11E5F, ax
-                mov     ax, word_12385
+                mov     ax, parm_7A
                 mov     word_11E7F, ax
                 cmp     byte ptr es:33h, 2
                 jnz     short loc_10167
@@ -157,7 +157,7 @@ loc_10167:                              ; CODE XREF: start+E8↑j
                 mov     ah, 2Dh ; '-'
                 int     62h             ; VID fn2D vidMouseSetCursorMode
                 mov     byte_126D6, 5
-                cmp     byte_12318, 2
+                cmp     parm_0D, 2
                 jz      short loc_10182
                 mov     byte_126D6, 1
 
@@ -169,11 +169,11 @@ loc_10182:                              ; CODE XREF: start+17B↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_107EC
                 call    sub_1053F
-                cmp     byte_1230E, 0
+                cmp     parm_03, 0
                 jz      short loc_101CF
                 cmp     byte ptr es:33h, 2
                 jnz     short loc_101B8
-                mov     byte_1230E, 0
+                mov     parm_03, 0
                 mov     al, 4
                 call    sub_110E2
                 jmp     short loc_101DA
@@ -181,7 +181,7 @@ loc_10182:                              ; CODE XREF: start+17B↑j
 
 loc_101B8:                              ; CODE XREF: start+1A8↑j
                 call    sub_10704
-                mov     byte_1230E, 0
+                mov     parm_03, 0
                 mov     al, 4
                 call    sub_110E2
                 mov     ah, 15h
@@ -209,7 +209,7 @@ loc_101E3:                              ; CODE XREF: start+235↓j
                 jl      short loc_10239
                 cmp     byte_126D6, 9
                 jnz     short loc_1022F
-                cmp     byte_12318, 2
+                cmp     parm_0D, 2
                 jz      short loc_10200
                 mov     byte_126D6, 1
 
@@ -303,11 +303,11 @@ loc_1028A:                              ; CODE XREF: start+240↑j
 ; ---------------------------------------------------------------------------
 
 loc_102A1:                              ; CODE XREF: start+29D↑j
-                mov     byte_12319, 1
+                mov     parm_0E, 1
                 mov     ax, 0E1Bh
                 mov     dx, 0EA7h
-                call    sub_10C34
-                mov     byte_12319, 0
+                call    execProgram     ; EXEC PROG5.EXE
+                mov     parm_0E, 0
                 mov     es, word_1238B
                 mov     word ptr es:16h, seg seg021
                 mov     word ptr es:18h, 9F7h
@@ -340,13 +340,13 @@ loc_102FF:                              ; CODE XREF: start+249↑j
 ; ---------------------------------------------------------------------------
 
 loc_10316:                              ; CODE XREF: start+312↑j
-                mov     byte_1230D, 0
-                mov     byte_12319, 2
+                mov     parm_02, 0
+                mov     parm_0E, 2
                 mov     ax, 0E1Bh
                 mov     dx, 0EA7h
-                call    sub_10C34
-                mov     byte_12319, 0
-                mov     word_1231B, 0
+                call    execProgram     ; EXEC PROG5.EXE
+                mov     parm_0E, 0
+                mov     parm_10, 0
                 mov     byte_126D6, 2
                 jmp     loc_101E3
 ; ---------------------------------------------------------------------------
@@ -376,13 +376,13 @@ loc_1036D:                              ; CODE XREF: start+253↑j
 ; ---------------------------------------------------------------------------
 
 loc_10384:                              ; CODE XREF: start+380↑j
-                mov     byte_1230D, 0
-                mov     byte_12319, 3
+                mov     parm_02, 0
+                mov     parm_0E, 3
                 mov     ax, 0E1Bh
                 mov     dx, 0EA7h
-                call    sub_10C34
-                mov     byte_12319, 0
-                mov     byte_1230D, 0
+                call    execProgram     ; EXEC PROG5.EXE
+                mov     parm_0E, 0
+                mov     parm_02, 0
                 mov     byte_126D6, 3
                 jmp     loc_101E3
 ; ---------------------------------------------------------------------------
@@ -408,13 +408,13 @@ loc_103D9:                              ; CODE XREF: start+25D↑j
                 call    sub_10C1A
                 cmp     word_114FC, 0Ah
                 jz      short loc_10415
-                mov     byte_1230D, 0
-                mov     byte_12319, 4
+                mov     parm_02, 0
+                mov     parm_0E, 4
                 mov     ax, 0E1Bh
                 mov     dx, 0EA7h
-                call    sub_10C34
-                mov     byte_12319, 0
-                mov     byte_1230D, 0
+                call    execProgram     ; EXEC PROG5.EXE
+                mov     parm_0E, 0
+                mov     parm_02, 0
                 mov     byte_126D6, 4
                 jmp     loc_101E3
 ; ---------------------------------------------------------------------------
@@ -503,10 +503,10 @@ loc_104CF:                              ; CODE XREF: start+490↑j
 ; ---------------------------------------------------------------------------
 
 loc_104FE:                              ; CODE XREF: start+271↑j
-                mov     byte_1230D, 0
+                mov     parm_02, 0
                 mov     ax, 0E1Bh
                 mov     dx, 0EB1h
-                call    sub_10C34
+                call    execProgram     ; EXEC PROG6.EXE
                 mov     es, word_1238B
                 mov     word ptr es:16h, seg seg021
                 mov     word ptr es:18h, 9F7h
@@ -1514,8 +1514,9 @@ seg010          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; DOS EXEC (INT 21h AH=4Bh): runs the program whose ASCIZ name is at DS:DX
 
-sub_10C34       proc far                ; CODE XREF: start+2AC↑P
+execProgram     proc far                ; CODE XREF: start+2AC↑P
                                         ; start+326↑P ...
                 push    cx
                 push    di
@@ -1556,7 +1557,7 @@ sub_10C34       proc far                ; CODE XREF: start+2AC↑P
                 pop     di
                 pop     cx
                 retf
-sub_10C34       endp
+execProgram     endp
 
 seg010          ends
 
@@ -5343,12 +5344,12 @@ word_11ED0      dw 0                    ; DATA XREF: start+CD↑w
                 db    0
                 db    0
                 db    0
-word_11EE9      dw 0                    ; DATA XREF: sub_10C34+1F↑w
-word_11EEB      dw 0                    ; DATA XREF: sub_10C34+12↑w
-word_11EED      dw 0                    ; DATA XREF: sub_10C34+26↑w
-word_11EEF      dw 0                    ; DATA XREF: sub_10C34+16↑w
-word_11EF1      dw 0                    ; DATA XREF: sub_10C34+2D↑w
-word_11EF3      dw 0                    ; DATA XREF: sub_10C34+1A↑w
+word_11EE9      dw 0                    ; DATA XREF: execProgram+1F↑w
+word_11EEB      dw 0                    ; DATA XREF: execProgram+12↑w
+word_11EED      dw 0                    ; DATA XREF: execProgram+26↑w
+word_11EEF      dw 0                    ; DATA XREF: execProgram+16↑w
+word_11EF1      dw 0                    ; DATA XREF: execProgram+2D↑w
+word_11EF3      dw 0                    ; DATA XREF: execProgram+1A↑w
                 db    0
                 db    0
                 db    0
@@ -6397,9 +6398,9 @@ byte_12309      db 0                    ; DATA XREF: start+18B↑w
                 db  0Fh
                 db    0
                 db    0
-byte_1230D      db 0                    ; DATA XREF: start:loc_10316↑w
+parm_02         db 0                    ; DATA XREF: start:loc_10316↑w
                                         ; start:loc_10384↑w ...
-byte_1230E      db 0                    ; DATA XREF: start+19B↑r
+parm_03         db 0                    ; DATA XREF: start+19B↑r
                                         ; start+1AA↑w ...
                 db    0
                 db    0
@@ -6410,12 +6411,12 @@ byte_1230E      db 0                    ; DATA XREF: start+19B↑r
                 db    0
                 db    0
                 db    0
-byte_12318      db 0                    ; DATA XREF: start+176↑r
+parm_0D         db 0                    ; DATA XREF: start+176↑r
                                         ; start+1F4↑r
-byte_12319      db 0                    ; DATA XREF: start:loc_102A1↑w
+parm_0E         db 0                    ; DATA XREF: start:loc_102A1↑w
                                         ; start+2B1↑w ...
                 db    0
-word_1231B      dw 0                    ; DATA XREF: start+330↑w
+parm_10         dw 0                    ; DATA XREF: start+330↑w
                 db    0
                 db    0
                 db    0
@@ -6486,26 +6487,26 @@ word_1231B      dw 0                    ; DATA XREF: start+330↑w
                 db    0
                 db    0
                 db    0
-word_12363      dw 0                    ; DATA XREF: start+2C↑r
-word_12365      dw 0                    ; DATA XREF: start+78↑r
-word_12367      dw 0                    ; DATA XREF: start+8E↑r
-word_12369      dw 0                    ; DATA XREF: start+94↑r
-word_1236B      dw 0                    ; DATA XREF: start+9A↑r
-word_1236D      dw 0                    ; DATA XREF: start+A0↑r
-word_1236F      dw 0                    ; DATA XREF: start+A6↑r
-word_12371      dw 0                    ; DATA XREF: start+AC↑r
-word_12373      dw 0                    ; DATA XREF: start+B2↑r
-word_12375      dw 0                    ; DATA XREF: start+B8↑r
+parm_58         dw 0                    ; DATA XREF: start+2C↑r
+parm_5A         dw 0                    ; DATA XREF: start+78↑r
+parm_5C         dw 0                    ; DATA XREF: start+8E↑r
+parm_5E         dw 0                    ; DATA XREF: start+94↑r
+parm_60         dw 0                    ; DATA XREF: start+9A↑r
+parm_62         dw 0                    ; DATA XREF: start+A0↑r
+parm_64         dw 0                    ; DATA XREF: start+A6↑r
+parm_66         dw 0                    ; DATA XREF: start+AC↑r
+parm_68         dw 0                    ; DATA XREF: start+B2↑r
+parm_6A         dw 0                    ; DATA XREF: start+B8↑r
                 db    0
                 db    0
                 db    0
                 db    0
-word_1237B      dw 0                    ; DATA XREF: start+BE↑r
-word_1237D      dw 0                    ; DATA XREF: start+C4↑r
-word_1237F      dw 0                    ; DATA XREF: start+CA↑r
-word_12381      dw 0                    ; DATA XREF: start+D0↑r
-word_12383      dw 0                    ; DATA XREF: start+D6↑r
-word_12385      dw 0                    ; DATA XREF: start+DC↑r
+parm_70         dw 0                    ; DATA XREF: start+BE↑r
+parm_72         dw 0                    ; DATA XREF: start+C4↑r
+parm_74         dw 0                    ; DATA XREF: start+CA↑r
+parm_76         dw 0                    ; DATA XREF: start+D0↑r
+parm_78         dw 0                    ; DATA XREF: start+D6↑r
+parm_7A         dw 0                    ; DATA XREF: start+DC↑r
                 db    0
                 db    0
                 db    0
@@ -6765,8 +6766,8 @@ byte_126DA      db 8                    ; DATA XREF: sub_105BB+B↑r
                 db  16h
                 db    2
                 db    0
-word_127AA      dw 0                    ; DATA XREF: sub_10C34+4B↑r
-word_127AC      dw 0                    ; DATA XREF: sub_10C34+50↑r
+word_127AA      dw 0                    ; DATA XREF: execProgram+4B↑r
+word_127AC      dw 0                    ; DATA XREF: execProgram+50↑r
                 db    0
                 db 0EFh
                 db  12h

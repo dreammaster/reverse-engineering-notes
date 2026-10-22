@@ -235,12 +235,18 @@ static Bytes_0(void) {
 	create_insn	(0X10556);
 	create_insn	(0X10570);
 	create_byte	(0X1059E);
+	set_name	(0X1059E,	"parm_0E");
 	create_byte	(0X105A0);
+	set_name	(0X105A0,	"parm_10");
 	create_word	(0X105E8);
+	set_name	(0X105E8,	"parm_58");
 	make_array	(0X105EA,	0X2);
 	create_word	(0X105EC);
+	set_name	(0X105EC,	"parm_5C");
 	create_word	(0X10606);
+	set_name	(0X10606,	"parm_76");
 	create_word	(0X10608);
+	set_name	(0X10608,	"parm_78");
 	create_word	(0X10ABF);
 	create_word	(0X10AE0);
 	create_word	(0X10AFF);

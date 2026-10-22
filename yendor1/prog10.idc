@@ -693,6 +693,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X110FA);
 	op_hex		(x,	0);
 	create_insn	(0X11119);
+	set_cmt	(0X1115E,	"EXEC PROG15.EXE",	0);
 	create_insn	(x=0X11163);
 	op_hex		(x,	1);
 	set_cmt	(0X11166,	"DOS - 2+ - GET EXIT CODE OF SUBPROGRAM (WAIT)",	0);
@@ -1408,9 +1409,11 @@ static Bytes_0(void) {
 	create_insn	(0X135BA);
 	create_insn	(x=0X135D7);
 	op_hex		(x,	1);
+	set_cmt	(0X135E8,	"EXEC PROG5.EXE",	0);
 	create_insn	(x=0X135F1);
 	op_seg		(x,	1);
 	create_insn	(0X13615);
+	set_cmt	(0X13629,	"EXEC PROG11.EXE",	0);
 	create_insn	(x=0X13632);
 	op_seg		(x,	1);
 	set_cmt	(0X13649,	"DOS - 2+ - GET EXIT CODE OF SUBPROGRAM (WAIT)",	0);
@@ -1433,6 +1436,7 @@ static Bytes_0(void) {
 	op_seg		(x,	1);
 	create_insn	(0X136DE);
 	create_insn	(0X136E7);
+	set_cmt	(0X136F2,	"EXEC PROG7.EXE",	0);
 	create_insn	(x=0X136FB);
 	op_seg		(x,	1);
 	create_insn	(0X13717);
@@ -1480,6 +1484,7 @@ static Bytes_0(void) {
 	create_insn	(0X13953);
 	create_insn	(x=0X13966);
 	op_hex		(x,	1);
+	set_cmt	(0X13977,	"EXEC PROG8.EXE",	0);
 	create_insn	(x=0X13980);
 	op_seg		(x,	1);
 	set_cmt	(0X139AF,	"DOS - 2+ - GET EXIT CODE OF SUBPROGRAM (WAIT)",	0);
@@ -3151,6 +3156,7 @@ static Bytes_0(void) {
 	create_insn	(0X16EC9);
 	create_insn	(0X16EE4);
 	create_insn	(0X16F16);
+	set_cmt	(0X16F34,	"EXEC PROG5.EXE",	0);
 	create_insn	(x=0X16F3E);
 	op_seg		(x,	1);
 	create_insn	(0X16F60);
@@ -3178,6 +3184,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X16FDB);
 	op_hex		(x,	0);
 	create_insn	(0X16FE5);
+	set_cmt	(0X16FF9,	"EXEC PROG11.EXE",	0);
 	create_insn	(x=0X17003);
 	op_seg		(x,	1);
 	set_cmt	(0X17019,	"VID fn29 vidMouseHide",	0);
@@ -3204,6 +3211,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X1BFB0);
 	create_insn	(0X17086);
 	create_insn	(0X170A0);
+	set_cmt	(0X170AB,	"EXEC PROG7.EXE",	0);
 	create_insn	(x=0X170B5);
 	op_seg		(x,	1);
 	create_insn	(0X170CB);
@@ -3214,6 +3222,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X170DF);
 	op_hex		(x,	0);
 	create_insn	(0X170E4);
+	set_cmt	(0X170F8,	"EXEC PROG8.EXE",	0);
 	create_insn	(x=0X17102);
 	op_seg		(x,	1);
 	set_cmt	(0X17118,	"VID fn29 vidMouseHide",	0);
@@ -3463,6 +3472,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X17A2F);
 	create_insn	(0X17A33);
+	set_cmt	(0X17A63,	"EXEC PROG5.EXE",	0);
 	set_cmt	(0X17A74,	"VID fn29 vidMouseHide",	0);
 	create_insn	(x=0X17A74);
 	op_hex		(x,	0);
@@ -3944,6 +3954,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1963D);
 	op_hex		(x,	0);
 	create_insn	(0X19648);
+	set_name	(0X19648,	"execProgram");
 	set_cmt	(0X19687,	"DOS - 2+ - LOAD OR EXECUTE (EXEC)\nDS:DX -> ASCIZ filename\nES:BX -> parameter block\nAL = subfunc: load & execute program",	0);
 	create_insn	(x=0X19687);
 	op_hex		(x,	0);
@@ -4922,29 +4933,53 @@ static Bytes_0(void) {
 	create_insn	(0X1BFB8);
 	make_array	(0X1BFBA,	0X2);
 	create_word	(0X1BFCC);
+	set_name	(0X1BFCC,	"parm_02");
 	create_word	(0X1BFCE);
+	set_name	(0X1BFCE,	"parm_04");
 	create_word	(0X1BFD0);
+	set_name	(0X1BFD0,	"parm_06");
 	create_word	(0X1BFD2);
+	set_name	(0X1BFD2,	"parm_08");
 	create_word	(0X1BFD4);
+	set_name	(0X1BFD4,	"parm_0A");
 	create_byte	(0X1BFD6);
+	set_name	(0X1BFD6,	"parm_0C");
 	create_byte	(0X1BFD8);
+	set_name	(0X1BFD8,	"parm_0E");
 	create_word	(0X1BFDA);
+	set_name	(0X1BFDA,	"parm_10");
 	create_word	(0X1C022);
+	set_name	(0X1C022,	"parm_58");
 	create_word	(0X1C024);
+	set_name	(0X1C024,	"parm_5A");
 	create_word	(0X1C026);
+	set_name	(0X1C026,	"parm_5C");
 	create_word	(0X1C028);
+	set_name	(0X1C028,	"parm_5E");
 	create_word	(0X1C02A);
+	set_name	(0X1C02A,	"parm_60");
 	create_word	(0X1C02C);
+	set_name	(0X1C02C,	"parm_62");
 	create_word	(0X1C02E);
+	set_name	(0X1C02E,	"parm_64");
 	create_word	(0X1C030);
+	set_name	(0X1C030,	"parm_66");
 	create_word	(0X1C032);
+	set_name	(0X1C032,	"parm_68");
 	create_word	(0X1C034);
+	set_name	(0X1C034,	"parm_6A");
 	create_word	(0X1C03A);
+	set_name	(0X1C03A,	"parm_70");
 	create_word	(0X1C03C);
+	set_name	(0X1C03C,	"parm_72");
 	create_word	(0X1C03E);
+	set_name	(0X1C03E,	"parm_74");
 	create_word	(0X1C040);
+	set_name	(0X1C040,	"parm_76");
 	create_word	(0X1C042);
+	set_name	(0X1C042,	"parm_78");
 	create_word	(0X1C044);
+	set_name	(0X1C044,	"parm_7A");
 	create_word	(0X1C8E4);
 	create_word	(0X1C8EA);
 	create_word	(0X1C8F9);
@@ -5059,6 +5094,15 @@ static Bytes_0(void) {
 	make_array	(0X21176,	0X2);
 	create_word	(0X21186);
 	create_word	(0X21188);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2118A);
 	create_word	(0X2118C);
 	create_byte	(0X2118E);
@@ -5137,15 +5181,6 @@ static Bytes_0(void) {
 	create_byte	(0X227A0);
 	create_word	(0X227A1);
 	create_word	(0X227A3);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X227A5);
 	create_word	(0X227A6);
 	create_word	(0X227A8);
@@ -5544,6 +5579,7 @@ static Functions_0(void) {
 	set_frame_size(0X19532, 0X4, 0, 0);
 	add_func    (0X19648,0X196A0);
 	set_func_flags(0X19648,0x5402);
+	set_func_cmt(0X19648,	"DOS EXEC (INT 21h AH=4Bh): runs the program whose ASCIZ name is at DS:DX", 1);
 	set_frame_size(0X19648, 0X4, 0, 0);
 	add_func    (0X196A0,0X198D0);
 	set_func_flags(0X196A0,0x5402);

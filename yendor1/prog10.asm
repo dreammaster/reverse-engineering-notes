@@ -55,7 +55,7 @@ start           proc near
                 mov     ax, seg seg046
                 mov     ds, ax
                 assume ds:seg046
-                mov     ax, word_1C022
+                mov     ax, parm_58
                 cmp     ax, 1234h
                 jz      short loc_1003A
                 mov     ah, 4Ch ; 'L'
@@ -90,39 +90,39 @@ loc_1003A:                              ; CODE XREF: start+32↑j
                 mov     ax, seg seg046
                 mov     ds, ax
                 assume ds:seg046
-                mov     ax, word_1C024
+                mov     ax, parm_5A
                 mov     word_227AF, ax
                 mov     es, ax
                 assume es:nothing
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
-                mov     ax, word_1C026
+                mov     ax, parm_5C
                 mov     word_1C993, ax
-                mov     ax, word_1C028
+                mov     ax, parm_5E
                 mov     word_1C8E4, ax
-                mov     ax, word_1C02A
+                mov     ax, parm_60
                 mov     word_1C8FD, ax
-                mov     ax, word_1C02C
+                mov     ax, parm_62
                 mov     word_1C916, ax
-                mov     ax, word_1C02E
+                mov     ax, parm_64
                 mov     word_1C92F, ax
-                mov     ax, word_1C030
+                mov     ax, parm_66
                 mov     word_1C948, ax
-                mov     ax, word_1C032
+                mov     ax, parm_68
                 mov     word_1C961, ax
-                mov     ax, word_1C034
+                mov     ax, parm_6A
                 mov     word_1C97A, ax
-                mov     ax, word_1C03A
+                mov     ax, parm_70
                 mov     word_1CA15, ax
-                mov     ax, word_1C03C
+                mov     ax, parm_72
                 mov     word_1CA2D, ax
-                mov     ax, word_1C03E
+                mov     ax, parm_74
                 mov     word_1CA44, ax
-                mov     ax, word_1C040
+                mov     ax, parm_76
                 mov     word_1C9B4, ax
-                mov     ax, word_1C042
+                mov     ax, parm_78
                 mov     word_1C9D3, ax
-                mov     ax, word_1C044
+                mov     ax, parm_7A
                 mov     word_1C9F3, ax
                 cmp     byte ptr es:33h, 2
                 jnz     short loc_10167
@@ -2096,7 +2096,7 @@ sub_10FEC       endp
 
 sub_11119       proc near               ; CODE XREF: seg000:6FBA↓p
                                         ; seg000:709A↓p ...
-                mov     byte_1BFD6, al
+                mov     parm_0C, al
                 push    cs
                 call    near ptr sub_103D8
                 call    sub_1945D
@@ -2109,13 +2109,13 @@ sub_11119       proc near               ; CODE XREF: seg000:6FBA↓p
                 mov     byte_20D5E, ah
                 call    sub_19407
                 mov     ax, 5ADAh
-                mov     word_1BFD4, ax
-                mov     word_1BFD2, ds
-                mov     word_1BFCE, 0
-                mov     word_1BFD0, 0
+                mov     parm_0A, ax
+                mov     parm_08, ds
+                mov     parm_04, 0
+                mov     parm_06, 0
                 mov     ax, 1Ah
                 mov     dx, 6C65h
-                call    sub_19648
+                call    execProgram     ; EXEC PROG15.EXE
                 mov     ax, 4D00h
                 int     21h             ; DOS - 2+ - GET EXIT CODE OF SUBPROGRAM (WAIT)
                 mov     byte_22794, al
@@ -6118,17 +6118,17 @@ loc_13594:                              ; CODE XREF: seg000:358C↑j
                 call    near ptr sub_103D8
                 call    sub_1945D
                 call    sub_19407
-                mov     byte ptr word_1BFCC, 2
-                mov     byte_1BFD8, 2
+                mov     byte ptr parm_02, 2
+                mov     parm_0E, 2
                 mov     bx, word_2278C
                 dec     bx
                 shl     bx, 1
                 add     bx, 4DB0h
                 mov     ax, [bx]
-                mov     word_1BFDA, ax
+                mov     parm_10, ax
                 mov     ax, 1Ah
                 mov     dx, 6C32h
-                call    sub_19648
+                call    execProgram     ; EXEC PROG5.EXE
                 mov     es, word_227AF
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
@@ -6144,7 +6144,7 @@ loc_13594:                              ; CODE XREF: seg000:358C↑j
                 call    sub_19407
                 mov     ax, 1Ah
                 mov     dx, 6C5Ah
-                call    sub_19648
+                call    execProgram     ; EXEC PROG11.EXE
                 mov     es, word_227AF
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
@@ -6243,7 +6243,7 @@ loc_136DE:                              ; CODE XREF: seg000:36BE↑j
                 call    sub_19407
                 mov     ax, 1Ah
                 mov     dx, 6C46h
-                call    sub_19648
+                call    execProgram     ; EXEC PROG7.EXE
                 mov     es, word_227AF
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
@@ -6500,10 +6500,10 @@ loc_13953:                              ; CODE XREF: seg000:392A↑j
                 shl     bx, 1
                 add     bx, 4DB0h
                 mov     ax, [bx]
-                mov     word_1BFD2, ax
+                mov     parm_08, ax
                 mov     ax, 1Ah
                 mov     dx, 6C50h
-                call    sub_19648
+                call    execProgram     ; EXEC PROG8.EXE
                 mov     es, word_227AF
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
@@ -12292,11 +12292,11 @@ loc_16EE4:                              ; CODE XREF: seg000:6EDC↑j
                 call    near ptr sub_103D8
                 call    sub_1945D
                 call    sub_19407
-                mov     byte ptr word_1BFCC, 3
-                mov     byte_1BFD8, 2
+                mov     byte ptr parm_02, 3
+                mov     parm_0E, 2
                 mov     ax, 1Ah
                 mov     dx, 6C32h
-                call    sub_19648
+                call    execProgram     ; EXEC PROG5.EXE
                 mov     ax, word_227AF
                 mov     es, ax
                 mov     word ptr es:16h, seg seg046
@@ -12382,7 +12382,7 @@ loc_16FD7:                              ; CODE XREF: seg000:6FC8↑j
                 call    sub_19407
                 mov     ax, 1Ah
                 mov     dx, 6C5Ah
-                call    sub_19648
+                call    execProgram     ; EXEC PROG11.EXE
                 mov     ax, word_227AF
                 mov     es, ax
                 mov     word ptr es:16h, seg seg046
@@ -12452,7 +12452,7 @@ loc_17086:                              ; CODE XREF: seg000:707D↑j
                 call    sub_19407
                 mov     ax, 1Ah
                 mov     dx, 6C46h
-                call    sub_19648
+                call    execProgram     ; EXEC PROG7.EXE
                 mov     ax, word_227AF
                 mov     es, ax
                 mov     word ptr es:16h, seg seg046
@@ -12475,7 +12475,7 @@ loc_17086:                              ; CODE XREF: seg000:707D↑j
                 call    sub_19407
                 mov     ax, 1Ah
                 mov     dx, 6C50h
-                call    sub_19648
+                call    execProgram     ; EXEC PROG8.EXE
                 mov     ax, word_227AF
                 mov     es, ax
                 mov     word ptr es:16h, seg seg046
@@ -13545,11 +13545,11 @@ sub_17A33       proc near               ; CODE XREF: start:loc_102C0↑p
 loc_17A4D:                              ; CODE XREF: sub_17A33+C↑j
                                         ; sub_17A33+12↑j
                 call    sub_19407
-                mov     word_1BFCC, 1
-                mov     byte_1BFD8, 2
+                mov     parm_02, 1
+                mov     parm_0E, 2
                 mov     ax, 1Ah
                 mov     dx, 6C32h
-                call    sub_19648
+                call    execProgram     ; EXEC PROG5.EXE
                 call    sub_193EA
                 call    sub_19424
                 mov     ah, 29h ; ')'
@@ -17312,8 +17312,9 @@ seg026          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; DOS EXEC (INT 21h AH=4Bh): runs the program whose ASCIZ name is at DS:DX
 
-sub_19648       proc far                ; CODE XREF: sub_11119+45↑P
+execProgram     proc far                ; CODE XREF: sub_11119+45↑P
                                         ; seg000:35E8↑P ...
                 push    cx
                 push    di
@@ -17354,7 +17355,7 @@ sub_19648       proc far                ; CODE XREF: sub_11119+45↑P
                 pop     di
                 pop     cx
                 retf
-sub_19648       endp
+execProgram     endp
 
 seg026          ends
 
@@ -20324,7 +20325,7 @@ loc_1AD8F:                              ; CODE XREF: sub_1AC9A+17↑j
                 push    si
                 push    di
                 mov     di, 56DAh
-                lea     si, word_1C024
+                lea     si, parm_5A
                 mov     cx, 300h
 
 loc_1AD9E:                              ; CODE XREF: sub_1AC9A+10D↓j
@@ -20374,7 +20375,7 @@ loc_1ADCD:                              ; CODE XREF: sub_1AC9A+139↓j
 loc_1ADDD:                              ; CODE XREF: sub_1AC9A+193↓j
                 push    cx
                 mov     di, 56DAh
-                lea     si, word_1C024
+                lea     si, parm_5A
                 lea     bx, unk_1C324
                 mov     cx, 300h
 
@@ -22642,19 +22643,19 @@ seg046          segment byte public 'UNK' use16
                 db    8
                 db    0
                 db    0
-word_1BFCC      dw 0                    ; DATA XREF: seg000:35C8↑w
+parm_02         dw 0                    ; DATA XREF: seg000:35C8↑w
                                         ; seg000:6F24↑w ...
-word_1BFCE      dw 0                    ; DATA XREF: sub_11119+33↑w
-word_1BFD0      dw 0                    ; DATA XREF: sub_11119+39↑w
-word_1BFD2      dw 0                    ; DATA XREF: sub_11119+2F↑w
+parm_04         dw 0                    ; DATA XREF: sub_11119+33↑w
+parm_06         dw 0                    ; DATA XREF: sub_11119+39↑w
+parm_08         dw 0                    ; DATA XREF: sub_11119+2F↑w
                                         ; seg000:396E↑w
-word_1BFD4      dw 0                    ; DATA XREF: sub_11119+2C↑w
-byte_1BFD6      db 0                    ; DATA XREF: sub_11119↑w
+parm_0A         dw 0                    ; DATA XREF: sub_11119+2C↑w
+parm_0C         db 0                    ; DATA XREF: sub_11119↑w
                 align 2
-byte_1BFD8      db 0                    ; DATA XREF: seg000:35CD↑w
+parm_0E         db 0                    ; DATA XREF: seg000:35CD↑w
                                         ; seg000:6F29↑w ...
                 align 2
-word_1BFDA      dw 0                    ; DATA XREF: seg000:35DF↑w
+parm_10         dw 0                    ; DATA XREF: seg000:35DF↑w
                 db    0
                 db    0
                 db    0
@@ -22725,27 +22726,27 @@ word_1BFDA      dw 0                    ; DATA XREF: seg000:35DF↑w
                 db    0
                 db    0
                 db    0
-word_1C022      dw 0                    ; DATA XREF: start+2C↑r
-word_1C024      dw 0                    ; DATA XREF: start+78↑r
+parm_58         dw 0                    ; DATA XREF: start+2C↑r
+parm_5A         dw 0                    ; DATA XREF: start+78↑r
                                         ; sub_1AC9A+FD↑o ...
-word_1C026      dw 0                    ; DATA XREF: start+8E↑r
-word_1C028      dw 0                    ; DATA XREF: start+94↑r
-word_1C02A      dw 0                    ; DATA XREF: start+9A↑r
-word_1C02C      dw 0                    ; DATA XREF: start+A0↑r
-word_1C02E      dw 0                    ; DATA XREF: start+A6↑r
-word_1C030      dw 0                    ; DATA XREF: start+AC↑r
-word_1C032      dw 0                    ; DATA XREF: start+B2↑r
-word_1C034      dw 0                    ; DATA XREF: start+B8↑r
+parm_5C         dw 0                    ; DATA XREF: start+8E↑r
+parm_5E         dw 0                    ; DATA XREF: start+94↑r
+parm_60         dw 0                    ; DATA XREF: start+9A↑r
+parm_62         dw 0                    ; DATA XREF: start+A0↑r
+parm_64         dw 0                    ; DATA XREF: start+A6↑r
+parm_66         dw 0                    ; DATA XREF: start+AC↑r
+parm_68         dw 0                    ; DATA XREF: start+B2↑r
+parm_6A         dw 0                    ; DATA XREF: start+B8↑r
                 db    0
                 db    0
                 db    0
                 db    0
-word_1C03A      dw 0                    ; DATA XREF: start+BE↑r
-word_1C03C      dw 0                    ; DATA XREF: start+C4↑r
-word_1C03E      dw 0                    ; DATA XREF: start+CA↑r
-word_1C040      dw 0                    ; DATA XREF: start+D0↑r
-word_1C042      dw 0                    ; DATA XREF: start+D6↑r
-word_1C044      dw 0                    ; DATA XREF: start+DC↑r
+parm_70         dw 0                    ; DATA XREF: start+BE↑r
+parm_72         dw 0                    ; DATA XREF: start+C4↑r
+parm_74         dw 0                    ; DATA XREF: start+CA↑r
+parm_76         dw 0                    ; DATA XREF: start+D0↑r
+parm_78         dw 0                    ; DATA XREF: start+D6↑r
+parm_7A         dw 0                    ; DATA XREF: start+DC↑r
                 db    0
                 db    0
                 db    0
@@ -44834,13 +44835,13 @@ word_2164E      dw 0                    ; DATA XREF: start+1D3↑w
                 db    0
                 db    0
                 db    0
-word_2168C      dw 0                    ; DATA XREF: sub_19648+1F↑w
-word_2168E      dw 0                    ; DATA XREF: sub_19648+12↑w
-word_21690      dw 0                    ; DATA XREF: sub_19648+26↑w
+word_2168C      dw 0                    ; DATA XREF: execProgram+1F↑w
+word_2168E      dw 0                    ; DATA XREF: execProgram+12↑w
+word_21690      dw 0                    ; DATA XREF: execProgram+26↑w
 word_21692      dw 0                    ; DATA XREF: sub_17E86+82↑w
                                         ; sub_17E86+C8↑w ...
-word_21694      dw 0                    ; DATA XREF: sub_19648+2D↑w
-word_21696      dw 0                    ; DATA XREF: sub_19648+1A↑w
+word_21694      dw 0                    ; DATA XREF: execProgram+2D↑w
+word_21696      dw 0                    ; DATA XREF: execProgram+1A↑w
                 db    0
                 db    0
                 db    0
@@ -57186,8 +57187,8 @@ byte_227B9      db 0                    ; DATA XREF: sub_10FEC+C7↑r
                 db    0
                 db    0
                 db    0
-word_246BE      dw 0                    ; DATA XREF: sub_19648+4B↑r
-word_246C0      dw 0                    ; DATA XREF: sub_19648+50↑r
+word_246BE      dw 0                    ; DATA XREF: execProgram+4B↑r
+word_246C0      dw 0                    ; DATA XREF: execProgram+50↑r
                 db    0
                 db    0
                 db    0

@@ -56,7 +56,7 @@ start           proc near
                 mov     ax, seg seg021
                 mov     ds, ax
                 assume ds:seg021
-                mov     ax, word_1251F
+                mov     ax, parm_58
                 cmp     ax, 1234h
                 jz      short loc_1003A
                 mov     ah, 4Ch ; 'L'
@@ -91,39 +91,39 @@ loc_1003A:                              ; CODE XREF: start+32↑j
                 mov     ax, seg seg021
                 mov     ds, ax
                 assume ds:seg021
-                mov     ax, word_12521
+                mov     ax, parm_5A
                 mov     word_12DDA, ax
                 mov     es, ax
                 assume es:nothing
                 mov     word ptr es:16h, seg seg021
                 mov     word ptr es:18h, 0A6Bh
-                mov     ax, word_12523
+                mov     ax, parm_5C
                 mov     word_123FF, ax
-                mov     ax, word_12525
+                mov     ax, parm_5E
                 mov     word_12350, ax
-                mov     ax, word_12527
+                mov     ax, parm_60
                 mov     word_12369, ax
-                mov     ax, word_12529
+                mov     ax, parm_62
                 mov     word_12382, ax
-                mov     ax, word_1252B
+                mov     ax, parm_64
                 mov     word_1239B, ax
-                mov     ax, word_1252D
+                mov     ax, parm_66
                 mov     word_123B4, ax
-                mov     ax, word_1252F
+                mov     ax, parm_68
                 mov     word_123CD, ax
-                mov     ax, word_12531
+                mov     ax, parm_6A
                 mov     word_123E6, ax
-                mov     ax, word_12537
+                mov     ax, parm_70
                 mov     word_12481, ax
-                mov     ax, word_12539
+                mov     ax, parm_72
                 mov     word_12499, ax
-                mov     ax, word_1253B
+                mov     ax, parm_74
                 mov     word_124B0, ax
-                mov     ax, word_1253D
+                mov     ax, parm_76
                 mov     word_12420, ax
-                mov     ax, word_1253F
+                mov     ax, parm_78
                 mov     word_1243F, ax
-                mov     ax, word_12541
+                mov     ax, parm_7A
                 mov     word_1245F, ax
                 cmp     byte ptr es:33h, 2
                 jnz     short loc_10167
@@ -154,25 +154,25 @@ loc_10167:                              ; CODE XREF: start+E8↑j
                 call    sub_11762
                 call    sub_112B4
                 mov     byte_12DE5, 0
-                cmp     byte_124CA, 0
+                cmp     parm_03, 0
                 jnz     short loc_10180
                 jmp     loc_1027E
 ; ---------------------------------------------------------------------------
 
 loc_10180:                              ; CODE XREF: start+17B↑j
-                cmp     byte_124CA, 1
+                cmp     parm_03, 1
                 jnz     short loc_10189
                 jmp     short loc_101E6
 ; ---------------------------------------------------------------------------
 
 loc_10189:                              ; CODE XREF: start+185↑j
-                cmp     byte_124CA, 2
+                cmp     parm_03, 2
                 jnz     short loc_10192
                 jmp     short loc_101B7
 ; ---------------------------------------------------------------------------
 
 loc_10192:                              ; CODE XREF: start+18E↑j
-                cmp     byte_124CA, 3
+                cmp     parm_03, 3
                 jz      short loc_101A1
                 mov     byte_12DDC, 0FFh
                 jmp     loc_102DD
@@ -659,7 +659,7 @@ sub_1061D       endp
 sub_106C8       proc near               ; CODE XREF: start+1A8↑p
                                         ; start:loc_10216↑p ...
                 mov     byte ptr es:31h, 1
-                cmp     byte_124C9, 1
+                cmp     parm_02, 1
                 jz      short loc_106E3
                 mov     byte ptr es:952h, 0
                 mov     byte ptr es:953h, 0
@@ -4886,8 +4886,8 @@ word_124B0      dw 0                    ; DATA XREF: start+CD↑w
                 db    0
                 db    0
                 db    0
-byte_124C9      db 0                    ; DATA XREF: sub_106C8+6↑r
-byte_124CA      db 0                    ; DATA XREF: start+176↑r
+parm_02         db 0                    ; DATA XREF: sub_106C8+6↑r
+parm_03         db 0                    ; DATA XREF: start+176↑r
                                         ; start:loc_10180↑r ...
                 db    0
                 db    0
@@ -4973,26 +4973,26 @@ byte_124CA      db 0                    ; DATA XREF: start+176↑r
                 db    0
                 db    0
                 db    0
-word_1251F      dw 0                    ; DATA XREF: start+2C↑r
-word_12521      dw 0                    ; DATA XREF: start+78↑r
-word_12523      dw 0                    ; DATA XREF: start+8E↑r
-word_12525      dw 0                    ; DATA XREF: start+94↑r
-word_12527      dw 0                    ; DATA XREF: start+9A↑r
-word_12529      dw 0                    ; DATA XREF: start+A0↑r
-word_1252B      dw 0                    ; DATA XREF: start+A6↑r
-word_1252D      dw 0                    ; DATA XREF: start+AC↑r
-word_1252F      dw 0                    ; DATA XREF: start+B2↑r
-word_12531      dw 0                    ; DATA XREF: start+B8↑r
+parm_58         dw 0                    ; DATA XREF: start+2C↑r
+parm_5A         dw 0                    ; DATA XREF: start+78↑r
+parm_5C         dw 0                    ; DATA XREF: start+8E↑r
+parm_5E         dw 0                    ; DATA XREF: start+94↑r
+parm_60         dw 0                    ; DATA XREF: start+9A↑r
+parm_62         dw 0                    ; DATA XREF: start+A0↑r
+parm_64         dw 0                    ; DATA XREF: start+A6↑r
+parm_66         dw 0                    ; DATA XREF: start+AC↑r
+parm_68         dw 0                    ; DATA XREF: start+B2↑r
+parm_6A         dw 0                    ; DATA XREF: start+B8↑r
                 db    0
                 db    0
                 db    0
                 db    0
-word_12537      dw 0                    ; DATA XREF: start+BE↑r
-word_12539      dw 0                    ; DATA XREF: start+C4↑r
-word_1253B      dw 0                    ; DATA XREF: start+CA↑r
-word_1253D      dw 0                    ; DATA XREF: start+D0↑r
-word_1253F      dw 0                    ; DATA XREF: start+D6↑r
-word_12541      dw 0                    ; DATA XREF: start+DC↑r
+parm_70         dw 0                    ; DATA XREF: start+BE↑r
+parm_72         dw 0                    ; DATA XREF: start+C4↑r
+parm_74         dw 0                    ; DATA XREF: start+CA↑r
+parm_76         dw 0                    ; DATA XREF: start+D0↑r
+parm_78         dw 0                    ; DATA XREF: start+D6↑r
+parm_7A         dw 0                    ; DATA XREF: start+DC↑r
                 db    0
                 db    0
                 db    0

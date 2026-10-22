@@ -233,6 +233,8 @@ static Bytes_0(void) {
 	set_cmt	(0X1019A,	"- VIDEO - SET VIDEO MODE\nAL = mode",	0);
 	create_insn	(x=0X1019A);
 	op_hex		(x,	0);
+	set_cmt	(0X101A2,	"EXEC PKUNZIP.EXE",	0);
+	set_cmt	(0X101AD,	"EXEC PKUNZIP.EXE",	0);
 	create_insn	(x=0X101B8);
 	op_hex		(x,	1);
 	set_cmt	(0X101BA,	"DOS - 2+ - CREATE A FILE WITH HANDLE (CREAT)\nCX = attributes for file\nDS:DX -> ASCIZ filename (may include drive and path)",	0);
@@ -243,6 +245,7 @@ static Bytes_0(void) {
 	set_cmt	(0X101C4,	"DOS - 2+ - CREATE A FILE WITH HANDLE (CREAT)\nCX = attributes for file\nDS:DX -> ASCIZ filename (may include drive and path)",	0);
 	create_insn	(x=0X101C4);
 	op_hex		(x,	0);
+	set_cmt	(0X101CC,	"EXEC PKUNZIP.EXE",	0);
 	create_insn	(x=0X101E8);
 	op_hex		(x,	1);
 	set_cmt	(0X101EA,	"DOS - PRINT STRING\nDS:DX -> string terminated by \"$\"",	0);
@@ -259,6 +262,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10232);
 	op_hex		(x,	0);
 	create_insn	(0X10241);
+	set_cmt	(0X10251,	"EXEC PKUNZIP.EXE",	0);
 	create_insn	(x=0X10259);
 	op_hex		(x,	1);
 	set_cmt	(0X1025B,	"DOS - PRINT STRING\nDS:DX -> string terminated by \"$\"",	0);
@@ -361,7 +365,9 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(x=0X105DC);
 	op_hex		(x,	1);
+	set_cmt	(0X105E9,	"EXEC PKUNZIP.EXE",	0);
 	create_insn	(0X105F0);
+	set_cmt	(0X105F6,	"EXEC PKUNZIP.EXE",	0);
 	create_insn	(0X10603);
 	set_cmt	(0X1060C,	"VID fn14 vidCopyScreen0To1AndShow",	0);
 	create_insn	(x=0X1060C);
@@ -437,6 +443,7 @@ static Bytes_0(void) {
 	set_cmt	(0X10817,	"DOS - 2+ - CREATE A SUBDIRECTORY (MKDIR)\nDS:DX -> ASCIZ pathname (may include drive)",	0);
 	create_insn	(x=0X10817);
 	op_hex		(x,	0);
+	set_cmt	(0X10840,	"EXEC PKUNZIP.EXE",	0);
 	create_insn	(x=0X10848);
 	op_hex		(x,	1);
 	create_insn	(0X10851);
@@ -454,7 +461,9 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(x=0X10883);
 	op_hex		(x,	1);
+	set_cmt	(0X10890,	"EXEC PKUNZIP.EXE",	0);
 	create_insn	(0X10897);
+	set_cmt	(0X1089D,	"EXEC PKUNZIP.EXE",	0);
 	create_insn	(0X108A4);
 	set_cmt	(0X108A7,	"- VIDEO - SET VIDEO MODE\nAL = mode",	0);
 	create_insn	(x=0X108A7);
@@ -582,6 +591,7 @@ static Bytes_0(void) {
 	create_insn	(0X10C69);
 	create_insn	(0X10C76);
 	create_insn	(0X10C8D);
+	set_cmt	(0X10C93,	"EXEC VID16.DRV",	0);
 	set_cmt	(0X10C9A,	"VID fn00 vidInit",	0);
 	create_insn	(x=0X10C9A);
 	op_hex		(x,	0);
@@ -788,6 +798,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11359);
 	op_hex		(x,	0);
 	create_insn	(0X11364);
+	set_name	(0X11364,	"execProgram");
 	set_cmt	(0X113A3,	"DOS - 2+ - LOAD OR EXECUTE (EXEC)\nDS:DX -> ASCIZ filename\nES:BX -> parameter block\nAL = subfunc: load & execute program",	0);
 	create_insn	(x=0X113A3);
 	op_hex		(x,	0);
@@ -1206,6 +1217,7 @@ static Functions_0(void) {
 	set_frame_size(0X1124E, 0X4, 0, 0);
 	add_func    (0X11364,0X113BC);
 	set_func_flags(0X11364,0x5402);
+	set_func_cmt(0X11364,	"DOS EXEC (INT 21h AH=4Bh): runs the program whose ASCIZ name is at DS:DX", 1);
 	set_frame_size(0X11364, 0X4, 0, 0);
 	add_func    (0X113BC,0X113D1);
 	set_func_flags(0X113BC,0x5402);
