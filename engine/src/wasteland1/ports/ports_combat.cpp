@@ -4,6 +4,8 @@
 #include "wasteland1/character.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/party.h"
+#include "wasteland1/rules.h"
+#include "wasteland1/text.h"
 
 namespace wl {
 namespace rc {
@@ -79,6 +81,24 @@ PORT(countAliveMonsters) {                                                      
 	r.a.b.l = n;
 	r.cf = n == 0;
 }
+
+// ---- combat messages ------------------------------------------------------------------------------------------------------
+PORT(printLocationMessage) { printLocationMessage(m, r.b.b.l); }                        // 1393E: bl = index
+PORT(printLocationMessageVariant) { printLocationMessageVariant(m, r.a.b.l); }          // 13939: al = base
+PORT(randomPlusOne) { r.a.b.l = uint8_t(r.a.b.l + Rules(m).random(2)); }                // 1394D: al = al + random(2)
+PORT(printDamageNumber) { printDamageNumber(m, uint16_t(r.a.b.l | (r.d.b.l << 8))); }   // 15A84: dl:al
+PORT(printHitMessage) { printHitMessage(m, r.a.b.l); }                                  // 15C36: al
+PORT(printAttackMessageA) { printAttackMessageA(m); }                                   // 15BBC
+PORT(printAttackMessageB) { printAttackMessageB(m); }                                   // 15BCB
+PORT(printAttackMessageC) { printAttackMessageC(m); }                                   // 15BEF
+PORT(printMessage2D) { printMessage(m, 0x2D); }                                         // 15BFE
+PORT(printMessage61) { printMessage(m, 0x61); }                                         // 15C03
+PORT(setHitPointBytes) { setHitPointBytes(m, r.a.b.l); }                                // 1592C
+PORT(weaponDamageClass) { r.b.b.l = weaponDamageClass(r.a.b.l); }                       // 156DE: al = type -> bl
+PORT(rollMonsterDamage) { setDlAl(r, rollMonsterDamage(m, r.a.b.l, r.d.b.l, r.b.b.l)); }   // 15672
+PORT(recordWordToNumber) { recordWordToNumber(m); r.a.b.l = 0; r.b.b.l = 1; }           // 15A18
+PORT(reduceByMonsterArmor) { setDlAl(r, reduceByMonsterArmor(m, uint16_t(r.a.b.l | (r.d.b.l << 8)), r.b.b.l)); }   // 1597E: dl:al damage, bl = combatant
+PORT(monsterExperience) { monsterExperience(m, r.a.b.l); }                              // 159C7: al = combatant
 
 } // namespace rc
 } // namespace wl

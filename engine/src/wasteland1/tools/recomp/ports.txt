@@ -147,3 +147,19 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 570F agilityBonus
 5714 strengthBonus
 57AD countAliveMonsters junk=ah,bl,di,pf,zf scratch=A688-A688,A59D-A59E
+393E printLocationMessage junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf
+3939 printLocationMessageVariant junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A597-A597,C059-C059
+394D randomPlusOne junk=ah,pf,sf scratch=A597-A597,C059-C059
+5A84 printDamageNumber junk=ah,al,bl,cl,di,dl,pf,si,zf
+5C36 printHitMessage junk=ah,al,bl,cl,di,dl,pf,si,zf scratch=A597-A597,C059-C059
+5BBC printAttackMessageA junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf
+5BCB printAttackMessageB junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A597-A597,C059-C059
+5BEF printAttackMessageC junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A597-A597,C059-C059
+5BFE printMessage2D junk=al,bl,cl,di,dl,pf,si,zf
+5C03 printMessage61 junk=al,bl,cl,di,dl,pf,si,zf
+592C setHitPointBytes junk=bl,di,pf
+56DE weaponDamageClass
+5672 rollMonsterDamage junk=bl,ch,cl,di,pf,si,zf scratch=A59D-A59D,A670-A670,BA08-BA11,4661-4662,CD3F-CD3F,C059-C059
+5A18 recordWordToNumber junk=di
+597E reduceByMonsterArmor junk=bl,cf,ch,cl,di,sf,si scratch=A680-A683,A59D-A59D,A670-A670,BA08-BA11,4661-4662,CD3F-CD3F,C059-C059
+59C7 monsterExperience junk=al,bl,ch,cl,di,dl,pf,si,zf scratch=A67D-A67F,A59D-A59D,A670-A670,BA08-BA11,4661-4662

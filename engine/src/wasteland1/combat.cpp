@@ -4,6 +4,7 @@
 #include "wasteland1/globals.h"
 #include "wasteland1/party.h"
 #include "wasteland1/rules.h"
+#include "wasteland1/text.h"
 
 namespace wl {
 
@@ -165,6 +166,93 @@ uint8_t countAliveMonsters(Machine &m, uint8_t group, uint8_t slot, uint8_t memb
 
 uint8_t weaponQuantityByte(Machine &m) {
 	return m.d8(uint16_t(cur(m) + equippedItemOffset(m, pm::weapon) + 1));
+}
+
+void printLocationMessage(Machine &m, uint8_t index) {
+	printMapMessage(m, m.d8(uint16_t(m.d16(g::locationsPtr) + index)));
+}
+
+void printLocationMessageVariant(Machine &m, uint8_t base) {
+	printLocationMessage(m, uint8_t(base + Rules(m).random(2)));
+}
+
+void printDamageNumber(Machine &m, uint16_t value) {
+	m.d8(g::itemQuantity) = (uint8_t(value >> 8) == 0 && uint8_t(value) == 1) ? 1 : 2;
+	writeNumber16(m, value);
+	printMessage(m, 0x59);
+}
+
+void printHitMessage(Machine &m, uint8_t n) {
+	m.d8(g::itemQuantity) = n;
+	if (m.d8(g::hitFlag) == 0) printMessage(m, 0x62);
+	else printLocationMessageVariant(m, 0x59);
+}
+
+void printAttackMessageA(Machine &m) {   // 15BBC
+	printLocationMessage(m, isTypeGroupA(m.d8(g::weaponType)) ? 0x39 : 0x3A);
+	printMessage(m, 0x2D);   // falls into 15BFE
+}
+
+void printAttackMessageB(Machine &m) {   // 15BCB
+	const uint8_t type = m.d8(g::weaponType);
+	uint8_t index;
+	if (type == 2) index = 0x37;
+	else if (type == 3 || type == 4 || isTypeGroupA(type)) index = 0x38;
+	else index = isTypeGroupC(type) ? 0x3D : 0x3A;
+	printLocationMessage(m, index);
+	printMessage(m, 0x2D);
+}
+
+void printAttackMessageC(Machine &m) {   // 15BEF
+	printLocationMessage(m, isTypeGroupA(m.d8(g::weaponType)) ? 0x3B : 0x3A);
+	printMessage(m, 0x2D);
+}
+
+void setHitPointBytes(Machine &m, uint8_t value) {
+	m.d8(uint16_t(cur(m) + pm::con)) = value;
+	m.d8(uint16_t(cur(m) + pm::con + 1)) = value;
+}
+
+uint8_t weaponDamageClass(uint8_t type) {
+	if (type == 2 || type == 5 || type == 0x0A || type == 0x0D) return 0;
+	if (type == 3 || type == 6 || type == 0x0B || type == 8) return 1;
+	return 2;
+}
+
+uint16_t rollMonsterDamage(Machine &m, uint8_t group, uint8_t slot, uint8_t member) {
+	selectMonsterType(m, group, slot, member);
+	uint8_t al;
+	return Rules(m).sumOfD6(0, itemClipSizeNibble(m), al);
+}
+
+void recordWordToNumber(Machine &m) {
+	m.d8(g::numberValue) = itemByte(m, 0);
+	m.d8(uint16_t(g::numberValue + 1)) = itemByte(m, 1);
+	m.d8(uint16_t(g::numberValue + 2)) = 0;
+}
+
+uint16_t reduceByMonsterArmor(Machine &m, uint16_t damage, uint8_t index) {
+	const CombatantId id = splitCombatantIndex(index);
+	const uint16_t armor = rollMonsterDamage(m, id.group, id.slot, id.member);
+	if (m.d8(g::hitIgnoresArmor) == 0) damage = damage >= armor ? uint16_t(damage - armor) : 0;
+	m.d8(g::hitIgnoresArmor) = 0;
+	return damage;
+}
+
+void monsterExperience(Machine &m, uint8_t index) {
+	const CombatantId id = splitCombatantIndex(index);
+	selectSlot(m, id.group, id.slot);
+	selectSlotCellRecord(m);
+	selectMonsterDetails(m, id.member);
+	const uint8_t count = uint8_t(itemClipSizeNibble(m) + 1);
+	recordWordToNumber(m);
+	const unsigned base = m.d8(g::numberValue) | (m.d8(uint16_t(g::numberValue + 1)) << 8);
+	for (int i = 0; i < 3; ++i) m.d8(uint16_t(g::numberValue + i)) = 0;
+	unsigned total = 0;
+	for (uint8_t i = 0; i != count || count == 0; ) { total += base; if (++i == count) break; }
+	m.d8(g::numberValue) = uint8_t(total);
+	m.d8(uint16_t(g::numberValue + 1)) = uint8_t(total >> 8);
+	m.d8(uint16_t(g::numberValue + 2)) = uint8_t(total >> 16);
 }
 
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }

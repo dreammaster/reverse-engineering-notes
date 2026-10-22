@@ -73,6 +73,32 @@ uint8_t countAliveMonsters(Machine &m, uint8_t group, uint8_t slot, uint8_t memb
 // 15C96: quantity and jam byte of the equipped weapon
 uint8_t weaponQuantityByte(Machine &m);
 
+// ---- combat messages ----------------------------------------------------------------------------------------------------
+// 1393E: prints string `bl` of the string index at the start of the map block's location data
+void printLocationMessage(Machine &m, uint8_t index);
+// 13939 / 1394D: location message `base` + random(2)
+void printLocationMessageVariant(Machine &m, uint8_t base);
+// 15A84: number in dl:al, then message 59h ("... N damage"-style); itemQuantity is 1 for exactly one point
+void printDamageNumber(Machine &m, uint16_t value);
+// 15C36: itemQuantity = n; message 62h or a variant of 59h depending on the hit flag
+void printHitMessage(Machine &m, uint8_t n);
+// 15BBC / 15BCB / 15BEF: attack announcement chosen from the weapon type
+void printAttackMessageA(Machine &m);
+void printAttackMessageB(Machine &m);
+void printAttackMessageC(Machine &m);
+// 1592C: both bytes of the current character's hit points = value
+void setHitPointBytes(Machine &m, uint8_t value);
+// 156DE: 0, 1 or 2 depending on the weapon type (damage class)
+uint8_t weaponDamageClass(uint8_t type);
+// 15672: damage dice of a monster member: sumOfD6(0, dice count of the member's record)
+uint16_t rollMonsterDamage(Machine &m, uint8_t group, uint8_t slot, uint8_t member);
+// 15A18: numberValue = the first two bytes of the item/monster record (0 as third byte)
+void recordWordToNumber(Machine &m);
+// 1597E: reduces `damage` by the armor roll of the monster combatant `index` (the roll happens even when armor is ignored,
+// byte hitIgnoresArmor); the result never goes below 0
+uint16_t reduceByMonsterArmor(Machine &m, uint16_t damage, uint8_t index);
+// 159C7: numberValue = experience for killing one monster of combatant `index`: record word * (dice nibble + 1)
+void monsterExperience(Machine &m, uint8_t index);
 // 15CD1: random 0..9
 uint8_t randomDigit(Machine &m);
 // 15C4A: remembers whether a damage value (dl:al) is below the "overkill" limit in the hit flag
