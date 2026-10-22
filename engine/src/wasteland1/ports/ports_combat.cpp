@@ -99,6 +99,13 @@ PORT(rollMonsterDamage) { setDlAl(r, rollMonsterDamage(m, r.a.b.l, r.d.b.l, r.b.
 PORT(recordWordToNumber) { recordWordToNumber(m); r.a.b.l = 0; r.b.b.l = 1; }           // 15A18
 PORT(reduceByMonsterArmor) { setDlAl(r, reduceByMonsterArmor(m, uint16_t(r.a.b.l | (r.d.b.l << 8)), r.b.b.l)); }   // 1597E: dl:al damage, bl = combatant
 PORT(monsterExperience) { monsterExperience(m, r.a.b.l); }                              // 159C7: al = combatant
+PORT(defenseRoll) { setDlAl(r, defenseRoll(m, r.a.b.l, r.d.b.l)); }                      // 15755: al = party member, dl = threshold
+PORT(attackStrength) { setDlAl(r, attackStrength(m, r.a.b.l, r.d.b.l)); }                // 15738
+PORT(hitMonster) {                                                                      // 15500: al = party member, bl = combatant -> al, CF
+	const HitResult h = hitMonster(m, r.a.b.l, r.b.b.l);
+	r.cf = h.alreadyDead;
+	r.a.b.l = h.alreadyDead ? r.a.b.l : (h.killed ? 0 : 0xFF);
+}
 
 } // namespace rc
 } // namespace wl

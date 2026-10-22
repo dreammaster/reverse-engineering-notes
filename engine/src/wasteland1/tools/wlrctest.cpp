@@ -131,9 +131,11 @@ int main(int argc, char **argv) {
 	std::vector<std::string> states;
 	long only = -1;
 	bool portedOnly = false;
+	int seeds = 1;
 	for (int i = 4; i < argc; ++i) {
 		if (std::string(argv[i]) == "--only" && i + 1 < argc) only = long(std::strtoul(argv[++i], nullptr, 16));
 		else if (std::string(argv[i]) == "--ported") portedOnly = true;
+		else if (std::string(argv[i]) == "--seeds" && i + 1 < argc) seeds = std::atoi(argv[++i]);
 		else if (std::string(argv[i]) == "--keys" && i + 1 < argc) {
 			std::stringstream ks(argv[++i]);
 			std::string k;
@@ -148,6 +150,7 @@ int main(int argc, char **argv) {
 	std::map<std::string, int> reasons;
 	std::map<uint16_t, std::set<std::string>> junkSeen;
 	for (const std::string &state : states) {
+		for (int sd = 0; sd < seeds; ++sd)
 		for (uint16_t e : entries) {
 			if (only >= 0 && e != only) continue;
 			if (portedOnly) {
@@ -155,7 +158,7 @@ int main(int argc, char **argv) {
 				for (const rc::PortInfo *p = rc::kPortInfo; p->name; ++p) ported |= p->address == e;
 				if (!ported) continue;
 			}
-			uint32_t seed = e * 2654435761u + 12345u;
+			uint32_t seed = e * 2654435761u + 12345u + uint32_t(sd) * 977u;
 			const Result r = testFunction(o, n, state, gameDir, e, seed);
 			if (r.kind == Result::Ok) ++ok;
 			else if (r.kind == Result::Skip) { ++skip; ++reasons[r.note.substr(0, 40)]; if (only >= 0) std::printf("%04X skipped: %s\n", e, r.note.c_str()); }

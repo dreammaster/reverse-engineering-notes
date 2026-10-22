@@ -67,6 +67,12 @@ constexpr uint16_t encounterOffsets = 0xA5B1;    // byte table: offsets of the t
 constexpr uint16_t sexFlagTable = 0xA920;         // byte_27740: indexed by byte 7 of a monster record -> itemSexFlag
 constexpr uint16_t readiness = 0x46CC;           // byte_214EC: 0 unconscious, 0Fh can act, FEh weapon that needs ammunition
 constexpr uint16_t weaponType = 0x46CD;          // byte_214ED: item type of the equipped weapon (1 when unarmed / no ammunition)
+constexpr uint16_t hitTargets = 0xAAE8;           // byte_27908: combatant numbers hit this round (FFh = free), 3 entries
+constexpr uint16_t hitKills = 0xAAEB;             // kills per entry
+constexpr uint16_t hitDamage = 0xAAEE;            // 3 words: total damage per entry
+constexpr uint16_t hitCounts = 0xAAF4;            // 10 bytes per entry: hits per monster
+constexpr uint16_t hitFlags = 0xAB12;             // byte_27932, per entry
+constexpr uint16_t hitStatus = 0xAB15;            // per entry
 constexpr uint16_t hitIgnoresArmor = 0x4723;   // byte_21543
 constexpr uint16_t hitFlag = 0x4725;          // byte_21545
 

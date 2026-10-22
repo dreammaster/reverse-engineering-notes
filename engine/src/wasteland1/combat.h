@@ -99,6 +99,14 @@ void recordWordToNumber(Machine &m);
 uint16_t reduceByMonsterArmor(Machine &m, uint16_t damage, uint8_t index);
 // 159C7: numberValue = experience for killing one monster of combatant `index`: record word * (dice nibble + 1)
 void monsterExperience(Machine &m, uint8_t index);
+// 15755: number of dice rolled for the defense of party member `partyNum` against a monster of toughness `threshold`
+uint16_t defenseRoll(Machine &m, uint8_t partyNum, uint8_t threshold);
+// 15738: defenseRoll plus the luck bonus of the current character
+uint16_t attackStrength(Machine &m, uint8_t partyNum, uint8_t threshold);
+// 15500: party member `partyNum` hits a random monster of combatant `index`. Result: alreadyDead when the chosen monster
+// had no hit points (try again); otherwise `killed` is true when the hit killed it
+struct HitResult { bool alreadyDead, killed; };
+HitResult hitMonster(Machine &m, uint8_t partyNum, uint8_t index);
 // 15CD1: random 0..9
 uint8_t randomDigit(Machine &m);
 // 15C4A: remembers whether a damage value (dl:al) is below the "overkill" limit in the hit flag

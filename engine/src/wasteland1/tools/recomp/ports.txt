@@ -163,3 +163,6 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 5A18 recordWordToNumber junk=di
 597E reduceByMonsterArmor junk=bl,cf,ch,cl,di,sf,si scratch=A680-A683,A59D-A59D,A670-A670,BA08-BA11,4661-4662,CD3F-CD3F,C059-C059
 59C7 monsterExperience junk=al,bl,ch,cl,di,dl,pf,si,zf scratch=A67D-A67F,A59D-A59D,A670-A670,BA08-BA11,4661-4662
+5755 defenseRoll junk=ah,bl,cl,di,pf,si,zf scratch=A689-A68A,A598-A599,CD3F-CD3F,C059-C059
+5738 attackStrength junk=ah,bl,cl,di,pf,sf,si,zf scratch=A689-A68C,A598-A599,CD3F-CD3F,C059-C059
+5500 hitMonster junk=ah,al,bl,di,dl,pf,zf scratch=A67D-A69D,A59D-A59E,A598-A599,A670-A670,BA08-BA11,4661-4662,CD3F-CD3F,C059-C059

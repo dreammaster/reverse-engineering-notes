@@ -255,6 +255,72 @@ void monsterExperience(Machine &m, uint8_t index) {
 	m.d8(uint16_t(g::numberValue + 2)) = uint8_t(total >> 16);
 }
 
+uint16_t defenseRoll(Machine &m, uint8_t partyNum, uint8_t threshold) {
+	combatReadiness(m, partyNum);
+	const uint8_t type = m.d8(g::weaponType);
+	uint8_t dice, base = 0;
+	if (!hasNoAmmunition(m, type) && m.d8(g::readiness) < 0x10) {
+		dice = (type == 2 || type == 0x0A) ? 1 : 2;
+		base = type;
+	} else {
+		dice = getArmorClass(m);
+		if (isTypeGroupC(type) && dice >= threshold) {
+			const unsigned sum = uint8_t(dice - threshold) + dice;
+			dice = sum > 0xFF ? 0xFF : uint8_t(sum);
+		}
+	}
+	uint8_t al;
+	return Rules(m).sumOfD6(base, dice, al);
+}
+
+uint16_t attackStrength(Machine &m, uint8_t partyNum, uint8_t threshold) {
+	const uint16_t roll = defenseRoll(m, partyNum, threshold);
+	return uint16_t(roll + attributeBonus(m, pm::luck));
+}
+
+HitResult hitMonster(Machine &m, uint8_t partyNum, uint8_t index) {
+	const CombatantId id = splitCombatantIndex(index);
+	selectMember(m, id.group, id.slot, id.member);
+	const uint8_t target = randomDigit(m);   // which of the ten monsters
+	const uint16_t record = m.d16(g::monsterPtr);
+	if (m.d16(uint16_t(record + target * 2)) == 0) return {true, false};
+	uint8_t entry = 0;
+	for (;; ++entry) {   // the combatant's entry in the table of this round's targets
+		const uint8_t t = m.d8(uint16_t(g::hitTargets + entry));
+		if (t == index) break;
+		if (t == 0xFF) { m.d8(uint16_t(g::hitTargets + entry)) = index; break; }
+		if (entry == 255) { entry = 0; break; }
+	}
+	++m.d8(uint16_t(g::hitCounts + timesTen(entry) + target));
+	selectMonsterType(m, id.group, id.slot, id.member);
+	const uint8_t toughness = itemClipSizeNibble(m);
+	uint16_t damage = attackStrength(m, partyNum, toughness);
+	m.d8(g::hitIgnoresArmor) = isTypeGroupC(m.d8(g::weaponType)) ? 0 : 1;
+	damage = reduceByMonsterArmor(m, damage, index);
+	const uint16_t totalAddr = uint16_t(g::hitDamage + entry * 2);
+	const unsigned total = m.d16(totalAddr) + damage;
+	m.setD16(totalAddr, total > 0xFFFF ? 0xFFFF : uint16_t(total));
+	if (damage == 0) return {false, false};
+	uint8_t marker = itemDamageDice(m);
+	selectMember(m, id.group, id.slot, id.member);
+	const uint16_t hpAddr = uint16_t(m.d16(g::monsterPtr) + target * 2);
+	const int hp = int(m.d16(hpAddr)) - damage;
+	if (hp > 0) { m.setD16(hpAddr, uint16_t(hp)); return {false, false}; }
+	// killed
+	++m.d8(uint16_t(g::hitKills + entry));
+	const uint16_t overkill = uint16_t(hp);   // the negative remainder, kept for the hit flag
+	m.setD16(hpAddr, 0);
+	const uint16_t statusAddr = uint16_t(m.d16(g::monsterPtr) + 0x14 + target);
+	if (m.d8(statusAddr) != 0) m.d8(statusAddr) = 0xFF;
+	else marker = 1;
+	monsterExperience(m, index);
+	addExperience(m);
+	const uint8_t flag = setHitFlag(m, overkill);
+	m.d8(uint16_t(g::hitFlags + entry)) &= flag;
+	m.d8(uint16_t(g::hitStatus + entry)) = marker;
+	return {false, true};
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }
