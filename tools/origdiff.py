@@ -12,6 +12,7 @@ Usage: tools/origdiff.py <first.pkl> <second.pkl> [-o out.tsv] [--classes] [--wo
   --show NAME          both versions of one function side by side (names as in the .tsv)
   --consts OUT.tsv     the numbers (immediates; the offsets added to pointers are not among them) and the texts of each function: those only the
                        first has and those only the second has, the second read together with the functions it calls that the first does not define
+  --conds OUT.tsv      the comparisons with constants (`x > 16` and `x >= 17` are the same test) that only the first and only the second has, per function
   --engine OUT.tsv     for builds compiled differently (-O2 against -O0): only the calls to engine functions (T* methods, free functions of the
                        engine) that both executables define and that are bigger than 24 bytes in the first one (smaller ones are inlined
                        in an -O2 build), compared as sequences; the rows are the functions whose sequences differ, most different first
@@ -240,6 +241,99 @@ def consts_mode(f1, f2, common, out):
     return 0
 
 
+JCC = {
+    "l": ("s", "<"), "nge": ("s", "<"), "le": ("s", "<="), "ng": ("s", "<="), "g": ("s", ">"), "nle": ("s", ">"),
+    "ge": ("s", ">="), "nl": ("s", ">="), "b": ("u", "<"), "nae": ("u", "<"), "c": ("u", "<"), "be": ("u", "<="),
+    "na": ("u", "<="), "a": ("u", ">"), "nbe": ("u", ">"), "ae": ("u", ">="), "nb": ("u", ">="), "nc": ("u", ">="),
+    "e": ("e", "=="), "z": ("e", "=="), "ne": ("e", "!="), "nz": ("e", "!="),
+}
+CMP_IMM = re.compile(r"^\$(-?0x[0-9a-f]+),")
+
+
+def conditions(f):
+    """[(kind, t)]: every comparison with a constant followed by a conditional jump, set or move, as the split of the numbers that it
+    makes: `x > 16` and `x >= 17` are both ('s', 16) (the same test, whichever way the compiler wrote it or laid it out), `x == c` ('e', c)."""
+    out = []
+    ins = f.insns
+    for k, ins_k in enumerate(ins):
+        if ins_k[0] != "cmp":
+            continue
+        m = CMP_IMM.match(ins_k[5][1].split("\t")[0])
+        if not m:
+            continue
+        c = int(m.group(1), 16)
+        if c > 0x7FFFFFFF and c <= 0xFFFFFFFF:
+            c -= 1 << 32
+        for q in range(k + 1, min(len(ins), k + 4)):
+            mn = ins[q][0]
+            cond = None
+            if mn.startswith("j") and mn != "jmp":
+                cond = mn[1:]
+            elif mn.startswith("set"):
+                cond = mn[3:]
+            elif mn.startswith("cmov"):
+                cond = mn[4:]
+            if cond is None:
+                if mn.startswith(("call", "cmp", "test")):
+                    break
+                continue
+            if cond in JCC:
+                kind, op = JCC[cond]
+                if kind == "e":
+                    out.append(("e", c))
+                else:
+                    out.append((kind, c if op in (">", "<=") else c - 1))
+            break
+    return out
+
+
+def conds_mode(f1, f2, common, out):
+    """The comparisons with constants of each function, as splits (conditions()), compared between the builds: those only the first
+    has and those only the second has. Each side is also read together with what its functions call (three levels), since the other
+    build may have inlined it. A changed `<` for `<=` against the same constant shows here, and nowhere in the numbers."""
+    by1 = {}
+    for n, f in f1.items():
+        by1.setdefault(normalize_name(n), f)
+    by2 = {}
+    for n, f in f2.items():
+        by2.setdefault(normalize_name(n), f)
+    cache1, cache2 = {}, {}
+
+    def own(f, cache, key):
+        if key not in cache:
+            cache[key] = collections.Counter(conditions(f))
+        return cache[key]
+
+    def closure(f, table, cache, depth=0, seen=None):
+        res = collections.Counter(own(f, cache, id(f)))
+        if depth < 3:
+            for c in set(f.calls()):
+                g = table.get(c)
+                if g is not None and g is not f:
+                    res |= closure(g, table, cache, depth + 1)
+        return res
+
+    rows = []
+    for n in common:
+        a, b = own(f1[n], cache1, id(f1[n])), own(f2[n], cache2, id(f2[n]))
+        if not a and not b:
+            continue
+        only1 = a - closure(f2[n], by2, cache2)
+        only2 = b - closure(f1[n], by1, cache1)
+        if only1 or only2:
+            rows.append((n, only1, only2, sum(a.values()), sum(b.values())))
+    rows.sort(key=lambda r: -(sum(r[1].values()) + sum(r[2].values())))
+    fmt = lambda c: " ".join("%s%s%x" % (k, "-" if t < 0 else "", abs(t)) for (k, t), v in sorted(c.items()) for _ in range(v))
+    with open(out, "w", encoding="utf8") as fh:
+        fh.write("name\tconditions_first\tconditions_second\tonly in the first\tonly in the second\n")
+        for n, o1, o2, ca, cb in rows:
+            fh.write("%s\t%d\t%d\t%s\t%s\n" % (n, ca, cb, fmt(o1), fmt(o2)))
+    print("functions in both with a comparison with a constant: %d; with a condition the other lacks: %d" % (
+        sum(1 for n in common if conditions(f1[n]) or conditions(f2[n])), len(rows)))
+    print("written %s" % out)
+    return 0
+
+
 def call_args(f):
     """[(callee, number)]: the numbers loaded in the four instructions before each call (the ids of fields, events, commands, the
     sizes that are given to a function), per callee."""
@@ -311,6 +405,7 @@ def main():
     engine_out = None
     consts_out = None
     args_out = None
+    conds_out = None
     pos = []
     i = 0
     while i < len(args):
@@ -328,6 +423,9 @@ def main():
                 i += 1
         elif a == "--engine":
             engine_out = args[i + 1]
+            i += 1
+        elif a == "--conds":
+            conds_out = args[i + 1]
             i += 1
         elif a == "--args":
             args_out = args[i + 1]
@@ -358,6 +456,8 @@ def main():
         return consts_mode(f1, f2, common, consts_out)
     if args_out:
         return args_mode(f1, f2, common, args_out)
+    if conds_out:
+        return conds_mode(f1, f2, common, conds_out)
     results = {n: compare(f1[n], f2[n]) for n in common}
     ranked = sorted(common, key=lambda n: (results[n]["score"], -f1[n].size))
     if out:

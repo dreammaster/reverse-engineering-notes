@@ -217,6 +217,27 @@ So the conclusion of the three comparisons (call graph, numbers/texts, source li
   `WebPConfigInit`; both builds then set the quality of the encoded picture to **85** (Deponia 4 loads `85.0` from `.rodata`, Deponia 1 has `config.quality = 85` as an immediate; the reconstruction has 85).
 - `TDiagnostic::DrawDiagram` (40, 960): the diagnostics drawing, the same values as immediates in Deponia 1.
 
+### Conditions and results: the same, checked by running the code
+
+A flipped `<` or `&&` is neither a call, a number nor a text, so three more checks were made (all of the two originals, Deponia 1 `-O2` and Deponia 4 `-O0`).
+
+- **`tools/origdiff.py --conds`** (comparisons with a constant, as the split of the numbers that they make, so `x > 16` and `x >= 17` are alike): 8,941 functions in both have such a comparison, 5,142 differ: not usable, `-O0` against `-O2` turns switches into jump tables or bit tests and
+  ranges into one unsigned compare. (`TTAction::IsImmediateExecutionType` is a chain of 16 compares in Deponia 4 and a pile of `lea/cmp/bt` tricks in Deponia 1; read by hand the sets are the same 16 values.)
+- **`tools/condcompare.py`** compares the reconstruction compiled at `-O0` (clang) with Deponia 4's `-O0` (GCC): both are transcriptions of the source, so only the compilers differ. 344 of 7,043 functions differ in their tests (127 with a jump table left out); with `--first` (Deponia 1) a test counts only when the
+  Deponia 1 original does not have it either: 63 functions left. Read and found alike: `TVisionaireObject::Release` (the assert is `0 < RefCount < 3000` in both: `(RefCount - 1) <= 2998` unsigned in Deponia 1, `RefCount != 0 && RefCount <= 2999` in Deponia 4), `TGameControl::MoveScene` (the same angle ranges, 91..269 and 90..270; the reconstruction
+  writes them as the unsigned range tests of Deponia 1), `TComposedFile::InitEntries` (a count of 0 to 99,999), `TTText::ReplaceValues`, `FindObjectByNameRelative`, `TSoundFFMPEG::SetStats` (volume 0..100, pan -100..100), `TVisionaire::BinaryLoad` (the tests of the ids 0x347 and 0x3E7 are in a function of their own in Deponia 4, inline in Deponia 1). The rest of the 63 are switch lowerings
+  (`THCharacter::OnEvent` and the other `OnEvent`s, `HapticNewEffect*`) and `== true` / `!= -1` tests; they were not all read.
+- **`tools/emucompare.py`** runs the same function of both executables in an x86-64 emulator (Unicorn) on the same arguments and compares what it returns (in the register of its return type, which the sources give) and, for a method, what it wrote into a 4 KB block of random small numbers standing for `this`.
+  This does not care how the compiler wrote a test. It finds a threshold moved by one (checked: patching `cmpl $0x167` to `$0x166` in a copy of `GetOppositeDirection` makes it report 1 of 479 inputs). Result:
+  - **50 free functions and static methods** with number arguments, 150-479 inputs each, **the same on every input**: `EaseLinear`, `lerp`, `BlendColors`, `angleDist`, `diff`, `mirror`, `Rand`, `RandF`, `CompositeEnums`, `TGCharacter::GetOppositeDirection`, `TData::GetDataSize`, `TSText::GetPauseLength`, `TGAction::ConvertToEvent`, the 40 easing functions
+    (`Easing::*`), `Noise1234::noise` (1 to 4 floats), `SimplexNoise1234::noise`. 22 more were skipped (they call out of the image).
+  - **546 methods of the `T*` classes** with number arguments (60 random argument sets each, the same object block in both): **541 the same**, including their writes into the object, e.g. `TTypeData::IsFittingSaveGameType`, `TTypeGroup::IsFittingSaveGameType` (first reported different: the test passed a "bool" of 56, which only Deponia 4's code reads as
+    two different truth values), `TVector3D::Length`. The 5 that differ are not code differences: `TCursorControl::TCursorControl` (+0x48 is the pointer to a second table of virtual functions), `TStandardPaths::TStandardPaths` (+0x8, an address), `TTAction::GetTypeGroup` (returns the address of a static). 891 methods were skipped (they call through a pointer that the block does not have, or take objects).
+  - **Layout**: a class whose members moved between the builds would differ on every run; none shows, which also says that the members these 546 methods use are at the same offsets in both builds.
+  Not covered by any of the three: functions that take or return objects, strings or pointers (the bulk of the engine), and anything that calls through a virtual table.
+
+So the logic of the engine is the same where it can be checked mechanically: calls, numbers, texts, the lines of the source, floating point constants, the order of the engine's calls, and now 590 functions run on the same inputs. The differences are the ones in the other sections.
+
 ### Other classes with the most functions unlike the reconstruction
 
 From `FUNCDIFF.md` (functions under 0.5 / functions in both): `TTable` 32/49 (most of it editor code the reconstruction does not have), `TArgument` 27/55, `TVisionaire` 19/80, `TSoundBase` 17/39,
@@ -226,7 +247,7 @@ None of these has been read yet; the next step is to take them in that order.
 
 ## Open points / next steps
 
-1. Conditions (a changed `<` or `&&` is not a number or a call): not covered by any check so far. The unlike functions of `FUNCDIFF.md` that call no engine function and have no assert (`TArgument`, `TMatrix3/4`, `TVector3D`, geometry helpers) are the place to look.
+1. Extend the emulator comparison to the functions that take objects: build the objects the way the engine does (a `TVisObjRef` with a record of the data, a `wxString`) in the emulated memory, or run the functions in a emulated image with the libraries stubbed. The 891 methods that were skipped are the first candidates.
 2. How `#s#000#00002#` (the lightmap of scene 1001) is resolved in Deponia 2 and Deponia 4 (see the data finding); the `table 21` assertion is the same in Deponia 1.
 3. The build number of the engine (the integer passed to `wxLog::logexpanded("Engine Version ...")`).
 4. Compile the sources here at `-O0` for real (`tools/pbuild.py deponia4`): `tools/tbuild.py <test>.cpp --game deponia4` builds a test of `tests/deponia1` against `src/deponia4` (objects in `build/tests-64[g]-deponia4`); the rest of the suite has not been run on it.
