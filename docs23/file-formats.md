@@ -6772,6 +6772,23 @@ effect id `+0x70`, sound id `+0x62`, ...) -- a later shot at the same member **o
 facing (0x800 facing south ... ) only decides whether the shot is drawn (`PresentTriggeredSideTrapEffects` :32732 animates the projectile and the weapon icon). That routine then plays the first sound in the table and
 applies every nonzero magnitude as the effect `+0x70` with the magnitude as the preset amount through the icon-bar pipeline (`combatApplyPresetEffect`). `session.c` `sessionAmbushShots`.
 
+### Group fights: the three combat slots, joining and compaction (decoded 2026-10-22)
+
+The three combat records (`g_monsterSlots` = DS:0x51C0, 0x525C, 0x52F8: **left, middle, right**; the info panels at y = 87 / 123 / 159 follow them) are filled by `ProcessLevelMonsters` (:33366) as monsters step onto
+the party's cell (`loc_22FCC`; the doorway and jump-spell scans copy the first monster the same way, `loc_2C4F5`). The **first** monster stands in the **middle** slot -- so a lone monster's name is in the middle panel -- and
+`g_uiScratchFlags4 |= monster flags (+0x92) & 0xE000` (the *formation*: 0x8000 fights in a group at all, 0x4000 a pair at most, 0x2000 room for a third; real data: most monsters are 0xA000 or 0xC000). With a fight on, the pass
+goes on over all 80 pool slots and a monster that steps onto the party's cell **joins** when its own flags and the formation have 0x8000:
+formation 0x2000 clear: only when the left slot is empty -- the middle record moves to the right (layer +1), the new one takes the left (layer -1), and the formation becomes 0x4000 when either has 0x4000 in its flags, else
+0x2000; formation 0x2000 set: the same when the left is empty, and when the left is taken and the middle empty (and the new monster has 0x2000 too) the left one moves to the middle (layer +1) and the new one takes the left (layer -1;
+the formation is left as it is). Nothing else joins; it waits in the pool. The record's `+0xA` is the **sprite layer** the view draws it with (`MonsterFieldAnimSet`: 9 / 10 / 11 left / middle / right for the alternate sprite
+set, 12 / 13 / 14 otherwise; the first monster starts in the middle one) -- the joins and the compaction move it one place.
+
+`ProcessCombatRound` (:11093) reaps the dead (rewards staged, record cleared, the turn-order entry struck off) and, with a monster left, runs `CompactMonsterSlots` (:33995) once: with the left occupied and the right free, the
+middle (or, with the middle empty, the left) record moves one slot right (layer +1); with the left empty and the right occupied, the middle (or the right) one moves one slot left (layer -1); the turn-order entries that pointed
+at the moved record follow it. When the round is over (the turn order is used up) `RunDungeonGameLoop` (:16377) runs `ProcessLevelMonsters`, `ProcessSideTrapsOnMovement` and then `BuildCombatTurnOrder` again, so the monsters
+outside walk, shoot and join *between rounds*, not within one. The standalone: `session.c` `combatEngage` / `combatCompact` / `combatAfterAction`. `ProcessLevelMonsters` ends -- with no fight on -- by showing and awarding the
+rewards its timed-out monsters staged (when the staged experience is not zero); during a fight they wait for its victory. (Rests loop `ProcessLevelMonsters` only: no side traps.)
+
 ### Turn-based combat: turn order (decoded 2026-09-24)
 
 A genuinely separate subsystem from the dungeon-exploration monster AI
