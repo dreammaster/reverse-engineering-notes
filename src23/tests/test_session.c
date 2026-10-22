@@ -1121,8 +1121,12 @@ static void testDoorwayEngage(GameKind game, const uint8_t *world, size_t size, 
     check("... the ant has not moved while it opens", antAt(s, 175, 43) == before);
     sessionDoorFinish(s);
     check("the two steps end on the ant's cell, and that is combat with it: the pool no longer holds it", s->x == 175 && s->y == 43 && s->combat.active && antAt(s, 175, 43) == NULL &&
-                                                                                                          monsterGetU16(s->combat.slots, MonsterFieldWorldX) == 175);
+                                                                                                          monsterGetU16(s->combat.slots + MonsterRecordSize, MonsterFieldWorldX) == 175);
     sessionFree(s);
+}
+
+static unsigned slotTypeOf(const SessionCombat *c, unsigned slot) {
+    return monsterGetU16(c->slots + (size_t)slot * MonsterRecordSize, MonsterFieldType);
 }
 
 /* ProcessSideTrapsOnMovement: an armed monster shoots one of the first three members; the avoidance roll depends on the member's EquipRating5 against the monster's ranged accuracy. */
@@ -1186,6 +1190,79 @@ static void testAmbush(GameKind game, const uint8_t *world, size_t size, const c
         now += sessionPartyRecord(s, i) ? partyGetStat(sessionPartyRecord(s, i), PartyStatHitPoints) : 0;
     }
     check("... and costs nothing", now == before);
+    sessionFree(s);
+}
+
+/* Group fights: the first monster stands in the middle slot, others join on the left (the middle one steps right) or, with room for a third, on the left with the left one stepping to the middle;
+ * the formation bits say how many; the dead leave gaps that CompactMonsterSlots closes one step at a time. */
+static void testGroupFight(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    if (game != GameYendor2) {
+        return;
+    }
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    ViewScene scene;
+    DungeonGridCell cells[ViewportCellCount];
+    place(s, 175, 40, SaveFacingSouth);
+    sessionScene(s, &scene, cells);
+    const uint8_t *ant = antAt(s, 175, 44);
+    check("the ant is there to copy", ant != NULL);
+    if (!ant) {
+        sessionFree(s);
+        return;
+    }
+    uint8_t model[MonsterRecordSize];
+    memcpy(model, ant, MonsterRecordSize);
+    uint8_t *spare[4];
+    for (unsigned i = 0; i < 4; i++) {
+        spare[i] = s->pool + (size_t)(70 + i) * MonsterRecordSize;
+    }
+    #define PLANT(i, flagBits) do { memcpy(spare[i], model, MonsterRecordSize); monsterSetU16(spare[i], MonsterFieldFlags, (uint16_t)(flagBits));         monsterSetU16(spare[i], MonsterFieldHealth, 40); monsterSetU16(spare[i], MonsterFieldWorldX, 0x300 + (i)); monsterSetU16(spare[i], MonsterFieldWorldY, 0x300);         monsterSetU16(spare[i], MonsterFieldAnimSet, 10); monsterSetU16(spare[i], MonsterFieldState, 0); } while (0)
+    SessionCombat *c = &s->combat;
+    PLANT(0, 0xA000);
+    PLANT(1, 0xA000);
+    PLANT(2, 0xA000);
+    PLANT(3, 0xA000);
+    check("the first monster starts the fight in the middle slot", sessionCombatEngage(s, spare[0]) && c->active && slotTypeOf(c, 1) && !slotTypeOf(c, 0) && !slotTypeOf(c, 2) && c->formation == 0xA000);
+    check("... and its record has left the pool", monsterGetU16(spare[0], MonsterFieldType) == 0);
+    check("a second joins on the left; the first steps to the right (layer + 1) and the new one is one layer to the left",
+          sessionCombatEngage(s, spare[1]) && slotTypeOf(c, 0) && !slotTypeOf(c, 1) && slotTypeOf(c, 2) && monsterGetU16(c->slots, MonsterFieldAnimSet) == 9 &&
+              monsterGetU16(c->slots + 2 * MonsterRecordSize, MonsterFieldAnimSet) == 11);
+    check("... the formation has room for a third (neither has 0x4000)", c->formation == 0xA000);
+    check("a third joins on the left, the left one stepping to the middle", sessionCombatEngage(s, spare[2]) && slotTypeOf(c, 0) && slotTypeOf(c, 1) && slotTypeOf(c, 2) &&
+                                                                              monsterGetU16(c->slots, MonsterFieldAnimSet) == 9 && monsterGetU16(c->slots + MonsterRecordSize, MonsterFieldAnimSet) == 10);
+    check("a fourth is refused and stays in the pool", !sessionCombatEngage(s, spare[3]) && monsterGetU16(spare[3], MonsterFieldType) != 0);
+
+    /* the dead leave a gap: the left monster dies, the middle one steps left (layer - 1) */
+    unsigned middleType = slotTypeOf(c, 1);
+    monsterSetU16(c->slots, MonsterFieldHealth, 0);
+    c->cursor = 0;
+    c->order[0].isMonster = false;
+    c->order[0].index = 0;
+    bool attacked = sessionAttack(s);
+    check("a member's turn went by", attacked);
+    check("the dead left monster is gone and the middle one has stepped left", slotTypeOf(c, 0) == middleType && !slotTypeOf(c, 1) && slotTypeOf(c, 2) && monsterGetU16(c->slots, MonsterFieldAnimSet) == 9);
+    sessionFree(s);
+
+    /* a pair-at-most formation (0x4000): the second joins, the third cannot; a monster that does not fight in a group never joins */
+    s = sessionNew(game, world, size);
+    place(s, 175, 40, SaveFacingSouth);
+    sessionScene(s, &scene, cells);
+    memcpy(model, antAt(s, 175, 44), MonsterRecordSize);
+    for (unsigned i = 0; i < 4; i++) {
+        spare[i] = s->pool + (size_t)(70 + i) * MonsterRecordSize;
+    }
+    c = &s->combat;
+    PLANT(0, 0xC000);
+    PLANT(1, 0xC000);
+    PLANT(2, 0xC000);
+    PLANT(3, 0x2000);
+    sessionCombatEngage(s, spare[0]);
+    check("a pair formation: the second joins, the formation stays 0x4000 and the third is refused", sessionCombatEngage(s, spare[1]) && c->formation == 0xC000 && !sessionCombatEngage(s, spare[2]));
+    check("a monster without 0x8000 never joins", !sessionCombatEngage(s, spare[3]));
+    #undef PLANT
     sessionFree(s);
 }
 
@@ -1382,6 +1459,7 @@ int main(void) {
             testLockedDoor(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBumpSound(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testAmbush(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testGroupFight(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBelt(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testInventorySlots(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);

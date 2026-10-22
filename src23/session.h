@@ -53,6 +53,12 @@ typedef struct {
     unsigned count, cursor;
     uint16_t targets[CombatMonsterSlotCount];
     MonsterRewardStaging staging;
+    /*
+     * g_uiScratchFlags4's 0xE000 bits, taken from the first monster's flags (+0x92) when the fight starts: 0x8000 = it fights in a group at all, 0x4000 = a pair at most, 0x2000 = room for a third.
+     * After each join they are recomputed (0x4000 when either of the two monsters has it, else 0x2000). The three slots are the left, middle and right of the view (51C0 / 525C / 52F8); the first
+     * monster stands in the middle one, and a monster's layer (+0xA) says where it is drawn (one less on the left, one more on the right).
+     */
+    unsigned formation;
 } SessionCombat;
 
 /*
@@ -135,6 +141,7 @@ typedef struct GameSession {
     unsigned pendingSound;  /* the sound event the last command asked for (a travel arrival, a story event); the front end plays it and clears it */
     uint16_t heldItem, heldExtra; /* the item on the cursor (CREATE FOOD / FORGE put one there when the cursor is empty); 0 = none */
     SessionCombat combat;
+    MonsterRewardStaging staged; /* the rewards of monsters whose timers ran out (GrantMonsterRewards stages them in globals): awarded with the next victory, or at the end of the monster pass when they carry experience */
     char log[96]; /* the last thing that happened, as the original's message area would say it */
 } GameSession;
 
@@ -189,6 +196,10 @@ RestOutcome sessionRest(GameSession *session);
  * a preset amount. True when somebody was hit. The sound of the shot goes to `pendingSound`.
  */
 bool sessionAmbushShots(GameSession *session);
+
+/* A pool monster steps onto the party's cell (what the monster pass does for one that reaches it): it starts the fight, or joins the fight that is on when its flags and the formation allow it
+ * (SessionCombat::formation). True when it was taken into a combat slot (the pool record is cleared then). */
+bool sessionCombatEngage(GameSession *session, uint8_t *poolRecord);
 
 /* UnlockDoorCommand with a key (see interactUnlockFacing); on success the faced cell's door marker is cleared. The sound, `unlockMessage` and (a lock that holds) `lockReport` are set for the front end. */
 InteractUnlockOutcome sessionUnlock(GameSession *session, uint16_t keyWord0, uint16_t heldKeyFlags);

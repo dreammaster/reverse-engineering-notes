@@ -96,8 +96,55 @@ static void say(GameSession *s, const char *format, unsigned a) {
 
 static void combatNewRound(GameSession *s) {
     SessionCombat *c = &s->combat;
+    memset(c->defeated, 0, sizeof(c->defeated)); /* BuildCombatTurnOrder makes fresh entries: nobody is struck off yet */
     c->count = combatBuildTurnOrder(&s->save, c->slots, &s->rng, c->order, c->targets);
     c->cursor = 0;
+}
+
+static unsigned slotType(const SessionCombat *c, unsigned slot) {
+    return monsterGetU16(c->slots + (size_t)slot * MonsterRecordSize, MonsterFieldType);
+}
+
+static void slotLayer(SessionCombat *c, unsigned slot, int delta) {
+    uint8_t *record = c->slots + (size_t)slot * MonsterRecordSize;
+    monsterSetU16(record, MonsterFieldAnimSet, (uint16_t)(monsterGetU16(record, MonsterFieldAnimSet) + delta));
+}
+
+/* Moves a combat slot's record to another (a copy, then the source is cleared); the turn order, the struck-off marks and the targets follow it. */
+static void slotMove(SessionCombat *c, unsigned from, unsigned to) {
+    uint8_t *source = c->slots + (size_t)from * MonsterRecordSize;
+    memcpy(c->slots + (size_t)to * MonsterRecordSize, source, MonsterRecordSize);
+    memset(source, 0, MonsterRecordSize);
+    for (unsigned i = 0; i < c->count; i++) {
+        if (c->order[i].isMonster && c->order[i].index == from) {
+            c->order[i].index = to;
+        }
+    }
+    c->defeated[to] = c->defeated[from];
+    c->defeated[from] = false;
+    c->targets[to] = c->targets[from];
+    c->targets[from] = 0;
+}
+
+/*
+ * CompactMonsterSlots (yendor2.asm:33995): one step toward a tidy formation, run by ProcessCombatRound whenever a monster is left. A left monster with the right slot free: the middle one (or, with the
+ * middle empty, the left one) moves one place right (its layer + 1); with the left empty and the right occupied: the middle one (or the right one) moves one place left (layer - 1). A full or a
+ * left-and-right pair is left as it is.
+ */
+static void combatCompact(SessionCombat *c) {
+    bool left = slotType(c, 0) != 0, middle = slotType(c, 1) != 0, right = slotType(c, 2) != 0;
+    if (left) {
+        if (right) {
+            return;
+        }
+        unsigned from = middle ? 1 : 0;
+        slotLayer(c, from, 1);
+        slotMove(c, from, from + 1);
+    } else if (right) {
+        unsigned from = middle ? 1 : 2;
+        slotLayer(c, from, -1);
+        slotMove(c, from, from - 1);
+    }
 }
 
 static void combatCheckWipe(GameSession *s) {
@@ -113,7 +160,18 @@ static void combatCheckWipe(GameSession *s) {
 }
 
 /* The rewards of a victory go to the party; when there is experience they are also kept to be shown (ShowLootAndAwardExperience) and the "treasure" sound (_val16, 7) is asked for. */
-static void awardLoot(GameSession *s, const MonsterRewardStaging *staging) {
+static void stagingAdd(MonsterRewardStaging *to, const MonsterRewardStaging *from) {
+    bcd4Add(to->gold, from->gold);
+    bcd4Add(to->ore, from->ore);
+    bcd4Add(to->nuore, from->nuore);
+    bcd4Add(to->experience, from->experience);
+}
+
+static void awardLoot(GameSession *s, const MonsterRewardStaging *given) {
+    MonsterRewardStaging total = *given; /* the rewards of monsters that timed out earlier are still staged: they go with this victory */
+    stagingAdd(&total, &s->staged);
+    memset(&s->staged, 0, sizeof(s->staged));
+    const MonsterRewardStaging *staging = &total;
     monsterRewardsAward(&s->save, s->game, staging);
     static const uint8_t zero[4] = {0, 0, 0, 0};
     if (memcmp(staging->experience, zero, 4) != 0) {
@@ -128,6 +186,8 @@ static void awardLoot(GameSession *s, const MonsterRewardStaging *staging) {
     }
 }
 
+static bool monstersTakeTurns(GameSession *s);
+
 /* ProcessCombatRound after a combatant has acted: reap the dead, then the next combatant. */
 static void combatAfterAction(GameSession *s) {
     SessionCombat *c = &s->combat;
@@ -137,8 +197,15 @@ static void combatAfterAction(GameSession *s) {
         memset(&c->staging, 0, sizeof(c->staging));
         c->active = false;
         snprintf(s->log, sizeof(s->log), "victory: the loot and experience are in the party's totals");
-    } else if (outcome == CombatRoundNewRound) {
-        combatNewRound(s);
+    } else {
+        combatCompact(c);
+        if (outcome == CombatRoundNewRound) { /* ProcessLevelMonsters and the ambushes between two rounds (RunDungeonGameLoop :16377): the monsters outside walk, and may join */
+            monstersTakeTurns(s);
+            sessionAmbushShots(s);
+            if (c->active) {
+                combatNewRound(s);
+            }
+        }
     }
 }
 
@@ -160,15 +227,68 @@ static void combatRunMonsters(GameSession *s) {
     }
 }
 
-static void combatStart(GameSession *s, uint8_t *poolRecord) {
+/*
+ * A monster steps onto the party's cell (ProcessLevelMonsters, :22FCC). The first one starts the fight: it stands in the middle slot, and its flags' top three bits are the formation. When a fight
+ * is on already, a monster that fights in a group (flags 0x8000, the formation's too) joins: with the left slot free it goes there and the middle one moves to the right; with the left taken and the
+ * middle free (a formation with room for a third: 0x2000, and the monster has 0x2000 too) the left one moves to the middle and it takes the left. Anything else stays outside. True when it was taken.
+ */
+static bool combatEngage(GameSession *s, uint8_t *poolRecord) {
     SessionCombat *c = &s->combat;
-    memset(c, 0, sizeof(*c));
-    memcpy(c->slots, poolRecord, MonsterRecordSize);
-    monsterPoolRemove(poolRecord, &s->grid);
-    c->active = true;
+    uint16_t flags = (uint16_t)monsterGetU16(poolRecord, MonsterFieldFlags);
+    if (!c->active) {
+        memset(c, 0, sizeof(*c));
+        memcpy(c->slots + MonsterRecordSize, poolRecord, MonsterRecordSize);
+        monsterPoolRemove(poolRecord, &s->grid);
+        c->active = true;
+        c->formation = flags & 0xE000;
+        return true;
+    }
+    if (!(flags & 0x8000) || !(c->formation & 0x8000)) {
+        return false;
+    }
+    bool left = slotType(c, 0) != 0;
+    if (!left || (c->formation & 0x2000)) {
+        if (left && (slotType(c, 1) || !(flags & 0x2000))) {
+            return false;
+        }
+        if (!left) { /* the middle one steps to the right, the new one stands on the left */
+            slotLayer(c, 1, 1);
+            slotMove(c, 1, 2);
+        } else { /* the left one steps to the middle */
+            slotLayer(c, 0, 1);
+            slotMove(c, 0, 1);
+        }
+        memcpy(c->slots, poolRecord, MonsterRecordSize);
+        monsterPoolRemove(poolRecord, &s->grid);
+        slotLayer(c, 0, -1);
+        if (!left) {
+            uint16_t either = (uint16_t)(monsterGetU16(c->slots, MonsterFieldFlags) | monsterGetU16(c->slots + 2 * MonsterRecordSize, MonsterFieldFlags));
+            c->formation = (c->formation & 0x9FFF) | ((either & 0x4000) ? 0x4000 : 0x2000);
+        }
+        return true;
+    }
+    return false;
+}
+
+/* The fight begins (RunDungeonGameLoop :16348 on): the turn order, and the monsters whose turn comes first. */
+static void combatBegin(GameSession *s) {
     combatNewRound(s);
     snprintf(s->log, sizeof(s->log), "combat");
     combatRunMonsters(s);
+}
+
+static void combatStart(GameSession *s, uint8_t *poolRecord) {
+    combatEngage(s, poolRecord);
+    combatBegin(s);
+}
+
+bool sessionCombatEngage(GameSession *s, uint8_t *poolRecord) {
+    bool first = !s->combat.active;
+    bool taken = combatEngage(s, poolRecord);
+    if (first && taken) {
+        combatBegin(s);
+    }
+    return taken;
 }
 
 /*
@@ -234,21 +354,39 @@ bool sessionAmbushShots(GameSession *s) {
     return hit;
 }
 
-/* ProcessLevelMonsters: every live monster takes its turn; one that reaches the party engages it and stops the pass. */
+/*
+ * ProcessLevelMonsters (yendor2.asm:33366): every live monster takes its turn, all 80 slots whether or not a fight is on. One that steps onto the party's cell starts the fight, or -- when one is on
+ * already -- joins it (combatEngage); the fight itself begins after the pass. The rewards of monsters whose timers ran out are staged: with no fight on, they are awarded at the end of the pass
+ * once they hold experience (the shown loot panel), else they wait for the next victory.
+ */
 static bool monstersTakeTurns(GameSession *s) {
+    bool wasActive = s->combat.active;
     MonsterRewardStaging staging;
     memset(&staging, 0, sizeof(staging));
-    for (unsigned slot = 0; slot < MonsterPoolSize && !s->combat.active; slot++) {
+    for (unsigned slot = 0; slot < MonsterPoolSize; slot++) {
         uint8_t *record = s->pool + (size_t)slot * MonsterRecordSize;
         if (monsterGetU16(record, MonsterFieldType) == 0) {
             continue;
         }
-        MonsterFullTurn turn = monsterPoolTakeTurn(record, s->game, &s->map, &s->grid, NULL, 0, &staging, s->x, s->y, &s->rng);
+        MonsterFullTurn turn = monsterPoolTakeTurn(record, s->game, &s->map, &s->grid, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, &staging, s->x, s->y, &s->rng);
         if (turn.move == MonsterMoveEngaged) {
-            combatStart(s, record);
+            combatEngage(s, record);
         }
     }
-    sessionAmbushShots(s);
+    static const uint8_t zero[4] = {0, 0, 0, 0};
+    if (s->combat.active) {
+        stagingAdd(&s->combat.staging, &staging);
+    } else {
+        stagingAdd(&s->staged, &staging);
+        if (memcmp(s->staged.experience, zero, 4) != 0) {
+            MonsterRewardStaging none;
+            memset(&none, 0, sizeof(none));
+            awardLoot(s, &none);
+        }
+    }
+    if (!wasActive && s->combat.active) {
+        combatBegin(s);
+    }
     return s->combat.active;
 }
 
@@ -329,6 +467,7 @@ static void stepUnchecked(GameSession *s, MovementResult move) {
 static void movedOnto(GameSession *s) {
     if (!engageMonsterOnPartyCell(s)) {
         monstersTakeTurns(s);
+        sessionAmbushShots(s); /* ProcessSideTrapsOnMovement follows the monster pass after a step (and after a shot, below), not the rests' */
     }
     applyMapTrigger(s);
 }
@@ -668,6 +807,7 @@ static void shotEnd(GameSession *s) { /* the common epilogue (loc_1D747): the lo
     memset(shot->picture, 0, sizeof(shot->picture));
     sessionRebuild(s);
     monstersTakeTurns(s);
+    sessionAmbushShots(s);
 }
 
 /* ResolveAttackOrAbilityAction's ranged branch for the first member still to shoot, against the monster at pool index `target`. True when it hit. */
