@@ -926,6 +926,27 @@ static void testShot(GameKind game, const uint8_t *world, size_t size, const cha
 }
 
 /* Saving and loading: the state of the session goes into a save image and comes back in a fresh session. */
+/* HandleMovementInput's door branch: walking into the magically locked door at (165, 40) from (166, 40) facing west is refused and the lock's words are kept for the message. */
+static void testLockedDoor(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    if (game != GameYendor2) {
+        return;
+    }
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[200];
+    place(s, 166, 40, SaveFacingWest);
+    s->lockReport = false;
+    SessionStep step = sessionMove(s, MovementForward);
+    snprintf(text, sizeof(text), "%s: a step into the magically locked door is refused and reports its lock (flag 0x20)", label);
+    check(text, step == SessionStepBlocked && s->x == 166 && s->lockReport && (s->lockFlags & LockFlagMagical));
+    s->lockReport = false;
+    sessionMove(s, MovementTurnLeft);
+    check("a turn reports no lock", !s->lockReport);
+    sessionFree(s);
+}
+
 /* The worker ant in the one-cell room behind the doorway at (175, 42) (Chapter 2, three cells south of the party's start): it comes up to the cell behind the door as the party reaches
  * the door, the door's two steps end on its cell, and HandleMovementInput's scan of the pool for a monster on the party's cell starts the combat. */
 static const uint8_t *antAt(GameSession *s, int x, int y) {
@@ -1159,6 +1180,7 @@ int main(void) {
             testSaveLoad(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testShot(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testDoorwayEngage(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testLockedDoor(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);
         }
     }

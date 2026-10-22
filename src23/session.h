@@ -123,6 +123,8 @@ typedef struct GameSession {
     bool scrollCast;           /* internal: a spell being cast from a scroll (no knowledge, no cost, attacks "already resolved") */
     unsigned scrollTarget;     /* its single-target recipient slot */
     unsigned castTarget;       /* internal: the recipient slot + 1 of a single-target spell chosen on the alchemy screen (sessionCastOn), 0 = the caster */
+    bool lockReport;           /* a step into a marked door cell was refused (sessionMove): `lockFlags` / `lockValue` / `lockSkill` are what ShowLockStatus (lockStatusText) needs; the front end writes the message and clears this */
+    uint16_t lockFlags, lockValue, lockSkill;
     RestOutcome rest;          /* the last rest (sessionRest) ... */
     bool restReport;           /* ... and whether the front end has still to show it in the message area */
     AilmentClock ailments;  /* the counters of the periodic ailment sweep (ailment.h) */

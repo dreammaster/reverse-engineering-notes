@@ -221,7 +221,24 @@ static void testRealYendor3(void) {
     checkU32("yendor3 gold-key locks", tally.keyCounts[6], 14);
 }
 
+static void testStatusText(void) {
+    const char *l[2];
+    check("a magical lock: MAGICALLY / LOCKED, whatever the skill", lockStatusText(LockFlagMagical | LockFlagKeyBrass, 5, 99, l) == 2 && !strcmp(l[0], "MAGICALLY") && !strcmp(l[1], "LOCKED"));
+    check("a trapped lock: NOT LOCKED, and BUT TRAPPED only with skill 55 and a trap word",
+          lockStatusText(LockFlagTrapped, 105, 54, l) == 1 && !strcmp(l[0], "NOT LOCKED") && lockStatusText(LockFlagTrapped, 0, 99, l) == 1 &&
+              lockStatusText(LockFlagTrapped, 105, 55, l) == 2 && !strcmp(l[1], "BUT TRAPPED"));
+    check("a plain lock: LOCKED, and no more to a clumsy member", lockStatusText(LockFlagKeyGold, 0, 54, l) == 1 && !strcmp(l[0], "LOCKED"));
+    check("a plain lock without a key tier stays LOCKED for the skilled", lockStatusText(0, 0, 99, l) == 1 && !strcmp(l[0], "LOCKED"));
+    check("a lock with a trap word: LOCKED AND / TRAPPED from skill 55, key tiers from 65",
+          lockStatusText(LockFlagKeyIron, 7, 60, l) == 2 && !strcmp(l[0], "LOCKED AND") && !strcmp(l[1], "TRAPPED") && lockStatusText(LockFlagKeyIron, 7, 65, l) == 2 && !strcmp(l[0], "REQUIRES") &&
+              !strcmp(l[1], "SPECIAL KEY"));
+    check("a key lock: REQUIRES / SPECIAL KEY from skill 55, the key's name from 80",
+          lockStatusText(LockFlagKeyIron | LockFlagKeyGold, 0, 60, l) == 2 && !strcmp(l[0], "REQUIRES") && !strcmp(l[1], "SPECIAL KEY") && lockStatusText(LockFlagKeyIron | LockFlagKeyGold, 0, 80, l) == 2 &&
+              !strcmp(l[1], "IRON KEY"));
+}
+
 int main(void) {
+    testStatusText();
     testLayout();
     testParse();
     testKeyType();

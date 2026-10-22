@@ -6706,6 +6706,15 @@ RETURN at (240, 132); a click on the row of region 5 / 7 of the confirm table, E
 screen is left, and `ApplyEncodedItemEffect` runs. `gameui.c` (`alchemyOpen`, `alchemyKey`, `alchemyClick`, `alchemyDraw`) does all this over `sessionCastBy` / `sessionCastOn`; the keys `M` / `R` also answer
 the MARK / RETURN question (the original answers to the mouse only).
 
+### Walking into a locked door: `ShowLockStatus` (decoded 2026-10-22)
+
+`HandleMovementInput` (yendor2.asm:2301; Chapter 3 :5936) -- for a destination cell whose grid flags have `0x6000` -- makes the third role's member (`g_partyRoleAssignment3`, header `+0xA8`; else the
+first in the party) the current record, runs `TryInteractAtPosition` on the cell and then **`ShowLockStatus`** (:12718; Chapter 3 :4534, the same code), plays the bump sound and does not move. The
+object at the cell is a door (`0x8000`: `LoadLockState`, the lock record's flags and trap word) or a curgame record (`0x4000`: the same two words), and the message -- in `0x8A`, transparent, at (240, 96),
+6 pixels apart -- depends on them and on the member's record word `+0x6C` (`lockStatusText`): `+0x20` MAGICALLY / LOCKED; `+0x80` NOT LOCKED (with skill >= 55 and a trap word: NOT LOCKED / BUT TRAPPED);
+else LOCKED, and with skill >= 55 LOCKED AND / TRAPPED when there is a trap word, from skill 65 on (or without a trap word) REQUIRES / SPECIAL KEY when a key tier (`0xFE00`) is set, and from skill 80 REQUIRES /
+the tier's key (BRASS first .. GOLD). `sessionMove` loads the words (`lockReport`, `lockFlags`, `lockValue`, `lockSkill`) and `gameui.c`'s `lockReport` writes the lines.
+
 ### Turn-based combat: turn order (decoded 2026-09-24)
 
 A genuinely separate subsystem from the dungeon-exploration monster AI

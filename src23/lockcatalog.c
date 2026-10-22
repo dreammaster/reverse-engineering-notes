@@ -89,6 +89,48 @@ uint16_t lockRequiredKeyType(uint16_t flags) {
     return 0;
 }
 
+unsigned lockStatusText(uint16_t flags, uint16_t trapValue, unsigned skill, const char *out[2]) {
+    out[0] = "MAGICALLY";
+    out[1] = "LOCKED";
+    if (flags & LockFlagMagical) {
+        return 2;
+    }
+    if (flags & LockFlagTrapped) {
+        out[0] = "NOT LOCKED";
+        if (skill < 55 || trapValue == 0) {
+            return 1;
+        }
+        out[1] = "BUT TRAPPED";
+        return 2;
+    }
+    out[0] = "LOCKED";
+    unsigned count = 1;
+    if (skill < 55) {
+        return 1;
+    }
+    if (trapValue != 0) {
+        out[0] = "LOCKED AND";
+        out[1] = "TRAPPED";
+        count = 2;
+        if (skill < 65) {
+            return 2;
+        }
+    }
+    if (!(flags & 0xFE00)) {
+        return count;
+    }
+    out[0] = "REQUIRES";
+    out[1] = "SPECIAL KEY";
+    if (skill < 80) {
+        return 2;
+    }
+    const char *key = lockKeyTypeName(lockRequiredKeyType(flags));
+    if (key) {
+        out[1] = key;
+    }
+    return 2;
+}
+
 const char *lockKeyTypeName(uint16_t keyFlag) {
     switch (keyFlag) {
     case LockFlagKeyBrass: return "BRASS KEY";

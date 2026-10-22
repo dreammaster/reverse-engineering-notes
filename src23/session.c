@@ -271,6 +271,38 @@ SessionStep sessionDoorFinish(GameSession *s) {
     return SessionStepMoved;
 }
 
+/*
+ * HandleMovementInput's door branch (:2301): TryInteractAtPosition loads the lock record of the object at the cell the party walked into (a door's lock, or a curgame record: the same two words),
+ * the member the original selects -- the third role's, else the first in the party -- is the current record, and ShowLockStatus reads his or her skill word +0x6C. Nothing is shown for a cell with
+ * no such object (the original would show whatever was loaded last).
+ */
+static void lockStatusLoad(GameSession *s, int col, int row) {
+    WorldObjectRecord object;
+    LockRecord lock;
+    uint16_t flags = 0, value = 0;
+    if (!worldObjectFind(&s->objects, s->game, col, row, &object)) {
+        return;
+    }
+    if (object.flags & WorldObjectFlagDoor) {
+        if (!lockCatalogRecord(&s->locks, object.value, &lock)) {
+            return;
+        }
+        flags = lock.flags;
+        value = lock.price;
+    } else if (!(object.flags & WorldObjectFlagCurgameRecord) || !lockCatalogCurgameRecord(&s->locks, object.value, &flags, &value)) {
+        return;
+    }
+    unsigned id = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 4);
+    if (id == 0) {
+        id = saveGetPartySlot(&s->save, 0);
+    }
+    const uint8_t *member = id ? saveGamePartyRecordById(&s->save, id) : NULL;
+    s->lockFlags = flags;
+    s->lockValue = value;
+    s->lockSkill = member ? partyGetU16(member, 0x6C) : 0;
+    s->lockReport = true;
+}
+
 SessionStep sessionMove(GameSession *s, MovementAction action) {
     if (s->combat.active || s->combat.wiped) {
         return SessionStepBusy;
@@ -288,6 +320,9 @@ SessionStep sessionMove(GameSession *s, MovementAction action) {
             bool isDoor = cell && (cell->flags & 0x6000);
             MovementCellOutcome outcome =
                 movementClassifyCell(s->game, worldMapTileA(&s->map, (unsigned)ny, (unsigned)nx), worldMapTileB(&s->map, (unsigned)ny, (unsigned)nx), isDoor, false);
+            if (outcome == MovementCellDoor) {
+                lockStatusLoad(s, nx, ny);
+            }
             if (outcome == MovementCellSpecial && action == MovementForward) { /* the door opens first */
                 s->doorOpening = true;
                 s->pendingSound = DoorSound;

@@ -507,6 +507,21 @@ static void restReport(GameUi *ui) {
     }
 }
 
+/* ShowLockStatus: what a refused step into a marked door cell tells (lockcatalog.h lockStatusText), written over the cleared message area, 6 pixels apart from (240, 96) in 0x8A. */
+static void lockReport(GameUi *ui) {
+    GameSession *s = ui->session;
+    if (!s->lockReport) {
+        return;
+    }
+    s->lockReport = false;
+    const char *lines[2];
+    unsigned count = lockStatusText(s->lockFlags, s->lockValue, s->lockSkill, lines);
+    ui->panelRunCount = 0;
+    for (unsigned i = 0; i < count; i++) {
+        panelRun(ui, 240, 96 + 6 * (int)i, 0x8A, false, lines[i]);
+    }
+}
+
 /* ---- the alchemy screen ---- */
 
 static bool alchemyMember(const GameUi *ui, unsigned slot) { /* a member with magic points to spend: the record word +0x94 (maximum MP) is not zero */
@@ -2014,6 +2029,7 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
     ui->panelRunCount = 0; /* the next command clears the message area */
     bool running = keyDispatch(ui, key, ctrl);
     restReport(ui);
+    lockReport(ui);
     return running;
 }
 

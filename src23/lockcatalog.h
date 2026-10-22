@@ -160,4 +160,16 @@ uint16_t lockRequiredKeyType(uint16_t flags);
 /* "BRASS KEY" .. "GOLD KEY" for one of the LockFlagKey* constants (as returned by lockRequiredKeyType), else NULL. */
 const char *lockKeyTypeName(uint16_t keyFlag);
 
+/*
+ * ShowLockStatus (yendor2.asm:12718, Chapter 3 :4534 -- the same code, strings at DS:0x7BB7.. / 0x7EE9..): what the party learns when it walks into a door cell that is still marked (HandleMovementInput:
+ * TryInteractAtPosition loads the faced lock's -- or a curgame record's -- flags and trap word, then this writes up to two lines at (240, 96) in 0x8A). `skill` is the record word +0x6C of the
+ * member the original selects (the third role's, else the first in the party): the more of it, the more he or she sees.
+ *   flags 0x20 (magical)           MAGICALLY / LOCKED
+ *   flags 0x80 (trapped)           NOT LOCKED; with skill >= 55 and a trap word: NOT LOCKED / BUT TRAPPED
+ *   otherwise                      LOCKED; skill >= 55 and a trap word: LOCKED AND / TRAPPED; skill >= 65 (or no trap word) and a key tier in flags 0xFE00:
+ *                                  REQUIRES / SPECIAL KEY; skill >= 80: REQUIRES / <BRASS .. GOLD> KEY (lockRequiredKeyType's priority)
+ * Returns the number of lines (1 or 2) written into out[].
+ */
+unsigned lockStatusText(uint16_t flags, uint16_t trapValue, unsigned skill, const char *out[2]);
+
 #endif

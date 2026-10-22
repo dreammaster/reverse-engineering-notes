@@ -620,6 +620,18 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
     gameUiDraw(&ui);
     check("the next command clears the message", countColour(ui.screen, 240, 96, 312, 107, 0x8A) + countColour(ui.screen, 240, 96, 312, 107, 0x0F) == 0);
 
+    /* a step into the magically locked door: MAGICALLY / LOCKED in the message area */
+    s->x = 166;
+    s->y = 40;
+    s->facing = SaveFacingWest;
+    sessionRebuild(s);
+    gameUiKey(&ui, UiKeyUp, false);
+    gameUiDraw(&ui);
+    check("a step into a magically locked door writes MAGICALLY LOCKED in the message area",
+          s->x == 166 && countColour(ui.screen, 240, 96, 312, 107, 0x8A) > 20);
+    gameUiKey(&ui, UiKeyLeft, false);
+    gameUiKey(&ui, UiKeyRight, false);
+
     /* the alchemy screen: the first member with magic points (slot 1: the first hero has none), a list that is all grey without nuore */
     gameUiKey(&ui, 'c', false);
     check("C opens the alchemy screen on the first member who has magic points, with the spells he or she knows", ui.overlay == UiOverlayAlchemy && ui.alchemyCaster == 1 && ui.alchemyCount == 2 && !ui.alchemyOk[0] && !ui.alchemyOk[1]);
