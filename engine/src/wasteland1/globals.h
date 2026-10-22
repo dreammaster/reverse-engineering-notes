@@ -58,6 +58,18 @@ constexpr uint16_t rememberedClass = 0x46FC;     // byte_2151C: cell content rep
 constexpr uint16_t rememberedAction = 0x46FD;    // byte_2151D
 constexpr uint16_t locationRecOffsets = 0xB9E0;  // _locationsRecOffsets: offsets of the record tables inside the location block
 
+// ---- combat (combat.h)
+constexpr uint16_t monsterPtr = 0x46C8;          // word_214E8: the slot or member record selected by selectSlot/selectMember
+constexpr uint16_t partyStatusPtr = 0x46D8;      // word_214F8: first 8 byte array of the party block
+constexpr uint16_t partyOrdersPtr = 0x46DA;      // word_214FA: second array (order byte per member: top 2 bits + low 6 bits)
+constexpr uint16_t partyBlockOffsets = 0xA5B4;   // byte table: offset of the block of each party group
+constexpr uint16_t encounterOffsets = 0xA5B1;    // byte table: offsets of the three monster entries of a location record
+constexpr uint16_t sexFlagTable = 0xA920;         // byte_27740: indexed by byte 7 of a monster record -> itemSexFlag
+constexpr uint16_t readiness = 0x46CC;           // byte_214EC: 0 unconscious, 0Fh can act, FEh weapon that needs ammunition
+constexpr uint16_t weaponType = 0x46CD;          // byte_214ED: item type of the equipped weapon (1 when unarmed / no ammunition)
+constexpr uint16_t hitFlag = 0x4725;          // byte_21545
+
+
 // ---- character screens and item handling scratch (data segment, IDB names in comments)
 constexpr uint16_t selectedEquipItem = 0xCCE7;   // _selectedEquipItem?
 constexpr uint16_t selectedItemOffset = 0xCCE0;

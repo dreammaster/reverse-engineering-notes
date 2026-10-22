@@ -104,3 +104,46 @@
 A0C5 scrollLine junk=al,dl,pf,si,zf
 07D8 scrollWindowUp junk=al,bl,ch,cl,di,dl,pf,si,zf
 06C9 eraseToRight junk=al,bl,ch,cl,di,dl,pf,zf
+# combat and encounter helpers (ports/ports_combat.cpp)
+2A40 selectMonsterDetails junk=ch,cl,di,dl,pf,si,zf
+2A4C getMonsterDetails junk=ch,cl,di,dl,pf,zf
+2A8D itemDamageDice junk=bl,di,pf,zf
+2A92 itemClipSizeNibble
+2A9D itemAmmunitionType junk=bl,di
+2AA2 itemArmorClassByte
+2AAB itemBytes01 junk=di,pf,zf
+2ABA itemByte2 junk=bl,di
+2AC5 locationRecordBits2 junk=bl,cf,di,pf,zf
+5C08 locationRecordBits4 junk=bl,cf,di,pf,zf
+5C27 markLocationVisited junk=al,bl,di,sf
+3449 orderLow junk=di,pf,zf
+353C orderHigh junk=cf,di,pf,zf
+3561 clearNumberValue
+3787 selectSlotCellRecord junk=ah,al,bl,di,dl,pf,zf scratch=BA08-BA11,4661-4662
+3797 selectCellRecord junk=ah,al,bl,di,dl,pf,zf scratch=BA08-BA11,4661-4662
+379E saveLocationRecord junk=ah,al,bl,cf,di,dl,pf,zf scratch=4661-4662
+37CE selectMember junk=ah,al,bl,pf,zf scratch=A59D-A59E
+37F4 selectSlot junk=ah,al,bl,pf,zf scratch=A59D-A59D
+38B0 clearSlot junk=al,bl,di,pf,zf
+391E markReady
+3924 selectPartyBlock junk=ah,al,bl,pf
+3A37 combatantIndex junk=sf scratch=A590-A591
+3A56 splitCombatantIndex
+3878 combatReadiness junk=ah,bl,cf,ch,cl,di,dl,pf,sf,si,zf scratch=A598-A599
+38C1 useAmmunitionNone junk=bl,cf,ch,cl,di,dl,pf,sf,zf scratch=A598-A599
+38C3 useAmmunition scratch=A598-A599
+5C4A setHitFlag junk=bl,pf
+5C68 typeGroupAOrB
+5C6E typeGroupA
+5C7E typeGroupB junk=sf
+5C8C typeGroupC
+5C96 weaponQuantityByte junk=bl,di,pf
+5CA4 weaponAmmunitionTypeFlags junk=bl,ch,cl,di,dl,pf
+5CB2 timesTen junk=bl,pf,zf
+5CC0 selectMonsterType junk=ch,cl,di,dl,pf,si,zf scratch=A59D-A59D,A670-A670,BA08-BA11,4661-4662
+5CD1 randomDigit scratch=C059-C059 junk=ah,pf
+5705 luckBonus junk=bl,cf,di,pf,sf,zf
+570A dexterityBonus
+570F agilityBonus
+5714 strengthBonus
+57AD countAliveMonsters junk=ah,bl,di,pf,zf scratch=A688-A688,A59D-A59E

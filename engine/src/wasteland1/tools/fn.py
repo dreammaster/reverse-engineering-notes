@@ -8,11 +8,17 @@ import sys
 root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", "ida_scripts")
 dump = open(os.path.join(root, "dump_wl_ext.txt"), errors="replace").read().split(";==== ")
 funcs = {}
+owner = {}      # address of any instruction -> function start
 for chunk in dump[1:]:
     head = chunk.split("\n", 1)[0]
     m = re.search(r"@ ([0-9A-F]+)", head)
     if m:
-        funcs[int(m.group(1), 16)] = ";==== " + chunk.rstrip()
+        start = int(m.group(1), 16)
+        funcs[start] = ";==== " + chunk.rstrip()
+        for ln in chunk.split("\n")[1:]:
+            mm = re.match(r"([0-9A-F]{5})  ", ln)
+            if mm:
+                owner[int(mm.group(1), 16)] = start
 names = {}
 for line in open(os.path.join(root, "wl_dsnames.txt")):
     p = line.split()
