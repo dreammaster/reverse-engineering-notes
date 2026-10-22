@@ -54,6 +54,10 @@ public:
 	bool quit;
 	int currentPsp;
 	std::vector<std::string> programTrace;   // programs started, in order
+	bool watchOn = false;
+	uint16_t watchCs = 0, watchIp = 0;   // dump the recent-instruction ring when this address is reached
+	std::deque<uint32_t> recent;         // last executed CS:IP pairs (ring), for diagnostics
+	std::string dumpRecent(size_t n) const;
 	uint16_t ctxSegment;                 // the video driver's context segment (from INT 62h AH=0)
 
 	/** Run an interrupt service routine to completion (used by compare mode and mouse callbacks). */

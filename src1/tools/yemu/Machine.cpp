@@ -206,7 +206,31 @@ std::string Machine::hostPath(const std::string &dos) const {
 			p[i] = '/';
 	while (!p.empty() && p[0] == '/')
 		p.erase(0, 1);
-	return _root + "/" + p;
+	// DOS cuts every path component to an 8-character name and a 3-character extension, and ignores trailing spaces
+	std::string out, comp;
+	for (size_t i = 0; i <= p.size(); i++) {
+		if (i == p.size() || p[i] == '/') {
+			while (!comp.empty() && comp[comp.size() - 1] == ' ')
+				comp.erase(comp.size() - 1);
+			const size_t dot = comp.find('.');
+			if (dot != std::string::npos && comp != "." && comp != "..") {
+				std::string name = comp.substr(0, dot), ext = comp.substr(dot + 1);
+				const size_t d2 = ext.find('.');
+				if (d2 != std::string::npos)
+					ext = ext.substr(0, d2);
+				comp = name.substr(0, 8) + "." + ext.substr(0, 3);
+			} else if (comp.size() > 8 && comp != "." && comp != "..") {
+				comp = comp.substr(0, 8);
+			}
+			out += comp;
+			if (i < p.size())
+				out += "/";
+			comp.clear();
+		} else {
+			comp += p[i];
+		}
+	}
+	return _root + "/" + out;
 }
 
 int Machine::sftAlloc(FILE *f, const std::string &path, bool console) {
@@ -442,6 +466,7 @@ int Machine::runChild(const std::string &dosPath, uint16_t paramSeg, uint16_t pa
 
 void Machine::terminate(uint8_t code, uint8_t type, bool tsr, uint16_t keepParas) {
 	const uint16_t psp = pspSeg();
+	{ char b[64]; snprintf(b, sizeof(b), "exit psp %04X code %02X type %d\n", psp, code, type); log += b; }
 	_childExit = code;
 	_childExitType = type;
 	// close the handles this process owns: the inherited first 20 and anything it opened
@@ -471,6 +496,12 @@ void Machine::terminate(uint8_t code, uint8_t type, bool tsr, uint16_t keepParas
 void Machine::runLoop(const std::function<bool()> &done) {
 	uint64_t lastPump = cpu.instructions;
 	while (!done() && !quit) {
+		recent.push_back(((uint32_t)cpu.s[CS] << 16) | cpu.ip);
+		if (watchOn && cpu.s[CS] == watchCs && cpu.ip == watchIp) {
+			watchOn = false;
+			log += "watch hit; recent: " + dumpRecent(200) + "\n";
+		}
+		if (recent.size() > 256) recent.pop_front();
 		if (!cpu.step()) {
 			log += "cpu stopped: " + cpu.fault + "\n";
 			quit = true;
@@ -485,6 +516,16 @@ void Machine::runLoop(const std::function<bool()> &done) {
 			quit = true;
 		}
 	}
+}
+
+std::string Machine::dumpRecent(size_t n) const {
+	std::string o;
+	char b[32];
+	for (size_t i = recent.size() > n ? recent.size() - n : 0; i < recent.size(); i++) {
+		snprintf(b, sizeof(b), "%04X:%04X ", recent[i] >> 16, recent[i] & 0xFFFF);
+		o += b;
+	}
+	return o;
 }
 
 int Machine::run(const std::string &program, uint64_t maxInstructions) {
@@ -848,7 +889,7 @@ void Machine::int21() {
 			const int mode = al & 3;
 			f = fopen(hp.c_str(), mode == 0 ? "rb" : "r+b");
 		}
-		if (!f) { dosError(2); break; }
+		if (!f) { log += "open failed: " + dos + "\n"; dosError(2); break; }
 		const int sft = sftAlloc(f, hp, false);
 		const int h = jftAssign(sft, true);
 		if (h < 0) { sftRelease(sft); dosError(4); break; }

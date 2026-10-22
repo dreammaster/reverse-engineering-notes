@@ -92,11 +92,20 @@ int main(int argc, char **argv) {
 	Yemu::Machine m(workDir);
 	if (!fontsDir.empty())
 		m.setFonts(loadFile(fontsDir + "/FONT8X8.BIN"), loadFile(fontsDir + "/FONT8X14.BIN"));
+	if (const char *w = getenv("YEMU_WATCH")) {
+		unsigned c, i;
+		if (sscanf(w, "%x:%x", &c, &i) == 2) { m.watchOn = true; m.watchCs = (uint16_t)c; m.watchIp = (uint16_t)i; }
+	}
 	m.onShot = [&](const std::string &name) { savePng(m, outDir + "/" + name + ".png"); };
 	std::map<int, uint64_t> hist;
-	if (trace62) {
+	int watch62 = -1;
+	if (const char *w = getenv("YEMU_WATCH62")) watch62 = (int)strtol(w, 0, 16);
+	if (trace62 || watch62 >= 0) {
 		m.int62Hook = [&](Yemu::Machine &mm) {
-			hist[mm.cpu.r[Yemu::AX] >> 8]++;
+			const int ah = mm.cpu.r[Yemu::AX] >> 8;
+			hist[ah]++;
+			if (ah == watch62 && hist[ah] == 1)
+				mm.log += "first INT 62h AH=" + std::to_string(ah) + "; recent: " + mm.dumpRecent(200) + "\n";
 			return false;
 		};
 	}
@@ -150,6 +159,8 @@ int main(int argc, char **argv) {
 		printf("console output:\n%s\n", m.console.c_str());
 	if (!m.log.empty())
 		printf("log:\n%s", m.log.c_str());
+	if (getenv("YEMU_RECENT"))
+		printf("recent: %s\n", m.dumpRecent(80).c_str());
 	if (trace62) {
 		printf("INT 62h histogram:\n");
 		for (std::map<int, uint64_t>::const_iterator it = hist.begin(); it != hist.end(); ++it)
