@@ -182,8 +182,15 @@ def kind_of(m):
     return m
 
 
+LOG_CALL = re.compile(r"^_ZN5wxLog(3log|11logexpanded|4logf)")
+
+
 def normalize_name(name):
     name = name.split("@")[0]
+    if LOG_CALL.match(name):
+        # Deponia 1 logs through the varargs wxLog::logexpanded(fmt, ...), Deponia 4 mostly through the typed wxLog::log<T...>(fmt, T...)
+        # (the same statement, another overload): one name for all of them, so that the logging does not drown the other differences
+        return "wxLog::log"
     return CTOR_DTOR.sub(lambda m: m.group(1)[0] + "?E", name)
 
 

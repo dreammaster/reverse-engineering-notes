@@ -1,0 +1,248 @@
+// Original path confirmed via x_assert() calls (not yet reconstructed):
+// src/graphicslib/graphics.cpp - see manifest/source_layout.tsv.
+//
+// The global rendering-backend singleton (`cs:graphics` in the
+// disassembly). Only the surface TPictureIO/TMasterControl touch is
+// stubbed: GetPreloadedPicManager(), GetSpriteFromCache(), and a virtual
+// method at vtable slot 0x90 (called whenever a TSpriteHandle's refcount
+// hits zero, to let the backend release the GPU resource - real name not
+// recovered).
+#pragma once
+
+#include <vector>
+
+#include "TSpriteHandle.h"
+#include "WxStub.h"
+#include "datastruct/visobjref.h"
+#include "graphicslib/spriteCache.h"
+#include "graphicslib/vector3d.h"
+
+class TPreloadedPicManager;
+class TSignalSlot;
+struct TPictureMemBlock;
+class TPictureMEM;
+class TParticleSystem;
+
+// Confirmed 2 raw-int parameters read straight from game data (field ids
+// 0x224/0x225), never a named constant - real values/meaning not resolved
+// (TGameControl::LoadAndInitGame, Deponia_Linux.asm lines 467710-467720).
+enum class TInterpolationEnum : int {};
+
+class TGraphicsInterface {
+public:
+	TGraphicsInterface();
+	virtual ~TGraphicsInterface();
+
+	TPreloadedPicManager *GetPreloadedPicManager();
+	/** The sprite cache (see TSpriteCache; the base class keeps it at +0x08 and passes the calls below on to it). */
+	TSpriteCache *GetSpriteCache() {
+		return &_spriteCache;
+	}
+	TSpriteHandle *GetSpriteFromCache(const wxString &name);
+	void AddToCache(const wxString &name, TSpriteHandle *sprite);
+	void PrintCacheContents(std::list<wxString> &lines);
+	void ClearCache();
+	// Confirmed call shape only (TGScene::SetCurrentLightmap(), Deponia_
+	// Linux.asm line 168383+) - the shared memory block a scene's lightmap
+	// picture decodes into; not reversed beyond that call shape.
+	TPictureMemBlock *GetLightMapMemBlock();
+	// Confirmed call shape only (TMSavegame::~TMSavegame()/SetActive()/
+	// SaveGame(), Deponia_Linux.asm lines 159388-163700) - evicts a named
+	// sprite from the sprite cache; not reversed beyond that call shape.
+	bool RemoveFromCache(const wxString &name);
+	// Confirmed call shapes only (TMSavegame::SaveSnapShot(), Deponia_Linux.
+	// asm lines 162236-162327): the shared memory block frame captures decode
+	// into, and the current frame's captured picture (a virtual slot, +0x128
+	// of the unmodeled GL backend's vtable - null when nothing was captured);
+	// not reversed beyond those call shapes.
+	TPictureMemBlock *GetMainMemBlock();
+	/** Confirmed (asm 762363-762383, bytes +0x270 and +0x272 of the backend): how the pixels of a picture that is made in
+	 *  memory are laid out for the backend: `rgbOrder` (red, green, blue; else the other way round) and `flipped` (the lines
+	 *  begin at the bottom). The OpenGL backend sets them; here they are what a TPictureMEM starts with. */
+	void GetPicsMemSettings(bool &rgbOrder, bool &flipped);
+	/** The picture of the game as it was last shown (GetSnapshotForSavegame, asm 707408: the picture at +0x2A0 of TGraphicsOGL); null
+	 *  when none was made. */
+	virtual TPictureMEM *GetSnapshotForSavegame();
+	// Confirmed call shapes (CmdCreateScreenshot::Redo(), Deponia_Linux.asm lines 392054-392180): slot 0xC8 captures the screen into a
+	// picture (false: it failed). The snapshot that the next savegames show is made by MakeSnapshotForSavegame (asm 710421) and let go
+	// by ClearSnapshotForSavegame (asm 708254); both are called with 1 by the script command (the snapshot is then kept), and the
+	// engine makes one by itself, with 0, when the scene changes from a playable one to a menu (a kept one is not replaced then).
+	virtual bool CaptureScreen(class TPictureIO &picture);
+	/** Takes the picture of the game as it was last shown, unless a kept one is there and `keep` is false; `keep` keeps it. */
+	virtual void MakeSnapshotForSavegame(bool keep);
+	/** Lets the snapshot go, unless it is kept and `keep` is false; `keep` also lets go of the keeping. */
+	virtual void ClearSnapshotForSavegame(bool keep);
+	/** What a backend gives to the snapshots: the picture of the game that was shown last, as 3 bytes (red, green, blue) to a pixel, the
+	 *  lines from the top (the part of the original's backend that reads the pixels of the window: asm 710421, g_subSys+0xD0). False when
+	 *  it cannot be read (the base class: always). */
+	virtual bool ReadScreen(std::vector<unsigned char> &rgb, int &width, int &height);
+	// Confirmed call shapes only (CmdToggleWindowMode/CmdSetWindowSize/CmdGetWindowMode, asm lines 388874-388967):
+	// slots 0x158 (changes between the window and the full screen), 0x160 (the size of the window, in windowed mode)
+	// and 0x168 (whether the window is a full screen one) of the unmodeled GL backend.
+	/** Slot 0x28 (a window event of ShowFrame): works out the part of the window where the game is drawn (the window
+	 *  less the bars of the aspect ratio), from the size of the window and the resolution of the game. */
+	virtual void CalculateDisplayedArea(const wxSize &windowSize, const wxSize &renderSize, wxRect *displayedArea);
+	/** Slot 0x18 (CreateWindowGL, asm 492404): the backend takes the window that was just made (its OpenGL state is set up
+	 *  here) and works out the part of it where the game is drawn (into `displayedArea`). False when it cannot. Here only
+	 *  the area is worked out. */
+	virtual bool InitGraphics(const wxSize &windowSize, wxSize &renderSize, wxRect *displayedArea);
+	virtual void ToggleWindowMode();
+	virtual bool SetWindowSize(int width, int height);
+	virtual bool IsFullscreen();
+
+	// Confirmed call shapes only (TGameControl::LoadAndInitGame, asm lines
+	// 467717-467726, 467884-467886) - not reversed beyond that.
+	void SetFilters(TInterpolationEnum a, TInterpolationEnum b);
+	void PreallocateTextures(int count);
+	void SetCacheSize(int size);
+
+	// Confirmed call shapes only (TGameControl::Update, Deponia_Linux.asm
+	// lines 469849, 469854) - checked once per frame; when the count has
+	// changed, UpdateCache() is called to react to it. Not reversed beyond
+	// that call shape.
+	int GetCacheSpriteCount() const;
+	bool UpdateCache();
+
+	// vtable slot 0x90 in the original; called with a TSpriteHandle* whose
+	// refcount just reached zero.
+	virtual void OnSpriteHandleReleased(TSpriteHandle *handle);
+	/** Slot 0x40 (TGraphicsOGL::FinishDraw() is empty; the sprite cache calls it before it lets go of the sprites). */
+	virtual void FinishDraw();
+	/** Makes the sprite (the backend's texture) of `width` x `height` pixels of `bytesPerPixel` bytes from `data` and puts the
+	 *  handle in `sprite`; false if it cannot be made. Here only the handle is made, with the memory the pixels take. */
+	virtual bool CreateSprite(TSpriteHandle **sprite, const char *data, int width, int height, int bytesPerPixel, int pitch,
+	                          bool flag);
+
+	// The calls of TMasterControl::Draw/Signal/PlayAVI that bracket the drawing of a frame (the names are those of
+	// TGraphicsOGL's vtable). The meaning of the parameters is not recovered: the OpenGL backend sets up its frame buffers
+	// and shader matrices in them.
+	/** Slot 0x30 (TGraphicsOGL::BeforeDrawScene(bool, int)). */
+	virtual void BeforeDrawScene(bool a, int b);
+	/** Slot 0x38 (TGraphicsOGL::AfterDrawScene(bool, bool)). */
+	virtual void AfterDrawScene(bool a, bool b);
+	/** Slot 0x48 (TGraphicsOGL::Swap()): the frame is shown (the buffers are swapped). */
+	virtual void Swap();
+	/** Slot 0x178 (TGraphicsOGL::SetDirectToScreen()): the drawing goes to the screen again, with the matrix of the window. */
+	virtual void SetDirectToScreen();
+
+	/** Confirmed (asm 763382-764646): the transition between two scenes, played to its end before it returns. `effect` is the
+	 *  setting of the game (kGameFadeEffect): 1 the new scene comes out of the dark, 2 it goes into the dark, 4 and 11 the old
+	 *  one dissolves into the new one (the backend draws both: it reads GetFadeEffect() and GetFadeProgress()), 5 and 6 the same
+	 *  with the progress eased in and out, 8 and 9 an iris that closes (8) or opens (9) round the middle of the screen; 0, 10 and
+	 *  the others do nothing, 3 and 7 are asserts. For `time` milliseconds, each turn: the game is updated and drawn through
+	 *  `game`, the sounds go on through `sound` (kSignalSoundFade). `first` and `second` are sprite handles that are let go
+	 *  when it is over. A backend that draws the transitions itself overrides this. */
+	virtual void FadeIn(int effect, int time, TSpriteHandle *first, TSpriteHandle *second, TSignalSlot *sound, TSignalSlot *game);
+	/** The effect the transition draws now, how far it is (0 to 1), and whether the backend drew something for it
+	 *  (+0x278, +0x280, +0x284; the backend sets the last one, Swap() clears it). */
+	int GetFadeEffect() const {
+		return _fadeEffect;
+	}
+	float GetFadeProgress() const {
+		return _fadeProgress;
+	}
+	void SetFadeDrawn(bool drawn) {
+		_fadeDrawn = drawn;
+	}
+	/** The size of the surface (+0x20C, +0x210): the whole screen, as the transitions cover it. */
+	int GetSurfaceWidth() const {
+		return _surfaceWidth;
+	}
+	int GetSurfaceHeight() const {
+		return _surfaceHeight;
+	}
+	void SetSurfaceSize(int width, int height) {
+		_surfaceWidth = width;
+		_surfaceHeight = height;
+	}
+	/** Slots 0x110 and 0x118 (TGraphicsOGL::BeginBatch()/EndBatch()): the drawing calls in between are put together to
+	 *  one (a text is drawn letter by letter between the two). */
+	virtual void BeginBatch();
+	virtual void EndBatch();
+
+	/** The size of the picture that the game is drawn on (+0x1F4, +0x1F8; the backend sets them). */
+	int GetWidth() const {
+		return _width;
+	}
+	int GetHeight() const {
+		return _height;
+	}
+	void SetSize(int width, int height) {
+		_width = width;
+		_height = height;
+	}
+
+	/** Slot 0x70 (TGraphicsOGL::Draw(void *, ...), asm 715317-716895): draws the part `sourceRect` (pixels of the sprite) of the
+	 *  sprite on the screen at `destRect`, `alpha` opaque, `mirrored`, with `color` (0xAABBGGRR; the picture is multiplied
+	 *  by it, premultiplied with the alpha), with the shader number `shader` (-1: the default), turned by `rotation` and
+	 *  scaled by `scaleX`/`scaleY` about `rotationCenter` (-1 for a coordinate: the middle of the rectangle), through the
+	 *  matrix `matrixId` (1 or more: through the matrices that the scripts set). While a batch is open (BeginBatch()) the
+	 *  quads are collected and rotation, scale and matrix are not used. The backend's.  */
+	virtual void Draw(TSpriteHandle *sprite, const wxRect &sourceRect, const FloatRect &destRect, float alpha, bool mirrored,
+	                  const unsigned int &color, int shader, float rotation, const wxPoint &rotationCenter, float scaleX,
+	                  float scaleY, int matrixId);
+	/** Slot 0xD8 (TGraphicsOGL::DrawBox(const wxRect &, uint, float)): fills the rectangle with `color` (0xAABBGGRR) and
+	 *  `alpha`. The backend's. */
+	virtual void DrawBox(const wxRect &rect, unsigned int color, float alpha);
+	/** Slot 0xF0 (TGraphicsOGL::DrawLine(const wxPoint &, const wxPoint &, uint, float)): a line. The backend's. */
+	virtual void DrawLine(const wxPoint &from, const wxPoint &to, unsigned int color, float alpha);
+	/** Slot 0x78 (TGraphicsOGL::DrawWithLightMap): the same, the picture multiplied by `lightMap` (the light map's pixels,
+	 *  moved by `offset`). */
+	virtual void DrawWithLightMap(TSpriteHandle *sprite, const wxRect &sourceRect, const FloatRect &destRect, float alpha,
+	                              bool mirrored, void *lightMap, const wxPoint &offset);
+
+	/** Slot 0x58 (TGraphicsOGL::SetOffset(float, float)): what is drawn after this is moved by (`x`, `y`) pixels; (0, 0) puts
+	 *  it back. The objects and the scene with particles move by the negated scroll position. The backend's. */
+	virtual void SetOffset(float x, float y);
+	/** Slot 0x88 (TGraphicsOGL::Draw(TParticleSystem &, bool, bool)): draws the particles of the emitters. The backend's. */
+	virtual void Draw(TParticleSystem &system, bool first, bool second);
+	/** The matrix of the drawing (+0x43C of the backend): an object drawn through a matrix multiplies it by its own. */
+	TMatrix4 &GetMatrix() {
+		return _matrix;
+	}
+	/** Confirmed (TGScene::Draw(), TGObject::Draw()): with the matrices on and `matrix1` set, the matrix of the drawing is
+	 *  multiplied by the one `matrix1` stands for (its nine numbers as a 3 x 3 in the corners of a 4 x 4). Used before the
+	 *  particles are drawn. */
+	void MultiplyByMatrix1();
+
+	/** Confirmed (asm 772807-773531, two overloads): narrows the rectangle `left`, `top`, `width`, `height` of a picture of
+	 *  4-byte pixels (`rgba`, alpha the last byte) to what has something in it - the lines at the top and the bottom and
+	 *  the columns at the left and the right that are transparent are taken off. On return `left` and `top` are how much
+	 *  was taken off at those sides, `width` and `height` the new size. The first form looks at the rectangle at
+	 *  (`originX`, `originY`) of a picture that is `pitch` pixels wide (everything is left as it is if the very first
+	 *  pixel of the picture, not of the rectangle, has alpha: the original looks there); the second at a picture
+	 *  that is `width` wide.
+	 *  NOTE: the original does not take off the transparent lines at the bottom if the rectangle was narrowed by exactly
+	 *  one column at the left (it tests the end of the scan with the wrong number); this is kept. */
+	void RemoveTransparentEdges(int &left, int &top, int &width, int &height, int pitch, int originY, int originX,
+	                            const char *rgba);
+	void RemoveTransparentEdges(int &left, int &top, int &width, int &height, const char *rgba);
+	/** The memory a sprite handle takes (the handle's own number). */
+	int GetSpriteMemSize(TSpriteHandle *handle) const;
+
+private:
+	int _width = 0;
+	int _height = 0;
+	int _surfaceWidth = 0;   // +0x20C
+	int _surfaceHeight = 0;  // +0x210
+	int _fadeEffect = 0;     // +0x278
+	int _fadeAux = 0;        // +0x27C
+	float _fadeProgress = 0.0f;  // +0x280
+	bool _fadeDrawn = false;     // +0x284
+	TSpriteCache _spriteCache;
+	TPreloadedPicManager *_preloadedPicManager = nullptr;
+	TPictureMEM *_snapshot = nullptr;   // +0x2A0 (a picture there in the original)
+	bool _snapshotMade = false;
+	bool _snapshotKept = false;         // +0x388
+	TMatrix4 _matrix;  // +0x43C
+};
+
+extern TGraphicsInterface *graphics;
+
+// Confirmed real globals (TGScene::Draw(), Deponia_Linux.asm lines 166568-
+// 166997): the shader every picture draws with when its data record names
+// none (id -1), and the callback that activates a given shader for the
+// picture about to be drawn. Neither is reversed - the real shader system
+// belongs with the (unmodeled) GL backend behind `graphics`.
+extern int defaultShader;
+void ShaderCallback(int shader, TVisObjRef *ref);

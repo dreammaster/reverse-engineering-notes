@@ -1,0 +1,486 @@
+#include "TManagedObject.h"
+
+#include <algorithm>
+#include <cmath>
+#include <limits>
+
+#include "AppGlobals.h"
+#include "TGAction.h"
+#include "TGCharacter.h"
+#include "TGObjectManager.h"
+#include "TGText.h"
+#include "TTAction.h"
+#include "datastruct/visionaire.h"
+#include "datastruct/vlist.h"
+#include "graphicslib/picture.h"
+#include "vscommon/scripting/argument.h"
+#include "vscommon/scripting/lua.h"
+#include "vsplayer/control/gameControl.h"
+#include "vstables/fieldIds.h"
+
+std::string TManagedObject::HookFunctionRender;
+
+// Confirmed (asm lines 1376052-1376134): the direction of (dx, dy) in degrees, 0 to
+// 359, counted anticlockwise from the positive x axis with y pointing up (so y is
+// negated: the screen's y points down).
+int GetAngle(float dx, float dy) {
+	if (dx == 0.0f)
+		return (0 > dy) ? 90 : 270;
+
+	int angle = (int)(std::atan(-(double)dy / (double)dx) * 57.29577950560105);
+
+	if (0 > dy) {
+		if (0 > dx)
+			angle += 180;
+	} else if (dx <= 0) {
+		angle += 180;
+	} else {
+		angle += 360;
+	}
+	return angle % 360;
+}
+
+void TManagedObject::ClickedWithoutReach(TGCharacter *character, TMouseEventEnum event) {
+	// (the character has the object as the destination it is going to, and does what the click says when it is there)
+	character->GetRef().SetLink(kCharacterDestinationObject, _objRef, true);
+	static_cast<TGameControl *>(g_pGameControl)->GetObjectManager()->SaveEventInfo(event);
+}
+
+void TManagedObject::SetText(TGText *text) {
+	_text = text;
+	if (text)
+		text->SetOwner(this);
+}
+
+void TManagedObject::RemoveSprites() {
+	if (_picture)
+		_picture->RemoveSprite();
+	if (_currentAnimation)
+		_currentAnimation->RemoveSprites();
+}
+
+void TManagedObject::Prepare() {
+	if (_active) {
+		if (_currentAnimation) {
+			if (!_currentAnimation->IsBonesAnimation())
+				_currentAnimation->Prepare();
+		} else if (_picture) {
+			_picture->RefreshSprite(false);
+		}
+	}
+	for (TGAnimation *anim : _animations)
+		if (anim->IsSpriteIndexValid())
+			anim->Prepare();
+}
+
+// Confirmed (asm lines 192706-193076). An active object first asks the script function registered for the hook
+// "renderObject" ("ObjectRenderHook", given the object): a true answer means the script has drawn it and nothing more
+// is done. Then the fade is stepped, and the primary animation is drawn (an animation that has a valid sprite, or is a
+// model or bones one; a bones one with the others mixed in) or, with none or an undrawable one, the picture; then the text.
+// The secondary animations that have a valid sprite are drawn last, at full alpha - also when the object is not active.
+void TManagedObject::Draw() {
+	if (_active) {
+		if (!HookFunctionRender.empty()) {
+			static TArgument parameter;
+			static TArgument returnValue;
+
+			parameter.Set(_objRef);
+			returnValue.SetType(TArgType::kBool);
+
+			std::vector<TArgument *> arguments = {&parameter};
+			std::vector<TArgument *> results = {&returnValue};
+
+			LuaDebugName("ObjectRenderHook");
+
+			if (LuaExecuteFunction(HookFunctionRender, arguments, results) && returnValue.GetBool())
+				return;
+		}
+
+		UpdateAlpha();
+
+		if (_currentAnimation && (_currentAnimation->IsSpriteIndexValid() || _currentAnimation->IsModelAnimation() ||
+		                          _currentAnimation->IsBonesAnimation())) {
+			if (_currentAnimation->IsBonesAnimation())
+				_currentAnimation->DrawMixed(_alpha, _color, _animations);
+			else
+				_currentAnimation->Draw(_alpha, _color, GetDirection());
+		} else if (_picture) {
+			_picture->Draw(_alpha, _color);
+		}
+
+		if (_text) {
+			_text->CalculateCurrentText();
+			if (_text)
+				_text->Draw(_alpha);
+		}
+	}
+
+	for (TGAnimation *anim : _animations)
+		if (anim->IsSpriteIndexValid())
+			anim->Draw(1.0f, _color, -1);
+}
+
+void TManagedObject::HandlePostExecution(TGEventInfo &info, const TGActionInfo &actionInfo) {
+	if (!actionInfo.flag4) {
+		if (actionInfo.flag7) {
+			int field264 = info.command.GetInt(kButtonCommandType);
+			if ((field264 == 2 || actionInfo.flag8) && !info.action.IsEmpty() && ReceiveItem(info))
+				return;
+			if (info.character)
+				info.character->ShowComment(info.command);
+			return;
+		}
+		if (actionInfo.flagB && !actionInfo.flag6 && info.character)
+			ClickedWithoutReach(info.character, static_cast<TMouseEventEnum>(info.mouseEvent));
+	}
+
+	TVisObjRef game = _objRef.GetVisionaire()->GetGame();
+	int field0xF4 = game.GetInt(kGameCommandBehaviour);
+	if (actionInfo.flag9)
+		return;
+
+	if (actionInfo.flag4) {
+		if (!actionInfo.flagB)
+			return;
+	} else {
+		if (!actionInfo.flag7)
+			return;
+	}
+
+	if (!info.flag8 && !info.action.IsEmpty())
+		game.ClearLink(kGameUsedItem, true);
+
+	if (actionInfo.flag4) {
+		if ((field0xF4 & ~2) != 0)
+			return;
+	} else {
+		if (actionInfo.flagA)
+			return;
+		if (field0xF4 != 0)
+			return;
+	}
+
+	TVisObjRef parent = info.command.GetParent();
+	parent.SetLink(kInterfaceActiveCommand, parent.GetLink(kInterfaceStandardCommand), true);
+	if (info.flag8)
+		static_cast<TGameControl *>(g_pGameControl)->GetObjectManager()->RemoveItem(true);
+}
+
+void TManagedObject::ExecuteMatchingAction(TVList &candidates, std::vector<TypeActionExecution> &types,
+        const TGEventInfo &info, TGActionInfo &outAction) {
+	outAction.flag4 = false;
+	outAction.flag5 = false;
+
+	bool matched = false;
+	for (TVisionaireObject *candidateObj : candidates.items) {
+		TVisObjRef actionRef(candidateObj);
+		// the object (or item) the action is for
+		TVisObjRef fixture = actionRef.GetLink(kActionFixture);
+		int actionType = actionRef.GetInt(kActionExecutionType);
+		bool isAnyObjectCmd = fixture.IsAnyObject();
+		bool cmdEmpty = fixture.IsEmpty();
+		bool notAnyObjectIfEmpty = cmdEmpty ? !isAnyObjectCmd : false;
+		TVisObjRef commandRef = actionRef.GetLink(kActionCommand);
+		TTButton button(commandRef);
+
+		// (the command of the action is the active one, or one of its group)
+		bool linkedMatch;
+		if (button.IsCommand() && (button == info.command)) {
+			linkedMatch = true;
+		} else {
+			TVList linkedItems;
+			commandRef.GetList(kButtonGroup, linkedItems);
+			linkedMatch = false;
+			for (TVisionaireObject *item : linkedItems.items) {
+				if (info.command == *item) {
+					linkedMatch = true;
+					break;
+				}
+			}
+		}
+
+		matched = false;
+		if (!types.empty()) {
+			bool shortcut10 = (actionType == 6) && linkedMatch;
+			bool shortcut18 = (actionType == 0x11) && linkedMatch;
+
+			for (TypeActionExecution t : types) {
+				int tv = static_cast<int>(t);
+				bool caseMatched = false;
+
+				switch (tv) {
+				case 3:
+				case 20:
+				case 25:
+				case 26:
+				case 27:
+				case 28:
+					if (actionType == tv && (fixture == info.action || isAnyObjectCmd)) {
+						if ((tv == 25 || tv == 26 || tv == 27 || tv == 28) && isAnyObjectCmd)
+							outAction.flagA = true;
+						caseMatched = true;
+					}
+					break;
+				case 10:
+					if (shortcut10 && notAnyObjectIfEmpty)
+						caseMatched = true;
+					break;
+				case 11:
+					if (shortcut10 && (fixture == info.action || isAnyObjectCmd))
+						caseMatched = true;
+					break;
+				case 18:
+					if (shortcut18 && notAnyObjectIfEmpty)
+						caseMatched = true;
+					break;
+				case 19:
+					if (shortcut18 && (fixture == info.action || isAnyObjectCmd))
+						caseMatched = true;
+					break;
+				case 21:
+				case 22:
+				case 23:
+				case 24:
+					if (actionType == tv && linkedMatch && (fixture == info.action || isAnyObjectCmd)) {
+						if (isAnyObjectCmd)
+							outAction.flagA = true;
+						caseMatched = true;
+					}
+					break;
+				default:
+					if (actionType == tv)
+						caseMatched = true;
+					break;
+				}
+
+				if (!caseMatched)
+					continue;
+
+				outAction.matchedType = actionType;
+				if (outAction.flag6 || TTAction::IsImmediateExecutionType(t)) {
+					outAction.flag4 = true;
+					matched = true;
+				} else if (isAnyObjectCmd) {
+					outAction.flag5 = true;
+					matched = true;
+				} else {
+					matched = false;
+				}
+
+				if (info.character && !_bypassReachCheck) {
+					TVisObjRef game = _objRef.GetVisionaire()->GetGame();
+					bool shouldSetAngle = game.GetBool(kGameAlignCharacterOnImExecution) &&
+					                      (tv == 0xD || tv == 0xF || tv == 0x10 || tv == 0x12 ||
+					                       tv == 0x13 || tv == 0x14 || tv == 0x22);
+					if (shouldSetAngle) {
+						info.character->StopWalking(true);
+						wxPoint objPos = GetPosition();
+						wxPoint charPos = info.character->GetPosition();
+						int angle = GetAngle(static_cast<float>(objPos.x - charPos.x),
+						                     static_cast<float>(objPos.y - charPos.y));
+						info.character->GetRef().SetValue(kCharacterDirection, angle, TSendEventEnum::kSendEvent);
+					}
+				}
+
+				if (outAction.flag4)
+					TGAction::AddRunningAction(actionRef);
+
+				break;
+			}
+		}
+
+		if (matched)
+			break;
+	}
+}
+
+void TManagedObject::GetActionsToTest(TGEventInfo &info, std::vector<TypeActionExecution> &outTypes,
+                                      TGActionInfo &outAction) {
+	bool sceneFlag124 = static_cast<TGameControl *>(g_pGameControl)->GetScene()->GetRef().GetBool(kSceneIsMenu);
+	outAction.flag7 = false;
+	outAction.flag8 = false;
+	outAction.flagB = false;
+
+	if (_bypassReachCheck || (info.character && IsReached(info.character->GetRef())))
+		outAction.flag6 = true;
+
+	if (info.mouseEvent == 3) {
+		if (sceneFlag124) {
+			outTypes.push_back(TypeActionExecution::kValue13);
+		} else {
+			outTypes.push_back(TypeActionExecution::kValue12);
+			outAction.flagB = true;
+			outTypes.push_back(TypeActionExecution::kValue13);
+		}
+	} else {
+		switch (info.mouseEvent) {
+		case 4:
+			if (!sceneFlag124) {
+				outTypes.push_back(TypeActionExecution::kValue14);
+				TVisObjRef game = _objRef.GetVisionaire()->GetGame();
+				if (game.GetInt(kGameLeftHoldBehaviour))
+					outAction.flagB = true;
+			}
+			outTypes.push_back(TypeActionExecution::kValue15);
+			break;
+		case 1:
+			outTypes.push_back(TypeActionExecution::kValue7);
+			if (!sceneFlag124) {
+				outAction.flagB = true;
+				if (!info.action.IsEmpty()) {
+					if (info.flag8) {
+						if (outAction.flag6)
+							outAction.flag7 = true;
+						outTypes.push_back(TypeActionExecution::kValue3);
+						outAction.flag8 = true;
+						outTypes.push_back(TypeActionExecution::kValue25);
+						outTypes.push_back(TypeActionExecution::kValue20);
+						outTypes.push_back(TypeActionExecution::kValue26);
+					} else {
+						if (outAction.flag6)
+							outAction.flag7 = true;
+						outTypes.push_back(TypeActionExecution::kValue11);
+						outTypes.push_back(TypeActionExecution::kValue21);
+						outTypes.push_back(TypeActionExecution::kValue19);
+						outTypes.push_back(TypeActionExecution::kValue22);
+					}
+				} else {
+					if (outAction.flag6)
+						outAction.flag7 = true;
+					outTypes.push_back(TypeActionExecution::kValue10);
+					outTypes.push_back(TypeActionExecution::kValue18);
+				}
+			}
+			break;
+		case 2:
+			if (sceneFlag124) {
+				outTypes.push_back(TypeActionExecution::kValue16);
+			} else {
+				outTypes.push_back(TypeActionExecution::kValue0);
+				TVisObjRef game = _objRef.GetVisionaire()->GetGame();
+				if (game.GetInt(kGameRightClickBehaviour))
+					outAction.flagB = true;
+				outTypes.push_back(TypeActionExecution::kValue16);
+			}
+			break;
+		case 5:
+			outTypes.push_back(TypeActionExecution::kValue1);
+			break;
+		case 6:
+			outTypes.push_back(TypeActionExecution::kValue2);
+			break;
+		case 7:
+			if (sceneFlag124) {
+				outTypes.push_back(TypeActionExecution::kValue34);
+			} else {
+				outTypes.push_back(TypeActionExecution::kValue33);
+				TVisObjRef game = _objRef.GetVisionaire()->GetGame();
+				if (game.GetInt(kGameMiddleClickBehaviour))
+					outAction.flagB = true;
+				outTypes.push_back(TypeActionExecution::kValue34);
+			}
+			break;
+		case 8:
+			outTypes.push_back(TypeActionExecution::kValue35);
+			break;
+		case 9:
+			outTypes.push_back(TypeActionExecution::kValue36);
+			break;
+		default:
+			break;
+		}
+	}
+
+	if ((info.command.IsStandardCommand() && info.action.IsEmpty()) || sceneFlag124)
+		outAction.flag7 = false;
+}
+
+// Confirmed (asm lines 193750-194360). The actions of the object are tested for what the event is; an event
+// that is a press or a hold (3, 4) that no action took is tried again as a click (1); an item that is used
+// on the object that has no action for it may have the action itself (the actions of the item are tested,
+// with the object as the one the item is used on). An action that changed the active command is told to
+// the post execution (flag9).
+void TManagedObject::ExecuteEvent(TGEventInfo &info) {
+	HandlePreExecution(info);
+
+	TGActionInfo outAction;
+	std::vector<TypeActionExecution> types;
+	GetActionsToTest(info, types, outAction);
+
+	if (info.mouseEvent != 5 && info.mouseEvent != 6 && !_bypassReachCheck && info.character) {
+		if (IsReached(info.character->GetRef()))
+			AlignCharacter(info.character->GetRef());
+	}
+
+	TGameControl *gameControl = static_cast<TGameControl *>(g_pGameControl);
+	TVisObjRef activeCommand = gameControl->GetGameSystem()->GetGame().GetLink(kGameActiveCommand);
+
+	TVList actionList;
+	GetActionList(actionList);
+	ExecuteMatchingAction(actionList, types, info, outAction);
+
+	bool handled = outAction.flag4 || outAction.flag5;
+
+	if (!handled && (info.mouseEvent == 3 || info.mouseEvent == 4)) {
+		TGEventInfo clickInfo;
+
+		clickInfo.action = info.action;
+		clickInfo.command = info.command;
+		clickInfo.mouseEvent = 1;
+		clickInfo.flag8 = info.flag8;
+		clickInfo.character = info.character;
+
+		types.clear();
+		GetActionsToTest(clickInfo, types, outAction);
+		ExecuteMatchingAction(actionList, types, clickInfo, outAction);
+		handled = outAction.flag4 || outAction.flag5;
+	}
+
+	if (!handled && !info.action.IsEmpty() && _hasActionTypeFallback) {
+		std::vector<TypeActionExecution> newTypes;
+		for (TypeActionExecution t : types) {
+			switch (static_cast<int>(t)) {
+			case 3:
+				newTypes.push_back(TypeActionExecution::kValue27);
+				newTypes.push_back(TypeActionExecution::kValue25);
+				break;
+			case 20:
+				newTypes.push_back(TypeActionExecution::kValue28);
+				newTypes.push_back(TypeActionExecution::kValue26);
+				break;
+			case 11:
+				newTypes.push_back(TypeActionExecution::kValue23);
+				newTypes.push_back(TypeActionExecution::kValue21);
+				break;
+			case 19:
+				newTypes.push_back(TypeActionExecution::kValue24);
+				newTypes.push_back(TypeActionExecution::kValue22);
+				break;
+			default:
+				break;
+			}
+		}
+		if (!newTypes.empty()) {
+			TVList itemActions;
+			info.action.GetList(kObjectActions, itemActions);
+
+			TGEventInfo itemInfo;
+
+			itemInfo.action = _objRef;
+			itemInfo.command = info.command;
+			itemInfo.mouseEvent = info.mouseEvent;
+			itemInfo.flag8 = info.flag8;
+			itemInfo.character = info.character;
+
+			ExecuteMatchingAction(itemActions, newTypes, itemInfo, outAction);
+		}
+	}
+
+	outAction.flag9 = !(gameControl->GetGameSystem()->GetGame().GetLink(kGameActiveCommand) == activeCommand);
+
+	if (!_skipFinalPostExecution) {
+		bool sceneFlag124 = gameControl->GetScene()->GetRef().GetBool(kSceneIsMenu);
+		if (!sceneFlag124)
+			HandlePostExecution(info, outAction);
+	}
+}

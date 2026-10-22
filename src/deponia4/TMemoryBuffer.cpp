@@ -1,0 +1,236 @@
+#include "TMemoryBuffer.h"
+
+#include <cstdlib>
+#include <cstring>
+#include <string>
+
+#include "MD5.h"
+#include "zlibShim.h"
+
+TMemoryBuffer::~TMemoryBuffer() {
+	delete[] _data;
+}
+
+void TMemoryBuffer::ReleaseMemory() {
+	delete[] _data;
+	_data = nullptr;
+	_len = 0;
+	_capacity = 0;
+}
+
+void TMemoryBuffer::ClearMemory() {
+	_len = 0;
+}
+
+void TMemoryBuffer::Reserve(unsigned long size) {
+	if (_capacity < size || !_data) {
+		delete[] _data;
+		_data = new unsigned char[size];
+		_capacity = size;
+		_len = 0;
+	}
+}
+
+void TMemoryBuffer::EnsureBufferSize(unsigned long size) {
+	if (_capacity < size) {
+		unsigned char *newData = new unsigned char[size];
+		if (_data && _len != 0)
+			std::memcpy(newData, _data, _len);
+		delete[] _data;
+		_data = newData;
+		_capacity = size;
+	} else if (!_data) {
+		_data = new unsigned char[size];
+		_capacity = size;
+	}
+}
+
+unsigned char *TMemoryBuffer::Init(unsigned long size) {
+	if (_capacity < size || !_data) {
+		delete[] _data;
+		_data = new unsigned char[size];
+		_capacity = size;
+	}
+	_len = 0;
+	return _data;
+}
+
+void TMemoryBuffer::growForAppend(unsigned long extraBytes) {
+	unsigned long newLen = _len + extraBytes;
+	if (newLen > _capacity || !_data) {
+		unsigned long newCapacity = newLen + 0x400000;
+		unsigned char *newData = new unsigned char[newCapacity];
+		if (_data && _len != 0)
+			std::memcpy(newData, _data, _len);
+		delete[] _data;
+		_data = newData;
+		_capacity = newCapacity;
+	}
+}
+
+void TMemoryBuffer::AppendData(const void *data, unsigned long size) {
+	growForAppend(size);
+	if (size != 0)
+		std::memcpy(_data + _len, data, size);
+	_len += size;
+}
+
+void TMemoryBuffer::AppendByte(unsigned char value) {
+	growForAppend(1);
+	_data[_len] = value;
+	_len += 1;
+}
+
+TMemoryBuffer &TMemoryBuffer::operator<<(char value) {
+	AppendByte(static_cast<unsigned char>(value));
+	return *this;
+}
+
+TMemoryBuffer &TMemoryBuffer::operator<<(const char *value) {
+	AppendData(value, static_cast<unsigned long>(std::strlen(value)));
+	return *this;
+}
+
+TMemoryBuffer &TMemoryBuffer::operator<<(unsigned char value) {
+	AppendByte(value);
+	return *this;
+}
+
+// The fixed-size numeric writers are big-endian (confirmed, asm lines
+// 550213-550648: the high byte is stored first), and the "long" ones store
+// only the low 32 bits even though `long` is 64-bit in the binary.
+TMemoryBuffer &TMemoryBuffer::operator<<(short value) {
+	return *this << static_cast<unsigned short>(value);
+}
+
+TMemoryBuffer &TMemoryBuffer::operator<<(unsigned short value) {
+	unsigned char bytes[2] = {static_cast<unsigned char>(value >> 8), static_cast<unsigned char>(value)};
+	AppendData(bytes, sizeof(bytes));
+	return *this;
+}
+
+TMemoryBuffer &TMemoryBuffer::operator<<(long value) {
+	return *this << static_cast<unsigned long>(value);
+}
+
+TMemoryBuffer &TMemoryBuffer::operator<<(unsigned long value) {
+	unsigned char bytes[4] = {static_cast<unsigned char>(value >> 24), static_cast<unsigned char>(value >> 16),
+	                          static_cast<unsigned char>(value >> 8), static_cast<unsigned char>(value)};
+	AppendData(bytes, sizeof(bytes));
+	return *this;
+}
+
+TMemoryBuffer &TMemoryBuffer::operator<<(const wxFileName &value) {
+	std::string narrow(static_cast<const char *>(value.GetFullPath().mb_str()));
+	AppendData(narrow.data(), static_cast<unsigned long>(narrow.size()));
+	return *this;
+}
+
+TMemoryBuffer &TMemoryBuffer::operator<<(const wxString &value) {
+	std::string narrow(static_cast<const char *>(value.mb_str()));
+	AppendData(narrow.data(), static_cast<unsigned long>(narrow.size()));
+	return *this;
+}
+
+void TMemoryBuffer::AppendStringWithLen(const wxString &value) {
+	std::string narrow(static_cast<const char *>(value.mb_str()));
+	*this << static_cast<short>(narrow.size());
+	AppendData(narrow.data(), static_cast<unsigned long>(narrow.size()));
+}
+
+// Confirmed (asm lines 551323-551447): decompresses this buffer's contents into
+// `dest`, whose buffer is first replaced by a fresh `expectedSize`-byte one if
+// it's smaller than that. NOTE the original never updates `dest`'s length (the
+// decompressed byte count is discarded) - callers are expected to have
+// prepared `dest` themselves; reproduced as-is.
+bool TMemoryBuffer::Uncompress(TMemoryBuffer &dest, long expectedSize) {
+	unsigned long wanted = static_cast<unsigned long>(expectedSize);
+	if (wanted > dest._capacity || !dest._data) {
+		delete[] dest._data;
+		dest._data = new unsigned char[wanted];
+		dest._len = 0;
+		dest._capacity = wanted;
+	}
+
+	unsigned long outLength = wanted;
+	if (zlibUncompress(dest._data, &outLength, _data, _len) == 0)
+		return true;
+
+	if (wxLog::loglevel >= 0)
+		wxLog::logexpanded(L"T");
+	return false;
+}
+
+// Confirmed (asm lines 551447-551564): decompresses in place into a new
+// `expectedSize`-byte buffer; on failure the old contents are kept.
+bool TMemoryBuffer::Uncompress(long expectedSize) {
+	unsigned long outLength = static_cast<unsigned long>(expectedSize);
+	unsigned char *out = new unsigned char[outLength];
+	if (zlibUncompress(out, &outLength, _data, _len) == 0) {
+		delete[] _data;
+		_data = out;
+		_len = outLength;
+		_capacity = outLength;
+		return true;
+	}
+
+	if (wxLog::loglevel >= 0)
+		wxLog::logexpanded(L"T");
+	delete[] out;
+	return false;
+}
+
+// Confirmed (asm lines 551564-551698): zlib's compress() into a buffer of
+// zlib's own worst-case size (len * 1.001 + 12); the compressed bytes replace
+// this buffer's contents.
+bool TMemoryBuffer::Compress() {
+	unsigned long outLength = static_cast<unsigned long>(static_cast<int>(static_cast<double>(_len) * 1.001)) + 12;
+	unsigned char *out = new unsigned char[outLength];
+	if (zlibCompress(out, &outLength, _data, _len) == 0) {
+		delete[] _data;
+		_data = out;
+		_len = outLength;
+		_capacity = outLength;
+		return true;
+	}
+
+	if (wxLog::loglevel >= 0)
+		wxLog::logexpanded(L"T");
+	delete[] out;
+	return false;
+}
+
+// Confirmed (asm lines 551698-551816): the bytes are XORed with the first 16 characters of the text of the MD5 of the
+// key (the hexadecimal digits, see MD5String()), over and over. The original reads them from the first on every call and
+// only counts the bytes with `cursor` (a count of 16 sends it back to the first); the callers all give no cursor.
+bool TMemoryBuffer::Decrypt(const wxString &key, unsigned long *cursor, unsigned long offset) {
+	if (key.IsEmpty())
+		return true;
+
+	std::string narrowKey(static_cast<const char *>(key.mb_str()));
+	const unsigned char *digest = reinterpret_cast<const unsigned char *>(MD5String(narrowKey.c_str(), static_cast<unsigned long>(narrowKey.size())));
+
+	unsigned char *target = _data + offset;
+	unsigned long count = cursor ? *cursor : 0;
+	const unsigned char *next = digest;
+
+	for (unsigned long i = 0; i < _len; i++) {
+		if (count == 16) {
+			next = digest;
+			count = 1;
+		} else {
+			count++;
+		}
+		target[i] ^= *next++;
+	}
+	if (cursor)
+		*cursor = count;
+
+	std::free(const_cast<unsigned char *>(digest));
+	return true;
+}
+
+bool TMemoryBuffer::Encrypt(const wxString &key, unsigned long *cursor, unsigned long offset) {
+	Decrypt(key, cursor, offset);
+	return true;
+}

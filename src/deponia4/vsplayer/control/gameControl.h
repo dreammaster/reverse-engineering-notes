@@ -1,0 +1,393 @@
+// Reconstructed from Deponia_Linux.asm, TGameControl methods at asm lines
+// 455671-478479 (address range 0x61A730-0x653C10+, ~22800 lines - by far
+// the largest class in this survey; see manifest/proprietary_classes.tsv).
+//
+// Original path confirmed via x_assert() calls (not yet reconstructed):
+// src/vsplayer/control/gameControl.cpp - see manifest/source_layout.tsv.
+//
+// TGameControl is the concrete class TMasterControl is an abstract
+// interface for - this is "the game" itself: it owns the scene, dialog and
+// console subsystems, the loaded TVisionaireGame data, character/action/
+// tween bookkeeping, and implements every one of TMasterControl's 8 pure
+// virtuals (their real names - Update, DisplayDialog, DisplayTexts,
+// DisplayConsole, DisplayInSceneConsole, HandleMouseMove, HandleMouseUp,
+// HandleMouseHolding - came directly from `vtable for TGameControl`'s own
+// dump, which names every slot; no guessing needed there, unlike when
+// TMasterControl was first written against these before TGameControl had
+// been looked at).
+//
+// Given the scale (98 methods), this pass is intentionally shallow almost
+// everywhere: the constructor and destructor were traced in full (giving an
+// accurate member layout and confirming the base-class chain), and a
+// handful of trivial-looking accessors are implemented by inference from
+// naming/context (GetSceneControl, GetScene, GetConsole, GetDialog,
+// GetVisionaire, GetGameSystem, GetObjectManager, GetGamePath, and the two
+// flag-setting methods TestCacheFileTime-style). Every other method has a
+// correct signature (from manifest/proprietary_functions.tsv) so the class
+// compiles completely, but only a stub body - each one (Update alone is
+// almost certainly thousands of lines - it's the entire per-frame game
+// logic dispatcher) is its own substantial reversing effort for a future
+// pass.
+#pragma once
+
+#include <list>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "SdlStub.h"
+#include "TConsole.h"
+#include "TGCharacter.h"
+#include "TGDialog.h"
+#include "TGText.h"
+#include "Tween.h"
+#include "TSceneControl.h"
+#include "TSText.h"
+#include "datastruct/vlist.h"
+#include "vscommon/fontManager.h"
+#include "vsplayer/control/masterControl.h"
+#include "vstables/visionaireGame.h"
+
+class TMSavegame;
+
+// Confirmed field layout (TGameControl::StartGameAction, Deponia_Linux.asm
+// lines 457301-457406): matched by (a, msg) pair; `flag` selects between
+// always-firing and only-firing-when-no-blocking-dialog/text behavior.
+// Field names are best-effort ("a"/"msg" match the matching StartGameAction
+// parameters they're compared against) - real names/meaning unconfirmed.
+struct SGameAction {
+	int a = 0;
+	bool flag = false;
+	int msg = 0;
+	TVisObjRef target;
+};
+
+class TGameControl : public TMasterControl {
+public:
+	TGameControl();
+	~TGameControl() override;
+
+	// TMasterControl's 8 pure virtuals - real names/signatures confirmed
+	// from `vtable for TGameControl`.
+	bool Update() override;
+	bool DisplayDialog() override;
+	bool DisplayTexts() override;
+	bool DisplayConsole() override;
+	void DisplayInSceneConsole() override;
+	void HandleMouseMove(const wxPoint &pos, bool isHolding) override;
+	void HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) override;
+	void HandleMouseHolding(const wxPoint &pos) override;
+
+	void UpdateTexts();
+	TSceneControl *GetSceneControl();
+	// Confirmed TGScene* (asm line 456314 tail-calls TSceneControl::
+	// GetScene(), whose own return type was corrected the same way - see
+	// TSceneControl.h).
+	TGScene *GetScene();
+	TGCharacter *GetCurrentCharacter();
+	TGCharacter *GetCurrentCharacterPointer() const;
+	TGCharacter *GetCharacter(const TVisObjRef &character);
+	TGCharacter *GetCharacterPointer(const TVisObjRef &character) const;
+	TGCharacter *GetCharacterPointerEx(const TVisObjRef &character) const;
+	// Confirmed (Deponia_Linux.asm line 456592, `lea rax,[rdi+340h]; retn`):
+	// this returns the address of the member itself, not a by-value copy -
+	// the manifest's inferred by-value signature was wrong.
+	std::vector<TGCharacter *> &GetAllCharacters();
+	// Confirmed TGInterface* (asm lines 456603-456648: the list holds
+	// TGInterface*, and the found node's payload is returned directly).
+	TGInterface *GetInterface(const TVisObjRef &interfaceObj) const;
+	// Confirmed TManagedObject* (TGObjectManager::SavedObjectChanged assigns
+	// the result straight into its own TManagedObject* _savedObject field,
+	// Deponia_Linux.asm lines 189027-189113) - every internal path here
+	// (TGScene::GetObject, GetCharacterPointerEx, TGInterface::GetObject)
+	// already returns a TManagedObject*-compatible pointer, so the
+	// manifest's void* was the same kind of placeholder guess TGScene::
+	// GetObject's own comment already corrected.
+	TManagedObject *GetObject(const TVisObjRef &object) const;
+	TGObjectManager *GetObjectManager();
+	void SkipCurrentText();
+	void UpdateCurrentObject();
+	void RegisterHookFunctionSceneMousePosition(const wxString &name);
+	/** Asks the script function of the hook "sceneMousePosition" for the position of the mouse in the scene. */
+	wxPoint CallSceneMousePositionHook(const wxPoint &pos);
+	TConsole *GetConsole();
+
+	int ConvertControllerButtonToSymKey(SDL_ControllerButtonEvent button);
+	// Confirmed wxString (asm lines 457066-457125: the function writes
+	// through a hidden return pointer, not int as the manifest inferred),
+	// one of the 6 SDL_GameControllerAxis names uppercased, or empty for an
+	// unrecognized axis.
+	wxString ConvertControllerAxisToUnicode(SDL_GameControllerAxis axis);
+	void StartGameAction(TKeyboardMessageEnum msg, const wxString &name, int a, unsigned short b);
+	void UpdateAspectRatio();
+	void InitAfterLoadingScreen();
+	void SaveEventHandlers();
+	void ExecuteStartingAction();
+	void InitInterfaces();
+	void SetCharacterInterfaces();
+	void InitFonts();
+	void InitScripts();
+	TVisionaireGame *GetGameSystem();
+	TVisionaireGame *GetVisionaire();
+	/** The mouse position as the scripts see it (after the scene mouse position hook; (-1,-1) before the
+	 *  mouse moved). */
+	const wxPoint &GetScriptMousePosition() const {
+		return _lastHookMousePos;
+	}
+	void ScrollToCharacterIfNeeded(const TVisObjRef &character);
+	bool MoveScene();
+	void CenterScene();
+	void SetOnScrollDestination();
+	void HandleCharacters();
+	void SetAllCharactersOnDestination();
+	void ResetState();
+	const TGDialog *GetDialog() const;
+	void StartDialog(const TVisObjRef &dialog);
+	void EndDialog();
+	void StartText(const TVisObjRef &text, TGCharacter *character, TextAlignmentEnum alignment,
+	               const TVisObjRef &target, const wxPoint &pos);
+	void StartBackgroundText(const TVisObjRef &text, TGCharacter *character, TextAlignmentEnum alignment,
+	                         const TVisObjRef &target, const wxPoint &pos);
+	void ReattachSceneObjectTexts();
+	bool IsTextActive(const TVisObjRef &text) const;
+	bool IsNoTextDisplayed() const;
+	bool IsTalking(const TVisObjRef &character) const;
+	void ClearTexts();
+	void ClearCurrentText();
+	void ClearText(const TVisObjRef &text);
+	void ClearObjectText(const TVisObjRef &object);
+	void StartObjectText(const TVisObjRef &text, const TVisObjRef &object, TextAlignmentEnum alignment,
+	                     const TVisObjRef &target, const wxPoint &pos);
+	// Confirmed (asm line 462534, `lea rax,[rdi+0A80h]; retn`): returns the
+	// member itself, not a by-value copy - the manifest's inferred by-value
+	// signature was wrong (same pattern as GetAllCharacters above).
+	const wxFileName &GetGamePath() const;
+	bool IsClearingAnimations() const;
+	bool SavegameExists(int slot);
+	bool DeleteSavegame(int slot);
+	// Confirmed void, not bool (TGameControl::SaveGame discards its return
+	// value entirely, asm line 463041) - the manifest's bool was a
+	// placeholder guess.
+	void Save();
+	// Confirmed void, not bool (every call site discards the return value,
+	// and the function itself never sets eax before any of its return
+	// points, asm lines 462981-463264) - the manifest's bool was a
+	// placeholder guess, same pattern as Save() above.
+	void SaveGame(int slot);
+	bool UnregisterEventHandlerMainLoop(const wxString &name);
+	void UpdateRandomTimers();
+	void UpdateWalkingSounds();
+	// Confirmed (asm lines 463692-464965): the first parameter is read-write
+	// throughout (resolved to an absolute path, then possibly rewritten to
+	// point at a numbered temp-extraction name for container formats) -
+	// same "manifest called it error, it's really a file path" pattern
+	// already found in LoadAndInitGame (batch 24), renamed accordingly. The
+	// second is used as a password/extra-data out-param, not literally a
+	// warning message, but kept as "warning" since that's plausible enough
+	// (a password prompt's context text) and not independently contradicted.
+	bool PreLoad(wxString &filePath, wxString &warning, bool isEditor);
+	void AdjustInterfacesOnScreen(bool force, TPaintControl *scene);
+	void SetInterfaces();
+	void SetCharacterActiveCommand();
+	void ChangeCharacter(const TVisObjRef &character, bool immediate, const TVisObjRef &scene);
+	// Confirmed by-value copies of TMasterControl's two interface lists
+	// (asm lines 466080-466193), not std::vector<void*> as the manifest
+	// inferred.
+	std::list<TGInterface *> GetActiveInterfaces() const;
+	std::list<TGInterface *> GetAllInterfaces() const;
+	// Confirmed bool, not void (asm lines 466201-466735: returns false if
+	// the game data has no characters, or none can be found again as the
+	// starting character; true otherwise) - the manifest's void was a
+	// placeholder guess.
+	bool InitCharacters();
+	void InitGameActions();
+	bool Init();
+	// Confirmed (asm lines 467635-468496): the manifest's parameter names
+	// were guesses and the first is wrong - `filePath` is read-only in the
+	// traced path (wrapped in a wxFileName and handed to
+	// TVisionaire::LoadDataGame) despite its non-const reference type,
+	// never written as an actual error message. `extra` is passed through
+	// to LoadDataGame's own second argument, untouched otherwise - its role
+	// isn't resolved (LoadDataGame itself isn't reversed). `gameName`
+	// doubles as a fallback value (populated from field 0x132 if passed
+	// empty) and, confusingly, as a language name to search for later in
+	// the same function - reproduced as observed rather than split into two
+	// parameters.
+	bool LoadAndInitGame(wxString &filePath, const wxString &extra, wxString language, bool isEditor);
+	bool ReplaceGame(wxFileName file, bool isEditor);
+	void HandleEngineEvent(const std::string &name, const std::string &arg);
+	void HandleKeyEvent(TKeyboardMessageEnum msg, const wxString &key, int a, unsigned short b);
+	void HandleControllerAxis(SDL_GameControllerAxis axis, int value, int index);
+	void HandleControllerButtonRelease(SDL_ControllerButtonEvent button, int index);
+	void HandleControllerButtonHit(SDL_ControllerButtonEvent button, int index);
+	void PushEngineEvent(const std::string &name, const std::string &arg);
+	void SetDelay(double seconds, const std::string &name);
+	void SetDelay(double seconds, int id);
+	void RegisterEventHandlerMainLoop(const wxString &name);
+	void GetWalkingSounds(std::vector<wxFileName> &outSounds);
+	void StartTween(const TVisObjTween &tween);
+	void LoadEventHandlers();
+	bool Load();
+	// Confirmed TMSavegame* (TGameControl::LoadGame(int) calls it directly
+	// with one, asm lines 478385-478469) - the manifest's void* was a
+	// placeholder guess.
+	bool LoadGame(TMSavegame *savegame);
+	// Confirmed accessed directly as a (private static) field from TGScene::
+	// InitialiseBackground() (Deponia_Linux.asm line 54F058) - modeled as a
+	// public accessor instead of a cross-class friendship.
+	static TTimer &GetStopTime() {
+		return s_stopTime;
+	}
+	bool LoadGame(int slot);
+	void StartTween(const Tween &tween, const std::string &name);
+
+protected:
+	TSceneControl _ownedSceneControl;
+	// Several vectors confirmed present in the constructor whose element
+	// types could be inferred from the ICF-vulnerable destructor symbols
+	// (see NOTES.md) - taken at face value here since nothing contradicts
+	// them: walking-sound filenames, per-character scroll-timing pairs, and
+	// registered scene-mouse-position hooks.
+	//
+	// The tweens the scripts named (88-byte elements in the original: a Tween and its name, which
+	// Tween carries itself here).
+	std::vector<Tween> _pendingTweens;
+	// The real vector StartTween(const TVisObjTween&) operates on (176-byte
+	// elements, confirmed distinct from _pendingTweens above - see its own
+	// comment). Named for its confirmed element type rather than guessing
+	// which of the two "pending tween" roles is the real one.
+	std::vector<TVisObjTween> _visObjTweens;
+	std::vector<std::string> _walkingSoundEventHandlers;
+	std::vector<std::pair<double, std::string>> _delaysByName;
+	std::vector<std::pair<double, int>> _delaysById;
+	// Owning: ~TGameControl deletes every element (confirmed, asm lines
+	// 474252-474270).
+	std::vector<TGCharacter *> _characters;
+	// Confirmed (asm line 457015): RegisterHookFunctionSceneMousePosition
+	// just assigns into a single wstring field via std::wstring::assign - a
+	// plain "last registered hook name," not a map as first guessed.
+	std::wstring _sceneMousePositionHookName;
+	TGDialog _dialog;
+	TConsole _console;
+	TVisionaireGame *_visionaireGame = nullptr;
+	std::vector<SGameAction> _gameActions;
+	// Confirmed std::wstring elements, not std::string (SaveEventHandlers,
+	// Deponia_Linux.asm lines 457549-457574: each element is appended via
+	// std::wstring::append(std::wstring const&) directly, which only type-
+	// checks against wide-string elements) - corrects this session's earlier
+	// (batch-17-era) narrow-string guess, which had no direct evidence
+	// beyond the vector's 8-byte-pointer stride (equally consistent with
+	// either narrow or wide COW strings under this project's old-ABI
+	// assumption).
+	std::vector<std::wstring> _engineEventHandlerNamesMainLoop;
+	// Confirmed embedded by value (asm line 456751, GetObjectManager():
+	// `lea rax,[rdi+0D0h]; retn`) - not owned by TMasterControl as first
+	// guessed.
+	TGObjectManager _objectManager;
+	// Confirmed field accesses, not always-nullptr/false stubs (asm lines
+	// 456332/456551/462534/462551): GetCurrentCharacter[Pointer] just reads
+	// this back, GetGamePath returns _gamePath by reference, and the
+	// destructor sets _isClearingAnimations = true before tearing down.
+	// _gamePath's type was corrected from wxString to wxFileName once
+	// PreLoad (Deponia_Linux.asm line 463799) turned up hard evidence: it's
+	// assigned via wxFileName::Assign(), and later read via GetPath()/
+	// GetFullPath() (ReplaceGame/LoadAndInitGame) - a wxString could not
+	// have supported the Assign() call. GetGamePath()'s own asm (just
+	// `lea rax,[rdi+0xA80]; retn`) confirms it's the immediately-preceding
+	// field to _isClearingAnimations at +0xA88, with nothing but a bare
+	// address-of in between - consistent with a single 8-byte handle, the
+	// same COW-string-based representation already established for
+	// wxString elsewhere in this project.
+	TGCharacter *_currentCharacter = nullptr;
+	wxFileName _gamePath;
+	bool _isClearingAnimations = false;
+	// Confirmed present immediately after _isClearingAnimations (TGameControl
+	// ::Update, Deponia_Linux.asm lines 469850-469853, offset +0xA8C vs.
+	// _isClearingAnimations's own confirmed +0xA88) - a cached baseline
+	// compared against TGraphicsInterface::GetCacheSpriteCount() each frame
+	// to detect when the sprite cache needs refreshing.
+	int _spriteCacheCount = 0;
+	// Confirmed (via UpdateCurrentObject, asm lines 456964-456999): the last mouse position re-dispatched through
+	// HandleMouseMove, defaulting to a {-1,-1} "no position yet" sentinel. (The resolved aspect width and height of
+	// UpdateAspectRatio, asm lines 457414-457458, are the window size of TMasterControl.)
+	// Confirmed written by HandleMouseMove itself (asm line 472189) from the
+	// raw, un-overridden position argument - see _lastHookMousePos below for
+	// the distinct hook-adjusted field written right alongside it.
+	wxPoint _lastMousePos{-1, -1};
+	// Confirmed present and cleared by ResetState() (asm line 460940); real
+	// purpose (what populates it) not identified.
+	TVList _pendingItems;
+	// Confirmed present, set to the same value as _currentCharacter right
+	// when it changes (TGameControl::ChangeCharacter, asm lines
+	// 465849-466072; also set by InitCharacters, asm lines 466201-466735) -
+	// despite the name, it's never observed differing from _currentCharacter
+	// at any write site, and it IS read: ScrollToCharacterIfNeeded (asm lines
+	// 458931-459278) calls GetPosition()/GetCurrentSpriteRect() through it,
+	// not through _currentCharacter directly. May just be a second cached
+	// copy rather than a distinct "previous character" as the name suggests.
+	TGCharacter *_previousCharacter = nullptr;
+	// Confirmed present, set to _currentCharacter's value once a starting
+	// character is found (TGameControl::InitCharacters, asm lines
+	// 466201-466735) - not read anywhere in what's been reversed so far;
+	// purpose unclear (possibly another cached copy, like
+	// _previousCharacter above).
+	TGCharacter *_startingCharacter = nullptr;
+	// Confirmed present (TGameControl::AdjustInterfacesOnScreen, asm line
+	// 465015): the character _currentCharacter's interfaces' item lists
+	// (field 0x297) were last refreshed for - refreshed again only when
+	// _currentCharacter changes.
+	TGCharacter *_lastInterfaceCharacter = nullptr;
+	// Confirmed a custom hash table keyed by TVisObjRef::GetId()'s packed
+	// id (GetCharacter/GetCharacterPointer/GetCharacterPointerEx do the
+	// lookup, InitCharacters does the insert - asm lines 456362-456578,
+	// 466201-466735): modeled as a plain hash map rather than replicating
+	// the original's open-hashing bucket/node layout, since nothing
+	// depends on its internal shape.
+	std::unordered_map<int, TGCharacter *> _charactersByHash;
+	// Confirmed (IsTextActive/IsNoTextDisplayed, asm lines 461674-461777):
+	// null when no text is currently displayed. Confirmed TGText*, not just
+	// TSText* (DisplayTexts calls TGText::GetSpeaker() directly on it, asm
+	// lines 455962-455989). Ownership/lifetime (who sets this, whether it's
+	// heap-owned) not confirmed - left un-deleted.
+	TGText *_currentText = nullptr;
+	// Confirmed sentinel-initialized in the constructor right before
+	// _dialog (IsTalking/ClearCurrentText use _activeTexts;
+	// ReattachSceneObjectTexts/ClearObjectText use _sceneTexts - asm lines
+	// 461601-462228). Ownership not confirmed - left un-deleted.
+	std::list<TGText *> _activeTexts;
+	std::list<TGText *> _sceneTexts;
+	// Confirmed present (SavegameExists's slot==-2 case looks up whatever
+	// savegame is at this point via TGScene::GetSavegameAt, asm line
+	// 462656) - presumably the last clicked/hovered position in a "load
+	// game" menu.
+	wxPoint _savegameClickPos;
+	// Confirmed present (TGameControl::HandleMouseMove, Deponia_Linux.asm
+	// line 472181): the previous call's set of hovered-interface objects,
+	// compared against the freshly rebuilt set each call so anything no
+	// longer hovered can fire a "mouse left" action (field 0x184).
+	TVList _hoveredInterfaceObjects;
+	// Confirmed present (TGameControl::HandleMouseMove, asm line 472187):
+	// written with the mouse position as possibly overridden by the
+	// (unimplemented) SceneMousePositionHook Lua dispatch - write-only in
+	// what's been reversed so far; not the same field as _lastMousePos
+	// above, which is written from the raw, un-overridden position
+	// (confirmed: SetCursorPosition() a few lines earlier in the same
+	// function always reads the raw argument, never this hook-adjusted
+	// value). Purpose beyond that isn't resolved.
+	wxPoint _lastHookMousePos{-1, -1};
+	// Confirmed a static member, not instance data (recovered byte-for-byte
+	// from its own mangled symbol, `_ZN12TGameControl10s_stopTimeE` - a
+	// static member has its own linker symbol, unlike a plain instance
+	// field, so the name is genuine recovered evidence rather than invented;
+	// same exception CLAUDE.md already carves out for a recovered global).
+	// Set once in Load() (Deponia_Linux.asm line 476706) and never read
+	// anywhere reversed so far - purpose beyond "loading resets a stop-time"
+	// not resolved. A distinct, separately-declared `TGText::s_stopTime`
+	// exists too; unrelated to this one.
+	static TTimer s_stopTime;
+	// Confirmed present (TGameControl::Update, Deponia_Linux.asm lines
+	// 469881-469883, 470370-470371): the SDL_GetTicks() value as of the end
+	// of the previous frame's tween/delay processing, used to derive this
+	// frame's elapsed-milliseconds delta.
+	unsigned int _lastUpdateTicks = 0;
+};

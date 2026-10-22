@@ -38,7 +38,7 @@ class AsmData:
                 t = line.strip()
                 if not t or t.startswith(";"):
                     continue
-                ma = re.match(r"^align\s+(\w+)$", t)
+                ma = re.match(r"^align\s+(\d\w*)$", t)
                 if ma and addr is not None:
                     v = ma.group(1)
                     a = int(v[:-1], 16) if v.endswith("h") else int(v)
