@@ -15,6 +15,7 @@
 #include "explore.h"
 #include "font.h"
 #include "gamedialog.h"
+#include "gameclock.h"
 #include "lighting.h"
 #include "localmap.h"
 #include "mapview.h"
@@ -404,26 +405,48 @@ static void panelCycle(GameUi *ui) {
     effect(ui, 2);
 }
 
-/* A left click on the panel: from the minimap or the plate to the resource panel, from there back. */
-static void panelClick(GameUi *ui) {
-    uint16_t flags = panelFlags(ui);
-    if (flags & MapFlagHidden) {
-        flags = (uint16_t)(flags & 0xEFFF);
-        panelSet(ui, (uint16_t)(flags | ((flags & MapFlagLargeCapable) ? MapFlagLarge : MapFlagSmall)));
-    } else {
-        panelEnterResources(ui, flags);
-    }
-    effect(ui, 2);
+static void panelLeaveResources(GameUi *ui) { /* from the resource panel back to the minimap (a party that can map) or the plate */
+    uint16_t flags = (uint16_t)(panelFlags(ui) & 0xEFFF);
+    panelSet(ui, (uint16_t)(flags | ((flags & MapFlagLargeCapable) ? MapFlagLarge : MapFlagSmall)));
 }
 
-/* The resource panel's counters (DrawResourceCounterPanel, :41134): GOLD COINS, MAGIC ORE and NUORE, each label over its amount, 18 pixels apart from y = 96. */
+/*
+ * The resource panel (ShowResourceDepletedOverlay, yendor2.asm:41015): the plate of category 6 picture 0x14 with nine 16 x 16 item icons in a 3 x 3 grid (the regions of UiRegionsStatusIconBar):
+ * the party's gold coins, magic ore and nuore (items 1-3) while it has any, then the six belt slots (session.h) with the icon of the item each holds.
+ */
+static void resourceIconsDraw(GameUi *ui) {
+    const ViewRenderer *r = &ui->renderer;
+    GameSession *s = ui->session;
+    static const unsigned kMaterial[3] = {SaveHeaderGold, SaveHeaderOreCounter1, SaveHeaderOreCounter2};
+    unsigned count;
+    const uint16_t(*cells)[5] = uiRegionEntries(s->game, UiRegionsStatusIconBar, &count);
+    viewDrawPicture(r, 6, 0x14, 0xF8, 9, true, 0);
+    for (unsigned i = 0; cells && i < count && i < 9; i++) {
+        unsigned id = 0;
+        if (i < 3) {
+            const uint8_t *amount = saveHeaderBcd4(&s->save, kMaterial[i]);
+            id = amount[0] | amount[1] | amount[2] | amount[3] ? i + 1 : 0;
+        } else {
+            id = itemSlotId(sessionBeltSlot(s, i - 3));
+        }
+        const uint8_t *item = id ? itemCatalogRecord(&s->items, id) : NULL;
+        if (item) {
+            viewDrawPicture(r, 8, item[ItemFieldIcon] | (item[ItemFieldIcon + 1] << 8), cells[i][0], cells[i][2], true, 0);
+        }
+    }
+}
+
+/* DrawResourceCounterPanel (:41134): GOLD COINS, MAGIC ORE and NUORE, each label over its amount, 18 pixels apart from y = 96. */
 static void resourcesDraw(GameUi *ui) {
     const ViewRenderer *r = &ui->renderer;
     SaveGame *save = &ui->session->save;
     static const char *const kLabels[3] = {"GOLD COINS:", "MAGIC ORE: ", "NUORE: "};
     const Bcd4 *amounts[3] = {(const Bcd4 *)saveHeaderBcd4(save, SaveHeaderGold), (const Bcd4 *)saveHeaderBcd4(save, SaveHeaderOreCounter1), (const Bcd4 *)saveHeaderBcd4(save, SaveHeaderOreCounter2)};
     char number[12];
-    viewDrawPicture(r, 6, 0x14, 0xF8, 9, true, 0);
+    resourceIconsDraw(ui);
+    if (ui->panelRunCount) { /* a message or an item's name has the text area */
+        return;
+    }
     textPanelClear(r, false);
     for (unsigned i = 0; i < 3; i++) {
         fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 240, 96 + 18 * (int)i, kLabels[i], 0x8A, 4, FontOpaque);
@@ -520,6 +543,232 @@ static void lockReport(GameUi *ui) {
     for (unsigned i = 0; i < count; i++) {
         panelRun(ui, 240, 96 + 6 * (int)i, 0x8A, false, lines[i]);
     }
+}
+
+/*
+ * ShowStatusPanelMessage (yendor2.asm:35105): the lines of a message in 0x8A, transparent, from (240, 96), 6 pixels apart, over the cleared message area; they stay until the next command.
+ */
+static void panelMessage(GameUi *ui, const char *const *lines, unsigned count) {
+    ui->panelRunCount = 0;
+    for (unsigned i = 0; i < count; i++) {
+        panelRun(ui, 240, 96 + 6 * (int)i, 0x8A, false, lines[i]);
+    }
+}
+
+/* A message the game keeps in the executable's data segment: `lines` consecutive strings at `offset` (the original's fixed-width, space-padded rows). */
+static void panelMessageExe(GameUi *ui, unsigned offset, unsigned lines) {
+    char text[UiPanelRunMax][16];
+    const char *shown[UiPanelRunMax];
+    unsigned count = 0;
+    for (; ui->exe && count < lines && count < UiPanelRunMax; count++) {
+        if (!exeDataString(ui->exe, offset, text[count], sizeof(text[count]))) {
+            break;
+        }
+        offset += (unsigned)strlen(text[count]) + 1;
+        shown[count] = text[count];
+    }
+    panelMessage(ui, shown, count);
+}
+
+/* The message of a refused step into a locked destination: Chapter 2 DS:0x7BCE, Chapter 3 DS:0x7F00 ("LOCKED"); Chapter 3's fixed three lines (DS:0x9606). Nothing without the executable. */
+static void panelMessageDenied(GameUi *ui, bool fixed) {
+    if (fixed) {
+        panelMessageExe(ui, 0x9606, 3);
+    } else {
+        panelMessageExe(ui, ui->session->game == GameYendor2 ? 0x7BCE : 0x7F00, 1);
+    }
+}
+
+/* A destination that asks for a password (IsDestinationUnlocked: ShowConfirmPrompt on the gate row's message, EditTextField at (240, 114)). */
+static void passwordOpen(GameUi *ui, unsigned promptId) {
+    ui->passwordActive = true;
+    ui->passwordPrompt = promptId;
+    textFieldInit(&ui->password, 13);
+}
+
+static void passwordDraw(GameUi *ui) {
+    ConfirmPrompt prompt;
+    GameSession *s = ui->session;
+    for (int row = 0; row < 60; row++) { /* ClearMessageBoxArea */
+        memset(&ui->screen[(96 + row) * ViewScreenWidth + 240], 4, 72);
+    }
+    if (confirmPromptLoad(ui->exe, s->game, ui->passwordPrompt, &prompt)) {
+        confirmPromptDraw(&ui->renderer, &prompt);
+    } else {
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 240, 96, "PASSWORD?", 0x8A, 4, FontTransparent);
+    }
+    char typed[TextFieldMaxSize + 2];
+    snprintf(typed, sizeof(typed), "%s-", ui->password.text);
+    fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 240, 114, typed, 0x0F, 4, FontOpaque);
+}
+
+static bool passwordKey(GameUi *ui, UiKey key) {
+    GameSession *s = ui->session;
+    unsigned ascii = key >= 'a' && key <= 'z' ? (unsigned)key - 32 : key < 0x80 ? (unsigned)key : 0; /* the keyboard poll upper-cases the letters */
+    switch (ascii ? textFieldKey(&ui->password, (uint8_t)ascii) : TextFieldEditing) {
+    case TextFieldConfirmed:
+        ui->passwordActive = false;
+        if (sessionTravelPassword(s, ui->password.text)) {
+            playPending(ui);
+            gameUiAmbientMusic(ui);
+        }
+        break;
+    case TextFieldCancelled:
+        ui->passwordActive = false;
+        break;
+    case TextFieldBeep:
+        effect(ui, 3);
+        break;
+    default:
+        break;
+    }
+    return true;
+}
+
+/* The name of an item in the text area, white on the panel, three 12-character rows (RedrawItemDescriptionAndMaterials: the record's +0x13 text). */
+static void panelItemName(GameUi *ui, unsigned itemId) {
+    const uint8_t *item = itemId ? itemCatalogRecord(&ui->session->items, itemId) : NULL;
+    ui->panelRunCount = 0;
+    for (unsigned i = 0; item && i < 3; i++) {
+        char line[ItemNameLineSize];
+        itemGetNameLine(item, i, line);
+        panelRun(ui, 240, 96 + 6 * (int)i, 0x0F, true, line);
+    }
+}
+
+/* The refusal beep (FlashStatusWarning plays sound 3 and flashes the cursor). */
+static void flashWarning(GameUi *ui) {
+    effect(ui, 3);
+}
+
+/*
+ * HandleStatusPanelItemSlotClick's tail (yendor2.asm:41175): a click on a belt slot of the resource panel. Picking an item up or swapping shows the name of the item now on the cursor, putting it down
+ * leaves the counters; an empty slot with an empty hand, or a refusal (a container, a key that is no key, the beep), is what ends the resource panel (errorCode 1).
+ */
+static bool beltClick(GameUi *ui, unsigned slot) {
+    GameSession *s = ui->session;
+    SessionBelt result = sessionBeltClick(s, slot);
+    playPending(ui);
+    ui->panelRunCount = 0;
+    switch (result) {
+    case SessionBeltTook:
+    case SessionBeltSwapped:
+        panelItemName(ui, s->heldItem);
+        return true;
+    case SessionBeltPlaced:
+    case SessionBeltKeyRing:
+        return true;
+    case SessionBeltRefused:
+        flashWarning(ui);
+        return false;
+    default:
+        return false;
+    }
+}
+
+/* A left click on the top-right panel (start's loc_103BA): outside the resource panel it opens it; inside, the three materials show their counters, a belt slot is worked, and a click anywhere
+ * else -- or on a slot that cannot be used -- leaves it. */
+static void panelClick(GameUi *ui, int x, int y) {
+    uint16_t flags = panelFlags(ui);
+    if (!(flags & MapFlagHidden)) {
+        panelEnterResources(ui, flags);
+        ui->panelRunCount = 0;
+        effect(ui, 2);
+        return;
+    }
+    unsigned region = uiRegionHit(ui->session->game, UiRegionsStatusIconBar, x, y);
+    if (region >= 1 && region <= 3) {
+        ui->panelRunCount = 0;
+        return;
+    }
+    if (region >= 4 && region <= 9 && beltClick(ui, region - 4)) {
+        return;
+    }
+    panelLeaveResources(ui);
+    effect(ui, 2);
+}
+
+/* ---- the cursor ---- */
+
+void gameUiMouseMove(GameUi *ui, int x, int y) {
+    ui->mouseX = x;
+    ui->mouseY = y;
+}
+
+bool gameUiCursorShown(const GameUi *ui) {
+    return ui->targeting || ui->session->heldItem != 0;
+}
+
+/* The cursor item or the crosshair, over everything else (DrawMouseCursor: the 16 x 16 sprite blitted at the pointer with 0xFF transparent). */
+static void cursorDraw(GameUi *ui) {
+    unsigned picture = 0;
+    if (ui->session->heldItem) {
+        const uint8_t *item = itemCatalogRecord(&ui->session->items, ui->session->heldItem);
+        picture = item ? (unsigned)(item[ItemFieldIcon] | (item[ItemFieldIcon + 1] << 8)) : 0;
+    } else if (ui->targeting) {
+        picture = 0x0F;
+    }
+    if (picture) {
+        viewDrawPicture(&ui->renderer, 8, picture, ui->mouseX, ui->mouseY, true, 0);
+    }
+}
+
+/* ---- the commands that need an item (K, M, T, W) ---- */
+
+/* IsItemRangeAvailable on the command's item: the belt, then every member's inventory. An unavailable command does nothing, silently. */
+static bool commandItem(GameUi *ui, MainAction action) {
+    unsigned id = mainCommandRequiredItem(ui->session->game, action);
+    return id == 0 || sessionHasItem(ui->session, id, id);
+}
+
+/* "YOUR SKILL / IS NOT HIGH / ENOUGH!" (ShowMapSkillTooLowMessage: DS:0x7D7E, Chapter 3 0x80AB). */
+static void mapSkillTooLow(GameUi *ui) {
+    panelMessageExe(ui, ui->session->game == GameYendor2 ? 0x7D7E : 0x80AB, 3);
+}
+
+/*
+ * ShowGameClockCommand (yendor2.asm:43387): the time in the 12-hour form "HH:MM AM" and the date "MM/DD/YYYY", digits zero-padded, white, over the cleared text area at (240, 96) and (240, 102).
+ * Midnight to 00:59 reads 12:xx AM, noon to 12:59 12:xx PM, from 13:00 the hour less 12.
+ */
+static void clockShow(GameUi *ui) {
+    GameClock *c = &ui->session->clock;
+    unsigned minutes = c->minutes, hour = minutes / 60, minute = minutes % 60;
+    bool pm = minutes > 0x2CF;
+    char time[16], date[16];
+    hour = minutes <= 59 ? 12 : minutes <= 0x30B ? hour : hour - 12;
+    snprintf(time, sizeof(time), "%02u:%02u %cM", hour % 100, minute, pm ? 'P' : 'A');
+    snprintf(date, sizeof(date), "%02u/%02u/%04u", (unsigned)c->month % 100, (unsigned)c->day % 100, (unsigned)c->year % 10000);
+    ui->panelRunCount = 0;
+    panelRun(ui, 240, 96, 0x0F, false, time);
+    panelRun(ui, 240, 102, 0x0F, false, date);
+}
+
+/* The status panel's word for an unlock (UnlockDoorCommand: NOT LOCKED DS:0x7BB7, UNLOCKED 0x7BAE; Chapter 3 0x7EE9 / 0x7EE0). */
+static void unlockReport(GameUi *ui) {
+    GameSession *s = ui->session;
+    if (s->unlockMessage) {
+        bool y2 = s->game == GameYendor2;
+        panelMessageExe(ui, s->unlockMessage == 1 ? (y2 ? 0x7BB7 : 0x7EE9) : (y2 ? 0x7BAE : 0x7EE0), 1);
+        s->unlockMessage = 0;
+    }
+}
+
+/* K with the key ring: the crosshair waits for a click on the view (Escape gives up), then the faced lock is tried. */
+static void unlockStart(GameUi *ui) {
+    if (ui->session->combat.active) {
+        flashWarning(ui);
+        return;
+    }
+    ui->targeting = true;
+}
+
+static void unlockTry(GameUi *ui) {
+    GameSession *s = ui->session;
+    ui->targeting = false;
+    ui->panelRunCount = 0;
+    sessionUnlockWithRing(s);
+    playPending(ui);
+    unlockReport(ui);
 }
 
 /* ---- the alchemy screen ---- */
@@ -759,12 +1008,17 @@ static void alchemyDraw(GameUi *ui) {
     }
     if (ui->alchemyMode == UiAlchemyMark) { /* message 0x22 */
         textPanelClear(r, false);
-        static const char *const kAsk[3] = {"DO YOU WANT", "TO MARK OR", "RETURN?"};
-        for (unsigned i = 0; i < 3; i++) {
-            fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 240, 96 + 6 * (int)i, kAsk[i], 0x0F, 4, FontTransparent);
+        ConfirmPrompt prompt;
+        if (confirmPromptLoad(ui->exe, s->game, 0x22, &prompt)) {
+            confirmPromptDraw(r, &prompt);
+        } else {
+            static const char *const kAsk[3] = {"DO YOU WANT", "TO MARK OR", "RETURN?"};
+            for (unsigned i = 0; i < 3; i++) {
+                fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 240, 96 + 6 * (int)i, kAsk[i], 0x0F, 4, FontTransparent);
+            }
+            fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 240, 120, "MARK", 0x8A, 4, FontTransparent);
+            fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 240, 132, "RETURN", 0x8A, 4, FontTransparent);
         }
-        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 240, 120, "MARK", 0x8A, 4, FontTransparent);
-        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 240, 132, "RETURN", 0x8A, 4, FontTransparent);
     }
     if (ui->alchemyMode == UiAlchemyList) { /* the caster's portrait carries the selection frame (DrawPartyStatusIconRow) */
         static const int kX[4] = {8, 0x42, 0x7C, 0xB6};
@@ -1282,7 +1536,7 @@ static void bootBackdrop(GameUi *ui) {
     }
 }
 
-void gameUiDraw(GameUi *ui) {
+static void drawScreen(GameUi *ui) {
     GameSession *s = ui->session;
     if (ui->overlay == UiOverlayRoster) {
         drawRoster(ui);
@@ -1349,6 +1603,9 @@ void gameUiDraw(GameUi *ui) {
             compassDraw(ui);
         }
         panelRunsDraw(ui);
+        if (ui->passwordActive) {
+            passwordDraw(ui);
+        }
         if (s->shot.active) { /* HandleRangedOrCombatAction: the shoot icon is down while the shot flies */
             viewDrawPicture(&ui->renderer, 8, 2, IconShootX, IconRowY, false, 0);
         } else if (ui->pressTicks > 0) {
@@ -1385,6 +1642,13 @@ void gameUiDraw(GameUi *ui) {
     case UiOverlayAlchemy:
         alchemyDraw(ui);
         break;
+    case UiOverlayWorldMap: { /* ToggleMapViewMode: category 0 picture 6 over the whole screen, a "you are here" marker (category 8 picture 0x11) on the party's cell */
+        viewDrawPicture(&ui->renderer, 0, 6, 0, 0, false, 0);
+        if (s->x >= 0xA0 && s->y >= 0x30 && s->x <= 0x27F && s->y <= 0xEF) {
+            viewDrawPicture(&ui->renderer, 8, 0x11, (s->x - 0xA0) / 0x28 * 0x18 + 0x1C, (s->y - 0x30) / 0x18 * 0x14 + 0x17, true, 0);
+        }
+        break;
+    }
     case UiOverlayClue:
         drawClue(ui);
         break;
@@ -1401,6 +1665,11 @@ void gameUiDraw(GameUi *ui) {
     default:
         break;
     }
+}
+
+void gameUiDraw(GameUi *ui) {
+    drawScreen(ui);
+    cursorDraw(ui);
 }
 
 void gameUiStatus(const GameUi *ui, char *out, size_t capacity) {
@@ -1428,18 +1697,6 @@ static void talkStep(GameUi *ui, const ConversationStep *step) {
 
 /* The use command on the object ahead (sessionInteract): chests are looted, destinations travelled to, the Chapter 2 ending is played; the rest shows up in the status line. */
 /* A message the session names in the executable's data segment: its lines, joined, into the log. */
-static void showExeMessage(GameUi *ui, unsigned offset, unsigned lines) {
-    GameSession *s = ui->session;
-    s->log[0] = 0;
-    for (unsigned i = 0; ui->exe && i < lines; i++) {
-        char line[80];
-        if (!exeDataString(ui->exe, offset, line, sizeof(line))) {
-            break;
-        }
-        snprintf(s->log + strlen(s->log), sizeof(s->log) - strlen(s->log), "%s%s", i ? " " : "", line);
-        offset += (unsigned)strlen(line) + 1;
-    }
-}
 
 static void useAhead(GameUi *ui) {
     GameSession *s = ui->session;
@@ -1452,11 +1709,15 @@ static void useAhead(GameUi *ui) {
     case SessionInteractStoryEvent:
         gameUiAmbientMusic(ui);
         break;
+    case SessionInteractNothingHere:
+        panelMessageExe(ui, s->game == GameYendor2 ? 0x7D71 : 0x809E, 1);
+        break;
     case SessionInteractTravelRefused:
-        snprintf(s->log, sizeof(s->log), "the way is closed (message %u)", use.messageId);
+    case SessionInteractTravelFixed:
+        panelMessageDenied(ui, use.kind == SessionInteractTravelFixed);
         break;
     case SessionInteractTravelPassword:
-        snprintf(s->log, sizeof(s->log), "this way asks for a password (prompt %u)", use.promptId);
+        passwordOpen(ui, use.promptId);
         break;
     case SessionInteractTalker: {
         ConversationStep first;
@@ -1470,10 +1731,8 @@ static void useAhead(GameUi *ui) {
     case SessionInteractStoryRefused:
     case SessionInteractEndingNotReady:
     case SessionInteractDemoLimit:
-        if (ui->exe && use.textOffset) {
-            showExeMessage(ui, use.textOffset, use.textLines ? use.textLines : 1);
-        } else {
-            snprintf(s->log, sizeof(s->log), "nothing happens (yet)");
+        if (use.textOffset) {
+            panelMessageExe(ui, use.textOffset, use.textLines ? use.textLines : 1);
         }
         break;
     case SessionInteractEnding:
@@ -1874,8 +2133,24 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
     case MainActionAlchemy:
         alchemyOpen(ui);
         break;
-    case MainActionUnlockDoor: /* a demo skeleton key: every tier, as chest and door key at once */
-        sessionUnlock(s, 0xFFC0, 0);
+    case MainActionUnlockDoor: /* K: needs the key ring */
+        if (commandItem(ui, MainActionUnlockDoor)) {
+            unlockStart(ui);
+        }
+        break;
+    case MainActionClock: /* T: needs the clock */
+        if (commandItem(ui, MainActionClock)) {
+            clockShow(ui);
+        }
+        break;
+    case MainActionToggleMapView: /* W: needs the world map item and a Mapping average of 80 */
+        if (commandItem(ui, MainActionToggleMapView)) {
+            if (panelFlags(ui) & MapFlagFullOverview) {
+                ui->overlay = UiOverlayWorldMap;
+            } else {
+                mapSkillTooLow(ui);
+            }
+        }
         break;
     case MainActionAct: /* S: the party shoots its weapons down the corridor */
         if (sessionShootStart(s)) {
@@ -1885,8 +2160,14 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
     case MainActionExamine: /* Space, or the right button on the view: use what is ahead */
         useAhead(ui);
         break;
-    case MainActionLocalMap:
-        ui->overlay = UiOverlayLocalMap;
+    case MainActionLocalMap: /* M: needs the map item and a Mapping average of 60 */
+        if (commandItem(ui, MainActionLocalMap)) {
+            if (panelFlags(ui) & MapFlagLocalMap) {
+                ui->overlay = UiOverlayLocalMap;
+            } else {
+                mapSkillTooLow(ui);
+            }
+        }
         break;
     case MainActionClueBook:
         if (ui->exe) {
@@ -1916,6 +2197,15 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
 static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     GameSession *s = ui->session;
     bool running = true;
+    if (ui->passwordActive) {
+        return passwordKey(ui, key);
+    }
+    if (ui->targeting) { /* WaitForTargetClick: only Escape is heard */
+        if (key == UiKeyEscape) {
+            ui->targeting = false;
+        }
+        return true;
+    }
     if (s->doorOpening || s->shot.active) { /* any key finishes a door that is still opening, or a shot, first */
         gameUiSettle(ui);
     }
@@ -1983,6 +2273,10 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     if (ui->overlay == UiOverlayAlchemy) {
         return alchemyKey(ui, key);
     }
+    if (ui->overlay == UiOverlayWorldMap) { /* WaitForKeypressTickingMusic: any key */
+        ui->overlay = UiOverlayNone;
+        return true;
+    }
     if (key == UiKeyEscape) {
         if (ui->overlay != UiOverlayNone) {
             ui->overlay = UiOverlayNone;
@@ -2019,6 +2313,9 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
 }
 
 bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
+    if (ui->passwordActive) { /* typing: the message area is the prompt's */
+        return keyDispatch(ui, key, ctrl);
+    }
     if (ui->restPause) { /* the interrupted rest's message is read: any key lets the combat show */
         ui->restPause = false;
         ui->panelRunCount = 0;
@@ -2222,8 +2519,14 @@ static bool alchemyClick(GameUi *ui, int x, int y) {
     }
     if (ui->alchemyMode == UiAlchemyMark) {
         unsigned row = uiRegionHit(game, UiRegionsConfirmList, x, y);
-        if (row == 5 || row == 7) {
-            alchemyMark(ui, row == 7);
+        ConfirmPrompt prompt;
+        unsigned mark = 5, back = 7; /* the answers are the rows of the prompt's first and last region (Chapter 3 asks at 4 and 6) */
+        if (confirmPromptLoad(ui->exe, game, 0x22, &prompt)) {
+            mark = prompt.firstRegion;
+            back = prompt.lastRegion;
+        }
+        if (row && (row == mark || row == back)) {
+            alchemyMark(ui, row == back);
         }
         return true;
     }
@@ -2261,7 +2564,7 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
     unsigned region = uiRegionHit(game, UiRegionsDungeonMain, x, y);
     if (region == 2) { /* the top-right panel: the plate or the minimap, then the resource panel */
         if (!s->combat.active) {
-            panelClick(ui);
+            panelClick(ui, x, y);
         }
         return true;
     }
@@ -2281,6 +2584,15 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
 
 static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
     ui->session->loot.pending = false; /* the loot panel stays until the next command */
+    if (ui->passwordActive) { /* EditTextField takes no clicks */
+        return true;
+    }
+    if (ui->targeting) { /* a left click on the view is the target; the right button and every other place are ignored */
+        if (!right && uiRegionHit(ui->session->game, UiRegionsDungeonMain, x, y) == 1) {
+            unlockTry(ui);
+        }
+        return true;
+    }
     if (right && ui->overlay != UiOverlayNone && ui->overlay != UiOverlayTitle) { /* the right button backs out */
         return press(ui, UiKeyEscape);
     }
@@ -2302,6 +2614,7 @@ static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
     case UiOverlayAlchemy:
         return alchemyClick(ui, x, y);
     case UiOverlayLocalMap:
+    case UiOverlayWorldMap:
     case UiOverlayDolls:
         ui->overlay = UiOverlayNone; /* any click closes them */
         return true;
@@ -2324,5 +2637,6 @@ bool gameUiClick(GameUi *ui, int x, int y, bool right) {
     ui->panelRunCount = 0;
     bool running = clickDispatch(ui, x, y, right);
     restReport(ui);
+    lockReport(ui);
     return running;
 }

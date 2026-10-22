@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_gameui test_gameui.c ../gameui.c ../alchemylist.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_gameui test_gameui.c ../gameui.c ../alchemylist.c ../confirmprompt.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../lighting.c \
  *       ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c \
  *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
@@ -14,6 +14,7 @@
 
 #include "gameui.h"
 #include "spellcast.h"
+#include "maininput.h"
 #include "gamedialog.h"
 #include "pictures.h"
 #include "uiregions.h"
@@ -271,6 +272,17 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     gameUiDraw(&ui);
     check("the Up key walks the party and the next frame differs", moved > 0 && sum(ui.screen) != first);
     unsigned before = sum(ui.screen);
+    gameUiKey(&ui, 'm', false);
+    check("M does nothing without the map item", ui.overlay == UiOverlayNone);
+    itemSlotSet(sessionBeltSlot(s, 0), (uint16_t)mainCommandRequiredItem(game, MainActionLocalMap), 0); /* the map goes on the tool belt */
+    for (unsigned member = 0; member < 4; member++) {
+        partySetStat(sessionPartyRecord(s, member), PartyStatMapping, 10);
+    }
+    gameUiKey(&ui, 'm', false);
+    check("M with the map but too little Mapping skill does not open it", ui.overlay == UiOverlayNone);
+    for (unsigned member = 0; member < 4; member++) {
+        partySetStat(sessionPartyRecord(s, member), PartyStatMapping, 90);
+    }
     gameUiKey(&ui, 'm', false);
     gameUiDraw(&ui);
     bool mapShown = ui.overlay == UiOverlayLocalMap && sum(ui.screen) != before;
@@ -577,6 +589,28 @@ static unsigned countColour(const uint8_t *screen, int x0, int y0, int x1, int y
     return count;
 }
 
+static unsigned wordAt(const uint8_t *p) {
+    return (unsigned)(p[0] | (p[1] << 8));
+}
+
+/* The first world object with the flag (and the value, if given). */
+static bool findObject(const GameSession *s, unsigned flag, unsigned value, int *col, int *row) {
+    for (unsigned c = 0; c < WorldObjectColumns; c++) {
+        for (unsigned at = wordAt(s->objects.data + 2 * c);; at += 6) {
+            unsigned y = wordAt(s->objects.data + at);
+            if (y == 0xFFFF) {
+                break;
+            }
+            if ((wordAt(s->objects.data + at + 2) & flag) && (!value || wordAt(s->objects.data + at + 4) == value)) {
+                *col = (int)(c + WorldObjectColumnMin);
+                *row = (int)y;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 static unsigned findBranchSpell(GameSession *s, SpellBranch branch) {
     for (unsigned id = 1; id <= s->spells.recordCount; id++) {
         const uint8_t *r = spellRecord(&s->spells, id);
@@ -619,6 +653,102 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
     gameUiKey(&ui, UiKeyLeft, false);
     gameUiDraw(&ui);
     check("the next command clears the message", countColour(ui.screen, 240, 96, 312, 107, 0x8A) + countColour(ui.screen, 240, 96, 312, 107, 0x0F) == 0);
+
+    /* NOTHING HERE, and a destination that asks for a password (the texts come from the executable when it is there) */
+    snprintf(path, sizeof(path), "%s/SW.EXE", dir ? dir : defaultDir);
+    size_t exeSize;
+    uint8_t *exeBytes = readFile(path, &exeSize);
+    static ExeData exe;
+    bool exeOk = exeBytes && exeDataOpen(&exe, game, exeBytes, exeSize);
+    if (exeOk) {
+        gameUiSetExe(&ui, &exe);
+    }
+    s->x = 5;
+    s->y = 5;
+    s->facing = SaveFacingNorth;
+    sessionRebuild(s);
+    gameUiKey(&ui, ' ', false);
+    gameUiDraw(&ui);
+    check("Space with nothing ahead writes NOTHING HERE in the message area", !exeOk || countColour(ui.screen, 240, 96, 312, 101, 0x8A) > 10);
+    int gateCol = 0, gateRow = 0;
+    bool asked = false;
+    for (unsigned id = 1; id <= travelDestinationCount(game) && !asked; id++) {
+        TravelDestination d;
+        travelDestinationLookup(game, id, &d);
+        if (!(d.flags & 0x2000) || !findObject(s, WorldObjectFlagUnknown2000, id, &gateCol, &gateRow)) {
+            continue;
+        }
+        TravelUnlockCheck unlock = travelCheckUnlock(game, id, d.flags, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
+        asked = unlock.outcome == TravelUnlockNeedsPassword;
+    }
+    if (asked) {
+        s->x = gateCol;
+        s->y = gateRow + 1;
+        s->facing = SaveFacingNorth;
+        sessionRebuild(s);
+        gameUiKey(&ui, ' ', false);
+        check("Space at a password destination opens the prompt", ui.passwordActive);
+        gameUiKey(&ui, 'a', false);
+        gameUiKey(&ui, 'b', false);
+        gameUiDraw(&ui);
+        check("the typed word shows in the message area, upper case", strcmp(ui.password.text, "AB") == 0 && countColour(ui.screen, 240, 114, 312, 119, 0x0F) > 5);
+        gameUiKey(&ui, UiKeyUp, false);
+        check("other keys do not walk while typing", s->y == gateRow + 1);
+        gameUiKey(&ui, UiKeyEnter, false);
+        check("a wrong word closes the prompt and the party stays", !ui.passwordActive && s->y == gateRow + 1);
+        gameUiKey(&ui, ' ', false);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("Escape gives the prompt up", !ui.passwordActive && s->y == gateRow + 1);
+    }
+
+    /* the clock, the key ring and the cursor item */
+    s->clock.minutes = 0;
+    gameUiKey(&ui, 't', false);
+    check("T does nothing without the clock", ui.panelRunCount == 0);
+    itemSlotSet(sessionBeltSlot(s, 1), (uint16_t)mainCommandRequiredItem(game, MainActionClock), 0);
+    gameUiKey(&ui, 't', false);
+    check("T with the clock writes the time and the date, in the 12-hour form", ui.panelRunCount == 2 && strcmp(ui.panelRuns[0].text, "12:00 AM") == 0 && strcmp(ui.panelRuns[1].text, "01/01/0001") == 0);
+    s->clock.minutes = 13 * 60 + 5;
+    gameUiKey(&ui, 't', false);
+    check("... 13:05 reads 01:05 PM", strcmp(ui.panelRuns[0].text, "01:05 PM") == 0);
+    s->clock.minutes = 420;
+    gameUiKey(&ui, 'k', false);
+    check("K does nothing without the key ring", !ui.targeting);
+    itemSlotSet(sessionBeltSlot(s, 0), (uint16_t)mainCommandRequiredItem(game, MainActionUnlockDoor), 0);
+    gameUiKey(&ui, 'k', false);
+    check("K with the ring waits for a click (the crosshair is the cursor)", ui.targeting && gameUiCursorShown(&ui));
+    gameUiKey(&ui, UiKeyUp, false);
+    check("... and only Escape is heard", ui.targeting && s->y != 39);
+    gameUiKey(&ui, UiKeyEscape, false);
+    check("Escape gives it up", !ui.targeting);
+    s->x = 166;
+    s->y = 40;
+    s->facing = SaveFacingWest;
+    sessionRebuild(s);
+    gameUiKey(&ui, 'k', false);
+    gameUiClick(&ui, 100, 60, false);
+    check("a click on the view tries the lock ahead: a magical one is only reported (ShowLockStatus)", !ui.targeting && ui.panelRunCount == 2 && strcmp(ui.panelRuns[0].text, "MAGICALLY") == 0);
+    s->heldItem = (uint16_t)mainCommandRequiredItem(game, MainActionClock);
+    gameUiMouseMove(&ui, 150, 90);
+    gameUiDraw(&ui);
+    unsigned withItem = sum(ui.screen);
+    bool shown = gameUiCursorShown(&ui);
+    s->heldItem = 0;
+    gameUiDraw(&ui);
+    check("an item on the cursor is drawn at the pointer and the system pointer is hidden", shown && !gameUiCursorShown(&ui) && withItem != sum(ui.screen));
+    saveHeaderSetU16(&s->save, 0x20, 0x1000); /* the resource panel */
+    itemSlotSet(sessionBeltSlot(s, 1), 0, 0);
+    s->heldItem = (uint16_t)mainCommandRequiredItem(game, MainActionClock);
+    gameUiClick(&ui, 270, 35, false); /* belt slot 2 */
+    check("in the resource panel a click on a belt slot puts the cursor item there", s->heldItem == 0 && itemSlotId(sessionBeltSlot(s, 1)) == mainCommandRequiredItem(game, MainActionClock) &&
+                                                                                      (saveHeaderGetU16(&s->save, 0x20) & 0x1000));
+    gameUiClick(&ui, 270, 35, false);
+    check("... and a click takes it up again, showing its name", s->heldItem != 0 && ui.panelRunCount == 3);
+    gameUiClick(&ui, 258, 20, false);
+    check("a click on a material shows the counters and stays", (saveHeaderGetU16(&s->save, 0x20) & 0x1000) && ui.panelRunCount == 0);
+    s->heldItem = 0;
+    gameUiClick(&ui, 300, 55, false);
+    check("a click on an empty slot with an empty hand leaves the resource panel", !(saveHeaderGetU16(&s->save, 0x20) & 0x1000));
 
     /* a step into the magically locked door: MAGICALLY / LOCKED in the message area */
     s->x = 166;

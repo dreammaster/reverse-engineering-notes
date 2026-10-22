@@ -123,6 +123,7 @@ typedef struct GameSession {
     bool scrollCast;           /* internal: a spell being cast from a scroll (no knowledge, no cost, attacks "already resolved") */
     unsigned scrollTarget;     /* its single-target recipient slot */
     unsigned castTarget;       /* internal: the recipient slot + 1 of a single-target spell chosen on the alchemy screen (sessionCastOn), 0 = the caster */
+    unsigned unlockMessage;    /* sessionUnlock: 1 = NOT LOCKED, 2 = UNLOCKED for the status panel (the front end clears it) */
     bool lockReport;           /* a step into a marked door cell was refused (sessionMove): `lockFlags` / `lockValue` / `lockSkill` are what ShowLockStatus (lockStatusText) needs; the front end writes the message and clears this */
     uint16_t lockFlags, lockValue, lockSkill;
     RestOutcome rest;          /* the last rest (sessionRest) ... */
@@ -182,8 +183,21 @@ bool sessionShootStep(GameSession *session);
  */
 RestOutcome sessionRest(GameSession *session);
 
-/* UnlockDoorCommand with a key (see interactUnlockFacing); on success the faced cell's door marker is cleared. */
+/* UnlockDoorCommand with a key (see interactUnlockFacing); on success the faced cell's door marker is cleared. The sound, `unlockMessage` and (a lock that holds) `lockReport` are set for the front end. */
 InteractUnlockOutcome sessionUnlock(GameSession *session, uint16_t keyWord0, uint16_t heldKeyFlags);
+
+/* The K command: the key ring's own flags (item 0x2F, a master key) against the faced lock. */
+InteractUnlockOutcome sessionUnlockWithRing(GameSession *session);
+uint16_t sessionKeyRingFlags(const GameSession *session);
+
+/*
+ * The tool belt (savegame.h SaveBeltSlotCount slots of item id + extra, under the resource panel's materials): the map, clock, key ring and the like the K / M / T / W commands need
+ * (sessionHasItem: IsItemRangeAvailable -- the belt first, then every member's inventory). sessionBeltClick is HandleStatusPanelItemSlotClick for the cursor item.
+ */
+typedef enum { SessionBeltNothing, SessionBeltTook, SessionBeltPlaced, SessionBeltSwapped, SessionBeltKeyRing, SessionBeltRefused } SessionBelt;
+bool sessionHasItem(GameSession *session, unsigned lowId, unsigned highId);
+uint8_t *sessionBeltSlot(GameSession *session, unsigned slot);
+SessionBelt sessionBeltClick(GameSession *session, unsigned slot);
 
 /*
  * A spell cast by a party member (RunAlchemyScreen: the costs are paid first -- DeductAlchemySpellCosts -- then ApplyEncodedItemEffect runs the branch
@@ -238,6 +252,8 @@ SessionUse sessionUseItem(GameSession *session, unsigned userSlot, unsigned item
  *   StoryRefused  the event's condition is not met (`textOffset`: the one line it shows)
  *   Ending        Chapter 2's Quartz Chamber with the three quest flags: play introEndingScript (the original also sets the clock to 08:00)
  *   EndingNotReady the same without them: the two-line message at textOffset
+ *   NothingHere   nothing is ahead or underfoot (ProbeFacingTile found no object): the status panel says NOTHING HERE (DS:0x7D71; Chapter 3 DS:0x809E)
+ *   TravelFixed   Chapter 3's locked destination without a gate message: the three-line YOU CANNOT / ENTER HERE / RIGHT NOW (DS:0x9606)
  *   DemoLimit     the shareware program's boundary (EnforceDemoBoundary, yendor2.asm:867): the destination at (0x200, 0x2B) facing south is refused with the two-line
  *                 message at textOffset (REGISTER TODAY!) while `shareware` is set (Chapter 2 only; a registered program, the default, takes it)
  */
@@ -252,7 +268,9 @@ typedef enum {
     SessionInteractStoryRefused,
     SessionInteractEnding,
     SessionInteractEndingNotReady,
-    SessionInteractDemoLimit
+    SessionInteractDemoLimit,
+    SessionInteractNothingHere,
+    SessionInteractTravelFixed
 } SessionInteractKind;
 
 typedef struct {

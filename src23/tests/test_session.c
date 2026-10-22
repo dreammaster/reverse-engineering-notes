@@ -411,9 +411,9 @@ static void testInteract(GameKind game, const uint8_t *world, size_t size, const
     }
     char text[160];
     int col, row;
-    snprintf(text, sizeof(text), "%s: nothing ahead means nothing happens", label);
+    snprintf(text, sizeof(text), "%s: nothing ahead means NOTHING HERE", label);
     place(s, 5, 5, SaveFacingNorth);
-    check(text, sessionInteract(s).kind == SessionInteractNothing);
+    check(text, sessionInteract(s).kind == SessionInteractNothingHere);
 
     /* a destination without a gate */
     bool travelled = false;
@@ -949,6 +949,42 @@ static void testLockedDoor(GameKind game, const uint8_t *world, size_t size, con
     sessionFree(s);
 }
 
+/* The tool belt: the six slots under the resource panel (cursor item in, out and swapped; keys on the key ring) and IsItemRangeAvailable over them. */
+static void testBelt(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[200];
+    unsigned ring = game == GameYendor2 ? 0x2F : 0x32, key = game == GameYendor2 ? 0x21 : 0x24, clock = game == GameYendor2 ? 7 : 0x0C;
+    for (unsigned id = key; id < key + 14; id++) { /* a door key (a chest key's entry has bit 0x80 and adds nothing to the ring) */
+        const uint8_t *record = itemCatalogRecord(&s->items, id);
+        const uint8_t *entry = record ? itemTargetEntry(&s->items, record) : NULL;
+        if (entry && !(itemTargetWord(entry, 0) & 0x80)) {
+            key = id;
+            break;
+        }
+    }
+    check("the belt starts empty and finds no clock", !sessionHasItem(s, clock, clock) && sessionBeltSlot(s, 5) && !sessionBeltSlot(s, 6));
+    s->heldItem = (uint16_t)clock;
+    check("an empty slot takes the item from the cursor (sound 6)", sessionBeltClick(s, 2) == SessionBeltPlaced && s->heldItem == 0 && itemSlotId(sessionBeltSlot(s, 2)) == clock && s->pendingSound == 6);
+    check("... and IsItemRangeAvailable finds it there", sessionHasItem(s, clock, clock));
+    s->pendingSound = 0;
+    check("an empty hand takes it back", sessionBeltClick(s, 2) == SessionBeltTook && s->heldItem == clock && itemSlotId(sessionBeltSlot(s, 2)) == 0);
+    check("an empty slot with an empty hand is nothing", (s->heldItem = 0, sessionBeltClick(s, 2)) == SessionBeltNothing);
+    s->heldItem = (uint16_t)clock;
+    sessionBeltClick(s, 0);
+    s->heldItem = (uint16_t)ring;
+    check("another item is swapped with the slot's", sessionBeltClick(s, 0) == SessionBeltSwapped && s->heldItem == clock && itemSlotId(sessionBeltSlot(s, 0)) == ring);
+    s->heldItem = (uint16_t)key;
+    unsigned flags = sessionKeyRingFlags(s);
+    snprintf(text, sizeof(text), "%s: a door key put on the key ring is used up and adds its tier to the ring (sound 4)", label);
+    check(text, sessionBeltClick(s, 0) == SessionBeltKeyRing && s->heldItem == 0 && sessionKeyRingFlags(s) != flags && s->pendingSound == 4);
+    s->heldItem = (uint16_t)clock;
+    check("something that is no key is refused over the ring", sessionBeltClick(s, 0) == SessionBeltRefused && s->heldItem == clock);
+    sessionFree(s);
+}
+
 /* The bump of a refused step: a wall bumps with each game's own sound, a turn does not. */
 static void testBumpSound(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -1208,6 +1244,7 @@ int main(void) {
             testDoorwayEngage(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testLockedDoor(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBumpSound(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testBelt(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);
         }
     }

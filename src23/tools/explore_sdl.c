@@ -5,7 +5,7 @@
  * and plays sound (the area music through the OPL2 synthesizer, a couple of effects). It is the smallest "engine" built from the modules.
  *
  * Build and run (from src23/tools; SDL2 from C:\sdk\SDL2-2.32.10, SDL2.dll next to the exe or on PATH):
- *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../gameui.c ../alchemylist.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -I /c/sdk/SDL2-2.32.10/include -o explore_sdl explore_sdl.c ../gameui.c ../alchemylist.c ../confirmprompt.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c \
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
@@ -665,13 +665,22 @@ int main(int argc, char **argv) {
                 int winW, winH;
                 SDL_GetWindowSize(window, &winW, &winH);
                 if (winW > 0 && winH > 0) { /* window pixels -> the 320 x 200 screen */
+                    gameUiMouseMove(&g_ui, event.button.x * ViewScreenWidth / winW, event.button.y * ViewScreenHeight / winH);
                     running = gameUiClick(&g_ui, event.button.x * ViewScreenWidth / winW, event.button.y * ViewScreenHeight / winH, event.button.button == SDL_BUTTON_RIGHT) && running;
                 }
                 dirty = true;
+            } else if (event.type == SDL_MOUSEMOTION) { /* the cursor item follows the pointer */
+                int winW, winH;
+                SDL_GetWindowSize(window, &winW, &winH);
+                if (winW > 0 && winH > 0) {
+                    gameUiMouseMove(&g_ui, event.motion.x * ViewScreenWidth / winW, event.motion.y * ViewScreenHeight / winH);
+                    dirty = dirty || gameUiCursorShown(&g_ui);
+                }
             } else if (event.type == SDL_WINDOWEVENT) {
                 dirty = true;
             }
         }
+        SDL_ShowCursor(gameUiCursorShown(&g_ui) ? SDL_DISABLE : SDL_ENABLE); /* the screen draws the cursor item or the crosshair itself */
         if (clockMs && !g_session->combat.active && g_ui.overlay == UiOverlayNone && SDL_GetTicks() - lastMinute >= clockMs) {
             lastMinute = SDL_GetTicks();
             sessionAdvanceTime(g_session, 1);

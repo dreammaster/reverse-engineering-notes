@@ -26,6 +26,11 @@
 #include "windowbake.h"
 
 static uint16_t *placeWord(GameSession *s);
+
+/* The six tool belt slots of the save header (DS:0x9519; savegame.h SaveHeaderBeltSlots): what IsItemRangeAvailable, the rest's food search and the story-item checks look at first. */
+static uint8_t *beltSlots(GameSession *s) {
+    return saveHeaderBcd4(&s->save, SaveHeaderBeltSlots);
+}
 static void arriveAt(GameSession *s, int x, int y, uint16_t facing);
 
 GameSession *sessionNew(GameKind game, const uint8_t *worldDat, size_t size) {
@@ -1086,8 +1091,7 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
     const uint8_t *target = itemRec ? itemTargetEntry(&s->items, itemRec) : NULL;
     if (target && itemTargetKind(itemRec) == ItemTargetConsumable && (itemTargetWord(target, 0) & 4) && !(itemTargetWord(target, ItemTargetSlotFlags) & 0x7E00)) {
         /* ExamineTarget: a key to a destination (KEY OF PORT HOPE..., ANKH OF PORTALS, ATHANEUM KEY): the road opens when its gate flag is set */
-        uint8_t globalSlots[24];
-        memset(globalSlots, 0, sizeof(globalSlots));
+        uint8_t *globalSlots = beltSlots(s);
         bool storyItem = itemRangeAvailable(globalSlots, &s->save, TravelStoryItemLow, TravelStoryItemHigh).found;
         unsigned destination = itemTargetWord(target, 2);
         TravelExamineOutcome outcome = travelExamineKey(s->game, destination, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, storyItem);
@@ -1156,8 +1160,7 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
             return SessionUseDone;
         }
         if (action == RelicActionAssemblePotion) {
-            uint8_t globalSlots[24];
-            memset(globalSlots, 0, sizeof(globalSlots));
+            uint8_t *globalSlots = beltSlots(s);
             if (!relicAssemblePotion(globalSlots, &s->save, &s->items)) {
                 return SessionUseNoEffect;
             }
@@ -1240,8 +1243,7 @@ static void travelTo(GameSession *s, unsigned destinationId) {
 /* Moves one item at a time from `from` to `to` (SwapItemInstanceEverywhere's loop; only the main inventories and the global slots are searched). */
 static unsigned swapItemEverywhere(GameSession *s, uint16_t from, uint16_t to) {
     unsigned swapped = 0;
-    uint8_t globalSlots[24];
-    memset(globalSlots, 0, sizeof(globalSlots));
+    uint8_t *globalSlots = beltSlots(s);
     for (;;) {
         ItemRangeAvailability r = itemRangeAvailable(globalSlots, &s->save, from, from);
         if (!r.found) {
@@ -1260,8 +1262,7 @@ static unsigned swapItemEverywhere(GameSession *s, uint16_t from, uint16_t to) {
 /* Removes every item of the id range, spending a charge at a time (the SWORD / HAMMER / TRIDENT OF LIGHT). */
 static unsigned removeItemRange(GameSession *s, uint16_t low, uint16_t high) {
     unsigned removed = 0;
-    uint8_t globalSlots[24];
-    memset(globalSlots, 0, sizeof(globalSlots));
+    uint8_t *globalSlots = beltSlots(s);
     for (unsigned guard = 0; guard < 64; guard++) {
         ItemRangeAvailability r = itemRangeAvailable(globalSlots, &s->save, low, high);
         if (!r.found) {
@@ -1325,8 +1326,7 @@ static SessionInteract storyEventRun(GameSession *s, unsigned value) {
         changed += swapItemEverywhere(s, e->swapFrom, e->swapTo);
     }
     if (e->checkItem) {
-        uint8_t globalSlots[24];
-        memset(globalSlots, 0, sizeof(globalSlots));
+        uint8_t *globalSlots = beltSlots(s);
         if (itemRangeAvailable(globalSlots, &s->save, e->checkItem, e->checkItem).found) {
             globalFlagSet(flags, SaveHeaderGlobalFlagsSize, (unsigned)e->checkItemFlag);
         }
@@ -1353,6 +1353,7 @@ SessionInteract sessionInteract(GameSession *s) {
     }
     WorldObjectProbeResult probe = worldObjectProbeFacingTile(&s->objects, s->game, s->x, s->y, s->facing);
     if (probe.outcome == WorldObjectProbeNone) {
+        out.kind = SessionInteractNothingHere;
         return out;
     }
     unsigned flags = probe.object.flags, value = probe.object.value;
@@ -1382,7 +1383,7 @@ SessionInteract sessionInteract(GameSession *s) {
                 return out;
             }
             if (check.outcome != TravelUnlockAlreadyUnlocked) {
-                out.kind = check.outcome == TravelUnlockDeniedSilent ? SessionInteractNothing : SessionInteractTravelRefused;
+                out.kind = check.outcome == TravelUnlockDeniedSilent ? SessionInteractNothing : check.outcome == TravelUnlockDeniedFixedMessage ? SessionInteractTravelFixed : SessionInteractTravelRefused;
                 out.messageId = check.messageId;
                 return out;
             }
@@ -1597,8 +1598,7 @@ bool sessionTalkStart(GameSession *s, unsigned npcId, unsigned speaker, Conversa
     s->talkSpeaker = speaker;
     memset(s->serviceCost, 0, sizeof(s->serviceCost));
     s->serviceType = 0;
-    uint8_t globalSlots[24];
-    memset(globalSlots, 0, sizeof(globalSlots));
+    uint8_t *globalSlots = beltSlots(s);
     unsigned item = dialogGetU16(npc, DialogNpcRequiredItemRange);
     bool held = item && itemRangeAvailable(globalSlots, &s->save, (uint16_t)item, (uint16_t)item).found;
     s->talking = conversationStart(&s->talk, &s->dialogs, npcId, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, held, first);
@@ -1949,8 +1949,7 @@ RestOutcome sessionRest(GameSession *s) {
         none.refused = true;
         return none;
     }
-    uint8_t globalSlots[24];
-    memset(globalSlots, 0, sizeof(globalSlots));
+    uint8_t *globalSlots = beltSlots(s);
     RestCtx ctx = {s};
     MapTriggerRecord trigger;
     RestOutcome out = restParty(&s->save, &s->clock, &s->items, globalSlots, s->heldItem != 0, false, partyCellTrigger(s, &trigger), restMonsters, &ctx);
@@ -1971,17 +1970,114 @@ RestOutcome sessionRest(GameSession *s) {
     return out;
 }
 
+/*
+ * UnlockDoorCommand's outcome (yendor2.asm:45960): nothing lockable ahead -> sound 3; already unlocked / triggered -> the status panel says NOT LOCKED (`unlockMessage` 1); the key opens it -> the unlock
+ * sound (Chapter 2 word_329EE = 0x2A, Chapter 3 0xB), the bit is set, the grid cell loses its 0x4000 marker and the panel says UNLOCKED (2); otherwise ShowLockStatus tells what the lock needs
+ * (`lockReport`, lockStatusText). The front end shows `unlockMessage` (and clears it).
+ */
+enum { UnlockSoundYendor2 = 0x2A, UnlockSoundYendor3 = 0x0B, RefusalSound = 3 };
+
+/* The key ring and the door / chest keys that can be put on it: items 0x2F and 0x21-0x2E in Chapter 2, 0x32 and 0x24-0x31 in Chapter 3 (HandleStatusPanelItemSlotClick's comparisons). */
+static unsigned keyRingId(GameKind game) {
+    return game == GameYendor2 ? 0x2F : 0x32;
+}
+
+static bool isRingKey(GameKind game, unsigned id) {
+    return game == GameYendor2 ? id >= 0x21 && id <= 0x2E : id >= 0x24 && id <= 0x31;
+}
+
 InteractUnlockOutcome sessionUnlock(GameSession *s, uint16_t keyWord0, uint16_t heldKeyFlags) {
     InteractUnlockOutcome out = interactUnlockFacing(&s->save, s->game, &s->objects, &s->locks, s->x, s->y, s->facing, keyWord0, heldKeyFlags);
     static const char *const names[] = {"nothing to unlock here", "already unlocked", "unlocked", "locked (needs another key)"};
     snprintf(s->log, sizeof(s->log), "%s", names[out.result]);
-    if (out.result == InteractUnlockOpened) {
+    s->unlockMessage = 0;
+    switch (out.result) {
+    case InteractUnlockNothing:
+        s->pendingSound = RefusalSound;
+        break;
+    case InteractUnlockAlready:
+        s->unlockMessage = 1;
+        break;
+    case InteractUnlockOpened: {
         DungeonGridCell *cell = dungeonGridCellMutable(&s->grid, out.worldRow - s->grid.originRow, out.worldCol - s->grid.originCol);
         if (cell) {
             cell->flags &= (uint16_t)~out.clearCellBits;
         }
+        s->pendingSound = s->game == GameYendor2 ? UnlockSoundYendor2 : UnlockSoundYendor3;
+        s->unlockMessage = 2;
+        break;
+    }
+    case InteractUnlockLocked:
+        lockStatusLoad(s, out.worldCol, out.worldRow);
+        break;
     }
     return out;
+}
+
+uint16_t sessionKeyRingFlags(const GameSession *s) {
+    return saveHeaderGetU16(&s->save, SaveHeaderKeyFlags);
+}
+
+/* The K command with the key ring (item 0x2F, a master key: the entry's flags word 0x0030): the tiers of the keys put on the ring decide. */
+InteractUnlockOutcome sessionUnlockWithRing(GameSession *s) {
+    const uint8_t *ring = itemCatalogRecord(&s->items, keyRingId(s->game));
+    const uint8_t *entry = ring ? itemTargetEntry(&s->items, ring) : NULL;
+    return sessionUnlock(s, entry ? itemTargetWord(entry, 0) : 0x0030, sessionKeyRingFlags(s));
+}
+
+bool sessionHasItem(GameSession *s, unsigned lowId, unsigned highId) {
+    return itemRangeAvailable(beltSlots(s), &s->save, (uint16_t)lowId, (uint16_t)highId).found;
+}
+
+uint8_t *sessionBeltSlot(GameSession *s, unsigned slot) {
+    return slot < SaveBeltSlotCount ? beltSlots(s) + 4 * slot : NULL;
+}
+
+/*
+ * HandleStatusPanelItemSlotClick (yendor2.asm:41175): a click on one of the six belt slots. With an empty hand the slot's item goes to the cursor; holding a key over the key ring puts it on the
+ * ring (its tier is added to the ring's flags, FinishPlacingHeldItem: sound 4, the key is used up); a container is refused; otherwise the held item is put in an empty slot or swapped with the
+ * slot's (sound 6). Nothing here is weighed.
+ */
+SessionBelt sessionBeltClick(GameSession *s, unsigned slot) {
+    uint8_t *cell = sessionBeltSlot(s, slot);
+    if (!cell) {
+        return SessionBeltNothing;
+    }
+    unsigned id = itemSlotId(cell);
+    if (!s->heldItem) {
+        if (!id) {
+            return SessionBeltNothing;
+        }
+        s->heldItem = (uint16_t)id;
+        s->heldExtra = itemSlotExtra(cell);
+        itemSlotSet(cell, 0, 0);
+        return SessionBeltTook;
+    }
+    if (id == keyRingId(s->game)) {
+        if (!isRingKey(s->game, s->heldItem)) {
+            return SessionBeltRefused;
+        }
+        const uint8_t *key = itemCatalogRecord(&s->items, s->heldItem);
+        const uint8_t *entry = key ? itemTargetEntry(&s->items, key) : NULL;
+        saveHeaderSetU16(&s->save, SaveHeaderKeyFlags, (uint16_t)(sessionKeyRingFlags(s) | (entry ? interactKeyRingContribution(itemTargetWord(entry, 0)) : 0)));
+        s->heldItem = s->heldExtra = 0;
+        s->pendingSound = 4;
+        return SessionBeltKeyRing;
+    }
+    const uint8_t *held = itemCatalogRecord(&s->items, s->heldItem);
+    if (!held || (held[ItemFieldFlags] | (held[ItemFieldFlags + 1] << 8)) & ItemFlagEquipCode0B) {
+        return SessionBeltRefused;
+    }
+    s->pendingSound = 6;
+    uint16_t heldId = s->heldItem, heldExtra = s->heldExtra;
+    if (id) {
+        s->heldItem = (uint16_t)id;
+        s->heldExtra = itemSlotExtra(cell);
+    } else {
+        s->heldItem = s->heldExtra = 0;
+    }
+    itemSlotSet(cell, heldId, heldExtra);
+    return id ? SessionBeltSwapped : SessionBeltPlaced;
 }
 
 unsigned sessionLoot(GameSession *s) {

@@ -97,9 +97,12 @@ enum {
     SaveHeaderDayTrack = 0x52,      /* u16: the music track a destination sets for 07:00-19:00 (word_36CB1 / ds:0CF2F), 0 = by map page */
     SaveHeaderNightTrack = 0x54,    /* u16: the same for the night (word_36CB3 / ds:0CF31) */
     SaveHeaderTravelMode = 0x56,    /* u16, Chapter 3: a destination's small "travel mode" value (ds:0CF33) */
+    SaveHeaderKeyFlags = 0x22,      /* u16: g_heldKeyFlags (word_36C81), the tiers of the door keys put on the key ring (FinishPlacingHeldItem) */
     SaveHeaderLastCaster = 0x6E,    /* u16: the party record id of the member who last cast on the alchemy screen (word_36CCD; DeductAlchemySpellCosts), the caster it opens on next time */
     SaveHeaderGlobalFlags = 0xD2,   /* the quest / world-state flag bitfield g_globalFlags (DS:0x94D1 / 0xCFAF), SaveHeaderGlobalFlagsSize bytes: see globalflags.h */
     SaveHeaderGlobalFlagsSize = 0x60,
+    SaveHeaderBeltSlots = 0x11A,    /* 6 x 4 bytes (item id, extra): the party's tool belt (DS:0x9519), the six slots under the resource panel's materials; IsItemRangeAvailable looks here first */
+    SaveBeltSlotCount = 6,
     SaveHeaderPartySlots = 0x1EC    /* 4 x u16: 1-based party record id, 0 = empty */
 };
 

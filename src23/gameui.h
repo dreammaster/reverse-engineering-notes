@@ -12,6 +12,7 @@
 #include "cluepaged.h"
 #include "creationwizard.h"
 #include "cluespell.h"
+#include "confirmprompt.h"
 #include "gamedialog.h"
 #include "palette.h"
 #include "textfield.h"
@@ -29,7 +30,7 @@
  * Time and the ailment sweep are the platform's to call (sessionAdvanceTime, sessionTickAilments); gameUiKey runs the sweep once per command, like one pass of the loop.
  * Everything that needs a picture file goes through the ViewPictureFn given at init.
  */
-typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayShop, UiOverlayTitle, UiOverlayClue, UiOverlayRoster, UiOverlayCreate, UiOverlayAlchemy } UiOverlay;
+typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayShop, UiOverlayTitle, UiOverlayClue, UiOverlayRoster, UiOverlayCreate, UiOverlayAlchemy, UiOverlayWorldMap } UiOverlay;
 
 typedef enum {
     UiKeyNone = 0,
@@ -104,6 +105,11 @@ typedef struct {
     PanelRun panelRuns[UiPanelRunMax]; /* the message area's text: what the last command wrote (a rest's result); cleared by the next key or click */
     unsigned panelRunCount;
     bool restPause;        /* an interrupted rest's message stays until a key (the combat's panels wait behind it) */
+    int mouseX, mouseY;    /* the pointer, from gameUiMouseMove: where the cursor item is drawn */
+    bool targeting;        /* K: the crosshair cursor waits for a click on the view (WaitForTargetClick) */
+    bool passwordActive;   /* a destination's password is being typed in the message area (ShowConfirmPrompt, mode 0x2000) */
+    unsigned passwordPrompt; /* its message id */
+    TextField password;
     UiAlchemyMode alchemyMode;
     unsigned alchemyCaster; /* the party slot (0-3) whose spells the screen lists */
     unsigned alchemyCount;  /* the list: the spells the caster knows, in id order */
@@ -198,8 +204,15 @@ void gameUiSettle(GameUi *ui);
  * conversations and shops, and on the main screen the icon row, the walk pad, the map panel and the party panels. The right button backs out of an overlay. False = quit. */
 bool gameUiClick(GameUi *ui, int x, int y, bool right);
 
-/* Renders the current screen (the view and panels, or the open overlay) into ui->screen. */
+/* Renders the current screen (the view and panels, or the open overlay) into ui->screen, with the cursor item or the crosshair over it. */
 void gameUiDraw(GameUi *ui);
+
+/*
+ * The pointer moved to (x, y) in the 320 x 200 screen. While the party holds an item (session.h heldItem) the item's icon is the cursor (UpdateCursorForHeldItem: the 16 x 16 picture of category 8
+ * the catalog record's +8 names) and while K waits for its target a crosshair (picture 0xF); gameUiCursorShown says when the platform should hide its own pointer because the screen draws one.
+ */
+void gameUiMouseMove(GameUi *ui, int x, int y);
+bool gameUiCursorShown(const GameUi *ui);
 
 /*
  * The palette to show: 256 x 3 six-bit DAC values, the master palette in the world data, whose entries 0xD0-0xDF are cycled the way the original's timer interrupt does
