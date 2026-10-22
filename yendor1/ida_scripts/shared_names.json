@@ -1,0 +1,482 @@
+{
+ "010eb459ec9f": {
+  "name": "shared_010eb4",
+  "progs": 3
+ },
+ "019ed02c9c60": {
+  "name": "shared_019ed0",
+  "progs": 18
+ },
+ "034038f6b4b6": {
+  "name": "shared_034038",
+  "progs": 9
+ },
+ "04c6887713d9": {
+  "name": "shared_04c688",
+  "progs": 12
+ },
+ "063c137b1cc5": {
+  "name": "shared_063c13",
+  "progs": 4
+ },
+ "069facab54c1": {
+  "name": "tileLookup",
+  "progs": 20
+ },
+ "08ea6e786547": {
+  "name": "shared_08ea6e",
+  "progs": 3
+ },
+ "0a1c1c45179f": {
+  "name": "waitInput",
+  "progs": 15
+ },
+ "0ae370aa52a6": {
+  "name": "shared_0ae370",
+  "progs": 3
+ },
+ "0bb58f74f2e6": {
+  "name": "shared_0bb58f",
+  "progs": 5
+ },
+ "0e0557b9ff5a": {
+  "name": "speakerOn",
+  "progs": 20
+ },
+ "10545d6326be": {
+  "name": "shared_10545d",
+  "progs": 3
+ },
+ "1558db8a7fcd": {
+  "name": "shared_1558db",
+  "progs": 3
+ },
+ "1639be498e61": {
+  "name": "shared_1639be",
+  "progs": 5
+ },
+ "16eee80f5293": {
+  "name": "fileReadToSegment",
+  "progs": 20
+ },
+ "17392b96a36a": {
+  "name": "drawStringLines",
+  "progs": 17
+ },
+ "1d0ebec01f42": {
+  "name": "shared_1d0ebe",
+  "progs": 9
+ },
+ "1e1ac1fc6768": {
+  "name": "shared_1e1ac1",
+  "progs": 5
+ },
+ "1f8a83443f64": {
+  "name": "shared_1f8a83",
+  "progs": 8
+ },
+ "204d4069d2d3": {
+  "name": "shared_204d40",
+  "progs": 3
+ },
+ "21818f8d14a3": {
+  "name": "shared_21818f",
+  "progs": 13
+ },
+ "23db76b629fe": {
+  "name": "shared_23db76",
+  "progs": 13
+ },
+ "23f116dcee25": {
+  "name": "shared_23f116",
+  "progs": 13
+ },
+ "26482f187bdc": {
+  "name": "shared_26482f",
+  "progs": 8
+ },
+ "26b4e4181e57": {
+  "name": "shared_26b4e4",
+  "progs": 5
+ },
+ "27c37f3f03b1": {
+  "name": "shared_27c37f",
+  "progs": 8
+ },
+ "2a7bbc11aea3": {
+  "name": "shared_2a7bbc",
+  "progs": 3
+ },
+ "2e7439f53202": {
+  "name": "shared_2e7439",
+  "progs": 3
+ },
+ "30e149b1e903": {
+  "name": "shared_30e149",
+  "progs": 5
+ },
+ "3151ea33f562": {
+  "name": "tileLoad",
+  "progs": 20
+ },
+ "3192480c5e8e": {
+  "name": "shared_319248",
+  "progs": 4
+ },
+ "33aaabd886b7": {
+  "name": "shared_33aaab",
+  "progs": 8
+ },
+ "33d40c9e4f30": {
+  "name": "shared_33d40c",
+  "progs": 5
+ },
+ "357ef3a79479": {
+  "name": "shared_357ef3",
+  "progs": 4
+ },
+ "38940fe72d26": {
+  "name": "clearTextScreen",
+  "progs": 5
+ },
+ "3d96ae511eed": {
+  "name": "shared_3d96ae",
+  "progs": 5
+ },
+ "3d9adbb03516": {
+  "name": "shared_3d9adb",
+  "progs": 4
+ },
+ "3edae82782ba": {
+  "name": "shared_3edae8",
+  "progs": 3
+ },
+ "4034ce3da54a": {
+  "name": "pollInput",
+  "progs": 20
+ },
+ "45e71ba0e0f4": {
+  "name": "delayTicks",
+  "progs": 20
+ },
+ "47fa83e440d4": {
+  "name": "shared_47fa83",
+  "progs": 6
+ },
+ "4a428974f660": {
+  "name": "shared_4a4289",
+  "progs": 13
+ },
+ "4b15dae700fe": {
+  "name": "fileOpen",
+  "progs": 3
+ },
+ "4c9d776c5aef": {
+  "name": "execProgram",
+  "progs": 6
+ },
+ "5085e854d1a0": {
+  "name": "sendPaletteCommand",
+  "progs": 5
+ },
+ "58fa665a3733": {
+  "name": "shared_58fa66",
+  "progs": 3
+ },
+ "5c3ccec375fa": {
+  "name": "shared_5c3cce",
+  "progs": 9
+ },
+ "5c5219354053": {
+  "name": "shared_5c5219",
+  "progs": 4
+ },
+ "6044790e4a11": {
+  "name": "shared_604479",
+  "progs": 4
+ },
+ "61fc6ef6fab2": {
+  "name": "shared_61fc6e",
+  "progs": 3
+ },
+ "6228a1648cff": {
+  "name": "shared_6228a1",
+  "progs": 9
+ },
+ "63ca2b89ed86": {
+  "name": "shared_63ca2b",
+  "progs": 9
+ },
+ "67284e504866": {
+  "name": "shared_67284e",
+  "progs": 18
+ },
+ "67ca92000a55": {
+  "name": "shared_67ca92",
+  "progs": 3
+ },
+ "6b57824dd238": {
+  "name": "shared_6b5782",
+  "progs": 15
+ },
+ "6d8cd0bfbfd9": {
+  "name": "shared_6d8cd0",
+  "progs": 3
+ },
+ "728316aa133b": {
+  "name": "shared_728316",
+  "progs": 9
+ },
+ "72afff48bacb": {
+  "name": "shared_72afff",
+  "progs": 12
+ },
+ "74c3f37faba2": {
+  "name": "shared_74c3f3",
+  "progs": 3
+ },
+ "75b317932e89": {
+  "name": "drawString",
+  "progs": 20
+ },
+ "76e15d30db0a": {
+  "name": "shared_76e15d",
+  "progs": 3
+ },
+ "77e6d6372262": {
+  "name": "shared_77e6d6",
+  "progs": 10
+ },
+ "78be1dbfc8a2": {
+  "name": "shared_78be1d",
+  "progs": 5
+ },
+ "7a0858f4abb1": {
+  "name": "shared_7a0858",
+  "progs": 8
+ },
+ "7e794e2dc246": {
+  "name": "fileWriteRecordFrom",
+  "progs": 19
+ },
+ "8125741c495c": {
+  "name": "drawPartyStrip",
+  "progs": 9
+ },
+ "8167dfceeb4f": {
+  "name": "speakerOff",
+  "progs": 20
+ },
+ "83772c539539": {
+  "name": "shared_83772c",
+  "progs": 8
+ },
+ "89c35e75bb5e": {
+  "name": "shared_89c35e",
+  "progs": 9
+ },
+ "89fc750b332a": {
+  "name": "shared_89fc75",
+  "progs": 3
+ },
+ "8f30c2aa2179": {
+  "name": "shared_8f30c2",
+  "progs": 6
+ },
+ "8f3252d67c00": {
+  "name": "shared_8f3252",
+  "progs": 3
+ },
+ "9212bc0d3c7c": {
+  "name": "shared_9212bc",
+  "progs": 3
+ },
+ "96caf4267a3f": {
+  "name": "shared_96caf4",
+  "progs": 5
+ },
+ "9790fc1d1780": {
+  "name": "shared_9790fc",
+  "progs": 9
+ },
+ "9a625de220f1": {
+  "name": "shared_9a625d",
+  "progs": 4
+ },
+ "9a999a81ccb4": {
+  "name": "shared_9a999a",
+  "progs": 7
+ },
+ "9c11a661171c": {
+  "name": "shared_9c11a6",
+  "progs": 12
+ },
+ "9cebbdf1f368": {
+  "name": "shared_9cebbd",
+  "progs": 9
+ },
+ "a38a73da7e75": {
+  "name": "shared_a38a73",
+  "progs": 5
+ },
+ "a5434e045fc5": {
+  "name": "shared_a5434e",
+  "progs": 3
+ },
+ "a5e50e3a2870": {
+  "name": "shared_a5e50e",
+  "progs": 3
+ },
+ "a7dbf246fa9a": {
+  "name": "shared_a7dbf2",
+  "progs": 5
+ },
+ "aa2cd64d7734": {
+  "name": "shared_aa2cd6",
+  "progs": 9
+ },
+ "ab7386402c90": {
+  "name": "shared_ab7386",
+  "progs": 9
+ },
+ "afced8a11241": {
+  "name": "shared_afced8",
+  "progs": 3
+ },
+ "b5d7cb8c53cd": {
+  "name": "shared_b5d7cb",
+  "progs": 5
+ },
+ "b62c052da8f2": {
+  "name": "shared_b62c05",
+  "progs": 5
+ },
+ "b65991ab3871": {
+  "name": "shared_b65991",
+  "progs": 3
+ },
+ "b9e1d8d36e53": {
+  "name": "shared_b9e1d8",
+  "progs": 5
+ },
+ "be74a420a841": {
+  "name": "shared_be74a4",
+  "progs": 8
+ },
+ "becf353d8667": {
+  "name": "shared_becf35",
+  "progs": 5
+ },
+ "bf0963d529b3": {
+  "name": "drawTileRun",
+  "progs": 20
+ },
+ "bfb949ee7cd3": {
+  "name": "shared_bfb949",
+  "progs": 3
+ },
+ "bffbf2d15b1b": {
+  "name": "tileOp",
+  "progs": 20
+ },
+ "c34f433e4c2a": {
+  "name": "shared_c34f43",
+  "progs": 4
+ },
+ "c444c7209d0f": {
+  "name": "shared_c444c7",
+  "progs": 6
+ },
+ "c70c8e33b845": {
+  "name": "shared_c70c8e",
+  "progs": 5
+ },
+ "c7ef80bd9c6a": {
+  "name": "shared_c7ef80",
+  "progs": 4
+ },
+ "c7f19123070c": {
+  "name": "fileWriteRecord",
+  "progs": 20
+ },
+ "c86d29719bbb": {
+  "name": "shared_c86d29",
+  "progs": 5
+ },
+ "c9c8cc6b4eaa": {
+  "name": "shared_c9c8cc",
+  "progs": 6
+ },
+ "cafb083e8bbd": {
+  "name": "shared_cafb08",
+  "progs": 3
+ },
+ "cc5ec9c60198": {
+  "name": "shared_cc5ec9",
+  "progs": 8
+ },
+ "cf62f330e835": {
+  "name": "shared_cf62f3",
+  "progs": 9
+ },
+ "cff500d32d9d": {
+  "name": "shared_cff500",
+  "progs": 5
+ },
+ "d2992bfe7dd8": {
+  "name": "shared_d2992b",
+  "progs": 16
+ },
+ "d809a137c558": {
+  "name": "shared_d809a1",
+  "progs": 6
+ },
+ "df562f70933d": {
+  "name": "paletteFade",
+  "progs": 4
+ },
+ "e72d5efea119": {
+  "name": "fileReadRecordTo",
+  "progs": 20
+ },
+ "e75c8c841f84": {
+  "name": "shared_e75c8c",
+  "progs": 8
+ },
+ "e79de91edfd0": {
+  "name": "shared_e79de9",
+  "progs": 13
+ },
+ "e95d591f7993": {
+  "name": "drawBackdropTile",
+  "progs": 13
+ },
+ "ea1717867bcc": {
+  "name": "fileSeekRecord",
+  "progs": 21
+ },
+ "ec00d9e661d9": {
+  "name": "shared_ec00d9",
+  "progs": 3
+ },
+ "ed3965890006": {
+  "name": "shared_ed3965",
+  "progs": 13
+ },
+ "ede455d376ab": {
+  "name": "shared_ede455",
+  "progs": 8
+ },
+ "f38b29681f9f": {
+  "name": "shared_f38b29",
+  "progs": 5
+ },
+ "f6ca29fc4add": {
+  "name": "shared_f6ca29",
+  "progs": 3
+ },
+ "fd803cf80b67": {
+  "name": "drawTileKeyed",
+  "progs": 10
+ }
+}

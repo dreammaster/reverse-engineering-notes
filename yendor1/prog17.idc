@@ -306,6 +306,7 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X1071E);
 	create_insn	(0X10738);
+	set_name	(0X10738,	"delayTicks");
 	set_cmt	(0X1073E,	"CLOCK - GET TIME OF DAY\nReturn: CX:DX = clock count\nAL = 00h if clock was read or written (via AH=0,1) since the previous\nmidnight\nOtherwise, AL > 0",	0);
 	create_insn	(x=0X1073E);
 	op_hex		(x,	0);
@@ -318,6 +319,7 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X107C0);
 	create_insn	(0X107C6);
+	set_name	(0X107C6,	"shared_67284e");
 	create_insn	(0X1080C);
 	set_cmt	(0X10830,	"VID fn29 vidMouseHide",	0);
 	create_insn	(x=0X10830);
@@ -332,6 +334,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10857);
 	op_hex		(x,	0);
 	create_insn	(0X1086D);
+	set_name	(0X1086D,	"shared_21818f");
 	set_cmt	(0X10880,	"VID fn12 vidShowPage",	0);
 	create_insn	(x=0X10880);
 	op_hex		(x,	0);
@@ -350,6 +353,7 @@ static Bytes_0(void) {
 	create_insn	(0X10944);
 	create_insn	(0X10952);
 	create_insn	(0X10959);
+	set_name	(0X10959,	"shared_23db76");
 	create_insn	(0X10962);
 	set_cmt	(0X109A5,	"VID fn07 vidFillRect",	0);
 	create_insn	(x=0X109A5);
@@ -361,9 +365,12 @@ static Bytes_0(void) {
 	create_insn	(0X10A04);
 	create_insn	(0X10A12);
 	create_insn	(0X10A20);
+	set_name	(0X10A20,	"shared_019ed0");
 	create_insn	(0X10A83);
 	create_insn	(0X10ADB);
+	set_name	(0X10ADB,	"drawTileRun");
 	create_insn	(0X10AF0);
+	set_name	(0X10AF0,	"pollInput");
 	set_cmt	(0X10AFC,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
 	create_insn	(x=0X10AFC);
 	op_hex		(x,	0);
@@ -405,7 +412,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X10BAE);
 	op_seg		(x,	1);
 	create_insn	(0X10BBE);
+	set_name	(0X10BBE,	"drawStringLines");
 	create_insn	(0X10BCC);
+	set_name	(0X10BCC,	"shared_728316");
 	create_insn	(0X10BD4);
 	create_insn	(0X10BFB);
 	create_insn	(0X10C1A);
@@ -414,6 +423,7 @@ static Bytes_0(void) {
 	create_insn	(0X10C38);
 	create_insn	(0X10C4F);
 	create_insn	(0X10C7C);
+	set_name	(0X10C7C,	"drawString");
 	set_cmt	(0X10C89,	"VID fn29 vidMouseHide",	0);
 	create_insn	(x=0X10C89);
 	op_hex		(x,	0);
@@ -425,6 +435,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10CA3);
 	op_hex		(x,	0);
 	create_insn	(0X10CB2);
+	set_name	(0X10CB2,	"shared_9c11a6");
 	create_insn	(x=0X10CBE);
 	op_hex		(x,	1);
 	set_cmt	(0X10CC0,	"DOS - GET CURRENT TIME\nReturn: CH = hours, CL = minutes, DH = seconds\nDL = hundredths of seconds",	0);
@@ -434,13 +445,18 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X10CE7);
 	create_insn	(0X10CF6);
+	set_name	(0X10CF6,	"shared_7a0858");
 	create_insn	(0X10D10);
+	set_name	(0X10D10,	"shared_33aaab");
 	create_insn	(0X10D45);
+	set_name	(0X10D45,	"shared_27c37f");
 	create_insn	(0X10D6D);
+	set_name	(0X10D6D,	"shared_1f8a83");
 	create_insn	(0X10DAA);
 	create_insn	(0X10DB1);
 	create_insn	(0X10DCA);
 	create_insn	(0X10DE8);
+	set_name	(0X10DE8,	"shared_47fa83");
 	set_cmt	(0X10E24,	"VID fn04 vidGetPixel",	0);
 	create_insn	(x=0X10E24);
 	op_hex		(x,	0);
@@ -451,8 +467,10 @@ static Bytes_0(void) {
 	create_insn	(0X10E74);
 	create_insn	(0X10E84);
 	create_insn	(0X10EA8);
+	set_name	(0X10EA8,	"shared_9a625d");
 	create_insn	(0X10F15);
 	create_insn	(0X10F50);
+	set_name	(0X10F50,	"speakerOn");
 	set_cmt	(0X10F5C,	"Timer 8253-5 (AT: 8254.2).",	0);
 	create_insn	(x=0X10F5C);
 	op_hex		(x,	0);
@@ -468,6 +486,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10F66);
 	op_hex		(x,	0);
 	create_insn	(0X10F6D);
+	set_name	(0X10F6D,	"speakerOff");
 	set_cmt	(0X10F6E,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X10F6E);
 	op_hex		(x,	1);
@@ -479,6 +498,7 @@ static Bytes_0(void) {
 	create_insn	(0X10F76);
 	create_insn	(0X10F78);
 	create_insn	(0X10F90);
+	set_name	(0X10F90,	"tileOp");
 	create_insn	(x=0X10F9D);
 	op_hex		(x,	1);
 	create_insn	(0X10FAD);
@@ -505,14 +525,17 @@ static Bytes_0(void) {
 	create_insn	(0X110D5);
 	create_insn	(0X110E3);
 	create_insn	(0X11101);
+	set_name	(0X11101,	"tileLookup");
 	create_insn	(0X11130);
 	create_insn	(0X1113C);
 	create_insn	(0X11176);
 	create_insn	(0X1119B);
+	set_name	(0X1119B,	"tileLoad");
 	create_insn	(x=0X111A7);
 	op_hex		(x,	1);
 	create_insn	(0X111BB);
 	create_insn	(0X111EA);
+	set_name	(0X111EA,	"fileSeekRecord");
 	set_cmt	(0X11202,	"DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)\nAL = method: offset from beginning of file",	0);
 	create_insn	(x=0X11202);
 	op_hex		(x,	0);
@@ -528,6 +551,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1123C);
 	op_hex		(x,	0);
 	create_insn	(0X11252);
+	set_name	(0X11252,	"fileReadToSegment");
 	set_cmt	(0X11265,	"DOS - 2+ - READ FROM FILE WITH HANDLE\nBX = file handle, CX = number of bytes to read\nDS:DX -> buffer",	0);
 	create_insn	(x=0X11265);
 	op_hex		(x,	0);

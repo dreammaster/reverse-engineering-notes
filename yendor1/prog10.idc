@@ -733,6 +733,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1122F);
 	op_hex		(x,	0);
 	create_insn	(0X11232);
+	set_name	(0X11232,	"drawTileRun");
 	create_insn	(x=0X11247);
 	op_hex		(x,	1);
 	create_insn	(0X11283);
@@ -783,6 +784,7 @@ static Bytes_0(void) {
 	create_insn	(0X11553);
 	create_insn	(0X1156D);
 	create_insn	(0X11573);
+	set_name	(0X11573,	"shared_3edae8");
 	set_cmt	(0X115AC,	"VID fn09 vidGetImageRaw",	0);
 	create_insn	(x=0X115AC);
 	op_hex		(x,	0);
@@ -3289,6 +3291,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X17326);
 	op_hex		(x,	0);
 	create_insn	(0X1732E);
+	set_name	(0X1732E,	"shared_204d40");
 	set_cmt	(0X1736D,	"VID fn12 vidShowPage",	0);
 	create_insn	(x=0X1736D);
 	op_hex		(x,	0);
@@ -3572,6 +3575,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X17FD8);
 	op_hex		(x,	0);
 	create_insn	(0X17FE6);
+	set_name	(0X17FE6,	"drawPartyStrip");
 	create_insn	(0X18000);
 	create_insn	(x=0X1809C);
 	op_hex		(x,	1);
@@ -3582,20 +3586,27 @@ static Bytes_0(void) {
 	create_insn	(x=0X18195);
 	op_hex		(x,	1);
 	create_insn	(0X181A1);
+	set_name	(0X181A1,	"shared_9790fc");
 	create_insn	(x=0X181BD);
 	op_hex		(x,	1);
+	set_name	(0X181BD,	"shared_63ca2b");
 	set_cmt	(0X181EA,	"VID fn07 vidFillRect",	0);
 	create_insn	(x=0X181EA);
 	op_hex		(x,	0);
 	create_insn	(0X18209);
 	create_insn	(0X183B5);
+	set_name	(0X183B5,	"shared_cf62f3");
 	create_insn	(0X1841F);
+	set_name	(0X1841F,	"shared_6228a1");
 	create_insn	(x=0X18482);
 	op_hex		(x,	1);
 	create_insn	(0X1849F);
+	set_name	(0X1849F,	"shared_9cebbd");
 	create_insn	(0X184C4);
 	create_insn	(0X184E0);
+	set_name	(0X184E0,	"shared_89c35e");
 	create_insn	(0X184FA);
+	set_name	(0X184FA,	"shared_ab7386");
 	create_insn	(x=0X18512);
 	op_hex		(x,	1);
 	create_insn	(x=0X1851C);
@@ -3687,13 +3698,16 @@ static Bytes_0(void) {
 	create_insn	(0X18981);
 	create_insn	(0X1898A);
 	create_insn	(0X18A0E);
+	set_name	(0X18A0E,	"shared_c34f43");
 	create_insn	(0X18A28);
 	create_insn	(x=0X18A31);
 	op_hex		(x,	1);
 	create_insn	(x=0X18A33);
 	op_hex		(x,	1);
 	create_insn	(0X18A3E);
+	set_name	(0X18A3E,	"shared_c9c8cc");
 	create_insn	(0X18AB2);
+	set_name	(0X18AB2,	"shared_5c3cce");
 	set_cmt	(0X18ABB,	"DOS - CLEAR KEYBOARD BUFFER\nAL must be 01h, 06h, 07h, 08h, or 0Ah.",	0);
 	create_insn	(x=0X18ABB);
 	op_hex		(x,	0);
@@ -3702,6 +3716,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18AD2);
 	op_hex		(x,	0);
 	create_insn	(0X18ADA);
+	set_name	(0X18ADA,	"shared_72afff");
 	create_insn	(x=0X18ADE);
 	op_hex		(x,	1);
 	create_insn	(x=0X18AE1);
@@ -3729,7 +3744,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X18B5D);
 	op_stkvar	(x,	0);
 	create_insn	(0X18B6F);
+	set_name	(0X18B6F,	"shared_04c688");
 	create_insn	(0X18B96);
+	set_name	(0X18B96,	"delayTicks");
 	set_cmt	(0X18B9C,	"CLOCK - GET TIME OF DAY\nReturn: CX:DX = clock count\nAL = 00h if clock was read or written (via AH=0,1) since the previous\nmidnight\nOtherwise, AL > 0",	0);
 	create_insn	(x=0X18B9C);
 	op_hex		(x,	0);
@@ -3758,6 +3775,7 @@ static Bytes_0(void) {
 	create_insn	(0X18CDF);
 	create_insn	(0X18CEF);
 	create_insn	(0X18CF8);
+	set_name	(0X18CF8,	"fileSeekRecord");
 	set_cmt	(0X18D10,	"DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)\nAL = method: offset from beginning of file",	0);
 	create_insn	(x=0X18D10);
 	op_hex		(x,	0);
@@ -3769,29 +3787,37 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X18D32);
 	create_insn	(0X18D39);
+	set_name	(0X18D39,	"fileWriteRecord");
 	set_cmt	(0X18D4A,	"DOS - 2+ - READ FROM FILE WITH HANDLE\nBX = file handle, CX = number of bytes to read\nDS:DX -> buffer",	0);
 	create_insn	(x=0X18D4A);
 	op_hex		(x,	0);
 	create_insn	(0X18D60);
+	set_name	(0X18D60,	"fileReadToSegment");
 	set_cmt	(0X18D73,	"DOS - 2+ - READ FROM FILE WITH HANDLE\nBX = file handle, CX = number of bytes to read\nDS:DX -> buffer",	0);
 	create_insn	(x=0X18D73);
 	op_hex		(x,	0);
 	create_insn	(0X18D8A);
+	set_name	(0X18D8A,	"fileWriteRecord_18D8A");
 	set_cmt	(0X18D9B,	"DOS - 2+ - WRITE TO FILE WITH HANDLE\nBX = file handle, CX = number of bytes to write, DS:DX -> buffer",	0);
 	create_insn	(x=0X18D9B);
 	op_hex		(x,	0);
 	create_insn	(0X18DB2);
+	set_name	(0X18DB2,	"shared_019ed0");
 	create_insn	(0X18E15);
 	create_insn	(0X18E6D);
+	set_name	(0X18E6D,	"drawTileRun_18E6D");
 	create_insn	(0X18E82);
+	set_name	(0X18E82,	"shared_e75c8c");
 	create_insn	(0X18EB0);
 	create_insn	(0X18EBA);
 	create_insn	(0X18EC0);
 	create_insn	(0X18EC8);
+	set_name	(0X18EC8,	"drawTileKeyed");
 	set_cmt	(0X18F1E,	"VID fn13 vidCopyRectKeyed",	0);
 	create_insn	(x=0X18F1E);
 	op_hex		(x,	0);
 	create_insn	(0X18F40);
+	set_name	(0X18F40,	"shared_67284e");
 	create_insn	(0X18F86);
 	set_cmt	(0X18FAA,	"VID fn29 vidMouseHide",	0);
 	create_insn	(x=0X18FAA);
@@ -3806,6 +3832,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18FD1);
 	op_hex		(x,	0);
 	create_insn	(0X18FE7);
+	set_name	(0X18FE7,	"shared_21818f");
 	set_cmt	(0X18FFA,	"VID fn12 vidShowPage",	0);
 	create_insn	(x=0X18FFA);
 	op_hex		(x,	0);
@@ -3824,6 +3851,7 @@ static Bytes_0(void) {
 	create_insn	(0X190BE);
 	create_insn	(0X190CC);
 	create_insn	(0X190D3);
+	set_name	(0X190D3,	"shared_23db76");
 	create_insn	(0X190DC);
 	set_cmt	(0X1911F,	"VID fn07 vidFillRect",	0);
 	create_insn	(x=0X1911F);
@@ -3834,6 +3862,7 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X1917E);
 	create_insn	(0X1918C);
+	set_name	(0X1918C,	"shared_8f30c2");
 	create_insn	(0X1919A);
 	create_insn	(0X191A0);
 	create_insn	(0X191A6);
@@ -3849,13 +3878,17 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X19244);
 	create_insn	(0X192D4);
+	set_name	(0X192D4,	"shared_c444c7");
 	create_insn	(0X192DB);
 	create_insn	(0X192EB);
 	create_insn	(0X192F6);
 	create_insn	(0X19308);
 	create_insn	(0X19316);
+	set_name	(0X19316,	"waitInput");
 	create_insn	(0X19324);
+	set_name	(0X19324,	"shared_58fa66");
 	create_insn	(0X19346);
+	set_name	(0X19346,	"pollInput");
 	set_cmt	(0X19352,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
 	create_insn	(x=0X19352);
 	op_hex		(x,	0);
@@ -3880,9 +3913,12 @@ static Bytes_0(void) {
 	create_insn	(x=0X193CC);
 	op_hex		(x,	0);
 	create_insn	(0X193D2);
+	set_name	(0X193D2,	"shared_1558db");
 	create_insn	(0X193E3);
 	create_insn	(0X193EA);
+	set_name	(0X193EA,	"shared_d2992b");
 	create_insn	(0X19407);
+	set_name	(0X19407,	"shared_4a4289");
 	create_insn	(0X19424);
 	create_insn	(0X1945D);
 	create_insn	(x=0X19488);
@@ -3891,12 +3927,14 @@ static Bytes_0(void) {
 	create_insn	(x=0X1948A);
 	op_hex		(x,	0);
 	create_insn	(0X1948D);
+	set_name	(0X1948D,	"shared_6b5782");
 	set_cmt	(0X1949A,	"VID fn0B vidGetImage",	0);
 	create_insn	(x=0X1949A);
 	op_hex		(x,	0);
 	create_insn	(x=0X1949C);
 	op_seg		(x,	1);
 	create_insn	(0X194AB);
+	set_name	(0X194AB,	"shared_6b5782_194AB");
 	set_cmt	(0X194B8,	"VID fn0C vidPutImageHdr",	0);
 	create_insn	(x=0X194B8);
 	op_hex		(x,	0);
@@ -3906,7 +3944,9 @@ static Bytes_0(void) {
 	create_insn	(0X194E2);
 	create_insn	(0X1950F);
 	create_insn	(0X19518);
+	set_name	(0X19518,	"fileReadRecordTo");
 	create_insn	(0X19532);
+	set_name	(0X19532,	"shared_ede455");
 	set_cmt	(0X19539,	"VID fn29 vidMouseHide",	0);
 	create_insn	(x=0X19539);
 	op_hex		(x,	0);
@@ -4489,29 +4529,38 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AB0B);
 	op_hex		(x,	1);
 	create_insn	(0X1AB12);
+	set_name	(0X1AB12,	"shared_aa2cd6");
 	create_insn	(0X1AB28);
+	set_name	(0X1AB28,	"shared_9a999a");
 	create_insn	(0X1AB6C);
 	create_insn	(0X1AB80);
 	create_insn	(0X1AB8A);
 	create_insn	(0X1AB91);
+	set_name	(0X1AB91,	"shared_be74a4");
 	create_insn	(0X1AB9A);
 	create_insn	(0X1ABA6);
 	create_insn	(x=0X1ABB0);
 	op_hex		(x,	1);
 	create_insn	(0X1ABB3);
+	set_name	(0X1ABB3,	"shared_26482f");
 	create_insn	(0X1ABEE);
+	set_name	(0X1ABEE,	"shared_cc5ec9");
 	create_insn	(0X1AC0A);
 	create_insn	(0X1AC11);
+	set_name	(0X1AC11,	"shared_83772c");
 	create_insn	(0X1AC18);
 	create_insn	(0X1AC1D);
 	create_insn	(0X1AC20);
+	set_name	(0X1AC20,	"drawStringLines");
 	create_insn	(0X1AC2E);
+	set_name	(0X1AC2E,	"shared_728316");
 	create_insn	(0X1AC36);
 	create_insn	(0X1AC5D);
 	create_insn	(0X1AC7C);
 	create_insn	(x=0X1AC7F);
 	op_hex		(x,	1);
 	create_insn	(0X1AC9A);
+	set_name	(0X1AC9A,	"paletteFade");
 	create_insn	(0X1ACA3);
 	create_insn	(0X1ACAD);
 	create_insn	(0X1ACB4);
@@ -4755,9 +4804,13 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1B70D);
 	create_insn	(0X1B71E);
+	set_name	(0X1B71E,	"shared_a7dbf2");
 	create_insn	(0X1B735);
+	set_name	(0X1B735,	"shared_063c13");
 	create_insn	(0X1B762);
+	set_name	(0X1B762,	"fileWriteRecordFrom");
 	create_insn	(0X1B782);
+	set_name	(0X1B782,	"shared_77e6d6");
 	set_cmt	(0X1B7A7,	"VID fn29 vidMouseHide",	0);
 	create_insn	(x=0X1B7A7);
 	op_hex		(x,	0);
@@ -4788,6 +4841,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1B8C9);
 	op_hex		(x,	0);
 	create_insn	(0X1B8CC);
+	set_name	(0X1B8CC,	"drawString");
 	set_cmt	(0X1B8D9,	"VID fn29 vidMouseHide",	0);
 	create_insn	(x=0X1B8D9);
 	op_hex		(x,	0);
@@ -4799,6 +4853,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1B8F3);
 	op_hex		(x,	0);
 	create_insn	(0X1B902);
+	set_name	(0X1B902,	"shared_1d0ebe");
 	create_insn	(0X1B913);
 	create_insn	(0X1B914);
 	set_cmt	(0X1B916,	"VID fn29 vidMouseHide",	0);
@@ -4814,6 +4869,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1B948);
 	op_hex		(x,	0);
 	create_insn	(0X1B94B);
+	set_name	(0X1B94B,	"shared_034038");
 	create_insn	(0X1B983);
 	set_cmt	(0X1B9A4,	"VID fn29 vidMouseHide",	0);
 	create_insn	(x=0X1B9A4);
@@ -4834,6 +4890,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1BA7E);
 	op_hex		(x,	0);
 	create_insn	(0X1BA82);
+	set_name	(0X1BA82,	"shared_9c11a6");
 	create_insn	(x=0X1BA8E);
 	op_hex		(x,	1);
 	set_cmt	(0X1BA90,	"DOS - GET CURRENT TIME\nReturn: CH = hours, CL = minutes, DH = seconds\nDL = hundredths of seconds",	0);
@@ -4843,13 +4900,18 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1BAB7);
 	create_insn	(0X1BAC6);
+	set_name	(0X1BAC6,	"shared_7a0858");
 	create_insn	(0X1BAE0);
+	set_name	(0X1BAE0,	"shared_33aaab");
 	create_insn	(0X1BB15);
+	set_name	(0X1BB15,	"shared_27c37f");
 	create_insn	(0X1BB3D);
+	set_name	(0X1BB3D,	"shared_1f8a83");
 	create_insn	(0X1BB7A);
 	create_insn	(0X1BB81);
 	create_insn	(0X1BB9A);
 	create_insn	(0X1BBB8);
+	set_name	(0X1BBB8,	"shared_47fa83");
 	set_cmt	(0X1BBF4,	"VID fn04 vidGetPixel",	0);
 	create_insn	(x=0X1BBF4);
 	op_hex		(x,	0);
@@ -4859,7 +4921,9 @@ static Bytes_0(void) {
 	create_insn	(0X1BC42);
 	create_insn	(0X1BC44);
 	create_insn	(0X1BC54);
+	set_name	(0X1BC54,	"drawBackdropTile");
 	create_insn	(0X1BC78);
+	set_name	(0X1BC78,	"shared_23f116");
 	set_cmt	(0X1BCB6,	"VID fn07 vidFillRect",	0);
 	create_insn	(x=0X1BCB6);
 	op_hex		(x,	0);
@@ -4870,6 +4934,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1BD00);
 	op_hex		(x,	0);
 	create_insn	(0X1BD04);
+	set_name	(0X1BD04,	"speakerOn");
 	set_cmt	(0X1BD10,	"Timer 8253-5 (AT: 8254.2).",	0);
 	create_insn	(x=0X1BD10);
 	op_hex		(x,	0);
@@ -4885,6 +4950,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1BD1A);
 	op_hex		(x,	0);
 	create_insn	(0X1BD21);
+	set_name	(0X1BD21,	"speakerOff");
 	set_cmt	(0X1BD22,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1BD22);
 	op_hex		(x,	1);
@@ -4895,7 +4961,9 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X1BD2A);
 	create_insn	(0X1BD2C);
+	set_name	(0X1BD2C,	"shared_e79de9");
 	create_insn	(0X1BD44);
+	set_name	(0X1BD44,	"tileOp");
 	create_insn	(x=0X1BD51);
 	op_hex		(x,	1);
 	create_insn	(0X1BD61);
@@ -4922,18 +4990,30 @@ static Bytes_0(void) {
 	create_insn	(0X1BE89);
 	create_insn	(0X1BE97);
 	create_insn	(0X1BEB5);
+	set_name	(0X1BEB5,	"tileLookup");
 	create_insn	(0X1BEE4);
 	create_insn	(0X1BEF0);
 	create_insn	(0X1BF2A);
 	create_insn	(0X1BF4F);
+	set_name	(0X1BF4F,	"tileLoad");
 	create_insn	(x=0X1BF5B);
 	op_hex		(x,	1);
 	create_insn	(0X1BF6F);
 	create_insn	(0X1BF9E);
+	set_name	(0X1BF9E,	"shared_ed3965");
 	create_insn	(0X1BFB8);
 	make_array	(0X1BFBA,	0X2);
 	create_word	(0X1BFCC);
 	set_name	(0X1BFCC,	"parm_02");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_word	(0X1BFCE);
 	set_name	(0X1BFCE,	"parm_04");
 	create_word	(0X1BFD0);
@@ -5094,15 +5174,6 @@ static Bytes_0(void) {
 	make_array	(0X21176,	0X2);
 	create_word	(0X21186);
 	create_word	(0X21188);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2118A);
 	create_word	(0X2118C);
 	create_byte	(0X2118E);

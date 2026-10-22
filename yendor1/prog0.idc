@@ -210,10 +210,12 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X10492);
 	create_insn	(0X1049C);
+	set_name	(0X1049C,	"fileSeekRecord");
 	set_cmt	(0X104B4,	"DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)\nAL = method: offset from beginning of file",	0);
 	create_insn	(x=0X104B4);
 	op_hex		(x,	0);
 	create_insn	(0X104BA);
+	set_name	(0X104BA,	"fileOpen");
 	create_insn	(x=0X104C6);
 	op_hex		(x,	1);
 	set_cmt	(0X104C8,	"DOS - 2+ - OPEN DISK FILE WITH HANDLE\nDS:DX -> ASCIZ filename\nAL = access mode\n0 - read, 1 - write, 2 - read & write",	0);
@@ -221,6 +223,7 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X104D6);
 	create_insn	(0X104DD);
+	set_name	(0X104DD,	"fileWriteRecord");
 	set_cmt	(0X104EE,	"DOS - 2+ - READ FROM FILE WITH HANDLE\nBX = file handle, CX = number of bytes to read\nDS:DX -> buffer",	0);
 	create_insn	(x=0X104EE);
 	op_hex		(x,	0);
@@ -229,11 +232,14 @@ static Bytes_0(void) {
 	create_insn	(x=0X10517);
 	op_hex		(x,	0);
 	create_insn	(0X1052E);
+	set_name	(0X1052E,	"fileWriteRecord_1052E");
 	set_cmt	(0X1053F,	"DOS - 2+ - WRITE TO FILE WITH HANDLE\nBX = file handle, CX = number of bytes to write, DS:DX -> buffer",	0);
 	create_insn	(x=0X1053F);
 	op_hex		(x,	0);
 	create_insn	(0X10556);
+	set_name	(0X10556,	"fileReadRecordTo");
 	create_insn	(0X10570);
+	set_name	(0X10570,	"fileWriteRecordFrom");
 	create_byte	(0X1059E);
 	set_name	(0X1059E,	"parm_0E");
 	create_byte	(0X105A0);

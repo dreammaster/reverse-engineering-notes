@@ -184,7 +184,7 @@ loc_1018C:                              ; CODE XREF: start+187↑j
                 dec     ax
                 mov     word_22786, ax
                 mov     word_2164E, 0FFFFh
-                call    sub_18AB2
+                call    shared_5c3cce
                 mov     al, 2
                 mov     ah, 2Dh ; '-'
                 int     62h             ; VID fn2D vidMouseSetCursorMode
@@ -256,7 +256,7 @@ loc_10264:                              ; CODE XREF: start+1EB↑j
                 call    sub_103D8
                 call    sub_1945D
                 call    sub_174BE
-                call    sub_19407
+                call    shared_4a4289
                 mov     al, 0
                 jmp     short loc_102E1
 ; ---------------------------------------------------------------------------
@@ -270,11 +270,11 @@ loc_10285:                              ; CODE XREF: start:loc_10208↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     bx, 6759h
-                call    sub_1BC78
+                call    shared_23f116
                 mov     byte ptr es:2Ah, 1Eh
                 mov     byte ptr es:2Bh, 0Ah
                 mov     bx, 685Ah
-                call    sub_1B8CC
+                call    drawString
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     al, 1
@@ -294,7 +294,7 @@ loc_102C0:                              ; CODE XREF: start+205↑j
 
 loc_102D7:                              ; CODE XREF: start+2D3↑j
                 call    sub_10AC5
-                call    sub_19407
+                call    shared_4a4289
                 mov     al, 0
 
 loc_102E1:                              ; CODE XREF: start+283↑j
@@ -319,7 +319,7 @@ loc_10303:                              ; CODE XREF: start+2F4↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
 
 loc_10307:                              ; CODE XREF: start+301↑j
-                call    sub_18DB2
+                call    shared_019ed0
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 28h ; '('
@@ -706,13 +706,13 @@ sub_10548       proc near               ; CODE XREF: sub_11AD7+1BA↓p
                 call    sub_19E70
                 call    sub_106F8
                 mov     ax, 63h ; 'c'
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 cmp     ax, word_2277B
                 jle     short loc_1057C
                 mov     ah, 1
                 mov     al, 16h
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_12DCF
                 mov     word_22774, 0
                 retn
@@ -721,7 +721,7 @@ sub_10548       proc near               ; CODE XREF: sub_11AD7+1BA↓p
 loc_1057C:                              ; CODE XREF: sub_10548+1F↑j
                 xor     ah, ah
                 mov     al, byte_1FA8E
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 add     al, byte_1FA8D
                 xor     ah, ah
@@ -742,7 +742,7 @@ loc_105AD:                              ; CODE XREF: sub_10548+8C↓j
                                         ; sub_10548+9E↓j ...
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -761,7 +761,7 @@ loc_105CF:                              ; CODE XREF: sub_10548+63↑j
                 jz      short loc_105AD
                 dec     byte_1FAAF
                 mov     ax, 63h ; 'c'
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 cmp     ax, 14h
                 jg      short loc_105AD
@@ -851,7 +851,7 @@ loc_10695:                              ; CODE XREF: sub_10548+13A↑j
 loc_106A6:                              ; CODE XREF: sub_10548+159↑j
                 mov     ah, 1
                 mov     al, 15h
-                call    sub_1AC2E
+                call    shared_728316
                 sub     word_20E02, 14h
                 mov     word_22774, 0
                 mov     ax, word_21186
@@ -880,7 +880,7 @@ sub_106D0       proc near               ; CODE XREF: sub_11247+139↓p
                 mov     es:1Ch, bx
                 add     bx, 1Fh
                 mov     es:20h, bx
-                call    sub_1948D
+                call    shared_6b5782
                 retn
 sub_106D0       endp
 
@@ -980,10 +980,10 @@ sub_10793       proc near               ; CODE XREF: seg000:6FB0↓p
                 mov     byte_22778, 0Fh
                 mov     word_22776, 1
                 mov     ax, 5
-                call    sub_1BD44
+                call    tileOp
                 inc     word_22776
                 mov     ax, 5
-                call    sub_1BD44
+                call    tileOp
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     di, es:6A4h
@@ -1005,15 +1005,15 @@ loc_107E9:                              ; CODE XREF: sub_10793+4F↑j
                 and     dx, 7FFh
                 mov     ax, word_22764
                 mov     bx, word_22766
-                call    sub_1B71E
+                call    shared_a7dbf2
                 test    byte_22783, 1
                 jz      short loc_10822
                 mov     ax, 0
                 mov     bx, 0
                 mov     dx, 116h
                 mov     byte_22778, 5
-                call    sub_1B71E
-                call    sub_18EC8
+                call    shared_a7dbf2
+                call    drawTileKeyed
 
 loc_10822:                              ; CODE XREF: sub_10793+75↑j
                 and     byte_22783, 0FEh
@@ -1021,7 +1021,7 @@ loc_10822:                              ; CODE XREF: sub_10793+75↑j
                 mov     word_22776, 117h
                 mov     byte_22754, 0Fh
                 mov     word_22755, 1
-                call    sub_11573
+                call    shared_3edae8
                 mov     di, es:6A4h
                 mov     byte_22754, 0Fh
                 mov     word_22755, 2
@@ -1033,10 +1033,10 @@ loc_10822:                              ; CODE XREF: sub_10793+75↑j
                 and     dx, 7FFh
                 mov     ax, word_22764
                 mov     bx, word_22766
-                call    sub_1B71E
+                call    shared_a7dbf2
                 mov     byte_22778, 5
                 mov     word_22776, 121h
-                call    sub_11573
+                call    shared_3edae8
                 mov     ah, 1Eh
                 int     62h             ; VID fn1E vidCopyScreen1To0AndShow
                 retn
@@ -1339,7 +1339,7 @@ sub_10A1F       endp
 sub_10A7A       proc near               ; CODE XREF: sub_10548+A3↑p
                                         ; sub_11AD7+C7↓p ...
                 mov     ax, 63h ; 'c'
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 xor     bh, bh
                 mov     bl, byte_2118E
@@ -1459,10 +1459,10 @@ sub_10B4D       proc near               ; CODE XREF: seg000:31C5↓p
                 push    ax
                 push    cx
                 mov     cx, 5Ah ; 'Z'
-                call    sub_1BD04
+                call    speakerOn
                 mov     ax, 1
-                call    sub_18B96
-                call    sub_1BD21
+                call    delayTicks
+                call    speakerOff
                 pop     cx
                 pop     ax
                 retn
@@ -1628,7 +1628,7 @@ loc_10C86:                              ; CODE XREF: sub_10BD2+E0↓j
                 jge     short loc_10CAE
                 mov     bx, word_1FA87
                 mov     al, 4
-                call    sub_1918C
+                call    shared_8f30c2
                 push    cs
                 call    near ptr sub_103D8
 
@@ -1658,7 +1658,7 @@ loc_10CCF:                              ; CODE XREF: sub_10BD2+F8↑j
                 test    byte ptr [bx+1], 80h
                 jnz     short loc_10CF4
                 mov     ax, 63h ; 'c'
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 cmp     al, byte_1FA81
                 jle     short loc_10CF7
@@ -1689,7 +1689,7 @@ loc_10D0D:                              ; CODE XREF: sub_10BD2+130↑j
                 mov     es:[di+3], al
                 mov     byte ptr es:[di+4], 1
                 mov     ax, 63h ; 'c'
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 cmp     al, byte_1FA82
                 jg      short loc_10D41
@@ -1706,7 +1706,7 @@ loc_10D41:                              ; CODE XREF: sub_10BD2+166↑j
                 mov     ax, [si+2]
                 mov     bx, word_1FA87
                 mul     bx
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, word_1FA87
                 mov     es:[di+5], ax
                 add     di, 7
@@ -1716,7 +1716,7 @@ loc_10D41:                              ; CODE XREF: sub_10BD2+166↑j
                 xor     bh, bh
                 mov     bl, byte_1FA8B
                 mul     bx
-                call    sub_1BA82
+                call    shared_9c11a6
                 mov     es:[di], al
                 mov     word ptr es:[di+1], 4
                 add     di, 3
@@ -1730,7 +1730,7 @@ loc_10D8A:                              ; CODE XREF: sub_10BD2+19D↑j
 loc_10D94:                              ; CODE XREF: sub_10BD2+1D8↓j
                                         ; sub_10BD2+1EE↓j
                 mov     ax, 8
-                call    sub_1BA82
+                call    shared_9c11a6
                 mov     bx, ax
                 shl     bx, 1
                 shl     bx, 1
@@ -1738,7 +1738,7 @@ loc_10D94:                              ; CODE XREF: sub_10BD2+1D8↓j
                 xor     ah, ah
                 cmp     ax, 0
                 jz      short loc_10D94
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     al, [bx+si+2]
                 mov     es:[di], al
                 mov     ax, [bx+si]
@@ -1760,11 +1760,11 @@ loc_10DC2:                              ; CODE XREF: sub_10BD2+1BD↑j
                 mov     byte_22778, 5
                 mov     word_22776, 116h
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
 
 loc_10DFF:                              ; CODE XREF: sub_10BD2:loc_10CF4↑j
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 14h
@@ -1904,7 +1904,7 @@ loc_10F29:                              ; CODE XREF: sub_10ED0+2F↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_17C08
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    word_2278C
@@ -1955,7 +1955,7 @@ sub_10F7B       proc near               ; CODE XREF: sub_11119+D7↓p
 
 loc_10F8D:                              ; CODE XREF: sub_10F7B+1D↓j
                 mov     al, 5
-                call    sub_1BD44
+                call    tileOp
                 inc     word_22776
                 loop    loc_10F8D
                 test    byte ptr es:912h, 40h
@@ -1987,7 +1987,7 @@ loc_10FCE:                              ; CODE XREF: sub_10F7B+25↑j
                 call    sub_17C08
 
 loc_10FDB:                              ; CODE XREF: sub_10F7B+51↑j
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     al, 2
@@ -2016,7 +2016,7 @@ sub_10FEC       proc near               ; CODE XREF: sub_11AD7+2D8↓p
                 add     ax, 60h ; '`'
                 mov     es:20h, ax
                 mov     ax, word_227A6
-                call    sub_1948D
+                call    shared_6b5782
                 pop     ax
                 mov     byte_22754, 0Fh
                 mov     word_2275A, 1
@@ -2025,14 +2025,14 @@ sub_10FEC       proc near               ; CODE XREF: sub_11AD7+2D8↓p
                 mov     word_22776, ax
                 inc     ax
                 mov     word_22758, ax
-                call    sub_11573
+                call    shared_3edae8
                 inc     word_22755
                 mov     byte_22757, 5
                 sub     word_22764, 20h ; ' '
                 sub     word_22766, 20h ; ' '
                 call    sub_115AF
                 call    sub_115AF
-                call    sub_1BC54
+                call    drawBackdropTile
                 call    sub_173D8
                 mov     dx, word_2275A
                 mov     word_22755, dx
@@ -2041,7 +2041,7 @@ sub_10FEC       proc near               ; CODE XREF: sub_11AD7+2D8↓p
                 mov     word_22764, ax
                 mov     bx, word_227B6
                 mov     word_22766, bx
-                call    sub_1B71E
+                call    shared_a7dbf2
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 14h
@@ -2049,19 +2049,19 @@ sub_10FEC       proc near               ; CODE XREF: sub_11AD7+2D8↓p
                 inc     word_22755
                 sub     word_22764, 20h ; ' '
                 sub     word_22766, 20h ; ' '
-                call    sub_1732E
+                call    shared_204d40
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
-                call    sub_1732E
+                call    shared_204d40
                 mov     ax, 5
-                call    sub_18B96
+                call    delayTicks
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_173D8
                 mov     bh, byte_227B8
                 mov     bl, byte_227B9
                 call    sub_11463
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, word_227B4
                 sub     ax, 20h ; ' '
                 mov     word_2274C, ax
@@ -2075,7 +2075,7 @@ sub_10FEC       proc near               ; CODE XREF: sub_11AD7+2D8↓p
                 mov     word_22749, 3
                 mov     word_22747, 3
                 mov     byte_2274B, 0FFh
-                call    sub_1BBB8
+                call    shared_47fa83
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     byte_22778, 0Fh
@@ -2084,7 +2084,7 @@ sub_10FEC       proc near               ; CODE XREF: sub_11AD7+2D8↓p
 
 loc_1110A:                              ; CODE XREF: sub_10FEC+12A↓j
                 mov     ax, 5
-                call    sub_1BD44
+                call    tileOp
                 inc     word_22776
                 loop    loc_1110A
                 retn
@@ -2107,7 +2107,7 @@ sub_11119       proc near               ; CODE XREF: seg000:6FBA↓p
                 mov     byte_20D5D, ah
                 mov     ah, byte ptr word_2118F+1
                 mov     byte_20D5E, ah
-                call    sub_19407
+                call    shared_4a4289
                 mov     ax, 5ADAh
                 mov     parm_0A, ax
                 mov     parm_08, ds
@@ -2123,11 +2123,11 @@ sub_11119       proc near               ; CODE XREF: seg000:6FBA↓p
                 mov     es, ax
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
-                call    sub_193EA
+                call    shared_d2992b
                 pop     ax
                 mov     byte_20D5D, ah
                 mov     byte_20D5E, al
-                call    sub_19407
+                call    shared_4a4289
                 call    sub_19424
                 push    cs
                 call    near ptr sub_10383
@@ -2162,7 +2162,7 @@ loc_111BA:                              ; CODE XREF: sub_11119+85↑j
                 mov     bl, es:[si+3]
                 dec     bl
                 call    sub_11463
-                call    sub_1BC54
+                call    drawBackdropTile
 
 loc_111EB:                              ; CODE XREF: sub_11119+95↑j
                 mov     ax, 1200h
@@ -2183,16 +2183,16 @@ sub_111F4       proc near               ; CODE XREF: seg000:376D↓p
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     bx, 6763h
-                call    sub_1BC78
+                call    shared_23f116
                 mov     byte ptr es:2Ah, 1Eh
                 mov     byte ptr es:2Bh, 0Ah
                 pop     bx
-                call    sub_1B8CC
+                call    drawString
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 28h ; '('
                 int     62h             ; VID fn28 vidMouseShow
-                call    sub_19316
+                call    waitInput
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
                 mov     ah, 1Eh
@@ -2206,15 +2206,15 @@ sub_111F4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11232       proc near               ; CODE XREF: sub_11232+12↓j
+drawTileRun     proc near               ; CODE XREF: drawTileRun+12↓j
                                         ; sub_17C69+20↓p ...
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word_22776
-                loop    sub_11232
+                loop    drawTileRun
                 retn
-sub_11232       endp
+drawTileRun     endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2331,7 +2331,7 @@ loc_1134A:                              ; CODE XREF: sub_11247+FD↑j
 loc_1135B:                              ; CODE XREF: sub_11247+8A↑j
                                         ; sub_11247+D0↑j ...
                 mov     word_2275C, 0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 14h
@@ -2441,7 +2441,7 @@ sub_11463       proc near               ; CODE XREF: sub_10548+5B↑p
                 and     ax, 7FFh
                 mov     word_22776, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     bx, word_2279C
                 test    byte ptr [bx+1], 80h
                 jnz     short loc_114B7
@@ -2458,8 +2458,8 @@ loc_114B7:                              ; CODE XREF: sub_11463+44↑j
                 mov     byte_22778, 5
                 mov     word_22776, 116h
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 mov     bx, word_2279C
                 test    byte ptr [bx+1], 2
                 jnz     short loc_114E8
@@ -2554,19 +2554,19 @@ sub_11553       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11573       proc near               ; CODE XREF: sub_10793+AA↑p
+shared_3edae8   proc near               ; CODE XREF: sub_10793+AA↑p
                                         ; sub_10793+E5↑p ...
                 mov     dx, word_22776
                 mov     ax, word_22760
                 mov     bx, word_22762
-                call    sub_1B71E
-                call    sub_18EC8
+                call    shared_a7dbf2
+                call    drawTileKeyed
                 mov     al, byte_22754
                 mov     byte_22778, al
                 mov     ax, word_22755
                 mov     word_22776, ax
                 mov     ax, 4
-                call    sub_1BD44
+                call    tileOp
                 mov     ax, word_22764
                 mov     es:1Ah, ax
                 mov     ax, word_22766
@@ -2574,7 +2574,7 @@ sub_11573       proc near               ; CODE XREF: sub_10793+AA↑p
                 mov     ah, 9
                 int     62h             ; VID fn09 vidGetImageRaw
                 retn
-sub_11573       endp
+shared_3edae8   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2597,7 +2597,7 @@ loc_115C2:                              ; CODE XREF: sub_115AF+31↓j
                 mov     byte_22778, al
                 mov     ax, word_22758
                 mov     word_22776, ax
-                call    sub_11573
+                call    shared_3edae8
                 add     word_22764, 20h ; ' '
                 inc     word_22758
                 inc     word_22755
@@ -2625,9 +2625,9 @@ sub_115F7       proc near               ; CODE XREF: sub_11AD7+35↓p
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
-                call    sub_1BC54
+                call    tileOp
+                call    drawTileKeyed
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 14h
@@ -2651,9 +2651,9 @@ loc_1164C:                              ; CODE XREF: sub_115F7+48↑j
                 mov     byte_1FA93, al
 
 loc_11663:                              ; CODE XREF: sub_115F7+3E↑j
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 4
-                call    sub_18B96
+                call    delayTicks
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 retn
@@ -2672,9 +2672,9 @@ sub_11676       proc near               ; CODE XREF: seg000:38F8↓p
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
-                call    sub_1BC54
+                call    tileOp
+                call    drawTileKeyed
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 14h
@@ -2699,9 +2699,9 @@ loc_116CE:                              ; CODE XREF: sub_11676+4B↑j
                 mov     byte_1FA93, al
 
 loc_116E5:                              ; CODE XREF: sub_11676+41↑j
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 4
-                call    sub_18B96
+                call    delayTicks
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 retn
@@ -2720,9 +2720,9 @@ sub_116F8       proc near               ; CODE XREF: sub_10548+78↑p
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
-                call    sub_1BC54
+                call    tileOp
+                call    drawTileKeyed
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
 sub_116F8       endp
@@ -2788,9 +2788,9 @@ loc_117B3:                              ; CODE XREF: sub_1172D+3B↑j
 
 loc_117B6:                              ; CODE XREF: sub_1172D+27↑j
                                         ; sub_1172D+55↑j ...
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 4
-                call    sub_18B96
+                call    delayTicks
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 retn
@@ -3092,17 +3092,17 @@ sub_119E7       proc near               ; CODE XREF: seg000:3276↓p
                 mov     al, es:73h
                 mov     es:2Fh, al
                 mov     bx, 676Dh
-                call    sub_1BC78
+                call    shared_23f116
                 mov     byte ptr es:2Ah, 1Eh
                 mov     byte ptr es:2Bh, 0Ah
                 mov     bx, 68C4h
                 mov     cx, 2
-                call    sub_1AC20
+                call    drawStringLines
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 28h ; '('
                 int     62h             ; VID fn28 vidMouseShow
-                call    sub_19316
+                call    waitInput
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
                 mov     ah, 1Eh
@@ -3117,18 +3117,18 @@ sub_119E7       proc near               ; CODE XREF: seg000:3276↓p
 loc_11A4F:                              ; CODE XREF: sub_119E7+6↑j
                                         ; sub_119E7+E↑j
                 mov     al, 21h ; '!'
-                call    sub_1B902
+                call    shared_1d0ebe
                 mov     bl, 0
                 mov     ah, 42h ; 'B'
                 mov     al, 42h ; 'B'
-                call    sub_18FE7
+                call    shared_21818f
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
                 mov     al, 0
-                call    sub_1B902
+                call    shared_1d0ebe
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
-                call    sub_18DB2
+                call    shared_019ed0
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 28h ; '('
@@ -3154,7 +3154,7 @@ sub_11A93       proc near               ; CODE XREF: seg000:3879↓p
                                         ; seg000:3C1C↓p ...
                 cmp     word_2278E, 0
                 jnz     short loc_11AA1
-                call    sub_1BC54
+                call    drawBackdropTile
                 jmp     short loc_11AB5
 ; ---------------------------------------------------------------------------
 
@@ -3174,7 +3174,7 @@ loc_11AB5:                              ; CODE XREF: sub_11A93+C↑j
                 mov     bh, byte_227B8
                 mov     bl, byte_227B9
                 call    sub_11463
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 retn
@@ -3201,7 +3201,7 @@ loc_11AE3:                              ; CODE XREF: sub_11AD7+9↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_1FA9F
                 mov     bx, word_1FAA1
                 mov     dx, 245h
@@ -3231,7 +3231,7 @@ loc_11B3B:                              ; CODE XREF: sub_11AD7+61↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_1FA9F
                 mov     bx, word_1FAA1
                 mov     dx, 245h
@@ -3282,7 +3282,7 @@ loc_11BBA:                              ; CODE XREF: sub_11AD7+11C↓j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -3319,7 +3319,7 @@ loc_11C22:                              ; CODE XREF: sub_11AD7+129↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_1FA9F
                 mov     bx, word_1FAA1
                 mov     dx, 245h
@@ -3389,7 +3389,7 @@ loc_11CAF:                              ; CODE XREF: sub_11AD7+1D1↑j
 loc_11CC9:                              ; CODE XREF: sub_11AD7+1E7↑j
                                         ; sub_11AD7+1EE↑j
                 mov     ax, 63h ; 'c'
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 cmp     ax, 1Eh
                 jge     short loc_11CD9
@@ -3498,11 +3498,11 @@ loc_11D8E:                              ; CODE XREF: sub_11AD7+2B2↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 3
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 mov     ah, 1
                 mov     al, 3
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, 161h
                 call    sub_10FEC
                 dec     byte_227B8
@@ -3555,7 +3555,7 @@ loc_11E0E:                              ; CODE XREF: sub_11AD7+333↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -3575,11 +3575,11 @@ loc_11E51:                              ; CODE XREF: sub_11AD7+2AA↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 18h
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 mov     ah, 1
                 mov     al, 3
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, 22Ah
                 call    sub_10FEC
                 dec     byte_227B8
@@ -3632,7 +3632,7 @@ loc_11ED1:                              ; CODE XREF: sub_11AD7+3F6↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -3664,11 +3664,11 @@ loc_11F33:                              ; CODE XREF: sub_11AD7+2B4↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 3
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 mov     ah, 1
                 mov     al, 3
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, 174h
                 call    sub_10FEC
                 dec     byte_227B8
@@ -3721,13 +3721,13 @@ loc_11FB3:                              ; CODE XREF: sub_11AD7+4D8↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
                 call    sub_116F8
                 mov     ax, 4
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_1747D
@@ -3754,7 +3754,7 @@ loc_12012:                              ; CODE XREF: sub_11AD7+531↑j
                 dec     byte_1FAA7
                 mov     ah, 1
                 mov     al, 19h
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_1A128
                 call    sub_17378
                 mov     cx, word_22788
@@ -3783,13 +3783,13 @@ loc_12046:                              ; CODE XREF: sub_11AD7+55F↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
                 call    sub_116F8
                 mov     ax, 8
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_1747D
@@ -3889,7 +3889,7 @@ loc_12124:                              ; CODE XREF: sub_11AD7+602↑j
                 cmp     ax, 0
                 jz      short loc_12141
                 mov     ax, 63h ; 'c'
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 cmp     ax, word_2277B
                 jle     short loc_12156
@@ -3897,7 +3897,7 @@ loc_12124:                              ; CODE XREF: sub_11AD7+602↑j
 loc_12141:                              ; CODE XREF: sub_11AD7+659↑j
                 mov     ah, 1
                 mov     al, 16h
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_12DCF
                 mov     word_22774, 0
                 jmp     loc_11CDE
@@ -3906,7 +3906,7 @@ loc_12141:                              ; CODE XREF: sub_11AD7+659↑j
 loc_12156:                              ; CODE XREF: sub_11AD7+668↑j
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_1FAB1
                 mov     bx, 23h ; '#'
                 mul     bx
@@ -3917,7 +3917,7 @@ loc_12156:                              ; CODE XREF: sub_11AD7+668↑j
                 xor     ah, ah
                 push    bx
                 dec     ax
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 pop     bx
                 add     al, [bx+8]
@@ -3939,11 +3939,11 @@ loc_121A0:                              ; CODE XREF: sub_11AD7+63A↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 0Bh
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 mov     ah, 1
                 mov     al, 0Bh
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, 187h
                 call    sub_10FEC
                 dec     byte_227B8
@@ -3996,13 +3996,13 @@ loc_12220:                              ; CODE XREF: sub_11AD7+745↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
                 call    sub_116F8
                 mov     ax, 6
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 6
                 mov     word_22774, ax
                 call    sub_1747D
@@ -4048,7 +4048,7 @@ loc_1227F:                              ; CODE XREF: sub_11AD7+79E↑j
                 cmp     ax, 0
                 jz      short loc_122CD
                 mov     ax, 63h ; 'c'
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 cmp     ax, word_2277B
                 jle     short loc_122E2
@@ -4057,7 +4057,7 @@ loc_122CD:                              ; CODE XREF: sub_11AD7+7E5↑j
                                         ; sub_11AD7+817↓j
                 mov     ah, 1
                 mov     al, 16h
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_12DCF
                 mov     word_22774, 0
                 jmp     loc_11CDE
@@ -4086,7 +4086,7 @@ loc_122FB:                              ; CODE XREF: sub_11AD7+820↑j
 loc_12305:                              ; CODE XREF: sub_11AD7+829↑j
                 mov     ah, 1
                 mov     al, 10h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     word_22774, 8
                 mov     ax, word_21186
                 mov     bx, word_21188
@@ -4103,7 +4103,7 @@ loc_12305:                              ; CODE XREF: sub_11AD7+829↑j
 loc_12339:                              ; CODE XREF: sub_11AD7+822↑j
                 mov     ah, 1
                 mov     al, 10h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     word_22774, 0Fh
                 mov     ax, word_21186
                 mov     bx, word_21188
@@ -4118,7 +4118,7 @@ loc_12339:                              ; CODE XREF: sub_11AD7+822↑j
 loc_12363:                              ; CODE XREF: sub_11AD7+819↑j
                 mov     ah, 1
                 mov     al, 3
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, 174h
                 call    sub_10FEC
                 dec     byte_227B8
@@ -4171,13 +4171,13 @@ loc_123CE:                              ; CODE XREF: sub_11AD7+8F3↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
                 call    sub_116F8
                 mov     ax, 4
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_1747D
@@ -4205,7 +4205,7 @@ loc_1242D:                              ; CODE XREF: sub_11AD7+94C↑j
                 cmp     byte ptr word_1FA7B, 1Eh
                 jnz     short loc_12444
                 mov     ax, 2
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 jmp     loc_124C7
 ; ---------------------------------------------------------------------------
@@ -4214,7 +4214,7 @@ loc_12444:                              ; CODE XREF: sub_11AD7+95F↑j
                 cmp     byte ptr word_1FA7B, 1Fh
                 jnz     short loc_12456
                 mov     ax, 4
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 jmp     short loc_124C7
 ; ---------------------------------------------------------------------------
@@ -4223,7 +4223,7 @@ loc_12456:                              ; CODE XREF: sub_11AD7+972↑j
                 cmp     byte ptr word_1FA7B, 20h ; ' '
                 jnz     short loc_1246A
                 mov     ax, 4
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 3
                 jmp     short loc_124C7
 ; ---------------------------------------------------------------------------
@@ -4232,7 +4232,7 @@ loc_1246A:                              ; CODE XREF: sub_11AD7+984↑j
                 cmp     byte ptr word_1FA7B, 1Ch
                 jnz     short loc_1247E
                 mov     ax, 5
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 5
                 jmp     short loc_124C7
 ; ---------------------------------------------------------------------------
@@ -4241,7 +4241,7 @@ loc_1247E:                              ; CODE XREF: sub_11AD7+998↑j
                 cmp     byte ptr word_1FA7B, 35h ; '5'
                 jnz     short loc_12492
                 mov     ax, 4
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 8
                 jmp     short loc_124C7
 ; ---------------------------------------------------------------------------
@@ -4250,7 +4250,7 @@ loc_12492:                              ; CODE XREF: sub_11AD7+9AC↑j
                 cmp     byte ptr word_1FA7B, 33h ; '3'
                 jnz     short loc_124A6
                 mov     ax, 7
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 7
                 jmp     short loc_124C7
 ; ---------------------------------------------------------------------------
@@ -4259,7 +4259,7 @@ loc_124A6:                              ; CODE XREF: sub_11AD7+9C0↑j
                 cmp     byte ptr word_1FA7B, 3Ch ; '<'
                 jnz     short loc_124BA
                 mov     ax, 7
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 8
                 jmp     short loc_124C7
 ; ---------------------------------------------------------------------------
@@ -4304,7 +4304,7 @@ sub_11AD7       endp
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 5
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jnz     short loc_12526
@@ -4315,7 +4315,7 @@ sub_11AD7       endp
 
 loc_12526:                              ; CODE XREF: seg000:251A↑j
                 mov     ax, 2
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 2
                 mov     word_22774, ax
                 call    sub_10A7A
@@ -4325,7 +4325,7 @@ loc_12526:                              ; CODE XREF: seg000:251A↑j
 loc_1253D:                              ; CODE XREF: seg000:2537↑j
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -4354,7 +4354,7 @@ loc_1253D:                              ; CODE XREF: seg000:2537↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 9
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jnz     short loc_125AD
@@ -4365,7 +4365,7 @@ loc_1253D:                              ; CODE XREF: seg000:2537↑j
 
 loc_125AD:                              ; CODE XREF: seg000:25A1↑j
                 mov     ax, 4
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 2
                 mov     word_22774, ax
                 call    sub_10A7A
@@ -4375,7 +4375,7 @@ loc_125AD:                              ; CODE XREF: seg000:25A1↑j
 loc_125C4:                              ; CODE XREF: seg000:25BE↑j
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -4411,13 +4411,13 @@ loc_12603:                              ; CODE XREF: seg000:25F5↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
                 call    sub_116F8
                 mov     ax, 6
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 2
                 mov     word_22774, ax
                 call    sub_1747D
@@ -4450,7 +4450,7 @@ loc_1263A:                              ; CODE XREF: seg000:2634↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 0Ah
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jnz     short loc_12692
@@ -4461,7 +4461,7 @@ loc_1263A:                              ; CODE XREF: seg000:2634↑j
 
 loc_12692:                              ; CODE XREF: seg000:2686↑j
                 mov     ax, 8
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 2
                 mov     word_22774, ax
                 call    sub_10A7A
@@ -4471,7 +4471,7 @@ loc_12692:                              ; CODE XREF: seg000:2686↑j
 loc_126A9:                              ; CODE XREF: seg000:26A3↑j
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -4500,7 +4500,7 @@ loc_126A9:                              ; CODE XREF: seg000:26A3↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 7
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jnz     short loc_12719
@@ -4516,7 +4516,7 @@ loc_12719:                              ; CODE XREF: seg000:270D↑j
                 jz      short loc_1270F
                 mov     ah, 1
                 mov     al, 3
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, 174h
                 call    sub_10FEC
                 dec     byte_227B8
@@ -4569,13 +4569,13 @@ loc_12789:                              ; CODE XREF: seg000:2785↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
                 call    sub_116F8
                 mov     ax, 4
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_1747D
@@ -4608,7 +4608,7 @@ loc_127CC:                              ; CODE XREF: seg000:27C6↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 0Fh
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jnz     short loc_12824
@@ -4619,7 +4619,7 @@ loc_127CC:                              ; CODE XREF: seg000:27C6↑j
 
 loc_12824:                              ; CODE XREF: seg000:2818↑j
                 mov     ax, 6
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_10A7A
@@ -4629,7 +4629,7 @@ loc_12824:                              ; CODE XREF: seg000:2818↑j
 loc_1283B:                              ; CODE XREF: seg000:2835↑j
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -4657,7 +4657,7 @@ loc_1283B:                              ; CODE XREF: seg000:2835↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 0Fh
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jnz     short loc_128A8
@@ -4668,7 +4668,7 @@ loc_1283B:                              ; CODE XREF: seg000:2835↑j
 
 loc_128A8:                              ; CODE XREF: seg000:289C↑j
                 mov     ax, 8
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_10A7A
@@ -4678,7 +4678,7 @@ loc_128A8:                              ; CODE XREF: seg000:289C↑j
 loc_128BF:                              ; CODE XREF: seg000:28B9↑j
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -4706,7 +4706,7 @@ loc_128BF:                              ; CODE XREF: seg000:28B9↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 8
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jnz     short loc_1292C
@@ -4717,7 +4717,7 @@ loc_128BF:                              ; CODE XREF: seg000:28B9↑j
 
 loc_1292C:                              ; CODE XREF: seg000:2920↑j
                 mov     ax, 0Ah
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_10A7A
@@ -4727,7 +4727,7 @@ loc_1292C:                              ; CODE XREF: seg000:2920↑j
 loc_12943:                              ; CODE XREF: seg000:293D↑j
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -4756,7 +4756,7 @@ loc_12943:                              ; CODE XREF: seg000:293D↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 5
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jnz     short loc_129B3
@@ -4772,7 +4772,7 @@ loc_129B3:                              ; CODE XREF: seg000:29A7↑j
                 jz      short loc_129A9
                 mov     ah, 1
                 mov     al, 0Bh
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, 187h
                 call    sub_10FEC
                 dec     byte_227B8
@@ -4825,13 +4825,13 @@ loc_12A23:                              ; CODE XREF: seg000:2A1F↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
                 call    sub_116F8
                 mov     ax, 6
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 6
                 mov     word_22774, ax
                 call    sub_1747D
@@ -4864,7 +4864,7 @@ loc_12A66:                              ; CODE XREF: seg000:2A60↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 9
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jnz     short loc_12ABE
@@ -4875,7 +4875,7 @@ loc_12A66:                              ; CODE XREF: seg000:2A60↑j
 
 loc_12ABE:                              ; CODE XREF: seg000:2AB2↑j
                 mov     ax, 0Ah
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 8
                 mov     word_22774, ax
                 call    sub_10A7A
@@ -4885,7 +4885,7 @@ loc_12ABE:                              ; CODE XREF: seg000:2AB2↑j
 loc_12AD5:                              ; CODE XREF: seg000:2ACF↑j
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -4921,13 +4921,13 @@ loc_12B14:                              ; CODE XREF: seg000:2B06↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
                 call    sub_116F8
                 mov     ax, 8
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 6
                 mov     word_22774, ax
                 call    sub_1747D
@@ -4960,7 +4960,7 @@ loc_12B4B:                              ; CODE XREF: seg000:2B45↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 9
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jnz     short loc_12BA3
@@ -4971,7 +4971,7 @@ loc_12B4B:                              ; CODE XREF: seg000:2B45↑j
 
 loc_12BA3:                              ; CODE XREF: seg000:2B97↑j
                 mov     ax, 7
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 8
                 mov     word_22774, ax
                 call    sub_10A7A
@@ -4981,7 +4981,7 @@ loc_12BA3:                              ; CODE XREF: seg000:2B97↑j
 loc_12BBA:                              ; CODE XREF: seg000:2BB4↑j
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -5017,13 +5017,13 @@ loc_12BF9:                              ; CODE XREF: seg000:2BEB↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 3
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 227h
                 call    sub_116F8
                 mov     ax, 0Ah
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 0Ah
                 mov     word_22774, ax
                 call    sub_1747D
@@ -5056,7 +5056,7 @@ loc_12C30:                              ; CODE XREF: seg000:2C2A↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 5
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jnz     short loc_12C88
@@ -5067,7 +5067,7 @@ loc_12C30:                              ; CODE XREF: seg000:2C2A↑j
 
 loc_12C88:                              ; CODE XREF: seg000:2C7C↑j
                 mov     ax, 0Fh
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 0Ah
                 mov     word_22774, ax
                 call    sub_10A7A
@@ -5077,7 +5077,7 @@ loc_12C88:                              ; CODE XREF: seg000:2C7C↑j
 loc_12C9F:                              ; CODE XREF: seg000:2C99↑j
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -5106,7 +5106,7 @@ loc_12C9F:                              ; CODE XREF: seg000:2C99↑j
                 call    sub_11808
                 mov     ah, 1
                 mov     al, 0Ah
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jnz     short loc_12D0F
@@ -5122,7 +5122,7 @@ loc_12D0F:                              ; CODE XREF: seg000:2D03↑j
                 jz      short loc_12D05
                 mov     ah, 1
                 mov     al, 0Ah
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, 1C0h
                 call    sub_10FEC
                 dec     byte_227B8
@@ -5175,13 +5175,13 @@ loc_12D7F:                              ; CODE XREF: seg000:2D7B↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
                 call    sub_116F8
                 mov     ax, 4
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 0Ah
                 mov     word_22774, ax
                 call    sub_1747D
@@ -5203,7 +5203,7 @@ sub_12DCF       proc near               ; CODE XREF: sub_10548+2A↑p
                                         ; sub_11AD7+673↑p ...
                 cmp     word_2278E, 0
                 jnz     short loc_12DDD
-                call    sub_1BC54
+                call    drawBackdropTile
                 jmp     short loc_12DF1
 ; ---------------------------------------------------------------------------
 
@@ -5340,7 +5340,7 @@ loc_12EB7:                              ; CODE XREF: sub_12E7B+1D↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 11h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -5378,7 +5378,7 @@ loc_12F13:                              ; CODE XREF: sub_12E7B+90↑j
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ah, 1
                 mov     al, 5
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_21186
                 mov     bx, word_21188
                 mov     dx, 245h
@@ -5397,7 +5397,7 @@ loc_12F38:                              ; CODE XREF: sub_12E7B+39↑j
 
 loc_12F4E:                              ; CODE XREF: sub_12E7B+C8↑j
                                         ; sub_12E7B+101↓j ...
-                call    sub_19346
+                call    pollInput
                 cmp     byte_227A5, 0
                 jz      short loc_12F38
                 cmp     byte_227A5, 1
@@ -5595,7 +5595,7 @@ loc_130CB:                              ; CODE XREF: sub_12E7B+103↑j
 ; ---------------------------------------------------------------------------
 
 loc_130DF:                              ; CODE XREF: sub_12E7B+258↑j
-                call    sub_18A0E
+                call    shared_c34f43
 
 loc_130E4:                              ; CODE XREF: sub_12E7B+260↑j
                 jmp     loc_12F4E
@@ -5736,7 +5736,7 @@ loc_131CB:                              ; CODE XREF: seg000:31C3↑j
                 and     ax, 7FFh
                 mov     word_22776, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     ax, word_21148
                 add     ax, word_2118A
                 mov     word_22776, ax
@@ -5744,9 +5744,9 @@ loc_131CB:                              ; CODE XREF: seg000:31C3↑j
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
-                call    sub_1BC54
+                call    tileOp
+                call    drawTileKeyed
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 jmp     loc_12F4E
@@ -6117,7 +6117,7 @@ loc_13594:                              ; CODE XREF: seg000:358C↑j
                 push    cs
                 call    near ptr sub_103D8
                 call    sub_1945D
-                call    sub_19407
+                call    shared_4a4289
                 mov     byte ptr parm_02, 2
                 mov     parm_0E, 2
                 mov     bx, word_2278C
@@ -6132,7 +6132,7 @@ loc_13594:                              ; CODE XREF: seg000:358C↑j
                 mov     es, word_227AF
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
-                call    sub_193EA
+                call    shared_d2992b
                 call    sub_19424
                 call    sub_10F7B
                 mov     byte ptr es:684h, 1
@@ -6141,14 +6141,14 @@ loc_13594:                              ; CODE XREF: seg000:358C↑j
                 push    cs
                 call    near ptr sub_103D8
                 call    sub_1945D
-                call    sub_19407
+                call    shared_4a4289
                 mov     ax, 1Ah
                 mov     dx, 6C5Ah
                 call    execProgram     ; EXEC PROG11.EXE
                 mov     es, word_227AF
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
-                call    sub_193EA
+                call    shared_d2992b
                 mov     ah, 4Dh ; 'M'
                 xor     al, al
                 int     21h             ; DOS - 2+ - GET EXIT CODE OF SUBPROGRAM (WAIT)
@@ -6240,14 +6240,14 @@ loc_136DE:                              ; CODE XREF: seg000:36BE↑j
                 mov     byte ptr es:684h, 1
                 jmp     loc_12F4E
 ; ---------------------------------------------------------------------------
-                call    sub_19407
+                call    shared_4a4289
                 mov     ax, 1Ah
                 mov     dx, 6C46h
                 call    execProgram     ; EXEC PROG7.EXE
                 mov     es, word_227AF
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
-                call    sub_193EA
+                call    shared_d2992b
                 mov     byte ptr es:684h, 1
                 jmp     loc_12F4E
 ; ---------------------------------------------------------------------------
@@ -6385,14 +6385,14 @@ loc_1381D:                              ; CODE XREF: seg000:3800↑j
                 jz      short loc_13861
                 mov     ah, 1
                 mov     al, 1
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11247
                 cmp     ax, 0
                 jz      short loc_13870
 
 loc_13861:                              ; CODE XREF: seg000:384E↑j
                 mov     ax, 63h ; 'c'
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 cmp     ax, word_2277B
                 jle     short loc_1387F
@@ -6400,7 +6400,7 @@ loc_13861:                              ; CODE XREF: seg000:384E↑j
 loc_13870:                              ; CODE XREF: seg000:385F↑j
                 mov     ah, 1
                 mov     al, 16h
-                call    sub_1AC2E
+                call    shared_728316
                 call    sub_11A93
                 jmp     loc_13906
 ; ---------------------------------------------------------------------------
@@ -6416,7 +6416,7 @@ loc_1387F:                              ; CODE XREF: seg000:386E↑j
                 xor     ah, ah
                 push    bx
                 dec     ax
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 pop     bx
                 add     al, [bx+8]
@@ -6451,7 +6451,7 @@ loc_138C1:                              ; CODE XREF: seg000:38B2↑j
 
 loc_138E9:                              ; CODE XREF: seg000:38CA↑j
                                         ; seg000:38D3↑j ...
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_227B4
                 mov     bx, word_227B6
                 mov     dx, 245h
@@ -6494,7 +6494,7 @@ loc_13953:                              ; CODE XREF: seg000:392A↑j
                 push    cs
                 call    near ptr sub_103D8
                 call    sub_1945D
-                call    sub_19407
+                call    shared_4a4289
                 mov     bx, word_2278C
                 dec     bx
                 shl     bx, 1
@@ -6508,7 +6508,7 @@ loc_13953:                              ; CODE XREF: seg000:392A↑j
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
                 mov     byte ptr es:35h, 0
-                call    sub_193EA
+                call    shared_d2992b
                 call    sub_19424
                 push    cs
                 call    near ptr sub_10383
@@ -6880,7 +6880,7 @@ loc_13B3B:                              ; CODE XREF: seg000:3BAE↓j
                 call    sub_18BAC
                 push    cs
                 call    near ptr sub_103B4
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
 
@@ -6942,7 +6942,7 @@ loc_13BDF:                              ; CODE XREF: seg000:3BC9↑j
 loc_13C21:                              ; CODE XREF: seg000:3C1A↑j
                 and     byte_1FA92, 87h
                 mov     ax, 4
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 2
                 mov     word_22774, ax
                 call    sub_1747D
@@ -6969,7 +6969,7 @@ loc_13C43:                              ; CODE XREF: seg000:3C3D↑j
 
 loc_13C6B:                              ; CODE XREF: seg000:3C4C↑j
                                         ; seg000:3C55↑j ...
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ax, word_227B4
                 mov     bx, word_227B6
                 mov     dx, 245h
@@ -7023,7 +7023,7 @@ loc_13CCE:                              ; CODE XREF: seg000:3CBE↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 and     byte_1FA92, 0FEh
@@ -7047,7 +7047,7 @@ loc_13D01:                              ; CODE XREF: seg000:3CFA↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -7095,7 +7095,7 @@ loc_13D80:                              ; CODE XREF: seg000:3D70↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 8
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 mov     ax, 2
@@ -7163,7 +7163,7 @@ loc_13E27:                              ; CODE XREF: seg000:3E20↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 8
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 2
                 mov     word_22774, ax
                 call    sub_1747D
@@ -7268,7 +7268,7 @@ loc_13F2D:                              ; CODE XREF: seg000:3F05↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 4
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 2
                 mov     word_22774, ax
                 call    sub_1747D
@@ -7324,7 +7324,7 @@ loc_13FA8:                              ; CODE XREF: seg000:3F98↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 4
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 2
                 mov     word_22774, ax
                 call    sub_1747D
@@ -7375,7 +7375,7 @@ loc_14021:                              ; CODE XREF: seg000:4011↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 and     byte_1FA92, 0FDh
@@ -7394,7 +7394,7 @@ loc_14021:                              ; CODE XREF: seg000:4011↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -7475,7 +7475,7 @@ loc_140FC:                              ; CODE XREF: seg000:40F5↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -7550,7 +7550,7 @@ loc_141CB:                              ; CODE XREF: seg000:41C4↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 8
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_1747D
@@ -7636,7 +7636,7 @@ loc_14288:                              ; CODE XREF: seg000:4281↑j
                 cmp     byte_227AC, 1
                 jz      short loc_142C4
                 mov     ax, 7
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_1747D
@@ -7832,7 +7832,7 @@ loc_1442F:                              ; CODE XREF: seg000:449B↓j
                 call    sub_18BAC
                 push    cs
                 call    near ptr sub_103B4
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
 
@@ -7942,7 +7942,7 @@ loc_14552:                              ; CODE XREF: seg000:452B↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 0Ah
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 6
                 mov     word_22774, ax
                 call    sub_1747D
@@ -7994,7 +7994,7 @@ loc_145F5:                              ; CODE XREF: seg000:45E5↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 and     byte_1FA92, 0FEh
@@ -8023,7 +8023,7 @@ loc_14634:                              ; CODE XREF: seg000:462D↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -8067,7 +8067,7 @@ loc_146AD:                              ; CODE XREF: seg000:469D↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 and     byte_1FA92, 0FEh
@@ -8096,7 +8096,7 @@ loc_146EC:                              ; CODE XREF: seg000:46E5↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -8135,7 +8135,7 @@ loc_14753:                              ; CODE XREF: seg000:4743↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 8
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_1747D
@@ -8224,7 +8224,7 @@ loc_1480F:                              ; CODE XREF: seg000:4808↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -8295,7 +8295,7 @@ loc_148D2:                              ; CODE XREF: seg000:48CB↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 0Ch
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_1747D
@@ -8354,7 +8354,7 @@ loc_14959:                              ; CODE XREF: seg000:4949↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 and     byte_1FA92, 0FEh
@@ -8378,7 +8378,7 @@ loc_1498C:                              ; CODE XREF: seg000:4985↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -8442,7 +8442,7 @@ loc_14A35:                              ; CODE XREF: seg000:4A2E↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 14h
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_1747D
@@ -8550,7 +8550,7 @@ loc_14B42:                              ; CODE XREF: seg000:4B1A↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 6
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 2
                 mov     word_22774, ax
                 call    sub_1747D
@@ -8650,7 +8650,7 @@ loc_14C1E:                              ; CODE XREF: seg000:4C17↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -8755,7 +8755,7 @@ loc_14D36:                              ; CODE XREF: seg000:4D0E↑j
                 cmp     byte_227AC, 1
                 jz      short loc_14D74
                 mov     ax, 8
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_1747D
@@ -8833,7 +8833,7 @@ loc_14E08:                              ; CODE XREF: seg000:4E01↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 1Ah
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 6
                 mov     word_22774, ax
                 call    sub_1747D
@@ -8950,7 +8950,7 @@ loc_14EFA:                              ; CODE XREF: seg000:4ED3↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 9
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 6
                 mov     word_22774, ax
                 call    sub_1747D
@@ -9003,7 +9003,7 @@ loc_14F8C:                              ; CODE XREF: seg000:4F76↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ax, 63h ; 'c'
-                call    sub_1BA82
+                call    shared_9c11a6
                 cmp     ax, 5
                 jg      short loc_14FC8
                 jmp     loc_15068
@@ -9035,7 +9035,7 @@ loc_14FF5:                              ; CODE XREF: seg000:4FED↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 0Eh
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 6
                 mov     word_22774, ax
                 mov     ax, 2
@@ -9057,7 +9057,7 @@ loc_14FF5:                              ; CODE XREF: seg000:4FED↑j
                 mov     dx, 226h
                 call    sub_11676
                 mov     ax, 8
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 2
                 mov     word_22774, ax
                 mov     ax, 1
@@ -9092,7 +9092,7 @@ loc_15094:                              ; CODE XREF: seg000:508D↑j
                 mov     dx, 226h
                 call    sub_115F7
                 mov     ax, 8
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 2
                 mov     word_22774, ax
                 mov     ax, 1
@@ -9114,7 +9114,7 @@ loc_15094:                              ; CODE XREF: seg000:508D↑j
                 mov     dx, 245h
                 call    sub_11676
                 mov     ax, 0Eh
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 6
                 mov     word_22774, ax
                 mov     ax, 2
@@ -9283,7 +9283,7 @@ loc_15262:                              ; CODE XREF: seg000:5247↑j
                 cmp     byte_227AC, 1
                 jz      short loc_15293
                 mov     ax, 13h
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 0Bh
                 mov     word_22774, ax
 
@@ -9367,7 +9367,7 @@ loc_1531C:                              ; CODE XREF: seg000:5315↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -9438,7 +9438,7 @@ loc_153DF:                              ; CODE XREF: seg000:53D8↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 16h
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 8
                 mov     word_22774, ax
                 call    sub_1747D
@@ -9550,7 +9550,7 @@ loc_154EC:                              ; CODE XREF: seg000:54C4↑j
                 cmp     byte_227AC, 1
                 jz      short loc_1552A
                 mov     ax, 0Dh
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 3
                 mov     word_22774, ax
                 call    sub_1747D
@@ -9610,7 +9610,7 @@ loc_15586:                              ; CODE XREF: seg000:5576↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 and     byte_1FA92, 0FEh
@@ -9630,7 +9630,7 @@ loc_15586:                              ; CODE XREF: seg000:5576↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -9769,7 +9769,7 @@ loc_15703:                              ; CODE XREF: seg000:56FB↑j
                 cmp     ax, 0
                 jz      short loc_156FD
                 call    sub_19A8F
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, word_1FA9F
                 sub     ax, 20h ; ' '
                 mov     word_2274C, ax
@@ -9783,7 +9783,7 @@ loc_15703:                              ; CODE XREF: seg000:56FB↑j
                 mov     word_22749, 3
                 mov     word_22747, 3
                 mov     byte_2274B, 0FFh
-                call    sub_1BBB8
+                call    shared_47fa83
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 call    sub_17677
@@ -9912,7 +9912,7 @@ loc_15877:                              ; CODE XREF: seg000:5850↑j
                 jnz     short loc_15852
                 or      byte_1FA92, 4
                 mov     ax, 1Dh
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 7
                 mov     word_22774, ax
                 call    sub_1747D
@@ -9987,7 +9987,7 @@ loc_1594B:                              ; CODE XREF: seg000:5944↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 2Eh ; '.'
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 9
                 mov     word_22774, ax
                 call    sub_1747D
@@ -10047,7 +10047,7 @@ loc_159BA:                              ; CODE XREF: seg000:59A4↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ax, 63h ; 'c'
-                call    sub_1BA82
+                call    shared_9c11a6
                 cmp     ax, 0Ah
                 jg      short loc_159F6
                 jmp     loc_15A96
@@ -10079,7 +10079,7 @@ loc_15A23:                              ; CODE XREF: seg000:5A1B↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 1Bh
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 9
                 mov     word_22774, ax
                 mov     ax, 2
@@ -10101,7 +10101,7 @@ loc_15A23:                              ; CODE XREF: seg000:5A1B↑j
                 mov     dx, 226h
                 call    sub_11676
                 mov     ax, 0Bh
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 3
                 mov     word_22774, ax
                 mov     ax, 1
@@ -10136,7 +10136,7 @@ loc_15AC2:                              ; CODE XREF: seg000:5ABB↑j
                 mov     dx, 226h
                 call    sub_115F7
                 mov     ax, 0Bh
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 3
                 mov     word_22774, ax
                 mov     ax, 1
@@ -10158,7 +10158,7 @@ loc_15AC2:                              ; CODE XREF: seg000:5ABB↑j
                 mov     ax, 245h
                 call    sub_11676
                 mov     ax, 1Bh
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 9
                 mov     word_22774, ax
                 mov     ax, 2
@@ -10212,7 +10212,7 @@ loc_15B78:                              ; CODE XREF: seg000:5B68↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 and     byte_1FA92, 0FEh
@@ -10236,7 +10236,7 @@ loc_15BAB:                              ; CODE XREF: seg000:5BA4↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -10275,7 +10275,7 @@ loc_15C11:                              ; CODE XREF: seg000:5C01↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 10h
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 8
                 mov     word_22774, ax
                 call    sub_1747D
@@ -10366,7 +10366,7 @@ loc_15CD2:                              ; CODE XREF: seg000:5CCB↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -10492,7 +10492,7 @@ loc_15DD9:                              ; CODE XREF: seg000:5DB2↑j
                 mov     si, 3ACBh
                 call    sub_19A8F
                 call    sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 push    cs
@@ -10555,7 +10555,7 @@ loc_15EC3:                              ; CODE XREF: seg000:5EBC↑j
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     al, 2
-                call    sub_1AC9A
+                call    paletteFade
                 and     byte_1FA92, 87h
                 mov     ax, word_1FA89
                 shl     ax, 1
@@ -10626,7 +10626,7 @@ loc_15F6B:                              ; CODE XREF: seg000:5F64↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 40h ; '@'
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 9
                 mov     word_22774, ax
                 call    sub_1747D
@@ -10788,7 +10788,7 @@ loc_160C6:                              ; CODE XREF: seg000:609F↑j
                 cmp     byte_227AC, 1
                 jz      short loc_16119
                 mov     ax, 37h ; '7'
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 8
                 mov     word_22774, ax
                 call    sub_1747D
@@ -10849,7 +10849,7 @@ loc_16165:                              ; CODE XREF: seg000:614F↑j
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     ax, 63h ; 'c'
-                call    sub_1BA82
+                call    shared_9c11a6
                 cmp     ax, 0Fh
                 jg      short loc_161A1
                 jmp     loc_16241
@@ -10881,7 +10881,7 @@ loc_161CE:                              ; CODE XREF: seg000:61C6↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 32h ; '2'
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 0Ah
                 mov     word_22774, ax
                 mov     ax, 2
@@ -10903,7 +10903,7 @@ loc_161CE:                              ; CODE XREF: seg000:61C6↑j
                 mov     dx, 226h
                 call    sub_11676
                 mov     ax, 16h
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 mov     ax, 1
@@ -10938,7 +10938,7 @@ loc_1626D:                              ; CODE XREF: seg000:6266↑j
                 mov     dx, 226h
                 call    sub_115F7
                 mov     ax, 0Bh
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 mov     ax, 1
@@ -10960,7 +10960,7 @@ loc_1626D:                              ; CODE XREF: seg000:6266↑j
                 mov     dx, 245h
                 call    sub_11676
                 mov     ax, 32h ; '2'
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 0Ah
                 mov     word_22774, ax
                 mov     ax, 2
@@ -11012,7 +11012,7 @@ loc_1631A:                              ; CODE XREF: seg000:6304↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 1Eh
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 14h
                 mov     word_22774, ax
                 call    sub_1747D
@@ -11335,7 +11335,7 @@ loc_1660B:                              ; CODE XREF: seg000:65E4↑j
                 mov     dx, 245h
                 call    sub_115F7
                 mov     ax, 4
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 4
                 mov     word_22774, ax
                 call    sub_1747D
@@ -11447,7 +11447,7 @@ loc_1672D:                              ; CODE XREF: seg000:6727↑j
 sub_1673A       proc near               ; CODE XREF: start+26C↑p
                 mov     ah, 2
                 mov     al, 2
-                call    sub_1AC2E
+                call    shared_728316
                 and     byte ptr es:912h, 7Bh
                 or      byte ptr es:912h, 40h
                 test    byte_22783, 10h
@@ -11483,7 +11483,7 @@ loc_16782:                              ; CODE XREF: sub_1673A+3D↑j
                 call    sub_17A33
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
-                call    sub_18DB2
+                call    shared_019ed0
                 mov     cx, word_22788
                 mov     word_2278C, 1
 
@@ -11524,7 +11524,7 @@ loc_167D6:                              ; CODE XREF: sub_1673A+6F↑j
                 and     ax, 7FFh
                 mov     word_22776, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
 
 loc_16804:                              ; CODE XREF: sub_1673A+68↑j
                 inc     word_2278C
@@ -11555,9 +11555,9 @@ loc_16804:                              ; CODE XREF: sub_1673A+68↑j
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
-                call    sub_1BC54
+                call    tileOp
+                call    drawTileKeyed
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
 
@@ -11579,7 +11579,7 @@ loc_16880:                              ; CODE XREF: sub_1673A+151↓j
 
 loc_1689B:                              ; CODE XREF: sub_1673A+16B↓j
                                         ; sub_1673A:loc_16918↓j ...
-                call    sub_19346
+                call    pollInput
                 cmp     byte_227A5, 0
                 jz      short loc_1689B
                 cmp     byte_227A5, 1
@@ -11781,7 +11781,7 @@ loc_16A18:                              ; CODE XREF: sub_1673A+190↑j
 ; ---------------------------------------------------------------------------
 
 loc_16A2C:                              ; CODE XREF: sub_1673A+2E6↑j
-                call    sub_18A0E
+                call    shared_c34f43
 
 loc_16A31:                              ; CODE XREF: sub_1673A+2EE↑j
                 jmp     loc_1689B
@@ -11921,7 +11921,7 @@ loc_16B14:                              ; CODE XREF: seg000:6B0C↑j
                 and     ax, 7FFh
                 mov     word_22776, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     ax, word_21148
                 add     ax, word_2118A
                 mov     word_22776, ax
@@ -11929,9 +11929,9 @@ loc_16B14:                              ; CODE XREF: seg000:6B0C↑j
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
-                call    sub_1BC54
+                call    tileOp
+                call    drawTileKeyed
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 jmp     loc_1689B
@@ -12291,7 +12291,7 @@ loc_16EE4:                              ; CODE XREF: seg000:6EDC↑j
                 push    cs
                 call    near ptr sub_103D8
                 call    sub_1945D
-                call    sub_19407
+                call    shared_4a4289
                 mov     byte ptr parm_02, 3
                 mov     parm_0E, 2
                 mov     ax, 1Ah
@@ -12301,7 +12301,7 @@ loc_16EE4:                              ; CODE XREF: seg000:6EDC↑j
                 mov     es, ax
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
-                call    sub_193EA
+                call    shared_d2992b
                 call    sub_19424
                 push    cs
                 call    near ptr sub_10383
@@ -12379,7 +12379,7 @@ loc_16FD7:                              ; CODE XREF: seg000:6FC8↑j
                 push    cs
                 call    near ptr sub_103D8
                 call    sub_1945D
-                call    sub_19407
+                call    shared_4a4289
                 mov     ax, 1Ah
                 mov     dx, 6C5Ah
                 call    execProgram     ; EXEC PROG11.EXE
@@ -12390,7 +12390,7 @@ loc_16FD7:                              ; CODE XREF: seg000:6FC8↑j
                 mov     byte ptr es:35h, 0
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
-                call    sub_193EA
+                call    shared_d2992b
                 call    sub_19424
                 push    cs
                 call    near ptr sub_10383
@@ -12406,7 +12406,7 @@ loc_16FD7:                              ; CODE XREF: seg000:6FC8↑j
 
 loc_1703A:                              ; CODE XREF: seg000:7031↑j
                                         ; seg000:7084↓j
-                call    sub_18DB2
+                call    shared_019ed0
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 call    sub_10F7B
@@ -12449,7 +12449,7 @@ loc_17086:                              ; CODE XREF: seg000:707D↑j
                 call    sub_11119
                 jmp     loc_16FBD
 ; ---------------------------------------------------------------------------
-                call    sub_19407
+                call    shared_4a4289
                 mov     ax, 1Ah
                 mov     dx, 6C46h
                 call    execProgram     ; EXEC PROG7.EXE
@@ -12457,14 +12457,14 @@ loc_17086:                              ; CODE XREF: seg000:707D↑j
                 mov     es, ax
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
-                call    sub_193EA
+                call    shared_d2992b
                 jmp     loc_1689B
 ; ---------------------------------------------------------------------------
                 call    sub_17E86
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_17C08
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 jmp     loc_1689B
@@ -12472,7 +12472,7 @@ loc_17086:                              ; CODE XREF: seg000:707D↑j
                 push    cs
                 call    near ptr sub_103D8
                 call    sub_1945D
-                call    sub_19407
+                call    shared_4a4289
                 mov     ax, 1Ah
                 mov     dx, 6C50h
                 call    execProgram     ; EXEC PROG8.EXE
@@ -12483,7 +12483,7 @@ loc_17086:                              ; CODE XREF: seg000:707D↑j
                 mov     byte ptr es:35h, 0
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
-                call    sub_193EA
+                call    shared_d2992b
                 call    sub_19424
                 push    cs
                 call    near ptr sub_10383
@@ -12502,7 +12502,7 @@ loc_17086:                              ; CODE XREF: seg000:707D↑j
 
 loc_17141:                              ; CODE XREF: seg000:7130↑j
                                         ; seg000:718B↓j
-                call    sub_18DB2
+                call    shared_019ed0
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 call    sub_10F7B
@@ -12544,7 +12544,7 @@ loc_1718D:                              ; CODE XREF: seg000:7184↑j
                 mov     bx, 68B1h
                 mov     byte ptr es:35h, 1
                 xor     al, al
-                call    sub_1B782
+                call    shared_77e6d6
                 mov     byte ptr es:35h, 0
                 call    sub_10793
                 mov     ah, 28h ; '('
@@ -12694,7 +12694,7 @@ sub_172D1       proc near               ; CODE XREF: sub_11247+13C↑p
                 mov     word ptr es:1Ch, 0
                 mov     byte_22778, 5
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Eh, 1Fh
                 mov     word ptr es:1Ch, 0
@@ -12707,7 +12707,7 @@ sub_172D1       proc near               ; CODE XREF: sub_11247+13C↑p
                 mov     es:34h, al
                 mov     ah, 13h
                 int     62h             ; VID fn13 vidCopyRectKeyed
-                call    sub_1BC54
+                call    drawBackdropTile
                 retn
 sub_172D1       endp
 
@@ -12715,23 +12715,23 @@ sub_172D1       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1732E       proc near               ; CODE XREF: sub_10FEC+AA↑p
+shared_204d40   proc near               ; CODE XREF: sub_10FEC+AA↑p
                                         ; sub_10FEC+B1↑p
                 push    word_22764
                 push    word_22766
                 mov     cx, 3
 
-loc_17339:                              ; CODE XREF: sub_1732E+3A↓j
+loc_17339:                              ; CODE XREF: shared_204d40+3A↓j
                 push    cx
                 push    word_22764
                 mov     cx, 3
 
-loc_17341:                              ; CODE XREF: sub_1732E+2E↓j
+loc_17341:                              ; CODE XREF: shared_204d40+2E↓j
                 push    cx
                 mov     dx, word_22755
                 mov     ax, word_22764
                 mov     bx, word_22766
-                call    sub_1B71E
+                call    shared_a7dbf2
                 add     word_22764, 20h ; ' '
                 inc     word_22755
                 pop     cx
@@ -12745,7 +12745,7 @@ loc_17341:                              ; CODE XREF: sub_1732E+2E↓j
                 pop     word_22766
                 pop     word_22764
                 retn
-sub_1732E       endp
+shared_204d40   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12755,7 +12755,7 @@ sub_17378       proc near               ; CODE XREF: sub_11AD7+54D↑p
                                         ; seg000:62EE↑p
                 mov     ah, 1
                 mov     al, 17h
-                call    sub_1AC2E
+                call    shared_728316
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     word ptr es:1Ah, 30h ; '0'
@@ -12808,7 +12808,7 @@ sub_173D8       proc near               ; CODE XREF: sub_10FEC+70↑p
                 add     ax, 60h ; '`'
                 mov     es:20h, ax
                 mov     ax, word_227A6
-                call    sub_194AB
+                call    shared_6b5782_194AB
                 retn
 sub_173D8       endp
 
@@ -12824,7 +12824,7 @@ sub_17403       proc near               ; CODE XREF: sub_11247+187↑p
                 mov     es:1Ch, bx
                 add     bx, 1Fh
                 mov     es:20h, bx
-                call    sub_194AB
+                call    shared_6b5782_194AB
                 retn
 sub_17403       endp
 
@@ -12844,17 +12844,17 @@ sub_17423       proc near               ; CODE XREF: sub_12E7B+D0↑p
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
-                call    sub_1BC54
+                call    tileOp
+                call    drawTileKeyed
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ax, 5
-                call    sub_18B96
+                call    delayTicks
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 call    sub_17C08
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 retn
@@ -13025,7 +13025,7 @@ loc_175C8:                              ; CODE XREF: sub_174BE+E7↑j
                 mov     al, es:913h
                 mov     ah, 2
                 mov     bx, 4E0Eh
-                call    sub_18E82
+                call    shared_e75c8c
 
 locret_175DE:                           ; CODE XREF: sub_174BE+110↑j
                 retn
@@ -13243,7 +13243,7 @@ loc_1777C:                              ; CODE XREF: sub_17719+5↑j
                                         ; sub_17719+59↑j ...
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
-                call    sub_17FE6
+                call    drawPartyStrip
                 mov     ah, 1Eh
                 int     62h             ; VID fn1E vidCopyScreen1To0AndShow
                 and     byte_22783, 0BFh
@@ -13298,14 +13298,14 @@ loc_177DB:                              ; CODE XREF: sub_177BC+8F↓j
                 mov     es:2Eh, ah
                 mov     es:2Fh, al
                 pop     bx
-                call    sub_1BC78
+                call    shared_23f116
                 pop     bx
-                call    sub_1AC20
+                call    drawStringLines
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 28h ; '('
                 int     62h             ; VID fn28 vidMouseShow
-                call    sub_19316
+                call    waitInput
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
                 mov     ah, 1Eh
@@ -13363,8 +13363,8 @@ sub_177BC       endp
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 retn
 
 ; =============== S U B R O U T I N E =======================================
@@ -13423,7 +13423,7 @@ loc_178F5:                              ; CODE XREF: sub_178AF+1C↑j
                 mov     word_22776, ax
                 mov     word_22798, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     ax, word_21148
                 add     ax, word_2118A
                 add     ax, 3
@@ -13432,8 +13432,8 @@ loc_178F5:                              ; CODE XREF: sub_178AF+1C↑j
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 cmp     word_2118A, 0
                 jnz     short loc_17966
                 add     word_22766, 20h ; ' '
@@ -13461,8 +13461,8 @@ loc_17987:                              ; CODE XREF: sub_178AF+B5↑j
                                         ; sub_178AF+C3↑j ...
                 inc     word_22776
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 retn
 sub_178AF       endp
 
@@ -13488,7 +13488,7 @@ sub_17999       proc near               ; CODE XREF: sub_11676+39↑p
                 mov     word_22776, ax
                 mov     word_22798, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     ax, word_21148
                 add     ax, word_2118A
                 mov     word_22776, ax
@@ -13496,8 +13496,8 @@ sub_17999       proc near               ; CODE XREF: sub_11676+39↑p
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 mov     bh, byte ptr word_2118F
                 mov     bl, byte ptr word_2118F+1
                 dec     bl
@@ -13544,13 +13544,13 @@ sub_17A33       proc near               ; CODE XREF: start:loc_102C0↑p
 
 loc_17A4D:                              ; CODE XREF: sub_17A33+C↑j
                                         ; sub_17A33+12↑j
-                call    sub_19407
+                call    shared_4a4289
                 mov     parm_02, 1
                 mov     parm_0E, 2
                 mov     ax, 1Ah
                 mov     dx, 6C32h
                 call    execProgram     ; EXEC PROG5.EXE
-                call    sub_193EA
+                call    shared_d2992b
                 call    sub_19424
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
@@ -13559,8 +13559,8 @@ loc_17A4D:                              ; CODE XREF: sub_17A33+C↑j
                 int     62h             ; VID fn2D vidMouseSetCursorMode
 
 loc_17A7C:                              ; CODE XREF: sub_17A33+18↑j
-                call    sub_18A3E
-                call    sub_19407
+                call    shared_c9c8cc
+                call    shared_4a4289
                 retn
 sub_17A33       endp
 
@@ -13649,7 +13649,7 @@ sub_17AE2       proc near               ; CODE XREF: seg000:3284↑p
                 mov     word_22776, ax
                 mov     word_22798, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 xor     ah, ah
                 mov     al, byte_2114A
                 add     ax, word_21148
@@ -13659,9 +13659,9 @@ sub_17AE2       proc near               ; CODE XREF: seg000:3284↑p
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
-                call    sub_1BC54
+                call    tileOp
+                call    drawTileKeyed
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 cmp     byte_2114A, 1
@@ -13692,7 +13692,7 @@ sub_17B6D       proc near               ; CODE XREF: seg000:32BE↑p
                 mov     ax, word_22798
                 mov     word_22776, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     ax, word_21186
                 mov     word_22764, ax
                 mov     ax, word_21188
@@ -13704,9 +13704,9 @@ sub_17B6D       proc near               ; CODE XREF: seg000:32BE↑p
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
-                call    sub_1BC54
+                call    tileOp
+                call    drawTileKeyed
+                call    drawBackdropTile
                 mov     bx, word_2118C
                 or      byte ptr [bx+1], 1
                 mov     ax, 1200h
@@ -13731,7 +13731,7 @@ sub_17BDC       proc near               ; CODE XREF: seg000:3287↑p
                 mov     ax, word_22798
                 mov     word_22776, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 retn
@@ -13759,7 +13759,7 @@ sub_17C08       proc near               ; CODE XREF: sub_10ED0+64↑p
                 mov     word_22776, ax
                 mov     word_22798, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     ax, word_21148
                 add     ax, word_2118A
                 mov     word_22776, ax
@@ -13767,8 +13767,8 @@ sub_17C08       proc near               ; CODE XREF: sub_10ED0+64↑p
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 retn
 sub_17C08       endp
 
@@ -13785,11 +13785,11 @@ sub_17C69       proc near               ; CODE XREF: start+2FE↑p
                 mov     byte_22778, 0
                 mov     word_22776, 202h
                 mov     cx, 8
-                call    sub_11232
+                call    drawTileRun
                 mov     word ptr es:1Ah, 2Fh ; '/'
                 add     word ptr es:1Ch, 20h ; ' '
                 mov     cx, 8
-                call    sub_11232
+                call    drawTileRun
                 mov     si, 609Fh
                 call    sub_17CF2
                 mov     si, word_2204A
@@ -13808,14 +13808,14 @@ sub_17CAA       proc near               ; CODE XREF: sub_17D2D+1A↓p
                 mov     byte_22778, 0
                 mov     word_22776, 282h
                 mov     cx, 6
-                call    sub_11232
+                call    drawTileRun
                 mov     word_22776, 2C6h
                 mov     cx, 2
-                call    sub_11232
+                call    drawTileRun
                 mov     word ptr es:1Ah, 2Fh ; '/'
                 add     word ptr es:1Ch, 20h ; ' '
                 mov     cx, 8
-                call    sub_11232
+                call    drawTileRun
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 retn
@@ -13889,7 +13889,7 @@ loc_17D5E:                              ; CODE XREF: sub_17D2D+B↑j
                 mov     bx, [si+6]
                 mov     es:20h, bx
                 mov     ax, word_2204C
-                call    sub_194AB
+                call    shared_6b5782_194AB
                 retn
 sub_17D2D       endp
 
@@ -13909,7 +13909,7 @@ sub_17D86       proc near               ; CODE XREF: sub_117C9+4↑p
                 mov     byte_22778, 0
                 mov     word_22776, 202h
                 mov     cx, 2
-                call    sub_11232
+                call    drawTileRun
                 mov     si, 609Fh
                 jmp     short loc_17DF4
 ; ---------------------------------------------------------------------------
@@ -13924,7 +13924,7 @@ loc_17DC2:                              ; CODE XREF: sub_17D86+9↑j
                 mov     byte_22778, 0
                 mov     word_22776, 28Ah
                 mov     cx, 2
-                call    sub_11232
+                call    drawTileRun
                 mov     si, 60A7h
 
 loc_17DF4:                              ; CODE XREF: sub_17D86+3A↑j
@@ -13937,7 +13937,7 @@ loc_17DF4:                              ; CODE XREF: sub_17D86+3A↑j
                 mov     bx, [si+6]
                 mov     es:20h, bx
                 mov     ax, word_2204C
-                call    sub_1948D
+                call    shared_6b5782
                 retn
 sub_17D86       endp
 
@@ -14078,13 +14078,13 @@ loc_17EE5:                              ; CODE XREF: sub_17E86+5A↑j
                 jnz     short loc_17F24
                 mov     bx, 56DAh
                 mov     ax, 6CA1h
-                call    sub_1AB12
+                call    shared_aa2cd6
                 mov     byte ptr cs:word_21692, 0
                 mov     ax, 72C5h
                 mov     bx, 56DAh
-                call    sub_19324
+                call    shared_58fa66
                 mov     bx, 56DAh
-                call    sub_1AB28
+                call    shared_9a999a
                 jmp     loc_17E8B
 ; ---------------------------------------------------------------------------
 
@@ -14107,13 +14107,13 @@ loc_17F42:                              ; CODE XREF: sub_17E86+B2↑j
                 push    si
                 mov     bx, 56DAh
                 mov     ax, 6CA1h
-                call    sub_1AB12
+                call    shared_aa2cd6
                 mov     byte ptr cs:word_21692, 0
                 pop     ax
                 mov     bx, 56DAh
-                call    sub_19324
+                call    shared_58fa66
                 mov     bx, 56DAh
-                call    sub_1AB28
+                call    shared_9a999a
                 jmp     loc_17E8B
 ; ---------------------------------------------------------------------------
 
@@ -14169,13 +14169,13 @@ loc_17FB2:                              ; CODE XREF: sub_17E86+53↑j
                 push    bx
                 mov     bx, 6CA9h
                 mov     ax, 6CC0h
-                call    sub_1AB12
+                call    shared_aa2cd6
                 mov     bx, 6CA9h
                 pop     ax
-                call    sub_1AB12
+                call    shared_aa2cd6
                 mov     bx, 6CA1h
                 mov     al, 0
-                call    sub_1B782
+                call    shared_77e6d6
                 jmp     loc_17E8B
 ; ---------------------------------------------------------------------------
 
@@ -14206,7 +14206,7 @@ seg002          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17FE6       proc far                ; CODE XREF: sub_17719+67↑P
+drawPartyStrip  proc far                ; CODE XREF: sub_17719+67↑P
                 push    ax
                 push    bx
                 push    cx
@@ -14218,55 +14218,55 @@ sub_17FE6       proc far                ; CODE XREF: sub_17719+67↑P
                 cmp     byte ptr ds:518Dh, 6
                 jnz     short loc_18000
 
-loc_17FFA:                              ; CODE XREF: sub_17FE6+B↑j
-                call    sub_183B5
+loc_17FFA:                              ; CODE XREF: drawPartyStrip+B↑j
+                call    shared_cf62f3
                 jmp     loc_18132
 ; ---------------------------------------------------------------------------
 
-loc_18000:                              ; CODE XREF: sub_17FE6+12↑j
-                call    sub_181BD
-                call    sub_184FA
+loc_18000:                              ; CODE XREF: drawPartyStrip+12↑j
+                call    shared_63ca2b
+                call    shared_ab7386
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     word ptr ds:67B4h, 10h
                 mov     word ptr ds:67B6h, 0Eh
                 mov     ax, 3
-                call    sub_1841F
+                call    shared_6228a1
                 mov     cx, 4
 
-loc_18029:                              ; CODE XREF: sub_17FE6+4B↓j
+loc_18029:                              ; CODE XREF: drawPartyStrip+4B↓j
                 add     word ptr ds:67B4h, 20h ; ' '
-                call    sub_181A1
+                call    shared_9790fc
                 loop    loc_18029
                 mov     word ptr ds:67B4h, 10h
                 mov     word ptr ds:67B6h, 2Eh ; '.'
                 mov     ax, 0Dh
-                call    sub_1841F
+                call    shared_6228a1
                 mov     cx, 4
 
-loc_18048:                              ; CODE XREF: sub_17FE6+6A↓j
+loc_18048:                              ; CODE XREF: drawPartyStrip+6A↓j
                 add     word ptr ds:67B4h, 20h ; ' '
-                call    sub_181A1
+                call    shared_9790fc
                 loop    loc_18048
                 mov     word ptr ds:67B4h, 10h
                 mov     word ptr ds:67B6h, 4Eh ; 'N'
                 mov     ax, 17h
-                call    sub_1841F
+                call    shared_6228a1
                 mov     cx, 4
 
-loc_18067:                              ; CODE XREF: sub_17FE6+89↓j
+loc_18067:                              ; CODE XREF: drawPartyStrip+89↓j
                 add     word ptr ds:67B4h, 20h ; ' '
-                call    sub_181A1
+                call    shared_9790fc
                 loop    loc_18067
                 mov     word ptr ds:67B4h, 10h
                 mov     word ptr ds:67B6h, 6Eh ; 'n'
                 mov     ax, 21h ; '!'
-                call    sub_1841F
+                call    shared_6228a1
                 mov     cx, 3
 
-loc_18086:                              ; CODE XREF: sub_17FE6+A8↓j
+loc_18086:                              ; CODE XREF: drawPartyStrip+A8↓j
                 add     word ptr ds:67B4h, 20h ; ' '
-                call    sub_181A1
+                call    shared_9790fc
                 loop    loc_18086
                 mov     word ptr ds:67B4h, 90h
                 mov     word ptr ds:67B6h, 6Eh ; 'n'
@@ -14277,58 +14277,58 @@ loc_18086:                              ; CODE XREF: sub_17FE6+A8↓j
                 mov     ds:67C6h, ax
                 mov     al, ds:5193h
                 mov     ds:67C8h, al
-                call    sub_181A1
+                call    shared_9790fc
 
-loc_180B5:                              ; CODE XREF: sub_17FE6+BB↑j
+loc_180B5:                              ; CODE XREF: drawPartyStrip+BB↑j
                 mov     ax, ds:8568h
                 or      ax, ax
                 jz      short loc_180C8
                 mov     ds:67C6h, ax
                 mov     al, ds:5193h
                 mov     ds:67C8h, al
-                call    sub_181A1
+                call    shared_9790fc
 
-loc_180C8:                              ; CODE XREF: sub_17FE6+D4↑j
+loc_180C8:                              ; CODE XREF: drawPartyStrip+D4↑j
                 cmp     word ptr ds:51B4h, 0
                 jnz     short loc_180D1
                 jmp     short loc_18132
 ; ---------------------------------------------------------------------------
 
-loc_180D1:                              ; CODE XREF: sub_17FE6+E7↑j
-                call    sub_1849F
+loc_180D1:                              ; CODE XREF: drawPartyStrip+E7↑j
+                call    shared_9cebbd
                 cmp     word ptr ds:856Ah, 0
                 jz      short loc_18132
                 mov     word ptr ds:67B6h, 0Eh
                 mov     cx, 4
 
-loc_180E4:                              ; CODE XREF: sub_17FE6+14A↓j
+loc_180E4:                              ; CODE XREF: drawPartyStrip+14A↓j
                 push    cx
                 mov     word ptr ds:67B4h, 30h ; '0'
                 mov     bx, ds:856Ah
                 mov     ax, [bx]
-                call    sub_184E0
+                call    shared_89c35e
                 mov     cx, 2
 
-loc_180F7:                              ; CODE XREF: sub_17FE6+11B↓j
+loc_180F7:                              ; CODE XREF: drawPartyStrip+11B↓j
                 add     word ptr ds:67B4h, 20h ; ' '
-                call    sub_18EC8
+                call    drawTileKeyed
                 loop    loc_180F7
                 add     word ptr ds:67B4h, 20h ; ' '
                 mov     bx, ds:856Ch
                 mov     ax, [bx]
-                call    sub_184E0
+                call    shared_89c35e
                 add     word ptr ds:67B4h, 20h ; ' '
                 mov     bx, ds:856Ch
                 mov     ax, [bx+2]
-                call    sub_184E0
+                call    shared_89c35e
                 add     word ptr ds:67B6h, 20h ; ' '
                 add     word ptr ds:856Ah, 2
                 add     word ptr ds:856Ch, 4
                 pop     cx
                 loop    loc_180E4
 
-loc_18132:                              ; CODE XREF: sub_17FE6+17↑j
-                                        ; sub_17FE6+E9↑j ...
+loc_18132:                              ; CODE XREF: drawPartyStrip+17↑j
+                                        ; drawPartyStrip+E9↑j ...
                 mov     ax, ds
                 mov     es:16h, ax
                 mov     ax, 56DAh
@@ -14340,28 +14340,28 @@ loc_18132:                              ; CODE XREF: sub_17FE6+17↑j
                 mov     word ptr es:1Ch, 0Eh
                 mov     cx, 4
 
-loc_18157:                              ; CODE XREF: sub_17FE6+1A8↓j
+loc_18157:                              ; CODE XREF: drawPartyStrip+1A8↓j
                 push    cx
                 mov     cx, 5
                 mov     word ptr es:1Ah, 30h ; '0'
 
-loc_18162:                              ; CODE XREF: sub_17FE6+19F↓j
+loc_18162:                              ; CODE XREF: drawPartyStrip+19F↓j
                 push    cx
                 mov     ah, 9
                 int     62h             ; VID fn09 vidGetImageRaw
                 mov     bx, 0A43h
-                call    sub_18D8A
+                call    fileWriteRecord_18D8A
                 inc     word ptr ds:0A4Bh
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     al, 5
-                call    sub_1BD44
+                call    tileOp
                 inc     word ptr ds:67C6h
                 pop     cx
                 loop    loc_18162
                 pop     cx
                 add     word ptr es:1Ch, 20h ; ' '
                 loop    loc_18157
-                call    sub_1BC54
+                call    drawBackdropTile
                 and     byte ptr ds:51A7h, 0BFh
                 pop     di
                 pop     si
@@ -14370,27 +14370,27 @@ loc_18162:                              ; CODE XREF: sub_17FE6+19F↓j
                 pop     bx
                 pop     ax
                 retf
-sub_17FE6       endp
+drawPartyStrip  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_181A1       proc near               ; CODE XREF: sub_17FE6+48↑p
-                                        ; sub_17FE6+67↑p ...
+shared_9790fc   proc near               ; CODE XREF: drawPartyStrip+48↑p
+                                        ; drawPartyStrip+67↑p ...
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 retn
-sub_181A1       endp
+shared_9790fc   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_181BD       proc near               ; CODE XREF: sub_17FE6:loc_18000↑p
+shared_63ca2b   proc near               ; CODE XREF: drawPartyStrip:loc_18000↑p
                 test    byte ptr ds:4DBCh, 10h
                 jz      short loc_18209
                 mov     word ptr es:1Ah, 30h ; '0'
@@ -14404,13 +14404,13 @@ sub_181BD       proc near               ; CODE XREF: sub_17FE6:loc_18000↑p
                 mov     word ptr es:1Ah, 90h
                 mov     word ptr es:1Ch, 6Eh ; 'n'
                 mov     ax, 21h ; '!'
-                call    sub_1841F
+                call    shared_6228a1
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_18209:                              ; CODE XREF: sub_181BD+5↑j
+loc_18209:                              ; CODE XREF: shared_63ca2b+5↑j
                 mov     word ptr es:1Ah, 30h ; '0'
                 mov     word ptr es:1Ch, 0Eh
                 mov     al, ds:5193h
@@ -14419,110 +14419,110 @@ loc_18209:                              ; CODE XREF: sub_181BD+5↑j
                 add     ax, 4
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:5196h
                 add     ax, 8
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word ptr ds:67C6h
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:5194h
                 add     ax, 5
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     word ptr es:1Ah, 30h ; '0'
                 mov     word ptr es:1Ch, 2Eh ; '.'
                 mov     ax, ds:5194h
                 add     ax, 0Eh
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:5196h
                 add     ax, 0Ah
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word ptr ds:67C6h
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:5194h
                 add     ax, 0Fh
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     word ptr es:1Ah, 30h ; '0'
                 mov     word ptr es:1Ch, 4Eh ; 'N'
                 mov     ax, ds:5194h
                 add     ax, 18h
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:5196h
                 add     ax, 0Ch
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word ptr ds:67C6h
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:5194h
                 add     ax, 19h
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     word ptr es:1Ah, 30h ; '0'
                 mov     word ptr es:1Ch, 6Eh ; 'n'
                 mov     ax, ds:5194h
                 add     ax, 22h ; '"'
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, ds:5196h
                 add     ax, 0Eh
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word ptr ds:67C6h
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 mov     ax, 21h ; '!'
-                call    sub_1841F
+                call    shared_6228a1
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     word ptr es:1Ah, 0B0h
                 mov     word ptr es:1Ch, 0Eh
                 mov     byte ptr ds:67C8h, 3
                 mov     word ptr ds:67C6h, 30h ; '0'
                 mov     cx, 4
 
-loc_183A4:                              ; CODE XREF: sub_181BD+1F5↓j
+loc_183A4:                              ; CODE XREF: shared_63ca2b+1F5↓j
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ch, 20h ; ' '
                 loop    loc_183A4
                 retn
-sub_181BD       endp
+shared_63ca2b   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_183B5       proc near               ; CODE XREF: sub_17FE6:loc_17FFA↑p
+shared_cf62f3   proc near               ; CODE XREF: drawPartyStrip:loc_17FFA↑p
                 mov     word ptr es:1Ch, 0Eh
                 mov     al, ds:5193h
                 mov     ds:67C8h, al
@@ -14531,14 +14531,14 @@ sub_183B5       proc near               ; CODE XREF: sub_17FE6:loc_17FFA↑p
                 mov     ds:67C6h, ax
                 mov     cx, 4
 
-loc_183CE:                              ; CODE XREF: sub_183B5+3B↓j
+loc_183CE:                              ; CODE XREF: shared_cf62f3+3B↓j
                 mov     word ptr es:1Ah, 30h ; '0'
                 push    cx
                 mov     cx, 4
 
-loc_183D9:                              ; CODE XREF: sub_183B5+32↓j
+loc_183D9:                              ; CODE XREF: shared_cf62f3+32↓j
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 loop    loc_183D9
                 add     word ptr es:1Ch, 20h ; ' '
@@ -14550,20 +14550,20 @@ loc_183D9:                              ; CODE XREF: sub_183B5+32↓j
                 mov     word ptr ds:67C6h, 30h ; '0'
                 mov     cx, 4
 
-loc_1840E:                              ; CODE XREF: sub_183B5+67↓j
+loc_1840E:                              ; CODE XREF: shared_cf62f3+67↓j
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ch, 20h ; ' '
                 loop    loc_1840E
                 retn
-sub_183B5       endp
+shared_cf62f3   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1841F       proc near               ; CODE XREF: sub_17FE6+3D↑p
-                                        ; sub_17FE6+5C↑p ...
+shared_6228a1   proc near               ; CODE XREF: drawPartyStrip+3D↑p
+                                        ; drawPartyStrip+5C↑p ...
                 mov     word ptr ds:67C6h, 30h ; '0'
                 mov     byte ptr ds:67C8h, 3
                 mov     bx, ds:51B2h
@@ -14597,13 +14597,13 @@ sub_1841F       proc near               ; CODE XREF: sub_17FE6+3D↑p
                 cmp     bx, 4
                 jle     short loc_18482
 
-locret_18481:                           ; CODE XREF: sub_1841F+12↑j
-                                        ; sub_1841F+20↑j ...
+locret_18481:                           ; CODE XREF: shared_6228a1+12↑j
+                                        ; shared_6228a1+20↑j ...
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_18482:                              ; CODE XREF: sub_1841F+17↑j
-                                        ; sub_1841F+25↑j ...
+loc_18482:                              ; CODE XREF: shared_6228a1+17↑j
+                                        ; shared_6228a1+25↑j ...
                 shl     bx, 1
                 sub     ax, 3
                 add     bx, ax
@@ -14613,23 +14613,23 @@ loc_18482:                              ; CODE XREF: sub_1841F+17↑j
                 jl      short loc_1849A
                 add     bx, 0A0h
 
-loc_1849A:                              ; CODE XREF: sub_1841F+75↑j
+loc_1849A:                              ; CODE XREF: shared_6228a1+75↑j
                 mov     ds:67C6h, bx
                 retn
-sub_1841F       endp
+shared_6228a1   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1849F       proc near               ; CODE XREF: sub_17FE6:loc_180D1↑p
+shared_9cebbd   proc near               ; CODE XREF: drawPartyStrip:loc_180D1↑p
                 mov     word ptr ds:856Eh, 0
                 mov     word ptr ds:856Ah, 0
                 mov     byte ptr ds:67C8h, 3
                 mov     bx, 82CEh
                 mov     ax, ds:51B4h
 
-loc_184B6:                              ; CODE XREF: sub_1849F+23↓j
+loc_184B6:                              ; CODE XREF: shared_9cebbd+23↓j
                 cmp     ax, [bx]
                 jz      short loc_184C4
                 cmp     word ptr [bx], 0
@@ -14638,7 +14638,7 @@ loc_184B6:                              ; CODE XREF: sub_1849F+23↓j
                 jmp     short loc_184B6
 ; ---------------------------------------------------------------------------
 
-loc_184C4:                              ; CODE XREF: sub_1849F+19↑j
+loc_184C4:                              ; CODE XREF: shared_9cebbd+19↑j
                 mov     bx, [bx+2]
                 mov     ds:856Ah, bx
                 add     bx, 8
@@ -14647,34 +14647,34 @@ loc_184C4:                              ; CODE XREF: sub_1849F+19↑j
                 jl      short locret_184DF
                 mov     word ptr ds:856Eh, 0A0h
 
-locret_184DF:                           ; CODE XREF: sub_1849F+1E↑j
-                                        ; sub_1849F+38↑j
+locret_184DF:                           ; CODE XREF: shared_9cebbd+1E↑j
+                                        ; shared_9cebbd+38↑j
                 retn
-sub_1849F       endp
+shared_9cebbd   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_184E0       proc near               ; CODE XREF: sub_17FE6+10B↑p
-                                        ; sub_17FE6+128↑p ...
+shared_89c35e   proc near               ; CODE XREF: drawPartyStrip+10B↑p
+                                        ; drawPartyStrip+128↑p ...
                 cmp     ax, 30h ; '0'
                 jz      short loc_184E9
                 add     ax, ds:856Eh
 
-loc_184E9:                              ; CODE XREF: sub_184E0+3↑j
+loc_184E9:                              ; CODE XREF: shared_89c35e+3↑j
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 retn
-sub_184E0       endp
+shared_89c35e   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_184FA       proc near               ; CODE XREF: sub_17FE6+1D↑p
+shared_ab7386   proc near               ; CODE XREF: drawPartyStrip+1D↑p
                 mov     word ptr ds:67B0h, 0
                 mov     word ptr ds:67B2h, 0
                 mov     word ptr ds:67B6h, 0FFEEh
@@ -14689,25 +14689,25 @@ sub_184FA       proc near               ; CODE XREF: sub_17FE6+1D↑p
                 jmp     short loc_18558
 ; ---------------------------------------------------------------------------
 
-loc_18528:                              ; CODE XREF: sub_184FA+1D↑j
+loc_18528:                              ; CODE XREF: shared_ab7386+1D↑j
                 test    byte ptr ds:4DBCh, 20h
                 jz      short loc_18534
                 mov     ax, 57Fh
                 jmp     short loc_18558
 ; ---------------------------------------------------------------------------
 
-loc_18534:                              ; CODE XREF: sub_184FA+33↑j
+loc_18534:                              ; CODE XREF: shared_ab7386+33↑j
                 mov     word ptr ds:8568h, 0
                 cmp     byte ptr ds:518Dh, 7
                 jl      short locret_18548
                 cmp     byte ptr ds:518Dh, 0Eh
                 jl      short loc_18549
 
-locret_18548:                           ; CODE XREF: sub_184FA+45↑j
+locret_18548:                           ; CODE XREF: shared_ab7386+45↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_18549:                              ; CODE XREF: sub_184FA+4C↑j
+loc_18549:                              ; CODE XREF: shared_ab7386+4C↑j
                 xor     ah, ah
                 mov     al, ds:518Dh
                 sub     ax, 7
@@ -14715,18 +14715,18 @@ loc_18549:                              ; CODE XREF: sub_184FA+4C↑j
                 shl     ax, cl
                 add     ax, 4FFh
 
-loc_18558:                              ; CODE XREF: sub_184FA+27↑j
-                                        ; sub_184FA+2C↑j ...
+loc_18558:                              ; CODE XREF: shared_ab7386+27↑j
+                                        ; shared_ab7386+2C↑j ...
                 mov     ds:67C6h, ax
                 mov     cx, 3
 
-loc_1855E:                              ; CODE XREF: sub_184FA+B5↓j
+loc_1855E:                              ; CODE XREF: shared_ab7386+B5↓j
                 add     word ptr ds:67B6h, 20h ; ' '
                 mov     word ptr ds:67B4h, 10h
                 push    cx
                 mov     cx, 4
 
-loc_1856D:                              ; CODE XREF: sub_184FA+B2↓j
+loc_1856D:                              ; CODE XREF: shared_ab7386+B2↓j
                 add     word ptr ds:67B4h, 20h ; ' '
                 mov     ax, ds:67B4h
                 mov     es:22h, ax
@@ -14742,7 +14742,7 @@ loc_1856D:                              ; CODE XREF: sub_184FA+B2↓j
                 mov     es:20h, ax
                 inc     word ptr ds:67C6h
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     ah, 13h
                 int     62h             ; VID fn13 vidCopyRectKeyed
                 loop    loc_1856D
@@ -14752,7 +14752,7 @@ loc_1856D:                              ; CODE XREF: sub_184FA+B2↓j
                 mov     word ptr ds:67B4h, 10h
                 mov     cx, 3
 
-loc_185BF:                              ; CODE XREF: sub_184FA+104↓j
+loc_185BF:                              ; CODE XREF: shared_ab7386+104↓j
                 add     word ptr ds:67B4h, 20h ; ' '
                 mov     ax, ds:67B4h
                 mov     es:22h, ax
@@ -14768,7 +14768,7 @@ loc_185BF:                              ; CODE XREF: sub_184FA+104↓j
                 mov     es:20h, ax
                 inc     word ptr ds:67C6h
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     ah, 13h
                 int     62h             ; VID fn13 vidCopyRectKeyed
                 loop    loc_185BF
@@ -14776,7 +14776,7 @@ loc_185BF:                              ; CODE XREF: sub_184FA+104↓j
                 mov     ax, ds:67C6h
                 mov     ds:8568h, ax
                 retn
-sub_184FA       endp
+shared_ab7386   endp
 
 seg002          ends
 
@@ -14814,7 +14814,7 @@ sub_1860C       proc far                ; CODE XREF: seg000:37A7↑P
                 mov     al, 1
                 mov     ah, 2Dh ; '-'
                 int     62h             ; VID fn2D vidMouseSetCursorMode
-                call    sub_193D2
+                call    shared_1558db
                 mov     ax, es:44h
                 mov     ds:8579h, ax
                 call    sub_18981
@@ -14824,7 +14824,7 @@ loc_1864E:                              ; CODE XREF: sub_1860C+58↓j
                                         ; sub_1860C+72↓j ...
                 mov     cs:byte_2275E, 0
                 call    sub_198E8
-                call    sub_19346
+                call    pollInput
                 cmp     cs:byte_227A5, 0
                 jz      short loc_1864E
                 cmp     cs:byte_227A5, 1
@@ -14940,7 +14940,7 @@ loc_18717:                              ; CODE XREF: sub_1860C+113↓j
                 mov     dx, ds:8579h
                 mov     ax, cs:word_227B4
                 mov     bx, cs:word_227B6
-                call    sub_1B71E
+                call    shared_a7dbf2
                 mov     ah, 28h ; '('
                 int     62h             ; VID fn28 vidMouseShow
                 mov     cl, 5
@@ -15178,7 +15178,7 @@ sub_188F6       proc near               ; CODE XREF: sub_1860C:loc_186F1↑p
                 mov     dx, ds:8579h
                 mov     ax, cs:word_227B4
                 mov     bx, cs:word_227B6
-                call    sub_1B71E
+                call    shared_a7dbf2
                 mov     bh, cs:byte_227B8
                 mov     bl, cs:byte_227B9
                 call    sub_18A28
@@ -15201,7 +15201,7 @@ sub_18936       proc near               ; CODE XREF: sub_1860C+3F↑p
                 mov     cs:word_22776, ax
                 mov     cs:byte_22778, 0Fh
                 mov     ax, 4
-                call    sub_1BD44
+                call    tileOp
                 mov     ax, cs:word_227B4
                 mov     es:1Ah, ax
                 mov     ax, cs:word_227B6
@@ -15212,8 +15212,8 @@ sub_18936       proc near               ; CODE XREF: sub_1860C+3F↑p
                 mov     dx, 107h
                 mov     ax, cs:word_227B4
                 mov     bx, cs:word_227B6
-                call    sub_1B735
-                call    sub_1BC54
+                call    shared_063c13
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 retn
@@ -15285,19 +15285,19 @@ seg004          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18A0E       proc far                ; CODE XREF: sub_12E7B:loc_130DF↑P
+shared_c34f43   proc far                ; CODE XREF: sub_12E7B:loc_130DF↑P
                                         ; sub_1673A:loc_16A2C↑P
                 push    ax
                 push    cx
                 mov     cx, 672h
-                call    sub_1BD04
+                call    speakerOn
                 mov     ax, 5
-                call    sub_18B96
-                call    sub_1BD21
+                call    delayTicks
+                call    speakerOff
                 pop     cx
                 pop     ax
                 retf
-sub_18A0E       endp
+shared_c34f43   endp
 
 seg004          ends
 
@@ -15341,7 +15341,7 @@ seg006          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18A3E       proc far                ; CODE XREF: sub_17A33:loc_17A7C↑P
+shared_c9c8cc   proc far                ; CODE XREF: sub_17A33:loc_17A7C↑P
                 push    ax
                 push    bx
                 push    cx
@@ -15352,7 +15352,7 @@ sub_18A3E       proc far                ; CODE XREF: sub_17A33:loc_17A7C↑P
                 mov     cs:word_20DEE, 0
                 mov     si, 4DBAh
 
-loc_18A51:                              ; CODE XREF: sub_18A3E+5A↓j
+loc_18A51:                              ; CODE XREF: shared_c9c8cc+5A↓j
                 cmp     word ptr [si], 0
                 jz      short loc_18A95
                 push    cx
@@ -15360,7 +15360,7 @@ loc_18A51:                              ; CODE XREF: sub_18A3E+5A↓j
                 mov     ax, [si]
                 mov     bx, 9E3h
                 mov     di, 5172h
-                call    sub_19518
+                call    fileReadRecordTo
                 pop     si
                 pop     cx
                 cmp     cs:byte_2113D, 6
@@ -15374,12 +15374,12 @@ loc_18A51:                              ; CODE XREF: sub_18A3E+5A↓j
                 cmp     cs:byte_2113C, 5
                 jnz     short loc_18A95
 
-loc_18A8F:                              ; CODE XREF: sub_18A3E+47↑j
+loc_18A8F:                              ; CODE XREF: shared_c9c8cc+47↑j
                 mov     ax, [si]
                 mov     cs:word_20DEE, ax
 
-loc_18A95:                              ; CODE XREF: sub_18A3E+16↑j
-                                        ; sub_18A3E+2F↑j ...
+loc_18A95:                              ; CODE XREF: shared_c9c8cc+16↑j
+                                        ; shared_c9c8cc+2F↑j ...
                 sub     si, 2
                 loop    loc_18A51
                 cmp     cs:word_20DEE, 0
@@ -15387,7 +15387,7 @@ loc_18A95:                              ; CODE XREF: sub_18A3E+16↑j
                 mov     ax, cs:word_20D60
                 mov     cs:word_20DEE, ax
 
-loc_18AAA:                              ; CODE XREF: sub_18A3E+62↑j
+loc_18AAA:                              ; CODE XREF: shared_c9c8cc+62↑j
                 pop     si
                 pop     di
                 pop     dx
@@ -15395,7 +15395,7 @@ loc_18AAA:                              ; CODE XREF: sub_18A3E+62↑j
                 pop     bx
                 pop     ax
                 retf
-sub_18A3E       endp
+shared_c9c8cc   endp
 
 seg006          ends
 
@@ -15411,7 +15411,7 @@ seg007          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18AB2       proc far                ; CODE XREF: start+1D9↑P
+shared_5c3cce   proc far                ; CODE XREF: start+1D9↑P
                 push    ax
                 push    bx
                 push    dx
@@ -15424,7 +15424,7 @@ sub_18AB2       proc far                ; CODE XREF: start+1D9↑P
                 pop     bx
                 pop     ax
                 retf
-sub_18AB2       endp
+shared_5c3cce   endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -15462,7 +15462,7 @@ seg008          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_18ADA       proc far                ; CODE XREF: sub_18BAC+36↓P
+shared_72afff   proc far                ; CODE XREF: sub_18BAC+36↓P
                                         ; sub_18BAC+66↓P ...
 
 var_4           = byte ptr -4
@@ -15486,58 +15486,58 @@ var_s0          = word ptr  0
                 jmp     short loc_18B67
 ; ---------------------------------------------------------------------------
 
-loc_18B0B:                              ; CODE XREF: sub_18ADA+17↑j
+loc_18B0B:                              ; CODE XREF: shared_72afff+17↑j
                 mov     [bp+var_2], 2710h
-                call    sub_18B6F
+                call    shared_04c688
                 cmp     al, 0
                 jz      short loc_18B1D
                 mov     [bp+var_4], 1
 
-loc_18B1D:                              ; CODE XREF: sub_18ADA+3D↑j
+loc_18B1D:                              ; CODE XREF: shared_72afff+3D↑j
                 mov     [bp+var_2], 3E8h
-                call    sub_18B6F
+                call    shared_04c688
                 cmp     al, 0
                 jz      short loc_18B2F
                 mov     [bp+var_4], 1
 
-loc_18B2F:                              ; CODE XREF: sub_18ADA+4F↑j
+loc_18B2F:                              ; CODE XREF: shared_72afff+4F↑j
                 cmp     [bp+var_4], 0
                 jz      short loc_18B39
                 mov     byte ptr [bx], 2Ch ; ','
                 inc     bx
 
-loc_18B39:                              ; CODE XREF: sub_18ADA+59↑j
+loc_18B39:                              ; CODE XREF: shared_72afff+59↑j
                 mov     [bp+var_2], 64h ; 'd'
-                call    sub_18B6F
+                call    shared_04c688
                 cmp     al, 0
                 jz      short loc_18B4B
                 mov     [bp+var_4], 1
 
-loc_18B4B:                              ; CODE XREF: sub_18ADA+6B↑j
+loc_18B4B:                              ; CODE XREF: shared_72afff+6B↑j
                 mov     [bp+var_2], 0Ah
-                call    sub_18B6F
+                call    shared_04c688
                 cmp     al, 0
                 jz      short loc_18B5D
                 mov     [bp+var_4], 1
 
-loc_18B5D:                              ; CODE XREF: sub_18ADA+7D↑j
+loc_18B5D:                              ; CODE XREF: shared_72afff+7D↑j
                 mov     [bp+var_2], 1
-                call    sub_18B6F
+                call    shared_04c688
 
-loc_18B67:                              ; CODE XREF: sub_18ADA+2F↑j
+loc_18B67:                              ; CODE XREF: shared_72afff+2F↑j
                 mov     byte ptr [bx], 0
                 pop     dx
                 mov     sp, bp
                 pop     bp
                 retf
-sub_18ADA       endp
+shared_72afff   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18B6F       proc far                ; CODE XREF: sub_18ADA+36↑P
-                                        ; sub_18ADA+48↑P ...
+shared_04c688   proc far                ; CODE XREF: shared_72afff+36↑P
+                                        ; shared_72afff+48↑P ...
                 mov     ax, [bp+0]
                 mov     dx, 0
                 div     word ptr [bp-2]
@@ -15552,10 +15552,10 @@ sub_18B6F       proc far                ; CODE XREF: sub_18ADA+36↑P
                 jnz     short locret_18B94
                 mov     byte ptr [bx-1], 20h ; ' '
 
-locret_18B94:                           ; CODE XREF: sub_18B6F+19↑j
-                                        ; sub_18B6F+1F↑j
+locret_18B94:                           ; CODE XREF: shared_04c688+19↑j
+                                        ; shared_04c688+1F↑j
                 retf
-sub_18B6F       endp
+shared_04c688   endp
 
 seg008          ends
 
@@ -15571,7 +15571,7 @@ seg009          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18B96       proc far                ; CODE XREF: sub_10B4D+D↑P
+delayTicks      proc far                ; CODE XREF: sub_10B4D+D↑P
                                         ; sub_10FEC+B7↑P ...
                 push    bx
                 push    cx
@@ -15585,7 +15585,7 @@ sub_18B96       proc far                ; CODE XREF: sub_10B4D+D↑P
                                         ; Otherwise, AL > 0
                 add     bx, dx
 
-loc_18BA0:                              ; CODE XREF: sub_18B96+10↓j
+loc_18BA0:                              ; CODE XREF: delayTicks+10↓j
                 xor     ah, ah
                 int     1Ah             ; CLOCK - GET TIME OF DAY
                                         ; Return: CX:DX = clock count
@@ -15598,7 +15598,7 @@ loc_18BA0:                              ; CODE XREF: sub_18B96+10↓j
                 pop     cx
                 pop     bx
                 retf
-sub_18B96       endp
+delayTicks      endp
 
 seg009          ends
 
@@ -15628,15 +15628,15 @@ loc_18BB2:                              ; CODE XREF: sub_18BAC+140↓j
 
 loc_18BC4:                              ; CODE XREF: sub_18BAC+10↑j
                 mov     ax, [si+2]
-                call    sub_19324
+                call    shared_58fa66
                 cmp     word ptr [si], 1
                 jnz     short loc_18BFC
                 mov     bx, 529Eh
                 mov     ax, 857Ch
-                call    sub_19324
+                call    shared_58fa66
                 mov     ax, [si+4]
                 mov     bx, 867Dh
-                call    sub_18ADA
+                call    shared_72afff
                 mov     ax, [bx-3]
                 mov     ds:8589h, ax
                 mov     al, [bx-1]
@@ -15654,10 +15654,10 @@ loc_18C01:                              ; CODE XREF: sub_18BAC+9B↓j
                                         ; sub_18BAC+AA↓j ...
                 mov     bx, 529Eh
                 mov     ax, 8583h
-                call    sub_19324
+                call    shared_58fa66
                 mov     ax, [si+4]
                 mov     bx, 867Dh
-                call    sub_18ADA
+                call    shared_72afff
                 mov     ax, [bx-3]
                 mov     ds:8589h, ax
                 mov     al, [bx-1]
@@ -15679,7 +15679,7 @@ loc_18C3A:                              ; CODE XREF: sub_18BAC+86↑j
                 cmp     word ptr [si], 4
                 jnz     short loc_18C49
                 mov     ax, 859Bh
-                call    sub_19324
+                call    shared_58fa66
                 jmp     short loc_18C01
 ; ---------------------------------------------------------------------------
 
@@ -15687,7 +15687,7 @@ loc_18C49:                              ; CODE XREF: sub_18BAC+91↑j
                 cmp     word ptr [si], 5
                 jnz     short loc_18C58
                 mov     ax, 85ADh
-                call    sub_19324
+                call    shared_58fa66
                 jmp     short loc_18C01
 ; ---------------------------------------------------------------------------
 
@@ -15695,7 +15695,7 @@ loc_18C58:                              ; CODE XREF: sub_18BAC+A0↑j
                 cmp     word ptr [si], 6
                 jnz     short loc_18C67
                 mov     ax, 85BFh
-                call    sub_19324
+                call    shared_58fa66
                 jmp     short loc_18C01
 ; ---------------------------------------------------------------------------
 
@@ -15785,7 +15785,7 @@ loc_18CD5:                              ; CODE XREF: sub_18BAC+122↑j
 
 loc_18CDF:                              ; CODE XREF: sub_18BAC+15↑j
                                         ; sub_18BAC+4D↑j ...
-                call    sub_19324
+                call    shared_58fa66
                 add     si, 6
                 cmp     word ptr [si], 0FFFFh
                 jz      short loc_18CEF
@@ -15794,7 +15794,7 @@ loc_18CDF:                              ; CODE XREF: sub_18BAC+15↑j
 
 loc_18CEF:                              ; CODE XREF: sub_18BAC+13E↑j
                 mov     bx, 529Eh
-                call    sub_1AB28
+                call    shared_9a999a
                 retf
 sub_18BAC       endp
 
@@ -15811,8 +15811,8 @@ seg011          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18CF8       proc far                ; CODE XREF: sub_18D39+4↓p
-                                        ; sub_18D60+5↓p ...
+fileSeekRecord  proc far                ; CODE XREF: fileWriteRecord+4↓p
+                                        ; fileReadToSegment+5↓p ...
                 push    dx
                 push    cx
                 push    bx
@@ -15830,7 +15830,7 @@ sub_18CF8       proc far                ; CODE XREF: sub_18D39+4↓p
                 pop     cx
                 pop     dx
                 retf
-sub_18CF8       endp
+fileSeekRecord  endp
 
 ; ---------------------------------------------------------------------------
                 push    bx
@@ -15857,13 +15857,13 @@ loc_18D32:                              ; CODE XREF: seg011:0036↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18D39       proc far                ; CODE XREF: sub_19518+6↓P
+fileWriteRecord proc far                ; CODE XREF: fileReadRecordTo+6↓P
                                         ; sub_1B1E2+58↓P
                 push    dx
                 push    cx
                 push    bx
                 push    cs
-                call    near ptr sub_18CF8
+                call    near ptr fileSeekRecord
                 mov     dx, [bx+2]
                 mov     cx, [bx+6]
                 mov     ah, 3Fh ; '?'
@@ -15877,23 +15877,23 @@ sub_18D39       proc far                ; CODE XREF: sub_19518+6↓P
                 jz      short loc_18D5D
                 inc     cs:byte_227A5
 
-loc_18D5D:                              ; CODE XREF: sub_18D39+1D↑j
+loc_18D5D:                              ; CODE XREF: fileWriteRecord+1D↑j
                 pop     cx
                 pop     dx
                 retf
-sub_18D39       endp
+fileWriteRecord endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18D60       proc far                ; CODE XREF: sub_1BF4F+49↓P
+fileReadToSegment proc far              ; CODE XREF: tileLoad+49↓P
                 push    dx
                 push    cx
                 push    ds
                 push    bx
                 push    cs
-                call    near ptr sub_18CF8
+                call    near ptr fileSeekRecord
                 mov     cx, [bx+6]
                 mov     ah, 3Fh ; '?'
                 mov     bx, [bx]
@@ -15909,23 +15909,23 @@ sub_18D60       proc far                ; CODE XREF: sub_1BF4F+49↓P
                 jz      short loc_18D87
                 inc     cs:byte_227A5
 
-loc_18D87:                              ; CODE XREF: sub_18D60+20↑j
+loc_18D87:                              ; CODE XREF: fileReadToSegment+20↑j
                 pop     cx
                 pop     dx
                 retf
-sub_18D60       endp
+fileReadToSegment endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18D8A       proc far                ; CODE XREF: sub_17FE6+184↑P
-                                        ; sub_1B762+19↓P
+fileWriteRecord_18D8A proc far          ; CODE XREF: drawPartyStrip+184↑P
+                                        ; fileWriteRecordFrom+19↓P
                 push    dx
                 push    cx
                 push    bx
                 push    cs
-                call    near ptr sub_18CF8
+                call    near ptr fileSeekRecord
                 mov     dx, [bx+2]
                 mov     cx, [bx+6]
                 mov     ah, 40h ; '@'
@@ -15938,11 +15938,11 @@ sub_18D8A       proc far                ; CODE XREF: sub_17FE6+184↑P
                 jz      short loc_18DAE
                 inc     cs:byte_227A5
 
-loc_18DAE:                              ; CODE XREF: sub_18D8A+1D↑j
+loc_18DAE:                              ; CODE XREF: fileWriteRecord_18D8A+1D↑j
                 pop     cx
                 pop     dx
                 retf
-sub_18D8A       endp
+fileWriteRecord_18D8A endp
 
 seg011          ends
 
@@ -15958,7 +15958,7 @@ seg012          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18DB2       proc far                ; CODE XREF: start:loc_10307↑P
+shared_019ed0   proc far                ; CODE XREF: start:loc_10307↑P
                                         ; sub_119E7+89↑P ...
                 cmp     byte ptr es:33h, 2
                 jz      short loc_18E15
@@ -15968,9 +15968,9 @@ sub_18DB2       proc far                ; CODE XREF: start:loc_10307↑P
                 mov     byte ptr ds:67C8h, 0
                 mov     word ptr ds:67C6h, 212h
 
-loc_18DD6:                              ; CODE XREF: sub_18DB2+36↓j
+loc_18DD6:                              ; CODE XREF: shared_019ed0+36↓j
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word ptr ds:67C6h
                 loop    loc_18DD6
@@ -15978,9 +15978,9 @@ loc_18DD6:                              ; CODE XREF: sub_18DB2+36↓j
                 mov     word ptr es:1Ah, 151h
                 add     word ptr es:1Ch, 20h ; ' '
 
-loc_18DFA:                              ; CODE XREF: sub_18DB2+5A↓j
+loc_18DFA:                              ; CODE XREF: shared_019ed0+5A↓j
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word ptr ds:67C6h
                 loop    loc_18DFA
@@ -15988,40 +15988,40 @@ loc_18DFA:                              ; CODE XREF: sub_18DB2+5A↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_18E15:                              ; CODE XREF: sub_18DB2+6↑j
+loc_18E15:                              ; CODE XREF: shared_019ed0+6↑j
                 mov     word ptr es:1Ch, 131h
                 mov     word ptr es:1Ah, 151h
                 mov     byte ptr ds:67C8h, 0
                 mov     word ptr ds:67C6h, 2A8h
                 mov     cx, 8
-                call    sub_18E6D
+                call    drawTileRun_18E6D
                 add     word ptr es:1Ch, 20h ; ' '
                 mov     word ptr es:1Ah, 151h
                 mov     word ptr ds:67C6h, 2B2h
                 mov     cx, 8
-                call    sub_18E6D
+                call    drawTileRun_18E6D
                 add     word ptr es:1Ch, 20h ; ' '
                 mov     word ptr es:1Ah, 151h
                 mov     word ptr ds:67C6h, 2BCh
                 mov     cx, 8
-                call    sub_18E6D
+                call    drawTileRun_18E6D
                 mov     byte ptr es:36h, 0
                 retf
-sub_18DB2       endp
+shared_019ed0   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18E6D       proc near               ; CODE XREF: sub_18DB2+7F↑p
-                                        ; sub_18DB2+98↑p ...
+drawTileRun_18E6D proc near             ; CODE XREF: shared_019ed0+7F↑p
+                                        ; shared_019ed0+98↑p ...
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 add     word ptr es:1Ah, 20h ; ' '
                 inc     word ptr ds:67C6h
-                loop    sub_18E6D
+                loop    drawTileRun_18E6D
                 retn
-sub_18E6D       endp
+drawTileRun_18E6D endp
 
 seg012          ends
 
@@ -16036,7 +16036,7 @@ seg013          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18E82       proc far                ; CODE XREF: sub_174BE+11B↑P
+shared_e75c8c   proc far                ; CODE XREF: sub_174BE+11B↑P
                 push    cx
                 push    dx
                 dec     al
@@ -16059,14 +16059,14 @@ sub_18E82       proc far                ; CODE XREF: sub_174BE+11B↑P
                 cmp     ch, 3
                 jz      short loc_18EC0
 
-loc_18EAD:                              ; CODE XREF: sub_18E82+32↓j
-                                        ; sub_18E82+36↓j ...
+loc_18EAD:                              ; CODE XREF: shared_e75c8c+32↓j
+                                        ; shared_e75c8c+36↓j ...
                 pop     dx
                 pop     cx
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_18EB0:                              ; CODE XREF: sub_18E82+1F↑j
+loc_18EB0:                              ; CODE XREF: shared_e75c8c+1F↑j
                 xor     al, al
                 test    [bx], ah
                 jz      short loc_18EAD
@@ -16074,18 +16074,18 @@ loc_18EB0:                              ; CODE XREF: sub_18E82+1F↑j
                 jmp     short loc_18EAD
 ; ---------------------------------------------------------------------------
 
-loc_18EBA:                              ; CODE XREF: sub_18E82+24↑j
+loc_18EBA:                              ; CODE XREF: shared_e75c8c+24↑j
                 xor     al, al
                 or      [bx], ah
                 jmp     short loc_18EAD
 ; ---------------------------------------------------------------------------
 
-loc_18EC0:                              ; CODE XREF: sub_18E82+29↑j
+loc_18EC0:                              ; CODE XREF: shared_e75c8c+29↑j
                 xor     al, al
                 not     ah
                 and     [bx], ah
                 jmp     short loc_18EAD
-sub_18E82       endp
+shared_e75c8c   endp
 
 seg013          ends
 
@@ -16100,7 +16100,7 @@ seg014          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18EC8       proc far                ; CODE XREF: sub_10793+8A↑P
+drawTileKeyed   proc far                ; CODE XREF: sub_10793+8A↑P
                                         ; sub_10BD2+228↑P ...
                 push    word ptr es:22h
                 push    word ptr es:24h
@@ -16131,7 +16131,7 @@ sub_18EC8       proc far                ; CODE XREF: sub_10793+8A↑P
                 pop     word ptr es:24h
                 pop     word ptr es:22h
                 retf
-sub_18EC8       endp
+drawTileKeyed   endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -16147,8 +16147,8 @@ seg015          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18F40       proc far                ; CODE XREF: sub_18FE7+A4↓p
-                                        ; sub_18FE7+C2↓p ...
+shared_67284e   proc far                ; CODE XREF: shared_21818f+A4↓p
+                                        ; shared_21818f+C2↓p ...
                 push    es
                 push    si
                 push    di
@@ -16164,8 +16164,8 @@ sub_18F40       proc far                ; CODE XREF: sub_18FE7+A4↓p
                 jz      short loc_18F6B
                 mov     word ptr es:1Ch, 135h
 
-loc_18F6B:                              ; CODE XREF: sub_18F40+22↑j
-                                        ; sub_18F40+3C↓j
+loc_18F6B:                              ; CODE XREF: shared_67284e+22↑j
+                                        ; shared_67284e+3C↓j
                 mov     ax, es:962h
                 cmp     ax, [si+4]
                 jl      short loc_18F7E
@@ -16174,13 +16174,13 @@ loc_18F6B:                              ; CODE XREF: sub_18F40+22↑j
                 add     si, 10h
                 loop    loc_18F6B
 
-loc_18F7E:                              ; CODE XREF: sub_18F40+32↑j
-                                        ; sub_18F40+54↓j ...
+loc_18F7E:                              ; CODE XREF: shared_67284e+32↑j
+                                        ; shared_67284e+54↓j ...
                 mov     cs:byte_227A5, 0
                 jmp     short loc_18FE0
 ; ---------------------------------------------------------------------------
 
-loc_18F86:                              ; CODE XREF: sub_18F40+37↑j
+loc_18F86:                              ; CODE XREF: shared_67284e+37↑j
                 mov     ax, es:964h
                 mov     bx, es:1Ch
                 add     bx, [si+8]
@@ -16202,7 +16202,7 @@ loc_18F86:                              ; CODE XREF: sub_18F40+37↑j
                 mov     ah, 28h ; '('
                 int     62h             ; VID fn28 vidMouseShow
                 mov     ax, 5
-                call    sub_18B96
+                call    delayTicks
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
                 mov     ax, [si+0Ch]
@@ -16213,7 +16213,7 @@ loc_18F86:                              ; CODE XREF: sub_18F40+37↑j
                 mov     cs:byte_227A5, 1
                 mov     es:2Ch, al
 
-loc_18FE0:                              ; CODE XREF: sub_18F40+44↑j
+loc_18FE0:                              ; CODE XREF: shared_67284e+44↑j
                 pop     bx
                 pop     cx
                 pop     dx
@@ -16221,13 +16221,13 @@ loc_18FE0:                              ; CODE XREF: sub_18F40+44↑j
                 pop     si
                 pop     es
                 retf
-sub_18F40       endp
+shared_67284e   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18FE7       proc far                ; CODE XREF: sub_119E7+75↑P
+shared_21818f   proc far                ; CODE XREF: sub_119E7+75↑P
                 push    es
                 push    si
                 push    di
@@ -16236,13 +16236,13 @@ sub_18FE7       proc far                ; CODE XREF: sub_119E7+75↑P
                 push    bx
                 cmp     ax, 0
                 jnz     short loc_18FFF
-                call    sub_18DB2
+                call    shared_019ed0
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 jmp     loc_190CC
 ; ---------------------------------------------------------------------------
 
-loc_18FFF:                              ; CODE XREF: sub_18FE7+9↑j
+loc_18FFF:                              ; CODE XREF: shared_21818f+9↑j
                 mov     ds:8684h, bl
                 mov     ds:8685h, al
                 mov     ds:8686h, ah
@@ -16252,9 +16252,9 @@ loc_18FFF:                              ; CODE XREF: sub_18FE7+9↑j
                 jz      short loc_19026
                 mov     word ptr es:1Ch, 135h
 
-loc_19026:                              ; CODE XREF: sub_18FE7+36↑j
-                                        ; sub_18FE7+51↓j ...
-                call    sub_19346
+loc_19026:                              ; CODE XREF: shared_21818f+36↑j
+                                        ; shared_21818f+51↓j ...
+                call    pollInput
                 cmp     cs:byte_227A5, 0
                 jnz     short loc_19043
                 test    byte ptr ds:8684h, 80h
@@ -16263,7 +16263,7 @@ loc_19026:                              ; CODE XREF: sub_18FE7+36↑j
                 jmp     loc_190CC
 ; ---------------------------------------------------------------------------
 
-loc_19043:                              ; CODE XREF: sub_18FE7+4A↑j
+loc_19043:                              ; CODE XREF: shared_21818f+4A↑j
                 cmp     cs:byte_227A5, 3
                 jz      short loc_19087
                 cmp     cs:byte_227A5, 4
@@ -16271,7 +16271,7 @@ loc_19043:                              ; CODE XREF: sub_18FE7+4A↑j
                 jmp     short loc_190A5
 ; ---------------------------------------------------------------------------
 
-loc_19055:                              ; CODE XREF: sub_18FE7+6A↑j
+loc_19055:                              ; CODE XREF: shared_21818f+6A↑j
                 mov     al, es:2Ch
                 mov     ah, ds:8686h
                 cmp     ah, 0
@@ -16279,31 +16279,31 @@ loc_19055:                              ; CODE XREF: sub_18FE7+6A↑j
                 mov     si, 8687h
                 mov     cx, 8
 
-loc_19068:                              ; CODE XREF: sub_18FE7+89↓j
+loc_19068:                              ; CODE XREF: shared_21818f+89↓j
                 cmp     al, [si+1]
                 jz      short loc_19074
 
-loc_1906D:                              ; CODE XREF: sub_18FE7+8F↓j
+loc_1906D:                              ; CODE XREF: shared_21818f+8F↓j
                 add     si, 10h
                 loop    loc_19068
                 jmp     short loc_19026
 ; ---------------------------------------------------------------------------
 
-loc_19074:                              ; CODE XREF: sub_18FE7+84↑j
+loc_19074:                              ; CODE XREF: shared_21818f+84↑j
                 test    [si], ah
                 jz      short loc_1906D
                 mov     al, [si+1]
                 mov     es:2Ch, al
 
-loc_1907F:                              ; CODE XREF: sub_18FE7+79↑j
+loc_1907F:                              ; CODE XREF: shared_21818f+79↑j
                 mov     cs:byte_227A5, 0
                 jmp     short loc_190CC
 ; ---------------------------------------------------------------------------
 
-loc_19087:                              ; CODE XREF: sub_18FE7+62↑j
+loc_19087:                              ; CODE XREF: shared_21818f+62↑j
                 mov     al, ds:8685h
                 push    cs
-                call    near ptr sub_18F40
+                call    near ptr shared_67284e
                 cmp     cs:byte_227A5, 1
                 jz      short loc_190CC
                 test    byte ptr ds:8684h, 20h
@@ -16312,10 +16312,10 @@ loc_19087:                              ; CODE XREF: sub_18FE7+62↑j
                 jmp     short loc_190CC
 ; ---------------------------------------------------------------------------
 
-loc_190A5:                              ; CODE XREF: sub_18FE7+6C↑j
+loc_190A5:                              ; CODE XREF: shared_21818f+6C↑j
                 mov     al, ds:8685h
                 push    cs
-                call    near ptr sub_18F40
+                call    near ptr shared_67284e
                 cmp     cs:byte_227A5, 1
                 jz      short loc_190C4
                 test    byte ptr ds:8684h, 20h
@@ -16323,16 +16323,16 @@ loc_190A5:                              ; CODE XREF: sub_18FE7+6C↑j
                 jmp     loc_19026
 ; ---------------------------------------------------------------------------
 
-loc_190BE:                              ; CODE XREF: sub_18FE7+D2↑j
+loc_190BE:                              ; CODE XREF: shared_21818f+D2↑j
                 mov     byte ptr es:2Ch, 0
 
-loc_190C4:                              ; CODE XREF: sub_18FE7+CB↑j
+loc_190C4:                              ; CODE XREF: shared_21818f+CB↑j
                 mov     cs:byte_227A5, 4
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_190CC:                              ; CODE XREF: sub_18FE7+15↑j
-                                        ; sub_18FE7+59↑j ...
+loc_190CC:                              ; CODE XREF: shared_21818f+15↑j
+                                        ; shared_21818f+59↑j ...
                 pop     bx
                 pop     cx
                 pop     dx
@@ -16340,19 +16340,19 @@ loc_190CC:                              ; CODE XREF: sub_18FE7+15↑j
                 pop     si
                 pop     es
                 retf
-sub_18FE7       endp
+shared_21818f   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_190D3       proc far                ; CODE XREF: sub_1B902:loc_1BA72↓P
+shared_23db76   proc far                ; CODE XREF: shared_1d0ebe:loc_1BA72↓P
                 cmp     byte ptr es:952h, 0
                 jnz     short loc_190DC
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_190DC:                              ; CODE XREF: sub_190D3+6↑j
+loc_190DC:                              ; CODE XREF: shared_23db76+6↑j
                 push    es
                 push    si
                 push    di
@@ -16379,7 +16379,7 @@ loc_190DC:                              ; CODE XREF: sub_190D3+6↑j
                 jmp     short loc_1915B
 ; ---------------------------------------------------------------------------
 
-loc_19136:                              ; CODE XREF: sub_190D3+48↑j
+loc_19136:                              ; CODE XREF: shared_23db76+48↑j
                 mov     word ptr es:1Ch, 135h
                 mov     word ptr es:20h, 179h
                 mov     ah, 7
@@ -16389,8 +16389,8 @@ loc_19136:                              ; CODE XREF: sub_190D3+48↑j
                 mov     si, 8687h
                 mov     cx, 8
 
-loc_1915B:                              ; CODE XREF: sub_190D3+61↑j
-                                        ; sub_190D3+A2↓j
+loc_1915B:                              ; CODE XREF: shared_23db76+61↑j
+                                        ; shared_23db76+A2↓j
                 push    cx
                 mov     al, [si]
                 test    ds:8685h, al
@@ -16400,7 +16400,7 @@ loc_1915B:                              ; CODE XREF: sub_190D3+61↑j
                 mov     ax, [si+0Ch]
                 call    sub_1917E
 
-loc_19171:                              ; CODE XREF: sub_190D3+8F↑j
+loc_19171:                              ; CODE XREF: shared_23db76+8F↑j
                 add     si, 10h
                 pop     cx
                 loop    loc_1915B
@@ -16411,17 +16411,17 @@ loc_19171:                              ; CODE XREF: sub_190D3+8F↑j
                 pop     si
                 pop     es
                 retf
-sub_190D3       endp
+shared_23db76   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1917E       proc near               ; CODE XREF: sub_18F40+76↑p
-                                        ; sub_18F40+8C↑p ...
+sub_1917E       proc near               ; CODE XREF: shared_67284e+76↑p
+                                        ; shared_67284e+8C↑p ...
                 mov     cs:word_22776, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 retn
 sub_1917E       endp
 
@@ -16439,7 +16439,7 @@ seg016          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1918C       proc far                ; CODE XREF: sub_10BD2+D3↑P
+shared_8f30c2   proc far                ; CODE XREF: sub_10BD2+D3↑P
                 push    ax
                 push    bx
                 push    cx
@@ -16453,26 +16453,26 @@ sub_1918C       proc far                ; CODE XREF: sub_10BD2+D3↑P
                 jmp     short loc_191B6
 ; ---------------------------------------------------------------------------
 
-loc_1919A:                              ; CODE XREF: sub_1918C+A↑j
+loc_1919A:                              ; CODE XREF: shared_8f30c2+A↑j
                 cmp     al, 2
                 jnz     short loc_191A0
                 jmp     short loc_191E3
 ; ---------------------------------------------------------------------------
 
-loc_191A0:                              ; CODE XREF: sub_1918C+10↑j
+loc_191A0:                              ; CODE XREF: shared_8f30c2+10↑j
                 cmp     al, 3
                 jnz     short loc_191A6
                 jmp     short loc_19207
 ; ---------------------------------------------------------------------------
 
-loc_191A6:                              ; CODE XREF: sub_1918C+16↑j
+loc_191A6:                              ; CODE XREF: shared_8f30c2+16↑j
                 cmp     al, 4
                 jnz     short loc_191AD
                 jmp     loc_19244
 ; ---------------------------------------------------------------------------
 
-loc_191AD:                              ; CODE XREF: sub_1918C+1C↑j
-                                        ; sub_1918C+55↓j ...
+loc_191AD:                              ; CODE XREF: shared_8f30c2+1C↑j
+                                        ; shared_8f30c2+55↓j ...
                 pop     di
                 pop     si
                 pop     es
@@ -16484,15 +16484,15 @@ loc_191AD:                              ; CODE XREF: sub_1918C+1C↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_191B6:                              ; CODE XREF: sub_1918C+C↑j
-                                        ; sub_1918C+145↓j
+loc_191B6:                              ; CODE XREF: shared_8f30c2+C↑j
+                                        ; shared_8f30c2+145↓j
                 mov     cx, 4
                 mov     di, bx
                 add     di, 3
                 mov     si, 5192h
                 clc
 
-loc_191C2:                              ; CODE XREF: sub_1918C+3C↓j
+loc_191C2:                              ; CODE XREF: shared_8f30c2+3C↓j
                 mov     al, [di]
                 adc     [si], al
                 dec     si
@@ -16505,7 +16505,7 @@ loc_191C2:                              ; CODE XREF: sub_1918C+3C↓j
                 mov     si, 5192h
                 mov     al, [si]
 
-loc_191D7:                              ; CODE XREF: sub_1918C+53↓j
+loc_191D7:                              ; CODE XREF: shared_8f30c2+53↓j
                 daa
                 mov     [si], al
                 dec     si
@@ -16515,12 +16515,12 @@ loc_191D7:                              ; CODE XREF: sub_1918C+53↓j
                 jmp     short loc_191AD
 ; ---------------------------------------------------------------------------
 
-loc_191E3:                              ; CODE XREF: sub_1918C+12↑j
+loc_191E3:                              ; CODE XREF: shared_8f30c2+12↑j
                 mov     cx, 4
                 mov     di, bx
                 mov     si, 518Fh
 
-loc_191EB:                              ; CODE XREF: sub_1918C+77↓j
+loc_191EB:                              ; CODE XREF: shared_8f30c2+77↓j
                 mov     ah, [si]
                 mov     al, [di]
                 and     ax, 0F0F0h
@@ -16535,12 +16535,12 @@ loc_191EB:                              ; CODE XREF: sub_1918C+77↓j
                 inc     di
                 loop    loc_191EB
 
-loc_19205:                              ; CODE XREF: sub_1918C+68↑j
-                                        ; sub_1918C+73↑j
+loc_19205:                              ; CODE XREF: shared_8f30c2+68↑j
+                                        ; shared_8f30c2+73↑j
                 jmp     short loc_191AD
 ; ---------------------------------------------------------------------------
 
-loc_19207:                              ; CODE XREF: sub_1918C+18↑j
+loc_19207:                              ; CODE XREF: shared_8f30c2+18↑j
                 mov     al, 20h ; ' '
                 push    es
                 push    ds
@@ -16558,23 +16558,23 @@ loc_19207:                              ; CODE XREF: sub_1918C+18↑j
                 mov     si, 518Fh
                 mov     cx, 4
 
-loc_19229:                              ; CODE XREF: sub_1918C+B3↓j
+loc_19229:                              ; CODE XREF: shared_8f30c2+B3↓j
                 push    cx
                 mov     cl, 4
                 mov     al, [si]
                 shl     ax, cl
                 shr     al, cl
                 and     ah, 0Fh
-                call    sub_192D4
+                call    shared_c444c7
                 mov     ah, al
-                call    sub_192D4
+                call    shared_c444c7
                 inc     si
                 pop     cx
                 loop    loc_19229
                 jmp     loc_191AD
 ; ---------------------------------------------------------------------------
 
-loc_19244:                              ; CODE XREF: sub_1918C+1E↑j
+loc_19244:                              ; CODE XREF: shared_8f30c2+1E↑j
                 mov     ds:870Ch, bx
                 xor     dx, dx
                 mov     ds:8708h, dx
@@ -16628,20 +16628,20 @@ loc_19244:                              ; CODE XREF: sub_1918C+1E↑j
                 mov     ds:870Bh, ah
                 mov     bx, 8708h
                 jmp     loc_191B6
-sub_1918C       endp
+shared_8f30c2   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_192D4       proc near               ; CODE XREF: sub_1918C+A9↑p
-                                        ; sub_1918C+AE↑p
+shared_c444c7   proc near               ; CODE XREF: shared_8f30c2+A9↑p
+                                        ; shared_8f30c2+AE↑p
                 cmp     ah, 0
                 jz      short loc_192DB
                 jmp     short loc_192F6
 ; ---------------------------------------------------------------------------
 
-loc_192DB:                              ; CODE XREF: sub_192D4+3↑j
+loc_192DB:                              ; CODE XREF: shared_c444c7+3↑j
                 cmp     dl, 1
                 jz      short loc_192EB
                 cmp     byte ptr [di], 2Ch ; ','
@@ -16649,23 +16649,23 @@ loc_192DB:                              ; CODE XREF: sub_192D4+3↑j
                 mov     byte ptr [di], 20h ; ' '
                 inc     di
 
-loc_192E9:                              ; CODE XREF: sub_192D4+F↑j
+loc_192E9:                              ; CODE XREF: shared_c444c7+F↑j
                 inc     di
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_192EB:                              ; CODE XREF: sub_192D4+A↑j
+loc_192EB:                              ; CODE XREF: shared_c444c7+A↑j
                 cmp     byte ptr [di], 2Ch ; ','
                 jnz     short loc_192F1
                 inc     di
 
-loc_192F1:                              ; CODE XREF: sub_192D4+1A↑j
+loc_192F1:                              ; CODE XREF: shared_c444c7+1A↑j
                 mov     byte ptr [di], 30h ; '0'
                 inc     di
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_192F6:                              ; CODE XREF: sub_192D4+5↑j
+loc_192F6:                              ; CODE XREF: shared_c444c7+5↑j
                 cmp     dl, 1
                 jz      short loc_19308
                 cmp     byte ptr [di], 2Ch ; ','
@@ -16673,23 +16673,23 @@ loc_192F6:                              ; CODE XREF: sub_192D4+5↑j
                 mov     byte ptr [di], 20h ; ' '
                 inc     di
 
-loc_19304:                              ; CODE XREF: sub_192D4+2A↑j
+loc_19304:                              ; CODE XREF: shared_c444c7+2A↑j
                 mov     dl, 1
                 jmp     short loc_1930E
 ; ---------------------------------------------------------------------------
 
-loc_19308:                              ; CODE XREF: sub_192D4+25↑j
+loc_19308:                              ; CODE XREF: shared_c444c7+25↑j
                 cmp     byte ptr [di], 2Ch ; ','
                 jnz     short loc_1930E
                 inc     di
 
-loc_1930E:                              ; CODE XREF: sub_192D4+32↑j
-                                        ; sub_192D4+37↑j
+loc_1930E:                              ; CODE XREF: shared_c444c7+32↑j
+                                        ; shared_c444c7+37↑j
                 add     ah, 30h ; '0'
                 mov     [di], ah
                 inc     di
                 retn
-sub_192D4       endp
+shared_c444c7   endp
 
 seg016          ends
 
@@ -16705,13 +16705,13 @@ seg017          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19316       proc far                ; CODE XREF: sub_111F4+2C↑P
+waitInput       proc far                ; CODE XREF: sub_111F4+2C↑P
                                         ; sub_119E7+50↑P ...
-                call    sub_19346
+                call    pollInput
                 cmp     cs:byte_227A5, 0
-                jz      short near ptr sub_19316
+                jz      short near ptr waitInput
                 retf
-sub_19316       endp
+waitInput       endp
 
 seg017          ends
 
@@ -16726,7 +16726,7 @@ seg018          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19324       proc far                ; CODE XREF: sub_17E86+8E↑P
+shared_58fa66   proc far                ; CODE XREF: sub_17E86+8E↑P
                                         ; sub_17E86+D2↑P ...
                 push    es
                 push    si
@@ -16742,7 +16742,7 @@ sub_19324       proc far                ; CODE XREF: sub_17E86+8E↑P
                 pop     si
                 mov     byte ptr [di-1], 20h ; ' '
 
-loc_19338:                              ; CODE XREF: sub_19324+18↓j
+loc_19338:                              ; CODE XREF: shared_58fa66+18↓j
                 lodsb
                 stosb
                 cmp     al, 0
@@ -16753,7 +16753,7 @@ loc_19338:                              ; CODE XREF: sub_19324+18↓j
                 pop     si
                 pop     es
                 retf
-sub_19324       endp
+shared_58fa66   endp
 
 seg018          ends
 
@@ -16769,7 +16769,7 @@ seg019          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19346       proc far                ; CODE XREF: sub_12E7B:loc_12F4E↑P
+pollInput       proc far                ; CODE XREF: sub_12E7B:loc_12F4E↑P
                                         ; sub_1673A:loc_1689B↑P ...
                 push    ax
                 push    bx
@@ -16790,14 +16790,14 @@ sub_19346       proc far                ; CODE XREF: sub_12E7B:loc_12F4E↑P
                 jg      short loc_19364
                 and     al, 5Fh
 
-loc_19364:                              ; CODE XREF: sub_19346+16↑j
-                                        ; sub_19346+1A↑j
+loc_19364:                              ; CODE XREF: pollInput+16↑j
+                                        ; pollInput+1A↑j
                 mov     es:2Ch, al
                 mov     byte ptr ds:67F5h, 1
                 jmp     short loc_193C2
 ; ---------------------------------------------------------------------------
 
-loc_1936F:                              ; CODE XREF: sub_19346+12↑j
+loc_1936F:                              ; CODE XREF: pollInput+12↑j
                 mov     ah, 6
                 mov     dl, 0FFh
                 int     21h             ; DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT
@@ -16809,7 +16809,7 @@ loc_1936F:                              ; CODE XREF: sub_19346+12↑j
                 jmp     short loc_193C2
 ; ---------------------------------------------------------------------------
 
-loc_19380:                              ; CODE XREF: sub_19346+E↑j
+loc_19380:                              ; CODE XREF: pollInput+E↑j
                 mov     byte ptr es:2Ch, 0
                 cmp     byte ptr es:952h, 0
                 jz      short loc_193CE
@@ -16821,27 +16821,27 @@ loc_19380:                              ; CODE XREF: sub_19346+E↑j
                 jmp     short loc_193C2
 ; ---------------------------------------------------------------------------
 
-loc_193A9:                              ; CODE XREF: sub_19346+4E↑j
+loc_193A9:                              ; CODE XREF: pollInput+4E↑j
                 test    byte ptr es:953h, 2
                 jz      short loc_193C2
                 mov     byte ptr es:2Ch, 0Dh
                 mov     byte ptr ds:67F5h, 4
                 and     byte ptr es:953h, 0BDh
 
-loc_193C2:                              ; CODE XREF: sub_19346+27↑j
-                                        ; sub_19346+38↑j ...
+loc_193C2:                              ; CODE XREF: pollInput+27↑j
+                                        ; pollInput+38↑j ...
                 test    byte ptr es:953h, 80h
                 jz      short loc_193CE
                 mov     ah, 2Bh ; '+'
                 int     62h             ; VID fn2B vidMouseRefresh
 
-loc_193CE:                              ; CODE XREF: sub_19346+46↑j
-                                        ; sub_19346+82↑j
+loc_193CE:                              ; CODE XREF: pollInput+46↑j
+                                        ; pollInput+82↑j
                 pop     dx
                 pop     bx
                 pop     ax
                 retf
-sub_19346       endp
+pollInput       endp
 
 seg019          ends
 
@@ -16856,17 +16856,17 @@ seg020          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_193D2       proc far                ; CODE XREF: sub_1860C+30↑P
+shared_1558db   proc far                ; CODE XREF: sub_1860C+30↑P
                 cmp     word ptr es:44h, 800h
                 jl      short loc_193E3
                 mov     word ptr es:44h, 0
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_193E3:                              ; CODE XREF: sub_193D2+7↑j
+loc_193E3:                              ; CODE XREF: shared_1558db+7↑j
                 inc     word ptr es:44h
                 retf
-sub_193D2       endp
+shared_1558db   endp
 
 seg020          ends
 
@@ -16882,18 +16882,18 @@ seg021          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_193EA       proc far                ; CODE XREF: sub_11119+65↑P
+shared_d2992b   proc far                ; CODE XREF: sub_11119+65↑P
                                         ; seg000:35FF↑P ...
                 mov     cx, 0Ah
                 mov     di, 4D8Ah
                 xor     ax, ax
 
-loc_193F2:                              ; CODE XREF: sub_193EA+1A↓j
+loc_193F2:                              ; CODE XREF: shared_d2992b+1A↓j
                 push    cx
                 push    di
                 push    ax
                 mov     bx, 9E3h
-                call    sub_19518
+                call    fileReadRecordTo
                 pop     ax
                 inc     ax
                 pop     di
@@ -16901,24 +16901,24 @@ loc_193F2:                              ; CODE XREF: sub_193EA+1A↓j
                 pop     cx
                 loop    loc_193F2
                 retf
-sub_193EA       endp
+shared_d2992b   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19407       proc far                ; CODE XREF: start+27C↑P
+shared_4a4289   proc far                ; CODE XREF: start+27C↑P
                                         ; start+2DA↑P ...
                 mov     cx, 0Ah
                 mov     si, 4D8Ah
                 xor     ax, ax
 
-loc_1940F:                              ; CODE XREF: sub_19407+1A↓j
+loc_1940F:                              ; CODE XREF: shared_4a4289+1A↓j
                 push    cx
                 push    si
                 push    ax
                 mov     bx, 9E3h
-                call    sub_1B762
+                call    fileWriteRecordFrom
                 pop     ax
                 inc     ax
                 pop     si
@@ -16926,7 +16926,7 @@ loc_1940F:                              ; CODE XREF: sub_19407+1A↓j
                 pop     cx
                 loop    loc_1940F
                 retf
-sub_19407       endp
+shared_4a4289   endp
 
 seg021          ends
 
@@ -16958,7 +16958,7 @@ loc_19436:                              ; CODE XREF: sub_19424+35↓j
                 push    si
                 push    cx
                 mov     bx, 9E3h
-                call    sub_19518
+                call    fileReadRecordTo
                 pop     cx
                 pop     si
                 add     si, 2
@@ -16993,7 +16993,7 @@ loc_1946B:                              ; CODE XREF: sub_1945D+27↓j
                 push    di
                 push    cx
                 mov     bx, 9E3h
-                call    sub_1B762
+                call    fileWriteRecordFrom
                 pop     cx
                 pop     di
                 add     di, 2
@@ -17030,7 +17030,7 @@ sub_19488       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1948D       proc far                ; CODE XREF: sub_106D0+22↑P
+shared_6b5782   proc far                ; CODE XREF: sub_106D0+22↑P
                                         ; sub_10FEC+2C↑P ...
                 mov     es:16h, ax
                 mov     word ptr es:18h, 0
@@ -17039,13 +17039,13 @@ sub_1948D       proc far                ; CODE XREF: sub_106D0+22↑P
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
                 retf
-sub_1948D       endp
+shared_6b5782   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_194AB       proc far                ; CODE XREF: sub_173D8+25↑P
+shared_6b5782_194AB proc far            ; CODE XREF: sub_173D8+25↑P
                                         ; sub_17403+1A↑P ...
                 mov     es:16h, ax
                 mov     word ptr es:18h, 0
@@ -17054,7 +17054,7 @@ sub_194AB       proc far                ; CODE XREF: sub_173D8+25↑P
                 mov     word ptr es:16h, seg seg046
                 mov     word ptr es:18h, 56DAh
                 retf
-sub_194AB       endp
+shared_6b5782_194AB endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -17064,7 +17064,7 @@ sub_194AB       endp
                 push    cx
                 push    bx
                 mov     ch, 0
-                call    sub_19532
+                call    shared_ede455
                 cmp     byte ptr ds:67F5h, 0
                 jz      short loc_194E2
                 pop     bx
@@ -17123,13 +17123,13 @@ seg024          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19518       proc far                ; CODE XREF: sub_18A3E+22↑P
-                                        ; sub_193EA+E↑P ...
+fileReadRecordTo proc far               ; CODE XREF: shared_c9c8cc+22↑P
+                                        ; shared_d2992b+E↑P ...
                 push    es
                 push    cx
                 push    si
                 mov     [bx+8], ax
-                call    sub_18D39
+                call    fileWriteRecord
                 push    ds
                 pop     es
                 cld
@@ -17140,7 +17140,7 @@ sub_19518       proc far                ; CODE XREF: sub_18A3E+22↑P
                 pop     cx
                 pop     es
                 retf
-sub_19518       endp
+fileReadRecordTo endp
 
 seg024          ends
 
@@ -17155,7 +17155,7 @@ seg025          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19532       proc far                ; CODE XREF: seg023:0051↑P
+shared_ede455   proc far                ; CODE XREF: seg023:0051↑P
                 push    si
                 push    bx
                 push    cx
@@ -17163,17 +17163,17 @@ sub_19532       proc far                ; CODE XREF: seg023:0051↑P
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
 
-loc_1953B:                              ; CODE XREF: sub_19532+78↓j
-                                        ; sub_19532+F6↓j ...
+loc_1953B:                              ; CODE XREF: shared_ede455+78↓j
+                                        ; shared_ede455+F6↓j ...
                 mov     byte ptr es:2Ch, 0AEh
                 mov     ah, 8
                 int     62h             ; VID fn08 vidDrawChar
                 mov     ah, 28h ; '('
                 int     62h             ; VID fn28 vidMouseShow
 
-loc_19549:                              ; CODE XREF: sub_19532+21↓j
-                                        ; sub_19532+32↓j ...
-                call    sub_19346
+loc_19549:                              ; CODE XREF: shared_ede455+21↓j
+                                        ; shared_ede455+32↓j ...
+                call    pollInput
                 cmp     byte ptr ds:67F5h, 0
                 jz      short loc_19549
                 cmp     byte ptr ds:67F5h, 3
@@ -17181,7 +17181,7 @@ loc_19549:                              ; CODE XREF: sub_19532+21↓j
                 jmp     loc_195E9
 ; ---------------------------------------------------------------------------
 
-loc_1955F:                              ; CODE XREF: sub_19532+28↑j
+loc_1955F:                              ; CODE XREF: shared_ede455+28↑j
                 cmp     byte ptr ds:67F5h, 1
                 jnz     short loc_19549
                 cmp     byte ptr es:2Ch, 0Dh
@@ -17191,7 +17191,7 @@ loc_1955F:                              ; CODE XREF: sub_19532+28↑j
                 jmp     loc_19614
 ; ---------------------------------------------------------------------------
 
-loc_19579:                              ; CODE XREF: sub_19532+42↑j
+loc_19579:                              ; CODE XREF: shared_ede455+42↑j
                 cmp     byte ptr es:2Ch, 1Bh
                 jz      short loc_195C7
                 cmp     byte ptr es:2Ch, 20h ; ' '
@@ -17213,15 +17213,15 @@ loc_19579:                              ; CODE XREF: sub_19532+42↑j
                 jmp     short loc_1953B
 ; ---------------------------------------------------------------------------
 
-loc_195AC:                              ; CODE XREF: sub_19532+3A↑j
-                                        ; sub_19532+D5↓j
+loc_195AC:                              ; CODE XREF: shared_ede455+3A↑j
+                                        ; shared_ede455+D5↓j
                 mov     byte ptr [si], 0
                 pop     cx
                 mov     byte ptr ds:67F5h, 0
                 jmp     short loc_195D0
 ; ---------------------------------------------------------------------------
 
-loc_195B7:                              ; CODE XREF: sub_19532+6C↑j
+loc_195B7:                              ; CODE XREF: shared_ede455+6C↑j
                 mov     ah, 8
                 int     62h             ; VID fn08 vidDrawChar
                 inc     byte ptr es:2Ah
@@ -17229,13 +17229,13 @@ loc_195B7:                              ; CODE XREF: sub_19532+6C↑j
                 jmp     short loc_195E0
 ; ---------------------------------------------------------------------------
 
-loc_195C7:                              ; CODE XREF: sub_19532+4D↑j
-                                        ; sub_19532+DD↓j
+loc_195C7:                              ; CODE XREF: shared_ede455+4D↑j
+                                        ; shared_ede455+DD↓j
                 mov     byte ptr [si], 0
                 pop     cx
                 mov     byte ptr ds:67F5h, 2
 
-loc_195D0:                              ; CODE XREF: sub_19532+83↑j
+loc_195D0:                              ; CODE XREF: shared_ede455+83↑j
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
                 mov     byte ptr es:2Ch, 20h ; ' '
@@ -17243,7 +17243,7 @@ loc_195D0:                              ; CODE XREF: sub_19532+83↑j
                 mov     ah, 8
                 int     62h             ; VID fn08 vidDrawChar
 
-loc_195E0:                              ; CODE XREF: sub_19532+93↑j
+loc_195E0:                              ; CODE XREF: shared_ede455+93↑j
                 mov     ah, 28h ; '('
                 int     62h             ; VID fn28 vidMouseShow
                 pop     ax
@@ -17252,12 +17252,12 @@ loc_195E0:                              ; CODE XREF: sub_19532+93↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_195E9:                              ; CODE XREF: sub_19532+2A↑j
+loc_195E9:                              ; CODE XREF: shared_ede455+2A↑j
                 cmp     byte ptr es:36h, 2
                 jnz     short loc_19611
                 xor     al, al
                 or      al, 42h
-                call    sub_18F40
+                call    shared_67284e
                 cmp     byte ptr ds:67F5h, 0
                 jz      short loc_19611
                 cmp     byte ptr es:2Ch, 0Dh
@@ -17265,12 +17265,12 @@ loc_195E9:                              ; CODE XREF: sub_19532+2A↑j
                 cmp     byte ptr es:2Ch, 1Bh
                 jz      short loc_195C7
 
-loc_19611:                              ; CODE XREF: sub_19532+BD↑j
-                                        ; sub_19532+CD↑j
+loc_19611:                              ; CODE XREF: shared_ede455+BD↑j
+                                        ; shared_ede455+CD↑j
                 jmp     loc_19549
 ; ---------------------------------------------------------------------------
 
-loc_19614:                              ; CODE XREF: sub_19532+44↑j
+loc_19614:                              ; CODE XREF: shared_ede455+44↑j
                 pop     cx
                 pop     ax
                 cmp     ax, si
@@ -17284,7 +17284,7 @@ loc_19614:                              ; CODE XREF: sub_19532+44↑j
                 jmp     loc_1953B
 ; ---------------------------------------------------------------------------
 
-loc_1962B:                              ; CODE XREF: sub_19532+E6↑j
+loc_1962B:                              ; CODE XREF: shared_ede455+E6↑j
                 dec     si
                 inc     cx
                 push    ax
@@ -17297,7 +17297,7 @@ loc_1962B:                              ; CODE XREF: sub_19532+E6↑j
                 int     62h             ; VID fn08 vidDrawChar
                 dec     byte ptr es:2Ah
                 jmp     loc_1953B
-sub_19532       endp
+shared_ede455   endp
 
 seg025          ends
 
@@ -17424,8 +17424,8 @@ loc_196E8:                              ; CODE XREF: sub_196A0+1D↑j
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 call    sub_1A24E
                 pop     si
                 retf
@@ -17444,8 +17444,8 @@ loc_1971F:                              ; CODE XREF: sub_196A0+26↑j
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 call    sub_1A24E
                 mov     ax, [bx+2]
                 mov     ds:67C6h, ax
@@ -17475,8 +17475,8 @@ loc_1978F:                              ; CODE XREF: sub_196A0+CA↑j
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 call    sub_1A24E
                 pop     si
                 retf
@@ -17505,8 +17505,8 @@ loc_197DA:                              ; CODE XREF: sub_196A0+16E↓j
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 call    sub_1A24E
                 add     si, 4
                 add     word ptr ds:67B4h, 20h ; ' '
@@ -17541,8 +17541,8 @@ loc_19831:                              ; CODE XREF: sub_196A0+1C5↓j
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 call    sub_1A24E
                 add     word ptr ds:67B4h, 20h ; ' '
                 add     bx, 2
@@ -17579,7 +17579,7 @@ loc_19896:                              ; CODE XREF: sub_196A0+218↓j
                 mov     ax, [bx]
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 call    sub_1A24E
                 add     word ptr es:1Ah, 20h ; ' '
                 add     bx, 2
@@ -17607,7 +17607,7 @@ sub_198D0       proc far                ; CODE XREF: sub_11AD7+1AC↑P
                 call    sub_19A8F
                 push    cs
                 call    near ptr sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 retf
@@ -17641,7 +17641,7 @@ loc_19904:                              ; CODE XREF: sub_198E8+44↓j
                 call    sub_1035F
                 cmp     byte ptr ds:8712h, 0
                 jz      short locret_19924
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
 
@@ -17697,8 +17697,8 @@ loc_1997A:                              ; CODE XREF: sub_198E8+8C↑j
                 mov     ax, ds:3AF1h
                 mov     ds:67B6h, ax
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 call    sub_1A24E
                 mov     bx, ds:3AEDh
                 or      byte ptr [bx+1], 2
@@ -17890,7 +17890,7 @@ loc_19AD5:                              ; CODE XREF: sub_19A8F+20↑j
                 and     ax, 7FFh
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 pop     bx
                 test    byte ptr [bx+1], 80h
                 jz      short locret_19AD4
@@ -17899,8 +17899,8 @@ loc_19AD5:                              ; CODE XREF: sub_19A8F+20↑j
                 mov     byte ptr ds:67C8h, 5
                 mov     word ptr ds:67C6h, 116h
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 jmp     short locret_19AD4
 ; ---------------------------------------------------------------------------
 
@@ -17913,7 +17913,7 @@ loc_19B21:                              ; CODE XREF: sub_19A8F+28↑j
                 and     ax, 7FFh
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     bx, [si+22h]
                 mov     al, [si+2Ah]
                 cmp     al, 0
@@ -17935,7 +17935,7 @@ loc_19B58:                              ; CODE XREF: sub_19A8F+F1↓j
                 and     ax, 7FFh
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 jmp     locret_19AD4
 ; ---------------------------------------------------------------------------
 
@@ -17977,7 +17977,7 @@ loc_19BA8:                              ; CODE XREF: sub_19A8F+170↓j
                 and     ax, 7FFh
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 pop     bx
                 push    bx
                 test    byte ptr [bx+1], 80h
@@ -17987,8 +17987,8 @@ loc_19BA8:                              ; CODE XREF: sub_19A8F+170↓j
                 mov     byte ptr ds:67C8h, 5
                 mov     word ptr ds:67C6h, 116h
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
 
 loc_19BF4:                              ; CODE XREF: sub_19A8F+13D↑j
                 pop     bx
@@ -18022,7 +18022,7 @@ loc_19C1D:                              ; CODE XREF: sub_19A8F+1B7↓j
                 and     ax, 7FFh
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 pop     bx
                 add     bx, 4
                 add     word ptr es:1Ah, 20h ; ' '
@@ -18055,7 +18055,7 @@ loc_19C68:                              ; CODE XREF: sub_19A8F+202↓j
                 and     ax, 7FFh
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 pop     bx
                 add     bx, 4
                 add     word ptr es:1Ah, 20h ; ' '
@@ -18371,7 +18371,7 @@ loc_19EC1:                              ; CODE XREF: sub_19E70+26↑j
                 and     ax, 7FFh
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 test    byte ptr [bx+1], 80h
@@ -18379,8 +18379,8 @@ loc_19EC1:                              ; CODE XREF: sub_19E70+26↑j
                 mov     byte ptr ds:67C8h, 5
                 mov     word ptr ds:67C6h, 116h
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
 
 loc_19F05:                              ; CODE XREF: sub_19E70+7B↑j
                 mov     word ptr es:1Ah, 0
@@ -18396,8 +18396,8 @@ loc_19F05:                              ; CODE XREF: sub_19E70+7B↑j
                 mov     byte ptr ds:67C8h, 4
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 pop     bx
                 mov     ax, [bx+2]
                 cmp     ax, 52h ; 'R'
@@ -18420,8 +18420,8 @@ loc_19F46:                              ; CODE XREF: sub_19E70+D3↑j
 loc_19F70:                              ; CODE XREF: sub_19E70+E3↑j
                                         ; sub_19E70+F4↑j
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -18474,8 +18474,8 @@ loc_19FD3:                              ; CODE XREF: sub_19E70+160↑j
 loc_1A002:                              ; CODE XREF: sub_19E70+175↑j
                                         ; sub_19E70+186↑j
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -18504,7 +18504,7 @@ loc_1A02D:                              ; CODE XREF: sub_19E70+1B0↑j
                 mov     bx, ds:3ACCh
                 add     bx, 1Ch
                 call    sub_1A99C
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 14h
@@ -18517,7 +18517,7 @@ loc_1A02D:                              ; CODE XREF: sub_19E70+1B0↑j
                 mov     bx, ds:3ACCh
                 add     bx, 2Ch ; ','
                 call    sub_1A99C
-                call    sub_1BC54
+                call    drawBackdropTile
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -18564,9 +18564,9 @@ loc_1A0B2:                              ; CODE XREF: sub_19E70+229↑j
                 mov     ax, [bx]
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
-                call    sub_1BC54
+                call    tileOp
+                call    drawTileKeyed
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 14h
@@ -18647,8 +18647,8 @@ loc_1A1BC:                              ; CODE XREF: sub_1A1A8+11↑j
                 mov     byte ptr ds:67C8h, 5
                 mov     word ptr ds:67C6h, 107h
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 retn
 sub_1A1A8       endp
 
@@ -18672,8 +18672,8 @@ loc_1A1E6:                              ; CODE XREF: sub_1A1D5+2F↓j
                 mov     ax, [bx]
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 pop     bx
                 add     bx, 2
                 add     word ptr ds:67B4h, 20h ; ' '
@@ -18705,8 +18705,8 @@ loc_1A220:                              ; CODE XREF: sub_1A214+2A↓j
                 mov     ax, [bx]
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 pop     bx
                 add     bx, 2
                 add     word ptr ds:67B4h, 20h ; ' '
@@ -18783,8 +18783,8 @@ loc_1A2BA:                              ; CODE XREF: sub_1A24E+E↑j
                                         ; sub_1A24E+1D↑j ...
                 mov     byte ptr ds:67C8h, 5
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 mov     byte ptr ds:67C8h, 4
                 pop     bx
                 retn
@@ -18801,8 +18801,8 @@ sub_1A2D3       proc near               ; CODE XREF: sub_19E70+131↑p
                 mov     ds:67C6h, ax
                 push    bx
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 pop     bx
                 mov     ax, [bx+2]
                 mov     ds:67C6h, ax
@@ -18824,8 +18824,8 @@ loc_1A317:                              ; CODE XREF: sub_1A2D3+29↑j
                 add     ds:67B4h, ax
                 add     ds:67B6h, bx
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 retn
 sub_1A2D3       endp
 
@@ -18900,9 +18900,9 @@ loc_1A3A3:                              ; CODE XREF: sub_1A355+43↑j
                 mov     ds:67C6h, ax
                 mov     byte ptr ds:67C8h, 4
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
-                call    sub_1BC54
+                call    tileOp
+                call    drawTileKeyed
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 14h
@@ -18924,7 +18924,7 @@ loc_1A3CC:                              ; CODE XREF: sub_1A355+27↑j
                 add     ds:3AEDh, ax
                 push    cs
                 call    near ptr sub_196A0
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 retn
@@ -18964,7 +18964,7 @@ loc_1A43E:                              ; CODE XREF: sub_1A3FE+34↑j
 
 loc_1A446:                              ; CODE XREF: sub_1A3FE+3E↑j
                 call    sub_1A2D3
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 14h
@@ -19008,7 +19008,7 @@ loc_1A4A2:                              ; CODE XREF: sub_1A464+31↑j
 
 loc_1A4AB:                              ; CODE XREF: sub_1A464+3C↑j
                 call    sub_1A1D5
-                call    sub_1BC54
+                call    drawBackdropTile
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 14h
@@ -19625,7 +19625,7 @@ loc_1A9A8:                              ; CODE XREF: sub_1A99C+26↓j
                 mov     ax, [bx]
                 mov     ds:67C6h, ax
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 pop     bx
                 add     bx, 2
                 add     word ptr es:1Ah, 20h ; ' '
@@ -19801,7 +19801,7 @@ seg028          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AB12       proc far                ; CODE XREF: sub_17E86+7D↑P
+shared_aa2cd6   proc far                ; CODE XREF: sub_17E86+7D↑P
                                         ; sub_17E86+C3↑P ...
                 push    es
                 push    si
@@ -19813,7 +19813,7 @@ sub_1AB12       proc far                ; CODE XREF: sub_17E86+7D↑P
                 pop     si
                 pop     di
 
-loc_1AB1B:                              ; CODE XREF: sub_1AB12+D↓j
+loc_1AB1B:                              ; CODE XREF: shared_aa2cd6+D↓j
                 lodsb
                 stosb
                 cmp     al, 0
@@ -19823,7 +19823,7 @@ loc_1AB1B:                              ; CODE XREF: sub_1AB12+D↓j
                 pop     si
                 pop     es
                 retf
-sub_1AB12       endp
+shared_aa2cd6   endp
 
 seg028          ends
 
@@ -19839,7 +19839,7 @@ seg029          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AB28       proc far                ; CODE XREF: sub_17E86+96↑P
+shared_9a999a   proc far                ; CODE XREF: sub_17E86+96↑P
                                         ; sub_17E86+DA↑P ...
                 push    es
                 push    si
@@ -19856,10 +19856,10 @@ sub_1AB28       proc far                ; CODE XREF: sub_17E86+96↑P
                 jnz     short loc_1AB4F
                 mov     byte ptr ds:8724h, 6
 
-loc_1AB4F:                              ; CODE XREF: sub_1AB28+20↑j
+loc_1AB4F:                              ; CODE XREF: shared_9a999a+20↑j
                 mov     si, bx
 
-loc_1AB51:                              ; CODE XREF: sub_1AB28+60↓j
+loc_1AB51:                              ; CODE XREF: shared_9a999a+60↓j
                 push    ds
                 pop     es
                 mov     di, 873Ch
@@ -19868,32 +19868,32 @@ loc_1AB51:                              ; CODE XREF: sub_1AB28+60↓j
                 rep stosb
                 mov     di, 873Ch
                 mov     byte ptr ds:8722h, 1Fh
-                call    sub_1AC11
+                call    shared_83772c
                 jnz     short loc_1AB6C
                 jmp     short loc_1AB8A
 ; ---------------------------------------------------------------------------
 
-loc_1AB6C:                              ; CODE XREF: sub_1AB28+40↑j
-                                        ; sub_1AB28+4C↓j
-                call    sub_1AB91
+loc_1AB6C:                              ; CODE XREF: shared_9a999a+40↑j
+                                        ; shared_9a999a+4C↓j
+                call    shared_be74a4
                 jz      short loc_1AB80
-                call    sub_1AC11
+                call    shared_83772c
                 jnz     short loc_1AB6C
                 mov     ax, ds:8725h
                 mov     es, ax
-                call    sub_1ABB3
+                call    shared_26482f
                 jmp     short loc_1AB8A
 ; ---------------------------------------------------------------------------
 
-loc_1AB80:                              ; CODE XREF: sub_1AB28+47↑j
+loc_1AB80:                              ; CODE XREF: shared_9a999a+47↑j
                 mov     ax, ds:8725h
                 mov     es, ax
-                call    sub_1ABB3
+                call    shared_26482f
                 jmp     short loc_1AB51
 ; ---------------------------------------------------------------------------
 
-loc_1AB8A:                              ; CODE XREF: sub_1AB28+42↑j
-                                        ; sub_1AB28+56↑j
+loc_1AB8A:                              ; CODE XREF: shared_9a999a+42↑j
+                                        ; shared_9a999a+56↑j
                 pop     bx
                 pop     cx
                 pop     dx
@@ -19901,13 +19901,13 @@ loc_1AB8A:                              ; CODE XREF: sub_1AB28+42↑j
                 pop     si
                 pop     es
                 retf
-sub_1AB28       endp
+shared_9a999a   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AB91       proc near               ; CODE XREF: sub_1AB28:loc_1AB6C↑p
+shared_be74a4   proc near               ; CODE XREF: shared_9a999a:loc_1AB6C↑p
                 cmp     byte ptr [si], 0FFh
                 jnz     short loc_1AB9A
                 inc     si
@@ -19915,58 +19915,58 @@ sub_1AB91       proc near               ; CODE XREF: sub_1AB28:loc_1AB6C↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1AB9A:                              ; CODE XREF: sub_1AB91+3↑j
-                call    sub_1ABEE
+loc_1AB9A:                              ; CODE XREF: shared_be74a4+3↑j
+                call    shared_cc5ec9
                 cmp     al, ds:8722h
                 jl      short loc_1ABA6
                 xor     al, al
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1ABA6:                              ; CODE XREF: sub_1AB91+10↑j
+loc_1ABA6:                              ; CODE XREF: shared_be74a4+10↑j
                 sub     ds:8722h, al
                 xor     ch, ch
                 mov     cl, al
                 rep movsb
                 or      al, 0FFh
                 retn
-sub_1AB91       endp
+shared_be74a4   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1ABB3       proc near               ; CODE XREF: sub_1AB28+53↑p
-                                        ; sub_1AB28+5D↑p
+shared_26482f   proc near               ; CODE XREF: shared_9a999a+53↑p
+                                        ; shared_9a999a+5D↑p
                 push    di
                 push    si
                 mov     bx, 873Ch
-                call    sub_1BF9E
+                call    shared_ed3965
                 xor     al, al
                 mov     bl, ds:8724h
                 cmp     ds:8723h, bl
                 jl      short loc_1ABDF
                 xor     al, al
                 mov     bx, 8727h
-                call    sub_1B782
-                call    sub_19316
+                call    shared_77e6d6
+                call    waitInput
                 mov     byte ptr ds:8723h, 0
                 mov     al, 2
 
-loc_1ABDF:                              ; CODE XREF: sub_1ABB3+14↑j
+loc_1ABDF:                              ; CODE XREF: shared_26482f+14↑j
                 mov     bx, 873Ch
-                call    sub_1B782
+                call    shared_77e6d6
                 inc     byte ptr ds:8723h
                 pop     si
                 pop     di
                 retn
-sub_1ABB3       endp
+shared_26482f   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1ABEE       proc near               ; CODE XREF: sub_1AB91:loc_1AB9A↑p
+shared_cc5ec9   proc near               ; CODE XREF: shared_be74a4:loc_1AB9A↑p
                 push    dx
                 push    di
                 push    si
@@ -19974,7 +19974,7 @@ sub_1ABEE       proc near               ; CODE XREF: sub_1AB91:loc_1AB9A↑p
                 mov     cx, 1Eh
                 mov     bx, 2000h
 
-loc_1ABFA:                              ; CODE XREF: sub_1ABEE+18↓j
+loc_1ABFA:                              ; CODE XREF: shared_cc5ec9+18↓j
                 mov     al, [si]
                 cmp     al, bl
                 jz      short loc_1AC0B
@@ -19986,40 +19986,40 @@ loc_1ABFA:                              ; CODE XREF: sub_1ABEE+18↓j
                 jmp     short loc_1AC0B
 ; ---------------------------------------------------------------------------
 
-loc_1AC0A:                              ; CODE XREF: sub_1ABEE+14↑j
+loc_1AC0A:                              ; CODE XREF: shared_cc5ec9+14↑j
                 inc     dx
 
-loc_1AC0B:                              ; CODE XREF: sub_1ABEE+10↑j
-                                        ; sub_1ABEE+1A↑j
+loc_1AC0B:                              ; CODE XREF: shared_cc5ec9+10↑j
+                                        ; shared_cc5ec9+1A↑j
                 mov     ax, dx
                 pop     si
                 pop     di
                 pop     dx
                 retn
-sub_1ABEE       endp
+shared_cc5ec9   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AC11       proc near               ; CODE XREF: sub_1AB28+3D↑p
-                                        ; sub_1AB28+49↑p ...
+shared_83772c   proc near               ; CODE XREF: shared_9a999a+3D↑p
+                                        ; shared_9a999a+49↑p ...
                 mov     al, [si]
                 or      al, al
                 jnz     short loc_1AC18
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1AC18:                              ; CODE XREF: sub_1AC11+4↑j
+loc_1AC18:                              ; CODE XREF: shared_83772c+4↑j
                 cmp     al, 20h ; ' '
                 jz      short loc_1AC1D
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1AC1D:                              ; CODE XREF: sub_1AC11+9↑j
+loc_1AC1D:                              ; CODE XREF: shared_83772c+9↑j
                 inc     si
-                jmp     short sub_1AC11
-sub_1AC11       endp
+                jmp     short shared_83772c
+shared_83772c   endp
 
 seg029          ends
 
@@ -20033,27 +20033,27 @@ seg030          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AC20       proc far                ; CODE XREF: sub_119E7+42↑P
+drawStringLines proc far                ; CODE XREF: sub_119E7+42↑P
                                         ; sub_177BC+40↑P ...
-                call    sub_1B8CC
+                call    drawString
                 inc     byte ptr es:2Bh
                 inc     bx
-                loop    near ptr sub_1AC20
+                loop    near ptr drawStringLines
                 retf
-sub_1AC20       endp
+drawStringLines endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AC2E       proc far                ; CODE XREF: sub_10548+25↑P
+shared_728316   proc far                ; CODE XREF: sub_10548+25↑P
                                         ; sub_10548+69↑P ...
                 cmp     byte ptr ds:4DA7h, 5
                 jz      short loc_1AC36
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1AC36:                              ; CODE XREF: sub_1AC2E+5↑j
+loc_1AC36:                              ; CODE XREF: shared_728316+5↑j
                 push    bx
                 push    cx
                 push    dx
@@ -20074,8 +20074,8 @@ loc_1AC36:                              ; CODE XREF: sub_1AC2E+5↑j
                 jmp     short loc_1AC94
 ; ---------------------------------------------------------------------------
 
-loc_1AC5D:                              ; CODE XREF: sub_1AC2E+1D↑j
-                                        ; sub_1AC2E+26↑j ...
+loc_1AC5D:                              ; CODE XREF: shared_728316+1D↑j
+                                        ; shared_728316+26↑j ...
                 push    ax
                 push    bx
                 mov     bx, 8
@@ -20083,7 +20083,7 @@ loc_1AC5D:                              ; CODE XREF: sub_1AC2E+1D↑j
                 pop     bx
                 pop     ax
 
-loc_1AC68:                              ; CODE XREF: sub_1AC2E+40↓j
+loc_1AC68:                              ; CODE XREF: shared_728316+40↓j
                 cmp     word ptr es:994h, 0
                 jnz     short loc_1AC68
                 cmp     ah, 1
@@ -20093,8 +20093,8 @@ loc_1AC68:                              ; CODE XREF: sub_1AC2E+40↓j
                 jmp     short loc_1AC94
 ; ---------------------------------------------------------------------------
 
-loc_1AC7C:                              ; CODE XREF: sub_1AC2E+45↑j
-                                        ; sub_1AC2E+4A↑j
+loc_1AC7C:                              ; CODE XREF: shared_728316+45↑j
+                                        ; shared_728316+4A↑j
                 xor     ah, ah
                 dec     ax
                 shl     ax, 1
@@ -20105,15 +20105,15 @@ loc_1AC7C:                              ; CODE XREF: sub_1AC2E+45↑j
                 mov     bx, 6
                 call    dword ptr ds:875Ch
 
-loc_1AC94:                              ; CODE XREF: sub_1AC2E+2D↑j
-                                        ; sub_1AC2E+4C↑j ...
+loc_1AC94:                              ; CODE XREF: shared_728316+2D↑j
+                                        ; shared_728316+4C↑j ...
                 pop     si
                 pop     di
                 pop     dx
                 pop     cx
                 pop     bx
                 retf
-sub_1AC2E       endp
+shared_728316   endp
 
 seg030          ends
 
@@ -20128,13 +20128,13 @@ seg031          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AC9A       proc far                ; CODE XREF: seg000:5ED5↑P
+paletteFade     proc far                ; CODE XREF: seg000:5ED5↑P
                 cmp     byte ptr es:33h, 2
                 jz      short loc_1ACA3
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1ACA3:                              ; CODE XREF: sub_1AC9A+6↑j
+loc_1ACA3:                              ; CODE XREF: paletteFade+6↑j
                 cmp     al, 0
                 jz      short loc_1ACB5
                 cmp     al, 1
@@ -20142,17 +20142,17 @@ loc_1ACA3:                              ; CODE XREF: sub_1AC9A+6↑j
                 jmp     short loc_1AD0F
 ; ---------------------------------------------------------------------------
 
-loc_1ACAD:                              ; CODE XREF: sub_1AC9A+F↑j
+loc_1ACAD:                              ; CODE XREF: paletteFade+F↑j
                 cmp     al, 2
                 jnz     short locret_1ACB4
                 jmp     loc_1AD8F
 ; ---------------------------------------------------------------------------
 
-locret_1ACB4:                           ; CODE XREF: sub_1AC9A+15↑j
+locret_1ACB4:                           ; CODE XREF: paletteFade+15↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1ACB5:                              ; CODE XREF: sub_1AC9A+B↑j
+loc_1ACB5:                              ; CODE XREF: paletteFade+B↑j
                 push    bx
                 push    cx
                 push    dx
@@ -20171,18 +20171,18 @@ loc_1ACB5:                              ; CODE XREF: sub_1AC9A+B↑j
                 pop     ds
                 pop     es
 
-loc_1ACCE:                              ; CODE XREF: sub_1AC9A+6D↓j
+loc_1ACCE:                              ; CODE XREF: paletteFade+6D↓j
                 mov     di, 56DAh
                 mov     cx, 300h
                 xor     al, al
 
-loc_1ACD6:                              ; CODE XREF: sub_1AC9A+46↓j
+loc_1ACD6:                              ; CODE XREF: paletteFade+46↓j
                 cmp     byte ptr [di], 0
                 jle     short loc_1ACDF
                 dec     byte ptr [di]
                 mov     al, 1
 
-loc_1ACDF:                              ; CODE XREF: sub_1AC9A+3F↑j
+loc_1ACDF:                              ; CODE XREF: paletteFade+3F↑j
                 inc     di
                 loop    loc_1ACD6
                 cmp     al, 0
@@ -20192,7 +20192,7 @@ loc_1ACDF:                              ; CODE XREF: sub_1AC9A+3F↑j
                 pop     es
                 mov     dx, 3DAh
 
-loc_1ACEC:                              ; CODE XREF: sub_1AC9A+55↓j
+loc_1ACEC:                              ; CODE XREF: paletteFade+55↓j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -20207,7 +20207,7 @@ loc_1ACEC:                              ; CODE XREF: sub_1AC9A+55↓j
                 mov     cx, 100h
                 mov     si, 56DAh
 
-loc_1ACFE:                              ; CODE XREF: sub_1AC9A+6A↓j
+loc_1ACFE:                              ; CODE XREF: paletteFade+6A↓j
                 lodsb
                 out     dx, al
                 lodsb
@@ -20219,7 +20219,7 @@ loc_1ACFE:                              ; CODE XREF: sub_1AC9A+6A↓j
                 jmp     short loc_1ACCE
 ; ---------------------------------------------------------------------------
 
-loc_1AD09:                              ; CODE XREF: sub_1AC9A+4A↑j
+loc_1AD09:                              ; CODE XREF: paletteFade+4A↑j
                 pop     di
                 pop     si
                 pop     dx
@@ -20228,7 +20228,7 @@ loc_1AD09:                              ; CODE XREF: sub_1AC9A+4A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1AD0F:                              ; CODE XREF: sub_1AC9A+11↑j
+loc_1AD0F:                              ; CODE XREF: paletteFade+11↑j
                 push    bx
                 push    cx
                 push    dx
@@ -20238,7 +20238,7 @@ loc_1AD0F:                              ; CODE XREF: sub_1AC9A+11↑j
                 lea     si, ds:74h
                 mov     cx, 300h
 
-loc_1AD1E:                              ; CODE XREF: sub_1AC9A+8D↓j
+loc_1AD1E:                              ; CODE XREF: paletteFade+8D↓j
                 mov     al, es:[si]
                 sub     al, 3Fh ; '?'
                 mov     [di], al
@@ -20247,36 +20247,36 @@ loc_1AD1E:                              ; CODE XREF: sub_1AC9A+8D↓j
                 loop    loc_1AD1E
                 mov     cx, 3Fh ; '?'
 
-loc_1AD2C:                              ; CODE XREF: sub_1AC9A+E2↓j
+loc_1AD2C:                              ; CODE XREF: paletteFade+E2↓j
                 push    cx
                 mov     di, 56DAh
                 lea     si, ds:74h
                 lea     bx, ds:374h
                 mov     cx, 300h
 
-loc_1AD3B:                              ; CODE XREF: sub_1AC9A+BA↓j
+loc_1AD3B:                              ; CODE XREF: paletteFade+BA↓j
                 mov     al, [di]
                 test    al, 80h
                 jnz     short loc_1AD46
                 cmp     al, es:[si]
                 jz      short loc_1AD51
 
-loc_1AD46:                              ; CODE XREF: sub_1AC9A+A5↑j
+loc_1AD46:                              ; CODE XREF: paletteFade+A5↑j
                 inc     al
                 mov     [di], al
                 test    al, 80h
                 jnz     short loc_1AD51
                 mov     es:[bx], al
 
-loc_1AD51:                              ; CODE XREF: sub_1AC9A+AA↑j
-                                        ; sub_1AC9A+B2↑j
+loc_1AD51:                              ; CODE XREF: paletteFade+AA↑j
+                                        ; paletteFade+B2↑j
                 inc     bx
                 inc     di
                 inc     si
                 loop    loc_1AD3B
                 mov     dx, 3DAh
 
-loc_1AD59:                              ; CODE XREF: sub_1AC9A+C2↓j
+loc_1AD59:                              ; CODE XREF: paletteFade+C2↓j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -20293,7 +20293,7 @@ loc_1AD59:                              ; CODE XREF: sub_1AC9A+C2↓j
                 push    es
                 pop     ds
 
-loc_1AD6E:                              ; CODE XREF: sub_1AC9A+DA↓j
+loc_1AD6E:                              ; CODE XREF: paletteFade+DA↓j
                 lodsb
                 out     dx, al
                 lodsb
@@ -20318,7 +20318,7 @@ loc_1AD6E:                              ; CODE XREF: sub_1AC9A+DA↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1AD8F:                              ; CODE XREF: sub_1AC9A+17↑j
+loc_1AD8F:                              ; CODE XREF: paletteFade+17↑j
                 push    bx
                 push    cx
                 push    dx
@@ -20328,7 +20328,7 @@ loc_1AD8F:                              ; CODE XREF: sub_1AC9A+17↑j
                 lea     si, parm_5A
                 mov     cx, 300h
 
-loc_1AD9E:                              ; CODE XREF: sub_1AC9A+10D↓j
+loc_1AD9E:                              ; CODE XREF: paletteFade+10D↓j
                 mov     al, es:[si]
                 add     al, 3Fh ; '?'
                 mov     [di], al
@@ -20341,7 +20341,7 @@ loc_1AD9E:                              ; CODE XREF: sub_1AC9A+10D↓j
                 rep stosw
                 mov     dx, 3DAh
 
-loc_1ADB8:                              ; CODE XREF: sub_1AC9A+121↓j
+loc_1ADB8:                              ; CODE XREF: paletteFade+121↓j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -20359,7 +20359,7 @@ loc_1ADB8:                              ; CODE XREF: sub_1AC9A+121↓j
                 pop     ds
                 assume ds:nothing
 
-loc_1ADCD:                              ; CODE XREF: sub_1AC9A+139↓j
+loc_1ADCD:                              ; CODE XREF: paletteFade+139↓j
                 lodsb
                 out     dx, al
                 lodsb
@@ -20372,36 +20372,36 @@ loc_1ADCD:                              ; CODE XREF: sub_1AC9A+139↓j
                 assume ds:seg046
                 mov     cx, 3Fh ; '?'
 
-loc_1ADDD:                              ; CODE XREF: sub_1AC9A+193↓j
+loc_1ADDD:                              ; CODE XREF: paletteFade+193↓j
                 push    cx
                 mov     di, 56DAh
                 lea     si, parm_5A
                 lea     bx, unk_1C324
                 mov     cx, 300h
 
-loc_1ADEC:                              ; CODE XREF: sub_1AC9A+16B↓j
+loc_1ADEC:                              ; CODE XREF: paletteFade+16B↓j
                 mov     al, [di]
                 cmp     al, 3Fh ; '?'
                 jg      short loc_1ADF7
                 cmp     al, es:[si]
                 jz      short loc_1AE02
 
-loc_1ADF7:                              ; CODE XREF: sub_1AC9A+156↑j
+loc_1ADF7:                              ; CODE XREF: paletteFade+156↑j
                 dec     al
                 mov     [di], al
                 cmp     al, 3Fh ; '?'
                 jg      short loc_1AE02
                 mov     es:[bx], al
 
-loc_1AE02:                              ; CODE XREF: sub_1AC9A+15B↑j
-                                        ; sub_1AC9A+163↑j
+loc_1AE02:                              ; CODE XREF: paletteFade+15B↑j
+                                        ; paletteFade+163↑j
                 inc     bx
                 inc     di
                 inc     si
                 loop    loc_1ADEC
                 mov     dx, 3DAh
 
-loc_1AE0A:                              ; CODE XREF: sub_1AC9A+173↓j
+loc_1AE0A:                              ; CODE XREF: paletteFade+173↓j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -20419,7 +20419,7 @@ loc_1AE0A:                              ; CODE XREF: sub_1AC9A+173↓j
                 pop     ds
                 assume ds:nothing
 
-loc_1AE1F:                              ; CODE XREF: sub_1AC9A+18B↓j
+loc_1AE1F:                              ; CODE XREF: paletteFade+18B↓j
                 lodsb
                 out     dx, al
                 lodsb
@@ -20442,7 +20442,7 @@ loc_1AE1F:                              ; CODE XREF: sub_1AC9A+18B↓j
                 pop     cx
                 pop     bx
                 retf
-sub_1AC9A       endp
+paletteFade     endp
 
 seg031          ends
 
@@ -20469,21 +20469,21 @@ sub_1AE40       proc far                ; CODE XREF: start+1B9↑P
                 or      cs:byte_22783, 10h
                 call    sub_1B1E2
                 call    sub_1B003
-                call    sub_193EA
+                call    shared_d2992b
                 call    sub_19424
                 call    sub_1B18A
-                call    sub_1BC54
+                call    drawBackdropTile
                 jmp     short loc_1AE99
 ; ---------------------------------------------------------------------------
 
 loc_1AE7E:                              ; CODE XREF: sub_1AE40+1C↑j
                 call    sub_1B1E2
                 call    sub_1B08C
-                call    sub_193EA
+                call    shared_d2992b
                 call    sub_19424
                 call    sub_1B294
                 call    sub_1AE9F
-                call    sub_1BC54
+                call    drawBackdropTile
 
 loc_1AE99:                              ; CODE XREF: sub_1AE40+3C↑j
                 mov     ax, 1200h
@@ -20557,7 +20557,7 @@ loc_1AF05:                              ; CODE XREF: sub_1AEEF+B↑j
                 mov     al, byte ptr cs:word_1FAA3+1
                 mov     es:[di+3], al
                 mov     ax, 0Ah
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 1
                 mov     es:[di+4], al
                 mov     ax, es:918h
@@ -20567,14 +20567,14 @@ loc_1AF05:                              ; CODE XREF: sub_1AEEF+B↑j
                 mov     si, 9Ah
                 add     si, ax
                 mov     ax, [si+2]
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 mov     es:[di+5], ax
                 add     di, 7
                 mov     ax, [si+4]
                 cmp     ax, 0
                 jz      short loc_1AF64
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 mov     es:[di], al
                 mov     word ptr es:[di+1], 4
@@ -20589,7 +20589,7 @@ loc_1AF6B:                              ; CODE XREF: sub_1AEEF+98↓j
                 push    cx
                 xor     ah, ah
                 mov     al, [si+3]
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 mov     es:[di], al
                 mov     ax, [si]
@@ -20632,8 +20632,8 @@ sub_1AF9B       proc near               ; CODE XREF: sub_1B003+75↓p
                 mov     cs:byte_22778, 5
                 mov     cs:word_22776, 116h
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 retn
 sub_1AF9B       endp
 
@@ -20650,8 +20650,8 @@ sub_1AFD4       proc near               ; CODE XREF: sub_1B18A+54↓p
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 retn
 sub_1AFD4       endp
 
@@ -20681,7 +20681,7 @@ sub_1B003       proc near               ; CODE XREF: sub_1AE40+27↑p
 loc_1B04F:                              ; CODE XREF: sub_1B003+19↑j
                                         ; sub_1B003+2A↑j ...
                 mov     ax, 0Ah
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 5
                 mov     cx, ax
                 mov     cs:byte_2278B, 1
@@ -20721,7 +20721,7 @@ sub_1B08C       proc near               ; CODE XREF: sub_1AE40+41↑p
                 jnz     short loc_1B0B8
                 sub     bx, 18h
                 mov     ax, 3
-                call    sub_1BA82
+                call    shared_9c11a6
                 mov     cx, 3
                 shl     ax, cl
                 add     bx, ax
@@ -20752,7 +20752,7 @@ loc_1B0C7:                              ; CODE XREF: sub_1B08C+38↑j
                 add     ax, 15Eh
                 mov     di, 3ACBh
                 mov     bx, 0A04h
-                call    sub_19518
+                call    fileReadRecordTo
                 mov     ax, 42D6h
                 test    cs:byte_1FA7E, 80h
                 jnz     short loc_1B11D
@@ -20779,7 +20779,7 @@ loc_1B11D:                              ; CODE XREF: sub_1B08C+6B↑j
                 cmp     ax, 1
                 jz      short loc_1B13C
                 dec     ax
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
 
 loc_1B13C:                              ; CODE XREF: sub_1B08C+A2↑j
@@ -20862,7 +20862,7 @@ sub_1B1E2       proc near               ; CODE XREF: sub_1AE40+24↑p
                 or      ax, ax
                 jz      short loc_1B204
                 push    bx
-                call    sub_1BA82
+                call    shared_9c11a6
                 pop     bx
                 shl     ax, 1
                 add     bx, ax
@@ -20872,7 +20872,7 @@ loc_1B204:                              ; CODE XREF: sub_1B1E2+15↑j
                 mov     bx, 0A23h
                 mov     word ptr [bx+6], 10h
                 mov     di, 8760h
-                call    sub_19518
+                call    fileReadRecordTo
                 mov     bx, 0A94h
                 xor     ah, ah
                 mov     al, ds:8763h
@@ -20890,7 +20890,7 @@ loc_1B204:                              ; CODE XREF: sub_1B1E2+15↑j
 
 loc_1B239:                              ; CODE XREF: sub_1B1E2+68↓j
                 push    cx
-                call    sub_18D39
+                call    fileWriteRecord
                 push    si
                 mov     cx, 44h ; 'D'
                 rep movsb
@@ -20916,7 +20916,7 @@ loc_1B265:                              ; CODE XREF: sub_1B1E2+A6↓j
                 and     ax, 7FFh
                 mov     cs:word_22776, ax
                 mov     ax, 101h
-                call    sub_1BD44
+                call    tileOp
                 add     si, 4
                 add     word ptr es:1Ah, 20h ; ' '
                 loop    loc_1B265
@@ -20977,13 +20977,13 @@ sub_1B2D8       proc near               ; CODE XREF: sub_1B003+72↑p
                 mov     al, ds:91CCh
                 sub     al, ds:91CBh
                 xor     ah, ah
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     al, ds:91CBh
                 mov     byte ptr cs:word_1FAA3, al
                 mov     al, ds:91CEh
                 sub     al, ds:91CDh
                 xor     ah, ah
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     al, ds:91CDh
                 mov     byte ptr cs:word_1FAA3+1, al
                 mov     bh, byte ptr cs:word_1FAA3
@@ -21049,13 +21049,13 @@ loc_1B3D8:                              ; CODE XREF: sub_1B35B+1F↑j
                 mov     al, ds:91CCh
                 sub     al, ds:91CBh
                 xor     ah, ah
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     al, ds:91CBh
                 mov     byte ptr cs:word_1FAA3, al
                 mov     al, ds:91CEh
                 sub     al, ds:91CDh
                 xor     ah, ah
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     al, ds:91CDh
                 mov     byte ptr cs:word_1FAA3+1, al
                 mov     bh, byte ptr cs:word_1FAA3
@@ -21286,7 +21286,7 @@ sub_1B5F7       proc near               ; CODE XREF: sub_1B08C+DF↑p
                 test    byte ptr cs:word_1FA95, 0F0h
                 jz      short loc_1B60C
                 mov     ax, 3
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 mov     cs:byte_1FAA7, al
 
@@ -21294,14 +21294,14 @@ loc_1B60C:                              ; CODE XREF: sub_1B5F7+6↑j
                 test    byte ptr cs:word_1FA95, 0Fh
                 jz      short loc_1B620
                 mov     ax, 5
-                call    sub_1BA82
+                call    shared_9c11a6
                 mov     cs:byte_1FAA8, al
 
 loc_1B620:                              ; CODE XREF: sub_1B5F7+1B↑j
                 test    byte ptr cs:word_1FA95+1, 0E0h
                 jz      short loc_1B634
                 mov     ax, 3
-                call    sub_1BA82
+                call    shared_9c11a6
                 mov     cs:byte_1FAA9, al
 
 loc_1B634:                              ; CODE XREF: sub_1B5F7+2F↑j
@@ -21313,7 +21313,7 @@ loc_1B642:                              ; CODE XREF: sub_1B5F7+43↑j
                 test    byte ptr cs:word_1FA95+1, 2
                 jz      short loc_1B659
                 mov     ax, 3
-                call    sub_1BA82
+                call    shared_9c11a6
                 add     ax, 2
                 mov     cs:byte_1FAAA, al
 
@@ -21376,7 +21376,7 @@ loc_1B70D:                              ; CODE XREF: sub_1B5F7+C6↑j
                                         ; sub_1B5F7+D4↑j ...
                 xor     ah, ah
                 mov     al, cs:byte_1FAAF
-                call    sub_1BA82
+                call    shared_9c11a6
                 inc     ax
                 mov     cs:byte_1FAAF, al
 
@@ -21398,21 +21398,21 @@ seg033          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B71E       proc far                ; CODE XREF: sub_10793+6B↑P
+shared_a7dbf2   proc far                ; CODE XREF: sub_10793+6B↑P
                                         ; sub_10793+85↑P ...
                 mov     es:1Ah, ax
                 mov     es:1Ch, bx
                 mov     cs:word_22776, dx
                 mov     ax, 1
-                call    sub_1BD44
+                call    tileOp
                 retf
-sub_1B71E       endp
+shared_a7dbf2   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B735       proc far                ; CODE XREF: sub_18936+3B↑P
+shared_063c13   proc far                ; CODE XREF: sub_18936+3B↑P
                 mov     cs:word_22764, ax
                 mov     cs:word_22766, bx
                 mov     ax, cs:word_22760
@@ -21421,10 +21421,10 @@ sub_1B735       proc far                ; CODE XREF: sub_18936+3B↑P
                 mov     es:1Ch, ax
                 mov     cs:word_22776, dx
                 mov     ax, 1
-                call    sub_1BD44
-                call    sub_18EC8
+                call    tileOp
+                call    drawTileKeyed
                 retf
-sub_1B735       endp
+shared_063c13   endp
 
 seg033          ends
 
@@ -21440,7 +21440,7 @@ seg034          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B762       proc far                ; CODE XREF: sub_19407+E↑P
+fileWriteRecordFrom proc far            ; CODE XREF: shared_4a4289+E↑P
                                         ; sub_1945D+1A↑P
                 push    es
                 cld
@@ -21454,10 +21454,10 @@ sub_1B762       proc far                ; CODE XREF: sub_19407+E↑P
                 mov     cx, [bx+6]
                 mov     di, [bx+2]
                 rep movsb
-                call    sub_18D8A
+                call    fileWriteRecord_18D8A
                 pop     es
                 retf
-sub_1B762       endp
+fileWriteRecordFrom endp
 
 seg034          ends
 
@@ -21472,7 +21472,7 @@ seg035          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B782       proc far                ; CODE XREF: seg000:71A6↑P
+shared_77e6d6   proc far                ; CODE XREF: seg000:71A6↑P
                                         ; sub_17E86+146↑P ...
                 push    bx
                 push    ax
@@ -21482,7 +21482,7 @@ sub_1B782       proc far                ; CODE XREF: seg000:71A6↑P
                 jnz     short loc_1B791
                 mov     bl, 2Eh ; '.'
 
-loc_1B791:                              ; CODE XREF: sub_1B782+B↑j
+loc_1B791:                              ; CODE XREF: shared_77e6d6+B↑j
                 mov     ds:91D1h, bl
                 mov     ax, 40h ; '@'
                 mov     ds, ax
@@ -21500,7 +21500,7 @@ loc_1B791:                              ; CODE XREF: sub_1B782+B↑j
                 test    byte ptr ds:91D0h, 1
                 jz      short loc_1B80E
 
-loc_1B7BC:                              ; CODE XREF: sub_1B782+31↑j
+loc_1B7BC:                              ; CODE XREF: shared_77e6d6+31↑j
                 mov     byte ptr es:36h, 1
                 mov     word ptr es:1Ah, 154h
                 mov     word ptr es:1Ch, 132h
@@ -21511,18 +21511,18 @@ loc_1B7BC:                              ; CODE XREF: sub_1B782+31↑j
                 mov     word ptr es:1Ch, 135h
                 mov     word ptr es:20h, 179h
 
-loc_1B7F4:                              ; CODE XREF: sub_1B782+62↑j
+loc_1B7F4:                              ; CODE XREF: shared_77e6d6+62↑j
                 mov     ah, es:66h
                 test    byte ptr ds:91D0h, 4
                 jz      short loc_1B805
                 mov     ah, es:2Fh
 
-loc_1B805:                              ; CODE XREF: sub_1B782+7C↑j
+loc_1B805:                              ; CODE XREF: shared_77e6d6+7C↑j
                 mov     es:30h, ah
                 mov     ah, 7
                 int     62h             ; VID fn07 vidFillRect
 
-loc_1B80E:                              ; CODE XREF: sub_1B782+38↑j
+loc_1B80E:                              ; CODE XREF: shared_77e6d6+38↑j
                 test    byte ptr ds:91D0h, 2
                 jnz     short loc_1B82B
                 mov     al, 1
@@ -21539,13 +21539,13 @@ loc_1B80E:                              ; CODE XREF: sub_1B782+38↑j
                 jmp     short loc_1B86F
 ; ---------------------------------------------------------------------------
 
-loc_1B82B:                              ; CODE XREF: sub_1B782+91↑j
+loc_1B82B:                              ; CODE XREF: shared_77e6d6+91↑j
                 test    byte ptr ds:91D0h, 4
                 jnz     short loc_1B83A
                 mov     al, es:66h
                 mov     es:2Fh, al
 
-loc_1B83A:                              ; CODE XREF: sub_1B782+AE↑j
+loc_1B83A:                              ; CODE XREF: shared_77e6d6+AE↑j
                 test    byte ptr ds:91D0h, 10h
                 jnz     short loc_1B855
                 mov     byte ptr es:2Ah, 2Bh ; '+'
@@ -21555,7 +21555,7 @@ loc_1B83A:                              ; CODE XREF: sub_1B782+AE↑j
                 jmp     short loc_1B864
 ; ---------------------------------------------------------------------------
 
-loc_1B855:                              ; CODE XREF: sub_1B782+BD↑j
+loc_1B855:                              ; CODE XREF: shared_77e6d6+BD↑j
                 mov     ah, 2Bh ; '+'
                 mov     al, es:2Ah
                 sub     al, ah
@@ -21563,33 +21563,33 @@ loc_1B855:                              ; CODE XREF: sub_1B782+BD↑j
                 mov     bx, 91D2h
                 add     bx, ax
 
-loc_1B864:                              ; CODE XREF: sub_1B782+D1↑j
+loc_1B864:                              ; CODE XREF: shared_77e6d6+D1↑j
                 mov     byte ptr es:35h, 1
-                call    sub_1B8CC
+                call    drawString
 
-loc_1B86F:                              ; CODE XREF: sub_1B782+A7↑j
+loc_1B86F:                              ; CODE XREF: shared_77e6d6+A7↑j
                 test    byte ptr ds:91D0h, 4
                 jnz     short loc_1B87E
                 mov     al, es:66h
                 mov     es:2Fh, al
 
-loc_1B87E:                              ; CODE XREF: sub_1B782+F2↑j
+loc_1B87E:                              ; CODE XREF: shared_77e6d6+F2↑j
                 test    byte ptr ds:91D0h, 8
                 jnz     short loc_1B88D
                 mov     al, es:72h
                 mov     es:2Eh, al
 
-loc_1B88D:                              ; CODE XREF: sub_1B782+101↑j
+loc_1B88D:                              ; CODE XREF: shared_77e6d6+101↑j
                 test    byte ptr ds:91D0h, 10h
                 jnz     short loc_1B8A3
                 mov     byte ptr es:2Ah, 2Bh ; '+'
                 mov     bl, ds:91D1h
                 mov     es:2Bh, bl
 
-loc_1B8A3:                              ; CODE XREF: sub_1B782+110↑j
+loc_1B8A3:                              ; CODE XREF: shared_77e6d6+110↑j
                 mov     byte ptr es:35h, 1
                 pop     bx
-                call    sub_1B8CC
+                call    drawString
                 mov     byte ptr es:35h, 0
                 push    ds
                 mov     ax, 40h ; '@'
@@ -21602,7 +21602,7 @@ loc_1B8A3:                              ; CODE XREF: sub_1B782+110↑j
                 mov     ah, 28h ; '('
                 int     62h             ; VID fn28 vidMouseShow
                 retf
-sub_1B782       endp
+shared_77e6d6   endp
 
 seg035          ends
 
@@ -21617,7 +21617,7 @@ seg036          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B8CC       proc far                ; CODE XREF: start+2B2↑P
+drawString      proc far                ; CODE XREF: start+2B2↑P
                                         ; sub_111F4+1E↑P ...
                 push    ax
                 mov     ah, es:2Bh
@@ -21626,7 +21626,7 @@ sub_1B8CC       proc far                ; CODE XREF: start+2B2↑P
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
 
-loc_1B8DB:                              ; CODE XREF: sub_1B8CC+23↓j
+loc_1B8DB:                              ; CODE XREF: drawString+23↓j
                 mov     al, [bx]
                 or      al, al
                 jz      short loc_1B8F1
@@ -21638,7 +21638,7 @@ loc_1B8DB:                              ; CODE XREF: sub_1B8CC+23↓j
                 jmp     short loc_1B8DB
 ; ---------------------------------------------------------------------------
 
-loc_1B8F1:                              ; CODE XREF: sub_1B8CC+13↑j
+loc_1B8F1:                              ; CODE XREF: drawString+13↑j
                 mov     ah, 28h ; '('
                 int     62h             ; VID fn28 vidMouseShow
                 pop     ax
@@ -21646,7 +21646,7 @@ loc_1B8F1:                              ; CODE XREF: sub_1B8CC+13↑j
                 mov     es:2Ah, al
                 pop     ax
                 retf
-sub_1B8CC       endp
+drawString      endp
 
 seg036          ends
 
@@ -21662,7 +21662,7 @@ seg037          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B902       proc far                ; CODE XREF: sub_119E7+6A↑P
+shared_1d0ebe   proc far                ; CODE XREF: sub_119E7+6A↑P
                                         ; sub_119E7+80↑P
 
 ; FUNCTION CHUNK AT 0083 SIZE 000000FE BYTES
@@ -21671,17 +21671,17 @@ sub_1B902       proc far                ; CODE XREF: sub_119E7+6A↑P
                 cmp     al, 0
                 jz      short loc_1B914
                 cmp     al, 1
-                jz      short near ptr sub_1B94B
+                jz      short near ptr shared_034038
                 cmp     al, 0Ah
                 jl      short locret_1B913
                 jmp     short loc_1B983
 ; ---------------------------------------------------------------------------
 
-locret_1B913:                           ; CODE XREF: sub_1B902+D↑j
+locret_1B913:                           ; CODE XREF: shared_1d0ebe+D↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1B914:                              ; CODE XREF: sub_1B902+5↑j
+loc_1B914:                              ; CODE XREF: shared_1d0ebe+5↑j
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
                 mov     ah, 14h
@@ -21691,20 +21691,20 @@ loc_1B914:                              ; CODE XREF: sub_1B902+5↑j
                 mov     word ptr es:1Eh, 24Fh
                 mov     word ptr es:20h, 12Dh
                 mov     ax, cs:word_227AA
-                call    sub_194AB
+                call    shared_6b5782_194AB
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 28h ; '('
                 int     62h             ; VID fn28 vidMouseShow
                 retf
-sub_1B902       endp
+shared_1d0ebe   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B94B       proc far                ; CODE XREF: sub_1B902+9↑j
-                                        ; sub_1B902+15E↓P
+shared_034038   proc far                ; CODE XREF: shared_1d0ebe+9↑j
+                                        ; shared_1d0ebe+15E↓P
                 mov     byte ptr es:35h, 0
                 mov     byte ptr es:2Ah, 3Ah ; ':'
                 mov     byte ptr es:2Bh, 13h
@@ -21717,17 +21717,17 @@ sub_1B94B       proc far                ; CODE XREF: sub_1B902+9↑j
                 jnb     short loc_1B975
                 inc     bx
 
-loc_1B975:                              ; CODE XREF: sub_1B94B+27↑j
-                call    sub_18ADA
+loc_1B975:                              ; CODE XREF: shared_034038+27↑j
+                call    shared_72afff
                 mov     bx, 9371h
-                call    sub_1B8CC
+                call    drawString
                 retf
-sub_1B94B       endp
+shared_034038   endp
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_1B902
+; START OF FUNCTION CHUNK FOR shared_1d0ebe
 
-loc_1B983:                              ; CODE XREF: sub_1B902+F↑j
+loc_1B983:                              ; CODE XREF: shared_1d0ebe+F↑j
                 cmp     cs:word_227AA, 0
                 jnz     short loc_1B9A2
                 mov     bx, 7D0h
@@ -21735,11 +21735,11 @@ loc_1B983:                              ; CODE XREF: sub_1B902+F↑j
                 jz      short loc_1B999
                 mov     bx, 3E8h
 
-loc_1B999:                              ; CODE XREF: sub_1B902+92↑j
+loc_1B999:                              ; CODE XREF: shared_1d0ebe+92↑j
                 call    sub_19488
                 mov     cs:word_227AA, ax
 
-loc_1B9A2:                              ; CODE XREF: sub_1B902+87↑j
+loc_1B9A2:                              ; CODE XREF: shared_1d0ebe+87↑j
                 mov     ah, 29h ; ')'
                 int     62h             ; VID fn29 vidMouseHide
                 mov     word ptr es:1Ah, 197h
@@ -21747,11 +21747,11 @@ loc_1B9A2:                              ; CODE XREF: sub_1B902+87↑j
                 mov     word ptr es:1Eh, 24Fh
                 mov     word ptr es:20h, 12Dh
                 mov     ax, cs:word_227AA
-                call    sub_1948D
+                call    shared_6b5782
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     bx, 939Eh
-                call    sub_1BC78
+                call    shared_23f116
                 mov     byte ptr es:35h, 0
                 mov     byte ptr es:2Ah, 34h ; '4'
                 mov     byte ptr es:2Bh, 11h
@@ -21762,10 +21762,10 @@ loc_1B9A2:                              ; CODE XREF: sub_1B902+87↑j
                 mov     al, es:64h
                 mov     es:2Eh, al
                 mov     bx, 9379h
-                call    sub_1B8CC
+                call    drawString
                 mov     byte ptr es:2Bh, 12h
                 mov     bx, 938Bh
-                call    sub_1B8CC
+                call    drawString
                 mov     al, es:6Fh
                 mov     es:2Eh, al
                 mov     byte ptr es:2Ah, 34h ; '4'
@@ -21776,11 +21776,11 @@ loc_1B9A2:                              ; CODE XREF: sub_1B902+87↑j
                 shl     bx, 1
                 add     bx, 91F3h
                 mov     bx, [bx]
-                call    sub_1B8CC
+                call    drawString
                 jmp     short loc_1BA70
 ; ---------------------------------------------------------------------------
 
-loc_1BA42:                              ; CODE XREF: sub_1B902+F4↑j
+loc_1BA42:                              ; CODE XREF: shared_1d0ebe+F4↑j
                 mov     al, es:6Fh
                 mov     es:2Eh, al
                 xor     bh, bh
@@ -21789,26 +21789,26 @@ loc_1BA42:                              ; CODE XREF: sub_1B902+F4↑j
                 shl     bx, 1
                 add     bx, 91F3h
                 mov     bx, [bx]
-                call    sub_1B8CC
-                call    sub_1B94B
+                call    drawString
+                call    shared_034038
                 cmp     byte ptr ds:91F2h, 14h
                 jge     short loc_1BA70
                 mov     al, 4Eh ; 'N'
                 jmp     short loc_1BA72
 ; ---------------------------------------------------------------------------
 
-loc_1BA70:                              ; CODE XREF: sub_1B902+13E↑j
-                                        ; sub_1B902+168↑j
+loc_1BA70:                              ; CODE XREF: shared_1d0ebe+13E↑j
+                                        ; shared_1d0ebe+168↑j
                 mov     al, 42h ; 'B'
 
-loc_1BA72:                              ; CODE XREF: sub_1B902+16C↑j
-                call    sub_190D3
+loc_1BA72:                              ; CODE XREF: shared_1d0ebe+16C↑j
+                call    shared_23db76
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 mov     ah, 28h ; '('
                 int     62h             ; VID fn28 vidMouseShow
                 retf
-; END OF FUNCTION CHUNK FOR sub_1B902
+; END OF FUNCTION CHUNK FOR shared_1d0ebe
 seg037          ends
 
 ; ===========================================================================
@@ -21823,7 +21823,7 @@ seg038          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BA82       proc far                ; CODE XREF: sub_10548+15↑P
+shared_9c11a6   proc far                ; CODE XREF: sub_10548+15↑P
                                         ; sub_10548+39↑P ...
                 push    bx
                 push    cx
@@ -21838,7 +21838,7 @@ sub_1BA82       proc far                ; CODE XREF: sub_10548+15↑P
                                         ; DL = hundredths of seconds
                 mov     ax, dx
 
-loc_1BA94:                              ; CODE XREF: sub_1BA82+A↑j
+loc_1BA94:                              ; CODE XREF: shared_9c11a6+A↑j
                 neg     ax
                 mov     bx, 805h
                 mul     bx
@@ -21850,19 +21850,19 @@ loc_1BA94:                              ; CODE XREF: sub_1BA82+A↑j
                 inc     ax
                 add     ax, 0FFFFh
 
-loc_1BAAB:                              ; CODE XREF: sub_1BA82+22↑j
+loc_1BAAB:                              ; CODE XREF: shared_9c11a6+22↑j
                 pop     dx
                 push    dx
                 mov     cx, 0
 
-loc_1BAB0:                              ; CODE XREF: sub_1BA82+33↓j
+loc_1BAB0:                              ; CODE XREF: shared_9c11a6+33↓j
                 shl     dx, 1
                 jb      short loc_1BAB7
                 inc     cx
                 jmp     short loc_1BAB0
 ; ---------------------------------------------------------------------------
 
-loc_1BAB7:                              ; CODE XREF: sub_1BA82+30↑j
+loc_1BAB7:                              ; CODE XREF: shared_9c11a6+30↑j
                 pop     dx
                 shl     ax, cl
                 shr     ax, cl
@@ -21870,12 +21870,12 @@ loc_1BAB7:                              ; CODE XREF: sub_1BA82+30↑j
                 jbe     short loc_1BAC2
                 sub     ax, dx
 
-loc_1BAC2:                              ; CODE XREF: sub_1BA82+3C↑j
+loc_1BAC2:                              ; CODE XREF: shared_9c11a6+3C↑j
                 pop     dx
                 pop     cx
                 pop     bx
                 retf
-sub_1BA82       endp
+shared_9c11a6   endp
 
 seg038          ends
 
@@ -21890,8 +21890,8 @@ seg039          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BAC6       proc near               ; CODE XREF: sub_1BBB8+2F↓p
-                                        ; sub_1BBB8+52↓p
+shared_7a0858   proc near               ; CODE XREF: shared_47fa83+2F↓p
+                                        ; shared_47fa83+52↓p
                 add     bx, ds:93B0h
                 add     bx, ds:93AAh
                 mov     es:1Ah, bx
@@ -21899,14 +21899,14 @@ sub_1BAC6       proc near               ; CODE XREF: sub_1BBB8+2F↓p
                 add     ax, ds:93ACh
                 mov     es:1Ch, ax
                 retn
-sub_1BAC6       endp
+shared_7a0858   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BAE0       proc near               ; CODE XREF: sub_1BB3D+1D↓p
-                                        ; sub_1BB3D:loc_1BBAB↓p
+shared_33aaab   proc near               ; CODE XREF: shared_1f8a83+1D↓p
+                                        ; shared_1f8a83:loc_1BBAB↓p
                 mov     cs:byte_227A5, 1
                 mov     si, ds:93ACh
                 mov     cl, 5
@@ -21926,15 +21926,15 @@ sub_1BAE0       proc near               ; CODE XREF: sub_1BB3D+1D↓p
                 or      [si], bl
                 mov     cs:byte_227A5, 0
 
-locret_1BB14:                           ; CODE XREF: sub_1BAE0+2A↑j
+locret_1BB14:                           ; CODE XREF: shared_33aaab+2A↑j
                 retn
-sub_1BAE0       endp
+shared_33aaab   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BB15       proc near               ; CODE XREF: sub_1BBB8+8↓p
+shared_27c37f   proc near               ; CODE XREF: shared_47fa83+8↓p
                 mov     word ptr ds:93AEh, 400h
                 mov     word ptr ds:93B4h, 0FDA6h
                 mov     word ptr ds:93B0h, 0
@@ -21949,25 +21949,25 @@ sub_1BB15       proc near               ; CODE XREF: sub_1BBB8+8↓p
                 rep stosw
                 pop     es
                 retn
-sub_1BB15       endp
+shared_27c37f   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BB3D       proc near               ; CODE XREF: sub_1BBB8:loc_1BBC3↓p
+shared_1f8a83   proc near               ; CODE XREF: shared_47fa83:loc_1BBC3↓p
                 cmp     word ptr ds:93AEh, 5
                 jle     short loc_1BB81
 
-loc_1BB44:                              ; CODE XREF: sub_1BB3D+2C↓j
-                                        ; sub_1BB3D+3B↓j
+loc_1BB44:                              ; CODE XREF: shared_1f8a83+2C↓j
+                                        ; shared_1f8a83+3B↓j
                 mov     ax, 1Fh
-                call    sub_1BA82
+                call    shared_9c11a6
                 mov     ds:93AAh, ax
                 mov     ax, 1Fh
-                call    sub_1BA82
+                call    shared_9c11a6
                 mov     ds:93ACh, ax
-                call    sub_1BAE0
+                call    shared_33aaab
                 cmp     cs:byte_227A5, 0
                 jz      short loc_1BB7A
                 inc     word ptr ds:93B4h
@@ -21977,41 +21977,41 @@ loc_1BB44:                              ; CODE XREF: sub_1BB3D+2C↓j
                 jmp     short loc_1BB44
 ; ---------------------------------------------------------------------------
 
-loc_1BB7A:                              ; CODE XREF: sub_1BB3D+26↑j
-                                        ; sub_1BB3D+62↓j ...
+loc_1BB7A:                              ; CODE XREF: shared_1f8a83+26↑j
+                                        ; shared_1f8a83+62↓j ...
                 mov     cs:byte_227A5, 0
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1BB81:                              ; CODE XREF: sub_1BB3D+5↑j
+loc_1BB81:                              ; CODE XREF: shared_1f8a83+5↑j
                 mov     word ptr ds:93AAh, 0
                 mov     word ptr ds:93ACh, 0
 
-loc_1BB8D:                              ; CODE XREF: sub_1BB3D+79↓j
+loc_1BB8D:                              ; CODE XREF: shared_1f8a83+79↓j
                 cmp     word ptr ds:93AAh, 1Fh
                 jz      short loc_1BB9A
                 inc     word ptr ds:93AAh
                 jmp     short loc_1BBAB
 ; ---------------------------------------------------------------------------
 
-loc_1BB9A:                              ; CODE XREF: sub_1BB3D+55↑j
+loc_1BB9A:                              ; CODE XREF: shared_1f8a83+55↑j
                 cmp     word ptr ds:93ACh, 1Fh
                 jz      short loc_1BB7A
                 mov     word ptr ds:93AAh, 0
                 inc     word ptr ds:93ACh
 
-loc_1BBAB:                              ; CODE XREF: sub_1BB3D+5B↑j
-                call    sub_1BAE0
+loc_1BBAB:                              ; CODE XREF: shared_1f8a83+5B↑j
+                call    shared_33aaab
                 cmp     cs:byte_227A5, 0
                 jz      short loc_1BB7A
                 jmp     short loc_1BB8D
-sub_1BB3D       endp
+shared_1f8a83   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BBB8       proc far                ; CODE XREF: sub_10FEC+106↑P
+shared_47fa83   proc far                ; CODE XREF: sub_10FEC+106↑P
                                         ; seg000:575C↑P
                 push    ax
                 push    bx
@@ -22021,23 +22021,23 @@ sub_1BBB8       proc far                ; CODE XREF: sub_10FEC+106↑P
                 push    es
                 push    si
                 push    di
-                call    sub_1BB15
+                call    shared_27c37f
 
-loc_1BBC3:                              ; CODE XREF: sub_1BBB8+88↓j
-                call    sub_1BB3D
+loc_1BBC3:                              ; CODE XREF: shared_47fa83+88↓j
+                call    shared_1f8a83
                 mov     word ptr ds:93B0h, 0
                 mov     word ptr ds:93B2h, 0
                 mov     cx, cs:word_22747
 
-loc_1BBD7:                              ; CODE XREF: sub_1BBB8:loc_1BC42↓j
+loc_1BBD7:                              ; CODE XREF: shared_47fa83:loc_1BC42↓j
                 push    cx
                 mov     cx, cs:word_22749
 
-loc_1BBDD:                              ; CODE XREF: sub_1BBB8+67↓j
+loc_1BBDD:                              ; CODE XREF: shared_47fa83+67↓j
                 push    cx
                 mov     bx, cs:word_2274C
                 mov     ax, cs:word_2274E
-                call    sub_1BAC6
+                call    shared_7a0858
                 mov     al, cs:byte_22745
                 mov     es:31h, al
                 mov     ah, 4
@@ -22047,13 +22047,13 @@ loc_1BBDD:                              ; CODE XREF: sub_1BBB8+67↓j
                 jz      short loc_1BC19
                 mov     bx, cs:word_22750
                 mov     ax, cs:word_22752
-                call    sub_1BAC6
+                call    shared_7a0858
                 mov     al, cs:byte_22746
                 mov     es:31h, al
                 mov     ah, 3
                 int     62h             ; VID fn03 vidPutPixel
 
-loc_1BC19:                              ; CODE XREF: sub_1BBB8+47↑j
+loc_1BC19:                              ; CODE XREF: shared_47fa83+47↑j
                 add     word ptr ds:93B0h, 20h ; ' '
                 pop     cx
                 loop    loc_1BBDD
@@ -22068,11 +22068,11 @@ loc_1BC19:                              ; CODE XREF: sub_1BBB8+47↑j
                 jmp     short loc_1BBC3
 ; ---------------------------------------------------------------------------
 
-loc_1BC42:                              ; CODE XREF: sub_1BBB8+75↑j
+loc_1BC42:                              ; CODE XREF: shared_47fa83+75↑j
                 jmp     short loc_1BBD7
 ; ---------------------------------------------------------------------------
 
-loc_1BC44:                              ; CODE XREF: sub_1BBB8+86↑j
+loc_1BC44:                              ; CODE XREF: shared_47fa83+86↑j
                 mov     byte ptr es:31h, 0
                 pop     di
                 pop     si
@@ -22083,7 +22083,7 @@ loc_1BC44:                              ; CODE XREF: sub_1BBB8+86↑j
                 pop     bx
                 pop     ax
                 retf
-sub_1BBB8       endp
+shared_47fa83   endp
 
 seg039          ends
 
@@ -22099,16 +22099,16 @@ seg040          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BC54       proc far                ; CODE XREF: sub_10BD2:loc_10DFF↑P
+drawBackdropTile proc far               ; CODE XREF: sub_10BD2:loc_10DFF↑P
                                         ; sub_10ED0+67↑P ...
                 mov     word ptr es:1Ah, 0
                 mov     word ptr es:1Ch, 0
                 mov     cs:byte_22778, 0
                 mov     cs:word_22776, 0D5h
                 mov     ax, 101h
-                call    sub_1BD44
+                call    tileOp
                 retf
-sub_1BC54       endp
+drawBackdropTile endp
 
 seg040          ends
 
@@ -22123,7 +22123,7 @@ seg041          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BC78       proc far                ; CODE XREF: start+29E↑P
+shared_23f116   proc far                ; CODE XREF: start+29E↑P
                                         ; sub_111F4+C↑P ...
                 mov     ax, [bx]
                 mov     es:1Ah, ax
@@ -22164,7 +22164,7 @@ sub_1BC78       proc far                ; CODE XREF: start+29E↑P
                 mov     ah, 7
                 int     62h             ; VID fn07 vidFillRect
                 retf
-sub_1BC78       endp
+shared_23f116   endp
 
 seg041          ends
 
@@ -22180,8 +22180,8 @@ seg042          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BD04       proc far                ; CODE XREF: sub_10B4D+5↑P
-                                        ; sub_18A0E+5↑P
+speakerOn       proc far                ; CODE XREF: sub_10B4D+5↑P
+                                        ; shared_c34f43+5↑P
                 push    ax
                 push    bx
                 push    cx
@@ -22214,7 +22214,7 @@ sub_1BD04       proc far                ; CODE XREF: sub_10B4D+5↑P
                 pop     bx
                 pop     ax
                 retf
-sub_1BD04       endp
+speakerOn       endp
 
 seg042          ends
 
@@ -22229,8 +22229,8 @@ seg043          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BD21       proc far                ; CODE XREF: sub_10B4D+12↑P
-                                        ; sub_18A0E+12↑P
+speakerOff      proc far                ; CODE XREF: sub_10B4D+12↑P
+                                        ; shared_c34f43+12↑P
                 push    ax
                 in      al, 61h         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═► OR 03H=spkr ON
@@ -22251,7 +22251,7 @@ sub_1BD21       proc far                ; CODE XREF: sub_10B4D+12↑P
                                         ; 7: 0=enable kbrd
                 pop     ax
                 retf
-sub_1BD21       endp
+speakerOff      endp
 
 ; ---------------------------------------------------------------------------
                 retf
@@ -22261,7 +22261,7 @@ sub_1BD21       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BD2C       proc far                ; CODE XREF: sub_1BF9E+1↓P
+shared_e79de9   proc far                ; CODE XREF: shared_ed3965+1↓P
                 push    cx
                 push    di
                 push    es
@@ -22279,7 +22279,7 @@ sub_1BD2C       proc far                ; CODE XREF: sub_1BF9E+1↓P
                 pop     di
                 pop     cx
                 retf
-sub_1BD2C       endp
+shared_e79de9   endp
 
 seg043          ends
 
@@ -22294,7 +22294,7 @@ seg044          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BD44       proc far                ; CODE XREF: sub_10793+13↑P
+tileOp          proc far                ; CODE XREF: sub_10793+13↑P
                                         ; sub_10793+1F↑P ...
                 push    bx
                 push    cx
@@ -22315,8 +22315,8 @@ sub_1BD44       proc far                ; CODE XREF: sub_10793+13↑P
                 jmp     ax
 ; ---------------------------------------------------------------------------
 
-loc_1BD61:                              ; CODE XREF: sub_1BD44+9↑j
-                                        ; sub_1BD44+19↑j ...
+loc_1BD61:                              ; CODE XREF: tileOp+9↑j
+                                        ; tileOp+19↑j ...
                 mov     al, 1
 
 loc_1BD63:                              ; CODE XREF: seg044:005F↓j
@@ -22333,7 +22333,7 @@ loc_1BD63:                              ; CODE XREF: seg044:005F↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1BD73:                              ; CODE XREF: sub_1BD44+2C↑j
+loc_1BD73:                              ; CODE XREF: tileOp+2C↑j
                 push    word ptr es:16h
                 push    word ptr es:18h
                 mov     ah, 2Bh ; '+'
@@ -22341,10 +22341,10 @@ loc_1BD73:                              ; CODE XREF: sub_1BD44+2C↑j
                 pop     word ptr es:18h
                 pop     word ptr es:16h
                 retf
-sub_1BD44       endp
+tileOp          endp
 
 ; ---------------------------------------------------------------------------
-                call    sub_1BEB5
+                call    tileLookup
                 cmp     cs:byte_227A5, 0
                 jz      short loc_1BDAE
                 cmp     cs:byte_227A5, 1
@@ -22353,7 +22353,7 @@ sub_1BD44       endp
 ; ---------------------------------------------------------------------------
 
 loc_1BDA1:                              ; CODE XREF: seg044:005D↑j
-                call    sub_1BF4F
+                call    tileLoad
                 cmp     cs:byte_227A5, 0
                 jz      short loc_1BDAE
                 jmp     short loc_1BD63
@@ -22373,7 +22373,7 @@ loc_1BDAE:                              ; CODE XREF: seg044:0055↑j
                 xor     al, al
                 jmp     short loc_1BD63
 ; ---------------------------------------------------------------------------
-                call    sub_1BEB5
+                call    tileLookup
                 cmp     cs:byte_227A5, 0
                 jz      short loc_1BDFC
                 cmp     cs:byte_227A5, 1
@@ -22382,7 +22382,7 @@ loc_1BDAE:                              ; CODE XREF: seg044:0055↑j
 ; ---------------------------------------------------------------------------
 
 loc_1BDEE:                              ; CODE XREF: seg044:00A9↑j
-                call    sub_1BF4F
+                call    tileLoad
                 cmp     cs:byte_227A5, 0
                 jz      short loc_1BDFC
                 jmp     loc_1BD63
@@ -22393,7 +22393,7 @@ loc_1BDFC:                              ; CODE XREF: seg044:00A1↑j
                 xor     al, al
                 jmp     loc_1BD63
 ; ---------------------------------------------------------------------------
-                call    sub_1BEB5
+                call    tileLookup
                 cmp     cs:byte_227A5, 0
                 jz      short loc_1BE0F
                 jmp     loc_1BD61
@@ -22412,7 +22412,7 @@ loc_1BE22:                              ; CODE XREF: seg044:00DD↑j
                 xor     al, al
                 jmp     loc_1BD63
 ; ---------------------------------------------------------------------------
-                call    sub_1BEB5
+                call    tileLookup
                 cmp     cs:byte_227A5, 0
                 jz      short loc_1BE3D
                 cmp     cs:byte_227A5, 1
@@ -22446,7 +22446,7 @@ loc_1BE52:                              ; CODE XREF: seg044:00F8↑j
                 xor     al, al
                 jmp     loc_1BD63
 ; ---------------------------------------------------------------------------
-                call    sub_1BEB5
+                call    tileLookup
                 cmp     cs:byte_227A5, 0
                 jz      short loc_1BE97
                 jmp     loc_1BD61
@@ -22468,7 +22468,7 @@ loc_1BE97:                              ; CODE XREF: seg044:0152↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BEB5       proc near               ; CODE XREF: seg044:004C↑p
+tileLookup      proc near               ; CODE XREF: seg044:004C↑p
                                         ; seg044:0098↑p ...
                 mov     cs:byte_227A5, 0
                 mov     dl, cs:byte_22778
@@ -22479,19 +22479,19 @@ sub_1BEB5       proc near               ; CODE XREF: seg044:004C↑p
                 mov     ds, ax
                 xor     si, si
 
-loc_1BED3:                              ; CODE XREF: sub_1BEB5+2B↓j
+loc_1BED3:                              ; CODE XREF: tileLookup+2B↓j
                 cmp     dl, [si+1]
                 jnz     short loc_1BEDD
                 cmp     bx, [si+2]
                 jz      short loc_1BEE4
 
-loc_1BEDD:                              ; CODE XREF: sub_1BEB5+21↑j
+loc_1BEDD:                              ; CODE XREF: tileLookup+21↑j
                 add     si, 6
                 loop    loc_1BED3
                 jmp     short loc_1BEF0
 ; ---------------------------------------------------------------------------
 
-loc_1BEE4:                              ; CODE XREF: sub_1BEB5+26↑j
+loc_1BEE4:                              ; CODE XREF: tileLookup+26↑j
                 mov     ax, [si+4]
                 pop     ds
                 mov     ds:9441h, ax
@@ -22499,7 +22499,7 @@ loc_1BEE4:                              ; CODE XREF: sub_1BEB5+26↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1BEF0:                              ; CODE XREF: sub_1BEB5+2D↑j
+loc_1BEF0:                              ; CODE XREF: tileLookup+2D↑j
                 pop     ds
                 mov     cs:byte_227A5, 1
                 mov     cx, es:0
@@ -22512,7 +22512,7 @@ loc_1BEF0:                              ; CODE XREF: sub_1BEB5+2D↑j
                 mov     ax, es:2
                 mov     ds, ax
 
-loc_1BF12:                              ; CODE XREF: sub_1BEB5:loc_1BF20↓j
+loc_1BF12:                              ; CODE XREF: tileLookup:loc_1BF20↓j
                 cmp     byte ptr [si], 0
                 jle     short loc_1BF2A
                 add     si, 6
@@ -22520,14 +22520,14 @@ loc_1BF12:                              ; CODE XREF: sub_1BEB5:loc_1BF20↓j
                 jbe     short loc_1BF20
                 xor     si, si
 
-loc_1BF20:                              ; CODE XREF: sub_1BEB5+67↑j
+loc_1BF20:                              ; CODE XREF: tileLookup+67↑j
                 loop    loc_1BF12
                 pop     ds
                 mov     cs:byte_227A5, 2
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1BF2A:                              ; CODE XREF: sub_1BEB5+60↑j
+loc_1BF2A:                              ; CODE XREF: tileLookup+60↑j
                 mov     ax, [si+4]
                 pop     ds
                 mov     ds:9441h, ax
@@ -22538,15 +22538,15 @@ loc_1BF2A:                              ; CODE XREF: sub_1BEB5+60↑j
                 jbe     short locret_1BF4E
                 mov     word ptr es:6, 0
 
-locret_1BF4E:                           ; CODE XREF: sub_1BEB5+90↑j
+locret_1BF4E:                           ; CODE XREF: tileLookup+90↑j
                 retn
-sub_1BEB5       endp
+tileLookup      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BF4F       proc near               ; CODE XREF: seg044:loc_1BDA1↑p
+tileLoad        proc near               ; CODE XREF: seg044:loc_1BDA1↑p
                                         ; seg044:loc_1BDEE↑p
                 xor     bx, bx
                 mov     bl, cs:byte_22778
@@ -22558,12 +22558,12 @@ sub_1BF4F       proc near               ; CODE XREF: seg044:loc_1BDA1↑p
                 cmp     bx, 0
                 jnz     short loc_1BF6F
 
-loc_1BF68:                              ; CODE XREF: sub_1BF4F+A↑j
+loc_1BF68:                              ; CODE XREF: tileLoad+A↑j
                 mov     cs:byte_227A5, 1
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1BF6F:                              ; CODE XREF: sub_1BF4F+17↑j
+loc_1BF6F:                              ; CODE XREF: tileLoad+17↑j
                 mov     dx, cs:word_22776
                 mov     [bx+8], dx
                 mov     ch, ds:943Eh
@@ -22577,9 +22577,9 @@ loc_1BF6F:                              ; CODE XREF: sub_1BF4F+17↑j
                 mov     [si+1], cl
                 pop     ds
                 mov     dx, ds:9441h
-                call    sub_18D60
+                call    fileReadToSegment
                 retn
-sub_1BF4F       endp
+tileLoad        endp
 
 seg044          ends
 
@@ -22594,14 +22594,14 @@ seg045          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BF9E       proc far                ; CODE XREF: sub_1ABB3+5↑P
+shared_ed3965   proc far                ; CODE XREF: shared_26482f+5↑P
                 push    di
-                call    sub_1BD2C
+                call    shared_e79de9
                 add     ax, bx
                 dec     ax
                 mov     di, ax
 
-loc_1BFA9:                              ; CODE XREF: sub_1BF9E+18↓j
+loc_1BFA9:                              ; CODE XREF: shared_ed3965+18↓j
                 cmp     byte ptr [di], 20h ; ' '
                 jnz     short loc_1BFB8
                 mov     byte ptr [di], 0
@@ -22611,11 +22611,11 @@ loc_1BFA9:                              ; CODE XREF: sub_1BF9E+18↓j
                 jmp     short loc_1BFA9
 ; ---------------------------------------------------------------------------
 
-loc_1BFB8:                              ; CODE XREF: sub_1BF9E+E↑j
-                                        ; sub_1BF9E+15↑j
+loc_1BFB8:                              ; CODE XREF: shared_ed3965+E↑j
+                                        ; shared_ed3965+15↑j
                 pop     di
                 retf
-sub_1BF9E       endp
+shared_ed3965   endp
 
 seg045          ends
 
@@ -22728,7 +22728,7 @@ parm_10         dw 0                    ; DATA XREF: seg000:35DF↑w
                 db    0
 parm_58         dw 0                    ; DATA XREF: start+2C↑r
 parm_5A         dw 0                    ; DATA XREF: start+78↑r
-                                        ; sub_1AC9A+FD↑o ...
+                                        ; paletteFade+FD↑o ...
 parm_5C         dw 0                    ; DATA XREF: start+8E↑r
 parm_5E         dw 0                    ; DATA XREF: start+94↑r
 parm_60         dw 0                    ; DATA XREF: start+9A↑r
@@ -23481,8 +23481,8 @@ parm_7A         dw 0                    ; DATA XREF: start+DC↑r
                 db    1
                 db  18h
                 db    1
-unk_1C324       db    1                 ; DATA XREF: sub_1AC9A+E4↑o
-                                        ; sub_1AC9A+10F↑o ...
+unk_1C324       db    1                 ; DATA XREF: paletteFade+E4↑o
+                                        ; paletteFade+10F↑o ...
                 db    1
                 db  1Ah
                 db    1
@@ -42485,7 +42485,7 @@ byte_20D5E      db 0                    ; DATA XREF: sub_11119+10↑r
                                         ; sub_11119+20↑w ...
 byte_20D5F      db 0                    ; DATA XREF: sub_12E7B+150↑r
                                         ; sub_1673A+1D2↑r
-word_20D60      dw 0                    ; DATA XREF: sub_18A3E+64↑r
+word_20D60      dw 0                    ; DATA XREF: shared_c9c8cc+64↑r
                 db    0
                 db    0
                 db    0
@@ -42632,8 +42632,8 @@ byte_20DB0      db 0                    ; DATA XREF: sub_10AC5+6E↑w
                 db    0
                 db    0
                 db    0
-word_20DEE      dw 0                    ; DATA XREF: sub_18A3E+9↑w
-                                        ; sub_18A3E+53↑w ...
+word_20DEE      dw 0                    ; DATA XREF: shared_c9c8cc+9↑w
+                                        ; shared_c9c8cc+53↑w ...
                 db 0FFh
                 db 0FFh
                 db 0FFh
@@ -43474,8 +43474,8 @@ word_210BA      dw 0                    ; DATA XREF: seg000:loc_1656D↑w
                 db    0
                 db    0
                 db    0
-byte_2113C      db 0                    ; DATA XREF: sub_18A3E+41↑r
-                                        ; sub_18A3E+49↑r
+byte_2113C      db 0                    ; DATA XREF: shared_c9c8cc+41↑r
+                                        ; shared_c9c8cc+49↑r
 byte_2113D      db 0                    ; DATA XREF: sub_10548+C4↑r
                                         ; sub_10548+CB↑w ...
 byte_2113E      db 0                    ; DATA XREF: sub_1071D+3F↑r
@@ -49146,9 +49146,9 @@ byte_2275E      db 0                    ; DATA XREF: sub_1860C:loc_1864E↑w
 byte_2275F      db 0                    ; DATA XREF: start+22A↑w
                                         ; start:loc_1023E↑w ...
 word_22760      dw 0                    ; DATA XREF: start+1AA↑w
-                                        ; sub_11573+4↑r ...
+                                        ; shared_3edae8+4↑r ...
 word_22762      dw 0                    ; DATA XREF: start+1B0↑w
-                                        ; sub_11573+7↑r ...
+                                        ; shared_3edae8+7↑r ...
 word_22764      dw 0                    ; DATA XREF: sub_10403+4↑w
                                         ; sub_10403+44↑w ...
 word_22766      dw 0                    ; DATA XREF: sub_10403+B↑w
@@ -49196,7 +49196,7 @@ word_2278C      dw 0                    ; DATA XREF: start+232↑w
                                         ; sub_10383+9↑r ...
 word_2278E      dw 0                    ; DATA XREF: sub_10548↑w
                                         ; sub_11247+33↑w ...
-word_22790      dw 0                    ; DATA XREF: sub_1B94B+20↑r
+word_22790      dw 0                    ; DATA XREF: shared_034038+20↑r
 word_22792      dw 0                    ; DATA XREF: sub_10403+13↑r
                                         ; sub_11247+84↑w ...
 byte_22794      db 0                    ; DATA XREF: sub_11119+4F↑w
@@ -49228,7 +49228,7 @@ word_227A6      dw 0                    ; DATA XREF: start+17B↑w
 word_227A8      dw 0                    ; DATA XREF: start+191↑w
                                         ; start:loc_1032F↑r ...
 word_227AA      dw 0                    ; DATA XREF: start:loc_1033C↑r
-                                        ; sub_1B902+36↑r ...
+                                        ; shared_1d0ebe+36↑r ...
 byte_227AC      db 0                    ; DATA XREF: sub_12E7B+328↑w
                                         ; seg000:loc_1366C↑w ...
 word_227AD      dw 0                    ; DATA XREF: sub_10403+7↑r
@@ -60411,7 +60411,7 @@ word_246C0      dw 0                    ; DATA XREF: execProgram+50↑r
                 db    1
                 db    0
                 db  0Ch
-word_25358      dw 0                    ; DATA XREF: sub_1BB3D+34↑w
+word_25358      dw 0                    ; DATA XREF: shared_1f8a83+34↑w
                 db    0
                 db    0
                 db    0

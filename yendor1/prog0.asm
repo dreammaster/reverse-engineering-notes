@@ -165,11 +165,11 @@ loc_10103:                              ; CODE XREF: start+167↓j
                 mov     byte_110B2, al
                 mov     al, 0
                 mov     bx, 0B0Bh
-                call    sub_104BA
+                call    fileOpen
                 mov     ax, 0
                 mov     bx, 0B0Bh
                 mov     di, 697h
-                call    sub_10556
+                call    fileReadRecordTo
                 mov     bx, word_1109B
                 mov     ah, 3Eh
                 int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
@@ -249,13 +249,13 @@ loc_101C9:                              ; CODE XREF: start+1C4↑j
 loc_101D9:                              ; CODE XREF: start+354↓j
                 mov     bx, 0B0Bh
                 mov     word ptr [bx+8], 0
-                call    sub_104DD
+                call    fileWriteRecord
                 mov     cx, word_11104
                 dec     cx
                 push    cx
                 mov     bx, 52Fh
                 mov     word ptr [bx+8], 0
-                call    sub_1052E
+                call    fileWriteRecord_1052E
                 pop     cx
                 cmp     byte_11140, 2
                 jnz     short loc_10207
@@ -266,30 +266,30 @@ loc_10207:                              ; CODE XREF: start+1FF↑j
                 push    cx
                 mov     bx, 0B0Bh
                 inc     word ptr [bx+8]
-                call    sub_104DD
+                call    fileWriteRecord
                 mov     bx, 52Fh
                 inc     word ptr [bx+8]
-                call    sub_1052E
+                call    fileWriteRecord_1052E
                 pop     cx
                 loop    loc_10207
                 mov     ax, 0
                 mov     bx, 0B2Fh
                 mov     di, 5F7h
-                call    sub_10556
+                call    fileReadRecordTo
                 mov     ax, 0
                 mov     bx, 550h
                 mov     si, 5F7h
-                call    sub_10570
+                call    fileWriteRecordFrom
                 mov     cx, 1BDh
 
 loc_10240:                              ; CODE XREF: start+258↓j
                 push    cx
                 mov     bx, 0B2Fh
                 inc     word ptr [bx+8]
-                call    sub_104DD
+                call    fileWriteRecord
                 mov     bx, 550h
                 inc     word ptr [bx+8]
-                call    sub_1052E
+                call    fileWriteRecord_1052E
                 pop     cx
                 loop    loc_10240
                 mov     cx, word_10B8B
@@ -297,9 +297,9 @@ loc_10240:                              ; CODE XREF: start+258↓j
 loc_1025E:                              ; CODE XREF: start+27C↓j
                 push    cx
                 mov     bx, 0B51h
-                call    sub_104DD
+                call    fileWriteRecord
                 mov     bx, 56Fh
-                call    sub_1052E
+                call    fileWriteRecord_1052E
                 mov     bx, 56Fh
                 inc     word ptr [bx+8]
                 mov     bx, 0B51h
@@ -324,43 +324,43 @@ loc_10286:                              ; CODE XREF: start+8D↑j
 loc_1029F:                              ; CODE XREF: start+29A↑j
                 mov     bx, 52Fh
                 mov     word ptr [bx+8], 0
-                call    sub_104DD
+                call    fileWriteRecord
                 mov     cx, word_11104
                 dec     cx
                 push    cx
                 mov     bx, 0B0Bh
                 mov     word ptr [bx+8], 0
-                call    sub_1052E
+                call    fileWriteRecord_1052E
                 pop     cx
 
 loc_102C0:                              ; CODE XREF: start+2D8↓j
                 push    cx
                 mov     bx, 52Fh
                 inc     word ptr [bx+8]
-                call    sub_104DD
+                call    fileWriteRecord
                 mov     bx, 0B0Bh
                 inc     word ptr [bx+8]
-                call    sub_1052E
+                call    fileWriteRecord_1052E
                 pop     cx
                 loop    loc_102C0
                 mov     ax, 0
                 mov     bx, 550h
                 mov     di, 5F7h
-                call    sub_10556
+                call    fileReadRecordTo
                 mov     ax, 0
                 mov     bx, 0B2Fh
                 mov     si, 5F7h
-                call    sub_10570
+                call    fileWriteRecordFrom
                 mov     cx, 1BDh
 
 loc_102F9:                              ; CODE XREF: start+311↓j
                 push    cx
                 mov     bx, 550h
                 inc     word ptr [bx+8]
-                call    sub_104DD
+                call    fileWriteRecord
                 mov     bx, 0B2Fh
                 inc     word ptr [bx+8]
-                call    sub_1052E
+                call    fileWriteRecord_1052E
                 pop     cx
                 loop    loc_102F9
                 mov     cx, word_10B8B
@@ -368,9 +368,9 @@ loc_102F9:                              ; CODE XREF: start+311↓j
 loc_10317:                              ; CODE XREF: start+335↓j
                 push    cx
                 mov     bx, 56Fh
-                call    sub_104DD
+                call    fileWriteRecord
                 mov     bx, 0B51h
-                call    sub_1052E
+                call    fileWriteRecord_1052E
                 mov     bx, 56Fh
                 inc     word ptr [bx+8]
                 mov     bx, 0B51h
@@ -466,7 +466,7 @@ sub_103AC       endp
 sub_103C0       proc near               ; CODE XREF: start+1BC↑p
                 mov     al, 2
                 mov     bx, 550h
-                call    sub_104BA
+                call    fileOpen
                 cmp     byte_11597, 0
                 jz      short loc_103D7
                 mov     byte_11597, 1
@@ -476,7 +476,7 @@ sub_103C0       proc near               ; CODE XREF: start+1BC↑p
 loc_103D7:                              ; CODE XREF: sub_103C0+F↑j
                 mov     al, 2
                 mov     bx, 56Fh
-                call    sub_104BA
+                call    fileOpen
                 mov     al, 2
                 cmp     byte_11597, 0
                 jz      short loc_103F0
@@ -487,7 +487,7 @@ loc_103D7:                              ; CODE XREF: sub_103C0+F↑j
 loc_103F0:                              ; CODE XREF: sub_103C0+28↑j
                 mov     al, 2
                 mov     bx, 52Fh
-                call    sub_104BA
+                call    fileOpen
                 mov     al, 3
                 cmp     byte_11597, 0
                 jz      short loc_10407
@@ -502,19 +502,19 @@ loc_10407:                              ; CODE XREF: sub_103AC+12↑j
                                         ; sub_103C0+41↑j
                 mov     al, 2
                 mov     bx, 0B0Bh
-                call    sub_104BA
+                call    fileOpen
                 mov     al, 9
                 cmp     byte_11597, 0
                 jnz     short loc_10403
                 mov     al, 2
                 mov     bx, 0B2Fh
-                call    sub_104BA
+                call    fileOpen
                 mov     al, 0Ah
                 cmp     byte_11597, 0
                 jnz     short loc_10403
                 mov     al, 2
                 mov     bx, 0B51h
-                call    sub_104BA
+                call    fileOpen
                 mov     al, 0Bh
                 cmp     byte_11597, 0
                 jnz     short loc_10403
@@ -610,7 +610,7 @@ seg001          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1049C       proc far                ; CODE XREF: sub_104DD+4↓p
+fileSeekRecord  proc far                ; CODE XREF: fileWriteRecord+4↓p
                                         ; seg001:0079↓p ...
                 push    dx
                 push    cx
@@ -629,13 +629,13 @@ sub_1049C       proc far                ; CODE XREF: sub_104DD+4↓p
                 pop     cx
                 pop     dx
                 retf
-sub_1049C       endp
+fileSeekRecord  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_104BA       proc far                ; CODE XREF: start+118↑P
+fileOpen        proc far                ; CODE XREF: start+118↑P
                                         ; sub_103C0+5↑P ...
                 push    bx
                 mov     cs:byte_11597, 0
@@ -653,23 +653,23 @@ sub_104BA       proc far                ; CODE XREF: start+118↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_104D6:                              ; CODE XREF: sub_104BA+10↑j
+loc_104D6:                              ; CODE XREF: fileOpen+10↑j
                 inc     cs:byte_11597
                 pop     bx
                 retf
-sub_104BA       endp
+fileOpen        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_104DD       proc far                ; CODE XREF: start+1E1↑P
+fileWriteRecord proc far                ; CODE XREF: start+1E1↑P
                                         ; start+20E↑P ...
                 push    dx
                 push    cx
                 push    bx
                 push    cs
-                call    near ptr sub_1049C
+                call    near ptr fileSeekRecord
                 mov     dx, [bx+2]
                 mov     cx, [bx+6]
                 mov     ah, 3Fh ; '?'
@@ -683,11 +683,11 @@ sub_104DD       proc far                ; CODE XREF: start+1E1↑P
                 jz      short loc_10501
                 inc     cs:byte_11597
 
-loc_10501:                              ; CODE XREF: sub_104DD+1D↑j
+loc_10501:                              ; CODE XREF: fileWriteRecord+1D↑j
                 pop     cx
                 pop     dx
                 retf
-sub_104DD       endp
+fileWriteRecord endp
 
 ; ---------------------------------------------------------------------------
                 push    dx
@@ -695,7 +695,7 @@ sub_104DD       endp
                 push    ds
                 push    bx
                 push    cs
-                call    near ptr sub_1049C
+                call    near ptr fileSeekRecord
                 mov     cx, [bx+6]
                 mov     ah, 3Fh ; '?'
                 mov     bx, [bx]
@@ -719,13 +719,13 @@ loc_1052B:                              ; CODE XREF: seg001:0094↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1052E       proc far                ; CODE XREF: start+1F4↑P
+fileWriteRecord_1052E proc far          ; CODE XREF: start+1F4↑P
                                         ; start+219↑P ...
                 push    dx
                 push    cx
                 push    bx
                 push    cs
-                call    near ptr sub_1049C
+                call    near ptr fileSeekRecord
                 mov     dx, [bx+2]
                 mov     cx, [bx+6]
                 mov     ah, 40h ; '@'
@@ -738,11 +738,11 @@ sub_1052E       proc far                ; CODE XREF: start+1F4↑P
                 jz      short loc_10552
                 inc     cs:byte_11597
 
-loc_10552:                              ; CODE XREF: sub_1052E+1D↑j
+loc_10552:                              ; CODE XREF: fileWriteRecord_1052E+1D↑j
                 pop     cx
                 pop     dx
                 retf
-sub_1052E       endp
+fileWriteRecord_1052E endp
 
 seg001          ends
 
@@ -758,13 +758,13 @@ seg002          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10556       proc far                ; CODE XREF: start+126↑P
+fileReadRecordTo proc far               ; CODE XREF: start+126↑P
                                         ; start+22A↑P ...
                 push    es
                 push    cx
                 push    si
                 mov     [bx+8], ax
-                call    sub_104DD
+                call    fileWriteRecord
                 push    ds
                 pop     es
                 cld
@@ -775,7 +775,7 @@ sub_10556       proc far                ; CODE XREF: start+126↑P
                 pop     cx
                 pop     es
                 retf
-sub_10556       endp
+fileReadRecordTo endp
 
 seg002          ends
 
@@ -789,7 +789,7 @@ seg003          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10570       proc far                ; CODE XREF: start+238↑P
+fileWriteRecordFrom proc far            ; CODE XREF: start+238↑P
                                         ; start+2F1↑P
                 push    es
                 cld
@@ -803,10 +803,10 @@ sub_10570       proc far                ; CODE XREF: start+238↑P
                 mov     cx, [bx+6]
                 mov     di, [bx+2]
                 rep movsb
-                call    sub_1052E
+                call    fileWriteRecord_1052E
                 pop     es
                 retf
-sub_10570       endp
+fileWriteRecordFrom endp
 
 seg003          ends
 
