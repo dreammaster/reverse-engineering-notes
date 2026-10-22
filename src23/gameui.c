@@ -2655,6 +2655,9 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
     case MainActionPartyPanel: /* 1-4: the numbers under a member's bars (DrawThreeStatBars) */
         partyInfoShow(ui, command.index & 3, 4);
         break;
+    case MainActionStatusMessage: /* Chapter 3's V: the two lines at DS:0x9538 (REGISTERED / VER 2.00) in the status panel */
+        panelMessageExe(ui, 0x9538, 2);
+        break;
     default:
         break;
     }

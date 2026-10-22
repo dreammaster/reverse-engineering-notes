@@ -6772,6 +6772,8 @@ effect id `+0x70`, sound id `+0x62`, ...) -- a later shot at the same member **o
 facing (0x800 facing south ... ) only decides whether the shot is drawn (`PresentTriggeredSideTrapEffects` :32732 animates the projectile and the weapon icon). That routine then plays the first sound in the table and
 applies every nonzero magnitude as the effect `+0x70` with the magnitude as the preset amount through the icon-bar pipeline (`combatApplyPresetEffect`). `session.c` `sessionAmbushShots`.
 
+**Chapter 3's V** (`start` key table, :0769): `ShowStatusPanelMessage` of the two strings at DS:0x9538, REGISTERED / VER 2.00 -- the version stamp of the registered program.
+
 ### Using belt items and spell scrolls (decoded 2026-10-22)
 
 **The right button on a belt slot** of the resource panel (`TryCureAilmentFromIconClick` :41358, called from `start` loc_1056B; the panel must be shown, `word_36C7F` bit 0x1000) uses the item there like one from a bag:
