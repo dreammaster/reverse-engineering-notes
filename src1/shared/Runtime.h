@@ -28,6 +28,12 @@ public:
 	virtual void flushKeys() = 0;
 	/** BIOS clock ticks (18.2 per second) since start. */
 	virtual uint32 ticks() = 0;
+	/** The DOS clock (INT 21h/2Ch DX): seconds in the high byte, hundredths in the low byte. The game's random generator seeds itself
+	 *  from it. The default derives it from ticks(). */
+	virtual uint16 dosClock() {
+		const uint32 t = ticks();
+		return (uint16)((((t * 10 / 182) % 60) << 8) | ((t * 1000 / 182) % 100));
+	}
 	/** Give the CPU back for a moment (busy-wait loops call this). */
 	virtual void idle() = 0;
 	/** PC speaker tone (frequency in Hz) or silence (0). */

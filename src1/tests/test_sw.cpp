@@ -49,14 +49,15 @@ public:
 	Shared::uint16 cpuClass() { return 0x386; }
 };
 
-// DefaultLauncher for PROG0/PROG1; the first request for anything else is recorded (the shell then ends the run)
+// DefaultLauncher; the first request for `stopAt` (or for a program the port lacks) is recorded and the shell then ends the run
 class StopAtUnimplemented : public Sw::Launcher {
 public:
 	Sw::DefaultLauncher inner;
 	int stoppedAt;
-	StopAtUnimplemented() : stoppedAt(-1) {}
+	int stopAt;
+	explicit StopAtUnimplemented(int stop) : stoppedAt(-1), stopAt(stop) {}
 	int run(int program, Shared::Params &params, Shared::Runtime &rt) {
-		const int r = inner.run(program, params, rt);
+		const int r = program == stopAt ? (int)kNotImplemented : inner.run(program, params, rt);
 		if (r == kNotImplemented && stoppedAt < 0)
 			stoppedAt = program;
 		return r;
@@ -128,7 +129,7 @@ static void checkShell(const char *refVar, const char *stopSnap, const char *sto
 	v.setTrace(&rec);
 	ScriptedSystem sys;
 	Shared::Runtime rt(v, sys);
-	StopAtUnimplemented launcher;
+	StopAtUnimplemented launcher(stopNumber);
 	Sw::Config cfg;
 	cfg.dataDir = TestUtil::gameDir();
 	cfg.workDir = work;

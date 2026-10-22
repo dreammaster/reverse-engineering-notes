@@ -56,12 +56,19 @@ public:
 	bool iconClick(byte mask);
 	/** shared_21818f with a non-zero mask: wait for a key, or a click that hits an icon enabled for `mask`. */
 	void waitForInput(byte mask);
+	/** shared_21818f in full: `keyMask` (AH) selects which icon keys end the wait (0 = any key), `clickMask` (AL) which icons a click may hit,
+	 *  `flags` is BL: 80h = do not block, report 2 when nothing happened; 20h = a click that misses every icon ends the wait too (3 = left,
+	 *  4 = right). Returns the original's result byte (byte_11E90): 0 key, 1 icon hit (rt.last.code / ctx.textChar = its key), 2 nothing
+	 *  happened, 3/4 click, FFh when the platform asked to quit. */
+	byte input(byte keyMask, byte clickMask, byte flags);
 	/** shared_21818f with AX=0: redraw the bottom decorations and show page 0. */
 	void refreshAndShow();
 	/** shared_47fa83 and helpers: copy the non-skip pixels from one page to the other in random order. */
 	void dissolve(const DissolveParams &p);
 
 	Rng rng;
+	/** shared_9c11a6 as the programs call it: a value in 0..max; when the generator is unseeded it reads the DOS clock first. */
+	uint16 random(uint16 max);
 
 private:
 	void drawIconTile(uint16 tile);

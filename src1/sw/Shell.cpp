@@ -1,6 +1,7 @@
 #include "sw/Shell.h"
 
 #include "prog1/Prog1.h"
+#include "prog2/Prog2.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -40,6 +41,10 @@ int DefaultLauncher::run(int program, Shared::Params &params, Shared::Runtime &r
 		return 0;               // the party/save-slot program is not reimplemented yet; "nothing to do" is its normal success
 	case kProg1: {
 		Prog1::Prog1 p(rt, params);
+		return p.run();
+	}
+	case kProg2: {
+		Prog2::Prog2 p(rt, params);
 		return p.run();
 	}
 	default:

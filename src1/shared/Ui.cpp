@@ -62,6 +62,10 @@ uint16 Rng::next(uint16 max, uint16 clockSeed) {
 BookUi::BookUi(Runtime &rt) : _rt(rt) {
 }
 
+uint16 BookUi::random(uint16 max) {
+	return rng.next(max, rng.seed() == 0 ? _rt.system.dosClock() : 0);
+}
+
 void BookUi::drawIconTile(uint16 tile) {
 	_rt.drawTile(5, tile);
 }
@@ -201,6 +205,39 @@ void BookUi::waitForInput(byte mask) {
 	}
 }
 
+byte BookUi::input(byte keyMask, byte clickMask, byte flags) {
+	Vid::Context &c = _rt.video.ctx;
+	c.y1 = c.videoKind == 2 ? 0x148 : 0x135;
+	for (;;) {
+		if (!_rt.system.pump())
+			return 0xFF;
+		const InputEvent ev = _rt.pollInput();
+		if (ev.source == InputEvent::None) {
+			if (flags & 0x80)
+				return 2;
+			_rt.system.idle();
+			continue;
+		}
+		if (ev.source == InputEvent::LeftClick || ev.source == InputEvent::RightClick) {
+			if (iconClick(clickMask))
+				return 1;
+			if (flags & 0x20) {
+				if (ev.source == InputEvent::RightClick)
+					c.textChar = 0;
+				return ev.source == InputEvent::LeftClick ? 3 : 4;
+			}
+			continue;
+		}
+		// a key: with no mask any key counts, else it has to be the key of an icon enabled for the mask
+		if (keyMask == 0)
+			return 0;
+		for (int i = 0; i < 8; i++) {
+			if (c.textChar == kIcons[i].key && (kIcons[i].flags & keyMask))
+				return 0;
+		}
+	}
+}
+
 void BookUi::refreshAndShow() {
 	drawBottomDecorations();
 	_rt.video.ctx.cursorShape = _rt.video.ctx.cursorShape;   // (no change; kept for symmetry with the original's flow)
@@ -218,7 +255,6 @@ void BookUi::dissolve(const DissolveParams &p) {
 		visited[i] = 0;
 	uint16 remaining = 0x400;
 	uint16 counter = 0xFDA6;
-	uint16 clockSeed = (uint16)_rt.system.ticks();
 	uint32 misses = 0;
 
 	// shared_33aaab: returns true when the offset pair was already taken, otherwise marks it
@@ -237,21 +273,20 @@ void BookUi::dissolve(const DissolveParams &p) {
 		// shared_1f8a83
 		if (remaining > 5) {
 			for (;;) {
-				ox = rng.next(0x1F, clockSeed);
-				oy = rng.next(0x1F, clockSeed);
-				if (!taken(ox, oy)) {
-					misses = 0;
+				ox = random(0x1F);
+				oy = random(0x1F);
+				if (!taken(ox, oy))
 					break;
-				}
-				if (++counter == 0)
+				// every 602nd miss the original clears the generator's seed, so the next draw is seeded from the clock again;
+				// that is what gets it out of the generator's short cycles
+				if (++counter == 0) {
 					counter = 0xFDA6;
-				// Deliberate deviation: the generator has short cycles (15, 17, 34, 360, 389 and 1023 values among them), and
-				// a clock seed that lands on one never reaches the remaining pixels. The original then loops forever
-				// (its retry counter only resets a variable nothing reads); here the generator is reseeded from the clock.
+					rng.setSeed(0);
+				}
+				// a clock that never changes would still trap it: give up on the cycle after many misses (not in the original)
 				if (++misses > 100000) {
 					misses = 0;
 					rng.setSeed(0);
-					clockSeed = (uint16)(_rt.system.ticks() + 0x9E37);
 				}
 			}
 		} else {

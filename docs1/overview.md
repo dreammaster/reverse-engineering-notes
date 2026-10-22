@@ -140,6 +140,28 @@ memory byte for byte); the shell from a fresh machine up to the first program no
 PROG2), 224,252 (state 1, to PROG3) and 1,277 (state 2, to PROG3) calls, with identical video memory at the hand-over.
 
 **Notes found on the way:** the game's random generator (shared_9c11a6) has short cycles (15, 17, 34, 360, 389, 1023 values), so an
-unlucky time seed makes the original dissolve loop forever; the port reseeds after 100,000 misses. `PROG0` is treated as a no-op
+unlucky time seed traps the dissolve for a while. **Correction (PROG2):** the original is not stuck for ever -- the retry counter in
+`shared_1f8a83` (`ds:1C76h`, starting at FDA6h) wraps after 602 failed draws and the code next to it (`mov cs:word_134CC, 0`) clears the
+generator's seed (that word *is* the seed, DS:1C5Ch), so the next draw is seeded from the DOS clock again. The port does the same
+(`Shared::BookUi::random`, `System::dosClock()`). `PROG0` is treated as a no-op
 success for now. Unverified (no reference run yet): the shell's end path (`showEndScreen`, PROG16/17/18 hand-overs), the PROG3/PROG4
 dispatch loops (they follow the documented exit-code table), and PROG1's click-on-icon path (only the key path was exercised).
+
+## 2026-10-23 -- PROG2 (the prologue) reimplemented and verified
+
+`src1/prog2` is a transliteration of PROG2.EXE: five book pages with story text and animated pictures. Texts (64-byte lines at DS:0A41h,
+0CC1h, 0F41h, 11C1h, 1441h) and the animation table (DS:1641h: six chains of 18-byte entries -- tile, x, y, columns, rows, delay,
+counter, next, random range; the delays are loop counts multiplied by 10 on a 386-class CPU) are read from PROG2.EXE at run time
+(data segment at image offset 1870h). Pages 1 and 2 leave on a timeout (20 s / 5 s on the BIOS clock) with a page curl (8 groups of 16
+frames, `curlFrame`) or a pixel dissolve of 64x64-pixel cells (`pixelDissolve`, 4096 passes of 12 pixels); pages 3-5 animate until the
+"More" icon is clicked (or its key, `M`, is pressed). Esc skips the whole prologue when SW passes parm_03 = 1. `shared_21818f` (the
+wait-for-input routine) is now ported in full as `BookUi::input(keyMask, clickMask, flags)`; sound cues (`shared_728316`) and the
+party-record preload (`shared_d2992b`) have no visible effect and are omitted.
+
+**Verification** (`tests/test_prog2.cpp`, reference run `YENDOR1_REF2_DIR`): all 110,415 driver calls match and the final video memory is
+identical. What had to be recovered from the trace because it comes from the outside world: the generator's seed (7943, found by
+searching all 16-bit seeds against the first 40 dissolve passes), its state at the start of page 3 (8817, found by simulating the
+animation counters against the order of draw events), and when each page's wait ended (the test delivers the click once the port has
+made as many driver calls as the original had when its click arrived). The dissolve's pixel *order* depends on clock readings at each
+reseed (see the correction above) and was only recovered for the first one, so only the set of pixels and not the coordinates left in
+the context by the last pixel are compared. The Esc-skip path (parm_03 = 1) is not covered by a reference run.
