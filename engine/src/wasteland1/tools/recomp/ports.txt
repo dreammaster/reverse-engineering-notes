@@ -61,3 +61,16 @@
 07ACE writeItemTextNormal
 07AF0 writeItemName
 07AC3 writeSingleCharacter junk=al,bl,cl,di,dl,pf,zf
+# map cells (ports/ports_map.cpp)
+07C20 tileClassAt junk=ah,bl,cf,di scratch=BA11-BA11,4661-4662
+07C69 shr4 junk=cf
+07C72 selectActionRow junk=al,bl,di,dl,pf scratch=4661-4662,BA11-BA11
+07CB1 selectLocationRecord junk=ah,al,bl,di scratch=4661-4662
+07CD2 cellAt junk=ah,bl,di scratch=BA0F-BA11,4661-4662
+07CEB actionAt junk=bl,di scratch=BA0E-BA11,4661-4662
+07CFF changeCellFromLocation junk=ah,al,bl,di,dl,pf scratch=BA08-BA11,4661-4662
+07D50 applyCellChange junk=al,bl,di,dl scratch=BA08-BA11,4661-4662
+07D7A setTileClass junk=ah,al,bl,di,sf scratch=BA08-BA11,4661-4662
+07DBB storeViewPosition junk=pf,zf
+07DC7 partyMapPosition junk=pf,zf
+07DE0 toViewPosition junk=pf

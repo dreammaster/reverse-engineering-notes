@@ -8,6 +8,7 @@
 #include "shared/image.h"
 #include <algorithm>
 #include <cstdio>
+#include <set>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -64,6 +65,26 @@ int main(int argc, char **argv) {
 				}
 				*prevIp = {cpu.cs, cpu.ip};
 			};
+		} else if (cmd == "indlog" && i + 1 < argc) {   // indlog <site hex>... | print: targets of indirect calls/jumps at the given code offsets
+			const std::string sub = argv[++i];
+			static std::map<uint32_t, std::set<uint16_t>> targets;
+			static std::set<uint32_t> sites;
+			static uint32_t pending = 0;
+			if (sub == "print") {
+				for (auto &kv : targets) {
+					std::printf("%04X:", kv.first - 0x10000);
+					for (uint16_t t : kv.second) std::printf(" %04X", t);
+					std::putchar(10);
+				}
+			} else {
+				sites.insert(0x10000 + uint32_t(std::strtoul(sub.c_str(), nullptr, 16)));
+				while (i + 1 < argc && std::isxdigit(static_cast<unsigned char>(argv[i + 1][0])) && std::strlen(argv[i + 1]) <= 4) sites.insert(0x10000 + uint32_t(std::strtoul(argv[++i], nullptr, 16)));
+				m.cpu.onStep = [&m](x86::Cpu &cpu) {
+					const uint32_t here = x86::Cpu::lin(cpu.cs, cpu.ip);
+					if (pending) { targets[pending].insert(uint16_t(cpu.ip)); pending = 0; }
+					if (sites.count(here)) pending = here;
+				};
+			}
 		} else if (cmd == "idle" && i + 1 < argc) {   // idle on|off
 			m.detectIdle = std::string(argv[++i]) == "on";
 		} else if (cmd == "watchw" && i + 1 < argc) {   // watchw <hex video offset>: report every write to it

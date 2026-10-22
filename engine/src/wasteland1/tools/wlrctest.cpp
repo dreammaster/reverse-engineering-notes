@@ -25,6 +25,8 @@ struct Result {
 	std::set<std::string> regs;   // registers/flags that differ (candidates for the junk list of a port)
 };
 
+std::vector<uint16_t> gKeys;   // keys offered to both machines before each run (--keys)
+
 Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const std::string &gameDir, uint16_t entry, uint32_t seed) {
 	Result res;
 	if (!o.loadState(state) || !n.loadState(state)) { res.kind = Result::Skip; res.note = "state"; return res; }
@@ -40,6 +42,7 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 	}
 	o.cpu.fault.clear(); o.cpu.halted = false; o.exited = false; o.needKey = false;
 	o.keys.clear(); n.keys.clear();
+	for (uint16_t k : gKeys) { o.keys.push_back(k); n.keys.push_back(k); }
 	o.detectIdle = true;
 	// register inputs: the state's own values with a few random small ones
 	uint32_t s = seed;
@@ -129,6 +132,11 @@ int main(int argc, char **argv) {
 	for (int i = 4; i < argc; ++i) {
 		if (std::string(argv[i]) == "--only" && i + 1 < argc) only = long(std::strtoul(argv[++i], nullptr, 16));
 		else if (std::string(argv[i]) == "--ported") portedOnly = true;
+		else if (std::string(argv[i]) == "--keys" && i + 1 < argc) {
+			std::stringstream ks(argv[++i]);
+			std::string k;
+			while (std::getline(ks, k, ',')) gKeys.push_back(uint16_t(std::strtoul(k.c_str(), nullptr, 16)));
+		}
 		else states.push_back(argv[i]);
 	}
 	emu::Machine o(gameDir);

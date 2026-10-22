@@ -1,0 +1,7 @@
+# Targets of the indirect calls and jumps of WL.EXE: "site-address target target ...". Observed with wlemu (indlog) and
+# taken from the pointer tables in the data segment. Used by the register analysis (sig.py).
+789C 9E53 9DC3
+9EB4 9E24 9E2A 9E30 9E36 8EAD 9EE1 9727 9E3C A004 9ECD A03F A0C5 A078 A275 9EB8 9EBE 9EAE 9F12 9EFC 20C1 240B 6510 6A10 8016
+767C 6330
+6D30 9582 95C7
+6556 6584 65FB 65AC 65D2 6563 6508 650D 6512 6517 8016 6510 6506

@@ -42,6 +42,22 @@ constexpr uint16_t itemDetails2 = 0xBA20;        // skill id -> {unused, attribu
 constexpr uint16_t conditionThresholds = 0xCCCD; // 5 signed bytes
 constexpr uint16_t ammunitionItems = 0xCD00;     // item ids that use ammunition, FFh terminated
 
+// ---- map cells (mapcells.h)
+constexpr uint16_t mapHeight = 0x46A4;           // IDB byte_214C4
+constexpr uint16_t mapWidth = 0x46A5;            // byte_214C5, a power of two
+constexpr uint16_t viewX = 0x46A6;               // byte_214C6: map coordinates of the party (view offset added)
+constexpr uint16_t viewY = 0x46A7;               // byte_214C7
+constexpr uint16_t viewOffsetX = 0x46A8;         // byte_214C8: map coordinates of the window origin
+constexpr uint16_t viewOffsetY = 0x46A9;         // byte_214C9
+constexpr uint16_t rowPtr = 0x46AA;              // word_214CA: class nibbles of the cached row
+constexpr uint16_t actionRowPtr = 0x46AC;        // word_214CC: action bytes of the selected row
+constexpr uint16_t cachedRow = 0x46B2;           // byte_214D2: row whose pointer rowPtr holds
+constexpr uint16_t newTileClass = 0x46B3;        // byte_214D3: pending cell change (class, action)
+constexpr uint16_t newTileAction = 0x46B4;       // byte_214D4
+constexpr uint16_t rememberedClass = 0x46FC;     // byte_2151C: cell content replaced by the last change
+constexpr uint16_t rememberedAction = 0x46FD;    // byte_2151D
+constexpr uint16_t locationRecOffsets = 0xB9E0;  // _locationsRecOffsets: offsets of the record tables inside the location block
+
 // ---- character screens and item handling scratch (data segment, IDB names in comments)
 constexpr uint16_t selectedEquipItem = 0xCCE7;   // _selectedEquipItem?
 constexpr uint16_t selectedItemOffset = 0xCCE0;
