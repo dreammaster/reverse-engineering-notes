@@ -123,16 +123,20 @@ uint8_t combatReadiness(Machine &m, uint8_t partyNum) {
 	return m.d8(g::readiness);
 }
 
-uint8_t useAmmunition(Machine &m, uint8_t rounds) {
+uint8_t useAmmunition(Machine &m, uint8_t rounds, bool *zeroFlag) {
+	bool zf = false;
+	if (!zeroFlag) zeroFlag = &zf;
 	const uint8_t negated = uint8_t(0 - rounds);
 	getEquippedWeaponDetails(m);
 	const uint8_t type = getItemType(m);
-	if (type == 0 || hasNoAmmunition(m, type) || itemByte(m, 4) == 0) return 1;
+	if (type == 0) { *zeroFlag = true; return 1; }
+	if (hasNoAmmunition(m, type)) { *zeroFlag = false; return 1; }
+	if (itemByte(m, 4) == 0) { *zeroFlag = true; return 1; }
 	const uint8_t offset = equippedItemOffset(m, pm::weapon);
-	if (offset == 0) { markReady(m); return 0x0F; }
+	if (offset == 0) { markReady(m); *zeroFlag = true; return 0x0F; }
 	const uint16_t qty = uint16_t(cur(m) + offset + 1);
 	uint8_t value = m.d8(qty);
-	if (value & 0x80) { markReady(m); return 0x0F; }   // jammed
+	if (value & 0x80) { markReady(m); *zeroFlag = false; return 0x0F; }   // jammed
 	const uint8_t flags = value & 0xC0;
 	uint8_t left = uint8_t((value & 0x3F) + negated);
 	if (left == 0 || (left & 0x80)) {
@@ -140,6 +144,7 @@ uint8_t useAmmunition(Machine &m, uint8_t rounds) {
 		left = 0;
 	}
 	m.d8(qty) = uint8_t(left | flags);
+	*zeroFlag = (left & 0x3F) == 0;
 	return left & 0x3F;
 }
 

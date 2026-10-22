@@ -11,6 +11,7 @@ namespace wl {
 namespace rc {
 
 namespace {
+uint8_t locByteRaw(Machine &m, uint8_t offset) { return m.d8(uint16_t(m.d16(g::savedLocationDetailsPtr) + offset)); }
 uint8_t itemByte(Machine &m, uint8_t offset) { return m.d8(uint16_t(m.d16(g::itemDetailsPtr) + offset)); }
 void setDlAl(Regs &r, uint16_t v) { r.a.b.l = uint8_t(v); r.d.b.l = uint8_t(v >> 8); }
 }
@@ -26,12 +27,24 @@ PORT(itemAmmunitionType) { r.a.b.l = itemAmmunitionType(m); }                   
 PORT(itemArmorClassByte) { r.a.b.l = itemArmorClassByte(m); }                           // 12AA2
 PORT(itemBytes01) { r.d.b.l = itemByte(m, 1); r.a.b.l = itemByte(m, 0); }               // 12AAB: al = byte 0, dl = byte 1
 PORT(itemByte2) { r.a.b.l = itemByte(m, 2); r.d.b.l = 0; }                              // 12ABA
-PORT(locationRecordBits2) { r.a.b.l = locationRecordBits2(m); }                         // 12AC5
+PORT(locationRecordBits2) {
+	const uint8_t v = locByteRaw(m, 9);
+	r.a.b.l = uint8_t(v >> 2);
+	r.cf = (v >> 1) & 1;
+	r.zf = r.a.b.l == 0;
+	r.sf = false;
+}                         // 12AC5
 PORT(locationRecordBits4) { r.a.b.l = locationRecordBits4(m); }                         // 15C08
 PORT(markLocationVisited) { markLocationVisited(m); }                                   // 15C27
 
 PORT(orderLow) { r.a.b.l = orderLow(m, r.b.b.l); }                                      // 13449: bl = member
-PORT(orderHigh) { r.a.b.l = orderHigh(m, r.b.b.l); }                                    // 1353C
+PORT(orderHigh) {
+	const uint8_t v = m.d8(uint16_t(m.d16(g::partyOrdersPtr) + r.b.b.l));
+	r.a.b.l = uint8_t(v >> 6);
+	r.cf = (v >> 5) & 1;
+	r.zf = r.a.b.l == 0;
+	r.sf = false;
+}                                    // 1353C
 PORT(clearNumberValue) { for (int i = 0; i < 3; ++i) m.d8(uint16_t(g::numberValue + i)) = 0; r.a.b.l = 0; }   // 13561
 PORT(selectSlotCellRecord) { selectSlotCellRecord(m); }                                  // 13787 (falls into 13797 and 1379E)
 PORT(selectCellRecord) { selectCellRecord(m, r.d.b.l, r.b.b.l); }                       // 13797: dl = x, bl = y
@@ -50,8 +63,8 @@ PORT(splitCombatantIndex) {                                                     
 	r.zf = id.group == 0;
 }
 PORT(combatReadiness) { r.a.b.l = combatReadiness(m, r.a.b.l); }                        // 13878: al = party number
-PORT(useAmmunitionNone) { r.a.b.l = useAmmunition(m, 0); }                              // 138C1
-PORT(useAmmunition) { r.a.b.l = useAmmunition(m, r.a.b.l); }                            // 138C3: al = rounds
+PORT(useAmmunitionNone) { r.a.b.l = useAmmunition(m, 0, &r.zf); }                              // 138C1
+PORT(useAmmunition) { r.a.b.l = useAmmunition(m, r.a.b.l, &r.zf); }                            // 138C3: al = rounds
 PORT(setHitFlag) { r.a.b.l = setHitFlag(m, uint16_t(r.a.b.l | (r.d.b.l << 8))); }       // 15C4A: dl:al
 PORT(typeGroupAOrB) { r.cf = !(isTypeGroupB(r.a.b.l) || isTypeGroupA(r.a.b.l)); }       // 15C68
 PORT(typeGroupA) { r.cf = !isTypeGroupA(r.a.b.l); }                                     // 15C6E

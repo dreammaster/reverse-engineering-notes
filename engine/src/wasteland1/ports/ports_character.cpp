@@ -21,8 +21,18 @@ PORT(removeItem) {   // 19AB6: bl = offset of the item id byte
 	r.di = curChar(m);
 }
 PORT(getInventoryItemIdPtr) { r.a.b.l = getInventoryItemOffset(r.a.b.l); }   // 19AC8: al = slot -> al = offset of the item id
-PORT(getMemberWeaponIdPtr) { r.b.b.l = r.a.b.l = equippedItemOffset(m, pm::weapon); r.di = curChar(m); }   // 196C9
-PORT(getMemberArmorIdPtr) { r.b.b.l = r.a.b.l = equippedItemOffset(m, pm::armor); r.di = curChar(m); }     // 196C4
+PORT(getMemberWeaponIdPtr) {
+	r.b.b.l = r.a.b.l = equippedItemOffset(m, pm::weapon);
+	r.di = curChar(m);
+	r.zf = r.a.b.l == 0;
+	r.sf = (r.a.b.l & 0x80) != 0;
+}   // 196C9
+PORT(getMemberArmorIdPtr) {
+	r.b.b.l = r.a.b.l = equippedItemOffset(m, pm::armor);
+	r.di = curChar(m);
+	r.zf = r.a.b.l == 0;
+	r.sf = (r.a.b.l & 0x80) != 0;
+}     // 196C4
 PORT(getEquippedWeaponDetails) { getEquippedWeaponDetails(m); }   // 196B2
 PORT(getArmorAC) { r.a.b.l = getArmorClass(m); r.b.b.l = 6; r.di = m.d16(g::itemDetailsPtr); }   // 19A0F
 PORT(equip) { equip(m, r.a.b.l); r.di = curChar(m); }                         // 1949E: al = inventory slot
@@ -99,7 +109,13 @@ PORT(rollMinusTarget) {                                    // 19C54: ax = seed2 
 	r.d.b.l = r.a.b.h;
 	r.cf = q.seed2() < q.seed1();
 }
-PORT(rollBeatsTarget) { Rules q(m); r.a.x = q.seed2(); r.cf = q.seed2() >= q.seed1(); }   // 19C69
+PORT(rollBeatsTarget) {
+	Rules q(m);
+	r.a.x = q.seed2();
+	r.cf = q.seed2() >= q.seed1();
+	r.zf = q.seed2() == q.seed1();
+	r.sf = ((q.seed2() - q.seed1()) & 0x8000) != 0;
+}   // 19C69
 PORT(targetBeatsRoll) { Rules q(m); r.a.x = q.seed1(); r.cf = q.seed1() >= q.seed2(); }   // 19C72
 PORT(axBeatsTarget) { r.cf = r.a.x >= Rules(m).seed1(); }  // 19C7E
 PORT(targetBase) {                                         // 19CAC: dl = count -> dl:al = 15 + 5 * count

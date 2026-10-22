@@ -24,8 +24,8 @@
 # inventory, equipment, money, hit points, skill check accumulators (ports/ports_character.cpp)
 09AB6 removeItem
 09AC8 getInventoryItemIdPtr junk=cf,sf
-096C9 getMemberWeaponIdPtr junk=pf,sf,zf
-096C4 getMemberArmorIdPtr junk=pf,zf
+096C9 getMemberWeaponIdPtr junk=pf
+096C4 getMemberArmorIdPtr junk=pf
 096B2 getEquippedWeaponDetails junk=al,bl,ch,cl,di,dl,pf,zf
 09A0F getArmorAC
 0949E equip junk=bl,cf,ch,cl,dl,sf
@@ -51,7 +51,7 @@
 09C04 addRoll junk=ah,pf
 09C2C addTarget junk=ah,pf,zf
 09C54 rollMinusTarget junk=pf,zf
-09C69 rollBeatsTarget junk=pf,zf
+09C69 rollBeatsTarget junk=pf
 09C72 targetBeatsRoll junk=pf,zf
 09C7E axBeatsTarget junk=pf
 09CAC targetBase junk=pf
@@ -113,11 +113,11 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 2AA2 itemArmorClassByte
 2AAB itemBytes01 junk=di,pf,zf
 2ABA itemByte2 junk=bl,di
-2AC5 locationRecordBits2 junk=bl,cf,di,pf,zf
+2AC5 locationRecordBits2 junk=bl,di,pf
 5C08 locationRecordBits4 junk=bl,cf,di,pf,zf
 5C27 markLocationVisited junk=al,bl,di,sf
 3449 orderLow junk=di,pf,zf
-353C orderHigh junk=cf,di,pf,zf
+353C orderHigh junk=di,pf
 3561 clearNumberValue
 3787 selectSlotCellRecord junk=ah,al,bl,di,dl,pf,zf scratch=BA08-BA11,4661-4662
 3797 selectCellRecord junk=ah,al,bl,di,dl,pf,zf scratch=BA08-BA11,4661-4662
@@ -130,7 +130,7 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 3A37 combatantIndex junk=sf scratch=A590-A591
 3A56 splitCombatantIndex
 3878 combatReadiness junk=ah,bl,cf,ch,cl,di,dl,pf,sf,si,zf scratch=A598-A599
-38C1 useAmmunitionNone junk=bl,cf,ch,cl,di,dl,pf,sf,zf scratch=A598-A599
+38C1 useAmmunitionNone junk=bl,cf,ch,cl,di,dl,pf,sf scratch=A598-A599
 38C3 useAmmunition scratch=A598-A599
 5C4A setHitFlag junk=bl,pf
 5C68 typeGroupAOrB

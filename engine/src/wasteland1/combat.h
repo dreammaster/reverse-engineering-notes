@@ -59,7 +59,7 @@ void markLocationVisited(Machine &m);         // byte 9 = (byte 9 | 1) & 0FDh
 // 1391E / 13878 / 138C1: readiness of the combatant (state byte at 46CC) and ammunition accounting
 void markReady(Machine &m);
 uint8_t combatReadiness(Machine &m, uint8_t partyNum);
-uint8_t useAmmunition(Machine &m, uint8_t rounds);
+uint8_t useAmmunition(Machine &m, uint8_t rounds, bool *zeroFlag = nullptr);   // zeroFlag: the zero flag the original returns
 // 15705..15714: damage bonus of the current character's luck / dexterity / agility / strength (16 bit, may be negative)
 uint16_t attributeBonus(Machine &m, uint8_t attributeOffset);
 // weapon class predicates (item types): true when the type belongs to the class

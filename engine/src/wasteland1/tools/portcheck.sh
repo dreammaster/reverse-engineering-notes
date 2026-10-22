@@ -11,3 +11,4 @@ if [ "$UPDATE" = "1" ]; then
   ./build/src/wasteland1/wlrctest.exe ../ida_scripts/wl_image.bin ../tmp_out/gc2 src/wasteland1/tools/recomp/entries.txt $STATES --ported "$@" > ../tmp_out/rct.txt 2>/dev/null
 fi
 grep -v "^[0-9A-F]* [a-z,]*$" ../tmp_out/rct.txt | grep -v "skipped" | cut -c1-220
+python src/wasteland1/tools/decomp/flagcheck.py
