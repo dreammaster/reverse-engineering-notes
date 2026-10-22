@@ -10,6 +10,9 @@ Usage: tools/origdiff.py <first.pkl> <second.pkl> [-o out.tsv] [--classes] [--wo
   --classes            per class: functions in both, same, changed
   --worst N [FILTER]   the N least alike functions whose name contains FILTER
   --show NAME          both versions of one function side by side (names as in the .tsv)
+  --engine OUT.tsv     for builds compiled differently (-O2 against -O0): only the calls to engine functions (T* methods, free functions of the
+                       engine) that both executables define and that are bigger than 24 bytes in the first one (smaller ones are inlined
+                       in an -O2 build), compared as sequences; the rows are the functions whose sequences differ, most different first
 
 A function is 'same' when its calls, texts and shape agree completely; the numbers are not required to (the offsets of the members of
 a class move when a member is added, which changes numbers in functions whose source did not change). 'moved only' lists those that
@@ -124,6 +127,76 @@ def show(f, g, name):
     print("   second calls:", ", ".join(g.calls()))
 
 
+def engine_mode(f1, f2, common, out):
+    own = set(n for n in common if f1[n].size > 24 and (klass(n).startswith("T") or re.match(r"^_Z\d+[A-Za-z]", n)))
+    own = set(n for n in own if not re.match(r"^_ZN?K?\d+(std|__gnu|wx)", n))
+
+    # what the first (-O2) build has inlined is a function of its own in the second (-O0): its calls are put in place of the call
+    norm1 = set(normalize_name(n) for n in f1)
+    by_norm2 = {}
+    for n, f in f2.items():
+        by_norm2.setdefault(normalize_name(n), f)
+
+    def expand(f, depth=0):
+        # the call, and what it calls in turn (three levels): the first build may have inlined any of the levels
+        out = []
+        for c in f.calls():
+            out.append(c)
+            g = by_norm2.get(c)
+            if depth < 3 and g is not None:
+                out.extend(expand(g, depth + 1))
+        return out
+
+    def seq(f, deep=False):
+        return [c for c in (expand(f) if deep else f.calls()) if c in own]
+    rows = []
+    for n in common:
+        a, b = seq(f1[n]), seq(f2[n], True)
+        if not a and not b:
+            continue
+        # an -O0 build (the second) makes every call that an -O2 build (the first) has inlined: what the second has more of is no
+        # difference. What the first has and the second has not cannot be explained that way.
+        missing = collections.Counter(a) - collections.Counter(b)
+        if missing:
+            rows.append((ratio(a, b), len(a), len(b), n, missing))
+    rows.sort(key=lambda t: (-sum(t[4].values()), t[0]))
+    with open(out, "w") as fh:
+        fh.write("name\tratio\tcalls_first\tcalls_second\tcalls only in the first\n")
+        for r, a, b, n, missing in rows:
+            fh.write("%s\t%.3f\t%d\t%d\t%s\n" % (n, r, a, b, ", ".join("%s x%d" % (c, k) for c, k in missing.items())))
+    total = sum(1 for n in common if seq(f1[n]) or seq(f2[n], True))
+    print("functions with engine calls: %d; the first calls something the second does not: %d" % (total, len(rows)))
+
+    # the other way: a call of the second build to a big function (over 200 bytes, which the -O2 build does not inline) that the
+    # first build's function and what it calls (three levels) never make
+    big = set(n for n in own if f1[n].size > 200)
+    by_norm1 = {}
+    for n, f in f1.items():
+        by_norm1.setdefault(normalize_name(n), f)
+
+    def expand1(f, depth=0):
+        res = []
+        for c in f.calls():
+            res.append(c)
+            g = by_norm1.get(c)
+            if depth < 3 and g is not None:
+                res.extend(expand1(g, depth + 1))
+        return res
+    rev = []
+    for n in common:
+        extra = collections.Counter(c for c in f2[n].calls() if c in big) - collections.Counter(expand1(f1[n]))
+        if extra:
+            rev.append((n, extra))
+    rev.sort(key=lambda t: -sum(t[1].values()))
+    with open(out + ".rev.tsv", "w") as fh:
+        fh.write("name\tcalls only in the second\n")
+        for n, extra in rev:
+            fh.write("%s\t%s\n" % (n, ", ".join("%s x%d" % (c, k) for c, k in extra.items())))
+    print("the second calls a big function that the first does not: %d (%s.rev.tsv)" % (len(rev), out))
+    print("written %s" % out)
+    return 0
+
+
 def main():
     args = sys.argv[1:]
     out = None
@@ -131,6 +204,7 @@ def main():
     worst = None
     flt = ""
     show_name = None
+    engine_out = None
     pos = []
     i = 0
     while i < len(args):
@@ -146,6 +220,9 @@ def main():
             if i + 1 < len(args) and not args[i + 1].startswith("-") and len(pos) >= 2:
                 flt = args[i + 1]
                 i += 1
+        elif a == "--engine":
+            engine_out = args[i + 1]
+            i += 1
         elif a == "--show":
             show_name = args[i + 1]
             i += 1
@@ -163,6 +240,8 @@ def main():
                 show(f1[n], f2[n], n)
                 break
         return 0
+    if engine_out:
+        return engine_mode(f1, f2, common, engine_out)
     results = {n: compare(f1[n], f2[n]) for n in common}
     ranked = sorted(common, key=lambda n: (results[n]["score"], -f1[n].size))
     if out:

@@ -6,8 +6,8 @@ two into one engine later, so every difference found goes in the log below, with
 The matrix of all the builds is in [`/VERSIONS.md`](../../VERSIONS.md); the reasons for the code are in
 [`../deponia1/NOTES.md`](../deponia1/NOTES.md) (not copied: it describes the code both share).
 
-Nothing in this folder has been changed from the Deponia 1 sources yet, apart from this file and the two generated reports
-(`SYMDIFF.md`, `FUNCDIFF.md`). Where a difference below is marked **to do**, the source here still does what Deponia 1 does.
+Nothing in this folder has been changed from the Deponia 1 sources yet, apart from this file and the generated reports
+(`SYMDIFF.md`, `FUNCDIFF.md`, `ENGINECALLS.md`). Where a difference below is marked **to do**, the source here still does what Deponia 1 does.
 
 ## The build
 
@@ -43,7 +43,8 @@ python tools/crosscompare.py deponia4 --tag o0 --original <Deponia4>          # 
 python tools/crossreport.py build/cross/deponia4-o0-compare.tsv -o src/deponia4/FUNCDIFF.md
 
 # 4. the same two executables against each other, no reconstruction involved (needs both original-*.pkl caches of step 3)
-python tools/origdiff.py build/cross/original-Deponia.pkl build/cross/original-Deponia4.pkl --classes -o build/cross/orig-D1-D4.tsv
+python tools/origdiff.py build/cross/original-Deponia.pkl build/cross/original-Deponia4.pkl --classes -o build/cross/orig-D1-D4.tsv   # (meaningless for -O2 against -O0: use --engine)
+python tools/origdiff.py build/cross/original-Deponia.pkl build/cross/original-Deponia4.pkl --engine build/cross/orig-engine-D1-D4.tsv   # -> ENGINECALLS.md
 
 # 5. the data schema (from the asm; run in a folder of its own, the tools write manifest/*.tsv relative to the working directory)
 python tools/extract_xml_names.py Deponia4_Linux.asm manifest/xml_names.tsv ; python tools/extract_schema.py Deponia4_Linux.asm
@@ -64,7 +65,7 @@ one of three things, and only the third is a difference of Deponia 4:
    listing, so what GCC had inlined there (an accessor, `ClearCurrentText`, a `wxString::Format`) is inline in the source, and in the
    `-O0` original it is a call. `TGameControl::ClearTexts` is an example: the original ends with `call TGameControl::ClearCurrentText()`, the
    reconstruction with the inlined body of it. The same goes for `std::to_wstring` (reconstruction) against `wxString::Format<int>` (original) in `SavegameExists`/`SaveGame`.
-3. **A real difference.** Not separated from 2 yet: that needs the functions to be read one by one in `Deponia4_Linux.asm`.
+3. **A real difference.** Separated from 2 by `tools/origdiff.py --engine` (see "The call graph of the engine"): very few so far.
 
 At `-O2` the reconstruction scored 0.95-1.00 for 4 functions of Deponia 4 and under 0.5 for 1,720; at `-O0` it is 3,113 and 930
 (of 7,043 functions in both). The `-O0` build is the right yardstick for Deponia 4. (Deponia 1 compared with itself: 1,001 under 0.5 of 2,801.)
@@ -133,6 +134,22 @@ the layer that owns both the Steam and the Galaxy objects is explicit in Deponia
 `Tween`, `Tooltip`, `TooltipHolder`, `TextBox`, `TCPDebuggerClient`, `TSyntaxDoc`, `TExampleDoc` are in both builds (they are in the Deponia 1 sources); the symbol differences are inline helpers.
 Their scores: `TCPDebuggerClient` 2 of 2 unlike, `TextBox` 21 more symbols, `Tween` 3 of 3 unlike, `TConsole` 4 of 4. **to do**: read them.
 
+### The call graph of the engine: no function with another logic found so far
+
+Method (executable, `tools/origdiff.py --engine`, no reconstruction involved; the two original executables against each other): for every function that both define, the calls to engine
+functions (T* methods and the engine's own free functions) are compared. Deponia 4 is `-O0`, so what Deponia 1 has inlined is a call in Deponia 4: Deponia 4's calls are therefore
+read together with what they call, three levels down. Result in [`ENGINECALLS.md`](ENGINECALLS.md):
+
+- Deponia 1 makes a call that Deponia 4's function does not make (even three levels down): **51 of 2,923 functions**. Reading them: calls through a vtable in Deponia 4 that GCC devirtualized in Deponia 1
+  (`TMSavegame::Delete`/`Exists`, `TVisionaire::CleanUp`, `TGameControl::LoadGame(TMSavegame*)`), comparison functions that `std::sort` calls through a pointer (`cmpName`, `cmpOrder`, `CmpLinkReferences`), `x_assert`,
+  `toUTF` (from the inlined `wxString(char const*)`) and the like. No missing call that looks like logic.
+- Deponia 4 makes a call to a function over 200 bytes that Deponia 1's function does not: 86 functions. Examples read in the listing: `TManagedObject::HandlePostExecution` calls `TGCharacter::ShowComment` at **two** sites in Deponia 4
+  and one in Deponia 1: the `-O0` code is the same two-way test (`!ReceiveItem(info)` then `info.character`, or no `ReceiveItem` test) that GCC merged; `TGameControl::HandleMouseUp` has the same sequence in both
+  (scene mouse position hook through `LuaExecuteFunction`, `SelectSavegame`, the inverse matrix as `TMatrix3 * TVector3D`, `IsCurrentObjectEmpty`, `SetValue(destination)`) as the reconstruction has it. The rest are helpers (`TData` `GetRefV*`,
+  `TMemoryBuffer::AppendData`, `TGInterface::UpdateAlpha`, the `TConsole::Print*` and `Parse*` helpers) that `-O2` inlined.
+- So, apart from what the other sections list (fonts, logging, platform SDKs), **the logic of the engine in Deponia 4 is that of Deponia 1** as far as the order of its engine calls shows. What this cannot see: a changed constant, a changed condition, a call
+  that was added to a function whose `-O2` form inlined the callee, and every function that calls no engine function. **to do**: the numbers (`origdiff.py` can compare `consts` once the offsets of moved members are masked).
+
 ### Other classes with the most functions unlike the reconstruction
 
 From `FUNCDIFF.md` (functions under 0.5 / functions in both): `TTable` 32/49 (most of it editor code the reconstruction does not have), `TArgument` 27/55, `TVisionaire` 19/80, `TSoundBase` 17/39,
@@ -142,8 +159,8 @@ None of these has been read yet; the next step is to take them in that order.
 
 ## Open points / next steps
 
-1. Find the real differences among the functions in `FUNCDIFF.md` by reading them (see "How to read the comparison"). Start with the classes where the instruction counts are alike but the calls differ: `TGameControl`
-   (`SaveGame`, `HandleMouseMove`, `HandleMouseUp`, `InitInterfaces`, `DisplayTexts`), `TGScene`, `TGCharacter`, `TGAction`.
+1. The numbers and conditions: compare the constants of the functions of the two executables with the offsets of members masked (the call-graph comparison found nothing); then read what `FUNCDIFF.md` lists for
+   classes the call graph cannot see (`TGAction::Execute` 10,083 instructions, `TGameControl::HandleMouseMove`, `InitInterfaces`, `DisplayTexts`).
 2. Why the run of the reconstruction on the Deponia 4 data stops after `lua_dump not supported`, and the `table 21` assertion.
 3. The build number of the engine (the integer passed to `wxLog::logexpanded("Engine Version ...")`).
 4. Compile the sources here at `-O0` for real (`tools/pbuild.py deponia4`, `tests/`): the tests (`tests/deponia1`) still build `src/deponia1` (`tools/tbuild.py` has the folder fixed); parametrize it before the two code bases diverge.
