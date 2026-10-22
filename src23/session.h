@@ -358,6 +358,20 @@ bool sessionStowHeld(GameSession *session, unsigned member);
  * from that equipment slot (its stat effect taken off, the weight subtracted).
  */
 bool sessionDropOnPortrait(GameSession *session, unsigned member);
+
+/*
+ * A left click on one of the slots of a member's expanded doll on the inventory screen (HandleInventorySlotClick, yendor2.asm:39344; `region` is the UiRegionsInventoryGrid result: 1-8 the bag
+ * slots, 9 nothing, 10-15 the weapon / B / C / D slots and the two rings, 16-21 the five worn-clothing slots). With an empty hand the slot's item goes to the cursor; with an item held it must
+ * suit the slot (inventory.h inventoryEligibleForSlot) and the carry weight must allow it (the member's +0x118 total against his or her capacity +0x56, the exchange counting only the
+ * difference), then it is put in an empty slot or swapped (sound 6; a worn item brings its stat effect, the wear counter is cleared); a key over a key ring in a slot goes on the ring (sound 4).
+ * Containers (bags, boxes: their contents live in item-instance records the standalone does not open) are refused.
+ */
+typedef enum { SessionInvIgnored, SessionInvTook, SessionInvPlaced, SessionInvSwapped, SessionInvKeyRing, SessionInvRefused } SessionInv;
+SessionInv sessionInventoryClick(GameSession *session, unsigned member, unsigned region);
+
+/* TryDropHeldItem (yendor2.asm:18109): whether the cursor item may be dropped (not a keepsake or a container holding one), and the drop itself (PlaceItemOnGround: the item ceases to exist). */
+bool sessionHeldDroppable(GameSession *session);
+void sessionDropHeld(GameSession *session);
 bool sessionPickUp(GameSession *session, unsigned member, unsigned slotNumber, unsigned equipmentCode);
 
 /*

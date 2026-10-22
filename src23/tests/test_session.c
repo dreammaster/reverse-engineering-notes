@@ -13,6 +13,7 @@
 #include "bcd4.h"
 #include "lightsource.h"
 #include "dialogservice.h"
+#include "inventory.h"
 #include "globalflags.h"
 #include "relics.h"
 #include "spellcast.h"
@@ -985,6 +986,65 @@ static void testBelt(GameKind game, const uint8_t *world, size_t size, const cha
     sessionFree(s);
 }
 
+/* The inventory screen's slots (HandleInventorySlotClick): pick up, put down, swap, the eligibility and the carry weight. */
+static void testInventorySlots(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[200];
+    unsigned found = 0, slot = 0, who = 0;
+    for (unsigned member = 0; member < 4 && !found; member++) { /* the first member who carries anything */
+        for (unsigned n = 1; n <= InventorySlotCount && !found; n++) {
+            found = itemSlotId(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, member), PartyGroupMain), n));
+            slot = n;
+            who = member;
+        }
+    }
+    check("a hero carries something", found != 0);
+    if (!found) {
+        sessionFree(s);
+        return;
+    }
+    uint8_t *hero = sessionPartyRecord(s, who);
+    uint8_t *group = partyInventoryGroup(hero, PartyGroupMain);
+    unsigned load = inventoryGroupWeight(group);
+    snprintf(text, sizeof(text), "%s: a click on an occupied bag slot takes the item to the cursor and lightens the load", label);
+    check(text, sessionInventoryClick(s, who, slot) == SessionInvTook && s->heldItem == found && itemSlotId(inventoryGroupSlot(group, slot)) == 0 && inventoryGroupWeight(group) <= load);
+    check("a click on the ninth cell does nothing", sessionInventoryClick(s, who, 9) == SessionInvIgnored && s->heldItem == found);
+    unsigned other = slot == 1 ? 2 : 1;
+    check("a click on an empty bag slot puts it down (sound 6) and the load is back", sessionInventoryClick(s, who, other) == SessionInvPlaced && s->heldItem == 0 && itemSlotId(inventoryGroupSlot(group, other)) == found &&
+                                                                                       inventoryGroupWeight(group) == load && s->pendingSound == 6);
+    sessionInventoryClick(s, who, other);
+    check("... not into the weapon slot: the item is no weapon", itemSlotId(inventoryGroupSlot(group, other)) == 0 && s->heldItem == found && (itemGetU16(itemCatalogRecord(&s->items, found), ItemFieldFlags) & 0x8000 ? true : sessionInventoryClick(s, who, 10) == SessionInvRefused));
+    uint16_t capacity = partyGetU16(hero, 0x56);
+    partySetU16(hero, 0x56, 0);
+    check("an item that is too heavy for the member is refused", sessionInventoryClick(s, who, other) == SessionInvRefused && s->heldItem == found);
+    partySetU16(hero, 0x56, capacity);
+    sessionInventoryClick(s, who, other);
+
+    unsigned weapon = 0;
+    for (unsigned id = 1; id <= 759 && !weapon; id++) {
+        const uint8_t *record = itemCatalogRecord(&s->items, id);
+        if (record && (itemGetU16(record, ItemFieldFlags) & ItemFlagEquipCode0A) && !(itemGetU16(record, ItemFieldFlags) & ItemFlagEquipCode0B)) {
+            weapon = id;
+        }
+    }
+    uint8_t *hand = partyEquipmentSlot(hero, 0x0A, game);
+    unsigned before = itemSlotId(hand);
+    partySetU16(hero, 0x56, 9999);
+    s->heldItem = (uint16_t)weapon;
+    SessionInv put = sessionInventoryClick(s, who, 10);
+    snprintf(text, sizeof(text), "%s: a weapon goes into the weapon slot (swapping what was there) and its wear counter is cleared", label);
+    check(text, (put == SessionInvPlaced || put == SessionInvSwapped) && itemSlotId(hand) == weapon && s->heldItem == before && partyGetU16(hero, PartyFieldWearMain) == 0);
+    check("a click on the weapon slot takes it back", (s->heldItem = 0, sessionInventoryClick(s, who, 10)) == SessionInvTook && s->heldItem == weapon && itemSlotId(hand) == 0);
+    s->heldItem = (uint16_t)found;
+    check("a held item with a keepsake flag cannot be dropped, any other can", sessionHeldDroppable(s) == !inventoryDropBlocked(game, &s->items, &s->save, found, 0));
+    sessionDropHeld(s);
+    check("dropping it empties the hand", s->heldItem == 0);
+    sessionFree(s);
+}
+
 /* The bump of a refused step: a wall bumps with each game's own sound, a turn does not. */
 static void testBumpSound(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -1245,6 +1305,7 @@ int main(void) {
             testLockedDoor(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBumpSound(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBelt(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testInventorySlots(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             free(worldI);
         }
     }

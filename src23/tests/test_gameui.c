@@ -1,6 +1,6 @@
 /*
  * Build and run (from src23/tests):
- *   gcc -Wall -Wextra -std=c99 -I .. -o test_gameui test_gameui.c ../gameui.c ../alchemylist.c ../confirmprompt.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
+ *   gcc -Wall -Wextra -std=c99 -I .. -o test_gameui test_gameui.c ../gameui.c ../alchemylist.c ../confirmprompt.c ../partyinfo.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../lighting.c \
  *       ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c \
  *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
@@ -860,6 +860,98 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
     free(world);
 }
 
+/* The party panels' lists, the inventory screen and the cursor item. */
+static void testInventoryUi(GameKind game, const char *envName, const char *defaultDir, const char *label) {
+    const char *dir = getenv(envName);
+    char path[512];
+    snprintf(path, sizeof(path), "%s/WORLD.DAT", dir ? dir : defaultDir);
+    size_t size;
+    uint8_t *world = readFile(path, &size);
+    if (!world) {
+        return;
+    }
+    GameSession *s = sessionNew(game, world, size);
+    static GameUi ui;
+    GameUiHost host = {NULL, onEffect, onMusic, NULL, onStore, onFetch};
+    char text[200];
+    gameUiInit(&ui, s, world, size, picture, NULL, &host);
+
+    /* the lists a click on a panel's icons writes */
+    gameUiClick(&ui, 20, 190, false); /* the first member's name bar */
+    snprintf(text, sizeof(text), "%s: a click on a name bar writes HEALTH / MAGIC / WEIGHT with the numbers", label);
+    check(text, ui.panelRunCount >= 6 && strcmp(ui.panelRuns[2].text, "HEALTH:") == 0);
+    check("... the name header is first", ui.panelRunCount > 2 && ui.panelRuns[0].y == 87 && ui.panelRuns[0].opaque);
+    gameUiKey(&ui, '2', false);
+    check("the key 2 shows the second member's bars", ui.panelRunCount >= 6 && strncmp(ui.panelRuns[1].text, (const char *)sessionPartyRecord(s, 1) + PartyFieldName, 13) == 0);
+    gameUiClick(&ui, 52, 164, false);
+    check("the protection icon lists the nine protections", ui.panelRunCount > 18 && strcmp(ui.panelRuns[2].text, "PROTECTIONS:") == 0);
+    gameUiClick(&ui, 43, 154, false);
+    check("an affliction icon lists the afflictions", strcmp(ui.panelRuns[2].text, "AFFLICTIONS:") == 0 && strcmp(ui.panelRuns[3].text, "NONE") == 0);
+
+    /* the inventory screen: P opens all four panels, a click takes an item, a click puts it down */
+    gameUiKey(&ui, 'p', false);
+    check("P opens the inventory screen with every member's panel", ui.overlay == UiOverlayDolls && ui.dollMask == 0xF);
+    unsigned found = 0, who = 0, slot = 0;
+    for (unsigned member = 0; member < 4 && !found; member++) {
+        for (unsigned n = 1; n <= InventorySlotCount && !found; n++) {
+            found = itemSlotId(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, member), PartyGroupMain), n));
+            who = member;
+            slot = n;
+        }
+    }
+    if (found) {
+        int cx = 8 + 56 * (int)who + 2 + 18 * (int)((slot - 1) % 3) + 8, cy = 8 + 2 + 17 * (int)((slot - 1) / 3) + 8;
+        gameUiClick(&ui, cx, cy, false);
+        check("a click on an occupied slot takes the item to the cursor and shows its name", s->heldItem == found && gameUiCursorShown(&ui) && ui.panelRunCount == 3);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("Escape with an item on the cursor beeps and stays", ui.overlay == UiOverlayDolls);
+        gameUiClick(&ui, cx, cy, false);
+        check("a click on the same slot puts it back", s->heldItem == 0 && itemSlotId(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, who), PartyGroupMain), slot)) == found);
+        gameUiClick(&ui, cx, cy, false);
+        gameUiClick(&ui, 300, 100, false); /* nowhere (the right-hand panel) */
+        check("the item stays on the cursor over nothing", s->heldItem == found && !ui.dropPrompt);
+        s->heldItem = 0;
+        for (unsigned member = 0; member < 4; member++) { /* the right button on a face hides that member's panel */
+            if (member != who) {
+                gameUiClick(&ui, 20 + 58 * (int)member, 160, true);
+            }
+        }
+        check("the right button on a face hides that member's panel", ui.dollMask == 1u << who && ui.overlay == UiOverlayDolls);
+        s->heldItem = (uint16_t)found;
+        int beside = who == 3 ? 20 : 220;
+        gameUiClick(&ui, beside, 100, false); /* inside the view, beside the one panel */
+        check("beside the panels the item is about to be dropped (the question)", ui.dropPrompt);
+        gameUiKey(&ui, 'n', false);
+        check("N keeps it", !ui.dropPrompt && s->heldItem == found);
+        gameUiClick(&ui, beside, 100, false);
+        gameUiKey(&ui, 'y', false);
+        check("Y drops it: the hand is empty", !ui.dropPrompt && s->heldItem == 0);
+    }
+    gameUiKey(&ui, 'p', false);
+    check("P closes the inventory screen", ui.overlay == UiOverlayNone);
+
+    /* a potion from a bag slot: the right button asks whom, a face answers, the member is healed and the charge is spent */
+    unsigned potion = game == GameYendor2 ? 0x14 : 0x36; /* HpFull */
+    uint8_t *giver = sessionPartyRecord(s, 0), *patient = sessionPartyRecord(s, 2);
+    for (unsigned n = 1; n <= InventorySlotCount; n++) {
+        itemSlotSet(inventoryGroupSlot(partyInventoryGroup(giver, PartyGroupMain), n), 0, 0);
+    }
+    itemSlotSet(inventoryGroupSlot(partyInventoryGroup(giver, PartyGroupMain), 1), (uint16_t)potion, 1);
+    partySetStat(patient, PartyStatHitPoints, 1);
+    gameUiKey(&ui, 'p', false);
+    gameUiClick(&ui, 18, 18, true);
+    check("the right button on a potion asks whom (the crosshair)", ui.pickActive && gameUiCursorShown(&ui));
+    gameUiKey(&ui, UiKeyEscape, false);
+    check("Escape gives it up", !ui.pickActive && itemSlotId(inventoryGroupSlot(partyInventoryGroup(giver, PartyGroupMain), 1)) == potion);
+    gameUiClick(&ui, 18, 18, true);
+    gameUiClick(&ui, 20 + 58 * 2, 160, false); /* the third member's face */
+    check("a click on a face heals that member and the potion is used up", !ui.pickActive && partyGetStat(patient, PartyStatHitPoints) == partyGetStatMax(patient, PartyStatHitPoints) &&
+                                                                          itemSlotId(inventoryGroupSlot(partyInventoryGroup(giver, PartyGroupMain), 1)) == 0);
+    gameUiKey(&ui, 'p', false);
+    sessionFree(s);
+    free(world);
+}
+
 static uint8_t g_slotImage[SaveSlotCount][SaveFileSizeMax];
 static size_t g_slotSize[SaveSlotCount];
 
@@ -1052,6 +1144,8 @@ int main(void) {
     testBoot(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
     testBoot(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
     testPanelAndAlchemy(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
+    testInventoryUi(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
+    testInventoryUi(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
     printf("%s (%d skipped)\n", g_failureCount ? "FAILED" : "ALL PASSED", g_skipCount);
     return g_failureCount ? 1 : 0;
 }

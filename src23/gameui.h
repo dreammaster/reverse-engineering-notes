@@ -15,6 +15,7 @@
 #include "confirmprompt.h"
 #include "gamedialog.h"
 #include "palette.h"
+#include "partyinfo.h"
 #include "textfield.h"
 #include "exedata.h"
 #include "session.h"
@@ -76,15 +77,9 @@ typedef enum { UiDialogMenu, UiDialogSlots, UiDialogName, UiDialogPrompt } UiDia
 /* What the alchemy screen is doing: showing its list, waiting for the portrait a single-target spell is for, or asking whether to mark or return. */
 typedef enum { UiAlchemyList, UiAlchemyTarget, UiAlchemyMark } UiAlchemyMode;
 
-enum { UiAlchemyMax = 128, UiPanelRunMax = 8 };
+enum { UiAlchemyMax = 128, UiPanelRunMax = PartyInfoMaxRuns };
 
-/* A piece of text written into the message area of the right-hand panel: where, in which colour, over the panel (opaque) or not. */
-typedef struct {
-    int x, y;
-    uint8_t colour;
-    bool opaque;
-    char text[16];
-} PanelRun;
+/* PanelRun (partyinfo.h): a piece of text written into the message area of the right-hand panel: where, in which colour, over the panel (opaque) or not. */
 
 typedef struct {
     GameSession *session;
@@ -107,6 +102,11 @@ typedef struct {
     bool restPause;        /* an interrupted rest's message stays until a key (the combat's panels wait behind it) */
     int mouseX, mouseY;    /* the pointer, from gameUiMouseMove: where the cursor item is drawn */
     bool targeting;        /* K: the crosshair cursor waits for a click on the view (WaitForTargetClick) */
+    unsigned dollMask;     /* the inventory screen (UiOverlayDolls): bit n = member n's expanded panel is shown */
+    bool pickActive;       /* an item waits for the member it is used on (ConfirmAndSelectPartyTarget): a click on a face or F1-F4 */
+    unsigned pickUser, pickSlot; /* ... the member whose bag slot (1-8) it is in */
+    bool reading;          /* the scroll (UiOverlayTalk) shows a readable item's text, not a conversation */
+    bool dropPrompt;       /* the cursor item is about to be dropped: DO YOU WANT TO DROP THAT RIGHT NOW? (TryDropHeldItem) */
     bool passwordActive;   /* a destination's password is being typed in the message area (ShowConfirmPrompt, mode 0x2000) */
     unsigned passwordPrompt; /* its message id */
     TextField password;

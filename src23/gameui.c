@@ -25,6 +25,8 @@
 #include "music.h"
 #include "paperdoll.h"
 #include "party.h"
+#include "partyinfo.h"
+#include "consumable.h"
 #include "pictures.h"
 #include "roster.h"
 #include "spellcast.h"
@@ -147,13 +149,13 @@ static void drawTalk(GameUi *ui) {
     GameSession *s = ui->session;
     const ViewRenderer *r = &ui->renderer;
     viewDrawPicture(r, 1, 3, 15, 23, true, 0);
-    if (s->talk.npc) {
+    if (s->talk.npc && !ui->reading) {
         viewDrawPicture(r, 7, dialogGetU16(s->talk.npc, 0), 21, 31, true, 0);
     }
     for (unsigned i = 0; i < ui->talkRowCount; i++) {
         fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 22, 67 + 6 * (int)i, ui->talkRows[i], 0x0D, 0, FontTransparent);
     }
-    for (unsigned i = 0; ui->talkListShown && i < s->talk.listedCount && i < ConversationListMax; i++) {
+    for (unsigned i = 0; !ui->reading && ui->talkListShown && i < s->talk.listedCount && i < ConversationListMax; i++) {
         char name[DialogTopicNameSize + 1];
         dialogTopicName(dialogTopic(&s->dialogs, s->talk.listed[i]), name);
         fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, i < 5 ? 58 : 142, 32 + 6 * (int)(i % 5), name, 0x8A, 0, FontTransparent);
@@ -696,12 +698,19 @@ void gameUiMouseMove(GameUi *ui, int x, int y) {
 }
 
 bool gameUiCursorShown(const GameUi *ui) {
-    return ui->targeting || ui->session->heldItem != 0;
+    return ui->targeting || ui->pickActive || ui->session->heldItem != 0;
 }
 
 /* The cursor item or the crosshair, over everything else (DrawMouseCursor: the 16 x 16 sprite blitted at the pointer with 0xFF transparent). */
 static void cursorDraw(GameUi *ui) {
     unsigned picture = 0;
+    if (ui->pickActive) {
+        viewDrawPicture(&ui->renderer, 8, 0x0F, ui->mouseX, ui->mouseY, true, 0);
+        return;
+    }
+    if (ui->dropPrompt) { /* the cursor is empty while the question is asked */
+        return;
+    }
     if (ui->session->heldItem) {
         const uint8_t *item = itemCatalogRecord(&ui->session->items, ui->session->heldItem);
         picture = item ? (unsigned)(item[ItemFieldIcon] | (item[ItemFieldIcon + 1] << 8)) : 0;
@@ -711,6 +720,195 @@ static void cursorDraw(GameUi *ui) {
     if (picture) {
         viewDrawPicture(&ui->renderer, 8, picture, ui->mouseX, ui->mouseY, true, 0);
     }
+}
+
+/* ---- the party panels and the cursor item ---- */
+
+/* The list a click on a member's icons writes into the text area (partyinfo.h): the runs replace whatever the area held. */
+static void partyInfoShow(GameUi *ui, unsigned member, int kind) {
+    GameSession *s = ui->session;
+    const uint8_t *record = sessionPartyRecord(s, member);
+    PanelRun runs[PartyInfoMaxRuns];
+    unsigned count = 0;
+    if (!record) {
+        return;
+    }
+    switch (kind) {
+    case 0:
+        count = partyInfoAfflictions(record, runs, PartyInfoMaxRuns);
+        break;
+    case 1:
+        count = partyInfoTraining(record, runs, PartyInfoMaxRuns);
+        break;
+    case 2:
+        count = partyInfoProtections(record, runs, PartyInfoMaxRuns);
+        break;
+    case 3:
+        count = partyInfoTransports(record, s->clock.minutes, runs, PartyInfoMaxRuns);
+        break;
+    case 4:
+        count = partyInfoStatBars(record, runs, PartyInfoMaxRuns);
+        break;
+    default:
+        break;
+    }
+    ui->panelRunCount = 0;
+    for (unsigned i = 0; i < count && i < UiPanelRunMax; i++) {
+        ui->panelRuns[ui->panelRunCount++] = runs[i];
+    }
+}
+
+/* HandleItemDropOnPartyPortrait: the cursor item dropped on a member's face is worn if it has a slot and the slot is free, else stowed in the first free bag slot, if the carry weight allows (sound 6); else the beep. */
+static void dropOnPortrait(GameUi *ui, unsigned member) {
+    if (sessionDropOnPortrait(ui->session, member)) {
+        effect(ui, 6);
+        ui->panelRunCount = 0;
+    } else {
+        flashWarning(ui);
+    }
+}
+
+/* TryDropHeldItem: an item that may not be dropped beeps; any other asks first. */
+static void dropStart(GameUi *ui) {
+    if (!ui->session->heldItem) {
+        return;
+    }
+    if (!sessionHeldDroppable(ui->session)) {
+        flashWarning(ui);
+        return;
+    }
+    ui->dropPrompt = true;
+}
+
+static void dropAnswer(GameUi *ui, bool yes) {
+    ui->dropPrompt = false;
+    if (yes) {
+        sessionDropHeld(ui->session);
+    }
+}
+
+static void dropPromptDraw(GameUi *ui) {
+    ConfirmPrompt prompt;
+    const ViewRenderer *r = &ui->renderer;
+    textPanelClear(r, false);
+    if (confirmPromptLoad(ui->exe, ui->session->game, 4, &prompt)) {
+        confirmPromptDraw(r, &prompt);
+    } else {
+        static const char *const kAsk[3] = {"DO YOU WANT", "TO DROP THAT", "RIGHT NOW?"};
+        for (unsigned i = 0; i < 3; i++) {
+            fontDrawString(ui->session->game, 0, ui->screen, ViewScreenWidth, 240, 96 + 6 * (int)i, kAsk[i], 0x8A, 4, FontTransparent);
+        }
+        fontDrawString(ui->session->game, 0, ui->screen, ViewScreenWidth, 240, 120, "    YES", 0xAA, 4, FontTransparent);
+        fontDrawString(ui->session->game, 0, ui->screen, ViewScreenWidth, 240, 132, "    NO", 0x5B, 4, FontTransparent);
+    }
+}
+
+/* ---- the inventory screen (RunPartyInventoryScreen, yendor2.asm:14679) ---- */
+
+/* The members' expanded panels (RefreshPartyPortraits: all four, the P key; HandlePortraitClick: the one whose face was right-clicked). */
+static void inventoryOpen(GameUi *ui, unsigned mask) {
+    ui->dollMask = mask;
+    ui->overlay = UiOverlayDolls;
+    ui->panelRunCount = 0;
+    effect(ui, 1);
+}
+
+static unsigned inventoryAllMask(const GameUi *ui) {
+    unsigned mask = 0;
+    for (unsigned i = 0; i < 4; i++) {
+        mask |= sessionPartyRecord(ui->session, i) ? 1u << i : 0;
+    }
+    return mask;
+}
+
+/* A click on a doll: the member and the slot region (UiRegionsRosterPortraits finds the doll, UiRegionsInventoryGrid the slot in it, relative to the doll's corner). */
+static void inventorySlotClick(GameUi *ui, int x, int y) {
+    GameSession *s = ui->session;
+    unsigned member = uiRegionHit(s->game, UiRegionsRosterPortraits, x, y);
+    if (!member || member > 4 || !(ui->dollMask & (1u << (member - 1)))) {
+        if (s->heldItem) { /* beside the dolls: SelectClickedRosterPortrait missed, TryDropHeldItem */
+            dropStart(ui);
+        }
+        return;
+    }
+    member--;
+    unsigned region = uiRegionHit(s->game, UiRegionsInventoryGrid, x - (8 + 56 * (int)member), y - 8);
+    SessionInv result = sessionInventoryClick(s, member, region);
+    playPending(ui);
+    ui->panelRunCount = 0;
+    switch (result) {
+    case SessionInvTook:
+    case SessionInvSwapped:
+        panelItemName(ui, s->heldItem);
+        break;
+    case SessionInvRefused:
+        flashWarning(ui);
+        break;
+    default:
+        break;
+    }
+}
+
+/* A readable item (HandleGameCommand -> RunConversation): its text in the scroll of the conversation screen, no face, the rows in 0x0D, until a key. */
+static void readOpen(GameUi *ui) {
+    GameSession *s = ui->session;
+    char line[DocumentLineBufferSize];
+    ui->talkRowCount = 0;
+    for (unsigned i = 0; ui->talkRowCount < 16 && sessionDocumentLine(s, i, line); i++) {
+        snprintf(ui->talkRows[ui->talkRowCount], sizeof(ui->talkRows[0]), "%s", line);
+        ui->talkRowCount++;
+    }
+    ui->reading = true;
+    ui->talkListShown = false;
+    ui->overlay = UiOverlayTalk;
+}
+
+/*
+ * Using an item from a bag slot (the right button on it: HandleInventoryGridClick -> HandleGameCommand): the restoratives and stat items first ask whom (ConfirmAndSelectPartyTarget: the
+ * crosshair, a face or F1-F4, Escape gives up); an item that would do nothing for that member beeps and asks again. Readable items open the scroll, a key to a destination takes the party there.
+ */
+static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipient) {
+    GameSession *s = ui->session;
+    SessionUse result = sessionUseItem(s, user, slot, recipient);
+    playPending(ui);
+    ui->panelRunCount = 0;
+    switch (result) {
+    case SessionUseDone:
+        break;
+    case SessionUseRead:
+        ui->overlay = UiOverlayNone;
+        readOpen(ui);
+        break;
+    case SessionUseTravelled:
+        ui->overlay = UiOverlayNone;
+        gameUiAmbientMusic(ui);
+        break;
+    case SessionUseNoEffect:
+        flashWarning(ui);
+        if (ui->pickActive) { /* the target prompt comes again */
+            return;
+        }
+        break;
+    default:
+        break;
+    }
+    ui->pickActive = false;
+}
+
+static void inventoryUse(GameUi *ui, unsigned member, unsigned slot) {
+    GameSession *s = ui->session;
+    uint8_t *record = sessionPartyRecord(s, member);
+    unsigned id = record ? itemSlotId(inventoryGroupSlot(partyInventoryGroup(record, PartyGroupMain), slot)) : 0;
+    if (!id || s->heldItem) {
+        return;
+    }
+    if (partyRestorativeForItem(s->game, id) != RestorativeNone || partyIsPercentRestorativeItem(s->game, id)) {
+        ui->pickActive = true;
+        ui->pickUser = member;
+        ui->pickSlot = slot;
+        return;
+    }
+    useItemOn(ui, member, slot, member);
 }
 
 /* ---- the commands that need an item (K, M, T, W) ---- */
@@ -1654,10 +1852,11 @@ static void drawScreen(GameUi *ui) {
         break;
     case UiOverlayDolls:
         for (unsigned i = 0; i < 4; i++) {
-            if (sessionPartyRecord(s, i)) {
+            if (sessionPartyRecord(s, i) && (ui->dollMask & (1u << i))) {
                 paperDollDraw(&ui->renderer, &s->items, sessionPartyRecord(s, i), 8 + 56 * (int)i, 8);
             }
         }
+        panelRunsDraw(ui);
         break;
     case UiOverlayDialog:
         dialogDraw(ui);
@@ -1669,6 +1868,9 @@ static void drawScreen(GameUi *ui) {
 
 void gameUiDraw(GameUi *ui) {
     drawScreen(ui);
+    if (ui->dropPrompt) {
+        dropPromptDraw(ui);
+    }
     cursorDraw(ui);
 }
 
@@ -2061,6 +2263,11 @@ static void talkChoose(GameUi *ui, unsigned number) { /* topic `number` of the l
 }
 
 static bool talkKey(GameUi *ui, UiKey key) { /* 1-9 choose a topic, Escape the last one listed (the way out); the first key only lets the greeting go and shows the list */
+    if (ui->reading) { /* a readable item's text: any key puts it away */
+        ui->reading = false;
+        ui->overlay = UiOverlayNone;
+        return true;
+    }
     if (!ui->talkListShown) {
         ui->talkListShown = true;
         return true;
@@ -2094,6 +2301,9 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         code = ctrl ? 0x73 : 0x4B;
     } else if (key == UiKeyRight) {
         code = ctrl ? 0x74 : 0x4D;
+    } else if (key >= '1' && key <= '4') { /* the party panels' keys */
+        extended = false;
+        code = (uint8_t)key;
     } else if (key >= UiKeyF1 && key <= UiKeyF8) {
         code = (uint8_t)(0x3B + (key - UiKeyF1));
     } else if (key == ' ') {
@@ -2186,7 +2396,10 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         ui->overlay = UiOverlayDetail;
         break;
     case MainActionPartyInventory:
-        ui->overlay = UiOverlayDolls;
+        inventoryOpen(ui, inventoryAllMask(ui));
+        break;
+    case MainActionPartyPanel: /* 1-4: the numbers under a member's bars (DrawThreeStatBars) */
+        partyInfoShow(ui, command.index & 3, 4);
         break;
     default:
         break;
@@ -2199,6 +2412,21 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     bool running = true;
     if (ui->passwordActive) {
         return passwordKey(ui, key);
+    }
+    if (ui->pickActive) { /* the member the item is used on: F1-F4 name one, Escape gives up */
+        if (key >= UiKeyF1 && key <= UiKeyF4 && sessionPartyRecord(s, (unsigned)(key - UiKeyF1))) {
+            useItemOn(ui, ui->pickUser, ui->pickSlot, (unsigned)(key - UiKeyF1));
+        } else if (key == UiKeyEscape) {
+            ui->pickActive = false;
+        }
+        return true;
+    }
+    if (ui->dropPrompt) { /* ShowConfirmPrompt 4: Y or Enter drop it, N or Escape keep it */
+        int answer = gameDialogPromptKey(key >= 'a' && key <= 'z' ? (uint8_t)(key - 32) : (uint8_t)key);
+        if (answer >= 0) {
+            dropAnswer(ui, answer == 1);
+        }
+        return true;
     }
     if (ui->targeting) { /* WaitForTargetClick: only Escape is heard */
         if (key == UiKeyEscape) {
@@ -2272,6 +2500,18 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     }
     if (ui->overlay == UiOverlayAlchemy) {
         return alchemyKey(ui, key);
+    }
+    if (ui->overlay == UiOverlayDolls) {
+        if (key == 'p' || (key == UiKeyEscape && !s->heldItem)) {
+            ui->overlay = UiOverlayNone;
+            ui->panelRunCount = 0;
+            effect(ui, 1);
+        } else if (key == UiKeyEscape) { /* an item on the cursor: FlashStatusWarning */
+            flashWarning(ui);
+        } else if (key >= '1' && key <= '4') {
+            partyInfoShow(ui, (unsigned)(key - '1'), 4);
+        }
+        return true;
     }
     if (ui->overlay == UiOverlayWorldMap) { /* WaitForKeypressTickingMusic: any key */
         ui->overlay = UiOverlayNone;
@@ -2478,7 +2718,12 @@ static bool dialogClick(GameUi *ui, int x, int y) {
     }
 }
 
-static bool talkClick(GameUi *ui, int x, int y) { /* the click table at DS:0x6458: the topic rows drawTalk lists, five to a column (x 58-135 and 142-220, 6 pixels each from y = 32) */
+static bool talkClick(GameUi *ui, int x, int y) {
+    if (ui->reading) {
+        ui->reading = false;
+        ui->overlay = UiOverlayNone;
+        return true;
+    } /* the click table at DS:0x6458: the topic rows drawTalk lists, five to a column (x 58-135 and 142-220, 6 pixels each from y = 32) */
     GameSession *s = ui->session;
     if (!ui->talkListShown) {
         ui->talkListShown = true;
@@ -2572,11 +2817,73 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
         unsigned icon = uiRegionHit(game, UiRegionsDungeonIconRow, x, y);
         return icon == 1 ? press(ui, s->combat.active ? 'a' : 's') : icon == 2 ? press(ui, 'c') : icon == 3 ? press(ui, 'r') : icon == 4 ? press(ui, 'd') : true;
     }
-    if (region == 6) { /* a party panel: its portrait or name bar opens that hero's sheet */
+    if (region == 6) { /* a party panel: the cursor item dropped on a face, else its icons' lists and (a click standing for the held button) the face's sheet */
         unsigned panel = uiRegionHit(game, UiRegionsPartyPanels, x, y);
         unsigned member = panel / 10, part = panel % 10;
-        if (panel && (part == 1 || part == 8) && member < 4) {
-            return press(ui, UiKeyF1 + (int)member);
+        if (panel && member < 4 && sessionPartyRecord(s, member)) {
+            if (s->heldItem) {
+                if (part == 1) {
+                    dropOnPortrait(ui, member);
+                } else {
+                    flashWarning(ui);
+                }
+            } else if (part == 1) {
+                return press(ui, UiKeyF1 + (int)member);
+            } else if (partyInfoKindForRegion(part) >= 0) {
+                partyInfoShow(ui, member, partyInfoKindForRegion(part));
+            }
+        }
+        return true;
+    }
+    if (region == 1 && s->heldItem) { /* TryDropHeldItem */
+        dropStart(ui);
+    }
+    return true;
+}
+
+/* The inventory screen's clicks (RunPartyInventoryScreen's event machine): the left button works a slot, the belt or the portraits; the right button on a face shows or hides that member's panel (the
+ * last one gone ends the screen). Right clicks that would use an item are not handled here. */
+static bool dollsClick(GameUi *ui, int x, int y, bool right) {
+    GameSession *s = ui->session;
+    GameKind game = s->game;
+    unsigned region = uiRegionHit(game, UiRegionsDungeonMain, x, y);
+    if (right) {
+        if (region == 6) {
+            unsigned panel = uiRegionHit(game, UiRegionsPartyPanels, x, y), member = panel / 10;
+            if (panel % 10 == 1 && member < 4 && sessionPartyRecord(s, member)) {
+                ui->dollMask ^= 1u << member;
+                effect(ui, 1);
+                if (!ui->dollMask) {
+                    ui->overlay = UiOverlayNone;
+                }
+            }
+        } else if (region == 1) { /* the right button on a bag slot uses the item */
+            unsigned doll = uiRegionHit(game, UiRegionsRosterPortraits, x, y);
+            if (doll >= 1 && doll <= 4 && (ui->dollMask & (1u << (doll - 1)))) {
+                unsigned slot = uiRegionHit(game, UiRegionsInventoryGrid, x - (8 + 56 * (int)(doll - 1)), y - 8);
+                if (slot >= 1 && slot <= 8) {
+                    inventoryUse(ui, doll - 1, slot);
+                }
+            }
+        }
+        return true;
+    }
+    if (region == 1) {
+        inventorySlotClick(ui, x, y);
+    } else if (region == 2) { /* the belt works here too */
+        panelClick(ui, x, y);
+    } else if (region == 6) {
+        unsigned panel = uiRegionHit(game, UiRegionsPartyPanels, x, y), member = panel / 10, part = panel % 10;
+        if (panel && member < 4 && sessionPartyRecord(s, member)) {
+            if (s->heldItem) {
+                if (part == 1) {
+                    dropOnPortrait(ui, member);
+                } else {
+                    flashWarning(ui);
+                }
+            } else if (partyInfoKindForRegion(part) >= 0) {
+                partyInfoShow(ui, member, partyInfoKindForRegion(part));
+            }
         }
     }
     return true;
@@ -2586,6 +2893,25 @@ static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
     ui->session->loot.pending = false; /* the loot panel stays until the next command */
     if (ui->passwordActive) { /* EditTextField takes no clicks */
         return true;
+    }
+    if (ui->pickActive) { /* a face is the answer; the right button gives up */
+        unsigned panel = uiRegionHit(ui->session->game, UiRegionsPartyPanels, x, y), member = panel / 10;
+        if (right) {
+            ui->pickActive = false;
+        } else if (panel % 10 == 1 && member < 4 && sessionPartyRecord(ui->session, member)) {
+            useItemOn(ui, ui->pickUser, ui->pickSlot, member);
+        }
+        return true;
+    }
+    if (ui->dropPrompt) {
+        int answer = gameDialogPromptClick(x, y);
+        if (answer >= 0) {
+            dropAnswer(ui, answer == 1);
+        }
+        return true;
+    }
+    if (ui->overlay == UiOverlayDolls) {
+        return dollsClick(ui, x, y, right);
     }
     if (ui->targeting) { /* a left click on the view is the target; the right button and every other place are ignored */
         if (!right && uiRegionHit(ui->session->game, UiRegionsDungeonMain, x, y) == 1) {
@@ -2615,7 +2941,6 @@ static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
         return alchemyClick(ui, x, y);
     case UiOverlayLocalMap:
     case UiOverlayWorldMap:
-    case UiOverlayDolls:
         ui->overlay = UiOverlayNone; /* any click closes them */
         return true;
     case UiOverlayDetail:

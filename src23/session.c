@@ -27,6 +27,9 @@
 
 static uint16_t *placeWord(GameSession *s);
 
+static unsigned keyRingId(GameKind game);
+static bool isRingKey(GameKind game, unsigned id);
+
 /* The six tool belt slots of the save header (DS:0x9519; savegame.h SaveHeaderBeltSlots): what IsItemRangeAvailable, the rest's food search and the story-item checks look at first. */
 static uint8_t *beltSlots(GameSession *s) {
     return saveHeaderBcd4(&s->save, SaveHeaderBeltSlots);
@@ -1900,9 +1903,115 @@ bool sessionPickUp(GameSession *s, unsigned member, unsigned slotNumber, unsigne
     }
     uint8_t *group = partyInventoryGroup(record, PartyGroupMain);
     uint16_t weight = itemWeightOf(s, id);
-    inventoryGroupSetWeight(group, (uint16_t)(inventoryGroupWeight(group) - weight));
+    bool weightless = (!equipmentCode || equipmentCode == 0x0B) && id == 0x11; /* the MAGIC CONTAINER in a bag slot weighs nothing (PickUpItemFromSlot) */
+    if (!weightless) {
+        inventoryGroupSetWeight(group, (uint16_t)(inventoryGroupWeight(group) - weight));
+    }
     partyRecomputeEquipmentStatBonuses(record, &s->items, s->game);
     return true;
+}
+
+/* Puts item `id` into the slot a click named (PlaceItemInSlot): its weight joins the member's load (a weightless MAGIC CONTAINER in a bag slot aside), worn gear takes effect, the wear counter of a weapon slot is cleared. */
+static void placeInSlot(GameSession *s, uint8_t *record, unsigned code, uint8_t *cell, unsigned id, unsigned extra) {
+    const uint8_t *item = itemCatalogRecord(&s->items, id);
+    uint8_t *group = partyInventoryGroup(record, PartyGroupMain);
+    if (code >= PartyEquipmentFirstShort) {
+        cell[0] = (uint8_t)id;
+        cell[1] = (uint8_t)(id >> 8);
+    } else {
+        itemSlotSet(cell, (uint16_t)id, (uint16_t)extra);
+    }
+    bool worn = code >= 0x0A && code != 0x0B;
+    if (worn || id != 0x11) {
+        inventoryGroupSetWeight(group, (uint16_t)(inventoryGroupWeight(group) + itemWeightOf(s, id)));
+    }
+    if (worn && item) {
+        partyApplyMultiStatEffect(record, itemEffectEntry(&s->items, item));
+    }
+    if (code == 0x0A) {
+        partySetU16(record, PartyFieldWearMain, 0);
+    } else if (code == 0x0C) {
+        partySetU16(record, PartyFieldWearSecond, 0);
+    } else if (code == 0x0D) {
+        partySetU16(record, PartyFieldWearThird, 0);
+    }
+    partyRecomputeEquipmentStatBonuses(record, &s->items, s->game);
+}
+
+SessionInv sessionInventoryClick(GameSession *s, unsigned member, unsigned region) {
+    uint8_t *record = sessionPartyRecord(s, member);
+    if (!record || region == 0 || region == 9 || region > 21) {
+        return SessionInvIgnored;
+    }
+    unsigned code = region == 21 ? 20 : region; /* the two last regions are the one slot */
+    unsigned equipment = code >= 10 ? code : 0;
+    uint8_t *group = partyInventoryGroup(record, PartyGroupMain);
+    uint8_t *cell = equipment ? partyEquipmentSlot(record, equipment, s->game) : inventoryGroupSlot(group, code);
+    if (!cell) {
+        return SessionInvIgnored;
+    }
+    bool shortSlot = code >= PartyEquipmentFirstShort;
+    unsigned slotId = shortSlot ? (unsigned)(cell[0] | (cell[1] << 8)) : itemSlotId(cell);
+    if (!s->heldItem) {
+        return slotId && sessionPickUp(s, member, equipment ? 0 : code, equipment) ? SessionInvTook : SessionInvIgnored;
+    }
+    const uint8_t *held = itemCatalogRecord(&s->items, s->heldItem);
+    if (!held) {
+        return SessionInvRefused;
+    }
+    unsigned flags = itemGetU16(held, ItemFieldFlags);
+    if (slotId == keyRingId(s->game)) { /* a key over a ring in a slot */
+        if (!isRingKey(s->game, s->heldItem)) {
+            return SessionInvRefused;
+        }
+        const uint8_t *entry = itemTargetEntry(&s->items, held);
+        saveHeaderSetU16(&s->save, SaveHeaderKeyFlags, (uint16_t)(sessionKeyRingFlags(s) | (entry ? interactKeyRingContribution(itemTargetWord(entry, 0)) : 0)));
+        s->heldItem = s->heldExtra = 0;
+        s->pendingSound = 4;
+        return SessionInvKeyRing;
+    }
+    const uint8_t *target = itemTargetEntry(&s->items, held);
+    bool eligible = inventoryEligibleForSlot(code, (uint16_t)flags, target ? (uint16_t)itemTargetWord(target, ItemTargetSlotFlags) : 0, partyGetU16(record, 0x13E) != 0,
+                                              partyGetU16(record, 0x146) != 0, (partyGetU16(record, PartyFieldUiFlags) & 0x20) != 0);
+    if (!eligible || (flags & ItemFlagEquipCode0B)) {
+        return SessionInvRefused;
+    }
+    unsigned heldWeight = itemWeightOf(s, s->heldItem), load = inventoryGroupWeight(group), capacity = partyGetU16(record, 0x56);
+    if (slotId) {
+        const uint8_t *there = itemCatalogRecord(&s->items, slotId);
+        if (!there || (itemGetU16(there, ItemFieldFlags) & ItemFlagEquipCode0B)) {
+            return SessionInvRefused;
+        }
+        unsigned thereWeight = itemWeightOf(s, slotId);
+        if (heldWeight != thereWeight && (uint16_t)(heldWeight + load - thereWeight) > capacity) {
+            return SessionInvRefused;
+        }
+        uint16_t id = s->heldItem, extra = s->heldExtra;
+        s->heldItem = 0;
+        sessionPickUp(s, member, equipment ? 0 : code, equipment); /* the slot's item to the cursor */
+        cell = equipment ? partyEquipmentSlot(record, equipment, s->game) : inventoryGroupSlot(group, code);
+        placeInSlot(s, record, code, cell, id, extra);
+        s->pendingSound = 6;
+        return SessionInvSwapped;
+    }
+    if ((uint16_t)(load + heldWeight) > capacity) {
+        return SessionInvRefused;
+    }
+    placeInSlot(s, record, code, cell, s->heldItem, s->heldExtra);
+    s->heldItem = s->heldExtra = 0;
+    s->pendingSound = 6;
+    return SessionInvPlaced;
+}
+
+bool sessionHeldDroppable(GameSession *s) {
+    return s->heldItem && !inventoryDropBlocked(s->game, &s->items, &s->save, s->heldItem, s->heldExtra);
+}
+
+void sessionDropHeld(GameSession *s) {
+    if (s->heldItem) {
+        inventoryDiscardDropped(&s->items, &s->save, s->heldItem, s->heldExtra);
+        s->heldItem = s->heldExtra = 0;
+    }
 }
 
 bool sessionStowHeld(GameSession *s, unsigned member) {
