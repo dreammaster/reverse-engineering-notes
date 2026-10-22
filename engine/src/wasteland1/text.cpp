@@ -836,6 +836,18 @@ void writeEncodedText(Machine &m, uint8_t index) {   // 178A3
 	}
 }
 
+void writeItemText(Machine &m, uint8_t index) {   // 17AD3
+	m.setD16(g::textPointer1, 0xB270);   // ITEMS_TEXT
+	writeEncodedText(m, index);
+}
+
+void writeItemTextNormal(Machine &m, uint8_t index) {   // 17ACE
+	setWriteCharacterFn(m);
+	writeItemText(m, index);
+}
+
+void writeItemName(Machine &m, uint8_t itemId) { writeItemText(m, uint8_t(itemId + 36)); }   // 17AF0
+
 void printMessage(Machine &m, uint8_t id) {   // 16CB2
 	setWriteCharacterFn(m);
 	m.setD16(g::textPointer1, 0xAB3E);

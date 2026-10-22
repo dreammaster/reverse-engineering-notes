@@ -32,6 +32,9 @@ void writeString(Machine &m);                     // 1786E: NUL terminated strin
 void writeString2(Machine &m);                    // 17877: same, with the writer chosen by setWriteCharacterFn*
 void setWriteCharacterFn(Machine &m);             // 1785E: buffered writer
 void setWriteCharacterFn2(Machine &m);            // 17857: immediate writer
+void writeItemText(Machine &m, uint8_t index);   // 17AD3: string `index` of the item text table (ITEMS_TEXT) through the current writer
+void writeItemTextNormal(Machine &m, uint8_t index);   // 17ACE: same through the buffered writer (setWriteCharacterFn)
+void writeItemName(Machine &m, uint8_t itemId);   // 17AF0: name of an item (strings start at index 36)
 void writeEncodedText(Machine &m, uint8_t index); // 178A3: decodes the 5-bit string `index` of textPointer1 and writes it
 void printMessage(Machine &m, uint8_t id);        // 16CB2: string `id` of the common message table
 void printMapMessage(Machine &m, uint8_t id);     // 178A0: string `id` of the current map

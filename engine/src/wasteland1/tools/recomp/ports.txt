@@ -21,3 +21,43 @@
 089B1 hintOverlay junk=al,bl,bp,di,dl,pf,si,zf
 09F12 flushLine junk=al,bl,dl,pf,si,zf
 09EFC newline junk=al,bl,dl,pf,si,zf
+# inventory, equipment, money, hit points, skill check accumulators (ports/ports_character.cpp)
+09AB6 removeItem
+09AC8 getInventoryItemIdPtr junk=cf,sf
+096C9 getMemberWeaponIdPtr junk=pf,sf,zf
+096C4 getMemberArmorIdPtr junk=pf,zf
+096B2 getEquippedWeaponDetails junk=al,bl,ch,cl,di,dl,pf,zf
+09A0F getArmorAC
+0949E equip junk=bl,cf,ch,cl,dl,sf
+094E8 removeWeaponArmor junk=pf
+096DB reload junk=al,bl,ch,cl,di,dl,pf,zf
+09D2F hasNoAmmunition junk=bl,pf,sf
+098BC resetMoney junk=pf
+09A9C getMemberMoney junk=pf
+09895 addMoneyToMember junk=pf,zf
+09B67 getMemberExperience
+09BC0 addExperience junk=pf,zf
+07B3E canAfford junk=al,bl,di,pf,zf
+07B15 pay junk=al,bl,di,pf,zf
+07B5C getItemPrice
+09CE9 applyDamage junk=ah,pf
+09CFE healOneHitPoint junk=ah,al,bl,cl,di,dl,pf,sf
+09A41 isAtFullHealth junk=pf
+09D0E countConsciousMembers junk=ah,bl,cl,di,dl,pf,si scratch=CD43-CD44
+09BEC resetRandomSeed2
+09BF0 setRandomSeed2
+09BF8 resetRandomSeed1
+09BFC setRandomSeed1
+09C04 addRoll junk=ah,pf
+09C2C addTarget junk=ah,pf,zf
+09C54 rollMinusTarget junk=pf,zf
+09C69 rollBeatsTarget junk=pf,zf
+09C72 targetBeatsRoll junk=pf,zf
+09C7E axBeatsTarget junk=pf
+09CAC targetBase junk=pf
+09CCC times3 junk=cf scratch=CD47-CD48
+09D86 sumOfD6 junk=pf,zf scratch=CD3F
+07AC8 writeItemText junk=ah,al,bl,cl,di,dl,pf,si,zf
+07ACE writeItemTextNormal
+07AF0 writeItemName
+07AC3 writeSingleCharacter junk=al,bl,cl,di,dl,pf,zf

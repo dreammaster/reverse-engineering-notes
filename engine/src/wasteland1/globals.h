@@ -21,6 +21,10 @@ constexpr uint16_t gfxLineOffsets = 0x8DF9;      // 200 words: video offset of e
 constexpr uint16_t writeCharacterFn = 0xB265;    // near pointer used by writeString (writeCharacter / writeCharacter2)
 
 // ---- party / characters (data segment)
+// offsets inside saved2 (IDB struct Saved2)
+namespace s2 {
+constexpr uint8_t membersInGroup = 5, activePartyGroup = 6, field7 = 7, field8 = 8, totalPartyGroups = 9;
+}
 constexpr uint16_t saved2 = 0x464E;              // live copy of the savegame bytes 78h..85h (see docs/wl-engine.md)
 constexpr uint16_t itemDetailsPtr = 0x4665;      // pointer to the record found by getItemDetails*
 constexpr uint16_t itemDetailsBasePtr = 0x4694;
@@ -37,6 +41,12 @@ constexpr uint16_t partiesOffsets = 0xB239;      // 4 bytes: offsets of the part
 constexpr uint16_t itemDetails2 = 0xBA20;        // skill id -> {unused, attribute offset} (2 bytes each)
 constexpr uint16_t conditionThresholds = 0xCCCD; // 5 signed bytes
 constexpr uint16_t ammunitionItems = 0xCD00;     // item ids that use ammunition, FFh terminated
+
+// ---- character screens and item handling scratch (data segment, IDB names in comments)
+constexpr uint16_t selectedEquipItem = 0xCCE7;   // _selectedEquipItem?
+constexpr uint16_t selectedItemOffset = 0xCCE0;
+constexpr uint16_t selectedWeaponQtyOffset = 0xCCDF;
+constexpr uint16_t currentItemId = 0xCD42;
 
 // ---- text engine state (data segment)
 constexpr uint16_t numberBcd = 0x466E;           // 4 bytes: packed BCD result of the number conversion (IDB byte_2148E..21491)

@@ -22,6 +22,21 @@ constexpr uint32_t kGfxLinear = 0x2AE20;     // seg003 (graphics work buffer, se
 constexpr size_t kDsSize = 0xE000;
 constexpr size_t kGfxSize = 0x39000 - 0x2AE20;
 
+// Registers for calling routines of the original program that have not been ported yet (Machine::callLegacy).
+struct X86Regs {
+	uint8_t al = 0, ah = 0, bl = 0, bh = 0, cl = 0, ch = 0, dl = 0, dh = 0;
+	uint16_t si = 0, di = 0, bp = 0;
+	bool cf = false, zf = false, sf = false;
+	uint16_t ax() const { return uint16_t(al | (ah << 8)); }
+	uint16_t bx() const { return uint16_t(bl | (bh << 8)); }
+	uint16_t cx() const { return uint16_t(cl | (ch << 8)); }
+	uint16_t dx() const { return uint16_t(dl | (dh << 8)); }
+	void setAx(uint16_t v) { al = uint8_t(v); ah = uint8_t(v >> 8); }
+	void setBx(uint16_t v) { bl = uint8_t(v); bh = uint8_t(v >> 8); }
+	void setCx(uint16_t v) { cl = uint8_t(v); ch = uint8_t(v >> 8); }
+	void setDx(uint16_t v) { dl = uint8_t(v); dh = uint8_t(v >> 8); }
+};
+
 struct Machine {
 	Bytes mem = Bytes(1 << 20, 0);
 	Ega ega;
@@ -31,6 +46,7 @@ struct Machine {
 	std::deque<uint16_t> keys;              // keyboard buffer: scancode << 8 | ascii
 	std::function<void()> onIdle;           // called while a routine waits for input or time (lets the front end run)
 	std::shared_ptr<rc::Sys> sys;           // DOS/BIOS state of the recompiled program (see recomp_rt.h)
+	std::function<void(uint16_t, X86Regs &)> callLegacy;   // runs the original routine at the given offset of the code segment
 	std::function<void()> onPortraitTick;   // the location portrait animation step (WL.EXE 190F8), called from input/scroll loops
 
 	// data segment accessors (offset relative to DS)

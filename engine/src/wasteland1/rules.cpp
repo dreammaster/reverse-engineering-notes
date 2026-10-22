@@ -47,6 +47,18 @@ uint8_t Rules::rollDice() {
 	}
 }
 
+uint16_t Rules::sumOfD6(uint8_t base, uint8_t count, uint8_t &al) {
+	uint8_t total = base, hi = 0;
+	al = base;
+	while (count--) {
+		const unsigned sum = unsigned(d6(al)) + total;
+		al = uint8_t(sum);
+		total = al;
+		if (sum > 0xFF && ++hi == 0) { hi = 0xFF; total = 0xFF; }
+	}
+	return uint16_t((hi << 8) | total);
+}
+
 void Rules::addTarget(int32_t delta) {
 	const int32_t v = int32_t(seed1()) + delta;
 	setSeed1(uint16_t(v < 0 ? 0 : v > 0xFFFF ? 0xFFFF : v));

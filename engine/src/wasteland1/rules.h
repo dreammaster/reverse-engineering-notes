@@ -27,6 +27,10 @@ public:
 	// sub_19C2C / sub_19C04: signed add to seed1 / seed2, clamped to 0..FFFFh
 	void addTarget(int32_t delta);
 	void addRoll(int32_t delta);
+	// 19D86: `base` plus the sum of `count` d6 rolls as a 16 bit value (saturating); `al` receives the generator's carry-over
+	uint16_t sumOfD6(uint8_t base, uint8_t count, uint8_t &al);
+	// 19BEC..19BFC: the target and roll accumulators as 16 bit values
+	void clearSeeds() { setSeed1(0); setSeed2(0); }
 	// sub_19CAC: base difficulty target 15 + 5 * count
 	static uint32_t targetBase(unsigned count) { return 15 + 5 * count; }
 	bool rollBeatsTarget() const { return seed2() >= seed1(); }   // sub_19C69 (CF clear = success)
