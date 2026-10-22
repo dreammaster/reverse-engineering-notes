@@ -69,9 +69,6 @@ TGText::~TGText() {
 
 	NotifyOwnerTextFinished();
 
-	for (GLCharBuffer *buffer : _buffers)
-		delete buffer;
-
 	if (_active.GetBool(kTextActive))
 		TextStopped();
 
@@ -510,7 +507,7 @@ void TGText::Draw(float scale) {
 	// the lines are printed with automatic breaks unless the position comes from the data
 	if (!drawnByScript) {
 		g_pGameControl->GetFontManager()->PrintTextLines(_lines, _lineWidths, (TextAlignmentEnum)_active.GetInt(kTextAlignment),
-		        *_active.GetPoint(kTextPosition), alpha, !_positionSet, &_buffers);
+		        *_active.GetPoint(kTextPosition), alpha, !_positionSet);
 	}
 
 	if (zoom)

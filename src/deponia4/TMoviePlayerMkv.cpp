@@ -822,7 +822,7 @@ void TMatroskaMoviePlayer::drawSubtitles(long long time) {
 
 		// (a text of several lines ends at the position, so that it does not leave the window)
 		where.y -= size.y * (lines - 1) / lines;
-		font->PrintText(text, TextAlignmentEnum::kCenter, where, 1.0f, -1, nullptr);
+		font->PrintText(text, TextAlignmentEnum::kCenter, where, 1.0f, -1);
 	}
 }
 

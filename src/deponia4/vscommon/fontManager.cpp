@@ -44,17 +44,15 @@ void TFontManager::SetCurrentFont(int &index) {
 	_currentFont = _fonts[index];
 }
 
-void TFontManager::PrintText(const wxString &text, TextAlignmentEnum alignment, const wxPoint &pos, float scale,
-                             GLCharBuffer *buffer) {
+void TFontManager::PrintText(const wxString &text, TextAlignmentEnum alignment, const wxPoint &pos, float scale) {
 	if (_currentFont != nullptr && !text.IsEmpty())
-		_currentFont->PrintText(text, alignment, pos, scale, -1, buffer);
+		_currentFont->PrintText(text, alignment, pos, scale, -1);
 }
 
 void TFontManager::PrintTextLines(const std::list<wxString> &lines, const std::vector<int> &lineWidths,
-                                  TextAlignmentEnum alignment, const wxPoint &pos, float scale, bool wrap,
-                                  std::vector<GLCharBuffer *> *buffers) {
+                                  TextAlignmentEnum alignment, const wxPoint &pos, float scale, bool wrap) {
 	if (_currentFont != nullptr)
-		_currentFont->PrintTextLines(lines, lineWidths, alignment, pos, scale, -1, wrap, buffers);
+		_currentFont->PrintTextLines(lines, lineWidths, alignment, pos, scale, -1, wrap);
 }
 
 void TFontManager::GetTextDimension(const wxString &text, wxPoint &outSize) const {
@@ -107,7 +105,7 @@ void TFontManager::Signal(const TSignalData &signal, TSignalData &result) {
 	if (signal.type == kSignalPrintText) {
 		result.type = kSignalPrintText;
 		if (_currentFont != nullptr && !signal.text.IsEmpty())
-			_currentFont->PrintText(signal.text, TextAlignmentEnum::kCenter, signal.point, 1.0f, -1, nullptr);
+			_currentFont->PrintText(signal.text, TextAlignmentEnum::kCenter, signal.point, 1.0f, -1);
 	} else if (signal.type == kSignalPrintTextLines) {
 		result.type = kSignalPrintTextLines;
 		// Confirmed (asm lines 1389740-1389773): looks the font up by an
@@ -133,8 +131,7 @@ void TFontManager::Signal(const TSignalData &signal, TSignalData &result) {
 		if (_currentFont != nullptr) {
 			bool savedMatrices = matricesActive;
 			matricesActive = false;
-			_currentFont->PrintTextLines(lines, lineWidths, TextAlignmentEnum::kCenter, signal.point, 1.0f, -1, true,
-			                             nullptr);
+			_currentFont->PrintTextLines(lines, lineWidths, TextAlignmentEnum::kCenter, signal.point, 1.0f, -1, true);
 			matricesActive = savedMatrices;
 		}
 	}

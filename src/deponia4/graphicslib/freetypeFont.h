@@ -1,4 +1,5 @@
-// TFreetypeFont (Deponia_Linux.asm lines 1582405-1589320, 19 methods): a TrueType or OpenType font made with FreeType
+// TFreetypeFont (Deponia4_Linux.asm, the Deponia 4 form; Deponia 1's is in src/deponia1. The offsets in the comments below are
+// Deponia 1's: Deponia 4's are 0x20 lower from the border flag on): a TrueType or OpenType font made with FreeType
 // (third_party/freetype, 2.8.0), as TCFont uses it for the fonts of the game that have a font file (Chinese, Korean and
 // Arabic). What is as the original has it: the font file is read from the data (and kept for every font that names the
 // same file), the face is set to the size in pixels (FT_Set_Char_Size with 64 times the size), `CreateFont()` and its
@@ -8,10 +9,10 @@
 // glyph) and shadow of the glyphs.
 // What is not: the original puts the glyphs into textures of the GL backend and draws quads in the batches of the
 // shaders (TSpritePartTexture, TGraphicsOGL::BindIndizesBuffer, region, GLCharBuffer); here each glyph is a sprite of the
-// graphics backend and is drawn by TGraphicsInterface::Draw(), so every backend can show the text. The original also
-// shapes the text with HarfBuzz (itemize(), hb_shape(), third_party/harfbuzz 1.8.8): the text is cut into runs of one script, each
-// is shaped in its direction (the ligatures and the forms of the letters of Arabic) and a line with a right-to-left run is laid
-// out from the right. The font that the original keeps for characters this one has not (+0x110) is not done.
+// graphics backend and is drawn by TGraphicsInterface::Draw(), so every backend can show the text. Deponia 4 does not shape the
+// text (Deponia 1 does, with HarfBuzz: runs of one script, directions, the forms of the letters of Arabic): the characters are put
+// one after the other. The font that the original keeps for characters this one has not is not done. The distance field glyphs
+// of the original's `CreateChar()` are switched off in it and are not here.
 #pragma once
 
 #include <map>
@@ -24,11 +25,10 @@ class GLCharBuffer;
 class TSpriteHandle;
 
 struct FT_FaceRec_;
-struct hb_font_t;
 
 class TFreetypeFont {
 public:
-	/** One glyph of the font (the original keeps them in a HashMap<int, Character>, by the index of the glyph). */
+	/** One glyph of the font (the original keeps them in a HashMap<int, Character>, by the character). */
 	struct Character {
 		int _advance = 0;       // the width of the glyph in pixels (+0x1C in the original)
 		int _bearingX = 0;      // how far the bitmap is from the pen, to the right
@@ -67,21 +67,31 @@ public:
 	int _color = 0xFFFFFF;     // +0xE0, the colour of the glyphs
 	int _previousColor = 0;    // +0x120, the colour that was used before
 	int _letterSpacing = 0;    // +0xF0
-	bool _spacingFlag = false; // +0xF7, set by TCFont together with _letterSpacing
+
+	/** The letter spacing (TCFont sets it when the font object says so). */
+	void SetSpacing(int spacing) {
+		_letterSpacing = spacing;
+	}
+
+	/** Stops the highest glyph made so far from being raised, which fixes the top of the lines (the original's editor GUI does
+	 *  this for its fonts, the game's fonts are not locked). */
+	void LockHeight() {
+		_heightLocked = true;
+	}
 
 	/** The bytes of a font file (kept for every font that names it). */
 	struct FontFile;
 
 private:
-	/** The glyph of an index of the face, made and kept. */
-	Character *glyph(unsigned int index);
+	/** The glyph of a character, made and kept. */
+	Character *glyph(unsigned int code);
 	/** The width of a character as the strings count it (the space and the tab are the font's own). */
 	int advanceOf(unsigned int code);
 	void clear();
 
 	FontFile *_file = nullptr;
 	FT_FaceRec_ *_face = nullptr;
-	hb_font_t *_shaper = nullptr;  // HarfBuzz's font for the face (hb_ft_font_create)
+	bool _heightLocked = false; // +0xF7 in Deponia 1, +0xD7 in Deponia 4
 	bool _valid = false;       // +0xF4
 	int _size = 0;             // +0x108
 	bool _border = false;      // +0xD8

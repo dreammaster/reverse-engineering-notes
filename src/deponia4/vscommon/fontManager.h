@@ -63,11 +63,9 @@ public:
 	// All four confirmed (asm lines 1389274-1389459) to no-op (or return a
 	// zeroed/default out-param) when no font is selected, otherwise delegate
 	// directly to the current TCFont.
-	void PrintText(const wxString &text, TextAlignmentEnum alignment, const wxPoint &pos, float scale,
-	               GLCharBuffer *buffer = nullptr);
+	void PrintText(const wxString &text, TextAlignmentEnum alignment, const wxPoint &pos, float scale);
 	void PrintTextLines(const std::list<wxString> &lines, const std::vector<int> &lineWidths,
-	                    TextAlignmentEnum alignment, const wxPoint &pos, float scale, bool wrap,
-	                    std::vector<GLCharBuffer *> *buffers);
+	                    TextAlignmentEnum alignment, const wxPoint &pos, float scale, bool wrap);
 	void GetTextDimension(const wxString &text, wxPoint &outSize) const;
 	void GetTextDimension(const std::list<wxString> &lines, wxPoint &outSize) const;
 	int GetLineHeight() const;

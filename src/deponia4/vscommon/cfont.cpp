@@ -150,10 +150,8 @@ void TCFont::createFreetypeFont(const TVisObjRef &font) {
 	wxFileName path = font.GetPath(kFontTrueTypeFontPath);
 
 	if (_freetype->CreateFont(path.GetFullPath(), size, color, border, borderSize, borderColor, shadow, *shadowOffset)) {
-		// the glyphs of a few letters are made at once
-		_freetype->StringLength("abc");
-		_freetype->_spacingFlag = true;
-		_freetype->_letterSpacing = font.GetInt(kFontLetterSpacing);
+		// (Deponia 1 measures "abc" here and locks the height of the font; Deponia 4 only sets the spacing)
+		_freetype->SetSpacing(font.GetInt(kFontLetterSpacing));
 	} else if (wxLog::loglevel >= 0) {
 		wxLog::logexpanded(L"Failed to create Freetype font '%s' (id: %d) with font file '%s'",
 		                   font.GetName().c_str().wc_str(), fontId(font), path.GetFullPath().wc_str());
@@ -621,13 +619,12 @@ void TCFont::GetTextDimension(const std::list<wxString> &lines, wxPoint &outSize
 // NOTE: the widths of the lines are worked out before for the alignments other than left; a new line that is only a CR or
 // only a LF is not seen there but is one when the text is drawn (the original); and the cursor in the widths moves by two at
 // every new line (also the original), so the third line of a right or centred text is put at the left (x_assert).
-void TCFont::PrintText(const wxString &text, TextAlignmentEnum alignment, const wxPoint &pos, float alpha, int color,
-                       GLCharBuffer *buffer) {
+void TCFont::PrintText(const wxString &text, TextAlignmentEnum alignment, const wxPoint &pos, float alpha, int color) {
 	if (!_base.IsEmpty()) {
 		TCFont *font = _manager->GetFont(_base);
 
 		if (font)
-			font->PrintText(text, alignment, pos, alpha, _font.GetInt(kFontColor), buffer);
+			font->PrintText(text, alignment, pos, alpha, _font.GetInt(kFontColor));
 
 		return;
 	}
@@ -665,7 +662,7 @@ void TCFont::PrintText(const wxString &text, TextAlignmentEnum alignment, const 
 
 		posX -= static_cast<float>(scroll.x);
 		posY -= static_cast<float>(scroll.y);
-		_freetype->RenderString(posX, posY, toUtf8(text), 1.0f, -1, -1, buffer, false);
+		_freetype->RenderString(posX, posY, toUtf8(text), 1.0f, -1, -1, nullptr, false);
 
 		// (the colour of the font is the one to use next, and the one of this text the one before)
 		_freetype->_previousColor = _freetype->_color;
@@ -784,13 +781,12 @@ void TCFont::PrintText(const wxString &text, TextAlignmentEnum alignment, const 
 // NOTE: the moving inside the screen of a right-aligned text puts its right edge at the left of the screen
 // (scroll - width) when it would stick out there, where the other alignments use scroll + width (the original).
 void TCFont::PrintTextLines(const std::list<wxString> &lines, const std::vector<int> &lineWidths,
-                            TextAlignmentEnum alignment, const wxPoint &pos, float alpha, int color, bool wrap,
-                            std::vector<GLCharBuffer *> *buffers) {
+                            TextAlignmentEnum alignment, const wxPoint &pos, float alpha, int color, bool wrap) {
 	if (!_base.IsEmpty()) {
 		TCFont *font = _manager->GetFont(_base);
 
 		if (font)
-			font->PrintTextLines(lines, lineWidths, alignment, pos, alpha, _font.GetInt(kFontColor), wrap, nullptr);
+			font->PrintTextLines(lines, lineWidths, alignment, pos, alpha, _font.GetInt(kFontColor), wrap);
 
 		return;
 	}
@@ -919,15 +915,6 @@ void TCFont::PrintTextLines(const std::list<wxString> &lines, const std::vector<
 			size_t index = 0;
 
 			for (auto line = lines.begin(); line != lines.end(); ++line, index++) {
-				GLCharBuffer *buffer = nullptr;
-
-				if (buffers) {
-					if (buffers->size() <= index)
-						buffers->push_back(new GLCharBuffer());
-
-					buffer = (*buffers)[index];
-				}
-
 				int width = static_cast<int>(static_cast<float>(lineWidths[index]) * zoom);
 
 				if (alignment == TextAlignmentEnum::kLeft)
@@ -935,7 +922,7 @@ void TCFont::PrintTextLines(const std::list<wxString> &lines, const std::vector<
 
 				int lineX = GetTextStartPos(alignment, startX, width, widest);
 
-				_freetype->RenderString(static_cast<float>(lineX - scroll.x), y, toUtf8(*line), zoom, -1, -1, buffer, true);
+				_freetype->RenderString(static_cast<float>(lineX - scroll.x), y, toUtf8(*line), zoom, -1, -1, nullptr, true);
 				y += static_cast<float>(_freetype->_lineHeight + _font.GetInt(kVerticalLetterSpacing));
 			}
 		}

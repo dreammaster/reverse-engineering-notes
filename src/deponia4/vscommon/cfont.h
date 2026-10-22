@@ -81,13 +81,11 @@ public:
 	void PerformAutoLineBreak(const wxString &text, std::list<wxString> &outLines);
 	/** Draws `text` with `pos` as the point it is aligned to; `alpha` how opaque; `color` -1: the colour the font has. A font
 	 *  that stands for another passes it on, with its own colour. */
-	void PrintText(const wxString &text, TextAlignmentEnum alignment, const wxPoint &pos, float alpha, int color,
-	               GLCharBuffer *buffer);
+	void PrintText(const wxString &text, TextAlignmentEnum alignment, const wxPoint &pos, float alpha, int color);
 	/** Draws the lines (`lineWidths` are their widths, from GetTextDimension()), one below the other. With `wrap` (and the
 	 *  text matrix on) the text is moved inside the screen. */
 	void PrintTextLines(const std::list<wxString> &lines, const std::vector<int> &lineWidths,
-	                    TextAlignmentEnum alignment, const wxPoint &pos, float alpha, int color, bool wrap,
-	                    std::vector<GLCharBuffer *> *buffers);
+	                    TextAlignmentEnum alignment, const wxPoint &pos, float alpha, int color, bool wrap);
 	/** Loads the picture of a font of a picture and puts its letters, with the transparent edges taken off, into one
 	 *  picture 512 pixels wide (an atlas); the letters get their place in it. Done once. */
 	void EnsureSpriteLoaded();

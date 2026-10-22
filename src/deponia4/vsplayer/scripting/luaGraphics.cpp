@@ -1183,7 +1183,7 @@ static int graphics_drawFont(lua_State *state) {
 	position.x = static_cast<int>(x);
 	position.y = static_cast<int>(y);
 
-	g_pGameControl->GetFontManager()->PrintText(converted, TextAlignmentEnum::kLeft, position, scale, nullptr);
+	g_pGameControl->GetFontManager()->PrintText(converted, TextAlignmentEnum::kLeft, position, scale);
 	return 0;
 }
 

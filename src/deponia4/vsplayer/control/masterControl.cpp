@@ -228,7 +228,7 @@ void TMasterControl::Draw(bool lock) {
 				position.y = rect.GetTop();
 			}
 
-			_fontManager->PrintText(text, TextAlignmentEnum::kLeft, position, 1.0f, nullptr);
+			_fontManager->PrintText(text, TextAlignmentEnum::kLeft, position, 1.0f);
 			cursorDrawn = true;
 		}
 	}

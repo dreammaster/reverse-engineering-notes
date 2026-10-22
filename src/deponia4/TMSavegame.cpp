@@ -249,7 +249,7 @@ void TMSavegame::DrawText() {
 
 	TFontManager *fonts = gameControl()->GetFontManager();
 	fonts->SetCurrentFont(font);
-	gameControl()->GetFontManager()->PrintText(_displayName, TextAlignmentEnum::kLeft, _textPos, 1.0f, nullptr);
+	gameControl()->GetFontManager()->PrintText(_displayName, TextAlignmentEnum::kLeft, _textPos, 1.0f);
 }
 
 // Confirmed (asm lines 163096-163219): removes the savegame file, telling

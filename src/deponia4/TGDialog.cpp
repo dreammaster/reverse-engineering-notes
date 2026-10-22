@@ -278,7 +278,7 @@ void TGDialog::Draw() {
 		bool hovered = (_lineParts[i] == _hovered && !_hoverUp && !_hoverDown);
 
 		fonts->SetCurrentFont(hovered ? _activeFont : _normalFont);
-		fonts->PrintText(_lines[i], TextAlignmentEnum::kLeft, wxPoint{rect.GetLeft(), rect.GetTop()}, 1.0f, nullptr);
+		fonts->PrintText(_lines[i], TextAlignmentEnum::kLeft, wxPoint{rect.GetLeft(), rect.GetTop()}, 1.0f);
 	}
 
 	if (_canScrollUp)

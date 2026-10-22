@@ -27,7 +27,6 @@
 #include "WxStub.h"
 #include "vscommon/fontManager.h"
 
-class GLCharBuffer;
 class TGCharacter;
 class TManagedObject;
 
@@ -98,7 +97,8 @@ protected:
 	bool _positionSet;                      // +0x40, the position comes from the data
 	std::list<wxString> _lines;             // +0x48
 	std::vector<int> _lineWidths;           // +0x58
-	std::vector<GLCharBuffer *> _buffers;   // +0x70
+	// (Deponia 1 keeps a std::vector<GLCharBuffer *> here, the glyph buffers of the lines, +0x70: Deponia 4 draws the text again each
+	// frame. The offsets of the members below are Deponia 1's; Deponia 4's are 0x18 lower.)
 	bool _stopped;                          // +0x88
 	bool _placed;                           // +0x89
 	TGCharacter *_speaker;                  // +0x90
