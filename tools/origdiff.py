@@ -10,6 +10,8 @@ Usage: tools/origdiff.py <first.pkl> <second.pkl> [-o out.tsv] [--classes] [--wo
   --classes            per class: functions in both, same, changed
   --worst N [FILTER]   the N least alike functions whose name contains FILTER
   --show NAME          both versions of one function side by side (names as in the .tsv)
+  --consts OUT.tsv     the numbers (immediates; the offsets added to pointers are not among them) and the texts of each function: those only the
+                       first has and those only the second has, the second read together with the functions it calls that the first does not define
   --engine OUT.tsv     for builds compiled differently (-O2 against -O0): only the calls to engine functions (T* methods, free functions of the
                        engine) that both executables define and that are bigger than 24 bytes in the first one (smaller ones are inlined
                        in an -O2 build), compared as sequences; the rows are the functions whose sequences differ, most different first
@@ -197,6 +199,108 @@ def engine_mode(f1, f2, common, out):
     return 0
 
 
+def consts_mode(f1, f2, common, out):
+    """The numbers and the texts of each function: what the first has and the second has not, and the other way round. The second
+    build is -O0, the first -O2: a function that the first inlined is read together with the function's own numbers (the closure
+    below); the numbers that an optimizer makes up (small steps, shifts) are not taken out, so the rows are candidates."""
+    norm1 = set(normalize_name(n) for n in f1)
+    by_norm2 = {}
+    for n, f in f2.items():
+        by_norm2.setdefault(normalize_name(n), f)
+
+    def closure(f, depth=0, seen=None):
+        nums, texts = list(f.consts()), list(f.strings())
+        for c in f.calls():
+            g = by_norm2.get(c)
+            # only what the first build can have inlined: functions it does not define at all
+            if depth < 4 and g is not None and c not in norm1:
+                a, b = closure(g, depth + 1)
+                nums += a
+                texts += b
+        return nums, texts
+
+    rows = []
+    for n in common:
+        n1, t1 = f1[n].consts(), f1[n].strings()
+        n2, t2 = closure(f2[n])
+        only1 = sorted(set(n1) - set(n2))
+        only2 = sorted(set(n2) - set(n1))
+        text1 = sorted(set(t1) - set(t2))
+        text2 = sorted(set(t2) - set(t1))
+        if only1 or only2 or text1 or text2:
+            rows.append((n, only1, only2, text1, text2, len(f1[n].insns), len(f2[n].insns)))
+    rows.sort(key=lambda r: (-(len(r[3]) + len(r[4])), -(len(r[1]) + len(r[2]))))
+    with open(out, "w", encoding="utf8", errors="replace") as fh:
+        fh.write("name\tinsns_first\tinsns_second\tnumbers only in the first\tnumbers only in the second\ttexts only in the first\ttexts only in the second\n")
+        for n, o1, o2, x1, x2, i1, i2 in rows:
+            fh.write("%s\t%d\t%d\t%s\t%s\t%s\t%s\n" % (n, i1, i2, " ".join("%x" % v for v in o1), " ".join("%x" % v for v in o2),
+                                                     " | ".join(x1), " | ".join(x2)))
+    print("functions in both: %d; with other numbers or texts: %d (texts: %d)" % (len(common), len(rows), sum(1 for r in rows if r[3] or r[4])))
+    print("written %s" % out)
+    return 0
+
+
+def call_args(f):
+    """[(callee, number)]: the numbers loaded in the four instructions before each call (the ids of fields, events, commands, the
+    sizes that are given to a function), per callee."""
+    out = []
+    ins = f.insns
+    for k, (m, t, c, s, j, o) in enumerate(ins):
+        if t is None or not m.startswith("call"):
+            continue
+        callee = normalize_name(t)
+        for q in range(max(0, k - 4), k):
+            if ins[q][0].startswith(("call", "j")):
+                continue  # (a number before another call or a jump belongs to that one)
+            for v in ins[q][2]:
+                out.append((callee, v))
+    return out
+
+
+def args_mode(f1, f2, common, out):
+    """What a function gives to the engine's functions (call_args), compared between the builds: the pairs (callee, number) that only
+    the first has and that only the second has. The second build is -O0: what the first inlined is read from the functions of the second
+    that the first does not define (three levels down). Only the engine's own callees count (T* methods, and the free functions
+    that are not std, wx or C library)."""
+    norm1 = set(normalize_name(n) for n in f1)
+    by_norm2 = {}
+    for n, f in f2.items():
+        by_norm2.setdefault(normalize_name(n), f)
+    by_norm1 = {}
+    for n, f in f1.items():
+        by_norm1.setdefault(normalize_name(n), f)
+
+    def own_callee(c):
+        return bool(re.match(r"^_ZN?K?\d+T[A-Za-z0-9_]*", c)) or bool(re.match(r"^_Z\d+(Lua|Cmd|Register|Get|Set)", c))
+
+    def closure(f, depth=0):
+        res = list(call_args(f))
+        for c in f.calls():
+            g = by_norm2.get(c)
+            if depth < 4 and g is not None and c not in norm1:
+                res += closure(g, depth + 1)
+        return res
+
+    rows = []
+    for n in common:
+        if not klass(n).startswith("T"):
+            continue
+        a = collections.Counter(p for p in call_args(f1[n]) if own_callee(p[0]))
+        b = collections.Counter(p for p in closure(f2[n]) if own_callee(p[0]))
+        only1 = set(a) - set(b)
+        only2 = set(b) - set(a)
+        if only1 or only2:
+            rows.append((n, sorted(only1), sorted(only2)))
+    rows.sort(key=lambda r: -(len(r[1]) + len(r[2])))
+    with open(out, "w", encoding="utf8") as fh:
+        fh.write("name\tonly in the first (callee number)\tonly in the second\n")
+        for n, o1, o2 in rows:
+            fh.write("%s\t%s\t%s\n" % (n, "; ".join("%s %x" % p for p in o1), "; ".join("%s %x" % p for p in o2)))
+    print("T* methods in both: %d; with other (callee, number) pairs: %d" % (sum(1 for n in common if klass(n).startswith("T")), len(rows)))
+    print("written %s" % out)
+    return 0
+
+
 def main():
     args = sys.argv[1:]
     out = None
@@ -205,6 +309,8 @@ def main():
     flt = ""
     show_name = None
     engine_out = None
+    consts_out = None
+    args_out = None
     pos = []
     i = 0
     while i < len(args):
@@ -222,6 +328,12 @@ def main():
                 i += 1
         elif a == "--engine":
             engine_out = args[i + 1]
+            i += 1
+        elif a == "--args":
+            args_out = args[i + 1]
+            i += 1
+        elif a == "--consts":
+            consts_out = args[i + 1]
             i += 1
         elif a == "--show":
             show_name = args[i + 1]
@@ -242,6 +354,10 @@ def main():
         return 0
     if engine_out:
         return engine_mode(f1, f2, common, engine_out)
+    if consts_out:
+        return consts_mode(f1, f2, common, consts_out)
+    if args_out:
+        return args_mode(f1, f2, common, args_out)
     results = {n: compare(f1[n], f2[n]) for n in common}
     ranked = sorted(common, key=lambda n: (results[n]["score"], -f1[n].size))
     if out:

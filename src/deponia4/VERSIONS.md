@@ -148,7 +148,29 @@ read together with what they call, three levels down. Result in [`ENGINECALLS.md
   (scene mouse position hook through `LuaExecuteFunction`, `SelectSavegame`, the inverse matrix as `TMatrix3 * TVector3D`, `IsCurrentObjectEmpty`, `SetValue(destination)`) as the reconstruction has it. The rest are helpers (`TData` `GetRefV*`,
   `TMemoryBuffer::AppendData`, `TGInterface::UpdateAlpha`, the `TConsole::Print*` and `Parse*` helpers) that `-O2` inlined.
 - So, apart from what the other sections list (fonts, logging, platform SDKs), **the logic of the engine in Deponia 4 is that of Deponia 1** as far as the order of its engine calls shows. What this cannot see: a changed constant, a changed condition, a call
-  that was added to a function whose `-O2` form inlined the callee, and every function that calls no engine function. **to do**: the numbers (`origdiff.py` can compare `consts` once the offsets of moved members are masked).
+  that was added to a function whose `-O2` form inlined the callee, and every function that calls no engine function.
+
+### Numbers, texts, field ids and source lines: the same
+
+Four checks of the two original executables against each other (`tools/origdiff.py --consts`, `--args`, `tools/assertlines.py`, and one-off scripts over the same caches); the `-O0`/`-O2` noise is treated as in the call graph section.
+
+- **Numbers (immediates), all `T*` code together**: 1,028 distinct numbers of 0x30 or more in Deponia 1, 1,030 in Deponia 4; 35 only in Deponia 1, 37 only in Deponia 4. Read: the line numbers of the asserts of `graphicslib/graphicsOGL.cpp` (they moved, see below),
+  and values that a `-O0` compiler writes out as separate cases. Example: `TGameControl::ConvertControllerButtonToSymKey` is a table (`CSWTCH_876`) in Deponia 1 and a 15-case `switch` in Deponia 4, both giving `1000001 + button` for buttons 0-14 and -1 otherwise.
+  Nothing in either build is a number the other has no counterpart for (no new field id, event, command or limit).
+- **Field ids**: the pairs (`TVisObjRef::GetInt/GetLink/SetValue/...`, id) over the whole executable: 657 in Deponia 1 against 666 in Deponia 4; the pairs only in one are the wrappers `TVisionaireObject`/`TDataGroup` (the same id goes through the other class in the other build,
+  one inlines the other) and the way a `wxPoint`'s two numbers get loaded. `TTGame::OnCreate` and `TCAnimation::Start`, read in both listings, write the same fields in the same order with the same values.
+- **Texts**: the string literals that `T*` code refers to are 1,758 (Deponia 1) and 1,739 (Deponia 4); the 17 only in Deponia 1 and the 3 only in Deponia 4 are standard library exception texts (`basic_string::substr`, `vector::reserve`: inlined range checks in Deponia 1), format strings that live in a helper in the other build (`%ld` is
+  in `CONVTOSTR(long const&)` in Deponia 4) and names that `-O0` stores through a local (`mouseDown`, `touchUp` ... are in `TMasterControl::MovieEvent` of both). Of the log messages (`wxLog::log*`/`logexpanded` call sites) 730 are in Deponia 1 and 706 in Deponia 4; the functions that differ
+  are `TData::*` (Deponia 1 has an `x_assert(value != NULL)` with its log inlined in 11 functions, Deponia 4 has it in the `GetRefV*` helpers) and `AudioDevice::AudioDevice` (9 against 3). **No log message or text of the game was added or removed.**
+- **Lines of the source files** (`tools/assertlines.py`): the engine's `x_assert(cond, "expression", file, line)` has the line of the source in it. 39 source files have such asserts in both builds; in **38 of them every assertion is at the same line** in both
+  (`datastruct/table.cpp` 966, `vstables/visionaireGame.cpp` 2072, `vsplayer/main/mainSDL.cpp` 872 ...), so nothing was added to or removed from those files above their last assert between Sep 2017 and Feb 2019. The two files where the lines moved:
+  - `vscommon/cfont.cpp`: Deponia 1 is 4 lines longer before line 0x155 (341) and 5 more before 0x2a2 (674) (`eAlignment == eAlignLeft` at 0x159 against 0x155, `false` at 0x2ab against 0x2a2). Matches the `GLCharBuffer` parameter and the text shaping that Deponia 1 added.
+  - `graphicslib/graphicsOGL.cpp`: Deponia 1 is 5 lines longer before 0x4f3 and 2 more before 0x94e (`false` at 0x4f8, 0x52a, 0xa92 against 0x4f3, 0x525, 0xa8b; `m_drawValid` at 0x6d1, 0x955, 0x9f7 against 0x6cc, 0x94e, 0x9f0). Deponia 4 has asserts of its own in `EnableMipmaps(int)` and `SetEmptyTexture(int, int, int)` (0x504, 0x50f,
+    `assert(false)` with `__PRETTY_FUNCTION__`: functions that must not be called) where Deponia 1's are empty (1 instruction, a `ret`).
+  Since these asserts are spread over `baselib`, `datastruct`, `graphicslib`, `guilib`, `mmedialib`, `vscommon`, `vsplayer` and `vstables`, **the sources of the two builds are the same files, line for line, apart from `cfont.cpp` and `graphicsOGL.cpp`**.
+
+So the conclusion of the three comparisons (call graph, numbers/texts, source lines) is that, apart from the fonts/text path (HarfBuzz, glyph buffers), `TGraphicsOGL`, the logging overloads, the platform SDK layer and the build options, **Deponia 4 and Deponia 1 are one code base**. The merge needs
+`#if`s (or runtime flags) for those, not two versions of the engine. `src/deponia4` can stay a copy only until the text path is cut back; after that it can be dropped in favour of a build option.
 
 ### Other classes with the most functions unlike the reconstruction
 
@@ -159,8 +181,7 @@ None of these has been read yet; the next step is to take them in that order.
 
 ## Open points / next steps
 
-1. The numbers and conditions: compare the constants of the functions of the two executables with the offsets of members masked (the call-graph comparison found nothing); then read what `FUNCDIFF.md` lists for
-   classes the call graph cannot see (`TGAction::Execute` 10,083 instructions, `TGameControl::HandleMouseMove`, `InitInterfaces`, `DisplayTexts`).
+1. Conditions (a changed `<` or `&&` is not a number or a call): not covered by any check so far. The unlike functions of `FUNCDIFF.md` that call no engine function and have no assert (`TArgument`, `TMatrix3/4`, `TVector3D`, geometry helpers) are the place to look.
 2. Why the run of the reconstruction on the Deponia 4 data stops after `lua_dump not supported`, and the `table 21` assertion.
 3. The build number of the engine (the integer passed to `wxLog::logexpanded("Engine Version ...")`).
 4. Compile the sources here at `-O0` for real (`tools/pbuild.py deponia4`, `tests/`): the tests (`tests/deponia1`) still build `src/deponia1` (`tools/tbuild.py` has the folder fixed); parametrize it before the two code bases diverge.
