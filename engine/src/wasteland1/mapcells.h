@@ -45,6 +45,17 @@ void scrollViewRight(Machine &m);
 void scrollViewDown(Machine &m);
 // 167CE: redraws the cells of the view window whose class carries an object (classes 4, 5 and 9)
 void redrawViewObjects(Machine &m);
+// 17DC7: the party position in map cells (view origin + 46A8/46A9); 17DBB stores it in 46A6/46A7
+void partyCell(Machine &m, uint8_t &x, uint8_t &y);
+// 169EB: selects the location record of the cell (x, y) and returns its tile class
+uint8_t selectCellLocation(Machine &m, uint8_t x, uint8_t y);
+// 16428: draws the markers of the other party groups that are inside the view
+void drawOtherParties(Machine &m);
+// 16716: draws the party marker; 163A0: redraws objects, other parties and the party marker
+void drawPartyMarker(Machine &m);
+void redrawViewAll(Machine &m);
+// 17DF1: the clock, compass and light bar beside the view
+void drawStatusBar(Machine &m);
 // 1675C: draws the cell of the party position
 void drawPartyCell(Machine &m);   // 17DBB: viewX/viewY = partyMapPosition()
 

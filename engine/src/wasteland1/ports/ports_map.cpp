@@ -49,6 +49,12 @@ PORT(scrollViewLeft) { scrollViewLeft(m); }                                     
 PORT(scrollViewRight) { scrollViewRight(m); }                                           // 165D2
 PORT(scrollViewDown) { scrollViewDown(m); }                                             // 165FB
 PORT(redrawViewObjects) { redrawViewObjects(m); }                                       // 167CE
+PORT(partyCell) { uint8_t x, y; partyCell(m, x, y); r.d.b.l = x; r.b.b.l = y; r.a.b.l = y; }   // 17DC7
+PORT(selectCellLocation) { r.a.b.l = selectCellLocation(m, r.d.b.l, r.b.b.l); }          // 169EB
+PORT(drawOtherParties) { drawOtherParties(m); }                                         // 16428
+PORT(drawPartyMarker) { drawPartyMarker(m); }                                           // 16716
+PORT(redrawViewAll) { redrawViewAll(m); }                                               // 163A0
+PORT(drawStatusBar) { drawStatusBar(m); }                                               // 17DF1
 PORT(drawPartyCell) { drawPartyCell(m); }                                               // 1675C
 
 } // namespace rc

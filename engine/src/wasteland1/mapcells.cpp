@@ -265,6 +265,146 @@ void redrawViewObjects(Machine &m) {
 	}
 }
 
+void partyCell(Machine &m, uint8_t &x, uint8_t &y) {
+	x = uint8_t(m.d8(g::saved2) + m.d8(0x46A8));
+	y = uint8_t(m.d8(uint16_t(g::saved2 + 1)) + m.d8(0x46A9));
+}
+
+uint8_t selectCellLocation(Machine &m, uint8_t x, uint8_t y) {
+	const uint8_t cls = tileClassAt(m, x, y);
+	selectLocationRecord(m, cls, actionAt(m, x, y));
+	return cls;
+}
+
+void drawOtherParties(Machine &m) {
+	const uint8_t active = m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup));
+	for (int group = m.d8(uint16_t(g::saved2 + g::s2::totalPartyGroups)); group >= 0; --group) {
+		m.d8(0xAA4C) = uint8_t(group);
+		if (group == active) continue;
+		setPartyIndexesPtr(m, uint8_t(group));
+		const uint16_t indexes = m.d16(g::partyIndexesPtr);
+		if (m.d8(uint16_t(indexes + 0x0A)) != m.d8(uint16_t(g::saved2 + g::s2::field7))) continue;
+		const uint8_t x = m.d8(uint16_t(indexes + 8)), y = m.d8(uint16_t(indexes + 9));
+		if (outsideView(m, x, y)) continue;
+		setViewRowPointer(m, y);
+		const uint8_t tile = m.d8(uint16_t(m.d16(0x46CA) + x));
+		uint8_t sx = x, sy = y;
+		cellToScreen(m, sx, sy);
+		if (m.d8(0x46B9) != 0 && sy >= 0x0D) continue;
+		m.d8(0x4685) = sx;
+		m.d8(0x4686) = sy;
+		X86Regs r;
+		r.al = 9; r.ah = tile; r.dl = sx; r.bl = sy;
+		legacy::call(m, 0x000C, r);   // j_start_2
+		legacy::call(m, 0x9E30, r);   // clearInverseText
+	}
+	setPartyIndexesPtr(m, active);
+}
+
+void drawPartyMarker(Machine &m) {
+	uint8_t x, y;
+	partyCell(m, x, y);
+	m.d8(0x46A6) = x;
+	m.d8(0x46A7) = y;
+	uint8_t tile;
+	if (tileClassAt(m, x, y) == 4) {
+		partyCell(m, x, y);
+		selectCellLocation(m, x, y);
+		tile = uint8_t(m.d8(uint16_t(m.d16(g::locationDetailsPtr) + 1)) & 0x7F);
+	} else {
+		setViewRowPointer(m, m.d8(0x46A7));
+		tile = m.d8(uint16_t(m.d16(0x46CA) + m.d8(0x46A6)));
+	}
+	uint8_t sx = m.d8(0x46A6), sy = m.d8(0x46A7);
+	cellToScreen(m, sx, sy);
+	m.d8(0x4685) = sx;
+	m.d8(0x4686) = sy;
+	X86Regs r;
+	r.al = 7; r.ah = tile; r.dl = sx; r.bl = sy;
+	legacy::call(m, 0x000C, r);   // j_start_2
+}
+
+void redrawViewAll(Machine &m) {
+	uint8_t x, y;
+	partyCell(m, x, y);
+	m.d8(0x46A6) = x;
+	m.d8(0x46A7) = y;
+	redrawViewObjects(m);
+	drawOtherParties(m);
+	drawPartyMarker(m);
+}
+
+void drawStatusBar(Machine &m) {
+	auto put = [&](uint8_t ch) { X86Regs r; r.al = ch; legacy::call(m, 0x0039, r); };   // j_writeColorCharacter
+	auto number = [&](uint8_t value) {
+		X86Regs r; r.al = value; legacy::call(m, 0x76A8, r);   // setNumberValueShort
+		const uint8_t bcd = m.d8(0x466E);
+		put(uint8_t(bcd >> 4));
+		put(bcd & 0x0F);
+	};
+	auto X = [&]() -> uint8_t & { return m.d8(g::stringXPos); };
+	auto Y = [&]() -> uint8_t & { return m.d8(g::stringYPos); };
+	const bool plain = m.d8(0x8DD9) == 0;
+	if (plain) {
+		X() = 0x1C; Y() = 0;
+		put(0x0A);
+		number(m.d8(uint16_t(g::saved2 + 0x0C)));
+		put(0x0C);
+		number(m.d8(uint16_t(g::saved2 + 0x0B)));
+		put(0x0B);
+		m.d8(0x4707) = 0;
+	}
+	uint8_t glyph = 0x7E;
+	for (uint8_t member = 1;; ++member) {
+		setCurrentCharacter(m, member);
+		if (findItemById(m, 0x30) >= 0) break;
+		if (member >= m.d8(uint16_t(g::saved2 + g::s2::membersInGroup))) {
+			m.d8(0x46EE) = 0xFF;
+			glyph = 0x7A;
+			break;
+		}
+	}
+	X() = 0x26; Y() = 0x10;
+	put(glyph++); put(glyph++);
+	X() = 0x26; --Y();
+	put(glyph++); put(glyph++);
+	X() = 0x26; --Y();
+	uint8_t half = 0;
+	const uint8_t level = uint8_t(m.d8(0x46EE) >> 3);
+	if (level < 9) {
+		const uint8_t rest = uint8_t(9 - level);
+		half = rest & 1;
+		uint8_t full = uint8_t(rest >> 1);
+		while (full != 0) {
+			if (Y() > 0x0C) { put(0x8A); put(0x8B); } else { put(0x86); put(0x87); }
+			if (m.d8(0x8DD9) != 0) return;
+			X() = 0x26; --Y();
+			--full;
+		}
+		if (Y() != 0x0A) {
+			if (half != 0) {
+				if (Y() > 0x0C) { put(0x88); put(0x89); } else { put(0x84); put(0x85); }
+				half = 0;
+				if (m.d8(0x8DD9) != 0) return;
+				X() = 0x26; --Y();
+			}
+		}
+	}
+	if (!(level < 9 && Y() == 0x0A)) {
+		for (;;) {   // 17F66
+			if (Y() == 0x0A) break;
+			put(0x82); put(0x83);
+			if (m.d8(0x8DD9) != 0) return;
+			X() = 0x26;
+			if (--Y() == 0) break;
+		}
+	}
+	glyph = half != 0 ? 0x76 : 0x72;
+	put(glyph++); put(glyph++);
+	X() = 0x26; --Y();
+	put(glyph++); put(glyph);
+}
+
 void drawPartyCell(Machine &m) {
 	X86Regs r;
 	legacy::call(m, 0x9E30, r);   // clearInverseText
