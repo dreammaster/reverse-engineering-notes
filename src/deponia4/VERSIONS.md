@@ -1,5 +1,7 @@
 # Deponia 4 (Deponia Doomsday): versions of the engine and of the game
 
+The list to work from when merging is in [`MERGE.md`](MERGE.md).
+
 `src/deponia4/` started as a **copy of `src/deponia1/`** (taken at commit 4ca6cb5) so that the Deponia 4 build can be
 reconstructed as a second code base next to the first, with this file as the running log of what differs. The aim is to merge the
 two into one engine later, so every difference found goes in the log below, with how it is known (executable, data, or a run).
@@ -160,7 +162,7 @@ For the merge, 1 and 5 are build options (HarfBuzz yes/no), 4 is a bug fix that 
 
 (symbols, scores) `TGameClientSDK` has 8 methods only in Deponia 4 (`InitSDK(wxString const&, wxString const&)`, `GetGalaxySDK`, `GetSteamSDK`, `GetGalaxyStatus`, `GetSteamStatus`, `DeleteCloudSavegame(wxString const&)`, `Update`):
 the layer that owns both the Steam and the Galaxy objects is explicit in Deponia 4. `TSteamSDK` (9 of 9 functions unlike) and `TGalaxySDK` (9 of 9) both differ. `CSteamID` is in the symbols of Deponia 4 (Steam: 1 symbol; Deponia 1: 0).
-`changes.txt`: "GOG: Galaxy Overlay Support", "Steam: Achievements ..."; `libGalaxy64.so`/`libGalaxyPeer64.so` ship with this build. **to do**: read `TGameClientSDK`, `TSteamSDK`, `TGalaxySDK` in the listing.
+`changes.txt`: "GOG: Galaxy Overlay Support", "Steam: Achievements ..."; `libGalaxy64.so`/`libGalaxyPeer64.so` ship with this build. Read (22-23 Oct 2026): every function of `TGameClientSDK`, `TSteamSDK`, `TGalaxySDK` and the Galaxy listener classes, strings and calls, in both builds: **no string differs anywhere**; the calls differ only where Deponia 1 inlined (`GetSteamSDK`/`GetSteamStatus`/`GetGalaxyStatus` are accessors in Deponia 4, `TGalaxySDK::IsActive` is a call there), where Deponia 4's `-O0` shows constructors of the listener classes and of `wxDynamicLibrary`, and the logging overload. The platform layer is the same code.
 
 ### Tweens, tooltips, text boxes, the debugger
 
