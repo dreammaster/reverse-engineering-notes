@@ -18,6 +18,7 @@
 #include "maptrigger.h"
 #include "inventory.h"
 #include "relics.h"
+#include "repair.h"
 #include "shop.h"
 #include "party.h"
 #include "spelljump.h"
@@ -1471,6 +1472,10 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
     if (id == (s->game == GameYendor2 ? LockpickYendor2 : LockpickYendor3)) { /* HandleGameCommand sends it to HandleSearchCommand: the front end asks who and where */
         return SessionUseSearch;
     }
+    const uint8_t *useRec = itemCatalogRecord(&s->items, id);
+    if (useRec && dialogRepairEligible(&s->items, useRec) && itemSlotExtra(slot)) { /* a damaged item: RepairItemCommand */
+        return SessionUseRepair;
+    }
     if (id == keyRingId(s->game) || isRingKey(s->game, id)) { /* the key ring and the door / chest keys: UnlockDoorCommand (the crosshair, then the faced lock) */
         return SessionUseKey;
     }
@@ -2833,6 +2838,75 @@ SessionSearch sessionSearch(GameSession *s, unsigned userSlot, unsigned itemSlot
     }
     s->unlockMessage = 2;
     return SessionSearchOpened;
+}
+
+bool sessionRepairer(GameSession *s, unsigned *memberSlot) {
+    unsigned id = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 2);
+    const uint8_t *member = id ? saveGamePartyRecordById(&s->save, id) : NULL;
+    if (member && (partyGetU16(member, PartyFieldStatusFlags) & PartyStatusIncapacitated)) { /* the warning, and the role is free again */
+        s->pendingSound = RefusalSound;
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 2, 0);
+        member = NULL;
+    }
+    for (unsigned slot = 0; member && slot < SavePartyMemberSlots; slot++) {
+        if (saveGetPartySlot(&s->save, slot) == id) {
+            *memberSlot = slot;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool sessionChooseRepairer(GameSession *s, unsigned memberSlot) {
+    const uint8_t *member = sessionPartyRecord(s, memberSlot);
+    if (!member || (partyGetU16(member, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+        s->pendingSound = RefusalSound;
+        return false;
+    }
+    saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 2, saveGetPartySlot(&s->save, memberSlot));
+    return true;
+}
+
+SessionRepair sessionRepair(GameSession *s, unsigned userSlot, unsigned itemSlot) {
+    unsigned repairerSlot;
+    s->unlockMessage = 0;
+    if (!sessionRepairer(s, &repairerSlot)) {
+        return SessionRepairNoRepairer;
+    }
+    uint8_t *user = sessionPartyRecord(s, userSlot), *repairer = sessionPartyRecord(s, repairerSlot);
+    uint8_t *slot = useSlot(s, user, itemSlot);
+    const uint8_t *damaged = slot && itemSlotId(slot) ? itemCatalogRecord(&s->items, itemSlotId(slot)) : NULL;
+    const uint8_t *original = slot && itemSlotExtra(slot) ? itemCatalogRecord(&s->items, itemSlotExtra(slot)) : NULL;
+    const uint8_t *entry = original ? itemTargetEntry(&s->items, original) : NULL;
+    if (!damaged || !entry || !dialogRepairEligible(&s->items, damaged)) {
+        return SessionRepairNothing;
+    }
+    /* the row is the item's difficulty: word 4 of a weapon's entry, word 3 (its "+N") of armour */
+    unsigned row = itemTargetWord(entry, (itemGetU16(damaged, ItemFieldFlags) & 0xC000) ? 4 : 3);
+    RepairOutcome outcome = repairAttempt(row, (uint16_t)partyGetStat(repairer, PartyStatRepair), &s->rng);
+    SessionRepair result = SessionRepairSoft;
+    if (outcome == RepairCriticalFail) {
+        uint8_t *main = partyInventoryGroup(user, PartyGroupMain);
+        inventoryGroupSetWeight(main, (uint16_t)(inventoryGroupWeight(main) - itemWeightOf(s, itemSlotId(slot))));
+        itemSlotSet(slot, 0, 0);
+        queueSound(s, s->game == GameYendor2 ? 0x28 : 8);
+        s->unlockMessage = 6;
+        result = SessionRepairDestroyed;
+    } else if (outcome == RepairSuccess) {
+        itemSlotSet(slot, (uint16_t)itemSlotExtra(slot), 0);
+        queueSound(s, 7);
+        s->unlockMessage = 7;
+        result = SessionRepairDone;
+    } else {
+        s->unlockMessage = 5;
+    }
+    if (s->combat.active && s->combat.cursor < s->combat.count && !s->combat.order[s->combat.cursor].isMonster) {
+        combatAfterAction(s);
+        combatRunMonsters(s);
+    } else {
+        turnSpent(s);
+    }
+    return result;
 }
 
 uint16_t sessionKeyRingFlags(const GameSession *s) {

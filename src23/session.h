@@ -269,7 +269,7 @@ SessionCast sessionCastOn(GameSession *session, unsigned casterSlot, unsigned sp
  * key. A key to a destination (ExamineTarget: the item's target entry has flag 4 and no container bits) takes the party there when its gate flag is set (Travelled), else
  * shows its description (Closed) or, in Chapter 3 inside the artifact realm holding a light weapon, refuses (Blocked); nothing is spent. A readable item answers Read: `readCategory` / `readId` name the text, `readability` says how many words of five the reader's Linguistics can read (sessionDocumentLine gives the lines). The light sources (items 8 / 0xE / 0xB, lit 9 / 0xF / 0xC) light and go out, and in Chapter 2 the quest relics (relics.h) work.
  */
-typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead, SessionUseScroll, SessionUseSearch, SessionUseKey } SessionUse;
+typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead, SessionUseScroll, SessionUseSearch, SessionUseKey, SessionUseRepair } SessionUse;
 SessionUse sessionUseItem(GameSession *session, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot);
 
 /*
@@ -382,6 +382,17 @@ bool sessionScrollInfo(GameSession *session, unsigned userSlot, unsigned itemSlo
 typedef enum { SessionSearchNothing, SessionSearchNoSearcher, SessionSearchAlready, SessionSearchStatus, SessionSearchBroke, SessionSearchOpened, SessionSearchDefeated, SessionSearchSprung } SessionSearch;
 bool sessionSearcher(GameSession *session, unsigned *memberSlot);
 SessionSearch sessionSearch(GameSession *session, unsigned userSlot, unsigned itemSlot);
+
+/*
+ * Using a damaged item from a bag slot (SessionUseRepair; HandleGameCommand :45750 -> RepairItemCommand :50985): a weapon whose target entry has word-1 bit 0x100, or armour (flag 0x800) with 0x40,
+ * the original id parked in its extra word. The second role's member repairs (`sessionRepairer`; ShowConfirmPrompt 9 asks when nobody is chosen, `sessionChooseRepairer` answers, one who cannot act is
+ * refused). `sessionRepair` rolls (repair.h: the item's difficulty row against the member's Repair): destroyed -- the slot is cleared and its weight leaves the load (sound 0x28, Chapter 3 8;
+ * `unlockMessage` 6: six lines); not repaired -- nothing happens (5: four lines); repaired -- the original id is back (sound 7; 7: two lines). Outside a fight it is a spent turn.
+ */
+typedef enum { SessionRepairNoRepairer, SessionRepairNothing, SessionRepairSoft, SessionRepairDestroyed, SessionRepairDone } SessionRepair;
+bool sessionRepairer(GameSession *session, unsigned *memberSlot);
+bool sessionChooseRepairer(GameSession *session, unsigned memberSlot);
+SessionRepair sessionRepair(GameSession *session, unsigned userSlot, unsigned itemSlot);
 
 /* Line `line` of the document sessionUseItem last opened (spacing kept); false past its end. */
 bool sessionDocumentLine(GameSession *session, unsigned line, char out[DocumentLineBufferSize]);

@@ -6784,6 +6784,14 @@ curgame record (cell flag objects 0x8000 / 0x4000) -- already open: NOT LOCKED; 
 runs once more (`ApplySavingThrowEffect`): a trapped lock (flag 0x80) either springs it or shows TRAP / DEFEATED (0x7CA8, 0x7FD5), an untrapped one says UNLOCKED and loses the door marker (`and [cell+6], 0xBFFF`).
 `session.c` `sessionSearch` (decision: `combatSearchTrap`), `gameui.c` `searchStart` / `unlockTry`.
 
+### Repairing a damaged item: RepairItemCommand as a user command (2026-10-22)
+
+`HandleGameCommand` (:45750) sends a damaged item (a weapon, flags 0xC000, whose target entry has word-1 bit 0x100, or armour, flag 0x800, with 0x40; its extra word holds the original id) to `RepairItemCommand`
+(:50985) and then sets the turn bit 0x20. The second role's member repairs (`ShowConfirmPrompt` 9 asks when nobody is chosen; one who cannot act gets the warning and is asked again); the roll is `repair.h`
+(`RandomInRange(100)` against the table row of the *original* item -- entry word 4 for a weapon, 3 for armour -- and the repairer's Repair tier). Destroyed: the sound `_val20` (Chapter 2 0x28, Chapter 3 8), YOUR ATTEMPT /
+TO REPAIR ... six lines (DS:0x8304, Chapter 3 0x862B), the slot cleared and its weight off the load; soft failure: the same four-line words (0x82D8, 0x85FF), nothing changes; success: sound 7 and THE ITEM IS / REPAIRED.
+(0x8349, 0x8670), the original id back in the slot, no weight change. The kit is not involved. `session.c` `sessionRepair`, `gameui.c` `repairStart`.
+
 ### A spent turn outside a fight (decoded 2026-10-22)
 
 `ApplyEncodedItemEffect` (:51097) opens with `g_uiScratchFlags3 |= 0x20`; so do the healing potions' handlers (:48594, :48707: HP restoratives), the repair command (:45907) and `InteractWithContainer` (scrolls, study). The

@@ -1094,6 +1094,8 @@ static void readOpen(GameUi *ui) {
  */
 static void scrollStart(GameUi *ui, unsigned user, unsigned slot);
 static void searchStart(GameUi *ui, unsigned user, unsigned slot);
+static void repairStart(GameUi *ui, unsigned user, unsigned slot);
+static void repairRun(GameUi *ui);
 
 static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipient) {
     GameSession *s = ui->session;
@@ -1119,6 +1121,9 @@ static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipie
         break;
     case SessionUseScroll:
         scrollStart(ui, user, slot);
+        return;
+    case SessionUseRepair:
+        repairStart(ui, user, slot);
         return;
     case SessionUseSearch:
         inventoryClose(ui);
@@ -1224,6 +1229,15 @@ static void scrollPromptDraw(GameUi *ui) {
 }
 
 static void pickAnswer(GameUi *ui, unsigned member) {
+    if (ui->pickScroll == 4) { /* who repairs */
+        if (!sessionChooseRepairer(ui->session, member)) {
+            flashWarning(ui);
+            return;
+        }
+        pickCancel(ui);
+        repairRun(ui);
+        return;
+    }
     if (ui->pickScroll == 3) { /* who searches: a member who cannot act is refused and asked again */
         if (!sessionChestChooseOpener(ui->session, member)) {
             flashWarning(ui);
@@ -1304,7 +1318,10 @@ static void unlockReport(GameUi *ui) {
     GameSession *s = ui->session;
     if (s->unlockMessage) {
         bool y2 = s->game == GameYendor2;
-        if (s->unlockMessage >= 3) { /* the lockpick's: THE LOCKPICK / BROKE (DS:0x7C89, Chapter 3 0x7FB6), TRAP / DEFEATED (0x7CA8, 0x7FD5) */
+        if (s->unlockMessage >= 5) { /* the repair's: YOUR ATTEMPT / TO REPAIR ... (4 and 6 lines: DS:0x82D8 / 0x8304, Chapter 3 0x85FF / 0x862B), THE ITEM IS / REPAIRED. (0x8349, 0x8670) */
+            unsigned offset = s->unlockMessage == 5 ? (y2 ? 0x82D8 : 0x85FF) : s->unlockMessage == 6 ? (y2 ? 0x8304 : 0x862B) : (y2 ? 0x8349 : 0x8670);
+            panelMessageExe(ui, offset, s->unlockMessage == 5 ? 4 : s->unlockMessage == 6 ? 6 : 2);
+        } else if (s->unlockMessage >= 3) { /* the lockpick's: THE LOCKPICK / BROKE (DS:0x7C89, Chapter 3 0x7FB6), TRAP / DEFEATED (0x7CA8, 0x7FD5) */
             panelMessageExe(ui, s->unlockMessage == 3 ? (y2 ? 0x7C89 : 0x7FB6) : (y2 ? 0x7CA8 : 0x7FD5), 2);
         } else {
             panelMessageExe(ui, s->unlockMessage == 1 ? (y2 ? 0x7BB7 : 0x7EE9) : (y2 ? 0x7BAE : 0x7EE0), 1);
@@ -1337,6 +1354,28 @@ static void unlockTry(GameUi *ui) {
     }
     playPending(ui);
     unlockReport(ui);
+}
+
+/* RepairItemCommand: the second role's member repairs (message 9 asks who when nobody is chosen), then the roll and its words. */
+static void repairRun(GameUi *ui) {
+    ui->panelRunCount = 0;
+    sessionRepair(ui->session, ui->searchUser, ui->searchSlot);
+    playPending(ui);
+    unlockReport(ui);
+}
+
+static void repairStart(GameUi *ui, unsigned user, unsigned slot) {
+    unsigned repairer;
+    ui->searchUser = user;
+    ui->searchSlot = slot;
+    if (sessionRepairer(ui->session, &repairer)) {
+        repairRun(ui);
+    } else {
+        ui->pickActive = true;
+        ui->pickChest = false;
+        ui->pickScroll = 4;
+        ui->pickPrompt = 9;
+    }
 }
 
 /* The lockpick (HandleSearchCommand): who searches (the third role, asked with message 8 "WHO WILL USE?" when nobody is), then the crosshair waits for a click on the view. */

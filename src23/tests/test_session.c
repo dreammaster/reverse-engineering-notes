@@ -2,7 +2,7 @@
  * Build and run (from src23/tests):
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../container.c ../maptrigger.c ../ailment.c ../document.c && ./test_session
+ *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../container.c ../repair.c ../maptrigger.c ../ailment.c ../document.c && ./test_session
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override).
  */
@@ -997,6 +997,52 @@ static void testSearch(GameKind game, const uint8_t *world, size_t size, const c
     sessionFree(s);
 }
 
+/* A damaged item used from a bag (RepairItemCommand): the second role's member rolls; a sure repair restores the parked id, a hopeless one destroys the item and its weight leaves the load. */
+static void testRepair(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    unsigned damaged = 0, easy = 0, hard = 0;
+    for (unsigned id = 1; id <= s->items.validItemCount; id++) {
+        const uint8_t *record = itemCatalogRecord(&s->items, id);
+        const uint8_t *entry = record ? itemTargetEntry(&s->items, record) : NULL;
+        if (!entry) {
+            continue;
+        }
+        if ((itemGetU16(record, ItemFieldFlags) & 0xC000) && (itemTargetWord(entry, ItemTargetSlotFlags) & 0x100) && !damaged) {
+            damaged = id;
+        }
+        if ((itemGetU16(record, ItemFieldFlags) & 0xC000) && (itemTargetWord(entry, ItemTargetSlotFlags) & 0x800)) {
+            unsigned row = itemTargetWord(entry, 4);
+            easy = row == 0 && !easy ? id : easy;
+            hard = row >= 4 && row < 16 && !hard ? id : hard;
+        }
+    }
+    check("the game has a damaged weapon and weapons to restore", damaged && easy && hard);
+    if (!damaged || !easy || !hard) {
+        sessionFree(s);
+        return;
+    }
+    uint8_t *hero = sessionPartyRecord(s, 0);
+    uint8_t *cell = inventoryGroupSlot(partyInventoryGroup(hero, PartyGroupMain), 1);
+    saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 2, 0);
+    itemSlotSet(cell, (uint16_t)damaged, (uint16_t)easy);
+    check("a damaged item is a repair (SessionUseRepair)", sessionUseItem(s, 0, 1, 0) == SessionUseRepair);
+    check("nobody repairs until one is chosen", sessionRepair(s, 0, 1) == SessionRepairNoRepairer && sessionChooseRepairer(s, 1));
+    partySetStat(sessionPartyRecord(s, 1), PartyStatRepair, 100);
+    char text[160];
+    snprintf(text, sizeof(text), "%s: a skilled repairer restores the original id and says so (message 7, sound 7)", label);
+    SessionRepair done = sessionRepair(s, 0, 1);
+    check(text, done == SessionRepairDone && itemSlotId(cell) == easy && itemSlotExtra(cell) == 0 && s->unlockMessage == 7);
+    partySetStat(sessionPartyRecord(s, 1), PartyStatRepair, 0);
+    itemSlotSet(cell, (uint16_t)damaged, (uint16_t)hard);
+    unsigned before = inventoryGroupWeight(partyInventoryGroup(hero, PartyGroupMain));
+    SessionRepair bad = sessionRepair(s, 0, 1);
+    check("an unskilled repairer of a hard item destroys it (or merely fails): never repairs", bad != SessionRepairDone && (bad != SessionRepairDestroyed || (itemSlotId(cell) == 0 && inventoryGroupWeight(partyInventoryGroup(hero, PartyGroupMain)) <= before)));
+    sessionFree(s);
+}
+
 /* The tool belt: the six slots under the resource panel (cursor item in, out and swapped; keys on the key ring) and IsItemRangeAvailable over them. */
 static void testBelt(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -1744,6 +1790,7 @@ int main(void) {
             testGroupFight(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBeltUse(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSearch(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testRepair(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBags(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBelt(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testInventorySlots(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
