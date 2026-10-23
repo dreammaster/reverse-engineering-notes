@@ -2,6 +2,7 @@
 #include "wasteland1/ports/port.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/mapcells.h"
+#include "wasteland1/movement.h"
 
 namespace wl {
 namespace rc {
@@ -56,6 +57,19 @@ PORT(drawPartyMarker) { drawPartyMarker(m); }                                   
 PORT(redrawViewAll) { redrawViewAll(m); }                                               // 163A0
 PORT(drawStatusBar) { drawStatusBar(m); }                                               // 17DF1
 PORT(drawPartyCell) { drawPartyCell(m); }                                               // 1675C
+
+PORT(advanceTime) { advanceTime(m); }                                                   // 1676A
+PORT(cellBlockedByObject) { r.cf = cellBlockedByObject(m, r.d.b.l, r.b.b.l); }          // 13E9B: dl = x, bl = y
+PORT(confirmGate) { r.cf = confirmGate(m, r.d.b.l, r.b.b.l); }                          // 16AD5
+PORT(applyStepOnChange) { r.cf = applyStepOnChange(m, r.d.b.l, r.b.b.l); }              // 15CE0
+PORT(stepBlocked) {                                                                     // 1649E: al = direction
+	r.cf = stepBlocked(m, r.a.b.l);
+	r.d.b.l = m.d8(0xAA4B);
+	r.b.b.l = m.d8(0xAA4A);
+}
+PORT(refreshViewLayout) { refreshViewLayout(m); }                                       // 169BC
+PORT(moveParty) { r.cf = !moveParty(m, r.a.b.l); r.b.x = 0; r.d.x = 0; }                 // 1652D
+PORT(tryStep) { r.cf = tryStep(m, r.a.b.l); r.b.x = 0; r.d.x = 0; }                      // 1651A
 
 } // namespace rc
 } // namespace wl

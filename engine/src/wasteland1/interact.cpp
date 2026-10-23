@@ -163,6 +163,15 @@ void applyActionEffectToParty(Machine &m) {
 }
 
 
+// 16D1A: shows string rec[at] (through the title page display) when it is not zero
+void showRecordString(Machine &m, uint8_t at) {
+	const uint8_t id = rec(m, at);
+	if (id == 0) return;
+	X86Regs x;
+	x.al = id;
+	legacy::call(m, 0x7920, x);   // sub_17920
+}
+
 namespace {
 // 17B3E: true (CF) when the current character has at least the amount in the number value
 bool canPay(Machine &m) {
@@ -172,14 +181,7 @@ bool canPay(Machine &m) {
 	return money >= need;
 }
 
-// 16D1A: shows string rec[at] (through the title page display) when it is not zero
-void showRecordString(Machine &m, uint8_t at) {
-	const uint8_t id = rec(m, at);
-	if (id == 0) return;
-	X86Regs x;
-	x.al = id;
-	legacy::call(m, 0x7920, x);   // sub_17920
-}
+
 
 // 142B1: offset of the data that follows the condition list, relative to `at`
 uint8_t afterConditions(Machine &m, uint8_t at) {

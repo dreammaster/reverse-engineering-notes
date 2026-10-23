@@ -40,4 +40,7 @@ void applyActionEffectToParty(Machine &m);
 // not interactive, else the number of failed runs
 bool evaluateAction(Machine &m, uint8_t x, uint8_t y, uint8_t &result);
 
+// 16D1A: shows the title page text named by record byte `at` when it is not zero
+void showRecordString(Machine &m, uint8_t at);
+
 } // namespace wl
