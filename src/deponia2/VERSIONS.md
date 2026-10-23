@@ -13,7 +13,7 @@ Looked at: `D:\Games\ScummVM\Dev\games\Visionnaire\Deponia2-Linux` (the MojoSetu
 | Game version | 3.3.2351 (`version.txt`) |
 | Executable | `Deponia2`, ELF x86-64, 22,364,946 bytes, packaged 18 Dec 2015, sha1 `6d2042d8c5a2...`, GCC 4.7.2 (Debian) and 4.6.3 (Ubuntu) |
 | Launcher | `start` (a script like Deponia 1's, with `GAME_NAME="Deponia 2"`; the save and log folder is `$XDG_DATA_HOME/Daedalic Entertainment/Deponia 2/`) |
-| Engine build string | the format string is the same as Deponia 1's ("Engine Version: %s (Build %d from Build date: %s)"); the values are not in the executable's strings, so they have not been found |
+| Engine build string | "Engine Version: %s (Build %d from Build date: %s)" with **4.2.5, build 1185, built Dec  6 2015** (the arguments of the `wxLog::logexpanded` call in `Init` at `0x5ae255`: the wide string `4.2.5` at `0xe287b8`, the integer `0x4A1`, the date string `Dec  6 2015`), found 23 Oct 2026 by the references to the format string in the code |
 | Debug information | sections `.debug_info` (1.9 MB) and the dynamic symbol table are kept, as in Deponia 1; no `branchPillars` source paths in the assertion texts |
 | `data.vis` | 55,904,517 bytes, `VIS3`, 2,629 entries, project version 2629 (Deponia 1: 81 MB, 3,109 entries) |
 | Password of `data.vis` | `aqy4rnsmsd8jTw` (a wide string in the executable, found with `tools/find_vis_password.py`) |
@@ -53,8 +53,7 @@ there: delete it afterwards).
   the lightmap is 0x0. The only WebP in that volume (480x270, plausible for a lightmap of a 1920x1080 scene) is entry
   1838. Either Deponia 2 numbers its entries another way for some names, which would be a difference in the
   engine, or the name in the data is a mistake of the game's that the original survives. Not decided.
-- Which build of the engine this is: the version and the date of the build are not found. The `Engine Version` text is
-  built from values that are not in the strings of the file.
+- ~~Which build of the engine this is~~: 4.2.5, build 1185, Dec  6 2015 (see the table at the top).
 - Whether the rest of the data (actions, scripts, dialogs, characters) loads and plays as in Deponia 1: only the load
   was checked.
 - Videos (57 Matroska volumes): not decoded with `TMatroskaMoviePlayer` yet.

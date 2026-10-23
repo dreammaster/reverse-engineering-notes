@@ -19,7 +19,7 @@ Looked at: `D:\Games\ScummVM\Dev\games\Visionnaire\Deponia4-Linux` (the GOG inst
 |---|---|
 | Game | "Deponia 4" in the launcher (`GAME_NAME` of `start`): **Deponia Doomsday**; game version 1.2.0267 (`version.txt`, `changes.txt`: patch of 2017-10-20, "Engine Update to Visionaire 5.0.1") |
 | Executable | `Deponia4`, ELF x86-64, 27,476,740 bytes, sha1 `7d77245bba56`, dated 15 Oct 2017; GCC 4.7.2 (Debian) and the same libraries as Deponia 1 (`readelf -p .comment`) |
-| Engine build | `5.0.1`, built **Sep  6 2017** (the wide strings `Engine Version: %s (Build %d from Build date: %s)`, `5.0.1`, `Sep  6 2017` are in `.rodata`; the build number is not found yet). Deponia 1's is 5.0.1 / 1189 / Feb  8 2019: **Deponia 4's engine is 17 months OLDER than Deponia 1's**, whatever the numbers of the games say |
+| Engine build | `5.0.1`, built **Sep  6 2017** (the wide strings `Engine Version: %s (Build %d from Build date: %s)`, `5.0.1`, `Sep  6 2017` are in `.rodata`; the build number is **1189**: `Init` calls `wxLog::log("Engine Version: %s (Build %d from Build date: %s)", "5.0.1", 0x4A5, "Sep  6 2017")` at `0x89341b`, found by the references to the three strings in the code; **the same number as Deponia 1's**, whose build date is Feb 2019: the number was not raised between the two). Deponia 1's is 5.0.1 / 1189 / Feb  8 2019: **Deponia 4's engine is 17 months OLDER than Deponia 1's**, whatever the numbers of the games say |
 | Symbols | `.symtab` is kept (69,377 defined symbols, 32,621 of them dynamic functions), `.debug_info` holds only the DWARF of the statically linked SDL2 (not of the engine), as in Deponia 1 |
 | Optimization | **`-O0`**, with frame pointers: nothing is inlined, every `std::vector::end()` is a call (see below). Deponia 1 is `-O2` |
 | `data.vis` | 78,066,964 bytes, `VIS3`, 2,416 entries; password `RHgPi6dmqvu6uT`, a narrow string (found with `tools/find_vis_password.py`, as in Deponia 1) |
@@ -259,7 +259,7 @@ None of these has been read yet; the next step is to take them in that order.
 
 1. Extend the emulator comparison to the functions that take objects: build the objects the way the engine does (a `TVisObjRef` with a record of the data, a `wxString`) in the emulated memory, or run the functions in a emulated image with the libraries stubbed. The 891 methods that were skipped are the first candidates.
 2. How `#s#000#00002#` (the lightmap of scene 1001) is resolved in Deponia 2 and Deponia 4 (see the data finding); the `table 21` assertion is the same in Deponia 1.
-3. The build number of the engine (the integer passed to `wxLog::logexpanded("Engine Version ...")`).
+3. ~~The build number of the engine~~ found: 1189 (see the table at the top).
 4. Compile the sources here at `-O0` for real (`tools/pbuild.py deponia4`): `tools/tbuild.py <test>.cpp --game deponia4` builds a test of `tests/deponia1` against `src/deponia4` (objects in `build/tests-64[g]-deponia4`); the rest of the suite has not been run on it.
 5. Deponia 2 (packaged Dec 2015, in the other thread) is older than this build: most of what Deponia 4 differs from Deponia 1 in should be a stage between Deponia 2 and Deponia 1.
    When Deponia 2 is looked at, use `tools/symdiff.py` and `tools/crosscompare.py --original` as above, and record in which build each difference appears (the engine order is Deponia 2 -> Deponia 4 (Sep 2017) -> Deponia 1 (Feb 2019), not the order of the games).

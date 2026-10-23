@@ -13,8 +13,8 @@ containers) and from running the reconstruction on the data. Say which of the th
 | Game | Platform | Executable | Engine build | Project version in `data.vis` | Status |
 |---|---|---|---|---|---|
 | Deponia 1 | Linux (GOG, game version 4.0.1386) | `Deponia`, 18.9 MB, sha1 `f4cad9601c77` | 5.0.1, build 1189, built 8 Feb 2019 | 3109 | **The reconstruction target.** Plays through the start, the tutorial and chapter 1 headless and in the SDL2 player ([details](src/deponia1/VERSIONS.md)) |
-| Deponia 2 | Linux (GOG, packaged Dec 2015) | `Deponia2`, 22.4 MB, sha1 `6d2042d8c5a2` | older than the above (no build string recovered yet) | 2629 | Data loads with the Deponia 2 password; the SDL2 player reaches the language select ([details](src/deponia2/VERSIONS.md)) |
-| Deponia 4 (Doomsday) | Linux (GOG, game version 1.2.0267) | `Deponia4`, 27.5 MB, sha1 `7d77245bba56` | 5.0.1, built 6 Sep 2017 (**older** than Deponia 1's), compiled with `-O0` | 2416 entries | Data loads with the Deponia 4 password; a copy of the reconstruction lives in `src/deponia4/`, nothing changed in it yet ([details](src/deponia4/VERSIONS.md)) |
+| Deponia 2 | Linux (GOG, packaged Dec 2015) | `Deponia2`, 22.4 MB, sha1 `6d2042d8c5a2` | 4.2.5, build 1185, built 6 Dec 2015 | 2629 | Data loads with the Deponia 2 password; the SDL2 player reaches the language select ([details](src/deponia2/VERSIONS.md)) |
+| Deponia 4 (Doomsday) | Linux (GOG, game version 1.2.0267) | `Deponia4`, 27.5 MB, sha1 `7d77245bba56` | 5.0.1, build 1189, built 6 Sep 2017 (**older** than Deponia 1's, the same build number), compiled with `-O0` | 2416 entries | Data loads with the Deponia 4 password; a copy of the reconstruction lives in `src/deponia4/`, nothing changed in it yet ([details](src/deponia4/VERSIONS.md)) |
 
 The engine builds are not in the order of the games: Deponia 4's engine (6 Sep 2017) is older than Deponia 1's (8 Feb 2019); Deponia 2 was packaged in Dec 2015 (its build date is
 not recovered). Deponia 4 is compiled without optimization (`-O0`; Deponia 1 is `-O2`, Deponia 2 not checked), which changes what every comparison of code means (see `src/deponia4/VERSIONS.md`).
