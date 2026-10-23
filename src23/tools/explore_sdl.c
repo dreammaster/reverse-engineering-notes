@@ -9,7 +9,7 @@
  *       ../worldobjects.c ../monsterpool.c ../monster.c ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../cmfplayer.c ../opl.c ../cmf.c \
  *       ../audio.c ../voc.c ../music.c ../spellrecord.c ../paperdoll.c ../statsheet.c ../roster.c ../viewrender.c ../minimap.c ../statuspanel.c ../font.c \
  *       ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c \
- *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../cluepaged.c ../cluebook.c ../clueentries.c ../clueitem.c ../cluetransport.c ../cluemonster.c ../cluemap.c ../cluespell.c ../pcx.c ../chargen.c ../creationwizard.c ../creation.c ../charcreate.c ../textfield.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../container.c ../repair.c ../maptrigger.c ../ailment.c ../document.c ../titlemenu.c ../spellcast.c ../consumable.c \
+ *       ../introstory.c ../intro2.c ../palettefade.c ../exedata.c ../cluepaged.c ../cluebook.c ../clueentries.c ../clueitem.c ../cluetransport.c ../cluemonster.c ../cluemap.c ../cluespell.c ../pcx.c ../chargen.c ../creationwizard.c ../creation.c ../charcreate.c ../textfield.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../container.c ../repair.c ../mount.c ../maptrigger.c ../ailment.c ../document.c ../titlemenu.c ../spellcast.c ../consumable.c \
  *       ../random.c ../viewport.c ../pictures.c ../pictures_stdio.c ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../palette.c \
  *       -L /c/sdk/SDL2-2.32.10/lib -lmingw32 -lSDL2main -lSDL2 -lm
  *   ./explore_sdl [options] <game dir>      (--help lists them: --game 2|3, --scale N, --no-splash, --no-title, --shareware, --no-sound, --clock-ms N; the chapter is found from the folder)
@@ -34,6 +34,7 @@
 #include <SDL.h>
 
 #include "audio.h"
+#include "explore.h"
 #include "cmfplayer.h"
 #include "exedata.h"
 #include "gameui.h"
@@ -541,6 +542,11 @@ int main(int argc, char **argv) {
             sessionRebuild(g_session);
         }
     }
+    if (opt("EXPLORE_MOUNTS")) { /* EXPLORE_MOUNTS=1 (testing): the first hero knows all four mounts, and the cells around the party are explored */
+        partySetU16(sessionPartyRecord(g_session, 0), PartyFieldAbilities, 0xF000);
+        ExploreReveal revealed;
+        exploreRevealAroundPlayer(&g_session->save, g_session->x, g_session->y, g_session->facing, &revealed);
+    }
     GameUiHost uiHost = {NULL, playEffect, playMusic, playIntro, storeSave, fetchSave, slotName, slotWrite, slotRead, introSoundBusy};
     if (!gameUiInit(&g_ui, g_session, g_worldDat, g_worldSize, pictureFileGet, g_pictures, &uiHost)) {
         fprintf(stderr, "the world data lacks the view tables\n");
@@ -642,6 +648,18 @@ int main(int argc, char **argv) {
                 }
             } else if (!opt("EXPLORE_DOORFRAME")) { /* EXPLORE_DOORFRAME=1: the picture of a door that is still opening */
                 gameUiSettle(&g_ui); /* otherwise it is passed before the picture */
+            }
+            const char *clicks = opt("EXPLORE_CLICKS"); /* EXPLORE_CLICKS="x,y;x,y": left clicks at those screen pixels (320 x 200) after the keys, before the picture ('r' as a prefix: the right button) */
+            while (clicks && *clicks) {
+                bool right = *clicks == 'r';
+                clicks += right;
+                int cx = 0, cy = 0, used = 0;
+                if (sscanf(clicks, "%d,%d%n", &cx, &cy, &used) < 2) {
+                    break;
+                }
+                gameUiClick(&g_ui, cx, cy, right);
+                clicks += used;
+                clicks += *clicks == ';';
             }
             gameUiDraw(&g_ui);
             writePng(shotPath, g_ui.screen, palette, ViewScreenWidth, ViewScreenHeight, 2);

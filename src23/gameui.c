@@ -799,6 +799,92 @@ static void partyInfoShow(GameUi *ui, unsigned member, int kind) {
     for (unsigned i = 0; i < count && i < UiPanelRunMax; i++) {
         ui->panelRuns[ui->panelRunCount++] = runs[i];
     }
+    if (kind == 3 && count > 0) { /* g_uiScratchFlags3 bit 0x1000: the list's lines 2-5 are the member's mounts, a click on one rides it */
+        ui->mountList = member + 1;
+    }
+}
+
+/*
+ * RevealMapRegion (yendor2.asm:44801): the mount chosen from the TRANSPORTS list. The view area becomes a box of the explored map around the party (a blank tile, then each explored cell's tile as on
+ * the local map, the compass arrow in the middle), its size by the party's Navigation; the message area names the mount and the charges that remain. A click on a cell flies there (the verdict
+ * decides: a refusal is the warning, a trap or trigger on the cell "THAT IS AN ILLUSION"), Escape gives up.
+ */
+static void mountStart(GameUi *ui, unsigned member, unsigned ability) {
+    GameSession *s = ui->session;
+    SessionMountInfo info;
+    if (sessionMountBegin(s, member, ability, &info) != MountCheckOk) {
+        return;
+    }
+    ui->mountMember = member;
+    ui->mountSlot = info.slot;
+    ui->mountRemaining = info.remaining;
+    ui->mountName = info.name;
+    ui->mountBox = mountRevealBox(partyAverageStatTiers(&s->save).navigation);
+    mountBoxOrigin(&ui->mountBox, s->x, s->y, &ui->mountOriginX, &ui->mountOriginY);
+    ui->panelRunCount = 0;
+    ui->overlay = UiOverlayMount;
+}
+
+static void mountDraw(GameUi *ui) {
+    GameSession *s = ui->session;
+    const ViewRenderer *r = &ui->renderer;
+    for (unsigned row = 0; row < 17; row++) {
+        for (unsigned col = 0; col < 28; col++) {
+            viewDrawPicture(r, LocalMapCategory, MinimapBlankTile, 8 + 8 * (int)col, 8 + 8 * (int)row, false, 0);
+        }
+    }
+    const MountBox *box = &ui->mountBox;
+    unsigned originPage = (unsigned)(s->y / LocalMapRows) * LocalMapBlocksPerRow + (unsigned)(s->x / LocalMapColumns);
+    uint8_t originAttr = mountPageAttribute(s->game, ui->worldDat, ui->worldSize, originPage);
+    for (unsigned row = 0; row < box->rows; row++) {
+        for (unsigned col = 0; col < box->columns; col++) {
+            int cx = ui->mountOriginX + (int)col, cy = ui->mountOriginY + (int)row;
+            if (cx < 0 || cy < 0 || cx >= WorldMapColumns || cy >= (int)s->map.rowCount || !exploreIsExplored(&s->save, cx, cy)) {
+                continue;
+            }
+            unsigned page = (unsigned)(cy / LocalMapRows) * LocalMapBlocksPerRow + (unsigned)(cx / LocalMapColumns);
+            if (!mountCellVisible(page == originPage, originAttr, mountPageAttribute(s->game, ui->worldDat, ui->worldSize, page))) {
+                continue;
+            }
+            int px = box->pixelX + 8 * (int)col, py = box->pixelY + 8 * (int)row;
+            uint16_t picture, overlay;
+            if (worldMapWallPictureOffset(s->game, worldMapTileA(&s->map, (unsigned)cy, (unsigned)cx), &picture)) {
+                viewDrawPicture(r, LocalMapCategory, picture, px, py, false, 0);
+            }
+            if (worldMapFloorPictureOffset(s->game, worldMapTileB(&s->map, (unsigned)cy, (unsigned)cx), &overlay) && overlay) {
+                viewDrawPicture(r, LocalMapCategory, overlay, px, py, true, 0);
+            }
+        }
+    }
+    unsigned arrow = (s->facing & SaveFacingNorth) ? 0 : (s->facing & SaveFacingSouth) ? 2 : (s->facing & SaveFacingEast) ? 1 : 3; /* DrawRevealMapDirectionIcon */
+    viewDrawPicture(r, LocalMapCategory, arrow, 0x74, 0x48, true, 0);
+    textPanelClear(r, true);
+    char line[40];
+    fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 241, 87, ui->mountName, 0x8A, 0, FontTransparent);
+    snprintf(line, sizeof(line), "%u REMAINING", ui->mountRemaining);
+    fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 241, 96, line, 0x0F, 0, FontTransparent);
+    fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 241, 102, "USES TODAY.", 0x0F, 0, FontTransparent);
+    panelRunsDraw(ui);
+}
+
+static void mountClick(GameUi *ui, int x, int y) {
+    GameSession *s = ui->session;
+    int cx, cy;
+    if (!mountCellFromClick(&ui->mountBox, ui->mountOriginX, ui->mountOriginY, x, y, &cx, &cy)) {
+        flashWarning(ui);
+        return;
+    }
+    MountTravelResult verdict = sessionMountFly(s, ui->mountMember, ui->mountSlot, cx, cy, ui->worldDat, ui->worldSize);
+    playPending(ui);
+    if (verdict == MountTravelOk) {
+        ui->overlay = UiOverlayNone;
+        gameUiAmbientMusic(ui);
+    } else if (verdict == MountTravelInteractive) { /* THAT IS / AN ILLUSION. in 0x5B at (240, 114) */
+        panelRun(ui, 240, 114, 0x5B, true, "THAT IS AN");
+        panelRun(ui, 240, 120, 0x5B, true, "ILLUSION.");
+    } else {
+        flashWarning(ui);
+    }
 }
 
 /* HandleItemDropOnPartyPortrait: the cursor item dropped on a member's face is worn if it has a slot and the slot is free, else stowed in the first free bag slot, if the carry weight allows (sound 6); else the beep. */
@@ -2281,6 +2367,9 @@ static void drawScreen(GameUi *ui) {
         }
     }
     switch (ui->overlay) {
+    case UiOverlayMount:
+        mountDraw(ui);
+        break;
     case UiOverlayLocalMap: {
         static LocalMapCell localCells[LocalMapColumns * LocalMapRows];
         int c0, r0;
@@ -2992,6 +3081,12 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
         }
         return true;
     }
+    if (ui->overlay == UiOverlayMount) { /* the flight waits for a click on the box; only Escape is heard */
+        if (key == UiKeyEscape) {
+            ui->overlay = UiOverlayNone;
+        }
+        return true;
+    }
     if (ui->overlay == UiOverlayWorldMap) { /* WaitForKeypressTickingMusic: any key */
         ui->overlay = UiOverlayNone;
         return true;
@@ -3041,6 +3136,7 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
 
 static bool gameUiKeyInner(GameUi *ui, UiKey key, bool ctrl) {
     wipeCheck(ui);
+    ui->mountList = 0;
     if (ui->vision) { /* WaitForKeypressTickingMusic: any key brings the party's own view back */
         ui->vision = false;
         sessionVisionEnd(ui->session);
@@ -3511,6 +3607,12 @@ static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
         }
         return true;
     }
+    if (ui->overlay == UiOverlayMount) { /* a left click names the cell to fly to; the right button is not heard */
+        if (!right) {
+            mountClick(ui, x, y);
+        }
+        return true;
+    }
     if (right && ui->overlay != UiOverlayNone && ui->overlay != UiOverlayTitle) { /* the right button backs out */
         return press(ui, UiKeyEscape);
     }
@@ -3563,7 +3665,13 @@ static bool gameUiClickInner(GameUi *ui, int x, int y, bool right) {
         ui->panelRunCount = 0;
         return true;
     }
+    unsigned list = ui->mountList;
+    ui->mountList = 0;
     ui->panelRunCount = 0;
+    if (list && !right && ui->overlay == UiOverlayNone && x >= 240 && x <= 311 && y >= 96 && y <= 191 && (y - 96) / 6 + 1 >= 2 && (y - 96) / 6 + 1 <= 5) {
+        mountStart(ui, list - 1, (unsigned)((y - 96) / 6 + 1)); /* the region table 0x5D5E: the lines of the TRANSPORTS list are the abilities 2-5 */
+        return true;
+    }
     bool running = clickDispatch(ui, x, y, right);
     restReport(ui);
     lockReport(ui);

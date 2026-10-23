@@ -14,6 +14,7 @@
 #include "gameclock.h"
 #include "interact.h"
 #include "lightsource.h"
+#include "mount.h"
 #include "item.h"
 #include "lockcatalog.h"
 #include "monster.h"
@@ -374,6 +375,19 @@ typedef struct {
     bool studyable, singleTarget;
 } SessionScrollInfo;
 bool sessionScrollInfo(GameSession *session, unsigned userSlot, unsigned itemSlot, SessionScrollInfo *out);
+
+/*
+ * The mounts (RevealMapRegion, yendor2.asm:44801; mount.h): a click on a learned mount in the TRANSPORTS list of a member's panel (lines 2-5 of the list) shows a box of the explored map around the party
+ * and a click on a cell flies there. `sessionMountBegin` checks the n-th learned mount (`ability` 2-5: charges left, the time of day) and names it with the charges that remain (daily charges less used);
+ * `sessionMountFly` gives TryTravelToClickedMapCell's verdict for a cell and, when it is fine, moves the party there (the cells around are revealed, the cell's trap or trigger runs), spends a charge and
+ * says MountTravelOk; the others are refusals (MountTravelOutside / Unexplored / FloorBlocked / WallBlocked / Interactive: THAT IS AN ILLUSION). `worldDat` is WORLD.DAT (the page table).
+ */
+typedef struct {
+    unsigned slot, remaining;
+    const char *name;
+} SessionMountInfo;
+MountCheckResult sessionMountBegin(GameSession *session, unsigned memberSlot, unsigned ability, SessionMountInfo *info);
+MountTravelResult sessionMountFly(GameSession *session, unsigned memberSlot, unsigned mountSlot, int cellX, int cellY, const uint8_t *worldDat, size_t worldSize);
 
 /*
  * The CRYSTAL BALL (item 0x253, Chapter 2; SessionUseVision; ShowVisionAtLocation, yendor2.asm:49095): the view is drawn from the fixed cell (340, 99) facing north with the place flags' low three bits

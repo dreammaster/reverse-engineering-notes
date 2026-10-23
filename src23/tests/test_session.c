@@ -2,7 +2,7 @@
  * Build and run (from src23/tests):
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_session test_session.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c \
- *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../container.c ../repair.c ../maptrigger.c ../ailment.c ../document.c && ./test_session
+ *       ../lighting.c ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../container.c ../repair.c ../mount.c ../maptrigger.c ../ailment.c ../document.c && ./test_session
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override).
  */
@@ -1051,6 +1051,44 @@ static void testRepair(GameKind game, const uint8_t *world, size_t size, const c
     sessionFree(s);
 }
 
+/* The mounts: the n-th learned mount, its charges and the time of day, then a flight to an explored cell (TryTravelToClickedMapCell's verdicts). */
+static void testMounts(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[200];
+    uint8_t *hero = sessionPartyRecord(s, 0);
+    SessionMountInfo info;
+    s->clock.minutes = 12 * 60;
+    partySetU16(hero, PartyFieldAbilities, 0);
+    check("a member with no mount has none to ride", sessionMountBegin(s, 0, 2, &info) == MountCheckNotLearned);
+    partySetU16(hero, PartyFieldAbilities, 0x8000 | 0x2000); /* PEGASUS and FLYING RUG */
+    partySetU16(hero, PartyFieldAbilityCharge, 0);
+    check("the first learned mount is the PEGASUS, one charge a day", sessionMountBegin(s, 0, 2, &info) == MountCheckOk && info.slot == 0 && info.remaining == 1 && strcmp(info.name, "PEGASUS") == 0);
+    check("the second is the FLYING RUG (4 a day, by day only)", sessionMountBegin(s, 0, 3, &info) == MountCheckOk && info.slot == 2 && info.remaining == 4);
+    s->clock.minutes = 2 * 60;
+    check("... which does not fly at night", sessionMountBegin(s, 0, 3, &info) == MountCheckWrongTime);
+    s->clock.minutes = 12 * 60;
+    check("a fourth mount that is not learned", sessionMountBegin(s, 0, 4, &info) == MountCheckNotLearned);
+    int startX = s->x, startY = s->y, cx = startX, cy = startY;
+    for (int dx = -2; dx <= 2; dx++) { /* an explored cell near the start that the verdict allows */
+        for (int dy = -2; dy <= 2; dy++) {
+            if ((dx || dy) && cx == startX && cy == startY && sessionMountFly(s, 0, 0, startX + dx, startY + dy, world, size) == MountTravelOk) {
+                cx = startX + dx;
+                cy = startY + dy;
+            }
+        }
+    }
+    snprintf(text, sizeof(text), "%s: a flight to an explored, passable cell moves the party and spends the charge", label);
+    check(text, (cx != startX || cy != startY) && s->x == cx && s->y == cy && partyGetU16(hero, PartyFieldAbilityCharge) == 1);
+    check("... and the one charge is gone for the day", sessionMountBegin(s, 0, 2, &info) == MountCheckNoCharges);
+    int here = s->x;
+    check("an unexplored far cell is refused", sessionMountFly(s, 0, 2, 5, 5, world, size) != MountTravelOk && s->x == here && partyGetU16(hero, PartyFieldAbilityCharge + 4) == 0);
+    check("a cell off the map is refused", sessionMountFly(s, 0, 2, -3, 4, world, size) == MountTravelOutside);
+    sessionFree(s);
+}
+
 /* The tool belt: the six slots under the resource panel (cursor item in, out and swapped; keys on the key ring) and IsItemRangeAvailable over them. */
 static void testBelt(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -1798,6 +1836,7 @@ int main(void) {
             testGroupFight(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBeltUse(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSearch(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testMounts(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testRepair(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBags(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBelt(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");

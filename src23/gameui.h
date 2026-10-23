@@ -18,6 +18,7 @@
 #include "partyinfo.h"
 #include "textfield.h"
 #include "exedata.h"
+#include "mount.h"
 #include "session.h"
 #include "viewrender.h"
 
@@ -31,7 +32,7 @@
  * Time and the ailment sweep are the platform's to call (sessionAdvanceTime, sessionTickAilments); gameUiKey runs the sweep once per command, like one pass of the loop.
  * Everything that needs a picture file goes through the ViewPictureFn given at init.
  */
-typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayTitle, UiOverlayClue, UiOverlayRoster, UiOverlayCreate, UiOverlayAlchemy, UiOverlayWorldMap } UiOverlay;
+typedef enum { UiOverlayNone, UiOverlayLocalMap, UiOverlayDialog, UiOverlayDetail, UiOverlayDolls, UiOverlayTalk, UiOverlayTitle, UiOverlayClue, UiOverlayRoster, UiOverlayCreate, UiOverlayAlchemy, UiOverlayWorldMap, UiOverlayMount } UiOverlay;
 
 typedef enum {
     UiKeyNone = 0,
@@ -118,6 +119,11 @@ typedef struct {
     unsigned pickUser, pickSlot; /* ... the member whose bag slot (1-8) it is in */
     bool reading;          /* the scroll (UiOverlayTalk) shows a readable item's text, not a conversation */
     unsigned targetKey;    /* ... or a key item's (0 = the key ring's): HandleGameCommand -> UnlockDoorCommand from a bag slot */
+    unsigned mountList;    /* the member + 1 whose TRANSPORTS list is in the message area (its lines 2-5 are clickable), 0 = none */
+    unsigned mountMember, mountSlot, mountRemaining; /* UiOverlayMount: the flying member, the mount's table slot and the charges left before this flight */
+    const char *mountName;
+    MountBox mountBox;     /* ... the box of the map around the party */
+    int mountOriginX, mountOriginY;
     bool vision;           /* the crystal ball's view is up: any key or click ends it */
     bool targetSearch;     /* the crosshair is the lockpick's (HandleSearchCommand), not the key ring's */
     unsigned searchUser, searchSlot; /* ... the member and item slot of the pick in use */

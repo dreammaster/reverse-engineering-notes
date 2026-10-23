@@ -7,6 +7,7 @@
 #include "chest.h"
 #include "container.h"
 #include "explore.h"
+#include "localmap.h"
 #include "globalflags.h"
 #include "lighting.h"
 #include "newgame.h"
@@ -2758,6 +2759,74 @@ InteractUnlockOutcome sessionUnlock(GameSession *s, uint16_t keyWord0, uint16_t 
         break;
     }
     return out;
+}
+
+MountCheckResult sessionMountBegin(GameSession *s, unsigned memberSlot, unsigned ability, SessionMountInfo *info) {
+    const uint8_t *member = sessionPartyRecord(s, memberSlot);
+    unsigned slot = 0;
+    if (!member || s->combat.active || s->combat.wiped) {
+        return MountCheckNotAMount;
+    }
+    MountCheckResult result = mountCheck(member, ability, s->clock.minutes, &slot);
+    if (result == MountCheckOk && info) {
+        const MountAbility *mount = mountAbility(slot);
+        info->slot = slot;
+        info->name = mount->name;
+        info->remaining = (unsigned)((int)mount->dailyCharges - (int16_t)partyGetU16(member, PartyFieldAbilityCharge + 2 * slot));
+    }
+    return result;
+}
+
+/* TryInteractAtPosition's outcome for a cell the party is not standing on (the verdict of a mount's flight looks at it). */
+static InteractOutcome interactAt(GameSession *s, int col, int row) {
+    WorldObjectRecord object;
+    LockRecord lock;
+    uint16_t curgameFlags = 0, curgameValue = 0;
+    bool lockOpen = false, curgameDone = false, spawned = false;
+    if (!worldObjectFind(&s->objects, s->game, col, row, &object)) {
+        return InteractOutcomeNone;
+    }
+    memset(&lock, 0, sizeof(lock));
+    if (object.flags & WorldObjectFlagDoor) {
+        if (!lockCatalogRecord(&s->locks, object.value, &lock)) {
+            return InteractOutcomeNone;
+        }
+        lockOpen = interactBitmapTest(&s->save, interactWorldObjectBitIndex(s->game, &object));
+    } else if (object.flags & WorldObjectFlagCurgameRecord) {
+        if (!lockCatalogCurgameRecord(&s->locks, object.value, &curgameFlags, &curgameValue)) {
+            return InteractOutcomeNone;
+        }
+        curgameDone = interactBitmapTest(&s->save, interactWorldObjectBitIndex(s->game, &object));
+    } else if (object.flags & WorldObjectFlagMonsterSpawn) {
+        spawned = monsterSpawnFlagTest(&s->save, s->game, object.value);
+    }
+    return interactClassify(&object, &lock, lockOpen, curgameFlags, curgameDone, spawned);
+}
+
+MountTravelResult sessionMountFly(GameSession *s, unsigned memberSlot, unsigned mountSlot, int cellX, int cellY, const uint8_t *worldDat, size_t worldSize) {
+    uint8_t *member = sessionPartyRecord(s, memberSlot);
+    if (!member || cellX < 0 || cellY < 0 || cellX >= WorldMapColumns || cellY >= (int)s->map.rowCount) {
+        return MountTravelOutside;
+    }
+    unsigned originPage = (unsigned)(s->y / LocalMapRows) * LocalMapBlocksPerRow + (unsigned)(s->x / LocalMapColumns);
+    unsigned destPage = (unsigned)(cellY / LocalMapRows) * LocalMapBlocksPerRow + (unsigned)(cellX / LocalMapColumns);
+    uint16_t wall = worldMapTileA(&s->map, (unsigned)cellY, (unsigned)cellX), floor = worldMapTileB(&s->map, (unsigned)cellY, (unsigned)cellX);
+    MountTravelResult verdict = mountTravelVerdict(s->game, originPage == destPage, mountPageAttribute(s->game, worldDat, worldSize, originPage), mountPageAttribute(s->game, worldDat, worldSize, destPage),
+                                                    exploreIsExplored(&s->save, cellX, cellY), movementIsFloorTypeImpassable(s->game, floor), movementClassifyFloorType(s->game, wall) != MovementFloorNormal,
+                                                    interactAt(s, cellX, cellY));
+    if (verdict != MountTravelOk) {
+        s->pendingSound = RefusalSound;
+        return verdict;
+    }
+    s->x = cellX;
+    s->y = cellY;
+    mountSpendCharge(member, mountSlot);
+    ExploreReveal revealed;
+    exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
+    sessionRebuild(s);
+    applyMapTrigger(s);
+    say(s, "flew to column %u", (unsigned)cellX);
+    return MountTravelOk;
 }
 
 void sessionVisionBegin(GameSession *s) {

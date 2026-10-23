@@ -3,7 +3,7 @@
  *   gcc -Wall -Wextra -std=c99 -I .. -o test_gameui test_gameui.c ../gameui.c ../alchemylist.c ../confirmprompt.c ../partyinfo.c ../mapview.c ../monsterpanel.c ../textpanel.c ../session.c ../thrown.c ../windowbake.c ../interact.c ../lockcatalog.c ../worldobjects.c ../monsterpool.c ../monster.c \
  *       ../globalflags.c ../chest.c ../rest.c ../gameclock.c ../combat.c ../explore.c ../newgame.c ../party.c ../item.c ../bcd4.c ../effect.c ../random.c ../viewport.c ../lighting.c \
  *       ../dungeongrid.c ../movement.c ../worldmap.c ../savegame.c ../spellrecord.c ../spellcast.c ../consumable.c ../lightsource.c ../spelljump.c ../travel.c ../storyevent.c \
- *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../container.c ../repair.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
+ *       ../conversation.c ../dialog.c ../dialogservice.c ../shop.c ../relics.c ../inventory.c ../container.c ../repair.c ../mount.c ../maptrigger.c ../ailment.c ../document.c ../viewrender.c ../minimap.c ../statuspanel.c \
  *       ../font.c ../uiregions.c ../localmap.c ../location.c ../gamedialog.c ../maininput.c ../music.c ../paperdoll.c ../statsheet.c ../roster.c ../pictures.c ../palette.c ../cluepaged.c ../cluebook.c ../titlemenu.c ../creationwizard.c ../creation.c ../charcreate.c ../textfield.c ../clueentries.c ../cluetransport.c ../cluemonster.c ../cluespell.c ../cluemap.c ../worldmap_stdio.c ../chargen.c ../clueitem.c ../exedata.c && ./test_gameui
  *
  * Needs WORLD.DAT of yendor2/game and yendor3/game (each game skipped if absent; YENDOR2_GAME_DIR / YENDOR3_GAME_DIR override). The pictures are synthetic.
@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include "container.h"
+#include "explore.h"
 #include "gameui.h"
 #include "spellcast.h"
 #include "maininput.h"
@@ -784,6 +785,49 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
         check("a click on the view searches what is ahead: nothing lockable gives the refusal sound", !ui.targeting && !ui.targetSearch && g_effects > effects);
         itemSlotSet(sessionBeltSlot(s, 1), 0, 0);
         saveHeaderSetU16(&s->save, 0x20, 0);
+    }
+
+    /* a mount: the transports icon lists it, a click on its line shows the box of the map, a click on an explored cell flies there */
+    {
+        uint8_t *rider = sessionPartyRecord(s, 0);
+        int iconX = -1, iconY = -1;
+        for (int py = 140; py < 199 && iconX < 0; py++) {
+            for (int px = 8; px < 70 && iconX < 0; px++) {
+                if (uiRegionHit(game, UiRegionsPartyPanels, px, py) == 7) {
+                    iconX = px;
+                    iconY = py;
+                }
+            }
+        }
+        ExploreReveal revealed; /* the cells around the party are on the map (the flight goes only to explored ones) */
+        exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
+        partySetU16(rider, PartyFieldAbilities, 0x8000);
+        partySetU16(rider, PartyFieldAbilityCharge, 0);
+        s->clock.minutes = 12 * 60;
+        gameUiClick(&ui, iconX, iconY, false);
+        check("the transports icon lists the mount", ui.mountList == 1 && ui.panelRunCount >= 2);
+        gameUiClick(&ui, 250, 103, false);
+        check("a click on the mount's line shows the box of the map", ui.overlay == UiOverlayMount && strcmp(ui.mountName, "PEGASUS") == 0 && ui.mountRemaining == 1);
+        gameUiDraw(&ui);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("Escape gives the flight up: no charge spent", ui.overlay == UiOverlayNone && partyGetU16(rider, PartyFieldAbilityCharge) == 0);
+        gameUiClick(&ui, iconX, iconY, false);
+        gameUiClick(&ui, 250, 103, false);
+        int keepX = s->x, keepY = s->y;
+        uint16_t keepFacing = s->facing;
+        for (int cx = 0; cx < 224 && ui.overlay == UiOverlayMount; cx += 8) { /* an explored cell of the box that the verdict allows */
+            for (int cy = 8; cy < 144 && ui.overlay == UiOverlayMount; cy += 8) {
+                gameUiClick(&ui, 8 + cx + 4, cy + 4, false);
+            }
+        }
+        check("a click on an explored cell flies there and spends the charge", ui.overlay == UiOverlayNone && partyGetU16(rider, PartyFieldAbilityCharge) == 1);
+        partySetU16(rider, PartyFieldAbilities, 0);
+        gameUiClick(&ui, iconX, iconY, false);
+        memset(&s->combat, 0, sizeof(s->combat));
+        s->x = keepX;
+        s->y = keepY;
+        s->facing = keepFacing;
+        sessionRebuild(s);
     }
 
     /* a bag on the inventory screen: the right button opens it, its icon (region 9) closes it, leaving the screen writes it back */

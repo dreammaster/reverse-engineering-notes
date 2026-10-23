@@ -6784,6 +6784,17 @@ curgame record (cell flag objects 0x8000 / 0x4000) -- already open: NOT LOCKED; 
 runs once more (`ApplySavingThrowEffect`): a trapped lock (flag 0x80) either springs it or shows TRAP / DEFEATED (0x7CA8, 0x7FD5), an untrapped one says UNLOCKED and loses the door marker (`and [cell+6], 0xBFFF`).
 `session.c` `sessionSearch` (decision: `combatSearchTrap`), `gameui.c` `searchStart` / `unlockTry`.
 
+### Flying with a mount (RevealMapRegion, 2026-10-23)
+
+The TRANSPORTS list a member's third panel icon writes (`HandlePartyStatusPanelInput`, which sets `g_uiScratchFlags3` 0x1000) has the header at y = 96 and the learned mounts on the next lines; `start` (loc_10696) hit-tests a click
+against the table 0x5D5E (sixteen 6-pixel lines from y = 96 at x 240-311) and calls `RevealMapRegion` (:44801) with the line number -- 2 to 5 are the member's 1st to 4th learned mount (`mount.h`: charges left, the time of
+day). The view area becomes 28 x 17 blank tiles (category 9 picture 0x13 from (8, 8)) with the box of explored map (11 x 7 .. 27 x 17 cells by the Navigation tier, `mountRevealBox`; each explored cell drawn as on the local
+map; on another map page only by `mountCellVisible`) and the compass arrow (category 9 picture 0 north, 1 east, 2 south, 3 west) at (116, 72); the message area shows the mount's name (241, 87), "n REMAINING" and "USES TODAY."
+(96, 102; n = the daily charges less those used). A left click is `TryTravelToClickedMapCell` (:45350): outside the box 1, unexplored 2, impassable floor type 3, blocked wall type 4 -- each the warning beep and the
+loop goes on -- a cell with a trap or trigger (`TryInteractAtPosition` outcome 6 or 7) THAT IS AN / ILLUSION. (0x8E05, 0x5B at (240, 114)); otherwise the party is on that cell, the charge counter +1, the window refreshed,
+the cells around revealed, the cell's trigger applied. Escape gives up without a charge; the right button is not heard. `session.c` `sessionMountBegin` / `sessionMountFly`, `gameui.c` `mountStart` / `mountDraw` /
+`mountClick`; `EXPLORE_MOUNTS=1` and `EXPLORE_CLICKS="x,y;..."` of the SDL tool exist to look at it headlessly.
+
 ### The crystal ball (ShowVisionAtLocation, 2026-10-23)
 
 Item 0x253 (Chapter 2) through `DispatchItemAbilityCommand` runs `ShowVisionAtLocation` (:49086): the party's X, Y, facing and place flags `word_36C79` are pushed, the flags' low three bits set to 1, the position set to (0x154, 0x63) = (340, 99)
