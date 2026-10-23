@@ -31,6 +31,9 @@ void selectLocationRecord(Machine &m, uint8_t table, uint8_t index);
 struct XY { uint8_t x, y; };
 XY partyMapPosition(Machine &m);
 XY toViewPosition(Machine &m, uint8_t x, uint8_t y);
-void storeViewPosition(Machine &m);   // 17DBB: viewX/viewY = partyMapPosition()
+void storeViewPosition(Machine &m);
+// 18024: draws the map cell (x, y) into the view window (terrain tile, or the object tile of the cell's action class);
+// the registers it leaves are the text cursor (dl = rectTextX, bl = rectTextY)
+void drawMapCell(Machine &m, uint8_t x, uint8_t y);   // 17DBB: viewX/viewY = partyMapPosition()
 
 } // namespace wl

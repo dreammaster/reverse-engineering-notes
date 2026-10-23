@@ -1,5 +1,8 @@
 #include "wasteland1/mapcells.h"
 #include "wasteland1/globals.h"
+#include "wasteland1/legacy.h"
+#include "wasteland1/party.h"
+#include "wasteland1/combat.h"
 
 namespace wl {
 
@@ -104,6 +107,70 @@ void storeViewPosition(Machine &m) {
 	const XY p = partyMapPosition(m);
 	m.d8(g::viewX) = p.x;
 	m.d8(g::viewY) = p.y;
+}
+
+void drawMapCell(Machine &m, uint8_t x, uint8_t y) {
+	m.d8(0xBA04) = x;
+	m.d8(0xBA05) = y;
+	uint8_t al = m.d8(uint16_t(m.d16(g::locationsPtr) + 0x33));
+	enum { Tile, Object } kind = Tile;
+	bool draw = true;
+	if (outsideMap(m, x, y)) {
+		kind = Tile;   // draws the default tile al
+	} else {
+		const Cell c{tileClassAt(m, x, y), 0};
+		auto record = [&]() { selectLocationRecord(m, c.tileClass, actionAt(m, x, y)); };
+		bool tile = false;
+		switch (c.tileClass) {
+		case 5:
+			al = 5;
+			kind = Object;
+			break;
+		case 4:
+			record();
+			al = uint8_t(m.d8(uint16_t(m.d16(g::locationDetailsPtr) + 1)) & 0x7F);
+			kind = al < 0x0A ? Object : Tile;
+			if (kind == Tile) draw = true;
+			break;
+		case 9: {
+			record();
+			const uint8_t distance = cellDistance(m, x, y);
+			if (distance < m.d8(0x46EE)) m.d8(0x46EE) = distance;
+			al = distance;
+			const uint8_t dayTime = m.d8(uint16_t(g::saved2 + 0x0C));
+			if (dayTime < 6 || dayTime >= 0x12) { al = 8; kind = Object; } else tile = true;
+			break;
+		}
+		default:
+			tile = true;
+			break;
+		}
+		if (tile) {
+			setViewRowPointer(m, y);
+			al = m.d8(uint16_t(m.d16(0x46CA) + x));
+			kind = Tile;
+		}
+	}
+	(void)draw;
+	if (kind == Object) {
+		setViewRowPointer(m, y);
+		const uint8_t ah = m.d8(uint16_t(m.d16(0x46CA) + x));
+		uint8_t sx = x, sy = y;
+		if (cellToScreen(m, sx, sy)) return;
+		m.d8(0x4685) = sx;
+		m.d8(0x4686) = sy;
+		X86Regs r;
+		r.al = al; r.ah = ah; r.dl = sx; r.bl = sy;
+		legacy::call(m, 0x000C, r);   // j_start_2
+	} else {
+		uint8_t sx = x, sy = y;
+		if (cellToScreen(m, sx, sy)) return;
+		m.d8(0x4685) = sx;
+		m.d8(0x4686) = sy;
+		X86Regs r;
+		r.al = al; r.dl = sx; r.bl = sy;
+		legacy::call(m, 0x0009, r);   // j_start_1
+	}
 }
 
 } // namespace wl

@@ -36,5 +36,11 @@ PORT(toViewPosition) {                                                          
 	r.b.b.l = r.a.b.l = p.y;
 }
 
+PORT(drawMapCell) {                                                                     // 18024: dl = x, bl = y
+	drawMapCell(m, r.d.b.l, r.b.b.l);
+	r.d.b.l = m.d8(g::rectTextX);
+	r.b.b.l = m.d8(g::rectTextY);
+}
+
 } // namespace rc
 } // namespace wl
