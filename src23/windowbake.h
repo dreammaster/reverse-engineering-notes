@@ -38,6 +38,9 @@ typedef struct {
 /* What the outcome writes; `curgameValue` is the curgame record's packed value (outcomes 6 and 7), `object` the cell's record (outcome 5). */
 WindowBake windowBakeForOutcome(InteractOutcome outcome, const WorldObjectRecord *object, uint16_t curgameValue);
 
+/* The same verdict for one world cell (TryInteractAtPosition's outcome run through windowBakeForOutcome); nothing is baked for a cell with no object. */
+WindowBake windowBakeAtCell(GameKind game, const WorldObjectTable *objects, const LockCatalog *locks, SaveGame *save, int x, int y);
+
 void windowBakeApply(DungeonGridCell *cell, const WindowBake *bake);
 
 /*

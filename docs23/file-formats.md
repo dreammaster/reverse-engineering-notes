@@ -1191,6 +1191,7 @@ three of them (not the rug) with VALUE, USES and TIME; the time reads ANYTIME wh
 The **local area map** (`ShowLocalAreaMap`, the M key; `localmap.c`; `RENDER_LOCALMAP=1`): the world is cut into blocks of 40 x 24 cells, 20 blocks per row; the party's
 block is shown full screen as 8 x 8 tiles (category 9, the minimap's pictures) from y = 8, unexplored cells as the blank tile 0x13, the party as the compass arrow. The clue book's
 map pages (F1) use the same drawing for any block.
+`DrawLocalMapCell` (the M key only -- the clue book clears the flag) first asks `TryInteractAtPosition` about each explored cell: outcome 6 (a curgame trigger with flag 0x10) draws the record's value as the floor type, outcome 7 (flag 0x8) as the wall type -- the same verdict the dungeon window bakes (`windowBakeAtCell`).
 
 **Sound events** (`TriggerSoundEvent`, yendor2.asm:43714): the argument is simply the 1-based effect id of WORLD.DAT's VOC table (`audio.h`; `LookupSoundEffectBlockOffset(id)`).
 With no digital sound device only id 3 does anything (a PC speaker beep). Call-site census of the ids with a literal argument (Chapter 2): **1** opening

@@ -20,8 +20,9 @@
  * legend word 4) over it when that is not zero. The party is marked with the compass arrow (minimapCompassPicture) at
  * (8 * (x mod 40), 8 * (y mod 24 + 1)).
  *
- * Not reproduced: while the local map is up the original also asks TryInteractAtPosition about every explored cell and, for a door or
- * trigger whose state changed (outcomes 6 and 7), draws the replacement tile it reports instead of the wall or floor.
+ * While the local map is up (the M key, not the clue book's pages) the original also asks TryInteractAtPosition about every explored cell and, for a
+ * trigger that is still to go off (outcomes 6 and 7), draws the curgame record's value as the cell's floor (6) or wall (7) type instead -- gameui.c does it
+ * with windowBakeAtCell, the same verdict the dungeon window bakes.
  */
 enum { LocalMapColumns = 40, LocalMapRows = 24, LocalMapBlocksPerRow = 20, LocalMapTileSize = 8, LocalMapTop = 8, LocalMapCategory = 9 };
 

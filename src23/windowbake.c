@@ -50,35 +50,41 @@ void windowBakeApply(DungeonGridCell *cell, const WindowBake *bake) {
     }
 }
 
+WindowBake windowBakeAtCell(GameKind game, const WorldObjectTable *objects, const LockCatalog *locks, SaveGame *save, int x, int y) {
+    WorldObjectRecord object;
+    if (!worldObjectFind(objects, game, x, y, &object)) {
+        WindowBake none;
+        memset(&none, 0, sizeof(none));
+        return none;
+    }
+    LockRecord lock;
+    memset(&lock, 0, sizeof(lock));
+    uint16_t curgameFlags = 0, curgameValue = 0;
+    bool alreadyDone = false, spawned = false;
+    switch (interactSelectBranch(&object)) {
+    case InteractBranchLock:
+        lockCatalogRecord(locks, object.value, &lock);
+        alreadyDone = interactBitmapTest(save, interactWorldObjectBitIndex(game, &object));
+        break;
+    case InteractBranchCurgame:
+        lockCatalogCurgameRecord(locks, object.value, &curgameFlags, &curgameValue);
+        alreadyDone = interactBitmapTest(save, interactWorldObjectBitIndex(game, &object));
+        break;
+    case InteractBranchMonsterSpawn:
+        spawned = monsterSpawnFlagTest(save, game, object.value);
+        break;
+    default:
+        break;
+    }
+    InteractOutcome outcome = interactClassify(&object, &lock, alreadyDone, curgameFlags, alreadyDone, spawned);
+    return windowBakeForOutcome(outcome, &object, curgameValue);
+}
+
 unsigned dungeonGridBakeMarkers(DungeonGrid *grid, GameKind game, const WorldObjectTable *objects, const LockCatalog *locks, SaveGame *save) {
     unsigned changed = 0;
     for (int col = 0; col < DungeonGridSize; col++) {
         for (int row = 0; row < DungeonGridSize; row++) {
-            WorldObjectRecord object;
-            if (!worldObjectFind(objects, game, grid->originCol + col, grid->originRow + row, &object)) {
-                continue;
-            }
-            LockRecord lock;
-            memset(&lock, 0, sizeof(lock));
-            uint16_t curgameFlags = 0, curgameValue = 0;
-            bool alreadyDone = false, spawned = false;
-            switch (interactSelectBranch(&object)) {
-            case InteractBranchLock:
-                lockCatalogRecord(locks, object.value, &lock);
-                alreadyDone = interactBitmapTest(save, interactWorldObjectBitIndex(game, &object));
-                break;
-            case InteractBranchCurgame:
-                lockCatalogCurgameRecord(locks, object.value, &curgameFlags, &curgameValue);
-                alreadyDone = interactBitmapTest(save, interactWorldObjectBitIndex(game, &object));
-                break;
-            case InteractBranchMonsterSpawn:
-                spawned = monsterSpawnFlagTest(save, game, object.value);
-                break;
-            default:
-                break;
-            }
-            InteractOutcome outcome = interactClassify(&object, &lock, alreadyDone, curgameFlags, alreadyDone, spawned);
-            WindowBake bake = windowBakeForOutcome(outcome, &object, curgameValue);
+            WindowBake bake = windowBakeAtCell(game, objects, locks, save, grid->originCol + col, grid->originRow + row);
             DungeonGridCell *cell = dungeonGridCellMutable(grid, row, col);
             if (cell && (bake.flagsOr || bake.setWall || bake.setFloor || bake.monsterMarker)) {
                 windowBakeApply(cell, &bake);

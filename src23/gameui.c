@@ -34,6 +34,7 @@
 #include "statuspanel.h"
 #include "textpanel.h"
 #include "titlemenu.h"
+#include "windowbake.h"
 #include "uiregions.h"
 
 static void paletteSyncToClock(GameUi *ui);
@@ -2375,6 +2376,17 @@ static void drawScreen(GameUi *ui) {
         int c0, r0;
         localMapBlockOrigin(s->x, s->y, &c0, &r0);
         localMapFill(localCells, s->game, &s->map, &s->save, c0, r0);
+        for (int i = 0; i < LocalMapColumns * LocalMapRows; i++) { /* DrawLocalMapCell: a trigger that changed the wall or the floor shows its new tile */
+            if (localCells[i].explored) {
+                WindowBake bake = windowBakeAtCell(s->game, &s->objects, &s->locks, &s->save, c0 + i % LocalMapColumns, r0 + i / LocalMapColumns);
+                if (bake.setWall) {
+                    localCells[i].wallType = bake.newType;
+                }
+                if (bake.setFloor) {
+                    localCells[i].floorType = bake.newType;
+                }
+            }
+        }
         memset(ui->screen, 0, sizeof(ui->screen));
         localMapDraw(&ui->renderer, localCells, s->x, s->y, s->facing);
         break;

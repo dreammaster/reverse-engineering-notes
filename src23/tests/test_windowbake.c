@@ -164,6 +164,28 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
     printf("     %s: %u windows, %u cells baked, %u monster markers\n", label, windows, bakedCells, monsterMarkers);
     check("windows bake something and every monster marker matches its world object", bakedCells > 0 && monsterMarkers > 0 && badMarkers == 0);
 
+    /* the local map asks about one cell at a time: a curgame trigger rewrites the floor or the wall, a cell with no object nothing */
+    unsigned floorTriggers = 0, wallTriggers = 0, disagree = 0;
+    for (int col = 0x28; col < 0x28 + 800; col++) {
+        for (int row = 0; row < 168; row++) {
+            WorldObjectRecord object;
+            if (!worldObjectFind(&objects, game, col, row, &object)) {
+                continue;
+            }
+            WindowBake one = windowBakeAtCell(game, &objects, &locks, &save, col, row);
+            floorTriggers += one.setFloor;
+            wallTriggers += one.setWall;
+            if (interactSelectBranch(&object) == InteractBranchCurgame && (one.setFloor || one.setWall)) {
+                uint16_t f, v;
+                disagree += !(lockCatalogCurgameRecord(&locks, object.value, &f, &v) && one.newType == v && (f & 0x18) != 0);
+            }
+        }
+    }
+    printf("     %s: %u floor triggers, %u wall triggers on the local map\n", label, floorTriggers, wallTriggers);
+    check("the local map finds triggers that rewrite a floor or a wall, each with its record's value", floorTriggers + wallTriggers > 0 && disagree == 0);
+    WindowBake empty = windowBakeAtCell(game, &objects, &locks, &save, 0, 0);
+    check("a cell with no object bakes nothing", !empty.flagsOr && !empty.setWall && !empty.setFloor && !empty.monsterMarker);
+
     /* UnlockDoorCommand: find a door whose lock needs a key tier, stand just south of it facing north and try keys */
     bool unlockTested = false;
     for (int col = 0x28; col < 0x28 + 800 && !unlockTested; col++) {
