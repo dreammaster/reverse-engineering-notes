@@ -64,7 +64,8 @@ NOISE = {"_Znwm", "_Znam", "_ZdlPv", "_ZdaPv", "_ZdlPvm", "malloc", "calloc", "r
          "__cxa_atexit", "__cxa_begin_catch", "__cxa_end_catch", "__cxa_rethrow", "__cxa_allocate_exception", "__cxa_throw",
          "_Unwind_Resume", "__gxx_personality_v0", "__stack_chk_fail", "abort", "__assert_fail", "__cxa_pure_virtual",
          "_ZSt9terminatev", "_ZNSs4_Rep20_S_empty_rep_storageE", "clock_gettime", "gettimeofday", "time", "pthread_mutex_lock",
-         "pthread_mutex_unlock", "pthread_mutex_init", "pthread_mutexattr_init", "pthread_mutexattr_settype", "pthread_mutex_destroy"}
+         "pthread_mutex_unlock", "pthread_mutex_init", "pthread_mutexattr_init", "pthread_mutexattr_settype", "pthread_mutex_destroy",
+         "__dynamic_cast"}  # (-O0 casts again at every use, -O2 once)
 NOISE |= set(MATH) | {n + "f" for n in MATH} | {"sincos", "sincosf"}  # (the optimizer makes a call of the library of sqrt, floor ... an instruction)
 NEEDS_ARGS = {"sincosf", "sincos", "clock_gettime", "gettimeofday", "time", "av_malloc", "av_mallocz", "av_realloc", "av_calloc", "av_malloc_array", "av_mallocz_array", "fwrite", "rand", "_Znwm", "_Znam", "malloc", "calloc", "_Znwj", "_Znaj", "memcpy", "memmove", "memset", "strlen", "memcmp", "strncmp", "strcmp"} | set(MATH) | {n + "f" for n in MATH}
 STRING_PREFIXES = ("_ZNSaI", "_ZNSs", "_ZNKSs", "_ZNSbIw", "_ZNKSbIw", "_ZSt", "_ZNSt", "_ZNKSt", "_ZStl", "_ZStp", "_ZSteq", "_ZStne")
@@ -106,6 +107,7 @@ class Image:
         self.pages = []      # the pages mapped on demand
         self.trace = []
         self.stopped = None
+        self.failure = ""
         self.plt_names = {}
         self._find_plt(data)
         self.low_pages = []
@@ -303,11 +305,17 @@ class Image:
             raw = struct.pack("<d", v) if is_double else struct.pack("<f", v)
             uc.reg_write(reg, int.from_bytes(raw.ljust(16, b"\0"), "little"))
         uc.reg_write(UC_X86_REG_RAX, 0)
+        self.failure = ""
         try:
             uc.emu_start(address, SENTINEL, timeout=RUN_MICROSECONDS, count=MAX_INSNS)
-        except UcError:
+        except UcError as e:
+            self.failure = "fault: %s" % e
             return None
-        if self.stopped or uc.reg_read(UC_X86_REG_RIP) != SENTINEL:
+        if self.stopped:
+            self.failure = "stopped in " + self.stopped
+            return None
+        if uc.reg_read(UC_X86_REG_RIP) != SENTINEL:
+            self.failure = "time or instruction limit"
             return None
         after = []
         for a, content in blocks:
@@ -446,6 +454,10 @@ def same(a, b, ret, tolerance=2e-6):
         x, = struct.unpack(fmt, a[1][:width])
         y, = struct.unpack(fmt, b[1][:width])
         return x == y or (x != x and y != y) or (x == x and y == y and abs(x - y) <= tolerance * max(1.0, abs(x), abs(y)))
+    if ret == "bool":
+        return bool(a[0] & 0xFF) == bool(b[0] & 0xFF)  # (a member byte returned as it is can hold any number)
+    if 0x400000 <= a[0] < IMAGE_TOKEN_END and 0x400000 <= b[0] < IMAGE_TOKEN_END:
+        return True  # (the address of a static of the image: it differs by build)
     mask = {"bool": 0xFF, "char": 0xFF, "unsigned char": 0xFF, "short": 0xFFFF, "unsigned short": 0xFFFF, "long": 0xFFFFFFFFFFFFFFFF,
             "unsigned long": 0xFFFFFFFFFFFFFFFF}.get(ret, 0xFFFFFFFF)
     return (a[0] & mask) == (b[0] & mask)
@@ -558,6 +570,7 @@ def main():
         count = 0
         trial_no = 0
         failed = None
+        fails = 0
         arg_sets = list(inputs([k if k != "p" else "i" for k in kinds if k != "p"], rng)) if [k for k in kinds if k != "p"] else [([], [])]
         if is_method or "p" in kinds:
             rng.shuffle(arg_sets)
@@ -595,8 +608,12 @@ def main():
                 im1, im2 = Image(args[0]), Image(args[1])
                 r1 = r2 = None
             if r1 is None or r2 is None:
-                failed = "image 1" if r1 is None else "image 2"
-                break
+                # (an input that does not run, e.g. a loop over a random size, is left out; the method is skipped when none runs)
+                failed = ("image 1: " + im1.failure) if r1 is None else ("image 2: " + im2.failure)
+                fails += 1
+                if fails >= 3 and count == 0:
+                    break  # (not worth the time limit of every input)
+                continue
             count += 1
             problems = []
             if ret != "memory" and not same((r1["rax"], r1["xmm0"]), (r2["rax"], r2["xmm0"]), ret):
@@ -612,7 +629,7 @@ def main():
                 problems.append("calls %s / %s" % (r1["trace"][:6], r2["trace"][:6]))
             if problems:
                 diffs.append((iv, [f[0] for f in fl], problems, safe))
-        if failed or count == 0:
+        if count == 0:
             skipped += 1
             skip_reasons[failed or "none"] = skip_reasons.get(failed or "none", 0) + 1
             continue
@@ -627,6 +644,8 @@ def main():
             same_all += 1
             if not quiet:
                 print("same      %s (%d inputs)" % (d, count))
+    for reason, n in sorted(skip_reasons.items(), key=lambda x: -x[1]):
+        print("skipped %4d  %s" % (n, reason))
     print("ran %d, the same on every input %d, different %d, different only in blocks with numbers over 1 %d, skipped %d" % (ran, same_all, differ, weak, skipped))
     return 0
 
