@@ -133,10 +133,12 @@ typedef struct GameSession {
     DocumentCatalog documents; /* the readable texts (document.h) */
     unsigned readCategory, readId; /* the document the last SessionUseRead opened */
     DocumentReadability readability; /* how much of it the reader could read */
+    const uint8_t *worldDat;   /* WORLD.DAT as sessionNew was given it (the page attribute table); it must outlive the session */
+    size_t worldSize;
     bool scrollCast;           /* internal: a spell being cast from a scroll (no knowledge, no cost, attacks "already resolved") */
     unsigned scrollTarget;     /* its single-target recipient slot */
     unsigned castTarget;       /* internal: the recipient slot + 1 of a single-target spell chosen on the alchemy screen (sessionCastOn), 0 = the caster */
-    unsigned unlockMessage;    /* sessionUnlock / sessionSearch: 1 = NOT LOCKED, 2 = UNLOCKED, 3 = THE LOCKPICK BROKE, 4 = TRAP DEFEATED for the status panel (the front end clears it) */
+    unsigned unlockMessage;    /* sessionUnlock / sessionSearch: 1 = NOT LOCKED, 2 = UNLOCKED, 3 = THE LOCKPICK BROKE, 4 = TRAP DEFEATED, 5-7 the repair's words, 8 = YOUR SPELL HAS FAILED., 9 = Chapter 3's YOU CAN NOT JUMP THROUGH HERE for the status panel (the front end clears it) */
     bool lockReport;           /* a step into a marked door cell was refused (sessionMove): `lockFlags` / `lockValue` / `lockSkill` are what ShowLockStatus (lockStatusText) needs; the front end writes the message and clears this */
     uint16_t lockFlags, lockValue, lockSkill;
     RestOutcome rest;          /* the last rest (sessionRest) ... */
@@ -273,7 +275,13 @@ SessionCast sessionCastOn(GameSession *session, unsigned casterSlot, unsigned sp
  * key. A key to a destination (ExamineTarget: the item's target entry has flag 4 and no container bits) takes the party there when its gate flag is set (Travelled), else
  * shows its description (Closed) or, in Chapter 3 inside the artifact realm holding a light weapon, refuses (Blocked); nothing is spent. A readable item answers Read: `readCategory` / `readId` name the text, `readability` says how many words of five the reader's Linguistics can read (sessionDocumentLine gives the lines). The light sources (items 8 / 0xE / 0xB, lit 9 / 0xF / 0xC) light and go out, and in Chapter 2 the quest relics (relics.h) work.
  */
-typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead, SessionUseScroll, SessionUseSearch, SessionUseKey, SessionUseRepair, SessionUseVision } SessionUse;
+/* sessionUseItem's words for the status panel (`unlockMessage` 10 and up; Chapter 2's relics): YOU CAN NOT USE THAT HERE!, THE POTION WORKED SUCCESSFULLY, YOU DON'T HAVE ALL OF THE ITEMS!, PATIENCE IS A VIRTUE.,
+ * +5,000 NUORE, +5,000 MAGIC ORE, 2 X HEALTH / 2 X MAGIC (DS:0x8DA3-0x8E4E). */
+enum { SessionMessageNotHere = 10, SessionMessagePotionWorked, SessionMessageMissingItems, SessionMessagePatience, SessionMessageNuore, SessionMessageOre, SessionMessageMassHeal };
+
+enum { SessionMessageSkill = 17, SessionMessageTooFew, SessionMessageNuoreMade, SessionMessageOreMade }; /* the transmutation's: YOUR SKILL IS NOT HIGH ENOUGH!, YOU MUST HAVE AT LEAST 10 UNITS., NUORE CREATED, MAGIC ORE CREATED. */
+
+typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead, SessionUseScroll, SessionUseSearch, SessionUseKey, SessionUseRepair, SessionUseVision, SessionUseTransmute, SessionUseClock, SessionUseLocalMap, SessionUseWorldMap } SessionUse;
 SessionUse sessionUseItem(GameSession *session, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot);
 
 /*
@@ -416,6 +424,40 @@ SessionSearch sessionSearch(GameSession *session, unsigned userSlot, unsigned it
 typedef enum { SessionRepairNoRepairer, SessionRepairNothing, SessionRepairSoft, SessionRepairDestroyed, SessionRepairDone } SessionRepair;
 bool sessionRepairer(GameSession *session, unsigned *memberSlot);
 bool sessionChooseRepairer(GameSession *session, unsigned memberSlot);
+
+/*
+ * A double click on an item of the resource panel's belt (HandleStatusIconBarClick, yendor2.asm:41087 -> ShowItemPurchaseConfirmPrompt :31180 outside a shop): the second role's member -- the one
+ * who repairs; ShowConfirmPrompt 7 asks when nobody is chosen, `sessionChooseRepairer` answers -- looks the item over, and what the description shows depends on their REPAIR skill (+0x6A): from 65 its
+ * weight, from 80 its damage or absorption, from 95 -- with a first role (the speaker) to name the price -- its value (the speaker's Bartering sell price). `sessionExaminer` is the quiet check of the
+ * role (a member who cannot act frees it, no beep). The key ring (a master key) always shows its weight and the tiers on it.
+ */
+typedef struct {
+    bool weight, effect, value;
+    Bcd4 price;
+} SessionExamine;
+
+/*
+ * MarkIneligiblePartyMembers / ClearIneligibleFlagForAllMembers (yendor2.asm:53571, :53611): while the question "who learns it?" (message 0x21) is asked, each member who cannot -- the spell is already
+ * known, no class bit fits or the level is too low -- has the record word +0x15E bit 0x8000 set, which dims the face in the party row (statuspanel.c); the scan stops at the first empty slot.
+ */
+void sessionMarkIneligible(GameSession *session, unsigned userSlot, unsigned itemSlot);
+void sessionClearIneligible(GameSession *session);
+
+/*
+ * The alchemist's item (Chapter 2 item 0x1C; CastSpell's loc_2AB8A, yendor2.asm:48787; SessionUseTransmute): the fifth role's member works it (ShowConfirmPrompt 8 asks when nobody is chosen; one who cannot
+ * act frees the role), needs a Chemistry skill of 65 (YOUR SKILL IS NOT HIGH ENOUGH!, `unlockMessage` 17), and the question "WHICH ORE DO YOU WANT TO CREATE?" (message 0x23) says in which direction. Then
+ * consumable.h's partyTransmuteOre moves up to 100 units (fewer than 10 of the source: YOU MUST HAVE AT LEAST 10 UNITS., 18), sound 7, "NUORE CREATED" / "MAGIC ORE CREATED." (19 / 20) and the
+ * number made; the item's charge is spent and the turn with it.
+ */
+typedef enum { SessionTransmuteTooFew, SessionTransmuteDone } SessionTransmute;
+bool sessionAlchemist(GameSession *session, unsigned *memberSlot);
+bool sessionChooseAlchemist(GameSession *session, unsigned memberSlot);
+bool sessionTransmuteSkillOk(GameSession *session, unsigned memberSlot); /* false sets message 17 */
+SessionTransmute sessionTransmute(GameSession *session, unsigned userSlot, unsigned itemSlot, bool toNuore, unsigned *made);
+
+bool sessionExaminer(GameSession *session, unsigned *memberSlot);
+bool sessionExamine(GameSession *session, unsigned itemId, SessionExamine *out);
+bool sessionIsKeyRing(const GameSession *session, unsigned itemId);
 SessionRepair sessionRepair(GameSession *session, unsigned userSlot, unsigned itemSlot);
 
 /* Line `line` of the document sessionUseItem last opened (spacing kept); false past its end. */

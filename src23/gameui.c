@@ -734,6 +734,26 @@ static void panelClick(GameUi *ui, int x, int y) {
     effect(ui, 2);
 }
 
+static void examineStart(GameUi *ui, unsigned itemId);
+
+/* A belt item of the resource panel under (x, y): the id, else 0. */
+static unsigned beltItemAt(GameUi *ui, int x, int y) {
+    unsigned icon = uiRegionHit(ui->session->game, UiRegionsDungeonMain, x, y) == 2 && (panelFlags(ui) & MapFlagHidden) ? uiRegionHit(ui->session->game, UiRegionsStatusIconBar, x, y) : 0;
+    return icon >= 4 && icon <= 9 ? sessionSlotItem(ui->session, 0, SessionBeltSlotBase + icon - 4) : 0;
+}
+
+bool gameUiWantsDoubleClick(GameUi *ui, int x, int y) {
+    return ui->overlay == UiOverlayNone && !ui->pickActive && !ui->session->combat.active && beltItemAt(ui, x, y) != 0;
+}
+
+bool gameUiDoubleClick(GameUi *ui, int x, int y) {
+    if (!gameUiWantsDoubleClick(ui, x, y)) {
+        return false;
+    }
+    examineStart(ui, beltItemAt(ui, x, y));
+    return true;
+}
+
 /* ---- the cursor ---- */
 
 void gameUiMouseMove(GameUi *ui, int x, int y) {
@@ -1008,26 +1028,32 @@ static void catalogLeave(GameUi *ui) { /* TriggerShopExitSoundAndPersist: sound 
 
 /* HandleShopCatalogSlotClick: a pile shows what it added ("GOLD COINS:" over the amount), an item shows its name on the cursor. */
 /*
- * What ShowItemPurchaseConfirmPrompt (yendor2.asm:31180) writes under a merchant's item name, whatever the party's skill (the skill gates of 65 / 80 / 95 are for the same prompt outside a shop): WEIGHT:
+ * What ShowItemPurchaseConfirmPrompt (yendor2.asm:31180) writes under a merchant's item name, whatever the party's skill (outside a shop the examiner's Repair skill gates the same lines at 65 / 80 / 95: examineShow): WEIGHT:
  * and the weight in tenths at y = 120 / 126, then DAMAGE: for a weapon (item flags 0xC000) or ABSORPTION: for armour and rings (0xE00) with the entry's first word at y = 132 / 138; the VALUE follows at 144.
  */
-static void merchantLines(GameUi *ui, unsigned itemId) {
+static void itemLines(GameUi *ui, unsigned itemId, bool weight, bool effect) {
     const ItemCatalog *items = &ui->session->items;
     const uint8_t *item = itemCatalogRecord(items, itemId);
     if (!item) {
         return;
     }
     char text[12];
-    panelRun(ui, 240, 120, 0x8A, true, "WEIGHT:");
-    partyInfoFormatTenths(itemGetU16(item, ItemFieldWeight), text);
-    panelRun(ui, 240, 126, 0x0F, true, text);
+    if (weight) {
+        panelRun(ui, 240, 120, 0x8A, true, "WEIGHT:");
+        partyInfoFormatTenths(itemGetU16(item, ItemFieldWeight), text);
+        panelRun(ui, 240, 126, 0x0F, true, text);
+    }
     unsigned flags = itemGetU16(item, ItemFieldFlags);
     const uint8_t *entry = itemTargetEntry(items, item);
-    if (entry && (flags & 0xCE00)) {
+    if (effect && entry && (flags & 0xCE00)) {
         panelRun(ui, 240, 132, 0x8A, true, (flags & 0xC000) ? "DAMAGE:" : "ABSORPTION:");
         snprintf(text, sizeof(text), "%u", itemTargetWord(entry, 0));
         panelRun(ui, 240, 138, 0x0F, true, text);
     }
+}
+
+static void merchantLines(GameUi *ui, unsigned itemId) {
+    itemLines(ui, itemId, true, true);
 }
 
 static void catalogSlotClick(GameUi *ui, unsigned slot) {
@@ -1183,12 +1209,17 @@ static void scrollStart(GameUi *ui, unsigned user, unsigned slot);
 static void searchStart(GameUi *ui, unsigned user, unsigned slot);
 static void repairStart(GameUi *ui, unsigned user, unsigned slot);
 static void repairRun(GameUi *ui);
+static void unlockReport(GameUi *ui);
+static void transmuteStart(GameUi *ui, unsigned user, unsigned slot);
+static void clockShow(GameUi *ui);
+static void mapSkillTooLow(GameUi *ui);
 
 static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipient) {
     GameSession *s = ui->session;
     SessionUse result = sessionUseItem(s, user, slot, recipient);
     playPending(ui);
     ui->panelRunCount = 0;
+    unlockReport(ui);
     switch (result) {
     case SessionUseDone:
         break;
@@ -1211,6 +1242,22 @@ static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipie
         return;
     case SessionUseRepair:
         repairStart(ui, user, slot);
+        return;
+    case SessionUseTransmute:
+        transmuteStart(ui, user, slot);
+        return;
+    case SessionUseClock:
+        inventoryClose(ui);
+        clockShow(ui);
+        return;
+    case SessionUseLocalMap:
+    case SessionUseWorldMap: /* the item itself is the map: the same screens as M and W, with the same Mapping skill gates */
+        inventoryClose(ui);
+        if (result == SessionUseLocalMap ? (panelFlags(ui) & MapFlagLocalMap) : (panelFlags(ui) & MapFlagFullOverview)) {
+            ui->overlay = result == SessionUseLocalMap ? UiOverlayLocalMap : UiOverlayWorldMap;
+        } else {
+            mapSkillTooLow(ui);
+        }
         return;
     case SessionUseVision:
         inventoryClose(ui);
@@ -1249,11 +1296,14 @@ static void pickCancel(GameUi *ui) {
  * for nothing, asking for the recipient (message 0x12) when the spell is for a single member; learning asks who (message 0x21) and a member who cannot learn it is refused with the beep and asked again.
  * A cast the place or the combat does not allow gives the refusal sound (3).
  */
+static void unlockReport(GameUi *ui);
+
 static void scrollFinish(GameUi *ui, bool study, unsigned member) {
     GameSession *s = ui->session;
     SessionCast result = sessionUseScroll(s, ui->scrollUser, ui->scrollSlot, study, member);
     playPending(ui);
     ui->panelRunCount = 0;
+    unlockReport(ui);
     if (study && result == SessionCastCannot) { /* the member cannot learn it: asked again */
         flashWarning(ui);
         return;
@@ -1289,6 +1339,7 @@ static void scrollStart(GameUi *ui, unsigned user, unsigned slot) {
         return;
     }
     ui->pickActive = false;
+    ui->askPrompt = 0x20;
     if (info.studyable) {
         ui->scrollAsk = true;
     } else {
@@ -1296,8 +1347,14 @@ static void scrollStart(GameUi *ui, unsigned user, unsigned slot) {
     }
 }
 
-static void scrollAnswer(GameUi *ui, int row) { /* 1 = USE ITEM?, 0 = LEARN SPELL? */
+static void transmuteAnswer(GameUi *ui, int row);
+
+static void scrollAnswer(GameUi *ui, int row) { /* 1 = USE ITEM?, 0 = LEARN SPELL? (for the ore question 1 = NUORE, 0 = MAGIC ORE) */
     SessionScrollInfo info;
+    if (ui->askPrompt == 0x23) {
+        transmuteAnswer(ui, row);
+        return;
+    }
     ui->scrollAsk = false;
     if (!sessionScrollInfo(ui->session, ui->scrollUser, ui->scrollSlot, &info)) {
         return;
@@ -1305,6 +1362,7 @@ static void scrollAnswer(GameUi *ui, int row) { /* 1 = USE ITEM?, 0 = LEARN SPEL
     if (row == 1) {
         scrollCast(ui, &info);
     } else {
+        sessionMarkIneligible(ui->session, ui->scrollUser, ui->scrollSlot);
         scrollPick(ui, 2, 0x21);
     }
 }
@@ -1312,7 +1370,7 @@ static void scrollAnswer(GameUi *ui, int row) { /* 1 = USE ITEM?, 0 = LEARN SPEL
 static void scrollPromptDraw(GameUi *ui) {
     ConfirmPrompt prompt;
     textPanelClear(&ui->renderer, false);
-    if (confirmPromptLoad(ui->exe, ui->session->game, 0x20, &prompt)) {
+    if (confirmPromptLoad(ui->exe, ui->session->game, ui->askPrompt ? ui->askPrompt : 0x20, &prompt)) {
         confirmPromptDraw(&ui->renderer, &prompt);
     } else {
         fontDrawString(ui->session->game, 0, ui->screen, ViewScreenWidth, 240, 120, "USE ITEM?", 0x8A, 4, FontTransparent);
@@ -1320,7 +1378,113 @@ static void scrollPromptDraw(GameUi *ui) {
     }
 }
 
+/*
+ * ShowItemPurchaseConfirmPrompt outside a shop (a double click on a belt item): the item's name, then the lines the examiner's Repair skill reads (sessionExamine). The key ring shows its weight at
+ * y = 102 / 108 and, from 114, a row for each key tier on it: the metal's name with C (a chest key) and D (a door key) in the brackets.
+ */
+static void examineShow(GameUi *ui, unsigned itemId) {
+    GameSession *s = ui->session;
+    SessionExamine info;
+    panelItemName(ui, itemId);
+    if (!sessionExamine(s, itemId, &info)) {
+        return;
+    }
+    if (sessionIsKeyRing(s, itemId)) {
+        const uint8_t *item = itemCatalogRecord(&s->items, itemId);
+        char text[12];
+        panelRun(ui, 240, 102, 0x8A, true, "WEIGHT:");
+        partyInfoFormatTenths(item ? itemGetU16(item, ItemFieldWeight) : 0, text);
+        panelRun(ui, 240, 108, 0x0F, true, text);
+        unsigned flags = sessionKeyRingFlags(s), row = 0;
+        for (unsigned i = 0; i < 8; i++) {
+            unsigned shifted = (flags << i) & 0xFFFF;
+            char name[16];
+            if (!(shifted & 0x8080) || !ui->exe || !exeDataString(ui->exe, (s->game == GameYendor2 ? 0x7CB7 : 0x7FE4) + 13 * i, name, sizeof(name)) || strlen(name) < 11) {
+                continue;
+            }
+            name[9] = (shifted & 0x8000) ? 'C' : name[9];
+            name[10] = (shifted & 0x80) ? 'D' : name[10];
+            panelRun(ui, 240, 114 + 6 * (int)row++, 0x0F, true, name);
+        }
+        return;
+    }
+    if (info.weight) {
+        itemLines(ui, itemId, true, info.effect);
+    }
+    if (info.value) {
+        char price[12];
+        bcd4Format(info.price, price);
+        panelRun(ui, 240, 144, 0x8A, true, "VALUE:");
+        panelRun(ui, 240, 150, 0x0F, true, price);
+    }
+}
+
+static void examineStart(GameUi *ui, unsigned itemId) {
+    unsigned examiner;
+    ui->examineItem = itemId;
+    if (sessionExaminer(ui->session, &examiner)) {
+        examineShow(ui, itemId);
+    } else {
+        ui->pickActive = true;
+        ui->pickChest = false;
+        ui->pickScroll = 5;
+        ui->pickPrompt = 7;
+    }
+}
+
+/* Chapter 2's item 0x1C (CastSpell loc_2AB8A): the fifth role's member (message 8 asks), the skill, then WHICH ORE DO YOU WANT TO CREATE? */
+static void transmuteSkill(GameUi *ui, unsigned alchemist) {
+    pickCancel(ui);
+    if (!sessionTransmuteSkillOk(ui->session, alchemist)) {
+        ui->panelRunCount = 0;
+        unlockReport(ui);
+        return;
+    }
+    ui->askPrompt = 0x23;
+    ui->scrollAsk = true;
+}
+
+static void transmuteStart(GameUi *ui, unsigned user, unsigned slot) {
+    unsigned alchemist;
+    ui->scrollUser = user;
+    ui->scrollSlot = slot;
+    if (sessionAlchemist(ui->session, &alchemist)) {
+        transmuteSkill(ui, alchemist);
+    } else {
+        ui->pickActive = true;
+        ui->pickChest = false;
+        ui->pickScroll = 6;
+        ui->pickPrompt = 8;
+    }
+}
+
+static void transmuteAnswer(GameUi *ui, int row) {
+    ui->scrollAsk = false;
+    ui->askPrompt = 0;
+    ui->panelRunCount = 0;
+    sessionTransmute(ui->session, ui->scrollUser, ui->scrollSlot, row == 1, &ui->transmuteMade);
+    playPending(ui);
+    unlockReport(ui);
+}
+
 static void pickAnswer(GameUi *ui, unsigned member) {
+    if (ui->pickScroll == 6) { /* who works the alchemist's item */
+        if (!sessionChooseAlchemist(ui->session, member)) {
+            flashWarning(ui);
+            return;
+        }
+        transmuteSkill(ui, member);
+        return;
+    }
+    if (ui->pickScroll == 5) { /* who looks the item over */
+        if (!sessionChooseRepairer(ui->session, member)) {
+            flashWarning(ui);
+            return;
+        }
+        pickCancel(ui);
+        examineShow(ui, ui->examineItem);
+        return;
+    }
     if (ui->pickScroll == 4) { /* who repairs */
         if (!sessionChooseRepairer(ui->session, member)) {
             flashWarning(ui);
@@ -1410,7 +1574,28 @@ static void unlockReport(GameUi *ui) {
     GameSession *s = ui->session;
     if (s->unlockMessage) {
         bool y2 = s->game == GameYendor2;
-        if (s->unlockMessage >= 5) { /* the repair's: YOUR ATTEMPT / TO REPAIR ... (4 and 6 lines: DS:0x82D8 / 0x8304, Chapter 3 0x85FF / 0x862B), THE ITEM IS / REPAIRED. (0x8349, 0x8670) */
+        if (s->unlockMessage >= SessionMessageSkill) { /* the ore transmutation's words (DS:0x7D7E, 0x802B, 0x7D2C, 0x8D8C), and under the two that say what was made, how much */
+            static const unsigned kMade[4][2] = {{0x7D7E, 3}, {0x802B, 4}, {0x7D2C, 2}, {0x8D8C, 2}};
+            unsigned which = s->unlockMessage - SessionMessageSkill;
+            panelMessageExe(ui, kMade[which][0], kMade[which][1]);
+            if (which >= 2) {
+                char amount[12];
+                partyInfoFormatNumber(ui->transmuteMade, amount);
+                panelRun(ui, 240, 108, 0x0F, true, amount);
+            }
+        } else if (s->unlockMessage >= SessionMessageNotHere) { /* Chapter 2's relics, in white: the table of (offset, lines) in the order of the enum */
+            static const unsigned kRelic[7][2] = {{0x8DA3, 3}, {0x8DBE, 3}, {0x8DDD, 3}, {0x8E1A, 2}, {0x8E30, 2}, {0x8E3D, 2}, {0x8E4E, 2}};
+            unsigned which = s->unlockMessage - SessionMessageNotHere;
+            panelMessageExe(ui, kRelic[which < 7 ? which : 0][0], kRelic[which < 7 ? which : 0][1]);
+            for (unsigned i = 0; i < ui->panelRunCount; i++) {
+                ui->panelRuns[i].colour = 0x0F;
+            }
+        } else if (s->unlockMessage >= 8) { /* a spell that did not work, in red: YOUR SPELL / HAS FAILED. (DS:0x867F, Chapter 3 0x89A6) or Chapter 3's YOU CAN NOT / JUMP THROUGH / HERE (0x9562) */
+            panelMessageExe(ui, s->unlockMessage == 8 ? (y2 ? 0x867F : 0x89A6) : 0x9562, s->unlockMessage == 8 ? 2 : 3);
+            for (unsigned i = 0; i < ui->panelRunCount; i++) {
+                ui->panelRuns[i].colour = 0x59;
+            }
+        } else if (s->unlockMessage >= 5) { /* the repair's: YOUR ATTEMPT / TO REPAIR ... (4 and 6 lines: DS:0x82D8 / 0x8304, Chapter 3 0x85FF / 0x862B), THE ITEM IS / REPAIRED. (0x8349, 0x8670) */
             unsigned offset = s->unlockMessage == 5 ? (y2 ? 0x82D8 : 0x85FF) : s->unlockMessage == 6 ? (y2 ? 0x8304 : 0x862B) : (y2 ? 0x8349 : 0x8670);
             panelMessageExe(ui, offset, s->unlockMessage == 5 ? 4 : s->unlockMessage == 6 ? 6 : 2);
         } else if (s->unlockMessage >= 3) { /* the lockpick's: THE LOCKPICK / BROKE (DS:0x7C89, Chapter 3 0x7FB6), TRAP / DEFEATED (0x7CA8, 0x7FD5) */
@@ -1585,6 +1770,7 @@ static void alchemyFinish(GameUi *ui, unsigned spellId, bool returnToMark, int t
         sessionCastBy(s, ui->alchemyCaster, spellId, returnToMark);
     }
     playPending(ui);
+    unlockReport(ui);
     paletteSyncToClock(ui); /* SAFE HAVEN rests */
     gameUiAmbientMusic(ui);
 }
@@ -2434,6 +2620,9 @@ static void drawScreen(GameUi *ui) {
 }
 
 void gameUiDraw(GameUi *ui) {
+    if (!(ui->pickActive && ui->pickScroll == 2)) { /* the dimmed faces of those who cannot learn the scroll last as long as the question (ClearIneligibleFlagForAllMembers) */
+        sessionClearIneligible(ui->session);
+    }
     wipeCheck(ui);
     drawScreen(ui);
     if (ui->catalogActive && ui->overlay != UiOverlayTalk && ui->overlay != UiOverlayDetail) {
@@ -2896,6 +3085,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
     case MainActionRest:
         pressButton(ui, 8, IconRestX, IconRowY, 2);
         sessionRest(s);
+        playPending(ui);
         paletteSyncToClock(ui); /* eight hours have gone by */
         break;
     case MainActionAlchemy:

@@ -128,6 +128,9 @@ typedef struct {
     bool targetSearch;     /* the crosshair is the lockpick's (HandleSearchCommand), not the key ring's */
     unsigned searchUser, searchSlot; /* ... the member and item slot of the pick in use */
     bool scrollAsk;        /* a spell scroll that can be studied asks USE ITEM? / LEARN SPELL? (message 0x20) */
+    unsigned askPrompt;    /* the message of the row question: 0x20 (USE ITEM? / LEARN SPELL?) or 0x23 (WHICH ORE DO YOU WANT TO CREATE?) */
+    unsigned transmuteMade; /* the ore the last transmutation made, for the line under its words */
+    unsigned examineItem;  /* the belt item a double click is looking at while the question "who looks?" (message 7) waits */
     unsigned scrollUser, scrollSlot; /* ... the member and item slot (1-8 bag, SessionBeltSlotBase + n belt) of the scroll in use */
     unsigned pickScroll;   /* the member picked is a scroll's: 1 = the cast's recipient (message 0x12), 2 = who learns it (0x21) */
     bool dropPrompt;       /* the cursor item is about to be dropped: DO YOU WANT TO DROP THAT RIGHT NOW? (TryDropHeldItem) */
@@ -227,6 +230,14 @@ void gameUiSettle(GameUi *ui);
  * (a face selects, a check box puts the hero in or out of the party, DONE returns), the creation wizard's lists, the clue book (tabs, entries, page arrows, legend markers), the pause dialog,
  * conversations and shops, and on the main screen the icon row, the walk pad, the map panel and the party panels. The right button backs out of an overlay. False = quit. */
 bool gameUiClick(GameUi *ui, int x, int y, bool right);
+
+/*
+ * Two presses of the left button within six ticks (the original's errorCode 6, which replaces the first click): on a belt item of the resource panel it looks the item over (HandleStatusIconBarClick:
+ * the second role's member, asked with message 7 when nobody is chosen, shows the item's weight, damage or absorption and value as far as their Repair skill reads it -- sessionExamine); on a counter
+ * it is the same as a click. `gameUiWantsDoubleClick` says whether a click at (x, y) would mean something as the first of two, so a platform can hold it back for the six ticks.
+ */
+bool gameUiDoubleClick(GameUi *ui, int x, int y);
+bool gameUiWantsDoubleClick(GameUi *ui, int x, int y);
 
 /* Renders the current screen (the view and panels, or the open overlay) into ui->screen, with the cursor item or the crosshair over it. */
 void gameUiDraw(GameUi *ui);

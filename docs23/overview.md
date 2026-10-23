@@ -11501,3 +11501,11 @@ music tracks (`+0x52` / `+0x54`); the use command's dispatch order is door, dest
 topic argument's bits 1 / 4 / 2 / quote) is `conversation.c` + `sessionTalk*` and was validated by walking every NPC of both games to the end; shops are the lock record's eight slots with
 `shopBuyPrice`; readable items take their text id from the consumable target entry's word 2; HandleGameCommand's item dispatch order is documented in `sessionUseItem`. Chapter 2's opening, story and
 ending and Chapter 3's opening are scripts for one player (`introstory.c`; `tools/intro_story`). Open: Chapter 3's ending (if any), the clue-book controller, ScummVM glue.
+
+### 2026-10-23: the last "not implemented" areas of the standalone
+
+Mount flight (`RevealMapRegion`), the local map's trigger tiles, a double click to look an item over (with the Repair-skill gates `ShowItemPurchaseConfirmPrompt` applies outside a shop -- the old "Bartering" reading was wrong),
+dimmed faces while the scroll's learner is asked, the sounds and words of spells that fail, the light timers, jumps, Knock; Chapter 2's relic words, the ore transmuter (item 0x1C was never wired), and the clock and map items
+used from a slot. `ConsumeItemChargeResource`'s three special modes were already `partyConsumeItemChargeMode` (the repair command is their only user and the belt / bag cases it can reach are covered). Details: file-formats.md,
+"Looking an item over, spell failures, relic words, ...".
+

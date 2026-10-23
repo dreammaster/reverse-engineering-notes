@@ -685,7 +685,7 @@ group's weight total -- unconditionally the main group, matching the
 original's own hardcoded offset regardless of which group the slot
 actually belongs to. The 6-entry global-table case (the same decrement-
 or-discard logic, no weight to deduct) is `itemSlotConsumeGlobalCharge`,
-reimplemented the same day. Not reimplemented: the 3 special modes
+reimplemented the same day. (Later, 2026-10-02: the 3 special modes are `partyConsumeItemChargeMode`; the repair command's belt and bag cases use them. The line that follows is the state of that day.) Not reimplemented then: the 3 special modes
 (recharge/discard/swap -- `TickEquippedItemDurability`'s own
 equipped-item durability write-back, `SwapItemMultiStatEffect`), and
 the portrait-redraw/bag-sync UI side effects. Tests in `test_party.c`
@@ -6756,7 +6756,7 @@ it; a trapped lock opens at once and the trap word (the lock's `+2`) goes throug
 stays. A click takes a slot: a pile (items 1-3) joins the counter at once (sound 7, its label over the amount), anything else goes to the cursor; the slot is taken for good (a persisted bit); with an item held a
 taken slot of the same item takes it back. Space or the right button on the view leaves (sound 6), P opens the inventory over it, the belt and the faces work. A merchant is the same screen with the gold ("$" and the
 amount, `ShowMaterialCounterHud`) in the header: a click on a slot shows its name and VALUE and buys it when the gold allows, a click holding an item sells it back, and in the inventory screen Space sells the cursor item.
-A click on a merchant's slot writes (`ShowItemPurchaseConfirmPrompt` :31180, whatever the party's skill -- the Bartering gates `+0x6A` of 65 / 80 / 95 apply to the same prompt outside a shop) the item's name, WEIGHT: and the
+A click on a merchant's slot writes (`ShowItemPurchaseConfirmPrompt` :31180, whatever the party's skill -- outside a shop the same prompt is gated by the examiner's REPAIR skill, `+0x6A`, at 65 / 80 / 95: see "Looking an item over" below) the item's name, WEIGHT: and the
 weight in tenths at y = 120 / 126, DAMAGE: (item flags 0xC000) or ABSORPTION: (0xE00) with the first word of its target entry at y = 132 / 138, and VALUE: with the price at 144 / 150 (`gameui.c` `merchantLines`).
 
 **Messages in the status panel** (`ShowStatusPanelMessage` :35105: `0x8A`, transparent, from (240, 96), 6 apart): Space with nothing ahead NOTHING HERE (DS:0x7D71, Chapter 3 0x809E); a refused destination
@@ -6809,6 +6809,36 @@ facing north, the window refreshed and the whole view and minimap redrawn; `Wait
 (`RandomInRange(100)` against the table row of the *original* item -- entry word 4 for a weapon, 3 for armour -- and the repairer's Repair tier). Destroyed: the sound `_val20` (Chapter 2 0x28, Chapter 3 8), YOUR ATTEMPT /
 TO REPAIR ... six lines (DS:0x8304, Chapter 3 0x862B), the slot cleared and its weight off the load; soft failure: the same four-line words (0x82D8, 0x85FF), nothing changes; success: sound 7 and THE ITEM IS / REPAIRED.
 (0x8349, 0x8670), the original id back in the slot, no weight change. The kit is not involved. `session.c` `sessionRepair`, `gameui.c` `repairStart`.
+
+### Looking an item over, spell failures, relic words, the ore transmuter, the clock and maps from a slot (decoded 2026-10-23)
+
+**Looking an item over** (`HandleStatusIconBarClick` :41087, reached by `start` :595 on `errorCode` 6 -- two left presses within six BIOS ticks; `PollKeyboardInput` waits those ticks after every left press before it
+reports a single click, so a click and a double click never both happen). In the resource panel (`word_36C7F` 0x1000) a double click on a counter does what a click does; on one of the six belt slots (the table at
+`0x950D + 4 * (zone - 1)`) holding an item it calls `ShowItemPurchaseConfirmPrompt` (:31180) outside a shop: nothing chosen as the second role asks `ShowConfirmPrompt 7` (a member who cannot act frees the role again,
+quietly); the item's description is redrawn (`RedrawItemDescriptionAndMaterials`) and, by the examiner's **Repair** skill (`+0x6A`; the gates were once misread as Bartering): from 65 WEIGHT: at y = 120 / 126, from 80
+DAMAGE: / ABSORPTION: at 132 / 138, from 95 -- and only when the first role (the speaker) is set -- VALUE: at 144 / 150, the speaker's Bartering *sell* price (`ComputeBarterPricingPreview`'s 0x50C0). The key ring
+(0x2F, Chapter 3 0x32) always shows WEIGHT: at 102 / 108 and, from 114, one row for each key tier on it: the metal's name (DS:0x7CB7, Chapter 3 0x7FE4, 13 bytes each, "BRASS   (  )") with C (chest key, flag 0x8000) and D (door
+key, 0x80) in the brackets. `session.c` `sessionExaminer` / `sessionExamine`, `gameui.c` `examineStart` / `examineShow`, `gameUiDoubleClick` / `gameUiWantsDoubleClick`; the SDL tool holds back a left click on a belt item for 330 ms to
+tell the two apart (`EXPLORE_CLICKS="d x,y"` is a double click).
+
+**Spells that fail** (`ApplyEncodedItemEffect` -> loc_2C400, :51474; Chapter 3 :52382): the refusal sound 3 and, in red (0x59) from (240, 96), YOUR SPELL / HAS FAILED. (DS:0x867F, Chapter 3 0x89A6). The branches that go there are
+a created item with the cursor full (0x10), a jump that finds no way, the facing trigger / Knock / lock-or-event spells with nothing to work on, and RETURN without a MARK. Chapter 3 refuses a jump *through* on a page whose
+attribute (the page table's byte 5, `mountPageAttribute`) has bit 2: YOU CAN NOT / JUMP THROUGH / HERE (DS:0x9562, sound 3). The branches' own sounds: the light timers 0xA (Chapter 3 0x2C), a created item 0x33, a
+walking jump 0x31 (0x4F), a jump through 0x3A (0x6B), the curgame event ahead 0x3B (0x2C), Knock and the lock-or-event spell the unlock sound (0x2A; Chapter 3 0xB), the latter with UNLOCKED or TRAP DEFEATED. A light put out
+plays 9 (`TickStatusEffects`), a rest 1 (opening) or, refused, 3.
+
+**Chapter 2's relic items** (`DispatchItemAbilityCommand` :49086) write their words in white at (240, 96): the caches +5,000 / NUORE (DS:0x8E30) and +5,000 / MAGIC ORE (0x8E3D) with sound 7; the mass heal 2 X HEALTH /
+2 X MAGIC (0x8E4E) with effect 3's sound; the location potion THE POTION / WORKED / SUCCESSFULLY (0x8DBE) with sound 0xE at (104, 110), elsewhere YOU CAN NOT / USE THAT / HERE! (0x8DA3) and the potion is kept; the
+empty bottle sound 7 when it brews, else YOU DON'T / HAVE ALL OF / THE ITEMS! (0x8DDD); an uncharged relic -- or the instant kill outside a fight -- PATIENCE IS / A VIRTUE. (0x8E1A) with no sound and no spent turn. The instant
+kill, used in a fight, ends the member's turn (it sets the turn bit). `unlockMessage` 10-16.
+
+**The ore transmuter** (Chapter 2 item 0x1C; `CastSpell` loc_2AB8A :48787): the fifth role's member (`ShowConfirmPrompt 8`; the role is header `+0xA4 + 8`), Chemistry (`+0x70`) of 65 -- YOUR SKILL / IS NOT HIGH / ENOUGH! (DS:0x7D7E) --
+then `ShowConfirmPrompt 0x23` WHICH ORE DO / YOU WANT TO / CREATE? with the rows NUORE (answer 5, the upper one) and MAGIC ORE (7); `partyTransmuteOre` moves up to 100 units (fewer than 10: YOU MUST / HAVE AT / LEAST 10 / UNITS.,
+0x802B); the words NUORE / CREATED (0x7D2C) or MAGIC / ORE CREATED. (0x8D8C), the amount made under them at y = 108, sound 7, the item's charge and the turn spent. `sessionTransmute`, `gameui.c` `transmuteStart`.
+
+**The clock and the maps as items** (`HandleGameCommand` :45750): used from a slot, item 7 (Chapter 3 0x0C) is `ShowGameClockCommand` (a fight refuses it with the warning), 0x1E (0x33) `ShowLocalAreaMap` and Chapter 2's 0x1F
+`ToggleMapViewMode`, each with the Mapping skill gates of the keys M and W (`SessionUseClock` / `SessionUseLocalMap` / `SessionUseWorldMap`). The local map (M) shows the *replacement* floor / wall tile of a pending
+curgame trigger (`DrawLocalMapCell`); the mount's flight window (`RevealMapRegionRow` -> `DrawRevealedCellIcon`) does not.
 
 ### A spent turn outside a fight (decoded 2026-10-22)
 
@@ -6867,7 +6897,7 @@ belt items having no weight there, which can wrap -- reproduced. The standalone 
 0x400), or without one and combat-only (0x3000 of word 2), sound 3 and nothing happens; a single-target spell (0x8000) asks whom (message 0x12) first; then `ApplyEncodedItemEffect` runs the spell for no cost and
 the scroll spends a charge. Learning marks the members who cannot (`MarkIneligiblePartyMembers`: already known, wrong class bits, or level below the spell's: their status panels are flagged `+0x15E` 0x8000 and dimmed),
 asks "WHO WILL LEARN?" (0x21), refuses a flagged member with the warning and asks again, then sets the spell's flag in the member's bank and applies effect 3. `gameui.c` `scrollStart` ... `scrollFinish`;
-`sessionScrollInfo`, `sessionUseScroll`. (The dimming of the ineligible faces is not drawn.)
+`sessionScrollInfo`, `sessionUseScroll`. (While the question "who learns it?" is asked the faces of the ineligible are dimmed: `sessionMarkIneligible` sets the record word `+0x15E` bit `0x8000`, which `statuspanel.c` draws as the incapacitated overlay; `gameUiDraw` clears the bits once the question is over -- `ClearIneligibleFlagForAllMembers`.)
 
 ### Documents in a foreign script (DrawIndentedTextColumn, decoded 2026-10-22)
 

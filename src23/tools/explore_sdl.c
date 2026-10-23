@@ -628,6 +628,10 @@ int main(int argc, char **argv) {
     }
     const char *shotPath = opt("EXPLORE_SHOT");
     Uint32 lastMinute = 0;
+    enum { DoubleClickMs = 330 }; /* six BIOS ticks */
+    bool pendingClick = false;
+    Uint32 pendingAt = 0;
+    int pendingX = 0, pendingY = 0;
     unsigned clockMs = opt("EXPLORE_CLOCK_MS") ? (unsigned)atoi(opt("EXPLORE_CLOCK_MS")) : script ? 0 : 5000; /* the original's clock: a game minute every 91 BIOS ticks, five seconds */ /* real milliseconds per game minute; 0 = the clock only moves with + / - and resting */
     while (running) {
         if (script && *script) { /* feed the next scripted key as a key press */
@@ -651,13 +655,15 @@ int main(int argc, char **argv) {
             }
             const char *clicks = opt("EXPLORE_CLICKS"); /* EXPLORE_CLICKS="x,y;x,y": left clicks at those screen pixels (320 x 200) after the keys, before the picture ('r' as a prefix: the right button) */
             while (clicks && *clicks) {
-                bool right = *clicks == 'r';
-                clicks += right;
+                bool right = *clicks == 'r', twice = *clicks == 'd'; /* 'd' as a prefix: a double click */
+                clicks += right || twice;
                 int cx = 0, cy = 0, used = 0;
                 if (sscanf(clicks, "%d,%d%n", &cx, &cy, &used) < 2) {
                     break;
                 }
-                gameUiClick(&g_ui, cx, cy, right);
+                if (!twice || !gameUiDoubleClick(&g_ui, cx, cy)) {
+                    gameUiClick(&g_ui, cx, cy, right);
+                }
                 clicks += used;
                 clicks += *clicks == ';';
             }
@@ -683,8 +689,20 @@ int main(int argc, char **argv) {
                 int winW, winH;
                 SDL_GetWindowSize(window, &winW, &winH);
                 if (winW > 0 && winH > 0) { /* window pixels -> the 320 x 200 screen */
-                    gameUiMouseMove(&g_ui, event.button.x * ViewScreenWidth / winW, event.button.y * ViewScreenHeight / winH);
-                    running = gameUiClick(&g_ui, event.button.x * ViewScreenWidth / winW, event.button.y * ViewScreenHeight / winH, event.button.button == SDL_BUTTON_RIGHT) && running;
+                    int mx = event.button.x * ViewScreenWidth / winW, my = event.button.y * ViewScreenHeight / winH;
+                    bool right = event.button.button == SDL_BUTTON_RIGHT;
+                    gameUiMouseMove(&g_ui, mx, my);
+                    if (!right && pendingClick && SDL_GetTicks() - pendingAt < DoubleClickMs) { /* the second press of a double click replaces the first (PollKeyboardInput: errorCode 6) */
+                        pendingClick = false;
+                        running = (gameUiDoubleClick(&g_ui, mx, my) || gameUiClick(&g_ui, mx, my, false)) && running;
+                    } else if (!right && gameUiWantsDoubleClick(&g_ui, mx, my)) { /* held back for six ticks, as the original does with every left click */
+                        pendingClick = true;
+                        pendingAt = SDL_GetTicks();
+                        pendingX = mx;
+                        pendingY = my;
+                    } else {
+                        running = gameUiClick(&g_ui, mx, my, right) && running;
+                    }
                 }
                 dirty = true;
             } else if (event.type == SDL_MOUSEMOTION) { /* the cursor item follows the pointer */
@@ -697,6 +715,11 @@ int main(int argc, char **argv) {
             } else if (event.type == SDL_WINDOWEVENT) {
                 dirty = true;
             }
+        }
+        if (pendingClick && SDL_GetTicks() - pendingAt >= DoubleClickMs) {
+            pendingClick = false;
+            running = gameUiClick(&g_ui, pendingX, pendingY, false) && running;
+            dirty = true;
         }
         SDL_ShowCursor(gameUiCursorShown(&g_ui) ? SDL_DISABLE : SDL_ENABLE); /* the screen draws the cursor item or the crosshair itself */
         if (clockMs && !g_session->combat.active && g_ui.overlay == UiOverlayNone && SDL_GetTicks() - lastMinute >= clockMs) {

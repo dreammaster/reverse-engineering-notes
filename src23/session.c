@@ -47,6 +47,8 @@ GameSession *sessionNew(GameKind game, const uint8_t *worldDat, size_t size) {
         return NULL;
     }
     s->game = game;
+    s->worldDat = worldDat;
+    s->worldSize = size;
     saveGameInit(&s->save, game);
     if (!worldMapParseWorldDat(&s->map, game, worldDat, size) || !worldObjectTableParseWorldDat(&s->objects, game, worldDat, size) ||
         !lockCatalogParseWorldDat(&s->locks, game, worldDat, size) || !monsterCatalogParseWorldDat(&s->monsters, game, worldDat, size) ||
@@ -739,8 +741,9 @@ static bool jumpCell(void *ctx, int col, int row, uint16_t *wallType, uint16_t *
 }
 
 /* The object ahead (the party cell, else the next one) as the interact.h branches want it: the record, its lock or curgame flags and the "already" bit. */
-static bool castOnFacing(GameSession *s, SpellBranch branch) {
+static bool castOnFacing(GameSession *s, SpellBranch branch, uint16_t *flagsOut) {
     WorldObjectProbeResult probe = worldObjectProbeFacingTile(&s->objects, s->game, s->x, s->y, s->facing);
+    *flagsOut = 0;
     if (probe.outcome == WorldObjectProbeNone) {
         return false;
     }
@@ -753,6 +756,7 @@ static bool castOnFacing(GameSession *s, SpellBranch branch) {
     } else if (probe.object.flags & WorldObjectFlagCurgameRecord) {
         lockCatalogCurgameRecord(&s->locks, probe.object.value, &curgameFlags, &ignored);
     }
+    *flagsOut = isLock ? lock.flags : curgameFlags;
     bool already = interactBitmapTest(&s->save, interactWorldObjectBitIndex(s->game, &probe.object));
     bool lockDone = isLock && already, curgameDone = !isLock && already;
     if (branch == SpellBranchKnock) {
@@ -1104,6 +1108,31 @@ static bool castSupported(SpellBranch branch, const uint8_t *spell) {
     }
 }
 
+enum { AlchemistRoleWord = 8, TransmuteItem = 0x1C }; /* the fifth role (header +0xA4 + 8); Chapter 2's ore transmutation item */
+
+enum { UnlockSoundYendor2 = 0x2A, UnlockSoundYendor3 = 0x0B, RefusalSound = 3 };
+
+/*
+ * The sounds ApplyEncodedItemEffect plays at the start of the branches that have no effect record of their own (yendor2.asm:51297-51890, yendor3.asm:52190-52810): the light timers, a created item,
+ * a jump (walking / through), the curgame event ahead, and the unlock sound (word_329EE) of the Knock and the lock / event branches. A branch that cannot work (a full hand, no room to land,
+ * nothing ahead, no mark to return to) plays the refusal sound and writes YOUR SPELL / HAS FAILED. (message 8; DS:0x867F, Chapter 3 0x89A6) in red. Chapter 3 refuses a jump through on a page
+ * whose attribute has bit 2: YOU CAN NOT / JUMP THROUGH / HERE (message 9; DS:0x9562).
+ */
+typedef struct {
+    unsigned light, held, jump, through, event;
+} SpellSounds;
+static const SpellSounds kSpellSounds2 = {0x0A, 0x33, 0x31, 0x3A, 0x3B};
+static const SpellSounds kSpellSounds3 = {0x2C, 0x33, 0x4F, 0x6B, 0x2C};
+
+static unsigned unlockSound(GameKind game) {
+    return game == GameYendor2 ? UnlockSoundYendor2 : UnlockSoundYendor3;
+}
+
+static bool jumpIsThrough(const uint8_t *spell) {
+    return !spellGetU16(spell, SpellFieldJumpForward) && !spellGetU16(spell, SpellFieldJumpBackward) && !spellGetU16(spell, SpellFieldJumpLeft) && !spellGetU16(spell, SpellFieldJumpRight) &&
+           spellGetU16(spell, SpellFieldJumpThrough);
+}
+
 static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spellId, bool returnToMark) {
     SessionCombat *c = &s->combat;
     uint8_t *caster = sessionPartyRecord(s, casterSlot);
@@ -1131,6 +1160,8 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
         spellDeductCosts(spell, caster, &s->save);
     }
     bool done = true;
+    unsigned failure = 0; /* the message of a branch that did not work: 8 or 9 (0 = it is not one that says so) */
+    const SpellSounds *sounds = s->game == GameYendor2 ? &kSpellSounds2 : &kSpellSounds3;
     switch (branch) {
     case SpellBranchAttackAllSlots: {
         CombatSpellAreaAttackOutcome area = combatApplySpellAttackToActiveSlots(c->slots, caster, spell, s->scrollCast, &s->rng);
@@ -1196,21 +1227,33 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
         done = castColumnAttack(s, caster, spell, branch == SpellBranchBeam);
         break;
     case SpellBranchLightTimer:
+        queueSound(s, sounds->light);
         done = lightSourceArmSpellTimer(&s->light, spellGetU16(spell, SpellFieldTimerSlot), spellGetU16(spell, SpellFieldTimerDuration));
         break;
     case SpellBranchHeldItem:
         if (s->heldItem == 0) {
+            queueSound(s, sounds->held);
             uint16_t bound = spellCreatedItemRollBound(spell);
             SpellCreatedItem created = spellCreatedItem(spell, bound ? (uint16_t)randomInRange(&s->rng, bound) : 0);
             s->heldItem = created.itemId;
             s->heldExtra = created.extra;
         } else {
             done = false;
+            failure = 8;
         }
         break;
     case SpellBranchTeleportEngage: {
         JumpCtx ctx = {s};
+        bool through = jumpIsThrough(spell);
         SpellJumpResult jump = spellResolveJump(s->game, spell, s->facing, s->x, s->y, jumpCell, &ctx);
+        if (through && s->game == GameYendor3 && s->worldDat && (mountPageAttribute(s->game, s->worldDat, s->worldSize, (unsigned)(s->y / LocalMapRows) * LocalMapBlocksPerRow + (unsigned)(s->x / LocalMapColumns)) & 2)) {
+            jump.ok = false;
+            failure = 9;
+        } else if (!jump.ok) {
+            failure = 8;
+        } else {
+            queueSound(s, through ? sounds->through : sounds->jump);
+        }
         if (jump.ok) {
             s->x = jump.col;
             s->y = jump.row;
@@ -1229,6 +1272,7 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
         } else {
             CombatLocationBookmark mark;
             done = combatRestoreLocationBookmark(caster, spellGetU16(spell, SpellFieldBookmarkOffset), &mark);
+            failure = done ? 0 : 8;
             if (done) {
                 s->x = mark.worldX;
                 s->y = mark.worldY;
@@ -1242,17 +1286,30 @@ static SessionCast castSpell(GameSession *s, unsigned casterSlot, unsigned spell
     case SpellBranchKnock:
     case SpellBranchTriggerCurgameEvent:
     case SpellBranchFacingLockOrEvent:
-        done = castOnFacing(s, branch);
+    {
+        uint16_t flags = 0;
+        done = castOnFacing(s, branch, &flags);
         if (done) {
+            queueSound(s, branch == SpellBranchTriggerCurgameEvent ? sounds->event : unlockSound(s->game));
+            if (branch == SpellBranchFacingLockOrEvent) {
+                s->unlockMessage = (flags & LockFlagTrapped) ? 4 : 2;
+            }
             sessionRebuild(s);
+        } else {
+            failure = 8;
         }
         break;
+    }
     case SpellBranchRest:
         sessionRest(s);
         break;
     default:
         done = false;
         break;
+    }
+    if (failure) {
+        queueSound(s, RefusalSound);
+        s->unlockMessage = failure;
     }
     snprintf(s->log, sizeof(s->log), "party member %u casts spell %u%s", casterSlot + 1, spellId, done ? "" : " (nothing happens)");
     return done ? SessionCastDone : SessionCastNoEffect;
@@ -1529,6 +1586,9 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
             return SessionUseNoEffect;
         }
         itemSlotSet(slot, (uint16_t)(lighting ? id + 1 : id - 1), itemSlotExtra(slot));
+        if (!lighting) {
+            queueSound(s, 9); /* TickStatusEffects, reached from HandleGameCommand with the flag 0x40: the light going out */
+        }
         snprintf(s->log, sizeof(s->log), lighting ? "light source %u lit" : "light source %u put out", id);
         return SessionUseDone;
     }
@@ -1540,37 +1600,50 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
             return SessionUseVision;
         }
         if (action == RelicActionCharged) {
-            if (!relicReady(flags, SaveHeaderGlobalFlagsSize)) {
-                return SessionUseNoEffect; /* "PATIENCE IS A VIRTUE." */
+            unsigned monster = s->combat.active ? combatActiveSlot(&s->combat) : CombatMonsterSlotCount;
+            if (!relicReady(flags, SaveHeaderGlobalFlagsSize) || (id == RelicInstantKill && monster >= CombatMonsterSlotCount)) {
+                s->unlockMessage = SessionMessagePatience;
+                return SessionUseDone;
             }
             if (id == RelicNuoreCache) {
                 relicAddCache(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2));
+                queueSound(s, 7);
+                s->unlockMessage = SessionMessageNuore;
             } else if (id == RelicMagicOreCache) {
                 relicAddCache(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1));
+                queueSound(s, 7);
+                s->unlockMessage = SessionMessageOre;
             } else if (id == RelicMassHeal) {
                 relicMassHealAndOverheal(&s->save);
+                effectSound(s, 3);
+                s->unlockMessage = SessionMessageMassHeal;
             } else {
-                unsigned monster = s->combat.active ? combatActiveSlot(&s->combat) : CombatMonsterSlotCount;
-                if (monster >= CombatMonsterSlotCount) {
-                    return SessionUseNoEffect;
-                }
                 relicInstantKill(s->combat.slots + (size_t)monster * MonsterRecordSize);
             }
             partyConsumeItemCharge(user, &s->items, slot);
+            if (id == RelicInstantKill) { /* it sets the turn bit: the member's turn is over */
+                combatAfterAction(s);
+                combatRunMonsters(s);
+            }
             return SessionUseDone;
         }
         if (action == RelicActionLocationPotion) {
             if (!relicUseLocationPotion(s->x, s->y, flags, SaveHeaderGlobalFlagsSize)) {
-                return SessionUseNoEffect;
+                s->unlockMessage = SessionMessageNotHere;
+                return SessionUseDone;
             }
+            queueSound(s, 0x0E);
+            s->unlockMessage = SessionMessagePotionWorked;
             partyConsumeItemCharge(user, &s->items, slot);
             return SessionUseDone;
         }
         if (action == RelicActionAssemblePotion) {
             uint8_t *globalSlots = beltSlots(s);
             if (!relicAssemblePotion(globalSlots, &s->save, &s->items)) {
-                return SessionUseNoEffect;
+                s->unlockMessage = SessionMessageMissingItems;
+                return SessionUseDone;
             }
+            queueSound(s, 7);
             s->heldItem = RelicPotionOfAppreciation;
             s->heldExtra = 0;
             return SessionUseDone;
@@ -1579,6 +1652,19 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
             s->pendingMusic = RelicFluteTrack;
             return SessionUseDone;
         }
+    }
+    if (s->game == GameYendor2 && id == TransmuteItem) {
+        return SessionUseTransmute;
+    }
+    /* the clock and the maps used from a slot (HandleGameCommand: ShowGameClockCommand, ShowLocalAreaMap, ToggleMapViewMode; a fight refuses the clock): the front end does what T, M and W do */
+    if (id == (s->game == GameYendor2 ? 7u : 0x0Cu)) {
+        return s->combat.active ? SessionUseNoEffect : SessionUseClock;
+    }
+    if (id == (s->game == GameYendor2 ? 0x1Eu : 0x33u)) {
+        return SessionUseLocalMap;
+    }
+    if (s->game == GameYendor2 && id == 0x1F) {
+        return SessionUseWorldMap;
     }
     RestorativeKind kind = partyRestorativeForItem(s->game, id);
     if (kind != RestorativeNone) {
@@ -2694,6 +2780,7 @@ RestOutcome sessionRest(GameSession *s) {
     memset(&none, 0, sizeof(none));
     if (s->combat.active || s->combat.wiped) {
         none.refused = true;
+        queueSound(s, RefusalSound);
         return none;
     }
     uint8_t *globalSlots = beltSlots(s);
@@ -2701,6 +2788,7 @@ RestOutcome sessionRest(GameSession *s) {
     MapTriggerRecord trigger;
     RestOutcome out = restParty(&s->save, &s->clock, &s->items, globalSlots, s->heldItem != 0, false, partyCellTrigger(s, &trigger), restMonsters, &ctx);
     s->rest = out;
+    queueSound(s, out.refused ? RefusalSound : 1); /* RestPartyAndAdvanceClock: the refusal beep with its two lines, else the screen-opening sound */
     s->restReport = !out.refused || out.noRest;
     s->clock.minutes %= 1440;
     if (!out.refused) {
@@ -2722,7 +2810,7 @@ RestOutcome sessionRest(GameSession *s) {
  * sound (Chapter 2 word_329EE = 0x2A, Chapter 3 0xB), the bit is set, the grid cell loses its 0x4000 marker and the panel says UNLOCKED (2); otherwise ShowLockStatus tells what the lock needs
  * (`lockReport`, lockStatusText). The front end shows `unlockMessage` (and clears it).
  */
-enum { UnlockSoundYendor2 = 0x2A, UnlockSoundYendor3 = 0x0B, RefusalSound = 3 };
+/* (UnlockSoundYendor2 and the rest are declared with castSpell, above.) */
 
 /* The key ring and the door / chest keys that can be put on it: items 0x2F and 0x21-0x2E in Chapter 2, 0x32 and 0x24-0x31 in Chapter 3 (HandleStatusPanelItemSlotClick's comparisons). */
 static unsigned keyRingId(GameKind game) {
@@ -2955,6 +3043,139 @@ bool sessionRepairer(GameSession *s, unsigned *memberSlot) {
         }
     }
     return false;
+}
+
+enum { IneligibleWord = 0x15E, IneligibleBit = 0x8000 };
+
+void sessionMarkIneligible(GameSession *s, unsigned userSlot, unsigned itemSlot) {
+    uint8_t *slot = useSlot(s, sessionPartyRecord(s, userSlot), itemSlot);
+    const uint8_t *item = slot && itemSlotId(slot) ? itemCatalogRecord(&s->items, itemSlotId(slot)) : NULL;
+    const uint8_t *target = item ? itemTargetEntry(&s->items, item) : NULL;
+    unsigned spellId = target ? itemTargetWord(target, 2) : 0;
+    const uint8_t *spell = spellRecord(&s->spells, spellId);
+    for (unsigned i = 0; i < SavePartyMemberSlots; i++) {
+        uint8_t *member = sessionPartyRecord(s, i);
+        if (!member) {
+            break;
+        }
+        if (!spell || !spellCanLearn(spell, spellId, member)) {
+            partySetU16(member, IneligibleWord, (uint16_t)(partyGetU16(member, IneligibleWord) | IneligibleBit));
+        }
+    }
+}
+
+void sessionClearIneligible(GameSession *s) {
+    for (unsigned i = 0; i < SavePartyMemberSlots; i++) {
+        uint8_t *member = sessionPartyRecord(s, i);
+        if (!member) {
+            break;
+        }
+        partySetU16(member, IneligibleWord, (uint16_t)(partyGetU16(member, IneligibleWord) & ~IneligibleBit));
+    }
+}
+
+bool sessionExaminer(GameSession *s, unsigned *memberSlot) {
+    unsigned id = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 2);
+    const uint8_t *member = id ? saveGamePartyRecordById(&s->save, id) : NULL;
+    if (member && (partyGetU16(member, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 2, 0);
+        member = NULL;
+    }
+    for (unsigned slot = 0; member && slot < SavePartyMemberSlots; slot++) {
+        if (saveGetPartySlot(&s->save, slot) == id) {
+            *memberSlot = slot;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool sessionAlchemist(GameSession *s, unsigned *memberSlot) {
+    unsigned id = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + AlchemistRoleWord);
+    const uint8_t *member = id ? saveGamePartyRecordById(&s->save, id) : NULL;
+    if (member && (partyGetU16(member, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + AlchemistRoleWord, 0);
+        member = NULL;
+    }
+    for (unsigned slot = 0; member && slot < SavePartyMemberSlots; slot++) {
+        if (saveGetPartySlot(&s->save, slot) == id) {
+            *memberSlot = slot;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool sessionChooseAlchemist(GameSession *s, unsigned memberSlot) {
+    const uint8_t *member = sessionPartyRecord(s, memberSlot);
+    if (!member || (partyGetU16(member, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+        return false;
+    }
+    saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + AlchemistRoleWord, saveGetPartySlot(&s->save, memberSlot));
+    return true;
+}
+
+bool sessionTransmuteSkillOk(GameSession *s, unsigned memberSlot) {
+    const uint8_t *member = sessionPartyRecord(s, memberSlot);
+    s->unlockMessage = 0;
+    if (!member || (int16_t)partyGetStat(member, PartyStatChemistry) < 0x41) {
+        s->unlockMessage = SessionMessageSkill;
+        return false;
+    }
+    return true;
+}
+
+SessionTransmute sessionTransmute(GameSession *s, unsigned userSlot, unsigned itemSlot, bool toNuore, unsigned *made) {
+    unsigned alchemist, consumed;
+    uint8_t *user = sessionPartyRecord(s, userSlot);
+    uint8_t *slot = useSlot(s, user, itemSlot);
+    s->unlockMessage = 0;
+    *made = 0;
+    if (!sessionAlchemist(s, &alchemist)) {
+        return SessionTransmuteTooFew;
+    }
+    uint8_t *ore = saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), *nuore = saveHeaderBcd4(&s->save, SaveHeaderOreCounter2);
+    AlchemyResult result = partyTransmuteOre(sessionPartyRecord(s, alchemist), toNuore ? ore : nuore, toNuore ? nuore : ore, &consumed, made);
+    if (result != AlchemyDone) {
+        s->unlockMessage = result == AlchemySkillTooLow ? SessionMessageSkill : SessionMessageTooFew;
+        return SessionTransmuteTooFew;
+    }
+    queueSound(s, 7);
+    s->unlockMessage = toNuore ? SessionMessageNuoreMade : SessionMessageOreMade;
+    if (slot) {
+        partyConsumeItemCharge(user, &s->items, slot);
+    }
+    turnSpent(s);
+    return SessionTransmuteDone;
+}
+
+bool sessionIsKeyRing(const GameSession *s, unsigned itemId) {
+    return itemId == keyRingId(s->game);
+}
+
+bool sessionExamine(GameSession *s, unsigned itemId, SessionExamine *out) {
+    unsigned slot;
+    memset(out, 0, sizeof(*out));
+    const uint8_t *item = itemId ? itemCatalogRecord(&s->items, itemId) : NULL;
+    if (!item || !sessionExaminer(s, &slot)) {
+        return false;
+    }
+    if (sessionIsKeyRing(s, itemId)) {
+        out->weight = true;
+        return true;
+    }
+    uint16_t skill = (uint16_t)partyGetStat(sessionPartyRecord(s, slot), PartyStatRepair);
+    out->weight = (int16_t)skill >= 0x41;
+    out->effect = out->weight && (int16_t)skill >= 0x50;
+    unsigned speaker = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments);
+    const uint8_t *seller = speaker ? saveGamePartyRecordById(&s->save, speaker) : NULL;
+    if (out->effect && (int16_t)skill >= 0x5F && seller) {
+        Bcd4 base;
+        memcpy(base, item + ItemFieldBaseValue, 4);
+        shopSellPrice(base, (uint16_t)partyGetStat(seller, PartyStatBartering), out->price);
+        out->value = true;
+    }
+    return true;
 }
 
 bool sessionChooseRepairer(GameSession *s, unsigned memberSlot) {

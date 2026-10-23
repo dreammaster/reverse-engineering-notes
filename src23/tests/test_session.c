@@ -20,6 +20,7 @@
 #include "relics.h"
 #include "spellcast.h"
 #include "session.h"
+#include "shop.h"
 
 static int g_failureCount = 0;
 static int g_skipCount = 0;
@@ -249,7 +250,10 @@ static void testSpells(GameKind game, const uint8_t *world, size_t size, const c
     s->clock.minutes = 0; /* midnight */
     sessionScene(s, &scene, cells);
     dark = scene.gradient[0];
+    while (sessionNextSound(s)) {
+    }
     cast = sessionCastBy(s, 0, light, false);
+    check("a light spell plays its own sound first", sessionNextSound(s) == (game == GameYendor2 ? 0x0Au : 0x2Cu));
     sessionScene(s, &scene, cells);
     snprintf(text, sizeof(text), "%s: a light spell lights the view and the timer runs out with the clock", label);
     check(text, cast == SessionCastDone && s->light.litFlags != 0 && scene.gradient[0] > dark);
@@ -290,7 +294,16 @@ static void testSpells(GameKind game, const uint8_t *world, size_t size, const c
     bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 90);
     bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 90);
     if (held) {
-        SessionCast first = sessionCastBy(s, 0, held, false), second = sessionCastBy(s, 0, held, false);
+        while (sessionNextSound(s)) {
+        }
+        SessionCast first = sessionCastBy(s, 0, held, false);
+        unsigned createSound = sessionNextSound(s);
+        while (sessionNextSound(s)) {
+        }
+        SessionCast second = sessionCastBy(s, 0, held, false);
+        unsigned failSound = sessionNextSound(s);
+        check("a created item plays 0x33; a full hand fails with the refusal sound and message 8", createSound == 0x33 && failSound == 3 && s->unlockMessage == 8);
+        s->unlockMessage = 0;
         snprintf(text, sizeof(text), "%s: a created item lands on the empty cursor and not on a full one", label);
         check(text, first == SessionCastDone && s->heldItem != 0 && second == SessionCastNoEffect);
     }
@@ -633,10 +646,51 @@ static void testLightsAndRelics(GameKind game, const uint8_t *world, size_t size
     check(text, lighted && out == SessionUseDone && itemSlotId(slot) == 8 && s->light.litCount[LightSourceCandle] == 0 && !(s->light.litFlags & 0x2000));
     if (game == GameYendor2) {
         itemSlotSet(slot, RelicMagicOreCache, 1);
-        check("Chapter 2: a charged relic needs the recharge flag", sessionUseItem(s, 0, 1, 0) == SessionUseNoEffect);
+        check("Chapter 2: a charged relic needs the recharge flag, else PATIENCE IS A VIRTUE.", sessionUseItem(s, 0, 1, 0) == SessionUseDone && s->unlockMessage == SessionMessagePatience && itemSlotId(slot) == RelicMagicOreCache);
+        s->unlockMessage = 0;
         globalFlagSet(saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, RelicRechargeFlag);
         memset(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 0, 4);
+        while (sessionNextSound(s)) {
+        }
         check("... and then adds 5000 magic ore", sessionUseItem(s, 0, 1, 0) == SessionUseDone && bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 5000));
+        check("... with sound 7 and the words +5,000 MAGIC ORE", sessionNextSound(s) == 7 && s->unlockMessage == SessionMessageOre);
+        s->unlockMessage = 0;
+        itemSlotSet(slot, 0x258, 1);
+        place(s, 10, 10, SaveFacingNorth);
+        check("the potion of the one cell says YOU CAN NOT USE THAT HERE! elsewhere and is kept", sessionUseItem(s, 0, 1, 0) == SessionUseDone && s->unlockMessage == SessionMessageNotHere && itemSlotId(slot) == 0x258);
+        s->unlockMessage = 0;
+        s->x = 104;
+        s->y = 110;
+        while (sessionNextSound(s)) {
+        }
+        check("... and works at (104, 110) with sound 0xE", sessionUseItem(s, 0, 1, 0) == SessionUseDone && s->unlockMessage == SessionMessagePotionWorked && sessionNextSound(s) == 0x0E && itemSlotId(slot) == 0);
+        s->unlockMessage = 0;
+        itemSlotSet(slot, 0x2C8, 1);
+        check("the empty bottle without the four ingredients says so", sessionUseItem(s, 0, 1, 0) == SessionUseDone && s->unlockMessage == SessionMessageMissingItems);
+        s->unlockMessage = 0;
+        itemSlotSet(slot, RelicMagicOreCache, 1);
+        itemSlotSet(slot, 0x1C, 1);
+        unsigned alchemist, made;
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 8, 0);
+        check("the ore transmuter is handed to the front end, and nobody works it yet", sessionUseItem(s, 0, 1, 0) == SessionUseTransmute && !sessionAlchemist(s, &alchemist));
+        check("a member is chosen", sessionChooseAlchemist(s, 2) && sessionAlchemist(s, &alchemist) && alchemist == 2);
+        partySetStat(sessionPartyRecord(s, 2), PartyStatChemistry, 60);
+        check("Chemistry below 65: YOUR SKILL IS NOT HIGH ENOUGH!", !sessionTransmuteSkillOk(s, 2) && s->unlockMessage == SessionMessageSkill);
+        partySetStat(sessionPartyRecord(s, 2), PartyStatChemistry, 100);
+        check("... at 65 and over it goes on", sessionTransmuteSkillOk(s, 2) && s->unlockMessage == 0);
+        memset(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 0, 4);
+        memset(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 0, 4);
+        bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 5);
+        check("fewer than 10 units: YOU MUST HAVE AT LEAST 10 UNITS.", sessionTransmute(s, 0, 1, true, &made) == SessionTransmuteTooFew && s->unlockMessage == SessionMessageTooFew && itemSlotId(slot) == 0x1C);
+        bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 145);
+        while (sessionNextSound(s)) {
+        }
+        check("150 units of magic ore make 25 nuore at Chemistry 100 (a quarter of the 100 taken), the item is spent",
+              sessionTransmute(s, 0, 1, true, &made) == SessionTransmuteDone && made == 25 && bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 25) && !bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 26) &&
+                  bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 50) && !bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 51) && itemSlotId(slot) == 0 && sessionNextSound(s) == 7 &&
+                  s->unlockMessage == SessionMessageNuoreMade);
+        s->unlockMessage = 0;
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 8, 0);
         itemSlotSet(slot, 0x26D, 1);
         check("the pan flute asks for its music", sessionUseItem(s, 0, 1, 0) == SessionUseDone && s->pendingMusic == RelicFluteTrack);
     }
@@ -1369,6 +1423,53 @@ static void testBeltUse(GameKind game, const uint8_t *world, size_t size, const 
     sessionFree(s);
 }
 
+/* A double click on a belt item: the second role's member looks it over, and their Repair skill decides how much is read (65 weight, 80 damage / absorption, 95 value with a speaker). */
+static void testExamine(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[160];
+    unsigned item = 0;
+    for (unsigned id = 1; id <= s->items.validItemCount && !item; id++) {
+        const uint8_t *record = itemCatalogRecord(&s->items, id);
+        if (record && (itemGetU16(record, ItemFieldFlags) & 0xC000) && itemGetU16(record, ItemFieldWeight) > 0) {
+            item = id;
+        }
+    }
+    SessionExamine info;
+    unsigned slot;
+    saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 2, 0);
+    snprintf(text, sizeof(text), "%s: nobody is asked until someone is chosen", label);
+    check(text, !sessionExaminer(s, &slot) && !sessionExamine(s, item, &info));
+    check("a member who can act is chosen", sessionChooseRepairer(s, 1) && sessionExaminer(s, &slot) && slot == 1);
+    uint8_t *looker = sessionPartyRecord(s, 1);
+    saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments, saveGetPartySlot(&s->save, 0));
+    partySetStat(sessionPartyRecord(s, 0), PartyStatBartering, 60);
+    partySetStat(looker, PartyStatRepair, 64);
+    check("below 65 nothing is read", sessionExamine(s, item, &info) && !info.weight && !info.effect && !info.value);
+    partySetStat(looker, PartyStatRepair, 65);
+    check("65 reads the weight", sessionExamine(s, item, &info) && info.weight && !info.effect && !info.value);
+    partySetStat(looker, PartyStatRepair, 80);
+    check("80 reads the damage or absorption too", sessionExamine(s, item, &info) && info.weight && info.effect && !info.value);
+    partySetStat(looker, PartyStatRepair, 95);
+    Bcd4 base, expect;
+    memcpy(base, itemCatalogRecord(&s->items, item) + ItemFieldBaseValue, 4);
+    shopSellPrice(base, 60, expect);
+    check("95 reads the value: the speaker's sell price", sessionExamine(s, item, &info) && info.value && memcmp(info.price, expect, 4) == 0);
+    saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments, 0);
+    check("without a speaker there is no value", sessionExamine(s, item, &info) && info.effect && !info.value);
+    partySetStat(looker, PartyStatRepair, 0);
+    unsigned ring = 0;
+    for (unsigned id = 1; id <= s->items.validItemCount && !ring; id++) {
+        ring = sessionIsKeyRing(s, id) ? id : 0;
+    }
+    check("the key ring always shows its weight", ring && sessionExamine(s, ring, &info) && info.weight && !info.effect);
+    partySetU16(looker, PartyFieldStatusFlags, PartyStatusDead);
+    check("a member who can no longer act frees the role", !sessionExaminer(s, &slot) && saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 2) == 0);
+    sessionFree(s);
+}
+
 /* Containers: bags put down get a record, open on the right button (the newest on top), hold what is put in, weigh with their contents and are searched by the item commands. */
 static void testBags(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -1835,6 +1936,7 @@ int main(void) {
             testAmbush(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testGroupFight(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBeltUse(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testExamine(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSearch(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testMounts(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testRepair(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");

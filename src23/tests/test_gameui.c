@@ -767,6 +767,25 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
     gameUiClick(&ui, 300, 55, false);
     check("a click on an empty slot with an empty hand leaves the resource panel", !(saveHeaderGetU16(&s->save, 0x20) & 0x1000));
 
+    /* a double click on a belt item looks it over: nobody chosen asks who (message 7), then the examiner's Repair skill decides what is read */
+    saveHeaderSetU16(&s->save, 0x20, 0x1000);
+    saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 2, 0);
+    itemSlotSet(sessionBeltSlot(s, 1), (uint16_t)mainCommandRequiredItem(game, MainActionClock), 0);
+    check("a belt item is worth holding a click back for", gameUiWantsDoubleClick(&ui, 270, 35) && !gameUiWantsDoubleClick(&ui, 300, 55));
+    partySetStat(sessionPartyRecord(s, 0), PartyStatRepair, 70);
+    check("a double click off the belt is no business of the panel", !gameUiDoubleClick(&ui, 300, 55));
+    check("a double click on the belt item asks who looks (message 7)", gameUiDoubleClick(&ui, 270, 35) && ui.pickActive && ui.pickScroll == 5 && ui.pickPrompt == 7);
+    gameUiKey(&ui, UiKeyF1, false);
+    check("the member looks: the name, then the weight their skill reads", !ui.pickActive && ui.panelRunCount >= 5 && strcmp(ui.panelRuns[ui.panelRunCount - 2].text, "WEIGHT:") == 0);
+    gameUiDoubleClick(&ui, 270, 35);
+    check("with the role filled it looks at once", !ui.pickActive && ui.panelRunCount >= 5);
+    partySetStat(sessionPartyRecord(s, 0), PartyStatRepair, 20);
+    gameUiDoubleClick(&ui, 270, 35);
+    check("a poor eye reads only the name", ui.panelRunCount <= 3);
+    saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 2, 0);
+    itemSlotSet(sessionBeltSlot(s, 1), 0, 0);
+    saveHeaderSetU16(&s->save, 0x20, 0);
+
     /* the lockpick on the belt: the right button asks who (message 8), then the crosshair waits for a click on the view */
     if (game == GameYendor2) {
         saveHeaderSetU16(&s->save, 0x20, 0x1000);
@@ -786,6 +805,54 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
         itemSlotSet(sessionBeltSlot(s, 1), 0, 0);
         saveHeaderSetU16(&s->save, 0x20, 0);
     }
+
+    /* Chapter 2's ore transmuter on the belt: who works it (message 8), then WHICH ORE DO YOU WANT TO CREATE? (message 0x23) and the words with the amount made */
+    if (game == GameYendor2) {
+        saveHeaderSetU16(&s->save, 0x20, 0x1000);
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 8, 0);
+        uint8_t oreWas[8];
+        memcpy(oreWas, saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 4);
+        memcpy(oreWas + 4, saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 4);
+        itemSlotSet(sessionBeltSlot(s, 1), 0x1C, 1);
+        partySetStat(sessionPartyRecord(s, 0), PartyStatChemistry, 100);
+        memset(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 0, 4);
+        memset(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 0, 4);
+        bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), 100);
+        gameUiClick(&ui, 270, 35, true);
+        check("the ore transmuter asks who works it (message 8)", ui.pickActive && ui.pickScroll == 6 && ui.pickPrompt == 8);
+        gameUiKey(&ui, UiKeyF1, false);
+        check("... then which ore to create (message 0x23)", !ui.pickActive && ui.scrollAsk && ui.askPrompt == 0x23);
+        gameUiClick(&ui, 270, 122, false); /* NUORE */
+        check("NUORE makes 25 of the 100 magic ore and says so", !ui.scrollAsk && ui.panelRunCount == 3 && strcmp(ui.panelRuns[2].text, "25") == 0 && bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), 25) &&
+                                                               itemSlotId(sessionBeltSlot(s, 1)) == 0);
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 8, 0);
+        memcpy(saveHeaderBcd4(&s->save, SaveHeaderOreCounter1), oreWas, 4);
+        memcpy(saveHeaderBcd4(&s->save, SaveHeaderOreCounter2), oreWas + 4, 4);
+        saveHeaderSetU16(&s->save, 0x20, 0);
+    }
+
+    /* the clock used from a belt slot (HandleGameCommand -> ShowGameClockCommand) writes the time like T; the map item opens the local map when the Mapping skill allows */
+    saveHeaderSetU16(&s->save, 0x20, 0x1000);
+    itemSlotSet(sessionBeltSlot(s, 1), (uint16_t)mainCommandRequiredItem(game, MainActionClock), 0);
+    s->clock.minutes = 13 * 60 + 5;
+    gameUiClick(&ui, 270, 35, true);
+    check("the clock item used from the belt writes the time", ui.panelRunCount == 2 && strcmp(ui.panelRuns[0].text, "01:05 PM") == 0);
+    itemSlotSet(sessionBeltSlot(s, 1), (uint16_t)mainCommandRequiredItem(game, MainActionLocalMap), 0);
+    saveHeaderSetU16(&s->save, 0x20, 0x1000 | 0x200);
+    gameUiClick(&ui, 270, 35, true);
+    check("the map item used from the belt opens the local map when the skill allows", ui.overlay == UiOverlayLocalMap);
+    ui.overlay = UiOverlayNone;
+    saveHeaderSetU16(&s->save, 0x20, 0x1000);
+    for (unsigned member = 0; member < 4; member++) {
+        partySetStat(sessionPartyRecord(s, member), PartyStatMapping, 10);
+    }
+    gameUiClick(&ui, 270, 35, true);
+    check("... and says the skill is too low when it does not", ui.overlay == UiOverlayNone && ui.panelRunCount == 3);
+    for (unsigned member = 0; member < 4; member++) {
+        partySetStat(sessionPartyRecord(s, member), PartyStatMapping, 90);
+    }
+    itemSlotSet(sessionBeltSlot(s, 1), 0, 0);
+    saveHeaderSetU16(&s->save, 0x20, 0);
 
     /* a mount: the transports icon lists it, a click on its line shows the box of the map, a click on an explored cell flies there */
     {
@@ -926,8 +993,21 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
             gameUiClick(&ui, 270, 35, true);
             gameUiClick(&ui, 270, 131, false);
             check("a click on LEARN SPELL? asks who (message 0x21)", !ui.scrollAsk && ui.pickActive && ui.pickScroll == 2 && ui.pickPrompt == 0x21);
+            unsigned dimmed = 0, cannot = 0;
+            for (unsigned m = 0; m < 4 && sessionPartyRecord(s, m); m++) {
+                unsigned flagged = (partyGetU16(sessionPartyRecord(s, m), 0x15E) & 0x8000) != 0;
+                dimmed += flagged;
+                cannot += !spellCanLearn(spellRecord(&s->spells, itemTargetWord(itemTargetEntry(&s->items, itemCatalogRecord(&s->items, studyScroll)), 2)), itemTargetWord(itemTargetEntry(&s->items, itemCatalogRecord(&s->items, studyScroll)), 2), sessionPartyRecord(s, m));
+            }
+            gameUiDraw(&ui);
+            check("... the faces of those who cannot learn it are dimmed while it is asked", dimmed == cannot);
             gameUiClick(&ui, 270, 35, true);
-            check("... and the right button gives that up", !ui.pickActive && ui.pickScroll == 0);
+            gameUiDraw(&ui);
+            bool clear = true;
+            for (unsigned m = 0; m < 4 && sessionPartyRecord(s, m); m++) {
+                clear = clear && !(partyGetU16(sessionPartyRecord(s, m), 0x15E) & 0x8000);
+            }
+            check("... and the right button gives that up, the faces clear again", !ui.pickActive && ui.pickScroll == 0 && clear);
             SessionScrollInfo info;
             bool known = sessionScrollInfo(s, 0, SessionBeltSlotBase + 1, &info);
             gameUiClick(&ui, 270, 35, true);
