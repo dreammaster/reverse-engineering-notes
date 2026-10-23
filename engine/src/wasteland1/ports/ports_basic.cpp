@@ -82,6 +82,8 @@ PORT(moveToGroup) {                                                             
 PORT(deleteCharacter) { deleteCharacter(m, r.a.b.l); }                                  // 172D4
 PORT(mergeGroupsAtSamePosition) { r.cf = !mergeGroupsAtSamePosition(m); }               // 15DAF
 
+PORT(splitOffCharacter) { splitOffCharacter(m, r.a.b.l, r.d.b.l, r.b.b.l); }            // 15D30: al = roster id, dl = x, bl = y
+
 // ---- text engine -------------------------------------------------------------------------------------------------------
 PORT(convertNumberToBcd) { convertNumberToBcd(m); }
 PORT(writeNumber) { writeNumber(m); }

@@ -334,3 +334,4 @@ AD73 combatRound junk=al,bl,cf,ch,cl,di,dl,es,si scratch=CF80-CF87,7931-8030,A4A
 6018 moveToGroup junk=al,bl,cl,di,dl,pf,sf,si,zf scratch=A6C4-A6C4,A6D2-A6D4
 72D4 deleteCharacter junk=ah,al,bl,cf,cl,di,dl,pf,sf,si scratch=B23E-B23F,4661-4662
 5DAF mergeGroupsAtSamePosition junk=ah,al,cl,dl,si scratch=A6C4-A6CC,A6D2-A6D4,B240-B241
+5D30 splitOffCharacter junk=ah,al,bl,cl,di,dl,pf,si,zf scratch=A6C4-A6D1,A6D2-A6D4,B240-B241,4661-4662

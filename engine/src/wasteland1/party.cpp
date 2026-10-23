@@ -1,5 +1,6 @@
 #include "wasteland1/party.h"
 #include "wasteland1/globals.h"
+#include "wasteland1/character.h"
 
 namespace wl {
 
@@ -298,6 +299,32 @@ bool mergeGroupsAtSamePosition(Machine &m) {
 	clearPartyGroup(m, 3);
 	setPartyIndexesPtr(m, S(g::s2::activePartyGroup));
 	return true;
+}
+
+void splitOffCharacter(Machine &m, uint8_t id, uint8_t x, uint8_t y) {
+	m.d8(0xA6CE) = id;
+	m.d8(0xA6D1) = x;
+	m.d8(0xA6D0) = y;
+	const uint8_t group = partyGroupOfRoster(m, id);
+	m.d8(0xA6CD) = group;
+	setCurrentRosterCharacter(m, id);
+	const uint16_t c = m.d16(g::currentCharacter);
+	if (m.d8(uint16_t(c + pm::con + 1)) & 0x80) return;
+	if ((m.d8(uint16_t(c + pm::con + 1)) | m.d8(uint16_t(c + pm::con))) == 0) return;
+	uint8_t target = group;
+	if (m.d8(uint16_t(g::saved2 + g::s2::totalPartyGroups)) != 3 && countPartyMembers(m, group) >= 2) {
+		const uint8_t position = findInSelectedGroup(m, id);
+		uint8_t moved;
+		moveToGroup(m, position, group, uint8_t(m.d8(uint16_t(g::saved2 + g::s2::totalPartyGroups)) + 1), moved);
+		setActivePartyGroup(m, group);
+		removeFromActiveGroup(m, id);
+		target = ++m.d8(uint16_t(g::saved2 + g::s2::totalPartyGroups));
+		m.d8(0xA6CD) = target;
+	}
+	setActivePartyGroup(m, target);
+	m.d8(0x46A6) = x;
+	m.d8(0x46A7) = y;
+	setActivePartyGroup(m, target);
 }
 
 } // namespace wl

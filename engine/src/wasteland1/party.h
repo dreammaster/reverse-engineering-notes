@@ -87,4 +87,9 @@ void deleteCharacter(Machine &m, uint8_t position);
 // group table; false (CF set in the original) when there is none
 bool mergeGroupsAtSamePosition(Machine &m);
 
+// 15D30: character `id` leaves its group to stand alone at map position (x, y): a new group is made when the group has other
+// members and fewer than four groups exist; the lone group is placed at (x, y) and becomes active. Nothing happens for
+// characters with no hit points
+void splitOffCharacter(Machine &m, uint8_t id, uint8_t x, uint8_t y);
+
 } // namespace wl
