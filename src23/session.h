@@ -116,6 +116,9 @@ typedef struct GameSession {
     LightSourceState light; /* the carried and spell light timers (lightsource.h); the view's light tiers come from litFlags */
     DialogCatalog dialogs;  /* the NPCs, topics and lines of the game (dialog.h) */
     Conversation talk;      /* the talk in progress (talking) or the last one */
+    bool visionActive;         /* the CRYSTAL BALL's peek is on (sessionVisionBegin): the party's position, facing and place flags are the vision's until sessionVisionEnd */
+    int visionX, visionY;
+    uint16_t visionFacing, visionPlace;
     bool doorOpening;          /* a door is opening (sessionMove returned SessionStepDoorOpening): sessionScene draws the opening frame until sessionDoorFinish */
     SessionLoot loot;          /* the rewards of the last victory, for the text panel */
     SessionShot shot;          /* the ranged shot in flight (sessionShootStart): sessionScene draws it, sessionShootStep moves it */
@@ -269,7 +272,7 @@ SessionCast sessionCastOn(GameSession *session, unsigned casterSlot, unsigned sp
  * key. A key to a destination (ExamineTarget: the item's target entry has flag 4 and no container bits) takes the party there when its gate flag is set (Travelled), else
  * shows its description (Closed) or, in Chapter 3 inside the artifact realm holding a light weapon, refuses (Blocked); nothing is spent. A readable item answers Read: `readCategory` / `readId` name the text, `readability` says how many words of five the reader's Linguistics can read (sessionDocumentLine gives the lines). The light sources (items 8 / 0xE / 0xB, lit 9 / 0xF / 0xC) light and go out, and in Chapter 2 the quest relics (relics.h) work.
  */
-typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead, SessionUseScroll, SessionUseSearch, SessionUseKey, SessionUseRepair } SessionUse;
+typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead, SessionUseScroll, SessionUseSearch, SessionUseKey, SessionUseRepair, SessionUseVision } SessionUse;
 SessionUse sessionUseItem(GameSession *session, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot);
 
 /*
@@ -371,6 +374,13 @@ typedef struct {
     bool studyable, singleTarget;
 } SessionScrollInfo;
 bool sessionScrollInfo(GameSession *session, unsigned userSlot, unsigned itemSlot, SessionScrollInfo *out);
+
+/*
+ * The CRYSTAL BALL (item 0x253, Chapter 2; SessionUseVision; ShowVisionAtLocation, yendor2.asm:49095): the view is drawn from the fixed cell (340, 99) facing north with the place flags' low three bits
+ * set to 1 until a key is pressed, then the party's own position, facing and place flags come back. Nothing is spent. `sessionVisionBegin` / `sessionVisionEnd`.
+ */
+void sessionVisionBegin(GameSession *session);
+void sessionVisionEnd(GameSession *session);
 
 /*
  * The lockpick (item 0x20; Chapter 3 0x0B), SessionUseSearch: HandleSearchCommand (yendor2.asm:48270). Who searches is the third role's member (the one who opens chests); `sessionSearcher` says who, false

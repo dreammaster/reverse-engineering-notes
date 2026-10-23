@@ -118,6 +118,7 @@ typedef struct {
     unsigned pickUser, pickSlot; /* ... the member whose bag slot (1-8) it is in */
     bool reading;          /* the scroll (UiOverlayTalk) shows a readable item's text, not a conversation */
     unsigned targetKey;    /* ... or a key item's (0 = the key ring's): HandleGameCommand -> UnlockDoorCommand from a bag slot */
+    bool vision;           /* the crystal ball's view is up: any key or click ends it */
     bool targetSearch;     /* the crosshair is the lockpick's (HandleSearchCommand), not the key ring's */
     unsigned searchUser, searchSlot; /* ... the member and item slot of the pick in use */
     bool scrollAsk;        /* a spell scroll that can be studied asks USE ITEM? / LEARN SPELL? (message 0x20) */

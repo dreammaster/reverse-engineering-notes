@@ -1535,6 +1535,9 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
     if (s->game == GameYendor2 && !(target && itemTargetKind(itemRec) == ItemTargetConsumable && (itemTargetWord(target, 0) & 4)) && relicClassify(id) != RelicActionNone) {
         RelicAction action = relicClassify(id);
         uint8_t *flags = saveGlobalFlags(&s->save);
+        if (action == RelicActionVision) {
+            return SessionUseVision;
+        }
         if (action == RelicActionCharged) {
             if (!relicReady(flags, SaveHeaderGlobalFlagsSize)) {
                 return SessionUseNoEffect; /* "PATIENCE IS A VIRTUE." */
@@ -2755,6 +2758,34 @@ InteractUnlockOutcome sessionUnlock(GameSession *s, uint16_t keyWord0, uint16_t 
         break;
     }
     return out;
+}
+
+void sessionVisionBegin(GameSession *s) {
+    if (s->visionActive) {
+        return;
+    }
+    s->visionActive = true;
+    s->visionX = s->x;
+    s->visionY = s->y;
+    s->visionFacing = s->facing;
+    s->visionPlace = *placeWord(s);
+    *placeWord(s) = (uint16_t)((*placeWord(s) & 0xFFF8) | 1);
+    s->x = RelicVisionX;
+    s->y = RelicVisionY;
+    s->facing = SaveFacingNorth;
+    sessionRebuild(s);
+}
+
+void sessionVisionEnd(GameSession *s) {
+    if (!s->visionActive) {
+        return;
+    }
+    s->visionActive = false;
+    s->x = s->visionX;
+    s->y = s->visionY;
+    s->facing = s->visionFacing;
+    *placeWord(s) = s->visionPlace;
+    sessionRebuild(s);
 }
 
 bool sessionSearcher(GameSession *s, unsigned *memberSlot) {

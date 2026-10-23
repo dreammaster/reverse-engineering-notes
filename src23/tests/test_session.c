@@ -986,6 +986,14 @@ static void testSearch(GameKind game, const uint8_t *world, size_t size, const c
     s->lockReport = false;
     snprintf(text, sizeof(text), "%s: facing the magically locked door (no hidden trap): its status is reported, nothing is spent", label);
     check(text, sessionSearch(s, 0, 1) == SessionSearchStatus && s->lockReport && (s->lockFlags & LockFlagMagical));
+    itemSlotSet(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, 0), PartyGroupMain), 3), 0x253, 0);
+    check("the CRYSTAL BALL is a vision (SessionUseVision)", sessionUseItem(s, 0, 3, 0) == SessionUseVision);
+    place(s, 166, 40, SaveFacingWest);
+    uint16_t placeBefore = s->light.litFlags;
+    sessionVisionBegin(s);
+    check("the view is from (340, 99) facing north", s->x == 340 && s->y == 99 && s->facing == SaveFacingNorth && (s->light.litFlags & 7) == 1);
+    sessionVisionEnd(s);
+    check("... and the party's own place, facing and lighting come back", s->x == 166 && s->y == 40 && s->facing == SaveFacingWest && s->light.litFlags == placeBefore);
     unsigned key = game == GameYendor2 ? 0x21 : 0x24, ring = game == GameYendor2 ? 0x2F : 0x32;
     itemSlotSet(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, 0), PartyGroupMain), 1), (uint16_t)key, 0);
     itemSlotSet(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, 0), PartyGroupMain), 2), (uint16_t)ring, 0);

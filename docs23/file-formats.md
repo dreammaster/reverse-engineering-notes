@@ -6784,6 +6784,12 @@ curgame record (cell flag objects 0x8000 / 0x4000) -- already open: NOT LOCKED; 
 runs once more (`ApplySavingThrowEffect`): a trapped lock (flag 0x80) either springs it or shows TRAP / DEFEATED (0x7CA8, 0x7FD5), an untrapped one says UNLOCKED and loses the door marker (`and [cell+6], 0xBFFF`).
 `session.c` `sessionSearch` (decision: `combatSearchTrap`), `gameui.c` `searchStart` / `unlockTry`.
 
+### The crystal ball (ShowVisionAtLocation, 2026-10-23)
+
+Item 0x253 (Chapter 2) through `DispatchItemAbilityCommand` runs `ShowVisionAtLocation` (:49086): the party's X, Y, facing and place flags `word_36C79` are pushed, the flags' low three bits set to 1, the position set to (0x154, 0x63) = (340, 99)
+facing north, the window refreshed and the whole view and minimap redrawn; `WaitForKeypressTickingMusic` holds it until a key, then everything is popped and redrawn. Nothing is spent and no turn passes. `session.c`
+`sessionVisionBegin` / `sessionVisionEnd` (the monster pool's window refresh happens both ways, as in the original), `gameui.c` `ui->vision`.
+
 ### Repairing a damaged item: RepairItemCommand as a user command (2026-10-22)
 
 `HandleGameCommand` (:45750) sends a damaged item (a weapon, flags 0xC000, whose target entry has word-1 bit 0x100, or armour, flag 0x800, with 0x40; its extra word holds the original id) to `RepairItemCommand`

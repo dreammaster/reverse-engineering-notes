@@ -1125,6 +1125,11 @@ static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipie
     case SessionUseRepair:
         repairStart(ui, user, slot);
         return;
+    case SessionUseVision:
+        inventoryClose(ui);
+        sessionVisionBegin(s);
+        ui->vision = true;
+        return;
     case SessionUseSearch:
         inventoryClose(ui);
         searchStart(ui, user, slot);
@@ -3036,6 +3041,11 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
 
 static bool gameUiKeyInner(GameUi *ui, UiKey key, bool ctrl) {
     wipeCheck(ui);
+    if (ui->vision) { /* WaitForKeypressTickingMusic: any key brings the party's own view back */
+        ui->vision = false;
+        sessionVisionEnd(ui->session);
+        return true;
+    }
     if (ui->passwordActive) { /* typing: the message area is the prompt's */
         return keyDispatch(ui, key, ctrl);
     }
@@ -3543,6 +3553,11 @@ bool gameUiClick(GameUi *ui, int x, int y, bool right) {
 
 static bool gameUiClickInner(GameUi *ui, int x, int y, bool right) {
     wipeCheck(ui);
+    if (ui->vision) {
+        ui->vision = false;
+        sessionVisionEnd(ui->session);
+        return true;
+    }
     if (ui->restPause) { /* the interrupted rest's message is read: any click lets the combat show */
         ui->restPause = false;
         ui->panelRunCount = 0;
