@@ -63,6 +63,13 @@ PORT(pendingCell) { uint8_t x, y; pendingCell(m, x, y); r.d.b.l = x; r.b.b.l = y
 PORT(setViewRowPointer) { setViewRowPointer(m, r.b.b.l); r.a.x = m.d16(0x46CA); }                              // 17FC8: bl = row
 PORT(shiftLeft4) { r.a.b.l = shiftLeft4(r.a.b.l); r.zf = r.a.b.l == 0; r.sf = (r.a.b.l & 0x80) != 0; r.cf = false; }   // 12738
 
+PORT(cellToScreen) {                                                                    // 17FEE: dl = x, bl = y
+	r.cf = cellToScreen(m, r.d.b.l, r.b.b.l);
+}
+PORT(outsideMap) { r.cf = outsideMap(m, r.d.b.l, r.b.b.l); }                            // 18016
+PORT(compareTextWithRecord) { r.a.b.l = compareTextWithRecord(m); r.zf = r.a.b.l == 0; }   // 18D8E
+PORT(copyCharacterRecord) { copyCharacterRecord(m, r.a.b.l, r.d.b.l); }                 // 1718B: al = dest, dl = source
+
 // ---- text engine -------------------------------------------------------------------------------------------------------
 PORT(convertNumberToBcd) { convertNumberToBcd(m); }
 PORT(writeNumber) { writeNumber(m); }

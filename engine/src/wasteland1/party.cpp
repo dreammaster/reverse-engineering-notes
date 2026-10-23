@@ -153,4 +153,32 @@ void setViewRowPointer(Machine &m, uint8_t row) {
 
 uint8_t shiftLeft4(uint8_t v) { return uint8_t(v << 4); }
 
+bool cellToScreen(Machine &m, uint8_t &x, uint8_t &y) {
+	x = uint8_t((x - m.d8(g::saved2)) * 2);
+	y = shiftLeft4(uint8_t(y - m.d8(uint16_t(g::saved2 + 1))));
+	return m.d8(0x46B9) != 0 && y >= 0x0D;
+}
+
+bool outsideMap(Machine &m, uint8_t x, uint8_t y) { return y >= m.d8(0x46A4) || x >= m.d8(0x46A5); }
+
+uint8_t compareTextWithRecord(Machine &m) {
+	for (uint8_t i = 0;; ++i) {
+		const uint8_t a = m.d8(uint16_t(m.d16(g::textString) + i)), b = m.d8(uint16_t(m.d16(g::itemDetailsPtr) + i));
+		if ((a | b) == 0) return 0;
+		if (a != b) return 0xFF;
+		if (i == 255) return 0xFF;
+	}
+}
+
+void copyCharacterRecord(Machine &m, uint8_t dest, uint8_t source) {
+	if (source == 0) return;
+	const uint16_t from = uint16_t(g::saved + (uint16_t(source) << 8));
+	m.setD16(g::currentCharacter, from);
+	m.setD16(0x4661, from);
+	const uint16_t to = uint16_t(g::saved + (uint16_t(dest) << 8));
+	m.setD16(g::currentCharacter, to);
+	m.d8(g::currentCharacterSex) = m.d8(uint16_t(to + pm::sex));
+	for (int i = 0; i < 256; ++i) m.d8(uint16_t(from + i)) = m.d8(uint16_t(to + i));
+}
+
 } // namespace wl

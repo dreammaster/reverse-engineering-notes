@@ -1281,6 +1281,29 @@ bool continuePendingMove(Machine &m) {
 	return true;
 }
 
+void updateSlotDistances(Machine &m) {
+	m.d8(0xA5A4) = m.d8(uint16_t(g::saved2 + g::s2::field7));
+	const uint8_t active = m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup));
+	const uint8_t total = m.d8(uint16_t(g::saved2 + g::s2::totalPartyGroups));
+	for (uint8_t group = 0; group <= total; ++group) {
+		m.d8(0xA5A3) = group;
+		setActivePartyGroup(m, group);
+		if (m.d8(uint16_t(g::saved2 + g::s2::field7)) != m.d8(0xA5A4)) continue;
+		for (uint8_t slot = 0; slot != 4; ++slot) {
+			m.d8(0xA5A2) = slot;
+			selectSlot(m, group, slot);
+			const uint16_t record = m.d16(g::monsterPtr);
+			if (m.d8(record) == 0) continue;
+			m.d8(uint16_t(record + 3)) = cellDistance(m, m.d8(record), m.d8(uint16_t(record + 1)));
+		}
+	}
+	setActivePartyGroup(m, active);
+}
+
+bool outsideView(Machine &m, uint8_t x, uint8_t y) {
+	return uint8_t(x - m.d8(g::saved2)) >= m.d8(0x46A3) || uint8_t(y - m.d8(uint16_t(g::saved2 + 1))) >= 9;
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }

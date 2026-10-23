@@ -260,3 +260,9 @@ AD14 act_ad14 junk=ah,al,bl,cl,di,dl,si scratch=CF20-CF7F,4661-4664,A59D-A59E,A5
 4AAA forgetTrackedGroup junk=bl,dl,pf,zf scratch=A604-A606,A609-A609
 4A88 recordTrackedGroup scratch=A60A-A60A
 4AC7 continuePendingMove junk=ah,al,bl,bp,cl,di,dl,pf,si,zf scratch=A59D-A5A1,4661-4662,BA0F-BA11
+7FEE cellToScreen junk=al,pf,sf,zf
+8016 outsideMap junk=pf,sf
+8D8E compareTextWithRecord junk=bl,cf,di,pf,sf
+718B copyCharacterRecord junk=ah,al,bl,cf,di,pf,zf scratch=4661-4662
+36C7 updateSlotDistances junk=ah,al,bl,cl,di,dl,pf,si,zf scratch=A5A2-A5A4,A59D-A59E,CD40-CD41
+69CF outsideView junk=al,pf,sf

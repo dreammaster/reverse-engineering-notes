@@ -58,4 +58,14 @@ void setViewRowPointer(Machine &m, uint8_t row);
 // 12738: shift left by four (result 8 bit)
 uint8_t shiftLeft4(uint8_t v);
 
+// 17FEE: map cell (x, y) -> screen position; x = (x - viewX) * 2, y = (y - viewY) << 4 (both 8 bit). Returns true (CF) when the
+// view is shown and the row is 0Dh or more
+bool cellToScreen(Machine &m, uint8_t &x, uint8_t &y);
+// 18016: true (CF) when (x, y) lies outside the map size (ds:46A5 wide, ds:46A4 high)
+bool outsideMap(Machine &m, uint8_t x, uint8_t y);
+// 18D8E: 0 when the zero terminated strings at textString and itemDetailsPtr are equal, FFh otherwise
+uint8_t compareTextWithRecord(Machine &m);
+// 1718B: overwrites the character record `source` (dl) with the record `dest` (al); nothing when source is 0
+void copyCharacterRecord(Machine &m, uint8_t dest, uint8_t source);
+
 } // namespace wl

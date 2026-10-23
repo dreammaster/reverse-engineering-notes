@@ -193,6 +193,8 @@ PORT(executeOrders) { executeOrders(m, r.a.b.l); }                              
 PORT(forgetTrackedGroup) { forgetTrackedGroup(m); r.a.b.l = 1; }                        // 14AAA
 PORT(recordTrackedGroup) { recordTrackedGroup(m, r.b.b.l); r.a.b.l = 1; }               // 14A88: bl = entry offset
 PORT(continuePendingMove) { r.cf = !continuePendingMove(m); }                           // 14AC7
+PORT(updateSlotDistances) { updateSlotDistances(m); }                                    // 136C7
+PORT(outsideView) { r.cf = outsideView(m, r.d.b.l, r.b.b.l); }                          // 169CF: dl = x, bl = y
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079

@@ -177,6 +177,10 @@ void forgetTrackedGroup(Machine &m);
 void recordTrackedGroup(Machine &m, uint8_t entryOffset);
 // 14AC7: false (CF) when the pending move belongs to another party group; otherwise runs the move (sub_18024)
 bool continuePendingMove(Machine &m);
+// 136C7: stores the distance to the party into byte 3 of every monster slot of the groups on the current map
+void updateSlotDistances(Machine &m);
+// 169CF: true (CF) when cell (x, y) is outside the visible window
+bool outsideView(Machine &m, uint8_t x, uint8_t y);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------
