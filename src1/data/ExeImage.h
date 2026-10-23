@@ -23,6 +23,8 @@ public:
 	/** NUL-terminated string at a data-segment offset, or 0 if out of range. */
 	const char *stringAt(uint32_t dsOffset) const;
 	const byte *bytesAt(uint32_t dsOffset, uint32_t length) const;
+	/** Copy the initial contents of the data segment (from its start to the end of the load image) to `dst`; returns the number of bytes. */
+	uint32_t copyDataSegment(byte *dst, uint32_t capacity) const;
 
 private:
 	Shared::Blob _file;

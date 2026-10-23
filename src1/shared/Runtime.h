@@ -121,6 +121,11 @@ public:
 	/** Draw `count` consecutive tiles left to right, advancing ctx.x1 by 32 each (drawTileRun). */
 	void drawTileRun(byte file, uint16 firstIndex, int count);
 
+	/** The tile "file" that is not a FILE0n.16: the party portraits in CURRGAME\BATPIC.DAT. */
+	enum { kBatpicFile = 7 };
+	bool readBatpic(uint16 record, byte *tile512);
+	bool writeBatpic(uint16 record, const byte *tile512);
+
 	// ---- driver shortcuts ----
 	void vid(byte ah, byte al = 0) { video.call(ah, al); }
 

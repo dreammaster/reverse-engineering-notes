@@ -14,3 +14,11 @@ and the test named below is pointed at `<dir>` through its environment variable.
 | `prog6_bookmarker.txt` | party state 2 | `test_prog6` (`YENDOR1_REFP6_DIR`) |
 | `prog0_save.txt`, `prog0_restore.txt` (game dir with differing current/saved game) | party state 2, `SAVEGAME.A\PARTY.DAT` original | `test_prog0` (`YENDOR1_REFP0_DIR`: before/after file copies, see the test) |
 | `prog0_new_game.txt` | party state 1, saved game original | `test_prog0` |
+| `prog5_create.txt` | party state 2 | `test_prog5` `create` (`YENDOR1_REFP5_DIR/create`: trace, snapshots, `in/` and `out/CURRGAME` party files) |
+| `prog5_three_characters.txt` | party state 2 | makes the game used by the next ones (three characters AAA, BBB, CCC; "game_chars") |
+| `prog5_assemble.txt` | game_chars | `test_prog5` `assemble`; its output is the "assembled" game (game_asm) |
+| `prog5_view.txt`, `prog5_remove_assigned.txt` | game_asm | `test_prog5` `view`, `remove_assigned` |
+| `prog5_remove.txt` | game_chars | `test_prog5` `remove` |
+
+For the PROG5 runs add `--work <dir>` (its CURRGAME holds the files after the run) as well as `--dump`/`--log62`.
+

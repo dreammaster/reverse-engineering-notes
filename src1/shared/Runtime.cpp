@@ -159,9 +159,15 @@ void Runtime::delayTicks(uint16 n) {
 // tileOp AL=1: draw a 32x32 tile with putImage (rows 32, 4 bytes wide, mask FFh). The caller's image pointer is preserved, and a
 // pending mouse movement is flushed with vidMouseRefresh afterwards, as the original's tileOp epilogue does.
 bool Runtime::drawTile(byte file, uint16 index) {
-	if (file >= Data::kTileFileCount)
-		return false;
-	const byte *raw = tiles[file].raw(index);
+	byte batpic[Data::kTileBytes];
+	const byte *raw = 0;
+	if (file == kBatpicFile) {
+		if (!readBatpic(index, batpic))
+			return false;
+		raw = batpic;
+	} else if (file < Data::kTileFileCount) {
+		raw = tiles[file].raw(index);
+	}
 	if (!raw)
 		return false;
 	Vid::Context &c = video.ctx;
@@ -175,6 +181,24 @@ bool Runtime::drawTile(byte file, uint16 index) {
 	if (c.mouseFlags & 0x80)
 		vid(0x2B);
 	return true;
+}
+
+// tile file 7 is CURRGAME/BATPIC.DAT: the character portraits the party strip code renders and stores (one 512-byte tile per record)
+static std::string batpicPath(const std::string &dir) {
+	std::string path = dir;
+	if (!path.empty() && path[path.size() - 1] != '/' && path[path.size() - 1] != '\\')
+		path += "/";
+	return path + "CURRGAME/BATPIC.DAT";
+}
+
+bool Runtime::readBatpic(uint16 record, byte *tile512) {
+	RecordFile f;
+	return f.open(batpicPath(workDir()).c_str(), Data::kTileBytes, false) && f.read(record, tile512);
+}
+
+bool Runtime::writeBatpic(uint16 record, const byte *tile512) {
+	RecordFile f;
+	return f.open(batpicPath(workDir()).c_str(), Data::kTileBytes, true) && f.write(record, tile512);
 }
 
 void Runtime::drawTileRun(byte file, uint16 firstIndex, int count) {

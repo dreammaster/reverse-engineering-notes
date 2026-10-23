@@ -1,0 +1,17 @@
+wait 4
+key 0D
+wait 8
+ext 48
+wait 1
+ext 48
+wait 1
+key 0D
+wait 3
+key 0D
+wait 3
+shot n0
+key 0D
+wait 2
+key 1B
+wait 3
+quit

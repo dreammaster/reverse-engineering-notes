@@ -1,0 +1,24 @@
+wait 4
+key 0D
+wait 8
+ext 48
+wait 1
+key 0D
+wait 3
+shot a0
+key 20
+wait 1
+shot a1
+ext 50
+wait 1
+key 20
+wait 1
+ext 50
+wait 1
+key 20
+wait 1
+shot a2
+key 0D
+wait 6
+shot a3
+quit

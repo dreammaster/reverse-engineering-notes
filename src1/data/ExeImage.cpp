@@ -19,6 +19,18 @@ const byte *ExeImage::bytesAt(uint32_t dsOffset, uint32_t length) const {
 	return _file.data() + pos;
 }
 
+uint32_t ExeImage::copyDataSegment(byte *dst, uint32_t capacity) const {
+	const uint32_t pos = _imageStart + _dataBase;
+	if (pos >= _file.size())
+		return 0;
+	uint32_t n = (uint32_t)_file.size() - pos;
+	if (n > capacity)
+		n = capacity;
+	for (uint32_t i = 0; i < n; i++)
+		dst[i] = _file.data()[pos + i];
+	return n;
+}
+
 const char *ExeImage::stringAt(uint32_t dsOffset) const {
 	const uint32_t pos = _imageStart + _dataBase + dsOffset;
 	if (pos >= _file.size())

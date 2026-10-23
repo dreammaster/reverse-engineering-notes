@@ -4,6 +4,7 @@
 #include "prog1/Prog1.h"
 #include "prog2/Prog2.h"
 #include "prog3/Prog3.h"
+#include "prog5/Prog5.h"
 #include "prog6/Prog6.h"
 
 #include <stdio.h>
@@ -54,6 +55,10 @@ int DefaultLauncher::run(int program, Shared::Params &params, Shared::Runtime &r
 	}
 	case kProg3: {
 		Prog3::Prog3 p(rt, params, *this);
+		return p.run();
+	}
+	case kProg5: {
+		Prog5::Prog5 p(rt, params);
 		return p.run();
 	}
 	case kProg6: {

@@ -213,3 +213,33 @@ SAVEGAME.A patched like CURRGAME).
 current and saved games differ; the scripts are in `tests/refs/`), and the error codes 9 and FEh. **Housekeeping:** `src1/tests/test_sw_work/`
 (copies of original game data written by test_sw) had been committed by mistake; it is now untracked and ignored (`.gitignore`), but it
 remains in the history of commits before this one.
+
+## 2026-10-23 -- PROG5 (the character screens) reimplemented and verified
+
+`src1/prog5` ports the four modes the book menu starts: Create (parm_0E = 1), View (2), Remove (3), Assemble party (4), as the original
+does them: the program works on a 64 KB data segment loaded from PROG5.EXE (`Shared::DataSegment`; the initial tables -- class ranges, item
+table, sprite tile tables, texts -- are read from the file at run time), with the whole PARTY.DAT (10 records of 100 bytes, characters from
+record 10 on, record 0's first word = record count) held at DS:05F7h and the character being worked on at DS:09DFh. Names of the offsets
+are in `prog5/Prog5Layout.h`. Pieces worth knowing:
+
+* **The character renderer** (`drawPartyStrip` and its helpers) composes a character from body, head, shield and weapon tiles of the
+  character's picture file off-screen, then copies the 5x4 tiles to CURRGAME\BATPIC.DAT -- tile "file" 7 of the tile cache is that file
+  (`Runtime::readBatpic/writeBatpic`; `drawTile(7, n)` draws record n). tileOp's six operations are: 1 draw (load if not cached), 2 load,
+  3 release, 4 get a pointer, 5 invalidate.
+* **Party assembly** keeps six slots (words at DS:061Dh); a character's `flags` byte has 01h = in the party, 40h = portrait needs rendering,
+  80h = has had the starting supplies (50 of item 1 and a few class items are added to the party stock at DS:06BFh, indexed by item number).
+* Attributes are rolled uniformly between per-class minimum and maximum (tables at DS:160Bh); the shared RNG is the one in `BookUi`.
+* Money is four BCD bytes at DS:09FCh with the original's quirky decimal correction (`Prog5::money`, flags emulated).
+* Stock, status and the "in the party" checks mean View lets the player change weapon/armour/shield of party members (Left/Right through
+  the items they can use, Enter keeps).
+* `byte_1481F` is three things at once in the original -- the last input result, a file error flag and the screens' cancelled flag; the port
+  keeps one `_status` the same way.
+
+**Verification** (`tests/test_prog5.cpp`, scripts in `tests/refs/prog5_*.txt`): five runs match the original call for call, in video memory and in
+the party files left behind (including BATPIC.DAT): create 926 calls, assemble 476, view 1,806, remove 1,504, remove-assigned 211. The
+attribute rolls of the create run needed the generator's state: 6157, found by searching all 16-bit states for the two rolls shown on the screens.
+
+**Not ported:** the variants started from the game (parm_02 = 1 or 2: choosing a member, the party rearranging UI with its page-flip
+animation, `sub_10F8D`'s notice that a dead leader cannot lead) -- PROG5 returns FCh for them; they come with PROG4. `drawPartyStrip` of
+PROG6 (used after a restore) is another copy of the same renderer with its own data offsets; it still needs to be connected to the port in
+`Prog6`.
