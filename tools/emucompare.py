@@ -5,7 +5,7 @@ compilers wrote it (-O0 against -O2 does not matter).
 
 Only functions whose arguments are numbers can be run: int, unsigned, long, bool (0 or 1), char, enum (names like eFoo, FooEnum, TypeFoo),
 float and double. Free functions and the static methods named in the sources (`static` in the headers of --headers) are tried;
-a function that calls out of the image (a PLT stub to a library), reads a pointer it was not given or loops for ever is skipped.
+a function that faults, takes longer than 1.5 s or stops in an assert/abort is skipped. The libraries are not loaded: their PLT stubs are noted and answered.
 
 Usage: tools/emucompare.py <first exe> <second exe> [--headers DIR] [--filter TEXT] [--list] [--methods]
   --methods       the non-static methods of the T* classes instead: `this` is a block of 4 KB of random small numbers (the same in both
@@ -56,6 +56,7 @@ ARENA_SIZE = 0x800000
 BLOCK = 0x1000
 BLOCK_STRIDE = 0x2000
 MAX_INSNS = 300000
+IMAGE_TOKEN_END = 0x1800000  # (the addresses of code and data of both builds; Deponia 4 has 16 MB of bss above it, which small numbers must not be taken for)
 RUN_MICROSECONDS = 1500000   # (a call that takes longer than this is given up)
 # calls whose presence or order says nothing about the logic (the optimizer inlines or merges them)
 NOISE = {"_Znwm", "_Znam", "_ZdlPv", "_ZdaPv", "_ZdlPvm", "malloc", "calloc", "realloc", "free", "memcpy", "memmove", "memset", "memcmp",
@@ -292,7 +293,7 @@ class Image:
         out = []
         for i in range(0, len(raw) - 7, 8):
             q, = struct.unpack_from("<Q", raw, i)
-            if self.low <= q < self.high or STACK <= q < STACK + STACK_SIZE or ARENA <= q < ARENA + ARENA_SIZE or SENTINEL <= q < SENTINEL + 0x1000:
+            if 0x400000 <= q < IMAGE_TOKEN_END or STACK <= q < STACK + STACK_SIZE or ARENA <= q < ARENA + ARENA_SIZE or SENTINEL <= q < SENTINEL + 0x1000:
                 q = -1
             out.append(q)
         return out
@@ -430,12 +431,14 @@ def kind_of_return(t):
     return None
 
 
-def make_block(rng, index):
+def make_block(rng, index, safe=False):
     """A block of random small numbers; its first 8 bytes point at an empty string (a wxString or std::string given as a reference)."""
     block = bytearray()
     for _ in range(BLOCK // 4):
         roll = rng.random()
-        if roll < 0.15:
+        if safe:
+            block += struct.pack("<I", rng.choice([0, 0, 1]))  # (only the values that a bool has: 0 and 1)
+        elif roll < 0.15:
             block += struct.pack("<I", 0)
         elif roll < 0.8:
             block += struct.pack("<I", rng.randint(0, 8))
@@ -519,11 +522,12 @@ def main():
         return 0
     im1, im2 = Image(args[0]), Image(args[1])
     rng = random.Random(1)
-    ran = same_all = differ = skipped = 0
+    ran = same_all = differ = skipped = weak = 0
     skip_reasons = {}
     for n, d, kinds, ret, is_method in todo:
         diffs = []
         count = 0
+        trial_no = 0
         failed = None
         arg_sets = list(inputs([k if k != "p" else "i" for k in kinds if k != "p"], rng)) if [k for k in kinds if k != "p"] else [([], [])]
         if is_method or "p" in kinds:
@@ -538,12 +542,14 @@ def main():
             blocks = []
             ints = []
             next_int = iter(iv)
+            safe = (trial_no % 2 == 0)  # (every other set has blocks of 0 and 1 only: a bool member holding 2 is read differently by GCC -O0 and -O2)
+            trial_no += 1
             if is_method:
-                blocks.append(make_block(rng, 0))
+                blocks.append(make_block(rng, 0, safe))
                 ints.append(blocks[0][0])
             for k in kinds:
                 if k == "p":
-                    blocks.append(make_block(rng, len(blocks)))
+                    blocks.append(make_block(rng, len(blocks), safe))
                     ints.append(blocks[-1][0])
                 elif k in "ib":
                     ints.append(next(next_int))
@@ -576,20 +582,23 @@ def main():
             if r1["trace"] != r2["trace"]:
                 problems.append("calls %s / %s" % (r1["trace"][:6], r2["trace"][:6]))
             if problems:
-                diffs.append((iv, [f[0] for f in fl], problems))
+                diffs.append((iv, [f[0] for f in fl], problems, safe))
         if failed or count == 0:
             skipped += 1
             skip_reasons[failed or "none"] = skip_reasons.get(failed or "none", 0) + 1
             continue
         ran += 1
-        if diffs:
+        if diffs and not any(x[3] for x in diffs) and is_method:
+            weak += 1
+            print("weak      %s: %d of %d inputs differ, only with blocks that hold numbers over 1, e.g. %s" % (d, len(diffs), count, [x[:3] for x in diffs[:1]]))
+        elif diffs:
             differ += 1
-            print("DIFFERENT %s: %d of %d inputs differ, e.g. %s" % (d, len(diffs), count, diffs[:2]))
+            print("DIFFERENT %s: %d of %d inputs differ, e.g. %s" % (d, len(diffs), count, [x[:3] for x in diffs[:2]]))
         else:
             same_all += 1
             if not quiet:
                 print("same      %s (%d inputs)" % (d, count))
-    print("ran %d, the same on every input %d, different %d, skipped %d" % (ran, same_all, differ, skipped))
+    print("ran %d, the same on every input %d, different %d, different only in blocks with numbers over 1 %d, skipped %d" % (ran, same_all, differ, weak, skipped))
     return 0
 
 
