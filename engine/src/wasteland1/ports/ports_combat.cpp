@@ -197,6 +197,7 @@ PORT(updateSlotDistances) { updateSlotDistances(m); }                           
 PORT(outsideView) { r.cf = outsideView(m, r.d.b.l, r.b.b.l); }                          // 169CF: dl = x, bl = y
 PORT(updateGroupDistances) { updateGroupDistances(m); }                                  // 149F7
 PORT(scanForMonsters) { r.cf = scanForMonsters(m); }                                     // 14664
+PORT(combatRound) { combatRound(m, r.a.b.l); }                                          // 1AD73
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079

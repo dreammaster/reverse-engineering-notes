@@ -186,6 +186,11 @@ void updateGroupDistances(Machine &m);
 // 14664: looks at every cell of the view window for monster markers (cell classes 3 and 0Fh), draws them and keeps the table of
 // tracked monster groups; true (CF) when nothing new was found
 bool scanForMonsters(Machine &m);
+// 1AD73: one combat round of the party group `partyGroup`: initiative of monsters and party members, then everybody acts
+// in turn (party members shoot, monsters attack) until the table is used up
+void combatInitiative(Machine &m, uint8_t partyGroup);
+void evasionChance(Machine &m, uint8_t base);
+void combatRound(Machine &m, uint8_t partyGroup);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

@@ -1575,6 +1575,237 @@ restart:   // 146DB
 	return !((D(0xA60A) & D(0xA610)) != 0);
 }
 
+namespace {
+uint8_t &T(Machine &m, unsigned i) { return m.d8(uint16_t(0x7931 + (i & 0xFF))); }   // the initiative table (256 bytes)
+}
+
+void combatInitiative(Machine &m, uint8_t partyGroup) {
+	Rules rules(m);
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	auto S = [&](uint8_t o) -> uint8_t & { return m.d8(uint16_t(g::saved2 + o)); };
+	auto record = [&](uint8_t i) -> uint8_t & { return m.d8(uint16_t(m.d16(g::monsterPtr) + i)); };
+	auto storeInitiative = [&](uint16_t value) {   // 1B0E2
+		T(m, D(0xCF83)) = uint8_t(value);
+		T(m, D(0xCF83) + 1) = uint8_t(value >> 8);
+	};
+	auto advance = [&](uint8_t by) { D(0xCF83) = uint8_t(D(0xCF83) + by); };   // 1B0DA
+	auto monsterInitiativeBonus = [&]() {   // 1B15F
+		selectMonsterDetails(m, D(0xCF80));
+		return itemByte(m, 2);
+	};
+
+	selectPartyBlock(m, partyGroup);
+	D(0xCF80) = 0;
+	D(0xCF83) = 0;
+	for (int i = 0; i != 256; ++i) T(m, i) = 0;
+	D(0xCF86) = 0;
+	for (;;) {   // 1AD8A: the monster slots in front of the party
+		const uint8_t slot = D(0xCF86);
+		selectSlot(m, S(g::s2::activePartyGroup), slot);
+		const uint8_t x = record(0);
+		bool skip = x == 0;
+		if (!skip) {
+			skip = cellDistance(m, x, record(1)) >= 0x10;
+			if (!skip) {
+				selectSlotCellRecord(m);
+				skip = (m.d8(uint16_t(m.d16(g::savedLocationDetailsPtr) + 9)) >> 1) & 1;
+			}
+		}
+		if (skip) {
+			advance(0x3C);
+		} else {
+			for (D(0xCF80) = 0; D(0xCF80) < 3; ++D(0xCF80)) {   // 1ADC6: the three monster groups of the slot
+				selectMember(m, S(g::s2::activePartyGroup), D(0xCF86), D(0xCF80));
+				selectMonsterDetails(m, D(0xCF80));
+				if (!hasNoAmmunition(m, itemDamageDice(m))) { advance(0x14); continue; }
+				for (uint8_t at = 0; at < 0x14; at = uint8_t(at + 2)) {
+					const uint16_t base = m.d16(g::monsterPtr);
+					if ((m.d8(uint16_t(base + at)) | m.d8(uint16_t(base + at + 1))) != 0) {
+						const uint8_t statusOffset = uint8_t((at >> 1) + 0x14);
+						if (m.d8(uint16_t(base + statusOffset)) != 0) {
+							m.d8(uint16_t(base + statusOffset)) = 0;
+							rules.setSeed1(0);
+							rules.addTarget(rules.rollDice());
+							rules.addTarget(int32_t(uint8_t(monsterInitiativeBonus() << 3)));
+							storeInitiative(rules.seed1());
+						}
+					}
+					advance(2);
+				}
+			}
+		}
+		if (++D(0xCF86) >= 4) break;
+	}
+	advance(2);
+	const uint8_t members = S(g::s2::membersInGroup);
+	for (uint8_t member = 1;; ++member) {   // 1AE66: the party members
+		D(0xCF84) = member;
+		if (!isMemberUnconscious(m, member) && m.d8(uint16_t(m.d16(g::partyStatusPtr) + member)) == 2) {
+			rules.setSeed1(0);
+			rules.addTarget(rules.rollDice());
+			rules.addTarget(m.d8(uint16_t(m.d16(g::currentCharacter) + pm::speed)));
+			rules.addTarget(int32_t(getMemberSkillLevel(m, 1)) * 3);
+			storeInitiative(rules.seed1());
+		}
+		advance(2);
+		if (member >= members) break;
+	}
+}
+
+void evasionChance(Machine &m, uint8_t base) {   // 1B108
+	Rules rules(m);
+	rules.addTarget(base);
+	rules.addTarget(int32_t(getMemberSkillLevel(m, 1)) * 3);
+	rules.addTarget(int16_t(attributeBonus(m, pm::agility)));
+	const CombatantId id = splitCombatantIndex(m.d8(0xCF81));
+	selectSlot(m, id.group, id.slot);
+	selectSlotCellRecord(m);
+	selectMonsterDetails(m, m.d8(0xCF80));
+	uint8_t bonus = itemByte(m, 2);
+	if (itemDamageDice(m) == 1) bonus = uint8_t(bonus << 2);
+	else rules.addTarget(5);
+	rules.addTarget(int16_t(0xFF00 | uint8_t(uint8_t(bonus ^ 0xFF) + 1)));
+	rules.setSeed2(100);
+	if (rules.seed1() >= rules.seed2()) rules.setSeed1(100);
+}
+
+void combatRound(Machine &m, uint8_t partyGroup) {
+	Rules rules(m);
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	auto S = [&](uint8_t o) -> uint8_t & { return m.d8(uint16_t(g::saved2 + o)); };
+	combatInitiative(m, partyGroup);
+	const uint8_t members = S(g::s2::membersInGroup);
+	for (;;) {
+		rules.setSeed1(0);
+		D(0xCF83) = 0;
+		do {   // 1AEB4: the entry with the highest initiative acts next
+			const unsigned at = D(0xCF83);
+			rules.setSeed2(uint16_t(T(m, at) | (T(m, at + 1) << 8)));
+			if (rules.rollBeatsTarget()) {
+				rules.setSeed1(rules.seed2());
+				D(0xCF82) = D(0xCF83);
+			}
+			D(0xCF83) = uint8_t(D(0xCF83) + 2);
+		} while (D(0xCF83) != 0);
+		if (rules.seed1() == 0) {   // everybody has acted
+			for (uint8_t member = 1; member <= members; ++member) {
+				if (m.d8(uint16_t(m.d16(g::partyStatusPtr) + member)) == 2) {
+					m.d8(uint16_t(m.d16(g::partyStatusPtr) + member)) = 0;
+					m.d8(uint16_t(m.d16(g::partyOrdersPtr) + member)) = 0;
+				}
+			}
+			return;
+		}
+		const uint8_t entry = D(0xCF82);
+		if (entry >= 0xF0) {   // 1AF18: a party member
+			const uint8_t member = uint8_t((entry - 0xF0) >> 1);
+			D(0xCF84) = member;
+			if (!isMemberUnconscious(m, member)) {
+				D(0xCF81) = orderLow(m, member);
+				uint8_t shots = uint8_t((getMemberSkillLevel(m, 1) >> 1) + 1);
+				D(0xCF87) = shots;
+				for (;;) {   // 1AF40
+					if (memberTargetsAlive(m, member) != 0) {
+						rules.setSeed1(0);
+						const CombatantId id = splitCombatantIndex(D(0xCF81));
+						D(0xCF80) = id.member;
+						D(0xCF86) = id.slot;
+						const uint8_t tracked = m.d8(uint16_t(0x711D + uint8_t(id.group * 4 + id.slot)));
+						evasionChance(m, tracked == 0xFF ? 0x3C : 0x32);
+						{   // 15C19
+							const CombatantId t = splitCombatantIndex(orderLow(m, D(0xCF84)));
+							selectSlot(m, t.group, t.slot);
+							selectSlotCellRecord(m);
+							markLocationVisited(m);
+						}
+						if (rules.random(100) >= uint8_t(rules.seed1())) {
+							printMessage(m, 0x23);
+						} else {
+							setItemQuantityOne(m);
+							X86Regs flush;
+							flush.dl = m.d8(m.d16(g::monsterPtr));
+							legacy::call(m, 0x9EFC, flush);   // sub_19EFC
+							writeCharacter(m, 0x0B);
+							rules.setSeed1(0);
+							rules.addTarget(int16_t(defenseRoll(m, D(0xCF84), flush.dl)));
+							rules.addTarget(int16_t(weaponSkillBonus(m)));
+							rules.addTarget(int16_t(attributeBonus(m, pm::dexterity)));
+							rules.addTarget(int16_t(attributeBonus(m, pm::strength)));
+							rules.addTarget(int16_t(attributeBonus(m, pm::luck)));
+							setItemQuantityOne(m);
+							bool alive;
+							bool killed;
+							do {
+								const uint8_t monster = randomDigit(m);
+								D(g::weaponNoteShown) = 0;
+								alive = attackMonster(m, D(0xCF81), monster, killed);
+							} while (!alive);
+							weaponSkillRoll(m, D(0xCF81));
+							if (killed) {
+								monsterExperience(m, D(0xCF81));
+								addExperience(m);
+								addExperience(m);
+							}
+						}
+					}
+					D(0xCF87) = --shots;
+					if (shots == 0) break;
+				}
+			}
+		} else {   // 1AFFD: a monster
+			uint8_t index = uint8_t(entry >> 1);
+			const uint8_t monster = uint8_t(index % 10);
+			D(0xCF85) = monster;
+			const CombatantId id = splitCombatantIndex(uint8_t(index / 10));
+			D(0xCF80) = id.member;
+			D(0xCF81) = combatantIndex(S(g::s2::activePartyGroup), id.slot, id.member);
+			{
+				const CombatantId c = splitCombatantIndex(D(0xCF81));
+				selectSlot(m, c.group, c.slot);
+				selectSlotCellRecord(m);
+				selectMember(m, c.group, c.slot, c.member);
+			}
+			const uint16_t base = m.d16(g::monsterPtr);
+			if ((m.d8(uint16_t(base + monster * 2)) | m.d8(uint16_t(base + monster * 2 + 1))) != 0) {
+				selectMonsterDetails(m, D(0xCF80));
+				uint8_t attacks = itemByte(m, 2);
+				D(0xCF87) = attacks;
+				if (countConsciousMembers(m) != 0) {
+					for (;;) {   // 1B04C
+						uint8_t pick;
+						do {
+							pick = rules.random(members);
+							D(0xCF84) = pick;
+						} while (isMemberUnconscious(m, pick));
+						rules.setSeed1(0);
+						const uint8_t status = m.d8(uint16_t(m.d16(g::partyStatusPtr) + pick));
+						evasionChance(m, status == 5 ? 0x3C : status == 2 ? 0x32 : 0x28);
+						setItemQuantityOne(m);
+						X86Regs flush;
+						if (rules.random(100) < uint8_t(rules.seed1())) {
+							legacy::call(m, 0x9EFC, flush);
+							printMonsterMessage(m, 0x1A, D(0xCF80));
+							printMessage(m, 0x1F);
+						} else {
+							legacy::call(m, 0x9EFC, flush);
+							printMonsterMessage(m, 0x1A, D(0xCF80));
+							printLocationMessageVariant(m, 0x55);
+							rules.setSeed1(0);
+							damagePartyMember(m, monsterDamage(m, D(0xCF80)), pick);
+						}
+						D(0xCF87) = --attacks;
+						if (attacks == 0 || (attacks & 0x80)) break;
+						if (countConsciousMembers(m) == 0) break;
+					}
+				}
+			}
+		}
+		T(m, D(0xCF82)) = 0;   // 1B0F9: this entry has acted
+		T(m, D(0xCF82) + 1) = 0;
+	}
+}
+
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }
