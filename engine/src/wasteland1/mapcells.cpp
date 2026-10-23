@@ -173,4 +173,102 @@ void drawMapCell(Machine &m, uint8_t x, uint8_t y) {
 	}
 }
 
+void redrawViewColumn(Machine &m) {
+	const uint8_t x = uint8_t((m.d8(0x4685) >> 1) + m.d8(g::saved2));
+	uint8_t y = m.d8(uint16_t(g::saved2 + 1));
+	m.d8(0xAA44) = x;
+	m.d8(0xAA43) = y;
+	for (int i = 9; i != 0; --i) {
+		m.d8(0xAA31) = uint8_t(i);
+		drawMapCell(m, x, y);
+		y = uint8_t(y + 1);
+		m.d8(0xAA43) = y;
+	}
+}
+
+void redrawViewRow(Machine &m) {
+	const uint8_t y = uint8_t((m.d8(0x4686) >> 4) + m.d8(uint16_t(g::saved2 + 1)));
+	uint8_t x = m.d8(g::saved2);
+	m.d8(0xAA42) = y;
+	m.d8(0xAA41) = x;
+	for (int i = m.d8(0x46A3) ? m.d8(0x46A3) : 256; i != 0; --i) {
+		m.d8(0xAA30) = uint8_t(i);
+		drawMapCell(m, x, y);
+		x = uint8_t(x + 1);
+		m.d8(0xAA41) = x;
+	}
+}
+
+void scrollViewUp(Machine &m) {
+	--m.d8(uint16_t(g::saved2 + 1));
+	if (m.d8(0x4724) != 0) return;
+	X86Regs r;
+	legacy::call(m, 0x002A, r);   // j_start_15
+	m.d8(0x4686) = 0x10;
+	redrawViewRow(m);
+	m.d8(0x4686) = 0;
+	redrawViewRow(m);
+}
+
+void scrollViewLeft(Machine &m) {
+	--m.d8(g::saved2);
+	if (m.d8(0x4724) != 0) return;
+	X86Regs r;
+	legacy::call(m, 0x0024, r);   // j_start_16
+	m.d8(0x4685) = 2;
+	redrawViewColumn(m);
+	m.d8(0x4685) = 0;
+	redrawViewColumn(m);
+}
+
+void scrollViewRight(Machine &m) {
+	++m.d8(g::saved2);
+	if (m.d8(0x4724) != 0) return;
+	X86Regs r;
+	legacy::call(m, 0x0021, r);   // j_start_17
+	m.d8(0x4685) = 0x22;
+	redrawViewColumn(m);
+	m.d8(0x4685) = 0x24;
+	redrawViewColumn(m);
+}
+
+void scrollViewDown(Machine &m) {
+	++m.d8(uint16_t(g::saved2 + 1));
+	if (m.d8(0x4724) != 0) return;
+	X86Regs r;
+	legacy::call(m, 0x0027, r);   // j_start_18
+	m.d8(0x4686) = 0x70;
+	redrawViewRow(m);
+	m.d8(0x4686) = 0x80;
+	redrawViewRow(m);
+}
+
+void redrawViewObjects(Machine &m) {
+	m.d8(0x46EE) = 0xFF;
+	uint8_t y = m.d8(uint16_t(g::saved2 + 1));
+	for (int row = 9; row != 0; --row, y = uint8_t(y + 1)) {
+		m.d8(0xAA32) = uint8_t(row);
+		m.d8(0xAA3E) = y;
+		if (!(y & 0x80)) {
+			if (y >= m.d8(0x46A4)) return;
+			m.d8(0xAA33) = m.d8(0x46A3);
+			uint8_t x = m.d8(g::saved2);
+			for (int col = m.d8(0x46A3) ? m.d8(0x46A3) : 256; col != 0; --col, x = uint8_t(x + 1)) {
+				m.d8(0xAA33) = uint8_t(col);
+				m.d8(0xAA3F) = x;
+				if (x & 0x80) continue;
+				if (x >= m.d8(0x46A5)) break;
+				const uint8_t cls = tileClassAt(m, x, y);
+				if (cls == 5 || cls == 4 || cls == 9) drawMapCell(m, x, y);
+			}
+		}
+	}
+}
+
+void drawPartyCell(Machine &m) {
+	X86Regs r;
+	legacy::call(m, 0x9E30, r);   // clearInverseText
+	drawMapCell(m, m.d8(0x46A6), m.d8(0x46A7));
+}
+
 } // namespace wl

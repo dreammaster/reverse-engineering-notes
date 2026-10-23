@@ -42,5 +42,14 @@ PORT(drawMapCell) {                                                             
 	r.b.b.l = m.d8(g::rectTextY);
 }
 
+PORT(redrawViewColumn) { redrawViewColumn(m); }                                          // 16619
+PORT(redrawViewRow) { redrawViewRow(m); }                                               // 16646
+PORT(scrollViewUp) { scrollViewUp(m); }                                                 // 16584
+PORT(scrollViewLeft) { scrollViewLeft(m); }                                             // 165AC
+PORT(scrollViewRight) { scrollViewRight(m); }                                           // 165D2
+PORT(scrollViewDown) { scrollViewDown(m); }                                             // 165FB
+PORT(redrawViewObjects) { redrawViewObjects(m); }                                       // 167CE
+PORT(drawPartyCell) { drawPartyCell(m); }                                               // 1675C
+
 } // namespace rc
 } // namespace wl

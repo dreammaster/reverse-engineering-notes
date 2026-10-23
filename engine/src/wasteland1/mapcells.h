@@ -34,6 +34,18 @@ XY toViewPosition(Machine &m, uint8_t x, uint8_t y);
 void storeViewPosition(Machine &m);
 // 18024: draws the map cell (x, y) into the view window (terrain tile, or the object tile of the cell's action class);
 // the registers it leaves are the text cursor (dl = rectTextX, bl = rectTextY)
-void drawMapCell(Machine &m, uint8_t x, uint8_t y);   // 17DBB: viewX/viewY = partyMapPosition()
+void drawMapCell(Machine &m, uint8_t x, uint8_t y);
+// 16619 / 16646: redraws the column (nine cells) at the screen offset ds:4685 / the row (46A3 cells) at the offset ds:4686
+void redrawViewColumn(Machine &m);
+void redrawViewRow(Machine &m);
+// 16584 / 165AC / 165D2 / 165FB: scroll the view one cell up / left / right / down and draw the cells that appear
+void scrollViewUp(Machine &m);
+void scrollViewLeft(Machine &m);
+void scrollViewRight(Machine &m);
+void scrollViewDown(Machine &m);
+// 167CE: redraws the cells of the view window whose class carries an object (classes 4, 5 and 9)
+void redrawViewObjects(Machine &m);
+// 1675C: draws the cell of the party position
+void drawPartyCell(Machine &m);   // 17DBB: viewX/viewY = partyMapPosition()
 
 } // namespace wl
