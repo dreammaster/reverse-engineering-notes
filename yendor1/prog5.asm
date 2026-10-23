@@ -834,106 +834,358 @@ loc_107B1:                              ; CODE XREF: seg000:07AC↑j
                 call    shared_b65991
                 jmp     loc_1062B
 ; ---------------------------------------------------------------------------
-                db 0B4h, 29h, 0CDh, 62h, 0E8h, 49h, 10h, 9Ah, 0Ch, 0
-                dw seg seg018
-                db 0B4h, 14h, 0CDh, 62h, 0E8h, 13h, 3, 80h, 3Eh, 0CFh
-                db 12h, 0, 74h, 3, 0E9h, 0D1h, 2, 0E8h, 0A1h, 10h, 80h
-                db 3Eh, 0CFh, 12h, 3, 74h, 23h, 26h, 80h, 3Eh, 2Ch, 0
-                db 20h, 74h, 1Bh, 26h, 80h, 3Eh, 2Ch, 0, 0Dh, 75h, 3, 0E9h
-                db 22h, 1, 26h, 80h, 3Eh, 2Ch, 0, 1Bh, 75h, 0DBh, 9Ah
-                db 0Ch, 0
-                db 0EFh ; SEG16 SEGDEF [seg018,0]
-                db  12h
-; ---------------------------------------------------------------------------
+                mov     ah, 29h ; ')'
+                int     62h             ; reserved for user interrupt
+                call    shared_b65991_11819
+                call    shared_d2992b
+                mov     ah, 14h
+                int     62h             ; reserved for user interrupt
+                call    sub_10AEF
+                cmp     byte_1481F, 0
+                jz      short loc_107E6
                 jmp     loc_10AB7
 ; ---------------------------------------------------------------------------
-                db 0A0h, 0CBh, 12h, 0A2h, 0C4h, 12h, 0FEh, 0C8h, 0B4h
-                db 36h, 0F6h, 0E4h, 0BEh, 9Fh, 0Ah, 3, 0F0h, 80h, 7Ch
-                db 0Dh, 20h, 74h, 2Bh, 80h, 7Ch, 0Bh, 0Eh, 7Ch, 3, 0E9h
-                db 0A8h, 0, 0C6h, 44h, 0Dh, 20h, 0B9h, 6, 0, 0BBh, 1Dh
-                db 6, 8Bh, 44h, 8, 3Bh, 7, 74h, 7, 83h, 0C3h, 2, 0E2h
-                db 0F7h, 0EBh, 39h, 0C7h, 7, 2 dup(0), 0C6h, 44h, 0Ah
-                db 0, 0EBh, 2Fh, 0B9h, 6, 0, 0BBh, 1Dh, 6, 0C6h, 44h, 0Ah
-                db 1, 80h, 7Ch, 0Bh, 0Ah, 7Ch, 7, 0FEh, 44h, 0Ah, 83h
-                db 0C3h, 2, 49h, 83h, 3Fh, 0, 74h, 0Ah, 0FEh, 44h, 0Ah
-                db 83h, 0C3h, 2, 0E2h, 0F3h, 0EBh, 32h, 0C6h, 44h, 0Dh
-                db 0FBh, 8Bh, 44h, 8, 89h, 7, 26h, 0C6h, 6, 2Ah, 0, 13h
-                db 0A0h, 0D9h, 12h, 2, 6, 0CBh, 12h, 0FEh, 0C8h, 26h, 0A2h
-                db 2Bh, 0, 8Ah, 44h, 0Dh, 0A2h, 0DAh, 12h, 0C6h, 6, 0DBh
-                db 12h, 0, 0BBh, 0DAh, 12h, 9Ah, 0Eh, 0
-                dw seg seg026
-                db 0E9h, 39h, 0FFh, 0B4h, 29h, 0CDh, 62h, 0B4h, 14h, 0CDh
-                db 62h, 0C6h, 44h, 8, 0, 26h, 0C6h, 6, 2Bh, 0, 0Ch, 26h
-                db 0C6h, 6, 2Ah, 0, 18h, 0BBh, 6Bh, 0Eh, 9Ah, 0Ch, 0
-                dw seg seg029
-                db 0BBh, 0B3h, 13h, 80h, 7Ch, 0Bh, 0Ah, 7Ch, 24h, 0BBh
-                db 48h, 14h, 0EBh, 1Fh, 0B4h, 29h, 0CDh, 62h, 0B4h, 14h
-                db 0CDh, 62h, 26h, 0C6h, 6, 2Bh, 0, 0Ch, 26h, 0C6h, 6
-                db 2Ah, 0, 18h, 0BBh, 6Bh, 0Eh, 9Ah, 0Ch, 0
-                dw seg seg029
-                db 0BBh, 0Dh, 14h, 9Ah, 0Eh, 0
-                dw seg seg026
-                db 0B0h, 2, 9Ah, 9Dh, 1
-                dw seg seg011
-                db 0B8h, 0, 12h, 0CDh, 62h, 0B4h, 28h, 0CDh, 62h, 0B3h
-                db 0, 0B4h, 2, 0B0h, 2, 9Ah, 0B1h, 0
-                dw seg seg011
-                db 0B4h, 29h, 0CDh, 62h, 0B4h, 1Eh, 0CDh, 62h, 0E9h, 0C1h
-                db 0FEh, 0B9h, 5, 0, 0BBh, 1Dh, 6, 51h, 83h, 3Fh, 0, 75h
-                db 3, 0E9h, 38h, 1, 59h, 83h, 0C3h, 2, 0E2h, 0F1h, 0B4h
-                db 29h, 0CDh, 62h, 0B4h, 14h, 0CDh, 62h, 0BBh, 0B1h, 0Eh
-                db 9Ah, 0Ch, 0
-                dw seg seg029
-                db 26h, 0C6h, 6, 2Ah, 0, 1Ch, 26h, 0C6h, 6, 2Bh, 0, 0Ah
-                db 26h, 0A0h, 6Fh, 0, 26h, 0A2h, 2Eh, 0, 26h, 0A0h, 73h
-                db 0, 26h, 0A2h, 2Fh, 0, 0BBh, 2Bh, 13h, 9Ah, 0Eh, 0
-                dw seg seg026
-                db 0B8h, 0, 12h, 0CDh, 62h, 0C7h, 6, 0CCh, 12h, 0Ah, 0
-                db 0A1h, 0CCh, 12h, 3Bh, 6, 0F7h, 5, 74h, 24h, 0BBh, 2Fh
-                db 5, 0BFh, 0DFh, 9, 9Ah, 6, 0
-                db 0FCh ; SEG16 SEGDEF [seg020,0]
-                db  12h
-                db 80h, 26h, 14h, 0Ah, 0FEh, 0A1h, 0CCh, 12h, 0BBh, 2Fh
-                db 5, 0BEh, 0DFh, 9, 9Ah, 0Eh, 0
-                dw seg seg025
-                db 0FFh, 6, 0CCh, 12h, 0EBh, 0D3h, 0B4h, 14h, 0CDh, 62h
-                db 0B9h, 6, 0, 0BEh, 1Dh, 6, 0C6h, 6, 0CBh, 12h, 1, 51h
-                db 0BBh, 2Fh, 5, 0BFh, 0DFh, 9, 8Bh, 4, 83h, 0F8h, 0, 75h
-                db 3, 0E9h, 85h, 0, 9Ah, 6, 0
-                db 0FCh ; SEG16 SEGDEF [seg020,0]
-                db  12h
-                db 80h, 3Eh, 0CBh, 12h, 1, 75h, 12h, 0A0h, 0, 0Ah, 0A2h
-                db 2Ah, 6, 0A1h, 1, 0Ah, 0A3h, 2Bh, 6, 0A1h, 3, 0Ah, 0A3h
-                db 33h, 6, 0F6h, 6, 14h, 0Ah, 80h, 75h, 3Bh, 80h, 0Eh
-                db 14h, 0Ah, 80h, 56h, 0B8h, 1, 0, 0BBh, 32h, 0, 9Ah, 2 dup(0)
-                dw seg seg013
-                db 80h, 3Eh, 0F9h, 9, 0, 75h, 8, 0B8h, 0Bh, 1, 0BBh, 1
-                db 0, 0EBh, 15h, 80h, 3Eh, 0F9h, 9, 1, 75h, 8, 0B8h, 0Ch
-                db 1, 0BBh, 1, 0, 0EBh, 6, 0B8h, 4, 0, 0BBh, 5, 0, 9Ah
-                db 2 dup(0)
-                dw seg seg013
-                db 5Eh, 80h, 0Eh, 14h, 0Ah, 1, 0A0h, 0CBh, 12h, 0FEh, 0C8h
-                db 0B4h, 14h, 0F6h, 0E4h, 0A3h, 5, 0Ah, 9Ah, 8, 0
-                dw seg seg001
-                db 8Bh, 4, 56h, 0BBh, 2Fh, 5, 0BEh, 0DFh, 9, 9Ah, 0Eh
-                db 0
-                dw seg seg025
-                db 5Eh, 59h, 83h, 0C6h, 2, 0FEh, 6, 0CBh, 12h, 0E2h, 14h
-                db 0B4h, 1Eh, 0CDh, 62h, 0B4h, 28h, 0CDh, 62h, 9Ah, 2
-                db 0
-                dw seg seg004
+
+loc_107E6:                              ; CODE XREF: seg000:07E1↑j
+                                        ; seg000:0809↓j ...
+                call    sub_1188A
+                cmp     byte_1481F, 3
+                jz      short loc_10813
+                cmp     byte ptr es:2Ch, 20h ; ' '
+                jz      short loc_10813
+                cmp     byte ptr es:2Ch, 0Dh
+                jnz     short loc_10803
+                jmp     loc_10925
 ; ---------------------------------------------------------------------------
+
+loc_10803:                              ; CODE XREF: seg000:07FE↑j
+                cmp     byte ptr es:2Ch, 1Bh
+                jnz     short loc_107E6
+                call    shared_d2992b
+                jmp     loc_10AB7
+; ---------------------------------------------------------------------------
+
+loc_10813:                              ; CODE XREF: seg000:07EE↑j
+                                        ; seg000:07F6↑j
+                mov     al, byte_1481B
+                mov     byte_14814, al
+                dec     al
+                mov     ah, 36h ; '6'
+                mul     ah
+                mov     si, 0A9Fh
+                add     si, ax
+                cmp     byte ptr [si+0Dh], 20h ; ' '
+                jz      short loc_10855
+                cmp     byte ptr [si+0Bh], 0Eh
+                jl      short loc_10833
+                jmp     loc_108DB
+; ---------------------------------------------------------------------------
+
+loc_10833:                              ; CODE XREF: seg000:082E↑j
+                mov     byte ptr [si+0Dh], 20h ; ' '
+                mov     cx, 6
+                mov     bx, 61Dh
+                mov     ax, [si+8]
+
+loc_10840:                              ; CODE XREF: seg000:0847↓j
+                cmp     ax, [bx]
+                jz      short loc_1084B
+                add     bx, 2
+                loop    loc_10840
+                jmp     short loc_10884
+; ---------------------------------------------------------------------------
+
+loc_1084B:                              ; CODE XREF: seg000:0842↑j
+                mov     word ptr [bx], 0
+                mov     byte ptr [si+0Ah], 0
+                jmp     short loc_10884
+; ---------------------------------------------------------------------------
+
+loc_10855:                              ; CODE XREF: seg000:0828↑j
+                mov     cx, 6
+                mov     bx, 61Dh
+                mov     byte ptr [si+0Ah], 1
+                cmp     byte ptr [si+0Bh], 0Ah
+                jl      short loc_1086C
+                inc     byte ptr [si+0Ah]
+                add     bx, 2
+                dec     cx
+
+loc_1086C:                              ; CODE XREF: seg000:0863↑j
+                                        ; seg000:0877↓j
+                cmp     word ptr [bx], 0
+                jz      short loc_1087B
+                inc     byte ptr [si+0Ah]
+                add     bx, 2
+                loop    loc_1086C
+                jmp     short loc_108AD
+; ---------------------------------------------------------------------------
+
+loc_1087B:                              ; CODE XREF: seg000:086F↑j
+                mov     byte ptr [si+0Dh], 0FBh
+                mov     ax, [si+8]
+                mov     [bx], ax
+
+loc_10884:                              ; CODE XREF: seg000:0849↑j
+                                        ; seg000:0853↑j
+                mov     byte ptr es:2Ah, 13h
+                mov     al, byte_14829
+                add     al, byte_1481B
+                dec     al
+                mov     es:2Bh, al
+                mov     al, [si+0Dh]
+                mov     byte ptr word_1482A, al
+                mov     byte ptr word_1482A+1, 0
+                mov     bx, 12DAh
+                call    drawString
+                jmp     loc_107E6
+; ---------------------------------------------------------------------------
+
+loc_108AD:                              ; CODE XREF: seg000:0879↑j
+                mov     ah, 29h ; ')'
+                int     62h             ; reserved for user interrupt
+                mov     ah, 14h
+                int     62h             ; reserved for user interrupt
+                mov     byte ptr [si+8], 0
+                mov     byte ptr es:2Bh, 0Ch
+                mov     byte ptr es:2Ah, 18h
+                mov     bx, 0E6Bh
+                call    shared_23f116
+                mov     bx, 13B3h
+                cmp     byte ptr [si+0Bh], 0Ah
+                jl      short loc_108FA
+                mov     bx, 1448h
+                jmp     short loc_108FA
+; ---------------------------------------------------------------------------
+
+loc_108DB:                              ; CODE XREF: seg000:0830↑j
+                mov     ah, 29h ; ')'
+                int     62h             ; reserved for user interrupt
+                mov     ah, 14h
+                int     62h             ; reserved for user interrupt
+                mov     byte ptr es:2Bh, 0Ch
+                mov     byte ptr es:2Ah, 18h
+                mov     bx, 0E6Bh
+                call    shared_23f116
+                mov     bx, 140Dh
+
+loc_108FA:                              ; CODE XREF: seg000:08D4↑j
+                                        ; seg000:08D9↑j
+                call    drawString
+                mov     al, 2
+                call    shared_23db76
+                mov     ax, 1200h
+                int     62h             ; reserved for user interrupt
+                mov     ah, 28h ; '('
+                int     62h             ; reserved for user interrupt
+                mov     bl, 0
+                mov     ah, 2
+                mov     al, 2
+                call    shared_21818f
+                mov     ah, 29h ; ')'
+                int     62h             ; reserved for user interrupt
+                mov     ah, 1Eh
+                int     62h             ; reserved for user interrupt
+                jmp     loc_107E6
+; ---------------------------------------------------------------------------
+
+loc_10925:                              ; CODE XREF: seg000:0800↑j
+                mov     cx, 5
+                mov     bx, 61Dh
+
+loc_1092B:                              ; CODE XREF: seg000:0938↓j
+                push    cx
+                cmp     word ptr [bx], 0
+                jnz     short loc_10934
+                jmp     loc_10A6C
+; ---------------------------------------------------------------------------
+
+loc_10934:                              ; CODE XREF: seg000:092F↑j
+                                        ; seg000:0AB4↓j
+                pop     cx
+                add     bx, 2
+                loop    loc_1092B
+
+loc_1093A:                              ; CODE XREF: seg000:0A7E↓j
+                mov     ah, 29h ; ')'
+                int     62h             ; reserved for user interrupt
+                mov     ah, 14h
+                int     62h             ; reserved for user interrupt
+                mov     bx, 0EB1h
+                call    shared_23f116
+                mov     byte ptr es:2Ah, 1Ch
+                mov     byte ptr es:2Bh, 0Ah
+                mov     al, es:6Fh
+                mov     es:2Eh, al
+                mov     al, es:73h
+                mov     es:2Fh, al
+                mov     bx, 132Bh
+                call    drawString
+                mov     ax, 1200h
+                int     62h             ; reserved for user interrupt
+                mov     word_1481C, 0Ah
+
+loc_10979:                              ; CODE XREF: seg000:09A4↓j
+                mov     ax, word_1481C
+                cmp     ax, word_13B47
+                jz      short loc_109A6
+                mov     bx, 52Fh
+                mov     di, 9DFh
+                call    fileReadRecordTo
+                and     byte_13F64, 0FEh
+                mov     ax, word_1481C
+                mov     bx, 52Fh
+                mov     si, 9DFh
+                call    fileWriteRecordFrom
+                inc     word_1481C
+                jmp     short loc_10979
+; ---------------------------------------------------------------------------
+
+loc_109A6:                              ; CODE XREF: seg000:0980↑j
+                mov     ah, 14h
+                int     62h             ; reserved for user interrupt
+                mov     cx, 6
+                mov     si, 61Dh
+                mov     byte_1481B, 1
+
+loc_109B5:                              ; CODE XREF: seg000:loc_10A69↓j
+                push    cx
+                mov     bx, 52Fh
+                mov     di, 9DFh
+                mov     ax, [si]
+                cmp     ax, 0
+                jnz     short loc_109C6
+                jmp     loc_10A4B
+; ---------------------------------------------------------------------------
+
+loc_109C6:                              ; CODE XREF: seg000:09C1↑j
+                call    fileReadRecordTo
+                cmp     byte_1481B, 1
+                jnz     short loc_109E4
+                mov     al, byte_13F50
+                mov     byte_13B7A, al
+                mov     ax, word_13F51
+                mov     word_13B7B, ax
+                mov     ax, word_13F53
+                mov     word_13B83, ax
+
+loc_109E4:                              ; CODE XREF: seg000:09D0↑j
+                test    byte_13F64, 80h
+                jnz     short loc_10A26
+                or      byte_13F64, 80h
+                push    si
+                mov     ax, 1
+                mov     bx, 32h ; '2'
+                call    sub_12C40
+                cmp     byte_13F49, 0
+                jnz     short loc_10A0B
+                mov     ax, 10Bh
+                mov     bx, 1
+                jmp     short loc_10A20
+; ---------------------------------------------------------------------------
+
+loc_10A0B:                              ; CODE XREF: seg000:0A01↑j
+                cmp     byte_13F49, 1
+                jnz     short loc_10A1A
+                mov     ax, 10Ch
+                mov     bx, 1
+                jmp     short loc_10A20
+; ---------------------------------------------------------------------------
+
+loc_10A1A:                              ; CODE XREF: seg000:0A10↑j
+                mov     ax, 4
+                mov     bx, 5
+
+loc_10A20:                              ; CODE XREF: seg000:0A09↑j
+                                        ; seg000:0A18↑j
+                call    sub_12C40
+                pop     si
+
+loc_10A26:                              ; CODE XREF: seg000:09E9↑j
+                or      byte_13F64, 1
+                mov     al, byte_1481B
+                dec     al
+                mov     ah, 14h
+                mul     ah
+                mov     word_13F55, ax
+                call    drawPartyStrip
+                mov     ax, [si]
+                push    si
+                mov     bx, 52Fh
+                mov     si, 9DFh
+                call    fileWriteRecordFrom
+                pop     si
+
+loc_10A4B:                              ; CODE XREF: seg000:09C3↑j
+                pop     cx
+                add     si, 2
+                inc     byte_1481B
+                loop    loc_10A69
+                mov     ah, 1Eh
+                int     62h             ; reserved for user interrupt
+                mov     ah, 28h ; '('
+                int     62h             ; reserved for user interrupt
+                call    shared_c9c8cc
                 call    shared_4a4289
                 jmp     short loc_10AB7
 ; ---------------------------------------------------------------------------
-                db 0E9h, 49h, 0FFh, 53h, 51h, 83h, 0C3h, 2, 83h, 3Fh, 0
-                db 75h, 0Bh, 83h, 0C3h, 2, 0E2h, 0F6h, 59h, 5Bh, 59h, 0E9h
-                db 0B9h, 0FEh, 8Bh, 7, 51h, 8Bh, 0Eh, 9Dh, 0Ah, 0BEh, 9Fh
-                db 0Ah, 3Bh, 44h, 8, 75h, 10h, 83h, 3Eh, 1Dh, 6, 0, 75h
-                db 11h, 80h, 7Ch, 0Bh, 0Ah, 7Ch, 0Bh, 59h, 0EBh, 0D6h
-                db 83h, 0C6h, 36h, 0E2h, 0E6h, 59h, 0EBh, 0CEh, 59h, 0C7h
-                db 7, 2 dup(0), 59h, 5Bh, 8Bh, 44h, 8, 89h, 7, 0E9h, 7Dh
-                db 0FEh
+
+loc_10A69:                              ; CODE XREF: seg000:0A53↑j
+                jmp     loc_109B5
+; ---------------------------------------------------------------------------
+
+loc_10A6C:                              ; CODE XREF: seg000:0931↑j
+                push    bx
+                push    cx
+                add     bx, 2
+
+loc_10A71:                              ; CODE XREF: seg000:0A79↓j
+                cmp     word ptr [bx], 0
+                jnz     short loc_10A81
+
+loc_10A76:                              ; CODE XREF: seg000:0A9E↓j
+                                        ; seg000:0AA6↓j
+                add     bx, 2
+                loop    loc_10A71
+                pop     cx
+                pop     bx
+                pop     cx
+                jmp     loc_1093A
+; ---------------------------------------------------------------------------
+
+loc_10A81:                              ; CODE XREF: seg000:0A74↑j
+                mov     ax, [bx]
+                push    cx
+                mov     cx, word_13FED
+                mov     si, 0A9Fh
+
+loc_10A8B:                              ; CODE XREF: seg000:0AA3↓j
+                cmp     ax, [si+8]
+                jnz     short loc_10AA0
+                cmp     word_13B6D, 0
+                jnz     short loc_10AA8
+                cmp     byte ptr [si+0Bh], 0Ah
+                jl      short loc_10AA8
+                pop     cx
+                jmp     short loc_10A76
+; ---------------------------------------------------------------------------
+
+loc_10AA0:                              ; CODE XREF: seg000:0A8E↑j
+                add     si, 36h ; '6'
+                loop    loc_10A8B
+                pop     cx
+                jmp     short loc_10A76
+; ---------------------------------------------------------------------------
+
+loc_10AA8:                              ; CODE XREF: seg000:0A95↑j
+                                        ; seg000:0A9B↑j
+                pop     cx
+                mov     word ptr [bx], 0
+                pop     cx
+                pop     bx
+                mov     ax, [si+8]
+                mov     [bx], ax
+                jmp     loc_10934
 ; ---------------------------------------------------------------------------
 
 loc_10AB7:                              ; CODE XREF: seg000:loc_1031A↑j
@@ -2389,7 +2641,7 @@ sub_1183E       endp
 
 
 sub_1188A       proc near               ; CODE XREF: seg000:loc_1033A↑p
-                                        ; seg000:loc_10638↑p
+                                        ; seg000:loc_10638↑p ...
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     al, 40h ; '@'
@@ -2996,6 +3248,7 @@ seg001          segment byte public 'CODE' use16
 
 
 drawPartyStrip  proc far                ; CODE XREF: seg000:0500↑P
+                                        ; seg000:0A37↑P
                 push    ax
                 push    bx
                 push    cx
@@ -4826,7 +5079,7 @@ seg013          segment byte public 'CODE' use16
 
 
 sub_12C40       proc far                ; CODE XREF: seg000:055A↑P
-                                        ; seg000:059E↑P
+                                        ; seg000:059E↑P ...
                 mov     si, 6BFh
                 dec     ax
                 shl     ax, 1
@@ -5854,7 +6107,7 @@ seg029          segment byte public 'CODE' use16
 
 
 shared_23f116   proc far                ; CODE XREF: seg000:0686↑P
-                                        ; sub_10AEF+BB↑P ...
+                                        ; seg000:08C8↑P ...
                 mov     ax, [bx]
                 mov     es:1Ah, ax
                 mov     ax, [bx+2]
@@ -7860,8 +8113,8 @@ word_13B47      dw 0Ah                  ; DATA XREF: seg000:02FE↑r
                 db    0
                 db    0
                 db    0
-word_13B6D      dw 0                    ; DATA XREF: sub_10AEF+107↑r
-                                        ; sub_10D1C+6↑r ...
+word_13B6D      dw 0                    ; DATA XREF: seg000:0A90↑r
+                                        ; sub_10AEF+107↑r ...
 word_13B6F      dw 0                    ; DATA XREF: sub_10AEF+11A↑r
                                         ; sub_10D1C+C↑r
 word_13B71      dw 0                    ; DATA XREF: sub_10AEF+12D↑r
@@ -7873,15 +8126,18 @@ word_13B75      dw 0                    ; DATA XREF: sub_10AEF+153↑r
 word_13B77      dw 0                    ; DATA XREF: sub_10AEF+166↑r
                                         ; sub_10D1C+24↑r
                 align 2
-byte_13B7A      db 0                    ; DATA XREF: sub_1188A+386↑w
-word_13B7B      dw 0                    ; DATA XREF: sub_1188A+38C↑w
+byte_13B7A      db 0                    ; DATA XREF: seg000:09D5↑w
+                                        ; sub_1188A+386↑w
+word_13B7B      dw 0                    ; DATA XREF: seg000:09DB↑w
+                                        ; sub_1188A+38C↑w
                 db    0
                 db    0
                 db    0
                 db    0
                 db    0
                 db    0
-word_13B83      dw 0                    ; DATA XREF: sub_1188A+392↑w
+word_13B83      dw 0                    ; DATA XREF: seg000:09E1↑w
+                                        ; sub_1188A+392↑w
                 db    0
                 db    0
                 db    0
@@ -8853,13 +9109,14 @@ byte_13F4A      db 0                    ; DATA XREF: sub_10D1C:loc_10D4C↑r
 byte_13F4B      db 0                    ; DATA XREF: sub_10D1C+1AE↑r
                                         ; sub_110A9+D↑w ...
                 align 8
-byte_13F50      db 0                    ; DATA XREF: sub_11651+1D↑w
-                                        ; sub_11651+29↑w ...
-word_13F51      dw 0                    ; DATA XREF: sub_11651+1A↑w
-                                        ; sub_11651+AD↑w ...
-word_13F53      dw 0                    ; DATA XREF: sub_11651+D↑w
-                                        ; sub_11651+A8↑w ...
-word_13F55      dw 0                    ; DATA XREF: sub_10D1C+D8↑r
+byte_13F50      db 0                    ; DATA XREF: seg000:09D2↑r
+                                        ; sub_11651+1D↑w ...
+word_13F51      dw 0                    ; DATA XREF: seg000:09D8↑r
+                                        ; sub_11651+1A↑w ...
+word_13F53      dw 0                    ; DATA XREF: seg000:09DE↑r
+                                        ; sub_11651+D↑w ...
+word_13F55      dw 0                    ; DATA XREF: seg000:0A34↑w
+                                        ; sub_10D1C+D8↑r
 byte_13F57      db 0                    ; DATA XREF: seg000:loc_10281↑w
 byte_13F58      db 0                    ; DATA XREF: sub_11008:loc_11046↑r
                                         ; sub_11008:loc_11075↑r ...
@@ -9014,8 +9271,8 @@ word_13F83      dw 0                    ; DATA XREF: shared_d809a1+73↑r
                 db    6
                 db 0C9h
                 db    7
-word_13FED      dw 0                    ; DATA XREF: sub_10AEF+66↑w
-                                        ; sub_10AEF+77↑r ...
+word_13FED      dw 0                    ; DATA XREF: seg000:0A84↑r
+                                        ; sub_10AEF+66↑w ...
                 db    0
                 db    0
                 db    0
@@ -11124,10 +11381,10 @@ word_14824      dw 0                    ; DATA XREF: start+7B↑w
                 db    0
                 db    0
                 db    0
-byte_14829      db 0                    ; DATA XREF: sub_10AEF+A4↑w
-                                        ; sub_10AEF+199↑w
-word_1482A      dw 0                    ; DATA XREF: sub_10D1C+1A3↑w
-                                        ; sub_10D1C+1A9↑w ...
+byte_14829      db 0                    ; DATA XREF: seg000:088A↑r
+                                        ; sub_10AEF+A4↑w ...
+word_1482A      dw 0                    ; DATA XREF: seg000:089A↑w
+                                        ; sub_10D1C+1A3↑w ...
 word_1482C      dw 0                    ; DATA XREF: sub_1188A+26C↑w
                                         ; sub_1188A+278↑r
 word_1482E      dw 0                    ; DATA XREF: sub_1188A+25C↑w
