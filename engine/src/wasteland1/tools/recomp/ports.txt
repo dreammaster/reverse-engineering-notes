@@ -289,3 +289,11 @@ A07E textFilterE junk=dl,pf,zf
 6428 drawOtherParties junk=ah,al,cl,dl,si scratch=AA4C-AA4C,4685-4686,4661-4662,46AA-46AD,A59D-A59E,CDC9-CDCC
 6716 drawPartyMarker junk=ah,al,bl,bp,ch,cl,di,dl,es,pf,si,zf scratch=4685-4686,4661-4662,46AA-46AD,BA0E-BA11,CDC9-CDCC
 7DF1 drawStatusBar junk=ah,al,bl,bp,cl,di,dl,es,pf,si,zf scratch=BA06-BA07,466B-4671,BA80-BA8F,CDC9-CDCC,4707-4707
+417F conditionType junk=cf,di,pf,zf
+418A conditionValue junk=di,pf,zf
+8146 skillRoll junk=bl,ch,cl,di,dl,pf scratch=BA71-BA72,CD40-CD4A,C059-C059,4661-4662,BA6D-BA70
+80F0 skillCheck junk=al,bl,ch,cl,di,dl,pf,sf,zf scratch=BA6F-BA74,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA73,A59D-A59E,CCD6-CCD9
+9A58 useUpItem junk=al,bl,ch,cl,di,dl,pf,zf scratch=CCD6-CCD9,CCE0-CCE8,A59D-A59E
+4090 matchItemCondition junk=al,bl,ch,cl,di,dl,pf,zf scratch=A5CC-A5CE,CCD6-CCD9,CCE0-CCE8,A59D-A59E
+40DD matchSkillCondition junk=al,bl,cf,ch,cl,di,dl,pf,sf,zf scratch=A5CA-A5CB,BA6F-BA74,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA73,A59D-A59E,CCD6-CCD9
+4126 matchAttributeCondition junk=al,bl,di,pf,zf scratch=A5C8-A5C9,BA6A-BA6B,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA73,A59D-A59E,CCD6-CCD9
