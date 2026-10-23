@@ -191,6 +191,20 @@ bool scanForMonsters(Machine &m);
 void combatInitiative(Machine &m, uint8_t partyGroup);
 void evasionChance(Machine &m, uint8_t base);
 void combatRound(Machine &m, uint8_t partyGroup);
+// ---- monsters walking towards (or away from) the party
+// 16840: true (CF) when a party group stands on the cell
+bool partyAtCell(Machine &m, uint8_t x, uint8_t y);
+// 14F26: true (CF) when a monster cannot enter the cell (edge, party, outside the map or not open ground)
+bool monsterCellBlocked(Machine &m, uint8_t x, uint8_t y);
+// 14ECB: tries the step (ds:A641, A642) from the monster position (ds:A63F/A640), else one axis only; gives the move direction
+bool monsterStepDirection(Machine &m, uint8_t &direction);
+// 14E4A / 14E45: step direction towards (or away from) the party, trying single axis steps when the diagonal is blocked
+bool monsterApproach(Machine &m, bool away, uint8_t &direction);
+// 14FDE / 14F9D: average hit points of the monster group (to seed2) / of the party members (to seed1)
+void averageMonsterHitPoints(Machine &m);
+void averagePartyHitPoints(Machine &m);
+// 14F7A: true (CF) when the monsters are too weak against the party (party average >> shift beats monster average)
+bool monsterHoldsBack(Machine &m, uint8_t shift);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

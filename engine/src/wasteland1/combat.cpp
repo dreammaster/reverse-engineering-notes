@@ -1806,6 +1806,122 @@ void combatRound(Machine &m, uint8_t partyGroup) {
 }
 
 
+// ---- monsters walking towards (or away from) the party --------------------------------------------------------------------------
+namespace {
+uint8_t &A(Machine &m, uint16_t a) { return m.d8(a); }
+}
+
+bool partyAtCell(Machine &m, uint8_t x, uint8_t y) {   // 16840
+	m.d8(0xAA3C) = x;
+	m.d8(0xAA3B) = y;
+	const uint8_t active = m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup));
+	bool found = false;
+	for (int group = m.d8(uint16_t(g::saved2 + g::s2::totalPartyGroups)); group >= 0; --group) {
+		m.d8(0xAA3D) = uint8_t(group);
+		setPartyIndexesPtr(m, uint8_t(group));
+		const uint16_t indexes = m.d16(g::partyIndexesPtr);
+		if (m.d8(uint16_t(indexes + 0x0A)) == m.d8(uint16_t(g::saved2 + g::s2::field7)) && m.d8(uint16_t(indexes + 8)) == x &&
+		    m.d8(uint16_t(indexes + 9)) == y) { found = true; break; }
+	}
+	setPartyIndexesPtr(m, active);
+	return found;
+}
+
+bool monsterCellBlocked(Machine &m, uint8_t x, uint8_t y) {   // 14F26
+	if (x == 0 || y == 0) return true;
+	if (partyAtCell(m, x, y)) return true;
+	if (outsideMap(m, x, y)) return true;
+	return tileClassAt(m, x, y) != 0;
+}
+
+bool monsterStepDirection(Machine &m, uint8_t &direction) {   // 14ECB: the move to (x + dx, y + dy) or the best single axis move
+	auto loadPosition = [&]() {   // 14F67
+		const uint16_t rec = m.d16(g::monsterPtr);
+		A(m, 0xA63F) = m.d8(rec);
+		A(m, 0xA640) = m.d8(uint16_t(rec + 1));
+	};
+	loadPosition();
+	uint8_t x = uint8_t(A(m, 0xA63F) + A(m, 0xA641));
+	A(m, 0xA63F) = x;
+	uint8_t y = uint8_t(A(m, 0xA640) + A(m, 0xA642));
+	A(m, 0xA640) = y;
+	if (monsterCellBlocked(m, x, y)) {
+		loadPosition();
+		x = uint8_t(A(m, 0xA63F) + A(m, 0xA641));
+		A(m, 0xA63F) = x;
+		y = A(m, 0xA640);
+		if (!monsterCellBlocked(m, x, y)) {
+			A(m, 0xA642) = 0;
+		} else {
+			loadPosition();
+			y = uint8_t(A(m, 0xA640) + A(m, 0xA642));
+			A(m, 0xA640) = y;
+			x = A(m, 0xA63F);
+			if (monsterCellBlocked(m, x, y)) return false;
+			A(m, 0xA641) = 0;
+		}
+	}
+	const int8_t dy = int8_t(A(m, 0xA642));
+	const uint8_t base = dy < 0 ? 1 : dy == 0 ? 4 : 7;
+	direction = m.d8(uint16_t(0xAA05 + uint8_t(base + A(m, 0xA641))));
+	return true;
+}
+
+bool monsterApproach(Machine &m, bool away, uint8_t &direction) {   // 14E4A / 14E45
+	const uint16_t rec = [&]() { selectSlot(m, A(m, 0xA63A), A(m, 0xA639)); return m.d16(g::monsterPtr); }();
+	(void)rec;
+	for (int axis = 1; axis >= 0; --axis) {
+		const uint8_t party = m.d8(uint16_t(0x46A6 + axis)), monster = A(m, uint16_t(0xA63F + axis));
+		A(m, uint16_t(0xA641 + axis)) = party == monster ? 0 : party < monster ? 0xFF : 1;
+	}
+	if (away)
+		for (int axis = 1; axis >= 0; --axis) A(m, uint16_t(0xA641 + axis)) = uint8_t(-int8_t(A(m, uint16_t(0xA641 + axis))));
+	if (monsterStepDirection(m, direction)) return true;
+	uint8_t axis = 0;
+	if (A(m, 0xA641) != 0) {
+		axis = 1;
+		if (A(m, 0xA642) != 0) return false;
+	}
+	A(m, 0xA637) = axis;
+	A(m, uint16_t(0xA641 + axis)) = 0xFF;
+	if (monsterStepDirection(m, direction)) return true;
+	A(m, uint16_t(0xA641 + A(m, 0xA637))) = 1;
+	return monsterStepDirection(m, direction);
+}
+
+void averageMonsterHitPoints(Machine &m) {   // 14FDE
+	Rules rules(m);
+	selectMember(m, A(m, 0xA63A), A(m, 0xA639), A(m, 0xA638));
+	rules.setSeed2(0);
+	const uint16_t rec = m.d16(g::monsterPtr);
+	for (int at = 9; at >= 0; --at) rules.addRoll(int16_t(m.d16(uint16_t(rec + at * 2))));
+	const uint8_t count = m.d8(uint16_t(m.d16(g::savedLocationDetailsPtr) + m.d8(uint16_t(g::encounterCountOffsets + A(m, 0xA638)))));
+	A(m, 0xA637) = count;
+	if (count != 0) rules.setSeed2(uint16_t(rules.seed2() / count));
+}
+
+void averagePartyHitPoints(Machine &m) {   // 14F9D
+	Rules rules(m);
+	rules.setSeed1(0);
+	const uint8_t members = m.d8(uint16_t(g::saved2 + g::s2::membersInGroup));
+	for (uint8_t member = 1;; ++member) {
+		A(m, 0xA63B) = member;
+		if (!isMemberUnconscious(m, member)) rules.addTarget(int16_t(m.d16(uint16_t(m.d16(g::currentCharacter) + pm::con))));
+		if (member >= members) break;
+	}
+	if (members != 0) rules.setSeed1(uint16_t(rules.seed1() / members));
+}
+
+bool monsterHoldsBack(Machine &m, uint8_t shift) {   // 14F7A: true (CF) when the party looks stronger than the monsters
+	Rules rules(m);
+	A(m, 0xA637) = shift;
+	averageMonsterHitPoints(m);
+	averagePartyHitPoints(m);
+	shift = A(m, 0xA637);   // (14FDE leaves the monster count in this variable, which is what gets used)
+	rules.setSeed1(shift == 0 || shift >= 16 ? 0 : uint16_t(rules.seed1() >> shift));
+	return !rules.rollBeatsTarget();
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }

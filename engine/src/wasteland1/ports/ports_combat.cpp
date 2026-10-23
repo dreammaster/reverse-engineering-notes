@@ -198,6 +198,19 @@ PORT(outsideView) { r.cf = outsideView(m, r.d.b.l, r.b.b.l); }                  
 PORT(updateGroupDistances) { updateGroupDistances(m); }                                  // 149F7
 PORT(scanForMonsters) { r.cf = scanForMonsters(m); }                                     // 14664
 PORT(combatRound) { combatRound(m, r.a.b.l); }                                          // 1AD73
+PORT(partyAtCell) {                                                                     // 16840: dl = x, bl = y
+	const uint8_t x = r.d.b.l, y = r.b.b.l;
+	r.cf = partyAtCell(m, x, y);
+	r.d.b.l = x;
+	r.b.b.l = y;
+}
+PORT(monsterCellBlocked) { r.cf = monsterCellBlocked(m, r.d.b.l, r.b.b.l); }            // 14F26
+PORT(monsterStepDirection) { uint8_t d = 0; r.cf = !monsterStepDirection(m, d); if (!r.cf) r.a.b.l = d; }   // 14ECB
+PORT(monsterApproachTowards) { uint8_t d = 0; r.cf = !monsterApproach(m, false, d); if (!r.cf) r.a.b.l = d; }   // 14E4A
+PORT(monsterApproachAway) { uint8_t d = 0; r.cf = !monsterApproach(m, true, d); if (!r.cf) r.a.b.l = d; }   // 14E45
+PORT(averageMonsterHitPoints) { averageMonsterHitPoints(m); }                           // 14FDE
+PORT(averagePartyHitPoints) { averagePartyHitPoints(m); }                               // 14F9D
+PORT(monsterHoldsBack) { r.cf = monsterHoldsBack(m, r.d.b.l); }                         // 14F7A: dl = shift
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079
