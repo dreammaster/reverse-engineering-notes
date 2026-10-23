@@ -269,6 +269,7 @@ AD14 act_ad14 junk=ah,al,bl,cl,di,dl,si scratch=CF20-CF7F,4661-4664,A59D-A59E,A5
 8024 drawMapCell junk=ah,al,bl,bp,cf,cl,di,dl,es,pf,sf,si,zf scratch=BA04-BA11,4661-4662,4685-4686,46EE-46EE,46AA-46AD,CD40-CD41,A59D-A59E
 49F7 updateGroupDistances junk=ah,al,bl,cl,di,dl,pf,si,zf scratch=A60E-A60F,BA0F-BA11,CD40-CD43,46E2-46EB,CD3F-CD4A,4661-4662,A59D-A59E,CD43-CD44,46AA-46AD
 4664 scanForMonsters junk=ah,al,bl,bp,cl,di,dl,pf,si,zf scratch=A600-A626,A59D-A5A1,A592-A594,7931-796F,CD3F-CD4A,C059-C059,4661-4664,465C-4662,CD40-CD41,BA04-BA11,4685-4686,A55A-A55E,AA3A-AA3F,A5A0-A5A7
+465F scanForMonstersQuiet junk=ah,al,bl,bp,cl,di,dl,pf,si,zf scratch=A600-A626,A59D-A5A1,A592-A594,7931-796F,CD3F-CD4A,C059-C059,4661-4664,465C-4662,CD40-CD41,BA04-BA11,4685-4686,A55A-A55E,AA3A-AA3F,A5A0-A5A7
 7BC7 textDecodeOffset junk=bl,cl,di,dl,pf
 7B8F textDecodeChar junk=bl,cl,di,dl,pf,zf
 78B9 textDecodeInit junk=al,bl,cl,di,dl,pf,zf
@@ -323,3 +324,6 @@ AD73 combatRound junk=al,bl,cf,ch,cl,di,dl,es,si scratch=CF80-CF87,7931-8030,A4A
 4F7A monsterHoldsBack junk=al,bl,cl,di,dl,pf,sf,si,zf scratch=A637-A637,A63B-A63B,A59D-A59E,CD3F-CD4A,BA80-BA8F
 5036 moveMonsters junk=ch,cl,si,ah,al,bl,cf,di,dl scratch=AA45-AA4C,BA04-BA11,A630-A636,AA3B-AA3D,BA0A-BA11,46AA-46AD,46B2-46B4,46FC-46FD,4661-4662,A59D-A59E,CDC9-CDCC,4685-4686,A5D0-A5D8
 4BF0 planMonsterMoves junk=zf,cf,sf,al,ah,bl,cl,dl,si,di,pf scratch=A630-A648,AA3B-AA3D,AA45-AA4C,BA04-BA11,46AA-46AD,46B2-46B4,4661-4662,A59D-A5A1,A592-A594,7931-796F,CD3F-CD4A,C059-C059,CD40-CD43,BA80-BA8F,A637-A63F,A5A0-A5A7
+3762 restoreLocationAtSlot junk=ah,al,bl,di,dl,pf,sf scratch=BA04-BA11,4661-4662,46AA-46AD,46B2-46B4,46FC-46FD,4685-4686,A59D-A59E
+35C6 updateSlotSurvivors junk=ah,al,bl,di,dl,pf,si,zf scratch=A5A8-A5AB,A688-A688,A59D-A59E,CD40-CD41,BA04-BA11,4661-4662,46AA-46AD,46B2-46B4,46FC-46FD,4685-4686
+3580 updateAllSlotSurvivors junk=ah,al,bl,di,dl,pf,si,zf scratch=A5A8-A5AD,A688-A688,A59D-A59E,CD40-CD41,BA04-BA11,4661-4662,46AA-46AD,46B2-46B4,46FC-46FD,4685-4686

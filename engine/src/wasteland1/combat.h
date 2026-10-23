@@ -185,7 +185,7 @@ bool outsideView(Machine &m, uint8_t x, uint8_t y);
 void updateGroupDistances(Machine &m);
 // 14664: looks at every cell of the view window for monster markers (cell classes 3 and 0Fh), draws them and keeps the table of
 // tracked monster groups; true (CF) when nothing new was found
-bool scanForMonsters(Machine &m);
+bool scanForMonsters(Machine &m, bool draw = true);   // 1465F: without drawing
 // 1AD73: one combat round of the party group `partyGroup`: initiative of monsters and party members, then everybody acts
 // in turn (party members shoot, monsters attack) until the table is used up
 void combatInitiative(Machine &m, uint8_t partyGroup);
@@ -211,6 +211,13 @@ void moveMonsters(Machine &m);
 // 14BF0: plans the move of every monster slot on the map (table at ds:711D, see moveMonsters): towards the party, away from it
 // when the monsters are weak, or none
 void planMonsterMoves(Machine &m);
+// 13762: the cell change of the saved location record is applied at the position of the selected slot (al = record offset)
+bool restoreLocationAtSlot(Machine &m, uint8_t offset);
+// 135C6: after a fight the survivors of slot (group, slot) are written back into the location record: counts per monster group,
+// types cleared for groups that are gone; a slot without survivors is cleared (and its cell restored). True (CF) when cleared
+bool updateSlotSurvivors(Machine &m, uint8_t group, uint8_t slot);
+// 13580: updateSlotSurvivors for every slot on the current map
+void updateAllSlotSurvivors(Machine &m);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

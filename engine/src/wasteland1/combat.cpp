@@ -1337,14 +1337,14 @@ void updateGroupDistances(Machine &m) {
 // 14B93: offset of the first of the four table entries of party group `group`
 static uint8_t groupEntryBase(Machine &m, uint8_t group) { return m.d8(uint16_t(0xA622 + group)); }
 
-bool scanForMonsters(Machine &m) {
+bool scanForMonsters(Machine &m, bool draw) {
 	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
 	auto S = [&](uint8_t o) -> uint8_t & { return m.d8(uint16_t(g::saved2 + o)); };
 	auto rec0 = [&](uint8_t i) -> uint8_t & { return m.d8(uint16_t(m.d16(g::savedLocationDetailsPtr) + i)); };
 	uint8_t al = 0, bl = 0, dl = 0;
 	X86Regs r;
 
-	D(0xA608) = 1;
+	D(0xA608) = draw ? 1 : 0;
 	for (int i = 0x3F; i >= 0; --i) D(uint16_t(0xA96F + i)) = 0;
 	D(0xA607) = S(g::s2::activePartyGroup);
 	D(0xA60F) = D(0x46DC);
@@ -2106,6 +2106,63 @@ void planMonsterMoves(Machine &m) {   // 14BF0
 		++group;
 	}
 	setActivePartyGroup(m, savedGroup);
+}
+
+bool restoreLocationAtSlot(Machine &m, uint8_t offset) {   // 13762
+	m.setD16(g::locationDetailsPtr, m.d16(g::savedLocationDetailsPtr));
+	const uint16_t record = m.d16(g::monsterPtr);
+	X86Regs x;
+	x.al = offset;
+	x.dl = m.d8(record);
+	x.bl = m.d8(uint16_t(record + 1));
+	legacy::call(m, 0x7CFF, x);   // sub_17CFF
+	return x.cf;
+}
+
+bool updateSlotSurvivors(Machine &m, uint8_t group, uint8_t slot) {
+	m.d8(0xA5A9) = group;
+	m.d8(0xA5A8) = slot;
+	selectSlotCellRecord(m);
+	m.d8(0xA5AA) = 0;
+	for (uint8_t member = 0; member != 3; ++member) {
+		m.d8(0xA5AB) = member;
+		const uint8_t alive = countAliveMonsters(m, group, slot, member);
+		const uint16_t location = m.d16(g::savedLocationDetailsPtr);
+		m.d8(uint16_t(location + m.d8(uint16_t(g::encounterCountOffsets + member)))) = alive;
+		bool clearName = alive == 0;
+		if (alive != 0) {
+			m.d8(0xA5AA) = uint8_t(m.d8(0xA5AA) + alive);
+			clearName = m.d8(0xA5AA) == 0;
+		}
+		if (clearName) m.d8(uint16_t(location + m.d8(uint16_t(g::encounterOffsets + member)))) = 0;
+	}
+	selectSlot(m, group, slot);
+	if (m.d8(0xA5AA) == 0) {
+		if (!(m.d8(uint16_t(m.d16(g::savedLocationDetailsPtr) + 0x0A)) & 0x80)) {
+			restoreLocationAtSlot(m, 0x0A);
+			clearSlot(m);
+		}
+		return true;
+	}
+	if ((m.d8(uint16_t(m.d16(g::savedLocationDetailsPtr) + 9)) >> 1) & 1) {
+		clearSlot(m);
+		return true;
+	}
+	return false;
+}
+
+void updateAllSlotSurvivors(Machine &m) {
+	for (uint8_t group = 0; group != 4; ++group) {
+		m.d8(0xA5AC) = group;
+		for (uint8_t slot = 0; slot != 4; ++slot) {
+			m.d8(0xA5AD) = slot;
+			selectSlot(m, group, slot);
+			const uint16_t record = m.d16(g::monsterPtr);
+			if (m.d8(record) == 0) continue;
+			if (m.d8(uint16_t(record + 2)) != m.d8(uint16_t(g::saved2 + g::s2::field7))) break;
+			updateSlotSurvivors(m, group, slot);
+		}
+	}
 }
 
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }

@@ -213,6 +213,10 @@ PORT(averagePartyHitPoints) { averagePartyHitPoints(m); }                       
 PORT(monsterHoldsBack) { r.cf = monsterHoldsBack(m, r.d.b.l); }                         // 14F7A: dl = shift
 PORT(moveMonsters) { moveMonsters(m); }                                                 // 15036
 PORT(planMonsterMoves) { planMonsterMoves(m); }                                          // 14BF0
+PORT(scanForMonstersQuiet) { r.cf = scanForMonsters(m, false); }                         // 1465F
+PORT(restoreLocationAtSlot) { r.cf = restoreLocationAtSlot(m, r.a.b.l); }                // 13762
+PORT(updateSlotSurvivors) { r.cf = updateSlotSurvivors(m, r.a.b.l, r.d.b.l); }          // 135C6: al = group, dl = slot
+PORT(updateAllSlotSurvivors) { updateAllSlotSurvivors(m); }                             // 13580
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079
