@@ -8,7 +8,6 @@ class Prog11Gen {
 public:
 	explicit Prog11Gen(Shared::Machine16 &machine) : m(machine), r(machine.r) {}
 	static const uint32_t kDataSegmentImageOffset = 0x4900;
-	static const uint16_t kTileFile = 0x7177, kTileIndex = 0x7175, kTileStatus = 0x7180;
 	/** Runs the program from its entry point; returns the DOS exit code. */
 	int run();
 	Shared::Machine16 &m;
@@ -121,6 +120,9 @@ private:
 	void speakerOff();
 	void shared_e79de9();
 	void shared_c7ef80();
+	void tileOp();
+	void tileLookup(uint16_t entry = 0);
+	void tileLoad();
 };
 } // namespace Gen
 } // namespace Yendor1

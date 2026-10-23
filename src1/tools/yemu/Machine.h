@@ -51,6 +51,7 @@ public:
 	uint32_t traceWinHit = 0, traceWinCount = 0;           // debugging: after the traceWinHit-th --logpc hit, log the next 4000 instruction addresses
 	int traceWinLeft = 0;
 	std::function<void(Machine &, int)> onProgramEnd;       // called when a process terminates, before its memory is freed
+	std::function<void(const ScriptStep &)> onStep;         // called when a script step (key, mouse) is delivered
 	std::function<void(const std::string &)> onPcLog;       // receives the --logpc lines as they are produced
 
 	// state

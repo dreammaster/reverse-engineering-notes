@@ -8,7 +8,6 @@ class Prog17Gen {
 public:
 	explicit Prog17Gen(Shared::Machine16 &machine) : m(machine), r(machine.r) {}
 	static const uint32_t kDataSegmentImageOffset = 0x12A0;
-	static const uint16_t kTileFile = 0xE9A, kTileIndex = 0xE98, kTileStatus = 0xEA1;
 	/** Runs the program from its entry point; returns the DOS exit code. */
 	int run();
 	Shared::Machine16 &m;
@@ -53,6 +52,9 @@ private:
 	void shared_9a625d();
 	void speakerOn();
 	void speakerOff();
+	void tileOp();
+	void tileLookup();
+	void tileLoad();
 	void fileSeekRecord();
 	void fileReadToSegment();
 };

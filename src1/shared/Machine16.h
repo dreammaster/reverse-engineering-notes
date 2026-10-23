@@ -310,8 +310,6 @@ public:
 	/** How many bytes a program pushed beyond its initial stack pointer (for sanity checks). */
 
 	// ---- tile operations (the tile cache is native: see Machine16.cpp) ----
-	uint16_t tileFileOffset, tileIndexOffset, tileStatusOffset;     ///< where the program keeps the (file, index) pair tileOp reads
-	void tileOp();                                 ///< AL = operation
 
 	// ---- palette helper (VIDP16): the command mailbox ----
 	void paletteCommand();                         ///< AL = command
@@ -340,6 +338,9 @@ private:
 	uint8_t _parentPsp[256];
 	uint8_t _jft[256];
 	uint8_t _ctxExtra[0x1000];
+	uint16_t _tileTableSeg;
+	unsigned _tileSlots;
+	void initTileStore();
 	uint8_t *_ctxMap[0x1000];
 	std::vector<std::vector<uint8_t> > _blocks;
 	std::vector<FILE *> _files;                    ///< handle - 0x100

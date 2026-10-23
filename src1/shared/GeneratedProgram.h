@@ -30,9 +30,6 @@ int runGenerated(Runtime &rt, Launcher *launcher, const Params &params, const ch
 	Machine16 machine(rt, launcher, p);
 	if (!machine.loadProgram(exeName, Gen::kDataSegmentImageOffset))
 		return 0xFE;
-	machine.tileFileOffset = Gen::kTileFile;
-	machine.tileIndexOffset = Gen::kTileIndex;
-	machine.tileStatusOffset = Gen::kTileStatus;
 	Gen program(machine);
 	return program.run();
 }

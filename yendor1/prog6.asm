@@ -1323,6 +1323,8 @@ shared_ab7386   endp
 
 ; ---------------------------------------------------------------------------
                 align 2
+
+loc_10CFA:
                 push    ax
                 push    cx
                 mov     cx, 672h
@@ -1363,6 +1365,8 @@ shared_5c3cce   endp
 
 ; ---------------------------------------------------------------------------
                 align 2
+
+loc_10D24:
                 push    ax
                 push    bx
                 push    cx
@@ -1418,6 +1422,8 @@ fileSeekRecord  proc far                ; CODE XREF: fileWriteRecord+4↓p
 fileSeekRecord  endp
 
 ; ---------------------------------------------------------------------------
+
+loc_10D5A:
                 push    bx
                 mov     cs:byte_127EB, 0
                 mov     dx, bx
@@ -2651,6 +2657,8 @@ speakerOff      proc far                ; CODE XREF: seg001:063C↑P
 speakerOff      endp
 
 ; ---------------------------------------------------------------------------
+
+locret_115DE:
                 retf
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2716,6 +2724,8 @@ loc_1160F:                              ; CODE XREF: tileOp+2C↑j
 tileOp          endp
 
 ; ---------------------------------------------------------------------------
+
+loc_11628:
                 call    tileLookup
                 cmp     cs:byte_127EB, 0
                 jz      short loc_1164A
@@ -2745,6 +2755,8 @@ loc_1164A:                              ; CODE XREF: seg019:0051↑j
                 xor     al, al
                 jmp     short loc_115FF
 ; ---------------------------------------------------------------------------
+
+loc_11674:
                 call    tileLookup
                 cmp     cs:byte_127EB, 0
                 jz      short loc_11698
@@ -2765,6 +2777,8 @@ loc_11698:                              ; CODE XREF: seg019:009D↑j
                 xor     al, al
                 jmp     loc_115FF
 ; ---------------------------------------------------------------------------
+
+loc_1169D:
                 call    tileLookup
                 cmp     cs:byte_127EB, 0
                 jz      short loc_116AB
@@ -2784,6 +2798,8 @@ loc_116BE:                              ; CODE XREF: seg019:00D9↑j
                 xor     al, al
                 jmp     loc_115FF
 ; ---------------------------------------------------------------------------
+
+loc_116C3:
                 call    tileLookup
                 cmp     cs:byte_127EB, 0
                 jz      short loc_116D9
@@ -2818,6 +2834,8 @@ loc_116EE:                              ; CODE XREF: seg019:00F4↑j
                 xor     al, al
                 jmp     loc_115FF
 ; ---------------------------------------------------------------------------
+
+loc_11725:
                 call    tileLookup
                 cmp     cs:byte_127EB, 0
                 jz      short loc_11733
@@ -2840,8 +2858,8 @@ loc_11733:                              ; CODE XREF: seg019:014E↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-tileLookup      proc near               ; CODE XREF: seg019:0048↑p
-                                        ; seg019:0094↑p ...
+tileLookup      proc near               ; CODE XREF: seg019:loc_11628↑p
+                                        ; seg019:loc_11674↑p ...
                 mov     cs:byte_127EB, 0
                 mov     dl, cs:byte_127E5
                 mov     bx, cs:word_127E6

@@ -2,6 +2,7 @@
 
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #include <io.h>
@@ -37,7 +38,7 @@ std::string joinPath(const std::string &dir, const std::string &name) {
 } // namespace
 
 Machine16::Machine16(Runtime &rtIn, Launcher *launcherIn, const Params &p)
-	: rt(rtIn), launcher(launcherIn), params(p), tileFileOffset(0), tileIndexOffset(0), tileStatusOffset(0), lastExitCode(0), _cursorX(0), _cursorY(0), _dummy(0),
+	: rt(rtIn), launcher(launcherIn), params(p), lastExitCode(0), _cursorX(0), _cursorY(0), _dummy(0),
 	  _speakerDivisor(0) {
 	memset(_stack, 0, sizeof(_stack));
 	memset(_psp, 0, sizeof(_psp));
@@ -76,6 +77,8 @@ Machine16::Machine16(Runtime &rtIn, Launcher *launcherIn, const Params &p)
 	map(0x95A, &c.clipX1, 2); map(0x95C, &c.clipX2, 2); map(0x95E, &c.clipY1, 2); map(0x960, &c.clipY2, 2);
 	map(0x962, &c.curX, 2); map(0x964, &c.curY, 2); map(0x966, &c.mouseX, 2); map(0x968, &c.mouseY, 2);
 	map(0x96A, &c.hotX, 2); map(0x96C, &c.hotY, 2);
+
+	initTileStore();
 }
 
 Machine16::~Machine16() {
@@ -93,6 +96,38 @@ bool Machine16::loadProgram(const std::string &exeName, uint32_t dataSegmentImag
 
 uint8_t &Machine16::ctxByte(uint16_t off) {
 	return *_ctxMap[off & 0xFFF];
+}
+
+// The driver's tile store as VID16.DRV leaves it for the programs: ES:0 slots, ES:2 the segment of the slot table (6 bytes per slot:
+// flag, file, tile index, segment of the slot's 512-byte buffer), ES:6 the next slot to try. Programs (tileOp in their own code) search
+// and fill it themselves, so it lives in the program's memory; every slot starts unused, as after tileOp's "release" (flag 0, file FFh,
+// index FFFFh).
+void Machine16::initTileStore() {
+	const unsigned slots = 200, perBlock = 128;
+	const uint16_t table = (uint16_t)(kFirstBlock + _blocks.size() * 0x1000);
+	_blocks.push_back(std::vector<uint8_t>(slots * 6, 0));
+	std::vector<uint16_t> bufferSeg;
+	for (unsigned i = 0; i < slots; i++) {
+		if (i % perBlock == 0)
+			_blocks.push_back(std::vector<uint8_t>(((slots - i) < perBlock ? (slots - i) : perBlock) * 512, 0));
+		bufferSeg.push_back((uint16_t)(kFirstBlock + (_blocks.size() - 1) * 0x1000 + (i % perBlock) * 32));
+	}
+	for (unsigned i = 0; i < slots; i++) {
+		uint8_t *e = &_blocks[table == 0 ? 0 : (size_t)(table - kFirstBlock) / 0x1000][i * 6];
+		e[0] = 0;
+		e[1] = 0xFF;
+		e[2] = e[3] = 0xFF;
+		e[4] = (uint8_t)bufferSeg[i];
+		e[5] = (uint8_t)(bufferSeg[i] >> 8);
+	}
+	_tileTableSeg = table;
+	_tileSlots = slots;
+	rt.video.ctx.tileSlots = (uint16_t)slots;
+	_ctxExtra[2] = (uint8_t)table;
+	_ctxExtra[3] = (uint8_t)(table >> 8);
+	_ctxExtra[4] = (uint8_t)bufferSeg[0];
+	_ctxExtra[5] = (uint8_t)(bufferSeg[0] >> 8);
+	_ctxExtra[6] = _ctxExtra[7] = 0;
 }
 
 uint8_t &Machine16::b(uint16_t seg, uint16_t off) {
@@ -487,22 +522,8 @@ uint8_t Machine16::in8(uint16_t port) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// tile cache operations and the palette helper
+// the palette helper
 // ---------------------------------------------------------------------------------------------
-
-// tileOp: AL 1 draws the tile (file byte and index word at the program's tile parameters) at (x1, y1); 2 preloads, 3 releases, 5
-// invalidates (the port reads tiles straight from their files, so those do nothing). Others report an error in AL.
-void Machine16::tileOp() {
-	const byte op = r.al;
-	r.ax = 0;
-	if (op == 1) {
-		const byte file = ds.b(tileFileOffset);
-		const uint16_t index = ds.w(tileIndexOffset);
-		ds.b(tileStatusOffset) = rt.drawTile(file, index) ? 0 : 1;
-	} else if (op == 0 || op > 5) {
-		r.al = 1;
-	}
-}
 
 void Machine16::paletteCommand() {
 	rt.sendPaletteCommand(r.al);

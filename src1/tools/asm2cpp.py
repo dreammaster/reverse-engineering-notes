@@ -428,6 +428,7 @@ class Translator:
                 out.append("%s:;" % it[1])
                 continue
             _, mnem, ops, ln = it
+            self._prev_push_cs = idx > 0 and proc.items[idx - 1][0] == "ins" and proc.items[idx - 1][1] == "push" and proc.items[idx - 1][2] == ["cs"]
             try:
                 nxt = None
                 for k in range(idx + 1, len(proc.items)):
@@ -581,10 +582,11 @@ class Translator:
             tp = self.labels[name]
             if tp.name in self.skipped:
                 return ["/* %s is native */" % name]
-            far = tp.seg != proc.seg
             if tp.name != name:
                 raise Err("call into the middle of " + tp.name)
-            # `push cs; call near ptr far_proc` pushes the code segment itself
+            # a far routine returns with retf (pops ip and cs): a far call pushes both, `push cs; call near ptr far_proc` pushes
+            # the code segment itself first (the translated `push cs` pushed it already)
+            far = tp.far and not self._prev_push_cs
             return ["m.push(0);"] + (["m.push(0);"] if far else []) + ["%s();" % name]
         if mnem == "retn":
             n = num(ops[0]) if ops else 0
@@ -695,7 +697,6 @@ class Translator:
         h.append("public:")
         h.append("\texplicit %s(Shared::Machine16 &machine) : m(machine), r(machine.r) {}" % name)
         h.append("\tstatic const uint32_t kDataSegmentImageOffset = 0x%X;" % self.ds_base)
-        h.append("\tstatic const uint16_t kTileFile = 0x%X, kTileIndex = 0x%X, kTileStatus = 0x%X;" % self.tile_offsets)
         h.append("\t/** Runs the program from its entry point; returns the DOS exit code. */")
         h.append("\tint run();")
         h.append("\tShared::Machine16 &m;")
@@ -757,28 +758,6 @@ class Translator:
         c.append("} // namespace Yendor1")
         open(outbase + ".cpp", "w", newline="\n").write("\n".join(c) + "\n")
 
-    def tile_param_offsets(self):
-        """The tile cache's parameter variables: what tileLookup reads first, and the status byte it clears."""
-        p = self.proc_by_name.get("tileLookup")
-        if p is None:
-            return (0, 0, 0)
-        found = []
-        status = None
-        for it in p.items:
-            if it[0] != "ins":
-                continue
-            _, mnem, ops, ln = it
-            joined = " ".join(ops)
-            m = re.search(r"\b((?:byte|word)_[0-9A-F]+)\b", joined)
-            if mnem == "mov" and m and status is None and ops[0].replace("cs:", "").startswith("byte_") and ops[1].strip() == "0":
-                status = self.data_offset(m.group(1))
-                continue
-            if mnem == "mov" and m and ops[1].startswith("cs:") and len(found) < 2:
-                found.append(self.data_offset(m.group(1)))
-        if len(found) < 2 or status is None:
-            raise Err("cannot find the tile parameters")
-        return (found[0], found[1], status)
-
 
 def main():
     args = sys.argv[1:]
@@ -795,7 +774,6 @@ def main():
             skip.append(a[5:])
     t = Translator(prog, cls, adapters)
     t.adapters_skip = skip
-    t.tile_offsets = t.tile_param_offsets()
     t.generate(outbase)
     sys.stderr.write("wrote %s.h/.cpp (%d routines)\n" % (outbase, len(t.procs)))
 

@@ -11,6 +11,7 @@
 #include "vid/Trace.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string>
 #include <vector>
 
@@ -21,7 +22,11 @@ using namespace Yendor1;
 class Recorder : public Vid::CallTrace {
 public:
 	std::vector<std::string> lines;
-	void onCall(const Vid::Video &v, int ah, int al) { lines.push_back(Vid::formatCall(v, ah, al)); }
+	void onCall(const Vid::Video &v, int ah, int al) {
+		if (getenv("CALL_LOG") && ah != 0x2B)
+			fprintf(stderr, "CALL %02X %02X\n", ah, al);
+		lines.push_back(Vid::formatCall(v, ah, al));
+	}
 };
 
 struct Step {

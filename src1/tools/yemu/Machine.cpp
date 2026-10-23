@@ -512,11 +512,14 @@ void Machine::runLoop(const std::function<bool()> &done) {
 		}
 		if (logPcLinear != 0xFFFFFFFFu && ((((uint32_t)(uint16_t)(cpu.s[CS] - (uint16_t)(currentPsp + 0x10))) << 4) + cpu.ip) == logPcLinear) {
 			if (++traceWinCount == traceWinHit)
-				traceWinLeft = 100000;
+				traceWinLeft = 3000000;
 			char b[640];
 			int n = snprintf(b, sizeof(b), "pc AX=%04X BX=%04X DI=%04X seed=%04X instr=%llu npc:", cpu.r[AX], cpu.r[BX], cpu.r[DI], cpu.rw(cpu.s[DS], 0x9D0E), (unsigned long long)cpu.instructions);
 			for (int i = 0; i < 0x1C && n < (int)sizeof(b) - 4; i++)
 				n += snprintf(b + n, sizeof(b) - n, " %02X", cpu.rb(cpu.s[DS], (uint16_t)(cpu.r[DI] + i)));
+			n += snprintf(b + n, sizeof(b) - n, " tile:");
+			for (int i = 0; i < 4; i++)
+				n += snprintf(b + n, sizeof(b) - n, " %02X", cpu.rb(cpu.s[DS], (uint16_t)(0x69C2 + i)));
 			n += snprintf(b + n, sizeof(b) - n, " map:");
 			const uint16_t cell = cpu.rw(cpu.s[DS], (uint16_t)(cpu.r[DI] + 4));
 			for (int i = -0x10; i < 0x30 && n < (int)sizeof(b) - 4; i++)
@@ -624,6 +627,8 @@ void Machine::deliverTick() {
 }
 
 void Machine::deliverStep(const ScriptStep &st) {
+	if (onStep)
+		onStep(st);
 	switch (st.kind) {
 	case ScriptStep::Key:
 		_keys.push_back((uint8_t)st.a);

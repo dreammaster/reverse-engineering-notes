@@ -255,8 +255,9 @@ exactly the flags the original sets), the stack and `seg:off` addressing all kep
 * the 64 KB data segment (loaded from the exe like `DataSegment`), the parameter block the parent would give (command tail / `parm_XX`
   fields, magic word, inherited file handles numbered by their parm offset), the video context block as ES (mapped onto the live
   `Vid::Context`, so the ES: fields and the driver always agree), the code segment as read-only bytes where needed;
-* the INT 62h driver calls (straight into `Vid::Video`), the tile cache `tileOp` and the palette mailbox natively (the translator skips
-  those routines: `tileOp=m.tileOp()`), and the DOS/BIOS services the programs use (file I/O, EXEC through `Shared::Launcher`, time, keyboard
+* the INT 62h driver calls (straight into `Vid::Video`, the image pointer ES:16h:18h bridged onto Machine16's memory), the tile store the
+  driver leaves for the programs (ES:0 slots, ES:2 the slot table, 200 slots with 512-byte buffers in the program's memory, so the
+  programs' own `tileOp`/`tileLookup`/`tileLoad` run translated, composed tiles included), the palette mailbox natively, and the DOS/BIOS services the programs use (file I/O, EXEC through `Shared::Launcher`, time, keyboard
   and mouse polling through `Shared::System`);
 * `ProgramExit` for INT 21h/4Ch; `unsupported()` for lines the translator could not handle (it reports and stops the program).
 
@@ -275,3 +276,12 @@ compares every driver call with the original's. Make the references reproducible
 (optionally `--tracewin N`) logs the registers and NPC record at every execution of an address into the trace, and was how the missing
 jump-table targets were found (compare label sequences of the original and the port with the generated code compiled with a `TR()` macro
 after each label). The idle tavern scene (490 calls including the NPCs' random walks) now matches exactly.
+
+Things the first PROG4 scenarios taught (all fixed in the translator/runtime): a `proc far` called with a plain far call pushes two words
+(cs and ip), the translated `retf` pops four bytes, so the caller must push both unless it did `push cs` itself (a frame-based routine
+like `formatNumber` printed wrong digits); the tile cache must be the original's, because the program fills slots itself with pictures
+it composed (tile "file" 0Fh); PROG5 started from the game (parm_02 = 1/2) and PROG6 run through the generated code until they are
+ported. `keys` (5,864 of 5,884 calls) and `walk`, `idle` match call for call through PROG4, 11, 5, 6, 8 and 7; the last 20 calls of `keys`
+differ (an NPC takes a step in the original that does not in the port; the NPC records and random seeds were equal at every visit
+before it, so something outside them differs -- not yet found).
+

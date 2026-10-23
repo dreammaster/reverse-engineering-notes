@@ -8,6 +8,8 @@
 #include "prog6/Prog6.h"
 #include "shared/GeneratedProgram.h"
 #include "gen/Prog4Gen.h"
+#include "gen/Prog5Gen.h"
+#include "gen/Prog6Gen.h"
 #include "gen/Prog7Gen.h"
 #include "gen/Prog8Gen.h"
 #include "gen/Prog9Gen.h"
@@ -72,6 +74,9 @@ int DefaultLauncher::run(int program, Shared::Params &params, Shared::Runtime &r
 		return p.run();
 	}
 	case kProg5: {
+		// the variants the game starts (choosing a member, rearranging the party) are not in the port: the translation runs them
+		if (params.raw[0x02] == 1 || params.raw[0x02] == 2)
+			return Shared::runGenerated<Gen::Prog5Gen>(rt, this, params, "PROG5.EXE");
 		Prog5::Prog5 p(rt, params);
 		return p.run();
 	}

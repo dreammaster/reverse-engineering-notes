@@ -1,0 +1,27 @@
+wait 4
+key 0D
+wait 8
+key 0D
+wait 4
+shot w0
+ext 4D
+wait 1
+ext 4D
+wait 1
+ext 50
+wait 1
+ext 50
+wait 1
+ext 50
+wait 1
+shot w1
+ext 4B
+wait 1
+ext 4B
+wait 1
+ext 48
+wait 1
+ext 48
+wait 1
+shot w2
+quit
