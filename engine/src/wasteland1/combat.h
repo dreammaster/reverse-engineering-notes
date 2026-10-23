@@ -221,6 +221,8 @@ void updateAllSlotSurvivors(Machine &m);
 // 122E9: can the selected monster slot be targeted: it is on this map, within the weapon range (ds:46CC), inside the view,
 // within the distance the location record allows and in line of sight. `distance` receives the distance; true when targetable
 bool slotTargetable(Machine &m, uint8_t &distance);
+// 13828: number of monster groups party member `member` can target with the equipped weapon
+uint8_t countTargetableGroups(Machine &m, uint8_t member);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

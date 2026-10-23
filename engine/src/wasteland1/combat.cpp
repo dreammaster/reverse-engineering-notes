@@ -2183,6 +2183,27 @@ bool slotTargetable(Machine &m, uint8_t &distance) {
 	return !lineBlocked(m, x, y);
 }
 
+uint8_t countTargetableGroups(Machine &m, uint8_t member) {
+	combatReadiness(m, member);
+	m.d8(0xA59B) = 0;
+	const uint8_t total = m.d8(uint16_t(g::saved2 + g::s2::totalPartyGroups));
+	for (uint8_t group = 0; group <= total; ++group) {
+		m.d8(0xA59A) = group;
+		for (int slot = 3; slot >= 0; --slot) {
+			m.d8(0xA59C) = uint8_t(slot);
+			selectSlot(m, group, uint8_t(slot));
+			uint8_t distance;
+			if (slotTargetable(m, distance)) {
+				for (int k = 2; k >= 0; --k) {
+					const uint16_t location = m.d16(g::savedLocationDetailsPtr);
+					if (m.d8(uint16_t(location + m.d8(uint16_t(g::encounterCountOffsets + k)))) != 0) ++m.d8(0xA59B);
+				}
+			}
+		}
+	}
+	return m.d8(0xA59B);
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }

@@ -218,6 +218,7 @@ PORT(restoreLocationAtSlot) { r.cf = restoreLocationAtSlot(m, r.a.b.l); }       
 PORT(updateSlotSurvivors) { r.cf = updateSlotSurvivors(m, r.a.b.l, r.d.b.l); }          // 135C6: al = group, dl = slot
 PORT(updateAllSlotSurvivors) { updateAllSlotSurvivors(m); }                             // 13580
 PORT(slotTargetable) { uint8_t d = 0; r.cf = !slotTargetable(m, d); r.a.b.l = d; }       // 122E9
+PORT(countTargetableGroups) { r.a.b.l = countTargetableGroups(m, r.a.b.l); }             // 13828: al = party member
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079

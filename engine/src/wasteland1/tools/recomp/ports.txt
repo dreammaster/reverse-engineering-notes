@@ -337,3 +337,4 @@ AD73 combatRound junk=al,bl,cf,ch,cl,di,dl,es,si scratch=CF80-CF87,7931-8030,A4A
 5D30 splitOffCharacter junk=ah,al,bl,cl,di,dl,pf,si,zf scratch=A6C4-A6D1,A6D2-A6D4,B240-B241,4661-4662
 4330 lineBlocked junk=ah,al,bl,di,dl,pf,zf scratch=46E2-46EB,BA0E-BA11,46AA-46AD,4661-4662,BA11-BA11
 22E9 slotTargetable junk=ah,bl,di,dl,pf,sf,zf scratch=A427-A429,BA04-BA11,46AA-46AD,46E2-46EB,4661-4662,A59D-A59E,CD40-CD41
+3828 countTargetableGroups junk=ah,bl,cf,ch,cl,di,dl,si scratch=A427-A429,A59A-A59C,A59D-A59E,BA04-BA11,46AA-46AD,46E2-46EB,4661-4662,CD40-CD41
