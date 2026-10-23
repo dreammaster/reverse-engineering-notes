@@ -1160,10 +1160,14 @@ loc_109CD:                              ; CODE XREF: sub_1097A+4F↑j
 sub_1097A       endp
 
 ; ---------------------------------------------------------------------------
+
+loc_109D3:
                 mov     ax, 1200h
                 int     62h             ; VID fn12 vidShowPage
                 retn
 ; ---------------------------------------------------------------------------
+
+loc_109D9:
                 mov     ax, 161h
                 call    sub_104C5
                 mov     ax, 5
@@ -1192,6 +1196,8 @@ loc_109E7:                              ; CODE XREF: seg000:0A55↓j
                 int     62h             ; VID fn12 vidShowPage
                 retn
 ; ---------------------------------------------------------------------------
+
+loc_10A2C:
                 mov     ax, 187h
                 call    sub_104C5
                 mov     ax, 28h ; '('
@@ -1203,18 +1209,24 @@ loc_109E7:                              ; CODE XREF: seg000:0A55↓j
                 int     62h             ; VID fn12 vidShowPage
                 retn
 ; ---------------------------------------------------------------------------
+
+loc_10A47:
                 mov     ax, 174h
                 call    sub_104C5
                 mov     ax, 5
                 call    delayTicks
                 jmp     short loc_109E7
 ; ---------------------------------------------------------------------------
+
+loc_10A57:
                 mov     ax, 19Ah
                 call    sub_104C5
                 mov     ax, 5
                 call    delayTicks
                 jmp     short loc_109E7
 ; ---------------------------------------------------------------------------
+
+loc_10A67:
                 mov     ax, 1ADh
                 call    sub_104C5
                 mov     ax, 28h ; '('
@@ -1226,6 +1238,8 @@ loc_109E7:                              ; CODE XREF: seg000:0A55↓j
                 int     62h             ; VID fn12 vidShowPage
                 retn
 ; ---------------------------------------------------------------------------
+
+loc_10A82:
                 mov     ax, 1C0h
                 call    sub_104C5
                 mov     ax, 28h ; '('
@@ -2677,6 +2691,8 @@ loc_1164D:                              ; CODE XREF: shared_96caf4+76↑j
 shared_96caf4   endp
 
 ; ---------------------------------------------------------------------------
+
+loc_11653:
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     word ptr es:1Ah, 0C8h
@@ -2830,6 +2846,8 @@ loc_11750:                              ; CODE XREF: shared_a38a73+CA↑j
 shared_a38a73   endp
 
 ; ---------------------------------------------------------------------------
+
+loc_11753:
                 mov     ah, 14h
                 int     62h             ; VID fn14 vidCopyScreen0To1AndShow
                 mov     word ptr es:1Ah, 0C8h
@@ -3470,6 +3488,8 @@ shared_ab7386   endp
 
 ; ---------------------------------------------------------------------------
                 align 2
+
+loc_11DC4:
                 push    ax
                 push    cx
                 mov     cx, 672h
@@ -3696,6 +3716,8 @@ shared_c9c8cc   endp
 
 ; ---------------------------------------------------------------------------
                 align 2
+
+loc_11F32:
                 push    ax
                 push    bx
                 push    dx
@@ -3896,6 +3918,8 @@ fileSeekRecord  proc far                ; CODE XREF: fileWriteRecord+4↓p
 fileSeekRecord  endp
 
 ; ---------------------------------------------------------------------------
+
+loc_12032:
                 push    bx
                 mov     cs:byte_1A0FF, 0
                 mov     dx, bx
@@ -5072,6 +5096,8 @@ shared_a7dbf2   proc far                ; CODE XREF: sub_104C5+6A↑P
 shared_a7dbf2   endp
 
 ; ---------------------------------------------------------------------------
+
+loc_12743:
                 mov     cs:word_1A0E3, ax
                 mov     cs:word_1A0E5, bx
                 mov     ax, cs:word_1A0E7
@@ -5907,6 +5933,8 @@ seg034          segment byte public 'CODE' use16
                 assume cs:seg034
                 ;org 8
                 assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
+
+locret_12D38:
                 retf
 ; ---------------------------------------------------------------------------
                 align 2
@@ -5998,6 +6026,8 @@ loc_12D81:                              ; CODE XREF: tileOp+2C↑j
 tileOp          endp
 
 ; ---------------------------------------------------------------------------
+
+loc_12D9A:
                 call    tileLookup
                 cmp     cs:byte_1A0FF, 0
                 jz      short loc_12DBC
@@ -6027,6 +6057,8 @@ loc_12DBC:                              ; CODE XREF: seg035:0053↑j
                 xor     al, al
                 jmp     short loc_12D71
 ; ---------------------------------------------------------------------------
+
+loc_12DE6:
                 call    tileLookup
                 cmp     cs:byte_1A0FF, 0
                 jz      short loc_12E0A
@@ -6047,6 +6079,8 @@ loc_12E0A:                              ; CODE XREF: seg035:009F↑j
                 xor     al, al
                 jmp     loc_12D71
 ; ---------------------------------------------------------------------------
+
+loc_12E0F:
                 call    tileLookup
                 cmp     cs:byte_1A0FF, 0
                 jz      short loc_12E1D
@@ -6066,6 +6100,8 @@ loc_12E30:                              ; CODE XREF: seg035:00DB↑j
                 xor     al, al
                 jmp     loc_12D71
 ; ---------------------------------------------------------------------------
+
+loc_12E35:
                 call    tileLookup
                 cmp     cs:byte_1A0FF, 0
                 jz      short loc_12E4B
@@ -6100,6 +6136,8 @@ loc_12E60:                              ; CODE XREF: seg035:00F6↑j
                 xor     al, al
                 jmp     loc_12D71
 ; ---------------------------------------------------------------------------
+
+loc_12E97:
                 call    tileLookup
                 cmp     cs:byte_1A0FF, 0
                 jz      short loc_12EA5
@@ -6122,8 +6160,8 @@ loc_12EA5:                              ; CODE XREF: seg035:0150↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-tileLookup      proc near               ; CODE XREF: seg035:004A↑p
-                                        ; seg035:0096↑p ...
+tileLookup      proc near               ; CODE XREF: seg035:loc_12D9A↑p
+                                        ; seg035:loc_12DE6↑p ...
                 mov     cs:byte_1A0FF, 0
                 mov     dl, cs:byte_1A0F0
                 mov     bx, cs:word_1A0EE

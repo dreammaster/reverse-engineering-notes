@@ -32,3 +32,4 @@ src1/build/
 
 # scratch directories the tests write (copies of game data)
 src1/tests/test_*_work*/
+src1/build_dbg/

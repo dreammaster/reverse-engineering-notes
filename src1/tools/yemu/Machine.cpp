@@ -504,6 +504,28 @@ void Machine::runLoop(const std::function<bool()> &done) {
 			log += "watch hit; recent: " + dumpRecent(200) + "\n";
 		}
 		if (recent.size() > 256) recent.pop_front();
+		if (traceWinLeft > 0) {
+			traceWinLeft--;
+			char b[32];
+			snprintf(b, sizeof(b), "ip %05X", (unsigned)(((((uint32_t)(uint16_t)(cpu.s[CS] - (uint16_t)(currentPsp + 0x10))) << 4) + cpu.ip) + 0x10000));
+			if (onPcLog) onPcLog(b);
+		}
+		if (logPcLinear != 0xFFFFFFFFu && ((((uint32_t)(uint16_t)(cpu.s[CS] - (uint16_t)(currentPsp + 0x10))) << 4) + cpu.ip) == logPcLinear) {
+			if (++traceWinCount == traceWinHit)
+				traceWinLeft = 100000;
+			char b[640];
+			int n = snprintf(b, sizeof(b), "pc AX=%04X BX=%04X DI=%04X seed=%04X instr=%llu npc:", cpu.r[AX], cpu.r[BX], cpu.r[DI], cpu.rw(cpu.s[DS], 0x9D0E), (unsigned long long)cpu.instructions);
+			for (int i = 0; i < 0x1C && n < (int)sizeof(b) - 4; i++)
+				n += snprintf(b + n, sizeof(b) - n, " %02X", cpu.rb(cpu.s[DS], (uint16_t)(cpu.r[DI] + i)));
+			n += snprintf(b + n, sizeof(b) - n, " map:");
+			const uint16_t cell = cpu.rw(cpu.s[DS], (uint16_t)(cpu.r[DI] + 4));
+			for (int i = -0x10; i < 0x30 && n < (int)sizeof(b) - 4; i++)
+				n += snprintf(b + n, sizeof(b) - n, " %02X", cpu.rb(cpu.s[DS], (uint16_t)(cell + i)));
+			if (onPcLog)
+				onPcLog(std::string(b));
+			else
+				log += std::string(b) + "\n";
+		}
 		if (!cpu.step()) {
 			log += "cpu stopped: " + cpu.fault + "\n";
 			quit = true;
@@ -894,6 +916,8 @@ void Machine::int21() {
 		const uint32_t sec = (uint32_t)(cpu.instructions / kInstrPerSecond) + 12 * 3600;
 		cpu.r[CX] = (uint16_t)(((sec / 3600 % 24) << 8) | (sec / 60 % 60));
 		cpu.r[DX] = (uint16_t)(((sec % 60) << 8) | (uint16_t)(cpu.instructions * 100 / kInstrPerSecond % 100));
+		if (fixedClockDx >= 0)
+			cpu.r[DX] = (uint16_t)fixedClockDx;
 		cpu.instructions += 1500;
 		break;
 	}

@@ -46,7 +46,12 @@ public:
 	/** Called for every INT 62h before it runs (AH in cpu.r[AX] >> 8). Return true if the hook ran the call itself. */
 	std::function<bool(Machine &)> int62Hook;
 	std::function<void(Machine &, int)> onProgramStart;     // (machine, psp)
+	int fixedClockDx = -1;                                   // >= 0: INT 21h/2Ch always returns this in DX (reproducible random seeds)
+	uint32_t logPcLinear = 0xFFFFFFFFu;                      // debugging: log AX and DS:9D0E whenever the current program reaches this offset in its image
+	uint32_t traceWinHit = 0, traceWinCount = 0;           // debugging: after the traceWinHit-th --logpc hit, log the next 4000 instruction addresses
+	int traceWinLeft = 0;
 	std::function<void(Machine &, int)> onProgramEnd;       // called when a process terminates, before its memory is freed
+	std::function<void(const std::string &)> onPcLog;       // receives the --logpc lines as they are produced
 
 	// state
 	std::string console;                 // text printed with INT 21h

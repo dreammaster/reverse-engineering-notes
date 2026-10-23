@@ -243,3 +243,35 @@ attribute rolls of the create run needed the generator's state: 6157, found by s
 animation, `sub_10F8D`'s notice that a dead leader cannot lead) -- PROG5 returns FCh for them; they come with PROG4. `drawPartyStrip` of
 PROG6 (used after a restore) is another copy of the same renderer with its own data offsets; it still needs to be connected to the port in
 `Prog6`.
+
+## 2026-10-23 -- the large programs are translated mechanically (asm2cpp)
+
+PROG4 (14k lines of assembly), PROG10 and the shop/conversation/cutscene programs are too large to transliterate by hand with the
+confidence the hand ports have, so `src1/tools/asm2cpp.py` translates the IDA export (`yendor1/progN.asm` + `.idc` + the exe) into C++
+(`src1/gen/ProgNGen.{h,cpp}`, regenerate everything with `tools/gen_all.sh`). The output is deliberately a literal rendition of the 8086
+code, not readable game logic: one member function per routine, C++ labels and `goto`, the register file, the flags (`alu::` helpers set
+exactly the flags the original sets), the stack and `seg:off` addressing all kept, running on `Shared::Machine16`. Machine16 provides:
+
+* the 64 KB data segment (loaded from the exe like `DataSegment`), the parameter block the parent would give (command tail / `parm_XX`
+  fields, magic word, inherited file handles numbered by their parm offset), the video context block as ES (mapped onto the live
+  `Vid::Context`, so the ES: fields and the driver always agree), the code segment as read-only bytes where needed;
+* the INT 62h driver calls (straight into `Vid::Video`), the tile cache `tileOp` and the palette mailbox natively (the translator skips
+  those routines: `tileOp=m.tileOp()`), and the DOS/BIOS services the programs use (file I/O, EXEC through `Shared::Launcher`, time, keyboard
+  and mouse polling through `Shared::System`);
+* `ProgramExit` for INT 21h/4Ch; `unsupported()` for lines the translator could not handle (it reports and stops the program).
+
+`runGenerated<Gen::ProgNGen>()` (shared/GeneratedProgram.h) is what the shell's launcher calls for the programs without a hand port.
+
+Three things the IDA export needed before the translation was complete: (1) *code reached only through jump tables* has no label in the
+export; `ida_scripts/label_orphans.py` names every instruction that is not reached by falling through (`loc_XXXXX`), and the translator
+builds each `jmp reg` into a switch over all labels of the same segment whose offset occurs as a word in the data segment image or as
+an `offset` operand; (2) functions IDA ended early ("endp ; sp-analysis failed") leave their remaining code outside any function; the
+translator appends it to the preceding routine; (3) a few blocks are still undecoded bytes (`db`) in PROG18 -- they are skipped with a
+warning and need `make_code` in IDA before PROG18 can be verified.
+
+**Verification** is by the same call traces: `tests/test_prog4.cpp` runs the generated PROG4 from the start snapshot of a yemu run and
+compares every driver call with the original's. Make the references reproducible with `yemu --clock 4660` (INT 21h/2Ch then returns DX =
+0x1234 always, so the RNG seeds are the same in the port, which the test's `dosClock()` answers). `yemu --logpc <hex image offset>`
+(optionally `--tracewin N`) logs the registers and NPC record at every execution of an address into the trace, and was how the missing
+jump-table targets were found (compare label sequences of the original and the port with the generated code compiled with a `TR()` macro
+after each label). The idle tavern scene (490 calls including the NPCs' random walks) now matches exactly.

@@ -1027,6 +1027,8 @@ fileSeekRecord  proc far                ; CODE XREF: fileWriteRecord+4↓p
 fileSeekRecord  endp
 
 ; ---------------------------------------------------------------------------
+
+loc_10AB2:
                 push    bx
                 mov     cs:byte_127B3, 0
                 mov     dx, bx
@@ -1139,6 +1141,8 @@ fileWriteRecord_10B26 endp
 
 ; ---------------------------------------------------------------------------
                 align 2
+
+loc_10B4E:
                 cmp     byte ptr es:33h, 2
                 jz      short loc_10BB1
                 mov     cx, 8
@@ -1387,6 +1391,8 @@ loc_10D38:                              ; CODE XREF: shared_d2992b+1A↓j
 shared_d2992b   endp
 
 ; ---------------------------------------------------------------------------
+
+loc_10D4D:
                 mov     cx, 0Ah
                 mov     si, 5FBh
                 xor     ax, ax
@@ -1457,6 +1463,8 @@ shared_6b5782_10D8D endp
 
 ; ---------------------------------------------------------------------------
                 align 2
+
+loc_10DAC:
                 push    es
                 push    si
                 push    di
@@ -1479,6 +1487,8 @@ loc_10DB5:                              ; CODE XREF: seg007:0059↓j
                 retf
 ; ---------------------------------------------------------------------------
                 align 2
+
+loc_10DC2:
                 push    es
                 push    si
                 push    di
@@ -1784,6 +1794,8 @@ shared_a7dbf2   proc far                ; CODE XREF: sub_1047D+B↑P
 shared_a7dbf2   endp
 
 ; ---------------------------------------------------------------------------
+
+loc_10F4B:
                 mov     cs:word_127A6, ax
                 mov     cs:word_127A8, bx
                 mov     ax, cs:word_127AA
@@ -2501,6 +2513,8 @@ loc_113FB:                              ; CODE XREF: tileOp+2C↑j
 tileOp          endp
 
 ; ---------------------------------------------------------------------------
+
+loc_11414:
                 call    tileLookup
                 cmp     cs:byte_127B3, 0
                 jz      short loc_11436
@@ -2530,6 +2544,8 @@ loc_11436:                              ; CODE XREF: seg020:005D↑j
                 xor     al, al
                 jmp     short loc_113EB
 ; ---------------------------------------------------------------------------
+
+loc_11460:
                 call    tileLookup
                 cmp     cs:byte_127B3, 0
                 jz      short loc_11484
@@ -2550,6 +2566,8 @@ loc_11484:                              ; CODE XREF: seg020:00A9↑j
                 xor     al, al
                 jmp     loc_113EB
 ; ---------------------------------------------------------------------------
+
+loc_11489:
                 call    tileLookup
                 cmp     cs:byte_127B3, 0
                 jz      short loc_11497
@@ -2569,6 +2587,8 @@ loc_114AA:                              ; CODE XREF: seg020:00E5↑j
                 xor     al, al
                 jmp     loc_113EB
 ; ---------------------------------------------------------------------------
+
+loc_114AF:
                 call    tileLookup
                 cmp     cs:byte_127B3, 0
                 jz      short loc_114C5
@@ -2603,6 +2623,8 @@ loc_114DA:                              ; CODE XREF: seg020:0100↑j
                 xor     al, al
                 jmp     loc_113EB
 ; ---------------------------------------------------------------------------
+
+loc_11511:
                 call    tileLookup
                 cmp     cs:byte_127B3, 0
                 jz      short loc_1151F
@@ -2625,8 +2647,8 @@ loc_1151F:                              ; CODE XREF: seg020:015A↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-tileLookup      proc near               ; CODE XREF: seg020:0054↑p
-                                        ; seg020:00A0↑p ...
+tileLookup      proc near               ; CODE XREF: seg020:loc_11414↑p
+                                        ; seg020:loc_11460↑p ...
                 mov     cs:byte_127B3, 0
                 mov     dl, cs:byte_127B0
                 mov     bx, cs:word_127AE
@@ -2739,6 +2761,8 @@ loc_115F7:                              ; CODE XREF: tileLoad+17↑j
 tileLoad        endp
 
 ; ---------------------------------------------------------------------------
+
+loc_11626:
                 push    ax
                 push    cx
                 mov     cx, 672h

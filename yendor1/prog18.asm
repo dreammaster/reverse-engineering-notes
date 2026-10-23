@@ -1677,6 +1677,8 @@ shared_1e1ac1   endp
 
 ; ---------------------------------------------------------------------------
                 align 2
+
+loc_10F08:
                 push    ax
                 push    cx
                 mov     cx, 672h
@@ -1998,6 +2000,8 @@ seg006          ends
 seg007          segment byte public 'CODE' use16
                 assume cs:seg007
                 assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
+
+loc_11140:
                 pop     word ptr es:24h
                 pop     word ptr es:22h
                 retf
@@ -2581,6 +2585,8 @@ drawStringLines proc far                ; CODE XREF: sub_1082E+24↑P
 drawStringLines endp
 
 ; ---------------------------------------------------------------------------
+
+loc_11534:
                 mov     es:1Ah, ax
                 mov     es:1Ch, bx
                 mov     cs:word_12C3C, dx
@@ -2588,6 +2594,8 @@ drawStringLines endp
                 call    tileOp
                 retf
 ; ---------------------------------------------------------------------------
+
+loc_1154B:
                 mov     cs:word_12C26, ax
                 mov     cs:word_12C28, bx
                 mov     ax, cs:word_12C2A
@@ -2599,6 +2607,8 @@ drawStringLines endp
                 call    tileOp
                 call    far ptr sub_110D4
 ; ---------------------------------------------------------------------------
+
+locret_11576:
                 retf
 seg012          ends
 
@@ -3083,6 +3093,8 @@ seg017          ends
 seg018          segment byte public 'CODE' use16
                 assume cs:seg018
                 assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
+
+loc_11950:
                 push    es
                 sbb     al, 13h
                 aad     0
@@ -3213,9 +3225,13 @@ speakerOff      proc far                ; CODE XREF: seg001:017A↑P
 speakerOff      endp
 
 ; ---------------------------------------------------------------------------
+
+locret_11A10:
                 retf
 ; ---------------------------------------------------------------------------
                 align 2
+
+loc_11A12:
                 push    cx
                 push    di
                 push    es
@@ -3296,6 +3312,8 @@ loc_11A59:                              ; CODE XREF: tileOp+2C↑j
 tileOp          endp
 
 ; ---------------------------------------------------------------------------
+
+loc_11A72:
                 call    tileLookup
                 cmp     cs:byte_12C5F, 0
                 jz      short loc_11A94
@@ -3325,6 +3343,8 @@ loc_11A94:                              ; CODE XREF: seg020:005B↑j
                 xor     al, al
                 jmp     short loc_11A49
 ; ---------------------------------------------------------------------------
+
+loc_11ABE:
                 call    tileLookup
                 cmp     cs:byte_12C5F, 0
                 jz      short loc_11AE2
@@ -3345,6 +3365,8 @@ loc_11AE2:                              ; CODE XREF: seg020:00A7↑j
                 xor     al, al
                 jmp     loc_11A49
 ; ---------------------------------------------------------------------------
+
+loc_11AE7:
                 call    tileLookup
                 cmp     cs:byte_12C5F, 0
                 jz      short loc_11AF5
@@ -3364,6 +3386,8 @@ loc_11B08:                              ; CODE XREF: seg020:00E3↑j
                 xor     al, al
                 jmp     loc_11A49
 ; ---------------------------------------------------------------------------
+
+loc_11B0D:
                 call    tileLookup
                 cmp     cs:byte_12C5F, 0
                 jz      short loc_11B23
@@ -3398,6 +3422,8 @@ loc_11B38:                              ; CODE XREF: seg020:00FE↑j
                 xor     al, al
                 jmp     loc_11A49
 ; ---------------------------------------------------------------------------
+
+loc_11B6F:
                 call    tileLookup
                 cmp     cs:byte_12C5F, 0
                 jz      short loc_11B7D
@@ -3420,8 +3446,8 @@ loc_11B7D:                              ; CODE XREF: seg020:0158↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-tileLookup      proc near               ; CODE XREF: seg020:0052↑p
-                                        ; seg020:009E↑p ...
+tileLookup      proc near               ; CODE XREF: seg020:loc_11A72↑p
+                                        ; seg020:loc_11ABE↑p ...
                 mov     cs:byte_12C5F, 0
                 mov     dl, cs:byte_12C4E
                 mov     bx, cs:word_12C4C
@@ -3568,6 +3594,8 @@ fileSeekRecord  proc far                ; CODE XREF: fileWriteRecord+4↓p
 fileSeekRecord  endp
 
 ; ---------------------------------------------------------------------------
+
+loc_11CA2:
                 push    bx
                 mov     cs:byte_12C5F, 0
                 mov     dx, bx
@@ -7453,7 +7481,7 @@ byte_12C1F      db 0                    ; DATA XREF: shared_33aaab↑w
                 db    0
                 db    0
                 db    0
-word_12C26      dw 0                    ; DATA XREF: seg012:002B↑w
+word_12C26      dw 0                    ; DATA XREF: seg012:loc_1154B↑w
 word_12C28      dw 0                    ; DATA XREF: seg012:002F↑w
 word_12C2A      dw 0                    ; DATA XREF: seg012:0034↑r
 word_12C2C      dw 0                    ; DATA XREF: seg012:003C↑r

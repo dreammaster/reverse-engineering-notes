@@ -6,6 +6,20 @@
 #include "prog3/Prog3.h"
 #include "prog5/Prog5.h"
 #include "prog6/Prog6.h"
+#include "shared/GeneratedProgram.h"
+#include "gen/Prog4Gen.h"
+#include "gen/Prog7Gen.h"
+#include "gen/Prog8Gen.h"
+#include "gen/Prog9Gen.h"
+#include "gen/Prog10Gen.h"
+#include "gen/Prog11Gen.h"
+#include "gen/Prog12Gen.h"
+#include "gen/Prog13Gen.h"
+#include "gen/Prog14Gen.h"
+#include "gen/Prog15Gen.h"
+#include "gen/Prog16Gen.h"
+#include "gen/Prog17Gen.h"
+#include "gen/Prog18Gen.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -65,6 +79,32 @@ int DefaultLauncher::run(int program, Shared::Params &params, Shared::Runtime &r
 		Prog6::Prog6 p(rt, params, *this);
 		return p.run();
 	}
+	case 4:
+		return Shared::runGenerated<Gen::Prog4Gen>(rt, this, params, "PROG4.EXE");
+	case 7:
+		return Shared::runGenerated<Gen::Prog7Gen>(rt, this, params, "PROG7.EXE");
+	case 8:
+		return Shared::runGenerated<Gen::Prog8Gen>(rt, this, params, "PROG8.EXE");
+	case 9:
+		return Shared::runGenerated<Gen::Prog9Gen>(rt, this, params, "PROG9.EXE");
+	case 10:
+		return Shared::runGenerated<Gen::Prog10Gen>(rt, this, params, "PROG10.EXE");
+	case 11:
+		return Shared::runGenerated<Gen::Prog11Gen>(rt, this, params, "PROG11.EXE");
+	case 12:
+		return Shared::runGenerated<Gen::Prog12Gen>(rt, this, params, "PROG12.EXE");
+	case 13:
+		return Shared::runGenerated<Gen::Prog13Gen>(rt, this, params, "PROG13.EXE");
+	case 14:
+		return Shared::runGenerated<Gen::Prog14Gen>(rt, this, params, "PROG14.EXE");
+	case 15:
+		return Shared::runGenerated<Gen::Prog15Gen>(rt, this, params, "PROG15.EXE");
+	case 16:
+		return Shared::runGenerated<Gen::Prog16Gen>(rt, this, params, "PROG16.EXE");
+	case 17:
+		return Shared::runGenerated<Gen::Prog17Gen>(rt, this, params, "PROG17.EXE");
+	case 18:
+		return Shared::runGenerated<Gen::Prog18Gen>(rt, this, params, "PROG18.EXE");
 	default:
 		return kNotImplemented;
 	}

@@ -26,7 +26,8 @@ file(GLOB_RECURSE YENDOR1_SOURCES CONFIGURE_DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/data/*.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/vid/*.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sw/*.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/prog*/*.cpp)
+  ${CMAKE_CURRENT_SOURCE_DIR}/prog*/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/gen/*.cpp)
 add_library(yendor1 STATIC ${YENDOR1_SOURCES})
 target_include_directories(yendor1 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

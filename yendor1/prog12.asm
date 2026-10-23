@@ -541,6 +541,8 @@ locret_10431:                           ; CODE XREF: shared_61fc6e+6↑j
 shared_61fc6e   endp
 
 ; ---------------------------------------------------------------------------
+
+loc_10432:
                 push    ax
                 push    cx
                 mov     cx, 672h
@@ -831,6 +833,8 @@ waitInput       proc far                ; CODE XREF: waitInput+B↓j
 waitInput       endp
 
 ; ---------------------------------------------------------------------------
+
+loc_10696:
                 push    es
                 push    si
                 push    di
@@ -1253,6 +1257,8 @@ shared_ede455   endp
 
 ; ---------------------------------------------------------------------------
                 align 2
+
+loc_108EC:
                 push    es
                 push    si
                 push    di
@@ -1907,6 +1913,8 @@ speakerOff      proc far                ; CODE XREF: seg000:0444↑P
 speakerOff      endp
 
 ; ---------------------------------------------------------------------------
+
+locret_10C6A:
                 retf
 ; ---------------------------------------------------------------------------
                 align 2
@@ -1997,6 +2005,8 @@ loc_10CB3:                              ; CODE XREF: tileOp+2C↑j
 tileOp          endp
 
 ; ---------------------------------------------------------------------------
+
+loc_10CCC:
                 call    tileLookup
                 cmp     cs:byte_1D3A9, 0
                 jz      short loc_10CEE
@@ -2026,6 +2036,8 @@ loc_10CEE:                              ; CODE XREF: seg018:0055↑j
                 xor     al, al
                 jmp     short loc_10CA3
 ; ---------------------------------------------------------------------------
+
+loc_10D18:
                 call    tileLookup
                 cmp     cs:byte_1D3A9, 0
                 jz      short loc_10D3C
@@ -2046,6 +2058,8 @@ loc_10D3C:                              ; CODE XREF: seg018:00A1↑j
                 xor     al, al
                 jmp     loc_10CA3
 ; ---------------------------------------------------------------------------
+
+loc_10D41:
                 call    tileLookup
                 cmp     cs:byte_1D3A9, 0
                 jz      short loc_10D4F
@@ -2065,6 +2079,8 @@ loc_10D62:                              ; CODE XREF: seg018:00DD↑j
                 xor     al, al
                 jmp     loc_10CA3
 ; ---------------------------------------------------------------------------
+
+loc_10D67:
                 call    tileLookup
                 cmp     cs:byte_1D3A9, 0
                 jz      short loc_10D7D
@@ -2099,6 +2115,8 @@ loc_10D92:                              ; CODE XREF: seg018:00F8↑j
                 xor     al, al
                 jmp     loc_10CA3
 ; ---------------------------------------------------------------------------
+
+loc_10DC9:
                 call    tileLookup
                 cmp     cs:byte_1D3A9, 0
                 jz      short loc_10DD7
@@ -2121,8 +2139,8 @@ loc_10DD7:                              ; CODE XREF: seg018:0152↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-tileLookup      proc near               ; CODE XREF: seg018:004C↑p
-                                        ; seg018:0098↑p ...
+tileLookup      proc near               ; CODE XREF: seg018:loc_10CCC↑p
+                                        ; seg018:loc_10D18↑p ...
                 mov     cs:byte_1D3A9, 0
                 mov     dl, cs:byte_1D3A0
                 mov     bx, cs:word_1D3A1
@@ -2305,6 +2323,8 @@ fileSeekRecord  proc far                ; CODE XREF: fileWriteRecord+4↓p
 fileSeekRecord  endp
 
 ; ---------------------------------------------------------------------------
+
+loc_10F18:
                 push    bx
                 mov     cs:byte_1D3A9, 0
                 mov     dx, bx
@@ -2505,6 +2525,8 @@ loc_11054:                              ; CODE XREF: shared_67284e+44↑j
 shared_67284e   endp
 
 ; ---------------------------------------------------------------------------
+
+loc_1105B:
                 push    es
                 push    si
                 push    di
@@ -2618,6 +2640,8 @@ loc_11140:                              ; CODE XREF: seg021:00C0↑j
                 pop     es
                 retf
 ; ---------------------------------------------------------------------------
+
+loc_11147:
                 cmp     byte ptr es:952h, 0
                 jnz     short loc_11150
                 retf

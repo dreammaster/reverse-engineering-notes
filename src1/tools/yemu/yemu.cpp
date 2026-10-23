@@ -12,6 +12,8 @@
  *   --trace62         print a histogram of INT 62h calls at the end
  *   --log62 <file>    write one line per INT 62h call (function, context fields, image-data hash); see Trace format below
  *   --dump <dir>      at every program start and end write <n>_<PROG>_{start,end}.ydmp (parameter block, context, cursor store, EGA planes)
+ *   --clock <n>       make the DOS clock's seconds/hundredths (INT 21h/2Ch DX) always n: reproducible random seeds (the ported
+ *                     programs use the same value)
  *   --compare         run Yendor1::Vid in lockstep with the real driver and report any difference
  *
  * Script lines (times are virtual seconds, 1 s = 3 million instructions):
@@ -71,6 +73,9 @@ int main(int argc, char **argv) {
 	const std::string gameDir = argv[1], program = argv[2];
 	std::string fontsDir, workDir, outDir = ".", scriptFile;
 	uint64_t maxInstr = 400000000ULL;
+	int fixedClock = -1;
+	unsigned long logPc = 0xFFFFFFFFul;
+	unsigned traceWin = 0;
 	bool trace62 = false, compare = false;
 	std::string log62File, dumpDir;
 	for (int i = 3; i < argc; i++) {
@@ -80,6 +85,9 @@ int main(int argc, char **argv) {
 		else if (a == "--out" && i + 1 < argc) outDir = argv[++i];
 		else if (a == "--script" && i + 1 < argc) scriptFile = argv[++i];
 		else if (a == "--max" && i + 1 < argc) maxInstr = strtoull(argv[++i], 0, 10);
+		else if (a == "--clock" && i + 1 < argc) fixedClock = atoi(argv[++i]);
+		else if (a == "--logpc" && i + 1 < argc) logPc = strtoul(argv[++i], 0, 16);
+		else if (a == "--tracewin" && i + 1 < argc) traceWin = (unsigned)atoi(argv[++i]);
 		else if (a == "--trace62") trace62 = true;
 		else if (a == "--compare") compare = true;
 		else if (a == "--dump" && i + 1 < argc) dumpDir = argv[++i];
@@ -121,6 +129,8 @@ int main(int argc, char **argv) {
 	FILE *trace62Out = 0;
 	if (!log62File.empty()) {
 		trace62Out = fopen(log62File.c_str(), "w");
+		if (logPc != 0xFFFFFFFFul)
+			m.onPcLog = [&](const std::string &l) { if (trace62Out) fprintf(trace62Out, "#%s\n", l.c_str()); };
 		m.onProgramStart = [&](Yemu::Machine &mm, int) {
 			if (trace62Out)
 				fprintf(trace62Out, "# start %s\n", mm.programTrace.back().c_str());
@@ -224,6 +234,9 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	m.fixedClockDx = fixedClock;
+	m.logPcLinear = (uint32_t)logPc;
+	m.traceWinHit = traceWin;
 	const int code = m.run(program, maxInstr);
 	printf("exit code %d after %llu instructions (%.1f virtual seconds)\n", code, (unsigned long long)m.cpu.instructions,
 		(double)m.cpu.instructions / Yemu::Machine::kInstrPerSecond);
