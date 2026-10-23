@@ -24,6 +24,12 @@ public:
 	virtual bool pump() = 0;
 	/** DOS INT 21h/06h style key byte, or -1. Extended keys arrive as 0 followed by the scan code. */
 	virtual int pollKey() = 0;
+	/** The poll a translated program makes: the `sinceCall`-th (from 0) INT 21h/06h of the program since its last driver call. Real
+	 *  systems just answer pollKey(); the tests of the translated programs use the count to give a key at the poll the original read it. */
+	virtual int pollKeyFor(uint64_t sinceCall) { (void)sinceCall; return pollKey(); }
+	/** The launcher is about to run / has finished a program (`generated`: the translation of the exe rather than a hand port). */
+	virtual void programStarted(int program, bool generated) { (void)program; (void)generated; }
+	virtual void programEnded() {}
 	/** Discard any pending key presses (DOS INT 21h/AH=0Ch). */
 	virtual void flushKeys() = 0;
 	/** BIOS clock ticks (18.2 per second) since start. */

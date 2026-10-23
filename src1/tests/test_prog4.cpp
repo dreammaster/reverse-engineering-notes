@@ -3,6 +3,7 @@
  * the port has made as many driver calls as the original had. Scenarios:
  *   idle     the tavern at the start of the game, no input: the first frames of the idle loop. */
 
+#include "ReplaySystem.h"
 #include "ScriptedInput.h"
 #include "TestUtil.h"
 #include "gen/Prog4Gen.h"
@@ -40,66 +41,6 @@ bool copyFile(const std::string &from, const std::string &to) {
 	return true;
 }
 
-// an input of the reference run: the key (or extended scan code) delivered once the program had made `at` driver calls
-struct Event {
-	size_t at;
-	int key, scan;     // scan >= 0: an extended key (the BIOS returns 0 first, then the scan code)
-};
-
-// stops the program when the port has recorded `limit` calls; keys come from the events of the reference run
-class Limited : public InputScript {
-public:
-	Limited(Vid::Video &v, const std::vector<Step> &s, const Recorder &r, size_t limit, unsigned clock, const std::vector<std::string> *want,
-	        const std::vector<Event> &events)
-		: InputScript(v, s), _rec(r), _limit(limit), _clock(clock), _want(want), _checked(0), _matched(0), _failed(false), _events(events),
-		  _nextEvent(0), _counted(0), _calls(0), _scan(-1) {}
-	int pollKey() {
-		if (_scan >= 0) {
-			const int s = _scan;
-			_scan = -1;
-			return s;
-		}
-		for (; _counted < _rec.lines.size(); _counted++)
-			if (TraceCompare::ahOf(_rec.lines[_counted]) != 0x2B)
-				_calls++;
-		if (_nextEvent < _events.size() && _calls >= _events[_nextEvent].at) {
-			const Event &e = _events[_nextEvent++];
-			if (e.scan >= 0) {
-				_scan = e.scan;
-				return 0;
-			}
-			return e.key;
-		}
-		return InputScript::pollKey();
-	}
-	// stops when enough calls were made, or (with a reference) at the first call that differs from it
-	bool pump() {
-		while (_want && !_failed && _checked < _rec.lines.size()) {
-			const std::string &l = _rec.lines[_checked++];
-			if (TraceCompare::ahOf(l) == 0x2B)
-				continue;
-			if (_matched < _want->size() && TraceCompare::normalise(l) != (*_want)[_matched])
-				_failed = true;
-			else
-				_matched++;
-		}
-		return !_failed && _rec.lines.size() < _limit && (_nextEvent < _events.size() || InputScript::pump());
-	}
-	bool failed() const { return _failed; }
-	Shared::uint16 dosClock() { return (Shared::uint16)_clock; }
-
-private:
-	const Recorder &_rec;
-	size_t _limit;
-	unsigned _clock;
-	const std::vector<std::string> *_want;
-	size_t _checked, _matched;
-	bool _failed;
-	std::vector<Event> _events;
-	size_t _nextEvent, _counted, _calls;
-	int _scan;
-};
-
 struct Scenario {
 	const char *name;
 	const char *startFile;
@@ -107,39 +48,6 @@ struct Scenario {
 	unsigned clock;
 	bool events;       // keys come from trace.txt.events
 };
-
-// the keys of the reference run's trace.txt.events from PROG4's start on (lines: program, driver calls so far in the whole run, kind, a, b;
-// kind 0 = key); `base` is the number of calls before PROG4 started
-std::vector<Event> loadEvents(const std::string &file, size_t base) {
-	std::vector<Event> out;
-	FILE *f = fopen(file.c_str(), "r");
-	if (!f)
-		return out;
-	char prog[64];
-	long at;
-	int kind, a, b;
-	while (fscanf(f, "%63s %ld %d %d %d", prog, &at, &kind, &a, &b) == 5) {
-		if (kind != 0 || (size_t)at < base)
-			continue;
-		Event e;
-		e.at = (size_t)at - base;
-		e.key = a;
-		e.scan = a == 0 ? b : -1;
-		out.push_back(e);
-	}
-	fclose(f);
-	return out;
-}
-
-// driver calls (without the pointer refreshes) before the program's start marker
-size_t callsBefore(const std::string &file, const std::string &program) {
-	std::vector<std::string> lines = TraceCompare::until(file, program);
-	size_t n = 0;
-	for (size_t i = 0; i < lines.size(); i++)
-		if (TraceCompare::ahOf(lines[i]) != 0x2B)
-			n++;
-	return n;
-}
 
 bool run(const std::string &refRoot, const Scenario &sc, bool quiet = false) {
 	const std::string ref = refRoot + "/" + sc.name;
@@ -166,12 +74,17 @@ bool run(const std::string &refRoot, const Scenario &sc, bool quiet = false) {
 	start.apply(v);
 	Recorder rec;
 	v.setTrace(&rec);
-	Limited sys(v, sc.steps, rec, want.size() * 3, sc.clock, &want, sc.events ? loadEvents(ref + "/trace.txt.events", callsBefore(ref + "/trace.txt", "PROG4.EXE")) : std::vector<Event>());
+	KeyReads keys;
+	if (sc.events)
+		keys.load(ref + "/trace.txt.events", callsBefore(ref + "/trace.txt", "PROG4.EXE"));
+	Replay sys(v, sc.steps, rec, want.size() * 3, sc.clock, &want, keys);
 	Shared::Runtime rt(v, sys);
 	rt.openGameFiles(TestUtil::gameDir());
 	rt.setWorkDir(work);
 	Sw::DefaultLauncher children;
+	sys.programStarted(4, true);
 	Shared::runGenerated<Gen::Prog4Gen>(rt, &children, start.params, "PROG4.EXE");
+	sys.programEnded();
 	v.setTrace(0);
 
 	std::vector<std::string> got = withoutRefresh(rec.lines, true);

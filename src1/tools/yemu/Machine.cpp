@@ -447,6 +447,7 @@ int Machine::runChild(const std::string &dosPath, uint16_t paramSeg, uint16_t pa
 	pr.psp = psp;
 	_procs.push_back(pr);
 	programTrace.push_back(dosPath);
+	_pollCount[psp] = 0;
 	if (onProgramStart)
 		onProgramStart(*this, psp);
 	const bool savedDone = _childDone;
@@ -566,6 +567,7 @@ int Machine::run(const std::string &program, uint64_t maxInstructions) {
 	_procs.push_back(pr);
 	programTrace.push_back(program);
 	_nextTick = (uint64_t)kInstrPerSecond * 10 / 182;
+	_pollCount[psp] = 0;
 	if (onProgramStart)
 		onProgramStart(*this, psp);
 	_childDone = false;
@@ -871,8 +873,13 @@ void Machine::int21() {
 	case 0x02: console += (char)(cpu.r[DX] & 0xFF); break;
 	case 0x06:
 		if ((cpu.r[DX] & 0xFF) == 0xFF) {
+			const uint64_t poll = _pollCount[currentPsp]++;
 			if (_keys.empty()) { cpu.flags |= ZF; cpu.r[AX] &= 0xFF00; }
-			else { cpu.flags &= (uint16_t)~ZF; cpu.r[AX] = (uint16_t)((cpu.r[AX] & 0xFF00) | _keys.front()); _keys.pop_front(); }
+			else {
+				cpu.flags &= (uint16_t)~ZF; cpu.r[AX] = (uint16_t)((cpu.r[AX] & 0xFF00) | _keys.front());
+				if (onKeyPoll) onKeyPoll((int)currentPsp, poll, _keys.front());
+				_keys.pop_front();
+			}
 		} else {
 			console += (char)(cpu.r[DX] & 0xFF);
 		}

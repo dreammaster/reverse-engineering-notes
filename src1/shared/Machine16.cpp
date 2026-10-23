@@ -38,7 +38,7 @@ std::string joinPath(const std::string &dir, const std::string &name) {
 } // namespace
 
 Machine16::Machine16(Runtime &rtIn, Launcher *launcherIn, const Params &p)
-	: rt(rtIn), launcher(launcherIn), params(p), lastExitCode(0), _cursorX(0), _cursorY(0), _dummy(0),
+	: rt(rtIn), launcher(launcherIn), params(p), lastExitCode(0), _cursorX(0), _cursorY(0), _dummy(0), _polls(0), _pollsAtCall(0),
 	  _speakerDivisor(0) {
 	memset(_stack, 0, sizeof(_stack));
 	memset(_psp, 0, sizeof(_psp));
@@ -266,6 +266,7 @@ void Machine16::unbridgeImage() {
 }
 
 void Machine16::int62() {
+	_pollsAtCall = _polls;
 	bridgeImage();
 	rt.video.call(r.ah, r.al);
 	unbridgeImage();
@@ -369,7 +370,8 @@ void Machine16::int21() {
 		if (!rt.system.pump())
 			throw ProgramExit(0xFD);                     // the platform wants to stop
 		if (r.dl == 0xFF) {
-			const int k = rt.system.pollKey();
+			const int k = rt.system.pollKeyFor(_polls - _pollsAtCall);
+			_polls++;
 			if (k < 0) {
 				r.zf = true;
 				r.al = 0;

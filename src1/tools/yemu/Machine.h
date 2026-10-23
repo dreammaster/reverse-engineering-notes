@@ -46,11 +46,15 @@ public:
 	/** Called for every INT 62h before it runs (AH in cpu.r[AX] >> 8). Return true if the hook ran the call itself. */
 	std::function<bool(Machine &)> int62Hook;
 	std::function<void(Machine &, int)> onProgramStart;     // (machine, psp)
+	std::map<int, uint64_t> _pollCount, _pollAtCall;
+	uint64_t pollAtCall(int psp) { return _pollAtCall[psp]; }
+	void noteCall() { _pollAtCall[currentPsp] = _pollCount[currentPsp]; }                      // INT 21h/06h polls per process
 	int fixedClockDx = -1;                                   // >= 0: INT 21h/2Ch always returns this in DX (reproducible random seeds)
 	uint32_t logPcLinear = 0xFFFFFFFFu;                      // debugging: log AX and DS:9D0E whenever the current program reaches this offset in its image
 	uint32_t traceWinHit = 0, traceWinCount = 0;           // debugging: after the traceWinHit-th --logpc hit, log the next 4000 instruction addresses
 	int traceWinLeft = 0;
 	std::function<void(Machine &, int)> onProgramEnd;       // called when a process terminates, before its memory is freed
+	std::function<void(int psp, uint64_t poll, uint8_t key)> onKeyPoll;   // a polling read (INT 21h/06h) returned a key: the nth poll of that process
 	std::function<void(const ScriptStep &)> onStep;         // called when a script step (key, mouse) is delivered
 	std::function<void(const std::string &)> onPcLog;       // receives the --logpc lines as they are produced
 

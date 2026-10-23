@@ -1,0 +1,6 @@
+wait 4
+key 0D
+wait 8
+key 0D
+wait 8
+quit

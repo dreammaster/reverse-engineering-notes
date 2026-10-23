@@ -128,10 +128,15 @@ int main(int argc, char **argv) {
 
 	FILE *trace62Out = 0, *eventsOut = 0;
 	std::string curProg;
+	std::vector<std::string> progStack;
 	long callsInProg = 0;
 	if (!log62File.empty()) {
 		trace62Out = fopen(log62File.c_str(), "w");
 		eventsOut = fopen((log62File + ".events").c_str(), "w");
+		m.onKeyPoll = [&](int psp, uint64_t poll, uint8_t key) {
+			if (eventsOut)
+				fprintf(eventsOut, "K %s %ld %llu %d\n", curProg.c_str(), callsInProg, (unsigned long long)(poll - m.pollAtCall(psp)), key);
+		};
 		m.onStep = [&](const Yemu::ScriptStep &st) {
 			if (eventsOut && (st.kind == Yemu::ScriptStep::Key || st.kind == Yemu::ScriptStep::MouseMove || st.kind == Yemu::ScriptStep::MouseTo || st.kind == Yemu::ScriptStep::MouseDown || st.kind == Yemu::ScriptStep::MouseUp))
 				fprintf(eventsOut, "%s %ld %d %d %d\n", curProg.c_str(), callsInProg, (int)st.kind, st.a, st.b);
@@ -139,7 +144,8 @@ int main(int argc, char **argv) {
 		if (logPc != 0xFFFFFFFFul)
 			m.onPcLog = [&](const std::string &l) { if (trace62Out) fprintf(trace62Out, "#%s\n", l.c_str()); };
 		m.onProgramStart = [&](Yemu::Machine &mm, int) {
-			curProg = mm.programTrace.back();
+			progStack.push_back(mm.programTrace.back());
+			curProg = progStack.back();
 			if (trace62Out)
 				fprintf(trace62Out, "# start %s\n", mm.programTrace.back().c_str());
 		};
@@ -163,8 +169,10 @@ int main(int argc, char **argv) {
 			fprintf(trace62Out, "%02X %02X x1=%u y1=%u x2=%u y2=%u x3=%u y3=%u col=%u pg=%u dst=%u key=%u rows=%u w=%u mask=%02X font=%u tx=%u ty=%u ch=%u fg=%u bg=%u img=%08X\n",
 				ah, al, w(0x1A), w(0x1C), w(0x1E), w(0x20), w(0x22), w(0x24), b(0x30), b(0x31), b(0x32), b(0x34), rows, bytes, b(0x14), b(0x35),
 				b(0x2A), b(0x2B), b(0x2C), b(0x2E), b(0x2F), hash);
-			if (ah != 0x2B)
+			if (ah != 0x2B) {
 				callsInProg++;
+				mm.noteCall();
+			}
 			return false;
 		};
 	}
@@ -196,11 +204,15 @@ int main(int argc, char **argv) {
 			dumpName[psp] = name;
 			++dumpCount;
 			writeDump(mm, psp, "start", name);
-			curProg = mm.programTrace.back();
+			progStack.push_back(mm.programTrace.back());
+			curProg = progStack.back();
 			if (trace62Out) fprintf(trace62Out, "# start %s\n", mm.programTrace.back().c_str());
 		};
 		m.onProgramEnd = [&, writeDump](Yemu::Machine &mm, int psp) {
 			writeDump(mm, psp, "end", dumpName[psp]);
+			if (!progStack.empty())
+				progStack.pop_back();
+			curProg = progStack.empty() ? std::string() : progStack.back();
 			if (trace62Out) fprintf(trace62Out, "# end %s\n", dumpName[psp].c_str());
 		};
 	}

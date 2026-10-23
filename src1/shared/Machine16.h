@@ -338,6 +338,7 @@ private:
 	uint8_t _parentPsp[256];
 	uint8_t _jft[256];
 	uint8_t _ctxExtra[0x1000];
+	uint64_t _polls, _pollsAtCall;    // INT 21h/06h polls made so far, and when the last driver call was made
 	uint16_t _tileTableSeg;
 	unsigned _tileSlots;
 	void initTileStore();

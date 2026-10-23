@@ -56,6 +56,15 @@ std::string join(const std::string &dir, const char *name) {
 // ---------------------------------------------------------------------------------------------
 
 int DefaultLauncher::run(int program, Shared::Params &params, Shared::Runtime &rt) {
+	const bool generated = program >= 4 && program != kProg5 && program != kProg6
+		|| (program == kProg5 && (params.raw[0x02] == 1 || params.raw[0x02] == 2));
+	rt.system.programStarted(program, generated);
+	const int code = runProgram(program, params, rt);
+	rt.system.programEnded();
+	return code;
+}
+
+int DefaultLauncher::runProgram(int program, Shared::Params &params, Shared::Runtime &rt) {
 	switch (program) {
 	case kProg0: {
 		Prog0::Prog0 p(rt, params);

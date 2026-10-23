@@ -24,6 +24,9 @@ typedef Shared::Launcher Launcher;
 class DefaultLauncher : public Launcher {
 public:
 	int run(int program, Shared::Params &params, Shared::Runtime &rt);
+
+private:
+	int runProgram(int program, Shared::Params &params, Shared::Runtime &rt);
 };
 
 struct Config {

@@ -37,3 +37,10 @@ after PROG4's start marker). Scenarios: `idle` (script `wait 4, key 0D, wait 8, 
 the "assembled" party of three characters (`game_asm`, see prog5_assemble above). `YENDOR1_ONLY=<name>` runs one scenario,
 `YENDOR1_DUMP=<file>` writes the compared call lines of both sides, `CALL_LOG=1` prints every call to stderr.
 
+Keys in the reference runs: yemu writes `K <program> <driver calls so far> <polls of the program since its last driver call> <byte>` to
+`trace.txt.events` whenever a program reads a key with INT 21h/06h. A translated program (`Machine16`) is given each key at exactly that
+poll (`System::pollKeyFor`), which matters because such programs count their waiting in loop iterations (PROG4's NPC sweeps); a hand-ported
+program gets its next key once the port has made as many driver calls. `Shared::DefaultLauncher` tells the System which kind of program runs
+(`programStarted/Ended`). `tests/test_game.cpp` replays a whole run from the start of SW.EXE this way (`YENDOR1_REFG_DIR`: `trace.txt`,
+`trace.txt.events`, `in/CURRGAME`, `in/SAVEGAME.A`).
+
