@@ -151,6 +151,31 @@ PORT(monsterRangeModifier) { r.a.b.l = monsterRangeModifier(m, r.a.b.l, r.d.b.l)
 PORT(ambush) { ambush(m, r.a.b.l); }                                                    // 12783
 PORT(partyAttackRound) { partyAttackRound(m, r.a.b.l); }                                // 12D3F: al = party group
 PORT(fieldCheck) { r.cf = !fieldCheck(m, r.a.b.l, r.b.b.l); }                           // 1820C: al = difficulty, bl = field offset
+PORT(entrySlot) {                                                                       // 14B9C: al = entry offset
+	const EntrySlot s = entrySlot(r.a.b.l);
+	r.a.b.l = s.group;
+	r.d.b.l = s.slot;
+	r.zf = s.group == 0;
+}
+PORT(entrySlotCurrent) {                                                                // 14659: entry offset from ds:A619
+	const EntrySlot s = entrySlot(m.d8(0xA619));
+	r.a.b.l = s.group;
+	r.d.b.l = s.slot;
+	r.zf = s.group == 0;
+}
+PORT(findEntrySlot) {                                                                   // 14B36: bl = entry offset -> al = group, dl = slot, CF found
+	EntrySlot s{0, 0};
+	r.cf = findEntrySlot(m, r.b.b.l, s);
+	r.a.b.l = r.cf ? s.group : 4;
+	r.d.b.l = r.cf ? s.slot : 4;
+}
+PORT(findEntry) {                                                                       // 14AEA: al = party id, dl = x, bl = y
+	uint8_t entry = 0;
+	r.cf = findEntry(m, r.a.b.l, r.d.b.l, r.b.b.l, entry);
+	if (r.cf) { r.a.b.l = uint8_t(entry >> 2); r.d.b.l = entry; r.zf = r.a.b.l == 0; }
+}
+PORT(swapEntrySlot) { swapEntrySlot(m, r.a.b.l, r.d.b.l, r.b.b.l); }                  // 14BAD: al = group, dl = slot, bl = entry offset
+PORT(placeTrackedMonsters) { placeTrackedMonsters(m); }                                 // 14480
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079

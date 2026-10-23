@@ -1048,6 +1048,128 @@ bool fieldCheck(Machine &m, uint8_t count, uint8_t offset) {
 	return rules.rollBeatsTarget();
 }
 
+EntrySlot entrySlot(uint8_t entryOffset) {
+	const uint8_t entry = entryOffset >> 2;
+	return {uint8_t(entry >> 2), uint8_t(entry & 3)};
+}
+
+bool findEntrySlot(Machine &m, uint8_t entryOffset, EntrySlot &found) {
+	m.d8(0xA603) = entryOffset;
+	for (uint8_t group = 0; group != 4; ++group) {
+		m.d8(0xA602) = group;
+		for (uint8_t slot = 0; slot != 4; ++slot) {
+			m.d8(0xA601) = slot;
+			selectSlot(m, group, slot);
+			const uint16_t record = m.d16(g::monsterPtr);
+			if (m.d8(uint16_t(0xA96F + entryOffset)) == m.d8(record) && m.d8(uint16_t(0xA970 + entryOffset)) == m.d8(uint16_t(record + 1)) &&
+			    m.d8(uint16_t(0xA971 + entryOffset)) == m.d8(uint16_t(record + 2))) {
+				found = {group, slot};
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool findEntry(Machine &m, uint8_t partyId, uint8_t x, uint8_t y, uint8_t &entry) {
+	m.d8(0xA606) = partyId;
+	m.d8(0xA605) = x;
+	m.d8(0xA604) = y;
+	for (uint8_t i = 0; i != 16; ++i) {
+		const uint8_t offset = uint8_t(i * 4);
+		const uint8_t tx = m.d8(uint16_t(0xA96F + offset));
+		if (tx != 0 && tx == x && m.d8(uint16_t(0xA970 + offset)) == y && m.d8(uint16_t(0xA971 + offset)) == partyId) {
+			entry = i;
+			return true;
+		}
+	}
+	return false;
+}
+
+void swapEntrySlot(Machine &m, uint8_t group, uint8_t slot, uint8_t entryOffset) {
+	m.d8(0xA600) = entryOffset;
+	selectSlot(m, group, slot);
+	const uint16_t first = m.d16(g::monsterPtr);
+	const EntrySlot target = entrySlot(entryOffset);
+	selectSlot(m, target.group, target.slot);
+	const uint16_t second = m.d16(g::monsterPtr);
+	m.setD16(0x4661, first);   // (the original keeps the pointer in the character special function variable)
+	for (int i = 0x5D; i >= 0; --i) std::swap(m.d8(uint16_t(first + i)), m.d8(uint16_t(second + i)));
+}
+
+void placeTrackedMonsters(Machine &m) {
+	Rules rules(m);
+	const uint8_t savedGroup = m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup));
+	auto entryX = [&](uint8_t off) { return m.d8(uint16_t(0xA96F + off)); };
+	auto selectGroup = [&](uint8_t group) { X86Regs x; x.al = group; legacy::call(m, 0x6149, x); };
+	// first pass: move records that sit in the wrong slot
+	for (uint8_t off = 0; off != 0x40; off = uint8_t(off + 4)) {
+		m.d8(0xA619) = off;
+		if (entryX(off) == 0) continue;
+		EntrySlot at;
+		if (!findEntrySlot(m, off, at)) continue;
+		const EntrySlot want = entrySlot(off);
+		if (want.group == at.group && want.slot == at.slot) continue;
+		swapEntrySlot(m, at.group, at.slot, off);
+	}
+	// second pass: entries without a record get a new encounter
+	for (uint8_t off = 0; off != 0x40; off = uint8_t(off + 4)) {
+		m.d8(0xA619) = off;
+		const uint8_t x = entryX(off);
+		if (x == 0) continue;
+		const uint8_t y = m.d8(uint16_t(0xA970 + off));
+		m.d8(0xA61D) = x;
+		m.d8(0xA61C) = y;
+		EntrySlot at;
+		if (findEntrySlot(m, off, at)) continue;
+		const EntrySlot slot = entrySlot(off);
+		selectSlot(m, slot.group, slot.slot);
+		selectGroup(slot.group);
+		const uint16_t record = m.d16(g::monsterPtr);
+		m.d8(record) = x;
+		m.d8(uint16_t(record + 1)) = y;
+		m.d8(uint16_t(record + 2)) = m.d8(uint16_t(0xA971 + off));
+		m.d8(uint16_t(record + 3)) = cellDistance(m, x, y);
+		selectSlotCellRecord(m);
+		const uint16_t location = m.d16(g::savedLocationDetailsPtr);
+		for (int group = 2; group >= 0; --group) {
+			m.d8(0xA615) = uint8_t(group);
+			for (const uint16_t table : {g::encounterOffsets, g::encounterCountOffsets}) {
+				const uint8_t offset = m.d8(uint16_t(table + group));
+				const uint8_t v = m.d8(uint16_t(location + offset));
+				if (v & 0x80) m.d8(uint16_t(location + offset)) = rules.random(v & 0x7F);
+			}
+		}
+		X86Regs flush;
+		legacy::call(m, 0x9727, flush);   // sub_19727
+		printMapMessage(m, m.d8(uint16_t(location + 2)));
+		describeEncounter(m, m.d8(uint16_t(m.d16(g::monsterPtr) + 3)));
+		for (uint8_t group = 0; group != 3; ++group) {
+			m.d8(0xA615) = group;
+			const uint8_t count = m.d8(uint16_t(location + m.d8(uint16_t(g::encounterCountOffsets + group))));
+			if (count == 0) continue;
+			getMonsterDetails(m, m.d8(uint16_t(location + m.d8(uint16_t(g::encounterOffsets + group)))));
+			const uint8_t lo = itemByte(m, 0), hi = itemByte(m, 1);
+			m.d8(0xA618) = lo;
+			m.d8(0xA616) = hi;
+			const EntrySlot s = entrySlot(off);
+			selectMember(m, s.group, s.slot, group);
+			uint8_t at8 = 0;
+			for (uint8_t n = count; n != 0; --n) {
+				const uint16_t shifted = uint16_t(((hi << 8) | lo) >> 2);
+				const unsigned sum = rules.random(lo) + uint8_t(shifted);
+				const uint8_t hpLo = uint8_t(sum);
+				const uint8_t hpHi = uint8_t(rules.random(hi) + uint8_t(shifted >> 8) + (sum > 0xFF ? 1 : 0));
+				const uint16_t base = m.d16(g::monsterPtr);
+				m.d8(uint16_t(base + at8)) = hpLo;
+				m.d8(uint16_t(base + at8 + 1)) = hpHi;
+				at8 = uint8_t(at8 + 2);
+			}
+		}
+	}
+	selectGroup(savedGroup);
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }

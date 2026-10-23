@@ -203,3 +203,9 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 2783 ambush junk=ah,al,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=A4A0-A4D6,A59D-A5A1,A55A-A55E,A592-A594,A670-A6A0,7931-796F,CD3F-CD4A,BA08-BA11,BA6D-BA70,C059-C059,4661-4662,465C-4662,CDCC-CDCC
 2D3F partyAttackRound junk=ah,al,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=A4A0-A4D6,A550-A5AF,A59D-A5A1,A592-A594,A670-A6A0,7931-796F,CD3F-CD4A,BA08-BA11,BA6D-BA70,C059-C059,4661-4662,465C-4662,CDCC-CDCC,A564-A564
 820C fieldCheck junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf,sf scratch=BA6A-BA6B,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA73
+4B9C entrySlot junk=ah,bl,ch,cl,di,es,pf,si,sf,cf
+4659 entrySlotCurrent junk=ah,bl,ch,cl,di,es,pf,si,sf,cf
+4B36 findEntrySlot junk=ah,bl,ch,cl,di,es,pf,si,sf,zf scratch=A601-A603,A59D-A59E
+4AEA findEntry junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=A604-A606
+4BAD swapEntrySlot junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf,cf,sf scratch=A600-A600,A59D-A59E,4661-4662
+4480 placeTrackedMonsters junk=ah,al,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=A600-A626,A59D-A5A1,A592-A594,7931-796F,CD3F-CD4A,C059-C059,4661-4662,465C-4662,CD40-CD41,BA08-BA11,A5A0-A5A7,A55A-A55E,CDCC-CDCC,466B-466D

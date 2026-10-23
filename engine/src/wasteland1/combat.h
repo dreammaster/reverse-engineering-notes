@@ -149,6 +149,19 @@ void partyAttackRound(Machine &m, uint8_t partyGroup);
 // 1820C: skill/attribute check of the current character: field `offset` against difficulty `count`. Offset 18h (nationality)
 // must equal count, 24h (level) must be at least count; any other field rolls dice against 15 + 5 * count. True on success
 bool fieldCheck(Machine &m, uint8_t count, uint8_t offset);
+// ---- the table of monster groups that follow the party (16 entries of {x, y, party id, distance} at ds:A96F) --------------
+struct EntrySlot { uint8_t group, slot; };
+// 14B9C: entry offset (4 * n) -> party group n / 4 and slot n % 4
+EntrySlot entrySlot(uint8_t entryOffset);
+// 14B36: the slot whose record starts with the entry's {x, y, party id}; false when none does
+bool findEntrySlot(Machine &m, uint8_t entryOffset, EntrySlot &found);
+// 14AEA: entry (offset / 4) holding {x, y, party id}; false when there is none
+bool findEntry(Machine &m, uint8_t partyId, uint8_t x, uint8_t y, uint8_t &entry);
+// 14BAD: swaps the 5Eh byte records of slot (group, slot) and of the slot of the entry
+void swapEntrySlot(Machine &m, uint8_t group, uint8_t slot, uint8_t entryOffset);
+// 14480: places the monsters of every table entry into its slot and generates the encounter (random counts and types,
+// hit points) of the entries that are new
+void placeTrackedMonsters(Machine &m);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------
