@@ -2165,6 +2165,24 @@ void updateAllSlotSurvivors(Machine &m) {
 	}
 }
 
+bool slotTargetable(Machine &m, uint8_t &distance) {
+	const uint16_t record = m.d16(g::monsterPtr);
+	if (m.d8(uint16_t(record + 2)) != m.d8(uint16_t(g::saved2 + g::s2::field7))) return false;
+	const uint8_t x = m.d8(record);
+	if (x == 0) return false;
+	const uint8_t y = m.d8(uint16_t(record + 1));
+	m.d8(0xA429) = x;
+	m.d8(0xA428) = y;
+	const uint8_t d = cellDistance(m, x, y);
+	m.d8(0xA427) = d;
+	distance = d;
+	if (d != 0 && d >= m.d8(g::readiness)) return false;
+	if (outsideView(m, x, y)) return false;
+	selectSlotCellRecord(m);
+	if (m.d8(m.d16(g::savedLocationDetailsPtr)) < d) return false;
+	return !lineBlocked(m, x, y);
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }

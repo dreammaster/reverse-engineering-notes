@@ -218,6 +218,9 @@ bool restoreLocationAtSlot(Machine &m, uint8_t offset);
 bool updateSlotSurvivors(Machine &m, uint8_t group, uint8_t slot);
 // 13580: updateSlotSurvivors for every slot on the current map
 void updateAllSlotSurvivors(Machine &m);
+// 122E9: can the selected monster slot be targeted: it is on this map, within the weapon range (ds:46CC), inside the view,
+// within the distance the location record allows and in line of sight. `distance` receives the distance; true when targetable
+bool slotTargetable(Machine &m, uint8_t &distance);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------
