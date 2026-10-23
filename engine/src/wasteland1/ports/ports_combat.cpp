@@ -176,6 +176,11 @@ PORT(findEntry) {                                                               
 }
 PORT(swapEntrySlot) { swapEntrySlot(m, r.a.b.l, r.d.b.l, r.b.b.l); }                  // 14BAD: al = group, dl = slot, bl = entry offset
 PORT(placeTrackedMonsters) { placeTrackedMonsters(m); }                                 // 14480
+PORT(unjam) { unjam(m, r.a.b.l, r.b.b.l); }                                             // 19ACD: al = party member, bl = weapon offset
+PORT(equipOrder) { equipOrder(m, r.a.b.l); }                                            // 130B1
+PORT(printMessage52) { printMessage(m, 0x52); }                                         // 13223
+PORT(reloadOrder) { reloadOrder(m, r.a.b.l); }                                          // 13228
+PORT(executeOrders) { executeOrders(m, r.a.b.l); }                                      // 12CC3: al = party group
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079

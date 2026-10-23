@@ -162,6 +162,15 @@ void swapEntrySlot(Machine &m, uint8_t group, uint8_t slot, uint8_t entryOffset)
 // 14480: places the monsters of every table entry into its slot and generates the encounter (random counts and types,
 // hit points) of the entries that are new
 void placeTrackedMonsters(Machine &m);
+// ---- the orders given to the party outside combat (status byte of each member: 1 talk, 3 equip, 5/6 reload / message, 7 ...) --
+// 19ACD: tries to clear the jam of the weapon of party member `member` (weapon item at inventory offset `weaponOffset`)
+void unjam(Machine &m, uint8_t member, uint8_t weaponOffset);
+// 130B1: order "equip" of party member `member`
+void equipOrder(Machine &m, uint8_t member);
+// 13228 / 1322B: order "reload" of party member `member`
+void reloadOrder(Machine &m, uint8_t member);
+// 12CC3: carries out the order of every member of the party group `partyGroup` that is able to act
+void executeOrders(Machine &m, uint8_t partyGroup);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

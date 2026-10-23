@@ -1170,6 +1170,91 @@ void placeTrackedMonsters(Machine &m) {
 	selectGroup(savedGroup);
 }
 
+void unjam(Machine &m, uint8_t member, uint8_t weaponOffset) {
+	const uint8_t qtyOffset = uint8_t(weaponOffset + 1);
+	m.d8(0xCCD4) = qtyOffset;
+	m.d8(0xCCD5) = member;
+	setCurrentCharacter(m, member);
+	Rules rules(m);
+	rules.setSeed1(0);
+	rules.setSeed2(0);
+	uint8_t &quantity = m.d8(uint16_t(cur(m) + qtyOffset));
+	if (!(quantity & 0x80)) return;
+	const uint8_t level = quantity & 0x3F;
+	bool success = false;
+	if (level < 6) {
+		m.d8(0xBA73) = level;
+		rules.addTarget(int32_t(Rules::targetBase(level)));
+		const uint8_t roll = rules.rollDice();
+		if (roll >= 5) {
+			rules.addRoll(roll);
+			rules.addRoll(m.d8(uint16_t(cur(m) + pm::iq)));
+			rules.addRoll(weaponSkillBonus(m));
+			success = rules.rollBeatsTarget();
+		}
+	}
+	if (success) {
+		writeItemTextNormal(m, 160);
+		m.d8(uint16_t(cur(m) + qtyOffset)) = 0;
+		X86Regs x;
+		x.al = member;
+		legacy::call(m, 0x7033, x);   // writePartyMemberCustomHilite
+		return;
+	}
+	writeItemTextNormal(m, 161);
+	uint8_t &q = m.d8(uint16_t(cur(m) + qtyOffset));
+	if (q < 133) ++q;
+}
+
+void equipOrder(Machine &m, uint8_t member) {
+	printMessage(m, 0x66);
+	equip(m, m.d8(uint16_t(m.d16(g::partyOrdersPtr) + member)));
+	X86Regs x;
+	x.al = member;
+	legacy::call(m, 0x7033, x);   // writePartyMemberCustomHilite
+}
+
+void reloadOrder(Machine &m, uint8_t member) {
+	m.d8(0xA558) = member;
+	uint8_t offset = equippedItemOffset(m, pm::weapon);
+	if (m.d8(uint16_t(cur(m) + offset + 1)) & 0x80) {   // jammed
+		unjam(m, member, offset);
+		offset = equippedItemOffset(m, pm::weapon);
+		if (m.d8(uint16_t(cur(m) + offset + 1)) & 0x80) return;
+	}
+	setCurrentCharacter(m, member);
+	getEquippedWeaponDetails(m);
+	const uint8_t ammoType = itemByte(m, 7);
+	if (ammoType == 0) { printMessage(m, 0x42); return; }
+	const int found = findItemById(m, ammoType);
+	if (found < 0) { printMessage(m, 0x41); return; }
+	reload(m, uint8_t(found));
+	printMessage(m, 0x68);
+	X86Regs x;
+	x.al = member;
+	legacy::call(m, 0x7033, x);   // writePartyMemberCustomHilite
+}
+
+void executeOrders(Machine &m, uint8_t partyGroup) {
+	selectPartyBlock(m, partyGroup);
+	const uint8_t members = m.d8(uint16_t(g::saved2 + g::s2::membersInGroup));
+	for (uint8_t member = 1; member <= members; ++member) {
+		m.d8(0xA567) = member;
+		if (isMemberUnconscious(m, member)) continue;
+		const uint8_t order = m.d8(uint16_t(m.d16(g::partyStatusPtr) + member));
+		X86Regs x;
+		x.al = member;
+		switch (order) {
+		case 1: legacy::call(m, 0x32AC, x); break;
+		case 3: equipOrder(m, member); break;
+		case 5: printMessage(m, 0x52); break;
+		case 6: reloadOrder(m, member); break;
+		case 7: legacy::call(m, 0x3265, x); break;
+		default: break;
+		}
+	}
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }

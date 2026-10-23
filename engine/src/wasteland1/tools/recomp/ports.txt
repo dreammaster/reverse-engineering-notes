@@ -245,3 +245,8 @@ ACF0 act_acf0 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,
 ACFC act_acfc junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
 AD08 act_ad08 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
 AD14 act_ad14 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E,CCE1-CCE1
+9ACD unjam junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf,cf,sf scratch=CCD4-CCD5,BA73-BA73,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA70,A59D-A59E,CCE1-CCE1
+30B1 equipOrder junk=ah,al,bl,bp,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=A59D-A59E,C059-C059,CCE0-CCE8,CD3F-CD4A,BA6D-BA70
+3223 printMessage52 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf,cf,sf scratch=C059-C059
+3228 reloadOrder junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf,cf,sf scratch=A558-A558,CCD4-CCD5,BA73-BA73,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA70,A59D-A59E,CCE0-CCE8,CCD6-CCD9
+2CC3 executeOrders junk=ah,al,bl,cf,ch,cl,di,dl,es,pf,sf,si,sp,zf scratch=A550-A5AF,A558-A558,A567-A567,CCD4-CCD9,BA73-BA73,CD3F-CD4A,C059-C059,4661-4664,BA6D-BA70,CCE0-CCE8,CDCC-CDCC,A4A0-A4D6,A670-A6A0,465C-4662,BA08-BA11
