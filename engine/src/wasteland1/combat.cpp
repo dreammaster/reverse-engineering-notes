@@ -1869,8 +1869,9 @@ bool monsterStepDirection(Machine &m, uint8_t &direction) {   // 14ECB: the move
 }
 
 bool monsterApproach(Machine &m, bool away, uint8_t &direction) {   // 14E4A / 14E45
-	const uint16_t rec = [&]() { selectSlot(m, A(m, 0xA63A), A(m, 0xA639)); return m.d16(g::monsterPtr); }();
-	(void)rec;
+	selectSlot(m, A(m, 0xA63A), A(m, 0xA639));   // 14F5D falls into 14F67, which loads the position
+	A(m, 0xA63F) = m.d8(m.d16(g::monsterPtr));
+	A(m, 0xA640) = m.d8(uint16_t(m.d16(g::monsterPtr) + 1));
 	for (int axis = 1; axis >= 0; --axis) {
 		const uint8_t party = m.d8(uint16_t(0x46A6 + axis)), monster = A(m, uint16_t(0xA63F + axis));
 		A(m, uint16_t(0xA641 + axis)) = party == monster ? 0 : party < monster ? 0xFF : 1;
@@ -1974,6 +1975,137 @@ void moveMonsters(Machine &m) {
 			printMessage(m, m.d8(uint16_t(0xA643 + D(0xA634))));
 		}
 	}
+}
+
+void planMonsterMoves(Machine &m) {   // 14BF0
+	Rules rules(m);
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	auto S = [&](uint8_t o) -> uint8_t & { return m.d8(uint16_t(g::saved2 + o)); };
+	auto rec0 = [&](uint8_t i) -> uint8_t & { return m.d8(uint16_t(m.d16(g::savedLocationDetailsPtr) + i)); };
+	auto slotByte = [&](uint8_t i) -> uint8_t & { return m.d8(uint16_t(m.d16(g::monsterPtr) + i)); };
+	auto selectCurrentSlot = [&]() {   // 14F5D (falls into 14F67)
+		selectSlot(m, D(0xA63A), D(0xA639));
+		D(0xA63F) = slotByte(0);
+		D(0xA640) = slotByte(1);
+	};
+	auto planIndex = [&]() -> uint8_t { return uint8_t(D(0xA63A) * 4 + D(0xA639)); };
+	uint8_t al = 0, direction = 0;
+
+	for (int i = 0; i != 16; ++i) D(uint16_t(0x711D + i)) = 0xFF;
+	const uint8_t savedGroup = S(g::s2::activePartyGroup);
+	uint8_t group = 0;
+	for (;;) {   // 14C05
+		D(0xA63A) = group;
+		setActivePartyGroup(m, group);
+		if (S(g::s2::field7) == D(0x46DC)) {
+			for (uint8_t slot = 0; slot != 4; ++slot) {   // 14C16
+				D(0xA639) = slot;
+				selectCurrentSlot();
+				if (slotByte(0) == 0) continue;
+				// 14C46
+				selectSlotCellRecord(m);
+				setSlotStatus(m, slot, 0);
+				if ((rec0(9) >> 1) & 1) continue;
+				if (rec0(9) & 4) goto leave;
+				{
+					uint8_t groupIndex = 0;
+					for (;; ) {   // 14C66
+						D(0xA638) = groupIndex;
+						if (rec0(m.d8(uint16_t(g::encounterCountOffsets + groupIndex))) != 0) {
+							selectMonsterDetails(m, groupIndex);
+							if (hasNoAmmunition(m, itemDamageDice(m))) {   // 14C85
+								if (itemArmorClassByte(m) != 1) {
+									averageMonsterHitPoints(m);
+									rules.setSeed1(uint16_t(itemByte(m, 0) | (itemByte(m, 1) << 8)));
+									rules.setSeed1(uint16_t(rules.seed1() >> 1));
+									if (!rules.rollBeatsTarget()) goto flee;   // 14E03
+								}
+								selectCurrentSlot();   // 14CA5
+								if (slotByte(3) < 0x10) goto leave;
+								goto approach;   // 14E0C
+							}
+							break;   // 14CCA
+						}
+						if (++groupIndex == 3) break;
+					}
+				}
+				{   // 14CCA
+					uint8_t armor = itemArmorClassByte(m);
+					uint8_t mode;
+					if (armor == 5) mode = 0x0F;
+					else if (armor == 4) {
+						if (monsterHoldsBack(m, 1)) goto flee;
+						mode = 0x0B;
+					} else {
+						if (monsterHoldsBack(m, 2)) goto flee;
+						mode = 7;
+					}
+					D(0xA63E) = mode;
+					selectCurrentSlot();
+					{
+						const uint8_t modifier = monsterRangeModifier(m, slotByte(3), D(0xA638));
+						D(0xA647) = modifier;
+						D(0xA648) = 0;
+						rules.setSeed1(modifier);
+					}
+					selectMonsterDetails(m, D(0xA638));
+					rules.setSeed2(itemByte(m, 2));
+					rules.addRoll(D(0xA63E));
+					if (rules.rollBeatsTarget()) goto leave;   // 14D31
+				}
+				D(0xA63C) = 0xFF;   // 14D34
+				rules.setSeed2(0xFFFF);
+				for (uint8_t dir = 0; dir != 9; ++dir) {   // 14D40
+					D(0xA63D) = dir;
+					D(0xA63F) = slotByte(0);
+					D(0xA640) = slotByte(1);
+					uint8_t x = D(0xA63F), y = D(0xA640);
+					stepTarget(dir, x, y);
+					if (outsideMap(m, x, y)) continue;
+					if (x == 0 || y == 0) continue;
+					D(0xA63F) = x;
+					D(0xA640) = y;
+					if (dir != 4 && tileClassAt(m, x, y) != 0) continue;
+					if (outsideView(m, x, y)) continue;
+					rules.setSeed1(monsterRangeModifier(m, cellDistance(m, x, y), D(0xA638)));
+					if (rules.rollBeatsTarget() && rules.seed2() != rules.seed1()) {   // a smaller value than anything seen
+						rules.setSeed2(rules.seed1());
+						D(0xA63C) = dir;
+					}
+				}
+				if (D(0xA63C) & 0x80) goto leave;
+				if (D(0xA63C) == 4) goto leave;
+				rules.setSeed1(uint16_t(D(0xA647) | (D(0xA648) << 8)));
+				if (rules.seed2() == rules.seed1()) goto leave;
+				direction = D(0xA63C);
+				goto store;
+			flee:   // 14E03
+				if (!monsterApproach(m, true, direction)) goto leave;
+				direction = uint8_t(direction + 0x40);
+				if (direction != 0) goto store;
+				goto leave;
+			approach:   // 14E0C
+				if (!monsterApproach(m, false, direction)) goto leave;
+				{
+					uint8_t x = D(0xA63F), y = D(0xA640);
+					stepTarget(direction, x, y);
+					al = cellDistance(m, x, y);
+					if (al < slotByte(3)) {
+						direction = uint8_t(direction + 0x80);
+						if (direction != 0) goto store;
+					}
+				}
+			leave:   // 14E3B
+				setSlotStatus(m, D(0xA639), 1);
+				continue;
+			store:
+				m.d8(uint16_t(0x711D + planIndex())) = direction;
+			}
+		}
+		if (uint8_t(group + 1) > S(g::s2::totalPartyGroups)) break;
+		++group;
+	}
+	setActivePartyGroup(m, savedGroup);
 }
 
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }

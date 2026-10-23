@@ -208,6 +208,9 @@ bool monsterHoldsBack(Machine &m, uint8_t shift);
 // 15036: carries out the monster moves planned in the table at ds:711D (direction in the low six bits, message type in the
 // top two): the monster slot moves one cell and the move is announced
 void moveMonsters(Machine &m);
+// 14BF0: plans the move of every monster slot on the map (table at ds:711D, see moveMonsters): towards the party, away from it
+// when the monsters are weak, or none
+void planMonsterMoves(Machine &m);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

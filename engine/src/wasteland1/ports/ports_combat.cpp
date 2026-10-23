@@ -212,6 +212,7 @@ PORT(averageMonsterHitPoints) { averageMonsterHitPoints(m); }                   
 PORT(averagePartyHitPoints) { averagePartyHitPoints(m); }                               // 14F9D
 PORT(monsterHoldsBack) { r.cf = monsterHoldsBack(m, r.d.b.l); }                         // 14F7A: dl = shift
 PORT(moveMonsters) { moveMonsters(m); }                                                 // 15036
+PORT(planMonsterMoves) { planMonsterMoves(m); }                                          // 14BF0
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079
