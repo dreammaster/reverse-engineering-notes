@@ -238,6 +238,71 @@ byte BookUi::input(byte keyMask, byte clickMask, byte flags) {
 	}
 }
 
+void BookUi::drawBox(const byte *r) {
+	Vid::Context &c = _rt.video.ctx;
+	auto word = [r](int i) { return (uint16)(r[i] | (r[i + 1] << 8)); };
+	const uint16 off = r[9];
+	c.x1 = (uint16)(word(0) + off);
+	c.y1 = (uint16)(word(2) + off);
+	c.x2 = (uint16)(word(4) + off);
+	c.y2 = (uint16)(word(6) + off);
+	c.colour = r[8];
+	_rt.vid(0x07);                                   // the shadow
+	c.x1 = (uint16)(c.x1 - off);
+	c.y1 = (uint16)(c.y1 - off);
+	c.x2 = (uint16)(c.x2 - off);
+	c.y2 = (uint16)(c.y2 - off);
+	c.colour = c.colourMap[7];
+	_rt.vid(0x06);                                   // the frame
+	c.x1++; c.y1++; c.x2--; c.y2--;
+	c.colour = c.colourMap[15];
+	_rt.vid(0x07);                                   // the inside
+}
+
+void BookUi::openConfirmPanel(const byte *boxRecord, const char *title1, const char *title2, const char *label, byte iconMask) {
+	Vid::Context &c = _rt.video.ctx;
+	if (_panelSaved.empty())
+		_panelSaved.assign(1000 * 16, 0);            // bx = 3E8h paragraphs
+	_rt.vid(0x29);
+	c.x1 = 0x197; c.y1 = 0xE9; c.x2 = 0x24F; c.y2 = 0x12D;
+	const Vid::ImagePtr saved = c.image;
+	c.image.set(&_panelSaved[0], (uint32_t)_panelSaved.size(), 0);
+	_rt.vid(0x0B);                                   // vidGetImage into the buffer
+	c.image = saved;
+	_rt.vid(0x14);
+	drawBox(boxRecord);
+	c.fontSelect = 0;
+	c.textCol = 0x34;
+	c.textRow = 0x11;
+	c.textBg = c.colourMap[15];
+	c.textFg = c.colourMap[0];
+	_rt.drawString(title1);
+	c.textRow = 0x12;
+	_rt.drawString(title2);
+	c.textFg = c.colourMap[11];
+	c.textCol = 0x34;
+	c.textRow = 0x13;
+	_rt.drawString(label);
+	drawIconBar(iconMask);
+	_rt.vid(0x12, 0);
+	_rt.vid(0x28);
+}
+
+void BookUi::closeInfoPanel() {
+	Vid::Context &c = _rt.video.ctx;
+	_rt.vid(0x29);
+	_rt.vid(0x14);
+	c.x1 = 0x197; c.y1 = 0xE9; c.x2 = 0x24F; c.y2 = 0x12D;
+	if (!_panelSaved.empty()) {
+		const Vid::ImagePtr saved = c.image;
+		c.image.set(&_panelSaved[0], (uint32_t)_panelSaved.size(), 0);
+		_rt.vid(0x0C);                               // vidPutImageHdr from the buffer
+		c.image = saved;
+	}
+	_rt.vid(0x12, 0);
+	_rt.vid(0x28);
+}
+
 void BookUi::refreshAndShow() {
 	drawBottomDecorations();
 	_rt.video.ctx.cursorShape = _rt.video.ctx.cursorShape;   // (no change; kept for symmetry with the original's flow)

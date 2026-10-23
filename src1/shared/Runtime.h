@@ -86,6 +86,9 @@ public:
 	bool openGameFiles(const char *gameDir);
 	/** The directory given to openGameFiles (programs read their texts from the original executables there). */
 	const std::string &dataDir() const { return _dataDir; }
+	/** Where CURRGAME\ (the working copy of the party, NPC and area files) lives; the game directory unless the shell says otherwise. */
+	const std::string &workDir() const { return _workDir.empty() ? _dataDir : _workDir; }
+	void setWorkDir(const std::string &dir) { _workDir = dir; }
 	Data::TileFile tiles[Data::kTileFileCount];
 
 	// ---- input (pollInput, waitInput) ----
@@ -119,6 +122,7 @@ public:
 
 private:
 	std::string _dataDir;
+	std::string _workDir;
 	Runtime(const Runtime &);
 	Runtime &operator=(const Runtime &);
 };

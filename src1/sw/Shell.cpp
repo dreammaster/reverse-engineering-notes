@@ -2,6 +2,7 @@
 
 #include "prog1/Prog1.h"
 #include "prog2/Prog2.h"
+#include "prog3/Prog3.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -45,6 +46,10 @@ int DefaultLauncher::run(int program, Shared::Params &params, Shared::Runtime &r
 	}
 	case kProg2: {
 		Prog2::Prog2 p(rt, params);
+		return p.run();
+	}
+	case kProg3: {
+		Prog3::Prog3 p(rt, params, *this);
 		return p.run();
 	}
 	default:
@@ -237,6 +242,7 @@ int Shell::run() {
 		_message = "Unable to open one of the data files.";
 		return 0xFF;
 	}
+	_rt.setWorkDir(_config.workDir);
 	_params.setParm(0, 0x0D);
 	_params.raw[0x58] = 0x34;
 	_params.raw[0x59] = 0x12;

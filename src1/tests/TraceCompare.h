@@ -90,6 +90,28 @@ inline std::vector<std::string> slice(const std::string &file, const std::string
 	return out;
 }
 
+/** The calls a program makes after one of its children ended: the lines between the `occurrence`-th "# end <child>" marker (name
+ *  without extension, as yemu writes it) and the next marker. */
+inline std::vector<std::string> sliceAfterEnd(const std::string &file, const std::string &child, int occurrence = 1) {
+	std::ifstream f(file.c_str());
+	std::vector<std::string> out;
+	std::string line;
+	bool on = false;
+	int seen = 0;
+	while (std::getline(f, line)) {
+		if (!line.empty() && line[0] == '#') {
+			if (on)
+				break;
+			if (line == "# end " + child && ++seen == occurrence)
+				on = true;
+			continue;
+		}
+		if (on)
+			out.push_back(line);
+	}
+	return out;
+}
+
 inline std::vector<std::string> until(const std::string &file, const std::string &stopAt) {
 	std::ifstream f(file.c_str());
 	std::vector<std::string> out;

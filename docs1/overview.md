@@ -165,3 +165,23 @@ animation counters against the order of draw events), and when each page's wait 
 made as many driver calls as the original had when its click arrived). The dissolve's pixel *order* depends on clock readings at each
 reseed (see the correction above) and was only recovered for the first one, so only the set of pixels and not the coordinates left in
 the context by the last pixel are compared. The Esc-skip path (parm_03 = 1) is not covered by a reference run.
+
+## 2026-10-23 -- PROG3 (the book menu) reimplemented and verified
+
+`src1/prog3`: the table of contents with its nine entries (Create, View, Remove, Assemble party members, Open book, Bookmarker, About
+the Authors, Introduction, Close). Up/Down/Enter or a click choose an entry (hit boxes at DS:11EBh); the exit code is the entry
+number (7 About, 8 Introduction, 9 Close -- or 1 when the game has not started yet, parm_0D != 2 --, 5 starts the game).
+Entries 1-4 and 6 start PROG5 / PROG6 through the new `Shared::Launcher` interface (the child gets its own copy of the parameter block;
+`Sw::Launcher` is now a typedef of it). The conditions come from record 0 of CURRGAME\PARTY.DAT: word 0 is a record count (0Ah = no
+characters, more than 1Bh = no more new ones), word 26h non-zero = a party has been assembled; otherwise a boxed one-line message
+("There are no players to view", ...) is shown until a key or click. "Close the book" opens the shared "are you certain" panel
+(`BookUi::openConfirmPanel/closeInfoPanel`, shared_1d0ebe: it saves the bottom-right strip with vidGetImage and restores it with
+vidPutImageHdr). `BookUi::drawBox` is shared_23f116. `Runtime::workDir()` tells programs where CURRGAME lives.
+
+**Verification** (`tests/test_prog3.cpp`, script `tests/refs/prog3_menu.txt`): all 1,012 driver calls and the final video memory match for a
+run that exercises the Open book / View / Remove / Assemble messages (keyboard and mouse), the Close confirmation (cancelled with Esc)
+and Introduction. New test tooling: `tests/ScriptedInput.h` (an `InputScript` that plays keys and mouse moves/clicks one step per poll,
+recorder, video diff, context printing); yemu now writes `# end <program>` markers to the trace and `TraceCompare::sliceAfterEnd`
+reads what a parent does after a child returned. Not covered by a reference run: the child launches (entries 1-4, 6; this game has
+no characters, so only Create would start PROG5), the first-launch variant (parm_03 = 0 uses the right-to-left wipe, which the
+menu shown by the new-game run in `ref2` exercises only up to its first click), and exits 5 and 9.

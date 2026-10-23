@@ -6,6 +6,7 @@
 #define YENDOR1_SW_SHELL_H
 
 #include "data/ExeImage.h"
+#include "shared/Launcher.h"
 #include "shared/Params.h"
 #include "shared/Runtime.h"
 
@@ -17,13 +18,7 @@ namespace Sw {
 using Shared::byte;
 using Shared::uint16;
 
-/** Runs one of the game's programs (PROG0..PROG18) and returns its exit code. */
-class Launcher {
-public:
-	enum { kNotImplemented = -1 };
-	virtual ~Launcher() {}
-	virtual int run(int program, Shared::Params &params, Shared::Runtime &rt) = 0;
-};
+typedef Shared::Launcher Launcher;
 
 /** The default launcher: the programs that have been reimplemented; every other one reports kNotImplemented. */
 class DefaultLauncher : public Launcher {

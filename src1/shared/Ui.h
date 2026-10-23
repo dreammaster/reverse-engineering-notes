@@ -7,6 +7,8 @@
 
 #include "shared/Runtime.h"
 
+#include <vector>
+
 namespace Yendor1 {
 namespace Shared {
 
@@ -61,6 +63,13 @@ public:
 	 *  4 = right). Returns the original's result byte (byte_11E90): 0 key, 1 icon hit (rt.last.code / ctx.textChar = its key), 2 nothing
 	 *  happened, 3/4 click, FFh when the platform asked to quit. */
 	byte input(byte keyMask, byte clickMask, byte flags);
+	/** shared_23f116: a framed box. `record` is the program's 10-byte description: x1, y1, x2, y2 (words), fill colour, shadow offset. */
+	void drawBox(const byte *record);
+	/** shared_1d0ebe (codes 1Eh and up): save the bottom-right strip of the page and open a "are you certain" panel there with
+	 *  `title1`, `title2` and `label`; `iconMask` selects the icons shown. Close it again with closeInfoPanel. */
+	void openConfirmPanel(const byte *boxRecord, const char *title1, const char *title2, const char *label, byte iconMask);
+	/** shared_1d0ebe(0): put the saved strip back and show page 0. */
+	void closeInfoPanel();
 	/** shared_21818f with AX=0: redraw the bottom decorations and show page 0. */
 	void refreshAndShow();
 	/** shared_47fa83 and helpers: copy the non-skip pixels from one page to the other in random order. */
@@ -72,6 +81,7 @@ public:
 
 private:
 	void drawIconTile(uint16 tile);
+	std::vector<byte> _panelSaved;     // the strip under the info panel (the original allocates a DOS block for it)
 
 	Runtime &_rt;
 };

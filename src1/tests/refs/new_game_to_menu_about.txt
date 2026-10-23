@@ -1,0 +1,30 @@
+wait 3
+key 0D
+wait 43
+key 0D
+wait 25
+moveto 512 326
+wait 2
+click l
+wait 10
+click l
+wait 10
+click l
+wait 10
+click l
+wait 10
+click l
+wait 10
+click l
+wait 10
+click l
+wait 10
+shot menu
+moveto 375 244
+wait 1
+click l
+wait 30
+shot about
+click l
+wait 20
+shot back

@@ -178,7 +178,10 @@ int main(int argc, char **argv) {
 			writeDump(mm, psp, "start", name);
 			if (trace62Out) fprintf(trace62Out, "# start %s\n", mm.programTrace.back().c_str());
 		};
-		m.onProgramEnd = [&, writeDump](Yemu::Machine &mm, int psp) { writeDump(mm, psp, "end", dumpName[psp]); };
+		m.onProgramEnd = [&, writeDump](Yemu::Machine &mm, int psp) {
+			writeDump(mm, psp, "end", dumpName[psp]);
+			if (trace62Out) fprintf(trace62Out, "# end %s\n", dumpName[psp].c_str());
+		};
 	}
 	Yemu::VidCompare vidCompare;
 	if (compare)
