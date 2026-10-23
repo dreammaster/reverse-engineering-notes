@@ -29,6 +29,8 @@ void writeSpaceNumber(Machine &m, uint16_t value);// 176C5
 void writeCharacter(Machine &m, uint8_t ch);      // 19E53: line buffered, word wrapped
 void writeCharacter2(Machine &m, uint8_t ch);     // 19DC3: drawn immediately
 void writeString(Machine &m);                     // 1786E: NUL terminated string at textString via the buffered writer
+// 16CB7: printMessage without selecting the character writer first
+void printMessageKeepWriter(Machine &m, uint8_t id);
 void writeString2(Machine &m);                    // 17877: same, with the writer chosen by setWriteCharacterFn*
 void setWriteCharacterFn(Machine &m);             // 1785E: buffered writer
 void setWriteCharacterFn2(Machine &m);            // 17857: immediate writer

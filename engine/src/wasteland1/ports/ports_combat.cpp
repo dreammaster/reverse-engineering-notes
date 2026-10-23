@@ -126,6 +126,9 @@ PORT(attackMonster) {                                                           
 	r.cf = !alive;
 	r.a.b.l = killed ? 1 : 0;
 }
+PORT(writeMonsterName) { writeMonsterName(m, r.d.b.l); }                                // 129E9: dl = group of monsters (0..2)
+PORT(printMonsterMessage43) { printMonsterMessage(m, 0x43, r.d.b.l); }                  // 129D5: dl = group of monsters
+PORT(printMonsterMessage1A) { printMonsterMessage(m, 0x1A, r.d.b.l); }                  // 129DA
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079
@@ -135,6 +138,8 @@ PORT(cellDistance) { r.a.b.l = cellDistance(m, r.d.b.l, r.b.b.l); }             
 PORT(burstHits) { r.a.b.l = burstHits(m, r.a.b.l); r.d.b.l = 0; }                      // 1595C: al = n
 PORT(burstSize) { r.a.b.l = burstSize(m, r.a.b.l); r.d.b.l = 0; }                      // 15956: al = party member
 PORT(rollToFire) { r.cf = rollToFire(m, r.a.b.l); }                                     // 134B2: al = party member
+PORT(attackDifficulty) { r.a.b.l = attackDifficulty(m, r.a.b.l); r.d.b.l = 0; }          // 1567F: al = party member
+PORT(partyMemberAttack) { partyMemberAttack(m, r.a.b.l); }                              // 12D84: al = party member
 PORT(damagePartyMember) { r.cf = damagePartyMember(m, uint16_t(r.a.b.l | (r.d.b.l << 8)), r.b.b.l); }   // 157D6: dl:al damage, bl = member
 
 } // namespace rc

@@ -410,6 +410,33 @@ bool damagePartyMember(Machine &m, uint16_t damage, uint8_t member) {
 
 void setItemQuantityOne(Machine &m) { m.d8(g::itemQuantity) = 1; }
 
+void writeMonsterName(Machine &m, uint8_t index) {
+	const uint16_t record = m.d16(g::savedLocationDetailsPtr);
+	const bool table = (m.d8(uint16_t(record + 9)) & 1) != 0;
+	selectMonsterDetails(m, index);
+	if (!table) {
+		printMessageKeepWriter(m, uint8_t(itemArmorClassByte(m) + 0x52));
+		return;
+	}
+	const uint16_t block = m.d16(g::locationsPtr);
+	m.setD16(g::textString, m.d16(uint16_t(block + 2)));
+	uint8_t skip = m.d8(uint16_t(record + m.d8(uint16_t(g::encounterOffsets + index))));
+	while (skip != 0) {
+		uint8_t c;
+		do {
+			c = m.d8(m.d16(g::textString));
+			m.setD16(g::textString, uint16_t(m.d16(g::textString) + 1));
+		} while (c != 0);
+		--skip;
+	}
+	writeString2(m);
+}
+
+void printMonsterMessage(Machine &m, uint8_t id, uint8_t index) {
+	printMessage(m, id);
+	writeMonsterName(m, index);
+}
+
 bool attackMonster(Machine &m, uint8_t index, uint8_t monster, bool &killed) {
 	const uint8_t savedQuantity = m.d8(g::itemQuantity);
 	const CombatantId id = splitCombatantIndex(index);
@@ -426,7 +453,7 @@ bool attackMonster(Machine &m, uint8_t index, uint8_t monster, bool &killed) {
 	const uint16_t damage = reduceByMonsterArmor(m, Rules(m).seed1(), index);
 	auto finish = [&]() {
 		setItemQuantityOne(m);
-		printMessage(m, 0x43);
+		printMonsterMessage(m, 0x43, id.member);
 		m.d8(g::itemQuantity) = savedQuantity;
 	};
 	if (damage == 0) {
@@ -536,6 +563,226 @@ bool rollToFire(Machine &m, uint8_t member) {
 	}
 	rules.addRoll(al);
 	return false;
+}
+
+uint8_t attackDifficulty(Machine &m, uint8_t member) {
+	m.d8(0xA68E) = member;
+	const CombatantId id = splitCombatantIndex(orderLow(m, member));
+	m.d8(0xA68D) = id.slot;
+	selectSlot(m, id.group, id.slot);
+	const uint16_t record = m.d16(g::monsterPtr);
+	const uint8_t distance = cellDistance(m, m.d8(record), m.d8(uint16_t(record + 1)));
+	combatReadiness(m, member);
+	selectSlotCellRecord(m);
+	selectMonsterDetails(m, id.slot);
+	const bool noAmmunition = hasNoAmmunition(m, itemDamageDice(m));
+	X86Regs x;
+	x.al = distance;
+	x.dl = noAmmunition ? 1 : 0;
+	x.bl = weaponDamageClass(m.d8(g::weaponType));
+	legacy::call(m, 0x39CE, x);   // sub_139CE
+	return x.al;
+}
+
+void finishTurn(Machine &m, uint8_t member) {
+	m.d8(uint16_t(m.d16(g::partyStatusPtr) + member)) = 0;
+	m.d8(uint16_t(m.d16(g::partyOrdersPtr) + member)) = 0;
+	getEquippedWeaponDetails(m);
+	if (itemByte(m, 4) != 1) return;
+	const uint8_t type = getItemType(m);
+	m.d8(g::weaponType) = type;
+	if (hasNoAmmunition(m, type) && type != 1) return;
+	const uint8_t offset = equippedItemOffset(m, pm::weapon);
+	const uint8_t itemId = m.d8(uint16_t(cur(m) + offset));
+	m.d8(0xA552) = itemId;
+	m.d8(uint16_t(cur(m) + offset)) = 0;
+	m.d8(uint16_t(cur(m) + offset + 1)) = 0;
+	m.d8(uint16_t(cur(m) + 0x1F)) = 0;
+	if (m.d8(g::weaponType) != 0x0D) return;
+	const int found = findItemById(m, itemId);
+	if (found < 0) return;
+	m.d8(uint16_t(cur(m) + pm::weapon)) = uint8_t((uint8_t(found) - 0xBB) >> 1);
+}
+
+void partyMemberAttack(Machine &m, uint8_t member) {
+	Rules rules(m);
+	m.d8(0xA562) = member;
+	if (memberTargetsAlive(m, member) == 0) return;
+	for (int i = 0; i < 0x30; ++i) m.d8(uint16_t(g::hitTargets + i)) = 0;
+	for (int i = 0; i < 3; ++i) { m.d8(uint16_t(g::hitTargets + i)) = 0xFF; m.d8(uint16_t(g::hitFlags + i)) = 0xFF; }
+	{   // 15C19: the target slot of the member, marked as visited
+		const CombatantId t = splitCombatantIndex(orderLow(m, member));
+		selectSlot(m, t.group, t.slot);
+		selectSlotCellRecord(m);
+		markLocationVisited(m);   // 15C19 falls into 15C27
+	}
+	rules.setSeed1(0);
+	rules.addTarget(attackDifficulty(m, member));
+	if (rollToFire(m, member)) { finishTurn(m, member); return; }
+
+	const uint8_t targetIndex = orderLow(m, member);
+	m.d8(0xA55B) = targetIndex;
+	const CombatantId target = splitCombatantIndex(targetIndex);
+	uint8_t dl = target.slot;
+	if (target.group != m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup))) {
+		rules.addRoll(8);
+		dl = uint8_t(rules.seed2() >> 8);
+	}
+	X86Regs x;
+	x.dl = dl;
+	legacy::call(m, 0x9EFC, x);   // sub_19EFC
+	dl = x.dl;
+
+	if (!rules.rollBeatsTarget()) {   // the attack misses
+		printMessage(m, 0x1C);
+		const CombatantId t = splitCombatantIndex(m.d8(0xA55B));
+		selectMember(m, t.member, t.slot, t.member);   // (sic) the group argument is the member number
+		setItemQuantityOne(m);
+		printMonsterMessage(m, 0x43, t.member);
+		printMessage(m, 0x20);
+		if (m.d8(g::weaponType) == 0x0D) { finishTurn(m, member); return; }
+		const uint8_t high = orderHigh(m, member);
+		uint8_t rounds;
+		if (high == 0) rounds = 1;
+		else if (high == 1) rounds = 3;
+		else rounds = useAmmunition(m, 0);
+		useAmmunition(m, rounds);
+		finishTurn(m, member);
+		return;
+	}
+
+	uint8_t rounds;
+	if (m.d8(g::weaponType) == 0x0D) {
+		printLocationMessage(m, 0x3C);
+		rules.setSeed1(defenseRoll(m, member, dl));
+		m.d8(g::weaponNoteShown) = 0;
+		for (uint8_t slotMember = 0; slotMember != 3; ++slotMember) {
+			m.d8(0xA559) = slotMember;
+			if (targetMembersAlive(m) == 0) continue;
+			for (uint8_t monster = 0; monster != 10; ++monster) {
+				m.d8(0xA563) = monster;
+				const CombatantId t = splitCombatantIndex(m.d8(0xA55B));
+				const uint8_t combatant = combatantIndex(t.group, t.slot, slotMember);
+				bool killed;
+				const bool alive = attackMonster(m, combatant, monster, killed);
+				if (alive && killed) {
+					monsterExperience(m, combatant);
+					addExperience(m);
+				}
+			}
+		}
+		weaponSkillRoll(m, m.d8(0xA55B));
+		finishTurn(m, member);
+		return;
+	}
+	const uint8_t high = orderHigh(m, member);
+	if (high == 0) {
+		printAttackMessageB(m);
+		while (hitMonster(m, member, m.d8(0xA55B)).alreadyDead) {}
+		rounds = 1;
+	} else if (high == 2) {
+		uint8_t shots = burstSize(m, member);
+		m.d8(0xA55A) = shots;
+		X86Regs y;
+		y.setAx(5);
+		legacy::call(m, 0xCBD3, y);   // sub_1CBD3 (reached through sub_11438)
+		printAttackMessageC(m);
+		for (;;) {
+			const CombatantId t = splitCombatantIndex(m.d8(0xA55B));
+			const uint8_t pick = uint8_t(rules.random(3) - 1);
+			const uint8_t combatant = combatantIndex(t.group, t.slot, pick);
+			if (hitMonster(m, member, combatant).alreadyDead) continue;
+			bool anyAlive = false;
+			for (int8_t mm = 2; mm >= 0; --mm) {
+				m.d8(0xA559) = uint8_t(mm);
+				const CombatantId s = splitCombatantIndex(m.d8(0xA55B));
+				if (countAliveMonsters(m, s.group, s.slot, uint8_t(mm)) != 0) { anyAlive = true; break; }
+			}
+			if (!anyAlive) { rounds = useAmmunition(m, 0); break; }
+			m.d8(0xA55A) = --shots;
+			if (shots == 0) { rounds = useAmmunition(m, 0); break; }
+		}
+	} else {
+		uint8_t shots = rules.random(3);
+		m.d8(0xA55A) = shots;
+		printAttackMessageA(m);
+		for (;;) {
+			while (hitMonster(m, member, m.d8(0xA55B)).alreadyDead) {}
+			m.d8(0xA55A) = --shots;
+			if (shots == 0) break;
+			if (memberTargetsAlive(m, member) == 0) break;
+		}
+		rounds = 3;
+	}
+	m.d8(0xA561) = rounds;
+
+	// the result of this round per hit target
+	m.d8(g::weaponNoteShown) = 0;
+	for (uint8_t entry = 0; entry != 3; ++entry) {
+		m.d8(0xA55A) = entry;
+		const uint8_t combatant = m.d8(uint16_t(g::hitTargets + entry));
+		if (combatant == 0xFF) break;
+		m.d8(0xA55B) = combatant;
+		const CombatantId t = splitCombatantIndex(combatant);
+		m.d8(0xA559) = t.member;
+		const uint16_t damage = m.d16(uint16_t(g::hitDamage + entry * 2));
+		m.d8(0xA560) = uint8_t(damage);
+		m.d8(0xA55F) = uint8_t(damage >> 8);
+		auto announce = [&]() {   // 13061: the monster's name
+			++m.d8(g::weaponNoteShown);
+			writeMonsterName(m, m.d8(0xA559));
+		};
+		if (damage == 0) {
+			printWeaponNote(m);
+			countHitMonsters(m);
+			printMessage(m, 0x2F);
+			announce();
+			printLocationMessage(m, 0x4A);
+		} else {
+			countHitMonsters(m);
+			printWeaponNote(m);
+			const uint8_t weaponOffset = equippedItemOffset(m, pm::weapon);
+			const uint8_t weaponId = m.d8(uint16_t(cur(m) + weaponOffset));
+			uint8_t kind = 5;
+			const uint8_t type = m.d8(g::weaponType);
+			if (weaponId != 0x11) {
+				kind = 4;
+				if (!isTypeGroupC(type)) {
+					kind = 3;
+					if (!isTypeGroupB(type)) {
+						kind = 2;
+						if (!isTypeGroupA(type)) {
+							kind = 1;
+							if (type != 3 && type != 4) kind = 0;
+						}
+					}
+				}
+			}
+			const uint8_t message = uint8_t(kind * 2 + 0x3E);
+			m.d8(0xA55D) = message;
+			printLocationMessage(m, message);
+			announce();
+			printLocationMessage(m, uint8_t(message + 1));
+			printDamageNumber(m, damage);
+			uint8_t kills = m.d8(uint16_t(g::hitKills + entry));
+			if (kills != 0) {
+				m.d8(0xA55C) = kills;
+				if (kills == 1 && m.d8(0xA55E) != 1) kills = 0;
+				m.d8(g::hitFlag) = m.d8(uint16_t(g::hitFlags + entry));
+				printHitMessage(m, kills);
+				if (!hasNoAmmunition(m, m.d8(uint16_t(g::hitStatus + entry)))) {
+					m.d8(g::itemQuantity) = m.d8(0xA55C);
+					printMessage(m, 0x22);
+				}
+			}
+		}
+		printMessage(m, 0x5A);
+		weaponSkillRoll(m, m.d8(0xA55B));
+		X86Regs fx;
+		legacy::call(m, 0x9EFC, fx);   // sub_19EFC
+	}
+	useAmmunition(m, m.d8(0xA561));
+	finishTurn(m, member);
 }
 
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }

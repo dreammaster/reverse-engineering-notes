@@ -1,3 +1,4 @@
+#include <array>
 // wlrctest <image.bin> <gamedir> <entries.txt> <state.bin>... : checks every recompiled function against the 8086 oracle.
 //
 // For each function entry the state file is loaded into the oracle and into a native Machine, the registers are set to
@@ -26,6 +27,8 @@ struct Result {
 	std::set<std::string> regs;   // registers/flags that differ (candidates for the junk list of a port)
 };
 
+int gAxMod = 0, gBxMod = 0, gDxMod = 0;   // --axmod/--bxmod/--dxmod N: register inputs reduced modulo N (valid ranges)
+std::map<uint16_t, std::array<int, 3>> gDomains;   // tools/domains.txt: per function reduction (ax, bx, dx modulo) of the random inputs
 std::vector<uint16_t> gKeys;   // keys offered to both machines before each run (--keys)
 
 Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const std::string &gameDir, uint16_t entry, uint32_t seed) {
@@ -49,7 +52,12 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 	// register inputs: the state's own values with a few random small ones
 	uint32_t s = seed;
 	rc::Regs r;
-	const uint16_t ax = uint16_t(rng(s) & 0xFF), bx = uint16_t(rng(s) & 0x1F), cx = uint16_t(rng(s) & 0x0F), dx = uint16_t(rng(s) & 0xFF);
+	uint16_t ax = uint16_t(rng(s) & 0xFF), bx = uint16_t(rng(s) & 0x1F), cx = uint16_t(rng(s) & 0x0F), dx = uint16_t(rng(s) & 0xFF);
+	int axMod = gAxMod, bxMod = gBxMod, dxMod = gDxMod;
+	if (const auto it = gDomains.find(entry); it != gDomains.end()) { axMod = it->second[0]; bxMod = it->second[1]; dxMod = it->second[2]; }
+	if (axMod) ax = uint16_t(ax % axMod);
+	if (bxMod) bx = uint16_t(bx % bxMod);
+	if (dxMod) dx = uint16_t(dx % dxMod);
 	const uint16_t si = uint16_t(rng(s) & 0xFFF), di = uint16_t(rng(s) & 0xFFF);
 	r.a.x = ax; r.b.x = bx; r.c.x = cx; r.d.x = dx; r.si = si; r.di = di;
 	r.bp = o.cpu.bp; r.sp = o.cpu.sp; r.es = o.cpu.es; r.cs = 0x1000; r.ss = 0x3900; r.ds = 0x1CE2;
@@ -58,6 +66,16 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 	o.cpu.flags = 0x0202;
 	r.ifl = true;
 
+	if (const char *w = std::getenv("WATCH")) {   // WATCH=<ds offset hex>: report which oracle instruction writes the byte
+		const uint16_t off = uint16_t(std::strtoul(w, nullptr, 16));
+		auto last = std::make_shared<uint8_t>(o.cpu.rb(0x1CE2, off));
+		auto prev = std::make_shared<std::pair<uint16_t, uint16_t>>(o.cpu.cs, o.cpu.ip);
+		o.cpu.onStep = [off, last, prev](x86::Cpu &cpu) {
+			const uint8_t v = cpu.rb(0x1CE2, off);
+			if (v != *last) { std::fprintf(stderr, "ds:%04X %02X -> %02X by %04X:%04X\n", off, *last, v, prev->first, prev->second); *last = v; }
+			*prev = {cpu.cs, cpu.ip};
+		};
+	}
 	const uint16_t sp0 = o.cpu.sp;
 	const std::string why = o.callNear(entry, 3000000);
 	if (why != "bp") { res.kind = Result::Skip; res.note = why; return res; }
@@ -136,12 +154,23 @@ int main(int argc, char **argv) {
 		if (std::string(argv[i]) == "--only" && i + 1 < argc) only = long(std::strtoul(argv[++i], nullptr, 16));
 		else if (std::string(argv[i]) == "--ported") portedOnly = true;
 		else if (std::string(argv[i]) == "--seeds" && i + 1 < argc) seeds = std::atoi(argv[++i]);
+		else if (std::string(argv[i]) == "--axmod" && i + 1 < argc) gAxMod = std::atoi(argv[++i]);
+		else if (std::string(argv[i]) == "--bxmod" && i + 1 < argc) gBxMod = std::atoi(argv[++i]);
+		else if (std::string(argv[i]) == "--dxmod" && i + 1 < argc) gDxMod = std::atoi(argv[++i]);
 		else if (std::string(argv[i]) == "--keys" && i + 1 < argc) {
 			std::stringstream ks(argv[++i]);
 			std::string k;
 			while (std::getline(ks, k, ',')) gKeys.push_back(uint16_t(std::strtoul(k.c_str(), nullptr, 16)));
 		}
 		else states.push_back(argv[i]);
+	}
+	{   // domains.txt next to the entries list: "<hex addr> <ax mod> <bx mod> <dx mod>"
+		std::ifstream din(std::string(argv[3]).substr(0, std::string(argv[3]).find_last_of("/\\") + 1) + "domains.txt");
+		std::string dl;
+		while (std::getline(din, dl)) {
+			unsigned a = 0; int x = 0, b = 0, d = 0;
+			if (std::sscanf(dl.c_str(), "%x %d %d %d", &a, &x, &b, &d) == 4) gDomains[uint16_t(a)] = {x, b, d};
+		}
 	}
 	emu::Machine o(gameDir);
 	Machine n;

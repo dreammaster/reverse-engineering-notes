@@ -115,7 +115,12 @@ bool damagePartyMember(Machine &m, uint16_t damage, uint8_t member);
 // current seed1 value reduced by the monster's armor. Returns false when that monster was already dead (CF set, nothing
 // happens); `killed` is set when the hit killed it.
 bool attackMonster(Machine &m, uint8_t index, uint8_t monster, bool &killed);
-// 17AB7 / 129D5 / 129DA: itemQuantity = 1; message 43h / 1Ah
+// 129E9: writes the name of the monster group `index` (0..2) of the selected location record: a table string when bit 0 of
+// the record's byte 9 is set, else the standard name 52h + armor class byte
+void writeMonsterName(Machine &m, uint8_t index);
+// 129D5 / 129DA: message 43h / 1Ah, then the monster name `index` (the routines fall into 129E9)
+void printMonsterMessage(Machine &m, uint8_t id, uint8_t index);
+// 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------
 // 13440: alive monster count of the target group of party member `member` (0: CF set in the original)
@@ -135,6 +140,13 @@ uint8_t burstSize(Machine &m, uint8_t member);
 // 134B2: the party member's roll to fire: false (CF clear) when the attack goes ahead with the roll accumulated in seed2;
 // true when the weapon jammed or the attack is aborted
 bool rollToFire(Machine &m, uint8_t member);
+// 1567F: the difficulty the distance and the weapon give the attack of party member `member` (added to seed1)
+uint8_t attackDifficulty(Machine &m, uint8_t member);
+// 13452: the party member's turn ends: status and orders cleared; a thrown weapon is used up and re-equipped from the
+// stack of the same item
+void finishTurn(Machine &m, uint8_t member);
+// 12D84: the attack of party member `member` against the monsters of its target group
+void partyMemberAttack(Machine &m, uint8_t member);
 // 15CD1: random 0..9
 uint8_t randomDigit(Machine &m);
 // 15C4A: remembers whether a damage value (dl:al) is below the "overkill" limit in the hit flag

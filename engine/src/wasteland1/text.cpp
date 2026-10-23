@@ -863,6 +863,11 @@ void printMessage(Machine &m, uint8_t id) {   // 16CB2
 	writeEncodedText(m, id);
 }
 
+void printMessageKeepWriter(Machine &m, uint8_t id) {   // 16CB7
+	m.setD16(g::textPointer1, 0xAB3E);
+	writeEncodedText(m, id);
+}
+
 void printMapMessage(Machine &m, uint8_t id) {   // 178A0: string `id` of the current map
 	m.setD16(g::textPointer1, m.d16(m.d16(g::locationsPtr)));
 	writeEncodedText(m, id);

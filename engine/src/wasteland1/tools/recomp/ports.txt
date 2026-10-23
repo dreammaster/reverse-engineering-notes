@@ -182,4 +182,9 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 9D4D cellDistance junk=ah,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=CD40-CD41
 595C burstHits junk=ah,bl,ch,cl,di,dl,es,pf,si,zf scratch=A684-A684,C059-C059
 5956 burstSize junk=ah,bl,ch,cl,di,dl,es,pf,si,zf scratch=A684-A684,C059-C059
-34B2 rollToFire junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A551-A551,CD49-CD4A,C059-C059,BA6D-BA70,CD3F-CD3F,4661-4662
+34B2 rollToFire junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A551-A551,CD49-CD4A,C059-C059,BA6D-BA70,CD3F-CD3F,4661-4662,CD47-CD48
+567F attackDifficulty junk=ah,bl,ch,cl,di,es,pf,si,zf,cf,sf scratch=A68D-A68E,CD40-CD41,A59D-A59E,A670-A683,C059-C059,B00E-B00F,4661-4662,BA08-BA11
+2D84 partyMemberAttack junk=ah,al,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=A550-A5AF,A660-A6A0,CD3F-CD4A,BA08-BA11,4661-4662,C059-C059,A688-A688,CDCC-CDCC,B00E-B00F,B06F-B06F,115B-115B
+29E9 writeMonsterName junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=A59D-A59E,C059-C059
+29D5 printMonsterMessage43 junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=A59D-A59E,C059-C059
+29DA printMonsterMessage1A junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=A59D-A59E,C059-C059
