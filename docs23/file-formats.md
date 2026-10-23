@@ -6775,6 +6775,15 @@ applies every nonzero magnitude as the effect `+0x70` with the magnitude as the 
 
 **Chapter 3's V** (`start` key table, :0769): `ShowStatusPanelMessage` of the two strings at DS:0x9538, REGISTERED / VER 2.00 -- the version stamp of the registered program.
 
+### The lockpick: HandleSearchCommand as a user command (2026-10-22)
+
+`HandleGameCommand` (:45750) sends the item LOCKPICK (Chapter 2 0x20, Chapter 3 0x0B) to `HandleSearchCommand` (:48270): the third role's member is the searcher (the same word as the chest opener; `ShowConfirmPrompt` 8,
+"WHO WILL USE?", asks when none is chosen, and an incapacitated one is dropped and asked again), `WaitForTargetClick` shows the crosshair (Escape gives up), then `ProbeFacingTile`: nothing -- sound 3; a door's lock or a
+curgame record (cell flag objects 0x8000 / 0x4000) -- already open: NOT LOCKED; lock flag 0x40 clear: `ShowLockStatus`; else `FailsSavingThrow` (searcher level, DC from the record, Thievery bonus): failed -- sound 4,
+`ConsumeItemChargeResource` (the pick breaks) and THE LOCKPICK / BROKE (DS:0x7C89, Chapter 3 0x7FB6); passed -- the unlock sound (`word_329EE`: Chapter 2 0x2A, Chapter 3 0xB), the object is marked opened, the packed trap
+runs once more (`ApplySavingThrowEffect`): a trapped lock (flag 0x80) either springs it or shows TRAP / DEFEATED (0x7CA8, 0x7FD5), an untrapped one says UNLOCKED and loses the door marker (`and [cell+6], 0xBFFF`).
+`session.c` `sessionSearch` (decision: `combatSearchTrap`), `gameui.c` `searchStart` / `unlockTry`.
+
 ### A spent turn outside a fight (decoded 2026-10-22)
 
 `ApplyEncodedItemEffect` (:51097) opens with `g_uiScratchFlags3 |= 0x20`; so do the healing potions' handlers (:48594, :48707: HP restoratives), the repair command (:45907) and `InteractWithContainer` (scrolls, study). The

@@ -1332,6 +1332,8 @@ bool sessionDocumentLine(GameSession *s, unsigned line, char out[DocumentLineBuf
     return documentGetLine(&s->documents, (DocumentCategory)s->readCategory, s->readId, line, out);
 }
 
+enum { LockpickYendor2 = 0x20, LockpickYendor3 = 0x0B }; /* the tool HandleGameCommand sends to HandleSearchCommand */
+
 /* The record of a use command's item slot: a bag slot of the member or, from SessionBeltSlotBase, a belt slot. */
 static uint8_t *useSlot(GameSession *s, uint8_t *user, unsigned itemSlot) {
     if (itemSlot >= SessionBeltSlotBase) {
@@ -1465,6 +1467,12 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
     unsigned id = slot ? itemSlotId(slot) : 0;
     if (!id) {
         return SessionUseNothing;
+    }
+    if (id == (s->game == GameYendor2 ? LockpickYendor2 : LockpickYendor3)) { /* HandleGameCommand sends it to HandleSearchCommand: the front end asks who and where */
+        return SessionUseSearch;
+    }
+    if (id == keyRingId(s->game) || isRingKey(s->game, id)) { /* the key ring and the door / chest keys: UnlockDoorCommand (the crosshair, then the faced lock) */
+        return SessionUseKey;
     }
     bool done;
     const uint8_t *itemRec = itemCatalogRecord(&s->items, id);
@@ -2744,11 +2752,100 @@ InteractUnlockOutcome sessionUnlock(GameSession *s, uint16_t keyWord0, uint16_t 
     return out;
 }
 
+bool sessionSearcher(GameSession *s, unsigned *memberSlot) {
+    unsigned id = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 4);
+    const uint8_t *opener = id ? saveGamePartyRecordById(&s->save, id) : NULL;
+    if (opener && (partyGetU16(opener, PartyFieldStatusFlags) & PartyStatusIncapacitated)) { /* one who cannot act is dropped and asked again */
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 4, 0);
+        opener = NULL;
+    }
+    for (unsigned slot = 0; opener && slot < SavePartyMemberSlots; slot++) {
+        if (saveGetPartySlot(&s->save, slot) == id) {
+            *memberSlot = slot;
+            return true;
+        }
+    }
+    return false;
+}
+
+SessionSearch sessionSearch(GameSession *s, unsigned userSlot, unsigned itemSlot) {
+    unsigned searcherSlot;
+    s->unlockMessage = 0;
+    if (!sessionSearcher(s, &searcherSlot)) {
+        return SessionSearchNoSearcher;
+    }
+    uint8_t *searcher = sessionPartyRecord(s, searcherSlot);
+    WorldObjectProbeResult probe = worldObjectProbeFacingTile(&s->objects, s->game, s->x, s->y, s->facing);
+    uint16_t flags = 0, packed = 0;
+    bool known = false, already = false;
+    if (probe.outcome != WorldObjectProbeNone) {
+        if (probe.object.flags & WorldObjectFlagDoor) {
+            LockRecord lock;
+            if (lockCatalogRecord(&s->locks, probe.object.value, &lock)) {
+                flags = lock.flags;
+                packed = lock.price;
+                known = true;
+            }
+        } else if ((probe.object.flags & WorldObjectFlagCurgameRecord) && lockCatalogCurgameRecord(&s->locks, probe.object.value, &flags, &packed)) {
+            known = true;
+        }
+    }
+    if (!known) {
+        s->pendingSound = RefusalSound;
+        return SessionSearchNothing;
+    }
+    unsigned bit = interactWorldObjectBitIndex(s->game, &probe.object);
+    already = interactBitmapTest(&s->save, bit);
+    CombatSearchResult found = combatSearchTrap(flags, packed, already, searcher, &s->save, s->game, &s->rng);
+    switch (found.outcome) {
+    case CombatSearchAlreadyDone:
+        s->unlockMessage = 1;
+        return SessionSearchAlready;
+    case CombatSearchNothingToFind:
+        lockStatusLoad(s, probe.worldCol, probe.worldRow);
+        return SessionSearchStatus;
+    case CombatSearchFailed: {
+        s->pendingSound = 4;
+        uint8_t *user = sessionPartyRecord(s, userSlot);
+        uint8_t *slot = useSlot(s, user, itemSlot);
+        if (user && slot) {
+            partyConsumeItemCharge(user, &s->items, slot);
+        }
+        s->unlockMessage = 3;
+        return SessionSearchBroke;
+    }
+    default:
+        break;
+    }
+    s->pendingSound = s->game == GameYendor2 ? UnlockSoundYendor2 : UnlockSoundYendor3;
+    interactBitmapSet(&s->save, bit);
+    combatCheckWipe(s);
+    if (flags & LockFlagTrapped) {
+        if (packed != 0 && found.trap == CombatSavingThrowTrapNone) {
+            s->unlockMessage = 4;
+            return SessionSearchDefeated;
+        }
+        return SessionSearchSprung;
+    }
+    DungeonGridCell *cell = dungeonGridCellMutable(&s->grid, probe.worldRow - s->grid.originRow, probe.worldCol - s->grid.originCol);
+    if (cell) {
+        cell->flags &= (uint16_t)~0x4000u;
+    }
+    s->unlockMessage = 2;
+    return SessionSearchOpened;
+}
+
 uint16_t sessionKeyRingFlags(const GameSession *s) {
     return saveHeaderGetU16(&s->save, SaveHeaderKeyFlags);
 }
 
 /* The K command with the key ring (item 0x2F, a master key: the entry's flags word 0x0030): the tiers of the keys put on the ring decide. */
+InteractUnlockOutcome sessionUnlockWithKey(GameSession *s, unsigned keyItemId) {
+    const uint8_t *key = itemCatalogRecord(&s->items, keyItemId);
+    const uint8_t *entry = key ? itemTargetEntry(&s->items, key) : NULL;
+    return sessionUnlock(s, entry ? itemTargetWord(entry, 0) : 0, sessionKeyRingFlags(s));
+}
+
 InteractUnlockOutcome sessionUnlockWithRing(GameSession *s) {
     const uint8_t *ring = itemCatalogRecord(&s->items, keyRingId(s->game));
     const uint8_t *entry = ring ? itemTargetEntry(&s->items, ring) : NULL;

@@ -1093,6 +1093,7 @@ static void readOpen(GameUi *ui) {
  * crosshair, a face or F1-F4, Escape gives up); an item that would do nothing for that member beeps and asks again. Readable items open the scroll, a key to a destination takes the party there.
  */
 static void scrollStart(GameUi *ui, unsigned user, unsigned slot);
+static void searchStart(GameUi *ui, unsigned user, unsigned slot);
 
 static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipient) {
     GameSession *s = ui->session;
@@ -1119,6 +1120,21 @@ static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipie
     case SessionUseScroll:
         scrollStart(ui, user, slot);
         return;
+    case SessionUseSearch:
+        inventoryClose(ui);
+        searchStart(ui, user, slot);
+        return;
+    case SessionUseKey: { /* UnlockDoorCommand: a fight refuses it, else the crosshair waits for a click with that key */
+        unsigned keyId = sessionSlotItem(s, user, slot);
+        inventoryClose(ui);
+        if (s->combat.active) {
+            flashWarning(ui);
+        } else {
+            ui->targeting = true;
+            ui->targetKey = keyId;
+        }
+        return;
+    }
     default:
         break;
     }
@@ -1208,6 +1224,15 @@ static void scrollPromptDraw(GameUi *ui) {
 }
 
 static void pickAnswer(GameUi *ui, unsigned member) {
+    if (ui->pickScroll == 3) { /* who searches: a member who cannot act is refused and asked again */
+        if (!sessionChestChooseOpener(ui->session, member)) {
+            flashWarning(ui);
+            return;
+        }
+        pickCancel(ui);
+        ui->targetSearch = ui->targeting = true;
+        return;
+    }
     if (ui->pickScroll) {
         scrollFinish(ui, ui->pickScroll == 2, member);
         return;
@@ -1279,7 +1304,11 @@ static void unlockReport(GameUi *ui) {
     GameSession *s = ui->session;
     if (s->unlockMessage) {
         bool y2 = s->game == GameYendor2;
-        panelMessageExe(ui, s->unlockMessage == 1 ? (y2 ? 0x7BB7 : 0x7EE9) : (y2 ? 0x7BAE : 0x7EE0), 1);
+        if (s->unlockMessage >= 3) { /* the lockpick's: THE LOCKPICK / BROKE (DS:0x7C89, Chapter 3 0x7FB6), TRAP / DEFEATED (0x7CA8, 0x7FD5) */
+            panelMessageExe(ui, s->unlockMessage == 3 ? (y2 ? 0x7C89 : 0x7FB6) : (y2 ? 0x7CA8 : 0x7FD5), 2);
+        } else {
+            panelMessageExe(ui, s->unlockMessage == 1 ? (y2 ? 0x7BB7 : 0x7EE9) : (y2 ? 0x7BAE : 0x7EE0), 1);
+        }
         s->unlockMessage = 0;
     }
 }
@@ -1297,9 +1326,36 @@ static void unlockTry(GameUi *ui) {
     GameSession *s = ui->session;
     ui->targeting = false;
     ui->panelRunCount = 0;
-    sessionUnlockWithRing(s);
+    if (ui->targetSearch) { /* the lockpick: sessionSearch on what is ahead, the pick of the slot it came from breaking if the search fails */
+        ui->targetSearch = false;
+        sessionSearch(s, ui->searchUser, ui->searchSlot);
+    } else if (ui->targetKey) {
+        sessionUnlockWithKey(s, ui->targetKey);
+        ui->targetKey = 0;
+    } else {
+        sessionUnlockWithRing(s);
+    }
     playPending(ui);
     unlockReport(ui);
+}
+
+/* The lockpick (HandleSearchCommand): who searches (the third role, asked with message 8 "WHO WILL USE?" when nobody is), then the crosshair waits for a click on the view. */
+static void searchStart(GameUi *ui, unsigned user, unsigned slot) {
+    unsigned searcher;
+    ui->searchUser = user;
+    ui->searchSlot = slot;
+    if (ui->session->combat.active) {
+        flashWarning(ui);
+        return;
+    }
+    if (sessionSearcher(ui->session, &searcher)) {
+        ui->targetSearch = ui->targeting = true;
+    } else {
+        ui->pickActive = true;
+        ui->pickChest = false;
+        ui->pickScroll = 3;
+        ui->pickPrompt = 8;
+    }
 }
 
 /* ---- the alchemy screen ---- */
@@ -2809,7 +2865,8 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     }
     if (ui->targeting) { /* WaitForTargetClick: only Escape is heard */
         if (key == UiKeyEscape) {
-            ui->targeting = false;
+            ui->targeting = ui->targetSearch = false;
+            ui->targetKey = 0;
         }
         return true;
     }

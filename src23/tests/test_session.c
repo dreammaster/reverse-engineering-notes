@@ -965,6 +965,38 @@ static void testLockedDoor(GameKind game, const uint8_t *world, size_t size, con
     sessionFree(s);
 }
 
+/* The lockpick (HandleSearchCommand): who searches, then what is ahead: nothing, or a lock's status when it has no hidden trap. */
+static void testSearch(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    if (game != GameYendor2) {
+        return;
+    }
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[200];
+    unsigned slot = 0;
+    saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 4, 0);
+    check("nobody is the searcher until one is chosen", !sessionSearcher(s, &slot) && sessionSearch(s, 0, 1) == SessionSearchNoSearcher);
+    check("a member who can act is chosen", sessionChestChooseOpener(s, 2) && sessionSearcher(s, &slot) && slot == 2);
+    place(s, 172, 36, SaveFacingEast);
+    s->pendingSound = 0;
+    check("facing nothing lockable: the refusal sound", sessionSearch(s, 0, 1) == SessionSearchNothing && s->pendingSound == 3);
+    place(s, 166, 40, SaveFacingWest);
+    s->lockReport = false;
+    snprintf(text, sizeof(text), "%s: facing the magically locked door (no hidden trap): its status is reported, nothing is spent", label);
+    check(text, sessionSearch(s, 0, 1) == SessionSearchStatus && s->lockReport && (s->lockFlags & LockFlagMagical));
+    unsigned key = game == GameYendor2 ? 0x21 : 0x24, ring = game == GameYendor2 ? 0x2F : 0x32;
+    itemSlotSet(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, 0), PartyGroupMain), 1), (uint16_t)key, 0);
+    itemSlotSet(inventoryGroupSlot(partyInventoryGroup(sessionPartyRecord(s, 0), PartyGroupMain), 2), (uint16_t)ring, 0);
+    check("a key and the key ring used from a bag slot go to UnlockDoorCommand (SessionUseKey)", sessionUseItem(s, 0, 1, 0) == SessionUseKey && sessionUseItem(s, 0, 2, 0) == SessionUseKey);
+    place(s, 166, 40, SaveFacingWest);
+    check("the key's own tier is tried on the lock ahead", sessionUnlockWithKey(s, key).result == InteractUnlockLocked || sessionUnlockWithKey(s, key).result == InteractUnlockOpened || sessionUnlockWithKey(s, key).result == InteractUnlockAlready);
+    partySetU16(sessionPartyRecord(s, 2), PartyFieldStatusFlags, (uint16_t)(partyGetU16(sessionPartyRecord(s, 2), PartyFieldStatusFlags) | PartyStatusIncapacitated));
+    check("a searcher who cannot act is dropped", !sessionSearcher(s, &slot) && saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 4) == 0);
+    sessionFree(s);
+}
+
 /* The tool belt: the six slots under the resource panel (cursor item in, out and swapped; keys on the key ring) and IsItemRangeAvailable over them. */
 static void testBelt(GameKind game, const uint8_t *world, size_t size, const char *label) {
     GameSession *s = sessionNew(game, world, size);
@@ -1711,6 +1743,7 @@ int main(void) {
             testAmbush(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testGroupFight(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBeltUse(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testSearch(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBags(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBelt(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testInventorySlots(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");

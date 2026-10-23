@@ -766,6 +766,26 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
     gameUiClick(&ui, 300, 55, false);
     check("a click on an empty slot with an empty hand leaves the resource panel", !(saveHeaderGetU16(&s->save, 0x20) & 0x1000));
 
+    /* the lockpick on the belt: the right button asks who (message 8), then the crosshair waits for a click on the view */
+    if (game == GameYendor2) {
+        saveHeaderSetU16(&s->save, 0x20, 0x1000);
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 4, 0);
+        itemSlotSet(sessionBeltSlot(s, 1), 0x20, 1);
+        s->x = 172;
+        s->y = 36;
+        s->facing = SaveFacingEast;
+        sessionRebuild(s);
+        gameUiClick(&ui, 270, 35, true);
+        check("the lockpick asks who will use it (message 8)", ui.pickActive && ui.pickScroll == 3 && ui.pickPrompt == 8);
+        gameUiKey(&ui, UiKeyF1, false);
+        check("a member is chosen and the crosshair waits for a click", !ui.pickActive && ui.targeting && ui.targetSearch);
+        unsigned effects = g_effects;
+        gameUiClick(&ui, 100, 60, false);
+        check("a click on the view searches what is ahead: nothing lockable gives the refusal sound", !ui.targeting && !ui.targetSearch && g_effects > effects);
+        itemSlotSet(sessionBeltSlot(s, 1), 0, 0);
+        saveHeaderSetU16(&s->save, 0x20, 0);
+    }
+
     /* a bag on the inventory screen: the right button opens it, its icon (region 9) closes it, leaving the screen writes it back */
     {
         unsigned bagId = 0;

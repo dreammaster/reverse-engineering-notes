@@ -132,7 +132,7 @@ typedef struct GameSession {
     bool scrollCast;           /* internal: a spell being cast from a scroll (no knowledge, no cost, attacks "already resolved") */
     unsigned scrollTarget;     /* its single-target recipient slot */
     unsigned castTarget;       /* internal: the recipient slot + 1 of a single-target spell chosen on the alchemy screen (sessionCastOn), 0 = the caster */
-    unsigned unlockMessage;    /* sessionUnlock: 1 = NOT LOCKED, 2 = UNLOCKED for the status panel (the front end clears it) */
+    unsigned unlockMessage;    /* sessionUnlock / sessionSearch: 1 = NOT LOCKED, 2 = UNLOCKED, 3 = THE LOCKPICK BROKE, 4 = TRAP DEFEATED for the status panel (the front end clears it) */
     bool lockReport;           /* a step into a marked door cell was refused (sessionMove): `lockFlags` / `lockValue` / `lockSkill` are what ShowLockStatus (lockStatusText) needs; the front end writes the message and clears this */
     uint16_t lockFlags, lockValue, lockSkill;
     RestOutcome rest;          /* the last rest (sessionRest) ... */
@@ -218,6 +218,9 @@ InteractUnlockOutcome sessionUnlock(GameSession *session, uint16_t keyWord0, uin
 
 /* The K command: the key ring's own flags (item 0x2F, a master key) against the faced lock. */
 InteractUnlockOutcome sessionUnlockWithRing(GameSession *session);
+
+/* A door or chest key used from a bag slot (HandleGameCommand -> UnlockDoorCommand with that key; SessionUseKey): the same as K with the key's own tier in place of the ring's. */
+InteractUnlockOutcome sessionUnlockWithKey(GameSession *session, unsigned keyItemId);
 uint16_t sessionKeyRingFlags(const GameSession *session);
 
 /*
@@ -266,7 +269,7 @@ SessionCast sessionCastOn(GameSession *session, unsigned casterSlot, unsigned sp
  * key. A key to a destination (ExamineTarget: the item's target entry has flag 4 and no container bits) takes the party there when its gate flag is set (Travelled), else
  * shows its description (Closed) or, in Chapter 3 inside the artifact realm holding a light weapon, refuses (Blocked); nothing is spent. A readable item answers Read: `readCategory` / `readId` name the text, `readability` says how many words of five the reader's Linguistics can read (sessionDocumentLine gives the lines). The light sources (items 8 / 0xE / 0xB, lit 9 / 0xF / 0xC) light and go out, and in Chapter 2 the quest relics (relics.h) work.
  */
-typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead, SessionUseScroll } SessionUse;
+typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead, SessionUseScroll, SessionUseSearch, SessionUseKey } SessionUse;
 SessionUse sessionUseItem(GameSession *session, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot);
 
 /*
@@ -368,6 +371,17 @@ typedef struct {
     bool studyable, singleTarget;
 } SessionScrollInfo;
 bool sessionScrollInfo(GameSession *session, unsigned userSlot, unsigned itemSlot, SessionScrollInfo *out);
+
+/*
+ * The lockpick (item 0x20; Chapter 3 0x0B), SessionUseSearch: HandleSearchCommand (yendor2.asm:48270). Who searches is the third role's member (the one who opens chests); `sessionSearcher` says who, false
+ * when nobody who can act is chosen yet (the prompt "WHO WILL USE?" asks, `sessionChestChooseOpener` answers). Then a click on the view names the target and `sessionSearch` works on what is ahead --
+ * nothing lockable: the refusal sound; already open: NOT LOCKED (`unlockMessage` 1); a lock without a hidden trap: its status (`lockReport`); a hidden trap (lock flag 0x40): a detection roll on the
+ * searcher's level and Thievery -- failed: sound 4, the pick breaks (a charge of the item at `userSlot` / `itemSlot` is spent, message 3 THE LOCKPICK BROKE); passed: the unlock sound, the object is
+ * marked open, the trap is run once more (combatSearchTrap) and, if the lock is a trapped one, either sprung or TRAP DEFEATED (message 4), else UNLOCKED (2) and the door marker of the cell goes.
+ */
+typedef enum { SessionSearchNothing, SessionSearchNoSearcher, SessionSearchAlready, SessionSearchStatus, SessionSearchBroke, SessionSearchOpened, SessionSearchDefeated, SessionSearchSprung } SessionSearch;
+bool sessionSearcher(GameSession *session, unsigned *memberSlot);
+SessionSearch sessionSearch(GameSession *session, unsigned userSlot, unsigned itemSlot);
 
 /* Line `line` of the document sessionUseItem last opened (spacing kept); false past its end. */
 bool sessionDocumentLine(GameSession *session, unsigned line, char out[DocumentLineBufferSize]);

@@ -117,6 +117,9 @@ typedef struct {
     bool pickActive;       /* an item waits for the member it is used on (ConfirmAndSelectPartyTarget): a click on a face or F1-F4 */
     unsigned pickUser, pickSlot; /* ... the member whose bag slot (1-8) it is in */
     bool reading;          /* the scroll (UiOverlayTalk) shows a readable item's text, not a conversation */
+    unsigned targetKey;    /* ... or a key item's (0 = the key ring's): HandleGameCommand -> UnlockDoorCommand from a bag slot */
+    bool targetSearch;     /* the crosshair is the lockpick's (HandleSearchCommand), not the key ring's */
+    unsigned searchUser, searchSlot; /* ... the member and item slot of the pick in use */
     bool scrollAsk;        /* a spell scroll that can be studied asks USE ITEM? / LEARN SPELL? (message 0x20) */
     unsigned scrollUser, scrollSlot; /* ... the member and item slot (1-8 bag, SessionBeltSlotBase + n belt) of the scroll in use */
     unsigned pickScroll;   /* the member picked is a scroll's: 1 = the cast's recipient (message 0x12), 2 = who learns it (0x21) */
