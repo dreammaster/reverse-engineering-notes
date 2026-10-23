@@ -209,4 +209,90 @@ uint8_t countConsciousMembers(Machine &m) {
 	return count;
 }
 
+void setCurrentRosterCharacter(Machine &m, uint8_t id) {
+	const uint16_t base = uint16_t(g::saved + (uint16_t(id) << 8));
+	m.setD16(g::currentCharacter, base);
+	m.d8(g::currentCharacterSex) = m.d8(uint16_t(base + pm::sex));
+}
+
+uint8_t partyGroupOfRoster(Machine &m, uint8_t id) {
+	const uint8_t saved = m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup));
+	m.d8(0xB241) = id;
+	uint8_t group = 0;
+	for (;; ++group) {
+		m.d8(0xB240) = group;
+		setPartyIndexesPtr(m, group);
+		const uint16_t indexes = m.d16(g::partyIndexesPtr);
+		bool found = false;
+		for (uint8_t at = 1; at != 8; ++at)
+			if (m.d8(uint16_t(indexes + at)) == id) { found = true; break; }
+		if (found || group + 1 == 4) break;
+	}
+	setPartyIndexesPtr(m, saved);
+	return m.d8(0xB240);
+}
+
+namespace {
+bool hpNonZero(Machine &m) { return (field(m, pm::con) | field(m, uint8_t(pm::con + 1))) != 0; }
+void healIfUnaffected(Machine &m) {   // 12537
+	if (field(m, pm::afflictions) == 0) applyDamage(m, 0xFFFF);
+}
+void hurtOne(Machine &m) { applyDamage(m, 1); }   // 1254A
+void hurtAndFinish(Machine &m) {   // 1251E
+	hurtOne(m);
+	if (field(m, pm::con) >= 0xCE) return;
+	field(m, pm::con) = 0;
+	field(m, uint8_t(pm::con + 1)) = 0;
+}
+}
+
+void healthTick(Machine &m) {
+	const uint8_t last = m.d8(uint16_t(g::saved2 + g::s2::field8));
+	for (uint8_t id = 1;; ++id) {
+		m.d8(0xA424) = id;
+		setCurrentRosterCharacter(m, id);
+		if (!hpNonZero(m)) goto next;
+		if (field(m, pm::afflictions) & 0xF0) {   // 124E9: seriously afflicted
+			if (m.d8(0x4722) & 0x3F) goto next;
+			if (field(m, uint8_t(pm::con + 1)) & 0x80 || !hpNonZero(m)) goto bleed;   // already unconscious
+			hurtOne(m);
+			if (hpNonZero(m)) goto next;
+			field(m, pm::con) = 0xFF;
+			field(m, uint8_t(pm::con + 1)) = 0xFF;
+			goto next;
+		bleed:
+			hurtAndFinish(m);
+			if (!hpNonZero(m)) goto next;
+			hurtAndFinish(m);
+			goto next;
+		}
+		if (field(m, uint8_t(pm::con + 1)) & 0x80) {   // negative hit points
+			if (field(m, pm::con) < 0xF6) { hurtAndFinish(m); goto next; }
+			healIfUnaffected(m);
+			if (hpNonZero(m)) goto next;
+			{   // came up to zero: half of the last known value
+				const uint16_t last2 = uint16_t(field(m, pm::lastCon) | (field(m, uint8_t(pm::lastCon + 1)) << 8));
+				const uint16_t half = uint16_t(last2 >> 1);
+				field(m, pm::con) = uint8_t(half);
+				field(m, uint8_t(pm::con + 1)) = uint8_t(half >> 8);
+			}
+			if (hpNonZero(m)) goto next;
+			field(m, pm::con) = 1;
+			goto next;
+		}
+		{   // regeneration towards the maximum
+			const uint8_t hi = field(m, uint8_t(pm::con + 1)), maxHi = field(m, uint8_t(pm::maxCon + 1));
+			bool heal = hi < maxHi;
+			if (!heal) heal = !(field(m, pm::con) >= field(m, pm::maxCon)) ? true : false;
+			if (!heal) goto next;
+			const uint8_t group = partyGroupOfRoster(m, id);
+			const uint8_t mask = group == m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup)) ? 0x7F : 0x3F;
+			if (mask & m.d8(0x4722)) goto next;
+			healIfUnaffected(m);
+		}
+	next:
+		if (id >= last) break;
+	}
+}
+
 } // namespace wl

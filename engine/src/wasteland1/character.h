@@ -58,4 +58,13 @@ bool isAtFullHealth(Machine &m);
 // 19D0E: number of members of the active group that are conscious
 uint8_t countConsciousMembers(Machine &m);
 
+// ---- health over time ---------------------------------------------------------------------------------------------------
+// 19624: selects the character record of roster number `id` (1 based) as the current character
+void setCurrentRosterCharacter(Machine &m, uint8_t id);
+// 1724F: party group of roster number `id` (0..3; 4 when none holds it)
+uint8_t partyGroupOfRoster(Machine &m, uint8_t id);
+// 12440: one step of time for every character: hit points regenerate, and poisoned or dying characters get worse.
+// `ds:4722` is the step counter that paces it
+void healthTick(Machine &m);
+
 } // namespace wl

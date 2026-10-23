@@ -146,6 +146,9 @@ PORT(itemSkillId) { r.a.b.l = itemSkillId(m, r.a.b.l); r.b.b.l = 5; r.di = m.d16
 PORT(weaponSkillBonus) { const uint16_t v = weaponSkillBonus(m); r.a.b.l = uint8_t(v); r.d.b.l = uint8_t(v >> 8); }   // 182FA
 PORT(absByte) { r.a.b.l = absByte(r.a.b.l); }                                           // 18D85
 PORT(trySkillImprovement) { trySkillImprovement(m, r.a.b.l, r.d.b.l); }                 // 1818E: al = skill, dl = ceiling
+PORT(setCurrentRosterCharacter) { setCurrentRosterCharacter(m, r.a.b.l); }               // 19624: al = roster number
+PORT(partyGroupOfRoster) { r.a.b.l = partyGroupOfRoster(m, r.a.b.l); }                  // 1724F
+PORT(healthTick) { healthTick(m); }                                                     // 12440
 PORT(selectWriterForRoster) { r.es = 0xA000; selectWriterForRoster(m); }                               // 19720
 
 } // namespace rc

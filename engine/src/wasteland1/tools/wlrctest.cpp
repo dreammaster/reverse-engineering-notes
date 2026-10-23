@@ -45,6 +45,14 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 		n.sys->nextHandle = o.nextHandle;
 		rc::installCallbacks(n);
 	}
+	if (const char *poke = std::getenv("WLPOKE")) {   // WLPOKE=<ds offset hex>=<byte hex>,... applied to both machines after loading the state
+		std::stringstream ps(poke);
+		std::string item;
+		while (std::getline(ps, item, ',')) {
+			unsigned off = 0, val = 0;
+			if (std::sscanf(item.c_str(), "%x=%x", &off, &val) == 2) { o.cpu.mem[kDsLinear + off] = uint8_t(val); n.mem[kDsLinear + off] = uint8_t(val); }
+		}
+	}
 	o.cpu.fault.clear(); o.cpu.halted = false; o.exited = false; o.needKey = false;
 	o.keys.clear(); n.keys.clear();
 	for (uint16_t k : gKeys) { o.keys.push_back(k); n.keys.push_back(k); }

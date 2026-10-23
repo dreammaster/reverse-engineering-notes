@@ -301,3 +301,6 @@ A07E textFilterE junk=dl,pf,zf
 42ED showActionMessage junk=al,bl,bp,cl,di,dl,es,pf,si,zf scratch=A5E6-A5E7,CDC9-CDCC,A5C5-A5C5
 4296 applyActionEffectToParty junk=ah,al,bl,cf,cl,di,dl,si scratch=A5C1-A5C7,A5E6-A5E7,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA70,A59D-A59E,CDCC-CDCC,A4A0-A4D6,A670-A6A0,7931-796F,465C-4662,BA08-BA11
 3EC9 evaluateAction junk=ah,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=AA30-AA44,A5C0-A5D6,A5E6-A5E7,CCD6-CCD9,CCE0-CCE8,BA04-BA11,BA6A-BA74,CD3F-CD4A,C059-C059,4661-4664,A59D-A59E,CDC9-CDCC,465C-4662,46AA-46AD,4685-4686,BA0A-BA11,A4A0-A4D6,A670-A6A0,7931-796F,466B-466D,4680-4681
+9624 setCurrentRosterCharacter
+724F partyGroupOfRoster junk=ah,bl,cl,di,dl,si scratch=B240-B241,4661-4662
+2440 healthTick junk=ah,al,bl,cf,ch,cl,di,dl,si scratch=A424-A424,B240-B241,4661-4662
