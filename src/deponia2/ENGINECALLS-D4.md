@@ -1,0 +1,260 @@
+# Engine calls that Deponia 2 and Deponia 4 do not share
+
+Generated with `python tools/origdiff.py build/cross/original-Deponia2.pkl build/cross/original-Deponia4.pkl --engine build/cross/orig-engine-D2-D4.tsv` and demangled.
+Deponia 4's logic is that of Deponia 1 (see `src/deponia4/VERSIONS.md`), so this is also Deponia 2 against Deponia 1. Deponia 2 is `-O2`, Deponia 4 `-O0`: section 1 lists
+the calls Deponia 2 makes that Deponia 4 does not make even three levels down; section 2 the calls to functions over 200 bytes that Deponia 4 makes and Deponia 2 does not.
+Much of it is the way the code is cut into functions (helpers that one build has inline); the real additions are in `VERSIONS.md` here.
+
+## 1. Only in Deponia 2 (78 functions)
+
+- `TVisionaireGame::BeforeSave()`: `TVisionaireObject::GetInt(int) const` x6; `TVisionaireObject::GetOrder() const` x6
+- `writeStructure(bin_structure&, _IO_FILE*)`: `TMemoryBuffer::AppendData(void*, unsigned long)` x12
+- `TPicturePCX::ReadData(TFile&, TPictureMEM&)`: `TPictureMEM::GetLine(int) const` x1; `TPictureMEM::InsertPixel(char*, unsigned char, unsigned char, unsigned char, unsigned char` x9
+- `TVisionaireGame::PopulateList(int, TVList&, bool)`: `cmpName(TVisionaireObject const*, TVisionaireObject const*)` x7
+- `Model::CheckForExtensions()`: `TGraphicsOGL::ExtensionSupported(char const*)` x4
+- `Model::Update(int)`: `TPictureIO::CreateEmptySprite(int, int, int, bool)` x4
+- `std::vector<TTextLanguage, std::allocator<TTextLanguage> >::operator=(std::vector<TTextLanguage, std`: `TCharHolder::operator=(TCharHolder const&)` x4
+- `std::vector<TSprite, std::allocator<TSprite> >::operator=(std::vector<TSprite, std::allocator<TSprit`: `TCharHolder::operator=(TCharHolder const&)` x4
+- `TPictureJPG::ReadData(TFile&, TPictureMEM&)`: `TPictureMEM::GetLine(int) const` x2; `TPictureMEM::InsertPixel(char*, unsigned char, unsigned char, unsigned char, unsigned char` x2
+- `TArgument::ConvertToObjectList()`: `TVList::push_back(TVisObjRef const&)` x1; `TCharHolder::operator wxString() const` x1; `FindObjectByNameOrId(wxString const&, TVisObjRef&, bool)` x1
+- `soundengine::Stream::Stream(char*, unsigned long, bool, wxString const&)`: `toUTF(wxString*, char const*)` x3
+- `TTable::RemoveObject(TVisionaireObject*)`: `TVisionaireObject::GetName() const` x1; `TCharHolder::operator wxString() const` x2
+- `getFieldFromString(LuaVisionaireObject*, char const*)`: `TXMLNames::GetNr(wxString const&)` x3
+- `TTable::GetObjectPosition(wxString const&, TId const&, unsigned long&) const`: `TVisionaireObject::GetName() const` x1; `TCharHolder::operator wxString() const` x2
+- `TPictureGIF::ReadData(TFile&, TPictureMEM&)`: `TPictureMEM::GetLine(int) const` x1; `TPictureMEM::InsertPixel(char*, unsigned char, unsigned char, unsigned char, unsigned char` x1; `TPictureGIF::SetNextLine(int*, int*)` x1
+- `TTable::GetByName(wxString const&, TVisObjRef&)`: `TCharHolder::operator wxString() const` x1; `cmpName(TVisionaireObject const*, TVisionaireObject const*)` x2
+- `ScriptEditor::SetText(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)`: `TFreetypeFont::StringLength(std::basic_string<char, std::char_traits<char>, std::allocator` x2
+- `TGInterface::GetObject(TVisObjRef const&) const`: `TVisObjRef::operator==(TVisObjRef const&) const` x2
+- `std::vector<TCharHolder, std::allocator<TCharHolder> >::operator=(std::vector<TCharHolder, std::allo`: `TCharHolder::operator=(TCharHolder const&)` x2
+- `SetIndex(lua_State*)`: `TXMLNames::GetNr(wxString const&)` x2
+- `TPicturePNG::Write(wxFileName const&, TPictureMEM&, int, int, int, bool)`: `TPictureMEM::GetPixel(char*, unsigned char&, unsigned char&, unsigned char&, unsigned char` x2
+- `TMasterControl::PlayAVI(wxFileName const&, bool, HandleSoundsEnum)`: `TFontManager::SetCurrentFont(TVisObjRef const&)` x2
+- `TVisionaire::RemoveObjectWithoutChildren(TVisObjRef&)`: `TVisionaireObject::Remove(bool, bool)` x1; `TVisObjRef::Clear()` x1
+- `GetTableIndex(lua_State*)`: `TTable::GetList(TVList&, bool) const` x1; `TVList::at(int)` x1
+- `TTable::ObjectNameChanged(TVisionaireObject const*, int)`: `TVisionaireObject::GetName() const` x1; `TCharHolder::operator wxString() const` x1
+- `ConvertToLua(TTextLanguage const&)`: `TCharHolder::GetFullPath(wxPathFormat) const` x1
+- `TFontManager::SetCurrentFont(TVisObjRef const&)`: `TVisObjRef::operator==(TVisObjRef const&) const` x1
+- `TFontManager::GetFont(TVisObjRef const&)`: `TVisObjRef::operator==(TVisObjRef const&) const` x1
+- `TGameControl::GetCharacter(TVisObjRef const&)`: `TVisObjRef::operator==(TVisObjRef const&) const` x1
+- `TMasterControl::StopEarthquake()`: `TGameController::HapticStopRumble()` x1
+- `TMasterControl::StartEarthquake(int, int)`: `TGameController::HapticStartRumble(float, unsigned int)` x1
+- `Model::SetupAmbientOcclusion()`: `TPictureIO::CreateEmptySprite(int, int, int, bool)` x1
+- `TMovie::Initialize(bool)`: `toUTF(wxString*, char const*)` x1
+- `TGScene::SortAllObjects()`: `TManagedObject::CompObjectCenter(TManagedObject const*, TManagedObject const*)` x1
+- `TGameControl::GetCharacterPointer(TVisObjRef const&) const`: `TVisObjRef::operator==(TVisObjRef const&) const` x1
+- `TGameControl::GetCharacterPointerEx(TVisObjRef const&) const`: `TVisObjRef::operator==(TVisObjRef const&) const` x1
+- `TGScene::GetObject(TVisObjRef const&) const`: `TVisObjRef::operator==(TVisObjRef const&) const` x1
+- `std::vector<TVisObjTween, std::allocator<TVisObjTween> >::erase(__gnu_cxx::__normal_iterator<TVisObj`: `TVisObjRef::operator=(TVisObjRef const&)` x1
+- `TGameControl::LoadGame(int)`: `TGameControl::LoadGame(TMSavegame*)` x1
+- `TGCharacter::AnimationStopped(TGAnimation*)`: `TManagedObject::AnimationStopped(TGAnimation*)` x1
+- `TGameControl::ReplaceGame(wxFileName, bool)`: `TGameControl::ExecuteStartingAction()` x1
+- `Model::Read()`: `TPictureIO::CreateEmptySprite(int, int, int, bool)` x1
+- `TManagedObject::GetActionsToTest(TGEventInfo&, std::vector<TypeActionExecution, std::allocator<TypeA`: `TTButton::IsStandardCommand() const` x1
+- `CleanUp(bool)`: `TVisionaire::CleanUp()` x1
+- `TGDialog::SetDialog(TVisObjRef const&)`: `TTText::GetTextString() const` x1
+- `TGCharacter::WalkWay()`: `TCAnimation::GetCurrentPause() const` x1
+- `TPicturePreloader::Entry()`: `TPictureIO::LoadPicture(wxFileName, TPictureIO::eLoadSetting)` x1
+- `TGScene::InitialiseBackground()`: `TGCharacter::AdjustTimers()` x1
+- `Model::GenerateTextures()`: `TPictureIO::CreateEmptySprite(int, int, int, bool)` x1
+- `TDiagnostic::DrawDiagram()`: `TFontManager::PrintText(wxString const&, TextAlignmentEnum, wxPoint const&, float)` x1
+- `TextBox::ProcessEvent(Event*)`: `TextBox::MarkAllWords(std::basic_string<char, std::char_traits<char>, std::allocator<char>` x1
+- `TMasterControl::Draw(bool)`: `TMasterControl::DrawInterfaces()` x1
+- `FindObjectByNameRelative(wxString const&, TVisObjRef&, bool)`: `TXMLNames::GetNr(wxString const&)` x1
+- `TGameControl::DeleteSavegame(int)`: `TMSavegame::Delete()` x1
+- `TMasterControl::Signal(TSignalData const&, TSignalData&)`: `TMasterControl::DrawInterfaces()` x1
+- `TGameControl::SavegameExists(int)`: `TMSavegame::Exists()` x1
+- `TGAction::AddRunningAction(TVisObjRef const&)`: `TVisObjRef::operator==(TVisObjRef const&) const` x1
+- `FindObjectByName(wxString const&, TVisObjRef&, bool)`: `TXMLNames::GetNr(wxString const&)` x1
+- `TData::ToString(eTypeData, void*, TVisionaire*)`: `TSprite::ToLuaString() const` x1
+- `TConsole::Init()`: `TConsole::SetMaxOptionsVisible()` x1
+- `TGScene::BeforeFade()`: `TMasterControl::DrawInterfaces()` x1
+- `SetTables()`: `TVisionaire::GetVisTableName(int, bool) const` x1
+- `TTScene::PrintScenes(std::list<wxString, std::allocator<wxString> >&, TVisionaireGame&)`: `cmpName(TVisionaireObject const*, TVisionaireObject const*)` x1
+- `TGraphicsOGL::ClearSnapshotForSavegame(bool)`: `TPictureIO::Clear()` x1
+- `TTValue::PrintValues(std::list<wxString, std::allocator<wxString> >&, TVisionaireGame&)`: `cmpName(TVisionaireObject const*, TVisionaireObject const*)` x1
+- `TTAnimation::IsBonesAnimation(TVisObjRef const&)`: `TVisObjRef::GetPath(int) const` x1
+- `TTCharacter::PrintCharacters(std::list<wxString, std::allocator<wxString> >&, TVisionaireGame&)`: `cmpName(TVisionaireObject const*, TVisionaireObject const*)` x1
+- `TTCondition::PrintConditions(std::list<wxString, std::allocator<wxString> >&, TVisionaireGame&)`: `cmpName(TVisionaireObject const*, TVisionaireObject const*)` x1
+- `InitLua(TVisionaireGame*, wxString const&, wxString const&, wxString const&)`: `TVisionaire::GetVisTableName(int, bool) const` x1
+- `TGameControl::GetObject(TVisObjRef const&) const`: `TVisObjRef::operator==(TVisObjRef const&) const` x1
+- `TArgument::Set(TVList const&)`: `TVList::operator=(TVList const&)` x1
+- `TArgument::Add(TVisObjRef const&)`: `TVList::push_back(TVisObjRef const&)` x1
+- `soundengine::Stream::stream(unsigned int)`: `toUTF(wxString*, char const*)` x1
+- `TDataGroup::GetList(int, TVList&) const`: `cmpOrder(TVisionaireObject const*, TVisionaireObject const*)` x1
+- `TTypeGroup::SetupNeededTypes(bool, bool, bool)`: `TTypeData::IsFittingSaveGameType(bool) const` x1
+- `TXMLWriter::Serialize(int, std::vector<TCharHolder, std::allocator<TCharHolder> > const&)`: `TCharHolder::operator wxFileName() const` x1
+- `TTable::GetList(TVList&, bool) const`: `cmpOrder(TVisionaireObject const*, TVisionaireObject const*)` x1
+- `TGCharacter::AdjustTimers()`: `TTimer::GetTime() const` x1
+
+## 2. Only in Deponia 4 (170 functions)
+
+- `TXMLNames::InitXMLNamesIntern()`: `TXMLNames::AddXMLName(wxString const&, int, bool)` x59
+- `TVisionaireGame::InitXMLNames()`: `TXMLNames::AddXMLName(wxString const&, int, bool)` x46
+- `TVisionaireGame::PopulateList(int, TVList&, bool)`: `AddActionTexts(TVList&, TVisObjRef const&)` x12; `AddDialogTexts(TVList&, TVisObjRef const&)` x1
+- `TConsole::ParseSetCommandArg()`: `TConsole::ParseObjectName(int)` x2; `TConsole::ParseCommandValue()` x6; `TConsole::ParseOnOffValue()` x1
+- `TData::GetSizeMemory(eTypeData, void*, bool, TVisionaire*)`: `GetRefLinks(void const*)` x2; `GetRefVSprite(void const*)` x2; `GetRefVPath(void const*)` x2; `GetRefVString(void const*)` x2
+- `TData::Compare(eTypeData, void const*, void const*)`: `GetRefVSprite(void const*)` x2; `GetRefVPath(void const*)` x2; `GetRefVString(void const*)` x2; `GetRefLinks(void const*)` x2
+- `TTGame::InitType(int, int)`: `TTypeGroup::AddType(TTypeData const&)` x8
+- `TTButton::InitType(int, int)`: `TTypeGroup::AddType(TTypeData const&)` x7
+- `TManagedObject::ExecuteEvent(TGEventInfo&)`: `TManagedObject::GetActionsToTest(TGEventInfo&, std::vector<TypeActionExecution, std::alloc` x2; `TManagedObject::ExecuteMatchingAction(TVList&, std::vector<TypeActionExecution, std::alloc` x3
+- `wxStandardPaths::GetTempDir()`: `CheckIfDirExists(wxString const&)` x4
+- `TData::SerializeContent(TProjectFileWriter&, eTypeData, int, void*)`: `GetRefLinks(void const*)` x1; `GetRefVSprite(void const*)` x1; `GetRefVPath(void const*)` x1; `GetRefVString(void const*)` x1
+- `TData::ClearDataInstance(eTypeData, void*)`: `GetRefVSprite(void const*)` x1; `GetRefVPath(void const*)` x1; `GetRefVString(void const*)` x1; `GetRefLinks(void const*)` x1
+- `TData::CompareDataWithValue(eTypeData, void const*, void const*)`: `GetRefVSprite(void const*)` x1; `GetRefVPath(void const*)` x1; `GetRefVString(void const*)` x1; `GetRefLinks(void const*)` x1
+- `TData::ToString(eTypeData, void*, TVisionaire*)`: `GetRefVSprite(void const*)` x1; `GetRefVPath(void const*)` x1; `GetRefVString(void const*)` x1; `GetRefLinks(void const*)` x1
+- `Assimp::ComputeMaterialHash(aiMaterial const*, bool)`: `SuperFastHash(char const*, unsigned int, unsigned int)` x4
+- `getFieldFromString(LuaVisionaireObject*, char const*)`: `TVisionaire::GetTableNameSingular(int, bool) const` x2; `TTypeGroup::GetType(int, bool) const` x1
+- `ShowFrame(void*)`: `TGameControl::HandleKeyEvent(TKeyboardMessageEnum, wxString const&, int, unsigned short)` x3
+- `GetIndex(lua_State*)`: `TVisionaireObject::GetName() const` x2; `IdStr(TId const&)` x1
+- `TDataGroup::SetValue(int, void const*, eTypeData, TSendEventEnum)`: `TTypeGroup::GetTypeData(int) const` x2; `TData::Assign(eTypeData, void*, void const*)` x1
+- `TTAnimation::InitType(int, int)`: `TTypeGroup::AddType(TTypeData const&)` x3
+- `TTCharacter::InitType(int, int)`: `TTypeGroup::AddType(TTypeData const&)` x3
+- `ScriptEditor::Render()`: `TFreetypeFont::StringLength(char const*, char const*)` x3
+- `TGameControl::LoadGame(TMSavegame*)`: `TMSavegame::GetFileName() const` x3
+- `TPictureWebP::ReadHeader(TFile&, int*, int*)`: `TMemoryBuffer::operator<<(long)` x2; `TMemoryBuffer::Decrypt(wxString const&, unsigned long*, unsigned long)` x1
+- `TPictureWebP::ReadData(TFile&, TPictureMEM&)`: `TMemoryBuffer::operator<<(long)` x2; `TMemoryBuffer::Decrypt(wxString const&, unsigned long*, unsigned long)` x1
+- `CmdGetProperty::Redo()`: `TArgument::ToLua() const` x3
+- `TVisionaireGame::TVisionaireGame()`: `TVisionaire::AddTable(int, int, wxString const&, wxString const&, wxString const&, TTypeGr` x3
+- `TData::Assign(eTypeData, void*, void const*)`: `GetRefVSprite(void const*)` x1; `GetRefVPath(void const*)` x1; `GetRefVString(void const*)` x1
+- `TFile::PasteFile(wxFileName const&, wxString const&, long, unsigned long&)`: `TFile::ReadToBuf(TMemoryBuffer&, unsigned long)` x3
+- `TCFont::PrintText(wxString const&, TextAlignmentEnum, wxPoint const&, float, int)`: `TCFont::GetTextDimension(wxString const&, wxPoint&) const` x3
+- `TSText::SetTextIntern(TextOutputEnum, int)`: `TTText::GetTextProperties(wxString&, wxFileName&) const` x1; `TTText::ReplaceValues(wxString&, TVisionaire*)` x1; `TSText::InvalidTag()` x1
+- `TConsole::ExecuteCommand()`: `TGameControl::LoadGame(int)` x1; `TGameControl::LoadGame(TMSavegame*)` x1; `TGameControl::SaveGame(int)` x1
+- `TConsole::HandleKeyEvent(TKeyboardMessageEnum, wxString, int, unsigned short)`: `TConsole::Clear()` x1; `TConsole::GetCurrentStateInfo(int&, int&, int&, wxString&, bool&)` x1; `TConsole::FilterOptions(wxString const&)` x1
+- `_wvsnprintf(wchar_t*, unsigned long, wchar_t const*, __va_list_tag*)`: `SDL_strtol(wchar_t const*, wchar_t**, int)` x2
+- `TraverseList(TVList const&, int, TVisionaireGame&)`: `TraverseList(TVList const&, int, TVisionaireGame&)` x1; `FindObjectByNameOrId(wxString const&, TVisObjRef&, bool)` x1
+- `AddDialogTexts(TVList&, TVisObjRef const&)`: `AddDialogTexts(TVList&, TVisObjRef const&)` x1; `AddActionTexts(TVList&, TVisObjRef const&)` x1
+- `FindObjectByNameRelative(wxString const&, TVisObjRef&, bool)`: `TVisionaire::GetTableNameSingular(int, bool) const` x1; `TTypeGroup::GetType(int, bool) const` x1
+- `toMB(std::basic_string<char, std::char_traits<char>, std::allocator<char> >*, wchar_t const*)`: `wine_utf8_wcstombs(int, wchar_t const*, int, char*, int)` x2
+- `cmpName(TVisionaireObject const*, TVisionaireObject const*)`: `TVisionaireObject::GetName() const` x2
+- `SetIndex(lua_State*)`: `getFieldFromString(LuaVisionaireObject*, char const*)` x1; `IdStr(TId const&)` x1
+- `TDataGroup::Serialize(TProjectFileWriter&)`: `TDataGroup::ForEachCall(eActivity, void*, void*)` x2
+- `TGCharacter::AnimationStopped(TGAnimation*)`: `TGCharacter::StartWalkAnim()` x1; `TGCharacter::CheckWalkingSound()` x1
+- `TGCharacter::Init()`: `TGCharacter::SetCurrentOutfit(TVisObjRef const&)` x1; `TGCharacter::SetCurrentCommentSet(TVisObjRef const&)` x1
+- `TGCharacter::Load()`: `TGCharacter::SetCurrentOutfit(TVisObjRef const&)` x1; `TGCharacter::SetCurrentCommentSet(TVisObjRef const&)` x1
+- `TGInterface::Init()`: `TGInterface::SetActiveCommand(TVisObjRef const&, bool)` x1; `TGInterface::SetObjectsActive(bool)` x1
+- `TGWaySystem::CalculateWay(TVisObjRef const&, wxPoint const&, wxPoint const&)`: `TGWaySystem::GetAllPointsNextTo(wxPoint const&, TVList&)` x1; `TGWaySystem::IsConnected(TVisObjRef const&, TVisObjRef const&) const` x1
+- `TMemoryBuffer::AppendStringWithLen(wxString const&)`: `TMemoryBuffer::operator<<(unsigned short)` x1; `TMemoryBuffer::AppendData(void*, unsigned long)` x1
+- `TVisionaireGame::UpdateVersion(int, bool)`: `replace(wxString const&, wxString const&, wxString const&)` x2
+- `TTParticleContainer::InitType(int, int)`: `TTypeGroup::AddType(TTypeData const&)` x2
+- `TComposedFileManager::GetMemoryFile(TMemoryFile&, wxFileName const&)`: `TComposedFileManager::GetComposedFileInfo(wxFileName const&, TComposedFileInfo&)` x1; `TComposedFileManager::GetComposedFile(TComposedFileInfo const&)` x1
+- `TComposedFileManager::Open(TFile&, wxFileName const&)`: `TComposedFileManager::GetComposedFileInfo(wxFileName const&, TComposedFileInfo&)` x1; `TComposedFileManager::GetComposedFile(TComposedFileInfo const&)` x1
+- `TComposedFileManager::Export(wxFileName const&, wxFileName const&, wxFileName&)`: `TComposedFileManager::GetComposedFileInfo(wxFileName const&, TComposedFileInfo&)` x1; `TComposedFileManager::GetComposedFile(TComposedFileInfo const&)` x1
+- `TSText::CalculateRestText()`: `TSText::InvalidTag()` x2
+- `TTScene::InitType(int, int)`: `TTypeGroup::AddType(TTypeData const&)` x2
+- `TTObject::InitType(int, int)`: `TTypeGroup::AddType(TTypeData const&)` x2
+- `TTOutfit::InitType(int, int)`: `TTypeGroup::AddType(TTypeData const&)` x2
+- `TVisionaireObject::GetNameWithParents(int) const`: `TVisionaireObject::GetName() const` x2
+- `TraverseTable(int, TVisObjRef&, TVisionaireGame&)`: `TraverseTable(int, TVisObjRef&, TVisionaireGame&)` x1
+- `createOrtho2D(float, float, float, float)`: `TMatrix4::operator*(TMatrix4 const&) const` x1
+- `ConvertFromLua(TSprite&, int)`: `ConvertFromLua(wxPoint&, int)` x1
+- `ConvertFromLua(std::vector<TTextLanguage, std::allocator<TTextLanguage> >&, int)`: `ConvertFromLua(TTextLanguage&, int)` x1
+- `ConvertFromLua(std::vector<wxRect, std::allocator<wxRect> >&, int)`: `ConvertFromLua(wxRect&, int)` x1
+- `ConvertFromLua(std::vector<TSprite, std::allocator<TSprite> >&, int)`: `ConvertFromLua(TSprite&, int)` x1
+- `ConvertFromLua(std::vector<wxPoint, std::allocator<wxPoint> >&, int)`: `ConvertFromLua(wxPoint&, int)` x1
+- `make_structure(bin_structure&, _IO_FILE*)`: `make_structure(bin_structure&, _IO_FILE*)` x1
+- `FindObjectByName(wxString const&, TVisObjRef&, bool)`: `FindObjectByNameRelative(wxString const&, TVisObjRef&, bool)` x1
+- `filter_codec_opts(AVDictionary*, AVCodecID, AVFormatContext*, AVStream*, AVCodec*)`: `check_stream_specifier(AVFormatContext*, AVStream*, char const*)` x1
+- `LoadGlobalScriptVariables(TVisionaireGame&)`: `TraverseList(TVList const&, int, TVisionaireGame&)` x1
+- `SaveGlobalScriptVariables(TVisionaireGame&)`: `TraverseTable(int, TVisObjRef&, TVisionaireGame&)` x1
+- `Init(wxString const&, wxSize&, wxSize&, int, char**, wxCmdLineParser&)`: `TTable::GetByName(wxString const&, TVisObjRef&)` x1
+- `InitLua(TVisionaireGame*, wxString const&, wxString const&, wxString const&)`: `SetTables()` x1
+- `MD5File(char*)`: `PrintMD5(unsigned char*)` x1
+- `MD5String(char const*, unsigned long)`: `PrintMD5(unsigned char*)` x1
+- `graphics_newindex(lua_State*)`: `ConvertFromLua(std::vector<int, std::allocator<int> >&, int)` x1
+- `GetName(lua_State*)`: `TVisionaireObject::GetName() const` x1
+- `GetPath(lua_State*)`: `TVisionaireObject::GetPath(int) const` x1
+- `GetSize(lua_State*)`: `TPictureIO::RefreshSprite(bool)` x1
+- `GetLinks(lua_State*)`: `TVisionaireObject::GetName() const` x1
+- `TDataGroup::Clear()`: `TDataGroup::ForEachCall(eActivity, void*, void*)` x1
+- `TMSavegame::SaveGame(TBufferedProjectFileWriter const&)`: `TMSavegame::SaveSnapShot(wxFileName const&)` x1
+- `TMSavegame::~TMSavegame()`: `TPictureIO::GetSpriteName() const` x1
+- `TPictureIO::RefreshSprite(bool)`: `TPictureIO::LoadPicture(wxFileName, TPictureIO::eLoadSetting)` x1
+- `TPictureIO::EnsureSizeValid()`: `TPictureIO::LoadHeader(TFile&, TPictureFormat**)` x1
+- `TPictureIO::ReadPictureFile()`: `TPictureIO::LoadHeader(TFile&, TPictureFormat**)` x1
+- `TPictureIO::CreateSpriteTexture(wxFileName const&)`: `TPictureIO::LoadPicture(wxFileName, TPictureIO::eLoadSetting)` x1
+- `TPictureIO::LoadRect(TSprite&)`: `TPictureIO::LoadHeader(TFile&, TPictureFormat**)` x1
+- `TPictureIO::TPictureIO(TSprite const&, bool)`: `TPictureIO::Set(TSprite const&)` x1
+- `TSoundBase::Keep(wxFileName const&)`: `TSoundBase::GetSoundItem(wxString const&) const` x1
+- `TSoundBase::Stop(wxFileName const&)`: `TSoundBase::GetSoundItem(wxString const&) const` x1
+- `TSoundBase::FadeOut(wxFileName const&)`: `TSoundBase::GetSoundItem(wxString const&) const` x1
+- `TSoundBase::SetStats(wxFileName const&, int, int, TSoundTypeEnum, bool, int)`: `TSoundBase::GetSoundItem(wxString const&) const` x1
+- `TDiagnostic::DrawDiagram()`: `TFreetypeFont::CreateFont(wxString const&, float, int, bool, float, int, bool, wxPoint con` x1
+- `TDiagnostic::BeginFixedRegion(wxString)`: `TDiagnostic::EndFixedRegion()` x1
+- `TGCharacter::AssignToScene(TVisObjRef const&, wxPoint const&, int)`: `TGCharacter::SetWaySystem(TVisObjRef const&, bool)` x1
+- `TGCharacter::StartTalkAnim()`: `TGCharacter::StartCharacterAnim(TVisObjRef&, TCharacterAnimEnum, bool)` x1
+- `TGCharacter::StartWalkAnim()`: `TGCharacter::StartCharacterAnim(TVisObjRef&, TCharacterAnimEnum, bool)` x1
+- `TGCharacter::StartRandomAnim()`: `TGCharacter::StartCharacterAnim(TVisObjRef&, TCharacterAnimEnum, bool)` x1
+- `TGCharacter::StartStandingAnim()`: `TGCharacter::StartCharacterAnim(TVisObjRef&, TCharacterAnimEnum, bool)` x1
+- `TGInterface::UpdateActiveStatus()`: `TGInterface::SetObjectsActive(bool)` x1
+- `TGInterface::Load()`: `TGInterface::SetActiveCommand(TVisObjRef const&, bool)` x1
+- `TTInterface::InitType(int, int)`: `TTypeGroup::AddType(TTypeData const&)` x1
+- `ScriptEditor::FormatText()`: `markRegions(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&,` x1
+- `TGameControl::StartObjectText(TVisObjRef const&, TVisObjRef const&, TextAlignmentEnum, TVisObjRef co`: `TGameControl::GetObject(TVisObjRef const&) const` x1
+- `TGameControl::HandleControllerAxis(SDL_GameControllerAxis, int, int)`: `TGameControl::HandleKeyEvent(TKeyboardMessageEnum, wxString const&, int, unsigned short)` x1
+- `TGameControl::HandleControllerButtonHit(SDL_ControllerButtonEvent, int)`: `TGameControl::HandleKeyEvent(TKeyboardMessageEnum, wxString const&, int, unsigned short)` x1
+- `TGameControl::HandleControllerButtonRelease(SDL_ControllerButtonEvent, int)`: `TGameControl::HandleKeyEvent(TKeyboardMessageEnum, wxString const&, int, unsigned short)` x1
+- `TGraphicsOGL::Draw(TParticleEmitter&, void*, bool, TVector3D&, TVector3D&)`: `TGraphicsOGL::SetTransformer(TGraphicsOGL::TTransformer)` x1
+- `TGraphicsOGL::Init()`: `TDiagnostic::AddFixedMemory(int, wxString)` x1
+- `TGraphicsOGL::SetOffset(float, float)`: `TMatrix4::operator*(TMatrix4 const&) const` x1
+- `BaseContainer::Render()`: `TPictureIO::RefreshSprite(bool)` x1
+- `TComposedFile::GetMemoryFile(TMemoryFile&, wxFileName const&, long)`: `TComposedFile::InitEntries()` x1
+- `TComposedFile::Open(TFile&, wxFileName const&, long)`: `TComposedFile::InitEntries()` x1
+- `TComposedFile::AddData(TMemoryBuffer const&, wxFileName, wxFileName&, int)`: `TComposedFile::GetContainerFileExtension(wxString, long) const` x1
+- `TFreetypeFont::GetChar(unsigned int)`: `TFreetypeFont::CreateChar(unsigned int, TFreetypeFont*)` x1
+- `TMemoryBuffer::operator<<(char const*)`: `TMemoryBuffer::AppendData(void*, unsigned long)` x1
+- `TMemoryBuffer::operator<<(wxFileName const&)`: `TMemoryBuffer::operator<<(wxString const&)` x1
+- `TMemoryBuffer::operator<<(wxString const&)`: `TMemoryBuffer::AppendData(void*, unsigned long)` x1
+- `TMemoryBuffer::operator<<(char)`: `TMemoryBuffer::AppendByte(unsigned char)` x1
+- `TMemoryBuffer::operator<<(unsigned char)`: `TMemoryBuffer::AppendByte(unsigned char)` x1
+- `TMemoryBuffer::operator<<(long)`: `TMemoryBuffer::operator<<(unsigned long)` x1
+- `TMemoryBuffer::operator<<(short)`: `TMemoryBuffer::operator<<(unsigned short)` x1
+- `TSceneControl::ChangeScene(TVisObjRef const&, TVisObjRef&, bool, wxPoint const&, int)`: `TSceneControl::ToScene(bool, TVisObjRef&, TVisObjRef const&, wxPoint const&, int, bool)` x1
+- `TSceneControl::ChangeScene(TVisObjRef const&, TVisObjRef const&, bool, int)`: `TSceneControl::ToScene(bool, TVisObjRef&, TVisObjRef const&, wxPoint const&, int, bool)` x1
+- `TSceneControl::ShowScene(TVisObjRef&, bool, bool)`: `TSceneControl::ToScene(bool, TVisObjRef&, TVisObjRef const&, wxPoint const&, int, bool)` x1
+- `TManagedObject::HandlePostExecution(TGEventInfo&, TGActionInfo const&)`: `TGCharacter::ShowComment(TVisObjRef const&)` x1
+- `TMasterControl::Signal(TSignalData const&, TSignalData&)`: `TMasterControl::Draw(bool)` x1
+- `TGObjectManager::ExecuteSavedObject()`: `TGObjectManager::HandleEvent(TMouseEventEnum)` x1
+- `TSoundInterface::Signal(TSignalData const&, TSignalData&)`: `TSoundInterface::Play(wxFileName const&, int, int, bool, TSoundTypeEnum, bool, int)` x1
+- `TVisionaireGame::CopyToClipboard(TVList const&)`: `TVisionaire::SaveDataGameToString()` x1
+- `TParticleEmitter::SetDirection(TVector3D const&)`: `TMatrix3::operator*(TMatrix3 const&) const` x1
+- `TPicturePreloader::Entry()`: `TPreloadedPicManager::PicturePreloaded(TPictureIO*)` x1
+- `TVisionaireObject::GetLinkByName(wxString const&, int)`: `TVisionaireObject::GetName() const` x1
+- `TVisionaireObject::GetLinkByNameIgnoreCase(wxString const&, int)`: `TVisionaireObject::GetName() const` x1
+- `TComposedFileManager::DecryptComposedFile(wxFileName const&, wxFileName&, wxString const&)`: `TComposedFileManager::GetComposedFileInfo(wxFileName const&, TComposedFileInfo&)` x1
+- `TComposedFileManager::EncryptComposedFile(wxFileName const&, wxString const&)`: `TComposedFileManager::DecryptComposedFile(wxFileName const&, wxFileName&, wxString const&)` x1
+- `TComposedFileManager::GetComposedMovieFileName(wxFileName const&, wxFileName&)`: `TComposedFileManager::GetComposedFileInfo(wxFileName const&, TComposedFileInfo&)` x1
+- `Model::GetTexturePaths()`: `Tools::GetFullPath(wxString, char const*)` x1
+- `Model::GenerateTextures()`: `TPictureIO::LoadPicture(wxFileName, TPictureIO::eLoadSetting)` x1
+- `Assimp::SceneCombiner::MergeScenes(aiScene**, aiScene*, std::vector<Assimp::AttachmentInfo, std::all`: `SuperFastHash(char const*, unsigned int, unsigned int)` x1
+- `Assimp::SceneCombiner::AddNodeHashes(aiNode*, std::set<unsigned int, std::less<unsigned int>, std::a`: `SuperFastHash(char const*, unsigned int, unsigned int)` x1
+- `Assimp::SceneCombiner::FindNameMatch(aiString const&, std::vector<Assimp::SceneHelper, std::allocato`: `SuperFastHash(char const*, unsigned int, unsigned int)` x1
+- `Assimp::SceneCombiner::BuildUniqueBoneList(std::list<Assimp::BoneWithHash, std::allocator<Assimp::Bo`: `SuperFastHash(char const*, unsigned int, unsigned int)` x1
+- `Assimp::SceneCombiner::AddNodePrefixesChecked(aiNode*, char const*, unsigned int, std::vector<Assimp`: `SuperFastHash(char const*, unsigned int, unsigned int)` x1
+- `Assimp::Importer::ReadFile(char const*, unsigned int)`: `WriteLogOpening(std::basic_string<char, std::char_traits<char>, std::allocator<char> > con` x1
+- `Bitmap::Render()`: `TPictureIO::RefreshSprite(bool)` x1
+- `TTable::RemoveObject(TVisionaireObject*)`: `TTable::GetObjectPosition(wxString const&, TId const&, unsigned long&) const` x1
+- `TTable::CreateActiveObject(TId const&)`: `TTable::CreateObject(TVisionaireObject*, int, bool)` x1
+- `TGScene::SetCharacters()`: `TGCharacter::UnloadAnimations()` x1
+- `TGScene::Draw()`: `TMatrix4::operator*(TMatrix4 const&) const` x1
+- `TGScene::SetScene()`: `TGScene::Clear()` x1
+- `TGScene::~TGScene()`: `TGScene::Clear()` x1
+- `TTValue::InitType(int, int)`: `TTypeGroup::AddType(TTypeData const&)` x1
+- `TextBox::FormatText()`: `TFreetypeFont::StringLength(char const*, char const*)` x1
+- `TConsole::ParseShowCommandArg()`: `TConsole::ParseObjectName(int)` x1
+- `TGAction::Execute(bool, t_SkipCutsceneInfo*)`: `TGAction::DeleteRunningAction(TVisObjRef const&, bool)` x1
+- `TGDialog::SetDialog(TVisObjRef const&)`: `TGDialog::Clear()` x1
+- `TGObject::Draw()`: `TMatrix4::operator*(TMatrix4 const&) const` x1
+- `THButton::OnEvent(TEventEnum, int, TVisionaireObject*)`: `THButton::RegisterConditions(TVisObjRef&, TVList&)` x1
+- `THButton::THButton(TVisObjRef const&, TGInterface*)`: `THButton::RegisterConditions(TVisObjRef&, TVList&)` x1
+- `THObject::OnEvent(TEventEnum, int, TVisionaireObject*)`: `THObject::RegisterConditions(TVisObjRef&, TVList&)` x1
+- `THObject::THObject(TVisObjRef const&)`: `THObject::RegisterConditions(TVisObjRef&, TVList&)` x1
+- `TTDialog::InitType(int, int)`: `TTypeGroup::AddType(TTypeData const&)` x1
+- `TArgParser::GetFlagArgument(wxString const&, TArgument const**) const`: `TArgParser::FindFlagArgument(wxString) const` x1
+- `TArgParser::IsEdit() const`: `TArgParser::FindFlagArgument(wxString) const` x1
+- `TSoundBase::GetExistingSoundID(wxFileName const&) const`: `TSoundBase::GetSoundItem(wxString const&) const` x1
+- `TSoundBase::IsPlaying(wxFileName const&) const`: `TSoundBase::GetSoundItem(wxString const&) const` x1
+- `TTCondition::IsTrue() const`: `TTCondition::IsTrue(TVList&) const` x1
+- `TVisionaireObject::GetNameInList() const`: `TVisionaireObject::GetName() const` x1
+- `TCFont::GetTextDimension(std::list<wxString, std::allocator<wxString> > const&, wxPoint&) const`: `TCFont::GetTextDimension(wxString const&, wxPoint&) const` x1
+- `_spAtlasPage_createTexture`: `TCharHolder::Assign(wxString const&)` x1
