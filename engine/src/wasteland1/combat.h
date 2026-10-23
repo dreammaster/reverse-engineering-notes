@@ -140,6 +140,10 @@ uint8_t burstSize(Machine &m, uint8_t member);
 // 134B2: the party member's roll to fire: false (CF clear) when the attack goes ahead with the roll accumulated in seed2;
 // true when the weapon jammed or the attack is aborted
 bool rollToFire(Machine &m, uint8_t member);
+// 139CE: weapon range modifier. Builds a table of (threshold, base, base + 7) triples at ds:7931 with thresholds 0, 5, ..,
+// 100 (the bases accumulate the per-class increment from ds:A5B8+cls / A5BB+cls) and returns the entry (1 + ammoFlag) bytes
+// behind the first triple whose threshold is >= distance
+uint8_t rangeModifier(Machine &m, uint8_t distance, uint8_t ammoFlag, uint8_t weaponClass);
 // 1567F: the difficulty the distance and the weapon give the attack of party member `member` (added to seed1)
 uint8_t attackDifficulty(Machine &m, uint8_t member);
 // 13452: the party member's turn ends: status and orders cleared; a thrown weapon is used up and re-equipped from the

@@ -138,6 +138,7 @@ PORT(cellDistance) { r.a.b.l = cellDistance(m, r.d.b.l, r.b.b.l); }             
 PORT(burstHits) { r.a.b.l = burstHits(m, r.a.b.l); r.d.b.l = 0; }                      // 1595C: al = n
 PORT(burstSize) { r.a.b.l = burstSize(m, r.a.b.l); r.d.b.l = 0; }                      // 15956: al = party member
 PORT(rollToFire) { r.cf = rollToFire(m, r.a.b.l); }                                     // 134B2: al = party member
+PORT(rangeModifier) { r.a.b.l = rangeModifier(m, r.a.b.l, r.d.b.l, r.b.b.l); }          // 139CE: al = distance, dl = ammo flag, bl = class
 PORT(attackDifficulty) { r.a.b.l = attackDifficulty(m, r.a.b.l); r.d.b.l = 0; }          // 1567F: al = party member
 PORT(partyMemberAttack) { partyMemberAttack(m, r.a.b.l); }                              // 12D84: al = party member
 PORT(damagePartyMember) { r.cf = damagePartyMember(m, uint16_t(r.a.b.l | (r.d.b.l << 8)), r.b.b.l); }   // 157D6: dl:al damage, bl = member

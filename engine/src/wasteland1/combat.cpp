@@ -565,6 +565,32 @@ bool rollToFire(Machine &m, uint8_t member) {
 	return false;
 }
 
+uint8_t rangeModifier(Machine &m, uint8_t distance, uint8_t ammoFlag, uint8_t weaponClass) {
+	const uint8_t offset = uint8_t(ammoFlag + 1);
+	m.d8(0xA594) = offset;
+	uint8_t base = m.d8(uint16_t(0xA5B8 + weaponClass));
+	const uint8_t step = m.d8(uint16_t(0xA5BB + weaponClass));
+	m.d8(0xA593) = base;
+	m.d8(0xA592) = step;
+	uint8_t index = 0;
+	for (uint8_t threshold = 0;; threshold = uint8_t(threshold + 5)) {
+		m.d8(uint16_t(0x7931 + index)) = threshold;
+		base = uint8_t(base + step);
+		m.d8(uint16_t(0x7932 + index)) = base;
+		m.d8(0xA593) = base;
+		m.d8(uint16_t(0x7933 + index)) = uint8_t(base + 7);
+		index = uint8_t(index + 3);
+		if (uint8_t(threshold + 5) >= 0x69) break;
+	}
+	uint8_t bl = 0;
+	for (;;) {
+		if (distance <= m.d8(uint16_t(0x7931 + bl))) break;
+		bl = uint8_t(bl + 3);
+		if (bl == 0) break;
+	}
+	return m.d8(uint16_t(0x7931 + uint8_t(bl + offset)));
+}
+
 uint8_t attackDifficulty(Machine &m, uint8_t member) {
 	m.d8(0xA68E) = member;
 	const CombatantId id = splitCombatantIndex(orderLow(m, member));
@@ -576,12 +602,7 @@ uint8_t attackDifficulty(Machine &m, uint8_t member) {
 	selectSlotCellRecord(m);
 	selectMonsterDetails(m, id.slot);
 	const bool noAmmunition = hasNoAmmunition(m, itemDamageDice(m));
-	X86Regs x;
-	x.al = distance;
-	x.dl = noAmmunition ? 1 : 0;
-	x.bl = weaponDamageClass(m.d8(g::weaponType));
-	legacy::call(m, 0x39CE, x);   // sub_139CE
-	return x.al;
+	return rangeModifier(m, distance, noAmmunition ? 1 : 0, weaponDamageClass(m.d8(g::weaponType)));
 }
 
 void finishTurn(Machine &m, uint8_t member) {
