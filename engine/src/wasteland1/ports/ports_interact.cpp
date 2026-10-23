@@ -42,5 +42,12 @@ PORT(evaluateAction) {                                                          
 	r.a.b.l = result;
 }
 
+PORT(refusalCheck) { r.cf = refusalCheck(m, r.a.b.l, r.b.b.l); }                         // 18288: al = difficulty, bl = field offset
+PORT(useSkillOnObject) {                                                                // 13C58: al = mode, dl = direction, bl = parameter
+	uint8_t result = 0;
+	r.cf = useSkillOnObject(m, r.a.b.l, r.d.b.l, r.b.b.l, result);
+	r.a.b.l = result;
+}
+
 } // namespace rc
 } // namespace wl

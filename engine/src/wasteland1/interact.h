@@ -43,4 +43,11 @@ bool evaluateAction(Machine &m, uint8_t x, uint8_t y, uint8_t &result);
 // 16D1A: shows the title page text named by record byte `at` when it is not zero
 void showRecordString(Machine &m, uint8_t at);
 
+// 18288: the character's refusal counter `field` is tested against a roll with difficulty `max`; true (CF) when the character
+// refuses. Refusals raise the counter, passing the test can lower it
+bool refusalCheck(Machine &m, uint8_t max, uint8_t field);
+// 13C58 (NOT registered as a port: its paths wait for keys and could not be compared with the oracle): the current party member (ds:4661) tries to use skill / item / attribute `param` (mode 0 skill, 1 item, 2 attribute) on
+// the object in direction `dir`; the NPC may refuse. Returns the carry of the original; `result` is its al
+bool useSkillOnObject(Machine &m, uint8_t mode, uint8_t dir, uint8_t param, uint8_t &result);
+
 } // namespace wl

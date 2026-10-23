@@ -4,6 +4,7 @@
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
 #include "wasteland1/mapcells.h"
+#include "wasteland1/movement.h"
 #include "wasteland1/party.h"
 #include "wasteland1/rules.h"
 #include "wasteland1/text.h"
@@ -81,7 +82,7 @@ bool matchItemCondition(Machine &m, uint8_t itemOffset, uint8_t &at) {
 	m.d8(0xA5CD) = itemId;
 	for (uint8_t i = 0x0A;; i = uint8_t(i + 2)) {
 		m.d8(0xA5CC) = i;
-		if (rec(m, i) == 0xFF) return false;
+		if (rec(m, i) == 0xFF) { at = 0xFF; return false; }
 		if (conditionType(m, i) == 1 && rec(m, uint8_t(i + 1)) == itemId) { at = i; break; }
 		if (uint8_t(i + 2) == 0) { at = i; break; }
 	}
@@ -94,7 +95,7 @@ bool matchSkillCondition(Machine &m, uint8_t skillId, uint8_t &at) {
 	uint8_t passed = skillId;
 	for (uint8_t i = 0x0A;; i = uint8_t(i + 2)) {
 		m.d8(0xA5CA) = i;
-		if (rec(m, i) == 0xFF) return true;
+		if (rec(m, i) == 0xFF) { at = 0xFF; return true; }
 		if (conditionType(m, i) == 0 && rec(m, uint8_t(i + 1)) == skillId) { at = i; break; }
 		if (uint8_t(i + 2) == 0) { at = i; passed = conditionType(m, i); break; }   // falls out with the last type in al
 	}
@@ -105,7 +106,7 @@ bool matchAttributeCondition(Machine &m, uint8_t attributeId, uint8_t &at) {
 	m.d8(0xA5C9) = attributeId;
 	for (uint8_t i = 0x0A;; i = uint8_t(i + 2)) {
 		m.d8(0xA5C8) = i;
-		if (rec(m, i) == 0xFF) return true;
+		if (rec(m, i) == 0xFF) { at = 0xFF; return true; }
 		if (conditionType(m, i) == 2 && rec(m, uint8_t(i + 1)) == attributeId) { at = i; break; }
 		if (uint8_t(i + 2) == 0) return true;   // (this scan falls out at the end instead of into the match)
 	}
@@ -310,6 +311,198 @@ finish:   // 1406F
 		result = m.d8(0xA5D1);
 		return r.cf;
 	}
+}
+
+namespace {
+void pageText(Machine &m, uint8_t page) {   // 13E64: title page `page` after preparing the message pointer
+	m.setD16(g::textPointer1, 0xAB3E);   // 16CBD
+	X86Regs x;
+	x.al = page;
+	legacy::call(m, 0x7923, x);   // displayTitleText2
+}
+void refreshLayoutIfShown(Machine &m) {   // 13E85
+	if (m.d8(0x4724) == 0) { X86Regs x; legacy::call(m, 0x63C4, x); }
+}
+void newlineIfShown(Machine &m) {   // 13E8F
+	if (m.d8(0x4724) == 0) writeCharacter(m, 6);
+}
+bool npcRefuses(Machine &m, uint8_t field) {   // 13E13 / 13E18 / 13E1D: the NPC's willingness against the given refusal counter
+	m.d8(0xA5DA) = field;
+	return refusalCheck(m, m.d8(uint16_t(cur(m) + pm::willingness)), field);
+}
+}
+
+bool refusalCheck(Machine &m, uint8_t max, uint8_t field) {
+	m.d8(0xBA69) = max;
+	m.d8(0xBA68) = field;
+	Rules rules(m);
+	uint8_t &value = m.d8(uint16_t(cur(m) + field));
+	if (value == 0xFF) return true;
+	rules.setSeed1(0);
+	rules.addTarget(int32_t(Rules::targetBase(0)));   // (resetRandomSeed1 clears dl, so the value never counts)
+	rules.setSeed2(0);
+	rules.addRoll(max);
+	const uint8_t roll = rules.rollDice();
+	if (roll < 5) {
+		if (value != 0x0A) ++value;
+		return true;
+	}
+	rules.addRoll(roll);
+	if (!rules.rollBeatsTarget()) return true;
+	if (rules.random(20) == 1 && value != 0) --value;
+	return false;
+}
+
+// 13E3D: true (CF) when the cell in direction A5D9 holds no object; the "nothing there" text has been shown then
+static bool noObjectInWay(Machine &m) {
+	uint8_t x, y;
+	partyCell(m, x, y);
+	stepTarget(m.d8(0xA5D9), x, y);
+	if (selectCellLocation(m, x, y) == 2) return false;
+	refreshLayoutIfShown(m);
+	pageText(m, (m.d8(0xA5E0) == 0 && m.d8(0xA5DB) == 9) ? 0x26 : 0x0C);
+	return true;
+}
+
+bool useSkillOnObject(Machine &m, uint8_t mode, uint8_t dir, uint8_t param, uint8_t &result) {
+	m.d8(0xA5E0) = mode;
+	m.d8(0xA5D9) = dir;
+	m.d8(0xA5DB) = param;
+	const uint8_t member = m.d8(0x4661);
+	m.d8(0xA5DC) = member;
+	setCurrentCharacter(m, member);
+	auto changeCell = [&](uint8_t offset) -> bool {   // 13E7F + 17CFF: the cell in direction A5D9
+		uint8_t x, y;
+		partyCell(m, x, y);
+		stepTarget(m.d8(0xA5D9), x, y);
+		X86Regs r;
+		r.al = offset; r.dl = x; r.bl = y;
+		legacy::call(m, 0x7CFF, r);   // sub_17CFF
+		return r.cf;
+	};
+	auto npcZero = [&]() { return m.d8(uint16_t(cur(m) + pm::npc)) == 0; };
+	uint8_t at = 0, none = 0;   // none: the al the failed attempt carries (FFh when the record has no such condition)
+	uint8_t offset;
+
+	if (mode == 2) {
+		if (!npcZero() && npcRefuses(m, 0x2D)) goto refused;
+		if (noObjectInWay(m)) { result = 1; return true; }
+		if (matchAttributeCondition(m, param, at)) { none = at == 0xFF ? 0xFF : 0; goto failed; }
+		goto passed;
+	}
+	if (mode == 1) {
+		if (!npcZero() && npcRefuses(m, 0x2B)) goto refused;
+		if (noObjectInWay(m)) { result = 1; return true; }
+		if (!matchItemCondition(m, param, at)) { none = 0xFF; goto failed; }
+		goto passed;
+	}
+	if (!npcZero() && npcRefuses(m, 0x2C)) goto refused;
+	if (param == 0x19 || param == 0x20) {
+		// 13D82: helping an unconscious character up
+		const uint8_t shift = param == 0x19 ? 2 : 3;
+		m.d8(0xA5DE) = shift;
+		setCurrentRosterCharacter(m, m.d8(0xA5D9));
+		if (conBytesOr(m) == 0 || !(m.d8(uint16_t(cur(m) + pm::con + 1)) & 0x80)) { result = 0; return true; }
+		setCurrentCharacter(m, member);
+		const int roll = skillRoll(m, param);
+		setCurrentRosterCharacter(m, m.d8(0xA5D9));
+		bool success = false;
+		if (roll >= 0) {
+			Rules rules(m);
+			rules.setSeed1(0);
+			const uint8_t v = uint8_t(absByte(m.d8(uint16_t(cur(m) + pm::con))) >> shift);
+			m.d8(0xA5DD) = v;
+			rules.addTarget(int32_t(Rules::targetBase(v)));
+			success = rules.rollBeatsTarget();
+		}
+		if (!success) {
+			setCurrentRosterCharacter(m, m.d8(0xA5D9));
+			printMessage(m, 9);
+			newlineIfShown(m);
+			result = 0;
+			return true;
+		}
+		const uint16_t c = cur(m);
+		const uint16_t con = uint16_t(m.d8(uint16_t(c + pm::con)) | (m.d8(uint16_t(c + pm::con + 1)) << 8));
+		m.setD16(uint16_t(c + pm::con), uint16_t((con >> 1) | 0x8000));
+		printMessage(m, 0x0A);
+		setCurrentCharacter(m, member);
+		trySkillImprovement(m, param, m.d8(0xA5DD));
+		newlineIfShown(m);
+		result = 0;
+		return true;
+	}
+	if (noObjectInWay(m)) { result = 1; return true; }
+	if (matchSkillCondition(m, param, at)) {
+		none = at == 0xFF ? 0xFF : 0;
+		if (param == 9 && none != 0) {
+			X86Regs x;
+			legacy::call(m, 0x7A6B, x);   // clearBottomArea
+			pageText(m, 0x26);
+			result = 1;
+			return true;
+		}
+		goto failed;
+	}
+
+passed:   // 13CE8
+	m.d8(0xA5DA) = at;
+	refreshLayoutIfShown(m);
+	showRecordString(m, 2);
+	offset = 4;
+	if (actionByte0(m) & 8) {
+		offset = at;
+		{
+			// 142B1: where the data that follows the condition list starts
+			uint8_t bl = at;
+			m.d8(0xA5C0) = bl;
+			for (;;) {
+				if (m.d8(uint16_t(m.d16(g::locationDetailsPtr) + bl)) == 0xFF) break;
+				bl = uint8_t(bl + 2);
+				if (bl == 0) break;
+			}
+			++bl;
+			m.d8(0xA5C0) = bl;
+			offset = uint8_t(uint8_t(at - 0x0A) + bl);
+		}
+	}
+	m.d8(0xA5DA) = offset;
+	if (changeCell(offset)) goto stepFailed;
+	moveParty(m, m.d8(0xA5D9));
+	result = offset;   // (al is left over from the move)
+	return false;
+
+stepFailed:   // 13D30
+	if (!tryStep(m, m.d8(0xA5D9))) m.d8(0x4716) = 0;
+	result = 0;
+	return false;
+
+failed:   // 13D3F
+	m.d8(0xA5DF) = none;
+	m.d8(0x470D) = m.d8(0xA5DC);
+	if (actionByte8(m) == 0) {
+		X86Regs x;
+		x.al = m.d8(0x8DF7);
+		legacy::call(m, 0x79B7, x);   // sub_179B7
+		if ((actionByte0(m) & 2) || !(none & 0x80)) showRecordString(m, 3);   // 13E6E
+		else pageText(m, 0x3D);
+	} else {
+		showActionMessage(m);
+		if (!(actionByte0(m) & 0x10)) applyActionEffect(m, m.d8(0xA5DC));
+		else applyActionEffectToParty(m);
+		writeCharacter(m, 6);
+		refreshLayoutIfShown(m);
+	}
+	if (changeCell(6)) goto stepFailed;
+	result = 6;
+	return false;
+
+refused:   // 13D07
+	selectWriterForRoster(m);
+	printMessage(m, 0x45);
+	newlineIfShown(m);
+	result = 0;
+	return true;
 }
 
 } // namespace wl
