@@ -57,6 +57,9 @@ void redrawViewAll(Machine &m);
 // 17DF1: the clock, compass and light bar beside the view
 void drawStatusBar(Machine &m);
 // 1675C: draws the cell of the party position
-void drawPartyCell(Machine &m);   // 17DBB: viewX/viewY = partyMapPosition()
+void drawPartyCell(Machine &m);
+// 14330: line of sight from the party to cell (x, y): walks the line with an error term (the original patches its own opcodes for
+// the step directions) and stops at a cell of class 0Bh. True (CF) when blocked
+bool lineBlocked(Machine &m, uint8_t x, uint8_t y);   // 17DBB: viewX/viewY = partyMapPosition()
 
 } // namespace wl

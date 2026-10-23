@@ -3,6 +3,7 @@
 #include "wasteland1/legacy.h"
 #include "wasteland1/party.h"
 #include "wasteland1/combat.h"
+#include "wasteland1/character.h"
 
 namespace wl {
 
@@ -409,6 +410,46 @@ void drawPartyCell(Machine &m) {
 	X86Regs r;
 	legacy::call(m, 0x9E30, r);   // clearInverseText
 	drawMapCell(m, m.d8(0x46A6), m.d8(0x46A7));
+}
+
+bool lineBlocked(Machine &m, uint8_t tx, uint8_t ty) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	const uint8_t px = D(0x46A6), py = D(0x46A7);
+	D(0x46E3) = px;
+	D(0x46E2) = py;
+	const bool stepYUp = ty >= py, stepXUp = tx >= px;   // inc (06h) when the target is not below / left, else dec (0Eh)
+	const uint8_t dy = absByte(uint8_t(ty - py));
+	D(0x46E9) = D(0x46EA) = D(0x46EB) = dy;
+	const uint8_t dx = absByte(uint8_t(tx - px));
+	D(0x46E5) = D(0x46E6) = D(0x46E7) = dx;
+	auto stepY = [&]() { D(0x46E2) = uint8_t(D(0x46E2) + (stepYUp ? 1 : -1)); };
+	auto stepX = [&]() { D(0x46E3) = uint8_t(D(0x46E3) + (stepXUp ? 1 : -1)); };
+	for (;;) {
+		if ((D(0x46E7) | D(0x46EB)) == 0) return false;
+		if (tileClassAt(m, D(0x46E3), D(0x46E2)) == 0x0B) return true;
+		bool diagonal = false;
+		if (D(0x46E6) == D(0x46EA)) diagonal = true;
+		else if (D(0x46E6) > D(0x46EA)) {
+			D(0x46E6) = uint8_t(D(0x46E6) - D(0x46EA));
+			D(0x46EA) = D(0x46E9);
+			stepX();
+			--D(0x46E7);
+			if (!(D(0x46E7) & 0x80)) continue;
+		}
+		if (!diagonal) {
+			D(0x46EA) = uint8_t(D(0x46EA) - D(0x46E6));
+			D(0x46E6) = D(0x46E5);
+			stepY();
+			--D(0x46EB);
+			if (!(D(0x46EB) & 0x80)) continue;
+		}
+		stepY();   // 43CB
+		stepX();
+		--D(0x46E7);
+		--D(0x46EB);
+		D(0x46E6) = D(0x46E5);
+		D(0x46EA) = D(0x46E9);
+	}
 }
 
 } // namespace wl

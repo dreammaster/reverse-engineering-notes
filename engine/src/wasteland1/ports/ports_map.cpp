@@ -56,6 +56,7 @@ PORT(drawOtherParties) { drawOtherParties(m); }                                 
 PORT(drawPartyMarker) { drawPartyMarker(m); }                                           // 16716
 PORT(redrawViewAll) { redrawViewAll(m); }                                               // 163A0
 PORT(drawStatusBar) { drawStatusBar(m); }                                               // 17DF1
+PORT(lineBlocked) { r.cf = lineBlocked(m, r.d.b.l, r.b.b.l); }                          // 14330: dl = x, bl = y
 PORT(drawPartyCell) { drawPartyCell(m); }                                               // 1675C
 
 PORT(advanceTime) { advanceTime(m); }                                                   // 1676A
