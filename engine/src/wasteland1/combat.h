@@ -139,6 +139,11 @@ void adjustMemberField(Machine &m, uint8_t member, uint8_t offset, uint8_t flags
 // 142D7 / 142E2: bytes 8 (masked with 7Fh) and 0 of the action data being executed
 uint8_t actionByte8(Machine &m);
 uint8_t actionByte0(Machine &m);
+// 156CB: range modifier of the monster group `group` at `distance` (selects the group's monster record)
+uint8_t monsterRangeModifier(Machine &m, uint8_t distance, uint8_t group);
+// 12783: the monsters of the location around the active party get their free attacks (ambush); `partyGroup` selects the
+// party block. Stops early when the whole party is down
+void ambush(Machine &m, uint8_t partyGroup);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

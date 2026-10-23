@@ -919,6 +919,102 @@ void partyMemberAttack(Machine &m, uint8_t member) {
 	finishTurn(m, member);
 }
 
+uint8_t monsterRangeModifier(Machine &m, uint8_t distance, uint8_t group) {
+	selectMonsterDetails(m, group);
+	return rangeModifier(m, distance, 0, weaponDamageClass(itemDamageDice(m)));
+}
+
+void ambush(Machine &m, uint8_t partyGroup) {
+	selectPartyBlock(m, partyGroup);
+	if (!anyMemberAlive(m)) return;
+	Rules rules(m);
+	const uint8_t activeGroup = m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup));
+	X86Regs flush;
+	for (int slot = 3; slot >= 0; --slot) {
+		m.d8(0xA4AA) = uint8_t(slot);
+		selectSlot(m, activeGroup, uint8_t(slot));
+		const uint16_t slotRecord = m.d16(g::monsterPtr);
+		if (m.d8(slotRecord) != 0) {
+			m.d8(0xA4B3) = m.d8(uint16_t(slotRecord + 3));
+			selectSlotCellRecord(m);
+			for (int group = 2; group >= 0; --group) {
+				m.d8(0xA4AB) = uint8_t(group);
+				m.d8(0xA4B0) = 0;
+				if ((m.d8(uint16_t(m.d16(g::savedLocationDetailsPtr) + 9)) >> 1) & 1) break;
+				const uint16_t record = m.d16(g::savedLocationDetailsPtr);
+				if (m.d8(uint16_t(record + m.d8(uint16_t(g::encounterOffsets + group)))) != 0) {
+					selectMonsterDetails(m, uint8_t(group));
+					if (hasNoAmmunition(m, itemDamageDice(m))) break;
+					selectMember(m, activeGroup, uint8_t(slot), uint8_t(group));
+					for (int monster = 9; monster >= 0; --monster) {
+						const uint16_t base = m.d16(g::monsterPtr);
+						const uint8_t statusOffset = uint8_t(0x14 + monster);
+						m.d8(0xA4AC) = statusOffset;
+						m.d8(0xA4B2) = uint8_t(monster * 2 + 1);
+						const bool alive = m.d16(uint16_t(base + monster * 2)) != 0;
+						const uint8_t status = m.d8(uint16_t(base + statusOffset));
+						if (!alive && !(status & 0x80)) continue;
+						if (status == 0) continue;
+						m.d8(uint16_t(base + statusOffset)) = 0;
+						markLocationVisited(m);
+						rules.setSeed1(0);
+						rules.addTarget(monsterRangeModifier(m, m.d8(0xA4B3), uint8_t(group)));
+						rules.setSeed2(0);
+						const uint8_t roll = rules.rollDice();
+						if (roll < 4) { ++m.d8(0xA4B0); continue; }
+						rules.addRoll(roll);
+						selectMonsterDetails(m, uint8_t(group));
+						rules.addRoll(itemByte(m, 2));
+						const uint8_t dice = itemDamageDice(m);
+						uint8_t kind = 2;
+						if (dice != 0x0B && dice != 0x0C) kind = isTypeGroupA(dice) ? 1 : 0;
+						m.d8(0xA4B1) = kind;
+						rules.addRoll(kind << 3);
+						if (!rules.rollBeatsTarget()) { ++m.d8(0xA4B0); continue; }
+						const uint16_t margin = uint16_t(rules.seed2() - rules.seed1());
+						m.d8(0xA4AF) = uint8_t(margin);
+						m.d8(0xA4AE) = uint8_t(margin >> 8);
+						legacy::call(m, 0x9EFC, flush);
+						setItemQuantityOne(m);
+						printMonsterMessage(m, 0x1A, uint8_t(group));
+						const uint8_t a = uint8_t(margin), b = uint8_t(margin >> 8);
+						if (kind == 0) {
+							printLocationMessageVariant(m, 0x4A);
+							monsterHitsParty(m, a, b, uint8_t(group));
+							continue;
+						}
+						uint8_t shots, message;
+						if (kind == 1) { message = 0x4C; shots = rules.random(3); }
+						else { message = 0x4E; shots = burstHits(m, 0x0C); }
+						m.d8(0xA4AD) = message;
+						m.d8(0xA4B4) = shots;
+						m.d8(g::weaponNoteShown) = 0;
+						for (;;) {
+							printWeaponNote(m);
+							printLocationMessageVariant(m, message);
+							monsterHitsParty(m, a, b, uint8_t(group));
+							legacy::call(m, 0x9EFC, flush);
+							++m.d8(g::weaponNoteShown);
+							if (!anyMemberAlive(m)) return;
+							m.d8(0xA4B4) = --shots;
+							if (shots == 0) break;
+						}
+					}
+				}
+				const uint8_t missed = m.d8(0xA4B0);
+				if (missed != 0) {
+					m.d8(g::itemQuantity) = missed;
+					legacy::call(m, 0x9EFC, flush);
+					writeNumberLeft(m, m.d8(g::itemQuantity));
+					writeCharacter(m, 0x20);
+					writeMonsterName(m, uint8_t(group));
+					printMessage(m, 0x1F);
+				}
+			}
+		}
+	}
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }

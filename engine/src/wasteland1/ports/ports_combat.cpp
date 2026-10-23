@@ -147,6 +147,8 @@ PORT(actionByte0) {                                                             
 	r.zf = r.a.b.l == 0;
 	r.sf = (r.a.b.l & 0x80) != 0;
 }
+PORT(monsterRangeModifier) { r.a.b.l = monsterRangeModifier(m, r.a.b.l, r.d.b.l); r.d.b.l = 0; }   // 156CB: al = distance, dl = group
+PORT(ambush) { ambush(m, r.a.b.l); }                                                    // 12783
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079
