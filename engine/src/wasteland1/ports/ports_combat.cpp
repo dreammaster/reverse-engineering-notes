@@ -133,6 +133,20 @@ PORT(writeEncounterGroup) { r.cf = !writeEncounterGroup(m, r.a.b.l); }          
 PORT(describeEncounter) { describeEncounter(m, r.a.b.l); }                              // 13651: al = distance
 PORT(setSlotStatusOne) { setSlotStatus(m, r.d.b.l, 1); }                                // 13726: dl = slot
 PORT(setSlotStatusZero) { setSlotStatus(m, r.d.b.l, 0); }                               // 1372B
+PORT(monsterDamage) { setDlAl(r, monsterDamage(m, r.d.b.l)); }                           // 12A76: dl = group -> dl:al
+PORT(monsterHitsParty) { monsterHitsParty(m, r.a.b.l, r.d.b.l, r.b.b.l); r.cf = false; }   // 1295D: al = a, dl = b, bl = group
+PORT(anyMemberAlive) { r.cf = !anyMemberAlive(m); }                                     // 129B6
+PORT(adjustMemberField) { adjustMemberField(m, r.a.b.l, r.d.b.l, r.b.b.l); }            // 141FA: al = member, dl = offset, bl = flags
+PORT(actionByte8) {                                                                     // 142D7
+	r.a.b.l = actionByte8(m);
+	r.zf = r.a.b.l == 0;
+	r.sf = false;
+}
+PORT(actionByte0) {                                                                     // 142E2
+	r.a.b.l = actionByte0(m);
+	r.zf = r.a.b.l == 0;
+	r.sf = (r.a.b.l & 0x80) != 0;
+}
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079

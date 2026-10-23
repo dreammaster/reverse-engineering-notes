@@ -470,6 +470,81 @@ void setSlotStatus(Machine &m, uint8_t slot, uint8_t value) {
 	}
 }
 
+uint16_t monsterDamage(Machine &m, uint8_t group) {
+	selectMonsterDetails(m, group);
+	uint8_t al;
+	return Rules(m).sumOfD6(uint8_t(itemByte(m, 5) >> 4), itemByte(m, 3), al);
+}
+
+void monsterHitsParty(Machine &m, uint8_t a, uint8_t b, uint8_t group) {
+	m.d8(0xA4A9) = a;
+	m.d8(0xA4A8) = b;
+	const uint16_t damage = monsterDamage(m, group);
+	m.d8(0xA4D5) = uint8_t(damage);
+	m.d8(0xA4D6) = uint8_t(damage >> 8);
+	for (;;) {
+		const uint8_t pick = Rules(m).random(m.d8(uint16_t(g::saved2 + g::s2::membersInGroup)));
+		m.d8(0xA4A7) = pick;
+		setCurrentCharacter(m, pick);
+		if (m.d8(uint16_t(m.d16(g::partyStatusPtr) + pick)) == 5 && b == 0 && a < 6) {
+			writeMemberName(m);
+			printMessage(m, 0x5D);
+			return;
+		}
+		if (!damagePartyMember(m, damage, pick)) return;
+	}
+}
+
+bool anyMemberAlive(Machine &m) {
+	const uint8_t members = m.d8(uint16_t(g::saved2 + g::s2::membersInGroup));
+	for (uint8_t member = 1;; ++member) {
+		m.d8(0xA4A0) = member;
+		setCurrentCharacter(m, member);
+		if (conBytesOr(m) != 0) return true;
+		if (member >= members) return false;
+	}
+}
+
+uint8_t actionByte8(Machine &m) { return m.d8(uint16_t(m.d16(g::locationDetailsPtr) + 8)) & 0x7F; }
+uint8_t actionByte0(Machine &m) { return m.d8(m.d16(g::locationDetailsPtr)); }
+
+void adjustMemberField(Machine &m, uint8_t member, uint8_t offset, uint8_t flags) {
+	m.d8(0xA5C2) = offset;
+	m.d8(0xA5C4) = member;
+	m.d8(0xA5C3) = flags;
+	setCurrentCharacter(m, member);
+	Rules rules(m);
+	const uint16_t amount = rules.seed2();
+	const uint16_t field = uint16_t(cur(m) + offset);
+	if (flags & 0x80) {
+		if (offset == pm::con) {
+			m.d8(g::quietCombat) = 1;
+			X86Regs x;
+			legacy::call(m, 0x9EFC, x);   // sub_19EFC
+			m.d8(g::armorBypass) = actionByte0(m) & 1;
+			damagePartyMember(m, amount, member);
+			m.d8(g::quietCombat) = 0;
+			m.d8(g::armorBypass) = 0;
+		} else if (offset == pm::money) {
+			m.d8(g::numberValue) = uint8_t(amount);
+			m.d8(uint16_t(g::numberValue + 1)) = uint8_t(amount >> 8);
+			m.d8(uint16_t(g::numberValue + 2)) = 0;
+			pay(m);
+		} else {
+			const uint8_t v = m.d8(field);
+			m.d8(field) = v < uint8_t(amount) ? 0 : uint8_t(v - uint8_t(amount));
+		}
+	} else if (offset == pm::experience) {
+		m.d8(g::numberValue) = uint8_t(amount);
+		m.d8(uint16_t(g::numberValue + 1)) = uint8_t(amount >> 8);
+		m.d8(uint16_t(g::numberValue + 2)) = 0;
+		addExperience(m);
+	} else {
+		const unsigned sum = m.d8(field) + uint8_t(amount);
+		if (sum <= 0xFF) m.d8(field) = uint8_t(sum);
+	}
+}
+
 void printMonsterMessage(Machine &m, uint8_t id, uint8_t index) {
 	printMessage(m, id);
 	writeMonsterName(m, index);

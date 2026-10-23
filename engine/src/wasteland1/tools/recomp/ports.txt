@@ -193,3 +193,9 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 3651 describeEncounter junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A5A5-A5A7,A59D-A59E,C059-C059,465C-4662
 3726 setSlotStatusOne junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A59D-A5A1
 372B setSlotStatusZero junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A59D-A5A1
+2A76 monsterDamage junk=ah,bl,ch,cl,di,es,pf,si,zf scratch=A59D-A59E,C059-C059,CD3F-CD3F
+295D monsterHitsParty junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A4A0-A4D6,A59D-A59E,C059-C059,CD3F-CD4A,BA6D-BA70,A680-A6A0
+29B6 anyMemberAlive junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A4A0-A4A0
+41FA adjustMemberField junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A5C2-A5C4,A59D-A59E,C059-C059,CD3F-CD4A,BA6D-BA70
+42D7 actionByte8 junk=ah,bl,ch,cl,di,es,pf,si,dl
+42E2 actionByte0 junk=ah,bl,ch,cl,di,es,pf,si,dl

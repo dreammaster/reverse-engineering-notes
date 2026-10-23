@@ -126,6 +126,19 @@ bool writeEncounterGroup(Machine &m, uint8_t index);
 void describeEncounter(Machine &m, uint8_t distance);
 // 13726 / 1372B: sets bytes 14h..1Dh (the status bytes) of the three members of slot `slot` of the active party group to value
 void setSlotStatus(Machine &m, uint8_t slot, uint8_t value);
+// 12A76: damage roll of the monster group `group` of the location record: byte 5 high nibble + (byte 3) d6
+uint16_t monsterDamage(Machine &m, uint8_t group);
+// 1295D: a monster of `group` attacks a random living member of the party, unless the member is protected (status 5 and
+// flag `b` clear and level `a` < 6); the member is retried while already dead
+void monsterHitsParty(Machine &m, uint8_t a, uint8_t b, uint8_t group);
+// 129B6: true when some member of the active group still has hit points (CF clear in the original)
+bool anyMemberAlive(Machine &m);
+// 141FA: applies seed2 to field `offset` of party member `member`: subtracts (flags bit 7 set) or adds. Hit points go through
+// damagePartyMember without armor messages; money and experience through the number value
+void adjustMemberField(Machine &m, uint8_t member, uint8_t offset, uint8_t flags);
+// 142D7 / 142E2: bytes 8 (masked with 7Fh) and 0 of the action data being executed
+uint8_t actionByte8(Machine &m);
+uint8_t actionByte0(Machine &m);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------
