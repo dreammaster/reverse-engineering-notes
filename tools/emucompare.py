@@ -65,9 +65,9 @@ NOISE = {"_Znwm", "_Znam", "_ZdlPv", "_ZdaPv", "_ZdlPvm", "malloc", "calloc", "r
          "_Unwind_Resume", "__gxx_personality_v0", "__stack_chk_fail", "abort", "__assert_fail", "__cxa_pure_virtual",
          "_ZSt9terminatev", "_ZNSs4_Rep20_S_empty_rep_storageE", "clock_gettime", "gettimeofday", "time", "pthread_mutex_lock",
          "pthread_mutex_unlock", "pthread_mutex_init", "pthread_mutexattr_init", "pthread_mutexattr_settype", "pthread_mutex_destroy"}
-NOISE |= set(MATH) | {n + "f" for n in MATH}  # (the optimizer makes a call of the library of sqrt, floor ... an instruction)
-NEEDS_ARGS = {"_Znwm", "_Znam", "malloc", "calloc", "_Znwj", "_Znaj", "memcpy", "memmove", "memset", "strlen", "memcmp", "strncmp", "strcmp"} | set(MATH) | {n + "f" for n in MATH}
-STRING_PREFIXES = ("_ZNSs", "_ZNKSs", "_ZNSbIw", "_ZNKSbIw", "_ZSt", "_ZNSt", "_ZNKSt", "_ZStl", "_ZStp", "_ZSteq", "_ZStne")
+NOISE |= set(MATH) | {n + "f" for n in MATH} | {"sincos", "sincosf"}  # (the optimizer makes a call of the library of sqrt, floor ... an instruction)
+NEEDS_ARGS = {"sincosf", "sincos", "clock_gettime", "gettimeofday", "time", "av_malloc", "av_mallocz", "av_realloc", "av_calloc", "av_malloc_array", "av_mallocz_array", "fwrite", "rand", "_Znwm", "_Znam", "malloc", "calloc", "_Znwj", "_Znaj", "memcpy", "memmove", "memset", "strlen", "memcmp", "strncmp", "strcmp"} | set(MATH) | {n + "f" for n in MATH}
+STRING_PREFIXES = ("_ZNSaI", "_ZNSs", "_ZNKSs", "_ZNSbIw", "_ZNKSbIw", "_ZSt", "_ZNSt", "_ZNKSt", "_ZStl", "_ZStp", "_ZSteq", "_ZStne")
 STOPPERS = {"__stack_chk_fail", "abort", "__assert_fail", "__cxa_throw", "_Unwind_Resume", "__cxa_pure_virtual", "_ZSt9terminatev"}
 NEEDS_ARGS |= STOPPERS
 
@@ -224,7 +224,7 @@ class Image:
             if name != "memcmp":
                 a, b = a.split(b"\0")[0], b.split(b"\0")[0]
             rax = (a > b) - (a < b) & 0xFFFFFFFF
-        elif name in MATH:
+        elif name in MATH or (name.endswith("f") and name[:-1] in MATH):
             single = name.endswith("f") and name[:-1] in MATH
             base = name[:-1] if single else name
             fmt, width = ("<f", 4) if single else ("<d", 8)
@@ -235,6 +235,34 @@ class Image:
                 value = float("nan")
             uc.reg_write(UC_X86_REG_XMM0, int.from_bytes(struct.pack(fmt, value) + bytes(16 - width), "little"))
             return
+        elif name in ("sincosf", "sincos"):
+            single = name == "sincosf"
+            fmt, width = ("<f", 4) if single else ("<d", 8)
+            x, = struct.unpack(fmt, uc.reg_read(XMM_REGS[0]).to_bytes(16, "little")[:width])
+            try:
+                pair = (math.sin(x), math.cos(x))
+            except ValueError:
+                pair = (float("nan"), float("nan"))
+            uc.mem_write(args[0], struct.pack(fmt, pair[0]))
+            uc.mem_write(args[1], struct.pack(fmt, pair[1]))
+            return
+        elif name in ("clock_gettime", "gettimeofday"):
+            uc.mem_write(args[1] if name == "clock_gettime" else args[0], struct.pack("<QQ", 1000, 500000))
+        elif name == "time":
+            rax = 1000
+        elif name in ("av_malloc", "av_mallocz", "av_realloc", "av_calloc", "av_malloc_array", "av_mallocz_array"):
+            n = (args[0] + 15) & ~15 if name not in ("av_calloc", "av_malloc_array", "av_mallocz_array") else (args[0] * args[1] + 15) & ~15
+            if n > 0x100000 or self.arena_top + n > ARENA + ARENA_SIZE:
+                self.stopped = "arena"
+                uc.emu_stop()
+                return
+            rax = self.arena_top
+            self.arena_top += n
+        elif name == "fwrite":
+            rax = args[2]
+        elif name == "rand":
+            self.rand_state = (getattr(self, "rand_state", 1) * 1103515245 + 12345) & 0x7FFFFFFF
+            rax = self.rand_state
         elif name in STOPPERS:
             self.stopped = name
             uc.emu_stop()
@@ -259,6 +287,7 @@ class Image:
         self.arena_top = ARENA
         self.trace = []
         self.stopped = None
+        self.rand_state = 1
         self.last_small = -1
         uc.reg_write(UC_X86_REG_FS_BASE, TLS)
         sp = STACK + STACK_SIZE - 0x1000
@@ -285,7 +314,7 @@ class Image:
             raw = bytes(uc.mem_read(a, len(content)))
             after.append(self._tokens(raw))
         return {"rax": uc.reg_read(UC_X86_REG_RAX), "xmm0": uc.reg_read(UC_X86_REG_XMM0).to_bytes(16, "little")[:8],
-                "blocks": after, "trace": [t[0] for t in self.trace if t[0] not in NOISE and not t[0].startswith(STRING_PREFIXES)],
+                "blocks": after, "trace": [t[0] for t in self.trace if t[0] not in NOISE and t[0] != "virtual" and not t[0].startswith(STRING_PREFIXES)],  # (virtual: the stub answers the same, the number of such calls depends on what the optimizer devirtualized)
                 "strings": any(t[0].startswith(STRING_PREFIXES) for t in self.trace)}
 
     def _tokens(self, raw):
