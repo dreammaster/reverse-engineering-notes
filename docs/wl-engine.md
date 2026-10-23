@@ -95,7 +95,7 @@ Known gaps: PC speaker sound (ports 42h/43h/61h are ignored), mouse (int 33h rep
 Generated functions are replaced one by one with hand written C++ (`engine/src/wasteland1/*.cpp`) through
 `engine/src/wasteland1/tools/recomp/ports.txt`; the recompiler then calls the `PORT(...)` adapters in
 `engine/src/wasteland1/ports/` instead of emitting the function. Ported code reaches routines that are not ported yet
-through `legacy::call` (`legacy.h`). `tools/portstatus.py` prints the progress (about 300 of 817 functions: combat, party and movement logic, map actions, text decoding) and the
+through `legacy::call` (`legacy.h`). `tools/portstatus.py` prints the progress (about 320 of 817 functions: combat, party and movement logic, map actions, text decoding; see docs/wl-port-status.md) and the
 next candidates whose callees are all ported.
 
 A ported function is accepted when every check below passes:
