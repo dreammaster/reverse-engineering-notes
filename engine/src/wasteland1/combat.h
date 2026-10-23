@@ -120,6 +120,12 @@ bool attackMonster(Machine &m, uint8_t index, uint8_t monster, bool &killed);
 void writeMonsterName(Machine &m, uint8_t index);
 // 129D5 / 129DA: message 43h / 1Ah, then the monster name `index` (the routines fall into 129E9)
 void printMonsterMessage(Machine &m, uint8_t id, uint8_t index);
+// 13697: writes "<count> <name>" of the monster group `index` of the location record; false (CF) when the group is empty
+bool writeEncounterGroup(Machine &m, uint8_t index);
+// 13651: writes the whole encounter description (all groups) followed by the distance `distance`
+void describeEncounter(Machine &m, uint8_t distance);
+// 13726 / 1372B: sets bytes 14h..1Dh (the status bytes) of the three members of slot `slot` of the active party group to value
+void setSlotStatus(Machine &m, uint8_t slot, uint8_t value);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

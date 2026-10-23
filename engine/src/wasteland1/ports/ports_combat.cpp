@@ -129,6 +129,10 @@ PORT(attackMonster) {                                                           
 PORT(writeMonsterName) { writeMonsterName(m, r.d.b.l); }                                // 129E9: dl = group of monsters (0..2)
 PORT(printMonsterMessage43) { printMonsterMessage(m, 0x43, r.d.b.l); }                  // 129D5: dl = group of monsters
 PORT(printMonsterMessage1A) { printMonsterMessage(m, 0x1A, r.d.b.l); }                  // 129DA
+PORT(writeEncounterGroup) { r.cf = !writeEncounterGroup(m, r.a.b.l); }                   // 13697: al = group; CF when empty
+PORT(describeEncounter) { describeEncounter(m, r.a.b.l); }                              // 13651: al = distance
+PORT(setSlotStatusOne) { setSlotStatus(m, r.d.b.l, 1); }                                // 13726: dl = slot
+PORT(setSlotStatusZero) { setSlotStatus(m, r.d.b.l, 0); }                               // 1372B
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079

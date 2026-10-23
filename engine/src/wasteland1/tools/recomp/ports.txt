@@ -189,3 +189,7 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 29D5 printMonsterMessage43 junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=A59D-A59E,C059-C059
 29DA printMonsterMessage1A junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=A59D-A59E,C059-C059
 39CE rangeModifier junk=,bl,dl,pf,si scratch=7931-796F,A592-A594
+3697 writeEncounterGroup junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=A5A5-A5A5,A59D-A59E,C059-C059
+3651 describeEncounter junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A5A5-A5A7,A59D-A59E,C059-C059,465C-4662
+3726 setSlotStatusOne junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A59D-A5A1
+372B setSlotStatusZero junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A59D-A5A1

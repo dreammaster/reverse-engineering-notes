@@ -432,6 +432,44 @@ void writeMonsterName(Machine &m, uint8_t index) {
 	writeString2(m);
 }
 
+bool writeEncounterGroup(Machine &m, uint8_t index) {
+	const uint16_t record = m.d16(g::savedLocationDetailsPtr);
+	m.d8(0xA5A5) = index;
+	const uint8_t count = m.d8(uint16_t(record + m.d8(uint16_t(g::encounterCountOffsets + index))));
+	if (count == 0) return false;
+	m.d8(g::itemQuantity) = count;
+	m.d8(g::tempTextX) = 2;
+	writeNumberLeft(m, count);
+	++m.d8(g::rectTextX);
+	writeMonsterName(m, index);
+	return true;
+}
+
+void describeEncounter(Machine &m, uint8_t distance) {
+	m.d8(0xA5A7) = distance;
+	X86Regs x;
+	legacy::call(m, 0x9EFC, x);   // sub_19EFC
+	for (uint8_t i = 0; i != 3; ++i) {
+		m.d8(0xA5A6) = i;
+		if (!writeEncounterGroup(m, i)) continue;
+		legacy::call(m, 0x9EFC, x);
+	}
+	++m.d8(g::tempTextX);
+	printMessage(m, 0x2E);
+	writeNumberLeft(m, distance);
+	printMessage(m, 0x47);
+}
+
+void setSlotStatus(Machine &m, uint8_t slot, uint8_t value) {
+	m.d8(0xA5A1) = slot;
+	m.d8(0xA5A0) = value;
+	for (uint8_t member = 0; member != 3; ++member) {
+		m.d8(0xA59F) = member;
+		selectMember(m, m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup)), slot, member);
+		for (uint8_t i = 0x14; i != 0x1E; ++i) m.d8(uint16_t(m.d16(g::monsterPtr) + i)) = value;
+	}
+}
+
 void printMonsterMessage(Machine &m, uint8_t id, uint8_t index) {
 	printMessage(m, id);
 	writeMonsterName(m, index);

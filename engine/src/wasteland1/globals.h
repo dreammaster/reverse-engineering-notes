@@ -63,6 +63,7 @@ constexpr uint16_t monsterPtr = 0x46C8;          // word_214E8: the slot or memb
 constexpr uint16_t partyStatusPtr = 0x46D8;      // word_214F8: first 8 byte array of the party block
 constexpr uint16_t partyOrdersPtr = 0x46DA;      // word_214FA: second array (order byte per member: top 2 bits + low 6 bits)
 constexpr uint16_t partyBlockOffsets = 0xA5B4;   // byte table: offset of the block of each party group
+constexpr uint16_t encounterCountOffsets = 0xA5AE; // byte table: offsets of the three monster counts of a location record
 constexpr uint16_t encounterOffsets = 0xA5B1;    // byte table: offsets of the three monster entries of a location record
 constexpr uint16_t sexFlagTable = 0xA920;         // byte_27740: indexed by byte 7 of a monster record -> itemSexFlag
 constexpr uint16_t readiness = 0x46CC;           // byte_214EC: 0 unconscious, 0Fh can act, FEh weapon that needs ammunition
