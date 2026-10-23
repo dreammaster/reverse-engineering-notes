@@ -116,11 +116,11 @@ So the newer data format reads Deponia 2's data as it is (a field that is not in
 
 ### Methods run in both executables (Deponia 2 against Deponia 4)
 
-`tools/emucompare.py ... --methods --trials 12` (the method mode, see `src/deponia4/VERSIONS.md`): **1,174 methods of the `T*` classes ran in both, 1,011 give the same results and the same writes on every input, 161 differ** (1,086 + 891 skipped as before).
+`tools/emucompare.py ... --methods --trials 12` (the method mode, see `src/deponia4/VERSIONS.md`): **1,174 methods of the `T*` classes ran in both, 1,011 give the same results and the same writes on every input, 161 differ** (882 more were skipped, as before).
 A difference is a moved member (a class whose layout changed), a changed piece of logic, or the noise the method mode has (library calls the optimizer inlined, uninitialised timer bytes, addresses). By class:
 
 - **No difference in any method that ran: 100 classes (535 methods)**, among them `TCAnimation` 28, `TCharHolder` 27, `TGameControl` 24 (the methods that do not touch the console), `TPaintControl` 24, `TDataGroup` 20, `TTypeData` 18, `TTypeGroup` 16, `TFieldValue` 13, `TLink` 13, `TMemoryBuffer` 10, `TTAction` 10, `TGInterface` 9,
-  `TGameController` 9, `TSoundInterface` 9, `TSceneControl` 8, `TGText` 7, `TSText` 6, `TTimer` 6, `TFreetypeFont` 5, `TGObjectManager` 5, `TComposedFile` 4 and all the record classes `TT*` (the ones of the data) except `TTable` / `TTButton` / `TTDialogPart` / `TTObject`. So the data classes, the animation, the typed-data layer and the plain accessors of the objects are the same code in 2015 and 2017.
+  `TGameController` 9, `TSoundInterface` 9, `TSceneControl` 8, `TGText` 7, `TSText` 6, `TTimer` 6, `TFreetypeFont` 5, `TGObjectManager` 5, `TComposedFile` 4 and the record classes `TT*` of the data except `TTButton`, `TTDialogPart` and `TTObject` (one method each differs). So the data classes, the animation, the typed-data layer and the plain accessors of the objects are the same code in 2015 and 2017.
 - **Most of their methods differ: `TConsole` 17 of 20** (it moved from `+0x838` to `+0x938` inside `TGameControl` and gained the load/save commands), `TPreloadedPicManager` 2 of 2, `TSpriteHandle` 5 of 7, `TFontManager` 4 of 6, `TSteamSDK` 4 of 6, `TGraphicsOGL` 6 of 11, `TPictureIO` 5 of 10, `TTable` 10 of 21, `TFile` 10 of 27, `TPictureMEM` 6 of 16,
   `TMatrix4` 4 of 11, `TMasterControl` 6 of 21, `TVedFile` 3 of 9; fewer of `TVisionaire` 5 of 33, `TGCharacter` 5 of 34, `TManagedObject` 5 of 36, `TVisObjRef` 3 of 35, `TArgument` 3 of 40, `TVisionaireObject` 2 of 26.
   These are the classes a merged engine has to look at per build (Deponia 2 against the others) first; the ones in the first list need nothing.
