@@ -45,6 +45,8 @@ Deponia, Deponia Doomsday, Edna & Harvey, The Whispered World, ...), and Linux b
 | Libraries in `libs64` | with `libopenal.so`, `libpng12.so.0` | without them (the system ones) | with `libopenal.so`, without `libpng12.so.0` |
 | String types of the helpers | `std::string` (`LuaDoString`, `LuaExecuteFunction`), `x_assert(bool, char const *, char const *, int)` | `wxString` for the same, `x_assert(bool, wchar_t const *, wchar_t const *)` without the line | as Deponia 1 (`std::string` helpers, `x_assert(bool, char const *, char const *, int)`) |
 
+The differences of Deponia 4 from Deponia 1 that need a decision when the engines are merged are collected in `src/deponia4/MERGE.md`: the text path (HarfBuzz shaping, the height lock of the game's fonts, the rendered-text cache), the outline shader and a few graphics details; everything else that could be checked mechanically is the same.
+
 Deponia 4 sits with Deponia 1 on every row of this table where Deponia 2 does not: the two share the graphics layer, the debugging aids and the `std::string` helpers, so the
 newer generation of the engine starts between Deponia 2 and Deponia 4. Further rows that only Deponia 4 and Deponia 1 differ in (`-O0` against `-O2`, HarfBuzz, typed `wxLog::log<T...>` against
 `wxLog::logexpanded`, the glyph-buffer variants of the text printing) are in `src/deponia4/VERSIONS.md`.

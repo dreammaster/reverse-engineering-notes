@@ -19,7 +19,7 @@ point constants and the results of about 1,330 functions run in an emulator on t
 | 5 | Rendered text cache | `TGText` keeps `std::vector<GLCharBuffer*>` (glyph vertices per line); `TFontManager::PrintTextLines` and `TCFont::PrintText/PrintTextLines` take the buffer | none: the text is laid out every frame | symbols (signatures), `TGText` constructor/destructor | speed only; the reconstruction does not batch glyphs, so keep Deponia 4's signatures (no buffer). A GL backend can add the cache |
 | 6 | Text shader | extra shader file `outline.bin` (shader object at `+0x6B0`, loaded in `ResizeScene`), uniform `borderColor` set in `RenderString_i`; `SetOffset` updates 7 shaders | no `outline.bin`; has `sht_color.bin`; `SetOffset` updates 5 | strings, listings | only for a GL backend: load the shaders the data names. Nothing in the reconstruction |
 | 7 | `TGraphicsOGL` | `EnableMipmaps(int)` and `SetEmptyTexture(int,int,int)` are empty; `graphicsOGL.cpp` has 5 + 2 more lines before 0x4F3 / 0x94E | both contain `assert(false)` ("must not be called") | symbols, assert line numbers | keep the empty functions (they are called from nowhere that matters) |
-| 8 | `cfont.cpp` | 4 + 5 more lines before 0x155 / 0x2A2 | | assert line numbers | the lines are the `GLCharBuffer` argument and the spacing priming of 3 and 5 |
+| 8 | `cfont.cpp` | 4 more lines before line 0x155 and 5 more before 0x2A2 | | assert line numbers | probably the `GLCharBuffer` argument and the spacing priming of 3 and 5 (the lines were not located) |
 | 9 | Logging | `wxLog::logexpanded(fmt, ...)` at every site | typed `wxLog::log<T...>(fmt, T...)` at most sites | symbols (676 and 65 sites of `logexpanded` against 172 + 161 + 71 + ... of `log`) | keep one API in `WxStub.h`; no behaviour |
 | 10 | Platform SDK layer | `TGameClientSDK` methods inline `GetSteamSDK` etc. | explicit accessors (`GetSteamSDK`, `GetGalaxySDK`, `GetSteamStatus`, `GetGalaxyStatus`, `Update`, `InitSDK`, `DeleteCloudSavegame`) | every string and call of the three classes compared: no string differs; the calls differ only in inlining and constructors (the listener classes have explicit constructors at `-O0`) | no difference in behaviour; Deponia 4's accessors are inline helpers of Deponia 1's code |
 | 11 | Libraries | HarfBuzz 1.8.8 linked; `libpng12.so.0`, `libopenal.so.1`, `voices_ES/IT.lua` shipped | no HarfBuzz; none of those three | symbols, game folders | HarfBuzz follows 1; the rest is packaging |
@@ -32,7 +32,7 @@ point constants and the results of about 1,330 functions run in an emulator on t
 | Shader Toolkit script | Deponia 4's data runs a Lua `DataDumper` at load that calls `pcall(string.dump, f)`; ScummVM's `lua_dump` is fatal. `InitLua` in `src/deponia4` replaces `string.dump` by a function that raises a Lua error (`WORKAROUND:`). **Put it in the merged `InitLua`** (and in `scriptingutils.cpp`'s `traverseTable`, which also calls `lua_dump`, not reached yet) |
 | Lightmap names | `data/assets/scenes/ch1/1001/1001_lightmap.webp#s#000#00002#` is "Error reading header" with Deponia 4's (and Deponia 2's) data: entry 2 of `scene.vs000` is not a WebP. How the original resolves the name is open (see `src/deponia2/VERSIONS.md`) |
 | Fonts | Deponia 4 has one TrueType font (`SourceHanSansCN-Medium.otf`), Deponia 1 twelve; `tests/deponia1/realdatatest.cpp` checks for 12 |
-| Volumes | Deponia 4: 168 scene, 329 character and 66 video volumes; Deponia 1: 74, 84, 42 |
+| Volumes | Deponia 4: 168 scene, 328 character and 66 video volumes; Deponia 1: 74, 84, 42 |
 
 ## What is the same (checked, no merge work)
 
@@ -40,7 +40,7 @@ point constants and the results of about 1,330 functions run in an emulator on t
 - the order of engine calls of every function that both define (51 of 2,923 functions differ for Deponia 1, none a logic difference; devirtualized calls, sort comparators, `x_assert`, `toUTF`);
 - the numbers (1,028 against 1,030 distinct constants in `T*` code; the rest are assert line numbers and `-O0` case labels), the texts (1,758 against 1,739 literals; standard library exception texts and format helpers), the floating point constants, the order of the field ids written by the constructors read;
 - the line numbers of the asserts in 38 of the 39 source files that have them;
-- the class layouts of the 541 + methods that ran in the emulator on random objects (no layout change seen except `TFreetypeFont`, `TGText`).
+- the class layouts as far as the 1,338 methods that ran in the emulator on random objects use them (a moved member shows as a difference; only `TFreetypeFont` and `TGText` did).
 
 ## Not checked
 
