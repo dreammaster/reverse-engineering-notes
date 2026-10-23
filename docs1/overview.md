@@ -196,3 +196,20 @@ each party member (it will come with PROG5); the restore path is therefore only 
 
 Verification (`tests/test_prog6.cpp`, script `tests/refs/prog6_bookmarker.txt`): two runs match call for call and in video memory (280 calls:
 navigation, RESTORE?/SAVE? confirmations cancelled by key and by the Esc icon, Esc exit; 206 calls: Enter, confirm, hand-over to PROG0).
+
+## 2026-10-23 -- PROG0 (the saved-game copier) reimplemented and verified
+
+PROG0 never draws with the video driver (DOS text screen + files), so `src1/prog0` is verified by the files it leaves behind. It copies
+CURRGAME\{PARTY,NPC,AREA}.DAT to or from SAVEGAME.<x>\ : the number of PARTY records is the first word of record 0, there are always 446
+NPC records, and the number of 128-byte AREA records is the word at offset 4 of NPC record 0 (so a save whose area count is below the
+file's leaves the rest of AREA.DAT as it was). Mode 1 (SW.EXE, game not begun) lists the saved games and asks for a number when there is
+more than one (text via the new `System::textOut`/`readLine`, default no-ops; the DOS directory order is approximated by probing letters),
+exit codes 21h (nothing saved), 20h (no party chosen), 1/3 (CURRGAME file will not open), 9/0Ah/0Bh (saved game's file will not open), FEh.
+The inherited DOS handles of modes 2/3 (parm_5C, 76, 78) have no counterpart: the port opens the files itself. Note for the shell: with
+PROG0 real, every start of an unfinished game overwrites CURRGAME with the saved game, as the original does (`test_sw` now supplies a
+SAVEGAME.A patched like CURRGAME).
+
+`tests/test_prog0.cpp`: the three modes produce byte-identical files to the original's (yemu runs of the original on a game directory whose
+current and saved games differ; the scripts are in `tests/refs/`), and the error codes 9 and FEh. **Housekeeping:** `src1/tests/test_sw_work/`
+(copies of original game data written by test_sw) had been committed by mistake; it is now untracked and ignored (`.gitignore`), but it
+remains in the history of commits before this one.

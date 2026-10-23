@@ -1,5 +1,6 @@
 #include "sw/Shell.h"
 
+#include "prog0/Prog0.h"
 #include "prog1/Prog1.h"
 #include "prog2/Prog2.h"
 #include "prog3/Prog3.h"
@@ -39,8 +40,10 @@ std::string join(const std::string &dir, const char *name) {
 
 int DefaultLauncher::run(int program, Shared::Params &params, Shared::Runtime &rt) {
 	switch (program) {
-	case kProg0:
-		return 0;               // the party/save-slot program is not reimplemented yet; "nothing to do" is its normal success
+	case kProg0: {
+		Prog0::Prog0 p(rt, params);
+		return p.run();
+	}
 	case kProg1: {
 		Prog1::Prog1 p(rt, params);
 		return p.run();

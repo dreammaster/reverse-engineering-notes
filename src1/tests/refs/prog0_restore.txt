@@ -1,0 +1,16 @@
+wait 4
+key 0D
+wait 8
+ext 50
+wait 1
+key 0D
+wait 3
+ext 50
+wait 1
+ext 50
+wait 1
+key 0D
+wait 1
+key 0D
+wait 6
+quit

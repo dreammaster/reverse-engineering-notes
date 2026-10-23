@@ -34,6 +34,10 @@ public:
 		const uint32 t = ticks();
 		return (uint16)((((t * 10 / 182) % 60) << 8) | ((t * 1000 / 182) % 100));
 	}
+	/** The DOS text screen, which PROG0 uses for its party list (INT 10h): write a string at a text cell (80x25) ... */
+	virtual void textOut(int col, int row, const char *s) { (void)col; (void)row; (void)s; }
+	/** ... and read a line typed by the player (INT 21h/0Ah); "" when the platform has none. */
+	virtual std::string readLine() { return std::string(); }
 	/** Give the CPU back for a moment (busy-wait loops call this). */
 	virtual void idle() = 0;
 	/** PC speaker tone (frequency in Hz) or silence (0). */

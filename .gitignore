@@ -29,3 +29,6 @@ yendor1/ida_scripts/*.txt
 yendor1/ida_scripts/batch_run_and_export.log
 src1/fonts/
 src1/build/
+
+# scratch directories the tests write (copies of game data)
+src1/tests/test_*_work*/

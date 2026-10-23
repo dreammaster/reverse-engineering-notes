@@ -104,19 +104,24 @@ static void checkShell(const char *refVar, const char *stopSnap, const char *sto
 	for (size_t i = 0; i < want.size(); i++)
 		want[i] = TraceCompare::normalise(want[i]);
 
-	// scratch work directory with the CURRGAME files (the shell empties BATPIC.DAT and may rewrite PARTY.DAT)
+	// scratch work directory with the CURRGAME files and the saved game SAVEGAME.A (the shell empties BATPIC.DAT, and PROG0 copies the
+	// saved game over CURRGAME when the game has not started; the reference runs used a saved game patched like the current one)
 	const std::string work = "test_sw_work";
 	MKDIR(work.c_str());
 	MKDIR((work + "/CURRGAME").c_str());
+	MKDIR((work + "/SAVEGAME.A").c_str());
 	static const char *files[] = {"PARTY.DAT", "NPC.DAT", "AREA.DAT", "BATPIC.DAT"};
 	for (size_t i = 0; i < 4; i++)
 		CHECK(copyFile(std::string(TestUtil::gameDir()) + "/CURRGAME/" + files[i], work + "/CURRGAME/" + files[i]));
-	{
+	for (size_t i = 0; i < 3; i++)
+		CHECK(copyFile(std::string(TestUtil::gameDir()) + "/SAVEGAME.A/" + files[i], work + "/SAVEGAME.A/" + files[i]));
+	for (int d = 0; d < 2; d++) {
+		const std::string partyPath = work + (d ? "/SAVEGAME.A/PARTY.DAT" : "/CURRGAME/PARTY.DAT");
 		Shared::Blob party;
-		CHECK(party.load((work + "/CURRGAME/PARTY.DAT").c_str()));
+		CHECK(party.load(partyPath.c_str()));
 		if (!party.empty()) {
 			party.data()[0x25] = (Shared::byte)state;
-			FILE *f = fopen((work + "/CURRGAME/PARTY.DAT").c_str(), "wb");
+			FILE *f = fopen(partyPath.c_str(), "wb");
 			if (f) { fwrite(party.data(), 1, party.size(), f); fclose(f); }
 		}
 	}
