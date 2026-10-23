@@ -45,6 +45,8 @@ Deponia, Deponia Doomsday, Edna & Harvey, The Whispered World, ...), and Linux b
 | Libraries in `libs64` | with `libopenal.so`, `libpng12.so.0` | without them (the system ones) | with `libopenal.so`, without `libpng12.so.0` |
 | String types of the helpers | `std::string` (`LuaDoString`, `LuaExecuteFunction`), `x_assert(bool, char const *, char const *, int)` | `wxString` for the same, `x_assert(bool, wchar_t const *, wchar_t const *)` without the line | as Deponia 1 (`std::string` helpers, `x_assert(bool, char const *, char const *, int)`) |
 
+Deponia 2 is the older engine that differs most: its data model is a subset of the newer builds' (every field has the same id and type; the newer builds add 3 record classes and 32 fields), and it has none of the Lua hook API, 46 of the Lua graphics functions, the shader layer, the console load/save or the controller key events (details in `src/deponia2/VERSIONS.md`; the one change of a function found by running both is `GetAngle`, which the newer builds take modulo 360).
+
 The differences of Deponia 4 from Deponia 1 that need a decision when the engines are merged are collected in `src/deponia4/MERGE.md`: the text path (HarfBuzz shaping, the height lock of the game's fonts, the rendered-text cache), the outline shader and a few graphics details; everything else that could be checked mechanically is the same.
 
 Deponia 4 sits with Deponia 1 on every row of this table where Deponia 2 does not: the two share the graphics layer, the debugging aids and the `std::string` helpers, so the
