@@ -181,6 +181,11 @@ bool continuePendingMove(Machine &m);
 void updateSlotDistances(Machine &m);
 // 169CF: true (CF) when cell (x, y) is outside the visible window
 bool outsideView(Machine &m, uint8_t x, uint8_t y);
+// 149F7: for every party group (3..0) that can reach the pending cell, the distance table at ds:7111 gets the distance, FFh otherwise
+void updateGroupDistances(Machine &m);
+// 14664: looks at every cell of the view window for monster markers (cell classes 3 and 0Fh), draws them and keeps the table of
+// tracked monster groups; true (CF) when nothing new was found
+bool scanForMonsters(Machine &m);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

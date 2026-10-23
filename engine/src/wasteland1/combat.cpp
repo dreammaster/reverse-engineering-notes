@@ -1304,6 +1304,277 @@ bool outsideView(Machine &m, uint8_t x, uint8_t y) {
 	return uint8_t(x - m.d8(g::saved2)) >= m.d8(0x46A3) || uint8_t(y - m.d8(uint16_t(g::saved2 + 1))) >= 9;
 }
 
+void updateGroupDistances(Machine &m) {
+	const uint8_t active = m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup));
+	const uint8_t total = m.d8(uint16_t(g::saved2 + g::s2::totalPartyGroups));
+	for (int group = 3; group >= 0; --group) {
+		m.d8(0xA60E) = uint8_t(group);
+		uint8_t value = 0xFF;
+		if (group <= total) {
+			setActivePartyGroup(m, uint8_t(group));
+			if (countConsciousMembers(m) != 0 && m.d8(uint16_t(g::saved2 + g::s2::field7)) == m.d8(0xA60F)) {
+				uint8_t x, y;
+				pendingCell(m, x, y);
+				if (!outsideView(m, x, y)) {
+					X86Regs r;
+					r.dl = x; r.bl = y;
+					legacy::call(m, 0x4330, r);   // sub_14330
+					if (!r.cf) {
+						const uint8_t distance = cellDistance(m, x, y);
+						const uint8_t activeNow = m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup));
+						if (distance <= m.d8(uint16_t(m.d16(g::savedLocationDetailsPtr) + 1)) || distance <= m.d8(uint16_t(0x7212 + activeNow)))
+							value = distance;
+					}
+				}
+			}
+		}
+		m.d8(uint16_t(0x7111 + group)) = value;
+	}
+	setActivePartyGroup(m, active);
+}
+
+// 14B93: offset of the first of the four table entries of party group `group`
+static uint8_t groupEntryBase(Machine &m, uint8_t group) { return m.d8(uint16_t(0xA622 + group)); }
+
+bool scanForMonsters(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	auto S = [&](uint8_t o) -> uint8_t & { return m.d8(uint16_t(g::saved2 + o)); };
+	auto rec0 = [&](uint8_t i) -> uint8_t & { return m.d8(uint16_t(m.d16(g::savedLocationDetailsPtr) + i)); };
+	uint8_t al = 0, bl = 0, dl = 0;
+	X86Regs r;
+
+	D(0xA608) = 1;
+	for (int i = 0x3F; i >= 0; --i) D(uint16_t(0xA96F + i)) = 0;
+	D(0xA607) = S(g::s2::activePartyGroup);
+	D(0xA60F) = D(0x46DC);
+	for (int group = 3; group >= 0; --group) {   // 14686: the toughest readiness of every party group
+		S(g::s2::activePartyGroup) = uint8_t(group);
+		D(0xA613) = 0;
+		D(0xA60E) = 0;
+		if (group <= S(g::s2::totalPartyGroups)) {
+			S(g::s2::membersInGroup) = countPartyMembers(m, uint8_t(group));
+			while (D(0xA60E) != S(g::s2::membersInGroup)) {
+				++D(0xA60E);
+				const uint8_t v = combatReadiness(m, D(0xA60E));
+				if (v >= D(0xA613)) D(0xA613) = v;
+			}
+		}
+		D(uint16_t(0x7212 + group)) = D(0xA613);
+	}
+	S(g::s2::activePartyGroup) = D(0xA607);
+	D(0xA60A) = 0;
+
+restart:   // 146DB
+	D(0xA609) = 0;
+	D(0xA614) = 0;
+	do {   // 146E3: every party group on this map
+		setActivePartyGroup(m, D(0xA614));
+		if (S(g::s2::field7) == D(0xA60F)) {
+			D(0xA621) = 9;
+			bl = S(1);
+			for (;;) {   // 146FB: rows of the view
+				D(0xA60C) = bl;
+				if (!(bl & 0x80)) {
+					if (bl >= D(0x46A4)) break;   // below the map: nothing more to scan
+					selectActionRow(m, bl);
+					D(0xA61F) = D(0x46A3);
+					bl = S(0);
+					for (;;) {   // 14718: columns
+						D(0xA60D) = bl;
+						if (!(bl & 0x80)) {
+							if (bl >= D(0x46A5)) break;
+							{
+								uint8_t x, y;
+								pendingCell(m, x, y);
+								al = tileClassAt(m, x, y);
+							}
+							D(0x46B3) = al;
+							if (al == 3 || al == 0x0F) {
+								// 14776: a monster marker cell
+								{
+									uint8_t x, y;
+									pendingCell(m, x, y);
+									r = X86Regs();
+									r.dl = x; r.bl = y;
+									legacy::call(m, 0x4330, r);   // sub_14330
+									if (r.cf) {
+										continuePendingMove(m);
+										goto nextColumn;
+									}
+								}
+								{
+									al = m.d8(uint16_t(m.d16(0x46AC) + D(0xA60D)));
+									saveLocationRecord(m, D(0x46B3), al);
+									uint8_t x, y;
+									pendingCell(m, x, y);
+									al = cellDistance(m, x, y);
+									D(0xA613) = al;
+									if (al <= rec0(0)) {
+										// 147B1
+										if (S(g::s2::activePartyGroup) == D(0xA607)) {
+											for (dl = 0; dl != 3; ++dl) {
+												al = rec0(m.d8(uint16_t(g::encounterOffsets + dl)));
+												if (al != 0) break;
+											}
+											bl = 3;
+											if (!(al & 0x80)) {
+												getMonsterDetails(m, al);
+												bl = itemByte(m, 6);
+											}
+											al = m.d8(uint16_t(0xAA17 + bl));
+											if (D(0xA608) != 0) {
+												setViewRowPointer(m, D(0xA60C));
+												const uint8_t ah = m.d8(uint16_t(m.d16(0x46CA) + D(0xA60D)));
+												uint8_t sx = D(0xA60D), sy = D(0xA60C);
+												if (!cellToScreen(m, sx, sy)) {
+													D(0x4685) = sx;
+													D(0x4686) = sy;
+													r = X86Regs();
+													r.al = al; r.ah = ah; r.dl = sx; r.bl = sy;
+													legacy::call(m, 0x000C, r);   // j_start_2
+												}
+											}
+										}
+									} else {
+										if (continuePendingMove(m)) goto handled;   // CF clear: carry on below
+										goto nextColumn;
+									}
+								}
+							handled:
+								// 1481C
+								if (countConsciousMembers(m) == 0) goto nextColumn;
+								al = D(0xA613);
+								{
+									bool take = false;
+									if (al <= rec0(1)) take = true;
+									else if (al <= D(uint16_t(0x7212 + S(g::s2::activePartyGroup)))) take = al <= rec0(0);
+									if (!take) goto nextColumn;
+								}
+								// 14854
+								{
+									uint8_t x, y;
+									pendingCell(m, x, y);
+									uint8_t entry = 0;
+									const bool found = findEntry(m, S(g::s2::field7), x, y, entry);
+									if (found) {
+										D(0xA612) = uint8_t(entry >> 2);
+										updateGroupDistances(m);
+										for (;;) {   // 14868
+											uint8_t index;
+											al = smallestGroupValue(m, index);
+											dl = index;
+											if (al == 0xFF) goto nextColumn;
+											al = D(0xA611);
+											if (al == D(0xA612)) goto nextColumn;
+											D(0xA60B) = al;
+											D(0xA611) = dl;
+											bl = groupEntryBase(m, dl);
+											bool freeSlot = false;
+											for (dl = 0;;) {
+												if (m.d8(uint16_t(0xA96F + bl)) == 0) { freeSlot = true; break; }
+												bl = uint8_t(bl + 4);
+												if (++dl == 4) break;
+											}
+											if (freeSlot) {
+												if (D(0xA611) == D(0xA612)) goto nextColumn;
+												D(0xA60E) = bl;
+												forgetTrackedGroup(m);
+												recordTrackedGroup(m, D(0xA60E));
+												goto nextColumn;
+											}
+											bl = groupEntryBase(m, D(0xA611));
+											bool replace = false;
+											for (dl = 3;;) {
+												if (D(0xA60B) < m.d8(uint16_t(0xA972 + bl))) { replace = true; break; }
+												bl = uint8_t(bl + 4);
+												if (--dl & 0x80) break;
+											}
+											if (replace && D(0xA611) != D(0xA612)) {
+												D(0xA60E) = bl;
+												forgetTrackedGroup(m);
+												recordTrackedGroup(m, D(0xA60E));
+												goto nextColumn;
+											}
+											D(uint16_t(0x7111 + D(0xA611))) = 0xFF;   // 148BB
+										}
+									} else {
+										updateGroupDistances(m);   // 148FF
+										for (;;) {
+											uint8_t index;
+											al = smallestGroupValue(m, index);
+											dl = index;
+											if (al == 0xFF) goto nextColumn;
+											D(0xA60B) = al;
+											D(0xA611) = dl;
+											bl = groupEntryBase(m, dl);
+											bool freeSlot = false;
+											for (dl = 0;;) {
+												if (m.d8(uint16_t(0xA96F + bl)) == 0) { freeSlot = true; break; }
+												bl = uint8_t(bl + 4);
+												if (++dl == 4) break;
+											}
+											if (freeSlot) { recordTrackedGroup(m, bl); goto nextColumn; }
+											bl = groupEntryBase(m, D(0xA611));
+											bool replace = false;
+											for (dl = 3;;) {
+												if (D(0xA60B) < m.d8(uint16_t(0xA972 + bl))) { replace = true; break; }
+												bl = uint8_t(bl + 4);
+												if (--dl & 0x80) break;
+											}
+											if (replace) {
+												D(0xA609) = 1;
+												recordTrackedGroup(m, bl);
+												goto nextColumn;
+											}
+											D(uint16_t(0x7111 + D(0xA611))) = 0xFF;
+										}
+									}
+								}
+							}
+						}
+					nextColumn:   // 14739
+						bl = uint8_t(D(0xA60D) + 1);
+						if (--D(0xA61F) == 0) break;
+					}
+				}
+				bl = uint8_t(D(0xA60C) + 1);   // 14747
+				if (--D(0xA621) == 0) break;
+			}
+		}
+		++D(0xA614);   // 14753
+	} while (D(0xA614) <= S(g::s2::totalPartyGroups));
+	if (D(0xA609) != 0) goto restart;
+	setActivePartyGroup(m, D(0xA607));
+
+	// 14965: the tracked monsters get their slots and visited flags
+	D(0xA610) = 0;
+	for (int group = 3; group >= 0; --group) {
+		D(0xA620) = uint8_t(group);
+		for (int slot = 3; slot >= 0; --slot) {
+			D(0xA61E) = uint8_t(slot);
+			selectSlot(m, uint8_t(group), uint8_t(slot));
+			const uint8_t base = groupEntryBase(m, uint8_t(group));
+			D(0xA60E) = base;
+			const uint8_t offset = uint8_t(slot * 4 + base);
+			const uint8_t x = m.d8(uint16_t(0xA96F + offset));
+			if (x != 0) {
+				const uint8_t y = m.d8(uint16_t(0xA970 + offset));
+				selectCellRecord(m, x, y);
+				if (!((m.d8(uint16_t(m.d16(g::savedLocationDetailsPtr) + 9)) >> 1) & 1)) D(0xA610) = 1;
+			}
+			const uint16_t slotRecord = m.d16(g::monsterPtr);
+			bool clear = false;
+			if (m.d8(slotRecord) == 0) clear = true;
+			else if (m.d8(uint16_t(slotRecord + 2)) == D(0xA60F)) {
+				uint8_t entry;
+				clear = !findEntry(m, D(0xA60F), m.d8(slotRecord), m.d8(uint16_t(slotRecord + 1)), entry);
+			}
+			if (clear) clearSlot(m);
+		}
+	}
+	return !((D(0xA60A) & D(0xA610)) != 0);
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }
