@@ -71,6 +71,7 @@ one of three things, and only the third is a difference of Deponia 4:
 
 At `-O2` the reconstruction scored 0.95-1.00 for 4 functions of Deponia 4 and under 0.5 for 1,720; at `-O0` it is 3,113 and 930
 (of 7,043 functions in both). The `-O0` build is the right yardstick for Deponia 4. (Deponia 1 compared with itself: 1,001 under 0.5 of 2,801.)
+After the text path was changed to Deponia 4's form, `src/deponia4` itself (157 files, `tools/crosscompile.py deponia4 -O0 -X -fno-omit-frame-pointer --tag o0`, 23 Oct 2026) scores 3,075 functions at 0.95-1.00 and 932 under 0.5 of 6,994 in both. The text classes stay low (`TFreetypeFont` 0.32, `TCFont` 0.47, `TFontManager` 0.39, `TTText` 0.16) for a reason of design, not a wrong text path: the reconstruction draws each glyph as a sprite of the graphics backend, where the original's `RenderString()` is a short wrapper (59 instructions) around `RenderString_i(x, y, begin, end, scale, vector<region>*, int, GLCharBuffer*)` and puts glyphs into textures and GL batches; the reconstruction's `RenderString()` does the per-character loop itself (371 instructions).
 
 ## Findings
 
