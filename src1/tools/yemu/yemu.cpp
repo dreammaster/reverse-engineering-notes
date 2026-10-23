@@ -137,6 +137,10 @@ int main(int argc, char **argv) {
 			if (eventsOut)
 				fprintf(eventsOut, "K %s %ld %llu %d\n", curProg.c_str(), callsInProg, (unsigned long long)(poll - m.pollAtCall(psp)), key);
 		};
+		m.onTicks = [&](int, uint64_t n, uint32_t t) {
+			if (eventsOut)
+				fprintf(eventsOut, "T %s %llu %u\n", curProg.c_str(), (unsigned long long)n, t);
+		};
 		m.onStep = [&](const Yemu::ScriptStep &st) {
 			if (eventsOut && (st.kind == Yemu::ScriptStep::Key || st.kind == Yemu::ScriptStep::MouseMove || st.kind == Yemu::ScriptStep::MouseTo || st.kind == Yemu::ScriptStep::MouseDown || st.kind == Yemu::ScriptStep::MouseUp))
 				fprintf(eventsOut, "%s %ld %d %d %d\n", curProg.c_str(), callsInProg, (int)st.kind, st.a, st.b);

@@ -38,7 +38,7 @@ std::string joinPath(const std::string &dir, const std::string &name) {
 } // namespace
 
 Machine16::Machine16(Runtime &rtIn, Launcher *launcherIn, const Params &p)
-	: rt(rtIn), launcher(launcherIn), params(p), lastExitCode(0), _cursorX(0), _cursorY(0), _dummy(0), _polls(0), _pollsAtCall(0),
+	: rt(rtIn), launcher(launcherIn), params(p), lastExitCode(0), _cursorX(0), _cursorY(0), _dummy(0), _polls(0), _pollsAtCall(0), _stringOps(0), _tickReads(0), driverCalls(0),
 	  _speakerDivisor(0) {
 	memset(_stack, 0, sizeof(_stack));
 	memset(_psp, 0, sizeof(_psp));
@@ -183,6 +183,13 @@ std::string Machine16::asciz(uint16_t seg, uint16_t off) {
 // string instructions
 // ---------------------------------------------------------------------------------------------
 
+// A program can spin in a loop that makes no call into the system (a list walk that never ends, as the original's does when given
+// parameters it was not written for): now and then the platform gets a chance to stop it.
+void Machine16::watchdog() {
+	if ((++_stringOps & 0xFFFF) == 0 && !rt.system.pump())
+		throw ProgramExit(0xFD);
+}
+
 void Machine16::movs(int size) {
 	if (size == 1)
 		b(r.es, r.di) = b(r.ds, r.si);
@@ -208,6 +215,7 @@ uint16_t Machine16::lods(int size) {
 }
 
 void Machine16::scas(int size) {
+	watchdog();
 	if (size == 1)
 		alu::sub<uint8_t>(r, r.al, b(r.es, r.di));
 	else
@@ -216,6 +224,7 @@ void Machine16::scas(int size) {
 }
 
 void Machine16::cmps(int size) {
+	watchdog();
 	if (size == 1)
 		alu::sub<uint8_t>(r, b(r.ds, r.si), b(r.es, r.di));
 	else
@@ -267,6 +276,8 @@ void Machine16::unbridgeImage() {
 
 void Machine16::int62() {
 	_pollsAtCall = _polls;
+	if (r.ah != 0x2B)
+		driverCalls++;
 	bridgeImage();
 	rt.video.call(r.ah, r.al);
 	unbridgeImage();
@@ -274,7 +285,7 @@ void Machine16::int62() {
 
 void Machine16::int1A() {
 	if (r.ah == 0) {
-		const uint32_t t = rt.system.ticks();
+		const uint32_t t = rt.system.ticksFor(_tickReads++);
 		r.dx = (uint16_t)t;
 		r.cx = (uint16_t)(t >> 16);
 		r.al = 0;

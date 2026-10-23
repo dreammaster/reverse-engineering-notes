@@ -56,7 +56,7 @@ std::string join(const std::string &dir, const char *name) {
 // ---------------------------------------------------------------------------------------------
 
 int DefaultLauncher::run(int program, Shared::Params &params, Shared::Runtime &rt) {
-	const bool generated = program >= 4 && program != kProg5 && program != kProg6
+	const bool generated = program >= 4 && program != kProg5
 		|| (program == kProg5 && (params.raw[0x02] == 1 || params.raw[0x02] == 2));
 	rt.system.programStarted(program, generated);
 	const int code = runProgram(program, params, rt);
@@ -89,10 +89,9 @@ int DefaultLauncher::runProgram(int program, Shared::Params &params, Shared::Run
 		Prog5::Prog5 p(rt, params);
 		return p.run();
 	}
-	case kProg6: {
-		Prog6::Prog6 p(rt, params, *this);
-		return p.run();
-	}
+	case kProg6:
+		// the hand port (Prog6, verified save/restore dialogs) lacks the party strip a restored game redraws: the translation does it all
+		return Shared::runGenerated<Gen::Prog6Gen>(rt, this, params, "PROG6.EXE");
 	case 4:
 		return Shared::runGenerated<Gen::Prog4Gen>(rt, this, params, "PROG4.EXE");
 	case 7:

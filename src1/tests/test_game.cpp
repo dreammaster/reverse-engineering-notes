@@ -75,7 +75,22 @@ TEST_MAIN_BEGIN("the whole game against the original")
 	keys.load(ref + "/trace.txt.events", 0);
 	Replay sys(v, none, rec, want.size() * 3, 0x1234, &want, keys);
 	Shared::Runtime rt(v, sys);
-	Sw::DefaultLauncher launcher;
+	// YENDOR1_SWAP=n: the reference run was made with PROG4.EXE replaced by PROGn.EXE (a way to reach a program without playing to it)
+	class SwapLauncher : public Sw::DefaultLauncher {
+	public:
+		int target;
+		SwapLauncher() : target(0) {}
+		int run(int program, Shared::Params &params, Shared::Runtime &rt) {
+			const int code = Sw::DefaultLauncher::run(target && program == 4 ? target : program, params, rt);
+			if (getenv("YENDOR1_EXITS"))
+				fprintf(stderr, "program %d exited with %d\n", program, code);
+			return code;
+		}
+	} launcher;
+	if (const char *swap = getenv("YENDOR1_SWAP")) {
+		launcher.target = atoi(swap);
+		sys.alias(launcher.target, "PROG4.EXE");
+	}
 	Sw::Config cfg;
 	cfg.dataDir = TestUtil::gameDir();
 	cfg.workDir = work;
@@ -89,6 +104,13 @@ TEST_MAIN_BEGIN("the whole game against the original")
 	got.resize(n);
 	expect.resize(n);
 	const std::string diff = TraceCompare::compare(expect, got);
+	if (const char *dump = getenv("YENDOR1_DUMP")) {
+		FILE *f = fopen(dump, "w");
+		for (size_t i = 0; f && i < n; i++)
+			fprintf(f, "%zu W %s\n%zu G %s\n", i, expect[i].c_str(), i, got[i].c_str());
+		if (f)
+			fclose(f);
+	}
 	if (!diff.empty()) {
 		printf("  trace mismatch: %s\n", diff.c_str());
 		showContext(diff, expect, got);

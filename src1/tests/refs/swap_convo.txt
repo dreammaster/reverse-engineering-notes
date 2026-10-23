@@ -1,0 +1,26 @@
+wait 4
+key 0D
+wait 8
+key 0D
+wait 4
+shot s0
+text name
+key 0D
+wait 3
+shot s1
+text job
+key 0D
+wait 3
+shot s2
+text tavern
+key 0D
+wait 3
+shot s3
+text xyzzy
+key 0D
+wait 3
+text bye
+key 0D
+wait 3
+shot s4
+quit

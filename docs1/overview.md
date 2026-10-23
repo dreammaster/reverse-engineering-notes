@@ -285,3 +285,22 @@ ported. `keys` (5,864 of 5,884 calls) and `walk`, `idle` match call for call thr
 differ (an NPC takes a step in the original that does not in the port; the NPC records and random seeds were equal at every visit
 before it, so something outside them differs -- not yet found).
 
+
+## 2026-10-23 -- verifying the other translated programs: running them in place of PROG4
+
+Playing the original to every program is slow, so `test_game` also runs a game directory in which `PROG4.EXE` is replaced by another
+program (`YENDOR1_SWAP=n`; the reference run is made with yemu on that directory, `tests/refs/make_game_ref.ps1`): SW.EXE starts it where
+it would start PROG4, with SW's parameter block. The programs run with whatever input a script gives them, which is enough to compare the
+port with the original call for call. Results (scripts `swap_convo.txt`, `swap_generic.txt`): PROG12, 13, 14 (conversation, typed words),
+PROG9, PROG16 (the Great Hall cutscene with its dissolve), PROG17, PROG18 (casino rules screens) match completely; the three-character
+`keys` run through PROG4 and its children matches 7,842 of 7,842 calls from the start of SW.EXE. PROG10 and PROG15 started this way
+diverge, and not because of the translation: with parameters PROG4 never gives them they take paths the original itself only survives by
+accident (PROG10's setup loop `retn`s into whatever is on the stack, PROG15 reads uninitialised data); they need a real route to their
+doors (PROG15: a shop entrance in a town; PROG10: PROG4's exit code 3) and are the next thing to cover.
+
+What the replay needs to be exact (all in `tests/ReplaySystem.h` and the translated runtime): keys are given at the poll the original read
+them (see above), the BIOS tick values the original read (INT 1Ah) are replayed from a sparse tape per program (`T` lines in
+`trace.txt.events`), and a translated program that loops without calling the system (the original loops forever too when given
+parameters it was not written for) is stopped by the platform through a watchdog at every jump back (`Machine16::loopTick`).
+`Shared::System` got `pollKeyFor`, `ticksFor`, `programStarted/Ended` for this; real systems answer them with `pollKey()`/`ticks()`.
+The shell now runs PROG6 through its translation as well (the hand port lacks the party strip a restored game redraws).

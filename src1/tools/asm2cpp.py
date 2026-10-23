@@ -412,7 +412,8 @@ class Translator:
     def goto(self, op, proc, cond=None):
         tp, name = self.jump_target(op, proc)
         if tp is proc:
-            stmt = "goto %s;" % name
+            # a jump back: the platform gets a chance to stop a loop that never ends (Machine16::loopTick)
+            stmt = ("{ m.loopTick(); goto %s; }" if name in self._seen else "goto %s;") % name
         else:
             self.entries.setdefault(tp.name, set()).add(name)
             if name == tp.name:
@@ -423,9 +424,11 @@ class Translator:
 
     def translate_proc(self, proc):
         out = ["%s:;" % proc.name]
+        self._seen = set([proc.name])
         for idx, it in enumerate(proc.items):
             if it[0] == "label":
                 out.append("%s:;" % it[1])
+                self._seen.add(it[1])
                 continue
             _, mnem, ops, ln = it
             self._prev_push_cs = idx > 0 and proc.items[idx - 1][0] == "ins" and proc.items[idx - 1][1] == "push" and proc.items[idx - 1][2] == ["cs"]

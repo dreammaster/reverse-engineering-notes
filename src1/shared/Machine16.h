@@ -338,6 +338,15 @@ private:
 	uint8_t _parentPsp[256];
 	uint8_t _jft[256];
 	uint8_t _ctxExtra[0x1000];
+	uint64_t _stringOps, _tickReads;
+public:
+	uint64_t driverCalls;            // driver calls made by this program (pointer refreshes excluded), for tracing
+private:
+	void watchdog();
+public:
+	/** Called at every jump back of the translated code: the platform may stop a program that loops without making a call. */
+	void loopTick() { watchdog(); }
+private:
 	uint64_t _polls, _pollsAtCall;    // INT 21h/06h polls made so far, and when the last driver call was made
 	uint16_t _tileTableSeg;
 	unsigned _tileSlots;

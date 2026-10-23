@@ -227,9 +227,9 @@ loc_1022D:;
     m.push(0);
     sub_103C5();
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x1B));
-    if (r.zf) goto loc_101F3;
+    if (r.zf) { m.loopTick(); goto loc_101F3; }
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0x7E00)), (uint8_t)(0x0));
-    if (r.zf) goto loc_101F3;
+    if (r.zf) { m.loopTick(); goto loc_101F3; }
     m.push(0);
     sub_114A6();
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0x7E00)), (uint8_t)(0x4B));
@@ -248,7 +248,7 @@ loc_10266:;
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(0x7DF0)));
     m.push(0);
     shared_bfb949();
-    goto loc_1022D;
+    { m.loopTick(); goto loc_1022D; }
 loc_1026E:;
     m.push(0);
     shared_5c5219();
@@ -289,7 +289,7 @@ loc_102A5:;
     m.push(0);
     sub_114A6();
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0x7E00)), (uint8_t)(0x0));
-    if (r.zf) goto loc_102A5;
+    if (r.zf) { m.loopTick(); goto loc_102A5; }
     m.push(0);
     shared_5c5219();
     r.ah = (uint8_t)(0x29);
@@ -403,7 +403,7 @@ loc_103AB:;
     m.ww(r.ds, (uint16_t)(0xE54), (uint16_t)(alu::inc<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xE54)))));
 loc_103B6:;
     r.si = (uint16_t)(alu::add<uint16_t>(r, r.si, (uint16_t)(0x22)));
-    goto loc_1032D;
+    { m.loopTick(); goto loc_1032D; }
 }
 void Prog8Gen::sub_103BC() {
 sub_103BC:;
@@ -443,7 +443,7 @@ loc_103E8:;
     m.push(0);
     shared_21818f();
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0x7E01)), (uint8_t)(0x3));
-    if ((!r.zf && r.sf == r.of)) goto loc_103E8;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto loc_103E8; }
     if (!r.zf) goto loc_10402;
     goto loc_10452;
 loc_10402:;
@@ -459,13 +459,13 @@ loc_10418:;
     if (!r.zf) goto loc_10425;
     m.push(0);
     sub_10A2B();
-    goto loc_103E8;
+    { m.loopTick(); goto loc_103E8; }
 loc_10425:;
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x51));
     if (!r.zf) goto loc_10432;
     m.push(0);
     sub_109E5();
-    goto loc_103E8;
+    { m.loopTick(); goto loc_103E8; }
 loc_10432:;
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0xD));
     if (!r.zf) goto loc_10444;
@@ -476,7 +476,7 @@ loc_10432:;
     return;
 loc_10444:;
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x1B));
-    if (!r.zf) goto loc_103E8;
+    if (!r.zf) { m.loopTick(); goto loc_103E8; }
     m.b(r.ds, (uint16_t)(0x7E00)) = (uint8_t)(0x0);
     r.sp = (uint16_t)(r.sp + 2);
     return;
@@ -486,11 +486,11 @@ loc_10455:;
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(r.di)), (uint16_t)(0x0));
     if (!r.zf) goto loc_1045C;
 loc_1045A:;
-    goto loc_103E8;
+    { m.loopTick(); goto loc_103E8; }
 loc_1045C:;
     r.ax = (uint16_t)(m.rw(r.es, (uint16_t)(0x966)));
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(r.di + 0x2))));
-    if ((r.sf != r.of)) goto loc_1045A;
+    if ((r.sf != r.of)) { m.loopTick(); goto loc_1045A; }
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(r.di + 0x6))));
     if ((!r.zf && r.sf == r.of)) goto loc_10478;
     r.ax = (uint16_t)(m.rw(r.es, (uint16_t)(0x968)));
@@ -500,7 +500,7 @@ loc_1045C:;
     if ((r.zf || r.sf != r.of)) goto loc_1047D;
 loc_10478:;
     r.di = (uint16_t)(alu::add<uint16_t>(r, r.di, (uint16_t)(0xA)));
-    goto loc_10455;
+    { m.loopTick(); goto loc_10455; }
 loc_1047D:;
     m.push((uint16_t)(r.si));
     m.ww(r.ds, (uint16_t)(0xE71), (uint16_t)(r.di));
@@ -574,7 +574,7 @@ loc_10525:;
     m.push(0);
     m.push(0);
     shared_0bb58f();
-    goto loc_103E8;
+    { m.loopTick(); goto loc_103E8; }
 loc_1053A:;
     r.al = (uint8_t)(m.b(r.es, (uint16_t)(0x73)));
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
@@ -605,7 +605,7 @@ loc_10577:;
     m.push(0);
     m.push(0);
     shared_0bb58f();
-    goto loc_103E8;
+    { m.loopTick(); goto loc_103E8; }
 }
 void Prog8Gen::sub_1058C() {
 sub_1058C:;
@@ -663,7 +663,7 @@ loc_105FF:;
     m.b(r.es, (uint16_t)(0x2B)) = (uint8_t)(alu::inc<uint8_t>(r, m.b(r.es, (uint16_t)(0x2B))));
     r.si = (uint16_t)(alu::inc<uint16_t>(r, r.si));
     r.cx--;
-    if (r.cx != 0) goto loc_105E5;
+    if (r.cx != 0) { m.loopTick(); goto loc_105E5; }
     r.al = (uint8_t)(m.b(r.es, (uint16_t)(0x6B)));
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
     r.si = (uint16_t)(0xE75);
@@ -706,7 +706,7 @@ loc_10622:;
     m.ww(r.ds, (uint16_t)(r.di + 0x6), (uint16_t)(r.ax));
     m.ww(r.ds, (uint16_t)(0xE71), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xE71)), (uint16_t)(0xA))));
     r.di = (uint16_t)(m.pop());
-    goto loc_105FF;
+    { m.loopTick(); goto loc_105FF; }
 }
 void Prog8Gen::sub_1066A() {
 sub_1066A:;
@@ -835,12 +835,12 @@ loc_1078C:;
     m.ww(r.ds, (uint16_t)(0x7DEC), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.ds, (uint16_t)(0x7DEC)), (uint16_t)(0x20))));
     r.bx = (uint16_t)(alu::add<uint16_t>(r, r.bx, (uint16_t)(0x4)));
     r.cx--;
-    if (r.cx != 0) goto loc_10784;
+    if (r.cx != 0) { m.loopTick(); goto loc_10784; }
     m.b(r.ds, (uint16_t)(0x7DF8)) = (uint8_t)(alu::inc<uint8_t>(r, m.b(r.ds, (uint16_t)(0x7DF8))));
     m.ww(r.ds, (uint16_t)(0x7DEE), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.ds, (uint16_t)(0x7DEE)), (uint16_t)(0x20))));
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_1075F;
+    if (r.cx != 0) { m.loopTick(); goto loc_1075F; }
     m.push(0);
     m.push(0);
     drawBackdropTile();
@@ -855,7 +855,7 @@ loc_107B1:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(0x7));
     if (r.zf) goto loc_107E0;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(0x5));
-    if (!r.zf) goto loc_1078C;
+    if (!r.zf) { m.loopTick(); goto loc_1078C; }
     m.push((uint16_t)(r.cx));
     m.push((uint16_t)(r.bx));
     m.ww(r.ds, (uint16_t)(0x7DF3), (uint16_t)(0x220));
@@ -893,7 +893,7 @@ loc_10800:;
     drawTileKeyed();
     r.bx = (uint16_t)(m.pop());
     r.cx = (uint16_t)(m.pop());
-    goto loc_1078C;
+    { m.loopTick(); goto loc_1078C; }
 }
 void Prog8Gen::sub_10825() {
 sub_10825:;
@@ -915,7 +915,7 @@ loc_1082C:;
     delayTicks();
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_1082C;
+    if (r.cx != 0) { m.loopTick(); goto loc_1082C; }
     m.b(r.es, (uint16_t)(0x35)) = (uint8_t)(0x1);
     r.al = (uint8_t)(m.b(r.es, (uint16_t)(0x73)));
     m.b(r.es, (uint16_t)(0x2F)) = (uint8_t)(r.al);
@@ -963,7 +963,7 @@ loc_108AB:;
     delayTicks();
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_108AB;
+    if (r.cx != 0) { m.loopTick(); goto loc_108AB; }
     m.b(r.es, (uint16_t)(0x35)) = (uint8_t)(0x0);
     r.al = (uint8_t)(m.b(r.es, (uint16_t)(0x73)));
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
@@ -994,7 +994,7 @@ loc_108E3:;
     delayTicks();
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_108E3;
+    if (r.cx != 0) { m.loopTick(); goto loc_108E3; }
     r.al = (uint8_t)(m.b(r.es, (uint16_t)(0x73)));
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
     m.push(0);
@@ -1038,11 +1038,11 @@ loc_1093A:;
     m.push(0);
     shared_21818f();
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0x7E01)), (uint8_t)(0x3));
-    if ((!r.zf && r.sf == r.of)) goto loc_1093A;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto loc_1093A; }
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0xD));
     if (r.zf) goto loc_10965;
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x1B));
-    if (!r.zf) goto loc_1093A;
+    if (!r.zf) { m.loopTick(); goto loc_1093A; }
     m.b(r.ds, (uint16_t)(0x7E01)) = (uint8_t)(0x2);
     r.sp = (uint16_t)(r.sp + 2);
     return;
@@ -1066,7 +1066,7 @@ loc_10983:;
     shared_8f3252();
     if (r.zf) goto loc_10998;
     m.ww(r.ds, (uint16_t)(0xE58), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xE58)), (uint16_t)(0x2))));
-    goto loc_10983;
+    { m.loopTick(); goto loc_10983; }
 loc_10998:;
     m.push((uint16_t)(r.cx));
     r.ah = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(r.ah ^ r.ah)));
@@ -1096,7 +1096,7 @@ loc_109BF:;
     m.b(r.ds, (uint16_t)(0xE67)) = (uint8_t)(alu::add<uint8_t>(r, m.b(r.ds, (uint16_t)(0xE67)), (uint8_t)(0x5)));
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_10983;
+    if (r.cx != 0) { m.loopTick(); goto loc_10983; }
     r.ah = (uint8_t)(0x28);
     m.intr(0x62);
     m.b(r.ds, (uint16_t)(0x7E01)) = (uint8_t)(0x0);
@@ -1361,7 +1361,7 @@ loc_10C1A:;
     goto loc_10C35;
 loc_10C27:;
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x1B));
-    if (!r.zf) goto loc_10C1A;
+    if (!r.zf) { m.loopTick(); goto loc_10C1A; }
     m.b(r.ds, (uint16_t)(0x7E01)) = (uint8_t)(0x2);
     r.sp = (uint16_t)(r.sp + 2);
     return;
@@ -1402,7 +1402,7 @@ loc_10C75:;
     if (!r.zf) goto loc_10C7D;
     goto loc_10EDF;
 loc_10C7D:;
-    goto loc_10C1A;
+    { m.loopTick(); goto loc_10C1A; }
 loc_10C7F:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x678)) & 0x80));
     if (r.zf) goto loc_10C8F;
@@ -1421,7 +1421,7 @@ loc_10C97:;
     return;
 loc_10CA0:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.es, (uint16_t)(0x912)) & 0x40));
-    if (!r.zf) goto loc_10C97;
+    if (!r.zf) { m.loopTick(); goto loc_10C97; }
     m.b(r.ds, (uint16_t)(0x678)) = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x678)) | 0x80)));
     m.b(r.ds, (uint16_t)(0x7E01)) = (uint8_t)(0x0);
     m.b(r.ds, (uint16_t)(0x7E00)) = (uint8_t)(0x64);
@@ -1431,7 +1431,7 @@ loc_10CA0:;
 loc_10CBD:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x678)) & 0x40));
     if (r.zf) goto loc_10CC6;
-    goto loc_10C86;
+    { m.loopTick(); goto loc_10C86; }
 loc_10CC6:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.es, (uint16_t)(0x912)) & 0x40));
     if (r.zf) goto loc_10CD7;
@@ -1456,7 +1456,7 @@ loc_10CD7:;
 loc_10D02:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x678)) & 0x20));
     if (r.zf) goto loc_10D0C;
-    goto loc_10C86;
+    { m.loopTick(); goto loc_10C86; }
 loc_10D0C:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.es, (uint16_t)(0x912)) & 0xC0));
     if (r.zf) goto loc_10D1D;
@@ -1504,7 +1504,7 @@ loc_10D78:;
 loc_10D81:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x678)) & 0x10));
     if (r.zf) goto loc_10D8B;
-    goto loc_10C86;
+    { m.loopTick(); goto loc_10C86; }
 loc_10D8B:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.es, (uint16_t)(0x912)) & 0xC0));
     if (r.zf) goto loc_10D9C;
@@ -1537,7 +1537,7 @@ loc_10D9C:;
 loc_10DDF:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x678)) & 0x8));
     if (r.zf) goto loc_10DE9;
-    goto loc_10C86;
+    { m.loopTick(); goto loc_10C86; }
 loc_10DE9:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.es, (uint16_t)(0x912)) & 0xC0));
     if (r.zf) goto loc_10DFA;
@@ -1564,7 +1564,7 @@ loc_10DFA:;
 loc_10E28:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x678)) & 0x4));
     if (r.zf) goto loc_10E32;
-    goto loc_10C86;
+    { m.loopTick(); goto loc_10C86; }
 loc_10E32:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.es, (uint16_t)(0x912)) & 0x80));
     if (!r.zf) goto loc_10E43;
@@ -1575,7 +1575,7 @@ loc_10E3A:;
     return;
 loc_10E43:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.es, (uint16_t)(0x912)) & 0x40));
-    if (!r.zf) goto loc_10E3A;
+    if (!r.zf) { m.loopTick(); goto loc_10E3A; }
     m.b(r.ds, (uint16_t)(0x678)) = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x678)) | 0x4)));
     m.b(r.ds, (uint16_t)(0x7E01)) = (uint8_t)(0x0);
     m.b(r.ds, (uint16_t)(0x7E00)) = (uint8_t)(0x65);
@@ -1599,7 +1599,7 @@ loc_10E70:;
 loc_10E80:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x678)) & 0x2));
     if (r.zf) goto loc_10E8A;
-    goto loc_10C86;
+    { m.loopTick(); goto loc_10C86; }
 loc_10E8A:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.es, (uint16_t)(0x912)) & 0xC0));
     if (r.zf) goto loc_10E9B;
@@ -1647,7 +1647,7 @@ loc_10EF6:;
 loc_10EFF:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x678)) & 0x1));
     if (r.zf) goto loc_10F09;
-    goto loc_10C86;
+    { m.loopTick(); goto loc_10C86; }
 loc_10F09:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.es, (uint16_t)(0x912)) & 0xC0));
     if (r.zf) goto loc_10F1A;
@@ -1701,7 +1701,7 @@ loc_10F73:;
 loc_10F87:;
     m.b(r.ds, (uint16_t)(0xE6D)) = (uint8_t)(0x5);
     m.b(r.ds, (uint16_t)(0xE6E)) = (uint8_t)(0x14);
-    goto loc_10AA4;
+    { m.loopTick(); goto loc_10AA4; }
 loc_10F94:;
     r.al = (uint8_t)(0xFF);
     m.push(0);
@@ -1785,7 +1785,7 @@ loc_11022:;
     r.sp = (uint16_t)(r.sp + 2);
     return;
 loc_11037:;
-    goto loc_10B6D;
+    { m.loopTick(); goto loc_10B6D; }
 loc_1103A:;
     r.al = (uint8_t)(0xFF);
     m.push(0);
@@ -1944,7 +1944,7 @@ loc_11177:;
     r.sp = (uint16_t)(r.sp + 2);
     return;
 loc_1118C:;
-    goto loc_10B6D;
+    { m.loopTick(); goto loc_10B6D; }
 loc_1118F:;
     m.b(r.ds, (uint16_t)(0xE6D)) = (uint8_t)(0x5);
     m.b(r.ds, (uint16_t)(0xE6E)) = (uint8_t)(0xF);
@@ -1963,7 +1963,7 @@ loc_1119D:;
     r.sp = (uint16_t)(r.sp + 2);
     return;
 loc_111B2:;
-    goto loc_10B6D;
+    { m.loopTick(); goto loc_10B6D; }
 loc_111B5:;
     r.al = (uint8_t)(0xFF);
     m.push(0);
@@ -2067,7 +2067,7 @@ loc_11278:;
 loc_1128C:;
     m.b(r.ds, (uint16_t)(0xE6D)) = (uint8_t)(0xF);
     m.b(r.ds, (uint16_t)(0xE6E)) = (uint8_t)(0x32);
-    goto loc_10AA4;
+    { m.loopTick(); goto loc_10AA4; }
 loc_11299:;
     r.al = (uint8_t)(0xD);
     m.push(0);
@@ -2079,7 +2079,7 @@ loc_11299:;
     r.sp = (uint16_t)(r.sp + 2);
     return;
 loc_112AE:;
-    goto loc_10B6D;
+    { m.loopTick(); goto loc_10B6D; }
 loc_112B1:;
     r.bx = (uint16_t)(0x4C0C);
     m.b(r.es, (uint16_t)(0x35)) = (uint8_t)(0x1);
@@ -2150,7 +2150,7 @@ loc_11313:;
     m.intr(0x62);
     r.ah = (uint8_t)(0x28);
     m.intr(0x62);
-    goto loc_10AE9;
+    { m.loopTick(); goto loc_10AE9; }
 loc_11355:;
     r.al = (uint8_t)(0xE);
     m.push(0);
@@ -2398,8 +2398,8 @@ loc_115AC:;
     r.ah = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(r.ah ^ r.ah)));
     r.al = (uint8_t)(m.b(r.ds, (uint16_t)(r.si + 0x3)));
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xA29)), (uint16_t)(r.ax));
-    if (r.cf) goto loc_11595;
-    goto loc_11506;
+    if (r.cf) { m.loopTick(); goto loc_11595; }
+    { m.loopTick(); goto loc_11506; }
 loc_115BA:;
     m.b(r.ds, (uint16_t)(0x7E00)) = (uint8_t)(0x80);
 loc_115C1:;
@@ -2498,7 +2498,7 @@ loc_116AF:;
     r.si = (uint16_t)(alu::add<uint16_t>(r, r.si, (uint16_t)(0x2)));
     r.di = (uint16_t)(alu::add<uint16_t>(r, r.di, (uint16_t)(0x23)));
     r.cx--;
-    if (r.cx != 0) goto loc_11671;
+    if (r.cx != 0) { m.loopTick(); goto loc_11671; }
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xE54)), (uint16_t)(0x0));
     if (r.zf) goto loc_116E3;
     m.b(r.ds, (uint16_t)(0xE65)) = (uint8_t)(0x5);
@@ -2570,14 +2570,14 @@ loc_1175E:;
 loc_11769:;
     r.bx = (uint16_t)(alu::add<uint16_t>(r, r.bx, (uint16_t)(0x2)));
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(r.bx)), (uint16_t)(0x0));
-    if (r.zf) goto loc_11769;
+    if (r.zf) { m.loopTick(); goto loc_11769; }
     r.ax = (uint16_t)(r.bx);
     m.push(0);
     shared_cff500();
     m.ww(r.ds, (uint16_t)(0xE58), (uint16_t)(r.bx));
     m.push(0);
     shared_a38a73();
-    if (!r.zf) goto loc_11769;
+    if (!r.zf) { m.loopTick(); goto loc_11769; }
     r.sp = (uint16_t)(r.sp + 2);
     return;
 }
@@ -2596,14 +2596,14 @@ loc_11788:;
 loc_11793:;
     r.bx = (uint16_t)(alu::sub<uint16_t>(r, r.bx, (uint16_t)(0x2)));
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(r.bx)), (uint16_t)(0x0));
-    if (r.zf) goto loc_11793;
+    if (r.zf) { m.loopTick(); goto loc_11793; }
     r.ax = (uint16_t)(r.bx);
     m.push(0);
     shared_cff500();
     m.ww(r.ds, (uint16_t)(0xE58), (uint16_t)(r.bx));
     m.push(0);
     shared_a38a73();
-    if (!r.zf) goto loc_11793;
+    if (!r.zf) { m.loopTick(); goto loc_11793; }
     r.sp = (uint16_t)(r.sp + 2);
     return;
 }
@@ -2942,12 +2942,12 @@ loc_11AB7:;
     r.di = (uint16_t)(alu::add<uint16_t>(r, r.di, (uint16_t)(0x23)));
     r.si = (uint16_t)(alu::add<uint16_t>(r, r.si, (uint16_t)(0x2)));
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(r.si)), (uint16_t)(0x0));
-    if (r.zf) goto loc_11AB7;
+    if (r.zf) { m.loopTick(); goto loc_11AB7; }
     m.ww(r.ds, (uint16_t)(0xE58), (uint16_t)(r.si));
     m.push(0);
     shared_a38a73();
-    if (!r.zf) goto loc_11AB7;
-    goto loc_11A20;
+    if (!r.zf) { m.loopTick(); goto loc_11AB7; }
+    { m.loopTick(); goto loc_11A20; }
 loc_11ACE:;
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(0xE5E)));
     m.ww(r.ds, (uint16_t)(0xE58), (uint16_t)(r.ax));
@@ -2988,7 +2988,7 @@ loc_11B12:;
     (void)alu::sub<uint16_t>(r, r.si, (uint16_t)(m.rw(r.ds, (uint16_t)(0xE5C))));
     if (r.zf) goto loc_11B25;
     r.cx--;
-    if (r.cx != 0) goto loc_11B12;
+    if (r.cx != 0) { m.loopTick(); goto loc_11B12; }
     m.ww(r.ds, (uint16_t)(0xE60), (uint16_t)(r.si));
     m.push(0);
     shared_becf35();
@@ -3001,7 +3001,7 @@ loc_11B2C:;
     m.push(0);
     shared_3d96ae();
     r.cx--;
-    if (r.cx != 0) goto loc_11B2C;
+    if (r.cx != 0) { m.loopTick(); goto loc_11B2C; }
     m.ww(r.ds, (uint16_t)(0xE5E), (uint16_t)(r.si));
     m.ww(r.ds, (uint16_t)(0xE58), (uint16_t)(r.si));
     m.push(0);
@@ -3034,7 +3034,7 @@ loc_11B60:;
     (void)alu::sub<uint16_t>(r, r.si, (uint16_t)(m.rw(r.ds, (uint16_t)(0xE5A))));
     if (r.zf) goto loc_11B77;
     r.cx--;
-    if (r.cx != 0) goto loc_11B60;
+    if (r.cx != 0) { m.loopTick(); goto loc_11B60; }
     m.ww(r.ds, (uint16_t)(0xE5E), (uint16_t)(r.si));
     m.ww(r.ds, (uint16_t)(0xE58), (uint16_t)(r.si));
     m.push(0);
@@ -3049,7 +3049,7 @@ loc_11B82:;
     m.push(0);
     shared_78be1d();
     r.cx--;
-    if (r.cx != 0) goto loc_11B82;
+    if (r.cx != 0) { m.loopTick(); goto loc_11B82; }
     m.ww(r.ds, (uint16_t)(0xE60), (uint16_t)(r.si));
     m.push(0);
     shared_becf35();
@@ -3068,14 +3068,14 @@ shared_78be1d:;
     return;
 loc_11B9E:;
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(r.si)), (uint16_t)(0x0));
-    if (r.zf) goto shared_78be1d;
+    if (r.zf) { m.loopTick(); goto shared_78be1d; }
     r.ax = (uint16_t)(r.si);
     m.push(0);
     shared_cff500();
     m.ww(r.ds, (uint16_t)(0xE58), (uint16_t)(r.si));
     m.push(0);
     shared_a38a73();
-    if (!r.zf) goto shared_78be1d;
+    if (!r.zf) { m.loopTick(); goto shared_78be1d; }
     r.sp = (uint16_t)(r.sp + 2);
     return;
 }
@@ -3091,14 +3091,14 @@ shared_3d96ae:;
     return;
 loc_11BC1:;
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(r.si)), (uint16_t)(0x0));
-    if (r.zf) goto shared_3d96ae;
+    if (r.zf) { m.loopTick(); goto shared_3d96ae; }
     r.ax = (uint16_t)(r.si);
     m.push(0);
     shared_cff500();
     m.ww(r.ds, (uint16_t)(0xE58), (uint16_t)(r.si));
     m.push(0);
     shared_a38a73();
-    if (!r.zf) goto shared_3d96ae;
+    if (!r.zf) { m.loopTick(); goto shared_3d96ae; }
     r.sp = (uint16_t)(r.sp + 2);
     return;
 }
@@ -3112,7 +3112,7 @@ shared_26b4e4:;
     m.push(0);
     shared_21818f();
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0x7E01)), (uint8_t)(0x3));
-    if ((!r.zf && r.sf == r.of)) goto shared_26b4e4;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto shared_26b4e4; }
     if (!r.zf) goto loc_11BF0;
     goto loc_11D44;
 loc_11BF0:;
@@ -3147,7 +3147,7 @@ loc_11C2A:;
     r.sp = (uint16_t)(r.sp + 2);
     return;
 loc_11C3A:;
-    goto shared_26b4e4;
+    { m.loopTick(); goto shared_26b4e4; }
 loc_11C3C:;
     r.ah = (uint8_t)(0x14);
     m.intr(0x62);
@@ -3176,7 +3176,7 @@ loc_11C68:;
     shared_1639be();
     r.ax = (uint16_t)(0x1200);
     m.intr(0x62);
-    goto shared_26b4e4;
+    { m.loopTick(); goto shared_26b4e4; }
 loc_11C82:;
     r.ah = (uint8_t)(0x14);
     m.intr(0x62);
@@ -3205,7 +3205,7 @@ loc_11CAE:;
     shared_1639be();
     r.ax = (uint16_t)(0x1200);
     m.intr(0x62);
-    goto shared_26b4e4;
+    { m.loopTick(); goto shared_26b4e4; }
 loc_11CC8:;
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xE54)), (uint16_t)(0xE));
     if ((r.sf != r.of)) goto loc_11D03;
@@ -3231,7 +3231,7 @@ loc_11CC8:;
     r.ax = (uint16_t)(0x1200);
     m.intr(0x62);
 loc_11D03:;
-    goto shared_26b4e4;
+    { m.loopTick(); goto shared_26b4e4; }
 loc_11D06:;
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xE54)), (uint16_t)(0xE));
     if ((r.sf != r.of)) goto loc_11D41;
@@ -3257,18 +3257,18 @@ loc_11D06:;
     r.ax = (uint16_t)(0x1200);
     m.intr(0x62);
 loc_11D41:;
-    goto shared_26b4e4;
+    { m.loopTick(); goto shared_26b4e4; }
 loc_11D44:;
     r.di = (uint16_t)(0xE73);
 loc_11D47:;
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(r.di)), (uint16_t)(0x0));
     if (!r.zf) goto loc_11D4F;
 loc_11D4C:;
-    goto shared_26b4e4;
+    { m.loopTick(); goto shared_26b4e4; }
 loc_11D4F:;
     r.ax = (uint16_t)(m.rw(r.es, (uint16_t)(0x966)));
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(r.di + 0x2))));
-    if ((r.sf != r.of)) goto loc_11D4C;
+    if ((r.sf != r.of)) { m.loopTick(); goto loc_11D4C; }
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(r.di + 0x6))));
     if ((!r.zf && r.sf == r.of)) goto loc_11D6B;
     r.ax = (uint16_t)(m.rw(r.es, (uint16_t)(0x968)));
@@ -3278,7 +3278,7 @@ loc_11D4F:;
     if ((r.zf || r.sf != r.of)) goto loc_11D70;
 loc_11D6B:;
     r.di = (uint16_t)(alu::add<uint16_t>(r, r.di, (uint16_t)(0xA)));
-    goto loc_11D47;
+    { m.loopTick(); goto loc_11D47; }
 loc_11D70:;
     m.ww(r.ds, (uint16_t)(0xE71), (uint16_t)(r.di));
     r.ah = (uint8_t)(0x14);
@@ -3373,7 +3373,7 @@ loc_11E43:;
     shared_b5d7cb();
     (void)alu::sub<uint16_t>(r, r.bx, (uint16_t)(m.rw(r.ds, (uint16_t)(0xE60))));
     if ((!r.cf && !r.zf)) goto loc_11E52;
-    goto loc_11DE7;
+    { m.loopTick(); goto loc_11DE7; }
 loc_11E52:;
     m.ww(r.ds, (uint16_t)(0xE60), (uint16_t)(r.bx));
 loc_11E56:;
@@ -3495,14 +3495,14 @@ loc_11F69:;
     r.ax = (uint16_t)(alu::shr<uint16_t>(r, r.ax, 0x1));
     r.ax = (uint16_t)(alu::inc<uint16_t>(r, r.ax));
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(0x11F));
-    if ((r.sf != r.of)) goto loc_11F64;
+    if ((r.sf != r.of)) { m.loopTick(); goto loc_11F64; }
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(0x126));
-    if ((!r.zf && r.sf == r.of)) goto loc_11F64;
-    goto loc_11F61;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto loc_11F64; }
+    { m.loopTick(); goto loc_11F61; }
 loc_11F7F:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(r.di + 0x1)) & 0x20));
-    if (!r.zf) goto loc_11F61;
-    goto loc_11F64;
+    if (!r.zf) { m.loopTick(); goto loc_11F61; }
+    { m.loopTick(); goto loc_11F64; }
 loc_11F87:;
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(0xE58)));
     r.ax = (uint16_t)(alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(0xE4E)))));
@@ -3522,49 +3522,49 @@ loc_11FA6:;
 loc_11FAD:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0xE51)) & 0x8));
     if (!r.zf) goto loc_11FF9;
-    goto loc_11F64;
+    { m.loopTick(); goto loc_11F64; }
 loc_11FB6:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(0x1040))));
     if ((r.sf == r.of)) goto loc_11FBE;
-    goto loc_11F64;
+    { m.loopTick(); goto loc_11F64; }
 loc_11FBE:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(0x1042))));
-    if ((!r.zf && r.sf == r.of)) goto loc_11F98;
-    goto loc_11F61;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto loc_11F98; }
+    { m.loopTick(); goto loc_11F61; }
 loc_11FC6:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(0x1044))));
     if ((r.sf == r.of)) goto loc_11FCE;
-    goto loc_11F64;
+    { m.loopTick(); goto loc_11F64; }
 loc_11FCE:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(0x1046))));
-    if ((!r.zf && r.sf == r.of)) goto loc_11F9F;
-    goto loc_11F61;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto loc_11F9F; }
+    { m.loopTick(); goto loc_11F61; }
 loc_11FD6:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(0x1048))));
     if ((r.sf == r.of)) goto loc_11FDE;
-    goto loc_11F64;
+    { m.loopTick(); goto loc_11F64; }
 loc_11FDE:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(0x104A))));
-    if ((!r.zf && r.sf == r.of)) goto loc_11FA6;
-    goto loc_11F61;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto loc_11FA6; }
+    { m.loopTick(); goto loc_11F61; }
 loc_11FE7:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(0x104C))));
     if ((r.sf == r.of)) goto loc_11FF0;
-    goto loc_11F64;
+    { m.loopTick(); goto loc_11F64; }
 loc_11FF0:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(0x104E))));
-    if ((!r.zf && r.sf == r.of)) goto loc_11FAD;
-    goto loc_11F61;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto loc_11FAD; }
+    { m.loopTick(); goto loc_11F61; }
 loc_11FF9:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(0x1050))));
     if ((r.sf == r.of)) goto loc_12002;
-    goto loc_11F64;
+    { m.loopTick(); goto loc_11F64; }
 loc_12002:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(0x1052))));
     if ((!r.zf && r.sf == r.of)) goto loc_1200B;
-    goto loc_11F61;
+    { m.loopTick(); goto loc_11F61; }
 loc_1200B:;
-    goto loc_11F64;
+    { m.loopTick(); goto loc_11F64; }
 }
 void Prog8Gen::shared_74c3f3() {
 shared_74c3f3:;
@@ -3607,7 +3607,7 @@ loc_1207B:;
 loc_12080:;
     r.si = (uint16_t)(alu::add<uint16_t>(r, r.si, (uint16_t)(0x2)));
     r.cx--;
-    if (r.cx != 0) goto loc_1207B;
+    if (r.cx != 0) { m.loopTick(); goto loc_1207B; }
     r.sp = (uint16_t)(r.sp + 2);
     return;
 loc_12086:;
@@ -3617,7 +3617,7 @@ loc_12086:;
     m.push(0);
     shared_8f3252();
     if (r.zf) goto loc_12092;
-    goto loc_12080;
+    { m.loopTick(); goto loc_12080; }
 loc_12092:;
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xE54)), (uint16_t)(0x0));
     if (!r.zf) goto loc_120A1;
@@ -3626,7 +3626,7 @@ loc_12092:;
 loc_120A1:;
     m.ww(r.ds, (uint16_t)(0xE5C), (uint16_t)(r.si));
     m.ww(r.ds, (uint16_t)(0xE54), (uint16_t)(alu::inc<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xE54)))));
-    goto loc_12080;
+    { m.loopTick(); goto loc_12080; }
 }
 void Prog8Gen::shared_afced8() {
 shared_afced8:;
@@ -3655,7 +3655,7 @@ loc_120D0:;
     m.push(0);
     shared_21818f();
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0x7E01)), (uint8_t)(0x3));
-    if ((!r.zf && r.sf == r.of)) goto loc_120D0;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto loc_120D0; }
     if (!r.zf) goto loc_120EB;
     goto loc_121D6;
 loc_120EB:;
@@ -3671,7 +3671,7 @@ loc_120FD:;
     return;
 loc_12106:;
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x1B));
-    if (!r.zf) goto loc_120D0;
+    if (!r.zf) { m.loopTick(); goto loc_120D0; }
     r.sp = (uint16_t)(r.sp + 2);
     return;
 loc_1210F:;
@@ -3694,7 +3694,7 @@ loc_1210F:;
     shared_0ae370();
     r.ax = (uint16_t)(0x1200);
     m.intr(0x62);
-    goto loc_120D0;
+    { m.loopTick(); goto loc_120D0; }
 loc_12145:;
     r.bx = (uint16_t)(m.rw(r.ds, (uint16_t)(0xE58)));
     r.bx = (uint16_t)(alu::sub<uint16_t>(r, r.bx, (uint16_t)(0x2)));
@@ -3704,7 +3704,7 @@ loc_12145:;
     shared_bfb949();
     m.push(0);
     shared_8f3252();
-    if (!r.zf) goto loc_12145;
+    if (!r.zf) { m.loopTick(); goto loc_12145; }
     m.b(r.ds, (uint16_t)(0xE67)) = (uint8_t)(alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0xE67)), (uint8_t)(0x5)));
     r.al = (uint8_t)(m.b(r.es, (uint16_t)(0x6B)));
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
@@ -3712,7 +3712,7 @@ loc_12145:;
     shared_0ae370();
     r.ax = (uint16_t)(0x1200);
     m.intr(0x62);
-    goto loc_120D0;
+    { m.loopTick(); goto loc_120D0; }
 loc_12172:;
     r.ah = (uint8_t)(0x14);
     m.intr(0x62);
@@ -3733,7 +3733,7 @@ loc_12172:;
     shared_0ae370();
     r.ax = (uint16_t)(0x1200);
     m.intr(0x62);
-    goto loc_120D0;
+    { m.loopTick(); goto loc_120D0; }
 loc_121A9:;
     r.bx = (uint16_t)(m.rw(r.ds, (uint16_t)(0xE58)));
     r.bx = (uint16_t)(alu::add<uint16_t>(r, r.bx, (uint16_t)(0x2)));
@@ -3743,7 +3743,7 @@ loc_121A9:;
     shared_bfb949();
     m.push(0);
     shared_8f3252();
-    if (!r.zf) goto loc_121A9;
+    if (!r.zf) { m.loopTick(); goto loc_121A9; }
     m.b(r.ds, (uint16_t)(0xE67)) = (uint8_t)(alu::add<uint8_t>(r, m.b(r.ds, (uint16_t)(0xE67)), (uint8_t)(0x5)));
     r.al = (uint8_t)(m.b(r.es, (uint16_t)(0x6B)));
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
@@ -3751,27 +3751,27 @@ loc_121A9:;
     shared_0ae370();
     r.ax = (uint16_t)(0x1200);
     m.intr(0x62);
-    goto loc_120D0;
+    { m.loopTick(); goto loc_120D0; }
 loc_121D6:;
     r.di = (uint16_t)(0xE73);
 loc_121D9:;
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(r.di)), (uint16_t)(0x0));
     if (!r.zf) goto loc_121E1;
 loc_121DE:;
-    goto loc_120D0;
+    { m.loopTick(); goto loc_120D0; }
 loc_121E1:;
     r.ax = (uint16_t)(m.rw(r.es, (uint16_t)(0x966)));
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(r.di + 0x2))));
-    if ((r.sf != r.of)) goto loc_121DE;
+    if ((r.sf != r.of)) { m.loopTick(); goto loc_121DE; }
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(r.di + 0x6))));
-    if ((!r.zf && r.sf == r.of)) goto loc_121DE;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto loc_121DE; }
     r.ax = (uint16_t)(m.rw(r.es, (uint16_t)(0x968)));
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(r.di + 0x4))));
-    if ((r.sf != r.of)) goto loc_121DE;
+    if ((r.sf != r.of)) { m.loopTick(); goto loc_121DE; }
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(r.di + 0x8))));
     if ((r.zf || r.sf != r.of)) goto loc_12202;
     r.di = (uint16_t)(alu::add<uint16_t>(r, r.di, (uint16_t)(0xA)));
-    goto loc_121D9;
+    { m.loopTick(); goto loc_121D9; }
 loc_12202:;
     m.push((uint16_t)(r.di));
     r.ah = (uint8_t)(0x14);
@@ -3838,12 +3838,12 @@ loc_122A1:;
     m.ww(r.es, (uint16_t)(0x1A), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.es, (uint16_t)(0x1A)), (uint16_t)(0x20))));
     m.ww(r.ds, (uint16_t)(0x7DF3), (uint16_t)(alu::inc<uint16_t>(r, m.rw(r.ds, (uint16_t)(0x7DF3)))));
     r.cx--;
-    if (r.cx != 0) goto loc_122A1;
+    if (r.cx != 0) { m.loopTick(); goto loc_122A1; }
     r.cx = (uint16_t)(m.pop());
     m.ww(r.ds, (uint16_t)(0x7DF3), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.ds, (uint16_t)(0x7DF3)), (uint16_t)(0x7))));
     m.ww(r.es, (uint16_t)(0x1C), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.es, (uint16_t)(0x1C)), (uint16_t)(0x20))));
     r.cx--;
-    if (r.cx != 0) goto loc_12296;
+    if (r.cx != 0) { m.loopTick(); goto loc_12296; }
     r.sp = (uint16_t)(r.sp + 2);
     return;
 loc_122C4:;
@@ -3929,7 +3929,7 @@ loc_12387:;
     goto loc_123AC;
 loc_1239C:;
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x1B));
-    if (!r.zf) goto loc_12387;
+    if (!r.zf) { m.loopTick(); goto loc_12387; }
     r.al = (uint8_t)(0x0);
     m.push(0);
     m.push(0);
@@ -4277,7 +4277,7 @@ loc_126DF:;
 loc_1271E:;
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x1B));
     if (r.zf) goto loc_12729;
-    goto loc_1269E;
+    { m.loopTick(); goto loc_1269E; }
 loc_12729:;
     r.al = (uint8_t)(m.b(r.es, (uint16_t)(0x73)));
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
@@ -4295,7 +4295,7 @@ loc_12729:;
     m.push(0);
     m.push(0);
     shared_1d0ebe();
-    goto loc_12575;
+    { m.loopTick(); goto loc_12575; }
 loc_12756:;
     r.al = (uint8_t)(m.b(r.es, (uint16_t)(0x73)));
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
@@ -4312,7 +4312,7 @@ loc_12756:;
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
     m.push(0);
     shared_cafb08();
-    goto loc_1269E;
+    { m.loopTick(); goto loc_1269E; }
 loc_12784:;
     m.ww(r.ds, (uint16_t)(0xE58), (uint16_t)(alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xE58)), (uint16_t)(0x1))));
     m.b(r.ds, (uint16_t)(0xE67)) = (uint8_t)(alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0xE67)), (uint8_t)(0x2)));
@@ -4320,7 +4320,7 @@ loc_12784:;
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
     m.push(0);
     shared_cafb08();
-    goto loc_1269E;
+    { m.loopTick(); goto loc_1269E; }
 loc_1279C:;
     r.al = (uint8_t)(m.b(r.es, (uint16_t)(0x73)));
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
@@ -4337,7 +4337,7 @@ loc_1279C:;
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
     m.push(0);
     shared_cafb08();
-    goto loc_1269E;
+    { m.loopTick(); goto loc_1269E; }
 loc_127CA:;
     m.ww(r.ds, (uint16_t)(0xE58), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xE58)), (uint16_t)(0x1))));
     m.b(r.ds, (uint16_t)(0xE67)) = (uint8_t)(alu::add<uint8_t>(r, m.b(r.ds, (uint16_t)(0xE67)), (uint8_t)(0x2)));
@@ -4345,7 +4345,7 @@ loc_127CA:;
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
     m.push(0);
     shared_cafb08();
-    goto loc_1269E;
+    { m.loopTick(); goto loc_1269E; }
 loc_127E2:;
     r.si = (uint16_t)(m.rw(r.ds, (uint16_t)(0xE58)));
     r.bx = (uint16_t)(r.si);
@@ -4390,7 +4390,7 @@ loc_12819:;
     m.push(0);
     shared_1d0ebe();
 loc_12858:;
-    goto loc_1269E;
+    { m.loopTick(); goto loc_1269E; }
 loc_1285B:;
     (void)alu::sub<uint16_t>(r, m.rw(r.es, (uint16_t)(0x966)), (uint16_t)(0x1A4));
     if ((r.sf != r.of)) goto loc_12894;
@@ -4411,9 +4411,9 @@ loc_1287E:;
     r.ax = (uint16_t)(alu::add<uint16_t>(r, r.ax, (uint16_t)(0x1)));
     r.dx = (uint16_t)(alu::add<uint16_t>(r, r.dx, (uint16_t)(0x2)));
     r.cx--;
-    if (r.cx != 0) goto loc_1287E;
+    if (r.cx != 0) { m.loopTick(); goto loc_1287E; }
 loc_12894:;
-    goto loc_1269E;
+    { m.loopTick(); goto loc_1269E; }
 loc_12897:;
     m.push((uint16_t)(r.dx));
     m.push((uint16_t)(r.ax));
@@ -4429,7 +4429,7 @@ loc_12897:;
     m.b(r.es, (uint16_t)(0x30)) = (uint8_t)(r.al);
     m.push(0);
     shared_cafb08();
-    goto loc_1269E;
+    { m.loopTick(); goto loc_1269E; }
 }
 void Prog8Gen::shared_8f3252() {
 shared_8f3252:;
@@ -4485,39 +4485,39 @@ loc_12922:;
     return;
 loc_12928:;
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0xA08)), (uint8_t)(0xF));
-    if (r.zf) goto loc_12922;
+    if (r.zf) { m.loopTick(); goto loc_12922; }
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0xA08)), (uint8_t)(0x1));
-    if ((!r.zf && r.sf == r.of)) goto loc_1291F;
-    goto loc_12922;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto loc_1291F; }
+    { m.loopTick(); goto loc_12922; }
 loc_12938:;
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0xA08)), (uint8_t)(0xE));
-    if ((r.sf == r.of)) goto loc_1291F;
-    goto loc_12922;
+    if ((r.sf == r.of)) { m.loopTick(); goto loc_1291F; }
+    { m.loopTick(); goto loc_12922; }
 loc_12941:;
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xA29)), (uint16_t)(0x0));
-    if ((r.zf || r.sf != r.of)) goto loc_12922;
+    if ((r.zf || r.sf != r.of)) { m.loopTick(); goto loc_12922; }
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0xA08)), (uint8_t)(0x6));
-    if (r.zf) goto loc_12922;
+    if (r.zf) { m.loopTick(); goto loc_12922; }
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0xA08)), (uint8_t)(0xB));
-    if ((r.sf == r.of)) goto loc_12922;
-    goto loc_1291F;
+    if ((r.sf == r.of)) { m.loopTick(); goto loc_12922; }
+    { m.loopTick(); goto loc_1291F; }
 loc_12958:;
     (void)alu::sub<uint8_t>(r, r.al, (uint8_t)(0x7));
-    if ((r.sf != r.of)) goto loc_12922;
+    if ((r.sf != r.of)) { m.loopTick(); goto loc_12922; }
     (void)alu::sub<uint8_t>(r, r.al, (uint8_t)(0xE));
     if ((!r.zf && r.sf == r.of)) goto loc_12968;
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0xA08)), (uint8_t)(r.al));
-    if (r.zf) goto loc_1291F;
-    goto loc_12922;
+    if (r.zf) { m.loopTick(); goto loc_1291F; }
+    { m.loopTick(); goto loc_12922; }
 loc_12968:;
     (void)alu::sub<uint8_t>(r, r.al, (uint8_t)(0xF));
     if (!r.zf) goto loc_1297E;
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xA27)), (uint16_t)(0x0));
-    if (r.zf) goto loc_12922;
+    if (r.zf) { m.loopTick(); goto loc_12922; }
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(0xA27)));
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xA29)), (uint16_t)(r.ax));
-    if ((r.sf == r.of)) goto loc_12922;
-    goto loc_1291F;
+    if ((r.sf == r.of)) { m.loopTick(); goto loc_12922; }
+    { m.loopTick(); goto loc_1291F; }
 loc_1297E:;
     (void)alu::sub<uint8_t>(r, r.al, (uint8_t)(0x10));
     if (!r.zf) goto loc_12994;
@@ -4526,7 +4526,7 @@ loc_1297E:;
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(0xA23)));
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xA25)), (uint16_t)(r.ax));
     if (!r.zf) goto loc_129BF;
-    goto loc_12922;
+    { m.loopTick(); goto loc_12922; }
 loc_12994:;
     (void)alu::sub<uint8_t>(r, r.al, (uint8_t)(0x11));
     if (!r.zf) goto loc_129AB;
@@ -4535,7 +4535,7 @@ loc_12994:;
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(0xA23)));
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(0xA25)), (uint16_t)(r.ax));
     if (!r.zf) goto loc_129BF;
-    goto loc_12922;
+    { m.loopTick(); goto loc_12922; }
 loc_129AB:;
     (void)alu::sub<uint8_t>(r, r.al, (uint8_t)(0x12));
     if (!r.zf) goto loc_129C5;
@@ -4544,35 +4544,35 @@ loc_129AB:;
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0xA08)), (uint8_t)(0x9));
     if ((!r.zf && r.sf == r.of)) goto loc_129C2;
 loc_129BF:;
-    goto loc_1291F;
+    { m.loopTick(); goto loc_1291F; }
 loc_129C2:;
-    goto loc_12922;
+    { m.loopTick(); goto loc_12922; }
 loc_129C5:;
     (void)alu::sub<uint8_t>(r, r.al, (uint8_t)(0x13));
     if (!r.zf) goto loc_129E3;
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(0xA2F)));
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(0x0));
-    if (r.zf) goto loc_129C2;
+    if (r.zf) { m.loopTick(); goto loc_129C2; }
     r.bx = (uint16_t)(0x23);
     alu::mul16(r, r.bx);
     r.ax = (uint16_t)(alu::add<uint16_t>(r, r.ax, (uint16_t)(0x1155)));
     r.bx = (uint16_t)(r.ax);
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(r.bx + 0x1)) & 0xC));
-    if (r.zf) goto loc_129C2;
-    goto loc_129BF;
+    if (r.zf) { m.loopTick(); goto loc_129C2; }
+    { m.loopTick(); goto loc_129BF; }
 loc_129E3:;
     (void)alu::sub<uint8_t>(r, r.al, (uint8_t)(0x14));
-    if (!r.zf) goto loc_129C2;
+    if (!r.zf) { m.loopTick(); goto loc_129C2; }
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(0xA2F)));
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(0x0));
-    if (r.zf) goto loc_129C2;
+    if (r.zf) { m.loopTick(); goto loc_129C2; }
     r.bx = (uint16_t)(0x23);
     alu::mul16(r, r.bx);
     r.ax = (uint16_t)(alu::add<uint16_t>(r, r.ax, (uint16_t)(0x1155)));
     r.bx = (uint16_t)(r.ax);
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(r.bx + 0x1)) & 0x1));
-    if (r.zf) goto loc_129C2;
-    goto loc_129BF;
+    if (r.zf) { m.loopTick(); goto loc_129C2; }
+    { m.loopTick(); goto loc_129BF; }
 }
 void Prog8Gen::shared_bfb949() {
 shared_bfb949:;
@@ -4964,12 +4964,12 @@ loc_12DDE:;
     shared_bfb949();
     m.push(0);
     shared_8f3252();
-    if (!r.zf) goto loc_12DDE;
+    if (!r.zf) { m.loopTick(); goto loc_12DDE; }
     m.b(r.es, (uint16_t)(0x2A)) = (uint8_t)(0x1E);
     m.push(0);
     shared_ec00d9();
     r.cx--;
-    if (r.cx != 0) goto loc_12DDE;
+    if (r.cx != 0) { m.loopTick(); goto loc_12DDE; }
     r.sp = (uint16_t)(r.sp + 2);
     return;
 }
@@ -4988,7 +4988,7 @@ loc_12E02:;
     if ((r.sf == r.of)) goto loc_12E18;
     r.di = (uint16_t)(alu::add<uint16_t>(r, r.di, (uint16_t)(0x2)));
     r.cx--;
-    if (r.cx != 0) goto loc_12E02;
+    if (r.cx != 0) { m.loopTick(); goto loc_12E02; }
     r.sp = (uint16_t)(r.sp + 2);
     return;
 loc_12E18:;
@@ -5055,7 +5055,7 @@ loc_12E56:;
     r.si = (uint16_t)(m.pop());
     r.si = (uint16_t)(alu::add<uint16_t>(r, r.si, (uint16_t)(0x2)));
     r.cx--;
-    if (r.cx != 0) goto loc_12E56;
+    if (r.cx != 0) { m.loopTick(); goto loc_12E56; }
 loc_12E8B:;
     r.di = (uint16_t)(m.pop());
     r.si = (uint16_t)(m.pop());
@@ -5387,7 +5387,7 @@ loc_1312E:;
     r.ax = (uint16_t)(alu::sub<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(0x7E3C)))));
     r.ax = (uint16_t)(alu::add<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(r.bx)))));
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(0xC350));
-    if ((!r.cf && !r.zf)) goto loc_13102;
+    if ((!r.cf && !r.zf)) { m.loopTick(); goto loc_13102; }
     m.ww(r.ds, (uint16_t)(r.bx), (uint16_t)(r.ax));
     m.ww(Machine16::kSegData, (uint16_t)(0x96B), (uint16_t)(alu::inc<uint16_t>(r, m.rw(Machine16::kSegData, (uint16_t)(0x96B)))));
 loc_13140:;
@@ -5426,7 +5426,7 @@ loc_13184:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(0xC350));
     if ((!r.cf && !r.zf)) goto loc_13198;
     m.ww(r.ds, (uint16_t)(r.bx), (uint16_t)(r.ax));
-    goto loc_13152;
+    { m.loopTick(); goto loc_13152; }
 loc_13198:;
     r.ax = (uint16_t)(alu::sub<uint16_t>(r, r.ax, (uint16_t)(0xC350)));
     m.ww(r.ds, (uint16_t)(r.bx), (uint16_t)(0xC350));
@@ -5435,28 +5435,28 @@ loc_13198:;
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(0xC350));
     if ((!r.cf && !r.zf)) goto loc_131AE;
     m.ww(r.ds, (uint16_t)(r.bx + 0x2), (uint16_t)(r.ax));
-    goto loc_13152;
+    { m.loopTick(); goto loc_13152; }
 loc_131AE:;
     m.ww(r.ds, (uint16_t)(r.bx + 0x4), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.ds, (uint16_t)(r.bx + 0x4)), (uint16_t)(0x1))));
     m.b(r.ds, (uint16_t)(0x7E3E)) = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x7E3E)) | 0x40)));
     r.ax = (uint16_t)(alu::sub<uint16_t>(r, r.ax, (uint16_t)(0xC350)));
     m.ww(r.ds, (uint16_t)(r.bx + 0x2), (uint16_t)(r.ax));
-    goto loc_13152;
+    { m.loopTick(); goto loc_13152; }
 loc_131BF:;
     m.ww(r.ds, (uint16_t)(r.bx + 0x4), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.ds, (uint16_t)(r.bx + 0x4)), (uint16_t)(0x1))));
     m.b(r.ds, (uint16_t)(0x7E3E)) = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x7E3E)) | 0x40)));
     r.ax = (uint16_t)(alu::add<uint16_t>(r, r.ax, (uint16_t)(0x3CB0)));
     m.ww(r.ds, (uint16_t)(r.bx + 0x2), (uint16_t)(r.ax));
-    goto loc_13152;
+    { m.loopTick(); goto loc_13152; }
 loc_131D0:;
     m.ww(r.ds, (uint16_t)(r.bx), (uint16_t)(0xC350));
     r.ax = (uint16_t)(alu::add<uint16_t>(r, r.ax, (uint16_t)(0x3CB0)));
     r.ax = (uint16_t)(alu::add<uint16_t>(r, r.ax, (uint16_t)(m.rw(r.ds, (uint16_t)(r.bx + 0x2)))));
-    if (r.cf) goto loc_131BF;
+    if (r.cf) { m.loopTick(); goto loc_131BF; }
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(0xC350));
-    if ((!r.cf && !r.zf)) goto loc_131AE;
+    if ((!r.cf && !r.zf)) { m.loopTick(); goto loc_131AE; }
     m.ww(r.ds, (uint16_t)(r.bx + 0x2), (uint16_t)(r.ax));
-    goto loc_13152;
+    { m.loopTick(); goto loc_13152; }
 }
 void Prog8Gen::drawPartyStrip() {
 drawPartyStrip:;
@@ -5492,7 +5492,7 @@ loc_1322B:;
     m.push(0);
     shared_9790fc();
     r.cx--;
-    if (r.cx != 0) goto loc_1322B;
+    if (r.cx != 0) { m.loopTick(); goto loc_1322B; }
     m.ww(r.ds, (uint16_t)(0x7DEC), (uint16_t)(0x10));
     m.ww(r.ds, (uint16_t)(0x7DEE), (uint16_t)(0x2E));
     r.ax = (uint16_t)(0xD);
@@ -5504,7 +5504,7 @@ loc_1324A:;
     m.push(0);
     shared_9790fc();
     r.cx--;
-    if (r.cx != 0) goto loc_1324A;
+    if (r.cx != 0) { m.loopTick(); goto loc_1324A; }
     m.ww(r.ds, (uint16_t)(0x7DEC), (uint16_t)(0x10));
     m.ww(r.ds, (uint16_t)(0x7DEE), (uint16_t)(0x4E));
     r.ax = (uint16_t)(0x17);
@@ -5516,7 +5516,7 @@ loc_13269:;
     m.push(0);
     shared_9790fc();
     r.cx--;
-    if (r.cx != 0) goto loc_13269;
+    if (r.cx != 0) { m.loopTick(); goto loc_13269; }
     m.ww(r.ds, (uint16_t)(0x7DEC), (uint16_t)(0x10));
     m.ww(r.ds, (uint16_t)(0x7DEE), (uint16_t)(0x6E));
     r.ax = (uint16_t)(0x21);
@@ -5528,7 +5528,7 @@ loc_13288:;
     m.push(0);
     shared_9790fc();
     r.cx--;
-    if (r.cx != 0) goto loc_13288;
+    if (r.cx != 0) { m.loopTick(); goto loc_13288; }
     m.ww(r.ds, (uint16_t)(0x7DEC), (uint16_t)(0x90));
     m.ww(r.ds, (uint16_t)(0x7DEE), (uint16_t)(0x6E));
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x637)) & 0x10));
@@ -5574,7 +5574,7 @@ loc_132F9:;
     m.push(0);
     drawTileKeyed();
     r.cx--;
-    if (r.cx != 0) goto loc_132F9;
+    if (r.cx != 0) { m.loopTick(); goto loc_132F9; }
     m.ww(r.ds, (uint16_t)(0x7DEC), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.ds, (uint16_t)(0x7DEC)), (uint16_t)(0x20))));
     r.bx = (uint16_t)(m.rw(r.ds, (uint16_t)(0x81D4)));
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(r.bx)));
@@ -5590,7 +5590,7 @@ loc_132F9:;
     m.ww(r.ds, (uint16_t)(0x81D4), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.ds, (uint16_t)(0x81D4)), (uint16_t)(0x4))));
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_132E6;
+    if (r.cx != 0) { m.loopTick(); goto loc_132E6; }
 loc_13334:;
     r.ax = (uint16_t)(r.ds);
     m.ww(r.es, (uint16_t)(0x16), (uint16_t)(r.ax));
@@ -5623,11 +5623,11 @@ loc_13364:;
     m.ww(r.ds, (uint16_t)(0x7DF3), (uint16_t)(alu::inc<uint16_t>(r, m.rw(r.ds, (uint16_t)(0x7DF3)))));
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_13364;
+    if (r.cx != 0) { m.loopTick(); goto loc_13364; }
     r.cx = (uint16_t)(m.pop());
     m.ww(r.es, (uint16_t)(0x1C), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.es, (uint16_t)(0x1C)), (uint16_t)(0x20))));
     r.cx--;
-    if (r.cx != 0) goto loc_13359;
+    if (r.cx != 0) { m.loopTick(); goto loc_13359; }
     m.push(0);
     m.push(0);
     drawBackdropTile();
@@ -5817,7 +5817,7 @@ loc_135A6:;
     tileOp();
     m.ww(r.es, (uint16_t)(0x1C), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.es, (uint16_t)(0x1C)), (uint16_t)(0x20))));
     r.cx--;
-    if (r.cx != 0) goto loc_135A6;
+    if (r.cx != 0) { m.loopTick(); goto loc_135A6; }
     r.sp = (uint16_t)(r.sp + 2);
     return;
 }
@@ -5841,11 +5841,11 @@ loc_135DB:;
     tileOp();
     m.ww(r.es, (uint16_t)(0x1A), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.es, (uint16_t)(0x1A)), (uint16_t)(0x20))));
     r.cx--;
-    if (r.cx != 0) goto loc_135DB;
+    if (r.cx != 0) { m.loopTick(); goto loc_135DB; }
     m.ww(r.es, (uint16_t)(0x1C), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.es, (uint16_t)(0x1C)), (uint16_t)(0x20))));
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_135D0;
+    if (r.cx != 0) { m.loopTick(); goto loc_135D0; }
     m.ww(r.es, (uint16_t)(0x1A), (uint16_t)(0xB0));
     m.ww(r.es, (uint16_t)(0x1C), (uint16_t)(0xE));
     m.b(r.ds, (uint16_t)(0x7DF2)) = (uint8_t)(0x3);
@@ -5858,7 +5858,7 @@ loc_13610:;
     tileOp();
     m.ww(r.es, (uint16_t)(0x1C), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.es, (uint16_t)(0x1C)), (uint16_t)(0x20))));
     r.cx--;
-    if (r.cx != 0) goto loc_13610;
+    if (r.cx != 0) { m.loopTick(); goto loc_13610; }
     r.sp = (uint16_t)(r.sp + 2);
     return;
 }
@@ -5926,7 +5926,7 @@ loc_136B8:;
     (void)alu::sub<uint16_t>(r, m.rw(r.ds, (uint16_t)(r.bx)), (uint16_t)(0x0));
     if (r.zf) goto locret_136E1;
     r.bx = (uint16_t)(alu::add<uint16_t>(r, r.bx, (uint16_t)(0x4)));
-    goto loc_136B8;
+    { m.loopTick(); goto loc_136B8; }
 loc_136C6:;
     r.bx = (uint16_t)(m.rw(r.ds, (uint16_t)(r.bx + 0x2)));
     m.ww(r.ds, (uint16_t)(0x81D2), (uint16_t)(r.bx));
@@ -6021,10 +6021,10 @@ loc_1376F:;
     r.ah = (uint8_t)(0x13);
     m.intr(0x62);
     r.cx--;
-    if (r.cx != 0) goto loc_1376F;
+    if (r.cx != 0) { m.loopTick(); goto loc_1376F; }
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_13760;
+    if (r.cx != 0) { m.loopTick(); goto loc_13760; }
     m.ww(r.ds, (uint16_t)(0x7DEE), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.ds, (uint16_t)(0x7DEE)), (uint16_t)(0x20))));
     m.ww(r.ds, (uint16_t)(0x7DEC), (uint16_t)(0x10));
     r.cx = (uint16_t)(0x3);
@@ -6050,7 +6050,7 @@ loc_137C1:;
     r.ah = (uint8_t)(0x13);
     m.intr(0x62);
     r.cx--;
-    if (r.cx != 0) goto loc_137C1;
+    if (r.cx != 0) { m.loopTick(); goto loc_137C1; }
     m.ww(r.ds, (uint16_t)(0x7DF3), (uint16_t)(alu::inc<uint16_t>(r, m.rw(r.ds, (uint16_t)(0x7DF3)))));
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(0x7DF3)));
     m.ww(r.ds, (uint16_t)(0x81D0), (uint16_t)(r.ax));
@@ -6091,7 +6091,7 @@ loc_13833:;
     (void)alu::sub<uint16_t>(r, r.bx, (uint16_t)(r.di));
     if (r.zf) goto loc_13842;
     r.di = (uint16_t)(alu::dec<uint16_t>(r, r.di));
-    goto loc_13833;
+    { m.loopTick(); goto loc_13833; }
 loc_13842:;
     r.di = (uint16_t)(m.pop());
     r.sp = (uint16_t)(r.sp + 4);
@@ -6202,7 +6202,7 @@ loc_13943:;
 loc_13949:;
     r.si = (uint16_t)(alu::sub<uint16_t>(r, r.si, (uint16_t)(0x2)));
     r.cx--;
-    if (r.cx != 0) goto loc_13905;
+    if (r.cx != 0) { m.loopTick(); goto loc_13905; }
     (void)alu::sub<uint16_t>(r, m.rw(Machine16::kSegData, (uint16_t)(0x6B9)), (uint16_t)(0x0));
     if (!r.zf) goto loc_1395E;
     r.ax = (uint16_t)(m.rw(Machine16::kSegData, (uint16_t)(0x62B)));
@@ -6316,7 +6316,7 @@ loc_13A2C:;
     r.ah = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(r.ah ^ r.ah)));
     m.intr(0x1A);
     (void)alu::sub<uint16_t>(r, r.dx, (uint16_t)(r.bx));
-    if (r.cf) goto loc_13A2C;
+    if (r.cf) { m.loopTick(); goto loc_13A2C; }
     r.dx = (uint16_t)(m.pop());
     r.cx = (uint16_t)(m.pop());
     r.bx = (uint16_t)(m.pop());
@@ -6340,7 +6340,7 @@ loc_13A5C:;
     m.ww(r.es, (uint16_t)(0x1A), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.es, (uint16_t)(0x1A)), (uint16_t)(0x20))));
     m.ww(r.ds, (uint16_t)(0x7DF3), (uint16_t)(alu::inc<uint16_t>(r, m.rw(r.ds, (uint16_t)(0x7DF3)))));
     r.cx--;
-    if (r.cx != 0) goto loc_13A5C;
+    if (r.cx != 0) { m.loopTick(); goto loc_13A5C; }
     r.cx = (uint16_t)(0x8);
     m.ww(r.es, (uint16_t)(0x1A), (uint16_t)(0x151));
     m.ww(r.es, (uint16_t)(0x1C), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.es, (uint16_t)(0x1C)), (uint16_t)(0x20))));
@@ -6352,7 +6352,7 @@ loc_13A80:;
     m.ww(r.es, (uint16_t)(0x1A), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.es, (uint16_t)(0x1A)), (uint16_t)(0x20))));
     m.ww(r.ds, (uint16_t)(0x7DF3), (uint16_t)(alu::inc<uint16_t>(r, m.rw(r.ds, (uint16_t)(0x7DF3)))));
     r.cx--;
-    if (r.cx != 0) goto loc_13A80;
+    if (r.cx != 0) { m.loopTick(); goto loc_13A80; }
     m.b(r.es, (uint16_t)(0x36)) = (uint8_t)(0x0);
     r.sp = (uint16_t)(r.sp + 4);
     return;
@@ -6389,7 +6389,7 @@ drawTileRun:;
     m.ww(r.es, (uint16_t)(0x1A), (uint16_t)(alu::add<uint16_t>(r, m.rw(r.es, (uint16_t)(0x1A)), (uint16_t)(0x20))));
     m.ww(r.ds, (uint16_t)(0x7DF3), (uint16_t)(alu::inc<uint16_t>(r, m.rw(r.ds, (uint16_t)(0x7DF3)))));
     r.cx--;
-    if (r.cx != 0) goto drawTileRun;
+    if (r.cx != 0) { m.loopTick(); goto drawTileRun; }
     r.sp = (uint16_t)(r.sp + 2);
     return;
 }
@@ -6496,7 +6496,7 @@ loc_13C23:;
     if ((r.zf || r.sf != r.of)) goto loc_13C3E;
     r.si = (uint16_t)(alu::add<uint16_t>(r, r.si, (uint16_t)(0x10)));
     r.cx--;
-    if (r.cx != 0) goto loc_13C23;
+    if (r.cx != 0) { m.loopTick(); goto loc_13C23; }
 loc_13C36:;
     m.b(Machine16::kSegData, (uint16_t)(0x7E01)) = (uint8_t)(0x0);
     goto loc_13C98;
@@ -6505,14 +6505,14 @@ loc_13C3E:;
     r.bx = (uint16_t)(m.rw(r.es, (uint16_t)(0x1C)));
     r.bx = (uint16_t)(alu::add<uint16_t>(r, r.bx, (uint16_t)(m.rw(r.ds, (uint16_t)(r.si + 0x8)))));
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(r.bx));
-    if ((r.sf != r.of)) goto loc_13C36;
+    if ((r.sf != r.of)) { m.loopTick(); goto loc_13C36; }
     r.bx = (uint16_t)(alu::sub<uint16_t>(r, r.bx, (uint16_t)(m.rw(r.ds, (uint16_t)(r.si + 0x8)))));
     r.bx = (uint16_t)(alu::add<uint16_t>(r, r.bx, (uint16_t)(m.rw(r.ds, (uint16_t)(r.si + 0xA)))));
     (void)alu::sub<uint16_t>(r, r.ax, (uint16_t)(r.bx));
-    if ((!r.zf && r.sf == r.of)) goto loc_13C36;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto loc_13C36; }
     r.ah = (uint8_t)(m.b(r.ds, (uint16_t)(0x81DB)));
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(r.si)) & r.ah));
-    if (r.zf) goto loc_13C36;
+    if (r.zf) { m.loopTick(); goto loc_13C36; }
     r.ah = (uint8_t)(0x29);
     m.intr(0x62);
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(r.si + 0x2)));
@@ -6578,7 +6578,7 @@ loc_13CDE:;
     (void)alu::sub<uint8_t>(r, m.b(Machine16::kSegData, (uint16_t)(0x7E01)), (uint8_t)(0x0));
     if (!r.zf) goto loc_13CFB;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x81DA)) & 0x80));
-    if (r.zf) goto loc_13CDE;
+    if (r.zf) { m.loopTick(); goto loc_13CDE; }
     m.b(Machine16::kSegData, (uint16_t)(0x7E01)) = (uint8_t)(0x2);
     goto loc_13D84;
 loc_13CFB:;
@@ -6600,11 +6600,11 @@ loc_13D20:;
 loc_13D25:;
     r.si = (uint16_t)(alu::add<uint16_t>(r, r.si, (uint16_t)(0x10)));
     r.cx--;
-    if (r.cx != 0) goto loc_13D20;
-    goto loc_13CDE;
+    if (r.cx != 0) { m.loopTick(); goto loc_13D20; }
+    { m.loopTick(); goto loc_13CDE; }
 loc_13D2C:;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(r.si)) & r.ah));
-    if (r.zf) goto loc_13D25;
+    if (r.zf) { m.loopTick(); goto loc_13D25; }
     r.al = (uint8_t)(m.b(r.ds, (uint16_t)(r.si + 0x1)));
     m.b(r.es, (uint16_t)(0x2C)) = (uint8_t)(r.al);
 loc_13D37:;
@@ -6618,7 +6618,7 @@ loc_13D3F:;
     (void)alu::sub<uint8_t>(r, m.b(Machine16::kSegData, (uint16_t)(0x7E01)), (uint8_t)(0x1));
     if (r.zf) goto loc_13D84;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x81DA)) & 0x20));
-    if (r.zf) goto loc_13CDE;
+    if (r.zf) { m.loopTick(); goto loc_13CDE; }
     m.b(Machine16::kSegData, (uint16_t)(0x7E01)) = (uint8_t)(0x3);
     goto loc_13D84;
 loc_13D5D:;
@@ -6630,7 +6630,7 @@ loc_13D5D:;
     if (r.zf) goto loc_13D7C;
     (void)alu::logic<uint8_t>(r, (uint8_t)(m.b(r.ds, (uint16_t)(0x81DA)) & 0x20));
     if (!r.zf) goto loc_13D76;
-    goto loc_13CDE;
+    { m.loopTick(); goto loc_13CDE; }
 loc_13D76:;
     m.b(r.es, (uint16_t)(0x2C)) = (uint8_t)(0x0);
 loc_13D7C:;
@@ -6699,7 +6699,7 @@ loc_13E29:;
     r.si = (uint16_t)(alu::add<uint16_t>(r, r.si, (uint16_t)(0x10)));
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_13E13;
+    if (r.cx != 0) { m.loopTick(); goto loc_13E13; }
     r.bx = (uint16_t)(m.pop());
     r.cx = (uint16_t)(m.pop());
     r.dx = (uint16_t)(m.pop());
@@ -6767,7 +6767,7 @@ loc_13E7A:;
     r.si = (uint16_t)(alu::dec<uint16_t>(r, r.si));
     r.di = (uint16_t)(alu::dec<uint16_t>(r, r.di));
     r.cx--;
-    if (r.cx != 0) goto loc_13E7A;
+    if (r.cx != 0) { m.loopTick(); goto loc_13E7A; }
     r.al = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(r.al ^ r.al)));
     r.cf = false;
     r.al = (uint8_t)(alu::add<uint8_t>(r, r.al, (uint8_t)(0x0), r.cf ? 1u : 0u));
@@ -6781,8 +6781,8 @@ loc_13E8F:;
     r.al = (uint8_t)(m.b(r.ds, (uint16_t)(r.si)));
     r.al = (uint8_t)(alu::add<uint8_t>(r, r.al, (uint8_t)(0x0), r.cf ? 1u : 0u));
     r.cx--;
-    if (r.cx != 0) goto loc_13E8F;
-    goto loc_13E65;
+    if (r.cx != 0) { m.loopTick(); goto loc_13E8F; }
+    { m.loopTick(); goto loc_13E65; }
 loc_13E9B:;
     r.cx = (uint16_t)(0x4);
     r.di = (uint16_t)(r.bx);
@@ -6801,9 +6801,9 @@ loc_13EA3:;
     r.si = (uint16_t)(alu::inc<uint16_t>(r, r.si));
     r.di = (uint16_t)(alu::inc<uint16_t>(r, r.di));
     r.cx--;
-    if (r.cx != 0) goto loc_13EA3;
+    if (r.cx != 0) { m.loopTick(); goto loc_13EA3; }
 loc_13EBD:;
-    goto loc_13E65;
+    { m.loopTick(); goto loc_13E65; }
 loc_13EBF:;
     r.al = (uint8_t)(0x20);
     m.push((uint16_t)(r.es));
@@ -6836,8 +6836,8 @@ loc_13EE1:;
     r.si = (uint16_t)(alu::inc<uint16_t>(r, r.si));
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_13EE1;
-    goto loc_13E65;
+    if (r.cx != 0) { m.loopTick(); goto loc_13EE1; }
+    { m.loopTick(); goto loc_13E65; }
 loc_13EFC:;
     m.ww(r.ds, (uint16_t)(0x8262), (uint16_t)(r.bx));
     r.dx = (uint16_t)(alu::logic<uint16_t>(r, (uint16_t)(r.dx ^ r.dx)));
@@ -6891,7 +6891,7 @@ loc_13EFC:;
     r.ax = (uint16_t)(alu::shl<uint16_t>(r, r.ax, r.cl));
     m.b(r.ds, (uint16_t)(0x8261)) = (uint8_t)(r.ah);
     r.bx = (uint16_t)(0x825E);
-    goto loc_13E6E;
+    { m.loopTick(); goto loc_13E6E; }
 }
 void Prog8Gen::shared_c444c7() {
 shared_c444c7:;
@@ -6945,7 +6945,7 @@ waitInput:;
     m.push(0);
     pollInput();
     (void)alu::sub<uint8_t>(r, m.b(Machine16::kSegData, (uint16_t)(0x7E01)), (uint8_t)(0x0));
-    if (r.zf) goto waitInput;
+    if (r.zf) { m.loopTick(); goto waitInput; }
     r.sp = (uint16_t)(r.sp + 4);
     return;
 }
@@ -7137,7 +7137,7 @@ loc_1412A:;
     r.di = (uint16_t)(alu::add<uint16_t>(r, r.di, (uint16_t)(0x64)));
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_1412A;
+    if (r.cx != 0) { m.loopTick(); goto loc_1412A; }
     r.sp = (uint16_t)(r.sp + 4);
     return;
 }
@@ -7160,7 +7160,7 @@ loc_14147:;
     r.si = (uint16_t)(alu::add<uint16_t>(r, r.si, (uint16_t)(0x64)));
     r.cx = (uint16_t)(m.pop());
     r.cx--;
-    if (r.cx != 0) goto loc_14147;
+    if (r.cx != 0) { m.loopTick(); goto loc_14147; }
     r.sp = (uint16_t)(r.sp + 4);
     return;
 }
@@ -7231,13 +7231,13 @@ loc_141CF:;
     m.push(0);
     pollInput();
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0x7E01)), (uint8_t)(0x0));
-    if (r.zf) goto loc_141CF;
+    if (r.zf) { m.loopTick(); goto loc_141CF; }
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0x7E01)), (uint8_t)(0x3));
     if (!r.zf) goto loc_141E5;
     goto loc_1426F;
 loc_141E5:;
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0x7E01)), (uint8_t)(0x1));
-    if (!r.zf) goto loc_141CF;
+    if (!r.zf) { m.loopTick(); goto loc_141CF; }
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0xD));
     if (r.zf) goto loc_14232;
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x8));
@@ -7247,9 +7247,9 @@ loc_141FF:;
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x1B));
     if (r.zf) goto loc_1424D;
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x20));
-    if ((r.sf != r.of)) goto loc_141CF;
+    if ((r.sf != r.of)) { m.loopTick(); goto loc_141CF; }
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x7F));
-    if ((!r.zf && r.sf == r.of)) goto loc_141CF;
+    if ((!r.zf && r.sf == r.of)) { m.loopTick(); goto loc_141CF; }
     r.ah = (uint8_t)(0x29);
     m.intr(0x62);
     r.al = (uint8_t)(m.b(r.es, (uint16_t)(0x2C)));
@@ -7262,7 +7262,7 @@ loc_141FF:;
     r.ah = (uint8_t)(0x8);
     m.intr(0x62);
     m.b(r.es, (uint16_t)(0x2A)) = (uint8_t)(alu::inc<uint8_t>(r, m.b(r.es, (uint16_t)(0x2A))));
-    goto loc_141C1;
+    { m.loopTick(); goto loc_141C1; }
 loc_14232:;
     m.b(r.ds, (uint16_t)(r.si)) = (uint8_t)(0x0);
     r.cx = (uint16_t)(m.pop());
@@ -7304,11 +7304,11 @@ loc_1426F:;
     (void)alu::sub<uint8_t>(r, m.b(r.ds, (uint16_t)(0x7E01)), (uint8_t)(0x0));
     if (r.zf) goto loc_14297;
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0xD));
-    if (r.zf) goto loc_14232;
+    if (r.zf) { m.loopTick(); goto loc_14232; }
     (void)alu::sub<uint8_t>(r, m.b(r.es, (uint16_t)(0x2C)), (uint8_t)(0x1B));
-    if (r.zf) goto loc_1424D;
+    if (r.zf) { m.loopTick(); goto loc_1424D; }
 loc_14297:;
-    goto loc_141CF;
+    { m.loopTick(); goto loc_141CF; }
 loc_1429A:;
     r.cx = (uint16_t)(m.pop());
     r.ax = (uint16_t)(m.pop());
@@ -7320,7 +7320,7 @@ loc_1429A:;
     r.al = (uint8_t)(0x7);
     r.ah = (uint8_t)(0x8);
     m.intr(0x62);
-    goto loc_141C1;
+    { m.loopTick(); goto loc_141C1; }
 loc_142B1:;
     r.si = (uint16_t)(alu::dec<uint16_t>(r, r.si));
     r.cx = (uint16_t)(alu::inc<uint16_t>(r, r.cx));
@@ -7333,7 +7333,7 @@ loc_142B1:;
     r.ah = (uint8_t)(0x8);
     m.intr(0x62);
     m.b(r.es, (uint16_t)(0x2A)) = (uint8_t)(alu::dec<uint8_t>(r, m.b(r.es, (uint16_t)(0x2A))));
-    goto loc_141C1;
+    { m.loopTick(); goto loc_141C1; }
 }
 void Prog8Gen::shared_604479() {
 shared_604479:;
@@ -7367,7 +7367,7 @@ loc_142F7:;
     r.al = (uint8_t)m.lods(1);
     m.stos(1);
     (void)alu::sub<uint8_t>(r, r.al, (uint8_t)(0x0));
-    if (!r.zf) goto loc_142F7;
+    if (!r.zf) { m.loopTick(); goto loc_142F7; }
     r.bx = (uint16_t)(r.di);
     r.di = (uint16_t)(m.pop());
     r.si = (uint16_t)(m.pop());
@@ -7383,7 +7383,7 @@ drawStringLines:;
     m.b(r.es, (uint16_t)(0x2B)) = (uint8_t)(alu::inc<uint8_t>(r, m.b(r.es, (uint16_t)(0x2B))));
     r.bx = (uint16_t)(alu::inc<uint16_t>(r, r.bx));
     r.cx--;
-    if (r.cx != 0) goto drawStringLines;
+    if (r.cx != 0) { m.loopTick(); goto drawStringLines; }
     r.sp = (uint16_t)(r.sp + 4);
     return;
 }
@@ -7538,7 +7538,7 @@ loc_1448B:;
     m.intr(0x62);
     m.b(r.es, (uint16_t)(0x2A)) = (uint8_t)(alu::inc<uint8_t>(r, m.b(r.es, (uint16_t)(0x2A))));
     r.bx = (uint16_t)(alu::inc<uint16_t>(r, r.bx));
-    goto loc_1448B;
+    { m.loopTick(); goto loc_1448B; }
 loc_144A1:;
     r.ah = (uint8_t)(0x28);
     m.intr(0x62);
@@ -7734,7 +7734,7 @@ loc_14660:;
     r.dx = (uint16_t)(alu::shl<uint16_t>(r, r.dx, 0x1));
     if (r.cf) goto loc_14667;
     r.cx = (uint16_t)(alu::inc<uint16_t>(r, r.cx));
-    goto loc_14660;
+    { m.loopTick(); goto loc_14660; }
 loc_14667:;
     r.dx = (uint16_t)(m.pop());
     r.ax = (uint16_t)(alu::shl<uint16_t>(r, r.ax, r.cl));
@@ -7943,13 +7943,13 @@ loc_147BC:;
     if (r.zf) goto loc_147DE;
     (void)alu::sub<uint8_t>(r, m.b(Machine16::kSegData, (uint16_t)(0x7E01)), (uint8_t)(0x1));
     if (r.zf) goto loc_147D1;
-    goto loc_14793;
+    { m.loopTick(); goto loc_14793; }
 loc_147D1:;
     m.push(0);
     tileLoad();
     (void)alu::sub<uint8_t>(r, m.b(Machine16::kSegData, (uint16_t)(0x7E01)), (uint8_t)(0x0));
     if (r.zf) goto loc_147DE;
-    goto loc_14793;
+    { m.loopTick(); goto loc_14793; }
 loc_147DE:;
     m.push((uint16_t)(m.rw(r.es, (uint16_t)(0x16))));
     m.push((uint16_t)(m.rw(r.es, (uint16_t)(0x18))));
@@ -7961,7 +7961,7 @@ loc_147DE:;
     m.ww(r.es, (uint16_t)(0x18), (uint16_t)(m.pop()));
     m.ww(r.es, (uint16_t)(0x16), (uint16_t)(m.pop()));
     r.al = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(r.al ^ r.al)));
-    goto loc_14793;
+    { m.loopTick(); goto loc_14793; }
 loc_14808:;
     m.push(0);
     tileLookup();
@@ -7969,22 +7969,22 @@ loc_14808:;
     if (r.zf) goto loc_1482C;
     (void)alu::sub<uint8_t>(r, m.b(Machine16::kSegData, (uint16_t)(0x7E01)), (uint8_t)(0x1));
     if (r.zf) goto loc_1481E;
-    goto loc_14793;
+    { m.loopTick(); goto loc_14793; }
 loc_1481E:;
     m.push(0);
     tileLoad();
     (void)alu::sub<uint8_t>(r, m.b(Machine16::kSegData, (uint16_t)(0x7E01)), (uint8_t)(0x0));
     if (r.zf) goto loc_1482C;
-    goto loc_14793;
+    { m.loopTick(); goto loc_14793; }
 loc_1482C:;
     r.al = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(r.al ^ r.al)));
-    goto loc_14793;
+    { m.loopTick(); goto loc_14793; }
 loc_14831:;
     m.push(0);
     tileLookup();
     (void)alu::sub<uint8_t>(r, m.b(Machine16::kSegData, (uint16_t)(0x7E01)), (uint8_t)(0x0));
     if (r.zf) goto loc_1483F;
-    goto loc_14791;
+    { m.loopTick(); goto loc_14791; }
 loc_1483F:;
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(0x843F)));
     r.si = (uint16_t)(r.ax);
@@ -7995,7 +7995,7 @@ loc_1483F:;
     m.b(r.ds, (uint16_t)(r.si)) = (uint8_t)(0x0);
 loc_14852:;
     r.al = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(r.al ^ r.al)));
-    goto loc_14793;
+    { m.loopTick(); goto loc_14793; }
 loc_14857:;
     m.push(0);
     tileLookup();
@@ -8003,13 +8003,13 @@ loc_14857:;
     if (r.zf) goto loc_1486D;
     (void)alu::sub<uint8_t>(r, m.b(Machine16::kSegData, (uint16_t)(0x7E01)), (uint8_t)(0x1));
     if (r.zf) goto loc_14882;
-    goto loc_14793;
+    { m.loopTick(); goto loc_14793; }
 loc_1486D:;
     r.al = (uint8_t)(0x1);
     r.bx = (uint16_t)(m.rw(r.ds, (uint16_t)(0x8441)));
     m.ww(r.es, (uint16_t)(0x16), (uint16_t)(r.bx));
     m.ww(r.es, (uint16_t)(0x18), (uint16_t)(0x0));
-    goto loc_14793;
+    { m.loopTick(); goto loc_14793; }
 loc_14882:;
     r.dx = (uint16_t)(m.rw(Machine16::kSegData, (uint16_t)(0x7DF3)));
     r.ch = (uint8_t)(m.b(r.ds, (uint16_t)(0x843E)));
@@ -8026,13 +8026,13 @@ loc_14882:;
     m.ww(r.es, (uint16_t)(0x16), (uint16_t)(r.bx));
     m.ww(r.es, (uint16_t)(0x18), (uint16_t)(0x0));
     r.al = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(r.al ^ r.al)));
-    goto loc_14793;
+    { m.loopTick(); goto loc_14793; }
 loc_148B9:;
     m.push(0);
     tileLookup();
     (void)alu::sub<uint8_t>(r, m.b(Machine16::kSegData, (uint16_t)(0x7E01)), (uint8_t)(0x0));
     if (r.zf) goto loc_148C7;
-    goto loc_14791;
+    { m.loopTick(); goto loc_14791; }
 loc_148C7:;
     m.push((uint16_t)(r.ds));
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(0x843F)));
@@ -8044,7 +8044,7 @@ loc_148C7:;
     m.ww(r.ds, (uint16_t)(r.si + 0x2), (uint16_t)(0xFFFF));
     r.ds = (uint16_t)(m.pop());
     r.al = (uint8_t)(alu::logic<uint8_t>(r, (uint8_t)(r.al ^ r.al)));
-    goto loc_14793;
+    { m.loopTick(); goto loc_14793; }
 }
 void Prog8Gen::tileLookup(uint16_t entry) {
     switch (entry) {
@@ -8072,7 +8072,7 @@ loc_14903:;
 loc_1490D:;
     r.si = (uint16_t)(alu::add<uint16_t>(r, r.si, (uint16_t)(0x6)));
     r.cx--;
-    if (r.cx != 0) goto loc_14903;
+    if (r.cx != 0) { m.loopTick(); goto loc_14903; }
     goto loc_14920;
 loc_14914:;
     r.ax = (uint16_t)(m.rw(r.ds, (uint16_t)(r.si + 0x4)));
@@ -8102,7 +8102,7 @@ loc_14942:;
     r.si = (uint16_t)(alu::logic<uint16_t>(r, (uint16_t)(r.si ^ r.si)));
 loc_14950:;
     r.cx--;
-    if (r.cx != 0) goto loc_14942;
+    if (r.cx != 0) { m.loopTick(); goto loc_14942; }
     r.ds = (uint16_t)(m.pop());
     m.b(Machine16::kSegData, (uint16_t)(0x7E01)) = (uint8_t)(0x2);
     r.sp = (uint16_t)(r.sp + 2);

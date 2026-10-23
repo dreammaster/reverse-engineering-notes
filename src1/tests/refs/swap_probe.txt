@@ -1,0 +1,18 @@
+wait 4
+key 0D
+wait 8
+key 0D
+wait 4
+shot s0
+text hello
+wait 2
+shot s1
+key 0D
+wait 3
+shot s2
+ext 50
+wait 1
+key 0D
+wait 3
+shot s3
+quit

@@ -448,6 +448,7 @@ int Machine::runChild(const std::string &dosPath, uint16_t paramSeg, uint16_t pa
 	_procs.push_back(pr);
 	programTrace.push_back(dosPath);
 	_pollCount[psp] = 0;
+	_tickReads[psp] = 0;
 	if (onProgramStart)
 		onProgramStart(*this, psp);
 	const bool savedDone = _childDone;
@@ -514,10 +515,16 @@ void Machine::runLoop(const std::function<bool()> &done) {
 		if (logPcLinear != 0xFFFFFFFFu && ((((uint32_t)(uint16_t)(cpu.s[CS] - (uint16_t)(currentPsp + 0x10))) << 4) + cpu.ip) == logPcLinear) {
 			if (++traceWinCount == traceWinHit)
 				traceWinLeft = 3000000;
-			char b[640];
+			char b[1024];
 			int n = snprintf(b, sizeof(b), "pc AX=%04X BX=%04X DI=%04X seed=%04X instr=%llu npc:", cpu.r[AX], cpu.r[BX], cpu.r[DI], cpu.rw(cpu.s[DS], 0x9D0E), (unsigned long long)cpu.instructions);
 			for (int i = 0; i < 0x1C && n < (int)sizeof(b) - 4; i++)
 				n += snprintf(b + n, sizeof(b) - n, " %02X", cpu.rb(cpu.s[DS], (uint16_t)(cpu.r[DI] + i)));
+			if (const char *mo = getenv("YEMU_MEMOFF")) {
+				const uint16_t off = (uint16_t)strtoul(mo, 0, 16);
+				n += snprintf(b + n, sizeof(b) - n, " mem:");
+				for (int i = 0; i < 0x40 && n < (int)sizeof(b) - 4; i++)
+					n += snprintf(b + n, sizeof(b) - n, " %02X", cpu.rb(cpu.s[DS], (uint16_t)(off + i)));
+			}
 			n += snprintf(b + n, sizeof(b) - n, " tile:");
 			for (int i = 0; i < 4; i++)
 				n += snprintf(b + n, sizeof(b) - n, " %02X", cpu.rb(cpu.s[DS], (uint16_t)(0x69C2 + i)));
@@ -568,6 +575,7 @@ int Machine::run(const std::string &program, uint64_t maxInstructions) {
 	programTrace.push_back(program);
 	_nextTick = (uint64_t)kInstrPerSecond * 10 / 182;
 	_pollCount[psp] = 0;
+	_tickReads[psp] = 0;
 	if (onProgramStart)
 		onProgramStart(*this, psp);
 	_childDone = false;
@@ -821,6 +829,10 @@ void Machine::int1a() {
 	if (ah == 0x00) {
 		cpu.instructions += 3000;        // a polling loop makes progress in virtual time
 		const uint32_t t = ticks();
+		const uint64_t n = _tickReads[currentPsp]++;
+		if (onTicks && (n == 0 || t != _tickLast[currentPsp]))
+			onTicks((int)currentPsp, n, t);
+		_tickLast[currentPsp] = t;
 		cpu.r[CX] = (uint16_t)(t >> 16);
 		cpu.r[DX] = (uint16_t)t;
 		cpu.r[AX] &= 0xFF00;
