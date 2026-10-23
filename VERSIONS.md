@@ -60,13 +60,21 @@ size. Where they differ most (functions of another size / functions in common): 
 
 ## How to look at a new build
 
-1. `python tools/compare_binaries.py <known build> <new build>`: the sizes, hashes and the table above for the pair.
-2. `python tools/find_vis_password.py <new executable> <its data.vis>`: finds the password of the data (every string of
-   the executable, narrow and wide, is tried against the directory of the container; the entries must lie inside the
-   file, because the key is made of hexadecimal digits only and a check of `HDR`/`END` alone lets false hits through).
-3. Run the reconstruction on its data with the password: `tests/deponia1/realdatatest.exe` with `GAME_PASSW=<password>`
-   from the game folder, or the SDL2 player with `-p <password>`. The first thing that fails is the first difference.
-4. Write what was found in `src/<game>/VERSIONS.md` (create the folder for a new game) and add a row to the tables above.
+Quick look (minutes):
 
-Keep the runs out of the game folders: the engine writes a `userdata` folder next to `data.vis` (remove it, or run
-from a copy).
+1. `python tools/compare_binaries.py <known build> <new build>`: the sizes, hashes and the table above for the pair.
+2. `python tools/find_vis_password.py <new executable> <its data.vis>`: finds the password of the data (every string of the executable, narrow and wide, is tried against the directory of the container; the entries must lie inside the file, because the key is made of hexadecimal digits only and a check of `HDR`/`END` alone lets false hits through).
+3. The engine build: the references to the wide string "Engine Version: %s (Build %d from Build date: %s)" in the code give the version, the build number and the date (`Init`; e.g. Deponia 2: 4.2.5 / 1185 / Dec  6 2015). `readelf -p .comment` gives the compiler; check `-O0` or `-O2` by reading a tail-call function such as `TGameControl::DisplayConsole`.
+4. Run the reconstruction on its data with the password: `tests/deponia1/realdatatest.exe` with `GAME_PASSW=<password>` from the game folder, or the SDL2 player with `-p <password>`. The first thing that fails is the first difference.
+
+Full comparison (what was done for Deponia 4 and Deponia 2; `src/deponia4/VERSIONS.md` has the reasons and the pitfalls):
+
+5. Make the cache of each executable: `python tools/crosscompare.py <game> --original <executable>` writes `build/cross/original-<name>.pkl` (it also compares with the reconstruction of `<game>`; the table it overwrites is regenerable).
+6. `python tools/symdiff.py <first> <second> -o out.md`: classes, methods, free functions and libraries that only one has. A `-O0` build has every inline function as a symbol: read the additions with that in mind.
+7. `python tools/origdiff.py <first.pkl> <second.pkl> --engine out.tsv`: calls of the engine that one build makes and the other does not (it reads a `-O0` second build together with what its functions call, three levels down); `--consts`, `--args` and `--conds` are for the numbers, field ids and tests, but between `-O0` and `-O2` they drown in noise (`--conds` especially).
+8. `python tools/globaldiff.py <first.pkl> <second.pkl>`: texts and numbers used anywhere in the `T*` code that the other build does not use; `tools/floatconsts.py` for the floating point constants; `tools/assertlines.py` for the line numbers in the asserts, which says in which source files lines were added or removed.
+9. `python tools/emucompare.py <first exe> <second exe> [--methods] [--trials N]`: runs the same functions of both executables in an emulator (Unicorn) on the same inputs and compares the results: the check that does not care how the compiler wrote a test. Needs `pip install unicorn`. `tools/condcompare.py` compares the reconstruction compiled at `-O0` with an `-O0` original.
+10. The data model: make an IDA listing (`idat64.exe -A -B` on a copy of the executable; plain `idat.exe` refuses an ELF64), then `tools/extract_xml_names.py` and `tools/extract_schema.py` on it (they read `-O2` code; run them in a folder of their own, they write `manifest/*.tsv` there) and compare with `manifest/`.
+11. Write what was found in `src/<game>/VERSIONS.md` (create the folder for a new game) and add a row to the tables above.
+
+Keep the runs out of the game folders: the engine writes a `userdata` folder next to `data.vis` (remove it, or run from a copy).
