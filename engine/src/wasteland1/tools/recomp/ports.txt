@@ -201,3 +201,5 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 42E2 actionByte0 junk=ah,bl,ch,cl,di,es,pf,si,dl
 56CB monsterRangeModifier junk=ah,bl,ch,cl,di,es,pf,si,zf scratch=7931-796F,A592-A594,A59D-A59E,C059-C059
 2783 ambush junk=ah,al,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=A4A0-A4D6,A59D-A5A1,A55A-A55E,A592-A594,A670-A6A0,7931-796F,CD3F-CD4A,BA08-BA11,BA6D-BA70,C059-C059,4661-4662,465C-4662,CDCC-CDCC
+2D3F partyAttackRound junk=ah,al,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=A4A0-A4D6,A550-A5AF,A59D-A5A1,A592-A594,A670-A6A0,7931-796F,CD3F-CD4A,BA08-BA11,BA6D-BA70,C059-C059,4661-4662,465C-4662,CDCC-CDCC,A564-A564
+820C fieldCheck junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf,sf scratch=BA6A-BA6B,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA73

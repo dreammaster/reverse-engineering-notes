@@ -1015,6 +1015,39 @@ void ambush(Machine &m, uint8_t partyGroup) {
 	}
 }
 
+void partyAttackRound(Machine &m, uint8_t partyGroup) {
+	selectPartyBlock(m, partyGroup);
+	const uint8_t members = m.d8(uint16_t(g::saved2 + g::s2::membersInGroup));
+	for (uint8_t member = 1; member <= members; ++member) {
+		m.d8(0xA564) = member;
+		if (isMemberUnconscious(m, member)) continue;
+		if (m.d8(uint16_t(m.d16(g::partyStatusPtr) + member)) != 2) continue;
+		setCurrentCharacter(m, member);
+		if (combatReadiness(m, member) >= 0x10) partyMemberAttack(m, member);
+	}
+}
+
+bool fieldCheck(Machine &m, uint8_t count, uint8_t offset) {
+	m.d8(0xBA6B) = count;
+	m.d8(0xBA6A) = offset;
+	const uint8_t value = m.d8(uint16_t(cur(m) + offset));
+	if (offset == 0x18) return value == count;
+	if (offset == 0x24) return value >= count;
+	Rules rules(m);
+	rules.setSeed2(0);
+	rules.setSeed1(0);
+	rules.addTarget(int32_t(Rules::targetBase(count)));
+	const uint8_t roll = rules.rollDice();
+	if (roll < 5) return false;
+	m.d8(g::numberValue) = roll;
+	m.d8(uint16_t(g::numberValue + 1)) = 0;
+	m.d8(uint16_t(g::numberValue + 2)) = 0;
+	if (m.d8(0x916B) != 0) addExperience(m);
+	rules.addRoll(roll);
+	rules.addRoll(value);
+	return rules.rollBeatsTarget();
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }

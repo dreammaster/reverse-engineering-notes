@@ -144,6 +144,11 @@ uint8_t monsterRangeModifier(Machine &m, uint8_t distance, uint8_t group);
 // 12783: the monsters of the location around the active party get their free attacks (ambush); `partyGroup` selects the
 // party block. Stops early when the whole party is down
 void ambush(Machine &m, uint8_t partyGroup);
+// 12D3F: every able party member of group `partyGroup` whose order is 2 and who can act attacks
+void partyAttackRound(Machine &m, uint8_t partyGroup);
+// 1820C: skill/attribute check of the current character: field `offset` against difficulty `count`. Offset 18h (nationality)
+// must equal count, 24h (level) must be at least count; any other field rolls dice against 15 + 5 * count. True on success
+bool fieldCheck(Machine &m, uint8_t count, uint8_t offset);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

@@ -149,6 +149,8 @@ PORT(actionByte0) {                                                             
 }
 PORT(monsterRangeModifier) { r.a.b.l = monsterRangeModifier(m, r.a.b.l, r.d.b.l); r.d.b.l = 0; }   // 156CB: al = distance, dl = group
 PORT(ambush) { ambush(m, r.a.b.l); }                                                    // 12783
+PORT(partyAttackRound) { partyAttackRound(m, r.a.b.l); }                                // 12D3F: al = party group
+PORT(fieldCheck) { r.cf = !fieldCheck(m, r.a.b.l, r.b.b.l); }                           // 1820C: al = difficulty, bl = field offset
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079
