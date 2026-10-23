@@ -70,6 +70,18 @@ PORT(outsideMap) { r.cf = outsideMap(m, r.d.b.l, r.b.b.l); }                    
 PORT(compareTextWithRecord) { r.a.b.l = compareTextWithRecord(m); r.zf = r.a.b.l == 0; }   // 18D8E
 PORT(copyCharacterRecord) { copyCharacterRecord(m, r.a.b.l, r.d.b.l); }                 // 1718B: al = dest, dl = source
 
+PORT(findInSelectedGroup) { const uint8_t at = findInSelectedGroup(m, r.a.b.l); r.cf = at == 0; r.b.b.l = at ? at : 8; }   // 17277
+PORT(appendToSelectedGroup) { appendToSelectedGroup(m, r.a.b.l); }                      // 171D3
+PORT(removeFromActiveGroup) { removeFromActiveGroup(m, r.a.b.l); }                      // 16078
+PORT(clearPartyGroup) { clearPartyGroup(m, r.a.b.l); }                                  // 1619F
+PORT(moveToGroup) {                                                                     // 16018: al = position, dl = from, bl = to
+	uint8_t id = 0;
+	r.cf = !moveToGroup(m, r.a.b.l, r.d.b.l, r.b.b.l, id);
+	if (!r.cf) r.a.b.l = id;
+}
+PORT(deleteCharacter) { deleteCharacter(m, r.a.b.l); }                                  // 172D4
+PORT(mergeGroupsAtSamePosition) { r.cf = !mergeGroupsAtSamePosition(m); }               // 15DAF
+
 // ---- text engine -------------------------------------------------------------------------------------------------------
 PORT(convertNumberToBcd) { convertNumberToBcd(m); }
 PORT(writeNumber) { writeNumber(m); }

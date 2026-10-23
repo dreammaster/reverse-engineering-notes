@@ -181,4 +181,123 @@ void copyCharacterRecord(Machine &m, uint8_t dest, uint8_t source) {
 	for (int i = 0; i < 256; ++i) m.d8(uint16_t(from + i)) = m.d8(uint16_t(to + i));
 }
 
+uint8_t findInSelectedGroup(Machine &m, uint8_t id) {
+	const uint16_t indexes = m.d16(g::partyIndexesPtr);
+	for (uint8_t at = 1; at != 8; ++at)
+		if (m.d8(uint16_t(indexes + at)) == id) return at;
+	return 0;
+}
+
+void appendToSelectedGroup(Machine &m, uint8_t id) {
+	const uint16_t indexes = m.d16(g::partyIndexesPtr);
+	uint8_t at = 1;
+	while (at != 8 && m.d8(uint16_t(indexes + at)) != 0) ++at;
+	m.d8(uint16_t(indexes + at)) = id;   // (a full list overwrites byte 8, the party's x position)
+	++m.d8(uint16_t(g::saved2 + g::s2::membersInGroup));
+}
+
+void removeFromActiveGroup(Machine &m, uint8_t id) {
+	setPartyIndexesPtr(m, m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup)));
+	const uint16_t indexes = m.d16(g::partyIndexesPtr);
+	uint8_t at = findInSelectedGroup(m, id);
+	if (at == 0) at = 8;   // (not found: the shifting below then runs through all 256 offsets, as the original does)
+	for (uint8_t bl = uint8_t(at + 1); bl != 8; ++bl) m.d8(uint16_t(indexes + uint8_t(bl - 1))) = m.d8(uint16_t(indexes + bl));
+	m.d8(uint16_t(indexes + 7)) = 0;
+	--m.d8(uint16_t(g::saved2 + g::s2::membersInGroup));
+}
+
+void clearPartyGroup(Machine &m, uint8_t group) {
+	setPartyIndexesPtr(m, group);
+	const uint16_t indexes = m.d16(g::partyIndexesPtr);
+	for (int i = 0x0D; i >= 0; --i) m.d8(uint16_t(indexes + i)) = 0;
+}
+
+bool moveToGroup(Machine &m, uint8_t position, uint8_t from, uint8_t to, uint8_t &movedId) {
+	m.d8(0xA6C4) = to;
+	setPartyIndexesPtr(m, from);
+	uint16_t indexes = m.d16(g::partyIndexesPtr);
+	const uint8_t id = m.d8(uint16_t(indexes + position));
+	if (id == 0) return false;
+	for (int i = 2; i >= 0; --i) m.d8(uint16_t(0xA6D2 + i)) = m.d8(uint16_t(indexes + 0x0B + (2 - i)));
+	setPartyIndexesPtr(m, to);
+	if (findInSelectedGroup(m, id) != 0) return false;
+	appendToSelectedGroup(m, id);
+	--m.d8(uint16_t(g::saved2 + g::s2::membersInGroup));
+	storePartyPosition(m);
+	indexes = m.d16(g::partyIndexesPtr);
+	for (int i = 2; i >= 0; --i) m.d8(uint16_t(indexes + 0x0B + (2 - i))) = m.d8(uint16_t(0xA6D2 + i));
+	movedId = id;
+	return true;
+}
+
+void deleteCharacter(Machine &m, uint8_t position) {
+	m.d8(0xB23E) = position;
+	setPartyIndexesPtr(m, m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup)));
+	uint16_t indexes = m.d16(g::partyIndexesPtr);
+	const uint8_t id = m.d8(uint16_t(indexes + position));
+	for (uint8_t at = id != 0 ? uint8_t(id + 1) : uint8_t(0); at != 8; ++at) {
+		m.d8(0xB23F) = at;
+		copyCharacterRecord(m, at, uint8_t(at - 1));
+	}
+	m.d8(0xB23F) = id;
+	uint8_t bl = position;
+	if (bl == 0) {   // (the original moves idx[0] to idx[255] once and then carries on at 1)
+		m.d8(uint16_t(indexes + 0xFF)) = m.d8(indexes);
+		bl = 1;
+	} else {
+		++bl;
+	}
+	for (; bl != 8; ++bl) m.d8(uint16_t(indexes + uint8_t(bl - 1))) = m.d8(uint16_t(indexes + bl));
+	m.d8(uint16_t(indexes + 7)) = 0;
+	--m.d8(uint16_t(g::saved2 + g::s2::membersInGroup));
+	--m.d8(uint16_t(g::saved2 + g::s2::field8));
+	for (int group = m.d8(uint16_t(g::saved2 + g::s2::totalPartyGroups)); group >= 0; --group) {
+		m.d8(0xB23E) = uint8_t(group);
+		setPartyIndexesPtr(m, uint8_t(group));
+		indexes = m.d16(g::partyIndexesPtr);
+		for (uint8_t at = 7; at != 0; --at) {
+			const uint8_t v = m.d8(uint16_t(indexes + at));
+			if (v >= id) m.d8(uint16_t(indexes + at)) = uint8_t(v - 1);
+		}
+	}
+}
+
+bool mergeGroupsAtSamePosition(Machine &m) {
+	auto S = [&](uint8_t o) -> uint8_t & { return m.d8(uint16_t(g::saved2 + o)); };
+	m.d8(0xA6C9) = S(g::s2::totalPartyGroups);
+	uint8_t other;
+	for (;;) {
+		other = m.d8(0xA6C9);
+		if (other != S(g::s2::activePartyGroup)) {
+			setPartyIndexesPtr(m, other);
+			const uint16_t indexes = m.d16(g::partyIndexesPtr);
+			if (m.d8(uint16_t(indexes + 0x0A)) == S(g::s2::field7) && m.d8(uint16_t(indexes + 8)) == m.d8(0x46A6) &&
+			    m.d8(uint16_t(indexes + 9)) == m.d8(0x46A7)) break;
+		}
+		if (--m.d8(0xA6C9) & 0x80) {
+			setPartyIndexesPtr(m, S(g::s2::activePartyGroup));   // 15DC4
+			return false;
+		}
+	}
+	for (uint8_t position = 1;; ++position) {   // 15DF3: move everybody over
+		m.d8(0xA6CC) = position;
+		uint8_t moved;
+		if (!moveToGroup(m, position, other, S(g::s2::activePartyGroup), moved)) break;
+		++S(g::s2::membersInGroup);
+	}
+	if (!(m.d8(0x4706) < S(g::s2::activePartyGroup)) && !(m.d8(0x4706) < other)) --m.d8(0x4706);
+	if (S(g::s2::activePartyGroup) >= other) --S(g::s2::activePartyGroup);
+	for (uint8_t group = other; group != 4;) {   // 15E32: close the gap in the group table
+		setPartyIndexesPtr(m, group);
+		const uint16_t indexes = m.d16(g::partyIndexesPtr);
+		for (int i = 0x0D, from = 0x1B; i >= 0; --i, --from) m.d8(uint16_t(indexes + i)) = m.d8(uint16_t(indexes + from));
+		++group;
+		m.d8(0xA6C9) = group;
+	}
+	--S(g::s2::totalPartyGroups);
+	clearPartyGroup(m, 3);
+	setPartyIndexesPtr(m, S(g::s2::activePartyGroup));
+	return true;
+}
+
 } // namespace wl

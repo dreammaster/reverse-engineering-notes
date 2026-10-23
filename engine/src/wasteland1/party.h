@@ -68,4 +68,23 @@ uint8_t compareTextWithRecord(Machine &m);
 // 1718B: overwrites the character record `source` (dl) with the record `dest` (al); nothing when source is 0
 void copyCharacterRecord(Machine &m, uint8_t dest, uint8_t source);
 
+// ---- moving characters between party groups -----------------------------------------------------------------------------------
+// 17277: position (1..7) of roster number `id` in the selected group's list; 0 when it is not there (CF in the original)
+uint8_t findInSelectedGroup(Machine &m, uint8_t id);
+// 171D3: appends roster number `id` to the selected group's list and counts it in membersInGroup
+void appendToSelectedGroup(Machine &m, uint8_t id);
+// 16078: removes roster number `id` from the active group's list (the members behind it move up)
+void removeFromActiveGroup(Machine &m, uint8_t id);
+// 1619F: clears the 14 byte record of party group `group`
+void clearPartyGroup(Machine &m, uint8_t group);
+// 16018: moves the character at list position `position` of group `from` into group `to`; false (CF) when the position is empty or
+// the character is already in the target. `movedId` is the roster number
+bool moveToGroup(Machine &m, uint8_t position, uint8_t from, uint8_t to, uint8_t &movedId);
+// 172D4: deletes the roster character at list position `position` of the active group: later characters move down one roster
+// number, the lists of all groups are renumbered and the counts reduced
+void deleteCharacter(Machine &m, uint8_t position);
+// 15DAF: merges another group standing at the same position of the same map into the active group and closes the gap in the
+// group table; false (CF set in the original) when there is none
+bool mergeGroupsAtSamePosition(Machine &m);
+
 } // namespace wl

@@ -327,3 +327,10 @@ AD73 combatRound junk=al,bl,cf,ch,cl,di,dl,es,si scratch=CF80-CF87,7931-8030,A4A
 3762 restoreLocationAtSlot junk=ah,al,bl,di,dl,pf,sf scratch=BA04-BA11,4661-4662,46AA-46AD,46B2-46B4,46FC-46FD,4685-4686,A59D-A59E
 35C6 updateSlotSurvivors junk=ah,al,bl,di,dl,pf,si,zf scratch=A5A8-A5AB,A688-A688,A59D-A59E,CD40-CD41,BA04-BA11,4661-4662,46AA-46AD,46B2-46B4,46FC-46FD,4685-4686
 3580 updateAllSlotSurvivors junk=ah,al,bl,di,dl,pf,si,zf scratch=A5A8-A5AD,A688-A688,A59D-A59E,CD40-CD41,BA04-BA11,4661-4662,46AA-46AD,46B2-46B4,46FC-46FD,4685-4686
+7277 findInSelectedGroup junk=di,pf,zf
+71D3 appendToSelectedGroup junk=bl,di,dl,pf
+6078 removeFromActiveGroup junk=al,bl,cl,di,dl,pf,sf,si
+619F clearPartyGroup junk=ah,al,bl,cl,di,dl,pf,sf,si
+6018 moveToGroup junk=al,bl,cl,di,dl,pf,sf,si,zf scratch=A6C4-A6C4,A6D2-A6D4
+72D4 deleteCharacter junk=ah,al,bl,cf,cl,di,dl,pf,sf,si scratch=B23E-B23F,4661-4662
+5DAF mergeGroupsAtSamePosition junk=ah,al,cl,dl,si scratch=A6C4-A6CC,A6D2-A6D4,B240-B241
