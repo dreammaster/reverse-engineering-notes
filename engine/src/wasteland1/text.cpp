@@ -893,4 +893,14 @@ void writeMemberName(Machine &m) {   // 171B9
 	writeString2(m);
 }
 
+
+// exported entry points of the helpers above (their registers are handled by the port adapters)
+uint8_t textDecodeOffset(Machine &m) { return decodeTextGetOffset(m); }
+uint8_t textDecodeChar(Machine &m) { return decodeTextGetChar(m); }
+void textDecodeInit(Machine &m, uint8_t index) { decodeTextInit(m, index); }
+uint8_t textFilterQuantity(Machine &m, uint8_t al) { return filterQuantity(m, al); }
+uint8_t textFilterSex(Machine &m, uint8_t al) { return filterSex(m, al); }
+uint8_t textFilterE(Machine &m, uint8_t al) { return filterE(m, al); }
+void textClearLineBuffer(Machine &m) { clearLineBufferColumn(m); }
+
 } // namespace wl

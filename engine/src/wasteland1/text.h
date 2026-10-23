@@ -31,6 +31,16 @@ void writeCharacter2(Machine &m, uint8_t ch);     // 19DC3: drawn immediately
 void writeString(Machine &m);                     // 1786E: NUL terminated string at textString via the buffered writer
 // 16CB7: printMessage without selecting the character writer first
 void printMessageKeepWriter(Machine &m, uint8_t id);
+// 17BC7 / 17B8F / 178B9: the five bit text decoder (offset code, character, start of string `index`)
+uint8_t textDecodeOffset(Machine &m);
+uint8_t textDecodeChar(Machine &m);
+void textDecodeInit(Machine &m, uint8_t index);
+// 1A00A / 1A045 / 1A07E: character filters of the text writers (plural, sex and three way alternatives)
+uint8_t textFilterQuantity(Machine &m, uint8_t al);
+uint8_t textFilterSex(Machine &m, uint8_t al);
+uint8_t textFilterE(Machine &m, uint8_t al);
+// 19EBE: clears the 25 byte line buffer at ds:8DDC
+void textClearLineBuffer(Machine &m);
 void writeString2(Machine &m);                    // 17877: same, with the writer chosen by setWriteCharacterFn*
 void setWriteCharacterFn(Machine &m);             // 1785E: buffered writer
 void setWriteCharacterFn2(Machine &m);            // 17857: immediate writer

@@ -14,6 +14,13 @@ PORT(checkKeypress) { r.a.b.l = checkKeypress(m, 0x20); }                       
 PORT(pollSpeedKeys) { pollSpeedKeys(m); }                                        // 19004
 
 PORT(writeNumberShort) { writeNumberShort(m, r.a.b.l); }                         // 1769C
+PORT(textDecodeOffset) { r.a.b.l = textDecodeOffset(m); r.zf = r.a.b.l == 0; }           // 17BC7
+PORT(textDecodeChar) { r.a.b.l = textDecodeChar(m); }                                   // 17B8F
+PORT(textDecodeInit) { textDecodeInit(m, r.a.b.l); }                                    // 178B9: al = index
+PORT(textFilterQuantity) { r.a.b.l = textFilterQuantity(m, r.a.b.l); }                  // 1A00A
+PORT(textFilterSex) { r.a.b.l = textFilterSex(m, r.a.b.l); }                            // 1A045
+PORT(textFilterE) { r.a.b.l = textFilterE(m, r.a.b.l); }                                // 1A07E
+PORT(textClearLineBuffer) { textClearLineBuffer(m); r.c.x = 0; r.si = 0x8DDC + 25; }    // 19EBE
 PORT(writeNumberLeft) { writeNumberLeft(m, r.a.b.l); }                           // 176A2
 PORT(writeSpaceNumber) { writeSpaceNumber(m, uint16_t(r.a.b.l | (r.d.b.l << 8))); }   // 176C5
 PORT(writeNumber16) { writeNumber16(m, uint16_t(r.a.b.l | (r.d.b.l << 8))); }    // 176D0

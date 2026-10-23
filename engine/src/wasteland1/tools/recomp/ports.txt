@@ -269,3 +269,10 @@ AD14 act_ad14 junk=ah,al,bl,cl,di,dl,si scratch=CF20-CF7F,4661-4664,A59D-A59E,A5
 8024 drawMapCell junk=ah,al,bl,bp,cf,cl,di,dl,es,pf,sf,si,zf scratch=BA04-BA11,4661-4662,4685-4686,46EE-46EE,46AA-46AD,CD40-CD41,A59D-A59E
 49F7 updateGroupDistances junk=ah,al,bl,cl,di,dl,pf,si,zf scratch=A60E-A60F,BA0F-BA11,CD40-CD43,46E2-46EB,CD3F-CD4A,4661-4662,A59D-A59E,CD43-CD44,46AA-46AD
 4664 scanForMonsters junk=ah,al,bl,bp,cl,di,dl,pf,si,zf scratch=A600-A626,A59D-A5A1,A592-A594,7931-796F,CD3F-CD4A,C059-C059,4661-4664,465C-4662,CD40-CD41,BA04-BA11,4685-4686,A55A-A55E,AA3A-AA3F,A5A0-A5A7
+7BC7 textDecodeOffset junk=bl,cl,di,dl,pf
+7B8F textDecodeChar junk=bl,cl,di,dl,pf,zf
+78B9 textDecodeInit junk=al,bl,cl,di,dl,pf,zf
+A00A textFilterQuantity junk=cf,dl,pf,sf,zf
+A045 textFilterSex junk=dl,pf,zf
+A07E textFilterE junk=dl,pf,zf
+9EBE textClearLineBuffer junk=al,pf,zf
