@@ -90,4 +90,67 @@ uint8_t itemFlag(Machine &m, uint8_t offset) { return m.d8(uint16_t(m.d16(g::ite
 
 uint8_t getItemType(Machine &m) { return uint8_t(itemFlag(m, 3) >> 3); }
 
+uint8_t countPartyMembers(Machine &m, uint8_t group, uint8_t *stop) {
+	setPartyIndexesPtr(m, group);
+	const uint16_t indexes = m.d16(g::partyIndexesPtr);
+	uint8_t count = 0, at = 1;
+	for (;;) {
+		if (m.d8(uint16_t(indexes + at)) == 0) break;
+		++count;
+		++at;
+		if (at == 8) break;
+	}
+	if (count == 0) at = 1;
+	if (stop) *stop = at;
+	return count;
+}
+
+void storePartyPosition(Machine &m) {
+	const uint16_t indexes = m.d16(g::partyIndexesPtr);
+	m.d8(uint16_t(indexes + 8)) = m.d8(0x46A6);
+	m.d8(uint16_t(indexes + 9)) = m.d8(0x46A7);
+	m.d8(uint16_t(indexes + 10)) = m.d8(uint16_t(g::saved2 + g::s2::field7));
+}
+
+void setActivePartyGroup(Machine &m, uint8_t group) {
+	setPartyIndexesPtr(m, m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup)));
+	storePartyPosition(m);
+	m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup)) = group;
+	m.d8(uint16_t(g::saved2 + g::s2::membersInGroup)) = countPartyMembers(m, group);
+	const uint16_t indexes = m.d16(g::partyIndexesPtr);
+	m.d8(0x46A6) = m.d8(uint16_t(indexes + 8));
+	m.d8(g::saved2) = uint8_t(m.d8(0x46A6) - m.d8(0x46A8));
+	m.d8(0x46A7) = m.d8(uint16_t(indexes + 9));
+	m.d8(uint16_t(g::saved2 + 1)) = uint8_t(m.d8(0x46A7) - m.d8(0x46A9));
+	m.d8(uint16_t(g::saved2 + g::s2::field7)) = m.d8(uint16_t(indexes + 10));
+}
+
+uint8_t smallestGroupValue(Machine &m, uint8_t &index) {
+	uint8_t best = 0xFF;
+	index = 0;
+	const uint8_t total = m.d8(uint16_t(g::saved2 + g::s2::totalPartyGroups));
+	for (uint8_t i = 0; i <= total; ++i) {
+		const uint8_t v = m.d8(uint16_t(0x7111 + i));
+		if (best > v) { best = v; index = i; }
+	}
+	return best;
+}
+
+void pendingCell(Machine &m, uint8_t &x, uint8_t &y) {
+	x = m.d8(0xA60D);
+	y = m.d8(0xA60C);
+}
+
+void setViewRowPointer(Machine &m, uint8_t row) {
+	uint16_t pointer = row;
+	uint8_t width = m.d8(0x46A5);
+	while (width != 0 && !(width & 1)) {
+		pointer = uint16_t(pointer << 1);
+		width >>= 1;
+	}
+	m.setD16(0x46CA, uint16_t(pointer + 0x3448));
+}
+
+uint8_t shiftLeft4(uint8_t v) { return uint8_t(v << 4); }
+
 } // namespace wl

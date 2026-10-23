@@ -172,6 +172,15 @@ PORT(findEntrySlot) {                                                           
 PORT(findEntry) {                                                                       // 14AEA: al = party id, dl = x, bl = y
 	uint8_t entry = 0;
 	r.cf = findEntry(m, r.a.b.l, r.d.b.l, r.b.b.l, entry);
+	const uint8_t x = r.d.b.l, y = r.b.b.l;
+	r.b.b.l = r.cf ? uint8_t(entry * 4) : 0x40;
+	if (!r.cf) {   // what the scan of the last entry leaves behind
+		uint8_t al = m.d8(0xA9AB);
+		if (al != 0 && al == x) { al = m.d8(0xA9AC); if (al == y) al = m.d8(0xA9AD); }
+		r.a.b.l = al;
+		r.d.b.l = 0x10;
+		r.zf = true;
+	}
 	if (r.cf) { r.a.b.l = uint8_t(entry >> 2); r.d.b.l = entry; r.zf = r.a.b.l == 0; }
 }
 PORT(swapEntrySlot) { swapEntrySlot(m, r.a.b.l, r.d.b.l, r.b.b.l); }                  // 14BAD: al = group, dl = slot, bl = entry offset
@@ -181,6 +190,9 @@ PORT(equipOrder) { equipOrder(m, r.a.b.l); }                                    
 PORT(printMessage52) { printMessage(m, 0x52); }                                         // 13223
 PORT(reloadOrder) { reloadOrder(m, r.a.b.l); }                                          // 13228
 PORT(executeOrders) { executeOrders(m, r.a.b.l); }                                      // 12CC3: al = party group
+PORT(forgetTrackedGroup) { forgetTrackedGroup(m); r.a.b.l = 1; }                        // 14AAA
+PORT(recordTrackedGroup) { recordTrackedGroup(m, r.b.b.l); r.a.b.l = 1; }               // 14A88: bl = entry offset
+PORT(continuePendingMove) { r.cf = !continuePendingMove(m); }                           // 14AC7
 PORT(setItemQuantityOne) { setItemQuantityOne(m); r.a.b.l = 1; }                       // 17AB7
 PORT(memberTargetsAlive) { const uint8_t n = memberTargetsAlive(m, r.b.b.l); r.a.b.l = n; r.cf = n == 0; }   // 13440: bl = party member
 PORT(targetMembersAlive) { const uint8_t n = targetMembersAlive(m); r.a.b.l = n; r.cf = n == 0; }           // 13079

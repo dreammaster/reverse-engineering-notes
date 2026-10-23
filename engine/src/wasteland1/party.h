@@ -42,4 +42,20 @@ void getItemDetails2(Machine &m, uint8_t skillId);        // skill -> attribute 
 uint8_t getItemType(Machine &m);                          // flags >> 3 of the current item record
 uint8_t itemFlag(Machine &m, uint8_t offset);             // byte at itemDetailsPtr + offset
 
+// ---- party groups (the savegame holds up to four parties that walk the map separately) ----------------------------------------
+// 171E3: selects the party record of `group` and counts its members (consecutive non-zero indexes from offset 1); returns the
+// count; `stop` receives the offset where the scan ended (the original's bl)
+uint8_t countPartyMembers(Machine &m, uint8_t group, uint8_t *stop = nullptr);
+// 16185: stores the party position (46A6/46A7) and the map id into the active party record
+void storePartyPosition(Machine &m);
+// 16149: stores the position of the active group and makes `group` the active one (position, member count, map id)
+void setActivePartyGroup(Machine &m, uint8_t group);
+// 14A65: smallest value of the byte table at ds:7111 over the party groups 0..total; returns the value and its index
+uint8_t smallestGroupValue(Machine &m, uint8_t &index);
+// 14AE1 / 17FC8: scratch helpers of the movement code: the pending cell (A60D, A60C) and the pointer 3448h + row * width
+void pendingCell(Machine &m, uint8_t &x, uint8_t &y);
+void setViewRowPointer(Machine &m, uint8_t row);
+// 12738: shift left by four (result 8 bit)
+uint8_t shiftLeft4(uint8_t v);
+
 } // namespace wl

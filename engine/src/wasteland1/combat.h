@@ -171,6 +171,12 @@ void equipOrder(Machine &m, uint8_t member);
 void reloadOrder(Machine &m, uint8_t member);
 // 12CC3: carries out the order of every member of the party group `partyGroup` that is able to act
 void executeOrders(Machine &m, uint8_t partyGroup);
+// 14AAA: forgets the tracked group standing on the pending cell (A60D, A60C) of the active party
+void forgetTrackedGroup(Machine &m);
+// 14A88: records the pending cell, the map id and ds:A60B as entry `entryOffset`
+void recordTrackedGroup(Machine &m, uint8_t entryOffset);
+// 14AC7: false (CF) when the pending move belongs to another party group; otherwise runs the move (sub_18024)
+bool continuePendingMove(Machine &m);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

@@ -49,6 +49,20 @@ PORT(findItemById) {
 	r.cf = off < 0;
 }
 
+PORT(setActivePartyGroup) { setActivePartyGroup(m, r.a.b.l); }                          // 16149: al = group
+PORT(storePartyPosition) { storePartyPosition(m); }                                     // 16185
+PORT(countPartyMembers) {                                                               // 171E3: al = group -> al = count, dl = count, bl
+	uint8_t stop = 1;
+	r.a.b.l = countPartyMembers(m, r.a.b.l, &stop);
+	r.d.b.l = r.a.b.l;
+	r.b.b.l = stop;
+	r.zf = r.a.b.l == 0;
+}
+PORT(smallestGroupValue) { uint8_t index; r.a.b.l = smallestGroupValue(m, index); r.d.b.l = index; }   // 14A65
+PORT(pendingCell) { uint8_t x, y; pendingCell(m, x, y); r.d.b.l = x; r.b.b.l = y; }    // 14AE1
+PORT(setViewRowPointer) { setViewRowPointer(m, r.b.b.l); r.a.x = m.d16(0x46CA); }                              // 17FC8: bl = row
+PORT(shiftLeft4) { r.a.b.l = shiftLeft4(r.a.b.l); r.zf = r.a.b.l == 0; r.sf = (r.a.b.l & 0x80) != 0; r.cf = false; }   // 12738
+
 // ---- text engine -------------------------------------------------------------------------------------------------------
 PORT(convertNumberToBcd) { convertNumberToBcd(m); }
 PORT(writeNumber) { writeNumber(m); }

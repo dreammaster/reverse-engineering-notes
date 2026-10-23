@@ -173,80 +173,90 @@ A0C5 scrollLine junk=al,dl,pf,si,zf
 9720 selectWriterForRoster junk=al,bl,bp,cl,di,dl,es,pf,si,zf
 5A30 weaponSkillRoll junk=al,bl,ch,cl,di,dl,pf,si,zf scratch=A67A-A67C,A59D-A59D,A598-A599,BA6D-BA70,BA08-BA11,4661-4662,C059-C059
 57D6 damagePartyMember junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CD49-CD4A,A685-A685,A686-A686,A698-A69D,A687-A687,A67D-A69D,BA6D-BA70,CD3F-CD3F,C059-C059
-5A9D attackMonster junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A670-A683,A597-A597,A59D-A59E,BA08-BA11,4661-4662,CD3F-CD3F,C059-C059
-7AB7 setItemQuantityOne junk=
-3440 memberTargetsAlive junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A59D-A59E,A688-A688
-3079 targetMembersAlive junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A59D-A59E,A688-A688
-306C printWeaponNote junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf
-3086 countHitMonsters junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A582-A582,A55E-A55E
-9D4D cellDistance junk=ah,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=CD40-CD41
-595C burstHits junk=ah,bl,ch,cl,di,dl,es,pf,si,zf scratch=A684-A684,C059-C059
-5956 burstSize junk=ah,bl,ch,cl,di,dl,es,pf,si,zf scratch=A684-A684,C059-C059
-34B2 rollToFire junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A551-A551,CD49-CD4A,C059-C059,BA6D-BA70,CD3F-CD3F,4661-4662,CD47-CD48
-567F attackDifficulty junk=ah,bl,ch,cl,di,es,pf,si,zf,cf,sf scratch=A68D-A68E,CD40-CD41,A59D-A59E,A670-A683,C059-C059,B00E-B00F,4661-4662,BA08-BA11
-2D84 partyMemberAttack junk=ah,al,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=A550-A5AF,A660-A6A0,CD3F-CD4A,BA08-BA11,4661-4662,C059-C059,A688-A688,CDCC-CDCC,B00E-B00F,B06F-B06F,115B-115B
+5A9D attackMonster junk=ah,bl,di,dl,pf,zf scratch=A670-A683,A597-A597,A59D-A59E,BA08-BA11,4661-4662,CD3F-CD3F,C059-C059
+7AB7 setItemQuantityOne
+3440 memberTargetsAlive junk=ah,bl,di,dl,pf,zf scratch=A59D-A59E,A688-A688
+3079 targetMembersAlive junk=ah,bl,di,dl,pf,zf scratch=A59D-A59E,A688-A688
+306C printWeaponNote junk=al,pf,zf
+3086 countHitMonsters junk=bl,pf,zf scratch=A582-A582,A55E-A55E
+9D4D cellDistance junk=bl,cf,pf,sf,zf scratch=CD40-CD41
+595C burstHits junk=ah,pf,zf scratch=A684-A684,C059-C059
+5956 burstSize junk=ah,bl,ch,cl,di,pf,si,zf scratch=A684-A684,C059-C059
+34B2 rollToFire junk=al,bl,ch,cl,di,dl,pf,si scratch=A551-A551,CD49-CD4A,C059-C059,BA6D-BA70,CD3F-CD3F,4661-4662,CD47-CD48
+567F attackDifficulty junk=ah,bl,ch,cl,di,pf,si scratch=A68D-A68E,CD40-CD41,A59D-A59E,A670-A683,C059-C059,B00E-B00F,4661-4662,BA08-BA11
+2D84 partyMemberAttack junk=ah,al,bl,cf,ch,cl,di,dl,pf,sf,si,zf scratch=A550-A5AF,A660-A6A0,CD3F-CD4A,BA08-BA11,4661-4662,C059-C059,A688-A688,CDCC-CDCC,B00E-B00F,B06F-B06F,115B-115B
 29E9 writeMonsterName junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=A59D-A59E,C059-C059
 29D5 printMonsterMessage43 junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=A59D-A59E,C059-C059
 29DA printMonsterMessage1A junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=A59D-A59E,C059-C059
-39CE rangeModifier junk=,bl,dl,pf,si scratch=7931-796F,A592-A594
-3697 writeEncounterGroup junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=A5A5-A5A5,A59D-A59E,C059-C059
-3651 describeEncounter junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A5A5-A5A7,A59D-A59E,C059-C059,465C-4662
-3726 setSlotStatusOne junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A59D-A5A1
-372B setSlotStatusZero junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A59D-A5A1
-2A76 monsterDamage junk=ah,bl,ch,cl,di,es,pf,si,zf scratch=A59D-A59E,C059-C059,CD3F-CD3F
+39CE rangeModifier junk=bl,dl,pf,si scratch=7931-796F,A592-A594
+3697 writeEncounterGroup junk=ah,al,bl,ch,cl,di,dl,pf,sf,si,zf scratch=A5A5-A5A5,A59D-A59E,C059-C059
+3651 describeEncounter scratch=A5A5-A5A7,A59D-A59E,C059-C059,465C-4662
+3726 setSlotStatusOne junk=ah,al,bl,di,pf,zf scratch=A59D-A5A1
+372B setSlotStatusZero junk=ah,al,bl,di,pf,zf scratch=A59D-A5A1
+2A76 monsterDamage junk=bl,ch,cl,di,pf,si,zf scratch=A59D-A59E,C059-C059,CD3F-CD3F
 295D monsterHitsParty junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A4A0-A4D6,A59D-A59E,C059-C059,CD3F-CD4A,BA6D-BA70,A680-A6A0
-29B6 anyMemberAlive junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A4A0-A4A0
-41FA adjustMemberField junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A5C2-A5C4,A59D-A59E,C059-C059,CD3F-CD4A,BA6D-BA70
-42D7 actionByte8 junk=ah,bl,ch,cl,di,es,pf,si,dl
-42E2 actionByte0 junk=ah,bl,ch,cl,di,es,pf,si,dl
-56CB monsterRangeModifier junk=ah,bl,ch,cl,di,es,pf,si,zf scratch=7931-796F,A592-A594,A59D-A59E,C059-C059
-2783 ambush junk=ah,al,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=A4A0-A4D6,A59D-A5A1,A55A-A55E,A592-A594,A670-A6A0,7931-796F,CD3F-CD4A,BA08-BA11,BA6D-BA70,C059-C059,4661-4662,465C-4662,CDCC-CDCC
-2D3F partyAttackRound junk=ah,al,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=A4A0-A4D6,A550-A5AF,A59D-A5A1,A592-A594,A670-A6A0,7931-796F,CD3F-CD4A,BA08-BA11,BA6D-BA70,C059-C059,4661-4662,465C-4662,CDCC-CDCC,A564-A564
-820C fieldCheck junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf,sf scratch=BA6A-BA6B,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA73
-4B9C entrySlot junk=ah,bl,ch,cl,di,es,pf,si,sf,cf
-4659 entrySlotCurrent junk=ah,bl,ch,cl,di,es,pf,si,sf,cf
-4B36 findEntrySlot junk=ah,bl,ch,cl,di,es,pf,si,sf,zf scratch=A601-A603,A59D-A59E
-4AEA findEntry junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=A604-A606
-4BAD swapEntrySlot junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf,cf,sf scratch=A600-A600,A59D-A59E,4661-4662
-4480 placeTrackedMonsters junk=ah,al,bl,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=A600-A626,A59D-A5A1,A592-A594,7931-796F,CD3F-CD4A,C059-C059,4661-4662,465C-4662,CD40-CD41,BA08-BA11,A5A0-A5A7,A55A-A55E,CDCC-CDCC,466B-466D
-A470 act_a470 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A4F4 act_a4f4 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A526 act_a526 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A54B act_a54b junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A611 act_a611 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A699 act_a699 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E,CCE1-CCE1
-A6F5 act_a6f5 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A738 act_a738 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A773 act_a773 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A795 act_a795 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A7B6 act_a7b6 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A879 act_a879 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A8AF act_a8af junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A8D2 act_a8d2 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A903 act_a903 junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A919 act_a919 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A931 act_a931 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A947 act_a947 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A961 act_a961 junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A977 act_a977 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A98D act_a98d junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A9A3 act_a9a3 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A9BC act_a9bc junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A9C7 act_a9c7 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-A9DD act_a9dd junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-AA12 act_aa12 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-AA3F act_aa3f junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-AA8E act_aa8e junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-AABF act_aabf junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-AB35 act_ab35 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E,BA08-BA11
-AB7B act_ab7b junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-ABCA act_abca junk=ah,al,bl,ch,cl,di,dl,es,pf,sf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-ACF0 act_acf0 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-ACFC act_acfc junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-AD08 act_ad08 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
-AD14 act_ad14 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E,CCE1-CCE1
-9ACD unjam junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf,cf,sf scratch=CCD4-CCD5,BA73-BA73,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA70,A59D-A59E,CCE1-CCE1
-30B1 equipOrder junk=ah,al,bl,bp,cf,ch,cl,di,dl,es,pf,sf,si,zf scratch=A59D-A59E,C059-C059,CCE0-CCE8,CD3F-CD4A,BA6D-BA70
-3223 printMessage52 junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf,cf,sf scratch=C059-C059
-3228 reloadOrder junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf,cf,sf scratch=A558-A558,CCD4-CCD5,BA73-BA73,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA70,A59D-A59E,CCE0-CCE8,CCD6-CCD9
-2CC3 executeOrders junk=ah,al,bl,cf,ch,cl,di,dl,es,pf,sf,si,sp,zf scratch=A550-A5AF,A558-A558,A567-A567,CCD4-CCD9,BA73-BA73,CD3F-CD4A,C059-C059,4661-4664,BA6D-BA70,CCE0-CCE8,CDCC-CDCC,A4A0-A4D6,A670-A6A0,465C-4662,BA08-BA11
+29B6 anyMemberAlive junk=ah,al,bl,cl,di,dl,si scratch=A4A0-A4A0
+41FA adjustMemberField junk=ah,al,bl,cl,di,dl,pf,si,zf scratch=A5C2-A5C4,A59D-A59E,C059-C059,CD3F-CD4A,BA6D-BA70
+42D7 actionByte8 junk=bl,di,pf
+42E2 actionByte0 junk=bl,di,pf
+56CB monsterRangeModifier junk=bl,ch,cl,di,pf,si scratch=7931-796F,A592-A594,A59D-A59E,C059-C059
+2783 ambush junk=ah,al,bl,cf,ch,cl,di,dl,pf,sf,si scratch=A4A0-A4D6,A59D-A5A1,A55A-A55E,A592-A594,A670-A6A0,7931-796F,CD3F-CD4A,BA08-BA11,BA6D-BA70,C059-C059,4661-4662,465C-4662,CDCC-CDCC
+2D3F partyAttackRound junk=ah,al,bl,cf,cl,di,dl,si scratch=A4A0-A4D6,A550-A5AF,A59D-A5A1,A592-A594,A670-A6A0,7931-796F,CD3F-CD4A,BA08-BA11,BA6D-BA70,C059-C059,4661-4662,465C-4662,CDCC-CDCC,A564-A564
+820C fieldCheck junk=al,di,dl,pf,sf,zf scratch=BA6A-BA6B,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA73
+4B9C entrySlot junk=pf
+4659 entrySlotCurrent junk=pf
+4B36 findEntrySlot junk=ah,bl,di,pf,si,zf scratch=A601-A603,A59D-A59E
+4AEA findEntry junk=pf scratch=A604-A606
+4BAD swapEntrySlot junk=ah,al,bl,di,dl,pf,sf scratch=A600-A600,A59D-A59E,4661-4662
+4480 placeTrackedMonsters junk=ah,al,bl,cl,di,dl,pf,si,zf scratch=A600-A626,A59D-A5A1,A592-A594,7931-796F,CD3F-CD4A,C059-C059,4661-4662,465C-4662,CD40-CD41,BA08-BA11,A5A0-A5A7,A55A-A55E,CDCC-CDCC,466B-466D
+A470 act_a470 junk=ah,al,bl,cl,di,dl,si scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A4F4 act_a4f4 junk=ah,al,bl,cl,di,dl,si scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A526 act_a526 junk=al,bl,di scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A54B act_a54b junk=ah,al,bl,cl,di,dl,pf,si,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A611 act_a611 junk=al,bl,di,pf,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A699 act_a699 junk=al,bl,cl,di,dl,si scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E,CCE1-CCE1
+A6F5 act_a6f5 junk=al,bl,di scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A738 act_a738 junk=al,bl,di scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A773 act_a773 junk=ah,al,bl,cl,di,dl,si scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A795 act_a795 junk=ah,al,bl,cl,di,dl,si scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A7B6 act_a7b6 junk=ah,al,bl,cl,di,dl,si scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A879 act_a879 junk=al,bl,di scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A8AF act_a8af junk=ah,al,bl,di scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A8D2 act_a8d2 junk=ah,al,bl,di,dl,si scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A903 act_a903 junk=al,bl,di,pf,sf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A919 act_a919 scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A931 act_a931 scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A947 act_a947 junk=al,bl,di,pf,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A961 act_a961 junk=al,bl,di,pf,sf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A977 act_a977 scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A98D act_a98d scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A9A3 act_a9a3 scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A9BC act_a9bc scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A9C7 act_a9c7 scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+A9DD act_a9dd junk=ah,al,bl,di,pf,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+AA12 act_aa12 junk=al,bl,di,pf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+AA3F act_aa3f junk=al,bl,di,pf,sf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+AA8E act_aa8e junk=al,bl,di,pf,zf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+AABF act_aabf junk=al,bl,di scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+AB35 act_ab35 junk=ah,al,bl,di,dl scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E,BA08-BA11
+AB7B act_ab7b junk=al,bl,di scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+ABCA act_abca junk=al,bl,di,pf,sf scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+ACF0 act_acf0 junk=al,bl,di scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+ACFC act_acfc junk=al,bl,di scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+AD08 act_ad08 junk=al,bl,di scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E
+AD14 act_ad14 junk=ah,al,bl,cl,di,dl,si scratch=CF20-CF7F,4661-4664,A59D-A59E,A55A-A55E,CCE1-CCE1
+9ACD unjam junk=ah,al,bl,cl,di,dl,pf,si,zf scratch=CCD4-CCD5,BA73-BA73,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA70,A59D-A59E,CCE1-CCE1
+30B1 equipOrder junk=ah,al,bl,bp,ch,cl,di,dl,es,pf,si,zf scratch=A59D-A59E,C059-C059,CCE0-CCE8,CD3F-CD4A,BA6D-BA70
+3223 printMessage52 junk=al,bl,ch,cl,di,dl,es,pf,si,zf scratch=C059-C059
+3228 reloadOrder junk=ah,al,bl,ch,cl,di,dl,es,pf,si,zf scratch=A558-A558,CCD4-CCD5,BA73-BA73,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA70,A59D-A59E,CCE0-CCE8,CCD6-CCD9
+2CC3 executeOrders junk=ah,al,bl,cf,ch,cl,di,dl,es,sf,si,sp scratch=A550-A5AF,A558-A558,A567-A567,CCD4-CCD9,BA73-BA73,CD3F-CD4A,C059-C059,4661-4664,BA6D-BA70,CCE0-CCE8,CDCC-CDCC,A4A0-A4D6,A670-A6A0,465C-4662,BA08-BA11
+6149 setActivePartyGroup junk=ah,al,bl,cf,cl,di,dl,pf,sf,si,zf
+6185 storePartyPosition junk=al,bl,di
+71E3 countPartyMembers junk=ah,cl,di,pf,si
+4A65 smallestGroupValue junk=bl,cf
+4AE1 pendingCell
+7FC8 setViewRowPointer junk=pf scratch=4661-4662
+2738 shiftLeft4 junk=pf
+4AAA forgetTrackedGroup junk=bl,dl,pf,zf scratch=A604-A606,A609-A609
+4A88 recordTrackedGroup scratch=A60A-A60A
+4AC7 continuePendingMove junk=ah,al,bl,bp,cl,di,dl,pf,si,zf scratch=A59D-A5A1,4661-4662,BA0F-BA11

@@ -1255,6 +1255,32 @@ void executeOrders(Machine &m, uint8_t partyGroup) {
 	}
 }
 
+void forgetTrackedGroup(Machine &m) {
+	uint8_t x, y;
+	pendingCell(m, x, y);
+	uint8_t entry = 0;
+	const uint8_t offset = findEntry(m, m.d8(uint16_t(g::saved2 + g::s2::field7)), x, y, entry) ? uint8_t(entry * 4) : 0x40;
+	for (int i = 0; i != 4; ++i) m.d8(uint16_t(0xA96F + offset + i)) = 0;
+	m.d8(0xA609) = 1;
+}
+
+void recordTrackedGroup(Machine &m, uint8_t entryOffset) {
+	m.d8(uint16_t(0xA96F + entryOffset)) = m.d8(0xA60D);
+	m.d8(uint16_t(0xA970 + entryOffset)) = m.d8(0xA60C);
+	m.d8(uint16_t(0xA971 + entryOffset)) = m.d8(uint16_t(g::saved2 + g::s2::field7));
+	m.d8(uint16_t(0xA972 + entryOffset)) = m.d8(0xA60B);
+	m.d8(0xA60A) = 1;
+}
+
+bool continuePendingMove(Machine &m) {
+	if (m.d8(0xA608) == 0) return true;
+	if (m.d8(uint16_t(g::saved2 + g::s2::activePartyGroup)) != m.d8(0xA607)) return false;
+	X86Regs x;
+	pendingCell(m, x.dl, x.bl);
+	legacy::call(m, 0x8024, x);   // sub_18024
+	return true;
+}
+
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
 
 uint8_t randomDigit(Machine &m) { return uint8_t(Rules(m).random(10) - 1); }
