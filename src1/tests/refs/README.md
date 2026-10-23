@@ -11,3 +11,4 @@ and the test named below is pointed at `<dir>` through its environment variable.
 |---|---|---|
 | `prog3_menu.txt` | party state 2 | `test_prog3` (`YENDOR1_REFP3_DIR`) |
 | `new_game_to_menu_about.txt` | unmodified (new game) | `test_prog1`/`test_prog2`/`test_sw` (`YENDOR1_REF2_DIR`) |
+| `prog6_bookmarker.txt` | party state 2 | `test_prog6` (`YENDOR1_REFP6_DIR`) |

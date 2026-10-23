@@ -185,3 +185,14 @@ recorder, video diff, context printing); yemu now writes `# end <program>` marke
 reads what a parent does after a child returned. Not covered by a reference run: the child launches (entries 1-4, 6; this game has
 no characters, so only Create would start PROG5), the first-launch variant (parm_03 = 0 uses the right-to-left wipe, which the
 menu shown by the new-game run in `ref2` exercises only up to its first click), and exits 5 and 9.
+
+## 2026-10-23 -- PROG6 (the Bookmarker) reimplemented and verified
+
+`src1/prog6`: the save/restore popup (3 entries from the book menu, 4 or 5 in a running game depending on parm_03/parm_05/parm_12), with
+the shared confirmation panel, Esc icon, mouse and keyboard selection (a click on an entry selects *and* activates it). Saving and
+restoring are done by PROG0 (modes 2 and 3, parm_10 = byte 21h of PARTY.DAT record 0) through `Shared::Launcher`. `BookUi::drawFrame`
+(shared_0bb58f) is now shared with PROG3. Not ported yet: `drawPartyStrip`, the shared character renderer PROG6 calls after a restore for
+each party member (it will come with PROG5); the restore path is therefore only verified up to the PROG0 hand-over.
+
+Verification (`tests/test_prog6.cpp`, script `tests/refs/prog6_bookmarker.txt`): two runs match call for call and in video memory (280 calls:
+navigation, RESTORE?/SAVE? confirmations cancelled by key and by the Esc icon, Esc exit; 206 calls: Enter, confirm, hand-over to PROG0).

@@ -3,6 +3,7 @@
 #include "prog1/Prog1.h"
 #include "prog2/Prog2.h"
 #include "prog3/Prog3.h"
+#include "prog6/Prog6.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -20,7 +21,7 @@ const uint32_t kMessageA = 0x108E;        // 21 lines of the shareware message, 
 const uint32_t kMessageB = 0x14FC;        // 24 lines shown after the PROG16 cutscene
 
 enum Program {
-	kProg0 = 0, kProg1 = 1, kProg2 = 2, kProg3 = 3, kProg4 = 4, kProg5 = 5, kProg10 = 10, kProg16 = 16, kProg17 = 17, kProg18 = 18
+	kProg0 = 0, kProg1 = 1, kProg2 = 2, kProg3 = 3, kProg4 = 4, kProg5 = 5, kProg6 = 6, kProg10 = 10, kProg16 = 16, kProg17 = 17, kProg18 = 18
 };
 
 std::string join(const std::string &dir, const char *name) {
@@ -50,6 +51,10 @@ int DefaultLauncher::run(int program, Shared::Params &params, Shared::Runtime &r
 	}
 	case kProg3: {
 		Prog3::Prog3 p(rt, params, *this);
+		return p.run();
+	}
+	case kProg6: {
+		Prog6::Prog6 p(rt, params, *this);
 		return p.run();
 	}
 	default:

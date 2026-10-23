@@ -63,6 +63,9 @@ public:
 	 *  4 = right). Returns the original's result byte (byte_11E90): 0 key, 1 icon hit (rt.last.code / ctx.textChar = its key), 2 nothing
 	 *  happened, 3/4 click, FFh when the platform asked to quit. */
 	byte input(byte keyMask, byte clickMask, byte flags);
+	/** shared_0bb58f: draw the frame round a menu entry (`rect` = x1, y1, x2, y2 words) in `colour`; the pointer is hidden while the frame
+	 *  is drawn if it is over it. */
+	void drawFrame(const byte *rect, byte colour);
 	/** shared_23f116: a framed box. `record` is the program's 10-byte description: x1, y1, x2, y2 (words), fill colour, shadow offset. */
 	void drawBox(const byte *record);
 	/** shared_1d0ebe (codes 1Eh and up): save the bottom-right strip of the page and open a "are you certain" panel there with

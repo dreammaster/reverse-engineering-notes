@@ -238,6 +238,20 @@ byte BookUi::input(byte keyMask, byte clickMask, byte flags) {
 	}
 }
 
+void BookUi::drawFrame(const byte *r, byte colour) {
+	Vid::Context &c = _rt.video.ctx;
+	auto word = [r](int i) { return (uint16)(r[i] | (r[i + 1] << 8)); };
+	c.colour = colour;
+	c.x1 = word(0); c.y1 = word(2); c.x2 = word(4); c.y2 = word(6);
+	const int16 curX = (int16)c.curX, curY = (int16)c.curY;
+	const bool apart = (int16)c.x2 < curX || (int16)c.y2 < curY || (int16)(curX + 0x0F) < (int16)c.x1 || (int16)(curY + 0x0F) < (int16)c.y1;
+	if (!apart)
+		_rt.vid(0x29);
+	_rt.vid(0x06);
+	if (c.cursorHide != 0)
+		_rt.vid(0x28);
+}
+
 void BookUi::drawBox(const byte *r) {
 	Vid::Context &c = _rt.video.ctx;
 	auto word = [r](int i) { return (uint16)(r[i] | (r[i + 1] << 8)); };

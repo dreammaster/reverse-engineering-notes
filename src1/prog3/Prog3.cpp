@@ -88,17 +88,7 @@ void Prog3::highlight(byte entry, byte colour) {
 	const byte *r = data((uint16)(kHitBoxes + (entry - 1) * 8), 8);
 	if (!r)
 		return;
-	auto word = [r](int i) { return (uint16)(r[i] | (r[i + 1] << 8)); };
-	_c.colour = colour;
-	_c.x1 = word(0); _c.y1 = word(2); _c.x2 = word(4); _c.y2 = word(6);
-	const int16_t curX = (int16_t)_c.curX, curY = (int16_t)_c.curY;
-	const bool apart = (int16_t)_c.x2 < curX || (int16_t)_c.y2 < curY || (int16_t)(curX + 0x0F) < (int16_t)_c.x1 ||
-	                   (int16_t)(curY + 0x0F) < (int16_t)_c.y1;
-	if (!apart)
-		_rt.vid(0x29);
-	_rt.vid(0x06);
-	if (_c.cursorHide != 0)
-		_rt.vid(0x28);
+	_ui.drawFrame(r, colour);
 }
 
 // sub_105BB: Up/Down move the frame, Enter accepts, a click on an entry selects it

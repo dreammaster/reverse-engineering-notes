@@ -1,0 +1,37 @@
+wait 4
+key 0D
+wait 8
+ext 50
+wait 1
+key 0D
+wait 3
+ext 50
+wait 1
+ext 50
+wait 1
+key 0D
+wait 1
+key 1B
+wait 1
+ext 48
+wait 1
+moveto 300 146
+wait 1
+click l
+wait 1
+moveto 392 326
+wait 1
+click l
+wait 1
+shot z1
+key 1B
+wait 3
+shot z2
+key 0D
+wait 3
+key 0D
+wait 1
+shot z3
+key 0D
+wait 4
+quit
