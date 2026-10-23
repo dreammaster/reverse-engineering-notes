@@ -32,5 +32,15 @@ PORT(matchAttributeCondition) {                                                 
 	r.a.b.l = 0;
 }
 
+PORT(applyActionEffect) { applyActionEffect(m, r.a.b.l); }                              // 14193: al = party member
+PORT(showActionMessage) { showActionMessage(m); }                                       // 142ED
+PORT(applyActionEffectToParty) { applyActionEffectToParty(m); }                         // 14296
+
+PORT(evaluateAction) {                                                                  // 13EC9: dl = x, bl = y -> al, CF
+	uint8_t result = 0;
+	r.cf = evaluateAction(m, r.d.b.l, r.b.b.l, result);
+	r.a.b.l = result;
+}
+
 } // namespace rc
 } // namespace wl

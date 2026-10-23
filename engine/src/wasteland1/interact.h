@@ -27,4 +27,17 @@ bool matchSkillCondition(Machine &m, uint8_t skillId, uint8_t &at);
 // there is none or the check failed
 bool matchAttributeCondition(Machine &m, uint8_t attributeId, uint8_t &at);
 
+// 14193: applies the effect stored in bytes 8 and 9 of the action record (a field offset and an amount, fixed or dice) to party
+// member `member` and shows the record's message (14314 / 14307 keep the text pacing variables around it)
+void applyActionEffect(Machine &m, uint8_t member);
+// 142ED: shows the record's message (byte 3) with the pacing variables set
+void showActionMessage(Machine &m);
+// 14296: applyActionEffect for every party member
+void applyActionEffectToParty(Machine &m);
+
+// 13EC9: runs the action record of the cell (x, y): every able party member is checked against the condition list, effects and
+// messages are applied and the cell changes accordingly. Returns the carry of the cell change; `result` is 1 when the record is
+// not interactive, else the number of failed runs
+bool evaluateAction(Machine &m, uint8_t x, uint8_t y, uint8_t &result);
+
 } // namespace wl
