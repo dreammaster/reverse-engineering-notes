@@ -76,14 +76,14 @@ everything that is new in Deponia 4 / Deponia 1 is new relative to it: the order
 | Compiler (`.comment`) | GCC 4.6.3 (Ubuntu/Linaro) and 4.7.2 (Debian), `-O2` | GCC 4.4.7, 4.7.2 and 4.6.3; Deponia 4 `-O0`, Deponia 1 `-O2` |
 | JIT assembler in the file | DynASM 1.3.0 | DynASM 1.4.0 (DynASM belongs to LuaJIT: most probably LuaJIT 2.0 against 2.1; not checked further) |
 | Class layouts | `TConsole` inside `TGameControl` at `+0x838` | `+0x938` in both |
-| Libraries | no Box2D, no HarfBuzz, no glm; 217 Lua/tolua symbols | Box2D (the `b2` Lua module); glm in Deponia 4 and 1 (inlined in Deponia 1); 345 / 339 Lua/tolua symbols; HarfBuzz in Deponia 1 only |
+| Libraries | no Box2D, no HarfBuzz, no glm symbols (Deponia 1 has none either: inlined); 217 Lua/tolua symbols | Box2D (the `b2` Lua module); glm in Deponia 4 and 1 (inlined in Deponia 1); 345 / 339 Lua/tolua symbols; HarfBuzz in Deponia 1 only |
 
 ### Data model: additive
 
 `tools/extract_xml_names.py` and `extract_schema.py` on `Deponia2.asm` (the same `-O2` code patterns as Deponia 1, so they read it directly): **Deponia 2 has 753 XML names (ids up to 794), 38 record classes and 543 fields; Deponia 4 and Deponia 1 have 799 names (up to 840), 41 classes and 583 fields.**
 Every name, class and field of Deponia 2 is in the newer builds with the same id, type, kind, link and version (0 differences, 0 fields only in Deponia 2; the five name differences are the extractor's: ids 3, 58, 144, 521, and the last id 794, which is a maximum marker in Deponia 2). What the newer builds add:
 
-- two record classes: `TTAudioBus` (audio busses) and `TTShader` (shaders), with the tables `AudioBusses`, `Shaders` and `Events`; the links `GameAudioContainerLinks`, `GameAudioMixLinks`, `GameShaderLinks`, `SceneAudioBusses`;
+- three record classes: `TTAudioBus` (audio busses), `TTShader` (shaders) and `TTEvent` (events, no fields of its own in the schema), with the tables `AudioBusses`, `Shaders` and `Events`; the links `GameAudioContainerLinks`, `GameAudioMixLinks`, `GameShaderLinks`, `SceneAudioBusses`;
 - 32 fields in 11 existing classes: `TTGame` 8 (`GameContainers`, `GameBuildRules`, `GameIconFile`, `GameBuildOptions`, `GameShaderLinks`, `GameSmoothScrolling`, `GameAudioMixLinks`, `GameAudioContainerLinks`), `TTButton` 7 (`ButtonRotation`, `ButtonRotationCenter`, `ButtonShaderSet`, `ButtonScale`, `ButtonMatrixId`, `ButtonScaleX`, `ButtonScaleY`),
   `TTAnimation` 3 (`AnimationModelFile`, `AnimationModelName`, `AnimationEndDirection`), `TTCharacter` 3 (`CharacterShaderSet`, `CharacterLightmapActive`, `CharacterHarmonizeWalkAnimations`), `TTObject` 2 (`ObjectScaleX/Y`), `TTOutfit` 2 (`OutfitModelFiles`, `OutfitTurnAnimations`), `TTParticleContainer` 2 (`ParticleContainerSettings`, `ParticleContainerPreviewScene`),
   `TTScene` 2 (`SceneShaderSet`, `SceneAudioBusses`), `TTDialog` 1 (`DialogCharacter`), `TTInterface` 1 (`InterfaceMatrixId`), `TTValue` 1 (`ValueFloat`).
