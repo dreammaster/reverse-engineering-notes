@@ -205,6 +205,9 @@ void averageMonsterHitPoints(Machine &m);
 void averagePartyHitPoints(Machine &m);
 // 14F7A: true (CF) when the monsters are too weak against the party (party average >> shift beats monster average)
 bool monsterHoldsBack(Machine &m, uint8_t shift);
+// 15036: carries out the monster moves planned in the table at ds:711D (direction in the low six bits, message type in the
+// top two): the monster slot moves one cell and the move is announced
+void moveMonsters(Machine &m);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

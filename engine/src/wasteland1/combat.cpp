@@ -1,5 +1,6 @@
 #include "wasteland1/combat.h"
 #include "wasteland1/mapcells.h"
+#include "wasteland1/movement.h"
 #include "wasteland1/character.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/party.h"
@@ -1920,6 +1921,59 @@ bool monsterHoldsBack(Machine &m, uint8_t shift) {   // 14F7A: true (CF) when th
 	shift = A(m, 0xA637);   // (14FDE leaves the monster count in this variable, which is what gets used)
 	rules.setSeed1(shift == 0 || shift >= 16 ? 0 : uint16_t(rules.seed1() >> shift));
 	return !rules.rollBeatsTarget();
+}
+
+void moveMonsters(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	const uint8_t total = m.d8(uint16_t(g::saved2 + g::s2::totalPartyGroups));
+	D(0xA631) = 0;
+	for (uint8_t group = 0; group <= total; ++group) {
+		D(0xA630) = group;
+		for (uint8_t slot = 0; slot != 4; ++slot, ++D(0xA631)) {
+			D(0xA636) = slot;
+			selectSlot(m, group, slot);
+			const uint8_t plan = m.d8(uint16_t(0x711D + D(0xA631)));
+			if (plan == 0xFF) continue;
+			D(0xA635) = plan & 0x3F;
+			D(0xA634) = uint8_t(plan >> 6);
+			const uint16_t record = m.d16(g::monsterPtr);
+			uint8_t x = m.d8(record);
+			if (x == 0) continue;
+			uint8_t y = m.d8(uint16_t(record + 1));
+			D(0xA633) = x;
+			D(0xA632) = y;
+			uint8_t tx = x, ty = y;
+			stepTarget(D(0xA635), tx, ty);
+			if (partyAtCell(m, tx, ty)) continue;
+			if (tileClassAt(m, tx, ty) != 0) continue;
+			const uint8_t oldClass = tileClassAt(m, x, y);
+			const uint8_t oldAction = actionAt(m, x, y);
+			D(0x46B3) = 0;
+			D(0x46B4) = 0;
+			applyCellChange(m, x, y);
+			x = tx; y = ty;
+			D(0xA633) = x;
+			D(0xA632) = y;
+			m.d8(uint16_t(record + 1)) = y;
+			m.d8(record) = x;
+			D(0x46B4) = oldAction;
+			D(0x46B3) = oldClass;
+			applyCellChange(m, x, y);
+			X86Regs flush;
+			legacy::call(m, 0x9EFC, flush);   // sub_19EFC
+			selectSlotCellRecord(m);
+			const uint16_t location = m.d16(g::savedLocationDetailsPtr);
+			uint8_t groupIndex = 0, count = 0;
+			for (; groupIndex != 3; ++groupIndex) {
+				count = m.d8(uint16_t(location + m.d8(uint16_t(g::encounterCountOffsets + groupIndex))));
+				if (count != 0) break;
+			}
+			if (groupIndex == 3) return;
+			m.d8(g::itemQuantity) = count;
+			printMonsterMessage(m, 0x1A, groupIndex);
+			printMessage(m, m.d8(uint16_t(0xA643 + D(0xA634))));
+		}
+	}
 }
 
 uint8_t timesTen(uint8_t n) { return uint8_t(n * 10); }
