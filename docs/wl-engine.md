@@ -89,3 +89,27 @@ hand the engine translates it mechanically and verifies the result against the o
 
 Known gaps: PC speaker sound (ports 42h/43h/61h are ignored), mouse (int 33h reports no driver), absolute disk calls
 (int 25h/26h fail, the game then uses its file based path).
+
+## Hand-ported functions
+
+Generated functions are replaced one by one with hand written C++ (`engine/src/wasteland1/*.cpp`) through
+`engine/src/wasteland1/tools/recomp/ports.txt`; the recompiler then calls the `PORT(...)` adapters in
+`engine/src/wasteland1/ports/` instead of emitting the function. Ported code reaches routines that are not ported yet
+through `legacy::call` (`legacy.h`). `tools/portstatus.py` prints the progress (about 190 of 817 functions) and the
+next candidates whose callees are all ported.
+
+A ported function is accepted when every check below passes:
+
+* `tools/portcheck.sh [--seeds N]` runs `wlrctest --ported`: the original 8086 code (oracle) and the port start from the
+  captured states in `tmp_out` with random register inputs and must agree on the registers and flags the callers use,
+  on the data segment and on the EGA planes. Registers and flags the original leaves undefined are the `junk=` list of
+  its `ports.txt` line, scratch variables of the original are `scratch=` ds ranges; `UPDATE=1` refreshes the junk lists.
+  `tools/recomp/domains.txt` limits the random inputs of a function to valid values (`addr ax-mod bx-mod dx-mod`).
+  `WATCH=<ds offset>` reports which oracle instruction writes a byte, `VDUMP=1` lists differing video bytes.
+* `tools/decomp/flagcheck.py` finds callers that read a flag right after a call to a ported function.
+* `tools/scramblecheck.sh` plays the game with `WL_SCRAMBLE` set, which overwrites the junk registers of every port with
+  garbage, and compares the result with a normal run; a difference means some caller depends on a "junk" register.
+
+Pitfalls found so far: IDA function boundaries hide fall-through chains (for example 129D5 -> 129DC -> 129E9 and
+15C19 -> 15C27), so a port has to continue into the code that follows; waiting for a key in the oracle and the port
+consumes a different number of random numbers, so tests that wait diverge in later random draws (declared as scratch).
