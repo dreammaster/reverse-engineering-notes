@@ -30,7 +30,7 @@ point constants and the results of about 1,330 functions run in an emulator on t
 |---|---|
 | Password | Deponia 1 `ykgT6QsrRNv9XR`, Deponia 4 `RHgPi6dmqvu6uT`, both narrow strings |
 | Shader Toolkit script | Deponia 4's data runs a Lua `DataDumper` at load that calls `pcall(string.dump, f)`; ScummVM's `lua_dump` is fatal. `InitLua` in `src/deponia4` replaces `string.dump` by a function that raises a Lua error (`WORKAROUND:`). **Put it in the merged `InitLua`** (and in `scriptingutils.cpp`'s `traverseTable`, which also calls `lua_dump`, not reached yet) |
-| Lightmap names | `data/assets/scenes/ch1/1001/1001_lightmap.webp#s#000#00002#` is "Error reading header" with Deponia 4's (and Deponia 2's) data: entry 2 of `scene.vs000` is not a WebP. How the original resolves the name is open (see `src/deponia2/VERSIONS.md`) |
+| Lightmap test | `realdatatest` loads `1001_lightmap.webp#s#000#00002#`, a name of Deponia 1's data; Deponia 4's `scene.vs000` has no entries, so the test line is Deponia 1's own (the open question about Deponia 2's data with this name is in `src/deponia2/VERSIONS.md`) |
 | Fonts | Deponia 4 has one TrueType font (`SourceHanSansCN-Medium.otf`), Deponia 1 twelve; `tests/deponia1/realdatatest.cpp` checks for 12 |
 | Volumes | Deponia 4: 168 scene, 328 character and 66 video volumes; Deponia 1: 74, 84, 42 |
 
