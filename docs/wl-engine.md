@@ -95,7 +95,7 @@ Known gaps: PC speaker sound (ports 42h/43h/61h are ignored), mouse (int 33h rep
 Generated functions are replaced one by one with hand written C++ (`engine/src/wasteland1/*.cpp`) through
 `engine/src/wasteland1/tools/recomp/ports.txt`; the recompiler then calls the `PORT(...)` adapters in
 `engine/src/wasteland1/ports/` instead of emitting the function. Ported code reaches routines that are not ported yet
-through `legacy::call` (`legacy.h`). `tools/portstatus.py` prints the progress (about 190 of 817 functions) and the
+through `legacy::call` (`legacy.h`). `tools/portstatus.py` prints the progress (about 300 of 817 functions: combat, party and movement logic, map actions, text decoding) and the
 next candidates whose callees are all ported.
 
 A ported function is accepted when every check below passes:
@@ -105,7 +105,9 @@ A ported function is accepted when every check below passes:
   on the data segment and on the EGA planes. Registers and flags the original leaves undefined are the `junk=` list of
   its `ports.txt` line, scratch variables of the original are `scratch=` ds ranges; `UPDATE=1` refreshes the junk lists.
   `tools/recomp/domains.txt` limits the random inputs of a function to valid values (`addr ax-mod bx-mod dx-mod`).
-  `WATCH=<ds offset>` reports which oracle instruction writes a byte, `VDUMP=1` lists differing video bytes.
+  `WATCH=<ds offset>` reports which oracle instruction writes a byte, `VDUMP=1` lists differing video bytes, and
+  `WLPOKE=<ds offset>=<byte>,...` patches both machines after loading the state so that rare paths (dying characters,
+  party orders, ...) can be exercised.
 * `tools/decomp/flagcheck.py` finds callers that read a flag right after a call to a ported function.
 * `tools/scramblecheck.sh` plays the game with `WL_SCRAMBLE` set, which overwrites the junk registers of every port with
   garbage, and compares the result with a normal run; a difference means some caller depends on a "junk" register.
