@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"C:/dev/yendor/src1/build_uninit/cmake_install.cmake"
-	],
-	"Parallel" : false
-}
