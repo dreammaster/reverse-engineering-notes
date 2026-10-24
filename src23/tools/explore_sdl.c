@@ -561,6 +561,7 @@ int main(int argc, char **argv) {
         gameUiSetExe(&g_ui, &g_exe);
     }
     g_ui.debugMarkers = opt("EXPLORE_DEBUG") != NULL;
+    g_ui.freeMaps = opt("EXPLORE_FREEMAPS") != NULL; /* M and W without the map item and the Mapping skill */
     if (opt("EXPLORE_BOOT")) { /* the original's start: the dialog with LOAD / NEW GAME / DOS when there are saves, else the title menu of a new game (EXPLORE_SPLASH: the boot title and the introduction first) */
         gameUiBoot(&g_ui);
     } else if (opt("EXPLORE_TITLE")) { /* start on the title menu: E enters, I plays the opening, R the story */

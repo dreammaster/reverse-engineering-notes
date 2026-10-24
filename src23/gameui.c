@@ -762,6 +762,9 @@ void gameUiMouseMove(GameUi *ui, int x, int y) {
 }
 
 bool gameUiCursorShown(const GameUi *ui) {
+    if (ui->dropPrompt) { /* the cursor is empty while the question is asked: the system pointer answers it */
+        return false;
+    }
     return ui->targeting || ui->pickActive || ui->session->heldItem != 0;
 }
 
@@ -1294,7 +1297,7 @@ static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipie
     case SessionUseLocalMap:
     case SessionUseWorldMap: /* the item itself is the map: the same screens as M and W, with the same Mapping skill gates */
         inventoryClose(ui);
-        if (result == SessionUseLocalMap ? (panelFlags(ui) & MapFlagLocalMap) : (panelFlags(ui) & MapFlagFullOverview)) {
+        if ((result == SessionUseLocalMap ? (panelFlags(ui) & MapFlagLocalMap) : (panelFlags(ui) & MapFlagFullOverview)) || ui->freeMaps) {
             ui->overlay = result == SessionUseLocalMap ? UiOverlayLocalMap : UiOverlayWorldMap;
         } else {
             mapSkillTooLow(ui);
@@ -1597,7 +1600,7 @@ static void inventoryUse(GameUi *ui, unsigned member, unsigned slot) {
 /* IsItemRangeAvailable on the command's item: the belt, then every member's inventory. An unavailable command does nothing, silently. */
 static bool commandItem(GameUi *ui, MainAction action) {
     unsigned id = mainCommandRequiredItem(ui->session->game, action);
-    return id == 0 || sessionHasItem(ui->session, id, id);
+    return id == 0 || ui->freeMaps || sessionHasItem(ui->session, id, id);
 }
 
 /* "YOUR SKILL / IS NOT HIGH / ENOUGH!" (ShowMapSkillTooLowMessage: DS:0x7D7E, Chapter 3 0x80AB). */
@@ -3198,7 +3201,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         break;
     case MainActionToggleMapView: /* W: needs the world map item and a Mapping average of 80 */
         if (commandItem(ui, MainActionToggleMapView)) {
-            if (panelFlags(ui) & MapFlagFullOverview) {
+            if ((panelFlags(ui) & MapFlagFullOverview) || ui->freeMaps) {
                 ui->overlay = UiOverlayWorldMap;
             } else {
                 mapSkillTooLow(ui);
@@ -3215,7 +3218,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         break;
     case MainActionLocalMap: /* M: needs the map item and a Mapping average of 60 */
         if (commandItem(ui, MainActionLocalMap)) {
-            if (panelFlags(ui) & MapFlagLocalMap) {
+            if ((panelFlags(ui) & MapFlagLocalMap) || ui->freeMaps) {
                 ui->overlay = UiOverlayLocalMap;
             } else {
                 mapSkillTooLow(ui);

@@ -1624,6 +1624,21 @@ static void testBeltItemsUi(GameKind game, const char *envName, const char *defa
         gameUiClick(&ui, 100, 60, false);
         check("... and at the spot sets flag 0x91 and says UNLOCKED", !ui.targeting && globalFlagTest(saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, 0x91) && ui.panelRunCount == 1);
     }
+    ui.overlay = UiOverlayNone;
+    itemSlotSet(sessionBeltSlot(s, 1), 0, 0);
+    s->heldItem = (uint16_t)mainCommandRequiredItem(game, MainActionClock);
+    ui.dropPrompt = true;
+    check("with the drop question up the system pointer shows again (the cursor item is not drawn)", !gameUiCursorShown(&ui));
+    ui.dropPrompt = false;
+    check("... and without it the item is the cursor", gameUiCursorShown(&ui));
+    s->heldItem = 0;
+    gameUiKey(&ui, 'm', false);
+    check("M without the map item or the skill does not open the map", ui.overlay == UiOverlayNone);
+    ui.freeMaps = true;
+    gameUiKey(&ui, 'm', false);
+    check("... with freeMaps (EXPLORE_FREEMAPS) it does", ui.overlay == UiOverlayLocalMap);
+    ui.overlay = UiOverlayNone;
+    ui.freeMaps = false;
     sessionFree(s);
     free(world);
 }
