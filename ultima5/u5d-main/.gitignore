@@ -1,0 +1,12 @@
+/.vs
+/u5win/.vs
+/u5win/x64
+/u5win/u5win
+/u5win/vcpkg_installed
+/u5win/*.user
+*.o
+*.d
+*.OBJ
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake

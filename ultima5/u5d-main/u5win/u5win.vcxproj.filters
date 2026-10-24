@@ -1,0 +1,449 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="vcpkg.json" />
+    <None Include="vcpkg-configuration.json" />
+    <None Include="..\src\u5.rsp">
+      <Filter>src</Filter>
+    </None>
+    <None Include="..\src\build.bat">
+      <Filter>src</Filter>
+    </None>
+    <None Include="..\Makefile" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{b118748e-ab4c-4c8e-b165-8b1ad3d674dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{fdaa795b-6aa3-4dea-b870-e837f5a88e04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="audio">
+      <UniqueIdentifier>{8b76d460-4201-4091-ba57-b6cc037ce5e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="backend">
+      <UniqueIdentifier>{ad7f8ec1-62e1-40a4-9211-71fcaa31dd01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics">
+      <UniqueIdentifier>{f6975040-b1c1-4662-9a36-5894bbd32d8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="key">
+      <UniqueIdentifier>{5e62b2b3-cc47-40fe-8035-2196a799062c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="time">
+      <UniqueIdentifier>{97517ce5-21c1-4899-bd58-a2f1abe18a1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="event">
+      <UniqueIdentifier>{1bafeedd-2341-46ef-a9bb-b7cd39bef73b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\0000.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\1000.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\2000.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\3000.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\4000.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\5000.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\6000.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\7000.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\blckthrn.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cast.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cast2.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cmds.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\combat.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\comsubs.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dnglook.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dungeon.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\endgame.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\flames.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\font.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\grap_drv.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\intro.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\lookobj.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\mainout.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\npc.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\outsubs.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shoppes.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shoppes2.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shoppes3.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sjog.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\talk.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\town.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ultima.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vars.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\zstats.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\debug.c">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\file.c">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\lzw.c">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\audio\aud_sdl.c">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\audio\aud_mus.c">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\audio\aud_sfx.c">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\graphics\grap.c">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\graphics\grap_buf.c">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\graphics\image.c">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\graphics\grap_sdl.c">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\graphics\grap_vga.c">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\key\key_dos.c">
+      <Filter>key</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\key\key_sdl.c">
+      <Filter>key</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\time\pctimer.c">
+      <Filter>time</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\time\time_dos.c">
+      <Filter>time</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\time\time_sdl.c">
+      <Filter>time</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\backend\backend.c">
+      <Filter>backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\graphics\reveal.c">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\audio\audio.c">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\event\evt_sdl.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\event\evt_dos.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\savegame.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\audio\aud_spk.c">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\memory.c">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\graphics\animate.c">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\graphics\wd.c">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\graphics\origin.c">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\audio\aud_cdda.c">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\audio\aud_adl.c">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\translate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\settings.c">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\util.c">
+      <Filter>common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\funcs.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\grap_drv.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\outsubs.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\structs.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\vars.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\common.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\dbg_font_data.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\file.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\platform.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\audio\aud_mus.h">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\audio\aud_sfx.h">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\graphics\grap.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\graphics\grap_buf.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\graphics\grap_ops.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\graphics\image.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\time\pctimer.h">
+      <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\backend\backend.h">
+      <Filter>backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\graphics\reveal.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\audio\audio.h">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\audio\aud_ops.h">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\time\time.h">
+      <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\key\key.h">
+      <Filter>key</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\event\event.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\savegame.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\mainout.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\town.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cast.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cast2.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cmds.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\combat.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\dnglook.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\comsubs.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\blckthrn.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\dungeon.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\endgame.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\font.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\intro.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\lookobj.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\npc.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shoppes.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shoppes2.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shoppes3.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sjog.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\talk.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\zstats.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\0000.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\1000.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\2000.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\3000.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\4000.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\5000.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\6000.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\7000.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\lzw.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\macros.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\memory.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiles.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\graphics\animate.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\graphics\wd.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\graphics\origin.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\audio\aud_adl.h">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\audio\sfx_map.h">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\translate.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\settings.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\version.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\config.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\debug.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\util.h">
+      <Filter>common</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

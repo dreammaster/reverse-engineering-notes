@@ -1,0 +1,660 @@
+#include "common/common.h"
+#include "vars.h"
+#include "funcs.h"
+
+#include "grap_drv.h"
+
+#include <stdio.h>
+
+#include "macros.h"
+
+// 017e..0877: crt (slibce)
+
+// 017e: _astart (crt0)
+// 0230: _cinit
+// 02f4: exit
+// 037d: (dynamic near call)
+// 038c: (dynamic far call)
+// 03a0: aNuldiv (32bit division)
+// 0402: memchr
+// 0426: itoa
+// 0442: aNlmul (32bit multiply)
+// aNulmul == aNlmul?
+// 0476: aNNalshl (32bit shl)
+// 0496: aNldiv (32bit division)
+// 0532: _NMSG_TEXT
+// 055d: _NMSG_WRITE
+// 0586: _FF_MSGBANNER
+// 05a6: _setargv
+// 0734: _setenvp
+// 07a2: _nullcheck
+// 07c4: _fptrap
+// 07d6: _cxtoa
+// 082a: aNlshl
+// 0836: _myalloc
+
+// STUB
+void ULTIMA_0878_RestoreVideoMode(void)
+{
+    debug("ULTIMA_0878_RestoreVideoMode");
+}
+
+// STUB
+void ULTIMA_0892_InitializeVideoDriver(int a)
+{
+    debug("ULTIMA_0892_InitializeVideoDriver(%d)", a);
+}
+
+// ASM
+// AX, BX => CARRY
+static int ULTIMA_08ca_InsideClipWindow(int ax, int bx)
+{
+	int x = ax;
+	int y = bx;
+
+	if (D_52ba_vdp._52d0_clipWindowX1 <= x && x <= D_52ba_vdp._52d2_clipWindowX2 &&
+		D_52ba_vdp._52d4_clipWindowY1 <= y && y <= D_52ba_vdp._52d6_clipWindowY2)
+	{
+		return 0;
+	}
+
+	return -1;
+}
+
+// xchg
+static void SWAP(int* a, int* b)
+{
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+// ASM
+int ULTIMA_08e6_ClipRectCoord(int *x1, int *y1, int *x2, int *y2)
+{
+	if (*x1 > *x2)
+		SWAP(x1, x2);
+
+	// 08eb
+	if (*y1 > *y2)
+		SWAP(y1, y2);
+
+	// 08f1
+	if (*x1 < 0)
+		*x1 = 0;
+
+	// 08f9
+	if (*x1 > 319)
+		*x1 = 319;
+
+	// 0901
+	if (*y1 < 0)
+		*y1 = 0;
+
+	// 0909
+	if (*y1 > 199)
+		*y1 = 199;
+
+	// 0912
+	if (*x2 < 0)
+		*x2 = 0;
+
+	// 091a
+	if (*x2 > 319)
+		*x2 = 319;
+
+	// 0923
+	if (*y2 < 0)
+		*y2 = 0;
+
+	// 092b
+	if (*y2 > 199)
+		*y2 = 199;
+
+	// 0934
+	return *x1; // void?
+}
+
+static void ULTIMA_0991(int* ax, int* bx, int* cx, int* dx);
+static void ULTIMA_0a22(int ax, int bx, int cx, int dx, int* si, int* di);
+
+// ASM
+static bool ULTIMA_0935_ClipLineCoord(int* x1, int* y1, int* x2, int* y2)
+{
+	int si = 0;
+	int di = 0;
+	ULTIMA_0a22(*x1, *y1, *x2, *y2, &si, &di);
+
+	if (si == 0 || di == 0)
+		return 0; // CLC
+
+	if (di != si)
+		return -1; // STC
+
+	// 0948
+	D_52fa = *x1;
+	D_52fc = *y1;
+	D_52fe = *x2;
+	D_5300 = *y2;
+
+	if (si != 0)
+	{
+		SWAP(x1, x2);
+		SWAP(y1, y2);
+		ULTIMA_0991(x1, y1, x2, y2);
+		D_52fa = *x1;
+		D_52fc = *y1;
+		*x2 = D_52fe;
+		*y2 = D_5300;
+	}
+
+	// 0971
+	if (di != 0)
+	{
+		ULTIMA_0991(x1, y1, x2, y2);
+		D_52fe = *x1;
+		D_5300 = *y1;
+	}
+	// 0980
+	*x1 = D_52fa;
+	*y1 = D_52fc;
+	*x2 = D_52fe;
+	*y2 = D_5300;
+	return 0;
+}
+
+// ASM
+static void ULTIMA_0991(int* ax, int* bx, int* cx, int* dx)
+{
+	int si;
+	int di;
+	while (1)
+	{
+		while (1)
+		{
+			si = *ax;
+			di = *bx;
+
+			*ax += *cx;
+			*bx += *dx;
+			if (*ax >= 0)
+			{
+				*ax >>= 1;
+			}
+			else
+			{
+				*ax /= 2;
+			}
+
+			if (*bx >= 0)
+			{
+				*bx >>= 1;
+			}
+			else
+			{
+				*bx /= 2;
+			}
+
+			D_52f6 = si - *ax;
+			D_52f8 = di - *bx;
+
+			ULTIMA_0a22(*ax, *bx, *cx, *dx, &si, &di);
+			if (si == 0)
+				break;
+			*cx = *ax;
+			*dx = *bx;
+			*ax += D_52f6;
+			*bx += D_52f8;
+		}
+
+		// 09e3
+		if (*ax == D_52ba_vdp._52d0_clipWindowX1 || *ax == D_52ba_vdp._52d2_clipWindowX2)
+		{
+			// 09ef
+			if (*bx == D_52ba_vdp._52d4_clipWindowY1 || *bx == D_52ba_vdp._52d6_clipWindowY2)
+				return;
+		}
+
+		// 09fb
+		si = D_52f6;
+		di = D_52f8;
+		if (si < 0)
+			si = -si;
+
+		// 0a0b
+		if (di < 0)
+			di = -di;
+
+		// 0a13
+		if (si < di)
+			si = di;
+
+		// 0a19
+		if (si < 1)
+			return;
+	}
+}
+
+// ASM
+static void ULTIMA_0a22(int ax, int bx, int cx, int dx, int *si, int *di)
+{
+	int x1 = ax;
+	int y1 = bx;
+	int x2 = cx;
+	int y2 = dx;
+
+	if (x1 < D_52ba_vdp._52d0_clipWindowX1)
+		*si |= 1;
+
+	if (x2 < D_52ba_vdp._52d0_clipWindowX1)
+		*di |= 1;
+
+	if (x1 > D_52ba_vdp._52d2_clipWindowX2)
+		*si |= 2;
+
+	if (x2 > D_52ba_vdp._52d2_clipWindowX2)
+		*di |= 2;
+
+	if (y1 > D_52ba_vdp._52d6_clipWindowY2)
+		*si |= 4;
+
+	if (y2 > D_52ba_vdp._52d6_clipWindowY2)
+		*di |= 4;
+
+	if (y1 < D_52ba_vdp._52d4_clipWindowY1)
+		*si |= 8;
+
+	if (y2 < D_52ba_vdp._52d4_clipWindowY1)
+		*di |= 8;
+}
+
+// ASM
+void ULTIMA_0a70_GRAP_2d_SetPenColor(int param_1)
+{
+	if (param_1 != -1)
+	{
+		param_1 &= D_52ba_vdp._52c8_videoDriverSelection == VDP_VIDEO_CGA ? 3 : 0xf;
+	}
+
+	D_52da_pen_color = param_1;
+
+	if (param_1 != -1)
+	{
+		DRV_2d(param_1);
+	}
+}
+
+// ASM
+void ULTIMA_0aa6_GRAP_3f_FillRect(int x1, int y1, int x2, int y2)
+{
+    ASSERT(x1 < x2);
+    ASSERT(y1 < y2);
+    ULTIMA_08e6_ClipRectCoord(&x1, &y1, &x2, &y2);
+    ASSERT(x1 < x2);
+    ASSERT(y1 < y2);
+	DRV_3f(x1, y1, x2, y2, 0);
+}
+
+// ASM
+// src_page, dst_page, x1, y1, x2, y2
+void ULTIMA_0ace_GRAP_18_TransferArea(int param_1, int param_2, int param_3, int param_4, int param_5, int param_6)
+{
+    int ax = param_3; // x1
+    int bx = param_4; // y1
+    int cx = param_5; // x2
+    int dx = param_6; // y2
+    int si = param_1;
+    int di = param_2;
+
+	int carry;
+
+    //debug("ULTIMA_0ace(%d,%d,%d,%d,%d,%d)", param_1, param_2, param_3, param_4, param_5, param_6);
+
+	if (si != di && si <= 1 && di <= 1)
+    {
+        ASSERT(ax <= cx);
+        ASSERT(bx <= dx);
+        ULTIMA_08e6_ClipRectCoord(&ax, &bx, &cx, &dx);
+        ASSERT(ax <= cx);
+        ASSERT(bx <= dx);
+
+		carry = si != 0;
+		// DRV_18 (transfer_area)
+        DRV_18(ax, bx, cx, dx, si, di, carry);
+    }
+}
+
+static void ULTIMA_0b2d_GRAP_Line(int ax, int bx, int cx, int dx, byte carry);
+
+// ASM
+void ULTIMA_0b10_GRAP_Line(int x1, int y1, int x2, int y2)
+{
+	ULTIMA_0b2d_GRAP_Line(x1, y1, x2, y2, 0);
+}
+
+// ASM
+static void ULTIMA_0b2d_GRAP_Line(int ax, int bx, int cx, int dx, byte carry)
+{
+	int x1 = ax;
+	int y1 = bx;
+	int x2 = cx;
+	int y2 = dx;
+
+	D_52ba_vdp._52cc_penX = x2;
+	D_52ba_vdp._52ce_penY = y2;
+
+	// pushf
+	if (D_52ba_vdp._52c4 != 0)
+	{
+		if (ULTIMA_0935_ClipLineCoord(&ax, &bx, &cx, &dx))
+			return; // JC return
+	}
+
+	if (y1 == y2)
+	{
+		if (x1 == x2)
+		{
+			// 0b78
+			// 0x30: pset
+			DRV_30(x1, y1);
+			return;
+		}
+		else
+		{
+			ULTIMA_08e6_ClipRectCoord(&ax, &bx, &cx, &dx);
+			DRV_39(ax, bx, cx);
+		}
+	}
+	else
+	{
+		// 0b59
+		if (x1 == x2)
+		{
+			ULTIMA_08e6_ClipRectCoord(&ax, &bx, &cx, &dx);
+			// 0x3c: v_line
+			DRV_3c(ax, bx, dx);
+			return;
+		}
+		else
+		{
+			// 0b6c
+			// 0x33: line
+			DRV_33(ax, bx, cx, dx);
+			return;
+		}
+	}
+
+	// 0b84
+}
+
+// ASM
+void ULTIMA_0b86_GRAP_XorFillRect(int x1, int y1, int x2, int y2)
+{
+    ULTIMA_08e6_ClipRectCoord(&x1, &y1, &x2, &y2);
+    DRV_3f(x1, y1, x2, y2, 1);
+}
+
+void* ULTIMA_125d_LoadResourceFileImpl(char* file_name);
+
+// ASM
+void* ULTIMA_0bae_LoadImageFile(char* file_name)
+{
+    debug("ULTIMA_0bae_LoadImageFile(%s)", file_name);
+
+	return ULTIMA_125d_LoadResourceFileImpl(file_name);
+
+	// if (error)
+    //     if (ret == 0) ax = -1;
+    //     D_535c_dosErrorCode = ax
+	//     D_5394_fn(); // disk swap message
+	// else
+	//     DRV_42(); // prepare image data for ega (swizzle)
+}
+
+// ASM
+void ULTIMA_0be4_FreeImage(void* ptr)
+{
+    debug("ULTIMA_0be4_FreeImage");
+	// int 21,49h
+    //free(ptr);
+}
+
+// ASM
+// put image (forced hflip)
+void ULTIMA_0bfc_GRAP_63(byte* param_1, int param_2, int param_3, int param_4, int param_5)
+{
+    //debug("ULTIMA_0bfc_GRAP_63(ptr,%d,%d,%d,%d)", param_2, param_3, param_4, param_5);
+
+    DRV_63(param_1, param_2, param_3, param_4, param_5);
+}
+
+// ASM
+void ULTIMA_0c22_GRAP_0f_SelectPage(int a)
+{
+	DRV_0f(a);
+}
+
+// ASM
+// set clip window coord
+void ULTIMA_0c3c(int a, int b, int c, int d)
+{
+    D_52ba_vdp._52d0_clipWindowX1 = a;
+    D_52ba_vdp._52d4_clipWindowY1 = b;
+    D_52ba_vdp._52d2_clipWindowX2 = c;
+    D_52ba_vdp._52d6_clipWindowY2 = d;
+}
+
+// ASM
+void ULTIMA_0c64_GRAP_30_Pset(int param_1, int param_2)
+{
+    D_52ba_vdp._52cc_penX = param_1;
+    D_52ba_vdp._52ce_penY = param_2;
+
+	if (D_52da_pen_color != -1)
+    {
+        if (D_52ba_vdp._52c4 != 0 && ULTIMA_08ca_InsideClipWindow(param_1, param_2))
+        {
+            return;
+        }
+
+        DRV_30(param_1, param_2);
+    }
+}
+
+static bool ULTIMA_0ccd(int* pAX, int* pCX);
+
+// ASM
+void ULTIMA_0c9c_GRAP_39_HorizLine(int x1, int y, int x2)
+{
+	int ax = x1;
+	int bx = y;
+	int cx = x2;
+
+	D_52ba_vdp._52cc_penX = x2;
+
+	if (D_52ba_vdp._52c4 != 0)
+	{
+		if (ULTIMA_0ccd(&ax, &cx))	// JC end
+			return;
+	}
+
+	DRV_39(ax, bx, cx);
+}
+
+// ASM
+static bool ULTIMA_0ccd(int *pAX, int *pCX)
+{
+	if (*pAX < *pCX)
+	{
+		SWAP(pAX, pCX);
+	}
+
+	if ((*pAX >= D_52ba_vdp._52d0_clipWindowX1) && (*pCX <= D_52ba_vdp._52d2_clipWindowX2) &&
+		*pAX >= 0 && *pAX <= 319 && *pCX <= 319)
+	{
+		return false; // CLC
+	}
+
+	return true; // STC
+}
+
+static int ULTIMA_0d2b(int bx, int dx);
+
+// ASM
+// vline
+void ULTIMA_0cf2_GRAP_3c_VertLine(int param_1, int param_2, int param_3)
+{
+	int ax, bx, cx, dx;
+
+    ax = param_1;
+    bx = param_2;
+    dx = param_3;
+    cx = ax;
+    D_52ba_vdp._52ce_penY = dx;
+	if (bx > dx)
+    {
+		// xchg bx, dx
+        bx ^= dx;
+        dx ^= bx;
+        bx ^= dx;
+	}
+    if (D_52ba_vdp._52c4 == 0 || !ULTIMA_0d2b(bx, dx))
+    {
+        // 0d19
+        DRV_3c(ax, bx, dx);
+	}
+}
+
+// ASM
+static int ULTIMA_0d2b(int bx, int dx)
+{
+    if (D_52ba_vdp._52d4_clipWindowY1 <= bx && dx <= D_52ba_vdp._52d6_clipWindowY2 && 0 <= bx && bx < 200 && dx < 200)
+    {
+        return 0; // clc
+    }
+
+    return -1; // stc
+}
+
+// ASM
+// put_image(rsrc, imageIdx, x, y, vflip?)
+void ULTIMA_0d4c_GRAP_4b_PutImage(void* rsrc, int idx, int x, int y, int flags)
+{
+    //debug("ULTIMA_0d4c_GRAP_4b_PutImage(rsrc:ptr,idx:%d,x:%d,y:%d,flags:%d)", idx, x, y, flags);
+	
+	DRV_4b(rsrc, idx, x, y, flags);
+}
+
+// NOT MATCHING
+int ULTIMA_0d72_AnimateOriginLogo(byte* image)
+{
+    int iVar1;
+    int iStack_4;
+
+    iStack_4 = 0;
+    ULTIMA_0c22_GRAP_0f_SelectPage(1);
+    ULTIMA_0a70_GRAP_2d_SetPenColor(0);
+    ULTIMA_0aa6_GRAP_3f_FillRect(0, 0, 319, 199);
+
+    for (iVar1 = 0; iVar1 < 7; iVar1++)
+    {
+        ULTIMA_1044_GRAP_4e_CopyBitImageIntoPage(image, iVar1, (320 - D_5306[iVar1]) >> 1, iStack_4);
+        iStack_4 += D_5314[iVar1];
+    }
+
+    ULTIMA_0c22_GRAP_0f_SelectPage(0);
+
+    return ULTIMA_1140_GRAP_6f_AnimateOriginLogo();
+}
+
+// ASM
+void ULTIMA_0de0_DetectVideo(void)
+{
+    debug("ULTIMA_0de0_DetectVideo");
+    D_52ba_vdp._52c8_videoDriverSelection = VDP_VIDEO_EGA;
+}
+
+// STUB (asm)
+int ULTIMA_0e94_LoadVideoDriver(void)
+{
+    debug("ULTIMA_0e94_LoadVideoDriver");
+    // DUMMY
+    return 1;
+}
+
+// STUB (asm)
+int ULTIMA_0f2a_GRAP_06_AllocPageBuffer(void)
+{
+    debug("ULTIMA_0f2a_GRAP_06_AllocPageBuffer");
+    // DUMMY
+    return 1;
+}
+
+// ASM
+void ULTIMA_0f46_GRAP_66_Reveal(int x1, int y1, int x2, int y2)
+{
+    debug("ULTIMA_0f46_GRAP_66_Reveal(%d,%d,%d,%d)", x1, y1, x2, y2);
+    ULTIMA_08e6_ClipRectCoord(&x1, &y1, &x2, &y2);
+	DRV_66(x1, y1, x2, y2, 0, 0, 0);
+}
+
+// ASM
+void ULTIMA_0f6e_GRAP_1b_TransferFullscreen(int from, int to)
+{
+    debug("ULTIMA_0f6e_GRAP_1b_TransferFullscreen(%d,%d)", from, to);
+    if (from != to)
+    {
+        DRV_1b(from, to);
+    }
+}
+
+// ASM
+void ULTIMA_0f90_GRAP_Pen(int x, int y)
+{
+	ULTIMA_0b2d_GRAP_Line(D_52ba_vdp._52cc_penX, D_52ba_vdp._52ce_penY, x, y, 0);
+}
+
+void* ULTIMA_125d_LoadResourceFileImpl(char* file_name);
+
+// ASM
+byte* ULTIMA_0fae_LoadResourceFile(char* file_name)
+{
+	byte* mem;
+    debug("ULTIMA_0fae_LoadFile(%s)", file_name);
+	mem = (byte*)ULTIMA_125d_LoadResourceFileImpl(file_name);
+	if (!mem)
+	{
+		D_535c = 1;
+	    D_5394_fn();
+	}
+
+	// if error (cf == 1)
+	//     if ret == 0
+	//         ret = -1
+	//     else
+	//         535c_dosErrorCode = ret
+	//         5394_diskSwapMessage();
+
+	return mem;
+}
+
+// ASM
+// NOTE: same as 0be4
+void ULTIMA_0fdc_FreeBitImage(void* ptr)
+{
+    debug("ULTIMA_0fdc_FreeBitImage(ptr)");
+	// int 21,49
+    //free(ptr);
+}
+
+// ASM
+int ULTIMA_0ff4_LoadTileset(char* file_name)
+{
+	byte* tileset;
+    debug("ULTIMA_0ff4_LoadTileset(%s)", file_name);
+	tileset = (byte*)ULTIMA_125d_LoadResourceFileImpl(file_name);
+
+	DRV_48_LoadTileset(tileset);
+
+	return 1;
+}

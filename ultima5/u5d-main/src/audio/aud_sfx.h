@@ -1,0 +1,16 @@
+#ifndef _AUDIO_AUD_SFX_H
+#define _AUDIO_AUD_SFX_H
+
+// 2192
+extern void AUDIO_DispatchPulse(int freq, int delay, int dur, int pulseWidth, int pulseInc);
+
+// 223c
+extern void AUDIO_DispatchWhiteNoise(uint rate, uint dur, uint limit);
+
+// 22c0
+extern void AUDIO_DispatchTone(uint freq, uint dur);
+
+// 43ae
+extern void AUDIO_DispatchSweepTone(int startFreq, int endFreq, int tickStep, int dur);
+
+#endif
