@@ -1,0 +1,9 @@
+/build/
+/run/
+# scratch for the audit pipeline: copies of the original game binaries and IDA output (regenerate with audit/run_all.py)
+/ida/in/
+/ida/out/
+__pycache__/
+*.pyc
+# generated audit data (the .md reports are kept)
+/audit/*.json
