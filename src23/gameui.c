@@ -2715,6 +2715,17 @@ void gameUiDraw(GameUi *ui) {
     if (ui->dropPrompt) {
         dropPromptDraw(ui);
     }
+    memcpy(ui->cursorBase, ui->screen, sizeof(ui->cursorBase));
+    ui->cursorBaseValid = true;
+    cursorDraw(ui);
+}
+
+void gameUiRedrawCursor(GameUi *ui) {
+    if (!ui->cursorBaseValid) {
+        gameUiDraw(ui);
+        return;
+    }
+    memcpy(ui->screen, ui->cursorBase, sizeof(ui->screen));
     cursorDraw(ui);
 }
 

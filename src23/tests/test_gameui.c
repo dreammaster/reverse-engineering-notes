@@ -1601,6 +1601,16 @@ static void testBeltItemsUi(GameKind game, const char *envName, const char *defa
     gameUiClick(&ui, 270, 35, true);
     printf("DEBUG overlay %d runs %u flags %x\n", (int)ui.overlay, ui.panelRunCount, saveHeaderGetU16(&s->save, 0x20));
     check("... and says the skill is too low when it does not", ui.overlay == UiOverlayNone && ui.panelRunCount == 3);
+    s->heldItem = (uint16_t)mainCommandRequiredItem(game, MainActionClock);
+    gameUiMouseMove(&ui, 150, 90);
+    gameUiDraw(&ui);
+    gameUiMouseMove(&ui, 203, 101);
+    gameUiRedrawCursor(&ui);
+    static uint8_t quick[ViewScreenWidth * ViewScreenHeight];
+    memcpy(quick, ui.screen, sizeof(quick));
+    gameUiDraw(&ui);
+    check("moving the cursor item redraws only the cursor, to the same picture as a full redraw", memcmp(quick, ui.screen, sizeof(quick)) == 0);
+    s->heldItem = 0;
     if (game == GameYendor3) {
         saveHeaderSetU16(&s->save, 0x20, 0x1000);
         itemSlotSet(sessionBeltSlot(s, 1), 0x17E, 1);

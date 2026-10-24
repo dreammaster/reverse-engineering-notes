@@ -109,6 +109,8 @@ typedef struct {
     bool combatPanel;      /* a fight is on: the top-right panel shows the resource icons and belt (RunDungeonGameLoop's ShowResourceDepletedOverlay) ... */
     uint16_t combatPanelSaved; /* ... and the panel bits (0x7000) it replaced, put back when the fight ends */
     bool restPause;        /* an interrupted rest's message stays until a key (the combat's panels wait behind it) */
+    uint8_t cursorBase[ViewScreenWidth * ViewScreenHeight]; /* the last picture before the cursor item went on it (gameUiRedrawCursor) */
+    bool cursorBaseValid;
     int mouseX, mouseY;    /* the pointer, from gameUiMouseMove: where the cursor item is drawn */
     bool targeting;        /* K: the crosshair cursor waits for a click on the view (WaitForTargetClick) */
     unsigned dollMask;     /* the inventory screen (UiOverlayDolls): bit n = member n's expanded panel is shown */
@@ -251,6 +253,9 @@ void gameUiDraw(GameUi *ui);
  * the catalog record's +8 names) and while K waits for its target a crosshair (picture 0xF); gameUiCursorShown says when the platform should hide its own pointer because the screen draws one.
  */
 void gameUiMouseMove(GameUi *ui, int x, int y);
+
+/* After gameUiMouseMove alone: puts the picture of the last gameUiDraw back and draws only the cursor item on it, a few hundred pixels instead of the whole screen. Falls back to gameUiDraw. */
+void gameUiRedrawCursor(GameUi *ui);
 bool gameUiCursorShown(const GameUi *ui);
 
 /*

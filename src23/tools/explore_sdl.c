@@ -676,7 +676,9 @@ int main(int argc, char **argv) {
             break;
         }
         SDL_Event event;
-        while (SDL_WaitEventTimeout(&event, script && *script ? 0 : 100)) {
+        bool cursorMoved = false; /* only the pointer moved, with an item or the crosshair on it: the cursor is redrawn, not the screen */
+        /* wait for the first event, then take what else is queued without waiting again (waiting 100 ms for each "next" event held every picture back by that long) */
+        for (bool haveEvent = SDL_WaitEventTimeout(&event, script && *script ? 0 : 100); haveEvent; haveEvent = SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 running = false;
             } else if (event.type == SDL_KEYDOWN) {
@@ -710,7 +712,7 @@ int main(int argc, char **argv) {
                 SDL_GetWindowSize(window, &winW, &winH);
                 if (winW > 0 && winH > 0) {
                     gameUiMouseMove(&g_ui, event.motion.x * ViewScreenWidth / winW, event.motion.y * ViewScreenHeight / winH);
-                    dirty = dirty || gameUiCursorShown(&g_ui);
+                    cursorMoved = cursorMoved || gameUiCursorShown(&g_ui);
                 }
             } else if (event.type == SDL_WINDOWEVENT) {
                 dirty = true;
@@ -732,8 +734,14 @@ int main(int argc, char **argv) {
             lastAnimation = SDL_GetTicks();
             dirty = gameUiAnimate(&g_ui) || dirty;
         }
-        if (dirty) {
+        bool cursorOnly = false;
+        if (!dirty && cursorMoved) {
+            gameUiRedrawCursor(&g_ui);
+            dirty = cursorOnly = true;
+        } else if (dirty) {
             gameUiDraw(&g_ui);
+        }
+        if (dirty) {
             if (colourStamp != g_ui.paletteStamp) { /* the cycled colours (gameUiPalette) moved on */
                 colourStamp = g_ui.paletteStamp;
                 for (unsigned i = 0xD0; i < 0x100; i++) { /* the cycled colours and the sky */
@@ -749,9 +757,11 @@ int main(int argc, char **argv) {
             SDL_RenderClear(sdl);
             SDL_RenderCopy(sdl, texture, NULL, NULL);
             SDL_RenderPresent(sdl);
-            char title[256];
-            gameUiStatus(&g_ui, title, sizeof(title));
-            SDL_SetWindowTitle(window, title);
+            if (!cursorOnly) {
+                char title[256];
+                gameUiStatus(&g_ui, title, sizeof(title));
+                SDL_SetWindowTitle(window, title);
+            }
             dirty = false;
         }
     }
