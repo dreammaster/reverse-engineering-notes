@@ -2,7 +2,48 @@
 
 #include <string.h>
 
+#include "globalflags.h"
 #include "monsterpool.h"
+
+/* Chapter 3's object that only carries the story-event bit (flag 0x400 with none of the door, curgame, fixed-response, monster bits). */
+static bool scriptedObject(GameKind game, const WorldObjectRecord *object) {
+    return game == GameYendor3 && (object->flags & WorldObjectFlagStoryEvent) && !(object->flags & (WorldObjectFlagDoor | WorldObjectFlagCurgameRecord | WorldObjectFlagFixedResponse | WorldObjectFlagMonsterSpawn));
+}
+
+static bool questFlag(SaveGame *save, unsigned index) {
+    return globalFlagTest(saveGlobalFlags(save), SaveHeaderGlobalFlagsSize, index);
+}
+
+bool windowBakeLocalMapFloor(GameKind game, const WorldObjectTable *objects, SaveGame *save, int x, int y, uint16_t *floorType) {
+    WorldObjectRecord object;
+    if (game != GameYendor3 || !worldObjectFind(objects, game, x, y, &object) || !scriptedObject(game, &object)) {
+        return false;
+    }
+    switch (object.value) {
+    case 1:
+        *floorType = questFlag(save, 5) ? 0 : 0xD2;
+        break;
+    case 2:
+        *floorType = questFlag(save, 0x1B) ? 0xDF : 0;
+        break;
+    case 3:
+        *floorType = 0xE0;
+        break;
+    case 4:
+        *floorType = 0xE7;
+        break;
+    case 5:
+        *floorType = 0xD4;
+        break;
+    case 6:
+        *floorType = 0xFA;
+        break;
+    default:
+        *floorType = 0;
+        break;
+    }
+    return true;
+}
 
 WindowBake windowBakeForOutcome(InteractOutcome outcome, const WorldObjectRecord *object, uint16_t curgameValue) {
     WindowBake bake;
@@ -56,6 +97,16 @@ WindowBake windowBakeAtCell(GameKind game, const WorldObjectTable *objects, cons
         WindowBake none;
         memset(&none, 0, sizeof(none));
         return none;
+    }
+    if (scriptedObject(game, &object)) { /* ApplyScriptedMapCellOverrides */
+        WindowBake scripted;
+        memset(&scripted, 0, sizeof(scripted));
+        if ((x == 40 && y == 62 && !questFlag(save, 5)) || (x == 69 && y == 50 && questFlag(save, 0x1B))) {
+            scripted.flagsOr = 0x200;
+            scripted.setFloor = true;
+            scripted.newType = x == 40 ? 0xD2 : 0xDF;
+        }
+        return scripted;
     }
     LockRecord lock;
     memset(&lock, 0, sizeof(lock));

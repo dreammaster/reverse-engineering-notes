@@ -135,6 +135,7 @@ typedef struct GameSession {
     DocumentReadability readability; /* how much of it the reader could read */
     const uint8_t *worldDat;   /* WORLD.DAT as sessionNew was given it (the page attribute table); it must outlive the session */
     size_t worldSize;
+    bool questArrival;         /* the throne's talk is under way: the arrival at (660, 132) follows it (sessionQuestArrive) */
     bool scrollCast;           /* internal: a spell being cast from a scroll (no knowledge, no cost, attacks "already resolved") */
     unsigned scrollTarget;     /* its single-target recipient slot */
     unsigned castTarget;       /* internal: the recipient slot + 1 of a single-target spell chosen on the alchemy screen (sessionCastOn), 0 = the caster */
@@ -279,9 +280,12 @@ SessionCast sessionCastOn(GameSession *session, unsigned casterSlot, unsigned sp
  * +5,000 NUORE, +5,000 MAGIC ORE, 2 X HEALTH / 2 X MAGIC (DS:0x8DA3-0x8E4E). */
 enum { SessionMessageNotHere = 10, SessionMessagePotionWorked, SessionMessageMissingItems, SessionMessagePatience, SessionMessageNuore, SessionMessageOre, SessionMessageMassHeal };
 
+/* `unlockMessage` 21-24: LOCKED (a wrong key on a destination), and Chapter 3's throne words YOU MUST BE / CLOSER TO / THE THRONE, BLAZIOS IS / STILL ALIVE, YOU DO NOT / HAVE ALL THE / KING~S ITEMS (DS:0x95E5, 0x95A8, 0x95C0). */
+enum { SessionMessageLocked = 21, SessionMessageThrone, SessionMessageBlazios, SessionMessageKingItems };
+
 enum { SessionMessageSkill = 17, SessionMessageTooFew, SessionMessageNuoreMade, SessionMessageOreMade }; /* the transmutation's: YOUR SKILL IS NOT HIGH ENOUGH!, YOU MUST HAVE AT LEAST 10 UNITS., NUORE CREATED, MAGIC ORE CREATED. */
 
-typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead, SessionUseScroll, SessionUseSearch, SessionUseKey, SessionUseRepair, SessionUseVision, SessionUseTransmute, SessionUseClock, SessionUseLocalMap, SessionUseWorldMap } SessionUse;
+typedef enum { SessionUseDone, SessionUseNothing, SessionUseNoEffect, SessionUseUnsupported, SessionUseTravelled, SessionUseClosed, SessionUseBlocked, SessionUseRead, SessionUseScroll, SessionUseSearch, SessionUseKey, SessionUseRepair, SessionUseVision, SessionUseTransmute, SessionUseClock, SessionUseLocalMap, SessionUseWorldMap, SessionUseDiscovery, SessionUseQuest } SessionUse;
 SessionUse sessionUseItem(GameSession *session, unsigned userSlot, unsigned itemSlot, unsigned recipientSlot);
 
 /*
@@ -454,6 +458,19 @@ bool sessionAlchemist(GameSession *session, unsigned *memberSlot);
 bool sessionChooseAlchemist(GameSession *session, unsigned memberSlot);
 bool sessionTransmuteSkillOk(GameSession *session, unsigned memberSlot); /* false sets message 17 */
 SessionTransmute sessionTransmute(GameSession *session, unsigned userSlot, unsigned itemSlot, bool toNuore, unsigned *made);
+
+/*
+ * The items that wait for a crosshair click and then work on what is faced or where the party stands (SessionUseDiscovery / SessionUseQuest; the front end asks for the click):
+ *   sessionUseDiscoveryKey   UseAbilityOnTarget: a key to a hidden destination (Chapter 2 0x242-0x245, Chapter 3 0x176) on the destination object faced (travel.h travelUseKeyOnDestination);
+ *                            UNLOCKED (`unlockMessage` 2) or LOCKED (21); nothing when the object is no destination or has no gate row.
+ *   sessionUseQuestItem      Chapter 3's HandleSpecialQuestCommand: 0x17E at (352, 67) facing south sets quest flag 0x91 (UNLOCKED); 0x277 at the throne (246, 30) facing west, with flag 0xDF set
+ *                            (Blazios is dead) and the five king's items (relics.h questGatherKingItems) takes them, clears the map flags 0x6100 and starts the talk with NPC 0x8C; when the talk is
+ *                            over the front end calls sessionQuestArrive (sound 0x2B, the party at (660, 132) facing north, travel mode 3, tracks 0, place flags |= 0x2002). Returns the NPC to talk to, else 0.
+ */
+void sessionUseDiscoveryKey(GameSession *session, unsigned itemId);
+unsigned sessionUseQuestItem(GameSession *session, unsigned itemId);
+bool sessionQuestArrivalPending(const GameSession *session);
+void sessionQuestArrive(GameSession *session);
 
 bool sessionExaminer(GameSession *session, unsigned *memberSlot);
 bool sessionExamine(GameSession *session, unsigned itemId, SessionExamine *out);

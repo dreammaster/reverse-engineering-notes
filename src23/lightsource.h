@@ -60,6 +60,12 @@ typedef struct {
     uint16_t litFlags; /* word_36C79 (DS:0x9419): 0x2000/0x800/0x400 (candle/torch/generic), 0x8000 "timers pending", 0x100..0x8 spell timers */
     /* word_36C93..36C9D == DS:0x9433.. (the same array TickWorldAilmentTimers walks): 6 light-spell duration timers. */
     uint16_t timers[LightSpellTimerCount];
+    /*
+     * Chapter 3 has one light item, not three families (HandleGameCommand yendor3.asm:46199): item 0x22 lights (ApplyStatusEffect, the 0x800 / middle kind), 0x23 is the lit one and
+     * puts out (TickStatusEffects, sound 0x28), and TickAilmentDuration burns the slot of 0x23 down WITHOUT changing the item (Chapter 2 turns it into the "used" id + 1). The other
+     * ids of the table above are not lights there (0xB is the lockpick, 0xC the clock). Set by the session for Chapter 3.
+     */
+    bool chapter3;
 } LightSourceState;
 
 /*

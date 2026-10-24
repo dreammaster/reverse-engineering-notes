@@ -1211,6 +1211,7 @@ static void repairStart(GameUi *ui, unsigned user, unsigned slot);
 static void repairRun(GameUi *ui);
 static void unlockReport(GameUi *ui);
 static void transmuteStart(GameUi *ui, unsigned user, unsigned slot);
+static void talkStep(GameUi *ui, const ConversationStep *step);
 static void clockShow(GameUi *ui);
 static void mapSkillTooLow(GameUi *ui);
 
@@ -1246,6 +1247,18 @@ static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipie
     case SessionUseTransmute:
         transmuteStart(ui, user, slot);
         return;
+    case SessionUseDiscovery:
+    case SessionUseQuest: {
+        unsigned itemId = sessionSlotItem(s, user, slot);
+        inventoryClose(ui);
+        ui->targeting = true;
+        if (result == SessionUseDiscovery) {
+            ui->targetDiscover = itemId;
+        } else {
+            ui->targetQuest = itemId;
+        }
+        return;
+    }
     case SessionUseClock:
         inventoryClose(ui);
         clockShow(ui);
@@ -1574,7 +1587,14 @@ static void unlockReport(GameUi *ui) {
     GameSession *s = ui->session;
     if (s->unlockMessage) {
         bool y2 = s->game == GameYendor2;
-        if (s->unlockMessage >= SessionMessageSkill) { /* the ore transmutation's words (DS:0x7D7E, 0x802B, 0x7D2C, 0x8D8C), and under the two that say what was made, how much */
+        if (s->unlockMessage >= SessionMessageLocked) { /* LOCKED (DS:0x7BCE, Chapter 3 0x7F00) and Chapter 3's throne words */
+            static const unsigned kThrone[3][2] = {{0x95E5, 3}, {0x95A8, 2}, {0x95C0, 3}};
+            if (s->unlockMessage == SessionMessageLocked) {
+                panelMessageExe(ui, y2 ? 0x7BCE : 0x7F00, 1);
+            } else {
+                panelMessageExe(ui, kThrone[s->unlockMessage - SessionMessageThrone][0], kThrone[s->unlockMessage - SessionMessageThrone][1]);
+            }
+        } else if (s->unlockMessage >= SessionMessageSkill) { /* the ore transmutation's words (DS:0x7D7E, 0x802B, 0x7D2C, 0x8D8C), and under the two that say what was made, how much */
             static const unsigned kMade[4][2] = {{0x7D7E, 3}, {0x802B, 4}, {0x7D2C, 2}, {0x8D8C, 2}};
             unsigned which = s->unlockMessage - SessionMessageSkill;
             panelMessageExe(ui, kMade[which][0], kMade[which][1]);
@@ -1623,6 +1643,20 @@ static void unlockTry(GameUi *ui) {
     if (ui->targetSearch) { /* the lockpick: sessionSearch on what is ahead, the pick of the slot it came from breaking if the search fails */
         ui->targetSearch = false;
         sessionSearch(s, ui->searchUser, ui->searchSlot);
+    } else if (ui->targetDiscover) {
+        sessionUseDiscoveryKey(s, ui->targetDiscover);
+        ui->targetDiscover = 0;
+    } else if (ui->targetQuest) {
+        unsigned npc = sessionUseQuestItem(s, ui->targetQuest);
+        ui->targetQuest = 0;
+        ConversationStep first;
+        if (npc && sessionTalkStart(s, npc, 0, &first)) { /* UseItem(0x8C), then the arrival */
+            ui->overlay = UiOverlayTalk;
+            ui->talkListShown = false;
+            talkStep(ui, &first);
+        } else if (npc) {
+            sessionQuestArrive(s);
+        }
     } else if (ui->targetKey) {
         sessionUnlockWithKey(s, ui->targetKey);
         ui->targetKey = 0;
@@ -2564,6 +2598,11 @@ static void drawScreen(GameUi *ui) {
         localMapFill(localCells, s->game, &s->map, &s->save, c0, r0);
         for (int i = 0; i < LocalMapColumns * LocalMapRows; i++) { /* DrawLocalMapCell: a trigger that changed the wall or the floor shows its new tile */
             if (localCells[i].explored) {
+                uint16_t scripted;
+                if (windowBakeLocalMapFloor(s->game, &s->objects, &s->save, c0 + i % LocalMapColumns, r0 + i / LocalMapColumns, &scripted)) { /* Chapter 3's story-event cells: a marker instead of the floor */
+                    localCells[i].floorType = scripted;
+                    continue;
+                }
                 WindowBake bake = windowBakeAtCell(s->game, &s->objects, &s->locks, &s->save, c0 + i % LocalMapColumns, r0 + i / LocalMapColumns);
                 if (bake.setWall) {
                     localCells[i].wallType = bake.newType;
@@ -2620,6 +2659,11 @@ static void drawScreen(GameUi *ui) {
 }
 
 void gameUiDraw(GameUi *ui) {
+    if (sessionQuestArrivalPending(ui->session) && ui->overlay != UiOverlayTalk) { /* the throne's talk is over: the party is carried off */
+        sessionQuestArrive(ui->session);
+        playPending(ui);
+        gameUiAmbientMusic(ui);
+    }
     if (!(ui->pickActive && ui->pickScroll == 2)) { /* the dimmed faces of those who cannot learn the scroll last as long as the question (ClearIneligibleFlagForAllMembers) */
         sessionClearIneligible(ui->session);
     }
@@ -3201,7 +3245,7 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     if (ui->targeting) { /* WaitForTargetClick: only Escape is heard */
         if (key == UiKeyEscape) {
             ui->targeting = ui->targetSearch = false;
-            ui->targetKey = 0;
+            ui->targetKey = ui->targetDiscover = ui->targetQuest = 0;
         }
         return true;
     }

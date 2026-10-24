@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "globalflags.h"
 #include "monsterpool.h"
 #include "windowbake.h"
 #include "worldmap_stdio.h"
@@ -185,6 +186,39 @@ static void testReal(GameKind game, const char *envName, const char *defaultDir,
     check("the local map finds triggers that rewrite a floor or a wall, each with its record's value", floorTriggers + wallTriggers > 0 && disagree == 0);
     WindowBake empty = windowBakeAtCell(game, &objects, &locks, &save, 0, 0);
     check("a cell with no object bakes nothing", !empty.flagsOr && !empty.setWall && !empty.setFloor && !empty.monsterMarker);
+
+    /* Chapter 3's story-event objects: scripted floor overrides in the window and markers on the local map */
+    unsigned scripted = 0, markers = 0, wrongMarkers = 0;
+    for (int col = 0x28; col < 0x28 + 800; col++) {
+        for (int row = 0; row < 168; row++) {
+            WorldObjectRecord object;
+            uint16_t floor;
+            if (worldObjectFind(&objects, game, col, row, &object) && (object.flags & WorldObjectFlagStoryEvent) && !(object.flags & (WorldObjectFlagDoor | WorldObjectFlagCurgameRecord | WorldObjectFlagFixedResponse | WorldObjectFlagMonsterSpawn))) {
+                scripted++;
+                bool marked = windowBakeLocalMapFloor(game, &objects, &save, col, row, &floor);
+                markers += marked;
+                static const uint16_t kMarker[7] = {0, 0xD2, 0, 0xE0, 0xE7, 0xD4, 0xFA};
+                wrongMarkers += game == GameYendor3 ? !(marked && floor == (object.value < 7 ? kMarker[object.value] : 0)) : marked;
+            }
+        }
+    }
+    printf("     %s: %u story-event objects, %u local-map markers\n", label, scripted, markers);
+    check("only Chapter 3 marks its story-event cells on the local map, with the value's floor", wrongMarkers == 0 && (game == GameYendor3 ? markers == scripted : markers == 0));
+    if (game == GameYendor3) {
+        uint8_t *flags = saveGlobalFlags(&save);
+        globalFlagClear(flags, SaveHeaderGlobalFlagsSize, 5);
+        WindowBake a1 = windowBakeAtCell(game, &objects, &locks, &save, 40, 62);
+        check("(40, 62) shows floor 0xD2 with flag 0x200 while quest flag 5 is clear", a1.setFloor && a1.newType == 0xD2 && a1.flagsOr == 0x200);
+        globalFlagSet(flags, SaveHeaderGlobalFlagsSize, 5);
+        a1 = windowBakeAtCell(game, &objects, &locks, &save, 40, 62);
+        check("... and nothing once it is set", !a1.setFloor && !a1.flagsOr);
+        globalFlagClear(flags, SaveHeaderGlobalFlagsSize, 0x1B);
+        a1 = windowBakeAtCell(game, &objects, &locks, &save, 69, 50);
+        check("(69, 50) is plain until flag 0x1B is set", !a1.setFloor);
+        globalFlagSet(flags, SaveHeaderGlobalFlagsSize, 0x1B);
+        a1 = windowBakeAtCell(game, &objects, &locks, &save, 69, 50);
+        check("... then floor 0xDF with flag 0x200", a1.setFloor && a1.newType == 0xDF && a1.flagsOr == 0x200);
+    }
 
     /* UnlockDoorCommand: find a door whose lock needs a key tier, stand just south of it facing north and try keys */
     bool unlockTested = false;

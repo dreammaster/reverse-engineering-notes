@@ -115,6 +115,13 @@ RelicAction relicClassify(unsigned itemId);
  * the original's order: ORANGE, FEATHER, COCOON, FLOWER, bottle) and the caller
  * puts RelicPotionOfAppreciation on the cursor. Returns true when it brewed.
  */
+/*
+ * Chapter 3's finale (HandleSpecialQuestCommand, yendor3.asm:20835, item 0x277 used at the throne): the KING'S ITEMS 0xD6, 0x12C, 0x20B, 0x224 and 0x276 must all be held (the belt, then the
+ * party's packs); if so they are consumed in that order and true is returned, else nothing is.
+ */
+enum { QuestKingItemCount = 5 };
+bool questGatherKingItems(uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog, bool consume);
+
 enum { RelicPotionOfAppreciation = RelicLocationPotion };
 
 bool relicAssemblePotion(uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog);

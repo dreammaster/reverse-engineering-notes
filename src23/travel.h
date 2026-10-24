@@ -154,6 +154,14 @@ typedef enum {
 
 enum { TravelStoryRealmFlag = 0x9D, TravelStoryItemLow = 0x17F, TravelStoryItemHigh = 0x181 };
 
+/*
+ * UseAbilityOnTarget (yendor2.asm:45586, yendor3.asm:46029): a "discovery key" used on a destination object (flag 0x2000) whose gate-table row names it -- the row's hasMsg word doubles as the key's
+ * item id (Chapter 2: 0x242-0x245 for destinations 170-176; Chapter 3: 0x176 for destination 58). No row: nothing happens. The row's flag already set: UNLOCKED. The right key: the flag is set
+ * and UNLOCKED. Any other item: LOCKED.
+ */
+typedef enum { TravelKeyNoRow, TravelKeyAlready, TravelKeyUnlocked, TravelKeyWrong } TravelKeyOutcome;
+TravelKeyOutcome travelUseKeyOnDestination(GameKind game, unsigned destinationId, unsigned itemId, uint8_t *globalFlags, size_t globalFlagsSize);
+
 TravelExamineOutcome travelExamineKey(GameKind game, unsigned destinationId, uint8_t *globalFlags, size_t globalFlagsSize,
                                       bool storyItemHeld);
 

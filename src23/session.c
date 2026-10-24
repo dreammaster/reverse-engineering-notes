@@ -47,6 +47,7 @@ GameSession *sessionNew(GameKind game, const uint8_t *worldDat, size_t size) {
         return NULL;
     }
     s->game = game;
+    s->light.chapter3 = game == GameYendor3;
     s->worldDat = worldDat;
     s->worldSize = size;
     saveGameInit(&s->save, game);
@@ -1108,6 +1109,7 @@ static bool castSupported(SpellBranch branch, const uint8_t *spell) {
     }
 }
 
+enum { QuestFountainItem = 0x17E, QuestThroneItem = 0x277, QuestNpc = 0x8C, QuestThroneBlaziosFlag = 0xDF, QuestFountainFlag = 0x91 };
 enum { AlchemistRoleWord = 8, TransmuteItem = 0x1C }; /* the fifth role (header +0xA4 + 8); Chapter 2's ore transmutation item */
 
 enum { UnlockSoundYendor2 = 0x2A, UnlockSoundYendor3 = 0x0B, RefusalSound = 3 };
@@ -1367,6 +1369,9 @@ SessionCast sessionCastBy(GameSession *s, unsigned casterSlot, unsigned spellId,
 
 /* TickWorldAilments (yendor2.asm:27798): the light sources burn down one unit -- the global slots, every member's eight main slots, the spell timers. */
 static void worldTick(GameSession *s) {
+    for (unsigned belt = 0; belt < SaveBeltSlotCount; belt++) { /* the six belt slots first */
+        lightSourceTickItemSlot(&s->light, beltSlots(s) + 4 * belt, 1);
+    }
     for (unsigned member = 0; member < 4; member++) {
         uint8_t *record = sessionPartyRecord(s, member);
         for (unsigned slot = 1; record && slot <= InventorySlotCount; slot++) {
@@ -1576,8 +1581,8 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
         return documentLineCount(s->game, (DocumentCategory)s->readCategory, s->readId) ? SessionUseRead : SessionUseNoEffect;
     }
     /* the light sources (HandleGameCommand: 8 / 0xE / 0xB light, 9 / 0xF / 0xC put out; ApplyStatusEffect, TickStatusEffects): the lit-item family steps to the next id */
-    if (id == 8 || id == 0xE || id == 0xB || id == 9 || id == 0xF || id == 0xC) {
-        bool lighting = id == 8 || id == 0xE || id == 0xB;
+    if (s->game == GameYendor2 ? (id == 8 || id == 0xE || id == 0xB || id == 9 || id == 0xF || id == 0xC) : (id == 0x22 || id == 0x23)) {
+        bool lighting = s->game == GameYendor2 ? (id == 8 || id == 0xE || id == 0xB) : id == 0x22;
         if (lighting && s->game == GameYendor2 && (s->light.litFlags & 2)) {
             return SessionUseNoEffect; /* the place bit 2: the original flashes a warning */
         }
@@ -1587,7 +1592,7 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
         }
         itemSlotSet(slot, (uint16_t)(lighting ? id + 1 : id - 1), itemSlotExtra(slot));
         if (!lighting) {
-            queueSound(s, 9); /* TickStatusEffects, reached from HandleGameCommand with the flag 0x40: the light going out */
+            queueSound(s, s->game == GameYendor2 ? 9 : 0x28); /* TickStatusEffects, reached from HandleGameCommand with the flag 0x40: the light going out */
         }
         snprintf(s->log, sizeof(s->log), lighting ? "light source %u lit" : "light source %u put out", id);
         return SessionUseDone;
@@ -1655,6 +1660,13 @@ SessionUse sessionUseItem(GameSession *s, unsigned userSlot, unsigned itemSlot, 
     }
     if (s->game == GameYendor2 && id == TransmuteItem) {
         return SessionUseTransmute;
+    }
+    /* the discovery keys and Chapter 3's quest items (UseAbilityOnTarget, HandleSpecialQuestCommand): a crosshair click first, unless a target flag sent the item to ExamineTarget above */
+    if ((s->game == GameYendor2 && relicClassify(id) == RelicActionDiscoveryKey) || (s->game == GameYendor3 && id == 0x176)) {
+        return s->combat.active ? SessionUseNoEffect : SessionUseDiscovery;
+    }
+    if (s->game == GameYendor3 && (id == QuestFountainItem || id == QuestThroneItem)) {
+        return s->combat.active ? SessionUseNoEffect : SessionUseQuest;
     }
     /* the clock and the maps used from a slot (HandleGameCommand: ShowGameClockCommand, ShowLocalAreaMap, ToggleMapViewMode; a fight refuses the clock): the front end does what T, M and W do */
     if (id == (s->game == GameYendor2 ? 7u : 0x0Cu)) {
@@ -3147,6 +3159,85 @@ SessionTransmute sessionTransmute(GameSession *s, unsigned userSlot, unsigned it
     }
     turnSpent(s);
     return SessionTransmuteDone;
+}
+
+void sessionUseDiscoveryKey(GameSession *s, unsigned itemId) {
+    s->unlockMessage = 0;
+    WorldObjectProbeResult probe = worldObjectProbeFacingTile(&s->objects, s->game, s->x, s->y, s->facing);
+    if (probe.outcome == WorldObjectProbeNone || !(probe.object.flags & WorldObjectFlagUnknown2000)) {
+        return;
+    }
+    switch (travelUseKeyOnDestination(s->game, probe.object.value, itemId, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize)) {
+    case TravelKeyAlready:
+    case TravelKeyUnlocked:
+        s->unlockMessage = 2;
+        break;
+    case TravelKeyWrong:
+        s->unlockMessage = SessionMessageLocked;
+        break;
+    default:
+        break;
+    }
+}
+
+unsigned sessionUseQuestItem(GameSession *s, unsigned itemId) {
+    s->unlockMessage = 0;
+    if (s->game != GameYendor3) {
+        return 0;
+    }
+    uint8_t *flags = saveGlobalFlags(&s->save);
+    if (itemId == QuestFountainItem) {
+        if (s->x == 352 && s->y == 67 && s->facing == SaveFacingSouth) {
+            globalFlagSet(flags, SaveHeaderGlobalFlagsSize, QuestFountainFlag);
+            s->unlockMessage = 2;
+        }
+        return 0;
+    }
+    if (itemId != QuestThroneItem) {
+        return 0;
+    }
+    if (s->x != 246 || s->y != 30 || s->facing != SaveFacingWest) {
+        s->unlockMessage = SessionMessageThrone;
+        return 0;
+    }
+    if (!globalFlagTest(flags, SaveHeaderGlobalFlagsSize, QuestThroneBlaziosFlag)) {
+        s->unlockMessage = SessionMessageBlazios;
+        return 0;
+    }
+    uint8_t *globalSlots = beltSlots(s);
+    if (!questGatherKingItems(globalSlots, &s->save, &s->items, false)) {
+        s->unlockMessage = SessionMessageKingItems;
+        return 0;
+    }
+    questGatherKingItems(globalSlots, &s->save, &s->items, true);
+    for (unsigned i = 0; i < SavePartyMemberSlots; i++) {
+        uint8_t *member = sessionPartyRecord(s, i);
+        if (member) {
+            partyRecomputeEquipmentStatBonuses(member, &s->items, s->game);
+        }
+    }
+    saveHeaderSetU16(&s->save, 0x20, (uint16_t)(saveHeaderGetU16(&s->save, 0x20) & 0x9EFF));
+    s->questArrival = true;
+    return QuestNpc;
+}
+
+bool sessionQuestArrivalPending(const GameSession *s) {
+    return s->questArrival;
+}
+
+void sessionQuestArrive(GameSession *s) {
+    if (!s->questArrival) {
+        return;
+    }
+    s->questArrival = false;
+    queueSound(s, 0x2B);
+    saveHeaderSetU16(&s->save, SaveHeaderTravelMode, 3);
+    saveHeaderSetU16(&s->save, SaveHeaderDayTrack, 0);
+    saveHeaderSetU16(&s->save, SaveHeaderNightTrack, 0);
+    *placeWord(s) = (uint16_t)(*placeWord(s) | 0x2002);
+    storePlace(s);
+    arriveAt(s, 660, 132, SaveFacingNorth);
+    say(s, "the king's items are given; the party is carried to column %u", 660u);
 }
 
 bool sessionIsKeyRing(const GameSession *s, unsigned itemId) {

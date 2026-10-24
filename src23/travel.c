@@ -512,6 +512,21 @@ TravelUnlockCheck travelCheckUnlock(GameKind game, unsigned destinationId, uint1
     return result;
 }
 
+TravelKeyOutcome travelUseKeyOnDestination(GameKind game, unsigned destinationId, unsigned itemId, uint8_t *globalFlags, size_t globalFlagsSize) {
+    const TravelGateEntry *entry = findGateEntry(game, destinationId);
+    if (!entry) {
+        return TravelKeyNoRow;
+    }
+    if (globalFlagTest(globalFlags, globalFlagsSize, entry->globalFlagIndex)) {
+        return TravelKeyAlready;
+    }
+    if (entry->hasMsg != itemId) {
+        return TravelKeyWrong;
+    }
+    globalFlagSet(globalFlags, globalFlagsSize, entry->globalFlagIndex);
+    return TravelKeyUnlocked;
+}
+
 TravelExamineOutcome travelExamineKey(GameKind game, unsigned destinationId, uint8_t *globalFlags, size_t globalFlagsSize,
                                       bool storyItemHeld) {
     if (game == GameYendor3 && globalFlagTest(globalFlags, globalFlagsSize, TravelStoryRealmFlag)) {

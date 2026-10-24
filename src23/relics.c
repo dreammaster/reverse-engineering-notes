@@ -74,6 +74,19 @@ static void consumeItem(uint8_t *globalSlots, SaveGame *save, const ItemCatalog 
     }
 }
 
+bool questGatherKingItems(uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog, bool consume) {
+    static const uint16_t items[QuestKingItemCount] = {0xD6, 0x12C, 0x20B, 0x224, 0x276};
+    for (unsigned i = 0; i < QuestKingItemCount; i++) {
+        if (!itemRangeAvailable(globalSlots, save, items[i], items[i]).found) {
+            return false;
+        }
+    }
+    for (unsigned i = 0; consume && i < QuestKingItemCount; i++) {
+        consumeItem(globalSlots, save, catalog, items[i]);
+    }
+    return true;
+}
+
 bool relicAssemblePotion(uint8_t *globalSlots, SaveGame *save, const ItemCatalog *catalog) {
     static const uint16_t ingredients[4] = {RelicFlower, RelicCocoon, RelicFeather, RelicOrange};
     for (unsigned i = 0; i < 4; i++) {

@@ -4,6 +4,14 @@ static const uint16_t kLitFlagBits[LightSourceCount] = {0x2000, 0x0800, 0x0400};
 
 bool lightSourceApply(LightSourceState *state, unsigned actionId) {
     LightSourceKind kind;
+    if (state->chapter3) {
+        if (actionId != 0x22) {
+            return false;
+        }
+        state->litFlags = (uint16_t)(state->litFlags | kLitFlagBits[LightSourceTorch]);
+        state->litCount[LightSourceTorch]++;
+        return true;
+    }
     switch (actionId) {
     case 8:
         kind = LightSourceCandle;
@@ -24,18 +32,25 @@ bool lightSourceApply(LightSourceState *state, unsigned actionId) {
 
 bool lightSourceTick(LightSourceState *state, unsigned actionId) {
     LightSourceKind kind;
-    switch (actionId) {
-    case 9:
-        kind = LightSourceCandle;
-        break;
-    case 0xF:
+    if (state->chapter3) {
+        if (actionId != 0x23) {
+            return false;
+        }
         kind = LightSourceTorch;
-        break;
-    case 0xC:
-        kind = LightSourceGeneric;
-        break;
-    default:
-        return false;
+    } else {
+        switch (actionId) {
+        case 9:
+            kind = LightSourceCandle;
+            break;
+        case 0xF:
+            kind = LightSourceTorch;
+            break;
+        case 0xC:
+            kind = LightSourceGeneric;
+            break;
+        default:
+            return false;
+        }
     }
     if (state->litCount[kind] > 0) {
         state->litCount[kind]--;
@@ -49,18 +64,25 @@ bool lightSourceTick(LightSourceState *state, unsigned actionId) {
 bool lightSourceTickItemSlot(LightSourceState *state, uint8_t *slot, uint16_t elapsedMinutes) {
     uint16_t id = itemSlotId(slot);
     LightSourceKind kind;
-    switch (id) {
-    case 9:
-        kind = LightSourceCandle;
-        break;
-    case 0xF:
+    if (state->chapter3) {
+        if (id != 0x23) {
+            return false;
+        }
         kind = LightSourceTorch;
-        break;
-    case 0xC:
-        kind = LightSourceGeneric;
-        break;
-    default:
-        return false;
+    } else {
+        switch (id) {
+        case 9:
+            kind = LightSourceCandle;
+            break;
+        case 0xF:
+            kind = LightSourceTorch;
+            break;
+        case 0xC:
+            kind = LightSourceGeneric;
+            break;
+        default:
+            return false;
+        }
     }
 
     uint16_t extra = itemSlotExtra(slot);
@@ -69,7 +91,7 @@ bool lightSourceTickItemSlot(LightSourceState *state, uint8_t *slot, uint16_t el
         return true;
     }
 
-    itemSlotSet(slot, (uint16_t)(id + 1), 0);
+    itemSlotSet(slot, state->chapter3 ? id : (uint16_t)(id + 1), 0);
     if (state->litCount[kind] > 0) {
         state->litCount[kind]--;
     }

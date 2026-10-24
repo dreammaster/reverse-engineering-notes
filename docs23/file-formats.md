@@ -6840,6 +6840,27 @@ then `ShowConfirmPrompt 0x23` WHICH ORE DO / YOU WANT TO / CREATE? with the rows
 `ToggleMapViewMode`, each with the Mapping skill gates of the keys M and W (`SessionUseClock` / `SessionUseLocalMap` / `SessionUseWorldMap`). The local map (M) shows the *replacement* floor / wall tile of a pending
 curgame trigger (`DrawLocalMapCell`); the mount's flight window (`RevealMapRegionRow` -> `DrawRevealedCellIcon`) does not.
 
+### Chapter 3's scripted cells, quest items and light (decoded 2026-10-24)
+
+**Story-event cells** (Chapter 3 only; `TryInteractAtPosition` yendor3.asm:29958 gains an outcome 11 for an object with flag 0x400 and none of door / curgame / fixed-response / monster -- the six objects with values 1-6 that
+`storyevent.c` runs). `RefreshDungeonMapWindow` hands them to `ApplyScriptedMapCellOverrides` (:21014): the cell (40, 62) while quest flag 5 is CLEAR and (69, 50) once flag 0x1B is SET get `flags |= 0x200` and the floor type
+0xD2 / 0xDF (`windowBakeAtCell`). `DrawLocalMapCell` asks `sub_1B751` (:21061) instead of drawing the cell's own floor: the object's value picks the marker floor type -- 1: 0xD2 while flag 5 is clear, 2: 0xDF once
+flag 0x1B is set, 3: 0xE0, 4: 0xE7, 5: 0xD4, 6: 0xFA (`windowBakeLocalMapFloor`).
+
+**Discovery keys** (`UseAbilityOnTarget`, yendor2.asm:45586, yendor3.asm:46029; Chapter 2 items 0x242-0x245, Chapter 3 0x176): the crosshair, then the object faced; if it is a destination (flag 0x2000) with a row in the gate
+table, the row's `hasMsg` word -- which is also the key's item id -- decides: flag already set or the right key (the flag is set): UNLOCKED, any other item: LOCKED (DS:0x7BAE / 0x7BCE, Chapter 3 0x7EE0 / 0x7F00). Chapter 2's four
+rows (destinations 170-176) and Chapter 3's one (58) are what the "hidden" roads need. `travelUseKeyOnDestination`, `sessionUseDiscoveryKey`.
+
+**Chapter 3's other quest items** (`HandleSpecialQuestCommand` :20835): 0x17E (crosshair) at (352, 67) facing south sets quest flag 0x91 and says UNLOCKED. 0x277 (the king's token, crosshair) at the throne
+(246, 30) facing west: elsewhere YOU MUST BE / CLOSER TO / THE THRONE (DS:0x95E5); Blazios alive (flag 0xDF clear) BLAZIOS IS / STILL ALIVE (0x95A8); without all of the items 0xD6, 0x12C, 0x20B, 0x224, 0x276 YOU DO NOT / HAVE ALL THE /
+KING~S ITEMS (0x95C0); otherwise the five items are consumed, the bonuses recomputed, the map flags lose 0x6100, the talk with NPC 0x8C runs (`UseItem(0x8C)`), and then sound 0x2B, the party stands at (660, 132) facing north with
+travel mode 3, both music tracks 0 and the place flags `|= 0x2002`. `sessionUseQuestItem`, `sessionQuestArrive` (the front end calls it once the talk is over).
+
+**Light in Chapter 3 is not Chapter 2's** (corrects the "instruction-identical" notes on `TickAilmentDuration`): HandleGameCommand knows only item 0x22 (lights: `ApplyStatusEffect`, the 0x800 flag, counter 0CF07) and 0x23 (the lit
+one, `TickStatusEffects`: put out, sound 0x28, not 9); ids 8-0xF are other things there (0xB the lockpick, 0xC the clock -- which the standalone used to take for a light). `TickAilmentDuration` burns a slot of 0x23 down and, when it is
+spent, only zeroes the extra word (Chapter 2 turns the item into its "used" id + 1). `TickWorldAilments` sweeps the six belt slots first in both games, then each member's eight main slots (the belt was missing in the standalone).
+`LightSourceState::chapter3`.
+
 ### A spent turn outside a fight (decoded 2026-10-22)
 
 `ApplyEncodedItemEffect` (:51097) opens with `g_uiScratchFlags3 |= 0x20`; so do the healing potions' handlers (:48594, :48707: HP restoratives), the repair command (:45907) and `InteractWithContainer` (scrolls, study). The

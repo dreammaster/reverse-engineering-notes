@@ -1558,6 +1558,66 @@ static void testWipe(GameKind game, const char *envName, const char *defaultDir,
     free(world);
 }
 
+/* Items worked from the belt in both games: the clock, the map, and Chapter 3's quest items (the crosshair, then the spot decides). */
+static void testBeltItemsUi(GameKind game, const char *envName, const char *defaultDir, const char *label) {
+    const char *dir = getenv(envName);
+    char path[512];
+    snprintf(path, sizeof(path), "%s/WORLD.DAT", dir ? dir : defaultDir);
+    size_t size;
+    uint8_t *world = readFile(path, &size);
+    if (!world) {
+        return;
+    }
+    char text[200];
+    GameUiHost host = {NULL, onEffect, onMusic, NULL, onStore, onFetch, onSlotName, onSlotWrite, onSlotRead};
+    static GameUi ui;
+    GameSession *s = sessionNew(game, world, size);
+    gameUiInit(&ui, s, world, size, picture, NULL, &host);
+    snprintf(path, sizeof(path), "%s/%s", dir ? dir : defaultDir, game == GameYendor3 ? "REGISTER.EXE" : "SW.EXE");
+    size_t exeSize;
+    uint8_t *exeBytes = readFile(path, &exeSize);
+    static ExeData exe;
+    if (exeBytes && exeDataOpen(&exe, game, exeBytes, exeSize)) {
+        gameUiSetExe(&ui, &exe); /* the words of the messages */
+    }
+    for (unsigned member = 0; member < 4; member++) {
+        partySetStat(sessionPartyRecord(s, member), PartyStatMapping, 90);
+    }
+    saveHeaderSetU16(&s->save, 0x20, 0x1000);
+    itemSlotSet(sessionBeltSlot(s, 1), (uint16_t)mainCommandRequiredItem(game, MainActionClock), 0);
+    s->clock.minutes = 13 * 60 + 5;
+    gameUiClick(&ui, 270, 35, true);
+    snprintf(text, sizeof(text), "%s: the clock item used from the belt writes the time", label);
+    check(text, ui.panelRunCount == 2 && strcmp(ui.panelRuns[0].text, "01:05 PM") == 0);
+    itemSlotSet(sessionBeltSlot(s, 1), (uint16_t)mainCommandRequiredItem(game, MainActionLocalMap), 0);
+    saveHeaderSetU16(&s->save, 0x20, 0x1000 | 0x200);
+    gameUiClick(&ui, 270, 35, true);
+    check("the map item used from the belt opens the local map when the skill allows", ui.overlay == UiOverlayLocalMap);
+    ui.overlay = UiOverlayNone;
+    saveHeaderSetU16(&s->save, 0x20, 0x1000);
+    for (unsigned member = 0; member < 4; member++) {
+        partySetStat(sessionPartyRecord(s, member), PartyStatMapping, 10);
+    }
+    gameUiClick(&ui, 270, 35, true);
+    printf("DEBUG overlay %d runs %u flags %x\n", (int)ui.overlay, ui.panelRunCount, saveHeaderGetU16(&s->save, 0x20));
+    check("... and says the skill is too low when it does not", ui.overlay == UiOverlayNone && ui.panelRunCount == 3);
+    if (game == GameYendor3) {
+        saveHeaderSetU16(&s->save, 0x20, 0x1000);
+        itemSlotSet(sessionBeltSlot(s, 1), 0x17E, 1);
+        s->x = 352;
+        s->y = 67;
+        s->facing = SaveFacingSouth;
+        sessionRebuild(s);
+        globalFlagClear(saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, 0x91);
+        gameUiClick(&ui, 270, 35, true);
+        check("Chapter 3's quest item waits for a click on the view", ui.targeting && ui.targetQuest == 0x17E);
+        gameUiClick(&ui, 100, 60, false);
+        check("... and at the spot sets flag 0x91 and says UNLOCKED", !ui.targeting && globalFlagTest(saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize, 0x91) && ui.panelRunCount == 1);
+    }
+    sessionFree(s);
+    free(world);
+}
+
 /* Sounds the session asks for one after another are played one at a time, each when the host says the one before it is over (TriggerSoundEventAfterDriverWait). */
 static void testSoundQueue(void) {
     const char *dir = getenv("YENDOR2_GAME_DIR");
@@ -1603,6 +1663,8 @@ int main(void) {
     testInventoryUi(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
     testWipe(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
     testWipe(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
+    testBeltItemsUi(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
+    testBeltItemsUi(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
     testSoundQueue();
     printf("%s (%d skipped)\n", g_failureCount ? "FAILED" : "ALL PASSED", g_skipCount);
     return g_failureCount ? 1 : 0;

@@ -23,6 +23,8 @@
  *   7  curgame flag 0x8                                  wall type (+0) = the curgame record's packed value
  *   5  a monster marker not yet spawned                  flags |= 0x400 and +4 = the marker's value (the monster type id)
  *   0, 4, 8, 9                                           nothing
+ *   11 (Chapter 3 only: an object with flag 0x400 and none of the others, TryInteractAtPosition loc_20C02) -> ApplyScriptedMapCellOverrides
+ *      (yendor3.asm:21014): at (40, 62) with global flag 5 CLEAR, and at (69, 50) with global flag 0x1B SET, the cell gets flags |= 0x200 and the floor type 0xD2 / 0xDF
  *
  * This is where the cell flags that movement.h's isDoor input (0x6000) and the monster spawn check (0x400, see monsterpool.h) come from; the base copy never
  * sets them. Doors (WorldObjectFlagDoor) themselves bake nothing (3 is the only door outcome that does); a closed door is the wall type itself.
@@ -40,6 +42,13 @@ WindowBake windowBakeForOutcome(InteractOutcome outcome, const WorldObjectRecord
 
 /* The same verdict for one world cell (TryInteractAtPosition's outcome run through windowBakeForOutcome); nothing is baked for a cell with no object. */
 WindowBake windowBakeAtCell(GameKind game, const WorldObjectTable *objects, const LockCatalog *locks, SaveGame *save, int x, int y);
+
+/*
+ * The local map's marker for the same Chapter 3 objects (sub_1B751, yendor3.asm:21061, called by DrawLocalMapCell for outcome 11): the object's value picks the floor type drawn over the cell's
+ * wall -- 1: 0xD2 while global flag 5 is clear, 2: 0xDF once flag 0x1B is set (else none), 3: 0xE0, 4: 0xE7, 5: 0xD4, 6: 0xFA, any other value none (the cell's own floor is NOT drawn).
+ * False for every other cell and in Chapter 2.
+ */
+bool windowBakeLocalMapFloor(GameKind game, const WorldObjectTable *objects, SaveGame *save, int x, int y, uint16_t *floorType);
 
 void windowBakeApply(DungeonGridCell *cell, const WindowBake *bake);
 

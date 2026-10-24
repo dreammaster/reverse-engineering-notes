@@ -638,12 +638,29 @@ static void testLightsAndRelics(GameKind game, const uint8_t *world, size_t size
     char text[160];
     uint8_t *hero = sessionPartyRecord(s, 0);
     uint8_t *slot = inventoryGroupSlot(partyInventoryGroup(hero, PartyGroupMain), 1);
-    itemSlotSet(slot, 8, 100);
+    unsigned unlit = game == GameYendor2 ? 8 : 0x22, burning = unlit + 1; /* Chapter 3 has one light item: 0x22 lights (the middle kind), 0x23 is the lit one */
+    LightSourceKind kind = game == GameYendor2 ? LightSourceCandle : LightSourceTorch;
+    unsigned flag = game == GameYendor2 ? 0x2000 : 0x800;
+    itemSlotSet(slot, (uint16_t)unlit, 100);
     SessionUse lit = sessionUseItem(s, 0, 1, 0);
-    snprintf(text, sizeof(text), "%s: a candle lights (flag, count, and the item becomes the lit one) and goes out again", label);
-    bool lighted = lit == SessionUseDone && itemSlotId(slot) == 9 && s->light.litCount[LightSourceCandle] == 1 && (s->light.litFlags & 0x2000);
+    snprintf(text, sizeof(text), "%s: a light lights (flag, count, and the item becomes the lit one) and goes out again", label);
+    bool lighted = lit == SessionUseDone && itemSlotId(slot) == burning && s->light.litCount[kind] == 1 && (s->light.litFlags & flag);
+    while (sessionNextSound(s)) {
+    }
     SessionUse out = sessionUseItem(s, 0, 1, 0);
-    check(text, lighted && out == SessionUseDone && itemSlotId(slot) == 8 && s->light.litCount[LightSourceCandle] == 0 && !(s->light.litFlags & 0x2000));
+    check(text, lighted && out == SessionUseDone && itemSlotId(slot) == unlit && s->light.litCount[kind] == 0 && !(s->light.litFlags & flag));
+    check("... putting it out plays the tick sound (9; Chapter 3 0x28)", sessionNextSound(s) == (game == GameYendor2 ? 9u : 0x28u));
+    if (game == GameYendor3) {
+        itemSlotSet(slot, 0x23, 3);
+        s->light.litCount[LightSourceTorch] = 1;
+        s->light.litFlags |= 0x800;
+        lightSourceTickItemSlot(&s->light, slot, 1);
+        check("Chapter 3: a lit light burns down in its slot and stays the same item", itemSlotId(slot) == 0x23 && itemSlotExtra(slot) == 2);
+        lightSourceTickItemSlot(&s->light, slot, 5);
+        check("... and when it is spent the lit flag goes out but the item is still 0x23", itemSlotId(slot) == 0x23 && itemSlotExtra(slot) == 0 && s->light.litCount[LightSourceTorch] == 0 && !(s->light.litFlags & 0x800));
+        itemSlotSet(slot, 0x0C, 0);
+        check("... and 0x0C is the clock there, not a light", sessionUseItem(s, 0, 1, 0) == SessionUseClock);
+    }
     if (game == GameYendor2) {
         itemSlotSet(slot, RelicMagicOreCache, 1);
         check("Chapter 2: a charged relic needs the recharge flag, else PATIENCE IS A VIRTUE.", sessionUseItem(s, 0, 1, 0) == SessionUseDone && s->unlockMessage == SessionMessagePatience && itemSlotId(slot) == RelicMagicOreCache);
@@ -693,6 +710,76 @@ static void testLightsAndRelics(GameKind game, const uint8_t *world, size_t size
         saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 8, 0);
         itemSlotSet(slot, 0x26D, 1);
         check("the pan flute asks for its music", sessionUseItem(s, 0, 1, 0) == SessionUseDone && s->pendingMusic == RelicFluteTrack);
+    }
+    sessionFree(s);
+}
+
+/* The discovery keys (UseAbilityOnTarget) and Chapter 3's quest items (HandleSpecialQuestCommand). */
+static void testQuestItems(GameKind game, const uint8_t *world, size_t size, const char *label) {
+    GameSession *s = sessionNew(game, world, size);
+    if (!s) {
+        return;
+    }
+    char text[200];
+    uint8_t *flags = saveGlobalFlags(&s->save);
+    unsigned key = game == GameYendor2 ? 0x242 : 0x176, destination = game == GameYendor2 ? 170 : 58;
+    int cx = -1, cy = -1;
+    for (int y = 0; y < 168 && cx < 0; y++) {
+        for (int x = 0x28; x < 0x28 + 800 && cx < 0; x++) {
+            WorldObjectRecord object;
+            if (worldObjectFind(&s->objects, game, x, y, &object) && (object.flags & WorldObjectFlagUnknown2000) && object.value == destination) {
+                cx = x;
+                cy = y;
+            }
+        }
+    }
+    snprintf(text, sizeof(text), "%s: the hidden destination %u has an object on the map", label, destination);
+    check(text, cx >= 0);
+    if (cx >= 0) {
+        place(s, cx, cy, SaveFacingNorth);
+        sessionUseDiscoveryKey(s, key + 1);
+        check("a wrong key on it says LOCKED", s->unlockMessage == SessionMessageLocked);
+        globalFlagClear(flags, SaveHeaderGlobalFlagsSize, 0);
+        sessionUseDiscoveryKey(s, key);
+        check("its own key says UNLOCKED and sets the gate flag (the road now opens)", s->unlockMessage == 2 &&
+                                                                                      travelCheckUnlock(game, destination, 0, flags, SaveHeaderGlobalFlagsSize).outcome == TravelUnlockAlreadyUnlocked);
+        s->unlockMessage = 0;
+        place(s, 10, 10, SaveFacingNorth);
+        sessionUseDiscoveryKey(s, key);
+        check("away from any destination nothing is said", s->unlockMessage == 0);
+    }
+    if (game == GameYendor3) {
+        place(s, 352, 67, SaveFacingSouth);
+        check("0x17E at the right spot sets quest flag 0x91", sessionUseQuestItem(s, 0x17E) == 0 && s->unlockMessage == 2 && globalFlagTest(flags, SaveHeaderGlobalFlagsSize, 0x91));
+        s->unlockMessage = 0;
+        place(s, 352, 68, SaveFacingSouth);
+        globalFlagClear(flags, SaveHeaderGlobalFlagsSize, 0x91);
+        sessionUseQuestItem(s, 0x17E);
+        check("... and nowhere else", !globalFlagTest(flags, SaveHeaderGlobalFlagsSize, 0x91) && s->unlockMessage == 0);
+        place(s, 247, 30, SaveFacingWest);
+        check("0x277 away from the throne says so", sessionUseQuestItem(s, 0x277) == 0 && s->unlockMessage == SessionMessageThrone);
+        place(s, 246, 30, SaveFacingWest);
+        globalFlagClear(flags, SaveHeaderGlobalFlagsSize, 0xDF);
+        sessionUseQuestItem(s, 0x277);
+        check("... with Blazios alive says so", s->unlockMessage == SessionMessageBlazios);
+        globalFlagSet(flags, SaveHeaderGlobalFlagsSize, 0xDF);
+        sessionUseQuestItem(s, 0x277);
+        check("... without the king's items says so", s->unlockMessage == SessionMessageKingItems && !sessionQuestArrivalPending(s));
+        static const uint16_t kingItems[5] = {0xD6, 0x12C, 0x20B, 0x224, 0x276};
+        for (unsigned i = 0; i < 5; i++) {
+            itemSlotSet(sessionBeltSlot(s, i), kingItems[i], 1);
+        }
+        unsigned npc = sessionUseQuestItem(s, 0x277);
+        bool gone = true;
+        for (unsigned i = 0; i < 5; i++) {
+            gone = gone && itemSlotId(sessionBeltSlot(s, i)) == 0;
+        }
+        check("with all five the items are taken and the talk with NPC 0x8C begins", npc == 0x8C && gone && sessionQuestArrivalPending(s));
+        while (sessionNextSound(s)) {
+        }
+        sessionQuestArrive(s);
+        check("afterwards the party stands at (660, 132) facing north, sound 0x2B, travel mode 3", s->x == 660 && s->y == 132 && s->facing == SaveFacingNorth && sessionNextSound(s) == 0x2B &&
+                                                                                                  saveHeaderGetU16(&s->save, SaveHeaderTravelMode) == 3 && (s->travelFlags & 0x2002) == 0x2002 && !sessionQuestArrivalPending(s));
     }
     sessionFree(s);
 }
@@ -1936,6 +2023,7 @@ int main(void) {
             testAmbush(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testGroupFight(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testBeltUse(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
+            testQuestItems(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testExamine(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testSearch(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");
             testMounts(g == 2 ? GameYendor2 : GameYendor3, worldI, sizeI, g == 2 ? "Chapter 2" : "Chapter 3");

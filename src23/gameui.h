@@ -118,6 +118,8 @@ typedef struct {
     bool pickActive;       /* an item waits for the member it is used on (ConfirmAndSelectPartyTarget): a click on a face or F1-F4 */
     unsigned pickUser, pickSlot; /* ... the member whose bag slot (1-8) it is in */
     bool reading;          /* the scroll (UiOverlayTalk) shows a readable item's text, not a conversation */
+    unsigned targetDiscover; /* ... or a discovery key's (UseAbilityOnTarget) or a Chapter 3 quest item's (HandleSpecialQuestCommand): the item whose click is awaited */
+    unsigned targetQuest;
     unsigned targetKey;    /* ... or a key item's (0 = the key ring's): HandleGameCommand -> UnlockDoorCommand from a bag slot */
     unsigned mountList;    /* the member + 1 whose TRANSPORTS list is in the message area (its lines 2-5 are clickable), 0 = none */
     unsigned mountMember, mountSlot, mountRemaining; /* UiOverlayMount: the flying member, the mount's table slot and the charges left before this flight */
