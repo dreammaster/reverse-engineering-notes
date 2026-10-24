@@ -12,6 +12,7 @@
 
 #include "vars.h"
 #include "macros.h"
+#include "time/time.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -141,7 +142,7 @@ static int ScriptNextKey(u16* key)
     } ext[] = {{"up", KBD_UP}, {"down", KBD_DOWN}, {"left", KBD_LEFT}, {"right", KBD_RIGHT},
                {"home", KBD_HOME}, {"end", KBD_END}, {"pgup", KBD_PGUP}, {"pgdn", KBD_PGDN}};
 
-    if (s_sleepUntil && (s32)(s_sleepUntil - (u32)GetTickCount64()) > 0)
+    if (s_sleepUntil && (s32)(s_sleepUntil - TIME_GetTicksMs()) > 0)
         return 0;
     s_sleepUntil = 0;
 
@@ -181,7 +182,7 @@ static int ScriptNextKey(u16* key)
         }
         if (!strncmp(tok, "sleep:", 6))
         {
-            s_sleepUntil = (u32)GetTickCount64() + (u32)atoi(tok + 6);
+            s_sleepUntil = TIME_GetTicksMs() + (u32)atoi(tok + 6);
             if (!s_sleepUntil)
                 s_sleepUntil = 1;
             return 0;

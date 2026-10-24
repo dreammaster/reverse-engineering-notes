@@ -16,13 +16,36 @@ void TIME_Cleanup(void)
 {
 }
 
+// U5_VCLOCK=1: virtual clock for fully reproducible test runs.  Time only advances when the game reads it
+// (1 ms per read) or sleeps (by the requested amount), so animation frames depend on the sequence of game
+// actions, never on wall-clock timing.
+static int VirtualClock(void)
+{
+    static int enabled = -1;
+    if (enabled < 0)
+        enabled = getenv("U5_VCLOCK") != NULL;
+    return enabled;
+}
+
+static u32 s_virtualMs;
+
 u32 TIME_GetTicksMs(void)
 {
+    if (VirtualClock())
+        return s_virtualMs++;
+
     return (u32)GetTickCount64();
 }
 
 void TIME_SleepMs(int ms)
 {
+    if (VirtualClock())
+    {
+        s_virtualMs += (u32)ms;
+        EVT_Yield();
+        return;
+    }
+
     // U5_FAST: don't actually wait for the long animation delays (automated tests).  Short (<= 20 ms) sleeps are
     // the per-poll pacing of the keyboard loops (e.g. the intro menu times out after 200 polls) and are kept so that
     // input-driven timing stays realistic.

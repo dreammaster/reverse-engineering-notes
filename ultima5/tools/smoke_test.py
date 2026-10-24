@@ -8,6 +8,8 @@ takes screenshots, and checks the process exits cleanly and that the screenshots
 run/ (a working copy of the game data; the original game directory is never modified).
 """
 import argparse
+import hashlib
+import json
 import os
 import shutil
 import struct
@@ -25,6 +27,10 @@ SCENARIOS = {
     # 'J' at the very first key poll is the original "Journey Onward" shortcut; the pristine SAVED.GAM has no
     # character yet, so the game prints "No active game. Please create a character..."
     "play": ("j{sleep:6000}{shot:play1.png}{up}{sleep:700}{left}{sleep:700}{shot:play2.png}{quit}", ["play1.png", "play2.png"], 180),
+    "stats": ("j{sleep:6000}z{sleep:1500}{shot:stats_select.png}1{sleep:1500}{shot:stats1.png}{esc}{sleep:800}{quit}",
+              ["stats_select.png", "stats1.png"], 180),
+    "look": ("j{sleep:6000}{right}{sleep:300}{down}{sleep:300}{down}{sleep:300}l{sleep:300}{down}{sleep:1500}{shot:look.png}"
+             "k{sleep:300}{down}{sleep:1500}{shot:klimb.png}{quit}", ["look.png", "klimb.png"], 180),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
 
@@ -57,6 +63,24 @@ def distinct_colors(path):
     return len(colors)
 
 
+GOLDEN = os.path.join(ROOT, "tests", "golden.json")
+# regions that legitimately vary between runs: wind banner, text cursor line
+MASKS = [(96, 362, 300, 388), (384, 340, 640, 392)]
+
+
+def screen_hash(path):
+    w, h, raw = load_png_rgb(path)
+    stride = 1 + w * 3
+    rows = []
+    for y in range(h):
+        row = bytearray(raw[y * stride + 1:(y + 1) * stride])
+        for x0, y0, x1, y1 in MASKS:
+            if y0 <= y < y1:
+                row[x0 * 3:x1 * 3] = bytes((x1 - x0) * 3)
+        rows.append(bytes(row))
+    return hashlib.sha1(b"".join(rows)).hexdigest()
+
+
 def install_fixture(name):
     """Copy tests/fixtures/<name>/* over the saves in run/SAVEGAME (scenario starts from that character)."""
     src = os.path.join(ROOT, "tests", "fixtures", name)
@@ -64,8 +88,8 @@ def install_fixture(name):
         shutil.copy2(os.path.join(src, f), os.path.join(RUN, "SAVEGAME", f))
 
 
-def run_scenario(name, keys, shots, timeout):
-    env = dict(os.environ, U5_HEADLESS="1", U5_FAST="1", U5_KEYS=keys)
+def run_scenario(name, keys, shots, timeout, golden=None, update=None):
+    env = dict(os.environ, U5_HEADLESS="1", U5_FAST="1", U5_SEED="7", U5_VCLOCK="1", U5_KEYS=keys)
     for s in shots:
         p = os.path.join(RUN, s)
         if os.path.exists(p):
@@ -82,12 +106,18 @@ def run_scenario(name, keys, shots, timeout):
             return "missing screenshot " + s
         if distinct_colors(p) < 2:
             return "blank screenshot " + s
+        if golden is not None and s in golden:
+            if screen_hash(p) != golden[s]:
+                return "screenshot %s differs from golden" % s
+        elif update is not None:
+            update[s] = screen_hash(p)
     return None
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--game-dir", default="C:/games/ultima5")
+    ap.add_argument("--update-golden", action="store_true", help="record screenshot hashes in tests/golden.json")
     ap.add_argument("scenarios", nargs="*")
     args = ap.parse_args()
 
@@ -95,14 +125,20 @@ def main():
         sys.exit("build/u5.exe not found; run mingw32-make first")
     subprocess.run([sys.executable, os.path.join(ROOT, "tools", "u5tool.py"), "rundir", args.game_dir, RUN], check=True)
 
+    golden = json.load(open(GOLDEN)) if os.path.exists(GOLDEN) else {}
+    update = {} if args.update_golden else None
     failed = 0
     for name in args.scenarios or SCENARIOS:
         keys, shots, timeout = SCENARIOS[name]
-        if name == "play":
+        if name in ("play", "stats", "look"):
             install_fixture("paula")
-        err = run_scenario(name, keys, shots, timeout)
+        err = run_scenario(name, keys, shots, timeout, None if args.update_golden else golden, update)
         print("%-8s %s" % (name, "ok" if err is None else "FAIL: " + err))
         failed += err is not None
+    if update:
+        golden.update(update)
+        json.dump(golden, open(GOLDEN, "w"), indent=1, sort_keys=True)
+        print("recorded %d golden hashes" % len(update))
     sys.exit(1 if failed else 0)
 
 

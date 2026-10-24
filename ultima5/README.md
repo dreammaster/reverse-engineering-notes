@@ -34,6 +34,9 @@ The Win32 backend honours these environment variables (used by `tools/smoke_test
 | `U5_KEYS_EXIT=1` | exit when the key script runs out |
 | `U5_KEYS_TRACE=1` | print each key the game receives |
 | `U5_SEED=n` | fixed random seed |
+| `U5_VCLOCK=1` | virtual clock: time advances only when the game reads it or sleeps, so runs are fully reproducible (and `{sleep:MS}` counts virtual ms) |
+
+`make test` runs boot/journey/play/stats/look scenarios from the `tests/fixtures/paula` save (a party of three), compares masked screenshot hashes (wind banner and text cursor ignored) with `tests/golden.json`, and `python tools/smoke_test.py --update-golden` re-records them after an intentional change. The goldens come from this build, so they catch regressions, not differences from the original.
 
 F12 in the window saves `screenshot.png`. At the very first key poll `J` is the original "Journey Onward" shortcut; the pristine
 `SAVED.GAM` has no character, so that path ends at "No active game. Please create a character...".
