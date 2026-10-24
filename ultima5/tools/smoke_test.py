@@ -31,6 +31,10 @@ SCENARIOS = {
               ["stats_select.png", "stats1.png"], 180),
     "look": ("j{sleep:6000}{right}{sleep:300}{down}{sleep:300}{down}{sleep:300}l{sleep:300}{down}{sleep:1500}{shot:look.png}"
              "k{sleep:300}{down}{sleep:1500}{shot:klimb.png}{quit}", ["look.png", "klimb.png"], 180),
+    # "paula-outside" fixture: standing outside the start room; walking south to the map edge asks to leave
+    "overworld": ("j{sleep:6000}" + "{down}{sleep:200}" * 14 + "{sleep:1000}{shot:leave.png}y{sleep:3000}{down}{sleep:1500}{sleep:5000}"
+                  "{shot:overworld1.png}{down}{sleep:300}{sleep:5000}{shot:overworld2.png}z{sleep:800}1{sleep:1500}{shot:overworld_stats.png}{quit}",
+                  ["leave.png", "overworld1.png", "overworld2.png", "overworld_stats.png"], 240),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
 
@@ -132,6 +136,8 @@ def main():
         keys, shots, timeout = SCENARIOS[name]
         if name in ("play", "stats", "look"):
             install_fixture("paula")
+        elif name == "overworld":
+            install_fixture("paula-outside")
         err = run_scenario(name, keys, shots, timeout, None if args.update_golden else golden, update)
         print("%-8s %s" % (name, "ok" if err is None else "FAIL: " + err))
         failed += err is not None
