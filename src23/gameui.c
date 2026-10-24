@@ -1014,15 +1014,43 @@ static void catalogOpen(GameUi *ui, unsigned lockId, bool shop) {
     ui->panelRunCount = 0;
 }
 
+static void talkChoose(GameUi *ui, unsigned number);
+
 static void catalogLeave(GameUi *ui) { /* TriggerShopExitSoundAndPersist: sound 6 (a chest that is not inexhaustible), the screen gives the pad back */
     ui->catalogActive = false;
     ui->panelRunCount = 0;
     if (!ui->catalogShop) {
         effect(ui, 6);
     }
-    if (ui->catalogShop && ui->shopFromTalk) { /* back to the conversation */
+    if (ui->catalogShop && ui->shopFromTalk) { /* UseKeyItem's tail: the panel mode comes back, and the first topic listed runs (DONE, which ends it) */
         ui->shopFromTalk = false;
+        saveHeaderSetU16(&ui->session->save, MapFlagsOffset, (uint16_t)((saveHeaderGetU16(&ui->session->save, MapFlagsOffset) & 0xEFFF) | ui->shopPanelWas));
         ui->overlay = UiOverlayTalk;
+        if (ui->session->talking && ui->session->talk.listedCount) {
+            talkChoose(ui, 1);
+        }
+    }
+}
+
+/* UseKeyItem: the resource panel is shown (the mode it found is kept), then the stock. */
+static void shopFromTalkOpen(GameUi *ui) {
+    ui->shopFromTalk = true;
+    ui->shopPanelWas = (uint16_t)(panelFlags(ui) & PanelModeBits);
+    panelEnterResources(ui, panelFlags(ui));
+    catalogOpen(ui, ui->shopLock, true);
+}
+
+/* UseItem -> ConfirmAndValidatePartyTarget -> UseKeyItem: WHO WILL BARTER? when nobody does yet (giving it up leaves the dialog as it is), then the merchant's screen. */
+static void barterStart(GameUi *ui) {
+    unsigned barterer;
+    ui->panelRunCount = 0;
+    if (sessionBarterer(ui->session, &barterer)) {
+        shopFromTalkOpen(ui);
+    } else {
+        ui->pickActive = true;
+        ui->pickChest = false;
+        ui->pickScroll = 7;
+        ui->pickPrompt = 10;
     }
 }
 
@@ -1300,6 +1328,9 @@ static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipie
 
 /* The member named for a pick prompt: for a chest, the one who opens it (a refusal asks again), else the recipient of the item. */
 static void pickCancel(GameUi *ui) {
+    if (ui->pickScroll == 7 && !ui->catalogActive) { /* nobody bartered: the conversation goes on without the shop */
+        ui->shopFromTalk = false;
+    }
     ui->pickActive = ui->pickChest = false;
     ui->pickScroll = 0;
 }
@@ -1481,6 +1512,15 @@ static void transmuteAnswer(GameUi *ui, int row) {
 }
 
 static void pickAnswer(GameUi *ui, unsigned member) {
+    if (ui->pickScroll == 7) { /* who barters */
+        if (!sessionChooseBarterer(ui->session, member)) {
+            flashWarning(ui);
+            return;
+        }
+        pickCancel(ui);
+        shopFromTalkOpen(ui);
+        return;
+    }
     if (ui->pickScroll == 6) { /* who works the alchemist's item */
         if (!sessionChooseAlchemist(ui->session, member)) {
             flashWarning(ui);
@@ -2552,7 +2592,7 @@ static void drawScreen(GameUi *ui) {
     for (unsigned panel = 0; panel < StatusPanelCount; panel++) {
         statusPanelDraw(&ui->renderer, panel, sessionPartyRecord(s, panel));
     }
-    if (ui->overlay == UiOverlayNone) {
+    if (ui->overlay == UiOverlayNone || (ui->overlay == UiOverlayTalk && ui->shopFromTalk)) { /* (a conversation's merchant keeps the right-hand panels) */
         if (s->combat.active) { /* DrawAndCacheStatusIcon: the swords take the shoot icon's place in a combat */
             viewDrawPicture(&ui->renderer, 8, 3, IconShootX, IconRowY, false, 0);
             resourceIconsDraw(ui);
@@ -2669,7 +2709,7 @@ void gameUiDraw(GameUi *ui) {
     }
     wipeCheck(ui);
     drawScreen(ui);
-    if (ui->catalogActive && ui->overlay != UiOverlayTalk && ui->overlay != UiOverlayDetail) {
+    if (ui->catalogActive && ((ui->overlay != UiOverlayTalk && ui->overlay != UiOverlayDetail) || (ui->overlay == UiOverlayTalk && ui->shopFromTalk))) {
         catalogDraw(ui);
     }
     if (ui->dropPrompt) {
@@ -2696,9 +2736,9 @@ static void talkStep(GameUi *ui, const ConversationStep *step) {
         sessionTalkResolve(s, true);
     }
     if (service == SessionServiceNeedScreen && (step->flags & DialogTopicUseKey)) { /* a shop: the lock record named by the topic's argument */
-        ui->overlay = UiOverlayNone; /* the conversation waits behind the merchant's screen (RunShopScreen is called from it) */
-        ui->shopFromTalk = true;
-        catalogOpen(ui, step->arg, true);
+        ui->shopFromTalk = true; /* the dialog stays up behind the merchant's screen (RunShopScreen is called from it) */
+        ui->shopLock = step->arg;
+        barterStart(ui);
     }
 }
 
@@ -3836,6 +3876,16 @@ static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
             pickAnswer(ui, member);
         }
         return true;
+    }
+    if (ui->catalogActive && ui->shopFromTalk && ui->overlay == UiOverlayTalk) { /* RunShopScreen with the dialog up: the first row of the topic list (DONE) leaves; the rest is the merchant's */
+        GameKind game = ui->session->game;
+        if (!right && uiRegionHit(game, UiRegionsDungeonMain, x, y) == 1) {
+            if (!ui->session->heldItem && x >= 58 && x <= 135 && y >= 32 && y <= 37 && ui->session->talk.listedCount) {
+                catalogLeave(ui);
+            }
+            return true;
+        }
+        return catalogClick(ui, x, y, right);
     }
     if (ui->dropPrompt) {
         int answer = gameDialogPromptClick(x, y);

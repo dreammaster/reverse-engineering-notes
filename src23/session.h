@@ -472,6 +472,13 @@ unsigned sessionUseQuestItem(GameSession *session, unsigned itemId);
 bool sessionQuestArrivalPending(const GameSession *session);
 void sessionQuestArrive(GameSession *session);
 
+/*
+ * ConfirmAndValidatePartyTarget (yendor2.asm:19859; UseItem asks it for a topic with flag 0x8000 or 0x4000 before the shop or the sell screen): the first role's member -- the one who haggles, g_partyRoleAssignment1 --
+ * is chosen with ShowConfirmPrompt 10, WHO WILL BARTER?; one who cannot act is refused with the warning and the role freed. `sessionBarterer` is the quiet check, `sessionChooseBarterer` the answer.
+ */
+bool sessionBarterer(GameSession *session, unsigned *memberSlot);
+bool sessionChooseBarterer(GameSession *session, unsigned memberSlot);
+
 bool sessionExaminer(GameSession *session, unsigned *memberSlot);
 bool sessionExamine(GameSession *session, unsigned itemId, SessionExamine *out);
 bool sessionIsKeyRing(const GameSession *session, unsigned itemId);

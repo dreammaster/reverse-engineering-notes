@@ -6861,6 +6861,16 @@ one, `TickStatusEffects`: put out, sound 0x28, not 9); ids 8-0xF are other thing
 spent, only zeroes the extra word (Chapter 2 turns the item into its "used" id + 1). `TickWorldAilments` sweeps the six belt slots first in both games, then each member's eight main slots (the belt was missing in the standalone).
 `LightSourceState::chapter3`.
 
+### A merchant inside a conversation (UseKeyItem, decoded 2026-10-24)
+
+A topic with flag 0x8000 (or 0x4000: the sell screen) first goes through `ConfirmAndValidatePartyTarget` (yendor2.asm:19859): with nobody in the first role (`g_partyRoleAssignment1`, the haggler) `ShowConfirmPrompt 10` --
+WHO WILL BARTER? in the text panel, answered by a click on a face or F1-F4 -- and one who cannot act is refused with the warning and asked again; giving the question up (right button, Escape) leaves the conversation as it
+was. `UseKeyItem` (:19537) then saves the panel mode (`word_36C7F & 0x7000`), shows the resource panel and runs `RunShopScreen` with the **dialog still on the screen**: the topic's own text, and the topic list
+that the shop topic leaves -- in Paundor's case DONE alone -- while the stock fills the lower right (the pad's place) and the gold the panel. In that mode (`g_uiScratchFlags2` 0x80) a click on the first row of the topic list
+(table 0x6458 region 1, x 58-135, y 32-37; DONE) or Space leaves, the stock's slots buy as they do outside, and when it is left the panel mode comes back and **the first topic listed runs** (`word_2E550` := the first of
+the list, then UseItem's loop at loc_17BA4): DONE answers "I WILL ALWAYS HAVE SOME SCROLLS..." and the menu of the conversation returns. `gameui.c` `barterStart` / `shopFromTalkOpen` / `catalogLeave`,
+`session.c` `sessionBarterer` / `sessionChooseBarterer`. (The sell topics still use the held item; their barterer question is not asked.)
+
 ### A spent turn outside a fight (decoded 2026-10-22)
 
 `ApplyEncodedItemEffect` (:51097) opens with `g_uiScratchFlags3 |= 0x20`; so do the healing potions' handlers (:48594, :48707: HP restoratives), the repair command (:45907) and `InteractWithContainer` (scrolls, study). The

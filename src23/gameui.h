@@ -97,7 +97,9 @@ typedef struct {
     char talkRows[16][DialogLineChars + 1]; /* the same in the rows the screen draws it in */
     unsigned talkRowCount;
     bool talkListShown;    /* the topic list is up: it comes after the greeting has been read (any key or click) */
-    bool shopFromTalk;     /* the merchant's screen was opened from a conversation, which goes on when it is left */
+    bool shopFromTalk;     /* the merchant's screen was opened from a conversation (UseKeyItem): the dialog stays up with the new topic list, DONE (or Space) leaves, and the first topic listed then runs */
+    unsigned shopLock;     /* the lock record of that merchant while WHO WILL BARTER? (message 10) is asked */
+    uint16_t shopPanelWas; /* the top-right panel mode (map flags & 0x7000) UseKeyItem saved before it showed the resource panel */
     unsigned lastMusicPage;
     PanelRun panelRuns[UiPanelRunMax]; /* the message area's text: what the last command wrote (a rest's result); cleared by the next key or click */
     unsigned panelRunCount;

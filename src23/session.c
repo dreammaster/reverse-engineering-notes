@@ -3102,6 +3102,31 @@ bool sessionExaminer(GameSession *s, unsigned *memberSlot) {
     return false;
 }
 
+bool sessionBarterer(GameSession *s, unsigned *memberSlot) {
+    unsigned id = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments);
+    const uint8_t *member = id ? saveGamePartyRecordById(&s->save, id) : NULL;
+    if (member && (partyGetU16(member, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments, 0);
+        member = NULL;
+    }
+    for (unsigned slot = 0; member && slot < SavePartyMemberSlots; slot++) {
+        if (saveGetPartySlot(&s->save, slot) == id) {
+            *memberSlot = slot;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool sessionChooseBarterer(GameSession *s, unsigned memberSlot) {
+    const uint8_t *member = sessionPartyRecord(s, memberSlot);
+    if (!member || (partyGetU16(member, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+        return false;
+    }
+    saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments, saveGetPartySlot(&s->save, memberSlot));
+    return true;
+}
+
 bool sessionAlchemist(GameSession *s, unsigned *memberSlot) {
     unsigned id = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + AlchemistRoleWord);
     const uint8_t *member = id ? saveGamePartyRecordById(&s->save, id) : NULL;

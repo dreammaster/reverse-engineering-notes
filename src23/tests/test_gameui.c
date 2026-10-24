@@ -1618,6 +1618,79 @@ static void testBeltItemsUi(GameKind game, const char *envName, const char *defa
     free(world);
 }
 
+/* A conversation's merchant (UseItem -> ConfirmAndValidatePartyTarget -> UseKeyItem): WHO WILL BARTER? first, then the stock on the right with the dialog still up and DONE the way out. */
+static void testTalkShop(GameKind game, const char *envName, const char *defaultDir, const char *label) {
+    const char *dir = getenv(envName);
+    char path[512];
+    snprintf(path, sizeof(path), "%s/WORLD.DAT", dir ? dir : defaultDir);
+    size_t size;
+    uint8_t *world = readFile(path, &size);
+    if (!world) {
+        return;
+    }
+    char text[200];
+    GameUiHost host = {NULL, onEffect, onMusic, NULL, onStore, onFetch, onSlotName, onSlotWrite, onSlotRead};
+    static GameUi ui;
+    GameSession *s = sessionNew(game, world, size);
+    gameUiInit(&ui, s, world, size, picture, NULL, &host);
+    int found = 0;
+    for (int y = 0; y < 168 && !found; y++) {
+        for (int x = 0x28; x < 0x28 + 800 && !found; x++) {
+            WorldObjectRecord object;
+            ConversationStep first;
+            if (!worldObjectFind(&s->objects, game, x, y, &object) || !(object.flags & WorldObjectFlagTalker) || (object.flags & (WorldObjectFlagDoor | WorldObjectFlagUnknown2000))) {
+                continue;
+            }
+            if (!sessionTalkStart(s, object.value, 0, &first)) {
+                continue;
+            }
+            unsigned shop = 0;
+            for (unsigned i = 0; i < s->talk.listedCount && !shop; i++) {
+                const uint8_t *topic = dialogTopic(&s->dialogs, s->talk.listed[i]);
+                if (topic && (dialogGetU16(topic, DialogTopicFlags) & DialogTopicUseKey) && !(dialogGetU16(topic, DialogTopicFlags) & (DialogTopicCheckKey | DialogTopicSell))) {
+                    shop = i + 1;
+                }
+            }
+            s->talking = false;
+            if (!shop) {
+                continue;
+            }
+            found = 1;
+            s->x = x;
+            s->y = y;
+            s->facing = SaveFacingNorth;
+            sessionRebuild(s);
+            saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments, 0);
+            gameUiKey(&ui, ' ', false);
+            snprintf(text, sizeof(text), "%s: Space on the merchant starts the conversation", label);
+            check(text, s->talking && ui.overlay == UiOverlayTalk);
+            gameUiKey(&ui, UiKeyEnter, false); /* the greeting lets go, the list shows */
+            gameUiKey(&ui, (UiKey)('0' + shop), false);
+            check("choosing the shop topic asks WHO WILL BARTER? (message 10) and leaves the dialog up", ui.pickActive && ui.pickScroll == 7 && ui.pickPrompt == 10 && ui.overlay == UiOverlayTalk && !ui.catalogActive);
+            gameUiKey(&ui, UiKeyF1, false);
+            check("a member answers: the stock opens over the dialog, the resource panel shows", !ui.pickActive && ui.catalogActive && ui.catalogShop && ui.shopFromTalk && ui.overlay == UiOverlayTalk &&
+                                                                                                   (saveHeaderGetU16(&s->save, 0x20) & 0x1000) && saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments) == saveGetPartySlot(&s->save, 0));
+            gameUiDraw(&ui);
+            gameUiKey(&ui, ' ', false);
+            check("Space leaves the merchant; the first topic listed runs", !ui.catalogActive && !ui.shopFromTalk);
+            s->talking = false;
+            ui.overlay = UiOverlayNone;
+            /* again, and this time give the question up, then ask once more and leave by clicking DONE */
+            sessionTalkStart(s, object.value, 0, &first);
+            ui.overlay = UiOverlayTalk;
+            ui.talkListShown = true;
+            saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments, 0);
+            gameUiKey(&ui, (UiKey)('0' + shop), false);
+            gameUiKey(&ui, UiKeyEscape, false);
+            check("Escape on the question leaves the conversation as it is, without a shop", !ui.pickActive && !ui.catalogActive && !ui.shopFromTalk && ui.overlay == UiOverlayTalk);
+        }
+    }
+    snprintf(text, sizeof(text), "%s: a merchant with a shop topic exists", label);
+    check(text, found);
+    sessionFree(s);
+    free(world);
+}
+
 /* Sounds the session asks for one after another are played one at a time, each when the host says the one before it is over (TriggerSoundEventAfterDriverWait). */
 static void testSoundQueue(void) {
     const char *dir = getenv("YENDOR2_GAME_DIR");
@@ -1665,6 +1738,8 @@ int main(void) {
     testWipe(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
     testBeltItemsUi(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
     testBeltItemsUi(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
+    testTalkShop(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
+    testTalkShop(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
     testSoundQueue();
     printf("%s (%d skipped)\n", g_failureCount ? "FAILED" : "ALL PASSED", g_skipCount);
     return g_failureCount ? 1 : 0;
