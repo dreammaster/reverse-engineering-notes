@@ -35,6 +35,10 @@ SCENARIOS = {
     "overworld": ("j{sleep:6000}" + "{down}{sleep:200}" * 14 + "{sleep:1000}{shot:leave.png}y{sleep:3000}{down}{sleep:1500}{sleep:5000}"
                   "{shot:overworld1.png}{down}{sleep:300}{sleep:5000}{shot:overworld2.png}z{sleep:800}1{sleep:1500}{shot:overworld_stats.png}{quit}",
                   ["leave.png", "overworld1.png", "overworld2.png", "overworld_stats.png"], 240),
+    # "paula-abbey" fixture: one square east of Empath Abbey on the overworld
+    "abbey": ("j{sleep:6000}{left}{sleep:2000}e{sleep:8000}{shot:abbey_gate.png}" + "{up}{sleep:700}" * 4 + "{left}{sleep:700}"
+              "{shot:abbey_hall.png}t{sleep:500}{left}{sleep:2500}{shot:abbey_talk.png}{quit}",
+              ["abbey_gate.png", "abbey_hall.png", "abbey_talk.png"], 240),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
 
@@ -136,6 +140,8 @@ def main():
         keys, shots, timeout = SCENARIOS[name]
         if name in ("play", "stats", "look"):
             install_fixture("paula")
+        elif name == "abbey":
+            install_fixture("paula-abbey")
         elif name == "overworld":
             install_fixture("paula-outside")
         err = run_scenario(name, keys, shots, timeout, None if args.update_golden else golden, update)
