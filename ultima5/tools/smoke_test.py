@@ -9,6 +9,7 @@ run/ (a working copy of the game data; the original game directory is never modi
 """
 import argparse
 import os
+import shutil
 import struct
 import subprocess
 import sys
@@ -23,6 +24,7 @@ SCENARIOS = {
     "boot": ("{sleep:500}{shot:boot.png}{quit}", ["boot.png"], 120),
     # 'J' at the very first key poll is the original "Journey Onward" shortcut; the pristine SAVED.GAM has no
     # character yet, so the game prints "No active game. Please create a character..."
+    "play": ("j{sleep:6000}{shot:play1.png}{up}{sleep:700}{left}{sleep:700}{shot:play2.png}{quit}", ["play1.png", "play2.png"], 180),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
 
@@ -53,6 +55,13 @@ def distinct_colors(path):
         for x in range(0, len(row), 3):
             colors.add(row[x:x + 3])
     return len(colors)
+
+
+def install_fixture(name):
+    """Copy tests/fixtures/<name>/* over the saves in run/SAVEGAME (scenario starts from that character)."""
+    src = os.path.join(ROOT, "tests", "fixtures", name)
+    for f in os.listdir(src):
+        shutil.copy2(os.path.join(src, f), os.path.join(RUN, "SAVEGAME", f))
 
 
 def run_scenario(name, keys, shots, timeout):
@@ -89,6 +98,8 @@ def main():
     failed = 0
     for name in args.scenarios or SCENARIOS:
         keys, shots, timeout = SCENARIOS[name]
+        if name == "play":
+            install_fixture("paula")
         err = run_scenario(name, keys, shots, timeout)
         print("%-8s %s" % (name, "ok" if err is None else "FAIL: " + err))
         failed += err is not None
