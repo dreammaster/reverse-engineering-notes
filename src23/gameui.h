@@ -258,6 +258,13 @@ void gameUiSettle(GameUi *ui);
 bool gameUiClick(GameUi *ui, int x, int y, bool right);
 
 /*
+ * The palette fades round the clue book (the picture of its first opening, the game and the help screen fading out and in; 16 steps of the palette each, about 0.44 s) are stepped apart from gameUiAnimate, every
+ * 27.5 ms while gameUiFading says one is under way: gameUiFadeStep moves it on (true when the picture or the palette changed). A key or a click finishes a fade by itself.
+ */
+bool gameUiFading(const GameUi *ui);
+bool gameUiFadeStep(GameUi *ui);
+
+/*
  * Two presses of the left button within six ticks (the original's errorCode 6, which replaces the first click): on a belt item of the resource panel it looks the item over (HandleStatusIconBarClick:
  * the second role's member, asked with message 7 when nobody is chosen, shows the item's weight, damage or absorption and value as far as their Repair skill reads it -- sessionExamine); on a counter
  * it is the same as a click. `gameUiWantsDoubleClick` says whether a click at (x, y) would mean something as the first of two, so a platform can hold it back for the six ticks.

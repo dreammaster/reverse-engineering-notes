@@ -653,6 +653,9 @@ int main(int argc, char **argv) {
             if (opt("EXPLORE_TICKS")) { /* EXPLORE_TICKS=n: n animation ticks pass first (a shot in flight, a pressed button) */
                 for (int tick = atoi(opt("EXPLORE_TICKS")); tick > 0; tick--) {
                     gameUiAnimate(&g_ui);
+                    for (int fade = 0; fade < 4; fade++) { /* four fade steps to an animation tick */
+                        gameUiFadeStep(&g_ui);
+                    }
                 }
             } else if (!opt("EXPLORE_DOORFRAME")) { /* EXPLORE_DOORFRAME=1: the picture of a door that is still opening */
                 gameUiSettle(&g_ui); /* otherwise it is passed before the picture */
@@ -682,7 +685,7 @@ int main(int argc, char **argv) {
         SDL_Event event;
         bool cursorMoved = false; /* only the pointer moved, with an item or the crosshair on it: the cursor is redrawn, not the screen */
         /* wait for the first event, then take what else is queued without waiting again (waiting 100 ms for each "next" event held every picture back by that long) */
-        for (bool haveEvent = SDL_WaitEventTimeout(&event, script && *script ? 0 : 100); haveEvent; haveEvent = SDL_PollEvent(&event)) {
+        for (bool haveEvent = SDL_WaitEventTimeout(&event, script && *script ? 0 : gameUiFading(&g_ui) ? 10 : 100); haveEvent; haveEvent = SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 running = false;
             } else if (event.type == SDL_KEYDOWN) {
@@ -732,6 +735,11 @@ int main(int argc, char **argv) {
             lastMinute = SDL_GetTicks();
             sessionAdvanceTime(g_session, 1);
             dirty = true;
+        }
+        static Uint32 lastFade;
+        if (!script && gameUiFading(&g_ui) && SDL_GetTicks() - lastFade >= 27) { /* the clue book's palette fades: a step every 27.5 ms */
+            lastFade = SDL_GetTicks();
+            dirty = gameUiFadeStep(&g_ui) || dirty;
         }
         static Uint32 lastAnimation;
         if (!script && SDL_GetTicks() - lastAnimation >= 110) { /* the animation tick: two BIOS clock counts */

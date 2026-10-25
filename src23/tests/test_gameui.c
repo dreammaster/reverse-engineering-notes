@@ -450,25 +450,26 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
             for (unsigned i = 0; i < 0xAF * 3; i++) {
                 dark = dark && ui.palette[i] <= 8; /* the first round of the fade */
             }
-            for (unsigned i = 0; i < 9; i++) {
-                gameUiAnimate(&ui);
+            for (unsigned i = 0; i < 17; i++) { /* fade steps of 27.5 ms: the title is in after 16 */
+                gameUiFadeStep(&ui);
             }
             titleHere = memcmp(ui.palette, block5, 0xAF * 3) == 0;
             wordsDark = true;
             for (unsigned i = 0xB0 * 3; i < 0xBF * 3; i++) {
                 wordsDark = wordsDark && ui.palette[i] == 0;
             }
-            for (unsigned i = 0; i < 23; i++) {
-                gameUiAnimate(&ui);
+            for (unsigned i = 0; i < 75; i++) {
+                gameUiFadeStep(&ui);
             }
             wordsHere = memcmp(ui.palette + 0xB0 * 3, block5 + 0xB0 * 3, 15 * 3) == 0;
             check("the picture starts dark, the title fades in first, the words only later (and stay)", dark && titleHere && wordsDark && wordsHere && ui.clueSplash > 0);
-            for (unsigned i = 0; i < 40 && ui.clueSplash; i++) {
-                gameUiAnimate(&ui);
+            for (unsigned i = 0; i < 200 && ui.clueSplash; i++) {
+                gameUiFadeStep(&ui);
             }
             check("it ends by itself, on black, the help screen fading in", ui.clueSplash == 0 && ui.clueStage != 0 && ui.palette[0] == 0 && ui.palette[0xF * 3] == 0);
-            for (unsigned i = 0; i < 12 && ui.clueStage; i++) {
-                gameUiAnimate(&ui);
+            check("the fades are on while they last", gameUiFading(&ui));
+            for (unsigned i = 0; i < 20 && ui.clueStage; i++) {
+                gameUiFadeStep(&ui);
             }
             restored = ui.clueStage == 0 && memcmp(ui.palette, ui.clueSavedPalette, sizeof(ui.palette)) == 0;
             check("... and the palette of the game is back once it is in", restored);

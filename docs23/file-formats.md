@@ -6878,8 +6878,9 @@ and the id as record number), and the display name is the block's two 12-charact
 ### The clue book's whole-screen fades, and map names (checked 2026-10-29)
 
 `ShowClueBook` (:1256) fades the game screen to black (`TriggerFullPaletteFadeOut`: every nonzero component loses 1 a round for 63 rounds), draws the first-time picture (when it is the first time) and `ShowClueBookHelpScreen`,
-and only then `TriggerFullPaletteFadeIn` (round r shows component clamp(target - 63 + r, 0, target)) brings the help screen up; leaving fades the book out, restores the game and fades it in. The standalone does each as 8
-animation ticks of the palette (`clueStageTick`), over the last picture drawn (`clueFrozen`), and any key or click finishes a fade at once. The SDL tool used to convert only the colours 0xD0-0xFF of the palette when it changed, so
+and only then `TriggerFullPaletteFadeIn` (round r shows component clamp(target - 63 + r, 0, target)) brings the help screen up; leaving fades the book out, restores the game and fades it in. The standalone does each as 16
+fade ticks of 27.5 ms (0.44 s, 16 steps of the palette; `clueStageTick`, stepped by `gameUiFadeStep` while `gameUiFading` -- the tool does this apart from the 110 ms `gameUiAnimate`), over the last picture drawn
+(`clueFrozen`), and any key or click finishes a fade at once. (They were 8 steps of 110 ms at first, which was too slow and coarse.) The SDL tool used to convert only the colours 0xD0-0xFF of the palette when it changed, so
 the picture's own palette (block 5) and every fade were never seen in the window -- it converts all 256 now.
 
 The clue book's map list names each entry by `locationName` alone: a block's name index is a 0-BASED index into the 20-byte names (block 24, the starting map, is index 0: "PORT HOPE"); the earlier test "name index != 0" blanked
@@ -6895,7 +6896,7 @@ cursor and remembers the item (flag `g_uiScratchFlags4` 0x20); Escape with nothi
 topic menu is waiting (no topic runs, unlike the shop). `sessionSellHeld` / `sessionSellUndo` / `sessionSellPrice`, `gameui.c` `sellOpen`.
 
 **The clue book's first-time picture** (`PlayClueBookOpenAnimation` :8293) fades in two ranges of palette block 5 separately, with everything else black: colours 0-0xAE (DARK UNION) over 63 rounds, 30 BIOS ticks, then 0xB0-0xBE
-(The On-Line Clue Book), 35 ticks, then the whole palette out. `clueSplashPalette` steps it every animation tick (110 ms): in 0-7, held to 22, words in 23-30, held to 47, out 48-55.
+(The On-Line Clue Book), 35 ticks, then the whole palette out. `clueSplashPalette` steps it every fade tick (27.5 ms): title in 0-15, held 60 ticks (1.65 s), words in 16 ticks, held 70 ticks (1.9 s), out 16 ticks (178 in all).
 
 ### NPCs with a foreign tongue: WHO WILL TRANSLATE? (decoded 2026-10-27)
 

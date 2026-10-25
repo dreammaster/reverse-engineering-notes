@@ -268,10 +268,16 @@ static void clueEntryName(const GameUi *ui, unsigned category, unsigned id, char
 
 /*
  * PlayClueBookOpenAnimation's fades (yendor2.asm:8293), on the palette of block 5 with the screen black at first: the colours 0-0xAE ("DARK UNION") fade in (StepPaletteFadeRange mode 1, 63 rounds, about 0.9 s),
- * 30 BIOS ticks go by, the colours 0xB0-0xBE (the words "The On-Line Clue Book") fade in, 35 ticks, and the whole palette fades out. An animation tick is two BIOS ticks (110 ms), so 8 ticks make a fade:
- * tick 0-7 the title in, 8-22 held, 23-30 the words in, 31-47 held, 48-55 everything out.
+ * 30 BIOS ticks go by, the colours 0xB0-0xBE (the words "The On-Line Clue Book") fade in, 35 ticks, and the whole palette fades out. Counted in fade ticks (27.5 ms each; ClueFadeTicks of them make a fade):
+ * the title in, held ClueHoldTitle, the words in, held ClueHoldWords, everything out.
  */
-enum { ClueSplashTicks = 56, ClueFadeTicks = 8, ClueTitleColours = 0xAF, ClueWordsFirst = 0xB0, ClueWordsLast = 0xBE };
+enum {
+    ClueFadeTicks = 16,                                  /* a fade is 16 steps of the palette in about 0.44 s: a fade tick is 27.5 ms (gameUiFadeStep) */
+    ClueHoldTitle = 60,                                  /* 30 BIOS ticks (1.65 s) with the title alone */
+    ClueHoldWords = 70,                                  /* 35 BIOS ticks (1.9 s) with the words too */
+    ClueSplashTicks = ClueFadeTicks + ClueHoldTitle + ClueFadeTicks + ClueHoldWords + ClueFadeTicks,
+    ClueTitleColours = 0xAF, ClueWordsFirst = 0xB0, ClueWordsLast = 0xBE
+};
 
 static void clueSplashPalette(GameUi *ui) {
     uint32_t block = paletteBlockOffset(ui->session->game, 5);
@@ -283,18 +289,19 @@ static void clueSplashPalette(GameUi *ui) {
     const uint8_t *target = ui->worldDat + block;
     memset(out, 0, sizeof(out));
     memcpy(full, target, sizeof(full));
+    const unsigned wordsAt = ClueFadeTicks + ClueHoldTitle, outAt = wordsAt + ClueFadeTicks + ClueHoldWords;
     if (elapsed < ClueFadeTicks) { /* the title comes in */
         paletteFadeInFrame(target, (elapsed + 1) * FadeRounds / ClueFadeTicks, full);
         memcpy(out, full, ClueTitleColours * 3);
     } else {
         memcpy(out, target, ClueTitleColours * 3);
-        if (elapsed >= 23) { /* the words come in */
-            unsigned round = elapsed >= 31 ? FadeRounds : (elapsed - 22) * FadeRounds / ClueFadeTicks;
+        if (elapsed >= wordsAt) { /* the words come in */
+            unsigned round = elapsed >= wordsAt + ClueFadeTicks ? FadeRounds : (elapsed - wordsAt + 1) * FadeRounds / ClueFadeTicks;
             paletteFadeInFrame(target, round, full);
             memcpy(out + ClueWordsFirst * 3, full + ClueWordsFirst * 3, (ClueWordsLast - ClueWordsFirst + 1) * 3);
         }
-        if (elapsed >= 48) { /* everything fades out, a step of the six-bit values a round */
-            unsigned round = (elapsed - 47) * FadeRounds / ClueFadeTicks;
+        if (elapsed >= outAt) { /* everything fades out, a step of the six-bit values a round */
+            unsigned round = (elapsed - outAt + 1) * FadeRounds / ClueFadeTicks;
             for (unsigned i = 0; i < PaletteBytes; i++) {
                 out[i] = out[i] > round ? (uint8_t)(out[i] - round) : 0;
             }
@@ -2235,6 +2242,27 @@ static void alchemyDraw(GameUi *ui) {
     viewDrawPicture(r, 8, 6, IconAlchemyX, IconRowY, false, 0); /* ShowAlchemyIconActive: the icon stays down */
 }
 
+bool gameUiFading(const GameUi *ui) {
+    return ui->clueStage != 0 || ui->clueSplash != 0;
+}
+
+bool gameUiFadeStep(GameUi *ui) {
+    if (ui->clueStage) {
+        clueStageTick(ui);
+        return true;
+    }
+    if (ui->clueSplash) {
+        if (--ui->clueSplash == 0) {
+            ui->clueSplash = 1;
+            clueSplashEnd(ui);
+        } else {
+            clueSplashPalette(ui);
+        }
+        return true;
+    }
+    return false;
+}
+
 void gameUiSettle(GameUi *ui) {
     GameSession *s = ui->session;
     clueSettle(ui);
@@ -2275,18 +2303,6 @@ bool gameUiAnimate(GameUi *ui) {
             paletteFadeStep(ui);
             changed = true;
         }
-    }
-    if (ui->clueStage) {
-        clueStageTick(ui);
-        changed = true;
-    } else if (ui->clueSplash) {
-        if (--ui->clueSplash == 0) {
-            ui->clueSplash = 1;
-            clueSplashEnd(ui);
-        } else {
-            clueSplashPalette(ui);
-        }
-        changed = true;
     }
     if (ui->pressTicks > 0) { /* a pressed button comes up */
         ui->pressTicks--;
