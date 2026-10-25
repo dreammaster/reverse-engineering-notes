@@ -37,11 +37,16 @@ public:
     ShopsResult edgeOfTown();           // SHOPS:30 (XGOTO 25)
     void temple();                      // SHOPS:2  (XGOTO 6)
     void boltac();                      // SHOPS:14 (XGOTO 5)
+    // Back from the maze (XGOTO 10 / 16).  Both finish with XGOTO 2 (the Castle).
+    void leaveMaze(Win *&g10);          // SHOPS:41: the party walks out alive
+    // SHOPS:27/28/29: the whole party died at (x, y) on `level` -- the cemetery screen
+    void partyWiped(Win *&g10, int level, int x, int y);
 
 private:
     // ---- Edge of Town (SHOPS:30/31/39/40)
     void enterMaze();
     void disbandParty();
+    void victory(Win *&g10);            // SHOPS:42: the Amulet is home
     // ---- Temple of Cant (SHOPS:2..13)
     bool templeSelect(Win *win);        // SHOPS:6/7 -- false = leave the Temple
     void templeTreat(Win *win);         // SHOPS:8/9/10/11

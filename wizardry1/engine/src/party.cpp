@@ -94,4 +94,16 @@ bool Party::save(const std::string &path) const {
     return true;
 }
 
+void Party::keepOnlyOk() {
+    int kept = 0;
+    for (int i = 0; i < count_; ++i)
+        if (chars_[i].status == Status::OK) {
+            chars_[kept] = chars_[i];
+            disk_[kept] = disk_[i];
+            ++kept;
+        }
+    for (int i = kept; i < count_; ++i) disk_[i] = -1;
+    count_ = kept;
+}
+
 } // namespace wiz

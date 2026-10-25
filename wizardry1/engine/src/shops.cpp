@@ -70,6 +70,80 @@ void Shops::disbandParty() {                                         // SHOPS:39
     save();
 }
 
+// ---- back from the maze ---------------------------------------------------------------------
+void Shops::leaveMaze(Win *&g10) {                                   // SHOPS:41
+    Console &con = d_.con;
+    Party &party = w_.party;
+    con.show(g10, false);
+    bool amulet = false;
+    for (int i = 0; i < party.count(); ++i) {
+        Character &c = party.member(i);
+        for (int k = 0; k < c.possCount; ++k)
+            if (c.poss[k].itemIndex == 94) { c.poss[k].itemIndex = 0; amulet = true; }
+        c.poison = 0;                                                // LOSTXYL words 100..102 := 0
+        c.lostX = c.lostY = c.lostLevel = 0;
+    }
+    if (amulet) victory(g10);
+    for (int i = 0; i < party.count(); ++i) party.member(i).inMaze = party.member(i).status == Status::OK;
+    party.writeBack(w_.roster);
+    party.keepOnlyOk();
+    save();
+}
+
+void Shops::victory(Win *&g10) {                                     // SHOPS:42
+    Console &con = d_.con;
+    con.close(g10, false);
+    con.clear(d_.window1, true);
+    int n = 1600;
+    while (d_.str(n) != "!END!") d_.putCentered(d_.window1, d_.str(n++));
+    d_.sound(7);
+    d_.gotoXY(d_.window1, 0, 19);
+    d_.putStrC(d_.window1, n + 1);
+    d_.waitCR();
+    for (int i = 0; i < w_.party.count(); ++i) {
+        Character &c = w_.party.member(i);
+        c.exp.v += 50000;
+        c.gold.v = std::min(kMaxGold, c.gold.v + 50000);
+        c.raw[103 * 2] |= 1;                                         // AWARDS: the Amulet bit
+    }
+}
+
+void Shops::partyWiped(Win *&g10, int level, int x, int y) {         // SHOPS:27
+    Console &con = d_.con;
+    Party &party = w_.party;
+    for (int i = 0; i < party.count(); ++i) {                        // SHOPS:28
+        Character &c = party.member(i);
+        if (int(c.status) < 5) c.status = Status::Dead;
+        c.inMaze = false;
+        c.gold.v /= 2;
+        for (int k = 0; k < c.possCount; ++k)                        // SHOPS:29: unlucky gear is lost
+            if (!c.poss[k].cursed && w_.rng.mod(21) > c.attrib[LUCK]) c.poss[k].itemIndex = 0;
+        int kept = 0;
+        for (int k = 0; k < c.possCount; ++k)
+            if (c.poss[k].itemIndex > 0) c.poss[kept++] = c.poss[k];
+        c.possCount = kept;
+        if (w_.rng.mod(50) < level) {
+            c.status = Status::Lost;
+        } else {
+            c.lostY = 100 * x + y;
+            c.lostLevel = level;
+        }
+    }
+    party.writeBack(w_.roster);
+    con.close(g10, false);
+    con.clear(d_.window1, true);
+    Win *b = con.open(0, 20, 40, 4, 1, true);
+    d_.putStrC(b, 510);
+    d_.putStrC(b, 511);
+    const u8 pics[4] = {3, 3, 3, 3};
+    con.blit13(d_.window1, pics);
+    con.present(d_.window1);
+    con.close(b, false);
+    d_.waitCR();
+    party.disbandQuiet();
+    save();
+}
+
 // ---- Temple of Cant (SHOPS:2) -------------------------------------------------------------
 void Shops::temple() {
     Console &con = d_.con;

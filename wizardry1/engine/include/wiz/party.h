@@ -45,6 +45,8 @@ public:
         chars_[0] = c; disk_[0] = slot; count_ = 1;
         for (int i = 1; i < kMax; ++i) disk_[i] = -1;
     }
+    // SHOPS:41: the characters who are not OK (still in the dungeon) leave the party
+    void keepOnlyOk();
     void disbandQuiet() { count_ = 0; for (int &d : disk_) d = -1; }
 
     // SHOPS:12 -- write every member's working copy back over its roster record.

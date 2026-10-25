@@ -848,6 +848,7 @@ bool MazeScreen::quitPrompt() {
         c.lostLevel = g_.level;
     }
     w_.party.writeBack(w_.roster);
+    w_.party.disbandQuiet();                         // PARTYCNT := 0: they stay where they stand
     save();
     g_.level = 0; g_.x = 0; g_.y = 0;
     finish(9);

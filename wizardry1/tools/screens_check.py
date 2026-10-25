@@ -39,6 +39,13 @@ SCEN = {
     'roller_create_n': dict(cmd='castle-test', keys=r'ETCBEAR\rPW\rPW\rBC++++\r++++++++\rC\rEN'),
     # the maze: Edge of Town -> M)AZE -> CAMP -> L)EAVE -> the first view (the stairs prompt)
     'maze_enter':    dict(cmd='castle-test', keys=r'GAAC\rLEML'),
+    'maze_up':       dict(cmd='castle-test', keys=r'GAAC\rLEMLYE'),            # stairs up -> the castle again
+    'maze_quit':     dict(cmd='castle-test', keys=r'GAAC\rLEMLNWQNQYE'),       # Q)UIT the expedition
+    'maze_camp':     dict(cmd='castle-test', keys=r'GAAC\rLEMLNWWCLWNCL'),     # C)AMP in the maze and back
+    # both fighters paralysed: the roster check at the maze's first row redraw finds nobody on their
+    # feet -> the cemetery (SHOPS:27) and back to the castle
+    'maze_wiped':    dict(cmd='castle-test', keys=r'GAAC\rLEML\r\r\rE',
+                          patch='0:20:3,1:20:3,2:20:3,3:20:3'),
     'maze_walk':     dict(cmd='castle-test', keys=r'GAAC\rLEMLNWWWDWWAWWXWWWWAWSSOOT5\rW'),
 }
 

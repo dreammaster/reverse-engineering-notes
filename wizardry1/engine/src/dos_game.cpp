@@ -2,8 +2,9 @@
 // over the segments ported from the p-code so far (CASTLE, SHOPS), bridging to
 // the legacy screens for the rest (Training Grounds, maze, camp).
 #include "dos_assets.h"
+#include "dos_flow.h"
 #include "wiz/castle.h"
-#include "wiz/cemetery.h"
+#include "wiz/combat_ui.h"
 #include "wiz/font.h"
 #include "wiz/maze_ui.h"
 #include "wiz/platform.h"
@@ -67,68 +68,27 @@ int cmdDosGame(int argc, char **argv) {
     do tr = runTitle(dos, rng, a.title); while (tr == TitleResult::MakeDisk);
     if (tr == TitleResult::Quit) return 0;
 
-    CastleWorld cw{party, roster, a.sc, rng, rosterPath, partyPath};
-    ShopsWorld sw{party, roster, shop, a.sc, rng, rosterPath, partyPath, shopPath};
     TownWorld tw{party, roster, shop, a.sc, &a.sp, rng, rosterPath, partyPath, shopPath, mazePath};
-    Castle castle(dos, cw);
-    Shops shops(dos, sw, castle);
-    RollerWorld rw{party, roster, a.sc, rng, rosterPath, partyPath};
-    RollerScreen roller(dos, rw);
     Ui ui(*plat, font);
-    MazeState mst;
+    DosFlow flow(dos, party, roster, a.sc, rng, shop, rosterPath, partyPath, shopPath);
 
-    int xgoto = XCASTLE;
-    int member = -1;
-    while (!dos.quit && xgoto != XQUIT) {
-        dos.partyCount = party.count();
-        if (xgoto == XCASTLE || xgoto == XCASTLE2) {
-            CastleResult r = castle.run(xgoto);
-            if (r.windowClosed) break;
-            xgoto = r.xgoto;
-            member = r.member;
-        } else if (xgoto == XSHOPS) {
-            shops.boltac();
-            xgoto = XCASTLE;
-        } else if (xgoto == XTEMPLE) {
-            shops.temple();
-            xgoto = XCASTLE;
-        } else if (xgoto == XEDGE) {
-            ShopsResult r = shops.edgeOfTown();
-            if (r.windowClosed) break;
-            xgoto = r.xgoto;
-        } else if (xgoto == XCAMP) {                    // legacy character sheet (CAMP not ported yet)
-            castle.closeWindows();
-            legacySeeMember(ui, tw, member);
-            if (ui.quit()) break;
-            con.refresh();
-            xgoto = XCASTLE;
-        } else if (xgoto == XROLLER || xgoto == 19) {   // Training Grounds (ROLLER)
-            RollerResult r = roller.run(xgoto);
-            if (r.windowClosed) break;
-            xgoto = r.xgoto;
-            if (xgoto == 17) {                          // INSPECT: CAMP's sheet (legacy view for now)
-                legacySeeMember(ui, tw, 0);
-                if (ui.quit()) break;
-                con.refresh();
-                xgoto = 19;
-            }
-        } else if (xgoto == XMAZE_ENTRY) {              // legacy maze
-            castle.closeWindows();
-            mst = MazeState{};
-            MazeExit me = runMaze(ui, party, roster, a.sc, &a.sp, rng, mst);
-            if (me == MazeExit::WindowClosed) break;
-            if (me == MazeExit::PartyWiped)
-                runCemetery(ui, party, roster, mst.pos.x, mst.pos.y, mst.level, rng);
-            else
-                endgameCheck(ui, party);
-            roster.save(rosterPath);
-            party.save(partyPath);
-            con.refresh();
-            xgoto = XCASTLE;
-        } else {                                        // U)TILITIES etc.: not ported yet
-            xgoto = XCASTLE;
-        }
-    }
+    // the screens that are not ported from the p-code yet run through the legacy Ui
+    flow.hooks.inspect = [&](int member, int from) -> int {          // CAMP:5 (the character sheet)
+        if (from == XCAMP) flow.castle.closeWindows();
+        legacySeeMember(ui, tw, from == 17 ? 0 : member);
+        if (ui.quit()) return -1;
+        con.refresh();
+        return from == XCAMP ? XCASTLE : from == 17 ? 19 : from;
+    };
+    flow.hooks.combat = [&]() -> int {                               // COMBAT
+        CombatResult r = runCombat(ui, party, a.sc, &a.sp, rng, flow.mg.g37, flow.mg.level, flow.mg.g29);
+        con.refresh();
+        if (r == CombatResult::WindowClosed || ui.quit()) return -1;
+        return r == CombatResult::PartyWiped ? 16 : 7;
+    };
+    flow.hooks.special = [&]() -> int { return 7; };                 // SPECIALS: not ported yet
+
+    flow.run(XCASTLE);
     roster.save(rosterPath);
     party.save(partyPath);
     shop.save(shopPath);
