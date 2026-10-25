@@ -43,6 +43,11 @@ SCENARIOS = {
     "talk": ("j{sleep:6000}t{sleep:500}{up}{sleep:2500}{shot:talk_greet.png}name{enter}{sleep:3000}{shot:talk_name.png}"
              "job{enter}{sleep:3000}{shot:talk_job.png}bye{enter}{sleep:3000}{shot:talk_bye.png}{quit}",
              ["talk_greet.png", "talk_name.png", "talk_job.png", "talk_bye.png"], 240),
+    # "paula-abbey-strong" fixture = paula-abbey with str/dex/int 40 and 999 HP: attack an abbey guard, which starts combat
+    "combat": ("j{sleep:6000}{left}{sleep:2000}e{sleep:8000}" + "{up}{sleep:700}" * 4 + "{left}{sleep:700}a{sleep:500}{left}{sleep:6000}"
+               "{shot:combat_start.png}a{sleep:500}{up}{sleep:5000}{shot:combat_attack.png}p{sleep:3000}{shot:combat_pass.png}"
+               "a{sleep:500}{up}{sleep:5000}{shot:combat_round2.png}{quit}",
+               ["combat_start.png", "combat_attack.png", "combat_pass.png", "combat_round2.png"], 300),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
 
@@ -144,6 +149,8 @@ def main():
         keys, shots, timeout = SCENARIOS[name]
         if name in ("play", "stats", "look"):
             install_fixture("paula")
+        elif name == "combat":
+            install_fixture("paula-abbey-strong")
         elif name == "talk":
             install_fixture("paula-jester")
         elif name == "abbey":
