@@ -1245,9 +1245,12 @@ static int cmdCombatTest(int argc, char **argv) {
     return 0;
 }
 
+namespace wiz { int cmdConsoleReplay(int argc, char **argv); }
+
 int main(int argc, char **argv) {
     if (argc < 2) return usage();
     std::string cmd = argv[1];
+    if (cmd == "console-replay") return wiz::cmdConsoleReplay(argc, argv);
     if (cmd == "maze") return cmdMaze(argc, argv);
     if (cmd == "maze-scan") return cmdMazeScan(argc, argv);
     if (cmd == "scnmsg-test") return cmdScnMsgTest(argc, argv);

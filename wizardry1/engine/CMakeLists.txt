@@ -21,6 +21,8 @@ add_library(wizcore STATIC
   src/monster_art.cpp
   src/font.cpp
   src/textscreen.cpp
+  src/console.cpp
+  src/console_replay.cpp
   src/roster.cpp
   src/roller_ui.cpp
   src/party.cpp
@@ -480,3 +482,11 @@ add_test(NAME settime
 # the save/reload.
 set_tests_properties(settime PROPERTIES
     PASS_REGULAR_EXPRESSION "reload:[^\n]*delay 250")
+
+# DOS console port vs the p-code oracle (needs python + the game disk; skipped otherwise)
+find_package(Python3 COMPONENTS Interpreter QUIET)
+if(Python3_Interpreter_FOUND)
+  add_test(NAME console_replay
+           COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/../tools/replay_check.py" $<TARGET_FILE:wiz1>)
+  set_tests_properties(console_replay PROPERTIES SKIP_RETURN_CODE 77 TIMEOUT 600)
+endif()

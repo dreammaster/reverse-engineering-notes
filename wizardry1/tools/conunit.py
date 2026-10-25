@@ -87,6 +87,8 @@ class Conunit:
         vm = self.vm
         vm.ioresult = 0
         self.calls.append((write, sel, z))
+        if vm.oplog is not None and write:
+            self.log0(sel, buf, z)
         if not write:
             if sel == 10: self.random(buf)
             elif sel == 11:                                       # key buffered?
@@ -107,6 +109,39 @@ class Conunit:
             raise RuntimeError(f'CONUNIT write selector {sel} not emulated '
                                f'(buf={buf:04x} z={z:04x})')
         f(buf, z, w)
+
+    def log0(self, sel, buf, z):
+        vm = self.vm
+        L = vm.oplog
+        t = 'L0e' if vm.logdepth > 0 else 'L0d'        # echo of a logged L1/L2 proc vs direct call
+        if sel == 3: L.append(f'  {t} present W{buf:04x}')
+        elif sel == 2: L.append(f'  {t} layout head=W{buf:04x}')
+        elif sel == 30: L.append(f'  {t} puts W{buf:04x} {vm.pstr(z)!r}')
+        elif sel == 4: L.append(f'  {t} putc W{buf:04x} {z:04x}')
+        elif sel == 5:
+            a = [vm.r16(buf + 2 * i) for i in range(8)]
+            L.append(f'  {t} drawline W{z:04x} {a[0] & 255} {a[1] & 255} {a[2]} {a[3]} {a[4] & 255} {a[5] & 255} {a[6]} {a[7]}')
+        elif sel == 13: L.append(f'  {t} blit13 W{z:04x} {" ".join(str(b) for b in vm.mem[buf:buf + 4])}')
+        elif sel == 17: L.append(f'  {t} clearattr W{z:04x}')
+        elif sel == 23: L.append(f'  {t} title {z}')
+        else: L.append(f'  {t} sel{sel} buf={buf:04x} z={z:04x}')
+
+    def visible(self):
+        """the composed screen: one word per cell, 0 = blank"""
+        out = []
+        for si in range(COLS * ROWS):
+            c = self.cell[si]
+            if (self.prio[si] & 0x3F) == 0 or c in (0x2020, 0x0020):
+                c = 0
+            out.append(c)
+        return out
+
+    def dump_grid(self, path):
+        v = self.visible()
+        with open(path, 'w') as f:
+            for r in range(ROWS):
+                f.write(' '.join(f'{c:04x}' for c in v[r * COLS:(r + 1) * COLS]) + chr(10))
+            f.write(f'vram {zlib.crc32(bytes(self.vram)) & 0xFFFFFFFF:08x}' + chr(10))
 
     def noop(self, buf, z, w): pass
     def sound(self, buf, z, w): pass

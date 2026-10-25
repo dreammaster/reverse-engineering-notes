@@ -44,7 +44,7 @@ class Proc:
 
 class Frame:
     __slots__ = ('proc', 'base', 'static', 'dyn', 'ret_ip', 'ret_seg',
-                 'sp', 'np_save')
+                 'sp', 'np_save', 'opidx')
 
 
 class Volume:
@@ -123,6 +123,8 @@ class VM:
         self.steps = 0
         self.con = Conunit(self)
         self.trace = False
+        self.oplog = None            # list of strings when op logging is on
+        self.logdepth = 0
         import collections
         self.hist = collections.deque(maxlen=60)
 
@@ -151,6 +153,10 @@ class VM:
         if self.np < self.hp + 64:
             raise Trap('Stack overflow!!')
         f = Frame()
+        f.opidx = None
+        if self.oplog is not None and key[0] == 1 and key[1] in OPDEF:
+            f.opidx = self.log_op(key[1], p)
+            self.logdepth += 1
         f.proc, f.base = p, self.np
         f.dyn = self.frame
         f.ret_ip, f.ret_seg = self.ip, self.seg
@@ -178,6 +184,10 @@ class VM:
 
     def leave(self, nret):
         f = self.frame
+        if f.opidx is not None:
+            self.logdepth -= 1
+            if f.proc.num == 19:
+                self.oplog[f.opidx] += f' -> W{self.r16(f.base):04x}'
         vals = [self.r16(f.base + 2 * i) for i in range(nret)]
         del self.st[f.sp:]
         for v in reversed(vals):
@@ -488,7 +498,12 @@ class VM:
                     if self.shotdir:
                         self.shotn += 1
                         k = self.keys[0] if self.keys else 0
-                        self.con.save_png(os.path.join(self.shotdir, f'{self.shotn:03d}_{k:02x}.png'), 2)
+                        base = os.path.join(self.shotdir, f'{self.shotn:03d}_{k:02x}')
+                        self.con.save_png(base + '.png', 2)
+                        self.con.dump_grid(base + '.grid')
+                        if self.oplog is not None:
+                            open(base + '.ops', 'w').write(chr(10).join(self.oplog) + chr(10))
+                            del self.oplog[:]
                     if not self.keys: raise NeedInput()
                     self.mem[buf + i] = self.keys.pop(0)
                 self.ioresult = 0
@@ -509,9 +524,12 @@ def main(argv):
     ap.add_argument('--steps', type=int, default=20_000_000)
     ap.add_argument('--trace', action='store_true')
     ap.add_argument('--shotdir', default='')
+    ap.add_argument('--ops', action='store_true')
     a = ap.parse_args(argv)
     vm = VM(keys=a.keys.encode('latin1').decode('unicode_escape').encode('latin1'))
     vm.trace = a.trace
+    if a.ops:
+        vm.oplog = []
     if a.shotdir:
         os.makedirs(a.shotdir, exist_ok=True)
         vm.shotdir = a.shotdir
@@ -527,6 +545,48 @@ def main(argv):
     if a.shot:
         vm.con.save_png(a.shot)
         print('wrote', a.shot)
+
+
+
+
+# ---------------------------------------------------------------------------
+# op log: the WIZARDRY window-manager / text procs, decoded at call time
+# arg kinds: i int, w window pointer, s pascal string pointer, n string number
+OPDEF = {
+    19: ('Open', 'iiiiiiii'), 20: ('Close', 'pi'), 21: ('SetPrio', 'wii'),
+    22: ('GotoXY', 'wii'), 23: ('PutNum', 'wii'), 24: ('Newline', 'w'),
+    25: ('Clear', 'wi'), 26: ('ClearRect', 'wiiii'), 27: ('Hide', 'wi'),
+    28: ('Show', 'wi'), 13: ('PutCentered', 'ws'), 35: ('PutC', 'wi'),
+    36: ('PutS', 'ws'), 37: ('Refresh', ''), 39: ('PutStr', 'wn'),
+    40: ('PutStrLn', 'wn'), 41: ('MenuStr', 'nw'), 43: ('BoxMsg', 'niii'),
+    29: ('GetLine', 'wsi'), 30: ('Menu', 'wsii'), 10: ('PutPadded11', 'ws'),
+    11: ('GetKey', ''),
+}
+
+
+def _log_op(self, num, proc):
+    name, spec = OPDEF[num]
+    n = proc.psize // 2
+    rn = 1 if num == 19 else 0
+    # args are pushed in order; the *last* rn words are result placeholders
+    vals = self.st[len(self.st) - n:]
+    args = []
+    for k, c in enumerate(spec):
+        if k >= len(vals) - rn: break
+        v = vals[k]
+        if c == 'w': args.append(f'W{v:04x}')
+        elif c == 'p': args.append(f'W{self.r16(v):04x}')
+        elif c == 's':
+            try: args.append(repr(self.pstr(v)))
+            except Exception: args.append(f'@{v:04x}')
+        elif c == 'n': args.append(f'#{v}')
+        else:
+            args.append(str(v - 65536 if v > 32767 else v))
+    self.oplog.append(f'{name}({", ".join(args)})')
+    return len(self.oplog) - 1
+
+
+VM.log_op = _log_op
 
 
 if __name__ == '__main__':
