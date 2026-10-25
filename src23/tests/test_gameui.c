@@ -1191,6 +1191,7 @@ static void testPanelAndAlchemy(GameKind game, const char *envName, const char *
     check("with nuore the heal is castable", ui.overlay == UiOverlayAlchemy && ui.alchemyCaster == 1 && ui.alchemyOk[0] && ui.alchemyIds[0] == 1);
     gameUiKey(&ui, ' ', false);
     check("a heal asks for the portrait it is for", ui.overlay == UiOverlayAlchemy && ui.alchemyMode == UiAlchemyTarget);
+    check("... and the pointer is the crosshair meanwhile", gameUiCursorShown(&ui));
     gameUiDraw(&ui);
     gameUiClick(&ui, 195, 160, false); /* the fourth member's portrait (x 182-212) */
     check("a click on the fourth member's portrait heals that member and closes the screen",

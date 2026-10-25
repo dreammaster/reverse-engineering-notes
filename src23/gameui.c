@@ -985,17 +985,22 @@ void gameUiMouseMove(GameUi *ui, int x, int y) {
     ui->mouseY = y;
 }
 
+/* Who is asked for: a crosshair for the face (an item's recipient, the member who opens, a spell's recipient on the alchemy screen -- ConfirmAlchemyInteraction). */
+static bool recipientAsked(const GameUi *ui) {
+    return ui->pickActive || (ui->overlay == UiOverlayAlchemy && ui->alchemyMode == UiAlchemyTarget);
+}
+
 bool gameUiCursorShown(const GameUi *ui) {
     if (ui->dropPrompt) { /* the cursor is empty while the question is asked: the system pointer answers it */
         return false;
     }
-    return ui->targeting || ui->pickActive || ui->session->heldItem != 0;
+    return ui->targeting || recipientAsked(ui) || ui->session->heldItem != 0;
 }
 
 /* The cursor item or the crosshair, over everything else (DrawMouseCursor: the 16 x 16 sprite blitted at the pointer with 0xFF transparent). */
 static void cursorDraw(GameUi *ui) {
     unsigned picture = 0;
-    if (ui->pickActive) {
+    if (recipientAsked(ui)) {
         viewDrawPicture(&ui->renderer, 8, 0x0F, ui->mouseX, ui->mouseY, true, 0);
         return;
     }
