@@ -6900,6 +6900,14 @@ topic menu is waiting (no topic runs, unlike the shop). `sessionSellHeld` / `ses
 **The clue book's first-time picture** (`PlayClueBookOpenAnimation` :8293) fades in two ranges of palette block 5 separately, with everything else black: colours 0-0xAE (DARK UNION) over 63 rounds, 30 BIOS ticks, then 0xB0-0xBE
 (The On-Line Clue Book), 35 ticks, then the whole palette out. `clueSplashPalette` steps it every fade tick (27.5 ms): title in 0-15, held 60 ticks (1.65 s), words in 16 ticks, held 70 ticks (1.9 s), out 16 ticks (178 in all).
 
+### The member's sheet and the faces (checked 2026-10-31)
+
+In Yendor 2 a LEFT click on a face does nothing (`start` loc_104B2 -> `HandlePartyStatusPanelInput`: the face's region result 1 is below its first test; the other regions are the info lists) -- the sheet (`RunPartyMemberDetailScreen`,
+yendor2.asm:16306) is F1-F4 (scan codes 0x3B-0x3E) only. While it is up: F1-F4 or a left click on another face (table 0x61C2, results 1 / 0xB / 0x15 / 0x1F) show that member's (an empty slot is ignored; sound 2 each time), Escape or C
+(errorCode 1) or the right button (7) leave (sound 2), RETURN (table 0x632E result 1) leaves, and results 2-6 are the role rows: the member shown is put into that role slot (header `SaveHeaderRoleAssignments` + 2 * (result - 2)),
+or out of it if already there; one who cannot act (status 0x1C40) gets the warning. The RIGHT click on a face (`HandlePortraitClick` on the right button's position) opens the inventory screen for that one member (the
+same toggle `dollsClick` has on the screen). `gameui.c` `detailOpen` / `detailKey` / `detailClick`.
+
 ### Readable items: the book, the note, the document (decoded 2026-10-30)
 
 `RunConversation` (yendor2.asm:49782) draws a picture of category 1 at (15, 23) (not the conversation scroll, picture 3) and the text in the reader's skill (`DrawIndentedTextColumn`, rows 6 apart, each starting at the

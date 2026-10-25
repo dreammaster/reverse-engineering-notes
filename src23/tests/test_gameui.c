@@ -272,9 +272,30 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         sessionRebuild(s);
     }
     gameUiClick(&ui, 20, 160, false);
-    check("a click on a party portrait opens that hero's sheet", ui.overlay == UiOverlayDetail);
+    check("a left click on a party portrait does nothing (the sheet is F1-F4)", ui.overlay == UiOverlayNone);
+    gameUiKey(&ui, UiKeyF1, false);
+    check("F1 opens the first hero's sheet", ui.overlay == UiOverlayDetail && ui.hero == 0);
+    gameUiKey(&ui, UiKeyF2, false);
+    check("F2 on the sheet shows the second hero's", ui.overlay == UiOverlayDetail && ui.hero == 1);
+    gameUiClick(&ui, 20, 160, false);
+    check("a click on a face on the sheet shows that hero's", ui.overlay == UiOverlayDetail && ui.hero == 0);
+    {
+        unsigned slotId = saveHeaderGetU16(&s->save, SaveHeaderPartySlots), before = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments);
+        gameUiClick(&ui, 150, 45, false);
+        unsigned given = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments);
+        gameUiClick(&ui, 150, 45, false);
+        check("a click on a role row gives the role to the member shown and the next takes it away", slotId && given == (before == slotId ? 0 : slotId) && saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments) == (before == slotId ? slotId : 0));
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments, (uint16_t)before);
+    }
     gameUiClick(&ui, 180, 116, false);
     check("RETURN on the sheet closes it", ui.overlay == UiOverlayNone);
+    gameUiKey(&ui, UiKeyF1, false);
+    gameUiKey(&ui, 'c', false);
+    check("C leaves the sheet", ui.overlay == UiOverlayNone);
+    gameUiClick(&ui, 20, 160, true);
+    check("the right button on a face opens that member's inventory alone", ui.overlay == UiOverlayDolls && ui.dollMask == 1);
+    gameUiKey(&ui, UiKeyEscape, false);
+    check("(and Escape closes it)", ui.overlay == UiOverlayNone);
     gameUiShowTitle(&ui);
     check("E enters the game", gameUiKey(&ui, 'e', false) && ui.overlay == UiOverlayNone);
     gameUiDraw(&ui);

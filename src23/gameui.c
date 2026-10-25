@@ -1508,6 +1508,7 @@ static void unlockReport(GameUi *ui);
 static void transmuteStart(GameUi *ui, unsigned user, unsigned slot);
 static void talkStep(GameUi *ui, const ConversationStep *step);
 static void clockShow(GameUi *ui);
+static void detailOpen(GameUi *ui, unsigned member);
 static void mapSkillTooLow(GameUi *ui);
 
 static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipient) {
@@ -3738,8 +3739,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         dialogOpen(ui, InGameDialogFlags);
         break;
     case MainActionMemberDetail:
-        ui->hero = command.index & 3;
-        ui->overlay = UiOverlayDetail;
+        detailOpen(ui, command.index & 3);
         break;
     case MainActionPartyInventory:
         inventoryOpen(ui, inventoryAllMask(ui));
@@ -3756,11 +3756,60 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
     return true;
 }
 
+/*
+ * The member's sheet (RunPartyMemberDetailScreen, yendor2.asm:16306): F1-F4 open it (a click on a face does not; the original's left button on a face does nothing), and while it is up F1-F4 or a click on
+ * another face switch to that member (sound 2 each time); Escape, C or the right button leave (sound 2); the five role rows (the click table DS:0x632E, results 2-6) give the role to the member shown or
+ * take it away, a member who cannot act is refused with the warning.
+ */
+static void detailOpen(GameUi *ui, unsigned member) {
+    if (member < 4 && sessionPartyRecord(ui->session, member)) {
+        ui->hero = member;
+        ui->overlay = UiOverlayDetail;
+        effect(ui, 2);
+    }
+}
+
+static bool detailKey(GameUi *ui, UiKey key) {
+    if (key >= UiKeyF1 && key <= UiKeyF4) {
+        detailOpen(ui, (unsigned)(key - UiKeyF1));
+    } else if (key == UiKeyEscape || key == 'c') {
+        ui->overlay = UiOverlayNone;
+        effect(ui, 2);
+    }
+    return true;
+}
+
+static bool detailClick(GameUi *ui, int x, int y) {
+    GameSession *s = ui->session;
+    unsigned region = uiRegionHit(s->game, UiRegionsMemberDetail, x, y);
+    if (region == 1) { /* RETURN */
+        ui->overlay = UiOverlayNone;
+        effect(ui, 2);
+    } else if (region >= 2) { /* a role row */
+        const uint8_t *record = sessionPartyRecord(s, ui->hero);
+        unsigned id = saveHeaderGetU16(&s->save, SaveHeaderPartySlots + 2 * ui->hero), offset = SaveHeaderRoleAssignments + 2 * (region - 2);
+        if (record && (partyGetU16(record, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+            flashWarning(ui);
+        } else if (id) {
+            saveHeaderSetU16(&s->save, offset, saveHeaderGetU16(&s->save, offset) == id ? 0 : (uint16_t)id);
+        }
+    } else {
+        unsigned panel = uiRegionHit(s->game, UiRegionsPartyPanels, x, y);
+        if (panel % 10 == 1 && panel / 10 < 4) { /* another member's face */
+            detailOpen(ui, panel / 10);
+        }
+    }
+    return true;
+}
+
 static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     GameSession *s = ui->session;
     bool running = true;
     if (ui->passwordActive) {
         return passwordKey(ui, key);
+    }
+    if (ui->overlay == UiOverlayDetail) {
+        return detailKey(ui, key);
     }
     if (ui->scrollAsk) { /* ShowConfirmPrompt 0x20 answers to clicks on its two rows only; Escape gives up */
         if (key == UiKeyEscape) {
@@ -3784,8 +3833,7 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
         } else if (key >= '1' && key <= '4') {
             partyInfoShow(ui, (unsigned)(key - '1'), 4);
         } else if (key >= UiKeyF1 && key <= UiKeyF4) {
-            ui->hero = (unsigned)(key - UiKeyF1);
-            ui->overlay = UiOverlayDetail;
+            detailOpen(ui, (unsigned)(key - UiKeyF1));
         }
         return true;
     }
@@ -4242,9 +4290,7 @@ static bool catalogClick(GameUi *ui, int x, int y, bool right) {
         if (panel && member < 4 && sessionPartyRecord(s, member)) {
             if (s->heldItem) {
                 part == 1 ? dropOnPortrait(ui, member) : flashWarning(ui);
-            } else if (part == 1) {
-                ui->hero = member;
-                ui->overlay = UiOverlayDetail;
+            } else if (part == 1) { /* the face itself: nothing (the sheet is F1-F4) */
             } else if (partyInfoKindForRegion(part) >= 0) {
                 partyInfoShow(ui, member, partyInfoKindForRegion(part));
             }
@@ -4300,6 +4346,13 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
             }
             return true;
         }
+        if (where == 6) { /* HandlePortraitClick: the right button on a face opens that member's inventory */
+            unsigned panel = uiRegionHit(game, UiRegionsPartyPanels, x, y), member = panel / 10;
+            if (panel % 10 == 1 && member < 4 && sessionPartyRecord(s, member)) {
+                inventoryOpen(ui, 1u << member);
+            }
+            return true;
+        }
         return where == 1 ? press(ui, ' ') : true;
     }
     unsigned pad = uiRegionHit(game, UiRegionsDirectionPad, x, y);
@@ -4337,8 +4390,7 @@ static bool mainClick(GameUi *ui, int x, int y, bool right) {
                 } else {
                     flashWarning(ui);
                 }
-            } else if (part == 1) {
-                return press(ui, UiKeyF1 + (int)member);
+            } else if (part == 1) { /* the face itself: nothing (the sheet is F1-F4) */
             } else if (partyInfoKindForRegion(part) >= 0) {
                 partyInfoShow(ui, member, partyInfoKindForRegion(part));
             }
@@ -4486,10 +4538,7 @@ static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
         ui->overlay = UiOverlayNone; /* any click closes them */
         return true;
     case UiOverlayDetail:
-        if (uiRegionHit(ui->session->game, UiRegionsMemberDetail, x, y) == 1) { /* RETURN */
-            ui->overlay = UiOverlayNone;
-        }
-        return true;
+        return detailClick(ui, x, y);
     default:
         return mainClick(ui, x, y, right);
     }
