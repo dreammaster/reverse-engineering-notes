@@ -555,7 +555,7 @@ int main(int argc, char **argv) {
     if (loadExe(game)) {
         gameUiSetExe(&g_ui, &g_exe);
         g_session->shareware = opt("EXPLORE_SHAREWARE") != NULL;
-        g_ui.clueRegistered = opt("EXPLORE_REGISTERED") != NULL; /* as in the original, SW.EXE's clue book dims (and refuses) what the shareware does not open; EXPLORE_REGISTERED=1 opens every entry */
+        g_ui.clueRegistered = opt("EXPLORE_SHAREWARE") == NULL; /* the registered program (there is no shareware / registered distinction any more): every entry is open; EXPLORE_SHAREWARE=1 brings the original shareware lock back */
     }
     if (loadExe(game)) {
         gameUiSetExe(&g_ui, &g_exe);

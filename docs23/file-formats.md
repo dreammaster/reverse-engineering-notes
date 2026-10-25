@@ -6869,7 +6869,7 @@ tab, command 8) closes the book -- from a first-level list too. (The standalone 
 
 **"Disabled" entries are the shareware lock, not unvisited places.** `DrawClueEntryList` (:4542) draws an entry dim (0x05; the selected one 0x84) when the program is not registered (`g_uiScratchFlags4` bit 0) and the entry's
 flag word (`[+2]`) lacks 0x8000; `RunClueEntryMenu` then answers its choice with the registration reminder. Nothing of the saved game enters. In SW.EXE the open entries are: maps 5 of 55, monsters 7 of 61, spells 16 of 105, the class
-spell lists 8-10 of 31-52, items 5-8 of 13-52 per group; REGISTER.EXE (Chapter 3) opens everything. The SDL tool now behaves so by default (`EXPLORE_REGISTERED=1` opens all, as it used to by default).
+spell lists 8-10 of 31-52, items 5-8 of 13-52 per group; REGISTER.EXE (Chapter 3) opens everything. The standalone is the registered program (no shareware / registered distinction any more), so by default every entry is open; `EXPLORE_SHAREWARE=1` in the SDL tool brings the lock back.
 
 **The monster list is the catalog's blocks, not types.** Its entry ids (1-61) are numbers of the monster catalog's BLOCKS (`LoadClueBookMonsterEntry` / `BuildMonsterDisplayName`: `WorldDat_setBlock5` with the block 0x32 table
 and the id as record number), and the display name is the block's two 12-character lines joined by a space ("CARNIVOROUS SPIDER", "OGRE CHIEF"). Reading them as monster *type* ids (several types share a block) gave WORKER ANT nine times.
