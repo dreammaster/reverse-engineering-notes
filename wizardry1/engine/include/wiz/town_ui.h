@@ -37,6 +37,10 @@ struct TownWorld {
 // Run the Castle hub until the player leaves via the Edge of Town.
 TownExit runTown(Ui &ui, TownWorld &world);
 
+// The legacy (Apple-derived) character sheet, used until CAMP is ported from the
+// DOS p-code: the Tavern's #)INSPECT.
+void legacySeeMember(Ui &ui, TownWorld &world, int member);
+
 // CHK4WIN (SHOPS P01021D / CONGRATS P01021E) -- call once the party is back
 // in the Castle.  If any member carries the Amulet of Werdna (object 94) the
 // quest is complete: show the CONGRATULATIONS screen, grant +250,000 XP each,

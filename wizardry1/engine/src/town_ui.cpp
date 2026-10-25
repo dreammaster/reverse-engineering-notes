@@ -724,6 +724,12 @@ TownExit runTown(Ui &ui, TownWorld &w) {
     }
 }
 
+void legacySeeMember(Ui &ui, TownWorld &w, int i) {
+    TownCtx c{ui, w.party, w.roster, w.shop, w.sc, w.sp, w.rng, w.rosterPath, w.partyPath, w.shopPath};
+    dspParty(c, "GILGAMESH'S TAVERN");
+    if (i >= 0 && i < w.party.count()) seeMember(c, w.party.member(i));
+}
+
 // ---- CHK4WIN (SHOPS P01021D) + CONGRATS (P01021E) --------------------
 bool endgameCheck(Ui &ui, Party &party) {
     bool won = false;

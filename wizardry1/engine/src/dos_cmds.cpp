@@ -1,63 +1,20 @@
 // Commands that drive the DOS-faithful screens (wiz::Dos / wiz::Console).
+#include "dos_assets.h"
 #include "wiz/castle.h"
 #include "wiz/shops.h"
 #include "wiz/platform.h"
-#include "wiz/scenario.h"
-#include "wiz/string_pool.h"
 
 #include <cstdio>
 #include <cstdlib>
-#include <fstream>
-#include <iterator>
 
 namespace wiz {
-namespace {
-
-std::vector<u8> slurp(const std::string &path) {
-    std::ifstream f(path, std::ios::binary);
-    return std::vector<u8>((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
-}
-
-std::string unescapeKeys(const char *s) {                 // "\r" "\e" "\xNN"
-    std::string o;
-    for (; *s; ++s) {
-        if (*s != '\\' || !s[1]) { o += *s; continue; }
-        ++s;
-        switch (*s) {
-            case 'r': o += '\r'; break;
-            case 'e': o += '\x1b'; break;
-            case 'n': o += '\n'; break;
-            case 'b': o += '\b'; break;
-            case 'x': o += char(std::strtol(std::string(s + 1, 2).c_str(), nullptr, 16)); s += 2; break;
-            default: o += *s; break;
-        }
-    }
-    return o;
-}
-
-// Everything a DOS-style screen needs, loaded from the extracted game directory.
-struct DosAssets {
-    Scenario sc;
-    StringPool sp;
-    std::vector<u8> charset, monsters, title;
-    bool load(const std::string &dir) {
-        if (!sc.load(slurp(dir + "/SCENARIO.DATA"))) return false;
-        if (!sp.load(slurp(dir + "/ASCII.KRN"))) return false;
-        charset = slurp(dir + "/200.CHARSET");
-        monsters = slurp(dir + "/200.MONSTERS");
-        title = slurp(dir + "/200.TITLE");
-        return !charset.empty();
-    }
-};
-
-} // namespace
 
 // wiz1 castle-test <dataDir> <keys> [gridDir]   (WIZ1_TOWN_PARTY=n seeds a party)
 int cmdCastleTest(int argc, char **argv) {
     if (argc < 4) { std::puts("castle-test <dataDir> <keys> [gridDir]"); return 2; }
     DosAssets a;
     if (!a.load(argv[2])) { std::fprintf(stderr, "bad data dir\n"); return 1; }
-    auto plat = makeNullPlatform(unescapeKeys(argv[3]), "");
+    auto plat = makeNullPlatform(unescapeKeys(argv[3]), std::getenv("WIZ1_FRAMES") ? std::getenv("WIZ1_FRAMES") : "");
     Console con;
     con.loadCharset(a.charset.data(), a.charset.size());
     con.loadMonsters(a.monsters);

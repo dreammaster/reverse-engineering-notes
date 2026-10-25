@@ -74,9 +74,12 @@ void Dos::dumpGrid(int key) {
         std::fwrite(out.data(), 1, out.size(), f);
         std::fclose(f);
     }
+    if (const char *m = std::getenv("WIZ1_MAXDUMPS"))                // regression runs: stop after N snapshots
+        if (dumpN_ >= std::atoi(m)) quit = true;
 }
 
 bool Dos::keyReady() {                                    // WIZARDRY:33
+    if (quit) return true;
     if (pending_ == KEY_NONE) pending_ = plat.pollKey();
     if (pending_ == KEY_QUIT) quit = true;
     return pending_ != KEY_NONE;
