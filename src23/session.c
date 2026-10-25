@@ -2014,6 +2014,7 @@ static SessionService serviceByType(GameSession *s, const ConversationStep *step
                 return SessionServiceFailed;
             }
             partyRecomputeEquipmentStatBonuses(member, &s->items, s->game);
+            partyCheckForLevelUp(member, s->game); /* CheckAndAnnounceLevelUp: the T by the face goes unless the experience covers one more level */
             s->training.done = true;
             s->training.classBefore = classBefore;
             s->training.bonusPoints = (unsigned)(bonus > 15 ? 15 : bonus);
