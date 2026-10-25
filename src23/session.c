@@ -2057,6 +2057,46 @@ static SessionService serviceByType(GameSession *s, const ConversationStep *step
 
 static const uint8_t *haggler(GameSession *s);
 
+bool sessionSellPrice(GameSession *s, Bcd4 out) {
+    const uint8_t *record = s->heldItem ? itemCatalogRecord(&s->items, s->heldItem) : NULL;
+    if (!record) {
+        return false;
+    }
+    Bcd4 base;
+    memcpy(base, record + ItemFieldBaseValue, 4);
+    shopSellPrice(base, (uint16_t)partyGetStat(haggler(s), PartyStatBartering), out);
+    return true;
+}
+
+SessionSell sessionSellHeld(GameSession *s, unsigned mask) {
+    const uint8_t *record = s->heldItem ? itemCatalogRecord(&s->items, s->heldItem) : NULL;
+    Bcd4 price;
+    if (!record) {
+        return SessionSellNothing;
+    }
+    if (!dialogSellAccepts(mask, record) || !sessionSellPrice(s, price)) {
+        return SessionSellRefused;
+    }
+    bcd4Add(saveHeaderBcd4(&s->save, SaveHeaderGold), price);
+    s->sellUndoItem = s->heldItem;
+    s->sellUndoExtra = s->heldExtra;
+    memcpy(s->sellUndoPrice, price, sizeof(price));
+    s->sellUndoValid = true;
+    s->heldItem = s->heldExtra = 0;
+    return SessionSellSold;
+}
+
+bool sessionSellUndo(GameSession *s) {
+    if (s->heldItem || !s->sellUndoValid) {
+        return false;
+    }
+    bcd4Sub(saveHeaderBcd4(&s->save, SaveHeaderGold), s->sellUndoPrice);
+    s->heldItem = s->sellUndoItem;
+    s->heldExtra = s->sellUndoExtra;
+    s->sellUndoValid = false;
+    return true;
+}
+
 /* The sell, enhance and repair topics work on the cursor item (the original's screens ask the player to put it down; here it is `heldItem`). */
 static SessionService itemService(GameSession *s, const ConversationStep *step) {
     if (!s->heldItem) {

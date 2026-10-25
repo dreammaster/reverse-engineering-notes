@@ -6875,6 +6875,18 @@ spell lists 8-10 of 31-52, items 5-8 of 13-52 per group; REGISTER.EXE (Chapter 3
 and the id as record number), and the display name is the block's two 12-character lines joined by a space ("CARNIVOROUS SPIDER", "OGRE CHIEF"). Reading them as monster *type* ids (several types share a block) gave WORKER ANT nine times.
 `monsterRecordFromBlock`. A list of more than 14 entries ends with "a  MORE  b" at (129, 167), the a / b only where there is a page to turn to.
 
+### The sell screen and the clue book's picture, in stages (decoded 2026-10-28)
+
+**SELL ITEMS** (a topic with flag 0x4000, e.g. the smithy's: `UseItem` :13253 -> `ConfirmAndValidatePartyTarget` (WHO WILL BARTER?) -> `RunSellItemScreen` :19845): the resource panel is shown (the mode is kept and comes back),
+the gold header goes on, and `RunPartyInventoryScreen` runs with `g_uiScratchFlags2` 0x10: the dolls of all four members, and in the lower right at (241, 173) in 0x7B on colour 4 SPACEBAR TO / SELL ITEM OR / ESC TO UNDO (DS:0x7FD0,
+Chapter 3 0x82FD; `RefreshPartyPortraits` :14650). An item taken up shows its name, weight and the price the merchant would pay (`ShowItemPurchaseConfirmPrompt`, the sell price of `ComputeBarterPricingPreview`); Space
+(`TrySellItemForGold` :15996) tests the item against the NPC's mask (the topic's argument) -- "I HAVE NO / NEED FOR / THAT TYPE OF / ITEM." (0x7FF7) in white at (240, 96) if not -- else adds the price to the gold, empties the
+cursor and remembers the item (flag `g_uiScratchFlags4` 0x20); Escape with nothing held puts it back and takes the price off again, with something held it only warns; P (or closing every doll) leaves, and the conversation's
+topic menu is waiting (no topic runs, unlike the shop). `sessionSellHeld` / `sessionSellUndo` / `sessionSellPrice`, `gameui.c` `sellOpen`.
+
+**The clue book's first-time picture** (`PlayClueBookOpenAnimation` :8293) fades in two ranges of palette block 5 separately, with everything else black: colours 0-0xAE (DARK UNION) over 63 rounds, 30 BIOS ticks, then 0xB0-0xBE
+(The On-Line Clue Book), 35 ticks, then the whole palette out. `clueSplashPalette` steps it every animation tick (110 ms): in 0-7, held to 22, words in 23-30, held to 47, out 48-55.
+
 ### NPCs with a foreign tongue: WHO WILL TRANSLATE? (decoded 2026-10-27)
 
 An NPC whose header word +2 (`DialogNpcSpeakerMode`) is 2, 6 or 4 -- 31 of Chapter 2's, among them the Governor's town folk -- speaks a language. `LoadItemData` (yendor2.asm:22286) asks `ShowConfirmPrompt 0xB`, **WHO WILL

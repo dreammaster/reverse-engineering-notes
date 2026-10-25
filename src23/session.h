@@ -127,6 +127,9 @@ typedef struct GameSession {
     bool talking;
     unsigned talkSpeaker;      /* the party slot (0-3) of the member who talks: the one the healer, trainer and challenge services act on */
     DialogState maskBackup;    /* the topic masks before the last topic was chosen: an acceptance the gold does not cover leaves them as they were (UseHealingItem returns before ApplyItemEffectFlags) */
+    uint16_t sellUndoItem, sellUndoExtra; /* the item the last sale took off the cursor, for ESC TO UNDO (word_32968 / word_3296A) */
+    Bcd4 sellUndoPrice;        /* what it paid */
+    bool sellUndoValid;        /* g_uiScratchFlags4 bit 0x20 */
     unsigned translatorSlot;   /* the member who translates for an NPC with a speaker mode (the fourth role): his or her Linguistics decides how much of the words is readable */
     unsigned quoteKind;        /* SessionQuote: what the last service step asks the front end to put on the dialog (ShowHealingCostPrompt); cleared by the next step */
     unsigned quoteNumber;      /* the level a trainer quotes / allows */
@@ -504,6 +507,16 @@ void sessionQuestArrive(GameSession *session);
  * ConfirmAndValidatePartyTarget (yendor2.asm:19859; UseItem asks it for a topic with flag 0x8000 or 0x4000 before the shop or the sell screen): the first role's member -- the one who haggles, g_partyRoleAssignment1 --
  * is chosen with ShowConfirmPrompt 10, WHO WILL BARTER?; one who cannot act is refused with the warning and the role freed. `sessionBarterer` is the quiet check, `sessionChooseBarterer` the answer.
  */
+/*
+ * The sell screen (RunSellItemScreen, yendor2.asm:19845: SELL ITEMS topics, flag 0x4000, after WHO WILL BARTER?): the party's inventory with SPACEBAR TO / SELL ITEM OR / ESC TO UNDO in the lower right. An item taken
+ * up shows what the merchant would pay (`sessionSellPrice`: the base value less the haggler's percentage); Space (`sessionSellHeld`, TrySellItemForGold :15996) pays it into the gold when the NPC's mask (the
+ * topic's argument) takes that kind of item -- else I HAVE NO USE FOR THAT -- and remembers it; Escape with nothing on the cursor puts the last sale back and takes its price off again (`sessionSellUndo`).
+ */
+typedef enum { SessionSellSold, SessionSellRefused, SessionSellNothing } SessionSell;
+SessionSell sessionSellHeld(GameSession *session, unsigned mask);
+bool sessionSellUndo(GameSession *session);
+bool sessionSellPrice(GameSession *session, Bcd4 out);
+
 bool sessionBarterer(GameSession *session, unsigned *memberSlot);
 bool sessionChooseBarterer(GameSession *session, unsigned memberSlot);
 

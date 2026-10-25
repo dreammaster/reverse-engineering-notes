@@ -267,6 +267,44 @@ static void clueEntryName(const GameUi *ui, unsigned category, unsigned id, char
     }
 }
 
+/*
+ * PlayClueBookOpenAnimation's fades (yendor2.asm:8293), on the palette of block 5 with the screen black at first: the colours 0-0xAE ("DARK UNION") fade in (StepPaletteFadeRange mode 1, 63 rounds, about 0.9 s),
+ * 30 BIOS ticks go by, the colours 0xB0-0xBE (the words "The On-Line Clue Book") fade in, 35 ticks, and the whole palette fades out. An animation tick is two BIOS ticks (110 ms), so 8 ticks make a fade:
+ * tick 0-7 the title in, 8-22 held, 23-30 the words in, 31-47 held, 48-55 everything out.
+ */
+enum { ClueSplashTicks = 56, ClueFadeTicks = 8, ClueTitleColours = 0xAF, ClueWordsFirst = 0xB0, ClueWordsLast = 0xBE };
+
+static void clueSplashPalette(GameUi *ui) {
+    uint32_t block = paletteBlockOffset(ui->session->game, 5);
+    uint8_t out[PaletteBytes], full[PaletteBytes];
+    unsigned elapsed = ClueSplashTicks - ui->clueSplash;
+    if (block + PaletteBytes > ui->worldSize) {
+        return;
+    }
+    const uint8_t *target = ui->worldDat + block;
+    memset(out, 0, sizeof(out));
+    memcpy(full, target, sizeof(full));
+    if (elapsed < ClueFadeTicks) { /* the title comes in */
+        paletteFadeInFrame(target, (elapsed + 1) * FadeRounds / ClueFadeTicks, full);
+        memcpy(out, full, ClueTitleColours * 3);
+    } else {
+        memcpy(out, target, ClueTitleColours * 3);
+        if (elapsed >= 23) { /* the words come in */
+            unsigned round = elapsed >= 31 ? FadeRounds : (elapsed - 22) * FadeRounds / ClueFadeTicks;
+            paletteFadeInFrame(target, round, full);
+            memcpy(out + ClueWordsFirst * 3, full + ClueWordsFirst * 3, (ClueWordsLast - ClueWordsFirst + 1) * 3);
+        }
+        if (elapsed >= 48) { /* everything fades out, a step of the six-bit values a round */
+            unsigned round = (elapsed - 47) * FadeRounds / ClueFadeTicks;
+            for (unsigned i = 0; i < PaletteBytes; i++) {
+                out[i] = out[i] > round ? (uint8_t)(out[i] - round) : 0;
+            }
+        }
+    }
+    memcpy(ui->palette, out, sizeof(out));
+    ui->paletteStamp++;
+}
+
 /* ShowClueBook: the music of track 21, PlayClueBookOpenAnimation (once: category 0 picture 12 on the palette of block 5) and ShowClueBookHelpScreen -- the list of the F keys -- which stays until one is pressed. */
 static void clueOpen(GameUi *ui) {
     ui->overlay = UiOverlayClue;
@@ -280,9 +318,8 @@ static void clueOpen(GameUi *ui) {
     uint32_t block = paletteBlockOffset(ui->session->game, 5);
     if (!ui->clueSeen && block + PaletteBytes <= ui->worldSize) {
         memcpy(ui->clueSavedPalette, ui->palette, sizeof(ui->palette));
-        memcpy(ui->palette, ui->worldDat + block, PaletteBytes);
-        ui->paletteStamp++;
-        ui->clueSplash = 33; /* about 3.6 seconds: the two waits of 30 and 35 BIOS ticks */
+        ui->clueSplash = ClueSplashTicks;
+        clueSplashPalette(ui);
     }
     ui->clueSeen = true;
 }
@@ -1096,6 +1133,40 @@ static void shopFromTalkOpen(GameUi *ui, bool shop) {
     catalogOpen(ui, ui->shopLock, shop);
 }
 
+static void inventoryOpen(GameUi *ui, unsigned mask);
+static unsigned inventoryAllMask(const GameUi *ui);
+
+/* RunSellItemScreen: the resource panel is shown (its mode kept), the inventory of every member opens with the sell text, and the cursor sells. */
+static void sellOpen(GameUi *ui) {
+    ui->sellMode = true;
+    ui->sellPanelWas = (uint16_t)(panelFlags(ui) & PanelModeBits);
+    panelEnterResources(ui, panelFlags(ui));
+    ui->session->sellUndoValid = false;
+    inventoryOpen(ui, inventoryAllMask(ui));
+}
+
+/* The sell text at (241, 173): SPACEBAR TO / SELL ITEM OR / ESC TO UNDO (Chapter 2 DS:0x7FD0, Chapter 3 0x82FD), in 0x7B on the panel's colour 4. */
+static void sellTextDraw(GameUi *ui) {
+    GameSession *s = ui->session;
+    char line[16];
+    unsigned offset = s->game == GameYendor2 ? 0x7FD0 : 0x82FD;
+    for (unsigned i = 0; i < 3 && ui->exe && exeDataString(ui->exe, offset, line, sizeof(line)); i++) {
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 241, 173 + 6 * (int)i, line, 0x7B, 4, FontOpaque);
+        offset += (unsigned)strlen(line) + 1;
+    }
+    textPanelGold(&ui->renderer, saveHeaderBcd4(&s->save, SaveHeaderGold));
+}
+
+/* TrySellItemForGold's refusal: "I HAVE NO / NEED FOR / THAT TYPE OF / ITEM." (DS:0x7FF7, Chapter 3 0x8324) in white at (240, 96). */
+static void sellRefused(GameUi *ui) {
+    ui->panelRunCount = 0;
+    panelMessageExe(ui, ui->session->game == GameYendor2 ? 0x7FF7 : 0x8324, 4);
+    for (unsigned i = 0; i < ui->panelRunCount; i++) {
+        ui->panelRuns[i].colour = 0x0F;
+        ui->panelRuns[i].opaque = true;
+    }
+}
+
 /* UseItem -> ConfirmAndValidatePartyTarget -> UseKeyItem: WHO WILL BARTER? when nobody does yet (giving it up leaves the dialog as it is), then the merchant's screen. */
 static void barterStart(GameUi *ui) {
     unsigned barterer;
@@ -1233,6 +1304,12 @@ static void inventoryClose(GameUi *ui) {
     for (unsigned member = 0; member < 4; member++) {
         sessionBagsClose(ui->session, member);
     }
+    if (ui->sellMode) { /* RunSellItemScreen's tail: the panel mode comes back and the conversation's list is waiting (UseItem loc_17D7D) */
+        ui->sellMode = false;
+        ui->session->sellUndoValid = false;
+        saveHeaderSetU16(&ui->session->save, MapFlagsOffset, (uint16_t)((saveHeaderGetU16(&ui->session->save, MapFlagsOffset) & 0xEFFF) | ui->sellPanelWas));
+        ui->overlay = UiOverlayTalk;
+    }
 }
 
 static unsigned inventoryAllMask(const GameUi *ui) {
@@ -1262,6 +1339,16 @@ static void inventorySlotClick(GameUi *ui, int x, int y) {
     case SessionInvTook:
     case SessionInvSwapped:
         panelItemName(ui, s->heldItem);
+        if (ui->sellMode && s->heldItem) { /* ShowItemPurchaseConfirmPrompt in the sell mode: what it weighs and what the merchant pays */
+            Bcd4 price;
+            char text[12];
+            merchantLines(ui, s->heldItem);
+            if (sessionSellPrice(s, price)) {
+                bcd4Format(price, text);
+                panelRun(ui, 240, 144, 0x8A, true, "VALUE:");
+                panelRun(ui, 240, 150, 0x0F, true, text);
+            }
+        }
         break;
     case SessionInvRefused:
         flashWarning(ui);
@@ -1570,6 +1657,15 @@ static void transmuteAnswer(GameUi *ui, int row) {
 static void talkOpen(GameUi *ui, unsigned npcId);
 
 static void pickAnswer(GameUi *ui, unsigned member) {
+    if (ui->pickScroll == 9) { /* who barters, for the sell screen */
+        if (!sessionChooseBarterer(ui->session, member)) {
+            flashWarning(ui);
+            return;
+        }
+        pickCancel(ui);
+        sellOpen(ui);
+        return;
+    }
     if (ui->pickScroll == 8) { /* who translates */
         if (!sessionChooseTranslator(ui->session, member)) {
             flashWarning(ui);
@@ -2116,6 +2212,8 @@ bool gameUiAnimate(GameUi *ui) {
         if (--ui->clueSplash == 0) {
             ui->clueSplash = 1;
             clueSplashEnd(ui);
+        } else {
+            clueSplashPalette(ui);
         }
         changed = true;
     }
@@ -2775,6 +2873,9 @@ static void drawScreen(GameUi *ui) {
         drawClue(ui);
         break;
     case UiOverlayDolls:
+        if (ui->sellMode) {
+            sellTextDraw(ui);
+        }
         for (unsigned i = 0; i < 4; i++) {
             if (sessionPartyRecord(s, i) && (ui->dollMask & (1u << i))) {
                 paperDollDraw(&ui->renderer, &s->items, sessionPartyRecord(s, i), 8 + 56 * (int)i, 8);
@@ -2906,6 +3007,19 @@ static void talkStep(GameUi *ui, const ConversationStep *step) {
     }
     ui->talkQuote = false;
     ui->talkExtraCount = 0;
+    if (step->flags & DialogTopicSell) { /* RunSellItemScreen after ConfirmAndValidatePartyTarget: the inventory is the screen (the dialog's menu is waiting behind it) */
+        unsigned barterer;
+        ui->sellMask = step->arg;
+        if (sessionBarterer(s, &barterer)) {
+            sellOpen(ui);
+        } else {
+            ui->pickActive = true;
+            ui->pickChest = false;
+            ui->pickScroll = 9;
+            ui->pickPrompt = 10;
+        }
+        return;
+    }
     SessionService service = sessionTalkService(s, step, NULL);
     if (s->quoteKind == SessionQuoteNoGold) { /* the quote stays on the screen, with the refusal under it */
         memcpy(ui->talkRows, keptRows, sizeof(keptRows));
@@ -3615,6 +3729,26 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
     }
     if (ui->overlay == UiOverlayAlchemy) {
         return alchemyKey(ui, key);
+    }
+    if (ui->overlay == UiOverlayDolls && ui->sellMode) { /* the sell screen: Space sells the cursor item, Escape undoes the last sale (nothing held) or warns (something held), P leaves */
+        if (key == ' ' && s->heldItem) {
+            SessionSell result = sessionSellHeld(s, ui->sellMask);
+            ui->panelRunCount = 0;
+            if (result == SessionSellRefused) {
+                sellRefused(ui);
+            }
+        } else if (key == UiKeyEscape) {
+            if (s->heldItem) {
+                flashWarning(ui);
+            } else if (sessionSellUndo(s)) {
+                ui->panelRunCount = 0;
+                panelItemName(ui, s->heldItem);
+            }
+        } else if (key == 'p') {
+            inventoryClose(ui);
+            effect(ui, 1);
+        }
+        return true;
     }
     if (ui->overlay == UiOverlayDolls) {
         if (key == ' ' && ui->catalogActive && ui->catalogShop && s->heldItem) { /* TrySellItemForGold: the item on the cursor is sold to the merchant */

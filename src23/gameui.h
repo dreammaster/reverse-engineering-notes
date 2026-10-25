@@ -103,6 +103,9 @@ typedef struct {
         char text[48];
     } talkExtra[3];        /* words written over the dialog apart from its rows: the trainer's level number, "YOU DON'T HAVE ENOUGH GOLD." */
     unsigned talkExtraCount;
+    bool sellMode;         /* the inventory is the sell screen of a SELL ITEMS topic (RunSellItemScreen) */
+    unsigned sellMask;     /* what the NPC takes: the topic's argument */
+    uint16_t sellPanelWas; /* the panel mode the sell screen found (map flags & 0x7000) */
     unsigned talkNpc;      /* the NPC whose WHO WILL TRANSLATE? is being asked */
     unsigned talkPreviewTopic; /* the topic whose flag 0x800 loaded the service's type word (word_32902): its words come back when another member is selected */
     bool talkEnding;       /* the conversation is over (an ending topic): its words stay until a key or a click, then the dialog closes -- to the title screen for the exit codes 1 and 2 */

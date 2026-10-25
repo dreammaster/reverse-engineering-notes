@@ -15,6 +15,7 @@
 #include "container.h"
 #include "explore.h"
 #include "gameui.h"
+#include "dialogservice.h"
 #include "spellcast.h"
 #include "maininput.h"
 #include "gamedialog.h"
@@ -441,6 +442,38 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         gameUiKey(&ui, UiKeyF8, false);
         gameUiDraw(&ui);
         check("F8 opens the clue book with its first-time picture (category 0 picture 12), which a key puts away", ui.overlay == UiOverlayClue && ui.clueSplash > 0 && sum(ui.screen) > 0);
+        {   /* the fades: the title first (colours 0-0xAE), the words (0xB0-0xBE) after it, then everything out */
+            const uint8_t *block5 = world + paletteBlockOffset(game, 5);
+            bool dark = true, titleHere, wordsDark, wordsHere, restored;
+            for (unsigned i = 0; i < 0xAF * 3; i++) {
+                dark = dark && ui.palette[i] <= 8; /* the first round of the fade */
+            }
+            for (unsigned i = 0; i < 9; i++) {
+                gameUiAnimate(&ui);
+            }
+            titleHere = memcmp(ui.palette, block5, 0xAF * 3) == 0;
+            wordsDark = true;
+            for (unsigned i = 0xB0 * 3; i < 0xBF * 3; i++) {
+                wordsDark = wordsDark && ui.palette[i] == 0;
+            }
+            for (unsigned i = 0; i < 23; i++) {
+                gameUiAnimate(&ui);
+            }
+            wordsHere = memcmp(ui.palette + 0xB0 * 3, block5 + 0xB0 * 3, 15 * 3) == 0;
+            check("the picture starts dark, the title fades in first, the words only later (and stay)", dark && titleHere && wordsDark && wordsHere && ui.clueSplash > 0);
+            for (unsigned i = 0; i < 40 && ui.clueSplash; i++) {
+                gameUiAnimate(&ui);
+            }
+            restored = ui.clueSplash == 0 && memcmp(ui.palette, ui.clueSavedPalette, sizeof(ui.palette)) == 0;
+            check("it ends by itself, the palette of the game back", restored);
+            gameUiKey(&ui, UiKeyEscape, false);
+            gameUiKey(&ui, UiKeyF8, false);
+            check("(F8 again: no picture, the help screen)", ui.clueSplash == 0 && ui.clueHelp);
+            ui.clueSeen = false;
+            gameUiKey(&ui, UiKeyEscape, false);
+            gameUiKey(&ui, UiKeyF8, false);
+            check("(a book that has not been seen shows it again)", ui.clueSplash > 0);
+        }
         gameUiKey(&ui, 'q', false);
         gameUiDraw(&ui);
         unsigned helpFirst = sum(ui.screen);
@@ -1783,6 +1816,53 @@ static void testTalkEnds(const char *envName, const char *defaultDir) {
         check("the key takes the party to the title screen (exit code 1)", ui.overlay == UiOverlayTitle);
         gameUiKey(&ui, 'e', false);
         check("E on the title screen goes back into the game", ui.overlay == UiOverlayNone);
+    }
+    if (findObject(s, WorldObjectFlagTalker, 8, &col, &row)) { /* the smithy: SELL ITEMS opens the inventory with the sell text */
+        s->x = col;
+        s->y = row;
+        s->facing = SaveFacingNorth;
+        sessionRebuild(s);
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments, 0);
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 6, saveGetPartySlot(&s->save, 0));
+        gameUiKey(&ui, ' ', false);
+        gameUiKey(&ui, UiKeyEnter, false);
+        gameUiKey(&ui, '1', false); /* SELL ITEMS */
+        check("SELL ITEMS asks WHO WILL BARTER? first", ui.pickActive && ui.pickScroll == 9 && ui.pickPrompt == 10);
+        gameUiKey(&ui, UiKeyF1, false);
+        check("then opens the party's inventory in the sell mode", ui.sellMode && ui.overlay == UiOverlayDolls && !ui.pickActive);
+        gameUiDraw(&ui);
+        unsigned sellable = 0, useless = 0;
+        for (unsigned id = 1; id <= s->items.validItemCount && !(sellable && useless); id++) {
+            const uint8_t *record = itemCatalogRecord(&s->items, id);
+            Bcd4 value;
+            if (!record) {
+                continue;
+            }
+            memcpy(value, record + ItemFieldBaseValue, 4);
+            if (dialogSellAccepts(ui.sellMask, record) && bcd4AtLeastU16(value, 10)) {
+                sellable = sellable ? sellable : id;
+            } else if (!dialogSellAccepts(ui.sellMask, record)) {
+                useless = useless ? useless : id;
+            }
+        }
+        uint8_t goldWas[4];
+        memcpy(goldWas, saveHeaderBcd4(&s->save, SaveHeaderGold), 4);
+        s->heldItem = (uint16_t)useless;
+        gameUiKey(&ui, ' ', false);
+        check("an item the smith has no need for is refused with his words and stays on the cursor", s->heldItem == useless && ui.panelRunCount == 4 && memcmp(goldWas, saveHeaderBcd4(&s->save, SaveHeaderGold), 4) == 0);
+        s->heldItem = (uint16_t)sellable;
+        gameUiKey(&ui, ' ', false);
+        check("Space sells what he takes: the gold rises, the cursor is empty", s->heldItem == 0 && memcmp(goldWas, saveHeaderBcd4(&s->save, SaveHeaderGold), 4) != 0);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("Escape with an empty hand undoes the sale: the item is back, the gold as it was", s->heldItem == sellable && memcmp(goldWas, saveHeaderBcd4(&s->save, SaveHeaderGold), 4) == 0);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("Escape with something held only warns; nothing is undone twice", s->heldItem == sellable && ui.overlay == UiOverlayDolls);
+        s->heldItem = 0;
+        gameUiKey(&ui, 'p', false);
+        check("P leaves the sell screen: the conversation's menu is waiting", !ui.sellMode && ui.overlay == UiOverlayTalk && s->talking);
+        for (unsigned i = 0; i < 6 && ui.overlay == UiOverlayTalk; i++) {
+            gameUiKey(&ui, UiKeyEscape, false);
+        }
     }
     if (findObject(s, WorldObjectFlagTalker, 48, &col, &row)) { /* a stranger with a foreign tongue (speaker mode 4) */
         s->x = col;
