@@ -244,8 +244,8 @@ static void awardLoot(GameSession *s, const MonsterRewardStaging *given) {
         memcpy(s->loot.ore, staging->ore, 4);
         memcpy(s->loot.nuore, staging->nuore, 4);
         memcpy(s->loot.experience, staging->experience, 4);
-        if (!s->pendingSound) {
-            s->pendingSound = 7;
+        if (!s->pendingSound) { /* after the attack's own sound (the queue plays behind pendingSound, so it is queued, not pending) */
+            queueSound(s, 7);
         }
     }
 }
