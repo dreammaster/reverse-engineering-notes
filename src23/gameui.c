@@ -1150,6 +1150,9 @@ static void sellTextDraw(GameUi *ui) {
     GameSession *s = ui->session;
     char line[16];
     unsigned offset = s->game == GameYendor2 ? 0x7FD0 : 0x82FD;
+    for (int row = 0; row < 35; row++) { /* ClearPortraitPanelAreas: the walk pad's place is blank (the text sits on colour 4) */
+        memset(&ui->screen[(160 + row) * ViewScreenWidth + 241], 4, 72);
+    }
     for (unsigned i = 0; i < 3 && ui->exe && exeDataString(ui->exe, offset, line, sizeof(line)); i++) {
         fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 241, 173 + 6 * (int)i, line, 0x7B, 4, FontOpaque);
         offset += (unsigned)strlen(line) + 1;
