@@ -17,6 +17,8 @@ import subprocess
 import sys
 import zlib
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXE = os.path.join(ROOT, "build", "u5.exe")
 RUN = os.path.join(ROOT, "run")
@@ -98,6 +100,28 @@ def screen_hash(path):
     return hashlib.sha1(b"".join(rows)).hexdigest()
 
 
+# Real-game references (DOSBox window captures supplied by the project owner); the 640x400 game area starts at (1,23).
+# Map viewport differences are animated tiles (water, torches), so the allowance is a small fraction; the panels are static.
+REFERENCES = [("abbey_hall.png", "abbey_hall_ega.png", (1, 23),
+               [("map viewport", (16, 16, 372, 372), 0.025), ("party list", (384, 0, 640, 120), 0.0), ("stats", (384, 120, 640, 170), 0.0)])]
+
+
+def check_references():
+    import refdiff
+    bad = []
+    for ours, ref, (ox, oy), boxes in REFERENCES:
+        po = os.path.join(RUN, ours)
+        if not os.path.exists(po):
+            continue
+        a, b = refdiff.dec(os.path.join(ROOT, "tests", "reference", ref)), refdiff.dec(po)
+        for name, box, allow in boxes:
+            n = refdiff.region_diff(a, b, ox, oy, box)
+            area = (box[2] - box[0]) * (box[3] - box[1])
+            if n > allow * area:
+                bad.append("%s vs %s: %s differs in %d of %d pixels" % (ours, ref, name, n, area))
+    return bad
+
+
 def install_fixture(name):
     """Copy tests/fixtures/<name>/* over the saves in run/SAVEGAME (scenario starts from that character)."""
     src = os.path.join(ROOT, "tests", "fixtures", name)
@@ -160,6 +184,10 @@ def main():
         err = run_scenario(name, keys, shots, timeout, None if args.update_golden else golden, update)
         print("%-8s %s" % (name, "ok" if err is None else "FAIL: " + err))
         failed += err is not None
+    if not args.update_golden:
+        for msg in check_references():
+            print("REFERENCE MISMATCH: " + msg)
+            failed += 1
     if update:
         golden.update(update)
         json.dump(golden, open(GOLDEN, "w"), indent=1, sort_keys=True)

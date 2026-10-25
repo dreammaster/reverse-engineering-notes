@@ -148,13 +148,27 @@ Not covered by the review: the *behaviour* of the graphics-driver functions them
 i.e. what the EGA/CGA/Hercules/Tandy driver code does with the pixels. That would need either an x86 emulator running the original
 `EGA.DRV` or reference screenshots from the original game.
 
+### Reference screenshots (real game, DOSBox)
+
+`tests/reference/` holds captures of the original game at the Empath Abbey gate in EGA (`abbey_hall_ega.png`, plus a scaled second
+capture), CGA and Hercules modes. `tools/refdiff.py` aligns a capture with one of our screenshots (the 640x400 game area starts at
+(1,23) in the window captures) and counts differing pixels; `make test` does this for `abbey_hall.png` against the EGA reference.
+
+* **EGA: matches.** The party list and stats panels are identical (0 of 43,520 pixels differ) and the map viewport differs in
+  1.3% of its pixels (1,640 of 126,736), all in animated tiles: the stream water and the torch flames, i.e. animation phase.
+  So the EGA path — tile graphics, palette, text rendering, window frame, character set — reproduces the original pixel for pixel.
+* **CGA and Hercules: not implemented.** The modern build renders everything through the EGA code in `graphics/grap_buf.c`;
+  `DetectVideo` is stubbed to EGA and the `CGA/HER/T1K.DRV` behaviour (4-colour cyan/magenta palette and the `*.4` images for
+  CGA; the 720x348 monochrome mode with its own glyph size, 24-byte characters and dithered tiles for Hercules; Tandy) is not
+  ported. The references are the targets for porting those modes, if ScummVM should offer them.
+
 ## Gaps and what to do about them
 
 | gap | status | note |
 |---|---|---|
 | Missing game logic | none found | |
 | Platform layer (video/timer/speaker/drive/keyboard/CRT) | replaced by the host | ScummVM provides its own; the list of replaced functions above is the complete API surface to re-create |
-| Hand-written graphics driver code (EGA/CGA/Hercules/Tandy) | re-implemented in `graphics/grap_buf.c` | the C drivers were not compared pixel for pixel with the original; 24 driver entry points are used, all present |
+| Graphics drivers | EGA re-implemented in `graphics/grap_buf.c` and verified against a real-game capture; CGA, Hercules and Tandy not implemented | see *Reference screenshots*; 24 driver entry points are used by the EXE, all present for EGA |
 | PC speaker / music | `audio/` synthesises sfx (SDL) and plays FM Towns-style BGM; the Win32 build is silent | original IBM sound is PC-speaker only |
 | Save format | `CAST2_10fe` uses the FM Towns-style writer (`FILE_WriteSavegameFile`) | on-disk layout equals `SAVED.GAM`; the IBM sequence also rewrites `UNDER.OOL`/`BRIT.OOL` — compare before relying on it |
 | 157 conditional blocks / 162 annotations | catalogued in [deviations.md](../audit/deviations.md) | each needs a keep/revert decision for ScummVM (`ENABLE_BUG_FIX`, `ENABLE_SPEED_FIX`, `GOG_BUILD`, ...) |
@@ -162,8 +176,8 @@ i.e. what the EGA/CGA/Hercules/Tandy driver code does with the pixels. That woul
 
 ## Next steps
 
-1. Verify the graphics-driver routines (`DRV_xx`) against the original EGA driver: run `EGA.DRV` in an emulator, or capture
-   reference screenshots from DOSBox, and compare with the goldens.
+1. Port the CGA and Hercules (and Tandy) video modes using the reference captures; capture more EGA references (combat, dungeon,
+   shops, intro) to extend the pixel comparison.
 2. Decide the keep/revert policy for the deviation list; make `MATCHING_BUILD`-style behaviour selectable at run time.
 3. Build a save-game fixture with a party (the pristine `SAVED.GAM` has none) so the headless harness can drive towns, combat and
    dungeons, and record golden screenshots from the original-matching configuration.
