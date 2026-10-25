@@ -168,6 +168,7 @@ static void drawReadRow(GameUi *ui, int x, int y, const char *row, const Documen
 }
 
 static const char *materialLabel(const GameUi *ui, unsigned index);
+static void trainBonusDraw(GameUi *ui);
 
 /*
  * A readable item (RunConversation, yendor2.asm:49782): over the view, at (15, 23), the picture of its kind of text -- category 1, not the conversation's scroll -- and the text in the reader's
@@ -229,6 +230,10 @@ static void drawTalk(GameUi *ui) {
         drawRead(ui);
         return;
     }
+    if (ui->trainStage == 3) {
+        trainBonusDraw(ui);
+        return;
+    }
     viewDrawPicture(r, 1, 3, 15, 23, true, 0);
     if (s->talk.npc) {
         viewDrawPicture(r, 7, dialogGetU16(s->talk.npc, 0), 21, 31, true, 0);
@@ -255,6 +260,9 @@ static void drawTalk(GameUi *ui) {
         if (s->talkSpeaker < 4) {
             viewDrawPicture(r, 7, 0, kX[s->talkSpeaker], 0x94, true, 0);
         }
+    }
+    if (ui->trainStage == 1 && ui->trainSlot < 4) { /* PrepareTrapEffectSlots 3: category 7 picture 1 over the face */
+        viewDrawPicture(r, 7, 1, 8 + 58 * (int)ui->trainSlot, 148, true, 0);
     }
     for (unsigned i = 0; ui->talkListShown && i < s->talk.listedCount && i < ConversationListMax; i++) {
         char name[DialogTopicNameSize + 1];
@@ -1509,6 +1517,7 @@ static void transmuteStart(GameUi *ui, unsigned user, unsigned slot);
 static void talkStep(GameUi *ui, const ConversationStep *step);
 static void clockShow(GameUi *ui);
 static void detailOpen(GameUi *ui, unsigned member);
+static void trainSummaryShow(GameUi *ui);
 static void mapSkillTooLow(GameUi *ui);
 
 static void useItemOn(GameUi *ui, unsigned user, unsigned slot, unsigned recipient) {
@@ -2355,6 +2364,12 @@ bool gameUiAnimate(GameUi *ui) {
             changed = true;
         }
     }
+    if (ui->trainStage == 1) { /* the sparkle on the trained face */
+        if (--ui->trainTicks == 0) {
+            trainSummaryShow(ui);
+        }
+        changed = true;
+    }
     if (ui->pressTicks > 0) { /* a pressed button comes up */
         ui->pressTicks--;
         changed = true;
@@ -2990,7 +3005,7 @@ static void drawScreen(GameUi *ui) {
             roles[i] = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 2 * i);
         }
         if (sessionPartyRecord(s, ui->hero)) { /* an empty slot has no sheet */
-            detailSheetDraw(&ui->renderer, sessionPartyRecord(s, ui->hero), 6 + ui->hero, roles);
+            detailSheetDraw(&ui->renderer, sessionPartyRecord(s, ui->hero), saveHeaderGetU16(&s->save, SaveHeaderPartySlots + 2 * ui->hero), roles);
         }
         break;
     }
@@ -3135,6 +3150,177 @@ static void talkQuoteShow(GameUi *ui) {
     ui->talkQuote = true;
 }
 
+/*
+ * A paid training (UseTrainingItem, yendor2.asm:21510): the member's face sparkles (PrepareTrapEffectSlots 3: sound 0xE and category 7 picture 1 over the face, until the sound is done), then in
+ * the dialog's frame, with the trainer's face: YOU ARE NOW LEVEL - n, WITH HEALTH POINTS - n and (for one with magic) MAGIC POINTS - n, at an even level YOU HAVE LEARNED SOME SPELLS when a spell
+ * unlocks (0xAA), at a promotion CONGRATULATIONS!! / YOU ARE NOW A <class>, and NOW YOU CAN SPEND YOUR BONUS / POINTS..., until a key. The conversation then goes on as it was.
+ */
+enum { TrainSparkleTicks = 5 };
+
+static void trainText(GameUi *ui, unsigned x, unsigned y, unsigned colour, const char *text) {
+    if (ui->talkExtraCount < sizeof(ui->talkExtra) / sizeof(ui->talkExtra[0])) {
+        ui->talkExtra[ui->talkExtraCount].x = (int)x;
+        ui->talkExtra[ui->talkExtraCount].y = (int)y;
+        ui->talkExtra[ui->talkExtraCount].colour = (uint8_t)colour;
+        snprintf(ui->talkExtra[ui->talkExtraCount].text, sizeof(ui->talkExtra[0].text), "%s", text);
+        ui->talkExtraCount++;
+    }
+}
+
+static void trainSummaryShow(GameUi *ui) {
+    GameSession *s = ui->session;
+    const uint8_t *record = sessionPartyRecord(s, ui->trainSlot);
+    char text[48], second[48], number[16];
+    bool ch2 = s->game == GameYendor2;
+    ui->trainStage = 2;
+    ui->talkRowCount = 0;
+    ui->talkQuote = false;
+    ui->talkExtraCount = 0;
+    ui->talkListShown = false;
+    if (!record || !ui->exe) {
+        return;
+    }
+    unsigned level = partyGetU16(record, PartyFieldLevel), maxMagic = partyGetStatMax(record, PartyStatMagicPoints);
+    quoteText(ui, 0x80A8, 0x83D5, text, sizeof(text));
+    trainText(ui, 22, 67, 0x0D, text);
+    snprintf(number, sizeof(number), "%u", level);
+    trainText(ui, 0x94, 67, 0x8A, number);
+    quoteText(ui, 0x80BE, 0x83EB, text, sizeof(text));
+    trainText(ui, 22, 73, 0x0D, text);
+    snprintf(number, sizeof(number), "%u", partyGetStatMax(record, PartyStatHitPoints));
+    trainText(ui, 0x94, 73, 0x8A, number);
+    if (maxMagic) {
+        uint16_t unlocked[PartyAbilityUnlockSlotCount];
+        quoteText(ui, 0x80D4, 0x8401, text, sizeof(text));
+        trainText(ui, 22, 79, 0x0D, text);
+        snprintf(number, sizeof(number), "%u", maxMagic);
+        trainText(ui, 0x94, 79, 0x8A, number);
+        if (!(level & 1) && partyAbilityUnlocksAtLevel(s->training.classBefore, level, s->game, unlocked)) {
+            quoteText(ui, 0x8111, 0x843E, text, sizeof(text));
+            trainText(ui, 22, 85, 0xAA, text);
+        }
+    }
+    if (partyGetU16(record, PartyFieldClass) != s->training.classBefore) { /* a promotion */
+        unsigned first = ch2 ? 0x84FAu : 0x8821u;
+        quoteText(ui, 0x84FA, 0x8821, text, sizeof(text));
+        trainText(ui, 22, 91, 0x0F, text);
+        exeDataString(ui->exe, first + (unsigned)strlen(text) + 1, second, sizeof(second));
+        trainText(ui, 22, 97, 0x0F, second);
+        trainText(ui, 0x6A, 97, 0x8A, partyClassName(partyGetU16(record, PartyFieldClass)));
+    }
+    unsigned bonus = ch2 ? 0x80EAu : 0x8417u;
+    quoteText(ui, 0x80EA, 0x8417, text, sizeof(text));
+    trainText(ui, 22, 109, 0x0D, text);
+    exeDataString(ui->exe, bonus + (unsigned)strlen(text) + 1, second, sizeof(second));
+    trainText(ui, 22, 115, 0x0D, second);
+}
+
+static void trainFinish(GameUi *ui) { /* the conversation goes on as it was */
+    ui->trainStage = 0;
+    memcpy(ui->talkRows, ui->trainRows, sizeof(ui->talkRows));
+    ui->talkRowCount = ui->trainRowCount;
+    ui->talkExtraCount = 0;
+    ui->talkListShown = true;
+}
+
+/*
+ * The bonus points (RunItemServiceRecipientLoop, yendor2.asm:16130): the member's sheet again (the detail sheet's picture and numbers) with BONUS POINTS at (144, 93), what is left at (171, 103)
+ * and CLOSE at (165, 113) (0x36 while there are points, 0x7B and 0xF at none). A left click on an attribute or a skill (the click table DS:0x6522, regions 4-9 the six attributes
+ * [+0x3C..], 10-22 the skills [+0x58..]) spends a point on its current value (999 at most, else the beep); the right button takes one back unless it is down to the maximum ([+0x7C..], [+0x98..]);
+ * with no points left a left click is refused. CLOSE, Escape or C leave, once nothing is left to spend.
+ */
+static void trainBonusDraw(GameUi *ui) {
+    GameSession *s = ui->session;
+    const uint8_t *record = sessionPartyRecord(s, ui->trainSlot);
+    uint16_t roles[5];
+    char text[16];
+    for (unsigned i = 0; i < 5; i++) {
+        roles[i] = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 2 * i);
+    }
+    if (!record) {
+        return;
+    }
+    detailSheetDraw(&ui->renderer, record, saveHeaderGetU16(&s->save, SaveHeaderPartySlots + 2 * ui->trainSlot), roles);
+    fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 0x90, 0x5D, quoteText(ui, 0x812E, 0x845B, text, sizeof(text)), 0x0F, 0, FontTransparent);
+    snprintf(text, sizeof(text), "%u", ui->trainBonus);
+    fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 0xAB, 0x67, text, 0x0F, 0, FontTransparent);
+    quoteText(ui, 0x8536, 0x885D, text, sizeof(text));
+    if (text[0]) {
+        char first[2] = {text[0], 0};
+        int x = fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 0xA5, 0x71, first, ui->trainBonus ? 0x36 : 0x7B, 0, FontTransparent);
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, x, 0x71, text + 1, ui->trainBonus ? 0x36 : 0x0F, 0, FontTransparent);
+    }
+}
+
+static bool trainBonusClick(GameUi *ui, int x, int y, bool right) {
+    GameSession *s = ui->session;
+    uint8_t *record = sessionPartyRecord(s, ui->trainSlot);
+    unsigned region = uiRegionHit(s->game, UiRegionsItemService, x, y);
+    if (!record) {
+        return true;
+    }
+    if (!right && region == 3) {
+        if (!ui->trainBonus) {
+            trainFinish(ui);
+        }
+        return true;
+    }
+    if (!right && !ui->trainBonus) {
+        flashWarning(ui);
+        return true;
+    }
+    if (region < 4) {
+        return true;
+    }
+    unsigned current = region <= 9 ? 0x3C + 2 * (region - 4) : 0x58 + 2 * (region - 10);
+    uint16_t value = partyGetU16(record, current), maximum = partyGetU16(record, current + 0x40);
+    if (!right) {
+        if (value >= 999) {
+            flashWarning(ui);
+        } else {
+            partySetU16(record, current, (uint16_t)(value + 1));
+            ui->trainBonus--;
+        }
+    } else if (value == maximum) {
+        flashWarning(ui);
+    } else {
+        partySetU16(record, current, (uint16_t)(value - 1));
+        ui->trainBonus++;
+    }
+    partyRefreshCarryCapacityAndAttributeBonuses(record);
+    partyRecomputeEquipmentStatBonuses(record, &s->items, s->game);
+    return true;
+}
+
+static void trainStart(GameUi *ui) {
+    ui->trainStage = 1;
+    ui->trainTicks = TrainSparkleTicks;
+    ui->trainSlot = ui->session->talkSpeaker;
+    memcpy(ui->trainRows, ui->talkRows, sizeof(ui->trainRows));
+    ui->trainRowCount = ui->talkRowCount;
+    ui->trainListShown = ui->talkListShown;
+    effect(ui, 0x0E);
+}
+
+/* A key or a click: the sparkle gives way to the summary, the summary to the conversation. */
+static bool trainAdvance(GameUi *ui) {
+    if (ui->trainStage == 1) {
+        trainSummaryShow(ui);
+    } else if (ui->trainStage == 2) {
+        ui->trainBonus = ui->session->training.bonusPoints;
+        if (ui->trainBonus) {
+            ui->trainStage = 3;
+        } else {
+            trainFinish(ui);
+        }
+    } else if (ui->trainStage == 3) { /* only Escape and C are heard (and only with nothing left to spend) */
+        return true;
+    } else {
+        return false;
+    }
+    return true;
+}
+
 static void talkStep(GameUi *ui, const ConversationStep *step) {
     GameSession *s = ui->session;
     if (!step->topic) {
@@ -3165,6 +3351,10 @@ static void talkStep(GameUi *ui, const ConversationStep *step) {
         return;
     }
     SessionService service = sessionTalkService(s, step, NULL);
+    if (s->training.done) {
+        s->training.done = false;
+        trainStart(ui);
+    }
     if (s->quoteKind == SessionQuoteNoGold) { /* the quote stays on the screen, with the refusal under it */
         memcpy(ui->talkRows, keptRows, sizeof(keptRows));
         ui->talkRowCount = keptCount;
@@ -3606,6 +3796,15 @@ static bool talkSelect(GameUi *ui, unsigned member) {
 }
 
 static bool talkKey(GameUi *ui, UiKey key) { /* 1-9 choose a topic, Escape the last one listed (the way out); the first key only lets the greeting go and shows the list */
+    if (ui->trainStage == 3) {
+        if ((key == UiKeyEscape || key == 'c') && !ui->trainBonus) {
+            trainFinish(ui);
+        }
+        return true;
+    }
+    if (trainAdvance(ui)) {
+        return true;
+    }
     if (ui->reading) { /* a readable item's text: a key turns the page, Escape (or the last page) puts it away */
         readAdvance(ui, key == UiKeyEscape);
         return true;
@@ -4186,6 +4385,9 @@ static bool dialogClick(GameUi *ui, int x, int y) {
 }
 
 static bool talkClick(GameUi *ui, int x, int y) {
+    if (trainAdvance(ui)) {
+        return true;
+    }
     if (ui->reading) {
         readAdvance(ui, false);
         return true;
@@ -4514,6 +4716,9 @@ static bool clickDispatch(GameUi *ui, int x, int y, bool right) {
             mountClick(ui, x, y);
         }
         return true;
+    }
+    if (ui->trainStage == 3) { /* the bonus points: the right button takes a point back */
+        return trainBonusClick(ui, x, y, right);
     }
     if (right && ui->overlay != UiOverlayNone && ui->overlay != UiOverlayTitle) { /* the right button backs out */
         return press(ui, UiKeyEscape);

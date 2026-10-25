@@ -101,8 +101,13 @@ typedef struct {
         int x, y;
         uint8_t colour;
         char text[48];
-    } talkExtra[3];        /* words written over the dialog apart from its rows: the trainer's level number, "YOU DON'T HAVE ENOUGH GOLD." */
+    } talkExtra[16];       /* words written over the dialog apart from its rows: the trainer's level number, "YOU DON'T HAVE ENOUGH GOLD." */
     unsigned talkExtraCount;
+    unsigned trainStage;   /* a paid training: 1 the sparkle on the face, 2 the level-up summary waiting for a key, 3 the bonus points to spend (UseTrainingItem) */
+    unsigned trainTicks, trainSlot, trainBonus;
+    char trainRows[16][DialogLineChars + 1]; /* the conversation as it was, which comes back after the summary */
+    unsigned trainRowCount;
+    bool trainListShown;
     bool sellMode;         /* the inventory is the sell screen of a SELL ITEMS topic (RunSellItemScreen) */
     unsigned sellMask;     /* what the NPC takes: the topic's argument */
     uint16_t sellPanelWas; /* the panel mode the sell screen found (map flags & 0x7000) */

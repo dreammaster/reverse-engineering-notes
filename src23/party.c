@@ -392,7 +392,7 @@ const PartyClassPromotionThresholds *partyClassPromotionThresholds(GameKind game
     return game == GameYendor2 ? &kYendor2 : &kYendor3;
 }
 
-static int partyScalePercentRounded(int value, int percent) {
+int partyScalePercentRounded(int value, int percent) {
     return (value * percent + 50) / 100;
 }
 

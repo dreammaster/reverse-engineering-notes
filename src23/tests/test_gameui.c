@@ -296,6 +296,33 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
     check("the right button on a face opens that member's inventory alone", ui.overlay == UiOverlayDolls && ui.dollMask == 1);
     gameUiKey(&ui, UiKeyEscape, false);
     check("(and Escape closes it)", ui.overlay == UiOverlayNone);
+    {   /* the bonus points after a training: a click on an attribute spends one, the right button takes it back, CLOSE only when none are left */
+        uint8_t *hero = sessionPartyRecord(s, 0);
+        unsigned strength = partyGetU16(hero, 0x3C), maximum = partyGetU16(hero, 0x7C);
+        ui.overlay = UiOverlayTalk;
+        ui.trainStage = 3;
+        ui.trainSlot = 0;
+        ui.trainBonus = 2;
+        gameUiClick(&ui, 40, 38, false);
+        check("a click on the Strength row spends a bonus point on it", partyGetU16(hero, 0x3C) == strength + 1 && ui.trainBonus == 1);
+        gameUiClick(&ui, 40, 38, true);
+        check("the right button takes it back", partyGetU16(hero, 0x3C) == strength && ui.trainBonus == 2);
+        partySetU16(hero, 0x3C, (uint16_t)maximum);
+        gameUiClick(&ui, 40, 38, true);
+        check("... but not below the maximum", partyGetU16(hero, 0x3C) == maximum && ui.trainBonus == 2);
+        gameUiClick(&ui, 180, 116, false);
+        check("CLOSE does nothing while points are left", ui.trainStage == 3);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("neither does Escape", ui.trainStage == 3);
+        gameUiClick(&ui, 40, 38, false);
+        gameUiClick(&ui, 40, 38, false);
+        gameUiClick(&ui, 40, 38, false);
+        check("with none left a click is refused", ui.trainBonus == 0 && partyGetU16(hero, 0x3C) == maximum + 2);
+        gameUiClick(&ui, 180, 116, false);
+        check("CLOSE leaves when nothing is left", ui.trainStage == 0);
+        partySetU16(hero, 0x3C, (uint16_t)strength);
+        ui.overlay = UiOverlayNone;
+    }
     gameUiShowTitle(&ui);
     check("E enters the game", gameUiKey(&ui, 'e', false) && ui.overlay == UiOverlayNone);
     gameUiDraw(&ui);

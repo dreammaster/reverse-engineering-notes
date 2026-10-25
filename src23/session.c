@@ -2004,6 +2004,9 @@ static SessionService serviceByType(GameSession *s, const ConversationStep *step
         if (arg & 4) {
             partyCheckForLevelUp(member, s->game);
         } else if (arg & 2) {
+            unsigned classBefore = partyGetU16(member, PartyFieldClass);
+            int bonus = partyScalePercentRounded(partyGetStatMax(member, PartyStatCharisma), 13);
+            s->training.done = false;
             if (partyApplyTraining(member, s->game, &s->save, *cost) != PartyTrainOutcomeApplied) {
                 s->quoteKind = SessionQuoteNoGold;
                 s->talk.masks = s->maskBackup;
@@ -2011,6 +2014,9 @@ static SessionService serviceByType(GameSession *s, const ConversationStep *step
                 return SessionServiceFailed;
             }
             partyRecomputeEquipmentStatBonuses(member, &s->items, s->game);
+            s->training.done = true;
+            s->training.classBefore = classBefore;
+            s->training.bonusPoints = (unsigned)(bonus > 15 ? 15 : bonus);
         } else if (arg & 0x800) {
             if (!dialogTrainingQuote(npc, member, *cost)) {
                 s->quoteKind = SessionQuoteTrainTooHigh;

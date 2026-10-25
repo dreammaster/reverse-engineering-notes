@@ -476,6 +476,9 @@ typedef enum {
  */
 PartyTrainOutcome partyApplyTraining(uint8_t *record, GameKind game, SaveGame *save, const Bcd4 cost);
 
+/* ScaleByPercentRounded (yendor2.asm:38474): (value * percent + 50) / 100, the original's rounding (the bonus points UseTrainingItem hands out are 13% of the Charisma maximum, 15 at most). */
+int partyScalePercentRounded(int value, int percent);
+
 /*
  * RefreshCarryCapacityAndAttributeBonuses (yendor2.asm:18962,
  * instruction-identical in Chapter 3): recomputes PartyStatCarryCapacity

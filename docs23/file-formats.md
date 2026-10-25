@@ -6900,6 +6900,19 @@ topic menu is waiting (no topic runs, unlike the shop). `sessionSellHeld` / `ses
 **The clue book's first-time picture** (`PlayClueBookOpenAnimation` :8293) fades in two ranges of palette block 5 separately, with everything else black: colours 0-0xAE (DARK UNION) over 63 rounds, 30 BIOS ticks, then 0xB0-0xBE
 (The On-Line Clue Book), 35 ticks, then the whole palette out. `clueSplashPalette` steps it every fade tick (27.5 ms): title in 0-15, held 60 ticks (1.65 s), words in 16 ticks, held 70 ticks (1.9 s), out 16 ticks (178 in all).
 
+### A paid training: the sparkle, the summary and the bonus points (decoded 2026-10-31)
+
+`UseTrainingItem` (yendor2.asm:21510), bit-2 (accept) branch, after the gold is paid and `partyApplyTraining`'s stats are done: (1) `PrepareTrapEffectSlots(3)` + `ApplyEffectAndDrawIconBar`: sound 0xE and category 7 picture 1 (the
+sparkle, transparent) over the trained member's face (the face region's top-left, (8 + 58 k, 148)) until the sound is done, then the panels are redrawn; (2) `CheckAndAnnounceLevelUp`, then the dialog frame
+(`DrawItemUseConfirmDialog`: category 1 picture 3 at (15, 23) with the trainer's face) with, from x = 22: YOU ARE NOW LEVEL - (DS:0x80A8, Chapter 3 0x83D5) at y = 67 and the level at x = 148 in 0x8A; WITH HEALTH POINTS -
+(0x80BE / 0x83EB) at 73 and the maximum HP; for a member with magic (max MP +0x94 nonzero) MAGIC POINTS - (0x80D4 / 0x8401) at 79 and the maximum MP, and at an EVEN level when the class unlocks a spell then
+(`partyAbilityUnlocksAtLevel` of the class before the promotion) YOU HAVE LEARNED SOME SPELLS (0x8111 / 0x843E, 0xAA) at 85; at a promotion CONGRATULATIONS!! / YOU ARE NOW A (0x84FA / 0x8821, 2 rows at 91, 97, 0xF) with the
+new class name at (106, 97) in 0x8A; and NOW YOU CAN SPEND YOUR BONUS / POINTS... (0x80EA / 0x8417, 2 rows at 109, 115, 0xD); a key; (3) `RunItemServiceRecipientLoop` (:16130): the member's sheet (the detail sheet's picture
+and numbers) with BONUS POINTS (0x812E / 0x845B) at (144, 93), the points left at (171, 103) and CLOSE (0x8536 / 0x885D, two-tone) at (165, 113); the points are 13% of the Charisma maximum, 15 at most (`word_2E38E`, taken
+before the stats grow). A left click on an attribute (table DS:0x6522 results 4-9, [+0x3C..]) or a skill (10-22, [+0x58..+0x70]) adds 1 to its CURRENT value (999 at most, else the beep) and takes a point; the right
+button takes one back unless the value equals its maximum ([+0x7C..], [+0x98..]); with no points left a left click beeps; CLOSE (result 3), Escape or C leave only when none are left. Then the conversation goes on.
+(`CheckAndAnnounceLevelUp`'s panel message when the experience already covers the next level is not drawn.) `gameui.c` `trainStart` / `trainSummaryShow` / `trainBonusDraw` / `trainBonusClick`, `session.c` (`training`).
+
 ### The member's sheet and the faces (checked 2026-10-31)
 
 In Yendor 2 a LEFT click on a face does nothing (`start` loc_104B2 -> `HandlePartyStatusPanelInput`: the face's region result 1 is below its first test; the other regions are the info lists) -- the sheet (`RunPartyMemberDetailScreen`,

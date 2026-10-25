@@ -133,6 +133,11 @@ typedef struct GameSession {
     unsigned translatorSlot;   /* the member who translates for an NPC with a speaker mode (the fourth role): his or her Linguistics decides how much of the words is readable */
     unsigned quoteKind;        /* SessionQuote: what the last service step asks the front end to put on the dialog (ShowHealingCostPrompt); cleared by the next step */
     unsigned quoteNumber;      /* the level a trainer quotes / allows */
+    struct {                   /* the last training paid for (UseTrainingItem's bit-2 branch): what the level-up screen shows */
+        bool done;
+        unsigned classBefore;  /* the class before a promotion (+10 at the two thresholds) -- the abilities unlock by it */
+        unsigned bonusPoints;  /* word_2E38E: 13% of the Charisma maximum, 15 at most, to spend on the stat sheet afterwards */
+    } training;
     uint16_t serviceType;      /* the healer's last quoted type (word_3298E) / the challenge's outcome */
     Bcd4 serviceCost;          /* the last quote of a healer, trainer or challenge, packed BCD (512Ah) */
     uint16_t travelFlags;   /* Chapter 3's ds:0CEF9 (saved in the header at +0x1C); Chapter 2 keeps its place bits in light.litFlags */
