@@ -39,6 +39,10 @@ SCENARIOS = {
     "abbey": ("j{sleep:6000}{left}{sleep:2000}e{sleep:8000}{shot:abbey_gate.png}" + "{up}{sleep:700}" * 4 + "{left}{sleep:700}"
               "{shot:abbey_hall.png}t{sleep:500}{left}{sleep:2500}{shot:abbey_talk.png}{quit}",
               ["abbey_gate.png", "abbey_hall.png", "abbey_talk.png"], 240),
+    # "paula-jester" fixture: Hardluck the abbey jester one square north (an empty line ends a conversation)
+    "talk": ("j{sleep:6000}t{sleep:500}{up}{sleep:2500}{shot:talk_greet.png}name{enter}{sleep:3000}{shot:talk_name.png}"
+             "job{enter}{sleep:3000}{shot:talk_job.png}bye{enter}{sleep:3000}{shot:talk_bye.png}{quit}",
+             ["talk_greet.png", "talk_name.png", "talk_job.png", "talk_bye.png"], 240),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
 
@@ -140,6 +144,8 @@ def main():
         keys, shots, timeout = SCENARIOS[name]
         if name in ("play", "stats", "look"):
             install_fixture("paula")
+        elif name == "talk":
+            install_fixture("paula-jester")
         elif name == "abbey":
             install_fixture("paula-abbey")
         elif name == "overworld":

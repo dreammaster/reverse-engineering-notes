@@ -11,5 +11,9 @@
  "play1.png": "ebb7ef7929f2956c9400f4e86d1ae0f9d721edc3",
  "play2.png": "8c5eafd5a5e70104e482a28cef6db83ac38a0204",
  "stats1.png": "a6158b2de2565a09cf54489e75fa3438679cf8c9",
- "stats_select.png": "21f9781d559eb5711cdcc0727578680c0537ffad"
+ "stats_select.png": "21f9781d559eb5711cdcc0727578680c0537ffad",
+ "talk_bye.png": "db523f5671baf42ff1fcc33e7194e657e0817fd1",
+ "talk_greet.png": "b5c1cf0a17a895cce43909f342733d5d27fe3cf8",
+ "talk_job.png": "9ba3180121fd9c79d19f92210f46a8299f270a10",
+ "talk_name.png": "8e5f047478ab0fa593f73a47efb248268b5801a3"
 }
