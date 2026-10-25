@@ -239,8 +239,7 @@ static void clueEntryName(const GameUi *ui, unsigned category, unsigned id, char
     out[0] = 0;
     if (category == 1) {
         LocationName name;
-        if (locationBlockNamed(game, ui->worldDat, ui->worldSize, id - 1) &&
-            locationName(game, ui->worldDat, ui->worldSize, id - 1, game == GameYendor2 ? " LEVEL X" : " LEVEL XXX", game == GameYendor2 ? " MAP X" : " MAP XXX", &name)) {
+        if (locationName(game, ui->worldDat, ui->worldSize, id - 1, game == GameYendor2 ? " LEVEL X" : " LEVEL XXX", game == GameYendor2 ? " MAP X" : " MAP XXX", &name)) { /* every id the list names has a name: index 0 is a name too (PORT HOPE, the starting map) */
             snprintf(out, ClueNameSize, "%s%s", name.name, name.suffix);
         }
     } else if (category == 2) {
@@ -305,8 +304,71 @@ static void clueSplashPalette(GameUi *ui) {
     ui->paletteStamp++;
 }
 
+/*
+ * The whole-screen fades round the book (TriggerFullPaletteFadeOut / TriggerFullPaletteFadeIn, 63 rounds each, about 0.9 s = ClueFadeTicks animation ticks): ShowClueBook fades the game out, shows the picture (the
+ * first time) and fades the help screen in; leaving it fades the book out and the game in. The picture that fades out is the last one drawn (`clueFrozen`); `clueBase` is the game's palette.
+ */
+typedef enum { ClueStageNone, ClueStageOutGame, ClueStageInHelp, ClueStageOutBook, ClueStageInGame } ClueStage;
+
+static void clueFadeFrame(GameUi *ui, bool in, unsigned tick) {
+    unsigned round = (tick + 1) * FadeRounds / ClueFadeTicks;
+    if (in) {
+        paletteFadeInFrame(ui->clueSavedPalette, round, ui->palette);
+    } else {
+        for (unsigned i = 0; i < PaletteBytes; i++) {
+            ui->palette[i] = ui->clueSavedPalette[i] > round ? (uint8_t)(ui->clueSavedPalette[i] - round) : 0;
+        }
+    }
+    ui->paletteStamp++;
+}
+
+static void clueStageStart(GameUi *ui, ClueStage stage) {
+    ui->clueStage = stage;
+    ui->clueStageTick = 0;
+    if (stage == ClueStageInHelp || stage == ClueStageInGame) { /* the screen is black until the first round */
+        memset(ui->palette, 0, PaletteBytes);
+        ui->paletteStamp++;
+    }
+}
+
+/* One animation tick of a fade; at its end the next part begins. */
+static void clueStageTick(GameUi *ui) {
+    ClueStage stage = (ClueStage)ui->clueStage;
+    clueFadeFrame(ui, stage == ClueStageInHelp || stage == ClueStageInGame, ui->clueStageTick);
+    if (++ui->clueStageTick < ClueFadeTicks) {
+        return;
+    }
+    ui->clueStage = ClueStageNone;
+    switch (stage) {
+    case ClueStageOutGame:
+        if (ui->clueSplash) { /* the picture: the screen is black and its first colours are about to come in */
+            clueSplashPalette(ui);
+        } else {
+            clueStageStart(ui, ClueStageInHelp);
+        }
+        break;
+    case ClueStageOutBook:
+        gameUiAmbientMusic(ui);
+        clueStageStart(ui, ClueStageInGame);
+        break;
+    default:
+        memcpy(ui->palette, ui->clueSavedPalette, PaletteBytes);
+        ui->paletteStamp++;
+        break;
+    }
+}
+
+static void clueSettle(GameUi *ui) { /* the fades are over (a key does not wait for them) */
+    while (ui->clueStage) {
+        clueStageTick(ui);
+    }
+}
+
 /* ShowClueBook: the music of track 21, PlayClueBookOpenAnimation (once: category 0 picture 12 on the palette of block 5) and ShowClueBookHelpScreen -- the list of the F keys -- which stays until one is pressed. */
 static void clueOpen(GameUi *ui) {
+    clueSettle(ui);
+    memcpy(ui->clueFrozen, ui->cursorBase, sizeof(ui->clueFrozen));
+    memcpy(ui->clueSavedPalette, ui->palette, PaletteBytes);
     ui->overlay = UiOverlayClue;
     ui->clueHelp = true;
     ui->clueNag = false;
@@ -315,27 +377,29 @@ static void clueOpen(GameUi *ui) {
     if (ui->host.music) {
         ui->host.music(ui->host.ctx, 21);
     }
-    uint32_t block = paletteBlockOffset(ui->session->game, 5);
-    if (!ui->clueSeen && block + PaletteBytes <= ui->worldSize) {
-        memcpy(ui->clueSavedPalette, ui->palette, sizeof(ui->palette));
+    if (!ui->clueSeen && paletteBlockOffset(ui->session->game, 5) + PaletteBytes <= ui->worldSize) {
         ui->clueSplash = ClueSplashTicks;
-        clueSplashPalette(ui);
     }
     ui->clueSeen = true;
+    clueStageStart(ui, ClueStageOutGame);
 }
 
 static void clueSplashEnd(GameUi *ui) {
     if (ui->clueSplash) {
         ui->clueSplash = 0;
-        memcpy(ui->palette, ui->clueSavedPalette, sizeof(ui->palette));
-        ui->paletteStamp++;
+        clueStageStart(ui, ClueStageInHelp); /* the help screen fades in on the black the picture left */
     }
 }
 
 static void clueClose(GameUi *ui) {
-    clueSplashEnd(ui);
+    if (ui->clueSplash) {
+        ui->clueSplash = 0;
+        memcpy(ui->palette, ui->clueSavedPalette, PaletteBytes);
+        ui->paletteStamp++;
+    }
+    memcpy(ui->clueFrozen, ui->cursorBase, sizeof(ui->clueFrozen));
     ui->overlay = UiOverlayNone;
-    gameUiAmbientMusic(ui);
+    clueStageStart(ui, ClueStageOutBook);
 }
 
 static void clueListOpen(GameUi *ui, unsigned category) {
@@ -2173,6 +2237,7 @@ static void alchemyDraw(GameUi *ui) {
 
 void gameUiSettle(GameUi *ui) {
     GameSession *s = ui->session;
+    clueSettle(ui);
     if (s->doorOpening) {
         sessionDoorFinish(s);
         ui->doorTicks = 0;
@@ -2211,7 +2276,10 @@ bool gameUiAnimate(GameUi *ui) {
             changed = true;
         }
     }
-    if (ui->clueSplash) {
+    if (ui->clueStage) {
+        clueStageTick(ui);
+        changed = true;
+    } else if (ui->clueSplash) {
         if (--ui->clueSplash == 0) {
             ui->clueSplash = 1;
             clueSplashEnd(ui);
@@ -2904,6 +2972,12 @@ void gameUiDraw(GameUi *ui) {
         sessionClearIneligible(ui->session);
     }
     wipeCheck(ui);
+    if (ui->clueStage == ClueStageOutGame || ui->clueStage == ClueStageOutBook) { /* the picture that is fading out */
+        memcpy(ui->screen, ui->clueFrozen, sizeof(ui->screen));
+        memcpy(ui->cursorBase, ui->screen, sizeof(ui->cursorBase));
+        ui->cursorBaseValid = true;
+        return;
+    }
     drawScreen(ui);
     if (ui->catalogActive && ((ui->overlay != UiOverlayTalk && ui->overlay != UiOverlayDetail) || (ui->overlay == UiOverlayTalk && ui->shopFromTalk))) {
         catalogDraw(ui);
@@ -3822,6 +3896,7 @@ bool gameUiKey(GameUi *ui, UiKey key, bool ctrl) {
 
 static bool gameUiKeyInner(GameUi *ui, UiKey key, bool ctrl) {
     wipeCheck(ui);
+    clueSettle(ui);
     ui->mountList = 0;
     if (ui->vision) { /* WaitForKeypressTickingMusic: any key brings the party's own view back */
         ui->vision = false;
@@ -4366,6 +4441,7 @@ bool gameUiClick(GameUi *ui, int x, int y, bool right) {
 
 static bool gameUiClickInner(GameUi *ui, int x, int y, bool right) {
     wipeCheck(ui);
+    clueSettle(ui);
     if (ui->vision) {
         ui->vision = false;
         sessionVisionEnd(ui->session);

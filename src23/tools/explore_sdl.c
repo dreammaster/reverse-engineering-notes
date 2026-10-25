@@ -748,7 +748,7 @@ int main(int argc, char **argv) {
         if (dirty) {
             if (colourStamp != g_ui.paletteStamp) { /* the cycled colours (gameUiPalette) moved on */
                 colourStamp = g_ui.paletteStamp;
-                for (unsigned i = 0xD0; i < 0x100; i++) { /* the cycled colours and the sky */
+                for (unsigned i = 0; i < 0x100; i++) { /* the cycled colours and the sky, and whatever a fade (the clue book's) has done to the rest */
                     unsigned r = palette[i * 3] & 63, g = palette[i * 3 + 1] & 63, b = palette[i * 3 + 2] & 63;
                     colours[i] = 0xFF000000u | (((r << 2) | (r >> 4)) << 16) | (((g << 2) | (g >> 4)) << 8) | ((b << 2) | (b >> 4));
                 }

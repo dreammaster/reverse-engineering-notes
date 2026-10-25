@@ -126,7 +126,10 @@ typedef struct {
     bool cursorBaseValid;
     unsigned clueSplash;      /* animation ticks the clue book's first-time picture (category 0 picture 12, palette block 5) still has to show; any key or click ends it */
     bool clueSeen;            /* the picture has been shown (the latch g_clueBookNavFlags 0x10) */
-    uint8_t clueSavedPalette[768];
+    uint8_t clueSavedPalette[768]; /* the palette the clue book's fades start from and end on: the game's */
+    unsigned clueStage;       /* ClueStage: a whole-screen fade of the book's opening or closing under way (TriggerFullPaletteFadeOut / In) */
+    unsigned clueStageTick;
+    uint8_t clueFrozen[ViewScreenWidth * ViewScreenHeight]; /* the picture that fades out (the game's, or the book's last) */
     bool freeMaps; /* a convenience the original does not have: M and W work without the map items and the Mapping skill (EXPLORE_FREEMAPS=1 in the SDL tool) */
     int mouseX, mouseY;    /* the pointer, from gameUiMouseMove: where the cursor item is drawn */
     bool targeting;        /* K: the crosshair cursor waits for a click on the view (WaitForTargetClick) */

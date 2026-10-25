@@ -26,7 +26,7 @@ typedef struct {
     int kind; /* 0 none, 1 map suffix, 2 level suffix */
 } LocationName;
 
-/* True if the block has a name (name index not 0): the blocks the clue book lists. */
+/* True if the block has a name index other than 0 -- which is NOT what the clue book lists by: its ids come from the executable, and index 0 is a name too ("PORT HOPE", map 25). */
 bool locationBlockNamed(GameKind game, const uint8_t *worldDat, size_t size, unsigned block);
 
 /* False if the block number or the file is out of range. */

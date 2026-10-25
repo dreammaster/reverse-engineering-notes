@@ -440,6 +440,8 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         check("F8 does nothing without the executable", ui.overlay == UiOverlayNone);
         gameUiSetExe(&ui, &exe);
         gameUiKey(&ui, UiKeyF8, false);
+        check("F8 starts the fade of the game out (the picture is still the game's)", ui.overlay == UiOverlayClue && ui.clueStage != 0 && ui.clueSplash > 0);
+        gameUiSettle(&ui);
         gameUiDraw(&ui);
         check("F8 opens the clue book with its first-time picture (category 0 picture 12), which a key puts away", ui.overlay == UiOverlayClue && ui.clueSplash > 0 && sum(ui.screen) > 0);
         {   /* the fades: the title first (colours 0-0xAE), the words (0xB0-0xBE) after it, then everything out */
@@ -464,8 +466,12 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
             for (unsigned i = 0; i < 40 && ui.clueSplash; i++) {
                 gameUiAnimate(&ui);
             }
-            restored = ui.clueSplash == 0 && memcmp(ui.palette, ui.clueSavedPalette, sizeof(ui.palette)) == 0;
-            check("it ends by itself, the palette of the game back", restored);
+            check("it ends by itself, on black, the help screen fading in", ui.clueSplash == 0 && ui.clueStage != 0 && ui.palette[0] == 0 && ui.palette[0xF * 3] == 0);
+            for (unsigned i = 0; i < 12 && ui.clueStage; i++) {
+                gameUiAnimate(&ui);
+            }
+            restored = ui.clueStage == 0 && memcmp(ui.palette, ui.clueSavedPalette, sizeof(ui.palette)) == 0;
+            check("... and the palette of the game is back once it is in", restored);
             gameUiKey(&ui, UiKeyEscape, false);
             gameUiKey(&ui, UiKeyF8, false);
             check("(F8 again: no picture, the help screen)", ui.clueSplash == 0 && ui.clueHelp);
@@ -547,6 +553,16 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         gameUiDraw(&ui);
         unsigned maps = sum(ui.screen);
         check("F1 lists the maps", ui.clueScreen == 1 && ui.clueCategory == 1 && ui.clueList.count > 14 && maps != list);
+        {   /* every map the list names has a name -- index 0 is one too (PORT HOPE, the starting map) */
+            bool allNamed = true, portHope = false;
+            for (unsigned i = 0; i < ui.clueList.count; i++) {
+                LocationName name;
+                bool ok = locationName(game, world, size, ui.clueEntries[i].id - 1, " LEVEL X", " MAP X", &name);
+                allNamed = allNamed && ok && name.name[0];
+                portHope = portHope || (ok && strcmp(name.name, "PORT HOPE") == 0 && name.kind == 0);
+            }
+            check("every entry of the map list has a name, the starting map's PORT HOPE among them", allNamed && (game != GameYendor2 || portHope));
+        }
         gameUiKey(&ui, UiKeyEnter, false);
         gameUiDraw(&ui);
         unsigned mapPage = sum(ui.screen);

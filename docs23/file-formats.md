@@ -6875,6 +6875,16 @@ spell lists 8-10 of 31-52, items 5-8 of 13-52 per group; REGISTER.EXE (Chapter 3
 and the id as record number), and the display name is the block's two 12-character lines joined by a space ("CARNIVOROUS SPIDER", "OGRE CHIEF"). Reading them as monster *type* ids (several types share a block) gave WORKER ANT nine times.
 `monsterRecordFromBlock`. A list of more than 14 entries ends with "a  MORE  b" at (129, 167), the a / b only where there is a page to turn to.
 
+### The clue book's whole-screen fades, and map names (checked 2026-10-29)
+
+`ShowClueBook` (:1256) fades the game screen to black (`TriggerFullPaletteFadeOut`: every nonzero component loses 1 a round for 63 rounds), draws the first-time picture (when it is the first time) and `ShowClueBookHelpScreen`,
+and only then `TriggerFullPaletteFadeIn` (round r shows component clamp(target - 63 + r, 0, target)) brings the help screen up; leaving fades the book out, restores the game and fades it in. The standalone does each as 8
+animation ticks of the palette (`clueStageTick`), over the last picture drawn (`clueFrozen`), and any key or click finishes a fade at once. The SDL tool used to convert only the colours 0xD0-0xFF of the palette when it changed, so
+the picture's own palette (block 5) and every fade were never seen in the window -- it converts all 256 now.
+
+The clue book's map list names each entry by `locationName` alone: a block's name index is a 0-BASED index into the 20-byte names (block 24, the starting map, is index 0: "PORT HOPE"); the earlier test "name index != 0" blanked
+it. The list's ids come from the executable.
+
 ### The sell screen and the clue book's picture, in stages (decoded 2026-10-28)
 
 **SELL ITEMS** (a topic with flag 0x4000, e.g. the smithy's: `UseItem` :13253 -> `ConfirmAndValidatePartyTarget` (WHO WILL BARTER?) -> `RunSellItemScreen` :19845): the resource panel is shown (the mode is kept and comes back),
