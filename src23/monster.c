@@ -207,6 +207,17 @@ bool monsterRecordSpawn(uint8_t *record, const MonsterCatalog *catalog, unsigned
     return true;
 }
 
+bool monsterRecordFromBlock(uint8_t *record, const MonsterCatalog *catalog, unsigned blockIndex) {
+    const uint8_t *block = blockIndex ? monsterCatalogBlock(catalog, blockIndex) : NULL;
+    if (!block) {
+        return false;
+    }
+    memset(record, 0, MonsterRecordSize);
+    memcpy(record + MonsterBlockOffset, block, MonsterBlockSize);
+    monsterSetU16(record, MonsterFieldHealth, monsterGetU16(record, MonsterFieldMaxHealth));
+    return true;
+}
+
 void monsterRecordPlace(uint8_t *record, uint16_t x, uint16_t y, uint16_t gridOriginRow, uint16_t gridOriginCol) {
     monsterSetU16(record, MonsterFieldWorldX, x);
     monsterSetU16(record, MonsterFieldWorldY, y);

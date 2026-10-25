@@ -111,6 +111,9 @@ typedef struct {
     bool restPause;        /* an interrupted rest's message stays until a key (the combat's panels wait behind it) */
     uint8_t cursorBase[ViewScreenWidth * ViewScreenHeight]; /* the last picture before the cursor item went on it (gameUiRedrawCursor) */
     bool cursorBaseValid;
+    unsigned clueSplash;      /* animation ticks the clue book's first-time picture (category 0 picture 12, palette block 5) still has to show; any key or click ends it */
+    bool clueSeen;            /* the picture has been shown (the latch g_clueBookNavFlags 0x10) */
+    uint8_t clueSavedPalette[768];
     bool freeMaps; /* a convenience the original does not have: M and W work without the map items and the Mapping skill (EXPLORE_FREEMAPS=1 in the SDL tool) */
     int mouseX, mouseY;    /* the pointer, from gameUiMouseMove: where the cursor item is drawn */
     bool targeting;        /* K: the crosshair cursor waits for a click on the view (WaitForTargetClick) */

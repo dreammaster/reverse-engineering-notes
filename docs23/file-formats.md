@@ -6861,6 +6861,20 @@ one, `TickStatusEffects`: put out, sound 0x28, not 9); ids 8-0xF are other thing
 spent, only zeroes the extra word (Chapter 2 turns the item into its "used" id + 1). `TickWorldAilments` sweeps the six belt slots first in both games, then each member's eight main slots (the belt was missing in the standalone).
 `LightSourceState::chapter3`.
 
+### The clue book's opening, its lists and what "disabled" means (checked 2026-10-26)
+
+`ShowClueBook` (yendor2.asm:1256): music track 21, `PlayClueBookOpenAnimation` -- category 0 picture 12 ("DARK UNION: The On-Line Clue Book") on palette block 5, about 3.6 s, **only the first time** (the latch
+`g_clueBookNavFlags` 0x10, set again on leaving) -- and then `ShowClueBookHelpScreen`: the list of the F keys, which is where the book rests; F1-F5 open the lists, F6 the walk through, Tab brings the help back, Escape (the EXIT
+tab, command 8) closes the book -- from a first-level list too. (The standalone used to open on the walk through and to fall back to it from a list.) `gameui.c` `clueOpen` / `clueClose`.
+
+**"Disabled" entries are the shareware lock, not unvisited places.** `DrawClueEntryList` (:4542) draws an entry dim (0x05; the selected one 0x84) when the program is not registered (`g_uiScratchFlags4` bit 0) and the entry's
+flag word (`[+2]`) lacks 0x8000; `RunClueEntryMenu` then answers its choice with the registration reminder. Nothing of the saved game enters. In SW.EXE the open entries are: maps 5 of 55, monsters 7 of 61, spells 16 of 105, the class
+spell lists 8-10 of 31-52, items 5-8 of 13-52 per group; REGISTER.EXE (Chapter 3) opens everything. The SDL tool now behaves so by default (`EXPLORE_REGISTERED=1` opens all, as it used to by default).
+
+**The monster list is the catalog's blocks, not types.** Its entry ids (1-61) are numbers of the monster catalog's BLOCKS (`LoadClueBookMonsterEntry` / `BuildMonsterDisplayName`: `WorldDat_setBlock5` with the block 0x32 table
+and the id as record number), and the display name is the block's two 12-character lines joined by a space ("CARNIVOROUS SPIDER", "OGRE CHIEF"). Reading them as monster *type* ids (several types share a block) gave WORKER ANT nine times.
+`monsterRecordFromBlock`. A list of more than 14 entries ends with "a  MORE  b" at (129, 167), the a / b only where there is a page to turn to.
+
 ### A merchant inside a conversation (UseKeyItem, decoded 2026-10-24)
 
 A topic with flag 0x8000 (or 0x4000: the sell screen) first goes through `ConfirmAndValidatePartyTarget` (yendor2.asm:19859): with nobody in the first role (`g_partyRoleAssignment1`, the haggler) `ShowConfirmPrompt 10` --

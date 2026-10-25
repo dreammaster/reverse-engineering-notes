@@ -226,7 +226,7 @@ static void clueEntryName(const GameUi *ui, unsigned category, unsigned id, char
         }
     } else if (category == 2) {
         uint8_t record[MonsterRecordSize];
-        if (monsterRecordSpawn(record, &ui->session->monsters, id)) {
+        if (monsterRecordFromBlock(record, &ui->session->monsters, id)) { /* the master list's ids are catalog block numbers */
             monsterGetName(record, out);
         }
     } else if (category == 3 || (category >= 5 && category <= 10)) {
@@ -246,6 +246,40 @@ static void clueEntryName(const GameUi *ui, unsigned category, unsigned id, char
             snprintf(out, ClueNameSize, "%s", name);
         }
     }
+}
+
+/* ShowClueBook: the music of track 21, PlayClueBookOpenAnimation (once: category 0 picture 12 on the palette of block 5) and ShowClueBookHelpScreen -- the list of the F keys -- which stays until one is pressed. */
+static void clueOpen(GameUi *ui) {
+    ui->overlay = UiOverlayClue;
+    ui->clueHelp = true;
+    ui->clueNag = false;
+    ui->clueScreen = 0;
+    ui->cluePage = 1;
+    if (ui->host.music) {
+        ui->host.music(ui->host.ctx, 21);
+    }
+    uint32_t block = paletteBlockOffset(ui->session->game, 5);
+    if (!ui->clueSeen && block + PaletteBytes <= ui->worldSize) {
+        memcpy(ui->clueSavedPalette, ui->palette, sizeof(ui->palette));
+        memcpy(ui->palette, ui->worldDat + block, PaletteBytes);
+        ui->paletteStamp++;
+        ui->clueSplash = 33; /* about 3.6 seconds: the two waits of 30 and 35 BIOS ticks */
+    }
+    ui->clueSeen = true;
+}
+
+static void clueSplashEnd(GameUi *ui) {
+    if (ui->clueSplash) {
+        ui->clueSplash = 0;
+        memcpy(ui->palette, ui->clueSavedPalette, sizeof(ui->palette));
+        ui->paletteStamp++;
+    }
+}
+
+static void clueClose(GameUi *ui) {
+    clueSplashEnd(ui);
+    ui->overlay = UiOverlayNone;
+    gameUiAmbientMusic(ui);
 }
 
 static void clueListOpen(GameUi *ui, unsigned category) {
@@ -283,7 +317,7 @@ static void clueEntryOpen(GameUi *ui) { /* Enter on the selected entry */
         }
     } else {
         ui->clueScreen = 2;
-        if (category == 2 && monsterRecordSpawn(ui->clueMonster, &ui->session->monsters, id)) {
+        if (category == 2 && monsterRecordFromBlock(ui->clueMonster, &ui->session->monsters, id)) {
             clueMonsterAnimStart(ui->clueMonster, &ui->clueAnim);
         }
     }
@@ -2048,6 +2082,13 @@ bool gameUiAnimate(GameUi *ui) {
             changed = true;
         }
     }
+    if (ui->clueSplash) {
+        if (--ui->clueSplash == 0) {
+            ui->clueSplash = 1;
+            clueSplashEnd(ui);
+        }
+        changed = true;
+    }
     if (ui->pressTicks > 0) { /* a pressed button comes up */
         ui->pressTicks--;
         changed = true;
@@ -2097,8 +2138,7 @@ static void clueBack(GameUi *ui) { /* Escape: one level up */
         }
         return;
     }
-    ui->clueScreen = 0;
-    ui->cluePage = 1;
+    clueClose(ui); /* from the first list Escape is the EXIT tab (command 8): the book closes */
 }
 
 static void drawClueList(GameUi *ui, const char *heading) {
@@ -2115,6 +2155,16 @@ static void drawClueList(GameUi *ui, const char *heading) {
         rows[shown].known = ui->clueEntries[i].free;
     }
     clueEntryListDraw(&ui->renderer, rows, shown, (int)(ui->clueList.selected - ui->clueList.first), ui->clueRegistered);
+    if (ui->clueList.count > ClueListRows) { /* "a  MORE  b" at (129, 167): the letters are there only where there is more to turn to (DrawClueEntryList) */
+        char more[16] = "a  MORE  b";
+        if (!clueListCanPageUp(&ui->clueList)) {
+            more[0] = ' ';
+        }
+        if (!clueListCanPageDown(&ui->clueList)) {
+            more[9] = ' ';
+        }
+        fontDrawString(game, 0, ui->screen, ViewScreenWidth, 129, 167, more, 0x0D, 0, FontTransparent);
+    }
     uint16_t flags = (uint16_t)(ClueTabFirstBit >> clueTab(ui->clueCategory));
     flags |= clueListCanPageUp(&ui->clueList) ? 0x100 : 0;
     flags |= clueListCanPageDown(&ui->clueList) ? 0x80 : 0;
@@ -2256,6 +2306,11 @@ static void drawClueCategory(GameUi *ui) {
 
 static void drawClue(GameUi *ui) {
     GameKind game = ui->session->game;
+    if (ui->clueSplash) {
+        memset(ui->screen, 0, sizeof(ui->screen));
+        viewDrawPicture(&ui->renderer, 0, 12, 1, 1, false, 0);
+        return;
+    }
     if (ui->clueScreen) {
         drawClueCategory(ui);
         return;
@@ -2281,6 +2336,10 @@ static void drawClue(GameUi *ui) {
  * marker, on an item page the "+N" variant; Escape backs out and from the first level closes the book. */
 static bool clueKey(GameUi *ui, UiKey key) {
     static const unsigned kFKeyCategory[5] = {1, 2, 3, 4, 11};
+    if (ui->clueSplash) { /* the first-time picture goes at a key */
+        clueSplashEnd(ui);
+        return true;
+    }
     if (key >= UiKeyF1 && key <= UiKeyF5) {
         clueListOpen(ui, kFKeyCategory[key - UiKeyF1]);
     } else if (ui->clueScreen == 2) {
@@ -2316,7 +2375,7 @@ static bool clueKey(GameUi *ui, UiKey key) {
             clueEntryOpen(ui);
         }
     } else if (key == UiKeyEscape) {
-        ui->overlay = UiOverlayNone;
+        clueClose(ui);
     } else if (key == 9 /* Tab */) {
         ui->clueHelp = !ui->clueHelp;
     } else if (key == UiKeyF6) {
@@ -3227,11 +3286,7 @@ static bool commandKey(GameUi *ui, UiKey key, bool ctrl) {
         break;
     case MainActionClueBook:
         if (ui->exe) {
-            ui->overlay = UiOverlayClue;
-            ui->clueHelp = false;
-            ui->clueNag = false;
-            ui->clueScreen = 0;
-            ui->cluePage = 1;
+            clueOpen(ui);
         }
         break;
     case MainActionGameDialog:
@@ -3549,8 +3604,12 @@ static bool clueClick(GameUi *ui, int x, int y) {
     if (tab >= 2 && tab <= 7) { /* the tabs: maps, monsters, spells, magic users, items, the walk through */
         return press(ui, UiKeyF1 + (int)(tab - 2));
     }
+    if (ui->clueSplash) { /* the first-time picture goes at a click */
+        clueSplashEnd(ui);
+        return true;
+    }
     if (tab == 8) { /* EXIT */
-        ui->overlay = UiOverlayNone;
+        clueClose(ui);
         return true;
     }
     unsigned scroll = uiRegionHit(game, UiRegionsClueScroll, x, y);

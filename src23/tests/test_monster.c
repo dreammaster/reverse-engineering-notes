@@ -343,6 +343,14 @@ static void testRealYendor2(void) {
     }
     check("type 1 has no death flag", monsterRecordSpawn(rec, &g_catalog, 1) && monsterGetU16(rec, MonsterFieldFlagOnDeath) == 0);
 
+    {   /* the clue book's master list names catalog BLOCKS: 1 ALLIGATOR ... 6 CARNIVOROUS SPIDER ... 61 RED DRAGON */
+        char name[MonsterNameBufferSize];
+        check("block 0 and a block past the end are no monsters", !monsterRecordFromBlock(rec, &g_catalog, 0) && !monsterRecordFromBlock(rec, &g_catalog, g_catalog.blockCount));
+        check("block 6 is the CARNIVOROUS SPIDER, at full health", monsterRecordFromBlock(rec, &g_catalog, 6) && (monsterGetName(rec, name), strncmp(name, "CARNIVOROUS SPIDER", 18) == 0) &&
+                                                                    monsterGetU16(rec, MonsterFieldHealth) == monsterGetU16(rec, MonsterFieldMaxHealth) && monsterGetU16(rec, MonsterFieldType) == 0);
+        check("block 61 is the RED DRAGON", monsterRecordFromBlock(rec, &g_catalog, 61) && (monsterGetName(rec, name), strncmp(name, "RED DRAGON", 10) == 0));
+    }
+
     checkInvariants("yendor2", GameYendor2);
 }
 

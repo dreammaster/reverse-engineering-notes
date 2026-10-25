@@ -350,6 +350,13 @@ unsigned monsterCatalogBlockIndex(const MonsterCatalog *catalog, unsigned typeId
  */
 bool monsterRecordSpawn(uint8_t *record, const MonsterCatalog *catalog, unsigned typeId);
 
+/*
+ * The record of a catalog BLOCK by its own index (1 to blockCount - 1), type id 0: what the clue book's monster list reads -- its ids are the master list's block numbers (LoadClueBookMonsterEntry,
+ * BuildMonsterDisplayName: WorldDat_setBlock5 with the block 0x32 table and the entry's id as the record number), not monster type ids (several types share one block). False for block 0 or one
+ * out of range.
+ */
+bool monsterRecordFromBlock(uint8_t *record, const MonsterCatalog *catalog, unsigned blockIndex);
+
 /* Sets world position and the grid cell offset ((y - originRow) * 0x270 + (x - originCol) * 8). */
 void monsterRecordPlace(uint8_t *record, uint16_t x, uint16_t y, uint16_t gridOriginRow, uint16_t gridOriginCol);
 

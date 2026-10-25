@@ -440,8 +440,15 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         gameUiSetExe(&ui, &exe);
         gameUiKey(&ui, UiKeyF8, false);
         gameUiDraw(&ui);
+        check("F8 opens the clue book with its first-time picture (category 0 picture 12), which a key puts away", ui.overlay == UiOverlayClue && ui.clueSplash > 0 && sum(ui.screen) > 0);
+        gameUiKey(&ui, 'q', false);
+        gameUiDraw(&ui);
+        unsigned helpFirst = sum(ui.screen);
+        check("... leaving the help screen with the list of the F keys", ui.clueSplash == 0 && ui.clueHelp && ui.clueScreen == 0 && helpFirst > 0);
+        gameUiKey(&ui, UiKeyF6, false);
+        gameUiDraw(&ui);
         unsigned page1 = sum(ui.screen);
-        check("F8 opens the clue book on the walk through's first page", ui.overlay == UiOverlayClue && ui.cluePage == 1 && page1 > 0);
+        check("F6 is the walk through's first page", ui.overlay == UiOverlayClue && ui.cluePage == 1 && !ui.clueHelp && page1 > 0 && page1 != helpFirst);
         gameUiKey(&ui, 'q', false);
         gameUiDraw(&ui);
         check("Q turns to page 2, which draws differently", ui.cluePage == 2 && sum(ui.screen) != page1);
@@ -500,7 +507,9 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         gameUiKey(&ui, UiKeyEscape, false);
         check("Escape goes back to the list", ui.clueScreen == 1 && ui.clueList.count == types && ui.overlay == UiOverlayClue);
         gameUiKey(&ui, UiKeyEscape, false);
-        check("and once more to the walk through", ui.clueScreen == 0 && ui.overlay == UiOverlayClue);
+        check("and once more closes the book (the EXIT command)", ui.overlay == UiOverlayNone);
+        gameUiKey(&ui, UiKeyF8, false);
+        check("F8 again opens on the help screen at once (the picture is shown only the first time)", ui.overlay == UiOverlayClue && ui.clueSplash == 0 && ui.clueHelp && ui.clueScreen == 0);
         gameUiKey(&ui, UiKeyF1, false);
         gameUiDraw(&ui);
         unsigned maps = sum(ui.screen);
@@ -514,6 +523,7 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         check("Right picks a legend marker when the map has one", ui.clueMarker == 0 ? sum(ui.screen) != mapPage : sum(ui.screen) == mapPage);
         gameUiKey(&ui, UiKeyEscape, false);
         gameUiKey(&ui, UiKeyEscape, false);
+        gameUiKey(&ui, UiKeyF8, false);
         gameUiKey(&ui, UiKeyF3, false);
         gameUiDraw(&ui);
         unsigned spells = sum(ui.screen);
@@ -523,7 +533,8 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         check("Enter shows the spell's page", ui.clueScreen == 2 && sum(ui.screen) != spells);
         gameUiKey(&ui, UiKeyEscape, false);
         gameUiKey(&ui, UiKeyEscape, false);
-        check("Escape twice is back at the walk through", ui.clueScreen == 0);
+        check("Escape twice closes the book", ui.overlay == UiOverlayNone);
+        gameUiKey(&ui, UiKeyF8, false);
         gameUiKey(&ui, UiKeyF4, false);
         gameUiDraw(&ui);
         unsigned classes = sum(ui.screen);
@@ -540,7 +551,8 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         gameUiKey(&ui, UiKeyEscape, false);
         check("Escape returns to the class list on the same class", ui.clueCategory == 4 && ui.clueScreen == 1 && ui.clueList.selected == 1);
         gameUiKey(&ui, UiKeyEscape, false);
-        check("and then to the walk through", ui.clueScreen == 0);
+        check("and then closes the book", ui.overlay == UiOverlayNone);
+        gameUiKey(&ui, UiKeyF8, false);
         gameUiKey(&ui, UiKeyF5, false);
         gameUiDraw(&ui);
         unsigned groups = sum(ui.screen);
@@ -573,7 +585,8 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         check("group 2 shows the legend of the attribute enhancers", ui.clueScreen == 2 && ui.clueCategory == 11 && legend != groups);
         gameUiKey(&ui, UiKeyEscape, false);
         gameUiKey(&ui, UiKeyEscape, false);
-        check("and then to the walk through", ui.clueScreen == 0);
+        check("and then closes the book", ui.overlay == UiOverlayNone);
+        gameUiKey(&ui, UiKeyF8, false);
         gameUiKey(&ui, 'e', false);
         check("the game keys are swallowed inside the clue book", ui.overlay == UiOverlayClue);
         check("Escape closes the clue book without quitting", gameUiKey(&ui, UiKeyEscape, false) && ui.overlay == UiOverlayNone);
