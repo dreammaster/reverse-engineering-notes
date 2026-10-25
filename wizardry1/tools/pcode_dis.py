@@ -24,8 +24,9 @@ SYSTEM.INTERP). Codefile structure (all little-endian, no byte-swap):
 Jumps:
   FJP/UJP  1 signed byte d. d>=0 (i.e. <0x80): IP += d (forward, from after the
            operand). d<0 (>=0x80): target = word@(PATanchor+d), self-relative.
-  XJP      word-align IP; i16 min, i16 max; (max-min+1) self-relative words;
-           then the default falls through past the table.
+  XJP      word-align IP; i16 min, i16 max; a 2-byte default `UJP` (executed
+           when the selector is out of range); then (max-min+1) self-relative
+           words (target = slot - *slot).  Execution never falls past the table.
 
 Usage:
     python tools/pcode_dis.py segments <SYSTEM.PASCAL>
@@ -290,6 +291,9 @@ def decode_one(d, ip, anchor, pretty=False):
 
     if kind == "ubt":
         v = d[p]
+        if v in (10, 12):               # BYTE / WORD array compare: + length operand
+            n, p2 = rd_big(d, p + 1)
+            return (f"{mnem:<6} {CMP_TYPE.get(v, v)} {n}" if pretty else None), "-", p2
         return (f"{mnem:<6} {CMP_TYPE.get(v, v)}" if pretty else None), "-", p + 1
 
     if kind == "ub_ub":
@@ -353,7 +357,7 @@ def decode_one(d, ip, anchor, pretty=False):
         lo = rd16s(d, q)
         hi = rd16s(d, q + 2)
         ncase = hi - lo + 1
-        tbl = q + 4
+        tbl = q + 6                     # q+4 holds the out-of-range UJP (2 bytes)
         tgts = []
         for i in range(max(ncase, 0)):
             slot = tbl + 2 * i
