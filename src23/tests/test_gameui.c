@@ -1699,6 +1699,7 @@ static void testTalkShop(GameKind game, const char *envName, const char *default
             s->facing = SaveFacingNorth;
             sessionRebuild(s);
             saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments, 0);
+            saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 6, saveGetPartySlot(&s->save, 0)); /* a translator, for a merchant with a foreign tongue */
             gameUiKey(&ui, ' ', false);
             snprintf(text, sizeof(text), "%s: Space on the merchant starts the conversation", label);
             check(text, s->talking && ui.overlay == UiOverlayTalk);
@@ -1782,6 +1783,33 @@ static void testTalkEnds(const char *envName, const char *defaultDir) {
         check("the key takes the party to the title screen (exit code 1)", ui.overlay == UiOverlayTitle);
         gameUiKey(&ui, 'e', false);
         check("E on the title screen goes back into the game", ui.overlay == UiOverlayNone);
+    }
+    if (findObject(s, WorldObjectFlagTalker, 48, &col, &row)) { /* a stranger with a foreign tongue (speaker mode 4) */
+        s->x = col;
+        s->y = row;
+        s->facing = SaveFacingNorth;
+        sessionRebuild(s);
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + 6, 0);
+        gameUiKey(&ui, ' ', false);
+        check("an NPC with a speaker mode asks WHO WILL TRANSLATE? (message 0xB) and does not begin yet", ui.pickActive && ui.pickScroll == 8 && ui.pickPrompt == 0x0B && !s->talking && ui.overlay == UiOverlayNone);
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("giving the question up: no conversation", !ui.pickActive && !s->talking && ui.overlay == UiOverlayNone);
+        partySetStat(sessionPartyRecord(s, 1), PartyStatLinguistics, 5);
+        gameUiKey(&ui, ' ', false);
+        gameUiKey(&ui, UiKeyF2, false);
+        check("a member answers: the conversation begins and the role is kept", s->talking && ui.overlay == UiOverlayTalk && s->translatorSlot == 1 && saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + 6) == saveGetPartySlot(&s->save, 1));
+        DocumentReadability poor = sessionTalkReadability(s);
+        partySetStat(sessionPartyRecord(s, 1), PartyStatLinguistics, 300);
+        DocumentReadability fluent = sessionTalkReadability(s);
+        check("his or her Linguistics decides how much is readable: none at 5, all at 300", poor.clearWordsOfFive == 0 && poor.fontOffset == 2 + 2 * 1 && fluent.clearWordsOfFive == 5);
+        for (unsigned i = 0; i < 6 && ui.overlay == UiOverlayTalk; i++) {
+            gameUiKey(&ui, UiKeyEscape, false);
+        }
+        gameUiKey(&ui, ' ', false);
+        check("with the role filled the next talk begins at once", !ui.pickActive && s->talking);
+        for (unsigned i = 0; i < 6 && ui.overlay == UiOverlayTalk; i++) {
+            gameUiKey(&ui, UiKeyEscape, false);
+        }
     }
     if (findObject(s, WorldObjectFlagTalker, 7, &col, &row)) { /* the healers: the frame round the selected member, the quote, switching members */
         s->x = col;

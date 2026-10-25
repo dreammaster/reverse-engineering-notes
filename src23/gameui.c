@@ -151,9 +151,8 @@ void gameUiAmbientMusic(GameUi *ui) {
  * font; a reader below the first threshold sees every character in the document's foreign font (offset / 2: 1, 3 or 2), and in between the first 1, 2 or 4 words of every five -- counted afresh in each
  * row -- are in the normal font and the others foreign.
  */
-static void drawReadRow(GameUi *ui, int x, int y, const char *row) {
+static void drawReadRow(GameUi *ui, int x, int y, const char *row, const DocumentReadability *r) {
     const GameSession *s = ui->session;
-    const DocumentReadability *r = &s->readability;
     unsigned foreign = r->fontOffset / 2;
     unsigned word = 0;
     for (const char *p = row; *p;) {
@@ -179,7 +178,10 @@ static void drawTalk(GameUi *ui) {
     }
     for (unsigned i = 0; i < ui->talkRowCount; i++) {
         if (ui->reading) {
-            drawReadRow(ui, 22, 67 + 6 * (int)i, ui->talkRows[i]);
+            drawReadRow(ui, 22, 67 + 6 * (int)i, ui->talkRows[i], &s->readability);
+        } else if (s->talk.npc && conversationNeedsSpeaker(s->talk.npc)) { /* an NPC with a foreign tongue: the translator reads as much as his or her Linguistics allows */
+            DocumentReadability readable = sessionTalkReadability(s);
+            drawReadRow(ui, 22, 67 + 6 * (int)i, ui->talkRows[i], &readable);
         } else {
             fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 22, 67 + 6 * (int)i, ui->talkRows[i], 0x0D, 0, FontTransparent);
         }
@@ -1565,7 +1567,18 @@ static void transmuteAnswer(GameUi *ui, int row) {
     unlockReport(ui);
 }
 
+static void talkOpen(GameUi *ui, unsigned npcId);
+
 static void pickAnswer(GameUi *ui, unsigned member) {
+    if (ui->pickScroll == 8) { /* who translates */
+        if (!sessionChooseTranslator(ui->session, member)) {
+            flashWarning(ui);
+            return;
+        }
+        pickCancel(ui);
+        talkOpen(ui, ui->talkNpc);
+        return;
+    }
     if (ui->pickScroll == 7) { /* who barters */
         if (!sessionChooseBarterer(ui->session, member)) {
             flashWarning(ui);
@@ -2915,6 +2928,28 @@ static void talkStep(GameUi *ui, const ConversationStep *step) {
     }
 }
 
+/* LoadItemData: an NPC with a foreign tongue first asks WHO WILL TRANSLATE? (message 0xB) unless the fourth role has someone; giving the question up, the conversation does not begin. */
+static void talkOpen(GameUi *ui, unsigned npcId) {
+    GameSession *s = ui->session;
+    ConversationStep first;
+    if (sessionNpcNeedsTranslator(s, npcId)) {
+        unsigned translator;
+        if (!sessionTranslator(s, &translator)) {
+            ui->talkNpc = npcId;
+            ui->pickActive = true;
+            ui->pickChest = false;
+            ui->pickScroll = 8;
+            ui->pickPrompt = 0x0B;
+            return;
+        }
+    }
+    if (sessionTalkStart(s, npcId, 0, &first)) {
+        ui->overlay = UiOverlayTalk;
+        ui->talkListShown = false; /* the greeting first */
+        talkStep(ui, &first);
+    }
+}
+
 /* The use command on the object ahead (sessionInteract): chests are looted, destinations travelled to, the Chapter 2 ending is played; the rest shows up in the status line. */
 /* A message the session names in the executable's data segment: its lines, joined, into the log. */
 
@@ -2940,12 +2975,7 @@ static void useAhead(GameUi *ui) {
         passwordOpen(ui, use.promptId);
         break;
     case SessionInteractTalker: {
-        ConversationStep first;
-        if (sessionTalkStart(s, use.value, 0, &first)) {
-            ui->overlay = UiOverlayTalk;
-            ui->talkListShown = false; /* the greeting first */
-            talkStep(ui, &first);
-        }
+        talkOpen(ui, use.value);
         break;
     }
     case SessionInteractStoryRefused:

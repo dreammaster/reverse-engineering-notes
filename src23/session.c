@@ -2105,9 +2105,13 @@ bool sessionTalkStart(GameSession *s, unsigned npcId, unsigned speaker, Conversa
     if (!npc || s->combat.active || s->combat.wiped || !voice) {
         return false;
     }
-    if (conversationNeedsSpeaker(npc) && (partyGetU16(voice, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
-        return false; /* LoadItemData asks again for a member who can act */
+    unsigned translator = speaker;
+    if (conversationNeedsSpeaker(npc)) {
+        if (!sessionTranslator(s, &translator) && (partyGetU16(voice, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+            return false; /* LoadItemData asks again for a member who can act */
+        }
     }
+    s->translatorSlot = translator;
     s->talkSpeaker = speaker;
     s->quoteKind = SessionQuoteNone;
     memset(s->serviceCost, 0, sizeof(s->serviceCost));
@@ -3129,6 +3133,46 @@ bool sessionExaminer(GameSession *s, unsigned *memberSlot) {
         }
     }
     return false;
+}
+
+bool sessionNpcNeedsTranslator(const GameSession *s, unsigned npcId) {
+    const uint8_t *npc = dialogNpc(&s->dialogs, npcId);
+    return npc && conversationNeedsSpeaker(npc);
+}
+
+enum { TranslatorRoleWord = 6 };
+
+bool sessionTranslator(GameSession *s, unsigned *memberSlot) {
+    unsigned id = saveHeaderGetU16(&s->save, SaveHeaderRoleAssignments + TranslatorRoleWord);
+    const uint8_t *member = id ? saveGamePartyRecordById(&s->save, id) : NULL;
+    if (member && (partyGetU16(member, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+        saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + TranslatorRoleWord, 0);
+        member = NULL;
+    }
+    for (unsigned slot = 0; member && slot < SavePartyMemberSlots; slot++) {
+        if (saveGetPartySlot(&s->save, slot) == id) {
+            *memberSlot = slot;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool sessionChooseTranslator(GameSession *s, unsigned memberSlot) {
+    const uint8_t *member = sessionPartyRecord(s, memberSlot);
+    if (!member || (partyGetU16(member, PartyFieldStatusFlags) & PartyStatusIncapacitated)) {
+        return false;
+    }
+    saveHeaderSetU16(&s->save, SaveHeaderRoleAssignments + TranslatorRoleWord, saveGetPartySlot(&s->save, memberSlot));
+    return true;
+}
+
+DocumentReadability sessionTalkReadability(const GameSession *s) {
+    const uint8_t *npc = s->talk.npc;
+    unsigned mode = npc ? dialogGetU16(npc, DialogNpcSpeakerMode) : 0;
+    const uint8_t *member = sessionPartyRecord((GameSession *)s, s->translatorSlot);
+    unsigned difficulty = mode == 2 ? 8 : mode == 6 ? 4 : mode == 4 ? 2 : 0;
+    return documentClassifyReadability(s->game, (uint16_t)difficulty, member ? (int16_t)partyGetStat(member, PartyStatLinguistics) : 0);
 }
 
 bool sessionBarterer(GameSession *s, unsigned *memberSlot) {

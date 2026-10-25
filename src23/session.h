@@ -127,6 +127,7 @@ typedef struct GameSession {
     bool talking;
     unsigned talkSpeaker;      /* the party slot (0-3) of the member who talks: the one the healer, trainer and challenge services act on */
     DialogState maskBackup;    /* the topic masks before the last topic was chosen: an acceptance the gold does not cover leaves them as they were (UseHealingItem returns before ApplyItemEffectFlags) */
+    unsigned translatorSlot;   /* the member who translates for an NPC with a speaker mode (the fourth role): his or her Linguistics decides how much of the words is readable */
     unsigned quoteKind;        /* SessionQuote: what the last service step asks the front end to put on the dialog (ShowHealingCostPrompt); cleared by the next step */
     unsigned quoteNumber;      /* the level a trainer quotes / allows */
     uint16_t serviceType;      /* the healer's last quoted type (word_3298E) / the challenge's outcome */
@@ -350,6 +351,18 @@ SessionInteract sessionInteract(GameSession *session);
 typedef enum { SessionServiceNone, SessionServiceDone, SessionServiceFailed, SessionServiceNeedText, SessionServiceNeedScreen, SessionServiceNeedItem } SessionService;
 
 bool sessionTalkStart(GameSession *session, unsigned npcId, unsigned speaker, ConversationStep *first);
+
+/*
+ * An NPC with a speaker mode (header word +2: 2, 6 or 4, the three foreign scripts of documents -- 31 of Chapter 2's) speaks a language only a translator reads: LoadItemData (yendor2.asm:22286) asks WHO WILL
+ * TRANSLATE? (ShowConfirmPrompt 0xB) unless the fourth role (g_partyRoleAssignment4) has a member; one who cannot act is refused with the warning and the role freed, and giving the question up means the
+ * conversation does not begin. `sessionNpcNeedsTranslator` says whether an NPC asks; `sessionTranslator` is the quiet check of the role; `sessionChooseTranslator` the answer. sessionTalkStart takes the
+ * role's member -- else `speaker` -- as the translator. Everything the NPC says is then drawn through DrawIndentedTextColumn (ComputeCostMessageIndentMode): `sessionTalkReadability` gives how many words of
+ * five the translator's Linguistics (+0x6E) reads, by the same thresholds as the documents (document.h), the mode 2 / 6 / 4 being their easy / medium / hard script.
+ */
+bool sessionNpcNeedsTranslator(const GameSession *session, unsigned npcId);
+bool sessionTranslator(GameSession *session, unsigned *memberSlot);
+bool sessionChooseTranslator(GameSession *session, unsigned memberSlot);
+DocumentReadability sessionTalkReadability(const GameSession *session);
 
 /*
  * What a healer's or trainer's quote shows (ShowHealingCostPrompt, yendor2.asm:20687): the dialog's words become IT WILL COST <n> GOLD / <what it buys> / (blank) / IS THAT PRICE AGREEABLE?, with the gold

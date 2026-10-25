@@ -6875,6 +6875,15 @@ spell lists 8-10 of 31-52, items 5-8 of 13-52 per group; REGISTER.EXE (Chapter 3
 and the id as record number), and the display name is the block's two 12-character lines joined by a space ("CARNIVOROUS SPIDER", "OGRE CHIEF"). Reading them as monster *type* ids (several types share a block) gave WORKER ANT nine times.
 `monsterRecordFromBlock`. A list of more than 14 entries ends with "a  MORE  b" at (129, 167), the a / b only where there is a page to turn to.
 
+### NPCs with a foreign tongue: WHO WILL TRANSLATE? (decoded 2026-10-27)
+
+An NPC whose header word +2 (`DialogNpcSpeakerMode`) is 2, 6 or 4 -- 31 of Chapter 2's, among them the Governor's town folk -- speaks a language. `LoadItemData` (yendor2.asm:22286) asks `ShowConfirmPrompt 0xB`, **WHO WILL
+TRANSLATE?** (the fourth role, `g_partyRoleAssignment4`, header +0xA4 + 6; a click on a face or F1-F4) unless the role already has a member; a member who cannot act is refused with the warning and the role freed, and giving the
+question up (Escape, the right button) means the conversation does not begin. (The healers' greeting, mode 0, asks nothing: it selects a member with the frame instead.) Everything such an NPC says -- the topic's words and the
+quotes -- is drawn through `ComputeCostMessageIndentMode` / `DrawIndentedTextColumn`: the translator's Linguistics (+0x6E) is compared against the document tiers (document.h; Chapter 2 mode 2: 65 / 70 / 75 / 80, mode 6: 75 / 80 / 85 /
+90, mode 4: 85 / 90 / 95 / 105), below the first the words are all in the foreign font, then 1, 2, 4 of every five words are readable, from the last all. `sessionNpcNeedsTranslator`, `sessionTranslator`,
+`sessionTalkReadability`, `gameui.c` `talkOpen`.
+
 ### The healers' and trainers' dialog: the selected member and the quote (decoded 2026-10-26)
 
 A service NPC (healer, trainer, challenger, mount seller: the type word its greeting loads) works on ONE member of the party: `ShowItemUsagePreview` (:22390) selects the first (`g_selectedPartySlotPtr` := 0x95EB), `DrawPartyStatusIconRow`
