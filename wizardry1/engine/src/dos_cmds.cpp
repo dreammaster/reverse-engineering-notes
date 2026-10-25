@@ -1,6 +1,8 @@
 // Commands that drive the DOS-faithful screens (wiz::Dos / wiz::Console).
 #include "dos_assets.h"
+#include "wiz/camp_dos.h"
 #include "wiz/castle.h"
+#include "wiz/maze_dos.h"
 #include "wiz/roller_dos.h"
 #include "wiz/shops.h"
 #include "wiz/platform.h"
@@ -57,6 +59,7 @@ int cmdCastleTest(int argc, char **argv) {
             pos = e + 1;
         }
     }
+    dos.setRngProbe(&rng);
     CastleWorld world{party, roster, a.sc, rng, "", ""};
     Shop shop;
     shop.seedFrom(a.sc);
@@ -65,12 +68,19 @@ int cmdCastleTest(int argc, char **argv) {
     Shops shops(dos, sworld, castle);
     RollerWorld rworld{party, roster, a.sc, rng, "", ""};
     RollerScreen roller(dos, rworld);
+    MazeGlobals mg;
+    MazeWorld mworld{party, roster, a.sc, rng, "", "", mg, castle.partyWindow()};
+    MazeScreen maze(dos, mworld);
+    CampWorld campWorld{party, castle.partyWindow(), mg.protect, mg.g41};
+    Camp camp(dos, campWorld);
 
     // the WIZARDRY mainline's XGOTO dispatch, restricted to the segments ported so far
     int xgoto = XCASTLE;
     int member = -1;
     while (!dos.quit) {
         if (xgoto == XCASTLE || xgoto == XCASTLE2) {
+            mg.protect = mg.light = mg.identify = 0;      // CASTLE:1 clears the maze's spell timers
+            mg.g31 = mg.g29 = mg.g30 = 0; mg.randomStart = false; mg.g41 = 3;
             CastleResult r = castle.run(xgoto);
             xgoto = r.xgoto;
             member = r.member;
@@ -85,7 +95,22 @@ int cmdCastleTest(int argc, char **argv) {
             RollerResult r = roller.run(xgoto);
             if (r.windowClosed) break;
             xgoto = r.xgoto;
-        } else break;                                   // not ported yet: CAMP, maze, ...
+        } else if (xgoto == XMAZE_ENTRY) {                // SHOPS:31 -> UTILITIE:9/10
+            mg.x = mg.y = 0; mg.dir = 0; mg.level = -1; mg.g38 = mg.g39 = mg.g40 = 0;
+            maze.enter();
+            xgoto = 13;
+        } else if (xgoto == 13 || xgoto == 20) {          // UTILITIE:29 (derived stats: not ported)
+            xgoto = xgoto == 13 ? 12 : 7;
+        } else if (xgoto == 12) {                         // CAMP:1
+            CampResult r = camp.run(12);
+            if (r.windowClosed) break;
+            xgoto = r.xgoto;
+            if (r.inspect) break;                         // the character sheet: not ported yet
+        } else if (xgoto == 7) {                          // RUNNER:1
+            MazeResult r = maze.run();
+            if (r.windowClosed) break;
+            xgoto = r.xgoto;
+        } else break;                                   // not ported yet: ...
     }
     std::printf("dos -> xgoto %d member %d  party %d\n", xgoto, member, party.count());
     return 0;

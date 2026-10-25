@@ -28,6 +28,8 @@ public:
     void initScreen();
     // regression dumps: write NNN_KK.grid (composed screen + VRAM CRC) at every key wait
     void setGridDump(const std::string &dir) { dumpDir_ = dir; }
+    // regression dumps also record the RANDOM state (compared against the oracle's)
+    void setRngProbe(const class Rng *r) { rngProbe_ = r; }
 
     // ---- strings -------------------------------------------------------------
     std::string str(int n) const;                       // proc 38  GETSTR
@@ -42,6 +44,7 @@ public:
     void waitCR();               // proc 12
     // proc 32: a digit 0..max (RETURN = 0); anything else beeps.  -1 if the window closed.
     int  getNum(int max);
+    void sound(int) {}           // WIZARDRY:58 (CONUNIT selector 24): the PC speaker -- not modelled
     void pause(int units);       // CONUNIT selector 19 (units of ~2 ticks of 18.2 Hz); key aborts
     void present();              // push the composed screen to the platform
 
@@ -78,6 +81,7 @@ private:
     const StringPool &sp_;
     int pending_ = KEY_NONE;
     std::string dumpDir_;
+    const class Rng *rngProbe_ = nullptr;
     int dumpN_ = 0;
     void dumpGrid(int key);
 };

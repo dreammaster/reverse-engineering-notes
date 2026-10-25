@@ -71,6 +71,14 @@ void Dos::dumpGrid(int key) {
     }
     std::snprintf(b, sizeof b, "%08x", con.vramCrc());
     out += std::string("vram ") + b + "\n";
+    if (rngProbe_) {
+        u16 st[4];
+        rngProbe_->state(st);
+        std::snprintf(b, sizeof b, "%04x", st[0]);
+        out += std::string("rng ") + b;
+        for (int i = 1; i < 4; ++i) { std::snprintf(b, sizeof b, ",%04x", st[i]); out += b; }
+        out += "\n";
+    }
     if (FILE *f = std::fopen((dumpDir_ + name).c_str(), "wb")) {
         std::fwrite(out.data(), 1, out.size(), f);
         std::fclose(f);

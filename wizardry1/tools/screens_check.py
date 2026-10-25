@@ -37,6 +37,9 @@ SCEN = {
     'roller_class':  dict(cmd='castle-test', keys=r'ETIACL\rL'),
     'roller_create': dict(cmd='castle-test', keys=r'ETCZORK\r\rAA++++++++++++\r++++++++++\r++++\rCAYLR\r'),
     'roller_create_n': dict(cmd='castle-test', keys=r'ETCBEAR\rPW\rPW\rBC++++\r++++++++\rC\rEN'),
+    # the maze: Edge of Town -> M)AZE -> CAMP -> L)EAVE -> the first view (the stairs prompt)
+    'maze_enter':    dict(cmd='castle-test', keys=r'GAAC\rLEML'),
+    'maze_walk':     dict(cmd='castle-test', keys=r'GAAC\rLEMLNWWWDWWAWWXWWWWAWSSOOT5\rW'),
 }
 
 

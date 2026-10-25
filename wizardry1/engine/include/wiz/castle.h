@@ -58,6 +58,8 @@ public:
 
     // Drop the Castle's persistent windows (G10/G13) -- the maze / roller do this.
     void closeWindows();
+    // G10: the roster window the Castle opens and CAMP / the maze keep using
+    Win *&partyWindow() { return roster_; }
     void closeTitleWindow() { if (title_) d_.con.close(title_, false); }   // SHOPS:31 closes G13 only
 
 private:

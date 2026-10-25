@@ -14,7 +14,8 @@ import os, sys
 def load(path):
     rows = open(path).read().split('\n')
     cells = [r.split() for r in rows[:25]]
-    return cells, rows[25]
+    rng = next((r for r in rows[26:] if r.startswith('rng')), '')
+    return cells, rows[25], rng
 
 def grids(d):
     out = {}
@@ -36,14 +37,16 @@ def main():
         j = i + skip
         if j not in og:
             print(f'engine screen {i}: no oracle screen {j}'); bad += 1; continue
-        oc, ov = load(os.path.join(od, og[j]))
-        ec, ev = load(os.path.join(ed, eg[i]))
+        oc, ov, orng = load(os.path.join(od, og[j]))
+        ec, ev, erng = load(os.path.join(ed, eg[i]))
         diffs = [(x, y, oc[y][x], ec[y][x]) for y in range(25) for x in range(40) if oc[y][x] != ec[y][x]]
         key_o, key_e = og[j][4:6], eg[i][4:6]
-        status = 'ok' if not diffs and ov == ev else 'MISMATCH'
+        rng_bad = bool(erng) and bool(orng) and erng != orng and key_o != '00'   # RANDOM state (the oracle's idle spin at the end stirs it)
+        status = 'ok' if not diffs and ov == ev and not rng_bad else 'MISMATCH'
         if status != 'ok': bad += 1
         print(f'{i:3d} <-> {j:3d}  keys {key_e}/{key_o}  {status}'
-              + (f'  {len(diffs)} cells' if diffs else '') + ('' if ov == ev else f'  vram {ev[5:]} vs {ov[5:]}'))
+              + (f'  {len(diffs)} cells' if diffs else '') + ('' if ov == ev else f'  vram {ev[5:]} vs {ov[5:]}')
+              + (f'  rng {erng[4:]} vs {orng[4:]}' if rng_bad else ''))
         for x, y, o, e in diffs[:8]:
             print(f'      ({x},{y}) oracle {o}  engine {e}')
     print('bad:', bad)

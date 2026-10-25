@@ -56,6 +56,8 @@ public:
         return u16(ax & 0x7FFF);                                // == ax & 0x700F
     }
 
+    void state(u16 out[4]) const { for (int i = 0; i < 4; ++i) out[i] = s_[i]; }
+
     // RANDOM MOD n -- the game's idiom for a bounded roll.
     int mod(int n) { return n > 0 ? int(next() % u16(n)) : 0; }
 
