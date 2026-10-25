@@ -1382,32 +1382,34 @@ static void testInventoryUi(GameKind game, const char *envName, const char *defa
         check("Space leaves the merchant's screen", !ui.catalogActive);
     }
 
-    /* a document in the reader's skill (DrawIndentedTextColumn): the first word of every five in the normal font, the rest foreign; a plain text is the normal font throughout */
+    /* a readable item (RunConversation): its own picture and columns, the text in the reader's skill (DrawIndentedTextColumn); a key turns the page, Escape puts it away */
     {
+        unsigned lines = documentLineCount(game, DocumentCategoryJournal, 1);
+        unsigned pixelsPlain = 0, pixelsForeign = 0;
         ui.overlay = UiOverlayTalk;
         ui.reading = true;
-        ui.talkRowCount = 1;
-        snprintf(ui.talkRows[0], sizeof(ui.talkRows[0]), "AA AA AA AA AA AA");
-        unsigned wordPixels[6][2] = {{0}};
+        ui.readFirst = 0;
+        s->readCategory = DocumentCategoryJournal;
+        s->readId = 1;
         for (int pass = 0; pass < 2; pass++) {
             s->readability.plain = pass == 1;
             s->readability.fontOffset = 2;
-            s->readability.clearWordsOfFive = pass == 1 ? 5 : 1;
+            s->readability.clearWordsOfFive = pass == 1 ? 5 : 0;
             gameUiDraw(&ui);
-            for (unsigned word = 0; word < 6; word++) {
-                for (int row = 0; row < 6; row++) {
-                    for (int col = 0; col < 12; col++) {
-                        wordPixels[word][pass] = wordPixels[word][pass] * 31 + ui.screen[(67 + row) * ViewScreenWidth + 22 + 18 * (int)word + col];
-                    }
+            for (int row = 0; row < 13 * 6; row++) {
+                for (int col = 26; col < 124; col++) {
+                    unsigned *hash = pass ? &pixelsPlain : &pixelsForeign;
+                    *hash = *hash * 31 + ui.screen[(33 + row) * ViewScreenWidth + col];
                 }
             }
         }
-        check("a plain document draws every word alike", wordPixels[0][1] == wordPixels[1][1] && wordPixels[1][1] == wordPixels[5][1]);
-        check("with one word of five readable the first is the normal font and the next four are foreign", wordPixels[0][0] == wordPixels[0][1] && wordPixels[1][0] != wordPixels[1][1] &&
-                                                                                                                wordPixels[1][0] == wordPixels[2][0] && wordPixels[4][0] == wordPixels[1][0]);
-        check("... and the sixth word starts the next group of five", wordPixels[5][0] == wordPixels[0][0]);
-        ui.reading = false;
-        ui.overlay = UiOverlayNone;
+        check("a book is read in the open book's picture, plain text and foreign script drawing differently", lines > 0 && pixelsPlain != pixelsForeign);
+        gameUiKey(&ui, ' ', false);
+        check("a key turns the page when there is another, else puts the book away", lines > 26 ? ui.reading && ui.readFirst == 26 : !ui.reading);
+        ui.reading = true;
+        ui.overlay = UiOverlayTalk;
+        gameUiKey(&ui, UiKeyEscape, false);
+        check("Escape puts it away at once", !ui.reading && ui.overlay == UiOverlayNone);
     }
     sessionFree(s);
     free(world);

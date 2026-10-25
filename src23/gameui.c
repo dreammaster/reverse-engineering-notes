@@ -151,14 +151,14 @@ void gameUiAmbientMusic(GameUi *ui) {
  * font; a reader below the first threshold sees every character in the document's foreign font (offset / 2: 1, 3 or 2), and in between the first 1, 2 or 4 words of every five -- counted afresh in each
  * row -- are in the normal font and the others foreign.
  */
-static void drawReadRow(GameUi *ui, int x, int y, const char *row, const DocumentReadability *r) {
+static void drawReadRow(GameUi *ui, int x, int y, const char *row, const DocumentReadability *r, unsigned colour) {
     const GameSession *s = ui->session;
     unsigned foreign = r->fontOffset / 2;
     unsigned word = 0;
     for (const char *p = row; *p;) {
         unsigned font = r->plain || r->clearWordsOfFive >= 5 ? 0 : r->clearWordsOfFive == 0 ? foreign : (word % 5) < r->clearWordsOfFive ? 0 : foreign;
         for (; *p && *p != ' '; p++) {
-            x = fontDrawChar(s->game, font, ui->screen, ViewScreenWidth, x, y, (unsigned char)*p, 0x0D, 0, FontTransparent);
+            x = fontDrawChar(s->game, font, ui->screen, ViewScreenWidth, x, y, (unsigned char)*p, colour, 0, FontTransparent);
         }
         for (; *p == ' '; p++) {
             x += 6;
@@ -169,19 +169,74 @@ static void drawReadRow(GameUi *ui, int x, int y, const char *row, const Documen
 
 static const char *materialLabel(const GameUi *ui, unsigned index);
 
+/*
+ * A readable item (RunConversation, yendor2.asm:49782): over the view, at (15, 23), the picture of its kind of text -- category 1, not the conversation's scroll -- and the text in the reader's
+ * skill: ShowConversationText_4000 (a journal or book: the open book, picture 7, two columns of 13 rows from (26, 33) and (124, 33), colour 0x39), _2000 (a document: picture 8 in Chapter 3 6,
+ * 11 rows from (57, 43), 0x46), _1000 (a note: picture 9, Chapter 3 8, 16 rows from (54, 28), 6) and _800 (picture 0xA, 16 rows in 4 from (54, 28) and again in 0xB from (55, 29)). A key turns
+ * to the next page, Escape or the last page puts it away.
+ */
+typedef struct {
+    unsigned picture2, picture3, rows, columns, x, y, colour;
+} ReadLayout;
+
+static const ReadLayout kReadLayouts[DocumentCategoryCount] = {
+    {7, 7, 13, 2, 26, 33, 0x39},   /* DocumentCategoryJournal: the second column is at x = 124 */
+    {9, 8, 16, 1, 54, 28, 6},      /* Note */
+    {8, 6, 11, 1, 57, 43, 0x46},   /* Document */
+    {0xA, 0xA, 16, 1, 54, 28, 4}, /* Unused */
+};
+
+static unsigned readPageLines(const GameUi *ui) {
+    const ReadLayout *layout = &kReadLayouts[ui->session->readCategory < DocumentCategoryCount ? ui->session->readCategory : 0];
+    return layout->rows * layout->columns;
+}
+
+/* A key or a click on a readable item's text: the next page, or (Escape, or the last page) away. */
+static void readAdvance(GameUi *ui, bool escape) {
+    GameSession *s = ui->session;
+    unsigned total = documentLineCount(s->game, (DocumentCategory)s->readCategory, s->readId);
+    if (escape || ui->readFirst + readPageLines(ui) >= total) {
+        ui->reading = false;
+        ui->overlay = UiOverlayNone;
+    } else {
+        ui->readFirst += readPageLines(ui);
+    }
+}
+
+static void drawRead(GameUi *ui) {
+    GameSession *s = ui->session;
+    DocumentCategory category = s->readCategory < DocumentCategoryCount ? (DocumentCategory)s->readCategory : DocumentCategoryJournal;
+    const ReadLayout *layout = &kReadLayouts[category];
+    unsigned total = documentLineCount(s->game, category, s->readId);
+    viewDrawPicture(&ui->renderer, 1, s->game == GameYendor2 ? layout->picture2 : layout->picture3, 15, 23, true, 0);
+    for (unsigned pass = 0; pass < (category == DocumentCategoryUnused ? 2u : 1u); pass++) { /* the last kind writes its text twice, the second a pixel lower right in 0xB */
+        for (unsigned column = 0; column < layout->columns; column++) {
+            for (unsigned row = 0; row < layout->rows; row++) {
+                unsigned line = ui->readFirst + column * layout->rows + row;
+                char text[DocumentLineBufferSize];
+                if (line < total && sessionDocumentLine(s, line, text)) {
+                    drawReadRow(ui, (column ? 124 : (int)layout->x) + (int)pass, (int)layout->y + (int)pass + 6 * (int)row, text, &s->readability, pass ? 0x0B : layout->colour);
+                }
+            }
+        }
+    }
+}
+
 static void drawTalk(GameUi *ui) {
     GameSession *s = ui->session;
     const ViewRenderer *r = &ui->renderer;
+    if (ui->reading) {
+        drawRead(ui);
+        return;
+    }
     viewDrawPicture(r, 1, 3, 15, 23, true, 0);
-    if (s->talk.npc && !ui->reading) {
+    if (s->talk.npc) {
         viewDrawPicture(r, 7, dialogGetU16(s->talk.npc, 0), 21, 31, true, 0);
     }
     for (unsigned i = 0; i < ui->talkRowCount; i++) {
-        if (ui->reading) {
-            drawReadRow(ui, 22, 67 + 6 * (int)i, ui->talkRows[i], &s->readability);
-        } else if (s->talk.npc && conversationNeedsSpeaker(s->talk.npc)) { /* an NPC with a foreign tongue: the translator reads as much as his or her Linguistics allows */
+        if (s->talk.npc && conversationNeedsSpeaker(s->talk.npc)) { /* an NPC with a foreign tongue: the translator reads as much as his or her Linguistics allows */
             DocumentReadability readable = sessionTalkReadability(s);
-            drawReadRow(ui, 22, 67 + 6 * (int)i, ui->talkRows[i], &readable);
+            drawReadRow(ui, 22, 67 + 6 * (int)i, ui->talkRows[i], &readable, 0x0D);
         } else {
             fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 22, 67 + 6 * (int)i, ui->talkRows[i], 0x0D, 0, FontTransparent);
         }
@@ -195,13 +250,13 @@ static void drawTalk(GameUi *ui) {
         bcd4Format(saveHeaderBcd4(&s->save, SaveHeaderGold), gold);
         fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 94, 115, gold, 0x8A, 0, FontTransparent);
     }
-    if (sessionTalkHasSelector(s) && !ui->reading) { /* the member the service is for: the frame round the face (DrawPartyStatusIconRow) */
+    if (sessionTalkHasSelector(s)) { /* the member the service is for: the frame round the face (DrawPartyStatusIconRow) */
         static const int kX[4] = {8, 0x42, 0x7C, 0xB6};
         if (s->talkSpeaker < 4) {
             viewDrawPicture(r, 7, 0, kX[s->talkSpeaker], 0x94, true, 0);
         }
     }
-    for (unsigned i = 0; !ui->reading && ui->talkListShown && i < s->talk.listedCount && i < ConversationListMax; i++) {
+    for (unsigned i = 0; ui->talkListShown && i < s->talk.listedCount && i < ConversationListMax; i++) {
         char name[DialogTopicNameSize + 1];
         dialogTopicName(dialogTopic(&s->dialogs, s->talk.listed[i]), name);
         fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, i < 5 ? 58 : 142, 32 + 6 * (int)(i % 5), name, 0x8A, 0, FontTransparent);
@@ -1432,15 +1487,10 @@ static void inventorySlotClick(GameUi *ui, int x, int y) {
     }
 }
 
-/* A readable item (HandleGameCommand -> RunConversation): its text in the scroll of the conversation screen, no face, the rows in 0x0D, until a key. */
+/* A readable item (HandleGameCommand -> RunConversation): the picture of its kind of text, drawRead. */
 static void readOpen(GameUi *ui) {
-    GameSession *s = ui->session;
-    char line[DocumentLineBufferSize];
     ui->talkRowCount = 0;
-    for (unsigned i = 0; ui->talkRowCount < 16 && sessionDocumentLine(s, i, line); i++) {
-        snprintf(ui->talkRows[ui->talkRowCount], sizeof(ui->talkRows[0]), "%s", line);
-        ui->talkRowCount++;
-    }
+    ui->readFirst = 0;
     ui->reading = true;
     ui->talkListShown = false;
     ui->overlay = UiOverlayTalk;
@@ -3555,9 +3605,8 @@ static bool talkSelect(GameUi *ui, unsigned member) {
 }
 
 static bool talkKey(GameUi *ui, UiKey key) { /* 1-9 choose a topic, Escape the last one listed (the way out); the first key only lets the greeting go and shows the list */
-    if (ui->reading) { /* a readable item's text: any key puts it away */
-        ui->reading = false;
-        ui->overlay = UiOverlayNone;
+    if (ui->reading) { /* a readable item's text: a key turns the page, Escape (or the last page) puts it away */
+        readAdvance(ui, key == UiKeyEscape);
         return true;
     }
     if (ui->talkEnding) {
@@ -4090,8 +4139,7 @@ static bool dialogClick(GameUi *ui, int x, int y) {
 
 static bool talkClick(GameUi *ui, int x, int y) {
     if (ui->reading) {
-        ui->reading = false;
-        ui->overlay = UiOverlayNone;
+        readAdvance(ui, false);
         return true;
     } /* the click table at DS:0x6458: the topic rows drawTalk lists, five to a column (x 58-135 and 142-220, 6 pixels each from y = 32) */
     GameSession *s = ui->session;

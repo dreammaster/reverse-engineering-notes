@@ -141,7 +141,8 @@ typedef struct {
     bool pickChest;        /* the member is the one who opens the chest ahead, not the recipient of an item */
     bool pickActive;       /* an item waits for the member it is used on (ConfirmAndSelectPartyTarget): a click on a face or F1-F4 */
     unsigned pickUser, pickSlot; /* ... the member whose bag slot (1-8) it is in */
-    bool reading;          /* the scroll (UiOverlayTalk) shows a readable item's text, not a conversation */
+    bool reading;          /* UiOverlayTalk shows a readable item's text (the book, the document, the note), not a conversation */
+    unsigned readFirst;    /* the first line of the page shown */
     unsigned targetDiscover; /* ... or a discovery key's (UseAbilityOnTarget) or a Chapter 3 quest item's (HandleSpecialQuestCommand): the item whose click is awaited */
     unsigned targetQuest;
     unsigned targetKey;    /* ... or a key item's (0 = the key ring's): HandleGameCommand -> UnlockDoorCommand from a bag slot */

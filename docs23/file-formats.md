@@ -6900,6 +6900,13 @@ topic menu is waiting (no topic runs, unlike the shop). `sessionSellHeld` / `ses
 **The clue book's first-time picture** (`PlayClueBookOpenAnimation` :8293) fades in two ranges of palette block 5 separately, with everything else black: colours 0-0xAE (DARK UNION) over 63 rounds, 30 BIOS ticks, then 0xB0-0xBE
 (The On-Line Clue Book), 35 ticks, then the whole palette out. `clueSplashPalette` steps it every fade tick (27.5 ms): title in 0-15, held 60 ticks (1.65 s), words in 16 ticks, held 70 ticks (1.9 s), out 16 ticks (178 in all).
 
+### Readable items: the book, the note, the document (decoded 2026-10-30)
+
+`RunConversation` (yendor2.asm:49782) draws a picture of category 1 at (15, 23) (not the conversation scroll, picture 3) and the text in the reader's skill (`DrawIndentedTextColumn`, rows 6 apart, each starting at the
+column's x): `ShowConversationText_4000` (the journals and books, `DocumentCategoryJournal`) picture 7, the open book, in two columns of 13 rows at (26, 33) and (124, 33), colour 0x39, 26 lines a page; `_2000` (documents) picture 8
+(Chapter 3: 6) at (57, 43), 11 rows, colour 0x46; `_1000` (notes) picture 9 (Chapter 3: 8) at (54, 28), 16 rows, colour 6; `_800` picture 0xA, 16 rows at (54, 28) in 4 and again at (55, 29) in 0xB. After each page
+`WaitForKeypressTickingMusic`: Escape ends, any other key shows the next page if the text has more lines. `gameui.c` `drawRead` / `readAdvance`.
+
 ### NPCs with a foreign tongue: WHO WILL TRANSLATE? (decoded 2026-10-27)
 
 An NPC whose header word +2 (`DialogNpcSpeakerMode`) is 2, 6 or 4 -- 31 of Chapter 2's, among them the Governor's town folk -- speaks a language. `LoadItemData` (yendor2.asm:22286) asks `ShowConfirmPrompt 0xB`, **WHO WILL
