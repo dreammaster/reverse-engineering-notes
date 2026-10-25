@@ -1219,7 +1219,9 @@ The **clue book entry lists** (`clueentries.c`; `ShowClueCategoryEntries` yendor
 
 The **clue book map page** (`cluemap.c`; `RENDER_CLUEMAP=<map id>`): map n is block n - 1 drawn like the local area map but with a "known" bitmap from WORLD.DAT (1 bit per world cell, MSB first, 100 bytes per
 row; Chapter 2 at 1396760, Chapter 3 at 3952386) instead of the fog of war, the block name in 0xD, the hint "SELECT LEGEND OR ESC" and the legend markers (8-byte records map id / x / y / label at 1450685 /
-4011261, sorted by map id; picture 0x73) whose labels are 26-byte strings (1453925 / 4013261).
+4011261, sorted by map id; picture 0x73) whose labels are 26-byte strings (1453925 / 4013261). A label is 25 characters padded with blanks, then a NUL; `DrawClueBookMapCategoryHeader` (yendor2.asm:6654) writes it
+whole at (0xAA, 1) with the font's background opaque (0), and that is what wipes the hint "SELECT LEGEND OR ESC" (x 201-320) -- `clueMapLabelDraw` pads the trimmed label back to 25 characters. The clue book's paging
+keys are scan codes 0x49 / 0x51 (`HandlePagedEntryNavigation`, `HandleClueEntryRowScrollInput`), i.e. PageUp / PageDown as well as the letters I / Q.
 
 The **clue book walk through** (`cluepaged.c`; `RENDER_WALKTHROUGH=<page>`): a 31 (Chapter 3: 33) page hint book, 25 lines of 51 bytes per page in WORLD.DAT (Chapter 2 at 1411160, Chapter 3 at
 3969186), shown on the clue backdrop with the footer "a  MORE  b" and navigated with I / Q. The unregistered (shareware) program refuses to go past page 6.

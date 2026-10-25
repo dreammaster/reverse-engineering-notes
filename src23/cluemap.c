@@ -88,8 +88,10 @@ void clueMapPageDraw(const ViewRenderer *r, const LocalMapCell cells[LocalMapCol
 }
 
 void clueMapLabelDraw(const ViewRenderer *r, const char *label) {
+    char padded[ClueMapLabelSize]; /* the stored label is 25 characters, blank-padded, and is written whole on an opaque background: that wipes the hint's "SELECT LEGEND OR ESC" */
+    snprintf(padded, sizeof(padded), "%-*s", ClueMapLabelSize - 1, label);
     viewDrawPicture(r, LocalMapCategory, 0x73, 161, 0, false, 0);
-    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 170, 1, label, 0x7B, 0, FontOpaque);
+    fontDrawString(r->game, 0, r->screen, ViewScreenWidth, 170, 1, padded, 0x7B, 0, FontOpaque);
 }
 
 int clueMapMarkerAt(const ClueMapMarker *markers, unsigned markerCount, int x, int y) {

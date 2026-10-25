@@ -495,6 +495,10 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         gameUiKey(&ui, 'i', false);
         gameUiKey(&ui, 'i', false);
         check("I does not go before page 1", ui.cluePage == 1);
+        gameUiKey(&ui, UiKeyPageDown, false);
+        check("PageDown turns the walk through's page like Q", ui.cluePage == 2);
+        gameUiKey(&ui, UiKeyPageUp, false);
+        check("PageUp like I", ui.cluePage == 1);
         for (unsigned i = 0; i < 6; i++) {
             gameUiKey(&ui, 'q', false);
         }
@@ -534,6 +538,10 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         gameUiKey(&ui, 'q', false);
         gameUiDraw(&ui);
         check("Q pages down", ui.clueList.first > 0 && ui.clueList.selected >= ui.clueList.first && sum(ui.screen) != list);
+        gameUiKey(&ui, UiKeyPageUp, false);
+        check("PageUp pages up again", ui.clueList.first == 0);
+        gameUiKey(&ui, UiKeyPageDown, false);
+        check("PageDown pages down like Q", ui.clueList.first > 0);
         gameUiKey(&ui, UiKeyEnter, false);
         gameUiDraw(&ui);
         unsigned monster = sum(ui.screen);
@@ -571,6 +579,15 @@ static void testGame(GameKind game, const char *envName, const char *defaultDir,
         gameUiKey(&ui, UiKeyRight, false);
         gameUiDraw(&ui);
         check("Right picks a legend marker when the map has one", ui.clueMarker == 0 ? sum(ui.screen) != mapPage : sum(ui.screen) == mapPage);
+        {   /* the key's text is written whole on an opaque background: nothing of the hint (colour 0x59) is left beside it */
+            bool hint = false;
+            for (unsigned y = 0; y < 8; y++) {
+                for (unsigned x = 170; x < ViewScreenWidth; x++) {
+                    hint = hint || ui.screen[y * ViewScreenWidth + x] == 0x59;
+                }
+            }
+            check("a legend marker's text wipes SELECT LEGEND OR ESC", ui.clueMarker != 0 || !hint);
+        }
         gameUiKey(&ui, UiKeyEscape, false);
         gameUiKey(&ui, UiKeyEscape, false);
         gameUiKey(&ui, UiKeyF8, false);

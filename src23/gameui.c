@@ -2547,7 +2547,7 @@ static void drawClue(GameUi *ui) {
     }
 }
 
-/* F1-F5 the category lists, F6 the walk through (I / Q turn its pages), Tab the help; in a list Up / Down / I / Q choose and Enter opens; on a map page Left / Right pick a legend
+/* F1-F5 the category lists, F6 the walk through (I / Q, PageUp / PageDown turn its pages), Tab the help; in a list Up / Down / I / Q / PageUp / PageDown choose and Enter opens; on a map page Left / Right pick a legend
  * marker, on an item page the "+N" variant; Escape backs out and from the first level closes the book. */
 static bool clueKey(GameUi *ui, UiKey key) {
     static const unsigned kFKeyCategory[5] = {1, 2, 3, 4, 11};
@@ -2582,8 +2582,8 @@ static bool clueKey(GameUi *ui, UiKey key) {
         } else if (key == UiKeyF6) {
             ui->clueScreen = 0;
             ui->cluePage = 1;
-        } else if (key == 'i' || key == 'q') {
-            clueListPageKey(&ui->clueList, key == 'q');
+        } else if (key == 'i' || key == 'q' || key == UiKeyPageUp || key == UiKeyPageDown) {
+            clueListPageKey(&ui->clueList, key == 'q' || key == UiKeyPageDown);
         } else if (key == UiKeyUp || key == UiKeyDown) {
             clueListRowKey(&ui->clueList, key == UiKeyDown);
         } else if (key == UiKeyEnter) {
@@ -2595,8 +2595,8 @@ static bool clueKey(GameUi *ui, UiKey key) {
         ui->clueHelp = !ui->clueHelp;
     } else if (key == UiKeyF6) {
         ui->clueHelp = false;
-    } else if ((key == 'i' || key == 'q') && !ui->clueHelp) {
-        CluePagedResult result = cluePagedNavigate(ui->session->game, &ui->cluePage, (uint8_t)(key == 'i' ? 'I' : 'Q'), 0, ui->clueRegistered);
+    } else if ((key == 'i' || key == 'q' || key == UiKeyPageUp || key == UiKeyPageDown) && !ui->clueHelp) {
+        CluePagedResult result = cluePagedNavigate(ui->session->game, &ui->cluePage, (uint8_t)(key == 'i' || key == UiKeyPageUp ? 'I' : 'Q'), 0, ui->clueRegistered);
         ui->clueNag = result == CluePagedNag;
         if (result == CluePagedNag) {
             effect(ui, 3);
