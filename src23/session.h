@@ -126,6 +126,9 @@ typedef struct GameSession {
     bool shareware;            /* the unregistered program: sessionInteract refuses the demo boundary (Chapter 2) */
     bool talking;
     unsigned talkSpeaker;      /* the party slot (0-3) of the member who talks: the one the healer, trainer and challenge services act on */
+    DialogState maskBackup;    /* the topic masks before the last topic was chosen: an acceptance the gold does not cover leaves them as they were (UseHealingItem returns before ApplyItemEffectFlags) */
+    unsigned quoteKind;        /* SessionQuote: what the last service step asks the front end to put on the dialog (ShowHealingCostPrompt); cleared by the next step */
+    unsigned quoteNumber;      /* the level a trainer quotes / allows */
     uint16_t serviceType;      /* the healer's last quoted type (word_3298E) / the challenge's outcome */
     Bcd4 serviceCost;          /* the last quote of a healer, trainer or challenge, packed BCD (512Ah) */
     uint16_t travelFlags;   /* Chapter 3's ds:0CEF9 (saved in the header at +0x1C); Chapter 2 keeps its place bits in light.litFlags */
@@ -347,6 +350,18 @@ SessionInteract sessionInteract(GameSession *session);
 typedef enum { SessionServiceNone, SessionServiceDone, SessionServiceFailed, SessionServiceNeedText, SessionServiceNeedScreen, SessionServiceNeedItem } SessionService;
 
 bool sessionTalkStart(GameSession *session, unsigned npcId, unsigned speaker, ConversationStep *first);
+
+/*
+ * What a healer's or trainer's quote shows (ShowHealingCostPrompt, yendor2.asm:20687): the dialog's words become IT WILL COST <n> GOLD / <what it buys> / (blank) / IS THAT PRICE AGREEABLE?, with the gold
+ * line (GOLD COINS: <n>) under them; the trainer who cannot take the member further says UNFORTUNATELY, I CAN ONLY TRAIN YOU THROUGH LEVEL <n>; an acceptance the gold does not cover writes YOU DON'T HAVE ENOUGH GOLD.
+ * `quoteKind` is set by sessionTalkChoose / sessionTalkService for the step just run (`serviceCost` is the price), 0 = nothing special.
+ *
+ * The healer and the trainer act on the member the dialog has selected (the frame round a face; `talkSpeaker`, the first member at the start): `sessionTalkSelect` changes it -- a click on a face or F1-F4,
+ * UseItem loc_17E3B -- and re-asks what that member can be offered (the healer lists HEAL only for one who is hurt).
+ */
+typedef enum { SessionQuoteNone, SessionQuoteHeal, SessionQuoteCure, SessionQuoteRevive, SessionQuoteRestore, SessionQuoteTrain, SessionQuoteTrainTooHigh, SessionQuoteNoGold } SessionQuote;
+bool sessionTalkSelect(GameSession *session, unsigned memberSlot);
+bool sessionTalkHasSelector(const GameSession *session); /* the NPC's service picks a member: the frame is drawn */
 ConversationStep sessionTalkChoose(GameSession *session, unsigned number);
 void sessionTalkResolve(GameSession *session, bool success);
 SessionService sessionTalkService(GameSession *session, const ConversationStep *step, const char *text);

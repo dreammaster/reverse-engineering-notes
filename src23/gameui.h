@@ -96,6 +96,14 @@ typedef struct {
     char talkText[1200];   /* what the NPC last said */
     char talkRows[16][DialogLineChars + 1]; /* the same in the rows the screen draws it in */
     unsigned talkRowCount;
+    bool talkQuote;        /* the words on the dialog are a healer's or trainer's quote: the gold line (GOLD COINS: n) is drawn under them */
+    struct {
+        int x, y;
+        uint8_t colour;
+        char text[48];
+    } talkExtra[3];        /* words written over the dialog apart from its rows: the trainer's level number, "YOU DON'T HAVE ENOUGH GOLD." */
+    unsigned talkExtraCount;
+    unsigned talkPreviewTopic; /* the topic whose flag 0x800 loaded the service's type word (word_32902): its words come back when another member is selected */
     bool talkEnding;       /* the conversation is over (an ending topic): its words stay until a key or a click, then the dialog closes -- to the title screen for the exit codes 1 and 2 */
     bool talkListShown;    /* the topic list is up: it comes after the greeting has been read (any key or click) */
     bool shopFromTalk;     /* the merchant's screen was opened from a conversation (UseKeyItem): the dialog stays up with the new topic list, DONE (or Space) leaves, and the first topic listed then runs */

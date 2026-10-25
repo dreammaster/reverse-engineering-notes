@@ -1743,6 +1743,13 @@ static void testTalkEnds(const char *envName, const char *defaultDir) {
     static GameUi ui;
     GameSession *s = sessionNew(GameYendor2, world, size);
     gameUiInit(&ui, s, world, size, picture, NULL, &host);
+    snprintf(path, sizeof(path), "%s/SW.EXE", dir ? dir : defaultDir);
+    size_t exeSize;
+    uint8_t *exeBytes = readFile(path, &exeSize);
+    static ExeData exe;
+    if (exeBytes && exeDataOpen(&exe, GameYendor2, exeBytes, exeSize)) {
+        gameUiSetExe(&ui, &exe); /* the words of the quotes */
+    }
     int col, row;
     if (findObject(s, WorldObjectFlagTalker, 5, &col, &row)) { /* the table that asks where the armory is */
         s->x = col;
@@ -1775,6 +1782,41 @@ static void testTalkEnds(const char *envName, const char *defaultDir) {
         check("the key takes the party to the title screen (exit code 1)", ui.overlay == UiOverlayTitle);
         gameUiKey(&ui, 'e', false);
         check("E on the title screen goes back into the game", ui.overlay == UiOverlayNone);
+    }
+    if (findObject(s, WorldObjectFlagTalker, 7, &col, &row)) { /* the healers: the frame round the selected member, the quote, switching members */
+        s->x = col;
+        s->y = row;
+        s->facing = SaveFacingNorth;
+        sessionRebuild(s);
+        for (unsigned m = 0; m < 4; m++) {
+            partySetStat(sessionPartyRecord(s, m), PartyStatHitPoints, partyGetStatMax(sessionPartyRecord(s, m), PartyStatHitPoints));
+        }
+        partySetStat(sessionPartyRecord(s, 0), PartyStatHitPoints, 1);
+        memset(saveHeaderBcd4(&s->save, SaveHeaderGold), 0, 4);
+        bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 1000);
+        gameUiKey(&ui, ' ', false);
+        gameUiKey(&ui, UiKeyEnter, false);
+        check("the healers select a member: the first, with the frame", sessionTalkHasSelector(s) && s->talkSpeaker == 0 && s->talk.listedCount == 2);
+        gameUiKey(&ui, '1', false); /* HEAL */
+        check("HEAL quotes: IT WILL COST <n> GOLD / TO REPLENISH YOUR HEALTH POINTS. / / IS THAT PRICE AGREEABLE?", ui.talkQuote && ui.talkRowCount == 4 && strncmp(ui.talkRows[0], "IT WILL COST ", 13) == 0 &&
+                                                                                                             strstr(ui.talkRows[1], "HEALTH POINTS") && strstr(ui.talkRows[3], "AGREEABLE"));
+        gameUiDraw(&ui);
+        gameUiKey(&ui, UiKeyF2, false);
+        check("F2 selects the second member (not hurt): the quote goes and only FINISHED is offered", s->talkSpeaker == 1 && !ui.talkQuote && s->talk.listedCount == 1);
+        gameUiKey(&ui, UiKeyF1, false);
+        check("F1 selects the first again: HEAL is offered", s->talkSpeaker == 0 && s->talk.listedCount == 2);
+        gameUiKey(&ui, '1', false);
+        memset(saveHeaderBcd4(&s->save, SaveHeaderGold), 0, 4);
+        gameUiKey(&ui, '1', false); /* YES without the gold */
+        check("YES without the gold writes YOU DON'T HAVE ENOUGH GOLD. in red and keeps the quote", ui.talkQuote && ui.talkExtraCount == 1 && ui.talkExtra[0].colour == 0x7B && strstr(ui.talkExtra[0].text, "ENOUGH GOLD") &&
+                                                                                                    partyGetStat(sessionPartyRecord(s, 0), PartyStatHitPoints) == 1);
+        bcd4AddU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 1000);
+        gameUiKey(&ui, '1', false); /* YES: the quote is still the one asked? (the list is YES / NO) */
+        check("YES with the gold heals the member to full and takes the price", partyGetStat(sessionPartyRecord(s, 0), PartyStatHitPoints) == partyGetStatMax(sessionPartyRecord(s, 0), PartyStatHitPoints) &&
+                                                                                !bcd4AtLeastU16(saveHeaderBcd4(&s->save, SaveHeaderGold), 1000));
+        for (unsigned i = 0; i < 6 && ui.overlay == UiOverlayTalk; i++) {
+            gameUiKey(&ui, UiKeyEscape, false);
+        }
     }
     sessionFree(s);
     free(world);

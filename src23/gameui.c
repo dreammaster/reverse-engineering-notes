@@ -168,6 +168,8 @@ static void drawReadRow(GameUi *ui, int x, int y, const char *row) {
     }
 }
 
+static const char *materialLabel(const GameUi *ui, unsigned index);
+
 static void drawTalk(GameUi *ui) {
     GameSession *s = ui->session;
     const ViewRenderer *r = &ui->renderer;
@@ -180,6 +182,21 @@ static void drawTalk(GameUi *ui) {
             drawReadRow(ui, 22, 67 + 6 * (int)i, ui->talkRows[i]);
         } else {
             fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 22, 67 + 6 * (int)i, ui->talkRows[i], 0x0D, 0, FontTransparent);
+        }
+    }
+    for (unsigned i = 0; i < ui->talkExtraCount; i++) {
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, ui->talkExtra[i].x, ui->talkExtra[i].y, ui->talkExtra[i].text, ui->talkExtra[i].colour, 0, FontTransparent);
+    }
+    if (ui->talkQuote) { /* DrawConfirmPromptGoldLine: GOLD COINS: and what the party has, at (22, 115) */
+        char gold[16];
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 22, 115, materialLabel(ui, 0), 0x0D, 0, FontTransparent);
+        bcd4Format(saveHeaderBcd4(&s->save, SaveHeaderGold), gold);
+        fontDrawString(s->game, 0, ui->screen, ViewScreenWidth, 94, 115, gold, 0x8A, 0, FontTransparent);
+    }
+    if (sessionTalkHasSelector(s) && !ui->reading) { /* the member the service is for: the frame round the face (DrawPartyStatusIconRow) */
+        static const int kX[4] = {8, 0x42, 0x7C, 0xB6};
+        if (s->talkSpeaker < 4) {
+            viewDrawPicture(r, 7, 0, kX[s->talkSpeaker], 0x94, true, 0);
         }
     }
     for (unsigned i = 0; !ui->reading && ui->talkListShown && i < s->talk.listedCount && i < ConversationListMax; i++) {
@@ -2797,14 +2814,94 @@ void gameUiStatus(const GameUi *ui, char *out, size_t capacity) {
              s->log[0] ? " - " : "", s->log);
 }
 
+/*
+ * A healer's or trainer's quote (ShowHealingCostPrompt): where the topic's words were, IT WILL COST <price> GOLD / what it buys / a blank row / IS THAT PRICE AGREEABLE?, in the dialog's rows, and under
+ * them the gold line. The strings are the executable's: the offsets of Chapter 2 and of Chapter 3 (the data segment moved 0x32D bytes, a little less for the trainer's refusal).
+ */
+static const char *quoteText(GameUi *ui, unsigned ch2, unsigned ch3, char *buffer, size_t size) {
+    buffer[0] = 0;
+    if (ui->exe) {
+        exeDataString(ui->exe, ui->session->game == GameYendor2 ? ch2 : ch3, buffer, size);
+    }
+    return buffer;
+}
+
+static void talkQuoteShow(GameUi *ui) {
+    GameSession *s = ui->session;
+    char cost[16], line[64], what[48], agree[48], goldWord[16], prefix[32];
+    static const unsigned kWhat[5][2] = {{0x7F26, 0x8253}, {0x7F47, 0x8274}, {0x7F62, 0x828F}, {0x7F79, 0x82A6}, {0x7F94, 0x82C1}};
+    unsigned kind = s->quoteKind;
+    ui->talkExtraCount = 0;
+    if (kind == SessionQuoteNoGold) { /* the rows stay as they were; only the refusal is written, in red, lower down */
+        ui->talkExtra[0].x = 22;
+        ui->talkExtra[0].y = 103;
+        ui->talkExtra[0].colour = 0x7B;
+        quoteText(ui, 0x808C, 0x83B9, ui->talkExtra[0].text, sizeof(ui->talkExtra[0].text));
+        ui->talkExtraCount = 1;
+        return;
+    }
+    if (kind == SessionQuoteTrainTooHigh) { /* UNFORTUNATELY, I CAN ONLY TRAIN / YOU THROUGH LEVEL <n> */
+        char second[48];
+        quoteText(ui, 0x86C4, 0x89EB, line, sizeof(line));
+        snprintf(second, sizeof(second), "YOU THROUGH LEVEL");
+        if (ui->exe && line[0]) {
+            unsigned next = (s->game == GameYendor2 ? 0x86C4u : 0x89EBu) + (unsigned)strlen(line) + 1;
+            exeDataString(ui->exe, next, second, sizeof(second));
+        }
+        ui->talkRowCount = 2;
+        snprintf(ui->talkRows[0], sizeof(ui->talkRows[0]), "%.33s", line);
+        snprintf(ui->talkRows[1], sizeof(ui->talkRows[1]), "%.33s", second);
+        ui->talkExtra[0].x = 22 + 6 * ((int)strlen(second) + 1);
+        ui->talkExtra[0].y = 73;
+        ui->talkExtra[0].colour = 0x8A;
+        snprintf(ui->talkExtra[0].text, sizeof(ui->talkExtra[0].text), "%u", s->quoteNumber);
+        ui->talkExtraCount = 1;
+        ui->talkQuote = false;
+        return;
+    }
+    bcd4Format(s->serviceCost, cost);
+    quoteText(ui, 0x805F, 0x838C, prefix, sizeof(prefix));
+    quoteText(ui, 0x806D, 0x839A, goldWord, sizeof(goldWord));
+    quoteText(ui, 0x8073, 0x83A0, agree, sizeof(agree));
+    quoteText(ui, kWhat[kind == SessionQuoteTrain ? 4 : kind - 1][0], kWhat[kind == SessionQuoteTrain ? 4 : kind - 1][1], what, sizeof(what));
+    if (kind == SessionQuoteTrain) { /* TO TRAIN TO LEVEL <n>. */
+        size_t at = strlen(what);
+        snprintf(what + at, sizeof(what) - at, "%u.", s->quoteNumber);
+    }
+    snprintf(line, sizeof(line), "%s%s%s", prefix, cost, goldWord);
+    snprintf(ui->talkRows[0], sizeof(ui->talkRows[0]), "%.33s", line);
+    snprintf(ui->talkRows[1], sizeof(ui->talkRows[1]), "%.33s", what);
+    ui->talkRows[2][0] = 0;
+    snprintf(ui->talkRows[3], sizeof(ui->talkRows[3]), "%.33s", agree);
+    ui->talkRowCount = 4;
+    ui->talkQuote = true;
+}
+
 static void talkStep(GameUi *ui, const ConversationStep *step) {
     GameSession *s = ui->session;
     if (!step->topic) {
         return;
     }
+    char keptRows[16][DialogLineChars + 1];
+    unsigned keptCount = ui->talkRowCount;
+    memcpy(keptRows, ui->talkRows, sizeof(keptRows));
+    bool keptQuote = ui->talkQuote;
     conversationText(&s->talk, step->topic, ui->talkText, sizeof(ui->talkText));
     ui->talkRowCount = conversationRows(&s->talk, step->topic, ui->talkRows, sizeof(ui->talkRows) / sizeof(ui->talkRows[0]));
+    if (step->flags & DialogTopicPreview) {
+        ui->talkPreviewTopic = step->topic;
+    }
+    ui->talkQuote = false;
+    ui->talkExtraCount = 0;
     SessionService service = sessionTalkService(s, step, NULL);
+    if (s->quoteKind == SessionQuoteNoGold) { /* the quote stays on the screen, with the refusal under it */
+        memcpy(ui->talkRows, keptRows, sizeof(keptRows));
+        ui->talkRowCount = keptCount;
+        ui->talkQuote = keptQuote;
+        talkQuoteShow(ui);
+    } else if (s->quoteKind) {
+        talkQuoteShow(ui);
+    }
     if (service == SessionServiceNone && step->needsResolve) {
         sessionTalkResolve(s, true);
     }
@@ -3205,6 +3302,21 @@ static void talkFinish(GameUi *ui) {
     }
 }
 
+/* UseItem loc_17E3B: another member is selected (a click on a face or F1-F4): the frame moves, the service asks again what that member can be offered, and the words of the topic that loaded it return. */
+static bool talkSelect(GameUi *ui, unsigned member) {
+    GameSession *s = ui->session;
+    if (!sessionTalkSelect(s, member)) {
+        return false;
+    }
+    if (ui->talkPreviewTopic) {
+        conversationText(&s->talk, ui->talkPreviewTopic, ui->talkText, sizeof(ui->talkText));
+        ui->talkRowCount = conversationRows(&s->talk, ui->talkPreviewTopic, ui->talkRows, sizeof(ui->talkRows) / sizeof(ui->talkRows[0]));
+    }
+    ui->talkQuote = false;
+    ui->talkExtraCount = 0;
+    return true;
+}
+
 static bool talkKey(GameUi *ui, UiKey key) { /* 1-9 choose a topic, Escape the last one listed (the way out); the first key only lets the greeting go and shows the list */
     if (ui->reading) { /* a readable item's text: any key puts it away */
         ui->reading = false;
@@ -3217,6 +3329,10 @@ static bool talkKey(GameUi *ui, UiKey key) { /* 1-9 choose a topic, Escape the l
     }
     if (!ui->talkListShown) {
         ui->talkListShown = true;
+        return true;
+    }
+    if (key >= UiKeyF1 && key <= UiKeyF4 && sessionTalkHasSelector(ui->session)) {
+        talkSelect(ui, (unsigned)(key - UiKeyF1));
         return true;
     }
     unsigned number = key == UiKeyEscape ? 0 : key >= '1' && key <= '9' ? (unsigned)(key - '1' + 1) : 99;
@@ -3728,6 +3844,13 @@ static bool talkClick(GameUi *ui, int x, int y) {
     if (!ui->talkListShown) {
         ui->talkListShown = true;
         return true;
+    }
+    if (sessionTalkHasSelector(s)) { /* a face (the party panel table's regions 1, 11, 21, 31) selects its member */
+        unsigned panel = uiRegionHit(s->game, UiRegionsPartyPanels, x, y);
+        if (panel % 10 == 1 && panel / 10 < 4) {
+            talkSelect(ui, panel / 10);
+            return true;
+        }
     }
     for (unsigned i = 0; i < s->talk.listedCount && i < ConversationListMax; i++) {
         int x0 = i < 5 ? 58 : 142, y0 = 32 + (int)(i % 5) * 6;

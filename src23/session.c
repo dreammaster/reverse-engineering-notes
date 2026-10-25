@@ -1977,6 +1977,7 @@ static SessionService serviceByType(GameSession *s, const ConversationStep *step
     }
     unsigned arg = step->arg;
     Bcd4 *cost = &s->serviceCost;
+    s->quoteKind = SessionQuoteNone;
     uint8_t *gold = saveHeaderBcd4(&s->save, SaveHeaderGold);
     if (arg & 1) {
         return SessionServiceDone;
@@ -1987,12 +1988,16 @@ static SessionService serviceByType(GameSession *s, const ConversationStep *step
             dialogClassifyCondition(&s->talk.masks, member);
         } else if (arg & 2) {
             if (!dialogApplyHealing(s->serviceType, *cost, gold, member, s->game)) {
+                s->quoteKind = SessionQuoteNoGold;
+                s->talk.masks = s->maskBackup;
+                conversationList(&s->talk, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
                 return SessionServiceFailed;
             }
             dialogClassifyCondition(&s->talk.masks, member);
         } else if (arg & 0xF000) {
             s->serviceType = (uint16_t)(arg & 0xF000);
             dialogHealingCost(npc, s->serviceType, &s->talk.masks, member, *cost);
+            s->quoteKind = (arg & 0x1000) ? SessionQuoteRestore : (arg & 0x2000) ? SessionQuoteRevive : (arg & 0x4000) ? SessionQuoteCure : SessionQuoteHeal;
         }
         break;
     case DialogServiceTrainer:
@@ -2000,13 +2005,20 @@ static SessionService serviceByType(GameSession *s, const ConversationStep *step
             partyCheckForLevelUp(member, s->game);
         } else if (arg & 2) {
             if (partyApplyTraining(member, s->game, &s->save, *cost) != PartyTrainOutcomeApplied) {
+                s->quoteKind = SessionQuoteNoGold;
+                s->talk.masks = s->maskBackup;
+                conversationList(&s->talk, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
                 return SessionServiceFailed;
             }
             partyRecomputeEquipmentStatBonuses(member, &s->items, s->game);
         } else if (arg & 0x800) {
             if (!dialogTrainingQuote(npc, member, *cost)) {
+                s->quoteKind = SessionQuoteTrainTooHigh;
+                s->quoteNumber = dialogGetU16(npc, DialogNpcParamB);
                 return SessionServiceFailed;
             }
+            s->quoteKind = SessionQuoteTrain;
+            s->quoteNumber = (partyGetU16(member, PartyFieldLevel) + 1) & 0xFFFF;
         }
         break;
     case DialogServiceChallenge:
@@ -2097,6 +2109,7 @@ bool sessionTalkStart(GameSession *s, unsigned npcId, unsigned speaker, Conversa
         return false; /* LoadItemData asks again for a member who can act */
     }
     s->talkSpeaker = speaker;
+    s->quoteKind = SessionQuoteNone;
     memset(s->serviceCost, 0, sizeof(s->serviceCost));
     s->serviceType = 0;
     uint8_t *globalSlots = beltSlots(s);
@@ -2110,7 +2123,23 @@ bool sessionTalkStart(GameSession *s, unsigned npcId, unsigned speaker, Conversa
     return s->talking || (first && first->ended);
 }
 
+bool sessionTalkHasSelector(const GameSession *s) {
+    return s->talking && dialogServiceForType(s->talk.typeWord) != DialogServiceNone;
+}
+
+bool sessionTalkSelect(GameSession *s, unsigned memberSlot) {
+    if (!sessionTalkHasSelector(s) || !sessionPartyRecord(s, memberSlot)) {
+        return false;
+    }
+    s->talkSpeaker = memberSlot;
+    s->quoteKind = SessionQuoteNone;
+    refreshService(s);
+    return true;
+}
+
 ConversationStep sessionTalkChoose(GameSession *s, unsigned number) {
+    s->quoteKind = SessionQuoteNone;
+    s->maskBackup = s->talk.masks;
     DialogService before = dialogServiceForType(s->talk.typeWord);
     ConversationStep step = conversationChoose(&s->talk, number, saveGlobalFlags(&s->save), SaveHeaderGlobalFlagsSize);
     if (before == DialogServiceNone) {

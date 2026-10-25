@@ -6875,6 +6875,19 @@ spell lists 8-10 of 31-52, items 5-8 of 13-52 per group; REGISTER.EXE (Chapter 3
 and the id as record number), and the display name is the block's two 12-character lines joined by a space ("CARNIVOROUS SPIDER", "OGRE CHIEF"). Reading them as monster *type* ids (several types share a block) gave WORKER ANT nine times.
 `monsterRecordFromBlock`. A list of more than 14 entries ends with "a  MORE  b" at (129, 167), the a / b only where there is a page to turn to.
 
+### The healers' and trainers' dialog: the selected member and the quote (decoded 2026-10-26)
+
+A service NPC (healer, trainer, challenger, mount seller: the type word its greeting loads) works on ONE member of the party: `ShowItemUsagePreview` (:22390) selects the first (`g_selectedPartySlotPtr` := 0x95EB), `DrawPartyStatusIconRow`
+draws the 32 x 32 selection frame (category 7 picture 0 at x = 8 / 0x42 / 0x7C / 0xB6, y = 0x94) round that face, and `ClassifyPartyMemberCondition` (the trainer: `CheckAndAnnounceLevelUp`) rewrites the topic masks, so a healer offers HEAL
+only to a member who is hurt, CURE to one with a condition, and so on. A click on a face (table 0x61C2, regions 1, 11, 21, 31) or F1-F4 selects another member (`UseItem` loc_17E3B): the frame moves, the masks are rewritten for that
+member and the words of the topic that loaded the type word come back. `sessionTalkSelect`, `talkSelect`.
+
+**The quote** (`ShowHealingCostPrompt` :20687, also the trainer's): in the dialog's rows (22, 67 from y = 67, colour 0x0D) IT WILL COST <price> GOLD / TO REPLENISH YOUR HEALTH POINTS. (HEAL, DS:0x7F26) | TO REMOVE YOUR CONDITIONS.
+(0x7F47) | TO RETURN YOU TO LIFE. (0x7F62) | TO COMPLETELY RESTORE YOU. (0x7F79) | TO TRAIN TO LEVEL <n>. (0x7F94) / a blank row / IS THAT PRICE AGREEABLE? (0x8073), the list YES / NO, and the gold line at (22, 115) -- GOLD COINS:
+and the amount at x = 94 in 0x8A (`DrawConfirmPromptGoldLine`). The price is the NPC's fee times the member's level (times the sum of the afflictions' prices for CURE and RESTORATION: `dialogHealingCost`). An acceptance the gold does
+not cover writes YOU DON'T HAVE ENOUGH GOLD. (0x808C) in 0x7B at (22, 103) over the unchanged quote, and the topic masks stay as they were (the service returns before `ApplyItemEffectFlags`). A trainer who cannot take the
+member further says UNFORTUNATELY, I CAN ONLY TRAIN / YOU THROUGH LEVEL <cap> (0x86C4). Chapter 3's strings sit 0x32D bytes later (0x327 for the trainer's refusal). `talkQuoteShow`.
+
 ### Conversation endings and reward panes (decoded 2026-10-26)
 
 **Exit codes.** A topic with flag 0x1 ends the conversation: its words stay until a key (`WaitForKeypressTickingMusic`), and its argument, when it is 1 or 2, is `UseItem`'s exit code (`word_2E52A`); `start` (:10660) answers 1 and 2
