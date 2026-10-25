@@ -1059,7 +1059,7 @@ static void catalogLeave(GameUi *ui) { /* TriggerShopExitSoundAndPersist: sound 
     if (!ui->catalogShop) {
         effect(ui, 6);
     }
-    if (ui->catalogShop && ui->shopFromTalk) { /* UseKeyItem's tail: the panel mode comes back, and the first topic listed runs (DONE, which ends it) */
+    if (ui->shopFromTalk) { /* UseKeyItem's / CheckKeyItem's tail: the panel mode comes back, and the first topic listed runs (DONE, which ends it) */
         ui->shopFromTalk = false;
         saveHeaderSetU16(&ui->session->save, MapFlagsOffset, (uint16_t)((saveHeaderGetU16(&ui->session->save, MapFlagsOffset) & 0xEFFF) | ui->shopPanelWas));
         ui->overlay = UiOverlayTalk;
@@ -1070,11 +1070,11 @@ static void catalogLeave(GameUi *ui) { /* TriggerShopExitSoundAndPersist: sound 
 }
 
 /* UseKeyItem: the resource panel is shown (the mode it found is kept), then the stock. */
-static void shopFromTalkOpen(GameUi *ui) {
+static void shopFromTalkOpen(GameUi *ui, bool shop) {
     ui->shopFromTalk = true;
     ui->shopPanelWas = (uint16_t)(panelFlags(ui) & PanelModeBits);
     panelEnterResources(ui, panelFlags(ui));
-    catalogOpen(ui, ui->shopLock, true);
+    catalogOpen(ui, ui->shopLock, shop);
 }
 
 /* UseItem -> ConfirmAndValidatePartyTarget -> UseKeyItem: WHO WILL BARTER? when nobody does yet (giving it up leaves the dialog as it is), then the merchant's screen. */
@@ -1082,7 +1082,7 @@ static void barterStart(GameUi *ui) {
     unsigned barterer;
     ui->panelRunCount = 0;
     if (sessionBarterer(ui->session, &barterer)) {
-        shopFromTalkOpen(ui);
+        shopFromTalkOpen(ui, true);
     } else {
         ui->pickActive = true;
         ui->pickChest = false;
@@ -1555,7 +1555,7 @@ static void pickAnswer(GameUi *ui, unsigned member) {
             return;
         }
         pickCancel(ui);
-        shopFromTalkOpen(ui);
+        shopFromTalkOpen(ui, true);
         return;
     }
     if (ui->pickScroll == 6) { /* who works the alchemist's item */
@@ -2812,6 +2812,9 @@ static void talkStep(GameUi *ui, const ConversationStep *step) {
         ui->shopFromTalk = true; /* the dialog stays up behind the merchant's screen (RunShopScreen is called from it) */
         ui->shopLock = step->arg;
         barterStart(ui);
+    } else if (service == SessionServiceNeedScreen && (step->flags & DialogTopicCheckKey)) { /* CheckKeyItem: the same screen with no question and no price -- what the topic gives (the armory's answer: gold nuggets) */
+        ui->shopLock = step->arg;
+        shopFromTalkOpen(ui, false);
     }
 }
 
@@ -2975,6 +2978,22 @@ static void dialogLoad(GameUi *ui) {
         ui->dialogMode = UiDialogSlots;
         ui->dialogSlot = -1;
     }
+}
+
+bool gameUiLoadSlot(GameUi *ui, unsigned slot) {
+    ui->dialogSlot = (int)slot;
+    GameSession *s = ui->session;
+    static uint8_t image[SaveFileSizeMax];
+    size_t bytes = ui->host.slotRead ? ui->host.slotRead(ui->host.ctx, slot, image, sizeof(image)) : 0;
+    if (!bytes || !sessionLoad(s, image, bytes)) {
+        return false;
+    }
+    ExploreReveal revealed;
+    exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
+    sessionRebuild(s);
+    s->log[0] = 0;
+    paletteSyncToClock(ui);
+    return true;
 }
 
 /* ConfirmNewGame's yes: RunTitleScreen starts a new game (InitializeNewGameWorldState) and the title menu is up; its E goes on into the game. */
@@ -3162,7 +3181,27 @@ static void talkChoose(GameUi *ui, unsigned number) { /* topic `number` of the l
     ConversationStep step = sessionTalkChoose(s, number);
     talkStep(ui, &step);
     if (!s->talking && ui->overlay == UiOverlayTalk) {
-        ui->overlay = UiOverlayNone;
+        if (step.topic) { /* the ending topic's own words wait for a key (UseItem: WaitForKeypressTickingMusic) */
+            ui->talkEnding = true;
+            ui->talkListShown = false;
+        } else {
+            ui->overlay = UiOverlayNone;
+        }
+    }
+}
+
+/*
+ * A key or a click puts the ending conversation away. UseItem then hands its exit code (the ending topic's argument when it is 1 or 2, word_2E52A) to `start`, which answers 1 and 2 with
+ * RunTitleScreen and, when that is left with E, InitializeDungeonLevel -- the "GO TO THE MAIN MENU? YES" of the inns.
+ */
+static void talkFinish(GameUi *ui) {
+    GameSession *s = ui->session;
+    ui->talkEnding = false;
+    ui->overlay = UiOverlayNone;
+    if (s->talk.exitCode == 1 || s->talk.exitCode == 2) {
+        ui->overlay = UiOverlayTitle;
+        ui->boot = UiBootNone;
+        gameUiAmbientMusic(ui);
     }
 }
 
@@ -3170,6 +3209,10 @@ static bool talkKey(GameUi *ui, UiKey key) { /* 1-9 choose a topic, Escape the l
     if (ui->reading) { /* a readable item's text: any key puts it away */
         ui->reading = false;
         ui->overlay = UiOverlayNone;
+        return true;
+    }
+    if (ui->talkEnding) {
+        talkFinish(ui);
         return true;
     }
     if (!ui->talkListShown) {
@@ -3377,6 +3420,11 @@ static bool keyDispatch(GameUi *ui, UiKey key, bool ctrl) {
             if (ui->boot != UiBootNone) {
                 ui->boot = UiBootNone;
                 ui->lastMusicPage = 0xFFFF;
+            }
+            { /* InitializeDungeonLevel: the level is built again for the party the title menu left */
+                ExploreReveal revealed;
+                exploreRevealAroundPlayer(&s->save, s->x, s->y, s->facing, &revealed);
+                sessionRebuild(s);
             }
             gameUiAmbientMusic(ui);
         } else if (key == 'a') {
@@ -3673,6 +3721,10 @@ static bool talkClick(GameUi *ui, int x, int y) {
         return true;
     } /* the click table at DS:0x6458: the topic rows drawTalk lists, five to a column (x 58-135 and 142-220, 6 pixels each from y = 32) */
     GameSession *s = ui->session;
+    if (ui->talkEnding) {
+        talkFinish(ui);
+        return true;
+    }
     if (!ui->talkListShown) {
         ui->talkListShown = true;
         return true;

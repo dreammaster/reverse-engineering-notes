@@ -96,6 +96,7 @@ typedef struct {
     char talkText[1200];   /* what the NPC last said */
     char talkRows[16][DialogLineChars + 1]; /* the same in the rows the screen draws it in */
     unsigned talkRowCount;
+    bool talkEnding;       /* the conversation is over (an ending topic): its words stay until a key or a click, then the dialog closes -- to the title screen for the exit codes 1 and 2 */
     bool talkListShown;    /* the topic list is up: it comes after the greeting has been read (any key or click) */
     bool shopFromTalk;     /* the merchant's screen was opened from a conversation (UseKeyItem): the dialog stays up with the new topic list, DONE (or Space) leaves, and the first topic listed then runs */
     unsigned shopLock;     /* the lock record of that merchant while WHO WILL BARTER? (message 10) is asked */
@@ -257,6 +258,9 @@ void gameUiDraw(GameUi *ui);
  * the catalog record's +8 names) and while K waits for its target a crosshair (picture 0xF); gameUiCursorShown says when the platform should hide its own pointer because the screen draws one.
  */
 void gameUiMouseMove(GameUi *ui, int x, int y);
+
+/* Loads save slot `slot` (0-5) through the host, as the pause dialog's LOAD does, without the dialog (the SDL tool's EXPLORE_LOAD=n). */
+bool gameUiLoadSlot(GameUi *ui, unsigned slot);
 
 /* After gameUiMouseMove alone: puts the picture of the last gameUiDraw back and draws only the cursor item on it, a few hundred pixels instead of the whole screen. Falls back to gameUiDraw. */
 void gameUiRedrawCursor(GameUi *ui);

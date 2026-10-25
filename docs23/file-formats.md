@@ -6875,6 +6875,16 @@ spell lists 8-10 of 31-52, items 5-8 of 13-52 per group; REGISTER.EXE (Chapter 3
 and the id as record number), and the display name is the block's two 12-character lines joined by a space ("CARNIVOROUS SPIDER", "OGRE CHIEF"). Reading them as monster *type* ids (several types share a block) gave WORKER ANT nine times.
 `monsterRecordFromBlock`. A list of more than 14 entries ends with "a  MORE  b" at (129, 167), the a / b only where there is a page to turn to.
 
+### Conversation endings and reward panes (decoded 2026-10-26)
+
+**Exit codes.** A topic with flag 0x1 ends the conversation: its words stay until a key (`WaitForKeypressTickingMusic`), and its argument, when it is 1 or 2, is `UseItem`'s exit code (`word_2E52A`); `start` (:10660) answers 1 and 2
+with `RunTitleScreen` -- the title menu: creation, assemble a party, enter, credits, introduction -- and, when E leaves it, `InitializeDungeonLevel`. The inns' GO TO MENU / YES (NPC 6, topic YES: flags 1, argument 1) is that.
+`talkEnding` / `talkFinish` in `gameui.c`; the title's E rebuilds the level.
+
+**Reward panes.** A topic with flag 0x1000 (`CheckKeyItem`, :22563) is `UseKeyItem` without the question WHO WILL BARTER? and without the buying flag (`g_uiScratchFlags2` 0x20): `RunShopScreen` over the dialog on the lock record the
+topic names, whose slots are simply taken (a chest's, with the "taken for good" bits). The table that asks where the armory is (NPC 5): SOUTH (flags 0x1020) shows four GOLD NUGGETs. Leaving runs the first topic listed, as for
+a shop. (The standalone ignored flag 0x1000 until now.) The SDL tool's `EXPLORE_LOAD=n` starts from save slot n.
+
 ### A merchant inside a conversation (UseKeyItem, decoded 2026-10-24)
 
 A topic with flag 0x8000 (or 0x4000: the sell screen) first goes through `ConfirmAndValidatePartyTarget` (yendor2.asm:19859): with nobody in the first role (`g_partyRoleAssignment1`, the haggler) `ShowConfirmPrompt 10` --

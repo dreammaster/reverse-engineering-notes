@@ -532,16 +532,6 @@ int main(int argc, char **argv) {
         fprintf(stderr, "cannot start a session (is %s/WORLD.DAT there?)\n", dir);
         return 1;
     }
-    if (opt("EXPLORE_START")) { /* x,y,N|E|S|W: start somewhere else (testing) */
-        int sx, sy;
-        char dirChar = 'N';
-        if (sscanf(opt("EXPLORE_START"), "%d,%d,%c", &sx, &sy, &dirChar) >= 2) {
-            g_session->x = sx;
-            g_session->y = sy;
-            g_session->facing = dirChar == 'S' ? SaveFacingSouth : dirChar == 'E' ? SaveFacingEast : dirChar == 'W' ? SaveFacingWest : SaveFacingNorth;
-            sessionRebuild(g_session);
-        }
-    }
     if (opt("EXPLORE_MOUNTS")) { /* EXPLORE_MOUNTS=1 (testing): the first hero knows all four mounts, and the cells around the party are explored */
         partySetU16(sessionPartyRecord(g_session, 0), PartyFieldAbilities, 0xF000);
         ExploreReveal revealed;
@@ -562,6 +552,19 @@ int main(int argc, char **argv) {
     }
     g_ui.debugMarkers = opt("EXPLORE_DEBUG") != NULL;
     g_ui.freeMaps = opt("EXPLORE_FREEMAPS") != NULL; /* M and W without the map item and the Mapping skill */
+    if (opt("EXPLORE_LOAD") && !gameUiLoadSlot(&g_ui, (unsigned)atoi(opt("EXPLORE_LOAD")) - 1)) { /* EXPLORE_LOAD=n: start from the game's save slot n (SAVGAMEn) */
+        fprintf(stderr, "could not load save slot %s%c", opt("EXPLORE_LOAD"), 10);
+    }
+    if (opt("EXPLORE_START")) { /* x,y,N|E|S|W: start somewhere else (testing) */
+        int sx, sy;
+        char dirChar = 'N';
+        if (sscanf(opt("EXPLORE_START"), "%d,%d,%c", &sx, &sy, &dirChar) >= 2) {
+            g_session->x = sx;
+            g_session->y = sy;
+            g_session->facing = dirChar == 'S' ? SaveFacingSouth : dirChar == 'E' ? SaveFacingEast : dirChar == 'W' ? SaveFacingWest : SaveFacingNorth;
+            sessionRebuild(g_session);
+        }
+    }
     if (opt("EXPLORE_BOOT")) { /* the original's start: the dialog with LOAD / NEW GAME / DOS when there are saves, else the title menu of a new game (EXPLORE_SPLASH: the boot title and the introduction first) */
         gameUiBoot(&g_ui);
     } else if (opt("EXPLORE_TITLE")) { /* start on the title menu: E enters, I plays the opening, R the story */

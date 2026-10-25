@@ -1729,6 +1729,57 @@ static void testTalkShop(GameKind game, const char *envName, const char *default
     free(world);
 }
 
+/* Chapter 2's tavern: the table's right answer shows a reward pane (CheckKeyItem), and the inn's "GO TO MENU / YES" ends the conversation with exit code 1, which is the title screen. */
+static void testTalkEnds(const char *envName, const char *defaultDir) {
+    const char *dir = getenv(envName);
+    char path[512];
+    snprintf(path, sizeof(path), "%s/WORLD.DAT", dir ? dir : defaultDir);
+    size_t size;
+    uint8_t *world = readFile(path, &size);
+    if (!world) {
+        return;
+    }
+    GameUiHost host = {NULL, onEffect, onMusic, NULL, onStore, onFetch, onSlotName, onSlotWrite, onSlotRead};
+    static GameUi ui;
+    GameSession *s = sessionNew(GameYendor2, world, size);
+    gameUiInit(&ui, s, world, size, picture, NULL, &host);
+    int col, row;
+    if (findObject(s, WorldObjectFlagTalker, 5, &col, &row)) { /* the table that asks where the armory is */
+        s->x = col;
+        s->y = row;
+        s->facing = SaveFacingNorth;
+        sessionRebuild(s);
+        gameUiKey(&ui, ' ', false);
+        gameUiKey(&ui, UiKeyEnter, false);
+        gameUiKey(&ui, '3', false); /* SOUTH */
+        check("the right answer opens the reward pane over the dialog (no question, no price)", ui.catalogActive && !ui.catalogShop && ui.shopFromTalk && ui.overlay == UiOverlayTalk);
+        gameUiDraw(&ui);
+        gameUiKey(&ui, ' ', false);
+        check("leaving it runs the first topic listed (DONE) and the conversation goes on", !ui.catalogActive && !ui.shopFromTalk && ui.overlay == UiOverlayTalk);
+        for (unsigned i = 0; i < 6 && ui.overlay == UiOverlayTalk; i++) { /* Escape is the last topic listed, the way out; an ending topic's words wait for a key */
+            gameUiKey(&ui, UiKeyEscape, false);
+        }
+        check("the way out closes the dialog (exit code 0: back in the game)", ui.overlay == UiOverlayNone && !s->talking);
+    }
+    if (findObject(s, WorldObjectFlagTalker, 6, &col, &row)) { /* the tavern keeper */
+        s->x = col;
+        s->y = row;
+        s->facing = SaveFacingNorth;
+        sessionRebuild(s);
+        gameUiKey(&ui, ' ', false);
+        gameUiKey(&ui, UiKeyEnter, false);
+        gameUiKey(&ui, '2', false); /* GO TO MENU */
+        gameUiKey(&ui, '1', false); /* YES */
+        check("YES ends the conversation, its words waiting for a key", !s->talking && ui.talkEnding && ui.overlay == UiOverlayTalk && s->talk.exitCode == 1);
+        gameUiKey(&ui, ' ', false);
+        check("the key takes the party to the title screen (exit code 1)", ui.overlay == UiOverlayTitle);
+        gameUiKey(&ui, 'e', false);
+        check("E on the title screen goes back into the game", ui.overlay == UiOverlayNone);
+    }
+    sessionFree(s);
+    free(world);
+}
+
 /* Sounds the session asks for one after another are played one at a time, each when the host says the one before it is over (TriggerSoundEventAfterDriverWait). */
 static void testSoundQueue(void) {
     const char *dir = getenv("YENDOR2_GAME_DIR");
@@ -1778,6 +1829,7 @@ int main(void) {
     testBeltItemsUi(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
     testTalkShop(GameYendor2, "YENDOR2_GAME_DIR", "../../yendor2/game", "Chapter 2");
     testTalkShop(GameYendor3, "YENDOR3_GAME_DIR", "../../yendor3/game", "Chapter 3");
+    testTalkEnds("YENDOR2_GAME_DIR", "../../yendor2/game");
     testSoundQueue();
     printf("%s (%d skipped)\n", g_failureCount ? "FAILED" : "ALL PASSED", g_skipCount);
     return g_failureCount ? 1 : 0;
