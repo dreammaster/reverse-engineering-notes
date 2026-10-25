@@ -119,42 +119,53 @@ static void ULTIMA_0991(int* ax, int* bx, int* cx, int* dx);
 static void ULTIMA_0a22(int ax, int bx, int cx, int dx, int* si, int* di);
 
 // ASM
+// Clips the line (x1,y1)-(x2,y2) to the clip window: returns 0 (CLC) when something is left to draw (coordinates updated),
+// -1 (STC) when the line is entirely outside.  Follows the register flow of the original, including its handling of an
+// endpoint pair that are both outside (the first endpoint is searched against the second as if that were inside).
 static bool ULTIMA_0935_ClipLineCoord(int* x1, int* y1, int* x2, int* y2)
 {
 	int si = 0;
 	int di = 0;
-	ULTIMA_0a22(*x1, *y1, *x2, *y2, &si, &di);
+	int ax = *x1;
+	int bx = *y1;
+	int cx = *x2;
+	int dx = *y2;
+	int t;
 
-	if (si == 0 || di == 0)
-		return 0; // CLC
+	ULTIMA_0a22(ax, bx, cx, dx, &si, &di);
 
-	if (di != si)
-		return -1; // STC
+	if (si == 0 && di == 0)
+		return 0; // CLC: fully inside
+
+	if ((di & si) != 0)
+		return -1; // STC: both endpoints beyond the same edge
 
 	// 0948
-	D_52fa = *x1;
-	D_52fc = *y1;
-	D_52fe = *x2;
-	D_5300 = *y2;
+	D_52fa = ax;
+	D_52fc = bx;
+	D_52fe = cx;
+	D_5300 = dx;
 
 	if (si != 0)
 	{
-		SWAP(x1, x2);
-		SWAP(y1, y2);
-		ULTIMA_0991(x1, y1, x2, y2);
-		D_52fa = *x1;
-		D_52fc = *y1;
-		*x2 = D_52fe;
-		*y2 = D_5300;
+		// xchg ax,cx; xchg bx,dx
+		t = ax; ax = cx; cx = t;
+		t = bx; bx = dx; dx = t;
+		ULTIMA_0991(&ax, &bx, &cx, &dx);
+		D_52fa = ax;
+		D_52fc = bx;
+		cx = D_52fe;
+		dx = D_5300;
 	}
 
 	// 0971
 	if (di != 0)
 	{
-		ULTIMA_0991(x1, y1, x2, y2);
-		D_52fe = *x1;
-		D_5300 = *y1;
+		ULTIMA_0991(&ax, &bx, &cx, &dx);
+		D_52fe = ax;
+		D_5300 = bx;
 	}
+
 	// 0980
 	*x1 = D_52fa;
 	*y1 = D_52fc;
@@ -287,11 +298,7 @@ void ULTIMA_0a70_GRAP_2d_SetPenColor(int param_1)
 // ASM
 void ULTIMA_0aa6_GRAP_3f_FillRect(int x1, int y1, int x2, int y2)
 {
-    ASSERT(x1 < x2);
-    ASSERT(y1 < y2);
     ULTIMA_08e6_ClipRectCoord(&x1, &y1, &x2, &y2);
-    ASSERT(x1 < x2);
-    ASSERT(y1 < y2);
 	DRV_3f(x1, y1, x2, y2, 0);
 }
 
@@ -335,13 +342,9 @@ void ULTIMA_0b10_GRAP_Line(int x1, int y1, int x2, int y2)
 // ASM
 static void ULTIMA_0b2d_GRAP_Line(int ax, int bx, int cx, int dx, byte carry)
 {
-	int x1 = ax;
-	int y1 = bx;
-	int x2 = cx;
-	int y2 = dx;
-
-	D_52ba_vdp._52cc_penX = x2;
-	D_52ba_vdp._52ce_penY = y2;
+	// the original compares the registers *after* clipping, not the arguments
+	D_52ba_vdp._52cc_penX = cx;
+	D_52ba_vdp._52ce_penY = dx;
 
 	// pushf
 	if (D_52ba_vdp._52c4 != 0)
@@ -350,13 +353,13 @@ static void ULTIMA_0b2d_GRAP_Line(int ax, int bx, int cx, int dx, byte carry)
 			return; // JC return
 	}
 
-	if (y1 == y2)
+	if (bx == dx)
 	{
-		if (x1 == x2)
+		if (ax == cx)
 		{
 			// 0b78
 			// 0x30: pset
-			DRV_30(x1, y1);
+			DRV_30(ax, bx);
 			return;
 		}
 		else
@@ -368,7 +371,7 @@ static void ULTIMA_0b2d_GRAP_Line(int ax, int bx, int cx, int dx, byte carry)
 	else
 	{
 		// 0b59
-		if (x1 == x2)
+		if (ax == cx)
 		{
 			ULTIMA_08e6_ClipRectCoord(&ax, &bx, &cx, &dx);
 			// 0x3c: v_line
@@ -653,6 +656,13 @@ int ULTIMA_0ff4_LoadTileset(char* file_name)
 	byte* tileset;
     debug("ULTIMA_0ff4_LoadTileset(%s)", file_name);
 	tileset = (byte*)ULTIMA_125d_LoadResourceFileImpl(file_name);
+	if (tileset == NULL)
+	{
+		// load error: disk swap message, caller retries (original: 535c = DOS error, call [5394], return 0)
+		D_535c = 1;
+		D_5394_fn();
+		return 0;
+	}
 
 	DRV_48_LoadTileset(tileset);
 

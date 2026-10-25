@@ -12,7 +12,7 @@ engine. Everything below is reproducible with `python audit/run_all.py` (needs I
 | What does "95% matched" mean then? | Instruction-level equality with the Microsoft C 5.1 output, which we cannot reproduce (no compiler, no original linker). It says nothing about missing functions; the 95% is a *codegen* figure. |
 | Do the C functions do what the binary does? | Mostly verified: 568 of 688 functions have identical callee sets and data references (607 once video-driver state and negative-offset constants are ignored); the rest were triaged and are explained (jump tables, string pools, stubs) except where listed under *Defects found*. |
 | Is the data right? | Yes: 529 initialised variables, 47 pointer tables and 2,214 string literals equal the original `DATA.OVL`, apart from one reversed table (fixed). |
-| What actually deviates from the original? | The 74 hand-written assembly functions (re-implemented in C, only partly checked), the platform layer, and 157 conditional blocks that the modern build adds. See *Gaps*. |
+| What actually deviates from the original? | The platform layer, the graphics-driver code (not checked pixel for pixel), and 157 conditional blocks that the modern build adds. The 74 hand-written assembly functions were all compared with the disassembly. See *Gaps*. |
 | Can we compile and test? | Yes. `mingw32-make` builds a native Win32 binary with no SDL; a headless key-script/screenshot harness and unit tests are included (see [README](../README.md)). |
 
 ## Binary layout (needed for any further analysis, and for the ScummVM port)
@@ -117,14 +117,36 @@ fingerprint singled out.
 
 ### Assembly-derived functions (74)
 
-These are the functions the u5d author could not match and re-wrote in C. Reviewed against the disassembly and found equivalent:
-`ULTIMA_16ba_PrintChar`, `17f4` (glyph effects), `1b94`, `1bf2`, `1c22`/`1c5b` (text windows), `NPC_12e0` (schedule slot — including its
-quirk of returning 1 instead of 3 for the fourth entry), `2092`/`207e` (PRNG, DOS branch). Fixed above: `2056`, `2092`, `207e`, `6f1e`.
+These are the functions the u5d author could not match and re-wrote in C. All 74 were compared with the disassembly
+(`audit/asm_review.py` prints each one next to its C port). Results:
 
-**Not yet checked line by line** (about 60, small): the graphics-driver wrappers `0991`–`0f90`, `1068`–`1140`, `6f9e`–`6ff0`;
-file/drive helpers `0bae`–`0ff4`, `1588`, `1674`, `1eac`, `1ef7`; `1d02`, `1d5e`, `1c9e`, `1cca`, `1f26`, `1f77`; timing/audio
-`20c8`, `20fa`, `2192`, `223c`, `22c0`; `INTRO_2090/20ae`. They are pure plumbing or timing, but the driver wrappers carry the
-EGA clipping and reveal arithmetic, so they should be checked before graphics are reproduced in ScummVM.
+* **Equivalent** (about 60): the text engine (`16ba`, `17f4`, `1b94`, `1bf2`, `1c22`/`1c5b`, `1c9e`, `1cca`, `1cee`, `1f12`, `1f26`, `1f77`,
+  `1184`, `1226`), clip window and rectangle helpers (`08ca`, `08e6`, `0991`, `0a22`, `0c3c`, `0ccd`, `0d2b`), the driver wrappers that
+  only marshal registers (`0a70`, `0aa6`, `0ace`, `0b86`, `0b10`, `0bfc`, `0c22`, `0c64`, `0c9c`, `0cf2`, `0d4c`, `0f46`, `0f6e`, `0f90`,
+  `1044`, `1068`, `10e0`, `1112`, `1140`, `6f9e`, `6fbc`, `6fd6`, `INTRO_2090/20ae`), `1588` (compressed-file name test), `6f90`, `6ff0`
+  (symmetric 6x6 table lookup), `NPC_12e0` (schedule slot, including its quirk of returning 1 instead of 3 for the fourth entry),
+  and the audio entry points `22c0`/`2192`/`223c` (parameter order checked; the synthesis itself is in `audio/`).
+* **Fixed** (earlier): `2056`/`2092`/`207e` (PRNG, clock seed), `6f1e` (substring search).
+* **Fixed in this pass** (`0000.c`, `1000.c`):
+  * `ULTIMA_0935_ClipLineCoord` tested the outcodes wrongly — it returned "nothing to clip" as soon as *either* endpoint was inside
+    (the original: only when *both* are), rejected when the outcodes differed (the original: when they share a bit), and
+    returned the endpoints swapped after clipping the first one. Rewritten from the register flow.
+  * `ULTIMA_0b2d_GRAP_Line` chose between pixel / horizontal / vertical / general line using the *unclipped* arguments; the original
+    uses the registers after clipping (matters for a line clipped down to a point or an axis-parallel run).
+  * `ULTIMA_0ff4_LoadTileset` ignored a load failure; `1674` (`TestOpenFile`) and `1d02` (`LoadCharset`) did not report failures
+    the way the original does (disk-swap message plus a zero return so the caller's retry loop runs; `LoadCharset` also rejects
+    index >= 4 with -2). These only matter when a file is missing.
+  * `ULTIMA_0aa6_GRAP_3f_FillRect` had debug assertions that fail for valid one-pixel-wide rectangles.
+* **Differences kept** (platform): file/memory/drive helpers (`0bae`, `0be4`, `0fae`, `0fdc`, `125d`, `1eac`, `1ef7`), timer
+  (`1158`, `11b4`, `20c8`, `20fa`), video detection (`0de0`) and `1d5e` (`PollKey`; the original also maps F1-F10 to `c9`-`d2`, which
+  nothing in the game consumes, and flags keypad digits via the BIOS shift/NumLock state, which the host cannot reproduce).
+  `20c8` indexes its shift table by byte offset rather than word index (harmless: both entries are 0).
+  `ULTIMA_0ccd` swaps pointers instead of values, so the horizontal-line driver call sees (x1, x2) in caller order rather than
+  (max, min); the driver treats both the same.
+
+Not covered by the review: the *behaviour* of the graphics-driver functions themselves (`DRV_xx` in `grap_drv.c`, `graphics/`),
+i.e. what the EGA/CGA/Hercules/Tandy driver code does with the pixels. That would need either an x86 emulator running the original
+`EGA.DRV` or reference screenshots from the original game.
 
 ## Gaps and what to do about them
 
@@ -140,7 +162,8 @@ EGA clipping and reveal arithmetic, so they should be checked before graphics ar
 
 ## Next steps
 
-1. Check the ~60 remaining assembly-derived functions (start with the driver clipping/reveal code and `1d5e`/`1c9e`/`1f26`).
+1. Verify the graphics-driver routines (`DRV_xx`) against the original EGA driver: run `EGA.DRV` in an emulator, or capture
+   reference screenshots from DOSBox, and compare with the goldens.
 2. Decide the keep/revert policy for the deviation list; make `MATCHING_BUILD`-style behaviour selectable at run time.
 3. Build a save-game fixture with a party (the pristine `SAVED.GAM` has none) so the headless harness can drive towns, combat and
    dungeons, and record golden screenshots from the original-matching configuration.

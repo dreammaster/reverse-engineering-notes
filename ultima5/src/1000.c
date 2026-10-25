@@ -270,8 +270,13 @@ int ULTIMA_1674_TestOpenFile(char* file_name)
     if (fp)
     {
         fclose(fp);
+        D_535c = 0;
         return 1;
     }
+
+    // original: 535c = DOS error code, disk swap message, return 0 (callers loop until the file exists)
+    D_535c = 1;
+    D_5394_fn();
     return 0;
 #else
     // FMT (dummy)
@@ -887,9 +892,14 @@ int ULTIMA_1d02_LoadCharset(char* a, int b)
 {
     debug("ULTIMA_1d02_LoadCharset(%s,%d)", a, b);
 
-    D_539c[b] = ULTIMA_0fae_LoadResourceFile(a);
+    // original: index >= 4 -> -2; load error -> disk swap message and 0 (callers retry); success -> non-zero
+    if (b >= 4)
+        return -2;
 
-    // FMT
+    D_539c[b] = ULTIMA_0fae_LoadResourceFile(a);
+    if (D_539c[b] == 0)
+        return 0;
+
     return 1;
 }
 
