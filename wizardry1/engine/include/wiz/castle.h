@@ -39,6 +39,10 @@ struct CastleResult {
     bool windowClosed = false;
 };
 
+// CASTLE:23 / SHOPS:32 -- recompute the per-level spell-point counts of a character
+// (known spells per group, then the class's levels-per-group floor, capped at 9).
+void recalcSpellCounts(Character &c);
+
 // KANJIREA:37 -- S)TART GAME: every character still flagged INMAZE from the last
 // session walks back to town (INMAZE := false; a character not lost in the
 // dungeon also has LOCATION[2] zeroed).
@@ -54,6 +58,7 @@ public:
 
     // Drop the Castle's persistent windows (G10/G13) -- the maze / roller do this.
     void closeWindows();
+    void closeTitleWindow() { if (title_) d_.con.close(title_, false); }   // SHOPS:31 closes G13 only
 
 private:
     // CASTLE:3/6/7 -- the roster window

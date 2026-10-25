@@ -101,8 +101,21 @@ void Dos::waitCR() {                                      // WIZARDRY:12
     do getKey(); while (inchar != 13 && !quit);
 }
 
+int Dos::getNum(int max) {                                // WIZARDRY:32
+    for (;;) {
+        getKey();
+        if (quit) return -1;
+        int k = inchar;
+        if (k == 13) k = 48;
+        else if (k == 48) k = 0;
+        int n = k - 48;
+        if (n >= 0 && n <= max) return n;
+    }
+}
+
 void Dos::pause(int units) {                              // CONUNIT selector 19
     present();
+    dumpGrid(0xFF);
     long ticks = long(units) * 2;                         // INTERP: shl dx,1 ; 18.2 Hz ticks
     for (long t = 0; t < ticks && !keyReady(); ++t) plat.delayMs(55);
 }

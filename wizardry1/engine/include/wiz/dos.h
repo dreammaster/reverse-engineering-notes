@@ -40,6 +40,8 @@ public:
     int  getKey();               // proc 11: upper-cases, ignores 91..127; presents first
     bool keyReady();             // proc 33
     void waitCR();               // proc 12
+    // proc 32: a digit 0..max (RETURN = 0); anything else beeps.  -1 if the window closed.
+    int  getNum(int max);
     void pause(int units);       // CONUNIT selector 19 (units of ~2 ticks of 18.2 Hz); key aborts
     void present();              // push the composed screen to the platform
 

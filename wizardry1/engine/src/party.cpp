@@ -35,6 +35,11 @@ void Party::remove(Roster &roster, int i) {
     disk_[count_] = -1;
 }
 
+void Party::writeBack(Roster &roster) const {
+    for (int i = 0; i < count_; ++i)
+        if (disk_[i] >= 0 && disk_[i] < roster.count()) roster.slot(disk_[i]) = chars_[i];
+}
+
 void Party::swapMembers(int a, int b) {
     if (a < 0 || b < 0 || a >= count_ || b >= count_ || a == b) return;
     std::swap(chars_[a], chars_[b]);

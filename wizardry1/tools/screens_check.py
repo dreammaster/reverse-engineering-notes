@@ -20,6 +20,11 @@ SCEN = {
     'castle_tavern': ('castle-test', 'GA\rRLAE', '', 3),
     'castle_party':  ('castle-test', r'GAABC\rR2DLA1B\rL\rE', '', 3),
     'castle_levelup': ('castle-test', r'GAA\rLA1B', '0:62:1500,0:67:2', 3),
+    # Temple: TEMPEST (slot 1) is DEAD / ASHES; THESUS + LYSANDER join and pool gold to pay
+    'shops_temple': ('castle-test', r'GAAC\rLTA1\rE', '1:20:5,1:67:0', 3),
+    'shops_temple2': ('castle-test', r'GAAC\rLTA2\r\rE', '1:20:6,1:67:0', 3),
+    'shops_boltac': ('castle-test', r'GAABC\rLB1BPPL2SP1UP1ILL3PLE', '', 3),
+    'shops_edge': ('castle-test', r'GAA\rLEMXC', '', 3),
 }
 
 def run(exe, name, tmp):

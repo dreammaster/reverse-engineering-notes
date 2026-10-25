@@ -250,16 +250,8 @@ void Castle::removeMember() {
     Win *w = con.open(8, 7, 24, 4, 7, true);
     d_.putStrC(w, 413);
     d_.putStrC(w, 414);
-    int who = -1;
-    for (;;) {                                                      // WIZARDRY:32
-        d_.getKey();
-        if (d_.quit) { con.close(w, false); return; }
-        int k = d_.inchar;
-        if (k == 13) k = 48;
-        else if (k == 48) k = 0;
-        int n = k - 48;
-        if (n >= 0 && n <= w_.party.count()) { who = n - 1; break; }
-    }
+    int who = d_.getNum(w_.party.count()) - 1;
+    if (d_.quit) { con.close(w, false); return; }
     con.close(w, false);
     if (who < 0) return;
     w_.party.remove(w_.roster, who);
@@ -340,7 +332,7 @@ static void perLevel(int g[8], int level, int minus, int step) {                
     for (int i = 1; i <= 7; ++i)
         if (g[i] > 9) g[i] = 9;
 }
-static void recalcSpells(Character &c) {                           // CASTLE:23
+void recalcSpellCounts(Character &c) {                              // CASTLE:23
     static const int mg[7][2] = {{1, 4}, {5, 6}, {7, 8}, {9, 11}, {12, 14}, {15, 18}, {19, 21}};
     static const int pg[7][2] = {{22, 26}, {27, 30}, {31, 34}, {35, 38}, {39, 44}, {45, 48}, {49, 50}};
     for (int g = 1; g <= 7; ++g) minCount(c, c.priestSpells, g, pg[g - 1][0], pg[g - 1][1]);
@@ -375,7 +367,7 @@ void Castle::learnSpells(Win *win, int m, bool &learned) {         // CASTLE:33/
         d_.putStr(win, 428);
         d_.newline(win);
     }
-    recalcSpells(c);
+    recalcSpellCounts(c);
 }
 
 void Castle::gainLose(Win *win, int m) {                           // CASTLE:37
@@ -412,7 +404,7 @@ void Castle::levelUp(Win *win, int m) {                            // CASTLE:31
     d_.newline(win);
     ++c.charLevel;
     if (c.charLevel > c.maxLevelAcquired) c.maxLevelAcquired = c.charLevel;
-    recalcSpells(c);
+    recalcSpellCounts(c);
     bool learned = false;
     learnSpells(win, m, learned);
     gainLose(win, m);
@@ -486,7 +478,7 @@ void Castle::nap(Win *win, int m, int hpPerWeek, int goldPerWeek) {   // CASTLE:
         d_.newline(win);
     }
     checkLevel(win, m);
-    recalcSpells(c);                                                // CASTLE:23
+    recalcSpellCounts(c);                                                // CASTLE:23
     d_.gotoXY(win, 0, 9);
     d_.putStrC(win, 440);
     d_.waitCR();
@@ -504,16 +496,8 @@ void Castle::inn() {                                                // CASTLE:20
         d_.newline(win);
         d_.putStrC(win, 418);
         d_.putStrC(win, 419);
-        int who = -1;
-        for (;;) {                                                  // WIZARDRY:32
-            d_.getKey();
-            if (d_.quit) { con.close(win, false); return; }
-            int k = d_.inchar;
-            if (k == 13) k = 48;
-            else if (k == 48) k = 0;
-            int n = k - 48;
-            if (n >= 0 && n <= w_.party.count()) { who = n - 1; break; }
-        }
+        int who = d_.getNum(w_.party.count()) - 1;
+        if (d_.quit) { con.close(win, false); return; }
         if (who < 0) { con.close(win, false); return; }
         if (w_.party.member(who).status != Status::OK) continue;
         int choice;

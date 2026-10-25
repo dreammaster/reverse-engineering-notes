@@ -149,7 +149,9 @@ class Conunit:
 
     def noop(self, buf, z, w): pass
     def sound(self, buf, z, w): pass
-    def pause(self, buf, z, w): pass
+    def pause(self, buf, z, w):
+        self.vm.shot(0xFF)                  # a pause is a visible beat: snapshot it
+
 
     # -- RANDOM ----------------------------------------------------------------
     def random(self, buf):

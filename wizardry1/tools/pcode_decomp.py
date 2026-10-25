@@ -144,7 +144,11 @@ class Dec:
                 self.labels.add(int(txt.split('L')[-1], 16))
             elif kind == 'xjp':
                 for t in txt.split('->')[1].split(','):
-                    self.labels.add(int(t.strip()[1:], 16))
+                    t = t.strip()[1:]
+                    try:
+                        self.labels.add(int(t, 16))
+                    except ValueError:
+                        pass
             if nxt is None or nxt <= scan: break
             scan = nxt
         name = pd.pname(self.seg.name, p.num) or ''

@@ -25,6 +25,7 @@ add_library(wizcore STATIC
   src/console_replay.cpp
   src/dos.cpp
   src/castle.cpp
+  src/shops.cpp
   src/dos_cmds.cpp
   src/roster.cpp
   src/roller_ui.cpp

@@ -1,5 +1,6 @@
 // Commands that drive the DOS-faithful screens (wiz::Dos / wiz::Console).
 #include "wiz/castle.h"
+#include "wiz/shops.h"
 #include "wiz/platform.h"
 #include "wiz/scenario.h"
 #include "wiz/string_pool.h"
@@ -99,10 +100,30 @@ int cmdCastleTest(int argc, char **argv) {
         }
     }
     CastleWorld world{party, roster, a.sc, rng, "", ""};
+    Shop shop;
+    shop.seedFrom(a.sc);
+    ShopsWorld sworld{party, roster, shop, a.sc, rng, "", "", ""};
     Castle castle(dos, world);
-    CastleResult r = castle.run(XCASTLE);
-    std::printf("castle -> xgoto %d member %d%s  party %d\n", r.xgoto, r.member,
-                r.windowClosed ? " (closed)" : "", party.count());
+    Shops shops(dos, sworld, castle);
+
+    // the WIZARDRY mainline's XGOTO dispatch, restricted to the segments ported so far
+    int xgoto = XCASTLE;
+    int member = -1;
+    while (!dos.quit) {
+        if (xgoto == XCASTLE || xgoto == XCASTLE2) {
+            CastleResult r = castle.run(xgoto);
+            xgoto = r.xgoto;
+            member = r.member;
+            if (r.windowClosed) break;
+        } else if (xgoto == XSHOPS) { shops.boltac(); xgoto = XCASTLE; }
+        else if (xgoto == XTEMPLE) { shops.temple(); xgoto = XCASTLE; }
+        else if (xgoto == XEDGE) {
+            ShopsResult r = shops.edgeOfTown();
+            if (r.windowClosed) break;
+            xgoto = r.xgoto;
+        } else break;                                   // not ported yet: CAMP, ROLLER, maze, ...
+    }
+    std::printf("dos -> xgoto %d member %d  party %d\n", xgoto, member, party.count());
     return 0;
 }
 

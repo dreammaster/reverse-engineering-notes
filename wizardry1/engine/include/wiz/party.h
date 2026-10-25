@@ -39,6 +39,9 @@ public:
     // UPDCHARS: everyone leaves (used by Edge of Town -> Training / Leave).
     void disband(Roster &roster);
 
+    // SHOPS:12 -- write every member's working copy back over its roster record.
+    void writeBack(Roster &roster) const;
+
     // REORDER: swap two members (character copy + roster index together).
     void swapMembers(int a, int b);
 
