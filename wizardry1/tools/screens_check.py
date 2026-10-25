@@ -30,6 +30,13 @@ SCEN = {
     'shops_temple2': dict(cmd='castle-test', keys=r'GAAC\rLTA2\r\rE', patch='1:20:6,1:67:0'),
     'shops_boltac':  dict(cmd='castle-test', keys=r'GAABC\rLB1BPPL2SP1UP1ILL3PLE'),
     'shops_edge':    dict(cmd='castle-test', keys=r'GAA\rLEMXC'),
+    'roller_menu':   dict(cmd='castle-test', keys=r'ETR\rTIA'),
+    'roller_inspect': dict(cmd='castle-test', keys=r'ETIAL\rIB'),
+    'roller_pw':     dict(cmd='castle-test', keys=r'ETIAAXYZ\rXYZ\r\rL\rIAAAB\rQ\rL'),
+    'roller_delete': dict(cmd='castle-test', keys=r'ETIEDNDY\rETR\r'),
+    'roller_class':  dict(cmd='castle-test', keys=r'ETIACL\rL'),
+    'roller_create': dict(cmd='castle-test', keys=r'ETCZORK\r\rAA++++++++++++\r++++++++++\r++++\rCAYLR\r'),
+    'roller_create_n': dict(cmd='castle-test', keys=r'ETCBEAR\rPW\rPW\rBC++++\r++++++++\rC\rEN'),
 }
 
 

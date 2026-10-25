@@ -1,6 +1,7 @@
 // Commands that drive the DOS-faithful screens (wiz::Dos / wiz::Console).
 #include "dos_assets.h"
 #include "wiz/castle.h"
+#include "wiz/roller_dos.h"
 #include "wiz/shops.h"
 #include "wiz/platform.h"
 
@@ -62,6 +63,8 @@ int cmdCastleTest(int argc, char **argv) {
     ShopsWorld sworld{party, roster, shop, a.sc, rng, "", "", ""};
     Castle castle(dos, world);
     Shops shops(dos, sworld, castle);
+    RollerWorld rworld{party, roster, a.sc, rng, "", ""};
+    RollerScreen roller(dos, rworld);
 
     // the WIZARDRY mainline's XGOTO dispatch, restricted to the segments ported so far
     int xgoto = XCASTLE;
@@ -78,7 +81,11 @@ int cmdCastleTest(int argc, char **argv) {
             ShopsResult r = shops.edgeOfTown();
             if (r.windowClosed) break;
             xgoto = r.xgoto;
-        } else break;                                   // not ported yet: CAMP, ROLLER, maze, ...
+        } else if (xgoto == XROLLER || xgoto == 19) {
+            RollerResult r = roller.run(xgoto);
+            if (r.windowClosed) break;
+            xgoto = r.xgoto;
+        } else break;                                   // not ported yet: CAMP, maze, ...
     }
     std::printf("dos -> xgoto %d member %d  party %d\n", xgoto, member, party.count());
     return 0;

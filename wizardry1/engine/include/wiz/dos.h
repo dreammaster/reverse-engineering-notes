@@ -68,6 +68,11 @@ public:
 
     // ---- line input (proc 29) ---------------------------------------------------------------
     std::string getLine(Win *w, int maxLen);
+    // KANJIREA:42 (the English path): the name entry -- '_' cursor (Ctrl-A swaps it for
+    // DEL), BS erases, ESC clears and returns "", punctuation 33..47 (except '*') is refused.
+    std::string getName(Win *w, int maxLen);
+    // CASTLE:2 / ROLLER:2: password entry -- echoes 1-2 'X' per key, `rng` picks how many.
+    std::string getPassword(Win *w, class Rng &rng);
 
 private:
     const StringPool &sp_;

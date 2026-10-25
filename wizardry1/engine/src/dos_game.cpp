@@ -7,6 +7,7 @@
 #include "wiz/font.h"
 #include "wiz/maze_ui.h"
 #include "wiz/platform.h"
+#include "wiz/roller_dos.h"
 #include "wiz/roller_ui.h"
 #include "wiz/shops.h"
 #include "wiz/title.h"
@@ -71,6 +72,8 @@ int cmdDosGame(int argc, char **argv) {
     TownWorld tw{party, roster, shop, a.sc, &a.sp, rng, rosterPath, partyPath, shopPath, mazePath};
     Castle castle(dos, cw);
     Shops shops(dos, sw, castle);
+    RollerWorld rw{party, roster, a.sc, rng, rosterPath, partyPath};
+    RollerScreen roller(dos, rw);
     Ui ui(*plat, font);
     MazeState mst;
 
@@ -99,11 +102,16 @@ int cmdDosGame(int argc, char **argv) {
             if (ui.quit()) break;
             con.refresh();
             xgoto = XCASTLE;
-        } else if (xgoto == XROLLER) {                  // legacy Training Grounds
-            runRoller(ui, roster, a.sc, rng, rosterPath);
-            if (ui.quit()) break;
-            con.refresh();
-            xgoto = XCASTLE;
+        } else if (xgoto == XROLLER || xgoto == 19) {   // Training Grounds (ROLLER)
+            RollerResult r = roller.run(xgoto);
+            if (r.windowClosed) break;
+            xgoto = r.xgoto;
+            if (xgoto == 17) {                          // INSPECT: CAMP's sheet (legacy view for now)
+                legacySeeMember(ui, tw, 0);
+                if (ui.quit()) break;
+                con.refresh();
+                xgoto = 19;
+            }
         } else if (xgoto == XMAZE_ENTRY) {              // legacy maze
             castle.closeWindows();
             mst = MazeState{};

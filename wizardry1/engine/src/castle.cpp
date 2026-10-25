@@ -211,20 +211,8 @@ void Castle::addMember() {
             con.clear(prompt, true);
             d_.gotoXY(prompt, 0, 0);
             d_.putStr(prompt, 410);
-            // CASTLE:2 -- password entry, echoing 1-2 'X' per key
-            std::string pw;
-            for (;;) {
-                d_.getKey();
-                if (d_.quit) return;
-                if (d_.inchar == 13) break;
-                if (pw.size() < 15) {
-                    int reps = rnd(2);
-                    for (int k = 0; k <= reps; ++k)
-                        if (prompt->cx < prompt->w - 3) d_.putC(prompt, 'X');
-                    pw.push_back(char(d_.inchar));
-                }
-            }
-            d_.newline(prompt);
+            std::string pw = d_.getPassword(prompt, w_.rng);          // CASTLE:2
+            if (d_.quit) return;
             if (pw != c.password) {
                 d_.gotoXY(list, 19 * (idx / 10), idx % 10);
                 d_.putC(list, 65 + idx);

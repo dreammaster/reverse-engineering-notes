@@ -39,6 +39,14 @@ public:
     // UPDCHARS: everyone leaves (used by Edge of Town -> Training / Leave).
     void disband(Roster &roster);
 
+    // ROLLER:17 -- hand one character to CAMP (PARTYCNT := 1, CHARDISK[0] := slot) and take
+    // it back afterwards (ROLLER:15) without touching any roster flags.
+    void setSingle(const Character &c, int slot) {
+        chars_[0] = c; disk_[0] = slot; count_ = 1;
+        for (int i = 1; i < kMax; ++i) disk_[i] = -1;
+    }
+    void disbandQuiet() { count_ = 0; for (int &d : disk_) d = -1; }
+
     // SHOPS:12 -- write every member's working copy back over its roster record.
     void writeBack(Roster &roster) const;
 

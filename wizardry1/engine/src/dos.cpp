@@ -1,4 +1,5 @@
 #include "wiz/dos.h"
+#include "wiz/rng.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -269,6 +270,62 @@ std::string Dos::getLine(Win *w, int maxLen) {                            // WIZ
             putC(w, inchar);
         }                                                               // else PRINTBEL
     }
+}
+
+std::string Dos::getName(Win *w, int maxLen) {                         // KANJIREA:42
+    std::string s;
+    bool underscore = true;
+    for (;;) {
+        int x = w->cx, y = w->cy;
+        gotoXY(w, x, y);
+        putC(w, underscore ? 95 : 127);
+        getKey();
+        gotoXY(w, x, y);
+        putC(w, ' ');
+        gotoXY(w, x, y);
+        if (quit) return s;
+        auto erase = [&] {                                              // KANJIREA:43
+            s.pop_back();
+            gotoXY(w, w->cx - 1, w->cy);
+            putC(w, ' ');
+            gotoXY(w, w->cx - 1, w->cy);
+        };
+        if (inchar == 8 && !s.empty()) {
+            erase();
+        } else if (inchar == 1) {
+            underscore = !underscore;
+        } else if (inchar > 31 && inchar <= 127 && x < w->w - 3 && int(s.size()) < maxLen) {
+            if (inchar == 42 || inchar < 33 || inchar > 47) {
+                s.push_back(char(inchar));
+                putC(w, inchar);
+            }
+        } else if (inchar == 13 || inchar == 27) {
+            putC(w, ' ');
+            if (inchar == 27)
+                while (!s.empty()) erase();
+            return s;
+        } else if (inchar == 11 || inchar == 10 || inchar == 12 || inchar == 9 || inchar == 222 ||
+                   inchar == 223 || (inchar >= 166 && inchar <= 221)) {
+            // kana / candidate-window keys: no effect in the English path
+        }                                                                // else PRINTBEL
+    }
+}
+
+std::string Dos::getPassword(Win *w, Rng &rng) {                        // CASTLE:2 / ROLLER:2
+    std::string pw;
+    for (;;) {
+        getKey();
+        if (quit) return pw;
+        if (inchar == 13) break;
+        if (pw.size() < 15) {
+            int reps = rng.mod(2);
+            for (int k = 0; k <= reps; ++k)
+                if (w->cx < w->w - 3) putC(w, 'X');
+            pw.push_back(char(inchar));
+        }                                                                // else PRINTBEL
+    }
+    newline(w);
+    return pw;
 }
 
 } // namespace wiz

@@ -27,6 +27,7 @@ add_library(wizcore STATIC
   src/castle.cpp
   src/title.cpp
   src/shops.cpp
+  src/roller_dos.cpp
   src/dos_cmds.cpp
   src/dos_game.cpp
   src/roster.cpp
