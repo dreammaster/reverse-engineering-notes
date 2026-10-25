@@ -16,7 +16,13 @@ public:
         std::snprintf(path, sizeof path, "%s/frame%04d.ppm", dir_.c_str(), frame_++);
         s.savePPM(path, pal, palLen);
     }
-    int pollKey() override { return nextKey(); }
+    int pollKey() override {
+        // an exhausted script means "no key yet" (waitKey then reports the quit);
+        // a runaway poll loop is cut off so headless runs always terminate
+        if (pos_ >= keys_.size()) return ++idle_ > 200000 ? int(KEY_QUIT) : int(KEY_NONE);
+        idle_ = 0;
+        return nextKey();
+    }
     int waitKey() override { return nextKey(); }
     void delayMs(int) override {}
     bool running() const override { return pos_ < keys_.size(); }
@@ -29,6 +35,7 @@ private:
     std::string keys_, dir_;
     size_t pos_ = 0;
     int frame_ = 0;
+    int idle_ = 0;
 };
 } // namespace
 

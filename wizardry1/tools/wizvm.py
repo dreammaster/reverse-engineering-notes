@@ -72,6 +72,17 @@ class Volume:
             if self.data[o + 7:o + 7 + ln].decode('latin1') == name:
                 self.data[o + 4:o + 6] = bytes(2)
 
+    def patch_roster(self, slot, word, value):
+        """poke a 16-bit word of roster record `slot` in the in-memory SCENARIO.DATA"""
+        first, _ = self.find('SCENARIO.DATA')
+        toc = self.read(first, 512)
+        per2b = struct.unpack_from('<H', toc, 0x2A + 2 * 5)[0]
+        size = struct.unpack_from('<H', toc, 0x4A + 2 * 5)[0]
+        bloff = struct.unpack_from('<H', toc, 0x5A + 2 * 5)[0]
+        blk = first + bloff + 2 * (slot // per2b)
+        off = (blk * 512) + size * (slot % per2b) + 2 * word
+        self.data[off:off + 2] = struct.pack('<H', value & 0xFFFF)
+
     def find(self, name):
         for i in range(77):
             o = 2 * 512 + 26 * (1 + i)
@@ -495,20 +506,24 @@ class VM:
                 self.ioresult = 0
             else:
                 for i in range(y):
-                    if self.shotdir:
-                        self.shotn += 1
-                        k = self.keys[0] if self.keys else 0
-                        base = os.path.join(self.shotdir, f'{self.shotn:03d}_{k:02x}')
-                        self.con.save_png(base + '.png', 2)
-                        self.con.dump_grid(base + '.grid')
-                        if self.oplog is not None:
-                            open(base + '.ops', 'w').write(chr(10).join(self.oplog) + chr(10))
-                            del self.oplog[:]
+                    self.shot(self.keys[0] if self.keys else 0)
                     if not self.keys: raise NeedInput()
                     self.mem[buf + i] = self.keys.pop(0)
                 self.ioresult = 0
         else:
             self.ioresult = 2
+
+    def shot(self, k):
+        """snapshot the screen (PNG + composed grid + the op log) at a keyboard wait"""
+        if not self.shotdir:
+            return
+        self.shotn += 1
+        base = os.path.join(self.shotdir, f'{self.shotn:03d}_{k:02x}')
+        self.con.save_png(base + '.png', 2)
+        self.con.dump_grid(base + '.grid')
+        if self.oplog is not None:
+            open(base + '.ops', 'w').write(chr(10).join(self.oplog) + chr(10))
+            del self.oplog[:]
 
     def key_ready(self):
         return len(self.keys) > 0
@@ -525,14 +540,24 @@ def main(argv):
     ap.add_argument('--trace', action='store_true')
     ap.add_argument('--shotdir', default='')
     ap.add_argument('--ops', action='store_true')
+    ap.add_argument('--rnglog', action='store_true')
+    ap.add_argument('--patch', default='', help='slot:word:value,...  poke roster words')
+    ap.add_argument('--rng', default='', help='s0,s1,s2,s3 (hex) initial RANDOM state')
     a = ap.parse_args(argv)
     vm = VM(keys=a.keys.encode('latin1').decode('unicode_escape').encode('latin1'))
     vm.trace = a.trace
+    if a.rnglog:
+        vm.con.rnglog = []
     if a.ops:
         vm.oplog = []
     if a.shotdir:
         os.makedirs(a.shotdir, exist_ok=True)
         vm.shotdir = a.shotdir
+    for item in filter(None, a.patch.split(',')):
+        sl, wd, val = (int(x, 0) for x in item.split(':'))
+        vm.vol.patch_roster(sl, wd, val)
+    if a.rng:
+        vm.con.s[:] = [int(x, 16) for x in a.rng.split(',')]
     vm.start()
     try:
         vm.run(a.steps)
@@ -542,6 +567,8 @@ def main(argv):
         print('TRAP:', repr(e), 'at', vm.seg.name, vm.frame.proc.num, hex(vm.ip))
         for h in list(vm.hist)[-30:]:
             print('  ', h)
+    if a.rnglog:
+        print('rng:', ' '.join(f'{x:04x}' for x in vm.con.rnglog))
     if a.shot:
         vm.con.save_png(a.shot)
         print('wrote', a.shot)

@@ -94,10 +94,12 @@ void Character::read(Bytes rec) {
     swingCnt   = i16(w(p, 91));
     hpDamRc[0] = i16(w(p, 92)); hpDamRc[1] = i16(w(p, 93)); hpDamRc[2] = i16(w(p, 94));
     wepSlay    = w(p, 98);
-    poison     = i16(w(p, 99));
-    lostX      = i16(w(p, 99));
-    lostY      = i16(w(p, 100));
-    lostLevel  = i16(w(p, 101));
+    // LOSTXYL = ARRAY[1..4] OF INTEGER at the end of the 104-word record: words
+    // 100..103 (CASTLE proc 3 reads POISNAMT[1] as `INC 100; IXA (1-1)`).
+    poison     = i16(w(p, 100));
+    lostX      = i16(w(p, 100));
+    lostY      = i16(w(p, 101));
+    lostLevel  = i16(w(p, 102));
 }
 
 std::array<u8, Character::kRecordBytes> Character::write() const {
@@ -146,13 +148,13 @@ std::array<u8, Character::kRecordBytes> Character::write() const {
     setw(p, 92, u16(i16(hpDamRc[0]))); setw(p, 93, u16(i16(hpDamRc[1]))); setw(p, 94, u16(i16(hpDamRc[2])));
     setw(p, 98, wepSlay);
     // LOSTXYL variant: LOCATION when the character is a dungeon corpse,
-    // else POISNAMT (words 100-101 stay 0 for a live, un-lost character).
+    // else POISNAMT (words 101-103 stay 0 for a live, un-lost character).
     if (inDungeon()) {
-        setw(p, 99, u16(i16(lostX)));
-        setw(p, 100, u16(i16(lostY)));
-        setw(p, 101, u16(i16(lostLevel)));
+        setw(p, 100, u16(i16(lostX)));
+        setw(p, 101, u16(i16(lostY)));
+        setw(p, 102, u16(i16(lostLevel)));
     } else {
-        setw(p, 99, u16(i16(poison)));
+        setw(p, 100, u16(i16(poison)));
     }
 
     return out;

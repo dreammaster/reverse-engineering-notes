@@ -67,6 +67,7 @@ class Win:
 class Conunit:
     s = [0x5BAB, 0xD02B, 0x7E15, 0x7351]
     idle = 0
+    rnglog = None
     IDLE_LIMIT = 300
 
     def __init__(self, vm):
@@ -95,6 +96,8 @@ class Conunit:
                 vm.w16(buf, 1 if vm.keys else 0)
                 self.idle = 0 if vm.keys else self.idle + 1
                 if self.idle > self.IDLE_LIMIT:
+                    if self.idle == self.IDLE_LIMIT + 1:
+                        vm.shot(0)                       # the screen the player is looking at
                     raise NeedInput()
             elif sel == 12: vm.w16(buf, 1)
             elif sel == 21: vm.w16(buf, 0x278)                    # drive size in blocks (sub_1210)
@@ -142,6 +145,7 @@ class Conunit:
             for r in range(ROWS):
                 f.write(' '.join(f'{c:04x}' for c in v[r * COLS:(r + 1) * COLS]) + chr(10))
             f.write(f'vram {zlib.crc32(bytes(self.vram)) & 0xFFFFFFFF:08x}' + chr(10))
+            f.write('rng ' + ','.join(f'{x:04x}' for x in self.s) + chr(10))
 
     def noop(self, buf, z, w): pass
     def sound(self, buf, z, w): pass
@@ -156,6 +160,7 @@ class Conunit:
             s[i] = (s[i] * mul[i] + inc[i]) & 0xFFFF
         sw = ((s[3] & 0xFF) << 8) | (s[3] >> 8)
         self.vm.w16(buf, sw & 0x700F)
+        if self.rnglog is not None: self.rnglog.append(sw & 0x700F)
 
     # -- init / shutdown ------------------------------------------------------
     def init(self, buf, z, w):

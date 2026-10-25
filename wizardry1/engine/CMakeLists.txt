@@ -23,6 +23,9 @@ add_library(wizcore STATIC
   src/textscreen.cpp
   src/console.cpp
   src/console_replay.cpp
+  src/dos.cpp
+  src/castle.cpp
+  src/dos_cmds.cpp
   src/roster.cpp
   src/roller_ui.cpp
   src/party.cpp
@@ -489,4 +492,9 @@ if(Python3_Interpreter_FOUND)
   add_test(NAME console_replay
            COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/../tools/replay_check.py" $<TARGET_FILE:wiz1>)
   set_tests_properties(console_replay PROPERTIES SKIP_RETURN_CODE 77 TIMEOUT 600)
+endif()
+if(Python3_Interpreter_FOUND)
+  add_test(NAME castle_screens
+           COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/../tools/screens_check.py" $<TARGET_FILE:wiz1>)
+  set_tests_properties(castle_screens PROPERTIES SKIP_RETURN_CODE 77 TIMEOUT 900)
 endif()
