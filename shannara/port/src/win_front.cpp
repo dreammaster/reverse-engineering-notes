@@ -330,7 +330,18 @@ int main(int argc, char **argv) {
 			}
 			Sleep(1);
 		};
-		int rc = host.run(INT64_MAX / 2);
+		int rc = 0;
+		try {
+			rc = host.run(INT64_MAX / 2);
+		} catch (...) {
+			audioDone = true;
+			audioThread.join();
+			if (midi) {
+				midiOutReset(midi);
+				midiOutClose(midi);
+			}
+			throw;
+		}
 		audioDone = true;
 		audioThread.join();
 		if (midi) {

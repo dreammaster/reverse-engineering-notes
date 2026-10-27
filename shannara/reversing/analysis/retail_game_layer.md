@@ -1042,3 +1042,7 @@ swapped in the IDB) and `sub_77AE4` (= "is sound id N still playing?") are nativ
 `make_voice?(3422)` plays `3422.mp3`, the ambient loop `make_sound(3536, loops = 10000)` repeats `3536.mp3`). Semantics follow the originals: `make_voice?(id, per-iteration callback)` blocks until the line has finished
 (calling the callback - the lip-sync / animation tick - every iteration), returns 1 when a click or key skipped it (`sub_13A20` is the skip test) and 0 otherwise; effects play asynchronously and are stopped by id or by
 -1/-2 (all). The Windows front end plays them through MCI (`mpegvideo`), so no MP3 decoder is needed in the project. `HOST_NOSOUND=1` disables all audio.
+
+Robustness: a function that ends without a `ret` and simply runs into the next one (`display_pic_at`: two stores, then the code of `display_pic`) is translated as a tail call into that function
+(previously "fell off the end"). A 7-minute session of randomised clicks and keys against the live game (`WIN_SCRIPT`, about 600 inputs: object hover, verbs, inventory, dialogs, the quit dialog, undo) ran without a crash
+or hang; the headless engine's regression checks were re-run after the transpiler change (0 mismatches).

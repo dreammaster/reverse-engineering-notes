@@ -335,7 +335,12 @@ class Gen:
             if ea in labels:
                 out.append("L_%X:;" % ea)
             out.append(text)
-        out.append("  throw FormatError(\"fell off the end of 0x%X\");" % v["ea"])
+        last = insns[-1]
+        nxt = last["ea"] + last["size"]
+        if last["mn"] not in ("retn", "jmp") and nxt in self.entries:
+            out.append("  { m.call(0x%Xu); return; } // falls through into the function that follows" % (nxt + self.D))
+        else:
+            out.append("  throw FormatError(\"fell off the end of 0x%X\");" % v["ea"])
         out.append("}")
         return "\n".join(out)
 
