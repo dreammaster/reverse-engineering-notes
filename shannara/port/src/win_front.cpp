@@ -10,6 +10,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <cstdio>
@@ -168,6 +169,41 @@ int main(int argc, char **argv) {
 		if (!getenv("HOST_NOSOUND") && midiOutOpen(&midi, MIDI_MAPPER, 0, 0, 0) == MMSYSERR_NOERROR)
 			host.audio().setMidiSink([midi](uint32_t m) { midiOutShortMsg(midi, m); });
 		host.audio().verbose = host.verbose;
+		// speech / effects: MP3 through MCI (HOST_NOSOUND=1 disables)
+		static int mciNext = 1;
+		if (!getenv("HOST_NOSOUND")) {
+			Audio::Mp3Backend &mp3 = host.audio().mp3;
+			mp3.play = [](const std::string &path, int loops) -> int {
+				int n = mciNext++;
+				char cmd[600], alias[32];
+				snprintf(alias, sizeof alias, "snd%d", n);
+				snprintf(cmd, sizeof cmd, "open \"%s\" type mpegvideo alias %s", path.c_str(), alias);
+				if (mciSendStringA(cmd, nullptr, 0, nullptr))
+					return 0;
+				snprintf(cmd, sizeof cmd, "play %s%s", alias, loops > 1 ? " repeat" : "");
+				mciSendStringA(cmd, nullptr, 0, nullptr);
+				return n;
+			};
+			mp3.stop = [](int h) {
+				char cmd[64];
+				snprintf(cmd, sizeof cmd, "stop snd%d", h);
+				mciSendStringA(cmd, nullptr, 0, nullptr);
+				snprintf(cmd, sizeof cmd, "close snd%d", h);
+				mciSendStringA(cmd, nullptr, 0, nullptr);
+			};
+			mp3.playing = [](int h) {
+				char cmd[64], buf[64] = {};
+				snprintf(cmd, sizeof cmd, "status snd%d mode", h);
+				if (mciSendStringA(cmd, buf, sizeof buf, nullptr))
+					return false;
+				return !strcmp(buf, "playing");
+			};
+			mp3.volume = [](int h, int v) {
+				char cmd[96];
+				snprintf(cmd, sizeof cmd, "setaudio snd%d volume to %d", h, std::max(0, std::min(1000, v * 1000 / 127)));
+				mciSendStringA(cmd, nullptr, 0, nullptr);
+			};
+		}
 		std::atomic<bool> audioDone(false);
 		std::thread audioThread([&]() {
 			auto last = std::chrono::steady_clock::now();

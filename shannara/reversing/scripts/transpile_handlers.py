@@ -41,7 +41,9 @@ NATIVE_CRT = {"memcpy_", "memmove_", "memset_", "strlen_", "strcmp_", "stricmp_"
               "_AIL_stop_sequence", "_AIL_end_sequence", "_AIL_release_sequence_handle", "_AIL_set_sequence_volume", "_AIL_register_sequence_callback", "_AIL_sequence_position",
               # AIL timers, run by the host as emulated interrupts (Machine::irqHook)
               "_AIL_register_timer", "_AIL_set_timer_frequency", "_AIL_set_timer_period", "_AIL_set_timer_user", "_AIL_start_timer", "_AIL_stop_timer", "_AIL_release_timer_handle",
-              "_AIL_lock", "_AIL_unlock", "_AIL_disable_interrupts", "_AIL_restore_interrupts"}
+              "_AIL_lock", "_AIL_unlock", "_AIL_disable_interrupts", "_AIL_restore_interrupts",
+              # speech and sound effects: numbered MP3 files played by the front end (Host::installShims)
+              "make_voice?", "make_sound", "stop_sound", "sub_77AE4", "update_music_volume"}
 
 JCC = {"jz": "m.zf", "jnz": "!m.zf", "jb": "m.cf", "jnb": "!m.cf", "jbe": "m.cond_be()", "ja": "!m.cond_be()",
        "jl": "m.cond_l()", "jge": "!m.cond_l()", "jle": "m.cond_le()", "jg": "!m.cond_le()", "js": "m.sf", "jns": "!m.sf",

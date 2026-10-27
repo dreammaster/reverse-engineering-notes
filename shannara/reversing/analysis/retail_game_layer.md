@@ -1036,3 +1036,9 @@ Music (`port/src/audio.*`): the Miles *high-level* sequence API the game uses is
 microseconds; note-on carries a variable-length duration; controllers 116/117 are FOR/NEXT loops, 110-120 are XMIDI-only and not sent on) and emits short MIDI messages to the Windows synthesizer on its own thread
 (`HOST_NOSOUND=1` disables it). `init_music`'s preload of all 78 tracks is visible as 78 sequence starts. The digital driver reports "none" (`_AIL_install_DIG_INI` returns 1): this release's voices are MP3 files
 (`Vocs.zip`) instead of the `SHAN006.VOC` archive the original expects, so speech and sound effects are not played yet.
+
+Speech and sound effects: `make_voice?`, `make_sound`, `stop_sound`, `update_music_volume` (it sets the volume of a sound *effect*; the names of this and `update_sound_volume`, which sets a *music* sequence's volume, are
+swapped in the IDB) and `sub_77AE4` (= "is sound id N still playing?") are native shims over the numbered MP3 files of this release (`Vocs.zip` extracted to `game_out/vocs`; the id the game passes *is* the file number:
+`make_voice?(3422)` plays `3422.mp3`, the ambient loop `make_sound(3536, loops = 10000)` repeats `3536.mp3`). Semantics follow the originals: `make_voice?(id, per-iteration callback)` blocks until the line has finished
+(calling the callback - the lip-sync / animation tick - every iteration), returns 1 when a click or key skipped it (`sub_13A20` is the skip test) and 0 otherwise; effects play asynchronously and are stopped by id or by
+-1/-2 (all). The Windows front end plays them through MCI (`mpegvideo`), so no MP3 decoder is needed in the project. `HOST_NOSOUND=1` disables all audio.

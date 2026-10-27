@@ -7,6 +7,7 @@
 #include <cstring>
 #include <ctime>
 #include <filesystem>
+#include <thread>
 
 namespace shannara {
 
@@ -93,6 +94,13 @@ void Host::serviceInterrupts(Machine &) {
 	for (auto &cb : cbs)
 		callGuest(cb.first, {cb.second});
 	_inIrq = false;
+}
+
+std::string Host::mp3Path(int id) {
+	char name[32];
+	snprintf(name, sizeof name, "%04d.mp3", id);
+	auto it = _dirIndex.find(name);
+	return it == _dirIndex.end() ? std::string() : it->second;
 }
 
 void Host::pump() {
@@ -819,6 +827,89 @@ void Host::installShims() {
 		if (Timer *t = timerOf(mm.stackArg(0)))
 			*t = Timer();
 		return 0u;
+	});
+	// speech and sound effects: the original streams PCM from the voice archive through AIL sample handles; this release keeps them as numbered MP3 files (NNNN.mp3), played by the front end.
+	// Semantics follow the originals: make_voice?(id, per-iteration callback) blocks until the line ends and returns 1 if a click/key skipped it; make_sound(id, loops, ...) starts an effect.
+	m.setShim("make_voice?", [this](Machine &mm) {
+		uint32_t id = mm.eax & 0xFFFF, cb = mm.edx;
+		uint32_t skipFn = addrOf("sub_13A20");
+		uint32_t ret = 0;
+		std::string path = mp3Path((int)id);
+		log("make_voice " + std::to_string(id) + " -> " + (path.empty() ? "(no file)" : path));
+		if (!_audio.mp3.play || path.empty() || !skipFn) {
+			mm.eax = 0;
+			mm.finishShim("make_voice?");
+			return;
+		}
+		if (callGuest(skipFn, {})) { // a click or key before the line starts skips it
+			mm.eax = 1;
+			mm.finishShim("make_voice?");
+			return;
+		}
+		int h = _audio.mp3.play(path, 1);
+		while (h && _audio.mp3.playing(h)) {
+			if (cb)
+				callGuest(cb, {0x5D8000u});
+			if (callGuest(skipFn, {})) {
+				ret = 1;
+				break;
+			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(3));
+		}
+		if (h)
+			_audio.mp3.stop(h);
+		mm.eax = ret;
+		mm.finishShim("make_voice?");
+	});
+	m.setShim("make_sound", [this](Machine &mm) {
+		int id = (int)(int16_t)mm.eax;
+		int loops = (int)mm.edx;
+		std::string path = mp3Path(id);
+		log("make_sound " + std::to_string(id) + " loops " + std::to_string(loops) + " -> " + (path.empty() ? "(no file)" : path));
+		if (_audio.mp3.play && !path.empty()) {
+			auto it = _sounds.find(id);
+			if (it != _sounds.end()) {
+				_audio.mp3.stop(it->second);
+				_sounds.erase(it);
+			}
+			int h = _audio.mp3.play(path, loops);
+			if (h)
+				_sounds[id] = h;
+		}
+		mm.eax = 0;
+		mm.finishShim("make_sound");
+	});
+	m.setShim("stop_sound", [this](Machine &mm) {
+		int id = (int)(int16_t)mm.eax;
+		if (_audio.mp3.stop)
+			for (auto it = _sounds.begin(); it != _sounds.end();) {
+				if (id == -1 || id == -2 || it->first == id) {
+					_audio.mp3.stop(it->second);
+					it = _sounds.erase(it);
+				} else {
+					++it;
+				}
+			}
+		mm.eax = 0;
+		mm.finishShim("stop_sound");
+	});
+	m.setShim("sub_77AE4", [this](Machine &mm) { // is the sound effect with this id still playing?
+		int id = (int)(int16_t)mm.eax;
+		auto it = _sounds.find(id);
+		bool on = it != _sounds.end() && _audio.mp3.playing && _audio.mp3.playing(it->second);
+		if (it != _sounds.end() && !on)
+			_sounds.erase(it);
+		mm.eax = on ? 1 : 0;
+		mm.finishShim("sub_77AE4");
+	});
+	m.setShim("update_music_volume", [this](Machine &mm) { // (despite the name) the volume of a sound effect: 0..127
+		int id = (int)(int16_t)mm.eax;
+		int vol = (int)mm.edx;
+		auto it = _sounds.find(id);
+		if (it != _sounds.end() && _audio.mp3.volume)
+			_audio.mp3.volume(it->second, vol);
+		mm.eax = 0;
+		mm.finishShim("update_music_volume");
 	});
 	timerShim("_AIL_lock", [](Machine &) { return 0u; });
 	timerShim("_AIL_unlock", [](Machine &) { return 0u; });

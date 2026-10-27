@@ -18,6 +18,13 @@ public:
 	void advance(double seconds);                        // runs the sequencers for that much time (called from the audio thread)
 	// sequences that ended since the last call: (callback function address, handle) - to be run on the game thread
 	void takeCallbacks(std::vector<std::pair<uint32_t, uint32_t>> &out);
+	// digital audio: the numbered MP3 files of this release (speech and sound effects); the front end provides the player (Windows MCI)
+	struct Mp3Backend {
+		std::function<int(const std::string &path, int loops)> play;   // returns a playback handle (>0) or 0
+		std::function<void(int)> stop;
+		std::function<bool(int)> playing;
+		std::function<void(int, int)> volume;                          // handle, 0..127
+	} mp3;
 	bool verbose = false;
 	int midiMessages = 0;     // statistics
 	int sequencesStarted = 0;

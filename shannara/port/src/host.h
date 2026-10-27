@@ -106,6 +106,8 @@ private:
 	std::vector<Timer> _timers = std::vector<Timer>(16);
 	bool _inIrq = false;
 	void serviceInterrupts(Machine &m);
+	std::map<int, int> _sounds; // sound effect id -> MP3 playback handle
+	std::string mp3Path(int id);
 	// setjmp
 	struct JmpBuf { uint32_t esp, ebp, ebx, ecx, esi, edi, resume; };
 	std::map<uint32_t, JmpBuf> _jmp;
