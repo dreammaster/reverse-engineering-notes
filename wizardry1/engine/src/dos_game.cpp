@@ -73,7 +73,6 @@ int cmdDosGame(int argc, char **argv) {
     DosFlow flow(dos, party, roster, a.sc, rng, shop, rosterPath, partyPath, shopPath);
 
     // the screens that are not ported from the p-code yet run through the legacy Ui
-    flow.hooks.other = [&](int x, int, int) -> int { return x == 15 ? 12 : 18; };   // E)QUIP / R)EORDER / MALOR: not ported yet
     flow.run(XCASTLE);
     roster.save(rosterPath);
     party.save(partyPath);

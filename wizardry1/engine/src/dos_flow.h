@@ -14,6 +14,7 @@
 #include "wiz/roller_dos.h"
 #include "wiz/shops.h"
 #include "wiz/specials_dos.h"
+#include "wiz/utilities_dos.h"
 
 #include <functional>
 
@@ -21,9 +22,6 @@ namespace wiz {
 
 // Screens that are not ported yet.  A hook returns the next XGOTO, or -1 to stop.
 struct FlowHooks {
-    // XGOTO 24 (REWARDS / SPECIALS / UTILITIE's camp jobs, `g36` says which), 14 (E)QUIP) and 15
-    // (R)EORDER) for character `member`.  Returns the next XGOTO (18 = back to CAMP).
-    std::function<int(int xgoto, int g36, int member)> other;
     std::function<int()> combat;       // XGOTO 8 (the encounter is in MazeGlobals::g37 / g29)
 };
 
@@ -52,6 +50,10 @@ public:
     Specials specials;
     Combat combat;
     Rewards rewards;
+private:
+    UtilitiesWorld utilitiesWorld_;
+public:
+    Utilities utilities;
     FlowHooks hooks;
 
     DosFlow(Dos &d, Party &party, Roster &roster, const Scenario &sc, Rng &rng, Shop &shop,
@@ -66,7 +68,9 @@ public:
           specialsWorld_{party, roster, sc, rng, rosterPath, partyPath, mg},
           combatWorld_{party, roster, sc, rng, rosterPath, partyPath, mg, castle.partyWindow()},
           rewardsWorld_{party, roster, sc, rng, rosterPath, partyPath, mg},
-          maze(d, mazeWorld_), camp(d, campWorld_), specials(d, specialsWorld_), combat(d, combatWorld_), rewards(d, rewardsWorld_) {}
+          maze(d, mazeWorld_), camp(d, campWorld_), specials(d, specialsWorld_), combat(d, combatWorld_), rewards(d, rewardsWorld_),
+          utilitiesWorld_{party, roster, sc, rng, mg, camp.titleWindow(), camp.sheetWindow()},
+          utilities(d, utilitiesWorld_) {}
 
     // Runs from `xgoto` until the window closes, a hook stops, or an unported screen is reached.
     // Returns the XGOTO it stopped at (-1 when a hook stopped it).
@@ -108,8 +112,12 @@ public:
                 bool fresh = mg.level < 0;
                 maze.enter();
                 xgoto = fresh ? 13 : 7;
-            } else if (xgoto == 13 || xgoto == 20) {             // UTILITIE:29 (the derived stats: not ported)
-                xgoto = xgoto == 13 ? 12 : 7;
+            } else if (xgoto == 13 || xgoto == 20 || xgoto == 14 || xgoto == 15 ||
+                       (xgoto == 24 && mg.g36 == 4)) {            // UTILITIE:1 (scores, E)QUIP, R)EORDER, MALOR)
+                UtilitiesResult r = utilities.run(xgoto);
+                if (r.windowClosed) break;
+                xgoto = r.xgoto;
+                if (xgoto == 18 || xgoto == 27) campMember = r.member;
             } else if (xgoto == 12 || xgoto == 18 || xgoto == 27) {   // CAMP:1
                 CampResult r = camp.run(xgoto, campMember);
                 if (r.windowClosed) break;
@@ -118,11 +126,6 @@ public:
                     campMember = r.member;
                     mg.g36 = r.g36;
                     mg.g9 = r.member;
-                    if (!(xgoto == 24 && r.g36 <= 3)) {               // 0..2 REWARDS, 3 DUMAPIC (SPECIALS) below
-                        if (!hooks.other) break;
-                        xgoto = hooks.other(xgoto, r.g36, r.member);
-                        if (xgoto < 0) break;
-                    }
                 }
             } else if (xgoto == 7) {                             // RUNNER:1
                 MazeResult r = maze.run();

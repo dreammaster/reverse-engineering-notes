@@ -19,6 +19,8 @@ TITLE = r'S\r\r'          # the oracle starts at the title + two disk prompts
 
 # name -> dict(cmd=engine command, keys=..., patch=roster pokes, skip=oracle screens before the
 #              engine's first, prefix=oracle keys that reach the engine's start screen, env=extra env)
+MALOR = '5:79:9,5:69:65535,5:70:65535,5:71:65535,5:72:65535'    # NOBAL: level 7 mage points, every spell known
+
 SCEN = {
     'title_static': dict(cmd='title-test', keys='S', skip=0, prefix=''),
     'title_anim':   dict(cmd='title-test', keys='', skip=0, prefix='', env={'WIZ1_MAXDUMPS': '70'}),
@@ -50,6 +52,26 @@ SCEN = {
     'camp_maze':     dict(cmd='castle-test', keys=r'GAAC\rLEMLNWC1T25\r1D1PTX\rL\rL'),
     # a priest and a mage in camp: cast DIOS on the mage, a prefix match, an unknown name, USE
     'camp_spells':   dict(cmd='castle-test', keys=r'GAFB\rLEMLNC1SDIOS\r2SK\rSZZ\rSDIOS\r1U1L\rL'),
+    # UTILITIE: E)QUIP from the sheet (a character), E)QUIP from the camp menu (everyone), R)EORDER
+    'camp_equip':    dict(cmd='castle-test', keys=r'GAAC\rLEMLNC1EL'),
+    # THESUS carries a long sword, a cursed long sword -1, a short sword, leather armor, a helm
+    'camp_equip2':   dict(cmd='castle-test', keys=r'GAAC\rLEMLNC1E31 1L',
+                          patch='0:29:5,0:33:1,0:37:29,0:41:2,0:45:11,0:49:15'),
+    # the special powers: AMULET w JEWELS, PRIESTS RING, RING w DEATH (each asks whether to invoke it)
+    'camp_power':    dict(cmd='castle-test', keys=r'GAAC\rLEMLNC1E1YNYL',
+                          patch='0:29:3,0:33:39,0:37:92,0:41:93'),
+    # MALOR (NOBAL knows every spell and has the points): to level 2 east 2 north 1, quit the prompt,
+    # up to the gates (0,0,0), west into solid rock, up and east onto the moat
+    'camp_malor':    dict(cmd='castle-test', keys=r'GAFB\rLEMLNC1SMALOR\rEENDTW', patch=MALOR),
+    'camp_malorq':   dict(cmd='castle-test', keys=r'GAFB\rLEMLNC1SMALOR\rEQLL', patch=MALOR),
+    'camp_malor0':   dict(cmd='castle-test', keys=r'GAFB\rLEMLNC1SMALOR\rUTE', patch=MALOR),
+    'camp_malorr':   dict(cmd='castle-test', keys=r'GAFB\rLEMLNC1SMALOR\rWTE', patch=MALOR),
+    'camp_malorm':   dict(cmd='castle-test', keys=r'GAFB\rLEMLNC1SMALOR\rUETE', patch=MALOR),
+    'camp_equipall2': dict(cmd='castle-test', keys=r'GAAC\rLEMLNCE31 1 1 L',
+                           patch='0:29:5,0:33:1,0:37:29,0:41:2,0:45:11,0:49:15,2:29:2,2:33:12,2:37:15'),
+    'camp_reorder3': dict(cmd='castle-test', keys=r'GAABC\rLEMLNCR31L'),
+    'camp_equipall': dict(cmd='castle-test', keys=r'GAAC\rLEMLNCE'),
+    'camp_reorder':  dict(cmd='castle-test', keys=r'GAAC\rLEMLNCR2L'),
     'maze_enc':      dict(cmd='castle-test', keys=r'GAAC\rLEMLNXDXXXWWAWWXWXAAWADWWDXAWDWWADWWWXXXAAWXWDWXWWXAWDAWXWAWWAXXDWWAWDWWWWWDWAAAWXXWW'),
     # SCNMSG squares of level 1: a sign (9,12), the exit to town (9,19), elevator (10,8), stairs down (0,10)
     'maze_sign':     dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'WWWWWWWWDWWWWWWWWWAWWWW' + r'\r\rW'),

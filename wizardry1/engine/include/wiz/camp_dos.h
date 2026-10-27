@@ -34,6 +34,9 @@ public:
     CampResult run(int xgoto, int member = -1);
     // CAMP:3 -- one roster row
     void row(int i);
+    // G11 / G15: the windows UTILITIE:3 closes when MALOR takes the party away
+    Win *&titleWindow() { return title_; }
+    Win *&sheetWindow() { return sheet_; }
 
 private:
     struct Leave { int xgoto; int g36; };          // EXIT(18:1)
