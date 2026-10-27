@@ -22,6 +22,8 @@ public:
     bool haveMonsterArt() const { return !monsterArt_.empty(); }
     Bytes monsterArtRecord(int pic) const;
 
+    // word `i` of the table of contents (block 0): SPELLGRP at 234, SPELL012 at 245, ...
+    u16 tocWord(int i) const { return (size_t(i) + 1) * 2 <= data_.size() ? rd16(data_.data() + i * 2) : u16(0); }
     const std::string &gameName() const { return gameName_; }
     int count(Type t) const { return count_[t]; }
     int recSize(Type t) const { return recSize_[t]; }

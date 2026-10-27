@@ -31,6 +31,9 @@ add_library(wizcore STATIC
   src/camp_dos.cpp
   src/maze_dos.cpp
   src/specials_dos.cpp
+  src/combat_dos.cpp
+  src/combat_cutil.cpp
+  src/combat_act.cpp
   src/dos_cmds.cpp
   src/dos_game.cpp
   src/roster.cpp

@@ -37,6 +37,11 @@ public:
     static std::string itoa(long n);                    // proc 51
     static std::string long2str(long long v);           // proc 52  TWIZLONG -> text
     static std::string substitute(const std::string &tmpl, const std::string &arg);   // proc 57 (replaces '^')
+    // proc 56: replace the first `ch` in `s` by `arg`
+    static std::string substituteChar(const std::string &s, int ch, const std::string &arg);
+    // proc 31: a name with its article -- `base` is the template pair (vowel / consonant); a leading
+    // '*' keeps the name as it is, '+' / '-' move to the second / third pair
+    std::string nameWith(const std::string &name, int base) const;
 
     // ---- keyboard --------------------------------------------------------------
     int  getKey();               // proc 11: upper-cases, ignores 91..127; presents first
@@ -46,6 +51,8 @@ public:
     int  getNum(int max);
     void sound(int) {}           // WIZARDRY:58 (CONUNIT selector 24): the PC speaker -- not modelled
     void pause(int units);       // CONUNIT selector 19 (units of ~2 ticks of 18.2 Hz); key aborts
+    void delay(int g28) { if (g28 > 0) pause(g28); }   // WIZARDRY:14: the DELAY beat
+    void flushKeys() {}          // FLUSHKEYS: the p-code oracle ignores it (type-ahead is kept)
     void present();              // push the composed screen to the platform
 
     // ---- window text procs --------------------------------------------------------

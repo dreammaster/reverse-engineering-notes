@@ -8,6 +8,7 @@
 #include "dos_assets.h"
 #include "wiz/camp_dos.h"
 #include "wiz/castle.h"
+#include "wiz/combat_dos.h"
 #include "wiz/maze_dos.h"
 #include "wiz/roller_dos.h"
 #include "wiz/shops.h"
@@ -42,10 +43,12 @@ private:
     MazeWorld mazeWorld_;
     CampWorld campWorld_;
     SpecialsWorld specialsWorld_;
+    CombatWorld combatWorld_;
 public:
     MazeScreen maze;
     Camp camp;
     Specials specials;
+    Combat combat;
     FlowHooks hooks;
 
     DosFlow(Dos &d, Party &party, Roster &roster, const Scenario &sc, Rng &rng, Shop &shop,
@@ -58,7 +61,8 @@ public:
           mazeWorld_{party, roster, sc, rng, rosterPath, partyPath, mg, castle.partyWindow()},
           campWorld_{party, castle.partyWindow(), mg, sc, rng},
           specialsWorld_{party, roster, sc, rng, rosterPath, partyPath, mg},
-          maze(d, mazeWorld_), camp(d, campWorld_), specials(d, specialsWorld_) {}
+          combatWorld_{party, roster, sc, rng, rosterPath, partyPath, mg, castle.partyWindow()},
+          maze(d, mazeWorld_), camp(d, campWorld_), specials(d, specialsWorld_), combat(d, combatWorld_) {}
 
     // Runs from `xgoto` until the window closes, a hook stops, or an unported screen is reached.
     // Returns the XGOTO it stopped at (-1 when a hook stopped it).
@@ -121,9 +125,14 @@ public:
                 if (r.windowClosed) break;
                 xgoto = r.xgoto;
             } else if (xgoto == 8) {                             // COMBAT
-                if (!hooks.combat) break;
-                xgoto = hooks.combat();
-                if (xgoto < 0) break;
+                if (hooks.combat) {
+                    xgoto = hooks.combat();
+                    if (xgoto < 0) break;
+                } else {
+                    CombatOutcome r = combat.run();
+                    if (r.windowClosed) break;
+                    xgoto = r.xgoto;
+                }
             } else if (xgoto == 23 || xgoto == 26 || (xgoto == 24 && mg.g36 == 3)) {   // SPECIALS
                 SpecialsResult r = specials.run(xgoto);
                 if (r.windowClosed) break;

@@ -58,6 +58,14 @@ SCEN = {
     # level 2 (arrive at (12,7)): a door that wants item 98 (8,12), a search square (9,18)
     'maze_gate':     dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'WWWWWWWWDWWWWWWWWWAWWAWWWWWWWWW' + 'YN' + 'WDWWWWAWWWDW' + r'\r\r'),
     'maze_search':   dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'WWWWWWWWDWWWWWWWWWAWWAWWWWWWWWW' + 'YN' + 'WDWWWWAWWWDWDWWAWWWWAWWDWDWAW' + r'\r\rYC'),
+    # a dead TREON lies at (0,1) on level 1: I)NSPECT finds him, G)ET picks him up
+    'maze_inspect':  dict(cmd='castle-test', keys=r'GAAC\rLEMLNIG1LI',
+                          patch='3:20:5,3:101:1,3:102:1'),
+    # a wandering encounter (found with tools/findenc.py): the fight's opening screens
+    'combat_start':  dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'AWWAXWAXWWWXWWADWXWWWXWDWWWWWWWWWWAXWDAWWWXXWDADWWDAAAXWXAAWAWDXWWWWWWXWWAAWDW' + r'\r'),
+    # type-ahead only matches the UPRT / D / S keys, so the party parries (the monsters do the fighting)
+    'combat_round':  dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'AWWAXWAXWWWXWWADWXWWWXWDWWWWWWWWWWAXWDAWWWXXWDADWWDAAAXWXAAWAWDXWWWWWWXWWAAWDWD' + r'PP\r'),
+    'combat_parry':  dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'AWWAXWAXWWWXWWADWXWWWXWDWWWWWWWWWWAXWDAWWWXXWDADWWDAAAXWXAAWAWDXWWWWWWXWWAAWDWD' + r'PP\rPP\rPP\rPP\r'),
     'maze_walk':     dict(cmd='castle-test', keys=r'GAAC\rLEMLNWWWDWWAWWXWWWWAWSSOOT5\rW'),
 }
 

@@ -699,6 +699,7 @@ void MazeScreen::encSquare() {
     setType(12);
     showMsg(702);
     d_.pause(20);
+    g_.xgoto2 = 0;
     g_.g29 = 2;
     closeHud(false);
     finish(8);
@@ -817,6 +818,7 @@ void MazeScreen::stepEffects() {
 
 // RUNNER:52 -- AN ENCOUNTER: size the group and hand over to COMBAT
 void MazeScreen::encounter() {
+    g_.xgoto2 = 1;
     showMsg(702);
     d_.pause(20);
     int grp = 1;

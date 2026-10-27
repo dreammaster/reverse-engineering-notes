@@ -43,6 +43,23 @@ std::string Dos::substitute(const std::string &tmpl, const std::string &arg) {  
     return tmpl.substr(0, p) + arg + tmpl.substr(p + 1);
 }
 
+std::string Dos::substituteChar(const std::string &s, int ch, const std::string &arg) {   // WIZARDRY:56
+    size_t p = s.find(char(ch));
+    if (p == std::string::npos) return s;
+    return s.substr(0, p) + arg + s.substr(p + 1);
+}
+
+std::string Dos::nameWith(const std::string &name, int base) const {                    // WIZARDRY:31
+    if (name.empty()) return name;
+    if (name[0] == '*') return name;
+    std::string n = name;
+    if (n[0] == '+') { base += 2; n.erase(0, 1); }
+    else if (n[0] == '-') { base += 4; n.erase(0, 1); }
+    char c = n.empty() ? ' ' : n[0];
+    bool vowel = c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
+    return substitute(str(vowel ? base : base + 1), n);
+}
+
 // ---- keyboard ------------------------------------------------------------------------
 void Dos::present() {
     static Surface s;

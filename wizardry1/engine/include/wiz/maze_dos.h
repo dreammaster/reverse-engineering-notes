@@ -31,6 +31,8 @@ struct MazeGlobals {
     int protect = 0;             // G34  PROTECT (AC bonus)
     int identify = 0;            // G32  IDENTIFY turns
     int g37 = 0;                 // G37  encounter size handed to COMBAT
+    int xgoto2 = 1;              // XGOTO2: 1 a wandering encounter (can be fled), 0 a fixed one
+    int g35 = 0;                 // G35  the monsters' strength this round (combat)
     int g36 = 0;                 // G36  XGOTO 24's sub-function (CAMP's jobs for other segments)
     int g38 = 0, g39 = 0, g40 = 0;   // G38..G40 the square the party just left
     int g41 = 7;                 // G41  the XGOTO to return to after CAMP
