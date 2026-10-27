@@ -73,13 +73,7 @@ int cmdDosGame(int argc, char **argv) {
     DosFlow flow(dos, party, roster, a.sc, rng, shop, rosterPath, partyPath, shopPath);
 
     // the screens that are not ported from the p-code yet run through the legacy Ui
-    flow.hooks.inspect = [&](int member, int from) -> int {          // CAMP:5 (the character sheet)
-        if (from == XCAMP) flow.castle.closeWindows();
-        legacySeeMember(ui, tw, from == 17 ? 0 : member);
-        if (ui.quit()) return -1;
-        con.refresh();
-        return from == XCAMP ? XCASTLE : from == 17 ? 19 : from;
-    };
+    flow.hooks.other = [&](int, int, int) -> int { return 18; };   // READ / EQUIP / REORDER...: not ported yet
     flow.hooks.combat = [&]() -> int {                               // COMBAT
         CombatResult r = runCombat(ui, party, a.sc, &a.sp, rng, flow.mg.g37, flow.mg.level, flow.mg.g29);
         con.refresh();

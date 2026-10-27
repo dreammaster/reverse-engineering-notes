@@ -18,8 +18,9 @@ namespace wiz {
 
 // Screens that are not ported yet.  A hook returns the next XGOTO, or -1 to stop.
 struct FlowHooks {
-    // the character sheet (CAMP:5): `from` = the XGOTO that asked (4 Tavern, 12 camp, 17 Training Grounds)
-    std::function<int(int member, int from)> inspect;
+    // XGOTO 24 (REWARDS / SPECIALS / UTILITIE's camp jobs, `g36` says which), 14 (E)QUIP) and 15
+    // (R)EORDER) for character `member`.  Returns the next XGOTO (18 = back to CAMP).
+    std::function<int(int xgoto, int g36, int member)> other;
     std::function<int()> combat;       // XGOTO 8 (the encounter is in MazeGlobals::g37 / g29)
     std::function<int()> special;      // XGOTO 23 / 26 (SPECIALS)
 };
@@ -53,13 +54,13 @@ public:
           rollerWorld_{party, roster, sc, rng, rosterPath, partyPath},
           castle(d, castleWorld_), shops(d, shopsWorld_, castle), roller(d, rollerWorld_),
           mazeWorld_{party, roster, sc, rng, rosterPath, partyPath, mg, castle.partyWindow()},
-          campWorld_{party, castle.partyWindow(), mg.protect, mg.g41},
+          campWorld_{party, castle.partyWindow(), mg, sc, rng},
           maze(d, mazeWorld_), camp(d, campWorld_) {}
 
     // Runs from `xgoto` until the window closes, a hook stops, or an unported screen is reached.
     // Returns the XGOTO it stopped at (-1 when a hook stopped it).
     int run(int xgoto, int *memberOut = nullptr) {
-        int member = -1;
+        int member = -1, campMember = -1;
         while (!d_.quit) {
             d_.partyCount = party_.count();
             if (xgoto == XCASTLE || xgoto == XCASTLE2) {
@@ -83,14 +84,14 @@ public:
                 if (r.windowClosed) break;
                 xgoto = r.xgoto;
                 if (xgoto == 17) {                               // INSPECT: CAMP's sheet
-                    if (!hooks.inspect) break;
-                    xgoto = hooks.inspect(0, 17);
-                    if (xgoto < 0) break;
+                    CampResult c = camp.run(17);
+                    if (c.windowClosed) break;
+                    xgoto = c.xgoto;
                 }
             } else if (xgoto == XCAMP) {                         // the Tavern's INSPECT
-                if (!hooks.inspect) break;
-                xgoto = hooks.inspect(member, XCAMP);
-                if (xgoto < 0) break;
+                CampResult c = camp.run(XCAMP, member);
+                if (c.windowClosed) break;
+                xgoto = c.xgoto;
             } else if (xgoto == 9) {                             // UTILITIE:9 -- into / between / out of the maze
                 if (mg.level == 0) { xgoto = 10; continue; }
                 bool fresh = mg.level < 0;
@@ -98,16 +99,15 @@ public:
                 xgoto = fresh ? 13 : 7;
             } else if (xgoto == 13 || xgoto == 20) {             // UTILITIE:29 (the derived stats: not ported)
                 xgoto = xgoto == 13 ? 12 : 7;
-            } else if (xgoto == 12) {                            // CAMP:1
-                CampResult r = camp.run(12);
+            } else if (xgoto == 12 || xgoto == 18 || xgoto == 27) {   // CAMP:1
+                CampResult r = camp.run(xgoto, campMember);
                 if (r.windowClosed) break;
                 xgoto = r.xgoto;
-                if (r.inspect) {
-                    if (!hooks.inspect) break;
-                    xgoto = hooks.inspect(r.member, 12);
+                if (xgoto == 24 || xgoto == 14 || xgoto == 15) {      // another segment's job
+                    campMember = r.member;
+                    if (!hooks.other) break;
+                    xgoto = hooks.other(xgoto, r.g36, r.member);
                     if (xgoto < 0) break;
-                } else if (xgoto == 14 || xgoto == 15) {         // E)QUIP / R)EORDER: not ported
-                    xgoto = 12;
                 }
             } else if (xgoto == 7) {                             // RUNNER:1
                 MazeResult r = maze.run();

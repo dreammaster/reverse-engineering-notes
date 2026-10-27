@@ -46,6 +46,10 @@ SCEN = {
     # feet -> the cemetery (SHOPS:27) and back to the castle
     'maze_wiped':    dict(cmd='castle-test', keys=r'GAAC\rLEML\r\r\rE',
                           patch='0:20:3,1:20:3,2:20:3,3:20:3'),
+    'camp_sheet':    dict(cmd='castle-test', keys=r'GAAC\rI1TL'),               # the Tavern's INSPECT: the sheet
+    'camp_maze':     dict(cmd='castle-test', keys=r'GAAC\rLEMLNWC1T25\r1D1PTX\rL\rL'),
+    # a priest and a mage in camp: cast DIOS on the mage, a prefix match, an unknown name, USE
+    'camp_spells':   dict(cmd='castle-test', keys=r'GAFB\rLEMLNC1SDIOS\r2SK\rSZZ\rSDIOS\r1U1L\rL'),
     'maze_walk':     dict(cmd='castle-test', keys=r'GAAC\rLEMLNWWWDWWAWWXWWWWAWSSOOT5\rW'),
 }
 
