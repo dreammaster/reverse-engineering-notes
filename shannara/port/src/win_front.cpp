@@ -309,7 +309,9 @@ int main(int argc, char **argv) {
 					writePng(e.path, img);
 				} else if (e.kind == "goto") { // debugging: enter room object A through the game's own go_to_room function
 					host.callGuestEax(host.addrOf("go_to_room?"), (uint32_t)e.a);
-				} else if (e.kind == "flag") { // debugging: set (B=1) or clear (B=0) game flag A
+				} else if (e.kind == "enc") { // debugging: start combat encounter A
+						host.callGuestEax(host.addrOf("start_encounter?"), (uint32_t)e.a);
+					} else if (e.kind == "flag") { // debugging: set (B=1) or clear (B=0) game flag A
 					uint32_t addr = Host::kBase + 0xCD8AC + (uint32_t)((e.a - 1) >> 3);
 					uint8_t bit = (uint8_t)(1 << ((e.a - 1) & 7));
 					Machine &mm = host.machine();
