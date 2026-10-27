@@ -203,13 +203,13 @@ class Dec:
         elif m == 'IXA':
             k = int(arg); i = self.pop(); a = self.pop(); P(f'{a}[{i}]' if k == 1 else f'{a}[{i}]*{k}w')
         elif m == 'IXP':
-            i = self.pop(); a = self.pop(); P(f'{a}.pk[{i}]')   # then LDP
+            i = self.pop(); a = self.pop(); P(f'{a}.pk{arg.replace(",", "/")}[{i}]')   # a packed-field reference; LDP / STP follow
             self.pk = arg
         elif m == 'LDP':
-            s = self.pop(); w = self.pop(); a = self.pop(); P(f'bits({a},{w},{s})')
+            P(self.pop())                                       # the packed-field reference reads as its value
         elif m == 'STP':
-            v = self.pop(); s = self.pop(); w = self.pop(); a = self.pop()
-            self.emit(f'   bits({a},{w},{s}) := {v}')
+            v = self.pop(); r = self.pop()
+            self.emit(f'   {r} := {v}')
         elif m == 'LDB':
             i = self.pop(); a = self.pop(); P(f'{a}.b[{i}]')
         elif m == 'STB':
