@@ -117,6 +117,20 @@ void Host::fillDta(const Found &f) { // DOS disk transfer area: attribute at +15
 		m.w8(_dta + 0x1E + (uint32_t)i, i < n.size() ? (uint8_t)n[i] : 0);
 }
 
+uint32_t Host::callGuestEax(uint32_t addr, uint32_t eax) {
+	Machine &m = *_m;
+	uint32_t secx = m.ecx, sedx = m.edx, sebx = m.ebx, sesi = m.esi, sedi = m.edi, sebp = m.ebp, sesp = m.esp, seax = m.eax;
+	bool zf = m.zf, sf = m.sf, cf = m.cf, of = m.of, df = m.df;
+	m.eax = eax;
+	m.push(0);
+	m.call(addr);
+	uint32_t r = m.eax;
+	m.esp = sesp;
+	m.eax = seax; m.ecx = secx; m.edx = sedx; m.ebx = sebx; m.esi = sesi; m.edi = sedi; m.ebp = sebp;
+	m.zf = zf; m.sf = sf; m.cf = cf; m.of = of; m.df = df;
+	return r;
+}
+
 void Host::pump() {
 	std::vector<std::pair<uint32_t, uint32_t>> cbs;
 	_audio.takeCallbacks(cbs);

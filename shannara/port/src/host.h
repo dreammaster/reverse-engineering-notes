@@ -37,6 +37,7 @@ public:
 	Audio &audio() { return _audio; }
 	// runs a guest function (cdecl, arguments pushed right to left) from host code; all registers and flags are preserved
 	uint32_t callGuest(uint32_t addr, std::initializer_list<uint32_t> args);
+	uint32_t callGuestEax(uint32_t addr, uint32_t eax); // register-convention call with one argument in eax
 
 	// runs main_ (never returns normally); returns the exit code if the program calls exit, or when the instruction budget is used up (budgetExhausted set)
 	int run(int64_t budget);

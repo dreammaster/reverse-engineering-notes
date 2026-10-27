@@ -307,6 +307,13 @@ int main(int argc, char **argv) {
 					Image img;
 					frameToRgb(host, img);
 					writePng(e.path, img);
+				} else if (e.kind == "goto") { // debugging: enter room object A through the game's own go_to_room function
+					host.callGuestEax(host.addrOf("go_to_room?"), (uint32_t)e.a);
+				} else if (e.kind == "flag") { // debugging: set (B=1) or clear (B=0) game flag A
+					uint32_t addr = Host::kBase + 0xCD8AC + (uint32_t)((e.a - 1) >> 3);
+					uint8_t bit = (uint8_t)(1 << ((e.a - 1) & 7));
+					Machine &mm = host.machine();
+					mm.w8(addr, e.b ? (mm.r8(addr) | bit) : (mm.r8(addr) & ~bit));
 				} else if (e.kind == "stack") {
 					fprintf(stderr, "call stack:");
 					for (uint32_t a : host.machine().trace)
@@ -334,6 +341,10 @@ int main(int argc, char **argv) {
 		try {
 			rc = host.run(INT64_MAX / 2);
 		} catch (...) {
+			fprintf(stderr, "stopped by an exception; call stack:");
+			for (uint32_t a : host.machine().trace)
+				fprintf(stderr, " %s >", host.describe(a).c_str());
+			fprintf(stderr, "\n");
 			audioDone = true;
 			audioThread.join();
 			if (midi) {
