@@ -103,6 +103,20 @@ std::string Host::mp3Path(int id) {
 	return it == _dirIndex.end() ? std::string() : it->second;
 }
 
+void Host::fillDta(const Found &f) { // DOS disk transfer area: attribute at +15h, time/date, size at +1Ah, 8.3 name at +1Eh
+	Machine &m = *_m;
+	m.w8(_dta + 0x15, 0x20);
+	m.w16(_dta + 0x16, 0);
+	m.w16(_dta + 0x18, 0x21);
+	m.w32(_dta + 0x1A, f.size);
+	std::string n = f.name;
+	for (char &c : n)
+		c = (char)toupper((unsigned char)c);
+	n.resize(std::min<size_t>(n.size(), 12));
+	for (size_t i = 0; i <= n.size(); i++)
+		m.w8(_dta + 0x1E + (uint32_t)i, i < n.size() ? (uint8_t)n[i] : 0);
+}
+
 void Host::pump() {
 	std::vector<std::pair<uint32_t, uint32_t>> cbs;
 	_audio.takeCallbacks(cbs);
@@ -424,6 +438,24 @@ void Host::int10() {
 	}
 }
 
+void Host::setMouse(int x, int y, int buttons) {
+	for (int b = 0; b < 3; b++) {
+		bool was = (_mb >> b) & 1, now = (buttons >> b) & 1;
+		if (!was && now) {
+			_pressCount[b]++;
+			_pressX[b] = x;
+			_pressY[b] = y;
+		} else if (was && !now) {
+			_releaseCount[b]++;
+			_releaseX[b] = x;
+			_releaseY[b] = y;
+		}
+	}
+	_mx = x;
+	_my = y;
+	_mb = buttons;
+}
+
 void Host::mouse33() {
 	Machine &m = *_m;
 	pump();
@@ -445,16 +477,31 @@ void Host::mouse33() {
 		m.ecx = (uint32_t)_mx;
 		m.edx = (uint32_t)_my;
 		break;
-	case 5: case 6: // button press / release information
-		m.ebx = 0;
-		m.ecx = (uint32_t)_mx;
-		m.edx = (uint32_t)_my;
+	case 5: case 6: { // button press / release information for button BX: status in AX, count in BX, position at the last press/release in CX/DX; counters reset
+		int b = (int)(m.ebx & 0xFFFF);
+		if (b < 0 || b > 2)
+			b = 0;
 		m.eax = (uint32_t)_mb;
+		if (ax == 5) {
+			m.ebx = (uint32_t)_pressCount[b];
+			m.ecx = (uint32_t)_pressX[b];
+			m.edx = (uint32_t)_pressY[b];
+			_pressCount[b] = 0;
+		} else {
+			m.ebx = (uint32_t)_releaseCount[b];
+			m.ecx = (uint32_t)_releaseX[b];
+			m.edx = (uint32_t)_releaseY[b];
+			_releaseCount[b] = 0;
+		}
 		break;
-	case 0x0B: // motion counters
-		m.ecx = 0;
-		m.edx = 0;
+	}
+	case 0x0B: { // motion counters (mickeys) since the last call
+		m.ecx = (uint32_t)(_mx - _lastMotionX) & 0xFFFF;
+		m.edx = (uint32_t)(_my - _lastMotionY) & 0xFFFF;
+		_lastMotionX = _mx;
+		_lastMotionY = _my;
 		break;
+	}
 	case 4:
 		_mx = (int)(m.ecx & 0xFFFF);
 		_my = (int)(m.edx & 0xFFFF);
@@ -758,9 +805,48 @@ void Host::dos21() {
 		break;
 	case 0x4C:
 		throw ProgramExit{(int)al};
-	case 0x4E: case 0x4F: // find first / next: no files matching (the savegame scan finds none)
-		fail(18);
+	case 0x4E: case 0x4F: { // find first / next (the savegame list is built this way): wildcard match on the base name over the save directory and the game directories
+		if (ah == 0x4E) {
+			std::string pat = dosPath(m.edx);
+			size_t cut = pat.find_last_of("\\/:");
+			if (cut != std::string::npos)
+				pat = pat.substr(cut + 1);
+			pat = lowerStr(pat);
+			if (pat == "*.*")
+				pat = "*";
+			auto match = [&](const std::string &name) { // * and ? wildcards
+				std::function<bool(size_t, size_t)> rec = [&](size_t i, size_t j) -> bool {
+					if (i == pat.size())
+						return j == name.size();
+					if (pat[i] == '*')
+						return rec(i + 1, j) || (j < name.size() && rec(i, j + 1));
+					return j < name.size() && (pat[i] == '?' || pat[i] == name[j]) && rec(i + 1, j + 1);
+				};
+				return rec(0, 0);
+			};
+			_found.clear();
+			_foundNext = 0;
+			std::map<std::string, Found> uniq;
+			std::error_code ec;
+			for (const auto &e : std::filesystem::directory_iterator(_saveDir, ec))
+				if (e.is_regular_file() && match(lowerStr(e.path().filename().string())))
+					uniq[lowerStr(e.path().filename().string())] = {e.path().filename().string(), e.path().string(), (uint32_t)e.file_size()};
+			for (auto &kv : _dirIndex)
+				if (!uniq.count(kv.first) && match(kv.first)) {
+					std::error_code ec2;
+					uniq[kv.first] = {std::filesystem::path(kv.second).filename().string(), kv.second, (uint32_t)std::filesystem::file_size(kv.second, ec2)};
+				}
+			for (auto &kv : uniq)
+				_found.push_back(kv.second);
+		}
+		if (_foundNext >= _found.size()) {
+			fail(ah == 0x4E ? 2 : 18);
+			break;
+		}
+		fillDta(_found[_foundNext++]);
+		m.eax = 0;
 		break;
+	}
 	default:
 		log("unhandled DOS function " + std::to_string(ah));
 		fail(1);

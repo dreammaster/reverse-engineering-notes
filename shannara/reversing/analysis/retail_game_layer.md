@@ -1046,3 +1046,7 @@ swapped in the IDB) and `sub_77AE4` (= "is sound id N still playing?") are nativ
 Robustness: a function that ends without a `ret` and simply runs into the next one (`display_pic_at`: two stores, then the code of `display_pic`) is translated as a tail call into that function
 (previously "fell off the end"). A 7-minute session of randomised clicks and keys against the live game (`WIN_SCRIPT`, about 600 inputs: object hover, verbs, inventory, dialogs, the quit dialog, undo) ran without a crash
 or hang; the headless engine's regression checks were re-run after the transpiler change (0 mismatches).
+
+Save and restore work through the emulated DOS: the menu behind the disk icon (Save, Restore, New Game, Status, Music/Voice, Help, History, Credits, Quit, Cancel) opens the list dialog; saving writes
+`SHAN000.SAV` (32,668 bytes - exactly the documented savegame size) plus `JOURNAL.000` into the save directory, and restoring enumerates them with INT 21h AH=4Eh/4Fh (find first/next: wildcard match on the base name,
+DOS DTA layout - the list shows the name typed at save time) and reloads the state. INT 33h now keeps per-button press/release counts and positions and the motion counters (the list dialogs wait on them).

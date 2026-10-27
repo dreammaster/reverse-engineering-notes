@@ -59,7 +59,7 @@ public:
 	std::function<void()> onPump;
 	void pump();
 	// input
-	void setMouse(int x, int y, int buttons) { _mx = x; _my = y; _mb = buttons; }
+	void setMouse(int x, int y, int buttons);
 	void pushKey(int ascii, int scan) { _keys.push_back((ascii & 0xFF) | ((scan & 0xFF) << 8)); }
 
 	std::string logPath;       // when set, the host writes a line per interrupt / unhandled call
@@ -98,6 +98,9 @@ private:
 	uint32_t _retrace = 0;
 	// mouse
 	int _mx = 0, _my = 0, _mb = 0;
+	// INT 33h bookkeeping: press/release counts and positions per button since the last query, and motion since the last AX=0Bh
+	int _pressCount[3] = {}, _releaseCount[3] = {}, _pressX[3] = {}, _pressY[3] = {}, _releaseX[3] = {}, _releaseY[3] = {};
+	int _lastMotionX = 0, _lastMotionY = 0;
 	std::vector<int> _keys;
 	int _scanPending = -1;      // extended keys: INT 21h AH=7 first returns 0, then the scan code
 	uint64_t _lastPump = 0;
@@ -108,6 +111,10 @@ private:
 	void serviceInterrupts(Machine &m);
 	std::map<int, int> _sounds; // sound effect id -> MP3 playback handle
 	std::string mp3Path(int id);
+	struct Found { std::string name, path; uint32_t size; };
+	std::vector<Found> _found; // INT 21h AH=4Eh/4Fh enumeration state
+	size_t _foundNext = 0;
+	void fillDta(const Found &f);
 	// setjmp
 	struct JmpBuf { uint32_t esp, ebp, ebx, ecx, esi, edi, resume; };
 	std::map<uint32_t, JmpBuf> _jmp;
