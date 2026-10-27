@@ -73,14 +73,7 @@ int cmdDosGame(int argc, char **argv) {
     DosFlow flow(dos, party, roster, a.sc, rng, shop, rosterPath, partyPath, shopPath);
 
     // the screens that are not ported from the p-code yet run through the legacy Ui
-    flow.hooks.other = [&](int, int, int) -> int { return 18; };   // READ / EQUIP / REORDER...: not ported yet
-    flow.hooks.combat = [&]() -> int {                               // COMBAT
-        CombatResult r = runCombat(ui, party, a.sc, &a.sp, rng, flow.mg.g37, flow.mg.level, flow.mg.g29);
-        con.refresh();
-        if (r == CombatResult::WindowClosed || ui.quit()) return -1;
-        return r == CombatResult::PartyWiped ? 16 : 7;
-    };
-
+    flow.hooks.other = [&](int x, int, int) -> int { return x == 15 ? 12 : 18; };   // E)QUIP / R)EORDER / MALOR: not ported yet
     flow.run(XCASTLE);
     roster.save(rosterPath);
     party.save(partyPath);

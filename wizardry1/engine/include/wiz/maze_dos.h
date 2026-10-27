@@ -12,6 +12,7 @@
 #include "wiz/maze.h"
 
 #include <array>
+#include <map>
 
 namespace wiz {
 
@@ -41,7 +42,14 @@ struct MazeGlobals {
     // the maze records as the game has changed them (the original rewrites them on disk):
     // fixed-encounter counters, used-up special squares
     std::vector<u8> levelRec[11];
+    // the monster records as the game has changed them (a unique monster's counter, REWARDS:4)
+    std::map<int, std::vector<u8>> monsterRec;
+    // what CINIT:11 leaves in the I/O cache for REWARDS:42: group sizes, monster numbers, drained members
+    int fightCount[4] = {}, fightMonster[4] = {-1, -1, -1, -1}, fightFlag[6] = {};
 };
+
+// monster `idx`'s 94-byte record (a working copy, loaded from the scenario on first use)
+std::vector<u8> &monsterRecord(MazeGlobals &g, const Scenario &sc, int idx);
 
 // the working copy of maze level `level` (1..10), loaded from the scenario on first use
 std::vector<u8> &mazeRecord(MazeGlobals &g, const Scenario &sc, int level);

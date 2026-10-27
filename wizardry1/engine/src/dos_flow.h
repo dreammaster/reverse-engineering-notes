@@ -10,6 +10,7 @@
 #include "wiz/castle.h"
 #include "wiz/combat_dos.h"
 #include "wiz/maze_dos.h"
+#include "wiz/rewards_dos.h"
 #include "wiz/roller_dos.h"
 #include "wiz/shops.h"
 #include "wiz/specials_dos.h"
@@ -44,11 +45,13 @@ private:
     CampWorld campWorld_;
     SpecialsWorld specialsWorld_;
     CombatWorld combatWorld_;
+    RewardsWorld rewardsWorld_;
 public:
     MazeScreen maze;
     Camp camp;
     Specials specials;
     Combat combat;
+    Rewards rewards;
     FlowHooks hooks;
 
     DosFlow(Dos &d, Party &party, Roster &roster, const Scenario &sc, Rng &rng, Shop &shop,
@@ -62,7 +65,8 @@ public:
           campWorld_{party, castle.partyWindow(), mg, sc, rng},
           specialsWorld_{party, roster, sc, rng, rosterPath, partyPath, mg},
           combatWorld_{party, roster, sc, rng, rosterPath, partyPath, mg, castle.partyWindow()},
-          maze(d, mazeWorld_), camp(d, campWorld_), specials(d, specialsWorld_), combat(d, combatWorld_) {}
+          rewardsWorld_{party, roster, sc, rng, rosterPath, partyPath, mg},
+          maze(d, mazeWorld_), camp(d, campWorld_), specials(d, specialsWorld_), combat(d, combatWorld_), rewards(d, rewardsWorld_) {}
 
     // Runs from `xgoto` until the window closes, a hook stops, or an unported screen is reached.
     // Returns the XGOTO it stopped at (-1 when a hook stopped it).
@@ -114,7 +118,7 @@ public:
                     campMember = r.member;
                     mg.g36 = r.g36;
                     mg.g9 = r.member;
-                    if (!(xgoto == 24 && r.g36 == 3)) {               // 3 = DUMAPIC: SPECIALS below
+                    if (!(xgoto == 24 && r.g36 <= 3)) {               // 0..2 REWARDS, 3 DUMAPIC (SPECIALS) below
                         if (!hooks.other) break;
                         xgoto = hooks.other(xgoto, r.g36, r.member);
                         if (xgoto < 0) break;
@@ -133,6 +137,10 @@ public:
                     if (r.windowClosed) break;
                     xgoto = r.xgoto;
                 }
+            } else if (xgoto == 11 || xgoto == 22 || (xgoto == 24 && mg.g36 <= 2)) {     // REWARDS
+                RewardsResult r = rewards.run(xgoto);
+                if (r.windowClosed) break;
+                xgoto = r.xgoto;
             } else if (xgoto == 23 || xgoto == 26 || (xgoto == 24 && mg.g36 == 3)) {   // SPECIALS
                 SpecialsResult r = specials.run(xgoto);
                 if (r.windowClosed) break;

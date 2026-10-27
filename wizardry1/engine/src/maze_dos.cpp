@@ -31,6 +31,16 @@ std::vector<u8> &mazeRecord(MazeGlobals &g, const Scenario &sc, int level) {
     return v;
 }
 
+std::vector<u8> &monsterRecord(MazeGlobals &g, const Scenario &sc, int idx) {
+    std::vector<u8> &v = g.monsterRec[idx];
+    if (v.empty()) {
+        Bytes b = sc.record(Scenario::Monster, idx);
+        v.assign(b.p, b.p + b.size());
+        v.resize(94, 0);
+    }
+    return v;
+}
+
 void MazeScreen::loadLevel() {
     std::vector<u8> &v = mazeRecord(g_, w_.sc, g_.level);
     level_.load(Bytes{v.data(), v.size()});

@@ -66,6 +66,13 @@ SCEN = {
     # type-ahead only matches the UPRT / D / S keys, so the party parries (the monsters do the fighting)
     'combat_round':  dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'AWWAXWAXWWWXWWADWXWWWXWDWWWWWWWWWWAXWDAWWWXXWDADWWDAAAXWXAAWAWDXWWWWWWXWWAAWDWD' + r'PP\r'),
     'combat_parry':  dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'AWWAXWAXWWWXWWADWXWWWXWDWWWWWWWWWWAXWDAWWWXXWDADWWDAAAXWXAAWAWDXWWWWWWXWWAAWDWD' + r'PP\rPP\rPP\rPP\r'),
+    # NOBAL knows every spell and has points for them: MALIKTO wipes out the group; then the spoils (a chest)
+    'rewards_chest': dict(cmd='castle-test', keys=r'GAFB\rLEMLN' + 'AWWAXWAXWWWXWWADWXWWWXWDWWWWWWWWWWAXWDAWWWXXWDADWWDAAAXWXAAWAWDXWWWWWWXWWAAWDWD' + r'PP\rSMALIKTO\rP\r',
+                          patch='5:80:9,5:81:9,5:82:9,5:83:9,5:84:9,5:85:9,5:86:9,5:69:65535,5:70:65535,5:71:65535,5:72:65535'),
+    'rewards_inspect': dict(cmd='castle-test', keys=r'GAFB\rLEMLN' + 'AWWAXWAXWWWXWWADWXWWWXWDWWWWWWWWWWAXWDAWWWXXWDADWWDAAAXWXAAWAWDXWWWWWWXWWAAWDWD' + r'PP\rSMALIKTO\rP\rI1I2C1C1D1TRAPLESS CHEST\rO1',
+                          patch='5:80:9,5:81:9,5:82:9,5:83:9,5:84:9,5:85:9,5:86:9,5:69:65535,5:70:65535,5:71:65535,5:72:65535'),
+    'rewards_open':  dict(cmd='castle-test', keys=r'GAFB\rLEMLN' + 'AWWAXWAXWWWXWWADWXWWWXWDWWWWWWWWWWAXWDAWWWXXWDADWWDAAAXWXAAWAWDXWWWWWWXWWAAWDWD' + r'PP\rSMALIKTO\rP\rO2\r\r\r\r',
+                          patch='5:80:9,5:81:9,5:82:9,5:83:9,5:84:9,5:85:9,5:86:9,5:69:65535,5:70:65535,5:71:65535,5:72:65535'),
     'maze_walk':     dict(cmd='castle-test', keys=r'GAAC\rLEMLNWWWDWWAWWXWWWWAWSSOOT5\rW'),
 }
 

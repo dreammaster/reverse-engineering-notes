@@ -206,8 +206,8 @@ void Combat::callForHelp() {
     if (rnd(200) > 10 * G_[g][80]) none();
     int keep116 = G_[g][116], keep117 = G_[g][117];
     {
-        Bytes b = w_.sc.record(Scenario::Monster, G_[g][3]);
-        for (int k = 0; k < 47; ++k) G_[g][76 + k] = k * 2 + 1 < int(b.size()) ? int(i16(rd16(b.p + k * 2))) : 0;
+        std::vector<u8> &b = monsterRecord(g_, w_.sc, G_[g][3]);
+        for (int k = 0; k < 47; ++k) G_[g][76 + k] = int(i16(rd16(b.data() + k * 2)));
     }
     if (keep117 < G_[g][117]) G_[g][117] = 1 + (G_[g][117] + keep117) / 2;
     if (keep116 < G_[g][116]) G_[g][116] = 1 + (G_[g][116] + keep116) / 2;

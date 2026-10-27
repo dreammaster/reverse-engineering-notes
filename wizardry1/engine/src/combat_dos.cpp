@@ -70,8 +70,8 @@ CombatOutcome Combat::run() {
     CombatOutcome res;
     std::memset(G_, 0, sizeof G_);
     {
-        Bytes b = w_.sc.record(Scenario::Monster, g_.g37);
-        for (int k = 0; k < 47; ++k) G_[1][76 + k] = k * 2 + 1 < int(b.size()) ? int(i16(rd16(b.p + k * 2))) : 0;
+        std::vector<u8> &b = monsterRecord(g_, w_.sc, g_.g37);
+        for (int k = 0; k < 47; ++k) G_[1][76 + k] = int(i16(rd16(b.data() + k * 2)));
     }
     con.show(w_.g10, false);
     list_ = con.open(2, 0, 36, 6, 6, false);
@@ -125,8 +125,8 @@ int Combat::roll(int dice, int sides, int add) {
 // CINIT:14 -- put monster `monster` into group `group` (and maybe a companion group after it)
 void Combat::loadGroup(int monster, int group) {
     G_[group][3] = monster;
-    Bytes b = w_.sc.record(Scenario::Monster, monster);
-    for (int k = 0; k < 47; ++k) rec(group, k) = k * 2 + 1 < int(b.size()) ? int(i16(rd16(b.p + k * 2))) : 0;
+    std::vector<u8> &b = monsterRecord(g_, w_.sc, monster);
+    for (int k = 0; k < 47; ++k) rec(group, k) = int(i16(rd16(b.data() + k * 2)));
     if (group < 4 && (group - 1) < g_.level && rec(group, 38) > 0) {
         if (rnd(100) < rec(group, 39)) loadGroup(rec(group, 38), group + 1);
     }
@@ -337,6 +337,11 @@ void Combat::cinitMonsters() {
 void Combat::cinitEnd() {
     for (int i = 0; i < partyCount(); ++i)
         if (int(chr(i).status) < 3) chr(i).status = Status::OK;
+    for (int i = 0; i < 4; ++i) {
+        g_.fightMonster[i] = G_[i + 1][3];
+        g_.fightCount[i] = G_[i + 1][2];
+    }
+    for (int i = 0; i < 6; ++i) g_.fightFlag[i] = flag_[i];
 }
 
 } // namespace wiz
