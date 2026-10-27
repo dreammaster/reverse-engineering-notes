@@ -10,11 +10,16 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include <atomic>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <string>
+#include <thread>
 #include <vector>
+
+#include <mmsystem.h>
 
 using namespace shannara;
 
@@ -158,6 +163,22 @@ int main(int argc, char **argv) {
 		g_host = &host;
 		host.verbose = getenv("HOST_VERBOSE") != nullptr;
 		host.loadNames("reversing/analysis/retail_function_map.tsv");
+		// music: the sequencer runs on its own thread and plays through the system MIDI synthesizer (HOST_NOSOUND=1 disables it)
+		HMIDIOUT midi = nullptr;
+		if (!getenv("HOST_NOSOUND") && midiOutOpen(&midi, MIDI_MAPPER, 0, 0, 0) == MMSYSERR_NOERROR)
+			host.audio().setMidiSink([midi](uint32_t m) { midiOutShortMsg(midi, m); });
+		host.audio().verbose = host.verbose;
+		std::atomic<bool> audioDone(false);
+		std::thread audioThread([&]() {
+			auto last = std::chrono::steady_clock::now();
+			while (!audioDone) {
+				std::this_thread::sleep_for(std::chrono::milliseconds(5));
+				auto now = std::chrono::steady_clock::now();
+				double dt = std::chrono::duration<double>(now - last).count();
+				last = now;
+				host.audio().advance(dt);
+			}
+		});
 		WNDCLASSA wc = {};
 		wc.lpfnWndProc = wndProc;
 		wc.hInstance = GetModuleHandle(nullptr);
@@ -274,7 +295,13 @@ int main(int argc, char **argv) {
 			Sleep(1);
 		};
 		int rc = host.run(INT64_MAX / 2);
-		fprintf(stderr, "game ended (%d)\n", rc);
+		audioDone = true;
+		audioThread.join();
+		if (midi) {
+			midiOutReset(midi);
+			midiOutClose(midi);
+		}
+		fprintf(stderr, "game ended (%d); music: %d sequences started, %d MIDI messages sent\n", rc, host.audio().sequencesStarted, host.audio().midiMessages);
 	} catch (const std::exception &x) {
 		fprintf(stderr, "error: %s\n", x.what());
 		return 1;

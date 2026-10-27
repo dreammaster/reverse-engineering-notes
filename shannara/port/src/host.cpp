@@ -49,7 +49,57 @@ Host::Host(const std::string &exePath, const std::string &gameDir, const std::st
 	_m->onPortOut = [this](Machine &, uint16_t p, uint32_t v, int b) { portOut(p, v, b); };
 }
 
+uint32_t Host::callGuest(uint32_t addr, std::initializer_list<uint32_t> args) {
+	Machine &m = *_m;
+	uint32_t seax = m.eax, secx = m.ecx, sedx = m.edx, sebx = m.ebx, sesi = m.esi, sedi = m.edi, sebp = m.ebp, sesp = m.esp;
+	bool zf = m.zf, sf = m.sf, cf = m.cf, of = m.of, df = m.df;
+	for (auto it = args.end(); it != args.begin();)
+		m.push(*--it);
+	m.push(0);
+	m.call(addr);
+	uint32_t r = m.eax;
+	m.esp = sesp;
+	m.eax = seax; m.ecx = secx; m.edx = sedx; m.ebx = sebx; m.esi = sesi; m.edi = sedi; m.ebp = sebp;
+	m.zf = zf; m.sf = sf; m.cf = cf; m.of = of; m.df = df;
+	return r;
+}
+
+static uint64_t nowUs() {
+	return (uint64_t)std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+}
+
+// called by Machine::tick every few thousand instructions: run due AIL timer callbacks and finished-music callbacks as if an interrupt had occurred here
+void Host::serviceInterrupts(Machine &) {
+	if (_inIrq)
+		return;
+	_inIrq = true;
+	uint64_t now = nowUs();
+	for (size_t i = 0; i < _timers.size(); i++) {
+		Timer &t = _timers[i];
+		if (!t.used || !t.running || t.cb == 0)
+			continue;
+		int fires = 0;
+		while (now >= t.nextUs && fires < 4) {
+			t.nextUs += (uint64_t)t.periodUs;
+			fires++;
+		}
+		if (now >= t.nextUs)
+			t.nextUs = now + (uint64_t)t.periodUs; // fell far behind: drop the missed ticks
+		for (int k = 0; k < fires; k++)
+			callGuest(t.cb, {t.user});
+	}
+	std::vector<std::pair<uint32_t, uint32_t>> cbs;
+	_audio.takeCallbacks(cbs);
+	for (auto &cb : cbs)
+		callGuest(cb.first, {cb.second});
+	_inIrq = false;
+}
+
 void Host::pump() {
+	std::vector<std::pair<uint32_t, uint32_t>> cbs;
+	_audio.takeCallbacks(cbs);
+	for (auto &cb : cbs)
+		callGuest(cb.first, {cb.second}); // the sequence-end callbacks of the music
 	if (!onPump)
 		return;
 	auto now = (uint64_t)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
@@ -715,6 +765,65 @@ void Host::dos21() {
 void Host::installShims() {
 	Machine &m = *_m;
 	installCrtShims(m);
+	_audio.install(m);
+	m.irqEvery = 4000;
+	m.irqCountdown = 4000;
+	m.irqHook = [this](Machine &mm) { serviceInterrupts(mm); };
+	// AIL timers (cdecl): handles are indices; callbacks run from serviceInterrupts
+	auto timerShim = [&](const char *name, std::function<uint32_t(Machine &)> fn) {
+		m.setShim(name, [name, fn](Machine &mm) {
+			mm.eax = fn(mm);
+			mm.finishShim(name);
+		});
+	};
+	timerShim("_AIL_register_timer", [this](Machine &mm) {
+		for (size_t i = 0; i < _timers.size(); i++)
+			if (!_timers[i].used) {
+				_timers[i] = Timer();
+				_timers[i].used = true;
+				_timers[i].cb = mm.stackArg(0);
+				return (uint32_t)i;
+			}
+		return 0xFFFFFFFFu;
+	});
+	auto timerOf = [this](uint32_t h) -> Timer * { return h < _timers.size() && _timers[h].used ? &_timers[h] : nullptr; };
+	timerShim("_AIL_set_timer_frequency", [this, timerOf](Machine &mm) {
+		if (Timer *t = timerOf(mm.stackArg(0)))
+			if (mm.stackArg(1))
+				t->periodUs = 1e6 / (double)mm.stackArg(1);
+		return 0u;
+	});
+	timerShim("_AIL_set_timer_period", [this, timerOf](Machine &mm) {
+		if (Timer *t = timerOf(mm.stackArg(0)))
+			t->periodUs = (double)mm.stackArg(1) > 0 ? (double)mm.stackArg(1) : 10000;
+		return 0u;
+	});
+	timerShim("_AIL_set_timer_user", [this, timerOf](Machine &mm) {
+		if (Timer *t = timerOf(mm.stackArg(0)))
+			t->user = mm.stackArg(1);
+		return 0u;
+	});
+	timerShim("_AIL_start_timer", [this, timerOf](Machine &mm) {
+		if (Timer *t = timerOf(mm.stackArg(0))) {
+			t->running = true;
+			t->nextUs = nowUs() + (uint64_t)t->periodUs;
+		}
+		return 0u;
+	});
+	timerShim("_AIL_stop_timer", [this, timerOf](Machine &mm) {
+		if (Timer *t = timerOf(mm.stackArg(0)))
+			t->running = false;
+		return 0u;
+	});
+	timerShim("_AIL_release_timer_handle", [this, timerOf](Machine &mm) {
+		if (Timer *t = timerOf(mm.stackArg(0)))
+			*t = Timer();
+		return 0u;
+	});
+	timerShim("_AIL_lock", [](Machine &) { return 0u; });
+	timerShim("_AIL_unlock", [](Machine &) { return 0u; });
+	timerShim("_AIL_disable_interrupts", [](Machine &) { return 0u; });
+	timerShim("_AIL_restore_interrupts", [](Machine &) { return 0u; });
 	// software-interrupt entry points of the C library: the original builds `int N` stubs at run time, here the interrupt is dispatched directly
 	auto doInt = [this](Machine &mm, uint32_t intno, uint32_t in, uint32_t out) -> uint32_t {
 		uint32_t sEsi = mm.esi, sEdi = mm.edi, sEbp = mm.ebp, sEbx = mm.ebx; // the library's versions preserve ebx, esi, edi and ebp (callers rely on it)

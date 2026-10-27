@@ -3,6 +3,7 @@
 // (AIL sound drivers, DPMI real-mode calls, setjmp) are implemented here. See analysis section 36.
 #pragma once
 #include "machine.h"
+#include "audio.h"
 
 #include <map>
 #include <memory>
@@ -33,6 +34,9 @@ public:
 
 	Host(const std::string &exePath, const std::string &gameDir, const std::string &picDir, const std::string &saveDir);
 	Machine &machine() { return *_m; }
+	Audio &audio() { return _audio; }
+	// runs a guest function (cdecl, arguments pushed right to left) from host code; all registers and flags are preserved
+	uint32_t callGuest(uint32_t addr, std::initializer_list<uint32_t> args);
 
 	// runs main_ (never returns normally); returns the exit code if the program calls exit, or when the instruction budget is used up (budgetExhausted set)
 	int run(int64_t budget);
@@ -78,6 +82,7 @@ private:
 	std::string resolve(const std::string &dosName, bool forWrite);
 	void log(const std::string &s);
 
+	Audio _audio;
 	LeExe *_exe = nullptr;
 	Machine *_m = nullptr;
 	std::string _gameDir, _picDir, _saveDir;
@@ -96,6 +101,11 @@ private:
 	std::vector<int> _keys;
 	int _scanPending = -1;      // extended keys: INT 21h AH=7 first returns 0, then the scan code
 	uint64_t _lastPump = 0;
+	// AIL timers (the game's clock is one: _update_timer at 100 Hz) are serviced like interrupts
+	struct Timer { bool used = false, running = false; uint32_t cb = 0, user = 0; double periodUs = 10000; uint64_t nextUs = 0; };
+	std::vector<Timer> _timers = std::vector<Timer>(16);
+	bool _inIrq = false;
+	void serviceInterrupts(Machine &m);
 	// setjmp
 	struct JmpBuf { uint32_t esp, ebp, ebx, ecx, esi, edi, resume; };
 	std::map<uint32_t, JmpBuf> _jmp;

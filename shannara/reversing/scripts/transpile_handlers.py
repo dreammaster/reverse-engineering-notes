@@ -34,7 +34,14 @@ SHIM_OVERRIDE = {"load_game?", "save_game?", "serialize_state?", "save_io_block?
 NATIVE_CRT = {"memcpy_", "memmove_", "memset_", "strlen_", "strcmp_", "stricmp_", "strcpy_", "toupper_", "tolower_", "strupr_", "strlwr_", "strncpy_", "strncmp_",
               "memicmp_", "strstr_",
               # software-interrupt plumbing (the library builds `int N` stubs at run time): implemented by the host
-              "int386_", "int386x_", "__int386x_", "_DoINTR_", "intdos_", "segread_", "sub_99658", "sub_996CA"}
+              "int386_", "int386x_", "__int386x_", "_DoINTR_", "intdos_", "segread_", "sub_99658", "sub_996CA",
+              # the Miles AIL entry points the game calls, implemented natively by port/src/audio.cpp (the real ones drive 16-bit DOS sound drivers)
+              "_AIL_startup", "_AIL_shutdown", "_AIL_delay", "_AIL_set_preference", "_AIL_set_GTL_filename_prefix", "_AIL_install_MDI_INI", "_AIL_install_MDI_driver_file",
+              "_AIL_MDI_driver_type", "_AIL_install_DIG_INI", "_AIL_allocate_sample_handle", "_AIL_allocate_sequence_handle", "_AIL_init_sequence", "_AIL_start_sequence",
+              "_AIL_stop_sequence", "_AIL_end_sequence", "_AIL_release_sequence_handle", "_AIL_set_sequence_volume", "_AIL_register_sequence_callback", "_AIL_sequence_position",
+              # AIL timers, run by the host as emulated interrupts (Machine::irqHook)
+              "_AIL_register_timer", "_AIL_set_timer_frequency", "_AIL_set_timer_period", "_AIL_set_timer_user", "_AIL_start_timer", "_AIL_stop_timer", "_AIL_release_timer_handle",
+              "_AIL_lock", "_AIL_unlock", "_AIL_disable_interrupts", "_AIL_restore_interrupts"}
 
 JCC = {"jz": "m.zf", "jnz": "!m.zf", "jb": "m.cf", "jnb": "!m.cf", "jbe": "m.cond_be()", "ja": "!m.cond_be()",
        "jl": "m.cond_l()", "jge": "!m.cond_l()", "jle": "m.cond_le()", "jg": "!m.cond_le()", "js": "m.sf", "jns": "!m.sf",

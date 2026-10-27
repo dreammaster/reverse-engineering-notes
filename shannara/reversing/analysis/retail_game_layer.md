@@ -1021,3 +1021,18 @@ arrival sequence (forest picture -> the fishing glen with its description), and 
 the command line ("Look at the fishing spot"), hover labels from the region table ("reflection"), the compass, the inventory pane and the undo button. `play_cutscene?` is now translated too
 (`jmp [ebx+table]` with a pre-scaled index is recognised via IDA's switch info), so only ten hardware/AIL functions remain native shims.
 `port/play.bat` starts the window front end with the usual directories.
+
+### 36.2 Timers and music
+
+The game's clock is not the DOS clock: `get_clock` returns `_timer_tick`, which `_update_timer` (registered through `_AIL_register_timer`, `_AIL_set_timer_frequency(h, 100)`, `_AIL_start_timer`) advances by 10
+at 100 Hz from the Miles timer interrupt. Without that interrupt every timed wait (`delay?`, `wait_ticks?`, `timeout`, the splash and the intro videos) could only end through a click; `init_music` also
+plays a track and waits for it with a timeout. The host therefore emulates interrupts: `Machine::tick` calls `irqHook` every 4,000 executed instructions, which fires the due AIL timers (the callback
+runs through `Host::callGuest`, which preserves every register and flag) and delivers finished-music callbacks. The `_AIL_*` timer, lock and interrupt entry points are native shims; callbacks start
+within a few microseconds of being due and may run at any instruction boundary, as under the original interrupt.
+
+Music (`port/src/audio.*`): the Miles *high-level* sequence API the game uses is implemented natively - `_AIL_install_MDI_INI` reports a driver, `_AIL_allocate_sequence_handle`, `_AIL_init_sequence(h, xmi, n)`,
+`_AIL_start/stop/end/release_sequence`, `_AIL_set_sequence_volume(h, vol, fade_ms)` (the game fades music with it), `_AIL_register_sequence_callback` (the game's `sub_7747C` calls `stop_music` when a track ends),
+`_AIL_sequence_position`. An XMIDI sequencer plays the track (EVNT chunk of the n-th `FORM XMID` of the `CAT`; delays are sums of bytes < 0x80 in 1/120 s intervals at the default tempo, so an interval is `tempo / 60`
+microseconds; note-on carries a variable-length duration; controllers 116/117 are FOR/NEXT loops, 110-120 are XMIDI-only and not sent on) and emits short MIDI messages to the Windows synthesizer on its own thread
+(`HOST_NOSOUND=1` disables it). `init_music`'s preload of all 78 tracks is visible as 78 sequence starts. The digital driver reports "none" (`_AIL_install_DIG_INI` returns 1): this release's voices are MP3 files
+(`Vocs.zip`) instead of the `SHAN006.VOC` archive the original expects, so speech and sound effects are not played yet.

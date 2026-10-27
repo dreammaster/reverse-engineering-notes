@@ -68,7 +68,14 @@ public:
 	int64_t budget = INT64_MAX; // instructions left before a runaway loop is aborted (reset per command by Engine)
 	std::vector<uint8_t> coverage; // optional: one byte per code address (allocated by enableCoverage)
 	void enableCoverage() { coverage.assign(0xA0000, 0); }
+	// emulated interrupts: when irqEvery is set, irqHook runs every irqEvery executed instructions (at an instruction boundary)
+	int irqEvery = 0, irqCountdown = 0;
+	std::function<void(Machine &)> irqHook;
 	void tick(uint32_t ea) {
+		if (irqEvery && --irqCountdown <= 0) {
+			irqCountdown = irqEvery;
+			irqHook(*this);
+		}
 		if (!coverage.empty() && ea < coverage.size()) coverage[ea] = 1;
 		if (tracing) traceInsn(ea);
 		if (--budget < 0) throw FormatError("instruction budget exhausted");
