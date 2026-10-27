@@ -11,6 +11,7 @@
 #include "wiz/maze_dos.h"
 #include "wiz/roller_dos.h"
 #include "wiz/shops.h"
+#include "wiz/specials_dos.h"
 
 #include <functional>
 
@@ -22,7 +23,6 @@ struct FlowHooks {
     // (R)EORDER) for character `member`.  Returns the next XGOTO (18 = back to CAMP).
     std::function<int(int xgoto, int g36, int member)> other;
     std::function<int()> combat;       // XGOTO 8 (the encounter is in MazeGlobals::g37 / g29)
-    std::function<int()> special;      // XGOTO 23 / 26 (SPECIALS)
 };
 
 class DosFlow {
@@ -41,9 +41,11 @@ public:
 private:
     MazeWorld mazeWorld_;
     CampWorld campWorld_;
+    SpecialsWorld specialsWorld_;
 public:
     MazeScreen maze;
     Camp camp;
+    Specials specials;
     FlowHooks hooks;
 
     DosFlow(Dos &d, Party &party, Roster &roster, const Scenario &sc, Rng &rng, Shop &shop,
@@ -55,7 +57,8 @@ public:
           castle(d, castleWorld_), shops(d, shopsWorld_, castle), roller(d, rollerWorld_),
           mazeWorld_{party, roster, sc, rng, rosterPath, partyPath, mg, castle.partyWindow()},
           campWorld_{party, castle.partyWindow(), mg, sc, rng},
-          maze(d, mazeWorld_), camp(d, campWorld_) {}
+          specialsWorld_{party, roster, sc, rng, rosterPath, partyPath, mg},
+          maze(d, mazeWorld_), camp(d, campWorld_), specials(d, specialsWorld_) {}
 
     // Runs from `xgoto` until the window closes, a hook stops, or an unported screen is reached.
     // Returns the XGOTO it stopped at (-1 when a hook stopped it).
@@ -105,9 +108,13 @@ public:
                 xgoto = r.xgoto;
                 if (xgoto == 24 || xgoto == 14 || xgoto == 15) {      // another segment's job
                     campMember = r.member;
-                    if (!hooks.other) break;
-                    xgoto = hooks.other(xgoto, r.g36, r.member);
-                    if (xgoto < 0) break;
+                    mg.g36 = r.g36;
+                    mg.g9 = r.member;
+                    if (!(xgoto == 24 && r.g36 == 3)) {               // 3 = DUMAPIC: SPECIALS below
+                        if (!hooks.other) break;
+                        xgoto = hooks.other(xgoto, r.g36, r.member);
+                        if (xgoto < 0) break;
+                    }
                 }
             } else if (xgoto == 7) {                             // RUNNER:1
                 MazeResult r = maze.run();
@@ -117,10 +124,10 @@ public:
                 if (!hooks.combat) break;
                 xgoto = hooks.combat();
                 if (xgoto < 0) break;
-            } else if (xgoto == 23 || xgoto == 26) {             // SPECIALS
-                if (!hooks.special) break;
-                xgoto = hooks.special();
-                if (xgoto < 0) break;
+            } else if (xgoto == 23 || xgoto == 26 || (xgoto == 24 && mg.g36 == 3)) {   // SPECIALS
+                SpecialsResult r = specials.run(xgoto);
+                if (r.windowClosed) break;
+                xgoto = r.xgoto;
             } else if (xgoto == 10) {                            // SHOPS:41 -- out of the maze alive
                 shops.leaveMaze(castle.partyWindow());
                 xgoto = XCASTLE;

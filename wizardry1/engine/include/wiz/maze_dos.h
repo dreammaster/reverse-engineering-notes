@@ -31,11 +31,18 @@ struct MazeGlobals {
     int protect = 0;             // G34  PROTECT (AC bonus)
     int identify = 0;            // G32  IDENTIFY turns
     int g37 = 0;                 // G37  encounter size handed to COMBAT
+    int g36 = 0;                 // G36  XGOTO 24's sub-function (CAMP's jobs for other segments)
     int g38 = 0, g39 = 0, g40 = 0;   // G38..G40 the square the party just left
     int g41 = 7;                 // G41  the XGOTO to return to after CAMP
     bool randomStart = false;    // G54  start at a random open square
     bool fight[20][20] = {};     // G323 the "unfought room" mask
+    // the maze records as the game has changed them (the original rewrites them on disk):
+    // fixed-encounter counters, used-up special squares
+    std::vector<u8> levelRec[11];
 };
+
+// the working copy of maze level `level` (1..10), loaded from the scenario on first use
+std::vector<u8> &mazeRecord(MazeGlobals &g, const Scenario &sc, int level);
 
 struct MazeWorld {
     Party &party;
@@ -135,7 +142,6 @@ private:
     MazeWorld &w_;
     MazeGlobals &g_;
     MazeLevel level_;
-    std::vector<u8> levelBytes_;
     int idx_ = 0;                   // the SQREXTRA index of the square being handled (RUNNER:55's L3)
     bool okSeen_ = false;           // RUNNER:49's L108: somebody is still on their feet
     // RUNNER:1's frame words 1..4, 23

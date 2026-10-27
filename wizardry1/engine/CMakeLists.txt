@@ -30,6 +30,7 @@ add_library(wizcore STATIC
   src/roller_dos.cpp
   src/camp_dos.cpp
   src/maze_dos.cpp
+  src/specials_dos.cpp
   src/dos_cmds.cpp
   src/dos_game.cpp
   src/roster.cpp

@@ -80,7 +80,6 @@ int cmdDosGame(int argc, char **argv) {
         if (r == CombatResult::WindowClosed || ui.quit()) return -1;
         return r == CombatResult::PartyWiped ? 16 : 7;
     };
-    flow.hooks.special = [&]() -> int { return 7; };                 // SPECIALS: not ported yet
 
     flow.run(XCASTLE);
     roster.save(rosterPath);

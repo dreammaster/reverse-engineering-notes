@@ -45,6 +45,8 @@ public:
         chars_[0] = c; disk_[0] = slot; count_ = 1;
         for (int i = 1; i < kMax; ++i) disk_[i] = -1;
     }
+    // SPECIALS:6: a recovered character joins the party as it is (no roster flags touched here)
+    void appendRaw(const Character &c, int slot) { if (count_ < kMax) { chars_[count_] = c; disk_[count_] = slot; ++count_; } }
     // SHOPS:41: the characters who are not OK (still in the dungeon) leave the party
     void keepOnlyOk();
     void disbandQuiet() { count_ = 0; for (int &d : disk_) d = -1; }

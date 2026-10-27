@@ -21,11 +21,19 @@ void MazeScreen::save() {
     if (!w_.partyPath.empty()) w_.party.save(w_.partyPath);
 }
 
+std::vector<u8> &mazeRecord(MazeGlobals &g, const Scenario &sc, int level) {
+    std::vector<u8> &v = g.levelRec[level < 1 ? 1 : level > 10 ? 10 : level];
+    if (v.empty()) {
+        Bytes b = sc.record(Scenario::Maze, level - 1);
+        v.assign(b.p, b.p + std::min<size_t>(b.size(), MazeLevel::kBytes));
+        v.resize(MazeLevel::kBytes, 0);
+    }
+    return v;
+}
+
 void MazeScreen::loadLevel() {
-    Bytes b = w_.sc.record(Scenario::Maze, g_.level - 1);
-    levelBytes_.assign(b.p, b.p + std::min<size_t>(b.size(), MazeLevel::kBytes));
-    levelBytes_.resize(MazeLevel::kBytes, 0);
-    level_.load(Bytes{levelBytes_.data(), levelBytes_.size()});
+    std::vector<u8> &v = mazeRecord(g_, w_.sc, g_.level);
+    level_.load(Bytes{v.data(), v.size()});
 }
 
 // ============================================================================================
@@ -666,17 +674,29 @@ void MazeScreen::encSquare() {
     if (level_.aux0(idx_) > 0) {
         // RUNNER writes the decremented count back into the level record (it is the running
         // total of such encounters left); keep the change in the working copy.
+        std::vector<u8> &rec = mazeRecord(g_, w_.sc, g_.level);
         int w = 384 + (idx_ & 15);
-        int v = int(i16(rd16(levelBytes_.data() + w * 2))) - 1;
-        levelBytes_[w * 2] = u8(v & 0xFF); levelBytes_[w * 2 + 1] = u8((v >> 8) & 0xFF);
+        int v = int(i16(rd16(rec.data() + w * 2))) - 1;
+        rec[w * 2] = u8(v & 0xFF); rec[w * 2 + 1] = u8((v >> 8) & 0xFF);
         if (v == 0) {
             int wd = 380 + (idx_ & 15) / 4, sh = ((idx_ & 15) % 4) * 4;
-            u16 old = rd16(levelBytes_.data() + wd * 2);
+            u16 old = rd16(rec.data() + wd * 2);
             old = u16(old & ~(0xF << sh));
-            levelBytes_[wd * 2] = u8(old & 0xFF); levelBytes_[wd * 2 + 1] = u8(old >> 8);
+            rec[wd * 2] = u8(old & 0xFF); rec[wd * 2 + 1] = u8(old >> 8);
         }
     }
+    // RUNNER:63 sets the square's type to 3 while it clears the room (so the room's flood
+    // fill is allowed to start on it), then back to 12
+    auto setType = [&](int t) {
+        std::vector<u8> &rec = mazeRecord(g_, w_.sc, g_.level);
+        int wd = 380 + (idx_ & 15) / 4, sh = ((idx_ & 15) % 4) * 4;
+        u16 old = rd16(rec.data() + wd * 2);
+        old = u16((old & ~(0xF << sh)) | (t << sh));
+        rec[wd * 2] = u8(old & 0xFF); rec[wd * 2 + 1] = u8(old >> 8);
+    };
+    setType(3);
     clearRoom();
+    setType(12);
     showMsg(702);
     d_.pause(20);
     g_.g29 = 2;

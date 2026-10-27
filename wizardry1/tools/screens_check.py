@@ -50,6 +50,14 @@ SCEN = {
     'camp_maze':     dict(cmd='castle-test', keys=r'GAAC\rLEMLNWC1T25\r1D1PTX\rL\rL'),
     # a priest and a mage in camp: cast DIOS on the mage, a prefix match, an unknown name, USE
     'camp_spells':   dict(cmd='castle-test', keys=r'GAFB\rLEMLNC1SDIOS\r2SK\rSZZ\rSDIOS\r1U1L\rL'),
+    'maze_enc':      dict(cmd='castle-test', keys=r'GAAC\rLEMLNXDXXXWWAWWXWXAAWADWWDXAWDWWADWWWXXXAAWXWDWXWWXAWDAWXWAWWAXXDWWAWDWWWWWDWAAAWXXWW'),
+    # SCNMSG squares of level 1: a sign (9,12), the exit to town (9,19), elevator (10,8), stairs down (0,10)
+    'maze_sign':     dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'WWWWWWWWDWWWWWWWWWAWWWW' + r'\r\rW'),
+    'maze_toup':     dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'WWWWWWWWDWWWWWWWWWAWWWWWDWAWWWWWWAW' + r'\r\rE'),
+    'maze_down':     dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'WWWWWWWWDWWWWWWWWWAWWAWWWWWWWWW' + r'YWWC\r'),
+    # level 2 (arrive at (12,7)): a door that wants item 98 (8,12), a search square (9,18)
+    'maze_gate':     dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'WWWWWWWWDWWWWWWWWWAWWAWWWWWWWWW' + 'YN' + 'WDWWWWAWWWDW' + r'\r\r'),
+    'maze_search':   dict(cmd='castle-test', keys=r'GAAC\rLEMLN' + 'WWWWWWWWDWWWWWWWWWAWWAWWWWWWWWW' + 'YN' + 'WDWWWWAWWWDWDWWAWWWWAWWDWDWAW' + r'\r\rYC'),
     'maze_walk':     dict(cmd='castle-test', keys=r'GAAC\rLEMLNWWWDWWAWWXWWWWAWSSOOT5\rW'),
 }
 
