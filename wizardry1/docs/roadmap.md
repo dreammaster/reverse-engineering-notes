@@ -9,7 +9,7 @@ Decided direction (2026-09-02):
   engine. C++ directly (not via transcribed Pascal) — modern C++ expresses
   UCSD's nested procedures better than ISO Pascal would.
 
-## Phase 0 — tooling & p-machine  *(in progress)*
+## Phase 0 — tooling & p-machine  *(done except the two unchecked items)*
 
 - [x] UCSD p-System volume reader — `tools/ucsd_disk.py` (list / extract / block).
 - [x] Extract `WIZ1.DSK` → `extracted/wiz1/`.
@@ -194,6 +194,35 @@ Decided direction (2026-09-02):
 - [ ] Nice-to-haves, none blocking: `HAS.CACHE` / `KANA.KEYMAP` id, `CSP`
       0/7-9/12/21-24 semantics, `HAS.STROPS` ABI, more proc names,
       chevrons/medals.
+
+## Phase 3b — DOS-faithful port against a p-code oracle  *(in progress; current as of 2026-10-28)*
+
+Phase 3 above produced a playable engine from the Apple source, but its UI was invented and its logic only
+approximately matched the DOS game.  Direction change (2026-09-04, the project owner's instruction): *the
+PC executable's own drawing code and p-code are the source of truth; screenshots only validate.*  See
+[`handoff.md`](handoff.md) for the full picture and workflow.
+
+- [x] **Drawing model recovered** — `drawing.md`: CONUNIT selectors, window compositor, text procs
+      (`tools/drawcalls.py`, `drawing-inventory.md`).
+- [x] **Oracle** — `tools/wizvm.py` (p-machine) + `tools/conunit.py` (driver transcription) run the real
+      `SYSTEM.PASCAL`; `tools/pcode_decomp.py` decompiles it.
+- [x] `wiz::Console` — bit-exact port of the window compositor (`console_replay` test).
+- [x] Title, CASTLE (hub, Tavern, Inn), SHOPS (Edge of Town, Boltac's, Temple, leave/victory/wiped).
+- [x] ROLLER (Training Grounds).
+- [x] RUNNER (maze view, HUD, movement, all square types, encounters) + maze entry.
+- [x] CAMP (sheet, trade/drop/pool/use, camp spells).
+- [x] SPECIALS (scripted squares, I)NSPECT, DUMAPIC).
+- [x] COMBAT / CINIT / CUTIL / SWINGASW / CASTASPE.
+- [x] REWARDS (experience, treasure, chests, camp jobs).
+- [x] UTILITIE camp side (derived scores, E)QUIP, R)EORDER, MALOR).
+- [x] `DosFlow` — one XGOTO dispatcher; `wiz1 dosgame` plays the above end to end.
+- [x] `tools/screens_check.py` — 50 oracle-vs-engine scenarios, wired into ctest (`castle_screens`).
+- [ ] GAMEUTIL (XGOTO 28/29, Edge-of-Town U)TILITIES); KANJIREA.
+- [ ] Oracle coverage for the remaining combat/rewards branches (U)SE, R)UN, D)ISPELL, breath, help,
+      HAMAN/MAHAMAN, level drain, trap effects, disarm, CALFO) — see `handoff.md` §6.
+- [ ] Persist monster/maze record changes back to the scenario file.
+- [ ] Retire the legacy Apple-derived UI/logic modules and their tests.
+- [ ] Refresh `town.md`, `maze.md`, `combat.md` against the DOS ports.
 
 ## Phase 4 — ScummVM engine  *(paused 2026-09-04)*
 

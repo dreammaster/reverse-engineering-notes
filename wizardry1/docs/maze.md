@@ -1,5 +1,7 @@
 # The Maze — RUNNER
 
+> **Status note (2026-10-28).** Written from the Apple source and early p-code reading; the first-person view described here as "approximated" is now ported exactly in `engine/src/maze_dos.cpp` (RUNNER procs 3-44, verified against the oracle). References to `engine/wiz/maze*.h`, `maze_ui` and `maze3d` are the legacy engine. Start with [`handoff.md`](handoff.md).
+
 `RUNNER` (`P010E01`, DOS segnum 20, 74 procs) is maze navigation + the
 first-person wireframe view.  Entered on `XGOTO = XRUNNER`; `XNEWMAZE`
 (handled by `UTILITIE`) loads a level first.

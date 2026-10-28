@@ -1,5 +1,7 @@
 # Screen layout — DOS windows & borders
 
+> **SUPERSEDED (2026-10-28).** This describes the early `TextScreen` window model built from the first CONUNIT reading and DOSBox screenshots. The real model is `wiz::Console` (a bit-exact port of the CONUNIT window compositor) documented in [`drawing.md`](drawing.md); the window table below is still a handy index of `WinOpen` calls but the "Status" section is obsolete. Start with [`handoff.md`](handoff.md).
+
 The DOS build draws every screen region as a **framed window** (`WIZARDRY`
 proc 19 opens one; `CONUNIT` `sub_159A` paints its border; proc 25 closes
 it, restoring what it covered).  Windows form a stack — a screen composes

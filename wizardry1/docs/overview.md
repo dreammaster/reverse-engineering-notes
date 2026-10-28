@@ -1,5 +1,7 @@
 # Wizardry I — reverse engineering overview
 
+> **Status note (2026-10-28).** This is the day-one overview; some details ("TBD" entries, the "prerequisite" remark about the p-code dialect) were resolved long ago -- see [`roadmap.md`](roadmap.md) and [`handoff.md`](handoff.md) for the current state.
+
 Goal: play *Wizardry: Proving Grounds of the Mad Overlord* (DOS release) from a
 clean C++ reimplementation, first as a standalone subproject, later as a ScummVM
 engine. The DOS version is the canonical target for file formats and behavior;
@@ -38,7 +40,7 @@ Volume `WIZBOOT`, 640 blocks in the image (header nominally claims 1272; the
 | file | kind | bytes | notes |
 |---|---|---|---|
 | `SYSTEM.PASCAL` | code | 89088 | the game: 16 p-code segments (below) |
-| `ASCII.KRN` | data | 27648 | high-entropy; font/graphics "kernel" or packed data — TBD |
+| `ASCII.KRN` | data | 27648 | the keyed, enciphered **string pool** (`GetStr(KN)`; cipher in `tools/strpool.py`, decoded text in `strings.txt`) |
 | `SCENARIO.DATA` | data | 37888 | scenario DB: `"$PROVING GROUNDS OF THE MAD OVERLORD!"` + record tables |
 | `200.MONSTERS` | data | 16384 | monster portraits as draw-primitive display lists (low res) |
 | `HAS.CACHE` | data | 512 | small table, possibly stale scratch |
@@ -84,5 +86,5 @@ ax,0x1000; mov ss,ax`). Contains the canonical UCSD runtime error strings
 (`Stack overflow!!`, `EXIT to uncalled procedure`, `call unlinked segment`,
 `Unimplemented Instruction`, `OOPS! end of code encountered!!`, …) and what
 looks like a p-code mnemonic table near `0x2fb0` (`AND`, `ARRAY`, …).
-Recovering its opcode dispatch tells us the exact p-code dialect (II vs IV) —
-prerequisite for trusting a p-code disassembly of `SYSTEM.PASCAL`.
+Its opcode dispatch has since been fully recovered (standard UCSD II.x p-code; see `../../docs/pmachine.md`),
+which is what the disassembler, decompiler and oracle in `tools/` build on.

@@ -1,5 +1,7 @@
 # Combat  (COMBAT / CINIT / CUTIL / MELEE / SWINGASW)
 
+> **Status note (2026-10-28).** Describes the legacy Apple-derived combat port (`engine/wiz/combat*.{h,cpp}`). The DOS-faithful port is `engine/src/combat_dos.cpp`, `combat_cutil.cpp`, `combat_act.cpp` and `rewards_dos.cpp` (COMBAT / CINIT / CUTIL / SWINGASW / CASTASPE / REWARDS, transcribed from the p-code). The record layouts and formulas below remain useful as a map. Start with [`handoff.md`](handoff.md).
+
 `P010401 .. P010901`, DOS segments 7-11.  Ported —
 `engine/wiz/combat.{h,cpp}` (data + resolution + `CASTASPE` spell effects) and
 `engine/wiz/combat_ui.cpp` (the screen + round loop + spell menus + monster

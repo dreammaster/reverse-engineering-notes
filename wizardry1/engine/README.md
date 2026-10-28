@@ -1,80 +1,81 @@
-# Wizardry I — standalone C++ engine (Phase 3)
+# Wizardry I — standalone C++ engine
 
-A dependency-free reimplementation of the DOS "Ultimate Wizardry Archives"
-release, built directly from the reverse-engineering notes in `../docs`.
-Structured so the platform-independent core (`wizcore`) can later back a
-ScummVM engine; the standalone `wiz1` executable is the driver.
+A dependency-free reimplementation of the DOS "Ultimate Wizardry Archives" release, ported screen by screen
+from the game's own p-code and checked bit-exact against a Python p-machine oracle (`../tools/wizvm.py`).
+The platform-independent core (`wizcore`) is meant to back a ScummVM engine later; the `wiz1` executable is
+the standalone driver.  **Read [`../docs/handoff.md`](../docs/handoff.md) first** for the project state and the
+workflow; this file is the module map.
 
-## Status
+## Two generations of code
 
-**Data layer** — reads everything the game needs straight from the original
-`WIZ1.DSK`, verified byte-for-byte against the Python tools in `../tools`:
+| generation | files | status |
+|---|---|---|
+| **DOS-faithful** (current) | `*_dos.cpp/.h`, `castle.*`, `shops.*`, `dos.*`, `console.*`, `dos_flow.h`, `combat_cutil.cpp`, `combat_act.cpp`, `title.*` | transcribed from the DOS p-code; verified against the oracle; what `wiz1 dosgame` runs |
+| legacy (Apple-derived) | `textscreen`, `town_ui`, `maze_ui`, `maze3d`, `camp_ui`, `combat`, `combat_ui`, `roller_ui`, `rewards`, `inn`, `temple`, `cemetery`, `equip`, `specials`, `runner`, … | earlier port with an invented UI; kept for its ctest tests only; slated for removal |
 
-| module | what |
+Shared data/rules layer (used by both): `ucsd_volume`, `string_pool`, `scenario`, `types`, `rng`, `character`,
+`party`, `roster`, `shop`, `roller` (rules), `font`, `bitmap`, `monster_art`, `surface`, `platform` (+ SDL).
+
+## DOS-faithful modules
+
+| module | p-code segment(s) |
 |---|---|
-| `wiz/ucsd_volume.h` | mounts the UCSD p-System volume, lists / extracts files |
-| `wiz/string_pool.h` | decodes `ASCII.KRN` (range tree + `(raw − 67·(kn%51) − 23·k) mod 256`) |
-| `wiz/scenario.h` | `SCENARIO.DATA` TOC + record grid; `MonsterRec` / `ObjectRec` / `ExpTable` views |
-| `wiz/types.h` | `WizLong` (base-10000), the enums, little-endian readers |
-
-**Game logic** — started with the character roller:
-
-| module | what |
-|---|---|
-| `wiz/rng.h` | `RANDOM` — reversed from `SYSTEM.INTERP` (the weak 128-value PC-Wizardry RNG) |
-| `wiz/roller.h` | race base attrs, class eligibility (`GTCHGLST`), bonus-point / HP / gold / age rolls, starting spells |
-| `wiz/character.{h,cpp}` | `Character` model + 208-byte `TCHAR` record reader/writer (round-trips all 20 shipped roster records byte-identically) |
-
-**Platform layer** (`wizcore`):
-
-| module | what |
-|---|---|
-| `wiz/surface.h` | 8-bit indexed framebuffer + primitives (lines, rects, 1-bpp blit, PPM dump) |
-| `wiz/font.h` | `200/400.CHARSET` — 16×8 glyphs, `drawText` onto a Surface |
-| `wiz/textscreen.h` | 40×24 character grid: windows, clamped `gotoXY`, UCSD control codes, `CLRRECT`, `': w'` right-justify, inverse video, font render |
-| `wiz/platform.h` | abstract `Platform` (present / pollKey / waitKey); `NullPlatform` (headless PPM) + `SdlPlatform` (SDL2 window) |
-
-SDL2 is optional. On Windows it links against ScummVM's prebuilt libs — set
-`WIZ_SDL_DIR` (default `C:/dev/scummvm_libs_2015`); without it the build is
-headless-only.
-
-**Game — the Training Grounds** (`wiz/roller_ui.h`, `wiz/roster.h`):
-`wiz1 roller <CHARSET> <SCENARIO.DATA>` opens an SDL window with the working
-character roller — create (password, race, alignment, live point allocation
-with class eligibility, keep Y/N), `*ROSTER`, and TRAINING (inspect / delete
-/ reroll / set password).  The roster is kept in `roster.dat`.
-`wiz1 roller-test <CHARSET> <SCENARIO> <keyscript> [dumpdir]` runs it
-headless with scripted input.
-
-Not yet: `CASTLE` / `SHOPS` / `RUNNER` / combat onward.
+| `dos.{h,cpp}` | WIZARDRY text/window/input procs (`Dos`): print, menus, `GetKey`, `GetNum`, `Delay`, string substitution |
+| `console.{h,cpp}`, `console_replay.cpp` | CONUNIT driver: window compositor, wireframe line drawing, portrait blits, CGA VRAM (`Console`) |
+| `dos_flow.h` | WIZARDRY:1 — the XGOTO dispatcher used by `dosgame` and `castle-test` |
+| `title.{h,cpp}` | title screen + animation |
+| `castle.{h,cpp}` | CASTLE: hub, Gilgamesh's Tavern, Adventurer's Inn |
+| `shops.{h,cpp}` | SHOPS: Edge of Town, Boltac's, Temple of Cant; leaving the maze, victory, party wiped |
+| `roller_dos.{h,cpp}` | ROLLER: Training Grounds |
+| `maze_dos.{h,cpp}` | RUNNER (+ UTILITIE:9–14 maze entry): view, HUD, movement, squares, encounters |
+| `camp_dos.{h,cpp}` | CAMP: sheet, trade/drop/pool/use, camp spells |
+| `specials_dos.{h,cpp}` | SPECIALS: scripted squares, I)NSPECT, DUMAPIC |
+| `combat_dos.{h,cpp}`, `combat_cutil.cpp`, `combat_act.cpp` | COMBAT, CINIT, CUTIL, SWINGASW, CASTASPE |
+| `rewards_dos.{h,cpp}` | REWARDS: experience, treasure, chests, camp jobs |
+| `utilities_dos.{h,cpp}` | UTILITIE camp side: derived scores, E)QUIP, R)EORDER, MALOR |
+| not ported | GAMEUTIL (XGOTO 28/29, Edge-of-Town U)TILITIES), KANJIREA |
 
 ## Build
 
 Windows / MSVC (uses the CMake + Ninja that ship with VS 2022):
 
 ```powershell
-engine\build.ps1
+engine\build.ps1            # -> engine\build\wiz1.exe
 ```
 
-Or any CMake toolchain:
+Or any CMake toolchain: `cmake -S engine -B engine/build -G Ninja && cmake --build engine/build`.
+SDL2 is optional: set `WIZ_SDL_DIR` (default `C:/dev/scummvm_libs_2015`); without it only the headless
+commands are built.
+
+## Run
 
 ```bash
-cmake -S engine -B engine/build -G Ninja
-cmake --build engine/build
-```
+# the game (SDL window); <dataDir> = extracted/wiz1, <stateDir> keeps roster.dat / party.dat / shop.dat / maze.dat
+wiz1 dosgame extracted/wiz1 mystate
 
-## Try it
+# headless, scripted -- what the regression harness uses (keys use \r and \e escapes; gridDir gets a .grid
+# dump of the composed screen at every key wait)
+wiz1 castle-test extracted/wiz1 'GAAC\rLEMLN' gridDir
+wiz1 title-test  extracted/wiz1 'S' gridDir
+#   env: WIZ1_RNG="s0,s1,s2,s3" (hex)  WIZ1_PATCH="slot:word:value,..."  WIZ1_TOWN_PARTY=n
 
-```bash
+# data-layer inspection
 wiz1 files    /path/to/WIZ1.DSK
 wiz1 toc      extracted/wiz1/SCENARIO.DATA
 wiz1 monsters extracted/wiz1/SCENARIO.DATA extracted/wiz1/ASCII.KRN
 wiz1 items    extracted/wiz1/SCENARIO.DATA extracted/wiz1/ASCII.KRN
-wiz1 exp      extracted/wiz1/SCENARIO.DATA
 wiz1 str      extracted/wiz1/ASCII.KRN 13010 5001 20355
 wiz1 rng      1 16
-wiz1 roll     elf good
 wiz1 roster   extracted/wiz1/SCENARIO.DATA
-wiz1 show     font extracted/wiz1/200.CHARSET font.ppm
-wiz1 mockup   extracted/wiz1/200.CHARSET menu.ppm     # or omit .ppm for an SDL window
 ```
+
+## Test
+
+```bash
+ctest --test-dir engine/build
+```
+
+52 tests.  The legacy ones (`town_flow`, `maze_*`, `combat_*`, `camp_*`, …) are self-contained.  Two need
+Python and the game disk and report *skipped* without them: `console_replay` (Console vs the oracle's driver
+calls) and `castle_screens` (`tools/screens_check.py`: 50 oracle-vs-engine scenarios covering the title, town,
+Training Grounds, maze, camp, specials, combat and rewards).

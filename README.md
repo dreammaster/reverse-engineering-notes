@@ -25,4 +25,6 @@ interface, the `0x221E` RNG — therefore applies verbatim to Wizardry II and
 III. `WIZ4.DSK` / `WIZ5.DSK` ship a different, revised interpreter.
 
 Start with [`docs/engine.md`](docs/engine.md), then
-[`wizardry1/docs/roadmap.md`](wizardry1/docs/roadmap.md).
+[`wizardry1/docs/handoff.md`](wizardry1/docs/handoff.md) (current state and workflow) and
+[`wizardry1/docs/roadmap.md`](wizardry1/docs/roadmap.md).  The full working history, with screenshots, is in
+[`wizardry1/docs/history/`](wizardry1/docs/history/).

@@ -8,18 +8,18 @@ Engine-wide reference (the UCSD p-System stack, disk / file formats, the
 p-machine, the RNG — all shared with Wiz II/III) lives one level up in
 [`../docs/`](../docs/).  This folder holds the Wizardry I-specific work.
 
-Start with [`../docs/engine.md`](../docs/engine.md), then
-[`docs/overview.md`](docs/overview.md) and [`docs/roadmap.md`](docs/roadmap.md).
+**Taking over the project? Start with [`docs/handoff.md`](docs/handoff.md)** (current state, workflow, gaps).
+Then [`../docs/engine.md`](../docs/engine.md), [`docs/drawing.md`](docs/drawing.md) and [`docs/roadmap.md`](docs/roadmap.md).
 
 ## Layout
 
 | path | what |
 |---|---|
 | `sources/` | Thomas Ewers' 2014 byte-exact Apple II Pascal reconstruction (reference) |
-| `tools/` | `ucsd_disk.py` — reader/extractor for the UCSD p-System `.DSK` images |
+| `tools/` | Python: UCSD disk reader, p-code disassembler/decompiler, **the p-code oracle** (`wizvm.py`, `conunit.py`), regression scripts (`screens_check.py`, `cmpgrids.py`, `replay_check.py`), decoders, `export_transcript.py` |
 | `ida_scripts/` | headless IDA (`idat.exe`) driver + analysis scripts |
-| `docs/` | Wiz1-specific findings: overview, roadmap, combat / maze / town, decoded tables, strings |
-| `engine/` | the standalone C++ engine (`wizcore` lib + `wiz1` CLI) |
+| `docs/` | Wiz1-specific findings: `handoff.md`, overview, roadmap, `drawing.md`, combat / maze / town, decoded tables, strings; `history/` = the working conversation + screenshots |
+| `engine/` | the standalone C++ engine (`wizcore` lib + `wiz1` CLI); `wiz1 dosgame` plays the DOS-faithful ports |
 | `extracted/` | files carved out of the game disks *(gitignored, regenerable)* |
 | `*.asm` / `*.idc` | committed IDA analysis backups |
 

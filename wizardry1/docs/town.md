@@ -1,5 +1,7 @@
 # The Town — CASTLE / SHOPS
 
+> **Status note (2026-10-28).** This analysis was written from the Apple source and the first p-code reading. The authoritative implementation is now the DOS-faithful port in `engine/src/castle.cpp` and `shops.cpp` (checked against the p-code oracle); where this file and those disagree, trust the code and the p-code. Start with [`handoff.md`](handoff.md).
+
 The "town" is everything outside the maze: the Castle hub and its four
 establishments, plus the Edge of Town. It is driven by the `XGOTO` state
 machine in `WIZARDRY` proc 1 (the mainline), which dispatches each state to a
