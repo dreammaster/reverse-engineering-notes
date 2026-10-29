@@ -43,6 +43,7 @@ PORT(evaluateAction) {                                                          
 }
 
 PORT(refusalCheck) { r.cf = refusalCheck(m, r.a.b.l, r.b.b.l); }                         // 18288: al = difficulty, bl = field offset
+PORT(applyCellChangeList) { applyCellChangeList(m, r.b.b.l); }                              // 12BD2: bl = record offset of the string
 PORT(useSkillOnObject) {                                                                // 13C58: al = mode, dl = direction, bl = parameter
 	uint8_t result = 0;
 	r.cf = useSkillOnObject(m, r.a.b.l, r.d.b.l, r.b.b.l, result);

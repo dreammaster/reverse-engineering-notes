@@ -505,4 +505,38 @@ refused:   // 13D07
 	return true;
 }
 
+
+// 12BD2: shows the record's string `at`, then applies the cell change list that starts at record offset 1 (entries of 5 bytes:
+// flags, x, y, ...; bit 0 = relative to the party position) until an entry with the top bit set
+void applyCellChangeList(Machine &m, uint8_t at) {
+	X86Regs x;
+	x.al = rec(m, at);
+	legacy::call(m, 0x7920, x);   // sub_17920
+	const uint8_t keep1 = m.d8(0x46FC), keep2 = m.d8(0x46FD);
+	uint8_t bl = 1, last;
+	for (;;) {
+		m.d8(0xA4D1) = bl;
+		uint8_t dx = 0, dy = 0;
+		if (rec(m, bl) & 1) { dx = m.d8(0x46A6); dy = m.d8(0x46A7); }
+		m.d8(0xA4D3) = dx;
+		m.d8(0xA4D2) = dy;
+		const uint8_t cx = uint8_t(rec(m, uint8_t(bl + 1)) + dx);
+		const uint8_t cy = uint8_t(rec(m, uint8_t(bl + 2)) + dy);
+		changeCellFromLocation(m, uint8_t(bl + 3), cx, cy);
+		bl = m.d8(0xA4D1);
+		last = rec(m, bl);
+		if (last & 0x80) break;
+		bl = uint8_t(bl + 5);
+		if (bl == 0) break;
+	}
+	m.d8(0xA4D0) = last;
+	m.d8(0x46FC) = keep1;
+	m.d8(0x46FD) = keep2;
+	const uint8_t al = uint8_t(bl + 5);
+	if (!(last & 0x40)) { X86Regs r; legacy::call(m, 0x63CA, r); }
+	X86Regs r;
+	r.al = al;
+	legacy::call(m, 0x69B1, r);
+}
+
 } // namespace wl

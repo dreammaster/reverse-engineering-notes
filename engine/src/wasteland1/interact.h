@@ -50,4 +50,7 @@ bool refusalCheck(Machine &m, uint8_t max, uint8_t field);
 // the object in direction `dir`; the NPC may refuse. Returns the carry of the original; `result` is its al
 bool useSkillOnObject(Machine &m, uint8_t mode, uint8_t dir, uint8_t param, uint8_t &result);
 
+// 12BD2 (bl = record offset of the string)
+void applyCellChangeList(Machine &m, uint8_t at);
+
 } // namespace wl
