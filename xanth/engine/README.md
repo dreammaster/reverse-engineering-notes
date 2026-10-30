@@ -5,7 +5,7 @@ No dependencies; intended to be dropped into a ScummVM engine (wrap `Common::See
 
 | Class | File | Reference | Verified on |
 |---|---|---|---|
-| `dclExplode` | PKWARE DCL implode (PIC pixels) | `dcl_explode.py` | all 2,968 pictures decode to exactly width*height |
+| `dclExplode` | PKWARE DCL implode (PIC pixels) | `dcl_explode.py` | all 3,294 pictures decode to exactly width*height |
 | `PicFile` | `XANTH_nn.PIC` | `xanth_pic.py` | 27 files; pixels/palette identical to Python |
 | `RgnFile` | `XANTH_nn.RGN` | `rgn_read.py` | 17 files, region id == object id |
 | `MessageFile` | `XANTHSTR.DAT` | `shanstr.py` | 80 blocks / 5,542 strings identical to Python |
