@@ -853,7 +853,7 @@ class Lift:
             if not re.match(r"^[\w?.$@]+$", op) and "[" in op:
                 # indirect jump through a pointer in memory (dispatch tables, video mode function pointers): call it, then return
                 d = self.classify(op, x)
-                far = d["kind"] == "mem" and (d.get("size") == 4 or "dword" in op or re.search(r"\bfn_\w+", op))
+                far = d["kind"] == "mem" and (d.get("size") == 4 or "dword" in op)
                 if far:
                     out.append("{ uint16_t _s = %s, _o = %s; uint16_t _off = c.rd16(_s, _o), _seg = c.rd16(_s, (uint16_t)(_o + 2)); c.cs = _cs; if (c.callFarHook) c.callFarHook(c, _seg, _off); return; }" % (d["seg"], d["off"]))
                 else:

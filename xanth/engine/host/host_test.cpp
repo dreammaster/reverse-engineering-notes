@@ -448,6 +448,8 @@ static int testRoom(Host &h, int room) {
 		int same = 0; for (unsigned y = 0; y < im.height; y++) for (unsigned x = 0; x < im.width; x++) same += h.mem[0xA0000 + (y + im.y) * 320 + x + im.x] == im.pixels[y * im.width + x];
 		int rgb = 0; for (unsigned y = 0; y < im.height; y++) for (unsigned x = 0; x < im.width; x++) { uint8_t s = h.mem[0xA0000 + (y + im.y) * 320 + x + im.x], t = im.pixels[y * im.width + x]; rgb += h.machine.palette[s * 3] == im.palette[t * 3] && h.machine.palette[s * 3 + 1] == im.palette[t * 3 + 1] && h.machine.palette[s * 3 + 2] == im.palette[t * 3 + 2]; }
 		printf("  same colour (DAC palette vs the picture's palette): %d of %u\n", rgb, im.width * im.height);
+		int sh = 0, shTotal = 0; for (unsigned y = 1; y < im.height; y++) for (unsigned x = 1; x < im.width; x++) { shTotal++; sh += h.mem[0xA0000 + (y + im.y - 1) * 320 + x + im.x - 1] == im.pixels[y * im.width + x]; }
+		printf("  shifted by the game's (-1,-1) Image_OffsetPos: %d of %d pixels equal\n", sh, shTotal);
 		printf("screen vs XANTH_02.PIC image 0 (%ux%u at %d,%d): %d of %u pixels equal\n", im.width, im.height, im.x, im.y, same, im.width * im.height);
 	  }
 	}
