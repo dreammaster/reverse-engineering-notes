@@ -1785,10 +1785,10 @@ conv_cb_24
     if arg_2!=1:
       -> (arg_2 - 1)
     if arg_2==1:
-      flag_85268_conv24 = 6
+      story_stage = 6
       -> (arg_2 - 1)
   if arg_2==0:
-    flag_85268_conv24 = 5
+    story_stage = 5
     -> arg_2
 
 conv_cb_25
@@ -2047,7 +2047,7 @@ conv_cb_51
   if arg_2>=0:
     if arg_2<=1:
       cancel_event(4)
-      flag_85268_conv24 = 0x1A
+      story_stage = 0x1A
       go_to_room?(0x5A)
       -> go_to_room?(0x5A)
     if arg_2>1:
@@ -2688,16 +2688,16 @@ conv_text_29
                                         voice_track = ([bp+var_2] + 0x4C7)
                                         -> es:[si+2]
                                     if flag_852DD_conv_text_75==0:
-                                      if flag_85266_censer==0:
+                                      if censer_count==0:
                                         conversation_set_enabled(0x803F, es:[bx+0], 1)
                                         voice_track = ([bp+var_2] + 0x4C7)
                                         -> es:[si+2]
-                                      if flag_85266_censer!=0:
-                                        if flag_85266_censer<2:
+                                      if censer_count!=0:
+                                        if censer_count<2:
                                           conversation_set_enabled(0x803F, es:[bx+0], 1)
                                           voice_track = ([bp+var_2] + 0x4C7)
                                           -> es:[si+2]
-                                        if flag_85266_censer>=2:
+                                        if censer_count>=2:
                                           if object_parent_is?(0x8B, 1)==0:
                                             cancel_event(0x11)
                                             conversation_set_enabled(0x803F, es:[bx+0], 1)
@@ -5135,7 +5135,7 @@ conv_text_79
   -> 0xF
 
 conv_text_81
-  flag_85268_conv24 = 0x16
+  story_stage = 0x16
   -> 0
 
 conv_text_82
@@ -5408,10 +5408,10 @@ exit_fn_02
 
 exit_fn_03
   if phase==0xF:
-    if flag_85266_censer==0:
+    if censer_count==0:
       Font_WriteMessage(msg(14:0x23))
       -> 0
-    if flag_85266_censer!=0:
+    if censer_count!=0:
       Font_WriteMessage(msg(14:0x24))
       -> 0x97
   if phase:other:
@@ -6713,10 +6713,10 @@ exit_fn_26
     if byte_852CE==0:
       byte_86CC0 = 0
       show_compendium(0x369, 0xE19)
-      if flag_85268_conv24==0x16:
+      if story_stage==0x16:
         go_to_room?(0x5A)
         -> 0
-      if flag_85268_conv24!=0x16:
+      if story_stage!=0x16:
         RoomItem_Draw(0x10)
         -> 0
     if byte_852CE!=0:
@@ -7136,10 +7136,10 @@ objh_003   # objects: 3 headman
                     show_compendium(0x27B, 0x5A0B)
                     -> 1
                   if byte_852CC!=0:
-                    if flag_85266_censer<2:
+                    if censer_count<2:
                       show_compendium(0x28E, 0x5A0B)
                       -> 1
-                    if flag_85266_censer>=2:
+                    if censer_count>=2:
                       if object_parent_is?(0x8B, 1)==0:
                         show_compendium(0x28D, 0x5A0B)
                         -> 1
@@ -7148,10 +7148,10 @@ objh_003   # objects: 3 headman
                         object_move?(3, 0, 0)
                         -> 1
                 if object_is_within?(0x73, 1)==0:
-                  if flag_85266_censer<2:
+                  if censer_count<2:
                     show_compendium(0x28E, 0x5A0B)
                     -> 1
-                  if flag_85266_censer>=2:
+                  if censer_count>=2:
                     if object_parent_is?(0x8B, 1)==0:
                       show_compendium(0x28D, 0x5A0B)
                       -> 1
@@ -7165,10 +7165,10 @@ objh_003   # objects: 3 headman
                   show_compendium(0x27B, 0x5A0B)
                   -> 1
                 if byte_852CC!=0:
-                  if flag_85266_censer<2:
+                  if censer_count<2:
                     show_compendium(0x28E, 0x5A0B)
                     -> 1
-                  if flag_85266_censer>=2:
+                  if censer_count>=2:
                     if object_parent_is?(0x8B, 1)==0:
                       show_compendium(0x28D, 0x5A0B)
                       -> 1
@@ -7177,10 +7177,10 @@ objh_003   # objects: 3 headman
                       object_move?(3, 0, 0)
                       -> 1
               if object_is_within?(0x73, 1)==0:
-                if flag_85266_censer<2:
+                if censer_count<2:
                   show_compendium(0x28E, 0x5A0B)
                   -> 1
-                if flag_85266_censer>=2:
+                if censer_count>=2:
                   if object_parent_is?(0x8B, 1)==0:
                     show_compendium(0x28D, 0x5A0B)
                     -> 1
@@ -7366,7 +7366,7 @@ objh_005   # objects: 5 Nada
             if byte_852EE!=0:
               byte_86CC0 = 0
               show_compendium(0x14B, 0x9AC)
-              flag_85268_conv24 = 0xB
+              story_stage = 0xB
               go_to_room?(0x5A)
               -> 1
           if flag_852E1_manacles==0:
@@ -7690,7 +7690,7 @@ objh_010   # objects: 10 Metria
     if cmd==KISS:
       Font_WriteMessage(msg(6:0x21))
       wait_ticks_or_click(0x1770)
-      flag_85268_conv24 = 0x1A
+      story_stage = 0x1A
       go_to_room?(0x5A)
       -> 1
     if cmd==GRAB:
@@ -7744,10 +7744,10 @@ objh_012   # objects: 13 Fairy Nuff
         show_compendium(0x32B, 0x64E)
         -> 1
       if flag_852CD_conv61==0:
-        if flag_85266_censer==2:
+        if censer_count==2:
           show_compendium(0x32C, 0x64E)
           -> 1
-        if flag_85266_censer!=2:
+        if censer_count!=2:
           if lock_combination_correct()!=0:
             if object_parent_is?(0x88, 1)!=0:
               if object_parent_is?(0x89, 1)!=0:
@@ -8617,10 +8617,10 @@ objh_029   # objects: 31 censer smoke, 32 censer smoke
       Font_WriteMessage(msg(8:0x40))
       -> 1
     if cmd==LOOK_AT:
-      if flag_85266_censer>0:
+      if censer_count>0:
         Font_WriteMessage(msg(8:0x3E), msg(8:0x3F))
         -> 1
-      if flag_85266_censer<=0:
+      if censer_count<=0:
         Font_WriteMessage(msg(8:0x3E), &aTwoCensers)
         -> 1
     if cmd==DO_USE:
@@ -12783,7 +12783,7 @@ objh_089   # objects: 94 cavern door
         cancel_event(4)
         cancel_event(5)
         wait_ticks_or_click(0x2710)
-        flag_85268_conv24 = 1
+        story_stage = 1
         go_to_room?(0x5A)
         -> 1
     if cmd==OPEN:
@@ -12849,7 +12849,7 @@ objh_092   # objects: 97 metal bars
       cancel_event(4)
       cancel_event(5)
       wait_ticks_or_click(0x2710)
-      flag_85268_conv24 = 2
+      story_stage = 2
       go_to_room?(0x5A)
       -> 1
     if cmd==LOOK_IN:
@@ -12859,7 +12859,7 @@ objh_092   # objects: 97 metal bars
       cancel_event(4)
       cancel_event(5)
       wait_ticks_or_click(0x2710)
-      flag_85268_conv24 = 2
+      story_stage = 2
       go_to_room?(0x5A)
       -> 1
   if phase==4:
@@ -14224,13 +14224,13 @@ objh_118   # objects: 124 tangle tree
       if flag_852CF_tangle_tree!=0:
         if flag_852B3_censer!=0:
           Font_WriteMessage(msg(10:0x19), msg(10:0x1A))
-          flag_85268_conv24 = 4
+          story_stage = 4
           wait_ticks_or_click(0)
           go_to_room?(0x5A)
           -> 1
         if flag_852B3_censer==0:
           Font_WriteMessage(msg(10:0x19), msg(10:0x1B))
-          flag_85268_conv24 = 4
+          story_stage = 4
           wait_ticks_or_click(0)
           go_to_room?(0x5A)
           -> 1
@@ -14250,13 +14250,13 @@ objh_118   # objects: 124 tangle tree
       if flag_852CF_tangle_tree!=0:
         if flag_852B3_censer!=0:
           Font_WriteMessage(msg(10:0x19), msg(10:0x1A))
-          flag_85268_conv24 = 4
+          story_stage = 4
           wait_ticks_or_click(0)
           go_to_room?(0x5A)
           -> 1
         if flag_852B3_censer==0:
           Font_WriteMessage(msg(10:0x19), msg(10:0x1B))
-          flag_85268_conv24 = 4
+          story_stage = 4
           wait_ticks_or_click(0)
           go_to_room?(0x5A)
           -> 1
@@ -14458,10 +14458,10 @@ objh_124   # objects: 130 flowers
       Font_WriteMessage(msg(12:0x3F))
       -> 1
     if cmd==SMELL:
-      if flag_85266_censer>=2:
+      if censer_count>=2:
         Font_WriteMessage(msg(12:0x41), ?, ?)
         -> 1
-      if flag_85266_censer<2:
+      if censer_count<2:
         Font_WriteMessage(msg(12:0x41), msg(12:0x42))
         -> 1
     if cmd==PICK:
@@ -14602,28 +14602,28 @@ objh_127   # objects: 133 censor-ship
     -> 0
   if phase==6:
     if cmd==TALK_TO:
-      if flag_85266_censer==2:
+      if censer_count==2:
         print_obj(0x22, dobj)
         Font_WriteMessage(msg(14:0x1F), print_obj(0x22, dobj), ?)
         -> 1
-      if flag_85266_censer!=2:
+      if censer_count!=2:
         Font_WriteMessage(msg(14:0x20))
         -> 1
     if cmd:other:
       -> 0
     if cmd==LISTEN:
       Font_WriteMessage(&aYouHear)
-      if flag_85266_censer<2:
+      if censer_count<2:
         Font_WriteMessage(msg(14:0x1A))
         -> 1
-      if flag_85266_censer>=2:
+      if censer_count>=2:
         Font_WriteMessage(msg(14:0x1B))
         -> 1
     if cmd==SMELL:
-      if flag_85266_censer<2:
+      if censer_count<2:
         Font_WriteMessage(msg(14:0x1D))
         -> 1
-      if flag_85266_censer>=2:
+      if censer_count>=2:
         Font_WriteMessage(msg(14:0x1E))
         -> 1
     if cmd==TAKE:
@@ -14631,80 +14631,80 @@ objh_127   # objects: 133 censor-ship
       -> 1
     if cmd==LOOK_AT:
       Font_WriteMessage(msg(14:0x14))
-      if flag_85266_censer!=0:
-        if flag_85266_censer!=1:
-          if (flag_85266_censer - 1)!=1:
+      if censer_count!=0:
+        if censer_count!=1:
+          if (censer_count - 1)!=1:
             Font_WriteMessage(msg(14:0x17))
-            if flag_85266_censer>=2:
+            if censer_count>=2:
               -> 1
-            if flag_85266_censer<2:
+            if censer_count<2:
               Font_WriteMessage(msg(14:0x18))
-              if flag_85266_censer!=0:
-                if flag_85266_censer!=1:
+              if censer_count!=0:
+                if censer_count!=1:
                   wputchar?(0x2E)
                   -> 1
-                if flag_85266_censer==1:
+                if censer_count==1:
                   Font_WriteMessage(msg(14:0x19))
                   wputchar?(0x2E)
                   -> 1
-              if flag_85266_censer==0:
+              if censer_count==0:
                 Font_WriteMessage(&aBothOfThem)
                 wputchar?(0x2E)
                 -> 1
-          if (flag_85266_censer - 1)==1:
+          if (censer_count - 1)==1:
             Font_WriteMessage(msg(14:0x16))
             Font_WriteMessage(msg(14:0x17))
-            if flag_85266_censer>=2:
+            if censer_count>=2:
               -> 1
-            if flag_85266_censer<2:
+            if censer_count<2:
               Font_WriteMessage(msg(14:0x18))
-              if flag_85266_censer!=0:
-                if flag_85266_censer!=1:
+              if censer_count!=0:
+                if censer_count!=1:
                   wputchar?(0x2E)
                   -> 1
-                if flag_85266_censer==1:
+                if censer_count==1:
                   Font_WriteMessage(msg(14:0x19))
                   wputchar?(0x2E)
                   -> 1
-              if flag_85266_censer==0:
+              if censer_count==0:
                 Font_WriteMessage(&aBothOfThem)
                 wputchar?(0x2E)
                 -> 1
-        if flag_85266_censer==1:
+        if censer_count==1:
           Font_WriteMessage(&aOneCenserHas)
           Font_WriteMessage(msg(14:0x17))
-          if flag_85266_censer>=2:
+          if censer_count>=2:
             -> 1
-          if flag_85266_censer<2:
+          if censer_count<2:
             Font_WriteMessage(msg(14:0x18))
-            if flag_85266_censer!=0:
-              if flag_85266_censer!=1:
+            if censer_count!=0:
+              if censer_count!=1:
                 wputchar?(0x2E)
                 -> 1
-              if flag_85266_censer==1:
+              if censer_count==1:
                 Font_WriteMessage(msg(14:0x19))
                 wputchar?(0x2E)
                 -> 1
-            if flag_85266_censer==0:
+            if censer_count==0:
               Font_WriteMessage(&aBothOfThem)
               wputchar?(0x2E)
               -> 1
-      if flag_85266_censer==0:
+      if censer_count==0:
         Font_WriteMessage(msg(14:0x15))
         Font_WriteMessage(msg(14:0x17))
-        if flag_85266_censer>=2:
+        if censer_count>=2:
           -> 1
-        if flag_85266_censer<2:
+        if censer_count<2:
           Font_WriteMessage(msg(14:0x18))
-          if flag_85266_censer!=0:
-            if flag_85266_censer!=1:
+          if censer_count!=0:
+            if censer_count!=1:
               wputchar?(0x2E)
               -> 1
-            if flag_85266_censer==1:
+            if censer_count==1:
               Font_WriteMessage(msg(14:0x19))
               wputchar?(0x2E)
               -> 1
-          if flag_85266_censer==0:
+          if censer_count==0:
             Font_WriteMessage(&aBothOfThem)
             wputchar?(0x2E)
             -> 1
@@ -16385,10 +16385,10 @@ objh_134   # objects: 142 gangway
     if cmd:other:
       -> 0
     if cmd==LOOK_AT:
-      if flag_85266_censer>=2:
+      if censer_count>=2:
         Font_WriteMessage(msg(13:0x13), &aVanquished)
         -> 1
-      if flag_85266_censer<2:
+      if censer_count<2:
         Font_WriteMessage(msg(13:0x13), &aHorrible)
         -> 1
     if cmd==CLOSE:
@@ -16778,10 +16778,10 @@ objh_141   # objects: 149 censer
     -> 0
   if phase==6:
     if cmd==TALK_TO:
-      if flag_85266_censer==2:
+      if censer_count==2:
         Font_WriteMessage(msg(23:0xD))
         -> 1
-      if flag_85266_censer!=2:
+      if censer_count!=2:
         Font_WriteMessage(msg(23:0xE))
         -> 1
     if cmd:other:
@@ -16792,28 +16792,28 @@ objh_141   # objects: 149 censer
           if ((current_room - 0x8C) - 8)!=3:
             -> 1
           if ((current_room - 0x8C) - 8)==3:
-            if flag_85266_censer<2:
+            if censer_count<2:
               Font_WriteMessage(msg(23:8))
               -> 1
-            if flag_85266_censer>=2:
+            if censer_count>=2:
               Font_WriteMessage(msg(23:9))
               -> 1
         if (current_room - 0x8C)==8:
-          if flag_85266_censer==0:
+          if censer_count==0:
             Font_WriteMessage(msg(23:5))
             -> 1
-          if flag_85266_censer!=0:
-            if flag_85266_censer<2:
+          if censer_count!=0:
+            if censer_count<2:
               Font_WriteMessage(msg(23:6))
               -> 1
-            if flag_85266_censer>=2:
+            if censer_count>=2:
               Font_WriteMessage(msg(23:7))
               -> 1
       if current_room==0x8C:
-        if flag_85266_censer<2:
+        if censer_count<2:
           Font_WriteMessage(msg(23:3))
           -> 1
-        if flag_85266_censer>=2:
+        if censer_count>=2:
           Font_WriteMessage(msg(23:4))
           -> 1
     if cmd==DO_USE:
@@ -16857,7 +16857,7 @@ objh_141   # objects: 149 censer
                           Font_WriteMessage(msg(23:0x16), print_obj(0x22, iobj), ?)
                           object_set_prop_a?(iobj, 0x122)
                           object_set_attr?(dobj, 0xA)
-                          inc flag_85266_censer
+                          inc censer_count
                           add_score?(0xF, 1, 1)
                           popup_window_event?()
                           wait_ticks_or_click(0x1388)
@@ -16895,7 +16895,7 @@ objh_141   # objects: 149 censer
                         Font_WriteMessage(msg(23:0x16), print_obj(0x22, iobj), ?)
                         object_set_prop_a?(iobj, 0x122)
                         object_set_attr?(dobj, 0xA)
-                        inc flag_85266_censer
+                        inc censer_count
                         add_score?(0xF, 1, 1)
                         popup_window_event?()
                         wait_ticks_or_click(0x1388)
@@ -16920,10 +16920,10 @@ objh_141   # objects: 149 censer
       Font_WriteMessage(msg(23:0xA))
       -> 1
     if cmd==SMELL:
-      if flag_85266_censer<2:
+      if censer_count<2:
         Font_WriteMessage(msg(23:0x17))
         -> 1
-      if flag_85266_censer>=2:
+      if censer_count>=2:
         Font_WriteMessage(msg(23:0x18))
         -> 1
     if cmd==TAKE:
@@ -16944,10 +16944,10 @@ objh_142   # objects: 150 censer
     -> 0
   if phase==6:
     if cmd==SMELL:
-      if flag_85266_censer<1:
+      if censer_count<1:
         Font_WriteMessage(msg(14:0x12))
         -> 1
-      if flag_85266_censer>=1:
+      if censer_count>=1:
         Font_WriteMessage(msg(14:0x13))
         -> 1
     if cmd:other:
@@ -16957,17 +16957,17 @@ objh_142   # objects: 150 censer
         if (current_room - 0x8C)!=8:
           -> 1
         if (current_room - 0x8C)==8:
-          if flag_85266_censer==0:
+          if censer_count==0:
             Font_WriteMessage(msg(14:7))
             -> 1
-          if flag_85266_censer!=0:
+          if censer_count!=0:
             Font_WriteMessage(msg(14:8))
             -> 1
       if current_room==0x8C:
-        if flag_85266_censer==0:
+        if censer_count==0:
           Font_WriteMessage(msg(14:5))
           -> 1
-        if flag_85266_censer!=0:
+        if censer_count!=0:
           Font_WriteMessage(msg(14:6))
           -> 1
     if cmd==DO_USE:
@@ -17023,7 +17023,7 @@ objh_142   # objects: 150 censer
                             if object_has_attr?(iobj, 0xA)!=0:
                               Font_WriteMessage(msg(14:0x11))
                               object_set_attr?(dobj, 0xA)
-                              inc flag_85266_censer
+                              inc censer_count
                               add_score?(0xF, 1, 0)
                               object_set_prop_a?(iobj, 0x122)
                               sub_44130(dobj, 0xD)
@@ -17070,7 +17070,7 @@ objh_142   # objects: 150 censer
                           if object_has_attr?(iobj, 0xA)!=0:
                             Font_WriteMessage(msg(14:0x11))
                             object_set_attr?(dobj, 0xA)
-                            inc flag_85266_censer
+                            inc censer_count
                             add_score?(0xF, 1, 0)
                             object_set_prop_a?(iobj, 0x122)
                             sub_44130(dobj, 0xD)
@@ -17117,7 +17117,7 @@ objh_142   # objects: 150 censer
                         if object_has_attr?(iobj, 0xA)!=0:
                           Font_WriteMessage(msg(14:0x11))
                           object_set_attr?(dobj, 0xA)
-                          inc flag_85266_censer
+                          inc censer_count
                           add_score?(0xF, 1, 0)
                           object_set_prop_a?(iobj, 0x122)
                           sub_44130(dobj, 0xD)
@@ -17334,7 +17334,7 @@ objh_147   # objects: 155 pail
         print_obj(2, dobj)
         Font_WriteMessage(msg(15:0x29), print_obj(2, dobj), ?)
         wait_ticks_or_click(0x1770)
-        flag_85268_conv24 = 0x12
+        story_stage = 0x12
         go_to_room?(0x5A)
         -> 1
     if cmd==FILL:
@@ -19204,11 +19204,11 @@ objh_181   # objects: 189 recipe
         sub_1EED9()
         -> 1
     if cmd==PUT:
-      if flag_85266_censer<2:
+      if censer_count<2:
         print_obj(0x12, dobj)
         Font_WriteMessage(msg(24:0x13), print_obj(0x12, dobj), ?)
         -> 1
-      if flag_85266_censer>=2:
+      if censer_count>=2:
         print_obj(2, iobj)
         print_obj(2, dobj, print_obj(2, iobj), ?)
         Font_WriteMessage(msg(24:0x14), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
@@ -19488,7 +19488,7 @@ objh_192   # objects: 200 spring
         wait_ticks_or_click(0x1388)
         show_compendium(0x303, 0x5A04)
         Font_WriteMessage(msg(27:8))
-        flag_85268_conv24 = 9
+        story_stage = 9
         wait_ticks_or_click(0x1388)
         go_to_room?(0x5A)
         -> 1
@@ -19499,7 +19499,7 @@ objh_192   # objects: 200 spring
           wait_ticks_or_click(0x1388)
           show_compendium(0x305, 0x5A04)
           Font_WriteMessage(msg(27:0xA))
-          flag_85268_conv24 = 0xA
+          story_stage = 0xA
           wait_ticks_or_click(0x1388)
           go_to_room?(0x5A)
           -> 1
@@ -19508,13 +19508,13 @@ objh_192   # objects: 200 spring
             Font_WriteMessage(msg(27:0xB))
             wait_ticks_or_click(0x1388)
             show_compendium(0x147, 0x5A03)
-            flag_85268_conv24 = 0xC
+            story_stage = 0xC
             wait_ticks_or_click(0x1388)
             go_to_room?(0x5A)
             -> 1
           if object_parent_is?(5, 0xC7)==0:
             Font_WriteMessage(msg(27:0xC))
-            flag_85268_conv24 = 0xD
+            story_stage = 0xD
             wait_ticks_or_click(0x1388)
             go_to_room?(0x5A)
             -> 1
@@ -19522,7 +19522,7 @@ objh_192   # objects: 200 spring
       if byte_852E0!=0:
         Font_WriteMessage(msg(27:0xD))
         wait_ticks_or_click(0x1388)
-        flag_85268_conv24 = 0x18
+        story_stage = 0x18
         go_to_room?(0x5A)
         -> 1
       if byte_852E0==0:
@@ -22318,7 +22318,7 @@ objh_227   # objects: 252 oven
               Font_WriteMessage(msg(33:0x1E))
               object_move?(0xFF, 0, 0)
               wait_ticks_or_click(0x1B58)
-              flag_85268_conv24 = 0xF
+              story_stage = 0xF
               go_to_room?(0x5A)
               -> 1
             if object_parent_is?(0xFF, dobj)==0:
@@ -22623,7 +22623,7 @@ objh_231   # objects: 256 firewater
           wputchar?(0xB)
           wait_ticks_or_click(0x1388)
           cancel_event(0x1C)
-          flag_85268_conv24 = 0xE
+          story_stage = 0xE
           go_to_room?(0x5A)
           -> 1
         if flag_8527E_firewater!=4:
@@ -22634,7 +22634,7 @@ objh_231   # objects: 256 firewater
           wputchar?(0xB)
           wait_ticks_or_click(0x1388)
           cancel_event(0x1C)
-          flag_85268_conv24 = 0xE
+          story_stage = 0xE
           go_to_room?(0x5A)
           -> 1
         if flag_8527E_firewater!=4:

@@ -46,3 +46,5 @@ word_8B9D0	voice_track	track to play with the line being shown by Conversation_S
 word_8B9DC	voice_on	option: play recorded speech (checked together with voc_enabled before voc_play_track in Conversation_Show); saved in the save-region table
 word_8B9DA	show_text_with_voice	option: show the line's text even when it is voiced; saved in the save-region table
 flag_85758_sword	follower_obj	object that follows the player into a new room (go_to_room moves it to current_room and gives it handler phase 0x1A; prints "%s follows you")
+flag_85268_conv24	story_stage	main-plot progress / scene selector: written with many distinct values (1, 2, 5, 6, 0xB, 0x16, 0x1A, ...) by conversation callbacks and NPC handlers, always right before go_to_room(0x5A) ('screen' room), read by the screen room's exit function (exit_fn_26) and others to decide what happens next
+flag_85266_censer	censer_count	counter incremented only by the two censer handlers (objh_141/142); read by the headman, Fairy Nuff, censer smoke, flowers and an exit function (progress of the censer/incense puzzle)
