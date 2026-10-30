@@ -4,7 +4,7 @@ address	name	size	written_by	tested_by
 85216	current_room	2		conv_text_29; event_fn_01; event_fn_02; event_fn_06; event_fn_25; event_fn_26; event_fn_34; event_fn_36; event_fn_41; objh_004(4 Kim); objh_005(5 Nada); objh_006(6 Jenny)
 85224	word_85224	2		
 8b9e2	flag_8B9E2_exit_fn_12	2	exit_fn_12=current_room	objh_005(5 Nada); objh_018(19 Guardian)
-8521c	word_8521C	2		
+8521c	turn_counter	2		
 8521e	word_8521E	2		
 85758	follower_obj	2	event_fn_05=0; objh_131(139 sword)=0; objh_215(240 manacles)=5	objh_203(213 mirror)
 8b9ce	unk_8B9CE	2		
@@ -88,8 +88,8 @@ address	name	size	written_by	tested_by
 852e0	byte_852E0	1		objh_192(200 spring)
 852e1	nada_shackled	1	objh_215(240 manacles)=0	conv_text_29; event_fn_19; exit_fn_13; objh_005(5 Nada); objh_215(240 manacles)
 852e6	flag_852E6_mortar	1	objh_207(217 mortar)=1	conv_text_29; exit_fn_15
-852e7	flag_852E7_bun	1	objh_225(250 bun)=1	conv_text_29; exit_fn_15; objh_013(14 fireman)
-852e8	flag_852E8_firearm	1	objh_015(16 firearm)=1; objh_207(217 mortar)=1	conv_text_29; exit_fn_15
+852e7	hot_dog_used	1	objh_225(250 bun)=1	conv_text_29; exit_fn_15; objh_013(14 fireman)
+852e8	firearm_given	1	objh_015(16 firearm)=1; objh_207(217 mortar)=1	conv_text_29; exit_fn_15
 852e9	byte_852E9	1	event_fn_26=1	conv_text_29; objh_020(21 path); objh_230(255 firecracker); objh_234(259 firewall)
 852ea	byte_852EA	1	event_fn_18=1	objh_194(202 barrow door)
 852eb	flag_852EB_manacles	1	objh_215(240 manacles)=1	
@@ -98,7 +98,7 @@ address	name	size	written_by	tested_by
 852ee	byte_852EE	1	event_fn_23=1	objh_005(5 Nada)
 852ef	flag_852EF_conv_text_41	1	conv_text_41=1	event_fn_23
 8527c	word_8527C	2	event_fn_24=inc	event_fn_24
-852e3	flag_852E3_letter_from_pia	1	objh_034(37 letter from Pia)=1	objh_033(36 envelope); objh_034(37 letter from Pia); objh_061(65 telephone)
+852e3	letter_read	1	objh_034(37 letter from Pia)=1	objh_033(36 envelope); objh_034(37 letter from Pia); objh_061(65 telephone)
 852f0	flag_852F0_oven	1	objh_227(252 oven)=1	
 85280	word_85280	2	event_fn_25=inc	event_fn_25; objh_207(217 mortar); objh_229(254 cracker dough)
 852f1	flag_852F1_mortar	1	objh_207(217 mortar)=1	

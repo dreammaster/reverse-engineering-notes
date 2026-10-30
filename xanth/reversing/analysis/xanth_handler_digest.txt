@@ -2791,11 +2791,11 @@ conv_text_29
                                                                               voice_track = ([bp+var_2] + 0x4C7)
                                                                               -> es:[si+2]
                                                                             if flag_852F9_nada!=0:
-                                                                              if flag_852E7_bun==0:
+                                                                              if hot_dog_used==0:
                                                                                 conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                 voice_track = ([bp+var_2] + 0x4C7)
                                                                                 -> es:[si+2]
-                                                                              if flag_852E7_bun!=0:
+                                                                              if hot_dog_used!=0:
                                                                                 if flag_852F4_conv_text_46==0:
                                                                                   if flag_852E6_mortar==0:
                                                                                     conversation_set_enabled(0x803F, es:[bx+0], 1)
@@ -2857,11 +2857,11 @@ conv_text_29
                                                                                                           voice_track = ([bp+var_2] + 0x4C7)
                                                                                                           -> es:[si+2]
                                                                                                         if event_pending(0x1A)==0:
-                                                                                                          if flag_852E8_firearm==0:
+                                                                                                          if firearm_given==0:
                                                                                                             conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                             voice_track = ([bp+var_2] + 0x4C7)
                                                                                                             -> es:[si+2]
-                                                                                                          if flag_852E8_firearm!=0:
+                                                                                                          if firearm_given!=0:
                                                                                                             if flag_852FF_firecracker==0:
                                                                                                               conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                               voice_track = ([bp+var_2] + 0x4C7)
@@ -9092,29 +9092,29 @@ exit_fn_14
 
 exit_fn_15
   if phase:other:
-    if flag_852E7_bun!=0:
+    if hot_dog_used!=0:
       if flag_852E6_mortar!=0:
-        if flag_852E8_firearm==0:
+        if firearm_given==0:
           -> 0
-        if flag_852E8_firearm!=0:
+        if firearm_given!=0:
           -> 0x102
       if flag_852E6_mortar==0:
         -> 0x102
-    if flag_852E7_bun==0:
-      if flag_852E8_firearm==0:
+    if hot_dog_used==0:
+      if firearm_given==0:
         -> 0
-      if flag_852E8_firearm!=0:
+      if firearm_given!=0:
         -> 0x102
   if phase==0xF:
-    if flag_852E7_bun==0:
+    if hot_dog_used==0:
       Font_WriteMessage(msg(33:0x56))
       -> 0
-    if flag_852E7_bun!=0:
+    if hot_dog_used!=0:
       if flag_852E6_mortar!=0:
-        if flag_852E8_firearm==0:
+        if firearm_given==0:
           Font_WriteMessage(msg(33:0x57))
           -> 0
-        if flag_852E8_firearm!=0:
+        if firearm_given!=0:
           -> 0x102
       if flag_852E6_mortar==0:
         -> 0x102
@@ -10399,10 +10399,10 @@ objh_013   # objects: 14 fireman
     if cmd:other:
       -> 0
     if cmd==TALK_TO:
-      if flag_852E7_bun==0:
+      if hot_dog_used==0:
         Font_WriteMessage(msg(6:0x37))
         -> 1
-      if flag_852E7_bun!=0:
+      if hot_dog_used!=0:
         if flag_852F4_conv_text_46==0:
           show_compendium(0x20E, 0x5A07)
           if flag_852F4_conv_text_46!=0:
@@ -10420,7 +10420,7 @@ objh_013   # objects: 14 fireman
     if cmd:other:
       -> 0
     if cmd==GIVE:
-      if flag_852E7_bun!=0:
+      if hot_dog_used!=0:
         if dobj==0x100:
           Font_WriteMessage(msg(6:0x38))
           object_move?(0x100, 0, 0)
@@ -10428,7 +10428,7 @@ objh_013   # objects: 14 fireman
         if dobj!=0x100:
           show_compendium(0x221, 0x5A07)
           -> 1
-      if flag_852E7_bun==0:
+      if hot_dog_used==0:
         Font_WriteMessage(msg(6:0x37))
         -> 1
 
@@ -10491,7 +10491,7 @@ objh_015   # objects: 16 firearm
       show_compendium(0x223, 0x5A09)
       Font_WriteMessage(msg(6:0x3E))
       add_score?(3, 1, 0)
-      flag_852E8_firearm = 1
+      firearm_given = 1
       object_move?(0x10, 0, 0)
       MouseCursor_SetHourglass()
       sub_29F77(0xA9B, 0x1B, 1)
@@ -10507,7 +10507,7 @@ objh_015   # objects: 16 firearm
       show_compendium(0x22B, 0x5A09)
       Font_WriteMessage(msg(6:0x3F))
       add_score?(3, 1, 0)
-      flag_852E8_firearm = 1
+      firearm_given = 1
       object_move?(0x10, 0, 0)
       MouseCursor_SetHourglass()
       sub_29F77(0xA9B, 0x1B, 1)
@@ -11315,11 +11315,11 @@ objh_033   # objects: 36 envelope
     if cmd:other:
       -> 0
     if cmd==LOOK_AT:
-      if flag_852E3_letter_from_pia!=0:
+      if letter_read!=0:
         Font_WriteMessage(msg(3:0xF), &aEx)
         Font_WriteMessage(msg(3:0x10))
         -> 1
-      if flag_852E3_letter_from_pia==0:
+      if letter_read==0:
         Font_WriteMessage(msg(3:0xF), ?, ?)
         Font_WriteMessage(msg(3:0x10))
         -> 1
@@ -11347,11 +11347,11 @@ objh_033   # objects: 36 envelope
           object_move?(dobj, 0x23, 1)
           -> 1
     if cmd==READ:
-      if flag_852E3_letter_from_pia!=0:
+      if letter_read!=0:
         Font_WriteMessage(msg(3:0xF), &aEx)
         Font_WriteMessage(msg(3:0x10))
         -> 1
-      if flag_852E3_letter_from_pia==0:
+      if letter_read==0:
         Font_WriteMessage(msg(3:0xF), ?, ?)
         Font_WriteMessage(msg(3:0x10))
         -> 1
@@ -11425,8 +11425,8 @@ objh_034   # objects: 37 letter from Pia
     if cmd:other:
       -> 0
     if cmd==LOOK_AT:
-      if flag_852E3_letter_from_pia==0:
-        flag_852E3_letter_from_pia = 1
+      if letter_read==0:
+        letter_read = 1
         game_over_screen?(0x20A)
         MouseCursor_SetTick()
         wait_ticks_or_click(0)
@@ -11437,7 +11437,7 @@ objh_034   # objects: 37 letter from Pia
           -> 1
         if object_has_attr?(dobj, 0xA)!=0:
           -> 1
-      if flag_852E3_letter_from_pia!=0:
+      if letter_read!=0:
         game_over_screen?(0x20A)
         MouseCursor_SetTick()
         wait_ticks_or_click(0)
@@ -11457,8 +11457,8 @@ objh_034   # objects: 37 letter from Pia
       Font_WriteMessage(msg(3:0x18), print_obj(2, dobj), ?)
       -> 1
     if cmd==READ:
-      if flag_852E3_letter_from_pia==0:
-        flag_852E3_letter_from_pia = 1
+      if letter_read==0:
+        letter_read = 1
         game_over_screen?(0x20A)
         MouseCursor_SetTick()
         wait_ticks_or_click(0)
@@ -11469,7 +11469,7 @@ objh_034   # objects: 37 letter from Pia
           -> 1
         if object_has_attr?(dobj, 0xA)!=0:
           -> 1
-      if flag_852E3_letter_from_pia!=0:
+      if letter_read!=0:
         game_over_screen?(0x20A)
         MouseCursor_SetTick()
         wait_ticks_or_click(0)
@@ -12774,7 +12774,7 @@ objh_061   # objects: 65 telephone
         run_command?(1, dobj, 0)
         -> run_command?(1, dobj, 0)
       if flag_871EE_telephone==0:
-        if flag_852E3_letter_from_pia!=0:
+        if letter_read!=0:
           if object_has_attr?(0x2C, 0xA)!=0:
             if event_pending(3)!=0:
               Font_WriteMessage(msg(5:0x59))
@@ -12796,7 +12796,7 @@ objh_061   # objects: 65 telephone
             if object_has_attr?(0x2C, 0xA)!=0:
               show_compendium(0x1FA, 0x5A0A)
               -> 1
-        if flag_852E3_letter_from_pia==0:
+        if letter_read==0:
           if object_has_attr?(0x2C, 0xA)==0:
             Font_WriteMessage(msg(5:0x5A))
             -> 1
@@ -23033,7 +23033,7 @@ objh_207   # objects: 217 mortar
                       wait_ticks_or_click(0x1388)
                       show_compendium(0x223, 0x5A09)
                       add_score?(3, 0, 1)
-                      flag_852E8_firearm = 1
+                      firearm_given = 1
                       object_move?(0x10, 0, 0)
                       if word_85018!=0:
                         -> 1
@@ -23053,7 +23053,7 @@ objh_207   # objects: 217 mortar
                       wait_ticks_or_click(0x1388)
                       show_compendium(0x223, 0x5A09)
                       add_score?(3, 0, 1)
-                      flag_852E8_firearm = 1
+                      firearm_given = 1
                       object_move?(0x10, 0, 0)
                       if word_85018!=0:
                         -> 1
@@ -23073,7 +23073,7 @@ objh_207   # objects: 217 mortar
                     wait_ticks_or_click(0x1388)
                     show_compendium(0x223, 0x5A09)
                     add_score?(3, 0, 1)
-                    flag_852E8_firearm = 1
+                    firearm_given = 1
                     object_move?(0x10, 0, 0)
                     if word_85018!=0:
                       -> 1
@@ -23102,7 +23102,7 @@ objh_207   # objects: 217 mortar
                       wait_ticks_or_click(0x1388)
                       show_compendium(0x223, 0x5A09)
                       add_score?(3, 0, 1)
-                      flag_852E8_firearm = 1
+                      firearm_given = 1
                       object_move?(0x10, 0, 0)
                       if word_85018!=0:
                         -> 1
@@ -23122,7 +23122,7 @@ objh_207   # objects: 217 mortar
                       wait_ticks_or_click(0x1388)
                       show_compendium(0x223, 0x5A09)
                       add_score?(3, 0, 1)
-                      flag_852E8_firearm = 1
+                      firearm_given = 1
                       object_move?(0x10, 0, 0)
                       if word_85018!=0:
                         -> 1
@@ -23142,7 +23142,7 @@ objh_207   # objects: 217 mortar
                     wait_ticks_or_click(0x1388)
                     show_compendium(0x223, 0x5A09)
                     add_score?(3, 0, 1)
-                    flag_852E8_firearm = 1
+                    firearm_given = 1
                     object_move?(0x10, 0, 0)
                     if word_85018!=0:
                       -> 1
@@ -23171,7 +23171,7 @@ objh_207   # objects: 217 mortar
                     wait_ticks_or_click(0x1388)
                     show_compendium(0x223, 0x5A09)
                     add_score?(3, 0, 1)
-                    flag_852E8_firearm = 1
+                    firearm_given = 1
                     object_move?(0x10, 0, 0)
                     if word_85018!=0:
                       -> 1
@@ -23191,7 +23191,7 @@ objh_207   # objects: 217 mortar
                     wait_ticks_or_click(0x1388)
                     show_compendium(0x223, 0x5A09)
                     add_score?(3, 0, 1)
-                    flag_852E8_firearm = 1
+                    firearm_given = 1
                     object_move?(0x10, 0, 0)
                     if word_85018!=0:
                       -> 1
@@ -23211,7 +23211,7 @@ objh_207   # objects: 217 mortar
                   wait_ticks_or_click(0x1388)
                   show_compendium(0x223, 0x5A09)
                   add_score?(3, 0, 1)
-                  flag_852E8_firearm = 1
+                  firearm_given = 1
                   object_move?(0x10, 0, 0)
                   if word_85018!=0:
                     -> 1
@@ -24723,15 +24723,15 @@ objh_225   # objects: 250 bun
                   sub_29F77(0xA85, 0x16, 1)
                   MouseCursor_SetSmallArrow()
                   object_move?(0xF, 0, 0)
-                  flag_852E7_bun = 1
+                  hot_dog_used = 1
                   -> 1
                 if word_85016==1:
                   object_move?(0xF, 0, 0)
-                  flag_852E7_bun = 1
+                  hot_dog_used = 1
                   -> 1
               if word_85018!=0:
                 object_move?(0xF, 0, 0)
-                flag_852E7_bun = 1
+                hot_dog_used = 1
                 -> 1
             if current_room!=0xFB:
               -> 1
@@ -24767,15 +24767,15 @@ objh_225   # objects: 250 bun
                   sub_29F77(0xA85, 0x16, 1)
                   MouseCursor_SetSmallArrow()
                   object_move?(0xF, 0, 0)
-                  flag_852E7_bun = 1
+                  hot_dog_used = 1
                   -> 1
                 if word_85016==1:
                   object_move?(0xF, 0, 0)
-                  flag_852E7_bun = 1
+                  hot_dog_used = 1
                   -> 1
               if word_85018!=0:
                 object_move?(0xF, 0, 0)
-                flag_852E7_bun = 1
+                hot_dog_used = 1
                 -> 1
             if current_room!=0xFB:
               -> 1

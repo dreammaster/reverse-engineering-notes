@@ -54,3 +54,6 @@ flag_852E1_manacles	nada_shackled	nonzero while Nada is held by the manacles; cl
 sub_1C89B	execute_command	one turn: actor_obj = player_obj; selectedCommand/dobj/iobj taken from the UI state (word_8B9BA/8B9CA/8B9C8; verb 0x51 moves dobj to byte_8BE1C); redraws the command box, run_command, handler phase 7 for the player and the room, advance_time?, word_85222 = 1, turn_counter++
 word_8521C	turn_counter	incremented once per executed command by execute_command
 sub_1F070	run_event	calls timed event handler event_function_table[id-1] for id 1..0x2D (0 if out of range); returns its result to advance_time?
+flag_852E7_bun	hot_dog_used	set (with object_move of the hot dog, object 15, out of the game) by the bun/hot-dog handlers when it is used up
+flag_852E8_firearm	firearm_given	set when the firearm (object 16) is talked to or given away and removed from the game
+flag_852E3_letter_from_pia	letter_read	set the first time the letter from Pia is looked at; tested by LOOK_AT/READ

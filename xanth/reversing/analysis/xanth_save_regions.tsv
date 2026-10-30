@@ -4,7 +4,7 @@ index	address	size	name
 2	85216	2	current_room
 3	85224	2	word_85224
 4	8b9e2	2	flag_8B9E2_exit_fn_12
-5	8521c	2	word_8521C
+5	8521c	2	turn_counter
 6	8521e	2	word_8521E
 7	85758	2	follower_obj
 8	8b9ce	2	unk_8B9CE
@@ -96,8 +96,8 @@ index	address	size	name
 94	852e0	1	byte_852E0
 95	852e1	1	nada_shackled
 96	852e6	1	flag_852E6_mortar
-97	852e7	1	flag_852E7_bun
-98	852e8	1	flag_852E8_firearm
+97	852e7	1	hot_dog_used
+98	852e8	1	firearm_given
 99	852e9	1	byte_852E9
 100	852ea	1	byte_852EA
 101	852eb	1	flag_852EB_manacles
@@ -106,7 +106,7 @@ index	address	size	name
 104	852ee	1	byte_852EE
 105	852ef	1	flag_852EF_conv_text_41
 106	8527c	2	word_8527C
-107	852e3	1	flag_852E3_letter_from_pia
+107	852e3	1	letter_read
 108	852f0	1	flag_852F0_oven
 109	85280	2	word_85280
 110	852f1	1	flag_852F1_mortar
