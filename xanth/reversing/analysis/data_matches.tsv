@@ -10,7 +10,6 @@ a7e50	dword_A7E50	85018	word_85018	2
 ade98	word_ADE98	85218	_object_count?	2
 ade28	dword_ADE28	850c2	word_850C2	2
 ade30	dword_ADE30	850c6	word_850C6	3
-cd8ac	_game_flags	85216	_room_music_table?	3
 ae9f4	dword_AE9F4	8ab04	seg_8AB04	2
 cd9cc	dword_CD9CC	3ec00	word_3EC00	2
 ae9f8	dword_AE9F8	3ec02	word_3EC02	2

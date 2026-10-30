@@ -221,6 +221,18 @@ def cond_text(conds):
     return " & ".join(parts) if parts else "always"
 
 
+STUBS = {}
+
+
+def find_stubs(funcs):
+    """RTLink overlay stubs `call rtlink_thunk / jmp target`: calls to them are shown as calls to the real target"""
+    for n, body in funcs.items():
+        code = [l.split(";")[0].strip() for l in body if l.startswith((" ", chr(9))) and l.split(";")[0].strip()]
+        code = [c for c in code if not c.startswith(("assume", "align", "db "))]
+        if len(code) == 2 and code[0].split()[-1] == "rtlink_thunk" and code[1].startswith("jmp"):
+            STUBS[n] = clean(code[1].split(None, 1)[1])
+
+
 def run(name, body, calls_known):
     insns, labels = tokens(body)
     results = []
@@ -334,6 +346,8 @@ def run(name, body, calls_known):
             elif mn in ("call",):
                 t = clean(ops[0]).replace("far ptr ", "")
                 t = t[2:] if t.startswith("j_") else t
+                for _ in range(3):
+                    t = STUBS.get(t, t)
                 args = merge_args(list(reversed(st.pend)))
                 if t != "rtlink_thunk":
                     addevent(st, "%s(%s)" % (t, ", ".join(args)))
@@ -384,6 +398,7 @@ def digest(name, body, calls_known):
 def main():
     load_enums()
     funcs = parse(sys.argv[1])
+    find_stubs(funcs)
     only = sys.argv[3:]
     out = open(sys.argv[2], "w", encoding="utf-8") if not only else sys.stdout
     names = [n for n in funcs if re.match(r"^(objh_\d+|cmd\w+|verbdef\w*)$", n)]

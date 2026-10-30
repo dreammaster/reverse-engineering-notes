@@ -298,7 +298,6 @@ xanth_ea	name	comment
 246a0	-	Shannara retail 85d58 get_file_int (tier B, signature, sizes 40/29)
 1383a	-	Shannara retail 905fc scan_white_ (tier B, signature, sizes 53/22)
 8a9ee	_object_slot_counts?	data: Shannara retail 20891 _object_slot_counts (2 votes)
-85216	_game_flags?	data: Shannara retail cd8ac _game_flags (3 votes)
 89f08	_prev_yoffset?	data: Shannara retail ca1b0 _prev_yoffset (2 votes)
 8a1a2	_current_popup?	data: Shannara retail ca204 _current_popup (2 votes)
 8b940	_popup_window?	data: Shannara retail d4748 _popup_window (2 votes)
