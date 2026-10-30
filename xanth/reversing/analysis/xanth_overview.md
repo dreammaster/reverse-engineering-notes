@@ -208,3 +208,10 @@ in `word_8912E` (bits 1-2 and 5-6, mapping to the two MIDI arrangements per tune
 `{u16 room; u16 picNum}` at `seg044:0x7F8`, **`picNum = (XANTH_nn.PIC file number << 8) | entry`** (all 68 resolve to existing entries; the same format is used by `Conversation_Show(convNum, picNum)` and the other `show_compendium` calls, e.g.
 `0x5A04` = `XANTH_90.PIC` entry 4). Room 0x1F0 chooses between two pictures (0x123E / 0x123F) by whether object 0x8B is held. Checked visually: room 34 (bedroom) -> `XANTH_02.PIC` entry 0 renders as the window, pen holder and computer that the
 object table puts in that room. Pictures are 264x122 (the picture window) and carry their own palette.
+
+## 15. Scenes: pictures + clickable regions (2026-10-30)
+
+`XANTH_nn.RGN` has Shannara's layout (`rgn_read.py`: 6-byte directory `{u16 dataOffset; u16 baseId; u16 count}` per entry of the same-numbered `.PIC`; rectangles and polygons in picture-window pixels), and in Xanth the **region id is simply the object id**
+and `baseId` the room's object id: `XANTH_02.RGN` entry 0 (the bedroom picture, `baseId` 34) has regions 35 desk, 45 window, 48 bookshelf, 46 pen holder, 47 pencils, 39 personal computer, 40 computer screen ... exactly the objects the object table places in room 34. Joining the room
+picture table, the region files and the object table gives **716 hotspots over the 70 rooms** (`analysis/xanth_scenes.tsv`, `scripts/xanth_scenes.py`; three rooms share a picture entry with a different `baseId`). Clicking in a scene is therefore a point-in-polygon test
+that yields an object id, which feeds `run_command(verb, dobj, iobj)`. With the object table, exits, handlers, conversations, voice, music and save state, the data a ScummVM `AdventureEngine` needs for the Xanth world is now fully located.
