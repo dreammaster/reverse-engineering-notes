@@ -4,6 +4,7 @@
 #include "wasteland1/globals.h"
 #include "wasteland1/interact.h"
 #include "wasteland1/legacy.h"
+#include "wasteland1/movement.h"
 #include "wasteland1/listmenu.h"
 #include "wasteland1/menu.h"
 #include "wasteland1/party.h"
@@ -306,6 +307,146 @@ bool collectOrders(Machine &m) {
 		if (D(memberVar) == D(members)) return false;
 		++D(memberVar);
 	}
+}
+
+
+void runCombat(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	constexpr uint16_t trackedMaps = 0xA9B0, visited = 0x720E, groupVar = 0xA435, acted = 0xA436, ordered = 0xA437, loopGroup = 0xA438;
+	const uint16_t totalGroups = uint16_t(g::saved2 + g::s2::totalPartyGroups), field7 = uint16_t(g::saved2 + g::s2::field7);
+	const uint16_t members = uint16_t(g::saved2 + g::s2::membersInGroup);
+	const uint16_t sharedRoll = 0x46DC;   // the map number of the fight in progress
+
+	D(0x4706) = D(uint16_t(g::saved2 + g::s2::activePartyGroup));
+	D(trackedMaps) = D(field7);
+	uint8_t group;
+restart:   // 11D48
+	for (int i = 3; i >= 0; --i) D(uint16_t(visited + i)) = 0;
+	group = 0;
+nextGroup:   // 11D56
+	D(groupVar) = group;
+	if (D(uint16_t(visited + group))) goto afterGroup;
+	setActivePartyGroup(m, group);
+	D(sharedRoll) = D(field7);
+	{
+		bool known = D(0x46DC) == D(0x46E0);
+		for (int i = 3; i >= 0 && !known; --i) known = D(uint16_t(trackedMaps + i)) == D(field7);
+		if (!known) {   // a new group wants into the fight
+			if (countConsciousMembers(m) == 0) goto leaveFight;
+			drawRosterHeadersAndMembers(m);
+			D(g::rosterLocOn) = 0;
+			drawRosterWindow(m);
+			printMessage(m, 0x36);
+			printMessage(m, 0x4C);
+			if (!askYesNo(m)) goto leaveFight;
+		}
+	}
+	call(m, 0x8350);   // sub_18350: loads the map of the fight
+	scanForMonsters(m, false);
+	placeTrackedMonsters(m);
+	updateSlotDistances(m);
+	planMonsterMoves(m);
+	D(g::rosterLocOn) = 1;
+orderRound:   // 11DBB
+	D(loopGroup) = 0;
+	D(ordered) = 0;
+	do {   // 11DC3
+		setActivePartyGroup(m, D(loopGroup));
+		if (D(field7) == D(sharedRoll)) {
+			drawRosterHeadersAndMembers(m);
+			drawInfoWindow(m);
+			if (collectOrders(m)) goto orderRound;
+			call(m, 0x7357);   // sub_17357
+			for (uint8_t bl = D(members); bl != 0; --bl)
+				if (D(uint16_t(m.d16(g::partyStatusPtr) + bl)) != 0) { ++D(ordered); break; }
+		}
+		++D(loopGroup);
+	} while (D(loopGroup) <= D(totalGroups));
+	if ((D(ordered) | D(acted)) == 0) {   // nobody wants to do anything: the fight is over
+		D(g::rosterLocOn) = 0;
+		goto endOfFight;
+	}
+	printMessage(m, 0x46);
+	if (!askYesNo(m)) goto orderRound;
+	D(acted) = 1;
+	setActivePartyGroup(m, D(groupVar));
+	call(m, 0x2551);   // sub_12551: header of the round
+	{
+		const uint8_t keep = D(0x4655);
+		D(0x4655) = D(0x46DC);
+		call(m, 0x8350);
+		D(0x4655) = keep;
+	}
+	setActivePartyGroup(m, D(groupVar));
+	updateAllSlotSurvivors(m);
+	selectWriterForRoster(m);
+	D(g::textSpeedFlag) = 1;
+	moveMonsters(m);
+	newline(m);
+	D(g::textSpeedFlag) = 0;
+	{
+		const bool scanCf = scanForMonsters(m, false);
+		int i;
+		if (!scanCf) {   // 11E4A: remember the map of this fight
+			for (i = 3; i >= 0; --i) if (D(uint16_t(trackedMaps + i)) == D(0x46DC)) goto leaveFight;
+			for (i = 3; i >= 0; --i) if (D(uint16_t(trackedMaps + i)) == 0xFF) break;
+			D(uint16_t(trackedMaps + uint8_t(i))) = D(0x46DC);
+		} else {   // 11E72: the fight on this map is over
+			for (i = 3; i >= 0; --i) if (D(uint16_t(trackedMaps + i)) == D(0x46DC)) { D(uint16_t(trackedMaps + i)) = 0xFF; break; }
+		}
+	}
+leaveFight:   // 11E8A
+	for (int g3 = 3; g3 >= 0; --g3) {
+		D(loopGroup) = uint8_t(g3);
+		if (g3 <= D(totalGroups)) {
+			setActivePartyGroup(m, uint8_t(g3));
+			if (D(field7) == D(0x46DC)) D(uint16_t(visited + g3)) = 1;
+		}
+	}
+	for (int i = 3; i >= 0; --i) if (!(D(uint16_t(trackedMaps + i)) & 0x80)) goto afterGroup;
+endOfFight:   // 11EC6
+	setActivePartyGroup(m, D(0x4706));
+	D(g::textSpeedFlag) = 1;
+	D(loopGroup) = 1;
+	D(groupVar) = 1;
+	for (;;) {   // 11ED7: every character's share of the experience
+		setCurrentRosterCharacter(m, D(groupVar));
+		getMemberExperience(m);
+		const uint16_t at = D(loopGroup);
+		uint8_t borrow = 0, any = 0;
+		for (int k = 0; k < 3; ++k) {
+			const int diff = int(D(uint16_t(g::numberValue + k))) - int(D(uint16_t(0x71B7 + at + k))) - borrow;
+			D(uint16_t(g::numberValue + k)) = uint8_t(diff);
+			borrow = diff < 0 ? 1 : 0;
+			any |= uint8_t(diff);
+		}
+		D(loopGroup) = uint8_t(at + 3);
+		if (any != 0) {
+			printMessage(m, 0x27);
+			writeNumber(m);
+			printMessage(m, 0x28);
+		}
+		const uint8_t next = uint8_t(D(groupVar) + 1);
+		if (next > D(uint16_t(g::saved + 0x86))) break;
+		D(groupVar) = next;
+	}
+	D(g::textSpeedFlag) = 0;
+	writeCharacter(m, 6);
+	D(g::rosterLocOn) = 0;
+	D(0x4724) = 0;
+	call(m, 0x8350);
+	call(m, 0x63C4);
+	return;
+
+afterGroup:   // 11F47
+	group = uint8_t(D(groupVar) + 1);
+	if (group <= D(totalGroups)) goto nextGroup;
+	advanceTime(m);
+	healthTick(m);
+	D(g::textSpeedFlag) = 1;
+	for (int i = 0; i < 6; ++i) newline(m);
+	D(g::textSpeedFlag) = 0;
+	goto restart;
 }
 
 } // namespace wl

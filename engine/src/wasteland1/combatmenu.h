@@ -23,4 +23,8 @@ CommandResult commandAttack(Machine &m, uint8_t member);       // 120C1
 // 121A8: picks the first monster group in range (shooting at the nearest one) and returns its code
 CommandResult pickFirstTarget(Machine &m);
 
+// 11D39 (NOT registered as a port: whole fights cannot be replayed against the oracle yet): the fight: every party group orders its members, the round is carried out and repeated until nobody is left; then the
+// experience is shared out
+void runCombat(Machine &m);
+
 } // namespace wl
