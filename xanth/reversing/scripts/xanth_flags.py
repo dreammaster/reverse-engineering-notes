@@ -13,6 +13,22 @@ here = os.path.dirname(os.path.abspath(__file__))
 A = os.path.join(here, "..", "analysis")
 regions = list(csv.DictReader(open(os.path.join(A, "xanth_save_regions.tsv")), delimiter="\t"))
 names = {r["name"]: r for r in regions if r["size"] in ("1", "2")}
+byaddr = {r["address"].lower(): r for r in names.values()}
+
+
+class Names(dict):
+    """token -> region; tokens renamed to flag_<ADDR>_<where> resolve through their address"""
+    def __contains__(self, k):
+        return dict.__contains__(self, k) or bool(re.match(r"^flag_([0-9A-Fa-f]+)_", k) and re.match(r"^flag_([0-9A-Fa-f]+)_", k).group(1).lower() in byaddr)
+
+    def __getitem__(self, k):
+        if dict.__contains__(self, k):
+            return dict.__getitem__(self, k)
+        return byaddr[re.match(r"^flag_([0-9A-Fa-f]+)_", k).group(1).lower()]
+
+
+orig = names
+names = Names(orig)
 digest = open(os.path.join(A, "xanth_handler_digest.txt"), encoding="utf-8").read().splitlines()
 writes = collections.defaultdict(lambda: collections.defaultdict(set))
 tests = collections.defaultdict(set)
@@ -37,7 +53,14 @@ for l in digest:
             tests[nm].add(label)
 with open(os.path.join(A, "xanth_flags.tsv"), "w", encoding="utf-8") as f:
     f.write("address\tname\tsize\twritten_by\ttested_by\n")
-    for nm, r in names.items():
-        w = "; ".join("%s=%s" % (h, "/".join(sorted(v))) for h, v in sorted(writes[nm].items()))
-        f.write("%s\t%s\t%s\t%s\t%s\n" % (r["address"], nm, r["size"], w, "; ".join(sorted(tests[nm])[:12])))
-print("variables", len(names), "with writers", sum(1 for n in names if writes[n]), "with tests", sum(1 for n in names if tests[n]))
+    for nm, r in orig.items():
+        pre = "flag_" + r["address"].lower() + "_"
+        keys = [nm] + [k for k in list(writes) + list(tests) if k.lower().startswith(pre)]
+        wr = collections.defaultdict(set)
+        for k in keys:
+            for h, v in writes.get(k, {}).items():
+                wr[h] |= v
+        te = set().union(*[tests.get(k, set()) for k in keys])
+        w = "; ".join("%s=%s" % (h, "/".join(sorted(v))) for h, v in sorted(wr.items()))
+        f.write("%s\t%s\t%s\t%s\t%s\n" % (r["address"], nm, r["size"], w, "; ".join(sorted(te)[:12])))
+print("variables", len(orig))

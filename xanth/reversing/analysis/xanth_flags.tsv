@@ -10,7 +10,7 @@ address	name	size	written_by	tested_by
 8b9ce	unk_8B9CE	2		
 85258	byte_85258	1	conv_cb_21=1; conv_cb_46=1	
 85254	word_85254	2	conv_cb_21=current_room; conv_cb_46=current_room	
-85256	word_85256	2	conv_cb_21=word_85250; conv_cb_46=word_85250	
+85256	word_85256	2	conv_cb_21=flag_85250_sword; conv_cb_46=flag_85250_sword	
 85259	byte_85259	1	conv_cb_21=1; conv_cb_46=1	
 8524c	word_8524C	2	conv_cb_21=event_count; conv_cb_46=event_count	
 85268	word_85268	2	conv_cb_24=5/6; conv_cb_51=0x1A; conv_text_81=0x16; objh_005(5 Nada)=0xB; objh_010(10 Metria)=0x1A; objh_089(94 cavern door)=1; objh_092(97 metal bars)=2; objh_118(124 tangle tree)=4; objh_147(155 pail)=0x12; objh_192(200 spring)=0x18/0xA/0xC/0xD/9; objh_227(252 oven)=0xF; objh_231(256 firewater)=0xE	exit_fn_26
