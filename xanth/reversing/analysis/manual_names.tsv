@@ -43,3 +43,5 @@ word_891F2	voc_enabled	1 when the VOC file opened and the buffers were allocated
 sub_23E82	voc_track_length	(convId): voc_offsets[convId+1] - voc_offsets[convId] as a dword (0 when voice is disabled); > 0 means this line has a recording
 sub_23EE0	voc_play_track	(track, far callback): streams VOC track `track` (8-bit PCM at the file offset, 4 KB aligned) through the sound driver, calling the callback while it plays (used for lip-sync/animation, e.g. sub_3F731); stops on key or mouse click
 word_8B9D0	voice_track	track to play with the line being shown by Conversation_Show: the convId when voc_track_length > 0, else 0xFFFF; scripted lines set it to explicit tracks (0x47C, 0x4C0, 0x525, ...)
+word_8B9DC	voice_on	option: play recorded speech (checked together with voc_enabled before voc_play_track in Conversation_Show); saved in the save-region table
+word_8B9DA	show_text_with_voice	option: show the line's text even when it is voiced; saved in the save-region table

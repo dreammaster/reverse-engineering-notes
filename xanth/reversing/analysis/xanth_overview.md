@@ -155,3 +155,15 @@ Xanth is a CD-talkie: `voc_init` (0x23D80) opens `XANTH_01.VOC`, reads the `u16`
 Each track is raw unsigned 8-bit PCM at the 4 KB-aligned file offset, padded with 0x80. **The sample rate is not stored in the file.** Validation of the line -> track mapping against the data: 932 of the 1,036 simple lines have a non-empty track, and over 860 lines clip length (trailing `0x80` padding stripped) correlates with the
 resolved text length with r = 0.91; the median is about 1,430 bytes per character, i.e. about 22 kHz for normal speech (roughly 15 characters per second) - so 22050 Hz is the likely rate (the SoundBlaster driver programs it from a table that
 is not yet traced). A reimplementation needs no executable data to find clips - only the convId -> line mapping from `xanth_conversations.tsv`.
+
+## 11. Game state = object records + 205 save regions (2026-10-30)
+
+`serialize_state` writes, after the 0x20-byte header, (a) every object's record prefix, (b) the **save-region table**: 205 `{far ptr, u16 size}` entries (`save_regions_seg + 0x116`, count `save_region_count`), 4,522 bytes in all
+(`analysis/xanth_save_regions.tsv`, from `scripts/dump_save_regions.py`), then the scheduled-event list. The regions are the whole mutable world besides the object records:
+
+- 2,736 bytes are the **conversation flag arrays** (`Conversation_ENTRIES1/2/3` = 1,036 + 1,300 + 400 bytes, bit 0 = line/option enabled), so conversation progress is saved state;
+- `current_room`, `word_8B9DA`/`word_8B9DC` (the *show text with voice* / *voice on* options - options travel inside savegames), the run-time words around `0x85216-0x8526E`;
+- about 130 single **flag bytes** at `0x852B2-0x85334` (`byte_852B3`, `byte_852C0`, ... - the puzzle and story flags that the handlers test; no bitset helpers in this engine) and ~30 flag words;
+- `unk_34628` (1,250 bytes, next to the object-type tables: probably the typed child-list heads of the containment tree), `word_81A26` (64 bytes), `unk_87C50` (180 bytes), `unk_87C3E` (18), `unk_8823C` (12), `byte_8B9D2` (the 7-byte lock combination).
+
+Everything a savegame needs is therefore enumerable from two tables, which is what makes a faithful, save-compatible reimplementation tractable. Naming the ~130 flag bytes from the handler digest (where each one is set) is the next big readability step.
