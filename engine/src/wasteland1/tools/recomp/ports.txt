@@ -356,3 +356,4 @@ AD73 combatRound junk=al,bl,cf,ch,cl,di,dl,es,si scratch=CF80-CF87,7931-8030,A4A
 98F0 skillScreen junk=ah,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F
 9454 itemList junk=ah,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F
 9394 itemScreen junk=ah,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F,CDC0-CE00
+2AE0 rearrangeParty junk=ah,al,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F,CDC0-CE00,A4C0-A4C1

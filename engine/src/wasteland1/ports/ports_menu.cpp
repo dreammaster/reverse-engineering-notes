@@ -38,5 +38,7 @@ PORT(skillScreen) { const ListResult l = skillScreen(m); r.cf = l.cf; r.a.b.l = 
 PORT(itemList) { const ListResult l = itemList(m, r.a.b.l); r.cf = l.cf; r.a.b.l = l.al; }   // 19454
 PORT(itemScreen) { const ListResult l = itemScreen(m, r.a.b.l); r.cf = l.cf; r.a.b.l = l.al; }   // 19394
 
+PORT(rearrangeParty) { rearrangeParty(m); }                                             // 12AE0
+
 } // namespace rc
 } // namespace wl

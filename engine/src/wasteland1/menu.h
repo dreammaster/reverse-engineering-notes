@@ -17,4 +17,7 @@ int askDirection(Machine &m);
 // 13AE4: the "Skill / Item / Attribute" menu: asks what party member `member` should use and on whom; false when cancelled
 bool chooseUseAction(Machine &m, uint8_t member, uint8_t &mode, uint8_t &target, uint8_t &what);
 
+// 12AE0: lets the player put the members of the active group in a new order
+void rearrangeParty(Machine &m);
+
 } // namespace wl

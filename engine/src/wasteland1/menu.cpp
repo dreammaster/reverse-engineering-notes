@@ -1,6 +1,7 @@
 #include "wasteland1/menu.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
+#include "wasteland1/character.h"
 #include "wasteland1/party.h"
 #include "wasteland1/text.h"
 
@@ -171,6 +172,72 @@ done:   // 3C45
 	target = D(Target);
 	what = D(What);
 	return true;
+}
+
+
+namespace {
+// 12B8A: lists the members that are not placed yet (ds:46CF) on the roster window lines
+void listUnplaced(Machine &m) {
+    m.d8(0x4691) = 2;
+    for (uint8_t bl = 1; bl < 8; bl = uint8_t(m.d8(0x469F) + 1)) {
+        m.d8(0x469F) = bl;
+        const uint8_t id = m.d8(uint16_t(0x46CF + bl));
+        if (id == 0) continue;
+        --m.d8(0x469F);
+        m.d8(0x4721) = 0xFF;
+        m.d8(0x469C) = 0;
+        call(m, 0x6EE8);   // sub_16EE8: row marker
+        ++m.d8(0x469F);
+        setCurrentRosterCharacter(m, id);
+        writeMemberName(m);
+    }
+}
+}
+
+void rearrangeParty(Machine &m) {
+    auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+    const uint16_t members = uint16_t(g::saved2 + g::s2::membersInGroup);
+    if (D(members) == 1) return;
+    uint16_t indexes = m.d16(g::partyIndexesPtr);
+    for (int bl = 7; bl >= 0; --bl) {   // take everybody out of the group and show the loose list
+        D(uint16_t(0x46CF + bl)) = D(uint16_t(indexes + bl));
+        D(uint16_t(indexes + bl)) = 0;
+    }
+    const uint8_t count = D(members);
+    D(0xA4C0) = 0;
+    D(members) = 0;
+    call(m, 0x728C);   // writeRosterHeadersAndMembers
+    D(members) = count;
+    for (;;) {
+        printMessage(m, 15);
+        listUnplaced(m);
+        for (;;) {   // 12B18: who goes next
+            const uint8_t pick = pickGroupMember(m, true);
+            if (pick == 0) {
+                if (D(0xA4C0) != 0) continue;   // ESC after the first placement is ignored
+                indexes = m.d16(g::partyIndexesPtr);
+                for (int bl = 7; bl >= 0; --bl) D(uint16_t(indexes + bl)) = D(uint16_t(0x46CF + bl));
+                call(m, 0x63C4);   // sub_163C4
+                return;
+            }
+            const uint8_t id = D(uint16_t(0x46CF + pick));
+            if (id == 0) continue;
+            D(uint16_t(0x46CF + pick)) = 0;
+            ++D(0xA4C0);
+            indexes = m.d16(g::partyIndexesPtr);
+            D(uint16_t(indexes + D(0xA4C0))) = id;
+            call(m, 0x7033, D(0xA4C0));   // writePartyMemberCustomHilite
+            break;
+        }
+        if (uint8_t(D(0xA4C0) + 1) != D(members)) continue;
+        uint8_t bl = 1, rest = 0;   // the one member left goes last
+        do { rest = D(uint16_t(0x46CF + bl)); if (rest) break; ++bl; } while (bl != 0);
+        indexes = m.d16(g::partyIndexesPtr);
+        D(uint16_t(indexes + D(members))) = rest;
+        call(m, 0x63C4);
+        call(m, 0x728C);
+        return;
+    }
 }
 
 } // namespace wl
