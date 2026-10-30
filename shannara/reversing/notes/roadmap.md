@@ -124,6 +124,10 @@ Regenerates `analysis/function_inventory.json`. The bucket heuristics in
 `classify()` are rough (name-prefix based) — refine as more subsystems get
 identified.
 
+## Direction change (2026-10-30)
+Combat is deprioritised (it is Shannara-only). Companions of Xanth, the older game on the same engine, is now the first target; see `xanth/reversing/` and
+`xanth/reversing/analysis/xanth_overview.md`. Shannara work should favour the shared framework (objects, verbs, text, windows, fonts, regions, saves, timers, help).
+
 ## Retail status (updated 2026-10-16, passes 10-28; see `analysis/retail_game_layer.md` sections 13-28, `retail_combat.md`, `q_codec_spec.md`, `demo_script.md`)
 
 **Real data is now available** (`game/` = retail files, `demo/` = demo files, both git-ignored; `game_out/` = local extraction/outputs, ignored). Validated against it:
