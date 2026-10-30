@@ -1733,7 +1733,7 @@ conv_cb_21
       if arg_2==0:
         flag_85258_conv21 = 1
         flag_85254_conv21 = current_room
-        flag_85256_conv21 = flag_85250_sword
+        flag_85256_conv21 = companion_obj
         ds = seg seg193
         flag_8524C_conv21 = event_count
         sub_1AAFB()
@@ -1743,7 +1743,7 @@ conv_cb_21
       if arg_2!=0:
         flag_85259_conv21 = 1
         flag_85254_conv21 = current_room
-        flag_85256_conv21 = flag_85250_sword
+        flag_85256_conv21 = companion_obj
         ds = seg seg193
         flag_8524C_conv21 = event_count
         sub_1AAFB()
@@ -1990,7 +1990,7 @@ conv_cb_46
       if arg_2==0:
         flag_85258_conv21 = 1
         flag_85254_conv21 = current_room
-        flag_85256_conv21 = flag_85250_sword
+        flag_85256_conv21 = companion_obj
         ds = seg seg193
         flag_8524C_conv21 = event_count
         sub_1AAFB()
@@ -1999,7 +1999,7 @@ conv_cb_46
       if arg_2!=0:
         flag_85259_conv21 = 1
         flag_85254_conv21 = current_room
-        flag_85256_conv21 = flag_85250_sword
+        flag_85256_conv21 = companion_obj
         ds = seg seg193
         flag_8524C_conv21 = event_count
         sub_1AAFB()
@@ -5441,9 +5441,9 @@ event_fn_02
       -> 1
 
 event_fn_03
-  if flag_85250_sword!=6:
-    if (flag_85250_sword - 6)!=4:
-      if ((flag_85250_sword - 6) - 4)!=1:
+  if companion_obj!=6:
+    if (companion_obj - 6)!=4:
+      if ((companion_obj - 6) - 4)!=1:
         popup_window_event?()
         Font_WriteMessage(&aS_, [bp+var_4], [bp+var_2])
         wait_ticks_or_click(0x2710)
@@ -5451,7 +5451,7 @@ event_fn_03
         story_stage = 3
         go_to_room?(0x5A)
         -> 1
-      if ((flag_85250_sword - 6) - 4)==1:
+      if ((companion_obj - 6) - 4)==1:
         object_set_attr?(0x5E, 0xE)
         popup_window_event?()
         Font_WriteMessage(&aS_, [bp+var_4], [bp+var_2])
@@ -5460,7 +5460,7 @@ event_fn_03
         story_stage = 3
         go_to_room?(0x5A)
         -> 1
-    if (flag_85250_sword - 6)==4:
+    if (companion_obj - 6)==4:
       object_set_attr?(0x5E, 0xE)
       popup_window_event?()
       Font_WriteMessage(&aS_, [bp+var_4], [bp+var_2])
@@ -5469,7 +5469,7 @@ event_fn_03
       story_stage = 3
       go_to_room?(0x5A)
       -> 1
-  if flag_85250_sword==6:
+  if companion_obj==6:
     object_set_attr?(0x5C, 0xE)
     popup_window_event?()
     Font_WriteMessage(&aS_, [bp+var_4], [bp+var_2])
@@ -6031,26 +6031,26 @@ event_fn_19
 event_fn_20
   wputchar?(0xB)
   wait_ticks_or_click(0xBB8)
-  if flag_85250_sword!=5:
-    if (flag_85250_sword - 5)!=1:
+  if companion_obj!=5:
+    if (companion_obj - 5)!=1:
       -> 0
-    if (flag_85250_sword - 5)==1:
+    if (companion_obj - 5)==1:
       show_compendium(0x2E1, 0x5A01)
       -> 0
-  if flag_85250_sword==5:
+  if companion_obj==5:
     show_compendium(0x13F, 0x5A03)
     -> 0
 
 event_fn_21
   wputchar?(0xB)
   wait_ticks_or_click(0xBB8)
-  if flag_85250_sword!=5:
-    if (flag_85250_sword - 5)!=1:
+  if companion_obj!=5:
+    if (companion_obj - 5)!=1:
       -> 0
-    if (flag_85250_sword - 5)==1:
+    if (companion_obj - 5)==1:
       show_compendium(0x2E2, 0x5A01)
       -> 0
-  if flag_85250_sword==5:
+  if companion_obj==5:
     show_compendium(0x143, 0x5A03)
     -> 0
 
@@ -8066,10 +8066,10 @@ exit_fn_09
   if phase:other:
     -> 0xBE
   if phase==0xF:
-    if flag_85250_sword==5:
+    if companion_obj==5:
       Font_WriteMessage(msg(26:4))
       -> 0
-    if flag_85250_sword!=5:
+    if companion_obj!=5:
       Font_WriteMessage(msg(26:5))
       -> 0
 
@@ -8166,11 +8166,11 @@ exit_fn_12
                               call_object_handler(current_room, 0xE)
                               if object_is_at(0xF2, 1, 0)!=0:
                                 if object_has_attr?(0xF2, 0xA)!=0:
-                                  if flag_85250_sword!=5:
+                                  if companion_obj!=5:
                                     sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                     object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                     -> 0xCD
-                                  if flag_85250_sword==5:
+                                  if companion_obj==5:
                                     object_set_prop_a?(0xF2, 0x16E)
                                     -> 0xCD
                                 if object_has_attr?(0xF2, 0xA)==0:
@@ -8190,11 +8190,11 @@ exit_fn_12
                               call_object_handler(current_room, 0xE)
                               if object_is_at(0xF2, 1, 0)!=0:
                                 if object_has_attr?(0xF2, 0xA)!=0:
-                                  if flag_85250_sword!=5:
+                                  if companion_obj!=5:
                                     sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                     object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                     -> 0xCD
-                                  if flag_85250_sword==5:
+                                  if companion_obj==5:
                                     object_set_prop_a?(0xF2, 0x16E)
                                     -> 0xCD
                                 if object_has_attr?(0xF2, 0xA)==0:
@@ -8214,11 +8214,11 @@ exit_fn_12
                             call_object_handler(current_room, 0xE)
                             if object_is_at(0xF2, 1, 0)!=0:
                               if object_has_attr?(0xF2, 0xA)!=0:
-                                if flag_85250_sword!=5:
+                                if companion_obj!=5:
                                   sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                   object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                   -> 0xCD
-                                if flag_85250_sword==5:
+                                if companion_obj==5:
                                   object_set_prop_a?(0xF2, 0x16E)
                                   -> 0xCD
                               if object_has_attr?(0xF2, 0xA)==0:
@@ -8238,11 +8238,11 @@ exit_fn_12
                           call_object_handler(current_room, 0xE)
                           if object_is_at(0xF2, 1, 0)!=0:
                             if object_has_attr?(0xF2, 0xA)!=0:
-                              if flag_85250_sword!=5:
+                              if companion_obj!=5:
                                 sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                 object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                 -> 0xCD
-                              if flag_85250_sword==5:
+                              if companion_obj==5:
                                 object_set_prop_a?(0xF2, 0x16E)
                                 -> 0xCD
                             if object_has_attr?(0xF2, 0xA)==0:
@@ -8262,11 +8262,11 @@ exit_fn_12
                         call_object_handler(current_room, 0xE)
                         if object_is_at(0xF2, 1, 0)!=0:
                           if object_has_attr?(0xF2, 0xA)!=0:
-                            if flag_85250_sword!=5:
+                            if companion_obj!=5:
                               sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                               object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                               -> 0xCD
-                            if flag_85250_sword==5:
+                            if companion_obj==5:
                               object_set_prop_a?(0xF2, 0x16E)
                               -> 0xCD
                           if object_has_attr?(0xF2, 0xA)==0:
@@ -8293,11 +8293,11 @@ exit_fn_12
                                     call_object_handler(current_room, 0xE)
                                     if object_is_at(0xF2, 1, 0)!=0:
                                       if object_has_attr?(0xF2, 0xA)!=0:
-                                        if flag_85250_sword!=5:
+                                        if companion_obj!=5:
                                           sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                           object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                           -> 0xCD
-                                        if flag_85250_sword==5:
+                                        if companion_obj==5:
                                           object_set_prop_a?(0xF2, 0x16E)
                                           -> 0xCD
                                       if object_has_attr?(0xF2, 0xA)==0:
@@ -8317,11 +8317,11 @@ exit_fn_12
                                     call_object_handler(current_room, 0xE)
                                     if object_is_at(0xF2, 1, 0)!=0:
                                       if object_has_attr?(0xF2, 0xA)!=0:
-                                        if flag_85250_sword!=5:
+                                        if companion_obj!=5:
                                           sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                           object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                           -> 0xCD
-                                        if flag_85250_sword==5:
+                                        if companion_obj==5:
                                           object_set_prop_a?(0xF2, 0x16E)
                                           -> 0xCD
                                       if object_has_attr?(0xF2, 0xA)==0:
@@ -8341,11 +8341,11 @@ exit_fn_12
                                   call_object_handler(current_room, 0xE)
                                   if object_is_at(0xF2, 1, 0)!=0:
                                     if object_has_attr?(0xF2, 0xA)!=0:
-                                      if flag_85250_sword!=5:
+                                      if companion_obj!=5:
                                         sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                         object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                         -> 0xCD
-                                      if flag_85250_sword==5:
+                                      if companion_obj==5:
                                         object_set_prop_a?(0xF2, 0x16E)
                                         -> 0xCD
                                     if object_has_attr?(0xF2, 0xA)==0:
@@ -8365,11 +8365,11 @@ exit_fn_12
                                 call_object_handler(current_room, 0xE)
                                 if object_is_at(0xF2, 1, 0)!=0:
                                   if object_has_attr?(0xF2, 0xA)!=0:
-                                    if flag_85250_sword!=5:
+                                    if companion_obj!=5:
                                       sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                       object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                       -> 0xCD
-                                    if flag_85250_sword==5:
+                                    if companion_obj==5:
                                       object_set_prop_a?(0xF2, 0x16E)
                                       -> 0xCD
                                   if object_has_attr?(0xF2, 0xA)==0:
@@ -8389,11 +8389,11 @@ exit_fn_12
                               call_object_handler(current_room, 0xE)
                               if object_is_at(0xF2, 1, 0)!=0:
                                 if object_has_attr?(0xF2, 0xA)!=0:
-                                  if flag_85250_sword!=5:
+                                  if companion_obj!=5:
                                     sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                     object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                     -> 0xCD
-                                  if flag_85250_sword==5:
+                                  if companion_obj==5:
                                     object_set_prop_a?(0xF2, 0x16E)
                                     -> 0xCD
                                 if object_has_attr?(0xF2, 0xA)==0:
@@ -8421,11 +8421,11 @@ exit_fn_12
                                   call_object_handler(current_room, 0xE)
                                   if object_is_at(0xF2, 1, 0)!=0:
                                     if object_has_attr?(0xF2, 0xA)!=0:
-                                      if flag_85250_sword!=5:
+                                      if companion_obj!=5:
                                         sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                         object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                         -> 0xCD
-                                      if flag_85250_sword==5:
+                                      if companion_obj==5:
                                         object_set_prop_a?(0xF2, 0x16E)
                                         -> 0xCD
                                     if object_has_attr?(0xF2, 0xA)==0:
@@ -8445,11 +8445,11 @@ exit_fn_12
                                   call_object_handler(current_room, 0xE)
                                   if object_is_at(0xF2, 1, 0)!=0:
                                     if object_has_attr?(0xF2, 0xA)!=0:
-                                      if flag_85250_sword!=5:
+                                      if companion_obj!=5:
                                         sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                         object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                         -> 0xCD
-                                      if flag_85250_sword==5:
+                                      if companion_obj==5:
                                         object_set_prop_a?(0xF2, 0x16E)
                                         -> 0xCD
                                     if object_has_attr?(0xF2, 0xA)==0:
@@ -8469,11 +8469,11 @@ exit_fn_12
                                 call_object_handler(current_room, 0xE)
                                 if object_is_at(0xF2, 1, 0)!=0:
                                   if object_has_attr?(0xF2, 0xA)!=0:
-                                    if flag_85250_sword!=5:
+                                    if companion_obj!=5:
                                       sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                       object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                       -> 0xCD
-                                    if flag_85250_sword==5:
+                                    if companion_obj==5:
                                       object_set_prop_a?(0xF2, 0x16E)
                                       -> 0xCD
                                   if object_has_attr?(0xF2, 0xA)==0:
@@ -8493,11 +8493,11 @@ exit_fn_12
                               call_object_handler(current_room, 0xE)
                               if object_is_at(0xF2, 1, 0)!=0:
                                 if object_has_attr?(0xF2, 0xA)!=0:
-                                  if flag_85250_sword!=5:
+                                  if companion_obj!=5:
                                     sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                     object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                     -> 0xCD
-                                  if flag_85250_sword==5:
+                                  if companion_obj==5:
                                     object_set_prop_a?(0xF2, 0x16E)
                                     -> 0xCD
                                 if object_has_attr?(0xF2, 0xA)==0:
@@ -8517,11 +8517,11 @@ exit_fn_12
                             call_object_handler(current_room, 0xE)
                             if object_is_at(0xF2, 1, 0)!=0:
                               if object_has_attr?(0xF2, 0xA)!=0:
-                                if flag_85250_sword!=5:
+                                if companion_obj!=5:
                                   sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                   object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                   -> 0xCD
-                                if flag_85250_sword==5:
+                                if companion_obj==5:
                                   object_set_prop_a?(0xF2, 0x16E)
                                   -> 0xCD
                               if object_has_attr?(0xF2, 0xA)==0:
@@ -8549,11 +8549,11 @@ exit_fn_12
                             call_object_handler(current_room, 0xE)
                             if object_is_at(0xF2, 1, 0)!=0:
                               if object_has_attr?(0xF2, 0xA)!=0:
-                                if flag_85250_sword!=5:
+                                if companion_obj!=5:
                                   sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                   object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                   -> 0xCD
-                                if flag_85250_sword==5:
+                                if companion_obj==5:
                                   object_set_prop_a?(0xF2, 0x16E)
                                   -> 0xCD
                               if object_has_attr?(0xF2, 0xA)==0:
@@ -8573,11 +8573,11 @@ exit_fn_12
                             call_object_handler(current_room, 0xE)
                             if object_is_at(0xF2, 1, 0)!=0:
                               if object_has_attr?(0xF2, 0xA)!=0:
-                                if flag_85250_sword!=5:
+                                if companion_obj!=5:
                                   sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                   object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                   -> 0xCD
-                                if flag_85250_sword==5:
+                                if companion_obj==5:
                                   object_set_prop_a?(0xF2, 0x16E)
                                   -> 0xCD
                               if object_has_attr?(0xF2, 0xA)==0:
@@ -8597,11 +8597,11 @@ exit_fn_12
                           call_object_handler(current_room, 0xE)
                           if object_is_at(0xF2, 1, 0)!=0:
                             if object_has_attr?(0xF2, 0xA)!=0:
-                              if flag_85250_sword!=5:
+                              if companion_obj!=5:
                                 sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                 object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                 -> 0xCD
-                              if flag_85250_sword==5:
+                              if companion_obj==5:
                                 object_set_prop_a?(0xF2, 0x16E)
                                 -> 0xCD
                             if object_has_attr?(0xF2, 0xA)==0:
@@ -8621,11 +8621,11 @@ exit_fn_12
                         call_object_handler(current_room, 0xE)
                         if object_is_at(0xF2, 1, 0)!=0:
                           if object_has_attr?(0xF2, 0xA)!=0:
-                            if flag_85250_sword!=5:
+                            if companion_obj!=5:
                               sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                               object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                               -> 0xCD
-                            if flag_85250_sword==5:
+                            if companion_obj==5:
                               object_set_prop_a?(0xF2, 0x16E)
                               -> 0xCD
                           if object_has_attr?(0xF2, 0xA)==0:
@@ -8645,11 +8645,11 @@ exit_fn_12
                       call_object_handler(current_room, 0xE)
                       if object_is_at(0xF2, 1, 0)!=0:
                         if object_has_attr?(0xF2, 0xA)!=0:
-                          if flag_85250_sword!=5:
+                          if companion_obj!=5:
                             sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                             object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                             -> 0xCD
-                          if flag_85250_sword==5:
+                          if companion_obj==5:
                             object_set_prop_a?(0xF2, 0x16E)
                             -> 0xCD
                         if object_has_attr?(0xF2, 0xA)==0:
@@ -8676,11 +8676,11 @@ exit_fn_12
                                   call_object_handler(current_room, 0xE)
                                   if object_is_at(0xF2, 1, 0)!=0:
                                     if object_has_attr?(0xF2, 0xA)!=0:
-                                      if flag_85250_sword!=5:
+                                      if companion_obj!=5:
                                         sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                         object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                         -> 0xCD
-                                      if flag_85250_sword==5:
+                                      if companion_obj==5:
                                         object_set_prop_a?(0xF2, 0x16E)
                                         -> 0xCD
                                     if object_has_attr?(0xF2, 0xA)==0:
@@ -8700,11 +8700,11 @@ exit_fn_12
                                   call_object_handler(current_room, 0xE)
                                   if object_is_at(0xF2, 1, 0)!=0:
                                     if object_has_attr?(0xF2, 0xA)!=0:
-                                      if flag_85250_sword!=5:
+                                      if companion_obj!=5:
                                         sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                         object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                         -> 0xCD
-                                      if flag_85250_sword==5:
+                                      if companion_obj==5:
                                         object_set_prop_a?(0xF2, 0x16E)
                                         -> 0xCD
                                     if object_has_attr?(0xF2, 0xA)==0:
@@ -8724,11 +8724,11 @@ exit_fn_12
                                 call_object_handler(current_room, 0xE)
                                 if object_is_at(0xF2, 1, 0)!=0:
                                   if object_has_attr?(0xF2, 0xA)!=0:
-                                    if flag_85250_sword!=5:
+                                    if companion_obj!=5:
                                       sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                       object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                       -> 0xCD
-                                    if flag_85250_sword==5:
+                                    if companion_obj==5:
                                       object_set_prop_a?(0xF2, 0x16E)
                                       -> 0xCD
                                   if object_has_attr?(0xF2, 0xA)==0:
@@ -8748,11 +8748,11 @@ exit_fn_12
                               call_object_handler(current_room, 0xE)
                               if object_is_at(0xF2, 1, 0)!=0:
                                 if object_has_attr?(0xF2, 0xA)!=0:
-                                  if flag_85250_sword!=5:
+                                  if companion_obj!=5:
                                     sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                     object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                     -> 0xCD
-                                  if flag_85250_sword==5:
+                                  if companion_obj==5:
                                     object_set_prop_a?(0xF2, 0x16E)
                                     -> 0xCD
                                 if object_has_attr?(0xF2, 0xA)==0:
@@ -8772,11 +8772,11 @@ exit_fn_12
                             call_object_handler(current_room, 0xE)
                             if object_is_at(0xF2, 1, 0)!=0:
                               if object_has_attr?(0xF2, 0xA)!=0:
-                                if flag_85250_sword!=5:
+                                if companion_obj!=5:
                                   sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                   object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                   -> 0xCD
-                                if flag_85250_sword==5:
+                                if companion_obj==5:
                                   object_set_prop_a?(0xF2, 0x16E)
                                   -> 0xCD
                               if object_has_attr?(0xF2, 0xA)==0:
@@ -8823,11 +8823,11 @@ exit_fn_12
                             call_object_handler(current_room, 0xE)
                             if object_is_at(0xF2, 1, 0)!=0:
                               if object_has_attr?(0xF2, 0xA)!=0:
-                                if flag_85250_sword!=5:
+                                if companion_obj!=5:
                                   sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                   object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                   -> 0xCD
-                                if flag_85250_sword==5:
+                                if companion_obj==5:
                                   object_set_prop_a?(0xF2, 0x16E)
                                   -> 0xCD
                               if object_has_attr?(0xF2, 0xA)==0:
@@ -8847,11 +8847,11 @@ exit_fn_12
                             call_object_handler(current_room, 0xE)
                             if object_is_at(0xF2, 1, 0)!=0:
                               if object_has_attr?(0xF2, 0xA)!=0:
-                                if flag_85250_sword!=5:
+                                if companion_obj!=5:
                                   sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                   object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                   -> 0xCD
-                                if flag_85250_sword==5:
+                                if companion_obj==5:
                                   object_set_prop_a?(0xF2, 0x16E)
                                   -> 0xCD
                               if object_has_attr?(0xF2, 0xA)==0:
@@ -8871,11 +8871,11 @@ exit_fn_12
                           call_object_handler(current_room, 0xE)
                           if object_is_at(0xF2, 1, 0)!=0:
                             if object_has_attr?(0xF2, 0xA)!=0:
-                              if flag_85250_sword!=5:
+                              if companion_obj!=5:
                                 sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                 object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                 -> 0xCD
-                              if flag_85250_sword==5:
+                              if companion_obj==5:
                                 object_set_prop_a?(0xF2, 0x16E)
                                 -> 0xCD
                             if object_has_attr?(0xF2, 0xA)==0:
@@ -8895,11 +8895,11 @@ exit_fn_12
                         call_object_handler(current_room, 0xE)
                         if object_is_at(0xF2, 1, 0)!=0:
                           if object_has_attr?(0xF2, 0xA)!=0:
-                            if flag_85250_sword!=5:
+                            if companion_obj!=5:
                               sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                               object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                               -> 0xCD
-                            if flag_85250_sword==5:
+                            if companion_obj==5:
                               object_set_prop_a?(0xF2, 0x16E)
                               -> 0xCD
                           if object_has_attr?(0xF2, 0xA)==0:
@@ -8919,11 +8919,11 @@ exit_fn_12
                       call_object_handler(current_room, 0xE)
                       if object_is_at(0xF2, 1, 0)!=0:
                         if object_has_attr?(0xF2, 0xA)!=0:
-                          if flag_85250_sword!=5:
+                          if companion_obj!=5:
                             sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                             object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                             -> 0xCD
-                          if flag_85250_sword==5:
+                          if companion_obj==5:
                             object_set_prop_a?(0xF2, 0x16E)
                             -> 0xCD
                         if object_has_attr?(0xF2, 0xA)==0:
@@ -8950,7 +8950,7 @@ exit_fn_12
                                   call_object_handler(current_room, 0xE)
                                   if object_is_at(0xF2, 1, 0)!=0:
                                     if object_has_attr?(0xF2, 0xA)!=0:
-                                      if flag_85250_sword!=5:
+                                      if companion_obj!=5:
                                         sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                         object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                         -> 0xCD
@@ -8965,7 +8965,7 @@ exit_fn_12
                                   call_object_handler(current_room, 0xE)
                                   if object_is_at(0xF2, 1, 0)!=0:
                                     if object_has_attr?(0xF2, 0xA)!=0:
-                                      if flag_85250_sword!=5:
+                                      if companion_obj!=5:
                                         sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                         object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                         -> 0xCD
@@ -8980,7 +8980,7 @@ exit_fn_12
                                 call_object_handler(current_room, 0xE)
                                 if object_is_at(0xF2, 1, 0)!=0:
                                   if object_has_attr?(0xF2, 0xA)!=0:
-                                    if flag_85250_sword!=5:
+                                    if companion_obj!=5:
                                       sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                       object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                       -> 0xCD
@@ -8995,7 +8995,7 @@ exit_fn_12
                               call_object_handler(current_room, 0xE)
                               if object_is_at(0xF2, 1, 0)!=0:
                                 if object_has_attr?(0xF2, 0xA)!=0:
-                                  if flag_85250_sword!=5:
+                                  if companion_obj!=5:
                                     sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                     object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                     -> 0xCD
@@ -9010,7 +9010,7 @@ exit_fn_12
                             call_object_handler(current_room, 0xE)
                             if object_is_at(0xF2, 1, 0)!=0:
                               if object_has_attr?(0xF2, 0xA)!=0:
-                                if flag_85250_sword!=5:
+                                if companion_obj!=5:
                                   sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                   object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                   -> 0xCD
@@ -9033,7 +9033,7 @@ exit_fn_12
                                 call_object_handler(current_room, 0xE)
                                 if object_is_at(0xF2, 1, 0)!=0:
                                   if object_has_attr?(0xF2, 0xA)!=0:
-                                    if flag_85250_sword!=5:
+                                    if companion_obj!=5:
                                       sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                       object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                       -> 0xCD
@@ -9056,7 +9056,7 @@ exit_fn_12
                           call_object_handler(current_room, 0xE)
                           if object_is_at(0xF2, 1, 0)!=0:
                             if object_has_attr?(0xF2, 0xA)!=0:
-                              if flag_85250_sword!=5:
+                              if companion_obj!=5:
                                 sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12)
                                 object_set_prop_a?(0xF2, (sub_1EF11(flag_852AA_exit_fn_12, flag_852AC_exit_fn_12) + 0x16E))
                                 -> 0xCD
@@ -9627,7 +9627,7 @@ objh_002   # objects: 2 Grundy
       Font_WriteMessage(msg(6:0x1D))
       -> 1
     if cmd==TALK_TO:
-      if flag_85250_sword==0:
+      if companion_obj==0:
         byte_86CC0 = 0
         show_compendium(0x12, 0x5A00)
         if flag_852C9_conv_text_13!=0:
@@ -9640,7 +9640,7 @@ objh_002   # objects: 2 Grundy
           if flag_8525A_conv09!=0:
             go_to_room?(0x22)
             -> 1
-      if flag_85250_sword!=0:
+      if companion_obj!=0:
         show_compendium(0x30, 0x5A00)
         -> 1
   if phase==4:
@@ -10033,10 +10033,10 @@ objh_006   # objects: 6 Jenny
     if cmd:other:
       -> 0
     if cmd==TALK_TO:
-      if flag_85250_sword==0:
+      if companion_obj==0:
         show_compendium(0x29A, 0x5A01)
         -> 1
-      if flag_85250_sword!=0:
+      if companion_obj!=0:
         if current_room==0x5B:
           byte_86CC0 = 0
           show_compendium(0x29C, 0x5A01)
@@ -15324,12 +15324,12 @@ objh_089   # objects: 94 cavern door
     if cmd==ENTER:
       if object_has_attr?(dobj, 0xE)==0:
         print_obj(2, dobj)
-        print_obj(0x51, flag_85250_sword, &aRemind, print_obj(2, dobj), ?)
-        Font_WriteMessage(msg(22:0x10), print_obj(0x51, flag_85250_sword, &aRemind, print_obj(2, dobj), ?), ?)
+        print_obj(0x51, companion_obj, &aRemind, print_obj(2, dobj), ?)
+        Font_WriteMessage(msg(22:0x10), print_obj(0x51, companion_obj, &aRemind, print_obj(2, dobj), ?), ?)
         -> 1
       if object_has_attr?(dobj, 0xE)!=0:
-        print_obj(0x11, flag_85250_sword)
-        Font_WriteMessage(msg(22:0x11), print_obj(0x11, flag_85250_sword), ?)
+        print_obj(0x11, companion_obj)
+        Font_WriteMessage(msg(22:0x11), print_obj(0x11, companion_obj), ?)
         MouseCursor_SetHourglass()
         realsound_play(&aExplode_rs)
         cancel_event(4)
@@ -15395,8 +15395,8 @@ objh_092   # objects: 97 metal bars
       Font_WriteMessage(msg(22:0x18), print_obj(2, dobj), ?)
       -> 1
     if cmd==LOOK_AT:
-      print_obj(0x11, flag_85250_sword)
-      Font_WriteMessage(msg(22:0x16), print_obj(0x11, flag_85250_sword), ?)
+      print_obj(0x11, companion_obj)
+      Font_WriteMessage(msg(22:0x16), print_obj(0x11, companion_obj), ?)
       realsound_play(&aScream2_rs)
       cancel_event(4)
       cancel_event(5)
@@ -15405,8 +15405,8 @@ objh_092   # objects: 97 metal bars
       go_to_room?(0x5A)
       -> 1
     if cmd==LOOK_IN:
-      print_obj(0x11, flag_85250_sword)
-      Font_WriteMessage(msg(22:0x16), print_obj(0x11, flag_85250_sword), ?)
+      print_obj(0x11, companion_obj)
+      Font_WriteMessage(msg(22:0x16), print_obj(0x11, companion_obj), ?)
       realsound_play(&aScream2_rs)
       cancel_event(4)
       cancel_event(5)
@@ -15476,8 +15476,8 @@ objh_097   # objects: 102 cave entrance
       Font_WriteMessage(msg(22:0x20))
       -> 1
     if cmd==ENTER:
-      print_obj(0x51, flag_85250_sword, &aRecommend)
-      Font_WriteMessage(msg(22:0x21), print_obj(0x51, flag_85250_sword, &aRecommend), ?)
+      print_obj(0x51, companion_obj, &aRecommend)
+      Font_WriteMessage(msg(22:0x21), print_obj(0x51, companion_obj, &aRecommend), ?)
       -> 1
   if phase:other:
     -> 0
@@ -18673,16 +18673,16 @@ objh_131   # objects: 139 sword
       if current_room!=0x1F0:
         print_obj(0x22, iobj)
         print_obj(2, dobj, print_obj(0x22, iobj), ?)
-        print_obj(0x11, flag_85250_sword, print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
-        Font_WriteMessage(msg(12:0x5D), print_obj(0x11, flag_85250_sword, print_obj(2, dobj, print_obj(0x22, iobj), ?), ?), ?)
+        print_obj(0x11, companion_obj, print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
+        Font_WriteMessage(msg(12:0x5D), print_obj(0x11, companion_obj, print_obj(2, dobj, print_obj(0x22, iobj), ?), ?), ?)
         -> 1
       if current_room==0x1F0:
         if iobj!=0x1F2:
           if iobj!=0x1F1:
             print_obj(0x22, iobj)
             print_obj(2, dobj, print_obj(0x22, iobj), ?)
-            print_obj(0x11, flag_85250_sword, print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
-            Font_WriteMessage(msg(12:0x5D), print_obj(0x11, flag_85250_sword, print_obj(2, dobj, print_obj(0x22, iobj), ?), ?), ?)
+            print_obj(0x11, companion_obj, print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
+            Font_WriteMessage(msg(12:0x5D), print_obj(0x11, companion_obj, print_obj(2, dobj, print_obj(0x22, iobj), ?), ?), ?)
             -> 1
           if iobj==0x1F1:
             cancel_event(0x2B)
@@ -18700,7 +18700,7 @@ objh_131   # objects: 139 sword
             show_text_box(msg(12:0x5C))
             flag_8532E_sword = 1
             follower_obj = 0
-            flag_85250_sword = 0
+            companion_obj = 0
             go_to_room?(0x22)
             -> 1
         if iobj==0x1F2:
@@ -18719,7 +18719,7 @@ objh_131   # objects: 139 sword
           show_text_box(msg(12:0x5C))
           flag_8532E_sword = 1
           follower_obj = 0
-          flag_85250_sword = 0
+          companion_obj = 0
           go_to_room?(0x22)
           -> 1
     if cmd:other:
@@ -19240,8 +19240,8 @@ objh_138   # objects: 146 anchor
         run_command?(0x48, iobj, dobj)
         -> run_command?(0x48, iobj, dobj)
     if cmd==TALK_TO:
-      print_obj(0x11, flag_85250_sword)
-      Font_WriteMessage(msg(13:0x34), print_obj(0x11, flag_85250_sword), ?)
+      print_obj(0x11, companion_obj)
+      Font_WriteMessage(msg(13:0x34), print_obj(0x11, companion_obj), ?)
       -> 1
     if cmd==TAKE:
       Font_WriteMessage(msg(13:0x33))
@@ -22551,11 +22551,11 @@ objh_200   # objects: 208 door ajar
       flag_852D0_door_ajar = 1
       object_move?(0xCE, 0xCD, 0)
       popup_window_event?()
-      if flag_85250_sword==5:
+      if companion_obj==5:
         wait_ticks_or_click(0x7D0)
         show_compendium(0x146, 0x5A03)
         -> 1
-      if flag_85250_sword!=5:
+      if companion_obj!=5:
         -> 1
     if cmd==OPEN:
       Font_WriteMessage(msg(11:0x16))
@@ -24306,7 +24306,7 @@ objh_215   # objects: 240 manacles
         cancel_event(0x2C)
         byte_87FBE = 0
         follower_obj = 5
-        flag_85250_sword = 5
+        companion_obj = 5
         popup_window_event?()
         MouseCursor_SetHourglass()
         realsound_play(&aDisney2_rs_1)
@@ -24420,13 +24420,13 @@ objh_217   # objects: 242 Nada finder
       Font_WriteMessage(msg(51:0x35), print_obj(2, dobj), ?)
       -> 1
     if cmd==PUT:
-      if flag_85250_sword!=0:
+      if companion_obj!=0:
         print_obj(0x22, iobj)
         object_has_attr?(iobj, 0x11, print_obj(0x22, iobj), ?)
         print_obj(0x12, dobj, ((object_has_attr?(iobj, 0x11, print_obj(0x22, iobj), ?) & 6) + 0x69))
         Font_WriteMessage(msg(51:0x37), print_obj(0x12, dobj, ((object_has_attr?(iobj, 0x11, print_obj(0x22, iobj), ?) & 6) + 0x69)), ?)
         -> 1
-      if flag_85250_sword==0:
+      if companion_obj==0:
         print_obj(0x12, dobj)
         Font_WriteMessage(msg(51:0x38), print_obj(0x12, dobj), ?)
         -> 1

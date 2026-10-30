@@ -24,7 +24,7 @@ index	address	size	name
 22	852e2	1	byte_852E2
 23	871f0	2	flag_871F0_telephone
 24	871ee	2	flag_871EE_telephone
-25	85250	2	flag_85250_sword
+25	85250	2	companion_obj
 26	85252	2	word_85252
 27	85260	2	word_85260
 28	85264	2	word_85264

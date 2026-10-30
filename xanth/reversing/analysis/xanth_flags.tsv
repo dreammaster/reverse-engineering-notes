@@ -10,7 +10,7 @@ address	name	size	written_by	tested_by
 8b9ce	unk_8B9CE	2		
 85258	flag_85258_conv21	1	conv_cb_21=1; conv_cb_46=1; event_fn_44=0	
 85254	flag_85254_conv21	2	conv_cb_21=current_room; conv_cb_46=current_room; event_fn_44=0	
-85256	flag_85256_conv21	2	conv_cb_21=flag_85250_sword; conv_cb_46=flag_85250_sword; event_fn_44=0	
+85256	flag_85256_conv21	2	conv_cb_21=companion_obj; conv_cb_46=companion_obj; event_fn_44=0	
 85259	flag_85259_conv21	1	conv_cb_21=1; conv_cb_46=1; event_fn_44=0	
 8524c	flag_8524C_conv21	2	conv_cb_21=event_count; conv_cb_46=event_count	
 85268	story_stage	2	conv_cb_24=5/6; conv_cb_51=0x1A; conv_text_81=0x16; event_fn_03=3; event_fn_05=8; event_fn_17=7; event_fn_23=0xB; event_fn_24=0x17; event_fn_26=0x10; event_fn_28=0x11; event_fn_29=0x13; event_fn_30=0x15; event_fn_31=0x19; event_fn_38=0x1B; objh_005(5 Nada)=0xB; objh_010(10 Metria)=0x1A; objh_089(94 cavern door)=1; objh_092(97 metal bars)=2; objh_118(124 tangle tree)=4; objh_147(155 pail)=0x12; objh_192(200 spring)=0x18/0xA/0xC/0xD/9; objh_227(252 oven)=0xF; objh_231(256 firewater)=0xE	event_fn_32; exit_fn_26
@@ -19,7 +19,7 @@ address	name	size	written_by	tested_by
 852e2	byte_852E2	1	event_fn_01=1	objh_048(52 front door)
 871f0	flag_871F0_telephone	2	event_fn_02=0/inc; event_fn_41=inc; objh_061(65 telephone)=0	event_fn_02
 871ee	flag_871EE_telephone	2	event_fn_02=0/1; event_fn_41=2; objh_061(65 telephone)=0/1	objh_061(65 telephone)
-85250	flag_85250_sword	2	objh_131(139 sword)=0; objh_215(240 manacles)=5	event_fn_03; event_fn_20; event_fn_21; exit_fn_09; exit_fn_12; objh_002(2 Grundy); objh_006(6 Jenny); objh_200(208 door ajar); objh_217(242 Nada finder)
+85250	companion_obj	2	objh_131(139 sword)=0; objh_215(240 manacles)=5	event_fn_03; event_fn_20; event_fn_21; exit_fn_09; exit_fn_12; objh_002(2 Grundy); objh_006(6 Jenny); objh_200(208 door ajar); objh_217(242 Nada finder)
 85252	word_85252	2		
 85260	word_85260	2	event_fn_08=inc	event_fn_08
 85264	word_85264	2		exit_fn_04; exit_fn_06
