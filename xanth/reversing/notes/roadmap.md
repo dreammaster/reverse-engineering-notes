@@ -21,6 +21,8 @@ Workflow is the same as `shannara/reversing/notes/roadmap.md`: work on a copy of
 
 - C++17 readers for DCL/PIC/RGN/XANTHSTR/MUS/VOC in `xanth/engine/` (`legend_tool check <gamedir>` decodes all 3,294 pictures, 5,542 strings, 86 MIDI records, the VOC directory).
 
+- Host (`xanth/engine/host`): the lifted original code runs on the original data - object model checked against the independently decoded table (0 mismatches in 12,352 checks), 47,232 handler scenarios and all 70 rooms with 0 invalid arguments, real game text printed through the real `run_command` / `print_obj` code. 8 handlers that were never named (code chunks) found and added.
+
 - Scenes (716 hotspots, region id = object id), room pictures (68), room music (66), object attributes (23), cutscene list: all data needed to *render and navigate* the Xanth world is located (overview sections 8-16).
 
 ## Next

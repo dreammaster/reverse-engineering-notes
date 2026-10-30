@@ -14,8 +14,10 @@ python lift_handlers.py symbols "$SP/asyms.json" --all
 cp ../../xanth.idb "$SP/x2.idb"; cp dump_symbols.py "$SP/"
 ( cd "$SP" && "$IDAT" -A -Lsy.log -S"dump_symbols.py asyms.json asyms_out.json" x2.idb >/dev/null 2>&1 )
 python lift_handlers.py "$SP/asyms_out.json" --all
+cp ../../engine/gen/cpu.h ../../engine/gen_all/cpu.h
 python make_trace_test.py
 python gen_handlers.py
 python lift_handlers.py "$SP/asyms_out.json"
 python lift_handlers.py "$SP/asyms_out.json" --all
+cp ../../engine/gen/cpu.h ../../engine/gen_all/cpu.h
 python make_trace_test.py

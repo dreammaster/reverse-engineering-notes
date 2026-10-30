@@ -11,3 +11,5 @@ xanth/xanth.asm
 
 xanth/game_out
 xanth/engine/gen_all/
+xanth/engine/host/gen/
+xanth/engine/host/*.exe

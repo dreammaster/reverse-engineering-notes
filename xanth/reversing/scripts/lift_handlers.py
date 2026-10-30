@@ -33,24 +33,74 @@ class Insn:
 
 # seg157:0402.. (xanth.asm byte_70402): the bytes 8C 5E F8 FF 76 F8 FF 76 F6 B8 03 00 BA 28 F0 52 50 9A 3B 47 <sg19DD> are code that IDA left as data;
 # word_70405 (the second instruction) is a jump target too.  Decoded by hand: Font_WriteMessage(ds:[bp-0Ah], msg 0xF028:3).
+# Each patch replaces data lines of xanth.asm that are really code: it starts at the first line matching `start`, drops every line up to and including the first
+# line matching `until`, and inserts the hand-decoded instructions (bytes read from the IDB image) with their labels.  `procs` registers far functions among them.
 PATCHES = [
-    ("byte_70402", "mov word ptr [bp-8], ds"),
-    ("word_70405", "push word ptr [bp-8]"),
-    (None, "push word ptr [bp-0Ah]"),
-    (None, "mov ax, 3"),
-    (None, "mov dx, 0F028h"),
-    (None, "push dx"),
-    (None, "push ax"),
-    (None, "call Font_WriteMessage"),
+    {   # seg157:0248.. : the tail of the function at loc_701CD (mov ax,1 / jmp / nop / xor ax,ax / retf) and the whole next function word_7024E
+        "start": r"^word_70248\s+dw 3EBh", "until": r"^\s+retf\b", "procs": ["word_7024E"],
+        "insns": [
+            ([], "jmp loc_7024D_h"),
+            (["word_7024A_p1", "word_7024A+1"], "xor ax, ax"),
+            (["loc_7024D_h"], "retf"),
+            (["word_7024E"], "mov ax, 0Eh"), ([], "push ax"), ([], "mov ax, 144h"), ([], "push ax"), ([], "call far ptr object_has_attr?"), ([], "add sp, 4"),
+            ([], "or ax, ax"), ([], "jz loc_7027C_h"),
+            ([], "mov ax, 1"), ([], "push ax"), ([], "mov ax, 145h"), ([], "push ax"), ([], "call far ptr object_get_list_head?"), ([], "add sp, 4"),
+            ([], "or ax, ax"), ([], "jz loc_7027C_h"),
+            ([], "mov ax, 1"), ([], "jmp loc_7027E_h"),
+            (["loc_7027C_h"], "xor ax, ax"),
+            (["loc_7027E_h"], "retf"),
+        ]},
+    {   # seg157:0402..: 8C 5E F8 FF 76 F8 FF 76 F6 B8 03 00 BA 28 F0 52 50 9A <Font_WriteMessage>; word_70405 is a jump target too
+        "start": r"^byte_70402\s+db", "until": r"dw seg sg19DD", "procs": [],
+        "insns": [
+            (["byte_70402"], "mov word ptr [bp-8], ds"),
+            (["word_70405"], "push word ptr [bp-8]"),
+            ([], "push word ptr [bp-0Ah]"), ([], "mov ax, 3"), ([], "mov dx, 0F028h"), ([], "push dx"), ([], "push ax"), ([], "call Font_WriteMessage"),
+        ]},
 ]
+
+
+DATAREFS = set()   # names stored in dd/dw data (function tables)
+SYMKIND = {}    # data symbol -> db / dw / dd (as defined in the listing)
+
+
+# Handlers whose code IDA left as plain code chunks (no function, so apply_xanth_handlers.py could not name them): handler number -> (label, linear address).
+# Derived from the RTLink stubs in object_handler_table (stub = E8 rel16 / EA off16 seg16; the far jump target is the label).
+CHUNK_HANDLERS = {1: ("loc_1E817", 0x1E817), 27: ("loc_5CA3F", 0x5CA3F), 30: ("loc_5CB83", 0x5CB83), 45: ("loc_4DD8C", 0x4DD8C), 86: ("loc_51085", 0x51085),
+                  177: ("loc_5B156", 0x5B156), 180: ("loc_5B25A", 0x5B25A), 335: ("loc_7480B", 0x7480B)}
+EXTRA_FUNCS = ["sub_540A4"]     # target of a function-table stub that IDA did not recognise as a stub
 
 
 def load_asm():
     """-> (insns, labels{name: insn index}, procs{name: insn index}, tables{name: [labels]}, locals{proc: {name: (size, offset)}})"""
     insns, labels, procs, tables, locs = [], {}, {}, {}, {}
     cur_proc, cur_tab, pending = None, None, []
+    patch = None                        # patch being applied (skipping the data lines it replaces)
     for line in open(ASM, encoding="utf-8", errors="replace"):
         line = line.rstrip("\n")
+        if patch:
+            if re.search(patch["until"], line):
+                patch = None
+            continue
+        for p in PATCHES:
+            if re.match(p["start"], line):
+                for labs, text in p["insns"]:
+                    parts = text.split(None, 1)
+                    ops = [o.strip() for o in parts[1].split(",")] if len(parts) > 1 else []
+                    i = Insn(len(insns), parts[0], ops, text)
+                    i.label, i.proc = pending + list(labs), cur_proc
+                    for lab in i.label:
+                        labels[lab] = i.idx
+                        if lab in p["procs"]:
+                            procs[lab] = i.idx
+                    pending = []
+                    insns.append(i)
+                patch = p
+                break
+        if patch:
+            if re.search(patch["until"], line):      # start and end on the same line
+                patch = None
+            continue
         m = re.match(r"^(\S+)\s+proc (near|far)", line)
         if m:
             cur_proc = m.group(1)
@@ -62,6 +112,12 @@ def load_asm():
         if cur_proc and re.match(r"^%s\s+endp" % re.escape(cur_proc), line):
             cur_proc = None
             continue
+        mt = re.match(r"^\s*(?:[\w?]+\s+)?(?:dd|dw)\s+(?:offset\s+)?([A-Za-z_][\w?]*)\s*(?:;.*)?$", line)
+        if mt:
+            DATAREFS.add(mt.group(1))
+        md = re.match(r"^([\w?]+)\s+(db|dw|dd)", line)
+        if md:
+            SYMKIND.setdefault(md.group(1), md.group(2))
         m = re.match(r"^(\w+)\s+dw offset (\w+)", line)
         if m:
             cur_tab = tables.setdefault(m.group(1), [])
@@ -106,6 +162,11 @@ def load_asm():
                 procs[p] = i.idx
         pending = []
         insns.append(i)
+    for num_, (lab, ea) in CHUNK_HANDLERS.items():
+        if lab in labels:
+            procs.setdefault("objh_%03d" % num_, labels[lab])
+    if "loc_701CD" in labels:                 # a function whose first instructions IDA did not turn into a function
+        procs.setdefault("loc_701CD", labels["loc_701CD"])
     return insns, labels, procs, tables, locs
 
 
@@ -135,7 +196,7 @@ def reachable(insns, labels, tables, entry):
         mn = x.mn
         tgt = None
         if mn.startswith("j") or mn in ("loop", "loope", "loopne", "jcxz"):
-            op = re.sub(r"^(short|near|far ptr|far)\s+", "", x.ops[0]) if x.ops else ""
+            op = re.sub(r"^((short|near ptr|far ptr|near|far)\s+)+", "", x.ops[0].strip()) if x.ops else ""
             m = re.match(r"^cs:(\w+)\[bx\]$", op)
             if m and m.group(1) in tables:
                 for lab in tables[m.group(1)]:
@@ -170,12 +231,17 @@ def operand_symbols(ins, labels, locs):
             base = t.split(".")[0]
             if t in locs.get(ins.proc, {}) or base in labels and base.startswith("loc_"):
                 continue
-            out.add(t)
+            out.add(base)
     return out
 
 
-ALL = "--all" in sys.argv
-if ALL:
+HOSTMODE = "--host" in sys.argv
+if HOSTMODE:
+    sys.argv.remove("--host")
+    GEN = os.path.join(HERE, "..", "..", "engine", "host", "gen")      # full lift for the host build (git-ignored)
+    os.makedirs(GEN, exist_ok=True)
+ALL = "--all" in sys.argv or HOSTMODE
+if "--all" in sys.argv:
     sys.argv.remove("--all")
     GEN = os.path.join(HERE, "..", "..", "engine", "gen_all")      # test build only (not committed)
     os.makedirs(GEN, exist_ok=True)
@@ -189,16 +255,6 @@ def todo_names():
                 out.append(l.split()[0])
         return out
     return [l.split("	")[0] for l in open(os.path.join(HERE, "..", "..", "engine", "gen", "handlers_todo.txt")) if l.strip()]
-
-
-if __name__ == "__main__" and len(sys.argv) > 2 and sys.argv[1] == "symbols":
-    insns, labels, procs, tables, locs = load_asm()
-    syms, segs = set(), set()
-    for n in todo_names():
-        for i in reachable(insns, labels, tables, procs[n]):
-            syms |= operand_symbols(insns[i], labels, locs)
-    json.dump(sorted(syms), open(sys.argv[2], "w"))
-    print(len(syms), "symbols")
 
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -249,6 +305,9 @@ class Lift:
         """C++ expression for a data symbol's offset within its segment"""
         base, _, field = name.partition(".")
         s = self.syms.get(base)
+        mf = re.match(r"^field_([0-9A-Fa-f]+)$", field)
+        if mf and (not s or s.get("kind") != "data"):
+            return "0x%s" % mf.group(1)          # `StructType.field_N`: IDA's struct-offset form of the constant N
         if not s or s.get("kind") != "data":
             UNRESOLVED.append(name)
             return "0 /*unresolved %s*/" % name
@@ -325,7 +384,7 @@ class Lift:
                 lv = self.local(t, ins)
                 if lv:
                     const += sg * lv[1]
-                    if size is None and lv[0] in (1, 2):
+                    if size is None and lv[0] in (1, 2, 4):
                         size = lv[0]
                     if "bp" not in regs:
                         regs.append("bp")
@@ -540,17 +599,20 @@ class Lift:
         name = self.stubs.get(name, name)
         words = 1 if self.procfar.get(name) is False else 2
         fn = ("L_%s" if name in self.lifted else "H_%s") % cid(name)
-        return "{ uint16_t _sp = c.sp; int _rw = c.retWords; c.retWords = %d; for (int _i = 0; _i < %d; _i++) c.push(0); %s(c); c.sp = _sp; c.retWords = _rw; }" % (words, words, fn)
+        return "{ uint16_t _sp = c.sp; int _rw = c.retWords; c.retWords = %d; for (int _i = 0; _i < %d; _i++) c.push(0); if (c.onCall) c.onCall(c, \"%s\"); %s(c); c.sp = _sp; c.retWords = _rw; }" % (words, words, name.replace("\"", ""), fn)
 
     def lower_call(self, x, cl, out):
         op = x.ops[0].strip()
         t = re.sub(r"^((short|near ptr|far ptr|near|far)\s+)+", "", op)
-        if re.match(r"^[\w?.$@]+$", t) and t not in REG16 and t not in PLAIN16 and self.local(t, x) is None and t not in self.syms:
+        if t == "rtlink_thunk":                # overlay loader hook of an RTLink stub: nothing to do
+            return
+        if re.match(r"^[\w?.$@]+$", t) and t not in REG16 and t not in PLAIN16 and self.local(t, x) is None and (t in self.procs or t not in self.syms):
             HOSTS.add(self.stubs.get(t, t))
             out.append(self.call_text(t))
             return
         d = self.classify(op, x)
-        if d["kind"] == "mem" and (d["size"] == 4 or "dword" in op):
+        farsym = any(SYMKIND.get(tok.split(".")[0]) == "dd" for tok in re.findall(r"[A-Za-z_][\w?.$@]*", op))
+        if d["kind"] == "mem" and (d["size"] == 4 or "dword" in op or farsym):
             out.append("{ uint16_t _s = %s, _o = %s; uint16_t _off = c.rd16(_s, _o), _seg = c.rd16(_s, (uint16_t)(_o + 2)); uint16_t _sp = c.sp; int _rw = c.retWords; c.retWords = 2; c.push(0); c.push(0); if (c.callFarHook) c.callFarHook(c, _seg, _off); c.sp = _sp; c.retWords = _rw; }" % (d["seg"], d["off"]))
         else:
             out.append("{ uint16_t _off = %s; uint16_t _sp = c.sp; int _rw = c.retWords; c.retWords = 1; c.push(0); if (c.callFarHook) c.callFarHook(c, c.cs, _off); c.sp = _sp; c.retWords = _rw; }" % self.rd(d, 2))
@@ -583,11 +645,95 @@ class Lift:
 WP = "LW_" if ALL else ""
 
 
+SUPPORTED = {"mov", "push", "pop", "add", "sub", "adc", "sbb", "and", "or", "xor", "cmp", "test", "inc", "dec", "neg", "not", "shl", "sal", "shr", "sar", "rol", "ror",
+             "lea", "les", "lds", "cbw", "cwd", "mul", "imul", "div", "idiv", "xchg", "call", "jmp", "retf", "retn", "ret", "cld", "std", "clc", "stc", "cmc", "nop",
+             "cli", "sti", "pushf", "popf", "movsb", "movsw", "stosb", "stosw", "lodsb", "lodsw", "scasb", "scasw", "cmpsb", "cmpsw", "jcxz", "loop", "loope", "loopne"} | set(COND)
+# engine functions that touch the screen, mouse, files, sound or memory manager: the host implements these (H_*) instead of lifting them
+BLACKLIST = re.compile(r"^(Font_|Screen_|Mouse|Image_|Palette|File_|j_File|Events_|RoomItem_|Windows_|ResourceText|show_|wait_|popup_|realsound|play_|save_game|load_game|"
+                       r"game_over|setup_pic|disable_pic|set_mouse|reset_color|Conversation_Show|wputchar|clear_text|memAlloc|Picture_|msleep|error_dialog|rtlink|Regions_|"
+                       r"voc_|Music|set_room_music|update_animation|clear_keys|handle_|main$|game_init|load_pic|get_region|click_button|disable_button|build_command|"
+                       r"interrupts|sub_27945|sub_29B35|showCutscene|Cutscene|sub_2A|sub_2B|sub_5F|sub_67E2A|sub_69FF7|sub_6C42D|_printf|_sprintf)")
+MAXSIZE = 1300
+STRIP = r"^((short|near ptr|far ptr|near|far)\s+)+"
+
+
+def stub_map(insns, procs):
+    out = {}
+    for pname, pidx in procs.items():
+        a = insns[pidx:pidx + 2]
+        if len(a) == 2 and a[0].mn == "call" and a[0].ops[0].split()[-1] == "rtlink_thunk" and a[1].mn == "jmp" and not a[1].ops[0].startswith("cs:"):
+            out[pname] = re.sub(STRIP, "", a[1].ops[0].strip())
+    return out
+
+
+def call_targets(insns, labels, procs, tables, name, stubs):
+    out = set()
+    for i in reachable(insns, labels, tables, procs[name]):
+        x = insns[i]
+        if x.mn == "call" or x.mn == "jmp" or x.mn in COND:
+            op = re.sub(STRIP, "", x.ops[0].strip()) if x.ops else ""
+            if op in procs:
+                out.add(stubs.get(op, op))
+        for o in x.ops:
+            m = re.match(r"^(?:\()?offset\s+([A-Za-z_][\w?]*)", o.strip())
+            if m and m.group(1) in procs:
+                out.add(stubs.get(m.group(1), m.group(1)))
+    return out
+
+
+def liftable(name, insns, labels, procs, tables):
+    if name not in procs or BLACKLIST.match(name):
+        return False
+    R = reachable(insns, labels, tables, procs[name])
+    if len(R) > MAXSIZE or not all(insns[i].mn in SUPPORTED for i in R):
+        return False
+    # struct members with a name (GFX._bgColor) cannot be resolved to offsets from the asm text: leave such functions to the host
+    return not any(re.search(r"[A-Za-z_]\w*\.(?!field_[0-9A-Fa-f]+)[A-Za-z_]", o) for i in R for o in insns[i].ops)
+
+
+def closure(insns, labels, procs, tables, initial):
+    """handlers + every engine function they (transitively) call that is plain game logic"""
+    stubs = stub_map(insns, procs)
+    out, seen, queue = list(initial), set(initial), list(initial)
+    while queue:
+        n = queue.pop(0)
+        for t in sorted(call_targets(insns, labels, procs, tables, n, stubs)):
+            if t not in seen:
+                seen.add(t)
+                if liftable(t, insns, labels, procs, tables):
+                    out.append(t)
+                    queue.append(t)
+    return out
+
+
+def lifted_set(insns, labels, procs, tables):
+    names = todo_names()
+    names = names + [n for n in ["objh_%03d" % k for k in CHUNK_HANDLERS] + EXTRA_FUNCS if n in procs and n not in names]
+    if HOSTMODE:
+        extra = [n for n in procs if re.match(r"^(cmd[A-Z]\w*|verbdef\w*)$", n)]
+        stubs = stub_map(insns, procs)
+        tabled = sorted({stubs.get(n, n) for n in DATAREFS if n in procs and liftable(stubs.get(n, n), insns, labels, procs, tables)})
+        names = closure(insns, labels, procs, tables, names + [n for n in extra + tabled if n not in names])
+    return names
+
+
+def symbols_main():
+    """write the data symbol names the lifted set uses (input for dump_symbols.py)"""
+    insns, labels, procs, tables, locs = load_asm()
+    syms = set()
+    for n in lifted_set(insns, labels, procs, tables):
+        for i in reachable(insns, labels, tables, procs[n]):
+            syms |= operand_symbols(insns[i], labels, locs)
+    json.dump(sorted(syms), open(sys.argv[2], "w"))
+    print(len(syms), "symbols")
+
+
 def main():
     insns, labels, procs, tables, locs = load_asm()
     syms_all = json.load(open(sys.argv[1]))
     syms, segs = syms_all["syms"], syms_all["segs"]
-    todo = todo_names()
+    funcs = json.load(open(sys.argv[2]))["funcs"] if len(sys.argv) > 2 else {}
+    todo = lifted_set(insns, labels, procs, tables)
     lifted = set(todo)
     L = Lift(insns, labels, procs, tables, locs, syms, segs, lifted)
     for m in re.finditer(r"^(\S+)\s+proc (near|far)", open(ASM, encoding="utf-8", errors="replace").read(), re.M):
@@ -614,6 +760,7 @@ def main():
         d = syms[s]
         dh.append("constexpr uint16_t D_%s = 0x%X;   // %s:%X (linear %X)" % (cid(s), d["ea"] - d["seg"] * 16, d["segname"], d["ea"] - d["seg"] * 16, d["ea"]))
     dh.append("")
+    dh.append("constexpr uint16_t SEG_dseg_para = 0x%X;   // the default data segment (value of ds)" % segs.get("dseg", 0))
     for s in sorted(L.used_segs):
         para = syms[s]["para"] if s in syms and syms[s].get("kind") == "seg" else (syms[s]["seg"] if s in syms else segs.get(s, 0))
         dh.append("constexpr uint16_t SEG_%s = 0x%X;" % (cid(s), para))
@@ -621,19 +768,63 @@ def main():
     api += ["void H_%s(Cpu &c);" % cid(h) for h in sorted(HOSTS - lifted)]
     api += [""] + ["void L_%s(Cpu &c);" % cid(n) for n in todo]
     api += ["", "// handler-style entry points (same signature as the translated handlers in handlers_gen.cpp)"]
-    api += ["intptr_t " + WP + "%s(int phase, int arg_2, int arg_4);" % n for n in todo]
+    api += ["intptr_t " + WP + "%s(int phase, int arg_2, int arg_4);" % cid(n) for n in todo]
     api += ["", "Cpu &liftedCpu();   // provided by the host"]
+    if HOSTMODE:
+        api += ["", "struct LiftedEntry { uint32_t linear; void (*fn)(Cpu &); const char *name; };", "extern const LiftedEntry kLifted[];", "extern const unsigned kLiftedCount;"]
     wrappers = []
     for n in todo:
         ret = "(intptr_t)(((uint32_t)c.dx.x << 16) | c.ax.x)" if n.startswith("conv_text") else "(int16_t)c.ax.x"
-        wrappers.append("intptr_t " + WP + "%s(int phase, int arg_2, int arg_4) {\n\tCpu &c = liftedCpu();\n\tuint16_t sp0 = c.sp;\n\tc.push((uint16_t)arg_4);\n\tc.push((uint16_t)arg_2);\n\tc.push((uint16_t)phase);\n\tc.retWords = 2;\n\tc.push(0);\n\tc.push(0);\n\tL_%s(c);\n\tc.sp = sp0;\n\treturn %s;\n}\n" % (n, cid(n), ret))
+        wrappers.append("intptr_t " + WP + "%s(int phase, int arg_2, int arg_4) {\n\tCpu &c = liftedCpu();\n\tuint16_t sp0 = c.sp;\n\tc.push((uint16_t)arg_4);\n\tc.push((uint16_t)arg_2);\n\tc.push((uint16_t)phase);\n\tc.retWords = 2;\n\tc.push(0);\n\tc.push(0);\n\tL_%s(c);\n\tc.sp = sp0;\n\treturn %s;\n}\n" % (cid(n), cid(n), ret))
     open(os.path.join(GEN, "lifted_data.h"), "w").write("\n".join(dh) + "\n")
     open(os.path.join(GEN, "lifted_api.h"), "w").write("\n".join(api) + "\n")
     open(os.path.join(GEN, "lifted_handlers.cpp"), "w").write(
         "// generated by lift_handlers.py from xanth.asm - do not edit.  Each L_<name> is an instruction-level lowering of one handler (registers in Cpu, gotos for jumps).\n"
         "#include \"lifted_api.h\"\n#include \"lifted_data.h\"\n\n" + "\n".join(body) + "\n" + "\n".join(wrappers))
+    if HOSTMODE:
+        stubs = stub_map(insns, procs)
+        ent = []
+        for n in todo:
+            if n in funcs:
+                ent.append((funcs[n]["ea"], n))
+        for num_, (lab, ea) in CHUNK_HANDLERS.items():
+            if "objh_%03d" % num_ in lifted:
+                ent.append((ea, "objh_%03d" % num_))
+        for st, tgt in stubs.items():
+            tgt2 = tgt
+            while tgt2 in stubs:
+                tgt2 = stubs[tgt2]
+            if tgt2 in lifted and st in funcs:
+                ent.append((funcs[st]["ea"], tgt2))
+        ent = sorted(set(ent))
+        open(os.path.join(GEN, "lifted_table.cpp"), "w").write(
+            "// generated by lift_handlers.py: linear address (segment * 16 + offset) of every lifted function and of the RTLink stubs that jump to it\n"
+            "#include \"lifted_api.h\"\nconst LiftedEntry kLifted[] = {\n" + "".join('\t{0x%X, L_%s, "%s"},\n' % (ea, cid(n), n) for ea, n in ent) + "};\nconst unsigned kLiftedCount = %d;\n" % len(ent))
+        print("table entries", len(ent))
+        hostset = sorted(HOSTS - lifted)
+        open(os.path.join(GEN, "host_functions.txt"), "w").write("\n".join(cid(h) for h in hostset) + "\n")
+        # name tables for the host: every IDB function (address, name, RTLink stub target) and the H_* implementations by original name
+        rows = []
+        for fname, f in sorted(funcs.items(), key=lambda kv: kv[1]["ea"]):
+            tgt = stubs.get(fname, "")
+            while tgt in stubs:
+                tgt = stubs[tgt]
+            rows.append('\t{0x%X, "%s", "%s"},\n' % (f["ea"], fname.replace('"', ""), tgt))
+        open(os.path.join(GEN, "lifted_names.cpp"), "w").write(
+            "// generated by lift_handlers.py\n#include \"lifted_api.h\"\nstruct FuncName { uint32_t linear; const char *name; const char *stubTarget; };\nextern const FuncName kFuncNames[] = {\n"
+            + "".join(rows) + "};\nextern const unsigned kFuncNameCount = %d;\n" % len(rows)
+            + "struct HostEntry { const char *name; void (*fn)(Cpu &); };\nextern const HostEntry kHosts[] = {\n"
+            + "".join('\t{"%s", H_%s},\n' % (h, cid(h)) for h in hostset) + "};\nextern const unsigned kHostCount = %d;\n" % len(hostset))
+        # weak default implementations (log and return 0) so the host only has to define the ones it implements
+        open(os.path.join(GEN, "host_defaults.cpp"), "w").write(
+            "// generated by lift_handlers.py: default (logging) bodies for every engine function the lifted code calls; the host overrides the ones it implements\n"
+            "#include \"lifted_api.h\"\nvoid hostUnimplemented(const char *name, Cpu &c);\n"
+            + "".join('__attribute__((weak)) void H_%s(Cpu &c) { hostUnimplemented("%s", c); }\n' % (cid(h), h) for h in hostset))
     print("lifted", len(todo), "functions;", count, "instructions;", len(HOSTS - lifted), "host functions;", len(set(UNRESOLVED)), "unresolved:", sorted(set(UNRESOLVED))[:30])
 
 
-if __name__ == "__main__" and len(sys.argv) == 2:
-    main()
+if __name__ == "__main__":
+    if len(sys.argv) > 2 and sys.argv[1] == "symbols":
+        symbols_main()
+    elif len(sys.argv) >= 2:
+        main()

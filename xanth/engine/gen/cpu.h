@@ -27,6 +27,8 @@ struct Cpu {
 
 	// computed far/near calls (call dword ptr [..]); the host maps seg:off to a function
 	void (*callFarHook)(Cpu &, uint16_t seg, uint16_t off) = nullptr;
+	// optional tracing: called before every direct call with the callee's original name (arguments readable with arg(n))
+	void (*onCall)(Cpu &, const char *name) = nullptr;
 };
 
 template <class T> struct Sz;
