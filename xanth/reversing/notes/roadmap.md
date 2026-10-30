@@ -17,11 +17,12 @@ Workflow is the same as `shannara/reversing/notes/roadmap.md`: work on a copy of
 
 - Exits (152, kinds 1-4, 56 computed `exit_fn_NN`), voice (VOC directory = convId; clip length vs text r=0.91, ~22 kHz), save regions (205 regions / 4,522 bytes), 82 conversation callbacks and 85 dynamic line texts named and in the digest (751 functions); `analysis/xanth_flags.tsv` cross-references every saved variable with the handlers that write/test it.
 
+- Handler phase order resolved: iobj gets phases 3/4 and dobj 5/6 in both engines (Shannara's `run_command?` agrees; its old note was wrong and is corrected).
+
 - Scenes (716 hotspots, region id = object id), room pictures (68), room music (66), object attributes (23), cutscene list: all data needed to *render and navigate* the Xanth world is located (overview sections 8-16).
 
 ## Next
 1. Write per-room/NPC story summaries from the digest (puzzles, flag logic) and name the remaining ~80 flag bytes meaningfully (they currently carry `flag_ADDR_<first writer>` labels).
-2. Resolve the handler phase order question (iobj 3/4, dobj 5/6 in Xanth vs the opposite in Shannara's notes) by reading Shannara's `run_command?`.
-3. Decode `*.RS` and the SoundBlaster sample-rate table (low priority); trace `play_music_entry` -> device selection for the two MIDI arrangements.
-4. Port the verified decoders (DCL, PIC, RGN, MUS directory, SHANSTR, VOC directory) to C++ and sketch the engine around `run_command` / `call_object_handler` / `Conversation_Show`.
-5. Re-run the pipeline (`extract_func_features.py` -> `match_engines.py --cooc 3 0.9` -> `make_xanth_names.py` -> apply scripts) whenever either IDB gains names; apply order: `apply_xanth_names.py`, `apply_xanth_handlers.py`, `apply_xanth_manual.py`, `apply_xanth_flags.py`.
+2. Decode `*.RS` and the SoundBlaster sample-rate table (low priority); trace `play_music_entry` -> device selection for the two MIDI arrangements.
+3. Port the verified decoders (DCL, PIC, RGN, MUS directory, SHANSTR, VOC directory) to C++ and sketch the engine around `run_command` / `call_object_handler` / `Conversation_Show`.
+4. Re-run the pipeline (`extract_func_features.py` -> `match_engines.py --cooc 3 0.9` -> `make_xanth_names.py` -> apply scripts) whenever either IDB gains names; apply order: `apply_xanth_names.py`, `apply_xanth_handlers.py`, `apply_xanth_manual.py`, `apply_xanth_flags.py`.

@@ -184,7 +184,7 @@ the event. Phases observed at call sites:
 
 | Phase | Where | Meaning |
 |---|---|---|
-| 1-6 | `run_command?` | command pipeline: 1 = room/actor-location pre, 2 = actor, 3 = dobj's container, **4 = dobj**, 5 = iobj's container, **6 = iobj** |
+| 1-6 | `run_command?` | command pipeline: 1 = room/actor-location pre, 2 = actor, 3 = iobj's container, **4 = iobj**, 5 = dobj's container, **6 = dobj** (corrected: `run_command?` stores its dx argument = dobj in `dword_CD92C` and bx = iobj in `dword_CD924`, then offers phases 3/4 to `dword_CD924` and 5/6 to `dword_CD92C`; Xanth is identical) |
 | 7 | `sub_1B9C8` (event 0x200) | event/idle notification |
 | 8 | `verbdef_07_Look` | look-around notification |
 | 9, 0x19 | `sub_1DA04` (start / after restore) | room entry / (re)start |

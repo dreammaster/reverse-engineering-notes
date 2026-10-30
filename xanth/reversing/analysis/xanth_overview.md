@@ -134,7 +134,7 @@ characters in rooms); characters default to verb `TALK_TO` (69). The model is Sh
 Shannara do not exist here: Xanth keeps its game flags as plain bytes/words (`byte_852B3`, `byte_852C0`, ...), which the handlers read and write directly (visible all over the digest).
 
 `call_object_handler` is driven by `run_command` exactly as in Shannara (phases 1-2 for the actor/room objects, 3/4 for one command object and its container, 5/6 for the other); in Xanth the iobj gets phases 3 and 4 and the
-dobj 5 and 6 (checked in `run_command`), whereas Shannara's notes list 4 = dobj and 6 = iobj - one of the two readings is the wrong way round; worth re-checking in Shannara's `run_command` when its handlers are read.
+dobj 5 and 6 (checked in `run_command`). Shannara's `run_command?` is the same (dx = dobj is stored in `dword_CD92C` and gets phases 5/6; bx = iobj in `dword_CD924` gets 3/4); the earlier Shannara note that listed 4 = dobj and 6 = iobj was wrong and has been corrected. Handler bodies agree: e.g. a boulder's phase-4 PUT branch tests `dobj` (the thing being put on it), its phase-6 branches act on `dobj` = itself.
 Digest headers (`xanth_handler_digest.txt`) now list the objects that use each `objh_NNN`.
 
 ## 9. Room exits (2026-10-30)
