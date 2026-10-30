@@ -280,11 +280,17 @@ def run(name, body, calls_known):
                     cases = {}
                     for k, lab in enumerate(TABLES[sw.group(1)]):
                         cases.setdefault(lab, []).append(k)
+                    # the switched variable is the one the preceding range check (`cmp var, N / ja default`) tested
+                    bound = next((c for c in reversed(st.conds) if c[1] in ("<=", "<") and isinstance(c[2], int)), None)
+                    sk = bound[0] if bound else "switch"
+                    ntab = len(TABLES[sw.group(1)])
+                    base = (bound[2] - (ntab - 1 if bound[1] == "<=" else ntab)) if bound else 0   # table index 0 is the value `base` (e.g. after `sub ax, 8`)
+                    cases = {lab: [k + base for k in ks] for lab, ks in cases.items()}
                     for lab, ks in cases.items():
                         if lab in labels and lab not in st.seen:
                             br = st.copy()
                             br.seen.add(lab)
-                            addcond(br, "switch", "==", ks[0] if len(ks) == 1 else "{" + ",".join(map(str, ks)) + "}")
+                            addcond(br, sk, "==", ks[0] if len(ks) == 1 else "{" + ",".join(map(str, ks)) + "}")
                             stack.append((labels[lab], br))
                             npaths += 1
                     break

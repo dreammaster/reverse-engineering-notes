@@ -28,8 +28,19 @@ Shannara's retail `.PIC` pixels are stored raw: `PicFile::decode(i, false)`.
 ## gen/ - handler prototype (generated)
 
 `../reversing/scripts/gen_handlers.py` translates the handler digest (`analysis/xanth_handler_digest.txt`) into C++:
-`gen/handlers_gen.cpp` has 647 of the 707 object handlers / exit functions / conversation callbacks / dynamic texts (`intptr_t objh_NNN(int phase, ...)`),
+`gen/handlers_gen.cpp` has 607 of the 707 object handlers / exit functions / conversation callbacks / dynamic texts (`intptr_t objh_NNN(int phase, ...)`),
 `gen/handlers_api.h` declares the 841 game variables and 95 engine functions they use (`Font_WriteMessage`, `object_move?` -> `object_move_q`, ...) plus the
-`Command` enum and the `MSG(block, index)` macro, and `gen/handlers_todo.txt` lists the 60 handlers that use loops or far-pointer structure accesses (`es:[bx+..]`) and still need hand work.
+`Command` enum and the `MSG(block, index)` macro, and `gen/handlers_todo.txt` lists the 100 handlers that use loops or far-pointer structure accesses (`es:[bx+..]`) and still need hand work.
 The result compiles (`g++ -std=c++17 -fsyntax-only gen/handlers_gen.cpp`) but is only as faithful as the digest (a path-trie summary, not a decompilation); it is the skeleton
 to port against, with the host providing the declared variables and functions.
+
+### How the 707 handlers are produced (all of them are now covered)
+
+`reversing/scripts/rebuild_handlers.sh <scratch>` runs the whole pipeline:
+
+1. `extract_xanth_digest.py` builds the symbolic digest; `gen_handlers.py` turns it into C++ (`gen/handlers_gen.cpp`).
+2. `lift_handlers.py` lowers the same functions instruction by instruction from `xanth.asm` (registers and flags in `gen/cpu.h`, gotos for jumps, jump tables as `switch`, tail jumps into IDA chunks followed, calls to engine functions as `H_<name>(Cpu &)` reading cdecl arguments from the emulated stack). The 707 lifts total 66,941 instructions and have no unresolved operands.
+3. `make_trace_test.py` runs both versions of every handler under mock hosts that record the engine functions called (all-zero state, 14 phases x 12 verbs) and compares the sequences. Results of the last run: 607 of 647 digest translations agree with the lift in every one of 101,976 scenarios; 40 differ (the digest merges paths whose conditions it cannot keep).
+4. The 40 disagreeing handlers (`gen/handlers_mismatch.txt`) and the 60 the digest could never express are taken from the lift: `gen/lifted_handlers.cpp` (100 handlers, 18,639 instructions, `lifted_api.h` / `lifted_data.h` / `cpu.h`). The other 607 stay as readable C++ in `handlers_gen.cpp`.
+
+The trace test only compares the *sequence of engine calls* in one state, so it catches structural errors (it found: verb names compiled as undeclared variables, duplicated nested calls, hoisting of repeated tests, and wrong jump-table case values), not wrong arguments or flag values. The lifted code is exact as far as the 8086 semantics in `cpu.h` are modelled (no `pushf/popf`, no interrupts, DF assumed clear). Neither set has been run inside a real game.

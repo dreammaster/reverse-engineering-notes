@@ -23,7 +23,7 @@ PARAMS = {"phase", "cmd", "dobj", "iobj", "arg_2", "arg_4"}
 KEYWORDS = {"if", "int", "return", "msg", "MSG", "other"}
 
 enums = [r for r in csv.DictReader(open(os.path.join(A, "xanth_enums.tsv")), delimiter="\t")]
-cmds = {r["name"]: int(r["value"]) for r in enums if r["enum"] == "CMD"}
+cmds = {r["name"][4:] if r["name"].startswith("CMD_") else r["name"]: int(r["value"]) for r in enums if r["enum"] == "CMD"}   # the digest prints verbs without the CMD_ prefix
 
 
 def load():
@@ -62,6 +62,8 @@ def expr(e):
             return t
         if re.match(r"(var|arg)_\w+$", t) and t not in PARAMS:
             LOCALS.add(t)
+            return t
+        if re.match(r"_t\d+$", t):
             return t
         if t in KEYWORDS or t in PARAMS or t in ("UNKNOWN_ARG", "ADDR"):
             return t
@@ -120,13 +122,49 @@ def stmt(t):
     raise ValueError("untranslatable: " + t)
 
 
+TEMP = 0
+
+
+def split_cond(c):
+    """`lhs OP rhs` at parenthesis depth 0 (rightmost operator) -> (lhs, op, rhs) or None"""
+    depth, k = 0, len(c) - 1
+    while k > 0:
+        ch = c[k]
+        if ch == ")":
+            depth += 1
+        elif ch == "(":
+            depth -= 1
+        elif depth == 0 and c[k - 1:k + 1] in ("==", "!=", "<=", ">="):
+            return c[:k - 1], c[k - 1:k + 1], c[k + 1:]
+        elif depth == 0 and ch in "<>" and c[k - 1] not in "<>=!":
+            return c[:k], ch, c[k + 1:]
+        k -= 1
+    return None
+
+
+def drop_inner_calls(out, text):
+    """the digest lists a nested call (e.g. print_obj(..) used as an argument, or an `if` tested call) as a statement just before its user: keep only the nested one"""
+    while out:
+        prev = out[-1].strip()
+        if prev.endswith(";") and prev[:-1] and prev[:-1] in text and re.match(r"^[\w]+\(.*\)$", prev[:-1]) and not prev.startswith(("return", "{", "}")):
+            out.pop()
+        else:
+            break
+
+
 def emit(nodes, ind, out):
     pad = "\t" * ind
     i = 0
     while i < len(nodes):
         n = nodes[i]
         if not n.text.startswith("if "):
-            out.append(pad + stmt(n.text))
+            st = stmt(n.text)
+            # the digest shows the last call of a path both as a statement and as `-> call(...)` (its result is the return value): call it once
+            if st.startswith("return ") and out and out[-1].strip() == st[len("return "):] and not out[-1].strip().startswith(("}", "{", "if ")):
+                out.pop()
+            elif st.startswith("return ") or re.match(r"^[\w]+\(", st):
+                drop_inner_calls(out, st)
+            out.append(pad + st)
             i += 1
             continue
         # group of consecutive `if V==const:` siblings with a `V:other:` default
@@ -136,11 +174,24 @@ def emit(nodes, ind, out):
         group = nodes[i:j]
         other = [g for g in group if g.text.endswith(":other:")]
         regular = [g for g in group if not g.text.endswith(":other:")]
-        eq = all(re.match(r"^if [\w?\[\]+\-. ]+==\w+:$", g.text) for g in regular)
+        # sibling tests of the same call result (`f(x)!=0` / `f(x)==0`, or `f(x)==a` / `f(x)==b`) are one test in the original: evaluate the call once
+        hoisted = False
+        if len(regular) >= 2:
+            parts = [split_cond(g.text[3:-1]) for g in regular]
+            if all(parts) and len({p[0] for p in parts}) == 1 and "(" in parts[0][0]:
+                global TEMP
+                TEMP += 1
+                out.append(pad + "{ int _t%d = (int)(%s);" % (TEMP, expr(parts[0][0])))
+                for g, p in zip(regular, parts):
+                    g.text = "if _t%d%s%s:" % (TEMP, p[1], p[2])
+                hoisted = True
+        eq = all(re.match(r"^if [\w?\[\]+\-. ]+==(\w+|\{[0-9,]+\}):$", g.text) for g in regular)
         if other and regular and eq:
             first = True
             for g in regular:
                 c = cond(g.text[3:-1])
+                if first:
+                    drop_inner_calls(out, c)
                 out.append(pad + ("if (%s) {" if first else "} else if (%s) {") % c)
                 emit(g.kids, ind + 1, out)
                 first = False
@@ -152,23 +203,32 @@ def emit(nodes, ind, out):
             emit(other[0].kids, ind + 1, out)
             out.append(pad + "}")
         else:
-            for g in group:
+            for g in regular + other:
                 if g.text.endswith(":other:"):
                     out.append(pad + "{ /* %s */" % g.text[3:-1])
                     emit(g.kids, ind + 1, out)
                     out.append(pad + "}")
                 else:
-                    out.append(pad + "if (%s) {" % cond(g.text[3:-1]))
+                    c_ = cond(g.text[3:-1])
+                    drop_inner_calls(out, c_)
+                    out.append(pad + "if (%s) {" % c_)
                     emit(g.kids, ind + 1, out)
                     out.append(pad + "}")
+        if hoisted:
+            out.append(pad + "}")
         i = j
 
 
 def main():
     fn, order = load()
     body, todo, done = [], [], 0
+    mm = os.path.join(OUT, "handlers_mismatch.txt")
+    mismatch = set(open(mm).read().split()) if os.path.exists(mm) else set()   # written by make_trace_test.py: the digest version disagrees with the lifted one
     for name in order:
         owners, lines = fn[name]
+        if name in mismatch:
+            todo.append("%s	differs from the lifted version in the trace test (digest cannot express it)" % name)
+            continue
         if not (name.startswith("objh_") or name.startswith("exit_fn_") or name.startswith("event_fn_") or name.startswith("conv_cb_") or name.startswith("conv_text_")):
             continue
         bad = [l.strip() for l in lines if IRREG.search(l)]

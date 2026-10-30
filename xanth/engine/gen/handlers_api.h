@@ -3,97 +3,97 @@
 #include <cstdint>
 
 enum Command {
-	CMD_ANSWER = 1,
-	CMD_ATTACH = 2,
-	CMD_BREAK = 3,
-	CMD_CATCH = 4,
-	CMD_CHASE = 5,
-	CMD_CLEAN = 6,
-	CMD_CLIMB = 7,
-	CMD_CLOSE = 8,
-	CMD_CRACK = 9,
-	CMD_CROSS = 10,
-	CMD_CRUMPLE = 11,
-	CMD_CURE = 12,
-	CMD_DO_USE = 13,
-	CMD_DRINK = 14,
-	CMD_EAT = 15,
-	CMD_EMPTY = 16,
-	CMD_ENJOY = 17,
-	CMD_ENTER = 18,
-	CMD_LOOK_AT = 19,
-	CMD_FILL = 20,
-	CMD_FILL_OUT = 21,
-	CMD_FLATTEN = 22,
-	CMD_FLIP = 23,
-	CMD_FOLLOW = 24,
-	CMD_GIVE = 25,
-	CMD_GOTO = 26,
-	CMD_GRAB = 27,
-	CMD_JUMP = 28,
-	CMD_KICK = 29,
-	CMD_KILL = 30,
-	CMD_KISS = 31,
-	CMD_KNEAD = 32,
-	CMD_KNOCK = 33,
-	CMD_LEAD = 34,
-	CMD_LIGHT = 35,
-	CMD_LISTEN = 36,
-	CMD_LOCK = 37,
-	CMD_LOOK = 38,
-	CMD_LOOK_IN = 39,
-	CMD_MAIL = 40,
-	CMD_GET_ON = 41,
-	CMD_MOVE = 42,
-	CMD_MOVE_TO = 43,
-	CMD_OPEN = 44,
-	CMD_PEER_AT = 45,
-	CMD_PICK = 46,
-	CMD_PLAY = 47,
-	CMD_PLUNGE = 48,
-	CMD_POKE = 49,
-	CMD_POP = 50,
-	CMD_POUR = 51,
-	CMD_PRESS = 52,
-	CMD_PRY = 53,
-	CMD_PULL = 54,
-	CMD_PUSH = 55,
-	CMD_PUT = 56,
-	CMD_QUIT = 57,
-	CMD_READ = 58,
-	CMD_REMOVE = 59,
-	CMD_RUB = 60,
-	CMD_SHAKE = 61,
-	CMD_SIT_ON = 62,
-	CMD_SMELL = 63,
-	CMD_SPREAD = 64,
-	CMD_SQUIRT = 65,
-	CMD_SWIM_IN = 66,
-	CMD_SWING = 67,
-	CMD_TAKE = 68,
-	CMD_TALK_TO = 69,
-	CMD_TASTE = 70,
-	CMD_THROW = 71,
-	CMD_TIE = 72,
-	CMD_TOUCH = 73,
-	CMD_TURN = 74,
-	CMD_TURN_OFF = 75,
-	CMD_TURN_ON = 76,
-	CMD_UNLOCK = 77,
-	CMD_UNTIE = 78,
-	CMD_USE = 79,
-	CMD_WAIT = 80,
-	CMD_WALK = 81,
-	CMD_WASH = 82,
-	CMD_WEAR = 83,
-	CMD_PIPE = 84,
-	CMD_LAUNCH = 85,
-	CMD_LOWER = 87,
-	CMD_RAISE = 88,
-	CMD_DRAW = 89,
-	CMD_ATTACK = 90,
-	CMD_DIG_UP = 91,
-	CMD_PET = 92,
+	ANSWER = 1,
+	ATTACH = 2,
+	BREAK = 3,
+	CATCH = 4,
+	CHASE = 5,
+	CLEAN = 6,
+	CLIMB = 7,
+	CLOSE = 8,
+	CRACK = 9,
+	CROSS = 10,
+	CRUMPLE = 11,
+	CURE = 12,
+	DO_USE = 13,
+	DRINK = 14,
+	EAT = 15,
+	EMPTY = 16,
+	ENJOY = 17,
+	ENTER = 18,
+	LOOK_AT = 19,
+	FILL = 20,
+	FILL_OUT = 21,
+	FLATTEN = 22,
+	FLIP = 23,
+	FOLLOW = 24,
+	GIVE = 25,
+	GOTO = 26,
+	GRAB = 27,
+	JUMP = 28,
+	KICK = 29,
+	KILL = 30,
+	KISS = 31,
+	KNEAD = 32,
+	KNOCK = 33,
+	LEAD = 34,
+	LIGHT = 35,
+	LISTEN = 36,
+	LOCK = 37,
+	LOOK = 38,
+	LOOK_IN = 39,
+	MAIL = 40,
+	GET_ON = 41,
+	MOVE = 42,
+	MOVE_TO = 43,
+	OPEN = 44,
+	PEER_AT = 45,
+	PICK = 46,
+	PLAY = 47,
+	PLUNGE = 48,
+	POKE = 49,
+	POP = 50,
+	POUR = 51,
+	PRESS = 52,
+	PRY = 53,
+	PULL = 54,
+	PUSH = 55,
+	PUT = 56,
+	QUIT = 57,
+	READ = 58,
+	REMOVE = 59,
+	RUB = 60,
+	SHAKE = 61,
+	SIT_ON = 62,
+	SMELL = 63,
+	SPREAD = 64,
+	SQUIRT = 65,
+	SWIM_IN = 66,
+	SWING = 67,
+	TAKE = 68,
+	TALK_TO = 69,
+	TASTE = 70,
+	THROW = 71,
+	TIE = 72,
+	TOUCH = 73,
+	TURN = 74,
+	TURN_OFF = 75,
+	TURN_ON = 76,
+	UNLOCK = 77,
+	UNTIE = 78,
+	USE = 79,
+	WAIT = 80,
+	WALK = 81,
+	WASH = 82,
+	WEAR = 83,
+	PIPE = 84,
+	LAUNCH = 85,
+	LOWER = 87,
+	RAISE = 88,
+	DRAW = 89,
+	ATTACK = 90,
+	DIG_UP = 91,
+	PET = 92,
 };
 
 #define MSG(block, index) (0xF0000000u | ((block) << 16) | (index))
@@ -102,71 +102,10 @@ enum Command {
 #define SEG_(x) 0
 
 extern int cmd, dobj, iobj;   // current command (set by run_command)
-extern int ANSWER;
-extern int ATTACH;
-extern int ATTACK;
-extern int BREAK;
-extern int CATCH;
-extern int CHASE;
-extern int CLEAN;
-extern int CLIMB;
-extern int CLOSE;
-extern int CRACK;
-extern int CROSS;
-extern int CRUMPLE;
-extern int DIG_UP;
-extern int DO_USE;
-extern int DRAW;
-extern int DRINK;
-extern int EAT;
-extern int EMPTY;
-extern int ENJOY;
-extern int ENTER;
-extern int FILL;
-extern int FILL_OUT;
-extern int FLATTEN;
-extern int FLIP;
-extern int GET_ON;
-extern int GIVE;
-extern int GOTO;
-extern int GRAB;
-extern int JUMP;
-extern int KICK;
-extern int KILL;
-extern int KISS;
-extern int KNOCK;
-extern int LAUNCH;
-extern int LIGHT;
-extern int LISTEN;
-extern int LOCK;
-extern int LOOK_AT;
-extern int LOOK_IN;
-extern int LOWER;
-extern int MAIL;
-extern int MOVE;
-extern int OPEN;
-extern int PEER_AT;
-extern int PET;
-extern int PICK;
-extern int PIPE;
-extern int PLAY;
-extern int POKE;
-extern int POP;
-extern int POUR;
-extern int PRESS;
-extern int PRY;
-extern int PULL;
-extern int PUSH;
-extern int PUT;
-extern int RAISE;
-extern int READ;
-extern int REMOVE;
-extern int RUB;
 extern int SEG_seg037;
 extern int SEG_seg103;
 extern int SEG_seg106;
 extern int SEG_seg108;
-extern int SEG_seg115;
 extern int SEG_seg117;
 extern int SEG_seg119;
 extern int SEG_seg121;
@@ -188,36 +127,13 @@ extern int SEG_seg176;
 extern int SEG_seg178;
 extern int SEG_seg180;
 extern int SEG_seg182;
-extern int SEG_seg184;
 extern int SEG_seg186;
 extern int SEG_seg188;
-extern int SHAKE;
-extern int SIT_ON;
-extern int SMELL;
-extern int SPREAD;
-extern int SQUIRT;
-extern int SWIM_IN;
-extern int Screen_picPalette;
-extern int TAKE;
-extern int TALK_TO;
-extern int THROW;
-extern int TIE;
-extern int TOUCH;
-extern int TURN;
-extern int TURN_OFF;
-extern int TURN_ON;
-extern int UNLOCK;
-extern int UNTIE;
-extern int USE;
-extern int WALK;
-extern int WASH;
-extern int WEAR;
 extern int _background;
 extern int aA;
 extern int aABall;
 extern int aADullGlow;
 extern int aAFinalTime_;
-extern int aASmallV;
 extern int aAStoneMortar;
 extern int aAboveYou;
 extern int aAgain;
@@ -239,19 +155,16 @@ extern int aAndTheTroll;
 extern int aAnd_6;
 extern int aAnd_7;
 extern int aAnd_8;
-extern int aAnother;
 extern int aApparently;
 extern int aAre_10;
 extern int aAre_15;
 extern int aAre_17;
-extern int aAre_25;
 extern int aAre_26;
 extern int aAre_27;
 extern int aAre_28;
 extern int aAre_29;
 extern int aAre_9;
 extern int aAsAScreen;
-extern int aAt;
 extern int aAt_0;
 extern int aAt_1;
 extern int aBack;
@@ -265,13 +178,11 @@ extern int aBeyond;
 extern int aBlinking;
 extern int aBombs;
 extern int aBothOfThem;
-extern int aBrightensABit;
 extern int aBrightlyLit;
 extern int aBubble_rs;
 extern int aBubble_rs_0;
 extern int aBubble_rs_1;
 extern int aBurn;
-extern int aClos;
 extern int aClos_0;
 extern int aClos_1;
 extern int aClos_2;
@@ -303,13 +214,9 @@ extern int aClosed_16;
 extern int aClosed_17;
 extern int aClosed_18;
 extern int aClosed_21;
-extern int aClosed_23;
-extern int aClosed_24;
 extern int aClosed_3;
 extern int aClosed_4;
 extern int aClosed_5;
-extern int aClosed_6;
-extern int aClosed_7;
 extern int aClosed_8;
 extern int aClosed_9;
 extern int aClosingIt;
@@ -323,13 +230,10 @@ extern int aCreak_rs_2;
 extern int aCreak_rs_3;
 extern int aCrevice_0;
 extern int aDark;
-extern int aDark_0;
 extern int aDarkened;
-extern int aDarkens;
 extern int aDe;
 extern int aDeep;
 extern int aDefeated;
-extern int aDimlyLit;
 extern int aDisney2_rs;
 extern int aDisney2_rs_1;
 extern int aDisney2_rs_2;
@@ -337,7 +241,6 @@ extern int aDo_0;
 extern int aDo_5;
 extern int aDo_6;
 extern int aDoorbell_rs;
-extern int aDown;
 extern int aDown_0;
 extern int aDown_2;
 extern int aDrawsNearer;
@@ -346,21 +249,16 @@ extern int aDrop_0;
 extern int aEmpty_0;
 extern int aEmpty_3;
 extern int aEmpty_4;
-extern int aEseAre;
 extern int aEx;
-extern int aExplode_rs;
 extern int aFairWell_;
 extern int aFarewell_;
 extern int aFastAsleep;
 extern int aFf;
 extern int aFf_;
-extern int aFf_0;
-extern int aFf_2;
 extern int aFf_3;
 extern int aFf_4;
 extern int aFilled_0;
 extern int aFirewall;
-extern int aFirmlyShut;
 extern int aFloor;
 extern int aFloor_1;
 extern int aFly_rs;
@@ -372,7 +270,6 @@ extern int aFrntdoor_rs_0;
 extern int aFromS_;
 extern int aFront;
 extern int aGeese_rs;
-extern int aGreenAndRed;
 extern int aGreen_0;
 extern int aGreen_1;
 extern int aGreen_2;
@@ -386,24 +283,19 @@ extern int aHas_0;
 extern int aHe;
 extern int aHer_1;
 extern int aHere_;
-extern int aHolding;
 extern int aHorrible;
 extern int aHuh_q;
 extern int aIMWaiting_;
 extern int aI_0;
 extern int aInTheFoyer;
 extern int aInYourHand;
-extern int aIn_0;
 extern int aInto;
 extern int aIsClosed;
 extern int aIsEmpty;
 extern int aIsForcedOut;
-extern int aIsIs;
-extern int aIsWideOpen;
 extern int aIs_0;
 extern int aIs_1;
 extern int aIs_2;
-extern int aIsthmusV;
 extern int aItAlreadyIs;
 extern int aItAlreadyIs_;
 extern int aItIsS_;
@@ -413,8 +305,6 @@ extern int aItSS_ItS_;
 extern int aItSVeryLacy_;
 extern int aItSWideOpen_;
 extern int aItSWideOpen__0;
-extern int aItself;
-extern int aKnockOn;
 extern int aLaddy_;
 extern int aLargeCrevice;
 extern int aLieClosed;
@@ -429,12 +319,10 @@ extern int aMaS;
 extern int aMail_rs_0;
 extern int aMailcls_rs;
 extern int aMay;
-extern int aMelting;
 extern int aMetria_;
 extern int aMossFilled;
 extern int aN;
 extern int aNOpen_0;
-extern int aNOpen_1;
 extern int aNOpen_2;
 extern int aNOpen_3;
 extern int aNOpen_4;
@@ -443,9 +331,6 @@ extern int aNOpened;
 extern int aNS_;
 extern int aNT;
 extern int aNUn;
-extern int aNUn_0;
-extern int aN_0;
-extern int aN_2;
 extern int aN_3;
 extern int aN_5;
 extern int aNadaS_;
@@ -457,13 +342,10 @@ extern int aNother;
 extern int aNother_1;
 extern int aNother_2;
 extern int aNother_3;
-extern int aNothing;
 extern int aNothing_;
 extern int aNothing_1;
 extern int aNothing_2;
-extern int aNothing_3;
 extern int aNothing_5;
-extern int aNothing__0;
 extern int aOccupiedByMa;
 extern int aOff;
 extern int aOil_rs;
@@ -473,7 +355,6 @@ extern int aOkay_TellMe;
 extern int aOneCenserHas;
 extern int aOntoTheGround;
 extern int aOpen;
-extern int aOpen_0;
 extern int aOpen_10;
 extern int aOpen_11;
 extern int aOpen_12;
@@ -491,19 +372,15 @@ extern int aOpen_28;
 extern int aOpen_29;
 extern int aOpen_3;
 extern int aOpen_30;
-extern int aOpen_31;
-extern int aOpen_32;
 extern int aOpen_33;
 extern int aOpen_34;
 extern int aOpen_4;
 extern int aOpen_5;
-extern int aOpen_6;
 extern int aOpen_7;
 extern int aOpen_8;
 extern int aOpen_9;
 extern int aOverTheDragon;
 extern int aPaneless;
-extern int aPcon_rs;
 extern int aPcon_rs_0;
 extern int aPend_rs;
 extern int aPend_rs_0;
@@ -515,7 +392,6 @@ extern int aPortclls_rs;
 extern int aPortclls_rs_0;
 extern int aPut;
 extern int aPutSOnS;
-extern int aPut_0;
 extern int aPut_1;
 extern int aRaised;
 extern int aRaised_0;
@@ -525,7 +401,6 @@ extern int aRecommend;
 extern int aRed_0;
 extern int aRed_1;
 extern int aRed_2;
-extern int aRemind;
 extern int aRevealingA;
 extern int aRollsOff;
 extern int aSBlinks_;
@@ -539,17 +414,13 @@ extern int aSIsS_;
 extern int aSIsUnfurled;
 extern int aSSaysC_;
 extern int aS_;
-extern int aS_15;
-extern int aS_2;
 extern int aS_3;
 extern int aS_6;
 extern int aS__1;
-extern int aS__2;
 extern int aS__4;
 extern int aScream1_rs;
 extern int aScream1_rs_1;
 extern int aScream1_rs_2;
-extern int aScream2_rs;
 extern int aScream2_rs_1;
 extern int aScreen;
 extern int aScreens;
@@ -560,7 +431,6 @@ extern int aSlide;
 extern int aSmell;
 extern int aSmellNothing;
 extern int aSoutheast_0;
-extern int aSquish_rs;
 extern int aStandOpen;
 extern int aStaringAtThe;
 extern int aStep_rs;
@@ -569,10 +439,8 @@ extern int aSteps_rs_0;
 extern int aSteps_rs_1;
 extern int aSteps_rs_2;
 extern int aStill;
-extern int aStuff;
 extern int aSubmerge;
 extern int aSuddenly;
-extern int aTalkTo;
 extern int aTall_0;
 extern int aTaste;
 extern int aTellMe;
@@ -588,7 +456,6 @@ extern int aTheir_0;
 extern int aThereIs;
 extern int aThis;
 extern int aThrough;
-extern int aThrow;
 extern int aThunder_rs;
 extern int aTightlyClosed;
 extern int aToClose;
@@ -598,7 +465,6 @@ extern int aTry_;
 extern int aTurnsBlack;
 extern int aTwoCensers;
 extern int aUn_0;
-extern int aUp;
 extern int aUp_0;
 extern int aUp_2;
 extern int aUse;
@@ -606,10 +472,7 @@ extern int aVanquished;
 extern int aViewS_;
 extern int aWallOfFire;
 extern int aWatery;
-extern int aWatery_0;
-extern int aWearing;
 extern int aWest;
-extern int aWhatSLeftOf;
 extern int aWhee_rs;
 extern int aWideOpen;
 extern int aWindy;
@@ -619,13 +482,11 @@ extern int aYehRight;
 extern int aYou;
 extern int aYouHear;
 extern int aYouOpenSAnd;
-extern int aYouOpenS_;
 extern int aYouRe;
 extern int aYouReopenS_;
 extern int aYouReopenS__0;
 extern int aYouS_;
 extern int aYouSnatchUpS;
-extern int aYouSwallowS_;
 extern int aYou_0;
 extern int aYou_1;
 extern int aYou_3;
@@ -636,7 +497,6 @@ extern int a__5;
 extern int a__7;
 extern int advisor_questions_asked;
 extern int asc_880AF;
-extern int asc_889B2;
 extern int ax;
 extern int byte_8524E;
 extern int byte_8525D;
@@ -661,7 +521,6 @@ extern int byte_852FA;
 extern int byte_85301;
 extern int byte_85302;
 extern int byte_85304;
-extern int byte_85310;
 extern int byte_8531B;
 extern int byte_85323;
 extern int byte_8532C;
@@ -676,7 +535,6 @@ extern int byte_87003;
 extern int byte_871F2;
 extern int byte_87396;
 extern int byte_8750E;
-extern int byte_87556;
 extern int byte_87642;
 extern int byte_876AE;
 extern int byte_87708;
@@ -688,8 +546,6 @@ extern int byte_878CE;
 extern int byte_8795A;
 extern int byte_87980;
 extern int byte_879BC;
-extern int byte_879EE;
-extern int byte_879EF;
 extern int byte_87B76;
 extern int byte_87BA0;
 extern int byte_87F55;
@@ -717,7 +573,6 @@ extern int byte_88974;
 extern int byte_88982;
 extern int byte_88A4A;
 extern int byte_88AB2;
-extern int byte_8ADF4;
 extern int byte_8B9D2;
 extern int byte_8B9D3;
 extern int byte_8B9D4;
@@ -799,7 +654,6 @@ extern int flag_8530D_faucet;
 extern int flag_8530E_sink;
 extern int flag_8530F_faucet;
 extern int flag_85311_pentominoes;
-extern int flag_85313_boulder;
 extern int flag_85314_sink;
 extern int flag_85315_sink;
 extern int flag_85316_well;
@@ -821,7 +675,6 @@ extern int flag_85332_exit_fn_33;
 extern int flag_85333_conv37;
 extern int flag_871EE_telephone;
 extern int flag_871F0_telephone;
-extern int flag_8B9DE_cylinder;
 extern int flag_8B9E2_exit_fn_12;
 extern int follower_obj;
 extern int guardian_riddle_count;
@@ -832,15 +685,12 @@ extern int picNum;
 extern int selectedCommand;
 extern int ss;
 extern int story_stage;
-extern int switch_index;
 extern int unk_4D880;
 extern int unk_4D8EC;
 extern int unk_4F1A8;
 extern int unk_4F1CC;
 extern int unk_50840;
 extern int unk_5087C;
-extern int unk_55B80;
-extern int unk_55BEC;
 extern int unk_56DD0;
 extern int unk_56E00;
 extern int unk_57930;
@@ -881,10 +731,8 @@ extern int unk_782E8;
 extern int unk_78300;
 extern int unk_79690;
 extern int unk_796A8;
-extern int unk_796CC;
 extern int unk_7A800;
 extern int unk_7A818;
-extern int unk_7B8D0;
 extern int unk_7C150;
 extern int unk_7C174;
 extern int unk_7C820;
@@ -901,8 +749,6 @@ extern int unk_8798E;
 extern int unk_879BE;
 extern int unk_879CA;
 extern int unk_87B78;
-extern int unk_87BA2;
-extern int unk_87BAE;
 extern int unk_87BD6;
 extern int unk_88104;
 extern int unk_88110;
@@ -913,7 +759,6 @@ extern int unk_88618;
 extern int unk_88624;
 extern int unk_88888;
 extern int unk_888D6;
-extern int unk_889BA;
 extern int unk_88AB4;
 extern int unk_88AC0;
 extern int voc_enabled;
@@ -966,7 +811,6 @@ intptr_t event_pending(...);
 intptr_t game_over_screen_q(...);
 intptr_t go_to_room_q(...);
 intptr_t load_game_q(...);
-intptr_t loc_701CD(...);
 intptr_t lock_combination_correct(...);
 intptr_t move_to_current_room_q(...);
 intptr_t number_to_words(...);
@@ -991,7 +835,6 @@ intptr_t random_percent(...);
 intptr_t realsound_play(...);
 intptr_t reset_color_cycle_q(...);
 intptr_t run_command_q(...);
-intptr_t save_game_q(...);
 intptr_t schedule_event_q(...);
 intptr_t set_mouse_cursor_q(...);
 intptr_t setup_pic_regions_q(...);
@@ -999,7 +842,6 @@ intptr_t showCutscene(...);
 intptr_t show_compendium(...);
 intptr_t show_status_dialog(...);
 intptr_t show_text_box(...);
-intptr_t sub_192F9(...);
 intptr_t sub_1D99F(...);
 intptr_t sub_1EB3A(...);
 intptr_t sub_1EDBC(...);
@@ -1018,8 +860,6 @@ intptr_t sub_2A333(...);
 intptr_t sub_2A386(...);
 intptr_t sub_2A5B4(...);
 intptr_t sub_3F997(...);
-intptr_t sub_43FF0(...);
-intptr_t sub_4404C(...);
 intptr_t sub_440CA(...);
 intptr_t sub_44130(...);
 intptr_t sub_443EB(...);
@@ -1033,7 +873,6 @@ intptr_t sub_67E2A(...);
 intptr_t sub_69FF7(...);
 intptr_t sub_6C42D(...);
 intptr_t sub_70120(...);
-intptr_t sub_7016A(...);
 intptr_t sub_73F97(...);
 intptr_t verbdef_Put_out_q(...);
 intptr_t wait_ticks_or_click(...);
@@ -1054,7 +893,6 @@ intptr_t conv_cb_11(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_12(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_13(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_14(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t conv_cb_15(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_16(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_17(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_18(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1113,12 +951,9 @@ intptr_t conv_cb_73(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_74(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_75(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_76(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t conv_cb_77(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_78(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_79(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_80(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t conv_cb_81(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t conv_cb_82(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_00(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_02(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_03(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1138,7 +973,6 @@ intptr_t conv_text_16(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_17(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_18(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_19(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t conv_text_22(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_23(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_24(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_26(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1148,7 +982,6 @@ intptr_t conv_text_32(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_33(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_34(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_35(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t conv_text_36(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_37(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_38(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_text_39(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1301,7 +1134,6 @@ intptr_t objh_022(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_023(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_024(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_025(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_026(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_028(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_029(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_031(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1309,7 +1141,6 @@ intptr_t objh_032(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_033(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_034(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_035(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_036(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_037(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_038(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_039(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1346,23 +1177,16 @@ intptr_t objh_072(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_073(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_074(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_075(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_076(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_077(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_078(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_079(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_080(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_081(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_082(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_083(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_084(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_087(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_088(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_089(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_090(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_091(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_092(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_093(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_094(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_095(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_096(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_097(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1371,7 +1195,6 @@ intptr_t objh_099(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_100(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_101(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_102(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_103(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_104(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_105(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_106(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1380,7 +1203,6 @@ intptr_t objh_108(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_109(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_110(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_111(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_112(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_113(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_114(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_115(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1388,16 +1210,13 @@ intptr_t objh_116(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_117(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_118(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_119(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_120(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_121(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_122(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_123(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_124(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_125(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_126(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_127(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_128(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_129(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_132(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_133(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_134(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1410,7 +1229,6 @@ intptr_t objh_141(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_142(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_143(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_144(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_145(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_146(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_148(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_149(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1435,7 +1253,6 @@ intptr_t objh_167(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_168(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_169(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_170(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_171(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_172(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_173(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_174(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1444,7 +1261,6 @@ intptr_t objh_176(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_178(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_179(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_181(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_183(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_184(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_185(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_186(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1452,7 +1268,6 @@ intptr_t objh_187(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_188(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_189(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_190(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_191(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_192(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_193(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_194(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1507,7 +1322,6 @@ intptr_t objh_251(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_252(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_253(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_254(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_255(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_256(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_257(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_258(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1534,7 +1348,6 @@ intptr_t objh_281(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_282(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_283(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_284(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_285(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_286(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_287(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_288(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1542,13 +1355,7 @@ intptr_t objh_289(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_290(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_292(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_293(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_294(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_295(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_297(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_298(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_299(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_300(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_301(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_302(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_303(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_304(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1592,7 +1399,6 @@ intptr_t objh_342(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_343(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_344(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_346(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_347(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_348(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_349(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_350(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1621,16 +1427,12 @@ intptr_t objh_372(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_373(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_374(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_375(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_376(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_377(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_381(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_382(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_383(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_384(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_385(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_386(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_387(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_389(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_391(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_392(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_393(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1642,9 +1444,7 @@ intptr_t objh_398(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_400(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_401(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_402(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_403(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_404(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_405(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_406(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_407(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_408(int phase, int arg_2 = 0, int arg_4 = 0);
@@ -1654,7 +1454,6 @@ intptr_t objh_411(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_412(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_413(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_414(int phase, int arg_2 = 0, int arg_4 = 0);
-intptr_t objh_415(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_416(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_417(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t objh_418(int phase, int arg_2 = 0, int arg_4 = 0);

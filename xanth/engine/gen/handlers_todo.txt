@@ -1,10 +1,16 @@
+conv_cb_15	differs from the lifted version in the trace test (digest cannot express it)
 conv_cb_21	2 irregular line(s), e.g. ds = seg seg193
 conv_cb_45	untranslatable: tail loc_47D3C
 conv_cb_46	2 irregular line(s), e.g. ds = seg seg193
+conv_cb_77	differs from the lifted version in the trace test (digest cannot express it)
+conv_cb_81	differs from the lifted version in the trace test (digest cannot express it)
+conv_cb_82	differs from the lifted version in the trace test (digest cannot express it)
 conv_text_01	1 irregular line(s), e.g. -> dword_86A3E[bx]
 conv_text_20	1 irregular line(s), e.g. -> dword_86ADA[bx]
+conv_text_22	differs from the lifted version in the trace test (digest cannot express it)
 conv_text_25	1 irregular line(s), e.g. -> es:[bx+0]
 conv_text_29	302 irregular line(s), e.g. conversation_set_enabled(0x803F, es:[bx+0], 1)
+conv_text_36	differs from the lifted version in the trace test (digest cannot express it)
 conv_text_47	1 irregular line(s), e.g. -> es:[bx+75Ch]
 conv_text_48	1 irregular line(s), e.g. -> es:[bx+778h]
 conv_text_49	1 irregular line(s), e.g. -> es:[bx+790h]
@@ -28,14 +34,32 @@ event_fn_43	1 irregular line(s), e.g. Font_WriteMessage(msg(31:0x2E), es:[bx+6Ch
 event_fn_44	1 irregular line(s), e.g. ds = seg seg193
 exit_fn_12	68 irregular line(s), e.g. if [bx]!=byte_8BE1C:
 objh_005	4 irregular line(s), e.g. if [bx]==current_room:
+objh_026	differs from the lifted version in the trace test (digest cannot express it)
+objh_036	differs from the lifted version in the trace test (digest cannot express it)
 objh_069	136 irregular line(s), e.g. if object_parent_is?([bx], 0x49)!=0:
 objh_070	untranslatable: tail loc_4FB59
+objh_076	differs from the lifted version in the trace test (digest cannot express it)
+objh_080	differs from the lifted version in the trace test (digest cannot express it)
 objh_085	163 irregular line(s), e.g. loop
+objh_087	differs from the lifted version in the trace test (digest cannot express it)
+objh_088	differs from the lifted version in the trace test (digest cannot express it)
+objh_089	differs from the lifted version in the trace test (digest cannot express it)
+objh_092	differs from the lifted version in the trace test (digest cannot express it)
+objh_094	differs from the lifted version in the trace test (digest cannot express it)
+objh_103	differs from the lifted version in the trace test (digest cannot express it)
+objh_112	differs from the lifted version in the trace test (digest cannot express it)
+objh_120	differs from the lifted version in the trace test (digest cannot express it)
+objh_122	differs from the lifted version in the trace test (digest cannot express it)
+objh_129	differs from the lifted version in the trace test (digest cannot express it)
 objh_130	2 irregular line(s), e.g. if es:[bx+66h]==5:
 objh_131	7 irregular line(s), e.g. Font_WriteMessage(&aASGem, es:[bx], es:[bx+2])
 objh_137	2 irregular line(s), e.g. if es:[bx+66h]==5:
+objh_145	differs from the lifted version in the trace test (digest cannot express it)
 objh_147	172 irregular line(s), e.g. if [bx]==0:
+objh_171	differs from the lifted version in the trace test (digest cannot express it)
 objh_182	untranslatable: [truncated: more than 150 paths]
+objh_183	differs from the lifted version in the trace test (digest cannot express it)
+objh_191	differs from the lifted version in the trace test (digest cannot express it)
 objh_197	4 irregular line(s), e.g. [bx+2C7Eh] or ?
 objh_204	2 irregular line(s), e.g. [bx+2C7Eh] or ?
 objh_207	untranslatable: [truncated: more than 150 paths]
@@ -45,16 +69,32 @@ objh_226	untranslatable: [truncated: more than 150 paths]
 objh_229	1 irregular line(s), e.g. Font_WriteMessage(msg(33:0x34), es:[bx+84h], es:[bx+86h])
 objh_231	2 irregular line(s), e.g. Font_WriteMessage(msg(33:0x30), &aNother_0, [bx+30BAh], [bx+30BCh])
 objh_249	90 irregular line(s), e.g. if object_is_at(es:[bx], 1, 0)!=0:
+objh_255	differs from the lifted version in the trace test (digest cannot express it)
 objh_267	2 irregular line(s), e.g. if es:[bx+66h]==5:
 objh_268	untranslatable: [truncated: more than 150 paths]
 objh_278	28 irregular line(s), e.g. if object_has_attr?([bx], 0xA)==0:
+objh_285	differs from the lifted version in the trace test (digest cannot express it)
 objh_291	untranslatable: tail loc_702DF
+objh_294	differs from the lifted version in the trace test (digest cannot express it)
+objh_295	differs from the lifted version in the trace test (digest cannot express it)
 objh_296	16 irregular line(s), e.g. if object_parent_is?([bx], dobj)!=0:
+objh_297	differs from the lifted version in the trace test (digest cannot express it)
+objh_299	differs from the lifted version in the trace test (digest cannot express it)
+objh_300	differs from the lifted version in the trace test (digest cannot express it)
+objh_301	differs from the lifted version in the trace test (digest cannot express it)
 objh_345	64 irregular line(s), e.g. if [bx-2]==current_room:
+objh_347	differs from the lifted version in the trace test (digest cannot express it)
+objh_376	differs from the lifted version in the trace test (digest cannot express it)
 objh_378	15 irregular line(s), e.g. if object_has_attr?([bx], 0xA)!=0:
 objh_379	108 irregular line(s), e.g. if [bx]!=dobj:
 objh_380	25 irregular line(s), e.g. if object_has_attr?([bx], 0xA)!=0:
+objh_384	differs from the lifted version in the trace test (digest cannot express it)
+objh_386	differs from the lifted version in the trace test (digest cannot express it)
 objh_388	2 irregular line(s), e.g. if es:[bx+66h]==5:
+objh_389	differs from the lifted version in the trace test (digest cannot express it)
 objh_390	1 irregular line(s), e.g. es:[bx] = 0x1A
 objh_399	2 irregular line(s), e.g. if es:[bx+66h]==5:
+objh_403	differs from the lifted version in the trace test (digest cannot express it)
+objh_405	differs from the lifted version in the trace test (digest cannot express it)
+objh_415	differs from the lifted version in the trace test (digest cannot express it)
 objh_441	36 irregular line(s), e.g. if es:[bx]!=dobj:
