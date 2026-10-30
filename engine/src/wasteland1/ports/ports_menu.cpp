@@ -3,6 +3,7 @@
 #include "wasteland1/globals.h"
 #include "wasteland1/listmenu.h"
 #include "wasteland1/menu.h"
+#include "wasteland1/roster.h"
 
 namespace wl {
 namespace rc {
@@ -39,6 +40,15 @@ PORT(itemList) { const ListResult l = itemList(m, r.a.b.l); r.cf = l.cf; r.a.b.l
 PORT(itemScreen) { const ListResult l = itemScreen(m, r.a.b.l); r.cf = l.cf; r.a.b.l = l.al; }   // 19394
 
 PORT(rearrangeParty) { rearrangeParty(m); }                                             // 12AE0
+
+PORT(drawRosterRow) { drawRosterRow(m); }                                               // 1708B
+PORT(redrawRosterRowHere) { redrawRosterRow(m, r.a.b.l, 0xFF); }                          // 17029: al = position, inverse text
+PORT(redrawRosterRowPlain) { redrawRosterRow(m, r.a.b.l, 0); }                            // 1702E
+PORT(redrawRosterRowKeep) { redrawRosterRow(m, r.a.b.l, m.d8(0x471F)); }                  // 17033
+PORT(drawRosterFrame) { drawRosterFrame(m); }                                           // 16F70
+
+PORT(drawRosterHeadersAndMembers) { drawRosterHeadersAndMembers(m); }                  // 1728C (al is preserved)
+PORT(showTitleText) { showTitleText(m, r.a.b.l); }                                      // 17923
 
 } // namespace rc
 } // namespace wl
