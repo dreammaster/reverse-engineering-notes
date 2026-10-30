@@ -194,3 +194,10 @@ Everything a savegame needs is therefore enumerable from two tables, which is wh
 
 Also named: `follower_obj` (the object that follows the player between rooms: `go_to_room` moves it into the new room and gives it handler phase 0x1A). Room-entry sequence in `go_to_room`: handler phase 0xF for the old room (leaving; non-zero cancels), `current_room` changes,
 the player and followers are moved, `update_room_light`, `set_room_music`, phase 0xD (entering, before the description), `describe_room`, phase 0xE (after the description); the first visit awards the room's points (`object_get_points` -> `add_score`) and sets attribute 5.
+
+## 13. Room music (2026-10-30)
+
+`set_room_music(room)` looks the room up in a 66-entry table (`analysis/xanth_room_music.tsv`, `scripts/dump_music.py`) of `{u16 room; u16 musicId; u8 volume; u8 loop}` (all volume 127, looped) and calls `play_music_entry(musicId, volume, loop)`.
+**`musicId = (file number << 8) | tune`**: `0x105` = tune 5 of `XANTH_01.MUS`, `0x204` = tune 4 of `XANTH_02.MUS`, ...; the tune numbers used (1-12, 1-12, 1-11, 1-8) fit the tune counts of the four archives exactly (12/12/11/8 tunes = 24/24/22/16
+directory records). Rooms 0x22 (bedroom), 0x40 and 0x51 bypass the table and play `0x307` (volume 0x7F, loop); rooms not in the table fall back to `0x302` / `0x307` depending on a sword flag. `play_music_entry` first checks the sound-device bits
+in `word_8912E` (bits 1-2 and 5-6, mapping to the two MIDI arrangements per tune) and remembers the current tune in `word_8911A` / `word_8912C` (both saved in the savegame tail).
