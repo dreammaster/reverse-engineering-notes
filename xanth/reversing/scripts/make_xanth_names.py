@@ -29,13 +29,18 @@ AUTO_DATA = ("dword_", "word_", "byte_", "unk_", "off_", "stru_", "asc_", "flt_"
 
 
 def tier(m):
+    """A = shared unique string; B = structurally supported (co-occurrence, identical callee signature, refinement, or propagation with solid support);
+    C = propagation/order alignment for functions of at least 32 bytes with similar size; D = dropped (tiny or unsupported)."""
     via = m["via"].split(":")[0]
     r = (m["s_size"] + 6) / (m["x_size"] + 6)
+    votes, dice = m.get("votes", 0), m.get("dice", 0)
     if via == "string":
         return "A"
-    if via in ("callee-of", "sole-caller-of") and 0.6 <= r <= 1.7:
+    if via in ("cooc", "signature", "refined", "data-anchor") and 0.4 <= r <= 2.5:
         return "B"
-    if via in ("order-gap", "callee-order") and 0.6 <= r <= 1.7 and m["s_size"] >= 24 and m["x_size"] >= 24:
+    if via in ("callee-of", "sole-caller-of") and 0.6 <= r <= 1.7 and (votes >= 3 and dice >= 0.5):
+        return "B"
+    if via in ("callee-of", "sole-caller-of", "order-gap", "callee-order") and 0.6 <= r <= 1.7 and m["s_size"] >= 32 and m["x_size"] >= 32:
         return "C"
     return "D"
 
@@ -59,7 +64,7 @@ for m in M:
     if t == "D":
         continue
     nm = xname(m["s_name"])
-    x_auto = m["x_name"].startswith(AUTO)
+    x_auto = m["x_name"].startswith(AUTO) or m["x_name"].endswith("?")  # a trailing '?' is a name transferred by an earlier run
     ev = "Shannara retail %x %s (tier %s, %s, sizes %d/%d)" % (m["s"], m["s_name"], t, m["via"], m["s_size"], m["x_size"])
     if nm and x_auto:
         names.append((m["x"], nm, ev))
@@ -86,7 +91,7 @@ with open(os.path.join(OUT, "data_matches.tsv"), "w") as f:
     for p in D:
         f.write("%x\t%s\t%x\t%s\t%d\n" % (p["s"], sn.get(p["s"], ""), p["x"], xn.get(p["x"], ""), p["votes"]))
         s_real = sn.get(p["s"], "") and not sn[p["s"]].startswith(AUTO_DATA)
-        x_auto = not xn.get(p["x"], "") or xn[p["x"]].startswith(AUTO_DATA)
+        x_auto = not xn.get(p["x"], "") or xn[p["x"]].startswith(AUTO_DATA) or xn[p["x"]].endswith("?")
         if s_real and x_auto:
             nm = sn[p["s"]]
             names.append((p["x"], nm if nm.endswith("?") else nm + "?", "data: Shannara retail %x %s (%d votes)" % (p["s"], nm, p["votes"])))

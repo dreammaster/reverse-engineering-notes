@@ -20,7 +20,30 @@ import sys
 
 def load(p):
     F = {f["ea"]: f for f in json.load(open(p))}
+    resolve_stubs(F)
     return F
+
+
+def resolve_stubs(F):
+    """RTLink overlay calls go through tiny stubs (`call rtlink_thunk; jmp target`): replace each stub in every call list by its target"""
+    stubs = {ea: f["tail"] for ea, f in F.items() if f.get("tail") and f["size"] <= 16}
+    if not stubs:
+        return
+    def res(c, depth=0):
+        while c in stubs and depth < 4:
+            c = stubs[c]
+            depth += 1
+        return c
+    for f in F.values():
+        f["calls"] = [res(c) for c in f["calls"]]
+    callers = {}
+    for ea, f in F.items():
+        for c in set(f["calls"]):
+            callers.setdefault(c, set()).add(ea)
+    for ea, f in F.items():
+        f["n_callers"] = len(callers.get(ea, ()))
+    for ea in stubs:
+        F[ea]["name"] = F[ea]["name"]  # keep; stubs stay in the table but are no longer referenced
 
 
 LIB_PREFIX = ("_", "__", "j_", "nullsub", "unknown_libname")
@@ -274,18 +297,245 @@ def data_anchors(S, X, pairs):
     return added
 
 
+COOC_VOTES, COOC_DICE = 3, 0.6
+
+
+def cooc_round(S, X, pairs, min_votes=None, min_dice=None):
+    min_votes = COOC_VOTES if min_votes is None else min_votes
+    min_dice = COOC_DICE if min_dice is None else min_dice
+    """co-occurrence voting: a function pair is supported by every matched caller pair (a,b) that call c and x respectively, and by every matched
+    callee pair (q,r) that are called by c and x respectively.  Accept mutually best candidates with enough support."""
+    inv = {b: a for a, (b, _) in pairs.items()}
+    s_calls = {a: set(S[a]["calls"]) for a in S}
+    x_calls = {b: set(X[b]["calls"]) for b in X}
+    s_callers = collections.defaultdict(set)
+    x_callers = collections.defaultdict(set)
+    for a, cs in s_calls.items():
+        for c in cs:
+            s_callers[c].add(a)
+    for b, cs in x_calls.items():
+        for c in cs:
+            x_callers[c].add(b)
+    votes = collections.defaultdict(collections.Counter)
+    for a, (b, _) in pairs.items():
+        for c in s_calls[a]:
+            for x in x_calls[b]:
+                votes[c][x] += 1
+        for c in s_callers[a] if False else ():
+            pass
+    # callee-side evidence: matched callees (q,r) vote for their callers
+    for q, (r, _) in pairs.items():
+        for c in s_callers[q]:
+            for x in x_callers[r]:
+                votes[c][x] += 1
+    cand = []
+    for c, cnt in votes.items():
+        if c in pairs or not is_game(S[c]):
+            continue
+        nc = len(set(a for a in s_callers[c] if a in pairs)) + len(set(q for q in s_calls[c] if q in pairs))
+        for x, v in cnt.items():
+            if x in inv or not is_game(X[x]) or v < min_votes:
+                continue
+            nx = len(set(b for b in x_callers[x] if b in inv)) + len(set(r for r in x_calls[x] if r in inv))
+            dice = 2.0 * v / max(1, nc + nx)
+            r = (S[c]["size"] + 8) / (X[x]["size"] + 8)
+            if dice >= min_dice and 0.35 <= r <= 2.8:
+                cand.append((dice, v, c, x))
+    cand.sort(reverse=True)
+    taken_s, taken_x, added = set(), set(), 0
+    for dice, v, c, x in cand:
+        if c in taken_s or x in taken_x:
+            continue
+        # mutual best: no better competing candidate for either side was skipped (greedy order guarantees this)
+        pairs[c] = (x, "cooc:%d/%.2f" % (v, dice))
+        inv[x] = c
+        taken_s.add(c)
+        taken_x.add(x)
+        added += 1
+    return added
+
+
+def support(S, X, pairs):
+    """for every pair: (votes, dice) from co-occurring matched callers and callees; also returns the vote tables for alternatives"""
+    inv = {b: a for a, (b, _) in pairs.items()}
+    s_calls = {a: set(S[a]["calls"]) for a in S}
+    x_calls = {b: set(X[b]["calls"]) for b in X}
+    s_callers, x_callers = collections.defaultdict(set), collections.defaultdict(set)
+    for a, cs in s_calls.items():
+        for c in cs:
+            s_callers[c].add(a)
+    for b, cs in x_calls.items():
+        for c in cs:
+            x_callers[c].add(b)
+    votes = collections.defaultdict(collections.Counter)
+    for a, (b, _) in pairs.items():
+        for c in s_calls[a]:
+            for x in x_calls[b]:
+                votes[c][x] += 1
+    for q, (r, _) in pairs.items():
+        for c in s_callers[q]:
+            for x in x_callers[r]:
+                votes[c][x] += 1
+    def mdeg_s(c):
+        return len(set(a for a in s_callers[c] if a in pairs)) + len(set(q for q in s_calls[c] if q in pairs))
+    def mdeg_x(x):
+        return len(set(b for b in x_callers[x] if b in inv)) + len(set(r for r in x_calls[x] if r in inv))
+    return votes, mdeg_s, mdeg_x
+
+
+def refine(S, X, pairs, rounds=4):
+    """replace a pair when a clearly better-supported alternative exists for its Shannara function"""
+    changed = 0
+    for _ in range(rounds):
+        votes, ds, dx = support(S, X, pairs)
+        inv = {b: a for a, (b, _) in pairs.items()}
+        swaps = []
+        for a, (b, via) in list(pairs.items()):
+            if via == "string":
+                continue
+            cnt = votes.get(a, {})
+            v0 = cnt.get(b, 0)
+            d0 = 2.0 * v0 / max(1, ds(a) + dx(b))
+            best = None
+            for x, v in cnt.items():
+                if x == b or v < 3 or not is_game(X[x]):
+                    continue
+                d = 2.0 * v / max(1, ds(a) + dx(x))
+                r = (S[a]["size"] + 8) / (X[x]["size"] + 8)
+                if d >= 0.8 and d > d0 + 0.3 and 0.35 <= r <= 2.8 and (best is None or d > best[0]):
+                    best = (d, v, x)
+            if best:
+                swaps.append((a, b, best))
+        done = 0
+        for a, b, (d, v, x) in sorted(swaps, key=lambda t: -t[2][0]):
+            holder = inv.get(x)
+            if holder is not None and holder != a:
+                if pairs[holder][1] == "string":
+                    continue
+                del pairs[holder]
+                del inv[x]
+            if inv.get(b) == a:
+                del inv[b]
+            pairs[a] = (x, "refined:%d/%.2f" % (v, d))
+            inv[x] = a
+            done += 1
+        changed += done
+        if not done:
+            break
+    return changed
+
+
+def sig_round(S, X, pairs, replace=True):
+    """structural signature: the set of callees (mapped through the current pairs) plus the set of mapped data references.  A function whose
+    callees/data are all matched is identified when exactly one function on the other side has the identical signature."""
+    dp = vote_data(S, X, pairs)
+    dmap = {x: y for x, (y, n) in dp.items()}
+    inv = {b: a for a, (b, _) in pairs.items()}
+
+    def ssig(a):
+        f = S[a]
+        calls = set()
+        for c in f["calls"]:
+            if c in pairs:
+                calls.add(pairs[c][0])
+            elif c != a:
+                return None
+        data = set()
+        for d in f["data"]:
+            if d in dmap:
+                data.add(dmap[d])
+            else:
+                return None
+        if not calls and not data:
+            return None
+        return (frozenset(calls), frozenset(data))
+
+    def xsig(b):
+        f = X[b]
+        return (frozenset(c for c in f["calls"] if c != b), frozenset(f["data"]))
+
+    xs = collections.defaultdict(list)
+    for b in X:
+        if is_game(X[b]):
+            sg = xsig(b)
+            if sg[0] or sg[1]:
+                xs[sg].append(b)
+    ss = collections.defaultdict(list)
+    for a in S:
+        if is_game(S[a]):
+            sg = ssig(a)
+            if sg:
+                ss[sg].append(a)
+    added = 0
+    import math
+    for sg, al in ss.items():
+        bl = xs.get(sg, [])
+        if not bl or len(al) > 4 or len(bl) > 4:
+            continue
+        cands = []
+        if len(al) == len(bl):                       # same count: the two builds link the shared sources in the same order
+            for a, b in zip(sorted(al), sorted(bl)):
+                r = (S[a]["size"] + 8) / (X[b]["size"] + 8)
+                if 0.4 <= r <= 2.5:
+                    cands.append((0.0, a, b))
+        else:
+            for a in al:
+                for b in bl:
+                    r = (S[a]["size"] + 8) / (X[b]["size"] + 8)
+                    if 0.5 <= r <= 2.0:
+                        cands.append((abs(math.log(r)), a, b))
+        cands.sort()
+        ua, ub = set(), set()
+        for d, a, b in cands:
+            if a in ua or b in ub:
+                continue
+            # when the group is ambiguous require a clear size winner for this pair
+            if (len(al) > 1 or len(bl) > 1):
+                rivals = [c for c in cands if (c[1] == a) != (c[2] == b) and (c[1] == a or c[2] == b)]
+                if rivals and min(c[0] for c in rivals) < d + 0.15:
+                    continue
+            ua.add(a)
+            ub.add(b)
+            cur = pairs.get(a)
+            if cur and cur[0] == b:
+                continue
+            if cur:
+                if not replace or cur[1] == "string":
+                    continue
+                inv.pop(cur[0], None)
+            holder = inv.get(b)
+            if holder is not None and holder != a:
+                if pairs[holder][1] == "string":
+                    continue
+                del pairs[holder]
+            pairs[a] = (b, "signature")
+            inv[b] = a
+            added += 1
+    return added
+
+
 def main():
     S, X = load(sys.argv[1]), load(sys.argv[2])
     add_keys(S)
     add_keys(X)
     out = sys.argv[3]
     holdout = float(sys.argv[sys.argv.index("--holdout") + 1]) if "--holdout" in sys.argv else 0.0
+    global COOC_VOTES, COOC_DICE
+    if "--cooc" in sys.argv:
+        i = sys.argv.index("--cooc")
+        COOC_VOTES, COOC_DICE = int(sys.argv[i + 1]), float(sys.argv[i + 2])
     pairs, held = seeds(S, X, holdout)
     n0 = len(pairs)
+    for _ in range(8):
+        if not cooc_round(S, X, pairs):
+            break
     pairs = propagate(S, X, pairs)
     for _ in range(5):
         g = fill_gaps(S, X, pairs)
         g += data_anchors(S, X, pairs)
+        g += cooc_round(S, X, pairs)
+        g += refine(S, X, pairs)
+        g += sig_round(S, X, pairs)
         pairs = propagate(S, X, pairs)
         if not g:
             break
@@ -302,7 +552,9 @@ def main():
             else:
                 missing += 1
         print("held-out string pairs: correct %d, wrong %d, not matched %d" % (right, wrong, missing))
-    json.dump([dict(s=a, x=b, via=v, s_name=S[a]["name"], x_name=X[b]["name"], s_size=S[a]["size"], x_size=X[b]["size"]) for a, (b, v) in sorted(pairs.items())], open(out, "w"), indent=0)
+    refine(S, X, pairs)
+    votes, ds, dx = support(S, X, pairs)
+    json.dump([dict(votes=votes.get(a, {}).get(b, 0), dice=round(2.0 * votes.get(a, {}).get(b, 0) / max(1, ds(a) + dx(b)), 2), s=a, x=b, via=v, s_name=S[a]["name"], x_name=X[b]["name"], s_size=S[a]["size"], x_size=X[b]["size"]) for a, (b, v) in sorted(pairs.items())], open(out, "w"), indent=0)
 
 
 if __name__ == "__main__":

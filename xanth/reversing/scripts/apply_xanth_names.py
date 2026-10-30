@@ -16,7 +16,29 @@ import ida_kernwin
 HERE = os.path.dirname(os.path.abspath(__file__))
 TSV = os.path.join(HERE, "..", "analysis", "xanth_names.tsv")
 AUTO = re.compile(r"^(sub_|nullsub_|loc_|j_|dword_|word_|byte_|unk_|seg_|off_|stru_|asc_|flt_|qword_|jpt_|byte|word)")
-done = renamed = 0
+MARK = "Shannara retail"
+done = renamed = reset = 0
+
+
+def strip_marked(c, sep):
+    return sep.join(l for l in c.split(sep) if MARK not in l)
+
+
+# pass 1: undo what an earlier run wrote (a '?' name whose comment carries the marker, and the marked comments themselves) so a better match can replace it
+import idautils
+for ea, nm in list(idautils.Names()):
+    fn = ida_funcs.get_func(ea)
+    is_func = fn is not None and fn.start_ea == ea
+    c = (idc.get_func_cmt(ea, 0) if is_func else idc.get_cmt(ea, 1)) or ""
+    if MARK not in c:
+        continue
+    if nm.endswith("?"):
+        idc.set_name(ea, "", idc.SN_NOWARN)
+        reset += 1
+    if is_func:
+        idc.set_func_cmt(ea, strip_marked(c, chr(10)), 0)
+    else:
+        idc.set_cmt(ea, strip_marked(c, " | "), 1)
 with open(TSV, encoding="utf-8") as f:
     next(f)
     for line in f:
@@ -42,6 +64,6 @@ with open(TSV, encoding="utf-8") as f:
                 idc.set_cmt(ea, (old + " | " if old else "") + cmt, 1)
         done += 1
 idc.save_database(idc.get_idb_path(), 0)
-print("applied", done, "renamed", renamed)
+print("applied", done, "renamed", renamed, "reset", reset)
 if not ida_kernwin.is_idaq():
     idc.qexit(0)

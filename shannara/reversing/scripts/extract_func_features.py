@@ -3,7 +3,7 @@ IDAPython: dumps per-function matching features from an open IDB to JSON, for co
 (e.g. retail Shannara, 32-bit Watcom, against Companions of Xanth, 16-bit Microsoft C, see match_engines.py):
 
   ea, name, size, nblocks, callees (function start eas), n_callers, strings (literals referenced), consts (immediates >= 0x20),
-  calls (ordered list of callee eas incl. duplicates), data (ordered non-string data addresses referenced) with data_names
+  tail (target of a final jmp in a tiny function: RTLink overlay stubs are `call rtlink_thunk; jmp target`), calls (ordered list of callee eas incl. duplicates), data (ordered non-string data addresses referenced) with data_names
 
     idat.exe -A -S"extract_func_features.py out.json" copy.idb       (relative out path; works for 16/32-bit IDBs)
 """
@@ -37,6 +37,7 @@ for f in starts:
     fn = ida_funcs.get_func(f)
     size = fn.end_ea - fn.start_ea
     strings, consts, calls, data = [], set(), [], []
+    tail = None
     ea = fn.start_ea
     while ea < fn.end_ea:
         insn = ida_ua.insn_t()
@@ -63,13 +64,18 @@ for f in starts:
                 if cf and cf.start_ea == r:
                     calls.append(r)
                     callers.setdefault(r, set()).add(f)
+        if mnem == "jmp" and size <= 16:
+            for r in idautils.CodeRefsFrom(ea, 0):
+                tf = ida_funcs.get_func(r)
+                if tf and tf.start_ea == r and r != f:
+                    tail = r
         ea += ln
     nb = 0
     try:
         nb = sum(1 for _ in ida_gdl.FlowChart(fn))
     except Exception:
         pass
-    funcs[f] = dict(ea=f, name=idc.get_func_name(f), size=size, nblocks=nb, strings=strings, consts=sorted(consts)[:40], calls=calls, data=data, data_names=[idc.get_name(d) for d in data])
+    funcs[f] = dict(ea=f, name=idc.get_func_name(f), size=size, nblocks=nb, strings=strings, consts=sorted(consts)[:40], calls=calls, tail=tail, data=data, data_names=[idc.get_name(d) for d in data])
 for f, d in funcs.items():
     d["n_callers"] = len(callers.get(f, ()))
 json.dump(list(funcs.values()), open(out, "w"))

@@ -1,0 +1,11 @@
+old_name	new_name	comment
+call_object_handler?	call_object_handler	verified by reading: handler_index (object_get_handler_index) in 1..0x1C0 -> far call through object_handler_table, argument = phase; returns 0 when none
+sub_41A6E	save_io_block	(ptr, size, count, FILE*, mode): fwrite/fread of count*size bytes depending on mode (2/0xA write, else read); used by serialize_state
+word_8580C	object_count	number of objects (OBJECT.DAT); loop bound in serialize_state and call_object_handler
+word_85336	save_region_count	number of {far ptr, u16 size} entries in the savegame region table (seg_8AA38 + 0x116, 6 bytes each)
+word_850AC	event_count	number of scheduled events (schedule_event? caps it at 16)
+unk_80702	event_list	scheduled event records, saved by serialize_state as event_count * 4 bytes after the u16 count
+byte_8BCE8	save_header	0x20-byte savegame header written/read first in serialize_state (modes 2 and 0xA)
+seg_8AA34	object_table_seg	segment of the object table: 6-byte entries from offset 0x6C {u8 type; ?; far ptr to the object's state}
+seg_8AA36	object_sizes_seg	segment of the per-type byte size table (byte at [type*3 - 1])
+seg_8AA38	save_regions_seg	segment of the save region table (6-byte entries from offset 0x116)
