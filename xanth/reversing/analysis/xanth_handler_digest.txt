@@ -1512,7 +1512,7 @@ cmdWear
     Font_WriteMessage(msg(18:0x55), print_obj(2, dobj), ?)
     -> 1
 
-objh_002
+objh_002   # objects: 2 Grundy
   if phase:other:
     -> 0
   if phase==6:
@@ -1552,7 +1552,7 @@ objh_002
       show_compendium(0x5A, 0x5A00)
       -> 1
 
-objh_003
+objh_003   # objects: 3 headman
   if phase==6:
     if cmd:other:
       -> 0
@@ -1702,7 +1702,7 @@ objh_003
               if ((dobj - 0x8B) - 8)!=8:
                 -> 0
 
-objh_004
+objh_004   # objects: 4 Kim
   if phase==6:
     if cmd:other:
       -> 0
@@ -1729,7 +1729,7 @@ objh_004
   if phase:other:
     -> 0
 
-objh_005
+objh_005   # objects: 5 Nada
   if phase==0x1A:
     if word_8B9E2!=0x5A:
       if obj_85216==0xCD:
@@ -1928,7 +1928,7 @@ objh_005
               if object_parent_is?(0x91, 1)!=0:
                 -> 1
 
-objh_006
+objh_006   # objects: 6 Jenny
   if phase:other:
     -> 0
   if phase==6:
@@ -1976,7 +1976,7 @@ objh_006
   if phase==0x1A:
     -> 1
 
-objh_007
+objh_007   # objects: 7 Sammy
   if phase:other:
     -> 0
   if phase==6:
@@ -2009,7 +2009,7 @@ objh_007
         show_compendium(0x2C6, 0x5A06)
         -> 1
 
-objh_008
+objh_008   # objects: 8 ogress
   if phase==6:
     if cmd:other:
       -> 0
@@ -2059,7 +2059,7 @@ objh_008
         show_compendium(0x3E1, 0x5A13)
         -> 1
 
-objh_009
+objh_009   # objects: 9 ogre boy
   if phase==6:
     if cmd:other:
       -> 0
@@ -2124,7 +2124,7 @@ objh_009
         Font_WriteMessage(msg(6:0x2E), print_obj(2, dobj), ?)
         -> 1
 
-objh_010
+objh_010   # objects: 10 Metria
   if phase:other:
     -> 0
   if phase==6:
@@ -2165,7 +2165,7 @@ objh_010
       show_compendium(0x307, 0x5A04)
       -> 1
 
-objh_011
+objh_011   # objects: 11 Che
   if phase:other:
     -> 0
   if phase==6:
@@ -2189,7 +2189,7 @@ objh_011
     if cmd:other:
       -> 0
 
-objh_012
+objh_012   # objects: 13 Fairy Nuff
   if phase==6:
     if cmd:other:
       -> 0
@@ -2294,7 +2294,7 @@ objh_012
         show_compendium(0x359, 0x64E)
         -> 1
 
-objh_013
+objh_013   # objects: 14 fireman
   if phase:other:
     -> 0
   if phase==6:
@@ -2334,7 +2334,7 @@ objh_013
         Font_WriteMessage(msg(6:0x37))
         -> 1
 
-objh_014
+objh_014   # objects: 15 hot dog
   if phase==6:
     if cmd:other:
       -> 0
@@ -2383,7 +2383,7 @@ objh_014
         if dobj!=0x4D:
           -> 0
 
-objh_015
+objh_015   # objects: 16 firearm
   if phase:other:
     -> 0
   if phase==6:
@@ -2416,7 +2416,7 @@ objh_015
       MouseCursor_SetSmallArrow()
       -> 1
 
-objh_016
+objh_016   # objects: 17 troll
   if phase:other:
     -> 0
   if phase==6:
@@ -2443,7 +2443,7 @@ objh_016
     if cmd:other:
       -> 0
 
-objh_017
+objh_017   # objects: 18 Ma Anathe
   if phase==6:
     if cmd:other:
       -> 0
@@ -2485,7 +2485,7 @@ objh_017
         object_move?(0x15F, 1, 0)
         -> 1
 
-objh_018
+objh_018   # objects: 19 Guardian
   if phase:other:
     -> 0
   if phase==6:
@@ -2525,7 +2525,7 @@ objh_018
         Font_WriteMessage(msg(6:0x44))
         -> 1
 
-objh_019
+objh_019   # objects: 20 door
   if phase:other:
     -> 0
   if phase==6:
@@ -2556,7 +2556,7 @@ objh_019
       Font_WriteMessage(msg(8:3))
       -> 1
 
-objh_020
+objh_020   # objects: 21 path
   if phase==6:
     if cmd==TALK_TO:
       print_obj(2, dobj)
@@ -2775,7 +2775,7 @@ objh_020
               object_move?(0x78, 0, 0)
               -> 1
 
-objh_021
+objh_021   # objects: 22 bush
   if phase==6:
     if cmd:other:
       -> 0
@@ -2799,7 +2799,7 @@ objh_021
   if phase:other:
     -> 0
 
-objh_022
+objh_022   # objects: 23 ocean
   if phase:other:
     -> 0
   if phase==6:
@@ -2866,7 +2866,7 @@ objh_022
       Font_WriteMessage(msg(8:0x3D), print_obj(0x12, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_023
+objh_023   # objects: 24 sky
   if phase:other:
     -> 0
   if phase==6:
@@ -2925,7 +2925,7 @@ objh_023
       Font_WriteMessage(msg(8:0x2A))
       -> 1
 
-objh_024
+objh_024   # objects: 25 desert
   if phase:other:
     -> 0
   if phase==6:
@@ -2957,7 +2957,7 @@ objh_024
     if cmd:other:
       -> 0
 
-objh_025
+objh_025   # objects: 26 cliffs
   if phase:other:
     -> 0
   if phase==6:
@@ -3006,7 +3006,7 @@ objh_025
         Font_WriteMessage(msg(8:0x4B), print_obj(2, dobj, print_obj(2, iobj, print_obj(4, dobj, msg(8:0x4C)), ?), ?), ?)
         -> 1
 
-objh_026
+objh_026   # objects: 27 distant cliffs
   if phase:other:
     -> 0
   if phase==6:
@@ -3029,7 +3029,7 @@ objh_026
     if cmd:other:
       -> 0
 
-objh_028
+objh_028   # objects: 30 forest
   if phase:other:
     -> 0
   if phase==6:
@@ -3056,7 +3056,7 @@ objh_028
     if cmd:other:
       -> 0
 
-objh_029
+objh_029   # objects: 31 censer smoke, 32 censer smoke
   if phase==6:
     if cmd==TALK_TO:
       Font_WriteMessage(msg(8:0x42))
@@ -3168,13 +3168,13 @@ objh_029
             run_command?(0xD, 0x96, dobj)
             -> run_command?(0xD, 0x96, dobj)
 
-objh_031
+objh_031   # objects: 34 bedroom
   if phase:other:
     -> 0
     tail cs:off_4CBB2[bx]
     -> tail
 
-objh_032
+objh_032   # objects: 35 desk
   if phase:other:
     -> 0
   if phase==6:
@@ -3209,7 +3209,7 @@ objh_032
       if dobj==0x24:
         -> 0
 
-objh_033
+objh_033   # objects: 36 envelope
   if phase==6:
     if cmd==TALK_TO:
       sub_1EF00()
@@ -3317,7 +3317,7 @@ objh_033
           object_move?(dobj, iobj, 1)
           -> 1
 
-objh_034
+objh_034   # objects: 37 letter from Pia
   if phase:other:
     -> 0
   if phase==6:
@@ -3387,7 +3387,7 @@ objh_034
       Font_WriteMessage(msg(3:0x19), print_obj(0x12, dobj), ?)
       -> 1
 
-objh_035
+objh_035   # objects: 38 bracelet
   if phase==6:
     if cmd:other:
       -> 0
@@ -3413,7 +3413,7 @@ objh_035
   if phase:other:
     -> 0
 
-objh_036
+objh_036   # objects: 39 personal computer
   if phase==6:
     if cmd==READ:
       run_command?(cmd, 0x28, 0)
@@ -3778,7 +3778,7 @@ objh_036
         object_move?(dobj, iobj, 1)
         -> 1
 
-objh_037
+objh_037   # objects: 40 computer screen
   if phase:other:
     -> 0
   if phase==6:
@@ -3854,7 +3854,7 @@ objh_037
       Font_WriteMessage(msg(50:0x1B))
       -> 1
 
-objh_038
+objh_038   # objects: 41 power switch
   if phase:other:
     -> 0
   if phase==6:
@@ -3936,7 +3936,7 @@ objh_038
                 add_score?(9, 1, 0)
                 -> 1
 
-objh_039
+objh_039   # objects: 42 light, 43 light
   if phase:other:
     -> 0
   if phase==6:
@@ -3986,7 +3986,7 @@ objh_039
       Font_WriteMessage(msg(50:0x1E))
       -> 1
 
-objh_040
+objh_040   # objects: 44 Post-It(tm)
   if phase:other:
     -> 0
   if phase==6:
@@ -4054,7 +4054,7 @@ objh_040
               object_move?(dobj, iobj, 1)
               -> 1
 
-objh_041
+objh_041   # objects: 45 window
   if phase==6:
     if cmd:other:
       -> 0
@@ -4077,7 +4077,7 @@ objh_041
   if phase:other:
     -> 0
 
-objh_042
+objh_042   # objects: 46 pen holder
   if phase:other:
     -> 0
   if phase==6:
@@ -4111,7 +4111,7 @@ objh_042
       Font_WriteMessage(msg(3:0x2D), print_obj(0x12, iobj, print_obj(6, dobj), ?), ?)
       -> 1
 
-objh_043
+objh_043   # objects: 47 pencils
   if phase==6:
     if cmd:other:
       -> 0
@@ -4134,7 +4134,7 @@ objh_043
   if phase:other:
     -> 0
 
-objh_044
+objh_044   # objects: 48 bookshelf
   if phase==6:
     if cmd:other:
       -> 0
@@ -4157,7 +4157,7 @@ objh_044
   if phase:other:
     -> 0
 
-objh_046
+objh_046   # objects: 50 disk drive
   if phase:other:
     -> 0
   if phase==6:
@@ -4191,13 +4191,13 @@ objh_046
       Font_WriteMessage(msg(50:0x11), print_obj(1, 0x56, print_obj(1, 0x31), ?), ?)
       -> 1
 
-objh_047
+objh_047   # objects: 51 entrance
   if phase:other:
     -> 0
     tail cs:off_4E67A[bx]
     -> tail
 
-objh_048
+objh_048   # objects: 52 front door
   if phase:other:
     -> 0
   if phase==6:
@@ -4252,7 +4252,7 @@ objh_048
         byte_87002 = 0
         -> 1
 
-objh_049
+objh_049   # objects: 53 blue mat
   if phase==6:
     if cmd:other:
       -> 0
@@ -4271,7 +4271,7 @@ objh_049
   if phase:other:
     -> 0
 
-objh_050
+objh_050   # objects: 54 painting
   if phase==6:
     if cmd:other:
       -> 0
@@ -4291,7 +4291,7 @@ objh_050
   if phase:other:
     -> 0
 
-objh_051
+objh_051   # objects: 55 mirror
   if phase==6:
     if cmd:other:
       -> 0
@@ -4313,7 +4313,7 @@ objh_051
   if phase:other:
     -> 0
 
-objh_052
+objh_052   # objects: 56 potted plant
   if phase==6:
     if cmd:other:
       -> 0
@@ -4339,7 +4339,7 @@ objh_052
   if phase:other:
     -> 0
 
-objh_053
+objh_053   # objects: 57 flowers
   if phase==6:
     if cmd:other:
       -> 0
@@ -4364,7 +4364,7 @@ objh_053
   if phase:other:
     -> 0
 
-objh_054
+objh_054   # objects: 58 wood table
   if phase:other:
     -> 0
   if phase==6:
@@ -4391,7 +4391,7 @@ objh_054
     if cmd:other:
       -> 0
 
-objh_055
+objh_055   # objects: 59 kitchen
   if phase==6:
     if cmd:other:
       -> 0
@@ -4416,7 +4416,7 @@ objh_055
   if phase:other:
     -> 0
 
-objh_056
+objh_056   # objects: 60 light
   if phase:other:
     -> 0
   if phase==6:
@@ -4529,7 +4529,7 @@ objh_056
       Font_WriteMessage(msg(4:0x3B))
       -> 1
 
-objh_057
+objh_057   # objects: 61 foyer switch
   if phase:other:
     -> 0
   if phase==6:
@@ -4593,7 +4593,7 @@ objh_057
       Font_WriteMessage(msg(4:0x3E))
       -> 1
 
-objh_058
+objh_058   # objects: 62 front stoop
   if phase:other:
     -> 0
   if phase==6:
@@ -4634,7 +4634,7 @@ objh_058
         Font_WriteMessage(msg(4:0x4A), print_obj(2, dobj), ?)
         -> 1
 
-objh_059
+objh_059   # objects: 63 front yard
   if phase==6:
     if cmd:other:
       -> 0
@@ -4650,13 +4650,13 @@ objh_059
   if phase:other:
     -> 0
 
-objh_060
+objh_060   # objects: 64 kitchen
   if phase:other:
     -> 0
     tail cs:off_4F24E[bx]
     -> tail
 
-objh_061
+objh_061   # objects: 65 telephone
   if phase:other:
     -> 0
   if phase==6:
@@ -4743,7 +4743,7 @@ objh_061
           word_871F0 = 0
           -> 1
 
-objh_062
+objh_062   # objects: 66 kitchen sink
   if phase:other:
     -> 0
   if phase==6:
@@ -4777,7 +4777,7 @@ objh_062
       Font_WriteMessage(msg(5:0x15), print_obj(2, dobj), ?)
       -> 1
 
-objh_063
+objh_063   # objects: 67 dishes
   if phase==6:
     if cmd:other:
       -> 0
@@ -4797,7 +4797,7 @@ objh_063
   if phase:other:
     -> 0
 
-objh_064
+objh_064   # objects: 68 hand towel
   if phase==6:
     if cmd:other:
       -> 0
@@ -4813,7 +4813,7 @@ objh_064
   if phase:other:
     -> 0
 
-objh_065
+objh_065   # objects: 69 table
   if phase:other:
     -> 0
   if phase==6:
@@ -4851,7 +4851,7 @@ objh_065
         Font_WriteMessage(msg(5:0x41))
         -> 1
 
-objh_066
+objh_066   # objects: 70 chair
   if phase==6:
     if cmd:other:
       -> 0
@@ -4875,7 +4875,7 @@ objh_066
   if phase:other:
     -> 0
 
-objh_067
+objh_067   # objects: 71 cabinets
   if phase==6:
     if cmd==OPEN:
       Font_WriteMessage(msg(5:0x37))
@@ -4895,7 +4895,7 @@ objh_067
   if phase:other:
     -> 0
 
-objh_068
+objh_068   # objects: 72 window
   if phase==6:
     if cmd:other:
       -> 0
@@ -4917,7 +4917,7 @@ objh_068
   if phase:other:
     -> 0
 
-objh_069
+objh_069   # objects: 73 icebox
   if phase==6:
     if cmd==TALK_TO:
       if object_has_attr?(dobj, 0xE)!=0:
@@ -6024,7 +6024,7 @@ objh_069
       -> 0
   [truncated: more than 150 paths]
 
-objh_070
+objh_070   # objects: 74 chocolate box
   if arg_2!=4:
     if ((arg_2 - 4) - 1)!=1:
       tail loc_4FB59
@@ -6075,7 +6075,7 @@ objh_070
       tail loc_4FB5B
       -> tail
 
-objh_071
+objh_071   # objects: 75 sandwich
   if phase==6:
     if cmd==TALK_TO:
       Font_WriteMessage(msg(5:0x4E))
@@ -6151,7 +6151,7 @@ objh_071
               object_set_attr?(iobj, 0xA)
               -> 1
 
-objh_072
+objh_072   # objects: 76 freezer
   if phase==6:
     if cmd:other:
       -> 0
@@ -6167,7 +6167,7 @@ objh_072
   if phase:other:
     -> 0
 
-objh_073
+objh_073   # objects: 77 mustard
   if phase:other:
     -> 0
   if phase==6:
@@ -6527,7 +6527,7 @@ objh_073
       object_set_default_verb?(dobj, 0x2C)
       -> 1
 
-objh_074
+objh_074   # objects: 78 teabag
   if phase:other:
     -> 0
   if phase==6:
@@ -6574,7 +6574,7 @@ objh_074
       Font_WriteMessage(msg(5:0x69), print_obj(0x12, dobj), ?)
       -> 1
 
-objh_075
+objh_075   # objects: 79 foyer
   if phase==6:
     if cmd:other:
       -> 0
@@ -6593,7 +6593,7 @@ objh_075
   if phase:other:
     -> 0
 
-objh_076
+objh_076   # objects: 80 package
   if phase:other:
     -> 0
   if phase==6:
@@ -6650,7 +6650,7 @@ objh_076
         Font_WriteMessage(msg(21:6), print_obj(2, dobj), ?)
         -> 1
 
-objh_077
+objh_077   # objects: 81 game box
   if phase==6:
     if cmd==TALK_TO:
       print_obj(1, dobj)
@@ -6744,7 +6744,7 @@ objh_077
           object_move?(dobj, iobj, 1)
           -> 1
 
-objh_078
+objh_078   # objects: 82 game manual
   if phase==6:
     if cmd==READ:
       Font_WriteMessage(msg(21:0x11))
@@ -6767,7 +6767,7 @@ objh_078
   if phase:other:
     -> 0
 
-objh_079
+objh_079   # objects: 83 warranty card
   if phase:other:
     -> 0
   if phase==6:
@@ -6812,7 +6812,7 @@ objh_079
         Font_WriteMessage(msg(21:0x24), print_obj(2, dobj), ?)
         -> 1
 
-objh_080
+objh_080   # objects: 84 3D glasses
   if phase:other:
     -> 0
   if phase==6:
@@ -6895,7 +6895,7 @@ objh_080
       Font_WriteMessage(msg(21:0x2A))
       -> 1
 
-objh_081
+objh_081   # objects: 85 Com-pendium
   if phase==6:
     if cmd:other:
       -> 0
@@ -6924,7 +6924,7 @@ objh_081
   if phase:other:
     -> 0
 
-objh_082
+objh_082   # objects: 86 diskette
   if phase:other:
     -> 0
   if phase==6:
@@ -7005,7 +7005,7 @@ objh_082
       Font_WriteMessage(msg(21:0x3E), print_obj(2, dobj), ?)
       -> 1
 
-objh_083
+objh_083   # objects: 87 plastic wrap
   if phase:other:
     -> 0
   if phase==6:
@@ -7031,7 +7031,7 @@ objh_083
       Font_WriteMessage(msg(21:0x16), print_obj(0x52, dobj, &aDo_5), ?)
       -> 1
 
-objh_084
+objh_084   # objects: 88 brown paper
   if phase:other:
     -> 0
   if phase==6:
@@ -7144,13 +7144,13 @@ objh_084
         run_command?(0x3C, iobj, dobj)
         -> run_command?(0x3C, iobj, dobj)
 
-objh_085
+objh_085   # objects: 90 screen
   if phase:other:
     -> 0
     tail cs:off_50A8E[bx]
     -> tail
 
-objh_087
+objh_087   # objects: 92 cavern door
   if phase==6:
     if cmd:other:
       -> 0
@@ -7173,7 +7173,7 @@ objh_087
   if phase:other:
     -> 0
 
-objh_088
+objh_088   # objects: 93 cavern door
   if phase:other:
     -> 0
   if phase==6:
@@ -7208,7 +7208,7 @@ objh_088
         Font_WriteMessage(msg(22:9), &aClosed_6)
         -> 1
 
-objh_089
+objh_089   # objects: 94 cavern door
   if phase:other:
     -> 0
   if phase==6:
@@ -7244,7 +7244,7 @@ objh_089
       Font_WriteMessage(msg(22:0xF))
       -> 1
 
-objh_090
+objh_090   # objects: 95 cavern door
   if phase==6:
     if cmd:other:
       -> 0
@@ -7265,7 +7265,7 @@ objh_090
   if phase:other:
     -> 0
 
-objh_091
+objh_091   # objects: 96 doorway
   if phase==6:
     if cmd:other:
       -> 0
@@ -7284,7 +7284,7 @@ objh_091
   if phase:other:
     -> 0
 
-objh_092
+objh_092   # objects: 97 metal bars
   if phase:other:
     -> 0
   if phase==6:
@@ -7325,7 +7325,7 @@ objh_092
       Font_WriteMessage(msg(22:0x19), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_093
+objh_093   # objects: 98 torch
   if phase==6:
     if cmd:other:
       -> 0
@@ -7342,7 +7342,7 @@ objh_093
   if phase:other:
     -> 0
 
-objh_094
+objh_094   # objects: 99 cave entrance
   if phase:other:
     -> 0
   if phase==8:
@@ -7350,7 +7350,7 @@ objh_094
     Font_WriteMessage(msg(22:0x1F))
     -> 0
 
-objh_095
+objh_095   # objects: 100 small bridge
   if phase==6:
     if cmd==LOOK_AT:
       Font_WriteMessage(msg(22:0x24))
@@ -7360,7 +7360,7 @@ objh_095
   if phase:other:
     -> 0
 
-objh_096
+objh_096   # objects: 101 brook
   if phase==6:
     if cmd==LOOK_AT:
       Font_WriteMessage(msg(22:0x25))
@@ -7370,7 +7370,7 @@ objh_096
   if phase:other:
     -> 0
 
-objh_097
+objh_097   # objects: 102 cave entrance
   if phase==6:
     if cmd:other:
       -> 0
@@ -7384,7 +7384,7 @@ objh_097
   if phase:other:
     -> 0
 
-objh_098
+objh_098   # objects: 103 cave exit
   if phase==6:
     if cmd:other:
       -> 0
@@ -7397,13 +7397,13 @@ objh_098
   if phase:other:
     -> 0
 
-objh_099
+objh_099   # objects: 105 crossroads
   if phase:other:
     -> 0
     tail cs:off_51B2C[bx]
     -> tail
 
-objh_100
+objh_100   # objects: 106 tree
   if phase==6:
     if cmd:other:
       -> 0
@@ -7433,7 +7433,7 @@ objh_100
   if phase:other:
     -> 0
 
-objh_101
+objh_101   # objects: 107 tree
   if phase:other:
     -> 0
   if phase==6:
@@ -7479,7 +7479,7 @@ objh_101
         Font_WriteMessage(msg(9:0xF), print_obj(2, dobj, print_obj(6, dobj), ?), ?)
         -> 1
 
-objh_102
+objh_102   # objects: 108 cherry bombs
   if phase:other:
     -> 0
   if phase==6:
@@ -7546,7 +7546,7 @@ objh_102
       Font_WriteMessage(msg(9:0x11), ?, ?)
       -> 1
 
-objh_103
+objh_103   # objects: 109 cherry bomb
   if phase:other:
     -> 0
   if phase==6:
@@ -7621,7 +7621,7 @@ objh_103
       Font_WriteMessage(msg(9:0x19), print_obj(2, dobj), ?)
       -> 1
 
-objh_104
+objh_104   # objects: 110 babbling brook
   if phase:other:
     -> 0
   if phase==6:
@@ -7673,7 +7673,7 @@ objh_104
         Font_WriteMessage(msg(9:0x24), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
         -> 1
 
-objh_105
+objh_105   # objects: 111 waterfall
   if phase:other:
     -> 0
   if phase==6:
@@ -7711,7 +7711,7 @@ objh_105
         run_command?(cmd, dobj, 0x6E)
         -> run_command?(cmd, dobj, 0x6E)
 
-objh_106
+objh_106   # objects: 112 bridge
   if phase:other:
     -> 0
   if phase==6:
@@ -7742,7 +7742,7 @@ objh_106
         Font_WriteMessage(msg(9:0x2D), print_obj(2, dobj, print_obj(2, iobj, print_obj(6, dobj), ?), ?), ?)
         -> 1
 
-objh_107
+objh_107   # objects: 113 bridge
   if phase:other:
     -> 0
   if phase==6:
@@ -7769,7 +7769,7 @@ objh_107
       Font_WriteMessage(msg(9:0x30), print_obj(2, dobj, print_obj(2, iobj, print_obj(4, dobj), ?), ?), ?)
       -> 1
 
-objh_108
+objh_108   # objects: 114 log jam
   if phase==6:
     if cmd:other:
       -> 0
@@ -7854,7 +7854,7 @@ objh_108
           run_command?(cmd, dobj, 0x73)
           -> run_command?(cmd, dobj, 0x73)
 
-objh_109
+objh_109   # objects: 115 log
   if phase==6:
     if cmd==TALK_TO:
       print_obj(2, dobj)
@@ -8104,7 +8104,7 @@ objh_109
           run_command?(0x35, 0x73, dobj)
           -> run_command?(0x35, 0x73, dobj)
 
-objh_110
+objh_110   # objects: 116 buttercups
   if phase:other:
     -> 0
   if phase==6:
@@ -8221,7 +8221,7 @@ objh_110
     if cmd:other:
       -> 0
 
-objh_111
+objh_111   # objects: 117 buttercup
   if phase:other:
     -> 0
   if phase==6:
@@ -8353,7 +8353,7 @@ objh_111
         run_command?(4, 0x77, iobj)
         -> run_command?(4, 0x77, iobj)
 
-objh_112
+objh_112   # objects: 118 butter
   if phase:other:
     -> 0
   if phase==6:
@@ -8461,7 +8461,7 @@ objh_112
           Font_WriteMessage(msg(48:0x1C))
           -> 1
 
-objh_113
+objh_113   # objects: 119 fireflies
   if phase:other:
     -> 0
   if phase==6:
@@ -8561,7 +8561,7 @@ objh_113
                 if object_has_attr?(0x78, 0xA)!=0:
                   -> 1
 
-objh_114
+objh_114   # objects: 120 firefly
   if phase:other:
     -> 0
   if phase==6:
@@ -8598,13 +8598,13 @@ objh_114
       Font_WriteMessage(msg(48:0x31), print_obj(2, dobj), ?)
       -> 1
 
-objh_115
+objh_115   # objects: 121 forest
   if phase:other:
     -> 0
     tail cs:off_53B1A[bx]
     -> tail
 
-objh_116
+objh_116   # objects: 122 tree
   if phase==6:
     if cmd:other:
       -> 0
@@ -8630,7 +8630,7 @@ objh_116
   if phase:other:
     -> 0
 
-objh_117
+objh_117   # objects: 123 tree
   if phase==6:
     if cmd:other:
       -> 0
@@ -8656,7 +8656,7 @@ objh_117
   if phase:other:
     -> 0
 
-objh_118
+objh_118   # objects: 124 tangle tree
   if phase:other:
     -> 0
   if phase==6:
@@ -8725,7 +8725,7 @@ objh_118
         Font_WriteMessage(msg(10:0x1E), print_obj(0x13, iobj), ?)
         -> 1
 
-objh_119
+objh_119   # objects: 125 bush
   if phase:other:
     -> 0
   if phase==6:
@@ -8781,7 +8781,7 @@ objh_119
       Font_WriteMessage(msg(10:0x12), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
       -> 1
 
-objh_120
+objh_120   # objects: 126 cough drop
   if phase:other:
     -> 0
   if phase==6:
@@ -8810,7 +8810,7 @@ objh_120
       show_compendium(0x17F, 0x5A03)
       -> 1
 
-objh_121
+objh_121   # objects: 127 spring
   if phase==6:
     if cmd==SWIM_IN:
       if byte_852B3!=0:
@@ -8867,13 +8867,13 @@ objh_121
         run_command?(0x14, dobj, iobj)
         -> run_command?(0x14, dobj, iobj)
 
-objh_122
+objh_122   # objects: 128 village
   if phase:other:
     -> 0
     tail cs:off_5454E[bx]
     -> tail
 
-objh_123
+objh_123   # objects: 129 buildings
   if phase:other:
     -> 0
   if phase==6:
@@ -8904,7 +8904,7 @@ objh_123
     if cmd:other:
       -> 0
 
-objh_124
+objh_124   # objects: 130 flowers
   if phase==6:
     if cmd:other:
       -> 0
@@ -8930,7 +8930,7 @@ objh_124
   if phase:other:
     -> 0
 
-objh_125
+objh_125   # objects: 131 gate
   if phase:other:
     -> 0
   if phase==6:
@@ -9032,7 +9032,7 @@ objh_125
       Font_WriteMessage(msg(13:0x56))
       -> 1
 
-objh_126
+objh_126   # objects: 132 pier
   if phase:other:
     -> 0
   if phase==6:
@@ -9051,7 +9051,7 @@ objh_126
     if cmd:other:
       -> 0
 
-objh_127
+objh_127   # objects: 133 censor-ship
   if phase:other:
     -> 0
   if phase==6:
@@ -9194,7 +9194,7 @@ objh_127
         Font_WriteMessage(msg(14:0x21), print_obj(2, dobj), ?)
         -> 1
 
-objh_128
+objh_128   # objects: 134 streetlight, 135 streetlight
   if phase==6:
     if dobj==0x86:
       if cmd==OPEN:
@@ -9848,7 +9848,7 @@ objh_128
                       object_move?(dobj, iobj, 1)
                       -> 1
 
-objh_129
+objh_129   # objects: 136 lamp cover, 137 lamp cover
   if phase==6:
     if cmd==WEAR:
       print_obj(0x12, dobj)
@@ -10366,7 +10366,7 @@ objh_129
       run_command?(0x14, iobj, dobj)
       -> run_command?(0x14, iobj, dobj)
 
-objh_130
+objh_130   # objects: 138 rock
   if phase:other:
     -> 0
   if phase==6:
@@ -10567,7 +10567,7 @@ objh_130
       Font_WriteMessage(msg(12:0x57), print_obj(2, iobj, print_obj(3, dobj), ?), ?)
       -> 1
 
-objh_131
+objh_131   # objects: 139 sword
   if phase:other:
     -> 0
   if phase==6:
@@ -10782,13 +10782,13 @@ objh_131
         object_set_attr?(dobj, 0xA)
         -> 1
 
-objh_132
+objh_132   # objects: 140 pier
   if phase:other:
     -> 0
     tail cs:off_55CB3[bx]
     -> tail
 
-objh_133
+objh_133   # objects: 141 pier
   if phase:other:
     -> 0
   if phase==6:
@@ -10832,7 +10832,7 @@ objh_133
         object_move?(dobj, iobj, 1)
         -> 1
 
-objh_134
+objh_134   # objects: 142 gangway
   if phase:other:
     -> 0
   if phase==6:
@@ -10875,7 +10875,7 @@ objh_134
       Font_WriteMessage(msg(13:0x19))
       -> 1
 
-objh_135
+objh_135   # objects: 143 sailcloth
   if phase:other:
     -> 0
   if phase==6:
@@ -10911,7 +10911,7 @@ objh_135
       Font_WriteMessage(msg(13:0x1E))
       -> 1
 
-objh_136
+objh_136   # objects: 144 grappling hook
   if phase:other:
     -> 0
   if phase==6:
@@ -10991,7 +10991,7 @@ objh_136
         Font_WriteMessage(msg(13:0x42), print_obj(2, dobj, print_obj(2, iobj, print_obj(0x22, iobj), ?), ?), ?)
         -> 1
 
-objh_137
+objh_137   # objects: 145 rope
   if phase:other:
     -> 0
   if phase==6:
@@ -11113,7 +11113,7 @@ objh_137
         run_command?(0x48, iobj, dobj)
         -> run_command?(0x48, iobj, dobj)
 
-objh_138
+objh_138   # objects: 146 anchor
   if phase:other:
     -> 0
   if phase==6:
@@ -11155,7 +11155,7 @@ objh_138
       if iobj!=0x17:
         -> 0
 
-objh_139
+objh_139   # objects: 147 key
   if phase:other:
     -> 0
   if phase==6:
@@ -11221,13 +11221,13 @@ objh_139
       Font_WriteMessage(msg(13:0x60))
       -> 1
 
-objh_140
+objh_140   # objects: 148 censor-ship
   if phase:other:
     -> 0
     tail cs:off_56E65[bx]
     -> tail
 
-objh_141
+objh_141   # objects: 149 censer
   if phase:other:
     -> 0
   if phase==6:
@@ -11393,7 +11393,7 @@ objh_141
       run_command?(0xD, iobj, dobj)
       -> run_command?(0xD, iobj, dobj)
 
-objh_142
+objh_142   # objects: 150 censer
   if phase:other:
     -> 0
   if phase==6:
@@ -11593,19 +11593,19 @@ objh_142
       run_command?(0xD, iobj, dobj)
       -> run_command?(0xD, iobj, dobj)
 
-objh_143
+objh_143   # objects: 151 deck
   if phase:other:
     -> 0
     tail cs:off_57483[bx]
     -> tail
 
-objh_144
+objh_144   # objects: 152 road
   if phase:other:
     -> 0
     tail cs:off_5798B[bx]
     -> tail
 
-objh_145
+objh_145   # objects: 153 boulder
   if phase==6:
     if cmd==TALK_TO:
       print_obj(0x12, dobj)
@@ -11749,13 +11749,13 @@ objh_145
                 if byte_85313!=0:
                   -> 1
 
-objh_146
+objh_146   # objects: 154 road
   if phase:other:
     -> 0
     tail cs:off_57BEE[bx]
     -> tail
 
-objh_147
+objh_147   # objects: 155 pail
   if phase==6:
     if cmd==TALK_TO:
       if byte_852B2==0:
@@ -12539,19 +12539,19 @@ objh_147
         -> 0
   [truncated: more than 150 paths]
 
-objh_148
+objh_148   # objects: 156 road
   if phase:other:
     -> 0
     tail cs:off_57E08[bx]
     -> tail
 
-objh_149
+objh_149   # objects: 157 ice palace
   if phase:other:
     -> 0
     tail cs:off_59126[bx]
     -> tail
 
-objh_150
+objh_150   # objects: 158 door
   if phase:other:
     -> 0
   if phase==6:
@@ -12603,7 +12603,7 @@ objh_150
           object_set_default_verb?(dobj, 0x2C)
           -> 1
 
-objh_151
+objh_151   # objects: 159 eye screen
   if phase:other:
     -> 0
   if phase==6:
@@ -12700,7 +12700,7 @@ objh_151
           object_set_default_verb?(dobj, 0x2C)
           -> 1
 
-objh_152
+objh_152   # objects: 160 eye
   if phase:other:
     -> 0
   if phase==6:
@@ -12764,7 +12764,7 @@ objh_152
         Font_WriteMessage(msg(16:0x17))
         -> 1
 
-objh_153
+objh_153   # objects: 161 icicles
   if phase==6:
     if cmd:other:
       -> 0
@@ -12781,7 +12781,7 @@ objh_153
   if phase:other:
     -> 0
 
-objh_154
+objh_154   # objects: 162 snow
   if phase==6:
     if cmd:other:
       -> 0
@@ -12797,7 +12797,7 @@ objh_154
   if phase:other:
     -> 0
 
-objh_155
+objh_155   # objects: 163 mailbox
   if phase==6:
     if cmd==TALK_TO:
       if object_has_attr?(dobj, 0xE)!=0:
@@ -12888,7 +12888,7 @@ objh_155
             object_move?(dobj, iobj, 1)
             -> 1
 
-objh_156
+objh_156   # objects: 164 envelope
   if phase==6:
     if cmd==TALK_TO:
       sub_1EF00()
@@ -12969,7 +12969,7 @@ objh_156
         Font_WriteMessage(msg(16:0x37), print_obj(2, iobj, print_obj(2, dobj), ?), ?)
         -> 1
 
-objh_157
+objh_157   # objects: 165 letter
   if phase:other:
     -> 0
   if phase==6:
@@ -13015,7 +13015,7 @@ objh_157
       Font_WriteMessage(msg(16:0x3A), print_obj(2, dobj, &aClos_0), ?)
       -> 1
 
-objh_158
+objh_158   # objects: 166 eye scream
   if phase==6:
     if cmd:other:
       -> 0
@@ -13055,7 +13055,7 @@ objh_158
   if phase:other:
     -> 0
 
-objh_159
+objh_159   # objects: 167 eye scream
   if phase:other:
     -> 0
   if phase==6:
@@ -13154,7 +13154,7 @@ objh_159
       Font_WriteMessage(msg(16:0x48))
       -> 1
 
-objh_160
+objh_160   # objects: 168 fairway
   if phase==6:
     if cmd:other:
       -> 0
@@ -13170,13 +13170,13 @@ objh_160
   if phase:other:
     -> 0
 
-objh_161
+objh_161   # objects: 169 fairway
   if phase:other:
     -> 0
     tail cs:off_5A38A[bx]
     -> tail
 
-objh_162
+objh_162   # objects: 170 scaffolding
   if phase:other:
     -> 0
   if phase==6:
@@ -13205,7 +13205,7 @@ objh_162
       Font_WriteMessage(msg(17:6), print_obj(0x12, dobj), ?)
       -> 1
 
-objh_163
+objh_163   # objects: 171 sandtraps
   if phase:other:
     -> 0
   if phase==6:
@@ -13229,7 +13229,7 @@ objh_163
     if cmd:other:
       -> 0
 
-objh_164
+objh_164   # objects: 172 putting green
   if phase:other:
     -> 0
   if phase==6:
@@ -13250,7 +13250,7 @@ objh_164
     if cmd:other:
       -> 0
 
-objh_165
+objh_165   # objects: 173 tee
   if phase:other:
     -> 0
   if phase==6:
@@ -13304,13 +13304,13 @@ objh_165
       Font_WriteMessage(msg(17:0x16))
       -> 1
 
-objh_166
+objh_166   # objects: 174 fair
   if phase:other:
     -> 0
     tail cs:off_5A994[bx]
     -> tail
 
-objh_167
+objh_167   # objects: 175 green
   if phase:other:
     -> 0
   if phase==6:
@@ -13339,7 +13339,7 @@ objh_167
     if cmd:other:
       -> 0
 
-objh_168
+objh_168   # objects: 176 cup
   if phase:other:
     -> 0
   if phase==6:
@@ -13387,7 +13387,7 @@ objh_168
         Font_WriteMessage(msg(19:0xF), print_obj(2, dobj), ?)
         -> 1
 
-objh_169
+objh_169   # objects: 177 egg
   if phase:other:
     -> 0
   if phase==6:
@@ -13449,7 +13449,7 @@ objh_169
           Font_WriteMessage(msg(19:0x19), print_obj(0x12, dobj), ?)
           -> 1
 
-objh_170
+objh_170   # objects: 178 booths
   if phase==6:
     if cmd==LOOK_AT:
       Font_WriteMessage(msg(19:0x1D))
@@ -13459,7 +13459,7 @@ objh_170
   if phase:other:
     -> 0
 
-objh_171
+objh_171   # objects: 179 fair
   if phase==6:
     if cmd:other:
       -> 0
@@ -13477,7 +13477,7 @@ objh_171
   if phase:other:
     -> 0
 
-objh_172
+objh_172   # objects: 180 clown booth
   if phase==6:
     if cmd==OPEN:
       print_obj(0x12, dobj)
@@ -13498,7 +13498,7 @@ objh_172
   if phase:other:
     -> 0
 
-objh_173
+objh_173   # objects: 181 witch booth
   if phase:other:
     -> 0
   if phase==6:
@@ -13525,7 +13525,7 @@ objh_173
       Font_WriteMessage(msg(19:0x23), print_obj(0x12, dobj), ?)
       -> 1
 
-objh_174
+objh_174   # objects: 182 balloons
   if phase==6:
     if cmd:other:
       -> 0
@@ -13548,7 +13548,7 @@ objh_174
   if phase:other:
     -> 0
 
-objh_175
+objh_175   # objects: 183 banner
   if phase==6:
     if cmd:other:
       -> 0
@@ -13567,13 +13567,13 @@ objh_175
   if phase:other:
     -> 0
 
-objh_176
+objh_176   # objects: 184 booth
   if phase:other:
     -> 0
     tail cs:off_5B07A[bx]
     -> tail
 
-objh_178
+objh_178   # objects: 186 blackboard
   if phase:other:
     -> 0
   if phase==6:
@@ -13598,7 +13598,7 @@ objh_178
     if cmd:other:
       -> 0
 
-objh_179
+objh_179   # objects: 187 Nuff's junk
   if phase==6:
     if cmd:other:
       -> 0
@@ -13623,7 +13623,7 @@ objh_179
   if phase:other:
     -> 0
 
-objh_181
+objh_181   # objects: 189 recipe
   if phase:other:
     -> 0
   if phase==6:
@@ -13690,13 +13690,13 @@ objh_181
       Font_WriteMessage(msg(24:0x15))
       -> 1
 
-objh_182
+objh_182   # objects: 190 desert
   if phase:other:
     -> 0
     tail cs:off_5B5A5[bx]
     -> tail
 
-objh_183
+objh_183   # objects: 191 door
   if phase:other:
     -> 0
   if phase==6:
@@ -13752,7 +13752,7 @@ objh_183
         object_set_default_verb?(dobj, 0x2C)
         -> 1
 
-objh_184
+objh_184   # objects: 192 mesa
   if phase==6:
     if cmd:other:
       -> 0
@@ -13777,7 +13777,7 @@ objh_184
   if phase:other:
     -> 0
 
-objh_185
+objh_185   # objects: 193 desert plant
   if phase:other:
     -> 0
   if phase==6:
@@ -13810,7 +13810,7 @@ objh_185
       Font_WriteMessage(msg(25:0x11), print_obj(3, dobj), ?)
       -> 1
 
-objh_186
+objh_186   # objects: 194 sun
   if phase==6:
     if cmd:other:
       -> 0
@@ -13829,7 +13829,7 @@ objh_186
   if phase:other:
     -> 0
 
-objh_187
+objh_187   # objects: 195 rubble
   if phase==6:
     if cmd:other:
       -> 0
@@ -13851,7 +13851,7 @@ objh_187
   if phase:other:
     -> 0
 
-objh_188
+objh_188   # objects: 196 unknown
   if phase==6:
     if cmd:other:
       -> 0
@@ -13879,13 +13879,13 @@ objh_188
   if phase:other:
     -> 0
 
-objh_189
+objh_189   # objects: 197 road
   if phase:other:
     -> 0
     tail cs:off_5E30E[bx]
     -> tail
 
-objh_190
+objh_190   # objects: 198 barrow
   if phase:other:
     -> 0
   if phase==6:
@@ -13912,13 +13912,13 @@ objh_190
       Font_WriteMessage(msg(26:3), print_obj(2, dobj), ?)
       -> 1
 
-objh_191
+objh_191   # objects: 199 spring
   if phase:other:
     -> 0
     tail cs:off_5E56F[bx]
     -> tail
 
-objh_192
+objh_192   # objects: 200 spring
   if phase:other:
     -> 0
   if phase==6:
@@ -13994,13 +13994,13 @@ objh_192
       Font_WriteMessage(msg(27:0xF), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
       -> 1
 
-objh_193
+objh_193   # objects: 201 barrow entrance
   if phase:other:
     -> 0
     tail cs:off_5ECA3[bx]
     -> tail
 
-objh_194
+objh_194   # objects: 202 barrow door
   if phase:other:
     -> 0
   if phase==6:
@@ -14108,7 +14108,7 @@ objh_194
           object_set_default_verb?(dobj, 0x2C)
           -> 1
 
-objh_195
+objh_195   # objects: 203 hinges
   if phase==6:
     if cmd:other:
       -> 0
@@ -14139,7 +14139,7 @@ objh_195
   if phase:other:
     -> 0
 
-objh_196
+objh_196   # objects: 204 darkness
   if phase:other:
     -> 0
   if phase==6:
@@ -14173,13 +14173,13 @@ objh_196
   if phase==4:
     -> 0
 
-objh_197
+objh_197   # objects: 205 barrow
   if phase:other:
     -> 0
     tail cs:off_5F53F[bx]
     -> tail
 
-objh_198
+objh_198   # objects: 206 jar
   if phase==6:
     if cmd==TALK_TO:
       Font_WriteMessage(msg(11:0x1B))
@@ -14391,7 +14391,7 @@ objh_198
         Font_WriteMessage(msg(11:0x2D))
         -> 1
 
-objh_199
+objh_199   # objects: 207 torch
   if phase:other:
     -> 0
   if phase==6:
@@ -14435,7 +14435,7 @@ objh_199
         Font_WriteMessage(msg(11:0x13), print_obj(2, dobj), ?)
         -> 1
 
-objh_200
+objh_200   # objects: 208 door ajar
   if phase:other:
     -> 0
   if phase==6:
@@ -14469,7 +14469,7 @@ objh_200
       Font_WriteMessage(msg(11:0x17))
       -> 1
 
-objh_201
+objh_201   # objects: 209 arch, 210 arch, 211 arch
   if phase:other:
     -> 0
   if phase==6:
@@ -14506,7 +14506,7 @@ objh_201
       Font_WriteMessage(msg(11:0x31))
       -> 1
 
-objh_202
+objh_202   # objects: 212 stone plaque
   if phase==6:
     if cmd==TOUCH:
       if object_parent_is?(0x58, dobj)!=0:
@@ -14576,7 +14576,7 @@ objh_202
               add_score?(0xA, 1, 0)
               -> 1
 
-objh_203
+objh_203   # objects: 213 mirror
   if phase:other:
     -> 0
   if phase==6:
@@ -14641,7 +14641,7 @@ objh_203
           add_score?(5, 0, 0)
           -> 1
 
-objh_204
+objh_204   # objects: 214 circular pad
   if phase:other:
     -> 0
   if phase==6:
@@ -14692,7 +14692,7 @@ objh_204
       Font_WriteMessage(msg(11:0x46), print_obj(2, dobj), ?)
       -> 1
 
-objh_205
+objh_205   # objects: 215 secret door
   if phase==6:
     if cmd:other:
       -> 0
@@ -14714,7 +14714,7 @@ objh_205
   if phase:other:
     -> 0
 
-objh_206
+objh_206   # objects: 216 ironwood tree
   if phase:other:
     -> 0
   if phase==6:
@@ -14756,7 +14756,7 @@ objh_206
           Font_WriteMessage(msg(11:0x53), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
           -> 1
 
-objh_207
+objh_207   # objects: 217 mortar
   if phase==6:
     if cmd==TALK_TO:
       Font_WriteMessage(msg(51:0x24))
@@ -15545,7 +15545,7 @@ objh_207
         -> 1
   [truncated: more than 150 paths]
 
-objh_208
+objh_208   # objects: 218 pestle
   if phase:other:
     -> 0
   if phase==6:
@@ -15604,7 +15604,7 @@ objh_208
       Font_WriteMessage(msg(51:0x2C), print_obj(0x22, dobj), ?)
       -> 1
 
-objh_209
+objh_209   # objects: 219 purple slime
   if phase:other:
     -> 0
   if phase==6:
@@ -15637,7 +15637,7 @@ objh_209
     if cmd:other:
       -> 0
 
-objh_210
+objh_210   # objects: 220 switch, 221 switch, 222 switch, 223 switch, 224 switch, 225 switch ...
   if phase:other:
     -> 0
   if phase==6:
@@ -15946,7 +15946,7 @@ objh_210
       Font_WriteMessage(msg(51:0xD), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_211
+objh_211   # objects: 236 big button
   if phase:other:
     -> 0
   if phase==6:
@@ -15985,13 +15985,13 @@ objh_211
       Font_WriteMessage(msg(51:0x10), print_obj(0x22, dobj), ?)
       -> 1
 
-objh_212
+objh_212   # objects: 237 dungeon
   if phase:other:
     -> 0
     tail cs:off_6235D[bx]
     -> tail
 
-objh_213
+objh_213   # objects: 238 agony moss
   if phase:other:
     -> 0
   if phase==6:
@@ -16165,7 +16165,7 @@ objh_213
       Font_WriteMessage(msg(31:0xC), print_obj(2, dobj), ?)
       -> 1
 
-objh_214
+objh_214   # objects: 239 staircase
   if phase==6:
     if cmd:other:
       -> 0
@@ -16189,7 +16189,7 @@ objh_214
   if phase:other:
     -> 0
 
-objh_215
+objh_215   # objects: 240 manacles
   if phase:other:
     -> 0
   if phase==6:
@@ -16278,7 +16278,7 @@ objh_215
             Font_WriteMessage(msg(31:0x27))
             -> 1
 
-objh_216
+objh_216   # objects: 241 pink dress
   if phase==6:
     if cmd:other:
       -> 0
@@ -16300,7 +16300,7 @@ objh_216
   if phase:other:
     -> 0
 
-objh_217
+objh_217   # objects: 242 Nada finder
   if phase:other:
     -> 0
   if phase==6:
@@ -16416,19 +16416,19 @@ objh_217
           Font_WriteMessage(msg(51:0x33), &aFf_4)
           -> 1
 
-objh_218
+objh_218   # objects: 243 dark
   if phase:other:
     -> 0
     tail cs:off_618B3[bx]
     -> tail
 
-objh_219
+objh_219   # objects: 244 tunnel
   if phase:other:
     -> 0
     tail cs:off_62D08[bx]
     -> tail
 
-objh_220
+objh_220   # objects: 245 stalagmites
   if phase==6:
     if cmd:other:
       -> 0
@@ -16456,7 +16456,7 @@ objh_220
   if phase:other:
     -> 0
 
-objh_221
+objh_221   # objects: 246 stalactites
   if phase:other:
     -> 0
   if phase==6:
@@ -16484,7 +16484,7 @@ objh_221
     if cmd:other:
       -> 0
 
-objh_222
+objh_222   # objects: 247 tunnel end
   if phase:other:
     -> 0
   if phase==6:
@@ -16512,13 +16512,13 @@ objh_222
     if cmd:other:
       -> 0
 
-objh_223
+objh_223   # objects: 248 chamber
   if phase:other:
     -> 0
     tail cs:off_6317A[bx]
     -> tail
 
-objh_224
+objh_224   # objects: 249 opening
   if phase:other:
     -> 0
   if phase==6:
@@ -16554,7 +16554,7 @@ objh_224
       Font_WriteMessage(msg(33:7), print_obj(2, dobj), ?)
       -> 1
 
-objh_225
+objh_225   # objects: 250 bun
   if phase==6:
     if cmd==TALK_TO:
       print_obj(0x12, dobj)
@@ -16682,13 +16682,13 @@ objh_225
             if obj_85216!=0xFB:
               -> 1
 
-objh_226
+objh_226   # objects: 251 lava path
   if phase:other:
     -> 0
     tail cs:off_63325[bx]
     -> tail
 
-objh_227
+objh_227   # objects: 252 oven
   if phase==6:
     if cmd==TALK_TO:
       print_obj(2, dobj)
@@ -16796,7 +16796,7 @@ objh_227
                   schedule_event?(0x1A, 1)
                   -> 1
 
-objh_228
+objh_228   # objects: 253 opening
   if phase:other:
     -> 0
   if phase==6:
@@ -16832,7 +16832,7 @@ objh_228
       run_command?(cmd, dobj, 0xFC)
       -> run_command?(cmd, dobj, 0xFC)
 
-objh_229
+objh_229   # objects: 254 cracker dough
   if phase:other:
     -> 0
   if phase==6:
@@ -16871,7 +16871,7 @@ objh_229
         Font_WriteMessage(msg(33:0x39), print_obj(0x22, dobj), ?)
         -> 1
 
-objh_230
+objh_230   # objects: 255 firecracker
   if phase:other:
     -> 0
   if phase==6:
@@ -17057,7 +17057,7 @@ objh_230
       Font_WriteMessage(msg(33:0x3D))
       -> 1
 
-objh_231
+objh_231   # objects: 256 firewater
   if phase:other:
     -> 0
   if phase==6:
@@ -17123,7 +17123,7 @@ objh_231
       Font_WriteMessage(msg(33:0x2D))
       -> 1
 
-objh_232
+objh_232   # objects: 257 opening
   if phase:other:
     -> 0
   if phase==6:
@@ -17153,13 +17153,13 @@ objh_232
     if cmd:other:
       -> 0
 
-objh_233
+objh_233   # objects: 258 firewall
   if phase:other:
     -> 0
     tail cs:off_64558[bx]
     -> tail
 
-objh_234
+objh_234   # objects: 259 firewall
   if phase:other:
     -> 0
   if phase==6:
@@ -17209,7 +17209,7 @@ objh_234
           Font_WriteMessage(msg(34:0xD), &aBurn, print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
           -> 1
 
-objh_235
+objh_235   # objects: 260 charred wood
   if phase:other:
     -> 0
   if phase==6:
@@ -17243,13 +17243,13 @@ objh_235
       Font_WriteMessage(msg(34:0x13), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_236
+objh_236   # objects: 261 rocks
   if phase:other:
     -> 0
     tail cs:off_6491A[bx]
     -> tail
 
-objh_237
+objh_237   # objects: 262 opening
   if phase==6:
     if cmd==OPEN:
       Font_WriteMessage(msg(35:9))
@@ -17313,13 +17313,13 @@ objh_237
           realsound_play(&aFly_rs)
           -> 1
 
-objh_238
+objh_238   # objects: 263 peninsula
   if phase:other:
     -> 0
     tail cs:off_64D6E[bx]
     -> tail
 
-objh_239
+objh_239   # objects: 264 rocks
   if phase:other:
     -> 0
   if phase==6:
@@ -17364,7 +17364,7 @@ objh_239
       Font_WriteMessage(msg(36:7), print_obj(2, dobj, print_obj(2, iobj, print_obj(0x26, dobj), ?), ?), ?)
       -> 1
 
-objh_240
+objh_240   # objects: 265 opening
   if phase:other:
     -> 0
   if phase==6:
@@ -17397,7 +17397,7 @@ objh_240
       Font_WriteMessage(msg(36:0xD), print_obj(2, dobj), ?)
       -> 1
 
-objh_241
+objh_241   # objects: 266 grappling hook
   if phase:other:
     -> 0
   if phase==6:
@@ -17433,7 +17433,7 @@ objh_241
       Font_WriteMessage(msg(36:0x11), print_obj(0x12, iobj, print_obj(2, dobj), ?), ?)
       -> 1
 
-objh_242
+objh_242   # objects: 267 scenery
   if phase:other:
     -> 0
   if phase==6:
@@ -17468,13 +17468,13 @@ objh_242
     if cmd:other:
       -> 0
 
-objh_243
+objh_243   # objects: 268 troll bridge
   if phase:other:
     -> 0
     tail cs:off_651A9[bx]
     -> tail
 
-objh_244
+objh_244   # objects: 269 troll bridge
   if phase:other:
     -> 0
   if phase==6:
@@ -17510,7 +17510,7 @@ objh_244
         Font_WriteMessage(msg(36:0x1F), print_obj(2, dobj, ?, ?), ?)
         -> 1
 
-objh_245
+objh_245   # objects: 270 rice mountain
   if phase:other:
     -> 0
   if phase==6:
@@ -17532,7 +17532,7 @@ objh_245
     if cmd:other:
       -> 0
 
-objh_246
+objh_246   # objects: 271 distant trees
   if phase:other:
     -> 0
   if phase==6:
@@ -17555,7 +17555,7 @@ objh_246
     if cmd:other:
       -> 0
 
-objh_247
+objh_247   # objects: 272 water
   if phase:other:
     -> 0
   if phase==6:
@@ -17585,7 +17585,7 @@ objh_247
     if cmd:other:
       -> 0
 
-objh_248
+objh_248   # objects: 273 sign
   if phase:other:
     -> 0
   if phase==6:
@@ -17627,13 +17627,13 @@ objh_248
     if cmd:other:
       -> 0
 
-objh_249
+objh_249   # objects: 274 living room
   if phase:other:
     -> 0
     tail cs:off_6572C[bx]
     -> tail
 
-objh_250
+objh_250   # objects: 275 staircase
   if phase:other:
     -> 0
   if phase==6:
@@ -17663,7 +17663,7 @@ objh_250
     if cmd:other:
       -> 0
 
-objh_251
+objh_251   # objects: 276 painting
   if phase:other:
     -> 0
   if phase==6:
@@ -17694,7 +17694,7 @@ objh_251
     if cmd:other:
       -> 0
 
-objh_252
+objh_252   # objects: 277 chandelier
   if phase:other:
     -> 0
   if phase==6:
@@ -17730,7 +17730,7 @@ objh_252
     if cmd:other:
       -> 0
 
-objh_253
+objh_253   # objects: 278 standing lamp
   if phase:other:
     -> 0
   if phase==6:
@@ -17767,7 +17767,7 @@ objh_253
       Font_WriteMessage(msg(37:0x48), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
       -> 1
 
-objh_254
+objh_254   # objects: 279 doorway
   if phase:other:
     -> 0
   if phase==6:
@@ -17799,7 +17799,7 @@ objh_254
       Font_WriteMessage(msg(37:0x4C), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_255
+objh_255   # objects: 280 green sofa
   if phase:other:
     -> 0
   if phase==6:
@@ -17829,7 +17829,7 @@ objh_255
     if cmd:other:
       -> 0
 
-objh_256
+objh_256   # objects: 281 pillow
   if phase:other:
     -> 0
   if phase==6:
@@ -17872,7 +17872,7 @@ objh_256
       Font_WriteMessage(msg(37:0x38), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_257
+objh_257   # objects: 282 lace
   if phase:other:
     -> 0
   if phase==6:
@@ -17909,7 +17909,7 @@ objh_257
     if cmd:other:
       -> 0
 
-objh_258
+objh_258   # objects: 283 small table
   if phase==6:
     if cmd==OPEN:
       Font_WriteMessage(msg(37:0x4F))
@@ -17963,7 +17963,7 @@ objh_258
           Font_WriteMessage(msg(37:0x52), print_obj(2, dobj), ?)
           -> 1
 
-objh_259
+objh_259   # objects: 284 large table
   if phase==6:
     if cmd==TALK_TO:
       Font_WriteMessage(msg(37:0x58))
@@ -18079,7 +18079,7 @@ objh_259
               Font_WriteMessage(msg(37:0x54), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
               -> 1
 
-objh_260
+objh_260   # objects: 285 fireplace
   if phase:other:
     -> 0
   if phase==6:
@@ -18109,7 +18109,7 @@ objh_260
     if cmd:other:
       -> 0
 
-objh_261
+objh_261   # objects: 286 fire
   if phase:other:
     -> 0
   if phase==6:
@@ -18135,7 +18135,7 @@ objh_261
     if cmd:other:
       -> 0
 
-objh_262
+objh_262   # objects: 287 green chair
   if phase:other:
     -> 0
   if phase==6:
@@ -18170,7 +18170,7 @@ objh_262
     if cmd:other:
       -> 0
 
-objh_263
+objh_263   # objects: 288 statue
   if phase:other:
     -> 0
   if phase==6:
@@ -18203,7 +18203,7 @@ objh_263
     if cmd:other:
       -> 0
 
-objh_264
+objh_264   # objects: 289 pentominoes
   if phase:other:
     -> 0
   if phase==6:
@@ -18296,7 +18296,7 @@ objh_264
       Font_WriteMessage(msg(37:0xD))
       -> 1
 
-objh_265
+objh_265   # objects: 290 sliding blocks
   if phase:other:
     -> 0
   if phase==6:
@@ -18406,7 +18406,7 @@ objh_265
       run_command?(cmd, dobj, 0x121)
       -> run_command?(cmd, dobj, 0x121)
 
-objh_266
+objh_266   # objects: 291 matchsticks
   if phase:other:
     -> 0
   if phase==6:
@@ -18496,7 +18496,7 @@ objh_266
       run_command?(cmd, dobj, 0x121)
       -> run_command?(cmd, dobj, 0x121)
 
-objh_267
+objh_267   # objects: 292 crowbar
   if phase:other:
     -> 0
   if phase==6:
@@ -18566,13 +18566,13 @@ objh_267
       Font_WriteMessage(msg(71:0x1A), print_obj(0x12, iobj, print_obj(2, dobj), ?), ?)
       -> 1
 
-objh_268
+objh_268   # objects: 293 laboratory
   if phase:other:
     -> 0
     tail cs:off_6DEB4[bx]
     -> tail
 
-objh_269
+objh_269   # objects: 294 well
   if phase==6:
     if cmd==TALK_TO:
       Font_WriteMessage(msg(38:0xB))
@@ -18686,7 +18686,7 @@ objh_269
             Font_WriteMessage(msg(38:0xC), print_obj(0x12, dobj, print_obj(2, iobj), ?), ?)
             -> 1
 
-objh_270
+objh_270   # objects: 295 metal key
   if phase:other:
     -> 0
   if phase==6:
@@ -18724,7 +18724,7 @@ objh_270
       Font_WriteMessage(msg(38:0x13), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
       -> 1
 
-objh_271
+objh_271   # objects: 296 sink
   if phase==6:
     if cmd==TALK_TO:
       if object_parent_is?(0x12D, dobj)!=0:
@@ -18917,7 +18917,7 @@ objh_271
                 byte_8838E = 0
                 -> 1
 
-objh_272
+objh_272   # objects: 297 faucet
   if phase:other:
     -> 0
   if phase==6:
@@ -19032,7 +19032,7 @@ objh_272
         Font_WriteMessage(msg(38:0x2C), print_obj(2, dobj, print_obj(2, iobj, print_obj(6, dobj), ?), ?), ?)
         -> 1
 
-objh_273
+objh_273   # objects: 298 lab junk
   if phase:other:
     -> 0
   if phase==6:
@@ -19074,7 +19074,7 @@ objh_273
       Font_WriteMessage(msg(38:0x31), print_obj(3, dobj), ?)
       -> 1
 
-objh_274
+objh_274   # objects: 299 lab bench
   if phase:other:
     -> 0
   if phase==6:
@@ -19105,7 +19105,7 @@ objh_274
     if cmd:other:
       -> 0
 
-objh_275
+objh_275   # objects: 300 tool chest
   if phase:other:
     -> 0
   if phase==6:
@@ -19170,7 +19170,7 @@ objh_275
         Font_WriteMessage(msg(38:0x3D), print_obj(0x12, dobj), ?)
         -> 1
 
-objh_276
+objh_276   # objects: 301 water
   if phase:other:
     -> 0
   if phase==6:
@@ -19198,7 +19198,7 @@ objh_276
       run_command?(cmd, dobj, 0x128)
       -> run_command?(cmd, dobj, 0x128)
 
-objh_277
+objh_277   # objects: 302 water
   if phase:other:
     -> 0
   if phase==6:
@@ -19229,7 +19229,7 @@ objh_277
     if cmd:other:
       -> 0
 
-objh_278
+objh_278   # objects: 303 green button, 304 blue button, 305 red button
   if phase:other:
     -> 0
   if phase==6:
@@ -19394,13 +19394,13 @@ objh_278
       Font_WriteMessage(msg(38:0x48))
       -> 1
 
-objh_279
+objh_279   # objects: 306 fork in the road
   if phase:other:
     -> 0
     tail cs:off_6F475[bx]
     -> tail
 
-objh_280
+objh_280   # objects: 307 rice mountain
   if phase:other:
     -> 0
   if phase==6:
@@ -19419,7 +19419,7 @@ objh_280
     if cmd:other:
       -> 0
 
-objh_281
+objh_281   # objects: 308 trees
   if phase==6:
     if cmd:other:
       -> 0
@@ -19441,7 +19441,7 @@ objh_281
   if phase:other:
     -> 0
 
-objh_282
+objh_282   # objects: 309 water
   if phase:other:
     -> 0
   if phase==6:
@@ -19478,7 +19478,7 @@ objh_282
         Font_WriteMessage(msg(39:0x30), print_obj(2, dobj), ?)
         -> 1
 
-objh_283
+objh_283   # objects: 310 sign
   if phase:other:
     -> 0
   if phase==6:
@@ -19508,7 +19508,7 @@ objh_283
     if cmd:other:
       -> 0
 
-objh_284
+objh_284   # objects: 311 hydrant
   if phase==6:
     if cmd==TURN_ON:
       if object_has_attr?(dobj, 0xA)!=0:
@@ -19664,7 +19664,7 @@ objh_284
             object_move?(dobj, iobj, 1)
             -> 1
 
-objh_285
+objh_285   # objects: 312 hose
   if phase:other:
     -> 0
   if phase==6:
@@ -19773,13 +19773,13 @@ objh_285
               add_score?(5, 1, 0)
               -> 1
 
-objh_286
+objh_286   # objects: 313 entrance
   if phase:other:
     -> 0
     tail cs:off_6FD91[bx]
     -> tail
 
-objh_287
+objh_287   # objects: 314 tunnel
   if phase:other:
     -> 0
   if phase==6:
@@ -19810,7 +19810,7 @@ objh_287
       if object_parent_is?(dobj, 1)==0:
         -> 0
 
-objh_288
+objh_288   # objects: 315 grass
   if phase:other:
     -> 0
   if phase==6:
@@ -19843,7 +19843,7 @@ objh_288
     if cmd:other:
       -> 0
 
-objh_289
+objh_289   # objects: 316 moss
   if phase:other:
     -> 0
   if phase==6:
@@ -19875,7 +19875,7 @@ objh_289
     if cmd:other:
       -> 0
 
-objh_290
+objh_290   # objects: 317 waterfall
   if phase:other:
     -> 0
   if phase==6:
@@ -19900,11 +19900,11 @@ objh_290
     if cmd:other:
       -> 0
 
-objh_291
+objh_291   # objects: 318 Com-Pewter
   tail loc_702DF
   -> tail
 
-objh_292
+objh_292   # objects: 319 Com-Pewter
   if phase==6:
     if cmd:other:
       -> 0
@@ -19979,7 +19979,7 @@ objh_292
         Font_WriteMessage(msg(40:9), print_obj(2, dobj), ?)
         -> 1
 
-objh_293
+objh_293   # objects: 320 rocks
   if phase:other:
     -> 0
   if phase==6:
@@ -20012,7 +20012,7 @@ objh_293
     if cmd:other:
       -> 0
 
-objh_294
+objh_294   # objects: 321 wires
   if phase==6:
     if cmd:other:
       -> 0
@@ -20030,7 +20030,7 @@ objh_294
   if phase:other:
     -> 0
 
-objh_295
+objh_295   # objects: 322 platform
   if phase==6:
     if cmd:other:
       -> 0
@@ -20114,7 +20114,7 @@ objh_295
         run_command?(cmd, dobj, 0x143)
         -> run_command?(cmd, dobj, 0x143)
 
-objh_296
+objh_296   # objects: 323 depression
   if phase==6:
     if cmd==TALK_TO:
       run_command?(cmd, 0x13F, 0)
@@ -20289,7 +20289,7 @@ objh_296
         object_move?(dobj, iobj, 1)
         -> 1
 
-objh_297
+objh_297   # objects: 324 cylinder
   if phase==6:
     if cmd==LOOK_AT:
       Font_WriteMessage(msg(40:0xF))
@@ -20508,7 +20508,7 @@ objh_297
                         object_move?(dobj, 0x145, 1)
                         -> 1
 
-objh_298
+objh_298   # objects: 325 interior
   if phase:other:
     -> 0
   if phase==6:
@@ -20541,7 +20541,7 @@ objh_298
       run_command?(cmd, dobj, 0x144)
       -> run_command?(cmd, dobj, 0x144)
 
-objh_299
+objh_299   # objects: 326 cylinder door
   if phase:other:
     -> 0
   if phase==6:
@@ -20568,7 +20568,7 @@ objh_299
       Font_WriteMessage(msg(40:0x20), print_obj(0x12, dobj, print_obj(3, iobj), ?), ?)
       -> 1
 
-objh_300
+objh_300   # objects: 327 exhaust duct
   if phase==6:
     if cmd:other:
       -> 0
@@ -20604,7 +20604,7 @@ objh_300
           Font_WriteMessage(msg(40:0x30), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
           -> 1
 
-objh_301
+objh_301   # objects: 328 intake duct
   if phase:other:
     -> 0
   if phase==6:
@@ -20631,7 +20631,7 @@ objh_301
       Font_WriteMessage(msg(40:0x33), print_obj(0x22, dobj), ?)
       -> 1
 
-objh_302
+objh_302   # objects: 329 , 330 , 331 , 332 , 333 
   if phase:other:
     -> 0
   if phase==6:
@@ -20724,7 +20724,7 @@ objh_302
       Font_WriteMessage(msg(40:0x43), print_obj(0x12, dobj), ?)
       -> 1
 
-objh_303
+objh_303   # objects: 334 virus
   if phase==6:
     if cmd==OPEN:
       Font_WriteMessage(msg(40:0x3D))
@@ -20743,13 +20743,13 @@ objh_303
   if phase:other:
     -> 0
 
-objh_304
+objh_304   # objects: 335 road
   if phase:other:
     -> 0
     tail cs:off_71CAB[bx]
     -> tail
 
-objh_305
+objh_305   # objects: 336 mountain
   if phase:other:
     -> 0
   if phase==6:
@@ -20773,7 +20773,7 @@ objh_305
       Font_WriteMessage(msg(57:8), print_obj(2, iobj, print_obj(2, dobj, print_obj(0x26, iobj), ?), ?), ?)
       -> 1
 
-objh_306
+objh_306   # objects: 337 shack
   if phase:other:
     -> 0
   if phase==6:
@@ -20826,7 +20826,7 @@ objh_306
           Font_WriteMessage(msg(57:0x10), &aTheInhabitant)
           -> 1
 
-objh_307
+objh_307   # objects: 338 door
   if phase:other:
     -> 0
   if phase==6:
@@ -20878,7 +20878,7 @@ objh_307
       Font_WriteMessage(msg(57:0x18), print_obj(2, iobj), ?)
       -> 1
 
-objh_308
+objh_308   # objects: 339 window
   if phase:other:
     -> 0
   if phase==6:
@@ -20912,7 +20912,7 @@ objh_308
       Font_WriteMessage(msg(57:0x1E), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
       -> 1
 
-objh_309
+objh_309   # objects: 340 chimney
   if phase:other:
     -> 0
   if phase==6:
@@ -20945,7 +20945,7 @@ objh_309
     if cmd:other:
       -> 0
 
-objh_310
+objh_310   # objects: 341 cart
   if phase==6:
     if cmd==TALK_TO:
       Font_WriteMessage(msg(57:0x2A))
@@ -21059,7 +21059,7 @@ objh_310
             RoomItem_Draw(0x20)
             -> 1
 
-objh_311
+objh_311   # objects: 342 cart wheel
   if phase:other:
     -> 0
   if phase==6:
@@ -21098,7 +21098,7 @@ objh_311
     if cmd:other:
       -> 1
 
-objh_312
+objh_312   # objects: 343 sail
   if phase:other:
     -> 0
   if phase==6:
@@ -21171,13 +21171,13 @@ objh_312
       Font_WriteMessage(msg(57:0x41), print_obj(0x12, dobj, print_obj(1, iobj), ?), ?)
       -> 1
 
-objh_313
+objh_313   # objects: 344 Ma's house
   if phase:other:
     -> 0
     tail cs:off_72832[bx]
     -> tail
 
-objh_314
+objh_314   # objects: 345 drapes
   if phase:other:
     -> 0
   if phase==6:
@@ -21209,7 +21209,7 @@ objh_314
     if cmd:other:
       -> 0
 
-objh_315
+objh_315   # objects: 346 stove
   if phase:other:
     -> 0
   if phase==6:
@@ -21245,7 +21245,7 @@ objh_315
     if cmd:other:
       -> 0
 
-objh_316
+objh_316   # objects: 347 fire
   if phase:other:
     -> 0
   if phase==6:
@@ -21277,7 +21277,7 @@ objh_316
     if cmd:other:
       -> 0
 
-objh_317
+objh_317   # objects: 348 rocking chair
   if phase:other:
     -> 0
   if phase==6:
@@ -21327,7 +21327,7 @@ objh_317
         Font_WriteMessage(msg(58:0x17), print_obj(0x12, iobj), ?)
         -> 1
 
-objh_318
+objh_318   # objects: 349 nail
   if phase==6:
     if cmd:other:
       -> 0
@@ -21393,7 +21393,7 @@ objh_318
               Font_WriteMessage(msg(58:0x21), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
               -> 1
 
-objh_319
+objh_319   # objects: 350 wind sock
   if phase:other:
     -> 0
   if phase==6:
@@ -21474,7 +21474,7 @@ objh_319
         Font_WriteMessage(msg(58:0x31), print_obj(0x22, dobj), ?)
         -> 1
 
-objh_320
+objh_320   # objects: 351 potion
   if phase:other:
     -> 0
   if phase==6:
@@ -21507,13 +21507,13 @@ objh_320
     if cmd:other:
       -> 0
 
-objh_321
+objh_321   # objects: 352 road
   if phase:other:
     -> 0
     tail cs:off_731DA[bx]
     -> tail
 
-objh_322
+objh_322   # objects: 353 ogre hut
   if phase==6:
     if cmd==TALK_TO:
       Font_WriteMessage(msg(59:6))
@@ -21567,13 +21567,13 @@ objh_322
           Font_WriteMessage(msg(59:9), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
           -> 1
 
-objh_323
+objh_323   # objects: 354 vent
   if phase:other:
     -> 0
     tail cs:off_734A3[bx]
     -> tail
 
-objh_324
+objh_324   # objects: 355 vent
   if phase==6:
     if cmd==TALK_TO:
       Font_WriteMessage(msg(60:0xA))
@@ -21670,7 +21670,7 @@ objh_324
             add_score?(0xC, 0, 0)
             -> 1
 
-objh_325
+objh_325   # objects: 356 spray
   if phase:other:
     -> 0
   if phase==6:
@@ -21707,7 +21707,7 @@ objh_325
           Font_WriteMessage(msg(60:0x16), print_obj(2, dobj), ?)
           -> 1
 
-objh_326
+objh_326   # objects: 357 ball
   if phase:other:
     -> 0
   if phase==6:
@@ -21741,13 +21741,13 @@ objh_326
     if cmd:other:
       -> 0
 
-objh_327
+objh_327   # objects: 358 winding road
   if phase:other:
     -> 0
     tail cs:off_73BFA[bx]
     -> tail
 
-objh_328
+objh_328   # objects: 359 trees
   if phase:other:
     -> 0
   if phase==6:
@@ -21783,7 +21783,7 @@ objh_328
     if cmd:other:
       -> 0
 
-objh_329
+objh_329   # objects: 360 windbag
   if phase:other:
     -> 0
   if phase==6:
@@ -21838,13 +21838,13 @@ objh_329
       Font_WriteMessage(msg(62:0x44))
       -> 1
 
-objh_330
+objh_330   # objects: 361 cave of winds
   if phase:other:
     -> 0
     tail cs:off_73D92[bx]
     -> tail
 
-objh_331
+objh_331   # objects: 362 mist
   if phase==6:
     if cmd==OPEN:
       Font_WriteMessage(msg(62:0xC))
@@ -21887,7 +21887,7 @@ objh_331
           Font_WriteMessage(msg(62:0xF), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
           -> 1
 
-objh_332
+objh_332   # objects: 363 jetty
   if phase:other:
     -> 0
   if phase==6:
@@ -21932,7 +21932,7 @@ objh_332
         Font_WriteMessage(msg(62:0x19), print_obj(0x12, dobj, print_obj(0x22, iobj), ?), ?)
         -> 1
 
-objh_333
+objh_333   # objects: 364 mooring
   if phase==6:
     if cmd==TALK_TO:
       sub_73F97(dobj)
@@ -22004,7 +22004,7 @@ objh_333
           object_set_default_verb?(dobj, 0x4E)
           -> 1
 
-objh_334
+objh_334   # objects: 365 sailboat
   if phase==6:
     if cmd==LAUNCH:
       if obj_85216==0x170:
@@ -22288,7 +22288,7 @@ objh_334
           if sub_1EFCF()==0:
             -> 1
 
-objh_336
+objh_336   # objects: 367 water
   if phase==6:
     if cmd:other:
       -> 0
@@ -22334,13 +22334,13 @@ objh_336
             Font_WriteMessage(msg(62:0x15), print_obj(2, dobj), ?)
             -> 1
 
-objh_337
+objh_337   # objects: 368 shore
   if phase:other:
     -> 0
     tail cs:off_74C9C[bx]
     -> tail
 
-objh_338
+objh_338   # objects: 369 torch
   if phase:other:
     -> 0
   if phase==6:
@@ -22375,7 +22375,7 @@ objh_338
       Font_WriteMessage(msg(63:5), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
       -> 1
 
-objh_339
+objh_339   # objects: 370 opening
   if phase:other:
     -> 0
   if phase==6:
@@ -22410,7 +22410,7 @@ objh_339
         Font_WriteMessage(msg(63:0xB), print_obj(2, iobj), ?)
         -> 1
 
-objh_340
+objh_340   # objects: 371 stairs
   if phase:other:
     -> 0
   if phase==6:
@@ -22453,13 +22453,13 @@ objh_340
         Font_WriteMessage(msg(63:0x11), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
         -> 1
 
-objh_341
+objh_341   # objects: 372 staircase
   if phase:other:
     -> 0
     tail cs:off_750CA[bx]
     -> tail
 
-objh_342
+objh_342   # objects: 373 cones
   if phase==6:
     if cmd:other:
       -> 0
@@ -22535,7 +22535,7 @@ objh_342
         Font_WriteMessage(msg(64:0x11))
         -> 1
 
-objh_343
+objh_343   # objects: 374 flashers
   if phase:other:
     -> 0
   if phase==6:
@@ -22572,7 +22572,7 @@ objh_343
       Font_WriteMessage(msg(64:0x17), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
       -> 1
 
-objh_344
+objh_344   # objects: 375 sign
   if phase:other:
     -> 0
   if phase==6:
@@ -22599,13 +22599,13 @@ objh_344
       Font_WriteMessage(msg(64:0x1C), print_obj(0x22, dobj), ?)
       -> 1
 
-objh_345
+objh_345   # objects: 376 desert, 378 desert, 380 desert
   if phase:other:
     -> 0
     tail cs:off_7571C[bx]
     -> tail
 
-objh_346
+objh_346   # objects: 382 Gap Chasm
   if phase:other:
     -> 0
   if phase==6:
@@ -22645,17 +22645,17 @@ objh_346
       Font_WriteMessage(msg(44:0xB), print_obj(2, dobj), ?)
       -> 1
 
-objh_347
+objh_347   # objects: 383 chasm edge
   if phase:other:
     -> 0
 
-objh_348
+objh_348   # objects: 384 gap
   if phase:other:
     -> 0
     tail cs:off_75CF3[bx]
     -> tail
 
-objh_349
+objh_349   # objects: 385 chasm walls
   if phase==6:
     if cmd:other:
       -> 0
@@ -22680,7 +22680,7 @@ objh_349
   if phase:other:
     -> 0
 
-objh_350
+objh_350   # objects: 386 Stanley
   if phase:other:
     -> 0
   if phase==6:
@@ -22707,7 +22707,7 @@ objh_350
       Font_WriteMessage(msg(46:0xF), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_351
+objh_351   # objects: 387 Fracto
   if phase:other:
     -> 0
   if phase==6:
@@ -22750,13 +22750,13 @@ objh_351
       Font_WriteMessage(msg(46:0x14), print_obj(0x23, dobj), ?)
       -> 1
 
-objh_352
+objh_352   # objects: 388 castle gate
   if phase:other:
     -> 0
     tail cs:off_7653A[bx]
     -> tail
 
-objh_353
+objh_353   # objects: 389 castle
   if phase:other:
     -> 0
   if phase==6:
@@ -22798,7 +22798,7 @@ objh_353
       Font_WriteMessage(msg(69:0xC))
       -> 1
 
-objh_354
+objh_354   # objects: 390 castle wall
   if phase:other:
     -> 0
   if phase==6:
@@ -22828,7 +22828,7 @@ objh_354
     if cmd:other:
       -> 0
 
-objh_355
+objh_355   # objects: 391 castle gate
   if phase:other:
     -> 0
   if phase==6:
@@ -22866,7 +22866,7 @@ objh_355
       Font_WriteMessage(msg(69:0x17), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_356
+objh_356   # objects: 392 loose brick
   if phase:other:
     -> 0
   if phase==6:
@@ -22916,7 +22916,7 @@ objh_356
         run_command?(0x34, iobj, 0)
         -> run_command?(0x34, iobj, 0)
 
-objh_357
+objh_357   # objects: 393 switch
   if phase:other:
     -> 0
   if phase==6:
@@ -22962,13 +22962,13 @@ objh_357
       Font_WriteMessage(msg(69:0x1D), print_obj(0x12, iobj), ?)
       -> 1
 
-objh_358
+objh_358   # objects: 394 courtyard
   if phase:other:
     -> 0
     tail cs:off_76E22[bx]
     -> tail
 
-objh_359
+objh_359   # objects: 395 moat
   if phase==6:
     if cmd==TALK_TO:
       Font_WriteMessage(msg(30:6))
@@ -23046,7 +23046,7 @@ objh_359
         Font_WriteMessage(msg(30:0xC), print_obj(2, dobj, print_obj(2, iobj, print_obj(6, dobj), ?), ?), ?)
         -> 1
 
-objh_360
+objh_360   # objects: 396 drawbridge
   if phase:other:
     -> 0
   if phase==6:
@@ -23201,13 +23201,13 @@ objh_360
       Font_WriteMessage(msg(30:0x1D), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_361
+objh_361   # objects: 397 entryway
   if phase:other:
     -> 0
     tail cs:off_772F2[bx]
     -> tail
 
-objh_362
+objh_362   # objects: 398 castle door
   if phase:other:
     -> 0
   if phase==6:
@@ -23289,7 +23289,7 @@ objh_362
       Font_WriteMessage(msg(43:0x19), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_363
+objh_363   # objects: 399 welcome mat
   if phase:other:
     -> 0
   if phase==6:
@@ -23327,7 +23327,7 @@ objh_363
       Font_WriteMessage(msg(43:0x11), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
       -> 1
 
-objh_364
+objh_364   # objects: 400 little door
   if phase:other:
     -> 0
   if phase==6:
@@ -23385,7 +23385,7 @@ objh_364
       Font_WriteMessage(msg(43:0xB))
       -> 1
 
-objh_365
+objh_365   # objects: 401 spider web
   if phase:other:
     -> 0
   if phase==6:
@@ -23418,7 +23418,7 @@ objh_365
     if cmd:other:
       -> 0
 
-objh_366
+objh_366   # objects: 402 eye
   if phase:other:
     -> 0
   if phase==6:
@@ -23456,13 +23456,13 @@ objh_366
       run_command?(0x31, iobj, 0)
       -> run_command?(0x31, iobj, 0)
 
-objh_367
+objh_367   # objects: 403 corner tower
   if phase:other:
     -> 0
     tail cs:off_77AA5[bx]
     -> tail
 
-objh_368
+objh_368   # objects: 404 
   if phase:other:
     -> 0
   if phase==6:
@@ -23489,7 +23489,7 @@ objh_368
     if cmd:other:
       -> 0
 
-objh_369
+objh_369   # objects: 405 
   if phase:other:
     -> 0
   if phase==6:
@@ -23536,7 +23536,7 @@ objh_369
       Font_WriteMessage(msg(70:0xB), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_370
+objh_370   # objects: 406 cricket
   if phase:other:
     -> 0
   if phase==6:
@@ -23598,13 +23598,13 @@ objh_370
         Font_WriteMessage(msg(70:0x15), print_obj(2, iobj, print_obj(2, dobj), ?), ?)
         -> 1
 
-objh_371
+objh_371   # objects: 407 corner tower
   if phase:other:
     -> 0
     tail cs:off_78093[bx]
     -> tail
 
-objh_372
+objh_372   # objects: 408 
   if phase:other:
     -> 0
   if phase==6:
@@ -23638,7 +23638,7 @@ objh_372
       run_command?(cmd, dobj, 0x194)
       -> run_command?(cmd, dobj, 0x194)
 
-objh_373
+objh_373   # objects: 409 lok pic
   if phase:other:
     -> 0
   if phase==6:
@@ -23666,13 +23666,13 @@ objh_373
     if cmd:other:
       -> 0
 
-objh_374
+objh_374   # objects: 410 castle wall
   if phase:other:
     -> 0
     tail cs:off_7838E[bx]
     -> tail
 
-objh_375
+objh_375   # objects: 411 grate
   if phase==6:
     if cmd==TALK_TO:
       if obj_85216!=0x19A:
@@ -23751,7 +23751,7 @@ objh_375
           Font_WriteMessage(msg(71:0x12), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
           -> 1
 
-objh_376
+objh_376   # objects: 412 sewer
   if phase==0x16:
     setup_pic_regions?(&unk_796CC, seg seg180, 6)
     -> setup_pic_regions?(&unk_796CC, seg seg180, 6)
@@ -23836,7 +23836,7 @@ objh_376
           showCutscene(0xA)
           -> 0
 
-objh_377
+objh_377   # objects: 413 end
   if phase:other:
     -> 0
   if phase==6:
@@ -23864,7 +23864,7 @@ objh_377
         Font_WriteMessage(msg(71:0x28), print_obj(0x12, iobj), ?)
         -> 1
 
-objh_378
+objh_378   # objects: 414 panel
   if phase:other:
     -> 0
   if phase==6:
@@ -24021,7 +24021,7 @@ objh_378
         Font_WriteMessage(msg(71:0x30), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
         -> 1
 
-objh_379
+objh_379   # objects: 415 red switch, 416 red switch, 417 red switch, 418 red switch, 419 red switch
   if phase:other:
     -> 0
   if phase==6:
@@ -24616,13 +24616,13 @@ objh_379
       Font_WriteMessage(msg(71:0x37), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_380
+objh_380   # objects: 420 round platform
   if phase:other:
     -> 0
     tail cs:off_78BD0[bx]
     -> tail
 
-objh_381
+objh_381   # objects: 421 sewer
   if phase==6:
     if cmd:other:
       -> 0
@@ -24644,7 +24644,7 @@ objh_381
   if phase:other:
     -> 0
 
-objh_382
+objh_382   # objects: 422 niche
   if phase:other:
     -> 0
   if phase==6:
@@ -24679,7 +24679,7 @@ objh_382
         Font_WriteMessage(msg(71:0x3C), print_obj(0x22, dobj), ?)
         -> 1
 
-objh_383
+objh_383   # objects: 423 creature
   if phase==6:
     if cmd:other:
       -> 0
@@ -24707,11 +24707,11 @@ objh_383
   if phase:other:
     -> 0
 
-objh_384
+objh_384   # objects: 424 library
   if phase:other:
     -> 0
 
-objh_385
+objh_385   # objects: 425 hypnogourd
   if phase:other:
     -> 0
   if phase==6:
@@ -24735,7 +24735,7 @@ objh_385
       go_to_room?(0x1AE)
       -> 1
 
-objh_386
+objh_386   # objects: 426 gourd room
   if phase:other:
     -> 0
     Font_WriteMessage(msg(47:8))
@@ -24748,7 +24748,7 @@ objh_386
     add_score?(0xF, 1, 0)
     -> 0
 
-objh_387
+objh_387   # objects: 427 wooden table
   if phase:other:
     -> 0
   if phase==6:
@@ -24783,7 +24783,7 @@ objh_387
       Font_WriteMessage(msg(47:0xE), print_obj(3, dobj, print_obj(0x23, iobj), ?), ?)
       -> 1
 
-objh_388
+objh_388   # objects: 428 wooden chairs
   if phase:other:
     -> 0
   if phase==6:
@@ -24817,7 +24817,7 @@ objh_388
         Font_WriteMessage(msg(47:0x12), print_obj(0x12, iobj), ?)
         -> 1
 
-objh_389
+objh_389   # objects: 429 gourds
   if phase==6:
     if cmd:other:
       -> 0
@@ -24835,13 +24835,13 @@ objh_389
   if phase:other:
     -> 0
 
-objh_390
+objh_390   # objects: 430 mansion
   if phase:other:
     -> 0
     tail cs:off_7980C[bx]
     -> tail
 
-objh_391
+objh_391   # objects: 431 house
   if phase:other:
     -> 0
   if phase==6:
@@ -24907,7 +24907,7 @@ objh_391
         Font_WriteMessage(msg(72:9), print_obj(2, iobj), ?)
         -> 1
 
-objh_392
+objh_392   # objects: 432 tree
   if phase==6:
     if cmd:other:
       -> 0
@@ -24932,13 +24932,13 @@ objh_392
   if phase:other:
     -> 0
 
-objh_393
+objh_393   # objects: 433 front yard
   if phase:other:
     -> 0
     tail cs:off_79A9D[bx]
     -> tail
 
-objh_394
+objh_394   # objects: 434 front door
   if phase==6:
     if cmd==OPEN:
       Font_WriteMessage(msg(72:0x10))
@@ -24958,7 +24958,7 @@ objh_394
   if phase:other:
     -> 0
 
-objh_395
+objh_395   # objects: 435 steps
   if phase==6:
     if cmd:other:
       -> 0
@@ -24987,7 +24987,7 @@ objh_395
   if phase:other:
     -> 0
 
-objh_396
+objh_396   # objects: 436 zombie
   if phase:other:
     -> 0
   if phase==6:
@@ -25025,7 +25025,7 @@ objh_396
       run_command?(0x5A, iobj, dobj)
       -> run_command?(0x5A, iobj, dobj)
 
-objh_397
+objh_397   # objects: 437 window
   if phase:other:
     -> 0
   if phase==6:
@@ -25057,7 +25057,7 @@ objh_397
         Font_WriteMessage(msg(72:0x1A))
         -> 1
 
-objh_398
+objh_398   # objects: 438 window
   if phase:other:
     -> 0
   if phase==6:
@@ -25082,7 +25082,7 @@ objh_398
     if cmd:other:
       -> 0
 
-objh_399
+objh_399   # objects: 439 cane
   if phase:other:
     -> 0
   if phase==6:
@@ -25166,13 +25166,13 @@ objh_399
       Font_WriteMessage(msg(72:0x27), print_obj(0x12, iobj, print_obj(2, dobj), ?), ?)
       -> 1
 
-objh_400
+objh_400   # objects: 440 back yard
   if phase:other:
     -> 0
     tail cs:off_7A116[bx]
     -> tail
 
-objh_401
+objh_401   # objects: 441 gravestones
   if phase:other:
     -> 0
   if phase==6:
@@ -25206,7 +25206,7 @@ objh_401
     if cmd:other:
       -> 0
 
-objh_402
+objh_402   # objects: 442 cellar doors
   if phase:other:
     -> 0
   if phase==6:
@@ -25280,7 +25280,7 @@ objh_402
       Font_WriteMessage(msg(72:0x39), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_403
+objh_403   # objects: 443 lock
   if phase:other:
     -> 0
   if phase==6:
@@ -25354,7 +25354,7 @@ objh_403
         Font_WriteMessage(msg(72:0x45), print_obj(2, iobj, print_obj(2, dobj), ?), ?)
         -> 1
 
-objh_404
+objh_404   # objects: 444 cellar
   if phase:other:
     -> 0
   if phase==6:
@@ -25391,13 +25391,13 @@ objh_404
         Font_WriteMessage(msg(72:0x4B), print_obj(2, iobj), ?)
         -> 1
 
-objh_405
+objh_405   # objects: 445 cellar
   if phase:other:
     -> 0
     tail cs:off_7A88B[bx]
     -> tail
 
-objh_406
+objh_406   # objects: 446 cellar door
   if phase:other:
     -> 0
   if phase==6:
@@ -25483,7 +25483,7 @@ objh_406
       Font_WriteMessage(msg(73:0x12), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_407
+objh_407   # objects: 447 cellar stairs
   if phase:other:
     -> 0
   if phase==6:
@@ -25514,7 +25514,7 @@ objh_407
       Font_WriteMessage(msg(73:0x16), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
       -> 1
 
-objh_408
+objh_408   # objects: 448 ski mask
   if phase:other:
     -> 0
   if phase==6:
@@ -25547,7 +25547,7 @@ objh_408
       Font_WriteMessage(msg(73:0x1A), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_409
+objh_409   # objects: 449 skeleton
   if phase:other:
     -> 0
   if phase==6:
@@ -25581,7 +25581,7 @@ objh_409
       Font_WriteMessage(msg(73:0x1F))
       -> 1
 
-objh_410
+objh_410   # objects: 450 skeleton key
   if phase:other:
     -> 0
   if phase==6:
@@ -25628,7 +25628,7 @@ objh_410
       Font_WriteMessage(msg(73:0x23), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_411
+objh_411   # objects: 451 twine
   if phase:other:
     -> 0
   if phase==6:
@@ -25681,7 +25681,7 @@ objh_411
       Font_WriteMessage(msg(73:0x29), print_obj(2, iobj), ?)
       -> 1
 
-objh_412
+objh_412   # objects: 452 maggots
   if phase:other:
     -> 0
   if phase==6:
@@ -25724,7 +25724,7 @@ objh_412
       Font_WriteMessage(msg(73:0x32), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
       -> 1
 
-objh_413
+objh_413   # objects: 453 dead bat
   if phase:other:
     -> 0
   if phase==6:
@@ -25755,7 +25755,7 @@ objh_413
       Font_WriteMessage(msg(73:0x37), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_414
+objh_414   # objects: 454 rat hole
   if phase:other:
     -> 0
   if phase==6:
@@ -25783,7 +25783,7 @@ objh_414
     if cmd:other:
       -> 0
 
-objh_415
+objh_415   # objects: 455 axe
   if phase:other:
     -> 0
   if phase==6:
@@ -25817,7 +25817,7 @@ objh_415
       Font_WriteMessage(msg(73:0x3E), print_obj(0x12, iobj, print_obj(2, dobj), ?), ?)
       -> 1
 
-objh_416
+objh_416   # objects: 456 ice pick
   if phase:other:
     -> 0
   if phase==6:
@@ -25846,7 +25846,7 @@ objh_416
     if cmd:other:
       -> 0
 
-objh_417
+objh_417   # objects: 457 giant spider
   if phase:other:
     -> 0
   if phase==6:
@@ -25874,7 +25874,7 @@ objh_417
     if cmd:other:
       -> 0
 
-objh_418
+objh_418   # objects: 458 decaying corpse
   if phase:other:
     -> 0
   if phase==6:
@@ -25909,7 +25909,7 @@ objh_418
       Font_WriteMessage(msg(73:0x4A), print_obj(2, dobj), ?)
       -> 1
 
-objh_419
+objh_419   # objects: 459 black cat
   if phase:other:
     -> 0
   if phase==6:
@@ -25943,7 +25943,7 @@ objh_419
     if cmd:other:
       -> 0
 
-objh_420
+objh_420   # objects: 460 jar
   if phase:other:
     -> 0
   if phase==6:
@@ -25977,7 +25977,7 @@ objh_420
       Font_WriteMessage(msg(73:0x53), print_obj(0x22, dobj), ?)
       -> 1
 
-objh_421
+objh_421   # objects: 461 severed hand
   if phase:other:
     -> 0
   if phase==6:
@@ -26019,13 +26019,13 @@ objh_421
       Font_WriteMessage(msg(73:0x5A))
       -> 1
 
-objh_422
+objh_422   # objects: 462 first floor
   if phase:other:
     -> 0
     tail cs:off_7B93C[bx]
     -> tail
 
-objh_423
+objh_423   # objects: 463 staircase
   if phase:other:
     -> 0
   if phase==6:
@@ -26072,7 +26072,7 @@ objh_423
         run_command?(0x48, dobj, 0x1D2)
         -> run_command?(0x48, dobj, 0x1D2)
 
-objh_424
+objh_424   # objects: 464 knob
   if phase:other:
     -> 0
   if phase==6:
@@ -26112,7 +26112,7 @@ objh_424
         Font_WriteMessage(msg(74:9), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
         -> 1
 
-objh_425
+objh_425   # objects: 465 knob
   if phase:other:
     -> 0
   if phase==6:
@@ -26156,7 +26156,7 @@ objh_425
         Font_WriteMessage(msg(74:0xB), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
         -> 1
 
-objh_426
+objh_426   # objects: 466 lever
   if phase==6:
     if cmd:other:
       -> 0
@@ -26229,7 +26229,7 @@ objh_426
           object_move?(dobj, 0x1CE, 0)
           -> 1
 
-objh_427
+objh_427   # objects: 467 window
   if phase:other:
     -> 0
   if phase==6:
@@ -26280,7 +26280,7 @@ objh_427
       Font_WriteMessage(msg(74:0x1B), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
       -> 1
 
-objh_428
+objh_428   # objects: 468 window pane
   if phase==6:
     if cmd:other:
       -> 0
@@ -26339,13 +26339,13 @@ objh_428
         object_move?(0x1EE, 0, 0)
         -> 1
 
-objh_429
+objh_429   # objects: 469 second floor
   if phase:other:
     -> 0
     tail cs:off_7C1BA[bx]
     -> tail
 
-objh_430
+objh_430   # objects: 470 door
   if phase:other:
     -> 0
   if phase==6:
@@ -26382,7 +26382,7 @@ objh_430
         run_command?(0x4D, iobj, dobj)
         -> run_command?(0x4D, iobj, dobj)
 
-objh_431
+objh_431   # objects: 471 handrail
   if phase:other:
     -> 0
   if phase==6:
@@ -26415,7 +26415,7 @@ objh_431
       Font_WriteMessage(msg(75:0xD), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
       -> 1
 
-objh_432
+objh_432   # objects: 472 white sign
   if phase==6:
     if cmd:other:
       -> 0
@@ -26445,7 +26445,7 @@ objh_432
   if phase:other:
     -> 0
 
-objh_433
+objh_433   # objects: 473 red button
   if phase:other:
     -> 0
   if phase==6:
@@ -26474,7 +26474,7 @@ objh_433
       Font_WriteMessage(msg(75:0x15))
       -> 1
 
-objh_434
+objh_434   # objects: 474 trap door
   if phase:other:
     -> 0
   if phase==6:
@@ -26522,7 +26522,7 @@ objh_434
         run_command?(0x4F, dobj, 0x1DB)
         -> run_command?(0x4F, dobj, 0x1DB)
 
-objh_435
+objh_435   # objects: 475 hook
   if phase==6:
     if cmd:other:
       -> 0
@@ -26574,7 +26574,7 @@ objh_435
         realsound_play(&aCreak_rs_3)
         -> 1
 
-objh_436
+objh_436   # objects: 476 staircase
   if phase:other:
     -> 0
   if phase==6:
@@ -26603,7 +26603,7 @@ objh_436
     if cmd:other:
       -> 0
 
-objh_437
+objh_437   # objects: 477 attic
   if phase==6:
     if cmd:other:
       -> 0
@@ -26625,13 +26625,13 @@ objh_437
   if phase:other:
     -> 0
 
-objh_438
+objh_438   # objects: 478 library
   if phase:other:
     -> 0
     tail cs:off_7C89A[bx]
     -> tail
 
-objh_439
+objh_439   # objects: 479 round hearth
   if phase:other:
     -> 0
   if phase==6:
@@ -26656,7 +26656,7 @@ objh_439
     if cmd:other:
       -> 0
 
-objh_440
+objh_440   # objects: 480 mantle
   if phase:other:
     -> 0
   if phase==6:
@@ -26683,7 +26683,7 @@ objh_440
     if cmd:other:
       -> 0
 
-objh_441
+objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book ...
   if es:[bx]!=dobj:
     inc [bp+var_2]
     [bp+var_4] add 0xA
@@ -27156,7 +27156,7 @@ objh_441
           Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
           -> 1
 
-objh_442
+objh_442   # objects: 492 chair
   if phase:other:
     -> 0
   if phase==6:
@@ -27182,7 +27182,7 @@ objh_442
     if cmd:other:
       -> 0
 
-objh_443
+objh_443   # objects: 493 skeleton
   if phase:other:
     -> 0
   if phase==6:
@@ -27224,7 +27224,7 @@ objh_443
         Font_WriteMessage(msg(76:0x21))
         -> 1
 
-objh_444
+objh_444   # objects: 494 pills
   if phase:other:
     -> 0
   if phase==6:
@@ -27260,7 +27260,7 @@ objh_444
       Font_WriteMessage(msg(76:0x27), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
       -> 1
 
-objh_445
+objh_445   # objects: 495 books
   if phase==6:
     if cmd:other:
       -> 0
@@ -27297,7 +27297,7 @@ objh_445
         Font_WriteMessage(msg(76:0x2D), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
         -> 1
 
-objh_446
+objh_446   # objects: 496 attic
   if phase:other:
     -> 0
   if phase==0xD:
@@ -27316,7 +27316,7 @@ objh_446
     show_text_box(msg(77:0))
     -> 0
 
-objh_447
+objh_447   # objects: 497 window
   if phase:other:
     -> 0
   if phase==6:
@@ -27335,7 +27335,7 @@ objh_447
     if cmd:other:
       -> 0
 
-objh_448
+objh_448   # objects: 498 Prize
   if phase:other:
     -> 0
   if phase==6:

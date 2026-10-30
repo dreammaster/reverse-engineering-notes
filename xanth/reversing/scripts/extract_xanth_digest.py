@@ -395,8 +395,24 @@ def digest(name, body, calls_known):
     return lines
 
 
+OWNERS = {}
+
+
+def load_owners():
+    """handler index -> 'id name' of the objects using it (from analysis/xanth_objects.tsv, made by xanth_objects.py)"""
+    import os
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "analysis", "xanth_objects.tsv")
+    if not os.path.exists(p):
+        return
+    for l in open(p, encoding="utf-8").read().splitlines()[1:]:
+        f = l.split(chr(9))
+        if len(f) > 7 and f[7] not in ("", "0"):
+            OWNERS.setdefault(int(f[7]), []).append("%s %s" % (f[0], f[2]))
+
+
 def main():
     load_enums()
+    load_owners()
     funcs = parse(sys.argv[1])
     find_stubs(funcs)
     only = sys.argv[3:]
@@ -406,7 +422,9 @@ def main():
     if only:
         names = only
     for n in names:
-        out.write("%s\n" % n)
+        m = re.match(r"^objh_(\d+)$", n)
+        own = OWNERS.get(int(m.group(1)), []) if m else []
+        out.write("%s%s\n" % (n, ("   # objects: " + ", ".join(own[:6]) + (" ..." if len(own) > 6 else "")) if own else ""))
         for l in digest(n, funcs[n], funcs):
             out.write(l + "\n")
         out.write("\n")

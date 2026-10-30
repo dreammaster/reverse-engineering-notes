@@ -13,9 +13,11 @@ Workflow is the same as `shannara/reversing/notes/roadmap.md`: work on a copy of
 - Matcher refined (stub resolution, co-occurrence, refine, signature groups): 391 pairs kept, 101 data pairs; earlier wrong `?` renames reset and re-applied.
 - Handler model confirmed identical; all 448 `objh_NNN` named (`scripts/apply_xanth_handlers.py`); savegame layout compared (see overview section 6).
 
+- Conversation system (compiled-in dialogue graph, 1,036 lines + 400 menus) and the 498-object table decoded; handler digest (528 functions) with owning objects.
+
 ## Next
-1. Read the Xanth handlers and port the Shannara handler digest/story-event extraction to Xanth (`extract_handler_digest.py` assumes the 32-bit table; needs a 16-bit far-pointer variant).
-2. Still unmatched/unverified: flag bitset helpers (`bitset_test/set/clear` not found by idiom search - may be inlined), party handling, `get_event`, memory manager (`new_handle`, `lock_handle`, ...), list system, `describe_contents?`, `show_dialog?`, `speak?`.
+1. Read the digest per room/NPC and write the game-logic summary (story events, puzzles); transpile the handlers.
+2. Still unverified: party handling, `get_event`, memory manager (`new_handle`, `lock_handle`, ...), list system; Xanth has no bitset flags (plain bytes), so those Shannara helpers have no counterpart.
 3. `*.RS` sample format and `*.VOC` sample rate / which game event plays which track (voice index linkage, as `retail_game_layer.md` section on voice for Shannara).
 4. Rename Xanth structs from the Shannara ones (Pic, Region, Font, MemoryBlock) once layouts are confirmed (16-bit sizes differ).
 5. Re-run the whole pipeline (`extract_func_features.py` on both IDBs -> `match_engines.py --cooc 3 0.9` -> `match_data.py` -> `make_xanth_names.py` -> apply) whenever either IDB gains names; the matcher treats a trailing `?` on the Xanth side as automatic.

@@ -110,3 +110,29 @@ The first simple line (`line 0 -> menu 0`) is the opening phone call (the caller
 Other facts established while naming the handler helpers: `selectedCommand` is the verb (enum `CMD` in `analysis/xanth_enums.tsv`: 92 verbs, `TAKE` = 68, `LOOK_AT` = 19, `TALK_TO` = 69, ...), `dobj` / `iobj` (`word_8B9C4` / `word_8B9C2`) the command's objects, `wait_ticks_or_click` the
 pause between scripted lines, `event_pending` / `cancel_event` / `schedule_event` the 16-slot timed-event queue (4-byte records, id first), `describe_contents` the "... holding ..." printer, `lock_combination_correct` the dial puzzle (bytes `8B9D2..8B9D8` = 2,1,3,1,2,1,1).
 Handler digest: `analysis/xanth_handler_digest.txt` (528 functions as path-structured pseudo-code, `scripts/extract_xanth_digest.py`).
+
+## 8. Object table (2026-10-30)
+
+498 objects (`object_count`), ids 1..498, initial state in the exe's data (`scripts/dump_objects.py` -> `scripts/xanth_objects.py` -> `analysis/xanth_objects.tsv`, which also resolves names from `OBJECT.DAT`).
+Table: 6-byte entries `{u8 type; u8 pad; u16 recOffset; u16 recSegment}` at `seg_8A9E4*16 + 0x66 + id*6` (savegame loop starts at `+0x6C`); records are packed in a data segment with sizes
+**18 / 28 / 32 / 14 / 32 bytes for types 1..5** (record spacing; every accessor offset fits). Types: **1 = rooms** (70), **2 = portable items** (326), **3 = containers/furniture** (69; things that hold items, e.g. desk, sink),
+**4 = scenery props** (14: door, path, bush, ocean), **5 = characters** (19: You, Grundy, headman, Kim, Nada, ...).
+
+| Field | Type 1 | Type 2 | Type 3 | Type 4 | Type 5 |
+|---|---|---|---|---|---|
+| name offset (word, 1-based into `OBJECT.DAT` pool) / alt name | +0 / +2 | +0 / +2 | +0 / +2 | +0 / +2 | +0 / +2 |
+| location (parent object) | - | +8 | +8 | - | +6 |
+| slot (byte; which child list of the parent) | - | +0Ah | +0Ah | - | +8 |
+| next sibling | - | +0Ch | +0Ch | - | +0Ah |
+| handler index (`objh_NNN`) | +0Ah | +1Ah | +1Eh | +0Ch | +1Eh |
+| default verb | - | +16h | +1Ah | +8 | +1Ah |
+| points | +8 | +12h | +16h | - | - |
+| `prop_a` | +0Ch | +14h | +18h | - | +18h |
+
+Checks: all 492 objects with a handler use indices 1..448 and 448 distinct values - exactly the size of `object_handler_table`; every location is a valid object of the expected type (items in rooms or containers,
+characters in rooms); characters default to verb `TALK_TO` (69). The model is Shannara's (rooms -> containers -> items as typed child lists, `object_move`), with 16-bit records. The `bitset_test/set/clear` flag primitives of
+Shannara do not exist here: Xanth keeps its game flags as plain bytes/words (`byte_852B3`, `byte_852C0`, ...), which the handlers read and write directly (visible all over the digest).
+
+`call_object_handler` is driven by `run_command` exactly as in Shannara (phases 1-2 for the actor/room objects, 3/4 for one command object and its container, 5/6 for the other); in Xanth the iobj gets phases 3 and 4 and the
+dobj 5 and 6 (checked in `run_command`), whereas Shannara's notes list 4 = dobj and 6 = iobj - one of the two readings is the wrong way round; worth re-checking in Shannara's `run_command` when its handlers are read.
+Digest headers (`xanth_handler_digest.txt`) now list the objects that use each `objh_NNN`.
