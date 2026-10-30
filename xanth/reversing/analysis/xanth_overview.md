@@ -201,3 +201,10 @@ the player and followers are moved, `update_room_light`, `set_room_music`, phase
 **`musicId = (file number << 8) | tune`**: `0x105` = tune 5 of `XANTH_01.MUS`, `0x204` = tune 4 of `XANTH_02.MUS`, ...; the tune numbers used (1-12, 1-12, 1-11, 1-8) fit the tune counts of the four archives exactly (12/12/11/8 tunes = 24/24/22/16
 directory records). Rooms 0x22 (bedroom), 0x40 and 0x51 bypass the table and play `0x307` (volume 0x7F, loop); rooms not in the table fall back to `0x302` / `0x307` depending on a sword flag. `play_music_entry` first checks the sound-device bits
 in `word_8912E` (bits 1-2 and 5-6, mapping to the two MIDI arrangements per tune) and remembers the current tune in `word_8911A` / `word_8912C` (both saved in the savegame tail).
+
+## 14. Room pictures (2026-10-30)
+
+`describe_room(room)` asks `sub_1DB4E` for the room's picture and redraws the scene (`RoomItem_Draw(0x20)`) only when it differs from the current `picNum`. The table (`analysis/xanth_room_pics.tsv`, `scripts/dump_roompics.py`) has 68 entries
+`{u16 room; u16 picNum}` at `seg044:0x7F8`, **`picNum = (XANTH_nn.PIC file number << 8) | entry`** (all 68 resolve to existing entries; the same format is used by `Conversation_Show(convNum, picNum)` and the other `show_compendium` calls, e.g.
+`0x5A04` = `XANTH_90.PIC` entry 4). Room 0x1F0 chooses between two pictures (0x123E / 0x123F) by whether object 0x8B is held. Checked visually: room 34 (bedroom) -> `XANTH_02.PIC` entry 0 renders as the window, pen holder and computer that the
+object table puts in that room. Pictures are 264x122 (the picture window) and carry their own palette.
