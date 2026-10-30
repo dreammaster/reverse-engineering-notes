@@ -47,6 +47,11 @@ int main(int argc, char **argv) {
 		} else if (cmd == "steps" && i + 1 < argc) {
 			const std::string why = m.run(uint64_t(std::atoll(argv[++i])));
 			std::printf("steps: %s at %04X:%04X\n", why.c_str(), c.cs, c.ip);
+		} else if (cmd == "keyrep" && i + 2 < argc) {   // keyrep <hex key> <count>: that many identical keys
+			const uint16_t k = uint16_t(std::strtoul(argv[++i], nullptr, 16));
+			for (int n = std::atoi(argv[++i]); n > 0; --n) m.keys.push_back(k);
+		} else if (cmd == "keydelay" && i + 1 < argc) {
+			m.keyDelay = std::atoi(argv[++i]);
 		} else if (cmd == "key" && i + 1 < argc) {
 			m.keys.push_back(uint16_t(std::strtoul(argv[++i], nullptr, 16)));
 		} else if (cmd == "type" && i + 1 < argc) {

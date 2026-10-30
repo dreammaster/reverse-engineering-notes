@@ -168,7 +168,11 @@ int main(int argc, char **argv) {
 		else if (std::string(argv[i]) == "--keys" && i + 1 < argc) {
 			std::stringstream ks(argv[++i]);
 			std::string k;
-			while (std::getline(ks, k, ',')) gKeys.push_back(uint16_t(std::strtoul(k.c_str(), nullptr, 16)));
+			while (std::getline(ks, k, ',')) {   // "<hex key>" or "<hex key>*<count>"
+				const size_t star = k.find('*');
+				const size_t count = star == std::string::npos ? 1 : std::strtoul(k.c_str() + star + 1, nullptr, 10);
+				gKeys.insert(gKeys.end(), count, uint16_t(std::strtoul(k.c_str(), nullptr, 16)));
+			}
 		}
 		else states.push_back(argv[i]);
 	}

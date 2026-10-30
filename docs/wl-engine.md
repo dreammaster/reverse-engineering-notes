@@ -108,6 +108,8 @@ A ported function is accepted when every check below passes:
   `WATCH=<ds offset>` reports which oracle instruction writes a byte, `VDUMP=1` lists differing video bytes, and
   `WLPOKE=<ds offset>=<byte>,...` patches both machines after loading the state so that rare paths (dying characters,
   party orders, ...) can be exercised.
+  Routines that wait for keys need `--keys "0d*100000"` (hex key `*` count): the text printer polls the keyboard for
+  speed keys and throws the queued keys away, so only an enormous queue is still there when the wait starts.
 * `tools/decomp/flagcheck.py` finds callers that read a flag right after a call to a ported function.
 * `tools/scramblecheck.sh` plays the game with `WL_SCRAMBLE` set, which overwrites the junk registers of every port with
   garbage, and compares the result with a normal run; a difference means some caller depends on a "junk" register.
