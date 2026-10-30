@@ -417,7 +417,7 @@ def main():
     find_stubs(funcs)
     only = sys.argv[3:]
     out = open(sys.argv[2], "w", encoding="utf-8") if not only else sys.stdout
-    names = [n for n in funcs if re.match(r"^(objh_\d+|exit_fn_\d+|conv_cb_\d+|conv_text_\d+|cmd\w+|verbdef\w*)$", n)]
+    names = [n for n in funcs if re.match(r"^(objh_\d+|exit_fn_\d+|event_fn_\d+|conv_cb_\d+|conv_text_\d+|cmd\w+|verbdef\w*)$", n)]
     names.sort()
     if only:
         names = only

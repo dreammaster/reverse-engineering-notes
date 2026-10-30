@@ -51,3 +51,6 @@ flag_85266_censer	censer_count	counter incremented only by the two censer handle
 flag_852B3_censer	can_climb	set to 1 by the censer handlers after the third-censer cutscene; tree/boulder handlers then let Dug climb (msg 9:8 / 15:24) instead of "screens cannot climb trees"
 flag_85319_windbag	windbag_opened	set when the windbag is opened in the cave (room 0x169): the bag sails away (msg 62:67) and the sail/mist/sailboat handlers change
 flag_852E1_manacles	nada_shackled	nonzero while Nada is held by the manacles; cleared (with msgs 31:32-34 and cancel_event 0x2C) when the manacles are asked to let her go
+sub_1C89B	execute_command	one turn: actor_obj = player_obj; selectedCommand/dobj/iobj taken from the UI state (word_8B9BA/8B9CA/8B9C8; verb 0x51 moves dobj to byte_8BE1C); redraws the command box, run_command, handler phase 7 for the player and the room, advance_time?, word_85222 = 1, turn_counter++
+word_8521C	turn_counter	incremented once per executed command by execute_command
+sub_1F070	run_event	calls timed event handler event_function_table[id-1] for id 1..0x2D (0 if out of range); returns its result to advance_time?

@@ -99,6 +99,12 @@ idc.set_name(CB, "conversation_callbacks", idc.SN_NOWARN)
 S69 = ida_segment.get_segm_by_name("seg069").start_ea
 c2 = name_table(S69, 90, 0, "conv_text_%02d", "dynamic conversation text %d (strIdx 0x8000+%d): returns the line's text pointer")
 print("renamed conversation callbacks", c1, "text functions", c2)
+
+# timed events: run_event (sub_1F070) calls the far pointer at seg_8AA18:[(id-1)*4] for id 1..0x2D; advance_time? runs it when an event's countdown expires
+EV = idc.get_wide_word(idc.get_name_ea_simple("seg_8AA18")) * 16
+c3 = name_table(EV, 45, 0, "event_fn_%02d", "timed event table entry %d (event id %d + 1 as used by schedule_event?/cancel_event; run_event calls it when the countdown expires)")
+idc.set_name(EV, "event_function_table", idc.SN_NOWARN)
+print("renamed event functions", c3)
 idc.save_database(idc.get_idb_path(), 0)
 print("renamed handlers", done)
 if not ida_kernwin.is_idaq():

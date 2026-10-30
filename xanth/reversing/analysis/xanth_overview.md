@@ -222,3 +222,22 @@ There is no video: `showCutscene(n)` (Paul's names throughout) is a 11-way jump 
 7 `kimMeetsMerman`, 8 `kimRafting`, 9 `kimGapChasm`, 10 `merCouple`. Triggers seen in handlers: censer (149) -> demonConv1, telephone (65) -> demonEndgame, spring (127) -> kimMeetsMerman, mirror (213) -> kimRafting, sewer (412) -> merCouple.
 `*.RS` files are loaded by `realsound_load` (only for certain sound-device bits of `word_8912E`; played through `sub_23BB1`) in chunks of at most 0xFFF0 bytes, up to 7 chunks per file. The earlier 'bit/nibble pattern' reading was wrong: the `CC`/`33` runs are part of a constant 32-byte header (the same bytes are the template `unk_3EC20` that `voc_play_track` -> `sub_23D57` memcpy's in front of every voice buffer, kind byte 6 there), and the data from offset 0x20 is smooth unsigned PCM (BARK: 0..68, mean 32; THUNDER: 0..68; the largest sample step is 58) whose maximum equals the header byte 0x48 = 72: the samples are PC-speaker PWM duty values for a timer period of 72 PIT ticks, i.e. about 1,193,182/72 = 16.6 kHz (the kind byte 1 or 2 is probably a repeat factor, so 8.3 kHz is possible; not confirmed because the player code behind `word_891BA` (`sub_10C98` selects start/stop routines per device 0-4) sits in a driver segment the IDB has not disassembled). A port can play them as 6-bit PCM at 16572 Hz (scale by 4).
 
+
+## 17. The game loop and one turn (2026-10-30)
+
+`main` (0x18A66): `game_init`, `show_intro`, then `setjmp` (the longjmp codes 0 = new game, 2 = after a restore, 3 = after an undo-style restart pick the redraw path: room picture `RoomItem_Draw`, room handler phase 0xA for code 2, `set_room_music?(current_room)`), then the event loop:
+
+1. `update_animation?`, `clear_keys?`, `Events_GetMouseStateExtra(mask 0x3FF)` fills the event record (`state.field_0` = event type).
+2. Dispatch on the type: 1 = key -> `handle_key_event?`; 2, 6 = mouse move -> `handle_move_event?`; 4 = click -> `handle_click_event?`; 0x10, 0x20, 0x40 = redraw requests -> `RoomItem_Draw(type)`; 0x80, 0x100 = further UI events (`sub_18C96` etc.).
+3. The UI is a sentence builder: verb buttons, a command line box (`build_command_line?`, `click_button_?`, `disable_button_?`) and scene regions (`get_region_?`); the verb, direct and indirect object chosen by the player end up in `word_8B9BA` / `unk_8B9CA` / `unk_8B9C8`. When a sentence is complete the click handler leaves the loop through `execute_command` (the `main:loc_18C8E` branch).
+
+`execute_command` (was `sub_1C89B`, 0x1C89B) is **one game turn**:
+
+1. hourglass cursor; `actor_obj = player_obj`; `selectedCommand`, `dobj`, `iobj` are copied from the UI words (verb 0x51 stores `dobj` in `byte_8BE1C` and clears it); `dobj_type` / `iobj_type` are read from the object table (type byte at `+0x66 + id*6`).
+2. the command box (x 0x33-0x13A, y 0x81-0x94) is redrawn.
+3. `run_command(selectedCommand, dobj, iobj)` (handler phases 1-6, then the default verb handler `cmd*`; see section 7).
+4. `call_object_handler(player_obj, 7)` and `call_object_handler(current_room, 7)`: phase 7 = "command finished" notification for the player and the room (the same phase 7 as Shannara's idle/event notification).
+5. `advance_time?(word_85222, 0)`: if `byte_850AB` is set it is cleared and nothing happens (a command that must not consume time). Otherwise it runs `call_object_handler(current_room, 0x1B)` (per-turn room tick), then walks the 16-slot event list (`seg_8A9E2`, 4-byte records: u8 event id at +0x32, u16 countdown at +0x34); every event whose countdown has expired is run through `run_event(id)` (was `sub_1F070`), which calls `event_function_table[id-1]` (45 far pointers at `seg_8AA18:0`, now `event_fn_NN` with NN = id-1; ids as used by `schedule_event?(id, delay)`, `cancel_event(id)`, `event_pending(id)`). Handlers set `word_85222` to a value > 1 (default 1, 506 stores in the digest, most of them 0) to stretch or suppress the time step.
+6. `word_85222 = 1`, `turn_counter` (`word_8521C`) incremented, `RoomItem_Draw(0x20)`, small-arrow cursor, `wputchar(0xB)` (prompt).
+
+For a port this fixes the engine skeleton: event loop -> sentence builder -> `execute_command` -> `run_command` -> timed events, with all game logic in the `objh_NNN` / `exit_fn_NN` / `conv_cb_NN` / `event_fn_NN` tables (digest and `xanth/engine/gen` carry 44 more functions now).
