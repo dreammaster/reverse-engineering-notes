@@ -25,7 +25,7 @@ static std::vector<std::string> listDir(const std::string &dir, const char *ext)
 		return out;
 	while (dirent *e = readdir(d)) {
 		std::string n = e->d_name;
-		if (n.size() > 4 && strcasecmp(n.c_str() + n.size() - 4, ext) == 0)
+		if (n.size() > strlen(ext) && strcasecmp(n.c_str() + n.size() - strlen(ext), ext) == 0)
 			out.push_back(n);
 	}
 	closedir(d);
@@ -130,6 +130,19 @@ static int check(const std::string &dir) {
 			printf("%s: %zu records used, %zu consistent\n", n.c_str(), used, good);
 			if (used != good)
 				fail(n + ": inconsistent MIDI sizes");
+		} catch (const std::exception &e) {
+			fail(n + ": " + e.what());
+		}
+	}
+	for (auto &n : listDir(dir, ".RS")) {
+		try {
+			RsFile r(readFile(dir + "/" + n));
+			unsigned mx = 0;
+			for (uint8_t s : r.samples())
+				mx = std::max<unsigned>(mx, s);
+			printf("%s: kind %u, %zu samples, max %u of %u\n", n.c_str(), r.kind(), r.samples().size(), mx, r.fullScale());
+			if (mx > r.fullScale())
+				fail(n + ": sample above full scale");
 		} catch (const std::exception &e) {
 			fail(n + ": " + e.what());
 		}

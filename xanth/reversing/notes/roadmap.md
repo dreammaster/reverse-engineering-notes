@@ -25,6 +25,6 @@ Workflow is the same as `shannara/reversing/notes/roadmap.md`: work on a copy of
 
 ## Next
 1. Write per-room/NPC story summaries from the digest (puzzles, flag logic) and name the remaining ~80 flag bytes meaningfully (they currently carry `flag_ADDR_<first writer>` labels).
-2. Decode `*.RS` and the SoundBlaster sample-rate table (low priority); trace `play_music_entry` -> device selection for the two MIDI arrangements.
+2. `*.RS` is decoded (6-bit PWM PCM, ~16.6 kHz, repeat byte unconfirmed). Still open: the digital player routines behind `word_891BA` (undisassembled driver segment) and the SoundBlaster voice rate; trace `play_music_entry` -> device selection for the two MIDI arrangements.
 3. Port the verified decoders (DCL, PIC, RGN, MUS directory, SHANSTR, VOC directory) to C++ and sketch the engine around `run_command` / `call_object_handler` / `Conversation_Show`.
 4. Re-run the pipeline (`extract_func_features.py` -> `match_engines.py --cooc 3 0.9` -> `make_xanth_names.py` -> apply scripts) whenever either IDB gains names; apply order: `apply_xanth_names.py`, `apply_xanth_handlers.py`, `apply_xanth_manual.py`, `apply_xanth_flags.py`.

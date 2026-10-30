@@ -414,4 +414,25 @@ size_t VocFile::trimmedSize(const uint8_t *samples, size_t size) {
 	return size;
 }
 
+// ---------------------------------------------------------------------------------------------------------------------------------------
+// RS: "STEVE" kind scale u32-length(at +7) 21-byte constant table, samples from +0x20
+
+RsFile::RsFile(const Bytes &d) {
+	if (d.size() < 32 || memcmp(d.data(), "STEVE", 5) != 0)
+		throw FormatError("RS: bad header");
+	_kind = d[5];
+	_scale = d[6];
+	uint32_t len = rd32(d, 7);
+	if (!_scale || 32 + (size_t)len > d.size())
+		throw FormatError("RS: bad length or scale");
+	_samples.assign(d.begin() + 32, d.begin() + 32 + len);
+}
+
+Bytes RsFile::toPcm8() const {
+	Bytes out(_samples.size());
+	for (size_t i = 0; i < out.size(); i++)
+		out[i] = (uint8_t)std::min<unsigned>(255, _samples[i] * 255u / _scale);
+	return out;
+}
+
 } // namespace Legend

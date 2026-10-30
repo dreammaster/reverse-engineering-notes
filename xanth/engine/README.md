@@ -10,6 +10,7 @@ No dependencies; intended to be dropped into a ScummVM engine (wrap `Common::See
 | `RgnFile` | `XANTH_nn.RGN` | `rgn_read.py` | 17 files, region id == object id |
 | `MessageFile` | `XANTHSTR.DAT` | `shanstr.py` | 80 blocks / 5,542 strings identical to Python |
 | `MusFile` | `XANTH_nn.MUS` | `xanth_mus.py` | 86 MIDI records, sizes consistent |
+| `RsFile` | `*.RS` (29 files) | overview section 15 | header, length and full-scale consistent |
 | `VocFile` | `XANTH_01.VOC` | overview section 10 | 1,326 tracks, last offset == file size |
 
 ```

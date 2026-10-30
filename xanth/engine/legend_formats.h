@@ -129,6 +129,22 @@ private:
 	std::vector<uint32_t> _offsets;
 };
 
+/** RealSound PC-speaker clip (*.RS): 32-byte "STEVE" header, then `length` unsigned PCM samples whose full scale is header[6] (0x48 = PWM period in PIT ticks). */
+class RsFile {
+public:
+	explicit RsFile(const Bytes &data);
+	uint8_t kind() const { return _kind; }          // 1 or 2 (probably a repeat factor; 6 in the in-memory voice template)
+	uint8_t fullScale() const { return _scale; }
+	const Bytes &samples() const { return _samples; }
+	/** 1193182 / fullScale() = about 16572 Hz; see analysis/xanth_overview.md (*.RS) for the open question about `kind`. */
+	unsigned sampleRate() const { return 1193182 / _scale; }
+	/** Unsigned 8-bit PCM scaled to the full 0..255 range. */
+	Bytes toPcm8() const;
+private:
+	uint8_t _kind = 0, _scale = 0;
+	Bytes _samples;
+};
+
 } // namespace Legend
 
 #endif
