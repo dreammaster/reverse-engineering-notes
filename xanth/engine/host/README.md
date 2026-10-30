@@ -73,6 +73,6 @@ blitter `sub_16804` jumps through `[bp+var_2E]` / `var_30` / `var_32` to one of 
 
 * The conversation menus (`Conversation_Show`) are the original code but wait for mouse/keyboard input; the sweeps do not script it yet, so 77 scenarios stop at the first menu.
 * Text is recorded, not rendered (the font code is lifted, but the tests read the text from `Font_WriteMessage` and friends).
-* `main` (`HOST_MAIN=1`) runs the original intro - copyright text, title pictures `XANTH_98`/`XANTH_99`, fonts - and reaches the "Restore?" dialog, then waits for mouse/keyboard input that the host does not script yet (`Machine::mouseScript`, `keys` exist).
+* `main` (`HOST_MAIN=1`) runs the original intro - copyright text, title pictures `XANTH_98`/`XANTH_99`, fonts - and reaches the "Restore?" dialog, then waits there: the dialog is answered with the mouse (button regions), and the host does not script the pointer yet (`Machine::mouseScript` exists; keys given with `HOST_KEYCODES="316E 1C0D"` reach the game through both `int 16h` and DOS `int 21h` AH=07/08/01 and are consumed, but do not answer this dialog).
 * Sound devices (SoundBlaster / MIDI) are not emulated; `realsound_play` is recorded.
 * The lifted code is exact as far as `../gen/cpu.h` models the 8086: `pushf/popf` and the parity flag are ignored, the direction flag is assumed clear.

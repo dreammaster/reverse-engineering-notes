@@ -344,9 +344,15 @@ void Machine::dosInt(Cpu &c) {
 	switch (ah) {
 	case 0x02: stdoutText.push_back((char)c.dx.l); break;
 	case 0x06: if (c.dx.l != 0xFF) stdoutText.push_back((char)c.dx.l); else { c.ZF = true; c.ax.l = 0; } break;
-	case 0x07: case 0x08: case 0x01: c.ax.l = 0x0D; break;
+	case 0x07: case 0x08: case 0x01:     // read a character from the BIOS key queue; an extended key comes as 0 followed by its scan code on the next call
+		if (pendingScan >= 0) { c.ax.l = (uint8_t)pendingScan; pendingScan = -1; break; }
+		if (keys.empty()) { c.ax.l = 0; break; }
+		c.ax.l = (uint8_t)(keys.front() & 0xFF);
+		if ((keys.front() & 0xFF) == 0) pendingScan = keys.front() >> 8;
+		keys.pop_front();
+		break;
 	case 0x09: { std::string s; for (int i = 0; i < 400; i++) { char ch = (char)c.rd8(c.ds, (uint16_t)(c.dx.x + i)); if (ch == '$') break; s.push_back(ch); } stdoutText += s; break; }
-	case 0x0B: c.ax.l = 0; break;
+	case 0x0B: c.ax.l = keys.empty() && pendingScan < 0 ? 0 : 0xFF; break;
 	case 0x0E: c.ax.l = 3; break;                                  // select disk: three drives
 	case 0x19: c.ax.l = 2; break;                                  // current drive C:
 	case 0x1A: dta = ((uint32_t)c.ds << 16) | c.dx.x; break;
