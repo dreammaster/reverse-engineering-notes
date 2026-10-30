@@ -23,7 +23,9 @@ for i in range(1, count + 1):
     rec = w(e + 4) * 16 + w(e + 2)
     size = SIZES[t]
     objs.append(dict(id=i, type=t, rec="%x" % rec, size=size, data=[b(rec + k) for k in range(size)]))
-json.dump(dict(count=count, objects=objs), open(out, "w"))
+# attribute descriptors: 4 bytes per attribute id at 0x33A1C + 4*id = {u8 bitOffset; u8 pad; u16 typeMask}; the bit lives at record + 4 + bitOffset/8, bit bitOffset%8
+attr = [dict(id=a, bit=b(0x33A1C + 4 * a), mask=w(0x33A1E + 4 * a)) for a in range(1, 25)]
+json.dump(dict(count=count, objects=objs, attrs=attr), open(out, "w"))
 print("objects", count)
 if not ida_kernwin.is_idaq():
     idc.qexit(0)

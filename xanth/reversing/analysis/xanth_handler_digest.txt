@@ -16147,7 +16147,7 @@ objh_131   # objects: 139 sword
             wait_ticks_or_click(0x1F40)
             show_text_box(msg(12:0x5C))
             flag_8532E_sword = 1
-            flag_85758_sword = 0
+            follower_obj = 0
             flag_85250_sword = 0
             go_to_room?(0x22)
             -> 1
@@ -16166,7 +16166,7 @@ objh_131   # objects: 139 sword
           wait_ticks_or_click(0x1F40)
           show_text_box(msg(12:0x5C))
           flag_8532E_sword = 1
-          flag_85758_sword = 0
+          follower_obj = 0
           flag_85250_sword = 0
           go_to_room?(0x22)
           -> 1
@@ -20140,12 +20140,12 @@ objh_203   # objects: 213 mirror
         flag_8531E_mirror = 1
         showCutscene(8)
         if object_parent_is?(5, current_room)!=0:
-          if flag_85758_sword==5:
+          if follower_obj==5:
             wait_ticks_or_click(0x7D0)
             show_compendium(0x190, 0x5A03)
             add_score?(5, 0, 0)
             -> 1
-          if flag_85758_sword!=5:
+          if follower_obj!=5:
             add_score?(5, 0, 0)
             -> 1
         if object_parent_is?(5, current_room)==0:
@@ -20175,12 +20175,12 @@ objh_203   # objects: 213 mirror
         flag_8531E_mirror = 1
         showCutscene(8)
         if object_parent_is?(5, current_room)!=0:
-          if flag_85758_sword==5:
+          if follower_obj==5:
             wait_ticks_or_click(0x7D0)
             show_compendium(0x190, 0x5A03)
             add_score?(5, 0, 0)
             -> 1
-          if flag_85758_sword!=5:
+          if follower_obj!=5:
             add_score?(5, 0, 0)
             -> 1
         if object_parent_is?(5, current_room)==0:
@@ -21753,7 +21753,7 @@ objh_215   # objects: 240 manacles
         flag_852E1_manacles = 0
         cancel_event(0x2C)
         byte_87FBE = 0
-        flag_85758_sword = 5
+        follower_obj = 5
         flag_85250_sword = 5
         popup_window_event?()
         MouseCursor_SetHourglass()

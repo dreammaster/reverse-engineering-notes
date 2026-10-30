@@ -6,7 +6,7 @@ address	name	size	written_by	tested_by
 8b9e2	word_8B9E2	2	exit_fn_12=current_room	objh_005(5 Nada); objh_018(19 Guardian)
 8521c	word_8521C	2		
 8521e	word_8521E	2		
-85758	word_85758	2	objh_131(139 sword)=0; objh_215(240 manacles)=5	objh_203(213 mirror)
+85758	word_85758	2		
 8b9ce	unk_8B9CE	2		
 85258	byte_85258	1	conv_cb_21=1; conv_cb_46=1	
 85254	word_85254	2	conv_cb_21=current_room; conv_cb_46=current_room	

@@ -45,3 +45,4 @@ sub_23EE0	voc_play_track	(track, far callback): streams VOC track `track` (8-bit
 word_8B9D0	voice_track	track to play with the line being shown by Conversation_Show: the convId when voc_track_length > 0, else 0xFFFF; scripted lines set it to explicit tracks (0x47C, 0x4C0, 0x525, ...)
 word_8B9DC	voice_on	option: play recorded speech (checked together with voc_enabled before voc_play_track in Conversation_Show); saved in the save-region table
 word_8B9DA	show_text_with_voice	option: show the line's text even when it is voiced; saved in the save-region table
+flag_85758_sword	follower_obj	object that follows the player into a new room (go_to_room moves it to current_room and gives it handler phase 0x1A; prints "%s follows you")

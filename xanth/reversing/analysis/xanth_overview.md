@@ -167,3 +167,30 @@ is not yet traced). A reimplementation needs no executable data to find clips - 
 - `unk_34628` (1,250 bytes, next to the object-type tables: probably the typed child-list heads of the containment tree), `word_81A26` (64 bytes), `unk_87C50` (180 bytes), `unk_87C3E` (18), `unk_8823C` (12), `byte_8B9D2` (the 7-byte lock combination).
 
 Everything a savegame needs is therefore enumerable from two tables, which is what makes a faithful, save-compatible reimplementation tractable. Naming the ~130 flag bytes from the handler digest (where each one is set) is the next big readability step.
+
+## 12. Object attributes (2026-10-30)
+
+`object_has_attr/set_attr/clear_attr(obj, attr)` work on a bit array inside the object record: `object_attr_locate` uses a 4-byte descriptor per attribute id at `0x33A1C + 4*id` = `{u8 bitOffset; u8 pad; u16 typeMask}`
+(the attribute exists only if `(typeMask >> (type-1)) & 1`), the bit is `record + 4 + bitOffset/8`, bit `bitOffset%8`. 23 attributes are defined (ids 1-23; 24 has an empty mask). The initial settings of every object are in the new
+`attrs` column of `xanth_objects.tsv` (dump: `dump_objects.py`). Meanings, from the default verbs (`cmdOpen`, `cmdTake`, `cmdLookAt`, `go_to_room`) and from which objects carry them:
+
+| id | meaning | evidence |
+|---|---|---|
+| 2 | proper name (no article: "Kim", "You") | on 11 of 19 characters, exactly the named ones; `print_obj` article logic |
+| 5 | "has been handled / scored once" | set by `cmdTake`, `cmdOpen`, room entry after the first points are awarded |
+| 7 | normal visible item (listed in room descriptions) | 90 items, 11 containers |
+| 8 | animate/other-grammar flag - on all 19 characters and 26 items | consulted in `cmdGive`/`print_obj` |
+| 9 / 21 | room properties (61 / 39 rooms; 21 = enclosed: `cmdOpen` on the current room says "isn't closed") | rooms only |
+| 10 | generic per-object story flag (set 157 times, cleared 38, tested 611 times by object handlers: switches, "done" bits) | no fixed meaning |
+| 11 | surface: contents are "on" it ("On the desk you see ...") | `cmdLookAt`, `go_to_room` ("on" / "in") |
+| 12 | portable (`cmdTake` refuses without it) | letter, bracelet, Post-It |
+| 13 | contents visible while closed (transparent) | `cmdLookAt`, `cmdOpen` |
+| 14 | open | `cmdOpen` sets, `cmdClose` clears; 327 tests |
+| 15 | openable | `cmdOpen` ("you can't open that" without it); envelope, window |
+| 17 | container | 38 containers, 14 items |
+| 22 | female | exactly the female characters (Kim, Nada, Jenny, Metria, ogress, ...) - pronoun choice in `print_obj` |
+| 23 | person/humanoid (speaks) | 16 of 19 characters |
+| 1, 3, 4, 18, 19, 20 | not identified yet | |
+
+Also named: `follower_obj` (the object that follows the player between rooms: `go_to_room` moves it into the new room and gives it handler phase 0x1A). Room-entry sequence in `go_to_room`: handler phase 0xF for the old room (leaving; non-zero cancels), `current_room` changes,
+the player and followers are moved, `update_room_light`, `set_room_music`, phase 0xD (entering, before the description), `describe_room`, phase 0xE (after the description); the first visit awards the room's points (`object_get_points` -> `add_score`) and sets attribute 5.

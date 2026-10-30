@@ -37,9 +37,21 @@ F = {
     "handler": {1: 0xA, 2: 0x1A, 3: 0x1E, 4: 0xC, 5: 0x1E}, "verb": {2: 0x16, 3: 0x1A, 4: 8, 5: 0x1A},
     "points": {1: 8, 2: 0x12, 3: 0x16}, "propa": {1: 0xC, 2: 0x14, 3: 0x18, 5: 0x18},
 }
+attrs = d.get("attrs", [])
+
+
+def attr_list(r, t):
+    """ids of the attributes set on this object: descriptor (bit, typeMask) from dump_objects.py; the bit is at record + 4 + bit // 8"""
+    out = []
+    for a in attrs:
+        if (a["mask"] >> (t - 1)) & 1 and r[4 + a["bit"] // 8] >> (a["bit"] % 8) & 1:
+            out.append(str(a["id"]))
+    return ",".join(out)
+
+
 here = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(here, "..", "analysis", "xanth_objects.tsv"), "w", encoding="utf-8") as f:
-    f.write("id\ttype\tname\talt\tlocation\tslot\tnext\thandler\tdefault_verb\tpoints\tprop_a\trecord_hex\n")
+    f.write("id\ttype\tname\talt\tlocation\tslot\tnext\thandler\tdefault_verb\tpoints\tprop_a\tattrs\trecord_hex\n")
     for o in d["objects"]:
         r, t = bytes(o["data"]), o["type"]
 
@@ -49,5 +61,5 @@ with open(os.path.join(here, "..", "analysis", "xanth_objects.tsv"), "w", encodi
                 return ""
             return str(struct.unpack_from("<H" if wide else "<B", r, off)[0])
         nm, alt = struct.unpack_from("<HH", r, 0)
-        f.write("\t".join([str(o["id"]), str(t), name(nm), name(alt), g("loc"), g("slot", False), g("next"), g("handler"), g("verb"), g("points"), g("propa"), r.hex()]) + "\n")
+        f.write("\t".join([str(o["id"]), str(t), name(nm), name(alt), g("loc"), g("slot", False), g("next"), g("handler"), g("verb"), g("points"), g("propa"), attr_list(r, t), r.hex()]) + "\n")
 print("objects", len(d["objects"]))
