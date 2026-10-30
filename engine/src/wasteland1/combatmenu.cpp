@@ -449,4 +449,91 @@ afterGroup:   // 11F47
 	goto restart;
 }
 
+
+void regroupParty(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	constexpr uint16_t orderOf = 0xA57A, memberIdx = 0xA583, groupIdx = 0xA584;   // orderOf[roster id]: the direction ordered
+	const uint16_t members = uint16_t(g::saved2 + g::s2::membersInGroup);
+	for (int i = 7; i >= 0; --i) D(uint16_t(orderOf + i)) = 0xFF;
+	auto restoreHere = [&]() { setActivePartyGroup(m, D(groupIdx)); };
+	auto keepSpeed = [&](auto &&body) {   // 46F7 is cleared around the group changes
+		const uint8_t keep = D(g::textSpeedFlag);
+		D(g::textSpeedFlag) = 0;
+		body();
+		D(g::textSpeedFlag) = keep;
+	};
+	auto followUp = [&]() {   // 363F6, then the new position is remembered for the shown group
+		call(m, 0x63F6);
+	};
+	auto syncFight = [&]() {   // 1354F: 8350 with the fight's map in ds:4655
+		const uint8_t keep = D(0x4655);
+		D(0x4655) = D(0x46DC);
+		call(m, 0x8350);
+		D(0x4655) = keep;
+	};
+	for (uint8_t group = 0;;) {   // 130D6: collect the movement orders of the members
+		D(groupIdx) = group;
+		selectPartyBlock(m, group);
+		restoreHere();
+		for (uint8_t bl = 1;;) {
+			D(memberIdx) = bl;
+			const uint8_t status = D(uint16_t(m.d16(g::partyStatusPtr) + bl));
+			if (status == 8) {   // 131AC: the leader moves everybody
+				selectWriterForRoster(m);
+				if (countConsciousMembers(m) != 0) {
+					const uint8_t direction = D(uint16_t(m.d16(g::partyOrdersPtr) + D(memberIdx)));
+					if (!stepBlocked(m, direction)) {
+						D(0x46A6) = D(0xAA4B);
+						D(0x46A7) = D(0xAA4A);
+						restoreHere();
+						for (int i = 7; i >= 0; --i) D(uint16_t(0x7115 + i)) = 0;
+						for (uint8_t i = D(members); i != 0; --i) D(uint16_t(0x7115 + i)) = 1;
+						newline(m);
+						call(m, 0x395B);
+						printMessage(m, 92);
+						keepSpeed([&]() {
+							followUp();
+							restoreHere();
+							mergeGroupsAtSamePosition(m);
+							syncFight();
+						});
+						for (int i = 7; i >= 0; --i) D(uint16_t(m.d16(g::partyStatusPtr) + i)) = 0;
+					}
+				}
+				break;   // 3220: on to the next group
+			}
+			if (status == 4 && !isMemberUnconscious(m, bl)) {
+				const uint8_t order = D(uint16_t(m.d16(g::partyOrdersPtr) + D(memberIdx)));
+				const uint8_t id = D(uint16_t(m.d16(g::partyIndexesPtr) + D(memberIdx)));
+				D(uint16_t(orderOf + id)) = order;
+			}
+			D(uint16_t(m.d16(g::partyStatusPtr) + D(memberIdx))) = 0;   // 3118
+			bl = uint8_t(D(memberIdx) + 1);
+			if (bl > D(members)) break;
+		}
+		group = uint8_t(D(groupIdx) + 1);
+		if (group > D(0x4657)) break;
+	}
+	for (uint8_t bl = 1; bl < 8; ++bl) {   // 3198: carry out the orders
+		D(memberIdx) = bl;
+		if (D(uint16_t(orderOf + bl)) & 0x80) continue;
+		setActivePartyGroup(m, partyGroupOfRoster(m, bl));
+		setCurrentRosterCharacter(m, D(memberIdx));
+		selectWriterForRoster(m);
+		if (D(members) != 1 && D(0x4657) >= 3) {
+			printMessage(m, 88);
+			continue;
+		}
+		printMessage(m, 43);
+		keepSpeed([&]() {
+			if (!stepBlocked(m, D(uint16_t(orderOf + D(memberIdx))))) {
+				splitOffCharacter(m, D(memberIdx), D(0xAA4B), D(0xAA4A));
+				followUp();
+				mergeGroupsAtSamePosition(m);
+				syncFight();
+			}
+		});
+	}
+}
+
 } // namespace wl

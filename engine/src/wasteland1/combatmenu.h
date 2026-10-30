@@ -27,4 +27,7 @@ CommandResult pickFirstTarget(Machine &m);
 // experience is shared out
 void runCombat(Machine &m);
 
+// 130C8: carries out the movement orders of the round: members that were told to leave split off, a leader moves the whole group
+void regroupParty(Machine &m);
+
 } // namespace wl

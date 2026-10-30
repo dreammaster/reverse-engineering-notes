@@ -74,5 +74,7 @@ PORT(pickFirstTarget) { setResult(r, pickFirstTarget(m)); }                     
 
 PORT(runCombat) { runCombat(m); }                                                       // 11D39
 
+PORT(regroupParty) { regroupParty(m); r.cf = true; }                                                 // 130C8
+
 } // namespace rc
 } // namespace wl
