@@ -209,6 +209,7 @@ void H_sub_676B6(Cpu &c) {
 // RTLink overlay manager: the lifted program is one image, so "loading" an overlay segment always succeeds
 void H_rtlink_countFlags(Cpu &c) { c.ax.x = 0; c.dx.x = 0; }
 void H_rtlink_loadSegment(Cpu &c) { c.ax.x = 1; c.dx.x = 0; }
+void H_rtlink_openFile2(Cpu &c) { c.ax.x = 0; c.dx.x = 0; }   // opens the overlay file: there is none, the segments are in the image
 
 // int _int86(int intno, union REGS far *in, union REGS far *out): the C library builds `int N` on the stack and runs it; the host executes the interrupt directly.
 // WORDREGS = { ax, bx, cx, dx, si, di, cflag }

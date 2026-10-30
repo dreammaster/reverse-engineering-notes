@@ -11,9 +11,9 @@ cp reversing/scripts/dump_image.py reversing/scripts/dump_symbols.py "$SP/"
 ( cd "$SP" && "$IDAT" -A -Lim.log -S"dump_image.py image.bin funcs.json" x2.idb >/dev/null 2>&1 )
 cp "$SP/image.bin" game_out/image.bin
 ( cd reversing/scripts
-  python lift_handlers.py symbols "$SP/hsyms.json" --host
+  python lift_handlers.py symbols "$SP/hsyms.json" --host --every
   ( cd "$SP" && "$IDAT" -A -Lsy.log -S"dump_symbols.py hsyms.json hsyms_out.json" x2.idb >/dev/null 2>&1 )
-  python lift_handlers.py "$SP/hsyms_out.json" "$SP/funcs.json" --host )
+  python lift_handlers.py "$SP/hsyms_out.json" "$SP/funcs.json" --host --every )
 cp engine/gen/cpu.h engine/host/gen/
 cd engine/host
 g++ -std=c++17 -O1 -static -w -DLIFT_STEP_LIMIT=3000000 -I gen -I . -I .. -o host_test.exe host.cpp host_impl.cpp host_machine.cpp host_test.cpp \

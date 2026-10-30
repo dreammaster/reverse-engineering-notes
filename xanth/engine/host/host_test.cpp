@@ -380,6 +380,27 @@ static int testRoom(Host &h, int room) {
 	if (getenv("HOST_LABELPFX")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int cnt = 0; if (!strncmp(w, getenv("HOST_LABELPFX"), strlen(getenv("HOST_LABELPFX"))) && cnt++ < 100000) fprintf(stderr, "L %s ax=%04X bx=%04X cx=%04X di=%04X si=%04X es=%04X ds=%04X\n", w, c.ax.x, c.bx.x, c.cx.x, c.di, c.si, c.es, c.ds); };
 	if (getenv("HOST_NZ")) h.cpu.onLabel = [](Cpu &c, const char *w) { if (!strcmp(w, getenv("HOST_NZ"))) { int nz = 0; for (int i = 0; i < 64000; i++) nz += host().mem[0xA0000 + i] != 0; fprintf(stderr, "nz %s: %d\n", w, nz); } };
 	if (getenv("HOST_SRC")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int k = 0; if (!strcmp(w, getenv("HOST_SRC")) && k++ < 6) { fprintf(stderr, "src %s ds:si=%04X:%04X cx=%04X:", w, c.ds, c.si, c.cx.x); for (int i = 0; i < 12; i++) fprintf(stderr, " %02X", c.rd8(c.ds, (uint16_t)(c.si + i))); fprintf(stderr, " | es:di"); for (int i = 0; i < 6; i++) fprintf(stderr, " %02X", c.rd8(c.es, (uint16_t)(c.di + i))); fprintf(stderr, "\n"); } };
+	if (getenv("HOST_CMPIMG")) h.cpu.onLabel = [](Cpu &c, const char *w) {
+		static int hits = 0;
+		if (strcmp(w, getenv("HOST_CMPIMG")) || hits++ > 6) return;
+		uint16_t io = c.arg(0), is = c.arg(1);
+		uint16_t wd = c.rd16(is, (uint16_t)(io + 6)), ht = c.rd16(is, (uint16_t)(io + 8)), po = c.rd16(is, (uint16_t)(io + 12)), ps = c.rd16(is, (uint16_t)(io + 14));
+		int nz = 0; for (unsigned i = 0; i < (unsigned)wd * ht; i++) nz += c.rd8(ps, (uint16_t)(po + i)) != 0;
+		fprintf(stderr, "image %04X:%04X %ux%u pixels %04X:%04X, %d non-zero\n", is, io, wd, ht, ps, po, nz);
+		for (int f = 1; f <= 30; f++) {
+			char fn[32]; snprintf(fn, sizeof(fn), "XANTH_%02d.PIC", f);
+			std::vector<uint8_t> data;
+			if (!host().machine.load(fn, data)) continue;
+			Legend::PicFile pf(data);
+			for (size_t i = 0; i < pf.size(); i++) {
+				Legend::PicFile::Image im;
+				try { im = pf.decode(i); } catch (...) { continue; }
+				if (im.width != wd || im.height != ht) continue;
+				int same = 0, inz = 0; for (unsigned k = 0; k < (unsigned)wd * ht; k++) { same += c.rd8(ps, (uint16_t)(po + k)) == im.pixels[k]; inz += im.pixels[k] != 0; }
+				if (same * 100 / (wd * ht) > 90 && inz > 100) fprintf(stderr, "  matches %s image %zu: %d of %d pixels (%d non-zero)\n", fn, i, same, wd * ht, inz);
+			}
+		}
+	};
 	if (getenv("HOST_WATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { if (!strcmp(w, getenv("HOST_WATCH"))) fprintf(stderr, "watch %s bp=%04X sp=%04X es=%04X args %04X %04X %04X locals C=%04X:%04X 2=%04X\n", w, c.bp, c.sp, c.es, c.rd16(c.ss, (uint16_t)(c.bp + 6)), c.rd16(c.ss, (uint16_t)(c.bp + 8)), c.rd16(c.ss, (uint16_t)(c.bp + 10)), c.rd16(c.ss, (uint16_t)(c.bp - 10)), c.rd16(c.ss, (uint16_t)(c.bp - 12)), c.rd16(c.ss, (uint16_t)(c.bp - 2))); };
 	if (getenv("HOST_MEMWATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { static uint16_t last = 0; static bool init = false; unsigned a = (unsigned)strtoul(getenv("HOST_MEMWATCH"), nullptr, 16); uint16_t sg = getenv("HOST_MEMWATCH_SEG") ? (uint16_t)strtoul(getenv("HOST_MEMWATCH_SEG"), nullptr, 16) : c.ss; uint16_t v = c.rd16(sg, (uint16_t)a); if (!init) { if (getenv("HOST_MEMWATCH_SEG") || !strcmp(w, "setup_pic_regions_q:loc_1CB07")) { init = true; last = v; } } else if (v != last) { fprintf(stderr, "mem %04X: %04X -> %04X before label %s (bp=%04X sp=%04X) prev %s %s %s\n", a, last, v, w, c.bp, c.sp, c.hist[(c.hpos - 2) & 63], c.hist[(c.hpos - 3) & 63], c.hist[(c.hpos - 4) & 63]); last = v; } };
 	if (getenv("HOST_DSWATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { static uint16_t last = 0x84FC; unsigned want = (unsigned)strtoul(getenv("HOST_DSWATCH"), nullptr, 16); if (c.ds != last) { if (c.ds == want || last == want) fprintf(stderr, "ds %04X -> %04X at %s prev %s %s %s\n", last, c.ds, w, c.hist[(c.hpos - 2) & 63], c.hist[(c.hpos - 3) & 63], c.hist[(c.hpos - 4) & 63]); last = c.ds; } };
@@ -397,6 +418,8 @@ static int testRoom(Host &h, int room) {
 	{ uint16_t pio = h.cpu.rd16(SEG_seg037, (uint16_t)(D__background + 16)), pis = h.cpu.rd16(SEG_seg037, (uint16_t)(D__background + 18));
 	  uint16_t ppo = h.cpu.rd16(pis, (uint16_t)(pio + 24)), pps = h.cpu.rd16(pis, (uint16_t)(pio + 26)), pw = h.cpu.rd16(pis, (uint16_t)(pio + 12)), ph = h.cpu.rd16(pis, (uint16_t)(pio + 10)), pp = h.cpu.rd16(pis, (uint16_t)(pio + 20));
 	  int nz = 0; for (unsigned i = 0; i < (unsigned)pp * ph && ((unsigned)pps * 16 + ppo + i) < 0x1FFFFF; i++) nz += h.cpu.rd8(pps, (uint16_t)(ppo + i)) != 0;
+	  { printf("rows:"); for (unsigned y = 0; y < 122; y += 6) { int c2 = 0; for (unsigned x = 0; x < pp; x++) c2 += h.cpu.rd8(pps, (uint16_t)(ppo + y * pp + x)) != 0; printf(" %u:%d", y, c2); } printf("\n"); }
+	  { unsigned first = 0; for (unsigned i = 0; i < (unsigned)pp * 121; i++) if (h.cpu.rd8(pps, (uint16_t)(ppo + i))) { first = i; break; } printf("first nonzero pixel offset %04X (row %u col %u)\n", first, first / pp, first % pp); }
 	  printf("Picture %04X:%04X %ux%u pitch %u pixels %04X:%04X: %d nonzero\n", pis, pio, pw, ph, pp, pps, ppo, nz); }
 	{ uint16_t pio = h.cpu.rd16(SEG_seg037, (uint16_t)(D__background + 16)), pis = h.cpu.rd16(SEG_seg037, (uint16_t)(D__background + 18));
 	  uint16_t ppo = h.cpu.rd16(pis, (uint16_t)(pio + 24)), pps = h.cpu.rd16(pis, (uint16_t)(pio + 26)), pp = h.cpu.rd16(pis, (uint16_t)(pio + 20));

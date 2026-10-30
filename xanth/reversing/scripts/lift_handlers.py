@@ -230,6 +230,11 @@ def load_asm():
     for n in sorted(DDLOCS):
         if n in labels:
             procs.setdefault(n, labels[n])
+    for x in insns:        # `call loc_xxx`: a code chunk IDA did not make a function (RTLink startup/shutdown code)
+        if x.mn == "call" and x.ops:
+            op = re.sub(r"^((short|near ptr|far ptr|near|far)\s+)+", "", x.ops[0].strip())
+            if op.startswith("loc_") and op in labels and op not in procs:
+                procs[op] = labels[op]
     if "loc_701CD" in labels:                 # a function whose first instructions IDA did not turn into a function
         procs.setdefault("loc_701CD", labels["loc_701CD"])
     for x in insns:
@@ -318,7 +323,7 @@ def operand_symbols(ins, labels, locs):
             if t.lower() in SKIP or is_num(t) or re.match(r"^[0-9A-F]+h$", t):
                 continue
             base = t.split(".")[0]
-            if t in locs.get(ins.proc, {}):
+            if t in locs.get(ins.proc, {}) and "[" in op:        # a bare name equal to a local is the global of that name (`cmp yp, 0` in sub_18E40)
                 continue
             if base in labels and base.startswith("loc_") and ins.mn in ("jmp", "call", "loop", "loope", "loopne", "jcxz") or (base in labels and base.startswith("loc_") and ins.mn in COND):
                 continue
@@ -834,10 +839,10 @@ class Lift:
             if op in REG16 or op in PLAIN16:
                 out.append("{ uint16_t _off = %s; uint16_t _my = c.cs; c.cs = _cs; if (c.callFarHook) c.callFarHook(c, _my, _off); return; }" % regx(op))
                 return
-            if SYMKIND.get(op) in ("dd", "dw"):
+            if SYMKIND.get(op[3:] if op.startswith("cs:") else op) in ("dd", "dw"):
                 # jmp through a pointer variable (dword_8A3BC): call it, then return
                 d = self.classify(op, x)
-                if SYMKIND[op] == "dd":
+                if SYMKIND[op[3:] if op.startswith("cs:") else op] == "dd":
                     out.append("{ uint16_t _s = %s, _o = %s; uint16_t _off = c.rd16(_s, _o), _seg = c.rd16(_s, (uint16_t)(_o + 2)); c.cs = _cs; if (c.callFarHook) c.callFarHook(c, _seg, _off); return; }" % (d["seg"], d["off"]))
                 else:
                     out.append("{ uint16_t _off = %s; uint16_t _my = c.cs; c.cs = _cs; if (c.callFarHook) c.callFarHook(c, _my, _off); return; }" % self.rd(d, 2))
@@ -1007,6 +1012,12 @@ def lifted_set(insns, labels, procs, tables):
         stubs = stub_map(insns, procs)
         tabled = sorted({stubs.get(n, n) for n in DATAREFS if n in procs and liftable(stubs.get(n, n), insns, labels, procs, tables)})
         names = closure(insns, labels, procs, tables, names + [n for n in extra + tabled if n not in names])
+        if "--every" in sys.argv:     # every function of the program, not only what the entry points reach (RTLink manager, C startup, library routines nothing calls)
+            seen = set(names)
+            rest = [n for n in procs if n not in seen and liftable(n, insns, labels, procs, tables)]
+            names = closure(insns, labels, procs, tables, names + rest)
+            skipped = sorted(n for n in procs if n not in set(names))
+            print("not lifted (%d): %s" % (len(skipped), " ".join(skipped[:80])))
     return names
 
 

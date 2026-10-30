@@ -20,12 +20,12 @@ the lifted code's labels - they found the bugs listed under "What the host found
 * **Memory image** (`game_out/image.bin`, 585,249 bytes, written by `reversing/scripts/dump_image.py`): the flat layout of the IDB (linear address =
   segment * 16 + offset) in a 2 MB host memory. It is the initial state of the executable (compiled-in tables, data segment initial values); `SS = DS` is the data
   segment like a DOS small-model program; the stack top is `FFF0`.
-* **Lifted code** (`gen/`, generated, git-ignored, ~1,890 functions / 132,000 instructions): every function reachable from the program's entry points - `main`, `init_game`,
-  all 448 object handlers (including the eight code chunks 1, 27, 30, 45, 86, 177, 180, 335), exit/event/conversation functions, the verb handlers, the object model,
-  `run_command`, `go_to_room`, the text decoder (`ResourceText_GetStr`), the picture decoder and blitters, fonts, the conversation menus, the C runtime (`fopen`, `setjmp`,
-  `malloc`, ...), the timer interrupt handler, and the code chunks the game stores as far pointers (the 100 region-visibility callbacks `dd loc_xxxx`). Calls through
-  pointers in game memory (`call_object_handler`, video-mode tables, driver vectors) go through `farHook`, which maps the far address - or an RTLink stub - to the lifted
-  function; a vector that still points at the host's `IRET` is a no-op.
+* **Lifted code** (`gen/`, generated, git-ignored, 2,837 functions / 138,000 instructions = every function of the program except the eight below): the entry points `main` and
+  `init_game`, all 448 object handlers (including the eight code chunks 1, 27, 30, 45, 86, 177, 180, 335), exit/event/conversation functions, the verb handlers, the object model,
+  `run_command`, `go_to_room`, the text decoder, the picture decoder and blitters, fonts, the conversation menus, the C runtime (`start`, `__cinit`, `fopen`, `setjmp`, `malloc`, ...),
+  the RTLink startup/shutdown code, the timer interrupt handler, and the code chunks the game stores as far pointers (the 100 region-visibility callbacks `dd loc_xxxx`).
+  `lift_handlers.py --host --every` builds it. Calls through pointers in game memory (`call_object_handler`, video-mode tables, driver vectors) go through `farHook`, which maps the
+  far address - or an RTLink stub - to the lifted function; a vector that still points at the host's `IRET` is a no-op.
 * **`longjmp`**: `_longjmp` throws a C++ exception; functions that call `_setjmp` (`main`'s command loop and `serialize_state?`'s I/O error exit) catch it, restore the
   registers from the jmp_buf and continue after their `_setjmp` call, exactly as the C runtime would. A jump to a buffer whose function is not running (a test calling
   `save_game?` directly instead of through `main`) ends that call and is counted in `Host::stray`.
@@ -38,10 +38,13 @@ the lifted code's labels - they found the bugs listed under "What the host found
   * Timer: every 1024 labels the host delivers IRQ 0 through the program's own handler (`INT 08h` or `INT 1Ch`, whichever the game installed - `timer_tick_fn` does the
     palette fades and the clock).
   * `LEGEND.INI` (GAMEDATA / SAVEDATA / MOUSE / MUSIC / SOUND) is supplied by the host.
-* **Host functions** (`host_impl.cpp`): `_sprintf` (the C library's variadic formatter), `__int86` (runs the interrupt on the machine), `_longjmp`, the RTLink overlay
-  manager (`rtlink_*`: everything is already in memory, "loading" always succeeds), `sub_676B6` (a helper that jumps into the middle of an instruction), and the functions that
-  record what the game prints or plays (`Font_WriteMessage`, `show_text_box`, `wputchar?`, `Font_WriteString`, `ResourceText_GetStr`, `realsound_play`) so the tests can read
-  the text instead of the pixels. Everything else is original code.
+* **Host functions** (`host_impl.cpp`; the only functions of the program that are not lifted): `_sprintf` (the C library's variadic formatter), `__int86` (runs the interrupt on the
+  machine), `_longjmp`, the RTLink overlay manager (`rtlink_countFlags`, `rtlink_loadSegment`, `rtlink_openFile2`, `rtlink_thunk`: everything is already in memory, so "loading" always
+  succeeds) and `sub_676B6`. **`sub_676B6`** is the helper of the three big cutscene routines (`sub_67E2A`, `sub_69FF7`, `sub_6C42D`): its ten far calls go to `421E:008B`, which is the
+  *middle of an instruction* inside `sub_421E0` (`DB C4 36 ...`), so the call target in the flattened image is wrong (most likely an RTLink overlay thunk whose address range is occupied by other
+  overlay code in the flattened image; the arguments - a file number, three pointers, a flag - look like a call to a file loader). The host records the call and reports success. In addition, `Font_WriteMessage`,
+  `show_text_box`, `wputchar?`, `Font_WriteString`, `ResourceText_GetStr` and `realsound_play` have *recording overrides* so the tests can read the text instead of the pixels (the lifted
+  versions exist too, `text` runs the original `ResourceText_GetStr`).
 
 ## What was checked (all against the original game files)
 
@@ -50,7 +53,7 @@ the lifted code's labels - they found the bugs listed under "What the host found
 | `init`: the original startup `init_game` | runs to completion on the emulated PC: reads `LEGEND.INI`, opens the data files, sets video mode 13h, installs the timer handler, creates and re-reads `restart.dat` (a 17,964-byte snapshot of the initial state) |
 | `text`: `ResourceText_GetStr` (the original decoder) vs `MessageFile` (the C++ port) | 5,542 strings, 0 mismatches |
 | `save`: the original save code writes `restart.dat` after the state was changed, then the original load code reads it back after a reset | 5 bytes differ from the initial snapshot; room and the desk's location are restored; the load ends in one `longjmp` to the main loop. **The IDB names are swapped**: `load_game?(1)` writes and `save_game?(1)` reads (mode 1 = `restart.dat`, 2 = a numbered slot, 3 = memory snapshot, 4 = `HELP.DAT`) |
-| `room 34`: `go_to_room` with the original picture code | `XANTH_18.PIC` image 18 is decoded by the lifted decoder into the 264x122 picture buffer: **31,944 of 31,944 pixels equal the C++ port's decode**; the room text is printed; no invalid argument |
+| `room 34`: `go_to_room` with the original room-entry code | runs through `describe_room?`, `RoomItem_Draw` (13 item images through `PictureDecoder__start`), the text and the music call without an invalid argument or an unlifted call. **The pixels are not right yet**: the screen stays black and the item images come out almost empty (a 68x20 image with 2 non-zero pixels), so the picture decoder path (`PictureDecoder__start` / `sub_14FB9` / `sub_16804`) does not yet produce the C++ port's output |
 | `objects`: lifted `object_has_attr?` / `object_get_location?` / `object_get_prop_a?` / `object_parent_is?` vs the object table decoded independently by `xanth_objects.py` | 11,454 attribute checks, 414 locations, 484 `prop_a` values: 0 mismatches |
 | `look`: `run_command(LOOK_AT, obj)` through the real pipeline | the right descriptions, e.g. the desk listing its contents with the original list formatting |
 | `scan`: 492 objects with handlers x phases 1-6 x 16 verbs = 47,232 scenarios | 1,300 print text (998 distinct messages); **0 invalid arguments** in 4,480 checked calls (every object / attribute / verb / event / conversation id passed to the object model, `go_to_room?`, `schedule_event?`, `Conversation_Show` is in range); 77 scenarios start a conversation and stop at its menu |
@@ -69,8 +72,9 @@ blitter `sub_16804` jumps through `[bp+var_2E]` / `var_30` / `var_32` to one of 
 ## Known gaps
 
 * The conversation menus (`Conversation_Show`) are the original code but wait for mouse/keyboard input; the sweeps do not script it yet, so 77 scenarios stop at the first menu.
-* After `go_to_room` the emulated screen is black at the first text output although the decoder produced the picture: the screen copy reads rows of the picture buffer before the
-  streamed decode has filled them. The pictures themselves are verified (see `room 34`); the blit order is still to be understood.
+* **Pictures**: the lifted decoder is not yet validated - `room 34` loads `XANTH_02.PIC` image 2 and the room items, but the decoded pixels are (almost) all zero and the screen
+  stays black. The checks that exist (`HOST_CMPIMG=Image_Free`, `HOST_NZ=label`, `HOST_MEMWATCH`) compare an `Image` in emulated memory with every same-sized image of every `XANTH_nn.PIC`
+  decoded by the C++ port. (An earlier note here claimed an exact match for XANTH_18 image 18: that image is entirely black, so the match proved nothing.)
 * `main` runs the intro (copyright text, fades) but the host does not yet script the title/menu input.
 * Sound devices (SoundBlaster / MIDI) are not emulated; `realsound_play` is recorded.
 * The lifted code is exact as far as `../gen/cpu.h` models the 8086: `pushf/popf` and the parity flag are ignored, the direction flag is assumed clear.
