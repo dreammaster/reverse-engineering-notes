@@ -36,3 +36,10 @@ word_850C0	run_command_depth	re-entrancy counter of run_command; an identical ne
 obj_85216	current_room	object id of the room the player is in (initial values written: 0x22 bedroom, 0x5A 'screen', 0x5B); first handler phase target of run_command; the earlier transfer of Shannara _game_flags was wrong
 word_85226	player_obj	object id of the player character (initial value 1 = You); describe_contents skips it; copied into actor_obj at the start of each command
 word_85218	actor_obj	object performing the current command (copied from player_obj by sub_1C89B); run_command gives it handler phases 1 and 2
+sub_23D80	voc_init	opens XANTH_01.VOC (FILETYPE_VOC file 1), reads u16 count and count*4 bytes of u32 track offsets into voc_offsets, allocates two 0x1020-byte buffers, sets voc_enabled
+Conversation_Offsets	voc_offsets	far pointer to the VOC directory (u32 offsets, track N = convId N)
+word_891F6	voc_track_count	u16 track count read from the VOC file header (1327)
+word_891F2	voc_enabled	1 when the VOC file opened and the buffers were allocated
+sub_23E82	voc_track_length	(convId): voc_offsets[convId+1] - voc_offsets[convId] as a dword (0 when voice is disabled); > 0 means this line has a recording
+sub_23EE0	voc_play_track	(track, far callback): streams VOC track `track` (8-bit PCM at the file offset, 4 KB aligned) through the sound driver, calling the callback while it plays (used for lip-sync/animation, e.g. sub_3F731); stops on key or mouse click
+word_8B9D0	voice_track	track to play with the line being shown by Conversation_Show: the convId when voc_track_length > 0, else 0xFFFF; scripted lines set it to explicit tracks (0x47C, 0x4C0, 0x525, ...)

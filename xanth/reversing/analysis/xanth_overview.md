@@ -146,3 +146,11 @@ attribute 0xE = open, otherwise "... isn't open"; 3 of them); **3/4** = computed
 (it printed something), `0xFFFF` = blocked; with any other phase value the same functions answer the default target (the digest shows `phase==0xF` / `phase:other`). Walking into a room (`go_to_room`) is shared by exits, `cmdGoto` and the
 story scripts (58 explicit `go_to_room` calls in handlers, mostly to the special room 90 "screen" used for cutscenes/conversations with `word_85268` as the return selector).
 Also named: `current_room` (object id of the player's room), `player_obj` (initially 1 = You), `actor_obj` (who performs the current command).
+
+## 10. Voice (XANTH_01.VOC) (2026-10-30)
+
+Xanth is a CD-talkie: `voc_init` (0x23D80) opens `XANTH_01.VOC`, reads the `u16` track count (1327) and the `u32` offsets into `voc_offsets`; track *N* is the recording of conversation line *N*
+(`voc_track_length(convId)` = `offsets[N+1] - offsets[N]`, > 0 means the line is voiced). `Conversation_Show` sets `voice_track` to the line's convId (or 0xFFFF), shows the text only when voice is off or
+`word_8B9DA` says so, and calls `voc_play_track(track, callback)`. Scripted sequences use explicit tracks above the 1,036 conversation lines (0x47C, 0x4C0, 0x525-0x528, 0x52D, ...) up to the last track 1325.
+Each track is raw unsigned 8-bit PCM at the 4 KB-aligned file offset, padded with 0x80. **The sample rate is not stored in the file**; the SoundBlaster driver programs it from a table (not yet traced, 11025 Hz is the usual value
+for this era). `voc_offsets` for track N equals the directory entry in the file, so a reimplementation needs no executable data to find clips - only the convId -> line mapping from `xanth_conversations.tsv`.
