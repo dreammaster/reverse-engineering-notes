@@ -19,6 +19,8 @@ Workflow is the same as `shannara/reversing/notes/roadmap.md`: work on a copy of
 
 - Handler phase order resolved: iobj gets phases 3/4 and dobj 5/6 in both engines (Shannara's `run_command?` agrees; its old note was wrong and is corrected).
 
+- C++17 readers for DCL/PIC/RGN/XANTHSTR/MUS/VOC in `xanth/engine/` (`legend_tool check <gamedir>` decodes all 3,294 pictures, 5,542 strings, 86 MIDI records, the VOC directory).
+
 - Scenes (716 hotspots, region id = object id), room pictures (68), room music (66), object attributes (23), cutscene list: all data needed to *render and navigate* the Xanth world is located (overview sections 8-16).
 
 ## Next
