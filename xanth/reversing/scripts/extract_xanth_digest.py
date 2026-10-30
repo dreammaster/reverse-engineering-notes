@@ -55,10 +55,25 @@ def parse(path):
     return funcs
 
 
+TABLES = {}    # jump tables `off_X dw offset loc_A / dw offset loc_B ...` -> [target labels]
+
+
 def tokens(body):
     """-> (insns, labels): insns = [(mnem, [ops], comment)], labels = name -> insn index"""
     insns, labels = [], {}
+    cur_table = None
     for line in body:
+        m = re.match(r"^(\w+)\s+dw offset (\w+)", line)
+        if m:
+            cur_table = TABLES.setdefault(m.group(1), [])
+            cur_table.append(m.group(2))
+            continue
+        m = re.match(r"^\s+dw offset (\w+)", line)
+        if m and cur_table is not None:
+            cur_table.append(m.group(1))
+            continue
+        if not re.match(r"^\s+(align|assume)", line) and not line.startswith(";") and line.strip():
+            cur_table = None
         m = re.match(r"^(\w+):", line)
         if m:
             labels[m.group(1)] = len(insns)
@@ -259,6 +274,20 @@ def run(name, body, calls_known):
                     st.seen.add(tgt)
                     i = labels[tgt]
                     continue
+                sw = re.match(r"cs:(\w+)\[bx\]$", tgt)
+                if sw and sw.group(1) in TABLES and npaths < MAXPATHS:
+                    # switch(jump table): one path per distinct target, listing the case values
+                    cases = {}
+                    for k, lab in enumerate(TABLES[sw.group(1)]):
+                        cases.setdefault(lab, []).append(k)
+                    for lab, ks in cases.items():
+                        if lab in labels and lab not in st.seen:
+                            br = st.copy()
+                            br.seen.add(lab)
+                            addcond(br, "switch", "==", ks[0] if len(ks) == 1 else "{" + ",".join(map(str, ks)) + "}")
+                            stack.append((labels[lab], br))
+                            npaths += 1
+                    break
                 addevent(st, "tail %s" % tgt.replace("far ptr ", ""))
                 results.append((st, "tail"))
                 break

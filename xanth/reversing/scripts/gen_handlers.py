@@ -18,7 +18,7 @@ A = os.path.join(HERE, "..", "analysis")
 OUT = os.path.join(HERE, "..", "..", "engine", "gen")
 os.makedirs(OUT, exist_ok=True)
 
-IRREG = re.compile(r"\[b[px]|\[[a-z]{2}\]|\bloop\b|\btail\b|\bes:|\bds =|\bcs:|\bds:|\bss:|\bvar_|\bcall\b")
+IRREG = re.compile(r"\[b[px]|\[[a-z]{2}\]|\bloop\b|\bes:|\bds =|\bcs:|\bds:|\bss:|\bvar_|\bcall\b")
 PARAMS = {"phase", "cmd", "dobj", "iobj", "arg_2", "arg_4"}
 KEYWORDS = {"if", "int", "return", "msg", "MSG", "other"}
 
@@ -47,7 +47,8 @@ idents = {}   # name -> kind ('var' or 'func')
 
 def expr(e):
     """translate an expression of the digest to C++, registering identifiers"""
-    e = e.strip()
+    e = e.strip().replace("switch==", "switch_index==")
+    e = re.sub(r"([\w?]+)==\{([0-9,]+)\}", lambda m: "(" + " || ".join("%s==%s" % (m.group(1), v) for v in m.group(2).split(",")) + ")", e)
     e = re.sub(r"msg\((\w+):", r"MSG(\1, ", e)
     e = re.sub(r"\bseg (\w+)", r"SEG_\1", e)
     e = re.sub(r"&([A-Za-z_][A-Za-z_0-9?]*)", r"ADDR(\1)", e)
