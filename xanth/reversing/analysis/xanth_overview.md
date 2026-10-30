@@ -88,3 +88,25 @@ So the saved state is "every object's state blob + the registered global regions
 needs to reproduce to read original saves. `schedule_event` caps the event list at 16.
 
 Names and comments established this way are in `analysis/manual_names.tsv` (`scripts/apply_xanth_manual.py`).
+
+## 7. Conversations are compiled into the executable (2026-10-30)
+
+`Conversation_Show(convNum, picNum)` (Paul's name; handlers call it through `show_compendium`, 189 call sites in the digest) is the full-screen conversation scene: fade out,
+load the background picture `picNum` (`0x5A04` = file `XANTH_90`, entry 4; the window rectangle comes from the `CompendiumBounds` table), then run a tiny dialogue graph. The graph
+is **not in a data file**: it is in the exe's data segments (`seg068`/`seg069`), and the text of every line is a SHANSTR message id into `XANTHSTR.DAT`. Layout (decoded from
+`Conversation_Show` and `Conversation_GetEntry`; extractor `scripts/dump_conversations.py`, viewer `scripts/xanth_conversations.py`, result `analysis/xanth_conversations.tsv`):
+
+| Item | Layout |
+|---|---|
+| simple line (`convId < 0x40C`, 1,036 of them) | `{u16 strIdx; u16 next}` at `dword_3B314[id*4]`; enabled flag = bit 0 of `Conversation_ENTRIES1[id]`; `next` = another line, a menu (`0x8000 | n`) or `0xFFFF` (end) |
+| menu (`convId = 0x8000 | n`, 400 of them) | `{u8 count; u8 b1; u16 first; u16 callback}` at `Conversation_LOOKUPS[n*6]`; option `j` = `{u16 strIdx; u16 next}` at `unk_3C858[(first+j)*4]`, enabled flag = bit 0 of `Conversation_ENTRIES2[first+j]` (211 options start disabled); per-menu flag in `ENTRIES3[n]`; 1,300 options in all |
+| callback | `dword_3DCA4[callback]` (82 distinct functions) is called with `(convId, first+j)` after the player picks option `j`, then the walk continues at that option's `next`; this is where the game reacts (enable follow-up options, set flags, move objects) |
+| text | `strIdx < 0x8000`: `seg068[strIdx*4]` is `0xF0BBIIII` (SHANSTR block `BB`, index `IIII`); `strIdx >= 0x8000`: `seg069[(strIdx-0x8000)*4]` is a far pointer to a function that builds the text (66 simple lines do this) |
+| state | `ConversationEntry` flag bytes are what `conversation_set_enabled(convId, subId, on)` flips (bit 0); the byte arrays are runtime state (the savegame saves object/region blobs, so they are probably registered as save regions - not checked) |
+
+The first simple line (`line 0 -> menu 0`) is the opening phone call (the caller's answers are menu options). Text view with the lines resolved (local only, `xanth/game_out/conversations.txt`) is produced by
+`xanth_conversations.py conv.json XANTHSTR.DAT ../../game_out`. This replaces what Shannara does with its 6-byte dialog descriptors (`retail_dialog_table.tsv`): the same idea (portrait/state + message id + next), Xanth just keeps the whole graph in the exe.
+
+Other facts established while naming the handler helpers: `selectedCommand` is the verb (enum `CMD` in `analysis/xanth_enums.tsv`: 92 verbs, `TAKE` = 68, `LOOK_AT` = 19, `TALK_TO` = 69, ...), `dobj` / `iobj` (`word_8B9C4` / `word_8B9C2`) the command's objects, `wait_ticks_or_click` the
+pause between scripted lines, `event_pending` / `cancel_event` / `schedule_event` the 16-slot timed-event queue (4-byte records, id first), `describe_contents` the "... holding ..." printer, `lock_combination_correct` the dial puzzle (bytes `8B9D2..8B9D8` = 2,1,3,1,2,1,1).
+Handler digest: `analysis/xanth_handler_digest.txt` (528 functions as path-structured pseudo-code, `scripts/extract_xanth_digest.py`).

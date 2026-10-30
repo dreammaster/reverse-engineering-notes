@@ -29,3 +29,8 @@ sub_4443C	number_to_words	(n, char *out): spells a number ("zero", ...) into unk
 sub_3129D	number_to_words_stub	RTLink stub of number_to_words
 sub_492FC	conversation_set_enabled	(convId, subId, on): sets (on) or clears bit 0 of the Conversation_GetEntry record
 sub_312A7	conversation_set_enabled_stub	RTLink stub of conversation_set_enabled
+word_8B9C4	dobj	direct object of the current command (run_command arg 2); handlers test and print it
+word_8B9C2	iobj	indirect object of the current command (run_command arg 3)
+word_8B9BE	dobj_type	type byte of the direct object (table at object_table_seg + 0x66 + obj*6), set by run_command
+unk_8B9C0	iobj_type	type of the indirect object (word), set by run_command
+word_850C0	run_command_depth	re-entrancy counter of run_command; an identical nested command >4 times prints the "infinite perform recursion" warning
