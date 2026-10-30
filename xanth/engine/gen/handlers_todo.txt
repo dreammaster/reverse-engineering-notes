@@ -2,113 +2,59 @@ conv_cb_21	2 irregular line(s), e.g. ds = seg seg193
 conv_cb_45	untranslatable: tail loc_47D3C
 conv_cb_46	2 irregular line(s), e.g. ds = seg seg193
 conv_text_01	1 irregular line(s), e.g. -> dword_86A3E[bx]
-conv_text_04	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_05	4 irregular line(s), e.g. -> [bp+var_4]
-conv_text_06	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_07	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_08	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_09	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_10	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_11	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_12	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_15	1 irregular line(s), e.g. -> [bp+var_4]
-conv_text_16	1 irregular line(s), e.g. -> [bp+var_4]
 conv_text_20	1 irregular line(s), e.g. -> dword_86ADA[bx]
-conv_text_22	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_23	8 irregular line(s), e.g. [bp+var_2] add 1
 conv_text_25	1 irregular line(s), e.g. -> es:[bx+0]
-conv_text_29	453 irregular line(s), e.g. conversation_set_enabled(0x803F, es:[bx+0], 1)
-conv_text_44	2 irregular line(s), e.g. -> [bp+var_8]
-conv_text_45	2 irregular line(s), e.g. -> [bp+var_4]
+conv_text_29	302 irregular line(s), e.g. conversation_set_enabled(0x803F, es:[bx+0], 1)
 conv_text_47	1 irregular line(s), e.g. -> es:[bx+75Ch]
 conv_text_48	1 irregular line(s), e.g. -> es:[bx+778h]
 conv_text_49	1 irregular line(s), e.g. -> es:[bx+790h]
-conv_text_53	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_55	3 irregular line(s), e.g. es:[bx] = 0
-conv_text_57	3 irregular line(s), e.g. -> [bp+var_4]
-conv_text_60	3 irregular line(s), e.g. -> [bp+var_4]
-conv_text_66	174 irregular line(s), e.g. conversation_set_enabled(0x8108, es:[bx+234h], 1)
+conv_text_55	1 irregular line(s), e.g. es:[bx] = 0
+conv_text_66	116 irregular line(s), e.g. conversation_set_enabled(0x8108, es:[bx+234h], 1)
 conv_text_70	1 irregular line(s), e.g. -> es:[bx+708h]
 conv_text_71	1 irregular line(s), e.g. -> es:[bx+724h]
 conv_text_72	1 irregular line(s), e.g. -> es:[bx+740h]
-conv_text_73	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_75	72 irregular line(s), e.g. if [bp+var_2]!=?:
-conv_text_77	667 irregular line(s), e.g. if word_86B4A[bx]==word_8ADAC[bx]:
-conv_text_78	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_82	10 irregular line(s), e.g. number_to_words(([bp+var_2] + 1))
+conv_text_77	202 irregular line(s), e.g. if word_86B4A[bx]==word_8ADAC[bx]:
+conv_text_82	8 irregular line(s), e.g. ResourceText_GetStr(es:[bx+604h], es:[bx+606h])
 conv_text_83	22 irregular line(s), e.g. ResourceText_GetStr(es:[bx+608h], es:[bx+60Ah])
 conv_text_84	untranslatable: tail loc_45E43
-conv_text_85	2 irregular line(s), e.g. -> [bp+var_4]
-conv_text_86	10 irregular line(s), e.g. ResourceText_GetStr(es:[bx+6A4h], es:[bx+6A6h])
-conv_text_87	23 irregular line(s), e.g. if ((es:[bx+6A8h] + es:[bx+6ACh]) - word_8ADBA)!=1:
-conv_text_88	2 irregular line(s), e.g. -> [bp+var_4]
-event_fn_03	4 irregular line(s), e.g. Font_WriteMessage(&aS_, [bp+var_4], [bp+var_2])
-event_fn_04	5 irregular line(s), e.g. Font_WriteMessage(&aNadaS_, [bp+var_4], [bp+var_2])
+conv_text_86	6 irregular line(s), e.g. ResourceText_GetStr(es:[bx+6A4h], es:[bx+6A6h])
+conv_text_87	7 irregular line(s), e.g. if ((es:[bx+6A8h] + es:[bx+6ACh]) - word_8ADBA)!=1:
 event_fn_05	3 irregular line(s), e.g. es:word_81A66 = word_8745C
 event_fn_11	3 irregular line(s), e.g. Font_WriteMessage([bp+msg], [bp+msg+2])
-event_fn_17	5 irregular line(s), e.g. Font_WriteMessage(&aYouS_, [bp+var_4], [bp+var_2])
 event_fn_25	17 irregular line(s), e.g. Font_WriteMessage(&aS__0, [bp+si+var_24], [bp+si+var_22])
-event_fn_26	5 irregular line(s), e.g. Font_WriteMessage(&aS__1, [bp+var_4], [bp+var_2])
-event_fn_31	94 irregular line(s), e.g. if es:[bx+5C0h]==0x58:
-event_fn_33	109 irregular line(s), e.g. if es:[bx]!=current_room:
-event_fn_35	4 irregular line(s), e.g. Font_WriteMessage(msg(70:0x23), [bp+var_4], [bp+var_2])
+event_fn_31	8 irregular line(s), e.g. if es:[bx+5C0h]==0x58:
+event_fn_33	70 irregular line(s), e.g. if es:[bx]!=current_room:
 event_fn_43	1 irregular line(s), e.g. Font_WriteMessage(msg(31:0x2E), es:[bx+6Ch], es:[bx+6Eh])
 event_fn_44	1 irregular line(s), e.g. ds = seg seg193
-exit_fn_12	103 irregular line(s), e.g. if [bx]!=byte_8BE1C:
-objh_005	7 irregular line(s), e.g. if [bx]==current_room:
-objh_031	126 irregular line(s), e.g. object_get_next_sibling?([bp+var_2])
-objh_069	579 irregular line(s), e.g. if object_parent_is?([bx], 0x49)!=0:
+exit_fn_12	68 irregular line(s), e.g. if [bx]!=byte_8BE1C:
+objh_005	4 irregular line(s), e.g. if [bx]==current_room:
+objh_069	136 irregular line(s), e.g. if object_parent_is?([bx], 0x49)!=0:
 objh_070	untranslatable: tail loc_4FB59
-objh_085	172 irregular line(s), e.g. loop
-objh_099	2 irregular line(s), e.g. -> [bp+var_2]
-objh_104	2 irregular line(s), e.g. Font_WriteMessage(msg(9:0x20), [bp+var_4], [bp+var_2], print_obj(2, dobj), ?)
-objh_111	29 irregular line(s), e.g. if [bp+var_2]==0:
-objh_128	64 irregular line(s), e.g. if object_parent_is?([bp+var_A], iobj)!=0:
-objh_129	30 irregular line(s), e.g. Font_WriteMessage(msg(12:0xF), [bp+var_8], [bp+var_6])
+objh_085	163 irregular line(s), e.g. loop
 objh_130	2 irregular line(s), e.g. if es:[bx+66h]==5:
-objh_131	66 irregular line(s), e.g. print_obj(2, dobj, [bp+var_4], print_obj(2, iobj), ?)
+objh_131	7 irregular line(s), e.g. Font_WriteMessage(&aASGem, es:[bx], es:[bx+2])
 objh_137	2 irregular line(s), e.g. if es:[bx+66h]==5:
-objh_140	16 irregular line(s), e.g. Font_WriteMessage(msg(14:1), msg(14:2), &aHas_0, &aAlso, [bp+var_4], [bp+var_2])
-objh_147	463 irregular line(s), e.g. if [bx]==0:
-objh_149	2 irregular line(s), e.g. Font_WriteMessage(msg(16:4), [bp+var_4], [bp+var_2], print_obj(1, 0xA3), ?)
+objh_147	172 irregular line(s), e.g. if [bx]==0:
 objh_182	untranslatable: [truncated: more than 150 paths]
-objh_197	14 irregular line(s), e.g. [bx+2C7Eh] or ?
-objh_198	7 irregular line(s), e.g. Font_WriteMessage(&aItSAS_, [bp+var_4], [bp+var_2])
+objh_197	4 irregular line(s), e.g. [bx+2C7Eh] or ?
 objh_204	2 irregular line(s), e.g. [bx+2C7Eh] or ?
-objh_207	6 irregular line(s), e.g. Font_WriteMessage([bp+var_4], [bp+var_2])
-objh_210	138 irregular line(s), e.g. object_clear_attr?(es:[bx+5E4h], 0xA)
+objh_207	untranslatable: [truncated: more than 150 paths]
+objh_210	29 irregular line(s), e.g. object_clear_attr?(es:[bx+5E4h], 0xA)
 objh_213	4 irregular line(s), e.g. if es:[bx+66h]!=5:
-objh_217	16 irregular line(s), e.g. if object_has_attr?(dobj, 0xA, [bp+var_2])!=0:
 objh_226	untranslatable: [truncated: more than 150 paths]
 objh_229	1 irregular line(s), e.g. Font_WriteMessage(msg(33:0x34), es:[bx+84h], es:[bx+86h])
-objh_230	2 irregular line(s), e.g. Font_WriteMessage(msg(33:0x44), [bp+var_4], [bp+var_2], print_obj(1, dobj), ?)
 objh_231	2 irregular line(s), e.g. Font_WriteMessage(msg(33:0x30), &aNother_0, [bx+30BAh], [bx+30BCh])
-objh_249	279 irregular line(s), e.g. if object_is_at(es:[bx], 1, 0)!=0:
-objh_259	34 irregular line(s), e.g. inc [bp+var_2]
-objh_264	2 irregular line(s), e.g. if [bp+var_2]!=0:
-objh_265	2 irregular line(s), e.g. if [bp+var_2]!=0:
-objh_266	2 irregular line(s), e.g. if [bp+var_2]>2:
-objh_267	8 irregular line(s), e.g. if es:[bx+66h]==5:
+objh_249	90 irregular line(s), e.g. if object_is_at(es:[bx], 1, 0)!=0:
+objh_267	2 irregular line(s), e.g. if es:[bx+66h]==5:
 objh_268	untranslatable: [truncated: more than 150 paths]
-objh_278	49 irregular line(s), e.g. if object_has_attr?([bx], 0xA)==0:
-objh_285	4 irregular line(s), e.g. Font_WriteMessage(&aS__2, [bp+var_4], [bp+var_2])
+objh_278	28 irregular line(s), e.g. if object_has_attr?([bx], 0xA)==0:
 objh_291	untranslatable: tail loc_702DF
-objh_296	69 irregular line(s), e.g. number_to_words([bp+var_4])
-objh_297	42 irregular line(s), e.g. if [bp+var_4]==dobj:
-objh_334	20 irregular line(s), e.g. if [bp+var_2]!=0:
-objh_341	13 irregular line(s), e.g. Font_WriteMessage(msg(64:3), [bp+var_4], [bp+var_2])
-objh_345	144 irregular line(s), e.g. if [bx-2]==current_room:
-objh_346	5 irregular line(s), e.g. Font_WriteMessage(&aS__4, [bp+var_4], [bp+var_2])
-objh_348	5 irregular line(s), e.g. sub_2A207([bp+picNum], [bp+var_4], 0, 0)
-objh_358	5 irregular line(s), e.g. Font_WriteMessage(msg(30:1), [bp+var_4], [bp+var_2])
-objh_360	5 irregular line(s), e.g. Font_WriteMessage(msg(30:0x10), [bp+var_4], [bp+var_2])
-objh_375	3 irregular line(s), e.g. Font_WriteMessage(msg(71:5), [bp+var_4], [bp+var_2])
-objh_378	85 irregular line(s), e.g. if object_has_attr?([bx], 0xA)!=0:
-objh_379	195 irregular line(s), e.g. if [bx]!=dobj:
-objh_380	55 irregular line(s), e.g. if object_has_attr?([bx], 0xA)!=0:
+objh_296	16 irregular line(s), e.g. if object_parent_is?([bx], dobj)!=0:
+objh_345	64 irregular line(s), e.g. if [bx-2]==current_room:
+objh_378	15 irregular line(s), e.g. if object_has_attr?([bx], 0xA)!=0:
+objh_379	108 irregular line(s), e.g. if [bx]!=dobj:
+objh_380	25 irregular line(s), e.g. if object_has_attr?([bx], 0xA)!=0:
 objh_388	2 irregular line(s), e.g. if es:[bx+66h]==5:
 objh_390	1 irregular line(s), e.g. es:[bx] = 0x1A
 objh_399	2 irregular line(s), e.g. if es:[bx+66h]==5:
-objh_410	3 irregular line(s), e.g. Font_WriteMessage(msg(73:0x20), [bp+var_2], ds)
-objh_411	3 irregular line(s), e.g. Font_WriteMessage(msg(73:0x24), [bp+var_2], ds)
-objh_441	43 irregular line(s), e.g. if es:[bx]!=dobj:
+objh_441	36 irregular line(s), e.g. if es:[bx]!=dobj:
