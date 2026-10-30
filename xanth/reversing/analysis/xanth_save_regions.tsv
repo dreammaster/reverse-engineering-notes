@@ -57,7 +57,7 @@ index	address	size	name
 55	852c5	1	flag_852C5_conv40
 56	852c2	1	flag_852C2_conv39
 57	852c3	1	flag_852C3_conv39
-58	852b3	1	flag_852B3_censer
+58	852b3	1	can_climb
 59	852ca	1	byte_852CA
 60	852cb	1	flag_852CB_conv_text_38
 61	852cc	1	byte_852CC
@@ -94,7 +94,7 @@ index	address	size	name
 92	85278	2	word_85278
 93	8527a	2	word_8527A
 94	852e0	1	byte_852E0
-95	852e1	1	flag_852E1_manacles
+95	852e1	1	nada_shackled
 96	852e6	1	flag_852E6_mortar
 97	852e7	1	flag_852E7_bun
 98	852e8	1	flag_852E8_firearm
@@ -162,7 +162,7 @@ index	address	size	name
 160	85316	1	flag_85316_well
 161	85317	1	flag_85317_cart
 162	85318	1	flag_85318_cart
-163	85319	1	flag_85319_windbag
+163	85319	1	windbag_opened
 164	8531a	1	flag_8531A_ma_anathe
 165	8531b	1	byte_8531B
 166	8531c	1	byte_8531C
@@ -170,7 +170,7 @@ index	address	size	name
 168	8531e	1	flag_8531E_mirror
 169	8531f	1	unk_8531F
 170	85296	2	flag_85296_lab_junk
-171	85319	1	flag_85319_windbag
+171	85319	1	windbag_opened
 172	85320	1	flag_85320_conv78
 173	85321	1	flag_85321_conv79
 174	85322	1	flag_85322_windbag

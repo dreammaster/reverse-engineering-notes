@@ -52,7 +52,7 @@ address	name	size	written_by	tested_by
 852c5	flag_852C5_conv40	1	conv_cb_40=1	conv_text_29; conv_text_57; objh_003(3 headman)
 852c2	flag_852C2_conv39	1	conv_cb_39=1	conv_text_29; conv_text_51; objh_003(3 headman)
 852c3	flag_852C3_conv39	1	conv_cb_39=1	conv_text_29; conv_text_52; conv_text_53
-852b3	flag_852B3_censer	1	objh_141(149 censer)=1	conv_text_44; objh_100(106 tree); objh_101(107 tree); objh_104(110 babbling brook); objh_111(117 buttercup); objh_116(122 tree); objh_117(123 tree); objh_118(124 tangle tree); objh_119(125 bush); objh_121(127 spring); objh_125(131 gate); objh_145(153 boulder)
+852b3	can_climb	1	objh_141(149 censer)=1	conv_text_44; objh_100(106 tree); objh_101(107 tree); objh_104(110 babbling brook); objh_111(117 buttercup); objh_116(122 tree); objh_117(123 tree); objh_118(124 tangle tree); objh_119(125 bush); objh_121(127 spring); objh_125(131 gate); objh_145(153 boulder)
 852ca	byte_852CA	1		
 852cb	flag_852CB_conv_text_38	1	conv_text_38=1	
 852cc	byte_852CC	1		objh_003(3 headman); objh_108(114 log jam); objh_130(138 rock)
@@ -86,7 +86,7 @@ address	name	size	written_by	tested_by
 85278	word_85278	2		
 8527a	word_8527A	2		exit_fn_10
 852e0	byte_852E0	1		objh_192(200 spring)
-852e1	flag_852E1_manacles	1	objh_215(240 manacles)=0	conv_text_29; exit_fn_13; objh_005(5 Nada); objh_215(240 manacles)
+852e1	nada_shackled	1	objh_215(240 manacles)=0	conv_text_29; exit_fn_13; objh_005(5 Nada); objh_215(240 manacles)
 852e6	flag_852E6_mortar	1	objh_207(217 mortar)=1	conv_text_29; exit_fn_15
 852e7	flag_852E7_bun	1	objh_225(250 bun)=1	conv_text_29; exit_fn_15; objh_013(14 fireman)
 852e8	flag_852E8_firearm	1	objh_015(16 firearm)=1; objh_207(217 mortar)=1	conv_text_29; exit_fn_15
@@ -153,7 +153,7 @@ address	name	size	written_by	tested_by
 85316	flag_85316_well	1	objh_269(294 well)=1	conv_text_29
 85317	flag_85317_cart	1	objh_310(341 cart)=1	conv_text_29; objh_310(341 cart)
 85318	flag_85318_cart	1	objh_310(341 cart)=0; objh_324(355 vent)=1	exit_fn_29; objh_310(341 cart); objh_311(342 cart wheel)
-85319	flag_85319_windbag	1	objh_329(360 windbag)=1	conv_text_29; exit_fn_30; objh_312(343 sail); objh_331(362 mist); objh_334(365 sailboat)
+85319	windbag_opened	1	objh_329(360 windbag)=1	conv_text_29; exit_fn_30; objh_312(343 sail); objh_331(362 mist); objh_334(365 sailboat)
 8531a	flag_8531A_ma_anathe	1	objh_017(18 Ma Anathe)=1	objh_017(18 Ma Anathe)
 8531b	byte_8531B	1		conv_text_29
 8531c	byte_8531C	1		

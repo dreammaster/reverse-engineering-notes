@@ -2751,11 +2751,11 @@ conv_text_29
                                                               voice_track = ([bp+var_2] + 0x4C7)
                                                               -> es:[si+2]
                                                             if event_pending(0x14)==0:
-                                                              if flag_852E1_manacles!=0:
+                                                              if nada_shackled!=0:
                                                                 conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                 voice_track = ([bp+var_2] + 0x4C7)
                                                                 -> es:[si+2]
-                                                              if flag_852E1_manacles==0:
+                                                              if nada_shackled==0:
                                                                 if byte_852F6==0:
                                                                   conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                   voice_track = ([bp+var_2] + 0x4C7)
@@ -3018,11 +3018,11 @@ conv_text_29
                                                                                                                                                                                   voice_track = ([bp+var_2] + 0x4C7)
                                                                                                                                                                                   -> es:[si+2]
                                                                                                                                                                                 if object_parent_is?(0x157, 0x16D)!=0:
-                                                                                                                                                                                  if flag_85319_windbag==0:
+                                                                                                                                                                                  if windbag_opened==0:
                                                                                                                                                                                     conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                                                                                                     voice_track = ([bp+var_2] + 0x4C7)
                                                                                                                                                                                     -> es:[si+2]
-                                                                                                                                                                                  if flag_85319_windbag!=0:
+                                                                                                                                                                                  if windbag_opened!=0:
                                                                                                                                                                                     if object_parent_is?(0x16E, 0x16C)==0:
                                                                                                                                                                                       conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                                                                                                       voice_track = ([bp+var_2] + 0x4C7)
@@ -3138,11 +3138,11 @@ conv_text_29
                                                                                                                                                                                 voice_track = ([bp+var_2] + 0x4C7)
                                                                                                                                                                                 -> es:[si+2]
                                                                                                                                                                               if object_parent_is?(0x157, 0x16D)!=0:
-                                                                                                                                                                                if flag_85319_windbag==0:
+                                                                                                                                                                                if windbag_opened==0:
                                                                                                                                                                                   conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                                                                                                   voice_track = ([bp+var_2] + 0x4C7)
                                                                                                                                                                                   -> es:[si+2]
-                                                                                                                                                                                if flag_85319_windbag!=0:
+                                                                                                                                                                                if windbag_opened!=0:
                                                                                                                                                                                   if object_parent_is?(0x16E, 0x16C)==0:
                                                                                                                                                                                     conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                                                                                                     voice_track = ([bp+var_2] + 0x4C7)
@@ -3264,11 +3264,11 @@ conv_text_29
                                                                                                                                                                                 voice_track = ([bp+var_2] + 0x4C7)
                                                                                                                                                                                 -> es:[si+2]
                                                                                                                                                                               if object_parent_is?(0x157, 0x16D)!=0:
-                                                                                                                                                                                if flag_85319_windbag==0:
+                                                                                                                                                                                if windbag_opened==0:
                                                                                                                                                                                   conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                                                                                                   voice_track = ([bp+var_2] + 0x4C7)
                                                                                                                                                                                   -> es:[si+2]
-                                                                                                                                                                                if flag_85319_windbag!=0:
+                                                                                                                                                                                if windbag_opened!=0:
                                                                                                                                                                                   if object_parent_is?(0x16E, 0x16C)==0:
                                                                                                                                                                                     conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                                                                                                     voice_track = ([bp+var_2] + 0x4C7)
@@ -3460,10 +3460,10 @@ conv_text_44
     -> 0x18
   if flag_852BE_conv_text_44!=0:
     ResourceText_GetStr(msg(54:0x17))
-    if flag_852B3_censer!=?:
+    if can_climb!=?:
       voice_track = 0x47A
       -> [bp+var_8]
-    if flag_852B3_censer==?:
+    if can_climb==?:
       ResourceText_GetStr(&aScreens)
       voice_track = 0x47A
       -> [bp+var_8]
@@ -6524,10 +6524,10 @@ exit_fn_13
   if phase:other:
     -> 0xCD
   if phase==0xF:
-    if flag_852E1_manacles!=0:
+    if nada_shackled!=0:
       Font_WriteMessage(msg(31:0x2C))
       -> 0
-    if flag_852E1_manacles==0:
+    if nada_shackled==0:
       -> 0xCD
 
 exit_fn_14
@@ -6752,10 +6752,10 @@ exit_fn_30
   if phase:other:
     -> 0x170
   if phase==0xF:
-    if flag_85319_windbag==0:
+    if windbag_opened==0:
       Font_WriteMessage(msg(62:0x46), msg(62:0x47))
       -> 0
-    if flag_85319_windbag!=0:
+    if windbag_opened!=0:
       Font_WriteMessage(msg(62:0x46), ?, ?)
       -> 0
 
@@ -7359,7 +7359,7 @@ objh_005   # objects: 5 Nada
         -> 1
       if current_room!=0x1AA:
         if current_room==0xED:
-          if flag_852E1_manacles!=0:
+          if nada_shackled!=0:
             if byte_852EE==0:
               Font_WriteMessage(msg(6:6))
               -> 1
@@ -7369,7 +7369,7 @@ objh_005   # objects: 5 Nada
               story_stage = 0xB
               go_to_room?(0x5A)
               -> 1
-          if flag_852E1_manacles==0:
+          if nada_shackled==0:
             if current_room==0x1F0:
               Font_WriteMessage(msg(6:7))
               -> 1
@@ -12957,10 +12957,10 @@ objh_100   # objects: 106 tree
       Font_WriteMessage(msg(9:7))
       -> 1
     if cmd==CLIMB:
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         Font_WriteMessage(msg(9:8))
         -> 1
-      if flag_852B3_censer==0:
+      if can_climb==0:
         Font_WriteMessage(msg(9:9))
         -> 1
     if cmd==TAKE:
@@ -12992,10 +12992,10 @@ objh_101   # objects: 107 tree
       run_command?(0x2C, 0x6A, 0)
       -> run_command?(0x2C, 0x6A, 0)
     if cmd==CLIMB:
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         Font_WriteMessage(msg(9:0xC))
         -> 1
-      if flag_852B3_censer==0:
+      if can_climb==0:
         Font_WriteMessage(msg(9:0xD))
         -> 1
     if cmd==TAKE:
@@ -13183,20 +13183,20 @@ objh_104   # objects: 110 babbling brook
       Font_WriteMessage(msg(9:0x23))
       -> 1
     if cmd==TAKE:
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         print_obj(2, dobj, ?, ?)
         Font_WriteMessage(msg(9:0x1D), print_obj(2, dobj, ?, ?), ?)
         -> 1
-      if flag_852B3_censer==0:
+      if can_climb==0:
         print_obj(2, dobj, msg(9:0x1E))
         Font_WriteMessage(msg(9:0x1D), print_obj(2, dobj, msg(9:0x1E)), ?)
         -> 1
     if cmd==SWIM_IN:
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         print_obj(2, dobj)
         Font_WriteMessage(msg(9:0x20), [bp+var_4], [bp+var_2], print_obj(2, dobj), ?)
         -> 1
-      if flag_852B3_censer==0:
+      if can_climb==0:
         print_obj(2, dobj)
         Font_WriteMessage(msg(9:0x20), [bp+var_4], [bp+var_2], print_obj(2, dobj), ?)
         -> 1
@@ -13860,19 +13860,19 @@ objh_111   # objects: 117 buttercup
           wputchar?(0x2E)
           -> 1
       if [bp+var_2]==0x78:
-        if flag_852B3_censer!=0:
+        if can_climb!=0:
           Font_WriteMessage(msg(48:0x12), &aYourNostrils)
           wputchar?(0x2E)
           -> 1
-        if flag_852B3_censer==0:
+        if can_climb==0:
           Font_WriteMessage(msg(48:0x12), ?, ?)
           wputchar?(0x2E)
           -> 1
     if cmd==TAKE:
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         Font_WriteMessage(&aItSInS_, msg(48:0xB))
         -> 1
-      if flag_852B3_censer==0:
+      if can_climb==0:
         Font_WriteMessage(&aItSInS_, &aYourPossession)
         -> 1
     if cmd==OPEN:
@@ -14164,10 +14164,10 @@ objh_116   # objects: 122 tree
       Font_WriteMessage(msg(10:0x22))
       -> 1
     if cmd==CLIMB:
-      if flag_852B3_censer==0:
+      if can_climb==0:
         Font_WriteMessage(msg(10:0x20))
         -> 1
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         Font_WriteMessage(msg(10:0x21))
         -> 1
     if cmd==TALK_TO:
@@ -14190,10 +14190,10 @@ objh_117   # objects: 123 tree
       Font_WriteMessage(msg(10:0x27))
       -> 1
     if cmd==CLIMB:
-      if flag_852B3_censer==0:
+      if can_climb==0:
         Font_WriteMessage(msg(10:0x25))
         -> 1
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         Font_WriteMessage(msg(10:0x26))
         -> 1
     if cmd==TALK_TO:
@@ -14222,13 +14222,13 @@ objh_118   # objects: 124 tangle tree
         flag_852CF_tangle_tree = 1
         -> 1
       if flag_852CF_tangle_tree!=0:
-        if flag_852B3_censer!=0:
+        if can_climb!=0:
           Font_WriteMessage(msg(10:0x19), msg(10:0x1A))
           story_stage = 4
           wait_ticks_or_click(0)
           go_to_room?(0x5A)
           -> 1
-        if flag_852B3_censer==0:
+        if can_climb==0:
           Font_WriteMessage(msg(10:0x19), msg(10:0x1B))
           story_stage = 4
           wait_ticks_or_click(0)
@@ -14248,13 +14248,13 @@ objh_118   # objects: 124 tangle tree
         flag_852CF_tangle_tree = 1
         -> 1
       if flag_852CF_tangle_tree!=0:
-        if flag_852B3_censer!=0:
+        if can_climb!=0:
           Font_WriteMessage(msg(10:0x19), msg(10:0x1A))
           story_stage = 4
           wait_ticks_or_click(0)
           go_to_room?(0x5A)
           -> 1
-        if flag_852B3_censer==0:
+        if can_climb==0:
           Font_WriteMessage(msg(10:0x19), msg(10:0x1B))
           story_stage = 4
           wait_ticks_or_click(0)
@@ -14299,10 +14299,10 @@ objh_119   # objects: 125 bush
           Font_WriteMessage(msg(10:0xA), print_obj(0x12, dobj), ?)
           -> 1
     if cmd==CLIMB:
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         Font_WriteMessage(msg(10:0xF), ?, ?)
         -> 1
-      if flag_852B3_censer==0:
+      if can_climb==0:
         Font_WriteMessage(msg(10:0xF), msg(10:0x10))
         -> 1
     if cmd==PICK:
@@ -14359,11 +14359,11 @@ objh_120   # objects: 126 cough drop
 objh_121   # objects: 127 spring
   if phase==6:
     if cmd==SWIM_IN:
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         print_obj(0x12, dobj, ?, ?)
         Font_WriteMessage(msg(10:6), print_obj(0x12, dobj, ?, ?), ?)
         -> 1
-      if flag_852B3_censer==0:
+      if can_climb==0:
         print_obj(0x12, dobj, msg(10:7))
         Font_WriteMessage(msg(10:6), print_obj(0x12, dobj, msg(10:7)), ?)
         -> 1
@@ -14382,10 +14382,10 @@ objh_121   # objects: 127 spring
         show_compendium(0x18C, 0x5A03)
         -> 1
     if cmd==DRINK:
-      if flag_852B3_censer==0:
+      if can_climb==0:
         Font_WriteMessage(msg(10:4))
         -> 1
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         Font_WriteMessage(msg(10:5))
         schedule_event?(9, 2)
         -> 1
@@ -14543,10 +14543,10 @@ objh_125   # objects: 131 gate
         object_set_default_verb?(dobj, 0x2C)
         -> 1
     if cmd==CLIMB:
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         Font_WriteMessage(msg(13:0x55), ?, ?)
         -> 1
-      if flag_852B3_censer==0:
+      if can_climb==0:
         Font_WriteMessage(msg(13:0x55), &aAsAScreen)
         -> 1
     if cmd==OPEN:
@@ -16867,7 +16867,7 @@ objh_141   # objects: 149 censer
                           cancel_event(0x12)
                           byte_87708 = 0
                           schedule_event?(0x11, 1)
-                          flag_852B3_censer = 1
+                          can_climb = 1
                           -> 1
               if iobj==0x88:
                 if object_get_prop_a?(iobj)==0x122:
@@ -16905,7 +16905,7 @@ objh_141   # objects: 149 censer
                         cancel_event(0x12)
                         byte_87708 = 0
                         schedule_event?(0x11, 1)
-                        flag_852B3_censer = 1
+                        can_climb = 1
                         -> 1
         if (current_room - 0x8C)==8:
           Font_WriteMessage(msg(23:0xF))
@@ -17162,11 +17162,11 @@ objh_145   # objects: 153 boulder
       Font_WriteMessage(msg(15:0x16))
       -> 1
     if cmd==GET_ON:
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         print_obj(2, dobj)
         Font_WriteMessage(msg(15:0x18), print_obj(2, dobj), ?)
         -> 1
-      if flag_852B3_censer==0:
+      if can_climb==0:
         Font_WriteMessage(msg(15:0x19))
         -> 1
     if cmd==LOOK_AT:
@@ -18739,11 +18739,11 @@ objh_162   # objects: 170 scaffolding
       Font_WriteMessage(msg(17:3))
       -> 1
     if cmd==CLIMB:
-      if flag_852B3_censer!=0:
+      if can_climb!=0:
         print_obj(2, dobj)
         Font_WriteMessage(msg(17:7), print_obj(2, dobj), ?)
         -> 1
-      if flag_852B3_censer==0:
+      if can_climb==0:
         show_compendium(0x15C, 0x5A03)
         -> 1
     if cmd==TALK_TO:
@@ -21740,17 +21740,17 @@ objh_215   # objects: 240 manacles
     -> 0
   if phase==6:
     if cmd==TALK_TO:
-      if flag_852E1_manacles==0:
+      if nada_shackled==0:
         print_obj(0x12, dobj)
         Font_WriteMessage(msg(31:0x23), print_obj(0x12, dobj), ?)
         -> 1
-      if flag_852E1_manacles!=0:
+      if nada_shackled!=0:
         Font_WriteMessage(msg(31:0x20))
         wait_ticks_or_click(0x7D0)
         Font_WriteMessage(msg(31:0x21))
         wait_ticks_or_click(0xFA0)
         Font_WriteMessage(msg(31:0x22))
-        flag_852E1_manacles = 0
+        nada_shackled = 0
         cancel_event(0x2C)
         byte_87FBE = 0
         follower_obj = 5
@@ -21767,10 +21767,10 @@ objh_215   # objects: 240 manacles
     if cmd:other:
       -> 0
     if cmd==LOOK_AT:
-      if flag_852E1_manacles!=0:
+      if nada_shackled!=0:
         Font_WriteMessage(msg(31:0x1A), msg(31:0x1B))
         -> 1
-      if flag_852E1_manacles==0:
+      if nada_shackled==0:
         Font_WriteMessage(msg(31:0x1A), ?, ?)
         -> 1
     if cmd==CLOSE:
@@ -21785,10 +21785,10 @@ objh_215   # objects: 240 manacles
       Font_WriteMessage(msg(31:0x24))
       -> 1
     if cmd==OPEN:
-      if flag_852E1_manacles!=0:
+      if nada_shackled!=0:
         Font_WriteMessage(msg(31:0x1D))
         -> 1
-      if flag_852E1_manacles==0:
+      if nada_shackled==0:
         print_obj(0x22, dobj)
         Font_WriteMessage(msg(31:0x1E), print_obj(0x22, dobj), ?)
         -> 1
@@ -21804,11 +21804,11 @@ objh_215   # objects: 240 manacles
             Font_WriteMessage(msg(31:0x25))
             -> 1
           if object_is_within?(0xEE, 1)!=0:
-            if flag_852E1_manacles!=0:
+            if nada_shackled!=0:
               print_obj(0x12, 0xEE)
               Font_WriteMessage(msg(31:0x26), print_obj(0x12, 0xEE), ?)
               -> 1
-            if flag_852E1_manacles==0:
+            if nada_shackled==0:
               Font_WriteMessage(msg(31:0x27))
               -> 1
       if dobj==0xCE:
@@ -21816,11 +21816,11 @@ objh_215   # objects: 240 manacles
           Font_WriteMessage(msg(31:0x25))
           -> 1
         if object_is_within?(0xEE, 1)!=0:
-          if flag_852E1_manacles!=0:
+          if nada_shackled!=0:
             print_obj(0x12, 0xEE)
             Font_WriteMessage(msg(31:0x26), print_obj(0x12, 0xEE), ?)
             -> 1
-          if flag_852E1_manacles==0:
+          if nada_shackled==0:
             Font_WriteMessage(msg(31:0x27))
             -> 1
 
@@ -26694,9 +26694,9 @@ objh_312   # objects: 343 sail
       if object_has_attr?(dobj, 0xA)!=0:
         print_obj(0x12, dobj)
         Font_WriteMessage(&aSIsUnfurled, print_obj(0x12, dobj), ?)
-        if flag_85319_windbag==0:
+        if windbag_opened==0:
           -> 1
-        if flag_85319_windbag!=0:
+        if windbag_opened!=0:
           Font_WriteMessage(msg(57:0x38))
           -> 1
       if object_has_attr?(dobj, 0xA)==0:
@@ -27365,7 +27365,7 @@ objh_329   # objects: 360 windbag
         wait_ticks_or_click(0x2710)
         sub_23C92()
         object_move?(0x168, 0, 0)
-        flag_85319_windbag = 1
+        windbag_opened = 1
         byte_8863C = 0
         if sub_1EFCF()==0:
           -> 1
@@ -27398,10 +27398,10 @@ objh_331   # objects: 362 mist
     if cmd:other:
       -> 0
     if cmd==LOOK_AT:
-      if flag_85319_windbag!=0:
+      if windbag_opened!=0:
         Font_WriteMessage(msg(62:0xB), &aWindy_0)
         -> 1
-      if flag_85319_windbag==0:
+      if windbag_opened==0:
         Font_WriteMessage(msg(62:0xB), &aSilent)
         -> 1
     if cmd==CLOSE:
@@ -27566,7 +27566,7 @@ objh_334   # objects: 365 sailboat
               print_obj(2, 0x16C)
               Font_WriteMessage(msg(62:0x2C), print_obj(2, 0x16C), ?)
               inc [bp+var_2]
-              if flag_85319_windbag==0:
+              if windbag_opened==0:
                 if [bp+var_2]!=0:
                   Font_WriteMessage(&aAnd_8)
                   Font_WriteMessage(msg(62:0x2D))
@@ -27576,14 +27576,14 @@ objh_334   # objects: 365 sailboat
                   Font_WriteMessage(msg(62:0x2D))
                   wputchar?(0x2E)
                   -> 1
-              if flag_85319_windbag!=0:
+              if windbag_opened!=0:
                 wputchar?(0x2E)
                 -> 1
             if [bp+var_2]==0:
               print_obj(2, 0x16C)
               Font_WriteMessage(msg(62:0x2C), print_obj(2, 0x16C), ?)
               inc [bp+var_2]
-              if flag_85319_windbag==0:
+              if windbag_opened==0:
                 if [bp+var_2]!=0:
                   Font_WriteMessage(&aAnd_8)
                   Font_WriteMessage(msg(62:0x2D))
@@ -27593,11 +27593,11 @@ objh_334   # objects: 365 sailboat
                   Font_WriteMessage(msg(62:0x2D))
                   wputchar?(0x2E)
                   -> 1
-              if flag_85319_windbag!=0:
+              if windbag_opened!=0:
                 wputchar?(0x2E)
                 -> 1
           if object_parent_is?(0x16E, 0x16C)==0:
-            if flag_85319_windbag==0:
+            if windbag_opened==0:
               if [bp+var_2]!=0:
                 Font_WriteMessage(&aAnd_8)
                 Font_WriteMessage(msg(62:0x2D))
@@ -27607,7 +27607,7 @@ objh_334   # objects: 365 sailboat
                 Font_WriteMessage(msg(62:0x2D))
                 wputchar?(0x2E)
                 -> 1
-            if flag_85319_windbag!=0:
+            if windbag_opened!=0:
               wputchar?(0x2E)
               -> 1
         if object_parent_is?(0x157, dobj)!=0:
@@ -27617,7 +27617,7 @@ objh_334   # objects: 365 sailboat
               print_obj(2, 0x16C)
               Font_WriteMessage(msg(62:0x2C), print_obj(2, 0x16C), ?)
               inc [bp+var_2]
-              if flag_85319_windbag==0:
+              if windbag_opened==0:
                 if [bp+var_2]!=0:
                   Font_WriteMessage(&aAnd_8)
                   Font_WriteMessage(msg(62:0x2D))
@@ -27627,14 +27627,14 @@ objh_334   # objects: 365 sailboat
                   Font_WriteMessage(msg(62:0x2D))
                   wputchar?(0x2E)
                   -> 1
-              if flag_85319_windbag!=0:
+              if windbag_opened!=0:
                 wputchar?(0x2E)
                 -> 1
             if [bp+var_2]==0:
               print_obj(2, 0x16C)
               Font_WriteMessage(msg(62:0x2C), print_obj(2, 0x16C), ?)
               inc [bp+var_2]
-              if flag_85319_windbag==0:
+              if windbag_opened==0:
                 if [bp+var_2]!=0:
                   Font_WriteMessage(&aAnd_8)
                   Font_WriteMessage(msg(62:0x2D))
@@ -27644,11 +27644,11 @@ objh_334   # objects: 365 sailboat
                   Font_WriteMessage(msg(62:0x2D))
                   wputchar?(0x2E)
                   -> 1
-              if flag_85319_windbag!=0:
+              if windbag_opened!=0:
                 wputchar?(0x2E)
                 -> 1
           if object_parent_is?(0x16E, 0x16C)==0:
-            if flag_85319_windbag==0:
+            if windbag_opened==0:
               if [bp+var_2]!=0:
                 Font_WriteMessage(&aAnd_8)
                 Font_WriteMessage(msg(62:0x2D))
@@ -27658,7 +27658,7 @@ objh_334   # objects: 365 sailboat
                 Font_WriteMessage(msg(62:0x2D))
                 wputchar?(0x2E)
                 -> 1
-            if flag_85319_windbag!=0:
+            if windbag_opened!=0:
               wputchar?(0x2E)
               -> 1
     if cmd:other:
@@ -27669,7 +27669,7 @@ objh_334   # objects: 365 sailboat
     if cmd==LOOK_AT:
       Font_WriteMessage(msg(62:0x20))
       if object_parent_is?(0x157, dobj)!=0:
-        if flag_85319_windbag!=0:
+        if windbag_opened!=0:
           Font_WriteMessage(msg(62:0x21), msg(62:0x22))
           if object_parent_is?(0x16E, 0x16C)==0:
             -> 1
@@ -27680,7 +27680,7 @@ objh_334   # objects: 365 sailboat
             if object_parent_is?(0x16E, 0x16C)==0:
               Font_WriteMessage(msg(62:0x25), msg(62:0x27))
               -> 1
-        if flag_85319_windbag==0:
+        if windbag_opened==0:
           Font_WriteMessage(msg(62:0x21), &aPerfectlyStill)
           if object_parent_is?(0x16E, 0x16C)==0:
             -> 1
@@ -27692,7 +27692,7 @@ objh_334   # objects: 365 sailboat
               Font_WriteMessage(msg(62:0x25), msg(62:0x27))
               -> 1
       if object_parent_is?(0x157, dobj)==0:
-        if flag_85319_windbag!=0:
+        if windbag_opened!=0:
           Font_WriteMessage(&aItIsS_, msg(62:0x23))
           if object_parent_is?(0x16E, 0x16C)==0:
             -> 1
@@ -27703,7 +27703,7 @@ objh_334   # objects: 365 sailboat
             if object_parent_is?(0x16E, 0x16C)==0:
               Font_WriteMessage(msg(62:0x25), msg(62:0x27))
               -> 1
-        if flag_85319_windbag==0:
+        if windbag_opened==0:
           Font_WriteMessage(&aItIsS_, msg(62:0x24))
           if object_parent_is?(0x16E, 0x16C)==0:
             -> 1
@@ -27719,10 +27719,10 @@ objh_334   # objects: 365 sailboat
         Font_WriteMessage(msg(62:0x2E))
         -> 1
       if current_room!=0x170:
-        if flag_85319_windbag==0:
+        if windbag_opened==0:
           Font_WriteMessage(msg(62:0x2F))
           -> 1
-        if flag_85319_windbag!=0:
+        if windbag_opened!=0:
           if object_parent_is?(0x16E, 0x16C)!=0:
             Font_WriteMessage(msg(62:0x30))
             -> 1
