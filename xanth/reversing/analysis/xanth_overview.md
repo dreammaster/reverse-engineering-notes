@@ -215,3 +215,10 @@ object table puts in that room. Pictures are 264x122 (the picture window) and ca
 and `baseId` the room's object id: `XANTH_02.RGN` entry 0 (the bedroom picture, `baseId` 34) has regions 35 desk, 45 window, 48 bookshelf, 46 pen holder, 47 pencils, 39 personal computer, 40 computer screen ... exactly the objects the object table places in room 34. Joining the room
 picture table, the region files and the object table gives **716 hotspots over the 70 rooms** (`analysis/xanth_scenes.tsv`, `scripts/xanth_scenes.py`; three rooms share a picture entry with a different `baseId`). Clicking in a scene is therefore a point-in-polygon test
 that yields an object id, which feeds `run_command(verb, dobj, iobj)`. With the object table, exits, handlers, conversations, voice, music and save state, the data a ScummVM `AdventureEngine` needs for the Xanth world is now fully located.
+
+## 16. Cutscenes, RealSound (2026-10-30)
+
+There is no video: `showCutscene(n)` (Paul's names throughout) is a 11-way jump table of code-driven sequences built from `Conversation_Show`, pictures and `wait_ticks_or_click`: 0 `intro` (title + `showIntroConv`), 1-4 `demonConv1..4`, 5 `demonEndgame`, 6 `meetingKim`,
+7 `kimMeetsMerman`, 8 `kimRafting`, 9 `kimGapChasm`, 10 `merCouple`. Triggers seen in handlers: censer (149) -> demonConv1, telephone (65) -> demonEndgame, spring (127) -> kimMeetsMerman, mirror (213) -> kimRafting, sewer (412) -> merCouple.
+`*.RS` files are loaded by `realsound_load` (only for certain sound-device bits of `word_8912E`; played through `sub_23BB1`) in chunks of at most 0xFFF0 bytes, up to 7 chunks per file. Header `"STEVE" 02` + two words, then a bit/nibble pattern that does not look like
+plain 8-bit PCM (alternating `0xCC`/`0x33` runs); not decoded - the sound effects are short (17-35 KB) and device-specific, so they are low priority for a port.
