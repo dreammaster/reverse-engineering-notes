@@ -57,3 +57,5 @@ sub_1F070	run_event	calls timed event handler event_function_table[id-1] for id 
 flag_852E7_bun	hot_dog_used	set (with object_move of the hot dog, object 15, out of the game) by the bun/hot-dog handlers when it is used up
 flag_852E8_firearm	firearm_given	set when the firearm (object 16) is talked to or given away and removed from the game
 flag_852E3_letter_from_pia	letter_read	set the first time the letter from Pia is looked at; tested by LOOK_AT/READ
+flag_85298_conv_text_87	guardian_riddle_count	incremented by the Guardian riddle conversation line (conv_text_87, "prepare to answer the next riddle"); read by the Guardian handler, conv_text_29/88 and exit_fn_31
+flag_852A6_conv81	advisor_questions_asked	incremented by the information-menu callbacks conv_cb_81/82 (the "what do you know" menus of the sword-of-wisdom advisor) and cleared by conv_text_89; gates the last menu option

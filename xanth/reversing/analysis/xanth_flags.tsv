@@ -164,7 +164,7 @@ address	name	size	written_by	tested_by
 85320	flag_85320_conv78	1	conv_cb_78=1	conv_cb_77
 85321	flag_85321_conv79	1	conv_cb_79=1	conv_cb_77
 85322	flag_85322_windbag	1	objh_329(360 windbag)=1; objh_334(365 sailboat)=1	
-85298	flag_85298_conv_text_87	2	conv_text_87=inc	conv_text_29; conv_text_87; conv_text_88; exit_fn_31; objh_018(19 Guardian)
+85298	guardian_riddle_count	2	conv_text_87=inc	conv_text_29; conv_text_87; conv_text_88; exit_fn_31; objh_018(19 Guardian)
 8529a	flag_8529A_exit_fn_33	2	exit_fn_33=dec/inc	exit_fn_33
 85323	byte_85323	1		objh_018(19 Guardian)
 85324	flag_85324_sammy	1	objh_007(7 Sammy)=1	
@@ -180,7 +180,7 @@ address	name	size	written_by	tested_by
 8532c	byte_8532C	1	event_fn_35=1	
 852a0	word_852A0	2	event_fn_37=inc; event_fn_39=4	event_fn_37; exit_fn_39
 852a2	flag_852A2_conv37	2	conv_cb_37=inc; conv_cb_49=inc	conv_cb_37; conv_cb_49
-852a6	flag_852A6_conv81	2	conv_cb_81=inc; conv_cb_82=inc; conv_text_89=0	conv_cb_81; conv_cb_82
+852a6	advisor_questions_asked	2	conv_cb_81=inc; conv_cb_82=inc; conv_text_89=0	conv_cb_81; conv_cb_82
 8532d	byte_8532D	1		
 8532e	flag_8532E_sword	1	objh_131(139 sword)=1	objh_037(40 computer screen)
 852a4	flag_852A4_conv37	2	conv_cb_37=inc; conv_cb_49=inc	

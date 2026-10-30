@@ -2334,11 +2334,11 @@ conv_cb_80
 conv_cb_81
   if arg_2!=3:
     conversation_set_enabled(phase, arg_2, 0)
-    inc flag_852A6_conv81
-    if flag_852A6_conv81==3:
+    inc advisor_questions_asked
+    if advisor_questions_asked==3:
       conversation_set_enabled(phase, 3, 1)
       -> conversation_set_enabled(phase, 3, 1)
-    if flag_852A6_conv81!=3:
+    if advisor_questions_asked!=3:
       -> conversation_set_enabled(phase, arg_2, 0)
   if arg_2==3:
     -> (arg_2 - 3)
@@ -2346,11 +2346,11 @@ conv_cb_81
 conv_cb_82
   if (arg_2 - 1)!=1:
     conversation_set_enabled(phase, arg_2, 0)
-    inc flag_852A6_conv81
-    if flag_852A6_conv81==2:
+    inc advisor_questions_asked
+    if advisor_questions_asked==2:
       conversation_set_enabled(phase, 2, 1)
       -> conversation_set_enabled(phase, 2, 1)
-    if flag_852A6_conv81!=2:
+    if advisor_questions_asked!=2:
       -> conversation_set_enabled(phase, arg_2, 0)
   if (arg_2 - 1)==1:
     -> ((arg_2 - 1) - 1)
@@ -3032,11 +3032,11 @@ conv_text_29
                                                                                                                                                                                       voice_track = ([bp+var_2] + 0x4C7)
                                                                                                                                                                                       -> es:[si+2]
                                                                                                                                                                               if object_has_attr?(0x170, 5)!=0:
-                                                                                                                                                                                if flag_85298_conv_text_87<0xA:
+                                                                                                                                                                                if guardian_riddle_count<0xA:
                                                                                                                                                                                   conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                                                                                                   voice_track = ([bp+var_2] + 0x4C7)
                                                                                                                                                                                   -> es:[si+2]
-                                                                                                                                                                                if flag_85298_conv_text_87>=0xA:
+                                                                                                                                                                                if guardian_riddle_count>=0xA:
                                                                                                                                                                                   if object_has_attr?(0x174, 5)==0:
                                                                                                                                                                                     conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                                                                                                     voice_track = ([bp+var_2] + 0x4C7)
@@ -3152,11 +3152,11 @@ conv_text_29
                                                                                                                                                                                     voice_track = ([bp+var_2] + 0x4C7)
                                                                                                                                                                                     -> es:[si+2]
                                                                                                                                                                             if object_has_attr?(0x170, 5)!=0:
-                                                                                                                                                                              if flag_85298_conv_text_87<0xA:
+                                                                                                                                                                              if guardian_riddle_count<0xA:
                                                                                                                                                                                 conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                                                                                                 voice_track = ([bp+var_2] + 0x4C7)
                                                                                                                                                                                 -> es:[si+2]
-                                                                                                                                                                              if flag_85298_conv_text_87>=0xA:
+                                                                                                                                                                              if guardian_riddle_count>=0xA:
                                                                                                                                                                                 if object_has_attr?(0x174, 5)==0:
                                                                                                                                                                                   conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                                                                                                   voice_track = ([bp+var_2] + 0x4C7)
@@ -3278,11 +3278,11 @@ conv_text_29
                                                                                                                                                                                     voice_track = ([bp+var_2] + 0x4C7)
                                                                                                                                                                                     -> es:[si+2]
                                                                                                                                                                             if object_has_attr?(0x170, 5)!=0:
-                                                                                                                                                                              if flag_85298_conv_text_87<0xA:
+                                                                                                                                                                              if guardian_riddle_count<0xA:
                                                                                                                                                                                 conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                                                                                                 voice_track = ([bp+var_2] + 0x4C7)
                                                                                                                                                                                 -> es:[si+2]
-                                                                                                                                                                              if flag_85298_conv_text_87>=0xA:
+                                                                                                                                                                              if guardian_riddle_count>=0xA:
                                                                                                                                                                                 if object_has_attr?(0x174, 5)==0:
                                                                                                                                                                                   conversation_set_enabled(0x803F, es:[bx+0], 1)
                                                                                                                                                                                   voice_track = ([bp+var_2] + 0x4C7)
@@ -5227,7 +5227,7 @@ conv_text_85
     -> [bp+var_4]
 
 conv_text_86
-  voice_track = (flag_85298_conv_text_87 + 0x499)
+  voice_track = (guardian_riddle_count + 0x499)
   ResourceText_GetStr(msg(56:6))
   ResourceText_GetStr(es:[bx+6A4h], es:[bx+6A6h])
   ResourceText_GetStr(&a__3)
@@ -5254,31 +5254,31 @@ conv_text_87
       inc [bp+var_2]
       if (es:[bx+6A8h] + es:[bx+6AAh])<=[bp+var_2]:
         ResourceText_GetStr(msg(56:7))
-        if flag_85298_conv_text_87==9:
+        if guardian_riddle_count==9:
           ResourceText_GetStr(&aAll)
-          inc flag_85298_conv_text_87
-          number_to_words(flag_85298_conv_text_87)
+          inc guardian_riddle_count
+          number_to_words(guardian_riddle_count)
           ResourceText_GetStr(msg(56:8))
-          if flag_85298_conv_text_87<0xA:
+          if guardian_riddle_count<0xA:
             ResourceText_GetStr(msg(56:9))
             voice_track = 0x496
             -> [bp+var_A]
-          if flag_85298_conv_text_87>=0xA:
+          if guardian_riddle_count>=0xA:
             conversation_set_enabled(0x817C, ?, ?)
             conversation_set_enabled(0x817C, 1, 0)
             conversation_set_enabled(0x817C, 2, 1)
             ResourceText_GetStr(msg(56:0xA))
             voice_track = 0x497
             -> [bp+var_A]
-        if flag_85298_conv_text_87!=9:
-          inc flag_85298_conv_text_87
-          number_to_words(flag_85298_conv_text_87)
+        if guardian_riddle_count!=9:
+          inc guardian_riddle_count
+          number_to_words(guardian_riddle_count)
           ResourceText_GetStr(msg(56:8))
-          if flag_85298_conv_text_87<0xA:
+          if guardian_riddle_count<0xA:
             ResourceText_GetStr(msg(56:9))
             voice_track = 0x496
             -> [bp+var_A]
-          if flag_85298_conv_text_87>=0xA:
+          if guardian_riddle_count>=0xA:
             conversation_set_enabled(0x817C, ?, ?)
             conversation_set_enabled(0x817C, 1, 0)
             conversation_set_enabled(0x817C, 2, 1)
@@ -5290,31 +5290,31 @@ conv_text_87
         inc [bp+var_2]
         if (es:[bx+6A8h] + es:[bx+6AAh])<=[bp+var_2]:
           ResourceText_GetStr(msg(56:7))
-          if flag_85298_conv_text_87==9:
+          if guardian_riddle_count==9:
             ResourceText_GetStr(&aAll)
-            inc flag_85298_conv_text_87
-            number_to_words(flag_85298_conv_text_87)
+            inc guardian_riddle_count
+            number_to_words(guardian_riddle_count)
             ResourceText_GetStr(msg(56:8))
-            if flag_85298_conv_text_87<0xA:
+            if guardian_riddle_count<0xA:
               ResourceText_GetStr(msg(56:9))
               voice_track = 0x496
               -> [bp+var_A]
-            if flag_85298_conv_text_87>=0xA:
+            if guardian_riddle_count>=0xA:
               conversation_set_enabled(0x817C, ?, ?)
               conversation_set_enabled(0x817C, 1, 0)
               conversation_set_enabled(0x817C, 2, 1)
               ResourceText_GetStr(msg(56:0xA))
               voice_track = 0x497
               -> [bp+var_A]
-          if flag_85298_conv_text_87!=9:
-            inc flag_85298_conv_text_87
-            number_to_words(flag_85298_conv_text_87)
+          if guardian_riddle_count!=9:
+            inc guardian_riddle_count
+            number_to_words(guardian_riddle_count)
             ResourceText_GetStr(msg(56:8))
-            if flag_85298_conv_text_87<0xA:
+            if guardian_riddle_count<0xA:
               ResourceText_GetStr(msg(56:9))
               voice_track = 0x496
               -> [bp+var_A]
-            if flag_85298_conv_text_87>=0xA:
+            if guardian_riddle_count>=0xA:
               conversation_set_enabled(0x817C, ?, ?)
               conversation_set_enabled(0x817C, 1, 0)
               conversation_set_enabled(0x817C, 2, 1)
@@ -5323,31 +5323,31 @@ conv_text_87
               -> [bp+var_A]
     if ([bp+var_4] + es:[bx+6AAh])<=[bp+var_4]:
       ResourceText_GetStr(msg(56:7))
-      if flag_85298_conv_text_87==9:
+      if guardian_riddle_count==9:
         ResourceText_GetStr(&aAll)
-        inc flag_85298_conv_text_87
-        number_to_words(flag_85298_conv_text_87)
+        inc guardian_riddle_count
+        number_to_words(guardian_riddle_count)
         ResourceText_GetStr(msg(56:8))
-        if flag_85298_conv_text_87<0xA:
+        if guardian_riddle_count<0xA:
           ResourceText_GetStr(msg(56:9))
           voice_track = 0x496
           -> [bp+var_A]
-        if flag_85298_conv_text_87>=0xA:
+        if guardian_riddle_count>=0xA:
           conversation_set_enabled(0x817C, ?, ?)
           conversation_set_enabled(0x817C, 1, 0)
           conversation_set_enabled(0x817C, 2, 1)
           ResourceText_GetStr(msg(56:0xA))
           voice_track = 0x497
           -> [bp+var_A]
-      if flag_85298_conv_text_87!=9:
-        inc flag_85298_conv_text_87
-        number_to_words(flag_85298_conv_text_87)
+      if guardian_riddle_count!=9:
+        inc guardian_riddle_count
+        number_to_words(guardian_riddle_count)
         ResourceText_GetStr(msg(56:8))
-        if flag_85298_conv_text_87<0xA:
+        if guardian_riddle_count<0xA:
           ResourceText_GetStr(msg(56:9))
           voice_track = 0x496
           -> [bp+var_A]
-        if flag_85298_conv_text_87>=0xA:
+        if guardian_riddle_count>=0xA:
           conversation_set_enabled(0x817C, ?, ?)
           conversation_set_enabled(0x817C, 1, 0)
           conversation_set_enabled(0x817C, 2, 1)
@@ -5357,16 +5357,16 @@ conv_text_87
 
 conv_text_88
   ResourceText_GetStr(msg(56:5))
-  if flag_85298_conv_text_87!=?:
+  if guardian_riddle_count!=?:
     ResourceText_GetStr(&aNother_3)
     ResourceText_GetStr(&aTry_)
     -> [bp+var_4]
-  if flag_85298_conv_text_87==?:
+  if guardian_riddle_count==?:
     ResourceText_GetStr(&aTry_)
     -> [bp+var_4]
 
 conv_text_89
-  flag_852A6_conv81 = 0
+  advisor_questions_asked = 0
   -> 3
 
 event_fn_00
@@ -9313,12 +9313,12 @@ exit_fn_30
 
 exit_fn_31
   if phase==0xF:
-    if flag_85298_conv_text_87<0xA:
+    if guardian_riddle_count<0xA:
       Font_WriteMessage(msg(63:0x13))
       wait_ticks_or_click(0x1388)
       show_compendium(0x3E9, 0x5A18)
       -> 0
-    if flag_85298_conv_text_87>=0xA:
+    if guardian_riddle_count>=0xA:
       -> 0x174
   if phase:other:
     -> 0x174
@@ -10590,14 +10590,14 @@ objh_018   # objects: 19 Guardian
     if cmd:other:
       -> 0
     if cmd==TALK_TO:
-      if flag_85298_conv_text_87<0xA:
+      if guardian_riddle_count<0xA:
         show_compendium(0x3E9, 0x5A18)
-        if flag_85298_conv_text_87==0xA:
+        if guardian_riddle_count==0xA:
           add_score?(7, 0, 0)
           -> 1
-        if flag_85298_conv_text_87!=0xA:
+        if guardian_riddle_count!=0xA:
           -> 1
-      if flag_85298_conv_text_87>=0xA:
+      if guardian_riddle_count>=0xA:
         if flag_8B9E2_exit_fn_12==0x169:
           show_compendium(0x3EE, 0x5A18)
           -> 1

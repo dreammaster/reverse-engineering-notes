@@ -24,6 +24,8 @@ S69 = ida_segment.get_segm_by_name("seg069").start_ea
 ea = idc.get_name_ea_simple
 LOOK, E1, E2, E3 = ea("Conversation_LOOKUPS"), ea("Conversation_ENTRIES1"), ea("Conversation_ENTRIES2"), ea("Conversation_ENTRIES3")
 ENT, SIMPLE, CB = ea("unk_3C858"), ea("dword_3B314"), ea("dword_3DCA4")
+if CB == idc.BADADDR:
+    CB = ea("conversation_callbacks")   # renamed by apply_xanth_handlers.py
 NSIMPLE, NMENU = idc.get_wide_word(ea("Conversation_Count")), idc.get_wide_word(ea("Conversation_MinusCount"))
 w, b = idc.get_wide_word, idc.get_wide_byte
 
@@ -38,7 +40,7 @@ def text(idx):
         hi = w(S68 + idx * 4 + 2)          # 0xF0BB: SHANSTR message id, block BB, index v
         return {"s": idx, "msg": [hi & 0xFF, v], "tag": hi >> 8}
     t = far(S69 + (idx - 0x8000) * 4)
-    return {"s": idx, "func": "%x" % t, "name": idc.get_func_name(t)}
+    return {"s": idx, "func": "%x" % t, "name": idc.get_func_name(t).replace("_stub", "")}
 
 
 res = {"simple": [], "menus": []}
@@ -55,7 +57,7 @@ for i in range(NMENU):
     m = {"id": 0x8000 + i, "flag": b(E3 + i), "b1": b1, "first": first, "options": opts}
     if cb:
         t = far(CB + cb * 4)
-        m["callback"] = {"index": cb, "func": "%x" % t, "name": idc.get_func_name(t)}
+        m["callback"] = {"index": cb, "func": "%x" % t, "name": idc.get_func_name(t).replace("_stub", "")}
     res["menus"].append(m)
 json.dump(res, open(out, "w"))
 print("conversations: simple %d, menus %d" % (NSIMPLE, NMENU))

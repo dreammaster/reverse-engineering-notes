@@ -174,7 +174,7 @@ index	address	size	name
 172	85320	1	flag_85320_conv78
 173	85321	1	flag_85321_conv79
 174	85322	1	flag_85322_windbag
-175	85298	2	flag_85298_conv_text_87
+175	85298	2	guardian_riddle_count
 176	8529a	2	flag_8529A_exit_fn_33
 177	85323	1	byte_85323
 178	85324	1	flag_85324_sammy
@@ -190,7 +190,7 @@ index	address	size	name
 188	8532c	1	byte_8532C
 189	852a0	2	word_852A0
 190	852a2	2	flag_852A2_conv37
-191	852a6	2	flag_852A6_conv81
+191	852a6	2	advisor_questions_asked
 192	8532d	1	byte_8532D
 193	8532e	1	flag_8532E_sword
 194	852a4	2	flag_852A4_conv37
