@@ -343,3 +343,16 @@ AD73 combatRound junk=al,bl,cf,ch,cl,di,dl,es,si scratch=CF80-CF87,7931-8030,A4A
 3C58 useSkillOnObject junk=bl,bp,ch,cl,di,dl,es,pf,si,zf scratch=4661-4662,BA00-BA11,AA30-AA50
 2619 askYesNo junk=bl,bp,cl,di,dl,es,pf,si,zf scratch=465C-4660
 2614 askYesNoAfterMessage junk=bl,bp,cl,di,dl,es,pf,si,zf scratch=465C-4660
+73B0 chooseByKey junk=bp,cl,di,dl,pf,si scratch=465C-4660
+721B pickGroupMember junk=es,zf,bl,bp,cl,di,dl,pf,sf,si scratch=465C-4660
+25BD askDirection junk=bp,cl,di,dl,es,pf,sf,si scratch=465C-4660
+3AE4 chooseUseAction junk=ah,bp,ch,cl,di,es,pf,sf,si,zf scratch=BA00-BA11,AA30-AA50,465C-4660,4661-4662
+6EAA listWindowSetup junk=ah,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F
+6DB4 pagedListDraw junk=ah,al,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F
+6E43 pagedListBack junk=ah,al,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F
+6D34 pagedListKeys junk=ah,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F
+6F20 markPickedRow junk=ah,al,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F
+997B skillList junk=ah,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F
+98F0 skillScreen junk=ah,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F
+9454 itemList junk=ah,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F
+9394 itemScreen junk=ah,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CCD0-CCF0,B1D0-B1E0,4661-4662,465C-4660,BA00-BA11,AA30-AA50,7931-796F,CDC0-CE00

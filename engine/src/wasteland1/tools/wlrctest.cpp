@@ -30,6 +30,24 @@ struct Result {
 int gAxMod = 0, gBxMod = 0, gDxMod = 0;   // --axmod/--bxmod/--dxmod N: register inputs reduced modulo N (valid ranges)
 std::map<uint16_t, std::array<int, 3>> gDomains;   // tools/domains.txt: per function reduction (ax, bx, dx modulo) of the random inputs
 std::vector<uint16_t> gKeys;   // keys offered to both machines before each run (--keys)
+std::map<uint16_t, std::string> gPokes;   // tools/recomp/pokes.txt: "<hex addr> <ds offset>=<byte>,..." applied before testing that function
+std::map<uint16_t, std::string> gFuncKeys;   // tools/recomp/keys.txt: "<hex addr> <key spec>" (as --keys) for that function
+std::vector<uint16_t> parseKeys(const std::string &specIn) {   // "<hex key>[*count],...[|repeat]"
+	std::string spec = specIn;
+	size_t repeat = 1;
+	if (const size_t bar = spec.find('|'); bar != std::string::npos) { repeat = std::strtoul(spec.c_str() + bar + 1, nullptr, 10); spec.resize(bar); }
+	std::vector<uint16_t> once;
+	std::stringstream ks(spec);
+	std::string k;
+	while (std::getline(ks, k, ',')) {
+		const size_t star = k.find('*');
+		const size_t count = star == std::string::npos ? 1 : std::strtoul(k.c_str() + star + 1, nullptr, 10);
+		once.insert(once.end(), count, uint16_t(std::strtoul(k.c_str(), nullptr, 16)));
+	}
+	std::vector<uint16_t> all;
+	for (size_t n = 0; n < repeat; ++n) all.insert(all.end(), once.begin(), once.end());
+	return all;
+}
 
 Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const std::string &gameDir, uint16_t entry, uint32_t seed) {
 	Result res;
@@ -45,8 +63,11 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 		n.sys->nextHandle = o.nextHandle;
 		rc::installCallbacks(n);
 	}
-	if (const char *poke = std::getenv("WLPOKE")) {   // WLPOKE=<ds offset hex>=<byte hex>,... applied to both machines after loading the state
-		std::stringstream ps(poke);
+	std::string pokeText;
+	if (const char *poke = std::getenv("WLPOKE")) pokeText = poke;   // WLPOKE=<ds offset hex>=<byte hex>,... applied to both machines after loading the state
+	else if (auto it = gPokes.find(entry); it != gPokes.end()) pokeText = it->second;
+	if (!pokeText.empty()) {
+		std::stringstream ps(pokeText);
 		std::string item;
 		while (std::getline(ps, item, ',')) {
 			unsigned off = 0, val = 0;
@@ -55,7 +76,10 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 	}
 	o.cpu.fault.clear(); o.cpu.halted = false; o.exited = false; o.needKey = false;
 	o.keys.clear(); n.keys.clear();
-	for (uint16_t k : gKeys) { o.keys.push_back(k); n.keys.push_back(k); }
+	const std::vector<uint16_t> *keyList = &gKeys;
+	std::vector<uint16_t> funcKeys;
+	if (gKeys.empty()) if (auto it = gFuncKeys.find(entry); it != gFuncKeys.end()) { funcKeys = parseKeys(it->second); keyList = &funcKeys; }
+	for (uint16_t k : *keyList) { o.keys.push_back(k); n.keys.push_back(k); }
 	o.detectIdle = true;
 	// register inputs: the state's own values with a few random small ones
 	uint32_t s = seed;
@@ -166,13 +190,18 @@ int main(int argc, char **argv) {
 		else if (std::string(argv[i]) == "--bxmod" && i + 1 < argc) gBxMod = std::atoi(argv[++i]);
 		else if (std::string(argv[i]) == "--dxmod" && i + 1 < argc) gDxMod = std::atoi(argv[++i]);
 		else if (std::string(argv[i]) == "--keys" && i + 1 < argc) {
-			std::stringstream ks(argv[++i]);
+			std::string spec = argv[++i];
+			size_t repeat = 1;
+			if (const size_t bar = spec.find('|'); bar != std::string::npos) { repeat = std::strtoul(spec.c_str() + bar + 1, nullptr, 10); spec.resize(bar); }   // "a,b,c|N": the list N times
+			std::stringstream ks(spec);
 			std::string k;
 			while (std::getline(ks, k, ',')) {   // "<hex key>" or "<hex key>*<count>"
 				const size_t star = k.find('*');
 				const size_t count = star == std::string::npos ? 1 : std::strtoul(k.c_str() + star + 1, nullptr, 10);
 				gKeys.insert(gKeys.end(), count, uint16_t(std::strtoul(k.c_str(), nullptr, 16)));
 			}
+			const std::vector<uint16_t> once = gKeys;
+			for (size_t n = 1; n < repeat; ++n) gKeys.insert(gKeys.end(), once.begin(), once.end());
 		}
 		else states.push_back(argv[i]);
 	}
@@ -182,6 +211,15 @@ int main(int argc, char **argv) {
 		while (std::getline(din, dl)) {
 			unsigned a = 0; int x = 0, b = 0, d = 0;
 			if (std::sscanf(dl.c_str(), "%x %d %d %d", &a, &x, &b, &d) == 4) gDomains[uint16_t(a)] = {x, b, d};
+		}
+	}
+	for (const char *name : {"pokes.txt", "keys.txt"}) {   // per function set up next to the entries list
+		std::ifstream fin(std::string(argv[3]).substr(0, std::string(argv[3]).find_last_of("/\\") + 1) + name);
+		std::string line;
+		while (std::getline(fin, line)) {
+			unsigned a = 0;
+			int used = 0;
+			if (std::sscanf(line.c_str(), "%x %n", &a, &used) >= 1 && used > 0) (name[0] == 'p' ? gPokes : gFuncKeys)[uint16_t(a)] = line.substr(size_t(used));
 		}
 	}
 	emu::Machine o(gameDir);
