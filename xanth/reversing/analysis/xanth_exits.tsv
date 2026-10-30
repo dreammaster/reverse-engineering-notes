@@ -1,0 +1,153 @@
+room	room_name	direction	kind	target	target_name	door_object
+34	bedroom	northwest	1	51	entrance	
+51	entrance	southeast	1	34	bedroom	
+51	entrance	west	1	64	kitchen	
+51	entrance	north	4	exit_fn_00		
+64	kitchen	east	1	51	entrance	
+90	screen	up	1	34	bedroom	
+91	Dark Cavern	north	4	exit_fn_01		
+99	cave entrance	northeast	1	105	crossroads	
+105	crossroads	east	1	121	forest	
+105	crossroads	southwest	1	99	cave entrance	
+105	crossroads	northwest	4	exit_fn_02		
+105	crossroads	southeast	4	exit_fn_02		
+121	forest	west	1	105	crossroads	
+121	forest	southeast	1	128	village	
+128	village	northwest	1	121	forest	
+128	village	north	2	140	pier	131
+128	village	east	1	152	road	
+140	pier	northeast	1	148	censor-ship	
+140	pier	south	1	128	village	
+148	censor-ship	southwest	1	140	pier	
+148	censor-ship	east	4	exit_fn_03		
+151	deck	west	1	148	censor-ship	
+152	road	west	1	128	village	
+152	road	northeast	1	154	road	
+154	road	southwest	4	exit_fn_04		
+154	road	northeast	1	156	road	
+156	road	northeast	4	exit_fn_05		
+156	road	southwest	4	exit_fn_06		
+157	ice palace	southwest	1	156	road	
+157	ice palace	north	2	169	fairway	158
+169	fairway	south	1	157	ice palace	
+169	fairway	north	1	174	fair	
+174	fair	south	1	169	fairway	
+174	fair	northeast	1	184	booth	
+184	booth	northwest	4	exit_fn_07		
+184	booth	southwest	1	174	fair	
+190	desert	north	4	exit_fn_08		
+190	desert	south	4	exit_fn_08		
+190	desert	east	4	exit_fn_08		
+190	desert	west	4	exit_fn_08		
+190	desert	northeast	4	exit_fn_08		
+190	desert	northwest	4	exit_fn_08		
+190	desert	southeast	4	exit_fn_08		
+190	desert	southwest	4	exit_fn_08		
+197	road	west	4	exit_fn_09		
+197	road	southeast	1	199	spring	
+197	road	north	1	201	barrow entrance	
+199	spring	northwest	4	exit_fn_10		
+199	spring	southeast	4	exit_fn_11		
+201	barrow entrance	north	2	205	barrow	202
+201	barrow entrance	south	1	197	road	
+205	barrow	north	4	exit_fn_12		
+205	barrow	south	4	exit_fn_12		
+205	barrow	east	4	exit_fn_12		
+205	barrow	west	4	exit_fn_12		
+205	barrow	down	4	exit_fn_12		
+237	dungeon	up	4	exit_fn_13		
+244	tunnel	south	4	exit_fn_14		
+244	tunnel	east	1	248	chamber	
+248	chamber	west	1	244	tunnel	
+248	chamber	southeast	1	251	lava path	
+251	lava path	northwest	1	248	chamber	
+251	lava path	northeast	4	exit_fn_15		
+258	firewall	southwest	1	251	lava path	
+258	firewall	north	4	exit_fn_16		
+261	rocks	south	1	258	firewall	
+261	rocks	up	4	exit_fn_17		
+263	peninsula	down	4	exit_fn_18		
+263	peninsula	north	1	268	troll bridge	
+268	troll bridge	north	4	exit_fn_19		
+268	troll bridge	south	1	263	peninsula	
+268	troll bridge	down	1	274	living room	
+274	living room	up	4	exit_fn_20		
+274	living room	north	4	exit_fn_21		
+274	living room	west	1	293	laboratory	
+293	laboratory	east	1	274	living room	
+293	laboratory	down	4	exit_fn_22		
+306	fork in the road	south	1	268	troll bridge	
+306	fork in the road	north	4	exit_fn_23		
+306	fork in the road	northwest	4	exit_fn_23		
+306	fork in the road	northeast	4	exit_fn_24		
+313	entrance	southwest	1	306	fork in the road	
+313	entrance	east	1	318	Com-Pewter	
+318	Com-Pewter	west	4	exit_fn_25		
+318	Com-Pewter	northeast	4	exit_fn_26		
+335	road	southwest	4	exit_fn_27		
+335	road	northeast	1	358	winding road	
+335	road	southeast	1	352	road	
+335	road	east	1	344	Ma's house	
+344	Ma's house	west	1	335	road	
+352	road	northwest	1	335	road	
+352	road	northeast	1	354	vent	
+352	road	southeast	4	exit_fn_28		
+354	vent	southwest	1	352	road	
+354	vent	northwest	1	358	winding road	
+358	winding road	southwest	1	335	road	
+358	winding road	southeast	1	354	vent	
+358	winding road	north	4	exit_fn_29		
+361	cave of winds	south	1	358	winding road	
+361	cave of winds	north	4	exit_fn_30		
+368	shore	northeast	4	exit_fn_31		
+368	shore	south	4	exit_fn_32		
+372	staircase	down	4	exit_fn_33		
+372	staircase	up	4	exit_fn_33		
+372	staircase	southwest	4	exit_fn_33		
+376	desert	northeast	1	378	desert	
+376	desert	northwest	1	352	road	
+378	desert	northeast	1	380	desert	
+378	desert	southwest	4	exit_fn_34		
+380	desert	northeast	4	exit_fn_35		
+380	desert	southwest	4	exit_fn_36		
+384	gap	up	4	exit_fn_37		
+384	gap	southwest	4	exit_fn_38		
+384	gap	southeast	4	exit_fn_38		
+384	gap	south	4	exit_fn_38		
+384	gap	northwest	4	exit_fn_39		
+384	gap	northeast	4	exit_fn_39		
+384	gap	north	4	exit_fn_39		
+388	castle gate	southwest	4	exit_fn_40		
+388	castle gate	south	4	exit_fn_40		
+388	castle gate	southeast	4	exit_fn_40		
+388	castle gate	north	4	exit_fn_41		
+394	courtyard	north	4	exit_fn_42		
+394	courtyard	south	1	388	castle gate	
+394	courtyard	northwest	1	403	corner tower	
+394	courtyard	northeast	1	407	corner tower	
+397	entryway	south	1	394	courtyard	
+403	corner tower	southeast	4	exit_fn_43		
+403	corner tower	east	4	exit_fn_44		
+407	corner tower	southwest	1	394	courtyard	
+407	corner tower	west	1	403	corner tower	
+407	corner tower	northwest	4	exit_fn_45		
+410	castle wall	southeast	4	exit_fn_46		
+410	castle wall	down	4	exit_fn_47		
+412	sewer	up	1	410	castle wall	
+412	sewer	west	1	420	round platform	
+420	round platform	east	1	412	sewer	
+424	library	southeast	1	426	gourd room	
+426	gourd room	northwest	4	exit_fn_48		
+430	mansion	northeast	1	433	front yard	
+433	front yard	southwest	1	430	mansion	
+433	front yard	northwest	1	440	back yard	
+433	front yard	north	4	exit_fn_49		
+440	back yard	southeast	1	433	front yard	
+440	back yard	down	4	exit_fn_50		
+445	cellar	up	4	exit_fn_51		
+445	cellar	north	4	exit_fn_52		
+462	first floor	south	1	445	cellar	
+462	first floor	north	4	exit_fn_53		
+469	second floor	south	1	462	first floor	
+469	second floor	north	4	exit_fn_54		
+496	attic	south	4	exit_fn_55		

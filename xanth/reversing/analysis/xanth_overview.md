@@ -136,3 +136,13 @@ Shannara do not exist here: Xanth keeps its game flags as plain bytes/words (`by
 `call_object_handler` is driven by `run_command` exactly as in Shannara (phases 1-2 for the actor/room objects, 3/4 for one command object and its container, 5/6 for the other); in Xanth the iobj gets phases 3 and 4 and the
 dobj 5 and 6 (checked in `run_command`), whereas Shannara's notes list 4 = dobj and 6 = iobj - one of the two readings is the wrong way round; worth re-checking in Shannara's `run_command` when its handlers are read.
 Digest headers (`xanth_handler_digest.txt`) now list the objects that use each `objh_NNN`.
+
+## 9. Room exits (2026-10-30)
+
+152 exits over the 70 rooms (`analysis/xanth_exits.tsv`; `scripts/dump_exits.py` + `scripts/xanth_exits.py`), read from `sub_1EB3A` (the movement routine behind walk/enter). A room record (type 1) has `+0Eh` = exit count and `+10h` = 1-based index of
+its first exit; exit `i` is 4 bytes `{u8 direction; u8 kind; u16 arg}` at `seg_8AA12*16 + 0x10FA + 4*(i-1)`. Direction ids (word table beside the clock code): 1 north, 2 northeast, 3 east, 4 southeast, 5 south, 6 southwest,
+7 west, 8 northwest (9 up, 10 down inferred). Kinds: **1** = plain exit (`arg` = target room, 72 of them); **2** = door (`arg` indexes a table of `{targetRoom, doorObject}` at `seg_8AA14*16 + 0x84E`; passes when the door has
+attribute 0xE = open, otherwise "... isn't open"; 3 of them); **3/4** = computed (77 of kind 4): `sub_1FB15(arg, 0xF)` calls `exit_function_table[arg]` (56 far pointers, named `exit_fn_NN`) which returns the target room, 0 = handled
+(it printed something), `0xFFFF` = blocked; with any other phase value the same functions answer the default target (the digest shows `phase==0xF` / `phase:other`). Walking into a room (`go_to_room`) is shared by exits, `cmdGoto` and the
+story scripts (58 explicit `go_to_room` calls in handlers, mostly to the special room 90 "screen" used for cutscenes/conversations with `word_85268` as the return selector).
+Also named: `current_room` (object id of the player's room), `player_obj` (initially 1 = You), `actor_obj` (who performs the current command).

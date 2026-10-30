@@ -293,14 +293,14 @@ cmdLock
   -> 1
 
 cmdLook
-  call_object_handler(obj_85216, 8)
+  call_object_handler(current_room, 8)
   -> 1
 
 cmdLookAt
-  if dobj==obj_85216:
+  if dobj==current_room:
     cmdLook()
     -> 1
-  if dobj!=obj_85216:
+  if dobj!=current_room:
     if dobj==0:
       cmdLook()
       -> 1
@@ -590,7 +590,7 @@ cmdMoveTo
 
 cmdOpen
   if dobj_type==1:
-    if dobj==obj_85216:
+    if dobj==current_room:
       if object_has_attr?(dobj, 0x15)==0:
         print_obj(2, dobj)
         Font_WriteMessage(msg(41:0xB), print_obj(2, dobj), ?)
@@ -599,7 +599,7 @@ cmdOpen
         print_obj(0x52, dobj, &aAre_6)
         Font_WriteMessage(&aSnTClosed_, print_obj(0x52, dobj, &aAre_6), ?)
         -> 1
-    if dobj!=obj_85216:
+    if dobj!=current_room:
       print_obj(0x52, dobj, &aAre_6)
       Font_WriteMessage(&aSnTClosed_, print_obj(0x52, dobj, &aAre_6), ?)
       -> 1
@@ -785,8 +785,8 @@ cmdPut
                 if object_has_attr?(iobj, 0xB)==0:
                   print_obj(2, iobj)
                   print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?)
-                  print_obj(0x12, word_85218, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
-                  Font_WriteMessage(msg(41:0x13), print_obj(0x12, word_85218, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?), ?)
+                  print_obj(0x12, actor_obj, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
+                  Font_WriteMessage(msg(41:0x13), print_obj(0x12, actor_obj, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?), ?)
                   -> 1
                 if object_has_attr?(iobj, 0xB)!=0:
                   if object_has_attr?(iobj, 0xB)==0:
@@ -825,8 +825,8 @@ cmdPut
               if object_has_attr?(iobj, 0xB)==0:
                 print_obj(2, iobj)
                 print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?)
-                print_obj(0x12, word_85218, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
-                Font_WriteMessage(msg(41:0x13), print_obj(0x12, word_85218, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?), ?)
+                print_obj(0x12, actor_obj, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
+                Font_WriteMessage(msg(41:0x13), print_obj(0x12, actor_obj, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?), ?)
                 -> 1
               if object_has_attr?(iobj, 0xB)!=0:
                 if object_has_attr?(iobj, 0xB)==0:
@@ -883,8 +883,8 @@ cmdPut
                 if object_has_attr?(iobj, 0xB)==0:
                   print_obj(2, iobj)
                   print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?)
-                  print_obj(0x12, word_85218, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
-                  Font_WriteMessage(msg(41:0x13), print_obj(0x12, word_85218, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?), ?)
+                  print_obj(0x12, actor_obj, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
+                  Font_WriteMessage(msg(41:0x13), print_obj(0x12, actor_obj, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?), ?)
                   -> 1
                 if object_has_attr?(iobj, 0xB)!=0:
                   if object_has_attr?(iobj, 0xB)==0:
@@ -923,8 +923,8 @@ cmdPut
               if object_has_attr?(iobj, 0xB)==0:
                 print_obj(2, iobj)
                 print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?)
-                print_obj(0x12, word_85218, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
-                Font_WriteMessage(msg(41:0x13), print_obj(0x12, word_85218, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?), ?)
+                print_obj(0x12, actor_obj, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
+                Font_WriteMessage(msg(41:0x13), print_obj(0x12, actor_obj, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?), ?)
                 -> 1
               if object_has_attr?(iobj, 0xB)!=0:
                 if object_has_attr?(iobj, 0xB)==0:
@@ -981,8 +981,8 @@ cmdPut
               if object_has_attr?(iobj, 0xB)==0:
                 print_obj(2, iobj)
                 print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?)
-                print_obj(0x12, word_85218, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
-                Font_WriteMessage(msg(41:0x13), print_obj(0x12, word_85218, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?), ?)
+                print_obj(0x12, actor_obj, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
+                Font_WriteMessage(msg(41:0x13), print_obj(0x12, actor_obj, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?), ?)
                 -> 1
               if object_has_attr?(iobj, 0xB)!=0:
                 if object_has_attr?(iobj, 0xB)==0:
@@ -1021,8 +1021,8 @@ cmdPut
             if object_has_attr?(iobj, 0xB)==0:
               print_obj(2, iobj)
               print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?)
-              print_obj(0x12, word_85218, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
-              Font_WriteMessage(msg(41:0x13), print_obj(0x12, word_85218, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?), ?)
+              print_obj(0x12, actor_obj, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
+              Font_WriteMessage(msg(41:0x13), print_obj(0x12, actor_obj, print_obj(2, dobj, [bp+var_2], print_obj(2, iobj), ?), ?), ?)
               -> 1
             if object_has_attr?(iobj, 0xB)!=0:
               if object_has_attr?(iobj, 0xB)==0:
@@ -1167,19 +1167,19 @@ cmdTake
           print_obj(2, dobj)
           Font_WriteMessage(&aYouTakeS, print_obj(2, dobj), ?)
           if [bp+var_2]!=0:
-            if [bp+var_2]!=obj_85216:
+            if [bp+var_2]!=current_room:
               print_obj(2, [bp+var_2])
               Font_WriteMessage(&aFromS, print_obj(2, [bp+var_2]), ?)
               wputchar?(0x2E)
-              object_move?(dobj, word_85218, 0)
+              object_move?(dobj, actor_obj, 0)
               object_get_points?(dobj, 1, 0)
               add_score?(object_get_points?(dobj, 1, 0))
               object_set_points?(dobj, 0)
               object_set_attr?(dobj, 5)
               -> 1
-            if [bp+var_2]==obj_85216:
+            if [bp+var_2]==current_room:
               wputchar?(0x2E)
-              object_move?(dobj, word_85218, 0)
+              object_move?(dobj, actor_obj, 0)
               object_get_points?(dobj, 1, 0)
               add_score?(object_get_points?(dobj, 1, 0))
               object_set_points?(dobj, 0)
@@ -1187,7 +1187,7 @@ cmdTake
               -> 1
           if [bp+var_2]==0:
             wputchar?(0x2E)
-            object_move?(dobj, word_85218, 0)
+            object_move?(dobj, actor_obj, 0)
             object_get_points?(dobj, 1, 0)
             add_score?(object_get_points?(dobj, 1, 0))
             object_set_points?(dobj, 0)
@@ -1210,13 +1210,13 @@ cmdTaste
   -> 1
 
 cmdThrow
-  if object_has_attr?(obj_85216, 0x15)!=0:
+  if object_has_attr?(current_room, 0x15)!=0:
     print_obj(0x54, dobj, &aMiss, 0x1E20, ds)
     print_obj(2, iobj, print_obj(0x54, dobj, &aMiss, 0x1E20, ds), ?)
     print_obj(2, dobj, print_obj(2, iobj, print_obj(0x54, dobj, &aMiss, 0x1E20, ds), ?), ?)
     Font_WriteMessage(msg(18:0x4C), print_obj(2, dobj, print_obj(2, iobj, print_obj(0x54, dobj, &aMiss, 0x1E20, ds), ?), ?), ?)
     -> 1
-  if object_has_attr?(obj_85216, 0x15)==0:
+  if object_has_attr?(current_room, 0x15)==0:
     print_obj(0x54, dobj, &aMiss, &aWall)
     print_obj(2, iobj, print_obj(0x54, dobj, &aMiss, &aWall), ?)
     print_obj(2, dobj, print_obj(2, iobj, print_obj(0x54, dobj, &aMiss, &aWall), ?), ?)
@@ -1268,7 +1268,7 @@ cmdUse
 cmdWait
   word_85222 = 0
   if event_pending(es:[bx])!=0:
-    if es:[bx]!=obj_85216:
+    if es:[bx]!=current_room:
       if es:[bx]!=0:
         inc [bp+var_2]
         [bp+var_6] add 4
@@ -1291,7 +1291,7 @@ cmdWait
               -> 1
         if [bp+var_6]<0x3E:
           if event_pending(es:[bx])!=0:
-            if es:[bx]!=obj_85216:
+            if es:[bx]!=current_room:
               if es:[bx]!=0:
                 inc [bp+var_2]
                 [bp+var_6] add 4
@@ -1330,7 +1330,7 @@ cmdWait
                   if event_pending(5)!=0:
                     advance_time?(1, [bp+var_4])
                     -> 1
-            if es:[bx]==obj_85216:
+            if es:[bx]==current_room:
               sub_1AC45(es:[bx+0])
               if [bp+var_4]==0:
                 if event_pending(5)==0:
@@ -1386,7 +1386,7 @@ cmdWait
           if event_pending(5)!=0:
             advance_time?(1, [bp+var_4])
             -> 1
-    if es:[bx]==obj_85216:
+    if es:[bx]==current_room:
       sub_1AC45(es:[bx+0])
       if [bp+var_4]==0:
         if event_pending(5)==0:
@@ -1426,7 +1426,7 @@ cmdWait
           -> 1
     if [bp+var_6]<0x3E:
       if event_pending(es:[bx])!=0:
-        if es:[bx]!=obj_85216:
+        if es:[bx]!=current_room:
           if es:[bx]!=0:
             inc [bp+var_2]
             [bp+var_6] add 4
@@ -1465,7 +1465,7 @@ cmdWait
               if event_pending(5)!=0:
                 advance_time?(1, [bp+var_4])
                 -> 1
-        if es:[bx]==obj_85216:
+        if es:[bx]==current_room:
           sub_1AC45(es:[bx+0])
           if [bp+var_4]==0:
             if event_pending(5)==0:
@@ -1511,6 +1511,1695 @@ cmdWear
     print_obj(2, dobj)
     Font_WriteMessage(msg(18:0x55), print_obj(2, dobj), ?)
     -> 1
+
+exit_fn_00
+  if phase:other:
+    -> 0x59
+  if phase==0xF:
+    if object_has_attr?(0x34, 0xE)==0:
+      -> 0xFFFF
+    if object_has_attr?(0x34, 0xE)!=0:
+      Font_WriteMessage(msg(4:0x4B))
+      -> 0
+
+exit_fn_01
+  if phase==0xF:
+    object_has_attr?(0x5D, 0xE)
+    -> (object_has_attr?(0x5D, 0xE) & 0x63)
+  if phase:other:
+    object_has_attr?(0x5D, 0xE)
+    -> ((object_has_attr?(0x5D, 0xE) & 0x9C) + 0x63)
+
+exit_fn_02
+  if phase==0xF:
+    if byte_8BE1C==8:
+      if byte_8BE1C==8:
+        Font_WriteMessage(msg(9:0x4D), &aUp_0, &aNorthwest_0)
+        -> 0
+      if byte_8BE1C!=8:
+        Font_WriteMessage(msg(9:0x4D), &aDown_0, &aNorthwest_0)
+        -> 0
+    if byte_8BE1C!=8:
+      if byte_8BE1C==8:
+        Font_WriteMessage(msg(9:0x4D), &aUp_0, &aSoutheast_0)
+        -> 0
+      if byte_8BE1C!=8:
+        Font_WriteMessage(msg(9:0x4D), &aDown_0, &aSoutheast_0)
+        -> 0
+  if phase:other:
+    -> 0x59
+
+exit_fn_03
+  if phase==0xF:
+    if word_85266==0:
+      Font_WriteMessage(msg(14:0x23))
+      -> 0
+    if word_85266!=0:
+      Font_WriteMessage(msg(14:0x24))
+      -> 0x97
+  if phase:other:
+    -> 0x97
+
+exit_fn_04
+  if phase==0xF:
+    if word_85264>1:
+      Font_WriteMessage(msg(15:0xD), &aAllTheWay)
+      byte_8774A = 0
+      byte_8774B = 0
+      -> 0x98
+    if word_85264<=1:
+      Font_WriteMessage(msg(15:0xD), ?, ?)
+      byte_8774A = 0
+      byte_8774B = 0
+      -> 0x98
+  if phase:other:
+    if word_85264>1:
+      -> 0x9C
+    if word_85264<=1:
+      -> 0x98
+
+exit_fn_05
+  if phase==0xF:
+    -> ((ax & 0xFD) + 0x9D)
+  if phase:other:
+    -> 0x9D
+
+exit_fn_06
+  if phase==0xF:
+    if word_85264>1:
+      Font_WriteMessage(msg(15:0x10), &aAllTheWay_0)
+      byte_8774A = 0
+      byte_8774B = 0
+      -> 0x98
+    if word_85264<=1:
+      Font_WriteMessage(msg(15:0x10), ?, ?)
+      byte_8774A = 0
+      byte_8774B = 0
+      -> 0x98
+  if phase:other:
+    -> 0x9A
+
+exit_fn_07
+  if phase:other:
+    if object_parent_is?(0x8B, 1)!=0:
+      if byte_852CD!=0:
+        -> 0xBE
+      if byte_852CD==0:
+        -> 0
+    if object_parent_is?(0x8B, 1)==0:
+      -> 0
+  if phase==0xF:
+    if byte_852CD!=0:
+      if object_parent_is?(0x8B, 1)!=0:
+        if object_parent_is?(0xA5, 1)==0:
+          if object_parent_is?(0xA4, 1)!=0:
+            show_compendium(0x35D, 0x64E)
+            -> 0
+          if object_parent_is?(0xA4, 1)==0:
+            -> 0xBE
+        if object_parent_is?(0xA5, 1)!=0:
+          show_compendium(0x35D, 0x64E)
+          -> 0
+      if object_parent_is?(0x8B, 1)==0:
+        -> 0xFFFF
+    if byte_852CD==0:
+      -> 0xFFFF
+
+exit_fn_08
+  if phase:other:
+    if object_parent_is?(0xBF, 0xBE)!=0:
+      if byte_8BE1C==1:
+        -> 0xC5
+      if byte_8BE1C!=1:
+        -> 0xBE
+    if object_parent_is?(0xBF, 0xBE)==0:
+      -> 0xBE
+  if phase==0xF:
+    if object_parent_is?(0xBF, 0xBE)!=0:
+      if byte_8BE1C==1:
+        if object_has_attr?(0xBF, 0xE)!=0:
+          Font_WriteMessage(msg(25:0x1D))
+          add_score?(2, 1, 1)
+          wait_ticks_or_click(0x1770)
+          -> 0xC5
+        if object_has_attr?(0xBF, 0xE)==0:
+          Font_WriteMessage(msg(25:0x1E))
+          -> 0
+      if byte_8BE1C!=1:
+        Font_WriteMessage(msg(25:0x1E))
+        -> 0
+    if object_parent_is?(0xBF, 0xBE)==0:
+      sub_443EB((byte_8BE1C - byte_8BE1C))
+      Font_WriteMessage(msg(25:0x1F), sub_443EB((byte_8BE1C - byte_8BE1C)), ?)
+      -> 0
+
+exit_fn_09
+  if phase:other:
+    -> 0xBE
+  if phase==0xF:
+    if word_85250==5:
+      Font_WriteMessage(msg(26:4))
+      -> 0
+    if word_85250!=5:
+      Font_WriteMessage(msg(26:5))
+      -> 0
+
+exit_fn_10
+  if phase==0xF:
+    if event_pending(0x13)!=0:
+      show_compendium(0x2FD, 0x5A04)
+      -> 0
+    if event_pending(0x13)==0:
+      if event_pending(0x14)!=0:
+        if word_8527A<8:
+          show_compendium(0x145, 0x5A03)
+          -> 0
+        if word_8527A>=8:
+          show_compendium(0x2FD, 0x5A04)
+          -> 0
+      if event_pending(0x14)==0:
+        -> 0xC5
+  if phase:other:
+    -> 0xC5
+
+exit_fn_11
+  if phase:other:
+    -> 0x59
+  if phase==0xF:
+    Font_WriteMessage(msg(27:0x12))
+    -> 0
+
+exit_fn_12
+  if sub_5F1A7(0)!=0:
+    if byte_8BE1C==1:
+      if byte_852D1!=0:
+        if phase==0xF:
+          if object_get_prop_a?(0x8B)==0x140:
+            sub_1D99F()
+            wputchar?(0xB)
+            wait_ticks_or_click(0x1388)
+            -> 0xF4
+          if object_get_prop_a?(0x8B)!=0x140:
+            -> 0xF4
+        if phase:other:
+          -> 0xF4
+      if byte_852D1==0:
+        if byte_8BE1C==0xA:
+          if sub_5F315(0)!=0:
+            if byte_852D2!=0:
+              -> 0xED
+            if byte_852D2==0:
+              if phase:other:
+                -> 0
+              if phase==0xF:
+                -> 0xFFFF
+          if sub_5F315(0)==0:
+            if phase:other:
+              -> 0
+            if phase==0xF:
+              -> 0xFFFF
+        if byte_8BE1C!=0xA:
+          if sub_5FCD2()!=0:
+            if byte_8BE1C==5:
+              -> 0xC9
+            if byte_8BE1C!=5:
+              if phase:other:
+                if [bx]!=byte_8BE1C:
+                  inc [bp+var_2]
+                  [bp+var_4] add 6
+                  if [bp+var_4]>=0x2D72:
+                    -> byte_8BE1C
+                  if [bp+var_4]<0x2D72:
+                    if [bx]!=byte_8BE1C:
+                      inc [bp+var_2]
+                      [bp+var_4] add 6
+                      if [bp+var_4]>=0x2D72:
+                        -> byte_8BE1C
+                    if [bx]==byte_8BE1C:
+                      -> (([si+2D5Bh] & [bx+2C90h]) & 0xCD)
+                if [bx]==byte_8BE1C:
+                  -> (([si+2D5Bh] & [bx+2C90h]) & 0xCD)
+              if phase==0xF:
+                if [bx]==byte_8BE1C:
+                  if [bx+2C90h]&([si+1] - [si+1])!=0:
+                    [bp+var_6] add 6
+                    if [bp+var_6]>=0x2D72:
+                      if (byte_8BE1C - byte_8BE1C)!=1:
+                        if (((byte_8BE1C - byte_8BE1C) - 1) - 1)!=1:
+                          if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)!=1:
+                            if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)!=1:
+                              [bx+2C7Eh] or ?
+                              call_object_handler(current_room, 0xF)
+                              object_move?(1, current_room, 0)
+                              word_8B9E2 = current_room
+                              call_object_handler(current_room, 0xD)
+                              call_object_handler(current_room, 0xA)
+                              call_object_handler(current_room, 0xE)
+                              if object_is_at(0xF2, 1, 0)!=0:
+                                if object_has_attr?(0xF2, 0xA)!=0:
+                                  if word_85250!=5:
+                                    sub_1EF11(word_852AA, word_852AC)
+                                    object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                    -> 0xCD
+                                  if word_85250==5:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                                if object_has_attr?(0xF2, 0xA)==0:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                              if object_is_at(0xF2, 1, 0)==0:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                            if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)==1:
+                              dec word_852AC
+                              [bx+2C7Eh] or ?
+                              call_object_handler(current_room, 0xF)
+                              object_move?(1, current_room, 0)
+                              word_8B9E2 = current_room
+                              call_object_handler(current_room, 0xD)
+                              call_object_handler(current_room, 0xA)
+                              call_object_handler(current_room, 0xE)
+                              if object_is_at(0xF2, 1, 0)!=0:
+                                if object_has_attr?(0xF2, 0xA)!=0:
+                                  if word_85250!=5:
+                                    sub_1EF11(word_852AA, word_852AC)
+                                    object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                    -> 0xCD
+                                  if word_85250==5:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                                if object_has_attr?(0xF2, 0xA)==0:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                              if object_is_at(0xF2, 1, 0)==0:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                          if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)==1:
+                            dec word_852AA
+                            [bx+2C7Eh] or ?
+                            call_object_handler(current_room, 0xF)
+                            object_move?(1, current_room, 0)
+                            word_8B9E2 = current_room
+                            call_object_handler(current_room, 0xD)
+                            call_object_handler(current_room, 0xA)
+                            call_object_handler(current_room, 0xE)
+                            if object_is_at(0xF2, 1, 0)!=0:
+                              if object_has_attr?(0xF2, 0xA)!=0:
+                                if word_85250!=5:
+                                  sub_1EF11(word_852AA, word_852AC)
+                                  object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                  -> 0xCD
+                                if word_85250==5:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                              if object_has_attr?(0xF2, 0xA)==0:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                            if object_is_at(0xF2, 1, 0)==0:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                        if (((byte_8BE1C - byte_8BE1C) - 1) - 1)==1:
+                          inc word_852AC
+                          [bx+2C7Eh] or ?
+                          call_object_handler(current_room, 0xF)
+                          object_move?(1, current_room, 0)
+                          word_8B9E2 = current_room
+                          call_object_handler(current_room, 0xD)
+                          call_object_handler(current_room, 0xA)
+                          call_object_handler(current_room, 0xE)
+                          if object_is_at(0xF2, 1, 0)!=0:
+                            if object_has_attr?(0xF2, 0xA)!=0:
+                              if word_85250!=5:
+                                sub_1EF11(word_852AA, word_852AC)
+                                object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                -> 0xCD
+                              if word_85250==5:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                            if object_has_attr?(0xF2, 0xA)==0:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                          if object_is_at(0xF2, 1, 0)==0:
+                            object_set_prop_a?(0xF2, 0x16E)
+                            -> 0xCD
+                      if (byte_8BE1C - byte_8BE1C)==1:
+                        inc word_852AA
+                        [bx+2C7Eh] or ?
+                        call_object_handler(current_room, 0xF)
+                        object_move?(1, current_room, 0)
+                        word_8B9E2 = current_room
+                        call_object_handler(current_room, 0xD)
+                        call_object_handler(current_room, 0xA)
+                        call_object_handler(current_room, 0xE)
+                        if object_is_at(0xF2, 1, 0)!=0:
+                          if object_has_attr?(0xF2, 0xA)!=0:
+                            if word_85250!=5:
+                              sub_1EF11(word_852AA, word_852AC)
+                              object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                              -> 0xCD
+                            if word_85250==5:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                          if object_has_attr?(0xF2, 0xA)==0:
+                            object_set_prop_a?(0xF2, 0x16E)
+                            -> 0xCD
+                        if object_is_at(0xF2, 1, 0)==0:
+                          object_set_prop_a?(0xF2, 0x16E)
+                          -> 0xCD
+                    if [bp+var_6]<0x2D72:
+                      if [bx]==byte_8BE1C:
+                        if [bx+2C90h]&([si+1] - [si+1])!=0:
+                          [bp+var_6] add 6
+                          if [bp+var_6]>=0x2D72:
+                            if (byte_8BE1C - byte_8BE1C)!=1:
+                              if (((byte_8BE1C - byte_8BE1C) - 1) - 1)!=1:
+                                if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)!=1:
+                                  if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)!=1:
+                                    [bx+2C7Eh] or ?
+                                    call_object_handler(current_room, 0xF)
+                                    object_move?(1, current_room, 0)
+                                    word_8B9E2 = current_room
+                                    call_object_handler(current_room, 0xD)
+                                    call_object_handler(current_room, 0xA)
+                                    call_object_handler(current_room, 0xE)
+                                    if object_is_at(0xF2, 1, 0)!=0:
+                                      if object_has_attr?(0xF2, 0xA)!=0:
+                                        if word_85250!=5:
+                                          sub_1EF11(word_852AA, word_852AC)
+                                          object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                          -> 0xCD
+                                        if word_85250==5:
+                                          object_set_prop_a?(0xF2, 0x16E)
+                                          -> 0xCD
+                                      if object_has_attr?(0xF2, 0xA)==0:
+                                        object_set_prop_a?(0xF2, 0x16E)
+                                        -> 0xCD
+                                    if object_is_at(0xF2, 1, 0)==0:
+                                      object_set_prop_a?(0xF2, 0x16E)
+                                      -> 0xCD
+                                  if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)==1:
+                                    dec word_852AC
+                                    [bx+2C7Eh] or ?
+                                    call_object_handler(current_room, 0xF)
+                                    object_move?(1, current_room, 0)
+                                    word_8B9E2 = current_room
+                                    call_object_handler(current_room, 0xD)
+                                    call_object_handler(current_room, 0xA)
+                                    call_object_handler(current_room, 0xE)
+                                    if object_is_at(0xF2, 1, 0)!=0:
+                                      if object_has_attr?(0xF2, 0xA)!=0:
+                                        if word_85250!=5:
+                                          sub_1EF11(word_852AA, word_852AC)
+                                          object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                          -> 0xCD
+                                        if word_85250==5:
+                                          object_set_prop_a?(0xF2, 0x16E)
+                                          -> 0xCD
+                                      if object_has_attr?(0xF2, 0xA)==0:
+                                        object_set_prop_a?(0xF2, 0x16E)
+                                        -> 0xCD
+                                    if object_is_at(0xF2, 1, 0)==0:
+                                      object_set_prop_a?(0xF2, 0x16E)
+                                      -> 0xCD
+                                if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)==1:
+                                  dec word_852AA
+                                  [bx+2C7Eh] or ?
+                                  call_object_handler(current_room, 0xF)
+                                  object_move?(1, current_room, 0)
+                                  word_8B9E2 = current_room
+                                  call_object_handler(current_room, 0xD)
+                                  call_object_handler(current_room, 0xA)
+                                  call_object_handler(current_room, 0xE)
+                                  if object_is_at(0xF2, 1, 0)!=0:
+                                    if object_has_attr?(0xF2, 0xA)!=0:
+                                      if word_85250!=5:
+                                        sub_1EF11(word_852AA, word_852AC)
+                                        object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                        -> 0xCD
+                                      if word_85250==5:
+                                        object_set_prop_a?(0xF2, 0x16E)
+                                        -> 0xCD
+                                    if object_has_attr?(0xF2, 0xA)==0:
+                                      object_set_prop_a?(0xF2, 0x16E)
+                                      -> 0xCD
+                                  if object_is_at(0xF2, 1, 0)==0:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                              if (((byte_8BE1C - byte_8BE1C) - 1) - 1)==1:
+                                inc word_852AC
+                                [bx+2C7Eh] or ?
+                                call_object_handler(current_room, 0xF)
+                                object_move?(1, current_room, 0)
+                                word_8B9E2 = current_room
+                                call_object_handler(current_room, 0xD)
+                                call_object_handler(current_room, 0xA)
+                                call_object_handler(current_room, 0xE)
+                                if object_is_at(0xF2, 1, 0)!=0:
+                                  if object_has_attr?(0xF2, 0xA)!=0:
+                                    if word_85250!=5:
+                                      sub_1EF11(word_852AA, word_852AC)
+                                      object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                      -> 0xCD
+                                    if word_85250==5:
+                                      object_set_prop_a?(0xF2, 0x16E)
+                                      -> 0xCD
+                                  if object_has_attr?(0xF2, 0xA)==0:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                                if object_is_at(0xF2, 1, 0)==0:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                            if (byte_8BE1C - byte_8BE1C)==1:
+                              inc word_852AA
+                              [bx+2C7Eh] or ?
+                              call_object_handler(current_room, 0xF)
+                              object_move?(1, current_room, 0)
+                              word_8B9E2 = current_room
+                              call_object_handler(current_room, 0xD)
+                              call_object_handler(current_room, 0xA)
+                              call_object_handler(current_room, 0xE)
+                              if object_is_at(0xF2, 1, 0)!=0:
+                                if object_has_attr?(0xF2, 0xA)!=0:
+                                  if word_85250!=5:
+                                    sub_1EF11(word_852AA, word_852AC)
+                                    object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                    -> 0xCD
+                                  if word_85250==5:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                                if object_has_attr?(0xF2, 0xA)==0:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                              if object_is_at(0xF2, 1, 0)==0:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                        if [bx+2C90h]&([si+1] - [si+1])==0:
+                          Font_WriteMessage(msg(29:0x1B))
+                          -> 0
+                      if [bx]!=byte_8BE1C:
+                        [bp+var_6] add 6
+                        if [bp+var_6]>=0x2D72:
+                          if (byte_8BE1C - byte_8BE1C)!=1:
+                            if (((byte_8BE1C - byte_8BE1C) - 1) - 1)!=1:
+                              if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)!=1:
+                                if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)!=1:
+                                  [bx+2C7Eh] or ?
+                                  call_object_handler(current_room, 0xF)
+                                  object_move?(1, current_room, 0)
+                                  word_8B9E2 = current_room
+                                  call_object_handler(current_room, 0xD)
+                                  call_object_handler(current_room, 0xA)
+                                  call_object_handler(current_room, 0xE)
+                                  if object_is_at(0xF2, 1, 0)!=0:
+                                    if object_has_attr?(0xF2, 0xA)!=0:
+                                      if word_85250!=5:
+                                        sub_1EF11(word_852AA, word_852AC)
+                                        object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                        -> 0xCD
+                                      if word_85250==5:
+                                        object_set_prop_a?(0xF2, 0x16E)
+                                        -> 0xCD
+                                    if object_has_attr?(0xF2, 0xA)==0:
+                                      object_set_prop_a?(0xF2, 0x16E)
+                                      -> 0xCD
+                                  if object_is_at(0xF2, 1, 0)==0:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                                if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)==1:
+                                  dec word_852AC
+                                  [bx+2C7Eh] or ?
+                                  call_object_handler(current_room, 0xF)
+                                  object_move?(1, current_room, 0)
+                                  word_8B9E2 = current_room
+                                  call_object_handler(current_room, 0xD)
+                                  call_object_handler(current_room, 0xA)
+                                  call_object_handler(current_room, 0xE)
+                                  if object_is_at(0xF2, 1, 0)!=0:
+                                    if object_has_attr?(0xF2, 0xA)!=0:
+                                      if word_85250!=5:
+                                        sub_1EF11(word_852AA, word_852AC)
+                                        object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                        -> 0xCD
+                                      if word_85250==5:
+                                        object_set_prop_a?(0xF2, 0x16E)
+                                        -> 0xCD
+                                    if object_has_attr?(0xF2, 0xA)==0:
+                                      object_set_prop_a?(0xF2, 0x16E)
+                                      -> 0xCD
+                                  if object_is_at(0xF2, 1, 0)==0:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                              if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)==1:
+                                dec word_852AA
+                                [bx+2C7Eh] or ?
+                                call_object_handler(current_room, 0xF)
+                                object_move?(1, current_room, 0)
+                                word_8B9E2 = current_room
+                                call_object_handler(current_room, 0xD)
+                                call_object_handler(current_room, 0xA)
+                                call_object_handler(current_room, 0xE)
+                                if object_is_at(0xF2, 1, 0)!=0:
+                                  if object_has_attr?(0xF2, 0xA)!=0:
+                                    if word_85250!=5:
+                                      sub_1EF11(word_852AA, word_852AC)
+                                      object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                      -> 0xCD
+                                    if word_85250==5:
+                                      object_set_prop_a?(0xF2, 0x16E)
+                                      -> 0xCD
+                                  if object_has_attr?(0xF2, 0xA)==0:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                                if object_is_at(0xF2, 1, 0)==0:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                            if (((byte_8BE1C - byte_8BE1C) - 1) - 1)==1:
+                              inc word_852AC
+                              [bx+2C7Eh] or ?
+                              call_object_handler(current_room, 0xF)
+                              object_move?(1, current_room, 0)
+                              word_8B9E2 = current_room
+                              call_object_handler(current_room, 0xD)
+                              call_object_handler(current_room, 0xA)
+                              call_object_handler(current_room, 0xE)
+                              if object_is_at(0xF2, 1, 0)!=0:
+                                if object_has_attr?(0xF2, 0xA)!=0:
+                                  if word_85250!=5:
+                                    sub_1EF11(word_852AA, word_852AC)
+                                    object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                    -> 0xCD
+                                  if word_85250==5:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                                if object_has_attr?(0xF2, 0xA)==0:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                              if object_is_at(0xF2, 1, 0)==0:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                          if (byte_8BE1C - byte_8BE1C)==1:
+                            inc word_852AA
+                            [bx+2C7Eh] or ?
+                            call_object_handler(current_room, 0xF)
+                            object_move?(1, current_room, 0)
+                            word_8B9E2 = current_room
+                            call_object_handler(current_room, 0xD)
+                            call_object_handler(current_room, 0xA)
+                            call_object_handler(current_room, 0xE)
+                            if object_is_at(0xF2, 1, 0)!=0:
+                              if object_has_attr?(0xF2, 0xA)!=0:
+                                if word_85250!=5:
+                                  sub_1EF11(word_852AA, word_852AC)
+                                  object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                  -> 0xCD
+                                if word_85250==5:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                              if object_has_attr?(0xF2, 0xA)==0:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                            if object_is_at(0xF2, 1, 0)==0:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                  if [bx+2C90h]&([si+1] - [si+1])==0:
+                    Font_WriteMessage(msg(29:0x1B))
+                    -> 0
+                if [bx]!=byte_8BE1C:
+                  [bp+var_6] add 6
+                  if [bp+var_6]>=0x2D72:
+                    if (byte_8BE1C - byte_8BE1C)!=1:
+                      if (((byte_8BE1C - byte_8BE1C) - 1) - 1)!=1:
+                        if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)!=1:
+                          if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)!=1:
+                            [bx+2C7Eh] or ?
+                            call_object_handler(current_room, 0xF)
+                            object_move?(1, current_room, 0)
+                            word_8B9E2 = current_room
+                            call_object_handler(current_room, 0xD)
+                            call_object_handler(current_room, 0xA)
+                            call_object_handler(current_room, 0xE)
+                            if object_is_at(0xF2, 1, 0)!=0:
+                              if object_has_attr?(0xF2, 0xA)!=0:
+                                if word_85250!=5:
+                                  sub_1EF11(word_852AA, word_852AC)
+                                  object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                  -> 0xCD
+                                if word_85250==5:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                              if object_has_attr?(0xF2, 0xA)==0:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                            if object_is_at(0xF2, 1, 0)==0:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                          if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)==1:
+                            dec word_852AC
+                            [bx+2C7Eh] or ?
+                            call_object_handler(current_room, 0xF)
+                            object_move?(1, current_room, 0)
+                            word_8B9E2 = current_room
+                            call_object_handler(current_room, 0xD)
+                            call_object_handler(current_room, 0xA)
+                            call_object_handler(current_room, 0xE)
+                            if object_is_at(0xF2, 1, 0)!=0:
+                              if object_has_attr?(0xF2, 0xA)!=0:
+                                if word_85250!=5:
+                                  sub_1EF11(word_852AA, word_852AC)
+                                  object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                  -> 0xCD
+                                if word_85250==5:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                              if object_has_attr?(0xF2, 0xA)==0:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                            if object_is_at(0xF2, 1, 0)==0:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                        if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)==1:
+                          dec word_852AA
+                          [bx+2C7Eh] or ?
+                          call_object_handler(current_room, 0xF)
+                          object_move?(1, current_room, 0)
+                          word_8B9E2 = current_room
+                          call_object_handler(current_room, 0xD)
+                          call_object_handler(current_room, 0xA)
+                          call_object_handler(current_room, 0xE)
+                          if object_is_at(0xF2, 1, 0)!=0:
+                            if object_has_attr?(0xF2, 0xA)!=0:
+                              if word_85250!=5:
+                                sub_1EF11(word_852AA, word_852AC)
+                                object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                -> 0xCD
+                              if word_85250==5:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                            if object_has_attr?(0xF2, 0xA)==0:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                          if object_is_at(0xF2, 1, 0)==0:
+                            object_set_prop_a?(0xF2, 0x16E)
+                            -> 0xCD
+                      if (((byte_8BE1C - byte_8BE1C) - 1) - 1)==1:
+                        inc word_852AC
+                        [bx+2C7Eh] or ?
+                        call_object_handler(current_room, 0xF)
+                        object_move?(1, current_room, 0)
+                        word_8B9E2 = current_room
+                        call_object_handler(current_room, 0xD)
+                        call_object_handler(current_room, 0xA)
+                        call_object_handler(current_room, 0xE)
+                        if object_is_at(0xF2, 1, 0)!=0:
+                          if object_has_attr?(0xF2, 0xA)!=0:
+                            if word_85250!=5:
+                              sub_1EF11(word_852AA, word_852AC)
+                              object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                              -> 0xCD
+                            if word_85250==5:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                          if object_has_attr?(0xF2, 0xA)==0:
+                            object_set_prop_a?(0xF2, 0x16E)
+                            -> 0xCD
+                        if object_is_at(0xF2, 1, 0)==0:
+                          object_set_prop_a?(0xF2, 0x16E)
+                          -> 0xCD
+                    if (byte_8BE1C - byte_8BE1C)==1:
+                      inc word_852AA
+                      [bx+2C7Eh] or ?
+                      call_object_handler(current_room, 0xF)
+                      object_move?(1, current_room, 0)
+                      word_8B9E2 = current_room
+                      call_object_handler(current_room, 0xD)
+                      call_object_handler(current_room, 0xA)
+                      call_object_handler(current_room, 0xE)
+                      if object_is_at(0xF2, 1, 0)!=0:
+                        if object_has_attr?(0xF2, 0xA)!=0:
+                          if word_85250!=5:
+                            sub_1EF11(word_852AA, word_852AC)
+                            object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                            -> 0xCD
+                          if word_85250==5:
+                            object_set_prop_a?(0xF2, 0x16E)
+                            -> 0xCD
+                        if object_has_attr?(0xF2, 0xA)==0:
+                          object_set_prop_a?(0xF2, 0x16E)
+                          -> 0xCD
+                      if object_is_at(0xF2, 1, 0)==0:
+                        object_set_prop_a?(0xF2, 0x16E)
+                        -> 0xCD
+                  if [bp+var_6]<0x2D72:
+                    if [bx]==byte_8BE1C:
+                      if [bx+2C90h]&([si+1] - [si+1])!=0:
+                        [bp+var_6] add 6
+                        if [bp+var_6]>=0x2D72:
+                          if (byte_8BE1C - byte_8BE1C)!=1:
+                            if (((byte_8BE1C - byte_8BE1C) - 1) - 1)!=1:
+                              if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)!=1:
+                                if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)!=1:
+                                  [bx+2C7Eh] or ?
+                                  call_object_handler(current_room, 0xF)
+                                  object_move?(1, current_room, 0)
+                                  word_8B9E2 = current_room
+                                  call_object_handler(current_room, 0xD)
+                                  call_object_handler(current_room, 0xA)
+                                  call_object_handler(current_room, 0xE)
+                                  if object_is_at(0xF2, 1, 0)!=0:
+                                    if object_has_attr?(0xF2, 0xA)!=0:
+                                      if word_85250!=5:
+                                        sub_1EF11(word_852AA, word_852AC)
+                                        object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                        -> 0xCD
+                                      if word_85250==5:
+                                        object_set_prop_a?(0xF2, 0x16E)
+                                        -> 0xCD
+                                    if object_has_attr?(0xF2, 0xA)==0:
+                                      object_set_prop_a?(0xF2, 0x16E)
+                                      -> 0xCD
+                                  if object_is_at(0xF2, 1, 0)==0:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                                if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)==1:
+                                  dec word_852AC
+                                  [bx+2C7Eh] or ?
+                                  call_object_handler(current_room, 0xF)
+                                  object_move?(1, current_room, 0)
+                                  word_8B9E2 = current_room
+                                  call_object_handler(current_room, 0xD)
+                                  call_object_handler(current_room, 0xA)
+                                  call_object_handler(current_room, 0xE)
+                                  if object_is_at(0xF2, 1, 0)!=0:
+                                    if object_has_attr?(0xF2, 0xA)!=0:
+                                      if word_85250!=5:
+                                        sub_1EF11(word_852AA, word_852AC)
+                                        object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                        -> 0xCD
+                                      if word_85250==5:
+                                        object_set_prop_a?(0xF2, 0x16E)
+                                        -> 0xCD
+                                    if object_has_attr?(0xF2, 0xA)==0:
+                                      object_set_prop_a?(0xF2, 0x16E)
+                                      -> 0xCD
+                                  if object_is_at(0xF2, 1, 0)==0:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                              if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)==1:
+                                dec word_852AA
+                                [bx+2C7Eh] or ?
+                                call_object_handler(current_room, 0xF)
+                                object_move?(1, current_room, 0)
+                                word_8B9E2 = current_room
+                                call_object_handler(current_room, 0xD)
+                                call_object_handler(current_room, 0xA)
+                                call_object_handler(current_room, 0xE)
+                                if object_is_at(0xF2, 1, 0)!=0:
+                                  if object_has_attr?(0xF2, 0xA)!=0:
+                                    if word_85250!=5:
+                                      sub_1EF11(word_852AA, word_852AC)
+                                      object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                      -> 0xCD
+                                    if word_85250==5:
+                                      object_set_prop_a?(0xF2, 0x16E)
+                                      -> 0xCD
+                                  if object_has_attr?(0xF2, 0xA)==0:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                                if object_is_at(0xF2, 1, 0)==0:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                            if (((byte_8BE1C - byte_8BE1C) - 1) - 1)==1:
+                              inc word_852AC
+                              [bx+2C7Eh] or ?
+                              call_object_handler(current_room, 0xF)
+                              object_move?(1, current_room, 0)
+                              word_8B9E2 = current_room
+                              call_object_handler(current_room, 0xD)
+                              call_object_handler(current_room, 0xA)
+                              call_object_handler(current_room, 0xE)
+                              if object_is_at(0xF2, 1, 0)!=0:
+                                if object_has_attr?(0xF2, 0xA)!=0:
+                                  if word_85250!=5:
+                                    sub_1EF11(word_852AA, word_852AC)
+                                    object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                    -> 0xCD
+                                  if word_85250==5:
+                                    object_set_prop_a?(0xF2, 0x16E)
+                                    -> 0xCD
+                                if object_has_attr?(0xF2, 0xA)==0:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                              if object_is_at(0xF2, 1, 0)==0:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                          if (byte_8BE1C - byte_8BE1C)==1:
+                            inc word_852AA
+                            [bx+2C7Eh] or ?
+                            call_object_handler(current_room, 0xF)
+                            object_move?(1, current_room, 0)
+                            word_8B9E2 = current_room
+                            call_object_handler(current_room, 0xD)
+                            call_object_handler(current_room, 0xA)
+                            call_object_handler(current_room, 0xE)
+                            if object_is_at(0xF2, 1, 0)!=0:
+                              if object_has_attr?(0xF2, 0xA)!=0:
+                                if word_85250!=5:
+                                  sub_1EF11(word_852AA, word_852AC)
+                                  object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                  -> 0xCD
+                                if word_85250==5:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                              if object_has_attr?(0xF2, 0xA)==0:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                            if object_is_at(0xF2, 1, 0)==0:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                      if [bx+2C90h]&([si+1] - [si+1])==0:
+                        Font_WriteMessage(msg(29:0x1B))
+                        -> 0
+          if sub_5FCD2()==0:
+            if phase:other:
+              if [bx]!=byte_8BE1C:
+                inc [bp+var_2]
+                [bp+var_4] add 6
+                if [bp+var_4]>=0x2D72:
+                  -> byte_8BE1C
+                if [bp+var_4]<0x2D72:
+                  if [bx]!=byte_8BE1C:
+                    inc [bp+var_2]
+                    [bp+var_4] add 6
+                    if [bp+var_4]>=0x2D72:
+                      -> byte_8BE1C
+                  if [bx]==byte_8BE1C:
+                    -> (([si+2D5Bh] & [bx+2C90h]) & 0xCD)
+              if [bx]==byte_8BE1C:
+                -> (([si+2D5Bh] & [bx+2C90h]) & 0xCD)
+            if phase==0xF:
+              if [bx]==byte_8BE1C:
+                if [bx+2C90h]&([si+1] - [si+1])!=0:
+                  [bp+var_6] add 6
+                  if [bp+var_6]>=0x2D72:
+                    if (byte_8BE1C - byte_8BE1C)!=1:
+                      if (((byte_8BE1C - byte_8BE1C) - 1) - 1)!=1:
+                        if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)!=1:
+                          if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)!=1:
+                            [bx+2C7Eh] or ?
+                            call_object_handler(current_room, 0xF)
+                            object_move?(1, current_room, 0)
+                            word_8B9E2 = current_room
+                            call_object_handler(current_room, 0xD)
+                            call_object_handler(current_room, 0xA)
+                            call_object_handler(current_room, 0xE)
+                            if object_is_at(0xF2, 1, 0)!=0:
+                              if object_has_attr?(0xF2, 0xA)!=0:
+                                if word_85250!=5:
+                                  sub_1EF11(word_852AA, word_852AC)
+                                  object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                  -> 0xCD
+                                if word_85250==5:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                              if object_has_attr?(0xF2, 0xA)==0:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                            if object_is_at(0xF2, 1, 0)==0:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                          if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)==1:
+                            dec word_852AC
+                            [bx+2C7Eh] or ?
+                            call_object_handler(current_room, 0xF)
+                            object_move?(1, current_room, 0)
+                            word_8B9E2 = current_room
+                            call_object_handler(current_room, 0xD)
+                            call_object_handler(current_room, 0xA)
+                            call_object_handler(current_room, 0xE)
+                            if object_is_at(0xF2, 1, 0)!=0:
+                              if object_has_attr?(0xF2, 0xA)!=0:
+                                if word_85250!=5:
+                                  sub_1EF11(word_852AA, word_852AC)
+                                  object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                  -> 0xCD
+                                if word_85250==5:
+                                  object_set_prop_a?(0xF2, 0x16E)
+                                  -> 0xCD
+                              if object_has_attr?(0xF2, 0xA)==0:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                            if object_is_at(0xF2, 1, 0)==0:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                        if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)==1:
+                          dec word_852AA
+                          [bx+2C7Eh] or ?
+                          call_object_handler(current_room, 0xF)
+                          object_move?(1, current_room, 0)
+                          word_8B9E2 = current_room
+                          call_object_handler(current_room, 0xD)
+                          call_object_handler(current_room, 0xA)
+                          call_object_handler(current_room, 0xE)
+                          if object_is_at(0xF2, 1, 0)!=0:
+                            if object_has_attr?(0xF2, 0xA)!=0:
+                              if word_85250!=5:
+                                sub_1EF11(word_852AA, word_852AC)
+                                object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                -> 0xCD
+                              if word_85250==5:
+                                object_set_prop_a?(0xF2, 0x16E)
+                                -> 0xCD
+                            if object_has_attr?(0xF2, 0xA)==0:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                          if object_is_at(0xF2, 1, 0)==0:
+                            object_set_prop_a?(0xF2, 0x16E)
+                            -> 0xCD
+                      if (((byte_8BE1C - byte_8BE1C) - 1) - 1)==1:
+                        inc word_852AC
+                        [bx+2C7Eh] or ?
+                        call_object_handler(current_room, 0xF)
+                        object_move?(1, current_room, 0)
+                        word_8B9E2 = current_room
+                        call_object_handler(current_room, 0xD)
+                        call_object_handler(current_room, 0xA)
+                        call_object_handler(current_room, 0xE)
+                        if object_is_at(0xF2, 1, 0)!=0:
+                          if object_has_attr?(0xF2, 0xA)!=0:
+                            if word_85250!=5:
+                              sub_1EF11(word_852AA, word_852AC)
+                              object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                              -> 0xCD
+                            if word_85250==5:
+                              object_set_prop_a?(0xF2, 0x16E)
+                              -> 0xCD
+                          if object_has_attr?(0xF2, 0xA)==0:
+                            object_set_prop_a?(0xF2, 0x16E)
+                            -> 0xCD
+                        if object_is_at(0xF2, 1, 0)==0:
+                          object_set_prop_a?(0xF2, 0x16E)
+                          -> 0xCD
+                    if (byte_8BE1C - byte_8BE1C)==1:
+                      inc word_852AA
+                      [bx+2C7Eh] or ?
+                      call_object_handler(current_room, 0xF)
+                      object_move?(1, current_room, 0)
+                      word_8B9E2 = current_room
+                      call_object_handler(current_room, 0xD)
+                      call_object_handler(current_room, 0xA)
+                      call_object_handler(current_room, 0xE)
+                      if object_is_at(0xF2, 1, 0)!=0:
+                        if object_has_attr?(0xF2, 0xA)!=0:
+                          if word_85250!=5:
+                            sub_1EF11(word_852AA, word_852AC)
+                            object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                            -> 0xCD
+                          if word_85250==5:
+                            object_set_prop_a?(0xF2, 0x16E)
+                            -> 0xCD
+                        if object_has_attr?(0xF2, 0xA)==0:
+                          object_set_prop_a?(0xF2, 0x16E)
+                          -> 0xCD
+                      if object_is_at(0xF2, 1, 0)==0:
+                        object_set_prop_a?(0xF2, 0x16E)
+                        -> 0xCD
+                  if [bp+var_6]<0x2D72:
+                    if [bx]==byte_8BE1C:
+                      if [bx+2C90h]&([si+1] - [si+1])!=0:
+                        [bp+var_6] add 6
+                        if [bp+var_6]>=0x2D72:
+                          if (byte_8BE1C - byte_8BE1C)!=1:
+                            if (((byte_8BE1C - byte_8BE1C) - 1) - 1)!=1:
+                              if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)!=1:
+                                if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)!=1:
+                                  [bx+2C7Eh] or ?
+                                  call_object_handler(current_room, 0xF)
+                                  object_move?(1, current_room, 0)
+                                  word_8B9E2 = current_room
+                                  call_object_handler(current_room, 0xD)
+                                  call_object_handler(current_room, 0xA)
+                                  call_object_handler(current_room, 0xE)
+                                  if object_is_at(0xF2, 1, 0)!=0:
+                                    if object_has_attr?(0xF2, 0xA)!=0:
+                                      if word_85250!=5:
+                                        sub_1EF11(word_852AA, word_852AC)
+                                        object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                        -> 0xCD
+                                if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)==1:
+                                  dec word_852AC
+                                  [bx+2C7Eh] or ?
+                                  call_object_handler(current_room, 0xF)
+                                  object_move?(1, current_room, 0)
+                                  word_8B9E2 = current_room
+                                  call_object_handler(current_room, 0xD)
+                                  call_object_handler(current_room, 0xA)
+                                  call_object_handler(current_room, 0xE)
+                                  if object_is_at(0xF2, 1, 0)!=0:
+                                    if object_has_attr?(0xF2, 0xA)!=0:
+                                      if word_85250!=5:
+                                        sub_1EF11(word_852AA, word_852AC)
+                                        object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                        -> 0xCD
+                              if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)==1:
+                                dec word_852AA
+                                [bx+2C7Eh] or ?
+                                call_object_handler(current_room, 0xF)
+                                object_move?(1, current_room, 0)
+                                word_8B9E2 = current_room
+                                call_object_handler(current_room, 0xD)
+                                call_object_handler(current_room, 0xA)
+                                call_object_handler(current_room, 0xE)
+                                if object_is_at(0xF2, 1, 0)!=0:
+                                  if object_has_attr?(0xF2, 0xA)!=0:
+                                    if word_85250!=5:
+                                      sub_1EF11(word_852AA, word_852AC)
+                                      object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                      -> 0xCD
+                            if (((byte_8BE1C - byte_8BE1C) - 1) - 1)==1:
+                              inc word_852AC
+                              [bx+2C7Eh] or ?
+                              call_object_handler(current_room, 0xF)
+                              object_move?(1, current_room, 0)
+                              word_8B9E2 = current_room
+                              call_object_handler(current_room, 0xD)
+                              call_object_handler(current_room, 0xA)
+                              call_object_handler(current_room, 0xE)
+                              if object_is_at(0xF2, 1, 0)!=0:
+                                if object_has_attr?(0xF2, 0xA)!=0:
+                                  if word_85250!=5:
+                                    sub_1EF11(word_852AA, word_852AC)
+                                    object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                    -> 0xCD
+                          if (byte_8BE1C - byte_8BE1C)==1:
+                            inc word_852AA
+                            [bx+2C7Eh] or ?
+                            call_object_handler(current_room, 0xF)
+                            object_move?(1, current_room, 0)
+                            word_8B9E2 = current_room
+                            call_object_handler(current_room, 0xD)
+                            call_object_handler(current_room, 0xA)
+                            call_object_handler(current_room, 0xE)
+                            if object_is_at(0xF2, 1, 0)!=0:
+                              if object_has_attr?(0xF2, 0xA)!=0:
+                                if word_85250!=5:
+                                  sub_1EF11(word_852AA, word_852AC)
+                                  object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                  -> 0xCD
+                      if [bx+2C90h]&([si+1] - [si+1])==0:
+                        Font_WriteMessage(msg(29:0x1B))
+                        -> 0
+                    if [bx]!=byte_8BE1C:
+                      [bp+var_6] add 6
+                      if [bp+var_6]>=0x2D72:
+                        if (byte_8BE1C - byte_8BE1C)!=1:
+                          if (((byte_8BE1C - byte_8BE1C) - 1) - 1)!=1:
+                            if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)!=1:
+                              if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)!=1:
+                                [bx+2C7Eh] or ?
+                                call_object_handler(current_room, 0xF)
+                                object_move?(1, current_room, 0)
+                                word_8B9E2 = current_room
+                                call_object_handler(current_room, 0xD)
+                                call_object_handler(current_room, 0xA)
+                                call_object_handler(current_room, 0xE)
+                                if object_is_at(0xF2, 1, 0)!=0:
+                                  if object_has_attr?(0xF2, 0xA)!=0:
+                                    if word_85250!=5:
+                                      sub_1EF11(word_852AA, word_852AC)
+                                      object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                      -> 0xCD
+                if [bx+2C90h]&([si+1] - [si+1])==0:
+                  Font_WriteMessage(msg(29:0x1B))
+                  -> 0
+              if [bx]!=byte_8BE1C:
+                [bp+var_6] add 6
+                if [bp+var_6]>=0x2D72:
+                  if (byte_8BE1C - byte_8BE1C)!=1:
+                    if (((byte_8BE1C - byte_8BE1C) - 1) - 1)!=1:
+                      if (((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1)!=1:
+                        if (((((((byte_8BE1C - byte_8BE1C) - 1) - 1) - 1) - 1) - 1) - 1)!=1:
+                          [bx+2C7Eh] or ?
+                          call_object_handler(current_room, 0xF)
+                          object_move?(1, current_room, 0)
+                          word_8B9E2 = current_room
+                          call_object_handler(current_room, 0xD)
+                          call_object_handler(current_room, 0xA)
+                          call_object_handler(current_room, 0xE)
+                          if object_is_at(0xF2, 1, 0)!=0:
+                            if object_has_attr?(0xF2, 0xA)!=0:
+                              if word_85250!=5:
+                                sub_1EF11(word_852AA, word_852AC)
+                                object_set_prop_a?(0xF2, (sub_1EF11(word_852AA, word_852AC) + 0x16E))
+                                -> 0xCD
+    if byte_8BE1C!=1:
+      if byte_8BE1C==0xA:
+        if sub_5F315(0)!=0:
+          if byte_852D2!=0:
+            -> 0xED
+  if sub_5F1A7(0)==0:
+    if byte_8BE1C==0xA:
+      if sub_5F315(0)!=0:
+        if byte_852D2!=0:
+          -> 0xED
+  [truncated: more than 150 paths]
+
+exit_fn_13
+  if phase:other:
+    -> 0xCD
+  if phase==0xF:
+    if byte_852E1!=0:
+      Font_WriteMessage(msg(31:0x2C))
+      -> 0
+    if byte_852E1==0:
+      -> 0xCD
+
+exit_fn_14
+  if phase==0xF:
+    word_852AA = 8
+    word_852AC = 6
+    -> 0xCD
+  if phase:other:
+    -> 0xCD
+
+exit_fn_15
+  if phase:other:
+    if byte_852E7!=0:
+      if byte_852E6!=0:
+        if byte_852E8==0:
+          -> 0
+        if byte_852E8!=0:
+          -> 0x102
+      if byte_852E6==0:
+        -> 0x102
+    if byte_852E7==0:
+      if byte_852E8==0:
+        -> 0
+      if byte_852E8!=0:
+        -> 0x102
+  if phase==0xF:
+    if byte_852E7==0:
+      Font_WriteMessage(msg(33:0x56))
+      -> 0
+    if byte_852E7!=0:
+      if byte_852E6!=0:
+        if byte_852E8==0:
+          Font_WriteMessage(msg(33:0x57))
+          -> 0
+        if byte_852E8!=0:
+          -> 0x102
+      if byte_852E6==0:
+        -> 0x102
+
+exit_fn_16
+  if phase:other:
+    -> (ax & 0x105)
+  if phase==0xF:
+    -> ((ax & 0xFEFA) + 0x105)
+
+exit_fn_17
+  if phase:other:
+    object_parent_is?(0x90, 0x105)
+    -> (object_parent_is?(0x90, 0x105) & 0x107)
+  if phase==0xF:
+    if object_parent_is?(0x90, 0x105)==0:
+      Font_WriteMessage(msg(35:0xD))
+      -> 0
+    if object_parent_is?(0x90, 0x105)!=0:
+      show_text_box(msg(35:0xE))
+      if object_parent_is?(0xEE, 0xCE)!=0:
+        object_move?(0xEE, 0, 0)
+        if object_get_prop_a?(0xCE)==0x166:
+          object_set_prop_a?(0xCE, 0x165)
+          object_move?(0xF2, 0, 0)
+          object_move?(0xD9, 0, 0)
+          object_move?(0xDA, 0, 0)
+          object_move?(0x104, 0, 0)
+          object_move?(0x100, 0, 0)
+          object_move?(0xFA, 0, 0)
+          object_move?(0x58, 0, 0)
+          object_move?(0x4D, 0, 0)
+          -> 0x107
+        if object_get_prop_a?(0xCE)!=0x166:
+          object_set_prop_a?(0xCE, 0x163)
+          object_move?(0xF2, 0, 0)
+          object_move?(0xD9, 0, 0)
+          object_move?(0xDA, 0, 0)
+          object_move?(0x104, 0, 0)
+          object_move?(0x100, 0, 0)
+          object_move?(0xFA, 0, 0)
+          object_move?(0x58, 0, 0)
+          object_move?(0x4D, 0, 0)
+          -> 0x107
+      if object_parent_is?(0xEE, 0xCE)==0:
+        object_move?(0xF2, 0, 0)
+        object_move?(0xD9, 0, 0)
+        object_move?(0xDA, 0, 0)
+        object_move?(0x104, 0, 0)
+        object_move?(0x100, 0, 0)
+        object_move?(0xFA, 0, 0)
+        object_move?(0x58, 0, 0)
+        object_move?(0x4D, 0, 0)
+        -> 0x107
+
+exit_fn_18
+  if phase:other:
+    -> 0x105
+  if phase==0xF:
+    show_compendium(0x169, 0x5A03)
+    -> 0
+
+exit_fn_19
+  if phase:other:
+    -> 0x132
+  if phase==0xF:
+    if object_parent_is?(0x11, 0x10C)!=0:
+      Font_WriteMessage(msg(36:0x32))
+      -> 0
+    if object_parent_is?(0x11, 0x10C)==0:
+      -> 0x132
+
+exit_fn_20
+  if phase==0xF:
+    if object_is_at(0x127, 0x11, 0)!=0:
+      if object_parent_is?(0x124, 1)==0:
+        Font_WriteMessage(msg(37:0x5A))
+        -> 0
+      if object_parent_is?(0x124, 1)!=0:
+        -> 0x10C
+    if object_is_at(0x127, 0x11, 0)==0:
+      -> 0x10C
+  if phase:other:
+    -> 0x10C
+
+exit_fn_21
+  if phase:other:
+    -> 0x59
+  if phase==0xF:
+    Font_WriteMessage(msg(37:0x5B))
+    -> 0
+
+exit_fn_22
+  if phase:other:
+    object_parent_is?(0x12E, 0x126)
+    -> (object_parent_is?(0x12E, 0x126) & 0x125)
+  if phase==0xF:
+    if object_parent_is?(0x12E, 0x126)==0:
+      Font_WriteMessage(msg(38:0x50))
+      -> 0
+    if object_parent_is?(0x12E, 0x126)!=0:
+      if object_parent_is?(0x127, 0x126)!=0:
+        Font_WriteMessage(msg(38:0x4E))
+        realsound_play(&aBubble_rs_1)
+        object_move?(0x127, 1, 0)
+        if object_has_attr?(0x127, 0xA)==0:
+          object_set_attr?(0x127, 0xA)
+          add_score?(0xA, 1, 0)
+          -> 0x125
+        if object_has_attr?(0x127, 0xA)!=0:
+          -> 0x125
+      if object_parent_is?(0x127, 0x126)==0:
+        Font_WriteMessage(msg(38:0x4F))
+        -> 0x125
+
+exit_fn_23
+  if phase==0xF:
+    if byte_8BE1C==1:
+      Font_WriteMessage(msg(39:0x31), ?, ?)
+      -> 0x132
+    if byte_8BE1C!=1:
+      Font_WriteMessage(msg(39:0x31), &aWest)
+      -> 0x132
+  if phase:other:
+    -> 0x132
+
+exit_fn_24
+  if phase==0xF:
+    if object_parent_is?(0x127, 0x11)==0:
+      show_compendium(0x16F, 0x5A03)
+      -> 0
+    if object_parent_is?(0x127, 0x11)!=0:
+      -> 0x139
+  if phase:other:
+    -> 0x139
+
+exit_fn_25
+  if phase:other:
+    -> 0x59
+  if phase==0xF:
+    Font_WriteMessage(msg(40:0x4B))
+    -> 0
+
+exit_fn_26
+  if phase:other:
+    -> 0x14F
+  if phase==0xF:
+    if byte_852CE==0:
+      byte_86CC0 = 0
+      show_compendium(0x369, 0xE19)
+      if word_85268==0x16:
+        go_to_room?(0x5A)
+        -> 0
+      if word_85268!=0x16:
+        RoomItem_Draw(0x10)
+        -> 0
+    if byte_852CE!=0:
+      -> 0x14F
+
+exit_fn_27
+  if phase:other:
+    -> 0x13E
+  if phase==0xF:
+    Font_WriteMessage(msg(57:0x42))
+    -> 0
+
+exit_fn_28
+  if phase:other:
+    object_parent_is?(0x15F, 8)
+    -> (object_parent_is?(0x15F, 8) & 0x178)
+  if phase==0xF:
+    object_parent_is?(0x15F, 8)
+    -> ((object_parent_is?(0x15F, 8) & 0xFE87) + 0x178)
+
+exit_fn_29
+  if phase==0xF:
+    if byte_85318!=0:
+      Font_WriteMessage(msg(61:7))
+      -> 0
+    if byte_85318==0:
+      Font_WriteMessage(msg(61:8))
+      -> 0x169
+  if phase:other:
+    -> 0x169
+
+exit_fn_30
+  if phase:other:
+    -> 0x170
+  if phase==0xF:
+    if byte_85319==0:
+      Font_WriteMessage(msg(62:0x46), msg(62:0x47))
+      -> 0
+    if byte_85319!=0:
+      Font_WriteMessage(msg(62:0x46), ?, ?)
+      -> 0
+
+exit_fn_31
+  if phase==0xF:
+    if word_85298<0xA:
+      Font_WriteMessage(msg(63:0x13))
+      wait_ticks_or_click(0x1388)
+      show_compendium(0x3E9, 0x5A18)
+      -> 0
+    if word_85298>=0xA:
+      -> 0x174
+  if phase:other:
+    -> 0x174
+
+exit_fn_32
+  if phase==0xF:
+    Font_WriteMessage(msg(63:0x12))
+    object_move?(0x16D, 0x169, 0)
+    object_move?(0x16E, 0x16C, 1)
+    object_set_default_verb?(0x16E, 0x4E)
+    -> 0x169
+  if phase:other:
+    -> 0x169
+
+exit_fn_33
+  if phase:other:
+    if (byte_8BE1C - byte_8BE1C)!=6:
+      if ((byte_8BE1C - byte_8BE1C) - 6)!=3:
+        if (((byte_8BE1C - byte_8BE1C) - 6) - 3)!=1:
+          -> 0
+        if (((byte_8BE1C - byte_8BE1C) - 6) - 3)==1:
+          if word_8529A>0:
+            -> 0x174
+          if word_8529A<=0:
+            -> 0
+      if ((byte_8BE1C - byte_8BE1C) - 6)==3:
+        if word_8529A<3:
+          -> 0x174
+        if word_8529A>=3:
+          -> 0
+    if (byte_8BE1C - byte_8BE1C)==6:
+      -> (((byte_8BE1C - byte_8BE1C) - 6) & 0x170)
+  if phase==0xF:
+    if (byte_8BE1C - byte_8BE1C)!=6:
+      if ((byte_8BE1C - byte_8BE1C) - 6)!=3:
+        if (((byte_8BE1C - byte_8BE1C) - 6) - 3)==1:
+          if word_8529A!=0:
+            dec word_8529A
+            if byte_85332!=0:
+              Font_WriteMessage(msg(64:0x21), &aAgain_1)
+              byte_85332 = 1
+              if word_8529A==2:
+                byte_88692 = 0
+                realsound_play(&aSteps_rs_0)
+                -> 0x174
+              if word_8529A!=2:
+                realsound_play(&aSteps_rs_0)
+                -> 0x174
+            if byte_85332==0:
+              Font_WriteMessage(msg(64:0x21), ?, ?)
+              byte_85332 = 1
+              if word_8529A==2:
+                byte_88692 = 0
+                realsound_play(&aSteps_rs_0)
+                -> 0x174
+              if word_8529A!=2:
+                realsound_play(&aSteps_rs_0)
+                -> 0x174
+          if word_8529A==0:
+            -> 0xFFFF
+        if (((byte_8BE1C - byte_8BE1C) - 6) - 3)!=1:
+          -> 0
+      if ((byte_8BE1C - byte_8BE1C) - 6)==3:
+        if word_8529A==3:
+          Font_WriteMessage(msg(64:0x1D))
+          -> 0
+        if word_8529A!=3:
+          inc word_8529A
+          Font_WriteMessage(msg(64:0x1E))
+          if word_8529A<3:
+            Font_WriteMessage(msg(64:0x1F))
+            realsound_play(&aSteps_rs)
+            -> 0x174
+          if word_8529A>=3:
+            Font_WriteMessage(msg(64:0x20))
+            byte_88692 = 0
+            realsound_play(&aSteps_rs)
+            -> 0x174
+    if (byte_8BE1C - byte_8BE1C)==6:
+      if word_8529A==0:
+        Font_WriteMessage(msg(64:0x22))
+        -> 0x170
+      if word_8529A!=0:
+        -> 0xFFFF
+
+exit_fn_34
+  if phase:other:
+    -> 0x178
+  if phase==0xF:
+    Font_WriteMessage(msg(44:0xD))
+    -> 0
+
+exit_fn_35
+  if phase:other:
+    -> 0x17F
+  if phase==0xF:
+    if object_has_attr?(0x17D, 0xA)==0:
+      print_obj(0x12, 0x17D)
+      Font_WriteMessage(msg(44:0xC), print_obj(0x12, 0x17D), ?)
+      -> 0
+    if object_has_attr?(0x17D, 0xA)!=0:
+      -> 0x17F
+
+exit_fn_36
+  if phase:other:
+    -> 0x17A
+  if phase==0xF:
+    Font_WriteMessage(msg(44:0xE))
+    -> 0
+
+exit_fn_37
+  if phase:other:
+    -> 0x17F
+  if phase==0xF:
+    Font_WriteMessage(msg(46:8))
+    -> 0
+
+exit_fn_38
+  if phase:other:
+    -> 0x180
+  if phase==0xF:
+    Font_WriteMessage(msg(46:6))
+    -> 0
+
+exit_fn_39
+  if phase:other:
+    -> 0x180
+  if phase==0xF:
+    if word_852A0>=4:
+      Font_WriteMessage(msg(46:7), &aInto)
+      -> 0
+    if word_852A0<4:
+      Font_WriteMessage(msg(46:7), &aToward)
+      -> 0
+
+exit_fn_40
+  if phase:other:
+    -> 0x59
+  if phase==0xF:
+    Font_WriteMessage(msg(69:0x24))
+    -> 0
+
+exit_fn_41
+  if phase==0xF:
+    if object_has_attr?(0x187, 0xE)==0:
+      Font_WriteMessage(msg(69:0x25))
+      -> 0
+    if object_has_attr?(0x187, 0xE)!=0:
+      -> 0x18A
+  if phase:other:
+    -> 0x18A
+
+exit_fn_42
+  if phase==0xF:
+    if word_8529C<3:
+      Font_WriteMessage(msg(30:0x1E))
+      -> 0
+    if word_8529C>=3:
+      -> 0x18D
+  if phase:other:
+    -> 0x18D
+
+exit_fn_43
+  if phase==0xF:
+    if event_pending(0x24)!=0:
+      Font_WriteMessage(msg(70:0x16))
+      -> 0
+    if event_pending(0x24)==0:
+      -> 0x18A
+  if phase:other:
+    -> 0x18A
+
+exit_fn_44
+  if phase==0xF:
+    if event_pending(0x24)!=0:
+      Font_WriteMessage(msg(70:0x16))
+      -> 0
+    if event_pending(0x24)==0:
+      -> 0x197
+  if phase:other:
+    -> 0x197
+
+exit_fn_45
+  if object_has_attr?(0x195, 0xA)!=0:
+    if phase==0xF:
+      Font_WriteMessage(msg(70:0x20))
+      -> 0x19A
+    if phase:other:
+      -> 0x19A
+  if object_has_attr?(0x195, 0xA)==0:
+    if phase:other:
+      -> 0
+    if phase==0xF:
+      -> 0xFFFF
+
+exit_fn_46
+  if phase==0xF:
+    Font_WriteMessage(msg(71:0x21))
+    -> 0x197
+  if phase:other:
+    -> 0x197
+
+exit_fn_47
+  if phase:other:
+    -> 0x19C
+  if phase==0xF:
+    if object_has_attr?(0x19B, 0xE)!=0:
+      Font_WriteMessage(msg(71:0x1F))
+      -> 0x19C
+    if object_has_attr?(0x19B, 0xE)==0:
+      Font_WriteMessage(msg(71:0x20))
+      -> 0
+
+exit_fn_48
+  if phase:other:
+    -> 0x1A8
+  if phase==0xF:
+    Font_WriteMessage(msg(47:0xA))
+    -> 0
+
+exit_fn_49
+  if phase:other:
+    -> 0x59
+  if phase==0xF:
+    Font_WriteMessage(msg(72:0x28))
+    -> 0
+
+exit_fn_50
+  if phase:other:
+    -> 0x1BD
+  if phase==0xF:
+    if object_has_attr?(0x1BA, 0xE)!=0:
+      Font_WriteMessage(msg(72:0x4C))
+      -> 0x1BD
+    if object_has_attr?(0x1BA, 0xE)==0:
+      Font_WriteMessage(msg(72:0x4D))
+      -> 0
+
+exit_fn_51
+  if phase:other:
+    -> 0x1B8
+  if phase==0xF:
+    Font_WriteMessage(msg(73:0x5B))
+    -> 0
+
+exit_fn_52
+  if phase:other:
+    -> 0x1CE
+  if phase==0xF:
+    if object_has_attr?(0x1BE, 0xE)!=0:
+      Font_WriteMessage(msg(73:0x5C))
+      realsound_play(&aSteps_rs_1)
+      -> 0x1CE
+    if object_has_attr?(0x1BE, 0xE)==0:
+      print_obj(0x12, 0x1BE)
+      Font_WriteMessage(msg(73:0x5D), print_obj(0x12, 0x1BE), ?)
+      -> 0
+
+exit_fn_53
+  if phase:other:
+    -> 0x1D5
+  if phase==0xF:
+    if object_parent_is?(0x1C3, 0x1CE)!=0:
+      Font_WriteMessage(msg(74:0x22))
+      realsound_play(&aStep_rs)
+      -> 0x1D5
+    if object_parent_is?(0x1C3, 0x1CE)==0:
+      Font_WriteMessage(msg(74:0x23))
+      wait_ticks_or_click(0x1388)
+      byte_88A4A = 1
+      popup_window_event?()
+      -> 0
+
+exit_fn_54
+  if phase:other:
+    -> 0x1F0
+  if phase==0xF:
+    if object_parent_is?(0x1DC, current_room)!=0:
+      Font_WriteMessage(msg(75:0x29))
+      -> 0x1F0
+    if object_parent_is?(0x1DC, current_room)==0:
+      Font_WriteMessage(msg(75:0x2A))
+      -> 0
+
+exit_fn_55
+  if phase:other:
+    -> 0x1D5
+  if phase==0xF:
+    Font_WriteMessage(msg(77:9))
+    -> 0
 
 objh_002   # objects: 2 Grundy
   if phase:other:
@@ -1711,19 +3400,19 @@ objh_004   # objects: 4 Kim
       -> 1
     if cmd==LOOK_AT:
       Font_WriteMessage(msg(6:0x24))
-      if obj_85216==0x1AA:
+      if current_room==0x1AA:
         Font_WriteMessage(msg(6:0x25))
         -> 1
-      if obj_85216!=0x1AA:
+      if current_room!=0x1AA:
         -> 1
     if cmd==TALK_TO:
-      if obj_85216!=0x1AA:
-        if (obj_85216 - 0x1AA)!=0x46:
+      if current_room!=0x1AA:
+        if (current_room - 0x1AA)!=0x46:
           -> 0
-        if (obj_85216 - 0x1AA)==0x46:
+        if (current_room - 0x1AA)==0x46:
           show_compendium(0x260, 0x5A0D)
           -> 1
-      if obj_85216==0x1AA:
+      if current_room==0x1AA:
         Font_WriteMessage(msg(6:0x26))
         -> 1
   if phase:other:
@@ -1732,20 +3421,20 @@ objh_004   # objects: 4 Kim
 objh_005   # objects: 5 Nada
   if phase==0x1A:
     if word_8B9E2!=0x5A:
-      if obj_85216==0xCD:
+      if current_room==0xCD:
         Font_WriteMessage(msg(6:4))
         -> 1
-      if obj_85216!=0xCD:
-        if [bx]==obj_85216:
+      if current_room!=0xCD:
+        if [bx]==current_room:
           -> 1
-        if [bx]!=obj_85216:
+        if [bx]!=current_room:
           [bp+var_3A] add 2
           if [bp+var_3A]>=?:
             _rand()
             Font_WriteMessage(&aNadaS__0, es:[bx+0], es:[bx+2])
             -> 1
           if [bp+var_3A]<?:
-            if [bx]==obj_85216:
+            if [bx]==current_room:
               -> 1
     if word_8B9E2==0x5A:
       -> 0
@@ -1753,15 +3442,15 @@ objh_005   # objects: 5 Nada
     -> 0
   if phase==6:
     if cmd==TALK_TO:
-      if obj_85216!=0x5B:
-        if (obj_85216 - 0x5B)==0x14F:
+      if current_room!=0x5B:
+        if (current_room - 0x5B)==0x14F:
           Font_WriteMessage(msg(6:0xB))
           -> 1
-        if (obj_85216 - 0x5B)!=0x14F:
-          if ((obj_85216 - 0x5B) - 0x14F)==0x46:
+        if (current_room - 0x5B)!=0x14F:
+          if ((current_room - 0x5B) - 0x14F)==0x46:
             Font_WriteMessage(msg(6:0xC))
             -> 1
-          if ((obj_85216 - 0x5B) - 0x14F)!=0x46:
+          if ((current_room - 0x5B) - 0x14F)!=0x46:
             sub_1EF93()
             show_compendium(0x63, sub_1EF93())
             if object_parent_is?(0x92, 1)!=0:
@@ -1797,7 +3486,7 @@ objh_005   # objects: 5 Nada
                   byte_852F9 = 1
                   Font_WriteMessage(msg(6:0xD))
                   -> 1
-      if obj_85216==0x5B:
+      if current_room==0x5B:
         if object_has_attr?(0x5D, 0xE)==0:
           show_compendium(0x112, 0x5A03)
           -> 1
@@ -1807,12 +3496,12 @@ objh_005   # objects: 5 Nada
     if cmd:other:
       -> 0
     if cmd==LOOK_AT:
-      if obj_85216==0x1AA:
+      if current_room==0x1AA:
         print_obj(0x11, dobj)
         Font_WriteMessage(msg(6:5), print_obj(0x11, dobj), ?)
         -> 1
-      if obj_85216!=0x1AA:
-        if obj_85216==0xED:
+      if current_room!=0x1AA:
+        if current_room==0xED:
           if byte_852E1!=0:
             if byte_852EE==0:
               Font_WriteMessage(msg(6:6))
@@ -1824,41 +3513,41 @@ objh_005   # objects: 5 Nada
               go_to_room?(0x5A)
               -> 1
           if byte_852E1==0:
-            if obj_85216==0x1F0:
+            if current_room==0x1F0:
               Font_WriteMessage(msg(6:7))
               -> 1
-            if obj_85216!=0x1F0:
-              print_obj(2, obj_85216)
-              _strlwr(print_obj(2, obj_85216), ?)
-              if object_has_attr?(5, 0xA, _strlwr(print_obj(2, obj_85216), ?), ?)!=0:
+            if current_room!=0x1F0:
+              print_obj(2, current_room)
+              _strlwr(print_obj(2, current_room), ?)
+              if object_has_attr?(5, 0xA, _strlwr(print_obj(2, current_room), ?), ?)!=0:
                 if object_has_attr?(5, 0xA, msg(6:9))!=0:
                   Font_WriteMessage(msg(6:8), &aNaga)
                   -> 1
                 if object_has_attr?(5, 0xA, msg(6:9))==0:
                   Font_WriteMessage(msg(6:8), &aHuman)
                   -> 1
-              if object_has_attr?(5, 0xA, _strlwr(print_obj(2, obj_85216), ?), ?)==0:
+              if object_has_attr?(5, 0xA, _strlwr(print_obj(2, current_room), ?), ?)==0:
                 if object_has_attr?(5, 0xA, msg(6:0xA))!=0:
                   Font_WriteMessage(msg(6:8), &aNaga)
                   -> 1
                 if object_has_attr?(5, 0xA, msg(6:0xA))==0:
                   Font_WriteMessage(msg(6:8), &aHuman)
                   -> 1
-        if obj_85216!=0xED:
-          if obj_85216==0x1F0:
+        if current_room!=0xED:
+          if current_room==0x1F0:
             Font_WriteMessage(msg(6:7))
             -> 1
-          if obj_85216!=0x1F0:
-            print_obj(2, obj_85216)
-            _strlwr(print_obj(2, obj_85216), ?)
-            if object_has_attr?(5, 0xA, _strlwr(print_obj(2, obj_85216), ?), ?)!=0:
+          if current_room!=0x1F0:
+            print_obj(2, current_room)
+            _strlwr(print_obj(2, current_room), ?)
+            if object_has_attr?(5, 0xA, _strlwr(print_obj(2, current_room), ?), ?)!=0:
               if object_has_attr?(5, 0xA, msg(6:9))!=0:
                 Font_WriteMessage(msg(6:8), &aNaga)
                 -> 1
               if object_has_attr?(5, 0xA, msg(6:9))==0:
                 Font_WriteMessage(msg(6:8), &aHuman)
                 -> 1
-            if object_has_attr?(5, 0xA, _strlwr(print_obj(2, obj_85216), ?), ?)==0:
+            if object_has_attr?(5, 0xA, _strlwr(print_obj(2, current_room), ?), ?)==0:
               if object_has_attr?(5, 0xA, msg(6:0xA))!=0:
                 Font_WriteMessage(msg(6:8), &aNaga)
                 -> 1
@@ -1879,15 +3568,15 @@ objh_005   # objects: 5 Nada
         Font_WriteMessage(msg(6:0xE), print_obj(0x52, dobj, &aAre_14), ?)
         -> 1
       if object_parent_is?(dobj, 1)!=0:
-        if obj_85216==0x1AA:
+        if current_room==0x1AA:
           print_obj(0x11, iobj)
           Font_WriteMessage(msg(6:0xF), print_obj(0x11, iobj), ?)
           -> 1
-        if obj_85216!=0x1AA:
-          if obj_85216==0x1F0:
+        if current_room!=0x1AA:
+          if current_room==0x1F0:
             Font_WriteMessage(msg(6:0x10))
             -> 1
-          if obj_85216!=0x1F0:
+          if current_room!=0x1F0:
             if dobj!=0x91:
               if dobj<=0x91:
                 if dobj!=0x75:
@@ -1939,20 +3628,20 @@ objh_006   # objects: 6 Jenny
         show_compendium(0x29A, 0x5A01)
         -> 1
       if word_85250!=0:
-        if obj_85216==0x5B:
+        if current_room==0x5B:
           byte_86CC0 = 0
           show_compendium(0x29C, 0x5A01)
           show_compendium(0x2D2, 0x5A06)
           -> 1
-        if obj_85216!=0x5B:
+        if current_room!=0x5B:
           if event_pending(0x24)!=0:
             Font_WriteMessage(msg(6:0x14))
             -> 1
           if event_pending(0x24)==0:
             show_compendium(0x29B, 0x5A01)
-            if obj_85216!=0x180:
+            if current_room!=0x180:
               -> 1
-            if obj_85216==0x180:
+            if current_room==0x180:
               if byte_85333==0:
                 -> 1
               if byte_85333!=0:
@@ -1983,7 +3672,7 @@ objh_007   # objects: 7 Sammy
     if cmd:other:
       -> 0
     if cmd==TALK_TO:
-      if obj_85216==0x184:
+      if current_room==0x184:
         if object_has_attr?(0x187, 0xE)==0:
           show_compendium(0x2C5, 0x5A01)
           byte_85324 = 1
@@ -1992,7 +3681,7 @@ objh_007   # objects: 7 Sammy
         if object_has_attr?(0x187, 0xE)!=0:
           show_compendium(0x2C7, 0x5A06)
           -> 1
-      if obj_85216!=0x184:
+      if current_room!=0x184:
         show_compendium(0x2C7, 0x5A06)
         -> 1
     if cmd==LOOK_AT:
@@ -2069,7 +3758,7 @@ objh_009   # objects: 9 ogre boy
         -> 1
       if object_parent_is?(0x165, dobj)!=0:
         if object_has_attr?(0x155, 0xA)==0:
-          if obj_85216==0x14F:
+          if current_room==0x14F:
             if object_has_attr?(0x155, 0xA)==0:
               show_compendium(0x3E5, 0x5A15)
               run_command?(2, 0x156, 0x155)
@@ -2078,7 +3767,7 @@ objh_009   # objects: 9 ogre boy
               sub_1EFB6()
               show_compendium(0x3E4, sub_1EFB6())
               -> 1
-          if obj_85216!=0x14F:
+          if current_room!=0x14F:
             sub_1EFB6()
             show_compendium(0x3E4, sub_1EFB6())
             -> 1
@@ -2129,14 +3818,14 @@ objh_010   # objects: 10 Metria
     -> 0
   if phase==6:
     if cmd==TALK_TO:
-      if obj_85216!=0x5B:
-        if (obj_85216 - 0x5B)!=0x6C:
+      if current_room!=0x5B:
+        if (current_room - 0x5B)!=0x6C:
           show_compendium(0x2E4, 0x5A04)
           -> 1
-        if (obj_85216 - 0x5B)==0x6C:
+        if (current_room - 0x5B)==0x6C:
           show_compendium(0x2FE, 0x5A04)
           -> 1
-      if obj_85216==0x5B:
+      if current_room==0x5B:
         show_compendium(0x2E5, 0x5A04)
         -> 1
     if cmd:other:
@@ -2154,9 +3843,9 @@ objh_010   # objects: 10 Metria
       Font_WriteMessage(msg(6:0x20))
       -> 1
     if cmd==CHASE:
-      print_obj(0x22, obj_85216)
-      _strlwr(print_obj(0x22, obj_85216), ?)
-      Font_WriteMessage(msg(6:0x22), _strlwr(print_obj(0x22, obj_85216), ?), ?)
+      print_obj(0x22, current_room)
+      _strlwr(print_obj(0x22, current_room), ?)
+      Font_WriteMessage(msg(6:0x22), _strlwr(print_obj(0x22, current_room), ?), ?)
       -> 1
   if phase==4:
     if cmd:other:
@@ -2172,15 +3861,15 @@ objh_011   # objects: 11 Che
     if cmd:other:
       -> 0
     if cmd==TALK_TO:
-      if obj_85216!=0x5B:
+      if current_room!=0x5B:
         show_compendium(0x203, 0x5A02)
         -> 1
-      if obj_85216==0x5B:
+      if current_room==0x5B:
         show_compendium(0x204, 0x5A02)
         -> 1
     if cmd==LOOK_AT:
-      print_obj(1, obj_85216)
-      Font_WriteMessage(msg(6:0x18), print_obj(1, obj_85216), ?)
+      print_obj(1, current_room)
+      Font_WriteMessage(msg(6:0x18), print_obj(1, current_room), ?)
       -> 1
   if phase==4:
     if cmd==GIVE:
@@ -2572,101 +4261,101 @@ objh_020   # objects: 21 path
       Font_WriteMessage(msg(8:0x1C), print_obj(1, dobj), ?)
       -> 1
     if cmd==LOOK_AT:
-      if obj_85216==0xF8:
+      if current_room==0xF8:
         print_obj(0x12, dobj)
         Font_WriteMessage(msg(8:0xD), print_obj(0x12, dobj), ?)
         -> 1
-      if obj_85216!=0xF8:
-        if obj_85216<=0xF8:
-          if obj_85216==0x9A:
+      if current_room!=0xF8:
+        if current_room<=0xF8:
+          if current_room==0x9A:
             print_obj(0x12, dobj)
             Font_WriteMessage(msg(8:8), print_obj(0x12, dobj), ?)
-            if obj_85216!=0x98:
+            if current_room!=0x98:
               Font_WriteMessage(&aAndSouthwest)
               wputchar?(0x2E)
               -> 1
-            if obj_85216==0x98:
+            if current_room==0x98:
               wputchar?(0x2E)
               -> 1
-          if obj_85216!=0x9A:
-            if obj_85216<=0x9A:
-              if obj_85216==0x63:
+          if current_room!=0x9A:
+            if current_room<=0x9A:
+              if current_room==0x63:
                 Font_WriteMessage(msg(8:4))
                 -> 1
-              if obj_85216!=0x63:
-                if (obj_85216 - 0x63)==6:
+              if current_room!=0x63:
+                if (current_room - 0x63)==6:
                   print_obj(1, dobj)
                   Font_WriteMessage(msg(8:5), print_obj(1, dobj), ?)
                   -> 1
-                if (obj_85216 - 0x63)!=6:
-                  if ((obj_85216 - 0x63) - 6)==0x10:
+                if (current_room - 0x63)!=6:
+                  if ((current_room - 0x63) - 6)==0x10:
                     print_obj(0x12, dobj)
                     Font_WriteMessage(msg(8:6), print_obj(0x12, dobj), ?)
                     -> 1
-                  if ((obj_85216 - 0x63) - 6)!=0x10:
-                    if (((obj_85216 - 0x63) - 6) - 0x10)==7:
+                  if ((current_room - 0x63) - 6)!=0x10:
+                    if (((current_room - 0x63) - 6) - 0x10)==7:
                       Font_WriteMessage(msg(8:7))
                       -> 1
-                    if (((obj_85216 - 0x63) - 6) - 0x10)!=7:
-                      if ((((obj_85216 - 0x63) - 6) - 0x10) - 7)==0x18:
+                    if (((current_room - 0x63) - 6) - 0x10)!=7:
+                      if ((((current_room - 0x63) - 6) - 0x10) - 7)==0x18:
                         print_obj(0x12, dobj)
                         Font_WriteMessage(msg(8:8), print_obj(0x12, dobj), ?)
-                        if obj_85216!=0x98:
+                        if current_room!=0x98:
                           Font_WriteMessage(&aAndSouthwest)
                           wputchar?(0x2E)
                           -> 1
-                        if obj_85216==0x98:
+                        if current_room==0x98:
                           wputchar?(0x2E)
                           -> 1
-                      if ((((obj_85216 - 0x63) - 6) - 0x10) - 7)!=0x18:
+                      if ((((current_room - 0x63) - 6) - 0x10) - 7)!=0x18:
                         print_obj(3, dobj)
                         Font_WriteMessage(msg(8:0x19), print_obj(3, dobj), ?)
                         -> 1
-            if obj_85216>0x9A:
-              if obj_85216==0x9C:
+            if current_room>0x9A:
+              if current_room==0x9C:
                 print_obj(0x12, dobj)
                 Font_WriteMessage(msg(8:8), print_obj(0x12, dobj), ?)
-                if obj_85216!=0x98:
+                if current_room!=0x98:
                   Font_WriteMessage(&aAndSouthwest)
                   wputchar?(0x2E)
                   -> 1
-                if obj_85216==0x98:
+                if current_room==0x98:
                   wputchar?(0x2E)
                   -> 1
-              if obj_85216!=0x9C:
-                if (obj_85216 - 0x9C)==1:
-                  print_obj(1, obj_85216)
-                  _strlwr(print_obj(1, obj_85216), ?)
-                  print_obj(0x12, dobj, _strlwr(print_obj(1, obj_85216), ?), ?)
-                  Font_WriteMessage(msg(8:9), print_obj(0x12, dobj, _strlwr(print_obj(1, obj_85216), ?), ?), ?)
+              if current_room!=0x9C:
+                if (current_room - 0x9C)==1:
+                  print_obj(1, current_room)
+                  _strlwr(print_obj(1, current_room), ?)
+                  print_obj(0x12, dobj, _strlwr(print_obj(1, current_room), ?), ?)
+                  Font_WriteMessage(msg(8:9), print_obj(0x12, dobj, _strlwr(print_obj(1, current_room), ?), ?), ?)
                   -> 1
-                if (obj_85216 - 0x9C)!=1:
-                  if ((obj_85216 - 0x9C) - 1)==0x28:
+                if (current_room - 0x9C)!=1:
+                  if ((current_room - 0x9C) - 1)==0x28:
                     print_obj(1, dobj)
                     print_obj(0x12, dobj, print_obj(1, dobj), ?)
                     Font_WriteMessage(msg(8:0xA), print_obj(0x12, dobj, print_obj(1, dobj), ?), ?)
                     -> 1
-                  if ((obj_85216 - 0x9C) - 1)!=0x28:
-                    if ((((obj_85216 - 0x9C) - 1) - 0x28) - 1)==1:
+                  if ((current_room - 0x9C) - 1)!=0x28:
+                    if ((((current_room - 0x9C) - 1) - 0x28) - 1)==1:
                       print_obj(0x12, dobj)
                       Font_WriteMessage(msg(8:0xB), print_obj(0x12, dobj), ?)
                       -> 1
-                    if ((((obj_85216 - 0x9C) - 1) - 0x28) - 1)!=1:
-                      if (((((obj_85216 - 0x9C) - 1) - 0x28) - 1) - 1)==0x2D:
+                    if ((((current_room - 0x9C) - 1) - 0x28) - 1)!=1:
+                      if (((((current_room - 0x9C) - 1) - 0x28) - 1) - 1)==0x2D:
                         print_obj(0x12, dobj)
                         Font_WriteMessage(msg(8:0xC), print_obj(0x12, dobj), ?)
                         -> 1
-                      if (((((obj_85216 - 0x9C) - 1) - 0x28) - 1) - 1)!=0x2D:
+                      if (((((current_room - 0x9C) - 1) - 0x28) - 1) - 1)!=0x2D:
                         print_obj(3, dobj)
                         Font_WriteMessage(msg(8:0x19), print_obj(3, dobj), ?)
                         -> 1
-        if obj_85216>0xF8:
-          if obj_85216==0x160:
+        if current_room>0xF8:
+          if current_room==0x160:
             Font_WriteMessage(msg(8:0x13))
             -> 1
-          if obj_85216!=0x160:
-            if obj_85216<=0x160:
-              if obj_85216==0x102:
+          if current_room!=0x160:
+            if current_room<=0x160:
+              if current_room==0x102:
                 if byte_852E9!=0:
                   print_obj(0x12, dobj, &aLargeCrevice)
                   Font_WriteMessage(msg(8:0xE), print_obj(0x12, dobj, &aLargeCrevice), ?)
@@ -2675,52 +4364,52 @@ objh_020   # objects: 21 path
                   print_obj(0x12, dobj, &aWallOfFire)
                   Font_WriteMessage(msg(8:0xE), print_obj(0x12, dobj, &aWallOfFire), ?)
                   -> 1
-              if obj_85216!=0x102:
-                if (obj_85216 - 0x102)==0xA:
+              if current_room!=0x102:
+                if (current_room - 0x102)==0xA:
                   print_obj(2, dobj)
                   Font_WriteMessage(msg(8:0xF), print_obj(2, dobj), ?)
                   -> 1
-                if (obj_85216 - 0x102)!=0xA:
-                  if ((obj_85216 - 0x102) - 0xA)==0x26:
+                if (current_room - 0x102)!=0xA:
+                  if ((current_room - 0x102) - 0xA)==0x26:
                     print_obj(0x12, dobj)
                     Font_WriteMessage(msg(8:0x10), print_obj(0x12, dobj), ?)
                     -> 1
-                  if ((obj_85216 - 0x102) - 0xA)!=0x26:
-                    if (((obj_85216 - 0x102) - 0xA) - 0x26)==7:
+                  if ((current_room - 0x102) - 0xA)!=0x26:
+                    if (((current_room - 0x102) - 0xA) - 0x26)==7:
                       print_obj(0x12, dobj)
                       Font_WriteMessage(msg(8:0x11), print_obj(0x12, dobj), ?)
                       -> 1
-                    if (((obj_85216 - 0x102) - 0xA) - 0x26)!=7:
-                      if ((((obj_85216 - 0x102) - 0xA) - 0x26) - 7)==0x16:
+                    if (((current_room - 0x102) - 0xA) - 0x26)!=7:
+                      if ((((current_room - 0x102) - 0xA) - 0x26) - 7)==0x16:
                         Font_WriteMessage(msg(8:0x12))
                         -> 1
-                      if ((((obj_85216 - 0x102) - 0xA) - 0x26) - 7)!=0x16:
+                      if ((((current_room - 0x102) - 0xA) - 0x26) - 7)!=0x16:
                         print_obj(3, dobj)
                         Font_WriteMessage(msg(8:0x19), print_obj(3, dobj), ?)
                         -> 1
-            if obj_85216>0x160:
-              if obj_85216==0x162:
+            if current_room>0x160:
+              if current_room==0x162:
                 Font_WriteMessage(msg(8:0x14))
                 -> 1
-              if obj_85216!=0x162:
-                if (obj_85216 - 0x162)==4:
+              if current_room!=0x162:
+                if (current_room - 0x162)==4:
                   Font_WriteMessage(msg(8:0x15))
                   -> 1
-                if (obj_85216 - 0x162)!=4:
-                  if ((obj_85216 - 0x162) - 4)==0x1E:
+                if (current_room - 0x162)!=4:
+                  if ((current_room - 0x162) - 4)==0x1E:
                     print_obj(0x12, dobj)
                     Font_WriteMessage(msg(8:0x16), print_obj(0x12, dobj), ?)
                     -> 1
-                  if ((obj_85216 - 0x162) - 4)!=0x1E:
-                    if (((obj_85216 - 0x162) - 4) - 0x1E)==6:
+                  if ((current_room - 0x162) - 4)!=0x1E:
+                    if (((current_room - 0x162) - 4) - 0x1E)==6:
                       print_obj(0x12, dobj)
                       Font_WriteMessage(msg(8:0x17), print_obj(0x12, dobj), ?)
                       -> 1
-                    if (((obj_85216 - 0x162) - 4) - 0x1E)!=6:
-                      if ((((obj_85216 - 0x162) - 4) - 0x1E) - 6)==0x24:
+                    if (((current_room - 0x162) - 4) - 0x1E)!=6:
+                      if ((((current_room - 0x162) - 4) - 0x1E) - 6)==0x24:
                         Font_WriteMessage(msg(8:0x18))
                         -> 1
-                      if ((((obj_85216 - 0x162) - 4) - 0x1E) - 6)!=0x24:
+                      if ((((current_room - 0x162) - 4) - 0x1E) - 6)!=0x24:
                         print_obj(3, dobj)
                         Font_WriteMessage(msg(8:0x19), print_obj(3, dobj), ?)
                         -> 1
@@ -2748,13 +4437,13 @@ objh_020   # objects: 21 path
                 Font_WriteMessage(msg(8:0x1F), print_obj(0x22, dobj), ?)
                 -> 1
               if object_parent_is?(dobj, 1)!=0:
-                if obj_85216==0x102:
+                if current_room==0x102:
                   print_obj(0x22, iobj)
                   print_obj(2, dobj, print_obj(0x22, iobj), ?)
                   Font_WriteMessage(msg(8:0x20), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
                   object_move?(dobj, 0x102, 0)
                   -> 1
-                if obj_85216!=0x102:
+                if current_room!=0x102:
                   print_obj(0x12, dobj)
                   Font_WriteMessage(msg(8:0x21), print_obj(0x12, dobj), ?)
                   -> 1
@@ -2786,11 +4475,11 @@ objh_021   # objects: 22 bush
       Font_WriteMessage(msg(8:0x2F))
       -> 1
     if cmd==LOOK_AT:
-      if obj_85216!=0x79:
+      if current_room!=0x79:
         print_obj(1, dobj)
         Font_WriteMessage(msg(8:0x2E), print_obj(1, dobj), ?)
         -> 1
-      if obj_85216==0x79:
+      if current_room==0x79:
         Font_WriteMessage(msg(8:0x2D))
         -> 1
     if cmd==TALK_TO:
@@ -2810,46 +4499,46 @@ objh_022   # objects: 23 ocean
     if cmd:other:
       -> 0
     if cmd==SWIM_IN:
-      if obj_85216!=0x80:
-        if (obj_85216 - 0x80)!=0xC:
-          if ((obj_85216 - 0x80) - 0xC)!=8:
-            if (((obj_85216 - 0x80) - 0xC) - 8)!=0x73:
-              if ((((obj_85216 - 0x80) - 0xC) - 8) - 0x73)!=5:
+      if current_room!=0x80:
+        if (current_room - 0x80)!=0xC:
+          if ((current_room - 0x80) - 0xC)!=8:
+            if (((current_room - 0x80) - 0xC) - 8)!=0x73:
+              if ((((current_room - 0x80) - 0xC) - 8) - 0x73)!=5:
                 Font_WriteMessage(msg(8:0x3B))
                 -> 1
-              if ((((obj_85216 - 0x80) - 0xC) - 8) - 0x73)==5:
+              if ((((current_room - 0x80) - 0xC) - 8) - 0x73)==5:
                 Font_WriteMessage(msg(8:0x3A))
                 -> 1
-            if (((obj_85216 - 0x80) - 0xC) - 8)==0x73:
+            if (((current_room - 0x80) - 0xC) - 8)==0x73:
               Font_WriteMessage(msg(8:0x3A))
               -> 1
-          if ((obj_85216 - 0x80) - 0xC)==8:
+          if ((current_room - 0x80) - 0xC)==8:
             Font_WriteMessage(msg(8:0x38))
             -> 1
-        if (obj_85216 - 0x80)==0xC:
+        if (current_room - 0x80)==0xC:
           Font_WriteMessage(msg(8:0x38))
           -> 1
-      if obj_85216==0x80:
+      if current_room==0x80:
         Font_WriteMessage(msg(8:0x39))
         -> 1
     if cmd==LOOK_AT:
-      if obj_85216!=0x80:
-        if (obj_85216 - 0x80)!=0xC:
-          if ((obj_85216 - 0x80) - 0xC)!=8:
-            if (((obj_85216 - 0x80) - 0xC) - 8)!=0x73:
+      if current_room!=0x80:
+        if (current_room - 0x80)!=0xC:
+          if ((current_room - 0x80) - 0xC)!=8:
+            if (((current_room - 0x80) - 0xC) - 8)!=0x73:
               print_obj(0x22, dobj)
               Font_WriteMessage(msg(8:0x37), print_obj(0x22, dobj), ?)
               -> 1
-            if (((obj_85216 - 0x80) - 0xC) - 8)==0x73:
+            if (((current_room - 0x80) - 0xC) - 8)==0x73:
               Font_WriteMessage(msg(8:0x36))
               -> 1
-          if ((obj_85216 - 0x80) - 0xC)==8:
+          if ((current_room - 0x80) - 0xC)==8:
             Font_WriteMessage(msg(8:0x34))
             -> 1
-        if (obj_85216 - 0x80)==0xC:
+        if (current_room - 0x80)==0xC:
           Font_WriteMessage(msg(8:0x35))
           -> 1
-      if obj_85216==0x80:
+      if current_room==0x80:
         Font_WriteMessage(msg(8:0x34))
         -> 1
   if phase==4:
@@ -2879,39 +4568,39 @@ objh_023   # objects: 24 sky
       Font_WriteMessage(msg(8:0x28))
       -> 1
     if cmd==LOOK_AT:
-      if obj_85216!=0x14F:
-        if obj_85216<=0x14F:
-          if obj_85216!=0x63:
-            if (obj_85216 - 0x63)!=0x5B:
+      if current_room!=0x14F:
+        if current_room<=0x14F:
+          if current_room!=0x63:
+            if (current_room - 0x63)!=0x5B:
               print_obj(2, dobj)
               Font_WriteMessage(msg(8:0x27), print_obj(2, dobj), ?)
               -> 1
-            if (obj_85216 - 0x63)==0x5B:
+            if (current_room - 0x63)==0x5B:
               Font_WriteMessage(msg(8:0x25))
               -> 1
-          if obj_85216==0x63:
+          if current_room==0x63:
             Font_WriteMessage(msg(8:0x24))
             -> 1
-        if obj_85216>0x14F:
-          if obj_85216!=0x160:
-            if ((obj_85216 - 0x160) - 1)!=1:
-              if (((obj_85216 - 0x160) - 1) - 1)!=4:
+        if current_room>0x14F:
+          if current_room!=0x160:
+            if ((current_room - 0x160) - 1)!=1:
+              if (((current_room - 0x160) - 1) - 1)!=4:
                 print_obj(2, dobj)
                 Font_WriteMessage(msg(8:0x27), print_obj(2, dobj), ?)
                 -> 1
-              if (((obj_85216 - 0x160) - 1) - 1)==4:
+              if (((current_room - 0x160) - 1) - 1)==4:
                 print_obj(0x12, dobj)
                 Font_WriteMessage(msg(8:0x26), print_obj(0x12, dobj), ?)
                 -> 1
-            if ((obj_85216 - 0x160) - 1)==1:
+            if ((current_room - 0x160) - 1)==1:
               print_obj(0x12, dobj)
               Font_WriteMessage(msg(8:0x26), print_obj(0x12, dobj), ?)
               -> 1
-          if obj_85216==0x160:
+          if current_room==0x160:
             print_obj(0x12, dobj)
             Font_WriteMessage(msg(8:0x26), print_obj(0x12, dobj), ?)
             -> 1
-      if obj_85216==0x14F:
+      if current_room==0x14F:
         print_obj(0x12, dobj)
         Font_WriteMessage(msg(8:0x26), print_obj(0x12, dobj), ?)
         -> 1
@@ -2971,11 +4660,11 @@ objh_025   # objects: 26 cliffs
       Font_WriteMessage(msg(8:0x48))
       -> 1
     if cmd==LOOK_AT:
-      if obj_85216==0x98:
+      if current_room==0x98:
         print_obj(0x12, dobj, msg(8:0x46))
         Font_WriteMessage(msg(8:0x45), print_obj(0x12, dobj, msg(8:0x46)), ?)
         -> 1
-      if obj_85216!=0x98:
+      if current_room!=0x98:
         print_obj(0x12, dobj, msg(8:0x47))
         Font_WriteMessage(msg(8:0x45), print_obj(0x12, dobj, msg(8:0x47)), ?)
         -> 1
@@ -2983,23 +4672,23 @@ objh_025   # objects: 26 cliffs
       run_command?(cmd, 0x1B, 0)
       -> run_command?(cmd, 0x1B, 0)
     if cmd==CLIMB:
-      if obj_85216==0x9C:
+      if current_room==0x9C:
         Font_WriteMessage(msg(8:0x4A), &aDe)
         -> 1
-      if obj_85216!=0x9C:
+      if current_room!=0x9C:
         Font_WriteMessage(msg(8:0x4A), &aA)
         -> 1
   if phase==4:
     if cmd:other:
       -> 0
     if cmd==PUT:
-      if obj_85216==0x98:
+      if current_room==0x98:
         print_obj(4, dobj, &aOntoTheGround)
         print_obj(2, iobj, print_obj(4, dobj, &aOntoTheGround), ?)
         print_obj(2, dobj, print_obj(2, iobj, print_obj(4, dobj, &aOntoTheGround), ?), ?)
         Font_WriteMessage(msg(8:0x4B), print_obj(2, dobj, print_obj(2, iobj, print_obj(4, dobj, &aOntoTheGround), ?), ?), ?)
         -> 1
-      if obj_85216!=0x98:
+      if current_room!=0x98:
         print_obj(4, dobj, msg(8:0x4C))
         print_obj(2, iobj, print_obj(4, dobj, msg(8:0x4C)), ?)
         print_obj(2, dobj, print_obj(2, iobj, print_obj(4, dobj, msg(8:0x4C)), ?), ?)
@@ -3078,18 +4767,18 @@ objh_029   # objects: 31 censer smoke, 32 censer smoke
         Font_WriteMessage(msg(8:0x3E), &aTwoCensers)
         -> 1
     if cmd==DO_USE:
-      if obj_85216!=0x8C:
-        if obj_85216!=0x80:
-          if obj_85216==0x97:
+      if current_room!=0x8C:
+        if current_room!=0x80:
+          if current_room==0x97:
             run_command?(cmd, 0x95, iobj)
             -> run_command?(cmd, 0x95, iobj)
-          if obj_85216!=0x97:
+          if current_room!=0x97:
             run_command?(cmd, 0x96, iobj)
             -> run_command?(cmd, 0x96, iobj)
-        if obj_85216==0x80:
+        if current_room==0x80:
           Font_WriteMessage(msg(8:0x43))
           -> 1
-      if obj_85216==0x8C:
+      if current_room==0x8C:
         Font_WriteMessage(msg(8:0x43))
         -> 1
   if phase:other:
@@ -3098,73 +4787,73 @@ objh_029   # objects: 31 censer smoke, 32 censer smoke
     if cmd:other:
       -> 0
     if cmd==PUT:
-      if obj_85216==0x94:
+      if current_room==0x94:
         if iobj!=0x1F:
-          if obj_85216!=0x97:
+          if current_room!=0x97:
             print_obj(0x22, iobj)
             print_obj(2, dobj, print_obj(0x22, iobj), ?)
             Font_WriteMessage(msg(8:0x44), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
             -> 1
-          if obj_85216==0x97:
-            if obj_85216==0x97:
+          if current_room==0x97:
+            if current_room==0x97:
               run_command?(0xD, 0x95, dobj)
               -> run_command?(0xD, 0x95, dobj)
-            if obj_85216!=0x97:
+            if current_room!=0x97:
               run_command?(0xD, 0x96, dobj)
               -> run_command?(0xD, 0x96, dobj)
         if iobj==0x1F:
-          if obj_85216==0x97:
+          if current_room==0x97:
             run_command?(0xD, 0x95, dobj)
             -> run_command?(0xD, 0x95, dobj)
-          if obj_85216!=0x97:
+          if current_room!=0x97:
             run_command?(0xD, 0x96, dobj)
             -> run_command?(0xD, 0x96, dobj)
-      if obj_85216!=0x94:
-        if obj_85216!=0x97:
+      if current_room!=0x94:
+        if current_room!=0x97:
           print_obj(0x22, iobj)
           print_obj(2, dobj, print_obj(0x22, iobj), ?)
           Font_WriteMessage(msg(8:0x44), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
           -> 1
-        if obj_85216==0x97:
-          if obj_85216==0x97:
+        if current_room==0x97:
+          if current_room==0x97:
             run_command?(0xD, 0x95, dobj)
             -> run_command?(0xD, 0x95, dobj)
-          if obj_85216!=0x97:
+          if current_room!=0x97:
             run_command?(0xD, 0x96, dobj)
             -> run_command?(0xD, 0x96, dobj)
     if cmd==POUR:
-      if obj_85216==0x94:
+      if current_room==0x94:
         if iobj!=0x1F:
-          if obj_85216!=0x97:
+          if current_room!=0x97:
             print_obj(0x22, iobj)
             print_obj(2, dobj, print_obj(0x22, iobj), ?)
             Font_WriteMessage(msg(8:0x44), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
             -> 1
-          if obj_85216==0x97:
-            if obj_85216==0x97:
+          if current_room==0x97:
+            if current_room==0x97:
               run_command?(0xD, 0x95, dobj)
               -> run_command?(0xD, 0x95, dobj)
-            if obj_85216!=0x97:
+            if current_room!=0x97:
               run_command?(0xD, 0x96, dobj)
               -> run_command?(0xD, 0x96, dobj)
         if iobj==0x1F:
-          if obj_85216==0x97:
+          if current_room==0x97:
             run_command?(0xD, 0x95, dobj)
             -> run_command?(0xD, 0x95, dobj)
-          if obj_85216!=0x97:
+          if current_room!=0x97:
             run_command?(0xD, 0x96, dobj)
             -> run_command?(0xD, 0x96, dobj)
-      if obj_85216!=0x94:
-        if obj_85216!=0x97:
+      if current_room!=0x94:
+        if current_room!=0x97:
           print_obj(0x22, iobj)
           print_obj(2, dobj, print_obj(0x22, iobj), ?)
           Font_WriteMessage(msg(8:0x44), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
           -> 1
-        if obj_85216==0x97:
-          if obj_85216==0x97:
+        if current_room==0x97:
+          if current_room==0x97:
             run_command?(0xD, 0x95, dobj)
             -> run_command?(0xD, 0x95, dobj)
-          if obj_85216!=0x97:
+          if current_room!=0x97:
             run_command?(0xD, 0x96, dobj)
             -> run_command?(0xD, 0x96, dobj)
 
@@ -6824,8 +8513,8 @@ objh_080   # objects: 84 3D glasses
         if byte_8524E!=0:
           Font_WriteMessage(msg(21:0x2C), msg(21:0x2D))
           object_move?(dobj, 1, 1)
-          if object_has_attr?(obj_85216, 0x13)==0:
-            Screen_picPalette = object_has_attr?(obj_85216, 0x13)
+          if object_has_attr?(current_room, 0x13)==0:
+            Screen_picPalette = object_has_attr?(current_room, 0x13)
             if object_has_attr?(dobj, 0xA)==0:
               object_set_attr?(dobj, 0xA)
               Font_WriteMessage(msg(21:0x2E))
@@ -6834,14 +8523,14 @@ objh_080   # objects: 84 3D glasses
             if object_has_attr?(dobj, 0xA)!=0:
               object_set_default_verb?(dobj, 0x3B)
               -> 1
-          if object_has_attr?(obj_85216, 0x13)!=0:
+          if object_has_attr?(current_room, 0x13)!=0:
             object_set_default_verb?(dobj, 0x3B)
             -> 1
         if byte_8524E==0:
           Font_WriteMessage(msg(21:0x2C), &aGreenAndRed)
           object_move?(dobj, 1, 1)
-          if object_has_attr?(obj_85216, 0x13)==0:
-            Screen_picPalette = object_has_attr?(obj_85216, 0x13)
+          if object_has_attr?(current_room, 0x13)==0:
+            Screen_picPalette = object_has_attr?(current_room, 0x13)
             if object_has_attr?(dobj, 0xA)==0:
               object_set_attr?(dobj, 0xA)
               Font_WriteMessage(msg(21:0x2E))
@@ -6850,7 +8539,7 @@ objh_080   # objects: 84 3D glasses
             if object_has_attr?(dobj, 0xA)!=0:
               object_set_default_verb?(dobj, 0x3B)
               -> 1
-          if object_has_attr?(obj_85216, 0x13)!=0:
+          if object_has_attr?(current_room, 0x13)!=0:
             object_set_default_verb?(dobj, 0x3B)
             -> 1
     if cmd:other:
@@ -6874,21 +8563,21 @@ objh_080   # objects: 84 3D glasses
         if byte_8524E!=0:
           Font_WriteMessage(msg(21:0x30), msg(21:0x31))
           object_move?(dobj, 1, 0)
-          if object_has_attr?(obj_85216, 0x13)==0:
-            Screen_picPalette = object_has_attr?(obj_85216, 0x13)
+          if object_has_attr?(current_room, 0x13)==0:
+            Screen_picPalette = object_has_attr?(current_room, 0x13)
             object_set_default_verb?(dobj, 0x53)
             -> 1
-          if object_has_attr?(obj_85216, 0x13)!=0:
+          if object_has_attr?(current_room, 0x13)!=0:
             object_set_default_verb?(dobj, 0x53)
             -> 1
         if byte_8524E==0:
           Font_WriteMessage(msg(21:0x30), msg(21:0x32))
           object_move?(dobj, 1, 0)
-          if object_has_attr?(obj_85216, 0x13)==0:
-            Screen_picPalette = object_has_attr?(obj_85216, 0x13)
+          if object_has_attr?(current_room, 0x13)==0:
+            Screen_picPalette = object_has_attr?(current_room, 0x13)
             object_set_default_verb?(dobj, 0x53)
             -> 1
-          if object_has_attr?(obj_85216, 0x13)!=0:
+          if object_has_attr?(current_room, 0x13)!=0:
             object_set_default_verb?(dobj, 0x53)
             -> 1
     if cmd==LOOK_AT:
@@ -8574,13 +10263,13 @@ objh_114   # objects: 120 firefly
       run_command?(cmd, 0x77, 0)
       -> run_command?(cmd, 0x77, 0)
     if cmd==KILL:
-      if object_has_attr?(obj_85216, 0x15)!=0:
+      if object_has_attr?(current_room, 0x15)!=0:
         print_obj(2, dobj, &aGround)
         Font_WriteMessage(msg(48:0x34), print_obj(2, dobj, &aGround), ?)
         object_move?(dobj, 0, 0)
         object_set_prop_a?(0x75, 0x116)
         -> 1
-      if object_has_attr?(obj_85216, 0x15)==0:
+      if object_has_attr?(current_room, 0x15)==0:
         print_obj(2, dobj, &aFloor)
         Font_WriteMessage(msg(48:0x34), print_obj(2, dobj, &aFloor), ?)
         object_move?(dobj, 0, 0)
@@ -9166,30 +10855,30 @@ objh_127   # objects: 133 censor-ship
     if cmd:other:
       -> 0
     if cmd==THROW:
-      if obj_85216!=0x80:
-        if (obj_85216 - 0x80)!=0xC:
+      if current_room!=0x80:
+        if (current_room - 0x80)!=0xC:
           print_obj(2, dobj)
           Font_WriteMessage(msg(14:0x22), print_obj(2, dobj), ?)
           -> 1
-        if (obj_85216 - 0x80)==0xC:
+        if (current_room - 0x80)==0xC:
           print_obj(2, dobj)
           Font_WriteMessage(msg(14:0x21), print_obj(2, dobj), ?)
           -> 1
-      if obj_85216==0x80:
+      if current_room==0x80:
         print_obj(2, dobj)
         Font_WriteMessage(msg(14:0x21), print_obj(2, dobj), ?)
         -> 1
     if cmd==PUT:
-      if obj_85216!=0x80:
-        if (obj_85216 - 0x80)!=0xC:
+      if current_room!=0x80:
+        if (current_room - 0x80)!=0xC:
           print_obj(2, dobj)
           Font_WriteMessage(msg(14:0x22), print_obj(2, dobj), ?)
           -> 1
-        if (obj_85216 - 0x80)==0xC:
+        if (current_room - 0x80)==0xC:
           print_obj(2, dobj)
           Font_WriteMessage(msg(14:0x21), print_obj(2, dobj), ?)
           -> 1
-      if obj_85216==0x80:
+      if current_room==0x80:
         print_obj(2, dobj)
         Font_WriteMessage(msg(14:0x21), print_obj(2, dobj), ?)
         -> 1
@@ -9963,11 +11652,11 @@ objh_129   # objects: 136 lamp cover, 137 lamp cover
           if object_parent_is?(dobj, 1)!=0:
             if iobj==0x6E:
               if iobj==0x17:
-                if obj_85216==0x80:
+                if current_room==0x80:
                   print_obj(2, iobj)
                   Font_WriteMessage(msg(12:0x2A), print_obj(2, iobj), ?)
                   -> 1
-                if obj_85216!=0x80:
+                if current_room!=0x80:
                   print_obj(2, iobj)
                   Font_WriteMessage(msg(12:0x2B), print_obj(2, iobj), ?)
                   object_set_prop_a?(dobj, 0x14A)
@@ -9980,11 +11669,11 @@ objh_129   # objects: 136 lamp cover, 137 lamp cover
             if iobj!=0x6E:
               if iobj==0x6F:
                 if iobj==0x17:
-                  if obj_85216==0x80:
+                  if current_room==0x80:
                     print_obj(2, iobj)
                     Font_WriteMessage(msg(12:0x2A), print_obj(2, iobj), ?)
                     -> 1
-                  if obj_85216!=0x80:
+                  if current_room!=0x80:
                     print_obj(2, iobj)
                     Font_WriteMessage(msg(12:0x2B), print_obj(2, iobj), ?)
                     object_set_prop_a?(dobj, 0x14A)
@@ -9997,11 +11686,11 @@ objh_129   # objects: 136 lamp cover, 137 lamp cover
               if iobj!=0x6F:
                 if iobj==0x7F:
                   if iobj==0x17:
-                    if obj_85216==0x80:
+                    if current_room==0x80:
                       print_obj(2, iobj)
                       Font_WriteMessage(msg(12:0x2A), print_obj(2, iobj), ?)
                       -> 1
-                    if obj_85216!=0x80:
+                    if current_room!=0x80:
                       print_obj(2, iobj)
                       Font_WriteMessage(msg(12:0x2B), print_obj(2, iobj), ?)
                       object_set_prop_a?(dobj, 0x14A)
@@ -10014,11 +11703,11 @@ objh_129   # objects: 136 lamp cover, 137 lamp cover
                 if iobj!=0x7F:
                   if iobj==0x17:
                     if iobj==0x17:
-                      if obj_85216==0x80:
+                      if current_room==0x80:
                         print_obj(2, iobj)
                         Font_WriteMessage(msg(12:0x2A), print_obj(2, iobj), ?)
                         -> 1
-                      if obj_85216!=0x80:
+                      if current_room!=0x80:
                         print_obj(2, iobj)
                         Font_WriteMessage(msg(12:0x2B), print_obj(2, iobj), ?)
                         object_set_prop_a?(dobj, 0x14A)
@@ -10166,8 +11855,8 @@ objh_129   # objects: 136 lamp cover, 137 lamp cover
           if object_get_prop_a?(dobj)!=0x122:
             if (object_get_prop_a?(dobj) - 0x122)!=0x24:
               if ((object_get_prop_a?(dobj) - 0x122) - 0x24)==1:
-                if obj_85216!=0x94:
-                  if obj_85216!=0x97:
+                if current_room!=0x94:
+                  if current_room!=0x97:
                     if object_has_attr?(iobj, 0x11)==0:
                       if object_has_attr?(iobj, 1)==0:
                         print_obj(2, iobj)
@@ -10181,18 +11870,18 @@ objh_129   # objects: 136 lamp cover, 137 lamp cover
                       print_obj(2, iobj)
                       Font_WriteMessage(msg(12:0x1B), [bp+var_A], print_obj(2, iobj), ?)
                       -> 1
-                  if obj_85216==0x97:
-                    if obj_85216==0x97:
+                  if current_room==0x97:
+                    if current_room==0x97:
                       run_command?(0xD, 0x95, dobj)
                       -> run_command?(0xD, 0x95, dobj)
-                    if obj_85216!=0x97:
+                    if current_room!=0x97:
                       run_command?(0xD, 0x96, dobj)
                       -> run_command?(0xD, 0x96, dobj)
-                if obj_85216==0x94:
-                  if obj_85216==0x97:
+                if current_room==0x94:
+                  if current_room==0x97:
                     run_command?(0xD, 0x95, dobj)
                     -> run_command?(0xD, 0x95, dobj)
-                  if obj_85216!=0x97:
+                  if current_room!=0x97:
                     run_command?(0xD, 0x96, dobj)
                     -> run_command?(0xD, 0x96, dobj)
               if ((object_get_prop_a?(dobj) - 0x122) - 0x24)!=1:
@@ -10405,24 +12094,24 @@ objh_130   # objects: 138 rock
             if byte_852B2==0:
               Font_WriteMessage(msg(12:0x52))
               byte_8774C = 1
-              if obj_85216==0x9A:
+              if current_room==0x9A:
                 object_move?(iobj, 0x9C, 0)
                 byte_8774A = 1
                 -> 1
-              if obj_85216!=0x9A:
-                if obj_85216!=0x9C:
+              if current_room!=0x9A:
+                if current_room!=0x9C:
                   -> 1
-                if obj_85216==0x9C:
+                if current_room==0x9C:
                   object_move?(iobj, 0x9A, 0)
                   byte_8774B = 1
                   -> 1
             if byte_852B2!=0:
               if iobj==0x1D:
-                if obj_85216==0x98:
+                if current_room==0x98:
                   Font_WriteMessage(msg(12:0x53))
                   object_move?(dobj, 0x9A, 0)
                   -> 1
-                if obj_85216!=0x98:
+                if current_room!=0x98:
                   if iobj!=0x1C:
                     if iobj!=0x1A:
                       if iobj!=0x1B:
@@ -10462,11 +12151,11 @@ objh_130   # objects: 138 rock
                   -> 1
           if iobj!=0x9B:
             if iobj==0x1D:
-              if obj_85216==0x98:
+              if current_room==0x98:
                 Font_WriteMessage(msg(12:0x53))
                 object_move?(dobj, 0x9A, 0)
                 -> 1
-              if obj_85216!=0x98:
+              if current_room!=0x98:
                 if iobj!=0x1C:
                   if iobj!=0x1A:
                     if iobj!=0x1B:
@@ -10524,12 +12213,12 @@ objh_130   # objects: 138 rock
             object_move?(dobj, 1, 0)
             -> 1
           if object_parent_is?(dobj, 0x99)==0:
-            if obj_85216==0x80:
+            if current_room==0x80:
               print_obj(2, dobj, msg(12:0x4B))
               Font_WriteMessage(msg(12:0x4A), print_obj(2, dobj, msg(12:0x4B)), ?)
               object_move?(dobj, 1, 0)
               -> 1
-            if obj_85216!=0x80:
+            if current_room!=0x80:
               print_obj(2, dobj, &aAgain_0)
               Font_WriteMessage(msg(12:0x4A), print_obj(2, dobj, &aAgain_0), ?)
               object_move?(dobj, 1, 0)
@@ -10572,13 +12261,13 @@ objh_131   # objects: 139 sword
     -> 0
   if phase==6:
     if cmd==THROW:
-      if obj_85216!=0x1F0:
+      if current_room!=0x1F0:
         print_obj(0x22, iobj)
         print_obj(2, dobj, print_obj(0x22, iobj), ?)
         print_obj(0x11, word_85250, print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
         Font_WriteMessage(msg(12:0x5D), print_obj(0x11, word_85250, print_obj(2, dobj, print_obj(0x22, iobj), ?), ?), ?)
         -> 1
-      if obj_85216==0x1F0:
+      if current_room==0x1F0:
         if iobj!=0x1F2:
           if iobj!=0x1F1:
             print_obj(0x22, iobj)
@@ -10811,10 +12500,10 @@ objh_133   # objects: 141 pier
       Font_WriteMessage(msg(13:0xC))
       -> 1
     if cmd==JUMP:
-      if obj_85216==0x8C:
+      if current_room==0x8C:
         Font_WriteMessage(msg(13:0xE))
         -> 1
-      if obj_85216!=0x8C:
+      if current_room!=0x8C:
         Font_WriteMessage(msg(13:0xF))
         -> 1
     if cmd==TALK_TO:
@@ -10951,10 +12640,10 @@ objh_136   # objects: 144 grappling hook
       -> 1
     if cmd==TAKE:
       if object_parent_is?(dobj, 0x105)!=0:
-        if obj_85216==0x105:
+        if current_room==0x105:
           Font_WriteMessage(msg(13:0x3A))
           -> 1
-        if obj_85216!=0x105:
+        if current_room!=0x105:
           print_obj(2, dobj)
           Font_WriteMessage(msg(13:0x3B), print_obj(2, dobj), ?)
           -> 1
@@ -11241,18 +12930,18 @@ objh_141   # objects: 149 censer
     if cmd:other:
       -> 0
     if cmd==LOOK_AT:
-      if obj_85216!=0x8C:
-        if (obj_85216 - 0x8C)!=8:
-          if ((obj_85216 - 0x8C) - 8)!=3:
+      if current_room!=0x8C:
+        if (current_room - 0x8C)!=8:
+          if ((current_room - 0x8C) - 8)!=3:
             -> 1
-          if ((obj_85216 - 0x8C) - 8)==3:
+          if ((current_room - 0x8C) - 8)==3:
             if word_85266<2:
               Font_WriteMessage(msg(23:8))
               -> 1
             if word_85266>=2:
               Font_WriteMessage(msg(23:9))
               -> 1
-        if (obj_85216 - 0x8C)==8:
+        if (current_room - 0x8C)==8:
           if word_85266==0:
             Font_WriteMessage(msg(23:5))
             -> 1
@@ -11263,7 +12952,7 @@ objh_141   # objects: 149 censer
             if word_85266>=2:
               Font_WriteMessage(msg(23:7))
               -> 1
-      if obj_85216==0x8C:
+      if current_room==0x8C:
         if word_85266<2:
           Font_WriteMessage(msg(23:3))
           -> 1
@@ -11271,11 +12960,11 @@ objh_141   # objects: 149 censer
           Font_WriteMessage(msg(23:4))
           -> 1
     if cmd==DO_USE:
-      if obj_85216!=0x8C:
-        if (obj_85216 - 0x8C)!=8:
-          if ((obj_85216 - 0x8C) - 8)!=3:
+      if current_room!=0x8C:
+        if (current_room - 0x8C)!=8:
+          if ((current_room - 0x8C) - 8)!=3:
             -> 1
-          if ((obj_85216 - 0x8C) - 8)==3:
+          if ((current_room - 0x8C) - 8)==3:
             if object_has_attr?(dobj, 0xA)!=0:
               Font_WriteMessage(msg(23:0x10))
               -> 1
@@ -11361,10 +13050,10 @@ objh_141   # objects: 149 censer
                         schedule_event?(0x11, 1)
                         byte_852B3 = 1
                         -> 1
-        if (obj_85216 - 0x8C)==8:
+        if (current_room - 0x8C)==8:
           Font_WriteMessage(msg(23:0xF))
           -> 1
-      if obj_85216==0x8C:
+      if current_room==0x8C:
         Font_WriteMessage(msg(23:0xF))
         -> 1
     if cmd==CLOSE:
@@ -11407,17 +13096,17 @@ objh_142   # objects: 150 censer
     if cmd:other:
       -> 0
     if cmd==LOOK_AT:
-      if obj_85216!=0x8C:
-        if (obj_85216 - 0x8C)!=8:
+      if current_room!=0x8C:
+        if (current_room - 0x8C)!=8:
           -> 1
-        if (obj_85216 - 0x8C)==8:
+        if (current_room - 0x8C)==8:
           if word_85266==0:
             Font_WriteMessage(msg(14:7))
             -> 1
           if word_85266!=0:
             Font_WriteMessage(msg(14:8))
             -> 1
-      if obj_85216==0x8C:
+      if current_room==0x8C:
         if word_85266==0:
           Font_WriteMessage(msg(14:5))
           -> 1
@@ -11425,10 +13114,10 @@ objh_142   # objects: 150 censer
           Font_WriteMessage(msg(14:6))
           -> 1
     if cmd==DO_USE:
-      if obj_85216!=0x8C:
-        if (obj_85216 - 0x8C)!=8:
+      if current_room!=0x8C:
+        if (current_room - 0x8C)!=8:
           -> 1
-        if (obj_85216 - 0x8C)==8:
+        if (current_room - 0x8C)==8:
           if object_has_attr?(dobj, 0xA)!=0:
             Font_WriteMessage(msg(14:0xA))
             -> 1
@@ -11580,7 +13269,7 @@ objh_142   # objects: 150 censer
                           -> 1
                         if object_has_attr?(iobj, 0xA)==0:
                           -> 1
-      if obj_85216==0x8C:
+      if current_room==0x8C:
         Font_WriteMessage(msg(14:9))
         -> 1
   if phase==4:
@@ -11773,14 +13462,14 @@ objh_147   # objects: 155 pail
     if cmd==KICK:
       if byte_852B2==0:
         Font_WriteMessage(msg(15:0x28))
-        if obj_85216==0x9A:
+        if current_room==0x9A:
           object_move?(dobj, 0x9C, 0)
           byte_8774A = 1
           -> 1
-        if obj_85216!=0x9A:
-          if obj_85216!=0x9C:
+        if current_room!=0x9A:
+          if current_room!=0x9C:
             -> 1
-          if obj_85216==0x9C:
+          if current_room==0x9C:
             object_move?(dobj, 0x9A, 0)
             byte_8774B = 1
             -> 1
@@ -12586,7 +14275,7 @@ objh_150   # objects: 158 door
         Font_WriteMessage(msg(17:0x20), print_obj(0x12, dobj), ?)
         -> 1
       if object_has_attr?(dobj, 0xE)!=0:
-        if obj_85216!=0x9D:
+        if current_room!=0x9D:
           byte_85743 = 1
           go_to_room?(0x9D)
           Font_WriteMessage(msg(17:0x21))
@@ -12595,7 +14284,7 @@ objh_150   # objects: 158 door
           object_clear_attr?(dobj, 0xE)
           object_set_default_verb?(dobj, 0x2C)
           -> 1
-        if obj_85216==0x9D:
+        if current_room==0x9D:
           wputchar?(0x59)
           print_obj(2, dobj)
           Font_WriteMessage(msg(17:0x22), print_obj(2, dobj), ?)
@@ -13065,13 +14754,13 @@ objh_159   # objects: 167 eye scream
         Font_WriteMessage(msg(16:0x4F), print_obj(1, dobj), ?)
         -> 1
       if object_parent_is?(dobj, 1)!=0:
-        if obj_85216==0x9D:
+        if current_room==0x9D:
           print_obj(0x22, iobj)
           print_obj(1, dobj, print_obj(0x22, iobj), ?)
           Font_WriteMessage(msg(16:0x50), print_obj(1, dobj, print_obj(0x22, iobj), ?), ?)
           object_move?(dobj, 0x9D, 0)
           -> 1
-        if obj_85216!=0x9D:
+        if current_room!=0x9D:
           print_obj(1, dobj)
           Font_WriteMessage(msg(16:0x51), print_obj(1, dobj), ?)
           cancel_event(0xE)
@@ -13129,7 +14818,7 @@ objh_159   # objects: 167 eye scream
         if iobj==0xA2:
           print_obj(1, dobj)
           Font_WriteMessage(msg(16:0x4B), print_obj(1, dobj), ?)
-          object_move?(dobj, obj_85216, 0)
+          object_move?(dobj, current_room, 0)
           cancel_event(0xE)
           -> 1
     if cmd==TAKE:
@@ -14014,10 +15703,10 @@ objh_194   # objects: 202 barrow door
         Font_WriteMessage(msg(28:5))
         -> 1
       if object_has_attr?(dobj, 0xE)==0:
-        if obj_85216!=0xC9:
+        if current_room!=0xC9:
           Font_WriteMessage(msg(28:6))
           -> 1
-        if obj_85216==0xC9:
+        if current_room==0xC9:
           if byte_852EA!=0:
             Font_WriteMessage(msg(28:7))
             realsound_play(&aCreak_rs)
@@ -14033,11 +15722,11 @@ objh_194   # objects: 202 barrow door
             Font_WriteMessage(msg(28:8))
             -> 1
     if cmd==KNOCK:
-      if obj_85216!=0xC9:
+      if current_room!=0xC9:
         print_obj(2, dobj)
         Font_WriteMessage(msg(28:0xD), print_obj(2, dobj), ?)
         -> 1
-      if obj_85216==0xC9:
+      if current_room==0xC9:
         if object_has_attr?(dobj, 0xE)!=0:
           Font_WriteMessage(msg(28:0xE))
           -> 1
@@ -14056,10 +15745,10 @@ objh_194   # objects: 202 barrow door
         Font_WriteMessage(msg(28:9))
         -> 1
       if object_has_attr?(dobj, 0xE)!=0:
-        if obj_85216!=0xC9:
+        if current_room!=0xC9:
           Font_WriteMessage(msg(28:0xA))
           -> 1
-        if obj_85216==0xC9:
+        if current_room==0xC9:
           Font_WriteMessage(msg(28:0xB))
           object_clear_attr?(dobj, 0xE)
           object_set_default_verb?(dobj, 0x2C)
@@ -14069,10 +15758,10 @@ objh_194   # objects: 202 barrow door
         Font_WriteMessage(msg(28:5))
         -> 1
       if object_has_attr?(dobj, 0xE)==0:
-        if obj_85216!=0xC9:
+        if current_room!=0xC9:
           Font_WriteMessage(msg(28:6))
           -> 1
-        if obj_85216==0xC9:
+        if current_room==0xC9:
           if byte_852EA!=0:
             Font_WriteMessage(msg(28:7))
             realsound_play(&aCreak_rs)
@@ -14088,10 +15777,10 @@ objh_194   # objects: 202 barrow door
             Font_WriteMessage(msg(28:8))
             -> 1
     if cmd==TAKE:
-      if obj_85216==0xC9:
+      if current_room==0xC9:
         Font_WriteMessage(msg(28:4), &aIs_1)
         -> 1
-      if obj_85216!=0xC9:
+      if current_room!=0xC9:
         Font_WriteMessage(msg(28:4), &aAt_0)
         -> 1
     if cmd==PUSH:
@@ -14099,10 +15788,10 @@ objh_194   # objects: 202 barrow door
         Font_WriteMessage(msg(28:9))
         -> 1
       if object_has_attr?(dobj, 0xE)!=0:
-        if obj_85216!=0xC9:
+        if current_room!=0xC9:
           Font_WriteMessage(msg(28:0xA))
           -> 1
-        if obj_85216==0xC9:
+        if current_room==0xC9:
           Font_WriteMessage(msg(28:0xB))
           object_clear_attr?(dobj, 0xE)
           object_set_default_verb?(dobj, 0x2C)
@@ -14229,13 +15918,13 @@ objh_198   # objects: 206 jar
             object_set_default_verb?(dobj, 8)
             print_obj(2, dobj)
             Font_WriteMessage(&aYouOpenSAnd, print_obj(2, dobj), ?)
-            if object_has_attr?(obj_85216, 0x15)!=0:
+            if object_has_attr?(current_room, 0x15)!=0:
               print_obj(2, 0xEE, &aGround_1)
               Font_WriteMessage(msg(11:0x28), print_obj(2, 0xEE, &aGround_1), ?)
               object_move?(0xEE, 0xED, 0)
               object_set_prop_a?(0xCE, 0x163)
               -> 1
-            if object_has_attr?(obj_85216, 0x15)==0:
+            if object_has_attr?(current_room, 0x15)==0:
               print_obj(2, 0xEE, &aFloor_1)
               Font_WriteMessage(msg(11:0x28), print_obj(2, 0xEE, &aFloor_1), ?)
               object_move?(0xEE, 0xED, 0)
@@ -14243,13 +15932,13 @@ objh_198   # objects: 206 jar
               -> 1
           if object_has_attr?(dobj, 0xE)!=0:
             Font_WriteMessage(&aYou_3)
-            if object_has_attr?(obj_85216, 0x15)!=0:
+            if object_has_attr?(current_room, 0x15)!=0:
               print_obj(2, 0xEE, &aGround_1)
               Font_WriteMessage(msg(11:0x28), print_obj(2, 0xEE, &aGround_1), ?)
               object_move?(0xEE, 0xED, 0)
               object_set_prop_a?(0xCE, 0x163)
               -> 1
-            if object_has_attr?(obj_85216, 0x15)==0:
+            if object_has_attr?(current_room, 0x15)==0:
               print_obj(2, 0xEE, &aFloor_1)
               Font_WriteMessage(msg(11:0x28), print_obj(2, 0xEE, &aFloor_1), ?)
               object_move?(0xEE, 0xED, 0)
@@ -14593,7 +16282,7 @@ objh_203   # objects: 213 mirror
         show_text_box(msg(11:0x48))
         byte_8531E = 1
         showCutscene(8)
-        if object_parent_is?(5, obj_85216)!=0:
+        if object_parent_is?(5, current_room)!=0:
           if word_85758==5:
             wait_ticks_or_click(0x7D0)
             show_compendium(0x190, 0x5A03)
@@ -14602,7 +16291,7 @@ objh_203   # objects: 213 mirror
           if word_85758!=5:
             add_score?(5, 0, 0)
             -> 1
-        if object_parent_is?(5, obj_85216)==0:
+        if object_parent_is?(5, current_room)==0:
           add_score?(5, 0, 0)
           -> 1
     if cmd==CLOSE:
@@ -14628,7 +16317,7 @@ objh_203   # objects: 213 mirror
         show_text_box(msg(11:0x48))
         byte_8531E = 1
         showCutscene(8)
-        if object_parent_is?(5, obj_85216)!=0:
+        if object_parent_is?(5, current_room)!=0:
           if word_85758==5:
             wait_ticks_or_click(0x7D0)
             show_compendium(0x190, 0x5A03)
@@ -14637,7 +16326,7 @@ objh_203   # objects: 213 mirror
           if word_85758!=5:
             add_score?(5, 0, 0)
             -> 1
-        if object_parent_is?(5, obj_85216)==0:
+        if object_parent_is?(5, current_room)==0:
           add_score?(5, 0, 0)
           -> 1
 
@@ -14664,10 +16353,10 @@ objh_204   # objects: 214 circular pad
         if object_has_attr?(dobj, 0x12)==0:
           object_set_attr?(dobj, 0x12)
           add_score?(5, 1, 0)
-          call_object_handler(obj_85216, 0x16)
+          call_object_handler(current_room, 0x16)
           -> 1
         if object_has_attr?(dobj, 0x12)!=0:
-          call_object_handler(obj_85216, 0x16)
+          call_object_handler(current_room, 0x16)
           -> 1
       if word_852AA!=7:
         word_852AA = 7
@@ -14676,10 +16365,10 @@ objh_204   # objects: 214 circular pad
         if object_has_attr?(dobj, 0x12)==0:
           object_set_attr?(dobj, 0x12)
           add_score?(5, 1, 0)
-          call_object_handler(obj_85216, 0x16)
+          call_object_handler(current_room, 0x16)
           -> 1
         if object_has_attr?(dobj, 0x12)!=0:
-          call_object_handler(obj_85216, 0x16)
+          call_object_handler(current_room, 0x16)
           -> 1
     if cmd==LOOK_AT:
       Font_WriteMessage(msg(11:0x42))
@@ -15677,7 +17366,7 @@ objh_210   # objects: 220 switch, 221 switch, 222 switch, 223 switch, 224 switch
           if word_852AE!=0x10:
             object_clear_attr?(es:[bx+5E4h], 0xA)
             object_clear_attr?(es:[bx+5E4h], 0x12)
-            object_move?(es:[bx+5E4h], obj_85216, 0)
+            object_move?(es:[bx+5E4h], current_room, 0)
             Font_WriteMessage(msg(51:0xB))
             Font_WriteMessage(msg(51:0xC))
             -> 1
@@ -16121,14 +17810,14 @@ objh_213   # objects: 238 agony moss
         byte_852DE = 1
         -> 1
     if cmd==TAKE:
-      if obj_85216!=0xED:
+      if current_room!=0xED:
         if object_parent_is?(dobj, 0xCE)==0:
           -> 1
         if object_parent_is?(dobj, 0xCE)!=0:
           print_obj(2, dobj)
           Font_WriteMessage(msg(31:0xB), print_obj(2, dobj), ?)
           -> 1
-      if obj_85216==0xED:
+      if current_room==0xED:
         if object_parent_is?(0xEE, 0xCE)!=0:
           if object_parent_is?(dobj, 0xCE)==0:
             -> 1
@@ -16334,8 +18023,8 @@ objh_217   # objects: 242 Nada finder
         -> 1
     if cmd==LOOK_AT:
       if object_has_attr?(dobj, 0xA)!=0:
-        if obj_85216!=0xCD:
-          if obj_85216==0xED:
+        if current_room!=0xCD:
+          if current_room==0xED:
             sub_1EF11(word_852AA, word_852AC)
             if object_has_attr?(dobj, 0xA, [bp+var_2])!=0:
               Font_WriteMessage(msg(51:0x33), &aN_5)
@@ -16343,14 +18032,14 @@ objh_217   # objects: 242 Nada finder
             if object_has_attr?(dobj, 0xA, [bp+var_2])==0:
               Font_WriteMessage(msg(51:0x33), &aFf_4)
               -> 1
-          if obj_85216!=0xED:
+          if current_room!=0xED:
             if object_has_attr?(dobj, 0xA, [bp+var_2])!=0:
               Font_WriteMessage(msg(51:0x33), &aN_5)
               -> 1
             if object_has_attr?(dobj, 0xA, [bp+var_2])==0:
               Font_WriteMessage(msg(51:0x33), &aFf_4)
               -> 1
-        if obj_85216==0xCD:
+        if current_room==0xCD:
           sub_1EF11(word_852AA, word_852AC)
           if object_has_attr?(dobj, 0xA, [bp+var_2])!=0:
             Font_WriteMessage(msg(51:0x33), &aN_5)
@@ -16384,8 +18073,8 @@ objh_217   # objects: 242 Nada finder
         -> 1
     if cmd==READ:
       if object_has_attr?(dobj, 0xA)!=0:
-        if obj_85216!=0xCD:
-          if obj_85216==0xED:
+        if current_room!=0xCD:
+          if current_room==0xED:
             sub_1EF11(word_852AA, word_852AC)
             if object_has_attr?(dobj, 0xA, [bp+var_2])!=0:
               Font_WriteMessage(msg(51:0x33), &aN_5)
@@ -16393,14 +18082,14 @@ objh_217   # objects: 242 Nada finder
             if object_has_attr?(dobj, 0xA, [bp+var_2])==0:
               Font_WriteMessage(msg(51:0x33), &aFf_4)
               -> 1
-          if obj_85216!=0xED:
+          if current_room!=0xED:
             if object_has_attr?(dobj, 0xA, [bp+var_2])!=0:
               Font_WriteMessage(msg(51:0x33), &aN_5)
               -> 1
             if object_has_attr?(dobj, 0xA, [bp+var_2])==0:
               Font_WriteMessage(msg(51:0x33), &aFf_4)
               -> 1
-        if obj_85216==0xCD:
+        if current_room==0xCD:
           sub_1EF11(word_852AA, word_852AC)
           if object_has_attr?(dobj, 0xA, [bp+var_2])!=0:
             Font_WriteMessage(msg(51:0x33), &aN_5)
@@ -16615,7 +18304,7 @@ objh_225   # objects: 250 bun
             Font_WriteMessage(msg(32:0x13))
             object_set_attr?(0xFA, 0xA)
             object_set_prop_a?(iobj, 0x152)
-            if obj_85216==0xFB:
+            if current_room==0xFB:
               popup_window_event?()
               Font_WriteMessage(msg(32:0x14))
               add_score?(0xF, 1, 1)
@@ -16635,7 +18324,7 @@ objh_225   # objects: 250 bun
                 object_move?(0xF, 0, 0)
                 byte_852E7 = 1
                 -> 1
-            if obj_85216!=0xFB:
+            if current_room!=0xFB:
               -> 1
     if cmd==PUT:
       if dobj!=0x4D:
@@ -16659,7 +18348,7 @@ objh_225   # objects: 250 bun
             Font_WriteMessage(msg(32:0x13))
             object_set_attr?(0xFA, 0xA)
             object_set_prop_a?(iobj, 0x152)
-            if obj_85216==0xFB:
+            if current_room==0xFB:
               popup_window_event?()
               Font_WriteMessage(msg(32:0x14))
               add_score?(0xF, 1, 1)
@@ -16679,7 +18368,7 @@ objh_225   # objects: 250 bun
                 object_move?(0xF, 0, 0)
                 byte_852E7 = 1
                 -> 1
-            if obj_85216!=0xFB:
+            if current_room!=0xFB:
               -> 1
 
 objh_226   # objects: 251 lava path
@@ -16697,10 +18386,10 @@ objh_227   # objects: 252 oven
     if cmd:other:
       -> 0
     if cmd==TAKE:
-      if obj_85216!=0xFB:
+      if current_room!=0xFB:
         Font_WriteMessage(msg(33:0x1A))
         -> 1
-      if obj_85216==0xFB:
+      if current_room==0xFB:
         print_obj(1, dobj)
         Font_WriteMessage(msg(33:0x1B), print_obj(1, dobj), ?)
         -> 1
@@ -16711,7 +18400,7 @@ objh_227   # objects: 252 oven
     if cmd==LOOK_AT:
       print_obj(0x12, dobj)
       Font_WriteMessage(msg(33:0x17), print_obj(0x12, dobj), ?)
-      if obj_85216==0xFB:
+      if current_room==0xFB:
         if object_parent_is?(0xD9, dobj)!=0:
           Font_WriteMessage(msg(33:0x18), msg(33:0x19))
           byte_852F0 = 1
@@ -16720,7 +18409,7 @@ objh_227   # objects: 252 oven
           Font_WriteMessage(msg(33:0x18), ?, ?)
           byte_852F0 = 1
           -> 1
-      if obj_85216!=0xFB:
+      if current_room!=0xFB:
         -> 1
     if cmd==CLOSE:
       print_obj(0x12, dobj)
@@ -16733,7 +18422,7 @@ objh_227   # objects: 252 oven
       -> 0
     if cmd==PUT:
       if dobj!=0xD9:
-        if obj_85216==0xFB:
+        if current_room==0xFB:
           if dobj==0xFE:
             run_command?(cmd, 0xD9, iobj)
             -> run_command?(cmd, 0xD9, iobj)
@@ -16742,14 +18431,14 @@ objh_227   # objects: 252 oven
             print_obj(2, dobj, print_obj(2, iobj), ?)
             Font_WriteMessage(msg(33:0x21), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
             -> 1
-        if obj_85216!=0xFB:
+        if current_room!=0xFB:
           print_obj(0x12, dobj)
           print_obj(0x12, iobj, print_obj(0x12, dobj), ?)
           Font_WriteMessage(msg(33:0x22), print_obj(0x12, iobj, print_obj(0x12, dobj), ?), ?)
           -> 1
       if dobj==0xD9:
-        if obj_85216!=0xFB:
-          if obj_85216==0xFB:
+        if current_room!=0xFB:
+          if current_room==0xFB:
             if dobj==0xFE:
               run_command?(cmd, 0xD9, iobj)
               -> run_command?(cmd, 0xD9, iobj)
@@ -16758,12 +18447,12 @@ objh_227   # objects: 252 oven
               print_obj(2, dobj, print_obj(2, iobj), ?)
               Font_WriteMessage(msg(33:0x21), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
               -> 1
-          if obj_85216!=0xFB:
+          if current_room!=0xFB:
             print_obj(0x12, dobj)
             print_obj(0x12, iobj, print_obj(0x12, dobj), ?)
             Font_WriteMessage(msg(33:0x22), print_obj(0x12, iobj, print_obj(0x12, dobj), ?), ?)
             -> 1
-        if obj_85216==0xFB:
+        if current_room==0xFB:
           if object_parent_is?(dobj, iobj)!=0:
             Font_WriteMessage(&aItAlreadyIs)
             -> 1
@@ -16918,9 +18607,9 @@ objh_230   # objects: 255 firecracker
         Font_WriteMessage(msg(33:0x40), print_obj(0x12, dobj), ?)
         -> 1
       if event_pending(0x1B)==0:
-        if obj_85216!=0xCD:
-          if obj_85216!=0xED:
-            if obj_85216==0x102:
+        if current_room!=0xCD:
+          if current_room!=0xED:
+            if current_room==0x102:
               if byte_852E9!=0:
                 print_obj(0x22, dobj)
                 Font_WriteMessage(msg(33:0x43), print_obj(0x22, dobj), ?)
@@ -16929,92 +18618,92 @@ objh_230   # objects: 255 firecracker
                 object_set_prop_a?(0xFF, 0x14F)
                 schedule_event?(0x1B, 1)
                 byte_852FF = 1
-                if obj_85216==0x102:
+                if current_room==0x102:
                   print_obj(0x22, 0x103)
                   print_obj(2, dobj, print_obj(0x22, 0x103), ?)
                   Font_WriteMessage(msg(33:0x41), print_obj(2, dobj, print_obj(0x22, 0x103), ?), ?)
                   add_score?(3, 1, 1)
                   wait_ticks_or_click(0x1388)
-                  if obj_85216!=0x102:
+                  if current_room!=0x102:
                     -> 1
-                  if obj_85216==0x102:
+                  if current_room==0x102:
                     Font_WriteMessage(msg(33:0x42))
                     object_move?(dobj, 0, 0)
                     add_score?(2, 1, 0)
                     -> 1
-                if obj_85216!=0x102:
+                if current_room!=0x102:
                   print_obj(0x22, 0xCF)
                   print_obj(2, dobj, print_obj(0x22, 0xCF), ?)
                   Font_WriteMessage(msg(33:0x41), print_obj(2, dobj, print_obj(0x22, 0xCF), ?), ?)
                   add_score?(3, 1, 1)
                   wait_ticks_or_click(0x1388)
-                  if obj_85216!=0x102:
+                  if current_room!=0x102:
                     -> 1
-                  if obj_85216==0x102:
+                  if current_room==0x102:
                     Font_WriteMessage(msg(33:0x42))
                     object_move?(dobj, 0, 0)
                     add_score?(2, 1, 0)
                     -> 1
-            if obj_85216!=0x102:
+            if current_room!=0x102:
               print_obj(0x22, dobj)
               Font_WriteMessage(msg(33:0x43), print_obj(0x22, dobj), ?)
               -> 1
-          if obj_85216==0xED:
+          if current_room==0xED:
             object_set_prop_a?(0xFF, 0x14F)
             schedule_event?(0x1B, 1)
             byte_852FF = 1
-            if obj_85216==0x102:
+            if current_room==0x102:
               print_obj(0x22, 0x103)
               print_obj(2, dobj, print_obj(0x22, 0x103), ?)
               Font_WriteMessage(msg(33:0x41), print_obj(2, dobj, print_obj(0x22, 0x103), ?), ?)
               add_score?(3, 1, 1)
               wait_ticks_or_click(0x1388)
-              if obj_85216!=0x102:
+              if current_room!=0x102:
                 -> 1
-              if obj_85216==0x102:
+              if current_room==0x102:
                 Font_WriteMessage(msg(33:0x42))
                 object_move?(dobj, 0, 0)
                 add_score?(2, 1, 0)
                 -> 1
-            if obj_85216!=0x102:
+            if current_room!=0x102:
               print_obj(0x22, 0xCF)
               print_obj(2, dobj, print_obj(0x22, 0xCF), ?)
               Font_WriteMessage(msg(33:0x41), print_obj(2, dobj, print_obj(0x22, 0xCF), ?), ?)
               add_score?(3, 1, 1)
               wait_ticks_or_click(0x1388)
-              if obj_85216!=0x102:
+              if current_room!=0x102:
                 -> 1
-              if obj_85216==0x102:
+              if current_room==0x102:
                 Font_WriteMessage(msg(33:0x42))
                 object_move?(dobj, 0, 0)
                 add_score?(2, 1, 0)
                 -> 1
-        if obj_85216==0xCD:
+        if current_room==0xCD:
           object_set_prop_a?(0xFF, 0x14F)
           schedule_event?(0x1B, 1)
           byte_852FF = 1
-          if obj_85216==0x102:
+          if current_room==0x102:
             print_obj(0x22, 0x103)
             print_obj(2, dobj, print_obj(0x22, 0x103), ?)
             Font_WriteMessage(msg(33:0x41), print_obj(2, dobj, print_obj(0x22, 0x103), ?), ?)
             add_score?(3, 1, 1)
             wait_ticks_or_click(0x1388)
-            if obj_85216!=0x102:
+            if current_room!=0x102:
               -> 1
-            if obj_85216==0x102:
+            if current_room==0x102:
               Font_WriteMessage(msg(33:0x42))
               object_move?(dobj, 0, 0)
               add_score?(2, 1, 0)
               -> 1
-          if obj_85216!=0x102:
+          if current_room!=0x102:
             print_obj(0x22, 0xCF)
             print_obj(2, dobj, print_obj(0x22, 0xCF), ?)
             Font_WriteMessage(msg(33:0x41), print_obj(2, dobj, print_obj(0x22, 0xCF), ?), ?)
             add_score?(3, 1, 1)
             wait_ticks_or_click(0x1388)
-            if obj_85216!=0x102:
+            if current_room!=0x102:
               -> 1
-            if obj_85216==0x102:
+            if current_room==0x102:
               Font_WriteMessage(msg(33:0x42))
               object_move?(dobj, 0, 0)
               add_score?(2, 1, 0)
@@ -17482,16 +19171,16 @@ objh_244   # objects: 269 troll bridge
       -> 0
     if cmd==LOOK_AT:
       Font_WriteMessage(msg(36:0x1B))
-      if object_parent_is?(0x11, obj_85216)!=0:
+      if object_parent_is?(0x11, current_room)!=0:
         Font_WriteMessage(msg(36:0x1C))
         -> 1
-      if object_parent_is?(0x11, obj_85216)==0:
+      if object_parent_is?(0x11, current_room)==0:
         -> 1
     if cmd==CROSS:
-      if object_parent_is?(0x11, obj_85216)!=0:
+      if object_parent_is?(0x11, current_room)!=0:
         Font_WriteMessage(msg(36:0x1E))
         -> 1
-      if object_parent_is?(0x11, obj_85216)==0:
+      if object_parent_is?(0x11, current_room)==0:
         sub_1EB3A(1)
         -> 1
     if cmd==TALK_TO:
@@ -17501,11 +19190,11 @@ objh_244   # objects: 269 troll bridge
     if cmd:other:
       -> 0
     if cmd==PUT:
-      if object_parent_is?(0x11, obj_85216)!=0:
+      if object_parent_is?(0x11, current_room)!=0:
         print_obj(2, dobj, &aAndTheTroll)
         Font_WriteMessage(msg(36:0x1F), print_obj(2, dobj, &aAndTheTroll), ?)
         -> 1
-      if object_parent_is?(0x11, obj_85216)==0:
+      if object_parent_is?(0x11, current_room)==0:
         print_obj(2, dobj, ?, ?)
         Font_WriteMessage(msg(36:0x1F), print_obj(2, dobj, ?, ?), ?)
         -> 1
@@ -17598,20 +19287,20 @@ objh_248   # objects: 273 sign
       Font_WriteMessage(msg(36:0x2E))
       -> 1
     if cmd==TAKE:
-      if object_parent_is?(0x11, obj_85216)!=0:
+      if object_parent_is?(0x11, current_room)!=0:
         Font_WriteMessage(msg(36:0x2F))
         -> 1
-      if object_parent_is?(0x11, obj_85216)==0:
+      if object_parent_is?(0x11, current_room)==0:
         Font_WriteMessage(msg(36:0x30))
         -> 1
     if cmd==READ:
       Font_WriteMessage(msg(36:0x2D))
       -> 1
     if cmd==PUT:
-      if object_parent_is?(0x11, obj_85216)!=0:
+      if object_parent_is?(0x11, current_room)!=0:
         Font_WriteMessage(msg(36:0x2F))
         -> 1
-      if object_parent_is?(0x11, obj_85216)==0:
+      if object_parent_is?(0x11, current_room)==0:
         Font_WriteMessage(msg(36:0x30))
         -> 1
     if cmd==OPEN:
@@ -18545,10 +20234,10 @@ objh_267   # objects: 292 crowbar
               Font_WriteMessage(msg(71:0x17), print_obj(0x12, dobj, [bp+var_2], print_obj(2, iobj), ?), ?)
               -> 1
           if iobj==0x19B:
-            if obj_85216!=0x19A:
+            if current_room!=0x19A:
               Font_WriteMessage(msg(71:0x18))
               -> 1
-            if obj_85216==0x19A:
+            if current_room==0x19A:
               print_obj(2, iobj)
               print_obj(2, dobj, print_obj(2, iobj), ?)
               Font_WriteMessage(msg(71:0x19), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
@@ -20790,9 +22479,9 @@ objh_306   # objects: 337 shack
       Font_WriteMessage(msg(57:9))
       if object_has_attr?(0x155, 0xA)!=0:
         Font_WriteMessage(msg(57:0xA))
-        if object_parent_is?(0x157, obj_85216)==0:
+        if object_parent_is?(0x157, current_room)==0:
           -> 1
-        if object_parent_is?(0x157, obj_85216)!=0:
+        if object_parent_is?(0x157, current_room)!=0:
           Font_WriteMessage(msg(57:0xB))
           -> 1
       if object_has_attr?(0x155, 0xA)==0:
@@ -21231,10 +22920,10 @@ objh_315   # objects: 346 stove
       Font_WriteMessage(msg(58:9))
       -> 1
     if cmd==TALK_TO:
-      if object_is_within?(0x12, obj_85216)!=0:
+      if object_is_within?(0x12, current_room)!=0:
         Font_WriteMessage(msg(58:0xA))
         -> 1
-      if object_is_within?(0x12, obj_85216)==0:
+      if object_is_within?(0x12, current_room)==0:
         Font_WriteMessage(msg(58:0xB))
         -> 1
   if phase==4:
@@ -21521,27 +23210,27 @@ objh_322   # objects: 353 ogre hut
     if cmd:other:
       -> 0
     if cmd==OPEN:
-      if obj_85216==0x162:
+      if current_room==0x162:
         print_obj(2, dobj)
         Font_WriteMessage(msg(59:4), print_obj(2, dobj), ?)
         -> 1
-      if obj_85216!=0x162:
+      if current_room!=0x162:
         print_obj(0x12, 8)
         Font_WriteMessage(msg(59:5), print_obj(0x12, 8), ?)
         -> 1
     if cmd==LOOK_AT:
       Font_WriteMessage(msg(59:2))
-      if obj_85216==0x160:
+      if current_room==0x160:
         Font_WriteMessage(msg(59:3))
         -> 1
-      if obj_85216!=0x160:
+      if current_room!=0x160:
         -> 1
     if cmd==CLOSE:
-      if obj_85216==0x162:
+      if current_room==0x162:
         print_obj(2, dobj)
         Font_WriteMessage(msg(59:4), print_obj(2, dobj), ?)
         -> 1
-      if obj_85216!=0x162:
+      if current_room!=0x162:
         print_obj(0x12, 8)
         Font_WriteMessage(msg(59:5), print_obj(0x12, 8), ?)
         -> 1
@@ -21556,12 +23245,12 @@ objh_322   # objects: 353 ogre hut
         Font_WriteMessage(msg(59:7), print_obj(0x22, dobj), ?)
         -> 1
       if object_parent_is?(dobj, 1)!=0:
-        if obj_85216==0x160:
+        if current_room==0x160:
           print_obj(0x22, dobj)
           print_obj(0x12, 8, print_obj(0x22, dobj), ?)
           Font_WriteMessage(msg(59:8), print_obj(0x12, 8, print_obj(0x22, dobj), ?), ?)
           -> 1
-        if obj_85216!=0x160:
+        if current_room!=0x160:
           print_obj(2, iobj)
           print_obj(2, dobj, print_obj(2, iobj), ?)
           Font_WriteMessage(msg(59:9), print_obj(2, dobj, print_obj(2, iobj), ?), ?)
@@ -21805,13 +23494,13 @@ objh_329   # objects: 360 windbag
         Font_WriteMessage(msg(62:0x41), print_obj(2, dobj, ((object_has_attr?(iobj, 0x11, print_obj(0x22, iobj), ?) & 6) + 0x69)), ?)
         -> 1
     if cmd==OPEN:
-      if obj_85216!=0x169:
+      if current_room!=0x169:
         Font_WriteMessage(msg(62:0x42))
         wait_ticks_or_click(0x1388)
-        object_has_attr?(obj_85216, 0x15, 0x5A03)
-        show_compendium(((object_has_attr?(obj_85216, 0x15, 0x5A03) & 4) + 0x185))
+        object_has_attr?(current_room, 0x15, 0x5A03)
+        show_compendium(((object_has_attr?(current_room, 0x15, 0x5A03) & 4) + 0x185))
         -> 1
-      if obj_85216==0x169:
+      if current_room==0x169:
         Font_WriteMessage(msg(62:0x43))
         add_score?(0xD, 1, 1)
         MouseCursor_SetHourglass()
@@ -22007,10 +23696,10 @@ objh_333   # objects: 364 mooring
 objh_334   # objects: 365 sailboat
   if phase==6:
     if cmd==LAUNCH:
-      if obj_85216==0x170:
+      if current_room==0x170:
         sub_1EB3A(5)
         -> 1
-      if obj_85216!=0x170:
+      if current_room!=0x170:
         Font_WriteMessage(msg(62:0x2A))
         if object_parent_is?(0x157, dobj)==0:
           Font_WriteMessage(msg(62:0x2B))
@@ -22169,10 +23858,10 @@ objh_334   # objects: 365 sailboat
               Font_WriteMessage(msg(62:0x25), msg(62:0x27))
               -> 1
     if cmd==ENTER:
-      if obj_85216==0x170:
+      if current_room==0x170:
         Font_WriteMessage(msg(62:0x2E))
         -> 1
-      if obj_85216!=0x170:
+      if current_room!=0x170:
         if byte_85319==0:
           Font_WriteMessage(msg(62:0x2F))
           -> 1
@@ -22420,21 +24109,21 @@ objh_340   # objects: 371 stairs
       sub_1F006(dobj)
       -> 1
     if cmd==LOOK_AT:
-      if obj_85216==0x170:
+      if current_room==0x170:
         Font_WriteMessage(msg(63:0xC))
         -> 1
-      if obj_85216!=0x170:
+      if current_room!=0x170:
         Font_WriteMessage(msg(63:0xD))
         -> 1
     if cmd==CLOSE:
       sub_1F006(dobj)
       -> 1
     if cmd==CLIMB:
-      if obj_85216==0x170:
+      if current_room==0x170:
         print_obj(0x22, dobj)
         Font_WriteMessage(msg(63:0xF), print_obj(0x22, dobj), ?)
         -> 1
-      if obj_85216!=0x170:
+      if current_room!=0x170:
         sub_1EB3A(9)
         -> 1
     if cmd==TALK_TO:
@@ -22616,22 +24305,22 @@ objh_346   # objects: 382 Gap Chasm
       -> 1
     if cmd==LOOK_AT:
       Font_WriteMessage(msg(44:5))
-      if obj_85216!=0x178:
-        if ((obj_85216 - 0x178) - 1)!=1:
-          if ((((obj_85216 - 0x178) - 1) - 1) - 1)!=1:
-            if (((((obj_85216 - 0x178) - 1) - 1) - 1) - 1)!=3:
+      if current_room!=0x178:
+        if ((current_room - 0x178) - 1)!=1:
+          if ((((current_room - 0x178) - 1) - 1) - 1)!=1:
+            if (((((current_room - 0x178) - 1) - 1) - 1) - 1)!=3:
               Font_WriteMessage(&aS__4, [bp+var_4], [bp+var_2])
               -> 1
-            if (((((obj_85216 - 0x178) - 1) - 1) - 1) - 1)==3:
+            if (((((current_room - 0x178) - 1) - 1) - 1) - 1)==3:
               Font_WriteMessage(&aS__4, [bp+var_4], [bp+var_2])
               -> 1
-          if ((((obj_85216 - 0x178) - 1) - 1) - 1)==1:
+          if ((((current_room - 0x178) - 1) - 1) - 1)==1:
             Font_WriteMessage(&aS__4, [bp+var_4], [bp+var_2])
             -> 1
-        if ((obj_85216 - 0x178) - 1)==1:
+        if ((current_room - 0x178) - 1)==1:
           Font_WriteMessage(&aS__4, [bp+var_4], [bp+var_2])
           -> 1
-      if obj_85216==0x178:
+      if current_room==0x178:
         Font_WriteMessage(&aS__4, [bp+var_4], [bp+var_2])
         -> 1
     if cmd==TALK_TO:
@@ -22976,10 +24665,10 @@ objh_359   # objects: 395 moat
     if cmd:other:
       -> 0
     if cmd==DRINK:
-      if obj_85216!=0x18A:
+      if current_room!=0x18A:
         Font_WriteMessage(msg(30:7))
         -> 1
-      if obj_85216==0x18A:
+      if current_room==0x18A:
         Font_WriteMessage(msg(30:8), &aHand, msg(30:9))
         -> 1
         Font_WriteMessage(msg(30:8), &aFoot, msg(30:9))
@@ -22992,10 +24681,10 @@ objh_359   # objects: 395 moat
       sub_1F006(dobj)
       -> 1
     if cmd==SWIM_IN:
-      if obj_85216!=0x18A:
+      if current_room!=0x18A:
         Font_WriteMessage(msg(30:7))
         -> 1
-      if obj_85216==0x18A:
+      if current_room==0x18A:
         if cmd==DRINK:
           Font_WriteMessage(msg(30:8), &aHand, msg(30:9))
           -> 1
@@ -23011,18 +24700,18 @@ objh_359   # objects: 395 moat
     if cmd==LOOK_AT:
       print_obj(0x22, 0x185)
       Font_WriteMessage(msg(30:3), print_obj(0x22, 0x185), ?)
-      if obj_85216!=0x18A:
-        if obj_85216!=0x184:
+      if current_room!=0x18A:
+        if current_room!=0x184:
           Font_WriteMessage(msg(30:5))
           -> 1
-        if obj_85216==0x184:
+        if current_room==0x184:
           if object_has_attr?(0x18C, 0xE)!=0:
             Font_WriteMessage(msg(30:4), &aLowered_1)
             -> 1
           if object_has_attr?(0x18C, 0xE)==0:
             Font_WriteMessage(msg(30:4), &aRaised_1)
             -> 1
-      if obj_85216==0x18A:
+      if current_room==0x18A:
         if object_has_attr?(0x18C, 0xE)!=0:
           Font_WriteMessage(msg(30:4), &aLowered_1)
           -> 1
@@ -23058,10 +24747,10 @@ objh_360   # objects: 396 drawbridge
           Font_WriteMessage(msg(30:0x18), print_obj(2, dobj, print_obj(0x22, iobj), ?), ?)
           -> 1
         if iobj==0x15:
-          if obj_85216!=0x18A:
+          if current_room!=0x18A:
             Font_WriteMessage(msg(30:0x19))
             -> 1
-          if obj_85216==0x18A:
+          if current_room==0x18A:
             if word_8529C==3:
               Font_WriteMessage(msg(30:0x1A))
               -> 1
@@ -23089,10 +24778,10 @@ objh_360   # objects: 396 drawbridge
                   realsound_play(&aDisney2_rs_2)
                   -> 1
       if iobj==0x18B:
-        if obj_85216!=0x18A:
+        if current_room!=0x18A:
           Font_WriteMessage(msg(30:0x19))
           -> 1
-        if obj_85216==0x18A:
+        if current_room==0x18A:
           if word_8529C==3:
             Font_WriteMessage(msg(30:0x1A))
             -> 1
@@ -23212,10 +24901,10 @@ objh_362   # objects: 398 castle door
     -> 0
   if phase==6:
     if cmd==TALK_TO:
-      if obj_85216==0x18D:
+      if current_room==0x18D:
         Font_WriteMessage(msg(43:0x15), &aIs_2)
         -> 1
-      if obj_85216!=0x18D:
+      if current_room!=0x18D:
         Font_WriteMessage(msg(43:0x15), &aAt_1)
         -> 1
     if cmd:other:
@@ -23224,42 +24913,42 @@ objh_362   # objects: 398 castle door
       Font_WriteMessage(msg(43:0x12))
       -> 1
     if cmd==CLOSE:
-      if obj_85216!=0x18D:
+      if current_room!=0x18D:
         print_obj(2, dobj)
         Font_WriteMessage(msg(43:0x13), print_obj(2, dobj), ?)
         -> 1
-      if obj_85216==0x18D:
+      if current_room==0x18D:
         Font_WriteMessage(msg(43:0x14))
         -> 1
     if cmd==TAKE:
-      if obj_85216!=0x18D:
+      if current_room!=0x18D:
         print_obj(2, dobj)
         Font_WriteMessage(msg(43:0x13), print_obj(2, dobj), ?)
         -> 1
-      if obj_85216==0x18D:
+      if current_room==0x18D:
         Font_WriteMessage(msg(43:0x14))
         -> 1
     if cmd==PUT:
-      if obj_85216!=0x18D:
+      if current_room!=0x18D:
         print_obj(2, dobj)
         Font_WriteMessage(msg(43:0x13), print_obj(2, dobj), ?)
         -> 1
-      if obj_85216==0x18D:
+      if current_room==0x18D:
         Font_WriteMessage(msg(43:0x14))
         -> 1
     if cmd==OPEN:
-      if obj_85216!=0x18D:
+      if current_room!=0x18D:
         print_obj(2, dobj)
         Font_WriteMessage(msg(43:0x13), print_obj(2, dobj), ?)
         -> 1
-      if obj_85216==0x18D:
+      if current_room==0x18D:
         Font_WriteMessage(msg(43:0x14))
         -> 1
     if cmd==KNOCK:
-      if obj_85216==0x18A:
+      if current_room==0x18A:
         Font_WriteMessage(msg(43:0x16))
         -> 1
-      if obj_85216!=0x18A:
+      if current_room!=0x18A:
         if object_has_attr?(0x190, 0xE)!=0:
           Font_WriteMessage(msg(43:0x17))
           -> 1
@@ -23574,7 +25263,7 @@ objh_370   # objects: 406 cricket
             Font_WriteMessage(msg(70:0x14), print_obj(2, iobj), ?)
             add_score?(0xA, 1, 0)
             object_set_attr?(0x195, 0xA)
-            object_move?(iobj, obj_85216, 0)
+            object_move?(iobj, current_room, 0)
             object_move?(dobj, 0, 0)
             byte_888AE = 0
             -> 1
@@ -23675,21 +25364,21 @@ objh_374   # objects: 410 castle wall
 objh_375   # objects: 411 grate
   if phase==6:
     if cmd==TALK_TO:
-      if obj_85216!=0x19A:
+      if current_room!=0x19A:
         print_obj(0x12, dobj)
         Font_WriteMessage(msg(71:0xF), print_obj(0x12, dobj), ?)
         -> 1
-      if obj_85216==0x19A:
+      if current_room==0x19A:
         Font_WriteMessage(msg(71:0x10))
         -> 1
     if cmd:other:
       -> 0
     if cmd==OPEN:
-      if obj_85216!=0x19A:
+      if current_room!=0x19A:
         print_obj(2, dobj)
         Font_WriteMessage(msg(71:8), print_obj(2, dobj), ?)
         -> 1
-      if obj_85216==0x19A:
+      if current_room==0x19A:
         if object_has_attr?(dobj, 0xE)!=0:
           print_obj(0x12, dobj)
           Font_WriteMessage(msg(71:0xB), print_obj(0x12, dobj), ?)
@@ -23698,33 +25387,33 @@ objh_375   # objects: 411 grate
           Font_WriteMessage(msg(71:0xC))
           -> 1
     if cmd==TAKE:
-      if obj_85216==0x19A:
+      if current_room==0x19A:
         if object_has_attr?(dobj, 0xE)!=0:
           Font_WriteMessage(msg(71:9))
           -> 1
         if object_has_attr?(dobj, 0xE)==0:
           Font_WriteMessage(msg(71:0xA))
           -> 1
-      if obj_85216!=0x19A:
+      if current_room!=0x19A:
         print_obj(2, dobj)
         Font_WriteMessage(msg(71:8), print_obj(2, dobj), ?)
         -> 1
     if cmd==LOOK_AT:
       if object_has_attr?(dobj, 0xE)!=0:
-        if obj_85216==0x19A:
+        if current_room==0x19A:
           Font_WriteMessage(msg(71:5), [bp+var_4], [bp+var_2])
           -> 1
-        if obj_85216!=0x19A:
+        if current_room!=0x19A:
           Font_WriteMessage(msg(71:5), [bp+var_4], [bp+var_2])
           -> 1
       if object_has_attr?(dobj, 0xE)==0:
         Font_WriteMessage(msg(71:5), [bp+var_4], [bp+var_2])
         -> 1
     if cmd==CLOSE:
-      if obj_85216!=0x19A:
+      if current_room!=0x19A:
         run_command?(0x2C, dobj, 0)
         -> run_command?(0x2C, dobj, 0)
-      if obj_85216==0x19A:
+      if current_room==0x19A:
         if object_has_attr?(dobj, 0xE)==0:
           Font_WriteMessage(msg(71:0xD))
           -> 1
@@ -23737,11 +25426,11 @@ objh_375   # objects: 411 grate
     if cmd:other:
       -> 0
     if cmd==PUT:
-      if obj_85216!=0x19A:
+      if current_room!=0x19A:
         print_obj(2, iobj)
         Font_WriteMessage(msg(71:0x11), print_obj(2, iobj), ?)
         -> 1
-      if obj_85216==0x19A:
+      if current_room==0x19A:
         if dobj==0x124:
           run_command?(0x4F, dobj, iobj)
           -> run_command?(0x4F, dobj, iobj)
@@ -24852,23 +26541,23 @@ objh_391   # objects: 431 house
     if cmd:other:
       -> 0
     if cmd==GOTO:
-      if obj_85216==0x1AE:
+      if current_room==0x1AE:
         sub_1EB3A(2)
         -> 1
-      if obj_85216!=0x1AE:
+      if current_room!=0x1AE:
         Font_WriteMessage(msg(72:7))
         -> 1
     if cmd==LOOK_AT:
       Font_WriteMessage(msg(72:2))
-      if obj_85216!=0x1AE:
-        if obj_85216==0x1B1:
+      if current_room!=0x1AE:
+        if current_room==0x1B1:
           Font_WriteMessage(msg(72:3))
           Font_WriteMessage(msg(72:4))
           -> 1
-        if obj_85216!=0x1B1:
+        if current_room!=0x1B1:
           Font_WriteMessage(msg(72:4))
           -> 1
-      if obj_85216==0x1AE:
+      if current_room==0x1AE:
         Font_WriteMessage(msg(72:3))
         Font_WriteMessage(msg(72:4))
         -> 1
@@ -25130,11 +26819,11 @@ objh_399   # objects: 439 cane
         Font_WriteMessage(msg(72:0x1E), print_obj(2, dobj), ?)
         -> 1
       if object_parent_is?(dobj, 1)==0:
-        if obj_85216==0x1B1:
+        if current_room==0x1B1:
           print_obj(0x22, dobj)
           Font_WriteMessage(msg(72:0x1F), print_obj(0x22, dobj), ?)
           -> 1
-        if obj_85216!=0x1B1:
+        if current_room!=0x1B1:
           if object_parent_is?(0x1D4, 0x1CE)!=0:
             Font_WriteMessage(msg(72:0x20))
             -> 1
@@ -25603,14 +27292,14 @@ objh_410   # objects: 450 skeleton key
       sub_1F006(dobj)
       -> 1
     if cmd==LOOK_AT:
-      if obj_85216==0x1BD:
+      if current_room==0x1BD:
         if object_has_attr?(0x1BE, 0xE)==0:
           Font_WriteMessage(msg(73:0x20), [bp+var_2], ds)
           -> 1
         if object_has_attr?(0x1BE, 0xE)!=0:
           Font_WriteMessage(msg(73:0x20), [bp+var_2], ds)
           -> 1
-      if obj_85216!=0x1BD:
+      if current_room!=0x1BD:
         Font_WriteMessage(msg(73:0x20), [bp+var_2], ds)
         -> 1
     if cmd==CLOSE:
@@ -25660,14 +27349,14 @@ objh_411   # objects: 451 twine
       sub_1F006(dobj)
       -> 1
     if cmd==LOOK_AT:
-      if obj_85216==0x1BD:
+      if current_room==0x1BD:
         if object_has_attr?(0x1BE, 0xE)==0:
           Font_WriteMessage(msg(73:0x24), [bp+var_2], ds)
           -> 1
         if object_has_attr?(0x1BE, 0xE)!=0:
           Font_WriteMessage(msg(73:0x24), [bp+var_2], ds)
           -> 1
-      if obj_85216!=0x1BD:
+      if current_room!=0x1BD:
         Font_WriteMessage(msg(73:0x24), [bp+var_2], ds)
         -> 1
     if cmd==TALK_TO:
@@ -26698,7 +28387,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
           -> 0
         if cmd==LOOK_AT:
           if dobj==0x1E3:
-            if obj_85216==0x1DE:
+            if current_room==0x1DE:
               Font_WriteMessage(msg(76:0x16))
               if object_has_attr?(0x1DE, 0xA)==0:
                 object_set_attr?(0x1DE, 0xA)
@@ -26716,7 +28405,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                 popup_window_event?()
                 byte_85331 = 1
                 -> 1
-            if obj_85216!=0x1DE:
+            if current_room!=0x1DE:
               Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
               -> 1
           if dobj!=0x1E3:
@@ -26727,7 +28416,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
           -> 1
         if cmd==TAKE:
           if dobj==0x1E3:
-            if obj_85216==0x1DE:
+            if current_room==0x1DE:
               Font_WriteMessage(msg(76:0x16))
               if object_has_attr?(0x1DE, 0xA)==0:
                 object_set_attr?(0x1DE, 0xA)
@@ -26745,7 +28434,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                 popup_window_event?()
                 byte_85331 = 1
                 -> 1
-            if obj_85216!=0x1DE:
+            if current_room!=0x1DE:
               Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
               -> 1
           if dobj!=0x1E3:
@@ -26753,7 +28442,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
             -> 1
         if cmd==READ:
           if dobj==0x1E3:
-            if obj_85216==0x1DE:
+            if current_room==0x1DE:
               Font_WriteMessage(msg(76:0x16))
               if object_has_attr?(0x1DE, 0xA)==0:
                 object_set_attr?(0x1DE, 0xA)
@@ -26771,7 +28460,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                 popup_window_event?()
                 byte_85331 = 1
                 -> 1
-            if obj_85216!=0x1DE:
+            if current_room!=0x1DE:
               Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
               -> 1
           if dobj!=0x1E3:
@@ -26779,7 +28468,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
             -> 1
         if cmd==OPEN:
           if dobj==0x1E3:
-            if obj_85216==0x1DE:
+            if current_room==0x1DE:
               Font_WriteMessage(msg(76:0x16))
               if object_has_attr?(0x1DE, 0xA)==0:
                 object_set_attr?(0x1DE, 0xA)
@@ -26797,7 +28486,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                 popup_window_event?()
                 byte_85331 = 1
                 -> 1
-            if obj_85216!=0x1DE:
+            if current_room!=0x1DE:
               Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
               -> 1
           if dobj!=0x1E3:
@@ -26818,7 +28507,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
               -> 0
             if cmd==LOOK_AT:
               if dobj==0x1E3:
-                if obj_85216==0x1DE:
+                if current_room==0x1DE:
                   Font_WriteMessage(msg(76:0x16))
                   if object_has_attr?(0x1DE, 0xA)==0:
                     object_set_attr?(0x1DE, 0xA)
@@ -26836,7 +28525,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                     popup_window_event?()
                     byte_85331 = 1
                     -> 1
-                if obj_85216!=0x1DE:
+                if current_room!=0x1DE:
                   Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
                   -> 1
               if dobj!=0x1E3:
@@ -26847,7 +28536,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
               -> 1
             if cmd==TAKE:
               if dobj==0x1E3:
-                if obj_85216==0x1DE:
+                if current_room==0x1DE:
                   Font_WriteMessage(msg(76:0x16))
                   if object_has_attr?(0x1DE, 0xA)==0:
                     object_set_attr?(0x1DE, 0xA)
@@ -26865,7 +28554,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                     popup_window_event?()
                     byte_85331 = 1
                     -> 1
-                if obj_85216!=0x1DE:
+                if current_room!=0x1DE:
                   Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
                   -> 1
               if dobj!=0x1E3:
@@ -26873,7 +28562,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                 -> 1
             if cmd==READ:
               if dobj==0x1E3:
-                if obj_85216==0x1DE:
+                if current_room==0x1DE:
                   Font_WriteMessage(msg(76:0x16))
                   if object_has_attr?(0x1DE, 0xA)==0:
                     object_set_attr?(0x1DE, 0xA)
@@ -26891,7 +28580,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                     popup_window_event?()
                     byte_85331 = 1
                     -> 1
-                if obj_85216!=0x1DE:
+                if current_room!=0x1DE:
                   Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
                   -> 1
               if dobj!=0x1E3:
@@ -26899,7 +28588,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                 -> 1
             if cmd==OPEN:
               if dobj==0x1E3:
-                if obj_85216==0x1DE:
+                if current_room==0x1DE:
                   Font_WriteMessage(msg(76:0x16))
                   if object_has_attr?(0x1DE, 0xA)==0:
                     object_set_attr?(0x1DE, 0xA)
@@ -26917,7 +28606,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                     popup_window_event?()
                     byte_85331 = 1
                     -> 1
-                if obj_85216!=0x1DE:
+                if current_room!=0x1DE:
                   Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
                   -> 1
               if dobj!=0x1E3:
@@ -26934,7 +28623,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
             -> 0
           if cmd==LOOK_AT:
             if dobj==0x1E3:
-              if obj_85216==0x1DE:
+              if current_room==0x1DE:
                 Font_WriteMessage(msg(76:0x16))
                 if object_has_attr?(0x1DE, 0xA)==0:
                   object_set_attr?(0x1DE, 0xA)
@@ -26952,7 +28641,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                   popup_window_event?()
                   byte_85331 = 1
                   -> 1
-              if obj_85216!=0x1DE:
+              if current_room!=0x1DE:
                 Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
                 -> 1
             if dobj!=0x1E3:
@@ -26963,7 +28652,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
             -> 1
           if cmd==TAKE:
             if dobj==0x1E3:
-              if obj_85216==0x1DE:
+              if current_room==0x1DE:
                 Font_WriteMessage(msg(76:0x16))
                 if object_has_attr?(0x1DE, 0xA)==0:
                   object_set_attr?(0x1DE, 0xA)
@@ -26981,7 +28670,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                   popup_window_event?()
                   byte_85331 = 1
                   -> 1
-              if obj_85216!=0x1DE:
+              if current_room!=0x1DE:
                 Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
                 -> 1
             if dobj!=0x1E3:
@@ -26989,7 +28678,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
               -> 1
           if cmd==READ:
             if dobj==0x1E3:
-              if obj_85216==0x1DE:
+              if current_room==0x1DE:
                 Font_WriteMessage(msg(76:0x16))
                 if object_has_attr?(0x1DE, 0xA)==0:
                   object_set_attr?(0x1DE, 0xA)
@@ -27007,7 +28696,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                   popup_window_event?()
                   byte_85331 = 1
                   -> 1
-              if obj_85216!=0x1DE:
+              if current_room!=0x1DE:
                 Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
                 -> 1
             if dobj!=0x1E3:
@@ -27015,7 +28704,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
               -> 1
           if cmd==OPEN:
             if dobj==0x1E3:
-              if obj_85216==0x1DE:
+              if current_room==0x1DE:
                 Font_WriteMessage(msg(76:0x16))
                 if object_has_attr?(0x1DE, 0xA)==0:
                   object_set_attr?(0x1DE, 0xA)
@@ -27033,7 +28722,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
                   popup_window_event?()
                   byte_85331 = 1
                   -> 1
-              if obj_85216!=0x1DE:
+              if current_room!=0x1DE:
                 Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
                 -> 1
             if dobj!=0x1E3:
@@ -27050,7 +28739,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
         -> 0
       if cmd==LOOK_AT:
         if dobj==0x1E3:
-          if obj_85216==0x1DE:
+          if current_room==0x1DE:
             Font_WriteMessage(msg(76:0x16))
             if object_has_attr?(0x1DE, 0xA)==0:
               object_set_attr?(0x1DE, 0xA)
@@ -27068,7 +28757,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
               popup_window_event?()
               byte_85331 = 1
               -> 1
-          if obj_85216!=0x1DE:
+          if current_room!=0x1DE:
             Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
             -> 1
         if dobj!=0x1E3:
@@ -27079,7 +28768,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
         -> 1
       if cmd==TAKE:
         if dobj==0x1E3:
-          if obj_85216==0x1DE:
+          if current_room==0x1DE:
             Font_WriteMessage(msg(76:0x16))
             if object_has_attr?(0x1DE, 0xA)==0:
               object_set_attr?(0x1DE, 0xA)
@@ -27097,7 +28786,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
               popup_window_event?()
               byte_85331 = 1
               -> 1
-          if obj_85216!=0x1DE:
+          if current_room!=0x1DE:
             Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
             -> 1
         if dobj!=0x1E3:
@@ -27105,7 +28794,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
           -> 1
       if cmd==READ:
         if dobj==0x1E3:
-          if obj_85216==0x1DE:
+          if current_room==0x1DE:
             Font_WriteMessage(msg(76:0x16))
             if object_has_attr?(0x1DE, 0xA)==0:
               object_set_attr?(0x1DE, 0xA)
@@ -27123,7 +28812,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
               popup_window_event?()
               byte_85331 = 1
               -> 1
-          if obj_85216!=0x1DE:
+          if current_room!=0x1DE:
             Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
             -> 1
         if dobj!=0x1E3:
@@ -27131,7 +28820,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
           -> 1
       if cmd==OPEN:
         if dobj==0x1E3:
-          if obj_85216==0x1DE:
+          if current_room==0x1DE:
             Font_WriteMessage(msg(76:0x16))
             if object_has_attr?(0x1DE, 0xA)==0:
               object_set_attr?(0x1DE, 0xA)
@@ -27149,7 +28838,7 @@ objh_441   # objects: 481 book, 482 book, 483 book, 484 book, 485 book, 486 book
               popup_window_event?()
               byte_85331 = 1
               -> 1
-          if obj_85216!=0x1DE:
+          if current_room!=0x1DE:
             Font_WriteMessage(msg(76:0x17), es:[bx+2], es:[bx+4], es:[bx+6], es:[bx+8])
             -> 1
         if dobj!=0x1E3:
@@ -27289,7 +28978,7 @@ objh_445   # objects: 495 books
           -> 1
         if object_parent_is?(dobj, 1)!=0:
           Font_WriteMessage(msg(76:0x2C))
-          object_move?(dobj, obj_85216, 0)
+          object_move?(dobj, current_room, 0)
           -> 1
       if dobj!=0x1EE:
         print_obj(2, iobj)

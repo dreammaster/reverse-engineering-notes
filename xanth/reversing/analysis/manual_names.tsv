@@ -14,7 +14,6 @@ sub_1AC01	event_pending	(eventId): 1 if a scheduled event with this id (first by
 sub_1AB88	cancel_event	(eventId): removes the event from event_list (memmove down) and adjusts event_count / event_index
 word_850AE	event_index	index into event_list of the event being processed (decremented when an earlier event is cancelled)
 sub_1C47D	object_is_at	(obj, location, slot): location == object_get_location(obj) and, when slot >= 0, slot == object_get_slot(obj)
-_game_flags?	obj_85216	WRONG transfer of Shannara _game_flags: this is a word compared against object ids (go_to_room asks object_parent_is(1, obj_85216)); meaning unknown (player's vehicle/container?)
 sub_1D8BD	describe_contents	(obj, listIdx): prints what an object contains/holds ("... is holding ...", "On it you see ..."); called from cmdLookAt and cmdOpen
 sub_49DD8	show_text_box	(far char *msg): word-wraps msg with font 10 into a box (max 0x70 rows high) over the scene, waits for a click
 sub_312C5	show_text_box_stub	RTLink stub of show_text_box
@@ -34,3 +33,6 @@ word_8B9C2	iobj	indirect object of the current command (run_command arg 3)
 word_8B9BE	dobj_type	type byte of the direct object (table at object_table_seg + 0x66 + obj*6), set by run_command
 unk_8B9C0	iobj_type	type of the indirect object (word), set by run_command
 word_850C0	run_command_depth	re-entrancy counter of run_command; an identical nested command >4 times prints the "infinite perform recursion" warning
+obj_85216	current_room	object id of the room the player is in (initial values written: 0x22 bedroom, 0x5A 'screen', 0x5B); first handler phase target of run_command; the earlier transfer of Shannara _game_flags was wrong
+word_85226	player_obj	object id of the player character (initial value 1 = You); describe_contents skips it; copied into actor_obj at the start of each command
+word_85218	actor_obj	object performing the current command (copied from player_obj by sub_1C89B); run_command gives it handler phases 1 and 2

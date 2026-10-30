@@ -43,6 +43,29 @@ for i in range(COUNT):
     idc.set_func_cmt(target, "object handler %d (table entry at %x)" % (i + 1, slot), 0)
     done += 1
 idc.set_name(TABLE, "object_handler_table", idc.SN_NOWARN)
+
+# computed room exits: sub_1FB15(index, 0xF) calls off_34D6A[index] (56 far pointers to RTLink stubs); see dump_exits.py
+EXITS = idc.get_name_ea_simple("off_34D6A")
+if EXITS == idc.BADADDR:
+    EXITS = idc.get_name_ea_simple("exit_function_table")
+exits = 0
+for k in range(0x38):
+    refs = [r for r in idautils.DataRefsFrom(EXITS + 4 * k) if ida_funcs.get_func(r)]
+    if not refs:
+        continue
+    stub = refs[0]
+    target = stub
+    for r in idautils.CodeRefsFrom(idc.next_head(stub), 0):
+        tf = ida_funcs.get_func(r)
+        if tf and tf.start_ea == r and r != stub:
+            target = r
+    if target != stub:
+        idc.set_name(stub, "exit_fn_%02d_stub" % k, idc.SN_NOWARN)
+    idc.set_name(target, "exit_fn_%02d" % k, idc.SN_NOWARN)
+    idc.set_func_cmt(target, "computed room exit %d: returns the target room for exits of kind 3/4 whose arg is %d (called with 0xF); <= 0 = blocked" % (k, k), 0)
+    exits += 1
+idc.set_name(EXITS, "exit_function_table", idc.SN_NOWARN)
+print("renamed exit functions", exits)
 idc.save_database(idc.get_idb_path(), 0)
 print("renamed handlers", done)
 if not ida_kernwin.is_idaq():
