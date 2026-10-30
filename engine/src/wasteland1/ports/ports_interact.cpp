@@ -1,6 +1,7 @@
 // Register adapters: matching action conditions (see interact.h).
 #include "wasteland1/ports/port.h"
 #include "wasteland1/interact.h"
+#include "wasteland1/globals.h"
 
 namespace wl {
 namespace rc {
@@ -44,6 +45,8 @@ PORT(evaluateAction) {                                                          
 
 PORT(refusalCheck) { r.cf = refusalCheck(m, r.a.b.l, r.b.b.l); }                         // 18288: al = difficulty, bl = field offset
 PORT(applyCellChangeList) { applyCellChangeList(m, r.b.b.l); }                              // 12BD2: bl = record offset of the string
+PORT(askYesNo) { r.cf = !askYesNo(m); r.a.b.l = m.d8(g::lastKey); }                         // 12619
+PORT(askYesNoAfterMessage) { r.cf = !askYesNoAfterMessage(m); r.a.b.l = m.d8(g::lastKey); }   // 12614
 PORT(useSkillOnObject) {                                                                // 13C58: al = mode, dl = direction, bl = parameter
 	uint8_t result = 0;
 	r.cf = useSkillOnObject(m, r.a.b.l, r.d.b.l, r.b.b.l, result);

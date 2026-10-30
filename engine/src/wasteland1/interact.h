@@ -53,4 +53,8 @@ bool useSkillOnObject(Machine &m, uint8_t mode, uint8_t dir, uint8_t param, uint
 // 12BD2 (bl = record offset of the string)
 void applyCellChangeList(Machine &m, uint8_t at);
 
+// 12619 / 12614: yes / no question (true = yes)
+bool askYesNo(Machine &m);
+bool askYesNoAfterMessage(Machine &m);
+
 } // namespace wl

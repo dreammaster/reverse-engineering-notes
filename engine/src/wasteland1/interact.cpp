@@ -539,4 +539,25 @@ void applyCellChangeList(Machine &m, uint8_t at) {
 	legacy::call(m, 0x69B1, r);
 }
 
+
+// 12619: waits for Y (true) or N / ESC (CF set in the original: false here); anything else is ignored
+bool askYesNo(Machine &m) {
+	for (;;) {
+		m.setD16(g::buttonMask1, 0x0404);
+		m.setD16(g::buttonMask2, 0);
+		waitForKeypress(m);
+		const uint8_t key = m.d8(g::lastKey);
+		if (key == 'N' || key == 0x1B) return false;
+		if (key == 'Y') return true;
+	}
+}
+
+// 12614: shows message 0x46 and asks
+bool askYesNoAfterMessage(Machine &m) {
+	X86Regs x;
+	x.al = 0x46;
+	legacy::call(m, 0x6CB2, x);   // sub_16CB2
+	return askYesNo(m);
+}
+
 } // namespace wl

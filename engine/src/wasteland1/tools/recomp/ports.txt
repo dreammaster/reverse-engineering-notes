@@ -341,3 +341,5 @@ AD73 combatRound junk=al,bl,cf,ch,cl,di,dl,es,si scratch=CF80-CF87,7931-8030,A4A
 8288 refusalCheck junk=ah,al,bl,cf,ch,cl,di,dl,pf,sf,si,zf scratch=BA68-BA69,CD3F-CD4A,C059-C059,4661-4662,BA6D-BA73
 2BD2 applyCellChangeList junk=ah,al,bl,bp,cf,cl,di,dl,es,pf,sf,si scratch=4661-4662,BA00-BA11,AA30-AA32
 3C58 useSkillOnObject junk=bl,bp,ch,cl,di,dl,es,pf,si,zf scratch=4661-4662,BA00-BA11,AA30-AA50
+2619 askYesNo junk=bl,bp,cl,di,dl,es,pf,si,zf scratch=465C-4660
+2614 askYesNoAfterMessage junk=bl,bp,cl,di,dl,es,pf,si,zf scratch=465C-4660
