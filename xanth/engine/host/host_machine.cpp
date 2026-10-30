@@ -471,7 +471,7 @@ void Machine::out(Cpu &, uint16_t port, uint16_t value, int) {
 	case 0x3C7: dacRead = (value & 0xFF) * 3; dacSub = 0; break;
 	case 0x3C8: dacWrite = (value & 0xFF) * 3; dacSub = 0; break;
 	case 0x3C9:
-		if (dacWrite < 768) palette[dacWrite] = (uint8_t)(value & 0x3F);
+		if (dacWrite + dacSub < 768) palette[dacWrite + dacSub] = (uint8_t)(value & 0x3F);
 		if (++dacSub == 3) { dacSub = 0; dacWrite += 3; }
 		paletteWrites++;
 		break;

@@ -36,6 +36,9 @@ class Insn:
 # Each patch replaces data lines of xanth.asm that are really code: it starts at the first line matching `start`, drops every line up to and including the first
 # line matching `until`, and inserts the hand-decoded instructions (bytes read from the IDB image) with their labels.  `procs` registers far functions among them.
 PATCHES = [
+    {   # PictureDecoder__start (PKWARE explode entry): `push seg; push offset; call sub_14FB9 (the 286 check); retf` is a far jump to PictureDecoder__load2 through the stack
+        "start": r"^PictureDecoder__start\s+proc far", "until": r"^\s+retf\b", "procs": ["PictureDecoder__start"],
+        "insns": [(["PictureDecoder__start"], "call sub_14FB9"), ([], "jmp PictureDecoder__load2")]},
     {   # pic_copyRect: `jmp es:[di+VIDEO_MODE.fn_copyRect]`; the only value ever stored there is the chunk vga_copyRect (vga_setCopyRectFn)
         "start": r"^\s+jmp\s+es:\[di\+VIDEO_MODE\.fn_copyRect\]", "until": r"^\s+jmp\s+es:\[di\+VIDEO_MODE\.fn_copyRect\]", "procs": [],
         "insns": [([], "jmp vga_copyRect")]},

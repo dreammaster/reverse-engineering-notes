@@ -53,7 +53,7 @@ the lifted code's labels - they found the bugs listed under "What the host found
 | `init`: the original startup `init_game` | runs to completion on the emulated PC: reads `LEGEND.INI`, opens the data files, sets video mode 13h, installs the timer handler, creates and re-reads `restart.dat` (a 17,964-byte snapshot of the initial state) |
 | `text`: `ResourceText_GetStr` (the original decoder) vs `MessageFile` (the C++ port) | 5,542 strings, 0 mismatches |
 | `save`: the original save code writes `restart.dat` after the state was changed, then the original load code reads it back after a reset | 5 bytes differ from the initial snapshot; room and the desk's location are restored; the load ends in one `longjmp` to the main loop. **The IDB names are swapped**: `load_game?(1)` writes and `save_game?(1)` reads (mode 1 = `restart.dat`, 2 = a numbered slot, 3 = memory snapshot, 4 = `HELP.DAT`) |
-| `room 34`: `go_to_room` with the original room-entry code | runs through `describe_room?`, `RoomItem_Draw` (13 item images through `PictureDecoder__start`), the text and the music call without an invalid argument or an unlifted call. **The pixels are not right yet**: the screen stays black and the item images come out almost empty (a 68x20 image with 2 non-zero pixels), so the picture decoder path (`PictureDecoder__start` / `sub_14FB9` / `sub_16804`) does not yet produce the C++ port's output |
+| `room 34`: `go_to_room` with the original room-entry code | the original code decodes `XANTH_02.PIC` image 0 (the bedroom) and the room items into the emulated VGA memory and sets the palette through the DAC ports: 32,791 non-black pixels; **the screen equals the C++ port's decode of image 0 for 96% of the pixels after the one-pixel shift the game itself applies** (`Image_OffsetPos` = (-1,-1) when the background is drawn; the rest are the items drawn on top: envelope, sticky note). The picture, its palette and the text (recorded) of the room are all produced by the original code |
 | `objects`: lifted `object_has_attr?` / `object_get_location?` / `object_get_prop_a?` / `object_parent_is?` vs the object table decoded independently by `xanth_objects.py` | 11,454 attribute checks, 414 locations, 484 `prop_a` values: 0 mismatches |
 | `look`: `run_command(LOOK_AT, obj)` through the real pipeline | the right descriptions, e.g. the desk listing its contents with the original list formatting |
 | `scan`: 492 objects with handlers x phases 1-6 x 16 verbs = 47,232 scenarios | 1,300 print text (998 distinct messages); **0 invalid arguments** in 4,480 checked calls (every object / attribute / verb / event / conversation id passed to the object model, `go_to_room?`, `schedule_event?`, `Conversation_Show` is in range); 77 scenarios start a conversation and stop at its menu |
@@ -61,7 +61,7 @@ the lifted code's labels - they found the bugs listed under "What the host found
 
 The sweeps use the image's initial state with one synthetic command per scenario, so they exercise every branch that state allows, not the game's story.
 
-## What the host found in the lifter (all fixed)
+## What the host found in the lifter (all fixed); and **`PictureDecoder__start`**, the PKWARE explode entry whose last instruction `retf` is a far jump through two pushed words to `PictureDecoder__load2` (the lifter returned instead, so no picture was ever decoded: spelled out in `PATCHES`).
 
 Running the game code, not just checking its traces, found problems the trace test cannot see: `cs:` tables read from the wrong segment; `size X` treated as memory; stdcall
 `retf N` ignored; `call near ptr` to far procedures pushing an extra word; struct members of size 4 that are far pointers; `jmp <own proc>` becoming recursion; code chunks and labels used as function
@@ -72,9 +72,7 @@ blitter `sub_16804` jumps through `[bp+var_2E]` / `var_30` / `var_32` to one of 
 ## Known gaps
 
 * The conversation menus (`Conversation_Show`) are the original code but wait for mouse/keyboard input; the sweeps do not script it yet, so 77 scenarios stop at the first menu.
-* **Pictures**: the lifted decoder is not yet validated - `room 34` loads `XANTH_02.PIC` image 2 and the room items, but the decoded pixels are (almost) all zero and the screen
-  stays black. The checks that exist (`HOST_CMPIMG=Image_Free`, `HOST_NZ=label`, `HOST_MEMWATCH`) compare an `Image` in emulated memory with every same-sized image of every `XANTH_nn.PIC`
-  decoded by the C++ port. (An earlier note here claimed an exact match for XANTH_18 image 18: that image is entirely black, so the match proved nothing.)
+* Text is recorded, not rendered (the font code is lifted, but the tests read the text from `Font_WriteMessage` and friends).
 * `main` runs the intro (copyright text, fades) but the host does not yet script the title/menu input.
 * Sound devices (SoundBlaster / MIDI) are not emulated; `realsound_play` is recorded.
 * The lifted code is exact as far as `../gen/cpu.h` models the 8086: `pushf/popf` and the parity flag are ignored, the direction flag is assumed clear.

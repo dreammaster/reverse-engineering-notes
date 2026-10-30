@@ -297,6 +297,7 @@ static int testRooms(Host &h) {
 static void dumpScreen(Host &h, const char *path) {
 	FILE *f = fopen(path, "wb");
 	if (!f) return;
+	{ fprintf(stderr, "palette:"); for (int i = 0; i < 24; i++) fprintf(stderr, " %02X%02X%02X", h.machine.palette[i * 3], h.machine.palette[i * 3 + 1], h.machine.palette[i * 3 + 2]); fprintf(stderr, "\n"); }
 	{ int nz = 0, pnz = 0; for (int i = 0; i < 320 * 200; i++) nz += h.mem[0xA0000 + i] != 0; for (int i = 0; i < 768; i++) pnz += h.machine.palette[i] != 0; fprintf(stderr, "screen dump %s: %d non-zero indices, %d non-zero palette components\n", path, nz, pnz); }
 	fprintf(f, "P6\n320 200\n255\n");
 	for (int i = 0; i < 320 * 200; i++) {
@@ -401,6 +402,8 @@ static int testRoom(Host &h, int room) {
 			}
 		}
 	};
+	if (getenv("HOST_ARGS")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int k = 0; if (!strcmp(w, getenv("HOST_ARGS")) && k++ < 8) { fprintf(stderr, "args %s:", w); for (int i = 0; i < 10; i++) fprintf(stderr, " %04X", c.arg(i)); fprintf(stderr, "\n"); } };
+	if (getenv("HOST_OFFSETPOS")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int k = 0; if (!strncmp(w, "Image_Draw", 10) && !strchr(w, 58) && k++ < 60) { uint16_t io = c.arg(0), is = c.arg(1); fprintf(stderr, "%s image %04X:%04X xp=%d yp=%d OffsetPos=(%d,%d)\n", w, is, io, (int16_t)c.rd16(is, (uint16_t)(io + 2)), (int16_t)c.rd16(is, (uint16_t)(io + 4)), (int16_t)c.rd16(c.ds, D_Image_OffsetPos), (int16_t)c.rd16(c.ds, (uint16_t)(D_Image_OffsetPos + 2))); } };
 	if (getenv("HOST_WATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { if (!strcmp(w, getenv("HOST_WATCH"))) fprintf(stderr, "watch %s bp=%04X sp=%04X es=%04X args %04X %04X %04X locals C=%04X:%04X 2=%04X\n", w, c.bp, c.sp, c.es, c.rd16(c.ss, (uint16_t)(c.bp + 6)), c.rd16(c.ss, (uint16_t)(c.bp + 8)), c.rd16(c.ss, (uint16_t)(c.bp + 10)), c.rd16(c.ss, (uint16_t)(c.bp - 10)), c.rd16(c.ss, (uint16_t)(c.bp - 12)), c.rd16(c.ss, (uint16_t)(c.bp - 2))); };
 	if (getenv("HOST_MEMWATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { static uint16_t last = 0; static bool init = false; unsigned a = (unsigned)strtoul(getenv("HOST_MEMWATCH"), nullptr, 16); uint16_t sg = getenv("HOST_MEMWATCH_SEG") ? (uint16_t)strtoul(getenv("HOST_MEMWATCH_SEG"), nullptr, 16) : c.ss; uint16_t v = c.rd16(sg, (uint16_t)a); if (!init) { if (getenv("HOST_MEMWATCH_SEG") || !strcmp(w, "setup_pic_regions_q:loc_1CB07")) { init = true; last = v; } } else if (v != last) { fprintf(stderr, "mem %04X: %04X -> %04X before label %s (bp=%04X sp=%04X) prev %s %s %s\n", a, last, v, w, c.bp, c.sp, c.hist[(c.hpos - 2) & 63], c.hist[(c.hpos - 3) & 63], c.hist[(c.hpos - 4) & 63]); last = v; } };
 	if (getenv("HOST_DSWATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { static uint16_t last = 0x84FC; unsigned want = (unsigned)strtoul(getenv("HOST_DSWATCH"), nullptr, 16); if (c.ds != last) { if (c.ds == want || last == want) fprintf(stderr, "ds %04X -> %04X at %s prev %s %s %s\n", last, c.ds, w, c.hist[(c.hpos - 2) & 63], c.hist[(c.hpos - 3) & 63], c.hist[(c.hpos - 4) & 63]); last = c.ds; } };
@@ -436,6 +439,16 @@ static int testRoom(Host &h, int room) {
 			for (unsigned y = 0; y < im.height && y < 121; y++) for (unsigned x = 0; x < im.width; x++) { total++; same += h.cpu.rd8(pps, (uint16_t)(ppo + y * pp + x)) == im.pixels[y * im.width + x]; }
 			if (total && same * 100 / total > 50) printf("  background matches %s image %zu (%ux%u): %d of %d pixels in the first rows\n", fn, i, im.width, im.height, same, total);
 		}
+	  }
+	}
+	{ std::vector<uint8_t> data;
+	  if (room == 34 && h.machine.load("XANTH_02.PIC", data)) {
+		Legend::PicFile pf(data);
+		Legend::PicFile::Image im = pf.decode(0);
+		int same = 0; for (unsigned y = 0; y < im.height; y++) for (unsigned x = 0; x < im.width; x++) same += h.mem[0xA0000 + (y + im.y) * 320 + x + im.x] == im.pixels[y * im.width + x];
+		int rgb = 0; for (unsigned y = 0; y < im.height; y++) for (unsigned x = 0; x < im.width; x++) { uint8_t s = h.mem[0xA0000 + (y + im.y) * 320 + x + im.x], t = im.pixels[y * im.width + x]; rgb += h.machine.palette[s * 3] == im.palette[t * 3] && h.machine.palette[s * 3 + 1] == im.palette[t * 3 + 1] && h.machine.palette[s * 3 + 2] == im.palette[t * 3 + 2]; }
+		printf("  same colour (DAC palette vs the picture's palette): %d of %u\n", rgb, im.width * im.height);
+		printf("screen vs XANTH_02.PIC image 0 (%ux%u at %d,%d): %d of %u pixels equal\n", im.width, im.height, im.x, im.y, same, im.width * im.height);
 	  }
 	}
 	{ printf("_background:"); for (int i = 0; i < 32; i++) printf(" %02X", h.cpu.rd8(SEG_seg037, (uint16_t)(D__background + i))); printf("\n"); }
