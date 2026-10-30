@@ -1,0 +1,99 @@
+shannara_ea	shannara_name	xanth_ea	xanth_name	votes
+cc724	dword_CC724	8abf4	word_8ABF4	2
+cc734	dword_CC734	8abf6	word_8ABF6	2
+cc730	dword_CC730	8abf2	word_8ABF2	2
+cc5ec	byte_CC5EC	8b9b6	word_8B9B6	2
+a7e50	dword_A7E50	85018	word_85018	2
+cc73c	dword_CC73C	8685e		2
+cc738	dword_CC738	8685c	dword_8685C	2
+cc700		ff002457		2
+cc6fc	stru_CC6FC	3ec88	savFolder	2
+ca4e4	_palette_off	8685a	byte_8685A	2
+cd8ac	_game_flags	806d0	word_806D0	2
+ade96		8b9c4	word_8B9C4	2
+217a0	_object_count	85218	word_85218	2
+20891	_object_slot_counts	8a9ee	seg_8A9EE	2
+ade28	dword_ADE28	850c2	word_850C2	2
+ade30	dword_ADE30	850c6	word_850C6	3
+ae9fc	_room_music_table	85216	word_85216	2
+cd926		33880	unk_33880	2
+ae9f4	dword_AE9F4	8ab04	seg_8AB04	2
+cd9cc	dword_CD9CC	3ec00	word_3EC00	2
+ae9f8	dword_AE9F8	3ec02	word_3EC02	2
+ebcb2		8bdfa	word_8BDFA	4
+ca1a4	_xoffset	89f06	Image_OffsetPos	6
+ca1ac	_prev_xoffset	89f0a	Image_OffsetPosBackup	4
+ca1a8	_yoffset	89f08		6
+ca1b0	_prev_yoffset	89f0c		4
+ff0018f0		ff002471		2
+ff0018f9		ff002478		2
+ff0018f6		ff002479		2
+ff0018f4		ff00247a		2
+ff0018f3		ff002476		2
+ff0018fc		ff002472		2
+d4680	_w_x2	8a19e	Wndows_numWindows	3
+ca200	_current_window	8a1a0	Font_currentWindow	9
+d46f8	_w_font	8b7d0	Windows_fontNumber	6
+d4608	_w_buffered	8b890	Windows_v1	4
+d46d0	_w_wp	8b880	Windows_v2	3
+7a6c0	jpt_7A70B	8b922		2
+d4e5c	_half_font_w	8bd9a	Font_xCenter	4
+d4e48	_tab_width	8bdbc	Font_tabWidth	4
+d4e60	_font_h	8b9b8	Font_lineHeight	2
+ca20c	dword_CA20C	8a1d8	updatePos	2
+d44f0	_w_buffer	8b920	Windows_v5	2
+ff001928		8b8a0	byte_8B8A0	2
+d4590	_w_lm	8b840	Windows_left	2
+d45e0	_w_y1	8b810	Windows_y1	2
+d46a8	_w_bk_color	8b7f0	Windows_bgColor	2
+d4720	_w_color	8b7e0	Windows_fgColor	2
+d4488	_w_cx	8b860	Windows_xpos	2
+d4e64	_font_w	8bce4	Screen_maxCharWidth	2
+a5ee4		8a19c	word_8A19C	2
+ca1f8	dword_CA1F8	8a19a	word_8A19A	2
+a5ef0	unk_A5EF0	8a1f6	unk_8A1F6	2
+a7c98	_IsTable	8a665	ascii_flags_list	2
+d4ae4	_num_regions	8b782	regionList	4
+d4b5c	_button_height	89f78	word_89F78	2
+ca420	dword_CA420	ff0018e2		2
+ca44c	_mouse_active	89e60	Mouse_updateInProgress	4
+ca4a4	off_CA4A4	89ee2		2
+ca464	unk_CA464	89ee4	Mouse_hotspot	2
+ca4a8	dword_CA4A8	89ee6		2
+ca4ac	dword_CA4AC	89ea0	BIG_ARROW_CURSOR	2
+ca458	_mouse_busy	89e5e	Mouse_flags	4
+d4db0	dword_D4DB0	8b3fa		2
+d4d90	dword_D4D90	8b3f8	Mouse_mousePos	2
+d4dc8	dword_D4DC8	8b3fe		2
+d4d94	dword_D4D94	8b3fc	Mouse_savedBackground	2
+d4c70	unk_D4C70	8b402		2
+d4b70	unk_D4B70	8b400	Mouse_savedBackground2	2
+d4db8	_mouse_pointer_y?	8b3ea		4
+d4db4	_mouse_pointer_x?	8b3e8	Mouse_rawMousePos	4
+d4dbc	_mouse_inside_x1	8b3ec	picDrawBounds	2
+d4d98	_mouse_inside_y1	8b3ee		2
+d4da0	_mouse_inside_x2	8b3f0		2
+d4d9c	_mouse_inside_y2	8b3f2		2
+d4e44	_font	8b300	Font_activeFont	2
+ff00191a		ff0018b2		2
+ff001aab		ff0018b1		2
+d4e4c	_font_color	8b304	Font_fgColor	2
+d4e54	_font_bk_color	8bdbe	Font_bgColor	3
+d516a		8b30e	word_8B30E	2
+ca4ea		892ac	word_892AC	2
+ca4e6		892ae	word_892AE	2
+ca588	_master_table	8b39e	unk_8B39E	2
+ca58c	_master_table_end	89d6e	word_89D6E	2
+ff0018e8		8b39c	unk_8B39C	2
+ca5d4	_next_music_id?	89cf6	Events_pendingKey	2
+ca5d8	_list_window	8b314	word_8B314	2
+d54f4	_l_num	89cf8	winNumber	2
+ca5dc	_num_lists	89cfa	word_89CFA	2
+ca5e0	_prev_list	89d60	word_89D60	2
+ca5e4	_prev_list_top	89d62	word_89D62	2
+ca5e8	_prev_list_ptr	89d64	word_89D64	2
+d5578		8a266	gfx	2
+d5576	dword_D5576	ff0018c3		2
+d557a	word_D557A	ff0018c4		2
+ca988	_cycle_handle	89f20	old_timer_tick_fn	2
+eb9bc	_cycle_palette	89f22		2
