@@ -2,6 +2,7 @@
 #include "wasteland1/ports/port.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/combat.h"
+#include "wasteland1/combatmenu.h"
 #include "wasteland1/listmenu.h"
 #include "wasteland1/menu.h"
 #include "wasteland1/roster.h"
@@ -58,6 +59,18 @@ PORT(chooseTargetGroup) {                                                       
 	r.cf = !chooseTargetGroup(m, group);
 	r.a.b.l = group;
 }
+
+namespace {
+void setResult(Regs &r, const CommandResult &c) { r.cf = c.cf; r.a.b.l = c.al; }
+}
+PORT(collectOrders) { r.cf = collectOrders(m); }                                         // 11F76
+PORT(commandPause) { setResult(r, commandPause(m, r.a.b.l)); }                          // 1208D
+PORT(commandUseItem) { setResult(r, commandUseItem(m, r.a.b.l)); }                      // 1234E
+PORT(commandMove) { setResult(r, commandMove(m, r.a.b.l)); }                            // 123A6
+PORT(commandReload) { setResult(r, commandReload(m, r.a.b.l)); }                        // 123E2
+PORT(commandUseSkill) { setResult(r, commandUseSkill(m, r.a.b.l)); }                    // 1240B
+PORT(commandAttack) { setResult(r, commandAttack(m, r.a.b.l)); }                        // 120C1
+PORT(pickFirstTarget) { setResult(r, pickFirstTarget(m)); }                             // 121A8
 
 } // namespace rc
 } // namespace wl

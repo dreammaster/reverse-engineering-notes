@@ -1,4 +1,4 @@
-add_library(wl STATIC movement.cpp interact.cpp menu.cpp listmenu.cpp roster.cpp actions.cpp character.cpp combat.cpp mapcells.cpp codec.cpp gamefile.cpp graphics.cpp exe.cpp machine.cpp ui.cpp video.cpp assets.cpp mapview.cpp rules.cpp party.cpp text.cpp x86.cpp)
+add_library(wl STATIC movement.cpp interact.cpp menu.cpp listmenu.cpp roster.cpp combatmenu.cpp actions.cpp character.cpp combat.cpp mapcells.cpp codec.cpp gamefile.cpp graphics.cpp exe.cpp machine.cpp ui.cpp video.cpp assets.cpp mapview.cpp rules.cpp party.cpp text.cpp x86.cpp)
 target_link_libraries(wl PUBLIC shared)
 target_compile_options(wl PRIVATE $<$<CXX_COMPILER_ID:GNU,Clang>:-Wall -Wextra>)
 

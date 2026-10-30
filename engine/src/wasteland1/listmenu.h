@@ -32,6 +32,8 @@ bool itemRow(Machine &m, uint8_t index);
 ListResult skillList(Machine &m, uint8_t title);
 // 198F0: the skill list screen with the option to rearrange the skills
 ListResult skillScreen(Machine &m);
+// 1963A: number of items the current character carries (also leaves the last slot number in ds:4721)
+uint8_t countItems(Machine &m);
 // 19454: shows the list of the current character's items and runs the keys
 ListResult itemList(Machine &m, uint8_t title);
 // 19394: the item list screen with the option to rearrange the items

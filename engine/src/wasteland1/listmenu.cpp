@@ -266,10 +266,8 @@ ListResult skillScreen(Machine &m) {
     }
 }
 
-ListResult itemList(Machine &m, uint8_t title) {
+uint8_t countItems(Machine &m) {
     auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
-    D(0xCCE8) = title;
-    // 1963A: count the items of the current character
     D(0xCCE4) = 0;
     uint8_t found = 0;
     for (uint8_t bl = 0xBD; bl != 0xF9; bl = uint8_t(bl + 2)) {
@@ -277,6 +275,13 @@ ListResult itemList(Machine &m, uint8_t title) {
         D(listLastIndex) = uint8_t((bl - 0xBB) >> 1);
         ++found;
     }
+    return found;
+}
+
+ListResult itemList(Machine &m, uint8_t title) {
+    auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+    D(0xCCE8) = title;
+    const uint8_t found = countItems(m);
     const uint8_t count = uint8_t(found + 1);
     if (count == 1) return {true, 0, true};
     D(listLimit) = count;
