@@ -1,0 +1,195 @@
+address	name	size	written_by	tested_by
+85220	word_85220	2		
+85745	unk_85745	1		
+85216	current_room	2		conv_text_29; objh_004(4 Kim); objh_005(5 Nada); objh_006(6 Jenny); objh_007(7 Sammy); objh_009(9 ogre boy); objh_010(10 Metria); objh_011(11 Che); objh_020(21 path); objh_021(22 bush); objh_022(23 ocean); objh_023(24 sky)
+85224	word_85224	2		
+8b9e2	word_8B9E2	2	exit_fn_12=current_room	objh_005(5 Nada); objh_018(19 Guardian)
+8521c	word_8521C	2		
+8521e	word_8521E	2		
+85758	word_85758	2	objh_131(139 sword)=0; objh_215(240 manacles)=5	objh_203(213 mirror)
+8b9ce	unk_8B9CE	2		
+85258	byte_85258	1	conv_cb_21=1; conv_cb_46=1	
+85254	word_85254	2	conv_cb_21=current_room; conv_cb_46=current_room	
+85256	word_85256	2	conv_cb_21=word_85250; conv_cb_46=word_85250	
+85259	byte_85259	1	conv_cb_21=1; conv_cb_46=1	
+8524c	word_8524C	2	conv_cb_21=event_count; conv_cb_46=event_count	
+85268	word_85268	2	conv_cb_24=5/6; conv_cb_51=0x1A; conv_text_81=0x16; objh_005(5 Nada)=0xB; objh_010(10 Metria)=0x1A; objh_089(94 cavern door)=1; objh_092(97 metal bars)=2; objh_118(124 tangle tree)=4; objh_147(155 pail)=0x12; objh_192(200 spring)=0x18/0xA/0xC/0xD/9; objh_227(252 oven)=0xF; objh_231(256 firewater)=0xE	exit_fn_26
+8526a	word_8526A	2		objh_131(139 sword)
+852e4	byte_852E4	1	objh_036(39 personal computer)=0/1; objh_038(41 power switch)=0/1	objh_037(40 computer screen)
+852e2	byte_852E2	1		objh_048(52 front door)
+871f0	word_871F0	2	objh_061(65 telephone)=0	
+871ee	word_871EE	2	objh_061(65 telephone)=0/1	objh_061(65 telephone)
+85250	word_85250	2	objh_131(139 sword)=0; objh_215(240 manacles)=5	exit_fn_09; exit_fn_12; objh_002(2 Grundy); objh_006(6 Jenny); objh_200(208 door ajar); objh_217(242 Nada finder)
+85252	word_85252	2		
+85260	word_85260	2		
+85264	word_85264	2		exit_fn_04; exit_fn_06
+852cd	byte_852CD	1	conv_cb_61=1	conv_text_29; exit_fn_07; objh_012(13 Fairy Nuff)
+85266	word_85266	2	objh_141(149 censer)=inc; objh_142(150 censer)=inc	conv_text_29; exit_fn_03; objh_003(3 headman); objh_012(13 Fairy Nuff); objh_029(31 censer smoke); objh_124(130 flowers); objh_127(133 censor-ship); objh_134(142 gangway); objh_141(149 censer); objh_142(150 censer); objh_181(189 recipe)
+85262	word_85262	2		
+852b2	byte_852B2	1		conv_text_29; objh_130(138 rock); objh_147(155 pail)
+8524e	byte_8524E	1		objh_080(84 3D glasses)
+8525a	byte_8525A	1	conv_cb_09=1; conv_cb_10=1; conv_text_17=1	objh_002(2 Grundy)
+8525b	byte_8525B	1		
+852b4	byte_852B4	1	conv_text_02=1	
+852b6	byte_852B6	1	conv_text_00=1	conv_text_43
+852b5	byte_852B5	1		objh_061(65 telephone)
+852b7	byte_852B7	1	conv_cb_12=1	conv_text_05; conv_text_06
+852ba	byte_852BA	1	conv_cb_14=1	conv_text_09
+852bb	byte_852BB	1	conv_cb_14=1	conv_text_10
+852bc	byte_852BC	1	conv_cb_14=1	conv_text_11
+852bd	byte_852BD	1	conv_cb_14=1	conv_text_12
+852b8	byte_852B8	1	conv_cb_13=1	conv_text_05; conv_text_07
+852b9	byte_852B9	1	conv_cb_11=1	conv_text_04; conv_text_05; conv_text_08
+852be	byte_852BE	1	conv_text_44=1	conv_text_44
+852c9	byte_852C9	1	conv_text_13=1; conv_text_14=1	objh_002(2 Grundy)
+852c6	byte_852C6	1	conv_text_32=1	
+852c7	byte_852C7	1	conv_text_37=1	
+852c8	byte_852C8	1		
+852bf	byte_852BF	1	conv_text_29=1	conv_text_29
+852c0	byte_852C0	1	conv_text_50=1	conv_text_29; conv_text_30; objh_003(3 headman)
+852c1	byte_852C1	1	conv_text_03=1	
+852c4	byte_852C4	1	conv_text_55=1	conv_text_29; conv_text_55; conv_text_57
+852c5	byte_852C5	1	conv_cb_40=1	conv_text_29; conv_text_57; objh_003(3 headman)
+852c2	byte_852C2	1	conv_cb_39=1	conv_text_29; conv_text_51; objh_003(3 headman)
+852c3	byte_852C3	1	conv_cb_39=1	conv_text_29; conv_text_52; conv_text_53
+852b3	byte_852B3	1	objh_141(149 censer)=1	conv_text_44; objh_100(106 tree); objh_101(107 tree); objh_104(110 babbling brook); objh_111(117 buttercup); objh_116(122 tree); objh_117(123 tree); objh_118(124 tangle tree); objh_119(125 bush); objh_121(127 spring); objh_125(131 gate); objh_145(153 boulder)
+852ca	byte_852CA	1		
+852cb	byte_852CB	1	conv_text_38=1	
+852cc	byte_852CC	1		objh_003(3 headman); objh_108(114 log jam); objh_130(138 rock)
+852ce	byte_852CE	1		exit_fn_26; objh_292(319 Com-Pewter); objh_297(324 cylinder)
+852cf	byte_852CF	1	objh_118(124 tangle tree)=1	objh_118(124 tangle tree)
+852aa	word_852AA	2	exit_fn_12=dec/inc; exit_fn_14=8; objh_204(214 circular pad)=7/8	objh_204(214 circular pad)
+852ac	word_852AC	2	exit_fn_12=dec/inc; exit_fn_14=6; objh_204(214 circular pad)=0/4	
+852ae	word_852AE	2	objh_210(220 switch)=[bp+var_2]/inc	objh_210(220 switch)
+852b0	word_852B0	2	objh_210(220 switch)=inc	objh_210(220 switch)
+852d0	byte_852D0	1	objh_200(208 door ajar)=1	conv_text_29
+852d1	byte_852D1	1	objh_213(238 agony moss)=1	conv_text_29; exit_fn_12
+852d2	byte_852D2	1		exit_fn_12
+852d3	byte_852D3	1	objh_151(159 eye screen)=1; objh_152(160 eye)=1	conv_text_29; objh_152(160 eye)
+852d4	byte_852D4	1	conv_text_74=1	conv_text_29; objh_151(159 eye screen); objh_152(160 eye)
+852d5	byte_852D5	1		
+852d6	byte_852D6	1	conv_text_23=0	
+852d7	byte_852D7	1		
+852d8	byte_852D8	1	conv_text_73=1	conv_text_73
+8526c	word_8526C	2		conv_text_19
+852d9	byte_852D9	1		
+852da	byte_852DA	1	conv_text_24=1	
+8526e	word_8526E	2	conv_cb_03=?	
+85270	word_85270	2		
+852db	byte_852DB	1		
+852dc	byte_852DC	1		
+852dd	byte_852DD	1	conv_text_75=0; conv_text_76=1	conv_text_29; objh_012(13 Fairy Nuff)
+852de	byte_852DE	1	objh_213(238 agony moss)=1	objh_213(238 agony moss)
+85274	word_85274	2		
+852df	byte_852DF	1		conv_text_29
+85276	word_85276	2		
+85278	word_85278	2		
+8527a	word_8527A	2		exit_fn_10
+852e0	byte_852E0	1		objh_192(200 spring)
+852e1	byte_852E1	1	objh_215(240 manacles)=0	conv_text_29; exit_fn_13; objh_005(5 Nada); objh_215(240 manacles)
+852e6	byte_852E6	1	objh_207(217 mortar)=1	conv_text_29; exit_fn_15
+852e7	byte_852E7	1	objh_225(250 bun)=1	conv_text_29; exit_fn_15; objh_013(14 fireman)
+852e8	byte_852E8	1	objh_015(16 firearm)=1; objh_207(217 mortar)=1	conv_text_29; exit_fn_15
+852e9	byte_852E9	1		conv_text_29; objh_020(21 path); objh_230(255 firecracker); objh_234(259 firewall)
+852ea	byte_852EA	1		objh_194(202 barrow door)
+852eb	byte_852EB	1	objh_215(240 manacles)=1	
+852ec	byte_852EC	1	objh_211(236 big button)=1	
+852ed	byte_852ED	1	objh_084(88 brown paper)=1	conv_text_29; objh_084(88 brown paper); objh_202(212 stone plaque)
+852ee	byte_852EE	1		objh_005(5 Nada)
+852ef	byte_852EF	1	conv_text_41=1	
+8527c	word_8527C	2		
+852e3	byte_852E3	1	objh_034(37 letter from Pia)=1	objh_033(36 envelope); objh_034(37 letter from Pia); objh_061(65 telephone)
+852f0	byte_852F0	1	objh_227(252 oven)=1	
+85280	word_85280	2		objh_207(217 mortar); objh_229(254 cracker dough)
+852f1	byte_852F1	1	objh_207(217 mortar)=1	
+852f2	byte_852F2	1	objh_207(217 mortar)=1	conv_text_29; objh_207(217 mortar); objh_208(218 pestle)
+852f3	byte_852F3	1	objh_207(217 mortar)=1	conv_text_29; objh_207(217 mortar); objh_208(218 pestle)
+8527e	word_8527E	2	objh_231(256 firewater)=inc	objh_231(256 firewater)
+85282	word_85282	2		
+852f4	byte_852F4	1	conv_text_46=1	conv_text_29; objh_013(14 fireman)
+852f6	byte_852F6	1		conv_text_29
+852f7	byte_852F7	1	objh_005(5 Nada)=1	objh_005(5 Nada)
+852f8	byte_852F8	1		
+852f9	byte_852F9	1	objh_005(5 Nada)=1	conv_text_29; objh_005(5 Nada)
+852fa	byte_852FA	1		conv_text_29
+852fb	byte_852FB	1	objh_084(88 brown paper)=1	conv_text_29; objh_084(88 brown paper)
+852fc	byte_852FC	1	objh_207(217 mortar)=1	conv_text_29
+852fd	byte_852FD	1	objh_208(218 pestle)=1	conv_text_29
+852fe	byte_852FE	1	objh_208(218 pestle)=1	conv_text_29
+852ff	byte_852FF	1	objh_230(255 firecracker)=1	conv_text_29
+85300	byte_85300	1		conv_text_29
+85284	word_85284	2		
+85301	byte_85301	1		objh_002(2 Grundy)
+85272	word_85272	2		
+85286	word_85286	2	objh_110(116 buttercups)=0	
+85288	word_85288	2		
+85302	byte_85302	1		conv_text_29
+85303	byte_85303	1	conv_text_60=0; conv_text_75=0; objh_129(136 lamp cover)=0/1; objh_142(150 censer)=0	conv_text_75; objh_129(136 lamp cover); objh_142(150 censer)
+85304	byte_85304	1		
+85305	byte_85305	1	conv_cb_72=1	
+85306	byte_85306	1		
+85307	byte_85307	1		
+85308	byte_85308	1		
+85309	byte_85309	1	objh_264(289 pentominoes)=1	objh_264(289 pentominoes)
+8530a	byte_8530A	1	objh_265(290 sliding blocks)=1	objh_265(290 sliding blocks)
+8530b	byte_8530B	1	objh_266(291 matchsticks)=1	objh_266(291 matchsticks)
+8530c	byte_8530C	1		
+8530d	byte_8530D	1	objh_272(297 faucet)=1; objh_278(303 green button)=1	
+8530e	byte_8530E	1	objh_271(296 sink)=1	
+8530f	byte_8530F	1	objh_272(297 faucet)=1	
+8528a	word_8528A	2	objh_264(289 pentominoes)=0/inc	objh_264(289 pentominoes)
+8528c	word_8528C	2	objh_265(290 sliding blocks)=0/inc	objh_265(290 sliding blocks)
+8528e	word_8528E	2	objh_266(291 matchsticks)=0/inc	objh_266(291 matchsticks)
+85310	byte_85310	1		objh_300(327 exhaust duct)
+85294	word_85294	2		
+85311	byte_85311	1	objh_264(289 pentominoes)=1; objh_265(290 sliding blocks)=1; objh_266(291 matchsticks)=1	
+8b9de	word_8B9DE	2	objh_297(324 cylinder)=object_get_list_head?(0x145, 1)	
+85290	word_85290	2		conv_text_29; conv_text_82; conv_text_83
+85292	word_85292	2		conv_text_29; conv_text_83
+85312	unk_85312	1		
+85313	byte_85313	1	objh_145(153 boulder)=1	objh_145(153 boulder)
+85314	byte_85314	1	objh_271(296 sink)=1	objh_271(296 sink)
+85315	byte_85315	1	objh_271(296 sink)=1	objh_271(296 sink)
+85316	byte_85316	1	objh_269(294 well)=1	conv_text_29
+85317	byte_85317	1	objh_310(341 cart)=1	conv_text_29; objh_310(341 cart)
+85318	byte_85318	1	objh_310(341 cart)=0; objh_324(355 vent)=1	exit_fn_29; objh_310(341 cart); objh_311(342 cart wheel)
+85319	byte_85319	1	objh_329(360 windbag)=1	conv_text_29; exit_fn_30; objh_312(343 sail); objh_331(362 mist); objh_334(365 sailboat)
+8531a	byte_8531A	1	objh_017(18 Ma Anathe)=1	objh_017(18 Ma Anathe)
+8531b	byte_8531B	1		conv_text_29
+8531c	byte_8531C	1		
+8531d	byte_8531D	1	objh_121(127 spring)=1	objh_121(127 spring)
+8531e	byte_8531E	1	objh_203(213 mirror)=1	objh_203(213 mirror)
+8531f	unk_8531F	1		
+85296	word_85296	2	objh_273(298 lab junk)=inc	objh_273(298 lab junk)
+85320	byte_85320	1	conv_cb_78=1	conv_cb_77
+85321	byte_85321	1	conv_cb_79=1	conv_cb_77
+85322	byte_85322	1	objh_329(360 windbag)=1; objh_334(365 sailboat)=1	
+85298	word_85298	2	conv_text_87=inc	conv_text_29; conv_text_87; conv_text_88; exit_fn_31; objh_018(19 Guardian)
+8529a	word_8529A	2	exit_fn_33=dec/inc	exit_fn_33
+85323	byte_85323	1		objh_018(19 Guardian)
+85324	byte_85324	1	objh_007(7 Sammy)=1	
+8529c	word_8529C	2	objh_360(396 drawbridge)=inc	exit_fn_42; objh_360(396 drawbridge)
+85325	byte_85325	1	objh_356(392 loose brick)=1	
+85326	byte_85326	1	objh_357(393 switch)=1	
+85327	byte_85327	1		
+85328	unk_85328	1		
+85329	unk_85329	1		
+8532a	unk_8532A	1		
+8532b	byte_8532B	1	objh_362(398 castle door)=1; objh_364(400 little door)=1	
+8529e	word_8529E	2		
+8532c	byte_8532C	1		
+852a0	word_852A0	2		exit_fn_39
+852a2	word_852A2	2	conv_cb_37=inc; conv_cb_49=inc	conv_cb_37; conv_cb_49
+852a6	word_852A6	2	conv_cb_81=inc; conv_cb_82=inc; conv_text_89=0	conv_cb_81; conv_cb_82
+8532d	byte_8532D	1		
+8532e	byte_8532E	1	objh_131(139 sword)=1	objh_037(40 computer screen)
+852a4	word_852A4	2	conv_cb_37=inc; conv_cb_49=inc	
+852a8	word_852A8	2		
+8532f	byte_8532F	1		objh_037(40 computer screen)
+85330	byte_85330	1		
+85331	byte_85331	1	objh_441(481 book)=1	conv_text_66
+85332	byte_85332	1	exit_fn_33=1	exit_fn_33
+85333	byte_85333	1	conv_cb_37=1; conv_cb_49=1; objh_006(6 Jenny)=0; objh_351(387 Fracto)=0	objh_006(6 Jenny); objh_351(387 Fracto)
+85334	byte_85334	1		
+8b9da	word_8B9DA	2		
+8b9dc	word_8B9DC	2		

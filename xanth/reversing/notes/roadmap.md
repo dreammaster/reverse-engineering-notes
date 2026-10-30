@@ -15,6 +15,8 @@ Workflow is the same as `shannara/reversing/notes/roadmap.md`: work on a copy of
 
 - Conversation system (compiled-in dialogue graph, 1,036 lines + 400 menus) and the 498-object table decoded; handler digest (528 functions) with owning objects.
 
+- Exits (152, kinds 1-4, 56 computed `exit_fn_NN`), voice (VOC directory = convId; clip length vs text r=0.91, ~22 kHz), save regions (205 regions / 4,522 bytes), 82 conversation callbacks and 85 dynamic line texts named and in the digest (751 functions); `analysis/xanth_flags.tsv` cross-references every saved variable with the handlers that write/test it.
+
 ## Next
 1. Read the digest per room/NPC and write the game-logic summary (story events, puzzles); transpile the handlers.
 2. Still unverified: party handling, `get_event`, memory manager (`new_handle`, `lock_handle`, ...), list system; Xanth has no bitset flags (plain bytes), so those Shannara helpers have no counterpart.

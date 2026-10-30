@@ -66,6 +66,39 @@ for k in range(0x38):
     exits += 1
 idc.set_name(EXITS, "exit_function_table", idc.SN_NOWARN)
 print("renamed exit functions", exits)
+
+# conversation callbacks (dword_3DCA4[1..82]) and dynamic line texts (seg069[(strIdx-0x8000)*4], 90 entries); see dump_conversations.py
+import ida_segment
+
+
+def name_table(base, count, first, fmt, comment):
+    n = 0
+    for k in range(first, first + count):
+        refs = [r for r in idautils.DataRefsFrom(base + 4 * k) if ida_funcs.get_func(r)]
+        if not refs:
+            continue
+        stub = refs[0]
+        target = stub
+        for r in idautils.CodeRefsFrom(idc.next_head(stub), 0):
+            tf = ida_funcs.get_func(r)
+            if tf and tf.start_ea == r and r != stub:
+                target = r
+        if target != stub:
+            idc.set_name(stub, fmt % k + "_stub", idc.SN_NOWARN)
+        idc.set_name(target, fmt % k, idc.SN_NOWARN)
+        idc.set_func_cmt(target, comment.replace("%d", str(k)), 0)
+        n += 1
+    return n
+
+
+CB = idc.get_name_ea_simple("dword_3DCA4")
+if CB == idc.BADADDR:
+    CB = idc.get_name_ea_simple("conversation_callbacks")
+c1 = name_table(CB, 83, 0, "conv_cb_%02d", "conversation menu callback %d: called as (convId, option index) after the player picks an option")
+idc.set_name(CB, "conversation_callbacks", idc.SN_NOWARN)
+S69 = ida_segment.get_segm_by_name("seg069").start_ea
+c2 = name_table(S69, 90, 0, "conv_text_%02d", "dynamic conversation text %d (strIdx 0x8000+%d): returns the line's text pointer")
+print("renamed conversation callbacks", c1, "text functions", c2)
 idc.save_database(idc.get_idb_path(), 0)
 print("renamed handlers", done)
 if not ida_kernwin.is_idaq():
