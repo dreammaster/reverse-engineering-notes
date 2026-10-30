@@ -1,6 +1,7 @@
 // Register adapters: key driven menus (see menu.h).
 #include "wasteland1/ports/port.h"
 #include "wasteland1/globals.h"
+#include "wasteland1/combat.h"
 #include "wasteland1/listmenu.h"
 #include "wasteland1/menu.h"
 #include "wasteland1/roster.h"
@@ -49,6 +50,14 @@ PORT(drawRosterFrame) { drawRosterFrame(m); }                                   
 
 PORT(drawRosterHeadersAndMembers) { drawRosterHeadersAndMembers(m); }                  // 1728C (al is preserved)
 PORT(showTitleText) { showTitleText(m, r.a.b.l); }                                      // 17923
+
+PORT(countGroupsInRange) { r.a.b.l = countGroupsInRange(m); }                              // 1382B
+PORT(showTargetList) { showTargetList(m, r.a.b.l); }                                    // 12262
+PORT(chooseTargetGroup) {                                                               // 1236F
+	uint8_t group = 0;
+	r.cf = !chooseTargetGroup(m, group);
+	r.a.b.l = group;
+}
 
 } // namespace rc
 } // namespace wl

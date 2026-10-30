@@ -1,6 +1,7 @@
 #include "wasteland1/listmenu.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
+#include "wasteland1/menu.h"
 #include "wasteland1/party.h"
 #include "wasteland1/text.h"
 
@@ -26,6 +27,7 @@ bool callRow(Machine &m, uint8_t index) {
     const uint16_t callback = m.d16(listCallback);
     if (callback == 0x9582) return skillRow(m, index);
     if (callback == 0x95C6) return itemRow(m, index);
+    if (callback == 0x2284) return targetRow(m, index);
     return call(m, callback, index).cf;
 }
 

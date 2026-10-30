@@ -364,3 +364,6 @@ AD73 combatRound junk=al,bl,cf,ch,cl,di,dl,es,si scratch=CF80-CF87,7931-8030,A4A
 6F70 drawRosterFrame junk=ah,al,bl,bp,ch,cl,di,dl,es,pf,si,zf scratch=B242-B243,AA30-AA50
 728C drawRosterHeadersAndMembers junk=ah,bl,bp,ch,cl,di,dl,es,pf,si,zf scratch=B242-B243,AA30-AA50
 7923 showTitleText junk=ah,al,bl,bp,ch,cl,di,dl,es,pf,si,zf scratch=CDC0-CE00,BA00-BA11,465C-4660,AA30-AA50,B242-B243
+382B countGroupsInRange junk=ah,bl,ch,cl,di,dl,pf,sf,si,zf scratch=A59A-A59C,A59D-A59E,BA04-BA11,46AA-46AD,46E2-46EB,4661-4662,CD40-CD41,A427-A429,AA30-AA50
+2262 showTargetList junk=ah,al,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=A59D-A59E,CDC0-CE00,BA00-BA11,465C-4660,AA30-AA50,B1D0-B1E0,A420-A42F
+236F chooseTargetGroup junk=ah,bl,bp,ch,cl,di,dl,es,pf,sf,si,zf scratch=CDC0-CE00,BA00-BA11,465C-4660,AA30-AA50,B1D0-B1E0,A420-A42F,A59A-A59E,46AA-46AD,46E2-46EB,CD40-CD41,A427-A429,4661-4662

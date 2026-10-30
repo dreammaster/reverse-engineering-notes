@@ -2185,6 +2185,10 @@ bool slotTargetable(Machine &m, uint8_t &distance) {
 
 uint8_t countTargetableGroups(Machine &m, uint8_t member) {
 	combatReadiness(m, member);
+	return countGroupsInRange(m);
+}
+
+uint8_t countGroupsInRange(Machine &m) {
 	m.d8(0xA59B) = 0;
 	const uint8_t total = m.d8(uint16_t(g::saved2 + g::s2::totalPartyGroups));
 	for (uint8_t group = 0; group <= total; ++group) {

@@ -223,6 +223,8 @@ void updateAllSlotSurvivors(Machine &m);
 bool slotTargetable(Machine &m, uint8_t &distance);
 // 13828: number of monster groups party member `member` can target with the equipped weapon
 uint8_t countTargetableGroups(Machine &m, uint8_t member);
+// 1382B: the same for the readiness already in ds:46CC
+uint8_t countGroupsInRange(Machine &m);
 // 17AB7: itemQuantity = 1
 void setItemQuantityOne(Machine &m);
 // ---- the round of one party member -----------------------------------------------------------------------------------------

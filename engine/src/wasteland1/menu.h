@@ -3,6 +3,7 @@
 // screens built from them.
 #include "wasteland1/machine.h"
 
+
 namespace wl {
 
 // 173B0: waits for a key and returns its position in the string at textString (a key that is not in it is ignored); 0xFF when
@@ -19,5 +20,13 @@ bool chooseUseAction(Machine &m, uint8_t member, uint8_t &mode, uint8_t &target,
 
 // 12AE0: lets the player put the members of the active group in a new order
 void rearrangeParty(Machine &m);
+
+// 12284: row of the target list: monster group `index` (1 based over all slots); false (CF) when the group is shown
+bool targetRow(Machine &m, uint8_t index);
+// 12262: opens the target list for `groups` entries
+void showTargetList(Machine &m, uint8_t groups);
+// 1236F: lets the player pick one of the monster groups in range (readiness ds:46CC set to FFh = any weapon); returns false (CF)
+// when cancelled or when there is nothing to pick; `group` is the 0 based list position
+bool chooseTargetGroup(Machine &m, uint8_t &group);
 
 } // namespace wl

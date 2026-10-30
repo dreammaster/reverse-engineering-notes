@@ -2,6 +2,8 @@
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
 #include "wasteland1/character.h"
+#include "wasteland1/combat.h"
+#include "wasteland1/listmenu.h"
 #include "wasteland1/party.h"
 #include "wasteland1/text.h"
 
@@ -237,6 +239,62 @@ void rearrangeParty(Machine &m) {
         call(m, 0x63C4);
         call(m, 0x728C);
         return;
+    }
+}
+
+
+bool targetRow(Machine &m, uint8_t index) {
+    auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+    const CombatantId id = splitCombatantIndex(uint8_t(index - 1));
+    D(0xA42C) = id.group;
+    D(0xA42A) = id.member;
+    selectSlot(m, id.group, id.slot);
+    uint8_t distance = 0;
+    if (!slotTargetable(m, distance)) return true;
+    D(0xA42B) = distance;
+    const uint8_t offset = D(uint16_t(g::encounterCountOffsets + D(0xA42A)));
+    if (D(uint16_t(m.d16(g::savedLocationDetailsPtr) + offset)) == 0) return true;
+    D(g::inverseText) = 0;
+    if (D(0x4654) == D(0xA42C)) D(g::inverseText) = 0xFF;
+    call(m, 0x6EE8);   // sub_16EE8: row marker
+    D(g::inverseText) = 0;
+    writeEncounterGroup(m, D(0xA42A));
+    D(0x4672) = uint8_t(D(g::rectRightCol) - 3);
+    writeCharacterVia(m, 32);
+    D(0x467F) = 2;
+    writeNumberShort(m, D(0xA42B));
+    writeCharacter2(m, 39);
+    return false;
+}
+
+void showTargetList(Machine &m, uint8_t groups) {
+    m.d8(0x469D) = uint8_t(groups + 1);
+    printMessage(m, 63);
+    m.d8(0x469C) = 65;
+    m.d8(0x4721) = 0xFF;
+    m.d8(0x4699) = 1;
+    m.setD16(0x4696, 0x2284);
+    pagedListDraw(m);
+}
+
+bool chooseTargetGroup(Machine &m, uint8_t &group) {
+    m.d8(g::readiness) = 0xFF;
+    const uint8_t groups = countGroupsInRange(m);
+    if (groups == 0) {
+        printMessage(m, 57);
+        group = 0;
+        return false;
+    }
+    showTargetList(m, groups);
+    for (;;) {
+        m.setD16(g::buttonMask1, 0x0434);
+        m.setD16(g::buttonMask2, 0);
+        const ListResult r = pagedListKeys(m);
+        if (r.cf && r.al == 0xFF) { group = 0xFF; return false; }
+        if (r.al >= 0xFD) continue;
+        group = uint8_t(r.al - 1);
+        markPickedRow(m);
+        return true;
     }
 }
 
