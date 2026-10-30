@@ -1671,6 +1671,955 @@ intptr_t conv_text_89(int phase, int arg_2, int arg_4) {
 	return 0;
 }
 
+// event_fn_00
+intptr_t event_fn_00(int phase, int arg_2, int arg_4) {
+	byte_852E5 = 1;
+	_rand();
+	schedule_event_q(1, (UNKNOWN_ARG + 1));
+	return 0;
+	return 0;
+}
+
+// event_fn_01
+intptr_t event_fn_01(int phase, int arg_2, int arg_4) {
+	clear_text_area();
+	object_move_q(0x50, 0x3E, 1);
+	object_set_attr_q(0x50, 6);
+	if (current_room==0x33) {
+		if (object_has_attr_q(0x34, 0xE)!=0) {
+			Font_WriteMessage(MSG(21, 0x40));
+			byte_852E2 = 1;
+			return 1;
+		}
+		if (object_has_attr_q(0x34, 0xE)==0) {
+			if (current_room==0x33) {
+				Font_WriteMessage(MSG(21, 0x41), UNKNOWN_ARG, UNKNOWN_ARG);
+				realsound_play(ADDR(aDoorbell_rs));
+				byte_852E2 = 1;
+				return 1;
+			}
+			if (current_room!=0x33) {
+				Font_WriteMessage(MSG(21, 0x41), ADDR(aInTheFoyer));
+				realsound_play(ADDR(aDoorbell_rs));
+				byte_852E2 = 1;
+				return 1;
+			}
+		}
+	}
+	if (current_room!=0x33) {
+		if (current_room==0x33) {
+			Font_WriteMessage(MSG(21, 0x41), UNKNOWN_ARG, UNKNOWN_ARG);
+			realsound_play(ADDR(aDoorbell_rs));
+			byte_852E2 = 1;
+			return 1;
+		}
+		if (current_room!=0x33) {
+			Font_WriteMessage(MSG(21, 0x41), ADDR(aInTheFoyer));
+			realsound_play(ADDR(aDoorbell_rs));
+			byte_852E2 = 1;
+			return 1;
+		}
+	}
+	return 0;
+}
+
+// event_fn_02
+intptr_t event_fn_02(int phase, int arg_2, int arg_4) {
+	flag_871EE_telephone = 1;
+	if (current_room!=0x40) {
+		Font_WriteMessage(MSG(5, 0x6E));
+		flag_871F0_telephone++;
+		if (flag_871F0_telephone<6) {
+			schedule_event_q(3, 1);
+			wputchar_q(0x2E);
+			realsound_play(ADDR(aPhone_rs));
+			return 1;
+		}
+		if (flag_871F0_telephone>=6) {
+			flag_871F0_telephone = 0;
+			flag_871EE_telephone = 0;
+			schedule_event_q(3, 0xC);
+			Font_WriteMessage(ADDR(aAFinalTime_));
+			realsound_play(ADDR(aPhone_rs));
+			return 1;
+		}
+	}
+	if (current_room==0x40) {
+		Font_WriteMessage(MSG(5, 0x6F));
+		flag_871F0_telephone++;
+		if (flag_871F0_telephone<6) {
+			schedule_event_q(3, 1);
+			wputchar_q(0x2E);
+			realsound_play(ADDR(aPhone_rs));
+			return 1;
+		}
+		if (flag_871F0_telephone>=6) {
+			flag_871F0_telephone = 0;
+			flag_871EE_telephone = 0;
+			schedule_event_q(3, 0xC);
+			Font_WriteMessage(ADDR(aAFinalTime_));
+			realsound_play(ADDR(aPhone_rs));
+			return 1;
+		}
+	}
+	return 0;
+}
+
+// event_fn_06
+intptr_t event_fn_06(int phase, int arg_2, int arg_4) {
+	byte_852CC = 1;
+	if (current_room!=0x80) {
+		return 0;
+	}
+	if (current_room==0x80) {
+		object_move_q(3, current_room, 0);
+		wputchar_q(0xB);
+		wait_ticks_or_click(0x1388);
+		show_compendium(0x281, 0x5A0B);
+		if (object_get_prop_a_q(0x73)==0x12D) {
+			if (object_has_attr_q(0x80, 0xA)==0) {
+				object_set_attr_q(0x80, 0xA);
+				add_score_q(9, 0, 0);
+				return 0;
+			}
+			if (object_has_attr_q(0x80, 0xA)!=0) {
+				return 0;
+			}
+		}
+		if (object_get_prop_a_q(0x73)!=0x12D) {
+			return 0;
+		}
+	}
+	return 0;
+}
+
+// event_fn_07
+intptr_t event_fn_07(int phase, int arg_2, int arg_4) {
+	flag_85286_buttercups++;
+	print_obj(0x12, 0x76);
+	Font_WriteMessage(ADDR(aSHas), print_obj(0x12, 0x76), UNKNOWN_ARG);
+	if (flag_85286_buttercups!=1) {
+		if ((flag_85286_buttercups - 1)!=1) {
+			if (((flag_85286_buttercups - 1) - 1)!=1) {
+				if ((((flag_85286_buttercups - 1) - 1) - 1)!=1) {
+					Font_WriteMessage(ADDR(a__5));
+					if (flag_85286_buttercups<4) {
+						schedule_event_q(8, 5);
+						return 1;
+					}
+					if (flag_85286_buttercups>=4) {
+						flag_85286_buttercups = 0;
+						return 1;
+					}
+				}
+				if ((((flag_85286_buttercups - 1) - 1) - 1)==1) {
+					Font_WriteMessage(MSG(48, 0x37));
+					object_move_q(0x76, 0, 0);
+					object_set_prop_a_q(0x76, 0x136);
+					Font_WriteMessage(ADDR(a__5));
+					if (flag_85286_buttercups<4) {
+						schedule_event_q(8, 5);
+						return 1;
+					}
+					if (flag_85286_buttercups>=4) {
+						flag_85286_buttercups = 0;
+						return 1;
+					}
+				}
+			}
+			if (((flag_85286_buttercups - 1) - 1)==1) {
+				object_set_prop_a_q(0x76, 0x139);
+				Font_WriteMessage(MSG(48, 0x36));
+				Font_WriteMessage(ADDR(a__5));
+				if (flag_85286_buttercups<4) {
+					schedule_event_q(8, 5);
+					return 1;
+				}
+				if (flag_85286_buttercups>=4) {
+					flag_85286_buttercups = 0;
+					return 1;
+				}
+			}
+		}
+		if ((flag_85286_buttercups - 1)==1) {
+			object_set_prop_a_q(0x76, 0x138);
+			Font_WriteMessage(MSG(48, 0x35));
+			Font_WriteMessage(ADDR(a__5));
+			if (flag_85286_buttercups<4) {
+				schedule_event_q(8, 5);
+				return 1;
+			}
+			if (flag_85286_buttercups>=4) {
+				flag_85286_buttercups = 0;
+				return 1;
+			}
+		}
+	}
+	if (flag_85286_buttercups==1) {
+		object_set_prop_a_q(0x76, 0x137);
+		Font_WriteMessage(ADDR(aBegunToMelt));
+		Font_WriteMessage(ADDR(a__5));
+		if (flag_85286_buttercups<4) {
+			schedule_event_q(8, 5);
+			return 1;
+		}
+		if (flag_85286_buttercups>=4) {
+			flag_85286_buttercups = 0;
+			return 1;
+		}
+	}
+	return 0;
+}
+
+// event_fn_08
+intptr_t event_fn_08(int phase, int arg_2, int arg_4) {
+	word_85260++;
+	if (word_85260!=1) {
+		if ((word_85260 - 1)!=1) {
+			if (((word_85260 - 1) - 1)!=1) {
+				if ((((word_85260 - 1) - 1) - 1)!=1) {
+					if (((((word_85260 - 1) - 1) - 1) - 1)!=1) {
+						schedule_event_q(9, 1);
+						return 1;
+					}
+					if (((((word_85260 - 1) - 1) - 1) - 1)==1) {
+						wputchar_q(0xB);
+						wait_ticks_or_click(0x1B58);
+						show_compendium(0x11A, 0x5A03);
+						go_to_room_q(0x5A);
+						return 1;
+					}
+				}
+				if ((((word_85260 - 1) - 1) - 1)==1) {
+					Font_WriteMessage(MSG(10, 0x2F));
+					schedule_event_q(9, 1);
+					return 1;
+				}
+			}
+			if (((word_85260 - 1) - 1)==1) {
+				Font_WriteMessage(MSG(10, 0x2E));
+				schedule_event_q(9, 1);
+				return 1;
+			}
+		}
+		if ((word_85260 - 1)==1) {
+			Font_WriteMessage(MSG(10, 0x2D));
+			schedule_event_q(9, 1);
+			return 1;
+		}
+	}
+	if (word_85260==1) {
+		Font_WriteMessage(MSG(10, 0x2C));
+		schedule_event_q(9, 1);
+		return 1;
+	}
+	return 0;
+}
+
+// event_fn_09
+intptr_t event_fn_09(int phase, int arg_2, int arg_4) {
+	byte_852C8 = 1;
+	object_move_q(0x8A, 0x9B, 1);
+	object_move_q(0x73, 0x98, 0);
+	object_set_attr_q(0x73, 0xA);
+	return 0;
+	return 0;
+}
+
+// event_fn_10
+intptr_t event_fn_10(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	wait_ticks_or_click(0x1388);
+	show_compendium(0x329, 0x600);
+	flag_852D3_eye_screen = 1;
+	return 1;
+	return 0;
+}
+
+// event_fn_12
+intptr_t event_fn_12(int phase, int arg_2, int arg_4) {
+	clear_text_area();
+	Font_WriteMessage(MSG(5, 0x72));
+	wait_ticks_or_click(0);
+	sub_1EDBC();
+	return 0;   // falls off the end
+	return 0;
+}
+
+// event_fn_13
+intptr_t event_fn_13(int phase, int arg_2, int arg_4) {
+	print_obj(0x12, 0xA7);
+	Font_WriteMessage(ADDR(aS_3), print_obj(0x12, 0xA7), UNKNOWN_ARG);
+	word_87952++;
+	if (word_87952!=1) {
+		if ((word_87952 - 1)!=1) {
+			if (((word_87952 - 1) - 1)!=1) {
+				if (word_87952<3) {
+					schedule_event_q(0xE, 1);
+					return 1;
+				}
+				if (word_87952>=3) {
+					word_87952 = 0;
+					return 1;
+				}
+			}
+			if (((word_87952 - 1) - 1)==1) {
+				object_move_q(0xA7, 0x9D, 0);
+				Font_WriteMessage(MSG(16, 0x54));
+				if (word_87952<3) {
+					schedule_event_q(0xE, 1);
+					return 1;
+				}
+				if (word_87952>=3) {
+					word_87952 = 0;
+					return 1;
+				}
+			}
+		}
+		if ((word_87952 - 1)==1) {
+			object_set_prop_a_q(0xA7, 0x127);
+			Font_WriteMessage(MSG(16, 0x53));
+			if (word_87952<3) {
+				schedule_event_q(0xE, 1);
+				return 1;
+			}
+			if (word_87952>=3) {
+				word_87952 = 0;
+				return 1;
+			}
+		}
+	}
+	if (word_87952==1) {
+		object_set_prop_a_q(0xA7, 0x126);
+		Font_WriteMessage(MSG(16, 0x52));
+		if (word_87952<3) {
+			schedule_event_q(0xE, 1);
+			return 1;
+		}
+		if (word_87952>=3) {
+			word_87952 = 0;
+			return 1;
+		}
+	}
+	return 0;
+}
+
+// event_fn_14
+intptr_t event_fn_14(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	wait_ticks_or_click(0x9C4);
+	Font_WriteMessage(MSG(25, 0x20));
+	if (word_8526C>=0x15) {
+		Font_WriteMessage(ADDR(aTo_1));
+		if (word_8526C==0x15) {
+			Font_WriteMessage(ADDR(aViewS_), MSG(25, 0x21));
+			byte_852D9 = 1;
+			_rand();
+			schedule_event_q(0xF, (UNKNOWN_ARG + 2));
+			if (flag_852DA_conv_text_24!=0) {
+				if (byte_852DB==0) {
+					flag_852DA_conv_text_24 = 0;
+					conversation_set_enabled(0x8026, 0xC, 0);
+					conversation_set_enabled(0x8026, 0xD, 1);
+					conversation_set_enabled(0x8026, 0xE, 1);
+					conversation_set_enabled(0x8026, 0xF, 1);
+					byte_852DB = 1;
+					return 1;
+				}
+				if (byte_852DB!=0) {
+					if (byte_852DB==0) {
+						conversation_set_enabled(0x8026, 0xC, 1);
+						return 1;
+					}
+					if (byte_852DB!=0) {
+						return 1;
+					}
+				}
+			}
+			if (flag_852DA_conv_text_24==0) {
+				if (byte_852DB==0) {
+					conversation_set_enabled(0x8026, 0xC, 1);
+					return 1;
+				}
+				if (byte_852DB!=0) {
+					return 1;
+				}
+			}
+		}
+		if (word_8526C!=0x15) {
+			Font_WriteMessage(ADDR(aViewS_), UNKNOWN_ARG, UNKNOWN_ARG);
+			byte_852D9 = 1;
+			_rand();
+			schedule_event_q(0xF, (UNKNOWN_ARG + 2));
+			if (flag_852DA_conv_text_24!=0) {
+				if (byte_852DB==0) {
+					flag_852DA_conv_text_24 = 0;
+					conversation_set_enabled(0x8026, 0xC, 0);
+					conversation_set_enabled(0x8026, 0xD, 1);
+					conversation_set_enabled(0x8026, 0xE, 1);
+					conversation_set_enabled(0x8026, 0xF, 1);
+					byte_852DB = 1;
+					return 1;
+				}
+				if (byte_852DB!=0) {
+					if (byte_852DB==0) {
+						conversation_set_enabled(0x8026, 0xC, 1);
+						return 1;
+					}
+					if (byte_852DB!=0) {
+						return 1;
+					}
+				}
+			}
+			if (flag_852DA_conv_text_24==0) {
+				if (byte_852DB==0) {
+					conversation_set_enabled(0x8026, 0xC, 1);
+					return 1;
+				}
+				if (byte_852DB!=0) {
+					return 1;
+				}
+			}
+		}
+	}
+	if (word_8526C<0x15) {
+		Font_WriteMessage(ADDR(aAndOutOf));
+		if (word_8526C==0x15) {
+			Font_WriteMessage(ADDR(aViewS_), MSG(25, 0x21));
+			byte_852D9 = 1;
+			_rand();
+			schedule_event_q(0xF, (UNKNOWN_ARG + 2));
+			if (flag_852DA_conv_text_24!=0) {
+				if (byte_852DB==0) {
+					flag_852DA_conv_text_24 = 0;
+					conversation_set_enabled(0x8026, 0xC, 0);
+					conversation_set_enabled(0x8026, 0xD, 1);
+					conversation_set_enabled(0x8026, 0xE, 1);
+					conversation_set_enabled(0x8026, 0xF, 1);
+					byte_852DB = 1;
+					return 1;
+				}
+				if (byte_852DB!=0) {
+					if (byte_852DB==0) {
+						conversation_set_enabled(0x8026, 0xC, 1);
+						return 1;
+					}
+					if (byte_852DB!=0) {
+						return 1;
+					}
+				}
+			}
+			if (flag_852DA_conv_text_24==0) {
+				if (byte_852DB==0) {
+					conversation_set_enabled(0x8026, 0xC, 1);
+					return 1;
+				}
+				if (byte_852DB!=0) {
+					return 1;
+				}
+			}
+		}
+		if (word_8526C!=0x15) {
+			Font_WriteMessage(ADDR(aViewS_), UNKNOWN_ARG, UNKNOWN_ARG);
+			byte_852D9 = 1;
+			_rand();
+			schedule_event_q(0xF, (UNKNOWN_ARG + 2));
+			if (flag_852DA_conv_text_24!=0) {
+				if (byte_852DB==0) {
+					flag_852DA_conv_text_24 = 0;
+					conversation_set_enabled(0x8026, 0xC, 0);
+					conversation_set_enabled(0x8026, 0xD, 1);
+					conversation_set_enabled(0x8026, 0xE, 1);
+					conversation_set_enabled(0x8026, 0xF, 1);
+					byte_852DB = 1;
+					return 1;
+				}
+				if (byte_852DB!=0) {
+					if (byte_852DB==0) {
+						conversation_set_enabled(0x8026, 0xC, 1);
+						return 1;
+					}
+					if (byte_852DB!=0) {
+						return 1;
+					}
+				}
+			}
+			if (flag_852DA_conv_text_24==0) {
+				if (byte_852DB==0) {
+					conversation_set_enabled(0x8026, 0xC, 1);
+					return 1;
+				}
+				if (byte_852DB!=0) {
+					return 1;
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+// event_fn_15
+intptr_t event_fn_15(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	wait_ticks_or_click(0x1388);
+	show_compendium(0x121, 0x5A03);
+	return 1;
+	return 0;
+}
+
+// event_fn_16
+intptr_t event_fn_16(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	wait_ticks_or_click(0x1388);
+	show_compendium(0x127, 0x5A03);
+	return 1;
+	return 0;
+}
+
+// event_fn_18
+intptr_t event_fn_18(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	wait_ticks_or_click(0x1388);
+	word_85276++;
+	if (word_85276!=1) {
+		if ((word_85276 - 1)!=1) {
+			if (((word_85276 - 1) - 1)!=1) {
+				if ((((word_85276 - 1) - 1) - 1)!=1) {
+					if (word_85276<4) {
+						schedule_event_q(0x13, 3);
+						return 1;
+					}
+					if (word_85276>=4) {
+						return 1;
+					}
+				}
+				if ((((word_85276 - 1) - 1) - 1)==1) {
+					show_compendium(0x2FB, 0x5A04);
+					conversation_set_enabled(0x8026, 0x12, 0);
+					object_move_q(0xA, 0, 0);
+					byte_852EA = 1;
+					word_85278++;
+					byte_87BA0 = 0;
+					RoomItem_Draw(0x40);
+					add_score_q(0xA, 0, 0);
+					if (word_85276<4) {
+						schedule_event_q(0x13, 3);
+						return 1;
+					}
+					if (word_85276>=4) {
+						return 1;
+					}
+				}
+			}
+			if (((word_85276 - 1) - 1)==1) {
+				show_compendium(0x2F9, 0x5A04);
+				if (word_85276<4) {
+					schedule_event_q(0x13, 3);
+					return 1;
+				}
+				if (word_85276>=4) {
+					return 1;
+				}
+			}
+		}
+		if ((word_85276 - 1)==1) {
+			show_compendium(0x2F0, 0x5A04);
+			if (word_85276<4) {
+				schedule_event_q(0x13, 3);
+				return 1;
+			}
+			if (word_85276>=4) {
+				return 1;
+			}
+		}
+	}
+	if (word_85276==1) {
+		byte_86CC0 = 0;
+		show_compendium(0x2E8, 0x5A04);
+		show_compendium(0x17E, 0x5A03);
+		if (word_85276<4) {
+			schedule_event_q(0x13, 3);
+			return 1;
+		}
+		if (word_85276>=4) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
+// event_fn_20
+intptr_t event_fn_20(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	wait_ticks_or_click(0xBB8);
+	if (flag_85250_sword!=5) {
+		if ((flag_85250_sword - 5)!=1) {
+			return 0;
+		}
+		if ((flag_85250_sword - 5)==1) {
+			show_compendium(0x2E1, 0x5A01);
+			return 0;
+		}
+	}
+	if (flag_85250_sword==5) {
+		show_compendium(0x13F, 0x5A03);
+		return 0;
+	}
+	return 0;
+}
+
+// event_fn_21
+intptr_t event_fn_21(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	wait_ticks_or_click(0xBB8);
+	if (flag_85250_sword!=5) {
+		if ((flag_85250_sword - 5)!=1) {
+			return 0;
+		}
+		if ((flag_85250_sword - 5)==1) {
+			show_compendium(0x2E2, 0x5A01);
+			return 0;
+		}
+	}
+	if (flag_85250_sword==5) {
+		show_compendium(0x143, 0x5A03);
+		return 0;
+	}
+	return 0;
+}
+
+// event_fn_22
+intptr_t event_fn_22(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	wait_ticks_or_click(0x7D0);
+	flag_8525A_conv09 = 1;
+	go_to_room_q(0x5A);
+	return 0;
+	return 0;
+}
+
+// event_fn_23
+intptr_t event_fn_23(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	wait_ticks_or_click(0x1388);
+	show_compendium(0x149, 0x9AC);
+	if (flag_852EF_conv_text_41!=0) {
+		story_stage = 0xB;
+		go_to_room_q(0x5A);
+		byte_852EE = 1;
+		return 1;
+	}
+	if (flag_852EF_conv_text_41==0) {
+		byte_852EE = 1;
+		return 1;
+	}
+	return 0;
+}
+
+// event_fn_24
+intptr_t event_fn_24(int phase, int arg_2, int arg_4) {
+	word_8527C++;
+	if (word_8527C!=1) {
+		if ((word_8527C - 1)!=1) {
+			if (((word_8527C - 1) - 1)!=1) {
+				if (word_8527C<3) {
+					schedule_event_q(0x19, 2);
+					return 1;
+				}
+				if (word_8527C>=3) {
+					return 1;
+				}
+			}
+			if (((word_8527C - 1) - 1)==1) {
+				Font_WriteMessage(MSG(31, 0x16));
+				wait_ticks_or_click(0x1388);
+				story_stage = 0x17;
+				go_to_room_q(0x5A);
+				if (word_8527C<3) {
+					schedule_event_q(0x19, 2);
+					return 1;
+				}
+				if (word_8527C>=3) {
+					return 1;
+				}
+			}
+		}
+		if ((word_8527C - 1)==1) {
+			Font_WriteMessage(MSG(31, 0x15));
+			if (word_8527C<3) {
+				schedule_event_q(0x19, 2);
+				return 1;
+			}
+			if (word_8527C>=3) {
+				return 1;
+			}
+		}
+	}
+	if (word_8527C==1) {
+		print_obj(0x12, 0xEE);
+		Font_WriteMessage(MSG(31, 0x14), print_obj(0x12, 0xEE), UNKNOWN_ARG);
+		if (word_8527C<3) {
+			schedule_event_q(0x19, 2);
+			return 1;
+		}
+		if (word_8527C>=3) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
+// event_fn_27
+intptr_t event_fn_27(int phase, int arg_2, int arg_4) {
+	print_obj(0x12, 0xE);
+	Font_WriteMessage(ADDR(aS_6), print_obj(0x12, 0xE), UNKNOWN_ARG);
+	if (object_parent_is_q(0x100, 1)==0) {
+		Font_WriteMessage(MSG(33, 0x54));
+		object_move_q(0x100, 1, 0);
+		schedule_event_q(0x1C, 2);
+		return 1;
+	}
+	if (object_parent_is_q(0x100, 1)!=0) {
+		Font_WriteMessage(MSG(33, 0x55));
+		object_move_q(0x100, 0, 0);
+		schedule_event_q(0x1C, 2);
+		return 1;
+	}
+	return 0;
+}
+
+// event_fn_28
+intptr_t event_fn_28(int phase, int arg_2, int arg_4) {
+	story_stage = 0x11;
+	go_to_room_q(0x5A);
+	return 1;
+	return 0;
+}
+
+// event_fn_29
+intptr_t event_fn_29(int phase, int arg_2, int arg_4) {
+	word_85288++;
+	if (word_85288!=1) {
+		if (((word_85288 - 1) - 1)!=1) {
+			if (((((word_85288 - 1) - 1) - 1) - 1)!=1) {
+				if (word_85288<5) {
+					schedule_event_q(0x1E, 1);
+					return 1;
+				}
+				if (word_85288>=5) {
+					story_stage = 0x13;
+					go_to_room_q(0x5A);
+					return 1;
+				}
+			}
+			if (((((word_85288 - 1) - 1) - 1) - 1)==1) {
+				byte_86CC0 = 0;
+				show_compendium(0x168, 0x5A03);
+				if (word_85288<5) {
+					schedule_event_q(0x1E, 1);
+					return 1;
+				}
+				if (word_85288>=5) {
+					story_stage = 0x13;
+					go_to_room_q(0x5A);
+					return 1;
+				}
+			}
+		}
+		if (((word_85288 - 1) - 1)==1) {
+			show_compendium(0x167, 0x5A03);
+			if (word_85288<5) {
+				schedule_event_q(0x1E, 1);
+				return 1;
+			}
+			if (word_85288>=5) {
+				story_stage = 0x13;
+				go_to_room_q(0x5A);
+				return 1;
+			}
+		}
+	}
+	if (word_85288==1) {
+		show_compendium(0x166, 0x5A03);
+		if (word_85288<5) {
+			schedule_event_q(0x1E, 1);
+			return 1;
+		}
+		if (word_85288>=5) {
+			story_stage = 0x13;
+			go_to_room_q(0x5A);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+// event_fn_30
+intptr_t event_fn_30(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	flag_8530D_faucet = 0;
+	flag_8530E_sink = 0;
+	RoomItem_Draw(0x20);
+	Font_WriteMessage(MSG(38, 0x51));
+	wait_ticks_or_click(0x1F40);
+	story_stage = 0x15;
+	go_to_room_q(0x5A);
+	return 1;
+	return 0;
+}
+
+// event_fn_32
+intptr_t event_fn_32(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	wait_ticks_or_click(0x1388);
+	byte_86CC0 = 0;
+	show_compendium(0x35F, 0xE19);
+	MouseCursor_SetSmallArrow();
+	if (story_stage==0x16) {
+		byte_85743 = 1;
+		go_to_room_q(0x5A);
+		return 0;
+	}
+	if (story_stage!=0x16) {
+		RoomItem_Draw(0x10);
+		return 0;
+	}
+	return 0;
+}
+
+// event_fn_34
+intptr_t event_fn_34(int phase, int arg_2, int arg_4) {
+	if (current_room==0x18D) {
+		print_obj(0x12, 0x190);
+		Font_WriteMessage(MSG(43, 0x22), print_obj(0x12, 0x190), UNKNOWN_ARG);
+		object_clear_attr_q(0x190, 0xE);
+		popup_window_event_q();
+		return 0;
+	}
+	if (current_room!=0x18D) {
+		object_clear_attr_q(0x190, 0xE);
+		popup_window_event_q();
+		return 0;
+	}
+	return 0;
+}
+
+// event_fn_36
+intptr_t event_fn_36(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	wait_ticks_or_click(0x1388);
+	if (current_room==0x8C) {
+		show_compendium(0x192, 0x5A03);
+		return 1;
+	}
+	if (current_room!=0x8C) {
+		show_compendium(0x196, 0x5A03);
+		return 1;
+	}
+	return 0;
+}
+
+// event_fn_37
+intptr_t event_fn_37(int phase, int arg_2, int arg_4) {
+	word_852A0++;
+	if (word_852A0>=4) {
+		Font_WriteMessage(MSG(46, 0x15), MSG(46, 0x16));
+		if (word_852A0<4) {
+			schedule_event_q(0x26, 2);
+			byte_8874A = 0;
+			return 1;
+		}
+		if (word_852A0>=4) {
+			schedule_event_q(0x27, 2);
+			byte_8874A = 0;
+			return 1;
+		}
+	}
+	if (word_852A0<4) {
+		Font_WriteMessage(MSG(46, 0x15), ADDR(aDrawsNearer));
+		if (word_852A0<4) {
+			schedule_event_q(0x26, 2);
+			byte_8874A = 0;
+			return 1;
+		}
+		if (word_852A0>=4) {
+			schedule_event_q(0x27, 2);
+			byte_8874A = 0;
+			return 1;
+		}
+	}
+	return 0;
+}
+
+// event_fn_38
+intptr_t event_fn_38(int phase, int arg_2, int arg_4) {
+	wputchar_q(0xB);
+	wait_ticks_or_click(0xBB8);
+	Font_WriteMessage(MSG(46, 0x17));
+	realsound_play(ADDR(aPend_rs_1));
+	wait_ticks_or_click(0x1770);
+	story_stage = 0x1B;
+	go_to_room_q(0x5A);
+	return 1;
+	return 0;
+}
+
+// event_fn_39
+intptr_t event_fn_39(int phase, int arg_2, int arg_4) {
+	word_852A0 = 4;
+	object_set_attr_q(0x182, 0xA);
+	cancel_event(0x26);
+	cancel_event(0x27);
+	wputchar_q(0xB);
+	popup_window_event_q();
+	show_text_box(MSG(46, 0x18));
+	Font_WriteMessage(MSG(46, 0x19));
+	add_score_q(0xA, 1, 1);
+	showCutscene(9);
+	show_text_box(MSG(46, 0x1A));
+	showCutscene(3);
+	go_to_room_q(0x184);
+	return 1;
+	return 0;
+}
+
+// event_fn_40
+intptr_t event_fn_40(int phase, int arg_2, int arg_4) {
+	if (random_percent(0x32)!=0) {
+		realsound_play(ADDR(aScream1_rs_1));
+		_rand();
+		schedule_event_q(0x29, (UNKNOWN_ARG + 2));
+		return 0;
+	}
+	if (random_percent(0x32)==0) {
+		realsound_play(ADDR(aScream2_rs_1));
+		_rand();
+		schedule_event_q(0x29, (UNKNOWN_ARG + 2));
+		return 0;
+	}
+	return 0;
+}
+
+// event_fn_41
+intptr_t event_fn_41(int phase, int arg_2, int arg_4) {
+	flag_871EE_telephone = 2;
+	if (current_room!=0x40) {
+		Font_WriteMessage(MSG(5, 0x70));
+		flag_871F0_telephone++;
+		realsound_play(ADDR(aPhone_rs_0));
+		schedule_event_q(0x2A, 1);
+		return 1;
+	}
+	if (current_room==0x40) {
+		Font_WriteMessage(MSG(5, 0x71));
+		flag_871F0_telephone++;
+		realsound_play(ADDR(aPhone_rs_0));
+		schedule_event_q(0x2A, 1);
+		return 1;
+	}
+	return 0;
+}
+
 // exit_fn_00
 intptr_t exit_fn_00(int phase, int arg_2, int arg_4) {
 	if (phase==0xF) {

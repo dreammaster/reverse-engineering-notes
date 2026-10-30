@@ -95,6 +95,8 @@ def parse(lines):
 
 def stmt(t):
     m = re.match(r"^-> (.*)$", t)
+    if m and m.group(1).strip() == "falls off":
+        return "return 0;   // falls off the end"
     if m:
         return "return %s;" % expr(m.group(1))
     m = re.match(r"^(\S+) = (.*)$", t)
@@ -161,7 +163,7 @@ def main():
     body, todo, done = [], [], 0
     for name in order:
         owners, lines = fn[name]
-        if not (name.startswith("objh_") or name.startswith("exit_fn_") or name.startswith("conv_cb_") or name.startswith("conv_text_")):
+        if not (name.startswith("objh_") or name.startswith("exit_fn_") or name.startswith("event_fn_") or name.startswith("conv_cb_") or name.startswith("conv_text_")):
             continue
         bad = [l.strip() for l in lines if IRREG.search(l)]
         if bad or not lines:

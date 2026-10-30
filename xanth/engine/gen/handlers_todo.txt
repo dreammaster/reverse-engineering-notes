@@ -44,6 +44,19 @@ conv_text_85	2 irregular line(s), e.g. -> [bp+var_4]
 conv_text_86	10 irregular line(s), e.g. ResourceText_GetStr(es:[bx+6A4h], es:[bx+6A6h])
 conv_text_87	23 irregular line(s), e.g. if ((es:[bx+6A8h] + es:[bx+6ACh]) - word_8ADBA)!=1:
 conv_text_88	2 irregular line(s), e.g. -> [bp+var_4]
+event_fn_03	4 irregular line(s), e.g. Font_WriteMessage(&aS_, [bp+var_4], [bp+var_2])
+event_fn_04	5 irregular line(s), e.g. Font_WriteMessage(&aNadaS_, [bp+var_4], [bp+var_2])
+event_fn_05	3 irregular line(s), e.g. es:word_81A66 = word_8745C
+event_fn_11	3 irregular line(s), e.g. Font_WriteMessage([bp+msg], [bp+msg+2])
+event_fn_17	5 irregular line(s), e.g. Font_WriteMessage(&aYouS_, [bp+var_4], [bp+var_2])
+event_fn_19	2 irregular line(s), e.g. tail cs:off_5EA26[bx]
+event_fn_25	17 irregular line(s), e.g. Font_WriteMessage(&aS__0, [bp+si+var_24], [bp+si+var_22])
+event_fn_26	5 irregular line(s), e.g. Font_WriteMessage(&aS__1, [bp+var_4], [bp+var_2])
+event_fn_31	94 irregular line(s), e.g. if es:[bx+5C0h]==0x58:
+event_fn_33	109 irregular line(s), e.g. if es:[bx]!=current_room:
+event_fn_35	4 irregular line(s), e.g. Font_WriteMessage(msg(70:0x23), [bp+var_4], [bp+var_2])
+event_fn_43	1 irregular line(s), e.g. Font_WriteMessage(msg(31:0x2E), es:[bx+6Ch], es:[bx+6Eh])
+event_fn_44	1 irregular line(s), e.g. ds = seg seg193
 exit_fn_12	103 irregular line(s), e.g. if [bx]!=byte_8BE1C:
 objh_005	7 irregular line(s), e.g. if [bx]==current_room:
 objh_031	2 irregular line(s), e.g. tail cs:off_4CBB2[bx]

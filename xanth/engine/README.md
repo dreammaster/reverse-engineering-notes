@@ -28,8 +28,8 @@ Shannara's retail `.PIC` pixels are stored raw: `PicFile::decode(i, false)`.
 ## gen/ - handler prototype (generated)
 
 `../reversing/scripts/gen_handlers.py` translates the handler digest (`analysis/xanth_handler_digest.txt`) into C++:
-`gen/handlers_gen.cpp` has 516 of the 663 object handlers / exit functions / conversation callbacks / dynamic texts (`intptr_t objh_NNN(int phase, ...)`),
-`gen/handlers_api.h` declares the 497 game variables and 79 engine functions they use (`Font_WriteMessage`, `object_move?` -> `object_move_q`, ...) plus the
-`Command` enum and the `MSG(block, index)` macro, and `gen/handlers_todo.txt` lists the 147 handlers that use loops, stack locals or jump tables and still need hand work.
+`gen/handlers_gen.cpp` has 547 of the 707 object handlers / exit functions / conversation callbacks / dynamic texts (`intptr_t objh_NNN(int phase, ...)`),
+`gen/handlers_api.h` declares the 527 game variables and 81 engine functions they use (`Font_WriteMessage`, `object_move?` -> `object_move_q`, ...) plus the
+`Command` enum and the `MSG(block, index)` macro, and `gen/handlers_todo.txt` lists the 160 handlers that use loops, stack locals or jump tables and still need hand work.
 The result compiles (`g++ -std=c++17 -fsyntax-only gen/handlers_gen.cpp`) but is only as faithful as the digest (a path-trie summary, not a decompilation); it is the skeleton
 to port against, with the host providing the declared variables and functions.
