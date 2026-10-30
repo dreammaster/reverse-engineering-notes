@@ -26,7 +26,8 @@ open(idc.ARGV[1], "wb").write(bytes(img[:top]))
 funcs = {}
 for ea in idautils.Functions():
     f = ida_funcs.get_func(ea)
-    funcs[idc.get_func_name(ea)] = {"ea": ea, "end": f.end_ea}
+    sg = ida_segment.getseg(ea)
+    funcs[idc.get_func_name(ea)] = {"ea": ea, "end": f.end_ea, "seg": (sg.start_ea >> 4) if sg else 0}
 json.dump({"top": top, "funcs": funcs}, open(idc.ARGV[2], "w"))
 print("image bytes", top, "functions", len(funcs))
 if not ida_kernwin.is_idaq():

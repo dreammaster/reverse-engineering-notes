@@ -77,6 +77,7 @@ void H_Font_WriteMessage(Cpu &c) {
 		e.w[i] = c.arg(i);
 	e.text = expand(c, fmt, n);
 	h.events.push_back(e);
+	if (h.onText) h.onText(h);
 	c.ax.x = c.dx.x = 0;
 }
 
@@ -174,8 +175,66 @@ void H__sprintf(Cpu &c) {
 		}
 		out += buf;
 	}
+	if (out.size() > 120) { char pb[200]; snprintf(pb, sizeof(pb), "sprintf produced %zu bytes into %04X:%04X, format %04X:%04X '%.40s'", out.size(), dseg, doff, c.arg(3), c.arg(2), fmt.c_str()); h.problem(pb); out.resize(120); }
 	for (size_t i = 0; i <= out.size(); i++)
 		c.wr8(dseg, (uint16_t)(doff + i), i < out.size() ? (uint8_t)out[i] : 0);
 	c.ax.x = (uint16_t)out.size();
 	c.dx.x = 0;
+}
+
+// Font_WriteString(const char far *text): the text the game draws on screen (the host records it instead of rendering glyphs)
+void H_Font_WriteString(Cpu &c) {
+	Host &h = host();
+	bool ok;
+	Event e;
+	e.name = "Font_WriteString";
+	for (int i = 0; i < 8; i++)
+		e.w[i] = c.arg(i);
+	e.text = h.str(c.arg(1), c.arg(0), 400, &ok);
+	h.events.push_back(e);
+	c.ax.x = c.dx.x = 0;
+}
+
+// sub_676B6: helper of the three big cutscene routines (sub_67E2A / sub_69FF7 / sub_6C42D); it builds on code that jumps into the middle of an instruction
+// (`call loc_4226A+1`), which the lifter cannot follow, so the host records the call and reports success
+void H_sub_676B6(Cpu &c) {
+	Event e;
+	e.name = "sub_676B6";
+	for (int i = 0; i < 8; i++)
+		e.w[i] = c.arg(i);
+	host().events.push_back(e);
+	c.ax.x = c.dx.x = 0;
+}
+
+// RTLink overlay manager: the lifted program is one image, so "loading" an overlay segment always succeeds
+void H_rtlink_countFlags(Cpu &c) { c.ax.x = 0; c.dx.x = 0; }
+void H_rtlink_loadSegment(Cpu &c) { c.ax.x = 1; c.dx.x = 0; }
+
+// int _int86(int intno, union REGS far *in, union REGS far *out): the C library builds `int N` on the stack and runs it; the host executes the interrupt directly.
+// WORDREGS = { ax, bx, cx, dx, si, di, cflag }
+void H___int86(Cpu &c) {
+	int intno = c.arg(0) & 0xFF;
+	uint16_t inOff = c.arg(1), inSeg = c.arg(2), outOff = c.arg(3), outSeg = c.arg(4);
+	uint16_t si = c.si, di = c.di, es = c.es, ds = c.ds;
+	c.ax.x = c.rd16(inSeg, inOff);
+	c.bx.x = c.rd16(inSeg, (uint16_t)(inOff + 2));
+	c.cx.x = c.rd16(inSeg, (uint16_t)(inOff + 4));
+	c.dx.x = c.rd16(inSeg, (uint16_t)(inOff + 6));
+	c.si = c.rd16(inSeg, (uint16_t)(inOff + 8));
+	c.di = c.rd16(inSeg, (uint16_t)(inOff + 10));
+	c.CF = false;
+	host().machine.intr(c, intno);
+	c.wr16(outSeg, outOff, c.ax.x);
+	c.wr16(outSeg, (uint16_t)(outOff + 2), c.bx.x);
+	c.wr16(outSeg, (uint16_t)(outOff + 4), c.cx.x);
+	c.wr16(outSeg, (uint16_t)(outOff + 6), c.dx.x);
+	c.wr16(outSeg, (uint16_t)(outOff + 8), c.si);
+	c.wr16(outSeg, (uint16_t)(outOff + 10), c.di);
+	c.wr16(outSeg, (uint16_t)(outOff + 12), c.CF ? 1 : 0);
+	c.si = si; c.di = di; c.es = es; c.ds = ds;
+}
+
+// void longjmp(jmp_buf env, int val): unwinds the lifted C++ frames up to the function that called _setjmp for this buffer
+void H__longjmp(Cpu &c) {
+	throw LongJmp{c.arg(1), c.arg(0), c.arg(2)};
 }

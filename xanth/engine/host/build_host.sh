@@ -16,6 +16,6 @@ cp "$SP/image.bin" game_out/image.bin
   python lift_handlers.py "$SP/hsyms_out.json" "$SP/funcs.json" --host )
 cp engine/gen/cpu.h engine/host/gen/
 cd engine/host
-g++ -std=c++17 -O1 -static -w -DLIFT_STEP_LIMIT=3000000 -I gen -I . -I .. -o host_test.exe host.cpp host_impl.cpp host_test.cpp \
+g++ -std=c++17 -O1 -static -w -DLIFT_STEP_LIMIT=3000000 -I gen -I . -I .. -o host_test.exe host.cpp host_impl.cpp host_machine.cpp host_test.cpp \
     gen/lifted_handlers.cpp gen/lifted_table.cpp gen/lifted_names.cpp gen/host_defaults.cpp ../legend_formats.cpp
 echo built engine/host/host_test.exe

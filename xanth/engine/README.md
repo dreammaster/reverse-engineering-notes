@@ -48,7 +48,8 @@ The trace test only compares the *sequence of engine calls* in one state, so it 
 
 ### Host
 
-`host/` runs the lifted code against the original data (memory image from the IDB, engine functions implemented or recorded); see `host/README.md`. Building it lifts about 1,020 functions
-(`lift_handlers.py --host`, which also follows every call, every function-table entry and every address-taken function) and writes them to `host/gen/` (git-ignored).
-The eight handlers whose code IDA left as plain chunks (1, 27, 30, 45, 86, 177, 180, 335; they were missing from the digest) and three hand-decoded blocks of code that IDA had left as
-data (`PATCHES` in `lift_handlers.py`) are covered there too.
+`host/` runs the lifted code on the original data on an emulated PC (DOS, BIOS, EMS, mouse, ports and the timer interrupt are emulated; the engine is the original code); see `host/README.md`.
+Building it lifts about 1,890 functions (`lift_handlers.py --host`, which also follows every call, every function-table entry, every address-taken function and every code chunk stored as a far
+pointer) and writes them to `host/gen/` (git-ignored). `setjmp`/`longjmp` are supported (a `longjmp` throws and the function that called `setjmp` resumes after that call), the computed jumps IDA
+did not resolve (the picture blitter's pixel-operation dispatch, `VIDEO_MODE.fn_copyRect`) are spelled out in `PATCHES`, and the eight handlers that are plain code chunks (1, 27, 30, 45, 86, 177, 180, 335)
+and the hand-decoded blocks of code that IDA had left as data are covered too. The original startup, the text decoder, the save/restore code and the room-entry code run and are checked against the independent decoders.

@@ -21,11 +21,12 @@ Workflow is the same as `shannara/reversing/notes/roadmap.md`: work on a copy of
 
 - C++17 readers for DCL/PIC/RGN/XANTHSTR/MUS/VOC in `xanth/engine/` (`legend_tool check <gamedir>` decodes all 3,294 pictures, 5,542 strings, 86 MIDI records, the VOC directory).
 
-- Host (`xanth/engine/host`): the lifted original code runs on the original data - object model checked against the independently decoded table (0 mismatches in 12,352 checks), 47,232 handler scenarios and all 70 rooms with 0 invalid arguments, real game text printed through the real `run_command` / `print_obj` code. 8 handlers that were never named (code chunks) found and added.
+- Host (`xanth/engine/host`): the whole lifted program (startup, C runtime, engine, game logic) runs on an emulated PC (DOS/BIOS/EMS/mouse/ports/timer) with the original data: `init_game` completes, the original text decoder reproduces all 5,542 strings, the original save/restore code round-trips `restart.dat` (IDB names `load_game?`/`save_game?` are swapped: the first writes), `go_to_room` decodes room pictures exactly (31,944 of 31,944 pixels of XANTH_18 image 18), the object model matches the independently decoded table (0 mismatches in 12,352 checks), 47,232 handler scenarios (1,300 print text) and all 70 rooms run with 0 invalid arguments (one in the Dark Cavern state artifact). 8 never-named handlers (code chunks), 100 region callbacks (`dd loc_xxx`), `setjmp`/`longjmp` and the picture blitter's computed jumps were found and lifted by running the game.
 
 - Scenes (716 hotspots, region id = object id), room pictures (68), room music (66), object attributes (23), cutscene list: all data needed to *render and navigate* the Xanth world is located (overview sections 8-16).
 
 ## Next
+0. Host: script `Conversation_Show` (mouse/keyboard) so the 77 scenarios that stop at a menu can be followed; understand why the first screen after `go_to_room` is black (streamed picture decode vs `pic_copyRect`); script `main`'s title/menu input; rename the swapped `load_game?`/`save_game?`.
 1. Write per-room/NPC story summaries from the digest (puzzles, flag logic) and name the remaining ~80 flag bytes meaningfully (they currently carry `flag_ADDR_<first writer>` labels).
 2. `*.RS` is decoded (6-bit PWM PCM, ~16.6 kHz, repeat byte unconfirmed). Still open: the digital player routines behind `word_891BA` (undisassembled driver segment) and the SoundBlaster voice rate; trace `play_music_entry` -> device selection for the two MIDI arrangements.
 3. Port the verified decoders (DCL, PIC, RGN, MUS directory, SHANSTR, VOC directory) to C++ and sketch the engine around `run_command` / `call_object_handler` / `Conversation_Show`.

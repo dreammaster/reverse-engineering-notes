@@ -36,6 +36,45 @@ class Insn:
 # Each patch replaces data lines of xanth.asm that are really code: it starts at the first line matching `start`, drops every line up to and including the first
 # line matching `until`, and inserts the hand-decoded instructions (bytes read from the IDB image) with their labels.  `procs` registers far functions among them.
 PATCHES = [
+    {   # pic_copyRect: `jmp es:[di+VIDEO_MODE.fn_copyRect]`; the only value ever stored there is the chunk vga_copyRect (vga_setCopyRectFn)
+        "start": r"^\s+jmp\s+es:\[di\+VIDEO_MODE\.fn_copyRect\]", "until": r"^\s+jmp\s+es:\[di\+VIDEO_MODE\.fn_copyRect\]", "procs": [],
+        "insns": [([], "jmp vga_copyRect")]},
+    {   # sub_16804: `jmp [bp+var_30]`: 3A5h xor, 3AAh and, 3AFh or, 3B4h replace (the `mov es:[di], al` is the last instruction of the span)
+        "start": r"^\s+jmp\s+\[bp\+var_30\]", "until": r"^\s+mov\s+es:\[di\], al", "procs": [],
+        "insns": [
+            ([], "cmp word ptr [bp-30h], 3A5h"), ([], "jz loc_pix30_xor_h"),
+            ([], "cmp word ptr [bp-30h], 3AAh"), ([], "jz loc_pix30_and_h"),
+            ([], "cmp word ptr [bp-30h], 3AFh"), ([], "jz loc_pix30_or_h"),
+            ([], "mov es:[di], al"), ([], "jmp loc_16BB7"),
+            (["loc_pix30_xor_h"], "xor es:[di], al"), ([], "jmp loc_16BB7"),
+            (["loc_pix30_and_h"], "and es:[di], al"), ([], "jmp loc_16BB7"),
+            (["loc_pix30_or_h"], "or es:[di], al"),
+        ]},
+    {   # sub_16804: `jmp [bp+var_32]`: 446h xor, 44Bh mask-and, 452h or, 457h and-or (the final `or es:[di], al` stays in the listing)
+        "start": r"^\s+jmp\s+\[bp\+var_32\]", "until": r"^\s+and\s+es:\[di\], dh", "procs": [],
+        "insns": [
+            ([], "cmp word ptr [bp-32h], 446h"), ([], "jz loc_pix32_xor_h"),
+            ([], "cmp word ptr [bp-32h], 44Bh"), ([], "jz loc_pix32_mask_h"),
+            ([], "cmp word ptr [bp-32h], 452h"), ([], "jz loc_pix32_or_h"),
+            ([], "jmp loc_pix32_def_h"),
+            (["loc_pix32_xor_h"], "xor es:[di], al"), ([], "jmp loc_16C5D"),
+            (["loc_pix32_mask_h"], "or al, dh"), ([], "and es:[di], al"), ([], "jmp loc_16C5D"),
+            (["loc_pix32_or_h"], "or es:[di], al"), ([], "jmp loc_16C5D"),
+            (["loc_pix32_def_h"], "and es:[di], dh"),
+        ]},
+    {   # sub_16804 (picture blitter): `jmp [bp+var_2E]` selects one of four pixel operations whose offsets (32Fh xor, 334h and-mask, 33Dh or, 342h replace) were stored
+        # by immediate moves; IDA did not see the code after the jump as reachable, so the dispatch is spelled out (the last `or es:[di], al` follows in the listing)
+        "start": r"^\s+jmp\s+\[bp\+var_2E\]", "until": r"^\s+and\s+es:\[di\], bl", "procs": [],
+        "insns": [
+            ([], "cmp word ptr [bp-2Eh], 32Fh"), ([], "jz loc_pix_xor_h"),
+            ([], "cmp word ptr [bp-2Eh], 334h"), ([], "jz loc_pix_mask_h"),
+            ([], "cmp word ptr [bp-2Eh], 33Dh"), ([], "jz loc_pix_or_h"),
+            ([], "jmp loc_pix_set_h"),
+            (["loc_pix_xor_h"], "xor es:[di], al"), ([], "jmp loc_16B4A"),
+            (["loc_pix_mask_h"], "not bl"), ([], "or al, bl"), ([], "and es:[di], al"), ([], "jmp loc_16B4A"),
+            (["loc_pix_or_h"], "or es:[di], al"), ([], "jmp loc_16B4A"),
+            (["loc_pix_set_h"], "not bl"), ([], "and es:[di], bl"),
+        ]},
     {   # seg157:0248.. : the tail of the function at loc_701CD (mov ax,1 / jmp / nop / xor ax,ax / retf) and the whole next function word_7024E
         "start": r"^word_70248\s+dw 3EBh", "until": r"^\s+retf\b", "procs": ["word_7024E"],
         "insns": [
@@ -60,7 +99,12 @@ PATCHES = [
 ]
 
 
+PROC_IDX = set()   # instruction index of every function entry
+# routines called through a pointer with the caller's BP (nested helpers): their locals are the parent's
+PARENT_FRAME = {"sub_18327": "sub_17E82"}
 DATAREFS = set()   # names stored in dd/dw data (function tables)
+DDLOCS = set()      # code labels stored as far pointers (`dd loc_xxx`): callbacks that IDA left as code chunks
+LOCAL_NAMES = {"vga_copyRect"}    # named labels that are chunks of the function that jumps to them (pic_copyRect through VIDEO_MODE.fn_copyRect)
 SYMKIND = {}    # data symbol -> db / dw / dd (as defined in the listing)
 
 
@@ -75,9 +119,23 @@ def load_asm():
     """-> (insns, labels{name: insn index}, procs{name: insn index}, tables{name: [labels]}, locals{proc: {name: (size, offset)}})"""
     insns, labels, procs, tables, locs = [], {}, {}, {}, {}
     cur_proc, cur_tab, pending = None, None, []
+    chunk_parent = None
+    last_proc = None                     # the function whose body precedes (chunks that IDA placed after its end use its frame)
     patch = None                        # patch being applied (skipping the data lines it replaces)
     for line in open(ASM, encoding="utf-8", errors="replace"):
         line = line.rstrip("\n")
+        if "offset" in line:       # a global variable that happens to be called `offset` (open_mus_file_mb)
+            line = re.sub(r"offset offset\b", "offset g_offset_var", line)
+            line = re.sub(r"ptr offset(?=\s*(;|$|\+|,|\]))", "ptr g_offset_var", line)
+        mc = re.match(r"^; START OF FUNCTION CHUNK FOR (\S+)", line)
+        if mc:
+            chunk_parent = mc.group(1)
+        elif line.startswith("; END OF FUNCTION CHUNK"):
+            chunk_parent = None
+        if "ptr ptr" in line:
+            line = line.replace("ptr ptr", "ptr g_ptr_var")
+        if "ptr" in line:      # the global variable `ptr` as a bare operand (push ptr / mov ptr, ax / or ax, ptr)
+            line = re.sub(r"(\s)ptr(?=\s*(,|;|$))", r"\1g_ptr_var", line)
         if patch:
             if re.search(patch["until"], line):
                 patch = None
@@ -110,11 +168,14 @@ def load_asm():
             cur_tab = None
             continue
         if cur_proc and re.match(r"^%s\s+endp" % re.escape(cur_proc), line):
+            last_proc = cur_proc
             cur_proc = None
             continue
         mt = re.match(r"^\s*(?:[\w?]+\s+)?(?:dd|dw)\s+(?:offset\s+)?([A-Za-z_][\w?]*)\s*(?:;.*)?$", line)
         if mt:
             DATAREFS.add(mt.group(1))
+            if re.match(r"^\s*(?:[\w?]+\s+)?dd\s", line) and mt.group(1).startswith("loc_"):
+                DDLOCS.add(mt.group(1))
         md = re.match(r"^([\w?]+)\s+(db|dw|dd)", line)
         if md:
             SYMKIND.setdefault(md.group(1), md.group(2))
@@ -130,9 +191,10 @@ def load_asm():
         code = line.split(";")[0].rstrip()
         if not code.strip():
             continue
-        m = re.match(r"^(\w+)\s*=\s*(byte|word|dword) ptr\s+(-?[0-9A-Fa-f]+h?)\s*$", code.strip())
-        if m and cur_proc:
-            locs[cur_proc][m.group(1)] = ({"byte": 1, "word": 2, "dword": 4}[m.group(2)], num(m.group(3)))
+        m = re.match(r"^(\w+)\s*=\s*(\w+)\s+ptr\s+(-?[0-9A-Fa-f]+h?)\s*$", code.strip())
+        if m and (cur_proc or last_proc):
+            tn = m.group(2)
+            locs[cur_proc or last_proc][m.group(1)] = ({"byte": 1, "word": 2, "dword": 4}.get(tn, 0), num(m.group(3)), None if tn in ("byte", "word", "dword") else tn)
             continue
         m = re.match(r"^(\w+):\s*$", code.strip()) if not code.startswith((" ", "\t")) else None
         if m:
@@ -155,7 +217,7 @@ def load_asm():
         ops = [o.strip() for o in parts[1].split(",")] if len(parts) > 1 else []
         i = Insn(len(insns), mn, ops, s, pfx)
         i.label = pending
-        i.proc = cur_proc
+        i.proc = cur_proc or chunk_parent or last_proc
         for p in pending:
             labels[p] = i.idx
             if p in procs:
@@ -165,8 +227,30 @@ def load_asm():
     for num_, (lab, ea) in CHUNK_HANDLERS.items():
         if lab in labels:
             procs.setdefault("objh_%03d" % num_, labels[lab])
+    for n in sorted(DDLOCS):
+        if n in labels:
+            procs.setdefault(n, labels[n])
     if "loc_701CD" in labels:                 # a function whose first instructions IDA did not turn into a function
         procs.setdefault("loc_701CD", labels["loc_701CD"])
+    for x in insns:
+        if (x.mn == "jmp" or x.mn in COND) and x.ops:
+            op = re.sub(r"^((short|near ptr|far ptr|near|far)\s+)+", "", x.ops[0].strip())
+            if op in labels and op not in procs and op not in LOCAL_NAMES and not op.startswith(("loc", "byte_", "word_", "dword_", "off_")) and not x.proc == op:
+                procs[op] = labels[op]
+    # IDA lost the label of a two-instruction node ("; Node #2": jmp loc_29CDE) in Image_Create; the conditional jump to it is a jump to loc_29CDE
+    if "loc_29CDE" in labels:
+        if "loc_29BAE" not in labels:
+            labels["loc_29BAE"] = labels["loc_29CDE"]
+            insns[labels["loc_29CDE"]].label.append("loc_29BAE")
+    for x in insns:
+        for o in x.ops:
+            mo = re.match(r"^(?:\()?offset\s+([A-Za-z_][\w?]*)", o.strip())
+            if mo:
+                nm = mo.group(1)
+                if nm in labels and nm not in procs and not nm.startswith(("byte_", "word_", "dword_", "off_", "unk_", "a")):
+                    procs[nm] = labels[nm]
+    PROC_IDX.clear()
+    PROC_IDX.update(procs.values())
     return insns, labels, procs, tables, locs
 
 
@@ -183,6 +267,11 @@ def num(tok):
 
 def is_num(tok):
     return bool(NUM.match(tok.strip())) and (tok.strip().lower().endswith("h") or tok.strip().lstrip("-").isdigit())
+
+
+def is_local_label(op, labels, entry):
+    """loc_xxx / locret_xxx / patched byte_ and word_ labels belong to the function (or chunk) being walked; other named labels are functions (tail calls)"""
+    return labels.get(op) == entry or op.startswith(("loc", "byte_", "word_")) or op in LOCAL_NAMES
 
 
 def reachable(insns, labels, tables, entry):
@@ -203,7 +292,7 @@ def reachable(insns, labels, tables, entry):
                     if lab in labels:
                         stack.append(labels[lab])
                 continue
-            if op in labels:
+            if op in labels and is_local_label(op, labels, entry):     # a jump to a named label (another function) is a tail call, not part of this one
                 stack.append(labels[op])
             if mn == "jmp":
                 continue
@@ -221,7 +310,7 @@ def operand_symbols(ins, labels, locs):
     """data symbols (not registers, locals, labels or numbers) used by an instruction's operands"""
     out = set()
     if ins.mn.startswith("j") or ins.mn in ("call", "loop", "loope", "loopne"):
-        ops = [o for o in ins.ops if not re.match(r"^(short |near |far ptr )?[\w?.$@]+$", o)] if ins.mn == "call" else []
+        ops = [o for o in ins.ops if not re.match(r"^(short |near |far ptr )?[\w?.$@]+$", o) or SYMKIND.get(o.strip().split()[-1]) in ("dd", "dw")] if ins.mn in ("call", "jmp") else []
     else:
         ops = ins.ops
     for op in ops:
@@ -229,7 +318,9 @@ def operand_symbols(ins, labels, locs):
             if t.lower() in SKIP or is_num(t) or re.match(r"^[0-9A-F]+h$", t):
                 continue
             base = t.split(".")[0]
-            if t in locs.get(ins.proc, {}) or base in labels and base.startswith("loc_"):
+            if t in locs.get(ins.proc, {}):
+                continue
+            if base in labels and base.startswith("loc_") and ins.mn in ("jmp", "call", "loop", "loope", "loopne", "jcxz") or (base in labels and base.startswith("loc_") and ins.mn in COND):
                 continue
             out.add(base)
     return out
@@ -283,11 +374,14 @@ def regx(name):
 class Lift:
     def __init__(self, insns, labels, procs, tables, locs, syms, segs, lifted):
         self.insns, self.labels, self.procs, self.tables, self.locs = insns, labels, procs, tables, locs
-        self.syms, self.segs, self.lifted = syms, segs, lifted
+        self.syms, self.segs, self.lifted = syms, segs, set(lifted) - OVERRIDES
         self.entry = None
         self.used_syms = set()
         self.used_segs = set()
         self.procfar = {}
+        self.structs = {}
+        self.enums = {}
+        self.cur_ins = None
         self.stubs = {}
         for pname, pidx in procs.items():
             a = insns[pidx:pidx + 2]
@@ -296,13 +390,104 @@ class Lift:
 
     # --- operands -------------------------------------------------------------------------------------------------------------------------------
     def local(self, name, ins):
-        for p in (ins.proc, self.entry):
+        for p in (ins.proc, self.entry, PARENT_FRAME.get(self.entry)):
             if p in self.locs and name in self.locs[p]:
                 return self.locs[p][name]
         return None
 
+    def fold_consts(self, e):
+        """size STRUCT -> number; innermost parenthesised constant arithmetic like (70 * 6) -> number"""
+        e = re.sub(r"size\s+(\w+)", lambda k: str(self.structs.get(k.group(1), {}).get("size", 0)), e)
+        for _ in range(6):
+            def ev(k):
+                body = k.group(1)
+                if not re.match(r"^[\s0-9A-Fa-fh*/+\-]+$", body) or not re.search(r"[*/]", body):
+                    return k.group(0)
+                body = re.sub(r"\b([0-9][0-9A-Fa-f]*)h\b", lambda q: str(int(q.group(1), 16)), body)
+                try:
+                    return str(int(eval(body, {"__builtins__": {}}, {})))
+                except Exception:
+                    return k.group(0)
+            n = re.sub(r"\(([^()]*)\)", ev, e)
+            if n == e:
+                break
+            e = n
+        return e
+
+    def member_path(self, cur, parts):
+        """offset of `parts` (member names) inside structure `cur` (a name or None); None if a name cannot be resolved"""
+        off = 0
+        st = self.structs.get(cur) if cur else None
+        for p in parts:
+            mf = re.match(r"^field_([0-9A-Fa-f]+)$", p)
+            m = st["members"].get(p) if st else None
+            if m:
+                off += m[0]
+                st = self.structs.get(m[2]) if m[2] else None
+            elif mf:
+                off += int(mf.group(1), 16)
+                st = None
+            else:
+                return None
+        return off
+
+    def unique_member(self, parts):
+        """a dotted path of member names whose first member name identifies the structure uniquely"""
+        cands = [n for n, st in self.structs.items() if parts[0] in st["members"]]
+        offs = {self.member_path(n, parts) for n in cands}
+        offs.discard(None)
+        return offs.pop() if len(offs) == 1 else None
+
+    def dotted(self, name, ins):
+        """(kind, value): ('const', n) for Type.member and local.member, ('data', 'D_x+n') for variable.member; None if unresolved"""
+        parts = name.split(".")
+        base, rest = parts[0], parts[1:]
+        if base in self.structs and not (base in self.syms and self.syms[base].get("kind") == "data"):
+            o = self.member_path(base, rest)
+            return ("const", o) if o is not None else None
+        s = self.syms.get(base)
+        if s and s.get("kind") == "data":
+            o = self.member_path(s.get("struct"), rest)
+            if o is None:
+                o = self.unique_member(rest)
+            if o is None:
+                return None
+            self.used_syms.add(base)
+            return ("data", "D_%s+%d" % (cid(base), o))
+        lv = self.local(base, ins)
+        if lv:
+            o = self.member_path(lv[2], rest) if len(lv) > 2 and lv[2] else None
+            if o is None:
+                o = self.unique_member(rest)
+            if o is None:
+                return None
+            return ("local", lv[1] + o, lv[0])
+        return None
+
+    def member_size(self, name):
+        """size in bytes of the last member of a dotted path (Type.member / var.member), or None"""
+        parts = name.split(".")
+        if len(parts) < 2:
+            return None
+        base = parts[0]
+        cur = base if base in self.structs else (self.syms.get(base) or {}).get("struct")
+        size = None
+        for p in parts[1:]:
+            st = self.structs.get(cur) if cur else None
+            m = st["members"].get(p) if st else None
+            if not m:
+                return None
+            size, cur = m[1], m[2]
+        return size
+
     def symoff(self, name):
         """C++ expression for a data symbol's offset within its segment"""
+        if "." in name:
+            d = self.dotted(name, self.cur_ins)
+            if d and d[0] == "const":
+                return str(d[1])
+            if d and d[0] == "data":
+                return d[1]
         base, _, field = name.partition(".")
         s = self.syms.get(base)
         mf = re.match(r"^field_([0-9A-Fa-f]+)$", field)
@@ -355,6 +540,13 @@ class Lift:
         m = re.match(r"^offset\s+(.*)$", o)
         if m:
             mm = re.match(r"^([\w?.$@]+)(?:\s*([+-])\s*(\w+))?$", m.group(1).strip())
+            if not mm:     # offset sym + (70 * size STRUCT) [+ n]: constant expression with structure sizes
+                body = m.group(1).strip()
+                sym = re.match(r"^([\w?.$@]+)", body).group(1)
+                rest = body[len(sym):]
+                rest = self.fold_consts(rest)
+                rest = re.sub(r"\b([0-9][0-9A-Fa-f]*)h\b", lambda k: "0x" + k.group(1), rest)
+                return dict(kind="offset", sym=sym, add=0, expr=rest, size=2)
             off = 0
             if mm.group(2):
                 off = num(mm.group(3)) * (1 if mm.group(2) == "+" else -1)
@@ -364,13 +556,28 @@ class Lift:
             return dict(kind="segof", sym=m.group(1), size=2)
         if is_num(o):
             return dict(kind="imm", value=num(o), size=size)
+        if o.startswith("not ") and (is_num(o[4:].strip()) or o[4:].strip().isdigit()):
+            return dict(kind="imm", value=~num(o[4:].strip()), size=size)
+        o = self.fold_consts(o) if re.match(r"^[\s0-9A-Fa-fhsize*/+\-()A-Z_a-z]+$", o) and "size" in o and "[" not in o else o
+        if is_num(o.strip()):
+            return dict(kind="imm", value=num(o.strip()), size=size)
+        if re.match(r"^[\s0-9A-Fa-f()*/+\-]+$", o) and re.search(r"[*/]", o) and not re.search(r"[g-zG-Z_]", o):
+            try:
+                v = eval(re.sub(r"\b([0-9][0-9A-Fa-f]*)h\b", lambda q: str(int(q.group(1), 16)), o).replace("/", "//"), {"__builtins__": {}}, {})
+                return dict(kind="imm", value=int(v), size=size)
+            except Exception:
+                pass
+        if o in self.enums:
+            return dict(kind="imm", value=self.enums[o], size=size)
         if re.match(r"^'.'$", o):
             return dict(kind="imm", value=ord(o[1]), size=size)
         # memory operand
+        o = self.fold_consts(o)
         seg = None
         m = re.match(r"^(es|ds|cs|ss):(.*)$", o)
         if m:
             seg, o = m.group(1), m.group(2)
+        inner_names = set(re.findall(r"[A-Za-z_][\w?.$@]*", " ".join(re.findall(r"\[(.*?)\]", o))))
         e = o.replace("[", "+").replace("]", "+").replace("(", "+").replace(")", "+")
         terms = re.findall(r"([+-]?)\s*([^+\-\s]+)", e)
         regs, const, syms_ = [], 0, []
@@ -380,8 +587,17 @@ class Lift:
                 regs.append(t)
             elif is_num(t) or re.match(r"^[0-9][0-9A-Fa-f]*h$", t):
                 const += sg * num(t)
+            elif t in self.enums:
+                const += sg * self.enums[t]
+            elif "." in t and self.dotted(t, ins) and self.dotted(t, ins)[0] == "local":
+                d_ = self.dotted(t, ins)
+                const += sg * d_[1]
+                if size is None and d_[2] in (1, 2):
+                    size = d_[2]
+                if "bp" not in regs:
+                    regs.append("bp")
             else:
-                lv = self.local(t, ins)
+                lv = self.local(t, ins) if t in inner_names else None
                 if lv:
                     const += sg * lv[1]
                     if size is None and lv[0] in (1, 2, 4):
@@ -390,6 +606,10 @@ class Lift:
                         regs.append("bp")
                 else:
                     syms_.append((sg, t))
+        if size is None:
+            for sg_, t_ in syms_:
+                if "." in t_ and self.member_size(t_) in (1, 2, 4):
+                    size = self.member_size(t_)
         if seg is None:
             seg = "ss" if "bp" in regs else "ds"
         parts = [regx(r) for r in regs]
@@ -400,7 +620,14 @@ class Lift:
         if const:
             parts.append(str(const))
         off = "(uint16_t)(%s)" % (" + ".join(parts) if parts else "0")
-        return dict(kind="mem", seg="c.%s" % seg, off=off, size=size)
+        segx = "c.%s" % seg
+        if seg == "cs":
+            for sg_, t_ in syms_:
+                b_ = self.syms.get(t_.split(".")[0])
+                if b_ and b_.get("kind") == "data":
+                    segx = "(uint16_t)0x%X" % b_["seg"]
+                    break
+        return dict(kind="mem", seg=segx, off=off, size=size)
 
     def rd(self, d, size):
         k = d["kind"]
@@ -415,9 +642,9 @@ class Lift:
             v = d["value"]
             return "(uint%d_t)%d" % (8 * (size or 2), v) if v < 0 else "%d" % v
         if k == "offset":
-            s = self.syms.get(d["sym"])
+            s = self.syms.get(d["sym"].split(".")[0])
             if s and s.get("kind") == "data":
-                return "(uint16_t)(%s%+d)" % (self.symoff(d["sym"]), d["add"])
+                return ("(uint16_t)(%s%s)" % (self.symoff(d["sym"]), d["expr"])) if d.get("expr") else "(uint16_t)(%s%+d)" % (self.symoff(d["sym"]), d["add"])
             UNRESOLVED.append("offset " + d["sym"])
             return "0 /*offset %s*/" % d["sym"]
         if k == "segof":
@@ -459,13 +686,14 @@ class Lift:
 
     # --- instruction lowering ------------------------------------------------------------------------------------------------------------------
     def lower(self, x, out):
+        self.cur_ins = x
         mn, ops = x.mn, x.ops
         flow = mn in ("call", "jmp", "jcxz", "loop", "loope", "loopne") or mn in COND
         cl = [] if flow and mn != "call" else [self.classify(o, x) for o in ops] if mn != "call" else []
         T = lambda sz: "uint%d_t" % (8 * sz)
         emit = out.append
 
-        if mn in ("nop", "cli", "sti", "wait"):
+        if mn in ("nop", "cli", "sti", "wait", "hlt"):
             return
         if mn == "cld":
             emit("c.DF = false;")
@@ -517,6 +745,27 @@ class Lift:
             cnt = "c.cx.l" if ops[1].strip() == "cl" else (str(num(ops[1])) if is_num(ops[1]) else "1")
             fn = {"shl": "opShl", "sal": "opShl", "shr": "opShr", "sar": "opSar", "rol": "opRol", "ror": "opRor"}[mn]
             emit(self.rmw(cl[0], sz, lambda old: "%s<%s>(c, %s, %s)" % (fn, t, old, cnt)))
+        elif mn in ("rcl", "rcr"):
+            sz = self.size_of(cl[:1])
+            t = T(sz)
+            cnt = "c.cx.l" if ops[1].strip() == "cl" else (str(num(ops[1])) if is_num(ops[1]) else "1")
+            emit(self.rmw(cl[0], sz, lambda old: "opRc%s<%s>(c, %s, %s)" % ("l" if mn == "rcl" else "r", t, old, cnt)))
+        elif mn == "int":
+            emit("if (c.onInt) c.onInt(c, %d);" % num(ops[0]))
+        elif mn == "in":
+            port = "c.dx.x" if ops[1].strip() == "dx" else "%d" % num(ops[1])
+            emit("%s = (%s)(c.onIn ? c.onIn(c, %s, %d) : 0);" % ("c.ax.l" if ops[0].strip() == "al" else "c.ax.x", "uint8_t" if ops[0].strip() == "al" else "uint16_t", port, 8 if ops[0].strip() == "al" else 16))
+        elif mn == "out":
+            port = "c.dx.x" if ops[0].strip() == "dx" else "%d" % num(ops[0])
+            emit("if (c.onOut) c.onOut(c, %s, %s, %d);" % (port, "c.ax.l" if ops[1].strip() == "al" else "c.ax.x", 8 if ops[1].strip() == "al" else 16))
+        elif mn == "daa":
+            emit("opDaa(c);")
+        elif mn == "lahf":
+            emit("c.ax.h = (uint8_t)((c.SF << 7) | (c.ZF << 6) | (c.CF));")
+        elif mn == "sahf":
+            emit("c.SF = (c.ax.h >> 7) & 1; c.ZF = (c.ax.h >> 6) & 1; c.CF = c.ax.h & 1;")
+        elif mn in ("xlat", "xlatb"):
+            emit("c.ax.l = c.rd8(c.ds, (uint16_t)(c.bx.x + c.ax.l));")
         elif mn == "lea":
             emit("%s = %s;" % (self.rd(cl[0], 2), cl[1]["off"]))
         elif mn in ("les", "lds"):
@@ -550,8 +799,14 @@ class Lift:
         elif mn == "call":
             self.lower_call(x, cl, out)
         elif mn in ("retf", "retn", "ret", "iret"):
-            emit("return;")
+            base = 4 if mn == "retf" else 6 if mn == "iret" else 2
+            extra = num(ops[0]) if ops and is_num(ops[0]) else 0
+            emit("{ c.sp = (uint16_t)(c.sp + %d); c.cs = _cs; return; }" % (base + extra))
         elif mn in ("movsb", "movsw", "stosb", "stosw", "lodsb", "lodsw", "scasb", "scasw", "cmpsb", "cmpsw"):
+            self.lower_string(x, out)
+        elif mn in ("lods", "stos", "movs", "scas", "cmps"):
+            w_ = "b" if any("byte" in o for o in ops) else "w"
+            x.mn = mn + w_
             self.lower_string(x, out)
         else:
             emit("unimpl(\"%s\");   // not lifted: %s" % (mn, x.text.replace("*/", "")))
@@ -559,6 +814,8 @@ class Lift:
 
     def lower_jump(self, x, cl, out):
         mn, op = x.mn, re.sub(r"^((short|near ptr|far ptr|near|far)\s+)+", "", x.ops[0].strip())
+        if mn == "jmp" and re.match(r"^\$\+[23]$", op):
+            return
         if mn == "jmp":
             m = re.match(r"^cs:([\w?]+)\[bx\]$", op)
             if m and m.group(1) in self.tables:
@@ -568,10 +825,35 @@ class Lift:
                 out.append("default: return;")
                 out.append("}")
                 return
-            if op in self.labels and op not in self.procs:
+            if op == self.entry:
+                out.append("goto entry;")
+                return
+            if op in self.labels and op not in self.procs and is_local_label(op, self.labels, self.procs.get(self.entry)):
                 out.append("goto %s;" % cid(op))
                 return
+            if op in REG16 or op in PLAIN16:
+                out.append("{ uint16_t _off = %s; uint16_t _my = c.cs; c.cs = _cs; if (c.callFarHook) c.callFarHook(c, _my, _off); return; }" % regx(op))
+                return
+            if SYMKIND.get(op) in ("dd", "dw"):
+                # jmp through a pointer variable (dword_8A3BC): call it, then return
+                d = self.classify(op, x)
+                if SYMKIND[op] == "dd":
+                    out.append("{ uint16_t _s = %s, _o = %s; uint16_t _off = c.rd16(_s, _o), _seg = c.rd16(_s, (uint16_t)(_o + 2)); c.cs = _cs; if (c.callFarHook) c.callFarHook(c, _seg, _off); return; }" % (d["seg"], d["off"]))
+                else:
+                    out.append("{ uint16_t _off = %s; uint16_t _my = c.cs; c.cs = _cs; if (c.callFarHook) c.callFarHook(c, _my, _off); return; }" % self.rd(d, 2))
+                return
+            if not re.match(r"^[\w?.$@]+$", op) and "[" in op:
+                # indirect jump through a pointer in memory (dispatch tables, video mode function pointers): call it, then return
+                d = self.classify(op, x)
+                far = d["kind"] == "mem" and (d.get("size") == 4 or "dword" in op or re.search(r"\bfn_\w+", op))
+                if far:
+                    out.append("{ uint16_t _s = %s, _o = %s; uint16_t _off = c.rd16(_s, _o), _seg = c.rd16(_s, (uint16_t)(_o + 2)); c.cs = _cs; if (c.callFarHook) c.callFarHook(c, _seg, _off); return; }" % (d["seg"], d["off"]))
+                else:
+                    out.append("{ uint16_t _off = %s; uint16_t _my = c.cs; c.cs = _cs; if (c.callFarHook) c.callFarHook(c, _my, _off); return; }" % self.rd(d, 2))
+                return
             self.tail(op, out)
+            return
+        if re.match(r"^\$\+[0-9]+$", op):
             return
         if mn == "jcxz":
             cond = "c.cx.x == 0"
@@ -579,7 +861,9 @@ class Lift:
             cond = "--c.cx.x != 0" + (" && c.ZF" if mn == "loope" else " && !c.ZF" if mn == "loopne" else "")
         else:
             cond = COND[mn]
-        if op in self.labels and op not in self.procs:
+        if op == self.entry:
+            out.append("if (%s) goto entry;" % cond)
+        elif op in self.labels and op not in self.procs and is_local_label(op, self.labels, self.procs.get(self.entry)):
             out.append("if (%s) goto %s;" % (cond, cid(op)))
         else:
             out.append("if (%s) {" % cond)
@@ -589,33 +873,44 @@ class Lift:
     def tail(self, name, out):
         """jump to another function (tail call): call it, then return"""
         if name in self.procs or re.match(r"^[\w?.$@]+$", name):
-            HOSTS.add(self.stubs.get(name, name))
-            out.append(self.call_text(name) + " return;")
+            tgt = self.stubs.get(name, name)
+            HOSTS.add(tgt)
+            if tgt in self.lifted:
+                out.append("{ if (c.onCall) c.onCall(c, \"%s\"); c.cs = _cs; L_%s(c); return; }" % (tgt.replace("\"", ""), cid(tgt)))
+            else:
+                out.append("{ c.popBytes = 2 * c.retWords; H_%s(c); c.sp = (uint16_t)(c.sp + c.popBytes); c.cs = _cs; return; }" % cid(tgt))
         else:
             out.append("unimpl(\"indirect jmp\"); return;   // %s" % name)
             UNRESOLVED.append("jmp " + name)
 
-    def call_text(self, name):
+    def call_text(self, name, words=None):
         name = self.stubs.get(name, name)
-        words = 1 if self.procfar.get(name) is False else 2
+        if words is None:
+            words = 1 if self.procfar.get(name) is False else 2
         fn = ("L_%s" if name in self.lifted else "H_%s") % cid(name)
-        return "{ uint16_t _sp = c.sp; int _rw = c.retWords; c.retWords = %d; for (int _i = 0; _i < %d; _i++) c.push(0); if (c.onCall) c.onCall(c, \"%s\"); %s(c); c.sp = _sp; c.retWords = _rw; }" % (words, words, name.replace("\"", ""), fn)
+        if name == "_setjmp" and name in self.lifted:    # longjmp resumes here: remember the jmp_buf pointer the caller pushed, leave a label
+            self.has_setjmp = True
+            return "{ int _rw = c.retWords; c.retWords = %d; for (int _i = 0; _i < %d; _i++) c.push(0); if (c.onCall) c.onCall(c, \"_setjmp\"); L__setjmp(c); c.retWords = _rw; }\n_jb_seg = c.rd16(c.ss, (uint16_t)(c.sp + 2)); _jb_off = c.rd16(c.ss, c.sp); _jb_set = true;\nafter_sj: ;" % (words, words)
+        if name in self.lifted:    # the callee pops its own return address (and `ret N` bytes)
+            return "{ int _rw = c.retWords; c.retWords = %d; for (int _i = 0; _i < %d; _i++) c.push(0); if (c.onCall) c.onCall(c, \"%s\"); %s(c); c.retWords = _rw; }" % (words, words, name.replace("\"", ""), fn)
+        return "{ uint16_t _sp = c.sp; int _rw = c.retWords; c.retWords = %d; for (int _i = 0; _i < %d; _i++) c.push(0); c.popBytes = %d; if (c.onCall) c.onCall(c, \"%s\"); %s(c); c.sp = (uint16_t)(_sp - %d + c.popBytes); c.retWords = _rw; }" % (words, words, 2 * words, name.replace("\"", ""), fn, 2 * words)
 
     def lower_call(self, x, cl, out):
         op = x.ops[0].strip()
         t = re.sub(r"^((short|near ptr|far ptr|near|far)\s+)+", "", op)
         if t == "rtlink_thunk":                # overlay loader hook of an RTLink stub: nothing to do
             return
-        if re.match(r"^[\w?.$@]+$", t) and t not in REG16 and t not in PLAIN16 and self.local(t, x) is None and (t in self.procs or t not in self.syms):
+        if re.match(r"^[\w?.$@]+$", t) and t not in REG16 and t not in PLAIN16 and self.local(t, x) is None and (t in self.procs or (t not in self.syms and SYMKIND.get(t) not in ("dd", "dw"))):
             HOSTS.add(self.stubs.get(t, t))
-            out.append(self.call_text(t))
+            words = 1 if "near ptr" in op else 2 if "far ptr" in op else None
+            out.append(self.call_text(t, words))
             return
         d = self.classify(op, x)
         farsym = any(SYMKIND.get(tok.split(".")[0]) == "dd" for tok in re.findall(r"[A-Za-z_][\w?.$@]*", op))
         if d["kind"] == "mem" and (d["size"] == 4 or "dword" in op or farsym):
-            out.append("{ uint16_t _s = %s, _o = %s; uint16_t _off = c.rd16(_s, _o), _seg = c.rd16(_s, (uint16_t)(_o + 2)); uint16_t _sp = c.sp; int _rw = c.retWords; c.retWords = 2; c.push(0); c.push(0); if (c.callFarHook) c.callFarHook(c, _seg, _off); c.sp = _sp; c.retWords = _rw; }" % (d["seg"], d["off"]))
+            out.append("{ uint16_t _s = %s, _o = %s; uint16_t _off = c.rd16(_s, _o), _seg = c.rd16(_s, (uint16_t)(_o + 2)); int _rw = c.retWords; c.retWords = 2; c.push(0); c.push(0); if (c.callFarHook) c.callFarHook(c, _seg, _off); c.retWords = _rw; }" % (d["seg"], d["off"]))
         else:
-            out.append("{ uint16_t _off = %s; uint16_t _sp = c.sp; int _rw = c.retWords; c.retWords = 1; c.push(0); if (c.callFarHook) c.callFarHook(c, c.cs, _off); c.sp = _sp; c.retWords = _rw; }" % self.rd(d, 2))
+            out.append("{ uint16_t _off = %s; int _rw = c.retWords; c.retWords = 1; c.push(0); if (c.callFarHook) c.callFarHook(c, c.cs, _off); c.retWords = _rw; }" % self.rd(d, 2))
 
     def lower_string(self, x, out):
         mn, pfx = x.mn, x.pfx
@@ -647,13 +942,12 @@ WP = "LW_" if ALL else ""
 
 SUPPORTED = {"mov", "push", "pop", "add", "sub", "adc", "sbb", "and", "or", "xor", "cmp", "test", "inc", "dec", "neg", "not", "shl", "sal", "shr", "sar", "rol", "ror",
              "lea", "les", "lds", "cbw", "cwd", "mul", "imul", "div", "idiv", "xchg", "call", "jmp", "retf", "retn", "ret", "cld", "std", "clc", "stc", "cmc", "nop",
-             "cli", "sti", "pushf", "popf", "movsb", "movsw", "stosb", "stosw", "lodsb", "lodsw", "scasb", "scasw", "cmpsb", "cmpsw", "jcxz", "loop", "loope", "loopne"} | set(COND)
+             "cli", "sti", "hlt", "iret", "daa", "int", "in", "out", "pushf", "popf", "rcl", "rcr", "lahf", "sahf", "xlat", "xlatb", "lods", "stos", "movs", "scas", "cmps", "movsb", "movsw", "stosb", "stosw", "lodsb", "lodsw", "scasb", "scasw", "cmpsb", "cmpsw", "jcxz", "loop", "loope", "loopne"} | set(COND)
 # engine functions that touch the screen, mouse, files, sound or memory manager: the host implements these (H_*) instead of lifting them
-BLACKLIST = re.compile(r"^(Font_|Screen_|Mouse|Image_|Palette|File_|j_File|Events_|RoomItem_|Windows_|ResourceText|show_|wait_|popup_|realsound|play_|save_game|load_game|"
-                       r"game_over|setup_pic|disable_pic|set_mouse|reset_color|Conversation_Show|wputchar|clear_text|memAlloc|Picture_|msleep|error_dialog|rtlink|Regions_|"
-                       r"voc_|Music|set_room_music|update_animation|clear_keys|handle_|main$|game_init|load_pic|get_region|click_button|disable_button|build_command|"
-                       r"interrupts|sub_27945|sub_29B35|showCutscene|Cutscene|sub_2A|sub_2B|sub_5F|sub_67E2A|sub_69FF7|sub_6C42D|_printf|_sprintf)")
-MAXSIZE = 1300
+BLACKLIST = re.compile(r"^(rtlink|sub_676B6$|_?_?int86x?$|_?_?intdosx?$|_longjmp$)")
+MAXSIZE = 2500
+# lifted too (L_<name> exists for tests), but calls go to the host's H_<name>: the host captures text instead of drawing it
+OVERRIDES = {"Font_WriteMessage", "Font_WriteString", "ResourceText_GetStr", "wputchar?", "show_text_box", "_sprintf"}
 STRIP = r"^((short|near ptr|far ptr|near|far)\s+)+"
 
 
@@ -687,8 +981,7 @@ def liftable(name, insns, labels, procs, tables):
     R = reachable(insns, labels, tables, procs[name])
     if len(R) > MAXSIZE or not all(insns[i].mn in SUPPORTED for i in R):
         return False
-    # struct members with a name (GFX._bgColor) cannot be resolved to offsets from the asm text: leave such functions to the host
-    return not any(re.search(r"[A-Za-z_]\w*\.(?!field_[0-9A-Fa-f]+)[A-Za-z_]", o) for i in R for o in insns[i].ops)
+    return True
 
 
 def closure(insns, labels, procs, tables, initial):
@@ -710,7 +1003,7 @@ def lifted_set(insns, labels, procs, tables):
     names = todo_names()
     names = names + [n for n in ["objh_%03d" % k for k in CHUNK_HANDLERS] + EXTRA_FUNCS if n in procs and n not in names]
     if HOSTMODE:
-        extra = [n for n in procs if re.match(r"^(cmd[A-Z]\w*|verbdef\w*)$", n)]
+        extra = [n for n in procs if re.match(r"^(cmd[A-Z]\w*|verbdef\w*|init_game|main|execute_command|show_intro|handle_\w+)$", n)]
         stubs = stub_map(insns, procs)
         tabled = sorted({stubs.get(n, n) for n in DATAREFS if n in procs and liftable(stubs.get(n, n), insns, labels, procs, tables)})
         names = closure(insns, labels, procs, tables, names + [n for n in extra + tabled if n not in names])
@@ -724,6 +1017,7 @@ def symbols_main():
     for n in lifted_set(insns, labels, procs, tables):
         for i in reachable(insns, labels, tables, procs[n]):
             syms |= operand_symbols(insns[i], labels, locs)
+    syms |= {n for n in lifted_set(insns, labels, procs, tables) if n not in ("objh_001",)}      # the addresses of function chunks (labels) come from the same dump
     json.dump(sorted(syms), open(sys.argv[2], "w"))
     print(len(syms), "symbols")
 
@@ -734,13 +1028,16 @@ def main():
     syms, segs = syms_all["syms"], syms_all["segs"]
     funcs = json.load(open(sys.argv[2]))["funcs"] if len(sys.argv) > 2 else {}
     todo = lifted_set(insns, labels, procs, tables)
-    lifted = set(todo)
+    lifted = set(todo) - OVERRIDES
     L = Lift(insns, labels, procs, tables, locs, syms, segs, lifted)
+    L.structs = syms_all.get("structs", {})
+    L.enums = syms_all.get("enums", {})
     for m in re.finditer(r"^(\S+)\s+proc (near|far)", open(ASM, encoding="utf-8", errors="replace").read(), re.M):
         L.procfar[m.group(1)] = m.group(2) == "far"
     body, count = [], 0
     for name in todo:
         L.entry = name
+        L.has_setjmp = False
         R = reachable(insns, labels, tables, procs[name])
         count += len(R)
         lines = []
@@ -748,12 +1045,25 @@ def main():
             x = insns[i]
             for lab in x.label:
                 if lab == name:
-                    lines.append("entry: STEP();")
+                    lines.append("entry: STEP(\"%s\");" % cid(name))
                 elif lab not in procs:
-                    lines.append("%s: STEP();" % cid(lab))
+                    lines.append("%s: STEP(\"%s:%s\");" % (cid(lab), cid(name), cid(lab)))
             lines.append("// %s" % x.text.replace("*/", "").replace("\\", "/"))
             L.lower(x, lines)
         lines.append(";")
+        if L.has_setjmp:       # a longjmp to this frame arrives as a C++ exception: restore the registers from the jmp_buf and continue after the _setjmp call
+            lines = (["uint16_t _jb_seg = 0, _jb_off = 0; bool _jb_set = false, _resume = false;", "resume_loop:", "try {", "if (_resume) { _resume = false; goto after_sj; }"] + lines +
+                     ["} catch (const LongJmp &_j) {",
+                      "if (!_jb_set || _j.seg != _jb_seg || _j.off != _jb_off) throw;",
+                      "c.cs = _cs0;",
+                      "c.di = c.rd16(_j.seg, (uint16_t)(_j.off + 2)); c.si = c.rd16(_j.seg, (uint16_t)(_j.off + 4));",
+                      "c.sp = (uint16_t)(c.rd16(_j.seg, (uint16_t)(_j.off + 6)) + 4); c.bp = c.rd16(_j.seg, _j.off); c.ds = c.rd16(_j.seg, (uint16_t)(_j.off + 12));",
+                      "c.ax.x = _j.val ? _j.val : 1; _resume = true; goto resume_loop;",
+                      "}"])
+        cs_para = funcs.get(name, {}).get("seg") or syms.get(name, {}).get("seg") or 0
+        lines.insert(0, "uint16_t _cs = c.cs; c.cs = 0x%X;   // code segment of this function" % cs_para)
+        if L.has_setjmp:
+            lines.insert(1, "const uint16_t _cs0 = c.cs;")
         body.append("void L_%s(Cpu &c) {\n%s\n}\n" % (cid(name), "\n".join(l if l.endswith(":") else "\t" + l for l in lines)))
     dh = ["// generated by lift_handlers.py: data symbol offsets (within their segment) and segment paragraphs used by lifted_handlers.cpp", "#pragma once", "#include <cstdint>", ""]
     for s in sorted(L.used_syms):
@@ -787,6 +1097,8 @@ def main():
         for n in todo:
             if n in funcs:
                 ent.append((funcs[n]["ea"], n))
+            elif syms.get(n, {}).get("kind") == "data":
+                ent.append((syms[n]["ea"], n))        # a function chunk (named label) IDA did not make a function
         for num_, (lab, ea) in CHUNK_HANDLERS.items():
             if "objh_%03d" % num_ in lifted:
                 ent.append((ea, "objh_%03d" % num_))
