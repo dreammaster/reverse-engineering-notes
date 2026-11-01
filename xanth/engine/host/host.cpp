@@ -147,6 +147,13 @@ void Host::reset() {
 	events.clear();
 	calls.clear();
 	scratch = 0;
+	// the C startup runs the initializer table (__cinit): __inittime records the start time that clock() subtracts
+	if (liftedByName.count("__inittime")) {
+		call("__inittime", {}, 2);
+		cpu.steps = 0;
+		events.clear();
+		calls.clear();
+	}
 }
 
 uint32_t Host::call(const char *name, std::initializer_list<uint16_t> args, int retWords) {

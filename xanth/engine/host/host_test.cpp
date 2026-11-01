@@ -374,8 +374,8 @@ static int testSave(Host &h) {
 // original go_to_room: the room picture is drawn by the lifted decoder and blitters into the emulated VGA memory
 // diagnostics selected by environment variables (see README.md): label hooks, memory watches, screen captures
 static void debugHooks(Host &h) {
-	if (getenv("HOST_SHOT_TEXT")) h.onText = [](Host &hh) { static bool done = false; if (!done) { done = true; dumpScreen(hh, getenv("HOST_SHOT_TEXT")); } };
-	if (getenv("HOST_LABELPFX")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int cnt = 0; if (!strncmp(w, getenv("HOST_LABELPFX"), strlen(getenv("HOST_LABELPFX"))) && cnt++ < 400) fprintf(stderr, "L %s ax=%04X bx=%04X cx=%04X di=%04X si=%04X es=%04X ds=%04X\n", w, c.ax.x, c.bx.x, c.cx.x, c.di, c.si, c.es, c.ds); };
+	if (getenv("HOST_SHOT_TEXT")) h.onText = [](Host &hh) { static bool done = false; if (!done || getenv("HOST_SHOT_LAST")) { done = true; dumpScreen(hh, getenv("HOST_SHOT_TEXT")); } };
+	if (getenv("HOST_LABELPFX")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int cnt = 0; if (!strncmp(w, getenv("HOST_LABELPFX"), strlen(getenv("HOST_LABELPFX"))) && cnt++ < 60) fprintf(stderr, "L %s ax=%04X bx=%04X cx=%04X di=%04X si=%04X es=%04X ds=%04X\n", w, c.ax.x, c.bx.x, c.cx.x, c.di, c.si, c.es, c.ds); };
 	if (getenv("HOST_NZ")) h.cpu.onLabel = [](Cpu &c, const char *w) { if (!strcmp(w, getenv("HOST_NZ"))) { int nz = 0; for (int i = 0; i < 64000; i++) nz += host().mem[0xA0000 + i] != 0; fprintf(stderr, "nz %s: %d\n", w, nz); } };
 	if (getenv("HOST_SRC")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int k = 0; if (!strcmp(w, getenv("HOST_SRC")) && k++ < 6) { fprintf(stderr, "src %s ds:si=%04X:%04X cx=%04X:", w, c.ds, c.si, c.cx.x); for (int i = 0; i < 12; i++) fprintf(stderr, " %02X", c.rd8(c.ds, (uint16_t)(c.si + i))); fprintf(stderr, " | es:di"); for (int i = 0; i < 6; i++) fprintf(stderr, " %02X", c.rd8(c.es, (uint16_t)(c.di + i))); fprintf(stderr, "\n"); } };
 	if (getenv("HOST_CMPIMG")) h.cpu.onLabel = [](Cpu &c, const char *w) {
@@ -492,7 +492,18 @@ static int testInit(Host &h) {
 	h.tracing = getenv("HOST_TRACE") != nullptr;
 	if (getenv("HOST_KEYS"))
 		for (int i = 0; i < atoi(getenv("HOST_KEYS")); i++) h.machine.keys.push_back(0x1C0D);       // Enter
-	if (getenv("HOST_KEYCODES")) {       // BIOS key words (scan << 8 | ascii) in hex, separated by spaces: "316E 1C0D"
+	if (getenv("HOST_KEYAT")) {          // HOST_KEYAT=label: queue HOST_KEYCODES when that label is first reached instead of at the start
+		h.cpu.onLabel = [](Cpu &c, const char *w) {
+			static bool done = false;
+			static int shown = 0;
+			if (done && getenv("HOST_LABELPFX") && !strncmp(w, getenv("HOST_LABELPFX"), strlen(getenv("HOST_LABELPFX"))) && shown++ < 80) fprintf(stderr, "K %s ax=%04X bx=%04X\n", w, c.ax.x, c.bx.x);
+			if (done || strcmp(w, getenv("HOST_KEYAT"))) return;
+			done = true;
+			std::string s = getenv("HOST_KEYCODES");
+			size_t p = 0;
+			while (p < s.size()) { while (p < s.size() && s[p] == 32) p++; if (p >= s.size()) break; host().machine.keys.push_back((uint16_t)strtoul(s.c_str() + p, nullptr, 16)); while (p < s.size() && s[p] != 32) p++; }
+		};
+	} else 	if (getenv("HOST_KEYCODES")) {       // BIOS key words (scan << 8 | ascii) in hex, separated by spaces: "316E 1C0D"
 		std::string s = getenv("HOST_KEYCODES");
 		size_t p = 0;
 		while (p < s.size()) {
@@ -510,6 +521,7 @@ static int testInit(Host &h) {
 		}
 	};
 	debugHooks(h);
+	if (getenv("HOST_STEPS")) h.cpu.stepLimit = atol(getenv("HOST_STEPS"));
 	int code = -1;
 	try {
 		if (getenv("HOST_MAIN")) h.call("main", {1, argvOff, 0xD800, 0x7100, 0xD800}, 1); else h.call("init_game", {1, argvOff, 0xD800, 0x7100, 0xD800}, 2);

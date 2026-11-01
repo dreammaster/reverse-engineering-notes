@@ -22,6 +22,9 @@ struct Cpu {
 	const char *where = "";                // last label passed (diagnostics for runaway loops)
 	int popBytes = 4;                        // bytes the last return popped (return address + `ret N` argument bytes)
 	long steps = 0;                          // instruction-budget counter, see STEP()
+#ifdef LIFT_STEP_LIMIT
+	long stepLimit = LIFT_STEP_LIMIT;        // the host raises it at run time (HOST_STEPS)
+#endif
 	int retWords = 2;                        // words pushed as a return address by the current call (1 near, 2 far)
 
 	static uint32_t lin(uint16_t seg, uint16_t off) { return (((uint32_t)seg << 4) + off) & 0x1FFFFF; }
@@ -127,7 +130,7 @@ inline void opDaa(Cpu &c) {
 // STEP(label) is executed at every label of the lifted code: it counts labels (for the timer interrupt below) and, when LIFT_STEP_LIMIT is defined, abandons runaway
 // loops and keeps a ring of the last labels for diagnostics
 #ifdef LIFT_STEP_LIMIT
-#define STEP(w_) do { if (++c.steps > LIFT_STEP_LIMIT) return; c.where = (w_); c.hist[c.hpos++ & 63] = (w_); if (c.onLabel) c.onLabel(c, (w_)); \
+#define STEP(w_) do { if (++c.steps > c.stepLimit) return; c.where = (w_); c.hist[c.hpos++ & 63] = (w_); if (c.onLabel) c.onLabel(c, (w_)); \
 	if (c.irqHook && !(c.steps & 0x3FF)) c.irqHook(c); } while (0)
 #else
 #define STEP(w_) do { ++c.steps; if (c.irqHook && !(c.steps & 0x3FF)) c.irqHook(c); } while (0)
