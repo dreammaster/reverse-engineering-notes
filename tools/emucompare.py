@@ -55,7 +55,7 @@ ARENA = 0x7FFB00000000
 ARENA_SIZE = 0x800000
 BLOCK = 0x1000
 BLOCK_STRIDE = 0x2000
-MAX_INSNS = 300000
+MAX_INSNS = 1500000  # (the -O0 build runs several times the instructions of the -O2 one for the same loop)
 IMAGE_TOKEN_END = 0x1800000  # (the addresses of code and data of both builds; Deponia 4 has 16 MB of bss above it, which small numbers must not be taken for)
 RUN_MICROSECONDS = 1500000   # (a call that takes longer than this is given up)
 # calls whose presence or order says nothing about the logic (the optimizer inlines or merges them)
