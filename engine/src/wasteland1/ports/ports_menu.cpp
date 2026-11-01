@@ -1,6 +1,7 @@
 // Register adapters: key driven menus (see menu.h).
 #include "wasteland1/ports/port.h"
 #include "wasteland1/globals.h"
+#include "wasteland1/buttons.h"
 #include "wasteland1/combat.h"
 #include "wasteland1/combatmenu.h"
 #include "wasteland1/listmenu.h"
@@ -77,6 +78,13 @@ PORT(runCombat) { runCombat(m); }                                               
 PORT(regroupParty) { regroupParty(m); r.cf = true; }                                                 // 130C8
 
 PORT(recruitMonster) { r.cf = recruitMonster(m, r.a.b.l); }                              // 132AC
+
+PORT(getButtonsText) { getButtonsText(m); r.a.x = m.d16(g::textString); }                // 17564
+PORT(findButton) { r.cf = !findButton(m); }                                              // 17533
+PORT(drawButtonPlain) { drawButton(m, false); }                                         // 17451
+PORT(drawButtonHighlighted) { drawButton(m, true); }                                    // 1744C
+PORT(drawButtonsRow) { drawButtonsRow(m); }                                             // 173D2
+PORT(buttonKey) { buttonKey(m); }                                                       // 17574
 
 } // namespace rc
 } // namespace wl
