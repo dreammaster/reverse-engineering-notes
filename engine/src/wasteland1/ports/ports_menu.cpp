@@ -7,6 +7,7 @@
 #include "wasteland1/listmenu.h"
 #include "wasteland1/menu.h"
 #include "wasteland1/roster.h"
+#include "wasteland1/shop.h"
 
 namespace wl {
 namespace rc {
@@ -95,6 +96,10 @@ PORT(splitParty) { splitParty(m); }                                             
 
 PORT(askYesLoose) { r.cf = askYesLoose(m); r.a.b.l = m.d8(g::lastKey); }                  // 19B4F
 PORT(switchToGroup) { r.cf = switchToGroup(m, r.a.b.l); }                                // 160E1
+
+PORT(payNumberValue) { r.cf = payNumberValue(m); }                                        // 17B15
+PORT(poolMoney) { poolMoney(m, r.a.b.l); r.cf = true; }                                               // 19B81
+PORT(doctorShop) { r.cf = doctorShop(m); }                                               // 1C260
 
 } // namespace rc
 } // namespace wl
