@@ -23,4 +23,7 @@ bool moveParty(Machine &m, uint8_t dir);
 // 1651A: tries to step in direction `dir` (checks the way first); true (CF) when blocked
 bool tryStep(Machine &m, uint8_t dir);
 
+// 16890: now and then places a random encounter next to the party (chance 1 in the map's rate)
+void randomEncounter(Machine &m);
+
 } // namespace wl

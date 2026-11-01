@@ -389,3 +389,4 @@ AD73 combatRound junk=al,bl,cf,ch,cl,di,dl,es,si scratch=CF80-CF87,7931-8030,A4A
 5E82 splitParty junk=cf,ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=A6C4-A6D4,B240-B243,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4661-4664,46A6-46A7,A590-A5A0,CD40-CD50
 9B4F askYesLoose junk=al,bp,ch,cl,di,dl,es,pf,sf,si,zf,bl,ah scratch=465C-4660
 60E1 switchToGroup junk=cf,ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=A6C0-A6C1,465C-4660,CDC0-CE00,BA00-BA11,AA30-AA50,4661-4664,CD40-CD50
+6890 randomEncounter junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=A634-A63F,46B3-46B4,4661-4664,BA00-BA11,AA30-AA50,465C-4660,4665-4666,CD40-CD50,C059-C059

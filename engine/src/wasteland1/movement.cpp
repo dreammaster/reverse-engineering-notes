@@ -6,6 +6,7 @@
 #include "wasteland1/legacy.h"
 #include "wasteland1/mapcells.h"
 #include "wasteland1/party.h"
+#include "wasteland1/rules.h"
 #include "wasteland1/text.h"
 
 namespace wl {
@@ -152,6 +153,64 @@ bool tryStep(Machine &m, uint8_t dir) {
 	refreshViewLayout(m);
 	if (stepBlocked(m, dir)) return true;
 	return !moveParty(m, dir);
+}
+
+
+void randomEncounter(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	auto map = [&](uint8_t i) -> uint8_t & { return D(uint16_t(m.d16(g::locationsPtr) + i)); };
+	auto rec = [&](uint8_t i) -> uint8_t & { return D(uint16_t(m.d16(g::locationDetailsPtr) + i)); };
+	constexpr uint16_t slotVar = 0x46B4, kindVar = 0xA63A, range = 0xA634, steps = 0xA635, firstDir = 0xA636, dirVar = 0xA637;
+	Rules rules(m);
+	if (map(0x2F) == 0) return;
+	if (rules.random(map(0x2F)) != 1) return;
+	uint8_t slot = 0;
+	for (;;) {   // 168A5: a free encounter slot in the map's list
+		D(slotVar) = slot;
+		selectLocationRecord(m, 0x0F, slot);
+		if ((rec(3) | rec(5) | rec(7)) == 0) break;
+		slot = uint8_t(D(slotVar) + 1);
+		if (slot == map(0x32)) return;
+	}
+	D(kindVar) = rules.random(map(0x31));   // 168CF: which monster
+	getMonsterDetails(m, D(kindVar));
+	const uint8_t table = itemDamageDice(m);
+	rec(0) = D(uint16_t(0xAA60 + table));
+	rec(1) = D(uint16_t(0xAA6D + table));
+	D(range) = D(uint16_t(0xAA7A + table));
+	D(firstDir) = uint8_t(rules.random(9) - 1);
+	uint8_t dir = D(firstDir);
+	for (;;) {
+		D(dirVar) = dir;
+		if (dir != 4) {   // 16915: walk `range` cells in that direction
+			uint8_t x = D(0x46A6), y = D(0x46A7);
+			D(steps) = D(range);
+			bool ok = true;
+			do {
+				stepTarget(D(dirVar), x, y);
+				if (outsideMap(m, x, y) || partyAtCell(m, x, y)) { ok = false; break; }
+				D(0xA639) = x;
+				D(0xA638) = y;
+				if (x == 0 || y == 0 || tileClassAt(m, x, y) != 0) { ok = false; break; }
+			} while (--D(steps) != 0);
+			if (ok) {   // room for the monsters here
+				rec(4) = rules.random(uint8_t(m.d8(uint16_t(m.d16(g::itemDetailsPtr) + 4)) >> 4));
+				rec(3) = D(kindVar);
+				D(0x46B3) = 0x0F;
+				applyCellChange(m, x, y);
+				return;
+			}
+		}
+		dir = uint8_t(D(dirVar) + 1);   // 16983: next direction around the compass
+		for (;;) {
+			if (dir == D(firstDir)) {
+				if (--D(range) == 0) return;   // 1699B: try again a shorter way
+				break;
+			}
+			if (dir < 9) break;
+			dir = 0;
+		}
+	}
 }
 
 } // namespace wl

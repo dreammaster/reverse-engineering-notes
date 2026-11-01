@@ -72,5 +72,7 @@ PORT(refreshViewLayout) { refreshViewLayout(m); }                               
 PORT(moveParty) { r.cf = !moveParty(m, r.a.b.l); r.b.x = 0; r.d.x = 0; }                 // 1652D
 PORT(tryStep) { r.cf = tryStep(m, r.a.b.l); r.b.x = 0; r.d.x = 0; }                      // 1651A
 
+PORT(randomEncounter) { randomEncounter(m); }                                           // 16890
+
 } // namespace rc
 } // namespace wl
