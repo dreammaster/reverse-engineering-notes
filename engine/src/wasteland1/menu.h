@@ -38,4 +38,10 @@ bool askKeyword(Machine &m);
 // 15E82: the "split the party" command: asks which members leave, then in which direction the new group walks
 void splitParty(Machine &m);
 
+// 19B4F: waits for a key: true (CF) for ESC and N, false for anything else
+bool askYesLoose(Machine &m);
+// 160E1: makes party group `group` the active one when somebody there can act (asks first when it stands on another map); true
+// (CF) when nothing changed
+bool switchToGroup(Machine &m, uint8_t group);
+
 } // namespace wl

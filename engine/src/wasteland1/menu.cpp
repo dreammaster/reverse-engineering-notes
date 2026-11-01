@@ -550,4 +550,50 @@ finish:   // 15F99
     }
 }
 
+
+bool askYesLoose(Machine &m) {
+    m.setD16(g::buttonMask1, 0x0404);
+    m.setD16(g::buttonMask2, 0);
+    if (waitForKeypress(m)) return true;
+    return m.d8(g::lastKey) == 'N';
+}
+
+bool switchToGroup(Machine &m, uint8_t group) {
+    auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+    const uint16_t active = uint16_t(g::saved2 + g::s2::activePartyGroup), field7 = uint16_t(g::saved2 + g::s2::field7);
+    const uint8_t oldMap = D(field7);
+    const uint8_t oldGroup = D(active);
+    D(0xA6C1) = oldGroup;
+    setActivePartyGroup(m, group);
+    if (countConsciousMembers(m) == 0) {   // nobody on their feet in that group
+        if (D(uint16_t(g::saved2 + g::s2::totalPartyGroups)) != 0) {
+            for (uint8_t id = 1; id <= D(uint16_t(g::saved2 + g::s2::field8)); ++id) {
+                D(0xA6C0) = id;
+                setCurrentRosterCharacter(m, id);
+                const uint16_t c = m.d16(g::currentCharacter);
+                const uint8_t high = D(uint16_t(c + pm::con + 1));
+                const bool down = (high & 0x80) || (high | D(uint16_t(c + pm::con))) == 0;
+                if (!down) {
+                    call(m, 0x728C);
+                    printMessage(m, 0x0E);
+                    break;
+                }
+            }
+        }
+        setActivePartyGroup(m, D(0xA6C1));
+        return true;
+    }
+    if (oldMap != D(field7)) {   // the group stands on another map: really go there?
+        call(m, 0x728C);
+        printMessage(m, 0x1B);
+        if (askYesLoose(m)) {
+            setActivePartyGroup(m, D(0xA6C1));
+            return true;
+        }
+        call(m, 0x8350);   // sub_18350: loads the other map
+    }
+    call(m, 0x63C4);
+    return false;
+}
+
 } // namespace wl

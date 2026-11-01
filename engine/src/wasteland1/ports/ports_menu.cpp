@@ -93,5 +93,8 @@ PORT(askKeyword) { r.cf = askKeyword(m); }                                      
 
 PORT(splitParty) { splitParty(m); }                                                     // 15E82
 
+PORT(askYesLoose) { r.cf = askYesLoose(m); r.a.b.l = m.d8(g::lastKey); }                  // 19B4F
+PORT(switchToGroup) { r.cf = switchToGroup(m, r.a.b.l); }                                // 160E1
+
 } // namespace rc
 } // namespace wl

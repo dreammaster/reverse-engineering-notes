@@ -204,8 +204,10 @@ bool isAtFullHealth(Machine &m) {
 
 uint8_t countConsciousMembers(Machine &m) {
 	uint8_t count = 0;
-	for (uint8_t n = m.d8(uint16_t(g::saved2 + g::s2::membersInGroup)); n != 0; --n)   // _saved2._membersInGroup
+	uint8_t n = m.d8(uint16_t(g::saved2 + g::s2::membersInGroup));   // (a do-while: an empty group counts 256 numbers)
+	do {
 		if (!isMemberUnconscious(m, n)) ++count;
+	} while (--n != 0);
 	return count;
 }
 
