@@ -76,5 +76,7 @@ PORT(runCombat) { runCombat(m); }                                               
 
 PORT(regroupParty) { regroupParty(m); r.cf = true; }                                                 // 130C8
 
+PORT(recruitMonster) { r.cf = recruitMonster(m, r.a.b.l); }                              // 132AC
+
 } // namespace rc
 } // namespace wl

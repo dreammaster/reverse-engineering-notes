@@ -30,4 +30,8 @@ void runCombat(Machine &m);
 // 130C8: carries out the movement orders of the round: members that were told to leave split off, a leader moves the whole group
 void regroupParty(Machine &m);
 
+// 132AC: party member `member` tries to talk the monster group it faces into joining the party; true (CF) when there is nobody to
+// talk to
+bool recruitMonster(Machine &m, uint8_t member);
+
 } // namespace wl

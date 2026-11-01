@@ -4,6 +4,7 @@
 #include "wasteland1/globals.h"
 #include "wasteland1/interact.h"
 #include "wasteland1/legacy.h"
+#include "wasteland1/mapcells.h"
 #include "wasteland1/movement.h"
 #include "wasteland1/listmenu.h"
 #include "wasteland1/menu.h"
@@ -534,6 +535,89 @@ void regroupParty(Machine &m) {
 			}
 		});
 	}
+}
+
+
+bool recruitMonster(Machine &m, uint8_t member) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	constexpr uint16_t memberVar2 = 0xA553, charismaKeep = 0xA555, itemSlot = 0xA554;
+	const uint16_t newMember = uint16_t(g::saved2 + g::s2::field8), members = uint16_t(g::saved2 + g::s2::membersInGroup);
+	Rules rules(m);
+	D(memberVar2) = member;
+	if (memberTargetsAlive(m, member) == 0) return true;   // nobody to talk to
+	auto charisma = [&]() { return field(m, pm::charisma); };
+	auto intPlusCha = [&]() { return uint8_t((unsigned(charisma()) + field(m, pm::iq)) >> 1); };   // 13427
+	auto fail = [&]() {   // 133F2
+		setCurrentCharacter(m, D(memberVar2));
+		printMessage(m, 0x2C);
+		const CombatantId id = splitCombatantIndex(orderLow(m, D(memberVar2)));
+		printMonsterMessage(m, 0x43, id.member);
+		printMessage(m, 0x51);
+	};
+	D(charismaKeep) = charisma();
+	const CombatantId id = splitCombatantIndex(orderLow(m, D(memberVar2)));
+	selectSlot(m, id.group, id.slot);
+	selectSlotCellRecord(m);
+	if (D(newMember) == 7) {
+		printMessage(m, 0x5F);
+		return false;
+	}
+	const uint16_t record = m.d16(g::savedLocationDetailsPtr);
+	if (!((D(uint16_t(record + 9)) >> 1) & 1)) { fail(); return false; }   // not a recruitable group
+	const uint8_t template_ = locationRecordBits4(m);
+	if (template_ == 0) { fail(); return false; }
+	selectLocationRecord(m, pm::speed, template_);
+	setCurrentRosterCharacter(m, uint8_t(D(newMember) + 1));
+	for (int i = 0; i < 256; ++i) field(m, uint8_t(i)) = D(uint16_t(m.d16(g::locationDetailsPtr) + i));
+	rules.setSeed1(0);
+	rules.addTarget(intPlusCha());
+	bool joins = field(m, pm::willingness) == 0;
+	if (!joins) {
+		rules.addTarget(field(m, pm::willingness));
+		rules.addTarget(field(m, pm::level));
+		rules.setSeed2(0);
+		setCurrentCharacter(m, D(memberVar2));
+		rules.addRoll(intPlusCha());
+		rules.addRoll(charisma());
+		rules.addRoll(field(m, pm::level));
+		setCurrentRosterCharacter(m, uint8_t(D(newMember) + 1));
+		const uint8_t roll = rules.rollDice();
+		if (roll < 5) {   // 133E3: a bad roll makes the group more stubborn
+			for (uint8_t offset = pm::itemRefuse; offset <= pm::attribRefuse; ++offset) {
+				uint8_t &v = field(m, offset);
+				if (v != 10) ++v;
+			}
+			fail();
+			return false;
+		}
+		rules.addRoll(roll);
+		joins = rules.rollBeatsTarget();
+		if (!joins) { fail(); return false; }
+	}
+	++D(newMember);   // 1334D: the monster joins
+	++D(members);
+	D(uint16_t(m.d16(g::partyIndexesPtr) + D(members))) = D(newMember);
+	printMapMessage(m, field(m, pm::joinString));
+	writeCharacter(m, 6);
+	field(m, pm::willingness) = D(charismaKeep);
+	const uint16_t diff = uint16_t(rules.seed2() - rules.seed1());
+	uint8_t bonus = (diff >> 8) != 0 ? 0xFF : uint8_t(diff);
+	bonus >>= 2;
+	for (uint8_t left = bonus; left != 0; --left) {
+		for (uint8_t offset = pm::itemRefuse; offset <= pm::attribRefuse; ++offset) {
+			uint8_t &v = field(m, offset);
+			if (v != 0) --v;
+		}
+	}
+	memberTargetsAlive(m, D(memberVar2));
+	for (int i = 0x13; i >= 0; --i) D(uint16_t(m.d16(g::monsterPtr) + i)) = 0;   // the monster leaves the fight
+	for (uint8_t slot = 0xBD; slot != 0xF9; slot = uint8_t(slot + 2)) {   // items start with their usual quantity
+		D(itemSlot) = slot;
+		getItemDetails(m, field(m, slot));
+		field(m, uint8_t(slot + 1)) = D(uint16_t(m.d16(g::itemDetailsPtr) + 4));
+	}
+	drawRosterFrame(m);
+	return false;
 }
 
 } // namespace wl
