@@ -1,3 +1,5 @@
+#include <cstdlib>
+#include <cstdio>
 #include "wasteland1/text.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
@@ -29,6 +31,7 @@ void setLine(Machine &m, int x, uint8_t v) { m.d8(uint16_t(g::lineBuffer + x)) =
 // keyboard
 
 bool biosKeyPending(Machine &m, uint16_t &key) {
+	if (std::getenv("KEYDBG")) std::fprintf(stderr, "port poll keys=%zu\n", m.keys.size());
 	if (m.keys.empty()) {
 		if (m.onIdle) m.onIdle();   // like int 16h AH=1 in the recompiled runtime: an empty poll lets the host run
 		return false;

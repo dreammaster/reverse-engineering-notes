@@ -234,6 +234,7 @@ void intr(Machine &m, Regs &r, int n) {
 			return;
 		}
 		if (ah == 1) {
+			if (std::getenv("KEYDBG")) std::fprintf(stderr, "port int16/1 keys=%zu\n", m.keys.size());
 			if (m.keys.empty()) {
 				r.zf = true;
 				++s.emptyPolls;

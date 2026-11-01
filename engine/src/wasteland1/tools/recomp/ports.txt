@@ -385,3 +385,5 @@ AD73 combatRound junk=al,bl,cf,ch,cl,di,dl,es,si scratch=CF80-CF87,7931-8030,A4A
 7574 buttonKey junk=ah,al,bl,bp,ch,cl,cf,di,dl,dh,es,pf,sf,si,zf scratch=B250-B251,722F-722F,8DD0-8DD7,4661-4662,465C-4660,CDC0-CE00,AA30-AA50,B1D0-B1E0,B240-B243,A420-A470,BA00-BA11,B260-B270,A600-A630
 7748 textInput junk=ah,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=B264-B264,467B-467B,CDC0-CE00,465C-4660,4682-4684
 7745 textInputAl junk=ah,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=B264-B264,467B-467B,CDC0-CE00,465C-4660,4682-4684
+5160 askKeyword junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=A650-A653,7931-7932,79B1-79F0,4684-4684,4682-4682,467B-467B,B264-B264,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4661-4664,4665-4666
+5E82 splitParty junk=cf,ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=A6C4-A6D4,B240-B243,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4661-4664,46A6-46A7,A590-A5A0,CD40-CD50

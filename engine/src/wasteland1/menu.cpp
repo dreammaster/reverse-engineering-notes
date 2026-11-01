@@ -4,6 +4,8 @@
 #include "wasteland1/character.h"
 #include "wasteland1/combat.h"
 #include "wasteland1/listmenu.h"
+#include "wasteland1/mapcells.h"
+#include "wasteland1/movement.h"
 #include "wasteland1/party.h"
 #include "wasteland1/text.h"
 
@@ -364,6 +366,187 @@ uint8_t textInput(Machine &m, bool numericOnly) {
             if (++D(position) != 0) break;
         }
         cursorGlyph(m, '_');   // 17771
+    }
+}
+
+
+bool askKeyword(Machine &m) {
+    auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+    auto rec = [&](uint8_t i) -> uint8_t & { return D(uint16_t(m.d16(g::locationDetailsPtr) + i)); };
+    constexpr uint16_t answers = 0xA650, tried = 0xA651, listed = 0xA653, typed = 0x7931, wordBuffer = 0x79B1;
+    uint8_t count = 0;
+    for (uint8_t bl = 3;; ++bl) {   // how many keyword entries the record lists
+        ++count;
+        if ((rec(bl) & 0x80) || bl == 0xFF) break;
+    }
+    D(listed) = count;
+    drawInfoWindow(m);
+    const uint8_t first = rec(0);
+    printMapMessage(m, first & 0x7F);
+    uint8_t index = 1;   // 15242: record offset 1 when the question is dropped
+    bool answered = false;
+    if (first & 0x80) {   // answered with a single key
+        m.setD16(g::buttonMask1, 0x0404);
+        m.setD16(g::buttonMask2, 0);
+        waitForKeypress(m);
+        const uint8_t key = D(g::lastKey);
+        if (key != 0x0D && key != 0x1B) {
+            D(typed) = key & 0x7F;
+            D(typed + 1) = 0;
+            answered = true;
+        }
+    } else {
+        scrollLine(m);
+        writeCharacter2(m, '>');
+        m.setD16(g::textString, typed);
+        D(0x4684) = 0x10;
+        answered = textInput(m, false) == 0 && D(typed) != 0;
+    }
+    if (answered) {   // 151D7: which keyword is it
+        D(tried) = 0;
+        for (uint8_t bl = 3;;) {
+            D(answers) = bl;
+            call(m, 0x6D14, rec(bl) & 0x7F);   // sub_16D14: starts decoding keyword text
+            for (uint8_t at = 0;; ++at) {
+                const uint8_t c = textDecodeChar(m);
+                D(uint16_t(wordBuffer + at)) = c;
+                if (c == 0 || at == 0xFF) break;
+            }
+            bool same = true;   // 18D8E
+            for (uint8_t at = 0;; ++at) {
+                const uint8_t a = D(uint16_t(wordBuffer + at)), b = D(uint16_t(typed + at));
+                if ((a | b) == 0) break;
+                if (a != b) { same = false; break; }
+                if (at == 0xFF) { same = false; break; }
+            }
+            m.setD16(g::textString, wordBuffer);
+            m.setD16(g::itemDetailsPtr, typed);
+            if (same) break;
+            ++D(tried);
+            if (rec(D(answers)) & 0x80) break;
+            bl = uint8_t(D(answers) + 1);
+            if (bl == 0) break;
+        }
+        D(answers) = uint8_t(3 + D(listed));
+        index = uint8_t(D(tried) * 2 + D(answers));
+    }
+    const bool cf = changeCellFromLocation(m, index, D(0x46A6), D(0x46A7));
+    call(m, 0x63C4);   // sub_163C4
+    return cf;
+}
+
+
+void splitParty(Machine &m) {
+    auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+    constexpr uint16_t ableCount = 0xA6C8, chosen = 0xA6C6, moved = 0xA6C7, newGroup = 0xA6C5;
+    const uint16_t members = uint16_t(g::saved2 + g::s2::membersInGroup), groups = uint16_t(g::saved2 + g::s2::totalPartyGroups);
+    const uint16_t fieldEight = uint16_t(g::saved2 + g::s2::field8);
+    auto cur = [&]() { return m.d16(g::currentCharacter); };
+    D(ableCount) = 0;
+    for (uint8_t id = 1; id <= D(fieldEight); ++id) {   // how many characters are on their feet
+        D(chosen) = id;
+        setCurrentRosterCharacter(m, id);
+        const uint8_t high = D(uint16_t(cur() + pm::con + 1));
+        const bool down = (high & 0x80) || (high | D(uint16_t(cur() + pm::con))) == 0;
+        if (!down) ++D(ableCount);
+    }
+    if (D(groups) == 3) {
+        printMessage(m, 0x15);
+        call(m, 0x63C4);
+        return;
+    }
+    call(m, 0x728C);
+    D(moved) = 0;
+restart:   // 15EBC
+    D(newGroup) = uint8_t(D(groups) + 1);
+    setPartyIndexesPtr(m, D(newGroup));
+    printMessage(m, 0x16);   // 15EC7
+keyLoop:   // 15ECC
+    m.setD16(g::buttonMask1, 0x0401);
+    m.setD16(g::buttonMask2, 0);
+    {
+        waitForKeypress(m);
+        const uint8_t key = D(g::lastKey);
+        if (key == 0x1B) goto cancel;
+        if (key == 0x0D) goto finish;
+        if (key < '1' || key > '9') goto keyLoop;
+        const uint8_t member = key & 0x0F;
+        if (member > D(members)) goto keyLoop;
+        D(chosen) = member;
+        setCurrentCharacter(m, member);
+        if (D(uint16_t(cur() + pm::npc)) != 0 && D(ableCount) >= 2) {   // a monster friend: leave the party for good?
+            printMessage(m, 0x4F);
+            printMessage(m, 0x4D);
+            for (;;) {
+                m.setD16(g::buttonMask1, 0x0404);
+                m.setD16(g::buttonMask2, 0);
+                waitForKeypress(m);
+                const uint8_t answer = D(g::lastKey);
+                if (answer == 'N') goto checkMember;
+                if (answer == 0x1B) goto cancel;
+                if (answer == 'Y') {
+                    deleteCharacter(m, D(chosen));
+                    goto cancel;
+                }
+            }
+        }
+    checkMember:   // 15F46
+        {
+            const uint8_t high = D(uint16_t(cur() + pm::con + 1));
+            if (high & 0x80) {   // down
+                writeMemberName(m);
+                printMessage(m, 0x18);
+                goto keyLoop;
+            }
+            if ((high | D(uint16_t(cur() + pm::con))) == 0) {   // dead
+                printMessage(m, 0x4F);
+                printMessage(m, 0x4E);
+                for (;;) {
+                    m.setD16(g::buttonMask1, 0x0404);
+                    m.setD16(g::buttonMask2, 0);
+                    waitForKeypress(m);
+                    const uint8_t answer = D(g::lastKey);
+                    if (answer == 'N') goto restart;
+                    if (answer == 0x1B) goto cancel;
+                    if (answer == 'Y') {
+                        deleteCharacter(m, D(chosen));
+                        goto cancel;
+                    }
+                }
+            }
+        }
+        writeMemberName(m);
+        uint8_t id;
+        if (moveToGroup(m, D(chosen), D(uint16_t(g::saved2 + g::s2::activePartyGroup)), D(newGroup), id)) {
+            ++D(moved);
+            newline(m);
+            if (uint8_t(D(moved) + 1) != D(members)) goto keyLoop;
+            goto finish;
+        }
+        printMessage(m, 0x17);
+        goto keyLoop;
+    }
+cancel:   // 15F7D
+    clearPartyGroup(m, D(newGroup));
+    call(m, 0x63C4);
+    return;
+finish:   // 15F99
+    call(m, 0x63C4);
+    if (D(moved) == 0) return;
+    {
+        const int dir = askDirection(m);
+        if (dir < 0) goto cancel;
+        ++D(groups);
+        for (uint8_t bl = 1; bl != 8; ++bl) {
+            D(chosen) = bl;
+            setPartyIndexesPtr(m, D(newGroup));
+            const uint8_t id = D(uint16_t(m.d16(g::partyIndexesPtr) + bl));
+            if (id == 0) break;
+            removeFromActiveGroup(m, id);
+        }
+        call(m, 0x60E1, D(newGroup));   // sub_160E1: the new group's position
+        tryStep(m, uint8_t(dir));
+        call(m, 0x63A0);   // sub_163A0
     }
 }
 

@@ -32,4 +32,10 @@ bool chooseTargetGroup(Machine &m, uint8_t &group);
 // 17748 / 17745: reads a line (ESC cancels: FFh, ENTER: 0) into the buffer at textString (ds:4684 = capacity); `numericOnly`: digits only
 uint8_t textInput(Machine &m, bool numericOnly);
 
+// 15160: asks the map's question (a keyword typed or a single key) and runs the action of the matching answer; CF as the cell change
+bool askKeyword(Machine &m);
+
+// 15E82: the "split the party" command: asks which members leave, then in which direction the new group walks
+void splitParty(Machine &m);
+
 } // namespace wl

@@ -89,5 +89,9 @@ PORT(buttonKey) { buttonKey(m); }                                               
 PORT(textInput) { r.a.b.l = textInput(m, false); }                                          // 17748
 PORT(textInputAl) { r.a.b.l = textInput(m, r.a.b.l != 0); }                              // 17745
 
+PORT(askKeyword) { r.cf = askKeyword(m); }                                                // 15160
+
+PORT(splitParty) { splitParty(m); }                                                     // 15E82
+
 } // namespace rc
 } // namespace wl
