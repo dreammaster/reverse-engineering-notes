@@ -29,4 +29,7 @@ void showTargetList(Machine &m, uint8_t groups);
 // when cancelled or when there is nothing to pick; `group` is the 0 based list position
 bool chooseTargetGroup(Machine &m, uint8_t &group);
 
+// 17748 / 17745: reads a line (ESC cancels: FFh, ENTER: 0) into the buffer at textString (ds:4684 = capacity); `numericOnly`: digits only
+uint8_t textInput(Machine &m, bool numericOnly);
+
 } // namespace wl

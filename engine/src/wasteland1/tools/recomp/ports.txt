@@ -383,3 +383,5 @@ AD73 combatRound junk=al,bl,cf,ch,cl,di,dl,es,si scratch=CF80-CF87,7931-8030,A4A
 744C drawButtonHighlighted junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=B250-B251,722F-722F,8DD0-8DD7,4661-4662,465C-4660,CDC0-CE00
 73D2 drawButtonsRow junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=B250-B251,722F-722F,8DD0-8DD7,4661-4662,465C-4660,CDC0-CE00
 7574 buttonKey junk=ah,al,bl,bp,ch,cl,cf,di,dl,dh,es,pf,sf,si,zf scratch=B250-B251,722F-722F,8DD0-8DD7,4661-4662,465C-4660,CDC0-CE00,AA30-AA50,B1D0-B1E0,B240-B243,A420-A470,BA00-BA11,B260-B270,A600-A630
+7748 textInput junk=ah,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=B264-B264,467B-467B,CDC0-CE00,465C-4660,4682-4684
+7745 textInputAl junk=ah,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=B264-B264,467B-467B,CDC0-CE00,465C-4660,4682-4684

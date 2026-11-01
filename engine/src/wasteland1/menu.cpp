@@ -298,4 +298,73 @@ bool chooseTargetGroup(Machine &m, uint8_t &group) {
     }
 }
 
+
+namespace {
+// 18DBE: a busy wait of al * 256 steps
+void delayLoop(Machine &, uint8_t) {}
+// 1783E / 17843: shows a cursor / blank at the cursor and steps back
+void cursorGlyph(Machine &m, uint8_t glyph) {
+    m.d8(g::inverseText) = 0;
+    writeCharacter2(m, glyph);
+    --m.d8(g::rectTextX);
+}
+}
+
+uint8_t textInput(Machine &m, bool numericOnly) {
+    auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+    constexpr uint16_t position = 0x4682, maxLength = 0x4684, numericFlag = 0x467B;
+    D(numericFlag) = numericOnly ? 1 : 0;
+    const uint16_t text = m.d16(g::textString);
+    D(g::inverseText) = 0;
+    D(position) = 0;
+    for (uint8_t bl = D(maxLength); bl != 0; --bl) D(uint16_t(text + bl)) = 0;
+    D(text) = 0;
+    cursorGlyph(m, '_');
+    for (;;) {
+        for (;;) {   // 17774: blink the cursor until a key comes
+            delayLoop(m, 0x30);
+            cursorGlyph(m, ' ');
+            delayLoop(m, 0x30);
+            cursorGlyph(m, '_');
+            m.setD16(g::buttonMask1, 0x0400);
+            m.setD16(g::buttonMask2, 0);
+            const uint8_t key = checkKeypress(m);
+            if (key == 0x1B) return 0xFF;
+            if (key == 8 || key == 0xFF) {   // backspace
+                if (D(position) == 0) continue;
+                cursorGlyph(m, ' ');
+                --D(g::rectTextX);
+                --D(position);
+                D(uint16_t(text + D(position))) = 0;
+                break;
+            }
+            if (key == 0x0D) {   // 17809: drop the trailing blanks
+                uint8_t bl = uint8_t(D(position) - 1);
+                for (;;) {
+                    if (D(uint16_t(text + bl)) != ' ') break;
+                    D(uint16_t(text + bl)) = 0;
+                    --D(position);
+                    if (D(position) == 0) {
+                        bl = uint8_t(bl - 1);
+                        if (D(uint16_t(text + bl)) == ' ') D(uint16_t(text + bl)) = 0;
+                        break;
+                    }
+                    bl = D(position) ? uint8_t(D(position) - 1) : bl;
+                }
+                cursorGlyph(m, ' ');
+                return 0;
+            }
+            if (key < 0x20) continue;
+            if (D(numericFlag) && (key < '0' || key >= ':')) continue;
+            const uint8_t c = key & 0x7F;
+            if (D(position) == D(maxLength)) continue;
+            D(uint16_t(text + D(position))) = c;
+            const X86Regs at = call(m, 0xA26C);   // saveFields1: dl, bl = cursor
+            call(m, 0x9DC0, c, at.dl, at.bl);   // restoreFields1 + writeCharacter2
+            if (++D(position) != 0) break;
+        }
+        cursorGlyph(m, '_');   // 17771
+    }
+}
+
 } // namespace wl

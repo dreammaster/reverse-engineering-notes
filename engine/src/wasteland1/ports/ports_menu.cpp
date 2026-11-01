@@ -86,5 +86,8 @@ PORT(drawButtonHighlighted) { drawButton(m, true); }                            
 PORT(drawButtonsRow) { drawButtonsRow(m); }                                             // 173D2
 PORT(buttonKey) { buttonKey(m); }                                                       // 17574
 
+PORT(textInput) { r.a.b.l = textInput(m, false); }                                          // 17748
+PORT(textInputAl) { r.a.b.l = textInput(m, r.a.b.l != 0); }                              // 17745
+
 } // namespace rc
 } // namespace wl
