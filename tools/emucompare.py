@@ -65,12 +65,22 @@ NOISE = {"_Znwm", "_Znam", "_ZdlPv", "_ZdaPv", "_ZdlPvm", "malloc", "calloc", "r
          "_Unwind_Resume", "__gxx_personality_v0", "__stack_chk_fail", "abort", "__assert_fail", "__cxa_pure_virtual",
          "_ZSt9terminatev", "_ZNSs4_Rep20_S_empty_rep_storageE", "clock_gettime", "gettimeofday", "time", "pthread_mutex_lock",
          "pthread_mutex_unlock", "pthread_mutex_init", "pthread_mutexattr_init", "pthread_mutexattr_settype", "pthread_mutex_destroy",
-         "__dynamic_cast"}  # (-O0 casts again at every use, -O2 once)
+         "__dynamic_cast",  # (-O0 casts again at every use, -O2 once)
+         "localtime", "puts"}  # (the log line: the one build inlines the write of wxLog::logexpanded, the other calls the typed wxLog::log)
 NOISE |= set(MATH) | {n + "f" for n in MATH} | {"sincos", "sincosf"}  # (the optimizer makes a call of the library of sqrt, floor ... an instruction)
 NEEDS_ARGS = {"sincosf", "sincos", "clock_gettime", "gettimeofday", "time", "av_malloc", "av_mallocz", "av_realloc", "av_calloc", "av_malloc_array", "av_mallocz_array", "fwrite", "rand", "_Znwm", "_Znam", "malloc", "calloc", "_Znwj", "_Znaj", "memcpy", "memmove", "memset", "strlen", "memcmp", "strncmp", "strcmp"} | set(MATH) | {n + "f" for n in MATH}
 STRING_PREFIXES = ("_ZNSaI", "_ZNSs", "_ZNKSs", "_ZNSbIw", "_ZNKSbIw", "_ZSt", "_ZNSt", "_ZNKSt", "_ZStl", "_ZStp", "_ZSteq", "_ZStne")
+# The methods of std::string / std::wstring (copy on write, libstdc++ 4.7) that code inlined from the libraries asks (loops over begin()..end() in wxFileName
+# and the like). The string is as the first 8 bytes of a block make it: empty, so these answer for an empty string and the loops end.
+STRING_METHODS = {}
+for _cls, _width in (("Ss", 1), ("SbIwSt11char_traitsIwESaIwEE", 4)):
+    for _const in ("", "K"):
+        for _m, _kind in (("begin", "data"), ("end", "end"), ("c_str", "data"), ("data", "data"), ("size", "length"), ("length", "length"), ("empty", "empty")):
+            STRING_METHODS["_ZN%s%s%d%sEv" % (_const, _cls, len(_m), _m)] = (_kind, _width)
+        STRING_METHODS["_ZN%s%s%s" % (_const, _cls, "ixEm")] = ("index", _width)
 STOPPERS = {"__stack_chk_fail", "abort", "__assert_fail", "__cxa_throw", "_Unwind_Resume", "__cxa_pure_virtual", "_ZSt9terminatev"}
 NEEDS_ARGS |= STOPPERS
+NEEDS_ARGS |= set(STRING_METHODS)
 
 
 class Image:
@@ -108,8 +118,14 @@ class Image:
         self.trace = []
         self.stopped = None
         self.failure = ""
+        self.fail_rip = 0
         self.plt_names = {}
         self._find_plt(data)
+        # (SDL is linked in: its error buffer and thread data code spins on the emulator's thread library, so each of its functions
+        # is made `xor eax, eax; ret`; the engine only asks it for ticks, errors and the like)
+        for sym, addr in symbols(path).items():
+            if sym.startswith("SDL_") and low <= addr < high:
+                self.uc.mem_write(addr, bytes([0x31, 0xC0, 0xC3]))
         self.low_pages = []
         self.uc.hook_add(UC_HOOK_MEM_READ_UNMAPPED | UC_HOOK_MEM_WRITE_UNMAPPED, self._unmapped)
         self.uc.hook_add(UC_HOOK_MEM_READ, self._small_read, begin=0, end=0xFFFF)
@@ -265,6 +281,16 @@ class Image:
         elif name == "rand":
             self.rand_state = (getattr(self, "rand_state", 1) * 1103515245 + 12345) & 0x7FFFFFFF
             rax = self.rand_state
+        elif name in STRING_METHODS:
+            kind, width = STRING_METHODS[name]
+            try:
+                data, = struct.unpack("<Q", bytes(uc.mem_read(args[0], 8)))
+                length, = struct.unpack("<Q", bytes(uc.mem_read(data - 24, 8)))
+            except UcError:
+                data, length = 0, 0
+            if length > 0x10000:
+                length = 0
+            rax = {"data": data, "end": data + length * width, "length": length, "empty": int(length == 0), "index": data + args[1] * width}[kind]
         elif name in STOPPERS:
             self.stopped = name
             uc.emu_stop()
@@ -316,6 +342,7 @@ class Image:
             return None
         if uc.reg_read(UC_X86_REG_RIP) != SENTINEL:
             self.failure = "time or instruction limit"
+            self.fail_rip = uc.reg_read(UC_X86_REG_RIP)
             return None
         after = []
         for a, content in blocks:
@@ -472,13 +499,15 @@ def kind_of_return(t):
     return None
 
 
-def make_block(rng, index, safe=False):
+def make_block(rng, index, safe=False, sparse=False):
     """A block of random small numbers; its first 8 bytes point at an empty string (a wxString or std::string given as a reference)."""
     block = bytearray()
     for _ in range(BLOCK // 4):
         roll = rng.random()
         if safe:
             block += struct.pack("<I", rng.choice([0, 0, 1]))  # (only the values that a bool has: 0 and 1)
+        elif sparse:
+            block += struct.pack("<I", rng.randint(1, 3) if roll > 0.96 else 0)  # (mostly empty: a std::vector in it is empty, a loop over it ends)
         elif roll < 0.15:
             block += struct.pack("<I", 0)
         elif roll < 0.8:
@@ -506,7 +535,8 @@ def main():
         trials = int(args[i + 1])
         del args[i:i + 2]
     quiet = "--quiet" in args
-    args = [a for a in args if a not in ("--list", "--methods", "--quiet")]
+    show_skipped = "--skipped" in args
+    args = [a for a in args if a not in ("--list", "--methods", "--quiet", "--skipped")]
     for opt in ("--headers", "--filter"):
         if opt in args:
             i = args.index(opt)
@@ -584,14 +614,15 @@ def main():
             blocks = []
             ints = []
             next_int = iter(iv)
+            sparse = (trial_no % 4 == 1)
             safe = (trial_no % 2 == 0)  # (every other set has blocks of 0 and 1 only: a bool member holding 2 is read differently by GCC -O0 and -O2)
             trial_no += 1
             if is_method:
-                blocks.append(make_block(rng, 0, safe))
+                blocks.append(make_block(rng, 0, safe, sparse))
                 ints.append(blocks[0][0])
             for k in kinds:
                 if k == "p":
-                    blocks.append(make_block(rng, len(blocks), safe))
+                    blocks.append(make_block(rng, len(blocks), safe, sparse))
                     ints.append(blocks[-1][0])
                 elif k in "ib":
                     ints.append(next(next_int))
@@ -631,6 +662,8 @@ def main():
                 diffs.append((iv, [f[0] for f in fl], problems, safe))
         if count == 0:
             skipped += 1
+            if show_skipped:
+                print("skip      %s: %s%s" % (d, failed, (" (at %x)" % im1.fail_rip) if "limit" in (failed or "") and "image 1" in failed else ""))
             skip_reasons[failed or "none"] = skip_reasons.get(failed or "none", 0) + 1
             continue
         ran += 1
