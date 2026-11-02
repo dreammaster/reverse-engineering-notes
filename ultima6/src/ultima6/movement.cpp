@@ -73,7 +73,7 @@ MoveResult Movement::check(int x, int y, int z, int mover, const MoveRules &rule
 	int cls = MovementClasses::classOf(type);
 	int cflags = MovementClasses::flags(cls);
 	bool fly = cflags & MovementClasses::FLIES;
-	bool tail = type == 0x19E || type == 0x19F;
+	bool tail = type == 0x19E || type == 0x19F; // the skiff and the raft
 	bool water = (cflags & MovementClasses::SWIMS) || tail;
 	bool ghost = cflags & MovementClasses::IGNORES_OBJECTS;
 	bool walker = (!water && !fly) || cls == 1;

@@ -224,7 +224,7 @@ list of 64 creature types (sub_35F9B finds the index, -1 if absent) and, at +0x2
 0x4000 opens doors. A mover is a *walker* if it neither swims nor flies, or is class 1 (type 0x1AD).
 Terrain flags used: 0x01 wet, 0x02 impassable, 0x04 blocks flying, 0x08 hurts.
 
-- walkers pass where 0x02 is clear; swimmers (and types 0x19E/0x19F, the body parts of the sea monsters) where
+- walkers pass where 0x02 is clear; swimmers (and types 0x19E and 0x19F, the skiff and the raft) where
   the tile is wet; swimmers also where 0x02 and 0x01 are both set; flyers where 0x04 is clear; ghosts everywhere;
   type 0x168 only on tiles that hurt.
 - a hurting tile sets `word_3EFF9`; if `word_3F004` (avoid damage) is set the answer is no.

@@ -328,13 +328,13 @@ int Talk::objectWeight(int obj, int quantity) {
 
 bool Talk::horsed(int npc) {
 	int k = _world.actorObject(npc);
-	return k >= 0 && _world.objects[k].type == 0x19F; // a horse with rider
+	return k >= 0 && _world.objects[k].type == 0x1AF; // a horse with rider (type 431)
 }
 
 void Talk::mount(int npc) {
 	int k = _world.actorObject(npc);
 	if (k >= 0) {
-		_world.objects[k].type = 0x19F;
+		_world.objects[k].type = 0x1AF;
 		_world.objects[k].frame = 0;
 	}
 }
