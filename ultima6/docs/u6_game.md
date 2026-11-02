@@ -95,6 +95,17 @@ All paths are relative to the game directory; the save files are in `savegame\`.
 A fresh game has the Avatar (actor 1) at 307,352,0 and a party of 4 — checked by `tests/test_data_files.cpp`, which exercises the C++ readers
 in `src/files/` against the real files.
 
+## The Use command's objects
+
+`cmd_use` first checks the object's type against a table of **85 usable types** at `ds:1C30` (`sub_2F86E`; C++ `src/ultima6/usable_objects.h`, checked against
+`GAME_UNP.EXE` by `tests/test_character.cpp`): Vortex Cube, lock picks, key, moonstone, gems, staff, Orb of the Moons, torches, sextant, grapes, butter,
+Gargish vocabulary, chests, pick, shovel, drinks, candles, food items, panpipes, telescope, crystal ball, harpsichord, harp, lute, fireplace, rubber ducky,
+switch, bucket of milk, churn, beehive, honey, barrels, crates, brazier, fan, cannon, powder keg, well, fountain, bell, the eight Runes, campfire,
+fishing pole, fish, lever, balloon plans, blue potion, passthroughs, crank, xylophone, doors (oaken, windowed, cedar, steel, secret), ladder, silver horn, ship,
+skiff, raft, pull chain, balloons, cow, horse and horse with rider (the descriptions come from `LOOK.LZD` via `BASETILE`). A second five-entry table at `ds:1CDA`
+(types 0x97, 0x3D, 0x98, 0x10E, 0x3B; `sub_2FCFD`) marks another group of objects. Anything else prints a refusal. The per-type handlers are the
+`use_*` functions named in the database (they are reached through the Use command's own comparisons, not a jump table).
+
 ## Schedules
 
 `update_actor_schedules` (`2AED5`) runs every game hour for the actors 2-255. A `SCHEDULE` entry is 5 bytes: byte 0 = hour (low 5 bits) and

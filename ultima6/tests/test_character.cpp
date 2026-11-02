@@ -4,6 +4,7 @@
 #include "files/lzw.h"
 #include "files/world_data.h"
 #include "ultima6/gypsy.h"
+#include "ultima6/usable_objects.h"
 
 #include <cstdio>
 #include <set>

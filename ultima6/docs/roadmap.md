@@ -27,6 +27,7 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 - [x] Conversation script files and opcode table: `u6_conversation.md`, `src/files/converse.*` (evaluator and text codes still open)
 - [ ] `GAME.EXE`: main loop, commands, combat, magic, usecode handlers, conversation evaluator
 - [x] Graphics/text data formats (tiles, shapes, archives, fonts, palettes, descriptions): `u6_graphics.md`, `src/files/` (graphics drivers still to disassemble)
+- [x] Music: `*.M` track format and the AdLib player: `u6_music.md`, `src/files/music.*`
 - [x] `END.EXE`: how it is started (arguments, time played), structure; see `u6_ending.md` (scene scripting not analysed)
 
 ## 3. Stand-alone C++ implementation (`src/`)
