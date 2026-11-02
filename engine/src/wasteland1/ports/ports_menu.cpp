@@ -106,5 +106,11 @@ PORT(trainingMessage) { trainingMessage(m, r.a.b.l); }                          
 PORT(setRankTitle) { setRankTitle(m, r.a.b.l); }                                          // 1BB6C
 PORT(distributePoints) { distributePoints(m, r.a.b.l); }                                  // 1BA72
 
+PORT(skillCost) { r.a.b.l = skillCost(r.a.b.l, r.d.b.l); }                                // 1C68E (al = base, dl = level)
+PORT(buildTrainableList) { buildTrainableList(m); }                                       // 1BD37
+PORT(skillSchool) { r.cf = skillSchool(m); }                                              // 1BBA0
+
+PORT(trainingRowOfSkill) { r.cf = trainingRowOfSkill(m, r.a.b.l); }                                     // 1BD94
+
 } // namespace rc
 } // namespace wl

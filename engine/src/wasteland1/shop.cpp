@@ -2,6 +2,7 @@
 #include "wasteland1/character.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
+#include "wasteland1/listmenu.h"
 #include "wasteland1/menu.h"
 #include "wasteland1/party.h"
 #include "wasteland1/roster.h"
@@ -310,6 +311,204 @@ void distributePoints(Machine &m, uint8_t member) {
 			clearRect(m);
 			return;
 		}
+	}
+}
+
+
+namespace {
+constexpr uint16_t schoolMember = 0xDAA5, skillBaseVar = 0xDAA2, skillLevelVar = 0xDAA1, schoolSlot = 0xDAA6, buildIndex = 0xDAA4;
+
+void schoolMessage(Machine &m, uint8_t id, bool immediate) {   // 1BE31 / 1BE2A
+	if (immediate) setWriteCharacterFn2(m);
+	else setWriteCharacterFn(m);
+	m.setD16(g::textPointer1, 0xDACC);
+	writeEncodedText(m, id);
+}
+void cursorHome(Machine &m) {   // 1BE40
+	m.d8(g::rectTextX) = 0x0F;
+	m.d8(g::rectTextY) = 1;
+}
+void skillRecord(Machine &m, uint8_t id) { m.setD16(g::itemDetailsPtr, uint16_t(0xDAA8 + id)); }   // 1BE16
+uint8_t skillRecordByte(Machine &m) { return m.d8(m.d16(g::itemDetailsPtr)); }
+uint8_t skillIq(Machine &m) { return uint8_t(skillRecordByte(m) >> 3); }                          // 1CA98
+uint8_t skillBase(Machine &m) { return uint8_t(skillRecordByte(m) & 7); }                         // 1CA8D
+uint8_t skillIdAt(Machine &m, uint8_t index) { return rec(m, uint8_t(0x10 + index)); }              // 1BE1F
+}
+
+uint8_t skillCost(uint8_t base, uint8_t level) {
+	uint8_t power = 1, dl = level;
+	for (;;) {
+		if (--dl == 0) break;
+		const unsigned shifted = unsigned(power) << 1;
+		if (shifted & 0x100) return 0xFF;
+		power = uint8_t(shifted);
+		if (power == 0) break;
+	}
+	uint8_t result = power;
+	for (uint8_t left = base;;) {
+		if (left == 1) return result;
+		const unsigned sum = unsigned(result) + power;
+		if (sum & 0x100) return 0xFF;
+		result = uint8_t(sum);
+		if (--left == 0) return 0xFF;
+	}
+}
+
+bool findSkillSlot(Machine &m, uint8_t id, uint8_t &offset) {
+	for (uint8_t bl = pm::skills; bl != pm::skillsEnd; bl = uint8_t(bl + 2)) {
+		if (field(m, bl) == id) { offset = bl; return true; }
+	}
+	offset = pm::skillsEnd;
+	return false;
+}
+
+void buildTrainableList(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	m.setD16(0x4696, 0xBD91);
+	D(0x469D) = 1;
+	D(0x469C) = 1;
+	for (uint8_t bl = 0x11;; ++bl) {
+		D(buildIndex) = bl;
+		const uint8_t id = rec(m, bl);
+		if (id == 0xFF) return;
+		skillRecord(m, id);
+		if (skillIq(m) <= field(m, pm::iq)) {
+			++D(0x469D);
+			D(0x4721) = D(0x469C);
+		}
+		++D(0x469C);
+		if (uint8_t(bl + 1) == 0) return;
+	}
+}
+
+bool trainingRow(Machine &m, uint8_t index) { return trainingRowOfSkill(m, skillIdAt(m, index)); }   // the list callback at 1BD91 first maps the row to its skill (1BE1F)
+
+bool trainingRowOfSkill(Machine &m, uint8_t skill) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	const uint8_t index = skill;
+	D(0xDAA3) = index;
+	skillRecord(m, index);
+	if (skillIq(m) > field(m, pm::iq)) return true;
+	call(m, 0x6EE8);   // sub_16EE8: row marker
+	skillRecord(m, D(0xDAA3));
+	D(0x467F) = 2;
+	writeNumberShort(m, skillIq(m));
+	writeCharacterVia(m, 32);
+	D(skillBaseVar) = skillBase(m);
+	D(skillLevelVar) = getMemberSkillLevel(m, D(0xDAA3));
+	const uint8_t price = skillCost(D(skillBaseVar), uint8_t(D(skillLevelVar) + 1));
+	++D(0x467F);
+	writeNumberShort(m, price);
+	writeCharacterVia(m, 32);
+	writeNumberShort(m, D(skillLevelVar));
+	++D(g::rectTextX);
+	m.setD16(g::textPointer1, 0xB270);
+	writeEncodedText(m, D(0xDAA3));
+	return false;
+}
+
+bool skillSchool(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	const uint8_t keepPicture = D(0x46FA), keepRoster = D(g::rosterLocOn);
+	for (uint8_t i = 0; i != 13; ++i) D(uint16_t(0x7201 + i)) = rec(m, uint8_t(4 + i));
+	call(m, 0x90A6, 2);   // writeRosterLocation2
+screen:   // 1BBC6
+	call(m, 0x728C);
+	printMapMessage(m, rec(m, 3));
+	schoolMessage(m, 5, false);
+	{
+		const uint8_t pick = pickGroupMember(m, false);
+		if (pick == 0) {
+			D(g::rosterLocOn) = keepRoster;
+			D(0x46FA) = keepPicture;
+			return true;
+		}
+		D(schoolMember) = pick;
+		if (isMemberUnconscious(m, pick)) {
+			schoolMessage(m, 6, false);
+			goto screen;
+		}
+		redrawRosterRow(m, pick, 0xFF);
+	}
+	drawInfoWindow(m);
+	D(0x4699) = 1;
+	D(0x4698) = 1;
+train:   // 1BC0C
+	{
+		const uint8_t points = field(m, pm::skillPoints);
+		if (points == 0) {
+			schoolMessage(m, 1, false);
+			goto screen;
+		}
+		uint8_t slot;
+		if (!findSkillSlot(m, 0, slot)) {   // no free skill slot
+			schoolMessage(m, 2, false);
+			goto screen;
+		}
+	}
+	buildTrainableList(m);
+	if (D(0x469D) == 1) {
+		schoolMessage(m, 9, false);
+		goto screen;
+	}
+	cursorHome(m);
+	schoolMessage(m, 3, true);
+	pagedListDraw(m);
+	for (;;) {
+		cursorHome(m);   // 1BC42 / 1BD7F: the skill point header
+		schoolMessage(m, 4, true);
+		D(0x467F) = 2;
+		writeNumberLeft(m, field(m, pm::skillPoints));
+		m.setD16(g::buttonMask1, 0x0434);
+		const ListResult r = pagedListKeys(m);
+		if (r.al == 0xFF) goto screen;
+		if (r.al >= 0xFD) continue;
+		skillRecord(m, skillIdAt(m, r.al));
+		const uint8_t base = skillBase(m);
+		if (base > field(m, pm::skillPoints)) {   // 1BC74: not enough points
+			cursorHome(m);
+			schoolMessage(m, 7, true);
+			call(m, 0x8DB4, 0, 7);   // delayFrames
+			goto train;
+		}
+		uint8_t slot;
+		const uint8_t id = skillIdAt(m, D(0x4698));
+		if (findSkillSlot(m, id, slot)) {
+			D(schoolSlot) = slot;
+			const uint8_t level = field(m, uint8_t(slot + 1));
+			uint8_t message = 0;
+			if (level == 0xFF) message = 8;
+			else if (level >= field(m, pm::level)) message = 0x0A;
+			if (message) {
+				cursorHome(m);
+				schoolMessage(m, message, true);
+				call(m, 0x8DB4, 0, 7);
+				goto train;
+			}
+			skillRecord(m, id);
+			const uint8_t price = skillCost(skillBase(m), uint8_t(level + 1));
+			D(0xDAA7) = price;
+			const int left = int(field(m, pm::skillPoints)) - price;
+			if (uint8_t(left) & 0x80) {
+				cursorHome(m);
+				schoolMessage(m, 7, true);
+				call(m, 0x8DB4, 0, 7);
+				goto train;
+			}
+			field(m, pm::skillPoints) = uint8_t(left);
+			++field(m, uint8_t(slot + 1));
+			markPickedRow(m);
+		} else {
+			if (!findSkillSlot(m, 0, slot)) goto screen;
+			D(schoolSlot) = slot;
+			field(m, slot) = skillIdAt(m, D(0x4698));
+			field(m, uint8_t(slot + 1)) = 1;
+			skillRecord(m, field(m, slot));
+			field(m, pm::skillPoints) = uint8_t(field(m, pm::skillPoints) - skillBase(m));
+			markPickedRow(m);
+		}
+		if (field(m, pm::skillPoints) != 0) goto train;
+		goto screen;
 	}
 }
 

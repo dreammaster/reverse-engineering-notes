@@ -20,4 +20,17 @@ void setRankTitle(Machine &m, uint8_t index);
 // 1BA72: the player spends ds:4687 attribute points of party member `member` (keys 1..7 attributes, 8 hit points)
 void distributePoints(Machine &m, uint8_t member);
 
+// 1C68E: price of the next skill level: `base` * 2^(level - 1), FFh when it overflows
+uint8_t skillCost(uint8_t base, uint8_t level);
+// 1BDFF: finds skill `id` in the current character's skill list; `offset` is the slot (skillsEnd when missing)
+bool findSkillSlot(Machine &m, uint8_t id, uint8_t &offset);
+// 1BD37: builds the list of skills the current character is clever enough for
+void buildTrainableList(Machine &m);
+// 1BD94: row of the training list; true (CF) when the skill is not shown
+bool trainingRow(Machine &m, uint8_t index);
+// 1BD94: the same for a skill number
+bool trainingRowOfSkill(Machine &m, uint8_t skill);
+// 1BBA0: the skill school: spend skill points on new skills and levels; always returns true
+bool skillSchool(Machine &m);
+
 } // namespace wl

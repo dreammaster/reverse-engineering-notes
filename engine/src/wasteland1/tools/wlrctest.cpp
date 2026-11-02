@@ -109,7 +109,9 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 		};
 	}
 	const uint16_t sp0 = o.cpu.sp;
-	const std::string why = o.callNear(entry, 3000000);
+	const uint64_t stepLimit = std::getenv("WLSTEPS") ? std::strtoull(std::getenv("WLSTEPS"), nullptr, 10) : 3000000;   // WLSTEPS=<n>: oracle step limit (picture loads need 30M)
+	n.sys->maxEdges = std::max<uint64_t>(n.sys->maxEdges, stepLimit);
+	const std::string why = o.callNear(entry, stepLimit);
 	if (why != "bp") { res.kind = Result::Skip; res.note = why; return res; }
 
 	try {
