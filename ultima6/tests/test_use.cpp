@@ -4,6 +4,7 @@
 
 #include <cstdio>
 #include <string>
+#include <vector>
 
 using namespace Ultima6;
 using ::Ultima6::Ultima6::Game;
@@ -106,6 +107,20 @@ int main() {
 		useEast(w, g, px, py);
 		CHECK(w.objects[candle].frame == 0);
 		CHECK(logText(g).find("candle is doused.") != std::string::npos);
+	}
+
+	// a well fills an empty bucket
+	{
+		put(w, 0xE9, 0, px + 1, py, 0);
+		w.addToInventory(1, 0xB2, 0, 1);
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Done") != std::string::npos);
+		std::vector<int> inv;
+		w.inventory(1, inv);
+		bool water = false;
+		for (int i : inv)
+			water |= w.objects[i].type == 0xB3 && !w.objects[i].deleted;
+		CHECK(water);
 	}
 
 	std::printf("%s\n", failures ? "FAILED" : "ok");
