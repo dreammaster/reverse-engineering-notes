@@ -43,8 +43,10 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
       `src/engine/`: framebuffer, headless and Win32 backends. `build/u6.exe <gamedir>` plays the start of the shipped game. See `u6_screen.md`.
 - [x] Also: `Combat`, `Creatures` (eggs, hunting), `Magic` (spell table, spellbook, reagents, first spells), inventory view, light and darkness, save/load, front end
       with character creation, containers, skiffs and rafts. See [u6_systems.md](u6_systems.md) for the state of each system.
-- [ ] Not yet: ships and the wind, horses (mounting), balloons, moongates, the rest of the spells and ranged weapons, combat modes and creature worktypes, hunger, Push (Move), most
-      of the 85 Use handlers (levers, bells, wells, instruments, runes, ...), signs and books, the animated introduction, character transfer, the ending, sound and music, the mouse.
+- [x] Since then: the Use command (`use.cpp`), Move, moon gates and the Orb, books and signs, shrines, fountains, buckets, fishing, the ending, the introduction (slide show), more spells.
+- [ ] Not yet (U6): ships and the wind, balloons, the remaining spells (about 40), creature worktypes beyond wandering/assault, combat modes, the original's mouse interface, the telescope,
+      crystal ball, gems, drawbridge, passthroughs, silver horn, cannons, the Drop command's own flow, transfer of characters, sound and music, the animated introduction and title
+      sequence, and replacing every entry of [approximations.md](approximations.md) (see its numbered list).
 
 ## 4. Martian Dreams and Savage Empire
 

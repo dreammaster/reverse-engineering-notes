@@ -158,6 +158,8 @@ void Game::useObject(int idx) {
 		}
 	} else if (type == 0xDD) {
 		message("\nFire!\n"); // APPROX(51): use_cannon (330C5) fires a ball along the cannon's direction; not done
+	} else if (type == 0x99 || type == 0x9C || type == 0x9D || type == 0x9E || type == 0x128) {
+		// play_instrument (329EA): a tune, no text (there is no sound yet)
 	} else if (type == 0xEC || type == 0x1A3) {
 		// ring_bell: an animation and a sound, no text
 		} else if (type == 0x5D) {

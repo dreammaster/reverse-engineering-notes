@@ -10,14 +10,18 @@ original's behaviour) because the original's code has not been traced for it yet
 | Conversations | `conversation.*`, `talk.*` | Nuvie's interpreter; texts and prompts from `cmd_talk` | all CONVERSE.A scripts run; Resurrect, Sleep, Horse are stubs |
 | Naming (Look) | `describe.*` | original `get_object_name`, `sub_2FED1`, `sub_2FCAE`, stackable table at ds:0765 | complete for objects; no creature "health" text |
 | Inventories | `world.*` | original quantity kinds; weights = TILEFLAG block 3 | containers nested; no slots (a readied object just has the READIED location) |
-| Combat | `combat.*`, `combat_tables.inc` | Nuvie (hit check, damage, armour, experience) with the original's wounded texts (seg067) | hand-to-hand only; no ranged weapons, no combat mode / initiative |
-| Creatures | `creatures.*` | eggs as Nuvie's egg manager; hunting is our own | eggs, hatching, hunting, despawn; no worktype behaviours, no flee, no spell casters |
-| Magic | `magic.*`, `spell_table.inc` | Nuvie's spell table and costs (circle = magic points) | 11 spells work (Harm, Heal, Great Heal, Light, Great Light, Infravision, Magic Arrow, Poison, Fireball, Lightning, ...), the rest say "No effect"; no reagent mixing |
+| Combat | `combat.*`, `combat_tables.inc` | original hit check, wound texts, tables (`nuvie_differences.md`); damage and experience as Nuvie | hand-to-hand and bows/crossbows with a cursor; no combat modes, no spell casters |
+| Creatures | `creatures.*` | eggs as Nuvie's egg manager; turns follow `wt_wander`, the assault range test and `wt_immobile` of the original | eggs, hatching, hunting, wandering, despawn; no other worktype behaviours |
+| Magic | `magic.*`, `spells.cpp`, `spell_table.inc` | spell table, costs and `cmd_cast` texts are the original's; effects own (Nuvie-like) | about 30 spells work (see approximations #56); the rest say "No effect"; no reagent mixing |
 | Time | `session.cpp`, `commands.cpp` | Nuvie's advance_time: timers, hourly magic points (+ level), torches burn, poison, fire, swamps | no hunger, no alcohol |
 | Light | `map_renderer.*` | our approximation (torch 4, Light 5, Great Light 7, lamps 3; night 19-5, dungeons always) | approximate |
 | Save/load | `world.*` (`save`), `ObjList::save` | original file layout (OBJLIST, OBJBLK??) written to our own directory (`u6save`, `--save`) | round trip tested, byte identical |
 | New game | `world.*` (`load` with a character), `front_end.*` | original (`LZOBJBLK`, `LZDNGBLK`, `write_new_game_objlist`) | complete |
-| Front end | `front_end.*` | menu and gypsy from `U.EXE` data | no intro, transfer, acknowledgements |
+| Front end | `front_end.*` | menu, gypsy and story text from `U.EXE` data | menu, character creation, the introduction as a slide show (#53); no transfer, acknowledgements |
 
 Non-original conveniences: `1`-`8` choose the member shown in the panel, `I` opens the inventory view (arrows select, Enter readies or unreadies, `D` drops), the cursor of
 Look and Cast moves with the arrows and is confirmed with Enter. The original's mouse interface is not implemented.
+
+Added since: `use.cpp` (the Use command as the original's `cmd_use` table: doors, chests, containers, food, lights, potions, keys and lock picks, buckets, churn, beehive,
+fishing, powder keg, sextant, shovel, moonstones, Orb of the Moons, shrines, fountains; the Move command), `moongate.cpp` (moon phases, blue and red gates), `ending.*` (the
+ending after the Codex has gone), books and signs from `BOOK.DAT`. Approximations 49-59 in [approximations.md](approximations.md) say what is not exact.
