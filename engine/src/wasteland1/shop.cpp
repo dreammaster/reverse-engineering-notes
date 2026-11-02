@@ -6,6 +6,7 @@
 #include "wasteland1/party.h"
 #include "wasteland1/roster.h"
 #include "wasteland1/text.h"
+#include "wasteland1/ui.h"
 
 namespace wl {
 
@@ -234,6 +235,81 @@ cureMenu:   // 1C418
 		if (field(m, pm::afflictions) != 0) goto cureMenu;
 		D(cureFlag) = 0;
 		goto patient;
+	}
+}
+
+
+bool raiseMaxCon(Machine &m, uint8_t amount) {
+	uint8_t &low = field(m, pm::maxCon);
+	uint8_t &high = field(m, uint8_t(pm::maxCon + 1));
+	const unsigned sum = unsigned(low) + amount;
+	low = uint8_t(sum);
+	high = uint8_t(high + (sum >> 8));
+	return (high & 0x80) != 0;
+}
+
+void trainingMessage(Machine &m, uint8_t id) {
+	setWriteCharacterFn(m);
+	m.setD16(g::textPointer1, 0xD622);
+	writeEncodedText(m, id);
+}
+
+void setRankTitle(Machine &m, uint8_t index) {
+	m.setD16(g::textPointer1, 0xD622);
+	textDecodeInit(m, index);
+	for (uint8_t at = pm::rank;; ++at) {
+		m.d8(0xD430) = at;
+		const uint8_t c = textDecodeChar(m);
+		field(m, at) = c;
+		if (c == 0 || at == 0xFF) break;
+	}
+}
+
+void distributePoints(Machine &m, uint8_t member) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	D(0xD432) = member;
+	raiseMaxCon(m, D(g::itemQuantity));
+	for (;;) {
+		m.setD16(g::textString, 0xD453);   // "<name> has <n> points to distribute..."
+		for (uint8_t at = pm::strength; at != 0x15; ++at) {
+			D(0xD431) = at;
+			const uint8_t value = field(m, at);
+			writeString(m);
+			writeNumberLeft(m, value);
+		}
+		writeString(m);
+		writeNumber16(m, uint16_t(field(m, pm::maxCon) | (field(m, uint8_t(pm::maxCon + 1)) << 8)));
+		writeString(m);
+		for (;;) {   // 1BAB7
+			m.setD16(g::textString, 0xD44A);   // "12345678"
+			m.setD16(g::buttonMask1, 0x0004);
+			m.setD16(g::buttonMask2, 0);
+			const uint8_t pick = chooseByKey(m);
+			if (pick == 0xFF) continue;
+			if (pick == 7) {   // one more hit point
+				if (raiseMaxCon(m, 1)) {
+					field(m, uint8_t(pm::maxCon + 1)) = 0x7F;   // full: stays at 7FFFh
+					field(m, pm::maxCon) = 0xFF;
+					continue;
+				}
+				const uint8_t at = findInSelectedGroup(m, D(0xD432));
+				if (at != 0) {
+					const uint8_t keep = D(g::itemQuantity);
+					redrawRosterRow(m, at, D(0x471F));
+					D(g::itemQuantity) = keep;
+				}
+				break;
+			}
+			const uint8_t offset = uint8_t(pick + pm::strength);
+			if (field(m, offset) == 0xFF) continue;
+			++field(m, offset);
+			if (offset == pm::iq && field(m, pm::skillPoints) != 0xFF) ++field(m, pm::skillPoints);
+			break;
+		}
+		if (--D(g::itemQuantity) == 0) {
+			clearRect(m);
+			return;
+		}
 	}
 }
 

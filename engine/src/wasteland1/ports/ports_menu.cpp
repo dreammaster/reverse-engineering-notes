@@ -101,5 +101,10 @@ PORT(payNumberValue) { r.cf = payNumberValue(m); }                              
 PORT(poolMoney) { poolMoney(m, r.a.b.l); r.cf = true; }                                               // 19B81
 PORT(doctorShop) { r.cf = doctorShop(m); }                                               // 1C260
 
+PORT(raiseMaxCon) { r.sf = raiseMaxCon(m, r.a.b.l); r.b.b.l = 0x1C; }          // 1BB32
+PORT(trainingMessage) { trainingMessage(m, r.a.b.l); }                                   // 1BB5D
+PORT(setRankTitle) { setRankTitle(m, r.a.b.l); }                                          // 1BB6C
+PORT(distributePoints) { distributePoints(m, r.a.b.l); }                                  // 1BA72
+
 } // namespace rc
 } // namespace wl
