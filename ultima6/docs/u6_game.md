@@ -31,8 +31,9 @@ at `off_3DB7E` (set to `cs:0430h` in `_main`); the call is retried when the hook
 no free.
 
 **Video**: the graphics driver (`EGADRV.BIN`, `MCGADRV.BIN`, `CGADRV.BIN`, `TGADRV.BIN` / `U6*.DRV`) is loaded into memory and
-entered through the far pointer `video_driver_call` (`4C508`): the offset is set to an entry number before each `call` (3 = shut
-down, 0x24 = set palette, 0x2A = initialise ...). `video_mode` (`3DA18`) is 0 = VGA/MCGA, 1 = EGA, 2 = Tandy, 3 = CGA, 4 =
+entered through the far pointer `video_driver_call` (`4C508`): the offset is set to an entry number before each `call` (offset 3 = entry 1 `video_shutdown`, 0x24 = entry 12, the palette
+set-up for the non-VGA modes (a no-op in the MCGA driver), 0x2A = entry 14, tile cache set-up/draw, 0x2D = entry 15 `draw_tile`; see
+[u6_drivers.md](u6_drivers.md)). `video_mode` (`3DA18`) is 0 = VGA/MCGA, 1 = EGA, 2 = Tandy, 3 = CGA, 4 =
 Hercules (the letters `v e t c h` of `CONFIG.U6`); `_main` builds a per-mode table of the 200 scan-line start offsets (stride 0x140 for VGA, 0x28 for EGA, 0xA0 over four
 2000h-byte banks at B800h for Tandy, 0x50 over two banks for CGA, 0x5A with 2000h bank steps for Hercules).
 
