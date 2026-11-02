@@ -1,5 +1,7 @@
 #include "ultima6/session.h"
 
+#include "ultima6/stats_view.h"
+
 #include <cstdio>
 
 namespace Ultima6 {
@@ -29,10 +31,11 @@ void GameClock::advance(int minutes) {
 	}
 }
 
-Game::Game(World &world) : _world(world), _renderer(world), _movement(world) {
+Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(world), _movement(world) {
 	world.avatarPosition(x, y, z);
 	_leaderObject = world.actorObject(1);
 	_rules.questFlag = !world.actors.globals.empty() && world.actors.globals[0] != 0;
+	prompt();
 	const std::vector<uint8_t> &g = world.actors.globals;
 	// objlist +0x1BF3: minute, hour, day, month, year (u16)
 	clock.minute = g[2];
@@ -42,10 +45,15 @@ Game::Game(World &world) : _world(world), _renderer(world), _movement(world) {
 	clock.year = g[6] | (g[7] << 8);
 }
 
+void Game::prompt() {
+	// the name of the party member in control, a colon and '>' (command_loop prints it with %s:\n%>)
+	message(std::string((const char *)_world.actors.partyNames[0]) + ":\n>");
+}
+
 bool Game::canWalk(int tx, int ty, int tz) {
 	MoveResult r = _movement.check(tx, ty, tz, _leaderObject, _rules);
 	if (r.denied) {
-		message("\"Thou art not upon a Sacred Quest! Passage denied!\"");
+		message("\n\"Thou art not upon a Sacred Quest!\nPassage denied!\"\n");
 		_rules.deniedPending = false;
 	}
 	return r.passable;
@@ -54,9 +62,12 @@ bool Game::canWalk(int tx, int ty, int tz) {
 bool Game::step(int dir) {
 	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
 	int nx = (x + DIR_DX[dir]) & mask, ny = (y + DIR_DY[dir]) & mask;
-	if (!canWalk(nx, ny, z)) {
-		message("Blocked!");
-		return false;
+	if (!canWalk(nx, ny, z))
+		return false; // the original only plays a sound
+	if (DIR_DX[dir] && DIR_DY[dir]) {
+		// a diagonal step needs one of the two squares it cuts across to be open (sub_2787E)
+		if (!canWalk((x + DIR_DX[dir]) & mask, y, z) && !canWalk(x, (y + DIR_DY[dir]) & mask, z))
+			return false;
 	}
 	x = nx;
 	y = ny;
@@ -67,6 +78,7 @@ bool Game::step(int dir) {
 }
 
 void Game::message(const std::string &text) {
+	scroll.print(text);
 	log.push_back(text);
 	if (log.size() > 64)
 		log.erase(log.begin());
@@ -97,7 +109,10 @@ bool Game::handleKey(int key) {
 void Game::render(Framebuffer &screen) {
 	screen.setPalette(_world.palette.rgb);
 	screen.clear(0);
+	screen.blit(0, 0, &_world.paper.pixels[0], _world.paper.width, _world.paper.height, _world.paper.width);
 	_renderer.draw(screen, x, y, z);
+	drawStatsView(screen, _world, _member);
+	scroll.draw(screen, _world.font);
 }
 
 } // namespace Ultima6

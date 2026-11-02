@@ -1,0 +1,31 @@
+#ifndef ULTIMA6_ULTIMA6_STATS_VIEW_H
+#define ULTIMA6_ULTIMA6_STATS_VIEW_H
+
+#include "engine/framebuffer.h"
+#include "ultima6/world.h"
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+/** The numbers GAME.EXE's panel shows for an actor (sub_2B4D1, sub_2B519, sub_2B549). */
+struct ActorStats {
+	static int level(const World &w, int actor) {
+		return w.actors.level[actor];
+	}
+	/** 30 hit points a level, at least 1 and at most 255. */
+	static int maxHealth(const World &w, int actor);
+	/** The Avatar has twice his intelligence in magic points, the two kinds of mage (types 0x17A, 0x179 and 0x182) as much or half. */
+	static int maxMagic(const World &w, int actor);
+};
+
+/**
+ * The default panel of the play screen (sub_1D4DA): a party member's name over his or her portrait,
+ * strength, dexterity, intelligence, magic, health, level and experience, and the four arrow
+ * buttons below the portrait, at the 17 x 12 character window (176, 8) of the right-hand column.
+ */
+void drawStatsView(Framebuffer &screen, const World &world, int member);
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+#endif

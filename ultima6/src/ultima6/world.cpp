@@ -2,6 +2,8 @@
 
 #include "files/lzw.h"
 
+#include "files/portrait.h"
+
 #include <algorithm>
 
 namespace Ultima6 {
@@ -47,6 +49,10 @@ bool World::load(const std::string &dir) {
 		return fail("BASETILE");
 	if (!readFile(joinPath(dir, "U6PAL"), d) || !palette.load(d))
 		return fail("U6PAL");
+	if (!readFile(joinPath(dir, "U6.CH"), d) || !font.load(d))
+		return fail("U6.CH");
+	if (!paper.load(joinPath(dir, "PAPER.BMP")))
+		return fail("PAPER.BMP");
 	Bytes mapTiles, maskType, objTiles, index;
 	Bytes raw;
 	if (!readFile(joinPath(dir, "MAPTILES.VGA"), raw) || !lzwDecompress(raw, 0, mapTiles))
@@ -58,6 +64,11 @@ bool World::load(const std::string &dir) {
 		return fail("tile set");
 	if (!readFile(joinPath(dir, "MAP"), d) || !readFile(joinPath(dir, "CHUNKS"), d2) || !map.load(d, d2))
 		return fail("MAP/CHUNKS");
+
+	static const char *const PORTRAIT_FILES[3] = {"PORTRAIT.A", "PORTRAIT.B", "PORTRAIT.Z"};
+	for (int i = 0; i < 3; ++i)
+		if (!readFile(joinPath(dir, PORTRAIT_FILES[i]), portraits[i]))
+			return fail(PORTRAIT_FILES[i]);
 
 	std::string save = joinPath(dir, "SAVEGAME");
 	if (!readFile(joinPath(save, "OBJLIST"), d) || !actors.load(d))
@@ -114,6 +125,16 @@ void World::objectsAt(int x, int y, int z, std::vector<int> &out) const {
 	auto it = std::lower_bound(_byPosition.begin(), _byPosition.end(), std::make_pair(key, -1));
 	for (; it != _byPosition.end() && it->first == key; ++it)
 		out.push_back(it->second);
+}
+
+bool World::portrait(int actor, Bytes &pixels) const {
+	int k = actorObject(actor);
+	int type = k >= 0 ? objects[k].type : 0;
+	int avatar = actors.globals.size() > 0x81 ? actors.globals[0x81] : 0; // objlist +0x1C72
+	PortraitRef ref;
+	if (!Portrait::locate(actor, type, avatar, ref))
+		return false;
+	return Portrait::decode(portraits[ref.file == 'A' ? 0 : ref.file == 'B' ? 1 : 2], ref.item, pixels);
 }
 
 void World::moveObject(int index, int x, int y, int z) {

@@ -3,6 +3,7 @@
 
 #include "files/map_data.h"
 #include "files/obj_block.h"
+#include "files/picture.h"
 #include "files/tile_data.h"
 #include "files/tile_set.h"
 #include "files/world_data.h"
@@ -57,9 +58,15 @@ public:
 	TileFlags flags;
 	BaseTile baseTile;
 	Palette palette;
+	Font font;
+	Picture paper;  // PAPER.BMP: the play screen's frame
+	Bytes portraits[3]; // PORTRAIT.A, .B and .Z
 	MapData map;
 	ObjList actors;
 	std::vector<Obj> objects;
+
+	/** The 56 x 64 portrait of an actor (see Portrait::locate); false if it has none. */
+	bool portrait(int actor, Bytes &pixels) const;
 
 	/** The party's leader (actor 1, the Avatar) position. */
 	void avatarPosition(int &x, int &y, int &z) const {

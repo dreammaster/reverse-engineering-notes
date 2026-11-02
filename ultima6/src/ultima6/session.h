@@ -4,6 +4,7 @@
 #include "engine/backend.h"
 #include "ultima6/map_renderer.h"
 #include "ultima6/movement.h"
+#include "ultima6/text_window.h"
 #include "ultima6/world.h"
 
 #include <string>
@@ -45,16 +46,20 @@ public:
 	bool canWalk(int x, int y, int z);
 
 	void message(const std::string &text);
+	/** Prints the command prompt: the name of the party member in control, a colon, and '>'. */
+	void prompt();
 
 	int x, y, z;
 	GameClock clock;
 	std::vector<std::string> log;
+	TextWindow scroll; // the text scroll of the play screen
 
 private:
 	World &_world;
 	MapRenderer _renderer;
 	Movement _movement;
 	MoveRules _rules;
+	int _member = 0; // party member shown in the panel
 	int _leaderObject; // index of the leader's body in the world's object list
 };
 
