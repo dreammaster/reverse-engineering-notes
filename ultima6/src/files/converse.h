@@ -23,6 +23,38 @@ namespace Ultima6 {
  * 0x2800 bytes are read). A script begins 0xFF, the actor number, the name, 0xF1 and the
  * description, then the code (0xF2 ...).
  */
+/**
+ * The structure of a script's code, as far as it is needed to find things in it without
+ * running it. Derived from the original's interpreter (GAME.EXE conv_execute_command /
+ * conv_read_value) and checked by scanning every shipped script:
+ *
+ *   - an *expression* is a postfix token string ending with 0xA7 (or 0xA8): tokens 0xD2 / 0xD3 / 0xD4
+ *     are followed by a u32 / u8 / u16 constant, other tokens below 0x81 are small constants, the
+ *     rest are operators (comparisons 81-86, arithmetic 90-95, VAR b2, SVAR b3, FLAG ab, ...)
+ *   - commands (0x9C-0xDF) take a fixed number of expressions (SETF 2, GIVE 4, ...), JUMP (0xB0) a u32
+ *     absolute offset, the input commands 0xF9/0xFB/0xFC a variable (tokens up to a 0xB2/0xB3)
+ *   - 0xEF starts a comma-separated keyword list that runs to the 0xF6 which starts its answer
+ *   - everything else printable is text; the code ends at a zero pad or where the data tables begin
+ */
+struct ConverseKeywordEntry {
+	std::string keywords;  // "name" or "heav,burd,trou,time"
+	size_t answerOffset;   // offset of the byte after 0xF6
+};
+
+struct ConverseScan {
+	enum Kind { TEXT, COMMAND, JUMP, KEYWORDS, ANSWER, PAD, DATA };
+	struct Item {
+		Kind kind;
+		size_t offset, length;
+		int op;
+		uint32_t target; // JUMP only
+	};
+	std::vector<Item> items;
+	std::vector<ConverseKeywordEntry> keywords;
+	bool clean; // the whole code was understood up to its end (a pad or the data tables)
+	size_t end; // offset where the scan stopped
+};
+
 struct ConverseRef {
 	bool second; // CONVERSE.B
 	int item;
@@ -49,6 +81,9 @@ public:
 	const std::string &description() const {
 		return _description;
 	}
+	/** Scans the code (see ConverseScan). */
+	void scan(ConverseScan &result) const;
+
 	/** Offset of the first byte of code (the 0xF2 that starts the conversation). */
 	size_t codeStart() const {
 		return _codeStart;

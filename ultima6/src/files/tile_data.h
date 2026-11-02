@@ -23,15 +23,15 @@ struct AnimData {
 
 /**
  * TILEFLAG (7168 bytes), read by load_tile_attribs into four buffers, one per tile
- * (2048 tiles) except the third, which has 1024 entries (its meaning is not
- * established yet).
+ * (2048 tiles) except the third, which has 1024 entries: the weight of each object type
+ * (found through the conversation weight operator).
  */
 struct TileFlags {
 	enum { TILES = 2048, BLOCK3 = 1024, FILE_SIZE = TILES + TILES + BLOCK3 + TILES };
 
 	uint8_t flags1[TILES];  // +0x0000
 	uint8_t flags2[TILES];  // +0x0800
-	uint8_t block3[BLOCK3]; // +0x1000
+	uint8_t block3[BLOCK3]; // +0x1000, weight per object type
 	uint8_t flags3[TILES];  // +0x1400, top two bits = article
 
 	bool load(const Bytes &data);

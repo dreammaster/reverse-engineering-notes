@@ -57,7 +57,7 @@ All paths are relative to the game directory; the save files are in `savegame\`.
 | File | Reader | Layout |
 |---|---|---|
 | `ANIMDATA` (194) | `load_tile_attribs` (`1118B`) | u16 count; u16[32] tile to animate; u16[32] first frame; u8[32] AND mask; u8[32] shift. Agrees with Nuvie's `Animdata` |
-| `TILEFLAG` (7168) | same | u8[2048] flags1; u8[2048] flags2; u8[1024] block 3 (meaning unknown); u8[2048] flags3 (top two bits = article). Nuvie reads 1, 2 and the last one |
+| `TILEFLAG` (7168) | same | u8[2048] flags1; u8[2048] flags2; u8[1024] the weight of each object type; u8[2048] flags3 (top two bits = article). Nuvie reads 1, 2 and the last one |
 | `U6PAL` (1024) | `load_palette` (`11474`) | VGA only: the first 0x300 bytes, 256 RGB triples of 6-bit values; the remaining 0x100 bytes are not read |
 | `SCHEDULE` (3329) | `load_world_data` (`14A6A`) | u16 index[256] and a u16 total (the 0x202-byte header; the total lands in `schedule_count`), then total * 5-byte entries |
 | `BASETILE` (2048) | same | u16[1024]: first tile of each object type (a tile is `basetile[type] + frame`) |

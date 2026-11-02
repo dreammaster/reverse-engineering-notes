@@ -1606,8 +1606,8 @@ loc_11276:                              ; CODE XREF: load_tile_attribs+D0↑j
                 mov     ax, 400h
                 push    dx
                 push    ax
-                push    word ptr tileflag_block3_ptr+2
-                push    word ptr tileflag_block3_ptr
+                push    word ptr object_weights_ptr+2
+                push    word ptr object_weights_ptr
                 call    file_read
                 push    di
                 mov     dx, 0FFFFh
@@ -28475,7 +28475,7 @@ loc_1D913:                              ; CODE XREF: sub_1D8B1+2C↑j
                 call    near ptr sub_1D88A
                 or      ax, ax
                 jz      short loc_1D932
-                les     bx, tileflag_block3_ptr
+                les     bx, object_weights_ptr
                 assume es:nothing
                 mov     al, es:[bx+si]
                 mov     ah, 0
@@ -28488,7 +28488,7 @@ loc_1D913:                              ; CODE XREF: sub_1D8B1+2C↑j
 ; ---------------------------------------------------------------------------
 
 loc_1D932:                              ; CODE XREF: sub_1D8B1+69↑j
-                les     bx, tileflag_block3_ptr
+                les     bx, object_weights_ptr
                 mov     al, es:[bx+si]
                 mov     ah, 0
                 mul     di
@@ -28614,7 +28614,7 @@ loc_1D9D9:                              ; CODE XREF: sub_1D998+8E↓j
                 and     ax, 18h
                 cmp     ax, 18h
                 jnz     short loc_1DA07
-                les     bx, tileflag_block3_ptr
+                les     bx, object_weights_ptr
                 add     bx, [bp+var_2]
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -28711,7 +28711,7 @@ loc_1DA7B:                              ; CODE XREF: sub_1DA30+109↓j
 ; ---------------------------------------------------------------------------
 
 loc_1DA9A:                              ; CODE XREF: sub_1DA30+65↑j
-                les     bx, tileflag_block3_ptr
+                les     bx, object_weights_ptr
                 add     bx, [bp+var_4]
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -30383,7 +30383,7 @@ loc_1E703:                              ; CODE XREF: cmd_ready+4F↑j
 ; ---------------------------------------------------------------------------
 
 loc_1E723:                              ; CODE XREF: cmd_ready+77↑j
-                les     bx, tileflag_block3_ptr
+                les     bx, object_weights_ptr
                 add     bx, [bp+var_6]
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -30857,7 +30857,7 @@ seg008          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_1EA97       proc far                ; CODE XREF: sub_1EBEC+B3↓p
+conv_init_variables proc far            ; CODE XREF: sub_1EBEC+B3↓p
                                         ; sub_24CF0+D0↓P
 
 arg_0           = word ptr  6
@@ -30874,10 +30874,10 @@ arg_2           = word ptr  8
                 jmp     short loc_1EAAE
 ; ---------------------------------------------------------------------------
 
-loc_1EAAB:                              ; CODE XREF: sub_1EA97+D↑j
+loc_1EAAB:                              ; CODE XREF: conv_init_variables+D↑j
                 mov     ax, 927h
 
-loc_1EAAE:                              ; CODE XREF: sub_1EA97+12↑j
+loc_1EAAE:                              ; CODE XREF: conv_init_variables+12↑j
                 mov     word_48F9D, ax
                 mov     word_48FAB, 92Eh
                 mov     ax, di
@@ -30891,18 +30891,18 @@ loc_1EAAE:                              ; CODE XREF: sub_1EA97+12↑j
                 jmp     short loc_1EADF
 ; ---------------------------------------------------------------------------
 
-loc_1EAD0:                              ; CODE XREF: sub_1EA97+32↑j
+loc_1EAD0:                              ; CODE XREF: conv_init_variables+32↑j
                 cmp     byte_4049D, 12h
                 jnb     short loc_1EADC
                 mov     ax, 95Eh
                 jmp     short loc_1EADF
 ; ---------------------------------------------------------------------------
 
-loc_1EADC:                              ; CODE XREF: sub_1EA97+3E↑j
+loc_1EADC:                              ; CODE XREF: conv_init_variables+3E↑j
                 mov     ax, 968h
 
-loc_1EADF:                              ; CODE XREF: sub_1EA97+37↑j
-                                        ; sub_1EA97+43↑j
+loc_1EADF:                              ; CODE XREF: conv_init_variables+37↑j
+                                        ; conv_init_variables+43↑j
                 mov     word_48FB7, ax
                 mov     al, [di+3533h]
                 mov     ah, 0
@@ -30924,10 +30924,10 @@ loc_1EADF:                              ; CODE XREF: sub_1EA97+37↑j
                 jmp     short loc_1EB18
 ; ---------------------------------------------------------------------------
 
-loc_1EB16:                              ; CODE XREF: sub_1EA97+78↑j
+loc_1EB16:                              ; CODE XREF: conv_init_variables+78↑j
                 xor     ax, ax
 
-loc_1EB18:                              ; CODE XREF: sub_1EA97+7D↑j
+loc_1EB18:                              ; CODE XREF: conv_init_variables+7D↑j
                 mov     word_48F51, ax
                 mov     al, byte_4049D
                 mov     ah, 0
@@ -30971,7 +30971,7 @@ loc_1EB18:                              ; CODE XREF: sub_1EA97+7D↑j
                 jmp     short loc_1EB9D
 ; ---------------------------------------------------------------------------
 
-loc_1EB8A:                              ; CODE XREF: sub_1EA97+109↓j
+loc_1EB8A:                              ; CODE XREF: conv_init_variables+109↓j
                 mov     ax, si
                 mov     dx, 64h ; 'd'
                 mul     dx
@@ -30981,20 +30981,20 @@ loc_1EB8A:                              ; CODE XREF: sub_1EA97+109↓j
                 mov     [bx-48D3h], ax
                 inc     si
 
-loc_1EB9D:                              ; CODE XREF: sub_1EA97+F1↑j
+loc_1EB9D:                              ; CODE XREF: conv_init_variables+F1↑j
                 cmp     si, 0Ah
                 jl      short loc_1EB8A
                 xor     si, si
                 jmp     short loc_1EBB1
 ; ---------------------------------------------------------------------------
 
-loc_1EBA6:                              ; CODE XREF: sub_1EA97+11D↓j
+loc_1EBA6:                              ; CODE XREF: conv_init_variables+11D↓j
                 mov     bx, si
                 shl     bx, 1
                 mov     word ptr [bx-491Fh], 0
                 inc     si
 
-loc_1EBB1:                              ; CODE XREF: sub_1EA97+10D↑j
+loc_1EBB1:                              ; CODE XREF: conv_init_variables+10D↑j
                 cmp     si, 0Ah
                 jl      short loc_1EBA6
                 mov     bx, word_3DD2F
@@ -31015,7 +31015,7 @@ loc_1EBB1:                              ; CODE XREF: sub_1EA97+10D↑j
                 pop     si
                 pop     bp
                 retf    4
-sub_1EA97       endp
+conv_init_variables endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -31127,7 +31127,7 @@ loc_1EC9A:                              ; CODE XREF: sub_1EBEC+51↑j
                 push    [bp+arg_4]
                 push    di
                 push    cs
-                call    near ptr sub_1EA97
+                call    near ptr conv_init_variables
                 jmp     short loc_1ECB0
 ; ---------------------------------------------------------------------------
 
@@ -31953,7 +31953,7 @@ sub_1F176       endp
 
 ; Attributes: bp-based frame
 
-conv_read_value proc far                ; CODE XREF: sub_20144+39↓p
+conv_read_value proc far                ; CODE XREF: conv_skip_data_ref+39↓p
                                         ; conv_execute_command+1BF↓p ...
 
 var_92          = word ptr -92h
@@ -32286,7 +32286,7 @@ loc_1F4A7:                              ; CODE XREF: conv_read_value+101↑j
                 add     bx, ax
                 mov     ax, [bx]
                 mov     [bp+var_56], ax
-                les     bx, tileflag_block3_ptr
+                les     bx, object_weights_ptr
                 add     bx, ax
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -33876,7 +33876,7 @@ conv_read_value endp
 
 ; Attributes: bp-based frame
 
-sub_20144       proc far                ; CODE XREF: conv_execute_command+CF↓p
+conv_skip_data_ref proc far             ; CODE XREF: conv_execute_command+CF↓p
                                         ; conv_execute_command+16C↓p ...
 
 var_8           = word ptr -8
@@ -33918,7 +33918,7 @@ arg_0           = word ptr  6
                 jmp     short loc_201B2
 ; ---------------------------------------------------------------------------
 
-loc_2019E:                              ; CODE XREF: sub_20144+70↓j
+loc_2019E:                              ; CODE XREF: conv_skip_data_ref+70↓j
                 mov     ax, conv_script_pos
                 inc     conv_script_pos
                 les     bx, conv_script_ptr
@@ -33927,14 +33927,14 @@ loc_2019E:                              ; CODE XREF: sub_20144+70↓j
                 jnz     short loc_201B2
                 dec     si
 
-loc_201B2:                              ; CODE XREF: sub_20144+58↑j
-                                        ; sub_20144+6B↑j
+loc_201B2:                              ; CODE XREF: conv_skip_data_ref+58↑j
+                                        ; conv_skip_data_ref+6B↑j
                 or      si, si
                 jg      short loc_2019E
                 jmp     short loc_201DE
 ; ---------------------------------------------------------------------------
 
-loc_201B8:                              ; CODE XREF: sub_20144+56↑j
+loc_201B8:                              ; CODE XREF: conv_skip_data_ref+56↑j
                 mov     ax, si
                 shl     ax, 1
                 add     conv_script_pos, ax
@@ -33943,7 +33943,7 @@ loc_201B8:                              ; CODE XREF: sub_20144+56↑j
                 jmp     short loc_201DE
 ; ---------------------------------------------------------------------------
 
-loc_201CA:                              ; CODE XREF: sub_20144+32↑j
+loc_201CA:                              ; CODE XREF: conv_skip_data_ref+32↑j
                 mov     ax, conv_script_pos
                 cwd
                 mov     [bp+var_6], dx
@@ -33952,15 +33952,15 @@ loc_201CA:                              ; CODE XREF: sub_20144+32↑j
                 sub     ax, word_4BFF1
                 mov     conv_script_pos, ax
 
-loc_201DE:                              ; CODE XREF: sub_20144+72↑j
-                                        ; sub_20144+84↑j
+loc_201DE:                              ; CODE XREF: conv_skip_data_ref+72↑j
+                                        ; conv_skip_data_ref+84↑j
                 mov     dx, [bp+var_6]
                 mov     ax, [bp+var_8]
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf    2
-sub_20144       endp
+conv_skip_data_ref endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -34048,7 +34048,7 @@ loc_2029C:                              ; CODE XREF: conv_execute_command+1C↑j
                 mov     ax, 1
                 push    ax
                 push    cs
-                call    near ptr sub_20144
+                call    near ptr conv_skip_data_ref
                 mov     word_4BFF9, dx
                 mov     word_4BFF7, ax
                 jmp     short loc_202CE
@@ -34120,7 +34120,7 @@ loc_2033A:                              ; CODE XREF: conv_execute_command+1C↑j
                 xor     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_20144
+                call    near ptr conv_skip_data_ref
                 mov     word_4BFF9, dx
                 mov     word_4BFF7, ax
                 les     bx, conv_script_ptr
@@ -34191,7 +34191,7 @@ loc_203D3:                              ; CODE XREF: conv_execute_command+1D0↑
                 mov     ax, 1
                 push    ax
                 push    cs
-                call    near ptr sub_20144
+                call    near ptr conv_skip_data_ref
                 mov     word_4BFF9, dx
                 mov     word_4BFF7, ax
                 xor     si, si
@@ -35127,7 +35127,7 @@ sub_209B1       endp
 
 ; Attributes: bp-based frame
 
-cmd_talk        proc far                ; CODE XREF: sub_1EA97+139↑P
+cmd_talk        proc far                ; CODE XREF: conv_init_variables+139↑P
 
 var_A           = word ptr -0Ah
 var_8           = word ptr -8
@@ -42151,7 +42151,7 @@ loc_23F96:                              ; CODE XREF: sub_23E67+121↑j
 ; ---------------------------------------------------------------------------
 
 loc_23FA8:                              ; CODE XREF: sub_23E67+133↑j
-                les     bx, tileflag_block3_ptr
+                les     bx, object_weights_ptr
                 cmp     byte ptr es:[bx+si], 0
                 jnz     short loc_23FC9
                 cmp     word_48F03, 100h
@@ -43867,7 +43867,7 @@ loc_24D84:                              ; CODE XREF: sub_24CF0+61↑j
                 mov     al, es:[bx+1]
                 mov     ah, 0
                 push    ax
-                call    sub_1EA97
+                call    conv_init_variables
                 mov     byte_4C404, 0
 
 loc_24DCA:                              ; CODE XREF: sub_24CF0+92↑j
@@ -57571,7 +57571,7 @@ sub_2B3D7       endp
 
 ; Attributes: bp-based frame
 
-sub_2B401       proc far                ; CODE XREF: sub_1EA97+52↑P
+sub_2B401       proc far                ; CODE XREF: conv_init_variables+52↑P
                                         ; sub_21338+6↑P ...
 
 arg_0           = word ptr  6
@@ -70806,7 +70806,7 @@ loc_31668:                              ; CODE XREF: sub_3151B+13C↑j
                 shl     bx, 1
                 mov     ax, [bx+3548h]
                 and     ax, 3FFh
-                les     bx, tileflag_block3_ptr
+                les     bx, object_weights_ptr
                 add     bx, ax
                 cmp     byte ptr es:[bx], 0
                 jz      short loc_316D3
@@ -71223,7 +71223,7 @@ loc_31A5A:                              ; CODE XREF: sub_3151B+52E↑j
                 call    sub_1D88A
                 or      ax, ax
                 jz      short loc_31A8A
-                les     bx, tileflag_block3_ptr
+                les     bx, object_weights_ptr
                 mov     al, es:[bx+di]
                 mov     ah, 0
                 mul     [bp+var_C]
@@ -71235,7 +71235,7 @@ loc_31A5A:                              ; CODE XREF: sub_3151B+52E↑j
 ; ---------------------------------------------------------------------------
 
 loc_31A8A:                              ; CODE XREF: sub_3151B+556↑j
-                les     bx, tileflag_block3_ptr
+                les     bx, object_weights_ptr
                 mov     al, es:[bx+di]
                 mov     ah, 0
                 mul     [bp+var_C]
@@ -102873,7 +102873,7 @@ word_404F4      dw 0                    ; DATA XREF: sub_13305+66↑r
 word_404F6      dw 0                    ; DATA XREF: sub_13305+84↑r
                                         ; sub_21E8F+A4↑w ...
 word_404F8      dw 0                    ; DATA XREF: scroll_print_wrapped+1E↑r
-                                        ; sub_1EA97+A3↑r ...
+                                        ; conv_init_variables+A3↑r ...
                 db    0
                 db    0
                 db    0
@@ -102914,8 +102914,8 @@ byte_40518      db 0                    ; DATA XREF: sub_13305+61C↑w
                                         ; sub_13305+61F↑r ...
 byte_40519      db 0                    ; DATA XREF: sub_131CA+86↑r
                                         ; sub_13305+63A↑w ...
-avatar_gender   db 0                    ; DATA XREF: sub_1EA97+8↑r
-                                        ; sub_1EA97+73↑r
+avatar_gender   db 0                    ; DATA XREF: conv_init_variables+8↑r
+                                        ; conv_init_variables+73↑r
 avatar_portrait_plus1 db 0              ; DATA XREF: _main+5F8↑r
                                         ; load_portrait+6D↑r
                 db    0
@@ -136794,7 +136794,7 @@ anim_shift_values db    ? ;             ; DATA XREF: load_tile_attribs+194↑o
                 db    ? ;
                 db    ? ;
                 db    ? ;
-tileflag_block3_ptr dd ?                ; DATA XREF: load_tile_attribs+1FF↑r
+object_weights_ptr dd ?                 ; DATA XREF: load_tile_attribs+1FF↑r
                                         ; sub_1D8B1+6B↑r ...
 word_48C6B      dw ?                    ; DATA XREF: _main+6B↑w
                                         ; _main+95↑r
@@ -137524,42 +137524,42 @@ word_48F2F      dw ?                    ; DATA XREF: sub_15747+1↑w
                 db    ? ;
                 db    ? ;
                 db    ? ;
-word_48F45      dw ?                    ; DATA XREF: sub_1EA97+57↑w
+word_48F45      dw ?                    ; DATA XREF: conv_init_variables+57↑w
                 db    ? ;
                 db    ? ;
                 db    ? ;
                 db    ? ;
-word_48F4B      dw ?                    ; DATA XREF: sub_1EA97+5F↑w
-word_48F4D      dw ?                    ; DATA XREF: sub_1EA97+70↑w
+word_48F4B      dw ?                    ; DATA XREF: conv_init_variables+5F↑w
+word_48F4D      dw ?                    ; DATA XREF: conv_init_variables+70↑w
                 db    ? ;
                 db    ? ;
-word_48F51      dw ?                    ; DATA XREF: sub_1EA97:loc_1EB18↑w
-word_48F53      dw ?                    ; DATA XREF: sub_1EA97+89↑w
-word_48F55      dw ?                    ; DATA XREF: sub_1EA97+98↑w
+word_48F51      dw ?                    ; DATA XREF: conv_init_variables:loc_1EB18↑w
+word_48F53      dw ?                    ; DATA XREF: conv_init_variables+89↑w
+word_48F55      dw ?                    ; DATA XREF: conv_init_variables+98↑w
                 db    ? ;
                 db    ? ;
-word_48F59      dw ?                    ; DATA XREF: sub_1EA97+A0↑w
-word_48F5B      dw ?                    ; DATA XREF: sub_1EA97+A6↑w
-                                        ; sub_1EA97+149↑r
-word_48F5D      dw ?                    ; DATA XREF: sub_1EA97+AE↑w
+word_48F59      dw ?                    ; DATA XREF: conv_init_variables+A0↑w
+word_48F5B      dw ?                    ; DATA XREF: conv_init_variables+A6↑w
+                                        ; conv_init_variables+149↑r
+word_48F5D      dw ?                    ; DATA XREF: conv_init_variables+AE↑w
 word_48F5F      dw ?                    ; DATA XREF: sub_1EF3B+25↑w
-word_48F61      dw ?                    ; DATA XREF: sub_1EA97+B7↑w
-word_48F63      dw ?                    ; DATA XREF: sub_1EA97+C8↑w
+word_48F61      dw ?                    ; DATA XREF: conv_init_variables+B7↑w
+word_48F63      dw ?                    ; DATA XREF: conv_init_variables+C8↑w
 word_48F65      dw ?                    ; DATA XREF: load_world_data+342↑w
                                         ; save_objlist+51↑r ...
                 db    ? ;
                 db    ? ;
-word_48F69      dw ?                    ; DATA XREF: sub_1EA97+D7↑w
+word_48F69      dw ?                    ; DATA XREF: conv_init_variables+D7↑w
                 db    ? ;
                 db    ? ;
                 db    ? ;
                 db    ? ;
                 db    ? ;
                 db    ? ;
-word_48F71      dw ?                    ; DATA XREF: sub_1EA97+E6↑w
+word_48F71      dw ?                    ; DATA XREF: conv_init_variables+E6↑w
                 db    ? ;
                 db    ? ;
-word_48F75      dw ?                    ; DATA XREF: sub_1EA97+EC↑w
+word_48F75      dw ?                    ; DATA XREF: conv_init_variables+EC↑w
                 db    ? ;
                 db    ? ;
 word_48F79      dw ?                    ; DATA XREF: sub_154AE+1F↑w
@@ -137598,7 +137598,7 @@ word_48F7B      dw ?                    ; DATA XREF: sub_15D54+80↑r
                 db    ? ;
                 db    ? ;
                 db    ? ;
-word_48F9D      dw ?                    ; DATA XREF: sub_1EA97:loc_1EAAE↑w
+word_48F9D      dw ?                    ; DATA XREF: conv_init_variables:loc_1EAAE↑w
                 db    ? ;
                 db    ? ;
                 db    ? ;
@@ -137611,18 +137611,18 @@ word_48F9D      dw ?                    ; DATA XREF: sub_1EA97:loc_1EAAE↑w
                 db    ? ;
                 db    ? ;
                 db    ? ;
-word_48FAB      dw ?                    ; DATA XREF: sub_1EA97+1A↑w
+word_48FAB      dw ?                    ; DATA XREF: conv_init_variables+1A↑w
                                         ; cmd_talk+211↑r ...
                 db    ? ;
                 db    ? ;
-word_48FAF      dw ?                    ; DATA XREF: sub_1EA97+2A↑w
+word_48FAF      dw ?                    ; DATA XREF: conv_init_variables+2A↑w
                 db    ? ;
                 db    ? ;
                 db    ? ;
                 db    ? ;
                 db    ? ;
                 db    ? ;
-word_48FB7      dw ?                    ; DATA XREF: sub_1EA97:loc_1EADF↑w
+word_48FB7      dw ?                    ; DATA XREF: conv_init_variables:loc_1EADF↑w
                 db    ? ;
                 db    ? ;
                 db    ? ;

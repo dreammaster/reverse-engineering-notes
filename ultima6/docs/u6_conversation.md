@@ -58,7 +58,47 @@ Nuvie remaps a few numbers (Exodus, shrines) that the original code does not.
 `BOOK.DAT` is an archive with u16 offsets (128 items) of NUL-terminated texts with the same `%` directives as `scroll_printf`; a book's number is
 the quality byte of the object and item number - 1 is read into the shared script buffer (`conv_script_ptr`) and printed.
 
+## Expressions (`conv_read_value`, `1F1BE`)
+
+A value is a **postfix expression** evaluated on a stack of ten 32-bit entries and ended by the token `A7` (or `A8`, the assignment form, which
+separates the target of an assignment from its value). `D2`, `D3` and `D4` are followed by a u32, u8 or u16 constant; any other token below 0x81 is
+itself a small constant; the rest are operators through the 100-entry table `jpt_1F2BF` (0x81-0xE4):
+
+| Operators | |
+|---|---|
+| 81-86 | greater, greater-or-equal, less, less-or-equal, not-equal, equal |
+| 90-95 | add, subtract, multiply, divide, or, and |
+| 9A, 9B, 9D, 9F, A0 | can-carry, weight (object weight = `tileflag_block3[type]` times the quantity), horsed, has-object, random(a, b) through `3B8F9` |
+| AB | flag(npc, flag) |
+| B2, B3, B4, B7, BB | variable, string variable, data, index-of, object count |
+| BC, BD | push 100 |
+| C0 | prints "Select item:" and lets the player pick an object; yields it, or 0x8001 when cancelled |
+| C1, C2, C3 | an object's position word, an object's type (`obj_type_frame & 3FF`), a script-position switch |
+| C6, C7, CA, CC | in-party, object-in-party, join, leave |
+| D7, DA, DC, DD | npc-nearby, wounded, poisoned, npc |
+| E0-E4 | experience, level, strength, intelligence, dexterity |
+
+This is Nuvie's `U6OP_*` list (`core/converse_interpret.h`) plus BC, BD and C0-C3, which the original has and Nuvie does not name. The `weight`
+operator settles what `TILEFLAG`'s third block (+0x1000, 1024 bytes) is: the weight of each object type.
+
+Variables live in 16-bit slots; slot *v* is at `0x48F31 + 2 * v` (so `0x10`, the Avatar's sex, is `word_48F51`, `0x14` karma, `0x19` hit points).
+`sub_1EA97` fills them for a conversation from the game state (sex, hour, day, month, year, karma, party size, hit points, worktype, ...) and
+points the string variables at the player's and the speaker's names and at the words for "milord/milady" and "morning/afternoon/evening".
+
+## Structure of the code
+
+`ConverseScript::scan` (`src/files/converse.*`) walks the code with the grammar below; 199 of the 200 scripts scan to the end of their code (where a
+zero pad or the data tables start), and of 4963 jumps only 5 land inside an operand (a mis-classified byte in those, not a real jump):
+
+* a command takes a fixed number of expressions: SETF/CLEARF/DECL/C8/WORKTYPE 2; IF, HORSE, INVENTORY, PORTRAIT, ADDKARMA/SUBKARMA, D0, RESURRECT,
+  SETNAME, HEAL, CURE, DF 1; NEW/DELETE/GIVE 4; SLEEP, ENDIF, ELSE, BYE, WAIT, ENDANSWER, ASK, ASKC none; JUMP `B0` a u32 **absolute offset into the
+  script** (so conditionals are `IF <expr> JUMP <target> ... ENDIF`); `F9/FB/FC` (input) a variable reference; DPRINT `B5` either `D5` or `D2 <u32>`
+  followed by `B1` or an expression;
+* `EF <keywords> F6 <answer code>`: the keywords are a comma-separated list (Lord British's script has 55 such entries, `name`, `rep`, `job`, ...);
+  `F7` asks for input and the answers end with a `JUMP` back to it; `FF`, `F1`, `F2` are the header and conversation start;
+* any other printable byte is text (`$P` player name, `$T` time of day, `*` wait for a key, `@` marks an emphasised keyword in the answer text).
+
 ## Not yet analysed
 
-The evaluator, the text escape codes, the keyword matching (`F6`/`EF`), the input opcodes and the variable set; the portrait loading
-(`PORTRAIT.A/B/Z`, `GAME.EXE` `394A9`).
+The keyword matching itself (how the input is compared: Nuvie clamps to four characters), the text escape codes beyond the ones above, the data tables
+that follow the code (`B4` DATA / `B8`), and the remaining command handlers' exact semantics.

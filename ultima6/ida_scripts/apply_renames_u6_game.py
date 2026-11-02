@@ -77,6 +77,8 @@ FUNCTIONS = [
     (0x20AD3, "cmd_talk", "the Talk command: 'Not on screen.', 'Funny, no response.', 'Talking to yourself?'"),
     (0x1F1BE, "conv_read_value", "conversation interpreter: reads and evaluates the next value expression of the script"),
     (0x201EB, "conv_execute_command", "conv_execute_command(opcode): switch over opcodes 9Ch-0DFh through jpt_20207; 'Unknown command.' by default"),
+    (0x1EA97, "conv_init_variables", "fills the conversation variables (slot v at 48F31h + 2v) from the game state"),
+    (0x20144, "conv_skip_data_ref", "helper of DPRINT: reads a u32 offset and positions/skips in the script"),
     (0x1ED3A, "conv_resolve_npc", "maps the script's npc operand (0EBh = the current speaker) to an actor"),
     (0x208F5, "conv_print_char", "'Try to print out a control char'"),
     (0x35809, "cmd_use", "the Use command: dispatcher with 44 object handlers"),
@@ -108,7 +110,7 @@ DATA = [
     # TILEFLAG
     (0x48C3B, "tileflags1_ptr", "far ptr to u8[2048] (TILEFLAG +0x0000)"),
     (0x46496, "tileflags2_ptr", "far ptr to u8[2048] (TILEFLAG +0x0800)"),
-    (0x48C67, "tileflag_block3_ptr", "far ptr to u8[1024] (TILEFLAG +0x1000)"),
+    (0x48C67, "object_weights_ptr", "far ptr to u8[1024] (TILEFLAG +0x1000): the weight of each object type; the conversation weight operator uses it"),
     (0x48C3F, "tileflags3_ptr", "far ptr to u8[2048] (TILEFLAG +0x1400)"),
     (0x44074, "basetile_ptr", "far ptr to BASETILE: u16[1024], first tile of each object type"),
     (0x4647C, "palette_ptr", "far ptr to U6PAL 0x300 bytes"),
