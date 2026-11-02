@@ -83,6 +83,8 @@ public:
 	/** The conversation script of an actor (CONVERSE.A/B for Ultima VI, TALK.LZC for the spin-offs); false if it cannot talk. */
 	bool script(int actor, ConverseScript &out) const;
 	Bytes converse[2];
+	Bytes faces; // MDFACES.LZC / FACES.LZC
+	mutable int portraitW = 56, portraitH = 64; // the size of the portrait the last call of portrait() produced
 	Bytes talk; // TALK.LZC of Martian Dreams / Savage Empire
 	mutable std::vector<int> _talkItem; // actor -> item of TALK.LZC  // CONVERSE.A and CONVERSE.B
 	MapData map;

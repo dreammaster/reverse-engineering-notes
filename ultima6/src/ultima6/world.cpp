@@ -132,8 +132,10 @@ bool World::load(const std::string &dir, const NewCharacter *newGame, const std:
 		return fail("SCHEDULE");
 	if (!spinoff && (!readFile(joinPath(dir, "CONVERSE.A"), converse[0]) || !readFile(joinPath(dir, "CONVERSE.B"), converse[1])))
 		return fail("CONVERSE");
-	if (spinoff)
+	if (spinoff) {
 		readFile(joinPath(dir, "TALK.LZC"), talk);
+		readFile(joinPath(dir, game == GameId::MartianDreams ? "MDFACES.LZC" : "FACES.LZC"), faces);
+	}
 
 	objects.clear();
 	if (newGame) {
@@ -221,6 +223,27 @@ void World::objectsAt(int x, int y, int z, std::vector<int> &out) const {
 }
 
 bool World::portrait(int actor, Bytes &pixels) const {
+	if (game != GameId::Ultima6) {
+		// MDFACES.LZC: item = actor number (the Avatar's is 0 for a woman and 1 for a man); FACES.LZC: item = actor number - 1; the picture is a shape 4 / 8 bytes into the item
+		LibN lib;
+		Bytes item;
+		int n = game == GameId::MartianDreams ? (actor == 1 ? (actors.globals.size() > 0x80 && actors.globals[0x80] ? 0 : 1) : actor) : actor - 1;
+		if (n < 0 || !lib.load(faces, true) || !lib.present(n) || !lib.get(n, item))
+			return false;
+		size_t skip = game == GameId::MartianDreams ? 4 : 8;
+		Shape s;
+		if (item.size() <= skip || !s.load(&item[skip], item.size() - skip))
+			return false;
+		pixels = s.pixels;
+		for (uint8_t &p : pixels)
+			if (p == Shape::TRANSPARENT)
+				p = 0;
+		portraitW = s.width;
+		portraitH = s.height;
+		return true;
+	}
+	portraitW = 56;
+	portraitH = 64;
 	int k = actorObject(actor);
 	int type = k >= 0 ? objects[k].type : 0;
 	int avatar = actors.globals.size() > 0x81 ? actors.globals[0x81] : 0; // objlist +0x1C72

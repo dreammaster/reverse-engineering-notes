@@ -75,7 +75,7 @@ void drawTalkView(Framebuffer &screen, const World &world, int actor) {
 	Ui::restorePaper(screen, world.paper, 176, 8, 136, 96);
 	Bytes portrait;
 	if (world.portrait(actor, portrait))
-		screen.blit(176 + (136 - 56) / 2, 16, &portrait[0], 56, 64, 56);
+		screen.blit(176 + (136 - world.portraitW) / 2, 16, &portrait[0], world.portraitW, world.portraitH, world.portraitW);
 }
 
 void drawStatsView(Framebuffer &screen, const World &world, int member) {
@@ -90,7 +90,7 @@ void drawStatsView(Framebuffer &screen, const World &world, int member) {
 
 	Bytes portrait;
 	if (world.portrait(actor, portrait))
-		screen.blit(176, 16, &portrait[0], 56, 64, 56);
+		screen.blit(176, 16, &portrait[0], world.portraitW, world.portraitH, world.portraitW);
 
 	const int X = 176 + 10 * 8;
 	std::snprintf(buf, sizeof buf, "STR:%d", a.strength[actor]);
