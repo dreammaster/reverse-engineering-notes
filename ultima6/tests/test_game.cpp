@@ -2,6 +2,8 @@
 
 #include "ultima6/session.h"
 
+#include <string>
+
 #include <cstdio>
 
 using namespace Ultima6;

@@ -63,6 +63,9 @@ private:
 	MoveRules _rules;
 	BorlandRandom _rng;
 	std::unique_ptr<Talk> _talk; // a conversation in progress
+	int _cx = 5, _cy = 5;        // cursor cell in the map view while targeting with it
+	bool _cursor = false;
+	void look(int tx, int ty);
 	int _pending = 0;            // command letter waiting for its target (a direction), or 0
 	bool selectTarget(int key, int &tx, int &ty) const;
 	void command(int key);

@@ -3,6 +3,7 @@
 #include "files/lzw.h"
 
 #include "files/portrait.h"
+#include "ultima6/describe.h"
 
 #include <algorithm>
 
@@ -146,9 +147,14 @@ bool World::portrait(int actor, Bytes &pixels) const {
 	return Portrait::decode(portraits[ref.file == 'A' ? 0 : ref.file == 'B' ? 1 : 2], ref.item, pixels);
 }
 
+void World::setQuantity(Obj &o, int q) const {
+	o.quantity = q & 0xFF;
+	if (o.type == 0x58)
+		o.quality = (q >> 8) & 0xFF; // gold keeps a word
+}
+
 bool World::isStackable(int type) const {
-	int tile = baseTile.firstTile[type & (BaseTile::TYPES - 1)] & (TileSet::COUNT - 1);
-	return look.description(tile).find('\\') != std::string::npos;
+	return Describe::quantityKind(type) != 0;
 }
 
 void World::inventory(int actor, std::vector<int> &out, bool nested) const {
@@ -187,14 +193,7 @@ void World::inventory(int actor, std::vector<int> &out, bool nested) const {
 
 int World::weightOfType(int type, int quantity) const {
 	int w = flags.block3[type & (TileFlags::BLOCK3 - 1)];
-	if (isStackable(type)) {
-		w *= quantity ? quantity : 1;
-		static const int REDUCED[] = {0x58, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E}; // gold and the reagents
-		for (int r : REDUCED)
-			if (r == type)
-				w /= 10;
-	}
-	return w;
+	return isStackable(type) ? w * (quantity ? quantity : 1) : w;
 }
 
 int World::weightOf(int index) const {
@@ -219,8 +218,7 @@ int World::addToInventory(int actor, int type, int quality, int quantity) {
 			Obj &o = objects[i];
 			if (o.type == type && o.location() == ObjRecord::IN_INVENTORY) {
 				int q = quantityOf(o) + quantity;
-				o.quantity = q & 0xFF;
-				o.quality = (q >> 8) & 0xFF;
+				setQuantity(o, q);
 				return i;
 			}
 		}
@@ -234,8 +232,7 @@ int World::addToInventory(int actor, int type, int quality, int quantity) {
 	o.actor = -1;
 	o.parent = actor;
 	if (stack) {
-		o.quantity = quantity & 0xFF;
-		o.quality = (quantity >> 8) & 0xFF;
+		setQuantity(o, quantity);
 	} else {
 		o.quantity = 1;
 		o.quality = quality;
@@ -259,8 +256,7 @@ int World::removeFromInventory(int actor, int type, int quality, int quantity) {
 		if (take >= have)
 			deleteObject(i);
 		else {
-			o.quantity = (have - take) & 0xFF;
-			o.quality = ((have - take) >> 8) & 0xFF;
+			setQuantity(o, have - take);
 		}
 		taken += take;
 		if (quantity > 0 && taken >= quantity)

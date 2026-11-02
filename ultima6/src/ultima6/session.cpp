@@ -1,7 +1,10 @@
 #include "ultima6/session.h"
 
+#include "ultima6/describe.h"
 #include "ultima6/stats_view.h"
+#include "ultima6/ui.h"
 
+#include <algorithm>
 #include <cstdio>
 
 namespace Ultima6 {
@@ -132,12 +135,46 @@ void Game::talkAt(int tx, int ty) {
 		_talk.reset();
 }
 
+void Game::look(int tx, int ty) {
+	message("Thou dost see ");
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	int top = -1;
+	for (int i : here)
+		if (!_world.objects[i].invisible())
+			top = i;
+	std::string text;
+	if (top < 0) {
+		int tile = _world.map.tile(z, tx, ty);
+		text = Describe::article(_world, tile) + Describe::tileName(_world, tile, false) + ".\n";
+	} else {
+		const World::Obj &o = _world.objects[top];
+		text = Describe::object(_world, o);
+		if (o.actor < 0) {
+			int w = _world.weightOf(top);
+			if (w > 0) {
+				bool one = _world.quantityOf(o) == 1;
+				text += std::string(one ? ". It weighs" : ". They weigh") + " " + std::to_string(w / 10) + "." + std::to_string(w % 10) + " stones";
+			}
+		}
+		text += ".\n";
+	}
+	message(text);
+	prompt();
+}
+
 void Game::command(int key) {
 	int c = key >= 'a' && key <= 'z' ? key - 32 : key;
 	switch (c) {
 	case 'T':
 		message("Talk-");
 		_pending = 'T';
+		break;
+	case 'L':
+		message("Look-");
+		_pending = 'L';
+		_cursor = true;
+		_cx = _cy = 5;
 		break;
 	case ' ':
 		message("Pass!\n");
@@ -157,6 +194,40 @@ bool Game::handleKey(int key) {
 			_talk.reset();
 			message("\n");
 			prompt();
+		}
+		return true;
+	}
+	if (_pending == 'L') {
+		// the cursor: arrows move it, Enter looks at the cell, Escape gives up
+		switch (key) {
+		case KEY_UP:
+			_cy = std::max(1, _cy - 1);
+			break;
+		case KEY_DOWN:
+			_cy = std::min(9, _cy + 1);
+			break;
+		case KEY_LEFT:
+			_cx = std::max(1, _cx - 1);
+			break;
+		case KEY_RIGHT:
+			_cx = std::min(9, _cx + 1);
+			break;
+		case KEY_ENTER:
+		case KEY_SPACE: {
+			int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+			_pending = 0;
+			_cursor = false;
+			look((x + _cx - 5) & mask, (y + _cy - 5) & mask);
+			break;
+		}
+		case KEY_ESC:
+			_pending = 0;
+			_cursor = false;
+			message("what?\n");
+			prompt();
+			break;
+		default:
+			break;
 		}
 		return true;
 	}
@@ -203,6 +274,8 @@ void Game::render(Framebuffer &screen) {
 	else
 		drawStatsView(screen, _world, _member);
 	scroll.draw(screen, _world.font);
+	if (_cursor)
+		Ui::drawTile(screen, _world, 0x16C, _cx * 16, _cy * 16);
 }
 
 } // namespace Ultima6

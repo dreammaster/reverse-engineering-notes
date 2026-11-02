@@ -86,10 +86,13 @@ public:
 
 	/** Whether objects of this type stack: their description has a plural form. */
 	bool isStackable(int type) const;
-	/** The object's quantity: stackable objects use the quality byte as the high byte. */
+	/** The object's quantity (gold has a word, the other stackable types a byte). */
 	int quantityOf(const Obj &o) const {
-		return isStackable(o.type) ? o.quantity | (o.quality << 8) : 1;
+		if (o.type == 0x58)
+			return o.quantity | (o.quality << 8); // gold keeps a word
+		return isStackable(o.type) ? o.quantity : 1;
 	}
+	void setQuantity(Obj &o, int q) const;
 	/** Indices of the objects an actor carries; with `nested`, also the contents of its containers. */
 	void inventory(int actor, std::vector<int> &out, bool nested = true) const;
 	/** Weight of an object with what it holds, in the game's tenth-unit scale (1/10 kg times 10). */
