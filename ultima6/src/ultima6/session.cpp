@@ -273,11 +273,18 @@ void Game::look(int tx, int ty) {
 		const World::Obj &o = _world.objects[top];
 		text = Describe::object(_world, o);
 		if (o.actor < 0) {
-			int w = _world.weightOf(top);
-			if (w > 0) {
-				bool one = _world.quantityOf(o) == 1;
+			// cmd_look (30567-30653): the weight when it is 1-254 (". It weighs" / ". They weigh" N.M "stones"), what the thing can do as a weapon and
+			// absorb as armour
+			int w = _world.weightOf(top) + _world.contentsWeight(top);
+			bool one = _world.quantityOf(o) == 1;
+			bool weighed = w > 0 && w < 0xFF;
+			if (weighed)
 				text += std::string(one ? ". It weighs" : ". They weigh") + " " + std::to_string(w / 10) + "." + std::to_string(w % 10) + " stones";
-			}
+			int dmg = Combat::weaponDamageOf(o.type), arm = Combat::armourOf(o.type);
+			if (dmg > 0)
+				text += std::string(!weighed ? ". It" : arm == 0 ? " and" : ",") + " can do " + std::to_string(dmg) + " point" + (dmg == 1 ? "" : "s") + " of damage";
+			if (arm > 0)
+				text += " and can absorb " + std::to_string(arm) + " point" + (arm == 1 ? "" : "s") + " of damage";
 		}
 		text += ".\n";
 	}
