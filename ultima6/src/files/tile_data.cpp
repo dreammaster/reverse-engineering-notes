@@ -60,6 +60,27 @@ bool Font::load(const Bytes &data) {
 	return true;
 }
 
+bool Font::loadWou(const Bytes &data) {
+	if (data.size() < 0x304)
+		return false;
+	wouHeight = data[0];
+	uint8_t pixelChar = data[2];
+	if (wouHeight == 0)
+		return false;
+	for (int c = 0; c < GLYPHS; ++c) {
+		wouWidth[c] = data[0x4 + c];
+		size_t offset = (size_t)data[0x204 + c] * 256 + data[0x104 + c];
+		size_t n = (size_t)wouWidth[c] * wouHeight;
+		wouPixels[c].assign(n, 0);
+		if (offset + n > data.size())
+			continue;
+		for (size_t i = 0; i < n; ++i)
+			wouPixels[c][i] = data[offset + i] == pixelChar;
+	}
+	wou = true;
+	return true;
+}
+
 bool IntroPalettes::load(const Bytes &data) {
 	if (data.size() != FILE_SIZE)
 		return false;

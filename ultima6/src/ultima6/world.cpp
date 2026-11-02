@@ -75,6 +75,13 @@ bool World::load(const std::string &dir, const NewCharacter *newGame, const std:
 		if (!readFile(joinPath(dir, game == GameId::MartianDreams ? "MDPAL" : "SEPAL"), d) || !palette.load(d))
 			return fail("palette");
 		std::memset(font.glyph, 0, sizeof font.glyph);
+		{
+			// FONTS.LZC (MD) / SAVAGE.FNT (SE): one item, a WOU font (see Font::loadWou)
+			LibN fontLib;
+			Bytes fontData;
+			if (readFile(joinPath(dir, game == GameId::MartianDreams ? "FONTS.LZC" : "SAVAGE.FNT"), raw) && fontLib.load(raw, true) && fontLib.get(0, fontData))
+				font.loadWou(fontData);
+		}
 		paper.width = 320;
 		paper.height = 200;
 		paper.pixels.assign(320 * 200, 0);

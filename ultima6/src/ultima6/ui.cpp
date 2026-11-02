@@ -11,6 +11,24 @@ void drawTile(Framebuffer &screen, const World &world, int tile, int x, int y) {
 }
 
 void drawText(Framebuffer &screen, const Font &font, int x, int y, const std::string &text, int fg, int bg) {
+	if (font.wou) {
+		for (size_t k = 0; k < text.size(); ++k) {
+			uint8_t c = (uint8_t)text[k];
+			int w = font.wouWidth[c], h = font.wouHeight;
+			for (int r = 0; r < h; ++r)
+				for (int b = 0; b < w; ++b) {
+					int px = x + b, py = y + r;
+					if (px < 0 || py < 0 || px >= Framebuffer::WIDTH || py >= Framebuffer::HEIGHT)
+						continue;
+					if (font.wouPixels[c][r * w + b])
+						screen.pixels()[py * Framebuffer::WIDTH + px] = (uint8_t)fg;
+					else if (bg >= 0)
+						screen.pixels()[py * Framebuffer::WIDTH + px] = (uint8_t)bg;
+				}
+			x += w;
+		}
+		return;
+	}
 	for (size_t k = 0; k < text.size(); ++k) {
 		const uint8_t *g = font.glyph[(uint8_t)text[k]];
 		for (int r = 0; r < 8; ++r) {

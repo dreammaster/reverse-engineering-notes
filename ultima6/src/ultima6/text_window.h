@@ -4,6 +4,7 @@
 #include "engine/framebuffer.h"
 #include "files/tile_data.h"
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -28,6 +29,17 @@ public:
 	void print(const std::string &text);
 	/** printf-style helper for one %s / %d free messages is not needed: callers format themselves. */
 	void clear();
+	/**
+	 * A proportional font (Martian Dreams, Savage Empire) makes the window wrap by pixel width and use the font's height as the line height: the window keeps as many lines as fit
+	 * its 8 * rows pixels. The font must outlive the window.
+	 */
+	void setFont(const Font *font) {
+		_font = font;
+	}
+	void setColours(int fg, int bg) {
+		_fg = fg;
+		_bg = bg;
+	}
 	/** Draws the window on the screen. */
 	void draw(Framebuffer &screen, const Font &font) const;
 
@@ -46,6 +58,12 @@ private:
 	void putChar(char c);
 	void newLine();
 
+	int maxLines() const {
+		return _font && _font->wou ? std::max(1, _rows * 8 / _font->wouHeight) : _rows;
+	}
+	int lineWidth(const std::string &line) const;
+
+	const Font *_font = nullptr;
 	int _col, _row, _cols, _rows, _fg, _bg;
 	std::vector<std::string> _lines; // at most _rows
 };

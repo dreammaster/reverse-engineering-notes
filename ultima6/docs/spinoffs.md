@@ -48,3 +48,6 @@ bytes: the first 768 are a VGA palette of 6-bit components (the first 16 colours
 (`World::game` selects the file names: `MDPAL` / `SEPAL`, one-item archives for `MAPTILES.VGA` and `MASKTYPE.VGA`, `LOOK.LZC`; the font stays blank, the frame is item 0 of `MDSCREEN.LZC` / `SCREEN.LZC` (a 320 x 200 shape behind 4 / 8 bytes of archive header), there are no
 portraits or conversations) and draw the map around the party correctly (`--keys "" --shot x.png`). Missing: the frame and panel graphics (`MDSCREEN.LZC`, `SCREEN.LZC`/`BKGRND.LZC`), the
 WOU fonts, the per-game tables (movement classes, creatures, usable objects, spells, text), `TALK.LZC` scripts, menus, intros and endings.
+
+Text now draws with the games' own proportional fonts (`Font::loadWou`, `TextWindow::setFont`): the message window wraps by pixel width and keeps as many lines as the 8 x rows pixels hold. Still U6's: the party panel
+(positions and colours), the left-hand button strip is only a picture, the colours of the party list, all prompts and rules.

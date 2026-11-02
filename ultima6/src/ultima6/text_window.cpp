@@ -5,8 +5,15 @@ namespace Ultima6 {
 
 void TextWindow::newLine() {
 	_lines.push_back("");
-	if ((int)_lines.size() > _rows)
+	if ((int)_lines.size() > maxLines())
 		_lines.erase(_lines.begin());
+}
+
+int TextWindow::lineWidth(const std::string &line) const {
+	int w = 0;
+	for (char c : line)
+		w += _font->wouWidth[(uint8_t)c];
+	return w;
 }
 
 // APPROX(42): not the original's exact behaviour, see docs/approximations.md
@@ -21,7 +28,8 @@ void TextWindow::putChar(char c) {
 		return;
 	}
 	std::string &line = _lines.back();
-	if ((int)line.size() >= _cols) {
+	bool full = _font && _font->wou ? lineWidth(line) + _font->wouWidth[(uint8_t)c] > _cols * 8 : (int)line.size() >= _cols;
+	if (full) {
 		// wrap at the last space of the full line, as the game's word wrapping does
 		size_t space = line.rfind(' ');
 		std::string carry;
@@ -49,6 +57,21 @@ void TextWindow::clear() {
 void TextWindow::draw(Framebuffer &screen, const Font &font) const {
 	int x0 = _col * 8, y0 = _row * 8;
 	screen.fillRect(x0, y0, _cols * 8, _rows * 8, _bg);
+	if (font.wou) {
+		for (size_t i = 0; i < _lines.size(); ++i) {
+			int x = x0, y = y0 + (int)i * font.wouHeight;
+			for (char ch : _lines[i]) {
+				uint8_t c = (uint8_t)ch;
+				int w = font.wouWidth[c];
+				for (int r = 0; r < font.wouHeight; ++r)
+					for (int b = 0; b < w; ++b)
+						if (font.wouPixels[c][r * w + b] && x + b < Framebuffer::WIDTH && y + r < Framebuffer::HEIGHT)
+							screen.pixels()[(y + r) * Framebuffer::WIDTH + x + b] = (uint8_t)_fg;
+				x += w;
+			}
+		}
+		return;
+	}
 	// the newest line sits on the last row once the window has filled up
 	int first = (int)_lines.size() > _rows ? 0 : 0;
 	for (size_t i = first; i < _lines.size(); ++i) {

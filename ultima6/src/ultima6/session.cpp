@@ -36,6 +36,9 @@ void GameClock::advance(int minutes) {
 }
 
 Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(world), _movement(world), _actors(world, _movement), _combat(world, _rng, scroll), _creatures(world, _movement, _actors, _combat, _rng, scroll), _magic(world, _combat, _rng, scroll) {
+	scroll.setFont(&world.font);
+	if (world.game != GameId::Ultima6)
+		scroll.setColours(0, world.paper.pixels[170 * world.paper.width + 200]); // black on the colour of the frame's message area
 	world.avatarPosition(x, y, z);
 	_leaderObject = world.actorObject(1);
 	_rules.questFlag = !world.actors.globals.empty() && world.actors.globals[0] != 0;

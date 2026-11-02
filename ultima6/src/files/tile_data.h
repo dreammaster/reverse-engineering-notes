@@ -71,6 +71,23 @@ struct Font {
 	uint8_t glyph[GLYPHS][ROWS];
 
 	bool load(const Bytes &data);
+
+	/**
+	 * The proportional fonts of Martian Dreams (FONTS.LZC) and Savage Empire (SAVAGE.FNT): byte 0 the height, byte 2 the value of a pixel that is set, the widths at +4, the low and high
+	 * bytes of each glyph's offset at +0x104 and +0x204, and there width * height pixel bytes (see Nuvie's wou_font.cpp). The 8 x 8 `glyph` bitmaps stay unused then.
+	 */
+	bool loadWou(const Bytes &data);
+	bool wou = false;
+	int wouHeight = 8;
+	uint8_t wouWidth[GLYPHS] = {};
+	Bytes wouPixels[GLYPHS]; // width * height bytes, non-zero where the glyph has a pixel
+
+	int width(uint8_t c) const {
+		return wou ? wouWidth[c] : 8;
+	}
+	int height() const {
+		return wou ? wouHeight : 8;
+	}
 };
 
 /**
