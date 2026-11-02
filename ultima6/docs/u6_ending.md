@@ -19,3 +19,9 @@ of the Ultima VI `objlist`.
 
 Not analysed: the scene scripting (palette fades, the animations between pages), which is presentation code driven through the graphics
 driver like the introduction.
+
+## Implementation (src/ultima6/ending.*)
+
+`Ending` shows the 11 text pages of END.EXE (`ending_text.inc`, file offsets 35179-37202) over END.SHP pictures (7 chamber, 3 red gate, 8 characters, 9 close-up,
+2 Codex, 10 parchment strip) with the ENDPAL.LBM palette (CMAP >> 2), then the congratulations with the time played in words (`number_to_words`). It starts from
+the Vortex Cube in the inventory (Enter) when the Codex and both lenses are in place, or alone with `u6 <dir> --ending`. Scene choices are guesses: approximations 49-50.

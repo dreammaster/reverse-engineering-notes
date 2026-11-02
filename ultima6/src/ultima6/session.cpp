@@ -361,6 +361,10 @@ void Game::command(int key) {
 }
 
 bool Game::handleKey(int key) {
+	if (_ending == 1 && key != KEY_NONE) {
+		_ending = 2;
+		return false;
+	}
 	bool more = handleKeyInner(key);
 	// after every completed command the actors take their turns (command_loop 145FD)
 	if (more && !_pending && !_talk && !_confirmSave && !_inventory && !_dead)

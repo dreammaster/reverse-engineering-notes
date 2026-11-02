@@ -87,6 +87,41 @@ void Game::attackAt(int tx, int ty) {
 
 // Keys while the inventory is on show: select, ready or unready, drop, leave.
 // APPROX(28): not the original's exact behaviour, see docs/approximations.md
+// use_vortex_cube: the Codex at the end of the game is complete when both lenses lie in the Codex chamber's pedestals; using the cube then ends the game.
+// APPROX(49): the check for the three objects and the text come from END.EXE's documentation (docs/u6_ending.md); the handler itself is not traced
+bool Game::useVortexCube() {
+	struct Need {
+		int type, x, y;
+	};
+	static const Need NEEDED[3] = {{0x18A, 921, 851}, {0x18C, 925, 851}, {0x3B, 923, 851}};
+	for (const Need &n : NEEDED) {
+		bool found = false;
+		for (const World::Obj &o : _world.objects)
+			found |= !o.deleted && o.onMap() && o.type == n.type && o.x == n.x && o.y == n.y;
+		if (!found)
+			return false;
+	}
+	message("\nThe Codex has vanished!\n");
+	_ending = 1;
+	return true;
+}
+
+void Game::timePlayed(int &years, int &months, int &days) const {
+	days = clock.day - 4;
+	months = clock.month - 7;
+	years = clock.year - 161;
+	if (days < 0) {
+		days += 28;
+		--months;
+	}
+	if (months < 0) {
+		months += 13;
+		--years;
+	}
+	if (years < 0)
+		years = months = days = 0;
+}
+
 bool Game::inventoryKey(int key) {
 	inventoryItems(_world, _member, _items);
 	int count = (int)_items.size();
@@ -128,6 +163,8 @@ bool Game::inventoryKey(int key) {
 			} else if (Combat::weaponDamageOf(o.type) >= 0 || Combat::armourOf(o.type) > 0) {
 				o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
 				message("\nReadied " + Describe::object(_world, o) + "\n");
+			} else if (o.type == 0x3E && useVortexCube()) {
+				// the Codex has vanished; the ending follows on the next key
 			} else {
 				message("\nNot usable\n");
 			}

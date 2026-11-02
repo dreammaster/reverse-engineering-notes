@@ -1,6 +1,7 @@
 #include "engine/backend.h"
 #include "engine/framebuffer.h"
 #include "engine/game_id.h"
+#include "ultima6/ending.h"
 #include "ultima6/front_end.h"
 #include "ultima6/session.h"
 #include "ultima6/world.h"
@@ -12,7 +13,7 @@
 #include <string>
 
 static void usage(const char *prog) {
-	std::fprintf(stderr, "usage: %s <game directory> [--play] [--save dir] [--keys <script>] [--shot file.png] [--scale n]\n", prog);
+	std::fprintf(stderr, "usage: %s <game directory> [--play] [--ending] [--save dir] [--keys <script>] [--shot file.png] [--scale n]\n", prog);
 	std::fprintf(stderr, "  --play   skip the main menu and start from the saved game\n");
 }
 
@@ -33,7 +34,7 @@ int main(int argc, char **argv) {
 
 	const char *keys = nullptr, *shot = nullptr;
 	int scale = 3;
-	bool play = false;
+	bool play = false, endingOnly = false;
 	std::string saveDir = "u6save"; // our own save directory; the game's files are never written
 	for (int i = 2; i < argc; ++i) {
 		if (!std::strcmp(argv[i], "--keys") && i + 1 < argc)
@@ -44,6 +45,8 @@ int main(int argc, char **argv) {
 			saveDir = argv[++i];
 		else if (!std::strcmp(argv[i], "--play"))
 			play = true;
+		else if (!std::strcmp(argv[i], "--ending"))
+			endingOnly = true;
 		else if (!std::strcmp(argv[i], "--scale") && i + 1 < argc)
 			scale = std::atoi(argv[++i]);
 		else {
@@ -62,6 +65,24 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	Ultima6::Framebuffer screen;
+
+	// --ending: the ending alone, for a game of one year, two months and three days
+	if (endingOnly) {
+		Ultima6::Ultima6::Ending ending(argv[1], 1, 2, 3);
+		if (!ending.ok()) {
+			std::fprintf(stderr, "cannot load the ending files\n");
+			return 1;
+		}
+		bool running = true;
+		while (running) {
+			ending.render(screen);
+			backend->present(screen);
+			running = ending.handleKey(backend->waitKey());
+		}
+		if (shot)
+			screen.savePng(shot, scale);
+		return 0;
+	}
 
 	// The menu and character creation (U.EXE), then the game (GAME.EXE).
 	Ultima6::Ultima6::World world;
@@ -105,6 +126,20 @@ int main(int argc, char **argv) {
 		backend->present(screen);
 		int key = backend->waitKey();
 		running = game.handleKey(key);
+	}
+
+	if (game.endingStarted()) {
+		int years, months, days;
+		game.timePlayed(years, months, days);
+		Ultima6::Ultima6::Ending ending(argv[1], years, months, days);
+		if (ending.ok()) {
+			bool showing = true;
+			while (showing) {
+				ending.render(screen);
+				backend->present(screen);
+				showing = ending.handleKey(backend->waitKey());
+			}
+		}
 	}
 
 	if (shot) {

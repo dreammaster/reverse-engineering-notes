@@ -64,6 +64,13 @@ public:
 	/** Prints the command prompt: the name of the party member in control, a colon, and '>'. */
 	void prompt();
 
+	/** Set when the Codex has been taken to the ending (use_vortex_cube): the front end then plays Ending. */
+	bool endingStarted() const {
+		return _ending == 2;
+	}
+	/** Years, months and days of play since the new game's start (4/7/161), borrowing 28 days and 13 months. */
+	void timePlayed(int &years, int &months, int &days) const;
+
 	int x, y, z;
 	GameClock clock;
 	std::vector<std::string> log;
@@ -113,6 +120,8 @@ private:
 	std::vector<int> _items;
 	bool inventoryKey(int key);
 	bool _dead = false;
+	int _ending = 0; // 1 once the Codex has vanished and a key is awaited, 2 when the ending is to be played
+	bool useVortexCube();
 	std::string _number;
 	int _restHours = 0; // digits typed for the Rest command
 	int _member = 0; // party member shown in the panel
