@@ -21,13 +21,15 @@ turns out to differ, the engine is changed and the entry moves up to a real diff
 | 8 | Object weight | conversation operator 0x9B: `TILEFLAG block 3 weight x quantity` | divides gold and reagents again by 10 | `docs/u6_conversation.md` (the Nuvie rule is not used) |
 | 9 | Conversation opening text | `"\n\nYou see "` | `"\nYou see "` | string in `GAME.EXE` near `aYouSay`; engine uses the original |
 | 10 | Skiff / raft / horse numbers | skiff 0x19E (414), raft 0x19F (415) are the water movers in the movement class code; horse with rider 0x1AF (431) | (same numbers, but my first reading of the original table was wrong) | `sub_25D7F` var_6 test, `seg066` |
+| 11 | Creature statistics: the Guard's strength | 30 | 9 | table in `GAME.EXE` (code segment, `seg066`: columns at +0x82 str, +0xC2 dex, +0x102 int, +0x142 exp, +0x182 dmg, +0x1C2 hp); the other 63 rows agree |
+| 12 | Where the creature flags live | alignment is `column(+0x202) >> 5` (0 neutral, 1 evil, 2 good, 3 chaotic) and the flags are bits of the movement class words (+0x242): 0x4000 can talk, 0x2000 bleeds, 0x1000 fades, 0x200 lives in water, 0x100 immune to tremors (fliers), 0x80 repels undead, 0x40 poisonous, 0x20 strength based, 0x10 double fire, 8 immune to magic, 4 immune to poison, 2 undead, 1 immune to sleep | separate flag arrays | same table; the engine reads the movement flags and these from the same data |
 
 ## Pending (engine uses Nuvie's rule until the original is traced)
 
 | # | Topic | Nuvie rule in use | Original routine to check |
 |---|---|---|---|
 | P1 | Hit check, damage, armour, experience | `script/u6/actor.cpp` | combat code of `GAME.EXE` |
-| P2 | Creature / weapon / armour tables | `script/u6/tables.cpp` | tables in `GAME.EXE` data |
+| P2 | ~~Creature / weapon / armour tables~~ | **done**: all of Nuvie's rows compared with `GAME.EXE` (weapon, armour, range tables at ds:1B0B/1B55, 1A87/1ABB, 1AD5/1AF9; creatures in seg066); one difference (#11). Still unread: the creatures' inventory columns (+0x302 on: spells, weapons, armour, treasure) | - |
 | P3 | Spell table, costs, effects | `script/u6/magic.cpp`, `core/magic.cpp` | spell code in `GAME.EXE` |
 | P4 | Egg hatching | `core/egg_manager.cpp` | egg code in `GAME.EXE` |
 | P5 | Per-minute hazards, torches, hourly magic points | `script/u6/actor.cpp` `advanceTime` | `sub_13305` |

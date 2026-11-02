@@ -1,6 +1,8 @@
-// From the creature statistics of the original (as Nuvie's U6 scripts carry them): object type, strength, dexterity, intelligence, hit points,
-// damage, alignment (0 good, 1 neutral, 2 evil, 3 chaotic), flags (bit n = flag n + 7 of the original: 7 talks, 8 bleeds, 9 fades away, 12 lives in water,
-// 13 immune to tremors, 14 repels undead, 15 poisonous, 16 strength based, 17 double fire damage, 18 immune to magic, 19 poison, 20 undead, 21 sleep), experience.
+// Creature statistics read from GAME.EXE (the code segment table that starts with the movement class types: types, then columns of strength, dexterity,
+// intelligence, experience, damage and hit points; alignment in the top bits of the column at +0x202; the flags are bits of the movement class words at +0x242, so
+// the movement flags and these are the same data). Fields: object type, strength, dexterity, intelligence, hit points, damage, alignment (0 good, 1 neutral,
+// 2 evil, 3 chaotic), flags (bit n = flag n + 7: 7 can talk, 8 bleeds, 9 fades away, 12 lives in water, 13 immune to tremors, 14 repels undead, 15 poisonous,
+// 16 strength based, 17 double fire damage, 18 immune to magic, 19 immune to poison, 20 undead, 21 immune to sleep), experience.
 static const CreatureStats CREATURES[] = {
 	{364, 5, 5, 2, 10, 1, 3, 0x4404, 0}, // Acid Slug
 	{429, 20, 10, 3, 30, 10, 3, 0x120A, 6}, // Alligator
@@ -26,7 +28,7 @@ static const CreatureStats CREATURES[] = {
 	{355, 2, 10, 21, 20, 1, 2, 0x4244, 0}, // Gazer
 	{352, 1, 10, 9, 20, 12, 2, 0x7894, 0}, // Ghost
 	{353, 2, 26, 7, 5, 1, 3, 0x8, 0}, // Gremlin
-	{382, 9, 30, 9, 100, 8, 2, 0x203, 0}, // Guard
+	{382, 30, 30, 9, 100, 8, 2, 0x203, 0}, // Guard
 	{370, 19, 13, 8, 20, 12, 2, 0x202, 2}, // Headless
 	{430, 22, 27, 7, 15, 3, 1, 0x20A, 0}, // Horse
 	{431, 22, 27, 7, 15, 3, 1, 0x202, 0}, // Horse with rider
@@ -67,6 +69,8 @@ static const CreatureStats CREATURES[] = {
 	{388, 4, 18, 8, 6, 2, 1, 0x2, 0}, // Cat
 	{263, 11, 12, 12, 8, 4, 3, 0x8, 0}, // Sinjen (Yew Stocks guy)
 };
+
+// verified identical to GAME.EXE ds:1B0B (types) and ds:1B55 (damage)
 static const struct { int type, damage; } WEAPON_DAMAGE[] = {
 	{4, 4}, // spiked helm
 	{33, 6}, // sling
@@ -106,6 +110,7 @@ static const struct { int type, damage; } WEAPON_DAMAGE[] = {
 	{79, 30}, // lightning wand
 	{80, 20}, // fire wand
 };
+// verified identical to GAME.EXE ds:1A87 (types) and ds:1ABB (armour class)
 static const struct { int type, armour; } ARMOUR[] = {
 	{1, 1}, // leather helm
 	{2, 2}, // chain coif
