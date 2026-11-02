@@ -81,6 +81,88 @@ void Game::getAt(int tx, int ty) {
 	prompt();
 }
 
+// Takes the whole party to a position on another level (ladders and stairs).
+void Game::changeLevel(int nx, int ny, int nz) {
+	const ObjList &a = _world.actors;
+	for (int i = 0; i < a.partySize; ++i) {
+		int k = _world.actorObject(a.partyRoster[i]);
+		if (k >= 0)
+			_world.moveObject(k, nx, ny, nz);
+	}
+	x = nx;
+	y = ny;
+	z = nz;
+}
+
+// Use: what the objects of a square do when used (the doors and ladders of the Use table; the rest answers "Not usable").
+void Game::useAt(int tx, int ty) {
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	for (size_t n = here.size(); n-- > 0;) {
+		int idx = here[n];
+		World::Obj &o = _world.objects[idx];
+		int type = o.type;
+		if (type >= 297 && type <= 300) { // doors
+			if (o.frame == 13 || o.frame == 15) {
+				message("\nmagically locked\n");
+			} else if (o.frame == 9 || o.frame == 11) {
+				int actor = _world.actors.partyRoster[_member];
+				std::vector<int> inv;
+				_world.inventory(actor, inv);
+				bool key = false;
+				for (int i : inv)
+					key |= _world.objects[i].type == 64 && o.quality != 0 && _world.objects[i].quality == o.quality;
+				if (key) {
+					o.frame -= 4;
+					message("\nunlocked\n");
+				} else {
+					message("\nlocked\n");
+				}
+			} else if (o.frame <= 3) { // open: close it unless something stands in the way
+				MoveRules rules;
+				std::vector<int> there;
+				_world.objectsAt(tx, ty, z, there);
+				bool blocked = false;
+				for (int i : there)
+					blocked |= _world.objects[i].actor >= 0;
+				if (blocked) {
+					message("\nNot now!\n");
+				} else {
+					o.frame += 4;
+					message("\nclosed!\n");
+				}
+			} else {
+				o.frame -= 4;
+				message("\nopened!\n");
+			}
+			prompt();
+			return;
+		}
+		if (type == 305 || type == 106) { // ladders
+			int nx = o.x, ny = o.y, nz = o.z;
+			if (o.frame == 0) { // down
+				if (o.z == 0) {
+					nx = (o.x & 0x07) | ((o.x >> 2) & 0xF8);
+					ny = (o.y & 0x07) | ((o.y >> 2) & 0xF8);
+				}
+				nz = o.z + 1;
+			} else { // up; the quality says which surface chunk of the 4 x 4 around the ladder to come up in
+				if (o.z == 1) {
+					nx = o.x / 8 * 8 * 4 + ((o.quality & 0x03) * 8) + (o.x - o.x / 8 * 8);
+					ny = o.y / 8 * 8 * 4 + (((o.quality >> 2) & 0x03) * 8) + (o.y - o.y / 8 * 8);
+				}
+				nz = o.z - 1;
+			}
+			message("\n");
+			changeLevel(nx, ny, nz);
+			prompt();
+			return;
+		}
+	}
+	message("\nNot usable\n");
+	prompt();
+}
+
 // Rest: ask for the hours, then let them pass; every hour heals the party a little.
 void Game::restKey(int key) {
 	if (key == KEY_ESC) {

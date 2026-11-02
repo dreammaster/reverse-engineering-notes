@@ -187,6 +187,10 @@ void Game::command(int key) {
 		message("Get-");
 		_pending = 'G';
 		break;
+	case 'U':
+		message("Use-");
+		_pending = 'U';
+		break;
 	case 'R':
 		message("Rest-");
 		message("\nHow many hours? ");
@@ -267,6 +271,8 @@ bool Game::handleKey(int key) {
 				talkAt(tx, ty);
 			else if (cmd == 'G')
 				getAt(tx, ty);
+			else if (cmd == 'U')
+				useAt(tx, ty);
 		} else {
 			message("what?\n");
 			prompt();

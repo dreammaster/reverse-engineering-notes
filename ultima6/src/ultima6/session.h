@@ -76,6 +76,8 @@ private:
 	void command(int key);
 	void talkAt(int tx, int ty);
 	void getAt(int tx, int ty);
+	void useAt(int tx, int ty);
+	void changeLevel(int nx, int ny, int nz);
 	void restKey(int key);
 	void followLeader(int oldX, int oldY);
 	std::string _number; // digits typed for the Rest command

@@ -111,6 +111,34 @@ int main() {
 		CHECK(moved > 10);
 	}
 
+	// Using a door from the west opens it, using it again closes it.
+	{
+		World w3;
+		CHECK(w3.load("u6/game"));
+		Game g3(w3);
+		int door = -1;
+		for (size_t i = 0; i < w3.objects.size() && door < 0; ++i) {
+			const World::Obj &o = w3.objects[i];
+			if (o.type >= 297 && o.type <= 300 && o.onMap() && o.z == 0 && (o.frame == 5 || o.frame == 7))
+				door = (int)i;
+		}
+		CHECK(door >= 0);
+		if (door >= 0) {
+			int frame = w3.objects[door].frame;
+			int px = w3.objects[door].x - 1, py = w3.objects[door].y;
+			w3.moveObject(w3.actorObject(1), px, py, 0);
+			g3.x = px;
+			g3.y = py;
+			g3.z = 0;
+			g3.handleKey('u');
+			g3.handleKey(KEY_RIGHT);
+			CHECK(w3.objects[door].frame == frame - 4);
+			g3.handleKey('u');
+			g3.handleKey(KEY_RIGHT);
+			CHECK(w3.objects[door].frame == frame);
+		}
+	}
+
 	if (failures == 0)
 		std::printf("ok\n");
 	return failures ? 1 : 0;
