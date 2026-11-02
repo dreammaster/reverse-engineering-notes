@@ -94,6 +94,7 @@ void FrontEnd::showMessage(const std::string &m) {
 	_state = MESSAGE;
 }
 
+// APPROX(38): not the original's exact behaviour, see docs/approximations.md
 void FrontEnd::render(Framebuffer &screen) {
 	screen.clear(0);
 	switch (_state) {

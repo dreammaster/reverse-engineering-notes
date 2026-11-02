@@ -41,6 +41,7 @@ void ActorManager::hourChanged(const GameClock &clock) {
 	}
 }
 
+// APPROX(6): not the original's exact behaviour, see docs/approximations.md
 void ActorManager::face(int actor, int direction) {
 	int k = _world.actorObject(actor);
 	if (k < 0 || direction < 0 || direction > 3)
@@ -52,6 +53,7 @@ void ActorManager::face(int actor, int direction) {
 		o.frame = (uint8_t)(direction * 4 + WALK[_walkFrame[actor]]);
 }
 
+// APPROX(1): not the original's exact behaviour, see docs/approximations.md
 // Breadth-first search for the first step towards (tx, ty).
 bool ActorManager::step(int actor, int objIndex, int tx, int ty, int z) {
 	const World::Obj o = _world.objects[objIndex];
@@ -103,6 +105,7 @@ bool ActorManager::step(int actor, int objIndex, int tx, int ty, int z) {
 	return true;
 }
 
+// APPROX(2): not the original's exact behaviour, see docs/approximations.md
 void ActorManager::tick(int px, int py, int pz) {
 	const Schedule &sc = _world.schedule;
 	ObjList &a = _world.actors;

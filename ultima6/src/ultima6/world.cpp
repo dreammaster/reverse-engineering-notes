@@ -307,6 +307,7 @@ void World::deleteObject(int index) {
 	o.deleted = true;
 }
 
+// APPROX(41): not the original's exact behaviour, see docs/approximations.md
 bool World::save(const std::string &saveDir) {
 	// bring the actors' arrays up to date with their bodies
 	for (int a = 0; a < ObjList::ACTORS; ++a) {

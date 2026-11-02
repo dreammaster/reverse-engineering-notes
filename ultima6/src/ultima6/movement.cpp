@@ -16,6 +16,7 @@ uint16_t MovementClasses::flags(int cls) {
 	return cls < 0 ? (uint16_t)UNLISTED_FLAGS : CLASS_FLAGS[cls];
 }
 
+// APPROX(12): not the original's exact behaviour, see docs/approximations.md
 void Movement::touching(int x, int y, int z, std::vector<Touch> &out) const {
 	out.clear();
 	int mask = z == 0 ? 0x3FF : 0xFF;

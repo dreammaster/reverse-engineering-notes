@@ -14,6 +14,7 @@ namespace Ultima6 {
 static const int DIR_DX[8] = {0, 1, 1, 1, 0, -1, -1, -1};
 static const int DIR_DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
 
+// APPROX(7): not the original's exact behaviour, see docs/approximations.md
 void GameClock::advance(int minutes) {
 	minute += minutes;
 	while (minute >= 60) {
@@ -61,6 +62,7 @@ bool Game::save() {
 	return !saveDir.empty() && _world.save(saveDir);
 }
 
+// APPROX(10): not the original's exact behaviour, see docs/approximations.md
 void Game::advanceTime(int minutes) {
 	for (int i = 0; i < minutes; ++i) {
 		clock.advance(1);
@@ -106,6 +108,7 @@ bool Game::canWalk(int tx, int ty, int tz) {
 	return r.passable;
 }
 
+// APPROX(5): not the original's exact behaviour, see docs/approximations.md
 bool Game::step(int dir) {
 	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
 	int nx = (x + DIR_DX[dir]) & mask, ny = (y + DIR_DY[dir]) & mask;
@@ -158,6 +161,7 @@ bool Game::selectTarget(int key, int &tx, int &ty) const {
 	return true;
 }
 
+// APPROX(36): not the original's exact behaviour, see docs/approximations.md
 void Game::talkAt(int tx, int ty) {
 	std::vector<int> here;
 	_world.objectsAt(tx, ty, z, here);
@@ -182,6 +186,7 @@ void Game::talkAt(int tx, int ty) {
 		_talk.reset();
 }
 
+// APPROX(29): not the original's exact behaviour, see docs/approximations.md
 void Game::look(int tx, int ty) {
 	message("Thou dost see ");
 	std::vector<int> here;

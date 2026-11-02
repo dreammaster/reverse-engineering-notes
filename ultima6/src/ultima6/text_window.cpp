@@ -9,6 +9,7 @@ void TextWindow::newLine() {
 		_lines.erase(_lines.begin());
 }
 
+// APPROX(42): not the original's exact behaviour, see docs/approximations.md
 void TextWindow::putChar(char c) {
 	if (c == '\b') {
 		if (!_lines.back().empty())

@@ -80,6 +80,7 @@ std::string Combat::nameOf(int actor) const {
 	return Describe::tileName(_world, _world.baseTile.firstTile[type & (BaseTile::TYPES - 1)], false);
 }
 
+// APPROX(16): not the original's exact behaviour, see docs/approximations.md
 bool Combat::hitCheck(int attacker, int defender, int weapon) {
 	int ka = _world.actorObject(attacker), kd = _world.actorObject(defender);
 	if (ka < 0 || kd < 0)
@@ -170,6 +171,7 @@ bool Combat::attack(int attacker, int defender) {
 	return applyDamage(attacker, defender, damage);
 }
 
+// APPROX(16): not the original's exact behaviour, see docs/approximations.md
 bool Combat::applyDamage(int attacker, int defender, int damage) {
 	int kd = _world.actorObject(defender);
 	if (kd < 0)

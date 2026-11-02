@@ -134,6 +134,7 @@ std::string Talk::genderTitle() {
 	return _world.actors.globals[G_GENDER] ? "milady" : "milord";
 }
 
+// APPROX(8): not the original's exact behaviour, see docs/approximations.md
 std::string Talk::timeOfDay() {
 	return _clock.hour < 12 ? "morning" : _clock.hour < 18 ? "afternoon" : "evening";
 }
@@ -180,6 +181,7 @@ int Talk::partyMember(int index) {
 	return index >= 0 && index < a.partySize ? a.partyRoster[index] : 0;
 }
 
+// APPROX(33): not the original's exact behaviour, see docs/approximations.md
 int Talk::joinParty(int npc) {
 	ObjList &a = _world.actors;
 	if (rosterIndex(npc) >= 0)

@@ -133,6 +133,7 @@ void Conversation::block(State s) {
 	_state = s;
 }
 
+// APPROX(35): not the original's exact behaviour, see docs/approximations.md
 std::string Conversation::format(const std::string &in) {
 	std::string out;
 	size_t i = 0, len = in.size();
@@ -401,6 +402,7 @@ void Conversation::giveLine(const std::string &raw) {
 	_waiting = false;
 }
 
+// APPROX(34): not the original's exact behaviour, see docs/approximations.md
 bool Conversation::matchKeywords(const std::string &keys, const std::string &input) const {
 	if (keys == "*")
 		return true;

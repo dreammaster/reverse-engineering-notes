@@ -74,6 +74,7 @@ void Magic::pay(int caster, const SpellInfo &spell) {
 			_world.removeFromInventory(caster, REAGENT_TYPE[b], 0, 1);
 }
 
+// APPROX(24): not the original's exact behaviour, see docs/approximations.md
 bool Magic::cast(int caster, const SpellInfo &spell, int target) {
 	ObjList &a = _world.actors;
 	int tk = target >= 0 ? _world.actorObject(target) : -1;

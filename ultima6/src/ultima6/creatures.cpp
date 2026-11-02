@@ -67,6 +67,7 @@ int Creatures::spawn(int type, int worktype, int x, int y, int z) {
 	return actor;
 }
 
+// APPROX(19): not the original's exact behaviour, see docs/approximations.md
 void Creatures::hatch(int egg, int hour) {
 	const World::Obj &e = _world.objects[egg];
 	int quality = e.quality;
@@ -124,6 +125,7 @@ void Creatures::checkEggs(int px, int py, int pz, int hour) {
 	}
 }
 
+// APPROX(20): not the original's exact behaviour, see docs/approximations.md
 void Creatures::tick(int px, int py, int pz) {
 	ObjList &a = _world.actors;
 	// the party's companions fight back: each goes for the nearest hostile creature, and strikes it when next to it

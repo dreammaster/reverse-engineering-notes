@@ -42,6 +42,7 @@ void MapRenderer::drawObject(const World::Obj &o, int cellX, int cellY) {
 	}
 }
 
+// APPROX(15): not the original's exact behaviour, see docs/approximations.md
 void MapRenderer::computeDarkness(int x, int y, int z, int hour, int partyLightRadius, uint8_t *out) const {
 	bool night = z != 0 || hour < 5 || hour >= 19;
 	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
@@ -81,6 +82,7 @@ void MapRenderer::computeDarkness(int x, int y, int z, int hour, int partyLightR
 		}
 }
 
+// APPROX(14): not the original's exact behaviour, see docs/approximations.md
 void MapRenderer::draw(Framebuffer &screen, int x, int y, int z, const uint8_t *darkness) {
 	int left = x - CELLS / 2, top = y - CELLS / 2;
 	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;

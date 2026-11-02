@@ -38,6 +38,7 @@ void inventoryItems(const World &world, int member, std::vector<int> &items) {
 	});
 }
 
+// APPROX(28): not the original's exact behaviour, see docs/approximations.md
 void drawInventoryView(Framebuffer &screen, const World &world, int member, int selected, std::vector<int> &items) {
 	Ui::restorePaper(screen, world.paper, 176, 8, 136, 96);
 	const int FG = 0x48;

@@ -10,6 +10,7 @@ namespace Ultima6 {
 namespace Ultima6 {
 
 // The party follows its leader (sub_275BD): each member steps into the square the member ahead of it has just left.
+// APPROX(4): not the original's exact behaviour, see docs/approximations.md
 void Game::followLeader(int oldX, int oldY) {
 	const ObjList &a = _world.actors;
 	int prevX = oldX, prevY = oldY;
@@ -46,6 +47,7 @@ void Game::followLeader(int oldX, int oldY) {
 }
 
 // Attack: hit the creature or person on the square.
+// APPROX(18): not the original's exact behaviour, see docs/approximations.md
 void Game::attackAt(int tx, int ty) {
 	std::vector<int> here;
 	_world.objectsAt(tx, ty, z, here);
@@ -69,6 +71,7 @@ void Game::attackAt(int tx, int ty) {
 }
 
 // Keys while the inventory is on show: select, ready or unready, drop, leave.
+// APPROX(28): not the original's exact behaviour, see docs/approximations.md
 bool Game::inventoryKey(int key) {
 	inventoryItems(_world, _member, _items);
 	int count = (int)_items.size();
@@ -145,6 +148,7 @@ bool Game::inventoryKey(int key) {
 
 // What a minute does to the party (as the original's time advance does it): poison hurts now and then, swamps poison, fire, traps and
 // force fields burn, and the lit torch that is carried burns down.
+// APPROX(9): not the original's exact behaviour, see docs/approximations.md
 void Game::partyHazards() {
 	ObjList &a = _world.actors;
 	for (int m = 0; m < a.partySize; ++m) {
@@ -199,6 +203,7 @@ void Game::partyHazards() {
 }
 
 // Skiffs (414) and rafts (415): using one boards it, with the whole party aboard; using the shore from aboard puts the party ashore.
+// APPROX(30): not the original's exact behaviour, see docs/approximations.md
 bool Game::boardOrLeave(int tx, int ty) {
 	std::vector<int> here;
 	_world.objectsAt(tx, ty, z, here);
@@ -269,6 +274,7 @@ bool Game::boardOrLeave(int tx, int ty) {
 }
 
 // Cast: the circle (a digit) and the syllables' letters, then Enter; spells that need a target then ask for one with the cursor.
+// APPROX(23): not the original's exact behaviour, see docs/approximations.md
 void Game::castKey(int key) {
 	if (key == KEY_ESC) {
 		_pending = 0;
@@ -337,6 +343,7 @@ void Game::castAt(int tx, int ty) {
 }
 
 // Get: take the top object of a square that can be carried.
+// APPROX(26): not the original's exact behaviour, see docs/approximations.md
 void Game::getAt(int tx, int ty) {
 	std::vector<int> here;
 	_world.objectsAt(tx, ty, z, here);
@@ -386,6 +393,7 @@ void Game::changeLevel(int nx, int ny, int nz) {
 }
 
 // Use: what the objects of a square do when used (the doors and ladders of the Use table; the rest answers "Not usable").
+// APPROX(30): not the original's exact behaviour, see docs/approximations.md
 void Game::useAt(int tx, int ty) {
 	if (boardOrLeave(tx, ty)) {
 		prompt();
@@ -490,6 +498,7 @@ void Game::useAt(int tx, int ty) {
 }
 
 // Rest: ask for the hours, then let them pass; every hour heals the party a little.
+// APPROX(31): not the original's exact behaviour, see docs/approximations.md
 void Game::restKey(int key) {
 	if (key == KEY_ESC) {
 		_pending = 0;
