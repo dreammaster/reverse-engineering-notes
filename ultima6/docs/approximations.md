@@ -54,7 +54,7 @@ Legend — **Source**: *own* = invented by me, *Nuvie* = taken from Nuvie's reim
 
 | # | What | Where | Source | What to analyse |
 |---|---|---|---|---|
-| 26 | "Gettable" = weight > 0 and not an actor; carrying limit = 2 * strength * 10; message "The weight is too great!" is **invented** | `commands.cpp` `getAt` | own / Nuvie | `cmd_get` and its object test (status bit 0x01 "ok to take", tile flags, `sub_1B59D` add to inventory), weight limit formula, strings after "Get". |
+| 26 | Get now follows `cmd_get` (nuvie_differences #15); still missing: cursor selection and range ("Out of range!"), stealing ("Stop Thief!!!", `sub_2F7E3`), free-hand rule for lit torches, stack merge details (`sub_1B701`), special pick-up conversions beyond the four listed | `commands.cpp` `getAt` | partial | `cmd_get` lines after 3138F, `sub_2F7E3`, `sub_1B59D`, `sub_1B701`. |
 | 27 | Quantities: gold word, other stackables byte (exact); merging stacks ignores readied/frame cases other than lit torch | `world.cpp` | partial | `sub_1B687`, `sub_1B6BD`. |
 | 28 | Inventory view: grid of tiles, own key set, "readied" = location 0x18 without slots (head, neck, hands, ...), several readied weapons allowed, no armour slot rules | `stats_view.cpp`, `commands.cpp` `inventoryKey` | own | `sub_15371`, `sub_1520E`, `sub_16125` (inventory/paper-doll drawing and slot layout), `cmd_ready` ("torch" string), the slot tables. |
 | 29 | Look: only the top object, weight line wording, no actor health/state text, no "searching here" rule, cursor keys | `session.cpp` `Game::look` | partial | `cmd_look` (68342, 600 lines), `sub_2F969`, `sub_2D04C`. |

@@ -96,7 +96,9 @@ void Game::advanceTime(int minutes) {
 
 void Game::prompt() {
 	// the name of the party member in control, a colon and '>' (command_loop prints it with %s:\n%>)
-	message(std::string((const char *)_world.actors.partyNames[0]) + ":\n>");
+	// command_loop prints "%s:\n%>" the first time and "\n%s:\n%>" after each later command
+	message(std::string(_firstPrompt ? "" : "\n") + (const char *)_world.actors.partyNames[0] + ":\n>");
+	_firstPrompt = false;
 }
 
 bool Game::canWalk(int tx, int ty, int tz) {

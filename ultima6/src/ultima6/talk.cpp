@@ -317,15 +317,19 @@ int Talk::whoHasObject(int obj, int quality) {
 	return -1;
 }
 
+// conv_read_value case 0x9A: strength * 200 less ten times what is carried (sub_1DA30 / sub_1D998), or 0
 int Talk::maxCarry(int npc) {
 	if (npc < 0 || npc >= ObjList::ACTORS)
 		return 0;
-	int room = _world.actors.strength[npc] * 2 * 10 - _world.carriedWeight(npc);
-	return room > 0 ? room : 0;
+	int most = _world.actors.strength[npc] * 200, have = _world.carriedWeight(npc) * 10;
+	return most > have ? most - have : 0;
 }
 
+// case 0x9B: quantity times the block 3 weight; ten times that unless the type is one of the nine reduced ones (gold and reagents)
 int Talk::objectWeight(int obj, int quantity) {
-	return _world.weightOfType(obj, quantity);
+	int w = _world.flags.block3[obj & (TileFlags::BLOCK3 - 1)] * quantity;
+	bool reduced = obj == 0x58 || (obj >= 0x41 && obj <= 0x48);
+	return reduced ? w : w * 10;
 }
 
 bool Talk::horsed(int npc) {

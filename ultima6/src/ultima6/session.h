@@ -101,6 +101,7 @@ private:
 	void restKey(int key);
 	void followLeader(int oldX, int oldY);
 	bool _confirmSave = false;
+	bool _firstPrompt = true;
 	bool _inventory = false; // the panel shows the inventory instead of the statistics
 	int _selected = 0;
 	std::vector<int> _items;

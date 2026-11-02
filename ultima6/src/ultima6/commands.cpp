@@ -352,35 +352,59 @@ void Game::castAt(int tx, int ty) {
 void Game::getAt(int tx, int ty) {
 	std::vector<int> here;
 	_world.objectsAt(tx, ty, z, here);
+	// cmd_get: the top object of the square (anything but an actor); "nothing" if there is none
 	int pick = -1;
 	for (size_t i = here.size(); i-- > 0;) {
 		const World::Obj &o = _world.objects[here[i]];
 		if (o.actor >= 0 || o.invisible())
 			continue;
-		if (_world.weightOf(here[i]) > 0) {
-			pick = here[i];
-			break;
-		}
+		pick = here[i];
+		break;
 	}
 	if (pick < 0) {
-		message("\nNot possible\n");
+		message("nothing\n");
 		prompt();
 		return;
 	}
 	World::Obj &o = _world.objects[pick];
 	int actor = _world.actors.partyRoster[_member];
-	message(Describe::object(_world, o) + "\n");
-	int w = _world.weightOf(pick);
-	int room = _world.actors.strength[actor] * 2 * 10 - _world.carriedWeight(actor);
-	if (w > room) {
-		message("\nThe weight is too great!\n");
-		prompt();
-		return;
+	message(Describe::object(_world, o));
+	int tile = _world.baseTile.firstTile[o.type] + o.frame;
+	int w = _world.weightOf(pick) + _world.contentsWeight(pick);
+	bool reduced = o.type == 0x58 || (o.type >= 0x41 && o.type <= 0x48);
+	if (_world.flags.flags1[tile & (TileFlags::TILES - 1)] & 0x08) {
+		message("\nNot possible");
+	} else if ((w == 0 && !reduced) || w >= 10000 || o.type == 0x19B) {
+		message("\nNot possible\n");
+	} else if (_world.actors.strength[actor] * 20 < w + _world.carriedWeight(actor)) {
+		message("\nThe total is too heavy.\n");
+	} else {
+		int qty = _world.quantityOf(o);
+		int type = o.type, quality = o.quality, frame = o.frame;
+		bool litTorch = type == 0x5A && frame == 1;
+		World::Obj taken = o;
+		_world.deleteObject(pick);
+		if (litTorch) {
+			// a lit torch goes straight into a hand
+			taken.deleted = false;
+			taken.status = (uint8_t)((taken.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+			taken.parent = actor;
+			_world.objects.push_back(taken);
+		} else {
+			_world.addToInventory(actor, type, quality, qty);
+			// what a thing turns into once it is picked up (cmd_get 3128E-3135C)
+			if (type == 0x7A || type == 0x91 || type == 0x1A7) {
+				std::vector<int> inv;
+				_world.inventory(actor, inv, false);
+				for (int i : inv)
+					if (_world.objects[i].type == type) {
+						_world.objects[i].frame = 0;
+						if (type == 0x1A7)
+							_world.objects[i].type = 0x1A4;
+					}
+			}
+		}
 	}
-	int qty = _world.quantityOf(o);
-	int type = o.type, quality = o.quality;
-	_world.deleteObject(pick);
-	_world.addToInventory(actor, type, quality, qty);
 	prompt();
 }
 

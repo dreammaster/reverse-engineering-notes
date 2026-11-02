@@ -100,6 +100,8 @@ public:
 	int quantityOf(const Obj &o) const {
 		if (o.type == 0x58)
 			return o.quantity | (o.quality << 8); // gold keeps a word
+		if (o.type == 0x5A && o.frame == 1)
+			return 1; // a lit torch is one object; its quantity is the burn time
 		return isStackable(o.type) ? o.quantity : 1;
 	}
 	void setQuantity(Obj &o, int q) const;
@@ -109,6 +111,7 @@ public:
 	int weightOf(int index) const;
 	int weightOfType(int type, int quantity) const;
 	int carriedWeight(int actor) const;
+	int contentsWeight(int index) const;
 	/** Creates an object in an actor's inventory (merging into a stack of the same kind); returns its index. */
 	int addToInventory(int actor, int type, int quality, int quantity);
 	/** Removes up to `quantity` of a type from an inventory (quality 0 = any); returns how many were taken. */

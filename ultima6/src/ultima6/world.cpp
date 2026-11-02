@@ -223,21 +223,46 @@ void World::inventory(int actor, std::vector<int> &out, bool nested) const {
 	}
 }
 
+// sub_1D8B1: block-3 weight times the quantity (gold and the reagents, the nine types of ds:081F, divided by ten); 255 means "cannot be moved" (10000)
 int World::weightOfType(int type, int quantity) const {
 	int w = flags.block3[type & (TileFlags::BLOCK3 - 1)];
-	return isStackable(type) ? w * (quantity ? quantity : 1) : w;
+	if (isStackable(type) && quantity)
+		w *= quantity;
+	else if (isStackable(type))
+		w *= 1;
+	if (type == 0x58 || (type >= 0x41 && type <= 0x48))
+		w /= 10;
+	if (w == 0xFF)
+		w = 10000;
+	return w;
 }
 
 int World::weightOf(int index) const {
 	return weightOfType(objects[index].type, quantityOf(objects[index]));
 }
 
+// sub_1D957: what the things inside an object weigh
+int World::contentsWeight(int index) const {
+	int total = 0;
+	for (size_t i = 0; i < objects.size(); ++i) {
+		const Obj &o = objects[i];
+		if (!o.deleted && o.location() == ObjRecord::IN_CONTAINER && o.parent == index)
+			total += weightOf((int)i) + contentsWeight((int)i);
+	}
+	return total;
+}
+
+// sub_1D998: worn things count their bare type weight, everything else carried its weight with its contents
 int World::carriedWeight(int actor) const {
 	std::vector<int> inv;
-	inventory(actor, inv);
+	inventory(actor, inv, false);
 	int total = 0;
-	for (int i : inv)
-		total += weightOf(i);
+	for (int i : inv) {
+		if (objects[i].location() == ObjRecord::READIED)
+			total += flags.block3[objects[i].type & (TileFlags::BLOCK3 - 1)];
+		else
+			total += weightOf(i) + contentsWeight(i);
+	}
 	return total;
 }
 

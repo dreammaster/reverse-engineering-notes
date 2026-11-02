@@ -18,7 +18,7 @@ turns out to differ, the engine is changed and the entry moves up to a real diff
 | 5 | Conversation opcodes | jump table `jpt_20207` also has 0xC8, 0xD0 and 0xDF; 0xA8 (assign) is handled outside it; value operators BC, BD, C0-C3 exist | no names for them | `docs/u6_conversation.md` |
 | 6 | Portrait numbers | no remapping | remaps a few (Exodus, shrines) | `load_portrait` (394A9) |
 | 7 | Stackable object types | the table at `ds:0765` (21 types) plus gold (0x58, word quantity); quantity printed with `%d ` | decides by "the description has a plural form" | `sub_1B687`, `Describe::quantityKind` |
-| 8 | Object weight | conversation operator 0x9B: `TILEFLAG block 3 weight x quantity` | divides gold and reagents again by 10 | `docs/u6_conversation.md` (the Nuvie rule is not used) |
+| 8 | Weights | `sub_1D8B1`: block 3 weight x quantity, divided by 10 for gold and the reagents (the nine types at ds:081F), 255 = unmovable (10000); the conversation operators work in ten times those units: 0x9B = qty x w (reduced types) or x10, 0x9A = strength x 200 - 10 x carried; carried = bare weight of readied things + weight and contents of the rest (`sub_1D998`) | Nuvie also divides reagents/gold by 10 for inventory weight (agrees), but scales conversation values differently | `conv_read_value` cases 0x9A/0x9B (1F553, 1F4A7), `sub_1D8B1`, `sub_1D957`, `sub_1D998` |
 | 9 | Conversation opening text | `"\n\nYou see "` | `"\nYou see "` | string in `GAME.EXE` near `aYouSay`; engine uses the original |
 | 10 | Skiff / raft / horse numbers | skiff 0x19E (414), raft 0x19F (415) are the water movers in the movement class code; horse with rider 0x1AF (431) | (same numbers, but my first reading of the original table was wrong) | `sub_25D7F` var_6 test, `seg066` |
 | 11 | Creature statistics: the Guard's strength | 30 | 9 | table in `GAME.EXE` (code segment, `seg066`: columns at +0x82 str, +0xC2 dex, +0x102 int, +0x142 exp, +0x182 dmg, +0x1C2 hp); the other 63 rows agree |
@@ -37,6 +37,11 @@ No Reagents.
 " has no leading newline | Nuvie checks everything first, uses "
 No spellbook is readied.
 " and single-newline wording, and takes payment after targeting | `check_spellbook` (45977), `cmd_cast` |
+| 15 | Get | `cmd_get` (69942): "nothing", name, then "Not possible" (weight 0 and not a reduced type, weight >= 10000, actors, type 0x19B, damaging tiles), "The total is too heavy." when strength x 20 < weight + carried; a lit torch goes into a hand ("No free hand"); a few types change when picked up | (own invention in the first version of the engine) | `cmd_get`, `sub_1D88A`, `sub_1D8B1` |
+| 16 | Prompt text | `"%s:
+%>"` first, `"
+%s:
+%>"` after each later command | - | `command_loop` (13C64), 145DD |
 
 ## Pending (engine uses Nuvie's rule until the original is traced)
 
