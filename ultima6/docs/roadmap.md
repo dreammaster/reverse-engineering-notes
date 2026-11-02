@@ -41,8 +41,10 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 - [x] `src/ultima6/`: `World` (all data, objects, inventories), `MapRenderer`, `Movement` (port of sub_25D7F), `TextWindow`, `stats_view` (party panel), `Conversation`
       (interpreter for the original scripts) and `Talk`, `ActorManager` (hourly schedules, walking), `Game` (key handler, clock, Talk/Look/Get/Rest, party follows);
       `src/engine/`: framebuffer, headless and Win32 backends. `build/u6.exe <gamedir>` plays the start of the shipped game. See `u6_screen.md`.
-- [ ] Not yet: Use/Drop/Move and the inventory view, day and night (lighting), combat, magic, creature AI and spawning, object-use handlers (doors, levers, ...), eggs,
-      ships and horses, save/load, main menu, introduction, character creation screens, ending, sound and music playback, mouse.
+- [x] Also: `Combat`, `Creatures` (eggs, hunting), `Magic` (spell table, spellbook, reagents, first spells), inventory view, light and darkness, save/load, front end
+      with character creation, containers, skiffs and rafts. See [u6_systems.md](u6_systems.md) for the state of each system.
+- [ ] Not yet: ships and the wind, horses (mounting), balloons, moongates, the rest of the spells and ranged weapons, combat modes and creature worktypes, hunger, Push (Move), most
+      of the 85 Use handlers (levers, bells, wells, instruments, runes, ...), signs and books, the animated introduction, character transfer, the ending, sound and music, the mouse.
 
 ## 4. Martian Dreams and Savage Empire
 
