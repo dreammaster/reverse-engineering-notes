@@ -5,6 +5,8 @@ exact behaviour (or, where that cannot be done, to hand the details over for fur
 and delete it (with the commit that fixes it) when the exact version is in. Places in the code are also tagged with the comment `APPROX(n)` where practical
 (`grep -rn "APPROX(" src`).
 
+See also [nuvie_differences.md](nuvie_differences.md): where Nuvie and the original disagree, the original is followed and the difference is logged there.
+
 Legend — **Source**: *own* = invented by me, *Nuvie* = taken from Nuvie's reimplementation (which may itself differ from the original), *partial* = original read but incomplete.
 **Original** = routine(s) in the IDA databases (`ultima6/u6/u6_game.asm`, `u6_u.asm`, `u6_end.asm`) to analyse. Addresses are linear offsets as in the docs.
 
