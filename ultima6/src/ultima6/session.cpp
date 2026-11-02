@@ -34,7 +34,7 @@ void GameClock::advance(int minutes) {
 	}
 }
 
-Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(world), _movement(world), _actors(world, _movement) {
+Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(world), _movement(world), _actors(world, _movement), _combat(world, _rng, scroll) {
 	world.avatarPosition(x, y, z);
 	_leaderObject = world.actorObject(1);
 	_rules.questFlag = !world.actors.globals.empty() && world.actors.globals[0] != 0;
@@ -194,6 +194,10 @@ void Game::command(int key) {
 		message("Talk-");
 		_pending = 'T';
 		break;
+	case 'A':
+		message("Attack-");
+		_pending = 'A';
+		break;
 	case 'G':
 		message("Get-");
 		_pending = 'G';
@@ -297,6 +301,8 @@ bool Game::handleKey(int key) {
 				talkAt(tx, ty);
 			else if (cmd == 'G')
 				getAt(tx, ty);
+			else if (cmd == 'A')
+				attackAt(tx, ty);
 			else if (cmd == 'U')
 				useAt(tx, ty);
 		} else {

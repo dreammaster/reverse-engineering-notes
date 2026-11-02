@@ -114,6 +114,8 @@ public:
 	/** Removes up to `quantity` of a type from an inventory (quality 0 = any); returns how many were taken. */
 	int removeFromInventory(int actor, int type, int quality, int quantity);
 	void deleteObject(int index);
+	/** Puts an object that is not on the map yet (a new one) onto the map position it holds. */
+	void addToMap(int index);
 
 	/** Puts an object on another map position (keeping the position index in step). */
 	void moveObject(int index, int x, int y, int z);

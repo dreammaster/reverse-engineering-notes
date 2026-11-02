@@ -5,6 +5,7 @@
 #include "ultima6/map_renderer.h"
 #include "ultima6/movement.h"
 #include "ultima6/actors.h"
+#include "ultima6/combat.h"
 #include "ultima6/talk.h"
 #include "ultima6/text_window.h"
 #include "ultima6/world.h"
@@ -71,6 +72,8 @@ private:
 	ActorManager _actors;
 	MoveRules _rules;
 	BorlandRandom _rng;
+	Combat _combat;
+	void attackAt(int tx, int ty);
 	std::unique_ptr<Talk> _talk; // a conversation in progress
 	int _cx = 5, _cy = 5;        // cursor cell in the map view while targeting with it
 	bool _cursor = false;

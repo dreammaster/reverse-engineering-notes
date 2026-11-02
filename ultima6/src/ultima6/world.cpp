@@ -386,6 +386,14 @@ bool World::save(const std::string &saveDir) {
 	return true;
 }
 
+void World::addToMap(int index) {
+	const Obj &o = objects[index];
+	std::pair<uint32_t, int> e(positionKey(o.x, o.y, o.z), index);
+	auto at = std::upper_bound(_byPosition.begin(), _byPosition.end(), e,
+							   [](const std::pair<uint32_t, int> &a, const std::pair<uint32_t, int> &b) { return a.first < b.first; });
+	_byPosition.insert(at, e);
+}
+
 void World::moveObject(int index, int x, int y, int z) {
 	Obj &o = objects[index];
 	if (o.onMap()) {

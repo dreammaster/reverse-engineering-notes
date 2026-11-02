@@ -45,6 +45,29 @@ void Game::followLeader(int oldX, int oldY) {
 	}
 }
 
+// Attack: hit the creature or person on the square.
+void Game::attackAt(int tx, int ty) {
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	int target = -1;
+	for (int i : here)
+		if (_world.objects[i].actor >= 0 && _world.objects[i].actor != 1)
+			target = _world.objects[i].actor;
+	if (target < 0) {
+		message("\nnothing!\n");
+		prompt();
+		return;
+	}
+	int attacker = _world.actors.partyRoster[_member];
+	bool died = _combat.attack(attacker, target);
+	(void)died;
+	advanceTime(1);
+	if (_world.actors.hp[1] == 0) {
+		message("\nThou art dead!\n");
+	}
+	prompt();
+}
+
 // Get: take the top object of a square that can be carried.
 void Game::getAt(int tx, int ty) {
 	std::vector<int> here;
