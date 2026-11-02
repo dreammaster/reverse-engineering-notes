@@ -26,12 +26,15 @@ namespace Ultima6 {
  */
 class FrontEnd {
 public:
-	enum State { MENU, NAME, SEX, PORTRAIT, QUIZ, RESULT, MESSAGE, DONE, QUIT };
+	enum State { MENU, NAME, SEX, PORTRAIT, QUIZ, RESULT, MESSAGE, INTRO, DONE, QUIT };
 
 	explicit FrontEnd(const std::string &dir);
 
 	bool ok() const {
 		return _ok;
+	}
+	State state() const {
+		return _state;
 	}
 	void render(Framebuffer &screen);
 	/** Feeds a key; false when the front end is finished (see wantsGame()). */
@@ -70,6 +73,9 @@ private:
 	IntroPalettes _palettes;
 	Palette _gamePalette; // U6PAL, the palette the portraits are painted for
 	std::vector<Shape> _titles, _menu, _gypsy, _vellum, _montage;
+	std::vector<Shape> _intro[3]; // INTRO_1.SHP, INTRO_2.SHP, INTRO_3.SHP
+	bool _hasIntro = false;
+	int _introPage = 0;
 	BorlandRandom _rng;
 	std::unique_ptr<GypsyQuiz> _quiz;
 	NewCharacter _character;

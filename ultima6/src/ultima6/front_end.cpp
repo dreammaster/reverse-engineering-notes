@@ -8,6 +8,7 @@ namespace Ultima6 {
 namespace Ultima6 {
 
 #include "ultima6/gypsy_text.inc"
+#include "ultima6/intro_text.inc"
 
 static const char *const MENU_ITEMS[5] = {"Introduction", "Create a Character", "Transfer a Character", "Acknowledgements", "Journey Onward"};
 static const int MENU_ROW[5] = {16, 35, 57, 76, 97}; // centre of each item inside MAINMENU.SHP
@@ -28,6 +29,8 @@ FrontEnd::FrontEnd(const std::string &dir) : _dir(dir), _rng((uint16_t)std::time
 	if (!loadShapes(dir, "TITLES.SHP", _titles) || !loadShapes(dir, "MAINMENU.SHP", _menu) || !loadShapes(dir, "GYPSY.SHP", _gypsy) ||
 		!loadShapes(dir, "VELLUM1.SHP", _vellum) || !loadShapes(dir, "MONTAGE.SHP", _montage))
 		return;
+	// the introduction's pictures are optional: without them it is skipped
+	_hasIntro = loadShapes(dir, "INTRO_1.SHP", _intro[0]) && loadShapes(dir, "INTRO_2.SHP", _intro[1]) && loadShapes(dir, "INTRO_3.SHP", _intro[2]);
 	_hasSavedGame = readFile(joinPath(joinPath(dir, "SAVEGAME"), "OBJLIST"), d);
 	_ok = true;
 }
@@ -162,6 +165,50 @@ void FrontEnd::render(Framebuffer &screen) {
 		text(screen, 40, 170, "Press a key", brightest(0));
 		break;
 	}
+	case INTRO: {
+		// APPROX(53): which picture goes with which page, and the plain slide show, are my choices; the original animates layers of INTRO_1/2/3.SHP
+		// (title_sequence 17A36, intro_story 1C678, not traced) with palettes 1, 2 and 3 of PALETTES.INT
+		struct Scene {
+			int file, shape, palette;
+		};
+		static const Scene SCENES[] = {{0, 0, 1}, {0, 1, 1}, {2, 0, 3}, {1, 10, 2}, {2, 0, 3}, {2, 5, 3}, {2, 5, 3}, {2, 5, 3}, {2, 5, 3}, {1, 28, 2}, {1, 10, 2}};
+		const Scene &sc = SCENES[_introPage];
+		setPalette(screen, sc.palette);
+		if ((size_t)sc.shape < _intro[sc.file].size())
+			blitShape(screen, _intro[sc.file][sc.shape], 0, 0);
+		screen.fillRect(0, 130, 320, 70, 0);
+		std::string all;
+		for (int i = 0; INTRO_PAGES[_introPage][i]; ++i) {
+			if (!all.empty() && all.back() != ' ' && all.back() != '\n')
+				all += ' ';
+			all += INTRO_PAGES[_introPage][i];
+		}
+		std::string clean;
+		for (size_t i = 0; i < all.size(); ++i) {
+			if (all[i] == '%' && i + 1 < all.size() && all[i + 1] == 'c')
+				++i;
+			else
+				clean += all[i];
+		}
+		int c = brightest(sc.palette), y = 133;
+		size_t pos = 0;
+		while (pos <= clean.size() && y < 198) {
+			size_t nl = clean.find('\n', pos);
+			std::string para = clean.substr(pos, nl == std::string::npos ? std::string::npos : nl - pos);
+			if (para.empty()) {
+				y += 8;
+			} else {
+				size_t before = para.size();
+				(void)before;
+				wrapped(screen, 4, y, 38, para, c);
+				y += 8 * (int)((para.size() + 37) / 38);
+			}
+			if (nl == std::string::npos)
+				break;
+			pos = nl + 1;
+		}
+		break;
+	}
 	default:
 		break;
 	}
@@ -199,7 +246,12 @@ bool FrontEnd::handleKey(int key) {
 		else if (key == KEY_ENTER || key == KEY_SPACE) {
 			switch (_selected) {
 			case 0:
-				showMessage("The introduction is not yet part of this version.");
+				if (_hasIntro) {
+					_introPage = 0;
+					_state = INTRO;
+				} else {
+					showMessage("The introduction's files are missing.");
+				}
 				break;
 			case 1:
 				startCreation();
@@ -225,6 +277,10 @@ bool FrontEnd::handleKey(int key) {
 		break;
 	case MESSAGE:
 		_state = _after;
+		break;
+	case INTRO:
+		if (key == KEY_ESC || ++_introPage >= (int)(sizeof(INTRO_PAGES) / sizeof(INTRO_PAGES[0])))
+			_state = MENU;
 		break;
 	case NAME:
 		if (key == KEY_ESC)

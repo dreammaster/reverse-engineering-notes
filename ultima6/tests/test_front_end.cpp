@@ -35,6 +35,21 @@ int main() {
 	Framebuffer screen;
 	f.render(screen);
 
+	// the introduction: Introduction is the first menu entry; its eleven pages draw and it returns to the menu
+	{
+		FrontEnd intro("u6/game");
+		intro.handleKey(KEY_UP);
+		intro.handleKey(KEY_ENTER);
+		int pages = 0;
+		while (pages < 40 && intro.state() == FrontEnd::INTRO) {
+			intro.render(screen);
+			intro.handleKey(KEY_SPACE);
+			++pages;
+		}
+		CHECK(pages == 11);
+		CHECK(intro.state() == FrontEnd::MENU);
+	}
+
 	// Journey Onward without a character plays the saved game that ships with the game; the menu starts on "Create a Character".
 	f.handleKey(KEY_ENTER);
 	type(f, "Gwenno");
