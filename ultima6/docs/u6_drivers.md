@@ -34,4 +34,4 @@ The pixel-block and shape findings are folded into `u6_graphics.md` and the C++ 
 
 `U6ADLIB`, `U6CMS`, `U6COVOX`, `U6INNOVA`, `U6ROLAND`, `U6TMUS` (Tandy music) share one interface: 0 `snd_init(port)` (AdLib: base port 0x388),
 1 `snd_silence`, 2 `snd_play(far ptr to music data)` (saves INT 08h, reprograms the PIT and plays from the timer interrupt), 3 `snd_stop`; the Roland
-driver adds 4, a per-channel set-up. The music files (`ULTIMA.M`, `BOOTUP.M`, ..., `MIDI.DAT`) and their format are not analysed yet.
+driver adds 4, a per-channel set-up. The timer interrupt handler (`snd_timer_isr`, at `3A0` in the AdLib driver) plays the track; the music format is in [u6_music.md](u6_music.md).

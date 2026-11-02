@@ -239,12 +239,14 @@ unk_84          db    0                 ; DATA XREF: sub_1BF+3C↓r
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-word_D2         dw 0                    ; DATA XREF: sub_1BF+17↓w
-word_D4         dw 0                    ; DATA XREF: sub_1BF+1C↓w
+word_D0         dw 0                    ; DATA XREF: snd_timer_isr:loc_4E2↓r
+                                        ; snd_timer_isr+175↓w ...
+dword_D2        dd 0                    ; DATA XREF: sub_1BF+17↓w
+                                        ; snd_timer_isr+5C↓r ...
 word_D6         dw 0                    ; DATA XREF: sub_1BF+21↓w
+                                        ; snd_timer_isr+60↓r ...
 word_D8         dw 0                    ; DATA XREF: sub_1BF+26↓w
+                                        ; snd_timer_isr:loc_560↓w ...
                 db    0
                 db    0
                 db    0
@@ -272,7 +274,8 @@ word_D8         dw 0                    ; DATA XREF: sub_1BF+26↓w
                 db    0
                 db    0
                 db    0
-                db    0
+byte_F5         db 0                    ; DATA XREF: snd_timer_isr+64↓r
+                                        ; snd_timer_isr+6B↓w ...
                 db    0
                 db    0
                 db    0
@@ -308,7 +311,9 @@ word_D8         dw 0                    ; DATA XREF: sub_1BF+26↓w
 dword_116       dd 0                    ; DATA XREF: sub_1BF+3E↓w
                                         ; sub_229+7↓r ...
 word_11A        dw 0                    ; DATA XREF: sub_1BF+2B↓w
+                                        ; snd_timer_isr↓r ...
 word_11C        dw 0                    ; DATA XREF: sub_1BF+32↓w
+                                        ; snd_timer_isr+205↓w
                 db 0FFh
                 db 0FFh
                 db 0FFh
@@ -438,38 +443,22 @@ word_11C        dw 0                    ; DATA XREF: sub_1BF+32↓w
                 db  12h
                 db  14h
                 db  16h
-                db  22h ; "
-                db    4
-                db  3Bh ; ;
-                db    4
-                db  61h ; a
-                db    4
-                db  7Eh ; ~
-                db    4
-                db  90h
-                db    4
-                db  9Ch
-                db    4
-                db 0A0h
-                db    4
-                db 0B4h
-                db    4
-                db 0C9h
-                db    4
-                db  11h
-                db    4
-                db  11h
-                db    4
-                db  11h
-                db    4
-                db  11h
-                db    4
-                db  11h
-                db    4
-                db  60h ; `
-                db    5
-                db  67h ; g
-                db    5
+off_19F         dw offset loc_422       ; DATA XREF: snd_timer_isr+81↓r
+                dw offset loc_43B
+                dw offset loc_461
+                dw offset loc_47E
+                dw offset loc_490
+                dw offset loc_49C
+                dw offset loc_4A0
+                dw offset loc_4B4
+                dw offset loc_4C9
+                dw offset loc_411
+                dw offset loc_411
+                dw offset loc_411
+                dw offset loc_411
+                dw offset loc_411
+                dw offset loc_560
+                dw offset loc_567
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -491,8 +480,8 @@ arg_0           = dword ptr  6
                 xor     al, al
                 rep stosb
                 les     bx, [bp+arg_0]
-                mov     cs:word_D2, bx
-                mov     cs:word_D4, es
+                mov     word ptr cs:dword_D2, bx
+                mov     word ptr cs:dword_D2+2, es
                 mov     cs:word_D6, bx
                 mov     cs:word_D8, bx
                 mov     cs:word_11A, 0
@@ -588,8 +577,8 @@ sub_250         endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26F         proc near               ; CODE XREF: sub_36D+8↓p
-                                        ; sub_37F+8↓p
+sub_26F         proc near               ; CODE XREF: sub_2B1+2A↓p
+                                        ; sub_30B+34↓p ...
                 mov     dx, 331h
                 mov     cx, 0FFFFh
 
@@ -616,232 +605,147 @@ loc_289:                                ; CODE XREF: sub_26F+16↑j
                 retn
 sub_26F         endp
 
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_28C         proc near               ; CODE XREF: sub_2B1+37↓p
+                                        ; sub_2B1+4B↓p ...
+                mov     dx, 331h
+                mov     cx, 0FFFFh
+
+loc_292:                                ; CODE XREF: sub_28C+B↓j
+                in      al, dx
+                test    al, 40h
+                jz      short loc_299
+                loop    loc_292
+
+loc_299:                                ; CODE XREF: sub_28C+9↑j
+                mov     al, ah
+                dec     dx
+                out     dx, al
+                retn
+sub_28C         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_29E         proc near               ; CODE XREF: snd_timer_isr+EE↓p
+                not     ah
+                and     ah, 3Fh
+                mov     al, ah
+                shr     ah, 1
+                add     ah, al
+                and     ah, 7Fh
+                mov     [bx+13Eh], ah
+                retn
+sub_29E         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_2B1         proc near               ; CODE XREF: sub_2B1+14↓p
+                                        ; sub_30B+1B↓p ...
+                push    si
+                mov     si, cx
+                test    si, 2000h
+                jz      short loc_2D2
+                test    byte ptr [bx+11Eh], 80h
+                jnz     short loc_2C8
+                mov     cx, si
+                xor     ch, ch
+                call    sub_2B1
+
+loc_2C8:                                ; CODE XREF: sub_2B1+E↑j
+                mov     ax, si
+                and     al, 7Fh
+                mov     [bx+12Eh], al
+                jmp     short loc_309
 ; ---------------------------------------------------------------------------
-                db 0BAh
-                db  31h ; 1
-                db    3
-                db 0B9h
-                db 0FFh
-                db 0FFh
-                db 0ECh
-                db 0A8h
-                db  40h ; @
-                db  74h ; t
-                db    2
-                db 0E2h
-                db 0F9h
-                db  8Ah
-                db 0C4h
-                db  4Ah ; J
-                db 0EEh
-                db 0C3h
-                db 0F6h
-                db 0D4h
-                db  80h
-                db 0E4h
-                db  3Fh ; ?
-                db  8Ah
-                db 0C4h
-                db 0D0h
-                db 0ECh
-                db    2
-                db 0E0h
-                db  80h
-                db 0E4h
-                db  7Fh ; 
-                db  88h
-                db 0A7h
-                db  3Eh ; >
-                db    1
-                db 0C3h
-                db  56h ; V
-                db  8Bh
-                db 0F1h
-                db 0F7h
-                db 0C6h
-                db    0
-                db  20h
-                db  74h ; t
-                db  18h
-                db 0F6h
-                db  87h
-                db  1Eh
-                db    1
-                db  80h
-                db  75h ; u
-                db    7
-                db  8Bh
-                db 0CEh
-                db  32h ; 2
-                db 0EDh
-                db 0E8h
-                db 0E9h
-                db 0FFh
-                db  8Bh
-                db 0C6h
-                db  24h ; $
-                db  7Fh ; 
-                db  88h
-                db  87h
-                db  2Eh ; .
-                db    1
-                db 0EBh
-                db  37h ; 7
-                db 0F6h
-                db  87h
-                db  1Eh
-                db    1
-                db  80h
-                db  75h ; u
-                db  30h ; 0
-                db 0B4h
-                db 0D0h
-                db 0E8h
-                db  91h
-                db 0FFh
-                db  8Ah
-                db 0A7h
-                db  47h ; G
-                db    1
-                db  80h
-                db 0E4h
-                db  0Fh
-                db  80h
-                db 0C4h
-                db  80h
-                db 0E8h
-                db 0A1h
-                db 0FFh
-                db  8Ah
-                db 0A7h
-                db  1Eh
-                db    1
-                db  80h
-                db 0E4h
-                db  7Fh ; 
-                db 0C6h
-                db  87h
-                db  1Eh
-                db    1
-                db 0FFh
-                db 0C6h
-                db  87h
-                db  2Eh ; .
-                db    1
-                db    0
-                db 0E8h
-                db  8Dh
-                db 0FFh
-                db  8Ah
-                db 0A7h
-                db  3Eh ; >
-                db    1
-                db  80h
-                db 0E4h
-                db  7Fh ; 
-                db 0E8h
-                db  83h
-                db 0FFh
-                db  5Eh ; ^
-                db 0C3h
-                db  83h
-                db 0E6h
-                db  0Fh
-                db  8Ah
-                db  8Ch
-                db  57h ; W
-                db    1
-                db  38h ; 8
-                db  8Fh
-                db  47h ; G
-                db    1
-                db  74h ; t
-                db  12h
-                db 0F6h
-                db  87h
-                db  1Eh
-                db    1
-                db  80h
-                db  75h ; u
-                db  0Bh
-                db  51h ; Q
-                db  8Ah
-                db  8Fh
-                db  1Eh
-                db    1
-                db  32h ; 2
-                db 0EDh
-                db 0E8h
-                db  88h
-                db 0FFh
-                db  59h ; Y
-                db  88h
-                db  8Fh
-                db  47h ; G
-                db    1
-                db  8Ah
-                db  8Ch
-                db  67h ; g
-                db    1
-                db  80h
-                db 0F9h
-                db 0FFh
-                db  74h ; t
-                db  1Ch
-                db  3Ah ; :
-                db  8Dh
-                db  77h ; w
-                db    1
-                db  74h ; t
-                db  16h
-                db 0B4h
-                db 0D0h
-                db 0E8h
-                db  2Dh ; -
-                db 0FFh
-                db  8Ah
-                db 0A7h
-                db  47h ; G
-                db    1
-                db  80h
-                db 0C4h
-                db 0C0h
-                db 0E8h
-                db  40h ; @
-                db 0FFh
-                db  8Ah
-                db 0A4h
-                db  67h ; g
-                db    1
-                db 0E8h
-                db  39h ; 9
-                db 0FFh
-                db 0C3h
-                db  8Bh
-                db 0D8h
-                db  83h
-                db 0E3h
-                db  1Fh
-                db  8Ah
-                db  8Fh
-                db  87h
-                db    1
-                db  32h ; 2
-                db 0EDh
-                db  25h ; %
-                db 0E0h
-                db    0
-                db 0D1h
-                db 0E8h
-                db 0D1h
-                db 0E8h
-                db    3
-                db 0C8h
-                db 0D1h
-                db 0E8h
-                db    3
-                db 0C8h
-                db 0C3h
+
+loc_2D2:                                ; CODE XREF: sub_2B1+7↑j
+                test    byte ptr [bx+11Eh], 80h
+                jnz     short loc_309
+                mov     ah, 0D0h
+                call    sub_26F
+                mov     ah, [bx+147h]
+                and     ah, 0Fh
+                add     ah, 80h
+                call    sub_28C
+                mov     ah, [bx+11Eh]
+                and     ah, 7Fh
+                mov     byte ptr [bx+11Eh], 0FFh
+                mov     byte ptr [bx+12Eh], 0
+                call    sub_28C
+                mov     ah, [bx+13Eh]
+                and     ah, 7Fh
+                call    sub_28C
+
+loc_309:                                ; CODE XREF: sub_2B1+1F↑j
+                                        ; sub_2B1+26↑j
+                pop     si
+                retn
+sub_2B1         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_30B         proc near               ; CODE XREF: snd_timer_isr+125↓p
+                and     si, 0Fh
+                mov     cl, [si+157h]
+                cmp     [bx+147h], cl
+                jz      short loc_32A
+                test    byte ptr [bx+11Eh], 80h
+                jnz     short loc_32A
+                push    cx
+                mov     cl, [bx+11Eh]
+                xor     ch, ch
+                call    sub_2B1
+                pop     cx
+
+loc_32A:                                ; CODE XREF: sub_30B+B↑j
+                                        ; sub_30B+12↑j
+                mov     [bx+147h], cl
+                mov     cl, [si+167h]
+                cmp     cl, 0FFh
+                jz      short locret_353
+                cmp     cl, [di+177h]
+                jz      short locret_353
+                mov     ah, 0D0h
+                call    sub_26F
+                mov     ah, [bx+147h]
+                add     ah, 0C0h
+                call    sub_28C
+                mov     ah, [si+167h]
+                call    sub_28C
+
+locret_353:                             ; CODE XREF: sub_30B+2A↑j
+                                        ; sub_30B+30↑j
+                retn
+sub_30B         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_354         proc near               ; CODE XREF: snd_timer_isr+8A↓p
+                                        ; snd_timer_isr+A8↓p ...
+                mov     bx, ax
+                and     bx, 1Fh
+                mov     cl, [bx+187h]
+                xor     ch, ch
+                and     ax, 0E0h
+                shr     ax, 1
+                shr     ax, 1
+                add     cx, ax
+                shr     ax, 1
+                add     cx, ax
+                retn
+sub_354         endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -890,547 +794,326 @@ loc_38F:                                ; CODE XREF: sub_37F+17↓j
                 retf
 sub_37F         endp
 
+
+; =============== S U B R O U T I N E =======================================
+
+
+snd_timer_isr   proc far
+                cmp     cs:word_11A, 0
+                jz      short loc_3A8
+                jmp     loc_5AB
 ; ---------------------------------------------------------------------------
-                db  2Eh ; .
-                db  83h
-                db  3Eh ; >
-                db  1Ah
-                db    1
-                db    0
-                db  74h ; t
-                db    3
-                db 0E9h
-                db    3
-                db    2
-                db  2Eh ; .
-                db 0FFh
-                db    6
-                db  1Ah
-                db    1
-                db  50h ; P
-                db  53h ; S
-                db  51h ; Q
-                db  52h ; R
-                db  56h ; V
-                db  57h ; W
-                db  1Eh
-                db    6
-                db  8Ch
-                db 0CEh
-                db  8Eh
-                db 0DEh
-                db  33h ; 3
-                db 0DBh
-                db 0B9h
-                db    9
-                db    0
-                db  51h ; Q
-                db  80h
-                db 0BFh
-                db  2Eh ; .
-                db    1
-                db    0
-                db  74h ; t
-                db  2Fh ; /
-                db 0B4h
-                db 0D0h
-                db 0E8h
-                db 0A4h
-                db 0FEh
-                db  8Ah
-                db 0A7h
-                db  47h ; G
-                db    1
-                db  80h
-                db 0E4h
-                db  0Fh
-                db  80h
-                db 0C4h
+
+loc_3A8:                                ; CODE XREF: snd_timer_isr+6↑j
+                inc     cs:word_11A
+                push    ax
+                push    bx
+                push    cx
+                push    dx
+                push    si
+                push    di
+                push    ds
+                push    es
+                mov     si, cs
+                mov     ds, si
+                xor     bx, bx
+                mov     cx, 9
+
+loc_3BE:                                ; CODE XREF: snd_timer_isr+5A↓j
+                push    cx
+                cmp     byte ptr [bx+12Eh], 0
+                jz      short loc_3F5
+                mov     ah, 0D0h
+                call    sub_26F
+                mov     ah, [bx+147h]
+                and     ah, 0Fh
+                add     ah, 90h
+                call    sub_28C
+                mov     ah, [bx+12Eh]
+                mov     byte ptr [bx+12Eh], 0
+                and     ah, 7Fh
+                mov     [bx+11Eh], ah
+                call    sub_28C
+                mov     ah, [bx+13Eh]
+                and     ah, 7Fh
+                call    sub_28C
+
+loc_3F5:                                ; CODE XREF: snd_timer_isr+27↑j
+                pop     cx
+                inc     bx
+                loop    loc_3BE
+                les     si, ds:dword_D2
+                mov     si, ds:word_D6
+                cmp     ds:byte_F5, 0
+                jz      short loc_411
+                dec     ds:byte_F5
+                jz      short loc_411
+                jmp     loc_593
+; ---------------------------------------------------------------------------
+
+loc_411:                                ; CODE XREF: snd_timer_isr+69↑j
+                                        ; snd_timer_isr+6F↑j ...
+                mov     al, es:[si]
+                inc     si
+                mov     bl, al
+                mov     cl, 3
+                shr     bl, cl
+                and     bx, 1Eh
+                jmp     ds:off_19F[bx]
+; ---------------------------------------------------------------------------
+
+loc_422:                                ; CODE XREF: snd_timer_isr+81↑j
+                                        ; DATA XREF: seg000:off_19F↑o
+                push    ax
+                mov     al, es:[si]
+                inc     si
+                call    sub_354
+                pop     bx
+                and     bx, 0Fh
+                shl     bx, 1
+                mov     [bx+0DAh], cx
+                shr     bx, 1
+                call    sub_2B1
+                jmp     short loc_411
+; ---------------------------------------------------------------------------
+
+loc_43B:                                ; CODE XREF: snd_timer_isr+81↑j
+                                        ; DATA XREF: seg000:01A1↑o
+                mov     bl, al
+                and     bx, 0Fh
+                push    bx
+                mov     al, es:[si]
+                inc     si
+                call    sub_354
+                pop     bx
+                push    cx
+                call    sub_2B1
+                pop     cx
+                or      cx, 2000h
+                xor     bh, bh
+                shl     bx, 1
+                mov     [bx+0DAh], cx
+                shr     bx, 1
+                call    sub_2B1
+                jmp     short loc_411
+; ---------------------------------------------------------------------------
+
+loc_461:                                ; CODE XREF: snd_timer_isr+81↑j
+                                        ; DATA XREF: seg000:01A3↑o
+                push    ax
+                mov     al, es:[si]
+                inc     si
+                call    sub_354
+                or      cx, 2000h
+                pop     bx
+                and     bx, 0Fh
+                shl     bx, 1
+                mov     [bx+0DAh], cx
+                shr     bx, 1
+                call    sub_2B1
+                jmp     short loc_411
+; ---------------------------------------------------------------------------
+
+loc_47E:                                ; CODE XREF: snd_timer_isr+81↑j
+                                        ; DATA XREF: seg000:01A5↑o
+                mov     bl, al
+                and     bx, 0Fh
+                mov     ah, es:[si]
+                inc     si
+                mov     [bx+0ECh], ah
+                call    sub_29E
+                jmp     short loc_411
+; ---------------------------------------------------------------------------
+
+loc_490:                                ; CODE XREF: snd_timer_isr+81↑j
+                                        ; DATA XREF: seg000:01A7↑o
+                mov     bl, al
+                and     bx, 0Fh
+                mov     ah, es:[si]
+                inc     si
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_49C:                                ; CODE XREF: snd_timer_isr+81↑j
+                                        ; DATA XREF: seg000:01A9↑o
+                inc     si
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_4A0:                                ; CODE XREF: snd_timer_isr+81↑j
+                                        ; DATA XREF: seg000:01AB↑o
+                mov     bl, al
+                and     bx, 0Fh
+                mov     al, es:[si]
+                inc     si
+                mov     ah, al
+                mov     cl, 4
+                shr     ah, cl
+                and     al, 0Fh
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_4B4:                                ; CODE XREF: snd_timer_isr+81↑j
+                                        ; DATA XREF: seg000:01AD↑o
+                mov     bl, es:[si]
+                inc     si
+                xor     bh, bh
+                push    si
+                mov     si, bx
+                mov     bx, ax
+                and     bx, 0Fh
+                call    sub_30B
+                pop     si
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_4C9:                                ; CODE XREF: snd_timer_isr+81↑j
+                                        ; DATA XREF: seg000:01AF↑o
+                and     ax, 0Fh
+                dec     ax
+                jz      short loc_4E2
+                dec     ax
+                jz      short loc_51A
+                dec     ax
+                jz      short loc_528
+                dec     ax
+                dec     ax
+                jz      short loc_53A
+                dec     ax
+                jz      short loc_4DF
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_4DF:                                ; CODE XREF: snd_timer_isr+13D↑j
+                jmp     short loc_54D
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0E8h
-                db 0B4h
-                db 0FEh
-                db  8Ah
-                db 0A7h
-                db  2Eh ; .
-                db    1
-                db 0C6h
-                db  87h
-                db  2Eh ; .
-                db    1
-                db    0
-                db  80h
-                db 0E4h
-                db  7Fh ; 
-                db  88h
-                db 0A7h
-                db  1Eh
-                db    1
-                db 0E8h
-                db 0A1h
-                db 0FEh
-                db  8Ah
-                db 0A7h
-                db  3Eh ; >
-                db    1
-                db  80h
-                db 0E4h
-                db  7Fh ; 
-                db 0E8h
-                db  97h
-                db 0FEh
-                db  59h ; Y
-                db  43h ; C
-                db 0E2h
-                db 0C5h
-                db 0C4h
-                db  36h ; 6
-                db 0D2h
-                db    0
-                db  8Bh
-                db  36h ; 6
-                db 0D6h
-                db    0
-                db  80h
-                db  3Eh ; >
-                db 0F5h
-                db    0
-                db    0
-                db  74h ; t
-                db    9
-                db 0FEh
-                db  0Eh
-                db 0F5h
-                db    0
-                db  74h ; t
-                db    3
-                db 0E9h
-                db  82h
-                db    1
-                db  26h ; &
-                db  8Ah
-                db    4
-                db  46h ; F
-                db  8Ah
-                db 0D8h
-                db 0B1h
-                db    3
-                db 0D2h
-                db 0EBh
-                db  83h
-                db 0E3h
-                db  1Eh
-                db 0FFh
-                db 0A7h
-                db  9Fh
-                db    1
-                db  50h ; P
-                db  26h ; &
-                db  8Ah
-                db    4
-                db  46h ; F
-                db 0E8h
-                db  2Ah ; *
-                db 0FFh
-                db  5Bh ; [
-                db  83h
-                db 0E3h
-                db  0Fh
-                db 0D1h
-                db 0E3h
-                db  89h
-                db  8Fh
-                db 0DAh
-                db    0
-                db 0D1h
-                db 0EBh
-                db 0E8h
-                db  78h ; x
-                db 0FEh
-                db 0EBh
-                db 0D6h
-                db  8Ah
-                db 0D8h
-                db  83h
-                db 0E3h
-                db  0Fh
-                db  53h ; S
-                db  26h ; &
-                db  8Ah
-                db    4
-                db  46h ; F
-                db 0E8h
-                db  0Ch
-                db 0FFh
-                db  5Bh ; [
-                db  51h ; Q
-                db 0E8h
-                db  64h ; d
-                db 0FEh
-                db  59h ; Y
-                db  81h
-                db 0C9h
-                db    0
-                db  20h
-                db  32h ; 2
-                db 0FFh
-                db 0D1h
-                db 0E3h
-                db  89h
-                db  8Fh
-                db 0DAh
-                db    0
-                db 0D1h
-                db 0EBh
-                db 0E8h
-                db  52h ; R
-                db 0FEh
-                db 0EBh
-                db 0B0h
-                db  50h ; P
-                db  26h ; &
-                db  8Ah
-                db    4
-                db  46h ; F
-                db 0E8h
-                db 0EBh
-                db 0FEh
-                db  81h
-                db 0C9h
-                db    0
-                db  20h
-                db  5Bh ; [
-                db  83h
-                db 0E3h
-                db  0Fh
-                db 0D1h
-                db 0E3h
-                db  89h
-                db  8Fh
-                db 0DAh
-                db    0
-                db 0D1h
-                db 0EBh
-                db 0E8h
-                db  35h ; 5
-                db 0FEh
-                db 0EBh
-                db  93h
-                db  8Ah
-                db 0D8h
-                db  83h
-                db 0E3h
-                db  0Fh
-                db  26h ; &
-                db  8Ah
-                db  24h ; $
-                db  46h ; F
-                db  88h
-                db 0A7h
-                db 0ECh
-                db    0
-                db 0E8h
-                db  10h
-                db 0FEh
-                db 0EBh
-                db  81h
-                db  8Ah
-                db 0D8h
-                db  83h
-                db 0E3h
-                db  0Fh
-                db  26h ; &
-                db  8Ah
-                db  24h ; $
-                db  46h ; F
-                db 0E9h
-                db  75h ; u
-                db 0FFh
-                db  46h ; F
-                db 0E9h
-                db  71h ; q
-                db 0FFh
-                db  8Ah
-                db 0D8h
-                db  83h
-                db 0E3h
-                db  0Fh
-                db  26h ; &
-                db  8Ah
-                db    4
-                db  46h ; F
-                db  8Ah
-                db 0E0h
-                db 0B1h
-                db    4
-                db 0D2h
-                db 0ECh
-                db  24h ; $
-                db  0Fh
-                db 0E9h
-                db  5Dh ; ]
-                db 0FFh
-                db  26h ; &
-                db  8Ah
-                db  1Ch
-                db  46h ; F
-                db  32h ; 2
-                db 0FFh
-                db  56h ; V
-                db  8Bh
-                db 0F3h
-                db  8Bh
-                db 0D8h
-                db  83h
-                db 0E3h
-                db  0Fh
-                db 0E8h
-                db  46h ; F
-                db 0FEh
-                db  5Eh ; ^
-                db 0E9h
-                db  48h ; H
-                db 0FFh
-                db  25h ; %
-                db  0Fh
-                db    0
-                db  48h ; H
-                db  74h ; t
-                db  13h
-                db  48h ; H
-                db  74h ; t
-                db  48h ; H
-                db  48h ; H
-                db  74h ; t
-                db  53h ; S
-                db  48h ; H
-                db  48h ; H
-                db  74h ; t
-                db  61h ; a
-                db  48h ; H
-                db  74h ; t
-                db    3
-                db 0E9h
-                db  32h ; 2
-                db 0FFh
-                db 0EBh
-                db  6Ch ; l
+; ---------------------------------------------------------------------------
+
+loc_4E2:                                ; CODE XREF: snd_timer_isr+130↑j
+                mov     bx, ds:word_D0
+                cmp     bx, 20h ; ' '
+                jnb     short loc_517
+                mov     al, es:[si]
+                inc     si
+                xor     ah, ah
+                mov     [bx+50h], ax
+                mov     ax, si
+                sub     ax, word ptr ds:dword_D2
+                add     ax, 2
+                mov     [bx+10h], ax
+                mov     ax, es:[si]
+                add     si, 2
+                add     ax, word ptr ds:dword_D2
+                mov     si, ax
+                mov     [bx+90h], ax
+                add     ds:word_D0, 2
+
+loc_517:                                ; CODE XREF: snd_timer_isr+14C↑j
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_51A:                                ; CODE XREF: snd_timer_isr+133↑j
+                mov     al, es:[si]
+                inc     si
+                mov     ds:byte_F5, al
+                mov     ds:word_D6, si
+                jmp     short loc_593
+; ---------------------------------------------------------------------------
                 db  90h
-                db  8Bh
-                db  1Eh
-                db 0D0h
-                db    0
-                db  83h
-                db 0FBh
-                db  20h
-                db  73h ; s
-                db  2Ch ; ,
-                db  26h ; &
-                db  8Ah
-                db    4
-                db  46h ; F
-                db  32h ; 2
-                db 0E4h
-                db  89h
-                db  87h
-                db  50h ; P
-                db    0
-                db  8Bh
-                db 0C6h
-                db  2Bh ; +
-                db    6
-                db 0D2h
-                db    0
-                db    5
-                db    2
-                db    0
-                db  89h
-                db  87h
-                db  10h
-                db    0
-                db  26h ; &
-                db  8Bh
-                db    4
-                db  83h
-                db 0C6h
-                db    2
-                db    3
-                db    6
-                db 0D2h
-                db    0
-                db  8Bh
-                db 0F0h
-                db  89h
-                db  87h
-                db  90h
-                db    0
-                db  83h
-                db    6
-                db 0D0h
-                db    0
-                db    2
-                db 0E9h
-                db 0F7h
-                db 0FEh
-                db  26h ; &
-                db  8Ah
-                db    4
-                db  46h ; F
-                db 0A2h
-                db 0F5h
-                db    0
-                db  89h
-                db  36h ; 6
-                db 0D6h
-                db    0
-                db 0EBh
-                db  6Ch ; l
-                db  90h
-                db  26h ; &
-                db  8Ah
-                db  1Ch
-                db  46h ; F
-                db  32h ; 2
-                db 0FFh
-                db 0D1h
-                db 0E3h
-                db  89h
-                db 0B7h
-                db 0F6h
-                db    0
-                db  83h
-                db 0C6h
-                db  0Bh
-                db 0E9h
-                db 0D7h
-                db 0FEh
-                db  26h ; &
-                db  8Ah
-                db    4
-                db  46h ; F
-                db  8Ah
-                db 0D8h
-                db 0B1h
-                db    4
-                db 0D2h
-                db 0EBh
-                db  32h ; 2
-                db 0FFh
-                db  24h ; $
-                db  0Fh
-                db 0FEh
-                db 0C0h
-                db 0E9h
-                db 0C4h
-                db 0FEh
-                db  26h ; &
-                db  8Ah
-                db    4
-                db  46h ; F
-                db  8Ah
-                db 0D8h
-                db 0B1h
-                db    4
-                db 0D2h
-                db 0EBh
-                db  32h ; 2
-                db 0FFh
-                db  24h ; $
-                db  0Fh
-                db 0FEh
-                db 0C0h
-                db 0E9h
-                db 0B1h
-                db 0FEh
-                db  89h
-                db  36h ; 6
-                db 0D8h
-                db    0
-                db 0E9h
-                db 0AAh
-                db 0FEh
-                db  8Bh
-                db  1Eh
-                db 0D0h
-                db    0
-                db  0Bh
-                db 0DBh
-                db  74h ; t
-                db  1Dh
-                db 0FFh
-                db  8Fh
-                db  4Eh ; N
-                db    0
-                db  74h ; t
-                db    7
-                db  8Bh
-                db 0B7h
-                db  8Eh
-                db    0
-                db 0E9h
-                db  95h
-                db 0FEh
-                db  8Bh
-                db 0B7h
-                db  0Eh
-                db    0
-                db    3
-                db  36h ; 6
-                db 0D2h
-                db    0
-                db  83h
-                db  2Eh ; .
-                db 0D0h
-                db    0
-                db    2
-                db 0E9h
-                db  85h
-                db 0FEh
-                db  8Bh
-                db  36h ; 6
-                db 0D8h
-                db    0
-                db 0E9h
-                db  7Eh ; ~
-                db 0FEh
-                db    7
-                db  1Fh
-                db  5Fh ; _
-                db  5Eh ; ^
-                db  5Ah ; Z
-                db  59h ; Y
-                db  5Bh ; [
-                db  58h ; X
-                db  2Eh ; .
-                db 0C7h
-                db    6
-                db  1Ah
-                db    1
-                db    0
-                db    0
-                db  2Eh ; .
-                db  81h
-                db    6
-                db  1Ch
-                db    1
-                db 0AEh
-                db  4Dh ; M
-                db  72h ; r
-                db    8
-                db 0FBh
-                db  50h ; P
-                db 0B0h
-                db  20h
-                db 0E6h
-                db  20h
-                db  58h ; X
-                db 0CFh
-                db 0FAh
-                db  2Eh ; .
-                db 0FFh
-                db  2Eh ; .
-                db  16h
-                db    1
+; ---------------------------------------------------------------------------
+
+loc_528:                                ; CODE XREF: snd_timer_isr+136↑j
+                mov     bl, es:[si]
+                inc     si
+                xor     bh, bh
+                shl     bx, 1
+                mov     [bx+0F6h], si
+                add     si, 0Bh
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_53A:                                ; CODE XREF: snd_timer_isr+13A↑j
+                mov     al, es:[si]
+                inc     si
+                mov     bl, al
+                mov     cl, 4
+                shr     bl, cl
+                xor     bh, bh
+                and     al, 0Fh
+                inc     al
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_54D:                                ; CODE XREF: snd_timer_isr:loc_4DF↑j
+                mov     al, es:[si]
+                inc     si
+                mov     bl, al
+                mov     cl, 4
+                shr     bl, cl
+                xor     bh, bh
+                and     al, 0Fh
+                inc     al
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_560:                                ; CODE XREF: snd_timer_isr+81↑j
+                                        ; DATA XREF: seg000:01BB↑o
+                mov     ds:word_D8, si
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_567:                                ; CODE XREF: snd_timer_isr+81↑j
+                                        ; DATA XREF: seg000:01BD↑o
+                mov     bx, ds:word_D0
+                or      bx, bx
+                jz      short loc_58C
+                dec     word ptr [bx+4Eh]
+                jz      short loc_57C
+                mov     si, [bx+8Eh]
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_57C:                                ; CODE XREF: snd_timer_isr+1D6↑j
+                mov     si, [bx+0Eh]
+                add     si, word ptr ds:dword_D2
+                sub     ds:word_D0, 2
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_58C:                                ; CODE XREF: snd_timer_isr+1D0↑j
+                mov     si, ds:word_D8
+                jmp     loc_411
+; ---------------------------------------------------------------------------
+
+loc_593:                                ; CODE XREF: snd_timer_isr+71↑j
+                                        ; snd_timer_isr+188↑j
+                pop     es
+                pop     ds
+                pop     di
+                pop     si
+                pop     dx
+                pop     cx
+                pop     bx
+                pop     ax
+                mov     cs:word_11A, 0
+                add     cs:word_11C, 4DAEh
+                jb      short loc_5B3
+
+loc_5AB:                                ; CODE XREF: snd_timer_isr+8↑j
+                sti
+                push    ax
+                mov     al, 20h ; ' '
+                out     20h, al         ; Interrupt controller, 8259A.
+                pop     ax
+                iret
+; ---------------------------------------------------------------------------
+
+loc_5B3:                                ; CODE XREF: snd_timer_isr+20C↑j
+                cli
+                jmp     cs:dword_116
+snd_timer_isr   endp
+
 seg000          ends
 
 
