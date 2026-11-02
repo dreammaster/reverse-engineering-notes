@@ -167,7 +167,14 @@ bool World::load(const std::string &dir, const NewCharacter *newGame, const std:
 			return fail("new game objlist");
 	} else {
 		std::string save = saveDir.empty() ? joinPath(dir, "SAVEGAME") : saveDir;
-		if (!readFile(joinPath(save, "OBJLIST"), d) || !actors.load(d))
+		if (!readFile(joinPath(save, "OBJLIST"), d))
+			return fail("SAVEGAME/OBJLIST");
+		if (spinoff && d.size() >= 0x15F1) {
+			// Martian Dreams and Savage Empire have one more 256-byte array in front of the movement points (0x14F1): everything after it is 0x100 further on than in Ultima VI
+			_spinoffExtra.assign(d.begin() + 0x14F1, d.begin() + 0x15F1);
+			d.erase(d.begin() + 0x14F1, d.begin() + 0x15F1);
+		}
+		if (!actors.load(d))
 			return fail("SAVEGAME/OBJLIST");
 		for (int row = 0; row < 8; ++row) {
 			for (int col = 0; col < 8; ++col) {
@@ -477,6 +484,8 @@ bool World::save(const std::string &saveDir) {
 	}
 	Bytes list;
 	actors.save(list);
+	if (game != GameId::Ultima6 && _spinoffExtra.size() == 0x100 && list.size() >= 0x14F1)
+		list.insert(list.begin() + 0x14F1, _spinoffExtra.begin(), _spinoffExtra.end());
 	if (!writeFile(joinPath(saveDir, "OBJLIST"), list))
 		return false;
 

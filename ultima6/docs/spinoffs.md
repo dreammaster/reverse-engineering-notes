@@ -53,3 +53,5 @@ Text now draws with the games' own proportional fonts (`Font::loadWou`, `TextWin
 (positions and colours), the left-hand button strip is only a picture, the colours of the party list, all prompts and rules.
 
 Conversations: `TALK.LZC` items hold the same scripts as Ultima VI's `CONVERSE.*` (`ff`, actor number, name, `f1`, description, code); the item number is *not* the actor number in Savage Empire (and item 30 of Martian Dreams), the script's second byte is, so `World::script` indexes them by that byte. 98 (MD) and 68 (SE) actors have a script; Martian Dreams' first item is a batch file. Talking works (`Talk`/`Conversation` unchanged); portraits are not drawn yet.
+
+`OBJLIST` of both spin-offs (7539 bytes, like the shipped Ultima VI save) is Ultima VI's layout with one extra 256-byte array inserted at 0x14F1 (before the movement points): everything from there on is 0x100 further (game time at 0x1CF3, Nuvie's `OBJLIST_OFFSET_WOU_GAMETIME`). `World::load` removes the array (and `save` puts it back); the clock then reads correctly (Martian Dreams starts on day 6 of month 1, year 1895).

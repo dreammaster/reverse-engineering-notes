@@ -158,6 +158,7 @@ private:
 	// index of objects by position: key = (z << 20) | (y << 10) | x, list kept in load order
 	std::vector<std::pair<uint32_t, int>> _byPosition; // sorted by key (stable)
 	std::vector<int> _actorObject;
+	Bytes _spinoffExtra; // the array the spin-offs' OBJLIST has at 0x14F1 and Ultima VI's does not
 };
 
 } // namespace Ultima6
