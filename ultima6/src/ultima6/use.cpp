@@ -114,6 +114,7 @@ void Game::useObject(int idx) {
 		message("\nSqueak!\n");
 	} else if (type == 0x61) {
 		message("\nYou study the scroll!\n");
+		_scrollStudied = true;
 	} else if (type == 0x113) {
 		message("On whom: ");
 		_useItem = idx;
@@ -602,6 +603,34 @@ void Game::explodeKeg() {
 		if (std::abs((int)_world.objects[k].x - kx) <= 1 && std::abs((int)_world.objects[k].y - ky) <= 1)
 			_combat.applyDamage(1, actor, 1 + _rng.next() % 60);
 	}
+}
+
+// read_book (6B7A): "\n\n", then the text of BOOK.DAT for the object's quality. In the text `&...&` marks a translation (shown only once a scroll has been
+// studied), `<...>` runic letters (the glyphs with the high bit), `*` a wait for a key.
+// APPROX(52): the wait for a key at `*` (and the window's page breaks, flag 0x10) is a blank line; the other escape characters (%, ^, \, @) are dropped
+void Game::readBook(int idx) {
+	message("\n\n");
+	std::string t = _world.bookText(_world.objects[idx].quality);
+	bool translation = false, runic = false;
+	std::string out;
+	for (char c : t) {
+		if (c == '&') {
+			translation = !translation;
+		} else if (translation && !_scrollStudied) {
+			continue;
+		} else if (c == '<') {
+			runic = true;
+		} else if (c == '>') {
+			runic = false;
+		} else if (c == '*') {
+			out += "\n";
+		} else if (c == '%' || c == '^' || c == '\\' || c == '@') {
+			continue;
+		} else {
+			out += runic && (uint8_t)c > 0x20 ? (char)((uint8_t)c | 0x80) : c;
+		}
+	}
+	message(out);
 }
 
 // The Use command's target: the objects on the square the player points at (cmd_use selects the top one).

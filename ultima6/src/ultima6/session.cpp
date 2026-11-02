@@ -290,6 +290,27 @@ void Game::look(int tx, int ty) {
 			if (arm > 0)
 				text += " and can absorb " + std::to_string(arm) + " point" + (arm == 1 ? "" : "s") + " of damage";
 		}
+		// the readable things (the table at ds:1CDA: 0x97, 0x3D, 0x98, 0x10E, 0x3B) are followed by what they say instead of the full stop
+		if (o.actor < 0 && (o.type == 0x97 || o.type == 0x3D || o.type == 0x98 || o.type == 0x10E || o.type == 0x3B)) {
+			message(text);
+			bool read = false;
+			std::vector<int> stack;
+			if (carriedObject(o))
+				stack.push_back(top);
+			else
+				for (size_t i = here.size(); i-- > 0;)
+					stack.push_back(here[i]);
+			for (int i : stack)
+				if (_world.objects[i].quality != 0) {
+					if (!read)
+						message(":");
+					readBook(i);
+					read = true;
+				}
+			message("\n");
+			prompt();
+			return;
+		}
 		text += ".\n";
 	}
 	message(text);

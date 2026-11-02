@@ -123,6 +123,19 @@ int main() {
 		CHECK(water);
 	}
 
+	// looking at a sign reads BOOK.DAT: quality 4 is "The bones of Zog."
+	{
+		int sign = put(w, 0x98, 0, px + 1, py, 0);
+		w.objects[sign].quality = 4;
+		w.moveObject(w.actorObject(1), px, py, 0);
+		g.x = px;
+		g.y = py;
+		g.handleKey('l');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find(":\n\nThe bones of Zog.") != std::string::npos);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

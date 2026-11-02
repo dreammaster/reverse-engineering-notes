@@ -79,6 +79,7 @@ bool World::load(const std::string &dir, const NewCharacter *newGame, const std:
 			return fail("LOOK.LZD");
 	}
 
+	readFile(joinPath(dir, "BOOK.DAT"), book); // optional: the text of books, scrolls and signs
 	if (!readFile(joinPath(dir, "SCHEDULE"), d) || !schedule.load(d))
 		return fail("SCHEDULE");
 	if (!readFile(joinPath(dir, "CONVERSE.A"), converse[0]) || !readFile(joinPath(dir, "CONVERSE.B"), converse[1]))
@@ -224,6 +225,16 @@ void World::inventory(int actor, std::vector<int> &out, bool nested) const {
 }
 
 // sub_1D8B1: block-3 weight times the quantity (gold and the reagents, the nine types of ds:081F, divided by ten); 255 means "cannot be moved" (10000)
+std::string World::bookText(int n) const {
+	if (n < 1 || n > 128 || book.size() < 256)
+		return "";
+	size_t off = book[(n - 1) * 2] | (book[(n - 1) * 2 + 1] << 8);
+	std::string out;
+	for (size_t i = off; i < book.size() && book[i]; ++i)
+		out += (char)book[i];
+	return out;
+}
+
 int World::weightOfType(int type, int quantity) const {
 	int w = flags.block3[type & (TileFlags::BLOCK3 - 1)];
 	if (isStackable(type) && quantity)

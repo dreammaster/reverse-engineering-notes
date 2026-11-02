@@ -64,6 +64,10 @@ public:
 		return _error;
 	}
 
+	/** BOOK.DAT: 128 word offsets, then the null-terminated texts (read_book, 6B7A). The text of quality `n` (1 to 128), or "" if there is none. */
+	std::string bookText(int n) const;
+	Bytes book;
+
 	TileSet tiles;
 	TileFlags flags;
 	BaseTile baseTile;
