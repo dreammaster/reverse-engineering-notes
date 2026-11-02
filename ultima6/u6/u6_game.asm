@@ -90331,7 +90331,7 @@ seg019          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_3A8B8       proc far                ; CODE XREF: sub_3A903+29↓p
+disk_present    proc far                ; CODE XREF: sub_3A903+29↓p
                                         ; require_disk+F0↓p
 
 arg_0           = byte ptr  6
@@ -90353,7 +90353,7 @@ arg_0           = byte ptr  6
                 push    si
                 call    file_close
 
-loc_3A8E6:                              ; CODE XREF: sub_3A8B8+26↑j
+loc_3A8E6:                              ; CODE XREF: disk_present+26↑j
                 mov     word ptr off_3DB7E+2, seg seg001
                 mov     word ptr off_3DB7E, 430h
                 cmp     si, 0FFFFh
@@ -90362,14 +90362,14 @@ loc_3A8E6:                              ; CODE XREF: sub_3A8B8+26↑j
                 jmp     short loc_3A8FE
 ; ---------------------------------------------------------------------------
 
-loc_3A8FC:                              ; CODE XREF: sub_3A8B8+3D↑j
+loc_3A8FC:                              ; CODE XREF: disk_present+3D↑j
                 xor     ax, ax
 
-loc_3A8FE:                              ; CODE XREF: sub_3A8B8+42↑j
+loc_3A8FE:                              ; CODE XREF: disk_present+42↑j
                 pop     si
                 pop     bp
                 retf    2
-sub_3A8B8       endp
+disk_present    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -90402,7 +90402,7 @@ arg_0           = word ptr  6
 loc_3A92A:                              ; CODE XREF: sub_3A903+3B↓j
                 push    si
                 push    cs
-                call    near ptr sub_3A8B8
+                call    near ptr disk_present
                 or      ax, ax
                 jz      short loc_3A93A
                 mov     al, byte ptr [bp+var_2]
@@ -90543,7 +90543,7 @@ loc_3AA23:                              ; CODE XREF: require_disk+12E↓j
                 call    sub_3B2A3
                 push    di
                 push    cs
-                call    near ptr sub_3A8B8
+                call    near ptr disk_present
                 or      ax, ax
                 jz      short loc_3AA71
                 mov     ax, si
@@ -103082,8 +103082,8 @@ byte_406FA      db 0                    ; DATA XREF: sub_3AB16+FD↑w
                 db    0
                 db    0
                 db    0
-aU61            db 'u6.1',0             ; DATA XREF: sub_3A8B8+18↑o
-                                        ; sub_3A8B8+15↑w
+aU61            db 'u6.1',0             ; DATA XREF: disk_present+18↑o
+                                        ; disk_present+15↑w
                 db    0
                 db  50h ; P
                 db  72h ; r

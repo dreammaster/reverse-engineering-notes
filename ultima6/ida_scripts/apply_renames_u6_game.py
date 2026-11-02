@@ -40,6 +40,7 @@ FUNCTIONS = [
     (0x11474, "load_palette", "loads U6PAL (0x300 bytes, VGA only) and sets it through the video driver"),
     (0x14A6A, "load_world_data", "loads SCHEDULE, BASETILE, savegame\\objlist (all arrays, layout in docs/u6_game.md) and CHUNKS"),
     (0x14EDF, "save_objlist", "writes savegame\\objlist: same arrays in the same order as load_world_data"),
+    (0x3A8B8, "disk_present", "disk_present(n): 1 if the marker file U6.n can be opened (U6.1-U6.8 identify the floppy disks)"),
     (0x3A947, "require_disk", "prompts to insert disk N (4 = program disk, 8 = save disk, 5 = ...) if it is not the current one (word_406EA)"),
     (0x1D0DB, "load_look_data", "loads LOOK.LZD (the object description table)"),
     (0x1D15C, "get_object_name", "copies the description of an object type from the look data ('Nothing' when none); 31 callers"),
@@ -177,7 +178,7 @@ DATA = [
     (0x40A7E, "mem_next_free", "far ptr: next free byte of the start-up block"),
     (0x40A82, "mem_bytes_left", "dword"),
     (0x4C508, "video_driver_call", "far ptr; the offset is set to a driver entry number before each call (3 = shut down, 0x24 = set palette, 0x2A = init ...)"),
-    (0x3DA18, "video_mode", "0 = VGA/MCGA, 1 = EGA, 2 = CGA, 3 = ?, 4 = Hercules (see _main's scan-line table set-up)"),
+    (0x3DA18, "video_mode", "0 VGA, 1 EGA, 2 Tandy, 3 CGA, 4 Hercules (letters v e t c h of CONFIG.U6; see _main's scan-line table set-up)"),
 ]
 
 

@@ -32,9 +32,17 @@ no free.
 
 **Video**: the graphics driver (`EGADRV.BIN`, `MCGADRV.BIN`, `CGADRV.BIN`, `TGADRV.BIN` / `U6*.DRV`) is loaded into memory and
 entered through the far pointer `video_driver_call` (`4C508`): the offset is set to an entry number before each `call` (3 = shut
-down, 0x24 = set palette, 0x2A = initialise ...). `video_mode` (`3DA18`) is 0 = VGA/MCGA, 1 = EGA, 2 = CGA, 3 = Tandy?, 4 =
-Hercules; `_main` builds a per-mode table of the 200 scan-line start offsets (stride 0x140 for VGA, 0x28 for EGA, 0xA0/0x50
-interleaved banks at B800h for CGA/Tandy, 0x5A with 2000h bank steps for Hercules).
+down, 0x24 = set palette, 0x2A = initialise ...). `video_mode` (`3DA18`) is 0 = VGA/MCGA, 1 = EGA, 2 = Tandy, 3 = CGA, 4 =
+Hercules (the letters `v e t c h` of `CONFIG.U6`); `_main` builds a per-mode table of the 200 scan-line start offsets (stride 0x140 for VGA, 0x28 for EGA, 0xA0 over four
+2000h-byte banks at B800h for Tandy, 0x50 over two banks for CGA, 0x5A with 2000h bank steps for Hercules).
+
+## Settings and disks
+
+`CONFIG.U6` is a short text string written by the set-up: one letter for the video mode (`v` VGA, `e` EGA, `t` Tandy, `c` CGA, `h` Hercules),
+`m` or `k` for mouse or keyboard, one for the sound device (`n` none, `a` AdLib, `x` CMS, `y` Tandy music, `r` Roland, `z` Covox, `i` Innova) and,
+for devices that have them, three digits of port or IRQ: the shipped file reads `vma388` (VGA, mouse, AdLib at port 388). `make_config_string` (`1166B`) builds the same
+string to pass to `END.EXE`. `U6.1`-`U6.8` are marker files that identify the floppy disks; `require_disk(n)` asks for a disk until
+`disk_present(n)` (`3A8B8`) can open `U6.n`. `MIDI.DAT` is a text file explaining the assignment of voices to MIDI channels for the Roland driver.
 
 ## Start-up order of GAME.EXE (`_main`)
 

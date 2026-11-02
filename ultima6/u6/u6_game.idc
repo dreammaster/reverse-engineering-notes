@@ -31405,6 +31405,7 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X3A8B5);
 	create_insn	(0X3A8B8);
+	set_name	(0X3A8B8,	"disk_present");
 	create_insn	(x=0X3A8BC);
 	op_seg		(x,	1);
 	create_insn	(x=0X3A8C8);
