@@ -382,15 +382,15 @@ loc_1022D:                              ; CODE XREF: seg000:0169↑j
 ; ---------------------------------------------------------------------------
 word_1023E      dw 0                    ; DATA XREF: start+3↑w
                                         ; start+BF↑r ...
-                dd unk_47AB2            ; DATA XREF: sub_10245+5↓r
-                                        ; sub_10245+1A↓r ...
+off_10240       dd unk_47AB2            ; DATA XREF: file_open+5↓r
+                                        ; file_open+1A↓r ...
 ; [00000001 BYTES: COLLAPSED FUNCTION nullsub_1. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_10245       proc far                ; CODE XREF: seg000:0562↓p
+file_open       proc far                ; CODE XREF: seg000:0562↓p
                                         ; seg001:01D7↓P ...
 
 arg_0           = word ptr  6
@@ -401,7 +401,7 @@ arg_0           = word ptr  6
                 push    di
                 mov     es, word ptr cs:off_10240+2
 
-loc_1024F:                              ; CODE XREF: sub_10245+33↓j
+loc_1024F:                              ; CODE XREF: file_open+33↓j
                 mov     dx, [bp+arg_0]
                 mov     es:word_402B2, dx
                 mov     ax, 3D02h
@@ -421,19 +421,19 @@ loc_1024F:                              ; CODE XREF: sub_10245+33↓j
                 mov     ax, 0FFFFh
                 stc
 
-loc_1027E:                              ; CODE XREF: sub_10245+17↑j
+loc_1027E:                              ; CODE XREF: file_open+17↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf    2
-sub_10245       endp
+file_open       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_10284       proc far                ; CODE XREF: seg000:05E8↓p
+file_close      proc far                ; CODE XREF: seg000:05E8↓p
                                         ; seg000:05F0↓p ...
 
 arg_0           = word ptr  6
@@ -443,7 +443,7 @@ arg_0           = word ptr  6
                 push    si
                 push    di
 
-loc_10289:                              ; CODE XREF: sub_10284+28↓j
+loc_10289:                              ; CODE XREF: file_close+28↓j
                 mov     bx, [bp+arg_0]
                 mov     ah, 3Eh
                 int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
@@ -460,19 +460,19 @@ loc_10289:                              ; CODE XREF: sub_10284+28↓j
                 mov     ax, 0FFFFh
                 stc
 
-loc_102B2:                              ; CODE XREF: sub_10284+C↑j
+loc_102B2:                              ; CODE XREF: file_close+C↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf    2
-sub_10284       endp
+file_close      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_102B8       proc far                ; CODE XREF: sub_2DDA8+16↓P
+file_create     proc far                ; CODE XREF: sub_2DDA8+16↓P
                                         ; sub_2DDA8+105↓P ...
 
 arg_0           = word ptr  6
@@ -484,7 +484,7 @@ arg_0           = word ptr  6
                 mov     dx, seg dseg
                 mov     es, dx
 
-loc_102C2:                              ; CODE XREF: sub_102B8+34↓j
+loc_102C2:                              ; CODE XREF: file_create+34↓j
                 mov     ah, 3Ch ; '<'
                 xor     cx, cx
                 mov     dx, [bp+arg_0]
@@ -504,19 +504,19 @@ loc_102C2:                              ; CODE XREF: sub_102B8+34↓j
                 mov     ax, 0FFFFh
                 stc
 
-loc_102F2:                              ; CODE XREF: sub_102B8+18↑j
+loc_102F2:                              ; CODE XREF: file_create+18↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf    2
-sub_102B8       endp
+file_create     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_102F8       proc far                ; CODE XREF: sub_2DD62+34↓P
+file_delete     proc far                ; CODE XREF: sub_2DD62+34↓P
                                         ; sub_2DDA8+C1↓P ...
 
 arg_0           = word ptr  6
@@ -528,7 +528,7 @@ arg_0           = word ptr  6
                 mov     dx, seg dseg
                 mov     es, dx
 
-loc_10302:                              ; CODE XREF: sub_102F8+32↓j
+loc_10302:                              ; CODE XREF: file_delete+32↓j
                 mov     ah, 41h ; 'A'
                 mov     dx, [bp+arg_0]
                 mov     es:word_402B2, dx
@@ -546,19 +546,19 @@ loc_10302:                              ; CODE XREF: sub_102F8+32↓j
                 mov     ax, 0FFFFh
                 stc
 
-loc_10330:                              ; CODE XREF: sub_102F8+16↑j
+loc_10330:                              ; CODE XREF: file_delete+16↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf    2
-sub_102F8       endp
+file_delete     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_10336       proc far                ; CODE XREF: seg000:05AE↓p
+file_read       proc far                ; CODE XREF: seg000:05AE↓p
                                         ; seg001:01F3↓P ...
 
 var_4           = word ptr -4
@@ -594,15 +594,15 @@ arg_C           = word ptr  12h
                 jmp     loc_1040D
 ; ---------------------------------------------------------------------------
 
-loc_10372:                              ; CODE XREF: sub_10336+1B↑j
-                                        ; sub_10336+25↑j ...
+loc_10372:                              ; CODE XREF: file_read+1B↑j
+                                        ; file_read+25↑j ...
                 test    [bp+arg_6], 0FFFFh
                 jnz     short loc_1037F
                 cmp     [bp+arg_4], 0FFF0h
                 jbe     short loc_103C3
 
-loc_1037F:                              ; CODE XREF: sub_10336+41↑j
-                                        ; sub_10336+70↓j
+loc_1037F:                              ; CODE XREF: file_read+41↑j
+                                        ; file_read+70↓j
                 mov     ah, 3Fh ; '?'
                 mov     bx, [bp+arg_C]
                 mov     cx, 0FFF0h
@@ -618,7 +618,7 @@ loc_1037F:                              ; CODE XREF: sub_10336+41↑j
                 test    word_402AE, 0FFFFh
                 jz      short loc_1037F
 
-loc_103A8:                              ; CODE XREF: sub_10336+56↑j
+loc_103A8:                              ; CODE XREF: file_read+56↑j
                 add     [bp+var_4], ax
                 adc     [bp+var_2], 0
                 cmp     ax, 0FFF0h
@@ -629,8 +629,8 @@ loc_103A8:                              ; CODE XREF: sub_10336+56↑j
                 jmp     short loc_10372
 ; ---------------------------------------------------------------------------
 
-loc_103C3:                              ; CODE XREF: sub_10336+47↑j
-                                        ; sub_10336+B4↓j
+loc_103C3:                              ; CODE XREF: file_read+47↑j
+                                        ; file_read+B4↓j
                 mov     ah, 3Fh ; '?'
                 mov     bx, [bp+arg_C]
                 mov     cx, [bp+arg_4]
@@ -646,20 +646,20 @@ loc_103C3:                              ; CODE XREF: sub_10336+47↑j
                 test    word_402AE, 0FFFFh
                 jz      short loc_103C3
 
-loc_103EC:                              ; CODE XREF: sub_10336+9A↑j
+loc_103EC:                              ; CODE XREF: file_read+9A↑j
                 add     [bp+var_4], ax
                 adc     [bp+var_2], 0
                 cmp     ax, [bp+arg_4]
                 jz      short loc_1040D
 
-loc_103F8:                              ; CODE XREF: sub_10336+7C↑j
+loc_103F8:                              ; CODE XREF: file_read+7C↑j
                 mov     ds, word ptr cs:off_10240+2
                 mov     word_402AE, 0FFFFh
                 mov     word_402B0, 5
                 call    off_402AA
 
-loc_1040D:                              ; CODE XREF: sub_10336+39↑j
-                                        ; sub_10336+C0↑j
+loc_1040D:                              ; CODE XREF: file_read+39↑j
+                                        ; file_read+C0↑j
                 mov     ax, [bp+var_4]
                 mov     dx, [bp+var_2]
                 pop     ds
@@ -668,14 +668,14 @@ loc_1040D:                              ; CODE XREF: sub_10336+39↑j
                 mov     sp, bp
                 pop     bp
                 retf    0Eh
-sub_10336       endp
+file_read       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1041C       proc far                ; CODE XREF: seg000:05D0↓p
+file_write      proc far                ; CODE XREF: seg000:05D0↓p
                                         ; sub_2DDA8+2E↓P ...
 
 arg_0           = dword ptr  6
@@ -706,15 +706,15 @@ arg_C           = word ptr  12h
                 jmp     loc_104D8
 ; ---------------------------------------------------------------------------
 
-loc_1044B:                              ; CODE XREF: sub_1041C+E↑j
-                                        ; sub_1041C+18↑j ...
+loc_1044B:                              ; CODE XREF: file_write+E↑j
+                                        ; file_write+18↑j ...
                 test    [bp+arg_6], 0FFFFh
                 jnz     short loc_10458
                 cmp     [bp+arg_4], 0FFF0h
                 jbe     short loc_10495
 
-loc_10458:                              ; CODE XREF: sub_1041C+34↑j
-                                        ; sub_1041C+63↓j
+loc_10458:                              ; CODE XREF: file_write+34↑j
+                                        ; file_write+63↓j
                 mov     ah, 40h ; '@'
                 mov     bx, [bp+arg_C]
                 mov     cx, 0FFF0h
@@ -729,7 +729,7 @@ loc_10458:                              ; CODE XREF: sub_1041C+34↑j
                 test    word_402AE, 0FFFFh
                 jz      short loc_10458
 
-loc_10481:                              ; CODE XREF: sub_1041C+49↑j
+loc_10481:                              ; CODE XREF: file_write+49↑j
                 cmp     ax, 0FFF0h
                 jnz     short loc_104C3
                 sub     [bp+arg_4], 0FFF0h
@@ -738,8 +738,8 @@ loc_10481:                              ; CODE XREF: sub_1041C+49↑j
                 jmp     short loc_1044B
 ; ---------------------------------------------------------------------------
 
-loc_10495:                              ; CODE XREF: sub_1041C+3A↑j
-                                        ; sub_1041C+A0↓j
+loc_10495:                              ; CODE XREF: file_write+3A↑j
+                                        ; file_write+A0↓j
                 mov     ah, 40h ; '@'
                 mov     bx, [bp+arg_C]
                 mov     cx, [bp+arg_4]
@@ -754,32 +754,32 @@ loc_10495:                              ; CODE XREF: sub_1041C+3A↑j
                 test    word_402AE, 0FFFFh
                 jz      short loc_10495
 
-loc_104BE:                              ; CODE XREF: sub_1041C+86↑j
+loc_104BE:                              ; CODE XREF: file_write+86↑j
                 cmp     ax, [bp+arg_4]
                 jz      short loc_104D8
 
-loc_104C3:                              ; CODE XREF: sub_1041C+68↑j
+loc_104C3:                              ; CODE XREF: file_write+68↑j
                 mov     ds, word ptr cs:off_10240+2
                 mov     word_402AE, 0FFFFh
                 mov     word_402B0, 6
                 call    off_402AA
 
-loc_104D8:                              ; CODE XREF: sub_1041C+2C↑j
-                                        ; sub_1041C+A5↑j
+loc_104D8:                              ; CODE XREF: file_write+2C↑j
+                                        ; file_write+A5↑j
                 pop     ds
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf    0Eh
-sub_1041C       endp
+file_write      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_104E1       proc far                ; CODE XREF: sub_2DDA8+D6↓P
+file_rename     proc far                ; CODE XREF: sub_2DDA8+D6↓P
                                         ; sub_2EB2A+7C↓P
 
 arg_0           = word ptr  6
@@ -790,7 +790,7 @@ arg_2           = word ptr  8
                 push    si
                 push    di
 
-loc_104E6:                              ; CODE XREF: sub_104E1+39↓j
+loc_104E6:                              ; CODE XREF: file_rename+39↓j
                 mov     ah, 56h ; 'V'
                 mov     es, word ptr cs:off_10240+2
                 mov     dx, [bp+arg_2]
@@ -813,12 +813,12 @@ loc_104E6:                              ; CODE XREF: sub_104E1+39↓j
                 mov     ax, 0FFFFh
                 stc
 
-loc_10520:                              ; CODE XREF: sub_104E1+1D↑j
+loc_10520:                              ; CODE XREF: file_rename+1D↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf    4
-sub_104E1       endp
+file_rename     endp
 
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -850,7 +850,7 @@ sub_104E1       endp
                 mov     ax, [bp+8]
                 push    ax
                 push    cs
-                call    near ptr sub_10245
+                call    near ptr file_open
                 jb      short loc_1057A
                 mov     [bp-0Ch], ax
                 mov     ah, 3Ch ; '<'
@@ -894,7 +894,7 @@ loc_10595:                              ; CODE XREF: seg000:0578↑j
                 xor     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_10336
+                call    near ptr file_read
                 mov     [bp-0Ah], ax
                 mov     [bp-8], dx
                 mov     ax, [bp-0Eh]
@@ -911,7 +911,7 @@ loc_10595:                              ; CODE XREF: seg000:0578↑j
                 xor     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_1041C
+                call    near ptr file_write
                 mov     ax, [bp-8]
                 cmp     ax, [bp-4]
                 jb      short loc_105E3
@@ -923,11 +923,11 @@ loc_105E3:                              ; CODE XREF: seg000:05D9↑j
                 mov     ax, [bp-0Ch]
                 push    ax
                 push    cs
-                call    near ptr sub_10284
+                call    near ptr file_close
                 mov     ax, [bp-0Eh]
                 push    ax
                 push    cs
-                call    near ptr sub_10284
+                call    near ptr file_close
                 mov     ah, 49h ; 'I'
                 mov     es, word ptr [bp-2]
                 int     21h             ; DOS - 2+ - FREE MEMORY
@@ -7862,7 +7862,7 @@ loc_12E8C:                              ; CODE XREF: seg001:01B0↑j
                 jnz     short loc_12ED0
                 lea     ax, [bp-12h]
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     di, ax
                 push    ax
                 xor     ax, ax
@@ -7875,9 +7875,9 @@ loc_12E8C:                              ; CODE XREF: seg001:01B0↑j
                 push    ax
                 push    word ptr [bp+0Ah]
                 push    word ptr [bp+8]
-                call    sub_10336
+                call    file_read
                 push    di
-                call    sub_10284
+                call    file_close
                 jmp     short loc_12EEC
 ; ---------------------------------------------------------------------------
 
@@ -8106,7 +8106,7 @@ loc_130A8:                              ; CODE XREF: sub_12FA2+100↑j
                 mov     word_44B74, dx
                 mov     ax, 215h
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     si, ax
                 push    ax
                 xor     ax, ax
@@ -8119,7 +8119,7 @@ loc_130A8:                              ; CODE XREF: sub_12FA2+100↑j
                 push    ds
                 mov     ax, 9CC2h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -8132,7 +8132,7 @@ loc_130A8:                              ; CODE XREF: sub_12FA2+100↑j
                 push    ds
                 mov     ax, 0B4C8h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -8145,7 +8145,7 @@ loc_130A8:                              ; CODE XREF: sub_12FA2+100↑j
                 push    ds
                 mov     ax, 770Eh
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -8158,7 +8158,7 @@ loc_130A8:                              ; CODE XREF: sub_12FA2+100↑j
                 push    ds
                 mov     ax, 3240h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -8171,12 +8171,12 @@ loc_130A8:                              ; CODE XREF: sub_12FA2+100↑j
                 push    ds
                 mov     ax, 0B50Ch
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    si
-                call    sub_10284
+                call    file_close
                 mov     ax, 21Eh
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     di, ax
                 push    ax
                 xor     ax, ax
@@ -8188,7 +8188,7 @@ loc_130A8:                              ; CODE XREF: sub_12FA2+100↑j
                 push    dx
                 push    word ptr dword_4AF74+2
                 push    word ptr dword_4AF74
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -8200,7 +8200,7 @@ loc_130A8:                              ; CODE XREF: sub_12FA2+100↑j
                 push    dx
                 push    word ptr dword_4686A+2
                 push    word ptr dword_4686A
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -8212,7 +8212,7 @@ loc_130A8:                              ; CODE XREF: sub_12FA2+100↑j
                 push    dx
                 push    word ptr dword_470B6+2
                 push    word ptr dword_470B6
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -8224,9 +8224,9 @@ loc_130A8:                              ; CODE XREF: sub_12FA2+100↑j
                 push    dx
                 push    word ptr dword_470BA+2
                 push    word ptr dword_470BA
-                call    sub_10336
+                call    file_read
                 push    di
-                call    sub_10284
+                call    file_close
                 pop     di
                 pop     si
                 mov     sp, bp
@@ -8386,7 +8386,7 @@ sub_132C7       proc far                ; CODE XREF: sub_13611+323↓p
                 call    near ptr sub_12DEA
                 mov     ax, 234h
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     si, ax
                 push    ax
                 xor     ax, ax
@@ -8398,9 +8398,9 @@ sub_132C7       proc far                ; CODE XREF: sub_13611+323↓p
                 push    dx
                 push    word ptr dword_4AFDC+2
                 push    word ptr dword_4AFDC
-                call    sub_10336
+                call    file_read
                 push    si
-                call    sub_10284
+                call    file_close
                 push    cs
                 call    near ptr sub_1327C
                 jmp     short loc_1331B
@@ -8873,7 +8873,7 @@ loc_13646:                              ; CODE XREF: sub_13611+26↑j
                 jb      short loc_13639
                 mov     ax, 23Ah
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     di, ax
                 or      ax, ax
                 jl      short loc_13682
@@ -8888,14 +8888,14 @@ loc_13646:                              ; CODE XREF: sub_13611+26↑j
                 push    ss
                 lea     ax, [bp+var_8]
                 push    ax
-                call    sub_10336
+                call    file_read
                 mov     [bp+var_2], 0
                 lea     ax, [bp+var_8]
                 push    ax
                 push    cs
                 call    near ptr sub_1353B
                 push    di
-                call    sub_10284
+                call    file_close
 
 loc_13682:                              ; CODE XREF: sub_13611+47↑j
                 mov     si, 1
@@ -31399,11 +31399,11 @@ loc_1E226:                              ; CODE XREF: sub_1E1B3+6F↑j
                 mov     word ptr es:[bx+12h], seg seg006
                 mov     word ptr es:[bx+24h], offset loc_12E76
                 mov     word ptr es:[bx+26h], seg seg001
-                mov     word ptr es:[bx+28h], offset sub_10245
+                mov     word ptr es:[bx+28h], offset file_open
                 mov     word ptr es:[bx+2Ah], seg seg000
-                mov     word ptr es:[bx+2Ch], offset sub_10336
+                mov     word ptr es:[bx+2Ch], offset file_read
                 mov     word ptr es:[bx+2Eh], seg seg000
-                mov     word ptr es:[bx+30h], offset sub_10284
+                mov     word ptr es:[bx+30h], offset file_close
                 mov     word ptr es:[bx+32h], seg seg000
                 or      si, si
                 jz      short loc_1E2C7
@@ -46427,7 +46427,7 @@ loc_25380:                              ; CODE XREF: sub_25340+22↑j
                 mov     [bx-432Eh], ax
                 mov     ax, 13E4h
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     word_40DE0, ax
                 push    ax
                 mov     ax, [bp+arg_0]
@@ -46446,9 +46446,9 @@ loc_25380:                              ; CODE XREF: sub_25340+22↑j
                 shl     ax, cl
                 add     ax, 0BCF2h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    word_40DE0
-                call    sub_10284
+                call    file_close
 
 loc_253CC:                              ; CODE XREF: sub_25340+42↑j
                 xor     si, si
@@ -46567,7 +46567,7 @@ loc_25467:                              ; CODE XREF: sub_25404+5E↑j
                 jz      short loc_254CA
                 mov     ax, 13EBh
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     word_40DE2, ax
                 push    ax
                 mov     ax, [bp+arg_0]
@@ -46586,9 +46586,9 @@ loc_25467:                              ; CODE XREF: sub_25404+5E↑j
                 push    dx
                 push    word ptr dword_4BBA6+2
                 push    word ptr dword_4BBA6
-                call    sub_10336
+                call    file_read
                 push    word_40DE2
-                call    sub_10284
+                call    file_close
                 mov     ax, [bp+arg_0]
                 mov     word_40DE4, ax
                 xor     di, di
@@ -46703,7 +46703,7 @@ loc_2556C:                              ; CODE XREF: sub_25404+163↑j
                 mov     word_40DEC, ax
                 mov     ax, 13EBh
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     word_40DE2, ax
                 xor     di, di
                 jmp     short loc_25600
@@ -46744,14 +46744,14 @@ loc_2559F:                              ; CODE XREF: sub_25404+1FF↓j
                 push    dx
                 push    [bp+var_E]
                 push    [bp+var_10]
-                call    sub_10336
+                call    file_read
                 inc     di
 
 loc_25600:                              ; CODE XREF: sub_25404+199↑j
                 cmp     di, 4
                 jl      short loc_2559F
                 push    word_40DE2
-                call    sub_10284
+                call    file_close
 
 loc_2560E:                              ; CODE XREF: sub_25404+165↑j
                 mov     word_40DE4, 0
@@ -64964,7 +64964,7 @@ loc_2DD6E:                              ; CODE XREF: sub_2DD62+40↓j
                 mov     byte_41086, al
                 mov     ax, 15C6h
                 push    ax
-                call    sub_102F8
+                call    file_delete
 
 loc_2DD9B:                              ; CODE XREF: sub_2DD62+16↑j
                 inc     [bp+var_2]
@@ -65002,7 +65002,7 @@ arg_2           = word ptr  8
                 mov     word ptr [bx+14F6h], 1
                 mov     ax, 15C6h
                 push    ax
-                call    sub_102B8
+                call    file_create
                 mov     si, ax
                 push    ax
                 xor     ax, ax
@@ -65015,7 +65015,7 @@ arg_2           = word ptr  8
                 push    ss
                 lea     ax, [bp+arg_2]
                 push    ax
-                call    sub_1041C
+                call    file_write
                 cmp     word_41866, 53h ; 'S'
                 jz      short loc_2DE0C
                 cmp     word_41866, 52h ; 'R'
@@ -65033,7 +65033,7 @@ arg_2           = word ptr  8
                 push    ax
                 push    word ptr dword_44B70+2
                 push    word ptr dword_44B70
-                call    sub_1041C
+                call    file_write
 
 loc_2DE0C:                              ; CODE XREF: sub_2DDA8+38↑j
                                         ; sub_2DDA8+3F↑j
@@ -65052,7 +65052,7 @@ loc_2DE16:                              ; CODE XREF: sub_2DDA8+69↑j
                 mov     al, byte_41074
                 mov     [bp+var_3], al
                 push    si
-                call    sub_10284
+                call    file_close
                 mov     [bp+var_2], 0
                 jmp     short loc_2DE91
 ; ---------------------------------------------------------------------------
@@ -65076,7 +65076,7 @@ loc_2DE3B:                              ; CODE XREF: sub_2DDA8+ED↓j
                 mov     byte_41074, al
                 mov     ax, 15B4h
                 push    ax
-                call    sub_102F8
+                call    file_delete
                 mov     ax, [bp+var_2]
                 cmp     ax, [bp+arg_0]
                 jz      short loc_2DE83
@@ -65084,7 +65084,7 @@ loc_2DE3B:                              ; CODE XREF: sub_2DDA8+ED↓j
                 push    ax
                 mov     ax, 15B4h
                 push    ax
-                call    sub_104E1
+                call    file_rename
 
 loc_2DE83:                              ; CODE XREF: sub_2DDA8+CC↑j
                 mov     bx, [bp+var_2]
@@ -65105,7 +65105,7 @@ loc_2DE91:                              ; CODE XREF: sub_2DDA8+91↑j
                 mov     byte_41086, al
                 mov     ax, 15B4h
                 push    ax
-                call    sub_102B8
+                call    file_create
                 mov     si, ax
                 push    ax
                 xor     ax, ax
@@ -65118,7 +65118,7 @@ loc_2DE91:                              ; CODE XREF: sub_2DDA8+91↑j
                 push    ss
                 lea     ax, [bp+arg_2]
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -65132,7 +65132,7 @@ loc_2DE91:                              ; CODE XREF: sub_2DDA8+91↑j
                 push    ax
                 push    word ptr dword_44B70+2
                 push    word ptr dword_44B70
-                call    sub_1041C
+                call    file_write
                 mov     al, [bp+var_4]
                 mov     byte_41073, al
                 mov     al, [bp+var_3]
@@ -65142,7 +65142,7 @@ loc_2DE91:                              ; CODE XREF: sub_2DDA8+91↑j
 
 loc_2DF05:                              ; CODE XREF: sub_2DDA8+6B↑j
                 push    si
-                call    sub_10284
+                call    file_close
                 pop     si
                 mov     sp, bp
                 pop     bp
@@ -66081,7 +66081,7 @@ loc_2E5A8:                              ; CODE XREF: sub_2E561+28↑j
 
 loc_2E5C3:                              ; CODE XREF: sub_2E561+45↑j
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     si, ax
                 push    si
                 xor     ax, ax
@@ -66094,7 +66094,7 @@ loc_2E5C3:                              ; CODE XREF: sub_2E561+45↑j
                 push    ss
                 lea     ax, [bp+var_2]
                 push    ax
-                call    sub_10336
+                call    file_read
                 cmp     [bp+var_2], 800h
                 jle     short loc_2E5ED
                 mov     [bp+var_2], 800h
@@ -66115,11 +66115,11 @@ loc_2E5ED:                              ; CODE XREF: sub_2E561+85↑j
                 push    ax
                 push    word ptr dword_44B70+2
                 push    word ptr dword_44B70
-                call    sub_10336
+                call    file_read
 
 loc_2E616:                              ; CODE XREF: sub_2E561+90↑j
                 push    si
-                call    sub_10284
+                call    file_close
                 cmp     [bp+var_2], 0
                 jz      short loc_2E629
                 push    [bp+var_2]
@@ -66485,7 +66485,7 @@ loc_2E864:                              ; CODE XREF: sub_2E824+2C↑j
 
 loc_2E874:                              ; CODE XREF: sub_2E824+3E↑j
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     si, ax
                 push    si
                 xor     ax, ax
@@ -66498,7 +66498,7 @@ loc_2E874:                              ; CODE XREF: sub_2E824+3E↑j
                 push    ss
                 lea     ax, [bp+var_2]
                 push    ax
-                call    sub_10336
+                call    file_read
                 cmp     [bp+var_2], 800h
                 jle     short loc_2E89E
                 mov     [bp+var_2], 800h
@@ -66519,11 +66519,11 @@ loc_2E89E:                              ; CODE XREF: sub_2E824+73↑j
                 push    ax
                 push    word ptr dword_44B70+2
                 push    word ptr dword_44B70
-                call    sub_10336
+                call    file_read
 
 loc_2E8C7:                              ; CODE XREF: sub_2E824+7E↑j
                 push    si
-                call    sub_10284
+                call    file_close
                 cmp     [bp+var_2], 0
                 jz      short loc_2E8DA
                 push    [bp+var_2]
@@ -66938,12 +66938,12 @@ loc_2EB65:                              ; CODE XREF: sub_2EB2A+93↓j
                 mov     byte_41086, al
                 mov     ax, 15B4h
                 push    ax
-                call    sub_102F8
+                call    file_delete
                 mov     ax, 15C6h
                 push    ax
                 mov     ax, 15B4h
                 push    ax
-                call    sub_104E1
+                call    file_rename
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 mov     word ptr [bx+14F6h], 0
@@ -75474,7 +75474,7 @@ loc_3289A:                              ; CODE XREF: sub_32831+48↑j
 loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 mov     ax, 1C81h
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     di, ax
                 push    ax
                 xor     ax, ax
@@ -75487,7 +75487,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 4EBEh
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75506,12 +75506,12 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ax
                 push    word ptr dword_4496A+2
                 push    word ptr dword_4496A
-                call    sub_10336
+                call    file_read
                 push    di
-                call    sub_10284
+                call    file_close
                 mov     ax, 1C8Ah
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     di, ax
                 push    ax
                 xor     ax, ax
@@ -75523,12 +75523,12 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    dx
                 push    word ptr dword_4696E+2
                 push    word ptr dword_4696E
-                call    sub_10336
+                call    file_read
                 push    di
-                call    sub_10284
+                call    file_close
                 mov     ax, 1C93h
                 push    ax
-                call    sub_10245
+                call    file_open
                 mov     di, ax
                 push    ax
                 xor     ax, ax
@@ -75541,7 +75541,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 3266h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75554,7 +75554,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 78AEh
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75567,7 +75567,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 9CC4h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75580,7 +75580,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 54BAh
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75593,7 +75593,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 6CBAh
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75606,7 +75606,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 53B2h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75619,7 +75619,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 45D0h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75632,7 +75632,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 760Eh
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75645,7 +75645,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 51AEh
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75658,7 +75658,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 6DBEh
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75671,7 +75671,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 50CEh
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75684,7 +75684,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 4EA4h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75697,7 +75697,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 9CC0h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75709,7 +75709,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    dx
                 push    word ptr dword_44966+2
                 push    word ptr dword_44966
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75721,7 +75721,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    dx
                 push    word ptr dword_44074+2
                 push    word ptr dword_44074
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75733,7 +75733,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    dx
                 push    word ptr dword_44180+2
                 push    word ptr dword_44180
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75745,7 +75745,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    dx
                 push    word ptr dword_42D12+2
                 push    word ptr dword_42D12
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75757,7 +75757,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    dx
                 push    word ptr dword_44E5E+2
                 push    word ptr dword_44E5E
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75770,7 +75770,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 44C4h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75783,7 +75783,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 44C4h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75795,7 +75795,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    dx
                 push    word ptr dword_4AFB8+2
                 push    word ptr dword_4AFB8
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75808,7 +75808,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 6EC6h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75820,7 +75820,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    dx
                 push    word ptr dword_44B7A+2
                 push    word ptr dword_44B7A
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75832,7 +75832,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    dx
                 push    word ptr dword_4407C+2
                 push    word ptr dword_4407C
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75844,7 +75844,7 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    dx
                 push    word ptr dword_44078+2
                 push    word ptr dword_44078
-                call    sub_10336
+                call    file_read
                 push    di
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -75858,9 +75858,9 @@ loc_328A8:                              ; CODE XREF: sub_32831+19↑j
                 push    ds
                 mov     ax, 1672h
                 push    ax
-                call    sub_10336
+                call    file_read
                 push    di
-                call    sub_10284
+                call    file_close
                 call    sub_2F6D8
                 test    byte_4697C, 2
                 jz      short loc_32C10
@@ -76430,7 +76430,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 mov     byte_41122, al
                 mov     ax, 1C93h
                 push    ax
-                call    sub_102B8
+                call    file_create
                 mov     si, ax
                 push    ax
                 xor     ax, ax
@@ -76443,7 +76443,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 3266h
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76456,7 +76456,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 78AEh
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76469,7 +76469,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 9CC4h
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76482,7 +76482,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 54BAh
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76495,7 +76495,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 6CBAh
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76508,7 +76508,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 53B2h
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76521,7 +76521,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 45D0h
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76534,7 +76534,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 760Eh
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76547,7 +76547,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 51AEh
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76560,7 +76560,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 6DBEh
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76573,7 +76573,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 50CEh
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76586,7 +76586,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 4EA4h
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76599,7 +76599,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 9CC0h
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76611,7 +76611,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    dx
                 push    word ptr dword_44966+2
                 push    word ptr dword_44966
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76623,7 +76623,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    dx
                 push    word ptr dword_44074+2
                 push    word ptr dword_44074
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76635,7 +76635,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    dx
                 push    word ptr dword_44180+2
                 push    word ptr dword_44180
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76647,7 +76647,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    dx
                 push    word ptr dword_42D12+2
                 push    word ptr dword_42D12
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76659,7 +76659,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    dx
                 push    word ptr dword_44E5E+2
                 push    word ptr dword_44E5E
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76672,7 +76672,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 44C4h
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76685,7 +76685,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 44C4h
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76697,7 +76697,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    dx
                 push    word ptr dword_4AFB8+2
                 push    word ptr dword_4AFB8
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76710,7 +76710,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 6EC6h
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76722,7 +76722,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    dx
                 push    word ptr dword_44B7A+2
                 push    word ptr dword_44B7A
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76734,7 +76734,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    dx
                 push    word ptr dword_4407C+2
                 push    word ptr dword_4407C
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76746,7 +76746,7 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    dx
                 push    word ptr dword_44078+2
                 push    word ptr dword_44078
-                call    sub_1041C
+                call    file_write
                 push    si
                 mov     ax, 0FFFFh
                 mov     dx, 0FFFFh
@@ -76760,9 +76760,9 @@ loc_3309E:                              ; CODE XREF: sub_3303E+A↑j
                 push    ds
                 mov     ax, 1672h
                 push    ax
-                call    sub_1041C
+                call    file_write
                 push    si
-                call    sub_10284
+                call    file_close
                 call    sub_258AF
                 inc     byte_409C2
                 mov     al, byte_469EC
@@ -84426,7 +84426,7 @@ sub_368B2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_368FA       proc far                ; CODE XREF: sub_36C19-84↓P
+lzw_decode      proc far                ; CODE XREF: sub_36C19-84↓P
                 mov     word_425AA, 9
                 mov     word_4259A, 0
                 mov     word_4259C, 0
@@ -84445,8 +84445,8 @@ sub_368FA       proc far                ; CODE XREF: sub_36C19-84↓P
                                         ; DS:DX -> buffer
                 pop     ds
 
-loc_36931:                              ; CODE XREF: sub_368FA:loc_36A62↓j
-                                        ; sub_368FA:loc_36B25↓j
+loc_36931:                              ; CODE XREF: lzw_decode:loc_36A62↓j
+                                        ; lzw_decode:loc_36B25↓j
                 push    bp
                 mov     ax, word_4259C
                 add     ax, word_425AA
@@ -84482,7 +84482,7 @@ loc_36931:                              ; CODE XREF: sub_368FA:loc_36A62↓j
                 xor     ax, ax
                 pop     dx
 
-loc_36978:                              ; CODE XREF: sub_368FA+4D↑j
+loc_36978:                              ; CODE XREF: lzw_decode+4D↑j
                 push    ds
                 mov     ds, word_42596
                 mov     si, ax
@@ -84492,12 +84492,12 @@ loc_36978:                              ; CODE XREF: sub_368FA+4D↑j
                 mov     cx, dx
                 jcxz    short loc_3698D
 
-loc_36987:                              ; CODE XREF: sub_368FA+91↓j
+loc_36987:                              ; CODE XREF: lzw_decode+91↓j
                 shr     al, 1
                 rcr     bx, 1
                 loop    loc_36987
 
-loc_3698D:                              ; CODE XREF: sub_368FA+8B↑j
+loc_3698D:                              ; CODE XREF: lzw_decode+8B↑j
                 pop     ds
                 mov     ax, bx
                 mov     bx, word_425AA
@@ -84516,13 +84516,13 @@ loc_3698D:                              ; CODE XREF: sub_368FA+8B↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_369B1:                              ; CODE XREF: sub_368FA+A7↑j
+loc_369B1:                              ; CODE XREF: lzw_decode+A7↑j
                 cmp     ax, 100h
                 jz      short loc_369B9
                 jmp     loc_36A65
 ; ---------------------------------------------------------------------------
 
-loc_369B9:                              ; CODE XREF: sub_368FA+BA↑j
+loc_369B9:                              ; CODE XREF: lzw_decode+BA↑j
                 mov     word_425AA, 9
                 mov     word_425A8, 200h
                 mov     word_425A4, 102h
@@ -84561,7 +84561,7 @@ loc_369B9:                              ; CODE XREF: sub_368FA+BA↑j
                 xor     ax, ax
                 pop     dx
 
-loc_36A12:                              ; CODE XREF: sub_368FA+E7↑j
+loc_36A12:                              ; CODE XREF: lzw_decode+E7↑j
                 push    ds
                 mov     ds, word_42596
                 mov     si, ax
@@ -84571,12 +84571,12 @@ loc_36A12:                              ; CODE XREF: sub_368FA+E7↑j
                 mov     cx, dx
                 jcxz    short loc_36A27
 
-loc_36A21:                              ; CODE XREF: sub_368FA+12B↓j
+loc_36A21:                              ; CODE XREF: lzw_decode+12B↓j
                 shr     al, 1
                 rcr     bx, 1
                 loop    loc_36A21
 
-loc_36A27:                              ; CODE XREF: sub_368FA+125↑j
+loc_36A27:                              ; CODE XREF: lzw_decode+125↑j
                 pop     ds
                 mov     ax, bx
                 mov     bx, word_425AA
@@ -84600,11 +84600,11 @@ loc_36A27:                              ; CODE XREF: sub_368FA+125↑j
                 inc     word_42592
                 mov     word_4259A, 0
 
-loc_36A62:                              ; CODE XREF: sub_368FA+15C↑j
+loc_36A62:                              ; CODE XREF: lzw_decode+15C↑j
                 jmp     loc_36931
 ; ---------------------------------------------------------------------------
 
-loc_36A65:                              ; CODE XREF: sub_368FA+BC↑j
+loc_36A65:                              ; CODE XREF: lzw_decode+BC↑j
                 mov     word_4259E, ax
                 mov     word_425A2, ax
                 mov     es, word_42598
@@ -84616,8 +84616,8 @@ loc_36A65:                              ; CODE XREF: sub_368FA+BC↑j
                 push    ax
                 inc     word_425A6
 
-loc_36A83:                              ; CODE XREF: sub_368FA+179↑j
-                                        ; sub_368FA+1AC↓j
+loc_36A83:                              ; CODE XREF: lzw_decode+179↑j
+                                        ; lzw_decode+1AC↓j
                 cmp     word_4259E, 0FFh
                 jle     short loc_36AA8
                 mov     bx, word_4259E
@@ -84634,7 +84634,7 @@ loc_36A83:                              ; CODE XREF: sub_368FA+179↑j
                 jmp     short loc_36A83
 ; ---------------------------------------------------------------------------
 
-loc_36AA8:                              ; CODE XREF: sub_368FA+18F↑j
+loc_36AA8:                              ; CODE XREF: lzw_decode+18F↑j
                 push    ds
                 pop     es
                 assume es:dseg
@@ -84646,7 +84646,7 @@ loc_36AA8:                              ; CODE XREF: sub_368FA+18F↑j
                 mov     cx, word_425A6
                 jcxz    short loc_36ADF
 
-loc_36ABE:                              ; CODE XREF: sub_368FA:loc_36ADD↓j
+loc_36ABE:                              ; CODE XREF: lzw_decode:loc_36ADD↓j
                 pop     ax
                 push    es
                 mov     es, word_42592
@@ -84660,10 +84660,10 @@ loc_36ABE:                              ; CODE XREF: sub_368FA:loc_36ADD↓j
                 inc     word_42592
                 mov     word_4259A, 0
 
-loc_36ADD:                              ; CODE XREF: sub_368FA+1D7↑j
+loc_36ADD:                              ; CODE XREF: lzw_decode+1D7↑j
                 loop    loc_36ABE
 
-loc_36ADF:                              ; CODE XREF: sub_368FA+1C2↑j
+loc_36ADF:                              ; CODE XREF: lzw_decode+1C2↑j
                 mov     word_425A6, cx
                 mov     bx, word_425A4
                 push    ax
@@ -84689,10 +84689,10 @@ loc_36ADF:                              ; CODE XREF: sub_368FA+1C2↑j
                 inc     word_425AA
                 shl     word_425A8, 1
 
-loc_36B25:                              ; CODE XREF: sub_368FA+21A↑j
-                                        ; sub_368FA+221↑j
+loc_36B25:                              ; CODE XREF: lzw_decode+21A↑j
+                                        ; lzw_decode+221↑j
                 jmp     loc_36931
-sub_368FA       endp ; sp-analysis failed
+lzw_decode      endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_36C19
@@ -84745,7 +84745,7 @@ loc_36B7A:                              ; CODE XREF: sub_36C19-A9↑j
 
 loc_36B92:                              ; CODE XREF: sub_36C19-91↑j
                 mov     word_42596, ax
-                call    sub_368FA
+                call    lzw_decode
                 clc
                 mov     ax, word_4258C
                 or      ax, ax
@@ -105476,14 +105476,14 @@ byte_401B4      db 0                    ; DATA XREF: sub_1A6F2:loc_1ACC6↑r
                 db  21h ; !
                 db  0Ah
                 db    0
-off_402AA       dd nullsub_1            ; DATA XREF: sub_10245+28↑r
-                                        ; sub_10284+1D↑r ...
-word_402AE      dw 0                    ; DATA XREF: sub_10245+1F↑w
-                                        ; sub_10245+2C↑r ...
-word_402B0      dw 0                    ; DATA XREF: sub_10245+22↑w
-                                        ; sub_10284+17↑w ...
-word_402B2      dw 0                    ; DATA XREF: sub_10245+D↑w
-                                        ; sub_102B8+11↑w ...
+off_402AA       dd nullsub_1            ; DATA XREF: file_open+28↑r
+                                        ; file_close+1D↑r ...
+word_402AE      dw 0                    ; DATA XREF: file_open+1F↑w
+                                        ; file_open+2C↑r ...
+word_402B0      dw 0                    ; DATA XREF: file_open+22↑w
+                                        ; file_close+17↑w ...
+word_402B2      dw 0                    ; DATA XREF: file_open+D↑w
+                                        ; file_create+11↑w ...
                 db  13h
                 db    0
                 db  0Dh
@@ -112619,7 +112619,7 @@ word_42526      dw 0                    ; DATA XREF: seg023:00C3↑w
                 db    0
 word_4252A      dw 0FFFFh               ; DATA XREF: seg023:0014↑r
                                         ; seg023:0022↑w ...
-word_4252C      dw 0                    ; DATA XREF: sub_368FA+1E↑r
+word_4252C      dw 0                    ; DATA XREF: lzw_decode+1E↑r
 word_4252E      dw 0                    ; DATA XREF: sub_3679E↑w
                                         ; sub_3679E:loc_367CF↑w ...
 word_42530      dw 0                    ; DATA XREF: sub_3679E+5C↑w
@@ -112706,38 +112706,38 @@ word_42580      dw 0                    ; DATA XREF: sub_36810+8↑w
 word_4258C      dw 0                    ; DATA XREF: sub_36C19-BF↑r
                                         ; sub_36C19-7E↑r
 word_4258E      dw 0                    ; DATA XREF: sub_36C19-BB↑r
-word_42590      dw 0                    ; DATA XREF: sub_368FA+24↑r
-                                        ; sub_368FA+60↑r ...
-word_42592      dw 0                    ; DATA XREF: sub_368FA+14B↑r
-                                        ; sub_368FA+15E↑w ...
+word_42590      dw 0                    ; DATA XREF: lzw_decode+24↑r
+                                        ; lzw_decode+60↑r ...
+word_42592      dw 0                    ; DATA XREF: lzw_decode+14B↑r
+                                        ; lzw_decode+15E↑w ...
 word_42594      dw 0                    ; DATA XREF: sub_36C19-EB↑w
                                         ; sub_36C19-9C↑w ...
-word_42596      dw 0                    ; DATA XREF: sub_368FA+29↑r
-                                        ; sub_368FA+64↑r ...
-word_42598      dw 0                    ; DATA XREF: sub_368FA+21↑w
-                                        ; sub_368FA+AE↑r ...
-word_4259A      dw 0                    ; DATA XREF: sub_368FA+6↑w
-                                        ; sub_368FA+14F↑r ...
-word_4259C      dw 0                    ; DATA XREF: sub_368FA+C↑w
-                                        ; sub_368FA+38↑r ...
-word_4259E      dw 0                    ; DATA XREF: sub_368FA+13E↑w
-                                        ; sub_368FA:loc_36A65↑w ...
-word_425A0      dw 0                    ; DATA XREF: sub_368FA+141↑w
-                                        ; sub_368FA+17B↑r ...
-word_425A2      dw 0                    ; DATA XREF: sub_368FA+16E↑w
-                                        ; sub_368FA+20C↑r
-word_425A4      dw 0                    ; DATA XREF: sub_368FA+12↑w
-                                        ; sub_368FA+CB↑w ...
-word_425A6      dw 0                    ; DATA XREF: sub_368FA+185↑w
-                                        ; sub_368FA+1A2↑w ...
-word_425A8      dw 0                    ; DATA XREF: sub_368FA+18↑w
-                                        ; sub_368FA+C5↑w ...
-word_425AA      dw 0                    ; DATA XREF: sub_368FA↑w
-                                        ; sub_368FA+3B↑r ...
-byte_425AC      db 0                    ; DATA XREF: sub_368FA+147↑w
-                                        ; sub_368FA+181↑r ...
-byte_425AD      db 0                    ; DATA XREF: sub_368FA+144↑w
-                                        ; sub_368FA+1B6↑w ...
+word_42596      dw 0                    ; DATA XREF: lzw_decode+29↑r
+                                        ; lzw_decode+64↑r ...
+word_42598      dw 0                    ; DATA XREF: lzw_decode+21↑w
+                                        ; lzw_decode+AE↑r ...
+word_4259A      dw 0                    ; DATA XREF: lzw_decode+6↑w
+                                        ; lzw_decode+14F↑r ...
+word_4259C      dw 0                    ; DATA XREF: lzw_decode+C↑w
+                                        ; lzw_decode+38↑r ...
+word_4259E      dw 0                    ; DATA XREF: lzw_decode+13E↑w
+                                        ; lzw_decode:loc_36A65↑w ...
+word_425A0      dw 0                    ; DATA XREF: lzw_decode+141↑w
+                                        ; lzw_decode+17B↑r ...
+word_425A2      dw 0                    ; DATA XREF: lzw_decode+16E↑w
+                                        ; lzw_decode+20C↑r
+word_425A4      dw 0                    ; DATA XREF: lzw_decode+12↑w
+                                        ; lzw_decode+CB↑w ...
+word_425A6      dw 0                    ; DATA XREF: lzw_decode+185↑w
+                                        ; lzw_decode+1A2↑w ...
+word_425A8      dw 0                    ; DATA XREF: lzw_decode+18↑w
+                                        ; lzw_decode+C5↑w ...
+word_425AA      dw 0                    ; DATA XREF: lzw_decode↑w
+                                        ; lzw_decode+3B↑r ...
+byte_425AC      db 0                    ; DATA XREF: lzw_decode+147↑w
+                                        ; lzw_decode+181↑r ...
+byte_425AD      db 0                    ; DATA XREF: lzw_decode+144↑w
+                                        ; lzw_decode+1B6↑w ...
 aOutOfMemory    db 'Out of Memory...',0Dh,0Ah
                 db '$',0
 word_425C2      dw 0                    ; DATA XREF: seg027:loc_36C7E↑r
