@@ -1,0 +1,57 @@
+# MinGW build of the stand-alone Ultima 6 engine (src/).
+#
+#   mingw32-make            build build/u6.exe
+#   mingw32-make test       build and run the unit tests (tests/)
+#   mingw32-make clean
+#
+# Variables:
+#   DEBUG=1    -O0 -g
+#   WARN=0     silence compiler warnings (on by default)
+
+ifeq ($(origin CXX),default)
+CXX := g++
+endif
+BUILD := build
+SRC   := src
+TARGET := $(BUILD)/u6.exe
+
+ENGINE_SRCS := engine/game_id ultima6/game martian_dreams/game savage_empire/game
+SRCS := $(ENGINE_SRCS) main
+
+CXXFLAGS := -std=c++17 -I$(SRC)
+ifeq ($(DEBUG),1)
+CXXFLAGS += -O0 -g
+else
+CXXFLAGS += -O2
+endif
+ifneq ($(WARN),0)
+CXXFLAGS += -Wall -Wextra
+endif
+
+OBJS := $(addprefix $(BUILD)/,$(addsuffix .o,$(SRCS)))
+ENGINE_OBJS := $(addprefix $(BUILD)/,$(addsuffix .o,$(ENGINE_SRCS)))
+TESTS := $(basename $(notdir $(wildcard tests/test_*.cpp)))
+TEST_EXES := $(addprefix $(BUILD)/,$(addsuffix .exe,$(TESTS)))
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+$(BUILD)/%.o: $(SRC)/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -MMD -MP -c -o $@ $<
+
+$(BUILD)/test_%.exe: tests/test_%.cpp $(ENGINE_OBJS)
+	@mkdir -p $(BUILD)
+	$(CXX) $(CXXFLAGS) -o $@ $< $(ENGINE_OBJS)
+
+test: $(TEST_EXES)
+	@for t in $(TEST_EXES); do echo "== $$t"; ./$$t || exit 1; done
+
+clean:
+	rm -rf $(BUILD)
+
+-include $(OBJS:.o=.d)
+
+.PHONY: all test clean

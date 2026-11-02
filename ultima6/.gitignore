@@ -1,3 +1,6 @@
 u6/game/
 md/game/
 se/game/
+build/
+ida_scripts/batch_run_and_export.log
+__pycache__/
