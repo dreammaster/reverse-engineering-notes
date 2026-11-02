@@ -1,6 +1,7 @@
 #include "engine/backend.h"
 #include "engine/framebuffer.h"
 #include "engine/game_id.h"
+#include "ultima6/front_end.h"
 #include "ultima6/session.h"
 #include "ultima6/world.h"
 
@@ -10,7 +11,8 @@
 #include <memory>
 
 static void usage(const char *prog) {
-	std::fprintf(stderr, "usage: %s <game directory> [--keys <script>] [--shot file.png] [--scale n]\n", prog);
+	std::fprintf(stderr, "usage: %s <game directory> [--play] [--keys <script>] [--shot file.png] [--scale n]\n", prog);
+	std::fprintf(stderr, "  --play   skip the main menu and start from the saved game\n");
 }
 
 int main(int argc, char **argv) {
@@ -30,11 +32,14 @@ int main(int argc, char **argv) {
 
 	const char *keys = nullptr, *shot = nullptr;
 	int scale = 3;
+	bool play = false;
 	for (int i = 2; i < argc; ++i) {
 		if (!std::strcmp(argv[i], "--keys") && i + 1 < argc)
 			keys = argv[++i];
 		else if (!std::strcmp(argv[i], "--shot") && i + 1 < argc)
 			shot = argv[++i];
+		else if (!std::strcmp(argv[i], "--play"))
+			play = true;
 		else if (!std::strcmp(argv[i], "--scale") && i + 1 < argc)
 			scale = std::atoi(argv[++i]);
 		else {
@@ -42,14 +47,6 @@ int main(int argc, char **argv) {
 			return 2;
 		}
 	}
-
-	Ultima6::Ultima6::World world;
-	if (!world.load(argv[1])) {
-		std::fprintf(stderr, "cannot load %s\n", world.error().c_str());
-		return 1;
-	}
-	Ultima6::Ultima6::Game game(world);
-	Ultima6::Framebuffer screen;
 
 	std::unique_ptr<Ultima6::Backend> backend;
 	if (keys || shot)
@@ -60,6 +57,40 @@ int main(int argc, char **argv) {
 		std::fprintf(stderr, "no window available; use --keys/--shot\n");
 		return 1;
 	}
+	Ultima6::Framebuffer screen;
+
+	// The menu and character creation (U.EXE), then the game (GAME.EXE).
+	Ultima6::Ultima6::World world;
+	bool created = false;
+	Ultima6::Ultima6::NewCharacter character;
+	if (!play) {
+		Ultima6::Ultima6::FrontEnd front(argv[1]);
+		if (!front.ok()) {
+			std::fprintf(stderr, "cannot load the menu files\n");
+			return 1;
+		}
+		bool running = true;
+		while (running) {
+			front.render(screen);
+			backend->present(screen);
+			int key = backend->waitKey();
+			running = front.handleKey(key);
+		}
+		if (!front.wantsGame()) {
+			if (shot)
+				screen.savePng(shot, scale);
+			return 0;
+		}
+		created = front.hasNewCharacter();
+		if (created)
+			character = front.character();
+	}
+
+	if (!world.load(argv[1], created ? &character : nullptr)) {
+		std::fprintf(stderr, "cannot load %s\n", world.error().c_str());
+		return 1;
+	}
+	Ultima6::Ultima6::Game game(world);
 
 	bool running = true;
 	while (running) {

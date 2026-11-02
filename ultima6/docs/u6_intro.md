@@ -71,3 +71,12 @@ A transferred character takes the same path via `transfer_from_disk`'s helpers (
 The animated parts (`title_sequence`, `intro_story`, the pouring animation and the story pages in `show_text_page`), the transfer
 file formats, and `MIDI.DAT`/`*.M` handling. The question and story *texts* are stored as strings in `U.EXE`; whether the new engine
 reads them from the executable or carries its own copy is a decision for the ScummVM stage.
+
+## Stand-alone front end (`src/ultima6/front_end.*`)
+
+`FrontEnd` is the menu and character creation of this implementation, driven by the same `GypsyQuiz` logic and ending in `World::load(dir, &character)`, which builds a new game
+from `LZOBJBLK` (64 surface blocks one after another) and `LZDNGBLK` (5 dungeon blocks, then the objlist patched by `NewCharacter::applyTo`). Screens use the palettes
+`create_character` and `_main` load with `load_intro_palette`: 0 for the main menu (`TITLES.SHP`, `MAINMENU.SHP`), 6 for the gypsy (`GYPSY.SHP` background, `VELLUM1.SHP` for the question), the
+portraits (`MONTAGE.SHP`, 6 female then 6 male) with `U6PAL`. The 28 questions are `src/ultima6/gypsy_text.inc`, extracted from `U.EXE` (they follow the story pages as
+NUL-terminated lines; `%c` marks a key wait) and check against the A/B virtue tables. Not done: the animated title sequence and introduction, the story pages, character
+transfer, acknowledgements, and the original's exact positions on the screens.
