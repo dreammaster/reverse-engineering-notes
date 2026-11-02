@@ -84,10 +84,96 @@ void Game::message(const std::string &text) {
 		log.erase(log.begin());
 }
 
-bool Game::handleKey(int key) {
+bool Game::selectTarget(int key, int &tx, int &ty) const {
+	int dir;
 	switch (key) {
-	case KEY_QUIT:
+	case KEY_UP:
+		dir = 0;
+		break;
+	case KEY_RIGHT:
+		dir = 2;
+		break;
+	case KEY_DOWN:
+		dir = 4;
+		break;
+	case KEY_LEFT:
+		dir = 6;
+		break;
+	default:
 		return false;
+	}
+	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+	tx = (x + DIR_DX[dir]) & mask;
+	ty = (y + DIR_DY[dir]) & mask;
+	return true;
+}
+
+void Game::talkAt(int tx, int ty) {
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	int actor = -1;
+	for (int i : here)
+		if (_world.objects[i].actor >= 0 && _world.objects[i].actor != 1)
+			actor = _world.objects[i].actor;
+	if (actor < 0) {
+		message("\nNo response\n");
+		prompt();
+		return;
+	}
+	std::unique_ptr<Talk> t(new Talk(_world, scroll, _rng, clock, actor));
+	if (!Talk::canTalk(_world, actor)) {
+		message("\nFunny, no response.\n");
+		prompt();
+		return;
+	}
+	_talk = std::move(t);
+	_talk->start();
+	if (_talk->actor() < 0)
+		_talk.reset();
+}
+
+void Game::command(int key) {
+	int c = key >= 'a' && key <= 'z' ? key - 32 : key;
+	switch (c) {
+	case 'T':
+		message("Talk-");
+		_pending = 'T';
+		break;
+	case ' ':
+		message("Pass!\n");
+		clock.advance(1);
+		prompt();
+		break;
+	default:
+		break;
+	}
+}
+
+bool Game::handleKey(int key) {
+	if (key == KEY_QUIT)
+		return false;
+	if (_talk) {
+		if (!_talk->key(key)) {
+			_talk.reset();
+			message("\n");
+			prompt();
+		}
+		return true;
+	}
+	if (_pending) {
+		int tx, ty;
+		int cmd = _pending;
+		_pending = 0;
+		if (selectTarget(key, tx, ty)) {
+			if (cmd == 'T')
+				talkAt(tx, ty);
+		} else {
+			message("what?\n");
+			prompt();
+		}
+		return true;
+	}
+	switch (key) {
 	case KEY_UP:
 		step(0);
 		break;
@@ -101,6 +187,7 @@ bool Game::handleKey(int key) {
 		step(6);
 		break;
 	default:
+		command(key);
 		break;
 	}
 	return true;
@@ -111,7 +198,10 @@ void Game::render(Framebuffer &screen) {
 	screen.clear(0);
 	screen.blit(0, 0, &_world.paper.pixels[0], _world.paper.width, _world.paper.height, _world.paper.width);
 	_renderer.draw(screen, x, y, z);
-	drawStatsView(screen, _world, _member);
+	if (_talk)
+		drawTalkView(screen, _world, _talk->portraitActor());
+	else
+		drawStatsView(screen, _world, _member);
 	scroll.draw(screen, _world.font);
 }
 

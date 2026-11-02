@@ -10,6 +10,11 @@ void TextWindow::newLine() {
 }
 
 void TextWindow::putChar(char c) {
+	if (c == '\b') {
+		if (!_lines.back().empty())
+			_lines.back().erase(_lines.back().size() - 1);
+		return;
+	}
 	if (c == '\n') {
 		newLine();
 		return;

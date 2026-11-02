@@ -25,6 +25,9 @@ struct ActorStats {
  */
 void drawStatsView(Framebuffer &screen, const World &world, int member);
 
+/** The panel while talking: the speaker's portrait. */
+void drawTalkView(Framebuffer &screen, const World &world, int actor);
+
 } // namespace Ultima6
 } // namespace Ultima6
 

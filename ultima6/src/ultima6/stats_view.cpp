@@ -29,6 +29,13 @@ int ActorStats::maxMagic(const World &w, int actor) {
 	}
 }
 
+void drawTalkView(Framebuffer &screen, const World &world, int actor) {
+	Ui::restorePaper(screen, world.paper, 176, 8, 136, 96);
+	Bytes portrait;
+	if (world.portrait(actor, portrait))
+		screen.blit(176 + (136 - 56) / 2, 16, &portrait[0], 56, 64, 56);
+}
+
 void drawStatsView(Framebuffer &screen, const World &world, int member) {
 	const ObjList &a = world.actors;
 	Ui::restorePaper(screen, world.paper, 176, 8, 136, 96);

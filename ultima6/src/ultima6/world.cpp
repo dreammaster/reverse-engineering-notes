@@ -70,6 +70,15 @@ bool World::load(const std::string &dir) {
 		if (!readFile(joinPath(dir, PORTRAIT_FILES[i]), portraits[i]))
 			return fail(PORTRAIT_FILES[i]);
 
+	{
+		Bytes lz;
+		if (!readFile(joinPath(dir, "LOOK.LZD"), lz) || !lzwDecompress(lz, 0, d) || !look.load(d))
+			return fail("LOOK.LZD");
+	}
+
+	if (!readFile(joinPath(dir, "CONVERSE.A"), converse[0]) || !readFile(joinPath(dir, "CONVERSE.B"), converse[1]))
+		return fail("CONVERSE");
+
 	std::string save = joinPath(dir, "SAVEGAME");
 	if (!readFile(joinPath(save, "OBJLIST"), d) || !actors.load(d))
 		return fail("SAVEGAME/OBJLIST");
@@ -135,6 +144,139 @@ bool World::portrait(int actor, Bytes &pixels) const {
 	if (!Portrait::locate(actor, type, avatar, ref))
 		return false;
 	return Portrait::decode(portraits[ref.file == 'A' ? 0 : ref.file == 'B' ? 1 : 2], ref.item, pixels);
+}
+
+bool World::isStackable(int type) const {
+	int tile = baseTile.firstTile[type & (BaseTile::TYPES - 1)] & (TileSet::COUNT - 1);
+	return look.description(tile).find('\\') != std::string::npos;
+}
+
+void World::inventory(int actor, std::vector<int> &out, bool nested) const {
+	out.clear();
+	std::vector<int> owners;
+	for (size_t i = 0; i < objects.size(); ++i) {
+		const Obj &o = objects[i];
+		if (o.deleted || o.location() == ObjRecord::ON_MAP || o.location() == ObjRecord::IN_CONTAINER)
+			continue;
+		if (o.parent == actor) {
+			out.push_back((int)i);
+			owners.push_back((int)i);
+		}
+	}
+	if (!nested)
+		return;
+	// containers inside: objects whose location is "container" and whose parent is an object already collected
+	bool grew = true;
+	std::vector<bool> taken(objects.size(), false);
+	for (int i : out)
+		taken[i] = true;
+	while (grew) {
+		grew = false;
+		for (size_t i = 0; i < objects.size(); ++i) {
+			const Obj &o = objects[i];
+			if (taken[i] || o.deleted || o.location() != ObjRecord::IN_CONTAINER || o.parent < 0)
+				continue;
+			if (o.parent < (int)taken.size() && taken[o.parent]) {
+				out.push_back((int)i);
+				taken[i] = true;
+				grew = true;
+			}
+		}
+	}
+}
+
+int World::weightOfType(int type, int quantity) const {
+	int w = flags.block3[type & (TileFlags::BLOCK3 - 1)];
+	if (isStackable(type)) {
+		w *= quantity ? quantity : 1;
+		static const int REDUCED[] = {0x58, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E}; // gold and the reagents
+		for (int r : REDUCED)
+			if (r == type)
+				w /= 10;
+	}
+	return w;
+}
+
+int World::weightOf(int index) const {
+	return weightOfType(objects[index].type, quantityOf(objects[index]));
+}
+
+int World::carriedWeight(int actor) const {
+	std::vector<int> inv;
+	inventory(actor, inv);
+	int total = 0;
+	for (int i : inv)
+		total += weightOf(i);
+	return total;
+}
+
+int World::addToInventory(int actor, int type, int quality, int quantity) {
+	bool stack = isStackable(type);
+	if (stack) {
+		std::vector<int> inv;
+		inventory(actor, inv, false);
+		for (int i : inv) {
+			Obj &o = objects[i];
+			if (o.type == type && o.location() == ObjRecord::IN_INVENTORY) {
+				int q = quantityOf(o) + quantity;
+				o.quantity = q & 0xFF;
+				o.quality = (q >> 8) & 0xFF;
+				return i;
+			}
+		}
+	}
+	Obj o;
+	o.status = ObjRecord::IN_INVENTORY | 0x01; // carried, may be taken
+	o.x = o.y = 0;
+	o.z = 0;
+	o.type = type;
+	o.frame = 0;
+	o.actor = -1;
+	o.parent = actor;
+	if (stack) {
+		o.quantity = quantity & 0xFF;
+		o.quality = (quantity >> 8) & 0xFF;
+	} else {
+		o.quantity = 1;
+		o.quality = quality;
+	}
+	objects.push_back(o);
+	return (int)objects.size() - 1;
+}
+
+int World::removeFromInventory(int actor, int type, int quality, int quantity) {
+	std::vector<int> inv;
+	inventory(actor, inv);
+	int taken = 0;
+	for (int i : inv) {
+		Obj &o = objects[i];
+		if (o.type != type || (quality && o.quality != quality && !isStackable(type)))
+			continue;
+		int have = quantityOf(o);
+		int take = quantity <= 0 ? have : std::min(have, quantity - taken);
+		if (take <= 0)
+			break;
+		if (take >= have)
+			deleteObject(i);
+		else {
+			o.quantity = (have - take) & 0xFF;
+			o.quality = ((have - take) >> 8) & 0xFF;
+		}
+		taken += take;
+		if (quantity > 0 && taken >= quantity)
+			break;
+	}
+	return taken;
+}
+
+void World::deleteObject(int index) {
+	Obj &o = objects[index];
+	if (o.onMap()) {
+		auto it = std::find(_byPosition.begin(), _byPosition.end(), std::make_pair(positionKey(o.x, o.y, o.z), index));
+		if (it != _byPosition.end())
+			_byPosition.erase(it);
+	}
+	o.deleted = true;
 }
 
 void World::moveObject(int index, int x, int y, int z) {

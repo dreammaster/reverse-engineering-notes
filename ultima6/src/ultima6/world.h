@@ -34,6 +34,7 @@ public:
 		uint8_t frame;
 		uint8_t quantity, quality;
 		int actor; // actor number if this object is an actor's body, else -1
+		bool deleted = false;
 		int parent; // index of the container (status location 8) or owning actor number (location 0x10 / 0x18), else -1
 
 		int location() const {
@@ -59,8 +60,10 @@ public:
 	BaseTile baseTile;
 	Palette palette;
 	Font font;
+	LookData look;
 	Picture paper;  // PAPER.BMP: the play screen's frame
 	Bytes portraits[3]; // PORTRAIT.A, .B and .Z
+	Bytes converse[2];  // CONVERSE.A and CONVERSE.B
 	MapData map;
 	ObjList actors;
 	std::vector<Obj> objects;
@@ -80,6 +83,24 @@ public:
 	int actorObject(int actor) const {
 		return actor >= 0 && actor < (int)_actorObject.size() ? _actorObject[actor] : -1;
 	}
+
+	/** Whether objects of this type stack: their description has a plural form. */
+	bool isStackable(int type) const;
+	/** The object's quantity: stackable objects use the quality byte as the high byte. */
+	int quantityOf(const Obj &o) const {
+		return isStackable(o.type) ? o.quantity | (o.quality << 8) : 1;
+	}
+	/** Indices of the objects an actor carries; with `nested`, also the contents of its containers. */
+	void inventory(int actor, std::vector<int> &out, bool nested = true) const;
+	/** Weight of an object with what it holds, in the game's tenth-unit scale (1/10 kg times 10). */
+	int weightOf(int index) const;
+	int weightOfType(int type, int quantity) const;
+	int carriedWeight(int actor) const;
+	/** Creates an object in an actor's inventory (merging into a stack of the same kind); returns its index. */
+	int addToInventory(int actor, int type, int quality, int quantity);
+	/** Removes up to `quantity` of a type from an inventory (quality 0 = any); returns how many were taken. */
+	int removeFromInventory(int actor, int type, int quality, int quantity);
+	void deleteObject(int index);
 
 	/** Puts an object on another map position (keeping the position index in step). */
 	void moveObject(int index, int x, int y, int z);

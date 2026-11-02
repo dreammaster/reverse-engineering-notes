@@ -4,9 +4,11 @@
 #include "engine/backend.h"
 #include "ultima6/map_renderer.h"
 #include "ultima6/movement.h"
+#include "ultima6/talk.h"
 #include "ultima6/text_window.h"
 #include "ultima6/world.h"
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -59,6 +61,12 @@ private:
 	MapRenderer _renderer;
 	Movement _movement;
 	MoveRules _rules;
+	BorlandRandom _rng;
+	std::unique_ptr<Talk> _talk; // a conversation in progress
+	int _pending = 0;            // command letter waiting for its target (a direction), or 0
+	bool selectTarget(int key, int &tx, int &ty) const;
+	void command(int key);
+	void talkAt(int tx, int ty);
 	int _member = 0; // party member shown in the panel
 	int _leaderObject; // index of the leader's body in the world's object list
 };
