@@ -1536,6 +1536,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11399);
 	op_hex		(x,	1);
 	create_insn	(0X113A5);
+	set_name	(0X113A5,	"main_menu");
 	create_insn	(x=0X113A8);
 	op_hex		(x,	1);
 	create_insn	(x=0X113AE);
@@ -2810,6 +2811,7 @@ static Bytes_0(void) {
 	create_insn	(0X1345C);
 	create_insn	(0X13468);
 	create_insn	(0X13470);
+	set_name	(0X13470,	"transfer_from_disk");
 	create_insn	(x=0X13473);
 	op_hex		(x,	1);
 	create_insn	(0X1348A);
@@ -3060,6 +3062,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X139F8);
 	create_insn	(0X13A06);
+	set_name	(0X13A06,	"transfer_character_menu");
 	create_insn	(x=0X13A09);
 	op_hex		(x,	1);
 	create_insn	(x=0X13A22);
@@ -3199,6 +3202,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X14032);
 	create_insn	(0X14066);
+	set_name	(0X14066,	"write_new_game_objlist");
 	create_insn	(x=0X14069);
 	op_hex		(x,	1);
 	create_insn	(x=0X14078);
@@ -3227,6 +3231,9 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X140E5);
 	op_stkvar	(x,	1);
+	create_insn	(x=0X140EE);
+	op_plain_offset	(x,	1,	0X24990);
+	op_plain_offset	(x,	129,	0X24990);
 	create_insn	(x=0X140F7);
 	op_hex		(x,	1);
 	create_insn	(x=0X14103);
@@ -3254,6 +3261,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14180);
 	op_hex		(x,	1);
 	create_insn	(0X1418A);
+	set_name	(0X1418A,	"enter_name_and_sex");
 	create_insn	(x=0X1418D);
 	op_hex		(x,	1);
 	create_insn	(x=0X14192);
@@ -3889,6 +3897,7 @@ static Bytes_0(void) {
 	create_insn	(0X14D9D);
 	create_insn	(0X14DBC);
 	create_insn	(0X14DD3);
+	set_name	(0X14DD3,	"shuffle_words");
 	create_insn	(x=0X14DD6);
 	op_hex		(x,	1);
 	create_insn	(x=0X14DDB);
@@ -3982,6 +3991,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14FF0);
 	op_stkvar	(x,	1);
 	create_insn	(0X14FF9);
+	set_name	(0X14FF9,	"gypsy_choose_answer");
 	create_insn	(x=0X14FFC);
 	op_hex		(x,	1);
 	create_insn	(x=0X15038);
@@ -4005,6 +4015,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X15096);
 	op_hex		(x,	1);
 	create_insn	(0X150A0);
+	set_name	(0X150A0,	"gypsy_apply_answer");
 	create_insn	(x=0X150A3);
 	op_hex		(x,	1);
 	create_insn	(x=0X150A8);
@@ -4062,6 +4073,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X152C3);
 	create_insn	(0X152C9);
+	set_name	(0X152C9,	"create_character");
 	create_insn	(x=0X152CC);
 	op_hex		(x,	1);
 	create_insn	(x=0X152DB);
@@ -4553,6 +4565,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1675D);
 	op_stkvar	(x,	1);
 	create_insn	(0X16766);
+	set_name	(0X16766,	"acknowledgements");
 	create_insn	(x=0X16769);
 	op_hex		(x,	1);
 	create_insn	(x=0X16785);
@@ -4901,6 +4914,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X16DEA);
 	op_stkvar	(x,	1);
 	create_insn	(0X16DF9);
+	set_name	(0X16DF9,	"start_game");
 	create_insn	(0X16E22);
 	create_insn	(x=0X16E58);
 	op_hex		(x,	1);
@@ -5429,6 +5443,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X17A2D);
 	op_stkvar	(x,	1);
 	create_insn	(0X17A36);
+	set_name	(0X17A36,	"title_sequence");
 	create_insn	(x=0X17A39);
 	op_hex		(x,	1);
 	create_insn	(x=0X17A40);
@@ -5616,6 +5631,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X18075);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X18078);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1808A);
@@ -5657,15 +5681,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1818A);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1818D);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X181A4);
@@ -6674,6 +6689,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X199D5);
 	op_stkvar	(x,	0);
 	create_insn	(0X19A0B);
+	set_name	(0X19A0B,	"show_text_page");
 	create_insn	(x=0X19A0E);
 	op_hex		(x,	1);
 	create_insn	(x=0X19A11);
@@ -8842,6 +8858,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1C66E);
 	create_insn	(0X1C678);
+	set_name	(0X1C678,	"intro_story");
 	create_insn	(x=0X1C67B);
 	op_hex		(x,	1);
 	create_insn	(0X1C6AE);
@@ -11379,6 +11396,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X20710);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2071A);
 	create_insn	(x=0X2071C);
 	op_stkvar	(x,	0);
@@ -11420,15 +11446,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X2079C);
 	op_stkvar	(x,	0);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X207A4);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X207B3);
@@ -15001,6 +15018,7 @@ static Bytes_2(void) {
 	create_word	(0X24A3A);
 	create_word	(0X24A3C);
 	create_word	(0X24B24);
+	set_name	(0X24B24,	"intro_seen");
 	create_word	(0X24B38);
 	create_strlit	(0X24BE5,	0XA);
 	set_name	(0X24BE5,	"aConfigU6");
@@ -15066,6 +15084,7 @@ static Bytes_2(void) {
 	create_strlit	(0X25015,	0XC);
 	set_name	(0X25015,	"aMontageShp");
 	create_byte	(0X25022);
+	set_name	(0X25022,	"new_char_karma");
 	create_word	(0X25023);
 	create_word	(0X25035);
 	create_word	(0X25037);
@@ -15076,6 +15095,12 @@ static Bytes_2(void) {
 	create_word	(0X25041);
 	create_word	(0X25043);
 	create_word	(0X25045);
+	set_name	(0X25047,	"gypsy_questions");
+	set_name	(0X250C7,	"gypsy_answer_a");
+	set_name	(0X250FF,	"gypsy_answer_b");
+	set_name	(0X25137,	"gypsy_bonus_str");
+	set_name	(0X25147,	"gypsy_bonus_dex");
+	set_name	(0X25157,	"gypsy_bonus_int");
 	create_word	(0X25167);
 	create_word	(0X25169);
 	create_word	(0X2516B);
@@ -15937,19 +15962,27 @@ static Bytes_2(void) {
 	create_word	(0X2A3BA);
 	create_word	(0X2A3BC);
 	create_word	(0X2A3BE);
-	make_array	(0X2A3C0,	0X10);
+	set_name	(0X2A3C0,	"new_char_name");
 	create_word	(0X2A3D0);
+	set_name	(0X2A3D0,	"new_char_str");
 	create_word	(0X2A3D2);
+	set_name	(0X2A3D2,	"new_char_dex");
 	create_word	(0X2A3D4);
+	set_name	(0X2A3D4,	"new_char_int");
 	create_byte	(0X2A3D6);
+	set_name	(0X2A3D6,	"new_char_sex");
 	create_byte	(0X2A3EE);
 	create_byte	(0X2A3EF);
 	create_word	(0X2A3F0);
+	set_name	(0X2A3F0,	"new_char_exp");
 	create_word	(0X2A3F2);
+	set_name	(0X2A3F2,	"new_char_level");
 	create_word	(0X2A3F4);
+	set_name	(0X2A3F4,	"new_char_hp");
 	create_word	(0X2A3F6);
 	create_word	(0X2A3F8);
 	create_word	(0X2A3FA);
+	set_name	(0X2A3FA,	"new_char_portrait");
 	create_word	(0X2A462);
 	create_word	(0X2A464);
 	create_word	(0X2A466);
@@ -15968,6 +16001,7 @@ static Bytes_2(void) {
 	create_word	(0X2A4A6);
 	create_word	(0X2A4B8);
 	create_word	(0X2A4BA);
+	set_name	(0X2A4BA,	"gypsy_table");
 	create_word	(0X2A4BC);
 	create_word	(0X2A52A);
 	create_word	(0X2A52C);
@@ -16060,6 +16094,15 @@ static Bytes_2(void) {
 	create_word	(0X2B0F6);
 	create_word	(0X2B0F8);
 	set_name	(0X2B0F8,	"addr");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2B0FA);
 	create_byte	(0X2B0FC);
 	create_byte	(0X2B0FD);
@@ -18248,6 +18291,7 @@ static Bytes(void) {
 	Bytes_0();
 	Bytes_1();
 	Bytes_2();
+	Bytes_3();
         end_type_updating(UTP_STRUCT);
 }
 

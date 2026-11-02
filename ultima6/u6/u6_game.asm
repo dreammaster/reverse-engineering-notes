@@ -3119,7 +3119,7 @@ loc_11EE5:                              ; CODE XREF: _main+5F6↓j
 loc_11F00:                              ; CODE XREF: _main+5D5↑j
                 cmp     si, anim_count
                 jl      short loc_11EE5
-                cmp     byte_4051B, 0
+                cmp     avatar_portrait_plus1, 0
                 jnz     short loc_11F5C
                 push    ds
                 mov     ax, offset aYouMustFirstCr ; "You must first create or transfer a cha"...
@@ -3217,17 +3217,17 @@ arg_0           = word ptr  6
 
                 push    bp
                 mov     bp, sp
-                mov     al, byte_404A2
+                mov     al, karma
                 mov     ah, 0
                 cmp     ax, [bp+arg_0]
                 jle     short loc_11FCE
                 mov     al, byte ptr [bp+arg_0]
-                sub     byte_404A2, al
+                sub     karma, al
                 jmp     short loc_11FD3
 ; ---------------------------------------------------------------------------
 
 loc_11FCE:                              ; CODE XREF: sub_11FB8+B↑j
-                mov     byte_404A2, 0
+                mov     karma, 0
 
 loc_11FD3:                              ; CODE XREF: sub_11FB8+14↑j
                 pop     bp
@@ -3237,18 +3237,18 @@ sub_11FB8       endp
 ; ---------------------------------------------------------------------------
                 push    bp
                 mov     bp, sp
-                mov     al, byte_404A2
+                mov     al, karma
                 mov     ah, 0
                 add     ax, [bp+6]
                 cmp     ax, 64h ; 'd'
                 jge     short loc_11FF0
                 mov     al, [bp+6]
-                add     byte_404A2, al
+                add     karma, al
                 jmp     short loc_11FF5
 ; ---------------------------------------------------------------------------
 
 loc_11FF0:                              ; CODE XREF: seg002:0035↑j
-                mov     byte_404A2, 63h ; 'c'
+                mov     karma, 63h ; 'c'
 
 loc_11FF5:                              ; CODE XREF: seg002:003E↑j
                 pop     bp
@@ -8061,7 +8061,7 @@ loc_144CE:                              ; CODE XREF: command_loop:loc_140B2↑j
                 mov     al, byte_4049D
                 mov     ah, 0
                 push    ax
-                mov     al, byte_404A2
+                mov     al, karma
                 mov     ah, 0
                 push    ax
                 push    ds
@@ -17423,7 +17423,7 @@ loc_18960:                              ; CODE XREF: sub_1890C+3E↑j
                 mov     al, byte_40C84
                 mov     byte_47346, al
                 and     byte_477FC, 0E0h
-                cmp     byte_404A2, 62h ; 'b'
+                cmp     karma, 62h ; 'b'
                 jnb     short loc_189F7
                 xor     dx, dx
                 mov     ax, 64h ; 'd'
@@ -17431,7 +17431,7 @@ loc_18960:                              ; CODE XREF: sub_1890C+3E↑j
                 push    ax
                 mov     ax, word_47447
                 xor     dx, dx
-                mov     bl, byte_404A2
+                mov     bl, karma
                 mov     bh, 0
                 push    dx
                 push    ax
@@ -30868,7 +30868,7 @@ arg_2           = word ptr  8
                 push    si
                 push    di
                 mov     di, [bp+arg_2]
-                cmp     byte_4051A, 0
+                cmp     avatar_gender, 0
                 jz      short loc_1EAAB
                 mov     ax, 920h
                 jmp     short loc_1EAAE
@@ -30918,7 +30918,7 @@ loc_1EADF:                              ; CODE XREF: sub_1EA97+37↑j
                 shl     bx, 1
                 mov     ax, [bx-640Bh]
                 mov     word_48F4D, ax
-                cmp     byte_4051A, 0
+                cmp     avatar_gender, 0
                 jz      short loc_1EB16
                 mov     ax, 1
                 jmp     short loc_1EB18
@@ -30937,7 +30937,7 @@ loc_1EB18:                              ; CODE XREF: sub_1EA97+7D↑j
                 push    ax
                 call    sub_2B448
                 mov     word_48F55, ax
-                mov     al, byte_404A2
+                mov     al, karma
                 mov     ah, 0
                 mov     word_48F59, ax
                 mov     ax, word_404F8
@@ -34507,14 +34507,14 @@ loc_20676:                              ; CODE XREF: sub_201EB+1C↑j
                 call    near ptr sub_1F1BE
                 mov     [bp+var_10], ax
                 mov     al, byte ptr [bp+var_10]
-                add     byte_404A2, al
-                cmp     byte_404A2, 63h ; 'c'
+                add     karma, al
+                cmp     karma, 63h ; 'c'
                 ja      short loc_2068E
                 jmp     loc_208EB       ; jumptable 00020207 cases 162,167
 ; ---------------------------------------------------------------------------
 
 loc_2068E:                              ; CODE XREF: sub_201EB+49E↑j
-                mov     byte_404A2, 63h ; 'c'
+                mov     karma, 63h ; 'c'
                 jmp     loc_208EB       ; jumptable 00020207 cases 162,167
 ; ---------------------------------------------------------------------------
 
@@ -34523,17 +34523,17 @@ loc_20696:                              ; CODE XREF: sub_201EB+1C↑j
                 push    cs              ; jumptable 00020207 case 197
                 call    near ptr sub_1F1BE
                 mov     [bp+var_10], ax
-                mov     al, byte_404A2
+                mov     al, karma
                 mov     ah, 0
                 cmp     ax, [bp+var_10]
                 jle     short loc_206B1
                 mov     al, byte ptr [bp+var_10]
-                sub     byte_404A2, al
+                sub     karma, al
                 jmp     loc_208EB       ; jumptable 00020207 cases 162,167
 ; ---------------------------------------------------------------------------
 
 loc_206B1:                              ; CODE XREF: sub_201EB+4BA↑j
-                mov     byte_404A2, 0
+                mov     karma, 0
                 jmp     loc_208EB       ; jumptable 00020207 cases 162,167
 ; ---------------------------------------------------------------------------
 
@@ -39503,7 +39503,7 @@ arg_0           = word ptr  6
                 call    sub_2B549
                 mov     [si-650Bh], al
                 and     byte ptr [si-6055h], 0E0h
-                cmp     byte_404A2, 62h ; 'b'
+                cmp     karma, 62h ; 'b'
                 jnb     short loc_22B80
                 xor     dx, dx
                 mov     ax, 64h ; 'd'
@@ -39513,7 +39513,7 @@ arg_0           = word ptr  6
                 shl     bx, 1
                 mov     ax, [bx-640Bh]
                 xor     dx, dx
-                mov     bl, byte_404A2
+                mov     bl, karma
                 mov     bh, 0
                 push    dx
                 push    ax
@@ -42809,7 +42809,7 @@ loc_24531:                              ; CODE XREF: sub_24235+2EC↑j
                 push    ax
                 call    scroll_printf
                 add     sp, 6
-                sub     byte_404A2, 5
+                sub     karma, 5
 
 loc_2454D:                              ; CODE XREF: sub_24235+267↑j
                 mov     al, byte_404A4
@@ -87535,7 +87535,7 @@ loc_39503:                              ; CODE XREF: sub_394A9+1D↑j
                 push    ax
                 call    require_disk
                 mov     byte_40462, 7Ah ; 'z'
-                mov     al, byte_4051B
+                mov     al, avatar_portrait_plus1
                 mov     ah, 0
                 mov     si, ax
                 dec     si
@@ -102772,7 +102772,7 @@ byte_4049F      db 7                    ; DATA XREF: sub_116CE+10↑r
                                         ; sub_13305+49B↑w ...
 word_404A0      dw 0A1h                 ; DATA XREF: sub_116CE+8↑r
                                         ; sub_13305+4AB↑w ...
-byte_404A2      db 4Bh                  ; DATA XREF: sub_11FB8+3↑r
+karma           db 4Bh                  ; DATA XREF: sub_11FB8+3↑r
                                         ; sub_11FB8+10↑w ...
 byte_404A3      db 0                    ; DATA XREF: sub_132A6+15↑r
                                         ; sub_132A6+1C↑w ...
@@ -102912,9 +102912,9 @@ byte_40518      db 0                    ; DATA XREF: sub_13305+61C↑w
                                         ; sub_13305+61F↑r ...
 byte_40519      db 0                    ; DATA XREF: sub_131CA+86↑r
                                         ; sub_13305+63A↑w ...
-byte_4051A      db 0                    ; DATA XREF: sub_1EA97+8↑r
+avatar_gender   db 0                    ; DATA XREF: sub_1EA97+8↑r
                                         ; sub_1EA97+73↑r
-byte_4051B      db 0                    ; DATA XREF: _main+5F8↑r
+avatar_portrait_plus1 db 0              ; DATA XREF: _main+5F8↑r
                                         ; sub_394A9+6D↑r
                 db    0
                 db    0

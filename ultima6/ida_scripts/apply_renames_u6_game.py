@@ -130,6 +130,9 @@ DATA = [
     (0x4259C, "actor_movement_flags_ptr", "objlist +0x19F1, u8[256] (far ptr)"),
     (0x46492, "objlist_1af1_ptr", "objlist +0x1AF1, u8[256] (far ptr, purpose not yet established)"),
     (ds(0x2C4A), "objlist_globals", "objlist +0x1BF1, 0x2CCC bytes: quest flag, rest counter, game time, karma, wind, timers, ..."),
+    (ds(0x2CCA), "avatar_gender", "objlist +0x1C71: 1 = female"),
+    (ds(0x2CCB), "avatar_portrait_plus1", "objlist +0x1C72: portrait + 1, 0 = no character yet; _main refuses to start without one"),
+    (ds(0x2C4A + 0x08), "karma", "objlist +0x1BF9 (the new game starts at 75, set by U.EXE)"),
     # map and objects
     (ds(0xBDDA), "obj_next", "u16[0xC00]: next object in the sorted list of loaded objects (-1 ends; index 100h is the list head)"),
     (0x4AE2A, "obj_free_head", "head of the free-object list (linked through obj_next)"),

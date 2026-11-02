@@ -21,7 +21,8 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 - [x] `GAME.EXE`: ANIMDATA, TILEFLAG, BASETILE, U6PAL, SCHEDULE and `objlist` layouts verified against the code (C++ readers in `src/files/`)
 - [x] `GAME.EXE`: MAP/CHUNKS lookup and caching, `objblk*` loading and saving, object arrays, LZW (C++ in `src/files/`, checked against the shipped files)
 - [ ] `GAME.EXE`: object list ordering (`sub_1BE84`), egg/NPC spawning, `objlist` globals block, new-game set-up (`U.EXE`)
-- [ ] `U.EXE`: data-file loaders, LZW, main menu, intro, character creation
+- [x] `U.EXE`: menu flow, character creation (gypsy quiz, new-game objlist patch), see `u6_intro.md`; C++ in `src/ultima6/gypsy.*`
+- [ ] `U.EXE`: drawing/animation of the title, introduction and gypsy scenes, story text pages, character transfer formats, music loading
 - [ ] `GAME.EXE`: main loop, commands, combat, magic, usecode interpreter, conversation interpreter
 - [ ] `END.EXE`: ending sequence
 
@@ -31,6 +32,7 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
       for game-specific code (main menu, intro, character creation, ending), game detection, tests, MinGW Makefile.
 - [x] `src/files/`: readers for ANIMDATA, TILEFLAG, BASETILE, U6PAL, SCHEDULE and `objlist` with tests against the real data.
 - [x] `src/files/`: `lzwDecompress`, `MapData` (MAP + CHUNKS), `ObjBlock`.
+- [x] `src/ultima6/gypsy.*`, `src/engine/random.h`: the gypsy quiz, Borland generator and the new-game character patch.
 - [ ] Everything else.
 
 ## 4. Martian Dreams and Savage Empire

@@ -34214,6 +34214,7 @@ static Bytes_5(void) {
 	create_byte	(0X4049F);
 	create_word	(0X404A0);
 	create_byte	(0X404A2);
+	set_name	(0X404A2,	"karma");
 	create_byte	(0X404A3);
 	create_byte	(0X404A4);
 	create_byte	(0X404A5);
@@ -34248,7 +34249,9 @@ static Bytes_5(void) {
 	create_byte	(0X40518);
 	create_byte	(0X40519);
 	create_byte	(0X4051A);
+	set_name	(0X4051A,	"avatar_gender");
 	create_byte	(0X4051B);
+	set_name	(0X4051B,	"avatar_portrait_plus1");
 	create_strlit	(0X40560,	0X16);
 	set_name	(0X40560,	"aHullStrengthD");
 	create_strlit	(0X40576,	0X5);

@@ -6,8 +6,8 @@ in [`../src`](../src) that matches the originals; add the two spin-offs to it;
 move the result into ScummVM's Ultima engine; and finally replace the old Nuvie
 engine (reference copy in [`../nuvie`](../nuvie)) with it.
 
-[roadmap.md](roadmap.md) lists what is done and what is next; [u6_game.md](u6_game.md) records what the Ultima VI executables have been
-shown to do so far.
+[roadmap.md](roadmap.md) lists what is done and what is next; [u6_game.md](u6_game.md) and [u6_intro.md](u6_intro.md) record what the Ultima VI
+executables have been shown to do so far.
 
 ## Layout
 
