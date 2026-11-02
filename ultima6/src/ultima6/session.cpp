@@ -347,6 +347,10 @@ void Game::command(int key) {
 		message("Use-");
 		_pending = 'U';
 		break;
+	case 'M':
+		message("Move-");
+		_pending = 'M';
+		break;
 	case 'R':
 		message("Rest");
 		{
@@ -482,6 +486,8 @@ bool Game::handleKeyInner(int key) {
 		_pending = 0;
 		if ((key == KEY_ENTER || key == KEY_SPACE) && cmd == 'U') {
 			useAt(x, y); // the own square (rear horse)
+		} else if (cmd == 'm') {
+			moveTo(key);
 		} else if (cmd == 'p' && key >= '1' && key <= '8') {
 			// the potion's target: a party member by number
 			int n = key - '1';
@@ -501,6 +507,8 @@ bool Game::handleKeyInner(int key) {
 						actor = _world.objects[i].actor;
 				usePotionOn(actor);
 				prompt();
+			} else if (cmd == 'M') {
+				moveSelect(tx, ty);
 			} else if (cmd == 'T')
 				talkAt(tx, ty);
 			else if (cmd == 'G')

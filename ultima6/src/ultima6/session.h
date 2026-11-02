@@ -111,6 +111,8 @@ private:
 	void getAt(int tx, int ty);
 	void useAt(int tx, int ty);
 	void useObject(int idx);
+	void moveSelect(int tx, int ty);
+	void moveTo(int key);
 	void readBook(int idx);
 	bool _scrollStudied = false; // word_404F8: after "You study the scroll!" the Gargish translations in books are shown
 	void useKeyOnDoor(int idx, bool lock, bool magic, bool unlock);

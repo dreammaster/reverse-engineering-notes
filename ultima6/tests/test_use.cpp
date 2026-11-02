@@ -136,6 +136,21 @@ int main() {
 		CHECK(logText(g).find(":\n\nThe bones of Zog.") != std::string::npos);
 	}
 
+	// Move: a key to the east is pushed one square on (or is "Blocked")
+	{
+		int key = put(w, 0x40, 0, px + 1, py, 0);
+		w.moveObject(w.actorObject(1), px, py, 0);
+		g.x = px;
+		g.y = py;
+		g.handleKey('m');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_RIGHT);
+		bool moved = w.objects[key].x == px + 2 && w.objects[key].y == py;
+		bool stayed = w.objects[key].x == px + 1 && logText(g).find("Blocked") != std::string::npos;
+		CHECK(moved || stayed);
+		CHECK(logText(g).find("East.") != std::string::npos);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

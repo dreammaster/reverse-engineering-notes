@@ -633,6 +633,81 @@ void Game::readBook(int idx) {
 	message(out);
 }
 
+// The Move command (sub_3151B), first half: the top object of the chosen square; "To " asks where to.
+// APPROX(54): only ordinary objects are pushed (no people, no handing things over to party members, no swapping with the occupant of the square); the test for
+// a blocked square is my own (impassable tile or object, or someone standing there) in place of sub_3143B
+void Game::moveSelect(int tx, int ty) {
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	int pick = -1;
+	for (size_t i = here.size(); i-- > 0;) {
+		const World::Obj &o = _world.objects[here[i]];
+		if (o.actor < 0 && !o.invisible()) {
+			pick = here[i];
+			break;
+		}
+	}
+	if (pick < 0) {
+		message("nothing\n");
+		prompt();
+		return;
+	}
+	const World::Obj &o = _world.objects[pick];
+	message(Describe::object(_world, o));
+	message("\n");
+	int a = _world.actorObject(actingActor());
+	if (a >= 0 && (std::abs((int)_world.objects[a].x - (int)o.x) > 1 || std::abs((int)_world.objects[a].y - (int)o.y) > 1)) {
+		message("\nOut of range!\n");
+		prompt();
+		return;
+	}
+	_useItem = pick;
+	_pending = 'm';
+	message("To ");
+}
+
+// The second half: a direction, then the object moves one square if it is not too heavy and the square is free.
+void Game::moveTo(int key) {
+	int idx = _useItem;
+	_useItem = -1;
+	static const char *const NAMES[8] = {"North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"};
+	int dir = key == KEY_UP ? 0 : key == KEY_RIGHT ? 2 : key == KEY_DOWN ? 4 : key == KEY_LEFT ? 6 : -1;
+	if (dir < 0) {
+		message("nowhere.\n");
+		prompt();
+		return;
+	}
+	message(std::string(NAMES[dir]) + ".\n");
+	World::Obj &o = _world.objects[idx];
+	int w = _world.weightOf(idx) + _world.contentsWeight(idx);
+	bool reduced = o.type == 0x58 || (o.type >= 0x41 && o.type <= 0x48);
+	if ((w == 0 && !reduced) || o.type == 0x19B) {
+		message("\nNot possible\n");
+		prompt();
+		return;
+	}
+	_world.spendMoves(actingActor(), 5);
+	static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1}; // ds:01A2 / 01AA
+	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+	int nx = (o.x + DX[dir]) & mask, ny = (o.y + DY[dir]) & mask;
+	bool blocked = _world.flags.flags1[_world.map.tile(z, nx, ny) & (TileFlags::TILES - 1)] & 0x02;
+	std::vector<int> there;
+	_world.objectsAt(nx, ny, z, there);
+	for (int t : there) {
+		const World::Obj &q = _world.objects[t];
+		if (q.actor >= 0 || (_world.flags.flags1[(_world.baseTile.firstTile[q.type] + q.frame) & (TileFlags::TILES - 1)] & 0x02))
+			blocked = true;
+	}
+	if (blocked) {
+		message("\nBlocked\n");
+	} else {
+		_world.moveObject(idx, nx, ny, z);
+		if (o.type == 0xDD && (o.frame != (dir >> 1))) // a cannon turns to face the way it was pushed
+			o.frame = (uint8_t)(dir >> 1);
+	}
+	prompt();
+}
+
 // The Use command's target: the objects on the square the player points at (cmd_use selects the top one).
 void Game::useAt(int tx, int ty) {
 	if (useHorse(tx, ty)) {
