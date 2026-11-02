@@ -410,6 +410,10 @@ bool Game::handleKeyInner(int key) {
 		return false;
 	if (_dead)
 		return false; // any key after the Avatar's death ends the game
+	if (_textActive) {
+		textKey(key);
+		return true;
+	}
 	if (key >= '1' && key <= '8' && !_talk && !_pending && !_confirmSave && key - '1' < _world.actors.partySize) {
 		_member = key - '1';
 		_selected = 0;
@@ -493,6 +497,17 @@ bool Game::handleKeyInner(int key) {
 		_pending = 0;
 		if ((key == KEY_ENTER || key == KEY_SPACE) && cmd == 'U') {
 			useAt(x, y); // the own square (rear horse)
+		} else if (cmd == 'w') {
+			if (key == 'y' || key == 'Y') {
+				message("\nWish for: ");
+				_textActive = true;
+				_textBuf.clear();
+				_textMax = 9;
+				_textPurpose = 2;
+			} else {
+				message("\n");
+				prompt();
+			}
 		} else if (cmd == 'm') {
 			moveTo(key);
 		} else if (cmd == 'v') {

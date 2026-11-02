@@ -116,6 +116,13 @@ private:
 	void placeGates();
 	void buryMoonstone(int idx);
 	void digAt(int key);
+	void textKey(int key);
+	void shrineChant(const std::string &mantra);
+	bool _textActive = false; // a line of text is being typed (sub_1737A): the mantra at a shrine
+	std::string _textBuf;
+	int _textMax = 0;
+	int _textPurpose = 0; // 1 a mantra, 2 a wish
+	void wishDone(const std::string &wish);
 	void gateTo(int n);
 	bool enterMoongate(int px, int py);
 	void useOrb(int idx);

@@ -259,6 +259,52 @@ int main() {
 		CHECK(hole);
 	}
 
+	// a shrine: the wrong mantra is refused, the right one with the moonstone of the virtue beside the party works
+	{
+		World w6;
+		w6.load("u6/game");
+		Game g6(w6);
+		int sx = g6.x, sy = g6.y;
+		put(w6, 0xF2, 0, sx + 1, sy, 0);
+		g6.handleKey('u');
+		g6.handleKey(KEY_RIGHT);
+		g6.handleKey('x');
+		g6.handleKey('x');
+		g6.handleKey(KEY_ENTER);
+		std::string text;
+		for (const std::string &l : g6.log)
+			text += l;
+		CHECK(text.find("Wrong mantra!") != std::string::npos);
+		put(w6, 0x49, 0, sx, sy + 1, 0);
+		g6.handleKey('u');
+		g6.handleKey(KEY_RIGHT);
+		for (char c : std::string("ahm"))
+			g6.handleKey(c);
+		g6.handleKey(KEY_ENTER);
+		text.clear();
+		for (const std::string &l : g6.log)
+			text += l;
+		CHECK(text.find("Done") != std::string::npos);
+	}
+
+	// a fountain: a wish that is no food has no effect
+	{
+		World w7;
+		w7.load("u6/game");
+		Game g7(w7);
+		put(w7, 0xEA, 0, g7.x + 1, g7.y, 0);
+		g7.handleKey('u');
+		g7.handleKey(KEY_RIGHT);
+		g7.handleKey('y');
+		for (char c : std::string("gold"))
+			g7.handleKey(c);
+		g7.handleKey(KEY_ENTER);
+		std::string text;
+		for (const std::string &l : g7.log)
+			text += l;
+		CHECK(text.find("Make a wish?") != std::string::npos && text.find("No effect") != std::string::npos);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

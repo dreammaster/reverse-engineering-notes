@@ -170,6 +170,20 @@ void Game::useObject(int idx) {
 			message("\n" + std::to_string(std::abs(lat)) + "{" + (lat > 0 ? "S" : "N"));
 			message(", " + std::to_string(std::abs(lon)) + "{" + (lon > 0 ? "E\n" : "W\n"));
 		}
+	} else if (type == 0xEA) {
+		// use_fountain (3452B): a wish that is one of five foods gives some food one time in five
+		message("Make a wish?");
+		_useItem = idx;
+		_pending = 'w';
+		return;
+	} else if (type >= 0xF2 && type <= 0xF9) {
+		message("Mantra: ");
+		_useItem = idx;
+		_textActive = true;
+		_textBuf.clear();
+		_textMax = 4;
+		_textPurpose = 1;
+		return;
 	} else if (type == 0x67 || type == 0x68) {
 		message("Direction:");
 		_useItem = idx;
@@ -652,6 +666,118 @@ void Game::readBook(int idx) {
 		}
 	}
 	message(out);
+}
+
+// A line of text typed after a prompt (sub_1737A): letters and digits are echoed, Backspace takes one back, Enter ends it, Escape gives it up.
+void Game::textKey(int key) {
+	if (key == KEY_ENTER || key == KEY_ESC) {
+		if (key == KEY_ESC)
+			_textBuf.clear();
+		_textActive = false;
+		message("\n");
+		if (_textPurpose == 2)
+			wishDone(_textBuf);
+		else
+			shrineChant(_textBuf);
+		prompt();
+	} else if (key == KEY_BACKSPACE) {
+		if (!_textBuf.empty()) {
+			_textBuf.erase(_textBuf.size() - 1);
+			message("");
+		}
+	} else if (key >= 32 && key < 127 && (int)_textBuf.size() < _textMax) {
+		_textBuf += (char)key;
+		message(std::string(1, (char)key));
+	}
+}
+
+// use_fountain: the wish (Food, Mutton, Wine, Fruit or Meat) is looked up case-blind; one try in five gives a food (0x81) if it can be carried.
+void Game::wishDone(const std::string &wish) {
+	static const char *const WORDS[6] = {"food", "mutton", "wine", "fruit", "meat", ""};
+	std::string t = wish;
+	for (char &c : t)
+		c = (char)std::tolower((unsigned char)c);
+	bool known = false;
+	for (const char *w : WORDS)
+		known |= t == w;
+	if (!known) {
+		message("\n\nNo effect\n");
+	} else if (_rng.next() % 5 != 0) {
+		message("\n\nFailed\n");
+	} else {
+		int actor = actingActor();
+		message("\n\nYou got food");
+		if (_world.actors.strength[actor] * 20 < _world.carriedWeight(actor) + 2) {
+			message(", but you can't carry it.\n");
+		} else {
+			_world.addToInventory(actor, 0x81, 0, 1);
+			message(".\n");
+		}
+	}
+	_world.spendMoves(actingActor(), 5);
+}
+
+// use_shrine (34228): the mantra must be that of this rune's virtue (Ahm, Mu, Ra, Beh, Cah, Summ, Om, Lum); then a moonstone of the colour of the virtue within a square of the
+// acting member is the key: the spawners around (sub_3419B) are cleared. "Done" when that happened, else "No effect".
+// APPROX(58): sub_3419B's clearing of the creature spawners (eggs of type 0x14F holding 0x16A/0x16B) in the 40 x 40 around is done for those eggs; the object of type 0x33 at the stone is deleted as the original does
+void Game::shrineChant(const std::string &mantra) {
+	int item = _useItem;
+	_useItem = -1;
+	static const char *const MANTRAS[8] = {"Ahm", "Mu", "Ra", "Beh", "Cah", "Summ", "Om", "Lum"};
+	int virtue = _world.objects[item].type - 0xF2, said = 8;
+	for (int i = 0; i < 8; ++i) {
+		std::string m = MANTRAS[i], t = mantra;
+		for (char &c : m)
+			c = (char)std::tolower((unsigned char)c);
+		for (char &c : t)
+			c = (char)std::tolower((unsigned char)c);
+		if (m == t) {
+			said = i;
+			break;
+		}
+	}
+	if (said == 8 || said != virtue) {
+		message("\nWrong mantra!\n");
+		_world.spendMoves(actingActor(), 5);
+		return;
+	}
+	int a = _world.actorObject(actingActor());
+	bool done = false;
+	if (a >= 0) {
+		int ax = _world.objects[a].x, ay = _world.objects[a].y;
+		for (int dx = -1; dx <= 1 && !done; ++dx)
+			for (int dy = -1; dy <= 1 && !done; ++dy) {
+				if (dx == 1 && dy == 1)
+					continue;
+				std::vector<int> here;
+				_world.objectsAt(ax + dx, ay + dy, z, here);
+				int stone = -1;
+				for (int i : here)
+					if (_world.objects[i].type == 0x49 && _world.objects[i].frame == virtue)
+						stone = i;
+				if (stone < 0)
+					continue;
+				for (int i : here)
+					if (_world.objects[i].type == 0x33)
+						_world.deleteObject(i);
+				int sx = _world.objects[stone].x, sy = _world.objects[stone].y;
+				for (size_t e = 0; e < _world.objects.size(); ++e) {
+					const World::Obj &egg = _world.objects[e];
+					if (egg.deleted || egg.type != 0x14F || !egg.onMap() || egg.z != z || std::abs((int)egg.x - sx) > 20 || std::abs((int)egg.y - sy) > 20)
+						continue;
+					bool spawner = false;
+					for (size_t c = 0; c < _world.objects.size(); ++c)
+						if (!_world.objects[c].deleted && _world.objects[c].location() == ObjRecord::IN_CONTAINER && _world.objects[c].parent == (int)e &&
+							(_world.objects[c].type == 0x16A || _world.objects[c].type == 0x16B))
+							spawner = true;
+					if (spawner)
+						_world.deleteObject((int)e);
+				}
+				done = true;
+			}
+	}
+	message(done ? "\nDone\n" : "\nNo effect\n");
+	_world.spendMoves(actingActor(), 5);
 }
 
 // use_shovel (34656): "Direction:", then the square next to the user is dug at. On the surface at 707,835 a hole (type 0x134, quality 0x13) appears if there is none yet;
