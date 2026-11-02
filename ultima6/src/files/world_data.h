@@ -26,6 +26,18 @@ struct Schedule {
 	 * index; GAME.EXE's own use of it is not yet traced.
 	 */
 	int entryCount(int actor) const;
+
+	/**
+	 * One 5-byte entry: byte 0 = hour (low 5 bits) and day of week (high 3 bits, 0 = every
+	 * day); byte 1 = the worktype the actor takes up; bytes 2-4 = x, y (10 bits each) and z
+	 * (4 bits) packed like an object position. GAME.EXE's schedule check (sub_2AED5, from
+	 * the actors' hourly update) compares the hour with the game hour and the day of week
+	 * with (day - 1) % 7 + 1, scanning an actor's entries from the last one.
+	 */
+	struct Entry {
+		int hour, dayOfWeek, worktype, x, y, z;
+	};
+	Entry entry(int index) const;
 	bool load(const Bytes &data);
 };
 
@@ -60,7 +72,7 @@ struct ObjList {
 		OFF_PARTY_ROSTER = 0xFE0,
 		OFF_PARTY_SIZE = 0xFF0,
 		OFF_LEVEL = 0xFF1,
-		OFF_UNKNOWN_10F1 = 0x10F1,
+		OFF_SCHEDULE_INDEX = 0x10F1,
 		OFF_WORKTYPE = 0x11F1,
 		OFF_UNKNOWN_12F1 = 0x12F1, // combat mode / magic points
 		OFF_UNKNOWN_13F1 = 0x13F1, // magic points / combat mode
@@ -88,7 +100,7 @@ struct ObjList {
 	uint8_t partyRoster[PARTY_MAX];
 	uint8_t partySize;
 	uint8_t level[ACTORS];
-	uint8_t unknown10f1[ACTORS];
+	uint8_t scheduleIndex[ACTORS]; // index (within the actor's entries) of the schedule entry in force
 	uint8_t worktype[ACTORS];
 	uint8_t unknown12f1[ACTORS];
 	uint8_t unknown13f1[ACTORS];

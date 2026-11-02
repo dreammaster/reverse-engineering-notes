@@ -6,26 +6,26 @@ static uint32_t get32(const uint8_t *p) {
 	return p[0] | (p[1] << 8) | (p[2] << 16) | ((uint32_t)p[3] << 24);
 }
 
-bool LibN::load(const Bytes &data, bool hasSizeHeader) {
+bool LibN::load(const Bytes &data, bool hasSizeHeader, int entrySize) {
 	_items.clear();
 	_data = data;
 	size_t tableStart = hasSizeHeader ? 4 : 0;
-	if (data.size() < tableStart + 4)
+	if ((entrySize != 2 && entrySize != 4) || data.size() < tableStart + entrySize)
 		return false;
 
 	// The table ends at the lowest non-zero offset.
 	size_t count = (size_t)-1;
-	for (size_t i = 0; tableStart + i * 4 + 4 <= data.size() && i < count; ++i) {
-		uint32_t offset = get32(&data[tableStart + i * 4]) & 0xFFFFFF;
-		if (offset != 0 && (offset - tableStart) / 4 < count)
-			count = (offset - tableStart) / 4;
+	for (size_t i = 0; tableStart + (i + 1) * entrySize <= data.size() && i < count; ++i) {
+		uint32_t offset = entrySize == 2 ? get16(&data[tableStart + i * 2]) : get32(&data[tableStart + i * 4]) & 0xFFFFFF;
+		if (offset != 0 && (offset - tableStart) / entrySize < count)
+			count = (offset - tableStart) / entrySize;
 	}
-	if (count == (size_t)-1 || tableStart + count * 4 > data.size())
+	if (count == (size_t)-1 || tableStart + count * entrySize > data.size())
 		return false;
 
 	_items.resize(count);
 	for (size_t i = 0; i < count; ++i) {
-		uint32_t v = get32(&data[tableStart + i * 4]);
+		uint32_t v = entrySize == 2 ? get16(&data[tableStart + i * 2]) : get32(&data[tableStart + i * 4]);
 		_items[i].offset = v & 0xFFFFFF;
 		_items[i].flag = (uint8_t)(v >> 24);
 		_items[i].size = 0;

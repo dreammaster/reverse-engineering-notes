@@ -6374,7 +6374,7 @@ loc_137BF:                              ; CODE XREF: sub_13305+4B4↑j
                 dec     byte_404C0
 
 loc_137CA:                              ; CODE XREF: sub_13305+4BF↑j
-                call    sub_2AED5
+                call    update_actor_schedules
                 xor     si, si
                 jmp     loc_13852
 ; ---------------------------------------------------------------------------
@@ -9112,8 +9112,8 @@ load_world_data proc far                ; CODE XREF: _main+5CE↑P
                 mov     ax, 100h
                 push    dx
                 push    ax
-                push    word ptr objlist_10f1_ptr+2
-                push    word ptr objlist_10f1_ptr
+                push    word ptr actor_schedule_index_ptr+2
+                push    word ptr actor_schedule_index_ptr
                 call    file_read
                 push    si
                 mov     dx, 0FFFFh
@@ -9613,8 +9613,8 @@ loc_14F22:                              ; CODE XREF: save_objlist+1B↑j
                 mov     ax, 100h
                 push    dx
                 push    ax
-                push    word ptr objlist_10f1_ptr+2
-                push    word ptr objlist_10f1_ptr
+                push    word ptr actor_schedule_index_ptr+2
+                push    word ptr actor_schedule_index_ptr
                 call    file_write
                 push    si
                 mov     dx, 0FFFFh
@@ -27987,7 +27987,7 @@ arg_0           = word ptr  6
                 push    ax
                 mov     ax, 10h
                 push    ax
-                call    sub_394A9
+                call    load_portrait
                 mov     al, [di+3533h]
                 mov     ah, 0
                 mov     si, ax
@@ -50624,7 +50624,7 @@ arg_0           = word ptr  6
                 push    si
                 push    di
                 mov     si, [bp+arg_0]
-                les     bx, objlist_10f1_ptr
+                les     bx, actor_schedule_index_ptr
                 assume es:nothing
                 mov     al, es:[bx+si]
                 mov     ah, 0
@@ -50641,7 +50641,7 @@ arg_0           = word ptr  6
                 lea     bx, [bp+var_A]
                 push    ss
                 push    bx
-                les     bx, objlist_10f1_ptr
+                les     bx, actor_schedule_index_ptr
                 mov     al, es:[bx+si]
                 mov     ah, 0
                 mov     bx, si
@@ -51527,7 +51527,7 @@ loc_2870F:                              ; CODE XREF: sub_2868C+4E↑j
                 lea     bx, [bp+var_8]
                 push    ss
                 push    bx
-                les     bx, objlist_10f1_ptr
+                les     bx, actor_schedule_index_ptr
                 mov     al, es:[bx+si]
                 mov     ah, 0
                 mov     bx, si
@@ -54398,7 +54398,7 @@ loc_29C29:                              ; CODE XREF: sub_29BDA+45↑j
                 lea     bx, [bp+var_4]
                 push    ss
                 push    bx
-                les     bx, objlist_10f1_ptr
+                les     bx, actor_schedule_index_ptr
                 mov     al, es:[bx+si]
                 mov     ah, 0
                 mov     bx, si
@@ -55450,7 +55450,7 @@ loc_2A40A:                              ; CODE XREF: sub_2A3BA+4B↑j
                 cmp     word_3EFF7, 3
                 jge     short loc_2A47C
                 xor     di, di
-                les     bx, objlist_10f1_ptr
+                les     bx, actor_schedule_index_ptr
                 mov     al, es:[bx+si]
                 mov     ah, 0
                 mov     bx, si
@@ -56839,7 +56839,7 @@ sub_2AE9A       endp
 
 ; Attributes: bp-based frame
 
-sub_2AED5       proc far                ; CODE XREF: sub_13305:loc_137CA↑P
+update_actor_schedules proc far         ; CODE XREF: sub_13305:loc_137CA↑P
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -56854,13 +56854,13 @@ var_2           = word ptr -2
                 jmp     loc_2AFEC
 ; ---------------------------------------------------------------------------
 
-loc_2AEE3:                              ; CODE XREF: sub_2AED5+11D↓j
+loc_2AEE3:                              ; CODE XREF: update_actor_schedules+11D↓j
                 les     bx, actor_worktype_ptr
                 cmp     byte ptr es:[bx+si], 9Bh
                 jnz     short loc_2AEF1
                 mov     byte ptr es:[bx+si], 81h
 
-loc_2AEF1:                              ; CODE XREF: sub_2AED5+16↑j
+loc_2AEF1:                              ; CODE XREF: update_actor_schedules+16↑j
                 mov     bx, si
                 shl     bx, 1
                 cmp     word ptr [bx+3548h], 0
@@ -56868,7 +56868,7 @@ loc_2AEF1:                              ; CODE XREF: sub_2AED5+16↑j
                 jmp     loc_2AFEB
 ; ---------------------------------------------------------------------------
 
-loc_2AEFF:                              ; CODE XREF: sub_2AED5+25↑j
+loc_2AEFF:                              ; CODE XREF: update_actor_schedules+25↑j
                 les     bx, actor_worktype_ptr
                 cmp     byte ptr es:[bx+si], 80h
                 jnb     short loc_2AF12
@@ -56877,14 +56877,14 @@ loc_2AEFF:                              ; CODE XREF: sub_2AED5+25↑j
                 jmp     loc_2AFEB
 ; ---------------------------------------------------------------------------
 
-loc_2AF12:                              ; CODE XREF: sub_2AED5+32↑j
-                                        ; sub_2AED5+38↑j
+loc_2AF12:                              ; CODE XREF: update_actor_schedules+32↑j
+                                        ; update_actor_schedules+38↑j
                 test    byte ptr [si-6055h], 80h
                 jz      short loc_2AF1C
                 jmp     loc_2AFEB
 ; ---------------------------------------------------------------------------
 
-loc_2AF1C:                              ; CODE XREF: sub_2AED5+42↑j
+loc_2AF1C:                              ; CODE XREF: update_actor_schedules+42↑j
                 mov     bx, si
                 shl     bx, 1
                 mov     ax, [bx-4BDFh]
@@ -56900,12 +56900,12 @@ loc_2AF1C:                              ; CODE XREF: sub_2AED5+42↑j
                 jmp     loc_2AFEB
 ; ---------------------------------------------------------------------------
 
-loc_2AF3C:                              ; CODE XREF: sub_2AED5+62↑j
+loc_2AF3C:                              ; CODE XREF: update_actor_schedules+62↑j
                 mov     di, ax
                 jmp     loc_2AFE3
 ; ---------------------------------------------------------------------------
 
-loc_2AF41:                              ; CODE XREF: sub_2AED5+113↓j
+loc_2AF41:                              ; CODE XREF: update_actor_schedules+113↓j
                 mov     ax, di
                 mov     dx, 5
                 mul     dx
@@ -56922,7 +56922,7 @@ loc_2AF41:                              ; CODE XREF: sub_2AED5+113↓j
                 jmp     loc_2AFE2
 ; ---------------------------------------------------------------------------
 
-loc_2AF66:                              ; CODE XREF: sub_2AED5+8C↑j
+loc_2AF66:                              ; CODE XREF: update_actor_schedules+8C↑j
                 mov     ax, [bp+var_2]
                 mov     cl, 5
                 sar     ax, cl
@@ -56941,10 +56941,10 @@ loc_2AF66:                              ; CODE XREF: sub_2AED5+8C↑j
                 test    [bp+var_2], 0E0h
                 jnz     short loc_2AFE2
 
-loc_2AF8A:                              ; CODE XREF: sub_2AED5+AC↑j
+loc_2AF8A:                              ; CODE XREF: update_actor_schedules+AC↑j
                 mov     ax, di
                 sub     al, byte ptr [bp+var_6]
-                les     bx, objlist_10f1_ptr
+                les     bx, actor_schedule_index_ptr
                 mov     es:[bx+si], al
                 les     bx, actor_worktype_ptr
                 mov     byte ptr es:[bx+si], 81h
@@ -56977,33 +56977,33 @@ loc_2AF8A:                              ; CODE XREF: sub_2AED5+AC↑j
                 jmp     short loc_2AFEB
 ; ---------------------------------------------------------------------------
 
-loc_2AFE2:                              ; CODE XREF: sub_2AED5+8E↑j
-                                        ; sub_2AED5+B3↑j
+loc_2AFE2:                              ; CODE XREF: update_actor_schedules+8E↑j
+                                        ; update_actor_schedules+B3↑j
                 dec     di
 
-loc_2AFE3:                              ; CODE XREF: sub_2AED5+69↑j
+loc_2AFE3:                              ; CODE XREF: update_actor_schedules+69↑j
                 cmp     di, [bp+var_6]
                 jl      short loc_2AFEB
                 jmp     loc_2AF41
 ; ---------------------------------------------------------------------------
 
-loc_2AFEB:                              ; CODE XREF: sub_2AED5+27↑j
-                                        ; sub_2AED5+3A↑j ...
+loc_2AFEB:                              ; CODE XREF: update_actor_schedules+27↑j
+                                        ; update_actor_schedules+3A↑j ...
                 inc     si
 
-loc_2AFEC:                              ; CODE XREF: sub_2AED5+B↑j
+loc_2AFEC:                              ; CODE XREF: update_actor_schedules+B↑j
                 cmp     si, 0E0h
                 jge     short loc_2AFF5
                 jmp     loc_2AEE3
 ; ---------------------------------------------------------------------------
 
-loc_2AFF5:                              ; CODE XREF: sub_2AED5+11B↑j
+loc_2AFF5:                              ; CODE XREF: update_actor_schedules+11B↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_2AED5       endp
+update_actor_schedules endp
 
 seg011          ends
 
@@ -59521,7 +59521,7 @@ loc_2C182:                              ; CODE XREF: sub_2C14F+21↑j
                 les     bx, objlist_12f1_ptr
                 mov     al, es:[bx+si]
                 mov     es:[bx+di], al
-                les     bx, objlist_10f1_ptr
+                les     bx, actor_schedule_index_ptr
                 mov     al, es:[bx+si]
                 mov     es:[bx+di], al
                 les     bx, objlist_18f1_ptr
@@ -67270,7 +67270,7 @@ loc_2FB73:                              ; CODE XREF: sub_2F969+202↑j
                 push    ax
                 mov     ax, 18h
                 push    ax
-                call    sub_394A9
+                call    load_portrait
                 mov     ax, 0C0h
                 push    ax
                 mov     ax, 28h ; '('
@@ -67313,7 +67313,7 @@ loc_2FBCA:                              ; CODE XREF: sub_2F969+259↑j
                 push    ax
                 mov     ax, 18h
                 push    ax
-                call    sub_394A9
+                call    load_portrait
                 jmp     short loc_2FBF0
 ; ---------------------------------------------------------------------------
 
@@ -67325,7 +67325,7 @@ loc_2FBDA:                              ; CODE XREF: sub_2F969+25F↑j
                 push    ax
                 mov     ax, 18h
                 push    ax
-                call    sub_394A9
+                call    load_portrait
 
 loc_2FBF0:                              ; CODE XREF: sub_2F969+231↑j
                                         ; sub_2F969+253↑j ...
@@ -67671,7 +67671,7 @@ sub_2FD67       endp
 
 ; Attributes: bp-based frame
 
-sub_2FE1F       proc far                ; CODE XREF: cmd_look+39F↓p
+read_book       proc far                ; CODE XREF: cmd_look+39F↓p
                                         ; cmd_look+3E7↓p
 
 var_4           = word ptr -4
@@ -67754,7 +67754,7 @@ arg_0           = word ptr  6
                 mov     sp, bp
                 pop     bp
                 retf    2
-sub_2FE1F       endp
+read_book       endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -68782,7 +68782,7 @@ loc_3067F:                              ; CODE XREF: cmd_look+383↑j
 loc_30691:                              ; CODE XREF: cmd_look+38C↑j
                 push    word_48F03
                 push    cs
-                call    near ptr sub_2FE1F
+                call    near ptr read_book
                 mov     [bp+var_4], 1
                 jmp     short loc_306F4
 ; ---------------------------------------------------------------------------
@@ -68816,7 +68816,7 @@ loc_306B6:                              ; CODE XREF: cmd_look+3FB↓j
 loc_306DA:                              ; CODE XREF: cmd_look+3D5↑j
                 push    [bp+var_6]
                 push    cs
-                call    near ptr sub_2FE1F
+                call    near ptr read_book
                 mov     [bp+var_4], 1
 
 loc_306E6:                              ; CODE XREF: cmd_look+3CF↑j
@@ -87477,7 +87477,7 @@ sub_3945E       endp
 
 ; Attributes: bp-based frame
 
-sub_394A9       proc far                ; CODE XREF: sub_1D4DA+9C↑P
+load_portrait   proc far                ; CODE XREF: sub_1D4DA+9C↑P
                                         ; sub_2F969+213↑P ...
 
 var_6           = word ptr -6
@@ -87509,7 +87509,7 @@ arg_4           = word ptr  0Ah
                 jmp     short loc_39503
 ; ---------------------------------------------------------------------------
 
-loc_394DB:                              ; CODE XREF: sub_394A9+22↑j
+loc_394DB:                              ; CODE XREF: load_portrait+22↑j
                 cmp     [bp+var_6], 17Eh
                 jnz     short loc_394F0
                 mov     ax, 7
@@ -87519,7 +87519,7 @@ loc_394DB:                              ; CODE XREF: sub_394A9+22↑j
                 jmp     short loc_39503
 ; ---------------------------------------------------------------------------
 
-loc_394F0:                              ; CODE XREF: sub_394A9+37↑j
+loc_394F0:                              ; CODE XREF: load_portrait+37↑j
                 cmp     [bp+var_6], 16Bh
                 jnz     short loc_39503
                 mov     ax, 7
@@ -87527,8 +87527,8 @@ loc_394F0:                              ; CODE XREF: sub_394A9+37↑j
                 call    require_disk
                 mov     si, 0C2h
 
-loc_39503:                              ; CODE XREF: sub_394A9+1D↑j
-                                        ; sub_394A9+30↑j ...
+loc_39503:                              ; CODE XREF: load_portrait+1D↑j
+                                        ; load_portrait+30↑j ...
                 cmp     si, 1
                 jnz     short loc_39527
                 mov     ax, 6
@@ -87544,16 +87544,16 @@ loc_39503:                              ; CODE XREF: sub_394A9+1D↑j
                 jmp     loc_395C8
 ; ---------------------------------------------------------------------------
 
-loc_39525:                              ; CODE XREF: sub_394A9+77↑j
+loc_39525:                              ; CODE XREF: load_portrait+77↑j
                 jmp     short loc_39552
 ; ---------------------------------------------------------------------------
 
-loc_39527:                              ; CODE XREF: sub_394A9+5D↑j
+loc_39527:                              ; CODE XREF: load_portrait+5D↑j
                 or      si, si
                 jz      short loc_3952C
                 dec     si
 
-loc_3952C:                              ; CODE XREF: sub_394A9+80↑j
+loc_3952C:                              ; CODE XREF: load_portrait+80↑j
                 cmp     si, 62h ; 'b'
                 jl      short loc_39544
                 mov     ax, 7
@@ -87564,14 +87564,14 @@ loc_3952C:                              ; CODE XREF: sub_394A9+80↑j
                 jmp     short loc_39552
 ; ---------------------------------------------------------------------------
 
-loc_39544:                              ; CODE XREF: sub_394A9+86↑j
+loc_39544:                              ; CODE XREF: load_portrait+86↑j
                 mov     ax, 6
                 push    ax
                 call    require_disk
                 mov     byte_40462, 61h ; 'a'
 
-loc_39552:                              ; CODE XREF: sub_394A9:loc_39525↑j
-                                        ; sub_394A9+99↑j
+loc_39552:                              ; CODE XREF: load_portrait:loc_39525↑j
+                                        ; load_portrait+99↑j
                 mov     ax, 2C09h
                 push    ax
                 call    file_open
@@ -87618,14 +87618,14 @@ loc_39552:                              ; CODE XREF: sub_394A9:loc_39525↑j
                 push    [bp+arg_0]
                 call    video_driver_call
 
-loc_395C8:                              ; CODE XREF: sub_394A9+79↑j
-                                        ; sub_394A9+B6↑j
+loc_395C8:                              ; CODE XREF: load_portrait+79↑j
+                                        ; load_portrait+B6↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf    6
-sub_394A9       endp
+load_portrait   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -101320,7 +101320,7 @@ aThe            db 'the ',0             ; DATA XREF: sub_2FCAE+40↑o
                 db  0Ah
                 db  0Ah
                 db    0
-aBookDat        db 'BOOK.DAT',0         ; DATA XREF: sub_2FE1F+3D↑o
+aBookDat        db 'BOOK.DAT',0         ; DATA XREF: read_book+3D↑o
 aD_2            db '%d ',0              ; DATA XREF: sub_2FED1+4E↑o
 aSearchingHereY db 0Ah                  ; DATA XREF: search_here+D6↑o
                 db 'Searching here, you find ',0
@@ -102712,8 +102712,8 @@ word_402AA      dw 7                    ; DATA XREF: sub_397A4:loc_397F2↑r
                 db  69h ; i
                 db  74h ; t
                 db  2Eh ; .
-byte_40462      db 61h                  ; DATA XREF: sub_394A9+68↑w
-                                        ; sub_394A9+91↑w ...
+byte_40462      db 61h                  ; DATA XREF: load_portrait+68↑w
+                                        ; load_portrait+91↑w ...
                 align 2
 aConverseA      db 'converse.a',0       ; DATA XREF: load_conversation:loc_3966A↑o
                                         ; load_conversation:loc_39630↑w ...
@@ -102917,7 +102917,7 @@ byte_40519      db 0                    ; DATA XREF: sub_131CA+86↑r
 avatar_gender   db 0                    ; DATA XREF: sub_1EA97+8↑r
                                         ; sub_1EA97+73↑r
 avatar_portrait_plus1 db 0              ; DATA XREF: _main+5F8↑r
-                                        ; sub_394A9+6D↑r
+                                        ; load_portrait+6D↑r
                 db    0
                 db    0
                 db  80h
@@ -128734,7 +128734,7 @@ terrain_cache   db    ? ;
                 db    ? ;
                 db    ? ;
                 db    ? ;
-objlist_10f1_ptr dd ?                   ; DATA XREF: load_world_data+21B↑r
+actor_schedule_index_ptr dd ?           ; DATA XREF: load_world_data+21B↑r
                                         ; save_objlist+1DC↑r ...
 anim_and_masks  db    ? ;               ; DATA XREF: load_tile_attribs+17B↑o
                 db    ? ;

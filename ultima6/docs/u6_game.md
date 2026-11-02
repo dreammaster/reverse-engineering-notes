@@ -72,7 +72,7 @@ All paths are relative to the game directory; the save files are in `savegame\`.
 | 0x0F00 | 0xE0 | 3236 | `party_names` | 14 * 16 |
 | 0x0FE0 / 0FF0 | 0x10 / 1 | 3533 / 8E50 | `party_roster`, `party_size` | |
 | 0x0FF1 | 0x100 | far ptr 4669C | `actor_level_ptr` | |
-| 0x10F1 | 0x100 | far ptr 46CE1 | unknown | |
+| 0x10F1 | 0x100 | far ptr 46CE1 | `actor_schedule_index_ptr` | index of the schedule entry in force | |
 | 0x11F1 | 0x100 | far ptr 40D94 | `actor_worktype_ptr` | |
 | 0x12F1 / 13F1 | 0x100 | far ptr 47685 / ds:9AF5 | combat mode, magic points (order not settled) | |
 | 0x14F1 | 0x100 | 8D4A | `actor_moves` | |
@@ -85,6 +85,14 @@ All paths are relative to the game directory; the save files are in `savegame\`.
 
 A fresh game has the Avatar (actor 1) at 307,352,0 and a party of 4 — checked by `tests/test_data_files.cpp`, which exercises the C++ readers
 in `src/files/` against the real files.
+
+## Schedules
+
+`update_actor_schedules` (`2AED5`) runs every game hour for the actors 2-255. A `SCHEDULE` entry is 5 bytes: byte 0 = hour (low 5 bits) and
+day of week (high 3 bits, 0 = every day), byte 1 = the worktype taken up (all 563 entries have 0x80 or more), bytes 2-4 = x, y, z packed like
+an object position. The check compares the hour with the game hour and the day of week with `(day - 1) % 7 + 1`, scanning the actor's entries
+from the last; a match stores the entry's index in the actor's `actor_schedule_index_ptr` slot and sets the worktype to 0x81. The C++
+`Schedule::entry` decodes them; all 563 entries are within range.
 
 ## Map
 

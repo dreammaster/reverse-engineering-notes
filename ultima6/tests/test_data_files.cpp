@@ -56,6 +56,10 @@ int main() {
 		sum += sched.entryCount(i);
 	}
 	CHECK(sum == 563); // every entry belongs to exactly one actor
+	for (int i = 0; i < 563; ++i) {
+		Schedule::Entry e = sched.entry(i);
+		CHECK(e.hour < 24 && e.dayOfWeek <= 7 && e.x < 1024 && e.y < 1024 && e.z <= 5 && e.worktype >= 0x80);
+	}
 
 	ObjList obj;
 	if (load("SAVEGAME/OBJLIST", data)) {

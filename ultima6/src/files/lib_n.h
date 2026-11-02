@@ -20,7 +20,8 @@ namespace Ultima6 {
  */
 class LibN {
 public:
-	bool load(const Bytes &data, bool hasSizeHeader);
+	/** entrySize is 4 for most archives and 2 for BOOK.DAT (u16 offsets, no flag byte). */
+	bool load(const Bytes &data, bool hasSizeHeader, int entrySize = 4);
 
 	size_t count() const {
 		return _items.size();

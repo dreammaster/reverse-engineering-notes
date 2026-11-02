@@ -44,6 +44,20 @@ This agrees with Nuvie's `U6OP_*` list (`core/converse_interpret.h`) except that
 and `0xA8` (ASSIGN) is not in it (it is handled outside the table). The value opcodes (comparisons, arithmetic, `VAR`, flags, ...)
 are evaluated by `conv_read_value` and not yet traced against Nuvie's list.
 
+## Portraits (`load_portrait`, `394A9`; `src/files/portrait.*`)
+
+`PORTRAIT.A` (98 items), `PORTRAIT.B` (96) and `PORTRAIT.Z` (12) are offset-table archives whose items are LZW streams of 56 x 64 bitmaps (all 206
+decode to exactly 3584 bytes). The Avatar uses `PORTRAIT.Z` item (portrait number chosen at creation, stored plus one at `objlist +0x1C72`);
+other actors use number = actor (item = number - 1 for actors above 0), below 98 in `PORTRAIT.A`, otherwise item number - 98 of `PORTRAIT.B`;
+creatures of object types 0x175, 0x17E and 0x16B (actors 224 and up) use numbers 192-194. `MONTAGE.SHP` holds the same twelve Avatar heads
+(6 female, then 6 male) as `PORTRAIT.Z`, item for item (they agree on 70-90% of their pixels; the rest differ by palette use).
+Nuvie remaps a few numbers (Exodus, shrines) that the original code does not.
+
+## Books (`read_book`, `2FE1F`)
+
+`BOOK.DAT` is an archive with u16 offsets (128 items) of NUL-terminated texts with the same `%` directives as `scroll_printf`; a book's number is
+the quality byte of the object and item number - 1 is read into the shared script buffer (`conv_script_ptr`) and printed.
+
 ## Not yet analysed
 
 The evaluator, the text escape codes, the keyword matching (`F6`/`EF`), the input opcodes and the variable set; the portrait loading

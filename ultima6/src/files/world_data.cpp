@@ -25,6 +25,18 @@ int Schedule::entryCount(int actor) const {
 	return index[actor + 1] - index[actor];
 }
 
+Schedule::Entry Schedule::entry(int index) const {
+	const uint8_t *e = &entries[index * ENTRY_SIZE];
+	Entry r;
+	r.hour = e[0] & 0x1F;
+	r.dayOfWeek = e[0] >> 5;
+	r.worktype = e[1];
+	r.x = e[2] | ((e[3] & 0x03) << 8);
+	r.y = ((e[3] & 0xFC) >> 2) | ((e[4] & 0x0F) << 6);
+	r.z = e[4] >> 4;
+	return r;
+}
+
 bool ObjList::load(const Bytes &data) {
 	if (data.size() < MIN_SIZE)
 		return false;
@@ -47,7 +59,7 @@ bool ObjList::load(const Bytes &data) {
 	std::memcpy(partyRoster, d + OFF_PARTY_ROSTER, PARTY_MAX);
 	partySize = d[OFF_PARTY_SIZE];
 	std::memcpy(level, d + OFF_LEVEL, ACTORS);
-	std::memcpy(unknown10f1, d + OFF_UNKNOWN_10F1, ACTORS);
+	std::memcpy(scheduleIndex, d + OFF_SCHEDULE_INDEX, ACTORS);
 	std::memcpy(worktype, d + OFF_WORKTYPE, ACTORS);
 	std::memcpy(unknown12f1, d + OFF_UNKNOWN_12F1, ACTORS);
 	std::memcpy(unknown13f1, d + OFF_UNKNOWN_13F1, ACTORS);

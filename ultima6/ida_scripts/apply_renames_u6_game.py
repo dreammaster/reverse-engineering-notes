@@ -69,6 +69,9 @@ FUNCTIONS = [
     (0x17A13, "scroll_print_wrapped", "word-wrapping text output, breaks at ' ,.:;!?\\'-\"\\n'"),
     # -- commands (identified from their message strings) --
     (0x13C64, "command_loop", "main command loop: 'Restore game? ', 'Help ', calls use_object"),
+    (0x2AED5, "update_actor_schedules", "hourly: for each actor 2-255 finds the schedule entry whose hour (low 5 bits of byte 0) equals the game hour and whose day of week (high 3 bits) matches, stores its index and sets worktype 81h"),
+    (0x394A9, "load_portrait", "load_portrait(actor, dest far): PORTRAIT.Z for the Avatar, else A (numbers below 98) or B"),
+    (0x2FE1F, "read_book", "read_book(object): book number = the object's quality byte; BOOK.DAT item number - 1 is read into the conversation script buffer and printed"),
     (0x395D0, "load_conversation", "load_conversation(actor, dest far): picks CONVERSE.A/B and the item (rules in docs/u6_conversation.md), LZW or plain"),
     (0x20AD3, "cmd_talk", "the Talk command: 'Not on screen.', 'Funny, no response.', 'Talking to yourself?'"),
     (0x1F1BE, "conv_read_value", "conversation interpreter: reads and evaluates the next value expression of the script"),
@@ -127,7 +130,7 @@ DATA = [
     (ds(0x3533), "party_roster", "objlist +0x0FE0, 16 bytes (actor ids)"),
     (ds(0x8E50), "party_size", "objlist +0x0FF0"),
     (0x4669C, "actor_level_ptr", "objlist +0x0FF1, u8[256] (far ptr)"),
-    (0x46CE1, "objlist_10f1_ptr", "objlist +0x10F1, u8[256] (far ptr, purpose not yet established)"),
+    (0x46CE1, "actor_schedule_index_ptr", "objlist +0x10F1, u8[256]: index of the schedule entry in force (set by the hourly schedule check sub_2AED5)"),
     (0x40D94, "actor_worktype_ptr", "objlist +0x11F1, u8[256] (far ptr)"),
     (0x47685, "objlist_12f1_ptr", "objlist +0x12F1, u8[256] (combat mode / magic points, far ptr)"),
     (ds(0x9AF5), "objlist_13f1", "objlist +0x13F1, u8[256] (magic points / combat mode)"),

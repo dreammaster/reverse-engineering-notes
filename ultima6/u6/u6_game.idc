@@ -19323,6 +19323,7 @@ static Bytes_3(void) {
 	create_insn	(0X2AE9A);
 	create_insn	(0X2AE9F);
 	create_insn	(0X2AED5);
+	set_name	(0X2AED5,	"update_actor_schedules");
 	create_insn	(x=0X2AED8);
 	op_hex		(x,	1);
 	create_insn	(0X2AEE3);
@@ -23255,6 +23256,7 @@ static Bytes_3(void) {
 	create_insn	(0X2FE07);
 	create_insn	(0X2FE15);
 	create_insn	(0X2FE1F);
+	set_name	(0X2FE1F,	"read_book");
 	create_insn	(x=0X2FE22);
 	op_hex		(x,	1);
 	create_insn	(x=0X2FE2F);
@@ -25046,13 +25048,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3243B);
 	op_hex		(x,	1);
-	create_insn	(x=0X32441);
-	op_hex		(x,	1);
-	create_insn	(x=0X32444);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X32448);
-	op_plain_offset	(x,	1,	0X3D850);
-	op_plain_offset	(x,	129,	0X3D850);
 }
 
 //------------------------------------------------------------------------
@@ -25062,6 +25057,13 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X32441);
+	op_hex		(x,	1);
+	create_insn	(x=0X32444);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X32448);
+	op_plain_offset	(x,	1,	0X3D850);
+	op_plain_offset	(x,	129,	0X3D850);
 	create_insn	(x=0X3246C);
 	op_stkvar	(x,	0);
 	create_insn	(0X32477);
@@ -30500,6 +30502,7 @@ static Bytes_4(void) {
 	create_insn	(0X393F9);
 	create_insn	(0X3945E);
 	create_insn	(0X394A9);
+	set_name	(0X394A9,	"load_portrait");
 	create_insn	(x=0X394AC);
 	op_hex		(x,	1);
 	create_insn	(x=0X394B1);
@@ -31307,6 +31310,15 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X3A64E);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3A654);
 	op_hex		(x,	1);
 	create_insn	(x=0X3A65C);
@@ -31319,15 +31331,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X3A6B7);
 	op_plain_offset	(x,	1,	0X3D850);
 	op_plain_offset	(x,	129,	0X3D850);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3A6D1);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3A6DC);
@@ -34506,7 +34509,7 @@ static Bytes_5(void) {
 	set_name	(0X466A0,	"party_size");
 	set_name	(0X466A1,	"terrain_cache");
 	create_dword	(0X46CE1);
-	set_name	(0X46CE1,	"objlist_10f1_ptr");
+	set_name	(0X46CE1,	"actor_schedule_index_ptr");
 	set_name	(0X46CE5,	"anim_and_masks");
 	set_name	(0X47345,	"objlist_13f1");
 	create_byte	(0X47346);
