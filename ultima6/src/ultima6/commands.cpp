@@ -359,6 +359,37 @@ void Game::useAt(int tx, int ty) {
 			prompt();
 			return;
 		}
+		if (type == 98 || type == 99 || type == 176 || type == 186 || type == 188 || type == 191 || type == 192) { // containers
+			if (type == 98 && o.frame >= 3) {
+				message("\nlocked\n");
+				prompt();
+				return;
+			}
+			std::vector<int> contents;
+			for (size_t i = 0; i < _world.objects.size(); ++i)
+				if (!_world.objects[i].deleted && _world.objects[i].location() == ObjRecord::IN_CONTAINER && _world.objects[i].parent == idx)
+					contents.push_back((int)i);
+			if (contents.empty()) {
+				message("\nSearching here, you find nothing.\n");
+			} else {
+				// opening it, the party takes what is inside
+				int actor = _world.actors.partyRoster[_member];
+				std::string list;
+				for (size_t n = 0; n < contents.size(); ++n) {
+					World::Obj &c = _world.objects[contents[n]];
+					list += (n == 0 ? "" : n + 1 == contents.size() ? " and " : ", ") + Describe::object(_world, c);
+					int qty = _world.quantityOf(c), t = c.type, q = c.quality;
+					bool stack = _world.isStackable(t);
+					_world.deleteObject(contents[n]);
+					_world.addToInventory(actor, t, q, stack ? qty : 1);
+				}
+				message("\nSearching here, you find " + list + ".\n");
+			}
+			if (type == 98 && o.frame > 0)
+				o.frame = 0; // the chest stands open
+			prompt();
+			return;
+		}
 		if (type == 305 || type == 106) { // ladders
 			int nx = o.x, ny = o.y, nz = o.z;
 			if (o.frame == 0) { // down
