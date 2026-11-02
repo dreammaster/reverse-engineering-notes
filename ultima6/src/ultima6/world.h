@@ -1,6 +1,7 @@
 #ifndef ULTIMA6_ULTIMA6_WORLD_H
 #define ULTIMA6_ULTIMA6_WORLD_H
 
+#include "engine/game_id.h"
 #include "files/map_data.h"
 #include "files/obj_block.h"
 #include "files/picture.h"
@@ -68,6 +69,7 @@ public:
 	std::string bookText(int n) const;
 	Bytes book;
 
+	GameId game = GameId::Ultima6; // set before load(): which of the three games' data the directory holds
 	TileSet tiles;
 	TileFlags flags;
 	BaseTile baseTile;

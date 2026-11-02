@@ -29,13 +29,13 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	std::printf("%s\n", Ultima6::gameInfo(id).title);
-	if (id != Ultima6::GameId::Ultima6)
-		return 0; // the spin-offs are not playable yet
+	// Martian Dreams and Savage Empire: only the world (map, objects, tiles) is shared with Ultima VI so far; there are no menus, no frame, no text and no conversations yet,
+	// the saved game is walked about in
 
 	const char *keys = nullptr, *shot = nullptr;
 	int scale = 3;
-	bool play = false, endingOnly = false;
-	std::string saveDir = "u6save"; // our own save directory; the game's files are never written
+	bool play = id != Ultima6::GameId::Ultima6, endingOnly = false;
+	std::string saveDir = id == Ultima6::GameId::MartianDreams ? "mdsave" : id == Ultima6::GameId::SavageEmpire ? "sesave" : "u6save"; // our own save directory; the game's files are never written
 	for (int i = 2; i < argc; ++i) {
 		if (!std::strcmp(argv[i], "--keys") && i + 1 < argc)
 			keys = argv[++i];
@@ -86,6 +86,7 @@ int main(int argc, char **argv) {
 
 	// The menu and character creation (U.EXE), then the game (GAME.EXE).
 	Ultima6::Ultima6::World world;
+	world.game = id;
 	bool created = false;
 	Ultima6::Ultima6::NewCharacter character;
 	if (!play) {

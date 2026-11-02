@@ -1,5 +1,6 @@
 #include "ultima6/world.h"
 
+#include "files/lib_n.h"
 #include "files/lzw.h"
 
 #include "files/portrait.h"
@@ -7,6 +8,7 @@
 #include "ultima6/gypsy.h"
 
 #include <algorithm>
+#include <cstring>
 #include <functional>
 
 namespace Ultima6 {
@@ -50,39 +52,63 @@ bool World::load(const std::string &dir, const NewCharacter *newGame, const std:
 		return fail("TILEFLAG");
 	if (!readFile(joinPath(dir, "BASETILE"), d) || !baseTile.load(d))
 		return fail("BASETILE");
-	if (!readFile(joinPath(dir, "U6PAL"), d) || !palette.load(d))
-		return fail("U6PAL");
-	if (!readFile(joinPath(dir, "U6.CH"), d) || !font.load(d))
-		return fail("U6.CH");
-	if (!paper.load(joinPath(dir, "PAPER.BMP")))
-		return fail("PAPER.BMP");
+	const bool spinoff = game != GameId::Ultima6;
 	Bytes mapTiles, maskType, objTiles, index;
 	Bytes raw;
-	if (!readFile(joinPath(dir, "MAPTILES.VGA"), raw) || !lzwDecompress(raw, 0, mapTiles))
-		return fail("MAPTILES.VGA");
-	if (!readFile(joinPath(dir, "MASKTYPE.VGA"), raw) || !lzwDecompress(raw, 0, maskType))
-		return fail("MASKTYPE.VGA");
-	if (!readFile(joinPath(dir, "OBJTILES.VGA"), objTiles) || !readFile(joinPath(dir, "TILEINDX.VGA"), index) ||
-		!tiles.load(mapTiles, maskType, objTiles, index))
+	if (!spinoff) {
+		if (!readFile(joinPath(dir, "U6PAL"), d) || !palette.load(d))
+			return fail("U6PAL");
+		if (!readFile(joinPath(dir, "U6.CH"), d) || !font.load(d))
+			return fail("U6.CH");
+		if (!paper.load(joinPath(dir, "PAPER.BMP")))
+			return fail("PAPER.BMP");
+		if (!readFile(joinPath(dir, "MAPTILES.VGA"), raw) || !lzwDecompress(raw, 0, mapTiles))
+			return fail("MAPTILES.VGA");
+		if (!readFile(joinPath(dir, "MASKTYPE.VGA"), raw) || !lzwDecompress(raw, 0, maskType))
+			return fail("MASKTYPE.VGA");
+		if (!readFile(joinPath(dir, "OBJTILES.VGA"), objTiles))
+			return fail("OBJTILES.VGA");
+	} else {
+		// Martian Dreams and Savage Empire: their palette files hold two palettes of 768 bytes, the pixel data is in one-item archives (docs/spinoffs.md), the font is
+		// not read yet (the glyphs stay blank) and there is no PAPER.BMP: the play screen has no frame yet
+		if (!readFile(joinPath(dir, game == GameId::MartianDreams ? "MDPAL" : "SEPAL"), d) || !palette.load(d))
+			return fail("palette");
+		std::memset(font.glyph, 0, sizeof font.glyph);
+		paper.width = 320;
+		paper.height = 200;
+		paper.pixels.assign(320 * 200, 0);
+		LibN lib;
+		if (!readFile(joinPath(dir, "MAPTILES.VGA"), raw) || !lib.load(raw, true) || !lib.get(0, mapTiles))
+			return fail("MAPTILES.VGA");
+		if (!readFile(joinPath(dir, "MASKTYPE.VGA"), raw) || !lib.load(raw, true) || !lib.get(0, maskType))
+			return fail("MASKTYPE.VGA");
+		if (!readFile(joinPath(dir, "OBJTILES.VGA"), objTiles))
+			return fail("OBJTILES.VGA");
+	}
+	if (!readFile(joinPath(dir, "TILEINDX.VGA"), index) || !tiles.load(mapTiles, maskType, objTiles, index))
 		return fail("tile set");
 	if (!readFile(joinPath(dir, "MAP"), d) || !readFile(joinPath(dir, "CHUNKS"), d2) || !map.load(d, d2))
 		return fail("MAP/CHUNKS");
 
-	static const char *const PORTRAIT_FILES[3] = {"PORTRAIT.A", "PORTRAIT.B", "PORTRAIT.Z"};
-	for (int i = 0; i < 3; ++i)
-		if (!readFile(joinPath(dir, PORTRAIT_FILES[i]), portraits[i]))
-			return fail(PORTRAIT_FILES[i]);
-
-	{
+	if (!spinoff) {
+		static const char *const PORTRAIT_FILES[3] = {"PORTRAIT.A", "PORTRAIT.B", "PORTRAIT.Z"};
+		for (int i = 0; i < 3; ++i)
+			if (!readFile(joinPath(dir, PORTRAIT_FILES[i]), portraits[i]))
+				return fail(PORTRAIT_FILES[i]);
 		Bytes lz;
 		if (!readFile(joinPath(dir, "LOOK.LZD"), lz) || !lzwDecompress(lz, 0, d) || !look.load(d))
 			return fail("LOOK.LZD");
+	} else {
+		// LOOK.LZC: one item, stored plain; the descriptions are in the format of Ultima VI's LOOK.LZD
+		LibN lib;
+		if (!readFile(joinPath(dir, "LOOK.LZC"), raw) || !lib.load(raw, true) || !lib.get(0, d) || !look.load(d))
+			return fail("LOOK.LZC");
 	}
 
 	readFile(joinPath(dir, "BOOK.DAT"), book); // optional: the text of books, scrolls and signs
 	if (!readFile(joinPath(dir, "SCHEDULE"), d) || !schedule.load(d))
 		return fail("SCHEDULE");
-	if (!readFile(joinPath(dir, "CONVERSE.A"), converse[0]) || !readFile(joinPath(dir, "CONVERSE.B"), converse[1]))
+	if (!spinoff && (!readFile(joinPath(dir, "CONVERSE.A"), converse[0]) || !readFile(joinPath(dir, "CONVERSE.B"), converse[1])))
 		return fail("CONVERSE");
 
 	objects.clear();
