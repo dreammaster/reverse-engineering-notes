@@ -117,6 +117,8 @@ private:
 	void buryMoonstone(int idx);
 	void digAt(int key);
 	void telescopeAt(int key);
+	int _crystalLat = 0;
+	static bool degrees(const std::string &s, char plus, char minus, int &out);
 	bool _peek = false; // the map shows somewhere else (a telescope) until a key is pressed
 	int _peekX = 0, _peekY = 0;
 	void textKey(int key);

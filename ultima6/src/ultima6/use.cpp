@@ -186,6 +186,15 @@ void Game::useObject(int idx) {
 		_textMax = 4;
 		_textPurpose = 1;
 		return;
+	} else if (type == 0x9B) {
+		// use_crystal_ball (34FC5): a place given by latitude and longitude is shown until a key is pressed. APPROX(61): the test at its start (`sub_323F1`, which can hurt the
+		// user with `print_wound_text`) is left out
+		message("\nEnter degrees followed by N, S, E or W.\n\nAt latitude=");
+		_textActive = true;
+		_textBuf.clear();
+		_textMax = 4;
+		_textPurpose = 3;
+		return;
 	} else if (type == 0x9A) {
 		message("Direction-");
 		_useItem = idx;
@@ -682,10 +691,41 @@ void Game::textKey(int key) {
 			_textBuf.clear();
 		_textActive = false;
 		message("\n");
-		if (_textPurpose == 2)
+		if (_textPurpose == 2) {
 			wishDone(_textBuf);
-		else
+		} else if (_textPurpose == 3) { // the crystal ball's latitude, then the longitude
+			int lat;
+			if (!degrees(_textBuf, 'S', 'N', lat) || lat > 0x50 || lat < -44) {
+				message("0   \n");
+			} else {
+				_crystalLat = lat;
+				message("\n  longitude=");
+				_textActive = true;
+				_textBuf.clear();
+				_textMax = 4;
+				_textPurpose = 4;
+				return;
+			}
+		} else if (_textPurpose == 4) {
+			int lon;
+			if (!degrees(_textBuf, 'E', 'W', lon) || lon > 0x58 || lon < -37) {
+				message("0   \n");
+			} else {
+				message("\n");
+				int vx = lon * 8 + 0x130, vy = _crystalLat * 8 + 0x168;
+				if (z != 0) {
+					vx >>= 2;
+					vy >>= 2;
+				}
+				_peekX = vx;
+				_peekY = vy;
+				_peek = true;
+				_world.spendMoves(actingActor(), 5);
+				return;
+			}
+		} else {
 			shrineChant(_textBuf);
+		}
 		prompt();
 	} else if (key == KEY_BACKSPACE) {
 		if (!_textBuf.empty()) {
@@ -785,6 +825,24 @@ void Game::shrineChant(const std::string &mantra) {
 	}
 	message(done ? "\nDone\n" : "\nNo effect\n");
 	_world.spendMoves(actingActor(), 5);
+}
+
+// A number of degrees followed by a letter (sub_2F895): `plus` makes it positive, `minus` negative.
+bool Game::degrees(const std::string &s, char plus, char minus, int &out) {
+	size_t i = 0;
+	int n = 0;
+	while (i < s.size() && std::isdigit((unsigned char)s[i]))
+		n = n * 10 + (s[i++] - '0');
+	if (i == 0 || i >= s.size())
+		return false;
+	char c = (char)std::toupper((unsigned char)s[i]);
+	if (c == plus)
+		out = n;
+	else if (c == minus)
+		out = -n;
+	else
+		return false;
+	return true;
 }
 
 // use_telescope (35127): the view goes out from the telescope in the chosen direction, up to 40 squares or until a terrain tile of 0xFC or more, and stays there until a key is pressed.

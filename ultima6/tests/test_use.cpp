@@ -323,6 +323,29 @@ int main() {
 		CHECK(text.find("East.") != std::string::npos && text.find("Done") != std::string::npos);
 	}
 
+	// a crystal ball shows the place at a latitude and longitude
+	{
+		World w9;
+		w9.load("u6/game");
+		Game g9(w9);
+		put(w9, 0x9B, 0, g9.x + 1, g9.y, 0);
+		g9.handleKey('u');
+		g9.handleKey(KEY_RIGHT);
+		for (char c : std::string("5s"))
+			g9.handleKey(c);
+		g9.handleKey(KEY_ENTER);
+		for (char c : std::string("5e"))
+			g9.handleKey(c);
+		g9.handleKey(KEY_ENTER);
+		Framebuffer fb;
+		g9.render(fb);
+		g9.handleKey(KEY_ENTER);
+		std::string text;
+		for (const std::string &l : g9.log)
+			text += l;
+		CHECK(text.find("At latitude=") != std::string::npos && text.find("longitude=") != std::string::npos && text.find("Done") != std::string::npos);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }
