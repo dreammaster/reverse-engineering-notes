@@ -63,6 +63,7 @@ public:
 	LookData look;
 	Picture paper;  // PAPER.BMP: the play screen's frame
 	Bytes portraits[3]; // PORTRAIT.A, .B and .Z
+	Schedule schedule;  // SCHEDULE
 	Bytes converse[2];  // CONVERSE.A and CONVERSE.B
 	MapData map;
 	ObjList actors;

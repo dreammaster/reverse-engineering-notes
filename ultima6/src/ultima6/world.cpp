@@ -77,6 +77,8 @@ bool World::load(const std::string &dir) {
 			return fail("LOOK.LZD");
 	}
 
+	if (!readFile(joinPath(dir, "SCHEDULE"), d) || !schedule.load(d))
+		return fail("SCHEDULE");
 	if (!readFile(joinPath(dir, "CONVERSE.A"), converse[0]) || !readFile(joinPath(dir, "CONVERSE.B"), converse[1]))
 		return fail("CONVERSE");
 

@@ -3,8 +3,11 @@
 #include "ultima6/session.h"
 
 #include <string>
+#include <vector>
 
 #include <cstdio>
+#include <string>
+#include <vector>
 
 using namespace Ultima6;
 using ::Ultima6::Ultima6::Game;
@@ -59,6 +62,51 @@ int main() {
 	for (int i = 0; i < 40; ++i)
 		game.step(i % 8);
 	CHECK(game.x > 280 && game.x < 330 && game.y > 330 && game.y < 370);
+
+	// Talking and looking go through the same key handler as the player's keys.
+	{
+		World w2;
+		CHECK(w2.load("u6/game"));
+		Game g2(w2);
+		auto text = [&]() {
+			std::string all;
+			for (const std::string &l : g2.scroll.lines())
+				all += l + " ";
+			return all;
+		};
+		g2.handleKey(KEY_DOWN); // to 307,353, with a companion to the east
+		g2.handleKey('t');
+		g2.handleKey(KEY_RIGHT);
+		CHECK(text().find("You see") != std::string::npos);
+		for (int i = 0; i < 40; ++i)
+			g2.handleKey(KEY_ESC); // keys at page breaks and prompts must never hang or crash
+		for (int i = 0; i < 4; ++i) {
+			g2.handleKey('b');
+			g2.handleKey('y');
+			g2.handleKey('e');
+			g2.handleKey(KEY_ENTER);
+			g2.handleKey(KEY_SPACE);
+		}
+		g2.handleKey('l');
+		g2.handleKey(KEY_ENTER);
+
+		// Time passes and people go about their schedules.
+		std::vector<std::pair<int, int>> before;
+		for (int a = 8; a < 0xE0; ++a) {
+			int k = w2.actorObject(a);
+			before.push_back(k >= 0 ? std::make_pair((int)w2.objects[k].x, (int)w2.objects[k].y) : std::make_pair(-1, -1));
+		}
+		for (int i = 0; i < 12 * 60; ++i)
+			g2.handleKey(KEY_SPACE);
+		int moved = 0;
+		for (int a = 8; a < 0xE0; ++a) {
+			int k = w2.actorObject(a);
+			if (k >= 0 && before[a - 8] != std::make_pair((int)w2.objects[k].x, (int)w2.objects[k].y))
+				++moved;
+		}
+		std::printf("%d actors moved in twelve hours\n", moved);
+		CHECK(moved > 10);
+	}
 
 	if (failures == 0)
 		std::printf("ok\n");

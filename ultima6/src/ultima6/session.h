@@ -4,6 +4,7 @@
 #include "engine/backend.h"
 #include "ultima6/map_renderer.h"
 #include "ultima6/movement.h"
+#include "ultima6/actors.h"
 #include "ultima6/talk.h"
 #include "ultima6/text_window.h"
 #include "ultima6/world.h"
@@ -47,6 +48,9 @@ public:
 	/** Whether the party leader can enter a tile. */
 	bool canWalk(int x, int y, int z);
 
+	/** Lets game time pass: the clock, the hourly schedules and the people walking about. */
+	void advanceTime(int minutes);
+
 	void message(const std::string &text);
 	/** Prints the command prompt: the name of the party member in control, a colon, and '>'. */
 	void prompt();
@@ -60,6 +64,7 @@ private:
 	World &_world;
 	MapRenderer _renderer;
 	Movement _movement;
+	ActorManager _actors;
 	MoveRules _rules;
 	BorlandRandom _rng;
 	std::unique_ptr<Talk> _talk; // a conversation in progress

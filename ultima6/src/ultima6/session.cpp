@@ -34,7 +34,7 @@ void GameClock::advance(int minutes) {
 	}
 }
 
-Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(world), _movement(world) {
+Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(world), _movement(world), _actors(world, _movement) {
 	world.avatarPosition(x, y, z);
 	_leaderObject = world.actorObject(1);
 	_rules.questFlag = !world.actors.globals.empty() && world.actors.globals[0] != 0;
@@ -46,6 +46,16 @@ Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(worl
 	clock.day = g[4];
 	clock.month = g[5];
 	clock.year = g[6] | (g[7] << 8);
+	_actors.hourChanged(clock);
+}
+
+void Game::advanceTime(int minutes) {
+	for (int i = 0; i < minutes; ++i) {
+		clock.advance(1);
+		if (clock.minute == 0)
+			_actors.hourChanged(clock);
+		_actors.tick(x, y, z);
+	}
 }
 
 void Game::prompt() {
@@ -76,7 +86,7 @@ bool Game::step(int dir) {
 	y = ny;
 	_world.moveObject(_leaderObject, x, y, z);
 	_rules.deniedPending = true;
-	clock.advance(1);
+	advanceTime(1);
 	return true;
 }
 
@@ -178,7 +188,7 @@ void Game::command(int key) {
 		break;
 	case ' ':
 		message("Pass!\n");
-		clock.advance(1);
+		advanceTime(1);
 		prompt();
 		break;
 	default:
