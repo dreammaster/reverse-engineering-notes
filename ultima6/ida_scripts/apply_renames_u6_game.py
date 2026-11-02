@@ -69,6 +69,12 @@ FUNCTIONS = [
     (0x17A13, "scroll_print_wrapped", "word-wrapping text output, breaks at ' ,.:;!?\\'-\"\\n'"),
     # -- commands (identified from their message strings) --
     (0x13C64, "command_loop", "main command loop: 'Restore game? ', 'Help ', calls use_object"),
+    (0x395D0, "load_conversation", "load_conversation(actor, dest far): picks CONVERSE.A/B and the item (rules in docs/u6_conversation.md), LZW or plain"),
+    (0x20AD3, "cmd_talk", "the Talk command: 'Not on screen.', 'Funny, no response.', 'Talking to yourself?'"),
+    (0x1F1BE, "conv_read_value", "conversation interpreter: reads and evaluates the next value expression of the script"),
+    (0x201EB, "conv_execute_command", "conv_execute_command(opcode): switch over opcodes 9Ch-0DFh through jpt_20207; 'Unknown command.' by default"),
+    (0x1ED3A, "conv_resolve_npc", "maps the script's npc operand (0EBh = the current speaker) to an actor"),
+    (0x208F5, "conv_print_char", "'Try to print out a control char'"),
     (0x35809, "cmd_use", "the Use command: dispatcher with 44 object handlers"),
     (0x302F7, "cmd_look", "the Look command: 'Thou dost see ...', weight, damage/defense"),
     (0x30031, "search_here", "'Searching here, you find ...'"),
@@ -135,6 +141,8 @@ DATA = [
     (ds(0x2CCA), "avatar_gender", "objlist +0x1C71: 1 = female"),
     (ds(0x2CCB), "avatar_portrait_plus1", "objlist +0x1C72: portrait + 1, 0 = no character yet; _main refuses to start without one"),
     (ds(0x2C4A + 0x08), "karma", "objlist +0x1BF9 (the new game starts at 75, set by U.EXE)"),
+    (0x425A0, "conv_script_ptr", "far ptr to the loaded conversation script"),
+    (0x4BFFB, "conv_script_pos", "offset of the next script byte"),
     # map and objects
     (ds(0xBDDA), "obj_next", "u16[0xC00]: next object in the sorted list of loaded objects (-1 ends; index 100h is the list head)"),
     (0x4AE2A, "obj_free_head", "head of the free-object list (linked through obj_next)"),

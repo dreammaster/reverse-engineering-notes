@@ -23,7 +23,8 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 - [ ] `GAME.EXE`: object list ordering (`sub_1BE84`), egg/NPC spawning, `objlist` globals block, new-game set-up (`U.EXE`)
 - [x] `U.EXE`: menu flow, character creation (gypsy quiz, new-game objlist patch), see `u6_intro.md`; C++ in `src/ultima6/gypsy.*`
 - [ ] `U.EXE`: drawing/animation of the title, introduction and gypsy scenes, story text pages, character transfer formats, music loading
-- [ ] `GAME.EXE`: main loop, commands, combat, magic, usecode interpreter, conversation interpreter
+- [x] Conversation script files and opcode table: `u6_conversation.md`, `src/files/converse.*` (evaluator and text codes still open)
+- [ ] `GAME.EXE`: main loop, commands, combat, magic, usecode handlers, conversation evaluator
 - [x] Graphics/text data formats (tiles, shapes, archives, fonts, palettes, descriptions): `u6_graphics.md`, `src/files/` (graphics drivers still to disassemble)
 - [x] `END.EXE`: how it is started (arguments, time played), structure; see `u6_ending.md` (scene scripting not analysed)
 

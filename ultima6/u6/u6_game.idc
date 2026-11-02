@@ -10340,6 +10340,7 @@ static Bytes_1(void) {
 	create_insn	(0X1ED1C);
 	set_cmt	(0X1ED22,	"s1",	0);
 	create_insn	(0X1ED3A);
+	set_name	(0X1ED3A,	"conv_resolve_npc");
 	create_insn	(x=0X1ED3D);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1ED49);
@@ -10518,6 +10519,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1F1AC);
 	create_insn	(0X1F1BE);
+	set_name	(0X1F1BE,	"conv_read_value");
 	create_insn	(x=0X1F1C1);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F1C9);
@@ -11644,6 +11646,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X201E1);
 	op_stkvar	(x,	1);
 	create_insn	(0X201EB);
+	set_name	(0X201EB,	"conv_execute_command");
 	create_insn	(x=0X201EE);
 	op_hex		(x,	1);
 	set_cmt	(0X201F2,	"src",	0);
@@ -11988,6 +11991,7 @@ static Bytes_1(void) {
 	set_cmt	(0X208EB,	"jumptable 00020207 cases 162,167",	1);
 	create_insn	(0X208EB);
 	create_insn	(0X208F5);
+	set_name	(0X208F5,	"conv_print_char");
 	create_insn	(x=0X208F8);
 	op_hex		(x,	1);
 	create_insn	(x=0X208FE);
@@ -12063,6 +12067,7 @@ static Bytes_1(void) {
 	create_insn	(0X20A92);
 	create_insn	(0X20A9E);
 	create_insn	(0X20AD3);
+	set_name	(0X20AD3,	"cmd_talk");
 	create_insn	(x=0X20AD6);
 	op_hex		(x,	1);
 	create_insn	(x=0X20ADB);
@@ -12288,6 +12293,15 @@ static Bytes_1(void) {
 	create_insn	(0X21338);
 	create_insn	(x=0X2133B);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2134D);
 	op_stkvar	(x,	0);
 	create_insn	(0X21378);
@@ -12303,15 +12317,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2139B);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X213A2);
 	op_hex		(x,	1);
 	create_insn	(x=0X213B0);
@@ -18532,6 +18537,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29ABC);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29AC3);
 	op_hex		(x,	1);
 	create_insn	(x=0X29AC5);
@@ -18546,15 +18560,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29B34);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29B5A);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29B63);
@@ -25048,6 +25053,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X32448);
 	op_plain_offset	(x,	1,	0X3D850);
 	op_plain_offset	(x,	129,	0X3D850);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3246C);
 	op_stkvar	(x,	0);
 	create_insn	(0X32477);
@@ -25059,15 +25073,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X324A6);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X324AA);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X324B8);
@@ -30529,6 +30534,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X395C1);
 	op_stkvar	(x,	0);
 	create_insn	(0X395D0);
+	set_name	(0X395D0,	"load_conversation");
 	create_insn	(x=0X395D3);
 	op_hex		(x,	1);
 	create_insn	(x=0X395D8);
@@ -31313,6 +31319,15 @@ static Bytes_4(void) {
 	create_insn	(x=0X3A6B7);
 	op_plain_offset	(x,	1,	0X3D850);
 	op_plain_offset	(x,	129,	0X3D850);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3A6D1);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3A6DC);
@@ -31327,15 +31342,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3A730);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3A750);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3A758);
@@ -34462,6 +34468,7 @@ static Bytes_5(void) {
 	create_dword	(0X4259C);
 	set_name	(0X4259C,	"actor_movement_flags_ptr");
 	create_dword	(0X425A0);
+	set_name	(0X425A0,	"conv_script_ptr");
 	create_word	(0X425A4);
 	create_word	(0X425A6);
 	create_word	(0X425A8);
@@ -34634,6 +34641,7 @@ static Bytes_5(void) {
 	create_word	(0X4BFF7);
 	create_word	(0X4BFF9);
 	create_word	(0X4BFFB);
+	set_name	(0X4BFFB,	"conv_script_pos");
 	create_word	(0X4C3E6);
 	create_word	(0X4C3E8);
 	create_byte	(0X4C3FA);
@@ -35362,7 +35370,7 @@ static Functions_0(void) {
 	set_frame_size(0X20144, 0XA, 2, 0X2);
 	add_func    (0X201EB,0X208F5);
 	set_func_flags(0X201EB,0x5412);
-	SetType(0X201EB, "int __fastcall __far sub_201EB(int, int, int, int, char);");
+	SetType(0X201EB, "int __fastcall __far conv_execute_command(int, int, int, int, char);");
 	set_frame_size(0X201EB, 0X1E, 2, 0X4);
 	define_local_var(0X201EB, 0X208F5, "[bp-0X2]", "dest");
 	add_func    (0X208F5,0X209B1);
