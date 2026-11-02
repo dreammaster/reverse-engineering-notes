@@ -198,6 +198,76 @@ void Game::partyHazards() {
 	}
 }
 
+// Skiffs (414) and rafts (415): using one boards it, with the whole party aboard; using the shore from aboard puts the party ashore.
+bool Game::boardOrLeave(int tx, int ty) {
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	World::Obj &me = _world.objects[_leaderObject];
+	if (_aboard) {
+		int vehicleType = me.type, vehicleFrame = me.frame;
+		me.type = (uint16_t)_footType;
+		me.frame = (uint8_t)_footFrame;
+		MoveRules rules;
+		bool ok = _movement.check(tx, ty, z, _leaderObject, rules).passable;
+		if (!ok) {
+			me.type = (uint16_t)vehicleType;
+			me.frame = (uint8_t)vehicleFrame;
+			return false;
+		}
+		// the vehicle stays where it was; the party steps ashore
+		World::Obj boat;
+		boat.status = 0;
+		boat.x = me.x;
+		boat.y = me.y;
+		boat.z = me.z;
+		boat.type = (uint16_t)vehicleType;
+		boat.frame = (uint8_t)vehicleFrame;
+		boat.quantity = 1;
+		boat.quality = 0;
+		boat.actor = -1;
+		boat.parent = -1;
+		_world.objects.push_back(boat);
+		_world.addToMap((int)_world.objects.size() - 1);
+		_aboard = false;
+		const ObjList &a = _world.actors;
+		for (int i = 0; i < a.partySize; ++i) {
+			int k = _world.actorObject(a.partyRoster[i]);
+			if (k >= 0) {
+				_world.objects[k].status &= ~0x02;
+				_world.moveObject(k, tx, ty, z);
+			}
+		}
+		x = tx;
+		y = ty;
+		message("\nDisembarked.\n");
+		return true;
+	}
+	for (int i : here) {
+		World::Obj &v = _world.objects[i];
+		if (v.actor >= 0 || (v.type != 414 && v.type != 415))
+			continue;
+		_footType = me.type;
+		_footFrame = me.frame;
+		me.type = v.type;
+		me.frame = v.frame;
+		int vx = v.x, vy = v.y;
+		_world.deleteObject(i);
+		_aboard = true;
+		const ObjList &a = _world.actors;
+		for (int m = 1; m < a.partySize; ++m) {
+			int k = _world.actorObject(a.partyRoster[m]);
+			if (k >= 0)
+				_world.objects[k].status |= 0x02; // aboard, out of sight
+		}
+		_world.moveObject(_leaderObject, vx, vy, z);
+		x = vx;
+		y = vy;
+		message("\nBoarded.\n");
+		return true;
+	}
+	return false;
+}
+
 // Cast: the circle (a digit) and the syllables' letters, then Enter; spells that need a target then ask for one with the cursor.
 void Game::castKey(int key) {
 	if (key == KEY_ESC) {
@@ -317,6 +387,10 @@ void Game::changeLevel(int nx, int ny, int nz) {
 
 // Use: what the objects of a square do when used (the doors and ladders of the Use table; the rest answers "Not usable").
 void Game::useAt(int tx, int ty) {
+	if (boardOrLeave(tx, ty)) {
+		prompt();
+		return;
+	}
 	std::vector<int> here;
 	_world.objectsAt(tx, ty, z, here);
 	for (size_t n = here.size(); n-- > 0;) {

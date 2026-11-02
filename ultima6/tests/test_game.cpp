@@ -197,6 +197,32 @@ int main() {
 		CHECK(ginseng2 == ginseng - 1);
 	}
 
+	// A raft or skiff can be boarded: the leader's body takes its type, and the party can come ashore again.
+	{
+		World w7;
+		CHECK(w7.load("u6/game"));
+		Game g7(w7);
+		int boat = -1;
+		for (size_t i = 0; i < w7.objects.size() && boat < 0; ++i)
+			if ((w7.objects[i].type == 414 || w7.objects[i].type == 415) && w7.objects[i].onMap() && w7.objects[i].z == 0)
+				boat = (int)i;
+		CHECK(boat >= 0);
+		if (boat >= 0) {
+			int bx = w7.objects[boat].x, by = w7.objects[boat].y, type = w7.objects[boat].type;
+			w7.moveObject(w7.actorObject(1), bx - 1, by, 0);
+			g7.x = bx - 1;
+			g7.y = by;
+			g7.z = 0;
+			g7.handleKey('u');
+			g7.handleKey(KEY_RIGHT);
+			CHECK(w7.objects[w7.actorObject(1)].type == type);
+			CHECK(g7.x == bx && g7.y == by);
+			g7.handleKey('u'); // ashore again, to the west where the Avatar stood (land)
+			g7.handleKey(KEY_LEFT);
+			CHECK(w7.objects[w7.actorObject(1)].type == 0x19A);
+		}
+	}
+
 	// Using a door from the west opens it, using it again closes it.
 	{
 		World w3;

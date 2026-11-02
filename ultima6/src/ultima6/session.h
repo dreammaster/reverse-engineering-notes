@@ -80,6 +80,10 @@ private:
 	const Magic::SpellInfo *_spell = nullptr; // the spell being cast, waiting for its target
 	std::string _invocation;                  // circle digit and syllables typed so far
 	void castKey(int key);
+	bool boardOrLeave(int tx, int ty);
+	bool _aboard = false;     // the party is on a skiff or raft: the leader's body has the vehicle's type
+	int _footType = 0;        // the leader's own type while aboard
+	int _footFrame = 0;
 	void partyHazards();
 	void castAt(int tx, int ty);
 	void attackAt(int tx, int ty);
