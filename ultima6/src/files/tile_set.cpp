@@ -19,7 +19,18 @@ static bool decodePixelBlocks(const uint8_t *p, size_t avail, uint8_t *out) {
 		int len = p[pos + 2];
 		if (len == 0)
 			return true;
-		dst += disp % 160 + (disp >= 1760 ? 160 : 0);
+		// What the MCGA driver's blit (U6MCGA.DRV sub_2458) does with a displacement: it is added to
+		// the screen pointer in full, then 144 more is added and 176 subtracted per remaining row;
+		// 176 + 144 is the 320 pixels of a screen line. For a tile that is 16 per row.
+		int rest = disp;
+		int delta = 0;
+		while (rest >= 16) {
+			delta += 16;
+			rest -= 176;
+		}
+		dst += delta + rest;
+		if (dst < 0)
+			return false;
 		if (pos + 3 + len > avail || dst + len > TileSet::SIZE)
 			return false;
 		std::memcpy(out + dst, p + pos + 3, len);

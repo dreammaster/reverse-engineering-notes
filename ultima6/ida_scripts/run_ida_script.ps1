@@ -14,6 +14,8 @@
 # original executable (normally under <game>\game\).
 #   .\run_ida_script.ps1 -Create -Idb u6\u6_game -Exe u6\game\GAME.EXE -ScriptName identify.py
 #
+# -Raw (with -Create) loads a headerless 16-bit code blob instead of a DOS executable.
+#
 # The IDA GUI must be closed first -- the .idb is locked while it's open.
 # After the run, batch_run_and_export.log has a step-by-step trace (console
 # output from idat.exe is not reliable).
@@ -27,6 +29,7 @@ param(
 
     [switch]$NoExport,
     [switch]$Create,
+    [switch]$Raw,
     [string]$Exe
 )
 
@@ -68,7 +71,12 @@ if ($Create) {
     $Out = [System.IO.Path]::ChangeExtension($Out, $null).TrimEnd('.')
     # -c: new database, discarding any existing one; -o: where to put it
     # (the original executable stays untouched in game\).
-    & $IdatExe -A -c "-o$Out.idb" -S"$driverArgs" $Exe | Out-Null
+    $loader = @()
+    if ($Raw) {
+        # a raw 16-bit code blob (the *.DRV drivers): binary loader, 8086, loaded at paragraph 0
+        $loader = @("-TBinary file", "-pmetapc", "-b0")
+    }
+    & $IdatExe -A -c @loader "-o$Out.idb" -S"$driverArgs" $Exe | Out-Null
 } else {
     $IdbPath = Resolve-Idb $Idb
     if (-not $IdbPath) {

@@ -16,12 +16,13 @@ namespace Ultima6 {
  *
  * Kinds: PLAIN is 256 pixels; TRANSPARENT is 256 pixels in which colour 255 shows
  * what is behind; PIXEL_BLOCKS is a byte followed by runs (u16 offset, u8 length,
- * pixels; length 0 ends) whose offsets are measured as if the tile were part of a
- * 320-pixel-wide screen: x = offset % 160 (plus 160 from offset 1760 on), added to
- * the position after the previous run. Pixels no run covers are transparent.
+ * pixels; length 0 ends) whose offsets are screen-line based: an offset is k * 176 + c
+ * with c below 16 and means "k rows and c pixels on from the end of the previous run"
+ * (a screen line is 320 = 176 + 144 bytes). Pixels no run covers are transparent.
  *
- * Verified by rendering all 2048 tiles; the drawing itself is done by the graphics
- * drivers (U6MCGA.DRV etc.), which have not been disassembled yet.
+ * The kinds and the pixel-block decoding are those of the MCGA driver's tile blit
+ * (U6MCGA.DRV entry 15, sub_2458: kind & 3 = 0 plain, 1 skip colour 255, 2 pixel blocks);
+ * all 2048 tiles were also rendered and inspected.
  */
 struct TileSet {
 	enum { COUNT = 2048, SIZE = 16 * 16, TRANSPARENT_PIXEL = 255 };

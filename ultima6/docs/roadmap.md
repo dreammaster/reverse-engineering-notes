@@ -9,7 +9,8 @@ Check items off and add notes as they are resolved. See [overview.md](overview.m
 - [x] Martian Dreams `GAME.EXE` overlays: IDA's loader already loads all 17 (`stub079-095`, `ovr079-095`); verified 95-100%
       function coverage and correct relocation, format documented in overview.md. (The first version of this item wrongly
       claimed nothing was loaded.)
-- [ ] Database for `INSTALL.EXE`/`MAKEMODE.EXE` and the `.DRV`/`.BIN` driver blobs (low priority).
+- [x] Databases for the ten `*.DRV` drivers (LZW-compressed raw code), entries named: `u6_drivers.md`
+- [ ] Databases for `INSTALL.EXE`/`MAKEMODE.EXE` and the small `*.BIN` loaders (low priority).
 - [ ] Per-database `apply_renames_*.py` / struct scripts as functions are identified.
 
 ## 2. Analysis of Ultima VI (using `nuvie/` as the reference)
