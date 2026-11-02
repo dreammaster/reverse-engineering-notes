@@ -158,7 +158,7 @@ void Game::partyHazards() {
 			continue;
 		const World::Obj &o = _world.objects[k];
 		const CreatureStats *cs = Combat::stats(o.type);
-		if ((a.status[actor] & 0x08) && _rng.next() % 8 == 0)
+		if ((a.status[actor] & 0x08) && !(a.status[actor] & 0x01) && _rng.next() % 8 == 0) // poisoned and not protected: 1 hp now and then (sub_13305 13716)
 			_combat.applyDamage(actor, actor, 1);
 		// the tiles on the square
 		int mask = o.z == 0 ? 0x3FF : 0xFF;
@@ -187,16 +187,37 @@ void Game::partyHazards() {
 		// a lit torch in hand burns down
 		std::vector<int> inv;
 		_world.inventory(actor, inv, false);
+		// sub_13305 (133E5-135AD), for the things held in the hands: a lit torch loses a minute of its burn time half of the time and is gone
+		// when it has none ("A torch burned out."); a regeneration ring (0x101) gives a hit point a minute; the invisibility ring (0x102), the
+		// regeneration ring and the storm cloak (0x51) vanish now and then ("A ring has vanished!")
 		for (int i : inv) {
 			World::Obj &t = _world.objects[i];
-			if (t.type == 90 && (t.frame & 1) && t.location() == ObjRecord::READIED && _rng.next() % 2 == 0) {
-				if (t.quantity > 1) {
-					--t.quantity;
-				} else {
-					t.frame = 0;
-					t.status = (uint8_t)((t.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
-					message("A torch burned out.\n");
+			if (t.location() != ObjRecord::READIED)
+				continue;
+			const char *vanished = nullptr;
+			if (t.type == 0x5A && (t.frame & 1)) {
+				if (_rng.next() % 2) {
+					if (t.quantity > 1) {
+						--t.quantity;
+					} else {
+						message("A torch burned out.\n");
+						_world.deleteObject(i);
+					}
 				}
+			} else if (t.type == 0x102) {
+				if (_rng.next() % 1001 == 429)
+					vanished = "ring";
+			} else if (t.type == 0x101) {
+				a.hp[actor] = (uint8_t)std::min<int>(ActorStats::maxHealth(_world, actor), a.hp[actor] + 1);
+				if (_rng.next() % 1001 == 734)
+					vanished = "ring";
+			} else if (t.type == 0x51) {
+				if (_rng.next() % 1001 == 588)
+					vanished = "cloak";
+			}
+			if (vanished) {
+				_world.deleteObject(i);
+				message(std::string("A ") + vanished + " has vanished!\n");
 			}
 		}
 	}
