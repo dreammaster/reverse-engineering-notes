@@ -26,6 +26,13 @@ int Combat::weaponDamageOf(int type) {
 	return -1;
 }
 
+int Combat::rangeOf(int type) {
+	for (const auto &r : WEAPON_RANGE)
+		if (r.type == type)
+			return r.range;
+	return 1;
+}
+
 int Combat::armourOf(int type) {
 	for (const auto &a : ARMOUR)
 		if (a.type == type)

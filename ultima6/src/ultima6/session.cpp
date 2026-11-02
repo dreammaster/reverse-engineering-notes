@@ -310,7 +310,9 @@ void Game::command(int key) {
 		break;
 	case 'A':
 		message("Attack-");
-		_pending = 'A';
+		_pending = 'a';
+		_cursor = true;
+		_cx = _cy = 5;
 		break;
 	case 'G':
 		message("Get-");
@@ -401,7 +403,7 @@ bool Game::handleKeyInner(int key) {
 		castKey(key);
 		return true;
 	}
-	if (_pending == 'L' || _pending == 'c') {
+	if (_pending == 'L' || _pending == 'c' || _pending == 'a') {
 		// the cursor: arrows move it, Enter looks at the cell, Escape gives up
 		switch (key) {
 		case KEY_UP:
@@ -419,10 +421,12 @@ bool Game::handleKeyInner(int key) {
 		case KEY_ENTER:
 		case KEY_SPACE: {
 			int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
-			bool casting = _pending == 'c';
+			bool casting = _pending == 'c', attacking = _pending == 'a';
 			_pending = 0;
 			_cursor = false;
-			if (casting)
+			if (attacking)
+				attackAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
+			else if (casting)
 				castAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 			else
 				look((x + _cx - 5) & mask, (y + _cy - 5) & mask);

@@ -40,6 +40,7 @@ public:
 	static const CreatureStats *stats(int type);
 	static int weaponDamageOf(int type); // -1 if the object type is no weapon
 	static int armourOf(int type);
+	static int rangeOf(int type); // 1 for the weapons that are not in the range table
 
 	/** The weapon an actor fights with: the best readied weapon's type, or its own type when unarmed. */
 	int weaponType(int actor) const;

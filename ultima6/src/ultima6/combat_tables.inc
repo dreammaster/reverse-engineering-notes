@@ -139,3 +139,8 @@ static const struct { int type, armour; } ARMOUR[] = {
 	{24, 2}, // spiked collar
 	{256, 5}, // protection ring
 };
+
+// weapon_range (sub_2BA04): ds:1AD5 (types) and ds:1AF9 (squares); every other weapon reaches 1
+static const struct { int type, range; } WEAPON_RANGE[] = {
+	{40, 2}, {47, 2}, {38, 3}, {83, 5}, {33, 4}, {37, 3}, {36, 4}, {41, 5}, {42, 7}, {57, 7}, {336, 5}, {49, 5}, {50, 7}, {412, 5}, {91, 4}, {54, 7}, {79, 7}, {80, 7},
+};

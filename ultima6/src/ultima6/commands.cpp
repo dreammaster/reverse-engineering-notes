@@ -55,18 +55,33 @@ void Game::attackAt(int tx, int ty) {
 	for (int i : here)
 		if (_world.objects[i].actor >= 0 && _world.objects[i].actor != 1)
 			target = _world.objects[i].actor;
+	int attacker = _world.actors.partyRoster[_member];
 	if (target < 0) {
-		message("\nnothing!\n");
+		message("nothing!\n");
 		prompt();
 		return;
 	}
-	int attacker = _world.actors.partyRoster[_member];
-	bool died = _combat.attack(attacker, target);
-	(void)died;
-	_world.spendMoves(attacker, 10); // sub_2DA99: sub_26CC4(attacker, 0x0A)
-	if (_world.actors.hp[1] == 0) {
-		message("\nThou art dead!\n");
+	int weapon = _combat.weaponType(attacker);
+	int k = _world.actorObject(target);
+	int dist = std::max(std::abs((int)_world.objects[k].x - x), std::abs((int)_world.objects[k].y - y));
+	if (dist > Combat::rangeOf(weapon)) {
+		message("Out of range!\n");
+		prompt();
+		return;
 	}
+	// ammunition: arrows (0x37) for the bows, bolts (0x38) for the crossbows
+	int ammo = (weapon == 41 || weapon == 54) ? 0x37 : (weapon == 42 || weapon == 50) ? 0x38 : 0;
+	if (ammo) {
+		if (!_world.removeFromInventory(attacker, ammo, 0, 1)) {
+			message(ammo == 0x37 ? "Out of arrows!\n" : "Out of bolts!\n");
+			prompt();
+			return;
+		}
+	}
+	_combat.attack(attacker, target);
+	_world.spendMoves(attacker, 10); // sub_2DA99: sub_26CC4(attacker, 0x0A)
+	if (_world.actors.hp[1] == 0)
+		message("\nThou art dead!\n");
 	prompt();
 }
 
