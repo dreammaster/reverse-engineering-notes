@@ -53,4 +53,27 @@ bool Palette::load(const Bytes &data) {
 	return true;
 }
 
+bool Font::load(const Bytes &data) {
+	if (data.size() != FILE_SIZE)
+		return false;
+	std::memcpy(glyph, &data[0], FILE_SIZE);
+	return true;
+}
+
+bool IntroPalettes::load(const Bytes &data) {
+	if (data.size() != FILE_SIZE)
+		return false;
+	for (int i = 0; i < COUNT; ++i) {
+		const uint8_t *src = &data[i * PACKED_SIZE];
+		uint8_t *dst = &palette[i].rgb[0][0];
+		for (int g = 0; g < PACKED_SIZE / 3; ++g, src += 3, dst += 4) {
+			dst[0] = src[0] & 0x3F;
+			dst[1] = (uint8_t)(((src[1] << 2) & 0x3C) + (src[0] >> 6));
+			dst[2] = (uint8_t)(((src[2] << 4) & 0x30) + (src[1] >> 4));
+			dst[3] = src[2] >> 2;
+		}
+	}
+	return true;
+}
+
 } // namespace Ultima6

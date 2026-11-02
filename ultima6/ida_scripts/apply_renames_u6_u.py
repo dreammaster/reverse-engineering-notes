@@ -25,6 +25,7 @@ FUNCTIONS = [
     (0x16DF9, "start_game", "execl GAME.EXE"),
     (0x13A06, "transfer_character_menu", "the Transfer character option"),
     (0x13470, "transfer_from_disk", "'TRANSFER A CHARACTER': reads party.sav / saved.gam of Ultima V or IV"),
+    (0x1BFE2, "load_intro_palette", "load_intro_palette(n): PALETTES.INT entry n (576 bytes at n * 576), unpacked 3 bytes -> 4 six-bit components, set through the driver"),
     # -- character creation --
     (0x152C9, "create_character", "name, sex, portrait, then the gypsy's seven questions; returns 0 when a character was created"),
     (0x1418A, "enter_name_and_sex", "'By what name shalt thou be called?', 'And art thou Male, or Female?'"),

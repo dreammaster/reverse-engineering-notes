@@ -24,6 +24,7 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 - [x] `U.EXE`: menu flow, character creation (gypsy quiz, new-game objlist patch), see `u6_intro.md`; C++ in `src/ultima6/gypsy.*`
 - [ ] `U.EXE`: drawing/animation of the title, introduction and gypsy scenes, story text pages, character transfer formats, music loading
 - [ ] `GAME.EXE`: main loop, commands, combat, magic, usecode interpreter, conversation interpreter
+- [x] Graphics/text data formats (tiles, shapes, archives, fonts, palettes, descriptions): `u6_graphics.md`, `src/files/` (graphics drivers still to disassemble)
 - [ ] `END.EXE`: ending sequence
 
 ## 3. Stand-alone C++ implementation (`src/`)
@@ -32,6 +33,7 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
       for game-specific code (main menu, intro, character creation, ending), game detection, tests, MinGW Makefile.
 - [x] `src/files/`: readers for ANIMDATA, TILEFLAG, BASETILE, U6PAL, SCHEDULE and `objlist` with tests against the real data.
 - [x] `src/files/`: `lzwDecompress`, `MapData` (MAP + CHUNKS), `ObjBlock`.
+- [x] `src/files/`: `LibN`, `Shape`, `TileSet`, `LookData`, `Font`, `IntroPalettes`.
 - [x] `src/ultima6/gypsy.*`, `src/engine/random.h`: the gypsy quiz, Borland generator and the new-game character patch.
 - [ ] Everything else.
 

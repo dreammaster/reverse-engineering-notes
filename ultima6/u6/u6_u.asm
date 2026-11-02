@@ -3646,7 +3646,7 @@ loc_1224E:                              ; CODE XREF: _main+50E↑j
                 jnz     short loc_122B3
                 xor     ax, ax
                 push    ax
-                call    sub_1BFE2
+                call    load_intro_palette
                 inc     sp
                 inc     sp
                 mov     [bp+var_5E], 0
@@ -10274,7 +10274,7 @@ loc_15855:                              ; CODE XREF: create_character+576↑j
 loc_1586C:                              ; CODE XREF: create_character+591↑j
                 mov     ax, 4
                 push    ax
-                call    sub_1BFE2
+                call    load_intro_palette
                 inc     sp
                 inc     sp
                 cmp     word_299D4, 0Dh
@@ -10759,7 +10759,7 @@ loc_15CBC:                              ; CODE XREF: create_character+9CD↑j
                 inc     sp
                 mov     ax, 5
                 push    ax
-                call    sub_1BFE2
+                call    load_intro_palette
                 inc     sp
                 inc     sp
                 mov     ax, word_299D4
@@ -11167,7 +11167,7 @@ loc_15FEE:                              ; CODE XREF: create_character+D14↑j
 loc_16019:                              ; CODE XREF: create_character+D3E↑j
                 mov     ax, 6
                 push    ax
-                call    sub_1BFE2
+                call    load_intro_palette
                 inc     sp
                 inc     sp
                 mov     word_2A47C, 0CBh
@@ -11464,7 +11464,7 @@ def_161BD:                              ; CODE XREF: create_character+EED↑j
                                         ; create_character+EF4↑j ...
                 mov     ax, 6           ; jumptable 000161BD default case, cases 5,6,8,10-12,14-18
                 push    ax
-                call    sub_1BFE2
+                call    load_intro_palette
                 inc     sp
                 inc     sp
                 cmp     word_299D4, 0Dh
@@ -14478,7 +14478,7 @@ loc_17AB4:                              ; CODE XREF: title_sequence+6F↑j
 loc_17ABA:                              ; CODE XREF: title_sequence+7C↑j
                 mov     ax, 1
                 push    ax
-                call    sub_1BFE2
+                call    load_intro_palette
                 inc     sp
                 inc     sp
                 call    sub_11371
@@ -16050,7 +16050,7 @@ def_18684:                              ; CODE XREF: title_sequence+C47↑j
                 call    sub_23695
                 mov     ax, 2
                 push    ax
-                call    sub_1BFE2
+                call    load_intro_palette
                 inc     sp
                 inc     sp
                 lea     ax, [bp+var_2C]
@@ -16349,7 +16349,7 @@ def_18990:                              ; CODE XREF: title_sequence+F53↑j
                                         ; title_sequence+F5A↑j ...
                 mov     ax, 3           ; jumptable 00018990 default case, cases 5,6,8,10-12,14-18
                 push    ax
-                call    sub_1BFE2
+                call    load_intro_palette
                 inc     sp
                 inc     sp
                 push    cs
@@ -21833,7 +21833,7 @@ sub_1BE8D       endp
 
 ; Attributes: bp-based frame
 
-sub_1BFE2       proc far                ; CODE XREF: _main+545↑P
+load_intro_palette proc far             ; CODE XREF: _main+545↑P
                                         ; create_character+5A7↑P ...
 
 var_16          = word ptr -16h
@@ -21857,7 +21857,7 @@ arg_0           = word ptr  6
                 jmp     loc_1C16A
 ; ---------------------------------------------------------------------------
 
-loc_1BFF4:                              ; CODE XREF: sub_1BFE2+D↑j
+loc_1BFF4:                              ; CODE XREF: load_intro_palette+D↑j
                 xor     dx, dx
                 mov     ax, 300h
                 push    dx
@@ -21875,7 +21875,7 @@ loc_1BFF4:                              ; CODE XREF: sub_1BFE2+D↑j
                 jmp     loc_1C15C
 ; ---------------------------------------------------------------------------
 
-loc_1C01E:                              ; CODE XREF: sub_1BFE2+37↑j
+loc_1C01E:                              ; CODE XREF: load_intro_palette+37↑j
                 mov     ax, [bp+arg_0]
                 cwd
                 mov     [bp+var_12], dx
@@ -21908,7 +21908,7 @@ loc_1C01E:                              ; CODE XREF: sub_1BFE2+37↑j
                 jmp     loc_1C0FF
 ; ---------------------------------------------------------------------------
 
-loc_1C077:                              ; CODE XREF: sub_1BFE2+121↓j
+loc_1C077:                              ; CODE XREF: load_intro_palette+121↓j
                 mov     ax, si
                 mov     dx, 3
                 mul     dx
@@ -21962,13 +21962,13 @@ loc_1C077:                              ; CODE XREF: sub_1BFE2+121↓j
                 mov     es:[bx], al
                 dec     si
 
-loc_1C0FF:                              ; CODE XREF: sub_1BFE2+92↑j
+loc_1C0FF:                              ; CODE XREF: load_intro_palette+92↑j
                 or      si, si
                 jl      short loc_1C106
                 jmp     loc_1C077
 ; ---------------------------------------------------------------------------
 
-loc_1C106:                              ; CODE XREF: sub_1BFE2+11F↑j
+loc_1C106:                              ; CODE XREF: load_intro_palette+11F↑j
                 les     bx, [bp+block]
                 mov     word ptr [bp+var_A+2], es
                 mov     word ptr [bp+var_A], bx
@@ -21976,7 +21976,7 @@ loc_1C106:                              ; CODE XREF: sub_1BFE2+11F↑j
                 jmp     short loc_1C156
 ; ---------------------------------------------------------------------------
 
-loc_1C113:                              ; CODE XREF: sub_1BFE2+178↓j
+loc_1C113:                              ; CODE XREF: load_intro_palette+178↓j
                 les     bx, [bp+var_A]
                 mov     al, es:[bx]
                 mov     ah, 0
@@ -21996,7 +21996,7 @@ loc_1C113:                              ; CODE XREF: sub_1BFE2+178↓j
                 jnz     short loc_1C148
                 call    sub_23695
 
-loc_1C148:                              ; CODE XREF: sub_1BFE2+15F↑j
+loc_1C148:                              ; CODE XREF: load_intro_palette+15F↑j
                 lea     ax, [bp+var_6]
                 push    ax
                 push    si
@@ -22004,23 +22004,23 @@ loc_1C148:                              ; CODE XREF: sub_1BFE2+15F↑j
                 add     sp, 4
                 inc     si
 
-loc_1C156:                              ; CODE XREF: sub_1BFE2+12F↑j
+loc_1C156:                              ; CODE XREF: load_intro_palette+12F↑j
                 cmp     si, 100h
                 jl      short loc_1C113
 
-loc_1C15C:                              ; CODE XREF: sub_1BFE2+39↑j
+loc_1C15C:                              ; CODE XREF: load_intro_palette+39↑j
                 push    word ptr [bp+block+2]
                 push    word ptr [bp+block] ; block
                 call    _farfree
                 add     sp, 4
 
-loc_1C16A:                              ; CODE XREF: sub_1BFE2+F↑j
+loc_1C16A:                              ; CODE XREF: load_intro_palette+F↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1BFE2       endp
+load_intro_palette endp
 
 seg007          ends
 
@@ -22912,7 +22912,7 @@ loc_1C871:                              ; CODE XREF: intro_story+151↑j
 loc_1C87A:                              ; CODE XREF: intro_story+1FD↑j
                 mov     ax, 7
                 push    ax
-                call    sub_1BFE2
+                call    load_intro_palette
                 inc     sp
                 inc     sp
                 call    sub_11371
@@ -38521,7 +38521,7 @@ byte_28A07      db 0                    ; DATA XREF: sub_1BC89+D5↑w
                 db  65h ; e
                 db  72h ; r
                 db    0
-aPalettesInt    db 'palettes.int',0     ; DATA XREF: sub_1BFE2+27↑o
+aPalettesInt    db 'palettes.int',0     ; DATA XREF: load_intro_palette+27↑o
                 db    0
                 db 0F8h
                 db 0FFh

@@ -61,6 +61,33 @@ struct Palette {
 	bool load(const Bytes &data);
 };
 
+/**
+ * U6.CH (2048 bytes): the text font, 256 glyphs of 8 rows, one byte per row with the
+ * leftmost pixel in the most significant bit.
+ */
+struct Font {
+	enum { GLYPHS = 256, ROWS = 8, FILE_SIZE = GLYPHS * ROWS };
+
+	uint8_t glyph[GLYPHS][ROWS];
+
+	bool load(const Bytes &data);
+};
+
+/**
+ * PALETTES.INT (4608 bytes): eight palettes of 576 bytes for the introduction and character
+ * creation. U.EXE's routine at 1BFE2 loads one by number (offset n * 576) and unpacks it
+ * from the end: every 3 bytes b0 b1 b2 hold four 6-bit components,
+ *   b0 & 3F,  (b1 << 2 & 3C) + (b0 >> 6),  (b2 << 4 & 30) + (b1 >> 4),  b2 >> 2,
+ * so 192 groups make the 256 colours of a VGA palette.
+ */
+struct IntroPalettes {
+	enum { COUNT = 8, PACKED_SIZE = 576, FILE_SIZE = COUNT * PACKED_SIZE };
+
+	Palette palette[COUNT];
+
+	bool load(const Bytes &data);
+};
+
 } // namespace Ultima6
 
 #endif
