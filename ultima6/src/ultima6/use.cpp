@@ -170,6 +170,11 @@ void Game::useObject(int idx) {
 			message("\n" + std::to_string(std::abs(lat)) + "{" + (lat > 0 ? "S" : "N"));
 			message(", " + std::to_string(std::abs(lon)) + "{" + (lon > 0 ? "E\n" : "W\n"));
 		}
+	} else if (type == 0x67 || type == 0x68) {
+		message("Direction:");
+		_useItem = idx;
+		_pending = 'v';
+		return;
 	} else if (type == 0x49) {
 		buryMoonstone(idx);
 	} else if (type == 0x57) {
@@ -647,6 +652,65 @@ void Game::readBook(int idx) {
 		}
 	}
 	message(out);
+}
+
+// use_shovel (34656): "Direction:", then the square next to the user is dug at. On the surface at 707,835 a hole (type 0x134, quality 0x13) appears if there is none yet;
+// in the caves (levels 1-4, terrain tiles 108-111) one try in 32 finds a water fountain (0xEA) and one in ten a gold nugget (0x59); anything else fails.
+// APPROX(58): whether a hole already exists is looked for at that square only (`sub_334B1`'s arguments are not traced)
+void Game::digAt(int key) {
+	int item = _useItem;
+	_useItem = -1;
+	(void)item;
+	static const char *const NAMES[8] = {"North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"};
+	static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+	int dir = key == KEY_UP ? 0 : key == KEY_RIGHT ? 2 : key == KEY_DOWN ? 4 : key == KEY_LEFT ? 6 : -1;
+	if (dir < 0) {
+		message("nowhere.\n");
+		prompt();
+		return;
+	}
+	message(std::string(NAMES[dir]) + ".\n");
+	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+	int tx = (x + DX[dir]) & mask, ty = (y + DY[dir]) & mask;
+	int tile = _world.map.tile(z, tx, ty) & 0xFF;
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	bool hole = false;
+	for (int i : here)
+		hole |= _world.objects[i].type == 0x134;
+	auto place = [&](int type, int frame, int quality, int quantity) {
+		World::Obj o;
+		o.status = 0;
+		o.x = (uint16_t)tx;
+		o.y = (uint16_t)ty;
+		o.z = (uint8_t)z;
+		o.type = (uint16_t)type;
+		o.frame = (uint8_t)frame;
+		o.quantity = (uint8_t)quantity;
+		o.quality = (uint8_t)quality;
+		o.actor = -1;
+		o.parent = -1;
+		_world.objects.push_back(o);
+		_world.addToMap((int)_world.objects.size() - 1);
+	};
+	if (z == 0 && tx == 707 && ty == 835 && !hole) {
+		place(0x134, 0, 0x13, 1);
+		message("\nYou dig a hole.\n");
+	} else if (z >= 1 && z <= 4 && tile >= 108 && tile <= 111) {
+		if (_rng.next() % 32 == 0) {
+			place(0xEA, 0, 0, 1);
+			message("\nYou find a water fountain.\n");
+		} else if (_rng.next() % 10 == 0) {
+			place(0x59, 0, 0, 1);
+			message("\nYou find a gold nugget.\n");
+		} else {
+			message("\nFailed\n");
+		}
+	} else {
+		message("\nNo effect\n");
+	}
+	_world.spendMoves(actingActor(), 5);
+	prompt();
 }
 
 // The Move command (sub_3151B), first half: the top object of the chosen square; "To " asks where to.

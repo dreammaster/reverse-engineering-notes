@@ -495,6 +495,8 @@ bool Game::handleKeyInner(int key) {
 			useAt(x, y); // the own square (rear horse)
 		} else if (cmd == 'm') {
 			moveTo(key);
+		} else if (cmd == 'v') {
+			digAt(key);
 		} else if (cmd == 'p' && key >= '1' && key <= '8') {
 			// the potion's target: a party member by number
 			int n = key - '1';

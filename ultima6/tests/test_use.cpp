@@ -234,6 +234,31 @@ int main() {
 		}
 	}
 
+	// digging at 707,835 with a shovel makes a hole
+	{
+		World w5;
+		w5.load("u6/game");
+		Game g5(w5);
+		w5.moveObject(w5.actorObject(1), 706, 835, 0);
+		g5.x = 706;
+		g5.y = 835;
+		g5.z = 0;
+		put(w5, 0x68, 0, 706, 835, 0);
+		g5.handleKey('u');
+		g5.handleKey(KEY_ENTER);
+		g5.handleKey(KEY_RIGHT);
+		std::string text;
+		for (const std::string &l : g5.log)
+			text += l;
+		CHECK(text.find("You dig a hole.") != std::string::npos);
+		std::vector<int> here;
+		w5.objectsAt(707, 835, 0, here);
+		bool hole = false;
+		for (int i : here)
+			hole |= w5.objects[i].type == 0x134;
+		CHECK(hole);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

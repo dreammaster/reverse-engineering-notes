@@ -115,6 +115,7 @@ private:
 	void updateMoons();
 	void placeGates();
 	void buryMoonstone(int idx);
+	void digAt(int key);
 	void gateTo(int n);
 	bool enterMoongate(int px, int py);
 	void useOrb(int idx);
