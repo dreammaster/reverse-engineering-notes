@@ -162,6 +162,41 @@ int main() {
 		CHECK(g2.x == 23 && g2.y == 22 && g2.z == 1);
 	}
 
+	// Create Food (circle 1, "imy"): 1-10 food for the caster
+	{
+		World w3;
+		w3.load("u6/game");
+		Game g3(w3);
+		int book = w3.addToInventory(1, 57, 0, 1);
+		w3.objects[book].status = (uint8_t)((w3.objects[book].status & ~0x18) | 0x18);
+		World::Obj spell = w3.objects[book];
+		spell.type = 58;
+		spell.quality = 255;
+		spell.status = 0x08;
+		spell.parent = book;
+		spell.actor = -1;
+		w3.objects.push_back(spell);
+		w3.addToInventory(1, 69, 0, 5);
+		w3.addToInventory(1, 67, 0, 5);
+		w3.addToInventory(1, 68, 0, 5);
+		g3.handleKey('c');
+		g3.handleKey('1');
+		g3.handleKey('i');
+		g3.handleKey('m');
+		g3.handleKey('y');
+		g3.handleKey(KEY_ENTER);
+		std::string text;
+		for (const std::string &l : g3.log)
+			text += l;
+		CHECK(text.find("Create ") != std::string::npos && text.find(" food.") != std::string::npos);
+		std::vector<int> inv;
+		w3.inventory(1, inv);
+		bool food = false;
+		for (int i : inv)
+			food |= w3.objects[i].type == 0x81 && !w3.objects[i].deleted;
+		CHECK(food);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

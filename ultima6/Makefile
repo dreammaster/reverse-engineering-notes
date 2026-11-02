@@ -15,7 +15,7 @@ BUILD := build
 SRC   := src
 TARGET := $(BUILD)/u6.exe
 
-ENGINE_SRCS := engine/game_id ultima6/game martian_dreams/game savage_empire/game files/data_file files/tile_data files/world_data files/lzw files/map_data files/obj_block files/lib_n files/shape files/tile_set files/converse files/portrait files/picture files/music engine/framebuffer engine/backend engine/backend_win32 ultima6/session ultima6/magic ultima6/creatures ultima6/combat ultima6/front_end ultima6/movement ultima6/actors ultima6/commands ultima6/text_window ultima6/conversation ultima6/talk ultima6/describe ultima6/ui ultima6/stats_view ultima6/world ultima6/map_renderer ultima6/gypsy ultima6/ending ultima6/use ultima6/moongate
+ENGINE_SRCS := engine/game_id ultima6/game martian_dreams/game savage_empire/game files/data_file files/tile_data files/world_data files/lzw files/map_data files/obj_block files/lib_n files/shape files/tile_set files/converse files/portrait files/picture files/music engine/framebuffer engine/backend engine/backend_win32 ultima6/session ultima6/magic ultima6/creatures ultima6/combat ultima6/front_end ultima6/movement ultima6/actors ultima6/commands ultima6/text_window ultima6/conversation ultima6/talk ultima6/describe ultima6/ui ultima6/stats_view ultima6/world ultima6/map_renderer ultima6/gypsy ultima6/ending ultima6/use ultima6/moongate ultima6/spells
 SRCS := $(ENGINE_SRCS) main
 
 CXXFLAGS := -std=c++17 -I$(SRC)

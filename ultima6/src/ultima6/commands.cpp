@@ -395,7 +395,8 @@ void Game::castKey(int key) {
 	_magic.pay(caster, *spell);
 	_spell = spell;
 	if (spell->select == Magic::SEL_NONE) {
-		_magic.cast(caster, *spell, caster);
+		if (!spellSpecial(*spell, caster, x, y, caster))
+			_magic.cast(caster, *spell, caster);
 		_world.spendMoves(caster, spell->circle * 3 + 10); // cmd_cast: sub_26CC4(caster, circle * 3 + 10)
 		prompt();
 		return;
@@ -417,7 +418,8 @@ void Game::castAt(int tx, int ty) {
 			target = _world.objects[i].actor;
 	int caster = _world.actors.partyRoster[_member];
 	message("\n");
-	_magic.cast(caster, *_spell, target);
+	if (!spellSpecial(*_spell, caster, tx, ty, target))
+		_magic.cast(caster, *_spell, target);
 	_world.spendMoves(caster, _spell->circle * 3 + 10);
 	_spell = nullptr;
 	prompt();

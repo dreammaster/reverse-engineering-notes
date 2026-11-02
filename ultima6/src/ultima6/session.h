@@ -111,6 +111,7 @@ private:
 	void getAt(int tx, int ty);
 	void useAt(int tx, int ty);
 	void useObject(int idx);
+	bool spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int ty, int target);
 	void updateMoons();
 	void gateTo(int n);
 	bool enterMoongate(int px, int py);

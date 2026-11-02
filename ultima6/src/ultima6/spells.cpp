@@ -1,0 +1,142 @@
+#include "ultima6/session.h"
+
+#include "ultima6/describe.h"
+
+#include <algorithm>
+#include <cstdlib>
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// The spells that act on objects, on a square or on many people at once (cast_spell_effect, 25495..; its first-level jump table at 254BA sends each spell index to a
+// group of handlers, only some of which have been read). Returns whether the spell was dealt with here; otherwise Magic::cast works it on the actor.
+// APPROX(56): the effects follow the spell manual and the actors' status bits; the original's animations, projectile paths, messages and the many saving throws
+// (sub_246AC, sub_24810, sub_24A61, sub_24BED, sub_24CF0, sub_24DCF, sub_24E78, sub_2502C, sub_25320) are not traced. Not done: Detect Magic/Trap, Help, Telekinesis, Trap,
+// Untrap, Peer, Repel Undead, Animate, Conjure, Disable, the fields, Wind Change, Explosion, Insect Swarm, Pickpocket, Reveal, Seance, X-ray, Charm, Clone, Confuse,
+// the winds, Hail Storm, Negate Magic, Replicate, Web, Chain Bolt, Enchant, Fear, Gate Travel, Wing Strike, Wizard Eye, Armageddon, Eclipse, Resurrect, Slime, Summon, Time Stop, Tremor
+bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int ty, int target) {
+	ObjList &a = _world.actors;
+	int index = spell.index();
+	// the people near the target square (not the party), for the mass spells
+	auto crowd = [&](std::vector<int> &out) {
+		for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
+			int k = _world.actorObject(actor);
+			if (k < 0 || _world.objects[k].deleted || (a.status[actor] & 0x80) || a.hp[actor] == 0 || _world.objects[k].z != z)
+				continue;
+			if (std::abs((int)_world.objects[k].x - tx) <= 5 && std::abs((int)_world.objects[k].y - ty) <= 5)
+				out.push_back(actor);
+		}
+	};
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	int object = -1;
+	for (size_t i = here.size(); i-- > 0;)
+		if (_world.objects[here[i]].actor < 0 && !_world.objects[here[i]].invisible()) {
+			object = here[i];
+			break;
+		}
+	switch (index) {
+	case 0: { // Create Food: 1-10 food (0x81) for the caster
+		int n = 1 + _rng.next() % 10;
+		_world.addToInventory(caster, 0x81, 0, n);
+		message("Create " + std::to_string(n) + " food.\n");
+		return true;
+	}
+	case 20: // Sleep
+		if (target < 0)
+			return false;
+		a.status[target] |= 0x04;
+		return true;
+	case 32: // Curse
+		if (target < 0)
+			return false;
+		_world.objects[_world.actorObject(target)].status |= 0x40;
+		return true;
+	case 40: // Protection
+		if (target < 0)
+			return false;
+		a.status[target] |= 0x01;
+		return true;
+	case 67: // Invisibility
+		if (target < 0)
+			return false;
+		_world.objects[_world.actorObject(target)].status |= 0x02;
+		return true;
+	case 69: // Paralyze
+		if (target < 0)
+			return false;
+		a.status[target] |= 0x02;
+		return true;
+	case 101: // Kill
+		if (target < 0)
+			return false;
+		_combat.applyDamage(caster, target, 255);
+		return true;
+	case 37: // Mass Awaken
+	case 38: // Mass Sleep
+	case 102: // Mass Curse
+	case 116: { // Mass Kill
+		std::vector<int> actors;
+		crowd(actors);
+		for (int t : actors) {
+			if (index == 37)
+				a.status[t] &= ~0x04;
+			else if (index == 38)
+				a.status[t] |= 0x04;
+			else if (index == 102)
+				_world.objects[_world.actorObject(t)].status |= 0x40;
+			else
+				_combat.applyDamage(caster, t, 255);
+		}
+		return true;
+	}
+	case 85: // Mass Protect: the party
+	case 103: // Mass Invis
+		for (int m = 0; m < a.partySize; ++m) {
+			int t = a.partyRoster[m];
+			if (index == 85)
+				a.status[t] |= 0x01;
+			else
+				_world.objects[_world.actorObject(t)].status |= 0x02;
+		}
+		return true;
+	case 25: // Vanish: an object becomes invisible
+		if (object < 0)
+			return false;
+		_world.objects[object].status |= 0x02;
+		return true;
+	case 19: // Reappear: what is invisible on the square can be seen again
+		for (int i : here)
+			_world.objects[i].status &= ~0x02;
+		return true;
+	case 4: // Douse
+	case 8: // Ignite
+		if (object < 0 || !(_world.objects[object].type == 0x7A || _world.objects[object].type == 0x91 || _world.objects[object].type == 0xA4 ||
+							_world.objects[object].type == 0xCE || _world.objects[object].type == 0xFD || _world.objects[object].type == 0x5A))
+			return false;
+		if (index == 4)
+			_world.objects[object].frame = (uint8_t)(_world.objects[object].frame & 2);
+		else
+			_world.objects[object].frame = (uint8_t)(_world.objects[object].frame | 1);
+		return true;
+	case 23: // Unlock Magic
+	case 36: // Lock
+		if (object < 0)
+			return false;
+		{
+			int type = _world.objects[object].type;
+			if (type >= 0x129 && type <= 0x12C)
+				useKeyOnDoor(object, false, index == 36, index == 23);
+			else if (type == 0x62)
+				useChest(object, false, index == 36, index == 23);
+			else
+				return false;
+		}
+		return true;
+	default:
+		return false;
+	}
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
