@@ -977,7 +977,7 @@ sub_10AF2       endp
 
 ; Attributes: bp-based frame
 
-sub_10BFA       proc far                ; CODE XREF: _main+6EF↓p
+show_ending_text proc far               ; CODE XREF: _main+6EF↓p
                                         ; _main+87C↓p ...
 
 var_14          = word ptr -14h
@@ -1005,10 +1005,10 @@ arg_0           = word ptr  6
                 jmp     short loc_10C19
 ; ---------------------------------------------------------------------------
 
-loc_10C14:                              ; CODE XREF: sub_10BFA+26↓j
+loc_10C14:                              ; CODE XREF: show_ending_text+26↓j
                 call    _getch
 
-loc_10C19:                              ; CODE XREF: sub_10BFA+18↑j
+loc_10C19:                              ; CODE XREF: show_ending_text+18↑j
                 call    _kbhit
                 or      ax, ax
                 jnz     short loc_10C14
@@ -1035,7 +1035,7 @@ loc_10C19:                              ; CODE XREF: sub_10BFA+18↑j
                 shl     bx, 1
                 jmp     cs:jpt_10C5A[bx] ; switch jump
 ; ---------------------------------------------------------------------------
-jpt_10C5A       dw offset loc_10C7F     ; DATA XREF: sub_10BFA+60↑r
+jpt_10C5A       dw offset loc_10C7F     ; DATA XREF: show_ending_text+60↑r
                 dw offset def_10C5A     ; jump table for switch statement
                 dw offset def_10C5A
                 dw offset loc_10C7F
@@ -1053,28 +1053,28 @@ jpt_10C5A       dw offset loc_10C7F     ; DATA XREF: sub_10BFA+60↑r
                 dw offset loc_10C91
 ; ---------------------------------------------------------------------------
 
-loc_10C7F:                              ; CODE XREF: sub_10BFA+60↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10C5A↑o
+loc_10C7F:                              ; CODE XREF: show_ending_text+60↑j
+                                        ; DATA XREF: show_ending_text:jpt_10C5A↑o
                 mov     [bp+var_14], 3  ; jumptable 00010C5A cases 4,7
                 jmp     short loc_10C8B
 ; ---------------------------------------------------------------------------
 
-loc_10C86:                              ; CODE XREF: sub_10BFA+60↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10C5A↑o
+loc_10C86:                              ; CODE XREF: show_ending_text+60↑j
+                                        ; DATA XREF: show_ending_text:jpt_10C5A↑o
                 mov     [bp+var_14], 0Eh ; jumptable 00010C5A cases 9,13
 
-loc_10C8B:                              ; CODE XREF: sub_10BFA+8A↑j
+loc_10C8B:                              ; CODE XREF: show_ending_text+8A↑j
                 mov     [bp+var_8], 0
                 jmp     short def_10C5A ; jumptable 00010C5A default case, cases 5,6,8,10-12,14-18
 ; ---------------------------------------------------------------------------
 
-loc_10C91:                              ; CODE XREF: sub_10BFA+60↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10C5A↑o
+loc_10C91:                              ; CODE XREF: show_ending_text+60↑j
+                                        ; DATA XREF: show_ending_text:jpt_10C5A↑o
                 mov     [bp+var_14], 31h ; '1' ; jumptable 00010C5A case 19
                 mov     [bp+var_8], 3Eh ; '>'
 
-def_10C5A:                              ; CODE XREF: sub_10BFA+5A↑j
-                                        ; sub_10BFA+60↑j ...
+def_10C5A:                              ; CODE XREF: show_ending_text+5A↑j
+                                        ; show_ending_text+60↑j ...
                 mov     al, byte ptr [bp+var_14] ; jumptable 00010C5A default case, cases 5,6,8,10-12,14-18
                 mov     [bp+var_7], al
                 lea     ax, [bp+var_12]
@@ -1090,12 +1090,12 @@ def_10C5A:                              ; CODE XREF: sub_10BFA+5A↑j
                 jmp     def_10CC0       ; jumptable 00010CC0 default case
 ; ---------------------------------------------------------------------------
 
-loc_10CBC:                              ; CODE XREF: sub_10BFA+BD↑j
+loc_10CBC:                              ; CODE XREF: show_ending_text+BD↑j
                 mov     bx, ax
                 shl     bx, 1
                 jmp     cs:jpt_10CC0[bx] ; switch jump
 ; ---------------------------------------------------------------------------
-jpt_10CC0       dw offset loc_10CE5     ; DATA XREF: sub_10BFA+C6↑r
+jpt_10CC0       dw offset loc_10CE5     ; DATA XREF: show_ending_text+C6↑r
                 dw offset loc_10D33     ; jump table for switch statement
                 dw offset loc_10DA8
                 dw offset loc_10E07
@@ -1113,8 +1113,8 @@ jpt_10CC0       dw offset loc_10CE5     ; DATA XREF: sub_10BFA+C6↑r
                 dw offset loc_112EA
 ; ---------------------------------------------------------------------------
 
-loc_10CE5:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_10CE5:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 0   ; jumptable 00010CC0 case 0
                 mov     word_199FE, 0A0h
                 mov     word_19A26, 8
@@ -1136,8 +1136,8 @@ loc_10CE5:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     loc_1140B
 ; ---------------------------------------------------------------------------
 
-loc_10D33:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_10D33:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 1   ; jumptable 00010CC0 case 1
                 mov     word_199FE, 85h
                 mov     word_19A26, 8
@@ -1174,8 +1174,8 @@ loc_10D33:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     def_10CC0       ; jumptable 00010CC0 default case
 ; ---------------------------------------------------------------------------
 
-loc_10DA8:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_10DA8:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 1   ; jumptable 00010CC0 case 2
                 mov     word_199FE, 97h
                 mov     word_19A26, 8
@@ -1204,8 +1204,8 @@ loc_10DA8:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     def_10CC0       ; jumptable 00010CC0 default case
 ; ---------------------------------------------------------------------------
 
-loc_10E07:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_10E07:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 0   ; jumptable 00010CC0 case 3
                 mov     word_199FE, 0A0h
                 mov     word_19A26, 8
@@ -1229,8 +1229,8 @@ loc_10E07:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     loc_1140B
 ; ---------------------------------------------------------------------------
 
-loc_10E59:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_10E59:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 1   ; jumptable 00010CC0 case 4
                 mov     word_199FE, 85h
                 mov     word_19A26, 8
@@ -1274,8 +1274,8 @@ loc_10E59:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     def_10CC0       ; jumptable 00010CC0 default case
 ; ---------------------------------------------------------------------------
 
-loc_10EDF:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_10EDF:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 1   ; jumptable 00010CC0 case 5
                 mov     word_199FE, 97h
                 mov     word_19A26, 8
@@ -1307,8 +1307,8 @@ loc_10EDF:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     def_10CC0       ; jumptable 00010CC0 default case
 ; ---------------------------------------------------------------------------
 
-loc_10F47:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_10F47:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 0   ; jumptable 00010CC0 case 6
                 mov     word_199FE, 0A0h
                 mov     word_19A26, 8
@@ -1330,8 +1330,8 @@ loc_10F47:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     loc_1140B
 ; ---------------------------------------------------------------------------
 
-loc_10F95:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_10F95:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 0   ; jumptable 00010CC0 case 7
                 mov     word_199FE, 98h
                 mov     word_19A26, 8
@@ -1358,8 +1358,8 @@ loc_10F95:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     def_10CC0       ; jumptable 00010CC0 default case
 ; ---------------------------------------------------------------------------
 
-loc_10FF0:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_10FF0:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 1   ; jumptable 00010CC0 case 8
                 mov     word_199FE, 85h
                 mov     word_19A26, 8
@@ -1406,8 +1406,8 @@ loc_10FF0:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     def_10CC0       ; jumptable 00010CC0 default case
 ; ---------------------------------------------------------------------------
 
-loc_1107F:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_1107F:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 0   ; jumptable 00010CC0 case 9
                 mov     word_199FE, 0A0h
                 mov     word_19A26, 8
@@ -1431,8 +1431,8 @@ loc_1107F:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     loc_1140B
 ; ---------------------------------------------------------------------------
 
-loc_110D1:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_110D1:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 0   ; jumptable 00010CC0 case 10
                 mov     word_199FE, 98h
                 mov     word_19A26, 8
@@ -1454,8 +1454,8 @@ loc_110D1:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     loc_1140B
 ; ---------------------------------------------------------------------------
 
-loc_1111F:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_1111F:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 1   ; jumptable 00010CC0 case 11
                 mov     word_199FE, 97h
                 mov     word_19A26, 8
@@ -1489,8 +1489,8 @@ loc_1111F:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     def_10CC0       ; jumptable 00010CC0 default case
 ; ---------------------------------------------------------------------------
 
-loc_1118B:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_1118B:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 1   ; jumptable 00010CC0 case 12
                 mov     word_199FE, 85h
                 mov     word_19A26, 8
@@ -1527,8 +1527,8 @@ loc_1118B:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     def_10CC0       ; jumptable 00010CC0 default case
 ; ---------------------------------------------------------------------------
 
-loc_11200:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_11200:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 1   ; jumptable 00010CC0 case 13
                 mov     word_199FE, 85h
                 mov     word_19A26, 8
@@ -1565,8 +1565,8 @@ loc_11200:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     def_10CC0       ; jumptable 00010CC0 default case
 ; ---------------------------------------------------------------------------
 
-loc_11275:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_11275:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 1   ; jumptable 00010CC0 case 14
                 mov     word_199FE, 85h
                 mov     word_19A26, 8
@@ -1603,8 +1603,8 @@ loc_11275:                              ; CODE XREF: sub_10BFA+C6↑j
                 jmp     def_10CC0       ; jumptable 00010CC0 default case
 ; ---------------------------------------------------------------------------
 
-loc_112EA:                              ; CODE XREF: sub_10BFA+C6↑j
-                                        ; DATA XREF: sub_10BFA:jpt_10CC0↑o
+loc_112EA:                              ; CODE XREF: show_ending_text+C6↑j
+                                        ; DATA XREF: show_ending_text:jpt_10CC0↑o
                 mov     word_199FC, 1   ; jumptable 00010CC0 case 15
                 mov     word_199FE, 44h ; 'D'
                 mov     word_19A26, 8
@@ -1647,7 +1647,7 @@ loc_112EA:                              ; CODE XREF: sub_10BFA+C6↑j
                 cmp     byte_17D54, 0
                 jz      short loc_11386
 
-loc_11375:                              ; CODE XREF: sub_10BFA+772↑j
+loc_11375:                              ; CODE XREF: show_ending_text+772↑j
                 mov     ax, 194h
                 push    ax
                 push    ds
@@ -1656,8 +1656,8 @@ loc_11375:                              ; CODE XREF: sub_10BFA+772↑j
                 call    sub_16619
                 add     sp, 6
 
-loc_11386:                              ; CODE XREF: sub_10BFA+75A↑j
-                                        ; sub_10BFA+779↑j
+loc_11386:                              ; CODE XREF: show_ending_text+75A↑j
+                                        ; show_ending_text+779↑j
                 cmp     byte_17D14, 0
                 jz      short loc_113B6
                 mov     ax, 1D4h
@@ -1677,14 +1677,14 @@ loc_11386:                              ; CODE XREF: sub_10BFA+75A↑j
                 call    sub_16619
                 add     sp, 6
 
-loc_113B6:                              ; CODE XREF: sub_10BFA+791↑j
-                                        ; sub_10BFA+7A9↑j
+loc_113B6:                              ; CODE XREF: show_ending_text+791↑j
+                                        ; show_ending_text+7A9↑j
                 cmp     byte_17CD4, 0
                 jnz     short loc_113C4
                 cmp     byte_17D14, 0
                 jz      short loc_113D8
 
-loc_113C4:                              ; CODE XREF: sub_10BFA+7C1↑j
+loc_113C4:                              ; CODE XREF: show_ending_text+7C1↑j
                 cmp     byte_17D54, 0
                 jz      short loc_113D8
                 push    ds
@@ -1693,8 +1693,8 @@ loc_113C4:                              ; CODE XREF: sub_10BFA+7C1↑j
                 call    sub_16619
                 add     sp, 4
 
-loc_113D8:                              ; CODE XREF: sub_10BFA+7C8↑j
-                                        ; sub_10BFA+7CF↑j
+loc_113D8:                              ; CODE XREF: show_ending_text+7C8↑j
+                                        ; show_ending_text+7CF↑j
                 cmp     byte_17D54, 0
                 jnz     short loc_113ED
                 cmp     byte_17CD4, 0
@@ -1702,7 +1702,7 @@ loc_113D8:                              ; CODE XREF: sub_10BFA+7C8↑j
                 cmp     byte_17D14, 0
                 jnz     short loc_113FE
 
-loc_113ED:                              ; CODE XREF: sub_10BFA+7E3↑j
+loc_113ED:                              ; CODE XREF: show_ending_text+7E3↑j
                 mov     ax, 214h
                 push    ax
                 push    ds
@@ -1711,20 +1711,20 @@ loc_113ED:                              ; CODE XREF: sub_10BFA+7E3↑j
                 call    sub_16619
                 add     sp, 6
 
-loc_113FE:                              ; CODE XREF: sub_10BFA+7EA↑j
-                                        ; sub_10BFA+7F1↑j
+loc_113FE:                              ; CODE XREF: show_ending_text+7EA↑j
+                                        ; show_ending_text+7F1↑j
                 push    ds
                 mov     ax, offset aReportThyFeatU ; ".\nReport thy feat unto Lord British at"...
                 push    ax
                 call    sub_16619
                 add     sp, 4
 
-loc_1140B:                              ; CODE XREF: sub_10BFA+136↑j
-                                        ; sub_10BFA+25C↑j ...
+loc_1140B:                              ; CODE XREF: show_ending_text+136↑j
+                                        ; show_ending_text+25C↑j ...
                 mov     [bp+var_2], 2
 
-def_10CC0:                              ; CODE XREF: sub_10BFA+BF↑j
-                                        ; sub_10BFA+1AB↑j ...
+def_10CC0:                              ; CODE XREF: show_ending_text+BF↑j
+                                        ; show_ending_text+1AB↑j ...
                 push    ds              ; jumptable 00010CC0 default case
                 push    [bp+var_6]
                 call    sub_15DD6
@@ -1737,7 +1737,7 @@ def_10CC0:                              ; CODE XREF: sub_10BFA+BF↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_10BFA       endp
+show_ending_text endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2917,7 +2917,7 @@ def_11C3F:                              ; CODE XREF: _main+5B8↑j
                 xor     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_10BFA
+                call    near ptr show_ending_text
                 inc     sp
                 inc     sp
                 cmp     word_19356, 13h
@@ -3096,7 +3096,7 @@ loc_11EF7:                              ; CODE XREF: _main+85D↑j
                 mov     ax, 1
                 push    ax
                 push    cs
-                call    near ptr sub_10BFA
+                call    near ptr show_ending_text
                 inc     sp
                 inc     sp
 
@@ -3468,7 +3468,7 @@ loc_12235:                              ; CODE XREF: _main+AD8↑j
                 push    ax
                 mov     ax, 1EAEh
                 push    ax
-                call    sub_1744F
+                call    number_to_words_2
                 add     sp, 6
                 mov     word ptr dword_192B0, 3
                 mov     ax, 1
@@ -3488,7 +3488,7 @@ loc_12235:                              ; CODE XREF: _main+AD8↑j
                 push    ax
                 mov     ax, 1EAEh
                 push    ax
-                call    sub_1744F
+                call    number_to_words_2
                 add     sp, 6
                 mov     ax, word_199CC
                 mov     word_199DE, ax
@@ -3688,7 +3688,7 @@ loc_123F8:                              ; CODE XREF: _main+CBD↑j
                 push    ax
                 mov     ax, 1EAEh
                 push    ax
-                call    sub_1744F
+                call    number_to_words_2
                 add     sp, 6
                 mov     ax, word_199CC
                 mov     word_199DE, ax
@@ -3889,7 +3889,7 @@ loc_125CE:                              ; CODE XREF: _main+E73↑j
                 push    ax
                 mov     ax, 1EAEh
                 push    ax
-                call    sub_1744F
+                call    number_to_words_2
                 add     sp, 6
                 mov     word ptr dword_192B0, 3
                 mov     ax, 4
@@ -3909,7 +3909,7 @@ loc_125CE:                              ; CODE XREF: _main+E73↑j
                 push    ax
                 mov     ax, 1EAEh
                 push    ax
-                call    sub_1744F
+                call    number_to_words_2
                 add     sp, 6
                 mov     ax, word_199CC
                 mov     word_199DE, ax
@@ -4000,7 +4000,7 @@ loc_126DD:                              ; CODE XREF: _main+1044↑j
                 mov     ax, 7           ; jumptable 000126C4 case 6
                 push    ax
                 push    cs
-                call    near ptr sub_10BFA
+                call    near ptr show_ending_text
                 inc     sp
                 inc     sp
                 mov     ax, 0Bh
@@ -4017,7 +4017,7 @@ loc_126F7:                              ; CODE XREF: _main+1044↑j
                 mov     ax, 8           ; jumptable 000126C4 case 7
                 push    ax
                 push    cs
-                call    near ptr sub_10BFA
+                call    near ptr show_ending_text
                 inc     sp
                 inc     sp
                 mov     di, 0FFF4h
@@ -4037,7 +4037,7 @@ def_126C4:                              ; CODE XREF: _main+103E↑j
                 inc     ax
                 push    ax
                 push    cs
-                call    near ptr sub_10BFA
+                call    near ptr show_ending_text
                 inc     sp
                 inc     sp
 
@@ -4072,7 +4072,7 @@ loc_1273C:                              ; CODE XREF: _main+10AB↑j
                 mov     ax, 0Fh
                 push    ax
                 push    cs
-                call    near ptr sub_10BFA
+                call    near ptr show_ending_text
                 inc     sp
                 inc     sp
                 mov     word ptr dword_192B0, 0Ch
@@ -4663,7 +4663,7 @@ loc_12B6A:                              ; CODE XREF: seg002:0081↑j
                 xor     ax, 200h
                 mov     word_19C46, ax
                 mov     es, word_19C46
-                call    sub_12D1C
+                call    number_to_words
                 jmp     short loc_12B98
 ; ---------------------------------------------------------------------------
 
@@ -4883,7 +4883,7 @@ sub_12C1C       endp ; sp-analysis failed
 
 
 sub_12CB6       proc near               ; CODE XREF: sub_12C1C:loc_12CFE↓p
-                                        ; sub_12D1C:loc_12E36↓p ...
+                                        ; number_to_words:loc_12E36↓p ...
                 shr     cs:word_19373, 1
                 jnb     short loc_12CC4
                 xor     cs:word_19373, 0B400h
@@ -4910,7 +4910,7 @@ sub_12CB6       endp
 
 
 sub_12CDA       proc near               ; CODE XREF: sub_12C1C+E9↓p
-                                        ; sub_12D1C+121↓p ...
+                                        ; number_to_words+121↓p ...
                 shr     cs:word_19375, 1
                 jnb     short loc_12CE8
                 xor     cs:word_19375, 0B400h
@@ -4961,7 +4961,7 @@ loc_12D14:                              ; CODE XREF: sub_12C1C+95↑j
 
 ; Attributes: bp-based frame
 
-sub_12D1C       proc far                ; CODE XREF: seg002:009E↑P
+number_to_words proc far                ; CODE XREF: seg002:009E↑P
                 push    bp
                 mov     bp, sp
                 push    di
@@ -4977,7 +4977,7 @@ sub_12D1C       proc far                ; CODE XREF: seg002:009E↑P
                                         ; unknown register
                 mov     si, 3Fh ; '?'
 
-loc_12D33:                              ; CODE XREF: sub_12D1C+100↓j
+loc_12D33:                              ; CODE XREF: number_to_words+100↓j
                 xor     bh, bh
                 xor     dh, dh
                 mov     dl, [si+1EECh]
@@ -5001,7 +5001,7 @@ loc_12D33:                              ; CODE XREF: sub_12D1C+100↓j
                 xor     bl, bl
                 mov     ax, 304h
 
-loc_12D6B:                              ; CODE XREF: sub_12D1C+5B↓j
+loc_12D6B:                              ; CODE XREF: number_to_words+5B↓j
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; unknown register
                 mov     bh, es:[di]
@@ -5023,20 +5023,20 @@ loc_12D6B:                              ; CODE XREF: sub_12D1C+5B↓j
                 mov     ah, es:[di]
                 mov     es:[di], ch
 
-loc_12D8E:                              ; CODE XREF: sub_12D1C+65↑j
+loc_12D8E:                              ; CODE XREF: number_to_words+65↑j
                 pop     dx
                 sub     dl, 38h ; '8'
                 pushf
                 jns     short loc_12D97
                 neg     dl
 
-loc_12D97:                              ; CODE XREF: sub_12D1C+77↑j
+loc_12D97:                              ; CODE XREF: number_to_words+77↑j
                 sub     bl, 2Fh ; '/'
                 pushf
                 jns     short loc_12D9F
                 neg     bl
 
-loc_12D9F:                              ; CODE XREF: sub_12D1C+7F↑j
+loc_12D9F:                              ; CODE XREF: number_to_words+7F↑j
                 mov     cl, 4
                 shr     dl, cl
                 add     dl, 1
@@ -5048,10 +5048,10 @@ loc_12D9F:                              ; CODE XREF: sub_12D1C+7F↑j
                 jmp     short loc_12DB8
 ; ---------------------------------------------------------------------------
 
-loc_12DB4:                              ; CODE XREF: sub_12D1C+90↑j
+loc_12DB4:                              ; CODE XREF: number_to_words+90↑j
                 sub     [si+1F2Ch], bl
 
-loc_12DB8:                              ; CODE XREF: sub_12D1C+96↑j
+loc_12DB8:                              ; CODE XREF: number_to_words+96↑j
                 mov     bl, [si+1F2Ch]
                 popf
                 js      short loc_12DC5
@@ -5059,17 +5059,17 @@ loc_12DB8:                              ; CODE XREF: sub_12D1C+96↑j
                 jmp     short loc_12DC9
 ; ---------------------------------------------------------------------------
 
-loc_12DC5:                              ; CODE XREF: sub_12D1C+A1↑j
+loc_12DC5:                              ; CODE XREF: number_to_words+A1↑j
                 sub     [si+1EECh], dl
 
-loc_12DC9:                              ; CODE XREF: sub_12D1C+A7↑j
+loc_12DC9:                              ; CODE XREF: number_to_words+A7↑j
                 mov     dl, [si+1EECh]
                 cmp     bl, 5Eh ; '^'
                 jnb     short loc_12E36
                 cmp     dl, 71h ; 'q'
                 jnb     short loc_12E36
 
-loc_12DD7:                              ; CODE XREF: sub_12D1C+12E↓j
+loc_12DD7:                              ; CODE XREF: number_to_words+12E↓j
                 shl     bl, 1
                 mov     di, [bx+1F6Ch]
                 add     dx, 6Ah ; 'j'
@@ -5085,7 +5085,7 @@ loc_12DD7:                              ; CODE XREF: sub_12D1C+12E↓j
                 xor     bl, bl
                 mov     ax, 304h
 
-loc_12DFA:                              ; CODE XREF: sub_12D1C+EA↓j
+loc_12DFA:                              ; CODE XREF: number_to_words+EA↓j
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; unknown register
                 mov     bh, es:[di]
@@ -5105,14 +5105,14 @@ loc_12DFA:                              ; CODE XREF: sub_12D1C+EA↓j
                 mov     ah, es:[di]
                 stosb
 
-loc_12E19:                              ; CODE XREF: sub_12D1C+109↓j
-                                        ; sub_12D1C+118↓j
+loc_12E19:                              ; CODE XREF: number_to_words+109↓j
+                                        ; number_to_words+118↓j
                 dec     si
                 js      short loc_12E4C
                 jmp     loc_12D33
 ; ---------------------------------------------------------------------------
 
-loc_12E1F:                              ; CODE XREF: sub_12D1C+F0↑j
+loc_12E1F:                              ; CODE XREF: number_to_words+F0↑j
                 mov     ch, [si+1E4Ch]
                 cmp     bl, ch
                 jnz     short loc_12E19
@@ -5121,13 +5121,13 @@ loc_12E1F:                              ; CODE XREF: sub_12D1C+F0↑j
                 jnz     short loc_12E30
                 inc     ch
 
-loc_12E30:                              ; CODE XREF: sub_12D1C+110↑j
+loc_12E30:                              ; CODE XREF: number_to_words+110↑j
                 mov     [si+1E4Ch], ch
                 jmp     short loc_12E19
 ; ---------------------------------------------------------------------------
 
-loc_12E36:                              ; CODE XREF: sub_12D1C+B4↑j
-                                        ; sub_12D1C+B9↑j
+loc_12E36:                              ; CODE XREF: number_to_words+B4↑j
+                                        ; number_to_words+B9↑j
                 call    sub_12CB6
                 mov     [si+1EECh], al
                 call    sub_12CDA
@@ -5137,7 +5137,7 @@ loc_12E36:                              ; CODE XREF: sub_12D1C+B4↑j
                 jmp     short loc_12DD7
 ; ---------------------------------------------------------------------------
 
-loc_12E4C:                              ; CODE XREF: sub_12D1C+FE↑j
+loc_12E4C:                              ; CODE XREF: number_to_words+FE↑j
                 pop     di
                 pop     si
                 pop     bp
@@ -5146,7 +5146,7 @@ loc_12E4C:                              ; CODE XREF: sub_12D1C+FE↑j
                 pop     di
                 pop     bp
                 retf
-sub_12D1C       endp ; sp-analysis failed
+number_to_words endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6980,7 +6980,7 @@ seg054          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_15DD6       proc far                ; CODE XREF: sub_10BFA+819↑P
+sub_15DD6       proc far                ; CODE XREF: show_ending_text+819↑P
                                         ; sub_163C6+1CC↓P
 
 arg_0           = dword ptr  6
@@ -8248,8 +8248,8 @@ sub_165CB       endp
 
 ; Attributes: bp-based frame
 
-sub_16619       proc far                ; CODE XREF: sub_10BFA+12E↑P
-                                        ; sub_10BFA+17C↑P ...
+sub_16619       proc far                ; CODE XREF: show_ending_text+12E↑P
+                                        ; show_ending_text+17C↑P ...
 
 arg_0           = dword ptr  6
 arg_4           = word ptr  0Ah
@@ -8487,8 +8487,8 @@ seg059          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_16778       proc far                ; CODE XREF: sub_10BFA+AA↑P
-                                        ; sub_10BFA+825↑P ...
+sub_16778       proc far                ; CODE XREF: show_ending_text+AA↑P
+                                        ; show_ending_text+825↑P ...
 
 arg_0           = word ptr  6
 
@@ -10264,7 +10264,7 @@ sub_17286       endp
 
 
 sub_173DB       proc far                ; CODE XREF: sub_17286+14↑P
-                                        ; sub_1744F+1A↓P ...
+                                        ; number_to_words_2+1A↓P ...
                 cld
                 mov     bx, [bp+6]
                 mov     bp, [bp+8]
@@ -10324,7 +10324,7 @@ sub_173DB       endp
 
 ; Attributes: bp-based frame
 
-sub_1744F       proc far                ; CODE XREF: _main+BD9↑P
+number_to_words_2 proc far              ; CODE XREF: _main+BD9↑P
                                         ; _main+C0F↑P ...
 
 arg_4           = word ptr  0Ah
@@ -10361,7 +10361,7 @@ arg_4           = word ptr  0Ah
                 mov     word_19200, 1
                 mov     cx, 2
 
-loc_174A9:                              ; CODE XREF: sub_1744F+71↓j
+loc_174A9:                              ; CODE XREF: number_to_words_2+71↓j
                 shr     ax, 1
                 jz      short loc_174C2
                 stc
@@ -10374,8 +10374,8 @@ loc_174A9:                              ; CODE XREF: sub_1744F+71↓j
                 jmp     short loc_174A9
 ; ---------------------------------------------------------------------------
 
-loc_174C2:                              ; CODE XREF: sub_1744F+5C↑j
-                                        ; sub_1744F+81↓j
+loc_174C2:                              ; CODE XREF: number_to_words_2+5C↑j
+                                        ; number_to_words_2+81↓j
                 shr     dx, 1
                 jz      short loc_174D2
                 stc
@@ -10385,7 +10385,7 @@ loc_174C2:                              ; CODE XREF: sub_1744F+5C↑j
                 jmp     short loc_174C2
 ; ---------------------------------------------------------------------------
 
-loc_174D2:                              ; CODE XREF: sub_1744F+75↑j
+loc_174D2:                              ; CODE XREF: number_to_words_2+75↑j
                 mov     dx, word_191F4
                 mov     ax, word_191F2
                 mul     dx
@@ -10400,8 +10400,8 @@ loc_174D2:                              ; CODE XREF: sub_1744F+75↑j
                 mov     ax, [bx+16D4h]
                 mov     word_191FC, ax
 
-loc_174F7:                              ; CODE XREF: sub_1744F+DA↓j
-                                        ; sub_1744F+E0↓j ...
+loc_174F7:                              ; CODE XREF: number_to_words_2+DA↓j
+                                        ; number_to_words_2+E0↓j ...
                 mov     dx, word_191F8
                 mov     ax, word_191F6
                 shr     dx, 1
@@ -10410,7 +10410,7 @@ loc_174F7:                              ; CODE XREF: sub_1744F+DA↓j
                 xor     dx, word_191FC
                 xor     ax, word_191FA
 
-loc_1750C:                              ; CODE XREF: sub_1744F+B3↑j
+loc_1750C:                              ; CODE XREF: number_to_words_2+B3↑j
                 mov     word_191F8, dx
                 mov     word_191F6, ax
                 mov     si, ax
@@ -10418,7 +10418,7 @@ loc_1750C:                              ; CODE XREF: sub_1744F+B3↑j
                 mov     di, ax
                 mov     cx, word_19200
 
-loc_1751F:                              ; CODE XREF: sub_1744F+D4↓j
+loc_1751F:                              ; CODE XREF: number_to_words_2+D4↓j
                 shr     dx, 1
                 rcr     di, 1
                 loop    loc_1751F
@@ -10444,7 +10444,7 @@ loc_1751F:                              ; CODE XREF: sub_1744F+D4↓j
                 xor     bl, bl
                 mov     ax, 304h
 
-loc_1755F:                              ; CODE XREF: sub_1744F+11C↓j
+loc_1755F:                              ; CODE XREF: number_to_words_2+11C↓j
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; unknown register
                 mov     bh, es:[di]
@@ -10466,13 +10466,13 @@ loc_1755F:                              ; CODE XREF: sub_1744F+11C↓j
                 call    sub_175E6
                 mov     bp, word_19204
 
-loc_17586:                              ; CODE XREF: sub_1744F+12E↑j
+loc_17586:                              ; CODE XREF: number_to_words_2+12E↑j
                 dec     word_19202
                 jz      short loc_1758F
                 jmp     loc_174F7
 ; ---------------------------------------------------------------------------
 
-loc_1758F:                              ; CODE XREF: sub_1744F+13B↑j
+loc_1758F:                              ; CODE XREF: number_to_words_2+13B↑j
                 mov     bx, 1392h
                 add     bx, word_18EC2
                 mov     bx, [bx]
@@ -10489,7 +10489,7 @@ loc_1758F:                              ; CODE XREF: sub_1744F+13B↑j
                 xor     bl, bl
                 mov     ax, 304h
 
-loc_175B9:                              ; CODE XREF: sub_1744F+176↓j
+loc_175B9:                              ; CODE XREF: number_to_words_2+176↓j
                 out     dx, ax          ; EGA: graph 1 and 2 addr reg:
                                         ; unknown register
                 mov     bh, es:[di]
@@ -10523,13 +10523,13 @@ loc_175B9:                              ; CODE XREF: sub_1744F+176↓j
                 pop     di
                 pop     bp
                 retf
-sub_1744F       endp
+number_to_words_2 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_175E6       proc near               ; CODE XREF: sub_1744F+130↑p
+sub_175E6       proc near               ; CODE XREF: number_to_words_2+130↑p
                                         ; sub_175F4+12A↓p ...
                 xor     ah, ah
                 int     1Ah             ; CLOCK - GET TIME OF DAY
@@ -11704,8 +11704,8 @@ word_17BEC      dw 0                    ; DATA XREF: start+21↑w
                 db    0
                 db    0
                 db    0
-byte_17CD4      db 0                    ; DATA XREF: sub_10BFA+755↑r
-                                        ; sub_10BFA:loc_113B6↑r ...
+byte_17CD4      db 0                    ; DATA XREF: show_ending_text+755↑r
+                                        ; show_ending_text:loc_113B6↑r ...
                 db    0
                 db    0
                 db    0
@@ -11769,8 +11769,8 @@ byte_17CD4      db 0                    ; DATA XREF: sub_10BFA+755↑r
                 db    0
                 db    0
                 db    0
-byte_17D14      db 0                    ; DATA XREF: sub_10BFA+76D↑r
-                                        ; sub_10BFA:loc_11386↑r ...
+byte_17D14      db 0                    ; DATA XREF: show_ending_text+76D↑r
+                                        ; show_ending_text:loc_11386↑r ...
                 db    0
                 db    0
                 db    0
@@ -11834,8 +11834,8 @@ byte_17D14      db 0                    ; DATA XREF: sub_10BFA+76D↑r
                 db    0
                 db    0
                 db    0
-byte_17D54      db 0                    ; DATA XREF: sub_10BFA+774↑r
-                                        ; sub_10BFA+7A4↑r ...
+byte_17D54      db 0                    ; DATA XREF: show_ending_text+774↑r
+                                        ; show_ending_text+7A4↑r ...
                 db    0
                 db    0
                 db    0
@@ -12263,8 +12263,8 @@ aZero           db 'zero',0
                 db  65h ; e
                 db  6Eh ; n
                 db    0
-aTwentyEight    db 'twenty-eight',0     ; DATA XREF: sub_12D1C+6↑o
-                                        ; sub_1744F+6↑o
+aTwentyEight    db 'twenty-eight',0     ; DATA XREF: number_to_words+6↑o
+                                        ; number_to_words_2+6↑o
                 db  74h ; t
                 db  77h ; w
                 db  65h ; e
@@ -12356,92 +12356,94 @@ aTwentyEight    db 'twenty-eight',0     ; DATA XREF: sub_12D1C+6↑o
                 db  21h ; !
                 db    0
 aFromItsCrimson db 'From its crimson depths Lord British emerges, trailed by ',0
-                                        ; DATA XREF: sub_10BFA+178↑o
+                                        ; DATA XREF: show_ending_text+178↑o
 aTheMageNystulA db 'the mage Nystul. Anguish and disbelief prevail on the ',0
-                                        ; DATA XREF: sub_10BFA+185↑o
+                                        ; DATA XREF: show_ending_text+185↑o
 aRoyalSeerSFace db 'royal seer',27h,'s face, but Lord British directs his stony ',0
-                                        ; DATA XREF: sub_10BFA+192↑o
+                                        ; DATA XREF: show_ending_text+192↑o
 aGazeAtYouAndSp db 'gaze at you and speaks as if to a wayward child.',0
-                                        ; DATA XREF: sub_10BFA+19F↑o
+                                        ; DATA XREF: show_ending_text+19F↑o
 aThouDidstHaveJ db '"Thou didst have just cause to burgle our ',0
-                                        ; DATA XREF: sub_10BFA+1ED↑o
+                                        ; DATA XREF: show_ending_text+1ED↑o
 aCodexITrustCHi db 'Codex, I trust,%c His Majesty says. "But for Virtue',27h,'s sake.'
-                                        ; DATA XREF: sub_10BFA+1FE↑o
+                                        ; DATA XREF: show_ending_text+1FE↑o
                 db '..',0
 aWhatHastThouDo db '"WHAT HAST THOU DONE WITH IT?%c',0
-                                        ; DATA XREF: sub_10BFA+250↑o
+                                        ; DATA XREF: show_ending_text+250↑o
 aYouPickUpTheCo db 'You pick up the concave lens and pass it to the King. ',0
-                                        ; DATA XREF: sub_10BFA+29E↑o
+                                        ; DATA XREF: show_ending_text+29E↑o
 aWasTheBookEver db '"Was the book ever truly ours, Your Majesty? Was it ',0
-                                        ; DATA XREF: sub_10BFA+2AB↑o
+                                        ; DATA XREF: show_ending_text+2AB↑o
 aWrittenForBrit db 'written for Britannia alone? Thou dost no longer ',0
-                                        ; DATA XREF: sub_10BFA+2B8↑o
+                                        ; DATA XREF: show_ending_text+2B8↑o
 aHoldTheCodexBu db 'hold the Codex, but is its wisdom indeed lost? Look ',0
-                                        ; DATA XREF: sub_10BFA+2C5↑o
+                                        ; DATA XREF: show_ending_text+2C5↑o
 aIntoTheVortexA db 'into the Vortex, and let the Codex answer for itself!%c',0
-                                        ; DATA XREF: sub_10BFA+2D6↑o
+                                        ; DATA XREF: show_ending_text+2D6↑o
 aAsLordBritishH db 'As Lord British holds the glass before the ',0
-                                        ; DATA XREF: sub_10BFA+324↑o
+                                        ; DATA XREF: show_ending_text+324↑o
 aWallTheCodexOf db 'wall, the Codex of Ultimate Wisdom wavers into ',0
-                                        ; DATA XREF: sub_10BFA+331↑o
+                                        ; DATA XREF: show_ending_text+331↑o
 aViewAgainstAMy db 'view against a myriad of swimming stars!',0
-                                        ; DATA XREF: sub_10BFA+33E↑o
+                                        ; DATA XREF: show_ending_text+33E↑o
 aYetTheBookRema db 'Yet the book remains closed.',0
-                                        ; DATA XREF: sub_10BFA+38C↑o
+                                        ; DATA XREF: show_ending_text+38C↑o
 aAndWavesOfHeat db 'And waves of heat shimmer in the air, heralding the ',0
-                                        ; DATA XREF: sub_10BFA+3DA↑o
+                                        ; DATA XREF: show_ending_text+3DA↑o
 aBirthOfAnother db 'birth of another red gate!',0
-                                        ; DATA XREF: sub_10BFA+3E7↑o
+                                        ; DATA XREF: show_ending_text+3E7↑o
 aKingDraxinusom db 'King Draxinusom of the Gargoyles strides forward, ',0
-                                        ; DATA XREF: sub_10BFA+435↑o
+                                        ; DATA XREF: show_ending_text+435↑o
 aFlankedByASmal db 'flanked by a small army of wingless attendants. Like ',0
-                                        ; DATA XREF: sub_10BFA+442↑o
+                                        ; DATA XREF: show_ending_text+442↑o
 aLordBritishHeS db 'Lord British, he seems to suppress his rage only through ',0
-                                        ; DATA XREF: sub_10BFA+44F↑o
+                                        ; DATA XREF: show_ending_text+44F↑o
 aAHeroicEffortO db 'a heroic effort of will. His scaly ',0
-                                        ; DATA XREF: sub_10BFA+45C↑o
+                                        ; DATA XREF: show_ending_text+45C↑o
 aHandGraspsYour db 'hand grasps your shoulder, and your Amulet of Submission grows ',0
-                                        ; DATA XREF: sub_10BFA+469↑o
-aVeryWarm       db 'very warm.',0       ; DATA XREF: sub_10BFA+476↑o
+                                        ; DATA XREF: show_ending_text+469↑o
+aVeryWarm       db 'very warm.',0       ; DATA XREF: show_ending_text+476↑o
 aThyTimeHathCom db '"Thy time hath come, Thief,%c he says.',0
-                                        ; DATA XREF: sub_10BFA+4C8↑o
+                                        ; DATA XREF: show_ending_text+4C8↑o
 aQuicklyYouReac db 'Quickly you reach down to seize the convex lens...',0
-                                        ; DATA XREF: sub_10BFA+516↑o
+                                        ; DATA XREF: show_ending_text+516↑o
 aAndYouPressItI db '...and you press it into the hand of the towering ',0
-                                        ; DATA XREF: sub_10BFA+564↑o
+                                        ; DATA XREF: show_ending_text+564↑o
 aGargoyleKingMe db 'Gargoyle king, meeting his sunken eyes. ',0
-                                        ; DATA XREF: sub_10BFA+571↑o
+                                        ; DATA XREF: show_ending_text+571↑o
 aJoinMyLordInHi db '"Join my Lord in his search for peace, I beg thee.%c',0
-                                        ; DATA XREF: sub_10BFA+582↑o
+                                        ; DATA XREF: show_ending_text+582↑o
 aAtYourUrgingKi db 'At your urging, King Draxinusom reluctantly raises his ',0
-                                        ; DATA XREF: sub_10BFA+5D0↑o
+                                        ; DATA XREF: show_ending_text+5D0↑o
 aLensToCatchThe db 'lens to catch the light. As Lord British holds up his own lens, ',0
-                                        ; DATA XREF: sub_10BFA+5DD↑o
+                                        ; DATA XREF: show_ending_text+5DD↑o
 aEveryEyeInTheR db 'every eye in the room, human and Gargoyle alike, fixes ',0
-                                        ; DATA XREF: sub_10BFA+5EA↑o
+                                        ; DATA XREF: show_ending_text+5EA↑o
 aUponTheImageOf db 'upon the image of the Codex which shines upon the wall.',0
-                                        ; DATA XREF: sub_10BFA+5F7↑o
+                                        ; DATA XREF: show_ending_text+5F7↑o
 aTheAncientBook db 'The ancient book opens. Both kings gaze upon its pages in ',0
-                                        ; DATA XREF: sub_10BFA+645↑o
+                                        ; DATA XREF: show_ending_text+645↑o
 aSpellboundSile db 'spellbound silence, as the eloquence of Ultimate Wisdom is reveal'
-                                        ; DATA XREF: sub_10BFA+652↑o
+                                        ; DATA XREF: show_ending_text+652↑o
                 db 'ed ',0
 aInTheTonguesOf db 'in the tongues of each lord',27h,'s domain. You, too, can read th'
-                                        ; DATA XREF: sub_10BFA+65F↑o
+                                        ; DATA XREF: show_ending_text+65F↑o
                 db 'e answers ',0
-aTheCodexGives  db 'the Codex gives...',0 ; DATA XREF: sub_10BFA+66C↑o
+aTheCodexGives  db 'the Codex gives...',0
+                                        ; DATA XREF: show_ending_text+66C↑o
 aAndWhenItsWisd db '...and when its wisdom is gleaned, when Lord British ',0
-                                        ; DATA XREF: sub_10BFA+6BA↑o
+                                        ; DATA XREF: show_ending_text+6BA↑o
 aAndKingDraxinu db 'and King Draxinusom turn to each other as friends, ',0
-                                        ; DATA XREF: sub_10BFA+6C7↑o
+                                        ; DATA XREF: show_ending_text+6C7↑o
 aHatingNoLonger db 'hating no longer, fearing no more, you know that your ',0
-                                        ; DATA XREF: sub_10BFA+6D4↑o
+                                        ; DATA XREF: show_ending_text+6D4↑o
 aMissionInBrita db 'mission in Britannia has ended at last.',0
-                                        ; DATA XREF: sub_10BFA+6E1↑o
-aCongratulation db 'CONGRATULATIONS',0Ah,0 ; DATA XREF: sub_10BFA+72F↑o
+                                        ; DATA XREF: show_ending_text+6E1↑o
+aCongratulation db 'CONGRATULATIONS',0Ah,0
+                                        ; DATA XREF: show_ending_text+72F↑o
 aThouHastComple db 'Thou hast completed Ultima VI: The False Prophet, ',0
-                                        ; DATA XREF: sub_10BFA+73C↑o
-aIn             db 'in ',0              ; DATA XREF: sub_10BFA+749↑o
+                                        ; DATA XREF: show_ending_text+73C↑o
+aIn             db 'in ',0              ; DATA XREF: show_ending_text+749↑o
                 db  25h ; %
                 db  73h ; s
                 db    0
@@ -12454,11 +12456,11 @@ aIn             db 'in ',0              ; DATA XREF: sub_10BFA+749↑o
                 db  2Ch ; ,
                 db  0Ah
                 db    0
-aAnd            db 'and ',0             ; DATA XREF: sub_10BFA+7D2↑o
+aAnd            db 'and ',0             ; DATA XREF: show_ending_text+7D2↑o
                 db  25h ; %
                 db  73h ; s
                 db    0
-aReportThyFeatU db '.',0Ah              ; DATA XREF: sub_10BFA+805↑o
+aReportThyFeatU db '.',0Ah              ; DATA XREF: show_ending_text+805↑o
                 db 'Report thy feat unto Lord British at Origin Systems!',0
                 db  22h ; "
                 db  54h ; T
@@ -13787,13 +13789,13 @@ word_18EBA      dw 0                    ; DATA XREF: sub_16F26+5E↑r
 word_18EBC      dw 0                    ; DATA XREF: sub_16F26+3D↑w
                                         ; sub_16FA7+23↑r ...
 word_18EBE      dw 0                    ; DATA XREF: sub_17286+19↑r
-                                        ; sub_1744F+1F↑r ...
+                                        ; number_to_words_2+1F↑r ...
 word_18EC0      dw 0                    ; DATA XREF: sub_17286+1C↑r
                                         ; sub_17286+F1↑r ...
 word_18EC2      dw 0                    ; DATA XREF: sub_17286+28↑r
                                         ; sub_17286+31↑w ...
 word_18EC4      dw 0                    ; DATA XREF: sub_17286+24↑r
-                                        ; sub_1744F+2A↑r ...
+                                        ; number_to_words_2+2A↑r ...
                 align 4
 word_18EC8      dw 0                    ; DATA XREF: sub_17286+107↑r
                                         ; sub_17286+145↑r ...
@@ -14781,8 +14783,8 @@ off_192A0       dd unknown_libname_1    ; DATA XREF: j_unknown_libname_1↑r
                 dd loc_1046E
                 dd loc_1046E
                 dd loc_1046E
-dword_192B0     dd ?                    ; DATA XREF: sub_10BFA+115↑w
-                                        ; sub_10BFA+122↑r ...
+dword_192B0     dd ?                    ; DATA XREF: show_ending_text+115↑w
+                                        ; show_ending_text+122↑r ...
 word_192B4      dw ?                    ; DATA XREF: sub_1142A+1E↑r
                                         ; _main+5F3↑w ...
 word_192B6      dw ?                    ; DATA XREF: sub_1142A+1A↑r
@@ -14896,17 +14898,17 @@ word_19344      dw ?                    ; DATA XREF: _main:loc_11BAC↑w
                 db    ? ;
                 db    ? ;
                 db    ? ;
-word_1934A      dw ?                    ; DATA XREF: sub_10BFA+109↑w
-                                        ; sub_10BFA+157↑w ...
-word_1934C      dw ?                    ; DATA XREF: sub_10BFA+47↑w
-word_1934E      dw ?                    ; DATA XREF: sub_10BFA+4A↑w
-word_19350      dw ?                    ; DATA XREF: sub_10BFA+10F↑w
-                                        ; sub_10BFA+15D↑w ...
+word_1934A      dw ?                    ; DATA XREF: show_ending_text+109↑w
+                                        ; show_ending_text+157↑w ...
+word_1934C      dw ?                    ; DATA XREF: show_ending_text+47↑w
+word_1934E      dw ?                    ; DATA XREF: show_ending_text+4A↑w
+word_19350      dw ?                    ; DATA XREF: show_ending_text+10F↑w
+                                        ; show_ending_text+15D↑w ...
 word_19352      dw ?                    ; DATA XREF: _main+500↑w
                                         ; _main:loc_120F8↑r ...
                 db    ? ;
                 db    ? ;
-word_19356      dw ?                    ; DATA XREF: sub_10BFA+51↑r
+word_19356      dw ?                    ; DATA XREF: show_ending_text+51↑r
                                         ; sub_1142A↑r ...
 byte_19358      db ?                    ; DATA XREF: sub_11475+5↑r
                                         ; sub_11475:loc_1148F↑r
@@ -16564,8 +16566,8 @@ word_199D6      dw ?                    ; DATA XREF: _main+34D↑w
 word_199D8      dw ?                    ; DATA XREF: _main+353↑w
 word_199DA      dw ?                    ; DATA XREF: sub_12912+6↑r
                                         ; sub_12912+21↑w ...
-word_199DC      dw ?                    ; DATA XREF: sub_10BFA+103↑w
-                                        ; sub_10BFA+151↑w ...
+word_199DC      dw ?                    ; DATA XREF: show_ending_text+103↑w
+                                        ; show_ending_text+151↑w ...
 word_199DE      dw ?                    ; DATA XREF: _main+BCD↑w
                                         ; _main+C1A↑w ...
                 db    ? ;
@@ -16588,10 +16590,10 @@ word_199F4      dw ?                    ; DATA XREF: _main+427↑w
 word_199F6      dw ?                    ; DATA XREF: _main+430↑w
 word_199F8      dw ?                    ; DATA XREF: _main+438↑w
 word_199FA      dw ?                    ; DATA XREF: _main+441↑w
-word_199FC      dw ?                    ; DATA XREF: sub_10BFA:loc_10CE5↑w
-                                        ; sub_10BFA:loc_10D33↑w ...
-word_199FE      dw ?                    ; DATA XREF: sub_10BFA+F1↑w
-                                        ; sub_10BFA+13F↑w ...
+word_199FC      dw ?                    ; DATA XREF: show_ending_text:loc_10CE5↑w
+                                        ; show_ending_text:loc_10D33↑w ...
+word_199FE      dw ?                    ; DATA XREF: show_ending_text+F1↑w
+                                        ; show_ending_text+13F↑w ...
 word_19A00      dw ?                    ; DATA XREF: sub_1142A+D↑w
                                         ; _main+1129↑w
                 db    ? ;
@@ -16629,10 +16631,10 @@ word_19A1E      dw ?                    ; DATA XREF: sub_1142A+A↑w
                 db    ? ;
                 db    ? ;
                 db    ? ;
-word_19A26      dw ?                    ; DATA XREF: sub_10BFA+F7↑w
-                                        ; sub_10BFA+145↑w ...
-word_19A28      dw ?                    ; DATA XREF: sub_10BFA+FD↑w
-                                        ; sub_10BFA+14B↑w ...
+word_19A26      dw ?                    ; DATA XREF: show_ending_text+F7↑w
+                                        ; show_ending_text+145↑w ...
+word_19A28      dw ?                    ; DATA XREF: show_ending_text+FD↑w
+                                        ; show_ending_text+14B↑w ...
                 db    ? ;
                 db    ? ;
                 db    ? ;

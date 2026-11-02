@@ -83,6 +83,8 @@ FUNCTIONS = [
     (0x34656, "use_shovel", "'You dig a hole.', water fountain, gold nugget"),
     (0x34FC5, "use_sextant", "'At latitude=', 'longitude='"),
     (0x355D3, "use_food", "'You eat the food.'"),
+    (0x1166B, "make_config_string", "builds the hardware settings string passed to END.EXE (video letter, M/K, sound letter, 3 digits)"),
+    (0x116CE, "start_ending", "computes the time played (game date minus 4th day, 7th month, year 161), formats years/months/days and execl's END.EXE with them"),
 ]
 
 # (ea, new_name, note)  -- data; DS-relative addresses go through ds()
@@ -157,6 +159,9 @@ DATA = [
     (0x404A6, "player_x", "party x position (word_404A6)"),
     (0x404A8, "player_y", "party y position"),
     (0x404AA, "player_z", "party level (0 = surface, 1-5 dungeon)"),
+    (0x4049E, "game_day", "objlist +0x1BF5: day of month 1-28"),
+    (0x4049F, "game_month", "objlist +0x1BF6: 1-13"),
+    (0x404A0, "game_year", "objlist +0x1BF7, word"),
     # runtime
     (0x40A7E, "mem_next_free", "far ptr: next free byte of the start-up block"),
     (0x40A82, "mem_bytes_left", "dword"),

@@ -14,6 +14,9 @@ FUNCTIONS = [
     (0x106B0, "file_close", "= GAME.EXE file_close"),
     (0x10762, "file_read", "= GAME.EXE file_read(dest far, count dword, offset dword, handle)"),
     (0x10848, "file_write", "= GAME.EXE file_write"),
+    (0x10BFA, "show_ending_text", "the Lord British / Nystul scene text and its pauses"),
+    (0x12D1C, "number_to_words", "'twenty-eight' ...: the playing time is spelled out"),
+    (0x1744F, "number_to_words_2", "second copy of the same routine"),
 ]
 
 for ea, name, note in FUNCTIONS:

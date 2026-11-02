@@ -2011,7 +2011,7 @@ sub_114D0       endp
 
 ; Attributes: bp-based frame
 
-sub_1166B       proc far                ; CODE XREF: sub_116CE+9A↓p
+make_config_string proc far             ; CODE XREF: start_ending+9A↓p
                                         ; _main+632↓p
 
 arg_0           = word ptr  6
@@ -2030,10 +2030,10 @@ arg_0           = word ptr  6
                 jmp     short loc_1168A
 ; ---------------------------------------------------------------------------
 
-loc_11688:                              ; CODE XREF: sub_1166B+17↑j
+loc_11688:                              ; CODE XREF: make_config_string+17↑j
                 mov     al, 4Bh ; 'K'
 
-loc_1168A:                              ; CODE XREF: sub_1166B+1B↑j
+loc_1168A:                              ; CODE XREF: make_config_string+1B↑j
                 mov     [si], al
                 inc     si
                 mov     bx, word_3DA1A
@@ -2045,7 +2045,7 @@ loc_1168A:                              ; CODE XREF: sub_1166B+1B↑j
                 cmp     bx, 2
                 jnz     short loc_116C6
 
-loc_116A2:                              ; CODE XREF: sub_1166B+30↑j
+loc_116A2:                              ; CODE XREF: make_config_string+30↑j
                 mov     ax, word_3DA1C
                 mov     cl, 8
                 sar     ax, cl
@@ -2065,19 +2065,19 @@ loc_116A2:                              ; CODE XREF: sub_1166B+30↑j
                 mov     [si], al
                 inc     si
 
-loc_116C6:                              ; CODE XREF: sub_1166B+35↑j
+loc_116C6:                              ; CODE XREF: make_config_string+35↑j
                 mov     byte ptr [si], 0
                 pop     si
                 pop     bp
                 retf    2
-sub_1166B       endp
+make_config_string endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn bp-based frame
 
-sub_116CE       proc near               ; CODE XREF: sub_3563C+101↓P
+start_ending    proc near               ; CODE XREF: sub_3563C+101↓P
 
 arg0            = byte ptr -1Ch
 var_14          = byte ptr -14h
@@ -2090,28 +2090,28 @@ var_2           = word ptr -2
                 sub     sp, 1Ch
                 push    si
                 push    di
-                mov     di, word_404A0
+                mov     di, game_year
                 add     di, 0FF5Fh
-                mov     al, byte_4049F
+                mov     al, game_month
                 mov     ah, 0
                 mov     si, ax
                 add     si, 0FFF9h
-                mov     al, byte_4049E
+                mov     al, game_day
                 mov     ah, 0
                 add     ax, 0FFFCh
                 mov     [bp+var_2], ax
-                cmp     byte_4049E, 0
+                cmp     game_day, 0
                 jnb     short loc_11700
-                add     byte_4049E, 1Ch
+                add     game_day, 1Ch
                 dec     si
 
-loc_11700:                              ; CODE XREF: sub_116CE+2A↑j
+loc_11700:                              ; CODE XREF: start_ending+2A↑j
                 or      si, si
                 jge     short loc_11708
                 add     si, 0Dh
                 dec     di
 
-loc_11708:                              ; CODE XREF: sub_116CE+34↑j
+loc_11708:                              ; CODE XREF: start_ending+34↑j
                 push    di
                 push    ss
                 lea     ax, [bp+var_14]
@@ -2151,9 +2151,9 @@ loc_11708:                              ; CODE XREF: sub_116CE+34↑j
                 lea     ax, [bp+arg0]
                 push    ax
                 push    cs
-                call    near ptr sub_1166B
+                call    near ptr make_config_string
 
-loc_1176B:                              ; CODE XREF: sub_116CE+C0↓j
+loc_1176B:                              ; CODE XREF: start_ending+C0↓j
                 xor     ax, ax
                 push    ax
                 lea     ax, [bp+var_8]
@@ -2171,7 +2171,7 @@ loc_1176B:                              ; CODE XREF: sub_116CE+C0↓j
                 call    _execl
                 add     sp, 0Eh
                 jmp     short loc_1176B
-sub_116CE       endp
+start_ending    endp
 
 ; ---------------------------------------------------------------------------
                 pop     di
@@ -3138,7 +3138,7 @@ loc_11F00:                              ; CODE XREF: _main+5D5↑j
                 lea     ax, [bp+arg0]
                 push    ax
                 push    cs
-                call    near ptr sub_1166B
+                call    near ptr make_config_string
 
 loc_11F43:                              ; CODE XREF: _main+64C↓j
                 xor     ax, ax
@@ -6350,17 +6350,17 @@ loc_1377C:                              ; CODE XREF: sub_13305+55F↓j
                 cmp     al, 17h
                 jbe     short loc_137B4
                 mov     byte_4049D, 0
-                inc     byte_4049E
-                mov     al, byte_4049E
+                inc     game_day
+                mov     al, game_day
                 cmp     al, 1Ch
                 jbe     short loc_137B4
-                mov     byte_4049E, 1
-                inc     byte_4049F
-                mov     al, byte_4049F
+                mov     game_day, 1
+                inc     game_month
+                mov     al, game_month
                 cmp     al, 0Ch
                 jbe     short loc_137B4
-                mov     byte_4049F, 1
-                inc     word_404A0
+                mov     game_month, 1
+                inc     game_year
 
 loc_137B4:                              ; CODE XREF: sub_13305+484↑j
                                         ; sub_13305+494↑j ...
@@ -6500,7 +6500,7 @@ loc_138CD:                              ; CODE XREF: sub_13305+5B6↑j
                 push    word ptr es:[bx+1D6h]
                 push    [bp+var_10]
                 call    video_driver_call
-                mov     al, byte_4049E
+                mov     al, game_day
                 mov     ah, 0
                 mov     bx, ax
                 dec     bx
@@ -6519,7 +6519,7 @@ loc_138CD:                              ; CODE XREF: sub_13305+5B6↑j
                 cwd
                 idiv    bx
                 mov     byte_40517, dl
-                mov     al, byte_4049E
+                mov     al, game_day
                 mov     ah, 0
                 mov     bx, ax
                 dec     bx
@@ -6552,9 +6552,9 @@ loc_1394C:                              ; CODE XREF: sub_13305+56B↑j
                 mov     al, byte_404A5
                 cbw
                 mov     [bp+var_10], ax
-                cmp     byte_4049E, 1
+                cmp     game_day, 1
                 jnz     short loc_13976
-                mov     al, byte_4049F
+                mov     al, game_month
                 mov     ah, 0
                 mov     bx, 3
                 cwd
@@ -6662,11 +6662,11 @@ loc_13A13:                              ; CODE XREF: sub_13305+707↑j
                 inc     bx
                 shl     bx, 1
                 push    word ptr [bx+357h]
-                push    word_404A0
-                mov     al, byte_4049E
+                push    game_year
+                mov     al, game_day
                 mov     ah, 0
                 push    ax
-                mov     al, byte_4049F
+                mov     al, game_month
                 mov     ah, 0
                 push    ax
                 mov     ax, seg seg067
@@ -15132,8 +15132,8 @@ sub_17938       endp
 
 ; Attributes: bp-based frame
 
-sub_1795A       proc far                ; CODE XREF: sub_116CE+48↑P
-                                        ; sub_116CE+5B↑P ...
+sub_1795A       proc far                ; CODE XREF: start_ending+48↑P
+                                        ; start_ending+5B↑P ...
 
 var_F           = byte ptr -0Fh
 var_E           = byte ptr -0Eh
@@ -30909,7 +30909,7 @@ loc_1EADF:                              ; CODE XREF: sub_1EA97+37↑j
                 push    ax
                 call    sub_2B401
                 mov     word_48F45, ax
-                mov     al, byte_4049E
+                mov     al, game_day
                 mov     ah, 0
                 mov     word_48F4B, ax
                 mov     al, [di+3533h]
@@ -30942,7 +30942,7 @@ loc_1EB18:                              ; CODE XREF: sub_1EA97+7D↑j
                 mov     word_48F59, ax
                 mov     ax, word_404F8
                 mov     word_48F5B, ax
-                mov     al, byte_4049F
+                mov     al, game_month
                 mov     ah, 0
                 mov     word_48F5D, ax
                 mov     al, party_size
@@ -30965,7 +30965,7 @@ loc_1EB18:                              ; CODE XREF: sub_1EA97+7D↑j
                 mov     al, es:[bx]
                 mov     ah, 0
                 mov     word_48F71, ax
-                mov     ax, word_404A0
+                mov     ax, game_year
                 mov     word_48F75, ax
                 xor     si, si
                 jmp     short loc_1EB9D
@@ -56926,7 +56926,7 @@ loc_2AF66:                              ; CODE XREF: sub_2AED5+8C↑j
                 mov     ax, [bp+var_2]
                 mov     cl, 5
                 sar     ax, cl
-                mov     dl, byte_4049E
+                mov     dl, game_day
                 mov     dh, 0
                 push    ax
                 mov     ax, dx
@@ -79566,7 +79566,7 @@ loc_3571F:                              ; CODE XREF: sub_3563C+DD↑j
                 pop     cx
                 pop     cx
                 call    sub_17099
-                call    far ptr sub_116CE
+                call    far ptr start_ending
 ; ---------------------------------------------------------------------------
                 mov     ax, 1
 
@@ -83751,7 +83751,7 @@ sub_37671       endp
 
 ; Attributes: bp-based frame
 
-sub_3773A       proc far                ; CODE XREF: sub_116CE+81↑P
+sub_3773A       proc far                ; CODE XREF: start_ending+81↑P
                                         ; _main+682↑P ...
 
 arg_0           = word ptr  6
@@ -87190,9 +87190,9 @@ var_2           = word ptr -2
 
 loc_39270:                              ; CODE XREF: sub_39255+E↑j
                                         ; sub_39255+16↑j
-                cmp     byte_4049E, 1
+                cmp     game_day, 1
                 jnz     short loc_39286
-                mov     al, byte_4049F
+                mov     al, game_month
                 mov     ah, 0
                 mov     bx, 3
                 cwd
@@ -95540,13 +95540,13 @@ word_3D9EA      dw 1F6h                 ; DATA XREF: sub_21671+4F↑r
 word_3DA16      dw 1                    ; DATA XREF: seg001:0440↑r
 video_mode      dw 0                    ; DATA XREF: sub_11426+6↑r
                                         ; load_palette+1↑r ...
-word_3DA1A      dw 0                    ; DATA XREF: sub_1166B+22↑r
+word_3DA1A      dw 0                    ; DATA XREF: make_config_string+22↑r
                                         ; sub_117F6:loc_118A3↑w ...
-word_3DA1C      dw 388h                 ; DATA XREF: sub_1166B:loc_116A2↑r
-                                        ; sub_1166B+43↑r ...
+word_3DA1C      dw 388h                 ; DATA XREF: make_config_string:loc_116A2↑r
+                                        ; make_config_string+43↑r ...
 word_3DA1E      dw 0                    ; DATA XREF: sub_117F6:loc_11860↑w
                                         ; sub_3789A+39↑r
-byte_3DA20      db 1                    ; DATA XREF: sub_1166B+12↑r
+byte_3DA20      db 1                    ; DATA XREF: make_config_string+12↑r
                                         ; sub_117F6:loc_11895↑w ...
 byte_3DA21      db 0                    ; DATA XREF: seg001:loc_1110B↑r
                                         ; _main+354↑w
@@ -102766,11 +102766,11 @@ byte_4049C      db 0                    ; DATA XREF: sub_128E1+64↑r
                                         ; sub_13305:loc_1376E↑r ...
 byte_4049D      db 8                    ; DATA XREF: sub_128E1+34↑r
                                         ; sub_13305+47B↑w ...
-byte_4049E      db 4                    ; DATA XREF: sub_116CE+1A↑r
-                                        ; sub_116CE+25↑r ...
-byte_4049F      db 7                    ; DATA XREF: sub_116CE+10↑r
+game_day        db 4                    ; DATA XREF: start_ending+1A↑r
+                                        ; start_ending+25↑r ...
+game_month      db 7                    ; DATA XREF: start_ending+10↑r
                                         ; sub_13305+49B↑w ...
-word_404A0      dw 0A1h                 ; DATA XREF: sub_116CE+8↑r
+game_year       dw 0A1h                 ; DATA XREF: start_ending+8↑r
                                         ; sub_13305+4AB↑w ...
 karma           db 4Bh                  ; DATA XREF: sub_11FB8+3↑r
                                         ; sub_11FB8+10↑w ...

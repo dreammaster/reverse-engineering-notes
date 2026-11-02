@@ -25,7 +25,7 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 - [ ] `U.EXE`: drawing/animation of the title, introduction and gypsy scenes, story text pages, character transfer formats, music loading
 - [ ] `GAME.EXE`: main loop, commands, combat, magic, usecode interpreter, conversation interpreter
 - [x] Graphics/text data formats (tiles, shapes, archives, fonts, palettes, descriptions): `u6_graphics.md`, `src/files/` (graphics drivers still to disassemble)
-- [ ] `END.EXE`: ending sequence
+- [x] `END.EXE`: how it is started (arguments, time played), structure; see `u6_ending.md` (scene scripting not analysed)
 
 ## 3. Stand-alone C++ implementation (`src/`)
 
