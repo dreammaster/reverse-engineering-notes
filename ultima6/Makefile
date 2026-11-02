@@ -49,7 +49,7 @@ $(BUILD)/%.o: $(SRC)/%.cpp
 
 $(BUILD)/test_%.exe: tests/test_%.cpp $(ENGINE_OBJS)
 	@mkdir -p $(BUILD)
-	$(CXX) $(CXXFLAGS) -o $@ $< $(ENGINE_OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $< $(ENGINE_OBJS) $(LIBS)
 
 test: $(TEST_EXES)
 	@for t in $(TEST_EXES); do echo "== $$t"; ./$$t || exit 1; done
