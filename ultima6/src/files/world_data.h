@@ -33,6 +33,10 @@ struct Schedule {
  * savegame\objlist, in the order and with the sizes GAME.EXE's load_world_data reads
  * and save_objlist writes it. The per-actor arrays have one entry per actor (256).
  *
+ * The first five arrays (status, position, type/frame, quantity) are the first 256 entries
+ * of the game's global object arrays, the ones object blocks are loaded into (actors are
+ * objects 0-255).
+ *
  * The program asks for 0x2CCC bytes for the final block but the file only holds the
  * remaining globals (0x182 bytes in a fresh game); loading therefore accepts a short
  * tail.
@@ -42,10 +46,10 @@ struct ObjList {
 
 	// File offsets of each block.
 	enum {
-		OFF_OBJ_FLAGS = 0x000,
+		OFF_OBJ_STATUS = 0x000,
 		OFF_POS = 0x100,
 		OFF_OBJ_FRAME = 0x400,
-		OFF_UNKNOWN_600 = 0x600,
+		OFF_OBJ_QUANTITY = 0x600,
 		OFF_STATUS = 0x800,
 		OFF_STRENGTH = 0x900,
 		OFF_DEXTERITY = 0xA00,
@@ -70,10 +74,10 @@ struct ObjList {
 		MIN_SIZE = OFF_GLOBALS
 	};
 
-	uint8_t objFlags[ACTORS];
+	uint8_t objStatus[ACTORS];    // object status/location bits of the actors (see ObjRecord)
 	uint8_t pos[ACTORS][3];       // x: 10 bits, y: 10 bits, z: 4 bits
 	uint16_t objFrame[ACTORS];    // object type (10 bits) | frame << 10
-	uint8_t unknown600[0x200];
+	uint16_t objQuantity[ACTORS]; // quantity (low byte) and quality (high byte) of the actors' objects
 	uint8_t status[ACTORS];
 	uint8_t strength[ACTORS];
 	uint8_t dexterity[ACTORS];

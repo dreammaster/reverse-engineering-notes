@@ -53,17 +53,18 @@ All paths are relative to the game directory; the save files are in `savegame\`.
 | `SCHEDULE` (3329) | `load_world_data` (`14A6A`) | u16 index[256] and a u16 total (the 0x202-byte header; the total lands in `schedule_count`), then total * 5-byte entries |
 | `BASETILE` (2048) | same | u16[1024]: first tile of each object type (a tile is `basetile[type] + frame`) |
 | `savegame\objlist` | `load_world_data`, `save_objlist` (`14EDF`) | table below |
-| `CHUNKS` (65536) | `load_world_data` | read last by it; not yet analysed |
+| `CHUNKS` (65536) | `load_world_data` | only opened there (`chunks_file_handle`); read on demand, see Map below |
+| `MAP` (32256) | `load_map_region` (`17F17`) | see Map below |
 
 `savegame\objlist` — one array per attribute, 256 actors each; the file offsets agree exactly with the constants in Nuvie's
 `obj_list.h`, which independently confirms both:
 
 | Offset | Size | Memory (ds:) | Name | Notes |
 |---|---|---|---|---|
-| 0x0000 | 0x100 | A0AB | `actor_obj_flags` | |
-| 0x0100 | 0x300 | 6828 | `actor_pos` | 3 bytes: x = b0 + (b1 & 3) << 8; y = (b1 >> 2) + (b2 & 0xF) << 6; z = b2 >> 4 |
-| 0x0400 | 0x200 | 3548 | `actor_obj_frame` | u16 = object type (10 bits) \| frame << 10; this array is also the first 256 entries of the object table used everywhere |
-| 0x0600 | 0x200 | 4EE4 | `objlist_0600` | purpose unknown (bytes, indexed by object) |
+| 0x0000 | 0x100 | A0AB | `obj_status` | first 256 of the 0xC00 global object status bytes (see below) |
+| 0x0100 | 0x300 | 6828 | `obj_pos` | 3 bytes: x = b0 + (b1 & 3) << 8; y = (b1 >> 2) + (b2 & 0xF) << 6; z = b2 >> 4 |
+| 0x0400 | 0x200 | 3548 | `obj_type_frame` | u16 = object type (10 bits) \| frame << 10 |
+| 0x0600 | 0x200 | 4EE4 | `obj_quantity` | u16 per object: quantity (low byte) and quality (high byte) |
 | 0x0800 | 0x100 | 9FAB | `actor_status_flags` | |
 | 0x0900 / 0A00 / 0B00 | 0x100 | 8C4A / 3316 / 3433 | strength / dexterity / intelligence | |
 | 0x0C00 | 0x200 | 9BF5 | `actor_exp` | u16 |
@@ -84,6 +85,55 @@ All paths are relative to the game directory; the save files are in `savegame\`.
 
 A fresh game has the Avatar (actor 1) at 307,352,0 and a party of 4 — checked by `tests/test_data_files.cpp`, which exercises the C++ readers
 in `src/files/` against the real files.
+
+## Map
+
+`MAP` is 64 surface superchunks of 0x180 bytes followed by 5 dungeon levels of 0x600 bytes; both hold 12-bit chunk numbers, two per
+three bytes. `CHUNKS` is 1024 chunks of 8 x 8 tile numbers. As the code does it (`C++: src/files/map_data.*`):
+
+* surface: superchunk = `(y >> 7) * 8 + (x >> 7)` at `superchunk * 0x180`; chunk in it = `((y >> 3) & 15) * 16 + ((x >> 3) & 15)`; coordinates wrap at 1024
+* dungeon level z (1-5): at `0x6000 + (z - 1) * 0x600`; chunk in it = `((y >> 3) & 31) * 32 + ((x >> 3) & 31)`; coordinates wrap at 256
+* the chunk number is the 12-bit field at byte `index + index / 2`: low 12 bits for even indices, the word shifted right by 4 for odd ones
+* tile = `CHUNKS[chunk * 64 + (y & 7) * 8 + (x & 7)]`
+
+Run time (`load_map_region` `17F17`, `get_chunk_index` `18B37`, `chunk_cache_get` `17E4F`, `build_terrain_cache` `18146`): the resident
+`map_buffer` holds the 2 x 2 superchunks around the player (numbers in `map_loaded_superchunks`; they are re-read when the player
+leaves the middle of the block) or one dungeon level. Chunks come from `CHUNKS` through a 16-slot LRU cache of 64-byte chunks
+(`chunk_cache_*`). The 40 x 40 `terrain_cache` (5 x 5 chunks, origin `player - 16` rounded down to a multiple of 8) is what the
+renderer reads; `object_grid` is the matching 40 x 40 table of object numbers.
+
+## Objects
+
+All loaded objects live in parallel arrays of **0xC00 entries** (the limit enforced by `load_surface_objblock`):
+`obj_status` (ds:A0AB), `obj_pos` (6828, 3 bytes), `obj_type_frame` (3548), `obj_quantity` (4EE4), `obj_next` (BDDA, link of a list
+of loaded objects kept sorted by position, head at index 0x100). Entries 0-255 are the actors, which is why `savegame\objlist`
+begins with exactly those arrays. Free entries are chained through `obj_next` (`obj_free_head`, `obj_free_count`).
+
+An **object block file** is a u16 count (at most 0xC00) followed by count 8-byte records:
+
+| Byte | Field |
+|---|---|
+| 0 | status; `status & 0x18` is the location: 0 on the map, 8 in a container, 0x10 in an inventory, 0x18 readied |
+| 1-3 | x (10 bits), y (10 bits), z (4 bits), same packing as `obj_pos` |
+| 4-5 | type (10 bits) and frame (6 bits) |
+| 6, 7 | quantity, quality |
+
+A contained object keeps the index of its container's record in the x word; `add_block_objects` (`1C098`) replaces it with the object's
+real id after allocating ids, then inserts each object into the sorted list. Blocks are `savegame\OBJBLK<col><row>` (col = x >> 7 and
+row = y >> 7 as letters from A, 64 files) and `OBJBLK<level>I` (level 1-5 as A-E): the code patches characters 15 and 16 of the name
+from the block number, `n & 7` and `n >> 3`, with n = 64 + level - 1 for dungeons. Every object lying on the map in all 69 shipped files is
+inside the superchunk its name says. While playing, changed blocks are written to `OBJBLK??.tmp` (`write_objblock`, flagged in
+`objblk_dirty`) and `commit_objblk_tmp_files` (`1C88A`) replaces the originals; `update_object_blocks` loads the blocks near the player
+and `unload_distant_objects` drops objects more than 20 tiles away.
+
+## LZW
+
+`LZMAP`, `LZOBJBLK` and `LZDNGBLK` (and other library files) are LZW streams: u32 decompressed size, then LSB-first codes of 9-12 bits;
+0x100 resets (the next code is a literal and defines no entry), 0x101 ends, entries start at 0x102 and the width grows when the next
+entry reaches `1 << width`. The decoder is `lzw_decode` (`3ACB4`), reached through `lzw_read_stream` and `lzw_load`; `load_file` (`10D8E`)
+uses it when `word_3D9E4` is set. The C++ `lzwDecompress` reproduces `MAP` exactly from `LZMAP`.
+`LZOBJBLK` expands to the 64 surface blocks in Morton (2 x 2 interleaved) superchunk order, not file-name order; `LZDNGBLK` to the 5 dungeon
+blocks followed by a new game's `objlist` (7283 bytes, 256 fewer than the shipped save). These are what a new game is built from.
 
 ## Commands and handlers identified from their strings
 

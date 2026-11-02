@@ -1091,6 +1091,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10D83);
 	op_stkvar	(x,	1);
 	create_insn	(0X10D8E);
+	set_name	(0X10D8E,	"load_file");
 	create_insn	(x=0X10D91);
 	op_hex		(x,	1);
 	create_insn	(x=0X10D96);
@@ -4895,6 +4896,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X17E49);
 	create_insn	(0X17E4F);
+	set_name	(0X17E4F,	"chunk_cache_get");
 	create_insn	(x=0X17E52);
 	op_hex		(x,	1);
 	create_insn	(0X17E63);
@@ -4932,6 +4934,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X17F05);
 	op_hex		(x,	1);
 	create_insn	(0X17F17);
+	set_name	(0X17F17,	"load_map_region");
 	create_insn	(x=0X17F1A);
 	op_hex		(x,	1);
 	create_insn	(x=0X17F22);
@@ -5060,6 +5063,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18120);
 	op_stkvar	(x,	0);
 	create_insn	(0X18146);
+	set_name	(0X18146,	"build_terrain_cache");
 	create_insn	(x=0X18149);
 	op_hex		(x,	1);
 	create_insn	(x=0X18155);
@@ -5158,6 +5162,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1837E);
 	op_hex		(x,	1);
 	create_insn	(0X1838C);
+	set_name	(0X1838C,	"refresh_map_view");
 	create_insn	(0X183B2);
 	create_insn	(x=0X183B5);
 	op_hex		(x,	1);
@@ -5388,6 +5393,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X18AD5);
 	create_insn	(0X18B37);
+	set_name	(0X18B37,	"get_chunk_index");
 	create_insn	(x=0X18B3A);
 	op_hex		(x,	1);
 	create_insn	(x=0X18B3F);
@@ -5924,6 +5930,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X19384);
 	op_stkvar	(x,	0);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X19389);
 	op_hex		(x,	1);
 	create_insn	(x=0X1938F);
@@ -5943,15 +5958,6 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X193BB);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X193C0);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X193C8);
@@ -7525,6 +7531,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1AE4E);
 	op_hex		(x,	1);
 	create_insn	(0X1AE6A);
+	set_name	(0X1AE6A,	"unload_distant_objects");
 	create_insn	(x=0X1AE6D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1AE75);
@@ -8206,6 +8213,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1BA3D);
 	create_insn	(0X1BA62);
+	set_name	(0X1BA62,	"collect_block_objects");
 	create_insn	(x=0X1BA65);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BA6A);
@@ -8281,6 +8289,7 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	1,	0X3D850);
 	op_plain_offset	(x,	129,	0X3D850);
 	create_insn	(0X1BBA2);
+	set_name	(0X1BBA2,	"delete_objblk_tmp_files");
 	create_insn	(0X1BBB0);
 	create_insn	(x=0X1BBB2);
 	op_hex		(x,	1);
@@ -8296,6 +8305,7 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	1,	0X3D850);
 	op_plain_offset	(x,	129,	0X3D850);
 	create_insn	(0X1BBE2);
+	set_name	(0X1BBE2,	"write_objblock");
 	create_insn	(x=0X1BBE5);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BBEA);
@@ -8329,14 +8339,23 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1BC98);
 	op_hex		(x,	1);
+	create_insn	(x=0X1BCA2);
+	op_plain_offset	(x,	1,	0X3D850);
+	op_plain_offset	(x,	129,	0X3D850);
 	create_insn	(x=0X1BCAB);
 	op_stkvar	(x,	1);
+	create_insn	(x=0X1BCB4);
+	op_plain_offset	(x,	1,	0X3D850);
+	op_plain_offset	(x,	129,	0X3D850);
 	create_insn	(x=0X1BCBF);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BCCD);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1BCD6);
 	op_stkvar	(x,	1);
+	create_insn	(x=0X1BCDF);
+	op_plain_offset	(x,	1,	0X3D850);
+	op_plain_offset	(x,	129,	0X3D850);
 	create_insn	(x=0X1BCF7);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1BD08);
@@ -8346,6 +8365,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1BD28);
 	op_stkvar	(x,	1);
 	create_insn	(0X1BD48);
+	set_name	(0X1BD48,	"save_surface_objblock");
 	create_insn	(x=0X1BD4B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BD50);
@@ -8546,6 +8566,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1C092);
 	create_insn	(0X1C098);
+	set_name	(0X1C098,	"add_block_objects");
 	create_insn	(x=0X1C09B);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C0A0);
@@ -8665,6 +8686,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1C2A7);
 	create_insn	(0X1C2AF);
+	set_name	(0X1C2AF,	"load_surface_objblock");
 	create_insn	(x=0X1C2B2);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C2B7);
@@ -8682,6 +8704,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1C2F2);
 	op_hex		(x,	1);
+	create_insn	(x=0X1C2F9);
+	op_plain_offset	(x,	1,	0X3D850);
+	op_plain_offset	(x,	129,	0X3D850);
 	create_insn	(0X1C306);
 	create_insn	(x=0X1C308);
 	op_hex		(x,	1);
@@ -8752,6 +8777,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1C46D);
 	create_insn	(0X1C473);
+	set_name	(0X1C473,	"save_dungeon_objblock");
 	create_insn	(x=0X1C476);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C47B);
@@ -8799,6 +8825,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1C553);
 	op_stkvar	(x,	1);
 	create_insn	(0X1C566);
+	set_name	(0X1C566,	"load_dungeon_objblock");
 	create_insn	(x=0X1C569);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C56E);
@@ -8808,6 +8835,9 @@ static Bytes_1(void) {
 	create_insn	(0X1C58A);
 	create_insn	(x=0X1C598);
 	op_hex		(x,	1);
+	create_insn	(x=0X1C5AD);
+	op_plain_offset	(x,	1,	0X3D850);
+	op_plain_offset	(x,	129,	0X3D850);
 	create_insn	(0X1C5BA);
 	create_insn	(x=0X1C5C6);
 	op_plain_offset	(x,	1,	0X3D850);
@@ -8827,6 +8857,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1C627);
 	op_stkvar	(x,	0);
 	create_insn	(0X1C636);
+	set_name	(0X1C636,	"update_object_blocks");
 	create_insn	(x=0X1C639);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C640);
@@ -9002,6 +9033,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1C878);
 	op_stkvar	(x,	0);
 	create_insn	(0X1C88A);
+	set_name	(0X1C88A,	"commit_objblk_tmp_files");
 	create_insn	(0X1C89C);
 	create_insn	(0X1C8A0);
 	create_insn	(x=0X1C8A2);
@@ -9017,6 +9049,12 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1C8D6);
 	op_hex		(x,	1);
+	create_insn	(x=0X1C8E3);
+	op_plain_offset	(x,	1,	0X3D850);
+	op_plain_offset	(x,	129,	0X3D850);
+	create_insn	(x=0X1C8F0);
+	op_plain_offset	(x,	1,	0X3D850);
+	op_plain_offset	(x,	129,	0X3D850);
 	create_insn	(x=0X1C8FB);
 	op_hex		(x,	1);
 	create_insn	(0X1C90D);
@@ -12269,6 +12307,15 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X213B7);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X213C8);
 	op_hex		(x,	1);
 	create_insn	(x=0X213D2);
@@ -12354,15 +12401,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X2157E);
 	op_stkvar	(x,	0);
 	create_insn	(0X21588);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2158A);
 	op_hex		(x,	1);
 	create_insn	(0X2159C);
@@ -18512,6 +18550,15 @@ static Bytes_2(void) {
 	op_seg		(x,	1);
 	create_insn	(x=0X29B70);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X29B78);
 	create_insn	(x=0X29B7B);
 	op_stkvar	(x,	0);
@@ -18570,15 +18617,6 @@ static Bytes_2(void) {
 	create_insn	(0X29D21);
 	set_cmt	(0X29D2A,	"jumptable 00029C87 case 6",	1);
 	create_insn	(0X29D2A);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X29D33,	"jumptable 00029C87 cases 8,155",	1);
 	create_insn	(0X29D33);
 	set_cmt	(0X29D3C,	"jumptable 00029C87 case 14",	1);
@@ -25025,6 +25063,15 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X324BB);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X324BE);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X324CC);
@@ -25106,15 +25153,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X3268B,	"int",	0);
 	set_cmt	(0X3268E,	"int",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X32694);
 	op_seg		(x,	1);
 	create_insn	(0X326A6);
@@ -31292,6 +31330,15 @@ static Bytes_4(void) {
 	create_insn	(x=0X3A758);
 	op_plain_offset	(x,	1,	0X3D850);
 	op_plain_offset	(x,	129,	0X3D850);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3A763);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3A76A);
@@ -31373,15 +31420,6 @@ static Bytes_4(void) {
 	set_name	(0X3A947,	"require_disk");
 	create_insn	(x=0X3A94A);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3A94F);
 	op_stkvar	(x,	1);
 	create_insn	(0X3A95C);
@@ -31490,6 +31528,7 @@ static Bytes_5(void) {
 	op_hex		(x,	1);
 	create_insn	(0X3AC1A);
 	create_insn	(0X3AC50);
+	set_name	(0X3AC50,	"lzw_load");
 	create_insn	(x=0X3AC56);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3AC5B);
@@ -31521,6 +31560,7 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X3ACA9);
 	create_insn	(0X3ACB4);
+	set_name	(0X3ACB4,	"lzw_decode");
 	create_insn	(x=0X3ACE0);
 	op_hex		(x,	1);
 	set_cmt	(0X3ACE2,	"DOS - 2+ - READ FROM FILE WITH HANDLE\nBX = file handle, CX = number of bytes to read\nDS:DX -> buffer",	0);
@@ -31559,6 +31599,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X3AED5);
 	op_hex		(x,	1);
 	create_insn	(0X3AEDC);
+	set_name	(0X3AEDC,	"lzw_read_stream");
 	create_insn	(x=0X3AEE6);
 	op_hex		(x,	1);
 	set_cmt	(0X3AEE8,	"DOS - 2+ - READ FROM FILE WITH HANDLE\nBX = file handle, CX = number of bytes to read\nDS:DX -> buffer",	0);
@@ -33587,10 +33628,15 @@ static Bytes_5(void) {
 	set_name	(0X3DE06,	"aS");
 	create_strlit	(0X3DE0E,	0XC);
 	create_word	(0X3DE1A);
+	set_name	(0X3DE1A,	"map_coord_mask");
 	create_word	(0X3DE1C);
+	set_name	(0X3DE1C,	"chunks_file_handle");
 	create_word	(0X3DE1E);
+	set_name	(0X3DE1E,	"map_file_handle");
 	create_word	(0X3DE20);
+	set_name	(0X3DE20,	"map_loaded_level");
 	create_word	(0X3DE22);
+	set_name	(0X3DE22,	"map_loaded_superchunks");
 	create_word	(0X3DE24);
 	create_word	(0X3DE26);
 	create_word	(0X3DE28);
@@ -33606,6 +33652,7 @@ static Bytes_5(void) {
 	create_word	(0X3DEA6);
 	create_word	(0X3DEA8);
 	create_word	(0X3DEAA);
+	set_name	(0X3DEAC,	"objblk_dirty");
 	create_word	(0X3DF36);
 	create_word	(0X3DF40);
 	create_word	(0X3DF42);
@@ -33620,10 +33667,11 @@ static Bytes_5(void) {
 	create_word	(0X3DF53);
 	create_word	(0X3DF55);
 	create_word	(0X3DF57);
+	set_name	(0X3DF59,	"objblk_name");
 	create_byte	(0X3DF68);
 	create_byte	(0X3DF69);
 	create_strlit	(0X3DF6B,	0X16);
-	set_name	(0X3DF6B,	"aSavegameObjblk");
+	set_name	(0X3DF6B,	"objblk_tmp_name");
 	create_byte	(0X3DF90);
 	create_byte	(0X3DF91);
 	create_strlit	(0X3DF92,	0X5);
@@ -34170,8 +34218,11 @@ static Bytes_5(void) {
 	create_byte	(0X404A4);
 	create_byte	(0X404A5);
 	create_word	(0X404A6);
+	set_name	(0X404A6,	"player_x");
 	create_word	(0X404A8);
+	set_name	(0X404A8,	"player_y");
 	create_word	(0X404AA);
+	set_name	(0X404AA,	"player_z");
 	create_byte	(0X404AC);
 	create_byte	(0X404AD);
 	create_byte	(0X404B3);
@@ -34396,7 +34447,7 @@ static Bytes_5(void) {
 	create_byte	(0X40D93);
 	create_dword	(0X40D94);
 	set_name	(0X40D94,	"actor_worktype_ptr");
-	set_name	(0X40D98,	"actor_obj_frame");
+	set_name	(0X40D98,	"obj_type_frame");
 	create_word	(0X40D9A);
 	create_word	(0X42598);
 	create_word	(0X4259A);
@@ -34407,13 +34458,13 @@ static Bytes_5(void) {
 	create_word	(0X425A6);
 	create_word	(0X425A8);
 	create_word	(0X425AA);
-	set_name	(0X42734,	"objlist_0600");
+	set_name	(0X42734,	"obj_quantity");
 	set_name	(0X43F34,	"actor_hp");
 	set_name	(0X44034,	"anim_tile_to_animate");
 	create_dword	(0X44074);
 	set_name	(0X44074,	"basetile_ptr");
 	create_word	(0X44078);
-	set_name	(0X44078,	"actor_pos");
+	set_name	(0X44078,	"obj_pos");
 	create_dword	(0X46478);
 	set_name	(0X46478,	"schedule_entries_ptr");
 	create_dword	(0X4647C);
@@ -34438,6 +34489,7 @@ static Bytes_5(void) {
 	set_name	(0X4669C,	"actor_level_ptr");
 	create_byte	(0X466A0);
 	set_name	(0X466A0,	"party_size");
+	set_name	(0X466A1,	"terrain_cache");
 	create_dword	(0X46CE1);
 	set_name	(0X46CE1,	"objlist_10f1_ptr");
 	set_name	(0X46CE5,	"anim_and_masks");
@@ -34449,6 +34501,7 @@ static Bytes_5(void) {
 	create_dword	(0X47685);
 	set_name	(0X47685,	"objlist_12f1_ptr");
 	create_dword	(0X47689);
+	set_name	(0X47689,	"objblk_buffer_ptr");
 	create_word	(0X4768D);
 	create_word	(0X4768F);
 	create_word	(0X47691);
@@ -34462,7 +34515,7 @@ static Bytes_5(void) {
 	create_byte	(0X477FC);
 	create_byte	(0X477FE);
 	create_byte	(0X478FB);
-	set_name	(0X478FB,	"actor_obj_flags");
+	set_name	(0X478FB,	"obj_status");
 	set_name	(0X48B3B,	"actor_talk_flags");
 	create_byte	(0X48B40);
 	create_dword	(0X48C3B);
@@ -34518,9 +34571,15 @@ static Bytes_5(void) {
 	create_word	(0X48FCD);
 	create_word	(0X48FCF);
 	create_word	(0X48FD1);
+	set_name	(0X48FD4,	"chunk_cache_age");
 	create_dword	(0X48FF4);
+	set_name	(0X48FF4,	"map_buffer_ptr");
+	set_name	(0X48FF8,	"chunk_cache_id");
+	set_name	(0X49018,	"chunk_cache_tiles");
 	create_word	(0X49418);
+	set_name	(0X49418,	"terrain_cache_x");
 	create_word	(0X4941A);
+	set_name	(0X4941A,	"terrain_cache_y");
 	create_word	(0X4961C);
 	create_word	(0X4961E);
 	create_word	(0X49620);
@@ -34528,13 +34587,17 @@ static Bytes_5(void) {
 	create_word	(0X49624);
 	create_word	(0X49626);
 	create_word	(0X49628);
+	set_name	(0X4962A,	"obj_next");
 	create_word	(0X49828);
 	create_word	(0X4982A);
 	create_word	(0X4AE28);
 	create_word	(0X4AE2A);
+	set_name	(0X4AE2A,	"obj_free_head");
 	create_byte	(0X4B02C);
+	set_name	(0X4B137,	"object_grid");
 	create_byte	(0X4BE30);
 	create_word	(0X4BF30);
+	set_name	(0X4BF30,	"obj_free_count");
 	create_word	(0X4BF32);
 	create_word	(0X4BF34);
 	make_array	(0X4BF36,	0X2);

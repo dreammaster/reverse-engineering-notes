@@ -19,7 +19,8 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 
 - [x] Origin run-time layer (DOS file I/O, bump allocator, disk prompt) named in `GAME.EXE`, `U.EXE`, `END.EXE`
 - [x] `GAME.EXE`: ANIMDATA, TILEFLAG, BASETILE, U6PAL, SCHEDULE and `objlist` layouts verified against the code (C++ readers in `src/files/`)
-- [ ] `GAME.EXE`: CHUNKS/MAP/`objblk*` loading, LZW, object list handling
+- [x] `GAME.EXE`: MAP/CHUNKS lookup and caching, `objblk*` loading and saving, object arrays, LZW (C++ in `src/files/`, checked against the shipped files)
+- [ ] `GAME.EXE`: object list ordering (`sub_1BE84`), egg/NPC spawning, `objlist` globals block, new-game set-up (`U.EXE`)
 - [ ] `U.EXE`: data-file loaders, LZW, main menu, intro, character creation
 - [ ] `GAME.EXE`: main loop, commands, combat, magic, usecode interpreter, conversation interpreter
 - [ ] `END.EXE`: ending sequence
@@ -29,6 +30,7 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 - [x] Skeleton: engine namespace `Ultima6` with `Ultima6::Ultima6`, `Ultima6::MartianDreams` and `Ultima6::SavageEmpire`
       for game-specific code (main menu, intro, character creation, ending), game detection, tests, MinGW Makefile.
 - [x] `src/files/`: readers for ANIMDATA, TILEFLAG, BASETILE, U6PAL, SCHEDULE and `objlist` with tests against the real data.
+- [x] `src/files/`: `lzwDecompress`, `MapData` (MAP + CHUNKS), `ObjBlock`.
 - [ ] Everything else.
 
 ## 4. Martian Dreams and Savage Empire

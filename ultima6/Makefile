@@ -15,7 +15,7 @@ BUILD := build
 SRC   := src
 TARGET := $(BUILD)/u6.exe
 
-ENGINE_SRCS := engine/game_id ultima6/game martian_dreams/game savage_empire/game files/data_file files/tile_data files/world_data
+ENGINE_SRCS := engine/game_id ultima6/game martian_dreams/game savage_empire/game files/data_file files/tile_data files/world_data files/lzw files/map_data files/obj_block
 SRCS := $(ENGINE_SRCS) main
 
 CXXFLAGS := -std=c++17 -I$(SRC)

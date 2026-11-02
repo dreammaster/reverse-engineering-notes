@@ -30,14 +30,14 @@ bool ObjList::load(const Bytes &data) {
 		return false;
 	const uint8_t *d = &data[0];
 
-	std::memcpy(objFlags, d + OFF_OBJ_FLAGS, ACTORS);
+	std::memcpy(objStatus, d + OFF_OBJ_STATUS, ACTORS);
 	std::memcpy(pos, d + OFF_POS, ACTORS * 3);
 	for (int i = 0; i < ACTORS; ++i) {
 		objFrame[i] = get16(d + OFF_OBJ_FRAME + i * 2);
 		exp[i] = get16(d + OFF_EXP + i * 2);
 		baseObjFrame[i] = get16(d + OFF_BASE_OBJ_FRAME + i * 2);
+		objQuantity[i] = get16(d + OFF_OBJ_QUANTITY + i * 2);
 	}
-	std::memcpy(unknown600, d + OFF_UNKNOWN_600, sizeof(unknown600));
 	std::memcpy(status, d + OFF_STATUS, ACTORS);
 	std::memcpy(strength, d + OFF_STRENGTH, ACTORS);
 	std::memcpy(dexterity, d + OFF_DEXTERITY, ACTORS);
