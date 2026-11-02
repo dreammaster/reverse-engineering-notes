@@ -26,6 +26,19 @@ Legend — **Source**: *own* = invented by me, *Nuvie* = taken from Nuvie's reim
 | 10 | Magic points return `+level` every hour | `session.cpp` `Game::advanceTime` | Nuvie | `sub_13305` hour branch (`loc_137CA`). Timers decrementing once a minute **is** exact (`ds:2C5C`, 16 bytes). |
 | 11 | Commands that take no time (Look, Talk, Get, Use, Attack takes 1 minute, Cast takes 1 minute, inventory 0) | `commands.cpp` | own | call sites of `sub_13305` in `command_loop` and each `cmd_*`. |
 
+### The original's turn structure (found, not yet ported)
+
+After every command (not after `ctrl-Q`) `command_loop` (145FD) calls **`sub_2AB7A`**, the real per-turn actor scheduler: it first runs `sub_2A8DA`, `sub_2A4B6`
+and `sub_2A3BA` (the schedule-walkers, 0x81 worktype handling), then loops: for every actor 1.. with a body, a worktype other than 0, not paralysed
+(actor status 2), not asleep unless worktype 0x80, not dead (0x10), with moves left (`ds:8D4A`, `moves[]` = objlist +0x14F1) > 0, on the party's level
+and not carried, it works out whether it is inside the 40 x 40 window around the party (`player_x/y - 16 & 0x3F8`) and either walks it
+(`sub_2868C`, `sub_27FE6`) or resets its moves; the actor with the greatest `moves / dex` ratio acts next, and every action subtracts moves (`sub_26CC4`);
+`sub_13305(minutes)` (time, timers, hazards) is called from `sub_2AB7A`'s caller chain with 1 minute for a normal turn, 0x3C for `conv_execute_command` sleep,
+0xA from `sub_275BD`/`cmd_rest` loops (`cmd_rest` 3A706 passes 10), 5 from `show_hull_strength`, etc. (callers: `_main`, `command_loop` case 0xD7, `sub_149D7`,
+`sub_18668`, `climb_ladder`, `sub_1890C`, `sub_25495` (spells), `sub_275BD` (party movement), `sub_298D0`, `sub_2AB7A`, `use_torch`, `use_fan`).
+My `Game::advanceTime` / `ActorManager::tick` / `Creatures::tick` replace all of this with "every actor acts once a minute". Porting the exact scheduler
+(moves, dex ratio, action costs) is a prerequisite for faithful NPC and creature behaviour (#1-#4, #20, #22).
+
 ## B. Passability and the map (ported, with known gaps)
 
 | # | What | Where | Source | Notes |
