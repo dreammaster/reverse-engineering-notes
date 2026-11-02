@@ -151,6 +151,17 @@ int main() {
 		CHECK(logText(g).find("East.") != std::string::npos);
 	}
 
+	// a blue moon gate at the start (day 4, 8:00): the moons' phases are 4 and 6, so the party goes to the gate of the second moon, gate 6 at 23,22 (level 1)
+	{
+		World w2;
+		w2.load("u6/game");
+		Game g2(w2);
+		int gx = g2.x, gy = g2.y;
+		put(w2, 0x55, 0, gx, gy - 1, 0);
+		CHECK(g2.step(0));
+		CHECK(g2.x == 23 && g2.y == 22 && g2.z == 1);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

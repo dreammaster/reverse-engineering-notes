@@ -111,6 +111,12 @@ private:
 	void getAt(int tx, int ty);
 	void useAt(int tx, int ty);
 	void useObject(int idx);
+	void updateMoons();
+	void gateTo(int n);
+	bool enterMoongate(int px, int py);
+	void useOrb(int idx);
+	void orbAt(int tx, int ty);
+	uint8_t _gateA = 0, _gateB = 0, _phaseA = 0, _phaseB = 0; // byte_40516..40519: the moons' gates and phases
 	void moveSelect(int tx, int ty);
 	void moveTo(int key);
 	void readBook(int idx);

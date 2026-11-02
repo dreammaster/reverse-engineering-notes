@@ -160,7 +160,11 @@ void Game::useObject(int idx) {
 		message("\nFire!\n"); // APPROX(51): use_cannon (330C5) fires a ball along the cannon's direction; not done
 	} else if (type == 0xEC || type == 0x1A3) {
 		// ring_bell: an animation and a sound, no text
-		} else if (type == 0x10C || type == 0xAE) {
+		} else if (type == 0x57) {
+		useOrb(idx);
+		if (_pending)
+			return;
+	} else if (type == 0x10C || type == 0xAE) {
 		useLever(idx);
 	} else if (type == 0x14E) {
 		World::Obj &d = _world.objects[idx];

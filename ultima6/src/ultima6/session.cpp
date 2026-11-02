@@ -48,6 +48,7 @@ Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(worl
 	clock.month = g[5];
 	clock.year = g[6] | (g[7] << 8);
 	_actors.hourChanged(clock);
+	updateMoons();
 	_creatures.checkEggs(x, y, z, clock.hour);
 }
 
@@ -66,8 +67,10 @@ bool Game::save() {
 // What one game minute does (sub_13305): the clock, the timers, the hourly schedules and magic points, the party's hazards, the eggs.
 void Game::minutePassed() {
 	clock.advance(1);
-	if (clock.minute == 0)
+	if (clock.minute == 0) {
 		_actors.hourChanged(clock);
+		updateMoons();
+	}
 	// the timers of light and the like count down a minute at a time
 	for (int t = 0; t < 16; ++t)
 		if (_world.actors.globals[0x12 + t])
@@ -201,6 +204,7 @@ bool Game::step(int dir) {
 	_rules.deniedPending = true;
 	_world.spendMoves(1, cost); // sub_28F67, counted on the square that was left
 	_creatures.checkEggs(x, y, z, clock.hour);
+	enterMoongate(x, y);
 	return true;
 }
 
@@ -436,7 +440,7 @@ bool Game::handleKeyInner(int key) {
 		castKey(key);
 		return true;
 	}
-	if (_pending == 'L' || _pending == 'c' || _pending == 'a') {
+	if (_pending == 'L' || _pending == 'c' || _pending == 'a' || _pending == 'o') {
 		// the cursor: arrows move it, Enter looks at the cell, Escape gives up
 		switch (key) {
 		case KEY_UP:
@@ -454,10 +458,13 @@ bool Game::handleKeyInner(int key) {
 		case KEY_ENTER:
 		case KEY_SPACE: {
 			int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
-			bool casting = _pending == 'c', attacking = _pending == 'a';
+			bool casting = _pending == 'c', attacking = _pending == 'a', orb = _pending == 'o';
 			_pending = 0;
 			_cursor = false;
-			if (attacking)
+			if (orb) {
+				orbAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
+				prompt();
+			} else if (attacking)
 				attackAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 			else if (casting)
 				castAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
