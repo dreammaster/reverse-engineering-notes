@@ -88,7 +88,23 @@ bool Game::inventoryKey(int key) {
 	case KEY_ENTER:
 		if (_selected < count) {
 			World::Obj &o = _world.objects[_items[_selected]];
-			if (o.location() == ObjRecord::READIED) {
+			int actor = _world.actors.partyRoster[_member];
+			if (o.type == 90 && (o.frame & 1)) { // a lit torch: put it out
+				int idx = _items[_selected];
+				_world.deleteObject(idx);
+				_world.addToInventory(actor, 90, 0, 1);
+				message("\nA torch is doused.\n");
+			} else if (o.type == 90) { // light one of the torches, which burns for a while in the hand
+				World::Obj lit = o;
+				_world.removeFromInventory(actor, 90, 0, 1);
+				lit.frame = 1;
+				lit.quantity = 100;
+				lit.deleted = false;
+				lit.status = (uint8_t)((lit.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+				lit.parent = actor;
+				_world.objects.push_back(lit);
+				message("\nA torch is lit.\n");
+			} else if (o.location() == ObjRecord::READIED) {
 				o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
 				message("\nUnreadied " + Describe::object(_world, o) + "\n");
 			} else if (Combat::weaponDamageOf(o.type) >= 0 || Combat::armourOf(o.type) > 0) {

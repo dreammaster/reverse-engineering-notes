@@ -248,7 +248,7 @@ int World::addToInventory(int actor, int type, int quality, int quantity) {
 		inventory(actor, inv, false);
 		for (int i : inv) {
 			Obj &o = objects[i];
-			if (o.type == type && o.location() == ObjRecord::IN_INVENTORY) {
+			if (o.type == type && o.frame == 0 && o.location() == ObjRecord::IN_INVENTORY) {
 				int q = quantityOf(o) + quantity;
 				setQuantity(o, q);
 				return i;
