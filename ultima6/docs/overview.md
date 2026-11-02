@@ -28,7 +28,7 @@ engine (reference copy in [`../nuvie`](../nuvie)) with it.
 | `u6/u6_game` | `GAME.EXE` (205 KB, **EXEPACK**) | Borland C++, large model | the game proper (loaded from the *unpacked* `GAME_UNP.EXE`) |
 | `u6/u6_end` | `END.EXE` (40 KB) | Borland C++ | ending sequence |
 | `md/md_martian` | `MARTIAN\MARTIAN.EXE` (118 KB) | Borland C++ | Martian Dreams menu/intro/character creation |
-| `md/md_game` | `MARTIAN\GAME.EXE` (341 KB) | Borland C++ | Martian Dreams game proper (has a 70 KB Borland `FBOV` overlay tail, see roadmap) |
+| `md/md_game` | `MARTIAN\GAME.EXE` (341 KB) | Borland C++, 17 VROOMM overlays | Martian Dreams game proper (70 KB `FBOV` overlay block, see [Martian Dreams overlays](#martian-dreams-overlays)) |
 | `se/se_savage` | `SAVAGE\SAVAGE.EXE` (76 KB) | Borland C++ | Savage Empire menu/intro/character creation |
 | `se/se_game` | `SAVAGE\GAME.EXE` (270 KB) | Borland C++ | Savage Empire game proper |
 
@@ -48,6 +48,31 @@ Not databased yet: `INSTALL.EXE`, `MAKEMODE.EXE`, `T2*.EXE`/`TANDYPIN.EXE`
   `sub_XXXXX` and is named through the scripts below.
 * All executables are 16-bit real-mode large-model programs; each Borland module is its own code segment (50-100 `segNNN` per
   database).
+
+## Martian Dreams overlays
+
+Martian Dreams' `GAME.EXE` is the only executable of the three games with Borland overlays: a 70,672-byte `FBOV` block follows
+the MZ image. IDA's DOS loader already handles it: `md_game.idb` has 17 `stubNNN` segments (the thunk tables, with a struct for the
+header) and 17 `ovrNNN` segments (the overlay code, relocated), the thunks are patched into `jmp`s to the overlay functions, and
+the overlay code is 95-100% covered by functions with every call into the resident program landing on a function start. (An
+earlier version of this repository's notes wrongly said the overlays were not loaded; a hand-written loader was tried, found to
+reproduce IDA's result exactly, and dropped.) The format, decoded while checking that:
+
+* `FBOV` block: `'FBOV'`, size of the overlay data (dword), file offset of the segment table (dword), number of segment-table
+  records (dword, 102), then the overlay data: per overlay its code followed by its relocation table.
+* **Segment table**: 8-byte records `(paragraph, size, kind, extra)` for every program segment, including the 17 stub segments
+  (kind 3) and DGROUP (record 96).
+* **Stub segment**: 0x20-byte header (`CD 3F`, memory-swap word, file offset of the overlay data (dword), code size, relocation
+  table size in bytes, thunk count, previous-stub link, 16 bytes of run-time state), then 5-byte thunks `CD 3F <offset in the overlay
+  code> 00`. Callers far-call a thunk; the overlay manager loads the overlay, patches the thunk into a `jmp` and runs it.
+* **Overlay relocations**: a list of word offsets into the overlay code. The word found there is **not a paragraph but the byte
+  offset of a record in the segment table**; the real segment is that record's paragraph plus the load segment. (Overlay far calls
+  use `0098:1872` where the resident program uses `1B09:1872`, and record 19 is `1B09`; overlays call each other through the stub
+  records.)
+* Stub order = overlay order; the 17 overlays hold 153 thunk entry points and 1.2-8.2 KB of code each (`ovr079` 1,197 bytes ...
+  `ovr095` 7,833 bytes).
+
+For the re-implementation the overlays don't matter beyond this: they are ordinary code that the C++ port simply links in.
 
 ## Headless IDA pipeline
 

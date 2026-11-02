@@ -6,9 +6,9 @@ Check items off and add notes as they are resolved. See [overview.md](overview.m
 
 - [x] Headless IDA pipeline (`ida_scripts/`), databases for all eight game executables, `.asm`/`.idc` exported.
 - [x] Unpack Ultima VI's EXEPACKed `GAME.EXE` (`tools/unexepack.py`) so it can be analysed.
-- [ ] Martian Dreams `GAME.EXE` carries a 70,672-byte Borland `FBOV` overlay block after the MZ image (IDA reports it as
-      "Overlays: base=422B0" but loads nothing from it in batch mode; 171 `CD 3F` overlay thunks exist in the image). Work out
-      how the overlay code is loaded and add it to `md_game.idb` as its own segments.
+- [x] Martian Dreams `GAME.EXE` overlays: IDA's loader already loads all 17 (`stub079-095`, `ovr079-095`); verified 95-100%
+      function coverage and correct relocation, format documented in overview.md. (The first version of this item wrongly
+      claimed nothing was loaded.)
 - [ ] Database for `INSTALL.EXE`/`MAKEMODE.EXE` and the `.DRV`/`.BIN` driver blobs (low priority).
 - [ ] Per-database `apply_renames_*.py` / struct scripts as functions are identified.
 
