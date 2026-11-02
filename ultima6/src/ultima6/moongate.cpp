@@ -19,6 +19,72 @@ void Game::updateMoons() {
 	_gateB = MOON_GATES[day - 1][1];
 	_phaseA = (uint8_t)((_gateA * 3 + 0x12 - clock.hour) % 24);
 	_phaseB = (uint8_t)((_gateB * 3 + 0x14 - clock.hour) % 24);
+	placeGates();
+}
+
+// sub_131CA: at each gate place within the 40 x 40 squares around the party a blue moon gate (type 0x55, frame 1) stands while one of the moons is below phase 15 and
+// is taken away when both are 15 or more. APPROX(55): the window is 20 squares each way around the party in place of the terrain cache's.
+void Game::placeGates() {
+	const std::vector<uint8_t> &g = _world.actors.globals;
+	for (int n = 0; n < 8; ++n) {
+		size_t o = 0x2A + 6 * (size_t)n;
+		if (o + 6 > g.size())
+			break;
+		int gx = g[o] | (g[o + 1] << 8), gy = g[o + 2] | (g[o + 3] << 8), gz = g[o + 4] | (g[o + 5] << 8);
+		if (!(gx || gy || gz) || gz != z || std::abs(gx - x) >= 20 || std::abs(gy - y) >= 20)
+			continue;
+		int existing = -1;
+		std::vector<int> here;
+		_world.objectsAt(gx, gy, gz, here);
+		for (int i : here)
+			if (_world.objects[i].type == 0x55)
+				existing = i;
+		bool up = _phaseA < 15 || _phaseB < 15;
+		if (up && existing < 0) {
+			World::Obj gate;
+			gate.status = 0;
+			gate.x = (uint16_t)gx;
+			gate.y = (uint16_t)gy;
+			gate.z = (uint8_t)gz;
+			gate.type = 0x55;
+			gate.frame = 1;
+			gate.quantity = 1;
+			gate.quality = 0;
+			gate.actor = -1;
+			gate.parent = -1;
+			_world.objects.push_back(gate);
+			_world.addToMap((int)_world.objects.size() - 1);
+		} else if (!up && existing >= 0) {
+			_world.deleteObject(existing);
+		}
+	}
+}
+
+// bury_object (32AB5): a moonstone (type 0x49, its frame is the number of its gate) is buried where the acting member stands if the ground is soft (terrain tiles 1-7 and
+// 16-111); that square becomes the place of the gate.
+void Game::buryMoonstone(int idx) {
+	int a = _world.actorObject(actingActor());
+	if (a < 0)
+		return;
+	int px = _world.objects[a].x, py = _world.objects[a].y;
+	int tile = _world.map.tile(z, px, py);
+	if (!((tile >= 1 && tile <= 7) || (tile >= 0x10 && tile <= 0x6F))) {
+		message("Cannot be buried here!\n");
+		return;
+	}
+	message("buried.\n");
+	size_t o = 0x2A + 6 * (size_t)(_world.objects[idx].frame & 7);
+	std::vector<uint8_t> &g = _world.actors.globals;
+	if (o + 6 <= g.size()) {
+		g[o] = (uint8_t)px;
+		g[o + 1] = (uint8_t)(px >> 8);
+		g[o + 2] = (uint8_t)py;
+		g[o + 3] = (uint8_t)(py >> 8);
+		g[o + 4] = (uint8_t)z;
+		g[o + 5] = 0;
+	}
+	_world.deleteObject(idx);
+	placeGates();
 }
 
 // sub_1887A: to the place where the buried moonstone of gate `n` lies (objlist +0x1C1B, eight sets of x, y, z words); when it holds nothing the party stays where it is

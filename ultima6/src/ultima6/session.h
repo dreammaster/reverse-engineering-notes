@@ -113,6 +113,8 @@ private:
 	void useObject(int idx);
 	bool spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int ty, int target);
 	void updateMoons();
+	void placeGates();
+	void buryMoonstone(int idx);
 	void gateTo(int n);
 	bool enterMoongate(int px, int py);
 	void useOrb(int idx);

@@ -197,6 +197,43 @@ int main() {
 		CHECK(food);
 	}
 
+	// burying a moonstone on soft ground sets the place of its gate and, the moons being up, a blue moon gate appears there
+	{
+		World w4;
+		w4.load("u6/game");
+		Game g4(w4);
+		int bx = -1, by = -1;
+		for (int yy = g4.y - 20; yy < g4.y + 20 && bx < 0; ++yy)
+			for (int xx = g4.x - 20; xx < g4.x + 20 && bx < 0; ++xx) {
+				int t = w4.map.tile(0, xx, yy);
+				if (t >= 0x10 && t <= 0x6F)
+					bx = xx, by = yy;
+			}
+		CHECK(bx >= 0);
+		if (bx >= 0) {
+			w4.moveObject(w4.actorObject(1), bx, by, 0);
+			g4.x = bx;
+			g4.y = by;
+			g4.z = 0;
+			int stone = put(w4, 0x49, 3, bx, by, 0);
+			(void)stone;
+			g4.handleKey('u');
+			g4.handleKey(KEY_ENTER); // the own square
+			std::string text;
+			for (const std::string &l : g4.log)
+				text += l;
+			CHECK(text.find("buried.") != std::string::npos);
+			const std::vector<uint8_t> &gl = w4.actors.globals;
+			CHECK((gl[0x2A + 18] | (gl[0x2A + 19] << 8)) == bx && (gl[0x2A + 20] | (gl[0x2A + 21] << 8)) == by);
+			std::vector<int> here;
+			w4.objectsAt(bx, by, 0, here);
+			bool gate = false;
+			for (int i : here)
+				gate |= w4.objects[i].type == 0x55;
+			CHECK(gate);
+		}
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

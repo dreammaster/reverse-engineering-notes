@@ -160,7 +160,19 @@ void Game::useObject(int idx) {
 		message("\nFire!\n"); // APPROX(51): use_cannon (330C5) fires a ball along the cannon's direction; not done
 	} else if (type == 0xEC || type == 0x1A3) {
 		// ring_bell: an animation and a sound, no text
-		} else if (type == 0x57) {
+		} else if (type == 0x5D) {
+		// use_sextant (2536C): latitude and longitude in degrees ({ is the degree sign of the font), only on the surface and on level 5
+		if (z != 0 && z != 5) {
+			message("\nNot usable\n");
+		} else {
+			int sx = z ? x * 4 : x, sy = z ? y * 4 : y;
+			int lat = (sy - 360) >> 3, lon = (sx - 304) >> 3;
+			message("\n" + std::to_string(std::abs(lat)) + "{" + (lat > 0 ? "S" : "N"));
+			message(", " + std::to_string(std::abs(lon)) + "{" + (lon > 0 ? "E\n" : "W\n"));
+		}
+	} else if (type == 0x49) {
+		buryMoonstone(idx);
+	} else if (type == 0x57) {
 		useOrb(idx);
 		if (_pending)
 			return;

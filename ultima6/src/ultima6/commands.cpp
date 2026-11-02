@@ -498,6 +498,7 @@ void Game::changeLevel(int nx, int ny, int nz) {
 	x = nx;
 	y = ny;
 	z = nz;
+	placeGates();
 }
 
 // Use: what the objects of a square do when used (the doors and ladders of the Use table; the rest answers "Not usable").
