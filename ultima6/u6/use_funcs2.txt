@@ -1,0 +1,985 @@
+=== sub_2220D 2220D
+2220D push    bp
+2220E mov     bp, sp
+22210 sub     sp, 2
+22213 mov     bx, word_48F03
+22217 test    byte ptr [bx-6055h], 10h
+2221C jz      short loc_22225
+2221E mov     byte_4C402, 2
+22223 jmp     short loc_22275
+22225 cmp     [bp+arg_0], 6
+22229 jnz     short loc_2225E
+2222B mov     ax, 1
+2222E push    ax
+2222F mov     ax, 1Eh
+22232 push    ax
+22233 call    sub_3B8F9
+22238 mov     [bp+var_2], ax
+2223B push    word_48F03
+2223F call    sub_2B519
+22244 mov     bx, word_48F03
+22248 mov     dl, [bx+66E4h]
+2224C mov     dh, 0
+2224E add     dx, [bp+var_2]
+22251 cmp     ax, dx
+22253 jle     short loc_22264
+22255 mov     al, byte ptr [bp+var_2]
+22258 add     [bx+66E4h], al
+2225C jmp     short loc_22275
+2225E cmp     [bp+arg_0], 34h ; '4'
+22262 jnz     short loc_22275
+22264 push    word_48F03
+22268 call    sub_2B519
+2226D mov     bx, word_48F03
+22271 mov     [bx+66E4h], al
+22275 mov     sp, bp
+22277 pop     bp
+22278 retf    2
+=== sub_2C20F 2C20F
+2C20F push    bp
+2C210 mov     bp, sp
+2C212 sub     sp, 2
+2C215 push    si
+2C216 push    di
+2C217 mov     si, [bp+arg_0]
+2C21A cmp     word_3F1B8, 0
+2C21F jnz     short loc_2C224
+2C221 jmp     loc_2C2B0
+2C224 mov     ax, si
+2C226 mov     dx, 3
+2C229 mul     dx
+2C22B mov     bx, ax
+2C22D mov     di, [bx+6828h]
+2C231 and     di, 3FFh
+2C235 sub     di, player_x
+2C239 add     di, 5
+2C23C mov     ax, si
+2C23E mov     dx, 3
+2C241 mul     dx
+2C243 mov     bx, ax
+2C245 mov     ax, [bx+6829h]
+2C249 sar     ax, 1
+2C24B sar     ax, 1
+2C24D and     ax, 3FFh
+2C250 sub     ax, player_y
+2C254 add     ax, 5
+2C257 mov     [bp+var_2], ax
+2C25A or      di, di
+2C25C jl      short loc_2C2A2
+2C25E cmp     di, 0Bh
+2C261 jge     short loc_2C2A2
+2C263 or      ax, ax
+2C265 jl      short loc_2C2A2
+2C267 cmp     ax, 0Bh
+2C26A jge     short loc_2C2A2
+2C26C call    sub_1CB82
+2C271 mov     ax, 101h
+2C274 push    ax
+2C275 push    di
+2C276 push    [bp+var_2]
+2C279 mov     ax, 1
+2C27C push    ax
+2C27D call    sub_1C93C
+2C282 mov     ax, 1
+2C285 push    ax
+2C286 call    sub_1297E
+2C28B mov     ax, 4
+2C28E push    ax
+2C28F xor     ax, ax
+2C291 push    ax
+2C292 call    sub_36E85
+2C297 call    sub_1CB82
+2C29C mov     word_3F000, 1
+2C2A2 cmp     si, 100h
+2C2A6 jge     short loc_2C2B0
+2C2A8 les     bx, actor_movement_flags_ptr
+2C2AC or      byte ptr es:[bx+si], 8
+2C2B0 test    byte ptr [si-6055h], 4
+2C2B5 jz      short loc_2C2D7
+2C2B7 and     byte ptr [si-6055h], 0FBh
+2C2BC mov     ax, si
+2C2BE shl     ax, 1
+2C2C0 les     bx, actor_base_obj_frame_ptr
+2C2C4 add     bx, ax
+2C2C6 mov     ax, es:[bx]
+2C2C9 mov     bx, si
+2C2CB shl     bx, 1
+2C2CD mov     [bx+3548h], ax
+2C2D1 mov     word_3F000, 1
+2C2D7 mov     word_3F1B8, 1
+2C2DD pop     di
+2C2DE pop     si
+2C2DF mov     sp, bp
+2C2E1 pop     bp
+2C2E2 retf    2
+=== sub_2B5A4 2B5A4
+2B5A4 push    bp
+2B5A5 mov     bp, sp
+2B5A7 sub     sp, 8
+2B5AA push    si
+2B5AB push    di
+2B5AC mov     si, [bp+arg_0]
+2B5AF mov     bx, si
+2B5B1 shl     bx, 1
+2B5B3 mov     di, [bx+3548h]
+2B5B7 and     di, 3FFh
+2B5BB mov     al, [si-6055h]
+2B5BF mov     ah, 0
+2B5C1 and     ax, 10h
+2B5C4 mov     [bp+var_2], ax
+2B5C7 cmp     di, 1AFh
+2B5CB jnz     short loc_2B5E1
+2B5CD push    si
+2B5CE call    rear_horse
+2B5D3 mov     bx, si
+2B5D5 shl     bx, 1
+2B5D7 mov     di, [bx+3548h]
+2B5DB and     di, 3FFh
+2B5DF jmp     short loc_2B60E
+2B5E1 cmp     di, 19Bh
+2B5E5 jz      short loc_2B5F9
+2B5E7 cmp     di, 1AAh
+2B5EB jge     short loc_2B5F9
+2B5ED cmp     di, 19Dh
+2B5F1 jz      short loc_2B5F9
+2B5F3 cmp     di, 19Ch
+2B5F7 jnz     short loc_2B60E
+2B5F9 mov     bx, si
+2B5FB shl     bx, 1
+2B5FD mov     ax, [bx+3548h]
+2B601 mov     dx, si
+2B603 shl     dx, 1
+2B605 les     bx, actor_base_obj_frame_ptr
+2B609 add     bx, dx
+2B60B mov     es:[bx], ax
+2B60E push    di
+2B60F call    sub_35F9B
+2B614 mov     [bp+var_8], ax
+2B617 mov     [bp+var_6], 1A29h
+2B61C jmp     short loc_2B62F
+2B61E mov     bx, [bp+var_6]
+2B621 add     [bp+var_6], 2
+2B625 mov     ax, [bx]
+2B627 cmp     ax, di
+2B629 jz      short loc_2B637
+2B62B add     [bp+var_6], 2
+2B62F mov     bx, [bp+var_6]
+2B632 cmp     word ptr [bx], 0
+2B635 jge     short loc_2B61E
+2B637 mov     bx, [bp+var_6]
+2B63A cmp     word ptr [bx], 0
+2B63D jl      short loc_2B67D
+2B63F mov     bx, [bp+var_8]
+2B642 shl     bx, 1
+2B644 mov     ax, seg seg066
+2B647 mov     es, ax
+2B649 test    word ptr es:[bx+242h], 1000h
+2B650 jnz     short loc_2B67D
+2B652 cmp     di, 1AEh
+2B656 jnz     short loc_2B66D
+2B658 cmp     [bp+var_2], 0
+2B65C jnz     short loc_2B661
+2B65E jmp     loc_2B782
+2B661 push    si
+2B662 call    sub_19613
+2B667 push    ax
+2B668 call    sub_1AC65
+2B66D mov     bx, [bp+var_6]
+2B670 mov     ax, [bx]
+2B672 mov     bx, si
+2B674 shl     bx, 1
+2B676 mov     [bx+3548h], ax
+2B67A jmp     loc_2B782
+2B67D cmp     [bp+var_2], 0
+2B681 jnz     short loc_2B686
+2B683 jmp     loc_2B782
+2B686 cmp     [bp+var_8], 0
+2B68A jge     short loc_2B68F
+2B68C jmp     loc_2B76B
+2B68F cmp     [bp+var_8], 15h
+2B693 jnz     short loc_2B6C8
+2B695 mov     ax, 157h
+2B698 push    ax
+2B699 mov     ax, si
+2B69B mov     dx, 3
+2B69E mul     dx
+2B6A0 mov     bx, ax
+2B6A2 mov     ax, [bx+6828h]
+2B6A6 and     ax, 3FFh
+2B6A9 push    ax
+2B6AA mov     ax, si
+2B6AC mov     dx, 3
+2B6AF mul     dx
+2B6B1 mov     bx, ax
+2B6B3 mov     ax, [bx+6829h]
+2B6B7 sar     ax, 1
+2B6B9 sar     ax, 1
+2B6BB and     ax, 3FFh
+2B6BE push    ax
+2B6BF push    player_z
+2B6C3 call    sub_363E9
+2B6C8 mov     bx, [bp+var_8]
+2B6CB shl     bx, 1
+2B6CD mov     ax, seg seg066
+2B6D0 mov     es, ax
+2B6D2 test    word ptr es:[bx+242h], 800h
+2B6D9 jnz     short loc_2B6F1
+2B6DB mov     bx, [bp+var_8]
+2B6DE shl     bx, 1
+2B6E0 mov     ax, seg seg066
+2B6E3 mov     es, ax
+2B6E5 test    word ptr es:[bx+242h], 1000h
+2B6EC jnz     short loc_2B6F1
+2B6EE jmp     loc_2B76B
+2B6F1 push    si
+2B6F2 call    sub_1AC65
+2B6F7 mov     bx, [bp+var_8]
+2B6FA shl     bx, 1
+2B6FC mov     ax, seg seg066
+2B6FF mov     es, ax
+2B701 test    word ptr es:[bx+242h], 1000h
+2B708 jz      short loc_2B76B
+2B70A mov     ax, si
+2B70C mov     dx, 3
+2B70F mul     dx
+2B711 mov     bx, ax
+2B713 mov     ax, [bx+6828h]
+2B717 and     ax, 3FFh
+2B71A sub     ax, player_x
+2B71E push    ax; x
+2B71F call    _abs
+2B724 pop     cx
+2B725 cmp     ax, 5
+2B728 jg      short loc_2B76B
+2B72A mov     ax, si
+2B72C mov     dx, 3
+2B72F mul     dx
+2B731 mov     bx, ax
+2B733 mov     ax, [bx+6829h]
+2B737 sar     ax, 1
+2B739 sar     ax, 1
+2B73B and     ax, 3FFh
+2B73E sub     ax, player_y
+2B742 push    ax; x
+2B743 call    _abs
+2B748 pop     cx
+2B749 cmp     ax, 5
+2B74C jg      short loc_2B76B
+2B74E mov     ax, 1
+2B751 push    ax
+2B752 call    sub_1297E
+2B757 call    sub_1CB82
+2B75C mov     word_40298, 1
+2B762 mov     ax, 1
+2B765 push    ax
+2B766 call    sub_1297E
+2B76B cmp     di, 177h
+2B76F jnz     short loc_2B776
+2B771 call    sub_1A081
+2B776 cmp     di, 19Bh
+2B77A jnz     short loc_2B782
+2B77C push    si
+2B77D call    sub_1AC65
+2B782 cmp     [bp+var_2], 0
+2B786 jnz     short loc_2B78B
+2B788 jmp     loc_2B819
+2B78B cmp     [bp+var_8], 0
+2B78F jl      short loc_2B7A4
+2B791 mov     bx, [bp+var_8]
+2B794 shl     bx, 1
+2B796 mov     ax, seg seg066
+2B799 mov     es, ax
+2B79B test    word ptr es:[bx+242h], 2000h
+2B7A2 jnz     short loc_2B7B0
+2B7A4 cmp     di, 187h
+2B7A8 jz      short loc_2B7B0
+2B7AA cmp     di, 188h
+2B7AE jnz     short loc_2B819
+2B7B0 mov     ax, 152h
+2B7B3 push    ax
+2B7B4 mov     ax, 20h ; ' '
+2B7B7 push    ax
+2B7B8 xor     ax, ax
+2B7BA push    ax
+2B7BB mov     ax, si
+2B7BD mov     dx, 3
+2B7C0 mul     dx
+2B7C2 mov     bx, ax
+2B7C4 mov     ax, [bx+6828h]
+2B7C8 and     ax, 3FFh
+2B7CB push    ax
+2B7CC mov     ax, si
+2B7CE mov     dx, 3
+2B7D1 mul     dx
+2B7D3 mov     bx, ax
+2B7D5 mov     ax, [bx+6829h]
+2B7D9 sar     ax, 1
+2B7DB sar     ax, 1
+2B7DD and     ax, 3FFh
+2B7E0 push    ax
+2B7E1 push    player_z
+2B7E5 call    sub_1A867
+2B7EA mov     [bp+var_4], ax
+2B7ED or      ax, ax
+2B7EF jl      short loc_2B819
+2B7F1 xor     ax, ax
+2B7F3 push    ax
+2B7F4 mov     ax, 2
+2B7F7 push    ax
+2B7F8 call    sub_3B8F9
+2B7FD mov     cl, 0Ah
+2B7FF shl     ax, cl
+2B801 mov     bx, [bp+var_4]
+2B804 shl     bx, 1
+2B806 mov     dx, [bx+3548h]
+2B80A and     dx, 3FFh
+2B80E add     ax, dx
+2B810 mov     bx, [bp+var_4]
+2B813 shl     bx, 1
+2B815 mov     [bx+3548h], ax
+2B819 mov     word_3F000, 1
+2B81F pop     di
+2B820 pop     si
+2B821 mov     sp, bp
+2B823 pop     bp
+2B824 retf    2
+=== sub_37940 37940
+37940 push    bp
+37941 mov     bp, sp
+37943 sub     sp, 4
+37946 push    si
+37947 push    di
+37948 mov     si, [bp+arg_2]
+3794B test    byte ptr [si-5F55h], 18h
+37950 jz      short loc_37955
+37952 jmp     loc_37A07
+37955 mov     ax, si
+37957 mov     dx, 3
+3795A mul     dx
+3795C mov     bx, ax
+3795E mov     di, [bx+6828h]
+37962 and     di, 3FFh
+37966 sub     di, player_x
+3796A add     di, 5
+3796D and     di, 3FFh
+37971 mov     ax, si
+37973 mov     dx, 3
+37976 mul     dx
+37978 mov     bx, ax
+3797A mov     ax, [bx+6829h]
+3797E sar     ax, 1
+37980 sar     ax, 1
+37982 and     ax, 3FFh
+37985 sub     ax, player_y
+37989 add     ax, 5
+3798C and     ax, 3FFh
+3798F mov     [bp+var_4], ax
+37992 mov     bx, si
+37994 shl     bx, 1
+37996 mov     ax, [bx+3548h]
+3799A and     ax, 3FFh
+3799D shl     ax, 1
+3799F les     bx, basetile_ptr
+379A3 add     bx, ax
+379A5 mov     ax, es:[bx]
+379A8 mov     bx, si
+379AA shl     bx, 1
+379AC mov     dx, [bx+3548h]
+379B0 mov     cl, 0Ah
+379B2 shr     dx, cl
+379B4 add     ax, dx
+379B6 push    ax
+379B7 cmp     [bp+arg_0], 0
+379BB jz      short loc_379C2
+379BD mov     ax, 1800h
+379C0 jmp     short loc_379C5
+379C2 mov     ax, 1000h
+379C5 pop     dx
+379C6 add     dx, ax
+379C8 mov     [bp+var_2], dx
+379CB cmp     di, 0Bh
+379CE jge     short loc_37A07
+379D0 cmp     [bp+var_4], 0Bh
+379D4 jge     short loc_37A07
+379D6 push    dx
+379D7 push    di
+379D8 push    [bp+var_4]
+379DB mov     ax, 2
+379DE push    ax
+379DF call    sub_1C93C
+379E4 mov     word_40298, 1
+379EA mov     ax, 1
+379ED push    ax
+379EE call    sub_1297E
+379F3 call    sub_1CB82
+379F8 mov     word_40298, 1
+379FE mov     ax, 1
+37A01 push    ax
+37A02 call    sub_1297E
+37A07 pop     di
+37A08 pop     si
+37A09 mov     sp, bp
+37A0B pop     bp
+37A0C retf    4
+=== sub_241CC 241CC
+241CC push    bp
+241CD mov     bp, sp
+241CF push    si
+241D0 mov     ax, [bp+arg_0]
+241D3 mov     bx, 10h
+241D6 cwd
+241D7 idiv    bx
+241D9 inc     ax
+241DA push    ax
+241DB push    cs
+241DC call    near ptr sub_21145
+241DF mov     al, byte_404A4
+241E2 mov     ah, 0
+241E4 mov     bx, ax
+241E6 mov     al, [bx+3533h]
+241EA mov     ah, 0
+241EC push    ax
+241ED xor     ax, ax
+241EF push    ax
+241F0 call    sub_37940
+241F5 mov     word_3DE38, 1
+241FB call    sub_18F86
+24200 xor     si, si
+24202 jmp     short loc_2420A
+24204 call    sub_12C6C
+24209 inc     si
+2420A cmp     si, 64h ; 'd'
+2420D jl      short loc_24204
+2420F mov     word_3DE38, 0
+24215 call    sub_18F86
+2421A call    sub_12C6C
+2421F push    word_3E63A
+24223 push    ds
+24224 mov     ax, offset aS_8; "\n%s\n"
+24227 push    ax
+24228 call    scroll_printf
+2422D add     sp, 6
+24230 pop     si
+24231 pop     bp
+24232 retf    2
+=== sub_1AC65 1AC65
+1AC65 push    bp
+1AC66 mov     bp, sp
+1AC68 sub     sp, 4
+1AC6B push    si
+1AC6C push    di
+1AC6D mov     si, [bp+arg_0]
+1AC70 or      si, si
+1AC72 jge     short loc_1AC77
+1AC74 jmp     loc_1AE62
+1AC77 mov     word_3DF57, 0FFFFh
+1AC7D cmp     word_3DD10, 92h
+1AC83 jnz     short loc_1AC9F
+1AC85 push    si
+1AC86 mov     bx, word_3DD03
+1AC8A mov     al, [bx+3533h]
+1AC8E mov     ah, 0
+1AC90 push    ax
+1AC91 call    sub_1B1EE
+1AC96 or      ax, ax
+1AC98 jz      short loc_1AC9F
+1AC9A mov     byte_3DB8A, 1
+1AC9F mov     bx, si
+1ACA1 shl     bx, 1
+1ACA3 mov     di, [bx+3548h]
+1ACA7 and     di, 3FFh
+1ACAB cmp     di, 19Ch
+1ACAF jnz     short loc_1ACB4
+1ACB1 jmp     loc_1AE62
+1ACB4 cmp     si, 100h
+1ACB8 jl      short loc_1ACBD
+1ACBA jmp     loc_1ADAF
+1ACBD cmp     di, 176h
+1ACC1 jz      short loc_1ACD5
+1ACC3 cmp     di, 19Ch
+1ACC7 jz      short loc_1ACD5
+1ACC9 cmp     di, 1AAh
+1ACCD jge     short loc_1ACD5
+1ACCF cmp     di, 19Bh
+1ACD3 jnz     short loc_1AD07
+1ACD5 push    si
+1ACD6 mov     ax, si
+1ACD8 mov     dx, 3
+1ACDB mul     dx
+1ACDD mov     bx, ax
+1ACDF mov     ax, [bx+6828h]
+1ACE3 and     ax, 3FFh
+1ACE6 push    ax
+1ACE7 mov     ax, si
+1ACE9 mov     dx, 3
+1ACEC mul     dx
+1ACEE mov     bx, ax
+1ACF0 mov     ax, [bx+6829h]
+1ACF4 sar     ax, 1
+1ACF6 sar     ax, 1
+1ACF8 and     ax, 3FFh
+1ACFB push    ax
+1ACFC mov     ax, 1
+1ACFF push    ax
+1AD00 push    cs
+1AD01 call    near ptr sub_1A62D
+1AD04 jmp     loc_1ADAF
+1AD07 cmp     di, 19Dh
+1AD0B jz      short loc_1AD10
+1AD0D jmp     loc_1ADAF
+1AD10 push    si
+1AD11 mov     ax, si
+1AD13 mov     dx, 3
+1AD16 mul     dx
+1AD18 mov     bx, ax
+1AD1A mov     ax, [bx+6828h]
+1AD1E and     ax, 3FFh
+1AD21 push    ax
+1AD22 mov     ax, si
+1AD24 mov     dx, 3
+1AD27 mul     dx
+1AD29 mov     bx, ax
+1AD2B mov     ax, [bx+6829h]
+1AD2F sar     ax, 1
+1AD31 sar     ax, 1
+1AD33 and     ax, 3FFh
+1AD36 push    ax
+1AD37 mov     ax, 1
+1AD3A push    ax
+1AD3B push    cs
+1AD3C call    near ptr sub_1A17E
+1AD3F jmp     short loc_1ADAF
+1AD41 mov     ax, [bp+var_4]
+1AD44 mov     word_3DF57, ax
+1AD47 test    byte ptr [si-5F55h], 18h
+1AD4C jnz     short loc_1AD90
+1AD4E push    ax
+1AD4F mov     ax, si
+1AD51 mov     dx, 3
+1AD54 mul     dx
+1AD56 mov     bx, ax
+1AD58 mov     ax, [bx+6828h]
+1AD5C and     ax, 3FFh
+1AD5F push    ax
+1AD60 mov     ax, si
+1AD62 mov     dx, 3
+1AD65 mul     dx
+1AD67 mov     bx, ax
+1AD69 mov     ax, [bx+6829h]
+1AD6D sar     ax, 1
+1AD6F sar     ax, 1
+1AD71 and     ax, 3FFh
+1AD74 push    ax
+1AD75 mov     ax, si
+1AD77 mov     dx, 3
+1AD7A mul     dx
+1AD7C mov     bx, ax
+1AD7E mov     al, [bx+682Ah]
+1AD82 mov     cl, 4
+1AD84 shr     al, cl
+1AD86 mov     ah, 0
+1AD88 push    ax
+1AD89 call    sub_1B26F
+1AD8E jmp     short loc_1ADAF
+1AD90 push    [bp+var_4]
+1AD93 mov     ax, si
+1AD95 mov     dx, 3
+1AD98 mul     dx
+1AD9A mov     bx, ax
+1AD9C push    word ptr [bx+6828h]
+1ADA0 mov     al, [si-5F55h]
+1ADA4 mov     ah, 0
+1ADA6 and     ax, 18h
+1ADA9 push    ax
+1ADAA call    sub_1B59D
+1ADAF push    si
+1ADB0 push    cs
+1ADB1 call    near ptr sub_19D00
+1ADB4 mov     [bp+var_4], ax
+1ADB7 or      ax, ax
+1ADB9 jge     short loc_1AD41
+1ADBB mov     bx, si
+1ADBD shl     bx, 1
+1ADBF mov     word ptr [bx+3548h], 0
+1ADC5 push    si
+1ADC6 push    cs
+1ADC7 call    near ptr sub_1AB25
+1ADCA mov     [bp+var_2], ax
+1ADCD or      ax, ax
+1ADCF jl      short loc_1AE10
+1ADD1 mov     bx, si
+1ADD3 shl     bx, 1
+1ADD5 mov     ax, [bx-4226h]
+1ADD9 mov     bx, [bp+var_2]
+1ADDC shl     bx, 1
+1ADDE mov     [bx-4226h], ax
+1ADE2 cmp     si, 100h
+1ADE6 jge     short loc_1ADFD
+1ADE8 mov     ax, word_49626
+1ADEB mov     bx, si
+1ADED shl     bx, 1
+1ADEF mov     [bx-4226h], ax
+1ADF3 mov     word_49626, si
+1ADF7 inc     word_4BF32
+1ADFB jmp     short loc_1AE10
+1ADFD mov     ax, obj_free_head
+1AE00 mov     bx, si
+1AE02 shl     bx, 1
+1AE04 mov     [bx-4226h], ax
+1AE08 mov     obj_free_head, si
+1AE0C inc     obj_free_count
+1AE10 mov     ax, si
+1AE12 mov     dx, 3
+1AE15 mul     dx
+1AE17 mov     bx, ax
+1AE19 mov     ax, [bx+6828h]
+1AE1D and     ax, 3FFh
+1AE20 push    ax
+1AE21 mov     ax, si
+1AE23 mov     dx, 3
+1AE26 mul     dx
+1AE28 mov     bx, ax
+1AE2A mov     ax, [bx+6829h]
+1AE2E sar     ax, 1
+1AE30 sar     ax, 1
+1AE32 and     ax, 3FFh
+1AE35 push    ax
+1AE36 mov     ax, si
+1AE38 mov     dx, 3
+1AE3B mul     dx
+1AE3D mov     bx, ax
+1AE3F mov     al, [bx+682Ah]
+1AE43 mov     cl, 4
+1AE45 shr     al, cl
+1AE47 mov     ah, 0
+1AE49 push    ax
+1AE4A push    si
+1AE4B mov     bx, [bp+var_2]
+1AE4E shl     bx, 1
+1AE50 push    word ptr [bx-4226h]
+1AE54 push    cs
+1AE55 call    near ptr sub_1AB95
+1AE58 cmp     di, 177h
+1AE5C jnz     short loc_1AE62
+1AE5E push    cs
+1AE5F call    near ptr sub_1A081
+1AE62 pop     di
+1AE63 pop     si
+1AE64 mov     sp, bp
+1AE66 pop     bp
+1AE67 retf    2
+=== sub_1DF45 1DF45
+1DF45 push    bp
+1DF46 mov     bp, sp
+1DF48 sub     sp, 0Ah
+1DF4B push    si
+1DF4C push    di
+1DF4D cmp     word_3DD10, 91h
+1DF53 jnz     short loc_1DF5F
+1DF55 cmp     byte_4C405, 0
+1DF5A jnz     short loc_1DF5F
+1DF5C jmp     loc_1E26C
+1DF5F mov     ax, 0B0h
+1DF62 push    ax
+1DF63 mov     ax, 6
+1DF66 push    ax
+1DF67 mov     ax, 137h
+1DF6A push    ax
+1DF6B mov     ax, 67h ; 'g'
+1DF6E push    ax
+1DF6F call    sub_14647
+1DF74 mov     [bp+var_A], ax
+1DF77 mov     ax, word_3DD2F
+1DF7A mov     [bp+var_2], ax
+1DF7D mov     ax, 0B6BEh
+1DF80 push    ax
+1DF81 call    sub_17494
+1DF86 mov     word ptr video_driver_call, 6
+1DF8C push    word_402A4
+1DF90 call    video_driver_call
+1DF94 mov     word ptr video_driver_call, 12h
+1DF9A mov     ax, 0F8h
+1DF9D push    ax
+1DF9E mov     ax, 10h
+1DFA1 push    ax
+1DFA2 mov     ax, 137h
+1DFA5 push    ax
+1DFA6 mov     ax, 4Fh ; 'O'
+1DFA9 push    ax
+1DFAA call    video_driver_call
+1DFAE xor     ax, ax
+1DFB0 push    ax
+1DFB1 push    ax
+1DFB2 push    cs
+1DFB3 call    near ptr sub_1DB44
+1DFB6 push    word_4BF59
+1DFBA call    sub_19D00
+1DFBF mov     di, ax
+1DFC1 xor     si, si
+1DFC3 cmp     byte_3E01E, 4
+1DFC8 jb      short loc_1E007
+1DFCA mov     al, byte_3E01E
+1DFCD mov     ah, 0
+1DFCF add     ax, 8
+1DFD2 mov     dl, byte_4BF46
+1DFD6 mov     dh, 0
+1DFD8 cmp     ax, dx
+1DFDA jl      short loc_1E007
+1DFDC sub     byte_3E01E, 4
+1DFE1 jmp     short loc_1E007
+1DFE3 mov     al, [di-5F55h]
+1DFE7 mov     ah, 0
+1DFE9 and     ax, 18h
+1DFEC cmp     ax, 10h
+1DFEF jz      short loc_1DFFF
+1DFF1 mov     al, [di-5F55h]
+1DFF5 mov     ah, 0
+1DFF7 and     ax, 18h
+1DFFA cmp     ax, 8
+1DFFD jnz     short loc_1E000
+1DFFF inc     si
+1E000 call    sub_19D59
+1E005 mov     di, ax
+1E007 mov     al, byte_3E01E
+1E00A mov     ah, 0
+1E00C cmp     ax, si
+1E00E jg      short loc_1DFE3
+1E010 mov     bx, word_4BF59
+1E014 shl     bx, 1
+1E016 mov     ax, [bx+3548h]
+1E01A and     ax, 3FFh
+1E01D mov     [bp+var_8], ax
+1E020 cmp     word_4BF59, 100h
+1E026 jge     short loc_1E06B
+1E028 mov     ax, word_4BF59
+1E02B shl     ax, 1
+1E02D les     bx, actor_base_obj_frame_ptr
+1E031 add     bx, ax
+1E033 mov     ax, es:[bx]
+1E036 and     ax, 3FFh
+1E039 mov     [bp+var_8], ax
+1E03C push    ax
+1E03D mov     ax, 4
+1E040 push    ax
+1E041 call    sub_19533
+1E046 mov     dx, [bp+var_8]
+1E049 shl     dx, 1
+1E04B les     bx, basetile_ptr
+1E04F add     bx, dx
+1E051 add     ax, es:[bx]
+1E054 mov     [bp+var_6], ax
+1E057 push    ax
+1E058 mov     ax, 19Bh
+1E05B push    ax
+1E05C mov     ax, 110h
+1E05F push    ax
+1E060 mov     ax, 10h
+1E063 push    ax
+1E064 call    sub_15497
+1E069 jmp     short loc_1E0A5
+1E06B mov     bx, word_4BF59
+1E06F shl     bx, 1
+1E071 mov     ax, [bx+3548h]
+1E075 and     ax, 3FFh
+1E078 shl     ax, 1
+1E07A les     bx, basetile_ptr
+1E07E add     bx, ax
+1E080 mov     ax, es:[bx]
+1E083 mov     bx, word_4BF59
+1E087 shl     bx, 1
+1E089 mov     dx, [bx+3548h]
+1E08D mov     cl, 0Ah
+1E08F shr     dx, cl
+1E091 add     ax, dx
+1E093 push    ax
+1E094 mov     ax, 19Bh
+1E097 push    ax
+1E098 mov     ax, 110h
+1E09B push    ax
+1E09C mov     ax, 10h
+1E09F push    ax
+1E0A0 call    sub_15497
+1E0A5 xor     si, si
+1E0A7 jmp     short loc_1E0F6
+1E0A9 mov     al, [di-5F55h]
+1E0AD mov     ah, 0
+1E0AF and     ax, 18h
+1E0B2 cmp     ax, 10h
+1E0B5 jz      short loc_1E0C5
+1E0B7 mov     al, [di-5F55h]
+1E0BB mov     ah, 0
+1E0BD and     ax, 18h
+1E0C0 cmp     ax, 8
+1E0C3 jnz     short loc_1E0EF
+1E0C5 push    di
+1E0C6 mov     ax, si
+1E0C8 and     ax, 3
+1E0CB mov     cl, 4
+1E0CD shl     ax, cl
+1E0CF add     ax, 0F8h
+1E0D2 push    ax
+1E0D3 mov     ax, si
+1E0D5 sar     ax, 1
+1E0D7 sar     ax, 1
+1E0D9 mov     cl, 4
+1E0DB shl     ax, cl
+1E0DD add     ax, 20h ; ' '
+1E0E0 push    ax
+1E0E1 call    sub_15371
+1E0E6 mov     bx, si
+1E0E8 shl     bx, 1
+1E0EA mov     [bx-18F1h], di
+1E0EE inc     si
+1E0EF call    sub_19D59
+1E0F4 mov     di, ax
+1E0F6 or      di, di
+1E0F8 jl      short loc_1E135
+1E0FA cmp     si, 0Ch
+1E0FD jl      short loc_1E0A9
+1E0FF jmp     short loc_1E135
+1E101 mov     bx, si
+1E103 shl     bx, 1
+1E105 mov     word ptr [bx-18F1h], 0
+1E10B mov     word ptr video_driver_call, 2Dh ; '-'
+1E111 mov     ax, 19Ah
+1E114 push    ax
+1E115 mov     ax, si
+1E117 and     ax, 3
+1E11A mov     cl, 4
+1E11C shl     ax, cl
+1E11E add     ax, 0F8h
+1E121 push    ax
+1E122 mov     ax, si
+1E124 sar     ax, 1
+1E126 sar     ax, 1
+1E128 mov     cl, 4
+1E12A shl     ax, cl
+1E12C add     ax, 20h ; ' '
+1E12F push    ax
+1E130 call    video_driver_call
+1E134 inc     si
+1E135 cmp     si, 0Ch
+1E138 jl      short loc_1E101
+1E13A mov     al, byte_4BF46
+1E13D mov     ah, 0
+1E13F mov     dl, byte_3E01E
+1E143 mov     dh, 0
+1E145 add     dx, 0Ch
+1E148 cmp     ax, dx
+1E14A jle     short loc_1E161
+1E14C mov     ax, 8
+1E14F push    ax
+1E150 push    ax
+1E151 call    sub_174CF
+1E156 mov     ax, 19h; int
+1E159 push    ax; int
+1E15A call    scroll_print_wrapped
+1E15F jmp     short loc_1E174
+1E161 mov     ax, 8
+1E164 push    ax
+1E165 push    ax
+1E166 call    sub_174CF
+1E16B mov     ax, 20h ; ' '; int
+1E16E push    ax; int
+1E16F call    scroll_print_wrapped
+1E174 cmp     byte_3E01E, 0
+1E179 jnz     short loc_1E193
+1E17B mov     ax, 8
+1E17E push    ax
+1E17F mov     ax, 3
+1E182 push    ax
+1E183 call    sub_174CF
+1E188 mov     ax, 20h ; ' '; int
+1E18B push    ax; int
+1E18C call    scroll_print_wrapped
+1E191 jmp     short loc_1E1A9
+1E193 mov     ax, 8
+1E196 push    ax
+1E197 mov     ax, 3
+1E19A push    ax
+1E19B call    sub_174CF
+1E1A0 mov     ax, 18h; int
+1E1A3 push    ax; int
+1E1A4 call    scroll_print_wrapped
+1E1A9 mov     ax, word_4BF59
+1E1AC mov     [bp+var_4], ax
+1E1AF cmp     ax, 100h
+1E1B2 jl      short loc_1E1CA
+1E1B4 mov     ax, [bp+var_4]
+1E1B7 mov     dx, 3
+1E1BA mul     dx
+1E1BC mov     bx, ax
+1E1BE mov     ax, [bx+6828h]
+1E1C2 mov     [bp+var_4], ax
+1E1C5 cmp     ax, 100h
+1E1C8 jge     short loc_1E1B4
+1E1CA mov     ax, 2
+1E1CD push    ax
+1E1CE mov     ax, 9
+1E1D1 push    ax
+1E1D2 call    sub_174CF
+1E1D7 push    ds
+1E1D8 mov     ax, offset asc_3E0FF; "      "
+1E1DB push    ax
+1E1DC call    scroll_printf
+1E1E1 pop     cx
+1E1E2 pop     cx
+1E1E3 mov     ax, 2
+1E1E6 push    ax
+1E1E7 mov     ax, 9
+1E1EA push    ax
+1E1EB call    sub_174CF
+1E1F0 mov     bx, [bp+var_4]
+1E1F3 mov     al, [bx-73B6h]
+1E1F7 mov     ah, 0
+1E1F9 push    ax
+1E1FA push    word_4BF44
+1E1FE push    cs
+1E1FF call    near ptr sub_1DF06
+1E202 push    ax
+1E203 push    ds
+1E204 mov     ax, offset aDDs; "%d%/%ds"
+1E207 push    ax
+1E208 call    scroll_printf
+1E20D add     sp, 8
+1E210 mov     ax, 0Bh
+1E213 push    ax
+1E214 mov     ax, 9
+1E217 push    ax
+1E218 call    sub_174CF
+1E21D push    ds
+1E21E mov     ax, offset asc_3E0FF; "      "
+1E221 push    ax
+1E222 call    scroll_printf
+1E227 pop     cx
+1E228 pop     cx
+1E229 mov     ax, 0Bh
+1E22C push    ax
+1E22D mov     ax, 9
+1E230 push    ax
+1E231 call    sub_174CF
+1E236 mov     bx, [bp+var_4]
+1E239 mov     al, [bx-73B6h]
+1E23D mov     ah, 0
+1E23F shl     ax, 1
+1E241 push    ax
+1E242 mov     ax, word_4BF47
+1E245 add     ax, word_4BF44
+1E249 push    ax
+1E24A push    cs
+1E24B call    near ptr sub_1DF06
+1E24E push    ax
+1E24F push    ds
+1E250 mov     ax, offset aDDs; "%d%/%ds"
+1E253 push    ax
+1E254 call    scroll_printf
+1E259 add     sp, 8
+1E25C push    [bp+var_2]
+1E25F call    sub_17494
+1E264 push    [bp+var_A]
+1E267 call    sub_14690
+1E26C pop     di
+1E26D pop     si
+1E26E mov     sp, bp
+1E270 pop     bp
+1E271 retf

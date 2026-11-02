@@ -457,8 +457,26 @@ bool Game::handleKeyInner(int key) {
 		_pending = 0;
 		if ((key == KEY_ENTER || key == KEY_SPACE) && cmd == 'U') {
 			useAt(x, y); // the own square (rear horse)
+		} else if (cmd == 'p' && key >= '1' && key <= '8') {
+			// the potion's target: a party member by number
+			int n = key - '1';
+			usePotionOn(n < _world.actors.partySize ? _world.actors.partyRoster[n] : -1);
+			prompt();
 		} else if (selectTarget(key, tx, ty)) {
-			if (cmd == 'T')
+			if (cmd == 'k') {
+				useKeyOn(tx, ty);
+				prompt();
+			} else if (cmd == 'p') {
+				// an adjacent person
+				std::vector<int> here;
+				_world.objectsAt(tx, ty, z, here);
+				int actor = -1;
+				for (int i : here)
+					if (_world.objects[i].actor >= 0)
+						actor = _world.objects[i].actor;
+				usePotionOn(actor);
+				prompt();
+			} else if (cmd == 'T')
 				talkAt(tx, ty);
 			else if (cmd == 'G')
 				getAt(tx, ty);
@@ -467,6 +485,8 @@ bool Game::handleKeyInner(int key) {
 			else if (cmd == 'U')
 				useAt(tx, ty);
 		} else {
+			if (cmd == 'k' || cmd == 'p')
+				_useItem = -1;
 			message("what?\n");
 			prompt();
 		}

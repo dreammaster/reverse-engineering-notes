@@ -1,0 +1,4261 @@
+=== use_food 355D3
+355D3 push    bp
+355D4 mov     bp, sp
+355D6 push    si
+355D7 push    di
+355D8 mov     si, [bp+arg_0]
+355DB xor     di, di
+355DD push    ds
+355DE mov     ax, offset aYouEatTheFood; "\nYou eat the food.\n"
+355E1 push    ax
+355E2 call    scroll_printf
+355E7 pop     cx
+355E8 pop     cx
+355E9 test    byte ptr [si-5F55h], 18h
+355EE jz      short loc_355F3
+355F0 mov     di, 1
+355F3 mov     bx, si
+355F5 shl     bx, 1
+355F7 mov     ax, [bx+3548h]
+355FB and     ax, 3FFh
+355FE push    ax
+355FF call    stackable_kind
+35604 or      ax, ax
+35606 jz      short loc_35627
+35608 mov     bx, si
+3560A shl     bx, 1
+3560C add     bx, 4EE4h
+35610 push    ds
+35611 pop     es
+35612 cmp     byte ptr es:[bx], 1
+35616 jbe     short loc_35627
+35618 mov     bx, si
+3561A shl     bx, 1
+3561C add     bx, 4EE4h
+35620 push    ds
+35621 pop     es
+35622 dec     byte ptr es:[bx]
+35625 jmp     short loc_3562D
+35627 push    si
+35628 call    sub_1AC65
+3562D or      di, di
+3562F jz      short loc_35636
+35631 call    sub_1DF45
+35636 pop     di
+35637 pop     si
+35638 pop     bp
+35639 retf    2
+=== use_potion 32EC2
+32EC2 push    bp
+32EC3 mov     bp, sp
+32EC5 push    si
+32EC6 push    word_3E63E
+32ECA push    ds
+32ECB mov     ax, 1E8Ah
+32ECE push    ax
+32ECF call    scroll_printf
+32ED4 add     sp, 6
+32ED7 mov     word_3DD0E, 1
+32EDD cmp     byte_3DCE2, 0
+32EE2 jz      short loc_32EF6
+32EE4 xor     ax, ax
+32EE6 push    ax
+32EE7 call    sub_16125
+32EEC mov     byte_3DCE2, 1
+32EF1 mov     byte_3DCE5, 7
+32EF6 call    sub_17099
+32EFB cmp     word_48F03, 0FFFFh
+32F00 jz      short loc_32F10
+32F02 cmp     word_48EFF, 0FFFFh
+32F07 jz      short loc_32F10
+32F09 cmp     word_48F01, 0FFFFh
+32F0E jnz     short loc_32F24
+32F10 push    word_3E636
+32F14 push    ds
+32F15 mov     ax, offset aS_15; "%s\n"
+32F18 push    ax
+32F19 call    scroll_printf
+32F1E add     sp, 6
+32F21 jmp     loc_330C0
+32F24 push    ds
+32F25 push    word_48F03
+32F29 call    get_object_name
+32F2E push    ax
+32F2F call    scroll_printf
+32F34 pop     cx
+32F35 pop     cx; int
+32F36 mov     ax, 0Ah; int
+32F39 push    ax; int
+32F3A call    scroll_print_wrapped
+32F3F mov     bx, word_48F03
+32F43 test    byte ptr [bx-6055h], 80h
+32F48 jnz     short loc_32F5E
+32F4A push    word_3E630
+32F4E push    ds
+32F4F mov     ax, offset aS_15; "%s\n"
+32F52 push    ax
+32F53 call    scroll_printf
+32F58 add     sp, 6
+32F5B jmp     loc_330C0
+32F5E mov     bx, [bp+arg_0]
+32F61 shl     bx, 1
+32F63 mov     si, [bx+3548h]
+32F67 mov     cl, 0Ah
+32F69 shr     si, cl
+32F6B mov     ax, si
+32F6D cmp     ax, 7; switch 8 cases
+32F70 jbe     short loc_32F75
+32F72 jmp     def_32F79; jumptable 00032F79 default case
+32F75 mov     bx, ax
+32F77 shl     bx, 1
+32F79 jmp     cs:jpt_32F79[bx]; switch jump
+32F7E db 0FEh; jump table for switch statement
+32F7F cmp     [si], bh
+32F81 cmp     [bx+39h], cx
+32F84 pop     bx
+32F85 cmp     [bp+si-2BC7h], dx
+32F89 cmp     cx, bp
+32F8B cmp     [bp+di], cx
+32F8D cmp     cl, [bp+di-4CE2h]
+32F91 mov     dh, 0F6h
+32F93 xchg    bp, [bp+di+49Fh]
+32F97 jz      short loc_32FB8
+32F99 and     byte ptr [bx-6055h], 0FBh
+32F9E mov     ax, bx
+32FA0 shl     ax, 1
+32FA2 les     bx, actor_base_obj_frame_ptr
+32FA6 add     bx, ax
+32FA8 mov     ax, es:[bx]
+32FAB mov     bx, word_48F03
+32FAF shl     bx, 1
+32FB1 mov     [bx+3548h], ax
+32FB5 jmp     def_32F79; jumptable 00032F79 default case
+32FB8 push    word_3E630
+32FBC push    ds
+32FBD mov     ax, offset aS_19; "\n%s\n"
+32FC0 push    ax
+32FC1 call    scroll_printf
+32FC6 add     sp, 6
+32FC9 jmp     def_32F79; jumptable 00032F79 default case
+32FCC mov     bx, word_48F03; jumptable 00032F79 case 1
+32FD0 test    byte ptr [bx-6055h], 8
+32FD5 jz      short loc_32FB8
+32FD7 and     byte ptr [bx-6055h], 0F7h
+32FDC jmp     def_32F79; jumptable 00032F79 default case
+32FDF mov     ax, 6; jumptable 00032F79 case 2
+32FE2 push    ax
+32FE3 call    sub_2220D
+32FE8 jmp     def_32F79; jumptable 00032F79 default case
+32FEB mov     bx, word_48F03; jumptable 00032F79 case 3
+32FEF shl     bx, 1
+32FF1 mov     ax, [bx+3548h]
+32FF5 and     ax, 3FFh
+32FF8 push    ax
+32FF9 call    sub_35F9B
+32FFE mov     bx, ax
+33000 shl     bx, 1
+33002 mov     ax, seg seg066
+33005 mov     es, ax
+33007 test    word ptr es:[bx+242h], 4
+3300E jnz     short loc_32FB8
+33010 mov     bx, word_48F03
+33014 or      byte ptr [bx-6055h], 8
+33019 push    bx
+3301A call    sub_2C20F
+3301F jmp     def_32F79; jumptable 00032F79 default case
+33022 mov     bx, word_48F03; jumptable 00032F79 case 4
+33026 shl     bx, 1
+33028 mov     ax, [bx+3548h]
+3302C and     ax, 3FFh
+3302F push    ax
+33030 call    sub_35F9B
+33035 mov     bx, ax
+33037 shl     bx, 1
+33039 mov     ax, seg seg066
+3303C mov     es, ax
+3303E test    word ptr es:[bx+242h], 80h
+33045 jz      short loc_3304A
+33047 jmp     loc_32FB8
+3304A push    word_48F03
+3304E call    sub_2C20F
+33053 mov     bx, word_48F03
+33057 or      byte ptr [bx-6055h], 4
+3305C push    bx
+3305D call    sub_2B5A4
+33062 jmp     short def_32F79; jumptable 00032F79 default case
+33064 mov     bx, word_48F03; jumptable 00032F79 case 5
+33068 test    byte ptr [bx-6055h], 1
+3306D jz      short loc_33072
+3306F jmp     loc_32FB8
+33072 or      byte ptr [bx-6055h], 1
+33077 jmp     short loc_3308C
+33079 mov     bx, word_48F03; jumptable 00032F79 case 6
+3307D test    byte ptr [bx-5F55h], 2
+33082 jz      short loc_33087
+33084 jmp     loc_32FB8
+33087 or      byte ptr [bx-5F55h], 2
+3308C push    word_48F03
+33090 mov     ax, 1
+33093 push    ax
+33094 call    sub_37940
+33099 jmp     short def_32F79; jumptable 00032F79 default case
+3309B mov     ax, 49h ; 'I'; jumptable 00032F79 case 7
+3309E push    ax
+3309F call    sub_241CC
+330A4 push    [bp+arg_0]; jumptable 00032F79 default case
+330A7 call    sub_1AC65
+330AC cmp     word_3DD10, 91h
+330B2 jz      short loc_330BC
+330B4 cmp     word_3DD10, 90h
+330BA jnz     short loc_330C0
+330BC inc     byte_3DB8A
+330C0 pop     si
+330C1 pop     bp
+330C2 retf    2
+=== use_scroll 33E70
+33E70 push    ds
+33E71 mov     ax, offset aYouStudyTheScr; "\nYou study the scroll!\n"
+33E74 push    ax
+33E75 call    scroll_printf
+33E7A pop     cx
+33E7B pop     cx
+33E7C mov     word_404F8, 1
+33E82 retf
+=== use_key_or_lockpick 3241E
+3241E push    bp
+3241F mov     bp, sp
+32421 sub     sp, 0Ah
+32424 push    si
+32425 push    di
+32426 mov     si, [bp+arg_0]
+32429 mov     al, byte_404A4
+3242C mov     ah, 0
+3242E mov     bx, ax
+32430 mov     al, [bx+3533h]
+32434 mov     ah, 0
+32436 mov     [bp+var_2], ax
+32439 mov     bx, si
+3243B shl     bx, 1
+3243D mov     ax, [bx+3548h]
+32441 and     ax, 3FFh
+32444 mov     [bp+var_4], ax
+32447 push    ds
+32448 mov     ax, offset aOn; "On "
+3244B push    ax
+3244C call    scroll_printf
+32451 pop     cx
+32452 pop     cx
+32453 cmp     byte_3DCE2, 0
+32458 jz      short loc_32467
+3245A xor     ax, ax
+3245C push    ax
+3245D call    sub_16125
+32462 mov     byte_3DCE2, 1
+32467 call    sub_17099
+3246C mov     [bp+var_A], ax
+3246F cmp     ax, 8Eh
+32472 jz      short loc_32477
+32474 jmp     loc_32648
+32477 cmp     word_48F03, 0FFFFh
+3247C jnz     short loc_32481
+3247E jmp     loc_32648
+32481 push    ds
+32482 push    word_48F03
+32486 call    get_object_name
+3248B push    ax
+3248C call    scroll_printf
+32491 pop     cx
+32492 pop     cx; int
+32493 mov     ax, 0Ah; int
+32496 push    ax; int
+32497 call    scroll_print_wrapped
+3249C mov     bx, word_48F03
+324A0 shl     bx, 1
+324A2 mov     di, [bx+3548h]
+324A6 and     di, 3FFh
+324AA mov     ax, [bp+var_2]
+324AD mov     dx, 3
+324B0 mul     dx
+324B2 mov     bx, ax
+324B4 mov     ax, [bx+6828h]
+324B8 and     ax, 3FFh
+324BB mov     [bp+var_8], ax
+324BE mov     ax, [bp+var_2]
+324C1 mov     dx, 3
+324C4 mul     dx
+324C6 mov     bx, ax
+324C8 mov     ax, [bx+6829h]
+324CC sar     ax, 1
+324CE sar     ax, 1
+324D0 and     ax, 3FFh
+324D3 mov     [bp+var_6], ax
+324D6 mov     bx, word_48F03
+324DA test    byte ptr [bx-5F55h], 18h
+324DF jnz     short loc_32519
+324E1 mov     ax, word_48EFF
+324E4 sub     ax, [bp+var_8]
+324E7 push    ax; x
+324E8 call    _abs
+324ED pop     cx
+324EE cmp     ax, 1
+324F1 jg      short loc_32505
+324F3 mov     ax, word_48F01
+324F6 sub     ax, [bp+var_6]
+324F9 push    ax; x
+324FA call    _abs
+324FF pop     cx
+32500 cmp     ax, 1
+32503 jle     short loc_32519
+32505 push    word_3E632
+32509 push    ds
+3250A mov     ax, 1F25h
+3250D push    ax
+3250E call    scroll_printf
+32513 add     sp, 6
+32516 jmp     loc_32659
+32519 cmp     di, 129h
+3251D jl      short loc_32525
+3251F cmp     di, 12Ch
+32523 jle     short loc_3252D
+32525 cmp     di, 62h ; 'b'
+32528 jz      short loc_3252D
+3252A jmp     loc_32635
+3252D cmp     [bp+var_4], 3Fh ; '?'
+32531 jnz     short loc_325A5
+32533 push    [bp+var_2]
+32536 call    adjusted_dexterity
+3253B push    ax
+3253C push    cs
+3253D call    near ptr sub_323C4
+32540 or      ax, ax
+32542 jz      short loc_325A5
+32544 mov     ax, 0Dh
+32547 push    ax
+32548 xor     ax, ax
+3254A push    ax
+3254B call    sub_36E85
+32550 push    ds
+32551 mov     ax, offset aKeyBroke; "\nKey broke.\n"
+32554 push    ax
+32555 call    scroll_printf
+3255A pop     cx
+3255B pop     cx
+3255C mov     bx, si
+3255E shl     bx, 1
+32560 add     bx, 4EE4h
+32564 push    ds
+32565 pop     es
+32566 cmp     byte ptr es:[bx], 1
+3256A jnz     short loc_32574
+3256C push    si
+3256D call    sub_1AC65
+32572 jmp     short loc_32592
+32574 mov     bx, si
+32576 shl     bx, 1
+32578 add     bx, 4EE4h
+3257C push    ds
+3257D pop     es
+3257E mov     al, es:[bx]
+32581 add     al, 0FFh
+32583 mov     bx, si
+32585 shl     bx, 1
+32587 add     bx, 4EE4h
+3258B push    ax
+3258C push    ds
+3258D pop     es
+3258E pop     ax
+3258F mov     es:[bx], al
+32592 cmp     word_3DD10, 92h
+32598 jz      short loc_3259D
+3259A jmp     loc_32659
+3259D call    sub_1DF45
+325A2 jmp     loc_32659
+325A5 cmp     [bp+var_4], 40h ; '@'
+325A9 jnz     short loc_325E0
+325AB mov     bx, word_48F03
+325AF shl     bx, 1
+325B1 add     bx, 4EE4h
+325B5 push    ds
+325B6 pop     es
+325B7 cmp     byte ptr es:[bx+1], 0
+325BC jz      short loc_325E0
+325BE mov     bx, si
+325C0 shl     bx, 1
+325C2 add     bx, 4EE4h
+325C6 push    ds
+325C7 pop     es
+325C8 mov     al, es:[bx+1]
+325CC mov     bx, word_48F03
+325D0 shl     bx, 1
+325D2 add     bx, 4EE4h
+325D6 push    ax
+325D7 push    ds
+325D8 pop     es
+325D9 pop     ax
+325DA cmp     al, es:[bx+1]
+325DE jz      short loc_325F9
+325E0 cmp     [bp+var_4], 3Fh ; '?'
+325E4 jnz     short loc_32622
+325E6 mov     bx, word_48F03
+325EA shl     bx, 1
+325EC add     bx, 4EE4h
+325F0 push    ds
+325F1 pop     es
+325F2 cmp     byte ptr es:[bx+1], 0
+325F7 jnz     short loc_32622
+325F9 cmp     di, 62h ; 'b'
+325FC jnz     short loc_32610
+325FE push    word_48F03
+32602 mov     ax, 1
+32605 push    ax
+32606 xor     ax, ax
+32608 push    ax
+32609 push    ax
+3260A push    cs
+3260B call    near ptr use_door
+3260E jmp     short loc_32659
+32610 push    word_48F03
+32614 mov     ax, 1
+32617 push    ax
+32618 xor     ax, ax
+3261A push    ax
+3261B push    ax
+3261C push    cs
+3261D call    near ptr use_key_on_door
+32620 jmp     short loc_32659
+32622 push    word_3E630
+32626 push    ds
+32627 mov     ax, offset aS_19; "\n%s\n"
+3262A push    ax
+3262B call    scroll_printf
+32630 add     sp, 6
+32633 jmp     short loc_32659
+32635 push    word_3E630
+32639 push    ds
+3263A mov     ax, offset aS_15; "%s\n"
+3263D push    ax
+3263E call    scroll_printf
+32643 add     sp, 6
+32646 jmp     short loc_32659
+32648 push    word_3E636
+3264C push    ds
+3264D mov     ax, offset aS_15; "%s\n"
+32650 push    ax
+32651 call    scroll_printf
+32656 add     sp, 6
+32659 pop     di
+3265A pop     si
+3265B mov     sp, bp
+3265D pop     bp
+3265E retf    2
+=== use_torch 32661
+32661 push    bp
+32662 mov     bp, sp
+32664 sub     sp, 6
+32667 push    si
+32668 push    di
+32669 mov     si, [bp+arg_0]
+3266C mov     bx, si
+3266E shl     bx, 1
+32670 add     bx, 4EE4h
+32674 push    ds
+32675 pop     es
+32676 mov     al, es:[bx]
+32679 mov     ah, 0
+3267B mov     [bp+var_6], ax
+3267E test    byte ptr [si-5F55h], 80h
+32683 jz      short loc_326A6
+32685 push    si
+32686 call    sub_1AC65
+3268B mov     ax, 0Ah; int
+3268E push    ax; int
+3268F call    scroll_print_wrapped
+32694 mov     ax, seg seg067
+32697 push    ax
+32698 mov     ax, 1F3h
+3269B push    ax
+3269C call    scroll_printf
+326A1 pop     cx
+326A2 pop     cx
+326A3 jmp     loc_32827
+326A6 cmp     word_4BF38, 0
+326AB jz      short loc_326C3
+326AD cmp     word_4BF3E, 0
+326B2 jz      short loc_326C3
+326B4 push    ds
+326B5 mov     ax, offset aNoFreeHandToHo; "\nNo free hand to hold the torch.\n"
+326B8 push    ax
+326B9 call    scroll_printf
+326BE pop     cx
+326BF pop     cx
+326C0 jmp     loc_3281A
+326C3 cmp     [bp+var_6], 1
+326C7 jg      short loc_326CC
+326C9 jmp     loc_3278D
+326CC mov     di, si
+326CE test    byte ptr [si-5F55h], 18h
+326D3 jz      short loc_326D8
+326D5 jmp     loc_3275B
+326D8 mov     al, byte ptr player_z
+326DB mov     cl, 4
+326DD shl     al, cl
+326DF mov     [bp+var_2], al
+326E2 mov     ax, di
+326E4 mov     dx, 3
+326E7 mul     dx
+326E9 mov     bx, ax
+326EB mov     ax, [bx+6828h]
+326EF and     ax, 3FFh
+326F2 mov     [bp+var_4], ax
+326F5 mov     ax, di
+326F7 mov     dx, 3
+326FA mul     dx
+326FC mov     bx, ax
+326FE mov     ax, [bx+6829h]
+32702 sar     ax, 1
+32704 sar     ax, 1
+32706 and     ax, 3FFh
+32709 shl     ax, 1
+3270B shl     ax, 1
+3270D or      [bp+var_4+1], ax
+32710 mov     al, [di-5F55h]
+32714 mov     ah, 0
+32716 and     ax, 18h
+32719 push    ax
+3271A lea     bx, [bp+var_4]
+3271D mov     dx, ss
+3271F mov     ax, bx
+32721 mov     cx, 4
+32724 call    SPUSH@
+32729 mov     ax, 5Ah ; 'Z'
+3272C push    ax
+3272D mov     bx, di
+3272F shl     bx, 1
+32731 mov     ax, [bx+3548h]
+32735 mov     cl, 0Ah
+32737 shr     ax, cl
+32739 push    ax
+3273A mov     bx, di
+3273C shl     bx, 1
+3273E add     bx, 4EE4h
+32742 push    ds
+32743 pop     es
+32744 mov     al, es:[bx+1]
+32748 mov     ah, 0
+3274A mov     cl, 8
+3274C shl     ax, cl
+3274E or      ax, 1
+32751 push    ax
+32752 call    sub_1A80C
+32757 mov     si, ax
+32759 jmp     short loc_32779
+3275B mov     ax, 5Ah ; 'Z'
+3275E push    ax
+3275F mov     ax, 18h
+32762 push    ax
+32763 mov     ax, 1
+32766 push    ax
+32767 mov     bx, word_3DD03
+3276B mov     al, [bx+3533h]
+3276F mov     ah, 0
+32771 push    ax
+32772 call    sub_1A968
+32777 mov     si, ax
+32779 mov     al, byte ptr [bp+var_6]
+3277C add     al, 0FFh
+3277E mov     bx, di
+32780 shl     bx, 1
+32782 add     bx, 4EE4h
+32786 push    ax
+32787 push    ds
+32788 pop     es
+32789 pop     ax
+3278A mov     es:[bx], al
+3278D test    byte ptr [si-5F55h], 18h
+32792 jz      short loc_327DD
+32794 mov     al, [si-5F55h]
+32798 mov     ah, 0
+3279A and     ax, 18h
+3279D cmp     ax, 10h
+327A0 jz      short loc_327B0
+327A2 mov     al, [si-5F55h]
+327A6 mov     ah, 0
+327A8 and     ax, 18h
+327AB cmp     ax, 8
+327AE jnz     short loc_327DD
+327B0 cmp     word_4BF38, 0
+327B5 jnz     short loc_327BD
+327B7 mov     word_4BF38, si
+327BB jmp     short loc_327C1
+327BD mov     word_4BF3E, si
+327C1 mov     al, [si-5F55h]
+327C5 and     al, 0E7h
+327C7 or      al, 18h
+327C9 mov     [si-5F55h], al
+327CD mov     bx, word_3DD03
+327D1 mov     al, [bx+3533h]
+327D5 mov     ah, 0
+327D7 push    ax
+327D8 call    compute_carried_weight
+327DD or      byte ptr [si-5F55h], 80h
+327E2 mov     bx, si
+327E4 shl     bx, 1
+327E6 mov     ax, [bx+3548h]
+327EA and     ax, 3FFh
+327ED add     ax, 400h
+327F0 mov     bx, si
+327F2 shl     bx, 1
+327F4 mov     [bx+3548h], ax
+327F8 mov     bx, si
+327FA shl     bx, 1
+327FC add     bx, 4EE4h
+32800 push    ds
+32801 pop     es
+32802 mov     byte ptr es:[bx], 0C8h
+32806 xor     ax, ax
+32808 push    ax
+32809 call    advance_time
+3280E push    ds
+3280F mov     ax, offset aTorchIsLit; "\nTorch is lit.\n"
+32812 push    ax
+32813 call    scroll_printf
+32818 pop     cx
+32819 pop     cx
+3281A cmp     word_3DD10, 92h
+32820 jnz     short loc_32827
+32822 call    sub_1DF45
+32827 pop     di
+32828 pop     si
+32829 mov     sp, bp
+3282B pop     bp
+3282C retf    2
+=== use_fan 35766
+35766 mov     al, byte_404A3
+35769 inc     al
+3576B and     al, 7
+3576D mov     byte_404A3, al
+35770 push    ds
+35771 mov     ax, offset aYouFeelABreeze; "\nYou feel a breeze.\n"
+35774 push    ax
+35775 call    scroll_printf
+3577A pop     cx
+3577B pop     cx
+3577C xor     ax, ax
+3577E push    ax
+3577F call    advance_time
+35784 retf
+=== use_door 3224C
+3224C push    bp
+3224D mov     bp, sp
+3224F push    si
+32250 push    di
+32251 mov     si, [bp+arg_6]
+32254 mov     ax, 0Ah; int
+32257 push    ax; int
+32258 call    scroll_print_wrapped
+3225D mov     bx, si
+3225F shl     bx, 1
+32261 mov     di, [bx+3548h]
+32265 mov     cl, 0Ah
+32267 shr     di, cl
+32269 or      di, di
+3226B jnz     short loc_32297
+3226D cmp     [bp+arg_4], 0
+32271 jz      short loc_32276
+32273 jmp     loc_323A1
+32276 cmp     [bp+arg_2], 0
+3227A jz      short loc_3227F
+3227C jmp     loc_323A1
+3227F cmp     [bp+arg_0], 0
+32283 jz      short loc_32288
+32285 jmp     loc_323A1
+32288 push    ds
+32289 mov     ax, offset aClosed; "closed!\n"
+3228C push    ax
+3228D call    scroll_printf
+32292 pop     cx
+32293 pop     cx
+32294 jmp     loc_32389
+32297 cmp     di, 1
+3229A jz      short loc_3229F
+3229C jmp     loc_32342
+3229F cmp     [bp+arg_4], 0
+322A3 jnz     short loc_32318
+322A5 cmp     [bp+arg_2], 0
+322A9 jnz     short loc_32318
+322AB cmp     [bp+arg_0], 0
+322AF jnz     short loc_32318
+322B1 push    si
+322B2 mov     ax, 151h
+322B5 push    ax
+322B6 mov     ax, 16h
+322B9 push    ax
+322BA call    sub_19FA2
+322BF cmp     ax, 0FFFFh
+322C2 jz      short loc_322CB
+322C4 push    si
+322C5 push    cs
+322C6 call    near ptr trigger_trap
+322C9 jmp     short loc_322D7
+322CB push    ds
+322CC mov     ax, offset aOpened; "opened!\n"
+322CF push    ax
+322D0 call    scroll_printf
+322D5 pop     cx
+322D6 pop     cx
+322D7 mov     bx, si
+322D9 shl     bx, 1
+322DB mov     ax, [bx+3548h]
+322DF and     ax, 3FFh
+322E2 mov     bx, si
+322E4 shl     bx, 1
+322E6 mov     [bx+3548h], ax
+322EA push    si
+322EB mov     ax, si
+322ED mov     dx, 3
+322F0 mul     dx
+322F2 mov     bx, ax
+322F4 mov     ax, [bx+6828h]
+322F8 and     ax, 3FFh
+322FB push    ax
+322FC mov     ax, si
+322FE mov     dx, 3
+32301 mul     dx
+32303 mov     bx, ax
+32305 mov     ax, [bx+6829h]
+32309 sar     ax, 1
+3230B sar     ax, 1
+3230D and     ax, 3FFh
+32310 push    ax
+32311 push    cs
+32312 call    near ptr search_here
+32315 jmp     loc_323B2
+32318 cmp     [bp+arg_4], 0
+3231C jz      short loc_3234D
+3231E push    ds
+3231F mov     ax, offset aLocked; "locked!\n"
+32322 push    ax
+32323 call    scroll_printf
+32328 pop     cx
+32329 pop     cx
+3232A mov     bx, si
+3232C shl     bx, 1
+3232E mov     ax, [bx+3548h]
+32332 and     ax, 3FFh
+32335 add     ax, 800h
+32338 mov     bx, si
+3233A shl     bx, 1
+3233C mov     [bx+3548h], ax
+32340 jmp     short loc_323B2
+32342 cmp     di, 2
+32345 jnz     short loc_32377
+32347 cmp     [bp+arg_4], 0
+3234B jnz     short loc_3237D
+3234D cmp     [bp+arg_2], 0
+32351 jz      short loc_323A1
+32353 push    ds
+32354 mov     ax, offset aMagicallyLocke; "magically locked!\n"
+32357 push    ax
+32358 call    scroll_printf
+3235D pop     cx
+3235E pop     cx
+3235F mov     bx, si
+32361 shl     bx, 1
+32363 mov     ax, [bx+3548h]
+32367 and     ax, 3FFh
+3236A add     ax, 0C00h
+3236D mov     bx, si
+3236F shl     bx, 1
+32371 mov     [bx+3548h], ax
+32375 jmp     short loc_323B2
+32377 cmp     [bp+arg_0], 0
+3237B jz      short loc_323A1
+3237D push    ds
+3237E mov     ax, offset aUnlocked; "unlocked!\n"
+32381 push    ax
+32382 call    scroll_printf
+32387 pop     cx
+32388 pop     cx
+32389 mov     bx, si
+3238B shl     bx, 1
+3238D mov     ax, [bx+3548h]
+32391 and     ax, 3FFh
+32394 add     ax, 400h
+32397 mov     bx, si
+32399 shl     bx, 1
+3239B mov     [bx+3548h], ax
+3239F jmp     short loc_323B2
+323A1 push    word_3E630
+323A5 push    ds
+323A6 mov     ax, offset aS_15; "%s\n"
+323A9 push    ax
+323AA call    scroll_printf
+323AF add     sp, 6
+323B2 test    byte ptr [si-5F55h], 18h
+323B7 jz      short loc_323BE
+323B9 call    sub_1DF45
+323BE pop     di
+323BF pop     si
+323C0 pop     bp
+323C1 retf    8
+=== use_key_on_door 320D4
+320D4 push    bp
+320D5 mov     bp, sp
+320D7 push    si
+320D8 push    di
+320D9 mov     si, [bp+arg_6]
+320DC mov     ax, 0Ah; int
+320DF push    ax; int
+320E0 call    scroll_print_wrapped
+320E5 mov     bx, si
+320E7 shl     bx, 1
+320E9 mov     di, [bx+3548h]
+320ED mov     cl, 0Ah
+320EF shr     di, cl
+320F1 cmp     di, 4
+320F4 jge     short loc_32126
+320F6 cmp     [bp+arg_4], 0
+320FA jnz     short loc_32117
+320FC cmp     [bp+arg_2], 0
+32100 jnz     short loc_32117
+32102 cmp     [bp+arg_0], 0
+32106 jnz     short loc_32117
+32108 push    ds
+32109 mov     ax, offset aClosed; "closed!\n"
+3210C push    ax
+3210D call    scroll_printf
+32112 pop     cx
+32113 pop     cx
+32114 jmp     loc_321F6
+32117 push    ds
+32118 mov     ax, offset aCanTUnLockAnOp; "Can't (Un)lock an opened door\n"
+3211B push    ax
+3211C call    scroll_printf
+32121 pop     cx
+32122 pop     cx
+32123 jmp     loc_32246
+32126 cmp     di, 4
+32129 jge     short loc_3212E
+3212B jmp     loc_321A4
+3212E cmp     di, 8
+32131 jge     short loc_321A4
+32133 cmp     [bp+arg_4], 0
+32137 jz      short loc_32148
+32139 push    ds
+3213A mov     ax, offset aLocked; "locked!\n"
+3213D push    ax
+3213E call    scroll_printf
+32143 pop     cx
+32144 pop     cx
+32145 jmp     loc_321C3
+32148 cmp     [bp+arg_2], 0
+3214C jz      short loc_3217C
+3214E push    ds
+3214F mov     ax, offset aMagicallyLocke; "magically locked!\n"
+32152 push    ax
+32153 call    scroll_printf
+32158 pop     cx
+32159 pop     cx
+3215A mov     bx, si
+3215C shl     bx, 1
+3215E mov     ax, [bx+3548h]
+32162 and     ax, 3FFh
+32165 mov     dx, di
+32167 xor     dx, 8
+3216B mov     cl, 0Ah
+3216D shl     dx, cl
+3216F add     ax, dx
+32171 mov     bx, si
+32173 shl     bx, 1
+32175 mov     [bx+3548h], ax
+32179 jmp     loc_32246
+3217C push    si
+3217D mov     ax, 151h
+32180 push    ax
+32181 mov     ax, 16h
+32184 push    ax
+32185 call    sub_19FA2
+3218A cmp     ax, 0FFFFh
+3218D jz      short loc_32196
+3218F push    si
+32190 push    cs
+32191 call    near ptr trigger_trap
+32194 jmp     short loc_321F6
+32196 push    ds
+32197 mov     ax, offset aOpened; "opened!\n"
+3219A push    ax
+3219B call    scroll_printf
+321A0 pop     cx
+321A1 pop     cx
+321A2 jmp     short loc_321F6
+321A4 cmp     di, 8
+321A7 jge     short loc_321AC
+321A9 jmp     loc_32225
+321AC cmp     di, 0Ch
+321AF jge     short loc_32225
+321B1 cmp     [bp+arg_4], 0
+321B5 jz      short loc_321E4
+321B7 push    ds
+321B8 mov     ax, offset aUnlocked; "unlocked!\n"
+321BB push    ax
+321BC call    scroll_printf
+321C1 pop     cx
+321C2 pop     cx
+321C3 mov     bx, si
+321C5 shl     bx, 1
+321C7 mov     ax, [bx+3548h]
+321CB and     ax, 3FFh
+321CE mov     dx, di
+321D0 xor     dx, 0Ch
+321D4 mov     cl, 0Ah
+321D6 shl     dx, cl
+321D8 add     ax, dx
+321DA mov     bx, si
+321DC shl     bx, 1
+321DE mov     [bx+3548h], ax
+321E2 jmp     short loc_32246
+321E4 cmp     [bp+arg_2], 0
+321E8 jz      short loc_32217
+321EA push    ds
+321EB mov     ax, offset aMagicallyLocke; "magically locked!\n"
+321EE push    ax
+321EF call    scroll_printf
+321F4 pop     cx
+321F5 pop     cx
+321F6 mov     bx, si
+321F8 shl     bx, 1
+321FA mov     ax, [bx+3548h]
+321FE and     ax, 3FFh
+32201 mov     dx, di
+32203 xor     dx, 4
+32207 mov     cl, 0Ah
+32209 shl     dx, cl
+3220B add     ax, dx
+3220D mov     bx, si
+3220F shl     bx, 1
+32211 mov     [bx+3548h], ax
+32215 jmp     short loc_32246
+32217 push    ds
+32218 mov     ax, offset aLocked_0; "locked\n"
+3221B push    ax
+3221C call    scroll_printf
+32221 pop     cx
+32222 pop     cx
+32223 jmp     short loc_32246
+32225 cmp     [bp+arg_0], 0
+32229 jz      short loc_3223A
+3222B push    ds
+3222C mov     ax, offset aUnlocked; "unlocked!\n"
+3222F push    ax
+32230 call    scroll_printf
+32235 pop     cx
+32236 pop     cx
+32237 jmp     loc_3215A
+3223A push    ds
+3223B mov     ax, offset aMagicallyLocke; "magically locked!\n"
+3223E push    ax
+3223F call    scroll_printf
+32244 pop     cx
+32245 pop     cx
+32246 pop     di
+32247 pop     si
+32248 pop     bp
+32249 retf    8
+=== search_here 30031
+30031 push    bp
+30032 mov     bp, sp
+30034 sub     sp, 0Eh
+30037 push    si
+30038 push    di
+30039 mov     si, [bp+arg_4]
+3003C mov     [bp+var_4], 0
+30041 mov     al, byte_404A4
+30044 mov     ah, 0
+30046 mov     bx, ax
+30048 mov     al, [bx+3533h]
+3004C mov     ah, 0
+3004E mov     [bp+var_E], ax
+30051 mov     dx, 3
+30054 mul     dx
+30056 mov     bx, ax
+30058 mov     ax, [bx+6828h]
+3005C and     ax, 3FFh
+3005F mov     [bp+var_C], ax
+30062 mov     ax, [bp+var_E]
+30065 mov     dx, 3
+30068 mul     dx
+3006A mov     bx, ax
+3006C mov     ax, [bx+6829h]
+30070 sar     ax, 1
+30072 sar     ax, 1
+30074 and     ax, 3FFh
+30077 mov     [bp+var_A], ax
+3007A mov     bx, si
+3007C shl     bx, 1
+3007E mov     ax, [bx+3548h]
+30082 and     ax, 3FFh
+30085 mov     [bp+var_8], ax
+30088 mov     bx, si
+3008A shl     bx, 1
+3008C mov     ax, [bx+3548h]
+30090 mov     cl, 0Ah
+30092 shr     ax, cl
+30094 mov     [bp+var_6], ax
+30097 mov     ax, [bp+arg_2]
+3009A sub     ax, [bp+var_C]
+3009D push    ax; x
+3009E call    _abs
+300A3 pop     cx
+300A4 cmp     ax, 1
+300A7 jle     short loc_300AC
+300A9 jmp     loc_302EF
+300AC mov     ax, [bp+arg_0]
+300AF sub     ax, [bp+var_A]
+300B2 push    ax; x
+300B3 call    _abs
+300B8 pop     cx
+300B9 cmp     ax, 1
+300BC jle     short loc_300C1
+300BE jmp     loc_302EF
+300C1 cmp     si, 100h
+300C5 jge     short loc_300CA
+300C7 jmp     loc_302EF
+300CA mov     bx, si
+300CC shl     bx, 1
+300CE mov     ax, [bx+3548h]
+300D2 and     ax, 3FFh
+300D5 shl     ax, 1
+300D7 les     bx, basetile_ptr
+300DB add     bx, ax
+300DD mov     ax, es:[bx]
+300E0 mov     bx, si
+300E2 shl     bx, 1
+300E4 mov     dx, [bx+3548h]
+300E8 mov     cl, 0Ah
+300EA shr     dx, cl
+300EC add     ax, dx
+300EE les     bx, tileflags1_ptr
+300F2 add     bx, ax
+300F4 test    byte ptr es:[bx], 8
+300F8 jz      short loc_300FD
+300FA jmp     loc_302EF
+300FD cmp     [bp+var_8], 39h ; '9'
+30101 jnz     short loc_30106
+30103 jmp     loc_302EF
+30106 push    ds
+30107 mov     ax, offset aSearchingHereY; "\nSearching here, you find "
+3010A push    ax
+3010B call    scroll_printf
+30110 pop     cx
+30111 pop     cx
+30112 cmp     [bp+var_8], 14Eh
+30117 jnz     short loc_30161
+30119 test    [bp+var_6], 1
+3011E jz      short loc_30123
+30120 jmp     loc_302CF
+30123 push    ds
+30124 mov     ax, offset aASecretDoor; "a secret door"
+30127 push    ax
+30128 call    scroll_printf
+3012D pop     cx
+3012E pop     cx
+3012F mov     bx, si
+30131 shl     bx, 1
+30133 mov     ax, [bx+3548h]
+30137 and     ax, 3FFh
+3013A mov     dx, [bp+var_6]
+3013D xor     dx, 1
+30141 mov     cl, 0Ah
+30143 shl     dx, cl
+30145 add     ax, dx
+30147 mov     bx, si
+30149 shl     bx, 1
+3014B mov     [bx+3548h], ax
+3014F call    sub_18F86
+30154 call    sub_12C6C
+30159 mov     [bp+var_4], 1
+3015E jmp     loc_302CF
+30161 mov     bx, si
+30163 shl     bx, 1
+30165 mov     ax, [bx+3548h]
+30169 and     ax, 3FFh
+3016C shl     ax, 1
+3016E les     bx, basetile_ptr
+30172 add     bx, ax
+30174 mov     ax, es:[bx]
+30177 mov     bx, si
+30179 shl     bx, 1
+3017B mov     dx, [bx+3548h]
+3017F mov     cl, 0Ah
+30181 shr     dx, cl
+30183 add     ax, dx
+30185 les     bx, tileflags3_ptr
+30189 add     bx, ax
+3018B test    byte ptr es:[bx], 10h
+3018F jz      short loc_301B5
+30191 push    si
+30192 push    cs
+30193 call    near ptr sub_2FFA9
+30196 mov     si, ax
+30198 mov     bx, si
+3019A shl     bx, 1
+3019C mov     ax, [bx+3548h]
+301A0 and     ax, 3FFh
+301A3 mov     [bp+var_8], ax
+301A6 mov     bx, si
+301A8 shl     bx, 1
+301AA mov     ax, [bx+3548h]
+301AE mov     cl, 0Ah
+301B0 shr     ax, cl
+301B2 mov     [bp+var_6], ax
+301B5 push    si
+301B6 push    cs
+301B7 call    near ptr sub_2FF63
+301BA or      ax, ax
+301BC jz      short loc_301C1
+301BE jmp     loc_302CF
+301C1 push    si
+301C2 call    sub_19D00
+301C7 mov     di, ax
+301C9 jmp     loc_302C8
+301CC mov     bx, di
+301CE shl     bx, 1
+301D0 mov     ax, [bx+3548h]
+301D4 and     ax, 3FFh
+301D7 mov     [bp+var_8], ax
+301DA cmp     ax, 150h
+301DD jnz     short loc_301E2
+301DF jmp     loc_302C1
+301E2 cmp     ax, 151h
+301E5 jnz     short loc_301EA
+301E7 jmp     loc_302C1
+301EA push    di
+301EB mov     ax, si
+301ED mov     dx, 3
+301F0 mul     dx
+301F2 mov     bx, ax
+301F4 mov     ax, [bx+6828h]
+301F8 and     ax, 3FFh
+301FB push    ax
+301FC mov     ax, si
+301FE mov     dx, 3
+30201 mul     dx
+30203 mov     bx, ax
+30205 mov     ax, [bx+6829h]
+30209 sar     ax, 1
+3020B sar     ax, 1
+3020D and     ax, 3FFh
+30210 push    ax
+30211 push    player_z
+30215 call    sub_1B26F
+3021A push    [bp+var_E]
+3021D push    [bp+var_C]
+30220 push    [bp+var_A]
+30223 push    player_z
+30227 call    sub_1B26F
+3022C call    sub_18F86
+30231 call    sub_12C6C
+30236 push    si
+30237 call    sub_19D00
+3023C mov     [bp+var_2], ax
+3023F jmp     short loc_30249
+30241 call    sub_19D59
+30246 mov     [bp+var_2], ax
+30249 cmp     [bp+var_2], 0
+3024D jl      short loc_30271
+3024F mov     bx, [bp+var_2]
+30252 shl     bx, 1
+30254 mov     ax, [bx+3548h]
+30258 and     ax, 3FFh
+3025B cmp     ax, 150h
+3025E jz      short loc_30241
+30260 mov     bx, [bp+var_2]
+30263 shl     bx, 1
+30265 mov     ax, [bx+3548h]
+30269 and     ax, 3FFh
+3026C cmp     ax, 151h
+3026F jz      short loc_30241
+30271 cmp     [bp+var_4], 0
+30275 jz      short loc_3028B
+30277 cmp     [bp+var_2], 0
+3027B jl      short loc_3028B
+3027D push    ds
+3027E mov     ax, 1DB6h
+30281 push    ax
+30282 call    scroll_printf
+30287 pop     cx
+30288 pop     cx
+30289 jmp     short loc_302A3
+3028B cmp     [bp+var_4], 0
+3028F jz      short loc_302A3
+30291 cmp     [bp+var_2], 0FFFFh
+30295 jnz     short loc_302A3
+30297 push    ds
+30298 mov     ax, offset aAnd; " and "
+3029B push    ax
+3029C call    scroll_printf
+302A1 pop     cx
+302A2 pop     cx
+302A3 push    di
+302A4 push    cs
+302A5 call    near ptr print_object_quantity_or_article
+302A8 push    ds
+302A9 push    di
+302AA call    get_object_name
+302AF push    ax
+302B0 call    scroll_printf
+302B5 pop     cx
+302B6 pop     cx
+302B7 mov     [bp+var_4], 1
+302BC mov     di, [bp+var_2]
+302BF jmp     short loc_302C8
+302C1 call    sub_19D59
+302C6 mov     di, ax
+302C8 or      di, di
+302CA jl      short loc_302CF
+302CC jmp     loc_301CC
+302CF cmp     [bp+var_4], 0
+302D3 jnz     short loc_302E3
+302D5 push    ds
+302D6 mov     ax, offset aNothing_2; "nothing.\n"
+302D9 push    ax
+302DA call    scroll_printf
+302DF pop     cx
+302E0 pop     cx
+302E1 jmp     short loc_302EF
+302E3 push    ds
+302E4 mov     ax, 1DC6h
+302E7 push    ax
+302E8 call    scroll_printf
+302ED pop     cx
+302EE pop     cx
+302EF pop     di
+302F0 pop     si
+302F1 mov     sp, bp
+302F3 pop     bp
+302F4 retf    6
+=== use_fountain 3452B
+3452B push    bp
+3452C mov     bp, sp
+3452E sub     sp, 0Eh
+34531 push    si
+34532 push    di
+34533 mov     [bp+var_C], 0
+34538 mov     al, byte_404A4
+3453B mov     ah, 0
+3453D push    ax
+3453E push    cs
+3453F call    near ptr sub_2F698
+34542 mov     di, ax
+34544 push    ds
+34545 mov     ax, offset aMakeAWish; "Make a wish?"
+34548 push    ax
+34549 call    scroll_printf
+3454E pop     cx
+3454F pop     cx
+34550 call    sub_17099
+34555 mov     [bp+var_E], ax
+34558 cmp     ax, 59h ; 'Y'
+3455B jz      short loc_34560
+3455D jmp     loc_34637
+34560 push    ds
+34561 mov     ax, offset aWishFor; "\nWish for: "
+34564 push    ax
+34565 call    scroll_printf
+3456A pop     cx
+3456B pop     cx
+3456C lea     ax, [bp+s1]
+3456F push    ax
+34570 mov     ax, 9
+34573 push    ax
+34574 call    sub_1737A
+34579 xor     si, si
+3457B jmp     loc_34616
+3457E mov     bx, si
+34580 shl     bx, 1
+34582 push    word ptr [bx+1D3Fh]
+34586 lea     ax, [bp+s1]
+34589 push    ax; s1
+3458A call    _stricmp
+3458F pop     cx
+34590 pop     cx
+34591 or      ax, ax
+34593 jz      short loc_34598
+34595 jmp     loc_34615
+34598 xor     ax, ax
+3459A push    ax
+3459B mov     ax, 4
+3459E push    ax
+3459F call    sub_3B8F9
+345A4 or      ax, ax
+345A6 jnz     short loc_345FD
+345A8 push    ds
+345A9 mov     ax, offset aYouGotFood; "\n\nYou got food"
+345AC push    ax
+345AD call    scroll_printf
+345B2 pop     cx
+345B3 pop     cx
+345B4 push    di
+345B5 call    compute_carried_weight
+345BA mov     al, [di-73B6h]
+345BE mov     ah, 0
+345C0 mov     dx, 14h
+345C3 mul     dx
+345C5 mov     dx, word_4BF47
+345C9 add     dx, word_4BF44
+345CD inc     dx
+345CE inc     dx
+345CF cmp     ax, dx
+345D1 jge     short loc_345E1
+345D3 push    ds
+345D4 mov     ax, offset aButYouCanTCarr; ", but you can't carry it.\n"
+345D7 push    ax
+345D8 call    scroll_printf
+345DD pop     cx
+345DE pop     cx
+345DF jmp     short loc_3460E
+345E1 push    di
+345E2 mov     ax, 81h
+345E5 push    ax
+345E6 mov     ax, 1
+345E9 push    ax
+345EA call    sub_1B701
+345EF push    ds
+345F0 mov     ax, 1DC6h
+345F3 push    ax
+345F4 call    scroll_printf
+345F9 pop     cx
+345FA pop     cx
+345FB jmp     short loc_3460E
+345FD push    word_3E62E
+34601 push    ds
+34602 mov     ax, offset aS_23; "\n\n%s\n"
+34605 push    ax
+34606 call    scroll_printf
+3460B add     sp, 6
+3460E mov     [bp+var_C], 1
+34613 jmp     short loc_3461E
+34615 inc     si
+34616 cmp     si, 0Ah
+34619 jge     short loc_3461E
+3461B jmp     loc_3457E
+3461E cmp     [bp+var_C], 0
+34622 jnz     short loc_34643
+34624 push    word_3E630
+34628 push    ds
+34629 mov     ax, offset aS_23; "\n\n%s\n"
+3462C push    ax
+3462D call    scroll_printf
+34632 add     sp, 6
+34635 jmp     short loc_34643
+34637 push    ds
+34638 mov     ax, 1D6Fh
+3463B push    ax
+3463C call    scroll_printf
+34641 pop     cx
+34642 pop     cx
+34643 cmp     word_3DD10, 92h
+34649 jnz     short loc_34650
+3464B call    sub_1DF45
+34650 pop     di
+34651 pop     si
+34652 mov     sp, bp
+34654 pop     bp
+34655 retf
+=== use_gems 3282F
+3282F push    bp
+32830 mov     bp, sp
+32832 push    si
+32833 push    di
+32834 mov     si, [bp+arg_0]
+32837 call    sub_39866
+3283C or      si, si
+3283E jz      short loc_32873
+32840 mov     bx, si
+32842 shl     bx, 1
+32844 add     bx, 4EE4h
+32848 push    ds
+32849 pop     es
+3284A mov     al, es:[bx]
+3284D mov     ah, 0
+3284F mov     di, ax
+32851 mov     ax, di
+32853 cmp     ax, 1
+32856 jle     short loc_3286D
+32858 mov     ax, di
+3285A add     al, 0FFh
+3285C mov     bx, si
+3285E shl     bx, 1
+32860 add     bx, 4EE4h
+32864 push    ax
+32865 push    ds
+32866 pop     es
+32867 pop     ax
+32868 mov     es:[bx], al
+3286B jmp     short loc_32873
+3286D push    si
+3286E call    sub_1AC65
+32873 cmp     word_3DD10, 92h
+32879 jnz     short loc_32880
+3287B call    sub_1DF45
+32880 pop     di
+32881 pop     si
+32882 pop     bp
+32883 retf    2
+=== use_sextant 2536C
+2536C push    bp
+2536D mov     bp, sp
+2536F sub     sp, 4
+25372 push    si
+25373 push    di
+25374 mov     si, player_x
+25378 mov     di, player_y
+2537C cmp     player_z, 0
+25381 jz      short loc_2538B
+25383 shl     si, 1
+25385 shl     si, 1
+25387 shl     di, 1
+25389 shl     di, 1
+2538B mov     ax, di
+2538D add     ax, 0FE98h
+25390 sar     ax, 1
+25392 sar     ax, 1
+25394 sar     ax, 1
+25396 mov     [bp+x], ax
+25399 mov     ax, si
+2539B add     ax, 0FED0h
+2539E sar     ax, 1
+253A0 sar     ax, 1
+253A2 sar     ax, 1
+253A4 mov     [bp+var_2], ax
+253A7 push    [bp+x]; x
+253AA call    _abs
+253AF pop     cx
+253B0 push    ax
+253B1 push    ds
+253B2 mov     ax, offset aD_0; "\n%d{"
+253B5 push    ax
+253B6 call    scroll_printf
+253BB add     sp, 6
+253BE cmp     [bp+x], 0
+253C2 jle     short loc_253D2
+253C4 push    ds
+253C5 mov     ax, 0F39h
+253C8 push    ax
+253C9 call    scroll_printf
+253CE pop     cx
+253CF pop     cx
+253D0 jmp     short loc_253DE
+253D2 push    ds
+253D3 mov     ax, 1653h
+253D6 push    ax
+253D7 call    scroll_printf
+253DC pop     cx
+253DD pop     cx
+253DE push    [bp+var_2]; x
+253E1 call    _abs
+253E6 pop     cx
+253E7 push    ax
+253E8 push    ds
+253E9 mov     ax, offset aD_1; ", %d{"
+253EC push    ax
+253ED call    scroll_printf
+253F2 add     sp, 6
+253F5 cmp     [bp+var_2], 0
+253F9 jle     short loc_25409
+253FB push    ds
+253FC mov     ax, 165Bh
+253FF push    ax
+25400 call    scroll_printf
+25405 pop     cx
+25406 pop     cx
+25407 jmp     short loc_25415
+25409 push    ds
+2540A mov     ax, 165Eh
+2540D push    ax
+2540E call    scroll_printf
+25413 pop     cx
+25414 pop     cx
+25415 pop     di
+25416 pop     si
+25417 mov     sp, bp
+25419 pop     bp
+2541A retf
+=== use_shovel 34656
+34656 push    bp
+34657 mov     bp, sp
+34659 sub     sp, 8
+3465C push    si
+3465D push    di
+3465E push    ds
+3465F mov     ax, offset aDirection_0; "Direction:"
+34662 push    ax
+34663 call    scroll_printf
+34668 pop     cx
+34669 pop     cx
+3466A mov     word_3DD0E, 0
+34670 cmp     byte_3DCE2, 0
+34675 jz      short loc_34684
+34677 xor     ax, ax
+34679 push    ax
+3467A call    sub_16125
+3467F mov     byte_3DCE2, 1
+34684 call    sub_17099
+34689 cmp     ax, 80h
+3468C jz      short loc_3469D
+3468E push    ds
+3468F mov     ax, offset aNowhere_1; "nowhere.\n"
+34692 push    ax
+34693 call    scroll_printf
+34698 pop     cx
+34699 pop     cx
+3469A jmp     loc_3484E
+3469D mov     bx, word_48F29
+346A1 shl     bx, 1
+346A3 push    word ptr [bx+1B2h]
+346A7 push    ds
+346A8 mov     ax, offset aS_22; "%s.\n"
+346AB push    ax
+346AC call    scroll_printf
+346B1 add     sp, 6
+346B4 mov     bx, word_48F29
+346B8 mov     al, [bx+1A2h]
+346BC cbw
+346BD mov     si, ax
+346BF add     si, player_x
+346C3 mov     al, [bx+1AAh]
+346C7 cbw
+346C8 mov     di, ax
+346CA add     di, player_y
+346CE push    si
+346CF push    di
+346D0 push    player_z
+346D4 call    sub_18C09
+346D9 mov     ah, 0
+346DB mov     [bp+var_8], ax
+346DE cmp     player_z, 0
+346E3 jnz     short loc_3475A
+346E5 cmp     si, 2C3h
+346E9 jnz     short loc_3475A
+346EB cmp     di, 343h
+346EF jnz     short loc_3475A
+346F1 push    si
+346F2 push    di
+346F3 push    player_z
+346F7 mov     ax, 134h
+346FA push    ax
+346FB push    cs
+346FC call    near ptr sub_334B1
+346FF cmp     ax, 0FFFFh
+34702 jnz     short loc_3475A
+34704 mov     al, byte ptr player_z
+34707 mov     cl, 4
+34709 shl     al, cl
+3470B mov     [bp+var_2], al
+3470E mov     [bp+var_4], si
+34711 mov     ax, di
+34713 shl     ax, 1
+34715 shl     ax, 1
+34717 or      [bp+var_4+1], ax
+3471A xor     ax, ax
+3471C push    ax
+3471D lea     bx, [bp+var_4]
+34720 mov     dx, ss
+34722 mov     ax, bx
+34724 mov     cx, 4
+34727 call    SPUSH@
+3472C mov     ax, 134h
+3472F push    ax
+34730 xor     ax, ax
+34732 push    ax
+34733 push    ax
+34734 call    sub_1A80C
+34739 mov     [bp+var_6], ax
+3473C mov     bx, ax
+3473E shl     bx, 1
+34740 add     bx, 4EE4h
+34744 push    ds
+34745 pop     es
+34746 mov     byte ptr es:[bx+1], 13h
+3474B push    ds
+3474C mov     ax, offset aYouDigAHole; "\nYou dig a hole.\n"
+3474F push    ax
+34750 call    scroll_printf
+34755 pop     cx
+34756 pop     cx
+34757 jmp     loc_3484E
+3475A cmp     player_z, 1
+3475F jge     short loc_34764
+34761 jmp     loc_3483D
+34764 cmp     player_z, 4
+34769 jle     short loc_3476E
+3476B jmp     loc_3483D
+3476E cmp     [bp+var_8], 6Ch ; 'l'
+34772 jge     short loc_34777
+34774 jmp     loc_3483D
+34777 cmp     [bp+var_8], 6Fh ; 'o'
+3477B jle     short loc_34780
+3477D jmp     loc_3483D
+34780 xor     ax, ax
+34782 push    ax
+34783 mov     ax, 1Fh
+34786 push    ax
+34787 call    sub_3B8F9
+3478C or      ax, ax
+3478E jnz     short loc_347D4
+34790 mov     al, byte ptr player_z
+34793 mov     cl, 4
+34795 shl     al, cl
+34797 mov     [bp+var_2], al
+3479A mov     [bp+var_4], si
+3479D mov     ax, di
+3479F shl     ax, 1
+347A1 shl     ax, 1
+347A3 or      [bp+var_4+1], ax
+347A6 xor     ax, ax
+347A8 push    ax
+347A9 lea     bx, [bp+var_4]
+347AC mov     dx, ss
+347AE mov     ax, bx
+347B0 mov     cx, 4
+347B3 call    SPUSH@
+347B8 mov     ax, 0EAh
+347BB push    ax
+347BC xor     ax, ax
+347BE push    ax
+347BF push    ax
+347C0 call    sub_1A80C
+347C5 push    ds
+347C6 mov     ax, offset aYouFindAWaterF; "\nYou find a water fountain.\n"
+347C9 push    ax
+347CA call    scroll_printf
+347CF pop     cx
+347D0 pop     cx
+347D1 jmp     loc_3484E
+347D4 xor     ax, ax
+347D6 push    ax
+347D7 mov     ax, 9
+347DA push    ax
+347DB call    sub_3B8F9
+347E0 or      ax, ax
+347E2 jnz     short loc_3482A
+347E4 mov     al, byte ptr player_z
+347E7 mov     cl, 4
+347E9 shl     al, cl
+347EB mov     [bp+var_2], al
+347EE mov     [bp+var_4], si
+347F1 mov     ax, di
+347F3 shl     ax, 1
+347F5 shl     ax, 1
+347F7 or      [bp+var_4+1], ax
+347FA xor     ax, ax
+347FC push    ax
+347FD lea     bx, [bp+var_4]
+34800 mov     dx, ss
+34802 mov     ax, bx
+34804 mov     cx, 4
+34807 call    SPUSH@
+3480C mov     ax, 59h ; 'Y'
+3480F push    ax
+34810 xor     ax, ax
+34812 push    ax
+34813 mov     ax, 1
+34816 push    ax
+34817 call    sub_1A80C
+3481C push    ds
+3481D mov     ax, offset aYouFindAGoldNu; "\nYou find a gold nugget.\n"
+34820 push    ax
+34821 call    scroll_printf
+34826 pop     cx
+34827 pop     cx
+34828 jmp     short loc_3484E
+3482A push    word_3E62E
+3482E push    ds
+3482F mov     ax, offset aS_19; "\n%s\n"
+34832 push    ax
+34833 call    scroll_printf
+34838 add     sp, 6
+3483B jmp     short loc_3484E
+3483D push    word_3E630
+34841 push    ds
+34842 mov     ax, offset aS_19; "\n%s\n"
+34845 push    ax
+34846 call    scroll_printf
+3484B add     sp, 6
+3484E pop     di
+3484F pop     si
+34850 mov     sp, bp
+34852 pop     bp
+34853 retf
+=== bury_object 32AB5
+32AB5 push    bp
+32AB6 mov     bp, sp
+32AB8 sub     sp, 4
+32ABB push    si
+32ABC push    di
+32ABD mov     al, byte_404A4
+32AC0 mov     ah, 0
+32AC2 mov     bx, ax
+32AC4 mov     al, [bx+3533h]
+32AC8 mov     ah, 0
+32ACA mov     dx, 3
+32ACD mul     dx
+32ACF mov     bx, ax
+32AD1 mov     si, [bx+6828h]
+32AD5 and     si, 3FFh
+32AD9 mov     al, byte_404A4
+32ADC mov     ah, 0
+32ADE mov     bx, ax
+32AE0 mov     al, [bx+3533h]
+32AE4 mov     ah, 0
+32AE6 mov     dx, 3
+32AE9 mul     dx
+32AEB mov     bx, ax
+32AED mov     di, [bx+6829h]
+32AF1 sar     di, 1
+32AF3 sar     di, 1
+32AF5 and     di, 3FFh
+32AF9 push    si
+32AFA push    di
+32AFB push    player_z
+32AFF call    sub_18C09
+32B04 mov     ah, 0
+32B06 mov     [bp+var_4], ax
+32B09 cmp     ax, 1
+32B0C jl      short loc_32B13
+32B0E cmp     ax, 7
+32B11 jle     short loc_32B25
+32B13 cmp     [bp+var_4], 10h
+32B17 jge     short loc_32B1C
+32B19 jmp     loc_32BB3
+32B1C cmp     [bp+var_4], 6Fh ; 'o'
+32B20 jle     short loc_32B25
+32B22 jmp     loc_32BB3
+32B25 push    ds
+32B26 mov     ax, offset aBuried; "buried.\n"
+32B29 push    ax
+32B2A call    scroll_printf
+32B2F pop     cx
+32B30 pop     cx
+32B31 mov     bx, [bp+arg_0]
+32B34 shl     bx, 1
+32B36 mov     ax, [bx+3548h]
+32B3A mov     cl, 0Ah
+32B3C shr     ax, cl
+32B3E mov     [bp+var_2], ax
+32B41 mov     dx, 6
+32B44 mul     dx
+32B46 mov     bx, ax
+32B48 mov     [bx+2C74h], si
+32B4C mov     ax, [bp+var_2]
+32B4F mov     dx, 6
+32B52 mul     dx
+32B54 mov     bx, ax
+32B56 mov     [bx+2C76h], di
+32B5A mov     ax, player_z
+32B5D push    ax
+32B5E mov     ax, [bp+var_2]
+32B61 mov     dx, 6
+32B64 mul     dx
+32B66 mov     bx, ax
+32B68 pop     ax
+32B69 mov     [bx+2C78h], ax
+32B6D mov     bx, word_3DD03
+32B71 mov     al, [bx+3533h]
+32B75 mov     ah, 0
+32B77 push    ax
+32B78 call    compute_carried_weight
+32B7D push    [bp+arg_0]
+32B80 push    si
+32B81 push    di
+32B82 push    player_z
+32B86 call    sub_1B26F
+32B8B mov     al, byte_404A4
+32B8E mov     ah, 0
+32B90 mov     bx, ax
+32B92 mov     al, [bx+3533h]
+32B96 mov     ah, 0
+32B98 push    ax
+32B99 push    si
+32B9A push    di
+32B9B push    player_z
+32B9F call    sub_1B26F
+32BA4 cmp     word_3DD10, 92h
+32BAA jnz     short loc_32BBF
+32BAC call    sub_1DF45
+32BB1 jmp     short loc_32BBF
+32BB3 push    ds
+32BB4 mov     ax, offset aCannotBeBuried; "Cannot be buried here!\n"
+32BB7 push    ax
+32BB8 call    scroll_printf
+32BBD pop     cx
+32BBE pop     cx
+32BBF pop     di
+32BC0 pop     si
+32BC1 mov     sp, bp
+32BC3 pop     bp
+32BC4 retf    2
+=== use_rubber_ducky 3574D
+3574D push    ds
+3574E mov     ax, offset aSqueak; "\nSqueak!\n"
+35751 push    ax
+35752 call    scroll_printf
+35757 pop     cx
+35758 pop     cx
+35759 mov     ax, 16h
+3575C push    ax
+3575D xor     ax, ax
+3575F push    ax
+35760 call    sub_36E85
+35765 retf
+=== use_beehive 32E63
+32E63 push    si
+32E64 push    di
+32E65 mov     al, byte_404A4
+32E68 mov     ah, 0
+32E6A push    ax
+32E6B push    cs
+32E6C call    near ptr sub_2F698
+32E6F mov     di, ax
+32E71 push    di
+32E72 mov     ax, 0B7h
+32E75 push    ax
+32E76 xor     ax, ax
+32E78 push    ax
+32E79 call    sub_19FA2
+32E7E mov     si, ax
+32E80 cmp     si, 0FFFFh
+32E83 jnz     short loc_32E93
+32E85 push    ds
+32E86 mov     ax, offset aYouNeedAHoneyJ; "\nYou need a honey jar.\n"
+32E89 push    ax
+32E8A call    scroll_printf
+32E8F pop     cx
+32E90 pop     cx
+32E91 jmp     short loc_32EBF
+32E93 mov     bx, si
+32E95 shl     bx, 1
+32E97 mov     ax, [bx+3548h]
+32E9B and     ax, 0FC00h
+32E9E add     ax, 0B8h
+32EA1 mov     bx, si
+32EA3 shl     bx, 1
+32EA5 mov     [bx+3548h], ax
+32EA9 push    word_3E63A
+32EAD push    ds
+32EAE mov     ax, offset aS_19; "\n%s\n"
+32EB1 push    ax
+32EB2 call    scroll_printf
+32EB7 add     sp, 6
+32EBA call    sub_1DF45
+32EBF pop     di
+32EC0 pop     si
+32EC1 retf
+=== ring_bell 32A1D
+32A1D push    si
+32A1E push    di
+32A1F xor     si, si
+32A21 jmp     short loc_32A8E
+32A23 mov     bx, si
+32A25 shl     bx, 1
+32A27 mov     ax, [bx+67E4h]
+32A2B les     bx, basetile_ptr
+32A2F cmp     ax, es:[bx+1D8h]
+32A34 jnz     short loc_32A8D
+32A36 xor     di, di
+32A38 jmp     short loc_32A6C
+32A3A mov     word ptr video_driver_call, 4Bh ; 'K'
+32A40 mov     bx, si
+32A42 shl     bx, 1
+32A44 push    word ptr [bx+67E4h]
+32A48 mov     bx, si
+32A4A shl     bx, 1
+32A4C mov     ax, [bx-620Bh]
+32A50 mov     dx, di
+32A52 sar     dx, 1
+32A54 sar     dx, 1
+32A56 add     ax, dx
+32A58 push    ax
+32A59 call    video_driver_call
+32A5D mov     ax, 1
+32A60 push    ax
+32A61 call    sub_1297E
+32A66 call    sub_114D0
+32A6B inc     di
+32A6C cmp     di, 10h
+32A6F jl      short loc_32A3A
+32A71 mov     word ptr video_driver_call, 4Bh ; 'K'
+32A77 mov     bx, si
+32A79 shl     bx, 1
+32A7B push    word ptr [bx+67E4h]
+32A7F mov     bx, si
+32A81 shl     bx, 1
+32A83 push    word ptr [bx-620Bh]
+32A87 call    video_driver_call
+32A8B jmp     short loc_32A94
+32A8D inc     si
+32A8E cmp     si, anim_count
+32A92 jl      short loc_32A23
+32A94 call    sub_12C6C
+32A99 mov     ax, 7D0h
+32A9C push    ax
+32A9D mov     ax, 1
+32AA0 push    ax
+32AA1 mov     ax, 3E80h
+32AA4 push    ax
+32AA5 mov     ax, 4E20h
+32AA8 push    ax
+32AA9 mov     ax, 0FFFFh
+32AAC push    ax
+32AAD call    sub_3B956
+32AB2 pop     di
+32AB3 pop     si
+32AB4 retf
+=== use_churn 32DFD
+32DFD push    si
+32DFE push    di
+32DFF mov     al, byte_404A4
+32E02 mov     ah, 0
+32E04 push    ax
+32E05 push    cs
+32E06 call    near ptr sub_2F698
+32E09 mov     si, ax
+32E0B push    si
+32E0C mov     ax, 0B4h
+32E0F push    ax
+32E10 xor     ax, ax
+32E12 push    ax
+32E13 call    sub_19FA2
+32E18 mov     di, ax
+32E1A cmp     di, 0FFFFh
+32E1D jnz     short loc_32E2D
+32E1F push    ds
+32E20 mov     ax, offset aYouNeedSomeMil; "\nYou need some milk.\n"
+32E23 push    ax
+32E24 call    scroll_printf
+32E29 pop     cx
+32E2A pop     cx
+32E2B jmp     short loc_32E60
+32E2D push    di
+32E2E call    sub_1AC65
+32E33 push    si
+32E34 mov     ax, 60h ; '`'
+32E37 push    ax
+32E38 mov     ax, 1
+32E3B push    ax
+32E3C call    sub_1B701
+32E41 push    si
+32E42 mov     ax, 0B2h
+32E45 push    ax
+32E46 mov     ax, 1
+32E49 push    ax
+32E4A call    sub_1B701
+32E4F push    word_3E63A
+32E53 push    ds
+32E54 mov     ax, offset aS_19; "\n%s\n"
+32E57 push    ax
+32E58 call    scroll_printf
+32E5D add     sp, 6
+32E60 pop     di
+32E61 pop     si
+32E62 retf
+=== fill_bucket_milk 32D77
+32D77 push    si
+32D78 push    di
+32D79 mov     al, byte_404A4
+32D7C mov     ah, 0
+32D7E push    ax
+32D7F push    cs
+32D80 call    near ptr sub_2F698
+32D83 mov     si, ax
+32D85 push    si
+32D86 mov     ax, 0B2h
+32D89 push    ax
+32D8A xor     ax, ax
+32D8C push    ax
+32D8D call    sub_19FA2
+32D92 mov     di, ax
+32D94 cmp     di, 0FFFFh
+32D97 jnz     short loc_32DA7
+32D99 push    ds
+32D9A mov     ax, offset aYouNeedABucket; "\nYou need a bucket.\n"
+32D9D push    ax
+32D9E call    scroll_printf
+32DA3 pop     cx
+32DA4 pop     cx
+32DA5 jmp     short loc_32DFA
+32DA7 push    si
+32DA8 call    compute_carried_weight
+32DAD mov     al, [si-73B6h]
+32DB1 mov     ah, 0
+32DB3 mov     dx, 14h
+32DB6 mul     dx
+32DB8 mov     dx, word_4BF47
+32DBC add     dx, word_4BF44
+32DC0 add     dx, 20h ; ' '
+32DC3 cmp     ax, dx
+32DC5 jge     short loc_32DD5
+32DC7 push    ds
+32DC8 mov     ax, offset aTheBucketOfMil; "\nThe bucket of milk is too heavy for y"...
+32DCB push    ax
+32DCC call    scroll_printf
+32DD1 pop     cx
+32DD2 pop     cx
+32DD3 jmp     short loc_32DFA
+32DD5 push    di
+32DD6 call    sub_1AC65
+32DDB push    si
+32DDC mov     ax, 0B4h
+32DDF push    ax
+32DE0 mov     ax, 1
+32DE3 push    ax
+32DE4 call    sub_1B701
+32DE9 push    word_3E63A
+32DED push    ds
+32DEE mov     ax, offset aS_19; "\n%s\n"
+32DF1 push    ax
+32DF2 call    scroll_printf
+32DF7 add     sp, 6
+32DFA pop     di
+32DFB pop     si
+32DFC retf
+=== fill_bucket_water 32CF1
+32CF1 push    si
+32CF2 push    di
+32CF3 mov     al, byte_404A4
+32CF6 mov     ah, 0
+32CF8 push    ax
+32CF9 push    cs
+32CFA call    near ptr sub_2F698
+32CFD mov     si, ax
+32CFF push    si
+32D00 mov     ax, 0B2h
+32D03 push    ax
+32D04 xor     ax, ax
+32D06 push    ax
+32D07 call    sub_19FA2
+32D0C mov     di, ax
+32D0E cmp     di, 0FFFFh
+32D11 jnz     short loc_32D21
+32D13 push    ds
+32D14 mov     ax, offset aYouNeedABucket; "\nYou need a bucket.\n"
+32D17 push    ax
+32D18 call    scroll_printf
+32D1D pop     cx
+32D1E pop     cx
+32D1F jmp     short loc_32D74
+32D21 push    si
+32D22 call    compute_carried_weight
+32D27 mov     al, [si-73B6h]
+32D2B mov     ah, 0
+32D2D mov     dx, 14h
+32D30 mul     dx
+32D32 mov     dx, word_4BF47
+32D36 add     dx, word_4BF44
+32D3A add     dx, 20h ; ' '
+32D3D cmp     ax, dx
+32D3F jge     short loc_32D4F
+32D41 push    ds
+32D42 mov     ax, offset aTheBucketOfWat; "\nThe bucket of water is too heavy for "...
+32D45 push    ax
+32D46 call    scroll_printf
+32D4B pop     cx
+32D4C pop     cx
+32D4D jmp     short loc_32D74
+32D4F push    di
+32D50 call    sub_1AC65
+32D55 push    si
+32D56 mov     ax, 0B3h
+32D59 push    ax
+32D5A mov     ax, 1
+32D5D push    ax
+32D5E call    sub_1B701
+32D63 push    word_3E63A
+32D67 push    ds
+32D68 mov     ax, offset aS_19; "\n%s\n"
+32D6B push    ax
+32D6C call    scroll_printf
+32D71 add     sp, 6
+32D74 pop     di
+32D75 pop     si
+32D76 retf
+=== use_fishing_pole 343D6
+343D6 push    bp
+343D7 mov     bp, sp
+343D9 sub     sp, 8
+343DC push    si
+343DD push    di
+343DE mov     [bp+var_2], 0
+343E3 mov     al, byte_404A4
+343E6 mov     ah, 0
+343E8 push    ax
+343E9 push    cs
+343EA call    near ptr sub_2F698
+343ED mov     di, ax
+343EF push    di
+343F0 push    cs
+343F1 call    near ptr sub_2F6B8
+343F4 mov     [bp+var_6], ax
+343F7 push    di
+343F8 push    cs
+343F9 call    near ptr sub_2F6E1
+343FC mov     [bp+var_4], ax
+343FF xor     si, si
+34401 jmp     loc_344D2
+34404 mov     [bp+var_8], 0
+34409 jmp     loc_344C2
+3440C cmp     si, 1
+3440F jnz     short loc_3441A
+34411 cmp     [bp+var_8], 1
+34415 jnz     short loc_3441A
+34417 jmp     loc_344BF
+3441A mov     ax, [bp+var_6]
+3441D add     ax, si
+3441F dec     ax
+34420 push    ax
+34421 mov     ax, [bp+var_4]
+34424 add     ax, si
+34426 dec     ax
+34427 push    ax
+34428 push    player_z
+3442C call    sub_18C09
+34431 mov     ah, 0
+34433 les     bx, tileflags1_ptr
+34437 add     bx, ax
+34439 test    byte ptr es:[bx], 1
+3443D jnz     short loc_34442
+3443F jmp     loc_344BF
+34442 cmp     byte_404BF, 0
+34447 jnz     short loc_344AC
+34449 xor     ax, ax
+3444B push    ax
+3444C mov     ax, 4
+3444F push    ax
+34450 call    sub_3B8F9
+34455 or      ax, ax
+34457 jnz     short loc_344AC
+34459 push    di
+3445A call    compute_carried_weight
+3445F mov     al, [di-73B6h]
+34463 mov     ah, 0
+34465 mov     dx, 14h
+34468 mul     dx
+3446A mov     dx, word_4BF47
+3446E add     dx, word_4BF44
+34472 add     dx, 5
+34475 cmp     ax, dx
+34477 jge     short loc_34487
+34479 push    ds
+3447A mov     ax, offset aGotItButCanTCa; "\nGot it, but can't carry it.\n"
+3447D push    ax
+3447E call    scroll_printf
+34483 pop     cx
+34484 pop     cx
+34485 jmp     short loc_344B8
+34487 push    ds
+34488 mov     ax, offset aGotIt; "\nGot it!\n"
+3448B push    ax
+3448C call    scroll_printf
+34491 pop     cx
+34492 pop     cx
+34493 mov     ax, 109h
+34496 push    ax
+34497 mov     ax, 10h
+3449A push    ax
+3449B mov     ax, 1
+3449E push    ax
+3449F push    di
+344A0 call    sub_1A968
+344A5 mov     byte_404BF, 1
+344AA jmp     short loc_344B8
+344AC push    ds
+344AD mov     ax, offset aDidnTGetAFish; "\nDidn't get a fish.\n"
+344B0 push    ax
+344B1 call    scroll_printf
+344B6 pop     cx
+344B7 pop     cx
+344B8 mov     [bp+var_2], 1
+344BD jmp     short loc_344CB
+344BF inc     [bp+var_8]
+344C2 cmp     [bp+var_8], 3
+344C6 jge     short loc_344CB
+344C8 jmp     loc_3440C
+344CB cmp     [bp+var_2], 0
+344CF jnz     short loc_344DA
+344D1 inc     si
+344D2 cmp     si, 3
+344D5 jge     short loc_344DA
+344D7 jmp     loc_34404
+344DA cmp     [bp+var_2], 0
+344DE jnz     short loc_344EC
+344E0 push    ds
+344E1 mov     ax, offset aYouNeedToStand; "\nYou need to stand next to water.\n"
+344E4 push    ax
+344E5 call    scroll_printf
+344EA pop     cx
+344EB pop     cx
+344EC cmp     word_3DD10, 92h
+344F2 jnz     short loc_344F9
+344F4 call    sub_1DF45
+344F9 pop     di
+344FA pop     si
+344FB mov     sp, bp
+344FD pop     bp
+344FE retf
+=== use_silver_horn 3525F
+3525F push    bp
+35260 mov     bp, sp
+35262 sub     sp, 12h
+35265 push    si
+35266 push    di
+35267 mov     [bp+var_6], 0
+3526C mov     [bp+var_12], 0E0h
+35271 jmp     short loc_352A2
+35273 mov     bx, [bp+var_12]
+35276 shl     bx, 1
+35278 cmp     word ptr [bx+3548h], 0
+3527D jz      short loc_3529F
+3527F mov     bx, [bp+var_12]
+35282 shl     bx, 1
+35284 mov     ax, [bx+3548h]
+35288 and     ax, 3FFh
+3528B cmp     ax, 19Dh
+3528E jnz     short loc_3529F
+35290 push    ds
+35291 mov     ax, offset aNotNow_0; "\nNot now!\n"
+35294 push    ax
+35295 call    scroll_printf
+3529A pop     cx
+3529B pop     cx
+3529C jmp     loc_3547C
+3529F inc     [bp+var_12]
+352A2 cmp     [bp+var_12], 100h
+352A7 jl      short loc_35273
+352A9 mov     al, byte ptr player_z
+352AC mov     cl, 4
+352AE shl     al, cl
+352B0 mov     [bp+var_2], al
+352B3 mov     [bp+var_4], 0
+352B8 or      [bp+var_4+1], 0
+352BD xor     ax, ax
+352BF push    ax
+352C0 lea     bx, [bp+var_4]
+352C3 mov     dx, ss
+352C5 mov     ax, bx
+352C7 mov     cx, 4
+352CA call    SPUSH@
+352CF mov     ax, 19Dh
+352D2 push    ax
+352D3 xor     ax, ax
+352D5 push    ax
+352D6 mov     ax, 1
+352D9 push    ax
+352DA call    sub_1A80C
+352DF mov     [bp+var_A], ax
+352E2 mov     [bp+var_C], 0
+352E7 jmp     loc_3544B
+352EA mov     [bp+var_E], 0
+352EF jmp     loc_353D2
+352F2 xor     ax, ax
+352F4 push    ax
+352F5 mov     ax, 3
+352F8 push    ax
+352F9 call    sub_3B8F9
+352FE mov     [bp+var_12], ax
+35301 xor     ax, ax
+35303 push    ax
+35304 mov     ax, 0Ah
+35307 push    ax
+35308 call    sub_3B8F9
+3530D mov     [bp+var_10], ax
+35310 mov     ax, [bp+var_12]
+35313 cmp     ax, 3; switch 4 cases
+35316 ja      short def_3531C; jumptable 0003531C default case
+35318 mov     bx, ax
+3531A shl     bx, 1
+3531C jmp     cs:jpt_3531C[bx]; switch jump
+35321 cwd; jump table for switch statement
+35322 pop     sp
+35323 mov     byte_48DAC, al
+35326 pop     sp
+35327 enter   8B5Ch, 36h
+3532B push    si
+3532C sub     al, 83h
+3532E db 0C6h
+3532F cli
+35330 jmp     short loc_3534C
+35332 mov     si, player_x
+35336 add     si, [bp+var_10]
+35339 add     si, 0FFFAh
+3533C mov     di, player_y
+35340 add     di, 0FFF9h
+35343 jmp     short def_3531C; jumptable 0003531C default case
+35345 mov     si, player_x; jumptable 0003531C case 2
+35349 add     si, 7
+3534C mov     di, player_y
+35350 add     di, [bp+var_10]
+35353 add     di, 0FFFAh
+35356 jmp     short def_3531C; jumptable 0003531C default case
+35358 mov     si, player_x; jumptable 0003531C case 3
+3535C add     si, [bp+var_10]
+3535F add     si, 0FFFAh
+35362 mov     di, player_y
+35366 add     di, 6
+35369 push    [bp+var_A]; jumptable 0003531C default case
+3536C push    si
+3536D push    di
+3536E call    can_actor_enter
+35373 or      ax, ax
+35375 jz      short loc_353CF
+35377 push    [bp+var_A]
+3537A mov     ax, si
+3537C dec     ax
+3537D push    ax
+3537E push    di
+3537F call    can_actor_enter
+35384 or      ax, ax
+35386 jz      short loc_353CF
+35388 push    [bp+var_A]
+3538B push    si
+3538C mov     ax, di
+3538E inc     ax
+3538F push    ax
+35390 call    can_actor_enter
+35395 or      ax, ax
+35397 jz      short loc_353CF
+35399 push    [bp+var_A]
+3539C mov     ax, si
+3539E dec     ax
+3539F push    ax
+353A0 mov     ax, di
+353A2 inc     ax
+353A3 push    ax
+353A4 call    can_actor_enter
+353A9 or      ax, ax
+353AB jz      short loc_353CF
+353AD push    [bp+var_A]
+353B0 mov     ax, si
+353B2 inc     ax
+353B3 push    ax
+353B4 push    di
+353B5 call    can_actor_enter
+353BA or      ax, ax
+353BC jz      short loc_353CF
+353BE push    [bp+var_A]
+353C1 push    si
+353C2 mov     ax, di
+353C4 dec     ax
+353C5 push    ax
+353C6 call    can_actor_enter
+353CB or      ax, ax
+353CD jnz     short loc_353DB
+353CF inc     [bp+var_E]
+353D2 cmp     [bp+var_E], 8
+353D6 jge     short loc_353DB
+353D8 jmp     loc_352F2
+353DB cmp     [bp+var_E], 8
+353DF jz      short loc_35448
+353E1 mov     al, byte ptr player_z
+353E4 mov     cl, 4
+353E6 shl     al, cl
+353E8 mov     [bp+var_2], al
+353EB mov     [bp+var_4], si
+353EE mov     ax, di
+353F0 shl     ax, 1
+353F2 shl     ax, 1
+353F4 or      [bp+var_4+1], ax
+353F7 xor     ax, ax
+353F9 push    ax
+353FA lea     bx, [bp+var_4]
+353FD mov     dx, ss
+353FF mov     ax, bx
+35401 mov     cx, 4
+35404 call    SPUSH@
+35409 mov     ax, 14Fh
+3540C push    ax
+3540D xor     ax, ax
+3540F push    ax
+35410 mov     ax, 464h
+35413 push    ax
+35414 call    sub_1A80C
+35419 mov     [bp+var_8], ax
+3541C mov     ax, 19Dh
+3541F push    ax
+35420 mov     ax, 8
+35423 push    ax
+35424 mov     ax, 4
+35427 push    ax
+35428 mov     ax, 8
+3542B push    ax
+3542C call    sub_3B8F9
+35431 or      ax, 800h
+35434 push    ax
+35435 push    [bp+var_8]
+35438 call    sub_1A968
+3543D push    [bp+var_8]
+35440 call    sub_366B0
+35445 inc     [bp+var_6]
+35448 inc     [bp+var_C]
+3544B cmp     [bp+var_C], 3
+3544F jge     short loc_35454
+35451 jmp     loc_352EA
+35454 push    [bp+var_A]
+35457 call    sub_1AC65
+3545C cmp     [bp+var_6], 0
+35460 jnz     short loc_35470
+35462 push    ds
+35463 mov     ax, offset aNoneGenerated; "\nNone generated!\n"
+35466 push    ax
+35467 call    scroll_printf
+3546C pop     cx
+3546D pop     cx
+3546E jmp     short loc_3547C
+35470 push    ds
+35471 mov     ax, offset aSilverSnakesAr; "\nSilver snakes are generated!\n"
+35474 push    ax
+35475 call    scroll_printf
+3547A pop     cx
+3547B pop     cx
+3547C pop     di
+3547D pop     si
+3547E mov     sp, bp
+35480 pop     bp
+35481 retf
+=== operate_drawbridge 339CD
+339CD push    bp
+339CE mov     bp, sp
+339D0 sub     sp, 6
+339D3 push    si
+339D4 push    di
+339D5 mov     bx, [bp+arg_0]
+339D8 shl     bx, 1
+339DA add     bx, 4EE4h
+339DE push    ds
+339DF pop     es
+339E0 mov     al, es:[bx+1]
+339E4 mov     ah, 0
+339E6 mov     [bp+var_6], ax
+339E9 xor     ax, ax
+339EB push    ax
+339EC push    ax
+339ED mov     ax, 3FFh
+339F0 push    ax
+339F1 push    ax
+339F2 call    sub_19E9E
+339F7 mov     si, ax
+339F9 jmp     short loc_33A02
+339FB call    sub_19DCD
+33A00 mov     si, ax
+33A02 or      si, si
+33A04 jl      short loc_33A2B
+33A06 mov     bx, si
+33A08 shl     bx, 1
+33A0A mov     ax, [bx+3548h]
+33A0E and     ax, 3FFh
+33A11 cmp     ax, 10Dh
+33A14 jnz     short loc_339FB
+33A16 mov     bx, si
+33A18 shl     bx, 1
+33A1A add     bx, 4EE4h
+33A1E push    ds
+33A1F pop     es
+33A20 mov     al, es:[bx+1]
+33A24 mov     ah, 0
+33A26 cmp     ax, [bp+var_6]
+33A29 jnz     short loc_339FB
+33A2B cmp     si, 0FFFFh
+33A2E jnz     short loc_33A3F
+33A30 push    ds
+33A31 mov     ax, offset aNoCorresponden; "\nNo correspondent drawbridge\n"
+33A34 push    ax
+33A35 call    scroll_printf
+33A3A pop     cx
+33A3B pop     cx
+33A3C jmp     loc_33B01
+33A3F mov     bx, si
+33A41 shl     bx, 1
+33A43 mov     ax, [bx+3548h]
+33A47 mov     cl, 0Ah
+33A49 shr     ax, cl
+33A4B mov     [bp+var_4], ax
+33A4E cmp     ax, 3
+33A51 jnz     short loc_33A58
+33A53 mov     di, 2
+33A56 jmp     short loc_33A5B
+33A58 mov     di, 1
+33A5B mov     ax, 3F1h
+33A5E push    ax
+33A5F push    di
+33A60 call    sub_11FF9
+33A65 mov     ax, 3FCh
+33A68 push    ax
+33A69 push    di
+33A6A call    sub_11FF9
+33A6F mov     [bp+var_2], 0
+33A74 jmp     short loc_33A7E
+33A76 call    sub_12C6C
+33A7B inc     [bp+var_2]
+33A7E cmp     [bp+var_2], 14h
+33A82 jl      short loc_33A76
+33A84 push    si
+33A85 push    cs
+33A86 call    near ptr sub_335D7
+33A89 mov     di, ax
+33A8B mov     ax, di
+33A8D cmp     ax, 4; switch 5 cases
+33A90 ja      short def_33A96; jumptable 00033A96 default case
+33A92 mov     bx, ax
+33A94 shl     bx, 1
+33A96 jmp     cs:jpt_33A96[bx]; switch jump
+33A9B adc     ax, 2344h; jump table for switch statement
+33A9E inc     sp
+33A9F xor     [si+3Fh], ax
+33AA2 inc     sp
+33AA3 dec     bp
+33AA4 inc     sp
+33AA5 push    ds
+33AA6 mov     ax, 2353h
+33AA9 push    ax
+33AAA call    scroll_printf
+33AAF pop     cx
+33AB0 pop     cx
+33AB1 jmp     short def_33A96; jumptable 00033A96 default case
+33AB3 push    ds; jumptable 00033A96 case 1
+33AB4 mov     ax, offset aCloseTheDrawbr; "\nClose the drawbridge.\n"
+33AB7 push    ax
+33AB8 call    scroll_printf
+33ABD pop     cx
+33ABE pop     cx
+33ABF jmp     short def_33A96; jumptable 00033A96 default case
+33AC1 push    ds; jumptable 00033A96 case 2
+33AC2 mov     ax, offset aOpenTheDrawbri; "\nOpen the drawbridge.\n"
+33AC5 push    ax
+33AC6 call    scroll_printf
+33ACB pop     cx
+33ACC pop     cx
+33ACD jmp     short def_33A96; jumptable 00033A96 default case
+33ACF push    ds; jumptable 00033A96 case 3
+33AD0 mov     ax, offset aCanTCloseTheDr; "\nCan't close the drawbridge.\n"
+33AD3 push    ax
+33AD4 call    scroll_printf
+33AD9 pop     cx
+33ADA pop     cx
+33ADB jmp     short def_33A96; jumptable 00033A96 default case
+33ADD push    ds; jumptable 00033A96 case 4
+33ADE mov     ax, offset aCanTOpenTheDra; "\nCan't open the drawbridge.\n"
+33AE1 push    ax
+33AE2 call    scroll_printf
+33AE7 pop     cx
+33AE8 pop     cx
+33AE9 mov     ax, 3F1h; jumptable 00033A96 default case
+33AEC push    ax
+33AED xor     ax, ax
+33AEF push    ax
+33AF0 call    sub_11FF9
+33AF5 mov     ax, 3FCh
+33AF8 push    ax
+33AF9 xor     ax, ax
+33AFB push    ax
+33AFC call    sub_11FF9
+33B01 pop     di
+33B02 pop     si
+33B03 mov     sp, bp
+33B05 pop     bp
+33B06 retf    2
+=== use_crystal_ball 34FC5
+34FC5 push    bp
+34FC6 mov     bp, sp
+34FC8 sub     sp, 0Eh
+34FCB push    si
+34FCC push    di
+34FCD mov     al, byte_404A4
+34FD0 mov     ah, 0
+34FD2 push    ax
+34FD3 push    cs
+34FD4 call    near ptr sub_2F698
+34FD7 mov     [bp+var_2], ax
+34FDA mov     bx, ax
+34FDC mov     al, [bx+3433h]
+34FE0 mov     ah, 0
+34FE2 push    ax
+34FE3 push    cs
+34FE4 call    near ptr sub_323F1
+34FE7 or      ax, ax
+34FE9 jz      short loc_35015
+34FEB push    [bp+var_2]
+34FEE mov     ax, 1
+34FF1 push    ax
+34FF2 mov     ax, 0Ah
+34FF5 push    ax
+34FF6 call    sub_3B8F9
+34FFB push    ax
+34FFC call    sub_2C2E5
+35001 mov     ax, 0Ah; int
+35004 push    ax; int
+35005 call    scroll_print_wrapped
+3500A push    [bp+var_2]
+3500D call    print_wound_text
+35012 jmp     loc_35121
+35015 cmp     byte_3DCE2, 0
+3501A jz      short loc_35029
+3501C xor     ax, ax
+3501E push    ax
+3501F call    sub_16125
+35024 mov     byte_3DCE2, 0
+35029 push    ds
+3502A mov     ax, offset aEnterDegreesFo; "\nEnter degrees followed by N, S, E or "...
+3502D push    ax
+3502E call    scroll_printf
+35033 pop     cx
+35034 pop     cx
+35035 push    ds
+35036 mov     ax, offset aAtLatitude; "\nAt latitude="
+35039 push    ax
+3503A call    scroll_printf
+3503F pop     cx
+35040 pop     cx
+35041 mov     bx, word_3DD2F
+35045 mov     al, [bx+5]
+35048 mov     ah, 0
+3504A mov     [bp+var_6], ax
+3504D lea     ax, [bp+var_E]
+35050 push    ax
+35051 mov     ax, 4
+35054 push    ax
+35055 call    sub_1737A
+3505A lea     ax, [bp+var_E]
+3505D push    ax
+3505E mov     ax, 1
+35061 push    ax
+35062 push    cs
+35063 call    near ptr sub_2F895
+35066 mov     si, ax
+35068 cmp     si, 50h ; 'P'
+3506B jg      short loc_350AF
+3506D cmp     si, 0FFD4h
+35070 jl      short loc_350AF
+35072 push    ds
+35073 mov     ax, offset aLongitude; "\n  longitude="
+35076 push    ax
+35077 call    scroll_printf
+3507C pop     cx
+3507D pop     cx
+3507E mov     bx, word_3DD2F
+35082 mov     al, [bx+5]
+35085 mov     ah, 0
+35087 mov     [bp+var_6], ax
+3508A lea     ax, [bp+var_E]
+3508D push    ax
+3508E mov     ax, 4
+35091 push    ax
+35092 call    sub_1737A
+35097 lea     ax, [bp+var_E]
+3509A push    ax
+3509B mov     ax, 2
+3509E push    ax
+3509F push    cs
+350A0 call    near ptr sub_2F895
+350A3 mov     di, ax
+350A5 cmp     di, 58h ; 'X'
+350A8 jg      short loc_350AF
+350AA cmp     di, 0FFDBh
+350AD jge     short loc_350C9
+350AF mov     ax, 0Ch
+350B2 push    ax
+350B3 push    [bp+var_6]
+350B6 call    sub_174CF
+350BB push    ds
+350BC mov     ax, offset a0; "0   \n"
+350BF push    ax
+350C0 call    scroll_printf
+350C5 pop     cx
+350C6 pop     cx
+350C7 jmp     short loc_35121
+350C9 mov     ax, 0Ah; int
+350CC push    ax; int
+350CD call    scroll_print_wrapped
+350D2 mov     ax, word_404C2
+350D5 mov     [bp+var_4], ax
+350D8 mov     word_404C2, 0
+350DE mov     ax, di
+350E0 shl     ax, 1
+350E2 shl     ax, 1
+350E4 shl     ax, 1
+350E6 add     ax, 130h
+350E9 mov     [bp+var_A], ax
+350EC mov     ax, si
+350EE shl     ax, 1
+350F0 shl     ax, 1
+350F2 shl     ax, 1
+350F4 add     ax, 168h
+350F7 mov     [bp+var_8], ax
+350FA cmp     player_z, 0
+350FF jz      short loc_3510D
+35101 sar     [bp+var_A], 1
+35104 sar     [bp+var_A], 1
+35107 sar     [bp+var_8], 1
+3510A sar     [bp+var_8], 1
+3510D push    [bp+var_A]
+35110 push    [bp+var_8]
+35113 xor     ax, ax
+35115 push    ax
+35116 call    sub_24A61
+3511B mov     ax, [bp+var_4]
+3511E mov     word_404C2, ax
+35121 pop     di
+35122 pop     si
+35123 mov     sp, bp
+35125 pop     bp
+35126 retf
+=== use_telescope 35127
+35127 push    bp
+35128 mov     bp, sp
+3512A sub     sp, 4
+3512D push    si
+3512E push    di
+3512F mov     si, 28h ; '('
+35132 xor     di, di
+35134 mov     ax, player_x
+35137 mov     [bp+var_4], ax
+3513A mov     ax, player_y
+3513D mov     [bp+var_2], ax
+35140 mov     ax, [bp+arg_0]
+35143 mov     dx, 3
+35146 mul     dx
+35148 mov     bx, ax
+3514A mov     ax, [bx+6828h]
+3514E and     ax, 3FFh
+35151 mov     player_x, ax
+35154 mov     ax, [bp+arg_0]
+35157 mov     dx, 3
+3515A mul     dx
+3515C mov     bx, ax
+3515E mov     ax, [bx+6829h]
+35162 sar     ax, 1
+35164 sar     ax, 1
+35166 and     ax, 3FFh
+35169 mov     player_y, ax
+3516C call    sub_1CB82
+35171 call    refresh_map_view
+35176 call    sub_12C6C
+3517B push    ds
+3517C mov     ax, offset aDirection_1; "Direction-"
+3517F push    ax
+35180 call    scroll_printf
+35185 pop     cx
+35186 pop     cx
+35187 mov     word_3DD0E, 0
+3518D call    sub_17099
+35192 cmp     ax, 80h
+35195 jz      short loc_351A6
+35197 push    ds
+35198 mov     ax, offset aNowhere_1; "nowhere.\n"
+3519B push    ax
+3519C call    scroll_printf
+351A1 pop     cx
+351A2 pop     cx
+351A3 jmp     loc_35257
+351A6 mov     bx, word_48F29
+351AA shl     bx, 1
+351AC push    word ptr [bx+1B2h]
+351B0 push    ds
+351B1 mov     ax, offset aS_22; "%s.\n"
+351B4 push    ax
+351B5 call    scroll_printf
+351BA add     sp, 6
+351BD mov     word_3DE38, 1
+351C3 mov     word_40298, 1
+351C9 call    sub_1CB82
+351CE call    refresh_map_view
+351D3 call    sub_12C6C
+351D8 jmp     short loc_35215
+351DA mov     bx, word_48F29
+351DE mov     al, [bx+1A2h]
+351E2 cbw
+351E3 add     player_x, ax
+351E7 mov     al, [bx+1AAh]
+351EB cbw
+351EC add     player_y, ax
+351F0 call    sub_1CB82
+351F5 call    refresh_map_view
+351FA call    sub_12C6C
+351FF dec     si
+35200 push    player_x
+35204 push    player_y
+35208 push    player_z
+3520C call    sub_18C09
+35211 mov     ah, 0
+35213 mov     di, ax
+35215 or      si, si
+35217 jl      short loc_3521F
+35219 cmp     di, 0FCh
+3521D jl      short loc_351DA
+3521F mov     word_3DE38, 0
+35225 mov     ax, [bp+var_4]
+35228 mov     player_x, ax
+3522B mov     ax, [bp+var_2]
+3522E mov     player_y, ax
+35231 call    sub_1CB82
+35236 call    refresh_map_view
+3523B mov     word_40298, 1
+35241 call    sub_12C6C
+35246 push    word_3E63A
+3524A push    ds
+3524B mov     ax, offset aS_19; "\n%s\n"
+3524E push    ax
+3524F call    scroll_printf
+35254 add     sp, 6
+35257 pop     di
+35258 pop     si
+35259 mov     sp, bp
+3525B pop     bp
+3525C retf    2
+=== use_shrine 34228
+34228 push    bp
+34229 mov     bp, sp
+3422B sub     sp, 12h
+3422E push    si
+3422F push    di
+34230 mov     [bp+var_2], 0
+34235 mov     bx, [bp+arg_0]
+34238 shl     bx, 1
+3423A mov     ax, [bx+3548h]
+3423E and     ax, 3FFh
+34241 add     ax, 0FF0Eh
+34244 mov     [bp+var_C], ax
+34247 push    ds
+34248 mov     ax, offset aMantra; "Mantra: "
+3424B push    ax
+3424C call    scroll_printf
+34251 pop     cx
+34252 pop     cx
+34253 lea     ax, [bp+s1]
+34256 push    ax
+34257 mov     ax, 4
+3425A push    ax
+3425B call    sub_1737A
+34260 mov     ax, 0Ah; int
+34263 push    ax; int
+34264 call    scroll_print_wrapped
+34269 xor     si, si
+3426B jmp     short loc_34285
+3426D mov     bx, si
+3426F shl     bx, 1
+34271 push    word ptr [bx+1D0Fh]
+34275 lea     ax, [bp+s1]
+34278 push    ax; s1
+34279 call    _stricmp
+3427E pop     cx
+3427F pop     cx
+34280 or      ax, ax
+34282 jz      short loc_3428A
+34284 inc     si
+34285 cmp     si, 8
+34288 jl      short loc_3426D
+3428A cmp     si, 8
+3428D jz      short loc_34294
+3428F cmp     si, [bp+var_C]
+34292 jz      short loc_342A3
+34294 push    ds
+34295 mov     ax, offset aWrongMantra; "\nWrong mantra!\n"
+34298 push    ax
+34299 call    scroll_printf
+3429E pop     cx
+3429F pop     cx
+342A0 jmp     loc_343CE
+342A3 mov     [bp+var_C], si
+342A6 mov     al, byte_404A4
+342A9 mov     ah, 0
+342AB mov     bx, ax
+342AD mov     al, [bx+3533h]
+342B1 mov     ah, 0
+342B3 mov     dx, 3
+342B6 mul     dx
+342B8 mov     bx, ax
+342BA mov     ax, [bx+6828h]
+342BE and     ax, 3FFh
+342C1 mov     [bp+var_A], ax
+342C4 mov     al, byte_404A4
+342C7 mov     ah, 0
+342C9 mov     bx, ax
+342CB mov     al, [bx+3533h]
+342CF mov     ah, 0
+342D1 mov     dx, 3
+342D4 mul     dx
+342D6 mov     bx, ax
+342D8 mov     ax, [bx+6829h]
+342DC sar     ax, 1
+342DE sar     ax, 1
+342E0 and     ax, 3FFh
+342E3 mov     [bp+var_8], ax
+342E6 xor     si, si
+342E8 jmp     loc_34393
+342EB xor     di, di
+342ED jmp     loc_3438A
+342F0 cmp     si, 1
+342F3 jnz     short loc_342FD
+342F5 cmp     di, 1
+342F8 jnz     short loc_342FD
+342FA jmp     loc_34389
+342FD mov     ax, [bp+var_A]
+34300 add     ax, si
+34302 dec     ax
+34303 push    ax
+34304 mov     ax, [bp+var_8]
+34307 add     ax, di
+34309 dec     ax
+3430A push    ax
+3430B push    player_z
+3430F mov     ax, 49h ; 'I'
+34312 push    ax
+34313 push    cs
+34314 call    near ptr sub_334B1
+34317 mov     [bp+var_6], ax
+3431A or      ax, ax
+3431C jl      short loc_34389
+3431E mov     bx, ax
+34320 shl     bx, 1
+34322 mov     ax, [bx+3548h]
+34326 mov     cl, 0Ah
+34328 shr     ax, cl
+3432A cmp     ax, [bp+var_C]
+3432D jnz     short loc_34389
+3432F mov     ax, [bp+var_A]
+34332 add     ax, si
+34334 dec     ax
+34335 push    ax
+34336 mov     ax, [bp+var_8]
+34339 add     ax, di
+3433B dec     ax
+3433C push    ax
+3433D push    player_z
+34341 mov     ax, 33h ; '3'
+34344 push    ax
+34345 push    cs
+34346 call    near ptr sub_334B1
+34349 mov     [bp+var_4], ax
+3434C or      ax, ax
+3434E jl      short loc_34356
+34350 push    ax
+34351 call    sub_1AC65
+34356 mov     ax, [bp+var_6]
+34359 mov     dx, 3
+3435C mul     dx
+3435E mov     bx, ax
+34360 mov     ax, [bx+6828h]
+34364 and     ax, 3FFh
+34367 push    ax
+34368 mov     ax, [bp+var_6]
+3436B mov     dx, 3
+3436E mul     dx
+34370 mov     bx, ax
+34372 mov     ax, [bx+6829h]
+34376 sar     ax, 1
+34378 sar     ax, 1
+3437A and     ax, 3FFh
+3437D push    ax
+3437E push    cs
+3437F call    near ptr sub_3419B
+34382 mov     [bp+var_2], 1
+34387 jmp     short loc_34392
+34389 inc     di
+3438A cmp     di, 3
+3438D jge     short loc_34392
+3438F jmp     loc_342F0
+34392 inc     si
+34393 cmp     si, 3
+34396 jge     short loc_3439B
+34398 jmp     loc_342EB
+3439B cmp     [bp+var_2], 0
+3439F jz      short loc_343BD
+343A1 mov     ax, 1
+343A4 push    ax
+343A5 call    sub_21145
+343AA push    word_3E63A
+343AE push    ds
+343AF mov     ax, offset aS_19; "\n%s\n"
+343B2 push    ax
+343B3 call    scroll_printf
+343B8 add     sp, 6
+343BB jmp     short loc_343CE
+343BD push    word_3E630
+343C1 push    ds
+343C2 mov     ax, offset aS_19; "\n%s\n"
+343C5 push    ax
+343C6 call    scroll_printf
+343CB add     sp, 6
+343CE pop     di
+343CF pop     si
+343D0 mov     sp, bp
+343D2 pop     bp
+343D3 retf    2
+=== use_orb_of_the_moons 34E19
+34E19 push    bp
+34E1A mov     bp, sp
+34E1C sub     sp, 4
+34E1F push    si
+34E20 push    di
+34E21 mov     al, byte_48B40
+34E24 mov     cl, 5
+34E26 shr     al, cl
+34E28 test    al, 1
+34E2A jnz     short loc_34E3B
+34E2C push    ds
+34E2D mov     ax, offset aYouCanTFigureO; "\nYou can't figure out how to use it.\n"
+34E30 push    ax
+34E31 call    scroll_printf
+34E36 pop     cx
+34E37 pop     cx
+34E38 jmp     loc_34FBF
+34E3B push    ds
+34E3C mov     ax, offset aWhere; "Where: "
+34E3F push    ax
+34E40 call    scroll_printf
+34E45 pop     cx
+34E46 pop     cx
+34E47 mov     word_3DD0E, 1
+34E4D cmp     byte_3DCE2, 0
+34E52 jz      short loc_34E66
+34E54 xor     ax, ax
+34E56 push    ax
+34E57 call    sub_16125
+34E5C mov     byte_3DCE2, 1
+34E61 mov     byte_3DCE5, 7
+34E66 call    sub_17099
+34E6B mov     ax, player_x
+34E6E add     ax, 0FFFEh
+34E71 cmp     ax, word_48EFF
+34E75 jle     short loc_34E7A
+34E77 jmp     loc_34FAE
+34E7A mov     ax, player_x
+34E7D inc     ax
+34E7E inc     ax
+34E7F cmp     ax, word_48EFF
+34E83 jge     short loc_34E88
+34E85 jmp     loc_34FAE
+34E88 mov     ax, player_y
+34E8B add     ax, 0FFFEh
+34E8E cmp     ax, word_48F01
+34E92 jle     short loc_34E97
+34E94 jmp     loc_34FAE
+34E97 mov     ax, player_y
+34E9A inc     ax
+34E9B inc     ax
+34E9C cmp     ax, word_48F01
+34EA0 jge     short loc_34EA5
+34EA2 jmp     loc_34FAE
+34EA5 mov     ax, word_48F01
+34EA8 cmp     ax, player_y
+34EAC jnz     short loc_34EC6
+34EAE mov     ax, player_x
+34EB1 dec     ax
+34EB2 cmp     ax, word_48EFF
+34EB6 jg      short loc_34EC6
+34EB8 mov     ax, player_x
+34EBB inc     ax
+34EBC cmp     ax, word_48EFF
+34EC0 jl      short loc_34EC6
+34EC2 xor     di, di
+34EC4 jmp     short loc_34EE2
+34EC6 mov     ax, word_48F01
+34EC9 sub     ax, player_y
+34ECD inc     ax
+34ECE inc     ax
+34ECF mov     dx, 5
+34ED2 mul     dx
+34ED4 mov     di, ax
+34ED6 mov     ax, word_48EFF
+34ED9 sub     ax, player_x
+34EDD add     di, ax
+34EDF add     di, 3
+34EE2 mov     al, byte ptr player_z
+34EE5 mov     cl, 4
+34EE7 shl     al, cl
+34EE9 mov     [bp+var_2], al
+34EEC mov     [bp+var_4], 0
+34EF1 or      [bp+var_4+1], 0
+34EF6 xor     ax, ax
+34EF8 push    ax
+34EF9 lea     bx, [bp+var_4]
+34EFC mov     dx, ss
+34EFE mov     ax, bx
+34F00 mov     cx, 4
+34F03 call    SPUSH@
+34F08 mov     ax, 54h ; 'T'
+34F0B push    ax
+34F0C mov     ax, 1
+34F0F push    ax
+34F10 mov     ax, di
+34F12 mov     cl, 8
+34F14 shl     ax, cl
+34F16 or      ax, 0
+34F19 push    ax
+34F1A call    sub_1A80C
+34F1F mov     si, ax
+34F21 push    si
+34F22 push    word_48EFF
+34F26 push    word_48F01
+34F2A call    can_actor_enter
+34F2F or      ax, ax
+34F31 jz      short loc_34F95
+34F33 push    word_48EFF
+34F37 push    word_48F01
+34F3B push    player_z
+34F3F mov     ax, 12Dh
+34F42 push    ax
+34F43 push    cs
+34F44 call    near ptr sub_334B1
+34F47 cmp     ax, 0FFFFh
+34F4A jnz     short loc_34F95
+34F4C push    word_48EFF
+34F50 push    word_48F01
+34F54 push    player_z
+34F58 mov     ax, 12Eh
+34F5B push    ax
+34F5C push    cs
+34F5D call    near ptr sub_334B1
+34F60 cmp     ax, 0FFFFh
+34F63 jnz     short loc_34F95
+34F65 push    ds
+34F66 mov     ax, offset aARedMoonGateAp; "a red moon gate appears.\n"
+34F69 push    ax
+34F6A call    scroll_printf
+34F6F pop     cx
+34F70 pop     cx
+34F71 push    si
+34F72 push    word_48EFF
+34F76 push    word_48F01
+34F7A push    player_z
+34F7E call    sub_1B26F
+34F83 mov     word_40298, 1
+34F89 call    sub_18F86
+34F8E call    sub_12C6C
+34F93 jmp     short loc_34FBF
+34F95 push    word_3E62E
+34F99 push    ds
+34F9A mov     ax, offset aS_15; "%s\n"
+34F9D push    ax
+34F9E call    scroll_printf
+34FA3 add     sp, 6
+34FA6 push    si
+34FA7 call    sub_1AC65
+34FAC jmp     short loc_34FBF
+34FAE push    word_3E62E
+34FB2 push    ds
+34FB3 mov     ax, offset aS_15; "%s\n"
+34FB6 push    ax
+34FB7 call    scroll_printf
+34FBC add     sp, 6
+34FBF pop     di
+34FC0 pop     si
+34FC1 mov     sp, bp
+34FC3 pop     bp
+34FC4 retf
+=== use_cannon 330C5
+330C5 push    bp
+330C6 mov     bp, sp
+330C8 sub     sp, 8
+330CB push    si
+330CC push    di
+330CD push    ds
+330CE mov     ax, offset aFire; "\nFire!\n"
+330D1 push    ax
+330D2 call    scroll_printf
+330D7 pop     cx
+330D8 pop     cx
+330D9 mov     bx, [bp+arg_0]
+330DC shl     bx, 1
+330DE mov     si, [bx+3548h]
+330E2 mov     cl, 0Ah
+330E4 shr     si, cl
+330E6 mov     ax, [bp+arg_0]
+330E9 mov     dx, 3
+330EC mul     dx
+330EE mov     bx, ax
+330F0 mov     ax, [bx+6828h]
+330F4 and     ax, 3FFh
+330F7 mov     [bp+var_8], ax
+330FA mov     ax, [bp+arg_0]
+330FD mov     dx, 3
+33100 mul     dx
+33102 mov     bx, ax
+33104 mov     ax, [bx+6829h]
+33108 sar     ax, 1
+3310A sar     ax, 1
+3310C and     ax, 3FFh
+3310F mov     [bp+var_6], ax
+33112 mov     di, 1
+33115 jmp     short loc_33143
+33117 mov     al, [si+1D02h]
+3311B cbw
+3311C mul     di
+3311E add     ax, [bp+var_8]
+33121 push    ax
+33122 mov     al, [si+1D06h]
+33126 cbw
+33127 mul     di
+33129 add     ax, [bp+var_6]
+3312C push    ax
+3312D push    player_z
+33131 call    sub_19C1A
+33136 mov     [bp+var_4], ax
+33139 or      ax, ax
+3313B jl      short loc_33142
+3313D cmp     ax, 100h
+33140 jl      short loc_33148
+33142 inc     di
+33143 cmp     di, 6
+33146 jl      short loc_33117
+33148 mov     al, [si+1D02h]
+3314C cbw
+3314D mul     di
+3314F add     [bp+var_8], ax
+33152 mov     al, [si+1D06h]
+33156 cbw
+33157 mul     di
+33159 add     [bp+var_6], ax
+3315C push    [bp+arg_0]
+3315F lea     ax, [bp+var_8]
+33162 push    ax
+33163 lea     ax, [bp+var_6]
+33166 push    ax
+33167 mov     ax, 5
+3316A push    ax
+3316B mov     ax, 18Fh
+3316E push    ax
+3316F call    sub_2BB2F
+33174 mov     [bp+var_2], ax
+33177 or      ax, ax
+33179 jnz     short loc_3319E
+3317B mov     al, [si+1D02h]
+3317F cbw
+33180 add     word_4C44E, ax
+33184 mov     al, [si+1D06h]
+33188 cbw
+33189 add     word_4C450, ax
+3318D push    word_4C44E
+33191 push    word_4C450
+33195 mov     ax, 189h
+33198 push    ax
+33199 call    sub_38962
+3319E push    word_4C44E
+331A2 push    word_4C450
+331A6 push    player_z
+331AA call    sub_19C1A
+331AF mov     [bp+var_4], ax
+331B2 or      ax, ax
+331B4 jl      short loc_331E1
+331B6 mov     bx, ax
+331B8 shl     bx, 1
+331BA mov     ax, [bx+3548h]
+331BE and     ax, 3FFh
+331C1 push    ax
+331C2 call    stackable_kind
+331C7 or      ax, ax
+331C9 jnz     short loc_331E1
+331CB push    [bp+var_4]
+331CE mov     ax, 1
+331D1 push    ax
+331D2 mov     ax, 3Ch ; '<'
+331D5 push    ax
+331D6 call    sub_3B8F9
+331DB push    ax
+331DC call    sub_2C2E5
+331E1 pop     di
+331E2 pop     si
+331E3 mov     sp, bp
+331E5 pop     bp
+331E6 retf    2
+=== light_powder_keg 331E9
+331E9 push    bp
+331EA mov     bp, sp
+331EC push    si
+331ED mov     si, [bp+arg_0]
+331F0 mov     bx, si
+331F2 shl     bx, 1
+331F4 mov     ax, [bx+3548h]
+331F8 mov     cl, 0Ah
+331FA shr     ax, cl
+331FC or      ax, ax
+331FE jnz     short loc_3325B
+33200 cmp     word_404F4, 0
+33205 jz      short loc_33215
+33207 push    ds
+33208 mov     ax, offset aNotNow; "\nNot now\n"
+3320B push    ax
+3320C call    scroll_printf
+33211 pop     cx
+33212 pop     cx
+33213 jmp     short loc_3326C
+33215 mov     bx, si
+33217 shl     bx, 1
+33219 mov     ax, [bx+3548h]
+3321D and     ax, 3FFh
+33220 add     ax, 400h
+33223 mov     bx, si
+33225 shl     bx, 1
+33227 mov     [bx+3548h], ax
+3322B mov     word_404F4, 3
+33231 mov     word_404F6, si
+33235 push    ds
+33236 mov     ax, offset aPowderLit; "\nPowder lit!\n"
+33239 push    ax
+3323A call    scroll_printf
+3323F pop     cx
+33240 pop     cx
+33241 test    byte ptr [si-5F55h], 18h
+33246 jnz     short loc_33254
+33248 call    sub_18F86
+3324D call    sub_12C6C
+33252 jmp     short loc_3326C
+33254 call    sub_1DF45
+33259 jmp     short loc_3326C
+3325B push    word_3E630
+3325F push    ds
+33260 mov     ax, offset aS_19; "\n%s\n"
+33263 push    ax
+33264 call    scroll_printf
+33269 add     sp, 6
+3326C pop     si
+3326D pop     bp
+3326E retf    2
+=== extinguish_light 32886
+32886 push    bp
+32887 mov     bp, sp
+32889 sub     sp, 2
+3288C push    si
+3288D push    di
+3288E mov     si, [bp+arg_0]
+32891 mov     bx, si
+32893 shl     bx, 1
+32895 mov     ax, [bx+3548h]
+32899 and     ax, 3FFh
+3289C mov     [bp+var_2], ax
+3289F mov     bx, si
+328A1 shl     bx, 1
+328A3 mov     di, [bx+3548h]
+328A7 mov     cl, 0Ah; int
+328A9 shr     di, cl
+328AB mov     ax, 0Ah; int
+328AE push    ax; int
+328AF call    scroll_print_wrapped
+328B4 mov     ax, [bp+var_2]
+328B7 mov     cx, 5; switch 5 cases
+328BA mov     bx, 323Ch
+328BD cmp     ax, cs:[bx]
+328C0 jz      short loc_328C8
+328C2 inc     bx
+328C3 inc     bx
+328C4 loop    loc_328BD
+328C6 jmp     short def_328C8; jumptable 000328C8 default case
+328C8 jmp     word ptr cs:[bx+0Ah]; switch jump
+328CC jp      short $+2; value table for switch statement
+328CE xchg    ax, cx
+328CF add     [si-3200h], ah
+328D3 add     ch, bh
+328D5 db    0
+328D6 mov     [bp+si], dh; jump table for switch statement
+328D8 insb
+328D9 xor     dl, [bx+si+32h]
+328DC pop     si
+328DD xor     bh, [bp+si+32h]
+328E0 push    ds
+328E1 mov     ax, 2202h
+328E4 push    ax
+328E5 call    scroll_printf
+328EA pop     cx
+328EB pop     cx
+328EC jmp     short def_328C8; jumptable 000328C8 default case
+328EE push    ds; jumptable 000328C8 case 206
+328EF mov     ax, offset aBrazier; "brazier"
+328F2 push    ax
+328F3 call    scroll_printf
+328F8 pop     cx
+328F9 pop     cx
+328FA jmp     short def_328C8; jumptable 000328C8 default case
+328FC push    ds; jumptable 000328C8 case 145
+328FD mov     ax, offset aCandelabra; "candelabra"
+32900 push    ax
+32901 call    scroll_printf
+32906 pop     cx
+32907 pop     cx
+32908 jmp     short def_328C8; jumptable 000328C8 default case
+3290A push    ds; jumptable 000328C8 case 253
+3290B mov     ax, offset aCampfire; "campfire"
+3290E push    ax
+3290F call    scroll_printf
+32914 pop     cx
+32915 pop     cx
+32916 jmp     short def_328C8; jumptable 000328C8 default case
+32918 push    ds; jumptable 000328C8 case 122
+32919 mov     ax, offset aCandle; "candle"
+3291C push    ax
+3291D call    scroll_printf
+32922 pop     cx
+32923 pop     cx
+32924 test    di, 1; jumptable 000328C8 default case
+32928 jz      short loc_32957
+3292A mov     bx, si
+3292C shl     bx, 1
+3292E mov     ax, [bx+3548h]
+32932 and     ax, 3FFh
+32935 mov     dx, di
+32937 and     dx, 2
+3293B mov     cl, 0Ah
+3293D shl     dx, cl
+3293F add     ax, dx
+32941 mov     bx, si
+32943 shl     bx, 1
+32945 mov     [bx+3548h], ax
+32949 push    ds
+3294A mov     ax, offset aIsDoused; " is doused.\n"
+3294D push    ax
+3294E call    scroll_printf
+32953 pop     cx
+32954 pop     cx
+32955 jmp     short loc_32982
+32957 mov     bx, si
+32959 shl     bx, 1
+3295B mov     ax, [bx+3548h]
+3295F and     ax, 3FFh
+32962 mov     dx, di
+32964 or      dx, 1
+32968 mov     cl, 0Ah
+3296A shl     dx, cl
+3296C add     ax, dx
+3296E mov     bx, si
+32970 shl     bx, 1
+32972 mov     [bx+3548h], ax
+32976 push    ds
+32977 mov     ax, 21F8h
+3297A push    ax
+3297B call    scroll_printf
+32980 pop     cx
+32981 pop     cx
+32982 pop     di
+32983 pop     si
+32984 mov     sp, bp
+32986 pop     bp
+32987 retf    2
+=== play_instrument 329EA
+329EA push    bp
+329EB mov     bp, sp
+329ED push    si
+329EE mov     byte_3DCE2, 0
+329F3 jmp     short loc_32A08
+329F5 push    [bp+arg_0]
+329F8 mov     bx, si
+329FA add     bx, 0FFD0h
+329FD shl     bx, 1
+329FF push    word ptr [bx+1CEEh]
+32A03 call    sub_36E85
+32A08 call    sub_17099
+32A0D mov     si, ax
+32A0F mov     bx, si
+32A11 test    byte ptr [bx+3117h], 2
+32A16 jnz     short loc_329F5
+32A18 pop     si
+32A19 pop     bp
+32A1A retf    2
+=== operate_passthrough 35482
+35482 push    bp
+35483 mov     bp, sp
+35485 sub     sp, 8
+35488 push    si
+35489 push    di
+3548A mov     si, [bp+arg_0]
+3548D mov     bx, si
+3548F shl     bx, 1
+35491 mov     ax, [bx+3548h]
+35495 and     ax, 3FFh
+35498 mov     [bp+var_6], ax
+3549B mov     bx, si
+3549D shl     bx, 1
+3549F mov     ax, [bx+3548h]
+354A3 mov     cl, 0Ah
+354A5 shr     ax, cl
+354A7 mov     [bp+var_8], ax
+354AA mov     ax, si
+354AC mov     dx, 3
+354AF mul     dx
+354B1 mov     bx, ax
+354B3 mov     di, [bx+6828h]
+354B7 and     di, 3FFh
+354BB mov     ax, si
+354BD mov     dx, 3
+354C0 mul     dx
+354C2 mov     bx, ax
+354C4 mov     ax, [bx+6829h]
+354C8 sar     ax, 1
+354CA sar     ax, 1
+354CC and     ax, 3FFh
+354CF mov     [bp+var_4], ax
+354D2 cmp     [bp+var_8], 0
+354D6 jnz     short loc_3552E
+354D8 cmp     [bp+var_6], 116h
+354DD jnz     short loc_354EE
+354DF push    si
+354E0 push    di
+354E1 dec     ax
+354E2 push    ax
+354E3 push    player_z
+354E7 call    sub_1B26F
+354EC jmp     short loc_354FF
+354EE push    si
+354EF mov     ax, di
+354F1 dec     ax
+354F2 push    ax
+354F3 push    [bp+var_4]
+354F6 push    player_z
+354FA call    sub_1B26F
+354FF mov     bx, si
+35501 shl     bx, 1
+35503 mov     ax, [bx+3548h]
+35507 and     ax, 3FFh
+3550A mov     dx, [bp+var_8]
+3550D or      dx, 2
+35511 mov     cl, 0Ah
+35513 shl     dx, cl
+35515 add     ax, dx
+35517 mov     bx, si
+35519 shl     bx, 1
+3551B mov     [bx+3548h], ax
+3551F push    ds
+35520 mov     ax, offset aOpenThePassthr; "\nOpen the passthrough.\n"
+35523 push    ax
+35524 call    scroll_printf
+35529 pop     cx
+3552A pop     cx
+3552B jmp     loc_355CB
+3552E cmp     [bp+var_6], 116h
+35533 jnz     short loc_35563
+35535 push    di
+35536 mov     ax, [bp+var_4]
+35539 inc     ax
+3553A push    ax
+3553B push    player_z
+3553F call    sub_19C1A
+35544 mov     [bp+var_2], ax
+35547 cmp     ax, 0FFFFh
+3554A jz      short loc_35551
+3554C cmp     ax, 100h
+3554F jl      short loc_35580
+35551 push    si
+35552 push    di
+35553 mov     ax, [bp+var_4]
+35556 inc     ax
+35557 push    ax
+35558 push    player_z
+3555C call    sub_1B26F
+35561 jmp     short loc_3559F
+35563 mov     ax, di
+35565 inc     ax
+35566 push    ax
+35567 push    [bp+var_4]
+3556A push    player_z
+3556E call    sub_19C1A
+35573 mov     [bp+var_2], ax
+35576 cmp     ax, 0FFFFh
+35579 jz      short loc_3558E
+3557B cmp     ax, 100h
+3557E jge     short loc_3558E
+35580 push    ds
+35581 mov     ax, offset aNotNow_0; "\nNot now!\n"
+35584 push    ax
+35585 call    scroll_printf
+3558A pop     cx
+3558B pop     cx
+3558C jmp     short loc_355CB
+3558E push    si
+3558F mov     ax, di
+35591 inc     ax
+35592 push    ax
+35593 push    [bp+var_4]
+35596 push    player_z
+3559A call    sub_1B26F
+3559F mov     bx, si
+355A1 shl     bx, 1
+355A3 mov     ax, [bx+3548h]
+355A7 and     ax, 3FFh
+355AA mov     dx, [bp+var_8]
+355AD and     dx, 1
+355B1 mov     cl, 0Ah
+355B3 shl     dx, cl
+355B5 add     ax, dx
+355B7 mov     bx, si
+355B9 shl     bx, 1
+355BB mov     [bx+3548h], ax
+355BF push    ds
+355C0 mov     ax, offset aCloseThePassth; "\nClose the passthrough.\n"
+355C3 push    ax
+355C4 call    scroll_printf
+355C9 pop     cx
+355CA pop     cx
+355CB pop     di
+355CC pop     si
+355CD mov     sp, bp
+355CF pop     bp
+355D0 retf    2
+=== open_secret_door 3298A
+3298A push    bp
+3298B mov     bp, sp
+3298D push    si
+3298E push    di
+3298F mov     si, [bp+arg_0]
+32992 mov     bx, si
+32994 shl     bx, 1
+32996 mov     di, [bx+3548h]
+3299A mov     cl, 0Ah
+3299C shr     di, cl
+3299E test    di, 1
+329A2 jz      short loc_329C5
+329A4 mov     bx, si
+329A6 shl     bx, 1
+329A8 mov     ax, [bx+3548h]
+329AC and     ax, 3FFh
+329AF mov     dx, di
+329B1 and     dx, 2
+329B5 mov     cl, 0Ah
+329B7 shl     dx, cl
+329B9 add     ax, dx
+329BB mov     bx, si
+329BD shl     bx, 1
+329BF mov     [bx+3548h], ax
+329C3 jmp     short loc_329E4
+329C5 mov     bx, si
+329C7 shl     bx, 1
+329C9 mov     ax, [bx+3548h]
+329CD and     ax, 3FFh
+329D0 mov     dx, di
+329D2 or      dx, 1
+329D6 mov     cl, 0Ah
+329D8 shl     dx, cl
+329DA add     ax, dx
+329DC mov     bx, si
+329DE shl     bx, 1
+329E0 mov     [bx+3548h], ax
+329E4 pop     di
+329E5 pop     si
+329E6 pop     bp
+329E7 retf    2
+=== use_vortex_cube 3563C
+3563C push    bp
+3563D mov     bp, sp
+3563F sub     sp, 12h
+35642 push    si
+35643 push    di
+35644 xor     si, si
+35646 jmp     short loc_35656
+35648 mov     bx, si
+3564A shl     bx, 1
+3564C lea     ax, [bp+var_12]
+3564F add     bx, ax
+35651 mov     word ptr [bx], 0
+35655 inc     si
+35656 cmp     si, 8
+35659 jl      short loc_35648
+3565B push    [bp+arg_0]
+3565E call    sub_19D00
+35663 mov     di, ax
+35665 jmp     short loc_35685
+35667 mov     bx, di
+35669 shl     bx, 1
+3566B mov     bx, [bx+3548h]
+3566F mov     cl, 0Ah
+35671 shr     bx, cl
+35673 shl     bx, 1
+35675 lea     ax, [bp+var_12]
+35678 add     bx, ax
+3567A mov     word ptr [bx], 1
+3567E call    sub_19D59
+35683 mov     di, ax
+35685 or      di, di
+35687 jge     short loc_35667
+35689 xor     si, si
+3568B jmp     short loc_3569F
+3568D mov     bx, si
+3568F shl     bx, 1
+35691 lea     ax, [bp+var_12]
+35694 add     bx, ax
+35696 cmp     word ptr [bx], 0
+35699 jnz     short loc_3569E
+3569B jmp     loc_3571B
+3569E inc     si
+3569F cmp     si, 8
+356A2 jl      short loc_3568D
+356A4 mov     ax, 399h
+356A7 push    ax
+356A8 mov     ax, 353h
+356AB push    ax
+356AC xor     ax, ax
+356AE push    ax
+356AF mov     ax, 18Ah
+356B2 push    ax
+356B3 push    cs
+356B4 call    near ptr sub_334B1
+356B7 cmp     ax, 0FFFFh
+356BA jz      short loc_3571B
+356BC mov     ax, 39Dh
+356BF push    ax
+356C0 mov     ax, 353h
+356C3 push    ax
+356C4 xor     ax, ax
+356C6 push    ax
+356C7 mov     ax, 18Ch
+356CA push    ax
+356CB push    cs
+356CC call    near ptr sub_334B1
+356CF cmp     ax, 0FFFFh
+356D2 jz      short loc_3571B
+356D4 mov     ax, 39Bh
+356D7 push    ax
+356D8 mov     ax, 353h
+356DB push    ax
+356DC xor     ax, ax
+356DE push    ax
+356DF mov     ax, 3Bh ; ';'
+356E2 push    ax
+356E3 push    cs
+356E4 call    near ptr sub_334B1
+356E7 mov     [bp+var_2], ax
+356EA cmp     ax, 0FFFFh
+356ED jz      short loc_3571B
+356EF mov     ax, player_x
+356F2 add     ax, 0FFFBh
+356F5 cmp     ax, 39Bh
+356F8 jg      short loc_3571B
+356FA mov     ax, player_x
+356FD add     ax, 5
+35700 cmp     ax, 39Bh
+35703 jl      short loc_3571B
+35705 mov     ax, player_y
+35708 add     ax, 0FFFBh
+3570B cmp     ax, 353h
+3570E jg      short loc_3571B
+35710 mov     ax, player_y
+35713 add     ax, 5
+35716 cmp     ax, 353h
+35719 jge     short loc_3571F
+3571B xor     ax, ax
+3571D jmp     short loc_35745
+3571F push    [bp+var_2]
+35722 call    sub_1AC65
+35727 call    sub_3945E
+3572C push    ds
+3572D mov     ax, offset aTheCodexHasVan; "\nThe Codex has vanished!\n"
+35730 push    ax
+35731 call    scroll_printf
+35736 pop     cx
+35737 pop     cx
+35738 call    sub_17099
+3573D call    far ptr start_ending
+35742 mov     ax, 1
+35745 pop     di
+35746 pop     si
+35747 mov     sp, bp
+35749 pop     bp
+3574A retf    2
+=== climb_ladder 186DE
+186DE push    bp
+186DF mov     bp, sp
+186E1 push    si
+186E2 push    di
+186E3 mov     di, [bp+arg_0]
+186E6 cmp     byte_40512, 0
+186EB jz      short loc_186F2
+186ED call    sub_2B1AC
+186F2 cmp     player_z, 0
+186F7 jz      short loc_18711
+186F9 cmp     player_z, 5
+186FE jz      short loc_1870C
+18700 mov     bx, di
+18702 shl     bx, 1
+18704 cmp     word ptr [bx+3548h], 531h
+1870A jnz     short loc_18711
+1870C mov     si, 0FFFFh
+1870F jmp     short loc_18714
+18711 mov     si, 1
+18714 mov     ax, di
+18716 mov     dx, 3
+18719 mul     dx
+1871B mov     bx, ax
+1871D mov     ax, [bx+6828h]
+18721 and     ax, 3FFh
+18724 mov     player_x, ax
+18727 mov     ax, di
+18729 mov     dx, 3
+1872C mul     dx
+1872E mov     bx, ax
+18730 mov     ax, [bx+6829h]
+18734 sar     ax, 1
+18736 sar     ax, 1
+18738 and     ax, 3FFh
+1873B mov     player_y, ax
+1873E mov     ax, 2
+18741 push    ax
+18742 push    cs
+18743 call    near ptr sub_183B2
+18746 add     player_z, si
+1874A cmp     player_z, 1
+1874F jnz     short loc_18787
+18751 cmp     si, 1
+18754 jnz     short loc_18787
+18756 mov     ax, player_x
+18759 sar     ax, 1
+1875B sar     ax, 1
+1875D and     ax, 0F8h
+18760 mov     dx, player_x
+18764 and     dx, 7
+18768 add     ax, dx
+1876A mov     player_x, ax
+1876D mov     ax, player_y
+18770 sar     ax, 1
+18772 sar     ax, 1
+18774 and     ax, 0F8h
+18777 mov     dx, player_y
+1877B and     dx, 7
+1877F add     ax, dx
+18781 mov     player_y, ax
+18784 jmp     loc_1881F
+18787 cmp     player_z, 0
+1878C jz      short loc_18791
+1878E jmp     loc_1881F
+18791 cmp     si, 0FFFFh
+18794 jz      short loc_18799
+18796 jmp     loc_1881F
+18799 mov     ax, player_x
+1879C shl     ax, 1
+1879E shl     ax, 1
+187A0 and     ax, 3E0h
+187A3 mov     dx, player_x
+187A7 and     dx, 7
+187AB add     ax, dx
+187AD mov     player_x, ax
+187B0 mov     ax, player_y
+187B3 shl     ax, 1
+187B5 shl     ax, 1
+187B7 and     ax, 3E0h
+187BA mov     dx, player_y
+187BE and     dx, 7
+187C2 add     ax, dx
+187C4 mov     player_y, ax
+187C7 mov     bx, di
+187C9 shl     bx, 1
+187CB add     bx, 4EE4h
+187CF push    ds
+187D0 pop     es
+187D1 test    byte ptr es:[bx+1], 1
+187D6 jz      short loc_187DD
+187D8 add     player_x, 8
+187DD mov     bx, di
+187DF shl     bx, 1
+187E1 add     bx, 4EE4h
+187E5 push    ds
+187E6 pop     es
+187E7 test    byte ptr es:[bx+1], 2
+187EC jz      short loc_187F3
+187EE add     player_x, 10h
+187F3 mov     bx, di
+187F5 shl     bx, 1
+187F7 add     bx, 4EE4h
+187FB push    ds
+187FC pop     es
+187FD test    byte ptr es:[bx+1], 4
+18802 jz      short loc_18809
+18804 add     player_y, 8
+18809 mov     bx, di
+1880B shl     bx, 1
+1880D add     bx, 4EE4h
+18811 push    ds
+18812 pop     es
+18813 test    byte ptr es:[bx+1], 8
+18818 jz      short loc_1881F
+1881A add     player_y, 10h
+1881F push    cs
+18820 call    near ptr refresh_map_view
+18823 call    sub_18F86
+18828 cmp     player_z, 0
+1882D jz      short loc_1884E
+1882F cmp     player_z, 5
+18834 jz      short loc_1884E
+18836 cmp     player_z, 1
+1883B jnz     short loc_18842
+1883D cmp     si, 1
+18840 jz      short loc_1884E
+18842 cmp     player_z, 4
+18847 jnz     short loc_1885B
+18849 cmp     si, 0FFFFh
+1884C jnz     short loc_1885B
+1884E call    sub_39255
+18853 xor     ax, ax
+18855 push    ax
+18856 call    advance_time
+1885B push    player_x
+1885F push    player_y
+18863 push    player_z
+18867 mov     ax, 2
+1886A push    ax
+1886B push    cs
+1886C call    near ptr sub_185BE
+1886F call    sub_377C8
+18874 pop     di
+18875 pop     si
+18876 pop     bp
+18877 retf    2
+=== use_lever 33B09
+33B09 push    bp
+33B0A mov     bp, sp
+33B0C sub     sp, 0Ch
+33B0F push    si
+33B10 push    di
+33B11 mov     [bp+var_6], 0
+33B16 push    ds
+33B17 mov     ax, offset aSwitchTheLever; "\nSwitch the lever, "
+33B1A push    ax
+33B1B call    scroll_printf
+33B20 pop     cx
+33B21 pop     cx
+33B22 mov     bx, [bp+arg_0]
+33B25 shl     bx, 1
+33B27 mov     ax, [bx+3548h]
+33B2B and     ax, 3FFh
+33B2E mov     bx, [bp+arg_0]
+33B31 shl     bx, 1
+33B33 mov     dx, [bx+3548h]
+33B37 mov     cl, 0Ah
+33B39 shr     dx, cl
+33B3B xor     dx, 1
+33B3F mov     cl, 0Ah
+33B41 shl     dx, cl
+33B43 add     ax, dx
+33B45 mov     bx, [bp+arg_0]
+33B48 shl     bx, 1
+33B4A mov     [bx+3548h], ax
+33B4E mov     bx, [bp+arg_0]
+33B51 shl     bx, 1
+33B53 add     bx, 4EE4h
+33B57 push    ds
+33B58 pop     es
+33B59 mov     al, es:[bx+1]
+33B5D mov     ah, 0
+33B5F mov     [bp+var_C], ax
+33B62 or      ax, ax
+33B64 jnz     short loc_33B69
+33B66 jmp     loc_33CC0
+33B69 xor     ax, ax
+33B6B push    ax
+33B6C push    ax
+33B6D mov     ax, 3FFh
+33B70 push    ax
+33B71 push    ax
+33B72 call    sub_19E9E
+33B77 mov     si, ax
+33B79 jmp     loc_33CB9
+33B7C call    sub_19DCD
+33B81 mov     si, ax
+33B83 or      si, si
+33B85 jl      short loc_33BAC
+33B87 mov     bx, si
+33B89 shl     bx, 1
+33B8B mov     ax, [bx+3548h]
+33B8F and     ax, 3FFh
+33B92 cmp     ax, 12Dh
+33B95 jnz     short loc_33B7C
+33B97 mov     bx, si
+33B99 shl     bx, 1
+33B9B add     bx, 4EE4h
+33B9F push    ds
+33BA0 pop     es
+33BA1 mov     al, es:[bx+1]
+33BA5 mov     ah, 0
+33BA7 cmp     ax, [bp+var_C]
+33BAA jnz     short loc_33B7C
+33BAC or      si, si
+33BAE jge     short loc_33BB3
+33BB0 jmp     loc_33CB9
+33BB3 mov     ax, si
+33BB5 mov     dx, 3
+33BB8 mul     dx
+33BBA mov     bx, ax
+33BBC mov     ax, [bx+6828h]
+33BC0 and     ax, 3FFh
+33BC3 mov     [bp+var_A], ax
+33BC6 mov     ax, si
+33BC8 mov     dx, 3
+33BCB mul     dx
+33BCD mov     bx, ax
+33BCF mov     ax, [bx+6829h]
+33BD3 sar     ax, 1
+33BD5 sar     ax, 1
+33BD7 and     ax, 3FFh
+33BDA mov     [bp+var_8], ax
+33BDD push    [bp+var_A]
+33BE0 push    ax
+33BE1 push    player_z
+33BE5 mov     ax, 136h
+33BE8 push    ax
+33BE9 push    cs
+33BEA call    near ptr sub_334B1
+33BED mov     di, ax
+33BEF cmp     di, 0FFFFh
+33BF2 jz      short loc_33BF7
+33BF4 jmp     loc_33CA7
+33BF7 push    [bp+var_A]
+33BFA push    [bp+var_8]
+33BFD push    player_z
+33C01 push    cs
+33C02 call    near ptr sub_3352A
+33C05 or      ax, ax
+33C07 jz      short loc_33C11
+33C09 mov     [bp+var_6], 2
+33C0E jmp     loc_33CC0
+33C11 mov     bx, si
+33C13 shl     bx, 1
+33C15 mov     ax, [bx+3548h]
+33C19 mov     cl, 0Ah
+33C1B shr     ax, cl
+33C1D test    ax, 2
+33C20 jz      short loc_33C62
+33C22 mov     al, byte ptr player_z
+33C25 mov     cl, 4
+33C27 shl     al, cl
+33C29 mov     [bp+var_2], al
+33C2C mov     ax, [bp+var_A]
+33C2F mov     [bp+var_4], ax
+33C32 mov     ax, [bp+var_8]
+33C35 shl     ax, 1
+33C37 shl     ax, 1
+33C39 or      [bp+var_4+1], ax
+33C3C xor     ax, ax
+33C3E push    ax
+33C3F lea     bx, [bp+var_4]
+33C42 mov     dx, ss
+33C44 mov     ax, bx
+33C46 mov     cx, 4
+33C49 call    SPUSH@
+33C4E mov     ax, 136h
+33C51 push    ax
+33C52 mov     ax, 3
+33C55 push    ax
+33C56 xor     ax, ax
+33C58 push    ax
+33C59 call    sub_1A80C
+33C5E mov     di, ax
+33C60 jmp     short loc_33CA0
+33C62 mov     al, byte ptr player_z
+33C65 mov     cl, 4
+33C67 shl     al, cl
+33C69 mov     [bp+var_2], al
+33C6C mov     ax, [bp+var_A]
+33C6F mov     [bp+var_4], ax
+33C72 mov     ax, [bp+var_8]
+33C75 shl     ax, 1
+33C77 shl     ax, 1
+33C79 or      [bp+var_4+1], ax
+33C7C xor     ax, ax
+33C7E push    ax
+33C7F lea     bx, [bp+var_4]
+33C82 mov     dx, ss
+33C84 mov     ax, bx
+33C86 mov     cx, 4
+33C89 call    SPUSH@
+33C8E mov     ax, 136h
+33C91 push    ax
+33C92 mov     ax, 1
+33C95 push    ax
+33C96 xor     ax, ax
+33C98 push    ax
+33C99 call    sub_1A80C
+33C9E mov     di, ax
+33CA0 and     byte ptr [di-5F55h], 0DFh
+33CA5 jmp     short loc_33CAD
+33CA7 push    di
+33CA8 call    sub_1AC65
+33CAD mov     [bp+var_6], 1
+33CB2 call    sub_19DCD
+33CB7 mov     si, ax
+33CB9 or      si, si
+33CBB jl      short loc_33CC0
+33CBD jmp     loc_33B83
+33CC0 cmp     [bp+var_6], 0
+33CC4 jnz     short loc_33CD4
+33CC6 push    ds
+33CC7 mov     ax, offset aStrangeNothing_0; "strange, nothing happened.\n"
+33CCA push    ax
+33CCB call    scroll_printf
+33CD0 pop     cx
+33CD1 pop     cx
+33CD2 jmp     short loc_33CFA
+33CD4 cmp     [bp+var_6], 1
+33CD8 jnz     short loc_33CE8
+33CDA push    ds
+33CDB mov     ax, offset aYouHearANoise; "you hear a noise.\n"
+33CDE push    ax
+33CDF call    scroll_printf
+33CE4 pop     cx
+33CE5 pop     cx
+33CE6 jmp     short loc_33CFA
+33CE8 cmp     [bp+var_6], 2
+33CEC jnz     short loc_33CFA
+33CEE push    ds
+33CEF mov     ax, offset aCanTCloseThePo; "can't close the portcullis.\n"
+33CF2 push    ax
+33CF3 call    scroll_printf
+33CF8 pop     cx
+33CF9 pop     cx
+33CFA pop     di
+33CFB pop     si
+33CFC mov     sp, bp
+33CFE pop     bp
+33CFF retf    2
+=== use_switch 33D02
+33D02 push    bp
+33D03 mov     bp, sp
+33D05 sub     sp, 0Ch
+33D08 push    si
+33D09 push    di
+33D0A mov     [bp+var_6], 0
+33D0F push    ds
+33D10 mov     ax, offset aOperateTheSwit; "\nOperate the switch, "
+33D13 push    ax
+33D14 call    scroll_printf
+33D19 pop     cx
+33D1A pop     cx
+33D1B mov     bx, [bp+arg_0]
+33D1E shl     bx, 1
+33D20 mov     ax, [bx+3548h]
+33D24 and     ax, 3FFh
+33D27 mov     bx, [bp+arg_0]
+33D2A shl     bx, 1
+33D2C mov     dx, [bx+3548h]
+33D30 mov     cl, 0Ah
+33D32 shr     dx, cl
+33D34 xor     dx, 1
+33D38 mov     cl, 0Ah
+33D3A shl     dx, cl
+33D3C add     ax, dx
+33D3E mov     bx, [bp+arg_0]
+33D41 shl     bx, 1
+33D43 mov     [bx+3548h], ax
+33D47 mov     bx, [bp+arg_0]
+33D4A shl     bx, 1
+33D4C add     bx, 4EE4h
+33D50 push    ds
+33D51 pop     es
+33D52 mov     al, es:[bx+1]
+33D56 mov     ah, 0
+33D58 mov     [bp+var_C], ax
+33D5B or      ax, ax
+33D5D jnz     short loc_33D62
+33D5F jmp     loc_33E48
+33D62 xor     ax, ax
+33D64 push    ax
+33D65 push    ax
+33D66 mov     ax, 3FFh
+33D69 push    ax
+33D6A push    ax
+33D6B call    sub_19E9E
+33D70 mov     si, ax
+33D72 jmp     loc_33E41
+33D75 call    sub_19DCD
+33D7A mov     si, ax
+33D7C or      si, si
+33D7E jl      short loc_33DA5
+33D80 mov     bx, si
+33D82 shl     bx, 1
+33D84 mov     ax, [bx+3548h]
+33D88 and     ax, 3FFh
+33D8B cmp     ax, 12Dh
+33D8E jnz     short loc_33D75
+33D90 mov     bx, si
+33D92 shl     bx, 1
+33D94 add     bx, 4EE4h
+33D98 push    ds
+33D99 pop     es
+33D9A mov     al, es:[bx+1]
+33D9E mov     ah, 0
+33DA0 cmp     ax, [bp+var_C]
+33DA3 jnz     short loc_33D75
+33DA5 or      si, si
+33DA7 jge     short loc_33DAC
+33DA9 jmp     loc_33E41
+33DAC mov     ax, si
+33DAE mov     dx, 3
+33DB1 mul     dx
+33DB3 mov     bx, ax
+33DB5 mov     ax, [bx+6828h]
+33DB9 and     ax, 3FFh
+33DBC mov     [bp+var_A], ax
+33DBF mov     ax, si
+33DC1 mov     dx, 3
+33DC4 mul     dx
+33DC6 mov     bx, ax
+33DC8 mov     ax, [bx+6829h]
+33DCC sar     ax, 1
+33DCE sar     ax, 1
+33DD0 and     ax, 3FFh
+33DD3 mov     [bp+var_8], ax
+33DD6 push    [bp+var_A]
+33DD9 push    ax
+33DDA push    player_z
+33DDE mov     ax, 0AFh
+33DE1 push    ax
+33DE2 push    cs
+33DE3 call    near ptr sub_334B1
+33DE6 mov     di, ax
+33DE8 cmp     di, 0FFFFh
+33DEB jnz     short loc_33E2F
+33DED mov     al, byte ptr player_z
+33DF0 mov     cl, 4
+33DF2 shl     al, cl
+33DF4 mov     [bp+var_2], al
+33DF7 mov     ax, [bp+var_A]
+33DFA mov     [bp+var_4], ax
+33DFD mov     ax, [bp+var_8]
+33E00 shl     ax, 1
+33E02 shl     ax, 1
+33E04 or      [bp+var_4+1], ax
+33E07 xor     ax, ax
+33E09 push    ax
+33E0A lea     bx, [bp+var_4]
+33E0D mov     dx, ss
+33E0F mov     ax, bx
+33E11 mov     cx, 4
+33E14 call    SPUSH@
+33E19 mov     ax, 0AFh
+33E1C push    ax
+33E1D xor     ax, ax
+33E1F push    ax
+33E20 push    ax
+33E21 call    sub_1A80C
+33E26 mov     di, ax
+33E28 and     byte ptr [di-5F55h], 0DFh
+33E2D jmp     short loc_33E35
+33E2F push    di
+33E30 call    sub_1AC65
+33E35 mov     [bp+var_6], 1
+33E3A call    sub_19DCD
+33E3F mov     si, ax
+33E41 or      si, si
+33E43 jl      short loc_33E48
+33E45 jmp     loc_33D7C
+33E48 cmp     [bp+var_6], 0
+33E4C jnz     short loc_33E5C
+33E4E push    ds
+33E4F mov     ax, offset aStrangeNothing_0; "strange, nothing happened.\n"
+33E52 push    ax
+33E53 call    scroll_printf
+33E58 pop     cx
+33E59 pop     cx
+33E5A jmp     short loc_33E68
+33E5C push    ds
+33E5D mov     ax, offset aYouHearANoise; "you hear a noise.\n"
+33E60 push    ax
+33E61 call    scroll_printf
+33E66 pop     cx
+33E67 pop     cx
+33E68 pop     di
+33E69 pop     si
+33E6A mov     sp, bp
+33E6C pop     bp
+33E6D retf    2

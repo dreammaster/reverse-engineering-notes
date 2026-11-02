@@ -1,0 +1,32 @@
+words at 32F7E: 38FE 393C 394F 395B 3992 39D4 39E9 3A0B
+32F8E mov     bx, word_48F03
+32F92 test    byte ptr [bx-6055h], 4
+32F97 jz      short loc_32FB8
+32F99 and     byte ptr [bx-6055h], 0FBh
+32F9E mov     ax, bx
+32FA0 shl     ax, 1
+32FA2 les     bx, actor_base_obj_frame_ptr
+32FA6 add     bx, ax
+32FA8 mov     ax, es:[bx]
+32FAB mov     bx, word_48F03
+32FAF shl     bx, 1
+32FB1 mov     [bx+3548h], ax
+32FB5 jmp     def_32F79; jumptable 00032F79 default case
+3E62C -> 13F2 'Success'
+3E62E -> 13FA 'Failed'
+3E630 -> 1401 'No effect'
+3E632 -> 140B 'Out of range'
+3E634 -> 1418 'Blocked'
+3E636 -> 1420 'nothing'
+3E638 -> 1428 'Not possible'
+3E63A -> 1435 'Done'
+3E63C -> 143A 'On what: '
+3E63E -> 1444 'On whom: '
+3E640 -> 144E 'Location: '
+3E642 -> 1459 'Not usable'
+3E644 -> 1464 'Magical energy prevents you from removing the amulet.'
+3E646 -> 0207 'ce0.bmp'
+3E648 -> 020F 'stats.bmp'
+3E64A -> 0216 'mp'
+3E64C -> 022F 'theast'
+3E64E -> 0232 'ast'

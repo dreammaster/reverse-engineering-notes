@@ -163,10 +163,13 @@ bool Game::inventoryKey(int key) {
 			} else if (Combat::weaponDamageOf(o.type) >= 0 || Combat::armourOf(o.type) > 0) {
 				o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
 				message("\nReadied " + Describe::object(_world, o) + "\n");
-			} else if (o.type == 0x3E && useVortexCube()) {
-				// the Codex has vanished; the ending follows on the next key
 			} else {
-				message("\nNot usable\n");
+				int idx = _items[_selected];
+				useObject(idx);
+				if (_pending) // a key, lock pick or potion asks for its target on the map
+					_inventory = false;
+				inventoryItems(_world, _member, _items);
+				_selected = std::max(0, std::min(_selected, (int)_items.size() - 1));
 			}
 		}
 		break;
@@ -547,162 +550,6 @@ bool Game::useHorse(int tx, int ty) {
 		}
 	}
 	return false;
-}
-
-void Game::useAt(int tx, int ty) {
-	if (useHorse(tx, ty)) {
-		prompt();
-		return;
-	}
-	if (boardOrLeave(tx, ty)) {
-		prompt();
-		return;
-	}
-	std::vector<int> here;
-	_world.objectsAt(tx, ty, z, here);
-	for (size_t n = here.size(); n-- > 0;) {
-		int idx = here[n];
-		World::Obj &o = _world.objects[idx];
-		int type = o.type;
-		if (type >= 297 && type <= 300) { // doors
-			if (o.frame == 13 || o.frame == 15) {
-				message("\nmagically locked\n");
-			} else if (o.frame == 9 || o.frame == 11) {
-				int actor = _world.actors.partyRoster[_member];
-				std::vector<int> inv;
-				_world.inventory(actor, inv);
-				bool key = false;
-				for (int i : inv)
-					key |= _world.objects[i].type == 64 && o.quality != 0 && _world.objects[i].quality == o.quality;
-				if (key) {
-					o.frame -= 4;
-					message("\nunlocked\n");
-				} else {
-					message("\nlocked\n");
-				}
-			} else if (o.frame <= 3) { // open: close it unless something stands in the way
-				MoveRules rules;
-				std::vector<int> there;
-				_world.objectsAt(tx, ty, z, there);
-				bool blocked = false;
-				for (int i : there)
-					blocked |= _world.objects[i].actor >= 0;
-				if (blocked) {
-					message("\nNot now!\n");
-				} else {
-					o.frame += 4;
-					message("\nclosed!\n");
-				}
-			} else {
-				o.frame -= 4;
-				message("\nopened!\n");
-			}
-			prompt();
-			return;
-		}
-		// APPROX(30): levers (268), switches (174), fire devices and secret doors work as in Nuvie; the original's use_lever, use_switch, ... are not traced
-		if (type == 268 || type == 174) {
-			// a lever or switch toggles every barrier at the doorways (type 301) that carry its quality: the portcullis (310) or electric field (175)
-			int barrier = type == 268 ? 310 : 175;
-			bool any = false;
-			size_t count = _world.objects.size();
-			for (size_t d = 0; d < count; ++d) {
-				const World::Obj door = _world.objects[d];
-				if (door.deleted || door.type != 301 || !door.onMap() || door.z != o.z || door.quality != o.quality)
-					continue;
-				any = true;
-				std::vector<int> there;
-				_world.objectsAt(door.x, door.y, door.z, there);
-				int existing = -1;
-				for (int t : there)
-					if (_world.objects[t].type == barrier)
-						existing = t;
-				if (existing >= 0) {
-					_world.deleteObject(existing);
-				} else {
-					World::Obj b = door;
-					b.type = (uint16_t)barrier;
-					b.quality = 0;
-					b.frame = barrier == 310 && door.frame == 9 ? 1 : (barrier == 310 ? door.frame : 0);
-					_world.objects.push_back(b);
-					_world.addToMap((int)_world.objects.size() - 1);
-				}
-			}
-			o.frame = (uint8_t)(o.frame ^ 1);
-			message(std::string("\n") + (type == 268 ? "Switch the lever, " : "Operate the switch, ") + (any ? "you hear a noise.\n" : "strange, nothing happened.\n"));
-			prompt();
-			return;
-		}
-		if (type == 122 || type == 145 || type == 164 || type == 206) { // candle, candelabra, fireplace, brazier: light or douse
-			if (type == 206 && o.frame == 2)
-				return prompt();
-			if (type == 164)
-				o.frame = (uint8_t)((o.frame == 1 || o.frame == 3) ? o.frame - 1 : o.frame + 1);
-			else
-				o.frame = (uint8_t)(o.frame ^ 1);
-			message((o.frame & 1) ? "\nLit.\n" : "\nDoused.\n"); // APPROX: the original's texts for these are in use_firedevice-like handlers
-			prompt();
-			return;
-		}
-		if (type == 334) { // secret door
-			o.frame = (uint8_t)((o.frame == 1 || o.frame == 3) ? o.frame - 1 : o.frame + 1);
-			prompt();
-			return;
-		}
-		if (type == 98 || type == 99 || type == 176 || type == 186 || type == 188 || type == 191 || type == 192) { // containers
-			if (type == 98 && o.frame >= 3) {
-				message("\nlocked\n");
-				prompt();
-				return;
-			}
-			std::vector<int> contents;
-			for (size_t i = 0; i < _world.objects.size(); ++i)
-				if (!_world.objects[i].deleted && _world.objects[i].location() == ObjRecord::IN_CONTAINER && _world.objects[i].parent == idx)
-					contents.push_back((int)i);
-			if (contents.empty()) {
-				message("\nSearching here, you find nothing.\n");
-			} else {
-				// opening it, the party takes what is inside
-				int actor = _world.actors.partyRoster[_member];
-				std::string list;
-				for (size_t n = 0; n < contents.size(); ++n) {
-					World::Obj &c = _world.objects[contents[n]];
-					list += (n == 0 ? "" : n + 1 == contents.size() ? " and " : ", ") + Describe::object(_world, c);
-					int qty = _world.quantityOf(c), t = c.type, q = c.quality;
-					bool stack = _world.isStackable(t);
-					_world.deleteObject(contents[n]);
-					_world.addToInventory(actor, t, q, stack ? qty : 1);
-				}
-				message("\nSearching here, you find " + list + ".\n");
-			}
-			if (type == 98 && o.frame > 0)
-				o.frame = 0; // the chest stands open
-			prompt();
-			return;
-		}
-		if (type == 305 || type == 106) { // ladders
-			int nx = o.x, ny = o.y, nz = o.z;
-			if (o.frame == 0) { // down
-				if (o.z == 0) {
-					nx = (o.x & 0x07) | ((o.x >> 2) & 0xF8);
-					ny = (o.y & 0x07) | ((o.y >> 2) & 0xF8);
-				}
-				nz = o.z + 1;
-			} else { // up; the quality says which surface chunk of the 4 x 4 around the ladder to come up in
-				if (o.z == 1) {
-					nx = o.x / 8 * 8 * 4 + ((o.quality & 0x03) * 8) + (o.x - o.x / 8 * 8);
-					ny = o.y / 8 * 8 * 4 + (((o.quality >> 2) & 0x03) * 8) + (o.y - o.y / 8 * 8);
-				}
-				nz = o.z - 1;
-			}
-			message("\n");
-			changeLevel(nx, ny, nz);
-			prompt();
-			return;
-		}
-	}
-	message("\nNot usable\n");
-	prompt();
 }
 
 // cmd_rest's conditions (89459..): in the order the original tests them; each yields the text printed after "Rest-".

@@ -49,6 +49,9 @@ No spellbook is readied.
 " or "heavily/lightly/barely wounded.
 " with no leading newline (`sub_2C97F`) | leading newlines | seg067 strings, `sub_2C97F` (60508) |
 | 19 | Where the party flag lives | actor status array (objlist +0x800): 0x80 in party, 0x40 attacks good, 0x20 attacks evil, 0x10 dead, 8 poisoned, 4 asleep, 2 paralysed, 1 protected; cursed is bit 0x40 of the object status | same bits (Nuvie's `status_flags`) | `sub_25D7F`, `update_actor_schedules`, `sub_2B401` (my first version wrongly read the object status) |
+| 20 | Opening a chest or other container | `use_door` (chest, frame 1 closed -> 0 open, 2 locked, 3 magically locked) prints "opened!" and `search_here` puts the contents on the chest's square ("Searching here, you find a, b and c."); nothing goes into the inventory | Nuvie opens a container view | `use_door` 3224C, `search_here` 30031 (my first version took everything into the inventory) |
+| 21 | Doors | `use_key_on_door`: frames 0-3 open, 4-7 closed, 8-11 locked ("locked"), 12-15 magic ("magically locked!"); plain Use of a locked door only says it is locked, a key (`use_key_or_lockpick`, matching quality; a lock pick works on quality 0 and may break: "Key broke.") locks or unlocks | the party's keys open locked doors automatically | `use_key_on_door` 320D4, `use_key_or_lockpick` 3241E, `sub_323C4` |
+| 22 | Ladders | only type 0x131 (305) is usable (the 85-type table); type 106 prints "Not usable" | accepts both | `cmd_use_types` table at cs:6467 |
 
 ## Pending (engine uses Nuvie's rule until the original is traced)
 

@@ -110,6 +110,19 @@ private:
 	void talkAt(int tx, int ty);
 	void getAt(int tx, int ty);
 	void useAt(int tx, int ty);
+	void useObject(int idx);
+	void useKeyOnDoor(int idx, bool lock, bool magic, bool unlock);
+	void useChest(int idx, bool lock, bool magic, bool unlock);
+	void searchHere(int idx);
+	void extinguishLight(int idx);
+	void useLever(int idx);
+	void useLadder(int idx);
+	void useKeyOn(int tx, int ty);
+	void usePotionOn(int actor);
+	void consumeOne(int idx);
+	int actingActor() const;
+	bool carriedObject(const World::Obj &o) const;
+	int _useItem = -1; // the key, lock pick or potion waiting for its target
 	void changeLevel(int nx, int ny, int nz);
 	void restKey(int key);
 	void followLeader(int oldX, int oldY);
