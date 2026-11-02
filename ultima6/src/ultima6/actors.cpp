@@ -24,7 +24,7 @@ void ActorManager::hourChanged(const GameClock &clock) {
 			continue;
 		if (!(a.worktype[actor] >= 0x80 || a.worktype[actor] == 7))
 			continue;
-		if (_world.objects[_world.actorObject(actor)].status & 0x80)
+		if (a.status[actor] & 0x80)
 			continue; // in the party
 		int count = sc.entryCount(actor);
 		int first = sc.index[actor];

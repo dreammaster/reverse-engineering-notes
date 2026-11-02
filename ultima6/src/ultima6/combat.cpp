@@ -80,7 +80,29 @@ std::string Combat::nameOf(int actor) const {
 	return Describe::tileName(_world, _world.baseTile.firstTile[type & (BaseTile::TYPES - 1)], false);
 }
 
-// APPROX(16): not the original's exact behaviour, see docs/approximations.md
+// sub_2C8BF (hit check), sub_2B3D7 / sub_2B401 (adjusted strength and dexterity)
+int Combat::adjustedStrength(int actor) const {
+	if (actor < 0 || actor >= ObjList::ACTORS)
+		return 1;
+	int k = _world.actorObject(actor);
+	int v = _world.actors.strength[actor];
+	if (k >= 0 && (_world.objects[k].status & 0x40)) // cursed
+		v = v - 3 < 1 ? 1 : v - 3;
+	return v;
+}
+
+int Combat::adjustedDexterity(int actor) const {
+	if (actor < 0 || actor >= ObjList::ACTORS)
+		return 1;
+	int k = _world.actorObject(actor);
+	int v = _world.actors.dexterity[actor];
+	if (k >= 0 && (_world.objects[k].status & 0x40))
+		v = v - 3 < 1 ? 1 : v - 3;
+	if (_world.actors.status[actor] & 0x04) // asleep
+		v = 1;
+	return v;
+}
+
 bool Combat::hitCheck(int attacker, int defender, int weapon) {
 	int ka = _world.actorObject(attacker), kd = _world.actorObject(defender);
 	if (ka < 0 || kd < 0)
@@ -91,9 +113,9 @@ bool Combat::hitCheck(int attacker, int defender, int weapon) {
 	bool useStrength = weapon == 4 || weapon == 34 || weapon == 39 || weapon == 44; // spiked helm, club, mace, two-handed hammer
 	if (own && weapon == _world.objects[ka].type && (own->flags & CreatureStats::STRENGTH_BASED))
 		useStrength = true;
-	int roll = useStrength ? _world.actors.strength[attacker] : _world.actors.dexterity[attacker];
-	int foeDex = _world.actors.dexterity[defender];
-	return (foeDex + 30 - roll) / 2 < random(1, 30);
+	int atk = useStrength ? adjustedStrength(attacker) : adjustedDexterity(attacker);
+	int foeDex = adjustedDexterity(defender);
+	return random(1, 30) >= (foeDex + 30 - atk) / 2; // a roll below half the difference misses
 }
 
 void Combat::die(int actor) {
@@ -105,6 +127,7 @@ void Combat::die(int actor) {
 	_world.inventory(actor, inv, false);
 	_world.actors.hp[actor] = 0;
 	_world.actors.worktype[actor] = 0;
+	_world.actors.status[actor] |= 0x10; // dead
 	if (actor == 1)
 		return; // the Avatar's death is handled by the game
 	// a dead body takes what the actor carried
@@ -150,7 +173,6 @@ bool Combat::attack(int attacker, int defender) {
 	std::string name = nameOf(defender);
 
 	if (!hitCheck(attacker, defender, weapon)) {
-		_scroll.print("\n" + name + " missed!\n");
 		return false;
 	}
 	int maxDamage = weaponDamageOf(weapon);
@@ -165,7 +187,7 @@ bool Combat::attack(int attacker, int defender) {
 	if (damage != 255 && ac > 0)
 		damage -= random(1, ac);
 	if (damage <= 0) {
-		_scroll.print("\n" + name + " grazed.\n");
+		_scroll.print(name + " grazed.\n");
 		return false;
 	}
 	return applyDamage(attacker, defender, damage);
@@ -189,7 +211,7 @@ bool Combat::applyDamage(int attacker, int defender, int damage) {
 			a.exp[attacker] = (uint16_t)(a.exp[attacker] + gain);
 		}
 		die(defender);
-		_scroll.print("\n" + name + " killed!\n");
+		_scroll.print(name + " killed!\n");
 		return true;
 	}
 	a.hp[defender] = (uint8_t)(a.hp[defender] - damage);
@@ -197,7 +219,7 @@ bool Combat::applyDamage(int attacker, int defender, int damage) {
 	int most = std::max(1, std::min(255, a.level[defender] * 30));
 	int quarter = (a.hp[defender] * 4) / most;
 	if (quarter < 4) {
-		std::string s = "\n" + name + " ";
+		std::string s = name + " "; // sub_2C97F: "`%s " then "critical!" or "heavily|lightly|barely wounded."
 		if (quarter == 0)
 			s += "critical!\n";
 		else

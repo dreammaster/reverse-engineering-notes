@@ -185,7 +185,6 @@ bool Magic::cast(int caster, const SpellInfo &spell, int target) {
 		}
 		if (((a.strength[target] / 2 + 30 - a.intelligence[caster]) / 2) <= random(1, 30)) {
 			a.status[target] |= 0x08;
-			_world.objects[tk].status |= 0x08;
 			_scroll.print("\n" + _combat.nameOf(target) + " poisoned!\n");
 			return true;
 		}

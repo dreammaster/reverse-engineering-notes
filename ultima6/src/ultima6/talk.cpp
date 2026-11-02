@@ -193,10 +193,7 @@ int Talk::joinParty(int npc) {
 	std::string n = _nameOfActor(npc);
 	std::memset(a.partyNames[i], 0, ObjList::NAME_SIZE);
 	std::memcpy(a.partyNames[i], n.data(), std::min<size_t>(n.size(), ObjList::NAME_SIZE - 1));
-	a.status[npc] |= 0x80; // in the party
-	int k = _world.actorObject(npc);
-	if (k >= 0)
-		_world.objects[k].status |= 0x80;
+	a.status[npc] |= 0x80; // in the party (actors' status array)
 	return 0;
 }
 
@@ -211,9 +208,6 @@ int Talk::leaveParty(int npc) {
 	}
 	--a.partySize;
 	a.status[npc] &= ~0x80;
-	int k = _world.actorObject(npc);
-	if (k >= 0)
-		_world.objects[k].status &= ~0x80;
 	return 0;
 }
 

@@ -78,7 +78,8 @@ MoveResult Movement::check(int x, int y, int z, int mover, const MoveRules &rule
 	bool water = (cflags & MovementClasses::SWIMS) || tail;
 	bool ghost = cflags & MovementClasses::IGNORES_OBJECTS;
 	bool walker = (!water && !fly) || cls == 1;
-	bool inParty = me.status & 0x80;
+	// the party flag, like the others below, is in the actors' status array (objlist +0x800, ds:9FAB), not in the object status
+	bool inParty = me.actor >= 0 && (_world.actors.status[me.actor] & 0x80);
 	bool moverIsActor = me.actor >= 0;
 
 	// --- terrain ---
@@ -193,8 +194,8 @@ MoveResult Movement::check(int x, int y, int z, int mover, const MoveRules &rule
 						if (ghost && !isActor) {
 							verdict = FALL;
 						} else if (inParty) {
-							if (si == rules.leader || !rules.partyMayShuffle || !isActor || !(o.status & 0x80) ||
-								(o.status & 0x16) || (rules.actorFlags && ((*rules.actorFlags)[si] & 0x10)))
+							if (si == rules.leader || !rules.partyMayShuffle || !isActor || !(_world.actors.status[o.actor] & 0x80) ||
+								(_world.actors.status[o.actor] & 0x16) || (rules.actorFlags && ((*rules.actorFlags)[si] & 0x10)))
 								verdict = BLOCK;
 							else
 								verdict = SKIP; // the party members change places

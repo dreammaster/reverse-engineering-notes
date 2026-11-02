@@ -45,6 +45,8 @@ public:
 	int weaponType(int actor) const;
 	int armourClass(int actor) const;
 	std::string nameOf(int actor) const;
+	int adjustedStrength(int actor) const;
+	int adjustedDexterity(int actor) const;
 
 	/** Takes `damage` hit points off the defender (spells and traps too): prints how badly it is hurt, kills it and rewards the attacker. */
 	bool applyDamage(int attacker, int defender, int damage);

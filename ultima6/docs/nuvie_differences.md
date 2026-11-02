@@ -42,6 +42,13 @@ No spellbook is readied.
 %>"` first, `"
 %s:
 %>"` after each later command | - | `command_loop` (13C64), 145DD |
+| 17 | Hit check | `sub_2C8BF`: hit when `rnd(1..30) >= (defender's adjusted dex + 30 - attacker's adjusted str/dex) / 2` (str for clubs, maces, hammers, spiked helm and strength-based creatures; glass sword and non-actors always hit); adjusted = -3 (min 1) when the object status has 0x40 (cursed), dex 1 when asleep (actor status 4) | strict `<` (a roll equal to the threshold misses) | `sub_2C8BF` (60382), `sub_2B3D7`, `sub_2B401` |
+| 18 | Combat messages | no text for a miss; "`%s grazed.
+"; "`%s killed!
+"; wound text "`%s " + "critical!
+" or "heavily/lightly/barely wounded.
+" with no leading newline (`sub_2C97F`) | leading newlines | seg067 strings, `sub_2C97F` (60508) |
+| 19 | Where the party flag lives | actor status array (objlist +0x800): 0x80 in party, 0x40 attacks good, 0x20 attacks evil, 0x10 dead, 8 poisoned, 4 asleep, 2 paralysed, 1 protected; cursed is bit 0x40 of the object status | same bits (Nuvie's `status_flags`) | `sub_25D7F`, `update_actor_schedules`, `sub_2B401` (my first version wrongly read the object status) |
 
 ## Pending (engine uses Nuvie's rule until the original is traced)
 
