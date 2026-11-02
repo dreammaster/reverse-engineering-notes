@@ -35,6 +35,11 @@ public:
 	/** Sets an actor's facing (0 north, 1 east, 2 south, 3 west) and the walking frame of its sprite. */
 	void face(int actor, int direction);
 
+	/** One breadth-first step of an actor towards a square; false if there is no way. */
+	bool walkToward(int actor, int objIndex, int tx, int ty, int z) {
+		return step(actor, objIndex, tx, ty, z);
+	}
+
 private:
 	bool step(int actor, int objIndex, int tx, int ty, int z);
 

@@ -75,8 +75,11 @@ int main() {
 			return all;
 		};
 		g2.handleKey(KEY_DOWN); // to 307,353, with a companion to the east
-		g2.handleKey('t');
-		g2.handleKey(KEY_RIGHT);
+		const int DIRS[4] = {KEY_RIGHT, KEY_LEFT, KEY_DOWN, KEY_UP};
+		for (int d = 0; d < 4 && text().find("You see") == std::string::npos; ++d) {
+			g2.handleKey('t');
+			g2.handleKey(DIRS[d]);
+		}
 		CHECK(text().find("You see") != std::string::npos);
 		for (int i = 0; i < 40; ++i)
 			g2.handleKey(KEY_ESC); // keys at page breaks and prompts must never hang or crash

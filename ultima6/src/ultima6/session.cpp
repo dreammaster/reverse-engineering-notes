@@ -82,9 +82,12 @@ bool Game::step(int dir) {
 		if (!canWalk((x + DIR_DX[dir]) & mask, y, z) && !canWalk(x, (y + DIR_DY[dir]) & mask, z))
 			return false;
 	}
+	int oldX = x, oldY = y;
 	x = nx;
 	y = ny;
 	_world.moveObject(_leaderObject, x, y, z);
+	_actors.face(1, DIR_DY[dir] < 0 ? 0 : DIR_DY[dir] > 0 ? 2 : DIR_DX[dir] > 0 ? 1 : 3);
+	followLeader(oldX, oldY);
 	_rules.deniedPending = true;
 	advanceTime(1);
 	return true;
@@ -180,6 +183,16 @@ void Game::command(int key) {
 		message("Talk-");
 		_pending = 'T';
 		break;
+	case 'G':
+		message("Get-");
+		_pending = 'G';
+		break;
+	case 'R':
+		message("Rest-");
+		message("\nHow many hours? ");
+		_pending = 'R';
+		_number.clear();
+		break;
 	case 'L':
 		message("Look-");
 		_pending = 'L';
@@ -241,6 +254,10 @@ bool Game::handleKey(int key) {
 		}
 		return true;
 	}
+	if (_pending == 'R') {
+		restKey(key);
+		return true;
+	}
 	if (_pending) {
 		int tx, ty;
 		int cmd = _pending;
@@ -248,6 +265,8 @@ bool Game::handleKey(int key) {
 		if (selectTarget(key, tx, ty)) {
 			if (cmd == 'T')
 				talkAt(tx, ty);
+			else if (cmd == 'G')
+				getAt(tx, ty);
 		} else {
 			message("what?\n");
 			prompt();
