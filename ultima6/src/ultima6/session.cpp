@@ -34,7 +34,7 @@ void GameClock::advance(int minutes) {
 	}
 }
 
-Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(world), _movement(world), _actors(world, _movement), _combat(world, _rng, scroll) {
+Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(world), _movement(world), _actors(world, _movement), _combat(world, _rng, scroll), _creatures(world, _movement, _actors, _combat, _rng, scroll) {
 	world.avatarPosition(x, y, z);
 	_leaderObject = world.actorObject(1);
 	_rules.questFlag = !world.actors.globals.empty() && world.actors.globals[0] != 0;
@@ -47,6 +47,7 @@ Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(worl
 	clock.month = g[5];
 	clock.year = g[6] | (g[7] << 8);
 	_actors.hourChanged(clock);
+	_creatures.checkEggs(x, y, z, clock.hour);
 }
 
 bool Game::save() {
@@ -66,6 +67,8 @@ void Game::advanceTime(int minutes) {
 		if (clock.minute == 0)
 			_actors.hourChanged(clock);
 		_actors.tick(x, y, z);
+		_creatures.tick(x, y, z);
+		_creatures.checkEggs(x, y, z, clock.hour);
 	}
 }
 

@@ -1,0 +1,59 @@
+#ifndef ULTIMA6_ULTIMA6_CREATURES_H
+#define ULTIMA6_ULTIMA6_CREATURES_H
+
+#include "engine/random.h"
+#include "ultima6/actors.h"
+#include "ultima6/combat.h"
+#include "ultima6/movement.h"
+#include "ultima6/text_window.h"
+#include "ultima6/world.h"
+
+#include <vector>
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+/**
+ * The monsters and animals of the world. They are hatched from eggs (objects of type 335 whose contents are the creatures to
+ * make): when the party comes within 20 squares of an egg that is not yet active it becomes active and, if the hour suits its
+ * quality (below 10 always, 10-19 daytime, 20-29 night, 30 and up always) and a random 1-100 is within its quantity (or the
+ * quantity is 100), creates 1 to n creatures of each kind it holds, as temporary actors with numbers from 0xE0 up. An egg
+ * becomes inactive again when the party is 20 or more squares away. Creatures that are evil or chaotic hunt the party:
+ * they walk towards the nearest member and fight it when next to it; the others wander. Temporary actors far from the party
+ * disappear.
+ */
+class Creatures {
+public:
+	enum { FIRST_TEMP_ACTOR = 0xE0, EGG = 335, SPAWN_RANGE = 20, HUNT_RANGE = 12, DESPAWN_RANGE = 40, FIRST_CREATURE = 342 };
+
+	Creatures(World &world, const Movement &movement, ActorManager &actors, Combat &combat, BorlandRandom &rng, TextWindow &scroll)
+		: _world(world), _movement(movement), _actors(actors), _combat(combat), _rng(rng), _scroll(scroll) {
+	}
+
+	/** Checks the eggs around the party (call after the party moved). */
+	void checkEggs(int px, int py, int pz, int hour);
+	/** One game minute of the creatures' turns. */
+	void tick(int px, int py, int pz);
+
+	int count() const; // living temporary actors
+
+private:
+	void scan();
+	void hatch(int egg, int hour);
+	int spawn(int type, int worktype, int x, int y, int z);
+
+	World &_world;
+	const Movement &_movement;
+	ActorManager &_actors;
+	Combat &_combat;
+	BorlandRandom &_rng;
+	TextWindow &_scroll;
+	std::vector<int> _eggs;
+	std::vector<bool> _active;
+	bool _scanned = false;
+};
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+#endif

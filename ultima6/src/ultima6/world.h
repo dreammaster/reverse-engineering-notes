@@ -116,6 +116,13 @@ public:
 	void deleteObject(int index);
 	/** Puts an object that is not on the map yet (a new one) onto the map position it holds. */
 	void addToMap(int index);
+	/** Creates the body of a (temporary) actor that has none, on the map; returns the object index. */
+	int addActor(int actor, int type, int x, int y, int z);
+	/** Whether an actor number has no body in the world. */
+	bool actorFree(int actor) const {
+		int k = actorObject(actor);
+		return k < 0 || objects[k].deleted;
+	}
 
 	/** Puts an object on another map position (keeping the position index in step). */
 	void moveObject(int index, int x, int y, int z);

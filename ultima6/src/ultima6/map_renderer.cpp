@@ -56,7 +56,7 @@ void MapRenderer::draw(Framebuffer &screen, int x, int y, int z) {
 				_world.objectsAt((left + cx) & mask, (top + cy) & mask, z, here);
 				for (int idx : here) {
 					const World::Obj &o = _world.objects[idx];
-					if (o.invisible())
+					if (o.invisible() || o.type == 335) // eggs are never drawn
 						continue;
 					int tile = _world.baseTile.firstTile[o.type] + o.frame;
 					bool topTile = _world.flags.flags2[tile & (TileSet::COUNT - 1)] & 0x10;

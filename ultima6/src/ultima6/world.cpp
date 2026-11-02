@@ -394,6 +394,25 @@ void World::addToMap(int index) {
 	_byPosition.insert(at, e);
 }
 
+int World::addActor(int actor, int type, int x, int y, int z) {
+	Obj o;
+	o.status = 0;
+	o.x = (uint16_t)x;
+	o.y = (uint16_t)y;
+	o.z = (uint8_t)z;
+	o.type = (uint16_t)type;
+	o.frame = 0;
+	o.quantity = 1;
+	o.quality = 0;
+	o.actor = actor;
+	o.parent = -1;
+	objects.push_back(o);
+	int k = (int)objects.size() - 1;
+	_actorObject[actor] = k;
+	addToMap(k);
+	return k;
+}
+
 void World::moveObject(int index, int x, int y, int z) {
 	Obj &o = objects[index];
 	if (o.onMap()) {
