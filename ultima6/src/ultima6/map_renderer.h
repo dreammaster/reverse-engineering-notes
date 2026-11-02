@@ -25,7 +25,14 @@ public:
 	}
 
 	/** Draws the view centred on tile (x, y, z) onto the screen. */
-	void draw(Framebuffer &screen, int x, int y, int z);
+	void draw(Framebuffer &screen, int x, int y, int z, const uint8_t *darkness = nullptr);
+
+	/**
+	 * How dark each of the 11 x 11 cells is for a party at (x, y, z) at an hour (0 lit, 1 dim, 2 black): the surface is dark at night, dungeons always;
+	 * what the party carries (a lit torch, the Light spell) lights a few squares around it and lit lamps, torches, candles and campfires on the
+	 * map light their surroundings. An approximation of the original's light levels.
+	 */
+	void computeDarkness(int x, int y, int z, int hour, int partyLightRadius, uint8_t *out) const;
 
 private:
 	void drawTile(int tile, int px, int py);

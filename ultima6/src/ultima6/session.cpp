@@ -381,7 +381,21 @@ void Game::render(Framebuffer &screen) {
 	screen.setPalette(_world.palette.rgb);
 	screen.clear(0);
 	screen.blit(0, 0, &_world.paper.pixels[0], _world.paper.width, _world.paper.height, _world.paper.width);
-	_renderer.draw(screen, x, y, z);
+	// the light the party makes: a lit torch carried by any member, or the Light spells
+	int radius = 1;
+	const ObjList &al = _world.actors;
+	for (int m = 0; m < al.partySize && radius < 4; ++m) {
+		std::vector<int> inv;
+		_world.inventory(al.partyRoster[m], inv, false);
+		for (int i : inv)
+			if (_world.objects[i].type == 90 && (_world.objects[i].frame & 1))
+				radius = 4;
+	}
+	if (al.globals[0x12 + Magic::TIMER_LIGHT])
+		radius = al.globals[0x12 + Magic::TIMER_LIGHT] > 100 ? 7 : 5;
+	uint8_t dark[MapRenderer::CELLS * MapRenderer::CELLS];
+	_renderer.computeDarkness(x, y, z, clock.hour, radius, dark);
+	_renderer.draw(screen, x, y, z, dark);
 	if (_talk)
 		drawTalkView(screen, _world, _talk->portraitActor());
 	else if (_inventory)

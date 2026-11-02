@@ -1,5 +1,8 @@
 #include "ultima6/map_renderer.h"
 
+#include <algorithm>
+#include <cstdlib>
+
 namespace Ultima6 {
 namespace Ultima6 {
 
@@ -39,7 +42,46 @@ void MapRenderer::drawObject(const World::Obj &o, int cellX, int cellY) {
 	}
 }
 
-void MapRenderer::draw(Framebuffer &screen, int x, int y, int z) {
+void MapRenderer::computeDarkness(int x, int y, int z, int hour, int partyLightRadius, uint8_t *out) const {
+	bool night = z != 0 || hour < 5 || hour >= 19;
+	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+	int left = x - CELLS / 2, top = y - CELLS / 2;
+	std::vector<std::pair<int, int>> lights; // in cell coordinates, with radius in the second
+	std::vector<int> radius;
+	for (int i = 0; i < CELLS * CELLS; ++i)
+		out[i] = night ? 2 : 0;
+	if (!night)
+		return;
+	std::vector<int> here;
+	for (int cy = -3; cy < CELLS + 3; ++cy)
+		for (int cx = -3; cx < CELLS + 3; ++cx) {
+			_world.objectsAt((left + cx) & mask, (top + cy) & mask, z, here);
+			for (int idx : here) {
+				const World::Obj &o = _world.objects[idx];
+				bool lit = ((o.type == 90 || o.type == 122 || o.type == 145 || o.type == 164 || o.type == 206) && (o.frame & 1)) || o.type == 253;
+				if (lit && o.actor < 0) {
+					lights.push_back({cx, cy});
+					radius.push_back(3);
+				}
+			}
+		}
+	lights.push_back({CELLS / 2, CELLS / 2});
+	radius.push_back(partyLightRadius);
+	for (int cy = 0; cy < CELLS; ++cy)
+		for (int cx = 0; cx < CELLS; ++cx) {
+			int best = 2;
+			for (size_t n = 0; n < lights.size(); ++n) {
+				int d = std::max(std::abs(cx - lights[n].first), std::abs(cy - lights[n].second));
+				if (d <= radius[n])
+					best = 0;
+				else if (d == radius[n] + 1)
+					best = std::min(best, 1);
+			}
+			out[cy * CELLS + cx] = (uint8_t)best;
+		}
+}
+
+void MapRenderer::draw(Framebuffer &screen, int x, int y, int z, const uint8_t *darkness) {
 	int left = x - CELLS / 2, top = y - CELLS / 2;
 	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
 
@@ -67,6 +109,18 @@ void MapRenderer::draw(Framebuffer &screen, int x, int y, int z) {
 		}
 	}
 
+	if (darkness) {
+		for (int cy = 0; cy < CELLS; ++cy)
+			for (int cx = 0; cx < CELLS; ++cx) {
+				int d = darkness[cy * CELLS + cx];
+				if (!d)
+					continue;
+				for (int j = 0; j < CELL_SIZE; ++j)
+					for (int i = 0; i < CELL_SIZE; ++i)
+						if (d == 2 || ((i + j) & 1))
+							_buffer[(cy * CELL_SIZE + j) * BUFFER_SIZE + cx * CELL_SIZE + i] = 0;
+			}
+	}
 	screen.blit(SCREEN_X, SCREEN_Y, &_buffer[SCREEN_Y * BUFFER_SIZE + SCREEN_X], VIEW_SIZE, VIEW_SIZE, BUFFER_SIZE);
 }
 
