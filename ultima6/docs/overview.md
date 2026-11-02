@@ -6,7 +6,8 @@ in [`../src`](../src) that matches the originals; add the two spin-offs to it;
 move the result into ScummVM's Ultima engine; and finally replace the old Nuvie
 engine (reference copy in [`../nuvie`](../nuvie)) with it.
 
-[roadmap.md](roadmap.md) lists what is done and what is next.
+[roadmap.md](roadmap.md) lists what is done and what is next; [u6_game.md](u6_game.md) records what the Ultima VI executables have been
+shown to do so far.
 
 ## Layout
 
@@ -15,7 +16,7 @@ engine (reference copy in [`../nuvie`](../nuvie)) with it.
 | `u6/`, `md/`, `se/` | per game: `*.idb` (git-ignored), `*.asm`, `*.idc` (tracked, regenerated from the idb) |
 | `u6/game/`, `md/game/`, `se/game/` | the original installed games (git-ignored, never modified; Martian Dreams and Savage Empire keep the real game files in the `MARTIAN/` and `SAVAGE/` sub-folder) |
 | `ida_scripts/` | headless IDA 8.3 pipeline and the per-database rename/struct scripts |
-| `tools/` | helper tools (`unexepack.py`) |
+| `tools/` | helper tools (`unexepack.py`, `match_functions.py`) |
 | `src/`, `tests/`, `Makefile` | the stand-alone C++ engine and its tests |
 | `nuvie/` | ScummVM's old Nuvie engine, kept as a reference only |
 

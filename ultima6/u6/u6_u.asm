@@ -153,15 +153,15 @@ word_1070E      dw 0                    ; DATA XREF: __exec+198↓w
 ; [0000001F BYTES: COLLAPSED FUNCTION LXLSH@. PRESS NUMPAD+ TO EXPAND]
 ; [00000025 BYTES: COLLAPSED FUNCTION PSBP@. PRESS NUMPAD+ TO EXPAND]
 ; [0000001C BYTES: COLLAPSED FUNCTION SCOPY@. PRESS NUMPAD+ TO EXPAND]
-seg_109F0       dw seg dseg             ; DATA XREF: sub_109F3+5↓r
-                                        ; sub_109F3+1A↓r ...
+seg_109F0       dw seg dseg             ; DATA XREF: file_open+5↓r
+                                        ; file_open+1A↓r ...
 ; [00000001 BYTES: COLLAPSED FUNCTION nullsub_1. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_109F3       proc far                ; CODE XREF: seg000:0D0F↓P
+file_open       proc far                ; CODE XREF: seg000:0D0F↓P
                                         ; _main+87↓P ...
 
 arg_0           = word ptr  6
@@ -173,7 +173,7 @@ arg_0           = word ptr  6
                 mov     es, cs:seg_109F0
                 assume es:dseg
 
-loc_109FD:                              ; CODE XREF: sub_109F3+33↓j
+loc_109FD:                              ; CODE XREF: file_open+33↓j
                 mov     dx, [bp+arg_0]
                 mov     es:word_28F70, dx
                 mov     ax, 3D02h
@@ -193,19 +193,19 @@ loc_109FD:                              ; CODE XREF: sub_109F3+33↓j
                 mov     ax, 0FFFFh
                 stc
 
-loc_10A2C:                              ; CODE XREF: sub_109F3+17↑j
+loc_10A2C:                              ; CODE XREF: file_open+17↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf    2
-sub_109F3       endp
+file_open       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_10A32       proc far                ; CODE XREF: seg000:0D98↓P
+file_close      proc far                ; CODE XREF: seg000:0D98↓P
                                         ; seg000:0DA1↓P ...
 
 arg_0           = word ptr  6
@@ -215,7 +215,7 @@ arg_0           = word ptr  6
                 push    si
                 push    di
 
-loc_10A37:                              ; CODE XREF: sub_10A32+28↓j
+loc_10A37:                              ; CODE XREF: file_close+28↓j
                 mov     bx, [bp+arg_0]
                 mov     ah, 3Eh
                 int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
@@ -232,12 +232,12 @@ loc_10A37:                              ; CODE XREF: sub_10A32+28↓j
                 mov     ax, 0FFFFh
                 stc
 
-loc_10A60:                              ; CODE XREF: sub_10A32+C↑j
+loc_10A60:                              ; CODE XREF: file_close+C↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf    2
-sub_10A32       endp
+file_close      endp
 
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -308,7 +308,7 @@ loc_10ADE:                              ; CODE XREF: seg000:0ABC↑j
 
 ; Attributes: bp-based frame
 
-sub_10AE4       proc far                ; CODE XREF: seg000:0D5C↓P
+file_read       proc far                ; CODE XREF: seg000:0D5C↓P
                                         ; _main+A8↓P ...
 
 var_4           = word ptr -4
@@ -344,15 +344,15 @@ arg_C           = word ptr  12h
                 jmp     loc_10BBB
 ; ---------------------------------------------------------------------------
 
-loc_10B20:                              ; CODE XREF: sub_10AE4+1B↑j
-                                        ; sub_10AE4+25↑j ...
+loc_10B20:                              ; CODE XREF: file_read+1B↑j
+                                        ; file_read+25↑j ...
                 test    [bp+arg_6], 0FFFFh
                 jnz     short loc_10B2D
                 cmp     [bp+arg_4], 0FFF0h
                 jbe     short loc_10B71
 
-loc_10B2D:                              ; CODE XREF: sub_10AE4+41↑j
-                                        ; sub_10AE4+70↓j
+loc_10B2D:                              ; CODE XREF: file_read+41↑j
+                                        ; file_read+70↓j
                 mov     ah, 3Fh ; '?'
                 mov     bx, [bp+arg_C]
                 mov     cx, 0FFF0h
@@ -368,7 +368,7 @@ loc_10B2D:                              ; CODE XREF: sub_10AE4+41↑j
                 test    word_28F6C, 0FFFFh
                 jz      short loc_10B2D
 
-loc_10B56:                              ; CODE XREF: sub_10AE4+56↑j
+loc_10B56:                              ; CODE XREF: file_read+56↑j
                 add     [bp+var_4], ax
                 adc     [bp+var_2], 0
                 cmp     ax, 0FFF0h
@@ -379,8 +379,8 @@ loc_10B56:                              ; CODE XREF: sub_10AE4+56↑j
                 jmp     short loc_10B20
 ; ---------------------------------------------------------------------------
 
-loc_10B71:                              ; CODE XREF: sub_10AE4+47↑j
-                                        ; sub_10AE4+B4↓j
+loc_10B71:                              ; CODE XREF: file_read+47↑j
+                                        ; file_read+B4↓j
                 mov     ah, 3Fh ; '?'
                 mov     bx, [bp+arg_C]
                 mov     cx, [bp+arg_4]
@@ -396,20 +396,20 @@ loc_10B71:                              ; CODE XREF: sub_10AE4+47↑j
                 test    word_28F6C, 0FFFFh
                 jz      short loc_10B71
 
-loc_10B9A:                              ; CODE XREF: sub_10AE4+9A↑j
+loc_10B9A:                              ; CODE XREF: file_read+9A↑j
                 add     [bp+var_4], ax
                 adc     [bp+var_2], 0
                 cmp     ax, [bp+arg_4]
                 jz      short loc_10BBB
 
-loc_10BA6:                              ; CODE XREF: sub_10AE4+7C↑j
+loc_10BA6:                              ; CODE XREF: file_read+7C↑j
                 mov     ds, cs:seg_109F0
                 mov     word_28F6C, 0FFFFh
                 mov     word_28F6E, 5
                 call    off_28F68
 
-loc_10BBB:                              ; CODE XREF: sub_10AE4+39↑j
-                                        ; sub_10AE4+C0↑j
+loc_10BBB:                              ; CODE XREF: file_read+39↑j
+                                        ; file_read+C0↑j
                 mov     ax, [bp+var_4]
                 mov     dx, [bp+var_2]
                 pop     ds
@@ -418,14 +418,14 @@ loc_10BBB:                              ; CODE XREF: sub_10AE4+39↑j
                 mov     sp, bp
                 pop     bp
                 retf    0Eh
-sub_10AE4       endp
+file_read       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_10BCA       proc far                ; CODE XREF: seg000:0D7F↓P
+file_write      proc far                ; CODE XREF: seg000:0D7F↓P
                                         ; sub_14066+104↓P
 
 arg_0           = dword ptr  6
@@ -456,15 +456,15 @@ arg_C           = word ptr  12h
                 jmp     loc_10C86
 ; ---------------------------------------------------------------------------
 
-loc_10BF9:                              ; CODE XREF: sub_10BCA+E↑j
-                                        ; sub_10BCA+18↑j ...
+loc_10BF9:                              ; CODE XREF: file_write+E↑j
+                                        ; file_write+18↑j ...
                 test    [bp+arg_6], 0FFFFh
                 jnz     short loc_10C06
                 cmp     [bp+arg_4], 0FFF0h
                 jbe     short loc_10C43
 
-loc_10C06:                              ; CODE XREF: sub_10BCA+34↑j
-                                        ; sub_10BCA+63↓j
+loc_10C06:                              ; CODE XREF: file_write+34↑j
+                                        ; file_write+63↓j
                 mov     ah, 40h ; '@'
                 mov     bx, [bp+arg_C]
                 mov     cx, 0FFF0h
@@ -479,7 +479,7 @@ loc_10C06:                              ; CODE XREF: sub_10BCA+34↑j
                 test    word_28F6C, 0FFFFh
                 jz      short loc_10C06
 
-loc_10C2F:                              ; CODE XREF: sub_10BCA+49↑j
+loc_10C2F:                              ; CODE XREF: file_write+49↑j
                 cmp     ax, 0FFF0h
                 jnz     short loc_10C71
                 sub     [bp+arg_4], 0FFF0h
@@ -488,8 +488,8 @@ loc_10C2F:                              ; CODE XREF: sub_10BCA+49↑j
                 jmp     short loc_10BF9
 ; ---------------------------------------------------------------------------
 
-loc_10C43:                              ; CODE XREF: sub_10BCA+3A↑j
-                                        ; sub_10BCA+A0↓j
+loc_10C43:                              ; CODE XREF: file_write+3A↑j
+                                        ; file_write+A0↓j
                 mov     ah, 40h ; '@'
                 mov     bx, [bp+arg_C]
                 mov     cx, [bp+arg_4]
@@ -504,25 +504,25 @@ loc_10C43:                              ; CODE XREF: sub_10BCA+3A↑j
                 test    word_28F6C, 0FFFFh
                 jz      short loc_10C43
 
-loc_10C6C:                              ; CODE XREF: sub_10BCA+86↑j
+loc_10C6C:                              ; CODE XREF: file_write+86↑j
                 cmp     ax, [bp+arg_4]
                 jz      short loc_10C86
 
-loc_10C71:                              ; CODE XREF: sub_10BCA+68↑j
+loc_10C71:                              ; CODE XREF: file_write+68↑j
                 mov     ds, cs:seg_109F0
                 mov     word_28F6C, 0FFFFh
                 mov     word_28F6E, 6
                 call    off_28F68
 
-loc_10C86:                              ; CODE XREF: sub_10BCA+2C↑j
-                                        ; sub_10BCA+A5↑j
+loc_10C86:                              ; CODE XREF: file_write+2C↑j
+                                        ; file_write+A5↑j
                 pop     ds
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf    0Eh
-sub_10BCA       endp
+file_write      endp
 
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -587,7 +587,7 @@ loc_10CCE:                              ; CODE XREF: seg000:0CAC↑j
                 mov     [bp-4], ax
                 mov     ax, [bp+8]
                 push    ax
-                call    sub_109F3
+                call    file_open
                 jb      short loc_10D29
                 mov     [bp-0Ch], ax
                 mov     ah, 3Ch ; '<'
@@ -630,7 +630,7 @@ loc_10D44:                              ; CODE XREF: seg000:0D27↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_10AE4
+                call    file_read
                 mov     [bp-0Ah], ax
                 mov     [bp-8], dx
                 mov     ax, [bp-0Eh]
@@ -646,7 +646,7 @@ loc_10D44:                              ; CODE XREF: seg000:0D27↑j
                 push    ax
                 xor     ax, ax
                 push    ax
-                call    sub_10BCA
+                call    file_write
                 mov     ax, [bp-8]
                 cmp     ax, [bp-4]
                 jb      short loc_10D94
@@ -657,10 +657,10 @@ loc_10D44:                              ; CODE XREF: seg000:0D27↑j
 loc_10D94:                              ; CODE XREF: seg000:0D8A↑j
                 mov     ax, [bp-0Ch]
                 push    ax
-                call    sub_10A32
+                call    file_close
                 mov     ax, [bp-0Eh]
                 push    ax
-                call    sub_10A32
+                call    file_close
                 mov     ah, 49h ; 'I'
                 mov     es, word ptr [bp-2]
                 int     21h             ; DOS - 2+ - FREE MEMORY
@@ -3072,9 +3072,9 @@ loc_11D7B:                              ; CODE XREF: _main+15↑j
                 mov     word_2A27C, 1
                 mov     word_2A27E, 0
                 mov     word_2A0D6, 0
-                mov     ax, 255h
+                mov     ax, offset aConfigU6 ; "config.u6"
                 push    ax
-                call    sub_109F3
+                call    file_open
                 mov     [bp+var_5C], ax
                 cmp     [bp+var_5C], 0
                 jl      short loc_11DF6
@@ -3089,7 +3089,7 @@ loc_11D7B:                              ; CODE XREF: _main+15↑j
                 push    ss
                 lea     ax, [bp+var_A]
                 push    ax
-                call    sub_10AE4
+                call    file_read
                 mov     [bp+var_4], 0
                 lea     ax, [bp+var_A]
                 push    ax
@@ -3098,7 +3098,7 @@ loc_11D7B:                              ; CODE XREF: _main+15↑j
                 inc     sp
                 inc     sp
                 push    [bp+var_5C]
-                call    sub_10A32
+                call    file_close
 
 loc_11DF6:                              ; CODE XREF: _main+93↑j
                 mov     [bp+var_5E], 1
@@ -4008,9 +4008,9 @@ arg_0           = word ptr  6
                 sub     sp, 8
                 push    si
                 push    di
-                mov     ax, 356h
+                mov     ax, offset aMidiDat ; "midi.dat"
                 push    ax
-                call    sub_109F3
+                call    file_open
                 mov     [bp+var_8], ax
                 xor     dx, dx
                 mov     ax, 401h
@@ -4036,7 +4036,7 @@ loc_124E0:                              ; CODE XREF: sub_124AD+2E↑j
                 push    ax
                 push    word ptr block+2
                 push    word ptr block
-                call    sub_10AE4
+                call    file_read
                 mov     [bp+var_4], 0
                 mov     word_2A0AE, 0
                 jmp     short loc_1254E
@@ -4087,7 +4087,7 @@ loc_1254E:                              ; CODE XREF: sub_124AD+59↑j
 
 loc_12556:                              ; CODE XREF: sub_124AD+8A↑j
                 push    [bp+var_8]
-                call    sub_10A32
+                call    file_close
                 jmp     short loc_12584
 ; ---------------------------------------------------------------------------
 
@@ -4739,7 +4739,7 @@ def_129A7:                              ; CODE XREF: sub_12990+10↑j
                 mov     ax, 5944h
                 push    ax
                 push    ds
-                mov     ax, 481h
+                mov     ax, offset aSSS ; "%s\n%s\n%s\n"
                 push    ax
                 call    sub_23129
                 add     sp, 0Ah
@@ -4750,7 +4750,7 @@ def_129A7:                              ; CODE XREF: sub_12990+10↑j
                 push    word_2A2E6
                 push    word_2A2E4
                 push    ds
-                mov     ax, 48Bh
+                mov     ax, offset aDDDDDDP ; "%d\n%d\n%d\n%d\n%d\n%d%P"
                 push    ax
                 call    sub_23157
                 add     sp, 10h
@@ -4779,7 +4779,7 @@ loc_12A9B:                              ; CODE XREF: sub_12990+104↑j
                 mov     ax, 5A30h
                 push    ax
                 push    ds
-                mov     ax, 49Fh
+                mov     ax, offset aSSS_0 ; "%s\n%s\n%s\n"
                 push    ax
                 call    sub_23129
                 add     sp, 0Ah
@@ -4790,7 +4790,7 @@ loc_12A9B:                              ; CODE XREF: sub_12990+104↑j
                 push    word_2A3D2
                 push    word_2A3D0
                 push    ds
-                mov     ax, 4A9h
+                mov     ax, offset aDDDDDDP_0 ; "%d\n%d\n%d\n%d\n%d\n%d%P"
                 push    ax
                 call    sub_23157
                 add     sp, 10h
@@ -5093,7 +5093,7 @@ def_12CE3:                              ; CODE XREF: sub_12BC2+11A↑j
                 inc     ax
                 mov     word_2A001, ax
                 push    ds
-                mov     ax, 4C9h
+                mov     ax, offset aUltima ; "Ultima "
                 push    ax
                 call    sub_23109
                 add     sp, 4
@@ -5119,7 +5119,7 @@ loc_12DF9:                              ; CODE XREF: sub_12BC2+228↑j
                 add     ax, 86h
                 mov     word_29FFF, ax
                 push    ds
-                mov     ax, 4D6h
+                mov     ax, offset aUltimaVi ; "Ultima VI"
                 push    ax
                 call    sub_23109
                 add     sp, 4
@@ -5133,12 +5133,12 @@ loc_12DF9:                              ; CODE XREF: sub_12BC2+228↑j
                 mov     word_2A001, ax
                 mov     byte_2A00D, 1
                 push    ds
-                mov     ax, 4E0h
+                mov     ax, offset aNameSexClass ; "Name\nSex\nClass\n"
                 push    ax
                 call    sub_23129
                 add     sp, 4
                 push    ds
-                mov     ax, 4F0h
+                mov     ax, offset aStrDexIntMagic ; "Str\nDex\nInt\nMagic\nExp\nLevel%P"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -5613,7 +5613,7 @@ def_131A7:                              ; CODE XREF: sub_12FB7+1E9↑j
                 mov     ax, 5A30h
                 push    ax
                 push    ds
-                mov     ax, 50Eh
+                mov     ax, offset aSP  ; "%s%P"
                 push    ax
                 call    sub_23129
                 add     sp, 6
@@ -6052,7 +6052,7 @@ def_13545:                              ; CODE XREF: sub_13470+CE↑j
                 mov     word_2A001, ax
                 mov     byte_2A00D, 2
                 push    ds
-                mov     ax, 513h
+                mov     ax, offset aTransferAChara ; "TRANSFER A CHARACTER%P"
                 push    ax
                 call    sub_23129
                 add     sp, 4
@@ -6101,12 +6101,12 @@ loc_13646:                              ; CODE XREF: sub_13470+1BE↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 52Ah
+                mov     ax, offset aEnterTheLetter ; "Enter the letter of the\nfloppy/hard dr"...
                 push    ax
                 call    sub_23129
                 add     sp, 4
                 push    ds
-                mov     ax, 565h
+                mov     ax, offset aUltimaVBritann ; "Ultima V Britannia\nor Ultima IV Player"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -6494,12 +6494,12 @@ loc_139B6:                              ; CODE XREF: sub_13470+52E↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 597h
+                mov     ax, offset aNoCharacterFou ; "No character found!  If you wish to tra"...
                 push    ax
                 call    sub_23129
                 add     sp, 4
                 push    ds
-                mov     ax, 5C7h
+                mov     ax, offset aCharacterFromA ; "character from a hard disk it must be s"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -7402,9 +7402,9 @@ loc_1412A:                              ; CODE XREF: sub_14066+BC↑j
                 inc     al
                 les     bx, [bp+block]
                 mov     es:[bx+1C72h], al
-                mov     ax, 0B4Ch
+                mov     ax, offset aSavegameObjlis ; "savegame\\objlist"
                 push    ax
-                call    sub_109F3
+                call    file_open
                 mov     si, ax
                 push    si
                 xor     ax, ax
@@ -7416,9 +7416,9 @@ loc_1412A:                              ; CODE XREF: sub_14066+BC↑j
                 push    ax
                 push    word ptr [bp+block+2]
                 push    word ptr [bp+block]
-                call    sub_10BCA
+                call    file_write
                 push    si
-                call    sub_10A32
+                call    file_close
                 push    word ptr [bp+block+2]
                 push    word ptr [bp+block] ; block
                 call    _farfree
@@ -7555,7 +7555,7 @@ loc_14269:                              ; CODE XREF: sub_1418A+D7↑j
                 call    sub_22882
                 mov     byte_2A00D, 2
                 push    ds
-                mov     ax, 0B5Dh
+                mov     ax, offset aByWhatNameShal ; "By what name shalt thou be called?\n\n%"...
                 push    ax
                 call    sub_23129
                 add     sp, 4
@@ -7625,12 +7625,12 @@ loc_14311:                              ; CODE XREF: sub_1418A+180↑j
                 mov     ax, 5A30h
                 push    ax
                 push    ds
-                mov     ax, 0B84h
+                mov     ax, offset aSP_0 ; "%s\n\n%P"
                 push    ax
                 call    sub_23129
                 add     sp, 6
                 push    ds
-                mov     ax, 0B8Bh
+                mov     ax, offset aAndArtThouMale ; "And art thou Male, or Female?\n\n%P"
                 push    ax
                 call    sub_23129
                 add     sp, 4
@@ -12281,7 +12281,7 @@ def_16975:                              ; CODE XREF: sub_16766+209↑j
                 mov     word_2A001, ax
                 mov     byte_2A00D, 2
                 push    ds
-                mov     ax, 0CCCh
+                mov     ax, offset aUltimaViALordB ; "Ultima VI\nA Lord British Production%P"
                 push    ax
                 call    sub_23129
                 add     sp, 4
@@ -12383,12 +12383,12 @@ loc_16AA4:                              ; CODE XREF: sub_16766+30E↑j
                 mov     ax, 0Ch
                 push    ax
                 push    ds
-                mov     ax, 0CF2h
+                mov     ax, offset aFproducedByPF ; "%FProduced by\n%P%F"
                 push    ax
                 call    sub_23129
                 add     sp, 8
                 push    ds
-                mov     ax, 0D05h
+                mov     ax, offset aRichardGarriot ; "Richard Garriott and Warren Spector\n\n"...
                 push    ax
                 call    sub_23129
                 add     sp, 4
@@ -12397,12 +12397,12 @@ loc_16AA4:                              ; CODE XREF: sub_16766+30E↑j
                 mov     ax, 0Ch
                 push    ax
                 push    ds
-                mov     ax, 0D2Dh
+                mov     ax, offset aFexecutiveProd ; "%FExecutive Producer\n%P%F"
                 push    ax
                 call    sub_23129
                 add     sp, 8
                 push    ds
-                mov     ax, 0D47h
+                mov     ax, offset aDallasSnellP ; "Dallas Snell\n\n%P"
                 push    ax
                 call    sub_23129
                 add     sp, 4
@@ -12411,17 +12411,17 @@ loc_16AA4:                              ; CODE XREF: sub_16766+30E↑j
                 mov     ax, 0Ch
                 push    ax
                 push    ds
-                mov     ax, 0D58h
+                mov     ax, offset aFprogrammingPF ; "%FProgramming\n%P%F"
                 push    ax
                 call    sub_23129
                 add     sp, 8
                 push    ds
-                mov     ax, 0D6Bh
+                mov     ax, offset aCherylChenJohn ; "Cheryl Chen    John Miles\n%P"
                 push    ax
                 call    sub_23129
                 add     sp, 4
                 push    ds
-                mov     ax, 0D88h
+                mov     ax, offset aHermanMillerGa ; "Herman Miller    Gary Scott Smith%P"
                 push    ax
                 call    sub_23129
                 add     sp, 4
@@ -12474,27 +12474,27 @@ loc_16B82:                              ; CODE XREF: sub_16766+3D1↑j
                 mov     ax, 0Ch
                 push    ax
                 push    ds
-                mov     ax, 0DACh
+                mov     ax, offset aFWritingPF ; "%F\n\nWriting\n%P%F"
                 push    ax
                 call    sub_23129
                 add     sp, 8
                 push    ds
-                mov     ax, 0DBDh
+                mov     ax, offset aStephenBeemanD ; "Stephen Beeman    Dr. Cat    'Manda Dee"...
                 push    ax
                 call    sub_23129
                 add     sp, 4
                 push    ds
-                mov     ax, 0DE6h
+                mov     ax, offset aRichardGarriot_0 ; "Richard Garriott    Greg Malone\n"
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 0E07h
+                mov     ax, offset aJohnMilesHerma ; "John Miles    Herman Miller\n"
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 0E24h
+                mov     ax, offset aToddPorterWarr ; "Todd Porter    Warren Spector\n%P"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -12532,22 +12532,22 @@ loc_16C0D:                              ; CODE XREF: sub_16766+48F↑j
                 mov     ax, 0Ch
                 push    ax
                 push    ds
-                mov     ax, 0E45h
+                mov     ax, offset aFartPF ; "%FArt\n%P%F"
                 push    ax
                 call    sub_23129
                 add     sp, 8
                 push    ds
-                mov     ax, 0E50h
+                mov     ax, offset aKeithBerdakDan ; "Keith Berdak    Daniel Bourbonnais\n"
                 push    ax
                 call    sub_23129
                 add     sp, 4
                 push    ds
-                mov     ax, 0E74h
+                mov     ax, offset aJeffDeeMandaDe ; "Jeff Dee    'Manda Dee\n"
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 0E8Ch
+                mov     ax, offset aGlenJohnsonDen ; "Glen Johnson    Denis Loubet\n\n%P"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -12556,17 +12556,17 @@ loc_16C0D:                              ; CODE XREF: sub_16766+48F↑j
                 mov     ax, 0Ch
                 push    ax
                 push    ds
-                mov     ax, 0EADh
+                mov     ax, offset aFmusicPF ; "%FMusic\n%P%F"
                 push    ax
                 call    sub_23129
                 add     sp, 8
                 push    ds
-                mov     ax, 0EBAh
+                mov     ax, offset aKenArnoldIoloF ; "Ken Arnold    Iolo Fitzowen\n"
                 push    ax
                 call    sub_23129
                 add     sp, 4
                 push    ds
-                mov     ax, 0ED7h
+                mov     ax, offset aHermanMillerTo ; "Herman Miller    Todd Porter\n%P"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -12604,17 +12604,17 @@ loc_16CBA:                              ; CODE XREF: sub_16766+53C↑j
                 mov     ax, 0Ch
                 push    ax
                 push    ds
-                mov     ax, 0EF7h
+                mov     ax, offset aFqualityAssura ; "%FQuality Assurance\n%P%F"
                 push    ax
                 call    sub_23129
                 add     sp, 8
                 push    ds
-                mov     ax, 0F10h
+                mov     ax, offset aPaulMaloneMike ; "Paul Malone    Mike Romero\n"
                 push    ax
                 call    sub_23129
                 add     sp, 4
                 push    ds
-                mov     ax, 0F2Ch
+                mov     ax, offset aMarcSchaefgenJ ; "Marc Schaefgen    John Watson\n\n%P"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -12623,27 +12623,27 @@ loc_16CBA:                              ; CODE XREF: sub_16766+53C↑j
                 mov     ax, 0Ch
                 push    ax
                 push    ds
-                mov     ax, 0F4Eh
+                mov     ax, offset aFadditionalSup ; "%FAdditional Support\n%P%F"
                 push    ax
                 call    sub_23129
                 add     sp, 8
                 push    ds
-                mov     ax, 0F68h
+                mov     ax, offset aMichelleCaddel ; "Michelle Caddel    Melanie Fleming\n"
                 push    ax
                 call    sub_23129
                 add     sp, 4
                 push    ds
-                mov     ax, 0F8Ch
+                mov     ax, offset aAlanGardnerJef ; "Alan Gardner    Jeff Hillhouse\n"
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 0FACh
+                mov     ax, offset aSherryHunterSt ; "Sherry Hunter    Steve Muchow\n"
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 0FCBh
+                mov     ax, offset aCherylNeeldP ; "Cheryl Neeld%P"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -18707,12 +18707,12 @@ loc_19C70:                              ; CODE XREF: sub_19A0B+E7↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 13E2h
+                mov     ax, offset aUponYourWorldF ; "Upon your world, five seasons have pass"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1418h
+                mov     ax, offset aTriumphantHome ; "triumphant homecoming from Britannia."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -18735,22 +18735,22 @@ loc_19CCB:                              ; CODE XREF: sub_19A0B+E7↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 143Eh
+                mov     ax, offset aYouHaveTradedT ; "You have traded the Avatar's life of pe"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1478h
+                mov     ax, offset aForTheLonelySe ; "for the lonely serenity of a world at p"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 14AAh
+                mov     ax, offset aTelevisionSupe ; "television supermen cannot take the pla"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 14E0h
+                mov     ax, offset aWhoDiedAtYourS ; "who died at your side!"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -18773,7 +18773,7 @@ loc_19D40:                              ; CODE XREF: sub_19A0B+E7↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 14F7h
+                mov     ax, offset aOutsideAChillW ; "Outside, a chill wind rises..."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -18796,7 +18796,7 @@ loc_19D8E:                              ; CODE XREF: sub_19A0B+E7↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1516h
+                mov     ax, offset aAndInMomentsTh ; "...and in moments, the storm is upon yo"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -18819,12 +18819,12 @@ loc_19DDC:                              ; CODE XREF: sub_19A0B+E7↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1540h
+                mov     ax, offset aTonguesOfLight ; "Tongues of lightning lash the sky, cond"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 157Ch
+                mov     ax, offset aCrescendoOfThu ; "crescendo of thunder...."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -18847,12 +18847,12 @@ loc_19E37:                              ; CODE XREF: sub_19A0B+E7↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1595h
+                mov     ax, offset aInACataclysmOf ; "In a cataclysm of sound and light, a bo"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 15CBh
+                mov     ax, offset aBlueFireStrike ; "blue fire strikes the earth!"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -18875,12 +18875,12 @@ loc_19E92:                              ; CODE XREF: sub_19A0B+E7↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 15E8h
+                mov     ax, offset aLightningAmong ; "Lightning among the stones!\nIs this a "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1619h
+                mov     ax, offset aDistantBritann ; "distant Britannia?"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -18903,17 +18903,17 @@ loc_19EED:                              ; CODE XREF: sub_19A0B+E7↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 162Ch
+                mov     ax, offset aYouBoltFromYou ; "You bolt from your house, stumbling, ru"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1666h
+                mov     ax, offset aStormIntoTheFo ; " storm. Into the forest, down the path,"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 169Bh
+                mov     ax, offset aRainToTheStone ; "rain... to the stones."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -18936,22 +18936,22 @@ loc_19F55:                              ; CODE XREF: sub_19A0B+E7↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 16B2h
+                mov     ax, offset aNearTheStonesT ; "Near the stones, the smell of damp, bla"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 16EBh
+                mov     ax, offset aInTheAirInAFro ; "in the air. In a frozen moment of light"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1718h
+                mov     ax, offset aStruckDaylight ; "struck daylight, you glimpse a tiny obs"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1753h
+                mov     ax, offset aMidstOfTheCirc ; "midst of the circle!"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -18973,7 +18973,7 @@ loc_19FCA:                              ; CODE XREF: sub_19A0B+D6↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1768h
+                mov     ax, offset aWonderingYouPi ; "Wondering, you pick it up...."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -18996,12 +18996,12 @@ loc_1A018:                              ; CODE XREF: sub_19A0B+119↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1786h
+                mov     ax, offset aAndFromTheHear ; "...and from the heart of the stones, a "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 17C2h
+                mov     ax, offset aAscendsInSilen ; "ascends in silence!"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -19024,17 +19024,17 @@ loc_1A073:                              ; CODE XREF: sub_19A0B+119↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 17D6h
+                mov     ax, offset aExultantMemori ; "Exultant memories wash over you as you "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1810h
+                mov     ax, offset aWhenLastYouSaw ; "When last you saw an orb such as this, "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1849h
+                mov     ax, offset aByLordBritishT ; "by Lord British to banish the tyrant Bl"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -19057,17 +19057,17 @@ loc_1A0DB:                              ; CODE XREF: sub_19A0B+119↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 187Ah
+                mov     ax, offset aButYourJoySoon ; "But your joy soon gives way to apprehen"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 18A9h
+                mov     ax, offset aTheGateToBrita ; "The gate to Britannia has always been b"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 18DBh
+                mov     ax, offset aBlueAsTheMorni ; "blue as the morning sky."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -19090,12 +19090,12 @@ loc_1A143:                              ; CODE XREF: sub_19A0B+119↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 18F4h
+                mov     ax, offset aAbruptlyThePor ; "Abruptly, the portal quivers and begins"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1925h
+                mov     ax, offset aIntoTheGroundI ; "into the ground.  Its crimson light wan"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -19117,7 +19117,7 @@ loc_1A19E:                              ; CODE XREF: sub_19A0B+105↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1950h
+                mov     ax, offset aDesperationMak ; "Desperation makes the decision an easy "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -19141,7 +19141,7 @@ loc_1A1EC:                              ; CODE XREF: sub_19A0B+12B↑j
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 197Ch
+                mov     ax, offset aWelcomeOSeeker ; "\"Welcome, O Seeker!%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19163,17 +19163,17 @@ loc_1A23E:                              ; CODE XREF: sub_19A0B+133↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1992h
+                mov     ax, offset aALonelyStrollA ; "A lonely stroll along an unfamiliar for"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 19CEh
+                mov     ax, offset aUponACuriousGy ; "upon a curious gypsy wagon, its exotic "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1A0Ch
+                mov     ax, offset aSummerShade ; "summer shade."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -19195,17 +19195,17 @@ loc_1A2A6:                              ; CODE XREF: sub_19A0B+13B↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1A1Ah
+                mov     ax, offset aAWomanSVoiceRi ; "A woman's voice rings out with friendsh"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1A59h
+                mov     ax, offset aAcrossTheWagon ; "across the wagon's threshold and, as it"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1A8Bh
+                mov     ax, offset aIntoAnotherLif ; "into another life...."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -19229,24 +19229,24 @@ loc_1A30E:                              ; CODE XREF: sub_19A0B+CC↑j
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 1AA1h
+                mov     ax, offset aAtLastThouHast ; "\"At last thou hast come to fulfill thy"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
                 push    ds
-                mov     ax, 1AD4h
+                mov     ax, offset aTheGypsySaysSh ; "the gypsy says. She smiles, as if in gr"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1B09h
+                mov     ax, offset aSitBeforeMeNow ; "\"Sit before me now, and I shall pour t"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 1B43h
+                mov     ax, offset aIntoTheShadows ; "into the shadows of thy future.%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19269,26 +19269,26 @@ loc_1A38B:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1B65h
+                mov     ax, offset aOnAWoodenTable ; "On a wooden table eight bottles stand, "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1BA3h
+                mov     ax, offset aLiquids ; "liquids.\n\n"
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 1BAEh
+                mov     ax, offset aBeholdTheVirtu ; "\"Behold the Virtues of the Avatar,%c t"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 1BDEh
+                mov     ax, offset aSaysLetUsBegin ; "says. \"Let us begin the casting!%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19311,24 +19311,24 @@ loc_1A408:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1C01h
+                mov     ax, offset aEntrustedToDel ; "\"Entrusted to deliver an uncounted pur"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1C3Eh
+                mov     ax, offset aMeetAPoorBegga ; "meet a poor beggar. Dost thou A) delive"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1C7Bh
+                mov     ax, offset aKnowingTheTrus ; "knowing the trust in thee was well-plac"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 1CC1h
+                mov     ax, offset aGiveTheBeggarA ; "give the beggar a coin, knowing it won'"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19351,24 +19351,24 @@ loc_1A481:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1CF7h
+                mov     ax, offset aThouHasBeenPro ; "\"Thou has been prohibited by thy absen"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1D32h
+                mov     ax, offset aThyFriendsInAC ; "thy friends in a close-pitched battle. "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1D70h
+                mov     ax, offset aSoThouMayHones ; "so thou may Honestly claim obedience; o"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 1DB0h
+                mov     ax, offset aThyComradesKno ; "thy comrades, knowing thou may deny it "...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19391,24 +19391,24 @@ loc_1A4FA:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1DE0h
+                mov     ax, offset aAMerchantOwesT ; "\"A merchant owes thy friend money, now"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1E1Ch
+                mov     ax, offset aDostSeeTheSame ; "dost see the same merchant drop a purse"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1E58h
+                mov     ax, offset aAHonestlyRetur ; "A) Honestly return the purse intact; or"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 1E94h
+                mov     ax, offset aFriendAPortion ; "friend a portion of the gold first?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19431,29 +19431,29 @@ loc_1A573:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1EBAh
+                mov     ax, offset aTheeAndThyFrie ; "\"Thee and thy friend are valiant but p"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1EF9h
+                mov     ax, offset aBothSetForthTo ; "both set forth to slay a mighty dragon."...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1F32h
+                mov     ax, offset aThinkHeSlewItB ; "think he slew it, but the killing blow "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 1F6Fh
+                mov     ax, offset aAHonestlyClaim ; "A) Honestly claim the reward; or B) Sac"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 1FAFh
+                mov     ax, offset aSakeOfThyFrien ; "sake of thy friendship?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19476,24 +19476,24 @@ loc_1A5F9:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 1FC9h
+                mov     ax, offset aThouArtSwornTo ; "\"Thou art sworn to protect thy Lord at"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 200Ch
+                mov     ax, offset aHeHathCommitte ; "he hath committed a crime. Authorities "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 204Ch
+                mov     ax, offset aDostThouABreak ; "Dost thou A) Break thine oath by Honest"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 208Eh
+                mov     ax, offset aHonorBySilentl ; "Honor by silently keeping thine oath?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19516,24 +19516,24 @@ loc_1A672:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 20B6h
+                mov     ax, offset aThyFriendDothS ; "\"Thy friend doth seek admittance to th"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 20F5h
+                mov     ax, offset aArtAskedToVouc ; "art asked to vouch for his purity of sp"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2135h
+                mov     ax, offset aUncertainDostT ; "uncertain. Dost thou A) Honestly expres"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 2176h
+                mov     ax, offset aForHimHopingFo ; "for him, hoping for his Spiritual impro"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19556,24 +19556,24 @@ loc_1A6EB:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 21A7h
+                mov     ax, offset aThyLordDothMis ; "\"Thy Lord doth mistakenly believe he s"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 21E6h
+                mov     ax, offset aProofThatThyLa ; "proof that thy lance felled the beast. "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2224h
+                mov     ax, offset aAHonestlyClaim_0 ; "A) Honestly claim the kill; or B) Humbl"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 2262h
+                mov     ax, offset aBeliefC ; "belief?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19596,19 +19596,19 @@ loc_1A764:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 226Ch
+                mov     ax, offset aThouDostManage ; "\"Thou dost manage to disarm thy mortal"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 22ABh
+                mov     ax, offset aAtThyMercyDost ; "at thy mercy. Dost thou A) Show Compass"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 22ECh
+                mov     ax, offset aYieldOrBSlayHi ; "yield; or B) Slay him, as expected of a"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19631,24 +19631,24 @@ loc_1A7D0:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 2327h
+                mov     ax, offset aAfterTwentyYea ; "\"After twenty years thou hast found th"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2363h
+                mov     ax, offset aFriendsTheVill ; "friends. The villain proves to be a man"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 23A2h
+                mov     ax, offset aSupportForAYou ; "support for a young girl. Dost thou A) "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 23E2h
+                mov     ax, offset aForTheChildOrB ; "for the child; or B) Slay him in the na"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19671,24 +19671,24 @@ loc_1A849:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 241Ah
+                mov     ax, offset aTheeAndThyFrie_0 ; "\"Thee and thy friends hath been routed"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 245Ah
+                mov     ax, offset aInDefianceOfTh ; "In defiance of thy orders, dost thou A)"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 249Dh
+                mov     ax, offset aAWoundedComrad ; "a wounded comrade; or B) Sacrifice thys"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 24DEh
+                mov     ax, offset aEnemySoThatOth ; "enemy so that others might escape?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19711,24 +19711,24 @@ loc_1A8C2:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 2503h
+                mov     ax, offset aThouArtSwornTo_0 ; "\"Thou art sworn to uphold a Lord who d"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2541h
+                mov     ax, offset aForbiddenTortu ; "forbidden torture of prisoners. Each ni"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2581h
+                mov     ax, offset aReachTheeDostT ; "reach thee. Dost thou A) Show Compassio"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 25C3h
+                mov     ax, offset aOrBHonorThyOat ; "or B) Honor thy oath and ignore the dee"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19751,24 +19751,24 @@ loc_1A93B:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 25F0h
+                mov     ax, offset aThouHastBeenTa ; "\"Thou hast been taught to preserve all"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 262Eh
+                mov     ax, offset aLiesFatallyStu ; "lies fatally stung by a venomous serpen"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2668h
+                mov     ax, offset aMercifulDeathD ; "merciful death. Dost thou A) Show Compa"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 26A8h
+                mov     ax, offset aOrBHeedThySpir ; "or B) heed thy Spiritual beliefs and tu"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19791,24 +19791,24 @@ loc_1A9B4:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 26DAh
+                mov     ax, offset aTheCaptainOfTh ; "\"The Captain of the King's Guard asks "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2715h
+                mov     ax, offset aVisitAHospital ; "visit a hospital to cheer the children "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 275Ch
+                mov     ax, offset aDeedsDostThouA ; "deeds. Dost thou A) Show thy Compassion"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 279Ch
+                mov     ax, offset aOrBHumblyLetAn ; "or B) Humbly let another go?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19831,24 +19831,24 @@ loc_1AA2D:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 27BBh
+                mov     ax, offset aThouHastBeenSe ; "\"Thou hast been sent to secure a neede"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 27FAh
+                mov     ax, offset aLordThyHostIsA ; "Lord. Thy host is agreeable to thy prop"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2837h
+                mov     ax, offset aCountryAtDinne ; "country at dinner. Dost thou A) Valiant"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 2875h
+                mov     ax, offset aBJustlyRiseAnd ; "B) Justly rise and demand an apology?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19871,19 +19871,19 @@ loc_1AAA6:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 289Dh
+                mov     ax, offset aABurlyKnightAc ; "\"A burly knight accosts thee and deman"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 28DBh
+                mov     ax, offset aAValiantlyRefu ; "A) Valiantly refuse and engage the knig"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 2917h
+                mov     ax, offset aThyRationsUnto ; "thy rations unto the hungry knight?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19906,24 +19906,24 @@ loc_1AB12:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 293Dh
+                mov     ax, offset aDuringBattleTh ; "\"During battle thou art ordered to gua"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 297Dh
+                mov     ax, offset aTentTheBattleG ; "tent. The battle goes poorly and thou d"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 29BAh
+                mov     ax, offset aFellowsDostTho ; "fellows. Dost thou A) Valiantly enter t"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 29EDh
+                mov     ax, offset aOrBHonorThyPos ; "or B) Honor thy post as guard?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19946,19 +19946,19 @@ loc_1AB8B:                              ; CODE XREF: sub_19A0B+150↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 2A0Eh
+                mov     ax, offset aALocalBullyPus ; "\"A local bully pushes for a fight. Dos"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2A49h
+                mov     ax, offset aTrounceTheRogu ; "trounce the rogue; or B) Decline, knowi"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 2A87h
+                mov     ax, offset aNoLastingGoodW ; "no lasting good will come of it?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -19980,24 +19980,24 @@ loc_1ABF7:                              ; CODE XREF: sub_19A0B+BF↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 2AAAh
+                mov     ax, offset aAlthoughASimpl ; "\"Although a simple fisherman, thou art"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2AF1h
+                mov     ax, offset aLordDostSeekTo ; "Lord dost seek to assemble a peacetime "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2B34h
+                mov     ax, offset aTheCallSoThatA ; "the call, so that all may witness thy V"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 2B7Bh
+                mov     ax, offset aOfferToJoinThy ; "offer to join thy Lord's largely ceremo"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -20020,24 +20020,24 @@ loc_1AC70:                              ; CODE XREF: sub_19A0B+19C↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 2BB5h
+                mov     ax, offset aDuringAPitched ; "\"During a pitched battle, thou dost se"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2BF2h
+                mov     ax, offset aPostEndangerin ; "post, endangering many. As he flees, he"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2C3Ah
+                mov     ax, offset aDostThouAJustl ; " Dost thou A) Justly let him fight alon"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 2C7Eh
+                mov     ax, offset aOfThineOwnLife ; "of thine own life to aid him?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -20060,24 +20060,24 @@ loc_1ACE9:                              ; CODE XREF: sub_19A0B+19C↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 2C9Eh
+                mov     ax, offset aThouHastSwornT ; "\"Thou hast sworn to do thy Lord's bidd"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2CDBh
+                mov     ax, offset aAPieceOfLandAn ; "a piece of land and orders its owner re"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2D1Dh
+                mov     ax, offset aJusticeRefusin ; "Justice, refusing to act, thus being di"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 2D60h
+                mov     ax, offset aOathAndEvictTh ; "oath and evict the landowner?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -20100,19 +20100,19 @@ loc_1AD62:                              ; CODE XREF: sub_19A0B+19C↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 2D80h
+                mov     ax, offset aThouDostBeliev ; "\"Thou dost believe that virtue resides"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2DC5h
+                mov     ax, offset aARogueStealFro ; "a rogue steal from thy Lord. Dost thou "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 2E0Bh
+                mov     ax, offset aPersonallyTryT ; "Personally try to sway him back to the "...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -20135,24 +20135,24 @@ loc_1ADCE:                              ; CODE XREF: sub_19A0B+19C↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 2E4Ch
+                mov     ax, offset aUnwitnessedTho ; "\"Unwitnessed, thou hast slain a mighty"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2E86h
+                mov     ax, offset aOfThyLifeAPoor ; "of thy life. A poor warrior claims the "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2EBEh
+                mov     ax, offset aDostThouAJustl_0 ; "Dost thou A) Justly step forward to cla"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 2EF5h
+                mov     ax, offset aOrBHumblyGoAbo ; "or B) Humbly go about thy life, secure "...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -20175,24 +20175,24 @@ loc_1AE47:                              ; CODE XREF: sub_19A0B+19C↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 2F32h
+                mov     ax, offset aThouArtABounty ; "\"Thou art a bounty hunter sworn to ret"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2F72h
+                mov     ax, offset aAfterHisCaptur ; "After his capture, thou dost come to be"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 2FB3h
+                mov     ax, offset aThouASacrifice ; "thou A) Sacrifice thy sizable bounty fo"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 2FF5h
+                mov     ax, offset aThineOathToRet ; "thine oath to return him as promised?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -20215,24 +20215,24 @@ loc_1AEC0:                              ; CODE XREF: sub_19A0B+19C↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 301Dh
+                mov     ax, offset aThouHastSpentT ; "\"Thou hast spent thy life in charitabl"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3060h
+                mov     ax, offset aUncleTheInnkee ; "uncle the innkeeper lies ill and asks t"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 30A5h
+                mov     ax, offset aDostThouASacri ; "Dost thou A) Sacrifice thy life of puri"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 30E6h
+                mov     ax, offset aDeclineAndFoll ; "Decline and follow the call of Spiritua"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -20255,24 +20255,24 @@ loc_1AF39:                              ; CODE XREF: sub_19A0B+19C↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3115h
+                mov     ax, offset aThouArtAnElder ; "\"Thou art an elderly, wealthy merchant"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3159h
+                mov     ax, offset aASacrificeAllT ; "A) Sacrifice all thy wealth to feed hun"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 319Dh
+                mov     ax, offset aReceivingPubli ; "receiving public adulation; or B) Humbl"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 31E2h
+                mov     ax, offset aThyFortuneToTh ; "thy fortune to thy heirs?%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -20295,24 +20295,24 @@ loc_1AFB2:                              ; CODE XREF: sub_19A0B+19C↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 31FEh
+                mov     ax, offset aInThyYouthThou ; "\"In thy youth thou didst pledge to mar"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 323Ch
+                mov     ax, offset aThouArtOnASacr ; "thou art on a sacred quest in distant l"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3279h
+                mov     ax, offset aDothAskTheeToK ; "doth ask thee to keep thy vow. Dost tho"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 32BAh
+                mov     ax, offset aWedOrBFollowTh ; "wed; or B) Follow thy Spiritual crusade"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -20335,24 +20335,24 @@ loc_1B02B:                              ; CODE XREF: sub_19A0B+19C↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 32E5h
+                mov     ax, offset aThoughThouArtB ; "\"Though thou art but a peasant shepher"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 332Dh
+                mov     ax, offset aSoleDescendant ; "sole descendant of a noble family long "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3366h
+                mov     ax, offset aDostThouAHonor ; "Dost thou A) Honorably take up the arms"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 33A4h
+                mov     ax, offset aBHumblyResumeT ; "B) Humbly resume thy life of simplicity"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -20374,19 +20374,19 @@ loc_1B0A4:                              ; CODE XREF: sub_19A0B+188↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 33D9h
+                mov     ax, offset aThyParentsWish ; "\"Thy parents wish thee to become an ap"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3418h
+                mov     ax, offset aAreAvailableDo ; "are available. Dost thou A) Become an a"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 345Dh
+                mov     ax, offset aOrderOrBBecome ; "order; or B) Become an assistant to a h"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -20413,24 +20413,24 @@ loc_1B110:                              ; CODE XREF: sub_19A0B+1CC↑j
                 mov     ax, 5A30h
                 push    ax
                 push    ds
-                mov     ax, 349Dh
+                mov     ax, offset aThePathOfTheAv ; "\"The path of the Avatar lies beneath t"...
                 push    ax
                 call    sub_23157
                 add     sp, 8
                 push    ds
-                mov     ax, 34DAh
+                mov     ax, offset aTheGypsyIntone ; "the gypsy intones. With a mysterious sm"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3537h
+                mov     ax, offset aDrinkOfTheseWa ; "\"Drink of these waters and go forth am"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 3572h
+                mov     ax, offset aShallReceiveTh ; "shall receive thee in joy!%c"
                 push    ax
                 call    sub_23157
                 add     sp, 6
@@ -20453,17 +20453,17 @@ loc_1B191:                              ; CODE XREF: sub_19A0B+1CC↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 358Fh
+                mov     ax, offset aAsYouDrinkFrom ; "As you drink from the flask, vertigo ov"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 35C5h
+                mov     ax, offset aASoothingMistO ; "A soothing mist obscures the gypsy's fa"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 35FEh
+                mov     ax, offset aWithoutFearInt ; "without fear into an untroubled sleep."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20486,17 +20486,17 @@ loc_1B1F9:                              ; CODE XREF: sub_19A0B+1CC↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3625h
+                mov     ax, offset aYouWakeInADiff ; "You wake in a different time, upon anot"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3660h
+                mov     ax, offset aThoughTheAvata ; "Though the Avatar's quests bring you bo"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 36A0h
+                mov     ax, offset aNeverDoYouStra ; "never do you stray from the path of the"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20519,17 +20519,17 @@ loc_1B261:                              ; CODE XREF: sub_19A0B+1CC↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 36D7h
+                mov     ax, offset aTheSagasOfUlti ; "The sagas of Ultima IV and Ultima V chr"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3714h
+                mov     ax, offset aTravelsAndYour ; "travels, and your name and your deeds a"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3755h
+                mov     ax, offset aBritanniaSLege ; "Britannia's legends...."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20551,12 +20551,12 @@ loc_1B2C9:                              ; CODE XREF: sub_19A0B+1B8↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 376Dh
+                mov     ax, offset aFinallyTempere ; "Finally, tempered by your struggles aga"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 37B5h
+                mov     ax, offset aAreProvenReady ; "are proven ready to answer the epic cha"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20578,17 +20578,17 @@ loc_1B324:                              ; CODE XREF: sub_19A0B+1DE↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 37F1h
+                mov     ax, offset aDazedYouEmerge ; "Dazed, you emerge from the portal to fi"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3825h
+                mov     ax, offset aStandingOnADes ; "standing on a desolate plain. Nearby re"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 385Bh
+                mov     ax, offset aRuneStruckAlta ; "rune-struck altar, shrouded in moonlit "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20610,22 +20610,22 @@ loc_1B38C:                              ; CODE XREF: sub_19A0B+1E6↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3887h
+                mov     ax, offset aAtFirstThePlai ; "At first the plain is still. Then a hun"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 38BBh
+                mov     ax, offset aRaiseASlowDeat ; "raise a slow, deathlike song, drawing c"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 38EDh
+                mov     ax, offset aCloserWithEach ; "closer with each passing moment. You ar"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 391Eh
+                mov     ax, offset aByAnUrgeToRun ; "by an urge to run..."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20648,7 +20648,7 @@ loc_1B401:                              ; CODE XREF: sub_19A0B+1EE↑j
                 add     sp, 4
                 mov     [bp+var_4], 2
                 push    ds
-                mov     ax, 3933h
+                mov     ax, offset aButYouHaveNoPl ; "...but you have no place to go."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20670,12 +20670,12 @@ loc_1B453:                              ; CODE XREF: sub_19A0B+17E↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3953h
+                mov     ax, offset aBeforeYouCanOf ; "Before you can offer a protest to the c"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3984h
+                mov     ax, offset aWhoSurroundYou ; "who surround you, scaly claws grasp you"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20699,7 +20699,7 @@ loc_1B4AE:                              ; CODE XREF: sub_19A0B+20D↑j
                 add     sp, 4
                 mov     [bp+var_4], 2
                 push    ds
-                mov     ax, 39B3h
+                mov     ax, offset aWithUnearthlyS ; "With unearthly strength, the monsters b"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20722,12 +20722,12 @@ loc_1B500:                              ; CODE XREF: sub_19A0B+20D↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 39F6h
+                mov     ax, offset aKneelingTheHor ; "Kneeling, the hordes sway and chant as "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3A28h
+                mov     ax, offset aWingedNightmar ; "winged nightmare steps forward."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20750,12 +20750,12 @@ loc_1B55B:                              ; CODE XREF: sub_19A0B+20D↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3A48h
+                mov     ax, offset aTheLeaderUnwra ; "The leader unwraps a velvet covered, br"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3A7Ah
+                mov     ax, offset aBookAndRecites ; "book and recites from it in a formal, s"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20778,17 +20778,17 @@ loc_1B5B6:                              ; CODE XREF: sub_19A0B+20D↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3AB0h
+                mov     ax, offset aShoutsAndJeers ; "Shouts and jeers explode from the masse"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3AE8h
+                mov     ax, offset aSlamsShutTheBo ; "slams shut the book. In his hand a mali"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3B1Dh
+                mov     ax, offset aDripsWithMoonl ; "drips with moonlight."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20811,12 +20811,12 @@ loc_1B61E:                              ; CODE XREF: sub_19A0B+20D↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3B33h
+                mov     ax, offset aYouCloseYourEy ; "You close your eyes. A dying scream, ce"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3B6Dh
+                mov     ax, offset aCurdlesTheAir ; "curdles the air."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20840,7 +20840,7 @@ loc_1B679:                              ; CODE XREF: sub_19A0B+20D↑j
                 add     sp, 4
                 mov     [bp+var_4], 2
                 push    ds
-                mov     ax, 3B7Eh
+                mov     ax, offset aCatcallsTheDag ; "Catcalls, the dagger, a scream, Death.."...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20864,7 +20864,7 @@ loc_1B6CB:                              ; CODE XREF: sub_19A0B+20D↑j
                 add     sp, 4
                 mov     [bp+var_4], 2
                 push    ds
-                mov     ax, 3BA8h
+                mov     ax, offset aPandemoniumShr ; "Pandemonium. Shrieks of rage, of terror"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20888,7 +20888,7 @@ loc_1B71D:                              ; CODE XREF: sub_19A0B+20D↑j
                 add     sp, 4
                 mov     [bp+var_4], 2
                 push    ds
-                mov     ax, 3BD1h
+                mov     ax, offset aFromTheInevita ; "From the inevitable, an impossibility e"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20912,7 +20912,7 @@ loc_1B76F:                              ; CODE XREF: sub_19A0B+20D↑j
                 add     sp, 4
                 mov     [bp+var_4], 2
                 push    ds
-                mov     ax, 3C00h
+                mov     ax, offset aYouAreStillAli ; "You are still alive."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20934,17 +20934,17 @@ loc_1B7C1:                              ; CODE XREF: sub_19A0B+1F9↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3C15h
+                mov     ax, offset aSilentRedLight ; "Silent red light fills the darkness. Th"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3C4Fh
+                mov     ax, offset aClackOfACrossb ; "clack of a crossbow, and a violet- flet"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3C88h
+                mov     ax, offset aInThePriestSBa ; "in the priest's barren forehead."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -20967,22 +20967,22 @@ loc_1B829:                              ; CODE XREF: sub_19A0B+23D↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3CA9h
+                mov     ax, offset aFriendlyFacesV ; "Friendly faces vault from a newborn moo"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3CE0h
+                mov     ax, offset aRainOfQuarrels ; "rain of quarrels holds the furious mob "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3D14h
+                mov     ax, offset aKnightDupreSSw ; "knight Dupre's sword flashes twice in t"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3D3Fh
+                mov     ax, offset aDarknessSlicin ; "darkness, slicing away your bonds!"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -21007,22 +21007,22 @@ loc_1B89E:                              ; CODE XREF: sub_19A0B+23D↑j
                 mov     ax, 7Fh
                 push    ax
                 push    ds
-                mov     ax, 3D62h
+                mov     ax, offset aQuicklyOldFrie ; "\"Quickly, old friend! To the gate!%c A"...
                 push    ax
                 call    sub_23157
                 add     sp, 6
                 push    ds
-                mov     ax, 3D9Bh
+                mov     ax, offset aSwordsmanShami ; "swordsman Shamino and a grinning, cross"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3DD0h
+                mov     ax, offset aIoloTheBardDup ; "Iolo the Bard, Dupre thrusts a spare sw"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3E06h
+                mov     ax, offset aHand ; "hand."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -21045,17 +21045,17 @@ loc_1B917:                              ; CODE XREF: sub_19A0B+23D↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3E0Ch
+                mov     ax, offset aSnatchingTheFa ; "Snatching the fallen priest's book, Iol"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3E3Ch
+                mov     ax, offset aIntoTheRedness ; "into the redness with Shamino at his he"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3E7Ch
+                mov     ax, offset aSurgesForwardA ; "surges forward, all of one terrible min"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -21078,7 +21078,7 @@ loc_1B97F:                              ; CODE XREF: sub_19A0B+23D↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3EA6h
+                mov     ax, offset aTheGateWanesRa ; "The gate wanes rapidly as you and Dupre"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -21101,7 +21101,7 @@ loc_1B9CD:                              ; CODE XREF: sub_19A0B+229↑j
                 add     sp, 4
                 mov     [bp+var_4], 2
                 push    ds
-                mov     ax, 3EE0h
+                mov     ax, offset aButNotRapidlyE ; "...but not rapidly enough."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -21123,22 +21123,22 @@ loc_1BA1F:                              ; CODE XREF: sub_19A0B+24F↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3EFBh
+                mov     ax, offset aFromTheMobSVan ; "From the mob's vanguard, three of the a"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3F2Fh
+                mov     ax, offset aScrambleToward ; "scramble toward the gate. Driven by fur"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3F5Ah
+                mov     ax, offset aTheCreaturesHu ; "the creatures hurl their bodies into th"...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3F84h
+                mov     ax, offset aPortalSLastHan ; "portal's last handspan of light!"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -21160,12 +21160,12 @@ loc_1BA94:                              ; CODE XREF: sub_19A0B+257↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 3FA5h
+                mov     ax, offset aAGameIsAlready ; "A game is already in progress.  Please "...
                 push    ax
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 3FDDh
+                mov     ax, offset aProgramToCreat ; "program to create a new character disk."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -21187,7 +21187,7 @@ loc_1BAEE:                              ; CODE XREF: sub_19A0B+25F↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 4005h
+                mov     ax, offset aPleaseInsertTh ; "Please insert the "
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -21198,7 +21198,7 @@ loc_1BAEE:                              ; CODE XREF: sub_19A0B+25F↑j
                 call    sub_23157
                 add     sp, 4
                 push    ds
-                mov     ax, 4018h
+                mov     ax, offset aDisk ; " disk."
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -21231,7 +21231,7 @@ def_19AF2:                              ; CODE XREF: sub_19A0B+E0↑j
                 call    dword_293C4
                 add     sp, 4
                 push    ds
-                mov     ax, 401Fh
+                mov     ax, offset aPassageUndefin ; "<< Passage undefined! >>"
                 push    ax
                 call    sub_23157
                 add     sp, 4
@@ -21308,15 +21308,15 @@ arg_0           = byte ptr  6
                 push    si
                 mov     al, [bp+arg_0]
                 add     al, 30h ; '0'
-                mov     byte_28A04, al
-                mov     ax, 4071h
+                mov     byte ptr aU61+3, al ; "1"
+                mov     ax, offset aU61 ; "u6.1"
                 push    ax
-                call    sub_109F3
+                call    file_open
                 mov     si, ax
                 cmp     si, 0FFFFh
                 jz      short loc_1BC32
                 push    si
-                call    sub_10A32
+                call    file_close
 
 loc_1BC32:                              ; CODE XREF: sub_1BC10+1A↑j
                 cmp     si, 0FFFFh
@@ -21866,9 +21866,9 @@ loc_1BFF4:                              ; CODE XREF: sub_1BFE2+D↑j
                 add     sp, 4
                 mov     word ptr [bp+block+2], dx
                 mov     word ptr [bp+block], ax
-                mov     ax, 40B6h
+                mov     ax, offset aPalettesInt ; "palettes.int"
                 push    ax
-                call    sub_109F3
+                call    file_open
                 mov     [bp+var_10], ax
                 cmp     [bp+var_10], 0
                 jge     short loc_1C01E
@@ -21901,9 +21901,9 @@ loc_1C01E:                              ; CODE XREF: sub_1BFE2+37↑j
                 push    ax
                 push    word ptr [bp+block+2]
                 push    word ptr [bp+block]
-                call    sub_10AE4
+                call    file_read
                 push    [bp+var_10]
-                call    sub_10A32
+                call    file_close
                 mov     si, 0BFh
                 jmp     loc_1C0FF
 ; ---------------------------------------------------------------------------
@@ -29059,7 +29059,7 @@ arg_0           = word ptr  6
                 call    PCMP@
                 jnz     short loc_227E6
                 push    ds
-                mov     ax, 454Ah
+                mov     ax, offset aNoFarMemory ; " << No far memory! >> "
                 push    ax
                 call    sub_23109
                 add     sp, 4
@@ -29084,7 +29084,7 @@ loc_227E6:                              ; CODE XREF: sub_2277C+56↑j
                 or      ax, [di+4]
                 jnz     short loc_22823
                 push    ds
-                mov     ax, 4561h
+                mov     ax, offset aNoYtableMemory ; " << No ytable memory! >> "
                 push    ax
                 call    sub_23109
                 add     sp, 4
@@ -32896,7 +32896,7 @@ arg_4           = word ptr  0Ah
                 push    di
                 push    si
                 push    ds
-                mov     dx, 3C4h
+                mov     dx, offset aEndM ; "end.m"
                 mov     ax, 0F02h
                 out     dx, ax          ; EGA: sequencer address reg
                                         ; unknown register
@@ -34736,16 +34736,7 @@ word_24B38      dw 0                    ; DATA XREF: sub_113A5:def_11477↑r
                 db  25h ; %
                 db  73h ; s
                 db    0
-                db  63h ; c
-                db  6Fh ; o
-                db  6Eh ; n
-                db  66h ; f
-                db  69h ; i
-                db  67h ; g
-                db  2Eh ; .
-                db  75h ; u
-                db  36h ; 6
-                db    0
+aConfigU6       db 'config.u6',0        ; DATA XREF: _main+83↑o
                 db  6Dh ; m
                 db  63h ; c
                 db  67h ; g
@@ -34993,15 +34984,7 @@ word_24B38      dw 0                    ; DATA XREF: sub_113A5:def_11477↑r
                 db  52h ; R
                 db  56h ; V
                 db    0
-                db  6Dh ; m
-                db  69h ; i
-                db  64h ; d
-                db  69h ; i
-                db  2Eh ; .
-                db  64h ; d
-                db  61h ; a
-                db  74h ; t
-                db    0
+aMidiDat        db 'midi.dat',0         ; DATA XREF: sub_124AD+8↑o
                 db  75h ; u
                 db  6Ch ; l
                 db  74h ; t
@@ -35103,12 +35086,7 @@ word_24B38      dw 0                    ; DATA XREF: sub_113A5:def_11477↑r
                 db  2Eh ; .
                 db  6Dh ; m
                 db    0
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  2Eh ; .
-                db  6Dh ; m
-                db    0
+aEndM           db 'end.m',0            ; DATA XREF: sub_240F5+6↑o
 byte_24D5A      db 61h                  ; DATA XREF: sub_13470+479↑w
 aPartySav       db ':\party.sav',0
 byte_24D67      db 61h                  ; DATA XREF: sub_13470+476↑w
@@ -35231,66 +35209,24 @@ byte_24DF5      db 54h                  ; DATA XREF: sub_12FB7+20↑w
                 db  6Ch ; l
                 db  65h ; e
                 db    0
-                db  25h ; %
-                db  73h ; s
-                db  0Ah
-                db  25h ; %
-                db  73h ; s
-                db  0Ah
-                db  25h ; %
-                db  73h ; s
-                db  0Ah
-                db    0
-                db  25h ; %
-                db  64h ; d
-                db  0Ah
-                db  25h ; %
-                db  64h ; d
-                db  0Ah
-                db  25h ; %
-                db  64h ; d
-                db  0Ah
-                db  25h ; %
-                db  64h ; d
-                db  0Ah
-                db  25h ; %
-                db  64h ; d
-                db  0Ah
-                db  25h ; %
-                db  64h ; d
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  25h ; %
-                db  73h ; s
-                db  0Ah
-                db  25h ; %
-                db  73h ; s
-                db  0Ah
-                db  25h ; %
-                db  73h ; s
-                db  0Ah
-                db    0
-                db  25h ; %
-                db  64h ; d
-                db  0Ah
-                db  25h ; %
-                db  64h ; d
-                db  0Ah
-                db  25h ; %
-                db  64h ; d
-                db  0Ah
-                db  25h ; %
-                db  64h ; d
-                db  0Ah
-                db  25h ; %
-                db  64h ; d
-                db  0Ah
-                db  25h ; %
-                db  64h ; d
-                db  25h ; %
-                db  50h ; P
-                db    0
+aSSS            db '%s',0Ah             ; DATA XREF: sub_12990+BD↑o
+                db '%s',0Ah
+                db '%s',0Ah,0
+aDDDDDDP        db '%d',0Ah             ; DATA XREF: sub_12990+E2↑o
+                db '%d',0Ah
+                db '%d',0Ah
+                db '%d',0Ah
+                db '%d',0Ah
+                db '%d%P',0
+aSSS_0          db '%s',0Ah             ; DATA XREF: sub_12990+126↑o
+                db '%s',0Ah
+                db '%s',0Ah,0
+aDDDDDDP_0      db '%d',0Ah             ; DATA XREF: sub_12990+14B↑o
+                db '%d',0Ah
+                db '%d',0Ah
+                db '%d',0Ah
+                db '%d',0Ah
+                db '%d%P',0
                 db  46h ; F
                 db  65h ; e
                 db  6Dh ; m
@@ -35303,342 +35239,35 @@ byte_24DF5      db 54h                  ; DATA XREF: sub_12FB7+20↑w
                 db  6Ch ; l
                 db  65h ; e
                 db    0
-                db  55h ; U
-                db  6Ch ; l
-                db  74h ; t
-                db  69h ; i
-                db  6Dh ; m
-                db  61h ; a
-                db  20h
-                db    0
+aUltima         db 'Ultima ',0          ; DATA XREF: sub_12BC2+208↑o
                 db  49h ; I
                 db  56h ; V
                 db    0
                 db  56h ; V
                 db    0
-                db  55h ; U
-                db  6Ch ; l
-                db  74h ; t
-                db  69h ; i
-                db  6Dh ; m
-                db  61h ; a
-                db  20h
-                db  56h ; V
-                db  49h ; I
-                db    0
-                db  4Eh ; N
-                db  61h ; a
-                db  6Dh ; m
-                db  65h ; e
-                db  0Ah
-                db  53h ; S
-                db  65h ; e
-                db  78h ; x
-                db  0Ah
-                db  43h ; C
-                db  6Ch ; l
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  0Ah
-                db    0
-                db  53h ; S
-                db  74h ; t
-                db  72h ; r
-                db  0Ah
-                db  44h ; D
-                db  65h ; e
-                db  78h ; x
-                db  0Ah
-                db  49h ; I
-                db  6Eh ; n
-                db  74h ; t
-                db  0Ah
-                db  4Dh ; M
-                db  61h ; a
-                db  67h ; g
-                db  69h ; i
-                db  63h ; c
-                db  0Ah
-                db  45h ; E
-                db  78h ; x
-                db  70h ; p
-                db  0Ah
-                db  4Ch ; L
-                db  65h ; e
-                db  76h ; v
-                db  65h ; e
-                db  6Ch ; l
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  25h ; %
-                db  73h ; s
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  54h ; T
-                db  52h ; R
-                db  41h ; A
-                db  4Eh ; N
-                db  53h ; S
-                db  46h ; F
-                db  45h ; E
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  20h
-                db  43h ; C
-                db  48h ; H
-                db  41h ; A
-                db  52h ; R
-                db  41h ; A
-                db  43h ; C
-                db  54h ; T
-                db  45h ; E
-                db  52h ; R
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  45h ; E
-                db  6Eh ; n
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Ch ; l
-                db  65h ; e
-                db  74h ; t
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  0Ah
-                db  66h ; f
-                db  6Ch ; l
-                db  6Fh ; o
-                db  70h ; p
-                db  70h ; p
-                db  79h ; y
-                db  2Fh ; /
-                db  68h ; h
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  64h ; d
-                db  72h ; r
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  6Eh ; n
-                db  74h ; t
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  0Ah
-                db    0
-                db  55h ; U
-                db  6Ch ; l
-                db  74h ; t
-                db  69h ; i
-                db  6Dh ; m
-                db  61h ; a
-                db  20h
-                db  56h ; V
-                db  20h
-                db  42h ; B
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  6Eh ; n
-                db  69h ; i
-                db  61h ; a
-                db  0Ah
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  55h ; U
-                db  6Ch ; l
-                db  74h ; t
-                db  69h ; i
-                db  6Dh ; m
-                db  61h ; a
-                db  20h
-                db  49h ; I
-                db  56h ; V
-                db  20h
-                db  50h ; P
-                db  6Ch ; l
-                db  61h ; a
-                db  79h ; y
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  73h ; s
-                db  6Bh ; k
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  4Eh ; N
-                db  6Fh ; o
-                db  20h
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  72h ; r
-                db  61h ; a
-                db  63h ; c
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  64h ; d
-                db  21h ; !
-                db  20h
-                db  20h
-                db  49h ; I
-                db  66h ; f
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  77h ; w
-                db  69h ; i
-                db  73h ; s
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  72h ; r
-                db  61h ; a
-                db  6Eh ; n
-                db  73h ; s
-                db  66h ; f
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  61h ; a
-                db  20h
-                db    0
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  72h ; r
-                db  61h ; a
-                db  63h ; c
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  61h ; a
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  73h ; s
-                db  6Bh ; k
-                db  20h
-                db  69h ; i
-                db  74h ; t
-                db  20h
-                db  6Dh ; m
-                db  75h ; u
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  61h ; a
-                db  76h ; v
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  73h ; s
-                db  75h ; u
-                db  62h ; b
-                db  64h ; d
-                db  69h ; i
-                db  72h ; r
-                db  65h ; e
-                db  63h ; c
-                db  74h ; t
-                db  6Fh ; o
-                db  72h ; r
-                db  79h ; y
-                db  20h
-                db  63h ; c
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  22h ; "
-                db  5Ch ; \
-                db  55h ; U
-                db  4Ch ; L
-                db  54h ; T
-                db  49h ; I
-                db  4Dh ; M
-                db  41h ; A
-                db  22h ; "
-                db  2Eh ; .
-                db  25h ; %
-                db  50h ; P
-                db    0
+aUltimaVi       db 'Ultima VI',0        ; DATA XREF: sub_12BC2+241↑o
+aNameSexClass   db 'Name',0Ah           ; DATA XREF: sub_12BC2+26D↑o
+                db 'Sex',0Ah
+                db 'Class',0Ah,0
+aStrDexIntMagic db 'Str',0Ah            ; DATA XREF: sub_12BC2+27A↑o
+                db 'Dex',0Ah
+                db 'Int',0Ah
+                db 'Magic',0Ah
+                db 'Exp',0Ah
+                db 'Level%P',0
+aSP             db '%s%P',0             ; DATA XREF: sub_12FB7+29E↑o
+aTransferAChara db 'TRANSFER A CHARACTER%P',0
+                                        ; DATA XREF: sub_13470+176↑o
+aEnterTheLetter db 'Enter the letter of the',0Ah
+                                        ; DATA XREF: sub_13470+1EA↑o
+                db 'floppy/hard drive containing your',0Ah,0
+aUltimaVBritann db 'Ultima V Britannia',0Ah ; DATA XREF: sub_13470+1F7↑o
+                db 'or Ultima IV Player disk....%P',0
+aNoCharacterFou db 'No character found!  If you wish to transfer a ',0
+                                        ; DATA XREF: sub_13470+55A↑o
+aCharacterFromA db 'character from a hard disk it must be saved in a subdirectory cal'
+                                        ; DATA XREF: sub_13470+567↑o
+                db 'led "\ULTIMA".%P',0
                 db  76h ; v
                 db  65h ; e
                 db  6Ch ; l
@@ -36894,103 +36523,18 @@ word_2516B      dw 42h                  ; DATA XREF: sub_14633:loc_146B2↑r
                 db  73h ; s
                 db  74h ; t
                 db    0
-                db  73h ; s
-                db  61h ; a
-                db  76h ; v
-                db  65h ; e
-                db  67h ; g
-                db  61h ; a
-                db  6Dh ; m
-                db  65h ; e
-                db  5Ch ; \
-                db  6Fh ; o
-                db  62h ; b
-                db  6Ah ; j
-                db  6Ch ; l
-                db  69h ; i
-                db  73h ; s
-                db  74h ; t
-                db    0
-                db  42h ; B
-                db  79h ; y
-                db  20h
-                db  77h ; w
-                db  68h ; h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  6Eh ; n
-                db  61h ; a
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  68h ; h
-                db  61h ; a
-                db  6Ch ; l
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  65h ; e
-                db  64h ; d
-                db  3Fh ; ?
-                db  0Ah
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  25h ; %
-                db  73h ; s
-                db  0Ah
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  41h ; A
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  4Dh ; M
-                db  61h ; a
-                db  6Ch ; l
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  46h ; F
-                db  65h ; e
-                db  6Dh ; m
-                db  61h ; a
-                db  6Ch ; l
-                db  65h ; e
-                db  3Fh ; ?
-                db  0Ah
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db    0
+aSavegameObjlis db 'savegame\objlist',0 ; DATA XREF: sub_14066+E7↑o
+aByWhatNameShal db 'By what name shalt thou be called?',0Ah
+                                        ; DATA XREF: sub_1418A+F0↑o
+                db 0Ah
+                db '%P',0
+aSP_0           db '%s',0Ah             ; DATA XREF: sub_1418A+1A0↑o
+                db 0Ah
+                db '%P',0
+aAndArtThouMale db 'And art thou Male, or Female?',0Ah
+                                        ; DATA XREF: sub_1418A+1AD↑o
+                db 0Ah
+                db '%P',0
                 db  76h ; v
                 db  65h ; e
                 db  6Ch ; l
@@ -37278,788 +36822,76 @@ word_2516B      dw 42h                  ; DATA XREF: sub_14633:loc_146B2↑r
                 db  68h ; h
                 db  70h ; p
                 db    0
-                db  55h ; U
-                db  6Ch ; l
-                db  74h ; t
-                db  69h ; i
-                db  6Dh ; m
-                db  61h ; a
-                db  20h
-                db  56h ; V
-                db  49h ; I
-                db  0Ah
-                db  41h ; A
-                db  20h
-                db  4Ch ; L
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  42h ; B
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  69h ; i
-                db  73h ; s
-                db  68h ; h
-                db  20h
-                db  50h ; P
-                db  72h ; r
-                db  6Fh ; o
-                db  64h ; d
-                db  75h ; u
-                db  63h ; c
-                db  74h ; t
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  25h ; %
-                db  46h ; F
-                db  50h ; P
-                db  72h ; r
-                db  6Fh ; o
-                db  64h ; d
-                db  75h ; u
-                db  63h ; c
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  62h ; b
-                db  79h ; y
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db  25h ; %
-                db  46h ; F
-                db    0
-                db  52h ; R
-                db  69h ; i
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  47h ; G
-                db  61h ; a
-                db  72h ; r
-                db  72h ; r
-                db  69h ; i
-                db  6Fh ; o
-                db  74h ; t
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  57h ; W
-                db  61h ; a
-                db  72h ; r
-                db  72h ; r
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  53h ; S
-                db  70h ; p
-                db  65h ; e
-                db  63h ; c
-                db  74h ; t
-                db  6Fh ; o
-                db  72h ; r
-                db  0Ah
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  25h ; %
-                db  46h ; F
-                db  45h ; E
-                db  78h ; x
-                db  65h ; e
-                db  63h ; c
-                db  75h ; u
-                db  74h ; t
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  50h ; P
-                db  72h ; r
-                db  6Fh ; o
-                db  64h ; d
-                db  75h ; u
-                db  63h ; c
-                db  65h ; e
-                db  72h ; r
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db  25h ; %
-                db  46h ; F
-                db    0
-                db  44h ; D
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  53h ; S
-                db  6Eh ; n
-                db  65h ; e
-                db  6Ch ; l
-                db  6Ch ; l
-                db  0Ah
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  25h ; %
-                db  46h ; F
-                db  50h ; P
-                db  72h ; r
-                db  6Fh ; o
-                db  67h ; g
-                db  72h ; r
-                db  61h ; a
-                db  6Dh ; m
-                db  6Dh ; m
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db  25h ; %
-                db  46h ; F
-                db    0
-                db  43h ; C
-                db  68h ; h
-                db  65h ; e
-                db  72h ; r
-                db  79h ; y
-                db  6Ch ; l
-                db  20h
-                db  43h ; C
-                db  68h ; h
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  4Ah ; J
-                db  6Fh ; o
-                db  68h ; h
-                db  6Eh ; n
-                db  20h
-                db  4Dh ; M
-                db  69h ; i
-                db  6Ch ; l
-                db  65h ; e
-                db  73h ; s
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  48h ; H
-                db  65h ; e
-                db  72h ; r
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  4Dh ; M
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  47h ; G
-                db  61h ; a
-                db  72h ; r
-                db  79h ; y
-                db  20h
-                db  53h ; S
-                db  63h ; c
-                db  6Fh ; o
-                db  74h ; t
-                db  74h ; t
-                db  20h
-                db  53h ; S
-                db  6Dh ; m
-                db  69h ; i
-                db  74h ; t
-                db  68h ; h
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  25h ; %
-                db  46h ; F
-                db  0Ah
-                db  0Ah
-                db  57h ; W
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db  25h ; %
-                db  46h ; F
-                db    0
-                db  53h ; S
-                db  74h ; t
-                db  65h ; e
-                db  70h ; p
-                db  68h ; h
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  42h ; B
-                db  65h ; e
-                db  65h ; e
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  44h ; D
-                db  72h ; r
-                db  2Eh ; .
-                db  20h
-                db  43h ; C
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  27h ; '
-                db  4Dh ; M
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  61h ; a
-                db  20h
-                db  44h ; D
-                db  65h ; e
-                db  65h ; e
-                db  0Ah
-                db    0
-                db  52h ; R
-                db  69h ; i
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  47h ; G
-                db  61h ; a
-                db  72h ; r
-                db  72h ; r
-                db  69h ; i
-                db  6Fh ; o
-                db  74h ; t
-                db  74h ; t
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  47h ; G
-                db  72h ; r
-                db  65h ; e
-                db  67h ; g
-                db  20h
-                db  4Dh ; M
-                db  61h ; a
-                db  6Ch ; l
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  0Ah
-                db    0
-                db  4Ah ; J
-                db  6Fh ; o
-                db  68h ; h
-                db  6Eh ; n
-                db  20h
-                db  4Dh ; M
-                db  69h ; i
-                db  6Ch ; l
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  48h ; H
-                db  65h ; e
-                db  72h ; r
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  4Dh ; M
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  65h ; e
-                db  72h ; r
-                db  0Ah
-                db    0
-                db  54h ; T
-                db  6Fh ; o
-                db  64h ; d
-                db  64h ; d
-                db  20h
-                db  50h ; P
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  57h ; W
-                db  61h ; a
-                db  72h ; r
-                db  72h ; r
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  53h ; S
-                db  70h ; p
-                db  65h ; e
-                db  63h ; c
-                db  74h ; t
-                db  6Fh ; o
-                db  72h ; r
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  25h ; %
-                db  46h ; F
-                db  41h ; A
-                db  72h ; r
-                db  74h ; t
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db  25h ; %
-                db  46h ; F
-                db    0
-                db  4Bh ; K
-                db  65h ; e
-                db  69h ; i
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  42h ; B
-                db  65h ; e
-                db  72h ; r
-                db  64h ; d
-                db  61h ; a
-                db  6Bh ; k
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  44h ; D
-                db  61h ; a
-                db  6Eh ; n
-                db  69h ; i
-                db  65h ; e
-                db  6Ch ; l
-                db  20h
-                db  42h ; B
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  62h ; b
-                db  6Fh ; o
-                db  6Eh ; n
-                db  6Eh ; n
-                db  61h ; a
-                db  69h ; i
-                db  73h ; s
-                db  0Ah
-                db    0
-                db  4Ah ; J
-                db  65h ; e
-                db  66h ; f
-                db  66h ; f
-                db  20h
-                db  44h ; D
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  27h ; '
-                db  4Dh ; M
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  61h ; a
-                db  20h
-                db  44h ; D
-                db  65h ; e
-                db  65h ; e
-                db  0Ah
-                db    0
-                db  47h ; G
-                db  6Ch ; l
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  4Ah ; J
-                db  6Fh ; o
-                db  68h ; h
-                db  6Eh ; n
-                db  73h ; s
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  44h ; D
-                db  65h ; e
-                db  6Eh ; n
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  4Ch ; L
-                db  6Fh ; o
-                db  75h ; u
-                db  62h ; b
-                db  65h ; e
-                db  74h ; t
-                db  0Ah
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  25h ; %
-                db  46h ; F
-                db  4Dh ; M
-                db  75h ; u
-                db  73h ; s
-                db  69h ; i
-                db  63h ; c
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db  25h ; %
-                db  46h ; F
-                db    0
-                db  4Bh ; K
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  41h ; A
-                db  72h ; r
-                db  6Eh ; n
-                db  6Fh ; o
-                db  6Ch ; l
-                db  64h ; d
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  49h ; I
-                db  6Fh ; o
-                db  6Ch ; l
-                db  6Fh ; o
-                db  20h
-                db  46h ; F
-                db  69h ; i
-                db  74h ; t
-                db  7Ah ; z
-                db  6Fh ; o
-                db  77h ; w
-                db  65h ; e
-                db  6Eh ; n
-                db  0Ah
-                db    0
-                db  48h ; H
-                db  65h ; e
-                db  72h ; r
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  4Dh ; M
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  54h ; T
-                db  6Fh ; o
-                db  64h ; d
-                db  64h ; d
-                db  20h
-                db  50h ; P
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  25h ; %
-                db  46h ; F
-                db  51h ; Q
-                db  75h ; u
-                db  61h ; a
-                db  6Ch ; l
-                db  69h ; i
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db  41h ; A
-                db  73h ; s
-                db  73h ; s
-                db  75h ; u
-                db  72h ; r
-                db  61h ; a
-                db  6Eh ; n
-                db  63h ; c
-                db  65h ; e
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db  25h ; %
-                db  46h ; F
-                db    0
-                db  50h ; P
-                db  61h ; a
-                db  75h ; u
-                db  6Ch ; l
-                db  20h
-                db  4Dh ; M
-                db  61h ; a
-                db  6Ch ; l
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  4Dh ; M
-                db  69h ; i
-                db  6Bh ; k
-                db  65h ; e
-                db  20h
-                db  52h ; R
-                db  6Fh ; o
-                db  6Dh ; m
-                db  65h ; e
-                db  72h ; r
-                db  6Fh ; o
-                db  0Ah
-                db    0
-                db  4Dh ; M
-                db  61h ; a
-                db  72h ; r
-                db  63h ; c
-                db  20h
-                db  53h ; S
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  65h ; e
-                db  66h ; f
-                db  67h ; g
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  4Ah ; J
-                db  6Fh ; o
-                db  68h ; h
-                db  6Eh ; n
-                db  20h
-                db  57h ; W
-                db  61h ; a
-                db  74h ; t
-                db  73h ; s
-                db  6Fh ; o
-                db  6Eh ; n
-                db  0Ah
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db    0
-                db  25h ; %
-                db  46h ; F
-                db  41h ; A
-                db  64h ; d
-                db  64h ; d
-                db  69h ; i
-                db  74h ; t
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  53h ; S
-                db  75h ; u
-                db  70h ; p
-                db  70h ; p
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  0Ah
-                db  25h ; %
-                db  50h ; P
-                db  25h ; %
-                db  46h ; F
-                db    0
-                db  4Dh ; M
-                db  69h ; i
-                db  63h ; c
-                db  68h ; h
-                db  65h ; e
-                db  6Ch ; l
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  43h ; C
-                db  61h ; a
-                db  64h ; d
-                db  64h ; d
-                db  65h ; e
-                db  6Ch ; l
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  4Dh ; M
-                db  65h ; e
-                db  6Ch ; l
-                db  61h ; a
-                db  6Eh ; n
-                db  69h ; i
-                db  65h ; e
-                db  20h
-                db  46h ; F
-                db  6Ch ; l
-                db  65h ; e
-                db  6Dh ; m
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  0Ah
-                db    0
-                db  41h ; A
-                db  6Ch ; l
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  47h ; G
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  6Eh ; n
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  4Ah ; J
-                db  65h ; e
-                db  66h ; f
-                db  66h ; f
-                db  20h
-                db  48h ; H
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  73h ; s
-                db  65h ; e
-                db  0Ah
-                db    0
-                db  53h ; S
-                db  68h ; h
-                db  65h ; e
-                db  72h ; r
-                db  72h ; r
-                db  79h ; y
-                db  20h
-                db  48h ; H
-                db  75h ; u
-                db  6Eh ; n
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  53h ; S
-                db  74h ; t
-                db  65h ; e
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  4Dh ; M
-                db  75h ; u
-                db  63h ; c
-                db  68h ; h
-                db  6Fh ; o
-                db  77h ; w
-                db  0Ah
-                db    0
-                db  43h ; C
-                db  68h ; h
-                db  65h ; e
-                db  72h ; r
-                db  79h ; y
-                db  6Ch ; l
-                db  20h
-                db  4Eh ; N
-                db  65h ; e
-                db  65h ; e
-                db  6Ch ; l
-                db  64h ; d
-                db  25h ; %
-                db  50h ; P
-                db    0
+aUltimaViALordB db 'Ultima VI',0Ah      ; DATA XREF: sub_16766+268↑o
+                db 'A Lord British Production%P',0
+aFproducedByPF  db '%FProduced by',0Ah  ; DATA XREF: sub_16766+350↑o
+                db '%P%F',0
+aRichardGarriot db 'Richard Garriott and Warren Spector',0Ah
+                                        ; DATA XREF: sub_16766+35D↑o
+                db 0Ah
+                db '%P',0
+aFexecutiveProd db '%FExecutive Producer',0Ah
+                                        ; DATA XREF: sub_16766+372↑o
+                db '%P%F',0
+aDallasSnellP   db 'Dallas Snell',0Ah   ; DATA XREF: sub_16766+37F↑o
+                db 0Ah
+                db '%P',0
+aFprogrammingPF db '%FProgramming',0Ah  ; DATA XREF: sub_16766+394↑o
+                db '%P%F',0
+aCherylChenJohn db 'Cheryl Chen    John Miles',0Ah
+                                        ; DATA XREF: sub_16766+3A1↑o
+                db '%P',0
+aHermanMillerGa db 'Herman Miller    Gary Scott Smith%P',0
+                                        ; DATA XREF: sub_16766+3AE↑o
+aFWritingPF     db '%F',0Ah             ; DATA XREF: sub_16766+42A↑o
+                db 0Ah
+                db 'Writing',0Ah
+                db '%P%F',0
+aStephenBeemanD db 'Stephen Beeman    Dr. Cat    ',27h,'Manda Dee',0Ah,0
+                                        ; DATA XREF: sub_16766+437↑o
+aRichardGarriot_0 db 'Richard Garriott    Greg Malone',0Ah,0
+                                        ; DATA XREF: sub_16766+444↑o
+aJohnMilesHerma db 'John Miles    Herman Miller',0Ah,0
+                                        ; DATA XREF: sub_16766+451↑o
+aToddPorterWarr db 'Todd Porter    Warren Spector',0Ah
+                                        ; DATA XREF: sub_16766+45E↑o
+                db '%P',0
+aFartPF         db '%FArt',0Ah          ; DATA XREF: sub_16766+4B5↑o
+                db '%P%F',0
+aKeithBerdakDan db 'Keith Berdak    Daniel Bourbonnais',0Ah,0
+                                        ; DATA XREF: sub_16766+4C2↑o
+aJeffDeeMandaDe db 'Jeff Dee    ',27h,'Manda Dee',0Ah,0
+                                        ; DATA XREF: sub_16766+4CF↑o
+aGlenJohnsonDen db 'Glen Johnson    Denis Loubet',0Ah
+                                        ; DATA XREF: sub_16766+4DC↑o
+                db 0Ah
+                db '%P',0
+aFmusicPF       db '%FMusic',0Ah        ; DATA XREF: sub_16766+4F1↑o
+                db '%P%F',0
+aKenArnoldIoloF db 'Ken Arnold    Iolo Fitzowen',0Ah,0
+                                        ; DATA XREF: sub_16766+4FE↑o
+aHermanMillerTo db 'Herman Miller    Todd Porter',0Ah
+                                        ; DATA XREF: sub_16766+50B↑o
+                db '%P',0
+aFqualityAssura db '%FQuality Assurance',0Ah
+                                        ; DATA XREF: sub_16766+562↑o
+                db '%P%F',0
+aPaulMaloneMike db 'Paul Malone    Mike Romero',0Ah,0
+                                        ; DATA XREF: sub_16766+56F↑o
+aMarcSchaefgenJ db 'Marc Schaefgen    John Watson',0Ah
+                                        ; DATA XREF: sub_16766+57C↑o
+                db 0Ah
+                db '%P',0
+aFadditionalSup db '%FAdditional Support',0Ah
+                                        ; DATA XREF: sub_16766+591↑o
+                db '%P%F',0
+aMichelleCaddel db 'Michelle Caddel    Melanie Fleming',0Ah,0
+                                        ; DATA XREF: sub_16766+59E↑o
+aAlanGardnerJef db 'Alan Gardner    Jeff Hillhouse',0Ah,0
+                                        ; DATA XREF: sub_16766+5AB↑o
+aSherryHunterSt db 'Sherry Hunter    Steve Muchow',0Ah,0
+                                        ; DATA XREF: sub_16766+5B8↑o
+aCherylNeeldP   db 'Cheryl Neeld%P',0   ; DATA XREF: sub_16766+5C5↑o
                 db  67h ; g
                 db  61h ; a
                 db  6Dh ; m
@@ -39092,11356 +37924,471 @@ word_25C98      dw 0                    ; DATA XREF: seg005:05C3↑r
                 db  68h ; h
                 db  70h ; p
                 db    0
-                db  55h ; U
-                db  70h ; p
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  6Ch ; l
-                db  64h ; d
-                db  2Ch ; ,
-                db  20h
-                db  66h ; f
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  61h ; a
-                db  73h ; s
-                db  6Fh ; o
-                db  6Eh ; n
-                db  73h ; s
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  73h ; s
-                db  69h ; i
-                db  6Eh ; n
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db    0
-                db  74h ; t
-                db  72h ; r
-                db  69h ; i
-                db  75h ; u
-                db  6Dh ; m
-                db  70h ; p
-                db  68h ; h
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  68h ; h
-                db  6Fh ; o
-                db  6Dh ; m
-                db  65h ; e
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  42h ; B
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  6Eh ; n
-                db  69h ; i
-                db  61h ; a
-                db  2Eh ; .
-                db    0
-                db  59h ; Y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  72h ; r
-                db  61h ; a
-                db  64h ; d
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  41h ; A
-                db  76h ; v
-                db  61h ; a
-                db  74h ; t
-                db  61h ; a
-                db  72h ; r
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  66h ; f
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  70h ; p
-                db  65h ; e
-                db  72h ; r
-                db  69h ; i
-                db  6Ch ; l
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  64h ; d
-                db  76h ; v
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  75h ; u
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db    0
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Ch ; l
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  72h ; r
-                db  65h ; e
-                db  6Eh ; n
-                db  69h ; i
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  61h ; a
-                db  20h
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  6Ch ; l
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  70h ; p
-                db  65h ; e
-                db  61h ; a
-                db  63h ; c
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db  42h ; B
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db    0
-                db  74h ; t
-                db  65h ; e
-                db  6Ch ; l
-                db  65h ; e
-                db  76h ; v
-                db  69h ; i
-                db  73h ; s
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  73h ; s
-                db  75h ; u
-                db  70h ; p
-                db  65h ; e
-                db  72h ; r
-                db  6Dh ; m
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  63h ; c
-                db  61h ; a
-                db  6Eh ; n
-                db  6Eh ; n
-                db  6Fh ; o
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  61h ; a
-                db  6Bh ; k
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  6Ch ; l
-                db  61h ; a
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  73h ; s
-                db  20h
-                db    0
-                db  77h ; w
-                db  68h ; h
-                db  6Fh ; o
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  73h ; s
-                db  69h ; i
-                db  64h ; d
-                db  65h ; e
-                db  21h ; !
-                db    0
-                db  4Fh ; O
-                db  75h ; u
-                db  74h ; t
-                db  73h ; s
-                db  69h ; i
-                db  64h ; d
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  20h
-                db  63h ; c
-                db  68h ; h
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  77h ; w
-                db  69h ; i
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  72h ; r
-                db  69h ; i
-                db  73h ; s
-                db  65h ; e
-                db  73h ; s
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db    0
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Dh ; m
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  73h ; s
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  6Fh ; o
-                db  72h ; r
-                db  6Dh ; m
-                db  20h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  75h ; u
-                db  70h ; p
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  2Eh ; .
-                db    0
-                db  54h ; T
-                db  6Fh ; o
-                db  6Eh ; n
-                db  67h ; g
-                db  75h ; u
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  6Eh ; n
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  6Ch ; l
-                db  61h ; a
-                db  73h ; s
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  6Bh ; k
-                db  79h ; y
-                db  2Ch ; ,
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  6Eh ; n
-                db  64h ; d
-                db  75h ; u
-                db  63h ; c
-                db  74h ; t
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  75h ; u
-                db  6Eh ; n
-                db  63h ; c
-                db  65h ; e
-                db  61h ; a
-                db  73h ; s
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db    0
-                db  63h ; c
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  63h ; c
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  6Fh ; o
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  75h ; u
-                db  6Eh ; n
-                db  64h ; d
-                db  65h ; e
-                db  72h ; r
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db    0
-                db  49h ; I
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  63h ; c
-                db  61h ; a
-                db  74h ; t
-                db  61h ; a
-                db  63h ; c
-                db  6Ch ; l
-                db  79h ; y
-                db  73h ; s
-                db  6Dh ; m
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  73h ; s
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  20h
-                db  62h ; b
-                db  6Fh ; o
-                db  6Ch ; l
-                db  74h ; t
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db    0
-                db  62h ; b
-                db  6Ch ; l
-                db  75h ; u
-                db  65h ; e
-                db  20h
-                db  66h ; f
-                db  69h ; i
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  72h ; r
-                db  69h ; i
-                db  6Bh ; k
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  68h ; h
-                db  21h ; !
-                db    0
-                db  4Ch ; L
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  6Eh ; n
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  61h ; a
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  21h ; !
-                db  0Ah
-                db  49h ; I
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  20h
-                db  73h ; s
-                db  69h ; i
-                db  67h ; g
-                db  6Eh ; n
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db    0
-                db  64h ; d
-                db  69h ; i
-                db  73h ; s
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  42h ; B
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  6Eh ; n
-                db  69h ; i
-                db  61h ; a
-                db  3Fh ; ?
-                db    0
-                db  59h ; Y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  62h ; b
-                db  6Fh ; o
-                db  6Ch ; l
-                db  74h ; t
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  73h ; s
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  75h ; u
-                db  6Dh ; m
-                db  62h ; b
-                db  6Ch ; l
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  2Ch ; ,
-                db  20h
-                db  72h ; r
-                db  75h ; u
-                db  6Eh ; n
-                db  6Eh ; n
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  62h ; b
-                db  6Ch ; l
-                db  69h ; i
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db    0
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  6Fh ; o
-                db  72h ; r
-                db  6Dh ; m
-                db  2Eh ; .
-                db  20h
-                db  49h ; I
-                db  6Eh ; n
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  2Ch ; ,
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  77h ; w
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  72h ; r
-                db  6Fh ; o
-                db  75h ; u
-                db  67h ; g
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db    0
-                db  72h ; r
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  6Dh ; m
-                db  65h ; e
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  64h ; d
-                db  61h ; a
-                db  6Dh ; m
-                db  70h ; p
-                db  2Ch ; ,
-                db  20h
-                db  62h ; b
-                db  6Ch ; l
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  6Eh ; n
-                db  67h ; g
-                db  73h ; s
-                db  20h
-                db    0
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  69h ; i
-                db  72h ; r
-                db  2Eh ; .
-                db  20h
-                db  49h ; I
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  7Ah ; z
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Dh ; m
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  6Eh ; n
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  2Dh ; -
-                db    0
-                db  73h ; s
-                db  74h ; t
-                db  72h ; r
-                db  75h ; u
-                db  63h ; c
-                db  6Bh ; k
-                db  20h
-                db  64h ; d
-                db  61h ; a
-                db  79h ; y
-                db  6Ch ; l
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  2Ch ; ,
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  67h ; g
-                db  6Ch ; l
-                db  69h ; i
-                db  6Dh ; m
-                db  70h ; p
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  20h
-                db  74h ; t
-                db  69h ; i
-                db  6Eh ; n
-                db  79h ; y
-                db  20h
-                db  6Fh ; o
-                db  62h ; b
-                db  73h ; s
-                db  69h ; i
-                db  64h ; d
-                db  69h ; i
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db    0
-                db  6Dh ; m
-                db  69h ; i
-                db  64h ; d
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  69h ; i
-                db  72h ; r
-                db  63h ; c
-                db  6Ch ; l
-                db  65h ; e
-                db  21h ; !
-                db    0
-                db  57h ; W
-                db  6Fh ; o
-                db  6Eh ; n
-                db  64h ; d
-                db  65h ; e
-                db  72h ; r
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  2Ch ; ,
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  70h ; p
-                db  69h ; i
-                db  63h ; c
-                db  6Bh ; k
-                db  20h
-                db  69h ; i
-                db  74h ; t
-                db  20h
-                db  75h ; u
-                db  70h ; p
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db    0
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  68h ; h
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  20h
-                db  73h ; s
-                db  6Fh ; o
-                db  66h ; f
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  67h ; g
-                db  6Ch ; l
-                db  6Fh ; o
-                db  77h ; w
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db    0
-                db  61h ; a
-                db  73h ; s
-                db  63h ; c
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  73h ; s
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  73h ; s
-                db  69h ; i
-                db  6Ch ; l
-                db  65h ; e
-                db  6Eh ; n
-                db  63h ; c
-                db  65h ; e
-                db  21h ; !
-                db    0
-                db  45h ; E
-                db  78h ; x
-                db  75h ; u
-                db  6Ch ; l
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  6Dh ; m
-                db  65h ; e
-                db  6Dh ; m
-                db  6Fh ; o
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  73h ; s
-                db  68h ; h
-                db  20h
-                db  6Fh ; o
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  63h ; c
-                db  6Ch ; l
-                db  75h ; u
-                db  74h ; t
-                db  63h ; c
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db    0
-                db  57h ; W
-                db  68h ; h
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  6Ch ; l
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  73h ; s
-                db  61h ; a
-                db  77h ; w
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  62h ; b
-                db  20h
-                db  73h ; s
-                db  75h ; u
-                db  63h ; c
-                db  68h ; h
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  69h ; i
-                db  73h ; s
-                db  2Ch ; ,
-                db  20h
-                db  69h ; i
-                db  74h ; t
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  63h ; c
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  77h ; w
-                db  6Eh ; n
-                db  20h
-                db    0
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  4Ch ; L
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  42h ; B
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  69h ; i
-                db  73h ; s
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  62h ; b
-                db  61h ; a
-                db  6Eh ; n
-                db  69h ; i
-                db  73h ; s
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  79h ; y
-                db  72h ; r
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  42h ; B
-                db  6Ch ; l
-                db  61h ; a
-                db  63h ; c
-                db  6Bh ; k
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  72h ; r
-                db  6Eh ; n
-                db  21h ; !
-                db    0
-                db  42h ; B
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  6Ah ; j
-                db  6Fh ; o
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  6Fh ; o
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  67h ; g
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  79h ; y
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  70h ; p
-                db  70h ; p
-                db  72h ; r
-                db  65h ; e
-                db  68h ; h
-                db  65h ; e
-                db  6Eh ; n
-                db  73h ; s
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  2Eh ; .
-                db  0Ah
-                db  0Ah
-                db    0
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  61h ; a
-                db  74h ; t
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  42h ; B
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  6Eh ; n
-                db  69h ; i
-                db  61h ; a
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  77h ; w
-                db  61h ; a
-                db  79h ; y
-                db  73h ; s
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  62h ; b
-                db  6Ch ; l
-                db  75h ; u
-                db  65h ; e
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  0Ah
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db    0
-                db  62h ; b
-                db  6Ch ; l
-                db  75h ; u
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Dh ; m
-                db  6Fh ; o
-                db  72h ; r
-                db  6Eh ; n
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  73h ; s
-                db  6Bh ; k
-                db  79h ; y
-                db  2Eh ; .
-                db    0
-                db  41h ; A
-                db  62h ; b
-                db  72h ; r
-                db  75h ; u
-                db  70h ; p
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  71h ; q
-                db  75h ; u
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  67h ; g
-                db  69h ; i
-                db  6Eh ; n
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  73h ; s
-                db  69h ; i
-                db  6Eh ; n
-                db  6Bh ; k
-                db  20h
-                db    0
-                db  69h ; i
-                db  6Eh ; n
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  72h ; r
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  64h ; d
-                db  2Eh ; .
-                db  20h
-                db  20h
-                db  49h ; I
-                db  74h ; t
-                db  73h ; s
-                db  20h
-                db  63h ; c
-                db  72h ; r
-                db  69h ; i
-                db  6Dh ; m
-                db  73h ; s
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  21h ; !
-                db    0
-                db  44h ; D
-                db  65h ; e
-                db  73h ; s
-                db  70h ; p
-                db  65h ; e
-                db  72h ; r
-                db  61h ; a
-                db  74h ; t
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  6Dh ; m
-                db  61h ; a
-                db  6Bh ; k
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  63h ; c
-                db  69h ; i
-                db  73h ; s
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  65h ; e
-                db  61h ; a
-                db  73h ; s
-                db  79h ; y
-                db  20h
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  2Eh ; .
-                db    0
-                db  22h ; "
-                db  57h ; W
-                db  65h ; e
-                db  6Ch ; l
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  4Fh ; O
-                db  20h
-                db  53h ; S
-                db  65h ; e
-                db  65h ; e
-                db  6Bh ; k
-                db  65h ; e
-                db  72h ; r
-                db  21h ; !
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  41h ; A
-                db  20h
-                db  6Ch ; l
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  72h ; r
-                db  6Fh ; o
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  6Fh ; o
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  75h ; u
-                db  6Eh ; n
-                db  66h ; f
-                db  61h ; a
-                db  6Dh ; m
-                db  69h ; i
-                db  6Ch ; l
-                db  69h ; i
-                db  61h ; a
-                db  72h ; r
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  62h ; b
-                db  72h ; r
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  73h ; s
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db    0
-                db  75h ; u
-                db  70h ; p
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  63h ; c
-                db  75h ; u
-                db  72h ; r
-                db  69h ; i
-                db  6Fh ; o
-                db  75h ; u
-                db  73h ; s
-                db  20h
-                db  67h ; g
-                db  79h ; y
-                db  70h ; p
-                db  73h ; s
-                db  79h ; y
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  67h ; g
-                db  6Fh ; o
-                db  6Eh ; n
-                db  2Ch ; ,
-                db  20h
-                db  69h ; i
-                db  74h ; t
-                db  73h ; s
-                db  20h
-                db  65h ; e
-                db  78h ; x
-                db  6Fh ; o
-                db  74h ; t
-                db  69h ; i
-                db  63h ; c
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  6Ch ; l
-                db  6Fh ; o
-                db  72h ; r
-                db  73h ; s
-                db  20h
-                db  64h ; d
-                db  61h ; a
-                db  70h ; p
-                db  70h ; p
-                db  6Ch ; l
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db    0
-                db  73h ; s
-                db  75h ; u
-                db  6Dh ; m
-                db  6Dh ; m
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  73h ; s
-                db  68h ; h
-                db  61h ; a
-                db  64h ; d
-                db  65h ; e
-                db  2Eh ; .
-                db    0
-                db  41h ; A
-                db  20h
-                db  77h ; w
-                db  6Fh ; o
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  76h ; v
-                db  6Fh ; o
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  72h ; r
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  73h ; s
-                db  20h
-                db  6Fh ; o
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db  77h ; w
-                db  69h ; i
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  73h ; s
-                db  68h ; h
-                db  69h ; i
-                db  70h ; p
-                db  2Ch ; ,
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  63h ; c
-                db  6Bh ; k
-                db  6Fh ; o
-                db  6Eh ; n
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db    0
-                db  61h ; a
-                db  63h ; c
-                db  72h ; r
-                db  6Fh ; o
-                db  73h ; s
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  67h ; g
-                db  6Fh ; o
-                db  6Eh ; n
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  68h ; h
-                db  6Fh ; o
-                db  6Ch ; l
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  69h ; i
-                db  74h ; t
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  70h ; p
-                db  70h ; p
-                db  65h ; e
-                db  6Eh ; n
-                db  73h ; s
-                db  2Ch ; ,
-                db  20h
-                db    0
-                db  69h ; i
-                db  6Eh ; n
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  6Fh ; o
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  66h ; f
-                db  65h ; e
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db    0
-                db  22h ; "
-                db  41h ; A
-                db  74h ; t
-                db  20h
-                db  6Ch ; l
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  66h ; f
-                db  75h ; u
-                db  6Ch ; l
-                db  66h ; f
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  69h ; i
-                db  6Eh ; n
-                db  79h ; y
-                db  2Ch ; ,
-                db  25h ; %
-                db  63h ; c
-                db  20h
-                db    0
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  79h ; y
-                db  70h ; p
-                db  73h ; s
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  61h ; a
-                db  79h ; y
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  53h ; S
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  6Dh ; m
-                db  69h ; i
-                db  6Ch ; l
-                db  65h ; e
-                db  73h ; s
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  69h ; i
-                db  66h ; f
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  67h ; g
-                db  72h ; r
-                db  65h ; e
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  6Ch ; l
-                db  69h ; i
-                db  65h ; e
-                db  66h ; f
-                db  2Eh ; .
-                db  0Ah
-                db  0Ah
-                db    0
-                db  22h ; "
-                db  53h ; S
-                db  69h ; i
-                db  74h ; t
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  6Eh ; n
-                db  6Fh ; o
-                db  77h ; w
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  49h ; I
-                db  20h
-                db  73h ; s
-                db  68h ; h
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  70h ; p
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  56h ; V
-                db  69h ; i
-                db  72h ; r
-                db  74h ; t
-                db  75h ; u
-                db  65h ; e
-                db  20h
-                db    0
-                db  69h ; i
-                db  6Eh ; n
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  68h ; h
-                db  61h ; a
-                db  64h ; d
-                db  6Fh ; o
-                db  77h ; w
-                db  73h ; s
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  75h ; u
-                db  74h ; t
-                db  75h ; u
-                db  72h ; r
-                db  65h ; e
-                db  2Eh ; .
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  4Fh ; O
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  77h ; w
-                db  6Fh ; o
-                db  6Fh ; o
-                db  64h ; d
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  61h ; a
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  65h ; e
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  20h
-                db  62h ; b
-                db  6Fh ; o
-                db  74h ; t
-                db  74h ; t
-                db  6Ch ; l
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  20h
-                db  72h ; r
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  62h ; b
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  62h ; b
-                db  75h ; u
-                db  62h ; b
-                db  62h ; b
-                db  6Ch ; l
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db    0
-                db  6Ch ; l
-                db  69h ; i
-                db  71h ; q
-                db  75h ; u
-                db  69h ; i
-                db  64h ; d
-                db  73h ; s
-                db  2Eh ; .
-                db  0Ah
-                db  0Ah
-                db    0
-                db  22h ; "
-                db  42h ; B
-                db  65h ; e
-                db  68h ; h
-                db  6Fh ; o
-                db  6Ch ; l
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  56h ; V
-                db  69h ; i
-                db  72h ; r
-                db  74h ; t
-                db  75h ; u
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  41h ; A
-                db  76h ; v
-                db  61h ; a
-                db  74h ; t
-                db  61h ; a
-                db  72h ; r
-                db  2Ch ; ,
-                db  25h ; %
-                db  63h ; c
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  77h ; w
-                db  6Fh ; o
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db    0
-                db  73h ; s
-                db  61h ; a
-                db  79h ; y
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  22h ; "
-                db  4Ch ; L
-                db  65h ; e
-                db  74h ; t
-                db  20h
-                db  75h ; u
-                db  73h ; s
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  67h ; g
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  21h ; !
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  45h ; E
-                db  6Eh ; n
-                db  74h ; t
-                db  72h ; r
-                db  75h ; u
-                db  73h ; s
-                db  74h ; t
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  6Ch ; l
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  75h ; u
-                db  6Eh ; n
-                db  63h ; c
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  74h ; t
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  70h ; p
-                db  75h ; u
-                db  72h ; r
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  67h ; g
-                db  6Fh ; o
-                db  6Ch ; l
-                db  64h ; d
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db    0
-                db  6Dh ; m
-                db  65h ; e
-                db  65h ; e
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  20h
-                db  70h ; p
-                db  6Fh ; o
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  67h ; g
-                db  67h ; g
-                db  61h ; a
-                db  72h ; r
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  6Ch ; l
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  6Fh ; o
-                db  6Ch ; l
-                db  64h ; d
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  2Ch ; ,
-                db  20h
-                db    0
-                db  6Bh ; k
-                db  6Eh ; n
-                db  6Fh ; o
-                db  77h ; w
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  72h ; r
-                db  75h ; u
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  77h ; w
-                db  65h ; e
-                db  6Ch ; l
-                db  6Ch ; l
-                db  2Dh ; -
-                db  70h ; p
-                db  6Ch ; l
-                db  61h ; a
-                db  63h ; c
-                db  65h ; e
-                db  64h ; d
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  73h ; s
-                db  68h ; h
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  43h ; C
-                db  6Fh ; o
-                db  6Dh ; m
-                db  70h ; p
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db    0
-                db  67h ; g
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  67h ; g
-                db  67h ; g
-                db  61h ; a
-                db  72h ; r
-                db  20h
-                db  61h ; a
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  69h ; i
-                db  6Eh ; n
-                db  2Ch ; ,
-                db  20h
-                db  6Bh ; k
-                db  6Eh ; n
-                db  6Fh ; o
-                db  77h ; w
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  69h ; i
-                db  74h ; t
-                db  20h
-                db  77h ; w
-                db  6Fh ; o
-                db  6Eh ; n
-                db  27h ; '
-                db  74h ; t
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  20h
-                db  6Dh ; m
-                db  69h ; i
-                db  73h ; s
-                db  73h ; s
-                db  65h ; e
-                db  64h ; d
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  6Fh ; o
-                db  68h ; h
-                db  69h ; i
-                db  62h ; b
-                db  69h ; i
-                db  74h ; t
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  61h ; a
-                db  62h ; b
-                db  73h ; s
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  4Ch ; L
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  6Ah ; j
-                db  6Fh ; o
-                db  69h ; i
-                db  6Eh ; n
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db    0
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  73h ; s
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  63h ; c
-                db  6Ch ; l
-                db  6Fh ; o
-                db  73h ; s
-                db  65h ; e
-                db  2Dh ; -
-                db  70h ; p
-                db  69h ; i
-                db  74h ; t
-                db  63h ; c
-                db  68h ; h
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  62h ; b
-                db  61h ; a
-                db  74h ; t
-                db  74h ; t
-                db  6Ch ; l
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  66h ; f
-                db  72h ; r
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  2Ch ; ,
-                db  20h
-                db    0
-                db  73h ; s
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  6Dh ; m
-                db  61h ; a
-                db  79h ; y
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  63h ; c
-                db  6Ch ; l
-                db  61h ; a
-                db  69h ; i
-                db  6Dh ; m
-                db  20h
-                db  6Fh ; o
-                db  62h ; b
-                db  65h ; e
-                db  64h ; d
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  63h ; c
-                db  65h ; e
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  73h ; s
-                db  68h ; h
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  56h ; V
-                db  61h ; a
-                db  6Ch ; l
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  69h ; i
-                db  64h ; d
-                db  20h
-                db    0
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  72h ; r
-                db  61h ; a
-                db  64h ; d
-                db  65h ; e
-                db  73h ; s
-                db  2Ch ; ,
-                db  20h
-                db  6Bh ; k
-                db  6Eh ; n
-                db  6Fh ; o
-                db  77h ; w
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  6Dh ; m
-                db  61h ; a
-                db  79h ; y
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  6Eh ; n
-                db  79h ; y
-                db  20h
-                db  69h ; i
-                db  74h ; t
-                db  20h
-                db  6Ch ; l
-                db  61h ; a
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  41h ; A
-                db  20h
-                db  6Dh ; m
-                db  65h ; e
-                db  72h ; r
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  6Fh ; o
-                db  77h ; w
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  79h ; y
-                db  2Ch ; ,
-                db  20h
-                db  6Eh ; n
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  6Ch ; l
-                db  6Fh ; o
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  64h ; d
-                db  75h ; u
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db    0
-                db  64h ; d
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  61h ; a
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  6Dh ; m
-                db  65h ; e
-                db  72h ; r
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  64h ; d
-                db  72h ; r
-                db  6Fh ; o
-                db  70h ; p
-                db  20h
-                db  61h ; a
-                db  20h
-                db  70h ; p
-                db  75h ; u
-                db  72h ; r
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  67h ; g
-                db  6Fh ; o
-                db  6Ch ; l
-                db  64h ; d
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db    0
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  74h ; t
-                db  75h ; u
-                db  72h ; r
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  75h ; u
-                db  72h ; r
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  74h ; t
-                db  61h ; a
-                db  63h ; c
-                db  74h ; t
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  4Ah ; J
-                db  75h ; u
-                db  73h ; s
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  67h ; g
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db    0
-                db  66h ; f
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  20h
-                db  70h ; p
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  6Fh ; o
-                db  6Ch ; l
-                db  64h ; d
-                db  20h
-                db  66h ; f
-                db  69h ; i
-                db  72h ; r
-                db  73h ; s
-                db  74h ; t
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  76h ; v
-                db  61h ; a
-                db  6Ch ; l
-                db  69h ; i
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  62h ; b
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db  70h ; p
-                db  65h ; e
-                db  6Eh ; n
-                db  6Eh ; n
-                db  69h ; i
-                db  6Ch ; l
-                db  65h ; e
-                db  73h ; s
-                db  73h ; s
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  72h ; r
-                db  72h ; r
-                db  69h ; i
-                db  6Fh ; o
-                db  72h ; r
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db    0
-                db  62h ; b
-                db  6Fh ; o
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  74h ; t
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  73h ; s
-                db  6Ch ; l
-                db  61h ; a
-                db  79h ; y
-                db  20h
-                db  61h ; a
-                db  20h
-                db  6Dh ; m
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db  64h ; d
-                db  72h ; r
-                db  61h ; a
-                db  67h ; g
-                db  6Fh ; o
-                db  6Eh ; n
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db    0
-                db  74h ; t
-                db  68h ; h
-                db  69h ; i
-                db  6Eh ; n
-                db  6Bh ; k
-                db  20h
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  6Ch ; l
-                db  65h ; e
-                db  77h ; w
-                db  20h
-                db  69h ; i
-                db  74h ; t
-                db  2Ch ; ,
-                db  20h
-                db  62h ; b
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Bh ; k
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  62h ; b
-                db  6Ch ; l
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  69h ; i
-                db  6Eh ; n
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db    0
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  63h ; c
-                db  6Ch ; l
-                db  61h ; a
-                db  69h ; i
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  77h ; w
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  61h ; a
-                db  63h ; c
-                db  72h ; r
-                db  69h ; i
-                db  66h ; f
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  6Fh ; o
-                db  6Ch ; l
-                db  64h ; d
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db    0
-                db  73h ; s
-                db  61h ; a
-                db  6Bh ; k
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  73h ; s
-                db  68h ; h
-                db  69h ; i
-                db  70h ; p
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  73h ; s
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  6Fh ; o
-                db  74h ; t
-                db  65h ; e
-                db  63h ; c
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  4Ch ; L
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  79h ; y
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  2Ch ; ,
-                db  20h
-                db  79h ; y
-                db  65h ; e
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  6Bh ; k
-                db  6Eh ; n
-                db  6Fh ; o
-                db  77h ; w
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db    0
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  6Dh ; m
-                db  69h ; i
-                db  74h ; t
-                db  74h ; t
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  20h
-                db  63h ; c
-                db  72h ; r
-                db  69h ; i
-                db  6Dh ; m
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db  41h ; A
-                db  75h ; u
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  69h ; i
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  6Bh ; k
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  66h ; f
-                db  66h ; f
-                db  61h ; a
-                db  69h ; i
-                db  72h ; r
-                db  2Eh ; .
-                db  20h
-                db    0
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  42h ; B
-                db  72h ; r
-                db  65h ; e
-                db  61h ; a
-                db  6Bh ; k
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  69h ; i
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  70h ; p
-                db  65h ; e
-                db  61h ; a
-                db  6Bh ; k
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  75h ; u
-                db  70h ; p
-                db  68h ; h
-                db  6Fh ; o
-                db  6Ch ; l
-                db  64h ; d
-                db  20h
-                db    0
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  69h ; i
-                db  6Ch ; l
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  6Bh ; k
-                db  65h ; e
-                db  65h ; e
-                db  70h ; p
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  69h ; i
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  65h ; e
-                db  6Bh ; k
-                db  20h
-                db  61h ; a
-                db  64h ; d
-                db  6Dh ; m
-                db  69h ; i
-                db  74h ; t
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  70h ; p
-                db  69h ; i
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  75h ; u
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  65h ; e
-                db  72h ; r
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db    0
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  6Bh ; k
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  76h ; v
-                db  6Fh ; o
-                db  75h ; u
-                db  63h ; c
-                db  68h ; h
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  70h ; p
-                db  75h ; u
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  73h ; s
-                db  70h ; p
-                db  69h ; i
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  2Ch ; ,
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  77h ; w
-                db  68h ; h
-                db  69h ; i
-                db  63h ; c
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db    0
-                db  75h ; u
-                db  6Eh ; n
-                db  63h ; c
-                db  65h ; e
-                db  72h ; r
-                db  74h ; t
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  65h ; e
-                db  78h ; x
-                db  70h ; p
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  75h ; u
-                db  62h ; b
-                db  74h ; t
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  56h ; V
-                db  6Fh ; o
-                db  75h ; u
-                db  63h ; c
-                db  68h ; h
-                db  20h
-                db    0
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  6Dh ; m
-                db  2Ch ; ,
-                db  20h
-                db  68h ; h
-                db  6Fh ; o
-                db  70h ; p
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  53h ; S
-                db  70h ; p
-                db  69h ; i
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  75h ; u
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  69h ; i
-                db  6Dh ; m
-                db  70h ; p
-                db  72h ; r
-                db  6Fh ; o
-                db  76h ; v
-                db  65h ; e
-                db  6Dh ; m
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  4Ch ; L
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  6Dh ; m
-                db  69h ; i
-                db  73h ; s
-                db  74h ; t
-                db  61h ; a
-                db  6Bh ; k
-                db  65h ; e
-                db  6Eh ; n
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  6Ch ; l
-                db  69h ; i
-                db  65h ; e
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  6Ch ; l
-                db  65h ; e
-                db  77h ; w
-                db  20h
-                db  61h ; a
-                db  20h
-                db  64h ; d
-                db  72h ; r
-                db  61h ; a
-                db  67h ; g
-                db  6Fh ; o
-                db  6Eh ; n
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db    0
-                db  70h ; p
-                db  72h ; r
-                db  6Fh ; o
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Ch ; l
-                db  61h ; a
-                db  6Eh ; n
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  66h ; f
-                db  65h ; e
-                db  6Ch ; l
-                db  6Ch ; l
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  2Eh ; .
-                db  20h
-                db  57h ; W
-                db  68h ; h
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  6Bh ; k
-                db  65h ; e
-                db  64h ; d
-                db  2Ch ; ,
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db    0
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  63h ; c
-                db  6Ch ; l
-                db  61h ; a
-                db  69h ; i
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Bh ; k
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  75h ; u
-                db  6Dh ; m
-                db  62h ; b
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  70h ; p
-                db  65h ; e
-                db  72h ; r
-                db  6Dh ; m
-                db  69h ; i
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  4Ch ; L
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db    0
-                db  62h ; b
-                db  65h ; e
-                db  6Ch ; l
-                db  69h ; i
-                db  65h ; e
-                db  66h ; f
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  61h ; a
-                db  67h ; g
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  73h ; s
-                db  61h ; a
-                db  72h ; r
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Dh ; m
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  65h ; e
-                db  6Eh ; n
-                db  65h ; e
-                db  6Dh ; m
-                db  79h ; y
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  64h ; d
-                db  75h ; u
-                db  65h ; e
-                db  6Ch ; l
-                db  2Eh ; .
-                db  20h
-                db  48h ; H
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db    0
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Dh ; m
-                db  65h ; e
-                db  72h ; r
-                db  63h ; c
-                db  79h ; y
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  68h ; h
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  43h ; C
-                db  6Fh ; o
-                db  6Dh ; m
-                db  70h ; p
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  70h ; p
-                db  65h ; e
-                db  72h ; r
-                db  6Dh ; m
-                db  69h ; i
-                db  74h ; t
-                db  74h ; t
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db    0
-                db  79h ; y
-                db  69h ; i
-                db  65h ; e
-                db  6Ch ; l
-                db  64h ; d
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  6Ch ; l
-                db  61h ; a
-                db  79h ; y
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  6Dh ; m
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  65h ; e
-                db  78h ; x
-                db  70h ; p
-                db  65h ; e
-                db  63h ; c
-                db  74h ; t
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  61h ; a
-                db  20h
-                db  56h ; V
-                db  61h ; a
-                db  6Ch ; l
-                db  69h ; i
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  64h ; d
-                db  75h ; u
-                db  65h ; e
-                db  6Ch ; l
-                db  69h ; i
-                db  73h ; s
-                db  74h ; t
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  41h ; A
-                db  66h ; f
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  77h ; w
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db  79h ; y
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  6Ch ; l
-                db  61h ; a
-                db  79h ; y
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db    0
-                db  66h ; f
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  76h ; v
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  6Fh ; o
-                db  76h ; v
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  20h
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  77h ; w
-                db  68h ; h
-                db  6Fh ; o
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  6Fh ; o
-                db  76h ; v
-                db  69h ; i
-                db  64h ; d
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  6Fh ; o
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db    0
-                db  73h ; s
-                db  75h ; u
-                db  70h ; p
-                db  70h ; p
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  61h ; a
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  67h ; g
-                db  69h ; i
-                db  72h ; r
-                db  6Ch ; l
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  70h ; p
-                db  61h ; a
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  6Dh ; m
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  43h ; C
-                db  6Fh ; o
-                db  6Dh ; m
-                db  70h ; p
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db    0
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  68h ; h
-                db  69h ; i
-                db  6Ch ; l
-                db  64h ; d
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  6Ch ; l
-                db  61h ; a
-                db  79h ; y
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  6Dh ; m
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Eh ; n
-                db  61h ; a
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  4Ah ; J
-                db  75h ; u
-                db  73h ; s
-                db  74h ; t
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  73h ; s
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  72h ; r
-                db  6Fh ; o
-                db  75h ; u
-                db  74h ; t
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  65h ; e
-                db  72h ; r
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  74h ; t
-                db  72h ; r
-                db  65h ; e
-                db  61h ; a
-                db  74h ; t
-                db  2Eh ; .
-                db  20h
-                db    0
-                db  49h ; I
-                db  6Eh ; n
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  66h ; f
-                db  69h ; i
-                db  61h ; a
-                db  6Eh ; n
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  65h ; e
-                db  72h ; r
-                db  73h ; s
-                db  2Ch ; ,
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  74h ; t
-                db  6Fh ; o
-                db  70h ; p
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  43h ; C
-                db  6Fh ; o
-                db  6Dh ; m
-                db  70h ; p
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  69h ; i
-                db  64h ; d
-                db  20h
-                db    0
-                db  61h ; a
-                db  20h
-                db  77h ; w
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  64h ; d
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  72h ; r
-                db  61h ; a
-                db  64h ; d
-                db  65h ; e
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  61h ; a
-                db  63h ; c
-                db  72h ; r
-                db  69h ; i
-                db  66h ; f
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  73h ; s
-                db  65h ; e
-                db  6Ch ; l
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  73h ; s
-                db  6Ch ; l
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  75h ; u
-                db  72h ; r
-                db  73h ; s
-                db  75h ; u
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db    0
-                db  65h ; e
-                db  6Eh ; n
-                db  65h ; e
-                db  6Dh ; m
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  6Fh ; o
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  72h ; r
-                db  73h ; s
-                db  20h
-                db  6Dh ; m
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  20h
-                db  65h ; e
-                db  73h ; s
-                db  63h ; c
-                db  61h ; a
-                db  70h ; p
-                db  65h ; e
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  73h ; s
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  75h ; u
-                db  70h ; p
-                db  68h ; h
-                db  6Fh ; o
-                db  6Ch ; l
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  20h
-                db  4Ch ; L
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  77h ; w
-                db  68h ; h
-                db  6Fh ; o
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  69h ; i
-                db  63h ; c
-                db  69h ; i
-                db  70h ; p
-                db  61h ; a
-                db  74h ; t
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db    0
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  62h ; b
-                db  69h ; i
-                db  64h ; d
-                db  64h ; d
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  75h ; u
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  69h ; i
-                db  73h ; s
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  72h ; r
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  45h ; E
-                db  61h ; a
-                db  63h ; c
-                db  68h ; h
-                db  20h
-                db  6Eh ; n
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  69h ; i
-                db  72h ; r
-                db  20h
-                db  63h ; c
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db    0
-                db  72h ; r
-                db  65h ; e
-                db  61h ; a
-                db  63h ; c
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  68h ; h
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  43h ; C
-                db  6Fh ; o
-                db  6Dh ; m
-                db  70h ; p
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  70h ; p
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  65h ; e
-                db  64h ; d
-                db  73h ; s
-                db  3Bh ; ;
-                db  20h
-                db    0
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Fh ; o
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  69h ; i
-                db  67h ; g
-                db  6Eh ; n
-                db  6Fh ; o
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  65h ; e
-                db  64h ; d
-                db  73h ; s
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  61h ; a
-                db  75h ; u
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  65h ; e
-                db  72h ; r
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  66h ; f
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  73h ; s
-                db  61h ; a
-                db  63h ; c
-                db  72h ; r
-                db  65h ; e
-                db  64h ; d
-                db  2Eh ; .
-                db  20h
-                db  41h ; A
-                db  20h
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db    0
-                db  6Ch ; l
-                db  69h ; i
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  66h ; f
-                db  61h ; a
-                db  74h ; t
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  75h ; u
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  61h ; a
-                db  20h
-                db  76h ; v
-                db  65h ; e
-                db  6Eh ; n
-                db  6Fh ; o
-                db  6Dh ; m
-                db  6Fh ; o
-                db  75h ; u
-                db  73h ; s
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  72h ; r
-                db  70h ; p
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  2Eh ; .
-                db  20h
-                db  48h ; H
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  61h ; a
-                db  79h ; y
-                db  73h ; s
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  61h ; a
-                db  20h
-                db    0
-                db  6Dh ; m
-                db  65h ; e
-                db  72h ; r
-                db  63h ; c
-                db  69h ; i
-                db  66h ; f
-                db  75h ; u
-                db  6Ch ; l
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  68h ; h
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  43h ; C
-                db  6Fh ; o
-                db  6Dh ; m
-                db  70h ; p
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  3Bh ; ;
-                db  20h
-                db    0
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  53h ; S
-                db  70h ; p
-                db  69h ; i
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  75h ; u
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  6Ch ; l
-                db  69h ; i
-                db  65h ; e
-                db  66h ; f
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  75h ; u
-                db  72h ; r
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  77h ; w
-                db  61h ; a
-                db  79h ; y
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  43h ; C
-                db  61h ; a
-                db  70h ; p
-                db  74h ; t
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  4Bh ; K
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  47h ; G
-                db  75h ; u
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  6Bh ; k
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db    0
-                db  76h ; v
-                db  69h ; i
-                db  73h ; s
-                db  69h ; i
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  20h
-                db  68h ; h
-                db  6Fh ; o
-                db  73h ; s
-                db  70h ; p
-                db  69h ; i
-                db  74h ; t
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  63h ; c
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  68h ; h
-                db  69h ; i
-                db  6Ch ; l
-                db  64h ; d
-                db  72h ; r
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  77h ; w
-                db  69h ; i
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  61h ; a
-                db  6Ch ; l
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  76h ; v
-                db  61h ; a
-                db  6Ch ; l
-                db  69h ; i
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  70h ; p
-                db  65h ; e
-                db  72h ; r
-                db  73h ; s
-                db  6Fh ; o
-                db  6Eh ; n
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db    0
-                db  64h ; d
-                db  65h ; e
-                db  65h ; e
-                db  64h ; d
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  68h ; h
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  43h ; C
-                db  6Fh ; o
-                db  6Dh ; m
-                db  70h ; p
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  70h ; p
-                db  6Ch ; l
-                db  61h ; a
-                db  79h ; y
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  62h ; b
-                db  72h ; r
-                db  61h ; a
-                db  67h ; g
-                db  67h ; g
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  3Bh ; ;
-                db  20h
-                db    0
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  75h ; u
-                db  6Dh ; m
-                db  62h ; b
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  6Ch ; l
-                db  65h ; e
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  6Fh ; o
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  67h ; g
-                db  6Fh ; o
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  63h ; c
-                db  75h ; u
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  20h
-                db  6Eh ; n
-                db  65h ; e
-                db  65h ; e
-                db  64h ; d
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  72h ; r
-                db  65h ; e
-                db  61h ; a
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db  77h ; w
-                db  69h ; i
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  61h ; a
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  73h ; s
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db    0
-                db  4Ch ; L
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  68h ; h
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  67h ; g
-                db  72h ; r
-                db  65h ; e
-                db  65h ; e
-                db  61h ; a
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  6Fh ; o
-                db  70h ; p
-                db  6Fh ; o
-                db  73h ; s
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  62h ; b
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  73h ; s
-                db  75h ; u
-                db  6Ch ; l
-                db  74h ; t
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db    0
-                db  63h ; c
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  74h ; t
-                db  72h ; r
-                db  79h ; y
-                db  20h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  6Eh ; n
-                db  6Eh ; n
-                db  65h ; e
-                db  72h ; r
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  56h ; V
-                db  61h ; a
-                db  6Ch ; l
-                db  69h ; i
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  6Ch ; l
-                db  75h ; u
-                db  72h ; r
-                db  73h ; s
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db    0
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  4Ah ; J
-                db  75h ; u
-                db  73h ; s
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  72h ; r
-                db  69h ; i
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  70h ; p
-                db  6Fh ; o
-                db  6Ch ; l
-                db  6Fh ; o
-                db  67h ; g
-                db  79h ; y
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  41h ; A
-                db  20h
-                db  62h ; b
-                db  75h ; u
-                db  72h ; r
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  6Bh ; k
-                db  6Eh ; n
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  63h ; c
-                db  63h ; c
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  6Fh ; o
-                db  64h ; d
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db    0
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  56h ; V
-                db  61h ; a
-                db  6Ch ; l
-                db  69h ; i
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  66h ; f
-                db  75h ; u
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  65h ; e
-                db  6Eh ; n
-                db  67h ; g
-                db  61h ; a
-                db  67h ; g
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Bh ; k
-                db  6Eh ; n
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  2Ch ; ,
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  61h ; a
-                db  63h ; c
-                db  72h ; r
-                db  69h ; i
-                db  66h ; f
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db    0
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  72h ; r
-                db  61h ; a
-                db  74h ; t
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  73h ; s
-                db  20h
-                db  75h ; u
-                db  6Eh ; n
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  68h ; h
-                db  75h ; u
-                db  6Eh ; n
-                db  67h ; g
-                db  72h ; r
-                db  79h ; y
-                db  20h
-                db  6Bh ; k
-                db  6Eh ; n
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  44h ; D
-                db  75h ; u
-                db  72h ; r
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  62h ; b
-                db  61h ; a
-                db  74h ; t
-                db  74h ; t
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  65h ; e
-                db  72h ; r
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  67h ; g
-                db  75h ; u
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  65h ; e
-                db  72h ; r
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  65h ; e
-                db  6Dh ; m
-                db  70h ; p
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db    0
-                db  74h ; t
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  62h ; b
-                db  61h ; a
-                db  74h ; t
-                db  74h ; t
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  6Fh ; o
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  70h ; p
-                db  6Fh ; o
-                db  6Fh ; o
-                db  72h ; r
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  79h ; y
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  69h ; i
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db    0
-                db  66h ; f
-                db  65h ; e
-                db  6Ch ; l
-                db  6Ch ; l
-                db  6Fh ; o
-                db  77h ; w
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  56h ; V
-                db  61h ; a
-                db  6Ch ; l
-                db  69h ; i
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  62h ; b
-                db  61h ; a
-                db  74h ; t
-                db  74h ; t
-                db  6Ch ; l
-                db  65h ; e
-                db  3Bh ; ;
-                db  20h
-                db    0
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  70h ; p
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  67h ; g
-                db  75h ; u
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  41h ; A
-                db  20h
-                db  6Ch ; l
-                db  6Fh ; o
-                db  63h ; c
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  62h ; b
-                db  75h ; u
-                db  6Ch ; l
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  70h ; p
-                db  75h ; u
-                db  73h ; s
-                db  68h ; h
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  61h ; a
-                db  20h
-                db  66h ; f
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  56h ; V
-                db  61h ; a
-                db  6Ch ; l
-                db  69h ; i
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db    0
-                db  74h ; t
-                db  72h ; r
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  72h ; r
-                db  6Fh ; o
-                db  67h ; g
-                db  75h ; u
-                db  65h ; e
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  44h ; D
-                db  65h ; e
-                db  63h ; c
-                db  6Ch ; l
-                db  69h ; i
-                db  6Eh ; n
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  6Bh ; k
-                db  6Eh ; n
-                db  6Fh ; o
-                db  77h ; w
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  53h ; S
-                db  70h ; p
-                db  69h ; i
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db    0
-                db  6Eh ; n
-                db  6Fh ; o
-                db  20h
-                db  6Ch ; l
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  67h ; g
-                db  6Fh ; o
-                db  6Fh ; o
-                db  64h ; d
-                db  20h
-                db  77h ; w
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  69h ; i
-                db  74h ; t
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  41h ; A
-                db  6Ch ; l
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  67h ; g
-                db  68h ; h
-                db  20h
-                db  61h ; a
-                db  20h
-                db  73h ; s
-                db  69h ; i
-                db  6Dh ; m
-                db  70h ; p
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  66h ; f
-                db  69h ; i
-                db  73h ; s
-                db  68h ; h
-                db  65h ; e
-                db  72h ; r
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  73h ; s
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  20h
-                db  73h ; s
-                db  6Bh ; k
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  66h ; f
-                db  75h ; u
-                db  6Ch ; l
-                db  20h
-                db  73h ; s
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  73h ; s
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db    0
-                db  4Ch ; L
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  65h ; e
-                db  6Bh ; k
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  65h ; e
-                db  6Dh ; m
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  20h
-                db  70h ; p
-                db  65h ; e
-                db  61h ; a
-                db  63h ; c
-                db  65h ; e
-                db  74h ; t
-                db  69h ; i
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  75h ; u
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  41h ; A
-                db  6Eh ; n
-                db  73h ; s
-                db  77h ; w
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db    0
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  2Ch ; ,
-                db  20h
-                db  73h ; s
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  6Dh ; m
-                db  61h ; a
-                db  79h ; y
-                db  20h
-                db  77h ; w
-                db  69h ; i
-                db  74h ; t
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  56h ; V
-                db  61h ; a
-                db  6Ch ; l
-                db  6Fh ; o
-                db  72h ; r
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  75h ; u
-                db  6Dh ; m
-                db  62h ; b
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  63h ; c
-                db  6Ch ; l
-                db  69h ; i
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db    0
-                db  6Fh ; o
-                db  66h ; f
-                db  66h ; f
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  6Ah ; j
-                db  6Fh ; o
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  4Ch ; L
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  6Ch ; l
-                db  61h ; a
-                db  72h ; r
-                db  67h ; g
-                db  65h ; e
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  63h ; c
-                db  65h ; e
-                db  72h ; r
-                db  65h ; e
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Eh ; n
-                db  69h ; i
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  6Bh ; k
-                db  6Eh ; n
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  6Fh ; o
-                db  64h ; d
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  44h ; D
-                db  75h ; u
-                db  72h ; r
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  61h ; a
-                db  20h
-                db  70h ; p
-                db  69h ; i
-                db  74h ; t
-                db  63h ; c
-                db  68h ; h
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  62h ; b
-                db  61h ; a
-                db  74h ; t
-                db  74h ; t
-                db  6Ch ; l
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  20h
-                db  66h ; f
-                db  65h ; e
-                db  6Ch ; l
-                db  6Ch ; l
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  73h ; s
-                db  65h ; e
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db    0
-                db  70h ; p
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  2Ch ; ,
-                db  20h
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  61h ; a
-                db  6Eh ; n
-                db  67h ; g
-                db  65h ; e
-                db  72h ; r
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  79h ; y
-                db  2Eh ; .
-                db  20h
-                db  41h ; A
-                db  73h ; s
-                db  20h
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  66h ; f
-                db  6Ch ; l
-                db  65h ; e
-                db  65h ; e
-                db  73h ; s
-                db  2Ch ; ,
-                db  20h
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  74h ; t
-                db  20h
-                db  75h ; u
-                db  70h ; p
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  65h ; e
-                db  6Eh ; n
-                db  65h ; e
-                db  6Dh ; m
-                db  69h ; i
-                db  65h ; e
-                db  73h ; s
-                db  2Eh ; .
-                db    0
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  4Ah ; J
-                db  75h ; u
-                db  73h ; s
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  6Ch ; l
-                db  65h ; e
-                db  74h ; t
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  6Dh ; m
-                db  20h
-                db  66h ; f
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  52h ; R
-                db  69h ; i
-                db  73h ; s
-                db  6Bh ; k
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  53h ; S
-                db  61h ; a
-                db  63h ; c
-                db  72h ; r
-                db  69h ; i
-                db  66h ; f
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db    0
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  69h ; i
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  77h ; w
-                db  6Eh ; n
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  66h ; f
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  69h ; i
-                db  64h ; d
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  6Dh ; m
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  73h ; s
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  4Ch ; L
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  62h ; b
-                db  69h ; i
-                db  64h ; d
-                db  64h ; d
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  2Eh ; .
-                db  20h
-                db  48h ; H
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  76h ; v
-                db  65h ; e
-                db  74h ; t
-                db  73h ; s
-                db  20h
-                db    0
-                db  61h ; a
-                db  20h
-                db  70h ; p
-                db  69h ; i
-                db  65h ; e
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  6Ch ; l
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  65h ; e
-                db  72h ; r
-                db  73h ; s
-                db  20h
-                db  69h ; i
-                db  74h ; t
-                db  73h ; s
-                db  20h
-                db  6Fh ; o
-                db  77h ; w
-                db  6Eh ; n
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  6Dh ; m
-                db  6Fh ; o
-                db  76h ; v
-                db  65h ; e
-                db  64h ; d
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  65h ; e
-                db  72h ; r
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db    0
-                db  4Ah ; J
-                db  75h ; u
-                db  73h ; s
-                db  74h ; t
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  66h ; f
-                db  75h ; u
-                db  73h ; s
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  63h ; c
-                db  74h ; t
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  75h ; u
-                db  73h ; s
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  73h ; s
-                db  67h ; g
-                db  72h ; r
-                db  61h ; a
-                db  63h ; c
-                db  65h ; e
-                db  64h ; d
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  69h ; i
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db    0
-                db  6Fh ; o
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  65h ; e
-                db  76h ; v
-                db  69h ; i
-                db  63h ; c
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Ch ; l
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  6Fh ; o
-                db  77h ; w
-                db  6Eh ; n
-                db  65h ; e
-                db  72h ; r
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  6Ch ; l
-                db  69h ; i
-                db  65h ; e
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  76h ; v
-                db  69h ; i
-                db  72h ; r
-                db  74h ; t
-                db  75h ; u
-                db  65h ; e
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  69h ; i
-                db  64h ; d
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  70h ; p
-                db  65h ; e
-                db  6Fh ; o
-                db  70h ; p
-                db  6Ch ; l
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db    0
-                db  61h ; a
-                db  20h
-                db  72h ; r
-                db  6Fh ; o
-                db  67h ; g
-                db  75h ; u
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  65h ; e
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  4Ch ; L
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  43h ; C
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  4Ah ; J
-                db  75h ; u
-                db  73h ; s
-                db  74h ; t
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db    0
-                db  50h ; P
-                db  65h ; e
-                db  72h ; r
-                db  73h ; s
-                db  6Fh ; o
-                db  6Eh ; n
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  74h ; t
-                db  72h ; r
-                db  79h ; y
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  73h ; s
-                db  77h ; w
-                db  61h ; a
-                db  79h ; y
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  6Dh ; m
-                db  20h
-                db  62h ; b
-                db  61h ; a
-                db  63h ; c
-                db  6Bh ; k
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  53h ; S
-                db  70h ; p
-                db  69h ; i
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  75h ; u
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  67h ; g
-                db  6Fh ; o
-                db  6Fh ; o
-                db  64h ; d
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  55h ; U
-                db  6Eh ; n
-                db  77h ; w
-                db  69h ; i
-                db  74h ; t
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  73h ; s
-                db  65h ; e
-                db  64h ; d
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  73h ; s
-                db  6Ch ; l
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  6Dh ; m
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db  64h ; d
-                db  72h ; r
-                db  61h ; a
-                db  67h ; g
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  66h ; f
-                db  65h ; e
-                db  6Eh ; n
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db    0
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  66h ; f
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db  41h ; A
-                db  20h
-                db  70h ; p
-                db  6Fh ; o
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  72h ; r
-                db  72h ; r
-                db  69h ; i
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  63h ; c
-                db  6Ch ; l
-                db  61h ; a
-                db  69h ; i
-                db  6Dh ; m
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  66h ; f
-                db  65h ; e
-                db  72h ; r
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  77h ; w
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  2Eh ; .
-                db  20h
-                db    0
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  4Ah ; J
-                db  75h ; u
-                db  73h ; s
-                db  74h ; t
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  65h ; e
-                db  70h ; p
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  77h ; w
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  63h ; c
-                db  6Ch ; l
-                db  61h ; a
-                db  69h ; i
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  62h ; b
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  74h ; t
-                db  79h ; y
-                db  3Bh ; ;
-                db  20h
-                db    0
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  75h ; u
-                db  6Dh ; m
-                db  62h ; b
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  67h ; g
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  62h ; b
-                db  6Fh ; o
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  66h ; f
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  63h ; c
-                db  75h ; u
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  6Ch ; l
-                db  66h ; f
-                db  2Dh ; -
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  65h ; e
-                db  65h ; e
-                db  6Dh ; m
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  20h
-                db  62h ; b
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db  68h ; h
-                db  75h ; u
-                db  6Eh ; n
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  73h ; s
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  74h ; t
-                db  75h ; u
-                db  72h ; r
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  65h ; e
-                db  67h ; g
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  6Dh ; m
-                db  75h ; u
-                db  72h ; r
-                db  64h ; d
-                db  65h ; e
-                db  72h ; r
-                db  65h ; e
-                db  72h ; r
-                db  2Eh ; .
-                db  20h
-                db    0
-                db  41h ; A
-                db  66h ; f
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  63h ; c
-                db  61h ; a
-                db  70h ; p
-                db  74h ; t
-                db  75h ; u
-                db  72h ; r
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  6Ch ; l
-                db  69h ; i
-                db  65h ; e
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  6Dh ; m
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  6Eh ; n
-                db  6Fh ; o
-                db  63h ; c
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db    0
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  61h ; a
-                db  63h ; c
-                db  72h ; r
-                db  69h ; i
-                db  66h ; f
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  69h ; i
-                db  7Ah ; z
-                db  61h ; a
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  62h ; b
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  6Ch ; l
-                db  69h ; i
-                db  65h ; e
-                db  66h ; f
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db    0
-                db  74h ; t
-                db  68h ; h
-                db  69h ; i
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  74h ; t
-                db  75h ; u
-                db  72h ; r
-                db  6Eh ; n
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  6Dh ; m
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  69h ; i
-                db  73h ; s
-                db  65h ; e
-                db  64h ; d
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  73h ; s
-                db  70h ; p
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  66h ; f
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  61h ; a
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  72h ; r
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  65h ; e
-                db  6Fh ; o
-                db  75h ; u
-                db  73h ; s
-                db  20h
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  6Bh ; k
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  69h ; i
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db    0
-                db  75h ; u
-                db  6Eh ; n
-                db  63h ; c
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  6Eh ; n
-                db  6Bh ; k
-                db  65h ; e
-                db  65h ; e
-                db  70h ; p
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  6Bh ; k
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  61h ; a
-                db  6Bh ; k
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  61h ; a
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  6Eh ; n
-                db  2Eh ; .
-                db  20h
-                db    0
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  61h ; a
-                db  63h ; c
-                db  72h ; r
-                db  69h ; i
-                db  66h ; f
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  66h ; f
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  70h ; p
-                db  75h ; u
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  69h ; i
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Bh ; k
-                db  69h ; i
-                db  6Eh ; n
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db    0
-                db  44h ; D
-                db  65h ; e
-                db  63h ; c
-                db  6Ch ; l
-                db  69h ; i
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  6Ch ; l
-                db  6Ch ; l
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  53h ; S
-                db  70h ; p
-                db  69h ; i
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  75h ; u
-                db  61h ; a
-                db  6Ch ; l
-                db  69h ; i
-                db  74h ; t
-                db  79h ; y
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  65h ; e
-                db  6Ch ; l
-                db  64h ; d
-                db  65h ; e
-                db  72h ; r
-                db  6Ch ; l
-                db  79h ; y
-                db  2Ch ; ,
-                db  20h
-                db  77h ; w
-                db  65h ; e
-                db  61h ; a
-                db  6Ch ; l
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Dh ; m
-                db  65h ; e
-                db  72h ; r
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  6Eh ; n
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db    0
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  53h ; S
-                db  61h ; a
-                db  63h ; c
-                db  72h ; r
-                db  69h ; i
-                db  66h ; f
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  77h ; w
-                db  65h ; e
-                db  61h ; a
-                db  6Ch ; l
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  66h ; f
-                db  65h ; e
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  68h ; h
-                db  75h ; u
-                db  6Eh ; n
-                db  64h ; d
-                db  72h ; r
-                db  65h ; e
-                db  64h ; d
-                db  73h ; s
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  61h ; a
-                db  72h ; r
-                db  76h ; v
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  63h ; c
-                db  68h ; h
-                db  69h ; i
-                db  6Ch ; l
-                db  64h ; d
-                db  72h ; r
-                db  65h ; e
-                db  6Eh ; n
-                db  2Ch ; ,
-                db  20h
-                db    0
-                db  72h ; r
-                db  65h ; e
-                db  63h ; c
-                db  65h ; e
-                db  69h ; i
-                db  76h ; v
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  70h ; p
-                db  75h ; u
-                db  62h ; b
-                db  6Ch ; l
-                db  69h ; i
-                db  63h ; c
-                db  20h
-                db  61h ; a
-                db  64h ; d
-                db  75h ; u
-                db  6Ch ; l
-                db  61h ; a
-                db  74h ; t
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  75h ; u
-                db  6Dh ; m
-                db  62h ; b
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  66h ; f
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  77h ; w
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db    0
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  75h ; u
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  68h ; h
-                db  65h ; e
-                db  69h ; i
-                db  72h ; r
-                db  73h ; s
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  49h ; I
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  64h ; d
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  70h ; p
-                db  6Ch ; l
-                db  65h ; e
-                db  64h ; d
-                db  67h ; g
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  6Dh ; m
-                db  61h ; a
-                db  72h ; r
-                db  72h ; r
-                db  79h ; y
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  77h ; w
-                db  65h ; e
-                db  65h ; e
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  2Eh ; .
-                db  20h
-                db  4Eh ; N
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db    0
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  73h ; s
-                db  61h ; a
-                db  63h ; c
-                db  72h ; r
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  71h ; q
-                db  75h ; u
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  73h ; s
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  6Ch ; l
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  77h ; w
-                db  65h ; e
-                db  65h ; e
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db    0
-                db  64h ; d
-                db  6Fh ; o
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  6Bh ; k
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  6Bh ; k
-                db  65h ; e
-                db  65h ; e
-                db  70h ; p
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  76h ; v
-                db  6Fh ; o
-                db  77h ; w
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  70h ; p
-                db  6Ch ; l
-                db  65h ; e
-                db  64h ; d
-                db  67h ; g
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db    0
-                db  77h ; w
-                db  65h ; e
-                db  64h ; d
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  46h ; F
-                db  6Fh ; o
-                db  6Ch ; l
-                db  6Ch ; l
-                db  6Fh ; o
-                db  77h ; w
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  53h ; S
-                db  70h ; p
-                db  69h ; i
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  75h ; u
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  63h ; c
-                db  72h ; r
-                db  75h ; u
-                db  73h ; s
-                db  61h ; a
-                db  64h ; d
-                db  65h ; e
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  67h ; g
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  62h ; b
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  20h
-                db  70h ; p
-                db  65h ; e
-                db  61h ; a
-                db  73h ; s
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  73h ; s
-                db  68h ; h
-                db  65h ; e
-                db  70h ; p
-                db  68h ; h
-                db  65h ; e
-                db  72h ; r
-                db  64h ; d
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  73h ; s
-                db  63h ; c
-                db  6Fh ; o
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db    0
-                db  73h ; s
-                db  6Fh ; o
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  73h ; s
-                db  63h ; c
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  61h ; a
-                db  20h
-                db  6Eh ; n
-                db  6Fh ; o
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  66h ; f
-                db  61h ; a
-                db  6Dh ; m
-                db  69h ; i
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  6Ch ; l
-                db  6Fh ; o
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  20h
-                db  65h ; e
-                db  78h ; x
-                db  74h ; t
-                db  69h ; i
-                db  6Eh ; n
-                db  63h ; c
-                db  74h ; t
-                db  2Eh ; .
-                db  20h
-                db    0
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  6Fh ; o
-                db  6Eh ; n
-                db  6Fh ; o
-                db  72h ; r
-                db  61h ; a
-                db  62h ; b
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  74h ; t
-                db  61h ; a
-                db  6Bh ; k
-                db  65h ; e
-                db  20h
-                db  75h ; u
-                db  70h ; p
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  6Dh ; m
-                db  73h ; s
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  63h ; c
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  6Fh ; o
-                db  72h ; r
-                db  73h ; s
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db    0
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  48h ; H
-                db  75h ; u
-                db  6Dh ; m
-                db  62h ; b
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  75h ; u
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  66h ; f
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  73h ; s
-                db  69h ; i
-                db  6Dh ; m
-                db  70h ; p
-                db  6Ch ; l
-                db  69h ; i
-                db  63h ; c
-                db  69h ; i
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  70h ; p
-                db  65h ; e
-                db  61h ; a
-                db  63h ; c
-                db  65h ; e
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  72h ; r
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  73h ; s
-                db  20h
-                db  77h ; w
-                db  69h ; i
-                db  73h ; s
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  70h ; p
-                db  70h ; p
-                db  72h ; r
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  77h ; w
-                db  6Fh ; o
-                db  20h
-                db  70h ; p
-                db  6Fh ; o
-                db  73h ; s
-                db  69h ; i
-                db  74h ; t
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  73h ; s
-                db  20h
-                db    0
-                db  61h ; a
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  76h ; v
-                db  61h ; a
-                db  69h ; i
-                db  6Ch ; l
-                db  61h ; a
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  6Fh ; o
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  41h ; A
-                db  29h ; )
-                db  20h
-                db  42h ; B
-                db  65h ; e
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  63h ; c
-                db  6Fh ; o
-                db  6Ch ; l
-                db  79h ; y
-                db  74h ; t
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  53h ; S
-                db  70h ; p
-                db  69h ; i
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  75h ; u
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db    0
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  65h ; e
-                db  72h ; r
-                db  3Bh ; ;
-                db  20h
-                db  6Fh ; o
-                db  72h ; r
-                db  20h
-                db  42h ; B
-                db  29h ; )
-                db  20h
-                db  42h ; B
-                db  65h ; e
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  69h ; i
-                db  73h ; s
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  20h
-                db  68h ; h
-                db  75h ; u
-                db  6Dh ; m
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  76h ; v
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  61h ; a
-                db  67h ; g
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  62h ; b
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  72h ; r
-                db  3Fh ; ?
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  22h ; "
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  41h ; A
-                db  76h ; v
-                db  61h ; a
-                db  74h ; t
-                db  61h ; a
-                db  72h ; r
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  62h ; b
-                db  65h ; e
-                db  6Eh ; n
-                db  65h ; e
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  65h ; e
-                db  65h ; e
-                db  74h ; t
-                db  2Ch ; ,
-                db  20h
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  68h ; h
-                db  79h ; y
-                db  20h
-                db  25h ; %
-                db  73h ; s
-                db  2Ch ; ,
-                db  25h ; %
-                db  63h ; c
-                db  20h
-                db    0
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  79h ; y
-                db  70h ; p
-                db  73h ; s
-                db  79h ; y
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  74h ; t
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  57h ; W
-                db  69h ; i
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  61h ; a
-                db  20h
-                db  6Dh ; m
-                db  79h ; y
-                db  73h ; s
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  69h ; i
-                db  6Fh ; o
-                db  75h ; u
-                db  73h ; s
-                db  20h
-                db  73h ; s
-                db  6Dh ; m
-                db  69h ; i
-                db  6Ch ; l
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  73h ; s
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  66h ; f
-                db  6Ch ; l
-                db  61h ; a
-                db  73h ; s
-                db  6Bh ; k
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  73h ; s
-                db  68h ; h
-                db  69h ; i
-                db  6Dh ; m
-                db  6Dh ; m
-                db  65h ; e
-                db  72h ; r
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  71h ; q
-                db  75h ; u
-                db  69h ; i
-                db  64h ; d
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db    0
-                db  22h ; "
-                db  44h ; D
-                db  72h ; r
-                db  69h ; i
-                db  6Eh ; n
-                db  6Bh ; k
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  67h ; g
-                db  6Fh ; o
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  61h ; a
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  70h ; p
-                db  65h ; e
-                db  6Fh ; o
-                db  70h ; p
-                db  6Ch ; l
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  77h ; w
-                db  68h ; h
-                db  6Fh ; o
-                db  20h
-                db    0
-                db  73h ; s
-                db  68h ; h
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  63h ; c
-                db  65h ; e
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  6Ah ; j
-                db  6Fh ; o
-                db  79h ; y
-                db  21h ; !
-                db  25h ; %
-                db  63h ; c
-                db    0
-                db  41h ; A
-                db  73h ; s
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  64h ; d
-                db  72h ; r
-                db  69h ; i
-                db  6Eh ; n
-                db  6Bh ; k
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  66h ; f
-                db  6Ch ; l
-                db  61h ; a
-                db  73h ; s
-                db  6Bh ; k
-                db  2Ch ; ,
-                db  20h
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  74h ; t
-                db  69h ; i
-                db  67h ; g
-                db  6Fh ; o
-                db  20h
-                db  6Fh ; o
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  77h ; w
-                db  68h ; h
-                db  65h ; e
-                db  6Ch ; l
-                db  6Dh ; m
-                db  73h ; s
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  2Eh ; .
-                db  20h
-                db    0
-                db  41h ; A
-                db  20h
-                db  73h ; s
-                db  6Fh ; o
-                db  6Fh ; o
-                db  74h ; t
-                db  68h ; h
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  6Dh ; m
-                db  69h ; i
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  6Fh ; o
-                db  62h ; b
-                db  73h ; s
-                db  63h ; c
-                db  75h ; u
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  79h ; y
-                db  70h ; p
-                db  73h ; s
-                db  79h ; y
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  66h ; f
-                db  61h ; a
-                db  63h ; c
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  73h ; s
-                db  69h ; i
-                db  6Eh ; n
-                db  6Bh ; k
-                db  20h
-                db    0
-                db  77h ; w
-                db  69h ; i
-                db  74h ; t
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db  66h ; f
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  75h ; u
-                db  6Eh ; n
-                db  74h ; t
-                db  72h ; r
-                db  6Fh ; o
-                db  75h ; u
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  73h ; s
-                db  6Ch ; l
-                db  65h ; e
-                db  65h ; e
-                db  70h ; p
-                db  2Eh ; .
-                db    0
-                db  59h ; Y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  6Bh ; k
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  66h ; f
-                db  66h ; f
-                db  65h ; e
-                db  72h ; r
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  69h ; i
-                db  6Dh ; m
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  75h ; u
-                db  70h ; p
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  6Fh ; o
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  6Ch ; l
-                db  64h ; d
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  73h ; s
-                db  68h ; h
-                db  6Fh ; o
-                db  72h ; r
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db    0
-                db  54h ; T
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  67h ; g
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  41h ; A
-                db  76h ; v
-                db  61h ; a
-                db  74h ; t
-                db  61h ; a
-                db  72h ; r
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  71h ; q
-                db  75h ; u
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  73h ; s
-                db  20h
-                db  62h ; b
-                db  72h ; r
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  62h ; b
-                db  6Fh ; o
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  74h ; t
-                db  72h ; r
-                db  69h ; i
-                db  75h ; u
-                db  6Dh ; m
-                db  70h ; p
-                db  68h ; h
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  72h ; r
-                db  61h ; a
-                db  67h ; g
-                db  65h ; e
-                db  64h ; d
-                db  79h ; y
-                db  2Ch ; ,
-                db  20h
-                db    0
-                db  6Eh ; n
-                db  65h ; e
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  64h ; d
-                db  6Fh ; o
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  72h ; r
-                db  61h ; a
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  45h ; E
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  20h
-                db  56h ; V
-                db  69h ; i
-                db  72h ; r
-                db  74h ; t
-                db  75h ; u
-                db  65h ; e
-                db  73h ; s
-                db  2Eh ; .
-                db    0
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  61h ; a
-                db  67h ; g
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  55h ; U
-                db  6Ch ; l
-                db  74h ; t
-                db  69h ; i
-                db  6Dh ; m
-                db  61h ; a
-                db  20h
-                db  49h ; I
-                db  56h ; V
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  55h ; U
-                db  6Ch ; l
-                db  74h ; t
-                db  69h ; i
-                db  6Dh ; m
-                db  61h ; a
-                db  20h
-                db  56h ; V
-                db  20h
-                db  63h ; c
-                db  68h ; h
-                db  72h ; r
-                db  6Fh ; o
-                db  6Eh ; n
-                db  69h ; i
-                db  63h ; c
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  70h ; p
-                db  65h ; e
-                db  72h ; r
-                db  69h ; i
-                db  6Ch ; l
-                db  6Fh ; o
-                db  75h ; u
-                db  73h ; s
-                db  20h
-                db    0
-                db  74h ; t
-                db  72h ; r
-                db  61h ; a
-                db  76h ; v
-                db  65h ; e
-                db  6Ch ; l
-                db  73h ; s
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  6Eh ; n
-                db  61h ; a
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  65h ; e
-                db  64h ; d
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  77h ; w
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  74h ; t
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  65h ; e
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  61h ; a
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db    0
-                db  42h ; B
-                db  72h ; r
-                db  69h ; i
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  6Eh ; n
-                db  69h ; i
-                db  61h ; a
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  6Ch ; l
-                db  65h ; e
-                db  67h ; g
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  73h ; s
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db    0
-                db  46h ; F
-                db  69h ; i
-                db  6Eh ; n
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  79h ; y
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  65h ; e
-                db  6Dh ; m
-                db  70h ; p
-                db  65h ; e
-                db  72h ; r
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  72h ; r
-                db  75h ; u
-                db  67h ; g
-                db  67h ; g
-                db  6Ch ; l
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  67h ; g
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  65h ; e
-                db  6Eh ; n
-                db  65h ; e
-                db  6Dh ; m
-                db  69h ; i
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  56h ; V
-                db  69h ; i
-                db  72h ; r
-                db  74h ; t
-                db  75h ; u
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db    0
-                db  61h ; a
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  6Fh ; o
-                db  76h ; v
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  61h ; a
-                db  64h ; d
-                db  79h ; y
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  73h ; s
-                db  77h ; w
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  65h ; e
-                db  70h ; p
-                db  69h ; i
-                db  63h ; c
-                db  20h
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  65h ; e
-                db  6Eh ; n
-                db  67h ; g
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  55h ; U
-                db  6Ch ; l
-                db  74h ; t
-                db  69h ; i
-                db  6Dh ; m
-                db  61h ; a
-                db  20h
-                db  56h ; V
-                db  49h ; I
-                db  21h ; !
-                db    0
-                db  44h ; D
-                db  61h ; a
-                db  7Ah ; z
-                db  65h ; e
-                db  64h ; d
-                db  2Ch ; ,
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  65h ; e
-                db  6Dh ; m
-                db  65h ; e
-                db  72h ; r
-                db  67h ; g
-                db  65h ; e
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  61h ; a
-                db  6Ch ; l
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  66h ; f
-                db  69h ; i
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  73h ; s
-                db  65h ; e
-                db  6Ch ; l
-                db  66h ; f
-                db  20h
-                db    0
-                db  73h ; s
-                db  74h ; t
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  6Fh ; o
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  73h ; s
-                db  6Fh ; o
-                db  6Ch ; l
-                db  61h ; a
-                db  74h ; t
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  6Ch ; l
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  2Eh ; .
-                db  20h
-                db  4Eh ; N
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  20h
-                db  6Dh ; m
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db    0
-                db  72h ; r
-                db  75h ; u
-                db  6Eh ; n
-                db  65h ; e
-                db  2Dh ; -
-                db  73h ; s
-                db  74h ; t
-                db  72h ; r
-                db  75h ; u
-                db  63h ; c
-                db  6Bh ; k
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  74h ; t
-                db  61h ; a
-                db  72h ; r
-                db  2Ch ; ,
-                db  20h
-                db  73h ; s
-                db  68h ; h
-                db  72h ; r
-                db  6Fh ; o
-                db  75h ; u
-                db  64h ; d
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Fh ; o
-                db  6Eh ; n
-                db  6Ch ; l
-                db  69h ; i
-                db  74h ; t
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  67h ; g
-                db  2Eh ; .
-                db    0
-                db  41h ; A
-                db  74h ; t
-                db  20h
-                db  66h ; f
-                db  69h ; i
-                db  72h ; r
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  6Ch ; l
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  68h ; h
-                db  75h ; u
-                db  6Eh ; n
-                db  64h ; d
-                db  72h ; r
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  76h ; v
-                db  6Fh ; o
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db    0
-                db  72h ; r
-                db  61h ; a
-                db  69h ; i
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  20h
-                db  73h ; s
-                db  6Ch ; l
-                db  6Fh ; o
-                db  77h ; w
-                db  2Ch ; ,
-                db  20h
-                db  64h ; d
-                db  65h ; e
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  6Ch ; l
-                db  69h ; i
-                db  6Bh ; k
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  6Fh ; o
-                db  6Eh ; n
-                db  67h ; g
-                db  2Ch ; ,
-                db  20h
-                db  64h ; d
-                db  72h ; r
-                db  61h ; a
-                db  77h ; w
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  63h ; c
-                db  6Ch ; l
-                db  6Fh ; o
-                db  73h ; s
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db    0
-                db  63h ; c
-                db  6Ch ; l
-                db  6Fh ; o
-                db  73h ; s
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  77h ; w
-                db  69h ; i
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  65h ; e
-                db  61h ; a
-                db  63h ; c
-                db  68h ; h
-                db  20h
-                db  70h ; p
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Dh ; m
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  2Eh ; .
-                db  20h
-                db  59h ; Y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  65h ; e
-                db  69h ; i
-                db  7Ah ; z
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db    0
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  75h ; u
-                db  72h ; r
-                db  67h ; g
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  72h ; r
-                db  75h ; u
-                db  6Eh ; n
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db    0
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  62h ; b
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  76h ; v
-                db  65h ; e
-                db  20h
-                db  6Eh ; n
-                db  6Fh ; o
-                db  20h
-                db  70h ; p
-                db  6Ch ; l
-                db  61h ; a
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  67h ; g
-                db  6Fh ; o
-                db  2Eh ; .
-                db    0
-                db  42h ; B
-                db  65h ; e
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  63h ; c
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  66h ; f
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  61h ; a
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  6Fh ; o
-                db  74h ; t
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  72h ; r
-                db  65h ; e
-                db  61h ; a
-                db  74h ; t
-                db  75h ; u
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db    0
-                db  77h ; w
-                db  68h ; h
-                db  6Fh ; o
-                db  20h
-                db  73h ; s
-                db  75h ; u
-                db  72h ; r
-                db  72h ; r
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  2Ch ; ,
-                db  20h
-                db  73h ; s
-                db  63h ; c
-                db  61h ; a
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  63h ; c
-                db  6Ch ; l
-                db  61h ; a
-                db  77h ; w
-                db  73h ; s
-                db  20h
-                db  67h ; g
-                db  72h ; r
-                db  61h ; a
-                db  73h ; s
-                db  70h ; p
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  62h ; b
-                db  6Fh ; o
-                db  64h ; d
-                db  79h ; y
-                db  2Eh ; .
-                db    0
-                db  57h ; W
-                db  69h ; i
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  75h ; u
-                db  6Eh ; n
-                db  65h ; e
-                db  61h ; a
-                db  72h ; r
-                db  74h ; t
-                db  68h ; h
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  72h ; r
-                db  65h ; e
-                db  6Eh ; n
-                db  67h ; g
-                db  74h ; t
-                db  68h ; h
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Eh ; n
-                db  73h ; s
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  73h ; s
-                db  20h
-                db  62h ; b
-                db  69h ; i
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  74h ; t
-                db  61h ; a
-                db  72h ; r
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  21h ; !
-                db    0
-                db  4Bh ; K
-                db  6Eh ; n
-                db  65h ; e
-                db  65h ; e
-                db  6Ch ; l
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  68h ; h
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  73h ; s
-                db  77h ; w
-                db  61h ; a
-                db  79h ; y
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  61h ; a
-                db  74h ; t
-                db  65h ; e
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db    0
-                db  77h ; w
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  6Eh ; n
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  6Dh ; m
-                db  61h ; a
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  65h ; e
-                db  70h ; p
-                db  73h ; s
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  77h ; w
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  2Eh ; .
-                db    0
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Ch ; l
-                db  65h ; e
-                db  61h ; a
-                db  64h ; d
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  75h ; u
-                db  6Eh ; n
-                db  77h ; w
-                db  72h ; r
-                db  61h ; a
-                db  70h ; p
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  20h
-                db  76h ; v
-                db  65h ; e
-                db  6Ch ; l
-                db  76h ; v
-                db  65h ; e
-                db  74h ; t
-                db  20h
-                db  63h ; c
-                db  6Fh ; o
-                db  76h ; v
-                db  65h ; e
-                db  72h ; r
-                db  65h ; e
-                db  64h ; d
-                db  2Ch ; ,
-                db  20h
-                db  62h ; b
-                db  72h ; r
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  2Dh ; -
-                db  62h ; b
-                db  6Fh ; o
-                db  75h ; u
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db    0
-                db  62h ; b
-                db  6Fh ; o
-                db  6Fh ; o
-                db  6Bh ; k
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  63h ; c
-                db  69h ; i
-                db  74h ; t
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  69h ; i
-                db  74h ; t
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  61h ; a
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  6Dh ; m
-                db  61h ; a
-                db  6Ch ; l
-                db  2Ch ; ,
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  69h ; i
-                db  6Ch ; l
-                db  74h ; t
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  6Eh ; n
-                db  67h ; g
-                db  75h ; u
-                db  65h ; e
-                db  2Eh ; .
-                db    0
-                db  53h ; S
-                db  68h ; h
-                db  6Fh ; o
-                db  75h ; u
-                db  74h ; t
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  6Ah ; j
-                db  65h ; e
-                db  65h ; e
-                db  72h ; r
-                db  73h ; s
-                db  20h
-                db  65h ; e
-                db  78h ; x
-                db  70h ; p
-                db  6Ch ; l
-                db  6Fh ; o
-                db  64h ; d
-                db  65h ; e
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Dh ; m
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db    0
-                db  73h ; s
-                db  6Ch ; l
-                db  61h ; a
-                db  6Dh ; m
-                db  73h ; s
-                db  20h
-                db  73h ; s
-                db  68h ; h
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  62h ; b
-                db  6Fh ; o
-                db  6Fh ; o
-                db  6Bh ; k
-                db  2Eh ; .
-                db  20h
-                db  49h ; I
-                db  6Eh ; n
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  20h
-                db  6Dh ; m
-                db  61h ; a
-                db  6Ch ; l
-                db  69h ; i
-                db  67h ; g
-                db  6Eh ; n
-                db  61h ; a
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  64h ; d
-                db  61h ; a
-                db  67h ; g
-                db  67h ; g
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db    0
-                db  64h ; d
-                db  72h ; r
-                db  69h ; i
-                db  70h ; p
-                db  73h ; s
-                db  20h
-                db  77h ; w
-                db  69h ; i
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Fh ; o
-                db  6Eh ; n
-                db  6Ch ; l
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  2Eh ; .
-                db    0
-                db  59h ; Y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  63h ; c
-                db  6Ch ; l
-                db  6Fh ; o
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  65h ; e
-                db  79h ; y
-                db  65h ; e
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  41h ; A
-                db  20h
-                db  64h ; d
-                db  79h ; y
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  73h ; s
-                db  63h ; c
-                db  72h ; r
-                db  65h ; e
-                db  61h ; a
-                db  6Dh ; m
-                db  2Ch ; ,
-                db  20h
-                db  63h ; c
-                db  65h ; e
-                db  72h ; r
-                db  74h ; t
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  6Fh ; o
-                db  77h ; w
-                db  6Eh ; n
-                db  2Ch ; ,
-                db  20h
-                db    0
-                db  63h ; c
-                db  75h ; u
-                db  72h ; r
-                db  64h ; d
-                db  6Ch ; l
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  69h ; i
-                db  72h ; r
-                db  2Eh ; .
-                db    0
-                db  43h ; C
-                db  61h ; a
-                db  74h ; t
-                db  63h ; c
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  73h ; s
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  64h ; d
-                db  61h ; a
-                db  67h ; g
-                db  67h ; g
-                db  65h ; e
-                db  72h ; r
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  20h
-                db  73h ; s
-                db  63h ; c
-                db  72h ; r
-                db  65h ; e
-                db  61h ; a
-                db  6Dh ; m
-                db  2Ch ; ,
-                db  20h
-                db  44h ; D
-                db  65h ; e
-                db  61h ; a
-                db  74h ; t
-                db  68h ; h
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db    0
-                db  50h ; P
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  65h ; e
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Eh ; n
-                db  69h ; i
-                db  75h ; u
-                db  6Dh ; m
-                db  2Eh ; .
-                db  20h
-                db  53h ; S
-                db  68h ; h
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Bh ; k
-                db  73h ; s
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  72h ; r
-                db  61h ; a
-                db  67h ; g
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  72h ; r
-                db  6Fh ; o
-                db  72h ; r
-                db  2Eh ; .
-                db    0
-                db  46h ; F
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  65h ; e
-                db  76h ; v
-                db  69h ; i
-                db  74h ; t
-                db  61h ; a
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  69h ; i
-                db  6Dh ; m
-                db  70h ; p
-                db  6Fh ; o
-                db  73h ; s
-                db  73h ; s
-                db  69h ; i
-                db  62h ; b
-                db  69h ; i
-                db  6Ch ; l
-                db  69h ; i
-                db  74h ; t
-                db  79h ; y
-                db  20h
-                db  65h ; e
-                db  6Dh ; m
-                db  65h ; e
-                db  72h ; r
-                db  67h ; g
-                db  65h ; e
-                db  73h ; s
-                db  2Eh ; .
-                db    0
-                db  59h ; Y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  74h ; t
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  2Eh ; .
-                db    0
-                db  53h ; S
-                db  69h ; i
-                db  6Ch ; l
-                db  65h ; e
-                db  6Eh ; n
-                db  74h ; t
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  20h
-                db  66h ; f
-                db  69h ; i
-                db  6Ch ; l
-                db  6Ch ; l
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  64h ; d
-                db  61h ; a
-                db  72h ; r
-                db  6Bh ; k
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  77h ; w
-                db  6Fh ; o
-                db  6Fh ; o
-                db  64h ; d
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db    0
-                db  63h ; c
-                db  6Ch ; l
-                db  61h ; a
-                db  63h ; c
-                db  6Bh ; k
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  61h ; a
-                db  20h
-                db  63h ; c
-                db  72h ; r
-                db  6Fh ; o
-                db  73h ; s
-                db  73h ; s
-                db  62h ; b
-                db  6Fh ; o
-                db  77h ; w
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  20h
-                db  76h ; v
-                db  69h ; i
-                db  6Fh ; o
-                db  6Ch ; l
-                db  65h ; e
-                db  74h ; t
-                db  2Dh ; -
-                db  20h
-                db  66h ; f
-                db  6Ch ; l
-                db  65h ; e
-                db  74h ; t
-                db  63h ; c
-                db  68h ; h
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  72h ; r
-                db  6Fh ; o
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db  62h ; b
-                db  6Ch ; l
-                db  6Fh ; o
-                db  6Fh ; o
-                db  6Dh ; m
-                db  73h ; s
-                db  20h
-                db    0
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  62h ; b
-                db  61h ; a
-                db  72h ; r
-                db  72h ; r
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  65h ; e
-                db  68h ; h
-                db  65h ; e
-                db  61h ; a
-                db  64h ; d
-                db  2Eh ; .
-                db    0
-                db  46h ; F
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  61h ; a
-                db  63h ; c
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  76h ; v
-                db  61h ; a
-                db  75h ; u
-                db  6Ch ; l
-                db  74h ; t
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  61h ; a
-                db  20h
-                db  6Eh ; n
-                db  65h ; e
-                db  77h ; w
-                db  62h ; b
-                db  6Fh ; o
-                db  72h ; r
-                db  6Eh ; n
-                db  20h
-                db  6Dh ; m
-                db  6Fh ; o
-                db  6Fh ; o
-                db  6Eh ; n
-                db  67h ; g
-                db  61h ; a
-                db  74h ; t
-                db  65h ; e
-                db  2Ch ; ,
-                db  20h
-                db  77h ; w
-                db  68h ; h
-                db  69h ; i
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  20h
-                db    0
-                db  72h ; r
-                db  61h ; a
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  71h ; q
-                db  75h ; u
-                db  61h ; a
-                db  72h ; r
-                db  72h ; r
-                db  65h ; e
-                db  6Ch ; l
-                db  73h ; s
-                db  20h
-                db  68h ; h
-                db  6Fh ; o
-                db  6Ch ; l
-                db  64h ; d
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  66h ; f
-                db  75h ; u
-                db  72h ; r
-                db  69h ; i
-                db  6Fh ; o
-                db  75h ; u
-                db  73h ; s
-                db  20h
-                db  6Dh ; m
-                db  6Fh ; o
-                db  62h ; b
-                db  20h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  62h ; b
-                db  61h ; a
-                db  79h ; y
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db    0
-                db  6Bh ; k
-                db  6Eh ; n
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  20h
-                db  44h ; D
-                db  75h ; u
-                db  70h ; p
-                db  72h ; r
-                db  65h ; e
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  73h ; s
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  66h ; f
-                db  6Ch ; l
-                db  61h ; a
-                db  73h ; s
-                db  68h ; h
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  74h ; t
-                db  77h ; w
-                db  69h ; i
-                db  63h ; c
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db    0
-                db  64h ; d
-                db  61h ; a
-                db  72h ; r
-                db  6Bh ; k
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  73h ; s
-                db  2Ch ; ,
-                db  20h
-                db  73h ; s
-                db  6Ch ; l
-                db  69h ; i
-                db  63h ; c
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  61h ; a
-                db  77h ; w
-                db  61h ; a
-                db  79h ; y
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db  62h ; b
-                db  6Fh ; o
-                db  6Eh ; n
-                db  64h ; d
-                db  73h ; s
-                db  21h ; !
-                db    0
-                db  22h ; "
-                db  51h ; Q
-                db  75h ; u
-                db  69h ; i
-                db  63h ; c
-                db  6Bh ; k
-                db  6Ch ; l
-                db  79h ; y
-                db  2Ch ; ,
-                db  20h
-                db  6Fh ; o
-                db  6Ch ; l
-                db  64h ; d
-                db  20h
-                db  66h ; f
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  6Eh ; n
-                db  64h ; d
-                db  21h ; !
-                db  20h
-                db  54h ; T
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  61h ; a
-                db  74h ; t
-                db  65h ; e
-                db  21h ; !
-                db  25h ; %
-                db  63h ; c
-                db  20h
-                db  41h ; A
-                db  63h ; c
-                db  63h ; c
-                db  6Fh ; o
-                db  6Dh ; m
-                db  70h ; p
-                db  61h ; a
-                db  6Eh ; n
-                db  69h ; i
-                db  65h ; e
-                db  64h ; d
-                db  20h
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db    0
-                db  73h ; s
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  73h ; s
-                db  6Dh ; m
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  53h ; S
-                db  68h ; h
-                db  61h ; a
-                db  6Dh ; m
-                db  69h ; i
-                db  6Eh ; n
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  61h ; a
-                db  20h
-                db  67h ; g
-                db  72h ; r
-                db  69h ; i
-                db  6Eh ; n
-                db  6Eh ; n
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  2Ch ; ,
-                db  20h
-                db  63h ; c
-                db  72h ; r
-                db  6Fh ; o
-                db  73h ; s
-                db  73h ; s
-                db  62h ; b
-                db  6Fh ; o
-                db  77h ; w
-                db  2Dh ; -
-                db  77h ; w
-                db  69h ; i
-                db  65h ; e
-                db  6Ch ; l
-                db  64h ; d
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db    0
-                db  49h ; I
-                db  6Fh ; o
-                db  6Ch ; l
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  42h ; B
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  2Ch ; ,
-                db  20h
-                db  44h ; D
-                db  75h ; u
-                db  70h ; p
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  72h ; r
-                db  75h ; u
-                db  73h ; s
-                db  74h ; t
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  20h
-                db  73h ; s
-                db  70h ; p
-                db  61h ; a
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  73h ; s
-                db  77h ; w
-                db  6Fh ; o
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  72h ; r
-                db  20h
-                db    0
-                db  68h ; h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  2Eh ; .
-                db    0
-                db  53h ; S
-                db  6Eh ; n
-                db  61h ; a
-                db  74h ; t
-                db  63h ; c
-                db  68h ; h
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  66h ; f
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  69h ; i
-                db  65h ; e
-                db  73h ; s
-                db  74h ; t
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  62h ; b
-                db  6Fh ; o
-                db  6Fh ; o
-                db  6Bh ; k
-                db  2Ch ; ,
-                db  20h
-                db  49h ; I
-                db  6Fh ; o
-                db  6Ch ; l
-                db  6Fh ; o
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db    0
-                db  69h ; i
-                db  6Eh ; n
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  72h ; r
-                db  65h ; e
-                db  64h ; d
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  73h ; s
-                db  20h
-                db  77h ; w
-                db  69h ; i
-                db  74h ; t
-                db  68h ; h
-                db  20h
-                db  53h ; S
-                db  68h ; h
-                db  61h ; a
-                db  6Dh ; m
-                db  69h ; i
-                db  6Eh ; n
-                db  6Fh ; o
-                db  20h
-                db  61h ; a
-                db  74h ; t
-                db  20h
-                db  68h ; h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  68h ; h
-                db  65h ; e
-                db  65h ; e
-                db  6Ch ; l
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  68h ; h
-                db  6Fh ; o
-                db  77h ; w
-                db  6Ch ; l
-                db  69h ; i
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  72h ; r
-                db  6Fh ; o
-                db  6Eh ; n
-                db  67h ; g
-                db  20h
-                db    0
-                db  73h ; s
-                db  75h ; u
-                db  72h ; r
-                db  67h ; g
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  66h ; f
-                db  6Fh ; o
-                db  72h ; r
-                db  77h ; w
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  2Ch ; ,
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  6Fh ; o
-                db  6Eh ; n
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  72h ; r
-                db  69h ; i
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  6Dh ; m
-                db  69h ; i
-                db  6Eh ; n
-                db  64h ; d
-                db  2Eh ; .
-                db    0
-                db  54h ; T
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  61h ; a
-                db  74h ; t
-                db  65h ; e
-                db  20h
-                db  77h ; w
-                db  61h ; a
-                db  6Eh ; n
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  72h ; r
-                db  61h ; a
-                db  70h ; p
-                db  69h ; i
-                db  64h ; d
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  61h ; a
-                db  73h ; s
-                db  20h
-                db  79h ; y
-                db  6Fh ; o
-                db  75h ; u
-                db  20h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  20h
-                db  44h ; D
-                db  75h ; u
-                db  70h ; p
-                db  72h ; r
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  72h ; r
-                db  67h ; g
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  72h ; r
-                db  6Fh ; o
-                db  75h ; u
-                db  67h ; g
-                db  68h ; h
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db    0
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  62h ; b
-                db  75h ; u
-                db  74h ; t
-                db  20h
-                db  6Eh ; n
-                db  6Fh ; o
-                db  74h ; t
-                db  20h
-                db  72h ; r
-                db  61h ; a
-                db  70h ; p
-                db  69h ; i
-                db  64h ; d
-                db  6Ch ; l
-                db  79h ; y
-                db  20h
-                db  65h ; e
-                db  6Eh ; n
-                db  6Fh ; o
-                db  75h ; u
-                db  67h ; g
-                db  68h ; h
-                db  2Eh ; .
-                db    0
-                db  46h ; F
-                db  72h ; r
-                db  6Fh ; o
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  6Dh ; m
-                db  6Fh ; o
-                db  62h ; b
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  76h ; v
-                db  61h ; a
-                db  6Eh ; n
-                db  67h ; g
-                db  75h ; u
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  2Ch ; ,
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  72h ; r
-                db  65h ; e
-                db  65h ; e
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  62h ; b
-                db  6Fh ; o
-                db  6Dh ; m
-                db  69h ; i
-                db  6Eh ; n
-                db  61h ; a
-                db  74h ; t
-                db  69h ; i
-                db  6Fh ; o
-                db  6Eh ; n
-                db  73h ; s
-                db  20h
-                db    0
-                db  73h ; s
-                db  63h ; c
-                db  72h ; r
-                db  61h ; a
-                db  6Dh ; m
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  77h ; w
-                db  61h ; a
-                db  72h ; r
-                db  64h ; d
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  67h ; g
-                db  61h ; a
-                db  74h ; t
-                db  65h ; e
-                db  2Eh ; .
-                db  20h
-                db  44h ; D
-                db  72h ; r
-                db  69h ; i
-                db  76h ; v
-                db  65h ; e
-                db  6Eh ; n
-                db  20h
-                db  62h ; b
-                db  79h ; y
-                db  20h
-                db  66h ; f
-                db  75h ; u
-                db  72h ; r
-                db  79h ; y
-                db  2Ch ; ,
-                db  20h
-                db    0
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  63h ; c
-                db  72h ; r
-                db  65h ; e
-                db  61h ; a
-                db  74h ; t
-                db  75h ; u
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  68h ; h
-                db  75h ; u
-                db  72h ; r
-                db  6Ch ; l
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  69h ; i
-                db  72h ; r
-                db  20h
-                db  62h ; b
-                db  6Fh ; o
-                db  64h ; d
-                db  69h ; i
-                db  65h ; e
-                db  73h ; s
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db    0
-                db  70h ; p
-                db  6Fh ; o
-                db  72h ; r
-                db  74h ; t
-                db  61h ; a
-                db  6Ch ; l
-                db  27h ; '
-                db  73h ; s
-                db  20h
-                db  6Ch ; l
-                db  61h ; a
-                db  73h ; s
-                db  74h ; t
-                db  20h
-                db  68h ; h
-                db  61h ; a
-                db  6Eh ; n
-                db  64h ; d
-                db  73h ; s
-                db  70h ; p
-                db  61h ; a
-                db  6Eh ; n
-                db  20h
-                db  6Fh ; o
-                db  66h ; f
-                db  20h
-                db  6Ch ; l
-                db  69h ; i
-                db  67h ; g
-                db  68h ; h
-                db  74h ; t
-                db  21h ; !
-                db    0
-                db  41h ; A
-                db  20h
-                db  67h ; g
-                db  61h ; a
-                db  6Dh ; m
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  73h ; s
-                db  20h
-                db  61h ; a
-                db  6Ch ; l
-                db  72h ; r
-                db  65h ; e
-                db  61h ; a
-                db  64h ; d
-                db  79h ; y
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  20h
-                db  70h ; p
-                db  72h ; r
-                db  6Fh ; o
-                db  67h ; g
-                db  72h ; r
-                db  65h ; e
-                db  73h ; s
-                db  73h ; s
-                db  2Eh ; .
-                db  20h
-                db  20h
-                db  50h ; P
-                db  6Ch ; l
-                db  65h ; e
-                db  61h ; a
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db  72h ; r
-                db  75h ; u
-                db  6Eh ; n
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  73h ; s
-                db  74h ; t
-                db  61h ; a
-                db  6Ch ; l
-                db  6Ch ; l
-                db  20h
-                db    0
-                db  70h ; p
-                db  72h ; r
-                db  6Fh ; o
-                db  67h ; g
-                db  72h ; r
-                db  61h ; a
-                db  6Dh ; m
-                db  20h
-                db  74h ; t
-                db  6Fh ; o
-                db  20h
-                db  63h ; c
-                db  72h ; r
-                db  65h ; e
-                db  61h ; a
-                db  74h ; t
-                db  65h ; e
-                db  20h
-                db  61h ; a
-                db  20h
-                db  6Eh ; n
-                db  65h ; e
-                db  77h ; w
-                db  20h
-                db  63h ; c
-                db  68h ; h
-                db  61h ; a
-                db  72h ; r
-                db  61h ; a
-                db  63h ; c
-                db  74h ; t
-                db  65h ; e
-                db  72h ; r
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  73h ; s
-                db  6Bh ; k
-                db  2Eh ; .
-                db    0
-                db  50h ; P
-                db  6Ch ; l
-                db  65h ; e
-                db  61h ; a
-                db  73h ; s
-                db  65h ; e
-                db  20h
-                db  69h ; i
-                db  6Eh ; n
-                db  73h ; s
-                db  65h ; e
-                db  72h ; r
-                db  74h ; t
-                db  20h
-                db  74h ; t
-                db  68h ; h
-                db  65h ; e
-                db  20h
-                db    0
-                db  20h
-                db  64h ; d
-                db  69h ; i
-                db  73h ; s
-                db  6Bh ; k
-                db  2Eh ; .
-                db    0
-                db  3Ch ; <
-                db  3Ch ; <
-                db  20h
-                db  50h ; P
-                db  61h ; a
-                db  73h ; s
-                db  73h ; s
-                db  61h ; a
-                db  67h ; g
-                db  65h ; e
-                db  20h
-                db  75h ; u
-                db  6Eh ; n
-                db  64h ; d
-                db  65h ; e
-                db  66h ; f
-                db  69h ; i
-                db  6Eh ; n
-                db  65h ; e
-                db  64h ; d
-                db  21h ; !
-                db  20h
-                db  3Eh ; >
-                db  3Eh ; >
-                db    0
+aUponYourWorldF db 'Upon your world, five seasons have passed since your ',0
+                                        ; DATA XREF: sub_19A0B+2A4↑o
+aTriumphantHome db 'triumphant homecoming from Britannia.',0
+                                        ; DATA XREF: sub_19A0B+2B1↑o
+aYouHaveTradedT db 'You have traded the Avatar',27h,'s life of peril and adventure ',0
+                                        ; DATA XREF: sub_19A0B+2FF↑o
+aForTheLonelySe db 'for the lonely serenity of a world at peace. But ',0
+                                        ; DATA XREF: sub_19A0B+30C↑o
+aTelevisionSupe db 'television supermen cannot take the place of friends ',0
+                                        ; DATA XREF: sub_19A0B+319↑o
+aWhoDiedAtYourS db 'who died at your side!',0
+                                        ; DATA XREF: sub_19A0B+326↑o
+aOutsideAChillW db 'Outside, a chill wind rises...',0
+                                        ; DATA XREF: sub_19A0B+374↑o
+aAndInMomentsTh db '...and in moments, the storm is upon you.',0
+                                        ; DATA XREF: sub_19A0B+3C2↑o
+aTonguesOfLight db 'Tongues of lightning lash the sky, conducting an unceasing ',0
+                                        ; DATA XREF: sub_19A0B+410↑o
+aCrescendoOfThu db 'crescendo of thunder....',0
+                                        ; DATA XREF: sub_19A0B+41D↑o
+aInACataclysmOf db 'In a cataclysm of sound and light, a bolt of searing ',0
+                                        ; DATA XREF: sub_19A0B+46B↑o
+aBlueFireStrike db 'blue fire strikes the earth!',0
+                                        ; DATA XREF: sub_19A0B+478↑o
+aLightningAmong db 'Lightning among the stones!',0Ah
+                                        ; DATA XREF: sub_19A0B+4C6↑o
+                db 'Is this a sign from ',0
+aDistantBritann db 'distant Britannia?',0 ; DATA XREF: sub_19A0B+4D3↑o
+aYouBoltFromYou db 'You bolt from your house, stumbling, running blind in the',0
+                                        ; DATA XREF: sub_19A0B+521↑o
+aStormIntoTheFo db ' storm. Into the forest, down the path, through the ',0
+                                        ; DATA XREF: sub_19A0B+52E↑o
+aRainToTheStone db 'rain... to the stones.',0
+                                        ; DATA XREF: sub_19A0B+53B↑o
+aNearTheStonesT db 'Near the stones, the smell of damp, blasted earth hangs ',0
+                                        ; DATA XREF: sub_19A0B+589↑o
+aInTheAirInAFro db 'in the air. In a frozen moment of lightning-',0
+                                        ; DATA XREF: sub_19A0B+596↑o
+aStruckDaylight db 'struck daylight, you glimpse a tiny obsidian stone in the ',0
+                                        ; DATA XREF: sub_19A0B+5A3↑o
+aMidstOfTheCirc db 'midst of the circle!',0 ; DATA XREF: sub_19A0B+5B0↑o
+aWonderingYouPi db 'Wondering, you pick it up....',0
+                                        ; DATA XREF: sub_19A0B+5FE↑o
+aAndFromTheHear db '...and from the heart of the stones, a softly glowing door ',0
+                                        ; DATA XREF: sub_19A0B+64C↑o
+aAscendsInSilen db 'ascends in silence!',0 ; DATA XREF: sub_19A0B+659↑o
+aExultantMemori db 'Exultant memories wash over you as you clutch the stone. ',0
+                                        ; DATA XREF: sub_19A0B+6A7↑o
+aWhenLastYouSaw db 'When last you saw an orb such as this, it was cast down ',0
+                                        ; DATA XREF: sub_19A0B+6B4↑o
+aByLordBritishT db 'by Lord British to banish the tyrant Blackthorn!',0
+                                        ; DATA XREF: sub_19A0B+6C1↑o
+aButYourJoySoon db 'But your joy soon gives way to apprehension.',0Ah
+                                        ; DATA XREF: sub_19A0B+70F↑o
+                db 0Ah,0
+aTheGateToBrita db 'The gate to Britannia has always been blue...',0Ah
+                                        ; DATA XREF: sub_19A0B+71C↑o
+                db 'as ',0
+aBlueAsTheMorni db 'blue as the morning sky.',0
+                                        ; DATA XREF: sub_19A0B+729↑o
+aAbruptlyThePor db 'Abruptly, the portal quivers and begins to sink ',0
+                                        ; DATA XREF: sub_19A0B+777↑o
+aIntoTheGroundI db 'into the ground.  Its crimson light wanes!',0
+                                        ; DATA XREF: sub_19A0B+784↑o
+aDesperationMak db 'Desperation makes the decision an easy one.',0
+                                        ; DATA XREF: sub_19A0B+7D2↑o
+aWelcomeOSeeker db '"Welcome, O Seeker!%c',0
+                                        ; DATA XREF: sub_19A0B+824↑o
+aALonelyStrollA db 'A lonely stroll along an unfamiliar forest path brings you ',0
+                                        ; DATA XREF: sub_19A0B+872↑o
+aUponACuriousGy db 'upon a curious gypsy wagon, its exotic colors dappled in the ',0
+                                        ; DATA XREF: sub_19A0B+87F↑o
+aSummerShade    db 'summer shade.',0    ; DATA XREF: sub_19A0B+88C↑o
+aAWomanSVoiceRi db 'A woman',27h,'s voice rings out with friendship, beckoning you in'
+                                        ; DATA XREF: sub_19A0B+8DA↑o
+                db 'to ',0
+aAcrossTheWagon db 'across the wagon',27h,'s threshold and, as it happens, ',0
+                                        ; DATA XREF: sub_19A0B+8E7↑o
+aIntoAnotherLif db 'into another life....',0
+                                        ; DATA XREF: sub_19A0B+8F4↑o
+aAtLastThouHast db '"At last thou hast come to fulfill thy destiny,%c ',0
+                                        ; DATA XREF: sub_19A0B+946↑o
+aTheGypsySaysSh db 'the gypsy says. She smiles, as if in great relief.',0Ah
+                                        ; DATA XREF: sub_19A0B+953↑o
+                db 0Ah,0
+aSitBeforeMeNow db '"Sit before me now, and I shall pour the light of Virtue ',0
+                                        ; DATA XREF: sub_19A0B+960↑o
+aIntoTheShadows db 'into the shadows of thy future.%c',0
+                                        ; DATA XREF: sub_19A0B+971↑o
+aOnAWoodenTable db 'On a wooden table eight bottles stand, a rainbow of bubbling ',0
+                                        ; DATA XREF: sub_19A0B+9BF↑o
+aLiquids        db 'liquids.',0Ah       ; DATA XREF: sub_19A0B+9CC↑o
+                db 0Ah,0
+aBeholdTheVirtu db '"Behold the Virtues of the Avatar,%c the woman ',0
+                                        ; DATA XREF: sub_19A0B+9DD↑o
+aSaysLetUsBegin db 'says. "Let us begin the casting!%c',0
+                                        ; DATA XREF: sub_19A0B+9EE↑o
+aEntrustedToDel db '"Entrusted to deliver an uncounted purse of gold, thou dost ',0
+                                        ; DATA XREF: sub_19A0B+A3C↑o
+aMeetAPoorBegga db 'meet a poor beggar. Dost thou A) deliver the gold Honestly, ',0
+                                        ; DATA XREF: sub_19A0B+A49↑o
+aKnowingTheTrus db 'knowing the trust in thee was well-placed; or B) show Compassion '
+                                        ; DATA XREF: sub_19A0B+A56↑o
+                db 'and ',0
+aGiveTheBeggarA db 'give the beggar a coin, knowing it won',27h,'t be missed?%c',0
+                                        ; DATA XREF: sub_19A0B+A67↑o
+aThouHasBeenPro db '"Thou has been prohibited by thy absent Lord from joining ',0
+                                        ; DATA XREF: sub_19A0B+AB5↑o
+aThyFriendsInAC db 'thy friends in a close-pitched battle. Dost thou A) refrain, ',0
+                                        ; DATA XREF: sub_19A0B+AC2↑o
+aSoThouMayHones db 'so thou may Honestly claim obedience; or B) show Valor and aid ',0
+                                        ; DATA XREF: sub_19A0B+ACF↑o
+aThyComradesKno db 'thy comrades, knowing thou may deny it later?%c',0
+                                        ; DATA XREF: sub_19A0B+AE0↑o
+aAMerchantOwesT db '"A merchant owes thy friend money, now long past due. Thou ',0
+                                        ; DATA XREF: sub_19A0B+B2E↑o
+aDostSeeTheSame db 'dost see the same merchant drop a purse of gold. Dost thou ',0
+                                        ; DATA XREF: sub_19A0B+B3B↑o
+aAHonestlyRetur db 'A) Honestly return the purse intact; or B) Justly give thy ',0
+                                        ; DATA XREF: sub_19A0B+B48↑o
+aFriendAPortion db 'friend a portion of the gold first?%c',0
+                                        ; DATA XREF: sub_19A0B+B59↑o
+aTheeAndThyFrie db '"Thee and thy friend are valiant but penniless warriors. Thou ',0
+                                        ; DATA XREF: sub_19A0B+BA7↑o
+aBothSetForthTo db 'both set forth to slay a mighty dragon. Thy friend dost ',0
+                                        ; DATA XREF: sub_19A0B+BB4↑o
+aThinkHeSlewItB db 'think he slew it, but the killing blow was thine. Dost thou ',0
+                                        ; DATA XREF: sub_19A0B+BC1↑o
+aAHonestlyClaim db 'A) Honestly claim the reward; or B) Sacrifice the gold for the ',0
+                                        ; DATA XREF: sub_19A0B+BCE↑o
+aSakeOfThyFrien db 'sake of thy friendship?%c',0
+                                        ; DATA XREF: sub_19A0B+BDF↑o
+aThouArtSwornTo db '"Thou art sworn to protect thy Lord at any cost, yet thou knowest'
+                                        ; DATA XREF: sub_19A0B+C2D↑o
+                db ' ',0
+aHeHathCommitte db 'he hath committed a crime. Authorities ask thee of the affair. ',0
+                                        ; DATA XREF: sub_19A0B+C3A↑o
+aDostThouABreak db 'Dost thou A) Break thine oath by Honestly speaking; or B) uphold '
+                                        ; DATA XREF: sub_19A0B+C47↑o
+                db 0
+aHonorBySilentl db 'Honor by silently keeping thine oath?%c',0
+                                        ; DATA XREF: sub_19A0B+C58↑o
+aThyFriendDothS db '"Thy friend doth seek admittance to thy spiritual order. Thou ',0
+                                        ; DATA XREF: sub_19A0B+CA6↑o
+aArtAskedToVouc db 'art asked to vouch for his purity of spirit, of which thou art ',0
+                                        ; DATA XREF: sub_19A0B+CB3↑o
+aUncertainDostT db 'uncertain. Dost thou A) Honestly express thy doubt; or B) Vouch ',0
+                                        ; DATA XREF: sub_19A0B+CC0↑o
+aForHimHopingFo db 'for him, hoping for his Spiritual improvement?%c',0
+                                        ; DATA XREF: sub_19A0B+CD1↑o
+aThyLordDothMis db '"Thy Lord doth mistakenly believe he slew a dragon. Thou hast ',0
+                                        ; DATA XREF: sub_19A0B+D1F↑o
+aProofThatThyLa db 'proof that thy lance felled the beast. When asked, dost thou ',0
+                                        ; DATA XREF: sub_19A0B+D2C↑o
+aAHonestlyClaim_0 db 'A) Honestly claim the kill; or B) Humbly permit thy Lord his ',0
+                                        ; DATA XREF: sub_19A0B+D39↑o
+aBeliefC        db 'belief?%c',0        ; DATA XREF: sub_19A0B+D4A↑o
+aThouDostManage db '"Thou dost manage to disarm thy mortal enemy in a duel. He is ',0
+                                        ; DATA XREF: sub_19A0B+D98↑o
+aAtThyMercyDost db 'at thy mercy. Dost thou A) Show Compassion by permitting him to ',0
+                                        ; DATA XREF: sub_19A0B+DA5↑o
+aYieldOrBSlayHi db 'yield; or B) Slay him, as expected of a Valiant duelist?%c',0
+                                        ; DATA XREF: sub_19A0B+DB6↑o
+aAfterTwentyYea db '"After twenty years thou hast found the slayer of thy best ',0
+                                        ; DATA XREF: sub_19A0B+E04↑o
+aFriendsTheVill db 'friends. The villain proves to be a man who provides the sole ',0
+                                        ; DATA XREF: sub_19A0B+E11↑o
+aSupportForAYou db 'support for a young girl. Dost thou A) Spare him in Compassion ',0
+                                        ; DATA XREF: sub_19A0B+E1E↑o
+aForTheChildOrB db 'for the child; or B) Slay him in the name of Justice?%c',0
+                                        ; DATA XREF: sub_19A0B+E2F↑o
+aTheeAndThyFrie_0 db '"Thee and thy friends hath been routed and ordered to retreat. ',0
+                                        ; DATA XREF: sub_19A0B+E7D↑o
+aInDefianceOfTh db 'In defiance of thy orders, dost thou A) Stop in Compassion to aid'
+                                        ; DATA XREF: sub_19A0B+E8A↑o
+                db ' ',0
+aAWoundedComrad db 'a wounded comrade; or B) Sacrifice thyself to slow the pursuing ',0
+                                        ; DATA XREF: sub_19A0B+E97↑o
+aEnemySoThatOth db 'enemy so that others might escape?%c',0
+                                        ; DATA XREF: sub_19A0B+EA8↑o
+aThouArtSwornTo_0 db '"Thou art sworn to uphold a Lord who doth participate in the ',0
+                                        ; DATA XREF: sub_19A0B+EF6↑o
+aForbiddenTortu db 'forbidden torture of prisoners. Each night their cries of pain ',0
+                                        ; DATA XREF: sub_19A0B+F03↑o
+aReachTheeDostT db 'reach thee. Dost thou A) Show Compassion by reporting the deeds; '
+                                        ; DATA XREF: sub_19A0B+F10↑o
+                db 0
+aOrBHonorThyOat db 'or B) Honor thy oath and ignore the deeds?%c',0
+                                        ; DATA XREF: sub_19A0B+F21↑o
+aThouHastBeenTa db '"Thou hast been taught to preserve all life as sacred. A man ',0
+                                        ; DATA XREF: sub_19A0B+F6F↑o
+aLiesFatallyStu db 'lies fatally stung by a venomous serpent. He prays for a ',0
+                                        ; DATA XREF: sub_19A0B+F7C↑o
+aMercifulDeathD db 'merciful death. Dost thou A) Show Compassion and end his pain; ',0
+                                        ; DATA XREF: sub_19A0B+F89↑o
+aOrBHeedThySpir db 'or B) heed thy Spiritual beliefs and turn away?%c',0
+                                        ; DATA XREF: sub_19A0B+F9A↑o
+aTheCaptainOfTh db '"The Captain of the King',27h,'s Guard asks that one among thee ',0
+                                        ; DATA XREF: sub_19A0B+FE8↑o
+aVisitAHospital db 'visit a hospital to cheer the children with tales of valiant pers'
+                                        ; DATA XREF: sub_19A0B+FF5↑o
+                db 'onal ',0
+aDeedsDostThouA db 'deeds. Dost thou A) Show thy Compassion and play the braggart; ',0
+                                        ; DATA XREF: sub_19A0B+1002↑o
+aOrBHumblyLetAn db 'or B) Humbly let another go?%c',0
+                                        ; DATA XREF: sub_19A0B+1013↑o
+aThouHastBeenSe db '"Thou hast been sent to secure a needed treaty with a distant ',0
+                                        ; DATA XREF: sub_19A0B+1061↑o
+aLordThyHostIsA db 'Lord. Thy host is agreeable to thy proposal but insults thy ',0
+                                        ; DATA XREF: sub_19A0B+106E↑o
+aCountryAtDinne db 'country at dinner. Dost thou A) Valiantly bear the slurs; or ',0
+                                        ; DATA XREF: sub_19A0B+107B↑o
+aBJustlyRiseAnd db 'B) Justly rise and demand an apology?%c',0
+                                        ; DATA XREF: sub_19A0B+108C↑o
+aABurlyKnightAc db '"A burly knight accosts thee and demands thy food. Dost thou ',0
+                                        ; DATA XREF: sub_19A0B+10DA↑o
+aAValiantlyRefu db 'A) Valiantly refuse and engage the knight, or B) Sacrifice ',0
+                                        ; DATA XREF: sub_19A0B+10E7↑o
+aThyRationsUnto db 'thy rations unto the hungry knight?%c',0
+                                        ; DATA XREF: sub_19A0B+10F8↑o
+aDuringBattleTh db '"During battle thou art ordered to guard thy commander',27h,'s em'
+                                        ; DATA XREF: sub_19A0B+1146↑o
+                db 'pty ',0
+aTentTheBattleG db 'tent. The battle goes poorly and thou dost yearn to aid thy ',0
+                                        ; DATA XREF: sub_19A0B+1153↑o
+aFellowsDostTho db 'fellows. Dost thou A) Valiantly enter the battle; ',0
+                                        ; DATA XREF: sub_19A0B+1160↑o
+aOrBHonorThyPos db 'or B) Honor thy post as guard?%c',0
+                                        ; DATA XREF: sub_19A0B+1171↑o
+aALocalBullyPus db '"A local bully pushes for a fight. Dost thou A) Valiantly ',0
+                                        ; DATA XREF: sub_19A0B+11BF↑o
+aTrounceTheRogu db 'trounce the rogue; or B) Decline, knowing in thy Spirit that ',0
+                                        ; DATA XREF: sub_19A0B+11CC↑o
+aNoLastingGoodW db 'no lasting good will come of it?%c',0
+                                        ; DATA XREF: sub_19A0B+11DD↑o
+aAlthoughASimpl db '"Although a simple fisherman, thou art also a skillful swordsman.'
+                                        ; DATA XREF: sub_19A0B+122B↑o
+                db ' Thy ',0
+aLordDostSeekTo db 'Lord dost seek to assemble a peacetime guard. Dost thou A) Answer'
+                                        ; DATA XREF: sub_19A0B+1238↑o
+                db ' ',0
+aTheCallSoThatA db 'the call, so that all may witness thy Valor; or B) Humbly decline'
+                                        ; DATA XREF: sub_19A0B+1245↑o
+                db ' the ',0
+aOfferToJoinThy db 'offer to join thy Lord',27h,'s largely ceremonial knighthood?%c',0
+                                        ; DATA XREF: sub_19A0B+1256↑o
+aDuringAPitched db '"During a pitched battle, thou dost see a fellow desert his ',0
+                                        ; DATA XREF: sub_19A0B+12A4↑o
+aPostEndangerin db 'post, endangering many. As he flees, he is set upon by several en'
+                                        ; DATA XREF: sub_19A0B+12B1↑o
+                db 'emies.',0
+aDostThouAJustl db ' Dost thou A) Justly let him fight alone; or B) Risk the Sacrific'
+                                        ; DATA XREF: sub_19A0B+12BE↑o
+                db 'e ',0
+aOfThineOwnLife db 'of thine own life to aid him?%c',0
+                                        ; DATA XREF: sub_19A0B+12CF↑o
+aThouHastSwornT db '"Thou hast sworn to do thy Lord',27h,'s bidding in all. He covets'
+                                        ; DATA XREF: sub_19A0B+131D↑o
+                db ' ',0
+aAPieceOfLandAn db 'a piece of land and orders its owner removed. Dost thou A) Serve '
+                                        ; DATA XREF: sub_19A0B+132A↑o
+                db 0
+aJusticeRefusin db 'Justice, refusing to act, thus being disgraced; or B) Honor thine'
+                                        ; DATA XREF: sub_19A0B+1337↑o
+                db ' ',0
+aOathAndEvictTh db 'oath and evict the landowner?%c',0
+                                        ; DATA XREF: sub_19A0B+1348↑o
+aThouDostBeliev db '"Thou dost believe that virtue resides in all people. Thou dost s'
+                                        ; DATA XREF: sub_19A0B+1396↑o
+                db 'ee ',0
+aARogueStealFro db 'a rogue steal from thy Lord. Dost thou A) Call him to Justice; or'
+                                        ; DATA XREF: sub_19A0B+13A3↑o
+                db ' B) ',0
+aPersonallyTryT db 'Personally try to sway him back to the Spiritual path of good?%c',0
+                                        ; DATA XREF: sub_19A0B+13B4↑o
+aUnwitnessedTho db '"Unwitnessed, thou hast slain a mighty dragon in defense ',0
+                                        ; DATA XREF: sub_19A0B+1402↑o
+aOfThyLifeAPoor db 'of thy life. A poor warrior claims the offered reward. ',0
+                                        ; DATA XREF: sub_19A0B+140F↑o
+aDostThouAJustl_0 db 'Dost thou A) Justly step forward to claim the bounty; ',0
+                                        ; DATA XREF: sub_19A0B+141C↑o
+aOrBHumblyGoAbo db 'or B) Humbly go about thy life, secure in thy self-esteem?%c',0
+                                        ; DATA XREF: sub_19A0B+142D↑o
+aThouArtABounty db '"Thou art a bounty hunter sworn to return an alleged murderer. ',0
+                                        ; DATA XREF: sub_19A0B+147B↑o
+aAfterHisCaptur db 'After his capture, thou dost come to believe him innocent. Dost ',0
+                                        ; DATA XREF: sub_19A0B+1488↑o
+aThouASacrifice db 'thou A) Sacrifice thy sizable bounty for thy belief; or B) Honor '
+                                        ; DATA XREF: sub_19A0B+1495↑o
+                db 0
+aThineOathToRet db 'thine oath to return him as promised?%c',0
+                                        ; DATA XREF: sub_19A0B+14A6↑o
+aThouHastSpentT db '"Thou hast spent thy life in charitable and righteous work. Thine'
+                                        ; DATA XREF: sub_19A0B+14F4↑o
+                db ' ',0
+aUncleTheInnkee db 'uncle the innkeeper lies ill and asks thee to take over his taver'
+                                        ; DATA XREF: sub_19A0B+1501↑o
+                db 'n. ',0
+aDostThouASacri db 'Dost thou A) Sacrifice thy life of purity to aid thy kin; or B) ',0
+                                        ; DATA XREF: sub_19A0B+150E↑o
+aDeclineAndFoll db 'Decline and follow the call of Spirituality?%c',0
+                                        ; DATA XREF: sub_19A0B+151F↑o
+aThouArtAnElder db '"Thou art an elderly, wealthy merchant. Thy end is near. Dost tho'
+                                        ; DATA XREF: sub_19A0B+156D↑o
+                db 'u ',0
+aASacrificeAllT db 'A) Sacrifice all thy wealth to feed hundreds of starving children'
+                                        ; DATA XREF: sub_19A0B+157A↑o
+                db ', ',0
+aReceivingPubli db 'receiving public adulation; or B) Humbly live out thy life, willi'
+                                        ; DATA XREF: sub_19A0B+1587↑o
+                db 'ng ',0
+aThyFortuneToTh db 'thy fortune to thy heirs?%c',0
+                                        ; DATA XREF: sub_19A0B+1598↑o
+aInThyYouthThou db '"In thy youth thou didst pledge to marry thy sweetheart. Now ',0
+                                        ; DATA XREF: sub_19A0B+15E6↑o
+aThouArtOnASacr db 'thou art on a sacred quest in distant lands. Thy sweetheart ',0
+                                        ; DATA XREF: sub_19A0B+15F3↑o
+aDothAskTheeToK db 'doth ask thee to keep thy vow. Dost thou A) Honor thy pledge to ',0
+                                        ; DATA XREF: sub_19A0B+1600↑o
+aWedOrBFollowTh db 'wed; or B) Follow thy Spiritual crusade?%c',0
+                                        ; DATA XREF: sub_19A0B+1611↑o
+aThoughThouArtB db '"Though thou art but a peasant shepherd, thou art discovered to b'
+                                        ; DATA XREF: sub_19A0B+165F↑o
+                db 'e the ',0
+aSoleDescendant db 'sole descendant of a noble family long thought extinct. ',0
+                                        ; DATA XREF: sub_19A0B+166C↑o
+aDostThouAHonor db 'Dost thou A) Honorably take up the arms of thy ancestors; or ',0
+                                        ; DATA XREF: sub_19A0B+1679↑o
+aBHumblyResumeT db 'B) Humbly resume thy life of simplicity and peace?%c',0
+                                        ; DATA XREF: sub_19A0B+168A↑o
+aThyParentsWish db '"Thy parents wish thee to become an apprentice. Two positions ',0
+                                        ; DATA XREF: sub_19A0B+16D8↑o
+aAreAvailableDo db 'are available. Dost thou A) Become an acolyte in a worthy Spiritu'
+                                        ; DATA XREF: sub_19A0B+16E5↑o
+                db 'al ',0
+aOrderOrBBecome db 'order; or B) Become an assistant to a humble village cobbler?%c',0
+                                        ; DATA XREF: sub_19A0B+16F6↑o
+aThePathOfTheAv db '"The path of the Avatar lies beneath thy feet, worthy %s,%c ',0
+                                        ; DATA XREF: sub_19A0B+174C↑o
+aTheGypsyIntone db 'the gypsy intones. With a mysterious smile, she passes you the fl'
+                                        ; DATA XREF: sub_19A0B+1759↑o
+                db 'ask of shimmering liquids. ',0
+aDrinkOfTheseWa db '"Drink of these waters and go forth among our people, who ',0
+                                        ; DATA XREF: sub_19A0B+1766↑o
+aShallReceiveTh db 'shall receive thee in joy!%c',0
+                                        ; DATA XREF: sub_19A0B+1777↑o
+aAsYouDrinkFrom db 'As you drink from the flask, vertigo overwhelms you. ',0
+                                        ; DATA XREF: sub_19A0B+17C5↑o
+aASoothingMistO db 'A soothing mist obscures the gypsy',27h,'s face, and you sink ',0
+                                        ; DATA XREF: sub_19A0B+17D2↑o
+aWithoutFearInt db 'without fear into an untroubled sleep.',0
+                                        ; DATA XREF: sub_19A0B+17DF↑o
+aYouWakeInADiff db 'You wake in a different time, upon another world',27h,'s shore. ',0
+                                        ; DATA XREF: sub_19A0B+182D↑o
+aThoughTheAvata db 'Though the Avatar',27h,'s quests bring you both triumph and trage'
+                                        ; DATA XREF: sub_19A0B+183A↑o
+                db 'dy, ',0
+aNeverDoYouStra db 'never do you stray from the path of the Eight Virtues.',0
+                                        ; DATA XREF: sub_19A0B+1847↑o
+aTheSagasOfUlti db 'The sagas of Ultima IV and Ultima V chronicle your perilous ',0
+                                        ; DATA XREF: sub_19A0B+1895↑o
+aTravelsAndYour db 'travels, and your name and your deeds are written forever among ',0
+                                        ; DATA XREF: sub_19A0B+18A2↑o
+aBritanniaSLege db 'Britannia',27h,'s legends....',0
+                                        ; DATA XREF: sub_19A0B+18AF↑o
+aFinallyTempere db 'Finally, tempered by your struggles against the enemies of Virtue'
+                                        ; DATA XREF: sub_19A0B+18FD↑o
+                db ', you ',0
+aAreProvenReady db 'are proven ready to answer the epic challenge of Ultima VI!',0
+                                        ; DATA XREF: sub_19A0B+190A↑o
+aDazedYouEmerge db 'Dazed, you emerge from the portal to find yourself ',0
+                                        ; DATA XREF: sub_19A0B+1958↑o
+aStandingOnADes db 'standing on a desolate plain. Nearby rests a massive ',0
+                                        ; DATA XREF: sub_19A0B+1965↑o
+aRuneStruckAlta db 'rune-struck altar, shrouded in moonlit fog.',0
+                                        ; DATA XREF: sub_19A0B+1972↑o
+aAtFirstThePlai db 'At first the plain is still. Then a hundred voices ',0
+                                        ; DATA XREF: sub_19A0B+19C0↑o
+aRaiseASlowDeat db 'raise a slow, deathlike song, drawing closer and ',0
+                                        ; DATA XREF: sub_19A0B+19CD↑o
+aCloserWithEach db 'closer with each passing moment. You are seized ',0
+                                        ; DATA XREF: sub_19A0B+19DA↑o
+aByAnUrgeToRun  db 'by an urge to run...',0
+                                        ; DATA XREF: sub_19A0B+19E7↑o
+aButYouHaveNoPl db '...but you have no place to go.',0
+                                        ; DATA XREF: sub_19A0B+1A39↑o
+aBeforeYouCanOf db 'Before you can offer a protest to the creatures ',0
+                                        ; DATA XREF: sub_19A0B+1A87↑o
+aWhoSurroundYou db 'who surround you, scaly claws grasp your body.',0
+                                        ; DATA XREF: sub_19A0B+1A94↑o
+aWithUnearthlyS db 'With unearthly strength, the monsters bind you to the altar stone'
+                                        ; DATA XREF: sub_19A0B+1AE6↑o
+                db '!',0
+aKneelingTheHor db 'Kneeling, the hordes sway and chant as a stately ',0
+                                        ; DATA XREF: sub_19A0B+1B34↑o
+aWingedNightmar db 'winged nightmare steps forward.',0
+                                        ; DATA XREF: sub_19A0B+1B41↑o
+aTheLeaderUnwra db 'The leader unwraps a velvet covered, brass-bound ',0
+                                        ; DATA XREF: sub_19A0B+1B8F↑o
+aBookAndRecites db 'book and recites from it in a formal, stilted tongue.',0
+                                        ; DATA XREF: sub_19A0B+1B9C↑o
+aShoutsAndJeers db 'Shouts and jeers explode from the masses as the priest ',0
+                                        ; DATA XREF: sub_19A0B+1BEA↑o
+aSlamsShutTheBo db 'slams shut the book. In his hand a malignant dagger ',0
+                                        ; DATA XREF: sub_19A0B+1BF7↑o
+aDripsWithMoonl db 'drips with moonlight.',0
+                                        ; DATA XREF: sub_19A0B+1C04↑o
+aYouCloseYourEy db 'You close your eyes. A dying scream, certainly your own, ',0
+                                        ; DATA XREF: sub_19A0B+1C52↑o
+aCurdlesTheAir  db 'curdles the air.',0 ; DATA XREF: sub_19A0B+1C5F↑o
+aCatcallsTheDag db 'Catcalls, the dagger, a scream, Death....',0
+                                        ; DATA XREF: sub_19A0B+1CB1↑o
+aPandemoniumShr db 'Pandemonium. Shrieks of rage, of terror.',0
+                                        ; DATA XREF: sub_19A0B+1D03↑o
+aFromTheInevita db 'From the inevitable, an impossibility emerges.',0
+                                        ; DATA XREF: sub_19A0B+1D55↑o
+aYouAreStillAli db 'You are still alive.',0
+                                        ; DATA XREF: sub_19A0B+1DA7↑o
+aSilentRedLight db 'Silent red light fills the darkness. There is the wooden ',0
+                                        ; DATA XREF: sub_19A0B+1DF5↑o
+aClackOfACrossb db 'clack of a crossbow, and a violet- fletched rose blooms ',0
+                                        ; DATA XREF: sub_19A0B+1E02↑o
+aInThePriestSBa db 'in the priest',27h,'s barren forehead.',0
+                                        ; DATA XREF: sub_19A0B+1E0F↑o
+aFriendlyFacesV db 'Friendly faces vault from a newborn moongate, while a ',0
+                                        ; DATA XREF: sub_19A0B+1E5D↑o
+aRainOfQuarrels db 'rain of quarrels holds the furious mob at bay. The ',0
+                                        ; DATA XREF: sub_19A0B+1E6A↑o
+aKnightDupreSSw db 'knight Dupre',27h,'s sword flashes twice in the ',0
+                                        ; DATA XREF: sub_19A0B+1E77↑o
+aDarknessSlicin db 'darkness, slicing away your bonds!',0
+                                        ; DATA XREF: sub_19A0B+1E84↑o
+aQuicklyOldFrie db '"Quickly, old friend! To the gate!%c Accompanied by the ',0
+                                        ; DATA XREF: sub_19A0B+1ED6↑o
+aSwordsmanShami db 'swordsman Shamino and a grinning, crossbow-wielding ',0
+                                        ; DATA XREF: sub_19A0B+1EE3↑o
+aIoloTheBardDup db 'Iolo the Bard, Dupre thrusts a spare sword into your ',0
+                                        ; DATA XREF: sub_19A0B+1EF0↑o
+aHand           db 'hand.',0            ; DATA XREF: sub_19A0B+1EFD↑o
+aSnatchingTheFa db 'Snatching the fallen priest',27h,'s book, Iolo dives ',0
+                                        ; DATA XREF: sub_19A0B+1F4B↑o
+aIntoTheRedness db 'into the redness with Shamino at his heels. The howling throng ',0
+                                        ; DATA XREF: sub_19A0B+1F58↑o
+aSurgesForwardA db 'surges forward, all of one terrible mind.',0
+                                        ; DATA XREF: sub_19A0B+1F65↑o
+aTheGateWanesRa db 'The gate wanes rapidly as you and Dupre charge through...',0
+                                        ; DATA XREF: sub_19A0B+1FB3↑o
+aButNotRapidlyE db '...but not rapidly enough.',0
+                                        ; DATA XREF: sub_19A0B+2005↑o
+aFromTheMobSVan db 'From the mob',27h,'s vanguard, three of the abominations ',0
+                                        ; DATA XREF: sub_19A0B+2053↑o
+aScrambleToward db 'scramble toward the gate. Driven by fury, ',0
+                                        ; DATA XREF: sub_19A0B+2060↑o
+aTheCreaturesHu db 'the creatures hurl their bodies into the ',0
+                                        ; DATA XREF: sub_19A0B+206D↑o
+aPortalSLastHan db 'portal',27h,'s last handspan of light!',0
+                                        ; DATA XREF: sub_19A0B+207A↑o
+aAGameIsAlready db 'A game is already in progress.  Please run the install ',0
+                                        ; DATA XREF: sub_19A0B+20C8↑o
+aProgramToCreat db 'program to create a new character disk.',0
+                                        ; DATA XREF: sub_19A0B+20D5↑o
+aPleaseInsertTh db 'Please insert the ',0 ; DATA XREF: sub_19A0B+2122↑o
+aDisk           db ' disk.',0           ; DATA XREF: sub_19A0B+2142↑o
+aPassageUndefin db '<< Passage undefined! >>',0
+                                        ; DATA XREF: sub_19A0B+2193↑o
                 db  78h ; x
                 db  40h ; @
                 db  79h ; y
@@ -50501,11 +38448,8 @@ byte_289E8      db 0                    ; DATA XREF: sub_1BE8D+F6↑w
                 db    0
                 db    0
                 db    0
-                db  75h ; u
-                db  36h ; 6
-                db  2Eh ; .
-byte_28A04      db 31h                  ; DATA XREF: sub_1BC10+9↑w
-                align 2
+aU61            db 'u6.1',0             ; DATA XREF: sub_1BC10+C↑o
+                                        ; sub_1BC10+9↑w
 byte_28A06      db 0                    ; DATA XREF: sub_1BC89:loc_1BD55↑r
                                         ; sub_1BC89+D8↑w ...
 byte_28A07      db 0                    ; DATA XREF: sub_1BC89+D5↑w
@@ -50572,19 +38516,7 @@ byte_28A07      db 0                    ; DATA XREF: sub_1BC89+D5↑w
                 db  65h ; e
                 db  72h ; r
                 db    0
-                db  70h ; p
-                db  61h ; a
-                db  6Ch ; l
-                db  65h ; e
-                db  74h ; t
-                db  74h ; t
-                db  65h ; e
-                db  73h ; s
-                db  2Eh ; .
-                db  69h ; i
-                db  6Eh ; n
-                db  74h ; t
-                db    0
+aPalettesInt    db 'palettes.int',0     ; DATA XREF: sub_1BFE2+27↑o
                 db    0
                 db 0F8h
                 db 0FFh
@@ -51319,55 +39251,10 @@ word_28ECC      dw 1                    ; DATA XREF: _dostounix+B3↑r
                 db  54h ; T
                 db    0
                 db    0
-                db  20h
-                db  3Ch ; <
-                db  3Ch ; <
-                db  20h
-                db  4Eh ; N
-                db  6Fh ; o
-                db  20h
-                db  66h ; f
-                db  61h ; a
-                db  72h ; r
-                db  20h
-                db  6Dh ; m
-                db  65h ; e
-                db  6Dh ; m
-                db  6Fh ; o
-                db  72h ; r
-                db  79h ; y
-                db  21h ; !
-                db  20h
-                db  3Eh ; >
-                db  3Eh ; >
-                db  20h
-                db    0
-                db  20h
-                db  3Ch ; <
-                db  3Ch ; <
-                db  20h
-                db  4Eh ; N
-                db  6Fh ; o
-                db  20h
-                db  79h ; y
-                db  74h ; t
-                db  61h ; a
-                db  62h ; b
-                db  6Ch ; l
-                db  65h ; e
-                db  20h
-                db  6Dh ; m
-                db  65h ; e
-                db  6Dh ; m
-                db  6Fh ; o
-                db  72h ; r
-                db  79h ; y
-                db  21h ; !
-                db  20h
-                db  3Eh ; >
-                db  3Eh ; >
-                db  20h
-                db    0
+aNoFarMemory    db ' << No far memory! >> ',0
+                                        ; DATA XREF: sub_2277C+59↑o
+aNoYtableMemory db ' << No ytable memory! >> ',0
+                                        ; DATA XREF: sub_2277C+96↑o
                 db    0
 dword_28F0C     dd 0                    ; DATA XREF: sub_228EF↑w
                                         ; sub_228EF+29↑r ...
@@ -51452,13 +39339,13 @@ word_28F64      dw 0                    ; DATA XREF: sub_235E0+25↑w
                                         ; sub_235E0+61↑r
 word_28F66      dw 0                    ; DATA XREF: sub_235E0+3E↑w
                                         ; sub_235E0+69↑r
-off_28F68       dd nullsub_1            ; DATA XREF: sub_109F3+28↑r
-                                        ; sub_10A32+1D↑r ...
-word_28F6C      dw 0                    ; DATA XREF: sub_109F3+1F↑w
-                                        ; sub_109F3+2C↑r ...
-word_28F6E      dw 0                    ; DATA XREF: sub_109F3+22↑w
-                                        ; sub_10A32+17↑w ...
-word_28F70      dw 0                    ; DATA XREF: sub_109F3+D↑w
+off_28F68       dd nullsub_1            ; DATA XREF: file_open+28↑r
+                                        ; file_close+1D↑r ...
+word_28F6C      dw 0                    ; DATA XREF: file_open+1F↑w
+                                        ; file_open+2C↑r ...
+word_28F6E      dw 0                    ; DATA XREF: file_open+22↑w
+                                        ; file_close+17↑w ...
+word_28F70      dw 0                    ; DATA XREF: file_open+D↑w
                                         ; seg000:0A77↑w ...
 word_28F72      dw 1                    ; DATA XREF: sub_236D4+5↑r
                                         ; sub_236D4+BE↑w ...
