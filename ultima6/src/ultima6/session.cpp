@@ -70,14 +70,17 @@ void Game::advanceTime(int minutes) {
 		for (int t = 0; t < 16; ++t)
 			if (_world.actors.globals[0x12 + t])
 				--_world.actors.globals[0x12 + t];
-		if (clock.minute % 10 == 0) {
+		if (clock.minute == 0) {
+			// every hour the people with magic recover as many magic points as their level
 			ObjList &al = _world.actors;
 			for (int m = 0; m < al.partySize; ++m) {
 				int actor = al.partyRoster[m];
-				if (al.unknown13f1[actor] < ActorStats::maxMagic(_world, actor))
-					++al.unknown13f1[actor];
+				int most = ActorStats::maxMagic(_world, actor);
+				if (most)
+					al.unknown13f1[actor] = (uint8_t)std::min<int>(most, al.unknown13f1[actor] + al.level[actor]);
 			}
 		}
+		partyHazards();
 		_actors.tick(x, y, z);
 		_creatures.tick(x, y, z);
 		_creatures.checkEggs(x, y, z, clock.hour);

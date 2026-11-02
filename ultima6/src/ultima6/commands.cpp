@@ -127,6 +127,61 @@ bool Game::inventoryKey(int key) {
 	return true;
 }
 
+// What a minute does to the party (as the original's time advance does it): poison hurts now and then, swamps poison, fire, traps and
+// force fields burn, and the lit torch that is carried burns down.
+void Game::partyHazards() {
+	ObjList &a = _world.actors;
+	for (int m = 0; m < a.partySize; ++m) {
+		int actor = a.partyRoster[m];
+		int k = _world.actorObject(actor);
+		if (k < 0 || _world.objects[k].deleted || a.hp[actor] == 0)
+			continue;
+		const World::Obj &o = _world.objects[k];
+		const CreatureStats *cs = Combat::stats(o.type);
+		if ((a.status[actor] & 0x08) && _rng.next() % 8 == 0)
+			_combat.applyDamage(actor, actor, 1);
+		// the tiles on the square
+		int mask = o.z == 0 ? 0x3FF : 0xFF;
+		std::vector<int> tiles;
+		tiles.push_back(_world.map.tile(o.z, o.x & mask, o.y & mask));
+		std::vector<int> here;
+		_world.objectsAt(o.x, o.y, o.z, here);
+		for (int i : here)
+			if (_world.objects[i].actor < 0)
+				tiles.push_back(_world.baseTile.firstTile[_world.objects[i].type] + _world.objects[i].frame);
+		for (int t : tiles) {
+			if (((t >= 2 && t <= 5) || t == 1165) && !(cs && (cs->flags & (1 << 12))) && !(a.status[actor] & 0x08)) {
+				a.status[actor] |= 0x08;
+				message(_combat.nameOf(actor) + " poisoned!\n");
+			} else if ((t >= 220 && t <= 223) || t == 890 || t == 1124 || t == 1125 || t == 1130 || t == 1131 || t == 1164 || t == 1193) {
+				int dmg = t == 1164 ? 1 + _rng.next() % 30 : 1 + _rng.next() % 8;
+				if (cs && (cs->flags & (1 << 10)))
+					dmg *= 2;
+				_combat.applyDamage(actor, actor, dmg);
+			} else if (t == 732 || t == 1010) {
+				_combat.applyDamage(actor, actor, 1 + _rng.next() % 30);
+			} else if (t == 562 || t == 731 || (t >= 1458 && t <= 1463)) {
+				_combat.applyDamage(actor, actor, 1 + _rng.next() % 8);
+			}
+		}
+		// a lit torch in hand burns down
+		std::vector<int> inv;
+		_world.inventory(actor, inv, false);
+		for (int i : inv) {
+			World::Obj &t = _world.objects[i];
+			if (t.type == 90 && (t.frame & 1) && t.location() == ObjRecord::READIED && _rng.next() % 2 == 0) {
+				if (t.quantity > 1) {
+					--t.quantity;
+				} else {
+					t.frame = 0;
+					t.status = (uint8_t)((t.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
+					message("A torch burned out.\n");
+				}
+			}
+		}
+	}
+}
+
 // Cast: the circle (a digit) and the syllables' letters, then Enter; spells that need a target then ask for one with the cursor.
 void Game::castKey(int key) {
 	if (key == KEY_ESC) {
