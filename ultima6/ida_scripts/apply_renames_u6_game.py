@@ -121,7 +121,6 @@ FUNCTIONS = [
     (0x35482, "operate_passthrough", "'Open the passthrough.', 'Close the passthrough.'"),
     (0x3A194, "show_hull_strength", "'Hull Strength: %d%%'"),
     (0x3AAC1, "disk_full_dialog", "'Disk full. Do you want to Save the game and continue, or Restore your last saved game?'"),
-    # -- found through the Use command's type -> handler table (cmd_use_types / cmd_use_handlers) --
     (0x2536C, "use_sextant", "type 05Dh: prints the position in degrees ('%d{')"),
     (0x3563C, "use_vortex_cube", "type 03Eh: 'The Codex has vanished!'"),
     (0x329EA, "play_instrument", "play_instrument(n): harp, harpsichord, lute, panpipes (types 09C, 09D, 09E, 099)"),
