@@ -226,6 +226,10 @@ void Game::command(int key) {
 		_cursor = true;
 		_cx = _cy = 5;
 		break;
+	case 'I':
+		_inventory = true;
+		_selected = 0;
+		break;
 	case 19: // ctrl-S
 		message("Save game? ");
 		_confirmSave = true;
@@ -245,6 +249,13 @@ bool Game::handleKey(int key) {
 		return false;
 	if (_dead)
 		return false; // any key after the Avatar's death ends the game
+	if (key >= '1' && key <= '8' && !_talk && !_pending && !_confirmSave && key - '1' < _world.actors.partySize) {
+		_member = key - '1';
+		_selected = 0;
+		return true;
+	}
+	if (_inventory && !_talk)
+		return inventoryKey(key);
 	if (_talk) {
 		if (!_talk->key(key)) {
 			_talk.reset();
@@ -348,6 +359,8 @@ void Game::render(Framebuffer &screen) {
 	_renderer.draw(screen, x, y, z);
 	if (_talk)
 		drawTalkView(screen, _world, _talk->portraitActor());
+	else if (_inventory)
+		drawInventoryView(screen, _world, _member, _selected, _items);
 	else
 		drawStatsView(screen, _world, _member);
 	scroll.draw(screen, _world.font);

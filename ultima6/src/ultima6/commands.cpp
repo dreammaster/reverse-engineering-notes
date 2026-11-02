@@ -68,6 +68,65 @@ void Game::attackAt(int tx, int ty) {
 	prompt();
 }
 
+// Keys while the inventory is on show: select, ready or unready, drop, leave.
+bool Game::inventoryKey(int key) {
+	inventoryItems(_world, _member, _items);
+	int count = (int)_items.size();
+	switch (key) {
+	case KEY_LEFT:
+		_selected = std::max(0, _selected - 1);
+		break;
+	case KEY_RIGHT:
+		_selected = std::min(std::max(0, count - 1), _selected + 1);
+		break;
+	case KEY_UP:
+		_selected = std::max(0, _selected - 8);
+		break;
+	case KEY_DOWN:
+		_selected = std::min(std::max(0, count - 1), _selected + 8);
+		break;
+	case KEY_ENTER:
+		if (_selected < count) {
+			World::Obj &o = _world.objects[_items[_selected]];
+			if (o.location() == ObjRecord::READIED) {
+				o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
+				message("\nUnreadied " + Describe::object(_world, o) + "\n");
+			} else if (Combat::weaponDamageOf(o.type) >= 0 || Combat::armourOf(o.type) > 0) {
+				o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+				message("\nReadied " + Describe::object(_world, o) + "\n");
+			} else {
+				message("\nNot usable\n");
+			}
+		}
+		break;
+	case 'd':
+	case 'D':
+		if (_selected < count) {
+			int idx = _items[_selected];
+			World::Obj &o = _world.objects[idx];
+			message("\nDrop-" + Describe::object(_world, o) + "\n");
+			o.status = (uint8_t)(o.status & ~ObjRecord::LOCATION_MASK);
+			o.parent = -1;
+			o.x = (uint16_t)x;
+			o.y = (uint16_t)y;
+			o.z = (uint8_t)z;
+			_world.addToMap(idx);
+			_selected = std::max(0, _selected - 1);
+		}
+		break;
+	case KEY_ESC:
+	case 'i':
+	case 'I':
+	case KEY_SPACE:
+		_inventory = false;
+		prompt();
+		break;
+	default:
+		break;
+	}
+	return true;
+}
+
 // Get: take the top object of a square that can be carried.
 void Game::getAt(int tx, int ty) {
 	std::vector<int> here;

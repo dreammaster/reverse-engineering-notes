@@ -90,6 +90,10 @@ private:
 	void restKey(int key);
 	void followLeader(int oldX, int oldY);
 	bool _confirmSave = false;
+	bool _inventory = false; // the panel shows the inventory instead of the statistics
+	int _selected = 0;
+	std::vector<int> _items;
+	bool inventoryKey(int key);
 	bool _dead = false;
 	std::string _number; // digits typed for the Rest command
 	int _member = 0; // party member shown in the panel

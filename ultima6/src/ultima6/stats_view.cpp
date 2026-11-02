@@ -1,6 +1,8 @@
 #include "ultima6/stats_view.h"
+#include "ultima6/describe.h"
 #include "ultima6/ui.h"
 
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 
@@ -27,6 +29,45 @@ int ActorStats::maxMagic(const World &w, int actor) {
 	default:
 		return 0;
 	}
+}
+
+void inventoryItems(const World &world, int member, std::vector<int> &items) {
+	world.inventory(world.actors.partyRoster[member], items, false);
+	std::stable_sort(items.begin(), items.end(), [&](int a, int b) {
+		return (world.objects[a].location() == ObjRecord::READIED) > (world.objects[b].location() == ObjRecord::READIED);
+	});
+}
+
+void drawInventoryView(Framebuffer &screen, const World &world, int member, int selected, std::vector<int> &items) {
+	Ui::restorePaper(screen, world.paper, 176, 8, 136, 96);
+	const int FG = 0x48;
+	int actor = world.actors.partyRoster[member];
+	std::string name = (const char *)world.actors.partyNames[member];
+	Ui::drawText(screen, world.font, 176 + (17 - (int)name.size()) / 2 * 8, 8, name, FG);
+
+	inventoryItems(world, member, items);
+	const int COLS = 8, X0 = 176 + 4, Y0 = 20;
+	for (size_t n = 0; n < items.size() && n < (size_t)COLS * 4; ++n) {
+		const World::Obj &o = world.objects[items[n]];
+		int x = X0 + ((int)n % COLS) * 16, y = Y0 + ((int)n / COLS) * 16;
+		Ui::drawTile(screen, world, world.baseTile.firstTile[o.type] + o.frame, x, y);
+		int kind = Describe::quantityKind(o.type);
+		if (kind && world.quantityOf(o) > 1)
+			Ui::drawText(screen, world.font, x, y + 8, std::to_string(world.quantityOf(o) % 100), 0xFF);
+		if (o.location() == ObjRecord::READIED)
+			Ui::drawText(screen, world.font, x + 8, y, "*", 10);
+	}
+	if (!items.empty() && selected >= 0 && selected < (int)items.size()) {
+		int x = X0 + (selected % COLS) * 16, y = Y0 + (selected / COLS) * 16;
+		Ui::drawTile(screen, world, 0x16C, x, y);
+		const World::Obj &o = world.objects[items[selected]];
+		std::string d = Describe::object(world, o);
+		Ui::drawText(screen, world.font, 176, 88, d.substr(0, 17), FG);
+	}
+	char buf[40];
+	int carried = world.carriedWeight(actor), most = world.actors.strength[actor] * 2 * 10;
+	std::snprintf(buf, sizeof buf, "%d.%d/%d.%d", carried / 10, carried % 10, most / 10, most % 10);
+	Ui::drawText(screen, world.font, 176, 96, buf, FG);
 }
 
 void drawTalkView(Framebuffer &screen, const World &world, int actor) {

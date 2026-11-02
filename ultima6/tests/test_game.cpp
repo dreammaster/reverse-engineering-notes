@@ -133,6 +133,33 @@ int main() {
 		CHECK(w4.portrait(1, px)); // the portrait chosen at creation
 	}
 
+	// The inventory: pick up, ready and drop through the keys of the inventory view.
+	{
+		World w5;
+		CHECK(w5.load("u6/game"));
+		Game g5(w5);
+		std::vector<int> inv;
+		w5.inventory(1, inv, false);
+		CHECK(!inv.empty());
+		size_t carried = inv.size();
+		g5.handleKey('i');
+		g5.handleKey('d'); // drop the first object
+		g5.handleKey(KEY_ESC);
+		w5.inventory(1, inv, false);
+		CHECK(inv.size() == carried - 1);
+		std::vector<int> here;
+		w5.objectsAt(g5.x, g5.y, g5.z, here);
+		bool dropped = false;
+		for (int i : here)
+			dropped |= w5.objects[i].actor < 0 && w5.objects[i].onMap() && w5.objects[i].type != 0x12F;
+		CHECK(dropped);
+		// and pick it up again
+		g5.handleKey('g');
+		g5.handleKey(KEY_DOWN);
+		g5.handleKey('g');
+		g5.handleKey(KEY_UP);
+	}
+
 	// Using a door from the west opens it, using it again closes it.
 	{
 		World w3;
