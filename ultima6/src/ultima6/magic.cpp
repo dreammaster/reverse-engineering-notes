@@ -29,6 +29,63 @@ bool Magic::bookHas(int caster, int spellIndex) {
 	return any;
 }
 
+static const char *const WORDS[26] = {"An", "Bet", "Corp", "Des", "Ex", "Flam", "Grav", "Hur", "In", "Jux", "Kal", "Lor", "Mani",
+									  "Nox", "Ort", "Por", "Quas", "Rel", "Sanct", "Tym", "Uus", "Vas", "Wis", "Xen", "Ylem", "Zu"}; // ds:0BF0 table
+
+bool Magic::checkBook(int caster) {
+	std::vector<int> inv;
+	_world.inventory(caster, inv, false);
+	for (int i : inv)
+		if (_world.objects[i].type == SPELLBOOK && _world.objects[i].location() == ObjRecord::READIED)
+			return true;
+	_scroll.print("No spellbook is readied.\n");
+	return false;
+}
+
+bool Magic::checkSpells(int caster) {
+	std::vector<int> inv;
+	_world.inventory(caster, inv, true);
+	for (int i : inv)
+		if (_world.objects[i].type == SPELL)
+			return true;
+	_scroll.print("No spells in the spellbook!\n");
+	return false;
+}
+
+std::string Magic::announce(const SpellInfo &spell) const {
+	std::string out = std::string(spell.name) + "\n\"";
+	for (size_t i = 0; spell.invocation[i]; ++i) {
+		int c = spell.invocation[i] - 'a';
+		out += std::string(i ? " " : "") + (c >= 0 && c < 26 ? WORDS[c] : "?");
+	}
+	return out + "\"";
+}
+
+bool Magic::checkCost(int caster, const SpellInfo &spell) {
+	if (_world.actors.level[caster] < spell.circle) {
+		_scroll.print("\n\nYour level is not high enough.\n");
+		return false;
+	}
+	if (_world.actors.unknown13f1[caster] < spell.circle) {
+		_scroll.print("\n\nNot enough magic points.\n");
+		return false;
+	}
+	std::vector<int> all;
+	_world.inventory(caster, all, true);
+	for (int b = 0; b < 8; ++b) {
+		if (!(spell.reagents & (1 << b)))
+			continue;
+		bool has = false;
+		for (int i : all)
+			has |= _world.objects[i].type == REAGENT_TYPE[b];
+		if (!has) {
+			_scroll.print("\n\nNo Reagents.\n");
+			return false;
+		}
+	}
+	return true;
+}
+
 bool Magic::canCast(int caster, const SpellInfo &spell) {
 	std::vector<int> inv;
 	_world.inventory(caster, inv, false);

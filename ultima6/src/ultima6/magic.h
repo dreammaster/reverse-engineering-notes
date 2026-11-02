@@ -39,6 +39,14 @@ public:
 
 	static const SpellInfo *find(int circle, const std::string &invocation);
 
+	/** check_spellbook (GAME.EXE 25D7F-ish): a readied spellbook (type 57); prints "No spellbook is readied." if there is none. */
+	bool checkBook(int caster);
+	/** cmd_cast: "No spells in the spellbook!" when the books hold nothing. */
+	bool checkSpells(int caster);
+	/** The words of power of a spell as cmd_cast prints them: the name, then the quoted syllables (An, Bet, Corp ... Zu for the letters A-Z). */
+	std::string announce(const SpellInfo &spell) const;
+	/** The checks cmd_cast makes after printing the spell, in its order: level ("Your level is not high enough."), magic points, reagents ("No Reagents."). */
+	bool checkCost(int caster, const SpellInfo &spell);
 	/** Checks the caster can cast; prints the reason and returns false if not. Nothing is used up. */
 	bool canCast(int caster, const SpellInfo &spell);
 	/** Uses the magic points and reagents. */

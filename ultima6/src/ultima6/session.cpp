@@ -224,6 +224,10 @@ void Game::command(int key) {
 		break;
 	case 'C':
 		message("Cast-");
+		if (!_magic.checkBook(_world.actors.partyRoster[_member]) || !_magic.checkSpells(_world.actors.partyRoster[_member])) {
+			prompt();
+			break;
+		}
 		_pending = 'C';
 		_invocation.clear();
 		break;

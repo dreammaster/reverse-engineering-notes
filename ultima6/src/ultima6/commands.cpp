@@ -308,19 +308,25 @@ void Game::castKey(int key) {
 		prompt();
 		return;
 	}
-	if (!_magic.canCast(caster, *spell)) {
+	// cmd_cast: the spell and its words are printed first, then the level, magic points and reagents are checked, then they are paid
+	// (before the target is chosen), then the effect asks for its target
+	message(_magic.announce(*spell));
+	if (!_magic.checkCost(caster, *spell)) {
+		message("\n");
 		prompt();
 		return;
 	}
+	_magic.pay(caster, *spell);
 	_spell = spell;
 	if (spell->select == Magic::SEL_NONE) {
-		_magic.pay(caster, *spell);
 		_magic.cast(caster, *spell, caster);
 		advanceTime(1);
 		prompt();
 		return;
 	}
-	message(std::string(spell->name) + "\nOn whom: ");
+	bool onObject = spell->select == Magic::SEL_OBJ || spell->select == Magic::SEL_OBJ_PROJ;
+	bool onPlace = spell->select == Magic::SEL_LOCATION || spell->select == Magic::SEL_LOCATION_PROJ;
+	message(std::string("\n") + (onObject ? "On what: " : onPlace ? "Location: " : "On whom: "));
 	_pending = 'c';
 	_cursor = true;
 	_cx = _cy = 5;
@@ -335,7 +341,6 @@ void Game::castAt(int tx, int ty) {
 			target = _world.objects[i].actor;
 	int caster = _world.actors.partyRoster[_member];
 	message("\n");
-	_magic.pay(caster, *_spell);
 	_magic.cast(caster, *_spell, target);
 	_spell = nullptr;
 	advanceTime(1);

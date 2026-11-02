@@ -1,5 +1,7 @@
 // The spells of Ultima VI: name, invocation (the syllables' initial letters), reagent bits (mandrake root, nightshade, black pearl, blood moss, spider silk, garlic,
 // ginseng, sulfurous ash), circle, number in the circle, what the spell asks for first.
+// Names, invocations and reagent masks verified against GAME.EXE (name pointers ds:0C24, invocation pointers ds:0AF0, reagent masks ds:0D44, all indexed by
+// (circle - 1) * 16 + number - 1). The original's masks for Mass Dispel, Poison Field and Sleep Field are the ones written here, not Nuvie's.
 static const Magic::SpellInfo SPELLS[] = {
 	{"Create Food", "imy", 0x61, 1, 1, Magic::SEL_NONE},
 	{"Detect Magic", "wo", 0x82, 1, 2, Magic::SEL_OBJ},
@@ -37,9 +39,9 @@ static const Magic::SpellInfo SPELLS[] = {
 	{"Fire Field", "ifg", 0x94, 4, 4, Magic::SEL_LOCATION_PROJ},
 	{"Great Heal", "vm", 0x51, 4, 5, Magic::SEL_ACTOR_PROJ},
 	{"Locate", "iw", 0x02, 4, 6, Magic::SEL_NONE},
-	{"Mass Dispel", "vajo", 0x60, 4, 7, Magic::SEL_LOCATION_PROJ},
-	{"Poison Field", "ing", 0x16, 4, 8, Magic::SEL_LOCATION_PROJ},
-	{"Sleep Field", "izg", 0x54, 4, 9, Magic::SEL_LOCATION_PROJ},
+	{"Mass Dispel", "vajo", 0x16, 4, 7, Magic::SEL_LOCATION_PROJ},
+	{"Poison Field", "ing", 0x54, 4, 8, Magic::SEL_LOCATION_PROJ},
+	{"Sleep Field", "izg", 0x60, 4, 9, Magic::SEL_LOCATION_PROJ},
 	{"Wind Change", "rh", 0x88, 4, 10, Magic::SEL_NONE},
 	{"Energy Field", "isg", 0x15, 5, 1, Magic::SEL_LOCATION_PROJ},
 	{"Explosion", "vpf", 0x8d, 5, 2, Magic::SEL_LOCATION_PROJ},
