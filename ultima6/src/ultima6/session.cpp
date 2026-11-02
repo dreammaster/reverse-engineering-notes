@@ -69,6 +69,11 @@ void Game::advanceTime(int minutes) {
 		_actors.tick(x, y, z);
 		_creatures.tick(x, y, z);
 		_creatures.checkEggs(x, y, z, clock.hour);
+		if (_world.actors.hp[1] == 0 && !_dead) {
+			_dead = true;
+			message("\nThou art dead!\n*");
+			break;
+		}
 	}
 }
 
@@ -238,6 +243,8 @@ void Game::command(int key) {
 bool Game::handleKey(int key) {
 	if (key == KEY_QUIT)
 		return false;
+	if (_dead)
+		return false; // any key after the Avatar's death ends the game
 	if (_talk) {
 		if (!_talk->key(key)) {
 			_talk.reset();

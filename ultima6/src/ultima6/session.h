@@ -90,6 +90,7 @@ private:
 	void restKey(int key);
 	void followLeader(int oldX, int oldY);
 	bool _confirmSave = false;
+	bool _dead = false;
 	std::string _number; // digits typed for the Rest command
 	int _member = 0; // party member shown in the panel
 	int _leaderObject; // index of the leader's body in the world's object list

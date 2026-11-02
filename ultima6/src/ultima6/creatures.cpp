@@ -126,6 +126,36 @@ void Creatures::checkEggs(int px, int py, int pz, int hour) {
 
 void Creatures::tick(int px, int py, int pz) {
 	ObjList &a = _world.actors;
+	// the party's companions fight back: each goes for the nearest hostile creature, and strikes it when next to it
+	for (int i = 1; i < a.partySize; ++i) {
+		int member = a.partyRoster[i];
+		int mk = _world.actorObject(member);
+		if (mk < 0 || _world.objects[mk].deleted || a.hp[member] == 0)
+			continue;
+		const World::Obj &m = _world.objects[mk];
+		int foe = -1, best = 1 << 20;
+		for (int actor = FIRST_TEMP_ACTOR; actor < ObjList::ACTORS; ++actor) {
+			int k = _world.actorObject(actor);
+			if (k < 0 || _world.objects[k].deleted || a.hp[actor] == 0 || _world.objects[k].z != m.z)
+				continue;
+			const CreatureStats *s = Combat::stats(_world.objects[k].type);
+			if (!s || !(s->align == CreatureStats::EVIL || s->align == CreatureStats::CHAOTIC))
+				continue;
+			int d = std::max(std::abs((int)_world.objects[k].x - (int)m.x), std::abs((int)_world.objects[k].y - (int)m.y));
+			if (d < best) {
+				best = d;
+				foe = actor;
+			}
+		}
+		if (foe < 0 || best > 5)
+			continue;
+		if (best <= 1) {
+			_combat.attack(member, foe);
+		} else {
+			int fk = _world.actorObject(foe);
+			_actors.walkToward(member, mk, _world.objects[fk].x, _world.objects[fk].y, m.z);
+		}
+	}
 	for (int actor = FIRST_TEMP_ACTOR; actor < ObjList::ACTORS; ++actor) {
 		if (_world.actorFree(actor))
 			continue;
