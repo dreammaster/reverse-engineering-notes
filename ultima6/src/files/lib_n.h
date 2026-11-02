@@ -34,6 +34,11 @@ public:
 	}
 	/** Pointer to and size of an item's bytes (nullptr / 0 for an absent item). */
 	const uint8_t *item(size_t i, size_t &size) const;
+	/**
+	 * The item as the spin-offs' *.LZC / *.VGA files hold it: flags 1 and 0x20 mean an LZW stream (u32 decompressed size first, then the codes, as in Ultima VI's
+	 * LZ files), 0xFF shares the flag of the next item that has another, 0xC1 is stored plain behind a u32 holding the item's own size, and everything else (0, 2, 0xE0) is stored plain.
+	 */
+	bool get(size_t i, Bytes &out) const;
 
 private:
 	struct Item {

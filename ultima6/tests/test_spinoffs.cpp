@@ -1,8 +1,10 @@
 // Which Ultima VI file formats the two spin-offs share (skipped when their data is absent).
 
+#include "files/lib_n.h"
 #include "files/map_data.h"
 #include "files/obj_block.h"
 #include "files/tile_data.h"
+#include "files/tile_set.h"
 #include "files/world_data.h"
 
 #include <cstdio>
@@ -43,6 +45,17 @@ static void check(const char *dir, int schedules) {
 		for (int y = 0; y < size; y += 8)
 			for (int x = 0; x < size; x += 8)
 				CHECK(md.chunkIndex(z, x, y) < MapData::CHUNK_COUNT);
+	}
+
+	// the tile pixel data: MAPTILES and MASKTYPE are one-item archives (a size header, then the table; flag 0xE0 or 2 means stored plain), OBJTILES and TILEINDX are plain
+	{
+		Bytes raw, mapTiles, maskType, objTiles, index;
+		LibN lib;
+		CHECK(readFile(joinPath(dir, "MAPTILES.VGA"), raw) && lib.load(raw, true) && lib.get(0, mapTiles));
+		CHECK(readFile(joinPath(dir, "MASKTYPE.VGA"), raw) && lib.load(raw, true) && lib.get(0, maskType));
+		CHECK(readFile(joinPath(dir, "OBJTILES.VGA"), objTiles) && readFile(joinPath(dir, "TILEINDX.VGA"), index));
+		TileSet tiles;
+		CHECK(tiles.load(mapTiles, maskType, objTiles, index));
 	}
 
 	int objects = 0, outside = 0;

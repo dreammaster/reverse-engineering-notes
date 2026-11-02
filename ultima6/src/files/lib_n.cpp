@@ -1,5 +1,7 @@
 #include "files/lib_n.h"
 
+#include "files/lzw.h"
+
 namespace Ultima6 {
 
 static uint32_t get32(const uint8_t *p) {
@@ -53,6 +55,27 @@ const uint8_t *LibN::item(size_t i, size_t &size) const {
 	}
 	size = _items[i].size;
 	return &_data[_items[i].offset];
+}
+
+bool LibN::get(size_t i, Bytes &out) const {
+	size_t size = 0;
+	const uint8_t *p = item(i, size);
+	if (!p)
+		return false;
+	uint8_t f = _items[i].flag;
+	for (size_t j = i; f == 0xFF && j < _items.size(); ++j)
+		if (_items[j].flag != 0xFF)
+			f = _items[j].flag;
+	if (f == 0x01 || f == 0x20)
+		return lzwDecompress(_data, _items[i].offset, out);
+	if (f == 0xC1) { // stored, with the item's own size in front
+		if (size < 4)
+			return false;
+		out.assign(p + 4, p + size);
+		return true;
+	}
+	out.assign(p, p + size);
+	return true;
 }
 
 } // namespace Ultima6

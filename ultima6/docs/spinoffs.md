@@ -31,3 +31,13 @@ So the world model â€” map, chunks, object blocks, schedules, tile attributes â€
 Position-independent function signatures (`ida_scripts/export_signatures.py`, `tools/match_functions.py`): Martian Dreams `GAME.EXE` and Savage Empire `GAME.EXE` share 244
 unique matches (of 954 and 654 functions), the two menu executables 203 (of 453 and 342). Ultima VI shares only 39 and 44 functions with them: the spin-offs were built
 from a reworked engine, Martian Dreams and Savage Empire from the same revision of it.
+
+## LZC containers decoded (`LibN::get`)
+
+Every `*.LZC`, `FONTS`, `SAVAGE.FNT`, `MAPTILES.VGA`, `MASKTYPE.VGA` (but **not** `OBJTILES.VGA` or `TILEINDX.VGA`, which are plain as in Ultima VI) is an offset-table archive with
+a 4-byte size header (the file's own size) and per-item flags (as Nuvie's `U6Lib_n`, checked here on every `.LZC` of Martian Dreams): **0x01 and 0x20** the item is an LZW stream
+(u32 decompressed size first, the same codes as Ultima VI's `LZ*` files); **0xC1** the item is stored plain behind a u32 that holds the item's own size; **0, 2, 0xE0** plain;
+**0xFF** (an absent item sharing the flag of the next present one, as in `TALK.LZC` and `MDFACES.LZC`). `MAPTILES.VGA` is flag 0xE0 (MD) / 2 (SE) and then has exactly the pixel format of Ultima VI's
+decompressed `MAPTILES.VGA`: `TileSet::load` accepts the pieces of both games (tests/test_spinoffs.cpp). Fonts (`FONTS.LZC`, `SAVAGE.FNT`) are Worlds-of-Ultima fonts (byte 0 the height,
+byte 2 the colour index of a set pixel, widths at +4, low and high offsets of each glyph's pixel bytes at +0x104 / +0x204; see Nuvie's `wou_font.cpp`). Palettes `MDPAL`, `SEPAL` are 1536
+bytes: the first 768 are a VGA palette of 6-bit components (the first 16 colours are the EGA ones).
