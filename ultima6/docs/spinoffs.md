@@ -17,10 +17,11 @@ So the world model â€” map, chunks, object blocks, schedules, tile attributes â€
 
 ## Containers that differ
 
-* The compressed data files (`LZMAP`, `LZOBJBLK`, `LZDNGBLK`, `*.LZC`) are archives with a size header (the same shape as the inside of Ultima VI's `.SHP`
-  files, `LibN` with `hasSizeHeader`) whose per-item flag byte says how the item is stored: `0xE0` and `0x20` are used for plain or specially coded items,
-  `1` and `2` for LZW-compressed ones (Savage Empire's `TALK.LZC` items are flag 1; Martian Dreams' are `0xE0` and read as plain scripts), `0xFF` marks
-  items that share the previous flag. Ultima VI's `LZMAP`/`LZOBJBLK`/`LZDNGBLK` are bare LZW streams instead. The item flags are not decoded by the C++ yet.
+* The "compressed" data files (`LZMAP`, `LZOBJBLK`, `LZDNGBLK`, `*.LZC`) are archives with a size header (the same shape as the inside of Ultima VI's
+  `.SHP` files, `LibN` with `hasSizeHeader`) and a flag byte per item. Ultima VI's `LZMAP`/`LZOBJBLK`/`LZDNGBLK` are bare LZW streams instead. The flag
+  does not simply mean "compressed": the single item of `LZMAP` is the plain `MAP` (byte for byte) with flag `0xE0` in Martian Dreams and `2` in Savage
+  Empire; Martian Dreams' `TALK.LZC` items (flag `0xE0`) read as plain scripts, Savage Empire's (flag 1) are what Nuvie treats as LZW, and `0xFF` marks
+  items that share the next item's flag. The flag meanings still have to be worked out from the spin-offs' executables.
 * Music/sound: `TM.DRV`, `SUPERTM.DRV`, `STRAX.DRV`, `*.TIM`, `*.LZC` music archives instead of `*.M` files and the `U6*.DRV` family.
 * Each game keeps its program in `GAME.EXE` plus a second executable (`MARTIAN.EXE`, `SAVAGE.EXE`) that is the menu/intro/character creation; neither is
   EXEPACKed, and Martian Dreams' `GAME.EXE` has 17 Borland overlays (see `overview.md`).

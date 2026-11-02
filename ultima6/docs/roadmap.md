@@ -42,7 +42,7 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 ## 4. Martian Dreams and Savage Empire
 
 - [x] First findings: `spinoffs.md` — world data formats are shared and verified on both games' files.
-- [ ] Diff each game's executables against Ultima VI's (start with the shared engine code of MD/SE), decode the LZC item flags, add to the stand-alone engine behind the per-game namespaces.
+- [ ] Diff each game's executables against Ultima VI's (start with the shared engine code of MD/SE), work out the LZC item flags (0xE0, 2 and 1 all occur; LZMAP's single item is the raw MAP), add to the stand-alone engine behind the per-game namespaces.
 
 ## 5. ScummVM integration, 6. Nuvie replacement
 
