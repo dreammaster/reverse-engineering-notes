@@ -1,15 +1,21 @@
+#include "engine/backend.h"
 #include "engine/framebuffer.h"
 #include "engine/game_id.h"
-#include "ultima6/map_renderer.h"
+#include "ultima6/session.h"
 #include "ultima6/world.h"
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
+
+static void usage(const char *prog) {
+	std::fprintf(stderr, "usage: %s <game directory> [--keys <script>] [--shot file.png] [--scale n]\n", prog);
+}
 
 int main(int argc, char **argv) {
 	if (argc < 2) {
-		std::fprintf(stderr, "usage: %s <game directory> [--shot file.png [x y z]]\n", argv[0]);
+		usage(argv[0]);
 		return 2;
 	}
 
@@ -22,29 +28,55 @@ int main(int argc, char **argv) {
 	if (id != Ultima6::GameId::Ultima6)
 		return 0; // the spin-offs are not playable yet
 
+	const char *keys = nullptr, *shot = nullptr;
+	int scale = 3;
+	for (int i = 2; i < argc; ++i) {
+		if (!std::strcmp(argv[i], "--keys") && i + 1 < argc)
+			keys = argv[++i];
+		else if (!std::strcmp(argv[i], "--shot") && i + 1 < argc)
+			shot = argv[++i];
+		else if (!std::strcmp(argv[i], "--scale") && i + 1 < argc)
+			scale = std::atoi(argv[++i]);
+		else {
+			usage(argv[0]);
+			return 2;
+		}
+	}
+
 	Ultima6::Ultima6::World world;
 	if (!world.load(argv[1])) {
 		std::fprintf(stderr, "cannot load %s\n", world.error().c_str());
 		return 1;
 	}
+	Ultima6::Ultima6::Game game(world);
+	Ultima6::Framebuffer screen;
 
-	if (argc >= 4 && !std::strcmp(argv[2], "--shot")) {
-		int x, y, z;
-		world.avatarPosition(x, y, z);
-		if (argc >= 7) {
-			x = std::atoi(argv[4]);
-			y = std::atoi(argv[5]);
-			z = std::atoi(argv[6]);
-		}
-		Ultima6::Framebuffer screen;
-		screen.setPalette(world.palette.rgb);
-		Ultima6::Ultima6::MapRenderer renderer(world);
-		renderer.draw(screen, x, y, z);
-		if (!screen.savePng(argv[3], 3)) {
-			std::fprintf(stderr, "cannot write %s\n", argv[3]);
+	std::unique_ptr<Ultima6::Backend> backend;
+	if (keys || shot)
+		backend.reset(new Ultima6::HeadlessBackend(keys ? keys : ""));
+	else
+		backend.reset(Ultima6::createWindowBackend("Ultima VI", scale));
+	if (!backend) {
+		std::fprintf(stderr, "no window available; use --keys/--shot\n");
+		return 1;
+	}
+
+	bool running = true;
+	while (running) {
+		game.render(screen);
+		backend->present(screen);
+		int key = backend->waitKey();
+		running = game.handleKey(key);
+	}
+
+	if (shot) {
+		game.render(screen);
+		if (!screen.savePng(shot, scale)) {
+			std::fprintf(stderr, "cannot write %s\n", shot);
 			return 1;
 		}
-		std::printf("wrote %s (view at %d,%d,%d, %zu objects)\n", argv[3], x, y, z, world.objects.size());
+		std::printf("wrote %s, party at %d,%d,%d, %02d:%02d day %d month %d year %d\n", shot, game.x, game.y, game.z, game.clock.hour,
+					game.clock.minute, game.clock.day, game.clock.month, game.clock.year);
 	}
 	return 0;
 }

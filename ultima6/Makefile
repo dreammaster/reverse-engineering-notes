@@ -15,7 +15,7 @@ BUILD := build
 SRC   := src
 TARGET := $(BUILD)/u6.exe
 
-ENGINE_SRCS := engine/game_id ultima6/game martian_dreams/game savage_empire/game files/data_file files/tile_data files/world_data files/lzw files/map_data files/obj_block files/lib_n files/shape files/tile_set files/converse files/portrait files/music engine/framebuffer ultima6/world ultima6/map_renderer ultima6/gypsy
+ENGINE_SRCS := engine/game_id ultima6/game martian_dreams/game savage_empire/game files/data_file files/tile_data files/world_data files/lzw files/map_data files/obj_block files/lib_n files/shape files/tile_set files/converse files/portrait files/music engine/framebuffer engine/backend engine/backend_win32 ultima6/session ultima6/world ultima6/map_renderer ultima6/gypsy
 SRCS := $(ENGINE_SRCS) main
 
 CXXFLAGS := -std=c++17 -I$(SRC)
@@ -28,6 +28,11 @@ ifneq ($(WARN),0)
 CXXFLAGS += -Wall -Wextra
 endif
 
+LIBS :=
+ifeq ($(OS),Windows_NT)
+LIBS := -lgdi32 -luser32
+endif
+
 OBJS := $(addprefix $(BUILD)/,$(addsuffix .o,$(SRCS)))
 ENGINE_OBJS := $(addprefix $(BUILD)/,$(addsuffix .o,$(ENGINE_SRCS)))
 TESTS := $(basename $(notdir $(wildcard tests/test_*.cpp)))
@@ -36,7 +41,7 @@ TEST_EXES := $(addprefix $(BUILD)/,$(addsuffix .exe,$(TESTS)))
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 $(BUILD)/%.o: $(SRC)/%.cpp
 	@mkdir -p $(dir $@)
