@@ -104,7 +104,7 @@ switch, bucket of milk, churn, beehive, honey, barrels, crates, brazier, fan, ca
 fishing pole, fish, lever, balloon plans, blue potion, passthroughs, crank, xylophone, doors (oaken, windowed, cedar, steel, secret), ladder, silver horn, ship,
 skiff, raft, pull chain, balloons, cow, horse and horse with rider (the descriptions come from `LOOK.LZD` via `BASETILE`). A second five-entry table at `ds:1CDA`
 (types 0x97, 0x3D, 0x98, 0x10E, 0x3B; `sub_2FCFD`) marks another group of objects. Anything else prints a refusal. The per-type handlers are the
-`use_*` functions named in the database (they are reached through the Use command's own comparisons, not a jump table).
+`use_*` functions named in the database; how `cmd_use` reaches them is not traced yet (the function contains no jump table).
 
 ## Schedules
 
