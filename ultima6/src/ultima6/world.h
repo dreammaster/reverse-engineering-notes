@@ -69,6 +69,14 @@ public:
 	/** Indices of the objects standing on a map position, in drawing order (bottom first). */
 	void objectsAt(int x, int y, int z, std::vector<int> &out) const;
 
+	/** Index into objects of an actor's body, or -1 if the actor is not in the world. */
+	int actorObject(int actor) const {
+		return actor >= 0 && actor < (int)_actorObject.size() ? _actorObject[actor] : -1;
+	}
+
+	/** Puts an object on another map position (keeping the position index in step). */
+	void moveObject(int index, int x, int y, int z);
+
 private:
 	bool fail(const std::string &msg) {
 		_error = msg;
@@ -79,6 +87,7 @@ private:
 	std::string _error;
 	// index of objects by position: key = (z << 20) | (y << 10) | x, list kept in load order
 	std::vector<std::pair<uint32_t, int>> _byPosition; // sorted by key (stable)
+	std::vector<int> _actorObject;
 };
 
 } // namespace Ultima6

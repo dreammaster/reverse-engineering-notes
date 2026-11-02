@@ -3,6 +3,7 @@
 
 #include "engine/backend.h"
 #include "ultima6/map_renderer.h"
+#include "ultima6/movement.h"
 #include "ultima6/world.h"
 
 #include <string>
@@ -28,9 +29,7 @@ struct GameClock {
 /**
  * The running game: party position, clock, message log and the commands. Movement and time follow the
  * original in structure (one step is one minute; directions are the eight-way table at ds:01A2 / 01AA
- * with north first, clockwise); the walkability rules are a first approximation (terrain and object
- * tiles flagged impassable, taken from TILEFLAG) of GAME.EXE's sub_25D7F, which has many special cases
- * for ships, doors and creature classes that are not ported yet.
+ * with north first, clockwise); walkability is the port of GAME.EXE's sub_25D7F in Movement.
  */
 class Game {
 public:
@@ -42,8 +41,8 @@ public:
 
 	/** Moves the party leader one step in a direction (0 = north, clockwise); false if blocked. */
 	bool step(int dir);
-	/** Whether the party can enter a tile on foot. */
-	bool canWalk(int x, int y, int z) const;
+	/** Whether the party leader can enter a tile. */
+	bool canWalk(int x, int y, int z);
 
 	void message(const std::string &text);
 
@@ -54,6 +53,9 @@ public:
 private:
 	World &_world;
 	MapRenderer _renderer;
+	Movement _movement;
+	MoveRules _rules;
+	int _leaderObject; // index of the leader's body in the world's object list
 };
 
 } // namespace Ultima6

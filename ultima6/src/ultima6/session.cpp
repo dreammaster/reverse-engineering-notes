@@ -29,8 +29,10 @@ void GameClock::advance(int minutes) {
 	}
 }
 
-Game::Game(World &world) : _world(world), _renderer(world) {
+Game::Game(World &world) : _world(world), _renderer(world), _movement(world) {
 	world.avatarPosition(x, y, z);
+	_leaderObject = world.actorObject(1);
+	_rules.questFlag = !world.actors.globals.empty() && world.actors.globals[0] != 0;
 	const std::vector<uint8_t> &g = world.actors.globals;
 	// objlist +0x1BF3: minute, hour, day, month, year (u16)
 	clock.minute = g[2];
@@ -40,23 +42,13 @@ Game::Game(World &world) : _world(world), _renderer(world) {
 	clock.year = g[6] | (g[7] << 8);
 }
 
-bool Game::canWalk(int tx, int ty, int tz) const {
-	int mask = tz == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
-	tx &= mask;
-	ty &= mask;
-	if (_world.flags.flags1[_world.map.tile(tz, tx, ty)] & 0x02)
-		return false;
-	std::vector<int> here;
-	_world.objectsAt(tx, ty, tz, here);
-	for (int idx : here) {
-		const World::Obj &o = _world.objects[idx];
-		if (o.invisible() || o.actor == 1)
-			continue;
-		int tile = _world.baseTile.firstTile[o.type] + o.frame;
-		if (_world.flags.flags1[tile & (TileSet::COUNT - 1)] & 0x02)
-			return false;
+bool Game::canWalk(int tx, int ty, int tz) {
+	MoveResult r = _movement.check(tx, ty, tz, _leaderObject, _rules);
+	if (r.denied) {
+		message("\"Thou art not upon a Sacred Quest! Passage denied!\"");
+		_rules.deniedPending = false;
 	}
-	return true;
+	return r.passable;
 }
 
 bool Game::step(int dir) {
@@ -68,6 +60,8 @@ bool Game::step(int dir) {
 	}
 	x = nx;
 	y = ny;
+	_world.moveObject(_leaderObject, x, y, z);
+	_rules.deniedPending = true;
 	clock.advance(1);
 	return true;
 }

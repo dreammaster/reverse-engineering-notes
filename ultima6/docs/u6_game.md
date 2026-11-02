@@ -211,3 +211,42 @@ signatures (unique matches only):
 So the two spin-offs are close relatives of each other and only distant relatives (at the instruction level) of Ultima VI: they
 were built from a reworked engine, not the same binary with different data. Expect the diff work (roadmap step 4) to be a real
 comparison, with Martian Dreams and Savage Empire sharing a base.
+
+## Passability: sub_25D7F (ported as `Movement::check`)
+
+`sub_25D7F(y, x, mover)` returns 1 if the object `mover` (an actor number, or a larger object number) may enter
+(x, y) on the current level. Arguments are pushed x first, so the first parameter is y. It works in two stages.
+
+**Terrain.** The tile under the position (`sub_18C09(z, y, x)` reads the terrain cache, falling back to the chunk
+cache) is looked up in TILEFLAG's first table. The mover's *movement class* comes from `seg066`: a 0-terminated
+list of 64 creature types (sub_35F9B finds the index, -1 if absent) and, at +0x242, one flag word per class
+(-1 reads the word before the table, 0x6000). Class flags: 0x100 flies, 0x200 swims, 0x400 ignores objects,
+0x4000 opens doors. A mover is a *walker* if it neither swims nor flies, or is class 1 (type 0x1AD).
+Terrain flags used: 0x01 wet, 0x02 impassable, 0x04 blocks flying, 0x08 hurts.
+
+- walkers pass where 0x02 is clear; swimmers (and types 0x19E/0x19F, the body parts of the sea monsters) where
+  the tile is wet; swimmers also where 0x02 and 0x01 are both set; flyers where 0x04 is clear; ghosts everywhere;
+  type 0x168 only on tiles that hurt.
+- a hurting tile sets `word_3EFF9`; if `word_3F004` (avoid damage) is set the answer is no.
+
+**Objects.** `sub_19C1A`/`sub_199FF` walk the objects on the position, including the parts of double-width,
+double-height and four-tile objects (TILEFLAG table 2 bits 0x80 / 0x40) that reach in from the east, south and
+south-east neighbours; `word_3DEA8` then holds how far into the object's tiles the cell lies (1..3) and is
+subtracted from the tile number. The mover itself is skipped. Per object the check ends in one of three ways:
+SKIP (ignore it), FALL (it does not block by its tiles) or BLOCK (answer no, stop). Rules in the order met:
+
+1. type 0x1A0 with the quest flag (first byte of the saved globals, `word_48F65`) clear: print "Thou art not upon a
+   Sacred Quest! Passage denied!" once (`byte_3EFFD`) and answer no.
+2. a segmented creature (type >= 0x1AA or 0x19C) meets another segment of the same type: the tile-flag bits
+   0x80/0x40/0x20/0x10 of the mover name the direction the body trails, and parts on that side are skipped.
+3. the mover is a type 0x162 and the object is type 0xD5, 0x11A or 0x136: passable, SKIP.
+4. a two-by-two mover cannot start over the origin cell of another big object.
+5. walkers: tile flag 3 bit 0x04 makes the cell passable and, without bit 0x10, ends the check with yes (bridges).
+6. type 0x19D (worm) refuses the next segment of itself, using the quality byte as the segment number.
+7. otherwise by the object's flags: walkers stop only at flag 0x02; swimmers pass wet impassable things or flag-3
+   0x10 tiles; flyers pass anything that does not block the air; ghosts pass non-actors; party members swap
+   places with other party members (not the leader, not with status bits 0x16, not if the per-actor movement flag
+   0x10 is set); other creatures pass doors (types 0x129-0x12C frame < 8, 0x116, 0x118) only with class flag 0x4000.
+8. after any of that, a creature in the way (any actor but number 0) blocks, unless its type is one of 0x164,
+   0x162, 0x157, 0x167, 0x165 and differs from the mover's.
+9. flyers of types 0x16A, 0x1A8, 0x19B, 0x1A9 are stopped by objects whose flag 0x04 is set.

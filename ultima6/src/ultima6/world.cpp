@@ -75,6 +75,7 @@ bool World::load(const std::string &dir) {
 			return fail(ObjBlock::dungeonFileName(level));
 	}
 
+	_actorObject.assign(ObjList::ACTORS, -1);
 	// The actors' bodies: objects 0-255 of the original. An actor without a type is not in the world.
 	for (int a = 0; a < ObjList::ACTORS; ++a) {
 		if (actors.objType(a) == 0)
@@ -92,6 +93,7 @@ bool World::load(const std::string &dir) {
 		o.quality = actors.objQuantity[a] >> 8;
 		o.actor = a;
 		o.parent = -1;
+		_actorObject[a] = (int)objects.size();
 		objects.push_back(o);
 	}
 
@@ -112,6 +114,24 @@ void World::objectsAt(int x, int y, int z, std::vector<int> &out) const {
 	auto it = std::lower_bound(_byPosition.begin(), _byPosition.end(), std::make_pair(key, -1));
 	for (; it != _byPosition.end() && it->first == key; ++it)
 		out.push_back(it->second);
+}
+
+void World::moveObject(int index, int x, int y, int z) {
+	Obj &o = objects[index];
+	if (o.onMap()) {
+		auto it = std::find(_byPosition.begin(), _byPosition.end(), std::make_pair(positionKey(o.x, o.y, o.z), index));
+		if (it != _byPosition.end())
+			_byPosition.erase(it);
+	}
+	o.x = x;
+	o.y = y;
+	o.z = z;
+	if (o.onMap()) {
+		std::pair<uint32_t, int> e(positionKey(o.x, o.y, o.z), index);
+		auto at = std::upper_bound(_byPosition.begin(), _byPosition.end(), e,
+								   [](const std::pair<uint32_t, int> &a, const std::pair<uint32_t, int> &b) { return a.first < b.first; });
+		_byPosition.insert(at, e);
+	}
 }
 
 } // namespace Ultima6
