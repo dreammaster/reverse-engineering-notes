@@ -1,0 +1,174 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef NUVIE_SCRIPT_SCRIPT_H
+#define NUVIE_SCRIPT_SCRIPT_H
+
+#include "common/str.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/misc/u6_misc.h"
+#include "ultima/ultima6/usecode/usecode.h"
+
+namespace Ultima {
+namespace Ultima6 {
+
+class Configuration;
+class MapCoord;
+class Spell;
+class Obj;
+class Actor;
+class NuvieIO;
+class SoundManager;
+
+namespace Scripts {
+class GameScripts;
+} // End of namespace Scripts
+
+#define NUVIE_SCRIPT_NOT_STARTED     255
+#define NUVIE_SCRIPT_ERROR             0
+#define NUVIE_SCRIPT_FINISHED          1
+#define NUVIE_SCRIPT_GET_TARGET        2
+#define NUVIE_SCRIPT_GET_DIRECTION     3
+#define NUVIE_SCRIPT_GET_INV_OBJ       4
+#define NUVIE_SCRIPT_ADVANCE_GAME_TIME 5
+#define NUVIE_SCRIPT_ADVANCE_REAL_TIME 6
+#define NUVIE_SCRIPT_TALK_TO_ACTOR     7
+#define NUVIE_SCRIPT_GET_SPELL         8
+#define NUVIE_SCRIPT_GET_OBJ           9
+#define NUVIE_SCRIPT_GET_PLAYER_OBJ   10 //can get an object immediately surrounding the player or from their inventory.
+
+#define NUVIE_SCRIPT_CB_ADV_GAME_TIME  1
+
+/**
+ * A script that may stop to wait for input or for game time to pass.
+ * The state reported after each step says what it is waiting for.
+ */
+class ScriptThread {
+public:
+	virtual ~ScriptThread() {}
+
+	virtual uint32 get_data() = 0;
+	virtual uint8 get_state() = 0;
+	virtual uint8 start() = 0;
+	virtual uint8 resume_with_location(const MapCoord &loc) = 0;
+	virtual uint8 resume_with_direction(NuvieDir dir) = 0;
+	virtual uint8 resume_with_spell_num(uint8 spell_num) = 0;
+	virtual uint8 resume_with_obj(Obj *obj) = 0;
+	virtual uint8 resume_with_nil() = 0;
+	virtual bool finished() = 0;
+
+	bool is_running() {
+		return !finished();
+	}
+};
+
+#define SCRIPT_DISPLAY_HIT_MSG true
+class Script {
+	static Script *script;
+	Configuration *config;
+	nuvie_game_t gametype; // what game is being played?
+	SoundManager *soundManager;
+
+	// The scripts for the game being played
+	Scripts::GameScripts *_scripts;
+
+public:
+
+	Script(Configuration *cfg, GUI *gui, SoundManager *sm, nuvie_game_t type);
+	~Script();
+
+	/* Return instance of self */
+	static Script *get_script() {
+		return script;
+	}
+	Configuration *get_config() {
+		return config;
+	}
+	SoundManager *get_sound_manager() {
+		return soundManager;
+	}
+
+	bool call_load_game(NuvieIO *objlist);
+	bool call_save_game(NuvieIO *objlist);
+
+	bool play_intro();
+	bool play_ending();
+	MovementStatus call_player_before_move_action(sint16 *rel_x, sint16 *rel_y);
+	bool call_player_post_move_action(bool didMove);
+	bool call_player_pass();
+	bool call_actor_update_all();
+	bool call_actor_init(Actor *actor, ActorAlignment alignment);
+	bool call_actor_attack(Actor *actor, MapCoord location, Obj *weapon, Actor *foe);
+	bool call_actor_map_dmg(Actor *actor, MapCoord location);
+	bool call_actor_tile_dmg(Actor *actor, uint16 tile_num);
+	bool call_actor_hit(Actor *actor, uint8 dmg, bool display_hit_msg = false);
+	uint8 call_actor_str_adj(Actor *actor);
+	uint8 call_actor_dex_adj(Actor *actor);
+	uint8 call_actor_int_adj(Actor *actor);
+	bool call_look_obj(Obj *obj);
+	int call_obj_get_readiable_location(Obj *obj);
+	uint8 actor_get_max_magic_points(const Actor *actor);
+	bool call_actor_get_obj(Actor *actor, Obj *obj, Obj *container = nullptr);
+	bool call_actor_subtract_movement_points(Actor *actor, uint8 points);
+	bool call_actor_resurrect(Actor *actor);
+	bool call_use_keg(Obj *obj); //we need this until we move all usecode into script.
+	bool call_has_usecode(Obj *obj, UseCodeEvent usecode_type);
+	ScriptThread *call_use_obj(Obj *obj, Actor *actor);
+	bool call_ready_obj(Obj *obj, Actor *actor);
+	bool call_move_obj(Obj *obj, sint16 rel_x, sint16 rel_y);
+	bool call_handle_alt_code(uint16 altcode);
+
+	bool call_magic_get_spell_list(Spell **spell_list);
+	ScriptThread *call_magic_cast(const char *invocation);
+	bool call_actor_use_effect(Obj *effect_obj, Actor *actor);
+	bool call_moonstone_set_loc(uint8 phase, MapCoord location); //this is a hack until we have 'use' moonstone in script.
+	bool call_advance_time(uint16 minutes);
+	bool call_can_get_obj_override(Obj *obj) const;
+	bool call_out_of_ammo(Actor *attacker, Obj *weapon, bool print_message);
+	bool call_is_avatar_dead();
+	bool call_is_ranged_select(UseCodeType operation);
+	bool call_set_g_show_stealing(bool stealing);
+	uint8 call_get_combat_range(uint16 absx, uint16 absy);
+	uint8 call_get_weapon_range(uint16 obj_n);
+
+	MapCoord call_moonstone_get_loc(uint8 phase);
+	bool call_update_moongates(bool visible);
+
+	uint8 call_play_midgame_sequence(uint16 seq_num);
+	bool call_talk_script(uint8 script_number);
+	bool call_talk_to_obj(Obj *obj);
+	bool call_talk_to_actor(Actor *actor);
+	bool call_is_container_obj(uint16 obj_n);
+	uint8 call_get_portrait_number(Actor *actor);
+	bool call_player_attack();
+	ScriptThread *call_player_attack_thread();
+
+	uint16 call_get_tile_to_object_mapping(uint16 tile_n);
+	bool call_is_tile_object(uint16 obj_n);
+
+private:
+	bool play_cutscene(bool intro);
+};
+
+} // End of namespace Ultima6
+} // End of namespace Ultima
+
+#endif

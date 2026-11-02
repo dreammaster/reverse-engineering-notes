@@ -1,0 +1,916 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/misc/u6_misc.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/files/nuvie_io.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/files/u6_lzw.h"
+#include "ultima/ultima6/misc/u6_line_walker.h"
+#include "ultima/ultima6/screen/game_palette.h"
+#include "ultima/ultima6/sound/sound_manager.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/fonts/wou_font.h"
+#include "ultima/ultima6/core/cursor.h"
+#include "ultima/ultima6/keybinding/keys.h"
+#include "ultima/ultima6/script/script_cutscene.h"
+#include "common/system.h"
+
+namespace Ultima {
+namespace Ultima6 {
+
+static const uint32 DELUXE_PAINT_MAGIC = 0x4d524f46; // "FORM"
+
+static ScriptCutscene *cutScene = nullptr;
+ScriptCutscene *get_cutscene() {
+	return cutScene;
+}
+
+void init_cutscene(Configuration *cfg, GUI *gui, SoundManager *sm) {
+	cutScene = new ScriptCutscene(gui, cfg, sm);
+}
+
+int ScriptCutscene::input_poll(bool poll_mouse_motion) {
+	Common::Event event;
+
+	while (Events::get()->pollEvent(event)) {
+		//FIXME do something here.
+		KeyBinder *keybinder = Game::get_game()->get_keybinder();
+
+		if (event.type == Common::EVENT_JOYAXIS_MOTION ||
+				event.type == Common::EVENT_JOYBUTTON_DOWN ||
+				event.type == Common::EVENT_JOYBUTTON_UP) {
+			event.kbd.flags = 0;
+			event.kbd.keycode = keybinder->get_key_from_joy_events(&event);
+			if (event.kbd.keycode == Common::KEYCODE_INVALID)
+				// button isn't mapped or was in deadzone
+				continue; // pretend nothing happened
+
+			event.type = Common::EVENT_KEYDOWN;
+		}
+
+		if (event.type == Common::EVENT_KEYDOWN) {
+			Common::KeyState key = event.kbd;
+
+			if ((((key.flags & Common::KBD_CAPS) == Common::KBD_CAPS
+					&& (key.flags & Common::KBD_SHIFT) == 0) || ((key.flags & Common::KBD_CAPS) == 0 && (key.flags & Common::KBD_SHIFT)))
+			        && key.keycode >= Common::KEYCODE_a && key.keycode <= Common::KEYCODE_z)
+				key.keycode = (Common::KeyCode)(key.keycode - 32);
+			if (key.keycode > 0xFF || !Common::isPrint((char)key.keycode) || (key.flags & Common::KBD_ALT) || (key.flags & Common::KBD_CTRL)) {
+				ActionType a = keybinder->get_ActionType(key);
+				switch (keybinder->GetActionKeyType(a)) {
+				case WEST_KEY:
+					return INPUT_KEY_LEFT;
+				case EAST_KEY:
+					return INPUT_KEY_RIGHT;
+				case SOUTH_KEY:
+					return INPUT_KEY_DOWN;
+				case NORTH_KEY:
+					return INPUT_KEY_UP;
+				case CANCEL_ACTION_KEY:
+					key.keycode = Common::KEYCODE_ESCAPE;
+					break;
+				case DO_ACTION_KEY:
+					key.keycode = Common::KEYCODE_RETURN;
+					break;
+				default:
+					if (keybinder->handle_always_available_keys(a)) continue;
+					break;
+				}
+			}
+			return key.keycode;
+		}
+		if (event.type == Common::EVENT_QUIT) {
+			return 'Q';
+		}
+
+		if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
+			return 0;
+		}
+		if (poll_mouse_motion && event.type == Common::EVENT_MOUSEMOVE) {
+			return 1;
+		}
+	}
+
+	return INPUT_NONE;
+}
+
+ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : GUI_Widget(nullptr) {
+	config = cfg;
+	gui = g;
+
+	cursor = Game::get_game()->get_cursor();
+	x_off = Game::get_game()->get_game_x_offset();
+	y_off = Game::get_game()->get_game_y_offset();
+
+	x_off += (Game::get_game()->get_game_width() - 320) / 2; // center it
+	y_off += (Game::get_game()->get_game_height() - 200) / 2; // center it
+
+	nuvie_game_t game_type = Game::get_game()->get_game_type();
+
+	GUI_Widget::Init(nullptr, 0, 0, g->get_width(), g->get_height());
+
+	clip_rect = Common::Rect(x_off, y_off, x_off + 320, y_off + 200);
+	screen = g->get_screen();
+	gui->AddWidget(this);
+	Hide();
+	sound_manager = sm;
+
+	//FIXME this should be loaded by script.
+	Common::Path path;
+
+
+	font = new WOUFont();
+
+	if (game_type == NUVIE_GAME_U6) {
+		config_get_path(config, "u6.set", path);
+		font->init(path);
+	}
+	//FIXME load other fonts for MD / SE if needed here.
+	if (game_type == NUVIE_GAME_SE) {
+		Common::Path filePath;
+		U6Lib_n lib_file;
+
+		config_get_path(config, "savage.fnt", filePath);
+
+		lib_file.open(filePath, 4, NUVIE_GAME_SE); //can be either SE or MD just as long as it isn't set to U6 type.
+
+		unsigned char *buf = lib_file.get_item(0);
+		font->initWithBuffer(buf, lib_file.get_item_size(0)); //buf will be freed by ~Font()
+	}
+
+	if (game_type == NUVIE_GAME_MD) {
+		Common::Path filePath;
+		U6Lib_n lib_file;
+
+		config_get_path(config, "fonts.lzc", filePath);
+
+		lib_file.open(filePath, 4, NUVIE_GAME_MD);
+
+		unsigned char *buf = lib_file.get_item(0);
+		font->initWithBuffer(buf, lib_file.get_item_size(0)); //buf will be freed by ~Font()
+	}
+	next_time = 0;
+	loop_interval = 40;
+
+	screen_opacity = 255;
+	bg_color = 0;
+	solid_bg = true;
+	rotate_game_palette = false;
+	palette = nullptr;
+}
+
+ScriptCutscene::~ScriptCutscene() {
+	delete font;
+}
+
+bool ScriptCutscene::is_lzc(const char *filename) {
+	if (strlen(filename) > 4 && scumm_stricmp((const char *)&filename[strlen(filename) - 4], ".lzc") == 0)
+		return true;
+
+	return false;
+}
+
+CSImage *ScriptCutscene::load_image_from_lzc(const Common::Path &filename, uint16 idx, uint16 sub_idx) {
+	CSImage *image = nullptr;
+	U6Lib_n lib_n;
+	unsigned char *buf = nullptr;
+
+	if (!lib_n.open(filename, 4, NUVIE_GAME_MD)) {
+		return nullptr;
+	}
+
+	if (idx >= lib_n.get_num_items()) {
+		return nullptr;
+	}
+
+	buf = lib_n.get_item(idx, nullptr);
+	NuvieIOBuffer io;
+	io.open(buf, lib_n.get_item_size(idx), false);
+	U6Lib_n lib1;
+	lib1.open(&io, 4, NUVIE_GAME_MD);
+
+	if (sub_idx >= lib1.get_num_items()) {
+		return nullptr;
+	}
+
+	U6Shape *shp = new U6Shape();
+	if (shp->load(&lib1, (uint32)sub_idx)) {
+		image = new CSImage(shp);
+	}
+
+	free(buf);
+
+	return image;
+}
+
+CSImage *ScriptCutscene::load_image(const char *filename, int idx, int sub_idx) {
+	U6Lib_n lib_n;
+	Common::Path path;
+	CSImage *image = nullptr;
+
+	config_get_path(config, filename, path);
+
+	if (is_lzc(filename)) {
+		return load_image_from_lzc(path, (uint16)idx, (uint16)sub_idx);
+	}
+
+	U6Shape *shp = new U6Shape();
+
+	if (idx >= 0) {
+		U6Lzw lzw;
+
+		uint32 decomp_size;
+		unsigned char *buf = lzw.decompress_file(path, decomp_size);
+		NuvieIOBuffer io;
+		io.open(buf, decomp_size, false);
+		{
+			// Note: libN needs to be destroyed before the io object.
+			U6Lib_n libN;
+			if (libN.open(&io, 4, NUVIE_GAME_MD)) {
+				if (shp->load(&libN, (uint32)idx)) {
+					image = new CSImage(shp);
+				}
+			}
+		}
+		free(buf);
+	} else {
+		if (shp->load(path)) {
+			image = new CSImage(shp);
+		}
+	}
+
+	if (image == nullptr)
+		delete shp;
+
+	return image;
+}
+
+Common::Array<Common::Array<CSImage *> > ScriptCutscene::load_all_images(const char *filename) {
+	Common::Path path;
+	CSImage *image = nullptr;
+
+	config_get_path(config, filename, path);
+
+	Common::Array<Common::Array<CSImage *> > v;
+	U6Lzw lzw;
+
+	U6Lib_n lib_n;
+	unsigned char *buf = nullptr;
+
+	if (is_lzc(filename)) {
+		if (!lib_n.open(path, 4, NUVIE_GAME_MD)) {
+			return v;
+		}
+		for (uint32 idx = 0; idx < lib_n.get_num_items(); idx++) {
+			buf = lib_n.get_item(idx, nullptr);
+			NuvieIOBuffer io;
+			io.open(buf, lib_n.get_item_size(idx), false);
+			U6Lib_n lib1;
+			lib1.open(&io, 4, NUVIE_GAME_MD);
+			//printf("lib_size = %d\n", lib1.get_num_items());
+			Common::Array<CSImage *> v1;
+			for (uint32 idx1 = 0; idx1 < lib1.get_num_items(); idx1++) {
+				U6Shape *shp = new U6Shape();
+				if (shp->load(&lib1, idx1)) {
+					image = new CSImage(shp);
+					v1.push_back(image);
+				}
+			}
+			free(buf);
+			buf = nullptr;
+			v.push_back(v1);
+		}
+	} else {
+		uint32 decomp_size;
+		buf = lzw.decompress_file(path, decomp_size);
+		if (!buf) // failed to open or decompress
+			return v;
+		NuvieIOBuffer io;
+		if (!buf || !io.open(buf, decomp_size, false) ||
+		    !lib_n.open(&io, 4, NUVIE_GAME_MD)) {
+			free(buf);
+			return v;
+		}
+
+		for (uint32 idx = 0; idx < lib_n.get_num_items(); idx++) {
+			Common::Array<CSImage *> v1;
+			U6Shape *shp = new U6Shape();
+			if (shp->load(&lib_n, idx)) {
+				image = new CSImage(shp);
+				v1.push_back(image);
+				v.push_back(v1);
+			}
+		}
+
+		lib_n.close();
+	}
+
+	if (buf)
+		free(buf);
+
+	return v;
+
+}
+
+void load_images_from_lib(Common::Array<CSImage *> *images, U6Lib_n *lib, uint32 index) {
+	unsigned char *buf = lib->get_item(index, nullptr);
+	if (buf == nullptr) {
+		return;
+	}
+
+	NuvieIOBuffer io;
+	io.open(buf, lib->get_item_size(index), false);
+	U6Lib_n lib1;
+	lib1.open(&io, 4, NUVIE_GAME_MD);
+
+	for (uint16 i = 0; i < lib1.get_num_items(); i++) {
+		U6Shape *shp = new U6Shape();
+		if (shp->load(&lib1, i)) {
+			images->push_back(new CSImage(shp));
+		}
+	}
+	free(buf);
+}
+
+Common::Array<CSMidGameData> ScriptCutscene::load_midgame_file(const char *filename) {
+	Common::Path path;
+	U6Lib_n lib_n;
+	Common::Array<CSMidGameData> v;
+	nuvie_game_t game_type = Game::get_game()->get_game_type();
+
+	config_get_path(config, filename, path);
+
+	if (!lib_n.open(path, 4, NUVIE_GAME_MD)) {
+		return v;
+	}
+
+	for (uint32 idx = 0; idx < lib_n.get_num_items();) {
+		if (game_type == NUVIE_GAME_MD && idx == 0) { //Skip the first entry in the lib for MD it is *bogus*
+			idx++;
+			continue;
+		}
+
+		CSMidGameData data;
+		for (int i = 0; i < 3; i++, idx++) {
+			unsigned char *buf = lib_n.get_item(idx, nullptr);
+			data.text.push_back(Common::String((const char *)buf));
+			free(buf);
+		}
+
+		load_images_from_lib(&data.images, &lib_n, idx++);
+
+		if (game_type == NUVIE_GAME_MD) {
+			load_images_from_lib(&data.images, &lib_n, idx++);
+		}
+
+		v.push_back(data);
+	}
+
+	return v;
+}
+
+TransferSaveData ScriptCutscene::load_transfer_save() {
+	TransferSaveData data;
+	data.gameType = 0;
+	data.name = "";
+	data.gender = 0;
+	data.className = "Avatar";
+	data.str = 0;
+	data.dex = 0;
+	data.intelligence = 0;
+	data.magic = 0;
+	data.exp = 0;
+	data.level = 0;
+
+	if (load_u5_save_file(data)) {
+		return data;
+	}
+
+	load_u4_save_file(data);
+
+	return data;
+}
+
+Common::Array<Common::String> ScriptCutscene::load_text(const char *filename, uint8 idx) {
+	Common::Path path;
+	U6Lib_n lib_n;
+	Common::Array<Common::String> v;
+	unsigned char *buf = nullptr;
+
+	config_get_path(config, filename, path);
+
+	if (!lib_n.open(path, 4, NUVIE_GAME_MD) || idx >= lib_n.get_num_items()) {
+		return v;
+	}
+
+	buf = lib_n.get_item(idx, nullptr);
+	uint16 len = lib_n.get_item_size(idx);
+	if (buf != nullptr) {
+		uint16 start = 0;
+		for (uint16 i = 0; i < len; i++) {
+			if (buf[i] == '\r') {
+				buf[i] = '\0';
+				v.push_back(Common::String((const char *)&buf[start]));
+				i++;
+				buf[i] = '\0'; // skip the '\n' character
+				start = i + 1;
+			}
+		}
+
+		free(buf);
+	}
+
+	return v;
+}
+
+void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16 *y, uint16 startx, uint16 width, uint8 color) {
+	int len = *x - startx;
+	size_t start = 0;
+	size_t found;
+	Common::String str = s;
+	Common::List<Common::String> tokens;
+	int space_width = font->getStringWidth(" ");
+	//uint16 x1 = startx;
+
+	found = str.findFirstOf(" ", start);
+	while (found != Common::String::npos) {
+		Common::String token = str.substr(start, found - start);
+
+		int token_len = font->getStringWidth(token.c_str());
+
+		if (len + token_len + space_width > width) {
+			//FIXME render line here.
+			int new_space = 0;
+			if (tokens.size() > 1)
+				new_space = floor((width - (len - space_width * (tokens.size() - 1))) / (tokens.size() - 1));
+
+			for (const Common::String &ss : tokens) {
+				*x = ((WOUFont *)font)->drawStringToShape(image->shp, ss.c_str(), *x, *y, color);
+				*x += new_space;
+			}
+			*y += 8;
+			*x = startx;
+			len = token_len + space_width;
+			tokens.clear();
+			tokens.push_back(token);
+		} else {
+			tokens.push_back(token);
+			len += token_len + space_width;
+		}
+
+		start = found + 1;
+		found = str.findFirstOf(" ", start);
+	}
+
+	for (const Common::String &ss : tokens) {
+		*x = ((WOUFont *)font)->drawStringToShape(image->shp, ss.c_str(), *x, *y, color);
+		*x += space_width;
+	}
+
+	if (start < str.size()) {
+		Common::String token = str.substr(start, str.size() - start);
+		if (len + font->getStringWidth(token.c_str()) > width) {
+			*y += 8;
+			*x = startx;
+		}
+		*x = ((WOUFont *)font)->drawStringToShape(image->shp, token.c_str(), *x, *y, color);
+	}
+
+
+	//font->drawStringToShape(image->shp, string, x, y, color);
+}
+
+void ScriptCutscene::print_text_raw(CSImage *image, const char *string, uint16 x, uint16 y, uint8 color) const {
+	((WOUFont *)font)->drawStringToShape(image->shp, string, x, y, color);
+}
+
+void ScriptCutscene::load_palette(const char *filename, int idx) {
+	NuvieIOFileRead file;
+	uint8 buf[0x240 + 1];
+	uint8 unpacked_palette[0x300];
+	Common::Path path;
+
+	config_get_path(config, filename, path);
+
+
+	if (file.open(path) == false) {
+		DEBUG(0, LEVEL_ERROR, "loading palette.\n");
+		return;
+	}
+
+	if (file.read4() == DELUXE_PAINT_MAGIC || has_file_extension(filename, ".lbm")) {
+		//deluxe paint palette file.
+		file.seek(0x30);
+		file.readToBuf(unpacked_palette, 0x300);
+	} else if (has_file_extension(filename, ".pal")) {
+		U6Lib_n lib;
+		lib.open(path, 4, NUVIE_GAME_MD);
+		unsigned char *decomp_buf = lib.get_item(0, nullptr);
+		memcpy(unpacked_palette, &decomp_buf[idx * 0x300], 0x300);
+
+		free(decomp_buf);
+	} else {
+		file.seek(idx * 0x240);
+
+		file.readToBuf(buf, 0x240);
+		buf[0x240] = 0; //protect from buf[byte_pos+1] overflow when processing last byte of data.
+
+		for (int i = 0; i < 0x100; i++) {
+			for (int j = 0; j < 3; j++) {
+				int byte_pos = (i * 3 * 6 + j * 6) / 8;
+				int shift_val = (i * 3 * 6 + j * 6) % 8;
+				int color = ((buf[byte_pos] +
+				              (buf[byte_pos + 1] << 8))
+				             >> shift_val) & 0x3F;
+				unpacked_palette[i * 3 + j] = (uint8)(color << 2);
+			}
+		}
+	}
+
+	/*
+	printf("GIMP Palette\nName: U6 ending\n#\n");
+	for (int i = 0; i < 0x100; i++)
+	{
+	    for (int j = 0; j < 3; j++)
+	    {
+	        printf("% 3d ", unpacked_palette[i*3+j]);
+	    }
+	    printf(" untitled\n");
+	}
+	*/
+	screen->set_palette(unpacked_palette);
+}
+
+void ScriptCutscene::set_palette_entry(uint8 idx, uint8 r, uint8 g, uint8 b) {
+	screen->set_palette_entry(idx, r, g, b);
+}
+
+void ScriptCutscene::rotate_palette(uint8 idx, uint8 length) {
+	screen->rotate_palette(idx, length);
+}
+
+void ScriptCutscene::set_update_interval(uint16 interval) {
+	loop_interval = interval;
+}
+
+void ScriptCutscene::set_screen_opacity(uint8 new_opacity) {
+	screen_opacity = new_opacity;
+}
+
+void ScriptCutscene::hide_sprites() {
+	for (CSSprite *s : sprite_list) {
+		if (s->visible)
+			s->visible = false;
+	}
+}
+
+void ScriptCutscene::update() {
+	if (cutScene->Status() == WIDGET_HIDDEN) {
+		cutScene->Show();
+		gui->force_full_redraw();
+	}
+
+	if (rotate_game_palette) {
+		GamePalette *pal = Game::get_game()->get_palette();
+		if (pal) {
+			pal->rotatePalette();
+		}
+	}
+	gui->Display();
+	screen->performUpdate();
+	sound_manager->update();
+	wait();
+}
+
+void ScriptCutscene::wait() {
+	uint32 now = SDL_GetTicks();
+	if (next_time <= now) {
+		next_time = now + loop_interval;
+		return;
+	}
+
+	uint32 delay = next_time - now;
+	next_time += loop_interval;
+	g_system->delayMillis(delay);
+}
+
+/* Show the widget  */
+void ScriptCutscene::Display(bool full_redraw) {
+	if (cursor && cursor->is_visible())
+		cursor->clear();
+
+	if (solid_bg) {
+		if (full_redraw)
+			screen->fill(bg_color, 0, 0, area.width(), area.height());
+		else
+			screen->fill(bg_color, x_off, y_off, 320, 200);
+	}
+
+	if (screen_opacity > 0) {
+		for (CSSprite *s : sprite_list) {
+			if (s->visible) {
+				if (s->image) {
+					uint16 w, h;
+					s->image->shp->get_size(&w, &h);
+					uint16 x, y;
+					s->image->shp->get_hot_point(&x, &y);
+					screen->blit(x_off + s->x - x, y_off + s->y - y, s->image->shp->get_data(), 8, w, h, w, true, s->clip_rect.width() != 0 ? &s->clip_rect : &clip_rect, s->opacity);
+				}
+
+				if (!s->text.empty()) {
+					if (s->text_align != 0) {
+						display_wrapped_text(s);
+					} else {
+						if (s->text_color == 0xffff) {
+							font->drawString(screen, s->text.c_str(), s->x + x_off, s->y + y_off);
+						} else {
+							font->drawString(screen, s->text.c_str(), s->x + x_off, s->y + y_off, (uint8) s->text_color, (uint8) s->text_color);
+						}
+					}
+				}
+			}
+		}
+
+		if (screen_opacity < 255) {
+			screen->fade(x_off, y_off, 320, 200, screen_opacity, bg_color);
+		}
+	}
+
+	if (cursor)
+		cursor->display();
+
+	if (full_redraw)
+		screen->update(0, 0, area.width(), area.height());
+	else
+		screen->update(x_off, y_off, 320, 200);
+}
+
+void ScriptCutscene::Hide() {
+	GUI_Widget::Hide();
+	gui->force_full_redraw();
+}
+
+void ScriptCutscene::display_wrapped_text(CSSprite *s) {
+	uint8 text_color = (uint8) s->text_color;
+
+	size_t start = 0;
+	size_t found;
+	Common::String str = s->text + "^";
+	Common::List<Common::String> tokens;
+	int y = s->y;
+
+
+	Common::String line = "";
+
+	found = str.findFirstOf("^", start);
+	while (found != Common::String::npos) {
+		Common::String token = str.substr(start, found - start);
+
+		y = display_wrapped_text_line(token, text_color, s->x, y, s->text_align);
+
+		start = found + 1;
+		found = str.findFirstOf("^", start);
+	}
+}
+
+int ScriptCutscene::display_wrapped_text_line(Common::String str, uint8 text_color, int x, int y, uint8 align_val) {
+
+	//font->drawString(screen, s->text.c_str(), s->x + x_off, s->y + y_off, text_color, text_color);
+	int len = 0;
+	size_t start = 0;
+	size_t found;
+	str = str + " ";
+	Common::List<Common::String> tokens;
+	int space_width = font->getStringWidth(" ");
+	//uint16 x1 = startx;
+	int width = 320 - x * 2;
+
+	int char_height = font->getCharHeight();
+
+	Common::String line = "";
+
+	found = str.findFirstOf(" ", start);
+	while (found != Common::String::npos) {
+		Common::String token = str.substr(start, found - start);
+
+		int token_len = font->getStringWidth(token.c_str());
+
+		if (len + token_len > width) {
+			if (len > 0) {
+				len -= space_width;
+			}
+			font->drawString(screen, line.c_str(), x + x_off + (align_val == 1 ? 0 : (width - len)) / 2, y + y_off, text_color, text_color);
+			line = "";
+			y += char_height + 2;
+			len = 0;
+		}
+
+		len += token_len + space_width;
+		line = line + token + " ";
+
+		start = found + 1;
+		found = str.findFirstOf(" ", start);
+	}
+
+	if (len > 0) {
+		len -= space_width;
+		font->drawString(screen, line.c_str(), x + x_off + (align_val == 1 ? 0 : (width - len)) / 2, y + y_off, text_color, text_color);
+		y += char_height + 2;
+	}
+
+	return y;
+}
+
+static constexpr char u4ClassNameTbl[9][9] = {
+	"Mage",
+	"Bard",
+	"Fighter",
+	"Druid",
+	"Tinker",
+	"Paladin",
+	"Ranger",
+	"Shepherd",
+	"Avatar",
+};
+
+bool ScriptCutscene::load_u4_save_file(TransferSaveData &saveData) {
+	NuvieIOFileRead file;
+	Common::Path filename;
+	char name[16];
+
+	config_get_path(config, "party.sav", filename);
+
+	if (file.open(filename) == false) {
+		return false;
+	}
+
+	saveData.gameType = 4;
+	file.seek(10);
+	saveData.level = file.read2() / 100;
+	saveData.exp = file.read2();
+	saveData.str = file.read2();
+	saveData.dex = file.read2();
+	saveData.intelligence = file.read2();
+	saveData.magic = file.read2();
+	file.seek(28);
+	file.readToBuf((unsigned char *)name, 16);
+	saveData.name = Common::String(name).substr(0, 8);
+	saveData.gender = file.read1() == 0xc ? 0 : 1;
+	int classId = file.read1();
+	if (classId < 9) {
+		saveData.className = Common::String(u4ClassNameTbl[classId]);
+	}
+	return true;
+}
+
+bool ScriptCutscene::load_u5_save_file(TransferSaveData &saveData) {
+	NuvieIOFileRead file;
+	Common::Path filename;
+	char name[9];
+
+	config_get_path(config, "saved.gam", filename);
+
+	if (file.open(filename) == false) {
+		return false;
+	}
+
+	saveData.gameType = 5;
+
+	file.seek(2);
+	file.readToBuf((unsigned char *)name, 9);
+	saveData.name = Common::String(name);
+	saveData.gender = file.read1() == 0xc ? 0 : 1;
+	file.read1(); // class
+	file.read1(); // status
+	saveData.str = file.read1();
+	saveData.dex = file.read1();
+	saveData.intelligence = file.read1();
+	saveData.magic = file.read1();
+	file.seek(0x16);
+	saveData.exp = file.read2();
+	saveData.level = file.read1();
+
+	file.close();
+
+	return true;
+}
+
+void CSImage::setScale(uint16 percentage) {
+	if (scale == percentage) {
+		return;
+	}
+
+	if (scaled_shp)
+		delete scaled_shp;
+
+	scale = percentage;
+	if (scale == 100) {
+		scaled_shp = nullptr;
+		shp = orig_shp;
+		return;
+	}
+
+	uint16 sw, sh;
+	uint16 sx, sy;
+
+	uint16 tw, th;
+	uint16 tx, ty;
+
+	float scale_factor = (float)scale / 100;
+
+	orig_shp->get_size(&sw, &sh);
+	orig_shp->get_hot_point(&sx, &sy);
+
+	tw = (uint16)((float)sw * scale_factor);
+	th = (uint16)((float)sh * scale_factor);
+	tx = (uint16)((float)sx * scale_factor);
+	ty = (uint16)((float)sy * scale_factor);
+
+	scaled_shp = new U6Shape();
+	if (!scaled_shp->init(tw, th, tx, ty)) {
+		scale = 100;
+		delete scaled_shp;
+		scaled_shp = nullptr;
+		return;
+	}
+
+	scale_rect_8bit(orig_shp->get_data(), scaled_shp->get_data(), sw, sh, tw, th);
+	shp = scaled_shp;
+
+	return;
+}
+
+CSStarFieldImage::CSStarFieldImage(U6Shape *shape) : CSImage(shape), w(0), h(0) {
+	shp->get_size(&w, &h);
+
+	for (int i = 0; i < STAR_FIELD_NUM_STARS; i++) {
+		stars[i].color = 2;
+		stars[i].line = nullptr;
+	}
+}
+
+void CSStarFieldImage::updateEffect() {
+	unsigned char *data = shp->get_data();
+
+	memset(data, 0, w * h);
+
+	for (int i = 0; i < STAR_FIELD_NUM_STARS; i++) {
+		if (stars[i].line == nullptr) {
+			switch (NUVIE_RAND() % 4) {
+			case 0 :
+				stars[i].line = new U6LineWalker(w / 2, h / 2, 0, NUVIE_RAND() % h);
+				break;
+			case 1 :
+				stars[i].line = new U6LineWalker(w / 2, h / 2, w - 1, NUVIE_RAND() % h);
+				break;
+			case 2 :
+				stars[i].line = new U6LineWalker(w / 2, h / 2, NUVIE_RAND() % w, 0);
+				break;
+			case 3 :
+				stars[i].line = new U6LineWalker(w / 2, h / 2, NUVIE_RAND() % w, h - 1);
+				break;
+			}
+
+			stars[i].color = NUVIE_RAND() % 10 + 229;
+			uint16 start_pos = NUVIE_RAND() % (w / 2);
+			for (int j = 0; j < start_pos; j++) {
+				if (stars[i].line->step() == false) {
+					delete stars[i].line;
+					stars[i].line = nullptr;
+					break;
+				}
+			}
+		} else {
+			uint32 cur_x, cur_y;
+			if (stars[i].line->next(&cur_x, &cur_y) == false) {
+				delete stars[i].line;
+				stars[i].line = nullptr;
+			} else {
+				data[cur_y * w + cur_x] = stars[i].color;
+			}
+		}
+	}
+}
+
+} // End of namespace Ultima6
+} // End of namespace Ultima
