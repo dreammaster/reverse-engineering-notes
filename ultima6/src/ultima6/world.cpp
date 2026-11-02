@@ -1,6 +1,7 @@
 #include "ultima6/world.h"
 
 #include "files/lib_n.h"
+#include "files/shape.h"
 #include "files/lzw.h"
 
 #include "files/portrait.h"
@@ -78,6 +79,20 @@ bool World::load(const std::string &dir, const NewCharacter *newGame, const std:
 		paper.height = 200;
 		paper.pixels.assign(320 * 200, 0);
 		LibN lib;
+		{
+			// the frame of the play screen: item 0 of MDSCREEN.LZC / SCREEN.LZC (an archive whose own header is 4 / 8 bytes, then a 320 x 200 shape)
+			Bytes item;
+			Shape frame;
+			if (readFile(joinPath(dir, game == GameId::MartianDreams ? "MDSCREEN.LZC" : "SCREEN.LZC"), raw) && lib.load(raw, true) && lib.get(0, item)) {
+				size_t skip = game == GameId::MartianDreams ? 4 : 8;
+				if (item.size() > skip && frame.load(&item[skip], item.size() - skip) && frame.width == 320 && frame.height == 200) {
+					std::fill(paper.pixels.begin(), paper.pixels.end(), 0);
+					for (int i = 0; i < 320 * 200; ++i)
+						if (frame.pixels[i] != Shape::TRANSPARENT)
+							paper.pixels[i] = frame.pixels[i];
+				}
+			}
+		}
 		if (!readFile(joinPath(dir, "MAPTILES.VGA"), raw) || !lib.load(raw, true) || !lib.get(0, mapTiles))
 			return fail("MAPTILES.VGA");
 		if (!readFile(joinPath(dir, "MASKTYPE.VGA"), raw) || !lib.load(raw, true) || !lib.get(0, maskType))

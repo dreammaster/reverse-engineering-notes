@@ -45,6 +45,6 @@ bytes: the first 768 are a VGA palette of 6-bit components (the first 16 colours
 ## First stand-alone run of Martian Dreams and Savage Empire
 
 `build/u6.exe md/game/MARTIAN` and `se/game/SAVAGE` (the directories with `MARTIAN.EXE` / `SAVAGE.EXE`) load the shipped saved game through the same `World` / `Game` code as Ultima VI
-(`World::game` selects the file names: `MDPAL` / `SEPAL`, one-item archives for `MAPTILES.VGA` and `MASKTYPE.VGA`, `LOOK.LZC`; the font stays blank, the frame is black, there are no
+(`World::game` selects the file names: `MDPAL` / `SEPAL`, one-item archives for `MAPTILES.VGA` and `MASKTYPE.VGA`, `LOOK.LZC`; the font stays blank, the frame is item 0 of `MDSCREEN.LZC` / `SCREEN.LZC` (a 320 x 200 shape behind 4 / 8 bytes of archive header), there are no
 portraits or conversations) and draw the map around the party correctly (`--keys "" --shot x.png`). Missing: the frame and panel graphics (`MDSCREEN.LZC`, `SCREEN.LZC`/`BKGRND.LZC`), the
 WOU fonts, the per-game tables (movement classes, creatures, usable objects, spells, text), `TALK.LZC` scripts, menus, intros and endings.
