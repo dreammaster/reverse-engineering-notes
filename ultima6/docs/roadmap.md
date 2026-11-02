@@ -51,7 +51,9 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 ## 4. Martian Dreams and Savage Empire
 
 - [x] First findings: `spinoffs.md` — world data formats are shared and verified on both games' files.
-- [ ] Diff each game's executables against Ultima VI's (start with the shared engine code of MD/SE), work out the LZC item flags (0xE0, 2 and 1 all occur; LZMAP's single item is the raw MAP), add to the stand-alone engine behind the per-game namespaces.
+- [x] LZC archives decoded (`LibN::get`), tile sets, palettes, frames and WOU fonts load; the shared `World` / `Game` draw both games' maps with their message windows (`build/u6.exe md/game/MARTIAN`).
+- [ ] Per-game tables from each executable (movement classes, creatures, usable objects, spells, texts), `TALK.LZC` scripts, portraits (`MDFACES.LZC`, `FACES.LZC`), party panel layout and graphics, menus, intros,
+      character creation, endings, Martian Dreams' own mechanics (oxygen, flight) and Savage Empire's (tribal rules), the LZC items whose use is still unknown.
 
 ## 5. ScummVM integration, 6. Nuvie replacement
 
