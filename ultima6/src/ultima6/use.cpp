@@ -119,7 +119,47 @@ void Game::useObject(int idx) {
 		_useItem = idx;
 		_pending = 'p';
 		return;
-	} else if (type == 0x10C || type == 0xAE) {
+	} else if (type == 0x1AC || type == 0xE9) {
+		fillBucket(type == 0x1AC);
+	} else if (type == 0xB5) {
+		// use_churn: a bucket of milk becomes butter and an empty bucket
+		int milk = findInInventory(0xB4);
+		if (milk < 0) {
+			message("\nYou need some milk.\n");
+		} else {
+			_world.deleteObject(milk);
+			_world.addToInventory(actingActor(), 0x60, 0, 1);
+			_world.addToInventory(actingActor(), 0xB2, 0, 1);
+			message("\nDone\n");
+		}
+	} else if (type == 0xB6) {
+		// use_beehive: a honey jar is filled
+		int jar = findInInventory(0xB7);
+		if (jar < 0) {
+			message("\nYou need a honey jar.\n");
+		} else {
+			_world.objects[jar].type = 0xB8;
+			message("\nDone\n");
+		}
+	} else if (type == 0x108) {
+		useFishingPole();
+	} else if (type == 0xDF) {
+		// light_powder_keg: frame 0 is lit and explodes three minutes later (APPROX(51): the blast is simplified)
+		if (o.frame != 0) {
+			message("\nNo effect\n");
+		} else if (_kegTimer) {
+			message("\nNot now\n");
+		} else {
+			o.frame = 1;
+			_kegTimer = 3;
+			_kegObject = idx;
+			message("\nPowder lit!\n");
+		}
+	} else if (type == 0xDD) {
+		message("\nFire!\n"); // APPROX(51): use_cannon (330C5) fires a ball along the cannon's direction; not done
+	} else if (type == 0xEC || type == 0x1A3) {
+		// ring_bell: an animation and a sound, no text
+		} else if (type == 0x10C || type == 0xAE) {
 		useLever(idx);
 	} else if (type == 0x14E) {
 		World::Obj &d = _world.objects[idx];
@@ -475,6 +515,93 @@ void Game::usePotionOn(int actor) {
 		message("\nNo effect\n");
 	consumeOne(item);
 	_world.spendMoves(actingActor(), 5);
+}
+
+// The first object of a type in the acting member's inventory (sub_19FA2), or -1.
+int Game::findInInventory(int type) {
+	std::vector<int> inv;
+	_world.inventory(actingActor(), inv);
+	for (int i : inv)
+		if (_world.objects[i].type == type)
+			return i;
+	return -1;
+}
+
+// fill_bucket_milk (32D77) at a cow, fill_bucket_water (32CF1) at a well: an empty bucket (0xB2) becomes a bucket of milk (0xB4) or water (0xB3) if it can be carried.
+void Game::fillBucket(bool milk) {
+	int bucket = findInInventory(0xB2);
+	if (bucket < 0) {
+		message("\nYou need a bucket.\n");
+		return;
+	}
+	int actor = actingActor();
+	if (_world.actors.strength[actor] * 20 < _world.carriedWeight(actor) + 0x20) {
+		message(milk ? "\nThe bucket of milk is too heavy for you.\n" : "\nThe bucket of water is too heavy for you.\n");
+		return;
+	}
+	_world.deleteObject(bucket);
+	_world.addToInventory(actor, milk ? 0xB4 : 0xB3, 0, 1);
+	message("\nDone\n");
+}
+
+// use_fishing_pole (343D6): water (flag 1 of TILEFLAG) in the eight squares around the member; one fish a day, one try in five.
+void Game::useFishingPole() {
+	int a = _world.actorObject(actingActor());
+	bool water = false;
+	if (a >= 0) {
+		int ax = _world.objects[a].x, ay = _world.objects[a].y;
+		int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+		for (int dy = -1; dy <= 1 && !water; ++dy)
+			for (int dx = -1; dx <= 1 && !water; ++dx) {
+				if (!dx && !dy)
+					continue;
+				int f = _world.flags.flags1[_world.map.tile(z, (ax + dx) & mask, (ay + dy) & mask) & (TileFlags::TILES - 1)];
+				water = f & 1;
+			}
+	}
+	if (!water) {
+		message("\nYou need to stand next to water.\n");
+		return;
+	}
+	if (_fishedToday || _rng.next() % 5 != 0) {
+		message("\nDidn't get a fish.\n");
+		return;
+	}
+	int actor = actingActor();
+	if (_world.actors.strength[actor] * 20 < _world.carriedWeight(actor) + 5) {
+		message("\nGot it, but can't carry it.\n");
+		return;
+	}
+	message("\nGot it!\n");
+	_world.addToInventory(actor, 0x109, 0, 1);
+	_fishedToday = true;
+}
+
+// sub_333BB: the keg is gone and what stands around its square takes 1-60 points of damage. APPROX(51): the original asks sub_38962 for the objects in the blast
+// (the explosion animation 0x189) and then calls blow_up_door; here the eight squares around and the square itself are hit and doors are not destroyed.
+void Game::explodeKeg() {
+	if (_kegObject < 0)
+		return;
+	World::Obj keg = _world.objects[_kegObject];
+	int kx = keg.x, ky = keg.y, kz = keg.z;
+	if (carriedObject(keg) && keg.parent >= 0) {
+		int owner = _world.actorObject(keg.parent);
+		if (owner >= 0) {
+			kx = _world.objects[owner].x;
+			ky = _world.objects[owner].y;
+			kz = _world.objects[owner].z;
+		}
+	}
+	_world.deleteObject(_kegObject);
+	_kegObject = -1;
+	message("\nBoom!\n");
+	for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
+		int k = _world.actorObject(actor);
+		if (k < 0 || _world.objects[k].deleted || _world.objects[k].z != kz)
+			continue;
+		if (std::abs((int)_world.objects[k].x - kx) <= 1 && std::abs((int)_world.objects[k].y - ky) <= 1)
+			_combat.applyDamage(1, actor, 1 + _rng.next() % 60);
+	}
 }
 
 // The Use command's target: the objects on the square the player points at (cmd_use selects the top one).

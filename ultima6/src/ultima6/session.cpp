@@ -82,6 +82,10 @@ void Game::minutePassed() {
 				al.unknown13f1[actor] = (uint8_t)std::min<int>(most, al.unknown13f1[actor] + al.level[actor]);
 		}
 	}
+	if (clock.hour == 0 && clock.minute == 0)
+		_fishedToday = false; // the fish bite again each day
+	if (_kegTimer > 0 && --_kegTimer == 0)
+		explodeKeg();
 	partyHazards();
 	_creatures.partyFights();
 	_creatures.despawn(x, y, z);

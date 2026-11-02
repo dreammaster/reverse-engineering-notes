@@ -121,6 +121,13 @@ private:
 	void usePotionOn(int actor);
 	void consumeOne(int idx);
 	int actingActor() const;
+	int findInInventory(int type);
+	void fillBucket(bool milk);
+	void useFishingPole();
+	void explodeKeg();
+	bool _fishedToday = false; // one fish a day (byte_404BF, cleared when the day changes)
+	int _kegTimer = 0;         // minutes until a lit powder keg explodes (word_404F4)
+	int _kegObject = -1;
 	bool carriedObject(const World::Obj &o) const;
 	int _useItem = -1; // the key, lock pick or potion waiting for its target
 	void changeLevel(int nx, int ny, int nz);
