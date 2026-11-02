@@ -51,6 +51,10 @@ public:
 	/** Lets game time pass: the clock, the hourly schedules and the people walking about. */
 	void advanceTime(int minutes);
 
+	/** Writes the saved game (the world and the clock) to `saveDir`. */
+	bool save();
+	std::string saveDir;
+
 	void message(const std::string &text);
 	/** Prints the command prompt: the name of the party member in control, a colon, and '>'. */
 	void prompt();
@@ -80,6 +84,7 @@ private:
 	void changeLevel(int nx, int ny, int nz);
 	void restKey(int key);
 	void followLeader(int oldX, int oldY);
+	bool _confirmSave = false;
 	std::string _number; // digits typed for the Rest command
 	int _member = 0; // party member shown in the panel
 	int _leaderObject; // index of the leader's body in the world's object list

@@ -4,3 +4,4 @@ se/game/
 build/
 ida_scripts/batch_run_and_export.log
 __pycache__/
+u6save/

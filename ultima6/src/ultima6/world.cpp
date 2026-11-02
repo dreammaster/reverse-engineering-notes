@@ -7,6 +7,7 @@
 #include "ultima6/gypsy.h"
 
 #include <algorithm>
+#include <functional>
 
 namespace Ultima6 {
 namespace Ultima6 {
@@ -43,7 +44,7 @@ bool World::loadBlock(const Bytes &data, int level) {
 	return true;
 }
 
-bool World::load(const std::string &dir, const NewCharacter *newGame) {
+bool World::load(const std::string &dir, const NewCharacter *newGame, const std::string &saveDir) {
 	Bytes d, d2, d3, d4;
 	if (!readFile(joinPath(dir, "TILEFLAG"), d) || !flags.load(d))
 		return fail("TILEFLAG");
@@ -112,7 +113,7 @@ bool World::load(const std::string &dir, const NewCharacter *newGame) {
 		if (!newGame->applyTo(objlist) || !actors.load(objlist))
 			return fail("new game objlist");
 	} else {
-		std::string save = joinPath(dir, "SAVEGAME");
+		std::string save = saveDir.empty() ? joinPath(dir, "SAVEGAME") : saveDir;
 		if (!readFile(joinPath(save, "OBJLIST"), d) || !actors.load(d))
 			return fail("SAVEGAME/OBJLIST");
 		for (int row = 0; row < 8; ++row) {
@@ -304,6 +305,85 @@ void World::deleteObject(int index) {
 			_byPosition.erase(it);
 	}
 	o.deleted = true;
+}
+
+bool World::save(const std::string &saveDir) {
+	// bring the actors' arrays up to date with their bodies
+	for (int a = 0; a < ObjList::ACTORS; ++a) {
+		int k = _actorObject.empty() ? -1 : _actorObject[a];
+		if (k < 0)
+			continue;
+		const Obj &o = objects[k];
+		actors.objStatus[a] = o.status;
+		actors.setPosition(a, o.x, o.y, o.z);
+		actors.objFrame[a] = (uint16_t)(o.type | (o.frame << 10));
+		actors.objQuantity[a] = (uint16_t)(o.quantity | (o.quality << 8));
+	}
+	Bytes list;
+	actors.save(list);
+	if (!writeFile(joinPath(saveDir, "OBJLIST"), list))
+		return false;
+
+	// which block each object goes to: 0-63 surface (row * 8 + col), 64-68 dungeon levels
+	std::vector<int> block(objects.size(), -1);
+	auto blockOfPosition = [](int x, int y, int z) { return z == 0 ? (y >> 7) * 8 + (x >> 7) : 63 + z; };
+	std::function<int(size_t)> resolve = [&](size_t i) -> int {
+		if (block[i] >= 0)
+			return block[i];
+		const Obj &o = objects[i];
+		int b = 0;
+		if (o.location() == ObjRecord::ON_MAP) {
+			b = blockOfPosition(o.x, o.y, o.z);
+		} else if (o.location() == ObjRecord::IN_CONTAINER) {
+			b = o.parent >= 0 ? resolve((size_t)o.parent) : 0;
+		} else {
+			int k = o.parent >= 0 && o.parent < ObjList::ACTORS ? _actorObject[o.parent] : -1;
+			b = k >= 0 ? blockOfPosition(objects[k].x, objects[k].y, objects[k].z) : 0;
+		}
+		return block[i] = b;
+	};
+	std::vector<std::vector<size_t>> members(64 + MapData::DUNGEON_LEVELS);
+	for (size_t i = 0; i < objects.size(); ++i) {
+		const Obj &o = objects[i];
+		if (o.deleted || o.actor >= 0)
+			continue;
+		int b = resolve(i);
+		if (b >= 0 && b < (int)members.size())
+			members[b].push_back(i);
+	}
+	for (size_t b = 0; b < members.size(); ++b) {
+		std::vector<size_t> &m = members[b];
+		std::vector<int> indexInBlock(objects.size(), -1);
+		for (size_t n = 0; n < m.size(); ++n)
+			indexInBlock[m[n]] = (int)n;
+		Bytes out(2 + m.size() * ObjBlock::RECORD_SIZE, 0);
+		out[0] = m.size() & 0xFF;
+		out[1] = (m.size() >> 8) & 0xFF;
+		for (size_t n = 0; n < m.size(); ++n) {
+			const Obj &o = objects[m[n]];
+			uint8_t *r = &out[2 + n * ObjBlock::RECORD_SIZE];
+			int x = o.x, y = o.y, z = o.z;
+			if (o.location() == ObjRecord::IN_CONTAINER) {
+				x = o.parent >= 0 ? indexInBlock[o.parent] : 0;
+				y = z = 0;
+			} else if (o.location() != ObjRecord::ON_MAP) {
+				x = o.parent;
+				y = z = 0;
+			}
+			r[0] = o.status;
+			r[1] = x & 0xFF;
+			r[2] = (uint8_t)(((x >> 8) & 0x03) | ((y & 0x3F) << 2));
+			r[3] = (uint8_t)(((y >> 6) & 0x0F) | ((z & 0x0F) << 4));
+			r[4] = (o.type | (o.frame << 10)) & 0xFF;
+			r[5] = (o.type | (o.frame << 10)) >> 8;
+			r[6] = o.quantity;
+			r[7] = o.quality;
+		}
+		std::string name = b < 64 ? ObjBlock::surfaceFileName((int)(b % 8), (int)(b / 8)) : ObjBlock::dungeonFileName((int)(b - 63));
+		if (!writeFile(joinPath(saveDir, name), out))
+			return false;
+	}
+	return true;
 }
 
 void World::moveObject(int index, int x, int y, int z) {

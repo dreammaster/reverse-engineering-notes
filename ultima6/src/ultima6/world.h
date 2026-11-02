@@ -52,7 +52,13 @@ public:
 
 	/** dir = the game directory (the one with MAP, CHUNKS, TILEFLAG ... and SAVEGAME\). */
 	/** With `newGame`, builds a new game from LZOBJBLK/LZDNGBLK with that character instead of reading SAVEGAME. */
-	bool load(const std::string &dir, const NewCharacter *newGame = nullptr);
+	bool load(const std::string &dir, const NewCharacter *newGame = nullptr, const std::string &saveDir = "");
+	/**
+	 * Writes the world as a SAVEGAME directory: OBJLIST (the actors' arrays and the globals) and one OBJBLK file per
+	 * block holding the other objects. Inventories go with the block their owner stands in, contents with their container.
+	 * `clock` etc. are in the globals, which the caller keeps current.
+	 */
+	bool save(const std::string &saveDir);
 
 	const std::string &error() const {
 		return _error;

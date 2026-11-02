@@ -48,7 +48,7 @@ int FrontEnd::brightest(int pal) const {
 	return best;
 }
 
-int FrontEnd::darkest(int pal) const {
+int FrontEnd::darkest(int) const {
 	return 0;
 }
 

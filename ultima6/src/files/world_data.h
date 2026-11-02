@@ -113,6 +113,9 @@ struct ObjList {
 	std::vector<uint8_t> globals;
 
 	bool load(const Bytes &data);
+	/** The inverse of load: the file as GAME.EXE's save_objlist writes it. */
+	void save(Bytes &data) const;
+	void setPosition(int actor, int x, int y, int z);
 
 	void position(int actor, int &x, int &y, int &z) const;
 	int objType(int actor) const {

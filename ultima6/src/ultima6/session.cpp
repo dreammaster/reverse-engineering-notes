@@ -49,6 +49,17 @@ Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(worl
 	_actors.hourChanged(clock);
 }
 
+bool Game::save() {
+	std::vector<uint8_t> &g = _world.actors.globals;
+	g[2] = (uint8_t)clock.minute;
+	g[3] = (uint8_t)clock.hour;
+	g[4] = (uint8_t)clock.day;
+	g[5] = (uint8_t)clock.month;
+	g[6] = (uint8_t)(clock.year & 0xFF);
+	g[7] = (uint8_t)(clock.year >> 8);
+	return !saveDir.empty() && _world.save(saveDir);
+}
+
 void Game::advanceTime(int minutes) {
 	for (int i = 0; i < minutes; ++i) {
 		clock.advance(1);
@@ -203,6 +214,10 @@ void Game::command(int key) {
 		_cursor = true;
 		_cx = _cy = 5;
 		break;
+	case 19: // ctrl-S
+		message("Save game? ");
+		_confirmSave = true;
+		break;
 	case ' ':
 		message("Pass!\n");
 		advanceTime(1);
@@ -222,6 +237,17 @@ bool Game::handleKey(int key) {
 			message("\n");
 			prompt();
 		}
+		return true;
+	}
+	if (_confirmSave) {
+		_confirmSave = false;
+		if (key == 'y' || key == 'Y') {
+			message("Yes\n");
+			message(save() ? "Game saved.\n" : "Cannot save!\n");
+		} else {
+			message("No\n");
+		}
+		prompt();
 		return true;
 	}
 	if (_pending == 'L') {

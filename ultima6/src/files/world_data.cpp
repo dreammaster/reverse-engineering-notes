@@ -72,6 +72,50 @@ bool ObjList::load(const Bytes &data) {
 	return true;
 }
 
+void ObjList::save(Bytes &data) const {
+	data.assign(OFF_GLOBALS + globals.size(), 0);
+	uint8_t *d = &data[0];
+	auto put16 = [](uint8_t *p, uint16_t v) {
+		p[0] = v & 0xFF;
+		p[1] = v >> 8;
+	};
+	std::memcpy(d + OFF_OBJ_STATUS, objStatus, ACTORS);
+	std::memcpy(d + OFF_POS, pos, ACTORS * 3);
+	for (int i = 0; i < ACTORS; ++i) {
+		put16(d + OFF_OBJ_FRAME + i * 2, objFrame[i]);
+		put16(d + OFF_EXP + i * 2, exp[i]);
+		put16(d + OFF_BASE_OBJ_FRAME + i * 2, baseObjFrame[i]);
+		put16(d + OFF_OBJ_QUANTITY + i * 2, objQuantity[i]);
+	}
+	std::memcpy(d + OFF_STATUS, status, ACTORS);
+	std::memcpy(d + OFF_STRENGTH, strength, ACTORS);
+	std::memcpy(d + OFF_DEXTERITY, dexterity, ACTORS);
+	std::memcpy(d + OFF_INTELLIGENCE, intelligence, ACTORS);
+	std::memcpy(d + OFF_HP, hp, ACTORS);
+	std::memcpy(d + OFF_PARTY_NAMES, partyNames, sizeof(partyNames));
+	std::memcpy(d + OFF_PARTY_ROSTER, partyRoster, PARTY_MAX);
+	d[OFF_PARTY_SIZE] = partySize;
+	std::memcpy(d + OFF_LEVEL, level, ACTORS);
+	std::memcpy(d + OFF_SCHEDULE_INDEX, scheduleIndex, ACTORS);
+	std::memcpy(d + OFF_WORKTYPE, worktype, ACTORS);
+	std::memcpy(d + OFF_UNKNOWN_12F1, unknown12f1, ACTORS);
+	std::memcpy(d + OFF_UNKNOWN_13F1, unknown13f1, ACTORS);
+	std::memcpy(d + OFF_MOVES, moves, ACTORS);
+	std::memcpy(d + OFF_TALK_FLAGS, talkFlags, ACTORS);
+	std::memcpy(d + OFF_UNKNOWN_18F1, unknown18f1, ACTORS);
+	std::memcpy(d + OFF_MOVEMENT_FLAGS, movementFlags, ACTORS);
+	std::memcpy(d + OFF_UNKNOWN_1AF1, unknown1af1, ACTORS);
+	if (!globals.empty())
+		std::memcpy(d + OFF_GLOBALS, &globals[0], globals.size());
+}
+
+void ObjList::setPosition(int actor, int x, int y, int z) {
+	uint8_t *p = pos[actor];
+	p[0] = x & 0xFF;
+	p[1] = (uint8_t)(((x >> 8) & 0x03) | ((y & 0x3F) << 2));
+	p[2] = (uint8_t)(((y >> 6) & 0x0F) | ((z & 0x0F) << 4));
+}
+
 void ObjList::position(int actor, int &x, int &y, int &z) const {
 	const uint8_t *p = pos[actor];
 	x = p[0] | ((p[1] & 0x03) << 8);

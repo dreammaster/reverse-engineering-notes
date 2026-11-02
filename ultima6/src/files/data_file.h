@@ -12,6 +12,9 @@ typedef std::vector<uint8_t> Bytes;
 /** Reads a whole file; false when it can't be opened. */
 bool readFile(const std::string &path, Bytes &out);
 
+/** Writes a whole file (creating the directory if needed); false on failure. */
+bool writeFile(const std::string &path, const Bytes &data);
+
 /** dir + '/' + name (DOS file names are case-insensitive, so the original spelling is kept). */
 std::string joinPath(const std::string &dir, const std::string &name);
 

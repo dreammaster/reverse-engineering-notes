@@ -9,9 +9,10 @@
 #include <cstdlib>
 #include <cstring>
 #include <memory>
+#include <string>
 
 static void usage(const char *prog) {
-	std::fprintf(stderr, "usage: %s <game directory> [--play] [--keys <script>] [--shot file.png] [--scale n]\n", prog);
+	std::fprintf(stderr, "usage: %s <game directory> [--play] [--save dir] [--keys <script>] [--shot file.png] [--scale n]\n", prog);
 	std::fprintf(stderr, "  --play   skip the main menu and start from the saved game\n");
 }
 
@@ -33,11 +34,14 @@ int main(int argc, char **argv) {
 	const char *keys = nullptr, *shot = nullptr;
 	int scale = 3;
 	bool play = false;
+	std::string saveDir = "u6save"; // our own save directory; the game's files are never written
 	for (int i = 2; i < argc; ++i) {
 		if (!std::strcmp(argv[i], "--keys") && i + 1 < argc)
 			keys = argv[++i];
 		else if (!std::strcmp(argv[i], "--shot") && i + 1 < argc)
 			shot = argv[++i];
+		else if (!std::strcmp(argv[i], "--save") && i + 1 < argc)
+			saveDir = argv[++i];
 		else if (!std::strcmp(argv[i], "--play"))
 			play = true;
 		else if (!std::strcmp(argv[i], "--scale") && i + 1 < argc)
@@ -86,11 +90,14 @@ int main(int argc, char **argv) {
 			character = front.character();
 	}
 
-	if (!world.load(argv[1], created ? &character : nullptr)) {
+	Ultima6::Bytes probe;
+	bool haveSave = Ultima6::readFile(Ultima6::joinPath(saveDir, "OBJLIST"), probe);
+	if (!world.load(argv[1], created ? &character : nullptr, !created && haveSave ? saveDir : std::string())) {
 		std::fprintf(stderr, "cannot load %s\n", world.error().c_str());
 		return 1;
 	}
 	Ultima6::Ultima6::Game game(world);
+	game.saveDir = saveDir;
 
 	bool running = true;
 	while (running) {
