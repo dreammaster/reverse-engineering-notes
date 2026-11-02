@@ -63,34 +63,100 @@ bool Game::save() {
 }
 
 // APPROX(10): not the original's exact behaviour, see docs/approximations.md
+// What one game minute does (sub_13305): the clock, the timers, the hourly schedules and magic points, the party's hazards, the eggs.
+void Game::minutePassed() {
+	clock.advance(1);
+	if (clock.minute == 0)
+		_actors.hourChanged(clock);
+	// the timers of light and the like count down a minute at a time
+	for (int t = 0; t < 16; ++t)
+		if (_world.actors.globals[0x12 + t])
+			--_world.actors.globals[0x12 + t];
+	if (clock.minute == 0) {
+		// every hour the people with magic recover as many magic points as their level
+		ObjList &al = _world.actors;
+		for (int m = 0; m < al.partySize; ++m) {
+			int actor = al.partyRoster[m];
+			int most = ActorStats::maxMagic(_world, actor);
+			if (most)
+				al.unknown13f1[actor] = (uint8_t)std::min<int>(most, al.unknown13f1[actor] + al.level[actor]);
+		}
+	}
+	partyHazards();
+	_creatures.partyFights();
+	_creatures.despawn(x, y, z);
+	_creatures.checkEggs(x, y, z, clock.hour);
+	if (_world.actors.hp[1] == 0 && !_dead) {
+		_dead = true;
+		message("\nThou art dead!\n*");
+	}
+}
+
+// Time that passes without anyone acting (resting): minutes at a time.
 void Game::advanceTime(int minutes) {
-	for (int i = 0; i < minutes; ++i) {
-		clock.advance(1);
-		if (clock.minute == 0)
-			_actors.hourChanged(clock);
-		// the timers of light and the like count down a minute at a time; magic points come back slowly
-		for (int t = 0; t < 16; ++t)
-			if (_world.actors.globals[0x12 + t])
-				--_world.actors.globals[0x12 + t];
-		if (clock.minute == 0) {
-			// every hour the people with magic recover as many magic points as their level
-			ObjList &al = _world.actors;
-			for (int m = 0; m < al.partySize; ++m) {
-				int actor = al.partyRoster[m];
-				int most = ActorStats::maxMagic(_world, actor);
-				if (most)
-					al.unknown13f1[actor] = (uint8_t)std::min<int>(most, al.unknown13f1[actor] + al.level[actor]);
+	for (int i = 0; i < minutes && !_dead; ++i) {
+		minutePassed();
+		_actors.scheduleUpdate(x, y, z);
+	}
+}
+
+// sub_2AB7A (after every command): the schedule-walkers first, then actors act in the order of the moves they have left until it is the player-controlled
+// party member's turn. Every actor gets as many moves as its dexterity each minute (what is left over, or owed, carries on); when no actor has moves
+// a minute passes and they are refilled. An actor 1.. that is on the party's level, near the party (within the 40 x 40 square), not paralysed, not
+// asleep, not dead, not carried and not a follower (worktype 1) is a candidate; the first with all its moves, else the one with the most moves per
+// dexterity, acts. Actors far away simply lose their moves.
+void Game::runTurns() {
+	ObjList &a = _world.actors;
+	_actors.scheduleUpdate(x, y, z);
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	int leader = a.partyRoster[0];
+	for (int guard = 0; guard < 4000 && !_dead; ++guard) {
+		int best = -1, bestMoves = 0, bestDex = 1;
+		int left = (x - 16) & 0x3F8, top = (y - 16) & 0x3F8;
+		for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
+			int k = _world.actorObject(actor);
+			if (k < 0 || _world.objects[k].deleted)
+				continue;
+			int wt = a.worktype[actor], st = a.status[actor];
+			int moves = (int8_t)a.moves[actor];
+			if (wt == 0 || (st & 0x02) || ((st & 0x04) && wt != 0x80) || (st & 0x10) || moves <= 0)
+				continue;
+			const World::Obj &o = _world.objects[k];
+			if (!o.onMap() || o.z != z)
+				continue;
+			bool inside = (((int)o.x - left) & mask) <= 0x27 && (((int)o.y - top) & mask) <= 0x27;
+			if (!inside) {
+				a.moves[actor] = 0;
+				continue;
 			}
+			if (wt == 1)
+				continue; // followers move with the leader
+			int dex = a.dexterity[actor];
+			int cross = moves * bestDex - dex * bestMoves;
+			if (moves >= dex || cross > 0 || (cross == 0 && dex > bestDex)) {
+				best = actor;
+				bestMoves = moves;
+				bestDex = dex;
+			}
+			if (moves >= dex)
+				break;
 		}
-		partyHazards();
-		_actors.tick(x, y, z);
-		_creatures.tick(x, y, z);
-		_creatures.checkEggs(x, y, z, clock.hour);
-		if (_world.actors.hp[1] == 0 && !_dead) {
-			_dead = true;
-			message("\nThou art dead!\n*");
-			break;
+		if (best < 0) {
+			// nobody can act: everyone's moves are refilled and a minute passes
+			for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
+				int moves = (int8_t)a.moves[actor];
+				a.moves[actor] = (uint8_t)(moves < 0 ? moves + a.dexterity[actor] : a.dexterity[actor]);
+			}
+			minutePassed();
+			_actors.scheduleUpdate(x, y, z);
+			continue;
 		}
+		if (best == leader || a.worktype[best] == 2)
+			return; // the player's turn
+		if (best >= Creatures::FIRST_TEMP_ACTOR)
+			_creatures.act(best, x, y, z);
+		else
+			_actors.act(best, x, y, z);
 	}
 }
 
@@ -122,13 +188,15 @@ bool Game::step(int dir) {
 			return false;
 	}
 	int oldX = x, oldY = y;
+	int cost = _world.moveCost(oldX, oldY, z);
 	x = nx;
 	y = ny;
 	_world.moveObject(_leaderObject, x, y, z);
 	_actors.face(1, DIR_DY[dir] < 0 ? 0 : DIR_DY[dir] > 0 ? 2 : DIR_DX[dir] > 0 ? 1 : 3);
 	followLeader(oldX, oldY);
 	_rules.deniedPending = true;
-	advanceTime(1);
+	_world.spendMoves(1, cost); // sub_28F67, counted on the square that was left
+	_creatures.checkEggs(x, y, z, clock.hour);
 	return true;
 }
 
@@ -267,7 +335,7 @@ void Game::command(int key) {
 		break;
 	case ' ':
 		message("Pass!\n");
-		advanceTime(1);
+		_world.actors.moves[_world.actors.partyRoster[_member]] = 0; // loc_14395: the leader's moves are set to 0
 		prompt();
 		break;
 	default:
@@ -276,6 +344,14 @@ void Game::command(int key) {
 }
 
 bool Game::handleKey(int key) {
+	bool more = handleKeyInner(key);
+	// after every completed command the actors take their turns (command_loop 145FD)
+	if (more && !_pending && !_talk && !_confirmSave && !_inventory && !_dead)
+		runTurns();
+	return more;
+}
+
+bool Game::handleKeyInner(int key) {
 	if (key == KEY_QUIT)
 		return false;
 	if (_dead)

@@ -242,6 +242,32 @@ int World::weightOf(int index) const {
 }
 
 // sub_1D957: what the things inside an object weigh
+int World::moveCost(int x, int y, int z) const {
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	int cost = 5;
+	int f = flags.flags1[map.tile(z, x & mask, y & mask) & (TileFlags::TILES - 1)];
+	if (!(f & 2))
+		cost += f >> 4;
+	std::vector<int> here;
+	objectsAt(x & mask, y & mask, z, here);
+	for (int i : here) {
+		const Obj &o = objects[i];
+		int g = flags.flags1[(baseTile.firstTile[o.type] + o.frame) & (TileFlags::TILES - 1)];
+		if (!(g & 2))
+			cost += g >> 4;
+	}
+	return cost;
+}
+
+void World::spendMoves(int actor, int cost) {
+	int k = actorObject(actor);
+	if (k >= 0 && objects[k].type == 0x1AF)
+		cost >>= 1; // a horse
+	if (cost < 1)
+		cost = 1;
+	actors.moves[actor] = (uint8_t)(actors.moves[actor] - cost);
+}
+
 int World::contentsWeight(int index) const {
 	int total = 0;
 	for (size_t i = 0; i < objects.size(); ++i) {

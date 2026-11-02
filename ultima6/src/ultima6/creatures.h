@@ -32,8 +32,11 @@ public:
 
 	/** Checks the eggs around the party (call after the party moved). */
 	void checkEggs(int px, int py, int pz, int hour);
-	/** One game minute of the creatures' turns. */
-	void tick(int px, int py, int pz);
+	/** The companions' blows (once a minute) and the disappearing of far creatures. */
+	void partyFights();
+	void despawn(int px, int py, int pz);
+	/** One action of a creature the turn scheduler picked. */
+	void act(int actor, int px, int py, int pz);
 
 	int count() const; // living temporary actors
 

@@ -31,6 +31,10 @@ public:
 	void hourChanged(const GameClock &clock);
 	/** One game minute; (px, py, pz) is the party's position. */
 	void tick(int px, int py, int pz);
+	/** The schedule-walkers' part of every turn (sub_2A8DA / 2A3BA): actors that have reached their place take up its worktype, and those far from the party are put there. */
+	void scheduleUpdate(int px, int py, int pz);
+	/** One action of a non-party actor 2-0xDF that was chosen by the turn scheduler: walks towards its schedule place when it is going there, otherwise does nothing; always uses up moves. */
+	void act(int actor, int px, int py, int pz);
 
 	/** Sets an actor's facing (0 north, 1 east, 2 south, 3 west) and the walking frame of its sprite. */
 	void face(int actor, int direction);

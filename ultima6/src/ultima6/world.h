@@ -111,6 +111,10 @@ public:
 	int weightOf(int index) const;
 	int weightOfType(int type, int quantity) const;
 	int carriedWeight(int actor) const;
+	/** sub_28F67: what leaving a square costs in moves: 5 plus the high nibble of the TILEFLAG byte of the terrain and of every object there that is not impassable. */
+	int moveCost(int x, int y, int z) const;
+	/** sub_26CC4: takes moves off an actor (halved on a horse, at least 1). */
+	void spendMoves(int actor, int cost);
 	int contentsWeight(int index) const;
 	/** Creates an object in an actor's inventory (merging into a stack of the same kind); returns its index. */
 	int addToInventory(int actor, int type, int quality, int quantity);

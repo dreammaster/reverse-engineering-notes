@@ -106,15 +106,14 @@ bool ActorManager::step(int actor, int objIndex, int tx, int ty, int z) {
 }
 
 // APPROX(2): not the original's exact behaviour, see docs/approximations.md
-void ActorManager::tick(int px, int py, int pz) {
+void ActorManager::scheduleUpdate(int px, int py, int pz) {
 	const Schedule &sc = _world.schedule;
 	ObjList &a = _world.actors;
-	int walkers = 0;
 	for (int actor = 2; actor < 0xE0; ++actor) {
 		if (a.worktype[actor] != GO_TO_SCHEDULE)
 			continue;
 		int k = _world.actorObject(actor);
-		if (k < 0)
+		if (k < 0 || _world.objects[k].deleted)
 			continue;
 		Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
 		const World::Obj &o = _world.objects[k];
@@ -124,18 +123,13 @@ void ActorManager::tick(int px, int py, int pz) {
 		}
 		bool near = o.z == pz && e.z == pz && std::abs(o.x - px) <= NEAR && std::abs(o.y - py) <= NEAR && std::abs(e.x - o.x) < 20 &&
 					std::abs(e.y - o.y) < 20;
-		if (near) {
-			if (walkers >= 12)
-				continue;
-			++walkers;
-			if (step(actor, k, e.x, e.y, e.z))
-				continue;
-		}
-		// far from the party, or stuck: put the actor in its place (or next to it)
+		if (near)
+			continue; // it walks, a step whenever the scheduler gives it a turn
+		// far from the party: put the actor in its place (or next to it)
 		MoveRules rules;
 		rules.partyMayShuffle = false;
-		bool placed = false;
 		int mask = e.z == 0 ? 0x3FF : 0xFF;
+		bool placed = false;
 		for (int r = 0; r <= 2 && !placed; ++r)
 			for (int dy = -r; dy <= r && !placed; ++dy)
 				for (int dx = -r; dx <= r && !placed; ++dx) {
@@ -149,6 +143,30 @@ void ActorManager::tick(int px, int py, int pz) {
 				}
 		a.worktype[actor] = (uint8_t)e.worktype;
 	}
+}
+
+void ActorManager::act(int actor, int px, int py, int pz) {
+	(void)px;
+	(void)py;
+	ObjList &a = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0 || a.worktype[actor] != GO_TO_SCHEDULE) {
+		a.moves[actor] = 0; // nothing to do this minute
+		return;
+	}
+	const Schedule &sc = _world.schedule;
+	Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
+	const World::Obj o = _world.objects[k];
+	if (o.x == e.x && o.y == e.y && o.z == e.z) {
+		a.worktype[actor] = (uint8_t)e.worktype;
+		a.moves[actor] = 0;
+		return;
+	}
+	int cost = _world.moveCost(o.x, o.y, o.z);
+	if (o.z == pz && step(actor, k, e.x, e.y, e.z))
+		_world.spendMoves(actor, cost);
+	else
+		a.moves[actor] = 0; // no way: wait
 }
 
 } // namespace Ultima6

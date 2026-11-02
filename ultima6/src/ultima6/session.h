@@ -53,6 +53,8 @@ public:
 
 	/** Lets game time pass: the clock, the hourly schedules and the people walking about. */
 	void advanceTime(int minutes);
+	/** sub_2AB7A: runs the actors' turns after a command until it is the player's turn again; a game minute passes whenever nobody has moves left. */
+	void runTurns();
 
 	/** Writes the saved game (the world and the clock) to `saveDir`. */
 	bool save();
@@ -80,6 +82,8 @@ private:
 	const Magic::SpellInfo *_spell = nullptr; // the spell being cast, waiting for its target
 	std::string _invocation;                  // circle digit and syllables typed so far
 	void castKey(int key);
+	bool handleKeyInner(int key);
+	void minutePassed();
 	bool boardOrLeave(int tx, int ty);
 	bool _aboard = false;     // the party is on a skiff or raft: the leader's body has the vehicle's type
 	int _footType = 0;        // the leader's own type while aboard

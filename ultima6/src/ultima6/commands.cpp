@@ -63,7 +63,7 @@ void Game::attackAt(int tx, int ty) {
 	int attacker = _world.actors.partyRoster[_member];
 	bool died = _combat.attack(attacker, target);
 	(void)died;
-	advanceTime(1);
+	_world.spendMoves(attacker, 10); // sub_2DA99: sub_26CC4(attacker, 0x0A)
 	if (_world.actors.hp[1] == 0) {
 		message("\nThou art dead!\n");
 	}
@@ -341,7 +341,7 @@ void Game::castKey(int key) {
 	_spell = spell;
 	if (spell->select == Magic::SEL_NONE) {
 		_magic.cast(caster, *spell, caster);
-		advanceTime(1);
+		_world.spendMoves(caster, spell->circle * 3 + 10); // cmd_cast: sub_26CC4(caster, circle * 3 + 10)
 		prompt();
 		return;
 	}
@@ -363,8 +363,8 @@ void Game::castAt(int tx, int ty) {
 	int caster = _world.actors.partyRoster[_member];
 	message("\n");
 	_magic.cast(caster, *_spell, target);
+	_world.spendMoves(caster, _spell->circle * 3 + 10);
 	_spell = nullptr;
-	advanceTime(1);
 	prompt();
 }
 
@@ -404,6 +404,7 @@ void Game::getAt(int tx, int ty) {
 		int type = o.type, quality = o.quality, frame = o.frame;
 		bool litTorch = type == 0x5A && frame == 1;
 		World::Obj taken = o;
+		_world.spendMoves(actor, 3); // cmd_get: sub_26CC4(actor, 3)
 		_world.deleteObject(pick);
 		if (litTorch) {
 			// a lit torch goes straight into a hand

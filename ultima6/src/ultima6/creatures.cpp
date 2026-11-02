@@ -63,6 +63,8 @@ int Creatures::spawn(int type, int worktype, int x, int y, int z) {
 	a.level[actor] = (uint8_t)((a.hp[actor] + 29) / 30);
 	a.exp[actor] = 100;
 	a.worktype[actor] = (uint8_t)worktype;
+	a.moves[actor] = a.dexterity[actor];
+	a.status[actor] = 0;
 	a.talkFlags[actor] = 0;
 	return actor;
 }
@@ -126,9 +128,9 @@ void Creatures::checkEggs(int px, int py, int pz, int hour) {
 }
 
 // APPROX(20): not the original's exact behaviour, see docs/approximations.md
-void Creatures::tick(int px, int py, int pz) {
+// The party's companions fight back: each goes for the nearest hostile creature within 5 squares, and strikes it when next to it.
+void Creatures::partyFights() {
 	ObjList &a = _world.actors;
-	// the party's companions fight back: each goes for the nearest hostile creature, and strikes it when next to it
 	for (int i = 1; i < a.partySize; ++i) {
 		int member = a.partyRoster[i];
 		int mk = _world.actorObject(member);
@@ -158,51 +160,78 @@ void Creatures::tick(int px, int py, int pz) {
 			_actors.walkToward(member, mk, _world.objects[fk].x, _world.objects[fk].y, m.z);
 		}
 	}
+}
+
+// Temporary actors that are far from the party disappear.
+void Creatures::despawn(int px, int py, int pz) {
+	ObjList &a = _world.actors;
 	for (int actor = FIRST_TEMP_ACTOR; actor < ObjList::ACTORS; ++actor) {
 		if (_world.actorFree(actor))
 			continue;
 		int k = _world.actorObject(actor);
 		const World::Obj &o = _world.objects[k];
-		if (a.hp[actor] == 0)
-			continue;
-		// the nearest party member
-		int target = -1, best = 1 << 20;
-		for (int i = 0; i < a.partySize; ++i) {
-			int pk = _world.actorObject(a.partyRoster[i]);
-			if (pk < 0 || _world.objects[pk].deleted || _world.objects[pk].z != o.z)
-				continue;
-			int d = std::max(std::abs((int)_world.objects[pk].x - (int)o.x), std::abs((int)_world.objects[pk].y - (int)o.y));
-			if (d < best) {
-				best = d;
-				target = a.partyRoster[i];
-			}
-		}
 		if (o.z != pz || std::abs((int)o.x - px) > DESPAWN_RANGE || std::abs((int)o.y - py) > DESPAWN_RANGE) {
 			_world.deleteObject(k);
 			a.hp[actor] = 0;
-			continue;
-		}
-		const CreatureStats *s = Combat::stats(o.type);
-		bool hostile = s && (s->align == CreatureStats::EVIL || s->align == CreatureStats::CHAOTIC) && a.worktype[actor] != 0x0C;
-		if (hostile && target >= 0 && best <= HUNT_RANGE) {
-			if (best <= 1) {
-				_combat.attack(actor, target);
-			} else {
-				int tk = _world.actorObject(target);
-				_actors.walkToward(actor, k, _world.objects[tk].x, _world.objects[tk].y, o.z);
-			}
-		} else if (_rng.next() % 3 == 0) {
-			int d = _rng.next() % 8;
-			int mask = o.z == 0 ? 0x3FF : 0xFF;
-			int nx = (o.x + DX[d]) & mask, ny = (o.y + DY[d]) & mask;
-			MoveRules rules;
-			rules.partyMayShuffle = false;
-			if (_movement.check(nx, ny, o.z, k, rules).passable) {
-				_world.moveObject(k, nx, ny, o.z);
-				_actors.face(actor, DY[d] < 0 ? 0 : DY[d] > 0 ? 2 : DX[d] > 0 ? 1 : 3);
-			}
 		}
 	}
+}
+
+// One action of a creature the turn scheduler has picked: hunt the nearest party member if hostile (hit it when next to it, else walk towards it),
+// otherwise wander now and then; a blow costs 10 moves, a step what the square costs.
+void Creatures::act(int actor, int px, int py, int pz) {
+	(void)px;
+	(void)py;
+	(void)pz;
+	ObjList &a = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0 || _world.objects[k].deleted || a.hp[actor] == 0) {
+		a.moves[actor] = 0;
+		return;
+	}
+	const World::Obj &o = _world.objects[k];
+	int target = -1, best = 1 << 20;
+	for (int i = 0; i < a.partySize; ++i) {
+		int pk = _world.actorObject(a.partyRoster[i]);
+		if (pk < 0 || _world.objects[pk].deleted || _world.objects[pk].z != o.z)
+			continue;
+		int d = std::max(std::abs((int)_world.objects[pk].x - (int)o.x), std::abs((int)_world.objects[pk].y - (int)o.y));
+		if (d < best) {
+			best = d;
+			target = a.partyRoster[i];
+		}
+	}
+	const CreatureStats *s = Combat::stats(o.type);
+	bool hostile = s && (s->align == CreatureStats::EVIL || s->align == CreatureStats::CHAOTIC) && a.worktype[actor] != 0x0C;
+	if (hostile && target >= 0 && best <= HUNT_RANGE) {
+		if (best <= 1) {
+			_combat.attack(actor, target);
+			_world.spendMoves(actor, 10);
+		} else {
+			int tk = _world.actorObject(target);
+			int cost = _world.moveCost(o.x, o.y, o.z);
+			if (_actors.walkToward(actor, k, _world.objects[tk].x, _world.objects[tk].y, o.z))
+				_world.spendMoves(actor, cost);
+			else
+				a.moves[actor] = 0;
+		}
+		return;
+	}
+	if (_rng.next() % 3 == 0) {
+		int d = _rng.next() % 8;
+		int mask = o.z == 0 ? 0x3FF : 0xFF;
+		int nx = (o.x + DX[d]) & mask, ny = (o.y + DY[d]) & mask;
+		MoveRules rules;
+		rules.partyMayShuffle = false;
+		if (_movement.check(nx, ny, o.z, k, rules).passable) {
+			int cost = _world.moveCost(o.x, o.y, o.z);
+			_world.moveObject(k, nx, ny, o.z);
+			_actors.face(actor, DY[d] < 0 ? 0 : DY[d] > 0 ? 2 : DX[d] > 0 ? 1 : 3);
+			_world.spendMoves(actor, cost);
+			return;
+		}
+	}
+	a.moves[actor] = 0;
 }
 
 } // namespace Ultima6
