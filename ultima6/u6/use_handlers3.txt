@@ -1,0 +1,231 @@
+=== vehicle 34919
+34919 push    bp
+3491A mov     bp, sp
+3491C sub     sp, 8
+3491F push    si
+34920 push    di
+34921 mov     si, [bp+arg_0]
+34924 push    si
+34925 call    sub_2D04C
+3492A mov     si, ax
+3492C mov     bx, si
+3492E shl     bx, 1
+34930 mov     di, [bx+3548h]
+34934 and     di, 3FFh
+34938 mov     al, byte_404A4
+3493B mov     ah, 0
+3493D mov     bx, ax
+3493F mov     al, [bx+3533h]
+34943 mov     ah, 0
+34945 mov     [bp+var_4], ax
+34948 mov     bx, ax
+3494A shl     bx, 1
+3494C mov     ax, [bx+3548h]
+34950 and     ax, 3FFh
+34953 mov     [bp+var_2], ax
+34956 mov     ax, si
+34958 mov     dx, 3
+3495B mul     dx
+3495D mov     bx, ax
+3495F mov     ax, [bx+6828h]
+34963 and     ax, 3FFh
+34966 mov     [bp+var_8], ax
+34969 mov     ax, si
+3496B mov     dx, 3
+3496E mul     dx
+34970 mov     bx, ax
+34972 mov     ax, [bx+6829h]
+34976 sar     ax, 1
+34978 sar     ax, 1
+3497A and     ax, 3FFh
+3497D mov     [bp+var_6], ax
+34980 cmp     byte_40513, 0FFh
+34985 jz      short loc_34996
+34987 push    ds
+34988 mov     ax, 263Ah
+3498B push    ax
+3498C call    scroll_printf
+34991 pop     cx
+34992 pop     cx
+34993 jmp     loc_34AB9
+34996 mov     al, byte_404A4
+34999 cmp     al, party_size
+3499D jz      short loc_349A2
+3499F jmp     loc_34A18
+349A2 mov     ax, [bp+var_4]
+349A5 cmp     ax, si
+349A7 jnz     short loc_34A18
+349A9 push    player_x
+349AD push    player_y
+349B1 push    si
+349B2 push    cs
+349B3 call    near ptr sub_34854
+349B6 or      ax, ax
+349B8 jz      short loc_349E4
+349BA mov     ax, 1
+349BD push    ax
+349BE call    sub_274B5
+349C3 mov     si, ax
+349C5 cmp     di, 1A7h
+349C9 jz      short loc_349CE
+349CB jmp     loc_34AB9
+349CE mov     bx, si
+349D0 shl     bx, 1
+349D2 mov     word ptr [bx+3548h], 1A4h
+349D8 push    word_4BF59
+349DC call    sub_1E272
+349E1 jmp     loc_34AB9
+349E4 cmp     di, 19Ch
+349E8 jnz     short loc_34A09
+349EA push    si
+349EB mov     ax, 19Eh
+349EE push    ax
+349EF xor     ax, ax
+349F1 push    ax
+349F2 call    sub_19FA2
+349F7 cmp     ax, 0FFFFh
+349FA jz      short loc_34A09
+349FC xor     ax, ax
+349FE push    ax
+349FF call    sub_274B5
+34A04 mov     si, ax
+34A06 jmp     loc_34AB9
+34A09 push    ds
+34A0A mov     ax, 264Dh
+34A0D push    ax
+34A0E call    scroll_printf
+34A13 pop     cx
+34A14 pop     cx
+34A15 jmp     loc_34AB9
+34A18 cmp     di, 19Ch
+34A1C jz      short loc_34A24
+34A1E cmp     di, 19Eh
+34A22 jnz     short loc_34A62
+34A24 mov     bx, si
+34A26 shl     bx, 1
+34A28 add     bx, 4EE4h
+34A2C push    ds
+34A2D pop     es
+34A2E cmp     byte ptr es:[bx+1], 0
+34A33 jz      short loc_34A62
+34A35 mov     ax, 95h
+34A38 push    ax
+34A39 mov     bx, si
+34A3B shl     bx, 1
+34A3D add     bx, 4EE4h
+34A41 push    ds
+34A42 pop     es
+34A43 mov     al, es:[bx+1]
+34A47 mov     ah, 0
+34A49 push    ax
+34A4A call    sub_1F176
+34A4F cmp     ax, 0FFFFh
+34A52 jnz     short loc_34A62
+34A54 push    ds
+34A55 mov     ax, 2662h
+34A58 push    ax
+34A59 call    scroll_printf
+34A5E pop     cx
+34A5F pop     cx
+34A60 jmp     short loc_34AB9
+34A62 mov     ax, player_x
+34A65 sub     ax, [bp+var_8]
+34A68 push    ax; x
+34A69 call    _abs
+34A6E pop     cx
+34A6F cmp     ax, 1
+34A72 jg      short loc_34A86
+34A74 mov     ax, player_y
+34A77 sub     ax, [bp+var_6]
+34A7A push    ax; x
+34A7B call    _abs
+34A80 pop     cx
+34A81 cmp     ax, 1
+34A84 jle     short loc_34A99
+34A86 push    word_3E632
+34A8A push    ds
+34A8B mov     ax, 1F24h
+34A8E push    ax
+34A8F call    scroll_printf
+34A94 add     sp, 6
+34A97 jmp     short loc_34AB9
+34A99 cmp     di, 19Ch
+34A9D jnz     short loc_34AB3
+34A9F cmp     [bp+var_2], 19Eh
+34AA4 jnz     short loc_34AB3
+34AA6 push    [bp+var_4]
+34AA9 push    si
+34AAA mov     ax, 10h
+34AAD push    ax
+34AAE call    sub_1B59D
+34AB3 push    si
+34AB4 call    sub_2722E
+34AB9 pop     di
+34ABA pop     si
+34ABB mov     sp, bp
+34ABD pop     bp
+34ABE retf    2
+=== sub_34AC1
+34AC1 push    bp
+34AC2 mov     bp, sp
+34AC4 sub     sp, 8
+34AC7 push    si
+34AC8 push    di
+34AC9 mov     di, [bp+arg_4]
+34ACC mov     si, [bp+arg_6]
+34ACF push    [bp+arg_8]
+34AD2 push    si
+34AD3 push    di
+34AD4 push    player_z
+34AD8 call    sub_1B26F
+34ADD mov     ax, [bp+arg_2]
+34AE0 mov     cl, 0Ah
+34AE2 shl     ax, cl
+34AE4 or      ax, 1AFh
+34AE7 mov     bx, [bp+arg_8]
+34AEA shl     bx, 1
+34AEC mov     [bx+3548h], ax
+34AF0 mov     player_x, si
+34AF4 mov     player_y, di
+34AF8 mov     ax, [bp+arg_2]
+34AFB and     ax, 6
+34AFE mov     [bp+var_8], ax
+34B01 mov     bx, ax
+34B03 mov     al, [bx+1A2h]
+34B07 cbw
+34B08 sub     si, ax
+34B0A mov     al, [bx+1AAh]
+34B0E cbw
+34B0F sub     di, ax
+34B11 cmp     [bp+arg_0], 0
+34B15 jz      short loc_34B46
+34B17 push    si
+34B18 push    di
+34B19 push    player_z
+34B1D call    sub_19C1A
+34B22 mov     [bp+var_6], ax
+34B25 mov     bx, ax
+34B27 shl     bx, 1
+34B29 mov     ax, [bx+3548h]
+34B2D mov     cl, 0Ah
+34B2F shr     ax, cl
+34B31 mov     [bp+arg_2], ax
+34B34 mov     cl, 0Ah
+34B36 shl     ax, cl
+34B38 or      ax, 1AFh
+34B3B mov     bx, [bp+var_6]
+34B3E shl     bx, 1
+34B40 mov     [bx+3548h], ax
+34B44 jmp     short loc_34B81
+34B46 mov     al, byte ptr player_z
+34B49 mov     cl, 4
+34B4B shl     al, cl
+34B4D mov     [bp+var_2], al
+34B50 mov     [bp+var_4], si
+34B53 mov     ax, di
+34B55 shl     ax, 1
+34B57 shl     ax, 1
+34B59 or      [bp+var_4+1], ax
+34B5C xor     ax, ax
+34B5E push    ax
+34B5F lea     bx, [bp+var_4]

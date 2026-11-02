@@ -270,7 +270,7 @@ bool Game::boardOrLeave(int tx, int ty) {
 	}
 	for (int i : here) {
 		World::Obj &v = _world.objects[i];
-		if (v.actor >= 0 || (v.type != 414 && v.type != 415))
+		if (v.actor >= 0 || (v.type != 414 && v.type != 415 && v.type != 412))
 			continue;
 		_footType = me.type;
 		_footFrame = me.frame;
@@ -548,6 +548,55 @@ void Game::useAt(int tx, int ty) {
 			prompt();
 			return;
 		}
+		// APPROX(30): levers (268), switches (174), fire devices and secret doors work as in Nuvie; the original's use_lever, use_switch, ... are not traced
+		if (type == 268 || type == 174) {
+			// a lever or switch toggles every barrier at the doorways (type 301) that carry its quality: the portcullis (310) or electric field (175)
+			int barrier = type == 268 ? 310 : 175;
+			bool any = false;
+			size_t count = _world.objects.size();
+			for (size_t d = 0; d < count; ++d) {
+				const World::Obj door = _world.objects[d];
+				if (door.deleted || door.type != 301 || !door.onMap() || door.z != o.z || door.quality != o.quality)
+					continue;
+				any = true;
+				std::vector<int> there;
+				_world.objectsAt(door.x, door.y, door.z, there);
+				int existing = -1;
+				for (int t : there)
+					if (_world.objects[t].type == barrier)
+						existing = t;
+				if (existing >= 0) {
+					_world.deleteObject(existing);
+				} else {
+					World::Obj b = door;
+					b.type = (uint16_t)barrier;
+					b.quality = 0;
+					b.frame = barrier == 310 && door.frame == 9 ? 1 : (barrier == 310 ? door.frame : 0);
+					_world.objects.push_back(b);
+					_world.addToMap((int)_world.objects.size() - 1);
+				}
+			}
+			o.frame = (uint8_t)(o.frame ^ 1);
+			message(std::string("\n") + (type == 268 ? "Switch the lever, " : "Operate the switch, ") + (any ? "you hear a noise.\n" : "strange, nothing happened.\n"));
+			prompt();
+			return;
+		}
+		if (type == 122 || type == 145 || type == 164 || type == 206) { // candle, candelabra, fireplace, brazier: light or douse
+			if (type == 206 && o.frame == 2)
+				return prompt();
+			if (type == 164)
+				o.frame = (uint8_t)((o.frame == 1 || o.frame == 3) ? o.frame - 1 : o.frame + 1);
+			else
+				o.frame = (uint8_t)(o.frame ^ 1);
+			message((o.frame & 1) ? "\nLit.\n" : "\nDoused.\n"); // APPROX: the original's texts for these are in use_firedevice-like handlers
+			prompt();
+			return;
+		}
+		if (type == 334) { // secret door
+			o.frame = (uint8_t)((o.frame == 1 || o.frame == 3) ? o.frame - 1 : o.frame + 1);
+			prompt();
+			return;
+		}
 		if (type == 98 || type == 99 || type == 176 || type == 186 || type == 188 || type == 191 || type == 192) { // containers
 			if (type == 98 && o.frame >= 3) {
 				message("\nlocked\n");
@@ -604,41 +653,95 @@ void Game::useAt(int tx, int ty) {
 	prompt();
 }
 
-// Rest: ask for the hours, then let them pass; every hour heals the party a little.
-// APPROX(31): not the original's exact behaviour, see docs/approximations.md
+// cmd_rest's conditions (89459..): in the order the original tests them; each yields the text printed after "Rest-".
+std::string Game::restCheck() {
+	const ObjList &a = _world.actors;
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	if (_leaderObject >= 0 && _world.objects[_leaderObject].type == 0x19C)
+		return "Can not be repaired!";
+	// sub_39D53: a building (a tile with flag 4 and a high nibble) within 5 squares, or standing on water on foot
+	bool built = false;
+	for (int dx = -5; dx <= 5 && !built; ++dx)
+		for (int dy = -5; dy <= 5 && !built; ++dy) {
+			int f = _world.flags.flags1[_world.map.tile(z, (x + dx) & mask, (y + dy) & mask) & (TileFlags::TILES - 1)];
+			built = (f & 4) && (f & 0xF0);
+		}
+	int under = _world.flags.flags1[_world.map.tile(z, x, y) & (TileFlags::TILES - 1)];
+	if (built || ((under & 1) && !_aboard))
+		return "Only in the wilderness!";
+	// sub_39DE0: a creature that attacks the party within the 40 x 40 square
+	int left = (x - 16) & 0x3F8, top = (y - 16) & 0x3F8;
+	for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
+		int k = _world.actorObject(actor);
+		if (k < 0 || _world.objects[k].deleted)
+			continue;
+		int st = a.status[actor] & 0x60;
+		const World::Obj &o = _world.objects[k];
+		if ((st == 0x20 || st == 0x60) && (((int)o.x - left) & mask) < 0x27 && (((int)o.y - top) & mask) < 0x27 && o.z == z)
+			return "Not while foes are near!";
+	}
+	// sub_39EA6: anyone not in the party within 5 squares (except a horse)
+	for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
+		int k = _world.actorObject(actor);
+		if (k < 0 || _world.objects[k].deleted || (a.status[actor] & 0x80))
+			continue;
+		const World::Obj &o = _world.objects[k];
+		if (std::abs((int)o.x - x) <= 5 && std::abs((int)o.y - y) <= 5 && o.z == z && o.type != 0x1AE)
+			return "Not while others are near!";
+	}
+	// sub_39F44: all the squares around must be enterable
+	MoveRules rules;
+	for (int dx = -1; dx <= 1; ++dx)
+		for (int dy = -1; dy <= 1; ++dy)
+			if (!_movement.check(x + dx, y + dy, z, _leaderObject, rules).passable)
+				return "Not enough room!";
+	if (_world.objects[_leaderObject].type == 0x1AF)
+		return "Dismount first!";
+	return "";
+}
+
+// Rest: "How many hours? " takes a single digit 1-9 (anything else prints "0" and gives up); with a party "Who will guard? " asks for a member
+// (a digit) or none. APPROX(31): what the camp does afterwards is not traced (the campfire, "Mealtime!", food, sleeping, ambushes, healing).
 void Game::restKey(int key) {
-	if (key == KEY_ESC) {
-		_pending = 0;
+	if (_number == "g") {
+		const ObjList &a = _world.actors;
+		int who = key - '1';
+		std::string guard = "none";
+		if (who >= 0 && who < a.partySize)
+			guard = (const char *)a.partyNames[who];
+		message(guard + "\n");
 		_number.clear();
+		_pending = 0;
+		message("\nMealtime!\n");
+		for (int h = 0; h < _restHours; ++h) {
+			advanceTime(60);
+			ObjList &al = _world.actors;
+			for (int i = 0; i < al.partySize; ++i) {
+				int actor = al.partyRoster[i];
+				int most = ActorStats::maxHealth(_world, actor);
+				al.hp[actor] = (uint8_t)std::min<int>(most, al.hp[actor] + 1 + al.level[actor] / 2);
+			}
+		}
+		prompt();
+		return;
+	}
+	if (key < '1' || key > '9') {
+		_pending = 0;
 		message("0\n");
 		prompt();
 		return;
 	}
-	if (key >= '0' && key <= '9' && _number.size() < 2) {
-		_number += (char)key;
-		message(std::string(1, (char)key));
+	message(std::string(1, (char)key) + "\n");
+	_restHours = key - '0';
+	if (_world.actors.partySize > 1) {
+		message("Who will guard? ");
+		_number = "g";
 		return;
 	}
-	if (key == KEY_BACKSPACE && !_number.empty()) {
-		_number.erase(_number.size() - 1);
-		message("\b");
-		return;
-	}
-	if (key != KEY_ENTER)
-		return;
-	int hours = std::atoi(_number.c_str());
-	_number.clear();
 	_pending = 0;
-	message("\n");
-	for (int h = 0; h < hours; ++h) {
+	message("\nMealtime!\n");
+	for (int h = 0; h < _restHours; ++h)
 		advanceTime(60);
-		ObjList &a = _world.actors;
-		for (int i = 0; i < a.partySize; ++i) {
-			int actor = a.partyRoster[i];
-			int most = ActorStats::maxHealth(_world, actor);
-			a.hp[actor] = (uint8_t)std::min<int>(most, a.hp[actor] + 1 + a.level[actor] / 2);
-		}
-	}
 	prompt();
 }
 

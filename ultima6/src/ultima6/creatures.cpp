@@ -64,7 +64,7 @@ int Creatures::spawn(int type, int worktype, int x, int y, int z) {
 	a.exp[actor] = 100;
 	a.worktype[actor] = (uint8_t)worktype;
 	a.moves[actor] = a.dexterity[actor];
-	a.status[actor] = 0;
+	a.status[actor] = (s && (s->align == CreatureStats::EVIL || s->align == CreatureStats::CHAOTIC)) ? 0x20 : 0; // attacks evil... i.e. hostile to the party
 	a.talkFlags[actor] = 0;
 	return actor;
 }

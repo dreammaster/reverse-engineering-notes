@@ -1,0 +1,53 @@
+35C4B push    word_48F03
+35C4F push    cs
+35C50 call    loc_344FF
+35C53 jmp     loc_35F2C
+35C56 mov     bx, word_48F03
+35C5A test    byte ptr [bx-5F55h], 18h
+35C5F jz      short near ptr unk_35C64
+35C61 jmp     loc_35EAB
+35C64 push    bx
+35C65 push    cs
+35C66 call    loc_34919
+35C69 jmp     loc_35F2C
+35C6C push    cs
+35C6D call    loc_33E83
+35C70 jmp     loc_35F2C
+35C73 cmp     word ptr [bp-0Ah], 1
+35C77 jnz     short near ptr unk_35C92
+35C79 mov     bx, word_48F03
+35C7D shl     bx, 1
+35C7F mov     ax, [bx+3548h]
+35C83 and     ax, 3FFh
+35C86 mov     bx, word_48F03
+35C8A shl     bx, 1
+35C8C mov     [bx+3548h], ax
+35C90 jmp     short near ptr unk_35CA3
+35C92 push    word_3E642
+35C96 push    ds
+35C97 mov     ax, 1F13h
+35C9A push    ax
+35C9B call    scroll_printf
+35CA0 add     sp, 6
+35CA3 push    word_48F03
+35CA7 push    word_48EFF
+35CAB push    word_48F01
+35CAF push    cs
+35CB0 call    near ptr search_here
+35CB3 jmp     loc_35F2C
+35CB6 push    cs
+35CB7 call    near ptr ring_bell
+35CBA jmp     loc_35F2C
+35CBD push    cs
+35CBE call    near ptr use_beehive
+35CC1 jmp     loc_35F2C
+35CC4 cmp     si, 0CEh
+35CC8 jnz     short near ptr unk_35CD4
+35CCA test    word ptr [bp-0Ah], 2
+35CCF jz      short near ptr unk_35CD4
+35CD1 jmp     loc_35EAB
+35CD4 push    word_48F03
+35CD8 push    cs
+35CD9 call    near ptr extinguish_light
+35CDC jmp     loc_35F2C
+35CDF push    word_48F03

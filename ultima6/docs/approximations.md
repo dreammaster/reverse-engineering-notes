@@ -71,7 +71,7 @@ and not carried, it works out whether it is inside the 40 x 40 window around the
 | 28 | Inventory view: grid of tiles, own key set, "readied" = location 0x18 without slots (head, neck, hands, ...), several readied weapons allowed, no armour slot rules | `stats_view.cpp`, `commands.cpp` `inventoryKey` | own | `sub_15371`, `sub_1520E`, `sub_16125` (inventory/paper-doll drawing and slot layout), `cmd_ready` ("torch" string), the slot tables. |
 | 29 | Look: object text (weight, "can do N points of damage", "can absorb ...") now follows `cmd_look` 30567-30653; still own: only the top object is looked at, no actor health/state text, no "searching here" rule, no read_book for readable objects, tile-only text, cursor keys | `session.cpp` `Game::look` | partial | `cmd_look` (68342, 600 lines), `sub_2F969`, `sub_2D04C`. |
 | 30 | Use: doors, ladders (formulas from Nuvie), containers (**I take all contents at once** - invented), torches (own), skiff/raft boarding (**invented**: the original makes actor 0 the vehicle) | `commands.cpp` | Nuvie / own | the 85-type Use table (`cmd_use_types` 0x35AF7, handlers at +0x2F690), `sub_26CC4`, vehicles code. Ships, horses, balloons, levers, bells, wells, instruments, runes, keys, food, books, signs etc. are **missing**. |
-| 31 | Rest: asks hours, then heals `1 + level/2` hp per hour; none of the original's rules ("Who will guard?", "Mealtime!", interruptions, "Not while ...!", camping, bed use) | `commands.cpp` `restKey` | own | `cmd_rest` (strings at seg/dseg 211830+). |
+| 31 | Rest: the conditions (wilderness, foes, others near, room, dismount) and prompts (single digit hours, "Who will guard?") follow `cmd_rest`; **not traced**: the campfire and where members sit (`sub_1A80C`, tables ds:2CEA/2CF2), "Mealtime!" food use (`sub_39D14`), the sleeping loop and ambushes, healing (mine: `1 + level/2` hp an hour), the wilderness test's exact meaning, combat-mode and ship cases | `commands.cpp` `restKey` | own | `cmd_rest` (strings at seg/dseg 211830+). |
 | 32 | Dropping puts the object on the party leader's square; no container/drop target rules | `commands.cpp` | own | `cmd_drop`. |
 
 ## E. Conversations
@@ -100,3 +100,13 @@ and not carried, it works out whether it is inside the 40 x 40 window around the
 Passability rules (apart from #12, #13), the object-list and savegame layouts, schedule selection (`update_actor_schedules`), the stackable table, quantity kinds, the
 conversation script grammar and file layer, LZW, map/chunk/object block loading, tile and shape formats, the stats panel contents, maximum hit/magic point formulas
 (`sub_2B519`, `sub_2B549`), the timer array decrement, the gypsy question logic and new-game objlist patch.
+
+## H. Added later (all approximate unless noted)
+
+| # | What | Where | Source | Original to analyse |
+|---|---|---|---|---|
+| 44 | Horses: mount by using one, dismount by using yourself (`U` then Enter) - messages exact, mechanics (`sub_34AC1`, `sub_363E9`, base object restore) approximated | `commands.cpp` `useHorse` | partial | `use_horse` 78037, `rear_horse` 78166, `sub_34AC1` |
+| 45 | Ships (0x19C) board and move like rafts: no wind ("Thou canst not move without wind!"), no multi-part ship, no cannons, no anchoring | `movement.cpp`, `commands.cpp` `boardOrLeave` | own | vehicle boarding at 34919 (`sub_274B5`, actor 0), `sub_26CC4`, wind variables |
+| 46 | Levers/switches (portcullis and electric field toggling by quality), fire devices (texts invented: "Lit."/"Doused."), secret doors | `commands.cpp` `useAt` | Nuvie / own | `use_lever`, `use_switch`, `extinguish_light`, `use_beehive`, `ring_bell`, `use_secret_door` ... in the dispatch of `cmd_use` (`docs` list: handler table at cs:35BA1) |
+| 47 | Not implemented Use handlers: keys and lock picks, food, scrolls, books/signs, gems, instruments, bell, beehive, churn, fishing pole, fountain, crystal ball, sextant, telescope, shovel/burying, potions, powder keg, cannon, rubber ducky, shrines (runes), secret door search, drawbridge crank, orb of the moons, vortex cube, silver horn, passthroughs | - | - | `use_handlers.txt` (IDA dump of the 85 handlers, `ida_scripts/dump_use_handlers.py`) |
+| 48 | Moongates, shrine/virtue mechanics, Codex, quest flag handling | - | - | `use_orb_of_the_moons`, `use_shrine`, `sub_1E272` |

@@ -321,7 +321,15 @@ void Game::command(int key) {
 		_pending = 'U';
 		break;
 	case 'R':
-		message("Rest-");
+		message("Rest");
+		{
+			std::string why = restCheck();
+			if (!why.empty()) {
+				message("-" + why + "\n");
+				prompt();
+				break;
+			}
+		}
 		message("\nHow many hours? ");
 		_pending = 'R';
 		_number.clear();
