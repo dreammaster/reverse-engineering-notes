@@ -203,7 +203,15 @@ void Creatures::act(int actor, int px, int py, int pz) {
 	}
 	const CreatureStats *s = Combat::stats(o.type);
 	bool hostile = s && (s->align == CreatureStats::EVIL || s->align == CreatureStats::CHAOTIC) && a.worktype[actor] != 0x0C;
-	if (hostile && target >= 0 && best <= HUNT_RANGE) {
+	// wt_immobile (0xE, 2F2DE): it stays where it is, passing five moves at a time (APPROX: its blows at enemies in reach are not done)
+	if (a.worktype[actor] == 0x0E) {
+		_world.spendMoves(actor, 5);
+		return;
+	}
+	// wt_combat_assault (2DF2E): a target less than eight squares away in both directions is fought
+	int tkx = target >= 0 ? _world.actorObject(target) : -1;
+	bool near = tkx >= 0 && std::abs((int)_world.objects[tkx].x - (int)o.x) < 8 && std::abs((int)_world.objects[tkx].y - (int)o.y) < 8;
+	if (hostile && near) {
 		if (best <= 1) {
 			_combat.attack(actor, target);
 			_world.spendMoves(actor, 10);
@@ -217,8 +225,9 @@ void Creatures::act(int actor, int px, int py, int pz) {
 		}
 		return;
 	}
-	if (_rng.next() % 3 == 0) {
-		int d = _rng.next() % 8;
+	// wt_wander (2954B): one turn in eight a step in a random one of the four directions, otherwise five moves are passed
+	if (_rng.next() % 8 == 0) {
+		int d = (_rng.next() % 4) * 2;
 		int mask = o.z == 0 ? 0x3FF : 0xFF;
 		int nx = (o.x + DX[d]) & mask, ny = (o.y + DY[d]) & mask;
 		MoveRules rules;
@@ -231,7 +240,7 @@ void Creatures::act(int actor, int px, int py, int pz) {
 			return;
 		}
 	}
-	a.moves[actor] = 0;
+	_world.spendMoves(actor, 5);
 }
 
 } // namespace Ultima6
