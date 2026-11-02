@@ -186,6 +186,11 @@ void Game::useObject(int idx) {
 		_textMax = 4;
 		_textPurpose = 1;
 		return;
+	} else if (type == 0x9A) {
+		message("Direction-");
+		_useItem = idx;
+		_pending = 'e';
+		return;
 	} else if (type == 0x67 || type == 0x68) {
 		message("Direction:");
 		_useItem = idx;
@@ -779,6 +784,34 @@ void Game::shrineChant(const std::string &mantra) {
 			}
 	}
 	message(done ? "\nDone\n" : "\nNo effect\n");
+	_world.spendMoves(actingActor(), 5);
+}
+
+// use_telescope (35127): the view goes out from the telescope in the chosen direction, up to 40 squares or until a terrain tile of 0xFC or more, and stays there until a key is pressed.
+// APPROX(61): the original scrolls the view square by square; here the last view is shown at once
+void Game::telescopeAt(int key) {
+	int item = _useItem;
+	_useItem = -1;
+	static const char *const NAMES[8] = {"North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"};
+	static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+	int dir = key == KEY_UP ? 0 : key == KEY_RIGHT ? 2 : key == KEY_DOWN ? 4 : key == KEY_LEFT ? 6 : -1;
+	if (dir < 0) {
+		message("nowhere.\n");
+		prompt();
+		return;
+	}
+	message(std::string(NAMES[dir]) + ".\n");
+	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+	int vx = _world.objects[item].x, vy = _world.objects[item].y;
+	for (int steps = 0x28; steps >= 0; --steps) {
+		vx = (vx + DX[dir]) & mask;
+		vy = (vy + DY[dir]) & mask;
+		if ((_world.map.tile(z, vx, vy) & 0xFF) >= 0xFC)
+			break;
+	}
+	_peekX = vx;
+	_peekY = vy;
+	_peek = true;
 	_world.spendMoves(actingActor(), 5);
 }
 

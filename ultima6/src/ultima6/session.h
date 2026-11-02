@@ -116,6 +116,9 @@ private:
 	void placeGates();
 	void buryMoonstone(int idx);
 	void digAt(int key);
+	void telescopeAt(int key);
+	bool _peek = false; // the map shows somewhere else (a telescope) until a key is pressed
+	int _peekX = 0, _peekY = 0;
 	void textKey(int key);
 	void shrineChant(const std::string &mantra);
 	bool _textActive = false; // a line of text is being typed (sub_1737A): the mantra at a shrine

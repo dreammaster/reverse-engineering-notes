@@ -305,6 +305,24 @@ int main() {
 		CHECK(text.find("Make a wish?") != std::string::npos && text.find("No effect") != std::string::npos);
 	}
 
+	// a telescope shows a far view until a key is pressed
+	{
+		World w8;
+		w8.load("u6/game");
+		Game g8(w8);
+		put(w8, 0x9A, 0, g8.x + 1, g8.y, 0);
+		g8.handleKey('u');
+		g8.handleKey(KEY_RIGHT);
+		g8.handleKey(KEY_RIGHT);
+		Framebuffer fb;
+		g8.render(fb);
+		g8.handleKey(KEY_ENTER);
+		std::string text;
+		for (const std::string &l : g8.log)
+			text += l;
+		CHECK(text.find("East.") != std::string::npos && text.find("Done") != std::string::npos);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

@@ -413,6 +413,12 @@ bool Game::handleKeyInner(int key) {
 		return false;
 	if (_dead)
 		return false; // any key after the Avatar's death ends the game
+	if (_peek && key != KEY_NONE) {
+		_peek = false;
+		message("\nDone\n");
+		prompt();
+		return true;
+	}
 	if (_textActive) {
 		textKey(key);
 		return true;
@@ -515,6 +521,8 @@ bool Game::handleKeyInner(int key) {
 			moveTo(key);
 		} else if (cmd == 'v') {
 			digAt(key);
+		} else if (cmd == 'e') {
+			telescopeAt(key);
 		} else if (cmd == 'p' && key >= '1' && key <= '8') {
 			// the potion's target: a party member by number
 			int n = key - '1';
@@ -590,7 +598,7 @@ void Game::render(Framebuffer &screen) {
 		radius = al.globals[0x12 + Magic::TIMER_LIGHT] > 100 ? 7 : 5;
 	uint8_t dark[MapRenderer::CELLS * MapRenderer::CELLS];
 	_renderer.computeDarkness(x, y, z, clock.hour, radius, dark);
-	_renderer.draw(screen, x, y, z, dark);
+	_renderer.draw(screen, _peek ? _peekX : x, _peek ? _peekY : y, z, dark);
 	if (_talk)
 		drawTalkView(screen, _world, _talk->portraitActor());
 	else if (_inventory)
