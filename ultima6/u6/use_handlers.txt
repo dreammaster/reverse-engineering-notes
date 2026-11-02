@@ -1,0 +1,2857 @@
+USE type 03E handler 35EF8
+   35EF8 cmp     byte_3DB8D, 0
+   35EFD jnz     short loc_35F0B
+   35EFF push    word_48F03
+   35F03 push    cs
+   35F04 call    near ptr use_vortex_cube
+   35F07 or      ax, ax
+   35F09 jnz     short loc_35F2C
+   35F0B push    word_3E630
+   35F0F push    ds
+   35F10 mov     ax, offset aS_19; "\n%s\n"
+   35F13 push    ax
+   35F14 call    scroll_printf
+   35F19 add     sp, 6
+   35F1C jmp     short loc_35F2C
+   35F1E push    cs
+   35F1F call    near ptr fill_bucket_water
+   35F22 jmp     short loc_35F2C
+   35F24 mov     ax, 14h
+   35F27 push    ax
+   35F28 push    cs
+   35F29 call    near ptr play_instrument
+   35F2C mov     al, byte_404A4
+   35F2F mov     ah, 0
+   35F31 mov     bx, ax
+   35F33 mov     al, [bx+3533h]
+   35F37 mov     ah, 0
+   35F39 push    ax
+   35F3A mov     ax, 5
+   35F3D push    ax
+   35F3E call    spend_moves
+   35F43 call    sub_18F86
+   35F48 call    sub_12C6C
+   35F4D pop     di
+   35F4E pop     si
+   35F4F mov     sp, bp
+   35F51 pop     bp
+   35F52 retf
+USE type 03F handler 35DAF
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+   35DD8 pop     cx
+   35DD9 jmp     loc_35F2C
+   35DDC push    word_48F03
+   35DE0 push    cs
+   35DE1 call    near ptr use_lever
+   35DE4 jmp     loc_35F2C
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+   35E08 jmp     loc_35EAB
+   35E0B push    cs
+   35E0C call    near ptr use_orb_of_the_moons
+   35E0F jmp     loc_35F2C
+   35E12 mov     ax, 13h
+   35E15 push    ax
+   35E16 push    cs
+   35E17 call    near ptr play_instrument
+   35E1A jmp     loc_35F2C
+   35E1D push    word_48F03
+   35E21 push    cs
+   35E22 call    near ptr operate_passthrough
+   35E25 jmp     loc_35F2C
+   35E28 mov     bx, word_48F03
+   35E2C mov     al, [bx-5F55h]
+   35E30 mov     ah, 0
+   35E32 and     ax, 18h
+   35E35 cmp     ax, 18h
+   35E38 jnz     short loc_35E41
+   35E3A push    cs
+   35E3B call    near ptr use_shovel
+   35E3E jmp     loc_35F2C
+   35E41 push    ds
+   35E42 mov     ax, offset aNotReadied; "\nNot readied.\n"
+   35E45 push    ax
+   35E46 call    scroll_printf
+   35E4B pop     cx
+   35E4C pop     cx
+USE type 040 handler 35DAF
+   same as type 03F
+USE type 049 handler 35DF2
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+   35E08 jmp     loc_35EAB
+   35E0B push    cs
+   35E0C call    near ptr use_orb_of_the_moons
+   35E0F jmp     loc_35F2C
+   35E12 mov     ax, 13h
+   35E15 push    ax
+   35E16 push    cs
+   35E17 call    near ptr play_instrument
+   35E1A jmp     loc_35F2C
+   35E1D push    word_48F03
+   35E21 push    cs
+   35E22 call    near ptr operate_passthrough
+   35E25 jmp     loc_35F2C
+   35E28 mov     bx, word_48F03
+   35E2C mov     al, [bx-5F55h]
+   35E30 mov     ah, 0
+   35E32 and     ax, 18h
+   35E35 cmp     ax, 18h
+   35E38 jnz     short loc_35E41
+   35E3A push    cs
+   35E3B call    near ptr use_shovel
+   35E3E jmp     loc_35F2C
+   35E41 push    ds
+   35E42 mov     ax, offset aNotReadied; "\nNot readied.\n"
+   35E45 push    ax
+   35E46 call    scroll_printf
+   35E4B pop     cx
+   35E4C pop     cx
+   35E4D jmp     loc_35F2C
+   35E50 push    word_48F03
+   35E54 push    cs
+   35E55 call    near ptr use_potion
+   35E58 jmp     loc_35F2C
+   35E5B push    word_48F03
+   35E5F push    cs
+   35E60 call    near ptr light_powder_keg
+   35E63 jmp     loc_35F2C
+   35E66 push    cs
+   35E67 call    near ptr use_rubber_ducky
+   35E6A jmp     loc_35F2C
+   35E6D push    word_48F03
+   35E71 push    cs
+   35E72 call    near ptr use_shrine
+   35E75 jmp     loc_35F2C
+   35E78 push    word_48F03
+   35E7C push    cs
+   35E7D call    near ptr open_secret_door
+   35E80 jmp     loc_35F2C
+   35E83 cmp     player_z, 0
+   35E88 jz      short loc_35E91
+   35E8A cmp     player_z, 5
+   35E8F jnz     short loc_35EAB
+   35E91 call    use_sextant
+USE type 04D handler 35D78
+   35D78 push    word_48F03
+   35D7C push    cs
+   35D7D call    near ptr use_gems
+   35D80 jmp     loc_35F2C
+   35D83 mov     ax, 2
+   35D86 push    ax
+   35D87 push    cs
+   35D88 call    near ptr play_instrument
+   35D8B jmp     loc_35F2C
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+   35DD8 pop     cx
+   35DD9 jmp     loc_35F2C
+   35DDC push    word_48F03
+   35DE0 push    cs
+   35DE1 call    near ptr use_lever
+   35DE4 jmp     loc_35F2C
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+   35E08 jmp     loc_35EAB
+   35E0B push    cs
+   35E0C call    near ptr use_orb_of_the_moons
+   35E0F jmp     loc_35F2C
+   35E12 mov     ax, 13h
+   35E15 push    ax
+USE type 04E handler 35EA0
+   35EA0 mov     bx, word_48F03
+   35EA4 test    byte ptr [bx-5F55h], 18h
+   35EA9 jnz     short loc_35EBE
+   35EAB push    word_3E642
+   35EAF push    ds
+   35EB0 mov     ax, offset aS_19; "\n%s\n"
+   35EB3 push    ax
+   35EB4 call    scroll_printf
+   35EB9 add     sp, 6
+   35EBC jmp     short loc_35F2C
+   35EBE mov     bx, word_48F03
+   35EC2 mov     al, [bx-5F55h]
+   35EC6 mov     ah, 0
+   35EC8 and     ax, 18h
+   35ECB cmp     ax, 18h
+   35ECE jz      short loc_35ED3
+   35ED0 jmp     loc_35E41
+   35ED3 push    bx
+   35ED4 push    cs
+   35ED5 call    near ptr sub_32BC7
+   35ED8 jmp     short loc_35F2C
+   35EDA push    word_48F03
+   35EDE push    cs
+   35EDF call    near ptr use_switch
+   35EE2 jmp     short loc_35F2C
+   35EE4 push    word_48F03
+   35EE8 push    cs
+   35EE9 call    near ptr use_telescope
+   35EEC jmp     short loc_35F2C
+   35EEE push    word_48F03
+   35EF2 push    cs
+   35EF3 call    near ptr use_torch
+   35EF6 jmp     short loc_35F2C
+   35EF8 cmp     byte_3DB8D, 0
+   35EFD jnz     short loc_35F0B
+   35EFF push    word_48F03
+   35F03 push    cs
+   35F04 call    near ptr use_vortex_cube
+   35F07 or      ax, ax
+   35F09 jnz     short loc_35F2C
+   35F0B push    word_3E630
+   35F0F push    ds
+   35F10 mov     ax, offset aS_19; "\n%s\n"
+   35F13 push    ax
+   35F14 call    scroll_printf
+   35F19 add     sp, 6
+   35F1C jmp     short loc_35F2C
+   35F1E push    cs
+   35F1F call    near ptr fill_bucket_water
+   35F22 jmp     short loc_35F2C
+   35F24 mov     ax, 14h
+   35F27 push    ax
+   35F28 push    cs
+   35F29 call    near ptr play_instrument
+   35F2C mov     al, byte_404A4
+   35F2F mov     ah, 0
+   35F31 mov     bx, ax
+   35F33 mov     al, [bx+3533h]
+   35F37 mov     ah, 0
+   35F39 push    ax
+USE type 057 handler 35DFD
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+   35E08 jmp     loc_35EAB
+   35E0B push    cs
+   35E0C call    near ptr use_orb_of_the_moons
+   35E0F jmp     loc_35F2C
+   35E12 mov     ax, 13h
+   35E15 push    ax
+   35E16 push    cs
+   35E17 call    near ptr play_instrument
+   35E1A jmp     loc_35F2C
+   35E1D push    word_48F03
+   35E21 push    cs
+   35E22 call    near ptr operate_passthrough
+   35E25 jmp     loc_35F2C
+   35E28 mov     bx, word_48F03
+   35E2C mov     al, [bx-5F55h]
+   35E30 mov     ah, 0
+   35E32 and     ax, 18h
+   35E35 cmp     ax, 18h
+   35E38 jnz     short loc_35E41
+   35E3A push    cs
+   35E3B call    near ptr use_shovel
+   35E3E jmp     loc_35F2C
+   35E41 push    ds
+   35E42 mov     ax, offset aNotReadied; "\nNot readied.\n"
+   35E45 push    ax
+   35E46 call    scroll_printf
+   35E4B pop     cx
+   35E4C pop     cx
+   35E4D jmp     loc_35F2C
+   35E50 push    word_48F03
+   35E54 push    cs
+   35E55 call    near ptr use_potion
+   35E58 jmp     loc_35F2C
+   35E5B push    word_48F03
+   35E5F push    cs
+   35E60 call    near ptr light_powder_keg
+   35E63 jmp     loc_35F2C
+   35E66 push    cs
+   35E67 call    near ptr use_rubber_ducky
+   35E6A jmp     loc_35F2C
+   35E6D push    word_48F03
+   35E71 push    cs
+   35E72 call    near ptr use_shrine
+   35E75 jmp     loc_35F2C
+   35E78 push    word_48F03
+   35E7C push    cs
+   35E7D call    near ptr open_secret_door
+   35E80 jmp     loc_35F2C
+   35E83 cmp     player_z, 0
+   35E88 jz      short loc_35E91
+   35E8A cmp     player_z, 5
+   35E8F jnz     short loc_35EAB
+   35E91 call    use_sextant
+   35E96 jmp     loc_35F2C
+   35E99 push    cs
+   35E9A call    near ptr use_silver_horn
+   35E9D jmp     loc_35F2C
+USE type 05A handler 35EEE
+   35EEE push    word_48F03
+   35EF2 push    cs
+   35EF3 call    near ptr use_torch
+   35EF6 jmp     short loc_35F2C
+   35EF8 cmp     byte_3DB8D, 0
+   35EFD jnz     short loc_35F0B
+   35EFF push    word_48F03
+   35F03 push    cs
+   35F04 call    near ptr use_vortex_cube
+   35F07 or      ax, ax
+   35F09 jnz     short loc_35F2C
+   35F0B push    word_3E630
+   35F0F push    ds
+   35F10 mov     ax, offset aS_19; "\n%s\n"
+   35F13 push    ax
+   35F14 call    scroll_printf
+   35F19 add     sp, 6
+   35F1C jmp     short loc_35F2C
+   35F1E push    cs
+   35F1F call    near ptr fill_bucket_water
+   35F22 jmp     short loc_35F2C
+   35F24 mov     ax, 14h
+   35F27 push    ax
+   35F28 push    cs
+   35F29 call    near ptr play_instrument
+   35F2C mov     al, byte_404A4
+   35F2F mov     ah, 0
+   35F31 mov     bx, ax
+   35F33 mov     al, [bx+3533h]
+   35F37 mov     ah, 0
+   35F39 push    ax
+   35F3A mov     ax, 5
+   35F3D push    ax
+   35F3E call    spend_moves
+   35F43 call    sub_18F86
+   35F48 call    sub_12C6C
+   35F4D pop     di
+   35F4E pop     si
+   35F4F mov     sp, bp
+   35F51 pop     bp
+   35F52 retf
+USE type 05D handler 35E83
+   35E83 cmp     player_z, 0
+   35E88 jz      short loc_35E91
+   35E8A cmp     player_z, 5
+   35E8F jnz     short loc_35EAB
+   35E91 call    use_sextant
+   35E96 jmp     loc_35F2C
+   35E99 push    cs
+   35E9A call    near ptr use_silver_horn
+   35E9D jmp     loc_35F2C
+   35EA0 mov     bx, word_48F03
+   35EA4 test    byte ptr [bx-5F55h], 18h
+   35EA9 jnz     short loc_35EBE
+   35EAB push    word_3E642
+   35EAF push    ds
+   35EB0 mov     ax, offset aS_19; "\n%s\n"
+   35EB3 push    ax
+   35EB4 call    scroll_printf
+   35EB9 add     sp, 6
+   35EBC jmp     short loc_35F2C
+   35EBE mov     bx, word_48F03
+   35EC2 mov     al, [bx-5F55h]
+   35EC6 mov     ah, 0
+   35EC8 and     ax, 18h
+   35ECB cmp     ax, 18h
+   35ECE jz      short loc_35ED3
+   35ED0 jmp     loc_35E41
+   35ED3 push    bx
+   35ED4 push    cs
+   35ED5 call    near ptr sub_32BC7
+   35ED8 jmp     short loc_35F2C
+   35EDA push    word_48F03
+   35EDE push    cs
+   35EDF call    near ptr use_switch
+   35EE2 jmp     short loc_35F2C
+   35EE4 push    word_48F03
+   35EE8 push    cs
+   35EE9 call    near ptr use_telescope
+   35EEC jmp     short loc_35F2C
+   35EEE push    word_48F03
+   35EF2 push    cs
+   35EF3 call    near ptr use_torch
+   35EF6 jmp     short loc_35F2C
+   35EF8 cmp     byte_3DB8D, 0
+   35EFD jnz     short loc_35F0B
+   35EFF push    word_48F03
+   35F03 push    cs
+   35F04 call    near ptr use_vortex_cube
+   35F07 or      ax, ax
+   35F09 jnz     short loc_35F2C
+   35F0B push    word_3E630
+   35F0F push    ds
+   35F10 mov     ax, offset aS_19; "\n%s\n"
+   35F13 push    ax
+   35F14 call    scroll_printf
+   35F19 add     sp, 6
+   35F1C jmp     short loc_35F2C
+   35F1E push    cs
+   35F1F call    near ptr fill_bucket_water
+   35F22 jmp     short loc_35F2C
+   35F24 mov     ax, 14h
+USE type 05F handler 35CDF
+   35CDF push    word_48F03
+   35CE3 push    cs
+   35CE4 call    near ptr use_food
+   35CE7 jmp     loc_35F2C
+   35CEA push    word_48F03
+   35CEE push    cs
+   35CEF call    near ptr use_cannon
+   35CF2 jmp     loc_35F2C
+   35CF5 push    word_48F03
+   35CF9 xor     ax, ax
+   35CFB push    ax
+   35CFC push    ax
+   35CFD push    ax
+   35CFE push    cs
+   35CFF call    near ptr use_key_on_door
+   35D02 jmp     loc_35F2C
+   35D05 mov     bx, word_48F03
+   35D09 test    byte ptr [bx-5F55h], 18h
+   35D0E jz      short loc_35D13
+   35D10 jmp     loc_35EAB
+   35D13 push    bx
+   35D14 xor     ax, ax
+   35D16 push    ax
+   35D17 push    ax
+   35D18 push    ax
+   35D19 push    cs
+   35D1A call    near ptr use_door
+   35D1D jmp     loc_35F2C
+   35D20 push    cs
+   35D21 call    near ptr use_churn
+   35D24 jmp     loc_35F2C
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+   35D33 call    near ptr operate_drawbridge
+   35D36 jmp     loc_35F2C
+   35D39 push    cs
+   35D3A call    near ptr use_crystal_ball
+   35D3D jmp     loc_35F2C
+   35D40 cmp     player_z, 0
+   35D45 jz      short loc_35D51
+   35D47 cmp     player_z, 5
+   35D4C jz      short loc_35D51
+   35D4E jmp     loc_35EAB
+   35D51 push    word_48F03
+   35D55 push    cs
+   35D56 call    near ptr sub_34053
+   35D59 jmp     loc_35F2C
+   35D5C push    cs
+   35D5D call    near ptr use_fan
+   35D60 jmp     loc_35F2C
+   35D63 push    cs
+   35D64 call    near ptr use_fishing_pole
+   35D67 jmp     loc_35F2C
+   35D6A push    cs
+   35D6B call    near ptr use_fountain
+   35D6E jmp     loc_35F2C
+   35D71 push    cs
+USE type 060 handler 35CDF
+   same as type 05F
+USE type 061 handler 35D71
+   35D71 push    cs
+   35D72 call    near ptr use_scroll
+   35D75 jmp     loc_35F2C
+   35D78 push    word_48F03
+   35D7C push    cs
+   35D7D call    near ptr use_gems
+   35D80 jmp     loc_35F2C
+   35D83 mov     ax, 2
+   35D86 push    ax
+   35D87 push    cs
+   35D88 call    near ptr play_instrument
+   35D8B jmp     loc_35F2C
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+   35DD8 pop     cx
+   35DD9 jmp     loc_35F2C
+   35DDC push    word_48F03
+   35DE0 push    cs
+   35DE1 call    near ptr use_lever
+   35DE4 jmp     loc_35F2C
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+   35E08 jmp     loc_35EAB
+   35E0B push    cs
+   35E0C call    near ptr use_orb_of_the_moons
+USE type 062 handler 35D05
+   35D05 mov     bx, word_48F03
+   35D09 test    byte ptr [bx-5F55h], 18h
+   35D0E jz      short loc_35D13
+   35D10 jmp     loc_35EAB
+   35D13 push    bx
+   35D14 xor     ax, ax
+   35D16 push    ax
+   35D17 push    ax
+   35D18 push    ax
+   35D19 push    cs
+   35D1A call    near ptr use_door
+   35D1D jmp     loc_35F2C
+   35D20 push    cs
+   35D21 call    near ptr use_churn
+   35D24 jmp     loc_35F2C
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+   35D33 call    near ptr operate_drawbridge
+   35D36 jmp     loc_35F2C
+   35D39 push    cs
+   35D3A call    near ptr use_crystal_ball
+   35D3D jmp     loc_35F2C
+   35D40 cmp     player_z, 0
+   35D45 jz      short loc_35D51
+   35D47 cmp     player_z, 5
+   35D4C jz      short loc_35D51
+   35D4E jmp     loc_35EAB
+   35D51 push    word_48F03
+   35D55 push    cs
+   35D56 call    near ptr sub_34053
+   35D59 jmp     loc_35F2C
+   35D5C push    cs
+   35D5D call    near ptr use_fan
+   35D60 jmp     loc_35F2C
+   35D63 push    cs
+   35D64 call    near ptr use_fishing_pole
+   35D67 jmp     loc_35F2C
+   35D6A push    cs
+   35D6B call    near ptr use_fountain
+   35D6E jmp     loc_35F2C
+   35D71 push    cs
+   35D72 call    near ptr use_scroll
+   35D75 jmp     loc_35F2C
+   35D78 push    word_48F03
+   35D7C push    cs
+   35D7D call    near ptr use_gems
+   35D80 jmp     loc_35F2C
+   35D83 mov     ax, 2
+   35D86 push    ax
+   35D87 push    cs
+   35D88 call    near ptr play_instrument
+   35D8B jmp     loc_35F2C
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+USE type 067 handler 35E28
+   35E28 mov     bx, word_48F03
+   35E2C mov     al, [bx-5F55h]
+   35E30 mov     ah, 0
+   35E32 and     ax, 18h
+   35E35 cmp     ax, 18h
+   35E38 jnz     short loc_35E41
+   35E3A push    cs
+   35E3B call    near ptr use_shovel
+   35E3E jmp     loc_35F2C
+   35E41 push    ds
+   35E42 mov     ax, offset aNotReadied; "\nNot readied.\n"
+   35E45 push    ax
+   35E46 call    scroll_printf
+   35E4B pop     cx
+   35E4C pop     cx
+   35E4D jmp     loc_35F2C
+   35E50 push    word_48F03
+   35E54 push    cs
+   35E55 call    near ptr use_potion
+   35E58 jmp     loc_35F2C
+   35E5B push    word_48F03
+   35E5F push    cs
+   35E60 call    near ptr light_powder_keg
+   35E63 jmp     loc_35F2C
+   35E66 push    cs
+   35E67 call    near ptr use_rubber_ducky
+   35E6A jmp     loc_35F2C
+   35E6D push    word_48F03
+   35E71 push    cs
+   35E72 call    near ptr use_shrine
+   35E75 jmp     loc_35F2C
+   35E78 push    word_48F03
+   35E7C push    cs
+   35E7D call    near ptr open_secret_door
+   35E80 jmp     loc_35F2C
+   35E83 cmp     player_z, 0
+   35E88 jz      short loc_35E91
+   35E8A cmp     player_z, 5
+   35E8F jnz     short loc_35EAB
+   35E91 call    use_sextant
+   35E96 jmp     loc_35F2C
+   35E99 push    cs
+   35E9A call    near ptr use_silver_horn
+   35E9D jmp     loc_35F2C
+   35EA0 mov     bx, word_48F03
+   35EA4 test    byte ptr [bx-5F55h], 18h
+   35EA9 jnz     short loc_35EBE
+   35EAB push    word_3E642
+   35EAF push    ds
+   35EB0 mov     ax, offset aS_19; "\n%s\n"
+   35EB3 push    ax
+   35EB4 call    scroll_printf
+   35EB9 add     sp, 6
+   35EBC jmp     short loc_35F2C
+   35EBE mov     bx, word_48F03
+   35EC2 mov     al, [bx-5F55h]
+   35EC6 mov     ah, 0
+   35EC8 and     ax, 18h
+   35ECB cmp     ax, 18h
+   35ECE jz      short loc_35ED3
+USE type 068 handler 35E28
+   same as type 067
+USE type 073 handler 35C4B
+   35C4B db 3Eh, 0, 3Fh, 0, 40h, 0, 49h, 0, 4Dh, 0, 4Eh, 0, 57h
+   35C9E dw seg seg003
+   35CA0 add     sp, 6
+   35CA3 push    word_48F03
+   35CA7 push    word_48EFF
+   35CAB push    word_48F01
+   35CAF push    cs
+   35CB0 call    near ptr search_here
+   35CB3 jmp     loc_35F2C
+   35CB6 push    cs
+   35CB7 call    near ptr ring_bell
+   35CBA jmp     loc_35F2C
+   35CBD push    cs
+   35CBE call    near ptr use_beehive
+   35CC1 jmp     loc_35F2C
+   35CC4 cmp     si, 0CEh
+   35CC8 jnz     short loc_35CD4
+   35CCA test    [bp+var_A], 2
+   35CCF jz      short loc_35CD4
+   35CD1 jmp     loc_35EAB
+   35CD4 push    word_48F03
+   35CD8 push    cs
+   35CD9 call    near ptr extinguish_light
+   35CDC jmp     loc_35F2C
+   35CDF push    word_48F03
+   35CE3 push    cs
+   35CE4 call    near ptr use_food
+   35CE7 jmp     loc_35F2C
+   35CEA push    word_48F03
+   35CEE push    cs
+   35CEF call    near ptr use_cannon
+   35CF2 jmp     loc_35F2C
+   35CF5 push    word_48F03
+   35CF9 xor     ax, ax
+   35CFB push    ax
+   35CFC push    ax
+   35CFD push    ax
+   35CFE push    cs
+   35CFF call    near ptr use_key_on_door
+   35D02 jmp     loc_35F2C
+   35D05 mov     bx, word_48F03
+   35D09 test    byte ptr [bx-5F55h], 18h
+   35D0E jz      short loc_35D13
+   35D10 jmp     loc_35EAB
+   35D13 push    bx
+   35D14 xor     ax, ax
+   35D16 push    ax
+   35D17 push    ax
+   35D18 push    ax
+   35D19 push    cs
+   35D1A call    near ptr use_door
+   35D1D jmp     loc_35F2C
+   35D20 push    cs
+   35D21 call    near ptr use_churn
+   35D24 jmp     loc_35F2C
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+USE type 074 handler 35C4B
+   same as type 073
+USE type 075 handler 35C4B
+   same as type 073
+USE type 07A handler 35CC4
+   35CC4 cmp     si, 0CEh
+   35CC8 jnz     short loc_35CD4
+   35CCA test    [bp+var_A], 2
+   35CCF jz      short loc_35CD4
+   35CD1 jmp     loc_35EAB
+   35CD4 push    word_48F03
+   35CD8 push    cs
+   35CD9 call    near ptr extinguish_light
+   35CDC jmp     loc_35F2C
+   35CDF push    word_48F03
+   35CE3 push    cs
+   35CE4 call    near ptr use_food
+   35CE7 jmp     loc_35F2C
+   35CEA push    word_48F03
+   35CEE push    cs
+   35CEF call    near ptr use_cannon
+   35CF2 jmp     loc_35F2C
+   35CF5 push    word_48F03
+   35CF9 xor     ax, ax
+   35CFB push    ax
+   35CFC push    ax
+   35CFD push    ax
+   35CFE push    cs
+   35CFF call    near ptr use_key_on_door
+   35D02 jmp     loc_35F2C
+   35D05 mov     bx, word_48F03
+   35D09 test    byte ptr [bx-5F55h], 18h
+   35D0E jz      short loc_35D13
+   35D10 jmp     loc_35EAB
+   35D13 push    bx
+   35D14 xor     ax, ax
+   35D16 push    ax
+   35D17 push    ax
+   35D18 push    ax
+   35D19 push    cs
+   35D1A call    near ptr use_door
+   35D1D jmp     loc_35F2C
+   35D20 push    cs
+   35D21 call    near ptr use_churn
+   35D24 jmp     loc_35F2C
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+   35D33 call    near ptr operate_drawbridge
+   35D36 jmp     loc_35F2C
+   35D39 push    cs
+   35D3A call    near ptr use_crystal_ball
+   35D3D jmp     loc_35F2C
+   35D40 cmp     player_z, 0
+   35D45 jz      short loc_35D51
+   35D47 cmp     player_z, 5
+   35D4C jz      short loc_35D51
+   35D4E jmp     loc_35EAB
+   35D51 push    word_48F03
+   35D55 push    cs
+   35D56 call    near ptr sub_34053
+   35D59 jmp     loc_35F2C
+   35D5C push    cs
+USE type 080 handler 35CDF
+   same as type 05F
+USE type 081 handler 35CDF
+   same as type 05F
+USE type 082 handler 35CDF
+   same as type 05F
+USE type 083 handler 35CDF
+   same as type 05F
+USE type 084 handler 35CDF
+   same as type 05F
+USE type 085 handler 35CDF
+   same as type 05F
+USE type 087 handler 35CDF
+   same as type 05F
+USE type 091 handler 35CC4
+   same as type 07A
+USE type 099 handler 35E12
+   35E12 mov     ax, 13h
+   35E15 push    ax
+   35E16 push    cs
+   35E17 call    near ptr play_instrument
+   35E1A jmp     loc_35F2C
+   35E1D push    word_48F03
+   35E21 push    cs
+   35E22 call    near ptr operate_passthrough
+   35E25 jmp     loc_35F2C
+   35E28 mov     bx, word_48F03
+   35E2C mov     al, [bx-5F55h]
+   35E30 mov     ah, 0
+   35E32 and     ax, 18h
+   35E35 cmp     ax, 18h
+   35E38 jnz     short loc_35E41
+   35E3A push    cs
+   35E3B call    near ptr use_shovel
+   35E3E jmp     loc_35F2C
+   35E41 push    ds
+   35E42 mov     ax, offset aNotReadied; "\nNot readied.\n"
+   35E45 push    ax
+   35E46 call    scroll_printf
+   35E4B pop     cx
+   35E4C pop     cx
+   35E4D jmp     loc_35F2C
+   35E50 push    word_48F03
+   35E54 push    cs
+   35E55 call    near ptr use_potion
+   35E58 jmp     loc_35F2C
+   35E5B push    word_48F03
+   35E5F push    cs
+   35E60 call    near ptr light_powder_keg
+   35E63 jmp     loc_35F2C
+   35E66 push    cs
+   35E67 call    near ptr use_rubber_ducky
+   35E6A jmp     loc_35F2C
+   35E6D push    word_48F03
+   35E71 push    cs
+   35E72 call    near ptr use_shrine
+   35E75 jmp     loc_35F2C
+   35E78 push    word_48F03
+   35E7C push    cs
+   35E7D call    near ptr open_secret_door
+   35E80 jmp     loc_35F2C
+   35E83 cmp     player_z, 0
+   35E88 jz      short loc_35E91
+   35E8A cmp     player_z, 5
+   35E8F jnz     short loc_35EAB
+   35E91 call    use_sextant
+   35E96 jmp     loc_35F2C
+   35E99 push    cs
+   35E9A call    near ptr use_silver_horn
+   35E9D jmp     loc_35F2C
+   35EA0 mov     bx, word_48F03
+   35EA4 test    byte ptr [bx-5F55h], 18h
+   35EA9 jnz     short loc_35EBE
+   35EAB push    word_3E642
+   35EAF push    ds
+   35EB0 mov     ax, offset aS_19; "\n%s\n"
+   35EB3 push    ax
+USE type 09A handler 35EE4
+   35EE4 push    word_48F03
+   35EE8 push    cs
+   35EE9 call    near ptr use_telescope
+   35EEC jmp     short loc_35F2C
+   35EEE push    word_48F03
+   35EF2 push    cs
+   35EF3 call    near ptr use_torch
+   35EF6 jmp     short loc_35F2C
+   35EF8 cmp     byte_3DB8D, 0
+   35EFD jnz     short loc_35F0B
+   35EFF push    word_48F03
+   35F03 push    cs
+   35F04 call    near ptr use_vortex_cube
+   35F07 or      ax, ax
+   35F09 jnz     short loc_35F2C
+   35F0B push    word_3E630
+   35F0F push    ds
+   35F10 mov     ax, offset aS_19; "\n%s\n"
+   35F13 push    ax
+   35F14 call    scroll_printf
+   35F19 add     sp, 6
+   35F1C jmp     short loc_35F2C
+   35F1E push    cs
+   35F1F call    near ptr fill_bucket_water
+   35F22 jmp     short loc_35F2C
+   35F24 mov     ax, 14h
+   35F27 push    ax
+   35F28 push    cs
+   35F29 call    near ptr play_instrument
+   35F2C mov     al, byte_404A4
+   35F2F mov     ah, 0
+   35F31 mov     bx, ax
+   35F33 mov     al, [bx+3533h]
+   35F37 mov     ah, 0
+   35F39 push    ax
+   35F3A mov     ax, 5
+   35F3D push    ax
+   35F3E call    spend_moves
+   35F43 call    sub_18F86
+   35F48 call    sub_12C6C
+   35F4D pop     di
+   35F4E pop     si
+   35F4F mov     sp, bp
+   35F51 pop     bp
+   35F52 retf
+USE type 09B handler 35D39
+   35D39 push    cs
+   35D3A call    near ptr use_crystal_ball
+   35D3D jmp     loc_35F2C
+   35D40 cmp     player_z, 0
+   35D45 jz      short loc_35D51
+   35D47 cmp     player_z, 5
+   35D4C jz      short loc_35D51
+   35D4E jmp     loc_35EAB
+   35D51 push    word_48F03
+   35D55 push    cs
+   35D56 call    near ptr sub_34053
+   35D59 jmp     loc_35F2C
+   35D5C push    cs
+   35D5D call    near ptr use_fan
+   35D60 jmp     loc_35F2C
+   35D63 push    cs
+   35D64 call    near ptr use_fishing_pole
+   35D67 jmp     loc_35F2C
+   35D6A push    cs
+   35D6B call    near ptr use_fountain
+   35D6E jmp     loc_35F2C
+   35D71 push    cs
+   35D72 call    near ptr use_scroll
+   35D75 jmp     loc_35F2C
+   35D78 push    word_48F03
+   35D7C push    cs
+   35D7D call    near ptr use_gems
+   35D80 jmp     loc_35F2C
+   35D83 mov     ax, 2
+   35D86 push    ax
+   35D87 push    cs
+   35D88 call    near ptr play_instrument
+   35D8B jmp     loc_35F2C
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+USE type 09C handler 35D8E
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+   35DD8 pop     cx
+   35DD9 jmp     loc_35F2C
+   35DDC push    word_48F03
+   35DE0 push    cs
+   35DE1 call    near ptr use_lever
+   35DE4 jmp     loc_35F2C
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+   35E08 jmp     loc_35EAB
+   35E0B push    cs
+   35E0C call    near ptr use_orb_of_the_moons
+   35E0F jmp     loc_35F2C
+   35E12 mov     ax, 13h
+   35E15 push    ax
+   35E16 push    cs
+   35E17 call    near ptr play_instrument
+   35E1A jmp     loc_35F2C
+   35E1D push    word_48F03
+   35E21 push    cs
+   35E22 call    near ptr operate_passthrough
+   35E25 jmp     loc_35F2C
+   35E28 mov     bx, word_48F03
+   35E2C mov     al, [bx-5F55h]
+USE type 09D handler 35D83
+   35D83 mov     ax, 2
+   35D86 push    ax
+   35D87 push    cs
+   35D88 call    near ptr play_instrument
+   35D8B jmp     loc_35F2C
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+   35DD8 pop     cx
+   35DD9 jmp     loc_35F2C
+   35DDC push    word_48F03
+   35DE0 push    cs
+   35DE1 call    near ptr use_lever
+   35DE4 jmp     loc_35F2C
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+   35E08 jmp     loc_35EAB
+   35E0B push    cs
+   35E0C call    near ptr use_orb_of_the_moons
+   35E0F jmp     loc_35F2C
+   35E12 mov     ax, 13h
+   35E15 push    ax
+   35E16 push    cs
+   35E17 call    near ptr play_instrument
+   35E1A jmp     loc_35F2C
+   35E1D push    word_48F03
+USE type 09E handler 35DE7
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+   35E08 jmp     loc_35EAB
+   35E0B push    cs
+   35E0C call    near ptr use_orb_of_the_moons
+   35E0F jmp     loc_35F2C
+   35E12 mov     ax, 13h
+   35E15 push    ax
+   35E16 push    cs
+   35E17 call    near ptr play_instrument
+   35E1A jmp     loc_35F2C
+   35E1D push    word_48F03
+   35E21 push    cs
+   35E22 call    near ptr operate_passthrough
+   35E25 jmp     loc_35F2C
+   35E28 mov     bx, word_48F03
+   35E2C mov     al, [bx-5F55h]
+   35E30 mov     ah, 0
+   35E32 and     ax, 18h
+   35E35 cmp     ax, 18h
+   35E38 jnz     short loc_35E41
+   35E3A push    cs
+   35E3B call    near ptr use_shovel
+   35E3E jmp     loc_35F2C
+   35E41 push    ds
+   35E42 mov     ax, offset aNotReadied; "\nNot readied.\n"
+   35E45 push    ax
+   35E46 call    scroll_printf
+   35E4B pop     cx
+   35E4C pop     cx
+   35E4D jmp     loc_35F2C
+   35E50 push    word_48F03
+   35E54 push    cs
+   35E55 call    near ptr use_potion
+   35E58 jmp     loc_35F2C
+   35E5B push    word_48F03
+   35E5F push    cs
+   35E60 call    near ptr light_powder_keg
+   35E63 jmp     loc_35F2C
+   35E66 push    cs
+   35E67 call    near ptr use_rubber_ducky
+   35E6A jmp     loc_35F2C
+   35E6D push    word_48F03
+   35E71 push    cs
+   35E72 call    near ptr use_shrine
+   35E75 jmp     loc_35F2C
+   35E78 push    word_48F03
+   35E7C push    cs
+   35E7D call    near ptr open_secret_door
+   35E80 jmp     loc_35F2C
+USE type 0A4 handler 35CC4
+   same as type 07A
+USE type 0A9 handler 35E66
+   35E66 push    cs
+   35E67 call    near ptr use_rubber_ducky
+   35E6A jmp     loc_35F2C
+   35E6D push    word_48F03
+   35E71 push    cs
+   35E72 call    near ptr use_shrine
+   35E75 jmp     loc_35F2C
+   35E78 push    word_48F03
+   35E7C push    cs
+   35E7D call    near ptr open_secret_door
+   35E80 jmp     loc_35F2C
+   35E83 cmp     player_z, 0
+   35E88 jz      short loc_35E91
+   35E8A cmp     player_z, 5
+   35E8F jnz     short loc_35EAB
+   35E91 call    use_sextant
+   35E96 jmp     loc_35F2C
+   35E99 push    cs
+   35E9A call    near ptr use_silver_horn
+   35E9D jmp     loc_35F2C
+   35EA0 mov     bx, word_48F03
+   35EA4 test    byte ptr [bx-5F55h], 18h
+   35EA9 jnz     short loc_35EBE
+   35EAB push    word_3E642
+   35EAF push    ds
+   35EB0 mov     ax, offset aS_19; "\n%s\n"
+   35EB3 push    ax
+   35EB4 call    scroll_printf
+   35EB9 add     sp, 6
+   35EBC jmp     short loc_35F2C
+   35EBE mov     bx, word_48F03
+   35EC2 mov     al, [bx-5F55h]
+   35EC6 mov     ah, 0
+   35EC8 and     ax, 18h
+   35ECB cmp     ax, 18h
+   35ECE jz      short loc_35ED3
+   35ED0 jmp     loc_35E41
+   35ED3 push    bx
+   35ED4 push    cs
+   35ED5 call    near ptr sub_32BC7
+   35ED8 jmp     short loc_35F2C
+   35EDA push    word_48F03
+   35EDE push    cs
+   35EDF call    near ptr use_switch
+   35EE2 jmp     short loc_35F2C
+   35EE4 push    word_48F03
+   35EE8 push    cs
+   35EE9 call    near ptr use_telescope
+   35EEC jmp     short loc_35F2C
+   35EEE push    word_48F03
+   35EF2 push    cs
+   35EF3 call    near ptr use_torch
+   35EF6 jmp     short loc_35F2C
+   35EF8 cmp     byte_3DB8D, 0
+   35EFD jnz     short loc_35F0B
+   35EFF push    word_48F03
+   35F03 push    cs
+   35F04 call    near ptr use_vortex_cube
+   35F07 or      ax, ax
+   35F09 jnz     short loc_35F2C
+USE type 0AE handler 35EDA
+   35EDA push    word_48F03
+   35EDE push    cs
+   35EDF call    near ptr use_switch
+   35EE2 jmp     short loc_35F2C
+   35EE4 push    word_48F03
+   35EE8 push    cs
+   35EE9 call    near ptr use_telescope
+   35EEC jmp     short loc_35F2C
+   35EEE push    word_48F03
+   35EF2 push    cs
+   35EF3 call    near ptr use_torch
+   35EF6 jmp     short loc_35F2C
+   35EF8 cmp     byte_3DB8D, 0
+   35EFD jnz     short loc_35F0B
+   35EFF push    word_48F03
+   35F03 push    cs
+   35F04 call    near ptr use_vortex_cube
+   35F07 or      ax, ax
+   35F09 jnz     short loc_35F2C
+   35F0B push    word_3E630
+   35F0F push    ds
+   35F10 mov     ax, offset aS_19; "\n%s\n"
+   35F13 push    ax
+   35F14 call    scroll_printf
+   35F19 add     sp, 6
+   35F1C jmp     short loc_35F2C
+   35F1E push    cs
+   35F1F call    near ptr fill_bucket_water
+   35F22 jmp     short loc_35F2C
+   35F24 mov     ax, 14h
+   35F27 push    ax
+   35F28 push    cs
+   35F29 call    near ptr play_instrument
+   35F2C mov     al, byte_404A4
+   35F2F mov     ah, 0
+   35F31 mov     bx, ax
+   35F33 mov     al, [bx+3533h]
+   35F37 mov     ah, 0
+   35F39 push    ax
+   35F3A mov     ax, 5
+   35F3D push    ax
+   35F3E call    spend_moves
+   35F43 call    sub_18F86
+   35F48 call    sub_12C6C
+   35F4D pop     di
+   35F4E pop     si
+   35F4F mov     sp, bp
+   35F51 pop     bp
+   35F52 retf
+USE type 0B4 handler 35CDF
+   same as type 05F
+USE type 0B5 handler 35D20
+   35D20 push    cs
+   35D21 call    near ptr use_churn
+   35D24 jmp     loc_35F2C
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+   35D33 call    near ptr operate_drawbridge
+   35D36 jmp     loc_35F2C
+   35D39 push    cs
+   35D3A call    near ptr use_crystal_ball
+   35D3D jmp     loc_35F2C
+   35D40 cmp     player_z, 0
+   35D45 jz      short loc_35D51
+   35D47 cmp     player_z, 5
+   35D4C jz      short loc_35D51
+   35D4E jmp     loc_35EAB
+   35D51 push    word_48F03
+   35D55 push    cs
+   35D56 call    near ptr sub_34053
+   35D59 jmp     loc_35F2C
+   35D5C push    cs
+   35D5D call    near ptr use_fan
+   35D60 jmp     loc_35F2C
+   35D63 push    cs
+   35D64 call    near ptr use_fishing_pole
+   35D67 jmp     loc_35F2C
+   35D6A push    cs
+   35D6B call    near ptr use_fountain
+   35D6E jmp     loc_35F2C
+   35D71 push    cs
+   35D72 call    near ptr use_scroll
+   35D75 jmp     loc_35F2C
+   35D78 push    word_48F03
+   35D7C push    cs
+   35D7D call    near ptr use_gems
+   35D80 jmp     loc_35F2C
+   35D83 mov     ax, 2
+   35D86 push    ax
+   35D87 push    cs
+   35D88 call    near ptr play_instrument
+   35D8B jmp     loc_35F2C
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+USE type 0B6 handler 35CBD
+   35CBD push    cs
+   35CBE call    near ptr use_beehive
+   35CC1 jmp     loc_35F2C
+   35CC4 cmp     si, 0CEh
+   35CC8 jnz     short loc_35CD4
+   35CCA test    [bp+var_A], 2
+   35CCF jz      short loc_35CD4
+   35CD1 jmp     loc_35EAB
+   35CD4 push    word_48F03
+   35CD8 push    cs
+   35CD9 call    near ptr extinguish_light
+   35CDC jmp     loc_35F2C
+   35CDF push    word_48F03
+   35CE3 push    cs
+   35CE4 call    near ptr use_food
+   35CE7 jmp     loc_35F2C
+   35CEA push    word_48F03
+   35CEE push    cs
+   35CEF call    near ptr use_cannon
+   35CF2 jmp     loc_35F2C
+   35CF5 push    word_48F03
+   35CF9 xor     ax, ax
+   35CFB push    ax
+   35CFC push    ax
+   35CFD push    ax
+   35CFE push    cs
+   35CFF call    near ptr use_key_on_door
+   35D02 jmp     loc_35F2C
+   35D05 mov     bx, word_48F03
+   35D09 test    byte ptr [bx-5F55h], 18h
+   35D0E jz      short loc_35D13
+   35D10 jmp     loc_35EAB
+   35D13 push    bx
+   35D14 xor     ax, ax
+   35D16 push    ax
+   35D17 push    ax
+   35D18 push    ax
+   35D19 push    cs
+   35D1A call    near ptr use_door
+   35D1D jmp     loc_35F2C
+   35D20 push    cs
+   35D21 call    near ptr use_churn
+   35D24 jmp     loc_35F2C
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+   35D33 call    near ptr operate_drawbridge
+   35D36 jmp     loc_35F2C
+   35D39 push    cs
+   35D3A call    near ptr use_crystal_ball
+   35D3D jmp     loc_35F2C
+   35D40 cmp     player_z, 0
+   35D45 jz      short loc_35D51
+   35D47 cmp     player_z, 5
+   35D4C jz      short loc_35D51
+   35D4E jmp     loc_35EAB
+   35D51 push    word_48F03
+   35D55 push    cs
+USE type 0B8 handler 35CDF
+   same as type 05F
+USE type 0BA handler 35C73
+   35C73 db 3Eh, 0, 3Fh, 0, 40h, 0, 49h, 0, 4Dh, 0, 4Eh, 0, 57h
+   35C9E dw seg seg003
+   35CA0 add     sp, 6
+   35CA3 push    word_48F03
+   35CA7 push    word_48EFF
+   35CAB push    word_48F01
+   35CAF push    cs
+   35CB0 call    near ptr search_here
+   35CB3 jmp     loc_35F2C
+   35CB6 push    cs
+   35CB7 call    near ptr ring_bell
+   35CBA jmp     loc_35F2C
+   35CBD push    cs
+   35CBE call    near ptr use_beehive
+   35CC1 jmp     loc_35F2C
+   35CC4 cmp     si, 0CEh
+   35CC8 jnz     short loc_35CD4
+   35CCA test    [bp+var_A], 2
+   35CCF jz      short loc_35CD4
+   35CD1 jmp     loc_35EAB
+   35CD4 push    word_48F03
+   35CD8 push    cs
+   35CD9 call    near ptr extinguish_light
+   35CDC jmp     loc_35F2C
+   35CDF push    word_48F03
+   35CE3 push    cs
+   35CE4 call    near ptr use_food
+   35CE7 jmp     loc_35F2C
+   35CEA push    word_48F03
+   35CEE push    cs
+   35CEF call    near ptr use_cannon
+   35CF2 jmp     loc_35F2C
+   35CF5 push    word_48F03
+   35CF9 xor     ax, ax
+   35CFB push    ax
+   35CFC push    ax
+   35CFD push    ax
+   35CFE push    cs
+   35CFF call    near ptr use_key_on_door
+   35D02 jmp     loc_35F2C
+   35D05 mov     bx, word_48F03
+   35D09 test    byte ptr [bx-5F55h], 18h
+   35D0E jz      short loc_35D13
+   35D10 jmp     loc_35EAB
+   35D13 push    bx
+   35D14 xor     ax, ax
+   35D16 push    ax
+   35D17 push    ax
+   35D18 push    ax
+   35D19 push    cs
+   35D1A call    near ptr use_door
+   35D1D jmp     loc_35F2C
+   35D20 push    cs
+   35D21 call    near ptr use_churn
+   35D24 jmp     loc_35F2C
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+USE type 0C0 handler 35C73
+   same as type 0BA
+USE type 0CE handler 35CC4
+   same as type 07A
+USE type 0D1 handler 35CDF
+   same as type 05F
+USE type 0D2 handler 35CDF
+   same as type 05F
+USE type 0D4 handler 35D5C
+   35D5C push    cs
+   35D5D call    near ptr use_fan
+   35D60 jmp     loc_35F2C
+   35D63 push    cs
+   35D64 call    near ptr use_fishing_pole
+   35D67 jmp     loc_35F2C
+   35D6A push    cs
+   35D6B call    near ptr use_fountain
+   35D6E jmp     loc_35F2C
+   35D71 push    cs
+   35D72 call    near ptr use_scroll
+   35D75 jmp     loc_35F2C
+   35D78 push    word_48F03
+   35D7C push    cs
+   35D7D call    near ptr use_gems
+   35D80 jmp     loc_35F2C
+   35D83 mov     ax, 2
+   35D86 push    ax
+   35D87 push    cs
+   35D88 call    near ptr play_instrument
+   35D8B jmp     loc_35F2C
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+   35DD8 pop     cx
+   35DD9 jmp     loc_35F2C
+   35DDC push    word_48F03
+   35DE0 push    cs
+   35DE1 call    near ptr use_lever
+   35DE4 jmp     loc_35F2C
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+USE type 0DD handler 35CEA
+   35CEA push    word_48F03
+   35CEE push    cs
+   35CEF call    near ptr use_cannon
+   35CF2 jmp     loc_35F2C
+   35CF5 push    word_48F03
+   35CF9 xor     ax, ax
+   35CFB push    ax
+   35CFC push    ax
+   35CFD push    ax
+   35CFE push    cs
+   35CFF call    near ptr use_key_on_door
+   35D02 jmp     loc_35F2C
+   35D05 mov     bx, word_48F03
+   35D09 test    byte ptr [bx-5F55h], 18h
+   35D0E jz      short loc_35D13
+   35D10 jmp     loc_35EAB
+   35D13 push    bx
+   35D14 xor     ax, ax
+   35D16 push    ax
+   35D17 push    ax
+   35D18 push    ax
+   35D19 push    cs
+   35D1A call    near ptr use_door
+   35D1D jmp     loc_35F2C
+   35D20 push    cs
+   35D21 call    near ptr use_churn
+   35D24 jmp     loc_35F2C
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+   35D33 call    near ptr operate_drawbridge
+   35D36 jmp     loc_35F2C
+   35D39 push    cs
+   35D3A call    near ptr use_crystal_ball
+   35D3D jmp     loc_35F2C
+   35D40 cmp     player_z, 0
+   35D45 jz      short loc_35D51
+   35D47 cmp     player_z, 5
+   35D4C jz      short loc_35D51
+   35D4E jmp     loc_35EAB
+   35D51 push    word_48F03
+   35D55 push    cs
+   35D56 call    near ptr sub_34053
+   35D59 jmp     loc_35F2C
+   35D5C push    cs
+   35D5D call    near ptr use_fan
+   35D60 jmp     loc_35F2C
+   35D63 push    cs
+   35D64 call    near ptr use_fishing_pole
+   35D67 jmp     loc_35F2C
+   35D6A push    cs
+   35D6B call    near ptr use_fountain
+   35D6E jmp     loc_35F2C
+   35D71 push    cs
+   35D72 call    near ptr use_scroll
+   35D75 jmp     loc_35F2C
+   35D78 push    word_48F03
+   35D7C push    cs
+USE type 0DF handler 35E5B
+   35E5B push    word_48F03
+   35E5F push    cs
+   35E60 call    near ptr light_powder_keg
+   35E63 jmp     loc_35F2C
+   35E66 push    cs
+   35E67 call    near ptr use_rubber_ducky
+   35E6A jmp     loc_35F2C
+   35E6D push    word_48F03
+   35E71 push    cs
+   35E72 call    near ptr use_shrine
+   35E75 jmp     loc_35F2C
+   35E78 push    word_48F03
+   35E7C push    cs
+   35E7D call    near ptr open_secret_door
+   35E80 jmp     loc_35F2C
+   35E83 cmp     player_z, 0
+   35E88 jz      short loc_35E91
+   35E8A cmp     player_z, 5
+   35E8F jnz     short loc_35EAB
+   35E91 call    use_sextant
+   35E96 jmp     loc_35F2C
+   35E99 push    cs
+   35E9A call    near ptr use_silver_horn
+   35E9D jmp     loc_35F2C
+   35EA0 mov     bx, word_48F03
+   35EA4 test    byte ptr [bx-5F55h], 18h
+   35EA9 jnz     short loc_35EBE
+   35EAB push    word_3E642
+   35EAF push    ds
+   35EB0 mov     ax, offset aS_19; "\n%s\n"
+   35EB3 push    ax
+   35EB4 call    scroll_printf
+   35EB9 add     sp, 6
+   35EBC jmp     short loc_35F2C
+   35EBE mov     bx, word_48F03
+   35EC2 mov     al, [bx-5F55h]
+   35EC6 mov     ah, 0
+   35EC8 and     ax, 18h
+   35ECB cmp     ax, 18h
+   35ECE jz      short loc_35ED3
+   35ED0 jmp     loc_35E41
+   35ED3 push    bx
+   35ED4 push    cs
+   35ED5 call    near ptr sub_32BC7
+   35ED8 jmp     short loc_35F2C
+   35EDA push    word_48F03
+   35EDE push    cs
+   35EDF call    near ptr use_switch
+   35EE2 jmp     short loc_35F2C
+   35EE4 push    word_48F03
+   35EE8 push    cs
+   35EE9 call    near ptr use_telescope
+   35EEC jmp     short loc_35F2C
+   35EEE push    word_48F03
+   35EF2 push    cs
+   35EF3 call    near ptr use_torch
+   35EF6 jmp     short loc_35F2C
+   35EF8 cmp     byte_3DB8D, 0
+   35EFD jnz     short loc_35F0B
+   35EFF push    word_48F03
+USE type 0E9 handler 35F1E
+   35F1E push    cs
+   35F1F call    near ptr fill_bucket_water
+   35F22 jmp     short loc_35F2C
+   35F24 mov     ax, 14h
+   35F27 push    ax
+   35F28 push    cs
+   35F29 call    near ptr play_instrument
+   35F2C mov     al, byte_404A4
+   35F2F mov     ah, 0
+   35F31 mov     bx, ax
+   35F33 mov     al, [bx+3533h]
+   35F37 mov     ah, 0
+   35F39 push    ax
+   35F3A mov     ax, 5
+   35F3D push    ax
+   35F3E call    spend_moves
+   35F43 call    sub_18F86
+   35F48 call    sub_12C6C
+   35F4D pop     di
+   35F4E pop     si
+   35F4F mov     sp, bp
+   35F51 pop     bp
+   35F52 retf
+USE type 0EA handler 35D6A
+   35D6A push    cs
+   35D6B call    near ptr use_fountain
+   35D6E jmp     loc_35F2C
+   35D71 push    cs
+   35D72 call    near ptr use_scroll
+   35D75 jmp     loc_35F2C
+   35D78 push    word_48F03
+   35D7C push    cs
+   35D7D call    near ptr use_gems
+   35D80 jmp     loc_35F2C
+   35D83 mov     ax, 2
+   35D86 push    ax
+   35D87 push    cs
+   35D88 call    near ptr play_instrument
+   35D8B jmp     loc_35F2C
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+   35DD8 pop     cx
+   35DD9 jmp     loc_35F2C
+   35DDC push    word_48F03
+   35DE0 push    cs
+   35DE1 call    near ptr use_lever
+   35DE4 jmp     loc_35F2C
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+USE type 0EC handler 35CB6
+   35CB6 push    cs
+   35CB7 call    near ptr ring_bell
+   35CBA jmp     loc_35F2C
+   35CBD push    cs
+   35CBE call    near ptr use_beehive
+   35CC1 jmp     loc_35F2C
+   35CC4 cmp     si, 0CEh
+   35CC8 jnz     short loc_35CD4
+   35CCA test    [bp+var_A], 2
+   35CCF jz      short loc_35CD4
+   35CD1 jmp     loc_35EAB
+   35CD4 push    word_48F03
+   35CD8 push    cs
+   35CD9 call    near ptr extinguish_light
+   35CDC jmp     loc_35F2C
+   35CDF push    word_48F03
+   35CE3 push    cs
+   35CE4 call    near ptr use_food
+   35CE7 jmp     loc_35F2C
+   35CEA push    word_48F03
+   35CEE push    cs
+   35CEF call    near ptr use_cannon
+   35CF2 jmp     loc_35F2C
+   35CF5 push    word_48F03
+   35CF9 xor     ax, ax
+   35CFB push    ax
+   35CFC push    ax
+   35CFD push    ax
+   35CFE push    cs
+   35CFF call    near ptr use_key_on_door
+   35D02 jmp     loc_35F2C
+   35D05 mov     bx, word_48F03
+   35D09 test    byte ptr [bx-5F55h], 18h
+   35D0E jz      short loc_35D13
+   35D10 jmp     loc_35EAB
+   35D13 push    bx
+   35D14 xor     ax, ax
+   35D16 push    ax
+   35D17 push    ax
+   35D18 push    ax
+   35D19 push    cs
+   35D1A call    near ptr use_door
+   35D1D jmp     loc_35F2C
+   35D20 push    cs
+   35D21 call    near ptr use_churn
+   35D24 jmp     loc_35F2C
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+   35D33 call    near ptr operate_drawbridge
+   35D36 jmp     loc_35F2C
+   35D39 push    cs
+   35D3A call    near ptr use_crystal_ball
+   35D3D jmp     loc_35F2C
+   35D40 cmp     player_z, 0
+   35D45 jz      short loc_35D51
+   35D47 cmp     player_z, 5
+   35D4C jz      short loc_35D51
+USE type 0F2 handler 35E6D
+   35E6D push    word_48F03
+   35E71 push    cs
+   35E72 call    near ptr use_shrine
+   35E75 jmp     loc_35F2C
+   35E78 push    word_48F03
+   35E7C push    cs
+   35E7D call    near ptr open_secret_door
+   35E80 jmp     loc_35F2C
+   35E83 cmp     player_z, 0
+   35E88 jz      short loc_35E91
+   35E8A cmp     player_z, 5
+   35E8F jnz     short loc_35EAB
+   35E91 call    use_sextant
+   35E96 jmp     loc_35F2C
+   35E99 push    cs
+   35E9A call    near ptr use_silver_horn
+   35E9D jmp     loc_35F2C
+   35EA0 mov     bx, word_48F03
+   35EA4 test    byte ptr [bx-5F55h], 18h
+   35EA9 jnz     short loc_35EBE
+   35EAB push    word_3E642
+   35EAF push    ds
+   35EB0 mov     ax, offset aS_19; "\n%s\n"
+   35EB3 push    ax
+   35EB4 call    scroll_printf
+   35EB9 add     sp, 6
+   35EBC jmp     short loc_35F2C
+   35EBE mov     bx, word_48F03
+   35EC2 mov     al, [bx-5F55h]
+   35EC6 mov     ah, 0
+   35EC8 and     ax, 18h
+   35ECB cmp     ax, 18h
+   35ECE jz      short loc_35ED3
+   35ED0 jmp     loc_35E41
+   35ED3 push    bx
+   35ED4 push    cs
+   35ED5 call    near ptr sub_32BC7
+   35ED8 jmp     short loc_35F2C
+   35EDA push    word_48F03
+   35EDE push    cs
+   35EDF call    near ptr use_switch
+   35EE2 jmp     short loc_35F2C
+   35EE4 push    word_48F03
+   35EE8 push    cs
+   35EE9 call    near ptr use_telescope
+   35EEC jmp     short loc_35F2C
+   35EEE push    word_48F03
+   35EF2 push    cs
+   35EF3 call    near ptr use_torch
+   35EF6 jmp     short loc_35F2C
+   35EF8 cmp     byte_3DB8D, 0
+   35EFD jnz     short loc_35F0B
+   35EFF push    word_48F03
+   35F03 push    cs
+   35F04 call    near ptr use_vortex_cube
+   35F07 or      ax, ax
+   35F09 jnz     short loc_35F2C
+   35F0B push    word_3E630
+   35F0F push    ds
+   35F10 mov     ax, offset aS_19; "\n%s\n"
+USE type 0F3 handler 35E6D
+   same as type 0F2
+USE type 0F4 handler 35E6D
+   same as type 0F2
+USE type 0F5 handler 35E6D
+   same as type 0F2
+USE type 0F6 handler 35E6D
+   same as type 0F2
+USE type 0F7 handler 35E6D
+   same as type 0F2
+USE type 0F8 handler 35E6D
+   same as type 0F2
+USE type 0F9 handler 35E6D
+   same as type 0F2
+USE type 0FD handler 35CC4
+   same as type 07A
+USE type 108 handler 35D63
+   35D63 push    cs
+   35D64 call    near ptr use_fishing_pole
+   35D67 jmp     loc_35F2C
+   35D6A push    cs
+   35D6B call    near ptr use_fountain
+   35D6E jmp     loc_35F2C
+   35D71 push    cs
+   35D72 call    near ptr use_scroll
+   35D75 jmp     loc_35F2C
+   35D78 push    word_48F03
+   35D7C push    cs
+   35D7D call    near ptr use_gems
+   35D80 jmp     loc_35F2C
+   35D83 mov     ax, 2
+   35D86 push    ax
+   35D87 push    cs
+   35D88 call    near ptr play_instrument
+   35D8B jmp     loc_35F2C
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+   35DD8 pop     cx
+   35DD9 jmp     loc_35F2C
+   35DDC push    word_48F03
+   35DE0 push    cs
+   35DE1 call    near ptr use_lever
+   35DE4 jmp     loc_35F2C
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+USE type 109 handler 35CDF
+   same as type 05F
+USE type 10C handler 35DDC
+   35DDC push    word_48F03
+   35DE0 push    cs
+   35DE1 call    near ptr use_lever
+   35DE4 jmp     loc_35F2C
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+   35E08 jmp     loc_35EAB
+   35E0B push    cs
+   35E0C call    near ptr use_orb_of_the_moons
+   35E0F jmp     loc_35F2C
+   35E12 mov     ax, 13h
+   35E15 push    ax
+   35E16 push    cs
+   35E17 call    near ptr play_instrument
+   35E1A jmp     loc_35F2C
+   35E1D push    word_48F03
+   35E21 push    cs
+   35E22 call    near ptr operate_passthrough
+   35E25 jmp     loc_35F2C
+   35E28 mov     bx, word_48F03
+   35E2C mov     al, [bx-5F55h]
+   35E30 mov     ah, 0
+   35E32 and     ax, 18h
+   35E35 cmp     ax, 18h
+   35E38 jnz     short loc_35E41
+   35E3A push    cs
+   35E3B call    near ptr use_shovel
+   35E3E jmp     loc_35F2C
+   35E41 push    ds
+   35E42 mov     ax, offset aNotReadied; "\nNot readied.\n"
+   35E45 push    ax
+   35E46 call    scroll_printf
+   35E4B pop     cx
+   35E4C pop     cx
+   35E4D jmp     loc_35F2C
+   35E50 push    word_48F03
+   35E54 push    cs
+   35E55 call    near ptr use_potion
+   35E58 jmp     loc_35F2C
+   35E5B push    word_48F03
+   35E5F push    cs
+   35E60 call    near ptr light_powder_keg
+   35E63 jmp     loc_35F2C
+   35E66 push    cs
+   35E67 call    near ptr use_rubber_ducky
+   35E6A jmp     loc_35F2C
+   35E6D push    word_48F03
+   35E71 push    cs
+   35E72 call    near ptr use_shrine
+   35E75 jmp     loc_35F2C
+USE type 10E handler 35C6C
+   35C6C db 3Eh, 0, 3Fh, 0, 40h, 0, 49h, 0, 4Dh, 0, 4Eh, 0, 57h
+   35C9E dw seg seg003
+   35CA0 add     sp, 6
+   35CA3 push    word_48F03
+   35CA7 push    word_48EFF
+   35CAB push    word_48F01
+   35CAF push    cs
+   35CB0 call    near ptr search_here
+   35CB3 jmp     loc_35F2C
+   35CB6 push    cs
+   35CB7 call    near ptr ring_bell
+   35CBA jmp     loc_35F2C
+   35CBD push    cs
+   35CBE call    near ptr use_beehive
+   35CC1 jmp     loc_35F2C
+   35CC4 cmp     si, 0CEh
+   35CC8 jnz     short loc_35CD4
+   35CCA test    [bp+var_A], 2
+   35CCF jz      short loc_35CD4
+   35CD1 jmp     loc_35EAB
+   35CD4 push    word_48F03
+   35CD8 push    cs
+   35CD9 call    near ptr extinguish_light
+   35CDC jmp     loc_35F2C
+   35CDF push    word_48F03
+   35CE3 push    cs
+   35CE4 call    near ptr use_food
+   35CE7 jmp     loc_35F2C
+   35CEA push    word_48F03
+   35CEE push    cs
+   35CEF call    near ptr use_cannon
+   35CF2 jmp     loc_35F2C
+   35CF5 push    word_48F03
+   35CF9 xor     ax, ax
+   35CFB push    ax
+   35CFC push    ax
+   35CFD push    ax
+   35CFE push    cs
+   35CFF call    near ptr use_key_on_door
+   35D02 jmp     loc_35F2C
+   35D05 mov     bx, word_48F03
+   35D09 test    byte ptr [bx-5F55h], 18h
+   35D0E jz      short loc_35D13
+   35D10 jmp     loc_35EAB
+   35D13 push    bx
+   35D14 xor     ax, ax
+   35D16 push    ax
+   35D17 push    ax
+   35D18 push    ax
+   35D19 push    cs
+   35D1A call    near ptr use_door
+   35D1D jmp     loc_35F2C
+   35D20 push    cs
+   35D21 call    near ptr use_churn
+   35D24 jmp     loc_35F2C
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+USE type 113 handler 35E50
+   35E50 push    word_48F03
+   35E54 push    cs
+   35E55 call    near ptr use_potion
+   35E58 jmp     loc_35F2C
+   35E5B push    word_48F03
+   35E5F push    cs
+   35E60 call    near ptr light_powder_keg
+   35E63 jmp     loc_35F2C
+   35E66 push    cs
+   35E67 call    near ptr use_rubber_ducky
+   35E6A jmp     loc_35F2C
+   35E6D push    word_48F03
+   35E71 push    cs
+   35E72 call    near ptr use_shrine
+   35E75 jmp     loc_35F2C
+   35E78 push    word_48F03
+   35E7C push    cs
+   35E7D call    near ptr open_secret_door
+   35E80 jmp     loc_35F2C
+   35E83 cmp     player_z, 0
+   35E88 jz      short loc_35E91
+   35E8A cmp     player_z, 5
+   35E8F jnz     short loc_35EAB
+   35E91 call    use_sextant
+   35E96 jmp     loc_35F2C
+   35E99 push    cs
+   35E9A call    near ptr use_silver_horn
+   35E9D jmp     loc_35F2C
+   35EA0 mov     bx, word_48F03
+   35EA4 test    byte ptr [bx-5F55h], 18h
+   35EA9 jnz     short loc_35EBE
+   35EAB push    word_3E642
+   35EAF push    ds
+   35EB0 mov     ax, offset aS_19; "\n%s\n"
+   35EB3 push    ax
+   35EB4 call    scroll_printf
+   35EB9 add     sp, 6
+   35EBC jmp     short loc_35F2C
+   35EBE mov     bx, word_48F03
+   35EC2 mov     al, [bx-5F55h]
+   35EC6 mov     ah, 0
+   35EC8 and     ax, 18h
+   35ECB cmp     ax, 18h
+   35ECE jz      short loc_35ED3
+   35ED0 jmp     loc_35E41
+   35ED3 push    bx
+   35ED4 push    cs
+   35ED5 call    near ptr sub_32BC7
+   35ED8 jmp     short loc_35F2C
+   35EDA push    word_48F03
+   35EDE push    cs
+   35EDF call    near ptr use_switch
+   35EE2 jmp     short loc_35F2C
+   35EE4 push    word_48F03
+   35EE8 push    cs
+   35EE9 call    near ptr use_telescope
+   35EEC jmp     short loc_35F2C
+   35EEE push    word_48F03
+   35EF2 push    cs
+   35EF3 call    near ptr use_torch
+USE type 116 handler 35E1D
+   35E1D push    word_48F03
+   35E21 push    cs
+   35E22 call    near ptr operate_passthrough
+   35E25 jmp     loc_35F2C
+   35E28 mov     bx, word_48F03
+   35E2C mov     al, [bx-5F55h]
+   35E30 mov     ah, 0
+   35E32 and     ax, 18h
+   35E35 cmp     ax, 18h
+   35E38 jnz     short loc_35E41
+   35E3A push    cs
+   35E3B call    near ptr use_shovel
+   35E3E jmp     loc_35F2C
+   35E41 push    ds
+   35E42 mov     ax, offset aNotReadied; "\nNot readied.\n"
+   35E45 push    ax
+   35E46 call    scroll_printf
+   35E4B pop     cx
+   35E4C pop     cx
+   35E4D jmp     loc_35F2C
+   35E50 push    word_48F03
+   35E54 push    cs
+   35E55 call    near ptr use_potion
+   35E58 jmp     loc_35F2C
+   35E5B push    word_48F03
+   35E5F push    cs
+   35E60 call    near ptr light_powder_keg
+   35E63 jmp     loc_35F2C
+   35E66 push    cs
+   35E67 call    near ptr use_rubber_ducky
+   35E6A jmp     loc_35F2C
+   35E6D push    word_48F03
+   35E71 push    cs
+   35E72 call    near ptr use_shrine
+   35E75 jmp     loc_35F2C
+   35E78 push    word_48F03
+   35E7C push    cs
+   35E7D call    near ptr open_secret_door
+   35E80 jmp     loc_35F2C
+   35E83 cmp     player_z, 0
+   35E88 jz      short loc_35E91
+   35E8A cmp     player_z, 5
+   35E8F jnz     short loc_35EAB
+   35E91 call    use_sextant
+   35E96 jmp     loc_35F2C
+   35E99 push    cs
+   35E9A call    near ptr use_silver_horn
+   35E9D jmp     loc_35F2C
+   35EA0 mov     bx, word_48F03
+   35EA4 test    byte ptr [bx-5F55h], 18h
+   35EA9 jnz     short loc_35EBE
+   35EAB push    word_3E642
+   35EAF push    ds
+   35EB0 mov     ax, offset aS_19; "\n%s\n"
+   35EB3 push    ax
+   35EB4 call    scroll_printf
+   35EB9 add     sp, 6
+   35EBC jmp     short loc_35F2C
+   35EBE mov     bx, word_48F03
+   35EC2 mov     al, [bx-5F55h]
+USE type 118 handler 35E1D
+   same as type 116
+USE type 120 handler 35D2E
+   35D2E push    word_48F03
+   35D32 push    cs
+   35D33 call    near ptr operate_drawbridge
+   35D36 jmp     loc_35F2C
+   35D39 push    cs
+   35D3A call    near ptr use_crystal_ball
+   35D3D jmp     loc_35F2C
+   35D40 cmp     player_z, 0
+   35D45 jz      short loc_35D51
+   35D47 cmp     player_z, 5
+   35D4C jz      short loc_35D51
+   35D4E jmp     loc_35EAB
+   35D51 push    word_48F03
+   35D55 push    cs
+   35D56 call    near ptr sub_34053
+   35D59 jmp     loc_35F2C
+   35D5C push    cs
+   35D5D call    near ptr use_fan
+   35D60 jmp     loc_35F2C
+   35D63 push    cs
+   35D64 call    near ptr use_fishing_pole
+   35D67 jmp     loc_35F2C
+   35D6A push    cs
+   35D6B call    near ptr use_fountain
+   35D6E jmp     loc_35F2C
+   35D71 push    cs
+   35D72 call    near ptr use_scroll
+   35D75 jmp     loc_35F2C
+   35D78 push    word_48F03
+   35D7C push    cs
+   35D7D call    near ptr use_gems
+   35D80 jmp     loc_35F2C
+   35D83 mov     ax, 2
+   35D86 push    ax
+   35D87 push    cs
+   35D88 call    near ptr play_instrument
+   35D8B jmp     loc_35F2C
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+USE type 128 handler 35F24
+   35F24 mov     ax, 14h
+   35F27 push    ax
+   35F28 push    cs
+   35F29 call    near ptr play_instrument
+   35F2C mov     al, byte_404A4
+   35F2F mov     ah, 0
+   35F31 mov     bx, ax
+   35F33 mov     al, [bx+3533h]
+   35F37 mov     ah, 0
+   35F39 push    ax
+   35F3A mov     ax, 5
+   35F3D push    ax
+   35F3E call    spend_moves
+   35F43 call    sub_18F86
+   35F48 call    sub_12C6C
+   35F4D pop     di
+   35F4E pop     si
+   35F4F mov     sp, bp
+   35F51 pop     bp
+   35F52 retf
+USE type 129 handler 35CF5
+   35CF5 push    word_48F03
+   35CF9 xor     ax, ax
+   35CFB push    ax
+   35CFC push    ax
+   35CFD push    ax
+   35CFE push    cs
+   35CFF call    near ptr use_key_on_door
+   35D02 jmp     loc_35F2C
+   35D05 mov     bx, word_48F03
+   35D09 test    byte ptr [bx-5F55h], 18h
+   35D0E jz      short loc_35D13
+   35D10 jmp     loc_35EAB
+   35D13 push    bx
+   35D14 xor     ax, ax
+   35D16 push    ax
+   35D17 push    ax
+   35D18 push    ax
+   35D19 push    cs
+   35D1A call    near ptr use_door
+   35D1D jmp     loc_35F2C
+   35D20 push    cs
+   35D21 call    near ptr use_churn
+   35D24 jmp     loc_35F2C
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+   35D33 call    near ptr operate_drawbridge
+   35D36 jmp     loc_35F2C
+   35D39 push    cs
+   35D3A call    near ptr use_crystal_ball
+   35D3D jmp     loc_35F2C
+   35D40 cmp     player_z, 0
+   35D45 jz      short loc_35D51
+   35D47 cmp     player_z, 5
+   35D4C jz      short loc_35D51
+   35D4E jmp     loc_35EAB
+   35D51 push    word_48F03
+   35D55 push    cs
+   35D56 call    near ptr sub_34053
+   35D59 jmp     loc_35F2C
+   35D5C push    cs
+   35D5D call    near ptr use_fan
+   35D60 jmp     loc_35F2C
+   35D63 push    cs
+   35D64 call    near ptr use_fishing_pole
+   35D67 jmp     loc_35F2C
+   35D6A push    cs
+   35D6B call    near ptr use_fountain
+   35D6E jmp     loc_35F2C
+   35D71 push    cs
+   35D72 call    near ptr use_scroll
+   35D75 jmp     loc_35F2C
+   35D78 push    word_48F03
+   35D7C push    cs
+   35D7D call    near ptr use_gems
+   35D80 jmp     loc_35F2C
+   35D83 mov     ax, 2
+   35D86 push    ax
+USE type 12A handler 35CF5
+   same as type 129
+USE type 12B handler 35CF5
+   same as type 129
+USE type 12C handler 35CF5
+   same as type 129
+USE type 131 handler 35DBA
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+   35DD8 pop     cx
+   35DD9 jmp     loc_35F2C
+   35DDC push    word_48F03
+   35DE0 push    cs
+   35DE1 call    near ptr use_lever
+   35DE4 jmp     loc_35F2C
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+   35E08 jmp     loc_35EAB
+   35E0B push    cs
+   35E0C call    near ptr use_orb_of_the_moons
+   35E0F jmp     loc_35F2C
+   35E12 mov     ax, 13h
+   35E15 push    ax
+   35E16 push    cs
+   35E17 call    near ptr play_instrument
+   35E1A jmp     loc_35F2C
+   35E1D push    word_48F03
+   35E21 push    cs
+   35E22 call    near ptr operate_passthrough
+   35E25 jmp     loc_35F2C
+   35E28 mov     bx, word_48F03
+   35E2C mov     al, [bx-5F55h]
+   35E30 mov     ah, 0
+   35E32 and     ax, 18h
+   35E35 cmp     ax, 18h
+   35E38 jnz     short loc_35E41
+   35E3A push    cs
+   35E3B call    near ptr use_shovel
+   35E3E jmp     loc_35F2C
+   35E41 push    ds
+   35E42 mov     ax, offset aNotReadied; "\nNot readied.\n"
+   35E45 push    ax
+   35E46 call    scroll_printf
+   35E4B pop     cx
+   35E4C pop     cx
+   35E4D jmp     loc_35F2C
+   35E50 push    word_48F03
+   35E54 push    cs
+   35E55 call    near ptr use_potion
+USE type 139 handler 35E99
+   35E99 push    cs
+   35E9A call    near ptr use_silver_horn
+   35E9D jmp     loc_35F2C
+   35EA0 mov     bx, word_48F03
+   35EA4 test    byte ptr [bx-5F55h], 18h
+   35EA9 jnz     short loc_35EBE
+   35EAB push    word_3E642
+   35EAF push    ds
+   35EB0 mov     ax, offset aS_19; "\n%s\n"
+   35EB3 push    ax
+   35EB4 call    scroll_printf
+   35EB9 add     sp, 6
+   35EBC jmp     short loc_35F2C
+   35EBE mov     bx, word_48F03
+   35EC2 mov     al, [bx-5F55h]
+   35EC6 mov     ah, 0
+   35EC8 and     ax, 18h
+   35ECB cmp     ax, 18h
+   35ECE jz      short loc_35ED3
+   35ED0 jmp     loc_35E41
+   35ED3 push    bx
+   35ED4 push    cs
+   35ED5 call    near ptr sub_32BC7
+   35ED8 jmp     short loc_35F2C
+   35EDA push    word_48F03
+   35EDE push    cs
+   35EDF call    near ptr use_switch
+   35EE2 jmp     short loc_35F2C
+   35EE4 push    word_48F03
+   35EE8 push    cs
+   35EE9 call    near ptr use_telescope
+   35EEC jmp     short loc_35F2C
+   35EEE push    word_48F03
+   35EF2 push    cs
+   35EF3 call    near ptr use_torch
+   35EF6 jmp     short loc_35F2C
+   35EF8 cmp     byte_3DB8D, 0
+   35EFD jnz     short loc_35F0B
+   35EFF push    word_48F03
+   35F03 push    cs
+   35F04 call    near ptr use_vortex_cube
+   35F07 or      ax, ax
+   35F09 jnz     short loc_35F2C
+   35F0B push    word_3E630
+   35F0F push    ds
+   35F10 mov     ax, offset aS_19; "\n%s\n"
+   35F13 push    ax
+   35F14 call    scroll_printf
+   35F19 add     sp, 6
+   35F1C jmp     short loc_35F2C
+   35F1E push    cs
+   35F1F call    near ptr fill_bucket_water
+   35F22 jmp     short loc_35F2C
+   35F24 mov     ax, 14h
+   35F27 push    ax
+   35F28 push    cs
+   35F29 call    near ptr play_instrument
+   35F2C mov     al, byte_404A4
+   35F2F mov     ah, 0
+   35F31 mov     bx, ax
+USE type 14E handler 35E78
+   35E78 push    word_48F03
+   35E7C push    cs
+   35E7D call    near ptr open_secret_door
+   35E80 jmp     loc_35F2C
+   35E83 cmp     player_z, 0
+   35E88 jz      short loc_35E91
+   35E8A cmp     player_z, 5
+   35E8F jnz     short loc_35EAB
+   35E91 call    use_sextant
+   35E96 jmp     loc_35F2C
+   35E99 push    cs
+   35E9A call    near ptr use_silver_horn
+   35E9D jmp     loc_35F2C
+   35EA0 mov     bx, word_48F03
+   35EA4 test    byte ptr [bx-5F55h], 18h
+   35EA9 jnz     short loc_35EBE
+   35EAB push    word_3E642
+   35EAF push    ds
+   35EB0 mov     ax, offset aS_19; "\n%s\n"
+   35EB3 push    ax
+   35EB4 call    scroll_printf
+   35EB9 add     sp, 6
+   35EBC jmp     short loc_35F2C
+   35EBE mov     bx, word_48F03
+   35EC2 mov     al, [bx-5F55h]
+   35EC6 mov     ah, 0
+   35EC8 and     ax, 18h
+   35ECB cmp     ax, 18h
+   35ECE jz      short loc_35ED3
+   35ED0 jmp     loc_35E41
+   35ED3 push    bx
+   35ED4 push    cs
+   35ED5 call    near ptr sub_32BC7
+   35ED8 jmp     short loc_35F2C
+   35EDA push    word_48F03
+   35EDE push    cs
+   35EDF call    near ptr use_switch
+   35EE2 jmp     short loc_35F2C
+   35EE4 push    word_48F03
+   35EE8 push    cs
+   35EE9 call    near ptr use_telescope
+   35EEC jmp     short loc_35F2C
+   35EEE push    word_48F03
+   35EF2 push    cs
+   35EF3 call    near ptr use_torch
+   35EF6 jmp     short loc_35F2C
+   35EF8 cmp     byte_3DB8D, 0
+   35EFD jnz     short loc_35F0B
+   35EFF push    word_48F03
+   35F03 push    cs
+   35F04 call    near ptr use_vortex_cube
+   35F07 or      ax, ax
+   35F09 jnz     short loc_35F2C
+   35F0B push    word_3E630
+   35F0F push    ds
+   35F10 mov     ax, offset aS_19; "\n%s\n"
+   35F13 push    ax
+   35F14 call    scroll_printf
+   35F19 add     sp, 6
+   35F1C jmp     short loc_35F2C
+USE type 19C handler 35C56
+   35C56 db 3Eh, 0, 3Fh, 0, 40h, 0, 49h, 0, 4Dh, 0, 4Eh, 0, 57h
+   35C9E dw seg seg003
+   35CA0 add     sp, 6
+   35CA3 push    word_48F03
+   35CA7 push    word_48EFF
+   35CAB push    word_48F01
+   35CAF push    cs
+   35CB0 call    near ptr search_here
+   35CB3 jmp     loc_35F2C
+   35CB6 push    cs
+   35CB7 call    near ptr ring_bell
+   35CBA jmp     loc_35F2C
+   35CBD push    cs
+   35CBE call    near ptr use_beehive
+   35CC1 jmp     loc_35F2C
+   35CC4 cmp     si, 0CEh
+   35CC8 jnz     short loc_35CD4
+   35CCA test    [bp+var_A], 2
+   35CCF jz      short loc_35CD4
+   35CD1 jmp     loc_35EAB
+   35CD4 push    word_48F03
+   35CD8 push    cs
+   35CD9 call    near ptr extinguish_light
+   35CDC jmp     loc_35F2C
+   35CDF push    word_48F03
+   35CE3 push    cs
+   35CE4 call    near ptr use_food
+   35CE7 jmp     loc_35F2C
+   35CEA push    word_48F03
+   35CEE push    cs
+   35CEF call    near ptr use_cannon
+   35CF2 jmp     loc_35F2C
+   35CF5 push    word_48F03
+   35CF9 xor     ax, ax
+   35CFB push    ax
+   35CFC push    ax
+   35CFD push    ax
+   35CFE push    cs
+   35CFF call    near ptr use_key_on_door
+   35D02 jmp     loc_35F2C
+   35D05 mov     bx, word_48F03
+   35D09 test    byte ptr [bx-5F55h], 18h
+   35D0E jz      short loc_35D13
+   35D10 jmp     loc_35EAB
+   35D13 push    bx
+   35D14 xor     ax, ax
+   35D16 push    ax
+   35D17 push    ax
+   35D18 push    ax
+   35D19 push    cs
+   35D1A call    near ptr use_door
+   35D1D jmp     loc_35F2C
+   35D20 push    cs
+   35D21 call    near ptr use_churn
+   35D24 jmp     loc_35F2C
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+USE type 19E handler 35C56
+   same as type 19C
+USE type 19F handler 35C56
+   same as type 19C
+USE type 1A3 handler 35CB6
+   same as type 0EC
+USE type 1A4 handler 35D40
+   35D40 cmp     player_z, 0
+   35D45 jz      short loc_35D51
+   35D47 cmp     player_z, 5
+   35D4C jz      short loc_35D51
+   35D4E jmp     loc_35EAB
+   35D51 push    word_48F03
+   35D55 push    cs
+   35D56 call    near ptr sub_34053
+   35D59 jmp     loc_35F2C
+   35D5C push    cs
+   35D5D call    near ptr use_fan
+   35D60 jmp     loc_35F2C
+   35D63 push    cs
+   35D64 call    near ptr use_fishing_pole
+   35D67 jmp     loc_35F2C
+   35D6A push    cs
+   35D6B call    near ptr use_fountain
+   35D6E jmp     loc_35F2C
+   35D71 push    cs
+   35D72 call    near ptr use_scroll
+   35D75 jmp     loc_35F2C
+   35D78 push    word_48F03
+   35D7C push    cs
+   35D7D call    near ptr use_gems
+   35D80 jmp     loc_35F2C
+   35D83 mov     ax, 2
+   35D86 push    ax
+   35D87 push    cs
+   35D88 call    near ptr play_instrument
+   35D8B jmp     loc_35F2C
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+   35DD8 pop     cx
+   35DD9 jmp     loc_35F2C
+   35DDC push    word_48F03
+USE type 1A7 handler 35C56
+   same as type 19C
+USE type 1AC handler 35D27
+   35D27 push    cs
+   35D28 call    near ptr fill_bucket_milk
+   35D2B jmp     loc_35F2C
+   35D2E push    word_48F03
+   35D32 push    cs
+   35D33 call    near ptr operate_drawbridge
+   35D36 jmp     loc_35F2C
+   35D39 push    cs
+   35D3A call    near ptr use_crystal_ball
+   35D3D jmp     loc_35F2C
+   35D40 cmp     player_z, 0
+   35D45 jz      short loc_35D51
+   35D47 cmp     player_z, 5
+   35D4C jz      short loc_35D51
+   35D4E jmp     loc_35EAB
+   35D51 push    word_48F03
+   35D55 push    cs
+   35D56 call    near ptr sub_34053
+   35D59 jmp     loc_35F2C
+   35D5C push    cs
+   35D5D call    near ptr use_fan
+   35D60 jmp     loc_35F2C
+   35D63 push    cs
+   35D64 call    near ptr use_fishing_pole
+   35D67 jmp     loc_35F2C
+   35D6A push    cs
+   35D6B call    near ptr use_fountain
+   35D6E jmp     loc_35F2C
+   35D71 push    cs
+   35D72 call    near ptr use_scroll
+   35D75 jmp     loc_35F2C
+   35D78 push    word_48F03
+   35D7C push    cs
+   35D7D call    near ptr use_gems
+   35D80 jmp     loc_35F2C
+   35D83 mov     ax, 2
+   35D86 push    ax
+   35D87 push    cs
+   35D88 call    near ptr play_instrument
+   35D8B jmp     loc_35F2C
+   35D8E mov     ax, 3
+   35D91 push    ax
+   35D92 push    cs
+   35D93 call    near ptr play_instrument
+   35D96 jmp     loc_35F2C
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+USE type 1AE handler 35D99
+   35D99 push    word_48F03
+   35D9D push    cs
+   35D9E call    near ptr use_horse
+   35DA1 jmp     loc_35F2C
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+   35DD8 pop     cx
+   35DD9 jmp     loc_35F2C
+   35DDC push    word_48F03
+   35DE0 push    cs
+   35DE1 call    near ptr use_lever
+   35DE4 jmp     loc_35F2C
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+   35E08 jmp     loc_35EAB
+   35E0B push    cs
+   35E0C call    near ptr use_orb_of_the_moons
+   35E0F jmp     loc_35F2C
+   35E12 mov     ax, 13h
+   35E15 push    ax
+   35E16 push    cs
+   35E17 call    near ptr play_instrument
+   35E1A jmp     loc_35F2C
+   35E1D push    word_48F03
+   35E21 push    cs
+   35E22 call    near ptr operate_passthrough
+   35E25 jmp     loc_35F2C
+   35E28 mov     bx, word_48F03
+   35E2C mov     al, [bx-5F55h]
+   35E30 mov     ah, 0
+   35E32 and     ax, 18h
+   35E35 cmp     ax, 18h
+   35E38 jnz     short loc_35E41
+   35E3A push    cs
+USE type 1AF handler 35DA4
+   35DA4 push    word_48F03
+   35DA8 push    cs
+   35DA9 call    near ptr rear_horse
+   35DAC jmp     loc_35F2C
+   35DAF push    word_48F03
+   35DB3 push    cs
+   35DB4 call    near ptr use_key_or_lockpick
+   35DB7 jmp     loc_35F2C
+   35DBA cmp     byte_40513, 0FFh
+   35DBF jnz     short loc_35DCD
+   35DC1 push    word_48F03
+   35DC5 call    climb_ladder
+   35DCA jmp     loc_35F2C
+   35DCD push    ds
+   35DCE mov     ax, offset aNotInSoloMode_1; "\nNot in solo mode.\n"
+   35DD1 push    ax
+   35DD2 call    scroll_printf
+   35DD7 pop     cx
+   35DD8 pop     cx
+   35DD9 jmp     loc_35F2C
+   35DDC push    word_48F03
+   35DE0 push    cs
+   35DE1 call    near ptr use_lever
+   35DE4 jmp     loc_35F2C
+   35DE7 mov     ax, 12h
+   35DEA push    ax
+   35DEB push    cs
+   35DEC call    near ptr play_instrument
+   35DEF jmp     loc_35F2C
+   35DF2 push    word_48F03
+   35DF6 push    cs
+   35DF7 call    near ptr bury_object
+   35DFA jmp     loc_35F2C
+   35DFD mov     bx, word_48F03
+   35E01 test    byte ptr [bx-5F55h], 18h
+   35E06 jnz     short loc_35E0B
+   35E08 jmp     loc_35EAB
+   35E0B push    cs
+   35E0C call    near ptr use_orb_of_the_moons
+   35E0F jmp     loc_35F2C
+   35E12 mov     ax, 13h
+   35E15 push    ax
+   35E16 push    cs
+   35E17 call    near ptr play_instrument
+   35E1A jmp     loc_35F2C
+   35E1D push    word_48F03
+   35E21 push    cs
+   35E22 call    near ptr operate_passthrough
+   35E25 jmp     loc_35F2C
+   35E28 mov     bx, word_48F03
+   35E2C mov     al, [bx-5F55h]
+   35E30 mov     ah, 0
+   35E32 and     ax, 18h
+   35E35 cmp     ax, 18h
+   35E38 jnz     short loc_35E41
+   35E3A push    cs
+   35E3B call    near ptr use_shovel
+   35E3E jmp     loc_35F2C
+   35E41 push    ds
+   35E42 mov     ax, offset aNotReadied; "\nNot readied.\n"

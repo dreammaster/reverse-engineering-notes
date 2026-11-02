@@ -445,7 +445,63 @@ void Game::changeLevel(int nx, int ny, int nz) {
 
 // Use: what the objects of a square do when used (the doors and ladders of the Use table; the rest answers "Not usable").
 // APPROX(30): not the original's exact behaviour, see docs/approximations.md
+// use_horse / rear_horse (GAME.EXE 34B..): using a horse mounts it (the leader becomes a horse with rider, type 0x1AF, and the horse is gone);
+// using yourself while mounted dismounts onto a free square next to you (a new horse appears) or says "No room!".
+bool Game::useHorse(int tx, int ty) {
+	World::Obj &me = _world.objects[_leaderObject];
+	if (me.type == 0x1AF && tx == x && ty == y) {
+		static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+		MoveRules rules;
+		for (int d = 0; d < 8; ++d) {
+			int nx = x + DX[d], ny = y + DY[d];
+			if (!_movement.check(nx, ny, z, _leaderObject, rules).passable)
+				continue;
+			int horse = _creatures.spawn(0x1AE, 0x0C, nx, ny, z);
+			if (horse < 0)
+				break;
+			me.type = (uint16_t)(_world.actors.baseObjFrame[1] & 0x3FF ? _world.actors.baseObjFrame[1] & 0x3FF : 0x19A);
+			return true;
+		}
+		message("\nNo room!\n");
+		return true;
+	}
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	for (int i : here) {
+		World::Obj &o = _world.objects[i];
+		if (o.type != 0x1AE || o.actor < 0)
+			continue;
+		if (o.actor == 9) {
+			message("\nSherry says: \"Eeek!!! I'm afraid of horses!\"\n");
+			return true;
+		}
+		if (o.actor == 0xA4) {
+			message("\nBehLem says: \"Horses are for food!\"\n");
+			return true;
+		}
+		if (me.type == 0x1AF) {
+			message("\nYou're already on a horse!\n");
+			return true;
+		}
+		if (o.actor >= 0xE0 || true) {
+			_world.actors.baseObjFrame[1] = (uint16_t)me.type;
+			me.type = 0x1AF;
+			_world.deleteObject(i);
+			_world.actors.hp[o.actor] = 0;
+			_world.moveObject(_leaderObject, tx, ty, z);
+			x = tx;
+			y = ty;
+			return true;
+		}
+	}
+	return false;
+}
+
 void Game::useAt(int tx, int ty) {
+	if (useHorse(tx, ty)) {
+		prompt();
+		return;
+	}
 	if (boardOrLeave(tx, ty)) {
 		prompt();
 		return;

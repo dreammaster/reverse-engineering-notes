@@ -439,7 +439,9 @@ bool Game::handleKeyInner(int key) {
 		int tx, ty;
 		int cmd = _pending;
 		_pending = 0;
-		if (selectTarget(key, tx, ty)) {
+		if ((key == KEY_ENTER || key == KEY_SPACE) && cmd == 'U') {
+			useAt(x, y); // the own square (rear horse)
+		} else if (selectTarget(key, tx, ty)) {
 			if (cmd == 'T')
 				talkAt(tx, ty);
 			else if (cmd == 'G')

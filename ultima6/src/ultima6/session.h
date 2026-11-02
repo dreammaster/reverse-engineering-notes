@@ -82,6 +82,7 @@ private:
 	const Magic::SpellInfo *_spell = nullptr; // the spell being cast, waiting for its target
 	std::string _invocation;                  // circle digit and syllables typed so far
 	void castKey(int key);
+	bool useHorse(int tx, int ty);
 	bool handleKeyInner(int key);
 	void minutePassed();
 	bool boardOrLeave(int tx, int ty);

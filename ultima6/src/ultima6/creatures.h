@@ -40,10 +40,11 @@ public:
 
 	int count() const; // living temporary actors
 
+	int spawn(int type, int worktype, int x, int y, int z);
+
 private:
 	void scan();
 	void hatch(int egg, int hour);
-	int spawn(int type, int worktype, int x, int y, int z);
 
 	World &_world;
 	const Movement &_movement;
