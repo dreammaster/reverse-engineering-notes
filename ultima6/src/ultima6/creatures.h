@@ -43,6 +43,10 @@ public:
 	int spawn(int type, int worktype, int x, int y, int z);
 
 private:
+	bool stepDir(int actor, int dir);
+	bool stepDiag(int actor, int vertical, int horizontal);
+	bool stepToward(int actor, int tx, int ty);
+	int pickTarget(int actor);
 	void scan();
 	void hatch(int egg, int hour);
 

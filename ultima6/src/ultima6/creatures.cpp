@@ -177,70 +177,164 @@ void Creatures::despawn(int px, int py, int pz) {
 	}
 }
 
-// One action of a creature the turn scheduler has picked: hunt the nearest party member if hostile (hit it when next to it, else walk towards it),
-// otherwise wander now and then; a blow costs 10 moves, a step what the square costs.
+// sub_29046: one step of an actor in a direction (0 north, clockwise, two for a quarter turn). The cost of leaving the square is paid whether the step works or not.
+bool Creatures::stepDir(int actor, int dir) {
+	int k = _world.actorObject(actor);
+	const World::Obj o = _world.objects[k];
+	dir &= 7;
+	_world.spendMoves(actor, _world.moveCost(o.x, o.y, o.z));
+	int mask = o.z == 0 ? 0x3FF : 0xFF;
+	int nx = (o.x + DX[dir]) & mask, ny = (o.y + DY[dir]) & mask;
+	MoveRules rules;
+	rules.partyMayShuffle = false;
+	if (!_movement.check(nx, ny, o.z, k, rules).passable)
+		return false;
+	_world.moveObject(k, nx, ny, o.z);
+	_actors.face(actor, DY[dir] < 0 ? 0 : DY[dir] > 0 ? 2 : DX[dir] > 0 ? 1 : 3);
+	return true;
+}
+
+// sub_291E0: a diagonal step between a vertical and a horizontal direction; one of the two squares it cuts across must be open as well as the square it ends on.
+bool Creatures::stepDiag(int actor, int vertical, int horizontal) {
+	int k = _world.actorObject(actor);
+	const World::Obj o = _world.objects[k];
+	if (o.type == 0x19D)
+		return false;
+	int dir = vertical == 0 && horizontal == 6 ? 7 : (vertical + horizontal) >> 1;
+	_world.spendMoves(actor, _world.moveCost(o.x, o.y, o.z));
+	int mask = o.z == 0 ? 0x3FF : 0xFF;
+	int nx = (o.x + DX[dir]) & mask, ny = (o.y + DY[dir]) & mask;
+	MoveRules rules;
+	rules.partyMayShuffle = false;
+	bool open = _movement.check(nx, o.y, o.z, k, rules).passable || _movement.check(o.x, ny, o.z, k, rules).passable;
+	if (!open || !_movement.check(nx, ny, o.z, k, rules).passable)
+		return false;
+	_world.moveObject(k, nx, ny, o.z);
+	_actors.face(actor, DY[dir] < 0 ? 0 : DY[dir] > 0 ? 2 : DX[dir] > 0 ? 1 : 3);
+	return true;
+}
+
+// sub_29317: a step towards a square. The side to step to along each axis comes from the signs of the differences (a random one when it is zero); whether to try the
+// vertical or the horizontal step first is chosen at random in proportion to the distances (near the target, by which is longer); then the straight steps, the
+// diagonal one and finally, now and then, a step the other way are tried until one works. Every try costs the moves of leaving the square.
+bool Creatures::stepToward(int actor, int tx, int ty) {
+	int k = _world.actorObject(actor);
+	const World::Obj o = _world.objects[k];
+	int dx = tx - o.x, dy = ty - o.y;
+	if ((dx == 0 && dy == 0) || _world.actors.worktype[actor] == 0x0E) {
+		_world.spendMoves(actor, 5);
+		return false;
+	}
+	int horizontal = dx == 0 ? (_rng.next() % 2 ? 2 : 6) : (dx < 0 ? 6 : 2);
+	int vertical = dy == 0 ? (_rng.next() % 2 ? 0 : 4) : (dy < 0 ? 0 : 4);
+	int adx = std::abs(dx), ady = std::abs(dy);
+	bool verticalFirst;
+	if (adx < 4 && ady < 4)
+		verticalFirst = adx < ady ? true : (adx == ady ? (_rng.next() % 2) != 0 : false);
+	else
+		verticalFirst = (1 + (int)(_rng.next() % (adx + ady))) > adx;
+	bool moved;
+	if (verticalFirst) {
+		moved = stepDir(actor, vertical) || stepDiag(actor, vertical, horizontal) || stepDir(actor, horizontal);
+		if (!moved && _rng.next() % 2 == 0)
+			moved = stepDir(actor, horizontal ^ 4);
+	} else {
+		moved = stepDir(actor, horizontal) || stepDiag(actor, vertical, horizontal) || stepDir(actor, vertical);
+		if (!moved && _rng.next() % 2 == 0)
+			moved = stepDir(actor, vertical ^ 4);
+	}
+	if (!moved)
+		_world.spendMoves(actor, _world.moveCost(o.x, o.y, o.z));
+	return moved;
+}
+
+// wt_0x99 (2DD5E): the nearest actor of the other side within 8 squares (squared distance, ties by chance), or -1. The sides are the status bits 0x60: 0x40 the party's
+// kind and 0x20 the monsters'; an actor with neither only fights the party when its worktype is 0x9B; retreating worktypes (7, 9, 0x13, 0x99, 0x9A) take anyone.
+int Creatures::pickTarget(int actor) {
+	ObjList &a = _world.actors;
+	int k = _world.actorObject(actor);
+	const World::Obj me = _world.objects[k];
+	int side = a.status[actor] & 0x60, wt = a.worktype[actor];
+	int best = -1, bestDist = 0x7FFF;
+	for (int t = 0; t < ObjList::ACTORS; ++t) {
+		int tk = _world.actorObject(t);
+		if (t == actor || tk < 0 || _world.objects[tk].deleted || (a.status[t] & 0x10) || _world.objects[tk].z != me.z)
+			continue;
+		int ts = a.status[t] & 0x60;
+		bool take = wt == 9 || wt == 0x9A || wt == 0x13 || wt == 7 || wt == 0x99;
+		if (!take) {
+			if (side == 0)
+				take = wt == 0x9B && ts == 0x40;
+			else if (side == 0x60 && ts == 0x60)
+				take = false;
+			else if (!ts)
+				take = false;
+			else if (side == 0x40 && !(ts & 0x20))
+				take = false;
+			else if (side == 0x20 && !(ts & 0x40))
+				take = false;
+			else
+				take = true;
+		}
+		if (!take)
+			continue;
+		const World::Obj &o = _world.objects[tk];
+		int ddx = std::abs((int)o.x - (int)me.x), ddy = std::abs((int)o.y - (int)me.y);
+		if (std::max(ddx, ddy) > 8)
+			continue;
+		int d = ddx * ddx + ddy * ddy;
+		if (d < bestDist || (d == bestDist && _rng.next() % 2)) {
+			bestDist = d;
+			best = t;
+		}
+	}
+	return best;
+}
+
+// One action of a creature the turn scheduler has picked (actor_worktype_act, 29BDA): wt_immobile (0xE), wt_wander (0xC, 0x8F) and wt_combat_assault (the rest here, 2DF2E):
+// a target of the other side is fought when it is in reach (the distance table at ds:196C against the weapon's range, 10 moves for a blow) and approached otherwise;
+// with no target the creature wanders, or (worktype 3) passes. APPROX(57): the line-of-fire test (sub_2BB2F) and the side step it causes are left out.
 void Creatures::act(int actor, int px, int py, int pz) {
 	(void)px;
 	(void)py;
 	(void)pz;
+	static const uint8_t DIST[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
+									   {4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
 	ObjList &a = _world.actors;
 	int k = _world.actorObject(actor);
 	if (k < 0 || _world.objects[k].deleted || a.hp[actor] == 0) {
 		a.moves[actor] = 0;
 		return;
 	}
-	const World::Obj &o = _world.objects[k];
-	int target = -1, best = 1 << 20;
-	for (int i = 0; i < a.partySize; ++i) {
-		int pk = _world.actorObject(a.partyRoster[i]);
-		if (pk < 0 || _world.objects[pk].deleted || _world.objects[pk].z != o.z)
-			continue;
-		int d = std::max(std::abs((int)_world.objects[pk].x - (int)o.x), std::abs((int)_world.objects[pk].y - (int)o.y));
-		if (d < best) {
-			best = d;
-			target = a.partyRoster[i];
-		}
-	}
-	const CreatureStats *s = Combat::stats(o.type);
-	bool hostile = s && (s->align == CreatureStats::EVIL || s->align == CreatureStats::CHAOTIC) && a.worktype[actor] != 0x0C;
-	// wt_immobile (0xE, 2F2DE): it stays where it is, passing five moves at a time (APPROX: its blows at enemies in reach are not done)
-	if (a.worktype[actor] == 0x0E) {
+	const World::Obj o = _world.objects[k];
+	int wt = a.worktype[actor];
+	if (wt == 0x0E) { // wt_immobile: five moves passed (its blows at enemies in reach are not done)
 		_world.spendMoves(actor, 5);
 		return;
 	}
-	// wt_combat_assault (2DF2E): a target less than eight squares away in both directions is fought
-	int tkx = target >= 0 ? _world.actorObject(target) : -1;
-	bool near = tkx >= 0 && std::abs((int)_world.objects[tkx].x - (int)o.x) < 8 && std::abs((int)_world.objects[tkx].y - (int)o.y) < 8;
-	if (hostile && near) {
-		if (best <= 1) {
+	int target = wt == 0x0C || wt == 0x8F ? -1 : pickTarget(actor);
+	if (target >= 0) {
+		const World::Obj &t = _world.objects[_world.actorObject(target)];
+		int dx = std::abs((int)t.x - (int)o.x), dy = std::abs((int)t.y - (int)o.y);
+		if (dx < 8 && dy < 8 && DIST[dx][dy] <= Combat::rangeOf(_combat.weaponType(actor))) {
 			_combat.attack(actor, target);
 			_world.spendMoves(actor, 10);
+		} else if (wt != 3) {
+			stepToward(actor, t.x, t.y);
 		} else {
-			int tk = _world.actorObject(target);
-			int cost = _world.moveCost(o.x, o.y, o.z);
-			if (_actors.walkToward(actor, k, _world.objects[tk].x, _world.objects[tk].y, o.z))
-				_world.spendMoves(actor, cost);
-			else
-				a.moves[actor] = 0;
+			_world.spendMoves(actor, 5);
 		}
 		return;
 	}
-	// wt_wander (2954B): one turn in eight a step in a random one of the four directions, otherwise five moves are passed
-	if (_rng.next() % 8 == 0) {
-		int d = (_rng.next() % 4) * 2;
-		int mask = o.z == 0 ? 0x3FF : 0xFF;
-		int nx = (o.x + DX[d]) & mask, ny = (o.y + DY[d]) & mask;
-		MoveRules rules;
-		rules.partyMayShuffle = false;
-		if (_movement.check(nx, ny, o.z, k, rules).passable) {
-			int cost = _world.moveCost(o.x, o.y, o.z);
-			_world.moveObject(k, nx, ny, o.z);
-			_actors.face(actor, DY[d] < 0 ? 0 : DY[d] > 0 ? 2 : DX[d] > 0 ? 1 : 3);
-			_world.spendMoves(actor, cost);
-			return;
-		}
+	if (wt == 3) {
+		_world.spendMoves(actor, 5);
+		return;
 	}
-	_world.spendMoves(actor, 5);
+	// wt_wander (2954B): one turn in eight a step in a random one of the four directions, otherwise five moves are passed
+	if (_rng.next() % 8 == 0)
+		stepDir(actor, (_rng.next() % 4) * 2);
+	else
+		_world.spendMoves(actor, 5);
 }
 
 } // namespace Ultima6
