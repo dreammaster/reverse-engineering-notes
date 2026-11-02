@@ -123,9 +123,10 @@ block of `cmd_use` that calls a `use_*` function. Read from the two tables:
 | `ring_bell`, `open_secret_door`, `climb_ladder`, `bury_object` | bell 0EC and pull chain 1A3, secret door 14E, ladder 131, moonstone 049 |
 | `use_churn`, `use_beehive`, `use_potion`, `use_fan`, `use_rubber_ducky`, `use_silver_horn`, `use_gems` | 0B5, 0B6, 113, 0D4, 0A9, 139, 04D |
 | shared block (extinguishing) | candle 07A, candelabra 091, fireplace 0A4, brazier 0CE, campfire 0FD |
-| inline in `cmd_use` | Orb of the Moons 057, open chest 062, balloon 1A4, staff 04E (a message) |
+| `use_orb_of_the_moons` | Orb of the Moons 057 (`Where:`, "a red moon gate appears."; its block in `cmd_use` checks the object's location first) |
+| inline in `cmd_use` | open chest 062, balloon 1A4, staff 04E (a message) |
 
-(`use_moonstone` at `34E19`, which prints "a red moon gate appears.", is reached by the moonstone's own block together with `bury_object`.) A second
+A second
 five-entry table at `ds:1CDA` (types 0x97, 0x3D, 0x98, 0x10E, 0x3B; `sub_2FCFD`) marks another group of objects.
 
 ## Schedules

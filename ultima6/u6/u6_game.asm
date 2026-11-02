@@ -78378,7 +78378,7 @@ rear_horse      endp
 
 ; Attributes: bp-based frame
 
-use_moonstone   proc far                ; CODE XREF: cmd_use+603↓p
+use_orb_of_the_moons proc far           ; CODE XREF: cmd_use+603↓p
 
 var_4           = word ptr -4
 var_2           = byte ptr -2
@@ -78402,7 +78402,7 @@ var_2           = byte ptr -2
                 jmp     loc_34FBF
 ; ---------------------------------------------------------------------------
 
-loc_34E3B:                              ; CODE XREF: use_moonstone+11↑j
+loc_34E3B:                              ; CODE XREF: use_orb_of_the_moons+11↑j
                 push    ds
                 mov     ax, offset aWhere ; "Where: "
                 push    ax
@@ -78418,7 +78418,7 @@ loc_34E3B:                              ; CODE XREF: use_moonstone+11↑j
                 mov     byte_3DCE2, 1
                 mov     byte_3DCE5, 7
 
-loc_34E66:                              ; CODE XREF: use_moonstone+39↑j
+loc_34E66:                              ; CODE XREF: use_orb_of_the_moons+39↑j
                 call    sub_17099
                 mov     ax, player_x
                 add     ax, 0FFFEh
@@ -78427,7 +78427,7 @@ loc_34E66:                              ; CODE XREF: use_moonstone+39↑j
                 jmp     loc_34FAE
 ; ---------------------------------------------------------------------------
 
-loc_34E7A:                              ; CODE XREF: use_moonstone+5C↑j
+loc_34E7A:                              ; CODE XREF: use_orb_of_the_moons+5C↑j
                 mov     ax, player_x
                 inc     ax
                 inc     ax
@@ -78436,7 +78436,7 @@ loc_34E7A:                              ; CODE XREF: use_moonstone+5C↑j
                 jmp     loc_34FAE
 ; ---------------------------------------------------------------------------
 
-loc_34E88:                              ; CODE XREF: use_moonstone+6A↑j
+loc_34E88:                              ; CODE XREF: use_orb_of_the_moons+6A↑j
                 mov     ax, player_y
                 add     ax, 0FFFEh
                 cmp     ax, word_48F01
@@ -78444,7 +78444,7 @@ loc_34E88:                              ; CODE XREF: use_moonstone+6A↑j
                 jmp     loc_34FAE
 ; ---------------------------------------------------------------------------
 
-loc_34E97:                              ; CODE XREF: use_moonstone+79↑j
+loc_34E97:                              ; CODE XREF: use_orb_of_the_moons+79↑j
                 mov     ax, player_y
                 inc     ax
                 inc     ax
@@ -78453,7 +78453,7 @@ loc_34E97:                              ; CODE XREF: use_moonstone+79↑j
                 jmp     loc_34FAE
 ; ---------------------------------------------------------------------------
 
-loc_34EA5:                              ; CODE XREF: use_moonstone+87↑j
+loc_34EA5:                              ; CODE XREF: use_orb_of_the_moons+87↑j
                 mov     ax, word_48F01
                 cmp     ax, player_y
                 jnz     short loc_34EC6
@@ -78469,8 +78469,8 @@ loc_34EA5:                              ; CODE XREF: use_moonstone+87↑j
                 jmp     short loc_34EE2
 ; ---------------------------------------------------------------------------
 
-loc_34EC6:                              ; CODE XREF: use_moonstone+93↑j
-                                        ; use_moonstone+9D↑j ...
+loc_34EC6:                              ; CODE XREF: use_orb_of_the_moons+93↑j
+                                        ; use_orb_of_the_moons+9D↑j ...
                 mov     ax, word_48F01
                 sub     ax, player_y
                 inc     ax
@@ -78483,7 +78483,7 @@ loc_34EC6:                              ; CODE XREF: use_moonstone+93↑j
                 add     di, ax
                 add     di, 3
 
-loc_34EE2:                              ; CODE XREF: use_moonstone+AB↑j
+loc_34EE2:                              ; CODE XREF: use_orb_of_the_moons+AB↑j
                 mov     al, byte ptr player_z
                 mov     cl, 4
                 shl     al, cl
@@ -78549,8 +78549,8 @@ loc_34EE2:                              ; CODE XREF: use_moonstone+AB↑j
                 jmp     short loc_34FBF
 ; ---------------------------------------------------------------------------
 
-loc_34F95:                              ; CODE XREF: use_moonstone+118↑j
-                                        ; use_moonstone+131↑j ...
+loc_34F95:                              ; CODE XREF: use_orb_of_the_moons+118↑j
+                                        ; use_orb_of_the_moons+131↑j ...
                 push    word_3E62E
                 push    ds
                 mov     ax, offset aS_15 ; "%s\n"
@@ -78562,8 +78562,8 @@ loc_34F95:                              ; CODE XREF: use_moonstone+118↑j
                 jmp     short loc_34FBF
 ; ---------------------------------------------------------------------------
 
-loc_34FAE:                              ; CODE XREF: use_moonstone+5E↑j
-                                        ; use_moonstone+6C↑j ...
+loc_34FAE:                              ; CODE XREF: use_orb_of_the_moons+5E↑j
+                                        ; use_orb_of_the_moons+6C↑j ...
                 push    word_3E62E
                 push    ds
                 mov     ax, offset aS_15 ; "%s\n"
@@ -78571,14 +78571,14 @@ loc_34FAE:                              ; CODE XREF: use_moonstone+5E↑j
                 call    scroll_printf
                 add     sp, 6
 
-loc_34FBF:                              ; CODE XREF: use_moonstone+1F↑j
-                                        ; use_moonstone+17A↑j ...
+loc_34FBF:                              ; CODE XREF: use_orb_of_the_moons+1F↑j
+                                        ; use_orb_of_the_moons+17A↑j ...
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-use_moonstone   endp
+use_orb_of_the_moons endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -80270,7 +80270,7 @@ loc_35DCD:                              ; CODE XREF: cmd_use+5B6↑j
 
 loc_35E0B:                              ; CODE XREF: cmd_use+5FD↑j
                 push    cs
-                call    near ptr use_moonstone
+                call    near ptr use_orb_of_the_moons
                 jmp     loc_35F2C
 ; ---------------------------------------------------------------------------
                 mov     ax, 13h
@@ -101792,11 +101792,11 @@ aYouReAlreadyOn db 0Ah                  ; DATA XREF: use_horse+71↑o
                 db 'You',27h,'re already on a horse!',0Ah,0
 aRearHorse      db 0Ah                  ; DATA XREF: rear_horse+E2↑o
                 db 'Rear horse???',0Ah,0
-aYouCanTFigureO db 0Ah                  ; DATA XREF: use_moonstone+14↑o
+aYouCanTFigureO db 0Ah                  ; DATA XREF: use_orb_of_the_moons+14↑o
                 db 'You can',27h,'t figure out how to use it.',0Ah,0
-aWhere          db 'Where: ',0          ; DATA XREF: use_moonstone+23↑o
+aWhere          db 'Where: ',0          ; DATA XREF: use_orb_of_the_moons+23↑o
 aARedMoonGateAp db 'a red moon gate appears.',0Ah,0
-                                        ; DATA XREF: use_moonstone+14D↑o
+                                        ; DATA XREF: use_orb_of_the_moons+14D↑o
 aEnterDegreesFo db 0Ah                  ; DATA XREF: use_crystal_ball+65↑o
                 db 'Enter degrees followed by N, S, E or W.',0Ah,0
 aAtLatitude     db 0Ah                  ; DATA XREF: use_crystal_ball+71↑o
@@ -136506,7 +136506,7 @@ actor_talk_flags db    ? ;              ; DATA XREF: load_world_data+2BA↑o
                 db    ? ;
                 db    ? ;
 byte_48B40      db ?                    ; DATA XREF: sub_298D0+8↑r
-                                        ; use_moonstone+8↑r
+                                        ; use_orb_of_the_moons+8↑r
                 db    ? ;
                 db    ? ;
                 db    ? ;

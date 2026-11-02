@@ -27087,7 +27087,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X34E04);
 	op_stkvar	(x,	0);
 	create_insn	(0X34E19);
-	set_name	(0X34E19,	"use_moonstone");
+	set_name	(0X34E19,	"use_orb_of_the_moons");
 	create_insn	(x=0X34E1C);
 	op_hex		(x,	1);
 	create_insn	(x=0X34E28);

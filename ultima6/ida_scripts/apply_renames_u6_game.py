@@ -117,7 +117,7 @@ FUNCTIONS = [
     (0x3452B, "use_fountain", "'Make a wish?', 'Wish for: ', 'You got food' (type 0EAh, fountain)"),
     (0x34B93, "use_horse", "'Not boardable!', 'You're already on a horse!'"),
     (0x34C80, "rear_horse", "'Rear horse???'"),
-    (0x34E19, "use_moonstone", "'Where: ', 'a red moon gate appears.'"),
+    (0x34E19, "use_orb_of_the_moons", "'Where: ', 'a red moon gate appears.' (type 057h; moonstones, 049h, are buried by bury_object)"),
     (0x35482, "operate_passthrough", "'Open the passthrough.', 'Close the passthrough.'"),
     (0x3A194, "show_hull_strength", "'Hull Strength: %d%%'"),
     (0x3AAC1, "disk_full_dialog", "'Disk full. Do you want to Save the game and continue, or Restore your last saved game?'"),
