@@ -127,6 +127,74 @@ bool Game::inventoryKey(int key) {
 	return true;
 }
 
+// Cast: the circle (a digit) and the syllables' letters, then Enter; spells that need a target then ask for one with the cursor.
+void Game::castKey(int key) {
+	if (key == KEY_ESC) {
+		_pending = 0;
+		message("\n");
+		prompt();
+		return;
+	}
+	if (key == KEY_BACKSPACE) {
+		if (!_invocation.empty()) {
+			_invocation.erase(_invocation.size() - 1);
+			message("\b");
+		}
+		return;
+	}
+	if (key != KEY_ENTER) {
+		if (key >= 'a' && key <= 'z' + 0 && !_invocation.empty() && _invocation.size() < 8) {
+			_invocation += (char)key;
+			message(std::string(1, (char)key));
+		} else if (key >= '1' && key <= '8' && _invocation.empty()) {
+			_invocation += (char)key;
+			message(std::string(1, (char)key));
+		}
+		return;
+	}
+	_pending = 0;
+	message("\n");
+	int caster = _world.actors.partyRoster[_member];
+	const Magic::SpellInfo *spell = _invocation.size() > 1 ? Magic::find(_invocation[0] - '0', _invocation.substr(1)) : nullptr;
+	if (!spell) {
+		message("That spell is not in thy spellbook!\n");
+		prompt();
+		return;
+	}
+	if (!_magic.canCast(caster, *spell)) {
+		prompt();
+		return;
+	}
+	_spell = spell;
+	if (spell->select == Magic::SEL_NONE) {
+		_magic.pay(caster, *spell);
+		_magic.cast(caster, *spell, caster);
+		advanceTime(1);
+		prompt();
+		return;
+	}
+	message(std::string(spell->name) + "\nOn whom: ");
+	_pending = 'c';
+	_cursor = true;
+	_cx = _cy = 5;
+}
+
+void Game::castAt(int tx, int ty) {
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	int target = -1;
+	for (int i : here)
+		if (_world.objects[i].actor >= 0)
+			target = _world.objects[i].actor;
+	int caster = _world.actors.partyRoster[_member];
+	message("\n");
+	_magic.pay(caster, *_spell);
+	_magic.cast(caster, *_spell, target);
+	_spell = nullptr;
+	advanceTime(1);
+	prompt();
+}
+
 // Get: take the top object of a square that can be carried.
 void Game::getAt(int tx, int ty) {
 	std::vector<int> here;

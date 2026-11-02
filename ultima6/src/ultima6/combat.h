@@ -46,6 +46,11 @@ public:
 	int armourClass(int actor) const;
 	std::string nameOf(int actor) const;
 
+	/** Takes `damage` hit points off the defender (spells and traps too): prints how badly it is hurt, kills it and rewards the attacker. */
+	bool applyDamage(int attacker, int defender, int damage);
+	int randomBetween(int lo, int hi) {
+		return random(lo, hi);
+	}
 	/** One attack; prints what happened. True if the defender died. */
 	bool attack(int attacker, int defender);
 

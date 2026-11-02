@@ -160,6 +160,43 @@ int main() {
 		g5.handleKey(KEY_UP);
 	}
 
+	// Casting Heal: needs a readied spellbook with the spell, magic points and reagents, and uses them up.
+	{
+		World w6;
+		CHECK(w6.load("u6/game"));
+		Game g6(w6);
+		int book = w6.addToInventory(1, 57, 0, 1);
+		w6.objects[book].status = (uint8_t)((w6.objects[book].status & ~0x18) | 0x18);
+		World::Obj spell = w6.objects[book];
+		spell.type = 58;
+		spell.quality = 255; // every spell
+		spell.status = 0x08;
+		spell.parent = book;
+		spell.actor = -1;
+		w6.objects.push_back(spell);
+		w6.addToInventory(1, 68, 0, 5); // ginseng
+		w6.addToInventory(1, 71, 0, 5); // spider silk
+		w6.actors.hp[1] = 10;
+		int mana = w6.actors.unknown13f1[1];
+		int ginseng = 0;
+		for (int i = 0; i < (int)w6.objects.size(); ++i)
+			if (!w6.objects[i].deleted && w6.objects[i].parent == 1 && w6.objects[i].type == 68)
+				ginseng = w6.quantityOf(w6.objects[i]);
+		g6.handleKey('c');
+		g6.handleKey('1');
+		g6.handleKey('i');
+		g6.handleKey('m');
+		g6.handleKey(KEY_ENTER);
+		g6.handleKey(KEY_ENTER); // the cursor starts on the caster
+		CHECK(w6.actors.hp[1] > 10);
+		CHECK(w6.actors.unknown13f1[1] == mana - 1 + (g6.clock.minute % 10 == 0 ? 1 : 0) || w6.actors.unknown13f1[1] == mana - 1);
+		int ginseng2 = 0;
+		for (int i = 0; i < (int)w6.objects.size(); ++i)
+			if (!w6.objects[i].deleted && w6.objects[i].parent == 1 && w6.objects[i].type == 68)
+				ginseng2 = w6.quantityOf(w6.objects[i]);
+		CHECK(ginseng2 == ginseng - 1);
+	}
+
 	// Using a door from the west opens it, using it again closes it.
 	{
 		World w3;

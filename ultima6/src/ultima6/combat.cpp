@@ -147,7 +147,6 @@ bool Combat::attack(int attacker, int defender) {
 		return false;
 	int weapon = weaponType(attacker);
 	std::string name = nameOf(defender);
-	ObjList &a = _world.actors;
 
 	if (!hitCheck(attacker, defender, weapon)) {
 		_scroll.print("\n" + name + " missed!\n");
@@ -168,6 +167,15 @@ bool Combat::attack(int attacker, int defender) {
 		_scroll.print("\n" + name + " grazed.\n");
 		return false;
 	}
+	return applyDamage(attacker, defender, damage);
+}
+
+bool Combat::applyDamage(int attacker, int defender, int damage) {
+	int kd = _world.actorObject(defender);
+	if (kd < 0)
+		return false;
+	ObjList &a = _world.actors;
+	std::string name = nameOf(defender);
 	if (_world.objects[kd].type == OBJ_LORD_BRITISH) {
 		a.hp[defender] = 255; // he cannot be hurt
 		return false;

@@ -34,7 +34,7 @@ void GameClock::advance(int minutes) {
 	}
 }
 
-Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(world), _movement(world), _actors(world, _movement), _combat(world, _rng, scroll), _creatures(world, _movement, _actors, _combat, _rng, scroll) {
+Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(world), _movement(world), _actors(world, _movement), _combat(world, _rng, scroll), _creatures(world, _movement, _actors, _combat, _rng, scroll), _magic(world, _combat, _rng, scroll) {
 	world.avatarPosition(x, y, z);
 	_leaderObject = world.actorObject(1);
 	_rules.questFlag = !world.actors.globals.empty() && world.actors.globals[0] != 0;
@@ -66,6 +66,18 @@ void Game::advanceTime(int minutes) {
 		clock.advance(1);
 		if (clock.minute == 0)
 			_actors.hourChanged(clock);
+		// the timers of light and the like count down a minute at a time; magic points come back slowly
+		for (int t = 0; t < 16; ++t)
+			if (_world.actors.globals[0x12 + t])
+				--_world.actors.globals[0x12 + t];
+		if (clock.minute % 10 == 0) {
+			ObjList &al = _world.actors;
+			for (int m = 0; m < al.partySize; ++m) {
+				int actor = al.partyRoster[m];
+				if (al.unknown13f1[actor] < ActorStats::maxMagic(_world, actor))
+					++al.unknown13f1[actor];
+			}
+		}
 		_actors.tick(x, y, z);
 		_creatures.tick(x, y, z);
 		_creatures.checkEggs(x, y, z, clock.hour);
@@ -202,6 +214,11 @@ void Game::command(int key) {
 		message("Talk-");
 		_pending = 'T';
 		break;
+	case 'C':
+		message("Cast-");
+		_pending = 'C';
+		_invocation.clear();
+		break;
 	case 'A':
 		message("Attack-");
 		_pending = 'A';
@@ -275,7 +292,11 @@ bool Game::handleKey(int key) {
 		prompt();
 		return true;
 	}
-	if (_pending == 'L') {
+	if (_pending == 'C') {
+		castKey(key);
+		return true;
+	}
+	if (_pending == 'L' || _pending == 'c') {
 		// the cursor: arrows move it, Enter looks at the cell, Escape gives up
 		switch (key) {
 		case KEY_UP:
@@ -293,9 +314,13 @@ bool Game::handleKey(int key) {
 		case KEY_ENTER:
 		case KEY_SPACE: {
 			int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+			bool casting = _pending == 'c';
 			_pending = 0;
 			_cursor = false;
-			look((x + _cx - 5) & mask, (y + _cy - 5) & mask);
+			if (casting)
+				castAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
+			else
+				look((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 			break;
 		}
 		case KEY_ESC:

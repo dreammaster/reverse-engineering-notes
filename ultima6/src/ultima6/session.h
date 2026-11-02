@@ -7,6 +7,7 @@
 #include "ultima6/actors.h"
 #include "ultima6/combat.h"
 #include "ultima6/creatures.h"
+#include "ultima6/magic.h"
 #include "ultima6/talk.h"
 #include "ultima6/text_window.h"
 #include "ultima6/world.h"
@@ -75,6 +76,11 @@ private:
 	BorlandRandom _rng;
 	Combat _combat;
 	Creatures _creatures;
+	Magic _magic;
+	const Magic::SpellInfo *_spell = nullptr; // the spell being cast, waiting for its target
+	std::string _invocation;                  // circle digit and syllables typed so far
+	void castKey(int key);
+	void castAt(int tx, int ty);
 	void attackAt(int tx, int ty);
 	std::unique_ptr<Talk> _talk; // a conversation in progress
 	int _cx = 5, _cy = 5;        // cursor cell in the map view while targeting with it
