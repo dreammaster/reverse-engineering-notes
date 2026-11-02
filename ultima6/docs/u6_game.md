@@ -103,8 +103,30 @@ Gargish vocabulary, chests, pick, shovel, drinks, candles, food items, panpipes,
 switch, bucket of milk, churn, beehive, honey, barrels, crates, brazier, fan, cannon, powder keg, well, fountain, bell, the eight Runes, campfire,
 fishing pole, fish, lever, balloon plans, blue potion, passthroughs, crank, xylophone, doors (oaken, windowed, cedar, steel, secret), ladder, silver horn, ship,
 skiff, raft, pull chain, balloons, cow, horse and horse with rider (the descriptions come from `LOOK.LZD` via `BASETILE`). A second five-entry table at `ds:1CDA`
-(types 0x97, 0x3D, 0x98, 0x10E, 0x3B; `sub_2FCFD`) marks another group of objects. Anything else prints a refusal. The per-type handlers are the
-`use_*` functions named in the database; how `cmd_use` reaches them is not traced yet (the function contains no jump table).
+(types 0x97, 0x3D, 0x98, 0x10E, 0x3B; `sub_2FCFD`) marks another group of objects. Anything else prints a refusal. **Dispatch**: `cmd_use` finds the type in a sorted table of 85 words embedded in its own code (`cmd_use_types`, `cs:6467`), and
+`jmp word ptr cs:[bx + 0AAh]` takes the handler offset from the parallel table 170 bytes on (add `0x2F690` for the linear address); every handler is a
+block of `cmd_use` that calls a `use_*` function. Read from the two tables:
+
+| Handler | Types |
+|---|---|
+| `use_key_on_door` | oaken, windowed, cedar and steel doors (129-12C) |
+| `use_key_or_lockpick` | lock picks, key (03F, 040) |
+| `use_food` | grapes, butter, loaf, meat, rolls, cake, cheese, ham, horse chops, bucket of milk, jar of honey, meat, ribs, fish (05F, 060, 080-085, 087, 0B4, 0B8, 0D1, 0D2, 109) |
+| `search_here` | wine, mead, ale, open barrel, open crate, balloon plans, ship, skiff, raft, balloon (073-075, 0BA, 0C0, 10E, 19C, 19E, 19F, 1A7) |
+| `use_shrine` | the eight Runes (0F2-0F9) |
+| `use_shovel` | pick, shovel (067, 068) |
+| `use_torch`, `use_lever`, `use_switch`, `use_cannon`, `light_powder_keg`, `use_fishing_pole`, `use_scroll` | torches 05A, lever 10C, switch 0AE, cannon 0DD, powder keg 0DF, fishing pole 108, Gargish vocabulary 061 |
+| `operate_drawbridge`, `operate_passthrough` | crank 120; passthroughs 116, 118 |
+| `use_horse`, `rear_horse`, `fill_bucket_milk`, `fill_bucket_water` | horse 1AE, horse with rider 1AF, cow 1AC, well 0E9 |
+| `use_fountain`, `use_crystal_ball`, `use_sextant`, `use_telescope`, `use_vortex_cube` | fountain 0EA, crystal ball 09B, sextant 05D, telescope 09A, Vortex Cube 03E |
+| `play_instrument` | panpipes, harpsichord, harp, lute (099, 09C, 09D, 09E) |
+| `ring_bell`, `open_secret_door`, `climb_ladder`, `bury_object` | bell 0EC and pull chain 1A3, secret door 14E, ladder 131, moonstone 049 |
+| `use_churn`, `use_beehive`, `use_potion`, `use_fan`, `use_rubber_ducky`, `use_silver_horn`, `use_gems` | 0B5, 0B6, 113, 0D4, 0A9, 139, 04D |
+| shared block (extinguishing) | candle 07A, candelabra 091, fireplace 0A4, brazier 0CE, campfire 0FD |
+| inline in `cmd_use` | Orb of the Moons 057, open chest 062, balloon 1A4, staff 04E (a message) |
+
+(`use_moonstone` at `34E19`, which prints "a red moon gate appears.", is reached by the moonstone's own block together with `bury_object`.) A second
+five-entry table at `ds:1CDA` (types 0x97, 0x3D, 0x98, 0x10E, 0x3B; `sub_2FCFD`) marks another group of objects.
 
 ## Schedules
 
