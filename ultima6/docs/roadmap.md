@@ -38,7 +38,11 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 - [x] `src/files/`: `lzwDecompress`, `MapData` (MAP + CHUNKS), `ObjBlock`.
 - [x] `src/files/`: `LibN`, `Shape`, `TileSet`, `LookData`, `Font`, `IntroPalettes`.
 - [x] `src/ultima6/gypsy.*`, `src/engine/random.h`: the gypsy quiz, Borland generator and the new-game character patch.
-- [ ] Everything else.
+- [x] `src/ultima6/`: `World` (all data, objects, inventories), `MapRenderer`, `Movement` (port of sub_25D7F), `TextWindow`, `stats_view` (party panel), `Conversation`
+      (interpreter for the original scripts) and `Talk`, `ActorManager` (hourly schedules, walking), `Game` (key handler, clock, Talk/Look/Get/Rest, party follows);
+      `src/engine/`: framebuffer, headless and Win32 backends. `build/u6.exe <gamedir>` plays the start of the shipped game. See `u6_screen.md`.
+- [ ] Not yet: Use/Drop/Move and the inventory view, day and night (lighting), combat, magic, creature AI and spawning, object-use handlers (doors, levers, ...), eggs,
+      ships and horses, save/load, main menu, introduction, character creation screens, ending, sound and music playback, mouse.
 
 ## 4. Martian Dreams and Savage Empire
 
