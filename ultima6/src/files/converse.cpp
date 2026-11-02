@@ -52,6 +52,13 @@ bool ConverseScript::load(const Bytes &archive, int item) {
 		_bytes.assign(p + 4, p + 4 + n);
 	}
 
+	return fromBytes(_bytes);
+}
+
+bool ConverseScript::fromBytes(const Bytes &script) {
+	_bytes = script;
+	_name.clear();
+	_description.clear();
 	// 0xFF, actor, name, 0xF1, description, then the code
 	if (_bytes.size() < 4 || _bytes[0] != SIDENT)
 		return false;

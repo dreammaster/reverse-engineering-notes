@@ -77,9 +77,8 @@ std::string Combat::nameOf(int actor) const {
 			return (const char *)a.partyNames[i];
 	int k = _world.actorObject(actor);
 	int type = k >= 0 ? _world.objects[k].type : 0;
-	ConverseRef ref;
 	ConverseScript s;
-	if (ConverseScript::locate(actor, type, ref) && s.load(_world.converse[ref.second ? 1 : 0], ref.item)) {
+	if (_world.script(actor, s)) {
 		std::string n = s.name();
 		std::replace(n.begin(), n.end(), '_', '.');
 		return n;

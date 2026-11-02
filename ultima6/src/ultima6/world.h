@@ -2,6 +2,7 @@
 #define ULTIMA6_ULTIMA6_WORLD_H
 
 #include "engine/game_id.h"
+#include "files/converse.h"
 #include "files/map_data.h"
 #include "files/obj_block.h"
 #include "files/picture.h"
@@ -79,7 +80,11 @@ public:
 	Picture paper;  // PAPER.BMP: the play screen's frame
 	Bytes portraits[3]; // PORTRAIT.A, .B and .Z
 	Schedule schedule;  // SCHEDULE
-	Bytes converse[2];  // CONVERSE.A and CONVERSE.B
+	/** The conversation script of an actor (CONVERSE.A/B for Ultima VI, TALK.LZC for the spin-offs); false if it cannot talk. */
+	bool script(int actor, ConverseScript &out) const;
+	Bytes converse[2];
+	Bytes talk; // TALK.LZC of Martian Dreams / Savage Empire
+	mutable std::vector<int> _talkItem; // actor -> item of TALK.LZC  // CONVERSE.A and CONVERSE.B
 	MapData map;
 	ObjList actors;
 	std::vector<Obj> objects;

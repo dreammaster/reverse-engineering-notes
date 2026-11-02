@@ -132,6 +132,8 @@ bool World::load(const std::string &dir, const NewCharacter *newGame, const std:
 		return fail("SCHEDULE");
 	if (!spinoff && (!readFile(joinPath(dir, "CONVERSE.A"), converse[0]) || !readFile(joinPath(dir, "CONVERSE.B"), converse[1])))
 		return fail("CONVERSE");
+	if (spinoff)
+		readFile(joinPath(dir, "TALK.LZC"), talk);
 
 	objects.clear();
 	if (newGame) {
@@ -273,6 +275,26 @@ void World::inventory(int actor, std::vector<int> &out, bool nested) const {
 }
 
 // sub_1D8B1: block-3 weight times the quantity (gold and the reagents, the nine types of ds:081F, divided by ten); 255 means "cannot be moved" (10000)
+bool World::script(int actor, ConverseScript &out) const {
+	if (game == GameId::Ultima6) {
+		int k = actorObject(actor);
+		ConverseRef ref;
+		return ConverseScript::locate(actor, k >= 0 ? objects[k].type : 0, ref) && out.load(converse[ref.second ? 1 : 0], ref.item);
+	}
+	// the scripts of TALK.LZC carry their actor number in their second byte (the items are not numbered by actor in Savage Empire); the first item of Martian Dreams is a batch file
+	LibN lib;
+	Bytes item;
+	if (actor <= 0 || actor >= ObjList::ACTORS || !lib.load(talk, true))
+		return false;
+	if (_talkItem.empty()) {
+		_talkItem.assign(ObjList::ACTORS, -1);
+		for (size_t i = 0; i < lib.count(); ++i)
+			if (lib.present(i) && lib.get(i, item) && item.size() > 2 && item[0] == ConverseScript::SIDENT && _talkItem[item[1]] < 0)
+				_talkItem[item[1]] = (int)i;
+	}
+	return _talkItem[actor] >= 0 && lib.get(_talkItem[actor], item) && out.fromBytes(item);
+}
+
 std::string World::bookText(int n) const {
 	if (n < 1 || n > 128 || book.size() < 256)
 		return "";

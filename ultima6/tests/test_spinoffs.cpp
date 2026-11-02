@@ -1,6 +1,7 @@
 // Which Ultima VI file formats the two spin-offs share (skipped when their data is absent).
 
 #include "files/lib_n.h"
+#include "ultima6/world.h"
 #include "files/map_data.h"
 #include "files/obj_block.h"
 #include "files/tile_data.h"
@@ -56,6 +57,23 @@ static void check(const char *dir, int schedules) {
 		CHECK(readFile(joinPath(dir, "OBJTILES.VGA"), objTiles) && readFile(joinPath(dir, "TILEINDX.VGA"), index));
 		TileSet tiles;
 		CHECK(tiles.load(mapTiles, maskType, objTiles, index));
+	}
+
+	// conversation scripts: TALK.LZC items are numbered by actor
+	{
+		::Ultima6::Ultima6::World w;
+		w.game = std::string(dir).find("MARTIAN") != std::string::npos ? GameId::MartianDreams : GameId::SavageEmpire;
+		CHECK(w.load(dir));
+		int found = 0;
+		for (int actor = 1; actor < 224; ++actor) {
+			ConverseScript cs;
+			if (w.script(actor, cs)) {
+				++found;
+				if (cs.actor() != actor) std::printf("item %d holds actor %d (%s)\n", actor, cs.actor(), cs.name().c_str());
+			}
+		}
+		CHECK(found > 40);
+		std::printf("%s: %d conversation scripts\n", dir, found);
 	}
 
 	int objects = 0, outside = 0;

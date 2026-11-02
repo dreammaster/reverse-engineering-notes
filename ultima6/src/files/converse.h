@@ -68,6 +68,8 @@ public:
 	static bool locate(int actor, int objectType, ConverseRef &ref);
 	/** Reads an item from the archive file's bytes. */
 	bool load(const Bytes &archive, int item);
+	/** A script that is already decoded (the spin-offs' TALK.LZC items): the header is parsed as `load` does. */
+	bool fromBytes(const Bytes &script);
 
 	const Bytes &bytes() const {
 		return _bytes;

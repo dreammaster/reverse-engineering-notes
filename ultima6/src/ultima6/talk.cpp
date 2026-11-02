@@ -23,33 +23,21 @@ Talk::Talk(World &world, TextWindow &scroll, BorlandRandom &rng, const GameClock
 }
 
 bool Talk::load(Bytes &script) const {
-	int k = _world.actorObject(_actor);
-	ConverseRef ref;
-	if (!ConverseScript::locate(_actor, k >= 0 ? _world.objects[k].type : 0, ref))
-		return false;
 	ConverseScript s;
-	if (!s.load(_world.converse[ref.second ? 1 : 0], ref.item))
+	if (!_world.script(_actor, s))
 		return false;
 	script = s.bytes();
 	return true;
 }
 
 bool Talk::canTalk(const World &world, int actor) {
-	int k = world.actorObject(actor);
-	ConverseRef ref;
-	if (!ConverseScript::locate(actor, k >= 0 ? world.objects[k].type : 0, ref))
-		return false;
 	ConverseScript s;
-	return s.load(world.converse[ref.second ? 1 : 0], ref.item);
+	return world.script(actor, s);
 }
 
 std::string Talk::_nameOfActor(int actor) const {
-	int k = _world.actorObject(actor);
-	ConverseRef ref;
-	if (!ConverseScript::locate(actor, k >= 0 ? _world.objects[k].type : 0, ref))
-		return "";
 	ConverseScript s;
-	if (!s.load(_world.converse[ref.second ? 1 : 0], ref.item))
+	if (!_world.script(actor, s))
 		return "";
 	std::string n = s.name();
 	std::replace(n.begin(), n.end(), '_', '.');
