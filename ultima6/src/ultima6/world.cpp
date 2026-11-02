@@ -4,6 +4,7 @@
 
 #include "files/portrait.h"
 #include "ultima6/describe.h"
+#include "ultima6/gypsy.h"
 
 #include <algorithm>
 
@@ -42,7 +43,7 @@ bool World::loadBlock(const Bytes &data, int level) {
 	return true;
 }
 
-bool World::load(const std::string &dir) {
+bool World::load(const std::string &dir, const NewCharacter *newGame) {
 	Bytes d, d2, d3, d4;
 	if (!readFile(joinPath(dir, "TILEFLAG"), d) || !flags.load(d))
 		return fail("TILEFLAG");
@@ -82,20 +83,48 @@ bool World::load(const std::string &dir) {
 	if (!readFile(joinPath(dir, "CONVERSE.A"), converse[0]) || !readFile(joinPath(dir, "CONVERSE.B"), converse[1]))
 		return fail("CONVERSE");
 
-	std::string save = joinPath(dir, "SAVEGAME");
-	if (!readFile(joinPath(save, "OBJLIST"), d) || !actors.load(d))
-		return fail("SAVEGAME/OBJLIST");
-
 	objects.clear();
-	for (int row = 0; row < 8; ++row) {
-		for (int col = 0; col < 8; ++col) {
-			if (!readFile(joinPath(save, ObjBlock::surfaceFileName(col, row)), d) || !loadBlock(d, 0))
-				return fail(ObjBlock::surfaceFileName(col, row));
+	if (newGame) {
+		// A new game is built from LZOBJBLK (the 64 surface blocks, one after another) and LZDNGBLK
+		// (the 5 dungeon blocks and then the objlist), as U.EXE's installer does.
+		Bytes lz, plain;
+		if (!readFile(joinPath(dir, "LZOBJBLK"), lz) || !lzwDecompress(lz, 0, plain))
+			return fail("LZOBJBLK");
+		size_t pos = 0;
+		for (int i = 0; i < 64; ++i) {
+			if (pos + 2 > plain.size())
+				return fail("LZOBJBLK");
+			size_t len = 2 + (size_t)get16(&plain[pos]) * 8;
+			if (pos + len > plain.size() || !loadBlock(Bytes(plain.begin() + pos, plain.begin() + pos + len), 0))
+				return fail("LZOBJBLK");
+			pos += len;
 		}
-	}
-	for (int level = 1; level <= MapData::DUNGEON_LEVELS; ++level) {
-		if (!readFile(joinPath(save, ObjBlock::dungeonFileName(level)), d) || !loadBlock(d, level))
-			return fail(ObjBlock::dungeonFileName(level));
+		if (!readFile(joinPath(dir, "LZDNGBLK"), lz) || !lzwDecompress(lz, 0, plain))
+			return fail("LZDNGBLK");
+		pos = 0;
+		for (int level = 1; level <= MapData::DUNGEON_LEVELS; ++level) {
+			size_t len = 2 + (size_t)get16(&plain[pos]) * 8;
+			if (pos + len > plain.size() || !loadBlock(Bytes(plain.begin() + pos, plain.begin() + pos + len), level))
+				return fail("LZDNGBLK");
+			pos += len;
+		}
+		Bytes objlist(plain.begin() + pos, plain.end());
+		if (!newGame->applyTo(objlist) || !actors.load(objlist))
+			return fail("new game objlist");
+	} else {
+		std::string save = joinPath(dir, "SAVEGAME");
+		if (!readFile(joinPath(save, "OBJLIST"), d) || !actors.load(d))
+			return fail("SAVEGAME/OBJLIST");
+		for (int row = 0; row < 8; ++row) {
+			for (int col = 0; col < 8; ++col) {
+				if (!readFile(joinPath(save, ObjBlock::surfaceFileName(col, row)), d) || !loadBlock(d, 0))
+					return fail(ObjBlock::surfaceFileName(col, row));
+			}
+		}
+		for (int level = 1; level <= MapData::DUNGEON_LEVELS; ++level) {
+			if (!readFile(joinPath(save, ObjBlock::dungeonFileName(level)), d) || !loadBlock(d, level))
+				return fail(ObjBlock::dungeonFileName(level));
+		}
 	}
 
 	_actorObject.assign(ObjList::ACTORS, -1);

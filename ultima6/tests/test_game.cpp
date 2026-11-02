@@ -1,5 +1,6 @@
 // The running game: start state, clock and movement (skipped when the game data is absent).
 
+#include "ultima6/gypsy.h"
 #include "ultima6/session.h"
 
 #include <string>
@@ -109,6 +110,27 @@ int main() {
 		}
 		std::printf("%d actors moved in twelve hours\n", moved);
 		CHECK(moved > 10);
+	}
+
+	// A new game: the world built from LZOBJBLK and LZDNGBLK with a freshly made character.
+	{
+		::Ultima6::Ultima6::NewCharacter c;
+		c.name = "Tester";
+		c.female = false;
+		c.portrait = 2;
+		c.stats.strength = 17;
+		c.stats.dexterity = 16;
+		c.stats.intelligence = 18;
+		c.stats.karma = 75;
+		World w4;
+		CHECK(w4.load("u6/game", &c));
+		CHECK(std::string((const char *)w4.actors.partyNames[0]) == "Tester");
+		CHECK(w4.actors.strength[1] == 17);
+		CHECK(w4.objects.size() > 10000);
+		Game g4(w4);
+		CHECK(g4.x > 0 && g4.y > 0);
+		Bytes px;
+		CHECK(w4.portrait(1, px)); // the portrait chosen at creation
 	}
 
 	// Using a door from the west opens it, using it again closes it.

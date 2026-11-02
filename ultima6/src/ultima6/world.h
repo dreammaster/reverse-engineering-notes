@@ -14,6 +14,8 @@
 namespace Ultima6 {
 namespace Ultima6 {
 
+struct NewCharacter;
+
 /**
  * Everything of Ultima VI's world that is loaded from the game directory and the saved game: the
  * tiles and their attributes, the map, every object of every object block and the actors.
@@ -49,7 +51,8 @@ public:
 	};
 
 	/** dir = the game directory (the one with MAP, CHUNKS, TILEFLAG ... and SAVEGAME\). */
-	bool load(const std::string &dir);
+	/** With `newGame`, builds a new game from LZOBJBLK/LZDNGBLK with that character instead of reading SAVEGAME. */
+	bool load(const std::string &dir, const NewCharacter *newGame = nullptr);
 
 	const std::string &error() const {
 		return _error;
