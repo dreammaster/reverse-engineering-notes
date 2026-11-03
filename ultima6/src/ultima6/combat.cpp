@@ -151,25 +151,64 @@ void Combat::die(int actor) {
 	_world.actors.status[actor] |= 0x10; // dead
 	if (actor == 1)
 		return; // the Avatar's death is handled by the game
-	// a dead body takes what the actor carried
+	// what the dead become (sub_2B5A4): people turn into a body (type 0x153, its frame by race, table ds:1A29); creatures flagged 0x800 or 0x1000 vanish; the rest stay as they are
+	// APPROX(16): the original changes the actor's own object (its carried things stay with the actor); here a body object stands in its place and takes the things (or they are laid on the square for those that vanish)
+	static const uint16_t BODY[][2] = {{0x16F, 0x153}, {0x16B, 0x153}, {0x173, 0x153}, {0x172, 0x553}, {0x1A8, 0xD54}, {0x17C, 0x953}, {0x17B, 0x953}, {0x183, 0xD53}, {0x17A, 0xD53},
+									   {0x17E, 0x1153}, {0x180, 0x1553}, {0x179, 0x1553}, {0x178, 0x1953}, {0x19A, 0x1D53}, {0x182, 0x1D53}, {0x188, 0x1D53}, {0x17D, 0x2153},
+									   {0x181, 0x2153}, {0x187, 0x2153}, {0x17F, 0x2153}, {0x170, 0x2553}, {0x16A, 0xD55}};
+	const CreatureStats *own = stats(body.type);
+	int cflags = own ? own->flags : 0;
+	int word = -1;
+	for (const auto &row : BODY)
+		if (row[0] == body.type)
+			word = row[1];
 	World::Obj corpse;
 	corpse.status = 0;
 	corpse.x = body.x;
 	corpse.y = body.y;
 	corpse.z = body.z;
-	corpse.type = OBJ_DEAD_BODY;
-	corpse.frame = 0;
-	corpse.quantity = 1;
-	corpse.quality = (uint8_t)actor; // whose body it is (APPROX(56): the original's link is not traced)
 	corpse.actor = -1;
 	corpse.parent = -1;
-	_world.objects.push_back(corpse);
-	int c = (int)_world.objects.size() - 1;
-	_world.addToMap(c);
+	corpse.quantity = 1;
+	corpse.quality = (uint8_t)actor; // whose body it is (APPROX(56): the original's link is not traced)
+	bool leaveBody = true;
+	if (word >= 0 && !(cflags & 0x1000)) {
+		corpse.type = (uint16_t)(word & 0x3FF);
+		corpse.frame = (uint8_t)(word >> 10);
+	} else if (cflags & (0x800 | 0x1000)) {
+		leaveBody = false;
+	} else {
+		corpse.type = body.type;
+		corpse.frame = body.frame;
+	}
+	if (cflags & 0x2000) {
+		World::Obj blood = corpse;
+		blood.type = 0x152;
+		blood.frame = (uint8_t)(_rng.next() % 3);
+		blood.quality = 0;
+		blood.status = 0x20;
+		_world.objects.push_back(blood);
+		_world.addToMap((int)_world.objects.size() - 1);
+	}
+	int c = -1;
+	if (leaveBody) {
+		_world.objects.push_back(corpse);
+		c = (int)_world.objects.size() - 1;
+		_world.addToMap(c);
+	}
 	for (int i : inv) {
 		World::Obj &o = _world.objects[i];
-		o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_CONTAINER);
-		o.parent = c;
+		if (c >= 0) {
+			o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_CONTAINER);
+			o.parent = c;
+		} else {
+			o.status = (uint8_t)(o.status & ~ObjRecord::LOCATION_MASK);
+			o.x = body.x;
+			o.y = body.y;
+			o.z = body.z;
+			o.parent = -1;
+			_world.addToMap(i);
+		}
 	}
 	// leave the party
 	ObjList &a = _world.actors;
@@ -214,7 +253,7 @@ bool Combat::attack(int attacker, int defender) {
 	return applyDamage(attacker, defender, damage);
 }
 
-// APPROX(16): not the original's exact behaviour, see docs/approximations.md
+// APPROX(16): not the original's exact behaviour, see docs/approximations.md (sub_2C2E5: the slime does not divide, ships and doors take no damage)
 bool Combat::applyDamage(int attacker, int defender, int damage) {
 	int kd = _world.actorObject(defender);
 	if (kd < 0)
@@ -225,9 +264,21 @@ bool Combat::applyDamage(int attacker, int defender, int damage) {
 		a.hp[defender] = 255; // he cannot be hurt
 		return false;
 	}
+	int type = _world.objects[kd].type;
+	if (type == 0x1A7 || damage < 0)
+		return false; // a balloon takes nothing
+	if ((type == 0x19E || type == 0x19F) && a.partySize > 0) {
+		// a boat that is hit passes the blow on to a random member of the party (sub_2C2E5 2C350)
+		int member = a.partyRoster[a.partySize > 1 ? random(0, a.partySize - 1) : 0];
+		if (member != defender)
+			return applyDamage(attacker, member, damage);
+	}
 	if (damage >= a.hp[defender]) {
-		const CreatureStats *foe = stats(_world.objects[kd].type);
-		if (foe && (foe->align == CreatureStats::EVIL || foe->align == CreatureStats::CHAOTIC)) {
+		const CreatureStats *foe = stats(type);
+		// sub_2C2E5 2C3FC-2C490: killing somebody who is on no side costs 5 karma; killing one of the evil side (status 0x20) earns a quarter of the sum of the creature's numbers
+		if (!(a.status[defender] & 0x60) && a.globals.size() > 8)
+			a.globals[8] = (uint8_t)(a.globals[8] > 5 ? a.globals[8] - 5 : 0);
+		if ((a.status[defender] & 0x20) && foe) {
 			int gain = (foe->str + foe->dex + foe->intel + foe->hp + foe->dmg + foe->exp) / 4;
 			a.exp[attacker] = (uint16_t)(a.exp[attacker] + gain);
 		}
