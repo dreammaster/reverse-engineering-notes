@@ -425,16 +425,20 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		}
 		return true;
 	}
-	case 84: { // Hail Storm: everybody (not the party) within the reach of the spell is hurt
-		int radius = 3;
-		for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
-			int k = _world.actorObject(actor);
-			if (k < 0 || _world.objects[k].deleted || (a.status[actor] & 0x80) || a.hp[actor] == 0 || _world.objects[k].z != z)
-				continue;
-			if (std::abs((int)_world.objects[k].x - tx) > radius || std::abs((int)_world.objects[k].y - ty) > radius)
-				continue;
-			_combat.applyDamage(caster, actor, 1 + _rng.next() % 20);
+	case 84: { // Hail Storm (sub_24DCF, sub_38C40): 10-30 hailstones fall on and around the target square; each lands at (square * 16 + 1-30 + 1-30 - 23) pixels and takes one hit point from whoever stands on the square it lands on
+		int stones = 10 + (int)(_rng.next() % 21);
+		for (int n = 0; n < stones; ++n) {
+			int px = tx * 16 + 1 + (int)(_rng.next() % 30) + 1 + (int)(_rng.next() % 30) - 23;
+			int py = ty * 16 + 1 + (int)(_rng.next() % 30) + 1 + (int)(_rng.next() % 30) - 23;
+			std::vector<int> there;
+			_world.objectsAt(px >> 4, py >> 4, z, there);
+			for (int i : there) {
+				int t = _world.objects[i].actor;
+				if (t >= 0 && t < ObjList::ACTORS && !(a.status[t] & 0x10))
+					_combat.applyDamage(caster, t, 1);
+			}
 		}
+		message("\nSuccess\n");
 		return true;
 	}
 	case 3: // Dispel Magic (sub_2227B): "Failed" when there was nothing to take off
@@ -651,15 +655,20 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		message("\nSuccess\n");
 		return true;
 	}
-	case 66: { // Insect Swarm: so are those near the party, less
-		int radius = 3;
-		for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
-			int k = _world.actorObject(actor);
-			if (k < 0 || _world.objects[k].deleted || a.hp[actor] == 0 || (a.status[actor] & 0x80) || _world.objects[k].z != z)
-				continue;
-			if (std::abs((int)_world.objects[k].x - x) <= radius && std::abs((int)_world.objects[k].y - y) <= radius)
-				_combat.applyDamage(caster, actor, 1 + _rng.next() % 10);
-		}
+	case 66: { // Insect Swarm (sub_2458F): eight swarms (0x157) of the caster's side, each put on the first of eight random squares within five of the party that it may enter (else it is let go), worktype 8
+		for (int swarm = 0; swarm < 8; ++swarm)
+			for (int tries = 0; tries < 8; ++tries) {
+				int sx = x + (int)(_rng.next() % 11) - 5, sy = y + (int)(_rng.next() % 11) - 5;
+				MoveRules rules;
+				rules.partyMayShuffle = false;
+				if (!_movement.check(sx, sy, z, _leaderObject, rules).passable)
+					continue;
+				int made = _creatures.spawn(0x157, 8, sx, sy, z);
+				if (made >= 0)
+					a.status[made] = (uint8_t)((a.status[made] & 0x9F) | (a.status[caster] & 0x60));
+				break;
+			}
+		message("\nSuccess\n");
 		return true;
 	}
 	case 53: { // Locate: where the party is, as the sextant says it
