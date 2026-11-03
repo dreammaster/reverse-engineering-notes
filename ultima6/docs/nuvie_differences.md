@@ -60,9 +60,9 @@ No spellbook is readied.
 | P1 | Hit check, damage, armour, experience | `script/u6/actor.cpp` | combat code of `GAME.EXE` |
 | P2 | ~~Creature / weapon / armour tables~~ | **done**: all of Nuvie's rows compared with `GAME.EXE` (weapon, armour, range tables at ds:1B0B/1B55, 1A87/1ABB, 1AD5/1AF9; creatures in seg066); one difference (#11). Still unread: the creatures' inventory columns (+0x302 on: spells, weapons, armour, treasure) | - |
 | P3 | Spell table: **names, invocations, reagents verified** (#13); costs, level rules, effects still Nuvie's | `script/u6/magic.cpp`, `core/magic.cpp` | spell code in `GAME.EXE` (messages "Success", "Failed", "No effect", "On whom: ", "On what: ", "Location: " at ds:13F2-1459; spell words of power at ds:1005 An..Zu) |
-| P4 | Egg hatching | `core/egg_manager.cpp` | egg code in `GAME.EXE` |
+| P4 | Egg hatching: **partly traced** (`sub_366B0`, `sub_36D4E`: hour windows, chance, counts, used eggs, side bits, eggs within 8 squares left alone, see approximations #19) | `core/egg_manager.cpp` | the scan window and placement |
 | P5 | Per-minute hazards, torches, hourly magic points | `script/u6/actor.cpp` `advanceTime` | `sub_13305` |
 | P6 | Conversation interpreter details, keyword matching | `core/converse_interpret.cpp` | `conv_execute_command` (201EB), `conv_read_value` (1F1BE) |
-| P7 | Door and ladder use | `usecode/u6_usecode.cpp` | the Use handlers behind `cmd_use_types` (0x35AF7) |
+| P7 | ~~Door and ladder use~~ | **done for doors and chests** (#21, #22); levers, switches and ladders still follow Nuvie | `use_lever`, `use_switch`, `climb_ladder` |
 | P8 | Walking frames and facing | `actors/actor.cpp` `set_direction` | `sub_263D4` |
 | P9 | Time-of-day words, party limit | `core/converse.cpp`, `core/party.cpp` | `sub_1EA97`, party join code |
