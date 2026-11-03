@@ -427,13 +427,32 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 			a.status[c] = a.status[target] & ~0x80;
 		}
 		return true;
-	case 49: // Conjure: a creature of a random kind
-	case 119: { // Summon
-		static const int KINDS[] = {0x16B, 0x16C, 0x17C, 0x182, 0x188, 0x1A8};
-		int c = _creatures.spawn(KINDS[_rng.next() % 6], 0x08, x + 1, y, z);
-		if (c < 0)
-			return false;
-		a.status[c] = 0x40; // the caster's side
+	case 49: // Conjure (spell_summon_daemon 23C?? with 0x31): a creature (by a roll of 0-15: 0x173, 0x156, 0x169, 0x158 or 0x166) for the party
+	case 119: { // Summon: a daemon (0x16F) that may resist ("Hostile daemon summoned.", it then fights everybody), else "Success"
+		int type = 0x16F;
+		if (index == 49) {
+			int r = _rng.next() % 16;
+			type = r <= 3 ? 0x173 : r <= 6 ? 0x156 : r <= 9 ? 0x169 : r <= 12 ? 0x158 : 0x166;
+		}
+		int made = -1;
+		for (int tries = 0; tries < 8 && made < 0; ++tries) {
+			int sx = x + (int)(_rng.next() % 11) - 5, sy = y + (int)(_rng.next() % 11) - 5;
+			MoveRules rules;
+			rules.partyMayShuffle = false;
+			if (!_movement.check(sx, sy, z, _leaderObject, rules).passable)
+				continue;
+			made = _creatures.spawn(type, 8, sx, sy, z);
+		}
+		if (made < 0)
+			return true; // the creature is let go again
+		bool hostile = false;
+		if (index == 119) {
+			const CreatureStats *cs = Combat::stats(type);
+			int daemonInt = cs ? cs->intel : 10;
+			hostile = daemonInt / 2 + 15 - _combat.adjustedIntelligence(caster) > 1 + (int)(_rng.next() % 30);
+		}
+		a.status[made] = (uint8_t)((a.status[made] & 0x9F) | (hostile ? 0x60 : (a.status[caster] & 0x60)));
+		message(hostile ? "\nHostile daemon summoned.\n" : "\nSuccess\n");
 		return true;
 	}
 	case 21: // Telekinesis: the object is used from where the caster stands
