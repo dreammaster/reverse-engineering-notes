@@ -338,7 +338,8 @@ void Talk::subtractKarma(int n) {
 }
 
 void Talk::sleep() {
-	// the party sleeps until sunrise; the clock handling for it is part of the rest command
+	if (onSleep)
+		onSleep();
 }
 
 } // namespace Ultima6

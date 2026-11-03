@@ -1,6 +1,7 @@
 #ifndef ULTIMA6_ULTIMA6_TALK_H
 #define ULTIMA6_ULTIMA6_TALK_H
 
+#include <functional>
 #include "engine/random.h"
 #include "ultima6/conversation.h"
 #include "ultima6/text_window.h"
@@ -37,6 +38,8 @@ public:
 	}
 	/** Whether the actor can be talked to at all (the script exists). */
 	static bool canTalk(const World &world, int actor);
+	/** What the game does when a conversation puts the party to sleep (an inn): set by the game. */
+	std::function<void()> onSleep;
 
 	// ConversationHost
 	void print(const std::string &text) override;

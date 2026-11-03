@@ -261,6 +261,21 @@ void Game::talkAt(int tx, int ty) {
 		prompt();
 		return;
 	}
+	t->onSleep = [this]() {
+		// the party sleeps until six in the morning (at least an hour), healing as it rests. APPROX(31): the same healing as the Rest command
+		int hours = (6 - clock.hour + 24) % 24;
+		if (hours == 0)
+			hours = 24;
+		for (int h = 0; h < hours; ++h) {
+			advanceTime(60);
+			ObjList &al = _world.actors;
+			for (int i = 0; i < al.partySize; ++i) {
+				int actor = al.partyRoster[i];
+				int most = ActorStats::maxHealth(_world, actor);
+				al.hp[actor] = (uint8_t)std::min<int>(most, al.hp[actor] + 1 + al.level[actor] / 2);
+			}
+		}
+	};
 	_talk = std::move(t);
 	_talk->start();
 	if (_talk->actor() < 0)
