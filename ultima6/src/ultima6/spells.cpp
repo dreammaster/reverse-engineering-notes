@@ -308,17 +308,17 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		}
 		return true;
 	}
-	case 51: // Fire Field
-	case 55: // Poison Field
-	case 56: // Sleep Field
-	case 64: { // Energy Field: a field object (0x13D fire, 0x13E poison, 0x13F sleep, 0xAF energy) on the square if nothing blocks it
-		int type = index == 51 ? 0x13D : index == 55 ? 0x13E : index == 56 ? 0x13F : 0xAF;
-		bool blocked = _world.flags.flags1[_world.map.tile(z, tx, ty) & (TileFlags::TILES - 1)] & 0x02;
-		for (int i : here)
-			if (_world.objects[i].actor >= 0 || (_world.flags.flags1[(_world.baseTile.firstTile[_world.objects[i].type] + _world.objects[i].frame) & (TileFlags::TILES - 1)] & 0x02))
-				blocked = true;
-		if (blocked)
-			return false;
+	case 51:   // Fire Field
+	case 55:   // Poison Field
+	case 56:   // Sleep Field
+	case 64: { // Energy Field (sub_2386F): a bolt flies to the square (else "Blocked"); the field object (0x13D fire, 0x13E poison, 0x140 sleep, 0x13F energy) is made there and kept only if it may stand there ("Success"), else "Not possible"
+		int ck = _world.actorObject(caster);
+		std::vector<std::pair<int, int>> path;
+		if (!boltPath(_world, z, _world.objects[ck].x, _world.objects[ck].y, tx, ty, 8, path)) {
+			message("\nBlocked\n");
+			return true;
+		}
+		int type = index == 51 ? 0x13D : index == 55 ? 0x13E : index == 56 ? 0x140 : 0x13F;
 		World::Obj f;
 		f.status = 0;
 		f.x = (uint16_t)tx;
@@ -331,7 +331,16 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		f.actor = -1;
 		f.parent = -1;
 		_world.objects.push_back(f);
-		_world.addToMap((int)_world.objects.size() - 1);
+		int made = (int)_world.objects.size() - 1;
+		MoveRules rules;
+		rules.partyMayShuffle = false;
+		if (!_movement.check(tx, ty, z, made, rules).passable) {
+			_world.objects.pop_back();
+			message("\nNot possible\n");
+			return true;
+		}
+		_world.addToMap(made);
+		message("\nSuccess\n");
 		return true;
 	}
 	case 33: { // Dispel Field
@@ -343,7 +352,7 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 				_world.objectsAt(tx + dx, ty + dy, z, at);
 				for (int i : at) {
 					int type = _world.objects[i].type;
-					if (type == 0x13D || type == 0x13E || type == 0x13F || type == 0xAF) {
+					if (type == 0x13D || type == 0x13E || type == 0x13F || type == 0x140 || type == 0xAF) {
 						_world.deleteObject(i);
 						any = true;
 					}
