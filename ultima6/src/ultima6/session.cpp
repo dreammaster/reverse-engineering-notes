@@ -444,6 +444,11 @@ void Game::command(int key) {
 		break;
 	case 'A':
 		message("Attack-");
+		if (_aboard && _world.objects[_leaderObject].type != 0x19C) { // cmd_attack: only a ship can fight
+			message("Not while aboard ship!\n");
+			prompt();
+			break;
+		}
 		_pending = 'a';
 		_cursor = true;
 		_cx = _cy = 5;

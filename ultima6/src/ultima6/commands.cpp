@@ -61,7 +61,7 @@ void Game::attackAt(int tx, int ty) {
 		prompt();
 		return;
 	}
-	int weapon = _combat.weaponType(attacker);
+	int weapon = _aboard && _world.objects[_leaderObject].type == 0x19C ? 0x19C : _combat.weaponType(attacker); // a ship fires its cannons (weapon_range of the vehicle: range 5, damage 30)
 	int k = _world.actorObject(target);
 	int dist = std::max(std::abs((int)_world.objects[k].x - x), std::abs((int)_world.objects[k].y - y));
 	if (dist > Combat::rangeOf(weapon)) {
