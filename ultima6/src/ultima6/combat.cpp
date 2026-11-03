@@ -253,7 +253,7 @@ bool Combat::attack(int attacker, int defender) {
 	return applyDamage(attacker, defender, damage);
 }
 
-// APPROX(16): not the original's exact behaviour, see docs/approximations.md (sub_2C2E5: the slime does not divide, ships and doors take no damage)
+// APPROX(16): not the original's exact behaviour, see docs/approximations.md (sub_2C2E5: ships and doors take no damage)
 bool Combat::applyDamage(int attacker, int defender, int damage) {
 	int kd = _world.actorObject(defender);
 	if (kd < 0)
@@ -287,6 +287,10 @@ bool Combat::applyDamage(int attacker, int defender, int damage) {
 		return true;
 	}
 	a.hp[defender] = (uint8_t)(a.hp[defender] - damage);
+	if (a.worktype[defender] == 9)
+		a.worktype[defender] = 8;
+	if (onHurt)
+		onHurt(defender);
 	// how badly hurt: the quarters of the maximum hit points
 	int most = std::max(1, std::min(255, a.level[defender] * 30));
 	int quarter = (a.hp[defender] * 4) / most;

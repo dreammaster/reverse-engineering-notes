@@ -37,6 +37,7 @@ void GameClock::advance(int minutes) {
 
 Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(world), _movement(world), _actors(world, _movement), _combat(world, _rng, scroll), _creatures(world, _movement, _actors, _combat, _rng, scroll), _magic(world, _combat, _rng, scroll) {
 	scroll.setFont(&world.font);
+	_combat.onHurt = [this](int actor) { _creatures.divide(actor); };
 	if (world.game != GameId::Ultima6)
 		scroll.setColours(0, world.paper.pixels[170 * world.paper.width + 200]); // black on the colour of the frame's message area
 	world.avatarPosition(x, y, z);

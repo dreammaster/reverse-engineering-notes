@@ -617,6 +617,49 @@ void Creatures::wake(int actor) {
 	_revealed = true;
 }
 
+// sub_2C2E5 2C576-2C632 with sub_2C14F: a slime (movement class 0x30) that is hurt and lives divides: on one of up to eight random squares next to it (each try picks a square
+// within one of it, its own square included) that it may enter, a copy of it (all its numbers, hit points as they are now) appears: "Slime divides!"
+void Creatures::divide(int actor) {
+	ObjList &a = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0 || actor >= 0x100 || MovementClasses::classOf(_world.objects[k].type) != 0x30)
+		return;
+	const World::Obj o = _world.objects[k];
+	MoveRules rules;
+	rules.partyMayShuffle = false;
+	int mask = o.z == 0 ? 0x3FF : 0xFF;
+	for (int tries = 0; tries < 8; ++tries) {
+		int nx = (o.x + (int)(_rng.next() % 3) - 1) & mask, ny = (o.y + (int)(_rng.next() % 3) - 1) & mask;
+		if (!_movement.check(nx, ny, o.z, k, rules).passable)
+			continue;
+		int n = spawn(o.type, a.worktype[actor], nx, ny, o.z);
+		if (n < 0)
+			return;
+		int kn = _world.actorObject(n);
+		_world.objects[kn].status = _world.objects[k].status;
+		if (o.type != 0x177)
+			_world.objects[kn].frame = _world.objects[k].frame;
+		_world.objects[kn].quantity = _world.objects[k].quantity;
+		_world.objects[kn].quality = _world.objects[k].quality;
+		a.status[n] = a.status[actor];
+		a.strength[n] = a.strength[actor];
+		a.dexterity[n] = a.dexterity[actor];
+		a.intelligence[n] = a.intelligence[actor];
+		a.level[n] = a.level[actor];
+		a.exp[n] = a.exp[actor];
+		a.hp[n] = a.hp[actor];
+		a.worktype[n] = a.worktype[actor];
+		a.unknown12f1[n] = a.unknown12f1[actor];
+		a.unknown13f1[n] = a.unknown13f1[actor];
+		a.scheduleIndex[n] = a.scheduleIndex[actor];
+		a.unknown18f1[n] = a.unknown18f1[actor];
+		a.movementFlags[n] = a.movementFlags[actor];
+		a.moves[n] = 0;
+		_scroll.print("Slime divides!\n");
+		return;
+	}
+}
+
 // wt_wander (2954B)
 void Creatures::wander(int actor, int px, int py) {
 	ObjList &a = _world.actors;

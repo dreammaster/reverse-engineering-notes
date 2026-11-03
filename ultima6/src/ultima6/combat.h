@@ -5,6 +5,7 @@
 #include "ultima6/text_window.h"
 #include "ultima6/world.h"
 
+#include <functional>
 #include <string>
 
 namespace Ultima6 {
@@ -36,6 +37,9 @@ class Combat {
 public:
 	Combat(World &world, BorlandRandom &rng, TextWindow &scroll) : _world(world), _rng(rng), _scroll(scroll) {
 	}
+
+	/** Called for an actor that has been hurt and lives (the slime divides). */
+	std::function<void(int)> onHurt;
 
 	static const CreatureStats *stats(int type);
 	static int weaponDamageOf(int type); // -1 if the object type is no weapon

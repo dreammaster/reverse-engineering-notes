@@ -140,6 +140,40 @@ int main() {
 			CHECK(std::abs((int)w.objects[w.actorObject(npc)].x - g.x) <= 1);
 		}
 	}
+	// a slime that is hurt and lives divides (sub_2C2E5 2C576)
+	{
+		for (int m = 0; m < w.actors.partySize; ++m) {
+			int member = w.actors.partyRoster[m];
+			w.actors.hp[member] = 250;
+			w.actors.status[member] &= ~0x10;
+			w.moveObject(w.actorObject(member), 307, 352, 0);
+		}
+		Game g(w);
+		int slime = 0xF0;
+		w.addActor(slime, 375, 308, 352, 0);
+		w.actors.hp[slime] = 250;
+		w.actors.strength[slime] = w.actors.dexterity[slime] = w.actors.intelligence[slime] = 6;
+		w.actors.level[slime] = 8;
+		w.actors.status[slime] = 0x20;
+		w.actors.worktype[slime] = 0x0E; // it stays where it is
+		auto slimes = [&]() {
+			int n = 0;
+			for (int a = 0xE0; a < 256; ++a) {
+				int k = w.actorObject(a);
+				n += k >= 0 && !w.objects[k].deleted && w.objects[k].type == 375 && w.actors.hp[a] > 0;
+			}
+			return n;
+		};
+		CHECK(slimes() == 1);
+		for (int i = 0; i < 12 && slimes() == 1; ++i) {
+			g.handleKey('A');
+			g.handleKey(KEY_RIGHT);
+			g.handleKey(KEY_ENTER);
+			w.actors.hp[slime] = 250; // the first slime stays alive however hard it is hit
+		}
+		std::printf("slimes after the blows: %d\n", slimes());
+		CHECK(slimes() >= 2);
+	}
 	if (failures == 0)
 		std::printf("ok\n");
 	return failures ? 1 : 0;

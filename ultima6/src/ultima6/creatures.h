@@ -37,6 +37,8 @@ public:
 	void despawn(int px, int py, int pz);
 	/** One action of a creature the turn scheduler picked. */
 	void act(int actor, int px, int py, int pz);
+	/** A slime that has been hurt and lives divides. */
+	void divide(int actor);
 	/** sub_2A4B6: where the two sides stand, worked out once at the start of every round of turns. */
 	void formation(int px, int py, int pz);
 
