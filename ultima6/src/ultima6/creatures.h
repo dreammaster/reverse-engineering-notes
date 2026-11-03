@@ -46,7 +46,7 @@ private:
 	bool stepDir(int actor, int dir);
 	bool stepDiag(int actor, int vertical, int horizontal);
 	bool stepToward(int actor, int tx, int ty);
-	int pickTarget(int actor);
+	int pickTarget(int actor, bool strongest = false);
 	void scan();
 	void hatch(int egg, int hour);
 

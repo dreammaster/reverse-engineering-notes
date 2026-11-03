@@ -259,7 +259,9 @@ bool Creatures::stepToward(int actor, int tx, int ty) {
 
 // wt_0x99 (2DD5E): the nearest actor of the other side within 8 squares (squared distance, ties by chance), or -1. The sides are the status bits 0x60: 0x40 the party's
 // kind and 0x20 the monsters'; an actor with neither only fights the party when its worktype is 0x9B; retreating worktypes (7, 9, 0x13, 0x99, 0x9A) take anyone.
-int Creatures::pickTarget(int actor) {
+// With `strongest` (wt_combat_berserk, 2EC2A) the choice among the actors within eight squares is the one whose strength + dexterity + intelligence is the greatest, and an actor
+// without a side fights anybody.
+int Creatures::pickTarget(int actor, bool strongest) {
 	ObjList &a = _world.actors;
 	int k = _world.actorObject(actor);
 	const World::Obj me = _world.objects[k];
@@ -292,6 +294,14 @@ int Creatures::pickTarget(int actor) {
 		if (std::max(ddx, ddy) > 8)
 			continue;
 		int d = ddx * ddx + ddy * ddy;
+		if (strongest) {
+			int sum = a.strength[t] + a.dexterity[t] + a.intelligence[t];
+			if (sum > bestDist || best < 0) {
+				bestDist = sum;
+				best = t;
+			}
+			continue;
+		}
 		if (d < bestDist || (d == bestDist && _rng.next() % 2)) {
 			bestDist = d;
 			best = t;
@@ -442,7 +452,7 @@ void Creatures::act(int actor, int px, int py, int pz) {
 			return;
 		}
 	}
-	int target = wt == 0x0C || wt == 0x8F ? -1 : pickTarget(actor);
+	int target = wt == 0x0C || wt == 0x8F ? -1 : pickTarget(actor, wt == 6);
 	if (target >= 0) {
 		const World::Obj &t = _world.objects[_world.actorObject(target)];
 		int dx = std::abs((int)t.x - (int)o.x), dy = std::abs((int)t.y - (int)o.y);
