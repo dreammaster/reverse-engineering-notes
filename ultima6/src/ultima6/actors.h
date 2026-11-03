@@ -49,10 +49,15 @@ public:
 private:
 	bool step(int actor, int objIndex, int tx, int ty, int z);
 	bool squareShut(int x, int y, int z) const;
+	bool inWindow(int x, int y, int z, int px, int py, int pz, int &gx, int &gy) const;
+	bool plan(int actor, int tx, int ty, int px, int py, int pz);
+	void follow(int actor, int destX, int destY);
 
 	World &_world;
 	const Movement &_movement;
 	int _walkFrame[ObjList::ACTORS] = {};
+	int _owner[8] = {}, _index[8] = {}, _rep[8] = {};
+	uint8_t _path[8][32] = {};
 };
 
 } // namespace Ultima6

@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <cstring>
 #include <queue>
 #include <vector>
 
@@ -229,6 +230,280 @@ bool ActorManager::step(int actor, int objIndex, int tx, int ty, int z) {
 }
 
 // APPROX(2): not the original's exact behaviour, see docs/approximations.md
+// ---- the path finder of walk_to_schedule_place (28AA7..28F2F), sub_2A0DA, sub_287E4, sub_28369 and wt_walk_path (295ED) ----------------------------------------------------------
+// The 40 x 40 squares around the party (origin ((x - 16) & 0x3F8, (y - 16) & 0x3F8)) get a cost to enter (sub_2A0DA: 0xFF shut, else the terrain's movement number + 1, doors and furniture
+// change it); a search spreads in two waves, from the actor (flag 0) and from the goal (flag 0x80), over a bucket queue indexed by the total cost (the newest square of a bucket comes out
+// first) in the order west, east, north, south, until a square of one wave is reached by the other; then sub_28369 walks back both ways and stores the route as bytes
+// (direction 0-3 for north, east, south, west, and 4 times the number of steps) in one of eight route tables. Actors on worktypes 0x83-0x85 follow that table (wt_walk_path).
+// APPROX(1): only routes that lie inside the 40 x 40 squares are planned; the original also plans from outside (swapping the ends, leaving through an edge: word_4C421), and
+// looks for the nearest object of a type (worktype 0x82, word_4C423); the search of those is not done. The order the objects that change the costs are met in (sub_19E9E) is the order
+// of the object list here.
+bool ActorManager::inWindow(int x, int y, int z, int px, int py, int pz, int &gx, int &gy) const {
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	gx = (x - ((px - 16) & 0x3F8)) & mask;
+	gy = (y - ((py - 16) & 0x3F8)) & mask;
+	return z == pz && gx < 40 && gy < 40;
+}
+
+bool ActorManager::plan(int actor, int tx, int ty, int px, int py, int pz) {
+	int k = _world.actorObject(actor);
+	const World::Obj &o = _world.objects[k];
+	int ax, ay, gx, gy;
+	if (!inWindow(o.x, o.y, o.z, px, py, pz, ax, ay) || !inWindow(tx, ty, o.z, px, py, pz, gx, gy))
+		return false;
+	int left = (px - 16) & 0x3F8, top = (py - 16) & 0x3F8;
+	int mask = o.z == 0 ? 0x3FF : 0xFF;
+	const TileFlags &tf = _world.flags;
+	const int T = TileFlags::TILES - 1;
+	// the costs (sub_2A0DA)
+	uint8_t cost[40][40];
+	int terrain[40][40];
+	for (int y = 0; y < 40; ++y)
+		for (int x = 0; x < 40; ++x) {
+			int tile = _world.map.tile(o.z, (left + x) & mask, (top + y) & mask) & T;
+			terrain[y][x] = tile;
+			uint8_t f = tf.flags1[tile];
+			cost[y][x] = (f & 2) ? 0xFF : (uint8_t)((f >> 4) + 1);
+		}
+	auto mark = [&](int tile, int x, int y) { // sub_29FD5
+		tile &= T;
+		uint8_t f = tf.flags1[tile];
+		if (cost[y][x] == 0xFF) {
+			if ((tf.flags1[terrain[y][x]] & 1) && !(f & 2))
+				cost[y][x] = (uint8_t)((f >> 4) + 1);
+		} else if (f & 2) {
+			cost[y][x] = 0xFF;
+		} else if (!(f & 4)) {
+			cost[y][x] = (uint8_t)std::min(0xFF, cost[y][x] + (f >> 4));
+		}
+	};
+	for (size_t i = 0; i < _world.objects.size(); ++i) {
+		const World::Obj &ob = _world.objects[i];
+		if (ob.deleted || !ob.onMap() || ob.z != o.z)
+			continue;
+		int x = (ob.x - left) & mask, y = (ob.y - top) & mask;
+		if (x >= 40 || y >= 40)
+			continue;
+		int tile = _world.baseTile.firstTile[ob.type] + ob.frame;
+		uint8_t f2 = tf.flags2[tile & T];
+		if (ob.type >= 0x129 && ob.type <= 0x12C) {
+			if (ob.frame < 8 && cost[y][x] < 0xFF)
+				++cost[y][x];
+			else
+				cost[y][x] = 0xFF;
+			if (f2 & 0x40) {
+				if (y)
+					cost[y - 1][x] = 0xFF;
+			} else if (x) {
+				cost[y][x - 1] = 0xFF;
+			}
+		} else if (ob.type == 0x116 || ob.type == 0x118) {
+			if (cost[y][x] < 0xFF)
+				++cost[y][x];
+		} else if (ob.actor < 0) {
+			mark(tile, x, y);
+			if (f2 & 0x80) {
+				if (x)
+					mark(tile - 1, x - 1, y);
+				if ((f2 & 0x40) && y)
+					mark(tile - 2, x, y - 1);
+				if ((f2 & 0x40) && x && y)
+					mark(tile - 3, x - 1, y - 1);
+			} else if ((f2 & 0x40) && y) {
+				mark(tile - 1, x, y - 1);
+			}
+		}
+	}
+	// the search (sub_287E4)
+	uint8_t visit[40][40];
+	std::memset(visit, 0xFF, sizeof visit);
+	int head[256], next[256], nodeX[256], nodeY[256];
+	for (int i = 0; i < 256; ++i) {
+		head[i] = -1;
+		next[i] = i + 1;
+	}
+	next[255] = -1;
+	int freeHead = 0, maxBucket = 0, cur = 0;
+	bool found = false;
+	int slot = -1;
+	for (int s = 0; s < 8; ++s) { // sub_29B97: the first table that is free (or whose walker has stopped walking)
+		if (_owner[s] && !(_world.actors.worktype[_owner[s]] >= 0x83 && _world.actors.worktype[_owner[s]] <= 0x86))
+			_owner[s] = 0;
+		if (!_owner[s]) {
+			slot = s;
+			break;
+		}
+	}
+	if (slot < 0)
+		return false;
+	static const int DX4[4] = {0, 1, 0, -1}, DY4[4] = {-1, 0, 1, 0};
+	auto trace = [&](int x, int y) { // sub_28369
+		uint8_t *p = _path[slot];
+		int len = 0, ox = x, oy = y;
+		p[0] = 0;
+		int dirLast = 0;
+		while (visit[y][x] != 0) {
+			int best = 0xFF, bd = 0;
+			for (int s = 0; s < 4; ++s) {
+				int nx = x + DX4[s], ny = y + DY4[s];
+				if (nx < 0 || nx > 39 || ny < 0 || ny > 39)
+					continue;
+				int v = visit[ny][nx];
+				if (v < best || (v == best && dirLast == s)) {
+					best = v;
+					bd = s;
+				}
+			}
+			x += DX4[bd];
+			y += DY4[bd];
+			dirLast = bd;
+			if (len && (p[0] & 3) == (bd ^ 2)) {
+				p[0] += 4;
+			} else {
+				if (len < 31)
+					++len;
+				for (int i = len; i > 0; --i)
+					p[i] = p[i - 1];
+				p[0] = (uint8_t)((bd ^ 2) + 4);
+			}
+		}
+		x = ox;
+		y = oy;
+		visit[y][x] = 0xFF;
+		dirLast = 0;
+		while (visit[y][x] > 0x80) {
+			int best = 0xFF, bd = 0;
+			for (int s = 0; s < 4; ++s) {
+				int nx = x + DX4[s], ny = y + DY4[s];
+				if (nx < 0 || nx > 39 || ny < 0 || ny > 39 || visit[ny][nx] < 0x80)
+					continue;
+				int v = visit[ny][nx];
+				if (v < best || (v == best && dirLast == s)) {
+					best = v;
+					bd = s;
+				}
+			}
+			x += DX4[bd];
+			y += DY4[bd];
+			dirLast = bd;
+			if (len >= 31)
+				break;
+			if (len && (p[len - 1] & 3) == bd)
+				p[len - 1] += 4;
+			else
+				p[len++] = (uint8_t)(bd + 4);
+		}
+		p[len] = 0;
+	};
+	auto insert = [&](int c, int x, int y, int flag) {
+		if (found || c > 0x7F || x < 0 || x > 39 || y < 0 || y > 39)
+			return;
+		int v = visit[y][x];
+		if (v != 0xFF && (v & 0x80) != flag) {
+			found = true;
+			trace(x, y);
+			return;
+		}
+		if ((visit[y][x] & 0x7F) <= c)
+			return;
+		int n = freeHead;
+		if (n < 0)
+			return;
+		if (c > maxBucket)
+			maxBucket = c;
+		freeHead = next[n];
+		next[n] = head[c];
+		nodeX[n] = x;
+		nodeY[n] = y;
+		head[c] = n;
+		visit[y][x] = (uint8_t)(c | flag);
+	};
+	insert(0, ax, ay, 0);
+	insert(0, gx, gy, 0x80);
+	while (head[cur] >= 0 && !found) {
+		int n = head[cur];
+		head[cur] = next[n];
+		int x = nodeX[n], y = nodeY[n];
+		next[n] = freeHead;
+		freeHead = n;
+		int flag = visit[y][x] & 0x80, d = visit[y][x] & 0x7F;
+		auto c = [&](int cx, int cy) { return cx < 0 || cx > 39 || cy < 0 || cy > 39 ? 0xFF : (int)cost[cy][cx]; };
+		insert(d + c(x - 1, y), x - 1, y, flag);
+		insert(d + c(x + 1, y), x + 1, y, flag);
+		insert(d + c(x, y - 1), x, y - 1, flag);
+		insert(d + c(x, y + 1), x, y + 1, flag);
+		if (head[cur] < 0)
+			while (cur < maxBucket && head[cur] < 0)
+				++cur;
+	}
+	ObjList &a = _world.actors;
+	if (!found) {
+		if (a.worktype[actor] == 0x81)
+			a.worktype[actor] = 0x86;
+		return true;
+	}
+	a.worktype[actor] = 0x83;
+	a.unknown18f1[actor] = (uint8_t)slot;
+	_owner[slot] = actor;
+	_index[slot] = 0;
+	_rep[slot] = 0;
+	return true;
+}
+
+// wt_walk_path: one step along the actor's table; when the table is used up the actor is at its place (or plans again), and a blocked step is tried again twice (0x83 -> 0x84 -> 0x85) before it gives up (0x86)
+void ActorManager::follow(int actor, int destX, int destY) {
+	ObjList &a = _world.actors;
+	int slot = a.unknown18f1[actor] & 7;
+	int entry = _path[slot][_index[slot] & 31];
+	int k = _world.actorObject(actor);
+	const World::Obj o = _world.objects[k];
+	if (entry == 0) {
+		_owner[slot] = 0;
+		if (std::max(std::abs(o.x - destX), std::abs(o.y - destY)) < 2) {
+			const Schedule &sc = _world.schedule;
+			Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
+			a.worktype[actor] = (uint8_t)e.worktype;
+		} else {
+			a.worktype[actor] = GO_TO_SCHEDULE;
+		}
+		_world.spendMoves(actor, 5);
+		return;
+	}
+	int dir = (entry & 3) * 2;
+	_world.spendMoves(actor, _world.moveCost(o.x, o.y, o.z));
+	int mask = o.z == 0 ? 0x3FF : 0xFF;
+	int nx = (o.x + DX[dir]) & mask, ny = (o.y + DY[dir]) & mask;
+	MoveRules rules;
+	rules.partyMayShuffle = false;
+	if (_movement.check(nx, ny, o.z, k, rules).passable) {
+		_world.moveObject(k, nx, ny, o.z);
+		a.movementFlags[actor] = (uint8_t)((a.movementFlags[actor] & ~7) | dir);
+		face(actor, dir);
+		if ((entry >> 2) <= ++_rep[slot]) {
+			++_index[slot];
+			_rep[slot] = 0;
+		}
+		a.worktype[actor] = 0x83;
+		return;
+	}
+	if (a.worktype[actor] == 0x83) {
+		a.worktype[actor] = 0x84;
+		a.moves[actor] = 0;
+	} else if (a.worktype[actor] == 0x84) {
+		a.worktype[actor] = 0x85;
+		a.moves[actor] = 0;
+	} else if (a.worktype[actor] == 0x85) {
+		a.worktype[actor] = 0x86;
+		a.moves[actor] = 0;
+		_owner[slot] = 0;
+		if (o.x + DX[dir] == destX && o.y + DY[dir] == destY) {
+			const Schedule &sc = _world.schedule;
+			Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
+			a.worktype[actor] = (uint8_t)e.worktype;
+		}
+	}
+}
+
 void ActorManager::scheduleUpdate(int px, int py, int pz) {
 	const Schedule &sc = _world.schedule;
 	ObjList &a = _world.actors;
@@ -244,8 +519,8 @@ void ActorManager::scheduleUpdate(int px, int py, int pz) {
 			a.worktype[actor] = (uint8_t)e.worktype;
 			continue;
 		}
-		bool near = o.z == pz && e.z == pz && std::abs(o.x - px) <= NEAR && std::abs(o.y - py) <= NEAR && std::abs(e.x - o.x) < 20 &&
-					std::abs(e.y - o.y) < 20;
+		int g1, g2;
+		bool near = inWindow(o.x, o.y, o.z, px, py, pz, g1, g2) && inWindow(e.x, e.y, e.z, px, py, pz, g1, g2);
 		if (near)
 			continue; // it walks, a step whenever the scheduler gives it a turn
 		// far from the party: put the actor in its place (or next to it)
@@ -269,27 +544,27 @@ void ActorManager::scheduleUpdate(int px, int py, int pz) {
 }
 
 void ActorManager::act(int actor, int px, int py, int pz) {
-	(void)px;
-	(void)py;
 	ObjList &a = _world.actors;
 	int k = _world.actorObject(actor);
-	if (k < 0 || a.worktype[actor] != GO_TO_SCHEDULE) {
+	int wt = a.worktype[actor];
+	if (k < 0 || !(wt == GO_TO_SCHEDULE || (wt >= 0x83 && wt <= 0x85))) {
 		a.moves[actor] = 0; // nothing to do this minute
 		return;
 	}
 	const Schedule &sc = _world.schedule;
 	Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
 	const World::Obj o = _world.objects[k];
+	if (wt != GO_TO_SCHEDULE) {
+		follow(actor, e.x, e.y);
+		return;
+	}
 	if (o.x == e.x && o.y == e.y && o.z == e.z) {
 		a.worktype[actor] = (uint8_t)e.worktype;
 		a.moves[actor] = 0;
 		return;
 	}
-	int cost = _world.moveCost(o.x, o.y, o.z);
-	if (o.z == pz && step(actor, k, e.x, e.y, e.z))
-		_world.spendMoves(actor, cost);
-	else
-		a.moves[actor] = 0; // no way: wait
+	if (!plan(actor, e.x, e.y, px, py, pz))
+		a.moves[actor] = 0; // out of the window or all tables in use: wait
 }
 
 } // namespace Ultima6
