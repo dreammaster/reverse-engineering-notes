@@ -95,7 +95,8 @@ void Game::minutePassed() {
 		explodeKeg();
 	actorStatusDecay();
 	partyHazards();
-	_creatures.partyFights();
+	if (!_combatMode)
+		_creatures.partyFights();
 	_creatures.despawn(x, y, z);
 	_creatures.checkEggs(x, y, z, clock.hour);
 	if (_world.actors.hp[1] == 0 && !_dead) {
@@ -169,7 +170,7 @@ void Game::runTurns() {
 		}
 		if (best == leader || a.worktype[best] == 2)
 			return; // the player's turn
-		if (best >= Creatures::FIRST_TEMP_ACTOR)
+		if (best >= Creatures::FIRST_TEMP_ACTOR || (a.status[best] & 0x80))
 			_creatures.act(best, x, y, z);
 		else
 			_actors.act(best, x, y, z);
@@ -414,6 +415,10 @@ void Game::command(int key) {
 	case 'M':
 		message("Move-");
 		_pending = 'M';
+		break;
+	case 'X': // the Combat command (event 0x8A of command_loop, 14178): the party fights by its members' own combat worktypes, or follows again
+		toggleCombat();
+		prompt();
 		break;
 	case 'R':
 		message("Rest");

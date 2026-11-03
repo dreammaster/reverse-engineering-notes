@@ -993,6 +993,26 @@ void Game::drawGem(Framebuffer &screen) const {
 	}
 }
 
+// sub_2B0B8 / sub_2B1AC: "Begin combat!" gives every member (but the one the player controls) the combat worktype kept in the objlist (+0x12F1: 3 front, 4 rear, 5 flank ...);
+// "Break off combat!" makes the living members followers (worktype 1) again and the dead ones motionless (0).
+// APPROX(65): the combat worktypes act as wt_combat_assault does (the originals, wt_combat_front 2E454, wt_combat_rear 2E4B9 and wt_combat_flank 2E7E2, are not traced); the key (X) is mine
+void Game::toggleCombat() {
+	ObjList &a = _world.actors;
+	if (a.partySize < 2) {
+		message("Not in party mode!\n");
+		return;
+	}
+	_combatMode = !_combatMode;
+	message(_combatMode ? "Begin combat!\n" : "Break off combat!\n");
+	for (int m = 1; m < a.partySize; ++m) {
+		int actor = a.partyRoster[m];
+		if (a.status[actor] & 0x10)
+			a.worktype[actor] = 0;
+		else
+			a.worktype[actor] = _combatMode ? (a.unknown12f1[actor] ? a.unknown12f1[actor] : 3) : 1;
+	}
+}
+
 // use_silver_horn (3525F): three times a spot is looked for at the edge of the view (a random side, a random place along it) where a silver serpent (0x19D) and the
 // squares around it can be entered; an egg with a serpent there is hatched at once (status 0x60: the serpent fights both sides). Not while serpents are about.
 // APPROX(62): the egg is skipped and the serpent made directly; its placement search and the egg's counts (4-8 inside, one hatched) follow the disassembly only roughly

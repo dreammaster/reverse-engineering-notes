@@ -303,8 +303,6 @@ int Creatures::pickTarget(int actor) {
 // a target of the other side is fought when it is in reach (the distance table at ds:196C against the weapon's range, 10 moves for a blow) and approached otherwise;
 // with no target the creature wanders, or (worktype 3) passes. APPROX(57): the line-of-fire test (sub_2BB2F) and the side step it causes are left out.
 void Creatures::act(int actor, int px, int py, int pz) {
-	(void)px;
-	(void)py;
 	(void)pz;
 	static const uint8_t DIST[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
 									   {4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
@@ -327,7 +325,7 @@ void Creatures::act(int actor, int px, int py, int pz) {
 		if (dx < 8 && dy < 8 && DIST[dx][dy] <= Combat::rangeOf(_combat.weaponType(actor))) {
 			_combat.attack(actor, target);
 			_world.spendMoves(actor, 10);
-		} else if (wt != 3) {
+		} else if (wt != 3 || (a.status[actor] & 0x80)) {
 			stepToward(actor, t.x, t.y);
 		} else {
 			_world.spendMoves(actor, 5);
@@ -338,7 +336,12 @@ void Creatures::act(int actor, int px, int py, int pz) {
 		_world.spendMoves(actor, 5);
 		return;
 	}
-	// wt_wander (2954B): one turn in eight a step in a random one of the four directions, otherwise five moves are passed
+	// wt_wander (2954B): a party member that is not on the leader's square walks towards the leader one turn in four
+	if ((a.status[actor] & 0x80) && !(o.x == px && o.y == py) && _rng.next() % 4 == 0) {
+		stepToward(actor, px, py);
+		return;
+	}
+	// ... otherwise one turn in eight a step in a random one of the four directions, five moves passed else
 	if (_rng.next() % 8 == 0)
 		stepDir(actor, (_rng.next() % 4) * 2);
 	else

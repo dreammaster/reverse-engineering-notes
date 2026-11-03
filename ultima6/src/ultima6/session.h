@@ -117,6 +117,8 @@ private:
 	void buryMoonstone(int idx);
 	void digAt(int key);
 	void telescopeAt(int key);
+	void toggleCombat();
+	bool _combatMode = false;
 	void drawGem(Framebuffer &screen) const;
 	bool _gem = false; // the overhead map of a gem is on the screen until a key is pressed
 	int vehicleDirection(int requested);

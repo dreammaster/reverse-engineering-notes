@@ -428,6 +428,18 @@ int main() {
 		gg.render(fb);
 	}
 
+	// the Combat command: members take their combat worktypes and then follow again
+	{
+		World wc;
+		wc.load("u6/game");
+		Game gc(wc);
+		int second = wc.actors.partyRoster[1];
+		gc.handleKey('x');
+		CHECK(wc.actors.worktype[second] == wc.actors.unknown12f1[second]);
+		gc.handleKey('x');
+		CHECK(wc.actors.worktype[second] == 1);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }
