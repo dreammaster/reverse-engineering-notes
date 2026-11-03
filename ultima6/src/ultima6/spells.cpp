@@ -677,6 +677,53 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		message("\nSuccess\n");
 		return true;
 	}
+	case 104: { // Wing Strike (sub_2502C): every living, visible creature of the evil side within five squares of the party takes 1-20 as the wings fly past; "No foes." if there is none
+		bool any = false;
+		for (int t = 0; t < ObjList::ACTORS; ++t) {
+			int tk = _world.actorObject(t);
+			if (tk < 0 || _world.objects[tk].deleted || (a.status[t] & 0x10) || (_world.objects[tk].status & 0x02) || _world.objects[tk].z != z)
+				continue;
+			int side = a.status[t] & 0x60;
+			if (side != 0x20 && side != 0x60)
+				continue;
+			if (std::abs((int)_world.objects[tk].x - x) > 5 || std::abs((int)_world.objects[tk].y - y) > 5)
+				continue;
+			_combat.applyDamage(caster, t, 1 + (int)(_rng.next() % 20));
+			any = true;
+		}
+		_spellQuiet = true;
+		if (!any)
+			message("\nNo foes.\n");
+		return true;
+	}
+	case 118: { // Slime (sub_233B4): within five squares of the party every creature of the evil side (status 0x60 = 0x20) that does not resist (and is not flagged 0x200, the Avatar excepted) turns into slime (0x177); its pack is lost from actor 0xE0 on
+		for (int t = 0; t < ObjList::ACTORS; ++t) {
+			int tk = _world.actorObject(t);
+			if (tk < 0 || _world.objects[tk].deleted || _world.objects[tk].z != z || (a.status[t] & 0x60) != 0x20)
+				continue;
+			if (std::abs((int)_world.objects[tk].x - x) > 5 || std::abs((int)_world.objects[tk].y - y) > 5)
+				continue;
+			if (_combat.resists(t, caster))
+				continue;
+			int cls = MovementClasses::classOf(_world.objects[tk].type);
+			if (cls >= 0 && (MovementClasses::flags(cls) & 0x200) && cls != 1)
+				continue;
+			_world.objects[tk].type = 0x177;
+			_world.objects[tk].frame = 0;
+			if (t >= 0xE0) {
+				std::vector<int> pack;
+				_world.inventory(t, pack, true);
+				for (int i : pack)
+					_world.deleteObject(i);
+			}
+		}
+		_spellQuiet = true;
+		return true;
+	}
+	case 73: // X-ray (sub_241CC): the walls turn transparent for a moment (not drawn here), then "Done"
+		message("\nDone\n");
+		_spellQuiet = true;
+		return true;
 	case 66: { // Insect Swarm (sub_2458F): eight swarms (0x157) of the caster's side, each put on the first of eight random squares within five of the party that it may enter (else it is let go), worktype 8
 		for (int swarm = 0; swarm < 8; ++swarm)
 			for (int tries = 0; tries < 8; ++tries) {
