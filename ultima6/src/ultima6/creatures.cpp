@@ -318,6 +318,43 @@ void Creatures::act(int actor, int px, int py, int pz) {
 		_world.spendMoves(actor, 5);
 		return;
 	}
+	// wt_combat_retreat (2EEC2, worktypes 7, 9, 0x13, 0x9A): too far from the leader (more than 7) it stops; otherwise it keeps away from the nearest other actor (the point
+	// opposite to it) when that one is within 8 squares (worktype 7) or 3 (the others), fighting back when cornered (except 9 and 0x9A), or wanders; a retreating (7) creature
+	// recovers a hit point one turn in four and returns to its combat worktype once it has a quarter of its hit points
+	if (wt == 7 || wt == 9 || wt == 0x13 || wt == 0x9A) {
+		if (std::max(std::abs((int)o.x - px), std::abs((int)o.y - py)) > 7) {
+			a.worktype[actor] = 0;
+			return;
+		}
+		int foe = pickTarget(actor);
+		if (foe < 0) {
+			if (_rng.next() % 8 == 0)
+				stepDir(actor, (_rng.next() % 4) * 2);
+			else
+				_world.spendMoves(actor, 5);
+		} else {
+			const World::Obj &t = _world.objects[_world.actorObject(foe)];
+			int dx = (int)t.x - (int)o.x, dy = (int)t.y - (int)o.y, range = wt == 7 ? 8 : 3;
+			if (std::abs(dx) < range && std::abs(dy) < range) {
+				if (!stepToward(actor, o.x - dx, o.y - dy) && wt != 9 && wt != 0x9A && std::max(std::abs(dx), std::abs(dy)) <= 1) {
+					_combat.attack(actor, foe);
+					_world.spendMoves(actor, 10);
+				}
+			} else if ((a.status[actor] & 0x60) == 0x40 && wt != 9 && wt != 0x9A) {
+				stepToward(actor, px, py);
+			} else {
+				_world.spendMoves(actor, 5);
+			}
+		}
+		if (wt == 7 && _rng.next() % 4 == 0) {
+			int most = std::max(1, std::min(255, a.level[actor] * 30));
+			if (most > a.hp[actor])
+				++a.hp[actor];
+			if (a.hp[actor] * 4 / most > 0)
+				a.worktype[actor] = a.unknown12f1[actor] ? a.unknown12f1[actor] : 8;
+		}
+		return;
+	}
 	int target = wt == 0x0C || wt == 0x8F ? -1 : pickTarget(actor);
 	if (target >= 0) {
 		const World::Obj &t = _world.objects[_world.actorObject(target)];

@@ -170,7 +170,9 @@ void Game::runTurns() {
 		}
 		if (best == leader || a.worktype[best] == 2)
 			return; // the player's turn
-		if (best >= Creatures::FIRST_TEMP_ACTOR || (a.status[best] & 0x80))
+		int bw = a.worktype[best];
+		bool fighting = (bw >= 3 && bw <= 0x0C) || bw == 0x0E || bw == 0x13 || bw == 0x8F || bw == 0x99 || bw == 0x9A || bw == 0x9B;
+		if (best >= Creatures::FIRST_TEMP_ACTOR || (a.status[best] & 0x80) || fighting)
 			_creatures.act(best, x, y, z);
 		else
 			_actors.act(best, x, y, z);
