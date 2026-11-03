@@ -561,6 +561,32 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		_spellQuiet = true;
 		return true;
 	}
+	case 48: { // Animate (sub_223BC case 0x30, sub_1D766): the object must be a statue (its tile is one of those the table lists); a creature of the statue's own object type is made where it
+		// stands (a statue has no creature numbers, so the plain ones: 10 for each and 30 hit points), on the caster's side, fighting (worktype 8), and the statue goes
+		static const uint16_t STATUES[33] = {0x220, 0x221, 0x223, 0x224, 0x225, 0x226, 0x227, 0x22a, 0x22f, 0x230, 0x238, 0x254, 0x256, 0x255, 0x259, 0x262, 0x263,
+											 0x264, 0x270, 0x271, 0x272, 0x273, 0x274, 0x275, 0x279, 0x27d, 0x27e, 0x27f, 0x280, 0x281, 0x2a2, 0x2a3, 0x2b9};
+		bool statue = false;
+		if (object >= 0) {
+			int tile = _world.baseTile.firstTile[_world.objects[object].type] + _world.objects[object].frame;
+			statue = tile == 0x21A || tile == 0x21B || tile == 0x258 || (tile >= 0x37D && tile <= 0x37F) || tile == 0x219 || (tile >= 0x250 && tile <= 0x252) || tile == 0x217 ||
+					 tile == 0x101 || (tile >= 0x200 && tile <= 0x207) || (tile >= 0x210 && tile <= 0x216) || tile == 0x218 || tile == 0x28C || tile == 0x28E || tile == 0x29D ||
+					 tile == 0x257 || tile == 0x228 || tile == 0x229 || tile == 0x231 || tile == 0x235 || (tile >= 0x22B && tile <= 0x22E) || (tile >= 0x208 && tile <= 0x20F) || tile == 0x222;
+			for (uint16_t t : STATUES)
+				statue |= t == tile;
+		}
+		if (!statue) {
+			message("\nNo effect\n");
+			_spellQuiet = true;
+			return true;
+		}
+		int n = _creatures.spawn(_world.objects[object].type, 8, _world.objects[object].x, _world.objects[object].y, z);
+		if (n >= 0) {
+			a.status[n] = (uint8_t)((a.status[n] & 0x9F) | (a.status[caster] & 0x60));
+			a.worktype[n] = 8;
+			_world.deleteObject(object);
+		}
+		return true;
+	}
 	case 7: { // Help (sub_1890C): the dead of the party are raised, all the party is cured and healed, the party goes to 307,352 on the surface (Lord British's court) and time passes in
 		// quarters of an hour until it is held (hours 8-11 and 14-17)
 		for (int actor = 0; actor < 0xE0; ++actor)
