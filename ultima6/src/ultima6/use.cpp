@@ -186,6 +186,8 @@ void Game::useObject(int idx) {
 		_textMax = 4;
 		_textPurpose = 1;
 		return;
+	} else if (type == 0x139) {
+		useSilverHorn();
 	} else if (type == 0x116 || type == 0x118) {
 		// operate_passthrough (35482): frame 0 is shut; opening slides it one square north (0x116) or west (0x118) and sets bit 1 of the frame, shutting slides it back
 		// unless somebody stands in that square
@@ -891,6 +893,42 @@ void Game::shrineChant(const std::string &mantra) {
 	}
 	message(done ? "\nDone\n" : "\nNo effect\n");
 	_world.spendMoves(actingActor(), 5);
+}
+
+// use_silver_horn (3525F): three times a spot is looked for at the edge of the view (a random side, a random place along it) where a silver serpent (0x19D) and the
+// squares around it can be entered; an egg with a serpent there is hatched at once (status 0x60: the serpent fights both sides). Not while serpents are about.
+// APPROX(62): the egg is skipped and the serpent made directly; its placement search and the egg's counts (4-8 inside, one hatched) follow the disassembly only roughly
+void Game::useSilverHorn() {
+	for (int actor = Creatures::FIRST_TEMP_ACTOR; actor < ObjList::ACTORS; ++actor) {
+		int k = _world.actorObject(actor);
+		if (k >= 0 && !_world.objects[k].deleted && _world.objects[k].type == 0x19D) {
+			message("\nNot now!\n");
+			return;
+		}
+	}
+	int made = 0;
+	MoveRules rules;
+	rules.partyMayShuffle = false;
+	for (int i = 0; i < 3; ++i) {
+		for (int tries = 0; tries < 8; ++tries) {
+			int side = _rng.next() % 4, r = _rng.next() % 11;
+			int sx = side == 1 ? x + r - 6 : side == 2 ? x + 7 : side == 3 ? x + r - 6 : x - 7;
+			int sy = side == 1 ? y - 7 : side == 2 ? y + r - 6 : side == 3 ? y + 6 : y + r - 6;
+			static const int OFF[6][2] = {{0, 0}, {-1, 0}, {0, 1}, {-1, 1}, {1, 0}, {0, -1}};
+			bool open = true;
+			for (const auto &o : OFF)
+				open &= _movement.check(sx + o[0], sy + o[1], z, _leaderObject, rules).passable;
+			if (!open)
+				continue;
+			int actor = _creatures.spawn(0x19D, 0x08, sx, sy, z);
+			if (actor >= 0) {
+				_world.actors.status[actor] = (uint8_t)((_world.actors.status[actor] & 0x9F) | 0x60);
+				++made;
+			}
+			break;
+		}
+	}
+	message(made ? "\nSilver snakes are generated!\n" : "\nNone generated!\n");
 }
 
 // A number of degrees followed by a letter (sub_2F895): `plus` makes it positive, `minus` negative.

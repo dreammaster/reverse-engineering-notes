@@ -383,6 +383,32 @@ int main() {
 		CHECK(!wa.resurrect(2));
 	}
 
+	// the silver horn makes serpents (0x19D) and then refuses
+	{
+		World wh;
+		wh.load("u6/game");
+		Game gh(wh);
+		put(wh, 0x139, 0, gh.x + 1, gh.y, 0);
+		gh.handleKey('u');
+		gh.handleKey(KEY_RIGHT);
+		int snakes = 0;
+		for (int a = 0xE0; a < 256; ++a) {
+			int k = wh.actorObject(a);
+			snakes += k >= 0 && !wh.objects[k].deleted && wh.objects[k].type == 0x19D;
+		}
+		std::string text;
+		for (const std::string &l : gh.log)
+			text += l;
+		CHECK(snakes > 0 ? text.find("generated") != std::string::npos : text.find("None generated") != std::string::npos);
+		gh.handleKey('u');
+		gh.handleKey(KEY_RIGHT);
+		text.clear();
+		for (const std::string &l : gh.log)
+			text += l;
+		if (snakes > 0)
+			CHECK(text.find("Not now!") != std::string::npos);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }
