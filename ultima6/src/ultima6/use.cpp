@@ -427,11 +427,13 @@ void Game::useLever(int idx) {
 	message(result == 1 ? "you hear a noise.\n" : result == 2 ? "can't close the portcullis.\n" : "strange, nothing happened.\n");
 }
 
-// APPROX(30): ladders as in Nuvie (the original's climb_ladder, 186DE, is not traced)
+// climb_ladder (186DE): the squares come out exactly as the original computes them (surface chunk of the 4 x 4 around a dungeon ladder named by the quality bits); the sound, time
+// advance and the `sub_183B2` / `sub_185BE` bookkeeping are not done
 void Game::useLadder(int idx) {
 	const World::Obj o = _world.objects[idx];
 	int nx = o.x, ny = o.y, nz = o.z;
-	if (o.frame == 0) { // down
+	bool down = z == 0 ? true : (z == 5 || o.frame == 1 ? false : true); // climb_ladder 186F2: on the surface always down, on level 5 always up, else by the ladder's frame
+	if (down) { // down
 		if (o.z == 0) {
 			nx = (o.x & 0x07) | ((o.x >> 2) & 0xF8);
 			ny = (o.y & 0x07) | ((o.y >> 2) & 0xF8);

@@ -63,6 +63,6 @@ No spellbook is readied.
 | P4 | Egg hatching: **partly traced** (`sub_366B0`, `sub_36D4E`: hour windows, chance, counts, used eggs, side bits, eggs within 8 squares left alone, see approximations #19) | `core/egg_manager.cpp` | the scan window and placement |
 | P5 | Per-minute hazards, torches, hourly magic points | `script/u6/actor.cpp` `advanceTime` | `sub_13305` |
 | P6 | Conversation interpreter details, keyword matching | `core/converse_interpret.cpp` | `conv_execute_command` (201EB), `conv_read_value` (1F1BE) |
-| P7 | ~~Door and ladder use~~ | **done for doors, chests, levers and switches** (#21, #22, `use_lever`, `use_switch` exact); ladders still follow Nuvie | `use_lever`, `use_switch`, `climb_ladder` |
+| P7 | ~~Door and ladder use~~ | **done for doors, chests, levers and switches** (#21, #22, `use_lever`, `use_switch` exact); ladders done as `climb_ladder` (the type 106 difference stays) | `use_lever`, `use_switch`, `climb_ladder` |
 | P8 | Walking frames and facing | `actors/actor.cpp` `set_direction` | `sub_263D4` |
 | P9 | Time-of-day words, party limit | `core/converse.cpp`, `core/party.cpp` | `sub_1EA97`, party join code |
