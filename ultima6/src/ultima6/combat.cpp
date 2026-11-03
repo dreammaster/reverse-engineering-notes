@@ -109,6 +109,21 @@ int Combat::adjustedDexterity(int actor) const {
 	return v;
 }
 
+int Combat::adjustedIntelligence(int actor) const {
+	if (actor < 0 || actor >= ObjList::ACTORS)
+		return 1;
+	int k = _world.actorObject(actor);
+	int v = _world.actors.intelligence[actor];
+	if (k >= 0 && (_world.objects[k].status & 0x40))
+		v = v - 3 < 1 ? 1 : v - 3;
+	return v;
+}
+
+bool Combat::resists(int target, int caster) {
+	int x = adjustedIntelligence(target) / 2 + 15 - adjustedIntelligence(caster);
+	return x > random(1, 30);
+}
+
 bool Combat::hitCheck(int attacker, int defender, int weapon) {
 	int ka = _world.actorObject(attacker), kd = _world.actorObject(defender);
 	if (ka < 0 || kd < 0)

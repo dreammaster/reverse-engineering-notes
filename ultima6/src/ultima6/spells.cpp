@@ -43,11 +43,21 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		message("Create " + std::to_string(n) + " food.\n");
 		return true;
 	}
-	case 20: // Sleep
+	case 20: { // Sleep (sub_21B90): creatures with flag 1 say "No effect"; the target may resist ("Failed"); else it sleeps, without a word
 		if (target < 0)
 			return false;
+		const CreatureStats *cs = Combat::stats(_world.objects[_world.actorObject(target)].type);
+		if (cs && (cs->flags & 1)) {
+			message("\nNo effect\n");
+			return true;
+		}
+		if (_combat.resists(target, caster)) {
+			message("\nFailed\n");
+			return true;
+		}
 		a.status[target] |= 0x04;
 		return true;
+	}
 	case 32: // Curse
 		if (target < 0)
 			return false;
@@ -211,10 +221,14 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		a.status[target] &= ~0x01;
 		_world.objects[_world.actorObject(target)].status &= ~(0x02 | 0x40);
 		return true;
-	case 50: // Disable
+	case 50: // Disable (sub_21CB4 with 0x32): unless resisted the target is left with one hit point
 		if (target < 0)
 			return false;
-		a.status[target] |= 0x02;
+		if (_combat.resists(target, caster)) {
+			message("\nFailed\n");
+			return true;
+		}
+		_combat.applyDamage(caster, target, a.hp[target] - 1 > 0 ? a.hp[target] - 1 : 0);
 		return true;
 	case 80: // Charm: the target takes the party's side
 		if (target < 0)

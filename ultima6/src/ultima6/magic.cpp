@@ -140,10 +140,14 @@ bool Magic::cast(int caster, const SpellInfo &spell, int target) {
 	int index = spell.index();
 	std::vector<uint8_t> &g = a.globals;
 	switch (index) {
-	case 5: // Harm
+	case 5: // Harm (sub_21CB4): resisted, else 1-10 points
 		if (!haveTarget)
 			break;
-		_combat.applyDamage(caster, target, 5);
+		if (_combat.resists(target, caster)) {
+			_scroll.print("\nFailed\n");
+			return true;
+		}
+		_combat.applyDamage(caster, target, random(1, 10));
 		return true;
 	case 6: // Heal
 		if (!haveTarget || a.hp[target] == 0)
@@ -164,31 +168,31 @@ bool Magic::cast(int caster, const SpellInfo &spell, int target) {
 	case 16: // Infravision
 		g[0x12 + TIMER_INFRAVISION] = 20;
 		return true;
-	case 17: { // Magic Arrow
+	case 17: { // Magic Arrow (sub_21C45, sub_21338): a miss when half the target's dexterity + 30 less the caster's intelligence, halved, beats a roll of 1-30; else 1-10 points
 		if (!haveTarget)
 			break;
-		int dex = a.dexterity[target], intel = a.intelligence[caster];
-		if (((dex / 2.0f) + 30 - intel) / 2 <= random(1, 30)) {
-			_combat.applyDamage(caster, target, random(1, 10));
+		int x = (_combat.adjustedDexterity(target) / 2 + 30 - _combat.adjustedIntelligence(caster)) / 2;
+		if (x > random(1, 30)) {
+			_scroll.print("\nFailed\n");
 			return true;
 		}
-		_scroll.print("\nFailed\n");
+		_combat.applyDamage(caster, target, random(1, 10));
 		return true;
 	}
-	case 18: { // Poison
+	case 18: { // Poison (sub_21BF2, sub_212F2): immune creatures (flag 4) say "No effect"; the target resists when half its strength + 30 less the caster's intelligence, halved, beats a roll of 1-30
 		if (!haveTarget)
 			break;
 		const CreatureStats *s = Combat::stats(_world.objects[tk].type);
-		if (!s || (s->flags & (1 << 12))) {
+		if (s && (s->flags & 4)) {
 			_scroll.print("\nNo effect\n");
 			return true;
 		}
-		if (((a.strength[target] / 2 + 30 - a.intelligence[caster]) / 2) <= random(1, 30)) {
-			a.status[target] |= 0x08;
-			_scroll.print("\n" + _combat.nameOf(target) + " poisoned!\n");
+		int x = (_combat.adjustedStrength(target) / 2 + 30 - _combat.adjustedIntelligence(caster)) / 2;
+		if (x > random(1, 30)) {
+			_scroll.print("\nFailed\n");
 			return true;
 		}
-		_scroll.print("\nFailed\n");
+		a.status[target] |= 0x08;
 		return true;
 	}
 	case 34: // Fireball

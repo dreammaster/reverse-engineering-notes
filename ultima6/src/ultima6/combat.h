@@ -48,6 +48,10 @@ public:
 	std::string nameOf(int actor) const;
 	int adjustedStrength(int actor) const;
 	int adjustedDexterity(int actor) const;
+	/** sub_2B448: the intelligence, less 3 (at least 1) when cursed. */
+	int adjustedIntelligence(int actor) const;
+	/** sub_2B472: whether `target` resists a spell of `caster` (the roll 1-30 is below the target's half intelligence + 15 - the caster's). */
+	bool resists(int target, int caster);
 
 	/** Takes `damage` hit points off the defender (spells and traps too): prints how badly it is hurt, kills it and rewards the attacker. */
 	bool applyDamage(int attacker, int defender, int damage);
