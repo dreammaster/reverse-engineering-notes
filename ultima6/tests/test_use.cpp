@@ -632,6 +632,46 @@ int main() {
 		CHECK(logText(gw).find("Done") != std::string::npos);
 	}
 
+	// Enchant (sub_24810): a staff on the ground takes the spell typed at "With: " as a charge (0x150) whose quality is the spell
+	{
+		World ww;
+		ww.load("u6/game");
+		Game gw(ww);
+		int book = ww.addToInventory(1, 57, 0, 1);
+		ww.objects[book].status = (uint8_t)((ww.objects[book].status & ~0x18) | 0x18);
+		World::Obj spell = ww.objects[book];
+		spell.type = 58;
+		spell.quality = 255;
+		spell.status = 0x08;
+		spell.parent = book;
+		spell.actor = -1;
+		ww.objects.push_back(spell);
+		for (int r = 65; r <= 72; ++r)
+			ww.addToInventory(1, r, 0, 5);
+		ww.actors.level[1] = 8;
+		ww.actors.unknown13f1[1] = 99;
+		int staff = put(ww, 0x4E, 0, gw.x + 1, gw.y, 0);
+		gw.handleKey('c');
+		gw.handleKey('7');
+		gw.handleKey('i');
+		gw.handleKey('o');
+		gw.handleKey('y');
+		gw.handleKey(KEY_ENTER);
+		gw.handleKey(KEY_RIGHT);
+		gw.handleKey(KEY_ENTER);
+		for (char c : std::string("1imy"))
+			gw.handleKey(c);
+		gw.handleKey(KEY_ENTER);
+		int charges = 0, spellIndex = -1;
+		for (const World::Obj &o : ww.objects)
+			if (!o.deleted && o.type == 0x150 && o.parent == staff) {
+				++charges;
+				spellIndex = o.quality;
+			}
+		CHECK(charges == 1 && spellIndex == 0); // Create Food
+		CHECK(logText(gw).find("With: ") != std::string::npos);
+	}
+
 	// Mass Awaken / Mass Protect (sub_2362A): the bolt flies to the target square and whoever stands there is affected; a wall in the way gives "Blocked"
 	{
 		World ww;

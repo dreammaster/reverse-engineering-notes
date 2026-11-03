@@ -98,6 +98,8 @@ void Game::useObject(int idx) {
 			searchHere(idx);
 		else
 			message("\nNot usable\n");
+	} else if (type == 0x4E) {
+		useStaff(idx);
 	} else if (type == 0x62) {
 		if (carried)
 			message("\nNot usable\n");
@@ -814,6 +816,30 @@ void Game::textKey(int key) {
 			_textBuf.clear();
 		_textActive = false;
 		message("\n");
+		if (_textPurpose == 7) { // Enchant: the spell for the staff, as the words of casting (a circle number and the letters)
+			int staff = _useItem;
+			_useItem = -1;
+			const Magic::SpellInfo *spell = _textBuf.size() > 1 ? Magic::find(_textBuf[0] - '0', _textBuf.substr(1)) : nullptr;
+			int caster = actingActor();
+			if (staff < 0 || !spell || !_magic.bookHas(caster, spell->index())) {
+				message("none\n");
+			} else {
+				message(Magic::words(*spell) + "\n");
+				World::Obj charge;
+				charge.status = ObjRecord::IN_CONTAINER;
+				charge.x = charge.y = 0;
+				charge.z = 0;
+				charge.type = 0x150;
+				charge.frame = 0;
+				charge.quantity = 1;
+				charge.quality = (uint8_t)spell->index();
+				charge.actor = -1;
+				charge.parent = staff;
+				_world.objects.push_back(charge);
+			}
+			prompt();
+			return;
+		}
 		if (_textPurpose == 6) { // Gate Travel
 			int n = _textBuf.empty() ? 0 : std::atoi(_textBuf.c_str()); // sub_2F895 reads the digits (up to four were typed)
 			if (n >= 1 && n <= 8)
@@ -1403,6 +1429,33 @@ void Game::moveTo(int key) {
 			o.frame = (uint8_t)(dir >> 1);
 	}
 	prompt();
+}
+
+// sub_32BC7, using a staff: it must be readied; its first charge (0x150, the quality is the spell) names the spell, which is cast as if by the Avatar but at no cost
+// ("With Kal Wis Ylem", then as cast_spell_effect), and the charge is used up
+void Game::useStaff(int idx) {
+	if ((_world.objects[idx].status & 0x18) != 0x18) {
+		message("\nNot readied.\n");
+		return;
+	}
+	int charge = -1;
+	for (size_t i = 0; i < _world.objects.size() && charge < 0; ++i) {
+		const World::Obj &c = _world.objects[i];
+		if (!c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == idx && c.type == 0x150)
+			charge = (int)i;
+	}
+	if (charge < 0) {
+		message("\nNo effect\n");
+		return;
+	}
+	const Magic::SpellInfo *spell = Magic::byIndex(_world.objects[charge].quality);
+	_world.deleteObject(charge);
+	if (!spell) {
+		message("\nNo effect\n");
+		return;
+	}
+	message("With " + Magic::words(*spell) + "\n");
+	castSpell(spell, actingActor(), false);
 }
 
 // The Use command's target: the objects on the square the player points at (cmd_use selects the top one).

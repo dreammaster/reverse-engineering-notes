@@ -68,6 +68,16 @@ std::string Magic::announce(const SpellInfo &spell) const {
 	return out + "\"";
 }
 
+// the syllables of a spell as the staffs and Enchant print them: "Kal Wis Ylem" (sub_32BC7)
+std::string Magic::words(const SpellInfo &spell) {
+	std::string out;
+	for (size_t i = 0; spell.invocation[i]; ++i) {
+		int c = spell.invocation[i] - 'a';
+		out += std::string(i ? " " : "") + (c >= 0 && c < 26 ? WORDS[c] : "?");
+	}
+	return out;
+}
+
 bool Magic::checkCost(int caster, const SpellInfo &spell) {
 	if (_world.actors.level[caster] < spell.circle) {
 		_scroll.print("\n\nYour level is not high enough.\n");

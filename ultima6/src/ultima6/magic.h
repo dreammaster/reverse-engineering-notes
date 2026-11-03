@@ -46,6 +46,7 @@ public:
 	bool checkSpells(int caster);
 	/** The words of power of a spell as cmd_cast prints them: the name, then the quoted syllables (An, Bet, Corp ... Zu for the letters A-Z). */
 	std::string announce(const SpellInfo &spell) const;
+	static std::string words(const SpellInfo &spell);
 	/** The checks cmd_cast makes after printing the spell, in its order: level ("Your level is not high enough."), magic points, reagents ("No Reagents."). */
 	bool checkCost(int caster, const SpellInfo &spell);
 	/** Checks the caster can cast; prints the reason and returns false if not. Nothing is used up. */
@@ -55,8 +56,10 @@ public:
 	/** Works the spell on an actor (target < 0: no actor) or, for those that need none, on the caster. Returns whether it did anything. */
 	bool cast(int caster, const SpellInfo &spell, int target);
 
-private:
+	/** Whether the spellbooks the caster carries hold a spell (a book with all the spells or the spell itself). */
 	bool bookHas(int caster, int spellIndex);
+
+private:
 	int random(int lo, int hi) {
 		return lo + _rng.next() % (hi - lo + 1);
 	}

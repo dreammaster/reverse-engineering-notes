@@ -526,12 +526,17 @@ void Game::castKey(int key) {
 		return;
 	}
 	_magic.pay(caster, *spell);
+	castSpell(spell, caster);
+}
+
+// cast_spell_effect: a spell that needs no target works at once, the others ask for one with the cursor
+void Game::castSpell(const Magic::SpellInfo *spell, int caster, bool promptAfter) {
 	_spell = spell;
 	if (spell->select == Magic::SEL_NONE) {
 		if (!spellSpecial(*spell, caster, x, y, caster))
 			_magic.cast(caster, *spell, caster);
 		_world.spendMoves(caster, spell->circle * 3 + 10); // cmd_cast: sub_26CC4(caster, circle * 3 + 10)
-		if (_pending != 'W' && !_eye)
+		if (promptAfter && _pending != 'W' && !_eye)
 			prompt();
 		return;
 	}

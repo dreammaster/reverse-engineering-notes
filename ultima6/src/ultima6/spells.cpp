@@ -562,6 +562,47 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		_spellQuiet = true;
 		return true;
 	}
+	case 97: { // Enchant (sub_24810): only a staff (0x4E) can be enchanted, and one that holds ten things is full; the spell to put in is asked for ("With: ", the original shows the spellbook's
+		// pages to choose from; here it is typed as when casting) and a charge (0x150, the quality being the spell) is put in the staff
+		if (object < 0) {
+			message("nothing\n");
+		} else {
+			message(Describe::object(_world, _world.objects[object]) + "\n");
+		}
+		if (object < 0 || _world.objects[object].type != 0x4E) {
+			message("\nNo effect\n");
+		} else {
+			int inside = 0;
+			for (const World::Obj &c : _world.objects)
+				inside += !c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == object;
+			if (inside == 10) {
+				message("\nIt's full\n");
+			} else {
+				message("With: ");
+				_useItem = object;
+				_textActive = true;
+				_textBuf.clear();
+				_textMax = 8;
+				_textPurpose = 7;
+			}
+		}
+		_spellQuiet = true;
+		return true;
+	}
+	case 72: { // Seance (sub_24CF0): the object chosen must be a body (0x153, 0x154, 0x155 or 0x162); its name is printed and the party talks with the dead one (the actor named by the body's quality)
+		if (object >= 0) {
+			int type = _world.objects[object].type;
+			if (type == 0x153 || type == 0x154 || type == 0x155 || type == 0x162) {
+				message(Describe::object(_world, _world.objects[object]) + "\n");
+				_spellQuiet = true;
+				startTalk(_world.objects[object].quality);
+				return true;
+			}
+		}
+		message("\nNo effect\n");
+		_spellQuiet = true;
+		return true;
+	}
 	case 120: // Time Stop: ten minutes (byte_404BA = 0xA, 45501)
 		_timeStop = 10;
 		return true;
