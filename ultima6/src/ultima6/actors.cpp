@@ -512,7 +512,7 @@ void ActorManager::follow(int actor, int destX, int destY, int px, int py, int p
 // sub_27FE6 (27FE6-28361): an actor that has come to its schedule place takes up the entry's worktype and its pose: asleep in a bed (0x91: the sleeping figure 0x92 on a bed 0xA3 whose frame is
 // 0 or 6), seated (0x92, 0x95: the chair or bed under it decides the frame, see face), standing and facing a direction (0x87-0x8E); an actor that has not reached its place goes on
 // (worktype 0x81). Waking up (any other worktype) takes the sleep away and the sprite back.
-// APPROX(1): the pose of 0x93 (the object 0xE4 and the neighbour 0x77 of sub_27E95), 0x95's table change and 0x98 are not done.
+// 0x93 (a chair beside a table 0x77, sub_27E95), 0x95 (the figure 0x188 at a chair) and 0x98 (the bell) follow the original; 0x93 is a chair that has a table beside it in the four directions.
 void ActorManager::arrive(int actor, int px, int py, int pz) {
 	ObjList &a = _world.actors;
 	int k = _world.actorObject(actor);
@@ -549,12 +549,75 @@ void ActorManager::arrive(int actor, int px, int py, int pz) {
 			o.type = a.baseObjFrame[actor] & 0x3FF;
 			o.frame = (uint8_t)(a.baseObjFrame[actor] >> 10);
 		}
+		// sub_27EF4: the thing of the kind the pose needs on the actor's own square (mode 0 a chair: 0xFC, or 0x147 of frame 2; mode 2 a chair with a table 0x77 beside it, mode 3 the bell 0x1A3)
+		auto seatAt = [&](int mode) {
+			static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+			std::vector<int> there;
+			_world.objectsAt(o.x, o.y, o.z, there);
+			for (int i : there) {
+				const World::Obj &s = _world.objects[i];
+				if (s.actor >= 0)
+					continue;
+				if (mode == 0 && (s.type == 0xFC || (s.type == 0x147 && s.frame == 2)))
+					return i;
+				if (mode == 3 && s.type == 0x1A3)
+					return i;
+				if (mode == 2 && s.type == 0xFC) {
+					int mask = o.z == 0 ? 0x3FF : 0xFF;
+					for (int d = 0; d < 8; d += 2) {
+						std::vector<int> near;
+						_world.objectsAt((o.x + DX[d]) & mask, (o.y + DY[d]) & mask, o.z, near);
+						for (int n : near)
+							if (_world.objects[n].type == 0x77)
+								return i;
+					}
+				}
+			}
+			return -1;
+		};
 		if (wt == 0x92 || wt == 0x95) {
+			at = true;
+			if (!shown) {
+				a.worktype[actor] = 0x80;
+			} else {
+				int seat = seatAt(0);
+				if (seat >= 0 && wt == 0x95) { // the chair is pulled in and the figure sits at it (type 0x188, frame 4)
+					_world.objects[seat].frame = 2;
+					face(actor, 4);
+					o.type = 0x188;
+					o.frame = 4;
+				} else if (seat >= 0) {
+					face(actor, 0);
+				}
+			}
+		} else if (wt == 0x93) { // at a table: the chair is turned to the table (its frame is the way to it) and the person faces it
+			at = true;
+			if (!shown) {
+				a.worktype[actor] = 0x80;
+			} else {
+				static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+				int chair = seatAt(2);
+				if (chair < 0) {
+					face(actor, 4);
+				} else {
+					int mask = o.z == 0 ? 0x3FF : 0xFF, dir = 0;
+					for (; dir < 8; dir += 2) {
+						std::vector<int> near;
+						_world.objectsAt((o.x + DX[dir]) & mask, (o.y + DY[dir]) & mask, o.z, near);
+						bool table = false;
+						for (int n : near)
+							table |= _world.objects[n].type == 0x77;
+						if (table)
+							break;
+					}
+					_world.objects[chair].frame = (uint8_t)(((dir + 1) >> 1) & 3);
+					face(actor, dir);
+				}
+			}
+		} else if (wt == 0x98) { // the bell: only the person standing at it
 			at = true;
 			if (!shown)
 				a.worktype[actor] = 0x80;
-			else
-				face(actor, 0);
 		} else if (wt >= 0x87 && wt <= 0x8E) {
 			int dir = ((wt + 0x79) & 3) * 2;
 			a.movementFlags[actor] = (uint8_t)((a.movementFlags[actor] & ~7) | dir);
