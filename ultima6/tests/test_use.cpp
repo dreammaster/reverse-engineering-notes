@@ -499,6 +499,43 @@ int main() {
 		CHECK(text.find("Close the drawbridge.") != std::string::npos);
 	}
 
+	// the area spells of sub_23AD5 answer "Success" (guards the spell cases of spellSpecial, which once were lost in an edit)
+	{
+		static const char *const spells[] = {"asl", "vq", "qc", "axc"};
+		static const char circle[] = {'5', '6', '7', '3'};
+		for (int n = 0; n < 4; ++n) {
+			World wc;
+			wc.load("u6/game");
+			Game gc(wc);
+			int book = wc.addToInventory(1, 57, 0, 1);
+			wc.objects[book].status = (uint8_t)((wc.objects[book].status & ~0x18) | 0x18);
+			World::Obj spell = wc.objects[book];
+			spell.type = 58;
+			spell.quality = 255;
+			spell.status = 0x08;
+			spell.parent = book;
+			spell.actor = -1;
+			wc.objects.push_back(spell);
+			for (int r = 65; r <= 72; ++r)
+				wc.addToInventory(1, r, 0, 5);
+			wc.actors.level[1] = 8;
+			wc.actors.unknown13f1[1] = 99;
+			int tag = put(wc, 0x15F, 0, gc.x + 1, gc.y, gc.z);
+			wc.objects[tag].status |= 0x02;
+			gc.handleKey('c');
+			gc.handleKey(circle[n]);
+			for (const char *k = spells[n]; *k; ++k)
+				gc.handleKey(*k);
+			gc.handleKey(KEY_ENTER);
+			if (logText(gc).find("Success") == std::string::npos)
+				std::printf("LOG[%s]\n", logText(gc).c_str());
+			CHECK(logText(gc).find("Success") != std::string::npos);
+			if (n == 0)
+				CHECK(!(wc.objects[tag].status & 0x02));
+		}
+	}
+
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

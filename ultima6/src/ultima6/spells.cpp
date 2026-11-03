@@ -302,26 +302,48 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 			a.status[t] = (uint8_t)((a.status[t] & 0x9F) | 0x40);
 		return true;
 	}
-	case 82: { // Confuse: everybody near turns on everybody
-		std::vector<int> actors;
-		crowd(actors);
-		for (int t : actors)
-			a.status[t] = (uint8_t)(a.status[t] | 0x60);
+	case 82: // Confuse (sub_23AD5 case 82)
+	case 99: // Fear (sub_23A6A)
+	case 41: // Repel Undead (sub_23AD5 case 41)
+	case 71: { // Reveal (sub_23AD5 case 71): every square within seven of the party, the first object found there
+		for (int ax = x - 7; ax <= x + 7; ++ax)
+			for (int ay = y - 7; ay <= y + 7; ++ay) {
+				std::vector<int> here2;
+				_world.objectsAt(ax, ay, z, here2);
+				if (here2.empty())
+					continue;
+				int k = here2.back();
+				World::Obj &o = _world.objects[k];
+				int t = o.actor;
+				if (index == 71) {
+					o.status &= ~0x02;
+					if (t >= 0) {
+						std::vector<int> inv;
+						_world.inventory(t, inv, true);
+						for (int i : inv)
+							if (_world.objects[i].type == 0x102 && _world.objects[i].location() == ObjRecord::READIED)
+								_world.objects[i].status = (uint8_t)((_world.objects[i].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
+					}
+					continue;
+				}
+				if (t < 0 || t >= 0x100)
+					continue;
+				const CreatureStats *cs = Combat::stats(o.type);
+				if (index == 41) {
+					if (cs && (cs->flags & 0x80) && !_combat.resists(t, caster))
+						a.worktype[t] = 0x13;
+				} else if (index == 99) {
+					if ((a.status[t] & 0x60) != 0x40 && !_combat.resists(t, caster) && !(cs && (cs->flags & 2)))
+						a.worktype[t] = 0x13;
+				} else if ((a.status[t] & 0x60) == 0x20 && !_combat.resists(t, caster)) {
+					a.worktype[t] = 8;
+					a.status[t] &= 0x9F;
+				}
+			}
+		message("\nSuccess\n");
 		return true;
 	}
-	case 99: // Fear: the creatures near flee (worktype 7)
-	case 41: { // Repel Undead: so do the undead
-		std::vector<int> actors;
-		tx = x;
-		ty = y;
-		crowd(actors);
-		for (int t : actors) {
-			const CreatureStats *cs = Combat::stats(_world.objects[_world.actorObject(t)].type);
-			if (index == 99 || (cs && (cs->flags & CreatureStats::UNDEAD)))
-				a.worktype[t] = 7;
-		}
-		return true;
-	}
+
 	case 86: { // Negate Magic: the fields and the conditions of everybody near are gone
 		std::vector<int> actors;
 		tx = x;
@@ -330,14 +352,6 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		for (int t : actors) {
 			a.status[t] &= ~0x07;
 			_world.objects[_world.actorObject(t)].status &= ~(0x02 | 0x40);
-		}
-		return true;
-	}
-	case 71: { // Reveal: whatever is invisible near the party shows itself
-		for (size_t i = 0; i < _world.objects.size(); ++i) {
-			World::Obj &o = _world.objects[i];
-			if (!o.deleted && o.onMap() && o.z == z && std::abs((int)o.x - x) <= 10 && std::abs((int)o.y - y) <= 10)
-				o.status &= ~0x02;
 		}
 		return true;
 	}
