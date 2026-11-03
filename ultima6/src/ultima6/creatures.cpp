@@ -482,14 +482,26 @@ void Creatures::assault(int actor, int px, int py) {
 	if (target >= 0) {
 		const World::Obj &t = _world.objects[_world.actorObject(target)];
 		int dx = std::abs((int)t.x - (int)o.x), dy = std::abs((int)t.y - (int)o.y);
-		if (dx < 8 && dy < 8 && DIST[dx][dy] <= Combat::rangeOf(_combat.weaponType(actor))) {
-			_combat.attack(actor, target);
-			_world.spendMoves(actor, 10);
-		} else if (wt != 3 || (a.status[actor] & 0x80)) {
-			stepToward(actor, t.x, t.y);
-		} else {
-			_world.spendMoves(actor, 5);
+		int range = Combat::rangeOf(_combat.weaponType(actor)), gx = t.x, gy = t.y;
+		if (dx < 8 && dy < 8 && DIST[dx][dy] <= range) {
+			if (lineOfFire(actor, t.x, t.y, range)) {
+				_combat.attack(actor, target);
+				_world.spendMoves(actor, 10);
+				return;
+			}
+			// no clear shot: a quarter turn about the target, the way chosen by chance
+			if (_rng.next() % 2) {
+				gx = o.x - ((int)t.y - o.y);
+				gy = o.y + ((int)t.x - o.x);
+			} else {
+				gx = ((int)t.y - o.y) + o.x;
+				gy = o.y - ((int)t.x - o.x);
+			}
 		}
+		if (wt != 3 || (dx < 8 && dy < 8 && DIST[dx][dy] <= range))
+			stepToward(actor, gx, gy);
+		else
+			_world.spendMoves(actor, 5);
 		return;
 	}
 	if (wt == 3) {
@@ -570,7 +582,11 @@ bool Creatures::validTarget(int actor, int target) const {
 bool Creatures::lineOfFire(int actor, int tx, int ty, int range) const {
 	const World::Obj &o = _world.objects[_world.actorObject(actor)];
 	std::vector<std::pair<int, int>> path;
-	return _world.boltPath(o.z, o.x, o.y, tx, ty, range, path);
+	if (_world.boltPath(o.z, o.x, o.y, tx, ty, range, path))
+		return true;
+	// a target standing on a square that blocks is still struck from the square before it
+	int lx = path.empty() ? o.x : path.back().first, ly = path.empty() ? o.y : path.back().second;
+	return std::max(std::abs(lx - tx), std::abs(ly - ty)) <= 1;
 }
 
 // sub_2A4B6, once at the start of every round of turns: the party's centre (leaving out the members on worktypes 5 and 6) and its enemies' (the other side's actors within 24
