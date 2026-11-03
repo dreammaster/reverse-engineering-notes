@@ -660,20 +660,33 @@ void Game::render(Framebuffer &screen) {
 	screen.setPalette(_world.palette.rgb);
 	screen.clear(0);
 	screen.blit(0, 0, &_world.paper.pixels[0], _world.paper.width, _world.paper.height, _world.paper.width);
-	// the light the party makes: a lit torch carried by any member, or the Light spells
-	int radius = 1;
+	// the daylight (advance_time 13984-13A05): 0 in a dungeon, at night (hours 20-4) and during an eclipse (the first day of every third month, or the spell), 7 by day, climbing
+	// 1-6 through the hour from five and falling 6-1 through the hour from seven in the evening; a torch or the Light spell make it 4 at least. It is the radius (in squares) in which
+	// the party sees.
 	const ObjList &al = _world.actors;
-	for (int m = 0; m < al.partySize && radius < 4; ++m) {
+	bool eclipse = (clock.day == 1 && clock.month % 3 == 0) || al.globals[0x12 + 15];
+	int light;
+	if (eclipse || clock.hour < 5 || clock.hour > 19 || (z > 0 && z < 5))
+		light = 0;
+	else if (clock.hour == 5)
+		light = clock.minute / 10 + 1;
+	else if (clock.hour == 19)
+		light = (59 - clock.minute) / 10 + 1;
+	else
+		light = 7;
+	bool lit = al.globals[0x12 + Magic::TIMER_LIGHT] != 0;
+	for (int m = 0; m < al.partySize && !lit; ++m) {
 		std::vector<int> inv;
 		_world.inventory(al.partyRoster[m], inv, false);
 		for (int i : inv)
-			if (_world.objects[i].type == 90 && (_world.objects[i].frame & 1))
-				radius = 4;
+			lit |= _world.objects[i].type == 90 && (_world.objects[i].frame & 1);
 	}
-	if (al.globals[0x12 + Magic::TIMER_LIGHT])
-		radius = al.globals[0x12 + Magic::TIMER_LIGHT] > 100 ? 7 : 5;
+	if (light < 4 && lit)
+		light = 4;
+	if (al.globals[0x12 + Magic::TIMER_LIGHT] > 100)
+		light = 7; // Great Light (APPROX(15): the original's radius for it is not traced)
 	uint8_t dark[MapRenderer::CELLS * MapRenderer::CELLS];
-	_renderer.computeDarkness(x, y, z, _world.actors.globals[0x12 + 15] ? 0 : clock.hour, radius, dark); // an eclipse makes it night
+	_renderer.computeDarkness(x, y, z, light >= 7 ? 12 : 0, light, dark);
 	_renderer.draw(screen, _peek ? _peekX : x, _peek ? _peekY : y, z, dark);
 	if (_talk)
 		drawTalkView(screen, _world, _talk->portraitActor());
