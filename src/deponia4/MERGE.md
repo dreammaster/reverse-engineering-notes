@@ -6,7 +6,7 @@ that found nothing else, are in [`VERSIONS.md`](VERSIONS.md); the generated repo
 
 **The short version:** the two builds are one code base. Source files that carry line numbers (the asserts) are line for line the same except `vscommon/cfont.cpp` and
 `graphicslib/graphicsOGL.cpp`; the data format (XML names, 41 record classes, 583 fields) is the same; the order of the engine's calls, the numbers, the texts, the floating
-point constants and the results of about 1,330 functions run in an emulator on the same inputs are the same. What differs is a text path, a few graphics details and the build.
+point constants and the results of about 1,650 methods and 67 functions run in an emulator on the same inputs are the same. What differs is a text path, a few graphics details and the build.
 
 ## Differences that need a decision in the merged engine
 
@@ -40,9 +40,9 @@ point constants and the results of about 1,330 functions run in an emulator on t
 - the order of engine calls of every function that both define (51 of 2,923 functions differ for Deponia 1, none a logic difference; devirtualized calls, sort comparators, `x_assert`, `toUTF`);
 - the numbers (1,028 against 1,030 distinct constants in `T*` code; the rest are assert line numbers and `-O0` case labels), the texts (1,758 against 1,739 literals; standard library exception texts and format helpers), the floating point constants, the order of the field ids written by the constructors read;
 - the line numbers of the asserts in 38 of the 39 source files that have them;
-- the class layouts as far as the 1,338 methods that ran in the emulator on random objects use them (a moved member shows as a difference; only `TFreetypeFont` and `TGText` did).
+- the class layouts as far as the 1,651 methods that ran in the emulator on random objects use them (a moved member shows as a difference; only `TFreetypeFont` and `TGText` did).
 
 ## Not checked
 
-Conditions in functions the emulator could not run (about a third of the methods: those needing a real `wxString`, `TVisObjRef` or object graph), the build number of Deponia 4's engine, the details of
+Conditions in functions the emulator could not run (718 of the 2,369 candidates: those needing a real `wxString`, `TVisObjRef` or object graph), the build number of Deponia 4's engine, the details of
 `TGraphicsOGL`'s other methods, the shaders in the data, and anything that only shows in play (`src/deponia4` has been run on the data up to the end of loading, not played).
