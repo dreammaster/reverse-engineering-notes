@@ -53,6 +53,8 @@ No spellbook is readied.
 | 21 | Doors | `use_key_on_door`: frames 0-3 open, 4-7 closed, 8-11 locked ("locked"), 12-15 magic ("magically locked!"); plain Use of a locked door only says it is locked, a key (`use_key_or_lockpick`, matching quality; a lock pick works on quality 0 and may break: "Key broke.") locks or unlocks | the party's keys open locked doors automatically | `use_key_on_door` 320D4, `use_key_or_lockpick` 3241E, `sub_323C4` |
 | 22 | Ladders | only type 0x131 (305) is usable (the 85-type table); type 106 prints "Not usable" | accepts both | `cmd_use_types` table at cs:6467 |
 
+| 23 | Months in a year | `advance_time` (137A0) resets the month when it passes 0Ch: 12 months of 28 days | Nuvie uses 13 months | `advance_time` 13789-137B4 |
+
 ## Pending (engine uses Nuvie's rule until the original is traced)
 
 | # | Topic | Nuvie rule in use | Original routine to check |

@@ -26,8 +26,8 @@ static int failures = 0;
 	} while (0)
 
 int main() {
-	// Clock arithmetic: 28-day months, 13 months a year.
-	GameClock c = {59, 23, 28, 13, 161};
+	// Clock arithmetic: 28-day months, 12 months a year (advance_time checks the month against 0Ch).
+	GameClock c = {59, 23, 28, 12, 161};
 	c.advance(1);
 	CHECK(c.minute == 0 && c.hour == 0 && c.day == 1 && c.month == 1 && c.year == 162);
 	c.advance(60 * 24 * 28);

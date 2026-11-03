@@ -29,8 +29,8 @@ void GameClock::advance(int minutes) {
 		day -= 28;
 		++month;
 	}
-	while (month > 13) {
-		month -= 13;
+	while (month > 12) { // advance_time 137A0: the original checks the month against 0Ch, not Nuvie's 13
+		month -= 12;
 		++year;
 	}
 }
@@ -69,6 +69,12 @@ bool Game::save() {
 // APPROX(10): not the original's exact behaviour, see docs/approximations.md
 // What one game minute does (sub_13305): the clock, the timers, the hourly schedules and magic points, the party's hazards, the eggs.
 void Game::minutePassed() {
+	// Time Stop (byte_404BA, advance_time 1330F-1334C): while it lasts the whole minute is skipped, the clock included; the minute it runs out goes on as usual
+	if (_timeStop > 1) {
+		--_timeStop;
+		return;
+	}
+	_timeStop = 0;
 	clock.advance(1);
 	if (clock.minute == 0) {
 		_actors.hourChanged(clock);
@@ -84,13 +90,15 @@ void Game::minutePassed() {
 		ObjList &al = _world.actors;
 		for (int m = 0; m < al.partySize; ++m) {
 			int actor = al.partyRoster[m];
+			int ko = _world.actorObject(actor);
+			int ot = ko >= 0 ? _world.objects[ko].type : 0;
+			if (ot != 0x19A && ot != 0x17A && ot != 0x179 && ot != 0x182)
+				continue; // advance_time 137D4-1384D: only the Avatar and the human kinds recover magic points
 			int most = ActorStats::maxMagic(_world, actor);
 			if (most)
 				al.unknown13f1[actor] = (uint8_t)std::min<int>(most, al.unknown13f1[actor] + al.level[actor]);
 		}
 	}
-	if (_timeStop > 0)
-		--_timeStop;
 	if (clock.hour == 0 && clock.minute == 0)
 		_fishedToday = false; // the fish bite again each day
 	if (_kegTimer > 0 && --_kegTimer == 0)
