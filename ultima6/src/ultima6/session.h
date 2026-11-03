@@ -142,6 +142,10 @@ private:
 	void dropObject(int idx, int count);
 	int _crystalLat = 0;
 	static bool degrees(const std::string &s, char plus, char minus, int &out);
+	bool _gemSpell = false; // the gem on show is the Peer spell's: "Done" follows it
+	bool _eye = false;      // the Wizard Eye is being steered
+	int _eyeX = 0, _eyeY = 0, _eyeLeft = 0, _eyeObject = -1;
+	void eyeKey(int key);
 	bool _peek = false; // the map shows somewhere else (a telescope) until a key is pressed
 	int _peekX = 0, _peekY = 0;
 	void textKey(int key);

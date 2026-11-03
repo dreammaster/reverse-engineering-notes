@@ -531,7 +531,7 @@ void Game::castKey(int key) {
 		if (!spellSpecial(*spell, caster, x, y, caster))
 			_magic.cast(caster, *spell, caster);
 		_world.spendMoves(caster, spell->circle * 3 + 10); // cmd_cast: sub_26CC4(caster, circle * 3 + 10)
-		if (_pending != 'W')
+		if (_pending != 'W' && !_eye)
 			prompt();
 		return;
 	}

@@ -671,10 +671,33 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		}
 		return true;
 	}
-	case 39: // Peer: the overhead map, as a gem shows it
-	case 105: // Wizard Eye: (approximated by the same view)
+	case 39: // Peer (cast_spell_effect 257B1): use_gems(0), the overhead map, then "Done"
 		_gem = true;
+		_gemSpell = true;
+		_spellQuiet = true;
 		return true;
+	case 105: { // Wizard Eye (sub_24A61): an eye (0x34) is sent out from the party and steered with the direction keys, 40 squares at most, until Escape or a tile of 0xFC and over; then "Done"
+		_eye = true;
+		_eyeX = x;
+		_eyeY = y;
+		_eyeLeft = 0x28;
+		World::Obj eye;
+		eye.status = 0;
+		eye.x = (uint16_t)x;
+		eye.y = (uint16_t)y;
+		eye.z = (uint8_t)z;
+		eye.type = 0x34;
+		eye.frame = 0;
+		eye.quantity = 1;
+		eye.quality = 0;
+		eye.actor = -1;
+		eye.parent = -1;
+		_world.objects.push_back(eye);
+		_eyeObject = (int)_world.objects.size() - 1;
+		_world.addToMap(_eyeObject);
+		_spellQuiet = true;
+		return true;
+	}
 	case 121: { // Tremor (sub_24BED): in the 11 x 11 squares around the party every actor of the monsters' side (status bits 0x60 = 0x20) that does not fly (creature flag 0x100) takes
 		// 1-30 points of damage; then "Success"
 		for (int actor = 0; actor < ObjList::ACTORS; ++actor) {

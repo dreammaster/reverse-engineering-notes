@@ -590,6 +590,48 @@ int main() {
 	}
 
 
+	// Wizard Eye (sub_24A61): an eye is steered with the direction keys until Escape
+	{
+		World ww;
+		ww.load("u6/game");
+		Game gw(ww);
+		int book = ww.addToInventory(1, 57, 0, 1);
+		ww.objects[book].status = (uint8_t)((ww.objects[book].status & ~0x18) | 0x18);
+		World::Obj spell = ww.objects[book];
+		spell.type = 58;
+		spell.quality = 255;
+		spell.status = 0x08;
+		spell.parent = book;
+		spell.actor = -1;
+		ww.objects.push_back(spell);
+		for (int r = 65; r <= 72; ++r)
+			ww.addToInventory(1, r, 0, 5);
+		ww.actors.level[1] = 8;
+		ww.actors.unknown13f1[1] = 99;
+		auto eyes = [&]() {
+			int n = 0, ex = -1;
+			for (const World::Obj &o : ww.objects)
+				if (!o.deleted && o.type == 0x34 && o.onMap()) {
+					++n;
+					ex = o.x;
+				}
+			return std::make_pair(n, ex);
+		};
+		gw.handleKey('c');
+		gw.handleKey('7');
+		gw.handleKey('p');
+		gw.handleKey('o');
+		gw.handleKey('w');
+		gw.handleKey(KEY_ENTER);
+		CHECK(eyes().first == 1 && eyes().second == gw.x);
+		for (int i = 0; i < 3; ++i)
+			gw.handleKey(KEY_RIGHT);
+		CHECK(eyes().first == 1 && eyes().second == gw.x + 3);
+		gw.handleKey(KEY_ESC);
+		CHECK(eyes().first == 0);
+		CHECK(logText(gw).find("Done") != std::string::npos);
+	}
+
 	// Mass Awaken / Mass Protect (sub_2362A): the bolt flies to the target square and whoever stands there is affected; a wall in the way gives "Blocked"
 	{
 		World ww;

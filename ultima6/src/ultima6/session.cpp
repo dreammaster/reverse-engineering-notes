@@ -513,6 +513,28 @@ void Game::command(int key) {
 	}
 }
 
+// sub_24A61, the Wizard Eye: the eye moves a square for each direction key (the eight directions), at most 0x28 times more; Escape, a tile of 0xFC or over under it or the last move
+// ends it, the eye goes and the map is the party's again
+void Game::eyeKey(int key) {
+	int dir = key == KEY_UP || key == '8' ? 0 : key == '9' ? 1 : key == KEY_RIGHT || key == '6' ? 2 : key == '3' ? 3 : key == KEY_DOWN || key == '2' ? 4 : key == '1' ? 5 : key == KEY_LEFT || key == '4' ? 6 : key == '7' ? 7 : -1;
+	bool done = key == KEY_ESC;
+	if (dir >= 0) {
+		int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+		_eyeX = (_eyeX + DIR_DX[dir]) & mask;
+		_eyeY = (_eyeY + DIR_DY[dir]) & mask;
+		_world.moveObject(_eyeObject, _eyeX, _eyeY, z);
+		--_eyeLeft;
+		done = _eyeLeft < 0 || (_world.map.tile(z, _eyeX, _eyeY) & 0xFF) >= 0xFC;
+	}
+	if (!done)
+		return;
+	_world.deleteObject(_eyeObject);
+	_eyeObject = -1;
+	_eye = false;
+	message("\nDone\n");
+	prompt();
+}
+
 bool Game::handleKey(int key) {
 	if (_ending == 1 && key != KEY_NONE) {
 		_ending = 2;
@@ -520,7 +542,7 @@ bool Game::handleKey(int key) {
 	}
 	bool more = handleKeyInner(key);
 	// after every completed command the actors take their turns (command_loop 145FD)
-	if (more && !_pending && !_talk && !_confirmSave && !_inventory && !_dead)
+	if (more && !_pending && !_talk && !_confirmSave && !_inventory && !_dead && !_eye)
 		runTurns();
 	return more;
 }
@@ -532,7 +554,14 @@ bool Game::handleKeyInner(int key) {
 		return false; // any key after the Avatar's death ends the game
 	if (_gem && key != KEY_NONE) {
 		_gem = false;
+		if (_gemSpell)
+			message("\nDone\n");
+		_gemSpell = false;
 		prompt();
+		return true;
+	}
+	if (_eye && key != KEY_NONE) {
+		eyeKey(key);
 		return true;
 	}
 	if (_peek && key != KEY_NONE) {
@@ -743,7 +772,7 @@ void Game::render(Framebuffer &screen) {
 		light = 7; // Great Light (APPROX(15): the original's radius for it is not traced)
 	uint8_t dark[MapRenderer::CELLS * MapRenderer::CELLS];
 	_renderer.computeDarkness(x, y, z, light >= 7 ? 12 : 0, light, dark);
-	_renderer.draw(screen, _peek ? _peekX : x, _peek ? _peekY : y, z, dark);
+	_renderer.draw(screen, _eye ? _eyeX : _peek ? _peekX : x, _eye ? _eyeY : _peek ? _peekY : y, z, dark);
 	if (_talk)
 		drawTalkView(screen, _world, _talk->portraitActor());
 	else if (_inventory)
