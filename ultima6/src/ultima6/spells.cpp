@@ -288,8 +288,15 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		}
 		return true;
 	}
-	case 120: // Time Stop
-		_world.actors.globals[0x12 + 14] = (uint8_t)(10 + _rng.next() % 10);
+	case 120: // Time Stop: ten minutes (byte_404BA = 0xA, 45501)
+		_timeStop = 10;
+		return true;
+	case 100: // Gate Travel: "To phase " and the number of the moon gate (1-8)
+		message("To phase ");
+		_textActive = true;
+		_textBuf.clear();
+		_textMax = 1;
+		_textPurpose = 6;
 		return true;
 	case 114: // Eclipse
 		_world.actors.globals[0x12 + 15] = (uint8_t)(20 + _rng.next() % 20);

@@ -89,6 +89,8 @@ void Game::minutePassed() {
 				al.unknown13f1[actor] = (uint8_t)std::min<int>(most, al.unknown13f1[actor] + al.level[actor]);
 		}
 	}
+	if (_timeStop > 0)
+		--_timeStop;
 	if (clock.hour == 0 && clock.minute == 0)
 		_fishedToday = false; // the fish bite again each day
 	if (_kegTimer > 0 && --_kegTimer == 0)
@@ -132,7 +134,7 @@ void Game::runTurns() {
 				continue;
 			int wt = a.worktype[actor], st = a.status[actor];
 			int moves = (int8_t)a.moves[actor];
-			if (!(st & 0x80) && a.globals[0x12 + 14]) { // Time Stop: only the party moves
+			if (!(st & 0x80) && _timeStop > 0) { // Time Stop: only the party moves
 				a.moves[actor] = 0;
 				continue;
 			}

@@ -812,6 +812,17 @@ void Game::textKey(int key) {
 			_textBuf.clear();
 		_textActive = false;
 		message("\n");
+		if (_textPurpose == 6) { // Gate Travel
+			int n = _textBuf.empty() ? 0 : _textBuf[0] - '0';
+			if (n >= 1 && n <= 8) {
+				message("\n");
+				gateTo(n - 1);
+			} else {
+				message("\nNo effect\n");
+			}
+			prompt();
+			return;
+		}
 		if (_textPurpose == 5) { // how many to drop; the inventory view stays
 			int idx = _useItem;
 			_useItem = -1;
