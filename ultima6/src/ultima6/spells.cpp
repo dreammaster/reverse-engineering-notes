@@ -592,12 +592,16 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		}
 		return true;
 	}
-	case 112: { // Armageddon: everything not of the party on the level dies
-		for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
+	case 112: { // Armageddon (sub_25463): every actor but the Avatar (1) and actor 5 is deleted, the party included, and the party is the Avatar alone
+		for (int actor = 0; actor < 0xFF; ++actor) {
+			if (actor == 1 || actor == 5)
+				continue;
 			int k = _world.actorObject(actor);
-			if (k >= 0 && !_world.objects[k].deleted && a.hp[actor] && !(a.status[actor] & 0x80) && _world.objects[k].z == z)
-				_combat.applyDamage(caster, actor, 255);
+			if (k >= 0 && !_world.objects[k].deleted)
+				_world.deleteObject(k);
 		}
+		a.partySize = 1;
+		_spellQuiet = true;
 		return true;
 	}
 	case 120: // Time Stop: ten minutes (byte_404BA = 0xA, 45501)
@@ -683,13 +687,32 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		message(hostile ? "\nHostile daemon summoned.\n" : "\nSuccess\n");
 		return true;
 	}
-	case 21: // Telekinesis: the object is used from where the caster stands
-		if (object < 0)
-			return false;
-		_telekinesis = true;
-		useObject(object);
-		_telekinesis = false;
+	case 21: { // Telekinesis (sub_23E67): a bolt flies to the object (else "Blocked"); a drawbridge crank or a lever is worked, a weightless object is "Not Possible", anything else is pushed one square in a direction
+		_spellQuiet = true;
+		if (object < 0) {
+			message("\nNo effect\n");
+			return true;
+		}
+		int ck = _world.actorObject(caster);
+		std::vector<std::pair<int, int>> path;
+		if (!boltPath(_world, z, _world.objects[ck].x, _world.objects[ck].y, tx, ty, 8, path)) {
+			message("\nBlocked\n");
+			return true;
+		}
+		int type = _world.objects[object].type;
+		if (type == 0x120) {
+			operateDrawbridge(object);
+		} else if (type == 0x10C) {
+			useLever(object);
+		} else if (_world.weightOf(object) == 0) {
+			message("\nNot Possible\n");
+		} else {
+			_useItem = object;
+			_pending = 'm';
+			message("Direction-");
+		}
 		return true;
+	}
 	case 39: // Peer: the overhead map, as a gem shows it
 	case 105: // Wizard Eye: (approximated by the same view)
 		_gem = true;

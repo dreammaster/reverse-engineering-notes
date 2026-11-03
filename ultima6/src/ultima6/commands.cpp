@@ -448,7 +448,8 @@ void Game::castAt(int tx, int ty) {
 		message("\nSuccess\n");
 	_world.spendMoves(caster, _spell->circle * 3 + 10);
 	_spell = nullptr;
-	prompt();
+	if (!_pending)
+		prompt();
 }
 
 // Get: take the top object of a square that can be carried.
