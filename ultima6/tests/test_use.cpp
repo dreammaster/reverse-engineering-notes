@@ -455,6 +455,50 @@ int main() {
 		CHECK(text.find("Done!") != std::string::npos || text.find("No room!") != std::string::npos);
 	}
 
+	// a drawbridge crank raises a flat bridge of two rows into one row of 6, 7, 7, 8 and says so
+	{
+		World wd;
+		wd.load("u6/game");
+		Game gd(wd);
+		int bx = gd.x + 3, by = gd.y + 3;
+		for (int row = -1; row < 3; ++row)
+			for (int col = -1; col < 5; ++col) {
+				std::vector<int> there;
+				wd.objectsAt(bx + col, by + row, 0, there);
+				for (int t : there)
+					if (wd.objects[t].actor < 0)
+						wd.deleteObject(t);
+			}
+		for (int row = 0; row < 2; ++row) {
+			int f[4] = {3, 4, 4, 5};
+			for (int col = 0; col < 4; ++col) {
+				int p = put(wd, 0x10D, f[col], bx + col, by + row, 0);
+				if (col == 0)
+					wd.objects[p].quality = 211;
+			}
+		}
+		int crank = put(wd, 0x120, 0, gd.x + 1, gd.y, 0);
+		wd.objects[crank].quality = 211;
+		int before = 0;
+		for (const World::Obj &o : wd.objects)
+			before += !o.deleted && o.type == 0x10D;
+		gd.handleKey('u');
+		gd.handleKey(KEY_RIGHT);
+		int pieces = 0, f6 = 0, f7 = 0, f8 = 0;
+		for (const World::Obj &o : wd.objects)
+			if (!o.deleted && o.type == 0x10D) {
+				++pieces;
+				f6 += o.frame == 6;
+				f7 += o.frame == 7;
+				f8 += o.frame == 8;
+			}
+		std::string text;
+		for (const std::string &l : gd.log)
+			text += l;
+		CHECK(pieces == before - 8 + 5 && f6 >= 1 && f7 >= 3 && f8 >= 1);
+		CHECK(text.find("Close the drawbridge.") != std::string::npos);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

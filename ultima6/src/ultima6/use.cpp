@@ -211,6 +211,8 @@ void Game::useObject(int idx) {
 		consumeOne(idx);
 		_world.spendMoves(actingActor(), 5);
 		return;
+	} else if (type == 0x120) {
+		operateDrawbridge(idx);
 	} else if (type == 0x1A4) {
 		// sub_34053 (the balloon, on the surface or on level 5 only): it is used up and a balloon (0x1A7, frame 3) is set up on the first free square next to the user
 		if (z != 0 && z != 5) {
@@ -995,6 +997,125 @@ void Game::actorStatusDecay() {
 			o.frame = (uint8_t)(a.baseObjFrame[actor] >> 10);
 		}
 	}
+}
+
+// operate_drawbridge (339CD) with sub_335D7: the bridge pieces (type 0x10D) that have the crank's quality are looked for; the first one's frame says what is done. Frame 3 (the
+// flat bridge: rows of 3, 4 ... 4, 5 below the moat's edge) is raised into one row above of 6, 7 ... 7, 8 and the rest of its rows are taken away ("Close the drawbridge.";
+// "Can't close" if somebody stands on it); frame 6 is lowered again over the squares whose terrain is not one of 16, 28, 32, 44, 214 ("Open the drawbridge."; "Can't open" if
+// something stands there). APPROX(68): the displacement of whoever stands on the last square after lowering (`sub_1B26F`) and the animation/sound calls are not done
+void Game::operateDrawbridge(int crank) {
+	int quality = _world.objects[crank].quality;
+	auto findAt = [&](int px, int py) {
+		std::vector<int> there;
+		_world.objectsAt(px, py, z, there);
+		for (int t : there)
+			if (_world.objects[t].type == 0x10D)
+				return t;
+		return -1;
+	};
+	auto blocked = [&](int px, int py) {
+		std::vector<int> there;
+		_world.objectsAt(px, py, z, there);
+		for (int t : there)
+			if (_world.objects[t].type != 0x10D)
+				return true;
+		return false;
+	};
+	auto make = [&](int px, int py, int frame) {
+		World::Obj o;
+		o.status = 0;
+		o.x = (uint16_t)px;
+		o.y = (uint16_t)py;
+		o.z = (uint8_t)z;
+		o.type = 0x10D;
+		o.frame = (uint8_t)frame;
+		o.quantity = 1;
+		o.quality = 0;
+		o.actor = -1;
+		o.parent = -1;
+		_world.objects.push_back(o);
+		_world.addToMap((int)_world.objects.size() - 1);
+		return (int)_world.objects.size() - 1;
+	};
+	int first = -1;
+	for (size_t i = 0; i < _world.objects.size(); ++i)
+		if (!_world.objects[i].deleted && _world.objects[i].onMap() && _world.objects[i].type == 0x10D && _world.objects[i].quality == quality && _world.objects[i].z == z) {
+			first = (int)i;
+			break;
+		}
+	if (first < 0) {
+		message("\nNo correspondent drawbridge\n");
+		return;
+	}
+	int frame = _world.objects[first].frame, x0 = _world.objects[first].x, y0 = _world.objects[first].y;
+	static const int WATERISH[5] = {16, 28, 32, 44, 214};
+	auto edge = [&](int px, int py) {
+		int t = _world.map.tile(z, px, py) & 0xFF;
+		for (int w : WATERISH)
+			if (w == t)
+				return true;
+		return false;
+	};
+	int code = 0;
+	if (frame == 3) {
+		// can the bridge be raised? nobody may stand on any of its squares
+		bool clear = true;
+		for (int row = y0; findAt(x0, row) >= 0 && clear; ++row)
+			for (int col = x0; findAt(col, row) >= 0; ++col)
+				if (blocked(col, row)) {
+					clear = false;
+					break;
+				}
+		if (!clear) {
+			code = 3;
+		} else {
+			int length = 0;
+			while (findAt(x0 + length, y0) >= 0)
+				++length;
+			// the rows go; the raised bridge stands in the row above: 6 at the left end, 7 between and 8 at the right end
+			std::vector<int> gone;
+			for (int row = y0; findAt(x0, row) >= 0; ++row)
+				for (int col = x0; findAt(col, row) >= 0; ++col)
+					gone.push_back(findAt(col, row));
+			for (int g : gone)
+				_world.deleteObject(g);
+			_world.objects[make(x0 - 1, y0 - 1, 6)].quality = (uint8_t)quality;
+			for (int col = x0; col < x0 + length - 1; ++col)
+				make(col, y0 - 1, 7);
+			make(x0 + length - 1, y0 - 1, 8);
+			code = 1;
+		}
+	} else if (frame == 6) {
+		int count = 1;
+		for (int col = x0; findAt(col, y0) >= 0; ++col)
+			++count;
+		bool clear = true;
+		for (int row = y0 + 1; !edge(x0 + 1, row) && clear && row < y0 + 64; ++row)
+			for (int e = 0; e < count - 4; ++e)
+				if (blocked(x0 + 1 + e, row)) {
+					clear = false;
+					break;
+				}
+		if (!clear) {
+			code = 4;
+		} else {
+			std::vector<int> gone;
+			for (int col = x0; findAt(col, y0) >= 0; ++col)
+				gone.push_back(findAt(col, y0));
+			for (int g : gone)
+				_world.deleteObject(g);
+			for (int row = y0 + 1; !edge(x0 + 1, row) && row < y0 + 64; ++row) {
+				_world.objects[make(x0 + 1, row, 3)].quality = (uint8_t)quality;
+				for (int e = 0; e < count - 4; ++e)
+					make(x0 + 2 + e, row, 4);
+				make(x0 + 2 + (count - 4), row, 5);
+			}
+			code = 2;
+		}
+	}
+	static const char *const TEXT[5] = {"\nStrange, nothing happened.\n", "\nClose the drawbridge.\n", "\nOpen the drawbridge.\n", "\nCan't close the drawbridge.\n",
+										"\nCan't open the drawbridge.\n"};
+	message(TEXT[code]);
 }
 
 // sub_39866 / sub_397A4: the 40 x 40 squares around the party as cells of 4 x 4 pixels at 8,8, drawn on every other pixel: dry walls 7, water 9, harmful ground 12, other ground 10, the

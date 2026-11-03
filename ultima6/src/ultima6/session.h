@@ -117,6 +117,7 @@ private:
 	void buryMoonstone(int idx);
 	void digAt(int key);
 	void telescopeAt(int key);
+	void operateDrawbridge(int crank);
 	int _timeStop = 0; // minutes of time stop left (byte_404BA)
 	void toggleCombat();
 	bool _combatMode = false;
