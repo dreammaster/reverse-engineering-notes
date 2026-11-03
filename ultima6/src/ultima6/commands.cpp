@@ -179,12 +179,17 @@ bool Game::inventoryKey(int key) {
 			int idx = _items[_selected];
 			World::Obj &o = _world.objects[idx];
 			message("\nDrop-" + Describe::object(_world, o) + "\n");
-			o.status = (uint8_t)(o.status & ~ObjRecord::LOCATION_MASK);
-			o.parent = -1;
-			o.x = (uint16_t)x;
-			o.y = (uint16_t)y;
-			o.z = (uint8_t)z;
-			_world.addToMap(idx);
+			if (_world.isStackable(o.type) && _world.quantityOf(o) > 1) {
+				// ask_quantity: how many of the stack
+				message("How many? ");
+				_useItem = idx;
+				_textActive = true;
+				_textBuf.clear();
+				_textMax = 3;
+				_textPurpose = 5;
+				break;
+			}
+			dropObject(idx, 1);
 			_selected = std::max(0, _selected - 1);
 		}
 		break;

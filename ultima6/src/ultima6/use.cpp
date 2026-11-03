@@ -684,6 +684,27 @@ void Game::readBook(int idx) {
 	message(out);
 }
 
+// Puts `count` of an inventory object (the whole stack if it is more) on the square of the party.
+void Game::dropObject(int idx, int count) {
+	World::Obj &o = _world.objects[idx];
+	int have = _world.quantityOf(o);
+	int dropIdx = idx;
+	if (_world.isStackable(o.type) && count < have) {
+		World::Obj part = o;
+		_world.setQuantity(part, count);
+		_world.setQuantity(o, have - count);
+		_world.objects.push_back(part);
+		dropIdx = (int)_world.objects.size() - 1;
+	}
+	World::Obj &d = _world.objects[dropIdx];
+	d.status = (uint8_t)(d.status & ~ObjRecord::LOCATION_MASK);
+	d.parent = -1;
+	d.x = (uint16_t)x;
+	d.y = (uint16_t)y;
+	d.z = (uint8_t)z;
+	_world.addToMap(dropIdx);
+}
+
 // A line of text typed after a prompt (sub_1737A): letters and digits are echoed, Backspace takes one back, Enter ends it, Escape gives it up.
 void Game::textKey(int key) {
 	if (key == KEY_ENTER || key == KEY_ESC) {
@@ -691,6 +712,14 @@ void Game::textKey(int key) {
 			_textBuf.clear();
 		_textActive = false;
 		message("\n");
+		if (_textPurpose == 5) { // how many to drop; the inventory view stays
+			int idx = _useItem;
+			_useItem = -1;
+			int n = _textBuf.empty() ? 0 : std::atoi(_textBuf.c_str());
+			if (n > 0 && idx >= 0)
+				dropObject(idx, n);
+			return;
+		}
 		if (_textPurpose == 2) {
 			wishDone(_textBuf);
 		} else if (_textPurpose == 3) { // the crystal ball's latitude, then the longitude

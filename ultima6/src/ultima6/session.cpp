@@ -397,6 +397,11 @@ void Game::command(int key) {
 		_inventory = true;
 		_selected = 0;
 		break;
+	case 'D':
+		message("Drop-");
+		_inventory = true; // the item is chosen in the inventory view (D drops the selected one)
+		_selected = 0;
+		break;
 	case 19: // ctrl-S
 		message("Save game? ");
 		_confirmSave = true;
