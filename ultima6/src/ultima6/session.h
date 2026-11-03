@@ -117,6 +117,8 @@ private:
 	void buryMoonstone(int idx);
 	void digAt(int key);
 	void telescopeAt(int key);
+	World::Obj _vanished; // the thing the Vanish spell took away (word_404BC), for Reappear
+	bool _haveVanished = false;
 	void operateDrawbridge(int crank);
 	int _timeStop = 0; // minutes of time stop left (byte_404BA)
 	void toggleCombat();

@@ -58,15 +58,16 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 			return false;
 		a.status[target] |= 0x01;
 		return true;
-	case 67: // Invisibility
-		if (target < 0)
+	case 67: // Invisibility: not twice
+		if (target < 0 || (_world.objects[_world.actorObject(target)].status & 0x02))
 			return false;
 		_world.objects[_world.actorObject(target)].status |= 0x02;
 		return true;
-	case 69: // Paralyze
+	case 69: // Paralyze: "<name> is paralyzed."
 		if (target < 0)
 			return false;
 		a.status[target] |= 0x02;
+		message("\n" + _combat.nameOf(target) + " is paralyzed.\n");
 		return true;
 	case 101: // Kill
 		if (target < 0)
@@ -101,14 +102,27 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 				_world.objects[_world.actorObject(t)].status |= 0x02;
 		}
 		return true;
-	case 25: // Vanish: an object becomes invisible
-		if (object < 0)
+	case 25: // Vanish (223BC case 25): only things whose tile has flag 8 of the third block go; the object is remembered for Reappear
+		if (object < 0 || !(_world.flags.flags3[(_world.baseTile.firstTile[_world.objects[object].type] + _world.objects[object].frame) & (TileFlags::TILES - 1)] & 0x08))
 			return false;
-		_world.objects[object].status |= 0x02;
+		_vanished = _world.objects[object];
+		_haveVanished = true;
+		_world.deleteObject(object);
 		return true;
-	case 19: // Reappear: what is invisible on the square can be seen again
-		for (int i : here)
-			_world.objects[i].status &= ~0x02;
+	case 19: // Reappear: the last thing that vanished comes back on the square
+		if (!_haveVanished)
+			return false;
+		{
+			World::Obj back = _vanished;
+			back.x = (uint16_t)tx;
+			back.y = (uint16_t)ty;
+			back.z = (uint8_t)z;
+			back.deleted = false;
+			back.status = 0;
+			_world.objects.push_back(back);
+			_world.addToMap((int)_world.objects.size() - 1);
+			_haveVanished = false;
+		}
 		return true;
 	case 4: // Douse
 	case 8: // Ignite

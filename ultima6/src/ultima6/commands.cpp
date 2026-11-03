@@ -437,8 +437,13 @@ void Game::castAt(int tx, int ty) {
 			target = _world.objects[i].actor;
 	int caster = _world.actors.partyRoster[_member];
 	message("\n");
-	if (!spellSpecial(*_spell, caster, tx, ty, target))
-		_magic.cast(caster, *_spell, target);
+	// sub_223BC ends with the result of the effect: "Success" (0), "Failed" (1) or "No effect" (2); the spells that fly as a ball of fire or lightning (34, 68, 96) say nothing
+	bool done = spellSpecial(*_spell, caster, tx, ty, target);
+	if (!done)
+		done = _magic.cast(caster, *_spell, target);
+	int idx = _spell->index();
+	if (done && idx != 34 && idx != 68 && idx != 96 && idx != 18 && idx != 17 && idx != 20 && idx != 0 && idx != 53 && idx != 121 && idx != 100 && idx != 39 && idx != 105)
+		message("\nSuccess\n");
 	_world.spendMoves(caster, _spell->circle * 3 + 10);
 	_spell = nullptr;
 	prompt();
