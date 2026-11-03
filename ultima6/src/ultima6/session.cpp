@@ -249,7 +249,7 @@ bool Game::step(int dir) {
 	x = nx;
 	y = ny;
 	_world.moveObject(_leaderObject, x, y, z);
-	_actors.face(1, DIR_DY[dir] < 0 ? 0 : DIR_DY[dir] > 0 ? 2 : DIR_DX[dir] > 0 ? 1 : 3);
+	_actors.face(1, dir);
 	followLeader(oldX, oldY);
 	_rules.deniedPending = true;
 	_world.spendMoves(1, cost); // sub_28F67, counted on the square that was left

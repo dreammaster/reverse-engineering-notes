@@ -199,7 +199,7 @@ bool Creatures::stepDir(int actor, int dir) {
 		return false;
 	_world.moveObject(k, nx, ny, o.z);
 	_world.actors.movementFlags[actor] = (uint8_t)((_world.actors.movementFlags[actor] & ~7) | dir); // the way it faces
-	_actors.face(actor, DY[dir] < 0 ? 0 : DY[dir] > 0 ? 2 : DX[dir] > 0 ? 1 : 3);
+	_actors.face(actor, dir);
 	return true;
 }
 
@@ -219,7 +219,7 @@ bool Creatures::stepDiag(int actor, int vertical, int horizontal) {
 	if (!open || !_movement.check(nx, ny, o.z, k, rules).passable)
 		return false;
 	_world.moveObject(k, nx, ny, o.z);
-	_actors.face(actor, DY[dir] < 0 ? 0 : DY[dir] > 0 ? 2 : DX[dir] > 0 ? 1 : 3);
+	_actors.face(actor, dir);
 	return true;
 }
 

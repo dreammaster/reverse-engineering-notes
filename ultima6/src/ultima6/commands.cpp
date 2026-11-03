@@ -33,7 +33,7 @@ void Game::followLeader(int oldX, int oldY) {
 				// the square the member ahead left is free to step into
 				if (_movement.check(prevX, prevY, z, k, rules).passable) {
 					_world.moveObject(k, prevX, prevY, z);
-					_actors.face(a.partyRoster[i], dx > 0 ? 1 : dx < 0 ? 3 : dy > 0 ? 2 : 0);
+					_actors.face(a.partyRoster[i], ActorManager::directionOf(dx, dy));
 				}
 			} else if (std::abs(dx) <= 8 && std::abs(dy) <= 8) {
 				_actors.walkToward(a.partyRoster[i], k, prevX, prevY, z);

@@ -820,6 +820,43 @@ int main() {
 	}
 
 
+	// walking east the Avatar takes the frames of facing east (4 to 7) in the cycle 1, 2, 1, 0 (sub_263D4)
+	{
+		World wf;
+		wf.load("u6/game");
+		Game gf(wf);
+		int bx = -1, by = -1;
+		for (int yy = gf.y - 20; yy < gf.y + 20 && bx < 0; ++yy)
+			for (int xx = gf.x - 20; xx < gf.x + 20 && bx < 0; ++xx) {
+				bool open = true;
+				for (int d = 0; d < 8; ++d) {
+					int t = wf.map.tile(0, xx + d, yy);
+					open &= t >= 0x10 && t <= 0x6F;
+					std::vector<int> there;
+					wf.objectsAt(xx + d, yy, 0, there);
+					open &= there.empty();
+				}
+				if (open)
+					bx = xx, by = yy;
+			}
+		CHECK(bx >= 0);
+		if (bx >= 0) {
+			wf.moveObject(wf.actorObject(1), bx, by, 0);
+			gf.x = bx;
+			gf.y = by;
+			gf.z = 0;
+			int seen = 0;
+			for (int i = 0; i < 6; ++i) {
+				gf.handleKey(KEY_RIGHT);
+				int frame = wf.objects[wf.actorObject(1)].frame;
+				CHECK(frame / 4 == 1);
+				seen |= 1 << (frame % 4);
+			}
+			CHECK((seen & 7) == 7);
+		}
+	}
+
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

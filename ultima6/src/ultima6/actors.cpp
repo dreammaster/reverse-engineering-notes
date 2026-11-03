@@ -41,16 +41,139 @@ void ActorManager::hourChanged(const GameClock &clock) {
 	}
 }
 
-// APPROX(6): not the original's exact behaviour, see docs/approximations.md
-void ActorManager::face(int actor, int direction) {
+int ActorManager::directionOf(int dx, int dy) {
+	static const int TABLE[3][3] = {{7, 0, 1}, {6, -1, 2}, {5, 4, 3}};
+	return TABLE[(dy > 0) - (dy < 0) + 1][(dx > 0) - (dx < 0) + 1];
+}
+
+// sub_26348: whether a square is shut to creatures (the terrain or an object that is not a party member stops them)
+bool ActorManager::squareShut(int x, int y, int z) const {
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	x &= mask;
+	y &= mask;
+	const TileFlags &tf = _world.flags;
+	if (tf.flags1[_world.map.tile(z, x, y) & (TileFlags::TILES - 1)] & 2)
+		return true;
+	std::vector<int> there;
+	_world.objectsAt(x, y, z, there);
+	for (int i : there) {
+		const World::Obj &o = _world.objects[i];
+		if (o.actor >= 0 && o.actor < 0x100 && (_world.actors.status[o.actor] & 0x80))
+			continue;
+		if (tf.flags1[(_world.baseTile.firstTile[o.type] + o.frame) & (TileFlags::TILES - 1)] & 2)
+			return true;
+	}
+	return false;
+}
+
+// sub_263D4: the frame an actor's sprite takes when it faces direction `dir` (0 north, 1 northeast, 2 east ... 7 northwest); its walking animation alternates by the flag 0x80 of the
+// movement flags, and each kind of creature has its own frame layout (4 frames for each direction for people, 12 for type 0x16A, 3 for 0x16B, 2 for the animals, 1 for boats ...)
+// APPROX(6): the parts of ships (0x19B, 0x19C) and of the big creatures (>= 0x1AA) that move together with a vehicle (word_3EFF3) are not turned here, and the creature 0x164 takes its
+// frame from a counter instead of a random number
+void ActorManager::face(int actor, int dir) {
 	int k = _world.actorObject(actor);
-	if (k < 0 || direction < 0 || direction > 3)
+	if (k < 0 || dir < 0 || dir > 7)
 		return;
-	static const int WALK[4] = {0, 1, 0, 2};
-	_walkFrame[actor] = (_walkFrame[actor] + 1) % 4;
 	World::Obj &o = _world.objects[k];
-	if (o.frame < 16)
-		o.frame = (uint8_t)(direction * 4 + WALK[_walkFrame[actor]]);
+	uint8_t &flags = _world.actors.movementFlags[actor];
+	int type = o.type, si = o.frame, di = 0;
+	// the turn of a diagonal step: keep the way it faces when that is one of the two cardinal directions of the step, else the opposite of the other
+	auto turn = [&](int cur) {
+		if (!(dir & 1))
+			return dir >> 1;
+		return (((dir >> 1) - cur + 1) & 3) > 1 ? (cur + 2) & 3 : cur;
+	};
+	// the walking phase: 3 frames in a cycle 1, 2, 1, 0 ... given by the frame and the flag
+	auto phase3 = [&](int ph) {
+		if (ph == 0) {
+			flags &= 0x7F;
+			return 1;
+		}
+		if (ph == 1)
+			return (flags & 0x80) ? 0 : 2;
+		if (ph == 2)
+			flags |= 0x80;
+		return 1;
+	};
+	int px = 0, py = 0;
+	bool shown = false; // sub_262DE: the actor is inside the 40 x 40 squares around the party (here: 20 each way)
+	{
+		int lead = _world.actorObject(_world.actors.partyRoster[0]);
+		if (lead >= 0) {
+			int mask = o.z == 0 ? 0x3FF : 0xFF;
+			px = _world.objects[lead].x;
+			py = _world.objects[lead].y;
+			shown = _world.objects[lead].z == o.z && ((o.x - (px - 20)) & mask) <= 39 && ((o.y - (py - 20)) & mask) <= 39;
+		}
+	}
+	if ((type >= 0x178 && type <= 0x183) || type == 0x199 || type == 0x19A) {
+		bool seated = false;
+		int seatFrame = 2;
+		if (shown) {
+			std::vector<int> there;
+			_world.objectsAt(o.x, o.y, o.z, there);
+			for (int i : there) {
+				const World::Obj &s = _world.objects[i];
+				if (s.type == 0xFC) {
+					seated = true;
+					seatFrame = s.frame;
+					break;
+				}
+				if (s.type == 0x147 && s.frame == 2) {
+					seated = true;
+					break;
+				}
+			}
+		}
+		if (seated) {
+			o.frame = (uint8_t)(seatFrame * 4 + 3);
+		} else {
+			di = turn(si >> 2);
+			o.frame = (uint8_t)(di * 4 + phase3(si & 3));
+		}
+	} else if (type == 0x16A) {
+		di = turn(si / 12);
+		int ph = si % 12, s;
+		if (ph == 3) {
+			flags &= 0x7F;
+			s = 7;
+		} else if (ph == 7) {
+			s = (flags & 0x80) ? 3 : 0xB;
+		} else {
+			if (ph == 0xB)
+				flags |= 0x80;
+			s = 7;
+		}
+		o.frame = (uint8_t)(di * 12 + s);
+	} else if (type == 0x164) {
+		o.frame = (uint8_t)(_walkFrame[actor]++ % 3);
+	} else if (type == 0x16B) {
+		di = turn(si / 3);
+		o.frame = (uint8_t)(di * 3 + phase3(si % 3));
+	} else if (type == 0x15C || type == 0x15D || type == 0x15E || type == 0x156 || type == 0x166 || type == 0x169 || type >= 0x1AA || type == 0x15F || type == 0x15A ||
+			   (type >= 0x16F && type <= 0x174) || type == 0x188) {
+		di = si >> 1;
+		if (!(type >= 0x1AA)) {
+			int d = dir;
+			if (d & 1) {
+				static const int DXT[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DYT[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+				if (squareShut(o.x, o.y - DYT[d], o.z))
+					d = (d & 4) + 2;
+				else if (squareShut(o.x - DXT[d], o.y, o.z))
+					d = (d + 1) & 4;
+			}
+			if (!(d & 1))
+				di = d >> 1;
+			else
+				di = (((d >> 1) - di + 1) & 3) > 1 ? (di + 2) & 3 : di;
+		}
+		o.frame = (uint8_t)(di * 2 + ((si & 1) ? 0 : 1));
+	} else if (type == 0x162 || type == 0x167 || type == 0x19E || type == 0x184) {
+		o.frame = (uint8_t)turn(si);
+	} else if (type == 0x1A8) {
+		di = turn(si >> 3);
+		o.frame = (uint8_t)(di * 8 + ((si & 4) ? 3 : 7));
+	}
 }
 
 // APPROX(1): not the original's exact behaviour, see docs/approximations.md
@@ -101,7 +224,7 @@ bool ActorManager::step(int actor, int objIndex, int tx, int ty, int z) {
 	int nx = cx - R + c % W, ny = cy - R + c / W;
 	int dx = nx - o.x, dy = ny - o.y;
 	_world.moveObject(objIndex, nx & mask, ny & mask, z);
-	face(actor, dx > 0 ? 1 : dx < 0 ? 3 : dy > 0 ? 2 : 0);
+	face(actor, directionOf(dx, dy));
 	return true;
 }
 

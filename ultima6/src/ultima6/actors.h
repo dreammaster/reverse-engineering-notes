@@ -36,8 +36,10 @@ public:
 	/** One action of a non-party actor 2-0xDF that was chosen by the turn scheduler: walks towards its schedule place when it is going there, otherwise does nothing; always uses up moves. */
 	void act(int actor, int px, int py, int pz);
 
-	/** Sets an actor's facing (0 north, 1 east, 2 south, 3 west) and the walking frame of its sprite. */
+	/** Sets the frame of an actor's sprite for a step in direction 0-7 (0 north, 1 northeast, 2 east, 3 southeast, 4 south ... 7 northwest), sub_263D4. */
 	void face(int actor, int direction);
+	/** The direction 0-7 of a step by (dx, dy), -1 for none. */
+	static int directionOf(int dx, int dy);
 
 	/** One breadth-first step of an actor towards a square; false if there is no way. */
 	bool walkToward(int actor, int objIndex, int tx, int ty, int z) {
@@ -46,6 +48,7 @@ public:
 
 private:
 	bool step(int actor, int objIndex, int tx, int ty, int z);
+	bool squareShut(int x, int y, int z) const;
 
 	World &_world;
 	const Movement &_movement;
