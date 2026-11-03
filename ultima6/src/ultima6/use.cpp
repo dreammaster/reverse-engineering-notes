@@ -186,6 +186,29 @@ void Game::useObject(int idx) {
 		_textMax = 4;
 		_textPurpose = 1;
 		return;
+	} else if (type == 0x116 || type == 0x118) {
+		// operate_passthrough (35482): frame 0 is shut; opening slides it one square north (0x116) or west (0x118) and sets bit 1 of the frame, shutting slides it back
+		// unless somebody stands in that square
+		int f = o.frame, ox = o.x, oy = o.y, oz = o.z;
+		if (f == 0) {
+			_world.moveObject(idx, type == 0x116 ? ox : ox - 1, type == 0x116 ? oy - 1 : oy, oz);
+			_world.objects[idx].frame = (uint8_t)(f | 2);
+			message("\nOpen the passthrough.\n");
+		} else {
+			int nx = type == 0x116 ? ox : ox + 1, ny = type == 0x116 ? oy + 1 : oy;
+			std::vector<int> there;
+			_world.objectsAt(nx, ny, oz, there);
+			bool blocked = false;
+			for (int t : there)
+				blocked |= _world.objects[t].actor >= 0;
+			if (blocked) {
+				message("\nNot now!\n");
+			} else {
+				_world.moveObject(idx, nx, ny, oz);
+				_world.objects[idx].frame = (uint8_t)(f & 1);
+				message("\nClose the passthrough.\n");
+			}
+		}
 	} else if (type == 0x9B) {
 		// use_crystal_ball (34FC5): a place given by latitude and longitude is shown until a key is pressed. APPROX(61): the test at its start (`sub_323F1`, which can hurt the
 		// user with `print_wound_text`) is left out
