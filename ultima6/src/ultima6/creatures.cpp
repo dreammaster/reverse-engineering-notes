@@ -357,6 +357,20 @@ void Creatures::act(int actor, int px, int py, int pz) {
 		stepDir(actor, dir);
 		return;
 	}
+	// wt_tangle (2F4E6, 0xD): a vine strikes a target within one square one time in two (10 moves); APPROX(67): what it does further away is not traced
+	if (wt == 0x0D) {
+		int foe = pickTarget(actor);
+		if (foe >= 0) {
+			const World::Obj &t = _world.objects[_world.actorObject(foe)];
+			if (std::abs((int)t.x - (int)o.x) < 2 && std::abs((int)t.y - (int)o.y) < 2 && _rng.next() % 2) {
+				_combat.attack(actor, foe);
+				_world.spendMoves(actor, 10);
+				return;
+			}
+		}
+		_world.spendMoves(actor, 5);
+		return;
+	}
 	if (wt == 0x0E) { // wt_immobile: five moves passed (its blows at enemies in reach are not done)
 		_world.spendMoves(actor, 5);
 		return;
