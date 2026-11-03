@@ -182,6 +182,9 @@ private:
 	void fillBucket(bool milk);
 	void useFishingPole();
 	void explodeKeg();
+	void explodeKegObject(int idx);
+	void blowUpDoors(int cx, int cy);
+	void blastActors(int tx, int ty, std::vector<int> &out);
 	bool _fishedToday = false; // one fish a day (byte_404BF, cleared when the day changes)
 	int _kegTimer = 0;         // minutes until a lit powder keg explodes (word_404F4)
 	int _kegObject = -1;

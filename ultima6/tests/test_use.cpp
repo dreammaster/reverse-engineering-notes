@@ -632,6 +632,23 @@ int main() {
 		CHECK(logText(gw).find("Done") != std::string::npos);
 	}
 
+	// A lit powder keg goes off after three minutes and blows up the doors round it (sub_333BB, blow_up_door)
+	{
+		World ww;
+		ww.load("u6/game");
+		Game gw(ww);
+		int keg = put(ww, 0xDF, 0, gw.x + 1, gw.y, 0);
+		int door = put(ww, 0x12C, 0, gw.x + 3, gw.y, 0);
+		int locked = put(ww, 0x129, 0x0C, gw.x + 3, gw.y + 1, 0); // frame bits 2 and 3 set: it stays
+		gw.handleKey('u');
+		gw.handleKey(KEY_RIGHT);
+		CHECK(ww.objects[keg].frame == 1);
+		gw.advanceTime(4);
+		CHECK(ww.objects[keg].deleted);
+		CHECK(ww.objects[door].deleted && !ww.objects[locked].deleted);
+		CHECK(logText(gw).find("The door is blown up!") != std::string::npos);
+	}
+
 	// Pickpocket (sub_24235): the victim's things are shown and the one chosen goes to the Avatar
 	{
 		World ww;

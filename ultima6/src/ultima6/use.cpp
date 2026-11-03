@@ -733,12 +733,69 @@ void Game::useFishingPole() {
 	_fishedToday = true;
 }
 
-// sub_333BB: the keg is gone and what stands around its square takes 1-60 points of damage. APPROX(51): the original asks sub_38962 for the objects in the blast
-// (the explosion animation 0x189) and then calls blow_up_door; here the eight squares around and the square itself are hit and doors are not destroyed.
-void Game::explodeKeg() {
-	if (_kegObject < 0)
-		return;
-	World::Obj keg = _world.objects[_kegObject];
+// sub_38962 (the explosion 0x189): the people on the squares sixteen scatter bolts (reach 3) from a square cross, and on the square itself
+void Game::blastActors(int tx, int ty, std::vector<int> &out) {
+	static const int8_t SX[16] = {2, 1, 0, 1, -1, -1, -2, -1, 0, -1, -2, -2, 2, 2, 1, 1}, SY[16] = {-1, 2, -2, -1, 2, -1, 0, 1, 2, -2, -1, 1, 1, 0, 1, -2};
+	bool hit[ObjList::ACTORS] = {};
+	auto mark = [&](int qx, int qy) {
+		std::vector<int> there;
+		_world.objectsAt(qx, qy, z, there);
+		for (int i : there) {
+			int t = _world.objects[i].actor;
+			if (t >= 0 && t < ObjList::ACTORS && !(_world.actors.status[t] & 0x10))
+				hit[t] = true;
+		}
+	};
+	for (int b = 0; b < 16; ++b) {
+		std::vector<std::pair<int, int>> squares;
+		_world.boltPath(z, tx, ty, tx + SX[b], ty + SY[b], 3, squares);
+		for (const std::pair<int, int> &q : squares)
+			mark(q.first, q.second);
+	}
+	mark(tx, ty);
+	for (int t = 0; t < ObjList::ACTORS; ++t)
+		if (hit[t])
+			out.push_back(t);
+}
+
+// blow_up_door (33260): in the 5 x 5 squares round (cx, cy) a powder keg is lit and goes off at once (type 0xDF, frame 1: sub_333BB), and of the doors the first kind found there
+// (0x12C, else 0x129, 0x12A, 0x12B) that is not of the unbreakable frames (frame bits 2 and 3 both set) goes: "The door is blown up!"
+void Game::blowUpDoors(int cx, int cy) {
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	auto find = [&](int type, int qx, int qy) {
+		std::vector<int> there;
+		_world.objectsAt(qx, qy, z, there);
+		for (int i : there)
+			if (_world.objects[i].type == type && _world.objects[i].actor < 0)
+				return i;
+		return -1;
+	};
+	for (int dy = -2; dy <= 2; ++dy)
+		for (int dx = -2; dx <= 2; ++dx) {
+			int qx = (cx + dx) & mask, qy = (cy + dy) & mask;
+			int keg = find(0xDF, qx, qy);
+			if (keg >= 0) {
+				_world.objects[keg].frame = 1;
+				explodeKegObject(keg);
+			}
+			int door = -1;
+			static const int KINDS[4] = {0x12C, 0x129, 0x12A, 0x12B};
+			for (int k = 0; k < 4 && door < 0; ++k) {
+				int d = find(KINDS[k], qx, qy);
+				if (d >= 0 && (_world.objects[d].frame & 0x0C) != 0x0C)
+					door = d;
+			}
+			if (door >= 0 && (_world.objects[door].frame & 0x0C) != 0x0C) {
+				_world.deleteObject(door);
+				message("\nThe door is blown up!\n");
+			}
+		}
+}
+
+// sub_333BB: the keg goes (from where it lies, or from the one who carries it), what is in the blast takes 1-60 points of damage (people only: the damage routine does nothing to
+// the things that stack), and the doors round it are blown up
+void Game::explodeKegObject(int idx) {
+	World::Obj keg = _world.objects[idx];
 	int kx = keg.x, ky = keg.y, kz = keg.z;
 	if (carriedObject(keg) && keg.parent >= 0) {
 		int owner = _world.actorObject(keg.parent);
@@ -748,16 +805,21 @@ void Game::explodeKeg() {
 			kz = _world.objects[owner].z;
 		}
 	}
-	_world.deleteObject(_kegObject);
+	_world.deleteObject(idx);
+	std::vector<int> hit;
+	blastActors(kx, ky, hit);
+	for (int actor : hit)
+		_combat.applyDamage(1, actor, 1 + (int)(_rng.next() % 60));
+	(void)kz;
+	blowUpDoors(kx, ky);
+}
+
+void Game::explodeKeg() {
+	if (_kegObject < 0)
+		return;
+	int keg = _kegObject;
 	_kegObject = -1;
-	message("\nBoom!\n");
-	for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
-		int k = _world.actorObject(actor);
-		if (k < 0 || _world.objects[k].deleted || _world.objects[k].z != kz)
-			continue;
-		if (std::abs((int)_world.objects[k].x - kx) <= 1 && std::abs((int)_world.objects[k].y - ky) <= 1)
-			_combat.applyDamage(1, actor, 1 + _rng.next() % 60);
-	}
+	explodeKegObject(keg);
 }
 
 // read_book (6B7A): "\n\n", then the text of BOOK.DAT for the object's quality. In the text `&...&` marks a translation (shown only once a scroll has been

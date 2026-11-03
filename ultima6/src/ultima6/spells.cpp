@@ -234,9 +234,8 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 				break;
 			}
 		}
-		if (index == 65 || index == 116) {
-			// blow_up_door at the target square: doors are not destroyed yet
-		}
+		if (index == 65 || index == 116)
+			blowUpDoors(tx, ty);
 		if (index != 65)
 			message("\nSuccess\n");
 		return true;
