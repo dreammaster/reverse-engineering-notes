@@ -218,12 +218,95 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 			return false;
 		return _world.resurrect(_world.objects[object].quality);
 	}
+	case 83:   // Flame Wind
+	case 87:   // Poison Wind
+	case 98:   // Energy Wind
+	case 113: { // Death Wind (sub_24E78, sub_38A7B, sub_37CBD): five bolts fly from the caster to the target square and its neighbours at right angles to the line
+		int ck = _world.actorObject(caster);
+		int cx = _world.objects[ck].x, cy = _world.objects[ck].y;
+		auto random = [&](int lo, int hi) { return lo + (int)(_rng.next() % (hi - lo + 1)); };
+		if (tx == cx && ty == cy) {
+			message("\nNo effect\n");
+			return true;
+		}
+		static const uint8_t DIRECTION[121] = {98, 99, 99, 99, 99, 100, 65, 66, 82, 82, 82, 98, 99, 99, 99, 100, 116, 65, 65, 66, 82, 82, 98, 99, 99, 100, 116, 116, 65, 65, 65, 66, 82,
+											   98, 99, 100, 116, 116, 116, 65, 65, 65, 65, 66, 98, 100, 116, 116, 116, 116, 64, 64, 64, 64, 64, 0, 4, 4, 4, 4, 4, 48, 48, 48, 48, 32,
+											   38, 6, 5, 5, 5, 5, 48, 48, 48, 32, 39, 38, 22, 6, 5, 5, 5, 48, 48, 32, 39, 39, 38, 22, 22, 6, 5, 5, 48, 32, 39, 39, 39, 38, 22, 22, 22,
+											   6, 5, 32, 39, 39, 39, 39, 38, 22, 22, 22, 22, 6};
+		static const int8_t DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+		static const uint8_t REACH[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
+											{4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
+		int ox = std::max(-5, std::min(5, tx - cx)), oy = std::max(-5, std::min(5, ty - cy));
+		int code = DIRECTION[(oy + 5) * 11 + ox + 5];
+		int hi = code >> 4, lo = code & 15;
+		int px[5] = {tx, tx + DX[hi & 7], tx + DX[lo & 7], tx + 2 * DX[hi & 7], tx + 2 * DX[lo & 7]};
+		int py[5] = {ty, ty + DY[hi & 7], ty + DY[lo & 7], ty + 2 * DY[hi & 7], ty + 2 * DY[lo & 7]};
+		// APPROX(70): every bolt follows a straight line of pixels (16 to a square) from the middle of the caster's square to the middle of its goal and hits whoever stands on the
+		// squares it crosses until a square blocks it (flags2 bit 0x20) or lies out of reach; the original's step sizes and error terms are not copied
+		bool hit[ObjList::ACTORS] = {};
+		for (int b = 0; b < 5; ++b) {
+			int dxp = (px[b] - cx) * 16, dyp = (py[b] - cy) * 16;
+			int major = std::max(std::abs(dxp), std::abs(dyp));
+			int lastX = cx, lastY = cy;
+			for (int step = 1; step <= major; ++step) {
+				int sx = cx * 16 + 8 + (2 * dxp * step + (dxp < 0 ? -major : major)) / (2 * major);
+				int sy = cy * 16 + 8 + (2 * dyp * step + (dyp < 0 ? -major : major)) / (2 * major);
+				int qx = sx >> 4, qy = sy >> 4;
+				if (qx == lastX && qy == lastY)
+					continue;
+				lastX = qx;
+				lastY = qy;
+				int adx = std::abs(qx - cx), ady = std::abs(qy - cy);
+				if (adx > 7 || ady > 7 || REACH[adx][ady] > 7)
+					break;
+				bool near = adx <= 1 && ady <= 1;
+				bool blocked = false;
+				int base = _world.map.tile(z, qx, qy) & (TileFlags::TILES - 1);
+				std::vector<int> there;
+				_world.objectsAt(qx, qy, z, there);
+				auto stops = [&](int tile) {
+					uint8_t f = _world.flags.flags2[tile & (TileFlags::TILES - 1)];
+					return (f & 0x20) && !(near && (f & 8));
+				};
+				blocked = stops(base);
+				for (int i : there)
+					blocked |= stops(_world.baseTile.firstTile[_world.objects[i].type] + _world.objects[i].frame);
+				if (blocked)
+					break;
+				for (int i : there) {
+					int t = _world.objects[i].actor;
+					if (t >= 0 && t < ObjList::ACTORS && !(a.status[t] & 0x10))
+						hit[t] = true;
+				}
+			}
+		}
+		for (int t = 0; t < ObjList::ACTORS; ++t) {
+			if (!hit[t])
+				continue;
+			int tk = _world.actorObject(t);
+			const CreatureStats *cs = tk >= 0 ? Combat::stats(_world.objects[tk].type) : nullptr;
+			switch (index) {
+			case 83: // sub_222F2
+				if (!(cs && (cs->flags & 8)))
+					_combat.applyDamage(caster, t, cs && (cs->flags & 0x10) ? random(1, 20) * 2 : random(1, 20));
+				break;
+			case 87: // sub_21BF2
+				if (!(cs && (cs->flags & 4)) && !((_combat.adjustedStrength(t) / 2 + 30 - _combat.adjustedIntelligence(caster)) / 2 > random(1, 30)))
+					a.status[t] |= 0x08;
+				break;
+			case 98:
+				_combat.applyDamage(caster, t, random(1, 30));
+				break;
+			default: // sub_21E06: the living that are not flagged (2) and do not resist die
+				if (!(a.status[t] & 0x10) && !(cs && (cs->flags & 2)) && !_combat.resists(t, caster))
+					_combat.applyDamage(caster, t, a.hp[t]);
+				break;
+			}
+		}
+		return true;
+	}
 	case 65: // Explosion
-	case 83: // Flame Wind
-	case 84: // Hail Storm
-	case 87: // Poison Wind
-	case 98: // Energy Wind
-	case 113: { // Death Wind: everybody (not the party) within the reach of the spell is hurt, poisoned or killed
+	case 84: { // Hail Storm: everybody (not the party) within the reach of the spell is hurt
 		int radius = index == 65 ? 1 : 3;
 		for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
 			int k = _world.actorObject(actor);
@@ -231,12 +314,7 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 				continue;
 			if (std::abs((int)_world.objects[k].x - tx) > radius || std::abs((int)_world.objects[k].y - ty) > radius)
 				continue;
-			if (index == 87)
-				a.status[actor] |= 0x08;
-			else if (index == 113)
-				_combat.applyDamage(caster, actor, 255);
-			else
-				_combat.applyDamage(caster, actor, 1 + _rng.next() % (index == 65 ? 30 : 20));
+			_combat.applyDamage(caster, actor, 1 + _rng.next() % (index == 65 ? 30 : 20));
 		}
 		return true;
 	}
