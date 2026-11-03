@@ -198,6 +198,7 @@ bool Creatures::stepDir(int actor, int dir) {
 	if (!_movement.check(nx, ny, o.z, k, rules).passable)
 		return false;
 	_world.moveObject(k, nx, ny, o.z);
+	_world.actors.movementFlags[actor] = (uint8_t)((_world.actors.movementFlags[actor] & ~7) | dir); // the way it faces
 	_actors.face(actor, DY[dir] < 0 ? 0 : DY[dir] > 0 ? 2 : DX[dir] > 0 ? 1 : 3);
 	return true;
 }
@@ -314,6 +315,24 @@ void Creatures::act(int actor, int px, int py, int pz) {
 	}
 	const World::Obj o = _world.objects[k];
 	int wt = a.worktype[actor];
+	// the guards (0xF, 0x10, 0x8B-0x8E, actor_worktype_act 29ED9): half the turns are passed; otherwise a step in the direction the guard faces (at its post a guard of 0x8B-0x8E
+	// goes the way its worktype says: north, east, south, west) and, if that is blocked, the opposite way
+	if (wt == 0x0F || wt == 0x10 || (wt >= 0x8B && wt <= 0x8E)) {
+		if (_rng.next() % 2 == 0) {
+			_world.spendMoves(actor, 5);
+			return;
+		}
+		int dir = a.movementFlags[actor] & 7;
+		if (wt >= 0x8B) {
+			const Schedule &sc = _world.schedule;
+			Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
+			if (o.x == e.x && o.y == e.y)
+				dir = (wt - 0x8B) * 2;
+		}
+		if (!stepDir(actor, dir))
+			stepDir(actor, dir ^ 4);
+		return;
+	}
 	if (wt == 0x0E) { // wt_immobile: five moves passed (its blows at enemies in reach are not done)
 		_world.spendMoves(actor, 5);
 		return;
