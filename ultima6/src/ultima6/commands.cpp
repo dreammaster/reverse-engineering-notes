@@ -148,15 +148,25 @@ bool Game::inventoryKey(int key) {
 				_world.addToInventory(actor, 90, 0, 1);
 				message("\nA torch is doused.\n");
 			} else if (o.type == 90) { // light one of the torches, which burns for a while in the hand
+				// use_torch (32661): both hands full means no light; the torch burns for 200 minutes (0xC8)
+				std::vector<int> held;
+				_world.inventory(actor, held, false);
+				int hands = 0;
+				for (int h : held)
+					hands += _world.objects[h].location() == ObjRecord::READIED;
+				if (hands >= 2) {
+					message("\nNo free hand to hold the torch.\n");
+					break;
+				}
 				World::Obj lit = o;
 				_world.removeFromInventory(actor, 90, 0, 1);
 				lit.frame = 1;
-				lit.quantity = 100;
+				lit.quantity = 200;
 				lit.deleted = false;
 				lit.status = (uint8_t)((lit.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
 				lit.parent = actor;
 				_world.objects.push_back(lit);
-				message("\nA torch is lit.\n");
+				message("\nTorch is lit.\n");
 			} else if (o.location() == ObjRecord::READIED) {
 				o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
 				message("\nUnreadied " + Describe::object(_world, o) + "\n");
