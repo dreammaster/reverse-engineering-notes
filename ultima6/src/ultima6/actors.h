@@ -51,7 +51,8 @@ private:
 	bool squareShut(int x, int y, int z) const;
 	bool inWindow(int x, int y, int z, int px, int py, int pz, int &gx, int &gy) const;
 	bool plan(int actor, int tx, int ty, int px, int py, int pz);
-	void follow(int actor, int destX, int destY);
+	void follow(int actor, int destX, int destY, int px, int py, int pz);
+	void arrive(int actor, int px, int py, int pz);
 
 	World &_world;
 	const Movement &_movement;

@@ -21,6 +21,15 @@ void ActorManager::hourChanged(const GameClock &clock) {
 	for (int actor = 2; actor < 0xE0; ++actor) {
 		if (a.worktype[actor] == 0x9B)
 			a.worktype[actor] = GO_TO_SCHEDULE;
+		if (a.worktype[actor] == 0x91) {
+			// the sleepers are about at the next schedule: sleep goes and the sprite comes back
+			int ko = _world.actorObject(actor);
+			if (ko >= 0 && _world.objects[ko].type == 0x92 && (a.baseObjFrame[actor] & 0x3FF)) {
+				_world.objects[ko].type = a.baseObjFrame[actor] & 0x3FF;
+				_world.objects[ko].frame = (uint8_t)(a.baseObjFrame[actor] >> 10);
+			}
+			a.status[actor] &= ~4;
+		}
 		if (_world.actorObject(actor) < 0)
 			continue;
 		if (!(a.worktype[actor] >= 0x80 || a.worktype[actor] == 7))
@@ -451,7 +460,7 @@ bool ActorManager::plan(int actor, int tx, int ty, int px, int py, int pz) {
 }
 
 // wt_walk_path: one step along the actor's table; when the table is used up the actor is at its place (or plans again), and a blocked step is tried again twice (0x83 -> 0x84 -> 0x85) before it gives up (0x86)
-void ActorManager::follow(int actor, int destX, int destY) {
+void ActorManager::follow(int actor, int destX, int destY, int px, int py, int pz) {
 	ObjList &a = _world.actors;
 	int slot = a.unknown18f1[actor] & 7;
 	int entry = _path[slot][_index[slot] & 31];
@@ -460,9 +469,7 @@ void ActorManager::follow(int actor, int destX, int destY) {
 	if (entry == 0) {
 		_owner[slot] = 0;
 		if (std::max(std::abs(o.x - destX), std::abs(o.y - destY)) < 2) {
-			const Schedule &sc = _world.schedule;
-			Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
-			a.worktype[actor] = (uint8_t)e.worktype;
+			arrive(actor, px, py, pz);
 		} else {
 			a.worktype[actor] = GO_TO_SCHEDULE;
 		}
@@ -497,10 +504,67 @@ void ActorManager::follow(int actor, int destX, int destY) {
 		a.moves[actor] = 0;
 		_owner[slot] = 0;
 		if (o.x + DX[dir] == destX && o.y + DY[dir] == destY) {
-			const Schedule &sc = _world.schedule;
-			Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
-			a.worktype[actor] = (uint8_t)e.worktype;
+			arrive(actor, px, py, pz);
 		}
+	}
+}
+
+// sub_27FE6 (27FE6-28361): an actor that has come to its schedule place takes up the entry's worktype and its pose: asleep in a bed (0x91: the sleeping figure 0x92 on a bed 0xA3 whose frame is
+// 0 or 6), seated (0x92, 0x95: the chair or bed under it decides the frame, see face), standing and facing a direction (0x87-0x8E); an actor that has not reached its place goes on
+// (worktype 0x81). Waking up (any other worktype) takes the sleep away and the sprite back.
+// APPROX(1): the pose of 0x93 (the object 0xE4 and the neighbour 0x77 of sub_27E95), 0x95's table change and 0x98 are not done.
+void ActorManager::arrive(int actor, int px, int py, int pz) {
+	ObjList &a = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0)
+		return;
+	const Schedule &sc = _world.schedule;
+	Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
+	World::Obj &o = _world.objects[k];
+	bool at = o.x == e.x && o.y == e.y && o.z == e.z;
+	int wt = e.worktype;
+	a.worktype[actor] = (uint8_t)wt;
+	int gx, gy;
+	bool shown = inWindow(o.x, o.y, o.z, px, py, pz, gx, gy);
+	if (wt == 0x91) {
+		at = true;
+		a.status[actor] |= 4;
+		if (!shown) {
+			a.worktype[actor] = 0x80;
+		} else {
+			std::vector<int> there;
+			_world.objectsAt(o.x, o.y, o.z, there);
+			for (int i : there) {
+				const World::Obj &bed = _world.objects[i];
+				if (bed.type == 0xA3 && (bed.frame == 0 || bed.frame == 6)) {
+					o.type = 0x92;
+					o.frame = bed.frame ? 1 : 0;
+					break;
+				}
+			}
+		}
+	} else {
+		a.status[actor] &= ~4;
+		if (o.type == 0x92 && (a.baseObjFrame[actor] & 0x3FF)) {
+			o.type = a.baseObjFrame[actor] & 0x3FF;
+			o.frame = (uint8_t)(a.baseObjFrame[actor] >> 10);
+		}
+		if (wt == 0x92 || wt == 0x95) {
+			at = true;
+			if (!shown)
+				a.worktype[actor] = 0x80;
+			else
+				face(actor, 0);
+		} else if (wt >= 0x87 && wt <= 0x8E) {
+			int dir = ((wt + 0x79) & 3) * 2;
+			a.movementFlags[actor] = (uint8_t)((a.movementFlags[actor] & ~7) | dir);
+			face(actor, dir);
+		}
+	}
+	if (!at) {
+		a.worktype[actor] = GO_TO_SCHEDULE;
+		if (o.type == 0x188)
+			o.type = 0x182;
 	}
 }
 
@@ -516,7 +580,7 @@ void ActorManager::scheduleUpdate(int px, int py, int pz) {
 		Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
 		const World::Obj &o = _world.objects[k];
 		if (o.x == e.x && o.y == e.y && o.z == e.z) {
-			a.worktype[actor] = (uint8_t)e.worktype;
+			arrive(actor, px, py, pz);
 			continue;
 		}
 		int g1, g2;
@@ -539,7 +603,7 @@ void ActorManager::scheduleUpdate(int px, int py, int pz) {
 						placed = true;
 					}
 				}
-		a.worktype[actor] = (uint8_t)e.worktype;
+		arrive(actor, px, py, pz);
 	}
 }
 
@@ -555,11 +619,11 @@ void ActorManager::act(int actor, int px, int py, int pz) {
 	Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
 	const World::Obj o = _world.objects[k];
 	if (wt != GO_TO_SCHEDULE) {
-		follow(actor, e.x, e.y);
+		follow(actor, e.x, e.y, px, py, pz);
 		return;
 	}
 	if (o.x == e.x && o.y == e.y && o.z == e.z) {
-		a.worktype[actor] = (uint8_t)e.worktype;
+		arrive(actor, px, py, pz);
 		a.moves[actor] = 0;
 		return;
 	}
