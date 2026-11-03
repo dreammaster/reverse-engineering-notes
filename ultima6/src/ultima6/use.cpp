@@ -157,7 +157,26 @@ void Game::useObject(int idx) {
 			message("\nPowder lit!\n");
 		}
 	} else if (type == 0xDD) {
-		message("\nFire!\n"); // APPROX(51): use_cannon (330C5) fires a ball along the cannon's direction; not done
+		// use_cannon (330C5): the ball flies along the cannon's facing (frame 0 north, 1 east, 2 south, 3 west) up to five squares and hurts the first person it meets for 1-60.
+		// APPROX(51): the flight test (`sub_2BB2F`), the objects it can hit and the blown-up doors (`blow_up_door`) are not done; a wall stops it
+		message("\nFire!\n");
+		static const int CX[4] = {0, 1, 0, -1}, CY[4] = {-1, 0, 1, 0};
+		int dir = o.frame & 3, mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+		for (int d = 1; d <= 5; ++d) {
+			int tx = (o.x + CX[dir] * d) & mask, ty = (o.y + CY[dir] * d) & mask;
+			if (_world.flags.flags1[_world.map.tile(z, tx, ty) & (TileFlags::TILES - 1)] & 0x02)
+				break;
+			std::vector<int> there;
+			_world.objectsAt(tx, ty, z, there);
+			int victim = -1;
+			for (int t : there)
+				if (_world.objects[t].actor >= 0)
+					victim = _world.objects[t].actor;
+			if (victim >= 0) {
+				_combat.applyDamage(actingActor(), victim, 1 + _rng.next() % 60);
+				break;
+			}
+		}
 	} else if (type == 0x99 || type == 0x9C || type == 0x9D || type == 0x9E || type == 0x128) {
 		// play_instrument (329EA): a tune, no text (there is no sound yet)
 	} else if (type == 0xEC || type == 0x1A3) {
