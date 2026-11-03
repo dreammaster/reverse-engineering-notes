@@ -345,15 +345,29 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 	case 105: // Wizard Eye: (approximated by the same view)
 		_gem = true;
 		return true;
-	case 121: // Tremor: everybody not of the party in view is hurt
+	case 121: { // Tremor (sub_24BED): in the 11 x 11 squares around the party every actor of the monsters' side (status bits 0x60 = 0x20) that does not fly (creature flag 0x100) takes
+		// 1-30 points of damage; then "Success"
+		for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
+			int k = _world.actorObject(actor);
+			if (k < 0 || _world.objects[k].deleted || a.hp[actor] == 0 || (a.status[actor] & 0x60) != 0x20 || _world.objects[k].z != z)
+				continue;
+			const CreatureStats *cs = Combat::stats(_world.objects[k].type);
+			if (cs && (cs->flags & 0x100))
+				continue;
+			if (std::abs((int)_world.objects[k].x - x) <= 5 && std::abs((int)_world.objects[k].y - y) <= 5)
+				_combat.applyDamage(caster, actor, 1 + _rng.next() % 30);
+		}
+		message("\nSuccess\n");
+		return true;
+	}
 	case 66: { // Insect Swarm: so are those near the party, less
-		int radius = index == 121 ? 8 : 3;
+		int radius = 3;
 		for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
 			int k = _world.actorObject(actor);
 			if (k < 0 || _world.objects[k].deleted || a.hp[actor] == 0 || (a.status[actor] & 0x80) || _world.objects[k].z != z)
 				continue;
 			if (std::abs((int)_world.objects[k].x - x) <= radius && std::abs((int)_world.objects[k].y - y) <= radius)
-				_combat.applyDamage(caster, actor, 1 + _rng.next() % (index == 121 ? 30 : 10));
+				_combat.applyDamage(caster, actor, 1 + _rng.next() % 10);
 		}
 		return true;
 	}
