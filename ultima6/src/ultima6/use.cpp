@@ -72,7 +72,7 @@ void Game::useObject(int idx) {
 		message("\nNot usable\n");
 		return;
 	}
-	if (!carried) {
+	if (!carried && !_telekinesis) {
 		// within one square of the acting member, else "Out of range!"
 		int a = _world.actorObject(actingActor());
 		if (a >= 0 && (std::abs((int)_world.objects[a].x - (int)o.x) > 1 || std::abs((int)_world.objects[a].y - (int)o.y) > 1) && o.type != 0x1AE && o.type != 0x1AF && o.type != 0x1AC) {

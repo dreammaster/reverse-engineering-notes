@@ -130,6 +130,10 @@ void Game::runTurns() {
 				continue;
 			int wt = a.worktype[actor], st = a.status[actor];
 			int moves = (int8_t)a.moves[actor];
+			if (!(st & 0x80) && a.globals[0x12 + 14]) { // Time Stop: only the party moves
+				a.moves[actor] = 0;
+				continue;
+			}
 			if (wt == 0 || (st & 0x02) || ((st & 0x04) && wt != 0x80) || (st & 0x10) || moves <= 0)
 				continue;
 			const World::Obj &o = _world.objects[k];
@@ -618,7 +622,7 @@ void Game::render(Framebuffer &screen) {
 	if (al.globals[0x12 + Magic::TIMER_LIGHT])
 		radius = al.globals[0x12 + Magic::TIMER_LIGHT] > 100 ? 7 : 5;
 	uint8_t dark[MapRenderer::CELLS * MapRenderer::CELLS];
-	_renderer.computeDarkness(x, y, z, clock.hour, radius, dark);
+	_renderer.computeDarkness(x, y, z, _world.actors.globals[0x12 + 15] ? 0 : clock.hour, radius, dark); // an eclipse makes it night
 	_renderer.draw(screen, _peek ? _peekX : x, _peek ? _peekY : y, z, dark);
 	if (_talk)
 		drawTalkView(screen, _world, _talk->portraitActor());

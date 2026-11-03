@@ -117,6 +117,7 @@ private:
 	void buryMoonstone(int idx);
 	void digAt(int key);
 	void telescopeAt(int key);
+	bool _telekinesis = false; // Use from a distance (the Telekinesis spell)
 	void actorStatusDecay();
 	void useSilverHorn();
 	void dropObject(int idx, int count);
