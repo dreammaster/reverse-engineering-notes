@@ -171,18 +171,7 @@ int Talk::partyMember(int index) {
 
 // APPROX(33): not the original's exact behaviour, see docs/approximations.md
 int Talk::joinParty(int npc) {
-	ObjList &a = _world.actors;
-	if (rosterIndex(npc) >= 0)
-		return 3;
-	if (a.partySize >= ObjList::PARTY_NAMES || a.partySize >= 8)
-		return 2;
-	int i = a.partySize++;
-	a.partyRoster[i] = (uint8_t)npc;
-	std::string n = _nameOfActor(npc);
-	std::memset(a.partyNames[i], 0, ObjList::NAME_SIZE);
-	std::memcpy(a.partyNames[i], n.data(), std::min<size_t>(n.size(), ObjList::NAME_SIZE - 1));
-	a.status[npc] |= 0x80; // in the party (actors' status array)
-	return 0;
+	return _world.joinParty(npc);
 }
 
 int Talk::leaveParty(int npc) {

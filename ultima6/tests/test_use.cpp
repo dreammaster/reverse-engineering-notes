@@ -632,6 +632,37 @@ int main() {
 		CHECK(logText(gw).find("Done") != std::string::npos);
 	}
 
+	// Help (sub_1890C): the party is healed, raised and taken to Lord British's court while it is held
+	{
+		World ww;
+		ww.load("u6/game");
+		Game gw(ww);
+		int book = ww.addToInventory(1, 57, 0, 1);
+		ww.objects[book].status = (uint8_t)((ww.objects[book].status & ~0x18) | 0x18);
+		World::Obj spell = ww.objects[book];
+		spell.type = 58;
+		spell.quality = 255;
+		spell.status = 0x08;
+		spell.parent = book;
+		spell.actor = -1;
+		ww.objects.push_back(spell);
+		ww.actors.level[1] = 8;
+		ww.actors.unknown13f1[1] = 99;
+		int buddy = ww.actors.partyRoster[1];
+		ww.actors.hp[buddy] = 3;
+		ww.actors.status[buddy] |= 0x08;
+		gw.advanceTime(60 * 12); // midday has passed
+		gw.handleKey('c');
+		gw.handleKey('1');
+		gw.handleKey('k');
+		gw.handleKey('l');
+		gw.handleKey(KEY_ENTER);
+		CHECK(ww.actors.hp[buddy] > 3 && !(ww.actors.status[buddy] & 0x08));
+		CHECK(gw.x == 307 && gw.y == 352 && gw.z == 0);
+		bool held = (gw.clock.hour >= 8 && gw.clock.hour <= 11) || (gw.clock.hour >= 14 && gw.clock.hour <= 17);
+		CHECK(held);
+	}
+
 	// Enchant (sub_24810): a staff on the ground takes the spell typed at "With: " as a charge (0x150) whose quality is the spell
 	{
 		World ww;

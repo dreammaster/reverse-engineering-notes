@@ -70,6 +70,8 @@ public:
 	std::string bookText(int n) const;
 	/** Brings a dead actor back with full hit points; its dead body (quality = the actor) gives back what it held and goes. False if it is not dead. */
 	bool resurrect(int actor);
+	/** sub_1EF66 (join_party): 0 when the actor has joined (last in the roster, with the name from its script, on the party's side as a follower), 2 when the party is full, 3 if it is in it already. */
+	int joinParty(int actor);
 	Bytes book;
 
 	GameId game = GameId::Ultima6; // set before load(): which of the three games' data the directory holds

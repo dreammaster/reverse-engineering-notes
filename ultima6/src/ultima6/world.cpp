@@ -344,7 +344,35 @@ bool World::resurrect(int dead) {
 		deleteObject((int)b);
 		break;
 	}
+	if (actors.status[dead] & 0x80)
+		joinParty(dead); // a member of the party who died comes back into it (sub_22B02 ends with join_party)
 	return true;
+}
+
+// sub_1EF66: the actor is added to the roster with its name (13 letters at most) and the party flag; it follows (worktype 1) and, once resurrected or joined, fights in the front line
+// (objlist +0x12F1 = 3); a Gargoyle figure of type 0x188 becomes 0x182
+int World::joinParty(int actor) {
+	for (int i = 0; i < actors.partySize; ++i)
+		if (actors.partyRoster[i] == actor)
+			return 3;
+	if (actors.partySize >= 8 || actors.partySize >= ObjList::PARTY_NAMES)
+		return 2;
+	int i = actors.partySize++;
+	actors.partyRoster[i] = (uint8_t)actor;
+	ConverseScript s;
+	std::string name = this->script(actor, s) ? s.name() : "";
+	std::replace(name.begin(), name.end(), '_', '.');
+	std::memset(actors.partyNames[i], 0, ObjList::NAME_SIZE);
+	std::memcpy(actors.partyNames[i], name.data(), std::min<size_t>(name.size(), ObjList::NAME_SIZE - 1));
+	actors.status[actor] |= 0x80;
+	if (!(actors.status[actor] & 0x60))
+		actors.status[actor] = (uint8_t)((actors.status[actor] & 0x9F) | 0x40);
+	actors.worktype[actor] = 1;
+	actors.unknown12f1[actor] = 3;
+	int k = actorObject(actor);
+	if (k >= 0 && objects[k].type == 0x188)
+		objects[k].type = 0x182;
+	return 0;
 }
 
 std::string World::bookText(int n) const {
