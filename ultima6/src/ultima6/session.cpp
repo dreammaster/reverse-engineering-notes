@@ -92,6 +92,7 @@ void Game::minutePassed() {
 		_fishedToday = false; // the fish bite again each day
 	if (_kegTimer > 0 && --_kegTimer == 0)
 		explodeKeg();
+	actorStatusDecay();
 	partyHazards();
 	_creatures.partyFights();
 	_creatures.despawn(x, y, z);

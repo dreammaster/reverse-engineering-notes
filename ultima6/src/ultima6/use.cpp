@@ -914,6 +914,36 @@ void Game::shrineChant(const std::string &mantra) {
 	_world.spendMoves(actingActor(), 5);
 }
 
+// What a minute does to the conditions of every actor (advance_time 135C3-1373E): protection and invisibility wear off one minute in 64 and curses one in 16 when a roll of
+// 1-30 reaches the actor's intelligence (less 3 when cursed, at least 1); paralysis one minute in 4 against its strength; sleep (except the sleep of a schedule, worktype 0x91)
+// ends one minute in 16 and the actor takes its own picture again.
+void Game::actorStatusDecay() {
+	ObjList &a = _world.actors;
+	auto roll = [&](int hi) { return 1 + (int)(_rng.next() % hi); };
+	for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
+		int k = _world.actorObject(actor);
+		if (k < 0 || _world.objects[k].deleted)
+			continue;
+		World::Obj &o = _world.objects[k];
+		int intel = a.intelligence[actor];
+		if (o.status & 0x40)
+			intel = std::max(1, intel - 3);
+		if ((o.status & 0x02) && _rng.next() % 64 == 0 && !(intel > roll(30)))
+			o.status &= ~0x02;
+		if ((a.status[actor] & 0x01) && _rng.next() % 64 == 0 && !(intel > roll(30)))
+			a.status[actor] &= ~0x01;
+		if ((o.status & 0x40) && _rng.next() % 16 == 0 && !(intel > roll(30)))
+			o.status &= ~0x40;
+		if ((a.status[actor] & 0x02) && _rng.next() % 4 == 0 && !(_combat.adjustedStrength(actor) > roll(30)))
+			a.status[actor] &= ~0x02;
+		if ((a.status[actor] & 0x04) && a.worktype[actor] != 0x91 && _rng.next() % 16 == 0) {
+			a.status[actor] &= ~0x04;
+			o.type = a.baseObjFrame[actor] & 0x3FF;
+			o.frame = (uint8_t)(a.baseObjFrame[actor] >> 10);
+		}
+	}
+}
+
 // use_silver_horn (3525F): three times a spot is looked for at the edge of the view (a random side, a random place along it) where a silver serpent (0x19D) and the
 // squares around it can be entered; an egg with a serpent there is hatched at once (status 0x60: the serpent fights both sides). Not while serpents are about.
 // APPROX(62): the egg is skipped and the serpent made directly; its placement search and the egg's counts (4-8 inside, one hatched) follow the disassembly only roughly

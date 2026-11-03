@@ -117,6 +117,7 @@ private:
 	void buryMoonstone(int idx);
 	void digAt(int key);
 	void telescopeAt(int key);
+	void actorStatusDecay();
 	void useSilverHorn();
 	void dropObject(int idx, int count);
 	int _crystalLat = 0;
