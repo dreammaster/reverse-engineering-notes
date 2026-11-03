@@ -74,6 +74,7 @@ void Game::minutePassed() {
 		_actors.hourChanged(clock);
 		updateMoons();
 	}
+	windChanges();
 	// the timers of light and the like count down a minute at a time
 	for (int t = 0; t < 16; ++t)
 		if (_world.actors.globals[0x12 + t])
@@ -192,7 +193,43 @@ bool Game::canWalk(int tx, int ty, int tz) {
 }
 
 // APPROX(5): not the original's exact behaviour, see docs/approximations.md
+// party_move (278A0..27988): a raft (0x19F) or balloon (0x1A7) goes where the wind and the player's wish together send it: the wish (or, on a raft over a current tile 8-15, the
+// current) and the opposite of the wind's direction index the table at ds:181A; with no wind the wish is followed; without a wish and without wind nothing moves.
+int Game::vehicleDirection(int requested) {
+	static const int8_t SAIL[8][8] = {{0, 0, 1, 1, 0, 7, 7, 0}, {1, 1, 1, 2, 2, 1, 0, 0}, {1, 2, 2, 2, 3, 3, 2, 1}, {2, 2, 3, 3, 3, 4, 4, 3},
+									  {4, 3, 3, 4, 4, 4, 5, 5}, {6, 5, 4, 4, 5, 5, 5, 6}, {7, 7, 6, 5, 5, 6, 6, 6}, {7, 0, 0, 7, 6, 6, 7, 7}};
+	int type = _world.objects[_leaderObject].type;
+	if (type != 0x19F && type != 0x1A7)
+		return requested;
+	int wind = _world.actors.globals.size() > 9 ? (int8_t)_world.actors.globals[9] : -1;
+	int col = wind ^ 4, want = requested;
+	if (type == 0x19F) {
+		int tile = _world.map.tile(z, x, y) & 0xFF;
+		if (tile >= 8 && tile < 16)
+			want = tile - 8;
+	}
+	int d = col < 0 ? want : (want >= 0 && col < 8 ? SAIL[want][col] : -1);
+	return d;
+}
+
+// sub_132A6: the wind changes now and then (one minute in 64, on the surface and on level 5): a random direction 0-6 or none (-1); under ground there is none.
+void Game::windChanges() {
+	std::vector<uint8_t> &g = _world.actors.globals;
+	if (g.size() <= 9)
+		return;
+	if (z > 0 && z < 5) {
+		g[9] = 0xFF;
+	} else if (_rng.next() % 64 == 0) {
+		g[9] = (uint8_t)((int)(_rng.next() % 8) - 1);
+	}
+}
+
 bool Game::step(int dir) {
+	dir = vehicleDirection(dir);
+	if (dir < 0) {
+		message("Thou canst not move without wind!\n");
+		return false;
+	}
 	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
 	int nx = (x + DIR_DX[dir]) & mask, ny = (y + DIR_DY[dir]) & mask;
 	if (!canWalk(nx, ny, z))

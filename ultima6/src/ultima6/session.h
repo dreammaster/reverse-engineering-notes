@@ -117,6 +117,8 @@ private:
 	void buryMoonstone(int idx);
 	void digAt(int key);
 	void telescopeAt(int key);
+	int vehicleDirection(int requested);
+	void windChanges();
 	bool _telekinesis = false; // Use from a distance (the Telekinesis spell)
 	void actorStatusDecay();
 	void useSilverHorn();
