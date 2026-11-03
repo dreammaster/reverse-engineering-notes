@@ -333,6 +333,30 @@ void Creatures::act(int actor, int px, int py, int pz) {
 			stepDir(actor, dir ^ 4);
 		return;
 	}
+	// wt_work (29134; worktypes 0x90, 0x94, 0x96, 0x97): one turn in eight a step, otherwise five moves passed; the step is along the axis the worker is further off its place on
+	// (a signed random number, from sub_28F37, decides between the two ways) so that it hovers about its schedule place. APPROX(67): 0x96 and 0x97 near the player call
+	// `wt_work_12` in the original, which is not traced
+	if (wt == 0x90 || wt == 0x94 || wt == 0x96 || wt == 0x97) {
+		if (_rng.next() % 8 != 0) {
+			_world.spendMoves(actor, 5);
+			return;
+		}
+		const Schedule &sc = _world.schedule;
+		Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
+		auto laplace = [&]() {
+			int n = 0;
+			while (_rng.next() % 2)
+				++n;
+			return _rng.next() % 2 ? -n : n;
+		};
+		int dx = (int)o.x - e.x, dy = (int)o.y - e.y, dir;
+		if (std::abs(dy) - std::abs(dx) >= laplace())
+			dir = laplace() > dy ? 4 : 0;
+		else
+			dir = laplace() > dx ? 2 : 6;
+		stepDir(actor, dir);
+		return;
+	}
 	if (wt == 0x0E) { // wt_immobile: five moves passed (its blows at enemies in reach are not done)
 		_world.spendMoves(actor, 5);
 		return;
