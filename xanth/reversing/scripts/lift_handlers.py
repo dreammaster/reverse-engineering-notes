@@ -302,7 +302,7 @@ def reachable(insns, labels, tables, entry):
                 continue
             if op in labels and is_local_label(op, labels, entry):     # a jump to a named label (another function) is a tail call, not part of this one
                 stack.append(labels[op])
-            if mn == "jmp":
+            if mn == "jmp" and not re.match(r"^\$\+[23]$", op):      # `jmp short $+2` (I/O delay) just falls through
                 continue
         elif mn in ("retf", "retn", "ret", "iret"):
             continue
@@ -454,6 +454,9 @@ class Lift:
             o = self.member_path(base, rest)
             return ("const", o) if o is not None else None
         s = self.syms.get(base)
+        lv0 = self.local(base, ins)
+        if lv0 and s and s.get("kind") == "data":     # `state.field_0` in a function with a local `state` and a global of the same name: the local (`[bp+state.field_0]`)
+            s = None
         if s and s.get("kind") == "data":
             o = self.member_path(s.get("struct"), rest)
             if o is None:

@@ -86,8 +86,10 @@ static void farHook(Cpu &c, uint16_t seg, uint16_t off) {
 static void traceCall(Cpu &c, const char *name) {
 	Host &h = host();
 	h.recent[h.recentPos++ % 6] = name;
-	if (!h.tracing || h.calls.size() > 4000000)
+	if (!h.tracing)
 		return;
+	if (h.calls.size() > 4000000)           // keep the most recent calls
+		h.calls.erase(h.calls.begin(), h.calls.begin() + 2000000);
 	Event e;
 	e.name = name;
 	for (int i = 0; i < 8; i++)
@@ -254,6 +256,11 @@ void callThroughHook(Cpu &c, uint16_t seg, uint16_t off) { farHook(c, seg, off);
 
 // IRQ0: run the program's INT 08h service routine (if it installed one) as the CPU would: push FLAGS, CS, IP and jump to the vector
 void Machine::timerTick(Cpu &c) {
+	// scripted input: keys that become available once the program has run a given number of labels (HOST_INPUT="steps:key,steps:key")
+	while (!inputScript.empty() && c.steps >= inputScript.front().first) {
+		keys.push_back(inputScript.front().second);
+		inputScript.pop_front();
+	}
 	uint32_t v8 = (uint32_t)c.rd16(0, 0x22) << 16 | c.rd16(0, 0x20), v1c = (uint32_t)c.rd16(0, 0x72) << 16 | c.rd16(0, 0x70);
 	uint32_t vec = v8 != 0xF000FFF0u ? v8 : v1c;                  // INT 08h if the program took it over, else the BIOS timer tick user hook INT 1Ch
 	if (inIsr || vec == 0xF000FFF0u || !vec)

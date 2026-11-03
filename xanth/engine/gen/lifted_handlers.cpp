@@ -40333,7 +40333,6 @@ void L_objh_441(Cpu &c) {
 
 void L_objh_001(Cpu &c) {
 	uint16_t _cs = c.cs; c.cs = 0x0;   // code segment of this function
-	loc_1E817: STEP("objh_001:loc_1E817");
 	// push    bp
 	c.push(c.bp);
 	// mov     bp, sp

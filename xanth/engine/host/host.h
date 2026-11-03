@@ -41,6 +41,7 @@ struct Machine {
 	EmsMap emsMap[4] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}};
 	int nextEms = 1, emsUsed = 0;
 	std::deque<MouseEvent> mouseScript;                    // successive mouse states returned by the driver (one per poll)
+	std::deque<std::pair<long, uint16_t>> inputScript;     // (label count, BIOS key word): queued when the program reaches that many labels
 	int pendingScan = -1;                                  // scan code of an extended key still to be returned by the next DOS read
 	std::deque<uint16_t> keys;                             // BIOS key codes (scan << 8 | ascii)
 	int mouseX = 160, mouseY = 100, mouseButtons = 0, mouseVisible = 0;

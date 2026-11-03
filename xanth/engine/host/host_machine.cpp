@@ -296,6 +296,7 @@ void Machine::mouseInt(Cpu &c) {
 		if (press) pressCount[b] = 0; else releaseCount[b] = 0;
 		break;
 	}
+	case 0x0B: c.cx.x = c.dx.x = 0; break;                                                // motion counters: the pointer only moves through the script
 	default: break;                                                                      // ranges, cursor shape, sensitivity, handler: accepted
 	}
 }
@@ -319,6 +320,7 @@ void Machine::keyInt(Cpu &c) {
 	case 0: case 0x10:      // read key
 		if (keys.empty()) { c.ax.x = 0; break; }
 		c.ax.x = keys.front();
+		if (getenv("HOST_TRACE_KEYS")) fprintf(stderr, "key %04X read by int 16h after %s %s %s\n", keys.front(), c.hist[(c.hpos - 3) & 63], c.hist[(c.hpos - 2) & 63], c.hist[(c.hpos - 1) & 63]);
 		keys.pop_front();
 		break;
 	case 1: case 0x11:      // key available?
@@ -347,6 +349,7 @@ void Machine::dosInt(Cpu &c) {
 	case 0x07: case 0x08: case 0x01:     // read a character from the BIOS key queue; an extended key comes as 0 followed by its scan code on the next call
 		if (pendingScan >= 0) { c.ax.l = (uint8_t)pendingScan; pendingScan = -1; break; }
 		if (keys.empty()) { c.ax.l = 0; break; }
+		if (getenv("HOST_TRACE_KEYS")) { fprintf(stderr, "key %04X read by DOS (steps %ld) after", keys.front(), c.steps); for (int q = 60; q >= 1; q--) fprintf(stderr, " %s", c.hist[(c.hpos - q) & 63]); fprintf(stderr, "\n"); }
 		c.ax.l = (uint8_t)(keys.front() & 0xFF);
 		if ((keys.front() & 0xFF) == 0) pendingScan = keys.front() >> 8;
 		keys.pop_front();
@@ -460,7 +463,7 @@ uint16_t Machine::in(Cpu &, uint16_t port, int bits) {
 	case 0x40: case 0x41: case 0x42: pitCount = (uint16_t)(pitCount - 0x91); return (uint16_t)((pitCount >> ((pitFlip ^= 1) ? 0 : 8)) & 0xFF);
 	case 0x21: return picMask;
 	case 0x61: return port61;
-	case 0x3DA: retrace ^= 9; return retrace;                       // vertical retrace and display-enable bits toggle: wait loops end
+	case 0x3BA: case 0x3DA: retrace ^= 9; return retrace;                       // vertical retrace and display-enable bits toggle: wait loops end
 	case 0x3C9: { uint8_t v = palette[dacRead]; dacSub++; if (dacSub == 3) { dacSub = 0; dacRead = (dacRead + 3) & 0x2FF; } return v; }
 	case 0x388: return 0;                                           // AdLib status: timers not running
 	case 0x201: return 0xFF;                                        // joystick: absent

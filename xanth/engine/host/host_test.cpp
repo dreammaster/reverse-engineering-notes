@@ -375,7 +375,7 @@ static int testSave(Host &h) {
 // diagnostics selected by environment variables (see README.md): label hooks, memory watches, screen captures
 static void debugHooks(Host &h) {
 	if (getenv("HOST_SHOT_TEXT")) h.onText = [](Host &hh) { static bool done = false; if (!done || getenv("HOST_SHOT_LAST")) { done = true; dumpScreen(hh, getenv("HOST_SHOT_TEXT")); } };
-	if (getenv("HOST_LABELPFX")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int cnt = 0; if (!strncmp(w, getenv("HOST_LABELPFX"), strlen(getenv("HOST_LABELPFX"))) && cnt++ < 60) fprintf(stderr, "L %s ax=%04X bx=%04X cx=%04X di=%04X si=%04X es=%04X ds=%04X\n", w, c.ax.x, c.bx.x, c.cx.x, c.di, c.si, c.es, c.ds); };
+	if (getenv("HOST_LABELPFX")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int cnt = 0; if (getenv("HOST_LABELFROM") && c.steps < atol(getenv("HOST_LABELFROM"))) return; if (cnt > 600) return; if (!strcmp(w, "DialogBtn_show:loc_1AAAA") && cnt < 600) { fprintf(stderr, "state@bp-1C:"); for (int q = 0; q < 8; q++) fprintf(stderr, " %04X", c.rd16(c.ss, (uint16_t)(c.bp - 0x1C + q * 2))); fprintf(stderr, " var_20=%04X\n", c.rd16(c.ss, (uint16_t)(c.bp - 0x20))); } if (getenv("HOST_LABELSKIP") && strstr(getenv("HOST_LABELSKIP"), w)) return; if (!strncmp(w, getenv("HOST_LABELPFX"), strlen(getenv("HOST_LABELPFX"))) && cnt++ < 100000000) fprintf(stderr, "L %s ax=%04X bx=%04X cx=%04X dx=%04X di=%04X si=%04X es=%04X ds=%04X sp=%04X bp=%04X\n", w, c.ax.x, c.bx.x, c.cx.x, c.dx.x, c.di, c.si, c.es, c.ds, c.sp, c.bp); };
 	if (getenv("HOST_NZ")) h.cpu.onLabel = [](Cpu &c, const char *w) { if (!strcmp(w, getenv("HOST_NZ"))) { int nz = 0; for (int i = 0; i < 64000; i++) nz += host().mem[0xA0000 + i] != 0; fprintf(stderr, "nz %s: %d\n", w, nz); } };
 	if (getenv("HOST_SRC")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int k = 0; if (!strcmp(w, getenv("HOST_SRC")) && k++ < 6) { fprintf(stderr, "src %s ds:si=%04X:%04X cx=%04X:", w, c.ds, c.si, c.cx.x); for (int i = 0; i < 12; i++) fprintf(stderr, " %02X", c.rd8(c.ds, (uint16_t)(c.si + i))); fprintf(stderr, " | es:di"); for (int i = 0; i < 6; i++) fprintf(stderr, " %02X", c.rd8(c.es, (uint16_t)(c.di + i))); fprintf(stderr, "\n"); } };
 	if (getenv("HOST_CMPIMG")) h.cpu.onLabel = [](Cpu &c, const char *w) {
@@ -401,6 +401,14 @@ static void debugHooks(Host &h) {
 	};
 	if (getenv("HOST_ARGS")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int k = 0; if (!strcmp(w, getenv("HOST_ARGS")) && k++ < 8) { fprintf(stderr, "args %s:", w); for (int i = 0; i < 10; i++) fprintf(stderr, " %04X", c.arg(i)); fprintf(stderr, "\n"); } };
 	if (getenv("HOST_OFFSETPOS")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int k = 0; if (!strncmp(w, "Image_Draw", 10) && !strchr(w, 58) && k++ < 60) { uint16_t io = c.arg(0), is = c.arg(1); fprintf(stderr, "%s image %04X:%04X xp=%d yp=%d OffsetPos=(%d,%d)\n", w, is, io, (int16_t)c.rd16(is, (uint16_t)(io + 2)), (int16_t)c.rd16(is, (uint16_t)(io + 4)), (int16_t)c.rd16(c.ds, D_Image_OffsetPos), (int16_t)c.rd16(c.ds, (uint16_t)(D_Image_OffsetPos + 2))); } };
+	if (getenv("HOST_SPDROP")) h.cpu.onLabel = [](Cpu &c, const char *w) { static uint16_t low = 0xFFF0, last = 0xFFF0; if ((last > c.sp ? last - c.sp : c.sp - last) > 0x1000) fprintf(stderr, "sp jump %04X -> %04X at %s prev %s %s (steps %ld)\n", last, c.sp, w, c.hist[(c.hpos - 2) & 63], c.hist[(c.hpos - 3) & 63], c.steps); last = c.sp; if (c.sp < low && (low - c.sp >= 0x200 || c.sp < 0x7000)) { low = c.sp; fprintf(stderr, "sp low %04X at %s (steps %ld)\n", c.sp, w, c.steps); } };
+	if (getenv("HOST_DLG")) h.cpu.onLabel = [](Cpu &c, const char *w) {
+		static int k = 0;
+		if (strcmp(w, "DialogBtn_show:loc_1AA04") || c.steps < atol(getenv("HOST_DLG")) || k++ > 2) return;
+		uint16_t bo = c.rd16(c.ss, (uint16_t)(c.bp + 10)), bs = c.rd16(c.ss, (uint16_t)(c.bp + 12));
+		fprintf(stderr, "dialog: numButtons2=%d numButtons=%d buttons=%04X:%04X keyflags: pendingKey=%04X\n", (int16_t)c.rd16(c.ss, (uint16_t)(c.bp - 0x32)), (int16_t)c.rd16(c.ss, (uint16_t)(c.bp - 0x28)), bs, bo, c.rd16(c.ds, D_Events_pendingKey));
+		for (int i = 0; i < 3; i++) { uint16_t po = c.rd16(bs, (uint16_t)(bo + i * 4)), ps = c.rd16(bs, (uint16_t)(bo + i * 4 + 2)); fprintf(stderr, "  button %d: %04X:%04X '%.12s'\n", i, ps, po, host().str(ps, po, 12).c_str()); }
+	};
 	if (getenv("HOST_WATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { if (!strcmp(w, getenv("HOST_WATCH"))) fprintf(stderr, "watch %s bp=%04X sp=%04X es=%04X args %04X %04X %04X locals C=%04X:%04X 2=%04X\n", w, c.bp, c.sp, c.es, c.rd16(c.ss, (uint16_t)(c.bp + 6)), c.rd16(c.ss, (uint16_t)(c.bp + 8)), c.rd16(c.ss, (uint16_t)(c.bp + 10)), c.rd16(c.ss, (uint16_t)(c.bp - 10)), c.rd16(c.ss, (uint16_t)(c.bp - 12)), c.rd16(c.ss, (uint16_t)(c.bp - 2))); };
 	if (getenv("HOST_MEMWATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { static uint16_t last = 0; static bool init = false; unsigned a = (unsigned)strtoul(getenv("HOST_MEMWATCH"), nullptr, 16); uint16_t sg = getenv("HOST_MEMWATCH_SEG") ? (uint16_t)strtoul(getenv("HOST_MEMWATCH_SEG"), nullptr, 16) : c.ss; uint16_t v = c.rd16(sg, (uint16_t)a); if (!init) { if (getenv("HOST_MEMWATCH_SEG") || !strcmp(w, "setup_pic_regions_q:loc_1CB07")) { init = true; last = v; } } else if (v != last) { fprintf(stderr, "mem %04X: %04X -> %04X before label %s (bp=%04X sp=%04X) prev %s %s %s\n", a, last, v, w, c.bp, c.sp, c.hist[(c.hpos - 2) & 63], c.hist[(c.hpos - 3) & 63], c.hist[(c.hpos - 4) & 63]); last = v; } };
 	if (getenv("HOST_DSWATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { static uint16_t last = 0x84FC; unsigned want = (unsigned)strtoul(getenv("HOST_DSWATCH"), nullptr, 16); if (c.ds != last) { if (c.ds == want || last == want) fprintf(stderr, "ds %04X -> %04X at %s prev %s %s %s\n", last, c.ds, w, c.hist[(c.hpos - 2) & 63], c.hist[(c.hpos - 3) & 63], c.hist[(c.hpos - 4) & 63]); last = c.ds; } };
@@ -493,11 +501,16 @@ static int testInit(Host &h) {
 	if (getenv("HOST_KEYS"))
 		for (int i = 0; i < atoi(getenv("HOST_KEYS")); i++) h.machine.keys.push_back(0x1C0D);       // Enter
 	if (getenv("HOST_KEYAT")) {          // HOST_KEYAT=label: queue HOST_KEYCODES when that label is first reached instead of at the start
+		static void (*prevHook)(Cpu &, const char *) = h.cpu.onLabel;
 		h.cpu.onLabel = [](Cpu &c, const char *w) {
+			if (prevHook) prevHook(c, w);
 			static bool done = false;
 			static int shown = 0;
 			if (done && getenv("HOST_LABELPFX") && !strncmp(w, getenv("HOST_LABELPFX"), strlen(getenv("HOST_LABELPFX"))) && shown++ < 80) fprintf(stderr, "K %s ax=%04X bx=%04X\n", w, c.ax.x, c.bx.x);
-			if (done || strcmp(w, getenv("HOST_KEYAT"))) return;
+			static long lastPush = -1000000;
+			if (strcmp(w, getenv("HOST_KEYAT"))) return;
+			if (done && (!getenv("HOST_KEYREPEAT") || c.steps - lastPush < 200000 || !host().machine.keys.empty())) return;     // HOST_KEYREPEAT: answer every later dialog, one set of keys per 200,000 labels
+			lastPush = c.steps;
 			done = true;
 			std::string s = getenv("HOST_KEYCODES");
 			size_t p = 0;
@@ -521,6 +534,19 @@ static int testInit(Host &h) {
 		}
 	};
 	debugHooks(h);
+	if (getenv("HOST_INPUT")) {           // "6000000:316E,60000000:1C0D"
+		std::string s = getenv("HOST_INPUT");
+		size_t p = 0;
+		while (p < s.size()) {
+			long st = atol(s.c_str() + p);
+			size_t colon = s.find(':', p);
+			if (colon == std::string::npos) break;
+			h.machine.inputScript.push_back({st, (uint16_t)strtoul(s.c_str() + colon + 1, nullptr, 16)});
+			p = s.find(',', colon);
+			if (p == std::string::npos) break;
+			p++;
+		}
+	}
 	if (getenv("HOST_STEPS")) h.cpu.stepLimit = atol(getenv("HOST_STEPS"));
 	int code = -1;
 	try {
@@ -530,6 +556,7 @@ static int testInit(Host &h) {
 		code = 1000 + e.code;
 	}
 	if (getenv("HOST_SHOT")) dumpScreen(h, getenv("HOST_SHOT"));
+	printf("CRT status port word_8B30C = %04X, retrace latch %02X\n", h.w(D_word_8B30C), h.machine.retrace);
 	printf("keys left in the BIOS queue: %zu\n", h.machine.keys.size());
 	printf("init_game %s (code %d); steps %ld\n", code == 0 ? "returned" : "exited", code, h.cpu.steps);
 	if (h.tracing && getenv("HOST_HIST")) {
@@ -540,6 +567,7 @@ static int testInit(Host &h) {
 		std::sort(v.rbegin(), v.rend());
 		for (size_t i = 0; i < v.size() && i < 60; i++) printf("  count %ld %s\n", v[i].first, v[i].second.c_str());
 	}
+	if (h.tracing && getenv("HOST_TAIL")) { size_t n = atoi(getenv("HOST_TAIL")); for (size_t i = h.calls.size() > n ? h.calls.size() - n : 0; i < h.calls.size(); i++) printf("  tail %s(%X,%X,%X)\n", h.calls[i].name.c_str(), h.calls[i].w[0], h.calls[i].w[1], h.calls[i].w[2]); }
 	if (h.tracing) {
 		size_t at = h.calls.size();
 		for (size_t i = 0; i < h.calls.size(); i++)
