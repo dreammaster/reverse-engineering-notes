@@ -442,7 +442,7 @@ void Game::castAt(int tx, int ty) {
 	if (!done)
 		done = _magic.cast(caster, *_spell, target);
 	int idx = _spell->index();
-	if (done && idx != 34 && idx != 68 && idx != 96 && idx != 18 && idx != 17 && idx != 20 && idx != 5 && idx != 50 && idx != 49 && idx != 119 && idx != 0 && idx != 53 && idx != 121 && idx != 100 && idx != 39 && idx != 105 && idx != 83 && idx != 87 && idx != 98 && idx != 113)
+	if (done && idx != 34 && idx != 68 && idx != 96 && idx != 18 && idx != 17 && idx != 20 && idx != 5 && idx != 50 && idx != 49 && idx != 119 && idx != 0 && idx != 53 && idx != 121 && idx != 100 && idx != 39 && idx != 105 && idx != 83 && idx != 87 && idx != 98 && idx != 113 && idx != 37 && idx != 38 && idx != 54 && idx != 65 && idx != 85 && idx != 102 && idx != 103 && idx != 115 && idx != 116)
 		message("\nSuccess\n");
 	_world.spendMoves(caster, _spell->circle * 3 + 10);
 	_spell = nullptr;

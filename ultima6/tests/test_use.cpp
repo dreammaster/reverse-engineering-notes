@@ -590,6 +590,60 @@ int main() {
 	}
 
 
+	// Mass Awaken / Mass Protect (sub_2362A): the bolt flies to the target square and whoever stands there is affected; a wall in the way gives "Blocked"
+	{
+		World ww;
+		ww.load("u6/game");
+		Game gw(ww);
+		int bx = -1, by = -1;
+		for (int yy = gw.y - 20; yy < gw.y + 20 && bx < 0; ++yy)
+			for (int xx = gw.x - 20; xx < gw.x + 20 && bx < 0; ++xx) {
+				bool open = true;
+				for (int d = 0; d < 5; ++d) {
+					int t = ww.map.tile(0, xx + d, yy);
+					open &= t >= 0x10 && t <= 0x6F;
+					std::vector<int> there;
+					ww.objectsAt(xx + d, yy, 0, there);
+					open &= there.empty();
+				}
+				if (open)
+					bx = xx, by = yy;
+			}
+		CHECK(bx >= 0);
+		if (bx >= 0) {
+			ww.moveObject(ww.actorObject(1), bx, by, 0);
+			gw.x = bx;
+			gw.y = by;
+			gw.z = 0;
+			ww.addActor(100, 427, bx + 3, by, 0);
+			int book = ww.addToInventory(1, 57, 0, 1);
+			ww.objects[book].status = (uint8_t)((ww.objects[book].status & ~0x18) | 0x18);
+			World::Obj spell = ww.objects[book];
+			spell.type = 58;
+			spell.quality = 255;
+			spell.status = 0x08;
+			spell.parent = book;
+			spell.actor = -1;
+			ww.objects.push_back(spell);
+			for (int r = 65; r <= 72; ++r)
+				ww.addToInventory(1, r, 0, 5);
+			ww.actors.level[1] = 8;
+			ww.actors.unknown13f1[1] = 99;
+			gw.handleKey('c');
+			gw.handleKey('6');
+			gw.handleKey('v');
+			gw.handleKey('i');
+			gw.handleKey('s');
+			gw.handleKey(KEY_ENTER);
+			for (int i = 0; i < 3; ++i)
+				gw.handleKey(KEY_RIGHT);
+			gw.handleKey(KEY_ENTER);
+			CHECK(ww.actors.status[100] & 0x01);
+			CHECK(logText(gw).find("Success") != std::string::npos);
+		}
+	}
+
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

@@ -9,6 +9,48 @@
 namespace Ultima6 {
 namespace Ultima6 {
 
+namespace {
+
+// The path of one bolt of sub_37CBD: a straight line of pixels (16 to a square) from the middle of the start square to the middle of the goal square. Squares are
+// collected in order until one lies beyond the reach (the distance table at ds:196C, at most `reach`) or blocks the bolt (flags2 bit 0x20 on the terrain or on any
+// object there, unless it is next to the start and has bit 8). Returns whether the goal square was reached.
+// APPROX(70): the step sizes and error terms of the original's Bresenham are not copied, and sub_18C09 gives only the top tile there.
+bool boltPath(World &w, int z, int cx, int cy, int gx, int gy, int reach, std::vector<std::pair<int, int>> &squares) {
+	static const uint8_t REACH[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
+										{4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
+	int dxp = (gx - cx) * 16, dyp = (gy - cy) * 16;
+	int major = std::max(std::abs(dxp), std::abs(dyp));
+	int lastX = cx, lastY = cy;
+	for (int step = 1; step <= major; ++step) {
+		int sx = cx * 16 + 8 + (2 * dxp * step + (dxp < 0 ? -major : major)) / (2 * major);
+		int sy = cy * 16 + 8 + (2 * dyp * step + (dyp < 0 ? -major : major)) / (2 * major);
+		int qx = sx >> 4, qy = sy >> 4;
+		if (qx == lastX && qy == lastY)
+			continue;
+		lastX = qx;
+		lastY = qy;
+		int adx = std::abs(qx - cx), ady = std::abs(qy - cy);
+		if (adx > 7 || ady > 7 || REACH[adx][ady] > reach)
+			return false;
+		bool next = adx <= 1 && ady <= 1;
+		auto stops = [&](int tile) {
+			uint8_t f = w.flags.flags2[tile & (TileFlags::TILES - 1)];
+			return (f & 0x20) && !(next && (f & 8));
+		};
+		std::vector<int> there;
+		w.objectsAt(qx, qy, z, there);
+		bool blocked = stops(w.map.tile(z, qx, qy));
+		for (int i : there)
+			blocked |= stops(w.baseTile.firstTile[w.objects[i].type] + w.objects[i].frame);
+		if (blocked)
+			return false;
+		squares.push_back(std::make_pair(qx, qy));
+	}
+	return true;
+}
+
+} // namespace
+
 // The spells that act on objects, on a square or on many people at once (cast_spell_effect, 25495..; its first-level jump table at 254BA sends each spell index to a
 // group of handlers, only some of which have been read). Returns whether the spell was dealt with here; otherwise Magic::cast works it on the actor.
 // APPROX(56): the effects follow the spell manual and the actors' status bits; the original's animations, projectile paths, messages and the many saving throws
@@ -27,6 +69,46 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 			if (std::abs((int)_world.objects[k].x - tx) <= 5 && std::abs((int)_world.objects[k].y - ty) <= 5)
 				out.push_back(actor);
 		}
+	};
+	// sub_2227B on one actor: sleep, poison, paralysis and charm are taken off; returns whether there was anything to take off
+	auto dispelActor = [&](int t) {
+		bool any = false;
+		int tk = _world.actorObject(t);
+		if (a.status[t] & 0x04) {
+			a.status[t] &= ~0x04;
+			_world.objects[tk].type = a.baseObjFrame[t] & 0x3FF;
+			_world.objects[tk].frame = (uint8_t)(a.baseObjFrame[t] >> 10);
+			any = true;
+		}
+		if (a.status[t] & 0x08) {
+			a.status[t] &= ~0x08;
+			any = true;
+		}
+		if (a.status[t] & 0x02) {
+			a.status[t] &= ~0x02;
+			any = true;
+		}
+		if (_world.objects[tk].status & 0x04) {
+			endCharm(t);
+			any = true;
+		}
+		return any;
+	};
+	// sub_21D63 on one actor: returns false when the target resisted; a charmed target is set free
+	auto charmActor = [&](int t, int c) {
+		int tk = _world.actorObject(t);
+		if (_combat.resists(t, c))
+			return false;
+		if (_world.objects[tk].status & 0x04) {
+			endCharm(t);
+			return true;
+		}
+		a.movementFlags[t] = (uint8_t)((a.movementFlags[t] & 0x9F) | (a.status[t] & 0x60));
+		_world.objects[tk].status |= 0x04;
+		a.status[t] = (uint8_t)((a.status[t] & 0x9F) | (a.status[c] & 0x60));
+		a.worktype[t] = 8;
+		message("\n" + _combat.nameOf(t) + " is charmed.\n");
+		return true;
 	};
 	std::vector<int> here;
 	_world.objectsAt(tx, ty, z, here);
@@ -94,34 +176,91 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		_combat.applyDamage(caster, target, a.hp[target]);
 		return true;
 	}
-	case 37: // Mass Awaken
-	case 38: // Mass Sleep
-	case 102: // Mass Curse
-	case 116: { // Mass Kill
-		std::vector<int> actors;
-		crowd(actors);
-		for (int t : actors) {
-			if (index == 37)
-				a.status[t] &= ~0x04;
-			else if (index == 38)
-				a.status[t] |= 0x04;
-			else if (index == 102)
-				_world.objects[_world.actorObject(t)].status |= 0x40;
-			else
-				_combat.applyDamage(caster, t, 255);
+	case 37:   // Mass Awaken
+	case 38:   // Mass Sleep
+	case 54:   // Mass Dispel
+	case 65:   // Explosion
+	case 85:   // Mass Protect
+	case 102:  // Mass Curse
+	case 103:  // Mass Invisibility
+	case 115:  // Mass Charm
+	case 116: { // Mass Kill (sub_2362A): a bolt flies from the caster to the target square (else "Blocked"), sixteen more scatter from the target square; whoever stands on the squares they cross, and on the target square, is affected
+		int ck = _world.actorObject(caster);
+		int cx = _world.objects[ck].x, cy = _world.objects[ck].y;
+		std::vector<std::pair<int, int>> path;
+		if (!boltPath(_world, z, cx, cy, tx, ty, 8, path)) {
+			message("\nBlocked\n");
+			return true;
 		}
+		static const int8_t SX[16] = {2, 1, 0, 1, -1, -1, -2, -1, 0, -1, -2, -2, 2, 2, 1, 1}, SY[16] = {-1, 2, -2, -1, 2, -1, 0, 1, 2, -2, -1, 1, 1, 0, 1, -2};
+		bool hit[ObjList::ACTORS] = {};
+		auto mark = [&](int qx, int qy) {
+			std::vector<int> there;
+			_world.objectsAt(qx, qy, z, there);
+			for (int i : there) {
+				int t = _world.objects[i].actor;
+				if (t >= 0 && t < ObjList::ACTORS && !(a.status[t] & 0x10))
+					hit[t] = true;
+			}
+		};
+		for (int b = 0; b < 16; ++b) {
+			std::vector<std::pair<int, int>> squares;
+			boltPath(_world, z, tx, ty, tx + SX[b], ty + SY[b], 3, squares);
+			for (const std::pair<int, int> &q : squares)
+				mark(q.first, q.second);
+		}
+		mark(tx, ty);
+		for (int t = 0; t < ObjList::ACTORS; ++t) {
+			if (!hit[t])
+				continue;
+			int tk = _world.actorObject(t);
+			if (tk < 0)
+				continue;
+			World::Obj &o = _world.objects[tk];
+			const CreatureStats *cs = Combat::stats(o.type);
+			switch (index) {
+			case 37:
+				a.status[t] &= ~0x04;
+				o.type = a.baseObjFrame[t] & 0x3FF;
+				o.frame = (uint8_t)(a.baseObjFrame[t] >> 10);
+				break;
+			case 38: // sub_21B90
+				if (!(cs && (cs->flags & 1)) && !_combat.resists(t, caster))
+					a.status[t] |= 0x04;
+				break;
+			case 54: // sub_2227B
+				dispelActor(t);
+				break;
+			case 65: // sub_222F2
+				if (!(cs && (cs->flags & 8)))
+					_combat.applyDamage(caster, t, cs && (cs->flags & 0x10) ? 2 * (1 + (int)(_rng.next() % 20)) : 1 + (int)(_rng.next() % 20));
+				break;
+			case 85:
+				a.status[t] |= 0x01;
+				break;
+			case 102:
+				o.status |= 0x40;
+				break;
+			case 103: // sub_21114: the vehicles and the big things do not turn invisible
+				if (!(o.status & 0x02) && o.type < 0x1AA && o.type != 0x19B && o.type != 0x176 && o.type != 0x19D && o.type != 0x177)
+					o.status |= 0x02;
+				break;
+			case 115:
+				charmActor(t, caster);
+				break;
+			default: // sub_21E06
+				if (!(a.status[t] & 0x10) && !(cs && (cs->flags & 2)) && !_combat.resists(t, caster))
+					_combat.applyDamage(caster, t, a.hp[t]);
+				break;
+			}
+		}
+		if (index == 65 || index == 116) {
+			// blow_up_door at the target square: doors are not destroyed yet
+		}
+		if (index != 65)
+			message("\nSuccess\n");
 		return true;
 	}
-	case 85: // Mass Protect: the party
-	case 103: // Mass Invis
-		for (int m = 0; m < a.partySize; ++m) {
-			int t = a.partyRoster[m];
-			if (index == 85)
-				a.status[t] |= 0x01;
-			else
-				_world.objects[_world.actorObject(t)].status |= 0x02;
-		}
-		return true;
 	case 25: // Vanish (223BC case 25): only things whose tile has flag 8 of the third block go; the object is remembered for Reappear
 		if (object < 0 || !(_world.flags.flags3[(_world.baseTile.firstTile[_world.objects[object].type] + _world.objects[object].frame) & (TileFlags::TILES - 1)] & 0x08))
 			return false;
@@ -195,9 +334,8 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		_world.addToMap((int)_world.objects.size() - 1);
 		return true;
 	}
-	case 33: // Dispel Field
-	case 54: { // Mass Dispel: every field within three squares
-		int radius = index == 54 ? 3 : 0;
+	case 33: { // Dispel Field
+		int radius = 0;
 		bool any = false;
 		for (int dx = -radius; dx <= radius; ++dx)
 			for (int dy = -radius; dy <= radius; ++dy) {
@@ -234,45 +372,18 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 											   38, 6, 5, 5, 5, 5, 48, 48, 48, 32, 39, 38, 22, 6, 5, 5, 5, 48, 48, 32, 39, 39, 38, 22, 22, 6, 5, 5, 48, 32, 39, 39, 39, 38, 22, 22, 22,
 											   6, 5, 32, 39, 39, 39, 39, 38, 22, 22, 22, 22, 6};
 		static const int8_t DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
-		static const uint8_t REACH[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
-											{4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
 		int ox = std::max(-5, std::min(5, tx - cx)), oy = std::max(-5, std::min(5, ty - cy));
 		int code = DIRECTION[(oy + 5) * 11 + ox + 5];
 		int hi = code >> 4, lo = code & 15;
 		int px[5] = {tx, tx + DX[hi & 7], tx + DX[lo & 7], tx + 2 * DX[hi & 7], tx + 2 * DX[lo & 7]};
 		int py[5] = {ty, ty + DY[hi & 7], ty + DY[lo & 7], ty + 2 * DY[hi & 7], ty + 2 * DY[lo & 7]};
-		// APPROX(70): every bolt follows a straight line of pixels (16 to a square) from the middle of the caster's square to the middle of its goal and hits whoever stands on the
-		// squares it crosses until a square blocks it (flags2 bit 0x20) or lies out of reach; the original's step sizes and error terms are not copied
 		bool hit[ObjList::ACTORS] = {};
 		for (int b = 0; b < 5; ++b) {
-			int dxp = (px[b] - cx) * 16, dyp = (py[b] - cy) * 16;
-			int major = std::max(std::abs(dxp), std::abs(dyp));
-			int lastX = cx, lastY = cy;
-			for (int step = 1; step <= major; ++step) {
-				int sx = cx * 16 + 8 + (2 * dxp * step + (dxp < 0 ? -major : major)) / (2 * major);
-				int sy = cy * 16 + 8 + (2 * dyp * step + (dyp < 0 ? -major : major)) / (2 * major);
-				int qx = sx >> 4, qy = sy >> 4;
-				if (qx == lastX && qy == lastY)
-					continue;
-				lastX = qx;
-				lastY = qy;
-				int adx = std::abs(qx - cx), ady = std::abs(qy - cy);
-				if (adx > 7 || ady > 7 || REACH[adx][ady] > 7)
-					break;
-				bool near = adx <= 1 && ady <= 1;
-				bool blocked = false;
-				int base = _world.map.tile(z, qx, qy) & (TileFlags::TILES - 1);
+			std::vector<std::pair<int, int>> squares;
+			boltPath(_world, z, cx, cy, px[b], py[b], 7, squares);
+			for (const std::pair<int, int> &q : squares) {
 				std::vector<int> there;
-				_world.objectsAt(qx, qy, z, there);
-				auto stops = [&](int tile) {
-					uint8_t f = _world.flags.flags2[tile & (TileFlags::TILES - 1)];
-					return (f & 0x20) && !(near && (f & 8));
-				};
-				blocked = stops(base);
-				for (int i : there)
-					blocked |= stops(_world.baseTile.firstTile[_world.objects[i].type] + _world.objects[i].frame);
-				if (blocked)
-					break;
+				_world.objectsAt(q.first, q.second, z, there);
 				for (int i : there) {
 					int t = _world.objects[i].actor;
 					if (t >= 0 && t < ObjList::ACTORS && !(a.status[t] & 0x10))
@@ -305,46 +416,24 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		}
 		return true;
 	}
-	case 65: // Explosion
 	case 84: { // Hail Storm: everybody (not the party) within the reach of the spell is hurt
-		int radius = index == 65 ? 1 : 3;
+		int radius = 3;
 		for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
 			int k = _world.actorObject(actor);
 			if (k < 0 || _world.objects[k].deleted || (a.status[actor] & 0x80) || a.hp[actor] == 0 || _world.objects[k].z != z)
 				continue;
 			if (std::abs((int)_world.objects[k].x - tx) > radius || std::abs((int)_world.objects[k].y - ty) > radius)
 				continue;
-			_combat.applyDamage(caster, actor, 1 + _rng.next() % (index == 65 ? 30 : 20));
+			_combat.applyDamage(caster, actor, 1 + _rng.next() % 20);
 		}
 		return true;
 	}
-	case 3: { // Dispel Magic (sub_2227B): sleep, poison, paralysis and charm are taken off; "Failed" when there was nothing to take off
+	case 3: // Dispel Magic (sub_2227B): "Failed" when there was nothing to take off
 		if (target < 0)
 			return false;
-		bool any = false;
-		int tk = _world.actorObject(target);
-		if (a.status[target] & 0x04) {
-			a.status[target] &= ~0x04;
-			_world.objects[tk].type = a.baseObjFrame[target] & 0x3FF;
-			_world.objects[tk].frame = (uint8_t)(a.baseObjFrame[target] >> 10);
-			any = true;
-		}
-		if (a.status[target] & 0x08) {
-			a.status[target] &= ~0x08;
-			any = true;
-		}
-		if (a.status[target] & 0x02) {
-			a.status[target] &= ~0x02;
-			any = true;
-		}
-		if (_world.objects[tk].status & 0x04) {
-			endCharm(target);
-			any = true;
-		}
-		if (!any)
+		if (!dispelActor(target))
 			message("\nFailed\n");
 		return true;
-	}
 	case 50: // Disable (sub_21CB4 with 0x32): unless resisted the target is left with one hit point
 		if (target < 0)
 			return false;
@@ -354,32 +443,12 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		}
 		_combat.applyDamage(caster, target, a.hp[target] - 1 > 0 ? a.hp[target] - 1 : 0);
 		return true;
-	case 80: { // Charm (sub_21D63): unless resisted the target takes the caster's side (the old side is kept in its movement flags), is charmed (object status 4) and fights (worktype 8)
+	case 80: // Charm (sub_21D63): unless resisted the target takes the caster's side (the old side is kept in its movement flags), is charmed (object status 4) and fights (worktype 8)
 		if (target < 0)
 			return false;
-		int tk = _world.actorObject(target);
-		if (_combat.resists(target, caster)) {
+		if (!charmActor(target, caster))
 			message("\nFailed\n");
-			return true;
-		}
-		if (_world.objects[tk].status & 0x04) {
-			endCharm(target);
-			return true;
-		}
-		a.movementFlags[target] = (uint8_t)((a.movementFlags[target] & 0x9F) | (a.status[target] & 0x60));
-		_world.objects[tk].status |= 0x04;
-		a.status[target] = (uint8_t)((a.status[target] & 0x9F) | (a.status[caster] & 0x60));
-		a.worktype[target] = 8;
-		message("\n" + _combat.nameOf(target) + " is charmed.\n");
 		return true;
-	}
-	case 115: { // Mass Charm
-		std::vector<int> actors;
-		crowd(actors);
-		for (int t : actors)
-			a.status[t] = (uint8_t)((a.status[t] & 0x9F) | 0x40);
-		return true;
-	}
 	case 82: // Confuse (sub_23AD5 case 82)
 	case 99: // Fear (sub_23A6A)
 	case 41: // Repel Undead (sub_23AD5 case 41)
