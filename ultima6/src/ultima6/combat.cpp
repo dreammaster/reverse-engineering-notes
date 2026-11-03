@@ -145,7 +145,7 @@ void Combat::die(int actor) {
 	corpse.type = OBJ_DEAD_BODY;
 	corpse.frame = 0;
 	corpse.quantity = 1;
-	corpse.quality = 0;
+	corpse.quality = (uint8_t)actor; // whose body it is (APPROX(56): the original's link is not traced)
 	corpse.actor = -1;
 	corpse.parent = -1;
 	_world.objects.push_back(corpse);

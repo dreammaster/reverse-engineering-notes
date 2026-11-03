@@ -1,6 +1,7 @@
 #include "ultima6/session.h"
 
 #include "ultima6/describe.h"
+#include "ultima6/stats_view.h"
 
 #include <algorithm>
 #include <cstdlib>
@@ -162,6 +163,46 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 				}
 			}
 		return any;
+	}
+	case 117: { // Resurrect: the dead body of an actor gets up again with full hit points and takes back what it carried
+		if (object < 0 || _world.objects[object].type != 339 || _world.objects[object].quality == 0)
+			return false;
+		int dead = _world.objects[object].quality;
+		if (!(a.status[dead] & 0x10))
+			return false;
+		a.status[dead] &= ~0x10;
+		a.hp[dead] = (uint8_t)ActorStats::maxHealth(_world, dead);
+		if (!(a.status[dead] & 0x80))
+			a.worktype[dead] = 0x81;
+		for (size_t i = 0; i < _world.objects.size(); ++i)
+			if (!_world.objects[i].deleted && _world.objects[i].location() == ObjRecord::IN_CONTAINER && _world.objects[i].parent == object) {
+				_world.objects[i].status = (uint8_t)((_world.objects[i].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
+				_world.objects[i].parent = dead;
+			}
+		_world.deleteObject(object);
+		return true;
+	}
+	case 65: // Explosion
+	case 83: // Flame Wind
+	case 84: // Hail Storm
+	case 87: // Poison Wind
+	case 98: // Energy Wind
+	case 113: { // Death Wind: everybody (not the party) within the reach of the spell is hurt, poisoned or killed
+		int radius = index == 65 ? 1 : 3;
+		for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
+			int k = _world.actorObject(actor);
+			if (k < 0 || _world.objects[k].deleted || (a.status[actor] & 0x80) || a.hp[actor] == 0 || _world.objects[k].z != z)
+				continue;
+			if (std::abs((int)_world.objects[k].x - tx) > radius || std::abs((int)_world.objects[k].y - ty) > radius)
+				continue;
+			if (index == 87)
+				a.status[actor] |= 0x08;
+			else if (index == 113)
+				_combat.applyDamage(caster, actor, 255);
+			else
+				_combat.applyDamage(caster, actor, 1 + _rng.next() % (index == 65 ? 30 : 20));
+		}
+		return true;
 	}
 	case 53: { // Locate: where the party is, as the sextant says it
 		int sx = z ? x * 4 : x, sy = z ? y * 4 : y;
