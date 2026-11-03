@@ -77,6 +77,8 @@ void Creatures::hatch(int egg, int hour) {
 	bool ok = quality < 10 || quality >= 30 || (quality < 20 && daytime) || (quality >= 20 && quality < 30 && !daytime);
 	if (!ok)
 		return;
+	if (e.status & 0x40) // an egg that has been used up (sub_366B0 36D3C)
+		return;
 	int chance = (_rng.next() % 100) + 1;
 	if (!(e.quantity == 100 || chance <= e.quantity))
 		return;
@@ -91,7 +93,12 @@ void Creatures::hatch(int egg, int hour) {
 			qty = (_rng.next() % qty) + 1;
 		for (int n = 0; n < qty; ++n) {
 			if (o.type >= FIRST_CREATURE || o.type == 98 || o.quality != 0)
-				spawn(o.type, o.quality, e.x, e.y, e.z);
+{
+				int actor = spawn(o.type, o.quality, e.x, e.y, e.z);
+				// the egg's quality names the side of what hatches: quality % 10 - 1 is shifted into the status bits 0x60 (sub_366B0 36793-36941)
+				if (actor >= 0 && quality % 10 != 0)
+					_world.actors.status[actor] = (uint8_t)((_world.actors.status[actor] & 0x9F) | (((quality % 10) - 1) << 5));
+			}
 			else {
 				// a plain object (reagents and the like grow where the egg is)
 				World::Obj t;
