@@ -129,7 +129,8 @@ void Creatures::checkEggs(int px, int py, int pz, int hour) {
 			_active[n] = false;
 		if (dx < SPAWN_RANGE && dy < SPAWN_RANGE && e.z == pz && !_active[n]) {
 			_active[n] = true;
-			hatch(_eggs[n], hour);
+			if (dx > 8 || dy > 8) // sub_36D4E: an egg within eight squares in both directions is left alone (creatures do not appear next to the party)
+				hatch(_eggs[n], hour);
 		}
 	}
 }
