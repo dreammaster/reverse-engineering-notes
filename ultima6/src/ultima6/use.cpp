@@ -815,14 +815,10 @@ void Game::textKey(int key) {
 		_textActive = false;
 		message("\n");
 		if (_textPurpose == 6) { // Gate Travel
-			int n = _textBuf.empty() ? 0 : _textBuf[0] - '0';
-			if (n >= 1 && n <= 8) {
-				message("\n");
+			int n = _textBuf.empty() ? 0 : std::atoi(_textBuf.c_str()); // sub_2F895 reads the digits (up to four were typed)
+			if (n >= 1 && n <= 8)
 				gateTo(n - 1);
-			} else {
-				message("\nNo effect\n");
-			}
-			prompt();
+			prompt(); // a gate that is not there, or no number: the original only plays the failing sound (sub_36E85)
 			return;
 		}
 		if (_textPurpose == 5) { // how many to drop; the inventory view stays

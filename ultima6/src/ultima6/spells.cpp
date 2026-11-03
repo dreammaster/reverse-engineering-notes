@@ -569,11 +569,11 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		message("To phase ");
 		_textActive = true;
 		_textBuf.clear();
-		_textMax = 1;
+		_textMax = 4;
 		_textPurpose = 6;
 		return true;
-	case 114: // Eclipse
-		_world.actors.globals[0x12 + 15] = (uint8_t)(20 + _rng.next() % 20);
+	case 114: // Eclipse (45524): byte_404BB = 20; nothing counts it down, so the sky stays dark until the game is left (it is not saved)
+		_eclipse = true;
 		return true;
 	case 57: // Wind Change (sub_2541B): "Direction-" asks for one of the eight directions; the wind blows that way ("North."), or "nowhere." (calm) for anything else
 		message("Direction-");

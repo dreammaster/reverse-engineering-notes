@@ -720,7 +720,7 @@ void Game::render(Framebuffer &screen) {
 	// 1-6 through the hour from five and falling 6-1 through the hour from seven in the evening; a torch or the Light spell make it 4 at least. It is the radius (in squares) in which
 	// the party sees.
 	const ObjList &al = _world.actors;
-	bool eclipse = (clock.day == 1 && clock.month % 3 == 0) || al.globals[0x12 + 15];
+	bool eclipse = (clock.day == 1 && clock.month % 3 == 0) || _eclipse;
 	int light;
 	if (eclipse || clock.hour < 5 || clock.hour > 19 || (z > 0 && z < 5))
 		light = 0;
