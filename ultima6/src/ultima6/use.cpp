@@ -989,6 +989,8 @@ void Game::actorStatusDecay() {
 			a.status[actor] &= ~0x01;
 		if ((o.status & 0x40) && _rng.next() % 16 == 0 && !(intel > roll(30)))
 			o.status &= ~0x40;
+		if ((o.status & 0x04) && _rng.next() % 8 == 0 && !(intel > roll(30)))
+			endCharm(actor);
 		if ((a.status[actor] & 0x02) && _rng.next() % 4 == 0 && !(_combat.adjustedStrength(actor) > roll(30)))
 			a.status[actor] &= ~0x02;
 		if ((a.status[actor] & 0x04) && a.worktype[actor] != 0x91 && _rng.next() % 16 == 0) {
@@ -1179,6 +1181,16 @@ void Game::toggleCombat() {
 		else
 			a.worktype[actor] = _combatMode ? (a.unknown12f1[actor] ? a.unknown12f1[actor] : 3) : 1;
 	}
+}
+
+// sub_2B04E: a charm ends: the side the actor had before (kept in its movement flags' bits 0x60) comes back and the charm bit (object status 4) goes.
+void Game::endCharm(int actor) {
+	ObjList &a = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0)
+		return;
+	a.status[actor] = (uint8_t)((a.status[actor] & 0x9F) | (a.movementFlags[actor] & 0x60));
+	_world.objects[k].status &= ~0x04;
 }
 
 // use_silver_horn (3525F): three times a spot is looked for at the edge of the view (a random side, a random place along it) where a silver serpent (0x19D) and the
