@@ -12,7 +12,7 @@ namespace Ultima6 {
 // The spells that act on objects, on a square or on many people at once (cast_spell_effect, 25495..; its first-level jump table at 254BA sends each spell index to a
 // group of handlers, only some of which have been read). Returns whether the spell was dealt with here; otherwise Magic::cast works it on the actor.
 // APPROX(56): the spells that were read in the original (the Create Food, Sleep, Kill, Charm, Dispel, Reveal, Fear, Confuse, mass, wind, field, Web, trap, Wing Strike and Slime groups) follow it;
-// the animations and sounds are left out. Still the spell manual's version: Animate and Pickpocket; Enchant's choice of the spell is typed instead of picked from the book's pages (docs/approximations.md #56, #69, #70)
+// the animations and sounds are left out. Still own: Enchant's choice of the spell is typed instead of picked from the book's pages (docs/approximations.md #56, #69, #70)
 bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int ty, int target) {
 	ObjList &a = _world.actors;
 	int index = spell.index();
@@ -508,18 +508,24 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		}
 		return true;
 	}
-	case 70: { // Pickpocket: the target gives up the first thing it carries
-		if (target < 0)
-			return false;
-		std::vector<int> inv;
-		_world.inventory(target, inv, false);
-		if (inv.empty()) {
-			message("nothing!\n");
+	case 70: { // Pickpocket (sub_24235): the one aimed at must be a person in the line of fire (range 8, else "Blocked"); then its things are shown and the Avatar picks one ("Which object: ")
+		if (target < 0 || target >= 0x100) {
+			message("\nNo effect\n");
+			_spellQuiet = true;
 			return true;
 		}
-		World::Obj &it = _world.objects[inv[0]];
-		it.status = (uint8_t)((it.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
-		it.parent = caster;
+		const World::Obj &c =_world.objects[_world.actorObject(caster)], &t = _world.objects[_world.actorObject(target)];
+		std::vector<std::pair<int, int>> path;
+		if (!_world.boltPath(z, c.x, c.y, t.x, t.y, 8, path)) {
+			message("\nBlocked\n");
+			_spellQuiet = true;
+			return true;
+		}
+		_stealing = target;
+		_inventory = true;
+		_selected = 0;
+		message("Which object: ");
+		_spellQuiet = true;
 		return true;
 	}
 	case 96: { // Chain Bolt (sub_220F8): the target takes 1-30 and the bolt jumps up to six times to the nearest other actor of the other side within eight squares, 1-30 each

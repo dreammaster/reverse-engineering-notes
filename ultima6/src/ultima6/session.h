@@ -89,6 +89,8 @@ private:
 	const Magic::SpellInfo *_spell = nullptr; // the spell being cast, waiting for its target
 	std::string _invocation;                  // circle digit and syllables typed so far
 	void castKey(int key);
+	int _stealing = -1; // the person whose things are on show for the Pickpocket spell
+	void stealItem(int idx);
 	void castSpell(const Magic::SpellInfo *spell, int caster, bool promptAfter = true);
 	void useStaff(int staff);
 	std::string restCheck();

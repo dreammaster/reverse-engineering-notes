@@ -123,8 +123,15 @@ void Game::timePlayed(int &years, int &months, int &days) const {
 }
 
 bool Game::inventoryKey(int key) {
-	inventoryItems(_world, _member, _items);
+	inventoryItems(_world, _stealing >= 0 ? 100 + _stealing : _member, _items);
 	int count = (int)_items.size();
+	if (_stealing >= 0 && (key == KEY_ESC || key == KEY_SPACE)) { // "Which object: " and nothing is chosen
+		_stealing = -1;
+		_inventory = false;
+		message("nothing\n");
+		prompt();
+		return true;
+	}
 	switch (key) {
 	case KEY_LEFT:
 		_selected = std::max(0, _selected - 1);
@@ -139,6 +146,10 @@ bool Game::inventoryKey(int key) {
 		_selected = std::min(std::max(0, count - 1), _selected + 8);
 		break;
 	case KEY_ENTER:
+		if (_stealing >= 0) {
+			stealItem(_selected < count ? _items[_selected] : -1);
+			break;
+		}
 		if (_selected < count) {
 			World::Obj &o = _world.objects[_items[_selected]];
 			int actor = _world.actors.partyRoster[_member];
@@ -214,6 +225,57 @@ bool Game::inventoryKey(int key) {
 		break;
 	}
 	return true;
+}
+
+// Pickpocket (sub_24235) after "Which object: ": the thing chosen must be one the victim carries; an amulet that is worn cannot be taken ("Magical energy prevents you from removing the
+// amulet.") and a torch that is lit burns out in the taking; the thief must be able to carry it ("Can't carry!"); a ring or cloak of invisibility stops working for its wearer;
+// the thing goes into the thief's pack, "Success", and 5 karma are lost
+void Game::stealItem(int idx) {
+	int victim = _stealing, thief = actingActor();
+	_stealing = -1;
+	_inventory = false;
+	if (idx < 0) {
+		message("nothing\n");
+		prompt();
+		return;
+	}
+	World::Obj &o = _world.objects[idx];
+	message(Describe::object(_world, o) + "\n");
+	if (!(o.status & 0x18)) {
+		message("\nNo effect\n");
+		prompt();
+		return;
+	}
+	if ((o.status & 0x18) == 0x18 && o.type == 0x4C) {
+		message("\nMagical energy prevents you from removing the amulet.\n");
+		prompt();
+		return;
+	}
+	if ((o.status & 0x18) == 0x18 && o.type == 0x5A && o.frame == 1) {
+		_world.deleteObject(idx);
+		message("\nA torch burned out.\n");
+		prompt();
+		return;
+	}
+	if (_world.carriedWeight(thief) + _world.weightOf(idx) > _world.actors.strength[thief] * 20) {
+		message("\nCan't carry!\n");
+		prompt();
+		return;
+	}
+	if ((o.status & 0x18) == 0x18 && o.type == 0x102)
+		_world.objects[_world.actorObject(victim)].status &= ~0x02;
+	int type = o.type, quality = o.quality, quantity = _world.quantityOf(o);
+	if (_world.isStackable(type)) {
+		_world.deleteObject(idx);
+		_world.addToInventory(thief, type, quality, quantity);
+	} else {
+		o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
+		o.parent = thief;
+	}
+	message("\nSuccess\n");
+	if (_world.actors.globals.size() > 8)
+		_world.actors.globals[8] = (uint8_t)(_world.actors.globals[8] > 5 ? _world.actors.globals[8] - 5 : 0);
+	prompt();
 }
 
 // What a minute does to the party (as the original's time advance does it): poison hurts now and then, swamps poison, fire, traps and
@@ -567,7 +629,7 @@ void Game::castAt(int tx, int ty) {
 		message("\nSuccess\n");
 	_world.spendMoves(caster, _spell->circle * 3 + 10);
 	_spell = nullptr;
-	if (!_pending)
+	if (!_pending && _stealing < 0)
 		prompt();
 }
 

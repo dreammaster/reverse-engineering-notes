@@ -632,6 +632,49 @@ int main() {
 		CHECK(logText(gw).find("Done") != std::string::npos);
 	}
 
+	// Pickpocket (sub_24235): the victim's things are shown and the one chosen goes to the Avatar
+	{
+		World ww;
+		ww.load("u6/game");
+		Game gw(ww);
+		int book = ww.addToInventory(1, 57, 0, 1);
+		ww.objects[book].status = (uint8_t)((ww.objects[book].status & ~0x18) | 0x18);
+		World::Obj spell = ww.objects[book];
+		spell.type = 58;
+		spell.quality = 255;
+		spell.status = 0x08;
+		spell.parent = book;
+		spell.actor = -1;
+		ww.objects.push_back(spell);
+		for (int r = 65; r <= 72; ++r)
+			ww.addToInventory(1, r, 0, 5);
+		ww.actors.level[1] = 8;
+		ww.actors.unknown13f1[1] = 99;
+		int victim = 5;
+		ww.moveObject(ww.actorObject(victim), gw.x + 2, gw.y, 0);
+		int gem = ww.addToInventory(victim, 0x4D, 0, 1);
+		(void)gem;
+		std::vector<int> mine, theirs;
+		ww.inventory(1, mine, false);
+		ww.inventory(victim, theirs, false);
+		int karma = ww.actors.globals[8];
+		gw.handleKey('c');
+		gw.handleKey('5');
+		gw.handleKey('p');
+		gw.handleKey('y');
+		gw.handleKey(KEY_ENTER);
+		gw.handleKey(KEY_RIGHT);
+		gw.handleKey(KEY_RIGHT);
+		gw.handleKey(KEY_ENTER); // the cursor is on the victim
+		CHECK(logText(gw).find("Which object: ") != std::string::npos);
+		gw.handleKey(KEY_ENTER); // the first thing the victim carries
+		std::vector<int> mine2, theirs2;
+		ww.inventory(1, mine2, false);
+		ww.inventory(victim, theirs2, false);
+		CHECK(mine2.size() == mine.size() + 1 && theirs2.size() + 1 == theirs.size());
+		CHECK(ww.actors.globals[8] == (karma > 5 ? karma - 5 : 0));
+	}
+
 	// Help (sub_1890C): the party is healed, raised and taken to Lord British's court while it is held
 	{
 		World ww;

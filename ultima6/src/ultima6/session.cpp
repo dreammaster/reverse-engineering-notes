@@ -776,7 +776,7 @@ void Game::render(Framebuffer &screen) {
 	if (_talk)
 		drawTalkView(screen, _world, _talk->portraitActor());
 	else if (_inventory)
-		drawInventoryView(screen, _world, _member, _selected, _items);
+		drawInventoryView(screen, _world, _stealing >= 0 ? 100 + _stealing : _member, _selected, _items);
 	else
 		drawStatsView(screen, _world, _member);
 	if (_gem)

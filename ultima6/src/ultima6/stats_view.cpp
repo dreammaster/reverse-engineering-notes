@@ -31,8 +31,13 @@ int ActorStats::maxMagic(const World &w, int actor) {
 	}
 }
 
+// `member` is a place in the party's roster, or 100 + an actor's number to look at somebody else's things (the Pickpocket spell)
+static int actorOfMember(const World &world, int member) {
+	return member >= 100 ? member - 100 : world.actors.partyRoster[member];
+}
+
 void inventoryItems(const World &world, int member, std::vector<int> &items) {
-	world.inventory(world.actors.partyRoster[member], items, false);
+	world.inventory(actorOfMember(world, member), items, false);
 	std::stable_sort(items.begin(), items.end(), [&](int a, int b) {
 		return (world.objects[a].location() == ObjRecord::READIED) > (world.objects[b].location() == ObjRecord::READIED);
 	});
@@ -42,8 +47,16 @@ void inventoryItems(const World &world, int member, std::vector<int> &items) {
 void drawInventoryView(Framebuffer &screen, const World &world, int member, int selected, std::vector<int> &items) {
 	Ui::restorePaper(screen, world.paper, 176, 8, 136, 96);
 	const int FG = 0x48;
-	int actor = world.actors.partyRoster[member];
-	std::string name = (const char *)world.actors.partyNames[member];
+	int actor = actorOfMember(world, member);
+	std::string name;
+	if (member >= 100) {
+		ConverseScript script;
+		if (world.script(actor, script))
+			name = script.name();
+		std::replace(name.begin(), name.end(), '_', '.');
+	} else {
+		name = (const char *)world.actors.partyNames[member];
+	}
 	Ui::drawText(screen, world.font, 176 + (17 - (int)name.size()) / 2 * 8, 8, name, FG);
 
 	inventoryItems(world, member, items);
