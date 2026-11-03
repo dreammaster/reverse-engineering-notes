@@ -683,6 +683,14 @@ void Game::render(Framebuffer &screen) {
 		drawStatsView(screen, _world, _member);
 	if (_gem)
 		drawGem(screen);
+	if (_world.game == GameId::Ultima6) {
+		// advance_time 13A13: month-day-year and the wind under the map (cell 2, row 21)
+		static const char *const WIND[9] = {"C ", "N ", "NE", "E ", "SE", "S ", "SW", "W ", "NW"};
+		int w = _world.actors.globals.size() > 9 ? (int8_t)_world.actors.globals[9] : -1;
+		char line[40];
+		std::snprintf(line, sizeof line, "%2d-%02d-%04d Wind:%2s", clock.month, clock.day, clock.year, WIND[w >= -1 && w < 8 ? w + 1 : 0]);
+		Ui::drawText(screen, _world.font, 16, 168, line, 0x48);
+	}
 	scroll.draw(screen, _world.font);
 	if (_cursor)
 		Ui::drawTile(screen, _world, 0x16C, _cx * 16, _cy * 16);
