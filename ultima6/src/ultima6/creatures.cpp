@@ -8,6 +8,9 @@ namespace Ultima6 {
 
 static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1};
 static const int DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+// the distance table at ds:196C: how far a missile or blow must reach to cover (dx, dy)
+static const uint8_t DIST[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
+								   {4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
 
 void Creatures::scan() {
 	_eggs.clear();
@@ -194,7 +197,7 @@ bool Creatures::stepDir(int actor, int dir) {
 	int mask = o.z == 0 ? 0x3FF : 0xFF;
 	int nx = (o.x + DX[dir]) & mask, ny = (o.y + DY[dir]) & mask;
 	MoveRules rules;
-	rules.partyMayShuffle = false;
+	rules.partyMayShuffle = _shuffle;
 	if (!_movement.check(nx, ny, o.z, k, rules).passable)
 		return false;
 	_world.moveObject(k, nx, ny, o.z);
@@ -214,7 +217,7 @@ bool Creatures::stepDiag(int actor, int vertical, int horizontal) {
 	int mask = o.z == 0 ? 0x3FF : 0xFF;
 	int nx = (o.x + DX[dir]) & mask, ny = (o.y + DY[dir]) & mask;
 	MoveRules rules;
-	rules.partyMayShuffle = false;
+	rules.partyMayShuffle = _shuffle;
 	bool open = _movement.check(nx, o.y, o.z, k, rules).passable || _movement.check(o.x, ny, o.z, k, rules).passable;
 	if (!open || !_movement.check(nx, ny, o.z, k, rules).passable)
 		return false;
@@ -315,15 +318,23 @@ int Creatures::pickTarget(int actor, bool strongest) {
 // with no target the creature wanders, or (worktype 3) passes. APPROX(57): the line-of-fire test (sub_2BB2F) and the side step it causes are left out.
 void Creatures::act(int actor, int px, int py, int pz) {
 	(void)pz;
-	static const uint8_t DIST[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
-									   {4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
 	ObjList &a = _world.actors;
 	int k = _world.actorObject(actor);
 	if (k < 0 || _world.objects[k].deleted || a.hp[actor] == 0) {
 		a.moves[actor] = 0;
 		return;
 	}
-	const World::Obj o = _world.objects[k];
+	// actor_worktype_act (29BDA) at its end: an action that used up no moves costs 10
+	_shuffle = false;
+	int before = (int8_t)a.moves[actor];
+	turn(actor, px, py);
+	if ((int8_t)a.moves[actor] == before)
+		_world.spendMoves(actor, 10);
+}
+
+void Creatures::turn(int actor, int px, int py) {
+	ObjList &a = _world.actors;
+	const World::Obj o = _world.objects[_world.actorObject(actor)];
 	int wt = a.worktype[actor];
 	// the guards (0xF, 0x10, 0x8B-0x8E, actor_worktype_act 29ED9): half the turns are passed; otherwise a step in the direction the guard faces (at its post a guard of 0x8B-0x8E
 	// goes the way its worktype says: north, east, south, west) and, if that is blocked, the opposite way
@@ -452,6 +463,21 @@ void Creatures::act(int actor, int px, int py, int pz) {
 			return;
 		}
 	}
+	if (wt == 3)
+		combatFront(actor, px, py);
+	else if (wt == 4)
+		combatRear(actor, px, py);
+	else if (wt == 5)
+		combatFlank(actor, px, py);
+	else
+		assault(actor, px, py);
+}
+
+// wt_combat_assault (2DF2E): see Creatures::act; the worktypes that are not handled elsewhere end here
+void Creatures::assault(int actor, int px, int py) {
+	ObjList &a = _world.actors;
+	const World::Obj o = _world.objects[_world.actorObject(actor)];
+	int wt = a.worktype[actor];
 	int target = wt == 0x0C || wt == 0x8F ? -1 : pickTarget(actor, wt == 6);
 	if (target >= 0) {
 		const World::Obj &t = _world.objects[_world.actorObject(target)];
@@ -470,6 +496,13 @@ void Creatures::act(int actor, int px, int py, int pz) {
 		_world.spendMoves(actor, 5);
 		return;
 	}
+	wander(actor, px, py);
+}
+
+// wt_wander (2954B)
+void Creatures::wander(int actor, int px, int py) {
+	ObjList &a = _world.actors;
+	const World::Obj o = _world.objects[_world.actorObject(actor)];
 	// wt_wander (2954B): a party member that is not on the leader's square walks towards the leader one turn in four
 	if ((a.status[actor] & 0x80) && !(o.x == px && o.y == py) && _rng.next() % 4 == 0) {
 		stepToward(actor, px, py);
@@ -480,6 +513,413 @@ void Creatures::act(int actor, int px, int py, int pz) {
 		stepDir(actor, (_rng.next() % 4) * 2);
 	else
 		_world.spendMoves(actor, 5);
+}
+
+// Arithmetic as the 16-bit code does it: every product and sum is a word
+static int w16(int v) {
+	return (int16_t)v;
+}
+
+static int posX(const World &w, int actor) {
+	int k = w.actorObject(actor);
+	return k >= 0 ? w.objects[k].x : 0;
+}
+
+static int posY(const World &w, int actor) {
+	int k = w.actorObject(actor);
+	return k >= 0 ? w.objects[k].y : 0;
+}
+
+// sub_19FFD: the first living actor (from 1) standing on a square of the party's level, or -1
+int Creatures::actorAt(int x, int y) const {
+	for (int i = 1; i < ObjList::ACTORS; ++i) {
+		int k = _world.actorObject(i);
+		if (k < 0 || _world.objects[k].deleted || (_world.actors.status[i] & 0x10))
+			continue;
+		const World::Obj &o = _world.objects[k];
+		if (o.x == x && o.y == y && o.z == _fz)
+			return i;
+	}
+	return -1;
+}
+
+// sub_2B827: whether an actor can be a target of another: not invisible (but party members see each other), not dead, not the hidden kind (type 0x165, tile flags3 bit 0x10)
+// and on the same level
+bool Creatures::validTarget(int actor, int target) const {
+	const ObjList &a = _world.actors;
+	int ka = _world.actorObject(actor), kt = _world.actorObject(target);
+	if (ka < 0 || kt < 0)
+		return false;
+	const World::Obj &t = _world.objects[kt];
+	bool ok = !(t.status & 2);
+	if ((a.status[actor] & 0x80) && !ok && target < 0x100 && (a.status[target] & 0x80))
+		ok = true;
+	if (target < 0x100 && (a.movementFlags[target] & 0x10))
+		ok = false;
+	if (t.type == 0x165 && t.frame == 0)
+		ok = false;
+	if (_world.flags.flags3[(_world.baseTile.firstTile[t.type] + t.frame) & (TileFlags::TILES - 1)] & 0x10)
+		ok = false;
+	if (_world.objects[ka].z != t.z)
+		ok = false;
+	return ok;
+}
+
+// sub_2BB2F: whether a missile flies from the actor to a square. APPROX(57): sub_37CBD flies it with its own Bresenham and may change the square it hits; here it is the
+// pixel line of World::boltPath
+bool Creatures::lineOfFire(int actor, int tx, int ty, int range) const {
+	const World::Obj &o = _world.objects[_world.actorObject(actor)];
+	std::vector<std::pair<int, int>> path;
+	return _world.boltPath(o.z, o.x, o.y, tx, ty, range, path);
+}
+
+// sub_2A4B6, once at the start of every round of turns: the party's centre (leaving out the members on worktypes 5 and 6) and its enemies' (the other side's actors within 24
+// squares, those retreating (7) only within 5), the actor of each side that lies furthest ahead and furthest to either side (only the actors in the front, worktypes 2 and 3,
+// count), and the first such actor of the other side.
+void Creatures::formation(int px, int py, int pz) {
+	ObjList &a = _world.actors;
+	_fz = pz;
+	_winX = (px - 16) & 0x3F8;
+	_winY = (py - 16) & 0x3F8;
+	auto X = [&](int i) { return posX(_world, i); };
+	auto Y = [&](int i) { return posY(_world, i); };
+	auto alive = [&](int i) {
+		int k = _world.actorObject(i);
+		return k >= 0 && !_world.objects[k].deleted;
+	};
+	int n = 0;
+	long sumX = 0, sumY = 0;
+	for (int m = 0; m < a.partySize; ++m) {
+		int actor = a.partyRoster[m];
+		if (!alive(actor) || a.worktype[actor] == 5 || a.worktype[actor] == 6)
+			continue;
+		++n;
+		sumX += X(actor);
+		sumY += Y(actor);
+	}
+	if (n) {
+		_f.partyX = (int)((sumX + (a.partySize >> 1)) / n);
+		_f.partyY = (int)((sumY + (a.partySize >> 1)) / n);
+	} else {
+		_f.partyX = px;
+		_f.partyY = py;
+	}
+	n = 0;
+	sumX = sumY = 0;
+	for (int i = 1; i < ObjList::ACTORS; ++i) {
+		if (!alive(i) || (a.status[i] & 0x10) || !(a.status[i] & 0x20))
+			continue;
+		int x = X(i), y = Y(i);
+		if (a.worktype[i] == 7 && (std::abs(x - px) > 5 || std::abs(y - py) > 5))
+			continue;
+		if (std::abs(x - px) >= 24 || std::abs(y - py) >= 24)
+			continue;
+		++n;
+		sumX += x;
+		sumY += y;
+	}
+	_f.enemies = n;
+	int facing = a.movementFlags[a.partyRoster[0]] & 7;
+	if (n) {
+		_f.enemyX = (int)((sumX + (n >> 1)) / n);
+		_f.enemyY = (int)((sumY + (n >> 1)) / n);
+		int vx = _f.enemyX - _f.partyX, vy = _f.enemyY - _f.partyY;
+		int front = -0x8000, right = 0, left = 0, enemyRight = 0, enemyLeft = 0;
+		_f.enemyRight = _f.enemyLeft = _f.lead = -1;
+		for (int i = 0; i < ObjList::ACTORS; ++i) {
+			if (!alive(i) || (a.status[i] & 0x10) || (a.worktype[i] != 3 && a.worktype[i] != 2))
+				continue;
+			int dx = X(i) - _f.partyX, dy = Y(i) - _f.partyY;
+			int ahead = w16(w16(dx * vx) + w16(dy * vy)), across = w16(w16(dx * vy) - w16(dy * vx));
+			if (a.status[i] & 0x80) {
+				if (ahead > front) {
+					front = ahead;
+					_f.partyFront = i;
+				}
+				if (across > right) {
+					right = across;
+					_f.partyRight = i;
+				}
+				if (across < left) {
+					left = across;
+					_f.partyLeft = i;
+				}
+			} else {
+				if (_f.lead < 0)
+					_f.lead = i;
+				if (across > enemyRight) {
+					enemyRight = across;
+					_f.enemyRight = i;
+				}
+				if (across < enemyLeft) {
+					enemyLeft = across;
+					_f.enemyLeft = i;
+				}
+			}
+		}
+	} else {
+		_f.enemyX = px + DX[facing];
+		_f.enemyY = py + DY[facing];
+	}
+	if (_f.enemyX == _f.partyX && _f.enemyY == _f.partyY) {
+		_f.enemyX += DX[facing];
+		_f.enemyY += DY[facing];
+	}
+}
+
+// sub_2E0FE: the actor goes to its place in the line. The place is on the line across the way from the party's centre (from the leader, for a party member) to the enemies'
+// (to the enemy that leads, for an enemy), as far along it as the leader of that line stands, and to the side the actor is already on; a place taken by someone else is
+// shifted along the line, to whichever side lies nearer. Returns false when the actor has acted, true when it has not (it passed, or is in its place or the place lies
+// outside the 40 x 40 squares), and then the caller goes on to fight.
+bool Creatures::formationWalk(int actor, int px, int py) {
+	ObjList &a = _world.actors;
+	bool party = (a.status[actor] & 0x80) != 0;
+	if (!(_f.enemies && _f.lead != 0) && !party) {
+		_world.spendMoves(actor, 5);
+		return true;
+	}
+	if (!party && _f.lead < 0) { // the original reads past the table here
+		_world.spendMoves(actor, 5);
+		return true;
+	}
+	auto X = [&](int i) { return posX(_world, i); };
+	auto Y = [&](int i) { return posY(_world, i); };
+	int cx = X(actor), cy = Y(actor);
+	int ref, p0x, p0y, vx, vy;
+	if (party) {
+		ref = a.partyRoster[0];
+		p0x = X(ref);
+		p0y = Y(ref);
+		vx = w16(_f.enemyX - p0x);
+		vy = w16(_f.enemyY - p0y);
+	} else {
+		ref = _f.lead;
+		p0x = _f.partyX;
+		p0y = _f.partyY;
+		vx = w16(X(ref) - p0x);
+		vy = w16(Y(ref) - p0y);
+	}
+	int cross = w16(w16((cx - p0x) * vy) - w16((cy - p0y) * vx));
+	bool onLeft = cross > 0;
+	if (cross == 0)
+		onLeft = _rng.next() % 2 != 0;
+	int stepX = vy > 0 ? 1 : -1, stepY = vx > 0 ? -1 : 1;
+	if (!onLeft) {
+		stepX = -stepX;
+		stepY = -stepY;
+	}
+	int along = w16(w16((X(ref) - p0x) * vx) + w16((Y(ref) - p0y) * vy));
+	if (a.partyRoster[0] == ref)
+		along = w16(along + std::abs(vx) + std::abs(vy));
+	int len2 = w16(w16(vx * vx) + w16(vy * vy));
+	if (len2 == 0)
+		len2 = 1;
+	int tx = w16(w16(along * vx) / len2) + p0x, ty = w16(w16(along * vy) / len2) + p0y;
+	_shuffle = false;
+	for (int guard = 0; guard < 400; ++guard) {
+		if (tx < _winX || _winX + 0x27 < tx || ty < _winY || _winY + 0x27 < ty || (cx == tx && cy == ty)) {
+			_shuffle = true;
+			return true;
+		}
+		if (actorAt(tx, ty) < 0)
+			break;
+		int ax = w16(w16((tx + stepX - p0x) * vx) + w16((ty - p0y) * vy));
+		int ay = w16(w16((tx - p0x) * vx) + w16((ty + stepY - p0y) * vy));
+		if (std::abs(w16(ax - along)) < std::abs(w16(ay - along)))
+			tx += stepX;
+		else
+			ty += stepY;
+	}
+	_shuffle = true;
+	int saved = (int8_t)a.moves[actor];
+	if (!stepToward(actor, tx, ty)) {
+		a.moves[actor] = (uint8_t)saved;
+		assault(actor, px, py);
+		return false;
+	}
+	if (party && !(X(actor) == tx && Y(actor) == ty)) {
+		if (_f.enemies == 0)
+			a.moves[actor] = (uint8_t)saved;
+		if (!stepToward(actor, tx, ty))
+			assault(actor, px, py);
+	}
+	return false;
+}
+
+// wt_combat_front (2E454): the actor takes its place in the line; once there an enemy 8 or more squares from the party waits, the enemy that leads now and then (one turn in
+// eight) goes for the party's centre, and everyone else fights as wt_combat_assault does
+void Creatures::combatFront(int actor, int px, int py) {
+	ObjList &a = _world.actors;
+	if (!formationWalk(actor, px, py))
+		return;
+	if (!(a.status[actor] & 0x80)) {
+		const World::Obj &o = _world.objects[_world.actorObject(actor)];
+		if (std::max(std::abs((int)o.x - _f.partyX), std::abs((int)o.y - _f.partyY)) >= 8) {
+			_world.spendMoves(actor, 5);
+			return;
+		}
+		if (actor == _f.lead && _rng.next() % 8 == 0) {
+			stepToward(actor, _f.partyX, _f.partyY);
+			return;
+		}
+	}
+	assault(actor, px, py);
+}
+
+// wt_combat_rear (2E4B9): the actor keeps behind the front line of its side (the front-line actors, worktype 3, of the same side): behind the foremost of them it moves
+// along the line to the side the actor is not yet past the flank actors on; otherwise it steps back; a party member more than 3 squares from the player comes to the player.
+// When it cannot move it fights.
+void Creatures::combatRear(int actor, int px, int py) {
+	ObjList &a = _world.actors;
+	bool party = (a.status[actor] & 0x80) != 0;
+	auto X = [&](int i) { return posX(_world, i); };
+	auto Y = [&](int i) { return posY(_world, i); };
+	int ref1, ref2, bx, by, vx, vy;
+	if (party) {
+		if (_f.enemies == 0) {
+			stepToward(actor, px, py);
+			return;
+		}
+		ref1 = _f.partyRight;
+		ref2 = _f.partyLeft;
+		bx = _f.partyX;
+		by = _f.partyY;
+		vx = _f.enemyX - _f.partyX;
+		vy = _f.enemyY - _f.partyY;
+	} else {
+		if (_f.enemies == 0) {
+			_world.spendMoves(actor, 5);
+			return;
+		}
+		ref1 = _f.enemyLeft < 0 ? actor : _f.enemyLeft;
+		ref2 = _f.enemyRight < 0 ? actor : _f.enemyRight;
+		bx = _f.enemyX;
+		by = _f.enemyY;
+		vx = _f.partyX - _f.enemyX;
+		vy = _f.partyY - _f.enemyY;
+	}
+	int foremost = 0x7FFF, side = a.status[actor] & 0x60;
+	for (int i = 0; i < ObjList::ACTORS; ++i) {
+		int k = _world.actorObject(i);
+		if (k < 0 || _world.objects[k].deleted || (a.status[i] & 0x10) || a.worktype[i] != 3 || (a.status[i] & 0x60) != side)
+			continue;
+		int d = w16(w16((X(i) - bx) * vx) + w16((Y(i) - by) * vy));
+		if (d < foremost)
+			foremost = d;
+	}
+	int ax = X(actor), ay = Y(actor);
+	int mine = w16(w16((ax - bx) * vx) + w16((ay - by) * vy));
+	int saved = (int8_t)a.moves[actor];
+	bool failed;
+	if (party && std::max(std::abs(ax - px), std::abs(ay - py)) > 3) {
+		failed = !stepToward(actor, px, py);
+	} else if (mine >= foremost) {
+		failed = !stepToward(actor, ax - vx, ay - vy);
+	} else {
+		int across = w16(w16((ax - bx) * vy) - w16((ay - by) * vx));
+		int across1 = w16(w16((X(ref1) - bx) * vy) - w16((Y(ref1) - by) * vx));
+		int across2 = w16(w16((X(ref2) - bx) * vy) - w16((Y(ref2) - by) * vx));
+		if (across1 < across)
+			failed = !stepToward(actor, ax - vy, ay + vx);
+		else if (across2 > across)
+			failed = !stepToward(actor, ax + vy, ay - vx);
+		else
+			failed = true;
+	}
+	if (failed) {
+		a.moves[actor] = (uint8_t)saved;
+		assault(actor, px, py);
+	}
+}
+
+// wt_combat_flank (2E7E2): with enemies about (and, for an enemy, the player within 7 squares) the actor picks the foe that lies furthest to the side it is on of the line
+// between the two sides (a foe must be one it can see, of the other side and near: within 7 of the player or within 5 of the actor; the retreating kinds only within 5 of the
+// player), shoots it when it is in reach and the line of fire is clear, turns a quarter turn about it when it is not, and otherwise comes round at the side. Without
+// enemies a party member only comes to within 2 squares of the player.
+void Creatures::combatFlank(int actor, int px, int py) {
+	ObjList &a = _world.actors;
+	bool party = (a.status[actor] & 0x80) != 0;
+	auto X = [&](int i) { return posX(_world, i); };
+	auto Y = [&](int i) { return posY(_world, i); };
+	int ax = X(actor), ay = Y(actor);
+	if (_f.enemies == 0 || (!party && std::max(std::abs(ax - px), std::abs(ay - py)) > 7)) {
+		int saved = (int8_t)a.moves[actor];
+		if (party && std::max(std::abs(ax - px), std::abs(ay - py)) > 2)
+			stepToward(actor, px, py);
+		a.moves[actor] = (uint8_t)saved;
+		_world.spendMoves(actor, 5);
+		return;
+	}
+	int mySide = a.status[actor] & 0x60;
+	int vx = _f.enemyX - _f.partyX, vy = _f.enemyY - _f.partyY;
+	int cross = w16(w16((ax - _f.partyX) * vy) - w16((ay - _f.partyY) * vx));
+	bool onLeft = cross > 0;
+	if (cross == 0)
+		onLeft = _rng.next() % 2 != 0;
+	int sideX, sideY;
+	if (onLeft) {
+		sideX = vy;
+		sideY = -vx;
+	} else {
+		sideX = -vy;
+		sideY = vx;
+		cross = -cross;
+	}
+	int best = -0x8000, foe = -1;
+	for (int i = 0; i < ObjList::ACTORS; ++i) {
+		int k = _world.actorObject(i);
+		if (k < 0 || _world.objects[k].deleted || (a.status[i] & 0x10) || (a.status[i] & 0x60) == mySide || !validTarget(actor, i))
+			continue;
+		if (mySide == 0x40 && !(a.status[i] & 0x20))
+			continue;
+		if (mySide == 0x20 && !(a.status[i] & 0x40))
+			continue;
+		int tx = X(i), ty = Y(i), wt = a.worktype[i];
+		if ((wt == 7 || wt == 9 || wt == 0x9A) && (tx < px - 5 || tx > px + 5 || ty < py - 5 || ty > py + 5))
+			continue;
+		if (!(std::abs(tx - px) <= 7 && std::abs(ty - py) <= 7) && (std::abs(tx - ax) > 5 || std::abs(ty - ay) > 5))
+			continue;
+		int c = w16(w16((tx - _f.partyX) * vy) - w16((ty - _f.partyY) * vx));
+		if (!onLeft)
+			c = -c;
+		if (c > best) {
+			best = c;
+			foe = i;
+		}
+	}
+	if (foe < 0) {
+		wander(actor, px, py);
+		return;
+	}
+	int tx = X(foe), ty = Y(foe);
+	int weapon = _combat.weaponType(actor), range = Combat::rangeOf(weapon);
+	int adx = std::abs(tx - ax), ady = std::abs(ty - ay);
+	if (adx < 8 && ady < 8 && DIST[adx][ady] <= range) {
+		if (lineOfFire(actor, tx, ty, range)) {
+			_combat.attack(actor, foe);
+			_world.spendMoves(actor, 10);
+			return;
+		}
+		// no clear shot: a quarter turn about the foe, the way chosen by chance
+		int gx, gy;
+		if (_rng.next() % 2) {
+			gx = ax - (ty - ay);
+			gy = ay + (tx - ax);
+		} else {
+			gx = (ty - ay) + ax;
+			gy = ay - (tx - ax);
+		}
+		tx = gx;
+		ty = gy;
+	} else {
+		tx += sideX > 0 ? 1 : (sideX < 0 ? -1 : 0);
+		ty += sideY > 0 ? 1 : (sideY < 0 ? -1 : 0);
+	}
+	int saved = (int8_t)a.moves[actor];
+	if (!stepToward(actor, tx, ty)) {
+		a.moves[actor] = (uint8_t)saved;
+		assault(actor, px, py);
+	}
 }
 
 } // namespace Ultima6

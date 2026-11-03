@@ -9,48 +9,6 @@
 namespace Ultima6 {
 namespace Ultima6 {
 
-namespace {
-
-// The path of one bolt of sub_37CBD: a straight line of pixels (16 to a square) from the middle of the start square to the middle of the goal square. Squares are
-// collected in order until one lies beyond the reach (the distance table at ds:196C, at most `reach`) or blocks the bolt (flags2 bit 0x20 on the terrain or on any
-// object there, unless it is next to the start and has bit 8). Returns whether the goal square was reached.
-// APPROX(70): the step sizes and error terms of the original's Bresenham are not copied, and sub_18C09 gives only the top tile there.
-bool boltPath(World &w, int z, int cx, int cy, int gx, int gy, int reach, std::vector<std::pair<int, int>> &squares) {
-	static const uint8_t REACH[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
-										{4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
-	int dxp = (gx - cx) * 16, dyp = (gy - cy) * 16;
-	int major = std::max(std::abs(dxp), std::abs(dyp));
-	int lastX = cx, lastY = cy;
-	for (int step = 1; step <= major; ++step) {
-		int sx = cx * 16 + 8 + (2 * dxp * step + (dxp < 0 ? -major : major)) / (2 * major);
-		int sy = cy * 16 + 8 + (2 * dyp * step + (dyp < 0 ? -major : major)) / (2 * major);
-		int qx = sx >> 4, qy = sy >> 4;
-		if (qx == lastX && qy == lastY)
-			continue;
-		lastX = qx;
-		lastY = qy;
-		int adx = std::abs(qx - cx), ady = std::abs(qy - cy);
-		if (adx > 7 || ady > 7 || REACH[adx][ady] > reach)
-			return false;
-		bool next = adx <= 1 && ady <= 1;
-		auto stops = [&](int tile) {
-			uint8_t f = w.flags.flags2[tile & (TileFlags::TILES - 1)];
-			return (f & 0x20) && !(next && (f & 8));
-		};
-		std::vector<int> there;
-		w.objectsAt(qx, qy, z, there);
-		bool blocked = stops(w.map.tile(z, qx, qy));
-		for (int i : there)
-			blocked |= stops(w.baseTile.firstTile[w.objects[i].type] + w.objects[i].frame);
-		if (blocked)
-			return false;
-		squares.push_back(std::make_pair(qx, qy));
-	}
-	return true;
-}
-
-} // namespace
-
 // The spells that act on objects, on a square or on many people at once (cast_spell_effect, 25495..; its first-level jump table at 254BA sends each spell index to a
 // group of handlers, only some of which have been read). Returns whether the spell was dealt with here; otherwise Magic::cast works it on the actor.
 // APPROX(56): the spells that were read in the original (the Create Food, Sleep, Kill, Charm, Dispel, Reveal, Fear, Confuse, mass, wind, field, Web, trap, Wing Strike and Slime groups) follow it;
@@ -211,7 +169,7 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		int ck = _world.actorObject(caster);
 		int cx = _world.objects[ck].x, cy = _world.objects[ck].y;
 		std::vector<std::pair<int, int>> path;
-		if (!boltPath(_world, z, cx, cy, tx, ty, 8, path)) {
+		if (!_world.boltPath(z, cx, cy, tx, ty, 8, path)) {
 			message("\nBlocked\n");
 			return true;
 		}
@@ -228,7 +186,7 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		};
 		for (int b = 0; b < 16; ++b) {
 			std::vector<std::pair<int, int>> squares;
-			boltPath(_world, z, tx, ty, tx + SX[b], ty + SY[b], 3, squares);
+			_world.boltPath(z, tx, ty, tx + SX[b], ty + SY[b], 3, squares);
 			for (const std::pair<int, int> &q : squares)
 				mark(q.first, q.second);
 		}
@@ -299,7 +257,7 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		}
 		int ck = _world.actorObject(caster);
 		std::vector<std::pair<int, int>> path;
-		if (!boltPath(_world, z, _world.objects[ck].x, _world.objects[ck].y, tx, ty, 8, path)) {
+		if (!_world.boltPath(z, _world.objects[ck].x, _world.objects[ck].y, tx, ty, 8, path)) {
 			message("\nBlocked\n");
 			return true;
 		}
@@ -342,7 +300,7 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 	case 64: { // Energy Field (sub_2386F): a bolt flies to the square (else "Blocked"); the field object (0x13D fire, 0x13E poison, 0x140 sleep, 0x13F energy) is made there and kept only if it may stand there ("Success"), else "Not possible"
 		int ck = _world.actorObject(caster);
 		std::vector<std::pair<int, int>> path;
-		if (!boltPath(_world, z, _world.objects[ck].x, _world.objects[ck].y, tx, ty, 8, path)) {
+		if (!_world.boltPath(z, _world.objects[ck].x, _world.objects[ck].y, tx, ty, 8, path)) {
 			message("\nBlocked\n");
 			return true;
 		}
@@ -357,7 +315,7 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		for (int b = 0; b < 9; ++b) {
 			std::vector<std::pair<int, int>> path;
 			int gx = b < 8 ? tx + WX[b] : tx, gy = b < 8 ? ty + WY[b] : ty;
-			all &= boltPath(_world, z, _world.objects[ck].x, _world.objects[ck].y, gx, gy, 7, path);
+			all &= _world.boltPath(z, _world.objects[ck].x, _world.objects[ck].y, gx, gy, 7, path);
 		}
 		if (!all) {
 			message("\nBlocked\n");
@@ -425,7 +383,7 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		bool hit[ObjList::ACTORS] = {};
 		for (int b = 0; b < 5; ++b) {
 			std::vector<std::pair<int, int>> squares;
-			boltPath(_world, z, cx, cy, px[b], py[b], 7, squares);
+			_world.boltPath(z, cx, cy, px[b], py[b], 7, squares);
 			for (const std::pair<int, int> &q : squares) {
 				std::vector<int> there;
 				_world.objectsAt(q.first, q.second, z, there);
@@ -695,7 +653,7 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		}
 		int ck = _world.actorObject(caster);
 		std::vector<std::pair<int, int>> path;
-		if (!boltPath(_world, z, _world.objects[ck].x, _world.objects[ck].y, tx, ty, 8, path)) {
+		if (!_world.boltPath(z, _world.objects[ck].x, _world.objects[ck].y, tx, ty, 8, path)) {
 			message("\nBlocked\n");
 			return true;
 		}

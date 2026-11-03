@@ -131,6 +131,7 @@ void Game::advanceTime(int minutes) {
 void Game::runTurns() {
 	ObjList &a = _world.actors;
 	_actors.scheduleUpdate(x, y, z);
+	_creatures.formation(x, y, z);
 	int mask = z == 0 ? 0x3FF : 0xFF;
 	int leader = a.partyRoster[0];
 	for (int guard = 0; guard < 4000 && !_dead; ++guard) {

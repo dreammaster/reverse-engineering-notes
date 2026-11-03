@@ -126,6 +126,8 @@ public:
 	int weightOf(int index) const;
 	int weightOfType(int type, int quantity) const;
 	int carriedWeight(int actor) const;
+	/** The squares a missile of sub_37CBD passes from (cx, cy) to (gx, gy), stopping at the reach or a blocking square; true if the goal was reached. */
+	bool boltPath(int z, int cx, int cy, int gx, int gy, int reach, std::vector<std::pair<int, int>> &squares) const;
 	/** sub_28F67: what leaving a square costs in moves: 5 plus the high nibble of the TILEFLAG byte of the terrain and of every object there that is not impassable. */
 	int moveCost(int x, int y, int z) const;
 	/** sub_26CC4: takes moves off an actor (halved on a horse, at least 1). */

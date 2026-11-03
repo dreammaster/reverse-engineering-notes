@@ -37,6 +37,8 @@ public:
 	void despawn(int px, int py, int pz);
 	/** One action of a creature the turn scheduler picked. */
 	void act(int actor, int px, int py, int pz);
+	/** sub_2A4B6: where the two sides stand, worked out once at the start of every round of turns. */
+	void formation(int px, int py, int pz);
 
 	int count() const; // living temporary actors
 
@@ -47,6 +49,16 @@ private:
 	bool stepDiag(int actor, int vertical, int horizontal);
 	bool stepToward(int actor, int tx, int ty);
 	int pickTarget(int actor, bool strongest = false);
+	void turn(int actor, int px, int py);
+	void assault(int actor, int px, int py);
+	void wander(int actor, int px, int py);
+	void combatFront(int actor, int px, int py);
+	void combatRear(int actor, int px, int py);
+	void combatFlank(int actor, int px, int py);
+	bool formationWalk(int actor, int px, int py);
+	int actorAt(int x, int y) const;
+	bool validTarget(int actor, int target) const;
+	bool lineOfFire(int actor, int tx, int ty, int range) const;
 	void scan();
 	void hatch(int egg, int hour);
 
@@ -56,6 +68,15 @@ private:
 	Combat &_combat;
 	BorlandRandom &_rng;
 	TextWindow &_scroll;
+	/** word_4C435..4C44B: the sides' centres and the actors at the ends of the lines */
+	struct Formation {
+		int partyX = 0, partyY = 0, enemyX = 0, enemyY = 0;
+		int partyFront = 0, partyRight = 0, partyLeft = 0;
+		int enemyRight = -1, enemyLeft = -1, lead = -1;
+		int enemies = 0;
+	} _f;
+	int _winX = 0, _winY = 0, _fz = 0; // terrain_cache_x/y and the party's level
+	bool _shuffle = false;             // word_3F002: party members may share a square while the line forms
 	std::vector<int> _eggs;
 	std::vector<bool> _active;
 	bool _scanned = false;

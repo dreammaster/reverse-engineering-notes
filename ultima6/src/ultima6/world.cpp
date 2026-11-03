@@ -618,5 +618,43 @@ void World::moveObject(int index, int x, int y, int z) {
 	}
 }
 
+// The path of one bolt of sub_37CBD: a straight line of pixels (16 to a square) from the middle of the start square to the middle of the goal square. Squares are
+// collected in order until one lies beyond the reach (the distance table at ds:196C, at most `reach`) or blocks the bolt (flags2 bit 0x20 on the terrain or on any
+// object there, unless it is next to the start and has bit 8). Returns whether the goal square was reached.
+// APPROX(70): the step sizes and error terms of the original's Bresenham are not copied, and sub_18C09 gives only the top tile there.
+bool World::boltPath(int z, int cx, int cy, int gx, int gy, int reach, std::vector<std::pair<int, int>> &squares) const {
+	static const uint8_t REACH[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
+										{4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
+	int dxp = (gx - cx) * 16, dyp = (gy - cy) * 16;
+	int major = std::max(std::abs(dxp), std::abs(dyp));
+	int lastX = cx, lastY = cy;
+	for (int step = 1; step <= major; ++step) {
+		int sx = cx * 16 + 8 + (2 * dxp * step + (dxp < 0 ? -major : major)) / (2 * major);
+		int sy = cy * 16 + 8 + (2 * dyp * step + (dyp < 0 ? -major : major)) / (2 * major);
+		int qx = sx >> 4, qy = sy >> 4;
+		if (qx == lastX && qy == lastY)
+			continue;
+		lastX = qx;
+		lastY = qy;
+		int adx = std::abs(qx - cx), ady = std::abs(qy - cy);
+		if (adx > 7 || ady > 7 || REACH[adx][ady] > reach)
+			return false;
+		bool next = adx <= 1 && ady <= 1;
+		auto stops = [&](int tile) {
+			uint8_t f = flags.flags2[tile & (TileFlags::TILES - 1)];
+			return (f & 0x20) && !(next && (f & 8));
+		};
+		std::vector<int> there;
+		objectsAt(qx, qy, z, there);
+		bool blocked = stops(map.tile(z, qx, qy));
+		for (int i : there)
+			blocked |= stops(baseTile.firstTile[objects[i].type] + objects[i].frame);
+		if (blocked)
+			return false;
+		squares.push_back(std::make_pair(qx, qy));
+	}
+	return true;
+}
+
 } // namespace Ultima6
 } // namespace Ultima6
