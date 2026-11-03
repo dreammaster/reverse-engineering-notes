@@ -111,14 +111,14 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		return true;
 	};
 	// sub_1A80C + can_actor_enter: makes an object of the type on the square and keeps it only if it may stand there
-	auto placeOn = [&](int type, int px, int py) {
+	auto placeOn = [&](int type, int px, int py, int frame = 0) {
 		World::Obj f;
 		f.status = 0;
 		f.x = (uint16_t)px;
 		f.y = (uint16_t)py;
 		f.z = (uint8_t)z;
 		f.type = (uint16_t)type;
-		f.frame = 0;
+		f.frame = (uint8_t)frame;
 		f.quantity = 1;
 		f.quality = 0;
 		f.actor = -1;
@@ -292,21 +292,26 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		_haveVanished = true;
 		_world.deleteObject(object);
 		return true;
-	case 19: // Reappear: the last thing that vanished comes back on the square
-		if (!_haveVanished)
-			return false;
-		{
-			World::Obj back = _vanished;
-			back.x = (uint16_t)tx;
-			back.y = (uint16_t)ty;
-			back.z = (uint8_t)z;
-			back.deleted = false;
-			back.status = 0;
-			_world.objects.push_back(back);
-			_world.addToMap((int)_world.objects.size() - 1);
-			_haveVanished = false;
+	case 19: { // Reappear (sub_234B2): a bolt flies to the square (else "Blocked"), what vanished last (word_404BC: type and frame) is made there and stays if it may stand there ("Success"), else "No effect"
+		_spellQuiet = true;
+		if (!_haveVanished) {
+			message("\nNo effect\n");
+			return true;
 		}
+		int ck = _world.actorObject(caster);
+		std::vector<std::pair<int, int>> path;
+		if (!boltPath(_world, z, _world.objects[ck].x, _world.objects[ck].y, tx, ty, 8, path)) {
+			message("\nBlocked\n");
+			return true;
+		}
+		if (!placeOn(_vanished.type, tx, ty, _vanished.frame)) {
+			message("\nNo effect\n");
+			return true;
+		}
+		_haveVanished = false;
+		message("\nSuccess\n");
 		return true;
+	}
 	case 4: // Douse (sub_21E8F)
 	case 8: { // Ignite: lights and the powder keg; a brazier past frame 1, a douse of an unlit light or an ignite of a lit one is "No effect"
 		if (object < 0)
@@ -382,10 +387,20 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 			}
 		return any;
 	}
-	case 117: { // Resurrect: the dead body of an actor gets up again with full hit points and takes back what it carried
-		if (object < 0 || _world.objects[object].type != 339 || _world.objects[object].quality == 0)
-			return false;
-		return _world.resurrect(_world.objects[object].quality);
+	case 117: { // Resurrect (sub_22D11): a body (types 0x153, 0x154, 0x155, 0x162) whose quality names a persistent actor (below 0xE0) gets up again ("Success"); quality 0 is "The corpse is too old!"
+		_spellQuiet = true;
+		int bt = object >= 0 ? _world.objects[object].type : -1;
+		if (object < 0 || !(bt == 0x153 || bt == 0x154 || bt == 0x155 || bt == 0x162) || _world.objects[object].quality >= 0xE0) {
+			message("\nNo effect\n");
+			return true;
+		}
+		if (_world.objects[object].quality == 0) {
+			message("\nThe corpse is too old!\n");
+			return true;
+		}
+		_world.resurrect(_world.objects[object].quality);
+		message("\nSuccess\n");
+		return true;
 	}
 	case 83:   // Flame Wind
 	case 87:   // Poison Wind
@@ -599,9 +614,10 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 	case 114: // Eclipse
 		_world.actors.globals[0x12 + 15] = (uint8_t)(20 + _rng.next() % 20);
 		return true;
-	case 57: // Wind Change
-		if (_world.actors.globals.size() > 9)
-			_world.actors.globals[9] = (uint8_t)(_rng.next() % 8);
+	case 57: // Wind Change (sub_2541B): "Direction-" asks for one of the eight directions; the wind blows that way ("North."), or "nowhere." (calm) for anything else
+		message("Direction-");
+		_pending = 'W';
+		_spellQuiet = true;
 		return true;
 	case 88: // Replicate: the object on the square is copied
 		if (object < 0)

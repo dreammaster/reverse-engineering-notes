@@ -593,6 +593,16 @@ bool Game::handleKeyInner(int key) {
 				message("\n");
 				prompt();
 			}
+		} else if (cmd == 'W') {
+			static const char *const NAMES[8] = {"North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"};
+			int dir = key == KEY_UP || key == '8' ? 0 : key == '9' ? 1 : key == KEY_RIGHT || key == '6' ? 2 : key == '3' ? 3 : key == KEY_DOWN || key == '2' ? 4 : key == '1' ? 5 : key == KEY_LEFT || key == '4' ? 6 : key == '7' ? 7 : -1;
+			if (dir >= 0)
+				message(std::string(NAMES[dir]) + ".\n");
+			else
+				message("nowhere.\n");
+			if (_world.actors.globals.size() > 9)
+				_world.actors.globals[9] = (uint8_t)dir;
+			prompt();
 		} else if (cmd == 'm') {
 			moveTo(key);
 		} else if (cmd == 'v') {

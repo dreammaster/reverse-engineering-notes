@@ -417,7 +417,8 @@ void Game::castKey(int key) {
 		if (!spellSpecial(*spell, caster, x, y, caster))
 			_magic.cast(caster, *spell, caster);
 		_world.spendMoves(caster, spell->circle * 3 + 10); // cmd_cast: sub_26CC4(caster, circle * 3 + 10)
-		prompt();
+		if (_pending != 'W')
+			prompt();
 		return;
 	}
 	bool onObject = spell->select == Magic::SEL_OBJ || spell->select == Magic::SEL_OBJ_PROJ;
