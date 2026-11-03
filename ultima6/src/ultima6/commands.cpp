@@ -297,7 +297,52 @@ void Game::partyHazards() {
 	}
 }
 
-// Skiffs (414) and rafts (415): using one boards it, with the whole party aboard; using the shore from aboard puts the party ashore.
+// A ship (0x19C) is three objects in a line: bow, middle and stern. The high nibble of the tile flags1 of each part says which neighbours it is linked to (0x80 north, 0x40 east, 0x20
+// south, 0x10 west; the middle has two, an end one); the frames are mid - 8 (bow), mid (9, 11, 13 or 15 for north, east, south and west) and mid + 8 (stern). Returns the middle part
+// of the ship a part belongs to and the bow and stern (-1 when not found).
+bool Game::shipParts(int part, int &mid, int &bow, int &stern) {
+	static const int DX[4] = {0, 1, 0, -1}, DY[4] = {-1, 0, 1, 0};
+	mid = part;
+	bow = stern = -1;
+	World::Obj p = _world.objects[part];
+	if (p.type != 0x19C)
+		return false;
+	auto links = [&](const World::Obj &o) {
+		return _world.flags.flags1[(_world.baseTile.firstTile[o.type] + o.frame) & (TileFlags::TILES - 1)] & 0xF0;
+	};
+	auto partAt = [&](int px, int py) {
+		std::vector<int> here;
+		_world.objectsAt(px, py, z, here);
+		for (int i : here)
+			if (_world.objects[i].type == 0x19C && _world.objects[i].actor < 0)
+				return i;
+		return -1;
+	};
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	int f = links(p);
+	if (f == 0x80 || f == 0x40 || f == 0x20 || f == 0x10) { // an end: the middle lies the way it is linked
+		int d = f == 0x80 ? 0 : f == 0x40 ? 1 : f == 0x20 ? 2 : 3;
+		int m = partAt((p.x + DX[d]) & mask, (p.y + DY[d]) & mask);
+		if (m < 0)
+			return false;
+		mid = m;
+	}
+	const World::Obj &m = _world.objects[mid];
+	for (int d = 0; d < 4; ++d) {
+		int i = partAt((m.x + DX[d]) & mask, (m.y + DY[d]) & mask);
+		if (i < 0)
+			continue;
+		if (_world.objects[i].frame == m.frame - 8)
+			bow = i;
+		else if (_world.objects[i].frame == m.frame + 8)
+			stern = i;
+	}
+	return bow >= 0 && stern >= 0;
+}
+
+// Skiffs (414), rafts (415), ships (412) and balloons (423): using one boards it, with the whole party aboard; using the shore from aboard puts the party ashore.
+// A ship needs its deed (a deed, type 0x95, whose quality is the ship's) if it has a number, and is sailed as its middle part with the bow and stern following it
+// (use_boat 34919, sub_2722E, sub_274B5; the stowing of a skiff in a ship and the launching of a skiff from one are not done).
 // APPROX(30): not the original's exact behaviour, see docs/approximations.md
 bool Game::boardOrLeave(int tx, int ty) {
 	std::vector<int> here;
@@ -309,11 +354,17 @@ bool Game::boardOrLeave(int tx, int ty) {
 		me.frame = (uint8_t)_footFrame;
 		MoveRules rules;
 		bool ok = _movement.check(tx, ty, z, _leaderObject, rules).passable;
+		me.type = (uint16_t)vehicleType;
+		me.frame = (uint8_t)vehicleFrame;
 		if (!ok) {
-			me.type = (uint16_t)vehicleType;
-			me.frame = (uint8_t)vehicleFrame;
+			if (vehicleType == 0x19C) {
+				message("\nOnly next to land.\n");
+				return true;
+			}
 			return false;
 		}
+		me.type = (uint16_t)_footType;
+		me.frame = (uint8_t)_footFrame;
 		// the vehicle stays where it was; the party steps ashore
 		World::Obj boat;
 		boat.status = 0;
@@ -322,13 +373,14 @@ bool Game::boardOrLeave(int tx, int ty) {
 		boat.z = me.z;
 		boat.type = (uint16_t)vehicleType;
 		boat.frame = (uint8_t)vehicleFrame;
-		boat.quantity = 1;
-		boat.quality = 0;
+		boat.quantity = (uint8_t)(vehicleType == 0x19C ? _shipQuantity : 1);
+		boat.quality = (uint8_t)(vehicleType == 0x19C ? _shipQuality : 0);
 		boat.actor = -1;
 		boat.parent = -1;
 		_world.objects.push_back(boat);
 		_world.addToMap((int)_world.objects.size() - 1);
 		_aboard = false;
+		_shipBow = _shipStern = -1;
 		const ObjList &a = _world.actors;
 		for (int i = 0; i < a.partySize; ++i) {
 			int k = _world.actorObject(a.partyRoster[i]);
@@ -346,12 +398,39 @@ bool Game::boardOrLeave(int tx, int ty) {
 		World::Obj &v = _world.objects[i];
 		if (v.actor >= 0 || (v.type != 414 && v.type != 415 && v.type != 412 && v.type != 423))
 			continue;
+		int boardAt = i, bow = -1, stern = -1;
+		if (v.type == 0x19C) {
+			int mid;
+			if (!shipParts(i, mid, bow, stern)) {
+				message("\nNot usable\n");
+				return true;
+			}
+			boardAt = mid;
+		}
+		const World::Obj &b = _world.objects[boardAt];
+		if ((b.type == 0x19C || b.type == 0x19E) && b.quality != 0) {
+			bool deed = false;
+			for (int m = 0; m < _world.actors.partySize && !deed; ++m) {
+				std::vector<int> inv;
+				_world.inventory(_world.actors.partyRoster[m], inv, true);
+				for (int k : inv)
+					deed |= _world.objects[k].type == 0x95 && _world.objects[k].quality == b.quality;
+			}
+			if (!deed) {
+				message("\nA deed is required.\n");
+				return true;
+			}
+		}
 		_footType = me.type;
 		_footFrame = me.frame;
-		me.type = v.type;
-		me.frame = v.frame;
-		int vx = v.x, vy = v.y;
-		_world.deleteObject(i);
+		me.type = b.type;
+		me.frame = b.frame;
+		_shipQuality = b.quality;
+		_shipQuantity = b.quantity;
+		_shipBow = bow;
+		_shipStern = stern;
+		int vx = b.x, vy = b.y;
+		_world.deleteObject(boardAt);
 		_aboard = true;
 		const ObjList &a = _world.actors;
 		for (int m = 1; m < a.partySize; ++m) {
@@ -366,6 +445,41 @@ bool Game::boardOrLeave(int tx, int ty) {
 		return true;
 	}
 	return false;
+}
+
+// sub_263D4 for a ship under way: the heading (0 north, 1 east, 2 south, 3 west) after a step in a direction 0-7; a diagonal step keeps the heading if it lies on either side of
+// the diagonal and turns the ship about otherwise
+int Game::shipHeading(int dir) const {
+	int heading = (_world.objects[_leaderObject].frame - 9) / 2 & 3;
+	if (!(dir & 1))
+		return dir >> 1;
+	int q = dir >> 1;
+	return ((q - heading + 1) & 3) <= 1 ? heading : (heading + 2) & 3;
+}
+
+// The bow and stern squares of a ship whose middle is at (mx, my) heading h
+void Game::shipEnds(int mx, int my, int h, int &bx, int &by, int &sx, int &sy) const {
+	static const int DX[4] = {0, 1, 0, -1}, DY[4] = {-1, 0, 1, 0};
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	bx = (mx + DX[h]) & mask;
+	by = (my + DY[h]) & mask;
+	sx = (mx - DX[h]) & mask;
+	sy = (my - DY[h]) & mask;
+}
+
+// the bow and stern follow the middle, and are turned with it
+void Game::moveShipParts(int h) {
+	int bx, by, sx, sy;
+	shipEnds(x, y, h, bx, by, sx, sy);
+	_world.objects[_leaderObject].frame = (uint8_t)(9 + 2 * h);
+	if (_shipBow >= 0) {
+		_world.moveObject(_shipBow, bx, by, z);
+		_world.objects[_shipBow].frame = (uint8_t)(1 + 2 * h);
+	}
+	if (_shipStern >= 0) {
+		_world.moveObject(_shipStern, sx, sy, z);
+		_world.objects[_shipStern].frame = (uint8_t)(17 + 2 * h);
+	}
 }
 
 // Cast: the circle (a digit) and the syllables' letters, then Enter; spells that need a target then ask for one with the cursor.

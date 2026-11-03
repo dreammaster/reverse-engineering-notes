@@ -261,10 +261,30 @@ bool Game::step(int dir) {
 	}
 	int oldX = x, oldY = y;
 	int cost = _world.moveCost(oldX, oldY, z);
+	int vehicle = _aboard ? _world.objects[_leaderObject].type : 0, heading = 0;
+	if (vehicle == 0x19C) {
+		// the bow and stern of the ship's new heading need squares to sail in (can_actor_enter looks at the parts of a ship)
+		heading = shipHeading(dir);
+		int bx, by, sx, sy;
+		shipEnds(nx, ny, heading, bx, by, sx, sy);
+		if (!canWalk(bx, by, z) || !canWalk(sx, sy, z))
+			return false;
+	}
 	x = nx;
 	y = ny;
 	_world.moveObject(_leaderObject, x, y, z);
 	_actors.face(1, dir);
+	// party_move 27C11: what a step costs a vessel. A ship goes by the wind (if there is any) through the table at ds:180A, a skiff by the current (tiles 8-15) through ds:1812
+	static const uint8_t SHIP_COST[8] = {10, 5, 3, 4, 5, 4, 3, 5}, SKIFF_COST[8] = {3, 4, 5, 7, 10, 7, 5, 4};
+	if (vehicle == 0x19C) {
+		moveShipParts(heading);
+		int wind = _world.actors.globals.size() > 9 ? (int8_t)_world.actors.globals[9] : -1;
+		if (wind >= 0)
+			cost = SHIP_COST[(dir - wind) & 7];
+	} else if (vehicle == 0x19E) {
+		int tile = _world.map.tile(z, x, y) & 0xFF, current = tile >= 8 && tile < 16 ? tile - 8 : dir;
+		cost = SKIFF_COST[(dir - current) & 7];
+	}
 	followLeader(oldX, oldY);
 	_rules.deniedPending = true;
 	_world.spendMoves(1, cost); // sub_28F67, counted on the square that was left

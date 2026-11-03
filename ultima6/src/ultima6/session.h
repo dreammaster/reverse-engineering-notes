@@ -94,6 +94,11 @@ private:
 	bool handleKeyInner(int key);
 	void minutePassed();
 	bool boardOrLeave(int tx, int ty);
+	bool shipParts(int part, int &mid, int &bow, int &stern);
+	int shipHeading(int dir) const;
+	void shipEnds(int mx, int my, int h, int &bx, int &by, int &sx, int &sy) const;
+	void moveShipParts(int h);
+	int _shipBow = -1, _shipStern = -1, _shipQuality = 0, _shipQuantity = 150; // the parts of the ship being sailed, and the number and hit points of its middle part
 	bool _aboard = false;     // the party is on a skiff or raft: the leader's body has the vehicle's type
 	int _footType = 0;        // the leader's own type while aboard
 	int _footFrame = 0;
