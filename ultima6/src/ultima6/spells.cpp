@@ -53,10 +53,9 @@ bool boltPath(World &w, int z, int cx, int cy, int gx, int gy, int reach, std::v
 
 // The spells that act on objects, on a square or on many people at once (cast_spell_effect, 25495..; its first-level jump table at 254BA sends each spell index to a
 // group of handlers, only some of which have been read). Returns whether the spell was dealt with here; otherwise Magic::cast works it on the actor.
-// APPROX(56): the effects follow the spell manual and the actors' status bits; the original's animations, projectile paths, messages and the many saving throws
-// (sub_246AC, sub_24810, sub_24A61, sub_24BED, sub_24CF0, sub_24DCF, sub_24E78, sub_2502C, sub_25320) are not traced. Not done: Detect Magic/Trap, Help, Telekinesis, Trap,
-// Untrap, Peer, Repel Undead, Animate, Conjure, Disable, Wind Change, Explosion, Insect Swarm, Pickpocket, Reveal, Seance, X-ray, Charm, Clone, Confuse,
-// the winds, Hail Storm, Negate Magic, Replicate, Web, Chain Bolt, Enchant, Fear, Gate Travel, Wing Strike, Wizard Eye, Armageddon, Eclipse, Resurrect, Slime, Summon, Time Stop, Tremor
+// APPROX(56): the spells that were read in the original (the Create Food, Sleep, Kill, Charm, Dispel, Reveal, Fear, Confuse, mass, wind, field, Web, trap, Wing Strike and Slime groups) follow it;
+// the animations and sounds are left out. Still the spell manual's version: Help, Animate, Enchant, Seance, Pickpocket, Peer, Wizard Eye, Telekinesis, Armageddon, Eclipse, Time Stop,
+// Tremor and Gate Travel are traced only in part (docs/approximations.md #56, #69, #70)
 bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int ty, int target) {
 	ObjList &a = _world.actors;
 	int index = spell.index();
@@ -379,7 +378,7 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 				_world.objectsAt(tx + dx, ty + dy, z, at);
 				for (int i : at) {
 					int type = _world.objects[i].type;
-					if (type == 0x13D || type == 0x13E || type == 0x13F || type == 0x140 || type == 0xAF) {
+					if (type == 0x13D || type == 0x13E || type == 0x13F || type == 0x140) {
 						_world.deleteObject(i);
 						any = true;
 					}
@@ -619,26 +618,43 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		_pending = 'W';
 		_spellQuiet = true;
 		return true;
-	case 88: // Replicate: the object on the square is copied
-		if (object < 0)
-			return false;
-		{
-			World::Obj copy = _world.objects[object];
-			_world.objects.push_back(copy);
-			_world.addToMap((int)_world.objects.size() - 1);
+	case 88: { // Replicate (sub_223BC case 88): an object whose tile has flag 8 of the third block is copied once (quantity 1, free to take) on the first of eight random squares within five of the party that may take it, else "Failed"
+		if (object < 0 || !(_world.flags.flags3[(_world.baseTile.firstTile[_world.objects[object].type] + _world.objects[object].frame) & (TileFlags::TILES - 1)] & 0x08)) {
+			message("\nFailed\n");
+			_spellQuiet = true;
+			return true;
 		}
+		int type = _world.objects[object].type, frame = _world.objects[object].frame;
+		for (int tries = 0; tries < 8; ++tries) {
+			int sx = x + (int)(_rng.next() % 11) - 5, sy = y + (int)(_rng.next() % 11) - 5;
+			if (placeOn(type, sx, sy, frame)) {
+				_world.objects.back().status |= 0x01;
+				return true;
+			}
+		}
+		message("\nFailed\n");
+		_spellQuiet = true;
 		return true;
-	case 81: // Clone: a creature like the target stands beside it
+	}
+	case 81: { // Clone (sub_223BC case 81): a creature like the target (same side, same worktype) appears on the first of eight random squares within five of the party that it could enter, else "No effect"
 		if (target < 0)
 			return false;
-		{
-			int tk = _world.actorObject(target);
-			int c = _creatures.spawn(_world.objects[tk].type, a.worktype[target], _world.objects[tk].x, _world.objects[tk].y, _world.objects[tk].z);
-			if (c < 0)
-				return false;
-			a.status[c] = a.status[target] & ~0x80;
+		int tk = _world.actorObject(target);
+		for (int tries = 0; tries < 8; ++tries) {
+			int sx = x + (int)(_rng.next() % 11) - 5, sy = y + (int)(_rng.next() % 11) - 5;
+			MoveRules rules;
+			rules.partyMayShuffle = false;
+			if (!_movement.check(sx, sy, z, tk, rules).passable)
+				continue;
+			int c = _creatures.spawn(_world.objects[tk].type, a.worktype[target], sx, sy, z);
+			if (c >= 0)
+				a.status[c] = (uint8_t)((a.status[c] & 0x9F) | (a.status[target] & 0x60));
+			return true;
 		}
+		message("\nNo effect\n");
+		_spellQuiet = true;
 		return true;
+	}
 	case 49: // Conjure (spell_summon_daemon 23C?? with 0x31): a creature (by a roll of 0-15: 0x173, 0x156, 0x169, 0x158 or 0x166) for the party
 	case 119: { // Summon: a daemon (0x16F) that may resist ("Hostile daemon summoned.", it then fights everybody), else "Success"
 		int type = 0x16F;
