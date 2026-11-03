@@ -412,6 +412,36 @@ void Creatures::act(int actor, int px, int py, int pz) {
 		}
 		return;
 	}
+	// wt_combat_like (2F06F, 0xA) and wt_combat_unfriendly (2F1A7, 0xB): with a party member less than three squares away in both directions the actor comes towards the party
+	// (like) or, half the time, fights (unfriendly); otherwise half of the turns are a walk towards a spot ten squares off along a random axis and half five passed moves
+	if (wt == 0x0A || wt == 0x0B) {
+		bool near = false;
+		for (int m = 0; m < a.partySize; ++m) {
+			int mk = _world.actorObject(a.partyRoster[m]);
+			if (mk >= 0 && std::abs((int)_world.objects[mk].x - (int)o.x) < 3 && std::abs((int)_world.objects[mk].y - (int)o.y) < 3)
+				near = true;
+		}
+		if (near && _rng.next() % 2 == 0) {
+			if (wt == 0x0A) {
+				stepToward(actor, px, py);
+				return;
+			}
+			wt = 8; // unfriendly: wt_combat_assault
+		} else {
+			if (_rng.next() % 2) {
+				int tx = o.x, ty = o.y;
+				int off = _rng.next() % 2 ? 10 : -10;
+				if (_rng.next() % 2)
+					tx += off;
+				else
+					ty += off;
+				stepToward(actor, tx, ty);
+			} else {
+				_world.spendMoves(actor, 5);
+			}
+			return;
+		}
+	}
 	int target = wt == 0x0C || wt == 0x8F ? -1 : pickTarget(actor);
 	if (target >= 0) {
 		const World::Obj &t = _world.objects[_world.actorObject(target)];
