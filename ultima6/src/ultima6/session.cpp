@@ -182,11 +182,17 @@ void Game::runTurns() {
 		if (best == leader || a.worktype[best] == 2)
 			return; // the player's turn
 		int bw = a.worktype[best];
-		bool fighting = (bw >= 3 && bw <= 0x0C) || bw == 0x0E || bw == 0x13 || bw == 0x8F || bw == 0x99 || bw == 0x9A || bw == 0x9B || bw == 0x0F || bw == 0x10 || bw == 0x90 || bw == 0x94 || bw == 0x96 || bw == 0x97 || (bw >= 0x8B && bw <= 0x8E);
+		bool fighting = (bw >= 3 && bw <= 0x10) || bw == 0x12 || bw == 0x13 || (bw >= 0x8B && bw <= 0x90) || bw == 0x94 || (bw >= 0x96 && bw <= 0x9B);
 		if (best >= Creatures::FIRST_TEMP_ACTOR || (a.status[best] & 0x80) || fighting)
 			_creatures.act(best, x, y, z);
 		else
 			_actors.act(best, x, y, z);
+		int speaker = _creatures.takeTalkRequest();
+		if (speaker >= 0 && !_talk) {
+			message("\n");
+			startTalk(speaker);
+			return;
+		}
 	}
 }
 
@@ -311,6 +317,11 @@ void Game::talkAt(int tx, int ty) {
 		prompt();
 		return;
 	}
+	startTalk(actor);
+}
+
+// sub_1EBEC: a conversation with a person begins (the player talked to them, or they walked up to the party)
+void Game::startTalk(int actor) {
 	std::unique_ptr<Talk> t(new Talk(_world, scroll, _rng, clock, actor));
 	if (!Talk::canTalk(_world, actor)) {
 		message("\nFunny, no response.\n");

@@ -40,6 +40,13 @@ public:
 	/** sub_2A4B6: where the two sides stand, worked out once at the start of every round of turns. */
 	void formation(int px, int py, int pz);
 
+	/** The person who walked up to the party to speak to it (worktypes 0x96, 0x97), or -1; asking clears it. */
+	int takeTalkRequest() {
+		int r = _talkRequest;
+		_talkRequest = -1;
+		return r;
+	}
+
 	int count() const; // living temporary actors
 
 	int spawn(int type, int worktype, int x, int y, int z);
@@ -52,6 +59,9 @@ private:
 	void turn(int actor, int px, int py);
 	void assault(int actor, int px, int py);
 	void wander(int actor, int px, int py);
+	void work(int actor);
+	int workApproach(int actor);
+	void wake(int actor);
 	void combatFront(int actor, int px, int py);
 	void combatRear(int actor, int px, int py);
 	void combatFlank(int actor, int px, int py);
@@ -76,6 +86,8 @@ private:
 		int enemies = 0;
 	} _f;
 	int _winX = 0, _winY = 0, _fz = 0; // terrain_cache_x/y and the party's level
+	int _talkRequest = -1;
+	bool _revealed = false; // word_3F1B8
 	bool _shuffle = false;             // word_3F002: party members may share a square while the line forms
 	std::vector<int> _eggs;
 	std::vector<bool> _active;

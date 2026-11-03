@@ -108,6 +108,7 @@ private:
 	bool selectTarget(int key, int &tx, int &ty) const;
 	void command(int key);
 	void talkAt(int tx, int ty);
+	void startTalk(int actor);
 	void getAt(int tx, int ty);
 	void useAt(int tx, int ty);
 	void useObject(int idx);

@@ -4,6 +4,7 @@
 #include "ultima6/session.h"
 
 #include <cstdio>
+#include <cstdlib>
 
 using namespace Ultima6;
 using ::Ultima6::Ultima6::Game;
@@ -101,6 +102,42 @@ int main() {
 			std::printf("front companion at %d (leader %d), foe hp %d\n", bx, g.x, w.actors.hp[foe]);
 			CHECK(bx > g.x - 1);          // the companion came up to the front of the line
 			CHECK(w.actors.hp[foe] < 250); // and the foe has been struck
+		}
+	}
+	// worktype 0x12 (wt_work_12 + sub_298D0): the person walks up to the nearest party member and then goes back to its schedule (0x81)
+	{
+		for (int m = 0; m < w.actors.partySize; ++m) { // the fight above may have been the party's end: a new game session over the same people, healed
+			int member = w.actors.partyRoster[m];
+			w.actors.hp[member] = 200;
+			w.actors.status[member] &= ~0x10;
+			w.actors.worktype[member] = m ? 1 : 2;
+			w.moveObject(w.actorObject(member), 307, 352, 0);
+		}
+		Game g(w);
+		int npc = -1;
+		for (int a = 2; a < 0xE0 && npc < 0; ++a) {
+			int k = w.actorObject(a);
+			bool member = false;
+			for (int m = 0; m < w.actors.partySize; ++m)
+				member |= w.actors.partyRoster[m] == a;
+			if (k >= 0 && !member && w.objects[k].onMap() && !(w.actors.status[a] & 0x10))
+				npc = a;
+		}
+		CHECK(npc >= 0);
+		if (npc >= 0) {
+			g.handleKey('X'); // combat over
+			g.x = 307;        // the start: open ground
+			g.y = 352;
+			w.moveObject(w.actorObject(1), g.x, g.y, 0);
+			w.moveObject(w.actorObject(npc), g.x + 3, g.y, 0);
+			w.actors.worktype[npc] = 0x12;
+			w.actors.moves[npc] = w.actors.dexterity[npc];
+			for (int r = 0; r < 60 && w.actors.worktype[npc] == 0x12; ++r)
+				g.handleKey(' ');
+			std::printf("person %d on worktype 0x12 ends on 0x%02X at %d,%d (party %d,%d) moves %d\n", npc, w.actors.worktype[npc], w.objects[w.actorObject(npc)].x,
+						w.objects[w.actorObject(npc)].y, g.x, g.y, (int8_t)w.actors.moves[npc]);
+			CHECK(w.actors.worktype[npc] >= 0x81 && w.actors.worktype[npc] <= 0x86); // back on its way to its schedule place
+			CHECK(std::abs((int)w.objects[w.actorObject(npc)].x - g.x) <= 1);
 		}
 	}
 	if (failures == 0)

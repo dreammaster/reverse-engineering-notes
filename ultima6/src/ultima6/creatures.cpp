@@ -12,6 +12,21 @@ static const int DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
 static const uint8_t DIST[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
 								   {4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
 
+// Arithmetic as the 16-bit code does it: every product and sum is a word
+static int w16(int v) {
+	return (int16_t)v;
+}
+
+static int posX(const World &w, int actor) {
+	int k = w.actorObject(actor);
+	return k >= 0 ? w.objects[k].x : 0;
+}
+
+static int posY(const World &w, int actor) {
+	int k = w.actorObject(actor);
+	return k >= 0 ? w.objects[k].y : 0;
+}
+
 void Creatures::scan() {
 	_eggs.clear();
 	for (size_t i = 0; i < _world.objects.size(); ++i) {
@@ -354,28 +369,54 @@ void Creatures::turn(int actor, int px, int py) {
 			stepDir(actor, dir ^ 4);
 		return;
 	}
-	// wt_work (29134; worktypes 0x90, 0x94, 0x96, 0x97): one turn in eight a step, otherwise five moves passed; the step is along the axis the worker is further off its place on
-	// (a signed random number, from sub_28F37, decides between the two ways) so that it hovers about its schedule place. APPROX(67): 0x96 and 0x97 near the player call
-	// `wt_work_12` in the original, which is not traced
-	if (wt == 0x90 || wt == 0x94 || wt == 0x96 || wt == 0x97) {
-		if (_rng.next() % 8 != 0) {
-			_world.spendMoves(actor, 5);
-			return;
+	// wt_work_12 (29740, worktype 0x12): the member of the party nearest to the person is walked up to; once next to one the person goes back to its schedule (sub_298D0: the arrest
+	// it would otherwise make depends on byte_48B40, which nothing sets)
+	if (wt == 0x12) {
+		if (workApproach(actor) >= 0)
+			a.worktype[actor] = 0x81;
+		return;
+	}
+	// the hourly bell (0x98) sounds when the clock has struck; nothing else is done
+	if (wt == 0x98) {
+		_world.spendMoves(actor, 5);
+		return;
+	}
+	// worktypes 0x96 and 0x97 with the player within 4 squares: the person walks up to the nearest member (wt_work_12) and, next to one, speaks to the party (sub_29B78 / sub_1EBEC) and goes back to work (0x90)
+	if ((wt == 0x96 || wt == 0x97) && std::abs((int)o.x - px) < 5 && std::abs((int)o.y - py) < 5) {
+		if (workApproach(actor) >= 0) {
+			a.worktype[actor] = 0x90;
+			_talkRequest = actor;
 		}
+		return;
+	}
+	if (wt == 0x90 || wt == 0x94 || wt == 0x96 || wt == 0x97) {
+		work(actor);
+		return;
+	}
+	// worktype 0x99: three turns in four the person works; otherwise it goes for the nearest foe within five squares of its place, waking one next to it (sub_2C20F) and going back to its place
+	if (wt == 0x99) {
 		const Schedule &sc = _world.schedule;
 		Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
-		auto laplace = [&]() {
-			int n = 0;
-			while (_rng.next() % 2)
-				++n;
-			return _rng.next() % 2 ? -n : n;
-		};
-		int dx = (int)o.x - e.x, dy = (int)o.y - e.y, dir;
-		if (std::abs(dy) - std::abs(dx) >= laplace())
-			dir = laplace() > dy ? 4 : 0;
-		else
-			dir = laplace() > dx ? 2 : 6;
-		stepDir(actor, dir);
+		if (_rng.next() % 4 != 0) {
+			work(actor);
+			return;
+		}
+		int foe = pickTarget(actor);
+		if (foe < 0) {
+			work(actor);
+			return;
+		}
+		const World::Obj &t = _world.objects[_world.actorObject(foe)];
+		if (std::max(std::abs((int)t.x - e.x), std::abs((int)t.y - e.y)) >= 5) {
+			work(actor);
+			return;
+		}
+		if (std::max(std::abs((int)t.x - (int)o.x), std::abs((int)t.y - (int)o.y)) < 2) {
+			wake(foe);
+			stepToward(actor, e.x, e.y);
+		} else {
+			stepToward(actor, t.x, t.y);
+		}
 		return;
 	}
 	// wt_tangle (2F4E6, 0xD): a vine strikes a target within one square one time in two (10 moves); APPROX(67): what it does further away is not traced
@@ -511,6 +552,71 @@ void Creatures::assault(int actor, int px, int py) {
 	wander(actor, px, py);
 }
 
+// wt_work (29134): one turn in eight a step, otherwise five moves passed; the step is along the axis the worker is further off its place on (a signed random number,
+// from sub_28F37, decides between the two ways) so that it hovers about its schedule place
+void Creatures::work(int actor) {
+	ObjList &a = _world.actors;
+	const World::Obj o = _world.objects[_world.actorObject(actor)];
+	if (_rng.next() % 8 != 0) {
+		_world.spendMoves(actor, 5);
+		return;
+	}
+	const Schedule &sc = _world.schedule;
+	Schedule::Entry e = sc.entry(sc.index[actor] + a.scheduleIndex[actor]);
+	auto laplace = [&]() {
+		int n = 0;
+		while (_rng.next() % 2)
+			++n;
+		return _rng.next() % 2 ? -n : n;
+	};
+	int dx = (int)o.x - e.x, dy = (int)o.y - e.y, dir;
+	if (std::abs(dy) - std::abs(dx) >= laplace())
+		dir = laplace() > dy ? 4 : 0;
+	else
+		dir = laplace() > dx ? 2 : 6;
+	stepDir(actor, dir);
+}
+
+// wt_work_12 (29740): the party member nearest the person (a squared distance under 50, ties by chance) that it can see is walked up to; its number once the person is next to it, else -1
+int Creatures::workApproach(int actor) {
+	ObjList &a = _world.actors;
+	int cx = posX(_world, actor), cy = posY(_world, actor), best = 50, found = -1;
+	for (int m = 0; m < a.partySize; ++m) {
+		int member = a.partyRoster[m], k = _world.actorObject(member);
+		if (k < 0 || _world.objects[k].deleted || (a.status[member] & 0x10) || !validTarget(actor, member))
+			continue;
+		int dx = _world.objects[k].x - cx, dy = _world.objects[k].y - cy, d = w16(w16(dx * dx) + w16(dy * dy));
+		if (d < best || (d == best && _rng.next() % 2)) {
+			best = d;
+			found = member;
+		}
+	}
+	if (found < 0) {
+		stepToward(actor, _f.partyX, _f.partyY);
+		return -1;
+	}
+	stepToward(actor, posX(_world, found), posY(_world, found));
+	if (std::abs(posX(_world, found) - posX(_world, actor)) > 1 || std::abs(posY(_world, found) - posY(_world, actor)) > 1)
+		return -1;
+	return found;
+}
+
+// sub_2C20F: a sleeper wakes (its own sprite comes back); the one it is said to be about to be revealed to is noticed (movement flag 8) from the second time on
+void Creatures::wake(int actor) {
+	ObjList &a = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0)
+		return;
+	if (_revealed && actor < 0x100)
+		a.movementFlags[actor] |= 8;
+	if (a.status[actor] & 0x04) {
+		a.status[actor] &= ~0x04;
+		_world.objects[k].type = a.baseObjFrame[actor] & 0x3FF;
+		_world.objects[k].frame = (uint8_t)(a.baseObjFrame[actor] >> 10);
+	}
+	_revealed = true;
+}
+
 // wt_wander (2954B)
 void Creatures::wander(int actor, int px, int py) {
 	ObjList &a = _world.actors;
@@ -525,21 +631,6 @@ void Creatures::wander(int actor, int px, int py) {
 		stepDir(actor, (_rng.next() % 4) * 2);
 	else
 		_world.spendMoves(actor, 5);
-}
-
-// Arithmetic as the 16-bit code does it: every product and sum is a word
-static int w16(int v) {
-	return (int16_t)v;
-}
-
-static int posX(const World &w, int actor) {
-	int k = w.actorObject(actor);
-	return k >= 0 ? w.objects[k].x : 0;
-}
-
-static int posY(const World &w, int actor) {
-	int k = w.actorObject(actor);
-	return k >= 0 ? w.objects[k].y : 0;
 }
 
 // sub_19FFD: the first living actor (from 1) standing on a square of the party's level, or -1
