@@ -128,6 +128,7 @@ private:
 	bool _gem = false; // the overhead map of a gem is on the screen until a key is pressed
 	int vehicleDirection(int requested);
 	void windChanges();
+	bool _spellQuiet = false;  // the spell has said its result itself (or the original says none)
 	bool _telekinesis = false; // Use from a distance (the Telekinesis spell)
 	void actorStatusDecay();
 	void useSilverHorn();

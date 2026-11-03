@@ -669,7 +669,7 @@ int main() {
 			gw.x = bx;
 			gw.y = by;
 			gw.z = 0;
-						int book = ww.addToInventory(1, 57, 0, 1);
+			int book = ww.addToInventory(1, 57, 0, 1);
 			ww.objects[book].status = (uint8_t)((ww.objects[book].status & ~0x18) | 0x18);
 			World::Obj spell = ww.objects[book];
 			spell.type = 58;
@@ -727,7 +727,7 @@ int main() {
 			gw.x = bx;
 			gw.y = by;
 			gw.z = 0;
-						int book = ww.addToInventory(1, 57, 0, 1);
+			int book = ww.addToInventory(1, 57, 0, 1);
 			ww.objects[book].status = (uint8_t)((ww.objects[book].status & ~0x18) | 0x18);
 			World::Obj spell = ww.objects[book];
 			spell.type = 58;
@@ -756,6 +756,66 @@ int main() {
 				field |= ww.objects[i].type == 0x35;
 			CHECK(field);
 			CHECK(logText(gw).find("Success") != std::string::npos);
+		}
+	}
+
+
+	// Trap and Untrap (sub_22EB4): a chest gets a trap object of quality 0x16 inside and loses it again
+	{
+		World ww;
+		ww.load("u6/game");
+		Game gw(ww);
+		int bx = -1, by = -1;
+		for (int yy = gw.y - 20; yy < gw.y + 20 && bx < 0; ++yy)
+			for (int xx = gw.x - 20; xx < gw.x + 20 && bx < 0; ++xx) {
+				bool open = true;
+				for (int d = 0; d < 5; ++d) {
+					int t = ww.map.tile(0, xx + d, yy);
+					open &= t >= 0x10 && t <= 0x6F;
+					std::vector<int> there;
+					ww.objectsAt(xx + d, yy, 0, there);
+					open &= there.empty();
+				}
+				if (open)
+					bx = xx, by = yy;
+			}
+		CHECK(bx >= 0);
+		if (bx >= 0) {
+			ww.moveObject(ww.actorObject(1), bx, by, 0);
+			gw.x = bx;
+			gw.y = by;
+			gw.z = 0;
+			int book = ww.addToInventory(1, 57, 0, 1);
+			ww.objects[book].status = (uint8_t)((ww.objects[book].status & ~0x18) | 0x18);
+			World::Obj spell = ww.objects[book];
+			spell.type = 58;
+			spell.quality = 255;
+			spell.status = 0x08;
+			spell.parent = book;
+			spell.actor = -1;
+			ww.objects.push_back(spell);
+			for (int r = 65; r <= 72; ++r)
+				ww.addToInventory(1, r, 0, 5);
+			ww.actors.level[1] = 8;
+			ww.actors.unknown13f1[1] = 99;
+			int chest = put(ww, 0x62, 0, bx + 2, by, 0);
+			auto traps = [&]() {
+				int n = 0;
+				for (const World::Obj &c : ww.objects)
+					n += !c.deleted && c.type == 0x151 && c.parent == chest && c.quality == 0x16;
+				return n;
+			};
+			for (int round = 0; round < 2; ++round) {
+				gw.handleKey('c');
+				gw.handleKey('2');
+				gw.handleKey(round ? 'a' : 'i');
+				gw.handleKey('j');
+				gw.handleKey(KEY_ENTER);
+				for (int i = 0; i < 2; ++i)
+					gw.handleKey(KEY_RIGHT);
+				gw.handleKey(KEY_ENTER);
+				CHECK(traps() == (round ? 0 : 1));
+			}
 		}
 	}
 

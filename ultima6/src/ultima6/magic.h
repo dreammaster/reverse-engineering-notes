@@ -38,6 +38,7 @@ public:
 	}
 
 	static const SpellInfo *find(int circle, const std::string &invocation);
+	static const SpellInfo *byIndex(int index);
 
 	/** check_spellbook (GAME.EXE 25D7F-ish): a readied spellbook (type 57); prints "No spellbook is readied." if there is none. */
 	bool checkBook(int caster);

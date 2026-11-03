@@ -438,11 +438,12 @@ void Game::castAt(int tx, int ty) {
 	int caster = _world.actors.partyRoster[_member];
 	message("\n");
 	// sub_223BC ends with the result of the effect: "Success" (0), "Failed" (1) or "No effect" (2); the spells that fly as a ball of fire or lightning (34, 68, 96) say nothing
+	_spellQuiet = false;
 	bool done = spellSpecial(*_spell, caster, tx, ty, target);
 	if (!done)
 		done = _magic.cast(caster, *_spell, target);
 	int idx = _spell->index();
-	if (done && idx != 34 && idx != 68 && idx != 96 && idx != 18 && idx != 17 && idx != 20 && idx != 5 && idx != 50 && idx != 49 && idx != 119 && idx != 0 && idx != 53 && idx != 121 && idx != 100 && idx != 39 && idx != 105 && idx != 83 && idx != 87 && idx != 98 && idx != 113 && idx != 37 && idx != 38 && idx != 54 && idx != 65 && idx != 85 && idx != 102 && idx != 103 && idx != 115 && idx != 116 && idx != 51 && idx != 55 && idx != 56 && idx != 64 && idx != 84 && idx != 66 && idx != 89)
+	if (done && !_spellQuiet && idx != 34 && idx != 68 && idx != 96 && idx != 18 && idx != 17 && idx != 20 && idx != 5 && idx != 50 && idx != 49 && idx != 119 && idx != 0 && idx != 53 && idx != 121 && idx != 100 && idx != 39 && idx != 105 && idx != 83 && idx != 87 && idx != 98 && idx != 113 && idx != 37 && idx != 38 && idx != 54 && idx != 65 && idx != 85 && idx != 102 && idx != 103 && idx != 115 && idx != 116 && idx != 51 && idx != 55 && idx != 56 && idx != 64 && idx != 84 && idx != 66 && idx != 89)
 		message("\nSuccess\n");
 	_world.spendMoves(caster, _spell->circle * 3 + 10);
 	_spell = nullptr;

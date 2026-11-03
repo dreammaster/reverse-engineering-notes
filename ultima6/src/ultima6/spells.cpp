@@ -699,20 +699,121 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		message(std::to_string(std::abs(lat)) + "{" + (lat > 0 ? "S" : "N") + ", " + std::to_string(std::abs(lon)) + "{" + (lon > 0 ? "E\n" : "W\n"));
 		return true;
 	}
-	case 23: // Unlock Magic
-	case 36: // Lock
-		if (object < 0)
-			return false;
-		{
-			int type = _world.objects[object].type;
-			if (type >= 0x129 && type <= 0x12C)
-				useKeyOnDoor(object, false, index == 36, index == 23);
-			else if (type == 0x62)
-				useChest(object, false, index == 36, index == 23);
-			else
-				return false;
+	case 1:   // Detect Magic
+	case 2:   // Detect Trap
+	case 22:  // Trap
+	case 23:  // Unlock Magic
+	case 24:  // Untrap
+	case 36: { // Lock (sub_22EB4): the object chosen is named ("nothing" when there is none, then "No effect"); the result codes of the original are 0 "Success", 1 "Failed", 2 "No effect", 0xFF said already
+		_spellQuiet = true;
+		if (object < 0) {
+			message("nothing\n\nNo effect\n");
+			return true;
 		}
+		World::Obj &o = _world.objects[object];
+		message(Describe::object(_world, o) + "\n");
+		int type = o.type;
+		bool door = type >= 0x129 && type <= 0x12C; // sub_21B69
+		// the trap objects (0x151) and charges (0x150) inside a container (sub_19D00 / sub_19D59 walk its contents)
+		auto child = [&](int ctype, int quality) {
+			for (size_t i = 0; i < _world.objects.size(); ++i) {
+				const World::Obj &c = _world.objects[i];
+				if (!c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == object && c.type == ctype && (quality == 0 || c.quality == quality))
+					return (int)i;
+			}
+			return -1;
+		};
+		int result = 0;
+		switch (index) {
+		case 1: { // sub_210C6: the tile is on the list of magical ones
+			static const uint16_t MAGICAL[78] = {0x207, 0x20f, 0x216, 0x22f, 0x232, 0x235, 0x238, 0x239, 0x23d, 0x248, 0x249, 0x24a, 0x24b, 0x24c, 0x24d, 0x24e, 0x24f, 0x251, 0x252,
+												 0x253, 0x255, 0x256, 0x257, 0x25a, 0x25b, 0x25c, 0x25d, 0x25f, 0x26e, 0x2b6, 0x31e, 0x31f, 0x326, 0x368, 0x369, 0x36a, 0x36b, 0x36c,
+												 0x36d, 0x36e, 0x36f, 0x37d, 0x37e, 0x37f, 0x3a8, 0x3a9, 0x3aa, 0x3ab, 0x3ac, 0x3ad, 0x3ae, 0x3af, 0x3fd, 0x3fe, 0x40c, 0x40d, 0x40e,
+												 0x40f, 0x41c, 0x41d, 0x41e, 0x41f, 0x42c, 0x42d, 0x42e, 0x42f, 0x43c, 0x43d, 0x43e, 0x43f, 0x484, 0x485, 0x48e, 0x48f, 0x6d0, 0x6d1,
+												 0x6d2, 0x6d3};
+			int tile = _world.baseTile.firstTile[type] + o.frame;
+			int kind = 0;
+			for (uint16_t m : MAGICAL)
+				if (m == tile)
+					kind = 1;
+			if (!kind) {
+				int c = child(0x150, 0);
+				if (c >= 0) {
+					const Magic::SpellInfo *charge = Magic::byIndex(_world.objects[c].quality);
+					message(std::string("\nIt shows a charge of ") + (charge ? charge->name : "?") + ".\n");
+					kind = 2;
+				}
+			}
+			static const char *const POTION[8] = {"an awaken", "a cure", "a heal", "a poison", "a sleep", "a protection", "an invisibility", "an xray vision"};
+			if (!kind)
+				message("\nIt's not magical.\n");
+			else if (kind == 1)
+				message(type == 0x113 ? std::string("\nIt's ") + POTION[o.frame & 7] + " potion.\n" : std::string("\nIt's magical.\n"));
+			result = 0xFF;
+			break;
+		}
+		case 2: { // a roll of 1-30 below the caster's intelligence finds a trap if there is one
+			bool found = 1 + (int)(_rng.next() % 30) < _combat.adjustedIntelligence(caster) && child(0x151, 0) >= 0;
+			message(found ? "\nIt's trapped.\n" : "\nNo trap\n");
+			result = 0xFF;
+			break;
+		}
+		case 22: // a chest or a door that has no such trap yet gets one (quality 0x16 = the spell)
+			if (!door && type != 0x62) {
+				result = 2;
+			} else if (child(0x151, 0x16) >= 0) {
+				result = 2;
+			} else {
+				World::Obj t;
+				t.status = (uint8_t)((ObjRecord::IN_CONTAINER) | 0);
+				t.x = t.y = 0;
+				t.z = 0;
+				t.type = 0x151;
+				t.frame = 0;
+				t.quantity = 1;
+				t.quality = 0x16;
+				t.actor = -1;
+				t.parent = object;
+				_world.objects.push_back(t);
+			}
+			break;
+		case 24: { // takes such a trap away again
+			int c = (door || type == 0x62) ? child(0x151, 0x16) : -1;
+			if (c < 0)
+				result = 2;
+			else
+				_world.deleteObject(c);
+			break;
+		}
+		case 23: // a magically locked door (frame bits 0xC) or chest (frame 3) opens
+			if (door && (o.frame & 0x0C) == 0x0C) {
+				useKeyOnDoor(object, false, false, true);
+				result = 0xFF;
+			} else if (type == 0x62 && o.frame == 3) {
+				useChest(object, false, false, true);
+				result = 0xFF;
+			} else {
+				result = 2;
+			}
+			break;
+		default: // Lock: any door, or a chest
+			if (door) {
+				useKeyOnDoor(object, false, true, false);
+				result = 0xFF;
+			} else if (type == 0x62) {
+				useChest(object, false, true, false);
+				result = 0xFF;
+			} else {
+				result = 2;
+			}
+			break;
+		}
+		if (result == 0)
+			message("\nSuccess\n");
+		else if (result == 2)
+			message("\nNo effect\n");
 		return true;
+	}
 	default:
 		return false;
 	}

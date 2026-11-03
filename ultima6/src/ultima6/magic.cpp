@@ -17,6 +17,13 @@ const Magic::SpellInfo *Magic::find(int circle, const std::string &invocation) {
 	return nullptr;
 }
 
+const Magic::SpellInfo *Magic::byIndex(int index) {
+	for (const SpellInfo &s : SPELLS)
+		if (s.index() == index)
+			return &s;
+	return nullptr;
+}
+
 bool Magic::bookHas(int caster, int spellIndex) {
 	std::vector<int> inv;
 	_world.inventory(caster, inv, true);
