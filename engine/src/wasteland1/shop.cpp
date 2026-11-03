@@ -1,5 +1,6 @@
 #include "wasteland1/shop.h"
 #include "wasteland1/character.h"
+#include "wasteland1/combat.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
 #include "wasteland1/listmenu.h"
@@ -33,6 +34,16 @@ void amountOf(Machine &m, uint8_t at) {   // 1C548: numberValue = byte `at` of t
 	m.d8(g::numberValue) = rec(m, at);
 	m.d8(uint16_t(g::numberValue + 1)) = 0;
 	m.d8(uint16_t(g::numberValue + 2)) = 0;
+}
+bool canAffordNumber(Machine &m) {   // 17B3E
+	const uint32_t price = uint32_t(m.d8(g::numberValue)) | (uint32_t(m.d8(uint16_t(g::numberValue + 1))) << 8) |
+	                       (uint32_t(m.d8(uint16_t(g::numberValue + 2))) << 16);
+	const uint32_t money = uint32_t(field(m, pm::money)) | (uint32_t(field(m, pm::money + 1)) << 8) | (uint32_t(field(m, pm::money + 2)) << 16);
+	return money >= price;
+}
+void showCursorHome(Machine &m) {   // 1C222
+	m.d8(g::rectTextX) = 0x0F;
+	m.d8(g::rectTextY) = 1;
 }
 void showMoney(Machine &m) {   // 1C22F
 	const uint8_t x = m.d8(g::rectTextX), y = m.d8(g::rectTextY);
@@ -510,6 +521,234 @@ train:   // 1BC0C
 		if (field(m, pm::skillPoints) != 0) goto train;
 		goto screen;
 	}
+}
+
+
+namespace {
+constexpr uint16_t shopPooler = 0xDBF5, shopDirty = 0xDBF6, shopDirty2 = 0xDBF7, shopItem = 0xDBF0, shopId = 0xDBF1, shopCount = 0xDBF2,
+                   sellRowVar = 0xDBF3;
+
+void goodsMessage(Machine &m, uint8_t id, bool immediate) {   // 1C20C / 1C213
+	if (immediate) setWriteCharacterFn2(m);
+	else setWriteCharacterFn(m);
+	m.setD16(g::textPointer1, 0xDBF8);
+	writeEncodedText(m, id);
+}
+void priceOfItem(Machine &m) {   // 17B5C: numberValue = the item's price (bytes 0 and 1)
+	m.d8(g::numberValue) = m.d8(m.d16(g::itemDetailsPtr));
+	m.d8(uint16_t(g::numberValue + 1)) = m.d8(uint16_t(m.d16(g::itemDetailsPtr) + 1));
+	m.d8(uint16_t(g::numberValue + 2)) = 0;
+}
+void discountedPrice(Machine &m, uint8_t shift) {   // 1C1D3: price - price / 2^shift
+	if (shift == 0) return;
+	uint32_t v = uint32_t(m.d8(g::numberValue)) | (uint32_t(m.d8(uint16_t(g::numberValue + 1))) << 8) |
+	             (uint32_t(m.d8(uint16_t(g::numberValue + 2))) << 16);
+	for (uint8_t i = 0; i != shift; ++i) v >>= 1;
+	const uint32_t price = uint32_t(m.d8(m.d16(g::itemDetailsPtr))) | (uint32_t(m.d8(uint16_t(m.d16(g::itemDetailsPtr) + 1))) << 8);
+	const uint32_t result = (price - v) & 0xFFFFFF;
+	m.d8(g::numberValue) = uint8_t(result);
+	m.d8(uint16_t(g::numberValue + 1)) = uint8_t(result >> 8);
+	m.d8(uint16_t(g::numberValue + 2)) = uint8_t(result >> 16);
+}
+}
+
+bool itemTypeAccepted(Machine &m) {
+	const uint8_t type = getItemType(m);
+	m.d8(0xB9C0) = type;
+	const uint16_t list = m.d16(0x46EC);
+	for (uint8_t at = 0;; ++at) {
+		const uint8_t t = m.d8(uint16_t(list + at));
+		if (t == 0xFF) return false;
+		if (t == type) return true;
+		if (at == 0xFF) return false;
+	}
+}
+
+void sellPrice(Machine &m) {
+	priceOfItem(m);
+	discountedPrice(m, m.d8(0x46C2));
+}
+
+void buyPrice(Machine &m) {
+	priceOfItem(m);
+	discountedPrice(m, m.d8(0x46C3));
+}
+
+uint8_t countSellable(Machine &m) {
+	m.d8(0xCCE4) = 0xFF;
+	uint8_t found = 0;
+	for (uint8_t bl = 0xBD; bl != 0xF9; bl = uint8_t(bl + 2)) {
+		m.d8(0xCCE3) = bl;
+		const uint8_t id = field(m, bl);
+		if (id == 0) continue;
+		getItemDetails(m, id);
+		if (!itemTypeAccepted(m)) continue;
+		m.d8(0x4721) = uint8_t((bl - 0xBB) >> 1);
+		++found;
+		m.d8(0xCCE2) = found;
+	}
+	return found;
+}
+
+bool sellRow(Machine &m, uint8_t index) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	D(sellRowVar) = index;
+	const uint8_t slot = uint8_t(index * 2 + 0xBB);
+	const uint8_t id = field(m, slot);
+	if (id == 0) return true;
+	getItemDetails(m, id);
+	if (!itemTypeAccepted(m)) return true;
+	call(m, 0x6EE8);   // row marker
+	D(0x467F) = 5;
+	getItemDetails(m, id);
+	sellPrice(m);
+	call(m, 0x7690);   // sub_17690: price with space padding
+	writeCharacterVia(m, 32);
+	setItemQuantityOne(m);
+	if (D(sellRowVar) == field(m, pm::armor) || D(sellRowVar) == field(m, pm::weapon)) D(g::inverseText) = 0xFF;
+	writeItemName(m, id);
+	D(g::inverseText) = 0;
+	return false;
+}
+
+void sellScreen(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	if (countSellable(m) == 0) {
+		goodsMessage(m, 5, false);
+		return;
+	}
+	goodsMessage(m, 7, true);
+	for (;;) {   // 1BF75
+		const uint8_t count = countSellable(m);
+		if (count == 0) {
+			goodsMessage(m, 5, false);
+			return;
+		}
+		D(0x469D) = uint8_t(count + 1);
+		D(0x469C) = 0x1F;
+		D(0x470E) = 0x50;
+		m.setD16(0x4696, 0xC01B);
+		pagedListDraw(m);
+		showMoney(m);
+		m.setD16(g::buttonMask1, 0x8434);
+		m.setD16(g::buttonMask2, 0);
+		const ListResult r = pagedListKeys(m);
+		if (r.al == 0xFF) break;
+		if (r.al == 0xFE) {
+			poolMoney(m, D(shopPooler));
+			continue;
+		}
+		if (r.al & 0x80) continue;
+		removeWeaponArmor(m, r.al);
+		const uint8_t slot = uint8_t(r.al * 2 + 0xBB);
+		const uint8_t id = field(m, slot);
+		field(m, slot) = 0;
+		field(m, uint8_t(slot + 1)) = 0;
+		getItemDetails(m, id);
+		sellPrice(m);
+		addMoneyToMember(m);
+		markPickedRow(m);
+		uint8_t &stock = m.d8(uint16_t(m.d16(g::itemDetailsPtr) + 2));
+		if (stock != 0xFF) ++stock;
+		D(shopDirty) = 1;
+		D(shopDirty2) = 1;
+		const uint8_t left = countSellable(m);
+		D(0x469D) = uint8_t(left + 1);
+		if (left + 1 == 1) break;
+		pagedListDraw(m);
+	}
+	if (D(shopDirty) != 0) call(m, 0x8654);   // loc_18654: writes the changed stock back
+}
+
+uint8_t countStock(Machine &m) {
+	m.d8(shopId) = 1;
+	getItemDetails(m, 1);
+	m.d8(shopCount) = 0;
+	for (;;) {
+		if (m.d8(uint16_t(m.d16(g::itemDetailsPtr) + 2)) != 0 && itemTypeAccepted(m)) {
+			++m.d8(shopCount);
+			m.d8(0x4721) = m.d8(shopId);
+		}
+		if (++m.d8(shopId) == 0x5E) break;
+		m.setD16(g::itemDetailsPtr, uint16_t(m.d16(g::itemDetailsPtr) + 8));
+	}
+	return m.d8(shopCount);
+}
+
+bool buyRow(Machine &m, uint8_t item) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	D(shopItem) = item;
+	getItemDetails(m, item);
+	if (D(uint16_t(m.d16(g::itemDetailsPtr) + 2)) == 0) return true;
+	if (!itemTypeAccepted(m)) return true;
+	call(m, 0x6EE8);
+	D(0x467F) = 5;
+	D(g::inverseText) = 0;
+	buyPrice(m);
+	call(m, 0x7690);
+	writeCharacterVia(m, 32);
+	D(g::itemQuantity) = 1;
+	writeItemName(m, D(shopItem));
+	return false;
+}
+
+void buyScreen(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	if (findItemById(m, 0) < 0) {
+		goodsMessage(m, 8, false);
+		return;
+	}
+	for (;;) {   // 1C081 / 1C091
+		goodsMessage(m, 7, true);
+		D(0x470E) = 0x50;
+		m.setD16(0x4696, 0xC188);
+		const uint8_t stock = countStock(m);
+		if (stock == 0) {
+			goodsMessage(m, 1, false);
+			return;
+		}
+		for (;;) {
+			D(0x469D) = stock;
+			D(0x469C) = 0x5E;
+			pagedListDraw(m);
+			showMoney(m);
+			m.setD16(g::buttonMask1, 0x8434);
+			m.setD16(g::buttonMask2, 0);
+			const ListResult r = pagedListKeys(m);
+			if (r.al == 0xFF) goto leave;
+			if (r.al == 0xFE) {
+				poolMoney(m, D(shopPooler));
+				break;
+			}
+			if (r.al & 0x80) break;
+			getItemDetails(m, r.al);
+			buyPrice(m);
+			if (!canAffordNumber(m)) {
+				showCursorHome(m);
+				goodsMessage(m, 9, true);
+				call(m, 0x8DB4, 0, 7);   // delayFrames
+				break;
+			}
+			{
+				const uint8_t quantity = m.d8(uint16_t(m.d16(g::itemDetailsPtr) + 4));
+				const int slot = findItemById(m, 0);
+				field(m, uint8_t(slot)) = D(0x4698);
+				field(m, uint8_t(slot + 1)) = quantity;
+			}
+			payNumberValue(m);
+			markPickedRow(m);
+			--m.d8(uint16_t(m.d16(g::itemDetailsPtr) + 2));
+			D(shopDirty) = 1;
+			D(shopDirty2) = 1;
+			pagedListDraw(m);
+			if (findItemById(m, 0) >= 0) break;
+			showCursorHome(m);
+			goodsMessage(m, 8, false);
+			goto leave;
+		}
+	}
+leave:   // 1C119
+	if (D(shopDirty) != 0) call(m, 0x8654);
 }
 
 } // namespace wl

@@ -112,5 +112,13 @@ PORT(skillSchool) { r.cf = skillSchool(m); }                                    
 
 PORT(trainingRowOfSkill) { r.cf = trainingRowOfSkill(m, r.a.b.l); }                                     // 1BD94
 
+PORT(itemTypeAccepted) { r.cf = !itemTypeAccepted(m); }                                   // 17AF5
+PORT(sellPrice) { sellPrice(m); }                                                         // 1C1C2
+PORT(buyPrice) { buyPrice(m); }                                                           // 1C1CC
+PORT(countSellable) { r.d.b.l = countSellable(m); r.a.b.l = r.d.b.l; }                    // 1963F
+PORT(sellScreen) { sellScreen(m); }                                                       // 1BF5F
+PORT(countStock) { r.a.b.l = countStock(m); }                                             // 1C140
+PORT(buyScreen) { buyScreen(m); }                                                         // 1C073
+
 } // namespace rc
 } // namespace wl

@@ -33,4 +33,22 @@ bool trainingRowOfSkill(Machine &m, uint8_t skill);
 // 1BBA0: the skill school: spend skill points on new skills and levels; always returns true
 bool skillSchool(Machine &m);
 
+// 17AF5: the shop deals in the type of the item in the details record
+bool itemTypeAccepted(Machine &m);
+// 1C1C2 / 1C1CC: numberValue = the selling / buying price of the item in the details record
+void sellPrice(Machine &m);
+void buyPrice(Machine &m);
+// 1963F: number of the current character's items the shop buys (also sets ds:4721)
+uint8_t countSellable(Machine &m);
+// 1C01B: row of the sell list
+bool sellRow(Machine &m, uint8_t index);
+// 1BF5F: the sell screen
+void sellScreen(Machine &m);
+// 1C140: number of items the shop has in stock
+uint8_t countStock(Machine &m);
+// 1C188: row of the buy list (the item number is the table index)
+bool buyRow(Machine &m, uint8_t item);
+// 1C073: the buy screen
+void buyScreen(Machine &m);
+
 } // namespace wl
