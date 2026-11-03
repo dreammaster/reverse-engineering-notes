@@ -409,6 +409,25 @@ int main() {
 			CHECK(text.find("Not now!") != std::string::npos);
 	}
 
+	// a gem shows the overhead map until a key is pressed and is used up
+	{
+		World wg;
+		wg.load("u6/game");
+		Game gg(wg);
+		int gem = put(wg, 0x4D, 0, gg.x + 1, gg.y, 0);
+		gg.handleKey('u');
+		gg.handleKey(KEY_RIGHT);
+		Framebuffer fb;
+		gg.render(fb);
+		bool drawn = false;
+		for (int i = 0; i < 160; ++i)
+			drawn |= fb.pixels()[(8 + 80) * Framebuffer::WIDTH + 8 + i] != 0;
+		CHECK(drawn);
+		CHECK(wg.objects[gem].deleted);
+		gg.handleKey(KEY_ENTER);
+		gg.render(fb);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

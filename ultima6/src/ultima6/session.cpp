@@ -475,6 +475,11 @@ bool Game::handleKeyInner(int key) {
 		return false;
 	if (_dead)
 		return false; // any key after the Avatar's death ends the game
+	if (_gem && key != KEY_NONE) {
+		_gem = false;
+		prompt();
+		return true;
+	}
 	if (_peek && key != KEY_NONE) {
 		_peek = false;
 		message("\nDone\n");
@@ -667,6 +672,8 @@ void Game::render(Framebuffer &screen) {
 		drawInventoryView(screen, _world, _member, _selected, _items);
 	else
 		drawStatsView(screen, _world, _member);
+	if (_gem)
+		drawGem(screen);
 	scroll.draw(screen, _world.font);
 	if (_cursor)
 		Ui::drawTile(screen, _world, 0x16C, _cx * 16, _cy * 16);

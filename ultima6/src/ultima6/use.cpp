@@ -205,6 +205,12 @@ void Game::useObject(int idx) {
 		_textMax = 4;
 		_textPurpose = 1;
 		return;
+	} else if (type == 0x4D) {
+		// use_gems (3282F): the overhead map (sub_39866) is shown and one gem is used up
+		_gem = true;
+		consumeOne(idx);
+		_world.spendMoves(actingActor(), 5);
+		return;
 	} else if (type == 0x139) {
 		useSilverHorn();
 	} else if (type == 0x116 || type == 0x118) {
@@ -941,6 +947,49 @@ void Game::actorStatusDecay() {
 			o.type = a.baseObjFrame[actor] & 0x3FF;
 			o.frame = (uint8_t)(a.baseObjFrame[actor] >> 10);
 		}
+	}
+}
+
+// sub_39866 / sub_397A4: the 40 x 40 squares around the party as cells of 4 x 4 pixels at 8,8, drawn on every other pixel: dry walls 7, water 9, harmful ground 12, other ground 10, the
+// party white on the other pixels; underground only what has been seen is shown (here: nothing is known, all of it is). APPROX(61): the window is the 40 x 40 around the party (the original
+// uses the terrain cache), objects that are not harmful or blocking are left out as there; the colour numbers are those of the game's palette
+void Game::drawGem(Framebuffer &screen) const {
+	screen.fillRect(8, 8, 160, 160, 0);
+	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+	auto classify = [&](int tile) {
+		uint8_t f = _world.flags.flags1[tile & (TileFlags::TILES - 1)];
+		if (f & 8)
+			return 12;
+		if (f & 2)
+			return (f & 1) ? 9 : 7;
+		return -1;
+	};
+	auto cell = [&](int cx, int cy, int colour, int phase) {
+		for (int v = 0; v < 4; ++v)
+			for (int u = 0; u < 4; ++u)
+				if (((v + u) & 1) == phase)
+					screen.pixels()[(8 + cy * 4 + v) * Framebuffer::WIDTH + 8 + cx * 4 + u] = (uint8_t)colour;
+	};
+	for (int cy = 0; cy < 40; ++cy)
+		for (int cx = 0; cx < 40; ++cx) {
+			int wx = (x - 20 + cx) & mask, wy = (y - 20 + cy) & mask;
+			int c = classify(_world.map.tile(z, wx, wy));
+			cell(cx, cy, c < 0 ? 10 : c, 1);
+		}
+	for (size_t i = 0; i < _world.objects.size(); ++i) {
+		const World::Obj &o = _world.objects[i];
+		if (o.deleted || !o.onMap() || o.z != z)
+			continue;
+		int cx = ((int)o.x - (x - 20)) & mask, cy = ((int)o.y - (y - 20)) & mask;
+		if (cx >= 40 || cy >= 40)
+			continue;
+		if (o.actor >= 0 && (_world.actors.status[o.actor] & 0x80)) {
+			cell(cx, cy, 15, 0);
+			continue;
+		}
+		int c = classify(_world.baseTile.firstTile[o.type] + o.frame);
+		if (c >= 0)
+			cell(cx, cy, c, 1);
 	}
 }
 

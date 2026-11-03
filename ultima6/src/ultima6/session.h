@@ -117,6 +117,8 @@ private:
 	void buryMoonstone(int idx);
 	void digAt(int key);
 	void telescopeAt(int key);
+	void drawGem(Framebuffer &screen) const;
+	bool _gem = false; // the overhead map of a gem is on the screen until a key is pressed
 	int vehicleDirection(int requested);
 	void windChanges();
 	bool _telekinesis = false; // Use from a distance (the Telekinesis spell)
