@@ -1,6 +1,7 @@
 // Which Ultima VI file formats the two spin-offs share (skipped when their data is absent).
 
 #include "files/lib_n.h"
+#include "ultima6/conversation.h"
 #include "ultima6/world.h"
 #include "files/map_data.h"
 #include "files/obj_block.h"
@@ -9,6 +10,7 @@
 #include "files/world_data.h"
 
 #include <cstdio>
+#include <map>
 
 using namespace Ultima6;
 
@@ -21,6 +23,59 @@ static int failures = 0;
 			++failures;                                                          \
 		}                                                                        \
 	} while (0)
+
+using ::Ultima6::Ultima6::Conversation;
+using ::Ultima6::Ultima6::ConversationHost;
+
+class SpinStubHost : public ConversationHost {
+public:
+	std::string out;
+	std::map<int, int> flags;
+	int karma = 0;
+
+	void print(const std::string &t) override {
+		for (char c : t) {
+			if (c == '\b' && !out.empty())
+				out.pop_back();
+			else
+				out += c;
+		}
+	}
+	std::string playerName() override { return "Avatar"; }
+	std::string genderTitle() override { return "milord"; }
+	std::string timeOfDay() override { return "morning"; }
+	void showPortrait(int) override {}
+	int random(int lo, int) override { return lo; }
+	std::string scriptName(int npc) override { return "Npc" + std::to_string(npc); }
+	std::string partyName(int, bool &in) override { in = false; return ""; }
+	int talkFlags(int n) override { return flags[n]; }
+	void setTalkFlags(int n, int f) override { flags[n] = f; }
+	bool inParty(int) override { return false; }
+	int partyMember(int) override { return 0; }
+	int joinParty(int) override { return 0; }
+	int leaveParty(int) override { return 0; }
+	bool npcNearby(int) override { return true; }
+	bool wounded(int) override { return false; }
+	bool poisoned(int) override { return false; }
+	void heal(int) override {}
+	void cure(int) override {}
+	void resurrect(int) override {}
+	void setWorktype(int, int) override {}
+	int adjustStat(int, int, int d) override { return d; }
+	bool hasObject(int, int, int, bool) override { return false; }
+	int countObject(int, int) override { return 0; }
+	void newObject(int, int, int, int) override {}
+	void deleteObject(int, int, int, int) override {}
+	void giveObject(int, int, int, int) override {}
+	int whoHasObject(int, int) override { return -1; }
+	int maxCarry(int) override { return 100; }
+	int objectWeight(int, int q) override { return q; }
+	bool horsed(int) override { return false; }
+	void mount(int) override {}
+	void addKarma(int n) override { karma += n; }
+	void subtractKarma(int n) override { karma -= n; }
+	void sleep() override {}
+};
 
 static void check(const char *dir, int schedules) {
 	Bytes d;
@@ -73,6 +128,23 @@ static void check(const char *dir, int schedules) {
 			}
 		}
 		CHECK(found > 40);
+		// every script runs to its first question and then ends on "bye"
+		int asked = 0;
+		for (int actor = 1; actor < 224; ++actor) {
+			ConverseScript cs;
+			if (!w.script(actor, cs))
+				continue;
+			SpinStubHost h;
+			Conversation c(cs.bytes(), actor, h);
+			Conversation::State st = c.run();
+			while (st == Conversation::NEED_KEY) {
+				c.giveKey();
+				st = c.run();
+			}
+			asked += st == Conversation::NEED_LINE;
+		}
+		std::printf("%s: %d scripts reach a question\n", dir, asked);
+		CHECK(asked > found / 2);
 		std::printf("%s: %d conversation scripts\n", dir, found);
 	}
 
