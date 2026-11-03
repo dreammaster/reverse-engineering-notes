@@ -344,7 +344,7 @@ bool Game::boardOrLeave(int tx, int ty) {
 	}
 	for (int i : here) {
 		World::Obj &v = _world.objects[i];
-		if (v.actor >= 0 || (v.type != 414 && v.type != 415 && v.type != 412))
+		if (v.actor >= 0 || (v.type != 414 && v.type != 415 && v.type != 412 && v.type != 423))
 			continue;
 		_footType = me.type;
 		_footFrame = me.frame;

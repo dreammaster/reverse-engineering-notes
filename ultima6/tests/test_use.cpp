@@ -440,6 +440,21 @@ int main() {
 		CHECK(wc.actors.worktype[second] == 1);
 	}
 
+	// a balloon is set up next to the user, and can be boarded
+	{
+		World wb;
+		wb.load("u6/game");
+		Game gb(wb);
+		int item = put(wb, 0x1A4, 0, gb.x + 1, gb.y, 0);
+		gb.handleKey('u');
+		gb.handleKey(KEY_RIGHT);
+		std::string text;
+		for (const std::string &l : gb.log)
+			text += l;
+		CHECK(wb.objects[item].deleted);
+		CHECK(text.find("Done!") != std::string::npos || text.find("No room!") != std::string::npos);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

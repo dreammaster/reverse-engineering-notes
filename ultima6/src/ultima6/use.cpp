@@ -211,6 +211,42 @@ void Game::useObject(int idx) {
 		consumeOne(idx);
 		_world.spendMoves(actingActor(), 5);
 		return;
+	} else if (type == 0x1A4) {
+		// sub_34053 (the balloon, on the surface or on level 5 only): it is used up and a balloon (0x1A7, frame 3) is set up on the first free square next to the user
+		if (z != 0 && z != 5) {
+			message("\nNot usable\n");
+		} else {
+			int a = _world.actorObject(actingActor());
+			int ax = _world.objects[a].x, ay = _world.objects[a].y;
+			_world.deleteObject(idx);
+			bool placed = false;
+			MoveRules rules;
+			rules.partyMayShuffle = false;
+			for (int dx = -1; dx <= 1 && !placed; ++dx)
+				for (int dy = -1; dy <= 1 && !placed; ++dy) {
+					if (!dx && !dy)
+						continue;
+					if (!_movement.check(ax + dx, ay + dy, z, _leaderObject, rules).passable)
+						continue;
+					World::Obj b;
+					b.status = 0;
+					b.x = (uint16_t)(ax + dx);
+					b.y = (uint16_t)(ay + dy);
+					b.z = (uint8_t)z;
+					b.type = 0x1A7;
+					b.frame = 3;
+					b.quantity = 1;
+					b.quality = 0;
+					b.actor = -1;
+					b.parent = -1;
+					_world.objects.push_back(b);
+					_world.addToMap((int)_world.objects.size() - 1);
+					message("\nDone!\n");
+					placed = true;
+				}
+			if (!placed)
+				message("\nNo room!\n");
+		}
 	} else if (type == 0x139) {
 		useSilverHorn();
 	} else if (type == 0x116 || type == 0x118) {
