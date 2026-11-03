@@ -257,6 +257,15 @@ void callThroughHook(Cpu &c, uint16_t seg, uint16_t off) { farHook(c, seg, off);
 // IRQ0: run the program's INT 08h service routine (if it installed one) as the CPU would: push FLAGS, CS, IP and jump to the vector
 void Machine::timerTick(Cpu &c) {
 	// scripted input: keys that become available once the program has run a given number of labels (HOST_INPUT="steps:key,steps:key")
+	while (!mouseTimeline.empty() && c.steps >= mouseTimeline.front().steps) {      // scripted pointer: position and buttons from this label count on
+		MouseStep m = mouseTimeline.front();
+		mouseTimeline.pop_front();
+		mouseX = m.x;
+		mouseY = m.y;
+		if ((m.buttons & 1) && !(mouseButtons & 1)) pressCount[0]++;
+		if (!(m.buttons & 1) && (mouseButtons & 1)) releaseCount[0]++;
+		mouseButtons = m.buttons;
+	}
 	while (!inputScript.empty() && c.steps >= inputScript.front().first) {
 		keys.push_back(inputScript.front().second);
 		inputScript.pop_front();

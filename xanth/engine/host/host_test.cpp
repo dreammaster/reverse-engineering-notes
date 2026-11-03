@@ -534,6 +534,17 @@ static int testInit(Host &h) {
 		}
 	};
 	debugHooks(h);
+	if (getenv("HOST_MOUSE")) {           // "50000000:15,175,0,50100000:15,175,1,50200000:15,175,0" (320x200 screen coordinates)
+		std::string s = getenv("HOST_MOUSE");
+		size_t p = 0;
+		while (p < s.size()) {
+			long st; int x, y, bt, n = 0;
+			if (sscanf(s.c_str() + p, "%ld:%d,%d,%d%n", &st, &x, &y, &bt, &n) < 4) break;
+			h.machine.mouseTimeline.push_back({st, x, y, bt});
+			p += n;
+			if (p < s.size() && s[p] == ',') p++;
+		}
+	}
 	if (getenv("HOST_INPUT")) {           // "6000000:316E,60000000:1C0D"
 		std::string s = getenv("HOST_INPUT");
 		size_t p = 0;
