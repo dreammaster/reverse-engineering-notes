@@ -195,11 +195,16 @@ bool Magic::cast(int caster, const SpellInfo &spell, int target) {
 		a.status[target] |= 0x08;
 		return true;
 	}
-	case 34: // Fireball
+	case 34: { // Fireball (sub_222F2): creatures with flag 8 are untouched ("No effect"), those with flag 0x10 take double of the roll 1-20
 		if (!haveTarget)
 			break;
-		_combat.applyDamage(caster, target, random(1, 30));
+		const CreatureStats *cs = Combat::stats(_world.objects[tk].type);
+		if (cs && (cs->flags & 8))
+			break;
+		int dmg = random(1, 20);
+		_combat.applyDamage(caster, target, cs && (cs->flags & 0x10) ? dmg * 2 : dmg);
 		return true;
+	}
 	case 68: // Lightning
 		if (!haveTarget)
 			break;
