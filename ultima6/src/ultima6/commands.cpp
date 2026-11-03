@@ -225,6 +225,10 @@ void Game::partyHazards() {
 			if (_world.objects[i].actor < 0)
 				tiles.push_back(_world.baseTile.firstTile[_world.objects[i].type] + _world.objects[i].frame);
 		for (int t : tiles) {
+			if (t == 1166 && !(a.status[actor] & 0x04)) { // a sleep field
+				a.status[actor] |= 0x04;
+				message(_combat.nameOf(actor) + " falls asleep!\n");
+			}
 			if (((t >= 2 && t <= 5) || t == 1165) && !(cs && (cs->flags & (1 << 12))) && !(a.status[actor] & 0x08)) {
 				a.status[actor] |= 0x08;
 				message(_combat.nameOf(actor) + " poisoned!\n");

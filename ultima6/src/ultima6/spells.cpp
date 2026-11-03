@@ -12,7 +12,7 @@ namespace Ultima6 {
 // group of handlers, only some of which have been read). Returns whether the spell was dealt with here; otherwise Magic::cast works it on the actor.
 // APPROX(56): the effects follow the spell manual and the actors' status bits; the original's animations, projectile paths, messages and the many saving throws
 // (sub_246AC, sub_24810, sub_24A61, sub_24BED, sub_24CF0, sub_24DCF, sub_24E78, sub_2502C, sub_25320) are not traced. Not done: Detect Magic/Trap, Help, Telekinesis, Trap,
-// Untrap, Peer, Repel Undead, Animate, Conjure, Disable, the fields, Wind Change, Explosion, Insect Swarm, Pickpocket, Reveal, Seance, X-ray, Charm, Clone, Confuse,
+// Untrap, Peer, Repel Undead, Animate, Conjure, Disable, Wind Change, Explosion, Insect Swarm, Pickpocket, Reveal, Seance, X-ray, Charm, Clone, Confuse,
 // the winds, Hail Storm, Negate Magic, Replicate, Web, Chain Bolt, Enchant, Fear, Gate Travel, Wing Strike, Wizard Eye, Armageddon, Eclipse, Resurrect, Slime, Summon, Time Stop, Tremor
 bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int ty, int target) {
 	ObjList &a = _world.actors;
@@ -119,6 +119,56 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		else
 			_world.objects[object].frame = (uint8_t)(_world.objects[object].frame | 1);
 		return true;
+	case 51: // Fire Field
+	case 55: // Poison Field
+	case 56: // Sleep Field
+	case 64: { // Energy Field: a field object (0x13D fire, 0x13E poison, 0x13F sleep, 0xAF energy) on the square if nothing blocks it
+		int type = index == 51 ? 0x13D : index == 55 ? 0x13E : index == 56 ? 0x13F : 0xAF;
+		bool blocked = _world.flags.flags1[_world.map.tile(z, tx, ty) & (TileFlags::TILES - 1)] & 0x02;
+		for (int i : here)
+			if (_world.objects[i].actor >= 0 || (_world.flags.flags1[(_world.baseTile.firstTile[_world.objects[i].type] + _world.objects[i].frame) & (TileFlags::TILES - 1)] & 0x02))
+				blocked = true;
+		if (blocked)
+			return false;
+		World::Obj f;
+		f.status = 0;
+		f.x = (uint16_t)tx;
+		f.y = (uint16_t)ty;
+		f.z = (uint8_t)z;
+		f.type = (uint16_t)type;
+		f.frame = 0;
+		f.quantity = 1;
+		f.quality = 0;
+		f.actor = -1;
+		f.parent = -1;
+		_world.objects.push_back(f);
+		_world.addToMap((int)_world.objects.size() - 1);
+		return true;
+	}
+	case 33: // Dispel Field
+	case 54: { // Mass Dispel: every field within three squares
+		int radius = index == 54 ? 3 : 0;
+		bool any = false;
+		for (int dx = -radius; dx <= radius; ++dx)
+			for (int dy = -radius; dy <= radius; ++dy) {
+				std::vector<int> at;
+				_world.objectsAt(tx + dx, ty + dy, z, at);
+				for (int i : at) {
+					int type = _world.objects[i].type;
+					if (type == 0x13D || type == 0x13E || type == 0x13F || type == 0xAF) {
+						_world.deleteObject(i);
+						any = true;
+					}
+				}
+			}
+		return any;
+	}
+	case 53: { // Locate: where the party is, as the sextant says it
+		int sx = z ? x * 4 : x, sy = z ? y * 4 : y;
+		int lat = (sy - 360) >> 3, lon = (sx - 304) >> 3;
+		message(std::to_string(std::abs(lat)) + "{" + (lat > 0 ? "S" : "N") + ", " + std::to_string(std::abs(lon)) + "{" + (lon > 0 ? "E\n" : "W\n"));
+		return true;
+	}
 	case 23: // Unlock Magic
 	case 36: // Lock
 		if (object < 0)
