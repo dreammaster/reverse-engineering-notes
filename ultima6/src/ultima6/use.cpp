@@ -381,38 +381,50 @@ void Game::extinguishLight(int idx) {
 	}
 }
 
-// APPROX(46): levers (268) and switches (174) work as in Nuvie, with the original's texts; use_lever (33B09) and use_switch (33D02) are not traced
+// use_lever (33B09) and use_switch (33D02): the lever or switch turns over (frame ^ 1), and with a quality that is not 0 every doorway (type 0x12D) of the level with that
+// quality has its barrier toggled: a lever's portcullis (0x136: frame 3 when the doorway's frame has bit 1, else 1; "can't close the portcullis" if somebody stands there),
+// a switch's electric field (0xAF). The texts after "Switch the lever, " / "Operate the switch, " are "strange, nothing happened.", "you hear a noise." or the refusal.
 void Game::useLever(int idx) {
-	World::Obj &o = _world.objects[idx];
-	int type = o.type == 0x10C ? 268 : 174;
-	// a lever or switch toggles every barrier at the doorways (type 301) that carry its quality: the portcullis (310) or electric field (175)
-	int barrier = type == 268 ? 310 : 175;
-	bool any = false;
-	size_t count = _world.objects.size();
-	for (size_t d = 0; d < count; ++d) {
-		const World::Obj door = _world.objects[d];
-		if (door.deleted || door.type != 301 || !door.onMap() || door.z != o.z || door.quality != o.quality)
-			continue;
-		any = true;
-		std::vector<int> there;
-		_world.objectsAt(door.x, door.y, door.z, there);
-		int existing = -1;
-		for (int t : there)
-			if (_world.objects[t].type == barrier)
-				existing = t;
-		if (existing >= 0) {
-			_world.deleteObject(existing);
-		} else {
-			World::Obj b = door;
-			b.type = (uint16_t)barrier;
-			b.quality = 0;
-			b.frame = barrier == 310 && door.frame == 9 ? 1 : (barrier == 310 ? door.frame : 0);
-			_world.objects.push_back(b);
-			_world.addToMap((int)_world.objects.size() - 1);
+	bool lever = _world.objects[idx].type == 0x10C;
+	_world.objects[idx].frame = (uint8_t)(_world.objects[idx].frame ^ 1);
+	int quality = _world.objects[idx].quality;
+	int result = 0;
+	message(lever ? "\nSwitch the lever, " : "\nOperate the switch, ");
+	if (quality != 0) {
+		int barrier = lever ? 0x136 : 0xAF;
+		size_t count = _world.objects.size();
+		for (size_t d = 0; d < count && result != 2; ++d) {
+			const World::Obj door = _world.objects[d];
+			if (door.deleted || door.type != 0x12D || !door.onMap() || door.z != z || door.quality != quality)
+				continue;
+			std::vector<int> there;
+			_world.objectsAt(door.x, door.y, door.z, there);
+			int existing = -1;
+			bool occupied = false;
+			for (int t : there) {
+				if (_world.objects[t].type == barrier)
+					existing = t;
+				if (_world.objects[t].actor >= 0)
+					occupied = true;
+			}
+			if (existing >= 0) {
+				_world.deleteObject(existing);
+				result = 1;
+			} else if (lever && occupied) {
+				result = 2;
+			} else {
+				World::Obj b = door;
+				b.type = (uint16_t)barrier;
+				b.quality = 0;
+				b.frame = lever ? ((door.frame & 2) ? 3 : 1) : 0;
+				b.status = 0;
+				_world.objects.push_back(b);
+				_world.addToMap((int)_world.objects.size() - 1);
+				result = 1;
+			}
 		}
 	}
-	_world.objects[idx].frame = (uint8_t)(_world.objects[idx].frame ^ 1);
-	message(std::string("\n") + (type == 268 ? "Switch the lever, " : "Operate the switch, ") + (any ? "you hear a noise.\n" : "strange, nothing happened.\n"));
+	message(result == 1 ? "you hear a noise.\n" : result == 2 ? "can't close the portcullis.\n" : "strange, nothing happened.\n");
 }
 
 // APPROX(30): ladders as in Nuvie (the original's climb_ladder, 186DE, is not traced)

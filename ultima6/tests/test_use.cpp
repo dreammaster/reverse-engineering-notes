@@ -346,6 +346,28 @@ int main() {
 		CHECK(text.find("At latitude=") != std::string::npos && text.find("longitude=") != std::string::npos && text.find("Done") != std::string::npos);
 	}
 
+	// a lever closes and opens the portcullis of the doorway with its quality
+	{
+		World wl;
+		wl.load("u6/game");
+		Game gl(wl);
+		int door = put(wl, 0x12D, 1, gl.x + 5, gl.y + 5, 0);
+		wl.objects[door].quality = 9;
+		int lever = put(wl, 0x10C, 0, gl.x + 1, gl.y, 0);
+		wl.objects[lever].quality = 9;
+		gl.handleKey('u');
+		gl.handleKey(KEY_RIGHT);
+		int portcullis = -1;
+		for (size_t i = 0; i < wl.objects.size(); ++i)
+			if (!wl.objects[i].deleted && wl.objects[i].type == 0x136)
+				portcullis = (int)i;
+		CHECK(portcullis >= 0 && wl.objects[portcullis].frame == 1);
+		CHECK(wl.objects[lever].frame == 1);
+		gl.handleKey('u');
+		gl.handleKey(KEY_RIGHT);
+		CHECK(wl.objects[portcullis].deleted);
+	}
+
 	// a dead actor is resurrected from its body
 	{
 		World wa;
