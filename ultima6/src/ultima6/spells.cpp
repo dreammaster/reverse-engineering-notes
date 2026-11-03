@@ -334,6 +334,22 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		useObject(object);
 		_telekinesis = false;
 		return true;
+	case 39: // Peer: the overhead map, as a gem shows it
+	case 105: // Wizard Eye: (approximated by the same view)
+		_gem = true;
+		return true;
+	case 121: // Tremor: everybody not of the party in view is hurt
+	case 66: { // Insect Swarm: so are those near the party, less
+		int radius = index == 121 ? 8 : 3;
+		for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
+			int k = _world.actorObject(actor);
+			if (k < 0 || _world.objects[k].deleted || a.hp[actor] == 0 || (a.status[actor] & 0x80) || _world.objects[k].z != z)
+				continue;
+			if (std::abs((int)_world.objects[k].x - x) <= radius && std::abs((int)_world.objects[k].y - y) <= radius)
+				_combat.applyDamage(caster, actor, 1 + _rng.next() % (index == 121 ? 30 : 10));
+		}
+		return true;
+	}
 	case 53: { // Locate: where the party is, as the sextant says it
 		int sx = z ? x * 4 : x, sy = z ? y * 4 : y;
 		int lat = (sy - 360) >> 3, lon = (sx - 304) >> 3;
