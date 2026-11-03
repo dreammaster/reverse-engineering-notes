@@ -346,6 +346,21 @@ int main() {
 		CHECK(text.find("At latitude=") != std::string::npos && text.find("longitude=") != std::string::npos && text.find("Done") != std::string::npos);
 	}
 
+	// a dead actor is resurrected from its body
+	{
+		World wa;
+		wa.load("u6/game");
+		Game ga(wa);
+		wa.actors.hp[2] = 0;
+		wa.actors.status[2] |= 0x10;
+		int body = put(wa, 339, 0, ga.x + 3, ga.y, 0);
+		wa.objects[body].quality = 2;
+		CHECK(wa.resurrect(2));
+		CHECK(!(wa.actors.status[2] & 0x10) && wa.actors.hp[2] > 0);
+		CHECK(wa.objects[body].deleted);
+		CHECK(!wa.resurrect(2));
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

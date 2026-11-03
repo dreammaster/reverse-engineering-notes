@@ -6,6 +6,7 @@
 
 #include "files/portrait.h"
 #include "ultima6/describe.h"
+#include "ultima6/stats_view.h"
 #include "ultima6/gypsy.h"
 
 #include <algorithm>
@@ -323,6 +324,27 @@ bool World::script(int actor, ConverseScript &out) const {
 				_talkItem[item[1]] = (int)i;
 	}
 	return _talkItem[actor] >= 0 && lib.get(_talkItem[actor], item) && out.fromBytes(item);
+}
+
+bool World::resurrect(int dead) {
+	if (dead <= 0 || dead >= ObjList::ACTORS || !(actors.status[dead] & 0x10))
+		return false;
+	actors.status[dead] &= ~0x10;
+	actors.hp[dead] = (uint8_t)ActorStats::maxHealth(*this, dead);
+	if (!(actors.status[dead] & 0x80))
+		actors.worktype[dead] = 0x81;
+	for (size_t b = 0; b < objects.size(); ++b) {
+		if (objects[b].deleted || objects[b].type != 339 || objects[b].quality != dead || !objects[b].onMap())
+			continue;
+		for (size_t i = 0; i < objects.size(); ++i)
+			if (!objects[i].deleted && objects[i].location() == ObjRecord::IN_CONTAINER && objects[i].parent == (int)b) {
+				objects[i].status = (uint8_t)((objects[i].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
+				objects[i].parent = dead;
+			}
+		deleteObject((int)b);
+		break;
+	}
+	return true;
 }
 
 std::string World::bookText(int n) const {

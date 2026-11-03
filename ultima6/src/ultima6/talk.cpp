@@ -225,8 +225,8 @@ void Talk::cure(int npc) {
 		_world.actors.status[npc] &= ~0x08;
 }
 
-void Talk::resurrect(int) {
-	// bringing a dead party member back needs the corpse bookkeeping of the object code (not ported yet)
+void Talk::resurrect(int actor) {
+	_world.resurrect(actor);
 }
 
 void Talk::setWorktype(int npc, int worktype) {

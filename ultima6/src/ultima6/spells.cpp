@@ -167,20 +167,7 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 	case 117: { // Resurrect: the dead body of an actor gets up again with full hit points and takes back what it carried
 		if (object < 0 || _world.objects[object].type != 339 || _world.objects[object].quality == 0)
 			return false;
-		int dead = _world.objects[object].quality;
-		if (!(a.status[dead] & 0x10))
-			return false;
-		a.status[dead] &= ~0x10;
-		a.hp[dead] = (uint8_t)ActorStats::maxHealth(_world, dead);
-		if (!(a.status[dead] & 0x80))
-			a.worktype[dead] = 0x81;
-		for (size_t i = 0; i < _world.objects.size(); ++i)
-			if (!_world.objects[i].deleted && _world.objects[i].location() == ObjRecord::IN_CONTAINER && _world.objects[i].parent == object) {
-				_world.objects[i].status = (uint8_t)((_world.objects[i].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
-				_world.objects[i].parent = dead;
-			}
-		_world.deleteObject(object);
-		return true;
+		return _world.resurrect(_world.objects[object].quality);
 	}
 	case 65: // Explosion
 	case 83: // Flame Wind

@@ -68,6 +68,8 @@ public:
 
 	/** BOOK.DAT: 128 word offsets, then the null-terminated texts (read_book, 6B7A). The text of quality `n` (1 to 128), or "" if there is none. */
 	std::string bookText(int n) const;
+	/** Brings a dead actor back with full hit points; its dead body (quality = the actor) gives back what it held and goes. False if it is not dead. */
+	bool resurrect(int actor);
 	Bytes book;
 
 	GameId game = GameId::Ultima6; // set before load(): which of the three games' data the directory holds
