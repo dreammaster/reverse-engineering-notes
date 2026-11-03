@@ -110,6 +110,30 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		message("\n" + _combat.nameOf(t) + " is charmed.\n");
 		return true;
 	};
+	// sub_1A80C + can_actor_enter: makes an object of the type on the square and keeps it only if it may stand there
+	auto placeOn = [&](int type, int px, int py) {
+		World::Obj f;
+		f.status = 0;
+		f.x = (uint16_t)px;
+		f.y = (uint16_t)py;
+		f.z = (uint8_t)z;
+		f.type = (uint16_t)type;
+		f.frame = 0;
+		f.quantity = 1;
+		f.quality = 0;
+		f.actor = -1;
+		f.parent = -1;
+		_world.objects.push_back(f);
+		int made = (int)_world.objects.size() - 1;
+		MoveRules rules;
+		rules.partyMayShuffle = false;
+		if (!_movement.check(px, py, z, made, rules).passable) {
+			_world.objects.pop_back();
+			return false;
+		}
+		_world.addToMap(made);
+		return true;
+	};
 	std::vector<int> here;
 	_world.objectsAt(tx, ty, z, here);
 	int object = -1;
@@ -319,27 +343,25 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 			return true;
 		}
 		int type = index == 51 ? 0x13D : index == 55 ? 0x13E : index == 56 ? 0x140 : 0x13F;
-		World::Obj f;
-		f.status = 0;
-		f.x = (uint16_t)tx;
-		f.y = (uint16_t)ty;
-		f.z = (uint8_t)z;
-		f.type = (uint16_t)type;
-		f.frame = 0;
-		f.quantity = 1;
-		f.quality = 0;
-		f.actor = -1;
-		f.parent = -1;
-		_world.objects.push_back(f);
-		int made = (int)_world.objects.size() - 1;
-		MoveRules rules;
-		rules.partyMayShuffle = false;
-		if (!_movement.check(tx, ty, z, made, rules).passable) {
-			_world.objects.pop_back();
-			message("\nNot possible\n");
+		message(placeOn(type, tx, ty) ? "\nSuccess\n" : "\nNot possible\n");
+		return true;
+	}
+	case 89: { // Web (sub_246AC, sub_38BAE): nine bolts fly to the target square and the eight around it (all must arrive, else "Blocked"); a web (0x35) is made on each square that may take it
+		int ck = _world.actorObject(caster);
+		static const int8_t WX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, WY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+		bool all = true;
+		for (int b = 0; b < 9; ++b) {
+			std::vector<std::pair<int, int>> path;
+			int gx = b < 8 ? tx + WX[b] : tx, gy = b < 8 ? ty + WY[b] : ty;
+			all &= boltPath(_world, z, _world.objects[ck].x, _world.objects[ck].y, gx, gy, 7, path);
+		}
+		if (!all) {
+			message("\nBlocked\n");
 			return true;
 		}
-		_world.addToMap(made);
+		for (int wx = tx - 1; wx <= tx + 1; ++wx)
+			for (int wy = ty - 1; wy <= ty + 1; ++wy)
+				placeOn(0x35, wx, wy);
 		message("\nSuccess\n");
 		return true;
 	}
