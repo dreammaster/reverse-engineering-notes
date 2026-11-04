@@ -933,26 +933,196 @@ std::string Game::restCheck() {
 
 // Rest: "How many hours? " takes a single digit 1-9 (anything else prints "0" and gives up); with a party "Who will guard? " asks for a member
 // (a digit) or none. APPROX(31): what the camp does afterwards is not traced (the campfire, "Mealtime!", food, sleeping, ambushes, healing).
+// sub_39CB5: one of the foods in the hands of an actor (the 14 types of ds:2CCE) is eaten
+static bool eatsOne(World &w, int actor) {
+	static const int FOODS[14] = {0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x87, 0x5F, 0xB8, 0x60, 0x109, 0xB4, 0xD1, 0xD2};
+	std::vector<int> inv;
+	w.inventory(actor, inv, false);
+	for (int i : inv) {
+		for (int f : FOODS)
+			if (w.objects[i].type == f) {
+				if (w.quantityOf(w.objects[i]) > 1 && w.isStackable(f))
+					w.setQuantity(w.objects[i], w.quantityOf(w.objects[i]) - 1);
+				else
+					w.deleteObject(i);
+				return true;
+			}
+	}
+	return false;
+}
+
+// sub_39D14: a member eats from his own food or, failing that, from any other member's
+bool Game::eatFood(int member) {
+	ObjList &a = _world.actors;
+	if (eatsOne(_world, a.partyRoster[member]))
+		return true;
+	for (int m = 0; m < a.partySize; ++m)
+		if (eatsOne(_world, a.partyRoster[m]))
+			return true;
+	return false;
+}
+
+// sub_3A0E7: a night's rest mends half of what a member is short of in hit points and a number from 0 to that besides (at least two when one is lacking), and fills his magic points
+void Game::restHeal(int member, bool say) {
+	ObjList &a = _world.actors;
+	int actor = a.partyRoster[member];
+	int most = ActorStats::maxHealth(_world, actor), missing = most - a.hp[actor];
+	if (missing != 0) {
+		if (missing == 1)
+			missing = 2;
+		int heal = (int)(_rng.next() % (missing / 2 + 1)) + missing / 2;
+		a.hp[actor] = (uint8_t)(most > a.hp[actor] + heal ? a.hp[actor] + heal : most);
+		if (say)
+			message(std::string((const char *)a.partyNames[member]) + " has healed.\n");
+	}
+	a.unknown13f1[actor] = (uint8_t)ActorStats::maxMagic(_world, actor);
+}
+
+// cmd_rest 3A42C-3A8AF, after the hours and the guard have been chosen (`guard` is an actor, or 0x100 for none): a campfire (0xFD) is lit where the party stands and the members gather
+// round it (up to 20 rounds of steps to the eight places around the fire); "Mealtime!": the first of the human figures (0x182) takes up a lute and "plays a tune", then each member eats
+// ("<name> has food." or "has no food."); all but the guard lie down (the figure of a body, sub_2B5A4); six times an hour the guard walks about for ten minutes and, one time in 64 on the
+// rounds whose number has neither bit 0 nor bit 2 set, a band of beasts may attack from the edge of the view: with a guard "You hear something!" wakes the party, without one it is
+// attacked asleep. After four hours or more, and not within twelve hours of an earlier rest, the party is healed (members "has healed.").
+// APPROX(31): the pictures between the steps (the campfire's flames, the animation ticks) and the sounds are left out
+void Game::restCamp(int guard) {
+	static const int FX[8] = {0, 0, 1, -1, 1, -1, 1, -1}, FY[8] = {-1, 1, 0, 0, -1, 1, 1, -1}, FACE[8] = {4, 0, 6, 2, 4, 0, 6, 2};
+	ObjList &a = _world.actors;
+	int fx = x, fy = y;
+	// the campfire
+	World::Obj fire;
+	fire.status = 0x20;
+	fire.x = (uint16_t)fx;
+	fire.y = (uint16_t)fy;
+	fire.z = (uint8_t)z;
+	fire.type = 0xFD;
+	fire.frame = 0;
+	fire.quantity = 1;
+	fire.quality = 0;
+	fire.actor = -1;
+	fire.parent = -1;
+	_world.objects.push_back(fire);
+	int fireIndex = (int)_world.objects.size() - 1;
+	_world.addToMap(fireIndex);
+	// the party gathers round it
+	for (int round = 20, moving = 1; moving && round > 0; --round) {
+		moving = 0;
+		for (int m = 0; m < a.partySize; ++m) {
+			int actor = a.partyRoster[m];
+			if (_creatures.walkTo(actor, fx + FX[m & 7], fy + FY[m & 7]))
+				moving = 1;
+			else
+				_actors.face(actor, FACE[m & 7]);
+		}
+	}
+	message("\nMealtime!\n");
+	for (int m = 0; m < a.partySize; ++m) {
+		int actor = a.partyRoster[m], k = _world.actorObject(actor);
+		if (k >= 0 && _world.objects[k].type == 0x182) {
+			_world.objects[k].type = 0x188;
+			_actors.face(actor, FACE[m & 7]);
+			message(std::string((const char *)a.partyNames[m]) + " plays a tune.\n");
+			break;
+		}
+	}
+	int hungry = -1;
+	for (int m = 0; m < a.partySize; ++m) {
+		message(std::string((const char *)a.partyNames[m]));
+		if (eatFood(m)) {
+			message(" has food.\n");
+		} else {
+			message(" has no food.\n");
+			if (hungry < 0)
+				hungry = m;
+		}
+	}
+	for (int m = 0; m < a.partySize; ++m) { // the lute is put away
+		int k = _world.actorObject(a.partyRoster[m]);
+		if (k >= 0 && _world.objects[k].type == 0x188) {
+			_world.objects[k].type = 0x182;
+			_actors.face(a.partyRoster[m], FACE[m & 7]);
+			break;
+		}
+	}
+	// all but the guard lie down
+	static const uint16_t BODY[][2] = {{0x16F, 0x153}, {0x16B, 0x153}, {0x173, 0x153}, {0x172, 0x553}, {0x1A8, 0xD54}, {0x17C, 0x953}, {0x17B, 0x953}, {0x183, 0xD53}, {0x17A, 0xD53},
+									   {0x17E, 0x1153}, {0x180, 0x1553}, {0x179, 0x1553}, {0x178, 0x1953}, {0x19A, 0x1D53}, {0x182, 0x1D53}, {0x188, 0x1D53}, {0x17D, 0x2153},
+									   {0x181, 0x2153}, {0x187, 0x2153}, {0x17F, 0x2153}, {0x170, 0x2553}, {0x16A, 0xD55}};
+	for (int m = 0; m < a.partySize; ++m) {
+		int actor = a.partyRoster[m], k = _world.actorObject(actor);
+		if (actor == guard) {
+			message("\n" + std::string((const char *)a.partyNames[m]) + " stands guard while the party rests.\n");
+			continue;
+		}
+		if (k < 0)
+			continue;
+		for (const auto &row : BODY)
+			if (row[0] == _world.objects[k].type) {
+				a.baseObjFrame[actor] = (uint16_t)(_world.objects[k].type | (_world.objects[k].frame << 10));
+				_world.objects[k].type = row[1] & 0x3FF;
+				_world.objects[k].frame = (uint8_t)(row[1] >> 10);
+				break;
+			}
+	}
+	// the hours
+	int guardWork = guard < 0x100 ? a.worktype[guard] : 0;
+	if (guard < 0x100)
+		a.worktype[guard] = 0x0C;
+	int heard = 0; // 1: the guard heard something, 2: set on asleep
+	for (int round = 0; round < _restHours * 6; ++round) {
+		if (guard < 0x100)
+			_creatures.act(guard, x, y, z);
+		advanceTime(10);
+		if ((round & 5) == 0 && _rng.next() % 64 == 0 && _creatures.ambush(fx, fy, z)) {
+			if (guard < 0x100) {
+				message("\nYou hear something!\n");
+				heard = 1;
+			} else {
+				heard = 2;
+			}
+			break;
+		}
+	}
+	_world.deleteObject(fireIndex);
+	for (int m = 0; m < a.partySize; ++m) {
+		int actor = a.partyRoster[m], k = _world.actorObject(actor);
+		if (heard < 2) {
+			if (actor != guard && k >= 0) {
+				_world.objects[k].type = a.baseObjFrame[actor] & 0x3FF;
+				_world.objects[k].frame = (uint8_t)(a.baseObjFrame[actor] >> 10);
+			}
+		} else {
+			a.status[actor] |= 0x04;
+		}
+		a.moves[actor] = a.dexterity[actor];
+	}
+	if (guard < 0x100)
+		a.worktype[guard] = (uint8_t)guardWork;
+	if (_restHours >= 4 && _restCooldown == 0 && heard == 0) {
+		for (int m = 0; m < a.partySize; ++m)
+			if (a.partyRoster[m] != guard)
+				restHeal(m, true);
+		_restCooldown = 12;
+	}
+	int lk = _world.actorObject(a.partyRoster[_member]);
+	if (lk >= 0) {
+		x = _world.objects[lk].x;
+		y = _world.objects[lk].y;
+	}
+}
+
 void Game::restKey(int key) {
 	if (_number == "g") {
-		const ObjList &a = _world.actors;
-		int who = key - '1';
-		std::string guard = "none";
-		if (who >= 0 && who < a.partySize)
-			guard = (const char *)a.partyNames[who];
-		message(guard + "\n");
+		ObjList &a = _world.actors;
+		int who = key - '1', guard = 0x100;
+		if (who >= 0 && who < a.partySize && !(a.status[a.partyRoster[who]] & 0x10)) {
+			guard = a.partyRoster[who];
+			message(std::string((const char *)a.partyNames[who]) + "\n");
+		} else {
+			message("none\n");
+		}
 		_number.clear();
 		_pending = 0;
-		message("\nMealtime!\n");
-		for (int h = 0; h < _restHours; ++h) {
-			advanceTime(60);
-			ObjList &al = _world.actors;
-			for (int i = 0; i < al.partySize; ++i) {
-				int actor = al.partyRoster[i];
-				int most = ActorStats::maxHealth(_world, actor);
-				al.hp[actor] = (uint8_t)std::min<int>(most, al.hp[actor] + 1 + al.level[actor] / 2);
-			}
-		}
+		restCamp(guard);
 		prompt();
 		return;
 	}
@@ -970,9 +1140,7 @@ void Game::restKey(int key) {
 		return;
 	}
 	_pending = 0;
-	message("\nMealtime!\n");
-	for (int h = 0; h < _restHours; ++h)
-		advanceTime(60);
+	restCamp(0x100);
 	prompt();
 }
 

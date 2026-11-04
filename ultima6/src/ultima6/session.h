@@ -199,6 +199,10 @@ private:
 	int _useItem = -1; // the key, lock pick or potion waiting for its target
 	void changeLevel(int nx, int ny, int nz);
 	void restKey(int key);
+	void restCamp(int guard);
+	bool eatFood(int member);
+	void restHeal(int member, bool say);
+	int _restCooldown = 0; // byte_4049B: hours before another rest mends the party
 	void followLeader(int mode = 0);
 	bool heldFollower(int actor);
 	int formationBusy(int slot, int x, int y);

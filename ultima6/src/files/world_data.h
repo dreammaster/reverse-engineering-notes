@@ -54,7 +54,7 @@ struct Schedule {
  * tail.
  */
 struct ObjList {
-	enum { ACTORS = 256, PARTY_MAX = 16, NAME_SIZE = 16, PARTY_NAMES = 14 };
+	enum { ACTORS = 256, PARTY_MAX = 16, NAME_SIZE = 14, PARTY_NAMES = 16 };
 
 	// File offsets of each block.
 	enum {

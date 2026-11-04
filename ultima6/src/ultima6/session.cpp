@@ -80,6 +80,8 @@ void Game::minutePassed() {
 	if (clock.minute == 0) {
 		_actors.hourChanged(clock);
 		updateMoons();
+		if (_restCooldown > 0)
+			--_restCooldown;
 	}
 	windChanges();
 	// the timers of light and the like count down a minute at a time

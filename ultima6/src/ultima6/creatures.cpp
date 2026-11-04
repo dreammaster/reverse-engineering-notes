@@ -46,7 +46,7 @@ int Creatures::count() const {
 	return n;
 }
 
-int Creatures::spawn(int type, int worktype, int x, int y, int z) {
+int Creatures::spawn(int type, int worktype, int x, int y, int z, bool exact) {
 	int actor = -1;
 	for (int a = FIRST_TEMP_ACTOR; a < ObjList::ACTORS; ++a)
 		if (_world.actorFree(a)) {
@@ -61,6 +61,11 @@ int Creatures::spawn(int type, int worktype, int x, int y, int z) {
 	int k = _world.addActor(actor, type, x, y, z);
 	int mask = z == 0 ? 0x3FF : 0xFF;
 	bool placed = false;
+	if (exact && !_movement.check(x & mask, y & mask, z, k, rules).passable) { // only this square will do
+		_world.deleteObject(k);
+		_world.actors.hp[actor] = 0;
+		return -1;
+	}
 	for (int r = 0; r <= 3 && !placed; ++r)
 		for (int dy = -r; dy <= r && !placed; ++dy)
 			for (int dx = -r; dx <= r && !placed; ++dx) {
@@ -86,6 +91,27 @@ int Creatures::spawn(int type, int worktype, int x, int y, int z) {
 	a.status[actor] = (s && (s->align == CreatureStats::EVIL || s->align == CreatureStats::CHAOTIC)) ? 0x20 : 0; // attacks evil... i.e. hostile to the party
 	a.talkFlags[actor] = 0;
 	return actor;
+}
+
+// sub_39F89: a band of 1 to 8 beasts (one kind: wolves 0x15F, snakes 0x166, giant rats 0x156 or 0x161, by chance) comes at a camp from the edge of the view: each tries up to eight places on
+// the four edges of the 13 x 13 squares round it (a random side, a random place along it) and is let go if none will do; they are hostile and fight. True if any came.
+bool Creatures::ambush(int px, int py, int pz) {
+	static const int KINDS[4] = {0x15F, 0x166, 0x156, 0x161};
+	int type = KINDS[_rng.next() % 4], count = 1 + (int)(_rng.next() % 8), placed = 0;
+	for (int n = 0; n < count; ++n) {
+		for (int tries = 0; tries < 8; ++tries) {
+			int side = _rng.next() % 4, off = _rng.next() % 11;
+			int sx = side == 0 ? px - 6 : side == 1 ? px + off - 6 : side == 2 ? px + 7 : px + off - 6;
+			int sy = side == 0 ? py + off - 6 : side == 1 ? py - 7 : side == 2 ? py + off - 6 : py + 6;
+			int actor = spawn(type, 8, sx, sy, pz, true);
+			if (actor >= 0) {
+				_world.actors.status[actor] = (uint8_t)((_world.actors.status[actor] & 0x9F) | 0x20);
+				++placed;
+				break;
+			}
+		}
+	}
+	return placed > 0;
 }
 
 // APPROX(19): not the original's exact behaviour, see docs/approximations.md

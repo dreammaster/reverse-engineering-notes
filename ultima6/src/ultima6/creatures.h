@@ -51,7 +51,12 @@ public:
 
 	int count() const; // living temporary actors
 
-	int spawn(int type, int worktype, int x, int y, int z);
+	int spawn(int type, int worktype, int x, int y, int z, bool exact = false);
+	/** One step of an actor towards a square (sub_29317); true if it moved. */
+	bool walkTo(int actor, int x, int y) {
+		return stepToward(actor, x, y);
+	}
+	bool ambush(int px, int py, int pz);
 
 private:
 	bool stepDir(int actor, int dir);
