@@ -422,6 +422,17 @@ int main(int argc, char **argv) {
 							for (int b = 0; b < 32; b += 8)
 								h = (h ^ ((v[a] >> b) & 0xFF)) * 0x01000193u;
 					}
+					static RoomObjs ro;
+					roomobjs_build(&ro, &m, &os, r, 0, 0);
+					for (int k = 0; k < ro.n; k++) {
+						const RoomObj *o = &ro.o[k];
+						uint32_t v[8] = {(uint32_t)r, (uint32_t)o->thing, (uint8_t)o->cx1, (uint8_t)o->cy1, (uint8_t)o->cx0, (uint8_t)o->cy0,
+						                 (uint8_t)o->czt, (uint8_t)o->czb};
+						for (int a = 0; a < 8; a++)
+							for (int b = 0; b < 32; b += 8)
+								h = (h ^ ((v[a] >> b) & 0xFF)) * 0x01000193u;
+						cnt += 1000000;
+					}
 				}
 				if (cnt != xv->exits || h != xv->hash) rc = -99;
 				objsprites_free(&os); mp2_free(&m);

@@ -14,6 +14,10 @@
  * (32 bytes as stored in the file, big-endian words), for a room whose tile (0,0) starts at pixel (gx, gy). */
 void object_project(int x1, int y1, int z0, const uint8_t hdr[32], int gx, int gy, int *sx, int *sy);
 
+/* The collision box of the object entry: x1, y1, x0, y0, zt, zb after the trimming of CAD.EXE sub_14CB9 (header bytes 0Eh, 1Ah, 1Bh;
+ * low nibble shrinks the far side, high nibble the near side). */
+void object_trimmed_box(int x1, int y1, int z0, const uint8_t hdr[32], int8_t out[6]);
+
 /* Box occupied by the object: x0..x1, y0..y1, z0..zt (inclusive, 1/8 cell units). */
 void object_box(int x1, int y1, int z0, const uint8_t hdr[32], int *x0, int *y0, int *zt);
 
@@ -30,7 +34,8 @@ int objsprite_initial_frame(const ObjSprite *sp);
 #define ROOMOBJS_MAX 512
 typedef struct {
 	int thing, x1, y1, z0;
-	int x0, y0, zt;             /* box: x0..x1, y0..y1, z0..zt */
+	int x0, y0, zt;             /* untrimmed box: x0..x1, y0..y1, z0..zt */
+	int cx1, cy1, cx0, cy0, czt, czb;   /* collision box kept by the game (trimmed by header bytes 0Eh, 1Ah, 1Bh) */
 	int solid;                  /* sprite header flag (file byte 12) bit 0 clear: blocks movement */
 	const ObjSprite *sp;
 	int sx, sy;                 /* projected top-left of the sprite */

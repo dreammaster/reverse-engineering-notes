@@ -533,6 +533,14 @@ write tracing):
   `x0 <= ds:5DF and y0 <= ds:5E0` (always 2 and 10 in level 1), `x0 < rec[21]`, `y0 < rec[20]`, or a door rectangle (`ds:54`, unused in
   level 1); results `flag = FDh` mark a solid overlap. If the mover leaves the room the routine looks for an **exit entry**
   (list at `ss:[3A]`, 50-byte entries in the *stack* segment) it touches and returns `count = FEh` with that exit's id.
+* **Collision box trimming (`sub_14CB9`, verified):** the entry's box is the sprite box (sizes = header words 8..10) *trimmed* by
+  three header bytes: byte `0Eh` (z: top −= low nibble, base += high nibble), byte `1Ah` (x: `x1` −= low, `x0` += high) and
+  byte `1Bh` (y: `y1` −= low, `y0` += high). `tools/objplace.py trimmed_box`, `object_trimmed_box` in `src/engine/roomobjs.c`.
+* **Cross-check of thing → entry → screen position on levels 1–5 (`tools/verify_objects.py`, ground truth from `tools/oracle_rooms.py`,
+  which calls the original's `room_enter` and `object_project` for every room):** of 3153 placed things, ~2480 plain sprites have
+  an entry with exactly the predicted trimmed box and exactly the predicted screen position. The rest are animated blocks (the game adds the
+  current frame's offset: compared separately), compound blocks (rope segments: header flag `04` without a frame script), objects clipped at the top
+  of the view (the game clamps y to 0), and the special rooms 69/78/84 whose lists contain things that do not appear as entries.
 * **Exits (verified against the original for every room of levels 1–5 — 363 rooms, one room with an odd record excepted —, `tools/roomexits.py`, `src/engine/roomexits.c`):** the room record lists up to 7
   *door ids* (u16be at `+6`, `FFFF` unused). A door id indexes MP2 section 1 (8-byte records `x y ?? ?? len ori ?? ??`: `x, y` = global
   map cell, `len` = 1 or 2 cells, `ori` = 0 / 1 = door along y / along x); the room record's `+1`, `+3` are the room's own map origin.

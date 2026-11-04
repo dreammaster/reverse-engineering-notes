@@ -35,3 +35,20 @@ def project(x1, y1, z0, hdr, origin_px):
 
 def box(x1, y1, z0, hdr):
     return x1 - hdr[8] + 1, y1 - hdr[9] + 1, z0 + hdr[10] - 1
+
+
+def trimmed_box(x1, y1, z0, hdr32):
+    """The collision box the game keeps in the object entry (x1, y1, x0, y0, z_top, z_base), CAD.EXE sub_14CB9: the sprite's box
+    (sizes = header words 8..10) is trimmed by header bytes 0Eh (z: top -= low nibble, base += high nibble), 1Ah (x: x1 -= low,
+    x0 += high) and 1Bh (y: y1 -= low, y0 += high).  hdr32 = the 32 header bytes."""
+    hw = struct.unpack('>16H', hdr32)
+    x0, y0, zt = x1 - hw[8] + 1, y1 - hw[9] + 1, z0 + hw[10] - 1
+    zb = z0
+    b = hdr32
+    if b[0x0E]:
+        zt -= b[0x0E] & 15; zb += b[0x0E] >> 4
+    if b[0x1A]:
+        x1 -= b[0x1A] & 15; x0 += b[0x1A] >> 4
+    if b[0x1B]:
+        y1 -= b[0x1B] & 15; y0 += b[0x1B] >> 4
+    return tuple(v & 0xFF for v in (x1, y1, x0, y0, zt, zb))

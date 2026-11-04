@@ -22,6 +22,16 @@ void object_project(int x1, int y1, int z0, const uint8_t hdr[32], int gx, int g
 	*sy = (p - *sx) / 320;
 }
 
+void object_trimmed_box(int x1, int y1, int z0, const uint8_t hdr[32], int8_t out[6]) {
+	int x0, y0, zt;
+	object_box(x1, y1, z0, hdr, &x0, &y0, &zt);
+	int zb = z0;
+	if (hdr[0x0E]) { zt -= hdr[0x0E] & 15; zb += hdr[0x0E] >> 4; }
+	if (hdr[0x1A]) { x1 -= hdr[0x1A] & 15; x0 += hdr[0x1A] >> 4; }
+	if (hdr[0x1B]) { y1 -= hdr[0x1B] & 15; y0 += hdr[0x1B] >> 4; }
+	out[0] = (int8_t)x1; out[1] = (int8_t)y1; out[2] = (int8_t)x0; out[3] = (int8_t)y0; out[4] = (int8_t)zt; out[5] = (int8_t)zb;
+}
+
 void object_box(int x1, int y1, int z0, const uint8_t hdr[32], int *x0, int *y0, int *zt) {
 	*x0 = x1 - hw(hdr, 8) + 1;
 	*y0 = y1 - hw(hdr, 9) + 1;
@@ -95,6 +105,11 @@ int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int roo
 			o->an.cnt = o->an.cad = 1;
 		}
 		object_box(o->x1, o->y1, o->z0, sp->header, &o->x0, &o->y0, &o->zt);
+		{
+			int8_t tb[6];
+			object_trimmed_box(o->x1, o->y1, o->z0, sp->header, tb);
+			o->cx1 = tb[0]; o->cy1 = tb[1]; o->cx0 = tb[2]; o->cy0 = tb[3]; o->czt = tb[4]; o->czb = tb[5];
+		}
 		o->solid = !(sp->header[12] & 1);
 		o->animated = anim_script_len(sp) > 0;
 		o->first = objsprite_initial_frame(sp);

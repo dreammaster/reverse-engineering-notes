@@ -292,8 +292,8 @@ static void walker_world(Walker *wk, RoomView *rv) {
 	for (int i = 0; i < rv->ro.n; i++) {
 		const RoomObj *o = &rv->ro.o[i];
 		ColBox *b = &wk->objs[i];
-		b->x1 = (int8_t)o->x1; b->y1 = (int8_t)o->y1; b->x0 = (int8_t)o->x0; b->y0 = (int8_t)o->y0;
-		b->zt = (int8_t)o->zt; b->zb = (int8_t)o->z0;
+		b->x1 = (int8_t)o->cx1; b->y1 = (int8_t)o->cy1; b->x0 = (int8_t)o->cx0; b->y0 = (int8_t)o->cy0;
+		b->zt = (int8_t)o->czt; b->zb = (int8_t)o->czb;
 		b->solid = o->solid;
 		b->id = o->thing;
 	}

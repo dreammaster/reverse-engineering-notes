@@ -26,6 +26,11 @@ for n,r in enumerate(secs[0]['records']):
     rw=lambda b,o:b[o]|b[o+1]<<8
     if rw(ds,0x232)!=n: continue
     ex=[ss[rw(ds,0x3a)+50*i:rw(ds,0x3a)+50*i+50] for i in range(rw(ds,0x22e))]
-    out[n]=dict(b=[ds[o] for o in (0x5D1,0x5D2,0x5DF,0x5E0,0x5F4,0x5F5)],z54=rw(ds,0x54),rects=ds[0x5E4:0x5F4],exits=ex,nobj=rw(ds,0x224),f9=ds[0x5F9])
+    ents0=rw(ds,0x2a); nob=rw(ds,0x224); proj=[]
+    for i in range(nob):
+        try: call(e,0x5A61,esi=ents0+50*i,ds=0x1F17)
+        except Exception: pass
+        eb=e.rd(0x1F17,ents0+50*i,50); proj.append((eb[0x0C]|eb[0x0D]<<8,eb[0x10],eb[0x11]))
+    out[n]=dict(proj=proj,b=[ds[o] for o in (0x5D1,0x5D2,0x5DF,0x5E0,0x5F4,0x5F5)],z54=rw(ds,0x54),rects=ds[0x5E4:0x5F4],exits=ex,nobj=rw(ds,0x224),f9=ds[0x5F9],ents=ds[rw(ds,0x2a):rw(ds,0x2a)+50*rw(ds,0x224)],player=ds[rw(ds,0x5c):rw(ds,0x5c)+16])
 pickle.dump(out,open('rooms_lv%d.pkl'%lv,'wb'))
 print(lv,len(out),'rooms; distinct (5DF,5E0):',set((o['b'][2],o['b'][3]) for o in out.values()),'z54',set(o['z54'] for o in out.values()))

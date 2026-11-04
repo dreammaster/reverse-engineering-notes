@@ -174,17 +174,19 @@ def collision_vector(seed):
 coll_vec = [(s, collision_vector(s)) for s in range(1, 41)]
 
 # room exits of every room of every level directory: Python roomexits.py vs src/engine/roomexits.c
-import roomexits
+import roomexits, objplace
 exit_vec = []
 for d in sorted(glob.glob(os.path.join(root, 'cadaver*', '*', '[0-9]'))):
     mp1 = mjm.mjm_unpack(open(glob.glob(os.path.join(d, 'LEV*.MP1'))[0], 'rb').read())
     mp2 = mjm.mjm_unpack(open(glob.glob(os.path.join(d, 'LEV*.MP2'))[0], 'rb').read())
     secs = mpsections.mp2_sections(mp2)
     parsed = {}
+    rawhdr = {}
     for bi, (sz, blk) in enumerate(objsprites.blocks(mp1)):
         p = objsprites.parse_sprite_block(blk) if sz > 1 else None
         if p:
             parsed[bi] = struct.unpack('>16H', p[0])
+            rawhdr[bi] = p[0]
     hd = lambda i: (parsed[i][8], parsed[i][9], parsed[i][10]) if i in parsed else None
     h = 0x811C9DC5
     cnt = 0
@@ -197,6 +199,21 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver*', '*', '[0-9]'))):
             for v in (n,) + tuple(e):
                 for sh in (0, 8, 16, 24):
                     h = ((h ^ ((v >> sh) & 0xFF)) * 0x01000193) & 0xFFFFFFFF
+        if not secs[3]['present']:
+            continue
+        rl = secs[2]['records'][n] if n < len(secs[2]['records']) and secs[2]['present'][n] else b''
+        for k in range(len(rl) // 2):
+            t = (rl[2 * k] << 8) | rl[2 * k + 1]
+            tr = secs[3]['records'][t] if t < len(secs[3]['records']) and secs[3]['present'][t] else b''
+            if len(tr) < 8 or tr[3] & 0x80:
+                continue
+            bk = (tr[6] << 8) | tr[7]
+            if bk not in parsed:
+                continue
+            for v in (n, t) + objplace.trimmed_box(tr[0], tr[1], tr[2], rawhdr[bk]):
+                for sh in (0, 8, 16, 24):
+                    h = ((h ^ ((v >> sh) & 0xFF)) * 0x01000193) & 0xFFFFFFFF
+            cnt += 1000000
     exit_vec.append((os.path.relpath(d, root), cnt, h))
 
 with open(os.path.join(root, 'src', 'tests', 'vectors.h'), 'w') as o:
