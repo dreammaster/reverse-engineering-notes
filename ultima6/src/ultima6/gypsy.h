@@ -79,6 +79,7 @@ struct NewCharacter {
 	bool female;
 	int portrait; // 0-5
 	GypsyQuiz::Stats stats;
+	int level = LEVEL, experience = EXPERIENCE, hitPoints = HIT_POINTS; // a transferred character has its own
 
 	/**
 	 * Patches the new-game objlist template (0x1C73 bytes, the tail of LZDNGBLK): actor 1's

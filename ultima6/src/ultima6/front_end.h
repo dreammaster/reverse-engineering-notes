@@ -7,6 +7,7 @@
 #include "files/shape.h"
 #include "files/tile_data.h"
 #include "ultima6/gypsy.h"
+#include "ultima6/transfer.h"
 
 #include <memory>
 #include <string>
@@ -26,7 +27,7 @@ namespace Ultima6 {
  */
 class FrontEnd {
 public:
-	enum State { MENU, NAME, SEX, PORTRAIT, QUIZ, RESULT, MESSAGE, INTRO, DONE, QUIT };
+	enum State { MENU, NAME, SEX, PORTRAIT, QUIZ, RESULT, MESSAGE, INTRO, TRANSFER, DONE, QUIT };
 
 	explicit FrontEnd(const std::string &dir);
 
@@ -83,6 +84,10 @@ private:
 	bool _hasSavedGame = false;
 	int _portrait = 0;
 	std::string _name;
+	std::vector<TransferCharacter> _found; // the characters of Ultima V / IV that were found
+	int _pick = 0;
+	bool _transfer = false; // the character being made comes from an older game
+	void startTransfer();
 };
 
 } // namespace Ultima6

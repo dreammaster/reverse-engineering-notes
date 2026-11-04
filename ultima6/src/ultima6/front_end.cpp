@@ -2,6 +2,7 @@
 
 #include <cctype>
 #include <cstdio>
+#include <cstdlib>
 #include <ctime>
 
 namespace Ultima6 {
@@ -159,6 +160,19 @@ void FrontEnd::render(Framebuffer &screen) {
 		}
 		break;
 	}
+	case TRANSFER: {
+		setPalette(screen, 0);
+		int c = brightest(0);
+		text(screen, 40, 20, "TRANSFER A CHARACTER", c);
+		for (size_t i = 0; i < _found.size() && i < 12; ++i) {
+			char buf[80];
+			const TransferCharacter &t = _found[i];
+			std::snprintf(buf, sizeof buf, "%c %-8s %s  Str %d Dex %d Int %d", (int)i == _pick ? '>' : ' ', t.name.c_str(), t.fromUltimaIV ? "IV" : "V ", t.strength, t.dexterity, t.intelligence);
+			text(screen, 24, 40 + 12 * (int)i, buf, c);
+		}
+		text(screen, 24, 188, "Up/Down, Enter to take, Esc to leave", c);
+		break;
+	}
 	case MESSAGE: {
 		setPalette(screen, 0);
 		wrapped(screen, 40, 80, 30, _message, brightest(0));
@@ -214,10 +228,40 @@ void FrontEnd::render(Framebuffer &screen) {
 	}
 }
 
+// transfer_character_menu: looks for Ultima V's SAVED.GAM and Ultima IV's PARTY.SAV (in the game's directory, an ULTIMA directory beside it or inside it, and the directory
+// the environment variable U6_TRANSFER_DIR names) and lists the characters in them
+void FrontEnd::startTransfer() {
+	_found.clear();
+	std::vector<std::string> dirs;
+	if (const char *env = std::getenv("U6_TRANSFER_DIR"))
+		dirs.push_back(env);
+	dirs.push_back(_dir);
+	dirs.push_back(joinPath(_dir, "ULTIMA"));
+	dirs.push_back(joinPath(_dir, "SAVEGAME"));
+	dirs.push_back(joinPath(_dir, "../ULTIMA"));
+	dirs.push_back(".");
+	for (const std::string &d : dirs) {
+		Bytes b;
+		if (readFile(joinPath(d, "SAVED.GAM"), b))
+			TransferCharacter::readUltimaV(b, _found);
+		if (readFile(joinPath(d, "PARTY.SAV"), b))
+			TransferCharacter::readUltimaIV(b, _found);
+		if (!_found.empty())
+			break;
+	}
+	if (_found.empty()) {
+		showMessage("No character found! SAVED.GAM of Ultima V or PARTY.SAV of Ultima IV must be in the game's directory (or U6_TRANSFER_DIR).");
+		return;
+	}
+	_pick = 0;
+	_state = TRANSFER;
+}
+
 void FrontEnd::startCreation() {
 	_name.clear();
 	_character = NewCharacter();
 	_created = false;
+	_transfer = false;
 	_portrait = 0;
 	_state = NAME;
 }
@@ -257,7 +301,7 @@ bool FrontEnd::handleKey(int key) {
 				startCreation();
 				break;
 			case 2:
-				showMessage("Characters cannot yet be transferred from Ultima V or IV.");
+				startTransfer();
 				break;
 			case 3:
 				showMessage("Ultima VI: The False Prophet. Written by Richard Garriott, Origin Systems, Inc.");
@@ -277,6 +321,21 @@ bool FrontEnd::handleKey(int key) {
 		break;
 	case MESSAGE:
 		_state = _after;
+		break;
+	case TRANSFER:
+		if (key == KEY_UP)
+			_pick = (_pick + (int)_found.size() - 1) % (int)_found.size();
+		else if (key == KEY_DOWN)
+			_pick = (_pick + 1) % (int)_found.size();
+		else if (key == KEY_ESC)
+			_state = MENU;
+		else if (key == KEY_ENTER) {
+			_character = _found[_pick].toNewCharacter();
+			_name = _character.name;
+			_transfer = true;
+			_portrait = 0;
+			_state = PORTRAIT;
+		}
 		break;
 	case INTRO:
 		if (key == KEY_ESC || ++_introPage >= (int)(sizeof(INTRO_PAGES) / sizeof(INTRO_PAGES[0])))
@@ -308,10 +367,15 @@ bool FrontEnd::handleKey(int key) {
 			_portrait = (_portrait + 1) % 6;
 		else if (key == KEY_ENTER) {
 			_character.portrait = (_character.female ? 0 : 6) + _portrait;
-			_quiz.reset(new GypsyQuiz(_rng));
-			_state = QUIZ;
+			if (_transfer) { // no gypsy for a character that comes from an older game
+				_created = true;
+				_state = RESULT;
+			} else {
+				_quiz.reset(new GypsyQuiz(_rng));
+				_state = QUIZ;
+			}
 		} else if (key == KEY_ESC)
-			_state = SEX;
+			_state = _transfer ? TRANSFER : SEX;
 		break;
 	case QUIZ:
 		if (key == 'a' || key == 'A')

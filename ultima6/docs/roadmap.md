@@ -46,7 +46,7 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 - [x] Since then: the Use command (`use.cpp`), Move, moon gates and the Orb, books and signs, shrines, fountains, buckets, fishing, the ending, the introduction (slide show), more spells.
 - [x] Also since: wind and rafts/balloons, combat mode (key X), retreat/guard/work/tangle worktypes, field/Peer/Tremor and other spells (about 85 % of the 64 listed), gems, telescope, crystal ball, silver horn, cannon, Drop.
 - [ ] Not yet (U6): the drawbridge crank (`sub_335D7`), multi-part ships and ship cannons, `wt_combat_rear/flank/berserk/like/unfriendly`, `wt_walk_path`, the remaining spells (Detect Magic/Trap, Trap, Untrap,
-      Help, Animate, Wing Strike, Web, Enchant, Gate Travel, Seance, X-ray, Slime), alcohol, the original's mouse interface, character transfer, sound and music, the animated introduction and title
+      Help, Animate, Wing Strike, Web, Enchant, Gate Travel, Seance, X-ray, Slime), alcohol, the original's mouse interface, sound and music, the animated introduction and title
       sequence, and replacing every entry of [approximations.md](approximations.md) (see its numbered list).
 
 ## 4. Martian Dreams and Savage Empire

@@ -138,10 +138,10 @@ bool NewCharacter::applyTo(Bytes &objlist) const {
 	o[OFF_GENDER] = female ? 1 : 0;
 	std::memset(o + OFF_NAMES, 0, MAX_NAME + 1);
 	std::memcpy(o + OFF_NAMES, name.data(), name.size() < (size_t)MAX_NAME ? name.size() : (size_t)MAX_NAME);
-	o[OFF_EXP + AVATAR * 2] = EXPERIENCE & 0xFF;
-	o[OFF_EXP + AVATAR * 2 + 1] = EXPERIENCE >> 8;
-	o[OFF_HP + AVATAR] = HIT_POINTS;
-	o[OFF_LEVEL + AVATAR] = LEVEL;
+	o[OFF_EXP + AVATAR * 2] = experience & 0xFF;
+	o[OFF_EXP + AVATAR * 2 + 1] = (experience >> 8) & 0xFF;
+	o[OFF_HP + AVATAR] = (uint8_t)hitPoints;
+	o[OFF_LEVEL + AVATAR] = (uint8_t)level;
 	o[OFF_PORTRAIT] = (uint8_t)(portrait + 1);
 	return true;
 }
