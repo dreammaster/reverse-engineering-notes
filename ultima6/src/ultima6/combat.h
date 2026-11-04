@@ -64,6 +64,8 @@ public:
 	}
 	/** One attack; prints what happened. True if the defender died. */
 	bool attack(int attacker, int defender);
+	/** The same with a chosen weapon type (the attacker's own type for bare hands, the ship for cannons). */
+	bool attackWith(int attacker, int defender, int weapon);
 
 private:
 	bool hitCheck(int attacker, int defender, int weapon);

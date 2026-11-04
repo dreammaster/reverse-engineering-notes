@@ -242,10 +242,13 @@ void Combat::die(int actor) {
 }
 
 bool Combat::attack(int attacker, int defender) {
+	return attackWith(attacker, defender, weaponType(attacker));
+}
+
+bool Combat::attackWith(int attacker, int defender, int weapon) {
 	int ka = _world.actorObject(attacker), kd = _world.actorObject(defender);
 	if (ka < 0 || kd < 0)
 		return false;
-	int weapon = weaponType(attacker);
 	std::string name = nameOf(defender);
 
 	if (!hitCheck(attacker, defender, weapon)) {

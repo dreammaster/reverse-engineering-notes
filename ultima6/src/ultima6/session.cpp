@@ -461,15 +461,24 @@ void Game::command(int key) {
 		_invocation.clear();
 		break;
 	case 'A':
-		message("Attack-");
+		message("Attack");
 		if (_aboard && _world.objects[_leaderObject].type != 0x19C) { // cmd_attack: only a ship can fight
-			message("Not while aboard ship!\n");
+			message("-Not while aboard ship!\n");
 			prompt();
 			break;
 		}
-		_pending = 'a';
-		_cursor = true;
-		_cx = _cy = 5;
+		message(" ");
+		// sub_2D7B5: the weapons the attacker holds in its hands (up to eight)
+		_attackWeapons.clear();
+		_attackIndex = 0;
+		{
+			std::vector<int> inv;
+			_world.inventory(_world.actors.partyRoster[_member], inv, false);
+			for (int i : inv)
+				if (_world.objects[i].location() == ObjRecord::READIED && Combat::weaponDamageOf(_world.objects[i].type) >= 0 && _attackWeapons.size() < 8)
+					_attackWeapons.push_back(i);
+		}
+		attackWeapon();
 		break;
 	case 'G':
 		message("Get-");

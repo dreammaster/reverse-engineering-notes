@@ -131,42 +131,78 @@ void Game::followLeader(int mode) {
 		}
 	}
 }
-// Attack: hit the creature or person on the square.
-// APPROX(18): not the original's exact behaviour, see docs/approximations.md
+// cmd_attack / sub_2D7B5 / sub_2D865: "Attack with <weapon>-" and the cursor, once for each weapon in the attacker's hands ("with bare hands-" with none, "with ship cannons-" on a ship)
+void Game::attackWeapon() {
+	if (_attackWeapons.empty()) {
+		message(_aboard ? "with ship cannons-" : "with bare hands-");
+	} else {
+		message("with " + Describe::object(_world, _world.objects[_attackWeapons[_attackIndex]]) + "-");
+	}
+	_pending = 'a';
+	_cursor = true;
+	_cx = _cy = 5;
+}
+
+// sub_2D865 and perform_attack: a bow wants arrows and a crossbow bolts ("Out of arrows!", "Out of bolts!"); the target is named ("pass." for oneself, "nothing!" for an empty square,
+// the terrain else); beyond the weapon's reach "Out of range!"; a weapon that hits costs one arrow or bolt either way. Then the next weapon is asked about, and the blows cost 10 moves.
+// APPROX(18): perform_attack's shots that go astray, the flight of missiles (`sub_2BB89`), the triple crossbow, thrown weapons breaking and the spell charges (0x150, 0x39) are not done
 void Game::attackAt(int tx, int ty) {
-	std::vector<int> here;
-	_world.objectsAt(tx, ty, z, here);
-	int target = -1;
-	for (int i : here)
-		if (_world.objects[i].actor >= 0 && _world.objects[i].actor != 1)
-			target = _world.objects[i].actor;
 	int attacker = _world.actors.partyRoster[_member];
-	if (target < 0) {
-		message("nothing!\n");
-		prompt();
-		return;
-	}
-	int weapon = _aboard && _world.objects[_leaderObject].type == 0x19C ? 0x19C : _combat.weaponType(attacker); // a ship fires its cannons (weapon_range of the vehicle: range 5, damage 30)
-	int k = _world.actorObject(target);
-	int dist = std::max(std::abs((int)_world.objects[k].x - x), std::abs((int)_world.objects[k].y - y));
-	if (dist > Combat::rangeOf(weapon)) {
-		message("Out of range!\n");
-		prompt();
-		return;
-	}
-	// ammunition: arrows (0x37) for the bows, bolts (0x38) for the crossbows
-	int ammo = (weapon == 41 || weapon == 54) ? 0x37 : (weapon == 42 || weapon == 50) ? 0x38 : 0;
+	int weaponIdx = _attackIndex < _attackWeapons.size() ? _attackWeapons[_attackIndex] : -1;
+	int weapon = weaponIdx >= 0 ? _world.objects[weaponIdx].type : _aboard && _world.objects[_leaderObject].type == 0x19C ? 0x19C : _world.objects[_world.actorObject(attacker)].type; // a ship fires its cannons
+	message("\n");
+	// the arrows and bolts
+	int ammo = (weapon == 0x29 || weapon == 0x36) ? 0x37 : (weapon == 0x2A || weapon == 0x32) ? 0x38 : 0;
+	bool done = false;
+	int have = 0;
 	if (ammo) {
-		if (!_world.removeFromInventory(attacker, ammo, 0, 1)) {
-			message(ammo == 0x37 ? "Out of arrows!\n" : "Out of bolts!\n");
-			prompt();
-			return;
+		std::vector<int> inv;
+		_world.inventory(attacker, inv);
+		for (int i : inv)
+			if (_world.objects[i].type == ammo)
+				have += _world.quantityOf(_world.objects[i]);
+	}
+	if (ammo && have == 0) { // none to be had: the weapon is skipped
+		message(ammo == 0x37 ? "Out of arrows!\n" : "Out of bolts!\n");
+		done = true;
+	}
+	int target = -1;
+	std::vector<int> here;
+	if (!done) {
+		_world.objectsAt(tx, ty, z, here);
+		for (int i : here)
+			if (_world.objects[i].actor >= 0)
+				target = _world.objects[i].actor;
+		if (target == attacker) {
+			message("pass.\n");
+			done = true;
+		} else if (target >= 0) {
+			message(_combat.nameOf(target) + ".\n");
+		} else {
+			message("nothing!\n");
 		}
 	}
-	_combat.attack(attacker, target);
+	if (!done && target >= 0) {
+		int k = _world.actorObject(target);
+		int dx = std::abs((int)_world.objects[k].x - x), dy = std::abs((int)_world.objects[k].y - y);
+		static const uint8_t DIST[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
+										   {4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
+		if (dx >= 8 || dy >= 8 || DIST[dx][dy] > Combat::rangeOf(weapon)) {
+			message("Out of range!\n");
+		} else {
+			if (ammo)
+				_world.removeFromInventory(attacker, ammo, 0, 1);
+			_combat.attackWith(attacker, target, weapon);
+		}
+	}
 	_world.spendMoves(attacker, 10); // sub_2DA99: sub_26CC4(attacker, 0x0A)
 	if (_world.actors.hp[1] == 0 && (_world.actors.status[1] & 0x10))
 		avatarDied();
+	if (++_attackIndex < _attackWeapons.size()) { // the next weapon in the hands
+		message("\nAttack ");
+		attackWeapon();
+		return;
+	}
 	prompt();
 }
 

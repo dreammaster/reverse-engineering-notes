@@ -111,6 +111,9 @@ private:
 	void partyHazards();
 	void castAt(int tx, int ty);
 	void attackAt(int tx, int ty);
+	void attackWeapon(); // announces the weapon of this round of the Attack command and asks for a target
+	std::vector<int> _attackWeapons; // sub_2D7B5: the readied weapons (up to 8) the Attack command goes through, one target for each
+	size_t _attackIndex = 0;
 	std::unique_ptr<Talk> _talk; // a conversation in progress
 	int _cx = 5, _cy = 5;        // cursor cell in the map view while targeting with it
 	bool _cursor = false;
