@@ -4,11 +4,17 @@
 #include "engine/game_id.h"
 
 #include <cstdint>
+#include <vector>
 
 namespace Ultima6 {
 namespace Ultima6 {
 
 struct CreatureStats;
+
+/** A weapon or armour type and its damage, range or armour class. */
+struct TypeValue {
+	int type, value;
+};
 
 /**
  * The numbers each game keeps in its executable and the shared code asks for: the creature types with a movement class of their own and the class flags,
@@ -21,6 +27,7 @@ struct GameTables {
 	int classCount = 0;
 	const CreatureStats *creatures = nullptr;
 	int creatureCount = 0;
+	std::vector<TypeValue> damage, range, armour; // weapon_damage, weapon_range and armour class lists
 };
 
 /** Chooses the tables of a game (World::load does it); until then they are Ultima VI's. */
@@ -29,6 +36,7 @@ const GameTables &activeTables();
 
 /** Ultima VI's own tables, which live where they are used. */
 const CreatureStats *u6CreatureTable(int &count);
+void u6WeaponTables(GameTables &t);
 void u6ClassTable(const uint16_t *&types, const uint16_t *&flags, int &count);
 
 } // namespace Ultima6

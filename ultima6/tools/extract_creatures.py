@@ -33,6 +33,14 @@ def reverse15(word):
     return out
 
 
+# the weapon damage, weapon range and armour class lists: (offset of the types, offset of the values, entries) from the start of the data segment, which starts
+# at this file offset in each executable; found from the three small look-up functions (docs/spinoffs.md)
+WEAPONS = {
+    "md": (208560, {"DAMAGE": (0xBB2, 0xBF2, 32), "RANGE": (0xC12, 0xC36, 18), "ARMOUR": (0xCFA, 0xD3E, 34)}),
+    "se": (208480, {"DAMAGE": (0x105E, 0x1094, 27), "RANGE": (0xF56, 0xF72, 14), "ARMOUR": (0xF3E, 0xF4E, 8)}),
+}
+
+
 def main():
     path, game = sys.argv[1], sys.argv[2]
     base, count, step, strs, flags = LAYOUTS[game]
@@ -48,6 +56,11 @@ def main():
         s, dx, it, ex, dm, hp, al = (cols[c][i] for c in range(7))
         print("\t{%d, %d, %d, %d, %d, %d, %d, 0x%X, %d}, // class %d" % (types[i], s, dx, it, hp, dm, ALIGN[al & 0x60], reverse15(cflags[i]), ex, i))
     print("};")
+    if game in WEAPONS:
+        ds, lists = WEAPONS[game]
+        for name, (tOff, vOff, n) in lists.items():
+            pairs = ["{%d, %d}" % (struct.unpack_from("<H", d, ds + tOff + 2 * i)[0], d[ds + vOff + i]) for i in range(n)]
+            print("static const TypeValue %s_%s[] = {%s};" % (game.upper(), name, ", ".join(pairs)))
 
 
 main()

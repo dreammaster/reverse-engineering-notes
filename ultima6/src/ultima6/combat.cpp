@@ -26,24 +26,33 @@ const CreatureStats *Combat::stats(int type) {
 	return nullptr;
 }
 
-int Combat::weaponDamageOf(int type) {
+void u6WeaponTables(GameTables &t) {
 	for (const auto &w : WEAPON_DAMAGE)
+		t.damage.push_back(TypeValue{w.type, w.damage});
+	for (const auto &r : WEAPON_RANGE)
+		t.range.push_back(TypeValue{r.type, r.range});
+	for (const auto &a : ARMOUR)
+		t.armour.push_back(TypeValue{a.type, a.armour});
+}
+
+int Combat::weaponDamageOf(int type) {
+	for (const TypeValue &w : activeTables().damage)
 		if (w.type == type)
-			return w.damage;
+			return w.value;
 	return -1;
 }
 
 int Combat::rangeOf(int type) {
-	for (const auto &r : WEAPON_RANGE)
+	for (const TypeValue &r : activeTables().range)
 		if (r.type == type)
-			return r.range;
+			return r.value;
 	return 1;
 }
 
 int Combat::armourOf(int type) {
-	for (const auto &a : ARMOUR)
+	for (const TypeValue &a : activeTables().armour)
 		if (a.type == type)
-			return a.armour;
+			return a.value;
 	return 0;
 }
 

@@ -16,6 +16,7 @@ void selectTables(GameId id) {
 		g_active = GameTables();
 		g_active.creatures = u6CreatureTable(g_active.creatureCount);
 		u6ClassTable(g_active.classTypes, g_active.classFlags, g_active.classCount);
+		u6WeaponTables(g_active);
 	}
 }
 

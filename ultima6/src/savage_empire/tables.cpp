@@ -6,6 +6,7 @@ namespace SavageEmpire {
 
 using ::Ultima6::Ultima6::CreatureStats;
 using ::Ultima6::Ultima6::GameTables;
+using ::Ultima6::Ultima6::TypeValue;
 
 #include "savage_empire/tables.inc"
 
@@ -16,6 +17,9 @@ const GameTables &tables() {
 	t.classCount = sizeof(SE_CLASS_TYPES) / sizeof(SE_CLASS_TYPES[0]);
 	t.creatures = SE_CREATURES;
 	t.creatureCount = sizeof(SE_CREATURES) / sizeof(SE_CREATURES[0]);
+	t.damage.assign(SE_DAMAGE, SE_DAMAGE + sizeof(SE_DAMAGE) / sizeof(SE_DAMAGE[0]));
+	t.range.assign(SE_RANGE, SE_RANGE + sizeof(SE_RANGE) / sizeof(SE_RANGE[0]));
+	t.armour.assign(SE_ARMOUR, SE_ARMOUR + sizeof(SE_ARMOUR) / sizeof(SE_ARMOUR[0]));
 	return t;
 }
 
