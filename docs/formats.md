@@ -296,7 +296,8 @@ level directories, unit-tested).
 ```
 u32be tile_bytes (17 280 in level 1 = 60 tiles)
 tile_bytes / 288 tiles of 288 bytes; tile 0 is empty
-rest of the file (~41 KB)   not decoded
+u32be length (40960 in the levels checked = 80 tiles)
+80 wall tiles of 512 bytes
 ```
 
 A tile is 32×18 pixels: 18 rows of 16 bytes; each row = two 16-pixel groups of four
@@ -307,6 +308,19 @@ derives the mask as the OR of the four plane words and stores `mask + 4 planes`
 `36EF:000A + 360 * id`. Verified by finding the file bytes of tiles 1–3 in the RAM tiles
 and by rendering all 60 tiles (isometric diamonds with an edge: water, stepping
 stones, cave rock; in the Payoff paving and so on).
+
+**Second block: wall tiles.** The same loader function (`CAD.EXE 1000:B87C…B94A`, after the
+floor tiles) reads a second `u32be` length and then 512-byte chunks (32 rows of 16 bytes,
+same ST-interleaved layout), converting each into `mask + 4 planes` (5 × 128 bytes) for
+a 32×32 pixel tile. They are the isometric wall blocks the room walls are built from
+(cave-rock cubes in level 1, gold/Egyptian blocks in Payoff level 3); 80 per level, the
+ids used by the wall layouts in `MP1` section 1 (§6.5) go up to `0x4F`. After this the
+function opens the language file (`ENGn.LNG` through the file table at `ss:4CD3`) and
+loads its offset table to `ss:[60]` byte-swapped to little endian (§5). The wall *layout*
+(MP1 section 1: per-room records that start `06 00 37 38 39 …` / `05 00 12 13 30 30 30 C2
+82 82 …`, where bytes with the high bit set look like run lengths/flags) is not decoded.
+`tools/roomview.py` (`load_wall_tiles`), `src/engine/rooms.c` (`walltiles_load`),
+and the `--scene tiles` viewer show them.
 
 ### 6.7 `ROUTINEn.TAD` and the script language
 

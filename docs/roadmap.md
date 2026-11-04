@@ -23,7 +23,8 @@ building oracles so later work can be *verified* rather than guessed.
 | Floor tiles (`MP3`) and floor maps (`MP1` section 0) | **Done** — isometric floor of every room renders like the game; Python + C, unit-tested on 14 level dirs; room viewer in the SDL app |
 | `LEVn.MP2` | Sections, room lists and the thing table decoded and named (Python + C, unit-tested on all 9 levels); thing record fields only partly understood |
 | `ANDATA` blocks | Container known, contents not |
-| `LEVn.MP1` sections 1–2, rest of `MP3`, `ROUTINEn.TAD` | Not decoded (walls/furniture, graphic blocks, scripts) |
+| Wall tiles (`MP3` block 2: 80 × 32×32) | **Done** (Python + C + tile viewer); the wall *layout* in `MP1` section 1 is not decoded |
+| `LEVn.MP1` sections 1–2, `ROUTINEn.TAD` | Not decoded (wall layouts, graphic blocks, scripts) |
 | Isometric renderer, objects, ACL interpreter, collision/AI, input, sound | **Not started** |
 | Cadaver 2 (Payoff) code differences | Not analysed (data differs only in `TATA/` and RNC-packed copies) |
 

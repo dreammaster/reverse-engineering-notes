@@ -199,7 +199,9 @@ int main(int argc, char **argv) {
 			TileSet ts;
 			FloorMaps fm;
 			Mp2 m;
+			TileSet wt;
 			rc = tiles_load(raw[2], rl[2], &ts);
+			if (rc == 0) { rc = walltiles_load(raw[2], rl[2], &wt); if (rc) tiles_free(&ts); }
 			if (rc == 0) rc = floormaps_parse(raw[0], rl[0], &fm);
 			if (rc == 0) rc = mp2_parse(raw[1], rl[1], &m);
 			unsigned h = 0x811C9DC5u;
@@ -207,6 +209,8 @@ int main(int argc, char **argv) {
 			if (rc == 0) {
 				for (int j = 0; j < ts.count * TILE_W * TILE_H; j++)
 					h = (h ^ ts.pixels[j]) * 0x01000193u;
+				for (int j = 0; j < wt.count * wt.w * wt.h; j++)
+					h = (h ^ wt.pixels[j]) * 0x01000193u;
 				uint16_t pal[16];
 				if (mp1_palette(raw[0], rl[0], pal) != 0)
 					rc = -98;
@@ -235,7 +239,7 @@ int main(int argc, char **argv) {
 				}
 				if (ts.count != rv->tiles || nrooms != rv->rooms || h != rv->hash)
 					rc = -99;
-				tiles_free(&ts); floormaps_free(&fm); mp2_free(&m);
+				tiles_free(&ts); tiles_free(&wt); floormaps_free(&fm); mp2_free(&m);
 			}
 			if (rc) { printf("FAIL %s: rc=%d (rooms %d)\n", rv->dir, rc, nrooms); failed++; }
 			checked++;

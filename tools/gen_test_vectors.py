@@ -64,7 +64,7 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
     secs = mpsections.mp2_sections(mp2)
     tiles = roomview.load_tiles(mp3)
     fms = roomview.floor_maps(mp1)
-    blob = b''.join(tiles) + struct.pack('<16H', *roomview.level_palette(mp1))
+    blob = b''.join(tiles) + b''.join(roomview.load_wall_tiles(mp3)) + struct.pack('<16H', *roomview.level_palette(mp1))
     nrooms = 0
     for i, fm in enumerate(fms):
         w, h = roomview.room_size(secs, i)

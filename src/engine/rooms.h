@@ -14,7 +14,8 @@
 
 typedef struct {
 	int count;
-	uint8_t *pixels;           /* count * TILE_W * TILE_H colour indices 0..15, TILE_TRANSPARENT = empty */
+	int w, h;                  /* 32x18 floor tiles, 32x32 wall tiles */
+	uint8_t *pixels;           /* count * w * h colour indices 0..15, TILE_TRANSPARENT = empty */
 } TileSet;
 
 typedef struct {
@@ -24,7 +25,8 @@ typedef struct {
 	int *len;
 } FloorMaps;
 
-int tiles_load(const uint8_t *mp3, size_t len, TileSet *ts);
+int tiles_load(const uint8_t *mp3, size_t len, TileSet *ts);      /* floor tiles: first MP3 block */
+int walltiles_load(const uint8_t *mp3, size_t len, TileSet *ts);  /* wall blocks: second MP3 block */
 void tiles_free(TileSet *ts);
 
 int floormaps_parse(const uint8_t *mp1, size_t len, FloorMaps *fm);

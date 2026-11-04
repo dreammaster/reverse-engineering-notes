@@ -3,22 +3,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-int tiles_load(const uint8_t *mp3, size_t len, TileSet *ts) {
-	memset(ts, 0, sizeof(*ts));
-	if (len < 4)
-		return -1;
-	size_t bytes = ((size_t)mp3[0] << 24) | (mp3[1] << 16) | (mp3[2] << 8) | mp3[3];
-	int n = (int)(bytes / 288);
-	if (4 + (size_t)n * 288 > len || n <= 0)
-		return -2;
-	ts->pixels = (uint8_t *)malloc((size_t)n * TILE_W * TILE_H);
+static uint32_t be32(const uint8_t *p) { return ((uint32_t)p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3]; }
+
+/* Convert n tiles of `rows` rows (16 bytes per row: two groups of four big-endian plane words). */
+static int tiles_convert(const uint8_t *src, int n, int rows, TileSet *ts) {
+	ts->pixels = (uint8_t *)malloc((size_t)n * TILE_W * rows);
 	if (!ts->pixels)
 		return -3;
 	ts->count = n;
+	ts->w = TILE_W;
+	ts->h = rows;
 	for (int k = 0; k < n; k++) {
-		const uint8_t *t = mp3 + 4 + 288 * (size_t)k;
-		uint8_t *out = ts->pixels + (size_t)k * TILE_W * TILE_H;
-		for (int y = 0; y < TILE_H; y++) {
+		const uint8_t *t = src + (size_t)k * 16 * rows;
+		uint8_t *out = ts->pixels + (size_t)k * TILE_W * rows;
+		for (int y = 0; y < rows; y++) {
 			for (int g = 0; g < 2; g++) {
 				const uint8_t *w = t + y * 16 + g * 8;       /* four big-endian plane words */
 				unsigned pl[4];
@@ -35,6 +33,31 @@ int tiles_load(const uint8_t *mp3, size_t len, TileSet *ts) {
 		}
 	}
 	return 0;
+}
+
+int tiles_load(const uint8_t *mp3, size_t len, TileSet *ts) {
+	memset(ts, 0, sizeof(*ts));
+	if (len < 4)
+		return -1;
+	size_t bytes = be32(mp3);
+	int n = (int)(bytes / 288);
+	if (4 + (size_t)n * 288 > len || n <= 0)
+		return -2;
+	return tiles_convert(mp3 + 4, n, TILE_H, ts);
+}
+
+int walltiles_load(const uint8_t *mp3, size_t len, TileSet *ts) {
+	memset(ts, 0, sizeof(*ts));
+	if (len < 8)
+		return -1;
+	size_t first = be32(mp3);
+	if (4 + first + 4 > len)
+		return -2;
+	size_t bytes = be32(mp3 + 4 + first);
+	int n = (int)(bytes / 512);
+	if (8 + first + (size_t)n * 512 > len || n <= 0)
+		return -2;
+	return tiles_convert(mp3 + 8 + first, n, 32, ts);
 }
 
 void tiles_free(TileSet *ts) {
@@ -89,7 +112,7 @@ void floor_render(const TileSet *ts, const uint8_t *map, int w, int h, uint8_t *
 			if (tid == 0 || (int)tid >= ts->count)
 				continue;
 			int ox = 16 * h + 16 * (col - row), oy = 8 * (col + row);
-			const uint8_t *t = ts->pixels + (size_t)tid * TILE_W * TILE_H;
+			const uint8_t *t = ts->pixels + (size_t)tid * TILE_W * TILE_H;  /* floor tiles are 32x18 */
 			for (int y = 0; y < TILE_H; y++) {
 				for (int x = 0; x < TILE_W; x++) {
 					uint8_t c = t[y * TILE_W + x];

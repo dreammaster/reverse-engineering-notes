@@ -5,7 +5,8 @@ Floor tiles and floor maps (LEVn.MP3 / LEVn.MP1).  See docs/formats.md sections 
 LEVn.MP3:  u32be tile_bytes, then tile_bytes/288 tiles.  Tile = 32x18 pixels, 18 rows of 16 bytes,
            each row = two 16-pixel groups of four big-endian plane words (Atari-ST interleaved,
            plane 0 = colour bit 0).  The game derives the mask as the OR of the four plane words.
-           Tile 0 is empty.  (CAD.EXE 1000:B7B5..B87x reads 288 bytes per tile via mjm_read and
+           A second block follows: u32be length (40960) and 80 tiles of 32x32 (512 bytes each, same layout) =
+           the isometric wall blocks (load_wall_tiles).  Tile 0 is empty.  (CAD.EXE 1000:B7B5..B87x reads 288 bytes per tile via mjm_read and
            builds the 360-byte mask+4-plane RAM tile at 36EF:000A + 360*id; used by 1000:D1FA.)
 LEVn.MP1:  72-byte preface, then three sections (each starts on an even offset; palette follows, see level_palette). A section {u32be data_len, u32be alloc_len, u16be count,
            count x (u16be size, u16be offset), data}; record i = floor map of room i: w*h tile ids
@@ -26,6 +27,26 @@ def load_tiles(mp3):
         t = mp3[4 + 288 * k:4 + 288 * (k + 1)]
         px = bytearray(32 * 18)
         for y in range(18):
+            for g in range(2):
+                ws = struct.unpack('>4H', t[y * 16 + g * 8:y * 16 + g * 8 + 8])
+                for b in range(16):
+                    bits = [(ws[p] >> (15 - b)) & 1 for p in range(4)]
+                    px[y * 32 + g * 16 + b] = sum(bits[p] << p for p in range(4)) if any(bits) else 0xFF
+        tiles.append(bytes(px))
+    return tiles
+
+
+def load_wall_tiles(mp3):
+    """Second MP3 block: u32be length (40960 = 80 tiles), then tiles of 32x32 pixels, 512 bytes each
+    (32 rows of 16 bytes, same ST-interleaved layout as the floor tiles).  Returns 32*32 byte pixel arrays."""
+    n1 = struct.unpack('>I', mp3[:4])[0]
+    n2 = struct.unpack('>I', mp3[4 + n1:8 + n1])[0]
+    blk = mp3[8 + n1:8 + n1 + n2]
+    tiles = []
+    for k in range(n2 // 512):
+        t = blk[k * 512:(k + 1) * 512]
+        px = bytearray(32 * 32)
+        for y in range(32):
             for g in range(2):
                 ws = struct.unpack('>4H', t[y * 16 + g * 8:y * 16 + g * 8 + 8])
                 for b in range(16):
