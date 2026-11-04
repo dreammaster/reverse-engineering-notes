@@ -65,7 +65,11 @@ public:
 	/** One attack; prints what happened. True if the defender died. */
 	bool attack(int attacker, int defender);
 	/** The same with a chosen weapon type (the attacker's own type for bare hands, the ship for cannons). */
-	bool attackWith(int attacker, int defender, int weapon);
+	bool attackWith(int attacker, int defender, int weapon, bool commanded = false);
+	/** sub_2CD10: a blow of `damage` (the most it can do: a number from 1 to it is rolled; -1 for 1) at a target by an attacker, with what comes of it. */
+	bool strike(int attacker, int target, int damage, bool commanded);
+	/** sub_2CAFE: a person yells for help: karma falls by 5, the guards come and the others nearby fight or run. */
+	void alertTownspeople();
 
 private:
 	bool hitCheck(int attacker, int defender, int weapon);

@@ -192,7 +192,7 @@ void Game::attackAt(int tx, int ty) {
 		} else {
 			if (ammo)
 				_world.removeFromInventory(attacker, ammo, 0, 1);
-			_combat.attackWith(attacker, target, weapon);
+			_combat.attackWith(attacker, target, weapon, true);
 		}
 	}
 	_world.spendMoves(attacker, 10); // sub_2DA99: sub_26CC4(attacker, 0x0A)
