@@ -271,6 +271,16 @@ bool Game::step(int dir) {
 		if (!canWalk(bx, by, z) || !canWalk(sx, sy, z))
 			return false;
 	}
+	// party_move 27B32-27C11: a member standing on the square the leader enters changes places with the leader (it goes to the square the leader leaves, facing the other way)
+	for (int m = 0; m < _world.actors.partySize; ++m) {
+		int member = _world.actors.partyRoster[m], mk = _world.actorObject(member);
+		if (mk < 0 || mk == _leaderObject || (_world.actors.status[member] & 0x10) || _world.objects[mk].type == 0x162)
+			continue;
+		if (_world.objects[mk].x == nx && _world.objects[mk].y == ny && _world.objects[mk].z == z) {
+			_world.moveObject(mk, oldX, oldY, z);
+			_actors.face(member, (dir + 4) & 7);
+		}
+	}
 	x = nx;
 	y = ny;
 	_world.moveObject(_leaderObject, x, y, z);
