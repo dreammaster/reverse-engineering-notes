@@ -253,6 +253,13 @@ bool Game::inventoryKey(int key) {
 		prompt();
 		return true;
 	}
+	if (_moveTarget) { // "To ": a party member by number, anything else is nobody
+		if (key >= '1' && key <= '8')
+			moveGive(key - '1');
+		else
+			moveGive(-1);
+		return true;
+	}
 	switch (key) {
 	case KEY_LEFT:
 		_selected = std::max(0, _selected - 1);
@@ -324,6 +331,11 @@ bool Game::inventoryKey(int key) {
 	case 'D':
 		if (_selected < count)
 			dropStart(_items[_selected]);
+		break;
+	case 'm':
+	case 'M':
+		if (_selected < count)
+			moveItemStart(_items[_selected]);
 		break;
 	case KEY_ESC:
 	case 'i':

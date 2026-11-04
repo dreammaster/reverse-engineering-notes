@@ -983,7 +983,7 @@ void Game::dropAt(int tx, int ty) {
 }
 
 // Puts `count` of an object into a container (a stack joins the one of its kind there) or onto a square, and marks it free to take.
-void Game::dropPlace(int idx, int count, int tx, int ty, int recipient) {
+void Game::dropPlace(int idx, int count, int tx, int ty, int recipient, bool free) {
 	World::Obj &o = _world.objects[idx];
 	int have = _world.quantityOf(o);
 	int placed = idx;
@@ -1000,14 +1000,15 @@ void Game::dropPlace(int idx, int count, int tx, int ty, int recipient) {
 				World::Obj &c = _world.objects[i];
 				if ((int)i != placed && !c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == recipient && c.type == _world.objects[placed].type && c.frame == _world.objects[placed].frame) {
 					_world.setQuantity(c, _world.quantityOf(c) + _world.quantityOf(_world.objects[placed]));
-					c.status |= 0x01;
+					if (free)
+						c.status |= 0x01;
 					_world.deleteObject(placed);
 					return;
 				}
 			}
 		}
 		World::Obj &d = _world.objects[placed];
-		d.status = (uint8_t)((d.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_CONTAINER | 0x01);
+		d.status = (uint8_t)((d.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_CONTAINER | (free ? 0x01 : 0));
 		d.parent = recipient;
 		d.x = d.y = 0;
 		d.z = 0;
@@ -1061,7 +1062,7 @@ void Game::textKey(int key) {
 			prompt(); // a gate that is not there, or no number: the original only plays the failing sound (sub_36E85)
 			return;
 		}
-		if (_textPurpose == 5) { // ask_quantity: nothing typed is all of them (sub_2F895: -1); more than there are, or none, is "0   " and ends the dropping
+		if (_textPurpose == 5 || _textPurpose == 8) { // ask_quantity: nothing typed is all of them (sub_2F895: -1); more than there are, or none, is "0   " and ends the dropping
 			int idx = _dropItem;
 			int have = idx >= 0 ? _world.quantityOf(_world.objects[idx]) : 0;
 			int n = _textBuf.empty() ? (escaped ? -2 : have) : std::atoi(_textBuf.c_str());
@@ -1073,7 +1074,10 @@ void Game::textKey(int key) {
 			}
 			if (_textBuf.empty())
 				message(std::to_string(n) + "\n");
-			dropWhere(n);
+			if (_textPurpose == 8)
+				moveWhere(n);
+			else
+				dropWhere(n);
 			return;
 		}
 		if (_textPurpose == 2) {
@@ -1579,16 +1583,15 @@ void Game::digAt(int key) {
 	prompt();
 }
 
-// The Move command (sub_3151B), first half: the top object of the chosen square; "To " asks where to.
-// APPROX(54): only ordinary objects are pushed (no people, no handing things over to party members, no swapping with the occupant of the square); the test for
-// a blocked square is my own (impassable tile or object, or someone standing there) in place of sub_3143B
+// The Move command (sub_3151B), first half: the top thing on the chosen square (a person counts); within one square of the party, else "Out of range!"; "To " asks where to.
+// APPROX(54): the cursor feedback of the original (sub_146A9, sub_263D4) is left out, and the inventory half (sub_3151B from loc_318D9) hands things only to party members: putting
+// things into and out of the containers of a pack (the pack view does not show them) is not done
 void Game::moveSelect(int tx, int ty) {
 	std::vector<int> here;
 	_world.objectsAt(tx, ty, z, here);
 	int pick = -1;
 	for (size_t i = here.size(); i-- > 0;) {
-		const World::Obj &o = _world.objects[here[i]];
-		if (o.actor < 0 && !o.invisible()) {
+		if (!_world.objects[here[i]].invisible()) {
 			pick = here[i];
 			break;
 		}
@@ -1612,12 +1615,31 @@ void Game::moveSelect(int tx, int ty) {
 	message("To ");
 }
 
-// The second half: a direction, then the object moves one square if it is not too heavy and the square is free.
+// sub_3143B: whether the square a step from (x, y) in direction dir is closed to the object: it must be somewhere the object can lie (can_actor_enter) or a surface (sub_309C0);
+// for a diagonal step one of the two squares beside the way must be as well.
+bool Game::moveBlocked(int idx, int x, int y, int dir) {
+	static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1}; // ds:01A2 / 01AA
+	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+	MoveRules rules;
+	auto open = [&](int sx, int sy) {
+		sx &= mask;
+		sy &= mask;
+		return _movement.check(sx, sy, z, idx, rules).passable || dropSurface(sx, sy);
+	};
+	if (!open(x + DX[dir], y + DY[dir]))
+		return true;
+	if (!(dir & 1))
+		return false;
+	return !(open(x + DX[(dir + 7) & 7] , y + DY[(dir + 7) & 7]) || open(x + DX[(dir + 1) & 7], y + DY[(dir + 1) & 7]));
+}
+
+// The second half: a direction (the arrow keys and the number pad), then the thing moves one square: a person has to be overpowered ("Failed"), a thing goes into a
+// container on the square that takes it, or onto the square if that is open ("Blocked" if not); a cannon turns to face the way it is pushed before it moves.
 void Game::moveTo(int key) {
 	int idx = _useItem;
 	_useItem = -1;
 	static const char *const NAMES[8] = {"North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"};
-	int dir = key == KEY_UP ? 0 : key == KEY_RIGHT ? 2 : key == KEY_DOWN ? 4 : key == KEY_LEFT ? 6 : -1;
+	int dir = key == KEY_UP || key == '8' ? 0 : key == '9' ? 1 : key == KEY_RIGHT || key == '6' ? 2 : key == '3' ? 3 : key == KEY_DOWN || key == '2' ? 4 : key == '1' ? 5 : key == KEY_LEFT || key == '4' ? 6 : key == '7' ? 7 : -1;
 	if (dir < 0) {
 		message("nowhere.\n");
 		prompt();
@@ -1632,25 +1654,147 @@ void Game::moveTo(int key) {
 		prompt();
 		return;
 	}
-	_world.spendMoves(actingActor(), 5);
-	static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1}; // ds:01A2 / 01AA
+	int member = actingActor();
+	if (o.actor >= 0) { // sub_212AC: the person's strength against the pusher's
+		int chance = (_combat.adjustedStrength(o.actor) / 2 + 30 - _combat.adjustedStrength(member)) / 2;
+		bool fails = chance > 1 + (int)(_rng.next() % 30) || o.actor == member || ((o.frame & 3) == 3 && o.type != 0x153);
+		if (fails) {
+			message("\nFailed\n");
+			prompt();
+			return;
+		}
+	}
+	_world.spendMoves(member, 5);
+	static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
 	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
-	int nx = (o.x + DX[dir]) & mask, ny = (o.y + DY[dir]) & mask;
-	bool blocked = _world.flags.flags1[_world.map.tile(z, nx, ny) & (TileFlags::TILES - 1)] & 0x02;
+	int ox = o.x, oy = o.y;
+	int nx = (ox + DX[dir]) & mask, ny = (oy + DY[dir]) & mask;
 	std::vector<int> there;
 	_world.objectsAt(nx, ny, z, there);
-	for (int t : there) {
-		const World::Obj &q = _world.objects[t];
-		if (q.actor >= 0 || (_world.flags.flags1[(_world.baseTile.firstTile[q.type] + q.frame) & (TileFlags::TILES - 1)] & 0x02))
-			blocked = true;
+	int occupant = there.empty() ? -1 : there.back();
+	if (occupant >= 0 && dropRecipient(occupant, idx) && w < 0xFF) { // a container takes it
+		dropPlace(idx, 1, nx, ny, occupant, false);
+		prompt();
+		return;
 	}
-	if (blocked) {
+	bool turns = o.type == 0xDD && o.frame != (dir >> 1); // a cannon
+	if (moveBlocked(idx, ox, oy, dir)) {
 		message("\nBlocked\n");
+		if (turns)
+			o.frame = (uint8_t)((dir >> 1) & 3);
+	} else if (turns) {
+		o.frame = (uint8_t)((dir >> 1) & 3);
 	} else {
 		_world.moveObject(idx, nx, ny, z);
-		if (o.type == 0xDD && (o.frame != (dir >> 1))) // a cannon turns to face the way it was pushed
-			o.frame = (uint8_t)(dir >> 1);
 	}
+	prompt();
+}
+
+// The inventory half of Move: the thing chosen in the pack, then "To " and a party member (sub_3151B from loc_318D9). A worn amulet stays, a lit torch burns out (sub_1E8B6);
+// the owner must be near (sub_1EE03: within four squares of the party); a stack asks "How many? "; the amulet cannot be given (the text comes after "To ").
+void Game::moveItemStart(int idx) {
+	World::Obj &o = _world.objects[idx];
+	message("Move-" + Describe::object(_world, o) + "\n");
+	if (o.location() == ObjRecord::READIED && o.type == 0x4C) {
+		message("\nMagical energy prevents you from removing the amulet.\n");
+		prompt();
+		return;
+	}
+	if (o.location() == ObjRecord::READIED && o.type == 0x5A && o.frame == 1) {
+		_world.deleteObject(idx);
+		message("\nA torch burned out.\n");
+		prompt();
+		return;
+	}
+	if (!memberNear(actingActor())) {
+		message("\nThis person is not around!\n");
+		prompt();
+		return;
+	}
+	_dropItem = idx;
+	int have = _world.isStackable(o.type) ? _world.quantityOf(o) : 1;
+	if (have > 1 && o.location() != ObjRecord::READIED) { // ask_quantity
+		message("How many? ");
+		_textActive = true;
+		_textBuf.clear();
+		_textMax = 3;
+		_textPurpose = 8;
+		return;
+	}
+	moveWhere(1);
+}
+
+void Game::moveWhere(int count) {
+	_dropCount = count;
+	message("To ");
+	if (_world.objects[_dropItem].type == 0x4C) {
+		_dropItem = -1;
+		message("\n\nMagical energy prevents you from removing the amulet.\n");
+		prompt();
+		return;
+	}
+	_moveTarget = true;
+}
+
+// sub_1EE03: a person is around when within four squares of the party (and on its level)
+bool Game::memberNear(int actor) const {
+	int k = _world.actorObject(actor);
+	if (k < 0 || _world.objects[k].deleted)
+		return false;
+	const World::Obj &o = _world.objects[k];
+	return o.z == z && o.x > x - 5 && o.x < x + 5 && o.y > y - 5 && o.y < y + 5;
+}
+
+// The party member chosen (by number) to receive the thing: "Out of range!" if not near; the owner itself is "yourself."; otherwise the name and ".", the receiver must be in the party
+// ("Only within the party!") and strong enough ("Can't carry!"); the thing leaves the owner (unreadied) and joins the receiver's pack; 5 moves.
+void Game::moveGive(int target) {
+	int idx = _dropItem, count = _dropCount;
+	_dropItem = -1;
+	_moveTarget = false;
+	if (target < 0 || target >= _world.actors.partySize) {
+		message("nobody.\n");
+		prompt();
+		return;
+	}
+	int receiver = _world.actors.partyRoster[target], member = actingActor();
+	if (!memberNear(receiver)) {
+		message("\n\nOut of range!\n");
+		prompt();
+		return;
+	}
+	if (receiver == member) {
+		message("yourself.\n");
+		_world.spendMoves(member, 5);
+		prompt();
+		return;
+	}
+	message(std::string((const char *)_world.actors.partyNames[target]) + ".\n");
+	if (!(_world.actors.status[receiver] & 0x80)) {
+		message("\nOnly within the party!\n");
+		prompt();
+		return;
+	}
+	World::Obj &o = _world.objects[idx];
+	bool stack = _world.isStackable(o.type);
+	int weight = stack ? _world.weightOfType(o.type, count) : _world.weightOf(idx) + _world.contentsWeight(idx);
+	if (_world.actors.strength[receiver] * 20 < weight + _world.carriedWeight(receiver)) {
+		message("\nCan't carry!\n");
+		prompt();
+		return;
+	}
+	if (o.location() == ObjRecord::READIED)
+		o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
+	if (stack) {
+		int have = _world.quantityOf(o), type = o.type, quality = o.quality;
+		_world.addToInventory(receiver, type, quality, count);
+		if (count >= have)
+			_world.deleteObject(idx);
+		else
+			_world.setQuantity(_world.objects[idx], have - count);
+	} else {
+		o.parent = receiver;
+	}
+	_world.spendMoves(member, 5);
 	prompt();
 }
 

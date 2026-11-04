@@ -639,7 +639,7 @@ bool Game::handleKeyInner(int key) {
 		textKey(key);
 		return true;
 	}
-	if (key >= '1' && key <= '8' && !_talk && !_pending && !_confirmSave && key - '1' < _world.actors.partySize) {
+	if (key >= '1' && key <= '8' && !_talk && !_pending && !_confirmSave && !_moveTarget && key - '1' < _world.actors.partySize) {
 		_member = key - '1';
 		_selected = 0;
 		return true;

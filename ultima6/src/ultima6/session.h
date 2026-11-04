@@ -152,10 +152,16 @@ private:
 	void useSilverHorn();
 	void dropStart(int idx);
 	void dropWhere(int count);
+	void moveItemStart(int idx);
+	void moveWhere(int count);
+	void moveGive(int target);
+	bool moveBlocked(int idx, int x, int y, int dir);
+	bool memberNear(int actor) const;
+	bool _moveTarget = false; // "To " waits for the party member to receive the object chosen in the pack
 	void dropAt(int tx, int ty);
 	bool dropSurface(int tx, int ty) const;
 	bool dropRecipient(int target, int item) const;
-	void dropPlace(int item, int count, int tx, int ty, int recipient);
+	void dropPlace(int item, int count, int tx, int ty, int recipient, bool free = true);
 	bool _dropPending = false; // "Drop-" is waiting for the object to be chosen in the inventory
 	int _dropItem = -1;		// the object chosen, while "Location: " waits for its place
 	int _dropCount = 0;
