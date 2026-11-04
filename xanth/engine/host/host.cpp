@@ -262,6 +262,29 @@ void callThroughHook(Cpu &c, uint16_t seg, uint16_t off) { farHook(c, seg, off);
 // IRQ0: run the program's INT 08h service routine (if it installed one) as the CPU would: push FLAGS, CS, IP and jump to the vector
 void Machine::timerTick(Cpu &c) {
 	// scripted input: keys that become available once the program has run a given number of labels (HOST_INPUT="steps:key,steps:key")
+	while (!callScript.empty() && c.steps >= callScript.front().steps && !inIsr) {      // scripted engine call (HOST_CALL="steps:name:arg,arg"): run a lifted function between two instructions of the program
+		CallStep cs = callScript.front();
+		callScript.pop_front();
+		inIsr = true;
+		uint16_t sp0 = c.sp, ss = c.ss, ds = c.ds, es = c.es, bp = c.bp, si = c.si, di = c.di;
+		Reg ax = c.ax, bx = c.bx, cx = c.cx, dx = c.dx;
+		bool cf = c.CF, zf = c.ZF, sf = c.SF, of = c.OF;
+		std::vector<uint16_t> a = cs.args;
+		for (size_t i = a.size(); i-- > 0;)
+			c.push(a[i]);
+		int rw = c.retWords;
+		c.retWords = 2;
+		c.push(0);
+		c.push(0);
+		auto it = host().liftedByName.find(cs.name);
+		if (it != host().liftedByName.end())
+			it->second(c);
+		c.retWords = rw;
+		c.sp = sp0; c.ss = ss; c.ds = ds; c.es = es; c.bp = bp; c.si = si; c.di = di;
+		c.ax = ax; c.bx = bx; c.cx = cx; c.dx = dx;
+		c.CF = cf; c.ZF = zf; c.SF = sf; c.OF = of;
+		inIsr = false;
+	}
 	while (!mouseTimeline.empty() && c.steps >= mouseTimeline.front().steps) {      // scripted pointer: position and buttons from this label count on
 		MouseStep m = mouseTimeline.front();
 		mouseTimeline.pop_front();

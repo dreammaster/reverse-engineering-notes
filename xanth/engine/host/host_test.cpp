@@ -548,6 +548,23 @@ static int testInit(Host &h) {
 		}
 	};
 	debugHooks(h);
+	if (getenv("HOST_CALL")) {            // "50000000:go_to_room_q:34;60000000:object_move_q:35,90,0" (lifted function names, decimal arguments)
+		std::string s = getenv("HOST_CALL");
+		size_t p = 0;
+		while (p < s.size()) {
+			size_t semi = s.find(';', p);
+			std::string item = s.substr(p, semi == std::string::npos ? std::string::npos : semi - p);
+			size_t c1 = item.find(':'), c2 = c1 == std::string::npos ? c1 : item.find(':', c1 + 1);
+			if (c2 == std::string::npos) break;
+			Machine::CallStep cs;
+			cs.steps = atol(item.c_str());
+			cs.name = item.substr(c1 + 1, c2 - c1 - 1);
+			for (size_t q = c2 + 1; q < item.size();) { cs.args.push_back((uint16_t)atoi(item.c_str() + q)); size_t cm = item.find(',', q); if (cm == std::string::npos) break; q = cm + 1; }
+			h.machine.callScript.push_back(cs);
+			if (semi == std::string::npos) break;
+			p = semi + 1;
+		}
+	}
 	if (getenv("HOST_MOUSE")) {           // "50000000:15,175,0,50100000:15,175,1,50200000:15,175,0" (320x200 screen coordinates)
 		std::string s = getenv("HOST_MOUSE");
 		size_t p = 0;
