@@ -6,6 +6,7 @@
  */
 #include "../engine/mjm.h"
 #include "../engine/pc1.h"
+#include "../engine/lng.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -71,6 +72,37 @@ int main(int argc, char **argv) {
 		}
 		checked++;
 		free(in);
+	}
+
+	for (size_t i = 0; i < sizeof(lng_vectors) / sizeof(lng_vectors[0]); i++) {
+		snprintf(path, sizeof(path), "%s/%s", root, lng_vectors[i].path);
+		size_t n, un;
+		uint8_t *in = slurp(path, &n), *raw = NULL;
+		if (!in)
+			continue;
+		LngTable t;
+		int rc = mjm_unpack(in, n, &raw, &un);
+		if (rc == 0)
+			rc = lng_parse(raw, un, &t);
+		unsigned h = 0x811C9DC5u;
+		if (rc == 0) {
+			for (int k = 0; k < t.count; k++) {
+				for (const char *c = t.strings[k]; ; c++) {
+					h = (h ^ (uint8_t)*c) * 0x01000193u;
+					if (!*c)
+						break;
+				}
+			}
+		}
+		if (rc || t.count != lng_vectors[i].count || h != lng_vectors[i].hash) {
+			printf("FAIL %s: rc=%d\n", lng_vectors[i].path, rc);
+			failed++;
+		}
+		if (rc == 0)
+			lng_free(&t);
+		checked++;
+		free(in);
+		free(raw);
 	}
 
 	if (!checked) {

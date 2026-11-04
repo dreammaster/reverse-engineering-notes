@@ -6,6 +6,7 @@ Work in progress. Currently:
 |---|---|
 | `engine/mjm.[ch]` | `mjm` container + PKWARE DCL explode + RNC1 unpacker |
 | `engine/pc1.[ch]` | `.PC1` picture decoder |
+| `engine/lng.[ch]` | `.LNG` language string tables (6-bit packed text) |
 | `engine/gamefiles.[ch]` | detects Cadaver / Cadaver: The Payoff, resolves DOS-style paths case-insensitively, loads + unpacks files |
 | `engine/screen.h` | 320×200 indexed framebuffer + palette |
 | `main.c` | SDL2 front end (title / scroll pictures; Esc quits, any key switches picture) |

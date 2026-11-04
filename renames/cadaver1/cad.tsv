@@ -1,13 +1,16 @@
 # Renames for disasm/cadaver1/cad.idb (unpacked/cadaver1/CAD.EXE, PKLITE-unpacked, loaded at 1000:0).
 # ea is the linear IDA address (seg*16+off). Column meanings and workflow: renames/README.md.
 # ea	segoff	kind	old	new	conf	size	sig	comment
+0x111E9	1000:11E9	func		keyboard_isr	verified		FA 50 53 51 1E 52 B8 17 0F 8E D8 E4 60 3C 1D 75	INT 9 handler (IVT[9] = 1000:11E9 in the running game). Reads port 60h, tracks Ctrl (1Dh/9Dh), records Ctrl+C (2Eh) / Ctrl+Q (10h) in abort_scancode, stores the last make code in last_scancode, looks the scancode up in key_bit_table to set/clear bits in input_held_bits/input_pressed_bits, then chains to old_int9_vector.
+0x1128E	1000:128E	data		key_bit_table	verified	512		256 words indexed by scancode (make code = bits to set; break code = AND mask of the cleared bits). Filled from cadaver.ini at start-up (zeros in the EXE). With the default INI: Up 01, Down 02, Left 04, Right 08, PgUp 09, PgDn 0A, Ins 05, Del 06 (diagonals = OR of two directions), End 80.
 0x1148C	1000:148C	data	dword_1148C	old_int8_vector	verified	4	00 00 00 00	Original INT 8 vector saved by timer_install.
 0x11490	1000:1490	data	dword_11490	timer_callback	likely	4	00 00 00 00	Optional far pointer called from the timer ISR; segment 0 = none.
 0x1149A	1000:149A	data	word_1149A	timer_ticks	likely	2	00 00	Incremented by every timer_isr call (~50 Hz).
 0x1149C	1000:149C	func	sub_1149C	timer_install	verified		FA 06 B8 08 35 CD 21 BF 8C 14 2E 89 1D 2E 8C 45	Saves the INT 8 vector to cs:148C, programs PIT channel 0 with divisor 5CECh (~50.2 Hz) and hooks INT 8 with timer_isr (1000:14E5).
 0x114C8	1000:14C8	func	sub_114C8	timer_restore	verified		FA 1E 2E C5 16 8C 14 0B D2 74 0F B8 08 25 CD 21	Restores the saved INT 8 vector and resets PIT channel 0 to divisor 0 (18.2 Hz).
 0x114E5	1000:14E5	func		timer_isr	verified		50 1E 53 51 52 57 56 06 1E 2E 83 3E 92 14 00 74	INT 8 handler: calls the optional far callback timer_callback (music tick), bumps timer_ticks and the game clock bytes at 1F722..1F728.
-0x175CA	1000:75CA	func		text6_decode	likely		53 51 52 50 56 06 8E 06 84 07 BF 62 0A BB 52 F8	Decodes a packed string at ds:bp into ds:0A62 (es:[784h] segment): 6-bit codes, 4 per 3 bytes MSB first, translated through text6_alphabet (code 0 terminates, FFh entries are skipped).
+0x175AF	1000:75AF	func		text_get_string	verified		52 8B 2E 60 00 89 16 3C 02 D1 E2 03 EA 8B 56 00	dx = string index. bp = text_strings_ptr + table[text_offsets_ptr + 2*dx] (both ss-relative), stores dx in ds:023C, then text6_decode. The table is the .LNG offset table converted to little endian; the string area is the .LNG string area minus its first two bytes.
+0x175CA	1000:75CA	func		text6_decode	verified		53 51 52 50 56 06 8E 06 84 07 BF 62 0A BB 52 F8	Decodes the packed string at ss:bp into es:0A62 (es = text_buffer_segment): 6-bit codes, 4 per 3 bytes MSB first, translated through text6_alphabet (code 0 terminates, FFh entries skipped). Verified in tools/dosemu: produces CAVERN, DAY, SILVER COIN, STONE, BOAT, DIARY; the sources are the .LNG strings (docs/formats.md section 5).
 0x1762B	1000:762B	func		text6_emit_char	likely		D7 3C FF 74 01 AA 0A C0 C3 8B 36 5A 00 83 3E 26	xlatb through bx=text6_alphabet-1; stores the char unless it is FFh; returns ZF set for code 0.
 0x1B2C6	1000:B2C6	func	sub_1B2C6	load_cadaver_ini	verified		06 1E 8C D8 8E C0 8C D0 8E D8 BA 73 4C B8 00 3D	Opens the config file named at ss:4C73 (cadaver.ini) and reads 200 bytes to ds:07B0; parses sound/video/input choices. Traced in tools/dosemu: READ CADAVER.INI 1f17:07b0 200.
 0x1C44A	1000:C44A	func	sub_1C44A	open_data_file	verified		73 68 50 53 51 52 55 56 57 06 1E 26 A0 08 07 BD	Opens the DOS file at ds:dx; every '?' in the name is replaced by the current disk digit (es:0708 + '1'); reads the 4-byte mjm header to cs:C8F1; if opening fails prompts for the right disk and retries.
@@ -22,6 +25,8 @@
 0x1EC7A	1DFD:0CAA	func		dcl_explode	likely		55 8B EC 56 57 8B 46 0A 8B 56 0C C4 76 06 8C C7	PKWARE DCL explode: reads 2 KiB chunks via read callback, validates header (type 0/1, dictionary bits 4..6), builds Huffman tables, decodes. Error codes 1..4 returned in AX.
 0x1ECD3	1DFD:0D03	func	sub_1ECD3	dcl_explode_thunk	likely		B8 FD 0D 50 B8 AA 0C 50 E8 74 F3 CB C7 26 8A 84	far entry: pushes 1DFD:0CAA (dcl_explode) and calls sub_1E052.
 0x1EDCD	1DFD:0DFD	func	sub_1EDCD	dcl_decode_loop	likely		55 8B EC 83 EC 02 56 57 C4 36 10 00 26 C7 44 04	Inner decode loop of the explode; returns 306h at end of stream.
+0x1F1D0	1F17:0060	data	word_1F1D0	text_offsets_ptr	verified	2	00 00	ss offset of the little-endian string offset table (9738h in level 1).
+0x1F1D2	1F17:0062	data	word_1F1D2	text_strings_ptr	verified	2	00 00	ss offset of the string data = .LNG string area + 2 (9B20h in level 1).
 0x1F722	1F17:05B2	data	byte_1F722	clock_period_lo	guess	1	00	Incremented by timer_isr when clock_blocks wraps at 30 (together with 1F723 and flag 1F726); possibly the in-game DAY counter - unverified.
 0x1F723	1F17:05B3	data	byte_1F723	clock_period_hi	guess	1	00	Incremented together with clock_period_lo.
 0x1F724	1F17:05B4	data	byte_1F724	clock_blocks	guess	1	00	Counts 0..29 in timer_isr, advanced every time clock_units wraps at 60.
@@ -29,8 +34,15 @@
 0x1F726	1F17:05B6	data	byte_1F726	clock_period_flag	guess	1	00	Set to 1 each time clock_blocks wraps.
 0x1F727	1F17:05B7	data	byte_1F727	clock_div_count	guess	1	00	Down-counter in timer_isr, reloaded from clock_div_reload.
 0x1F728	1F17:05B8	data	byte_1F728	clock_div_reload	guess	1	00	Reload value for clock_div_count.
+0x1F887	1F17:0717	data	byte_1F887	last_scancode	likely	1	00	Make scancode of the last key pressed that is not in key_bit_table (0 after a break code).
+0x1F8F4	1F17:0784	data	word_1F8F4	text_buffer_segment	likely	2	00 00	Segment of the output buffer text6_decode writes to (offset 0A62h); equals DS (1F17) in level 1.
+0x1F90C	1F17:079C	data	dword_1F90C	old_int9_vector	likely	4	00 00 00 00	Original INT 9 vector, chained to by keyboard_isr.
+0x1F914	1F17:07A4	data	word_1F914	input_held_bits	likely	2	00 00	Currently held direction/action bits (see key_bit_table).
+0x1F916	1F17:07A6	data	word_1F916	input_pressed_bits	likely	2	00 00	Bits ORed in on every key press (sticky; presumably cleared by the consumer).
+0x1F919	1F17:07A9	data	byte_1F919	abort_scancode	likely	1	00	Set to 2Eh (C) or 10h (Q) when pressed with Ctrl.
+0x1F91A	1F17:07AA	data	byte_1F91A	ctrl_down	likely	1	00	Non-zero while Ctrl is held.
 0x2E956	1F17:F7E6	data		msg_press_key_language	verified	33	20 50 52 45 53 53 20 4B 45 59 20 31 20 45 4E 47 4C 49 53 48 20 20 32 20	 PRESS KEY / 1 ENGLISH / 2 FRANCAIS / 3 DEUTSCH prompt text.
-0x2E9C3	1F17:F853	data		text6_alphabet	verified	63	41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F 50 51 52 53 54 55 56 57 58	Code->char table for text6_decode, 1-based (the byte before it, 0, is the terminator): A-Z, space . , 0-9, CR CR - ? " < = > (< = > stand for national letters, e.g. O/U umlaut), then 16 x FFh for codes 48..63.
+0x2E9C3	1F17:F853	data		text6_alphabet	verified	63	41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F 50 51 52 53 54 55 56 57 58	Code->char table for text6_decode, 1-based (the byte before it, 0, is the terminator): A-Z, space . , 0-9, CR CR - ? " < = > (< = > are the German O/A/U umlaut glyphs), then 16 x FFh for codes 48..63.
 0x2EA02	1F17:F892	data		msg_heap_too_big	likely	35	6D 6A 6D 30 44 41 43 20 31 20 48 45 41 50 20 54 4F 20 42 49 47 20 42 59	'DAC 1 HEAP TO BIG BY 0000 BYTES' error text (preceded by the 4 bytes 'mjm0'); the digits are patched in at run time.
 0x2EA2F	1F17:F8BF	data		path_mike_save	verified	15	64 61 74 61 5C 6D 69 6B 65 5F 73 61 76 65 00	Default saved-game path data\mike_save.
 0x6B850	6B85:0000	data	byte_6B850	kbd_fn_base	likely	1	00	INT 16h function base: 0 for classic, 10h for enhanced keyboard services (kbd_* add 0/1 to it).

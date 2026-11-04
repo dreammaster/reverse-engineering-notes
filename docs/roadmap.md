@@ -17,7 +17,7 @@ building oracles so later work can be *verified* rather than guessed.
 | SDL2 front end | Shows the title and scroll pictures of either game. **No gameplay.** |
 | Emulator harness + DOSBox capture | **Done** — runs the real game to the level-1 screen (see `docs/tools.md`) |
 | `FONT2.SPR` | Layout known (8×8, 4 plane bytes/row), colour mapping not pinned |
-| `*.LNG` text | Container known, **string encoding not decoded** |
+| `*.LNG` text | **Done** — 6-bit packed text, Python + C, all 41 files verified, in-game strings confirmed in the emulator |
 | `LEVn.MP1/2/3`, `ANDATA.DAT`, `PCMAN.DAT`, `ROUTINEn.TAD` | Loaded into known places in memory; **formats not decoded** |
 | Isometric renderer, objects, ACL interpreter, collision/AI, input, sound | **Not started** |
 | Cadaver 2 (Payoff) code differences | Not analysed (data differs only in `TATA/` and RNC-packed copies) |
@@ -51,13 +51,7 @@ the PC1 decoder and the file-name strings. New findings add rows as we go.
 
 ## Suggested order of work
 
-1. **Language strings** — `text6_decode` (`1000:75CA`, 6-bit packed text via the
-   table at `1F17:F853`) is understood but is *not* fed directly from the
-   `.LNG` buffer (see `formats.md` §5). Find who fills `ds:9738`/`ds:9B20`
-   (hook writes to that range, or break on the first `text6_decode` call with a
-   non-empty source — it only happens once text is displayed, e.g. after
-   moving the player or picking something up), and what the `.LNG` file is
-   converted into on the way.
+1. ~~Language strings~~ — **done** (`tools/lng.py`, `src/engine/lng.c`, `formats.md` §5).
 2. **Level data** — diff harness memory/VRAM before and after the level load
    to attribute each part of `MP1/MP2/MP3` to a destination (tile graphics →
    VRAM pages, room geometry → tables). `MP2` begins with a `(size,offset)`

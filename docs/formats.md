@@ -93,28 +93,48 @@ each group to VGA planes 0..3 with the map-mask register (mode 0Dh, 320×200×16
 followed by punctuation (`. , ? -` …). The planes encode fill/outline/shadow;
 exact colour assignment still to be pinned down from the text-drawing routine.
 
-## 5. Language files `*.LNG` — *partial*
+## 5. Language files `*.LNG` — *verified*
 
-After the container is removed: `u16be count` (387 in `ENG1`), `count` × `u16be`
-offsets into the string area (which starts at `2 + 2*count`), then the string
-data. The strings themselves are **not plain text**; the encoding is **not yet
-decoded**. What is known:
+`ENGn.LNG` / `FREn.LNG` / `GERn.LNG` (per level; `TATA/` has its own for the
+Payoff levels). After the container is removed:
 
-* The game has a packed-text routine, `text6_decode` (`CAD.EXE 1000:75CA`):
-  6-bit codes, four per three bytes (MSB first), translated through the
-  alphabet table `text6_alphabet` at `1F17:F853` (1-based; code 0 ends the
-  string; codes 48–63 are dropped): `A–Z`, space, `. ,`, `0–9`, CR, `- ? "`,
-  and `<` `=` `>` which stand for national letters (the plain system strings
-  spell MÖCHTEN as `M<CHTEN`, DRÜCKEN as `DR>CKEN`).
-* It reads its offset table from `ds:9738` and its string area from
-  `ds:9B20` (`ds`=`1F17`), **not** from the buffer where `ENG1.LNG` is
-  loaded (`6C28:000A`), and in the first 160 M emulated instructions it is
-  only called twice, on still-empty buffers. Decoding `ENG1.LNG` directly with
-  it gives garbage (tried), so either the `.LNG` data goes through another
-  layer first, or `text6_decode` serves a different text source. Open.
-* The fixed system messages ("PLEASE INSERT DISK 2 …", save/restore prompts)
-  are plain ASCII inside the EXE in English, French and German
-  (`6C08:4170…`, `6C08:4883…`, `6C08:4A23…`).
+| Offset | Size | |
+|---|---|---|
+| 0 | 2 | `u16be count` (387 in `ENG1`) |
+| 2 | 2×count | `u16be` string offsets, relative to the string area |
+| 2+2×count | 2 | two bytes that belong to no string (purpose unknown) |
+| 4+2×count | … | string data; **string area = this address**: string *i* starts at `area + offset[i]` |
+
+Strings are runs of **6-bit codes, four per three bytes, MSB first**
+(`c0 = b0>>2`, `c1 = (b0&3)<<4 | b1>>4`, `c2 = (b1&15)<<2 | b2>>6`, `c3 = b2&63`);
+code 0 ends the string, codes 48–63 produce nothing. Code → character:
+
+```
+ 1..26  A-Z      27 ' '    28 '.'    29 ','    30..39 '0'-'9'
+ 40,41  CR (line break)    42 '-'    43 '?'    44 '"'    45 '<'    46 '='    47 '>'
+```
+
+`<`, `=`, `>` are the German Ö, Ä, Ü glyphs in the Payoff (`TATA/`) texts
+(`TR=GT`, `F>R`, `G<TTER`); Cadaver 1's German files use `<` for *every* umlaut
+(`T<R`, `G<TTER`). French has no accents. Everything is upper case.
+
+Decoder in the game: `text_get_string` (`1000:75AF`, index in DX) → `text6_decode`
+(`1000:75CA`), which writes to `es:0A62` (`es` = `text_buffer_segment`). The game
+copies the file into its stack segment as `ss:9738` (offset table, converted to
+little endian) and `ss:9B20` (string area + 2). Verified in the emulator
+harness: in-game it produced `CAVERN`, `DAY`, `SILVER COIN`, `STONE`, `BOAT`,
+`DIARY`, and the same strings are in the decoded `ENGn.LNG`. Level 1 `ENG1.LNG`
+(387 strings): `0` = `"1.0"` (a version string), `1` = `"YOU UNLOCK THE DOOR"`,
+`2` = `"THAT DOOR IS BLOCKED"`, `3` = `"YOU FIND NOTHING"`, …, `28` = `"A DAY
+PASSES ..."`, `29` = `"DAY"`. (Strings 16–25 are sentence fragments that the
+game concatenates with numbers: `"THERE ARE " n " SHOTS LEFT EACH WITH A POWER OF "`.)
+
+Tooling: `tools/lng.py`, `src/engine/lng.[ch]` (identical output for all 41
+decodable language files; unit-tested).
+
+The fixed system messages ("PLEASE INSERT DISK 2 …", save/restore prompts) are
+*not* in the `.LNG` files: they are plain ASCII inside the EXE in English, French
+and German (`6C08:4170…`, `6C08:4883…`, `6C08:4A23…`).
 
 ## 6. Level files — *unknown / partial*
 

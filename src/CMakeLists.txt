@@ -10,6 +10,7 @@ endif()
 add_library(cadaver_engine STATIC
   engine/mjm.c
   engine/pc1.c
+  engine/lng.c
   engine/gamefiles.c)
 target_include_directories(cadaver_engine PUBLIC engine)
 target_compile_options(cadaver_engine PRIVATE -Wall -Wextra)

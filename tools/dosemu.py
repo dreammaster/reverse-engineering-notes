@@ -39,6 +39,8 @@ class Emu:
         self.dta = 0
         self.keys = []           # queued (scan<<8|ascii) words
         self.pending_keys = []   # released one at a time once the game is idle-polling
+        self.scan_queue = []     # raw scancodes (make: sc, break: sc|0x80) delivered via INT 9 / port 60h
+        self.scan_port = 0
         self.idle_polls = 0
         self.palette = [(0, 0, 0)] * 256
         self.dac_idx = 0
@@ -122,7 +124,7 @@ class Emu:
             self.retrace ^= 9
             return self.retrace
         if port == 0x60:
-            return self.keys[0] >> 8 if self.keys else 0
+            return self.scan_port
         if port == 0x40:
             self.retrace += 1
             return self.retrace & 0xFF
@@ -340,12 +342,20 @@ class Emu:
     def _tick(self):
         """Deliver an INT 8 if the game installed a handler and IF is set."""
         self.ticks += 1
-        off, seg = struct.unpack('<HH', self.rd(0, 8 * 4, 4))
-        if seg == 0xF000:
-            return
         fl = self.r('eflags')
         if not fl & 0x200:
             return
+        off9, seg9 = struct.unpack('<HH', self.rd(0, 9 * 4, 4))
+        if self.scan_queue and seg9 != 0xF000:
+            self.scan_port = self.scan_queue.pop(0)
+            self._deliver(seg9, off9, fl)
+            return
+        off, seg = struct.unpack('<HH', self.rd(0, 8 * 4, 4))
+        if seg == 0xF000:
+            return
+        self._deliver(seg, off, fl)
+
+    def _deliver(self, seg, off, fl):
         ss, sp = self.r('ss'), (self.r('sp') - 6) & 0xFFFF
         self.wr(ss, sp, struct.pack('<HHH', self.r('ip'), self.r('cs'), fl & 0xFFFF))
         self.w('sp', sp)
