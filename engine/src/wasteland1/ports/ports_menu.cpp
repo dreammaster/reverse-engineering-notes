@@ -120,5 +120,12 @@ PORT(sellScreen) { sellScreen(m); }                                             
 PORT(countStock) { r.a.b.l = countStock(m); }                                             // 1C140
 PORT(buyScreen) { buyScreen(m); }                                                         // 1C073
 
+PORT(textInputCaseSensitive) { r.a.b.l = textInput(m, false, true); }                      // 17750
+PORT(creationRowPort) { r.cf = creationRow(m, r.a.b.l); }                                 // 1C622 (al = skill)
+PORT(createCharacter) { createCharacter(m); }                                             // 1C6C9
+
+PORT(rollAttribute) { r.a.b.l = rollAttribute(m, r.a.b.l); }                                // 1CAD1 (bx is kept)
+PORT(startingItems) { startingItems(m); }                                                  // 1C9DE
+
 } // namespace rc
 } // namespace wl

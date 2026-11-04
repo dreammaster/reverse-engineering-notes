@@ -7,6 +7,7 @@
 #include "wasteland1/menu.h"
 #include "wasteland1/party.h"
 #include "wasteland1/roster.h"
+#include "wasteland1/rules.h"
 #include "wasteland1/text.h"
 #include "wasteland1/ui.h"
 
@@ -749,6 +750,344 @@ void buyScreen(Machine &m) {
 	}
 leave:   // 1C119
 	if (D(shopDirty) != 0) call(m, 0x8654);
+}
+
+
+uint8_t rollAttribute(Machine &m, uint8_t carry) {
+	Rules rules(m);
+	uint8_t dice[5];
+	uint8_t al = carry;
+	for (int i = 4; i >= 0; --i) {
+		al = rules.d6(al);
+		dice[i] = al;
+		m.d8(uint16_t(0xDFF1 + i)) = al;
+	}
+	for (uint8_t dl = 4; dl != 0; --dl) {   // 1CAE5: the loop keeps comparing the die it started with (al is not reloaded)
+		const uint8_t held = dice[dl];
+		for (int bl = dl - 1; bl >= 0; --bl) {
+			if (held < dice[bl]) {
+				dice[dl] = dice[bl];
+				dice[bl] = held;
+			}
+		}
+	}
+	for (int i = 0; i < 5; ++i) m.d8(uint16_t(0xDFF1 + i)) = dice[i];
+	return uint8_t(dice[4] + dice[3] + dice[2]);
+}
+
+void startingItems(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	for (;;) {   // 1C9DE: item / quantity pairs from the list at ds:4663 up to FFh
+		const uint8_t id = D(uint16_t(m.d16(0x4663) + D(0xDEC5)));
+		if (id == 0xFF) return;
+		field(m, D(0xDEC6)) = id;
+		getItemDetails(m, id);
+		const uint8_t quantity = m.d8(uint16_t(m.d16(g::itemDetailsPtr) + 4));
+		++D(0xDEC6);
+		field(m, D(0xDEC6)) = quantity;
+		++D(0xDEC5);
+		if (++D(0xDEC6) == 0) return;
+	}
+}
+
+void restoreName(Machine &m) {   // 1CAC0
+	for (int i = 13; i >= 0; --i) field(m, uint8_t(i)) = m.d8(uint16_t(0x7931 + i));
+}
+
+uint8_t readName(Machine &m, uint16_t prompt) {   // 1CAA9
+	m.setD16(g::textString, prompt);
+	writeString(m);
+	m.setD16(g::textString, 0x7931);
+	m.d8(0x4684) = 0x0D;
+	m.d8(g::rectTextX) = 0x0F;
+	return textInput(m, false, true);
+}
+
+void deleteCharacterText(Machine &m, uint8_t id) {   // 1A3E1
+	setWriteCharacterFn(m);
+	m.setD16(g::textPointer1, 0xCE4B);
+	writeEncodedText(m, id);
+}
+
+void creationSkillRecord(Machine &m, uint8_t id) {   // getItemDetails2: the skill table at ds:BA20 has two bytes per skill
+	m.setD16(0x4694, 0xBA20);
+	m.d8(0x469B) = 2;
+	m.setD16(g::itemDetailsPtr, uint16_t(0xBA20 + 2 * id));
+}
+
+bool creationRow(Machine &m, uint8_t skill) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	D(0xDEB1) = skill;
+	creationSkillRecord(m, skill);
+	if (skillIq(m) > field(m, pm::iq)) return true;
+	call(m, 0x6EE8);
+	m.setD16(g::textPointer1, 0xB270);
+	creationSkillRecord(m, D(0xDEB1));
+	D(0x467F) = 2;
+	writeNumberShort(m, skillIq(m));
+	++D(g::rectTextX);
+	D(0xDEB2) = skillBase(m);
+	D(0xDEB3) = getMemberSkillLevel(m, D(0xDEB1));
+	++D(0x467F);
+	writeNumberShort(m, skillCost(D(0xDEB2), uint8_t(D(0xDEB3) + 1)));
+	++D(g::rectTextX);
+	writeNumberShort(m, D(0xDEB3));
+	++D(g::rectTextX);
+	writeEncodedText(m, D(0xDEB1));
+	return false;
+}
+
+void creationSkillList(Machine &m) {   // 1C5B0
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	deleteCharacterText(m, 4);
+	D(0x470E) = 0x12;
+	D(0x4699) = 1;
+	D(0x4698) = 1;
+	m.setD16(0x4696, 0xC61F);
+	D(0x469D) = 0;
+	D(0x469C) = 0;
+	do {
+		++D(0x469C);
+		creationSkillRecord(m, D(0x469C));
+		if (skillIq(m) <= field(m, pm::iq)) {
+			++D(0x469D);
+			D(0x4721) = D(0x469C);
+		}
+	} while (D(0x469C) != 0x24);
+	D(0x4691) = 3;
+	D(0x469E) = 9;
+	pagedListDraw(m);
+}
+
+void skillPointsHeader(Machine &m, uint8_t points) {   // 1C608
+	m.setD16(g::textString, 0xDEA0);   // "SKILL POINTS = "
+	X86Regs x;
+	x.dl = 0x0F; x.bl = 1;
+	legacy::call(m, 0x7868, x);
+	m.d8(0x467F) = 2;
+	writeNumberLeft(m, points);
+}
+
+bool uniqueName(Machine &m, uint8_t member) {   // 1CA14: false (CF) when the player gave up
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	for (int i = 13; i >= 0; --i) D(uint16_t(0x7931 + i)) = field(m, uint8_t(i));
+	for (;;) {
+		bool clash = false;
+		for (uint8_t id = 1; id <= D(uint16_t(g::saved2 + g::s2::field8)); ++id) {
+			D(0xDEC5) = id;
+			setCurrentRosterCharacter(m, id);
+			m.setD16(g::textString, m.d16(g::currentCharacter));
+			m.setD16(g::itemDetailsPtr, 0x7931);
+			bool same = true;
+			for (uint8_t at = 0;; ++at) {
+				const uint8_t a = D(uint16_t(m.d16(g::textString) + at)), b = D(uint16_t(0x7931 + at));
+				if ((a | b) == 0) break;
+				if (a != b || at == 0xFF) { same = false; break; }
+			}
+			if (same) {
+				const uint8_t group = partyGroupOfRoster(m, id);
+				setPartyIndexesPtr(m, group);
+				uint8_t position = findInSelectedGroup(m, id);
+				if (position == 0) position = 8;   // (bl of the last search)
+				setPartyIndexesPtr(m, D(uint16_t(g::saved2 + g::s2::activePartyGroup)));
+				if (group == D(uint16_t(g::saved2 + g::s2::activePartyGroup)) && position == member) return true;
+				clash = true;
+				break;
+			}
+		}
+		if (!clash) return true;
+		setCurrentCharacter(m, member);
+		for (;;) {   // "... is already in the game": another name
+			if (readName(m, 0xDF27) != 0) return false;
+			restoreName(m);
+			if (field(m, pm::name) != 0) break;
+		}
+		for (int i = 13; i >= 0; --i) D(uint16_t(0x7931 + i)) = field(m, uint8_t(i));
+	}
+}
+
+void createCharacter(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	constexpr uint16_t memberVar = 0xDEC4, counter = 0xDEC5, second = 0xDEC6;
+	const uint16_t field8 = uint16_t(g::saved2 + g::s2::field8);
+	D(second) = 0;
+	for (uint8_t id = 1; id <= D(field8); ++id) {
+		D(counter) = id;
+		setCurrentRosterCharacter(m, id);
+		if (field(m, pm::npc) == 0) ++D(second);
+	}
+	if (D(second) >= 4) {
+		deleteCharacterText(m, 1);
+		return;
+	}
+	++D(field8);
+	setPartyIndexesPtr(m, D(uint16_t(g::saved2 + g::s2::activePartyGroup)));
+	appendToSelectedGroup(m, D(field8));
+	D(memberVar) = findInSelectedGroup(m, D(field8));
+	setCurrentCharacter(m, D(memberVar));
+	for (int i = 0; i < 256; ++i) field(m, uint8_t(i)) = 0;
+	m.setD16(0x4663, Rules(m).random(2) == 1 ? 0xDECF : 0xDED9);
+	D(counter) = 0;
+	D(second) = 0xBD;
+	startingItems(m);
+	m.setD16(0x4663, 0xDEE3);
+	D(counter) = 0;
+	startingItems(m);
+	deleteCharacterText(m, 2);
+	uint8_t al = 4;
+roll:   // 1C75F
+	al = 4;
+	D(counter) = 4;
+	do {
+		for (uint8_t at = pm::strength; at != 0x15; ++at) {
+			al = rollAttribute(m, al);
+			field(m, at) = al;
+		}
+		al = uint8_t(rollAttribute(m, al) + 0x12);
+		field(m, pm::maxCon) = al;
+		field(m, pm::con) = al;
+		field(m, pm::level) = 1;
+		field(m, pm::skillPoints) = field(m, pm::iq);
+		for (uint8_t at = 0;; ++at) {   // the starting rank
+			const uint8_t c = D(uint16_t(0xDEC7 + at));
+			field(m, uint8_t(pm::rank + at)) = c;
+			if (c == 0) break;
+		}
+		D(g::rectTextX) = 0x0F;
+		D(g::rectTextY) = 2;
+		call(m, 0x9506, D(memberVar));   // writeMemberStats
+	} while (--D(counter) != 0);
+	m.setD16(g::textString, 0xDEEA);
+	writeString(m);
+	for (;;) {
+		m.setD16(g::buttonMask1, 0x0404);
+		m.setD16(g::buttonMask2, 0);
+		waitForKeypress(m);
+		const uint8_t key = D(g::lastKey);
+		if (key == ' ') goto roll;
+		if (key == 0x0D) break;
+		if (key == 0x1B) { deleteCharacter(m, D(memberVar)); return; }
+	}
+	for (;;) {   // 1C7F4: the name
+		for (;;) {
+			m.setD16(g::buttonMask1, 0);
+			m.setD16(g::buttonMask2, 0);
+			if (readName(m, 0xDF18) != 0) { deleteCharacter(m, D(memberVar)); return; }
+			restoreName(m);
+			if (field(m, pm::name) != 0) break;
+		}
+		if (!uniqueName(m, D(memberVar))) { deleteCharacter(m, D(memberVar)); return; }
+		break;
+	}
+	{
+		m.setD16(g::textString, 0xDF56);   // "Enter sex"
+		writeString(m);
+		uint8_t sex;
+		for (;;) {
+			m.setD16(g::buttonMask1, 0x0404);
+			m.setD16(g::buttonMask2, 0);
+			waitForKeypress(m);
+			const uint8_t key = D(g::lastKey);
+			if (key == 0x1B) { deleteCharacter(m, D(memberVar)); return; }
+			if (key == 'M') { sex = 0; break; }
+			if (key == 'F') { sex = 1; break; }
+		}
+		field(m, pm::sex) = sex;
+		m.setD16(g::textString, 0xDF73);   // "Nationality"
+		writeString(m);
+		for (;;) {
+			m.setD16(g::buttonMask1, 0x0404);
+			m.setD16(g::buttonMask2, 0);
+			waitForKeypress(m);
+			const uint8_t key = D(g::lastKey);
+			if (key == 0x1B) { deleteCharacter(m, D(memberVar)); return; }
+			if (key >= '1' && key < '6') { field(m, pm::nationality) = uint8_t(key - '1'); break; }
+		}
+	}
+	field(m, pm::skillPoints) = field(m, pm::iq);
+skills:   // 1C8B1
+	clearRect(m);
+	creationSkillList(m);
+	for (;;) {   // 1C8B7
+		skillPointsHeader(m, field(m, pm::skillPoints));
+		m.setD16(g::buttonMask1, 0x0C34);
+		m.setD16(g::buttonMask2, 0);
+		const ListResult r = pagedListKeys(m);
+		if (r.al == 0xFD) goto confirm;
+		if (r.al == 0xFF) {
+			call(m, 0x9362);   // summary_write
+			writeCharacter(m, 6);
+			goto skills;
+		}
+		if (r.al == 0xFE) {   // forget all the skills
+			for (uint8_t at = pm::skills; at != pm::items; ++at) field(m, at) = 0;
+			field(m, pm::skillPoints) = field(m, pm::iq);
+			goto skills;
+		}
+		creationSkillRecord(m, r.al);
+		bool refused = false;
+		if (skillIq(m) > field(m, pm::iq)) {
+			m.setD16(g::textString, 0xDFBC);   // "YOU ARE NOT SMART ENOUGH!"
+			X86Regs x; x.dl = 0x0F; x.bl = 1;
+			legacy::call(m, 0x7868, x);
+			refused = true;
+		} else if (skillBase(m) > field(m, pm::skillPoints)) {
+			m.setD16(g::textString, 0xDFD7);   // "NOT ENOUGH SKILL POINTS!"
+			X86Regs x; x.dl = 0x0F; x.bl = 1;
+			legacy::call(m, 0x7868, x);
+			refused = true;
+		}
+		if (!refused) {
+			uint8_t bl = pm::skills;
+			bool known = false;
+			for (;;) {
+				const uint8_t id = field(m, bl);
+				if (id == 0) break;
+				if (id == D(0x4698)) { known = true; break; }
+				bl = uint8_t(bl + 2);
+				if (bl == 0) break;
+			}
+			if (known) {
+				D(counter) = bl;
+				const uint8_t level = field(m, uint8_t(bl + 1));
+				const uint8_t price = skillCost(skillBase(m), uint8_t(level + 1));
+				D(second) = price;
+				const int left = int(field(m, pm::skillPoints)) - price;
+				if (uint8_t(left) & 0x80) {
+					m.setD16(g::textString, 0xDFD7);
+					X86Regs x; x.dl = 0x0F; x.bl = 1;
+					legacy::call(m, 0x7868, x);
+					refused = true;
+				} else {
+					field(m, pm::skillPoints) = uint8_t(left);
+					++field(m, uint8_t(D(counter) + 1));
+					markPickedRow(m);
+				}
+			} else {
+				field(m, bl) = D(0x4698);
+				field(m, uint8_t(bl + 1)) = 1;
+				D(counter) = skillBase(m);
+				field(m, pm::skillPoints) = uint8_t(field(m, pm::skillPoints) - D(counter));
+				markPickedRow(m);
+			}
+		}
+		if (refused) {
+			call(m, 0x8DB4, 0, 7);   // delayFrames
+			continue;
+		}
+		if (field(m, pm::skillPoints) == 0) goto confirm;
+		pagedListDraw(m);
+	}
+confirm:   // 1C9B9
+	deleteCharacterText(m, 3);
+	for (;;) {
+		m.setD16(g::buttonMask1, 0x0404);
+		m.setD16(g::buttonMask2, 0);
+		if (waitForKeypress(m)) goto skills;
+		const uint8_t key = D(g::lastKey);
+		if (key == 'Y') return;
+		if (key == 'N') { deleteCharacter(m, D(memberVar)); return; }
+	}
 }
 
 } // namespace wl

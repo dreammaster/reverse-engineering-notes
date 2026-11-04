@@ -32,6 +32,7 @@ bool callRow(Machine &m, uint8_t index) {
     if (callback == 0xBD91) return trainingRow(m, index);
     if (callback == 0xC01B) return sellRow(m, index);
     if (callback == 0xC188) return buyRow(m, index);
+    if (callback == 0xC61F) return creationRow(m, index);
     return call(m, callback, index).cf;
 }
 

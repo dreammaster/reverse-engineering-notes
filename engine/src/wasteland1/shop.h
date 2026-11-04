@@ -51,4 +51,13 @@ bool buyRow(Machine &m, uint8_t item);
 // 1C073: the buy screen
 void buyScreen(Machine &m);
 
+// 1CAD1: an attribute roll: the best three of five d6 (`carry` is the random generator's carried-over value)
+uint8_t rollAttribute(Machine &m, uint8_t carry);
+// 1C9DE: gives the new character the starting items from the list at ds:4663
+void startingItems(Machine &m);
+// 1C622: row of the skill list of character creation
+bool creationRow(Machine &m, uint8_t skill);
+// 1C6C9 (NOT registered as a port: memory matches the oracle but the screen differs by the portrait animation of a few polls): the "create character" screen: rolls attributes, asks name, sex and nationality, spends the skill points
+void createCharacter(Machine &m);
+
 } // namespace wl

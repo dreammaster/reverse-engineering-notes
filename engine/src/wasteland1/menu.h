@@ -30,7 +30,7 @@ void showTargetList(Machine &m, uint8_t groups);
 bool chooseTargetGroup(Machine &m, uint8_t &group);
 
 // 17748 / 17745: reads a line (ESC cancels: FFh, ENTER: 0) into the buffer at textString (ds:4684 = capacity); `numericOnly`: digits only
-uint8_t textInput(Machine &m, bool numericOnly);
+uint8_t textInput(Machine &m, bool numericOnly, bool keepCase = false);
 
 // 15160: asks the map's question (a keyword typed or a single key) and runs the action of the matching answer; CF as the cell change
 bool askKeyword(Machine &m);

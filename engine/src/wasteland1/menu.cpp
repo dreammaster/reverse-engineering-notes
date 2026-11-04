@@ -312,7 +312,7 @@ void cursorGlyph(Machine &m, uint8_t glyph) {
 }
 }
 
-uint8_t textInput(Machine &m, bool numericOnly) {
+uint8_t textInput(Machine &m, bool numericOnly, bool keepCase) {
     auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
     constexpr uint16_t position = 0x4682, maxLength = 0x4684, numericFlag = 0x467B;
     D(numericFlag) = numericOnly ? 1 : 0;
@@ -330,7 +330,7 @@ uint8_t textInput(Machine &m, bool numericOnly) {
             cursorGlyph(m, '_');
             m.setD16(g::buttonMask1, 0x0400);
             m.setD16(g::buttonMask2, 0);
-            const uint8_t key = checkKeypress(m);
+            const uint8_t key = keepCase ? checkKeypress(m, 0) : checkKeypress(m);
             if (key == 0x1B) return 0xFF;
             if (key == 8 || key == 0xFF) {   // backspace
                 if (D(position) == 0) continue;
