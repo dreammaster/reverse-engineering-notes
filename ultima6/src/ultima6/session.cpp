@@ -108,8 +108,6 @@ void Game::minutePassed() {
 		explodeKeg();
 	actorStatusDecay();
 	partyHazards();
-	if (!_combatMode)
-		_creatures.partyFights();
 	_creatures.despawn(x, y, z);
 	_creatures.checkEggs(x, y, z, clock.hour);
 	if (_world.actors.hp[1] == 0 && (_world.actors.status[1] & 0x10))
@@ -494,7 +492,7 @@ void Game::command(int key) {
 		message("Move-");
 		_pending = 'M';
 		break;
-	case 'X': // the Combat command (event 0x8A of command_loop, 14178): the party fights by its members' own combat worktypes, or follows again
+	case 'B': // the Combat command (key 0x42 is event 0x8A of command_loop, 14178): the party fights by its members' own combat worktypes, or follows again
 		toggleCombat();
 		prompt();
 		break;

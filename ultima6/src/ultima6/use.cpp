@@ -1249,11 +1249,13 @@ void Game::drawGem(Framebuffer &screen) const {
 
 // sub_2B0B8 / sub_2B1AC: "Begin combat!" gives every member (but the one the player controls) the combat worktype kept in the objlist (+0x12F1: 3 front, 4 rear, 5 flank ...);
 // "Break off combat!" makes the living members followers (worktype 1) again and the dead ones motionless (0).
-// APPROX(65): the combat worktypes act as wt_combat_assault does (the originals, wt_combat_front 2E454, wt_combat_rear 2E4B9 and wt_combat_flank 2E7E2, are not traced); the key (X) is mine
+// Nothing else starts or ends combat: the flag (byte_40512) is written only here, so the companions never fight unless the player says so (the engine has no solo mode:
+// the original answers "Not in solo mode!" to this key there).
+// APPROX(65): the combat worktypes act as wt_combat_assault does (the originals, wt_combat_front 2E454, wt_combat_rear 2E4B9 and wt_combat_flank 2E7E2, are not traced)
 void Game::toggleCombat() {
 	ObjList &a = _world.actors;
-	if (a.partySize < 2) {
-		message("Not in party mode!\n");
+	if (!_combatMode && _aboard) {
+		message("Not while aboard ship!\n");
 		return;
 	}
 	_combatMode = !_combatMode;

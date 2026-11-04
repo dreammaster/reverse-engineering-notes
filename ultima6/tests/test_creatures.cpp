@@ -95,7 +95,7 @@ int main() {
 			w.moveObject(w.actorObject(foe), g.x + 5, g.y, 0);
 			for (int m = 1; m < w.actors.partySize; ++m)
 				w.moveObject(w.actorObject(w.actors.partyRoster[m]), g.x - m, g.y, 0);
-			g.handleKey('X');
+			g.handleKey('B');
 			for (int r = 0; r < 40; ++r)
 				g.handleKey(' ');
 			int bx = w.objects[w.actorObject(w.actors.partyRoster[1])].x;
@@ -125,7 +125,7 @@ int main() {
 		}
 		CHECK(npc >= 0);
 		if (npc >= 0) {
-			g.handleKey('X'); // combat over
+			g.handleKey('B'); // combat over
 			g.x = 307;        // the start: open ground
 			g.y = 352;
 			w.moveObject(w.actorObject(1), g.x, g.y, 0);

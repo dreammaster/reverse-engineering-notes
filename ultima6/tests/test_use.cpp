@@ -434,9 +434,9 @@ int main() {
 		wc.load("u6/game");
 		Game gc(wc);
 		int second = wc.actors.partyRoster[1];
-		gc.handleKey('x');
+		gc.handleKey('b');
 		CHECK(wc.actors.worktype[second] == wc.actors.unknown12f1[second]);
-		gc.handleKey('x');
+		gc.handleKey('b');
 		CHECK(wc.actors.worktype[second] == 1);
 	}
 
