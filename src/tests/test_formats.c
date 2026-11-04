@@ -8,6 +8,7 @@
 #include "../engine/pc1.h"
 #include "../engine/lng.h"
 #include "../engine/sprites.h"
+#include "../engine/mp2.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -138,6 +139,38 @@ int main(int argc, char **argv) {
 		}
 		if (rc == 0)
 			spriteset_free(&set);
+		checked++;
+		free(in);
+		free(raw);
+	}
+
+	for (size_t i = 0; i < sizeof(mp2_vectors) / sizeof(mp2_vectors[0]); i++) {
+		snprintf(path, sizeof(path), "%s/%s", root, mp2_vectors[i].path);
+		size_t n, un;
+		uint8_t *in = slurp(path, &n), *raw = NULL;
+		if (!in)
+			continue;
+		Mp2 m;
+		int rc = mjm_unpack(in, n, &raw, &un);
+		if (rc == 0)
+			rc = mp2_parse(raw, un, &m);
+		unsigned h = 0x811C9DC5u;
+#define HASH32(v) do { uint32_t x_ = (uint32_t)(v); for (int b_ = 0; b_ < 4; b_++) h = (h ^ ((x_ >> (8 * b_)) & 0xFF)) * 0x01000193u; } while (0)
+		if (rc == 0) {
+			for (int s = 0; s < MP2_SECTIONS; s++) {
+				HASH32(m.sec[s].count); HASH32(m.sec[s].data_len); HASH32(m.sec[s].alloc_len);
+				for (int k = 0; k < m.sec[s].count; k++) {
+					HASH32(m.sec[s].len[k]);
+					for (int j = 0; j < m.sec[s].len[k]; j++)
+						h = (h ^ (m.sec[s].rec[k] ? m.sec[s].rec[k][j] : 0)) * 0x01000193u;
+				}
+			}
+			mp2_free(&m);
+		}
+		if (rc || h != mp2_vectors[i].hash) {
+			printf("FAIL %s: rc=%d\n", mp2_vectors[i].path, rc);
+			failed++;
+		}
 		checked++;
 		free(in);
 		free(raw);

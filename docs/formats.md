@@ -216,22 +216,47 @@ count x { u16be size, u16be offset }    directory, offsets contiguous from 0
 data_len bytes      variable-length records (big-endian words)
 ```
 
-| Section | count × stride | notes |
+| Section | count × stride | what it holds |
 |---|---|---|
-| 1 | 100 × 52 | records of 32–104 bytes; level-1 record 0 is the room record the game reads when it prints the room name |
-| 2 | 400 × 8 | |
-| 3 | 100 × 80 | |
-| 4 | 1000 × 26 | most of the file (12 910 bytes in level 1) |
+| 1 | 100 × 52 | script/event records (messages, rank titles such as PEASANT, ROGUE, SCOUT, INITIATE, PATHFINDER, RANGER, TRACKER; a word at `+0x0A` is a language string id, `FFFF` = none). Probably the ACL scripts |
+| 2 | 400 × 8 | small 8-byte records (e.g. `36 3F 00 00 02 01 00 00`) — unknown |
+| 3 | 100 × 80 | **room lists**: each record is a list of big-endian **thing ids** (see below). Record 0 holds global things (version string, "CANNOT", "SEARCH", the save-game prompts …) |
+| 4 | 1000 × 26 | **things**: record *i* is thing *i*; the big-endian word at `+4` equals *i* in every non-empty record of every level (509 things in level 1, 815 in level 2 …) |
 
-The loader ("EXPANDING DATA") expands these compact records into fixed-stride
-little-endian structs in the data segment; in the emulator the first 12 bytes of
-level-1 record 0, `54 0C 0F 12 0A 0A 00 32 00 3B …`, appear as
-`54 0C 0F 12 0A 0A 32 00 3B 00 …` (the 16-bit fields byte-swapped) at `ds:3DDA`.
-Preceding it at `ds:3DC0` is a table of string indices `0085 0086 0087 …` — the
-**room names are language strings 133 + room number** (`CAVERN` = 133 in
-`ENG1.LNG`). Object names are requested by one routine, `1000:2314`
-(for example indices 215 `SILVER COIN`, 201 `STONE`, 187 `BOAT`, 242 `DIARY`
-in level 1) — the mapping from object to string index is still to be found.
+**Thing ids are language string ids.** A thing's name is `ENGn.LNG` string *i*
+(`CAVERN` = 133, `BOAT` = 187, `STONE` = 201, `SILVER COIN` = 215, `DIARY` = 242 in
+level 1), and its descriptive messages are other things (strings) in the same
+list ("THE LID IS TIGHTLY CLOSED", "THE KEY IS COVERED IN SPIDERS WEBS"). In the
+running game the name routine (`1000:22C4…2314`, called with the string id in DX)
+follows an object → type record pointer and reads the name id from a word at
+type-record offset `+0A`; `FFFF` (negative) means "unnamed".
+
+**Room lists** (section 3): the words are thing ids, every thing appears in exactly
+one list (no duplicates in any of the nine levels), e.g. level 1 list 14 =
+`WELL, STONE BAG, STONE BLOCK, BREASTPLATE, "THE FLASK HOLDS A BRIGHT LIQUID", …`,
+list 12 = the prison (`LESSER, COMMON, WARRIORS, GLUTTONS, TELEPORT, CELL 1, CELL 2,
+CELL 3`). Whether list *n* is room *n* is not established. `tools/things.py` dumps
+them with names.
+
+**Thing record layout** (compact form, big-endian, 16–132 bytes, mostly 16–44),
+partly understood from `BOAT` `2A 22 | 00 20 | 00 BB | 00 29 | 00 D2 | 1D 01 | 16 16 16 …`,
+`STONE` `0E 28 | 00 00 | 00 C9 | 00 59 | 01 EA | 1D 00 00 00 00 80`:
+
+| Offset | |
+|---|---|
+| `+0`, `+1` | two bytes, differ per thing (sizes? sprite numbers?) |
+| `+2` | `u16` flags (`0020` on BOAT, `0000` on STONE) |
+| `+4` | `u16` thing id |
+| `+6`, `+8` | two `u16` that vary a lot (BOAT 41, 210; STONE 89, 490; SILVER COIN 82, 140; DIARY 89, 140) — positions? *unverified* |
+| `+10` | byte (29 for BOAT and STONE, 27 for SILVER COIN, 68 for DIARY) — height? *unverified* |
+| rest | variable tail (`16 16 16 00 06 90 48 …` on BOAT) |
+
+The loader ("EXPANDING DATA") byte-swaps the 16-bit fields in place and stores the
+records back to back (not at a fixed 52-byte stride): level-1 script record 0
+`54 0C 0F 12 0A 0A 00 32 00 3B …` appears as `54 0C 0F 12 0A 0A 32 00 3B 00 …` at
+`ds:3DDA`, and the next compact record follows directly after its 104 bytes.
+Preceding it at `ds:3DC0` is a table of string ids `0085 0086 0087 …`
+(**room names are strings 133 + n**).
 
 ### 6.5 `LEVn.MP1` — *partly understood*
 

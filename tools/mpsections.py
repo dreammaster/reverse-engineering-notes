@@ -16,6 +16,12 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import mjm
 
 
+def _rec(d, pos, size):
+    """A record that is not completely inside the file (damaged TATA/2 dump) reads as zeros."""
+    r = d[pos:pos + size]
+    return r if len(r) == size else bytes(size)
+
+
 def mp2_sections(d):
     p, secs = 0, []
     while p < len(d):
@@ -35,7 +41,7 @@ def mp2_sections(d):
         truncated = data + dl > len(d)
         secs.append(dict(pos=p, data_len=dl, alloc_len=al, count=cnt, stride=(al / cnt if cnt else 0),
                          truncated=truncated,
-                         records=[d[data + ents[2 * i + 1]:data + ents[2 * i + 1] + ents[2 * i]] for i in range(cnt)]))
+                         records=[_rec(d, data + ents[2 * i + 1], ents[2 * i]) for i in range(cnt)]))
         p = data + dl
     return secs
 

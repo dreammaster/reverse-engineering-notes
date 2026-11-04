@@ -160,3 +160,20 @@ static const SpriteVector sprite_vectors[] = {
 	{"cadaver1/DATA/PCMAN.DAT", 48, 0x6FE6F421U},
 	{"cadaver2/DATA/PCMAN.DAT", 48, 0x6FE6F421U},
 };
+typedef struct { const char *path; unsigned hash; } Mp2Vector;
+static const Mp2Vector mp2_vectors[] = {
+	{"cadaver1/DATA/1/LEV1.MP2", 0x9D3F9206U},
+	{"cadaver1/DATA/2/LEV2.MP2", 0x4DDC23DCU},
+	{"cadaver1/DATA/3/LEV3.MP2", 0xD2734F13U},
+	{"cadaver1/DATA/4/LEV4.MP2", 0x2B19D746U},
+	{"cadaver1/DATA/5/LEV5.MP2", 0x83544A1DU},
+	{"cadaver2/DATA/1/LEV1.MP2", 0x9D3F9206U},
+	{"cadaver2/DATA/2/LEV2.MP2", 0x4DDC23DCU},
+	{"cadaver2/DATA/3/LEV3.MP2", 0xD2734F13U},
+	{"cadaver2/DATA/4/LEV4.MP2", 0x2B19D746U},
+	{"cadaver2/DATA/5/LEV5.MP2", 0x83544A1DU},
+	{"cadaver2/TATA/1/LEV1.MP2", 0x4F58643DU},
+	{"cadaver2/TATA/2/LEV2.MP2", 0x3E3CCC36U},
+	{"cadaver2/TATA/3/LEV3.MP2", 0x5DA557CBU},
+	{"cadaver2/TATA/4/LEV4.MP2", 0xA0F4B3E9U},
+};

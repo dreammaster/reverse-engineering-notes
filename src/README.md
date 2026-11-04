@@ -7,6 +7,7 @@ Work in progress. Currently:
 | `engine/mjm.[ch]` | `mjm` container + PKWARE DCL explode + RNC1 unpacker |
 | `engine/pc1.[ch]` | `.PC1` picture decoder |
 | `engine/sprites.[ch]` | `PCMAN.DAT` player sprites (48 frames) and the game palette |
+| `engine/mp2.[ch]` | `LEVn.MP2` section tables: script records, room lists, things |
 | `engine/lng.[ch]` | `.LNG` language string tables (6-bit packed text) |
 | `engine/gamefiles.[ch]` | detects Cadaver / Cadaver: The Payoff, resolves DOS-style paths case-insensitively, loads + unpacks files |
 | `engine/screen.h` | 320×200 indexed framebuffer + palette |
