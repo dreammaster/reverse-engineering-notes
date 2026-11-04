@@ -255,23 +255,23 @@ type-record offset `+0A`; `FFFF` (negative) means "unnamed".
 one list (no duplicates in any of the nine levels), e.g. level 1 list 14 =
 `WELL, STONE BAG, STONE BLOCK, BREASTPLATE, "THE FLASK HOLDS A BRIGHT LIQUID", …`,
 list 12 = the prison (`LESSER, COMMON, WARRIORS, GLUTTONS, TELEPORT, CELL 1, CELL 2,
-CELL 3`). Whether list *n* is room *n* is not established. `tools/things.py` dumps
+CELL 3`). List *n* is room *n* (verified, §6.12). `tools/things.py` dumps
 them with names.
 
 **Thing record layout** (compact form, big-endian, 16–132 bytes, mostly 16–44):
 
 | Offset | |
 |---|---|
-| `+0`, `+1` | two bytes that differ per thing (`+1` is constant within groups of similar things — 55 for every thing in level-1 list 12 — so probably a type/class number; `+0` unknown) |
-| `+2` | `u16` flags (values like `0020`, `1000`, `2040`, `4002` …; meaning unknown) |
+| `+0`, `+1` | `x1`, `y1`: the object's far corner in the room, in 1/8 cell units (verified: the game's object entries hold exactly these, §6.12) |
+| `+2` | `z0`: height of the object's base, same units (0 for things on the floor; 0x30 for the flame bowl on the wall, 2 for the pentagram) |
+| `+3` | flags: `0x80` = not in the room (inside a container / not placed yet — the game does not build an object entry for it); `0x20` = present in many bigger objects (undecoded) |
 | `+4` | `u16` **thing id** (= the record index = the name string id) — all levels |
-| `+6` | `u16`, varies per thing (BOAT 41, STONE 89, SILVER COIN 82, WELL 46 …); unknown |
+| `+6` | `u16` **index of the sprite block** (`LEVn.MP1` section 2) that draws the thing — verified for every placed object of level 1 room 0 (§6.12) |
 | `+8` | `u16` **slot offset = 70 × (position of the thing in its room list)** (verified for every thing of 8 of 9 levels; level 1 list 39 restarts at 0 for its 4th entry). So the loader gives each room an array of 70-byte object slots |
-| `+10` | byte **room list number** the thing belongs to — verified for every thing in all nine levels (BOAT → 29, SILVER COIN → 27, DIARY → 68) |
-| rest | variable tail (e.g. `16 16 16 00 06 90 48 …` on BOAT) |
+| `+10` | byte **room list number** the thing belongs to — verified for every thing in all nine levels (BOAT → 29, SILVER COIN → 27, DIARY → 68). Room list *n* is room *n* (level 1 room 0 reproduced from list 0) |
+| rest | variable tail (e.g. `16 16 16 00 06 90 48 …` on BOAT): per-thing state/behaviour data, undecoded |
 
-(An earlier guess that `+6/+8/+10` were x/y/z coordinates was wrong: they are
-bookkeeping — slot and room links — so positions must be in the tail or elsewhere.)
+(Earlier guesses — "class", then `+6/+8/+10` as x/y/z — were wrong; see above.)
 
 The loader ("EXPANDING DATA") byte-swaps the 16-bit fields in place and stores the
 records back to back (not at a fixed 52-byte stride): level-1 script record 0
