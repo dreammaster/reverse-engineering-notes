@@ -13,7 +13,10 @@ Safety rules, so re-running is harmless and nothing of yours is overwritten:
     row's `old` name nor the `new` name is a CONFLICT and is skipped (you
     renamed it yourself);
   * comments are only written when the location has no comment yet;
-  * rows below the minimum confidence are skipped.
+  * rows below the minimum confidence are skipped;
+  * the whole table is refused when fewer than 70% of its informative
+    signatures (>= 8 bytes, not all the same byte) match the database -
+    i.e. this is the wrong executable build.
 
 Environment variables (set before launching idat/IDA):
     CADAVER_RENAMES_DRY=1       report only, change nothing (also pass -NoExport)
@@ -105,6 +108,15 @@ def main():
     if errors:
         print("table has errors, nothing applied")
         return
+    if not FORCE:
+        informative = [r for r in rows if r.sig and '??' not in r.sig and len(set(R.sig_bytes(r.sig))) > 2
+                       and len(R.sig_bytes(r.sig)) >= 8]
+        good = sum(1 for r in informative
+                   if R.sig_matches(ida_bytes.get_bytes(r.ea, len(R.sig_bytes(r.sig))) or b"", r.sig))
+        if informative and good * 10 < len(informative) * 7:
+            print("WRONG BUILD? only %d of %d informative signatures match this database; table refused "
+                  "(CADAVER_RENAMES_FORCE=1 overrides)" % (good, len(informative)))
+            return
     min_rank = R.CONF_ORDER[MIN_CONF]
     stats = dict(renamed=0, same=0, conflict=0, sig=0, failed=0, not_loaded=0, comments=0, below_conf=0)
     for r in sorted(rows, key=lambda r: r.ea):

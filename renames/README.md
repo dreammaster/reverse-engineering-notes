@@ -56,7 +56,9 @@ The result of each row is written to `ida_scripts\batch_run_and_export.log`
 followed by a summary line. The script is safe to re-run:
 
 * a row whose `sig` bytes differ from the database is skipped (wrong build or
-  wrong address) — the Cadaver 1 table cannot be applied to Cadaver 2 by mistake;
+  wrong address), and if fewer than 70% of the table's informative signatures
+  match, the whole table is refused (`WRONG BUILD?`) — the Cadaver 1 table cannot
+  be applied to Cadaver 2 by mistake;
 * an address you already named yourself is reported as a `CONFLICT` and left
   alone (`$env:CADAVER_RENAMES_FORCE = 1` overrides);
 * existing comments are kept;

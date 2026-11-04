@@ -104,8 +104,8 @@ class Tests(unittest.TestCase):
         # Cadaver 1 table against the Cadaver 2 executable: signatures must stop it
         f = fake('cadaver2/GAME.EXE', 'disasm/cadaver1/cad.idb')
         out = f.run()
-        self.assertIn('signature mismatch', out)
-        self.assertLess(len(f.names), 15)
+        self.assertIn('WRONG BUILD', out)
+        self.assertEqual(f.names, {})
 
     def test_cadaver2_table_on_cadaver2_binary(self):
         f = fake('cadaver2/GAME.EXE', 'disasm/cadaver2/game.idb')
