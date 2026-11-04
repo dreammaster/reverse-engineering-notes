@@ -4,7 +4,7 @@ Room exits (door boxes) = the entries the game builds at ss:[3A] in CAD.EXE 1000
 
 The room record (MP2 section 0) lists door ids at +6 (u16be words, FFFF = unused, `rec[0x16]` of the expanded record = how many);
 a door id indexes MP2 section 1 (8-byte records): (x, y) = global map cell, +4 = length in cells (1 or 2), +5 = orientation (0 = the
-door lies along y, 1 = along x).  The room record gives the room's own map origin (+1 = x, +3 = y).
+door lies along y, 1 = along x), +6 = floor level (the box starts at z = 16 * (level - room_rec[0x1E])).  The room record gives the room's own map origin (+1 = x, +3 = y).
 """
 import struct
 
@@ -47,7 +47,7 @@ def room_exits(room_rec, doors, headers, thick_x, thick_y):
         xs, ys, zs = hd
         x0, y0 = (dl * 8) & 0xFF, (dh * 8) & 0xFF
         dl, dh = x0, y0
-        zb = 0
+        zb = ((r[6] - (room_rec[0x1E] if len(room_rec) > 0x1E else 0)) << 4) & 0xFF if len(r) > 6 else 0
         bx, by = xs, ys
         if xs == 8:
             bx = thick_x

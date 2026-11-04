@@ -533,15 +533,16 @@ write tracing):
   `x0 <= ds:5DF and y0 <= ds:5E0` (always 2 and 10 in level 1), `x0 < rec[21]`, `y0 < rec[20]`, or a door rectangle (`ds:54`, unused in
   level 1); results `flag = FDh` mark a solid overlap. If the mover leaves the room the routine looks for an **exit entry**
   (list at `ss:[3A]`, 50-byte entries in the *stack* segment) it touches and returns `count = FEh` with that exit's id.
-* **Exits (verified for all 72 rooms of level 1, `tools/roomexits.py`, `src/engine/roomexits.c`):** the room record lists up to 7
+* **Exits (verified against the original for every room of levels 1–5 — 363 rooms, one room with an odd record excepted —, `tools/roomexits.py`, `src/engine/roomexits.c`):** the room record lists up to 7
   *door ids* (u16be at `+6`, `FFFF` unused). A door id indexes MP2 section 1 (8-byte records `x y ?? ?? len ori ?? ??`: `x, y` = global
   map cell, `len` = 1 or 2 cells, `ori` = 0 / 1 = door along y / along x); the room record's `+1`, `+3` are the room's own map origin.
   Local cell `(dl, dh)` = door − origin; when the result is negative the door is on the near side (`ch` 0 / 1), else the far side
   (`ch` 2 / 3). The exit's box comes from sprite block `(len-1)*4 + ch` of MP1 section 2 (blocks 0–7 are 8×16×48 / 16×8×48
   door-opening boxes): `x0 = 8·dl`, `y0 = 8·dh` (8 = the wall thickness `rec[21]` / `rec[20]` replaces a block size of 8, and the box is shifted
-  by 4 on the other axis), `x1 = x0 + xs - 1`, `y1 = y0 + ys - 1`, `z 0..47`. Both rooms joined by a door list the same door id, so
+  by 4 on the other axis), `x1 = x0 + xs - 1`, `y1 = y0 + ys - 1`, `z = 16·(door level − rec[0x1E]) … +47`. Both rooms joined by a door list the same door id, so
   the target room of an exit is the *other* room that lists it. (Ground truth: the room-entry routine `sub_1DA60` can be called for any room in
-  the emulator, `tools/emu_call.py` — the exits and the bounds of all 72 rooms were read back that way.)
+  the emulator, `tools/emu_call.py`, `tools/oracle_rooms.py N` — the exits and the bounds of every room were read back that way; the level
+  number is forced by writing `ds:0708 = level-1` before the files are opened.)
 * The player's per-tick move is `sub_167DF` (add `(dx, dy, dz)` to the box and position record of the player and whatever it carries —
   objects such as the small flat thing at (40, 23) in level 1 room 0 are *pushed* along until they hit something, which is what
   stops the player at x1 = 69 there). Not ported: pushing, climbing onto low solid objects, the halving retry.

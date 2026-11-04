@@ -7,8 +7,14 @@ import os
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DS=0x1F170
 def boot(level=1):
+    """Run the original (CAD.EXE) until its title/level 1 room is up (900 ticks). level = 1..5 forces the level number
+    (ds:0708 = level-1 is read by the file-name patcher at 1000:C4CB) before the level files are opened."""
     e=Emu(ROOT+'/unpacked/cadaver1/CAD.EXE',ROOT+'/cadaver1')
-    e.pending_keys=[((level+1)<<8)|(0x30+level),0x011b]
+    e.pending_keys=[0x0231,0x011b]
+    if level != 1:
+        def force(uc, addr, size, user):
+            e.wr(0x1F17, 0x708, bytes([level - 1]))
+        e.uc.hook_add(UC_HOOK_CODE, force, None, e.lin(0x1000, 0xC4CB), e.lin(0x1000, 0xC4CB))
     while e.ticks<900: e.run(max_instr=20000)
     return e
 REGS=['eax','ebx','ecx','edx','esi','edi','ebp','esp','eip','es','ds','ss','cs','eflags']

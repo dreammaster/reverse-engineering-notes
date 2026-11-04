@@ -34,7 +34,8 @@ int room_build_exits(const Mp2 *mp2, const ObjSprites *objs, int room, ColBox ou
 		if (!sp)
 			continue;
 		int xs = hw(sp->header, 8), ys = hw(sp->header, 9), zs = hw(sp->header, 10);
-		int x0 = (dl * 8) & 0xFF, y0 = (dh * 8) & 0xFF, ddl = x0, ddh = y0, zb = 0, bx = xs, by = ys;
+		int zb = mp2->sec[1].len[d] > 6 ? ((r[6] - (mp2->sec[0].len[room] > 0x1E ? rr[0x1E] : 0)) << 4) & 0xFF : 0;
+		int x0 = (dl * 8) & 0xFF, y0 = (dh * 8) & 0xFF, ddl = x0, ddh = y0, bx = xs, by = ys;
 		if (xs == 8) { bx = thick_x; y0 = (y0 - 4) & 0xFF; ddh = (ddh + 4) & 0xFF; }
 		if (ys == 8) { by = thick_y; x0 = (x0 - 4) & 0xFF; ddl = (ddl + 4) & 0xFF; }
 		ColBox *e = &out[n++];
