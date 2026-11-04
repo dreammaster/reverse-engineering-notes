@@ -448,6 +448,31 @@ So the four keys move along the four isometric grid axes (not along screen axes)
 taking damage). In the first frame of level 1 the standing player (sprite 16) is at
 screen (148, 32), i.e. on floor tile (0,0) of the 10×10 room 0, whose top-left is at (144, 29).
 
+### 6.12 Objects in the running room — *observed, partly decoded*
+
+How the first frame of level 1 (room 0) gets its 19 objects, from the harness (post-load memory dump + blit and
+write tracing):
+
+* The current room's objects are an array of **50-byte entries** at `ds:[002A]` (1E40h; count in `ds:[0224]`).
+  A blit log (`sub_19080`, which takes the source segment from `ds:[075A]`, the destination segment from `ds:[0002]`,
+  rows in `ch`, shift in `cl & 7`, `+8` pixels if `cl & 8`) shows that every floor tile (source segment `36EF`), wall tile
+  (`3C35`) and object sprite (own segment per sprite) goes through the same blitter.
+* An entry holds (offsets in bytes): `+0 x1`, `+1 y1`, `+2 x0`, `+3 y0`, `+4 z_top` (world coordinates in 1/8 cell
+  units; the object occupies the box `[x0,x1] × [y0,y1]`, the sprite block header gives its size as `extent + 1`),
+  `+6` sprite segment, `+0A` pointer to its 16-byte position record, `+0C` video offset of the sprite's top-left,
+  `+10h` screen y, `+11h` pixel shift, `+2A` sprite segment, `+2C` offset of the sprite data (what the blitter uses).
+* Measured over the 19 objects: **screen x = 158 + 2·(x0 − y1) exactly** (0 residual); screen y ≈ 26 + (x1 + y0 ... ) − z,
+  within ±2 px (the sprite's own offsets are in the block header; the exact formula is in `object_project`).
+* The projection routine (`object_project`, `CAD.EXE 1000:5A61`): the position record gives `x, y, z` bytes; `x>>3, y>>3`
+  select the cell, `x&7, y&7` the sub-cell; the cell's video offset comes from the table at `ds:08DC` (built by
+  `room_setup_floor_origin` from the room's floor origin), the sub-cell's offset and pixel shift from a 64-entry table at
+  `ds:F8CE`; then `(z − hdr[+2] + hdr[+10h] + hdr[+12h] + hdr[+14h])` rows are subtracted. `hdr` is the sprite block's
+  32-byte header as words: `[1]`, `[2]` = 3, 1 (small constants), `[8]`, `[9]`, `[10]` = x-, y-, z-size of the object's
+  box (e.g. 6, 5, 0x16 for the boat-sized block 14), `[12]` = `FFFF` …
+* The position records live in the things table area (`ds:65E4 …`, 16 bytes each, stride 16): their first bytes are the
+  object's `x1, y1` (the same `+0`, `+1` of the thing record in §6.4, which I had called a "class" — they are positions).
+  The remaining fields (the link from a thing to its sprite block, `z`, the flag bits) are not mapped yet.
+
 ## 7. Text strings recovered from the executables
 
 INTRO.EXE contains the plain-text story ("chapter thirteen — the story so far
