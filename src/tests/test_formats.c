@@ -14,6 +14,7 @@
 #include "../engine/objsprites.h"
 #include "../engine/roomobjs.h"
 #include "../engine/anim.h"
+#include "../engine/collision.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -39,6 +40,65 @@ static uint8_t *slurp(const char *path, size_t *len) {
 	fclose(f);
 	*len = (size_t)n;
 	return d;
+}
+
+
+static uint32_t rng_s;
+static uint32_t rng_next(void) {
+	uint32_t x = rng_s;
+	x ^= x << 13; x ^= x >> 17; x ^= x << 5;
+	return rng_s = x;
+}
+static int rnd(int n) { return (int)(rng_next() % (uint32_t)n); }
+
+/* the same random world and queries as collision_vector() in tools/gen_test_vectors.py */
+static unsigned collision_vector(unsigned seed) {
+	rng_s = seed ? seed : 1;
+	ColWorld w;
+	memset(&w, 0, sizeof(w));
+	static ColBox objs[32], exits[8];
+	w.w8 = 8 * (3 + rnd(8)); w.h8 = 8 * (3 + rnd(8));
+	w.thick_x = rnd(8); w.thick_y = rnd(8); w.wallx = rnd(20); w.wally = rnd(20);
+	w.dirbits = rnd(2);
+	w.nzones = rnd(5);
+	for (int j = 0; j < 4; j++) {
+		int x1 = rnd(90), y1 = rnd(90);
+		w.zones[j].x1 = (int8_t)x1; w.zones[j].y1 = (int8_t)y1;
+		w.zones[j].x0 = (int8_t)(x1 - rnd(12)); w.zones[j].y0 = (int8_t)(y1 - rnd(12));
+	}
+	int nobj = rnd(25);
+	for (int i = 0; i < nobj; i++) {
+		int x1 = rnd(100), y1 = rnd(100), zb = rnd(30);
+		int x0 = x1 - rnd(10), y0 = y1 - rnd(10), zt = zb + rnd(30);
+		int marker = rnd(2) ? 0xFF : rnd(20);
+		int flag4 = rnd(4) == 0;
+		objs[i].x1 = (int8_t)x1; objs[i].y1 = (int8_t)y1; objs[i].x0 = (int8_t)x0; objs[i].y0 = (int8_t)y0;
+		objs[i].zt = (int8_t)zt; objs[i].zb = (int8_t)zb;
+		objs[i].solid = marker >= 0x80 || flag4;
+		objs[i].id = 0x3000 + 16 * i;
+	}
+	int nex = rnd(4);
+	for (int i = 0; i < nex; i++) {
+		int x1 = rnd(100), y1 = rnd(100), zb = rnd(20);
+		int x0 = x1 - rnd(12), y0 = y1 - rnd(12), zt = zb + rnd(40);
+		exits[i].x1 = (int8_t)x1; exits[i].y1 = (int8_t)y1; exits[i].x0 = (int8_t)x0; exits[i].y0 = (int8_t)y0;
+		exits[i].zt = (int8_t)zt; exits[i].zb = (int8_t)zb;
+		exits[i].id = 0x4000 + i;
+	}
+	w.objs = objs; w.nobjs = nobj; w.exits = exits; w.nexits = nex;
+	int selfk = rnd(nobj + 1);
+	int self = selfk < nobj ? 0x3000 + 16 * selfk : -1;
+	unsigned h = 0x811C9DC5u;
+#define MIX(v) do { uint32_t m_ = (uint32_t)(v); for (int s_ = 0; s_ < 32; s_ += 8) h = (h ^ ((m_ >> s_) & 0xFF)) * 0x01000193u; } while (0)
+	for (int q = 0; q < 60; q++) {
+		int x = (rnd(110) - 5) & 0xFF, y = (rnd(110) - 5) & 0xFF, z = rnd(40), xs = 1 + rnd(9), ys = 1 + rnd(9), zs = 1 + rnd(30);
+		ColResult r;
+		collision_test(&w, x, y, z, xs, ys, zs, self, 1, &r);
+		MIX(r.zf); MIX(r.count); MIX(r.flag); MIX(r.n);
+		for (int k = 0; k < r.n; k++) MIX(r.ids[k]);
+		MIX(r.count == 0xFE ? r.exit_id : 0);
+	}
+	return h;
 }
 
 int main(int argc, char **argv) {
@@ -318,6 +378,14 @@ int main(int argc, char **argv) {
 		checked++;
 		free(in);
 		free(raw);
+	}
+
+	for (size_t i = 0; i < sizeof(coll_vectors) / sizeof(coll_vectors[0]); i++) {
+		if (collision_vector(coll_vectors[i].seed) != coll_vectors[i].hash) {
+			printf("FAIL collision world %u\n", coll_vectors[i].seed);
+			failed++;
+		}
+		checked++;
 	}
 
 	for (size_t i = 0; i < sizeof(intro_vectors) / sizeof(intro_vectors[0]); i++) {
