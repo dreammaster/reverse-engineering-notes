@@ -38,6 +38,7 @@ void inventoryItems(const World &world, int member, std::vector<int> &items);
 void drawInventoryView(Framebuffer &screen, const World &world, int member, int selected, std::vector<int> &items, int &scroll);
 
 /** The panel while talking: the speaker's portrait. */
+void drawActorView(Framebuffer &screen, const World &world, int actor, const std::string &name);
 void drawTalkView(Framebuffer &screen, const World &world, int actor);
 
 } // namespace Ultima6

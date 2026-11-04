@@ -170,6 +170,8 @@ private:
 	bool dropSurface(int tx, int ty) const;
 	bool dropRecipient(int target, int item) const;
 	void dropPlace(int item, int count, int tx, int ty, int recipient, bool free = true);
+	int _actorView = -1;       // the person Look is showing (sub_2F969), until a key is pressed
+	std::string _actorName;
 	int _packScroll = 0;       // the first of the objects the pack view shows (a multiple of four)
 	bool _dropPending = false; // "Drop-" is waiting for the object to be chosen in the inventory
 	int _dropItem = -1;		// the object chosen, while "Location: " waits for its place

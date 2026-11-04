@@ -66,6 +66,41 @@ static int dollTile(const World &world, int actor) {
 	return world.baseTile.firstTile[type] + frame;
 }
 
+// sub_1DB44: the eight places of the doll, offset by (dx, dy)
+static void drawDoll(Framebuffer &screen, const World &world, const Equipment::Slots &slots, int dx, int dy) {
+	for (int k = 0; k < Equipment::SLOTS; ++k) {
+		int x = Equipment::SLOT_X[k] + dx, y = Equipment::SLOT_Y[k] + dy;
+		if (slots.object[k] >= 0) {
+			const World::Obj &o = world.objects[slots.object[k]];
+			Ui::drawTile(screen, world, 0x19B, x, y);
+			Ui::drawTile(screen, world, world.baseTile.firstTile[o.type] + o.frame, x, y);
+		} else {
+			Ui::drawTile(screen, world, k == 5 && slots.twoHanded ? 0x185 : 0x19A, x, y);
+		}
+	}
+}
+
+// sub_2F969: what looking at a person shows: the portrait, and what the person has readied around it, then the name in the middle of row 10. With a portrait and equipment the portrait stands
+// at (248, 24) and the doll is lowered by 8; with equipment alone the doll is lowered by 8 and moved 32 to the right; with a portrait alone it stands at (216, 24).
+void drawActorView(Framebuffer &screen, const World &world, int actor, const std::string &name) {
+	Ui::restorePaper(screen, world.paper, 176, 8, 136, 96);
+	Equipment::Slots slots = Equipment::of(world, actor);
+	bool equipped = false;
+	for (int o : slots.object)
+		equipped |= o >= 0;
+	Bytes portrait;
+	bool shown = world.portrait(actor, portrait);
+	if (equipped && shown) {
+		screen.blit(248, 24, &portrait[0], world.portraitW, world.portraitH, world.portraitW);
+		drawDoll(screen, world, slots, 0, 8);
+	} else if (equipped) {
+		drawDoll(screen, world, slots, 32, 8);
+	} else if (shown) {
+		screen.blit(216, 24, &portrait[0], world.portraitW, world.portraitH, world.portraitW);
+	}
+	Ui::drawText(screen, world.font, 176 + (17 - (int)name.size()) / 2 * 8, 8 + 10 * 8, name, 0x48);
+}
+
 // sub_1DF45 / sub_1DB44: the name at the top; the doll's eight places for what is readied (the frame tile 0x19B behind the thing, 0x19A for a free place, 0x185 for the hand a two-handed
 // weapon holds), the person in the corner, a pack of twelve places (four across, three down) that scrolls by rows of four with arrows when there is more, and the weights.
 // APPROX(28): the weights lines and the cursor are not the original's
@@ -97,13 +132,7 @@ void drawInventoryView(Framebuffer &screen, const World &world, int member, int 
 		if (Describe::quantityKind(o.type) && world.quantityOf(o) > 1)
 			Ui::drawText(screen, world.font, x, y + 8, std::to_string(world.quantityOf(o) % 100), 0xFF);
 	};
-	for (int k = 0; k < Equipment::SLOTS; ++k) {
-		int x = Equipment::SLOT_X[k], y = Equipment::SLOT_Y[k];
-		if (slots.object[k] >= 0)
-			cell(slots.object[k], x, y);
-		else
-			Ui::drawTile(screen, world, k == 5 && slots.twoHanded ? 0x185 : 0x19A, x, y);
-	}
+	drawDoll(screen, world, slots, 0, 0);
 	Ui::drawTile(screen, world, 0x19B, 272, 16);
 	Ui::drawTile(screen, world, dollTile(world, actor), 272, 16);
 

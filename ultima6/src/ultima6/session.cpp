@@ -418,9 +418,21 @@ void Game::look(int tx, int ty) {
 	if (top < 0) {
 		int tile = _world.map.tile(z, tx, ty);
 		text = Describe::article(_world, tile) + Describe::tileName(_world, tile, false) + ".\n";
+		if (std::abs(tx - x) <= 1 && std::abs(ty - y) <= 1) // looking at nothing on a square next to the party
+			text += "\nSearching here, you find nothing.\n";
 	} else {
 		const World::Obj &o = _world.objects[top];
 		text = Describe::object(_world, o);
+		if (o.actor >= 0) { // cmd_look: a person is named and shown (sub_2F969) unless the party is aboard a ship
+			message(text + "\n");
+			if (!_aboard) {
+				_actorView = o.actor;
+				_actorName = text;
+				return;
+			}
+			prompt();
+			return;
+		}
 		if (o.actor < 0) {
 			// cmd_look (30567-30653): the weight when it is 1-254 (". It weighs" / ". They weigh" N.M "stones"), what the thing can do as a weapon and
 			// absorb as armour
@@ -645,6 +657,11 @@ bool Game::handleKeyInner(int key) {
 	}
 	if (_eye && key != KEY_NONE) {
 		eyeKey(key);
+		return true;
+	}
+	if (_actorView >= 0 && key != KEY_NONE) { // sub_2F969 waits for a key
+		_actorView = -1;
+		prompt();
 		return true;
 	}
 	if (_peek && key != KEY_NONE) {
@@ -878,7 +895,9 @@ void Game::render(Framebuffer &screen) {
 	uint8_t dark[MapRenderer::CELLS * MapRenderer::CELLS];
 	_renderer.computeDarkness(x, y, z, light >= 7 ? 12 : 0, light, dark);
 	_renderer.draw(screen, _eye ? _eyeX : _peek ? _peekX : x, _eye ? _eyeY : _peek ? _peekY : y, z, dark);
-	if (_talk)
+	if (_actorView >= 0)
+		drawActorView(screen, _world, _actorView, _actorName);
+	else if (_talk)
 		drawTalkView(screen, _world, _talk->portraitActor());
 	else if (_inventory)
 		drawInventoryView(screen, _world, _stealing >= 0 ? 100 + _stealing : _member, _selected, _items, _packScroll);

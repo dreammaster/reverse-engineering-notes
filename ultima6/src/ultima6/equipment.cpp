@@ -65,8 +65,8 @@ Equipment::Slots Equipment::of(const World &world, int actor) {
 	std::vector<int> inv;
 	world.inventory(actor, inv, false);
 	for (int i : inv) {
-		if (world.objects[i].location() != ObjRecord::READIED)
-			continue;
+		if (world.objects[i].location() != ObjRecord::READIED || world.objects[i].type == 0x150 || world.objects[i].type == 0x151)
+			continue; // (the charges of a staff are no equipment)
 		int cls = slotClassOf(world, i);
 		if (cls < 0)
 			continue;
