@@ -196,6 +196,19 @@ static int testScan(Host &h) {
 			for (int v : verbs) {
 				h.reset();
 				h.tracing = true;
+				if (getenv("HOST_SCANKEYS")) {        // keys for the conversation menus the scenario may open, e.g. "0231 0231 011B" (1, 1, Esc)
+					std::string ks = getenv("HOST_SCANKEYS");
+					size_t kp = 0;
+					while (kp < ks.size()) { while (kp < ks.size() && ks[kp] == 32) kp++; if (kp >= ks.size()) break; h.machine.keys.push_back((uint16_t)strtoul(ks.c_str() + kp, nullptr, 16)); while (kp < ks.size() && ks[kp] != 32) kp++; }
+				}
+				if (getenv("HOST_SCANCLICK")) {      // HOST_SCANCLICK="x,y": click there every 300,000 labels (answers conversation menus)
+					int cx = 160, cy = 135;
+					sscanf(getenv("HOST_SCANCLICK"), "%d,%d", &cx, &cy);
+					for (int k = 1; k <= 40; k++) {
+						h.machine.mouseTimeline.push_back({(long)k * 300000, cx, cy, 1});
+						h.machine.mouseTimeline.push_back({(long)k * 300000 + 60000, cx, cy, 0});
+					}
+				}
 				bool asIobj = phase == 3 || phase == 4;
 				setupCommand(h, v, asIobj ? 7 : o, asIobj ? o : 8);
 				h.problems.clear();

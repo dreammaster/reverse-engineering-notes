@@ -218,6 +218,11 @@ std::string Host::message(uint32_t id, bool *ok) const {
 }
 
 void Machine::reset() {
+	mouseTimeline.clear();
+	inputScript.clear();
+	keys.clear();
+	mouseButtons = 0;
+	pressCount[0] = pressCount[1] = releaseCount[0] = releaseCount[1] = 0;
 	for (auto &f : files)
 		if (f.second.fp)
 			fclose(f.second.fp);
