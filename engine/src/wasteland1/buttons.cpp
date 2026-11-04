@@ -1,6 +1,7 @@
 #include "wasteland1/buttons.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
+#include "wasteland1/text.h"
 
 namespace wl {
 
@@ -157,6 +158,46 @@ void buttonKey(Machine &m) {
 	m.setD16(0xB250, handler);
 	X86Regs x;
 	legacy::call(m, handler, x);
+	drawButtonsRow(m);
+}
+
+
+void moreButton(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	const uint16_t keepText = m.d16(g::textString), keepTexts = m.d16(buttonTexts), keepHandlers = m.d16(buttonHandlers);
+	const uint8_t keepRow = D(buttonRow), keepSecond = D(buttonSelected), keepFirst = D(buttonLast);
+	m.setD16(buttonTexts, 0xCDDE);   // "MORE"
+	m.setD16(buttonHandlers, 0xCDE0);
+	D(buttonRow) = 0;
+	D(buttonSelected) = 0;
+	D(buttonLast) = 0;
+	drawButtonsRow(m);
+	do {
+		D(0xCDE2) = 0;
+		m.setD16(g::buttonMask1, 0x0008);
+		m.setD16(g::buttonMask2, 0);
+		waitForKeypress(m);
+		buttonKey(m);
+	} while (D(0xCDE2) == 0);
+	D(buttonLast) = keepFirst;
+	D(buttonSelected) = keepSecond;
+	D(buttonRow) = keepRow;
+	m.setD16(buttonHandlers, keepHandlers);
+	m.setD16(buttonTexts, keepTexts);
+	drawButtonsRow(m);
+	m.setD16(g::textString, keepText);
+}
+
+void moreButtonPressed(Machine &m) { m.d8(0xCDE2) = 1; }
+
+
+void rosterButtons(Machine &m) {
+	m.setD16(buttonTexts, 0xCE42);   // "Create / Delete / Play"
+	m.setD16(buttonHandlers, 0xCE44);
+	m.d8(buttonRow) = 0;
+	m.d8(buttonSelected) = 0;
+	m.d8(0x468C) = 24;
+	m.d8(buttonLast) = 2;
 	drawButtonsRow(m);
 }
 

@@ -141,5 +141,10 @@ PORT(cycleGroups) { cycleGroups(m, false); }                                    
 PORT(cycleGroupsFromOrigin) { cycleGroups(m, true); }                                     // 160DC
 PORT(deleteCharacterMenu) { deleteCharacterMenu(m); }                                     // 1A430
 
+PORT(moreButton) { moreButton(m); }                                                      // 1A1EF
+PORT(moreButtonPressed) { moreButtonPressed(m); }                                         // 1A25B
+
+PORT(rosterButtons) { rosterButtons(m); }                                                // 1A308
+
 } // namespace rc
 } // namespace wl

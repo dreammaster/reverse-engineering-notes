@@ -16,4 +16,12 @@ void drawButton(Machine &m, bool highlight);
 // 17574: handles the key in ds:4667: a letter, the cursor keys (F3h / F4h) or ENTER selects and runs a button
 void buttonKey(Machine &m);
 
+// 1A1EF: shows a single "MORE" button and waits until it is pressed
+void moreButton(Machine &m);
+// 1A25B: the handler of that button
+void moreButtonPressed(Machine &m);
+
+// 1A308: the button row of the roster screen
+void rosterButtons(Machine &m);
+
 } // namespace wl
