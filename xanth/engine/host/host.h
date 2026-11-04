@@ -99,6 +99,7 @@ struct Host {
 	std::vector<std::string> problems;                // argument checks that failed
 	std::vector<Event> calls;                         // optional trace of every call (name + arguments) when tracing is on
 	bool tracing = false;
+	bool draw = false;                                 // HOST_DRAW: text output functions also run the original (lifted) code, so the text appears on the emulated screen
 	void (*onText)(Host &) = nullptr;                  // called when the game prints text (tests use it to capture the screen at that moment)
 	unsigned scratch = 0;
 	std::string recent[6];                            // the last calls made (for diagnostics)

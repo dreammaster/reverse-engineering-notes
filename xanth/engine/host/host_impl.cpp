@@ -78,6 +78,7 @@ void H_Font_WriteMessage(Cpu &c) {
 	e.text = expand(c, fmt, n);
 	h.events.push_back(e);
 	if (h.onText) h.onText(h);
+	if (host().draw) { L_Font_WriteMessage(c); return; }      // HOST_DRAW: the original code also draws the text
 	c.ax.x = c.dx.x = 0;
 }
 
@@ -108,6 +109,7 @@ void H_show_text_box(Cpu &c) {
 		e.w[i] = c.arg(i);
 	e.text = expand(c, fmt, n);
 	h.events.push_back(e);
+	if (host().draw) { L_show_text_box(c); return; }
 	c.ax.x = c.dx.x = 0;
 }
 
@@ -119,6 +121,7 @@ void H_wputchar_q(Cpu &c) {
 	if (e.w[0] >= 0x20 && e.w[0] < 0x7F)
 		e.text = std::string(1, (char)e.w[0]);
 	host().events.push_back(e);
+	if (host().draw) { L_wputchar_q(c); return; }
 	c.ax.x = c.dx.x = 0;
 }
 
@@ -192,6 +195,7 @@ void H_Font_WriteString(Cpu &c) {
 		e.w[i] = c.arg(i);
 	e.text = h.str(c.arg(1), c.arg(0), 400, &ok);
 	h.events.push_back(e);
+	if (host().draw) { L_Font_WriteString(c); return; }
 	c.ax.x = c.dx.x = 0;
 }
 

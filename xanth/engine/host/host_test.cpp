@@ -387,6 +387,7 @@ static int testSave(Host &h) {
 // original go_to_room: the room picture is drawn by the lifted decoder and blitters into the emulated VGA memory
 // diagnostics selected by environment variables (see README.md): label hooks, memory watches, screen captures
 static void debugHooks(Host &h) {
+	h.draw = getenv("HOST_DRAW") != nullptr;
 	if (getenv("HOST_SHOT_TEXT")) h.onText = [](Host &hh) { static bool done = false; if (!done || getenv("HOST_SHOT_LAST")) { done = true; dumpScreen(hh, getenv("HOST_SHOT_TEXT")); } };
 	if (getenv("HOST_LABELPFX")) h.cpu.onLabel = [](Cpu &c, const char *w) { static int cnt = 0; if (getenv("HOST_LABELFROM") && c.steps < atol(getenv("HOST_LABELFROM"))) return; if (cnt > 600) return; if (!strcmp(w, "DialogBtn_show:loc_1AAAA") && cnt < 600) { fprintf(stderr, "state@bp-1C:"); for (int q = 0; q < 8; q++) fprintf(stderr, " %04X", c.rd16(c.ss, (uint16_t)(c.bp - 0x1C + q * 2))); fprintf(stderr, " var_20=%04X\n", c.rd16(c.ss, (uint16_t)(c.bp - 0x20))); } if (getenv("HOST_LABELSKIP") && strstr(getenv("HOST_LABELSKIP"), w)) return; if (!strncmp(w, getenv("HOST_LABELPFX"), strlen(getenv("HOST_LABELPFX"))) && cnt++ < 100000000) fprintf(stderr, "L %s ax=%04X bx=%04X cx=%04X dx=%04X di=%04X si=%04X es=%04X ds=%04X sp=%04X bp=%04X\n", w, c.ax.x, c.bx.x, c.cx.x, c.dx.x, c.di, c.si, c.es, c.ds, c.sp, c.bp); };
 	if (getenv("HOST_NZ")) h.cpu.onLabel = [](Cpu &c, const char *w) { if (!strcmp(w, getenv("HOST_NZ"))) { int nz = 0; for (int i = 0; i < 64000; i++) nz += host().mem[0xA0000 + i] != 0; fprintf(stderr, "nz %s: %d\n", w, nz); } };
@@ -558,6 +559,7 @@ static int testInit(Host &h) {
 			if (p < s.size() && s[p] == ',') p++;
 		}
 	}
+	h.draw = getenv("HOST_DRAW") != nullptr;
 	if (getenv("HOST_INPUT")) {           // "6000000:316E,60000000:1C0D"
 		std::string s = getenv("HOST_INPUT");
 		size_t p = 0;
