@@ -16,6 +16,8 @@
 #include "engine/intro.h"
 #include "engine/objsprites.h"
 #include "engine/roomobjs.h"
+#include "engine/collision.h"
+#include "engine/roomexits.h"
 
 #include <SDL.h>
 #include <stdio.h>
@@ -107,6 +109,9 @@ static void roomview_tick(RoomView *rv) {
 		roomobjs_step(&rv->ro);
 }
 
+/* while the walk demo runs, objects in front of the player are drawn after it (see walk_draw) */
+static struct { int on, x1, y1, z0, z1; } g_plbox;
+
 static void roomview_unload(RoomView *rv) {
 	rv->ro_key = 0;
 	if (rv->ok) {
@@ -186,7 +191,10 @@ static int roomview_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 			roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy);
 			rv->ro_key = key;
 		}
-		roomobjs_draw(&rv->ro, shell, 1);
+		if (g_plbox.on)
+			roomobjs_draw_rel(&rv->ro, shell, 1, g_plbox.x1, g_plbox.y1, g_plbox.z0, g_plbox.z1, 0);
+		else
+			roomobjs_draw(&rv->ro, shell, 1);
 		nobj = rv->ro.n;
 	}
 	for (int i = 0; i < VIEW_W * VIEW_H; i++)
@@ -228,51 +236,163 @@ static int tiles_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	return 0;
 }
 
-/* ---- walk demo: the room floor plus the animated player (no collision data yet; stays on the floor area) ---- */
+/* ---- walk demo: the player moves in 1/8-cell units with the game's own collision test (engine/collision.c), room exits
+ * (engine/roomexits.c) lead to the next room; objects are depth-sorted against the player approximately ---- */
 enum { DIR_RIGHT, DIR_LEFT, DIR_DOWN, DIR_UP };
 typedef struct {
-	int x, y;            /* sprite top-left on screen */
+	int x1, y1, z;       /* far corner of the player's 7x7x30 box, 1/8 cell units */
 	int dir, moving, anim, tick;
-	int init_room;
+	int world_key, placed;
+	ColWorld world;
+	ColBox objs[ROOMOBJS_MAX];
+	ColBox exits[ROOM_MAX_EXITS];
+	uint8_t hdr8[32];
+	int hdr8_ok;
 	SpriteSet set;
 	int set_ok;
 } Walker;
 static Walker g_walk;
 
+#define PL_XS 7
+#define PL_YS 7
+#define PL_ZS 30
+
 /* PCMAN sprite numbers observed in the running game (docs/formats.md 6.11) */
 static const int walk_frames[4][4] = {{0, 1, 2, 3}, {7, 6, 5, 4}, {11, 10, 9, 8}, {12, 13, 14, 15}};
 static const int idle_frame[4] = {16, 21, 26, 31};
 
-static int walker_in_room(const Walker *wk, int gx, int gy, int w, int h) {
-	int h_spr = wk->set.sprites[0].h ? 42 : 42;
-	double fx = wk->x + 16, fy = wk->y + h_spr - 2;
-	double cx = (fx - gx) / 16.0, cy = (fy - gy - 9) / 8.0;
-	double col = (cx - 1 + cy) / 2.0, row = (cy - (cx - 1)) / 2.0;
-	return col >= 0 && col < w && row >= 0 && row < h;
+static int roomview_geom(RoomView *rv, int *w, int *h, int *gx, int *gy) {
+	const uint8_t *rec = rv->mp2.sec[0].rec[rv->room];
+	if (!rv->ok || !rec || rv->mp2.sec[0].len[rv->room] < 22)
+		return 0;
+	*w = rec[4]; *h = rec[5];
+	return *w >= 3 && *w <= 10 && *h >= 3 && *h <= 10 && floor_origin(*w, *h, gx, gy) == 0;
 }
 
-/* one 50 Hz game tick; dirs: bit0 up, bit1 down, bit2 left, bit3 right (the game's own input bits) */
-static void walker_tick(Walker *wk, RoomView *rv, int keys) {
-	int w = 0, h = 0, gx = 0, gy = 0;
-	if (rv->ok && rv->mp2.sec[0].rec[rv->room] && rv->mp2.sec[0].len[rv->room] >= 6) {
-		w = rv->mp2.sec[0].rec[rv->room][4];
-		h = rv->mp2.sec[0].rec[rv->room][5];
-		floor_origin(w, h, &gx, &gy);
+static int room_key(const RoomView *rv) { return 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata; }
+
+static void roomview_ensure_objs(RoomView *rv, int gx, int gy) {
+	if (rv->ro_key != room_key(rv)) {
+		roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy);
+		rv->ro_key = room_key(rv);
 	}
-	wk->tick++;
+}
+
+static void walker_world(Walker *wk, RoomView *rv) {
+	int w, h, gx, gy;
+	if (!roomview_geom(rv, &w, &h, &gx, &gy))
+		return;
+	roomview_ensure_objs(rv, gx, gy);
+	const uint8_t *rec = rv->mp2.sec[0].rec[rv->room];
+	ColWorld *cw = &wk->world;
+	memset(cw, 0, sizeof(*cw));
+	cw->w8 = w * 8; cw->h8 = h * 8;
+	cw->thick_y = rec[20]; cw->thick_x = rec[21];
+	cw->wallx = 2; cw->wally = 10;               /* constant in all 72 rooms of level 1 (docs 6.12) */
+	for (int i = 0; i < rv->ro.n; i++) {
+		const RoomObj *o = &rv->ro.o[i];
+		ColBox *b = &wk->objs[i];
+		b->x1 = (int8_t)o->x1; b->y1 = (int8_t)o->y1; b->x0 = (int8_t)o->x0; b->y0 = (int8_t)o->y0;
+		b->zt = (int8_t)o->zt; b->zb = (int8_t)o->z0;
+		b->solid = o->solid;
+		b->id = o->thing;
+	}
+	cw->objs = wk->objs; cw->nobjs = rv->ro.n;
+	cw->nexits = room_build_exits(&rv->mp2, &rv->objs, rv->room, wk->exits);
+	cw->exits = wk->exits;
+	wk->world_key = room_key(rv);
+	if (!wk->hdr8_ok) {
+		const uint8_t *hd = objsprites_header(&rv->objs, 8);
+		if (hd) { memcpy(wk->hdr8, hd, 32); wk->hdr8_ok = 1; }
+	}
+}
+
+/* free spot near (cx, cy): spiral search for a position where the player's box overlaps nothing and is inside the room */
+static int walker_find_free(Walker *wk, int cx, int cy) {
+	for (int r = 0; r < 40; r++)
+		for (int dy = -r; dy <= r; dy++)
+			for (int dx = -r; dx <= r; dx++) {
+				if (abs(dx) != r && abs(dy) != r)
+					continue;
+				ColResult cr;
+				collision_test(&wk->world, cx + dx, cy + dy, 0, PL_XS, PL_YS, PL_ZS, -1, 1, &cr);
+				if (cr.zf) {
+					wk->x1 = cx + dx; wk->y1 = cy + dy; wk->z = 0;
+					return 1;
+				}
+			}
+	return 0;
+}
+
+static void walker_place_default(Walker *wk, RoomView *rv) {
+	/* level 1 room 0: thing 0 (the player) is in the room list at (24, 23) */
+	const uint8_t *list = rv->mp2.sec[2].rec[rv->room];
+	int n = list ? rv->mp2.sec[2].len[rv->room] / 2 : 0;
+	for (int i = 0; i < n; i++)
+		if (((list[2 * i] << 8) | list[2 * i + 1]) == 0) {
+			int len;
+			const uint8_t *t = mp2_thing(&rv->mp2, 0, &len);
+			if (t && len >= 3) { wk->x1 = t[0]; wk->y1 = t[1]; wk->z = t[2]; return; }
+		}
+	walker_find_free(wk, wk->world.w8 / 2, wk->world.h8 / 2);
+}
+
+/* the other room that lists door `d` */
+static int door_target(const RoomView *rv, int d) {
+	for (int r = 0; r < rv->mp2.sec[0].count; r++) {
+		const uint8_t *rec = rv->mp2.sec[0].rec[r];
+		if (r == rv->room || !rec || rv->mp2.sec[0].len[r] < 22)
+			continue;
+		for (int i = 0; i < 7; i++)
+			if (((rec[6 + 2 * i] << 8) | rec[7 + 2 * i]) == d)
+				return r;
+	}
+	return -1;
+}
+
+static void walker_enter(Walker *wk, RoomView *rv, int room, int door) {
+	rv->room = room;
+	wk->world_key = 0;
+	walker_world(wk, rv);
+	int placed = 0;
+	for (int i = 0; i < wk->world.nexits; i++)
+		if (wk->exits[i].id == door) {
+			const ColBox *e = &wk->exits[i];
+			placed = walker_find_free(wk, (e->x0 + e->x1) / 2, (e->y0 + e->y1) / 2);
+		}
+	if (!placed)
+		walker_find_free(wk, wk->world.w8 / 2, wk->world.h8 / 2);
+}
+
+/* one 50 Hz timer tick; keys: bit0 up, bit1 down, bit2 left, bit3 right (the game's own input bits). The game loop (and
+ * the player's move of one unit) runs every 2 ticks. */
+static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	roomview_tick(rv);
+	wk->tick++;
+	if (wk->world_key != room_key(rv)) {
+		walker_world(wk, rv);
+		walker_place_default(wk, rv);
+	}
+	if (wk->tick & 1)
+		return;
 	int dx = 0, dy = 0, dir = -1;
-	if (keys & 8) { dir = DIR_RIGHT; dx = 1; dy = wk->tick & 1; }
-	else if (keys & 4) { dir = DIR_LEFT; dx = -1; dy = -(wk->tick & 1); }
-	else if (keys & 2) { dir = DIR_DOWN; dx = -1; dy = wk->tick & 1; }
-	else if (keys & 1) { dir = DIR_UP; dx = 1; dy = -(wk->tick & 1); }
+	if (keys & 8) { dir = DIR_RIGHT; dx = 1; }
+	else if (keys & 4) { dir = DIR_LEFT; dx = -1; }
+	else if (keys & 2) { dir = DIR_DOWN; dy = 1; }
+	else if (keys & 1) { dir = DIR_UP; dy = -1; }
 	if (dir < 0) { wk->moving = 0; wk->anim = 0; return; }
 	wk->dir = dir;
-	Walker t = *wk;
-	t.x += dx; t.y += dy;
-	if (w == 0 || walker_in_room(&t, gx, gy, w, h)) { wk->x = t.x; wk->y = t.y; }
 	wk->moving = 1;
-	if (wk->tick % 6 == 0) wk->anim = (wk->anim + 1) & 3;
+	wk->world.dirbits = (keys & 3) ? 1 : 0;
+	ColResult cr;
+	collision_test(&wk->world, wk->x1 + dx, wk->y1 + dy, wk->z, PL_XS, PL_YS, PL_ZS, -1, 1, &cr);
+	if (cr.count == 0xFE) {
+		int t = door_target(rv, cr.exit_id);
+		if (t >= 0) walker_enter(wk, rv, t, cr.exit_id);
+		return;
+	}
+	if (cr.count != 0xFF && cr.flag != 0xFD) { wk->x1 += dx; wk->y1 += dy; }
+	if ((wk->tick / 2) % 3 == 0) wk->anim = (wk->anim + 1) & 3;
 }
 
 static int walk_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
@@ -286,21 +406,27 @@ static int walk_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	}
 	int sx = rv->scroll_x, sy = rv->scroll_y;
 	rv->scroll_x = rv->scroll_y = 0;
-	if (roomview_draw(rv, g, scr) != 0) { rv->scroll_x = sx; rv->scroll_y = sy; return -1; }
+	g_plbox.on = g_walk.hdr8_ok && g_walk.world_key == room_key(rv);
+	g_plbox.x1 = g_walk.x1; g_plbox.y1 = g_walk.y1; g_plbox.z0 = g_walk.z; g_plbox.z1 = g_walk.z + 30 - 1;
+	int rc = roomview_draw(rv, g, scr);
+	g_plbox.on = 0;
 	rv->scroll_x = sx; rv->scroll_y = sy;
-	if (g_walk.init_room != 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata) {
-		int w = 10, h = 10, gx = 0, gy = 0;
-		const uint8_t *rec = rv->mp2.sec[0].rec[rv->room];
-		if (rec && rv->mp2.sec[0].len[rv->room] >= 6) { w = rec[4]; h = rec[5]; }
-		if (floor_origin(w, h, &gx, &gy) != 0) { gx = 144; gy = 29; }
-		g_walk.x = gx + 4; g_walk.y = gy + 3;      /* (148, 32) for room 0 of level 1, as in the original */
-		g_walk.dir = DIR_RIGHT; g_walk.moving = 0; g_walk.anim = 0;
-		g_walk.init_room = 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata;
-	}
+	if (rc != 0) return -1;
+	int w, h, gx, gy;
+	if (!roomview_geom(rv, &w, &h, &gx, &gy) || !g_walk.hdr8_ok) return 0;
+	if (g_walk.world_key != room_key(rv)) { walker_world(&g_walk, rv); walker_place_default(&g_walk, rv); }
+	int px, py;
+	object_project(g_walk.x1, g_walk.y1, g_walk.z, g_walk.hdr8, gx, gy, &px, &py);
 	int f = g_walk.moving ? walk_frames[g_walk.dir][g_walk.anim] : idle_frame[g_walk.dir];
 	const Sprite *sp = &g_walk.set.sprites[f];
-	blit_sprite(scr, sp, g_walk.x + sp->hot_x, g_walk.y + sp->hot_y, 1);
-	snprintf(rv->info, sizeof(rv->info), "walk demo: %s level %d room %d - arrows move along the room axes",
+	blit_sprite(scr, sp, px + sp->hot_x, py + sp->hot_y, 1);
+	static uint8_t front[VIEW_W * VIEW_H];
+	memset(front, TILE_TRANSPARENT, sizeof(front));
+	roomobjs_draw_rel(&rv->ro, front, 1, g_walk.x1, g_walk.y1, g_walk.z, g_walk.z + PL_ZS - 1, 1);
+	for (int i = 0; i < VIEW_W * VIEW_H; i++)
+		if (front[i] != TILE_TRANSPARENT)
+			scr->pixels[i] = front[i];
+	snprintf(rv->info, sizeof(rv->info), "walk: %s level %d room %d - arrows move along the room axes, exits change room",
 	         rv->use_tata ? "TATA" : "DATA", rv->level, rv->room);
 	return 0;
 }

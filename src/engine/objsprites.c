@@ -114,8 +114,13 @@ int objsprites_load(const uint8_t *mp1, size_t len, ObjSprites *out) {
 	if (cnt <= 0 || data > len)
 		return -2;
 	out->sprites = (ObjSprite *)calloc((size_t)cnt, sizeof(ObjSprite));
-	if (!out->sprites)
+	out->hdr = (uint8_t (*)[32])calloc((size_t)cnt, 32);
+	out->has_hdr = (uint8_t *)calloc((size_t)cnt, 1);
+	out->nhdr = cnt;
+	if (!out->sprites || !out->hdr || !out->has_hdr) {
+		objsprites_free(out);
 		return -3;
+	}
 	size_t pos = 0;
 	for (int i = 0; i < cnt; i++) {
 		unsigned sz = be16(mp1 + dir + 4 * i);
@@ -123,6 +128,10 @@ int objsprites_load(const uint8_t *mp1, size_t len, ObjSprites *out) {
 		if (data + pos + stored > len) {
 			objsprites_free(out);
 			return -2;
+		}
+		if (stored >= 32) {
+			memcpy(out->hdr[i], mp1 + data + pos, 32);
+			out->has_hdr[i] = 1;
 		}
 		ObjSprite sp;
 		memset(&sp, 0, sizeof(sp));
@@ -143,5 +152,7 @@ void objsprites_free(ObjSprites *o) {
 		free(o->sprites[i].extra);
 	}
 	free(o->sprites);
+	free(o->hdr);
+	free(o->has_hdr);
 	memset(o, 0, sizeof(*o));
 }

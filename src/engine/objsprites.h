@@ -24,6 +24,9 @@ typedef struct {
 typedef struct {
 	int count;
 	ObjSprite *sprites;         /* only blocks that parse as sprite blocks */
+	int nhdr;                   /* raw 32-byte headers of every non-empty block (index = block number) */
+	uint8_t (*hdr)[32];
+	uint8_t *has_hdr;
 } ObjSprites;
 
 int objsprites_load(const uint8_t *mp1, size_t len, ObjSprites *out);

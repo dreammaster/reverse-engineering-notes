@@ -520,17 +520,31 @@ write tracing):
   object record, `F4/F3` set a flag. A step sets `frame := script[pos].argument` and advances `pos` only every `cad + 1` steps
   (`cnt` counts down); `dx, dy` come from the block's frame table. Example (flame bowl, block 86): script frames
   `0 1 2 3 2 0 3 1 2 3 2 3 1 2 3 2 FD00`, one position per 2 steps = 4 ticks.
-* **Object entry construction and collision (read from the code, not yet ported):** the room loader (`CAD.EXE 1000:4A00…4C50`,
+* **Object entry construction and collision (verified, ported):** the room loader (`CAD.EXE 1000:4A00…4C50`,
   inside `sub_14A00`) fills the 50-byte entries from the room list: `+0/+1/+5` ← thing `x1,y1,z0`; `+2/+3/+4` ← `x0 = x1-xs+1`,
   `y0 = y1-ys+1`, `z_top = z0+zs-1` (sizes from the block header); `+6/+8` ← sprite segment / header offset; `+0A` ← the 16-byte position
-  record; `+26h` ← thing byte `+3` (flags; `0x80` = skip); `+27h` ← sprite header byte `0Ch` (bit 0 = flat/non-solid, `04` = animated,
-  `20` = special frame table, `08` = …); `+20h` starts at 4. Entry `+14h` is the "solid" marker: `FFh` for ordinary objects, the entry
-  number for those whose header flag `0Ch` bit 0 is set. `sub_116E0` (`collision_test`) takes a candidate `(x1, y1, z)` plus the mover's
-  box sizes and reports every entry whose x, y and z intervals overlap (all bounds inclusive), marking the result *blocked* when the
-  mover leaves the floor (`x1 >= 8w`, `y1 >= 8h`, `z < 0`), enters the wall corner (`x0 <= 2+8·cw` and `y0 <= 10+8·ch`,
-  `cw`/`ch` = number of columns with a wall), is closer than the wall thickness (`x0 < rec[+15h]`, `y0 < rec[+14h]` of the room record) or touches a
-  solid entry. The player's per-tick move is then `sub_167DF` (add `(dx, dy, dz)` to the box and position record of the player and
-  whatever it carries); on a hit the main loop retries with the deltas halved (`sar`) before giving up.
+  record; `+26h` ← thing byte `+3`; `+27h` ← **sprite header byte 12** (bit 0 = flat/non-solid, `04` = animated, `20` = special frame
+  table); `+20h` starts at 4. Entry `+14h` is the "solid" marker: `FFh` unless header byte 12 bit 0 is set (then the entry number)
+  — checked on all 72 rooms of level 1 (0 violations). `sub_116E0` (`collision_test`) takes a candidate `(x1, y1, z)` plus the
+  mover's box sizes and reports every entry whose x, y and z intervals overlap (all bounds inclusive, signed bytes). **It is
+  reproduced by `tools/collision.py` and `src/engine/collision.c` and was compared with the original routine called inside the
+  emulator on 3000 random positions with no mismatch** (`tools/verify_collision.py`; the C port against the Python reference on
+  random worlds in the unit test). Blocked (`count = FFh`): `z < 0`, `z+h >= F0h`, `x1 >= 8w`, `y1 >= 8h`, the wall corner
+  `x0 <= ds:5DF and y0 <= ds:5E0` (always 2 and 10 in level 1), `x0 < rec[21]`, `y0 < rec[20]`, or a door rectangle (`ds:54`, unused in
+  level 1); results `flag = FDh` mark a solid overlap. If the mover leaves the room the routine looks for an **exit entry**
+  (list at `ss:[3A]`, 50-byte entries in the *stack* segment) it touches and returns `count = FEh` with that exit's id.
+* **Exits (verified for all 72 rooms of level 1, `tools/roomexits.py`, `src/engine/roomexits.c`):** the room record lists up to 7
+  *door ids* (u16be at `+6`, `FFFF` unused). A door id indexes MP2 section 1 (8-byte records `x y ?? ?? len ori ?? ??`: `x, y` = global
+  map cell, `len` = 1 or 2 cells, `ori` = 0 / 1 = door along y / along x); the room record's `+1`, `+3` are the room's own map origin.
+  Local cell `(dl, dh)` = door − origin; when the result is negative the door is on the near side (`ch` 0 / 1), else the far side
+  (`ch` 2 / 3). The exit's box comes from sprite block `(len-1)*4 + ch` of MP1 section 2 (blocks 0–7 are 8×16×48 / 16×8×48
+  door-opening boxes): `x0 = 8·dl`, `y0 = 8·dh` (8 = the wall thickness `rec[21]` / `rec[20]` replaces a block size of 8, and the box is shifted
+  by 4 on the other axis), `x1 = x0 + xs - 1`, `y1 = y0 + ys - 1`, `z 0..47`. Both rooms joined by a door list the same door id, so
+  the target room of an exit is the *other* room that lists it. (Ground truth: the room-entry routine `sub_1DA60` can be called for any room in
+  the emulator, `tools/emu_call.py` — the exits and the bounds of all 72 rooms were read back that way.)
+* The player's per-tick move is `sub_167DF` (add `(dx, dy, dz)` to the box and position record of the player and whatever it carries —
+  objects such as the small flat thing at (40, 23) in level 1 room 0 are *pushed* along until they hit something, which is what
+  stops the player at x1 = 69 there). Not ported: pushing, climbing onto low solid objects, the halving retry.
 * Not plain sprites although things refer to them: the player (thing 0 → block 8, 29 424 bytes) and compound objects such as
   the rope (block 112–119 in level 1: a table of segment records) — undecoded.
 

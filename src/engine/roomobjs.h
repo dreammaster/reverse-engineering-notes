@@ -30,6 +30,8 @@ int objsprite_initial_frame(const ObjSprite *sp);
 #define ROOMOBJS_MAX 512
 typedef struct {
 	int thing, x1, y1, z0;
+	int x0, y0, zt;             /* box: x0..x1, y0..y1, z0..zt */
+	int solid;                  /* sprite header flag (file byte 12) bit 0 clear: blocks movement */
 	const ObjSprite *sp;
 	int sx, sy;                 /* projected top-left of the sprite */
 	int animated, first;
@@ -45,6 +47,13 @@ typedef struct {
 int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy);
 void roomobjs_step(RoomObjs *ro);
 void roomobjs_draw(const RoomObjs *ro, uint8_t *canvas, int use_state);
+/* Same, but only the objects that are behind (front = 0) or in front of (front = 1) a moving box (px1, py1 = far corner, pz1 = top,
+ * pz0 = base): an object is in front when it starts beyond the box along x or y, or above it. Approximation of the game's
+ * depth ordering, which is not decoded. */
+void roomobjs_draw_rel(const RoomObjs *ro, uint8_t *canvas, int use_state, int px1, int py1, int pz0, int pz1, int front);
+
+/* Raw 32-byte header of a block of section 2 (also for blocks that are not plain sprites, e.g. the player's block 8). */
+const uint8_t *objsprites_header(const ObjSprites *o, int block);
 
 const ObjSprite *objsprites_find(const ObjSprites *o, int block);
 

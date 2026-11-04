@@ -94,6 +94,8 @@ int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int roo
 		} else if (anim_script_len(sp)) {
 			o->an.cnt = o->an.cad = 1;
 		}
+		object_box(o->x1, o->y1, o->z0, sp->header, &o->x0, &o->y0, &o->zt);
+		o->solid = !(sp->header[12] & 1);
 		o->animated = anim_script_len(sp) > 0;
 		o->first = objsprite_initial_frame(sp);
 	}
@@ -106,24 +108,40 @@ void roomobjs_step(RoomObjs *ro) {
 			anim_step(&ro->o[i].an, ro->o[i].sp, NULL);
 }
 
+static void draw_obj(const RoomObj *o, uint8_t *canvas, int use_state) {
+	int fk = use_state && o->animated ? o->an.frame : o->first, dx = 0, dy = 0;
+	if (o->sp->extra_len)
+		objsprite_frame_offset(o->sp, fk, &dx, &dy);
+	if (fk < 0 || fk >= o->sp->nframes)
+		return;
+	const ObjFrame *f = &o->sp->frames[fk];
+	int sx = o->sx + dx, sy = o->sy + dy;
+	for (int y = 0; y < f->h; y++)
+		for (int x = 0; x < f->w; x++) {
+			uint8_t c = f->pixels[y * f->w + x];
+			int px = sx + x, py = sy + y;
+			if (c && px >= 0 && px < VIEW_W && py >= 0 && py < VIEW_H)
+				canvas[py * VIEW_W + px] = c;
+		}
+}
+
 void roomobjs_draw(const RoomObjs *ro, uint8_t *canvas, int use_state) {
+	for (int i = 0; i < ro->n; i++)
+		draw_obj(&ro->o[i], canvas, use_state);
+}
+
+void roomobjs_draw_rel(const RoomObjs *ro, uint8_t *canvas, int use_state, int px1, int py1, int pz0, int pz1, int front) {
+	(void)pz0;
 	for (int i = 0; i < ro->n; i++) {
 		const RoomObj *o = &ro->o[i];
-		int fk = use_state && o->animated ? o->an.frame : o->first, dx = 0, dy = 0;
-		if (o->sp->extra_len)
-			objsprite_frame_offset(o->sp, fk, &dx, &dy);
-		if (fk < 0 || fk >= o->sp->nframes)
-			continue;
-		const ObjFrame *f = &o->sp->frames[fk];
-		int sx = o->sx + dx, sy = o->sy + dy;
-		for (int y = 0; y < f->h; y++)
-			for (int x = 0; x < f->w; x++) {
-				uint8_t c = f->pixels[y * f->w + x];
-				int px = sx + x, py = sy + y;
-				if (c && px >= 0 && px < VIEW_W && py >= 0 && py < VIEW_H)
-					canvas[py * VIEW_W + px] = c;
-			}
+		int infront = o->x0 > px1 || o->y0 > py1 || o->z0 > pz1;
+		if (infront == !!front)
+			draw_obj(o, canvas, use_state);
 	}
+}
+
+const uint8_t *objsprites_header(const ObjSprites *o, int block) {
+	return (block >= 0 && block < o->nhdr && o->has_hdr[block]) ? o->hdr[block] : NULL;
 }
 
 int room_render_objects(const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, uint8_t *canvas) {
