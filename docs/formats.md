@@ -238,18 +238,20 @@ list 12 = the prison (`LESSER, COMMON, WARRIORS, GLUTTONS, TELEPORT, CELL 1, CEL
 CELL 3`). Whether list *n* is room *n* is not established. `tools/things.py` dumps
 them with names.
 
-**Thing record layout** (compact form, big-endian, 16–132 bytes, mostly 16–44),
-partly understood from `BOAT` `2A 22 | 00 20 | 00 BB | 00 29 | 00 D2 | 1D 01 | 16 16 16 …`,
-`STONE` `0E 28 | 00 00 | 00 C9 | 00 59 | 01 EA | 1D 00 00 00 00 80`:
+**Thing record layout** (compact form, big-endian, 16–132 bytes, mostly 16–44):
 
 | Offset | |
 |---|---|
-| `+0`, `+1` | two bytes, differ per thing (sizes? sprite numbers?) |
-| `+2` | `u16` flags (`0020` on BOAT, `0000` on STONE) |
-| `+4` | `u16` thing id |
-| `+6`, `+8` | two `u16` that vary a lot (BOAT 41, 210; STONE 89, 490; SILVER COIN 82, 140; DIARY 89, 140) — positions? *unverified* |
-| `+10` | byte (29 for BOAT and STONE, 27 for SILVER COIN, 68 for DIARY) — height? *unverified* |
-| rest | variable tail (`16 16 16 00 06 90 48 …` on BOAT) |
+| `+0`, `+1` | two bytes that differ per thing (`+1` is constant within groups of similar things — 55 for every thing in level-1 list 12 — so probably a type/class number; `+0` unknown) |
+| `+2` | `u16` flags (values like `0020`, `1000`, `2040`, `4002` …; meaning unknown) |
+| `+4` | `u16` **thing id** (= the record index = the name string id) — all levels |
+| `+6` | `u16`, varies per thing (BOAT 41, STONE 89, SILVER COIN 82, WELL 46 …); unknown |
+| `+8` | `u16` **slot offset = 70 × (position of the thing in its room list)** (verified for every thing of 8 of 9 levels; level 1 list 39 restarts at 0 for its 4th entry). So the loader gives each room an array of 70-byte object slots |
+| `+10` | byte **room list number** the thing belongs to — verified for every thing in all nine levels (BOAT → 29, SILVER COIN → 27, DIARY → 68) |
+| rest | variable tail (e.g. `16 16 16 00 06 90 48 …` on BOAT) |
+
+(An earlier guess that `+6/+8/+10` were x/y/z coordinates was wrong: they are
+bookkeeping — slot and room links — so positions must be in the tail or elsewhere.)
 
 The loader ("EXPANDING DATA") byte-swaps the 16-bit fields in place and stores the
 records back to back (not at a fixed 52-byte stride): level-1 script record 0

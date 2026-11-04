@@ -36,4 +36,7 @@ if __name__ == '__main__':
     if '--things' in sys.argv:
         for i, t in enumerate(things):
             if len(t) >= 6:
-                print('%4d %-24r %s' % (i, nm(i)[:24], t.hex(' ')))
+                f = '' if len(t) < 11 else 'class=%3d flags=%04x +6=%4d slot=%4d room=%3d' % (
+                    t[1], struct.unpack('>H', t[2:4])[0], struct.unpack('>H', t[6:8])[0],
+                    struct.unpack('>H', t[8:10])[0], t[10])
+                print('%4d %-24r %s | %s' % (i, nm(i)[:24], f, t.hex(' ')))
