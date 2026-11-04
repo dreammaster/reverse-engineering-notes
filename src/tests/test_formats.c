@@ -15,6 +15,7 @@
 #include "../engine/roomobjs.h"
 #include "../engine/anim.h"
 #include "../engine/collision.h"
+#include "../engine/roomexits.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -386,6 +387,49 @@ int main(int argc, char **argv) {
 			failed++;
 		}
 		checked++;
+	}
+
+	for (size_t i = 0; i < sizeof(exit_vectors) / sizeof(exit_vectors[0]); i++) {
+		const ExitVector *xv = &exit_vectors[i];
+		char lev = xv->dir[strlen(xv->dir) - 1];
+		uint8_t *raw[2] = {0, 0};
+		size_t rl[2] = {0, 0};
+		int rc = 0, have = 1;
+		for (int f = 0; f < 2 && rc == 0; f++) {
+			snprintf(path, sizeof(path), "%s/%s/LEV%c.MP%d", root, xv->dir, lev, f == 0 ? 1 : 2);
+			size_t n;
+			uint8_t *in = slurp(path, &n);
+			if (!in) { have = 0; break; }
+			rc = mjm_unpack(in, n, &raw[f], &rl[f]);
+			free(in);
+		}
+		if (have && rc == 0) {
+			ObjSprites os; Mp2 m;
+			rc = objsprites_load(raw[0], rl[0], &os);
+			if (rc == 0) { rc = mp2_parse(raw[1], rl[1], &m); if (rc) objsprites_free(&os); }
+			if (rc == 0) {
+				unsigned h = 0x811C9DC5u;
+				int cnt = 0;
+				for (int r = 0; r < m.sec[0].count; r++) {
+					if (!m.sec[0].rec[r]) continue;
+					ColBox ex[ROOM_MAX_EXITS];
+					int ne = room_build_exits(&m, &os, r, ex);
+					for (int k = 0; k < ne; k++) {
+						cnt++;
+						uint32_t v[8] = {(uint32_t)r, (uint8_t)ex[k].x1, (uint8_t)ex[k].y1, (uint8_t)ex[k].x0, (uint8_t)ex[k].y0,
+						                 (uint8_t)ex[k].zt, (uint8_t)ex[k].zb, (uint32_t)ex[k].id};
+						for (int a = 0; a < 8; a++)
+							for (int b = 0; b < 32; b += 8)
+								h = (h ^ ((v[a] >> b) & 0xFF)) * 0x01000193u;
+					}
+				}
+				if (cnt != xv->exits || h != xv->hash) rc = -99;
+				objsprites_free(&os); mp2_free(&m);
+			}
+			if (rc) { printf("FAIL exits %s: rc=%d\n", xv->dir, rc); failed++; }
+			checked++;
+		}
+		free(raw[0]); free(raw[1]);
 	}
 
 	for (size_t i = 0; i < sizeof(intro_vectors) / sizeof(intro_vectors[0]); i++) {

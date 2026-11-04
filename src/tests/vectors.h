@@ -259,3 +259,20 @@ static const CollVector coll_vectors[] = {
 	{39, 0x0002B8EBU},
 	{40, 0xA581EFE9U},
 };
+typedef struct { const char *dir; int exits; unsigned hash; } ExitVector;
+static const ExitVector exit_vectors[] = {
+	{"cadaver1/DATA/1", 142, 0x04992F50U},
+	{"cadaver1/DATA/2", 258, 0xC8F19613U},
+	{"cadaver1/DATA/3", 210, 0xBD94ACDAU},
+	{"cadaver1/DATA/4", 144, 0xCDDC3B47U},
+	{"cadaver1/DATA/5", 90, 0x2C6F7BDDU},
+	{"cadaver2/DATA/1", 142, 0x04992F50U},
+	{"cadaver2/DATA/2", 258, 0xC8F19613U},
+	{"cadaver2/DATA/3", 210, 0xBD94ACDAU},
+	{"cadaver2/DATA/4", 144, 0xCDDC3B47U},
+	{"cadaver2/DATA/5", 90, 0x2C6F7BDDU},
+	{"cadaver2/TATA/1", 56, 0x5C12674AU},
+	{"cadaver2/TATA/2", 182, 0x568DA19AU},
+	{"cadaver2/TATA/3", 94, 0x37E138F8U},
+	{"cadaver2/TATA/4", 92, 0x6259E15AU},
+};

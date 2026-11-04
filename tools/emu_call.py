@@ -6,9 +6,9 @@ from unicorn import x86_const as X
 import os
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DS=0x1F170
-def boot():
+def boot(level=1):
     e=Emu(ROOT+'/unpacked/cadaver1/CAD.EXE',ROOT+'/cadaver1')
-    e.pending_keys=[0x0231,0x011b]
+    e.pending_keys=[((level+1)<<8)|(0x30+level),0x011b]
     while e.ticks<900: e.run(max_instr=20000)
     return e
 REGS=['eax','ebx','ecx','edx','esi','edi','ebp','esp','eip','es','ds','ss','cs','eflags']
