@@ -84,13 +84,18 @@ The two games contain same-named executables (`INTRO.EXE`, `CADAVER.*`,
 `SETUP.*`), so pass `-Idb cadaver1\intro` / `cadaver2\intro`. Bare stems
 work when unambiguous (`game`, `cad`).
 
+## Progress since the disassembly
+
+See `formats.md` (file formats — containers, `.PC1`, partial notes on the
+rest), `tools.md` (Python tooling, the Unicorn-based emulator harness and the
+DOSBox capture script) and `roadmap.md` (current status and next steps).
+`src/` holds the C reimplementation (decoders, asset loading, SDL2 front end).
+
 ## Not yet looked at
 
-- Everything: no function has been named, no structs/enums defined.
-- The `DATA/`, `TATA/` directories and the numbered files (`1`, `2`, …),
-  `*.DAT`, `*.PC1` (DEGAS-style compressed pictures?), `FONT2.SPR`,
-  `FLAME.DAT` file formats.
+- Level data (`LEV*.MP1/2/3`), `ANDATA.DAT`, `PCMAN.DAT`, `ROUTINE*.TAD`
+  internals and the `*.LNG` string encoding — see `roadmap.md`.
 - Cadaver 1 `SETUP.COM`/Cadaver 2 `SETUP.EXE` embed an installer script
   (see `FILE.TXT`) that is probably irrelevant for the engine.
 - The 430 KB unpacked game images are mostly data; the code and the data
-  segments (`seg000`…`seg010`) have not been separated or renamed.
+  segments (`seg000`…`seg010`) have not been separated or renamed in IDA.
