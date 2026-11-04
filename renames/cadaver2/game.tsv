@@ -50,3 +50,4 @@
 0x70FD9	6C3A:4C39	data		path_lng_ger	verified	16	64 61 74 61 5C 3F 5C 67 65 72 3F 2E 6C 6E 67 00	ASCIIZ file name 'data\\?\\ger?.lng' (in the initialised stack segment, ss:4CF9). [ported from cadaver1/cad 0x70d79 by content match]
 0x70FE9	6C3A:4C49	data		path_savegame_prefix	verified	10	73 61 76 65 67 61 6D 65 2E 00	ASCIIZ file name 'savegame.' (in the initialised stack segment, ss:4D09). [ported from cadaver1/cad 0x70d89 by content match]
 0x70FF4	6C3A:4C54	data		path_pcman_dat	verified	15	64 61 74 61 5C 70 63 6D 61 6E 2E 64 61 74 00	ASCIIZ file name 'data\\pcman.dat' (in the initialised stack segment, ss:4D14). [ported from cadaver1/cad 0x70d94 by content match]
+0x71010	6C3A:4C70	data		floor_origin_table	verified	128		Same 128 bytes as Cadaver 1's floor_origin_table [matched by exact content, added by hand].
