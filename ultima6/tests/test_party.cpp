@@ -4,6 +4,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 
 using namespace Ultima6;
 using ::Ultima6::Ultima6::Game;

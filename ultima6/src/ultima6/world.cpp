@@ -335,9 +335,22 @@ bool World::resurrect(int dead) {
 	actors.hp[dead] = (uint8_t)ActorStats::maxHealth(*this, dead);
 	if (!(actors.status[dead] & 0x80))
 		actors.worktype[dead] = 0x81;
+	int ak = actorObject(dead);
 	for (size_t b = 0; b < objects.size(); ++b) {
-		if (objects[b].deleted || objects[b].type != 339 || objects[b].quality != dead || !objects[b].onMap())
+		int bt = objects[b].type;
+		if (objects[b].deleted || !(bt == 339 || bt == 0x154 || bt == 0x155 || bt == 0x162) || objects[b].quality != dead || !objects[b].onMap())
 			continue;
+		if (ak >= 0) { // the actor stands where the body lay, in its own shape again (sub_1B112)
+			Obj &o = objects[ak];
+			o.deleted = false;
+			o.status = (uint8_t)(o.status & ~ObjRecord::LOCATION_MASK);
+			o.x = objects[b].x;
+			o.y = objects[b].y;
+			o.z = objects[b].z;
+			o.type = actors.baseObjFrame[dead] & 0x3FF;
+			o.frame = (uint8_t)(actors.baseObjFrame[dead] >> 10);
+			addToMap(ak);
+		}
 		for (size_t i = 0; i < objects.size(); ++i)
 			if (!objects[i].deleted && objects[i].location() == ObjRecord::IN_CONTAINER && objects[i].parent == (int)b) {
 				objects[i].status = (uint8_t)((objects[i].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);

@@ -9,6 +9,38 @@
 namespace Ultima6 {
 namespace Ultima6 {
 
+// sub_1890C: the dead of the party are raised, all the party is cured and healed, the party goes to 307,352 on the surface (Lord British's court) and time passes in quarters of an
+// hour until it is held (hours 8-11 and 14-17). It is what the Help spell does and what happens when the Avatar dies (sub_2A86A).
+void Game::helpParty() {
+	ObjList &a = _world.actors;
+	for (int actor = 0; actor < 0xE0; ++actor)
+		if ((a.status[actor] & 0x80) && (a.status[actor] & 0x10))
+			_world.resurrect(actor); // the dead of the party (they left the roster when they fell) come back into it
+	for (int m = 0; m < a.partySize; ++m) {
+		int member = a.partyRoster[m];
+		int k = _world.actorObject(member);
+		if (k < 0)
+			continue;
+		if (a.status[member] & 0x04) { // asleep: its own figure again
+			a.status[member] &= ~0x04;
+			_world.objects[k].type = a.baseObjFrame[member] & 0x3FF;
+			_world.objects[k].frame = (uint8_t)(a.baseObjFrame[member] >> 10);
+		}
+		a.status[member] = (uint8_t)(((a.status[member] & 0x9F) | 0x40) & 0xE1);
+		_world.objects[k].status &= 0xB9;
+		a.hp[member] = (uint8_t)ActorStats::maxHealth(_world, member);
+		a.moves[member] = a.dexterity[member];
+	}
+	for (int actor = 0; actor < 0xE0; ++actor)
+		if (a.worktype[actor] == 0x9B)
+			a.worktype[actor] = 0x81;
+	if (_combatMode)
+		toggleCombat();
+	changeLevel(0x133, 0x160, 0);
+	while (!((clock.hour >= 8 && clock.hour <= 11) || (clock.hour >= 14 && clock.hour <= 17)))
+		advanceTime(15);
+}
+
 // The spells that act on objects, on a square or on many people at once (cast_spell_effect, 25495..; its first-level jump table at 254BA sends each spell index to a
 // group of handlers, only some of which have been read). Returns whether the spell was dealt with here; otherwise Magic::cast works it on the actor.
 // APPROX(56): the spells that were read in the original (the Create Food, Sleep, Kill, Charm, Dispel, Reveal, Fear, Confuse, mass, wind, field, Web, trap, Wing Strike and Slime groups) follow it;
@@ -592,37 +624,10 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 		}
 		return true;
 	}
-	case 7: { // Help (sub_1890C): the dead of the party are raised, all the party is cured and healed, the party goes to 307,352 on the surface (Lord British's court) and time passes in
-		// quarters of an hour until it is held (hours 8-11 and 14-17)
-		for (int actor = 0; actor < 0xE0; ++actor)
-			if ((a.status[actor] & 0x80) && (a.status[actor] & 0x10))
-				_world.resurrect(actor); // the dead of the party (they left the roster when they fell) come back into it
-		for (int m = 0; m < a.partySize; ++m) {
-			int member = a.partyRoster[m];
-			int k = _world.actorObject(member);
-			if (k < 0)
-				continue;
-			if (a.status[member] & 0x04) { // asleep: its own figure again
-				a.status[member] &= ~0x04;
-				_world.objects[k].type = a.baseObjFrame[member] & 0x3FF;
-				_world.objects[k].frame = (uint8_t)(a.baseObjFrame[member] >> 10);
-			}
-			a.status[member] = (uint8_t)(((a.status[member] & 0x9F) | 0x40) & 0xE1);
-			_world.objects[k].status &= 0xB9;
-			a.hp[member] = (uint8_t)ActorStats::maxHealth(_world, member);
-			a.moves[member] = a.dexterity[member];
-		}
-		for (int actor = 0; actor < 0xE0; ++actor)
-			if (a.worktype[actor] == 0x9B)
-				a.worktype[actor] = 0x81;
-		if (_combatMode)
-			toggleCombat();
-		changeLevel(0x133, 0x160, 0);
-		while (!((clock.hour >= 8 && clock.hour <= 11) || (clock.hour >= 14 && clock.hour <= 17)))
-			advanceTime(15);
+	case 7: // Help (sub_1890C): the party is revived and taken to Lord British's court (helpParty)
+		helpParty();
 		_spellQuiet = true;
 		return true;
-	}
 	case 97: { // Enchant (sub_24810): only a staff (0x4E) can be enchanted, and one that holds ten things is full; the spell to put in is asked for ("With: ", the original shows the spellbook's
 		// pages to choose from; here it is typed as when casting) and a charge (0x150, the quality being the spell) is put in the staff
 		if (object < 0) {

@@ -136,6 +136,8 @@ private:
 	bool _eclipse = false; // byte_404BB: the Eclipse spell
 	int _timeStop = 0; // minutes of time stop left (byte_404BA)
 	void toggleCombat();
+	void helpParty();
+	void avatarDied();
 	bool _combatMode = false;
 	void drawGem(Framebuffer &screen) const;
 	bool _gem = false; // the overhead map of a gem is on the screen until a key is pressed

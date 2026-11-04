@@ -228,7 +228,7 @@ void Combat::die(int actor) {
 	}
 	// leave the party
 	ObjList &a = _world.actors;
-	for (int i = 0; i < a.partySize; ++i) {
+	for (int i = 1; i < a.partySize; ++i) { // the leader stays in the roster (sub_2C2E5 2C4AC)
 		if (a.partyRoster[i] == actor) {
 			for (int j = i; j + 1 < a.partySize; ++j) {
 				a.partyRoster[j] = a.partyRoster[j + 1];

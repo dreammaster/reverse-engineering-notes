@@ -165,8 +165,8 @@ void Game::attackAt(int tx, int ty) {
 	}
 	_combat.attack(attacker, target);
 	_world.spendMoves(attacker, 10); // sub_2DA99: sub_26CC4(attacker, 0x0A)
-	if (_world.actors.hp[1] == 0)
-		message("\nThou art dead!\n");
+	if (_world.actors.hp[1] == 0 && (_world.actors.status[1] & 0x10))
+		avatarDied();
 	prompt();
 }
 

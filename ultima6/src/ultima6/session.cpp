@@ -110,10 +110,17 @@ void Game::minutePassed() {
 		_creatures.partyFights();
 	_creatures.despawn(x, y, z);
 	_creatures.checkEggs(x, y, z, clock.hour);
-	if (_world.actors.hp[1] == 0 && !_dead) {
-		_dead = true;
-		message("\nThou art dead!\n*");
-	}
+	if (_world.actors.hp[1] == 0 && (_world.actors.status[1] & 0x10))
+		avatarDied();
+}
+
+// sub_2A86A: the Avatar has died: darkness, a voice, and the Help spell (sub_1890C) brings the party back to Lord British's court
+void Game::avatarDied() {
+	message("\nAn unending darkness engulfs thee...\n");
+	message("\nA voice in the darkness intones, \"KAL LOR!\"\n");
+	helpParty();
+	_leaderObject = _world.actorObject(1);
+	_world.avatarPosition(x, y, z);
 }
 
 // Time that passes without anyone acting (resting): minutes at a time.
