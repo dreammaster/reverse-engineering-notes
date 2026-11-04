@@ -12,6 +12,9 @@ Everything here runs on Linux with Python 3 (`pillow`, `numpy`, `unicorn`),
 | `tools/dosemu.py` | **Emulator harness** (Unicorn): runs an *unpacked* original EXE with a DOS INT 21h subset, keyboard/timer feeding and a planar EGA/VGA model. Lets us run the game's own loaders and renderer and inspect memory/VRAM. |
 | `tools/emu_run.py` | Convenience driver around `dosemu.py`: feeds keys, writes a PNG every 25 M instructions, and dumps conventional memory (`*_mem.bin`) and VRAM (`*_vram.bin`) at the end. |
 | `tools/dosbox_capture.sh` | Runs the *retail* game in real DOSBox on a virtual X display, sends keys, takes native-resolution screenshots. The independent reference to compare the emulator and the C port against. |
+| `tools/renames.py`, `tools/renames_lib.py` | Maintain the rename tables in `renames/` (check / fill / port between the two games / merge renames exported from IDA / stats). See `renames/README.md`. |
+| `ida_scripts/apply_renames.py`, `ida_scripts/export_renames.py` | IDA 8.3 scripts (run through `run_ida_script.ps1`): apply a table to your local `.idb`, or dump the names already in an `.idb`. |
+| `tools/test_renames.py` | Tests for the above (the apply script is run against a fake IDA API backed by the real binaries). |
 | `tools/gen_test_vectors.py` | Regenerates `src/tests/vectors.h` (sizes + FNV hashes from the Python decoders) for the C unit test. |
 
 ## Reproducing the in-game frame

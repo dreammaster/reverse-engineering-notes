@@ -1,0 +1,53 @@
+# Renames for disasm/cadaver1/cad.idb (unpacked/cadaver1/CAD.EXE, PKLITE-unpacked, loaded at 1000:0).
+# ea is the linear IDA address (seg*16+off). Column meanings and workflow: renames/README.md.
+# ea	segoff	kind	old	new	conf	size	sig	comment
+0x1148C	1000:148C	data	dword_1148C	old_int8_vector	verified	4	00 00 00 00	Original INT 8 vector saved by timer_install.
+0x11490	1000:1490	data	dword_11490	timer_callback	likely	4	00 00 00 00	Optional far pointer called from the timer ISR; segment 0 = none.
+0x1149A	1000:149A	data	word_1149A	timer_ticks	likely	2	00 00	Incremented by every timer_isr call (~50 Hz).
+0x1149C	1000:149C	func	sub_1149C	timer_install	verified		FA 06 B8 08 35 CD 21 BF 8C 14 2E 89 1D 2E 8C 45	Saves the INT 8 vector to cs:148C, programs PIT channel 0 with divisor 5CECh (~50.2 Hz) and hooks INT 8 with timer_isr (1000:14E5).
+0x114C8	1000:14C8	func	sub_114C8	timer_restore	verified		FA 1E 2E C5 16 8C 14 0B D2 74 0F B8 08 25 CD 21	Restores the saved INT 8 vector and resets PIT channel 0 to divisor 0 (18.2 Hz).
+0x114E5	1000:14E5	func		timer_isr	verified		50 1E 53 51 52 57 56 06 1E 2E 83 3E 92 14 00 74	INT 8 handler: calls the optional far callback timer_callback (music tick), bumps timer_ticks and the game clock bytes at 1F722..1F728.
+0x175CA	1000:75CA	func		text6_decode	likely		53 51 52 50 56 06 8E 06 84 07 BF 62 0A BB 52 F8	Decodes a packed string at ds:bp into ds:0A62 (es:[784h] segment): 6-bit codes, 4 per 3 bytes MSB first, translated through text6_alphabet (code 0 terminates, FFh entries are skipped).
+0x1762B	1000:762B	func		text6_emit_char	likely		D7 3C FF 74 01 AA 0A C0 C3 8B 36 5A 00 83 3E 26	xlatb through bx=text6_alphabet-1; stores the char unless it is FFh; returns ZF set for code 0.
+0x1B2C6	1000:B2C6	func	sub_1B2C6	load_cadaver_ini	verified		06 1E 8C D8 8E C0 8C D0 8E D8 BA 73 4C B8 00 3D	Opens the config file named at ss:4C73 (cadaver.ini) and reads 200 bytes to ds:07B0; parses sound/video/input choices. Traced in tools/dosemu: READ CADAVER.INI 1f17:07b0 200.
+0x1C44A	1000:C44A	func	sub_1C44A	open_data_file	verified		73 68 50 53 51 52 55 56 57 06 1E 26 A0 08 07 BD	Opens the DOS file at ds:dx; every '?' in the name is replaced by the current disk digit (es:0708 + '1'); reads the 4-byte mjm header to cs:C8F1; if opening fails prompts for the right disk and retries.
+0x1C7D1	1000:C7D1	func	sub_1C7D1	mjm_read	verified		36 01 0E 10 3B 2E 81 3E F3 C8 6D 31 75 72 1E 8C	far. Read cx bytes to ds:dx from the open data file. If the header method word cs:C8F3 == 316Dh ('m','1') the data is run through the PKWARE DCL explode coroutine (stack swap), otherwise plain DOS read (int 21h/3Fh).
+0x1C8F1	1000:C8F1	data		mjm_header	verified	4	00 00 00 00	The 4 header bytes ('mjm' + method) of the data file just opened by open_data_file; method word is at cs:C8F3.
+0x1C8FB	1000:C8FB	func		dcl_write_cb	likely		55 8B EC 1E C4 5E 06 26 8B 0F C5 56 0A 2E 8E 06	explode output callback (second argument pushed by mjm_read): copies decompressed bytes to the caller's buffer and resumes the caller.
+0x1C934	1000:C934	func		dcl_read_cb	likely		55 8B EC 1E C4 5E 06 26 8B 0F B8 17 0F 8E D8 8B	explode input callback (first argument pushed by mjm_read): DOS read of *size bytes from handle word_1F8EE.
+0x1D7CC	1000:D7CC	func	sub_1D7CC	vram_copy_page	likely		33 F6 33 FF B9 40 1F EB 00 E8 0F 00 8C D8 8E 06	Copies 1F40h (8000) bytes = one EGA plane page from the segment at ds:0 to the segment at ds:2 with the VGA latches (write mode 1).
+0x1D7E7	1000:D7E7	func	sub_1D7E7	vga_set_latch_copy_mode	likely		BA C4 03 B8 02 0F EF BA CE 03 B8 05 01 EF B8 07	Programs the VGA: sequencer map mask 0Fh, GC mode 1 (write mode 1), colour-don't-care 0, no rotate/function; used before latch copies.
+0x1DEC8	1000:DEC8	func	sub_1DEC8	kbd_flush	verified		50 1E 2E 8E 1E D3 DF 8A 26 00 00 FE C4 CD 16 74	Drains the BIOS keyboard buffer (INT 16h peek + read until empty).
+0x1DEE4	1000:DEE4	func	sub_1DEE4	kbd_wait_key	likely		53 1E 2E 8E 1E D3 DF 93 8A 26 00 00 FE C4 CD 16	Blocks (INT 28h idle) until a key is available and reads it, skipping extended-key prefix bytes.
+0x1EC7A	1DFD:0CAA	func		dcl_explode	likely		55 8B EC 56 57 8B 46 0A 8B 56 0C C4 76 06 8C C7	PKWARE DCL explode: reads 2 KiB chunks via read callback, validates header (type 0/1, dictionary bits 4..6), builds Huffman tables, decodes. Error codes 1..4 returned in AX.
+0x1ECD3	1DFD:0D03	func	sub_1ECD3	dcl_explode_thunk	likely		B8 FD 0D 50 B8 AA 0C 50 E8 74 F3 CB C7 26 8A 84	far entry: pushes 1DFD:0CAA (dcl_explode) and calls sub_1E052.
+0x1EDCD	1DFD:0DFD	func	sub_1EDCD	dcl_decode_loop	likely		55 8B EC 83 EC 02 56 57 C4 36 10 00 26 C7 44 04	Inner decode loop of the explode; returns 306h at end of stream.
+0x1F722	1F17:05B2	data	byte_1F722	clock_period_lo	guess	1	00	Incremented by timer_isr when clock_blocks wraps at 30 (together with 1F723 and flag 1F726); possibly the in-game DAY counter - unverified.
+0x1F723	1F17:05B3	data	byte_1F723	clock_period_hi	guess	1	00	Incremented together with clock_period_lo.
+0x1F724	1F17:05B4	data	byte_1F724	clock_blocks	guess	1	00	Counts 0..29 in timer_isr, advanced every time clock_units wraps at 60.
+0x1F725	1F17:05B5	data	byte_1F725	clock_units	guess	1	00	Counts 0..59 in timer_isr, advanced every clock_div_reload ticks.
+0x1F726	1F17:05B6	data	byte_1F726	clock_period_flag	guess	1	00	Set to 1 each time clock_blocks wraps.
+0x1F727	1F17:05B7	data	byte_1F727	clock_div_count	guess	1	00	Down-counter in timer_isr, reloaded from clock_div_reload.
+0x1F728	1F17:05B8	data	byte_1F728	clock_div_reload	guess	1	00	Reload value for clock_div_count.
+0x2E956	1F17:F7E6	data		msg_press_key_language	verified	33	20 50 52 45 53 53 20 4B 45 59 20 31 20 45 4E 47 4C 49 53 48 20 20 32 20	 PRESS KEY / 1 ENGLISH / 2 FRANCAIS / 3 DEUTSCH prompt text.
+0x2E9C3	1F17:F853	data		text6_alphabet	verified	63	41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F 50 51 52 53 54 55 56 57 58	Code->char table for text6_decode, 1-based (the byte before it, 0, is the terminator): A-Z, space . , 0-9, CR CR - ? " < = > (< = > stand for national letters, e.g. O/U umlaut), then 16 x FFh for codes 48..63.
+0x2EA02	1F17:F892	data		msg_heap_too_big	likely	35	6D 6A 6D 30 44 41 43 20 31 20 48 45 41 50 20 54 4F 20 42 49 47 20 42 59	'DAC 1 HEAP TO BIG BY 0000 BYTES' error text (preceded by the 4 bytes 'mjm0'); the digits are patched in at run time.
+0x2EA2F	1F17:F8BF	data		path_mike_save	verified	15	64 61 74 61 5C 6D 69 6B 65 5F 73 61 76 65 00	Default saved-game path data\mike_save.
+0x6B850	6B85:0000	data	byte_6B850	kbd_fn_base	likely	1	00	INT 16h function base: 0 for classic, 10h for enhanced keyboard services (kbd_* add 0/1 to it).
+0x70CB2	6C08:4C32	data		path_adlib_bin	verified	10	61 64 6C 69 62 2E 62 69 6E 00	ASCIIZ file name 'adlib.bin' (in the initialised stack segment, ss:4C32).
+0x70CBC	6C08:4C3C	data		path_beeper_bin	verified	11	62 65 65 70 65 72 2E 62 69 6E 00	ASCIIZ file name 'beeper.bin' (in the initialised stack segment, ss:4C3C).
+0x70CC7	6C08:4C47	data		path_roland_bin	verified	11	72 6F 6C 61 6E 64 2E 62 69 6E 00	ASCIIZ file name 'roland.bin' (in the initialised stack segment, ss:4C47).
+0x70CD2	6C08:4C52	data		path_sblaster_bin	verified	13	73 62 6C 61 73 74 65 72 2E 62 69 6E 00	ASCIIZ file name 'sblaster.bin' (in the initialised stack segment, ss:4C52).
+0x70CDF	6C08:4C5F	data		path_tandy_bin	verified	10	74 61 6E 64 79 2E 62 69 6E 00	ASCIIZ file name 'tandy.bin' (in the initialised stack segment, ss:4C5F).
+0x70CE9	6C08:4C69	data		path_intro_exe	verified	10	69 6E 74 72 6F 2E 65 78 65 00	ASCIIZ file name 'intro.exe' (in the initialised stack segment, ss:4C69).
+0x70CF3	6C08:4C73	data		path_cadaver_ini	verified	12	63 61 64 61 76 65 72 2E 69 6E 69 00	ASCIIZ file name 'cadaver.ini' (in the initialised stack segment, ss:4C73).
+0x70CFF	6C08:4C7F	data		path_andata_dat	verified	16	64 61 74 61 5C 61 6E 64 61 74 61 2E 64 61 74 00	ASCIIZ file name 'data\\andata.dat' (in the initialised stack segment, ss:4C7F).
+0x70D0F	6C08:4C8F	data		path_lev_mp1	verified	16	64 61 74 61 5C 3F 5C 6C 65 76 3F 2E 6D 70 31 00	ASCIIZ file name 'data\\?\\lev?.mp1' (in the initialised stack segment, ss:4C8F).
+0x70D1F	6C08:4C9F	data		path_lev_mp2	verified	16	64 61 74 61 5C 3F 5C 6C 65 76 3F 2E 6D 70 32 00	ASCIIZ file name 'data\\?\\lev?.mp2' (in the initialised stack segment, ss:4C9F).
+0x70D2F	6C08:4CAF	data		path_lev_mp3	verified	16	64 61 74 61 5C 3F 5C 6C 65 76 3F 2E 6D 70 33 00	ASCIIZ file name 'data\\?\\lev?.mp3' (in the initialised stack segment, ss:4CAF).
+0x70D3F	6C08:4CBF	data		path_routine_tad	verified	20	64 61 74 61 5C 3F 5C 72 6F 75 74 69 6E 65 3F 2E 74 61 64 00	ASCIIZ file name 'data\\?\\routine?.tad' (in the initialised stack segment, ss:4CBF).
+0x70D59	6C08:4CD9	data		path_lng_eng	verified	16	64 61 74 61 5C 3F 5C 65 6E 67 3F 2E 6C 6E 67 00	ASCIIZ file name 'data\\?\\eng?.lng' (in the initialised stack segment, ss:4CD9).
+0x70D69	6C08:4CE9	data		path_lng_fre	verified	16	64 61 74 61 5C 3F 5C 66 72 65 3F 2E 6C 6E 67 00	ASCIIZ file name 'data\\?\\fre?.lng' (in the initialised stack segment, ss:4CE9).
+0x70D79	6C08:4CF9	data		path_lng_ger	verified	16	64 61 74 61 5C 3F 5C 67 65 72 3F 2E 6C 6E 67 00	ASCIIZ file name 'data\\?\\ger?.lng' (in the initialised stack segment, ss:4CF9).
+0x70D89	6C08:4D09	data		path_savegame_prefix	verified	10	73 61 76 65 67 61 6D 65 2E 00	ASCIIZ file name 'savegame.' (in the initialised stack segment, ss:4D09).
+0x70D94	6C08:4D14	data		path_pcman_dat	verified	15	64 61 74 61 5C 70 63 6D 61 6E 2E 64 61 74 00	ASCIIZ file name 'data\\pcman.dat' (in the initialised stack segment, ss:4D14).

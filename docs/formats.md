@@ -24,7 +24,7 @@ Used by every file under `DATA/` and `TATA/` (`*.LNG`, `*.MP1/2/3`,
   The game's own explode routine is in `CAD.EXE` seg001 (entry `sub_1ECD3`
   / worker `sub_1EDCD`, which returns `0x306` = end-of-stream; it validates the
   two header bytes exactly as above: type 0/1, dictionary bits 4..6). The
-  error text `"DAC 1 HEAP TO BIG BY nnnn BYTES"` at `seg002:F722` is probably
+  error text `"DAC 1 HEAP TO BIG BY nnnn BYTES"` at `1F17:F892` is probably
   its. In the emulator the file is read in 2 KiB chunks by `sub_1C7D1`
   (`1000:C94E`), a coroutine that swaps stacks between the DOS reader and the
   decompressor, and the output is copied to its destination by `rep movsb`
@@ -45,7 +45,7 @@ intact and the Cadaver 2 `DATA/` tree is otherwise byte-identical to it).
 
 Both games read `data\<disk>\lev<n>.mp1|2|3`, `data\<disk>\routine<n>.tad`,
 `data\<disk>\eng|fre|ger<n>.lng`, `data\andata.dat`, `data\pcman.dat`
-(strings at `CAD.EXE seg002:…` just after the "PLEASE INSERT DISK n" messages).
+(file-name strings in the initialised stack segment, `6C08:4C32…`; see `renames/cadaver1/cad.tsv`, `path_*`).
 `?` in these names is replaced by the current disk/level number at run time.
 
 | | Cadaver (1990) | Cadaver: The Payoff (1991) |
@@ -97,12 +97,24 @@ exact colour assignment still to be pinned down from the text-drawing routine.
 
 After the container is removed: `u16be count` (387 in `ENG1`), `count` × `u16be`
 offsets into the string area (which starts at `2 + 2*count`), then the string
-data. The strings themselves are **not plain text** — a further bit-packed
-encoding (tables near `CAD.EXE seg002:F683`, symbol alphabet
-`ABCDEFGHIJKLMNOPQRSTUVWXYZ .,0123456789\r\r-?"<=>` at `seg002:F6E3`).
-Decoder not yet located. The fixed system messages ("PLEASE INSERT DISK 2 …",
-save/restore prompts) are plain ASCII inside the EXE in English, French and
-German (`seg002:0x60080…`).
+data. The strings themselves are **not plain text**; the encoding is **not yet
+decoded**. What is known:
+
+* The game has a packed-text routine, `text6_decode` (`CAD.EXE 1000:75CA`):
+  6-bit codes, four per three bytes (MSB first), translated through the
+  alphabet table `text6_alphabet` at `1F17:F853` (1-based; code 0 ends the
+  string; codes 48–63 are dropped): `A–Z`, space, `. ,`, `0–9`, CR, `- ? "`,
+  and `<` `=` `>` which stand for national letters (the plain system strings
+  spell MÖCHTEN as `M<CHTEN`, DRÜCKEN as `DR>CKEN`).
+* It reads its offset table from `ds:9738` and its string area from
+  `ds:9B20` (`ds`=`1F17`), **not** from the buffer where `ENG1.LNG` is
+  loaded (`6C28:000A`), and in the first 160 M emulated instructions it is
+  only called twice, on still-empty buffers. Decoding `ENG1.LNG` directly with
+  it gives garbage (tried), so either the `.LNG` data goes through another
+  layer first, or `text6_decode` serves a different text source. Open.
+* The fixed system messages ("PLEASE INSERT DISK 2 …", save/restore prompts)
+  are plain ASCII inside the EXE in English, French and German
+  (`6C08:4170…`, `6C08:4883…`, `6C08:4A23…`).
 
 ## 6. Level files — *unknown / partial*
 
@@ -145,8 +157,8 @@ Facts established so far:
 ## 7. Text strings recovered from the executables
 
 INTRO.EXE contains the plain-text story ("chapter thirteen — the story so far
-…") and the credits as lower-case strings starting at `INTRO.EXE` image offset
-`0x1278`. The credits list, in the order stored (the string layout does not make
+…") and the credits as lower-case strings starting at file offset `0x1278` of the
+unpacked `INTRO.EXE`. The credits list, in the order stored (the string layout does not make
 the heading→name pairing unambiguous): levels design; architectural graphics;
 creature graphics; object graphics; title screen graphics; musician; sound
 effects; coding; additional coding; production and concept; game co-ordinator;

@@ -1,0 +1,9 @@
+# Renames for the Cadaver 2 disassembly - see renames/README.md.
+# Most rows were produced by `tools/renames.py port` from the Cadaver 1 table (matching by instruction-aware signature or string content);
+# `[ported ...]` in the comment says how.
+# ea	segoff	kind	old	new	conf	size	sig	comment
+0x10926	1000:0926	func	sub_10926	load_file_record	likely		C7 06 8C 01 00 00 8B 17 B8 00 3D CD 21 72 3C 83	Counterpart of Cadaver 1's load_file_record (open/read/close of the file described by the record at ds:bx); [matched by structure, not signature].
+0x10AEE	1000:0AEE	func	sub_10AEE	draw_st_interleaved_to_vram	likely		B8 00 A0 8E C0 BA C4 03 B8 02 01 EF AD 26 89 05	Writes cx groups of four plane words (ST interleaved layout) from ds:si to VRAM at a000:di, selecting each plane with the sequencer map mask. [ported from cadaver1/intro 0x10a8d by sig16 match]
+0x10B1A	1000:0B1A	func	sub_10B1A	vram_read_planes	likely		1E B8 00 A0 8E D8 BA CE 03 B8 04 00 EF 51 56 F3	Reads cx words from each of VGA planes 0..3 (GC read-map-select 0..3) at a000:si into es:di, one plane after the other. [ported from cadaver1/intro 0x10ab9 by sig16 match]
+0x10B6A	1000:0B6A	func	sub_10B6A	pc1_lz_decode	verified		1E 55 BE 00 00 BF 00 00 8B 16 8E 01 8E C2 8E 5F	Decompresses a .PC1 picture (block length + literal/back-reference stream) from the segment at [bx+6] into the segment at ds:0180h. Format in docs/formats.md section 3. [ported from cadaver1/intro 0x10b09 by sig16 match]
+0x10BB8	1000:0BB8	func	sub_10BB8	pc1_decode_and_draw	likely		1E 55 57 E8 AC FF B9 10 00 BE 02 00 BF 56 01 8C	Runs pc1_lz_decode, copies the 16-word ST palette to ds:0148h and draws the 4000 interleaved 16-pixel groups to VGA planes 0..3 (map mask 1,2,4,8). [ported from cadaver1/intro 0x10b57 by sig16 match]

@@ -1,0 +1,7 @@
+# Renames for disasm/cadaver1/intro.idb (unpacked/cadaver1/INTRO.EXE, loaded at 1000:0).
+# ea	segoff	kind	old	new	conf	size	sig	comment
+0x10908	1000:0908	func	sub_10908	load_file_record	verified		C7 06 7E 01 00 00 8B 17 B8 00 3D CD 21 72 36 83	Loads a whole file described by the record at ds:bx (+0 name offset, +2 byte count, +6 destination segment): open, read, close; any DOS error jumps to the error exit at loc_10122. Traced in dosemu (every INTRO file read comes from its int 21h/3Fh at 1000:0934).
+0x10A8D	1000:0A8D	func	sub_10A8D	draw_st_interleaved_to_vram	likely		B8 00 A0 8E C0 BA C4 03 B8 02 01 EF AD 26 89 05	Writes cx groups of four plane words (ST interleaved layout) from ds:si to VRAM at a000:di, selecting each plane with the sequencer map mask.
+0x10AB9	1000:0AB9	func	sub_10AB9	vram_read_planes	likely		1E B8 00 A0 8E D8 BA CE 03 B8 04 00 EF 51 56 F3	Reads cx words from each of VGA planes 0..3 (GC read-map-select 0..3) at a000:si into es:di, one plane after the other.
+0x10B09	1000:0B09	func	sub_10B09	pc1_lz_decode	verified		1E 55 BE 00 00 BF 00 00 8B 16 80 01 8E C2 8E 5F	Decompresses a .PC1 picture (block length + literal/back-reference stream) from the segment at [bx+6] into the segment at ds:0180h. Format in docs/formats.md section 3.
+0x10B57	1000:0B57	func	sub_10B57	pc1_decode_and_draw	likely		1E 55 57 E8 AC FF B9 10 00 BE 02 00 BF 48 01 8C	Runs pc1_lz_decode, copies the 16-word ST palette to ds:0148h and draws the 4000 interleaved 16-pixel groups to VGA planes 0..3 (map mask 1,2,4,8).

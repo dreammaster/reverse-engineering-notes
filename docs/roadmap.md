@@ -41,14 +41,23 @@ building oracles so later work can be *verified* rather than guessed.
   "restore game?" prompt (`0`–`9`/Esc; saves live in `data\mike_save`) → level
   files for the current disk/level → `ENGn.LNG`.
 
+## Renames
+
+Every routine/variable/string identified goes into `renames/<game>/<stem>.tsv`
+(see `renames/README.md`) so it can be applied to the local IDBs; currently
+`cad` 50 rows, `intro` 5, Cadaver 2 `game` 38 and `intro` 5, including the
+mjm/DCL loader chain, the 50 Hz timer ISR, keyboard helpers, VRAM latch copy,
+the PC1 decoder and the file-name strings. New findings add rows as we go.
+
 ## Suggested order of work
 
-1. **Language strings** — find the routine that draws `CAVERN`/`DAY n` and the
-   message window; trace reads of the `ENG1.LNG` buffer (`6C28:000A`) *after*
-   start-up with the harness (the first 600 M instructions only read it while
-   decompressing), or trigger a message in-game by feeding movement keys.
-   The alphabet table is at `seg002:F6E3` (nothing read it in the first 220 M
-   instructions, so it may belong to a different feature).
+1. **Language strings** — `text6_decode` (`1000:75CA`, 6-bit packed text via the
+   table at `1F17:F853`) is understood but is *not* fed directly from the
+   `.LNG` buffer (see `formats.md` §5). Find who fills `ds:9738`/`ds:9B20`
+   (hook writes to that range, or break on the first `text6_decode` call with a
+   non-empty source — it only happens once text is displayed, e.g. after
+   moving the player or picking something up), and what the `.LNG` file is
+   converted into on the way.
 2. **Level data** — diff harness memory/VRAM before and after the level load
    to attribute each part of `MP1/MP2/MP3` to a destination (tile graphics →
    VRAM pages, room geometry → tables). `MP2` begins with a `(size,offset)`
