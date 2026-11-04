@@ -402,20 +402,36 @@ void Conversation::giveLine(const std::string &raw) {
 	_waiting = false;
 }
 
-// APPROX(34): not the original's exact behaviour, see docs/approximations.md
+// sub_1ECB6: a keyword matches when it is the start of one of the words the player typed (split at spaces), compared without regard to case and with ? in the keyword standing for any
+// character; a comma separates the keywords of a list (sub_209B1), and "*" takes anything. (The list of words of findDbString has its own limit of four letters.)
 bool Conversation::matchKeywords(const std::string &keys, const std::string &input) const {
 	if (keys == "*")
 		return true;
+	std::vector<std::string> words;
+	size_t p = 0;
+	while (p < input.size()) {
+		while (p < input.size() && input[p] == ' ')
+			++p;
+		size_t q = input.find(' ', p);
+		if (p >= input.size())
+			break;
+		words.push_back(input.substr(p, q == std::string::npos ? std::string::npos : q - p));
+		p = q == std::string::npos ? input.size() : q;
+	}
 	size_t start = 0;
 	while (start <= keys.size()) {
 		size_t comma = keys.find(',', start);
-		std::string tok = keys.substr(start, comma == std::string::npos ? std::string::npos : comma - start);
-		std::string cmp = input.substr(0, tok.size());
-		bool same = tok.size() == cmp.size();
-		for (size_t i = 0; same && i < tok.size(); ++i)
-			same = std::tolower((unsigned char)tok[i]) == std::tolower((unsigned char)cmp[i]);
-		if (same)
-			return true;
+		std::string key = keys.substr(start, comma == std::string::npos ? std::string::npos : comma - start);
+		for (const std::string &word : words) {
+			size_t i = 0;
+			for (; i < key.size(); ++i) {
+				int c = i < word.size() ? std::tolower((unsigned char)word[i]) : 0;
+				if (std::tolower((unsigned char)key[i]) != c && key[i] != '?')
+					break;
+			}
+			if (i == key.size())
+				return true;
+		}
 		if (comma == std::string::npos)
 			break;
 		start = comma + 1;
