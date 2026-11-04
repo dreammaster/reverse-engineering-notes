@@ -21,6 +21,7 @@ void convertNumberToBcd(Machine &m);              // 18DCE: numberValue (24 bit)
 void setNumberValue(Machine &m, uint32_t v);      // numberValue = v (3 bytes)
 void writeNumber(Machine &m);                     // 17696: numberValue, up to 8 digits without padding
 void writeNumberShort(Machine &m, uint8_t value); // 1769C: space padded to tempTextX columns
+void writeNumberShortPrefixed(Machine &m, uint8_t value, uint8_t prefix);   // 1769C with `prefix` instead of spaces
 void writeNumberLeft(Machine &m, uint8_t value);  // 176A2
 void writeNumber16(Machine &m, uint16_t value);   // 176D0
 void writeSpaceNumber(Machine &m, uint16_t value);// 176C5

@@ -59,5 +59,13 @@ void checkGateCells(Machine &m);
 // 1AD14: some member carries an item listed from offset 7 -> branch 3, else branch 5
 void branchIfItemListed(Machine &m);
 
+// 1AB0E: remembers the time of this visit, clears the map's encounter rate and runs the screen refresh twice
+void restartClock(Machine &m);
+// 1A7E8: shows the time that has passed
+void showTime(Machine &m);
+
+// 1AC03: a prepared character joins when enough time has passed (the player names it); branch 6 when not yet, 8 when the group is full, else 4
+void recruitAfterTime(Machine &m);
+
 } // namespace actions
 } // namespace wl

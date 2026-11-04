@@ -457,6 +457,13 @@ void writeNumberShort(Machine &m, uint8_t value) {   // 1769C: space padded to t
 	writeNumberDigits(m);
 }
 
+void writeNumberShortPrefixed(Machine &m, uint8_t value, uint8_t prefix) {   // 1769C with another padding character
+	setNumberValue(m, value);
+	convertNumberToBcd(m);
+	m.d8(g::writeNumberPrefix) = prefix;
+	writeNumberDigits(m);
+}
+
 void writeNumberLeft(Machine &m, uint8_t value) {   // 176A2: up to 3 digits, no padding
 	setNumberValue(m, value);
 	writeNumber(m);

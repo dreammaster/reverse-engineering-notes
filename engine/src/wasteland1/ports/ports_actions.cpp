@@ -42,5 +42,10 @@ PORT(act_acfc) { actions::set2F_1E(m); r.cf = false; }   // 1ACFC
 PORT(act_ad08) { actions::set2F_64(m); r.cf = false; }   // 1AD08
 PORT(act_ad14) { actions::branchIfItemListed(m); r.cf = false; }   // 1AD14
 
+PORT(act_ab0e) { actions::restartClock(m); r.cf = false; }                                 // 1AB0E
+PORT(act_a7e8) { actions::showTime(m); r.cf = true; }                                      // 1A7E8
+
+PORT(act_ac03) { actions::recruitAfterTime(m); r.cf = false; }                              // 1AC03
+
 } // namespace rc
 } // namespace wl

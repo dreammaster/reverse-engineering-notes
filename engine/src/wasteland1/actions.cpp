@@ -1,8 +1,11 @@
 #include "wasteland1/actions.h"
+#include "wasteland1/charscreen.h"
+#include "wasteland1/menu.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
 #include "wasteland1/mapcells.h"
 #include "wasteland1/party.h"
+#include "wasteland1/text.h"
 
 namespace wl {
 namespace actions {
@@ -313,6 +316,84 @@ void branchIfItemListed(Machine &m) {
 		if (member >= members) break;
 	}
 	branch(m, 5);
+}
+
+
+void restartClock(Machine &m) {   // 1AB0E
+	m.d8(uint16_t(g::saved + 0xFA)) = s2(m, 2);
+	m.d8(uint16_t(g::saved + 0xFB)) = s2(m, 3);
+	m.d8(uint16_t(g::saved + 0xFC)) = s2(m, 4);
+	m.d8(uint16_t(g::saved + 0xF9)) = 1;
+	m.d8(uint16_t(m.d16(g::locationsPtr) + 0x2F)) = 0;
+	X86Regs x;
+	legacy::call(m, 0x142B, x);   // sub_1142B (twice)
+	legacy::call(m, 0x142B, x);
+}
+
+void showTime(Machine &m) {   // 1A7E8: the elapsed time in the "clock" message
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	unsigned lo = unsigned(s2(m, 2)) - m.d8(uint16_t(g::saved + 0xFA));
+	const unsigned borrow1 = lo >> 8 & 1;
+	unsigned mid = unsigned(s2(m, 3)) - m.d8(uint16_t(g::saved + 0xFB)) - borrow1;
+	D(0xCF27) = uint8_t(lo);
+	D(0xCF28) = uint8_t(mid);
+	const unsigned l2 = 0xF0u - D(0xCF27);
+	const unsigned b2 = l2 >> 8 & 1;
+	D(0xCF27) = uint8_t(l2);
+	D(0xCF28) = uint8_t(0u - D(0xCF28) - b2);
+	D(0xCF29) = D(uint16_t(0xCF4A + (D(0xCF27) & 3)));
+	uint16_t minutes = uint16_t(D(0xCF27) | (D(0xCF28) << 8));
+	minutes >>= 2;
+	D(0xCF27) = uint8_t(minutes);
+	D(0xCF28) = uint8_t(minutes >> 8);
+	printMapMessage(m, 0x11);
+	auto divide = [&]() {   // 1A86D: the minutes divided by 60 (hours in `low`, minutes in ds:BA80)
+		uint8_t hi = 0, mid = D(0xCF28), low = D(0xCF27);
+		D(0xBA86) = 0;
+		divideMoney(m, hi, mid, low, 60);
+		return low;
+	};
+	writeNumberLeft(m, divide());
+	writeCharacterVia(m, ':');
+	D(0x467F) = 2;
+	divide();
+	writeNumberShortPrefixed(m, D(0xBA80), '0');
+	writeCharacterVia(m, '.');
+	writeNumberLeft(m, D(0xCF29));
+	printMapMessage(m, 0x12);
+}
+
+
+void recruitAfterTime(Machine &m) {   // 1AC03: after enough time a prepared character joins and is named by the player
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	const uint8_t index = rec(m, 3);
+	D(0xCF24) = index;
+	const uint16_t table = uint16_t(0xA5C + uint16_t(index << 2));
+	const uint32_t now = uint32_t(s2(m, 2)) | (uint32_t(s2(m, 3)) << 8) | (uint32_t(s2(m, 4)) << 16) | (uint32_t(m.d8(uint16_t(g::saved + 0xFD))) << 24);
+	const uint32_t then = uint32_t(D(table)) | (uint32_t(D(uint16_t(table + 1))) << 8) | (uint32_t(D(uint16_t(table + 2))) << 16) | (uint32_t(D(uint16_t(table + 3))) << 24);
+	D(0xCF22) = uint8_t((now - then) >> 8);
+	D(0xCF23) = uint8_t((now - then) >> 24);
+	if (now - then < 0x2D00u) { branch(m, 6); return; }
+	if (s2(m, g::s2::field8) >= 7) { branch(m, 8); return; }
+	const uint16_t source = uint16_t((uint16_t(index) << 8) + 0x65C);
+	setCharacterById(m, uint8_t(s2(m, g::s2::field8) + 1));
+	for (int i = 0; i < 256; ++i) m.d8(uint16_t(m.d16(g::currentCharacter) + i)) = m.d8(uint16_t(source + i));
+	++s2(m, g::s2::field8);
+	++s2(m, g::s2::membersInGroup);
+	m.d8(uint16_t(m.d16(g::partyIndexesPtr) + s2(m, g::s2::membersInGroup))) = s2(m, g::s2::field8);
+	for (;;) {
+		m.setD16(g::textString, 0xCF56);   // "Enter new name for ..."
+		writeString(m);
+		m.setD16(g::textString, 0x7931);
+		D(0x4684) = 0x0D;
+		++D(g::rectTextX);
+		--D(g::rectTextY);
+		if (textInput(m, false, true) != 0) continue;
+		if (D(0x7931) == 0) continue;
+		break;
+	}
+	for (int i = 13; i >= 0; --i) m.d8(uint16_t(m.d16(g::currentCharacter) + i)) = m.d8(uint16_t(0x7931 + i));
+	branch(m, 4);
 }
 
 } // namespace actions

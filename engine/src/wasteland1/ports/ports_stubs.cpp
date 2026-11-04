@@ -69,5 +69,7 @@ PORT(selectActiveGroupLeaves) { setPartyIndexesPtr(m, m.d8(0x4654)); r.cf = true
 PORT(setPendingFlags) { m.d8(0xAAD3) = 0; m.d8(0xAAD4) = 1; r.d.b.l = 1; r.cf = true; }   // 16B09
 PORT(textTableAB3E) { m.setD16(0x4692, 0xAB3E); r.d.x = 0; }                              // 16CBD
 
+PORT(act_aa3d) { r.cf = true; }                                                           // 1AA3D
+
 } // namespace rc
 } // namespace wl
