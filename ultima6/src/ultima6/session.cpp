@@ -286,7 +286,7 @@ bool Game::step(int dir) {
 		int tile = _world.map.tile(z, x, y) & 0xFF, current = tile >= 8 && tile < 16 ? tile - 8 : dir;
 		cost = SKIFF_COST[(dir - current) & 7];
 	}
-	followLeader(oldX, oldY);
+	followLeader();
 	_rules.deniedPending = true;
 	_world.spendMoves(1, cost); // sub_28F67, counted on the square that was left
 	_creatures.checkEggs(x, y, z, clock.hour);

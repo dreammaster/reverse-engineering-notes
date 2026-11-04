@@ -11,41 +11,126 @@ namespace Ultima6 {
 
 // The party follows its leader (sub_275BD): each member steps into the square the member ahead of it has just left.
 // APPROX(4): not the original's exact behaviour, see docs/approximations.md
-void Game::followLeader(int oldX, int oldY) {
-	const ObjList &a = _world.actors;
-	int prevX = oldX, prevY = oldY;
-	MoveRules rules;
-	rules.partyMayShuffle = true;
-	for (int i = 1; i < a.partySize; ++i) {
-		int k = _world.actorObject(a.partyRoster[i]);
-		if (k < 0)
-			continue;
-		World::Obj &o = _world.objects[k];
-		int ox = o.x, oy = o.y;
-		int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
-		int dx = (prevX - ox) & mask, dy = (prevY - oy) & mask;
-		if (dx > mask / 2)
-			dx -= mask + 1;
-		if (dy > mask / 2)
-			dy -= mask + 1;
-		if (o.z == z && (dx || dy)) {
-			if (std::abs(dx) <= 1 && std::abs(dy) <= 1) {
-				// the square the member ahead left is free to step into
-				if (_movement.check(prevX, prevY, z, k, rules).passable) {
-					_world.moveObject(k, prevX, prevY, z);
-					_actors.face(a.partyRoster[i], ActorManager::directionOf(dx, dy));
-				}
-			} else if (std::abs(dx) <= 8 && std::abs(dy) <= 8) {
-				_actors.walkToward(a.partyRoster[i], k, prevX, prevY, z);
-			} else {
-				_world.moveObject(k, prevX, prevY, z); // too far behind: caught up at once
-			}
-		}
-		prevX = ox;
-		prevY = oy;
+// sub_26D19: a follower that has been swallowed (movement flag 0x10) is held unless a strength test (a number from 1 to 30 under its strength) frees it ("<name> regurgitated!");
+// if not it is hurt for 1-15 and loses its moves. True while it is held.
+bool Game::heldFollower(int actor) {
+	ObjList &a = _world.actors;
+	if (!(a.movementFlags[actor] & 0x10))
+		return false;
+	if (a.worktype[actor] == 2)
+		message("\n" + _combat.nameOf(actor) + ":\nARGH!\n");
+	int roll = 1 + (int)(_rng.next() % 30);
+	if (roll < _combat.adjustedStrength(actor)) {
+		message(_combat.nameOf(actor) + " regurgitated!\n");
+		a.movementFlags[actor] &= ~0x10;
+		return false;
 	}
+	_combat.applyDamage(actor, actor, 1 + (int)(_rng.next() % 15));
+	a.moves[actor] = 0;
+	return true;
 }
 
+// sub_26DC6: whether a square is a good one for the follower in a slot of the formation: some follower of an earlier slot stands next to it (within one square, counting the rider's
+// tile of a horse) and none on it (a horse 0x162 may share)
+int Game::formationBusy(int slot, int x, int y) {
+	static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+	const ObjList &a = _world.actors;
+	int own = _world.actorObject(_formation[slot]);
+	bool ownHorse = own >= 0 && _world.objects[own].type == 0x162;
+	int good = 0;
+	for (int s = 0; s < slot; ++s) {
+		int k = _world.actorObject(_formation[s]);
+		if (k < 0)
+			continue;
+		const World::Obj &p = _world.objects[k];
+		int px = (int)p.x - x, py = (int)p.y - y;
+		if (px == 0 && py == 0 && p.type != 0x162 && !ownHorse)
+			return 0;
+		if (px > -2 && px < 2 && py > -2 && py < 2)
+			good = 1;
+		if (p.type == 0x1AF) {
+			int d = p.frame & 6;
+			px -= DX[d];
+			py -= DY[d];
+			if (px == 0 && py == 0 && !ownHorse)
+				return 0;
+			if (px > -2 && px < 2 && py > -2 && py < 2)
+				good = 1;
+		}
+	}
+	(void)a;
+	return good;
+}
+
+// sub_26F03, after the party has moved: the followers (worktype 1) take their places behind the leader. Slot n lies back[n] squares behind the leader, lateral[n] to the side, in the
+// way the leader faces; a follower in a slot that has a neighbour in an earlier slot stays, in the second pass moving only if its place lies ahead of it (mode 0), else it takes the
+// one of the eight squares round it that it may enter and lies nearest its place (one next to an earlier follower counts most). Each follower is charged 5 moves.
+void Game::followLeader(int mode) {
+	static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+	static const int LATERAL[11] = {0, -1, 1, 0, -2, 2, -1, 1, -3, 3, 0}, BACK[11] = {0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 1};
+	ObjList &a = _world.actors;
+	if (_aboard)
+		return;
+	int leader = a.partyRoster[_member], lk = _world.actorObject(leader);
+	if (lk < 0)
+		return;
+	int lx = _world.objects[lk].x, ly = _world.objects[lk].y, lt = _world.objects[lk].type;
+	int heading = (lt >= 0x178 && lt <= 0x19A) || lt == 0x16B ? (_world.objects[lk].frame >> 1) & 6 : (a.movementFlags[leader] & 7) & 6;
+	MoveRules rules;
+	rules.partyMayShuffle = false;
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	for (int pass = 0; pass < 2; ++pass) {
+		int slot = 1;
+		for (int r = 0; r < a.partySize; ++r) {
+			int si = a.partyRoster[r];
+			if (slot < 16)
+				_formation[slot] = si;
+			if (slot > 10)
+				break;
+			int tx = lx - DX[heading] * BACK[slot] - DY[heading] * LATERAL[slot], ty = ly + DX[heading] * LATERAL[slot] - DY[heading] * BACK[slot];
+			int k = _world.actorObject(si);
+			if (si == leader || k < 0 || _world.objects[k].z != z || a.worktype[si] != 1 || heldFollower(si) || (a.status[si] & 0x16) || (a.movementFlags[si] & 0x10))
+				continue;
+			int saved = (int8_t)a.moves[si];
+			int fx = _world.objects[k].x, fy = _world.objects[k].y;
+			bool move;
+			if (!formationBusy(slot, fx, fy))
+				move = true;
+			else if (pass != 1)
+				move = false;
+			else if (mode != 0)
+				move = !(tx == fx && ty == fy);
+			else
+				move = (tx - fx) * DX[heading] + (ty - fy) * DY[heading] > 0;
+			if (move) {
+				bool here = formationBusy(slot, fx, fy) != 0;
+				int best = -1, bestScore = 0;
+				for (int d = 0; d < 8; ++d) {
+					int nx = (fx + DX[d]) & mask, ny = (fy + DY[d]) & mask;
+					if (!_movement.check(nx, ny, z, k, rules).passable)
+						continue;
+					int score = 0x100;
+					if (formationBusy(slot, nx, ny))
+						score += 0x100;
+					else if (here)
+						score = 0;
+					score -= std::abs(nx - tx) + std::abs(ny - ty);
+					if (score > bestScore) {
+						bestScore = score;
+						best = d;
+					}
+				}
+				if (best >= 0) {
+					_world.moveObject(k, (fx + DX[best]) & mask, (fy + DY[best]) & mask, z);
+					_actors.face(si, best);
+				}
+			}
+			a.moves[si] = (uint8_t)saved;
+			_world.spendMoves(si, 5);
+			++slot;
+		}
+	}
+}
 // Attack: hit the creature or person on the square.
 // APPROX(18): not the original's exact behaviour, see docs/approximations.md
 void Game::attackAt(int tx, int ty) {

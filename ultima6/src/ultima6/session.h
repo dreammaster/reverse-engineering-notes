@@ -192,7 +192,10 @@ private:
 	int _useItem = -1; // the key, lock pick or potion waiting for its target
 	void changeLevel(int nx, int ny, int nz);
 	void restKey(int key);
-	void followLeader(int oldX, int oldY);
+	void followLeader(int mode = 0);
+	bool heldFollower(int actor);
+	int formationBusy(int slot, int x, int y);
+	int _formation[16] = {};
 	bool _confirmSave = false;
 	bool _firstPrompt = true;
 	bool _inventory = false; // the panel shows the inventory instead of the statistics
