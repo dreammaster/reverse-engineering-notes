@@ -933,18 +933,25 @@ void Game::changeLevel(int nx, int ny, int nz) {
 bool Game::useHorse(int tx, int ty) {
 	World::Obj &me = _world.objects[_leaderObject];
 	if (me.type == 0x1AF && tx == x && ty == y) {
-		static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+		// rear_horse (34CAE): the rider is himself again, facing the way he did, and a horse is put on the first square of the nine around that can be entered (x the outer
+		// loop, y the inner, the middle one left out); the dismounting is done even if there is no room, and the horse is then lost
+		ObjList &a = _world.actors;
+		int type = a.baseObjFrame[1] & 0x3FF ? a.baseObjFrame[1] & 0x3FF : 0x19A;
+		me.type = (uint16_t)type;
+		bool person = (type >= 0x178 && type <= 0x183) || type == 0x199 || type == 0x19A;
+		me.frame = (uint8_t)(person ? (a.movementFlags[1] & 7) * 2 + 1 : 0);
 		MoveRules rules;
-		for (int d = 0; d < 8; ++d) {
-			int nx = x + DX[d], ny = y + DY[d];
-			if (!_movement.check(nx, ny, z, _leaderObject, rules).passable)
-				continue;
-			int horse = _creatures.spawn(0x1AE, 0x0C, nx, ny, z);
-			if (horse < 0)
-				break;
-			me.type = (uint16_t)(_world.actors.baseObjFrame[1] & 0x3FF ? _world.actors.baseObjFrame[1] & 0x3FF : 0x19A);
-			return true;
-		}
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		for (int ox = 0; ox < 3; ++ox)
+			for (int oy = 0; oy < 3; ++oy) {
+				if (ox == 1 && oy == 1)
+					continue;
+				int nx = (x + ox - 1) & mask, ny = (y + oy - 1) & mask;
+				if (!_movement.check(nx, ny, z, _leaderObject, rules).passable)
+					continue;
+				if (_creatures.spawn(0x1AE, 0x0C, nx, ny, z, true) >= 0)
+					return true;
+			}
 		message("\nNo room!\n");
 		return true;
 	}
