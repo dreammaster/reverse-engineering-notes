@@ -6,6 +6,7 @@
 
 #include "files/portrait.h"
 #include "ultima6/describe.h"
+#include "ultima6/game_tables.h"
 #include "ultima6/stats_view.h"
 #include "ultima6/gypsy.h"
 
@@ -49,6 +50,7 @@ bool World::loadBlock(const Bytes &data, int level) {
 }
 
 bool World::load(const std::string &dir, const NewCharacter *newGame, const std::string &saveDir) {
+	selectTables(game);
 	Bytes d, d2, d3, d4;
 	if (!readFile(joinPath(dir, "TILEFLAG"), d) || !flags.load(d))
 		return fail("TILEFLAG");

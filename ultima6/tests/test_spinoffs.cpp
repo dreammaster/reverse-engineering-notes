@@ -1,6 +1,7 @@
 // Which Ultima VI file formats the two spin-offs share (skipped when their data is absent).
 
 #include "files/lib_n.h"
+#include "ultima6/combat.h"
 #include "ultima6/conversation.h"
 #include "ultima6/world.h"
 #include "files/map_data.h"
@@ -164,6 +165,24 @@ static void check(const char *dir, int schedules) {
 }
 
 int main() {
+	// the per-game tables are the games' own (tools/extract_creatures.py)
+	{
+		using ::Ultima6::Ultima6::Combat;
+		using ::Ultima6::Ultima6::World;
+		static World md;
+		md.game = GameId::MartianDreams;
+		if (md.load("md/game/MARTIAN")) {
+			CHECK(Combat::stats(0x171) && Combat::stats(0x171)->hp == 45); // a Martian creature
+			CHECK(!Combat::stats(0x16C) || Combat::stats(0x16C)->hp != 10); // not Ultima VI's acid slug
+		}
+		static World se;
+		se.game = GameId::SavageEmpire;
+		if (se.load("se/game/SAVAGE"))
+			CHECK(Combat::stats(317) && Combat::stats(317)->hp == 255);
+		static World u6;
+		if (u6.load("u6/game"))
+			CHECK(Combat::stats(364) && Combat::stats(364)->hp == 10); // the acid slug again
+	}
 	check("md/game/MARTIAN", 192);
 	check("se/game/SAVAGE", 354);
 	if (failures == 0)

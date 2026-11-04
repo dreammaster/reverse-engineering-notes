@@ -2,6 +2,7 @@
 
 #include "files/converse.h"
 #include "ultima6/describe.h"
+#include "ultima6/game_tables.h"
 
 #include <algorithm>
 
@@ -12,10 +13,16 @@ namespace Ultima6 {
 
 enum { OBJ_BLOOD = 338, OBJ_DEAD_BODY = 339, OBJ_LORD_BRITISH = 409 };
 
+const CreatureStats *u6CreatureTable(int &count) {
+	count = (int)(sizeof(CREATURES) / sizeof(CREATURES[0]));
+	return CREATURES;
+}
+
 const CreatureStats *Combat::stats(int type) {
-	for (const CreatureStats &c : CREATURES)
-		if (c.type == type)
-			return &c;
+	const GameTables &t = activeTables();
+	for (int i = 0; i < t.creatureCount; ++i)
+		if (t.creatures[i].type == type)
+			return &t.creatures[i];
 	return nullptr;
 }
 

@@ -1,19 +1,28 @@
 #include "ultima6/movement.h"
+#include "ultima6/game_tables.h"
 
 namespace Ultima6 {
 namespace Ultima6 {
 
 #include "ultima6/movement_tables.inc"
 
+void u6ClassTable(const uint16_t *&types, const uint16_t *&flags, int &count) {
+	types = CLASS_TYPES;
+	flags = CLASS_FLAGS;
+	count = MovementClasses::COUNT;
+}
+
 int MovementClasses::classOf(int type) {
-	for (int i = 0; i < COUNT; ++i)
-		if (CLASS_TYPES[i] == type)
+	const GameTables &t = activeTables();
+	for (int i = 0; i < t.classCount; ++i)
+		if (t.classTypes[i] == type)
 			return i;
 	return -1;
 }
 
 uint16_t MovementClasses::flags(int cls) {
-	return cls < 0 ? (uint16_t)UNLISTED_FLAGS : CLASS_FLAGS[cls];
+	const GameTables &t = activeTables();
+	return cls < 0 || cls >= t.classCount ? (uint16_t)UNLISTED_FLAGS : t.classFlags[cls];
 }
 
 // APPROX(12): not the original's exact behaviour, see docs/approximations.md
