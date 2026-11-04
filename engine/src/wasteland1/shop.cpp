@@ -956,6 +956,7 @@ roll:   // 1C75F
 		D(g::rectTextX) = 0x0F;
 		D(g::rectTextY) = 2;
 		call(m, 0x9506, D(memberVar));   // writeMemberStats
+		al = 0;   // (the text writer leaves al = 0, which is the carry of the next roll)
 	} while (--D(counter) != 0);
 	m.setD16(g::textString, 0xDEEA);
 	writeString(m);

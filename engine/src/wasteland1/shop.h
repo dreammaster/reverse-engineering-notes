@@ -57,7 +57,7 @@ uint8_t rollAttribute(Machine &m, uint8_t carry);
 void startingItems(Machine &m);
 // 1C622: row of the skill list of character creation
 bool creationRow(Machine &m, uint8_t skill);
-// 1C6C9 (NOT registered as a port: memory matches the oracle but the screen differs by the portrait animation of a few polls): the "create character" screen: rolls attributes, asks name, sex and nationality, spends the skill points
+// 1C6C9: the "create character" screen (the oracle and native runs only agree on dice rolled before the first keyboard poll: each poll stirs the generator with the portrait timer tick of 190F8): rolls attributes, asks name, sex and nationality, spends the skill points
 void createCharacter(Machine &m);
 
 } // namespace wl

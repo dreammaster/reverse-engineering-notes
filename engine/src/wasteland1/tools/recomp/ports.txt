@@ -442,3 +442,7 @@ C61F creationRowPort junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=D
 5DC4 selectActiveGroupLeaves junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
 6B09 setPendingFlags junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
 6CBD textTableAB3E junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
+9579 writeMemberAttribute junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4690-4690,467F-4681,466B-466D,71C0-7200,8D00-8F00
+9506 writeMemberStats junk=ah,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4690-4690,467F-4681,466B-466D,71C0-7200,8D00-8F00
+9362 writeSummary junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,466A-466A,467F-4681,466B-466D,71C0-7200,8D00-8F00
+C6C9 createCharacter junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=DEB0-DEC7,DFF0-DFF6,D430-D436,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4661-4666,467F-4681,466B-466D,4682-4684,B240-B243,CD40-CD50,B1D0-B1E0,4696-4699,469C-469F,4720-4721,71C0-7200,8D00-8F00,7931-7960,A410-A470,4663-4664,C059-C059

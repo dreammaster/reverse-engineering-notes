@@ -162,4 +162,46 @@ void showTitleText(Machine &m, uint8_t page) {
 	restoreRectBounds(m);
 }
 
+
+void writeMemberAttribute(Machine &m, uint8_t offset) {
+	writeNumberShort(m, m.d8(uint16_t(m.d16(g::currentCharacter) + offset)));
+}
+
+void writeMemberStats(Machine &m) {
+	newline(m);
+	m.d8(0x467F) = 3;
+	m.setD16(g::textString, 0xCC80);   // "ST =" and the following labels: each writeString moves on to the next one
+	for (uint8_t at = pm::strength; at != pm::money; ++at) {
+		m.d8(0x466A) = at;
+		writeString(m);
+		writeMemberAttribute(m, at);
+	}
+	writeString(m);
+	writeMemberAttribute(m, 0x20);   // skill points
+	writeString(m);
+	m.setD16(g::textString, uint16_t(m.d16(g::currentCharacter) + pm::rank));
+	writeString(m);
+	m.setD16(g::textString, 0xCCB8);   // the MAXCON label
+	writeString(m);
+	writeNumber16(m, uint16_t(m.d8(uint16_t(m.d16(g::currentCharacter) + pm::maxCon)) |
+	                          (m.d8(uint16_t(m.d16(g::currentCharacter) + pm::maxCon + 1)) << 8)));
+	writeString(m);
+	getMemberMoney(m);
+	writeNumber(m);
+	writeString(m);
+}
+
+
+void writeSummary(Machine &m) {
+	const uint16_t c = m.d16(g::currentCharacter);
+	writeItemTextNormal(m, 137);
+	newline(m);
+	writeMemberStats(m);
+	writeItemTextNormal(m, 138);
+	writeItemTextNormal(m, uint8_t(m.d8(uint16_t(c + pm::sex)) + 162));
+	writeItemTextNormal(m, 139);
+	writeItemTextNormal(m, uint8_t(m.d8(uint16_t(c + pm::nationality)) + 145));
+	newline(m);
+}
+
 } // namespace wl

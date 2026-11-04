@@ -81,6 +81,7 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 	if (gKeys.empty()) if (auto it = gFuncKeys.find(entry); it != gFuncKeys.end()) { funcKeys = parseKeys(it->second); keyList = &funcKeys; }
 	for (uint16_t k : *keyList) { o.keys.push_back(k); n.keys.push_back(k); }
 	o.detectIdle = true;
+	o.nextTick = ~0ull / 2;   // no timer interrupts on the oracle either: the native side has none, and the interrupt handler animates the portrait and stirs the generator
 	// register inputs: the state's own values with a few random small ones
 	uint32_t s = seed;
 	rc::Regs r;

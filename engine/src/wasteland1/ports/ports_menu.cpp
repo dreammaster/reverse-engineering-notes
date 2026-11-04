@@ -127,5 +127,10 @@ PORT(createCharacter) { createCharacter(m); }                                   
 PORT(rollAttribute) { r.a.b.l = rollAttribute(m, r.a.b.l); }                                // 1CAD1 (bx is kept)
 PORT(startingItems) { startingItems(m); }                                                  // 1C9DE
 
+PORT(writeMemberAttribute) { writeMemberAttribute(m, r.b.b.l); }                          // 19579
+PORT(writeMemberStats) { writeMemberStats(m); r.a.b.l = 0; r.d.x = 0; r.b.x = 0; }                      // 19506
+
+PORT(writeSummary) { writeSummary(m); }                                                  // 19362
+
 } // namespace rc
 } // namespace wl

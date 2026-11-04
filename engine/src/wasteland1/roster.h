@@ -17,4 +17,12 @@ void drawRosterHeadersAndMembers(Machine &m);
 // 17923: shows the title page text `page` in the picture window
 void showTitleText(Machine &m, uint8_t page);
 
+// 19579: writes attribute byte `offset` of the current character as a number
+void writeMemberAttribute(Machine &m, uint8_t offset);
+// 19506: the character sheet: attributes, rank, maximum hit points and money (the labels are consecutive strings at ds:CC80)
+void writeMemberStats(Machine &m);
+
+// 19362: the full character summary: stats, sex and nationality
+void writeSummary(Machine &m);
+
 } // namespace wl
