@@ -136,43 +136,122 @@ The fixed system messages ("PLEASE INSERT DISK 2 …", save/restore prompts) are
 *not* in the `.LNG` files: they are plain ASCII inside the EXE in English, French
 and German (`6C08:4170…`, `6C08:4883…`, `6C08:4A23…`).
 
-## 6. Level files — *unknown / partial*
+## 6. Level, animation and sprite data — *partly decoded*
 
-`LEVn.MP1` (~110 KB unpacked), `MP2` (~25–40 KB), `MP3` (~55–63 KB),
-`ROUTINEn.TAD`, `ANDATA.DAT` (animation data, 20 454 bytes), `PCMAN.DAT` (the
-player sprite set, 41 936 bytes).
+Files: `LEVn.MP1` (~105–120 KB unpacked), `MP2` (24–37 KB), `MP3` (55–63 KB),
+`ROUTINEn.TAD/PAK`, `ANDATA.DAT` (20 454 bytes), `PCMAN.DAT` (41 936 bytes).
+Load order in the running game (traced): `ANDATA`, `PCMAN` at start-up, then per
+level `ROUTINEn`, `LEVn.MP1`, `MP2`, `MP3`, `ENGn.LNG`.
 
-Facts established so far:
+### 6.1 Graphics storage — *verified*
 
-* All graphics are stored **EGA-planar**: the game keeps its sprite and tile
-  bitmaps in VGA RAM (pages at `A000h/A200h/A800h`) and blits them with the
-  latch-copy write mode (`rep movsb` with GC mode 1) and AND/OR masks —
-  hence the planar layout of the on-disk bitmaps.
-* The screen is isometric, 320×200, 16 colours, mode 0Dh, with a status panel
-  (6 inventory slots, "DAY n", location name) drawn in the lower part.
-* `ROUTINEn.TAD` (after the `mjm0` header; 16 zero bytes, then a small x86 stub
-  at offset `0x10`, then data): the stub is
-  `nop nop; push ds; mov ax,cs; mov ds,ax; mov si,0E5Dh; mov cx,10h; rep movsw;
-  pop ds; mov bx,27h; mov ax,2Ch; retf` followed at `+0x27` by
-  `call word [078Ch]; retf`. i.e. the blob is loaded as a code segment, the game
-  far-calls offset `0x10` to initialise it (it copies a 16-word table from the
-  end of the blob and hands back BX=entry thunk, AX=data-table offset) and later
-  calls the thunk, which dispatches through a pointer inside the blob. The bulk
-  of the file after the stub is **not** x86 (looks like 16-bit tables and
-  0xFFFF-terminated lists) — presumably the per-level ACL scripts / object
-  behaviour tables.
-* The game also contains a bytecode interpreter (the in-house "ACL" language;
-  INTRO's credits: *"cadaver uses an internal language … 'acl'. acl is copyright
-  the bitmap brothers"*). Likely opcode handlers (small routines that fetch
-  operands with `lodsb`/`lodsw` from SI and poke object fields via `DI`) sit in
-  `CAD.EXE seg000` around `1000:7AE0–7C50`; **the link between the `.TAD` data
-  and the interpreter is not yet confirmed.**
-* `LEVn.MP2` starts with two big-endian dwords, then an array of
-  `(size:u16be, offset:u16be)` records where `offset[n+1] = offset[n] + size[n]`
-  (e.g. 0x20@0x68, 0x40@0x88, 0x2A@0xC8, …): a table of sub-blocks.
-* After loading, the game places `MP1` at `2917:0000`, `ENG1.LNG` at
-  `6C28:000A`, parts of `MP2` and `ANDATA` at other segments (measured in the
-  emulator harness; see `docs/tools.md`).
+The game keeps bitmaps in **EGA/VGA video RAM** (mode 0Dh, 320×200×16, planar),
+with several screen-sized pages (the room is drawn into a larger scrolled buffer)
+and sprite sheets in the top ~25 KB of each plane, and blits with the VGA latches
+(write mode 1) and AND/OR masks. Consequences: on-disk bitmaps are plane-separate
+(or ST-interleaved for `.PC1`), not chunky.
+
+### 6.2 `PCMAN.DAT` (the player's sprites) — *verified placement*
+
+Raw plane dumps, loaded unchanged into VRAM (found by matching emulator VRAM
+against the file):
+
+| File bytes | Destination |
+|---|---|
+| `0 … 24575` (24 576) | plane 2, VRAM offsets `A000h … FFFFh` |
+| `24576 … 41935` (17 360) | plane 3, VRAM offsets `A000h … E44Fh` |
+
+Planes 0 and 1 of that region are zero, i.e. the sprites are 2-bit (colour
+= 4·p2 + 8·p3 → palette entries 0, 4, 8, 12). The sprites are **not** a plain
+40-byte-stride image (rendering them that way gives noise); frame rectangles
+come from `ANDATA.DAT`, which is not yet decoded.
+
+### 6.3 `ANDATA.DAT` — *container verified, contents unknown*
+
+`u16be count` (6), `count × u16be` block sizes (1904, 15840, 576, 920, 1104, 96),
+then the blocks back to back (the sizes tile the file exactly; `tools/mpsections.py`).
+Block 0 is a table of 8-byte entries (e.g. `80EE 0040 7F30 80FE`, with
+`FFFE 0000 0000 FFFE` as the empty entry); the 15 840-byte block is the largest.
+Identical in Cadaver 1 and 2.
+
+### 6.4 `LEVn.MP2` — *structure verified*
+
+Four **sections** back to back, which tile the file exactly in all 5 + 4 levels
+(one Payoff file, `TATA/2/LEV2.MP2`, is 74 bytes short in the retail dump):
+
+```
+u32be data_len      bytes of record data in this section
+u32be alloc_len     size of the table once expanded in memory = count * stride
+u16be count
+count x { u16be size, u16be offset }    directory, offsets contiguous from 0
+data_len bytes      variable-length records (big-endian words)
+```
+
+| Section | count × stride | notes |
+|---|---|---|
+| 1 | 100 × 52 | records of 32–104 bytes; level-1 record 0 is the room record the game reads when it prints the room name |
+| 2 | 400 × 8 | |
+| 3 | 100 × 80 | |
+| 4 | 1000 × 26 | most of the file (12 910 bytes in level 1) |
+
+The loader ("EXPANDING DATA") expands these compact records into fixed-stride
+little-endian structs in the data segment; in the emulator the first 12 bytes of
+level-1 record 0, `54 0C 0F 12 0A 0A 00 32 00 3B …`, appear as
+`54 0C 0F 12 0A 0A 32 00 3B 00 …` (the 16-bit fields byte-swapped) at `ds:3DDA`.
+Preceding it at `ds:3DC0` is a table of string indices `0085 0086 0087 …` — the
+**room names are language strings 133 + room number** (`CAVERN` = 133 in
+`ENG1.LNG`). Object names are requested by one routine, `1000:2314`
+(for example indices 215 `SILVER COIN`, 201 `STONE`, 187 `BOAT`, 242 `DIARY`
+in level 1) — the mapping from object to string index is still to be found.
+
+### 6.5 `LEVn.MP1` — *partly understood*
+
+Starts with a 72-byte preface (first word `0x0019`, a few small constants), then
+sections of the same shape as MP2 (`data_len`, `alloc_len`, `count`, directory):
+`3002 / 10000 / 100` at `0x48`, `5358 / 32008 / 100` at `0xD9C`, and a third with
+`104 842 / 255 000 / 255` at `0x2424` (alloc = 255 × 1000). The directories
+here do *not* tile (the first has a last entry `(320, 3002)` past `data_len`),
+so the walker in `tools/mpsections.py` does not apply to MP1 yet. Only a fraction
+of the file appears verbatim in memory after loading (e.g. file `0x3C00–0x6330` at
+`4CF0:0006`); the rest is transformed by the loader.
+
+### 6.6 `LEVn.MP3`
+
+58 KB; starts `00 00 43 80` (17 280), zeros, then bit-mask style tables (`0003 C000
+000F F000 003F FC00 …`: progressively wider masks, probably clipping/edge masks)
+and graphics-like data. Not understood.
+
+### 6.7 `ROUTINEn.TAD` and the script language
+
+`ROUTINEn.TAD` (after the `mjm0` header; 16 zero bytes, then a small x86 stub
+at offset `0x10`, then data): the stub is
+`nop nop; push ds; mov ax,cs; mov ds,ax; mov si,0E5Dh; mov cx,10h; rep movsw;
+pop ds; mov bx,27h; mov ax,2Ch; retf` followed at `+0x27` by
+`call word [078Ch]; retf`. i.e. the blob is loaded as a code segment, the game
+far-calls offset `0x10` to initialise it (it copies a 16-word table from the
+end of the blob and hands back BX=entry thunk, AX=data-table offset) and later
+calls the thunk, which dispatches through a pointer inside the blob. The bulk
+of the file after the stub is **not** x86 (looks like 16-bit tables and
+0xFFFF-terminated lists) — presumably the per-level ACL scripts / object
+behaviour tables.
+
+The game also contains a bytecode interpreter (the in-house "ACL" language;
+INTRO's credits: *"cadaver uses an internal language … 'acl'. acl is copyright
+the bitmap brothers"*). Likely opcode handlers (small routines that fetch
+operands with `lodsb`/`lodsw` from SI and poke object fields via `DI`) sit in
+`CAD.EXE seg000` around `1000:7AE0–7C50`; **the link between the `.TAD` data
+and the interpreter is not yet confirmed.**
+
+### 6.8 Input
+
+The game installs its own INT 9 handler (`keyboard_isr`, `1000:11E9`) and keeps
+a 256-word table `key_bit_table` (`1000:128E`) filled from `CADAVER.INI`:
+make code → bits to set, break code → mask of bits to clear. Default bits:
+Up `01`, Down `02`, Left `04`, Right `08`, PgUp `09` (up+right), PgDn `0A`,
+Ins `05`, Del `06`, End `80`. Keys not in the table are reported through
+`last_scancode`. Ctrl+C / Ctrl+Q are recorded in `abort_scancode`. The harness
+can inject scancodes (`Emu.scan_queue`), which is how the object names above
+were provoked by walking the emulated player past objects.
 
 ## 7. Text strings recovered from the executables
 
