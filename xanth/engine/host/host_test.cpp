@@ -573,6 +573,7 @@ static int testInit(Host &h) {
 			p++;
 		}
 	}
+	if (getenv("HOST_TICKMASK")) h.cpu.tickMask = atol(getenv("HOST_TICKMASK"));
 	if (getenv("HOST_STEPS")) h.cpu.stepLimit = atol(getenv("HOST_STEPS"));
 	int code = -1;
 	try {

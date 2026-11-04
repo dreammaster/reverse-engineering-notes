@@ -21,6 +21,7 @@ struct Cpu {
 	void (*onLabel)(struct Cpu &, const char *) = nullptr;   // optional per-label probe (diagnostics)
 	const char *where = "";                // last label passed (diagnostics for runaway loops)
 	int popBytes = 4;                        // bytes the last return popped (return address + `ret N` argument bytes)
+	long tickMask = 0x3FF;                   // the timer interrupt is delivered every tickMask+1 labels (the host can make time pass faster)
 	long steps = 0;                          // instruction-budget counter, see STEP()
 #ifdef LIFT_STEP_LIMIT
 	long stepLimit = LIFT_STEP_LIMIT;        // the host raises it at run time (HOST_STEPS)
@@ -131,9 +132,9 @@ inline void opDaa(Cpu &c) {
 // loops and keeps a ring of the last labels for diagnostics
 #ifdef LIFT_STEP_LIMIT
 #define STEP(w_) do { if (++c.steps > c.stepLimit) return; c.where = (w_); c.hist[c.hpos++ & 63] = (w_); if (c.onLabel) c.onLabel(c, (w_)); \
-	if (c.irqHook && !(c.steps & 0x3FF)) c.irqHook(c); } while (0)
+	if (c.irqHook && !(c.steps & c.tickMask)) c.irqHook(c); } while (0)
 #else
-#define STEP(w_) do { ++c.steps; if (c.irqHook && !(c.steps & 0x3FF)) c.irqHook(c); } while (0)
+#define STEP(w_) do { ++c.steps; if (c.irqHook && !(c.steps & c.tickMask)) c.irqHook(c); } while (0)
 #endif
 
 #define SGN(c) ((int16_t)(c))
