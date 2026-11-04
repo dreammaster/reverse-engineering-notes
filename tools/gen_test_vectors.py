@@ -88,7 +88,7 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
         r = objsprites.parse_sprite_block(blk)
         if r:
             nspr += 1
-            ob += struct.pack('<ii', bi, len(r[1])) + r[0]
+            ob += struct.pack('<iii', bi, len(r[1]), len(r[2])) + r[0] + r[2]
             for (fw, fh, fpx) in r[1]:
                 ob += struct.pack('<ii', fw, fh) + fpx
     obj_vec.append((os.path.relpath(d, root), nspr, fnv(ob)))

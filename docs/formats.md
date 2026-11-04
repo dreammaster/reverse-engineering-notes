@@ -294,7 +294,7 @@ palette: 16 big-endian ST words      (right after the third section; §6.9)
 |---|---|---|---|
 | 0 | 100 | 10 000 (100 × 100) | **floor maps**: record *i* = `w*h` tile-id bytes for room *i* (row major, 0 = no tile), where `w`, `h` are bytes `+4`, `+5` of `LEVn.MP2` section-0 record *i*. The match `size == w*h` holds for ~98% of rooms in all nine levels; the others are 1-byte placeholders (27 of 100 records are empty in level 1). The loader inserts one empty column and row (11×11 for a 10×10 room) |
 | 1 | 100 | 32 008 | **wall records**, one per room (verified): a 2-byte header (byte 0 = `slots`, the number of tile slots per column — 6 in level 1; byte 1 = 0) followed by `w + h` columns of `slots` bytes. Columns `0 … w-1` are the right-hand wall starting at the corner, columns `w … w+h-1` the left-hand wall going outward (so level 1 room 0, 10×10, is 2 + 20×6 = 122 bytes). Each column is a stack of wall-tile ids (`MP3` block 2), **bottom to top**; `0` and ids ≥ `0x80` (e.g. `86`, `C6`) occupy a slot but draw nothing. Placement, with `(gx, gy)` the floor origin of §6.5: right wall column `i` at x = `gx + 16·i`, left wall column `j` (1-based) at x = `gx − 16·j`; slot `k` of a column has its top at y = `gy − 17 + 8·i − 16·k` (right) or `gy − 17 + 8·j − 16·k` (left); tiles are clipped to the 320×136 viewport (a tile cut off at the top is drawn from the corresponding source row, 4 bytes per row per plane). Columns are drawn in record order, each bottom to top, after the floor. `thing_expand_grid` / `room_expand_wall_columns` (`1000:39F9`) expands this record into a buffer |
-| 2 | 255 | 255 000 (255 × 1000) | 255 blocks. The directory `size` is the block's size in RAM; **each block is stored in `floor(size/2)` bytes** (consecutive, in order; the sum over all 255 entries equals the section's `data_len` exactly — rounding odd sizes *up* shifts every later block by a byte and made ~40% of the blocks look unparsable; `offset` is a `u16` that wraps). Most of the blocks are **object sprite blocks** (verified): a 32-byte header (not yet decoded) followed by one or more frames `u16be w` (16-pixel groups, 1–4), `u16be h` (rows), `h·w·8` bytes of **Atari-ST interleaved pixels** (per row, per 16-pixel group, four big-endian plane words, plane 0 = colour bit 0; colour 0 = transparent — the game derives the mask as the OR of the planes). The frames consume the block exactly (96 of the 124 non-empty blocks in level 1; 100/114/123/95 in levels 2/3/4/5; found by matching the RAM sprites that the game blits against the file). Level 1 contains the boat, barrels, jars, rocks, rats, bones, helmets, shields, the pentagram …; the Payoff levels have doors, crates, keys, potions. The other blocks (e.g. block 8, 29 424 bytes, starting `00 00 00 00 00 01 00 01 00 01 FF FF …`) are tables/definitions, not decoded |
+| 2 | 255 | 255 000 (255 × 1000) | 255 blocks. The directory `size` is the block's size in RAM; **each block is stored in `floor(size/2)` bytes** (consecutive, in order; the sum over all 255 entries equals the section's `data_len` exactly — rounding odd sizes *up* shifts every later block by a byte and made ~40% of the blocks look unparsable; `offset` is a `u16` that wraps). Most of the blocks are **object sprite blocks** (verified): a 32-byte header (box size etc., §6.12), optionally an animation table (§6.12), and one or more frames `u16be w` (16-pixel groups, 1–8), `u16be h` (rows), `h·w·8` bytes of **Atari-ST interleaved pixels** (per row, per 16-pixel group, four big-endian plane words, plane 0 = colour bit 0; colour 0 = transparent — the game derives the mask as the OR of the planes). The frames consume the block exactly (114 of the 124 non-empty blocks in level 1 incl. 12 animated ones; 123/148/165/123 in levels 2–5; found by matching the RAM sprites that the game blits against the file). Level 1 contains the boat, barrels, jars, rocks, rats, bones, helmets, shields, the pentagram …; the Payoff levels have doors, crates, keys, potions. The other blocks (e.g. block 8, 29 424 bytes, starting `00 00 00 00 00 01 00 01 00 01 FF FF …`) are tables/definitions, not decoded |
 Directory entries are `(size, offset)` with offsets contiguous in sections 1 and 2 of MP2; in
 MP1 section 0 of level 1 the last entry is `(320, 3002)`, past `data_len` (so use `data_len`
 for the section length). The trailer is a table of 8-byte records (`u16be id` + six
@@ -486,10 +486,27 @@ write tracing):
 * A thing with bit `0x80` in byte `+3` is not placed in the room (it is inside a container / not there yet): the room list of
   level 1 room 0 has 21 things, the game builds 19 entries, and the two missing ones (510, 488) have `rec[3] = 0x80`.
   Thing 0 (the player, block 8 — a 29 424-byte block that is not a plain sprite) comes first in the list.
-* Header words: `h[1]` (1–4) and `h[2]` (1–4) shift the sprite by `z`-rows / 16-pixel words, `h[11..15]` = `0, FFFF, 0, n, FF00`
-  (`h[12] = FFFF` selects the "static frame" branch of `object_project`; animated blocks such as block 86 — the flame bowl in
-  the top right of the first room — carry a frame script after the header instead of plain frames and are not decoded yet).
-  Several sprites of a block are drawn by the engine through `[si+1Eh]` (frame table); the C/Python renderers use frame 0.
+* Header words: `h[1]` (1–4) and `h[2]` (1–4) shift the sprite by rows / 16-pixel words (see the formula above),
+  `h[8..10]` = box size, `h[11..15]` = `?, FFFF, 0, n, FF00` (not decoded; `h[11]` differs per object).
+* **Animated blocks** (`MP1` section 2; 12–39 per level, 356 over the 14 level directories) have, between the 32-byte header
+  and the frames, an *extra* area (verified on all of them; the plain/animated test is `blk[32]` = frame count,
+  `blk[33] = 0`, and the table-length word equal to `8·nframes`):
+
+  ```
+  +0  u8   nframes      +1  u8 0      +2  u16be script_bytes      +4  u16 0      +6  u16be h0 (height of frame 0)
+  +8  script            script_bytes bytes of u16be words
+  +8+script_bytes  table: u16be table_bytes (= 8*nframes) = entry 0's first word, then per frame k an 8-byte entry
+                        u16be ram_offset, s16be dx, s16be dy, u16be 0           (entry k at +8+script_bytes+8k)
+  then the nframes frames (u16be w, u16be h, ST planes), exactly as in plain blocks
+  ```
+
+  `dx, dy` are the frame's pixel offset from the projected sprite position (e.g. the flame bowl of level 1 room 0, block 86:
+  frame 0 at `(0,5)`, frames 1–3 at `(0,4)`; frame 3 drawn by the game at tick 900 matches 100%). `ram_offset` is the position of the
+  frame inside the game's expanded in-RAM copy (not needed here). The script words are frame numbers (`0..nframes-1`)
+  interleaved with command words (`F9xx`, `FC00–FC09`, `FEnn`, terminated by `FD00`); their timing semantics are not decoded —
+  the renderers show the first frame number in the script. `tools/objsprites.py frame_offsets/script`, `src/engine/roomobjs.c`.
+* Not plain sprites although things refer to them: the player (thing 0 → block 8, 29 424 bytes) and compound objects such as
+  the rope (block 112–119 in level 1: a table of segment records) — undecoded.
 
 ## 7. Text strings recovered from the executables
 

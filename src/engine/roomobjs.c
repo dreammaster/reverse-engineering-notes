@@ -34,6 +34,30 @@ const ObjSprite *objsprites_find(const ObjSprites *o, int block) {
 	return NULL;
 }
 
+int objsprite_frame_offset(const ObjSprite *sp, int k, int *dx, int *dy) {
+	*dx = *dy = 0;
+	if (sp->extra_len < 8 || k < 0 || k >= sp->nframes)
+		return 0;
+	size_t sl = (size_t)((sp->extra[2] << 8) | sp->extra[3]), o = 8 + sl + 8 * (size_t)k + 2;
+	if (o + 4 > (size_t)sp->extra_len)
+		return 0;
+	*dx = (int16_t)((sp->extra[o] << 8) | sp->extra[o + 1]);
+	*dy = (int16_t)((sp->extra[o + 2] << 8) | sp->extra[o + 3]);
+	return 1;
+}
+
+int objsprite_initial_frame(const ObjSprite *sp) {
+	if (sp->extra_len < 8)
+		return 0;
+	size_t sl = (size_t)((sp->extra[2] << 8) | sp->extra[3]);
+	for (size_t i = 0; i + 1 < sl && 8 + i + 1 < (size_t)sp->extra_len; i += 2) {
+		unsigned w = (unsigned)((sp->extra[8 + i] << 8) | sp->extra[8 + i + 1]);
+		if (w < (unsigned)sp->nframes)
+			return (int)w;
+	}
+	return 0;
+}
+
 int room_render_objects(const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, uint8_t *canvas) {
 	if (room < 0 || room >= mp2->sec[2].count || !mp2->sec[2].rec[room])
 		return 0;
@@ -49,7 +73,11 @@ int room_render_objects(const Mp2 *mp2, const ObjSprites *objs, int room, int gx
 			continue;
 		int sx, sy;
 		object_project(t[0], t[1], t[2], sp->header, gx, gy, &sx, &sy);
-		const ObjFrame *f = &sp->frames[0];
+		int fk = objsprite_initial_frame(sp), dx, dy;
+		objsprite_frame_offset(sp, fk, &dx, &dy);
+		sx += dx;
+		sy += dy;
+		const ObjFrame *f = &sp->frames[fk];
 		for (int y = 0; y < f->h; y++)
 			for (int x = 0; x < f->w; x++) {
 				uint8_t c = f->pixels[y * f->w + x];

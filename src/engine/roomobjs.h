@@ -18,9 +18,13 @@ void object_box(int x1, int y1, int z0, const uint8_t hdr[32], int *x0, int *y0,
 
 /* Draws every object of `room` (thing list = MP2 section 2) into the 320x136 canvas (colour 0 = transparent;
  * objects flagged "not in the room" (+3 & 0x80) and blocks that are not plain sprites are skipped).
- * Objects are drawn in list order with frame 0 (the real draw order and frame selection are not decoded).
+ * Objects are drawn in list order with the first frame of their animation script (the real draw order and the animation timing are not decoded).
  * Returns the number of objects drawn. */
 int room_render_objects(const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, uint8_t *canvas);
+
+/* Animated blocks: per-frame (dx, dy) offsets from the projected position (signed pixels) and the first frame of the script. */
+int objsprite_frame_offset(const ObjSprite *sp, int k, int *dx, int *dy);
+int objsprite_initial_frame(const ObjSprite *sp);
 
 const ObjSprite *objsprites_find(const ObjSprites *o, int block);
 

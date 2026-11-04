@@ -25,7 +25,10 @@ def draw_objects(canvas, secs, blocks, room, gx, gy):
             continue
         hdr = struct.unpack('>16H', p[0])
         x, y = objplace.project(r[0], r[1], r[2], hdr, gy * 320 + gx)
-        fw, fh, px = p[1][0]
+        k = objsprites.initial_frame(p[2], len(p[1]))
+        fw, fh, px = p[1][k]
+        if p[2]:
+            x, y = x + objsprites.frame_offsets(p[2])[k][0], y + objsprites.frame_offsets(p[2])[k][1]
         for yy in range(fh):
             for xx in range(fw):
                 c = px[yy * fw + xx]

@@ -14,9 +14,11 @@ typedef struct {
 
 typedef struct {
 	int block;                  /* record index in section 2 */
-	uint8_t header[32];         /* not yet decoded */
+	uint8_t header[32];         /* words h[1], h[2], h[8..10] decoded: docs/formats.md 6.12 */
 	int nframes;
 	ObjFrame *frames;
+	int extra_len;              /* bytes between the header and the first frame (animation script of animated blocks) */
+	uint8_t *extra;
 } ObjSprite;
 
 typedef struct {

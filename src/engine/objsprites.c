@@ -5,22 +5,20 @@
 
 static unsigned be16(const uint8_t *p) { return (unsigned)((p[0] << 8) | p[1]); }
 
-/* Try to parse one block. Returns the number of frames (0 = not a sprite block). */
-static int parse_block(const uint8_t *b, size_t n, ObjSprite *sp) {
-	if (n < 36)
-		return 0;
-	size_t p = 32;
+/* Frames back to back from offset p to the end of the block. Returns the frame count (0 = no exact tiling). */
+static int parse_frames(const uint8_t *b, size_t n, size_t p, ObjFrame **out) {
 	int cap = 0, cnt = 0;
 	ObjFrame *fr = NULL;
 	while (p + 4 <= n) {
 		unsigned w = be16(b + p), h = be16(b + p + 2);
-		if (w < 1 || w > 4 || h < 1 || h > 128 || p + 4 + (size_t)h * w * 8 > n)
+		if (w < 1 || w > 8 || h < 1 || h > 200 || p + 4 + (size_t)h * w * 8 > n)
 			break;
 		if (cnt == cap) {
 			cap = cap ? cap * 2 : 4;
-			fr = (ObjFrame *)realloc(fr, (size_t)cap * sizeof(ObjFrame));
-			if (!fr)
-				return 0;
+			ObjFrame *nf = (ObjFrame *)realloc(fr, (size_t)cap * sizeof(ObjFrame));
+			if (!nf)
+				goto fail;
+			fr = nf;
 		}
 		ObjFrame *f = &fr[cnt];
 		f->w = (int)w * 16;
@@ -47,15 +45,56 @@ static int parse_block(const uint8_t *b, size_t n, ObjSprite *sp) {
 	}
 	if (cnt == 0 || p != n)
 		goto fail;
-	memcpy(sp->header, b, 32);
-	sp->nframes = cnt;
-	sp->frames = fr;
+	*out = fr;
 	return cnt;
 fail:
 	for (int i = 0; i < cnt; i++)
 		free(fr[i].pixels);
 	free(fr);
 	return 0;
+}
+
+/* One block. Plain: 32-byte header, frames. Animated: header, then "extra" = [u8 nframes, u8 0, u16 script_bytes, u16 0,
+ * u16 h0, script, u16 table_bytes (= 8*nframes), table], then the frames (docs/formats.md 6.12).
+ * Returns the number of frames (0 = not a sprite block). */
+static int parse_block(const uint8_t *b, size_t n, ObjSprite *sp) {
+	if (n < 36)
+		return 0;
+	size_t p = 32;
+	ObjFrame *fr = NULL;
+	int cnt = 0;
+	unsigned nf = b[32];
+	if (nf >= 1 && nf <= 32 && b[33] == 0 && n >= 42) {
+		size_t q = 40 + be16(b + 34);
+		if (q + 2 <= n && be16(b + q) == 8 * nf) {
+			cnt = parse_frames(b, n, q + 8 * nf, &fr);
+			if (cnt == (int)nf)
+				p = q + 8 * nf;
+			else if (cnt) {
+				for (int i = 0; i < cnt; i++)
+					free(fr[i].pixels);
+				free(fr);
+				fr = NULL;
+				cnt = 0;
+			}
+		}
+	}
+	if (!cnt) {
+		p = 32;
+		cnt = parse_frames(b, n, 32, &fr);
+		if (!cnt)
+			return 0;
+	}
+	memcpy(sp->header, b, 32);
+	sp->nframes = cnt;
+	sp->frames = fr;
+	sp->extra_len = (int)(p - 32);
+	if (sp->extra_len) {
+		sp->extra = (uint8_t *)malloc((size_t)sp->extra_len);
+		if (sp->extra)
+			memcpy(sp->extra, b + 32, (size_t)sp->extra_len);
+	}
+	return cnt;
 }
 
 int objsprites_load(const uint8_t *mp1, size_t len, ObjSprites *out) {
@@ -101,6 +140,7 @@ void objsprites_free(ObjSprites *o) {
 		for (int k = 0; k < o->sprites[i].nframes; k++)
 			free(o->sprites[i].frames[k].pixels);
 		free(o->sprites[i].frames);
+		free(o->sprites[i].extra);
 	}
 	free(o->sprites);
 	memset(o, 0, sizeof(*o));

@@ -37,14 +37,12 @@ def blocks(mp1):
     return out
 
 
-def parse_sprite_block(blk):
-    """-> (header32, [(w_px, h, pixels)]) or None.  pixels: w_px*h colour indices, 0 = transparent."""
-    if len(blk) < 36:
-        return None
-    p, frames = 32, []
+def _frames(blk, p):
+    """Frames back to back from offset p to the end of the block, or None."""
+    frames = []
     while p + 4 <= len(blk):
         w, h = struct.unpack('>HH', blk[p:p + 4])
-        if not (1 <= w <= 4 and 1 <= h <= 128) or p + 4 + h * w * 8 > len(blk):
+        if not (1 <= w <= 8 and 1 <= h <= 200) or p + 4 + h * w * 8 > len(blk):
             break
         data = blk[p + 4:p + 4 + h * w * 8]
         px = bytearray(w * 16 * h)
@@ -55,9 +53,49 @@ def parse_sprite_block(blk):
                     px[y * w * 16 + g * 16 + b] = sum(((ws[pl] >> (15 - b)) & 1) << pl for pl in range(4))
         frames.append((w * 16, h, bytes(px)))
         p += 4 + h * w * 8
-    if not frames or p != len(blk):
+    return frames if frames and p == len(blk) else None
+
+
+def parse_sprite_block(blk):
+    """-> (header32, [(w_px, h, pixels)], extra) or None.  pixels: w_px*h colour indices, 0 = transparent.
+    Plain blocks: header, frames.  Animated blocks: header, then `extra` = [u8 nframes, u8 0, u16 script_bytes, u16 0, u16 h0,
+    script (script_bytes bytes), u16 table_bytes = 8*nframes, table (8-byte entries)], then the nframes frames
+    (docs/formats.md 6.12).  `extra` is empty for plain blocks."""
+    if len(blk) < 36:
         return None
-    return blk[:32], frames
+    nf = blk[32]
+    if 1 <= nf <= 32 and blk[33] == 0 and len(blk) >= 42:
+        sl = struct.unpack('>H', blk[34:36])[0]
+        p = 40 + sl
+        if p + 2 <= len(blk) and struct.unpack('>H', blk[p:p + 2])[0] == 8 * nf:
+            fr = _frames(blk, p + 8 * nf)
+            if fr and len(fr) == nf:
+                return blk[:32], fr, blk[32:p + 8 * nf]
+    fr = _frames(blk, 32)
+    return (blk[:32], fr, b'') if fr else None
+
+
+def frame_offsets(extra):
+    """Per-frame (dx, dy) offsets (signed pixels, relative to the projected sprite position) of an animated block."""
+    if not extra:
+        return None
+    nf, sl = extra[0], struct.unpack('>H', extra[2:4])[0]
+    return [struct.unpack('>2h', extra[8 + sl + 8 * k + 2:8 + sl + 8 * k + 6]) for k in range(nf)]
+
+
+def script(extra):
+    """The animation script words (frame numbers; 0xFC00-0xFDFF look like commands, 0xFD00 ends the loop)."""
+    if not extra:
+        return []
+    sl = struct.unpack('>H', extra[2:4])[0]
+    return list(struct.unpack('>%dH' % (sl // 2), extra[8:8 + sl]))
+
+
+def initial_frame(extra, nframes):
+    for w in script(extra):
+        if w < nframes:
+            return w
+    return 0
 
 
 if __name__ == '__main__':

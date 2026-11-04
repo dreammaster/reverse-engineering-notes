@@ -282,12 +282,14 @@ int main(int argc, char **argv) {
 		if (rc == 0) {
 			for (int k = 0; k < os.count; k++) {
 				const ObjSprite *sp = &os.sprites[k];
-				uint32_t hd[2] = {(uint32_t)sp->block, (uint32_t)sp->nframes};
-				for (int a = 0; a < 2; a++)
+				uint32_t hd[3] = {(uint32_t)sp->block, (uint32_t)sp->nframes, (uint32_t)sp->extra_len};
+				for (int a = 0; a < 3; a++)
 					for (int b = 0; b < 4; b++)
 						h = (h ^ ((hd[a] >> (8 * b)) & 0xFF)) * 0x01000193u;
 				for (int j = 0; j < 32; j++)
 					h = (h ^ sp->header[j]) * 0x01000193u;
+				for (int j = 0; j < sp->extra_len; j++)
+					h = (h ^ sp->extra[j]) * 0x01000193u;
 				for (int f = 0; f < sp->nframes; f++) {
 					uint32_t fd[2] = {(uint32_t)sp->frames[f].w, (uint32_t)sp->frames[f].h};
 					for (int a = 0; a < 2; a++)
