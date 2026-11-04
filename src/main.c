@@ -159,7 +159,10 @@ static int roomview_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	if (!cv) return -1;
 	memset(cv, TILE_TRANSPARENT, (size_t)cw * ch);
 	floor_render(&rv->tiles, rv->maps.map[rv->room], w, h, cv);
-	int ox = (SCREEN_W - cw) / 2 - rv->scroll_x, oy = (SCREEN_H - ch) / 2 - rv->scroll_y;
+	int gx = 0, gy = 0;
+	/* the game's own placement (viewport is the upper 320x136 part of the screen) */
+	if (floor_origin(w, h, &gx, &gy) != 0) { gx = (SCREEN_W - cw) / 2 + 16 * h; gy = (SCREEN_H - ch) / 2; }
+	int ox = gx - 16 * h - rv->scroll_x, oy = gy - rv->scroll_y;
 	for (int y = 0; y < ch; y++)
 		for (int x = 0; x < cw; x++) {
 			int dx = ox + x, dy = oy + y;

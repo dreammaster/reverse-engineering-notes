@@ -287,7 +287,14 @@ spaces, then zeros) followed by `u16be id, u32be value` pairs ending with
 `(col, row)` of the room, tile id `t = map[row*w + col]`; if non-zero the 32×18
 tile `t` is drawn at screen position `(x0 + 16*(col-row), y0 + 8*(col+row))`
 (video offset `col*0x142 + row*0x13E`), rows top to bottom, OR-blitted with its
-mask. Rendering rooms this way reproduces the running game's floor
+mask. **Placement on screen** (`room_setup_floor_origin`, `1000:D2C5`): the video offset of tile
+(0,0) comes from an 8×8 table of words at `ss:4D30` (`floor_origin_table`, identical in
+`GAME.EXE`), indexed `[(h-3)*8 + (w-3)]`; offset = `y*40 + x/8`. A 10×10 room starts at
+pixel (144, 29) so its floor spans exactly the 320-pixel width; 3×3 at (144, 80).
+Checked by comparing the rendered floor with the running game's first frame: best
+alignment is exactly (144, 29) with 61% of floor pixels equal (the rest is covered by
+walls, objects and the player).
+Rendering rooms this way reproduces the running game's floor
 (`tools/roomview.py`, `src/engine/rooms.c`; identical output for every room of all 14
 level directories, unit-tested).
 

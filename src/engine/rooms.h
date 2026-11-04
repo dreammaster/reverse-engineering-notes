@@ -35,6 +35,10 @@ void floormaps_free(FloorMaps *fm);
 /* The level palette (16 Atari-ST words, 0x0RGB) stored after MP1's three sections. Returns 0 on success. */
 int mp1_palette(const uint8_t *mp1, size_t len, uint16_t pal[16]);
 
+/* Screen pixel position of tile (0,0) of a w x h room (3..10 each) as the game places it in its
+ * 320-pixel wide viewport (table at CAD.EXE ss:4D30). Returns 0 on success. */
+int floor_origin(int w, int h, int *x, int *y);
+
 /* Size of the canvas needed for a w x h room floor. */
 static inline void floor_canvas_size(int w, int h, int *cw, int *ch) {
 	*cw = 16 * (w + h) + 16;

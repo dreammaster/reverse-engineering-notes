@@ -247,6 +247,16 @@ int main(int argc, char **argv) {
 		for (int f = 0; f < 3; f++) free(raw[f]);
 	}
 
+	{
+		int x, y;
+		if (floor_origin(10, 10, &x, &y) != 0 || x != 144 || y != 29 || floor_origin(3, 3, &x, &y) != 0 || x != 144 || y != 80 ||
+		    floor_origin(2, 5, &x, &y) == 0) {
+			printf("FAIL floor_origin\n");
+			failed++;
+		}
+		checked++;
+	}
+
 	if (!checked) {
 		printf("SKIP: no retail data under %s\n", root);
 		return 77;

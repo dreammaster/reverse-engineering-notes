@@ -75,6 +75,17 @@ def level_palette(mp1):
     return list(struct.unpack('>16H', mp1[p:p + 32]))
 
 
+# CAD.EXE ss:4D30 / GAME.EXE (same bytes): video offset (stride 40 bytes, x*8 pixels) of tile (0,0),
+# indexed [(height-3)*8 + (width-3)]; used by 1000:D2C5.  A 10x10 room starts at pixel (144, 29).
+FLOOR_ORIGIN = [3218,2898,2896,2576,2574,2254,1932,1930,2898,2898,2576,2576,2254,2254,1932,1932,2900,2578,2578,2256,2256,1934,1934,1932,2900,2900,2578,2258,2256,1936,1934,1614,2582,2260,2260,1938,1938,1616,1616,1614,2264,1942,1942,1940,1940,1618,1618,1296,1944,1944,1942,1622,1620,1620,1618,1178,1946,1944,1944,1622,1622,1300,1180,1178]
+
+
+def floor_origin(w, h):
+    """Screen pixel (x, y) of the top-left of tile (0,0) as the game places a w x h room (3..10)."""
+    v = FLOOR_ORIGIN[(h - 3) * 8 + (w - 3)]
+    return (v % 40) * 8, v // 40
+
+
 def room_size(mp2_secs, room):
     r = mp2_secs[0]['records'][room]
     return (r[4], r[5]) if len(r) >= 6 else (0, 0)
