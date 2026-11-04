@@ -41,6 +41,24 @@ public:
 	/** Feeds a key; false when the front end is finished (see wantsGame()). */
 	bool handleKey(int key);
 
+	/** The track U.EXE plays now (sub_1259A): ULTIMA in the menu, INTRO in the story, CREATE while a character is made; 0 when leaving. */
+	int music() const {
+		switch (_state) {
+		case INTRO:
+			return 3;
+		case NAME:
+		case SEX:
+		case PORTRAIT:
+		case QUIZ:
+		case RESULT:
+			return 4;
+		case DONE:
+		case QUIT:
+			return 0;
+		default:
+			return 1;
+		}
+	}
 	/** True when the player chose to start (a new character or the saved game). */
 	bool wantsGame() const {
 		return _state == DONE;

@@ -125,6 +125,7 @@ int main(int argc, char **argv) {
 		}
 		bool running = true;
 		while (running) {
+			music.set(front.music());
 			front.render(screen);
 			backend->present(screen);
 			int key = backend->waitKey();
