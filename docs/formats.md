@@ -303,9 +303,9 @@ spaces, then zeros) followed by `u16be id, u32be value` pairs ending with
 (prices/scores?) or a script-compiler symbol table; not decoded.
 
 **Object sprites** (`tools/objsprites.py`, `src/engine/objsprites.c`, identical output for all 14 level
-directories, unit-tested): the sprite sheet of any level is shown by `--scene objects`. How a *thing* refers to
-its sprite block (and where its position in the room lives) is not yet decoded: the thing record fields `+6`
-(e.g. BOAT 41) are not block numbers.
+directories, unit-tested): the sprite sheet of any level is shown by `--scene objects`. A thing's sprite block is
+its record's `+6` (§6.12) and its position in the room view follows from `+0/+1/+2` and the block header
+(`tools/objplace.py`, `src/engine/roomobjs.c`, verified pixel-for-pixel against the running game).
 
 **Room shell** (floor + walls, verified): `tools/roomview.py render_shell` and `src/engine/rooms.c
 room_render_shell` reproduce the room exactly as the game draws it into its 320×136 viewport. Compared with the
@@ -472,7 +472,24 @@ write tracing):
   box (e.g. 6, 5, 0x16 for the boat-sized block 14), `[12]` = `FFFF` …
 * The position records live in the things table area (`ds:65E4 …`, 16 bytes each, stride 16): their first bytes are the
   object's `x1, y1` (the same `+0`, `+1` of the thing record in §6.4, which I had called a "class" — they are positions).
-  The remaining fields (the link from a thing to its sprite block, `z`, the flag bits) are not mapped yet.
+* **Thing → sprite → screen (verified).** For a thing in the room list (MP2 section 2, big-endian ids), with the compact
+  record of §6.4 and `h[i]` = the big-endian words of the 32-byte header of sprite block `thing[+6]`:
+  `x1 = rec[0]`, `y1 = rec[1]`, `z0 = rec[2]`, `xs,ys,zs = h[8],h[9],h[10]`; the box is
+  `x0 = x1-xs+1`, `y0 = y1-ys+1`, `z_top = z0+zs-1` (the 50-byte entry's `+0..+4` hold exactly these, 19 of 19 in level 1 room 0).
+  Screen position of the sprite's top-left pixel, as a pixel index `P = y*320 + x`:
+  `P = 320*gy + gx + 2576*(x1>>3) + 2544*(y1>>3) + SUB[(y1&7)*8 + (x1&7)] - 320*N - 16*(h[2]-1) + (xs&7 ? 2*(8-(xs&7)) : 0)`
+  with `N = z0 - h[1] + xs + ys + zs` and `(gx,gy)` the room's floor origin (`floor_origin`). `SUB` is the irregular 64-entry
+  table at `ds:F8CE` (initialised data in the EXE, a table not a formula; `tools/objplace.py`). This reproduces all
+  17 sprites of level 1 room 0 exactly (x and y) and renders every barrel, boat, jar, rock, bone and shield of that room
+  at the right place (`tools/room_objects.py`, `--scene room` in the C program; 97.7% of the room pixels equal the game's
+  frame — the rest is the player, one animated object and a few draw-order details).
+* A thing with bit `0x80` in byte `+3` is not placed in the room (it is inside a container / not there yet): the room list of
+  level 1 room 0 has 21 things, the game builds 19 entries, and the two missing ones (510, 488) have `rec[3] = 0x80`.
+  Thing 0 (the player, block 8 — a 29 424-byte block that is not a plain sprite) comes first in the list.
+* Header words: `h[1]` (1–4) and `h[2]` (1–4) shift the sprite by `z`-rows / 16-pixel words, `h[11..15]` = `0, FFFF, 0, n, FF00`
+  (`h[12] = FFFF` selects the "static frame" branch of `object_project`; animated blocks such as block 86 — the flame bowl in
+  the top right of the first room — carry a frame script after the header instead of plain frames and are not decoded yet).
+  Several sprites of a block are drawn by the engine through `[si+1Eh]` (frame table); the C/Python renderers use frame 0.
 
 ## 7. Text strings recovered from the executables
 

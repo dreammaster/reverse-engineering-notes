@@ -3,7 +3,7 @@
 import glob, os, struct, sys
 here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, here)
-import mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites
+import mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects
 
 root = os.path.join(here, '..')
 
@@ -74,7 +74,12 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
         if w * h == len(fm) and len(fm):
             W, H, px = roomview.render_floor(tiles, fm, w, h)
             blob += struct.pack('<iii', i, W, H) + px
-            blob += roomview.render_shell(tiles, wtiles, fm, wrecs[i], w, h) if 3 <= w <= 10 and 3 <= h <= 10 else b''
+            if 3 <= w <= 10 and 3 <= h <= 10:
+                shell = bytearray(roomview.render_shell(tiles, wtiles, fm, wrecs[i], w, h))
+                blob += bytes(shell)
+                gx, gy = roomview.floor_origin(w, h)
+                room_objects.draw_objects(shell, secs, objsprites.blocks(mp1), i, gx, gy)
+                blob += bytes(shell)
             nrooms += 1
     room_vec.append((os.path.relpath(d, root), len(tiles), nrooms, fnv(blob)))
     ob = b''

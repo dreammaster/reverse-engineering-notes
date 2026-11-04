@@ -41,7 +41,8 @@ def mp2_sections(d):
         truncated = data + dl > len(d)
         secs.append(dict(pos=p, data_len=dl, alloc_len=al, count=cnt, stride=(al / cnt if cnt else 0),
                          truncated=truncated,
-                         records=[_rec(d, data + ents[2 * i + 1], ents[2 * i]) for i in range(cnt)]))
+                         records=[_rec(d, data + ents[2 * i + 1], ents[2 * i]) for i in range(cnt)],
+                         present=[data + ents[2 * i + 1] + ents[2 * i] <= len(d) for i in range(cnt)]))
         p = data + dl
     return secs
 

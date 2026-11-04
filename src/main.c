@@ -15,6 +15,7 @@
 #include "engine/rooms.h"
 #include "engine/intro.h"
 #include "engine/objsprites.h"
+#include "engine/roomobjs.h"
 
 #include <SDL.h>
 #include <stdio.h>
@@ -169,10 +170,13 @@ static int roomview_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	room_render_shell(&rv->tiles, &rv->walls, rv->maps.map[rv->room],
 	                  rv->room < rv->wrecs.count ? rv->wrecs.map[rv->room] : NULL,
 	                  rv->room < rv->wrecs.count ? rv->wrecs.len[rv->room] : 0, w, h, shell);
+	int gx = 0, gy = 0, nobj = 0;
+	if (floor_origin(w, h, &gx, &gy) == 0)
+		nobj = room_render_objects(&rv->mp2, &rv->objs, rv->room, gx, gy, shell);
 	for (int i = 0; i < VIEW_W * VIEW_H; i++)
 		if (shell[i] != TILE_TRANSPARENT)
 			scr->pixels[i] = shell[i];
-	snprintf(rv->info, sizeof(rv->info), "%s level %d room %d (%dx%d)", rv->use_tata ? "TATA" : "DATA", rv->level, rv->room, w, h);
+	snprintf(rv->info, sizeof(rv->info), "%s level %d room %d (%dx%d), %d objects", rv->use_tata ? "TATA" : "DATA", rv->level, rv->room, w, h, nobj);
 	return 0;
 }
 

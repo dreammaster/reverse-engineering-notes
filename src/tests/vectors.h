@@ -179,20 +179,20 @@ static const Mp2Vector mp2_vectors[] = {
 };
 typedef struct { const char *dir; int tiles; int rooms; unsigned hash; } RoomVector;
 static const RoomVector room_vectors[] = {
-	{"cadaver1/DATA/1", 60, 71, 0x62BF6D80U},
-	{"cadaver1/DATA/2", 70, 96, 0x3EEEB105U},
-	{"cadaver1/DATA/3", 70, 89, 0xBCBA08BAU},
-	{"cadaver1/DATA/4", 60, 72, 0x4B421726U},
-	{"cadaver1/DATA/5", 50, 49, 0x8BA924D2U},
-	{"cadaver2/DATA/1", 60, 71, 0x62BF6D80U},
-	{"cadaver2/DATA/2", 70, 96, 0x3EEEB105U},
-	{"cadaver2/DATA/3", 70, 89, 0xBCBA08BAU},
-	{"cadaver2/DATA/4", 60, 72, 0x4B421726U},
-	{"cadaver2/DATA/5", 50, 49, 0x8BA924D2U},
-	{"cadaver2/TATA/1", 30, 30, 0xDB7AE912U},
-	{"cadaver2/TATA/2", 50, 66, 0x8E7B5751U},
-	{"cadaver2/TATA/3", 70, 46, 0x2DF60860U},
-	{"cadaver2/TATA/4", 70, 45, 0xDB3637AAU},
+	{"cadaver1/DATA/1", 60, 71, 0xAE615D59U},
+	{"cadaver1/DATA/2", 70, 96, 0xE899BB09U},
+	{"cadaver1/DATA/3", 70, 89, 0xA90F8766U},
+	{"cadaver1/DATA/4", 60, 72, 0x54F736E6U},
+	{"cadaver1/DATA/5", 50, 49, 0xACEC6A7FU},
+	{"cadaver2/DATA/1", 60, 71, 0xAE615D59U},
+	{"cadaver2/DATA/2", 70, 96, 0xE899BB09U},
+	{"cadaver2/DATA/3", 70, 89, 0xA90F8766U},
+	{"cadaver2/DATA/4", 60, 72, 0x54F736E6U},
+	{"cadaver2/DATA/5", 50, 49, 0xACEC6A7FU},
+	{"cadaver2/TATA/1", 30, 30, 0x9B272886U},
+	{"cadaver2/TATA/2", 50, 66, 0x3F66ED05U},
+	{"cadaver2/TATA/3", 70, 46, 0x8A9BB15FU},
+	{"cadaver2/TATA/4", 70, 45, 0x7F02BA66U},
 };
 typedef struct { const char *dir; unsigned hash; } IntroVector;
 static const IntroVector intro_vectors[] = {

@@ -9,6 +9,7 @@ Everything here runs on Linux with Python 3 (`pillow`, `numpy`, `unicorn`),
 | `tools/mjm.py` | Decode `mjm0/1/2` files (PKWARE DCL, RNC1). `python3 tools/mjm.py FILE...` prints sizes; import `mjm_unpack` for scripting. |
 | `tools/rnc1.py` | RNC method 1 decompressor (used by `mjm.py` and for the Cadaver 2 `.BIN` drivers). |
 | `tools/objsprites.py` | Object sprite blocks of `LEVn.MP1` section 2 → sprite sheet PNG (`python3 tools/objsprites.py cadaver1/DATA/1/LEV1.MP1 sheet.png`). |
+| `tools/objplace.py`, `tools/room_objects.py` | Thing → screen position (the game's `object_project`, verified) and a room renderer with objects (`python3 tools/room_objects.py cadaver1/DATA/1 0 room.png`). |
 | `tools/roomview.py` | Render a room's isometric floor (`python3 tools/roomview.py cadaver1/DATA/1 0 room0.png`); also the reference decoder for tiles, floor maps, wall records (`render_shell` draws floor + walls) and the level palette. |
 | `tools/pcman.py` | `PCMAN.DAT` → sprite sheet PNG (`python3 tools/pcman.py cadaver1/DATA/PCMAN.DAT sheet.png`). |
 | `tools/things.py` | Dump a level's room lists and things by name (`python3 tools/things.py cadaver1/DATA/1 [--things]`). |

@@ -12,6 +12,7 @@
 #include "../engine/rooms.h"
 #include "../engine/intro.h"
 #include "../engine/objsprites.h"
+#include "../engine/roomobjs.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -202,11 +203,14 @@ int main(int argc, char **argv) {
 			FloorMaps fm, wr;
 			Mp2 m;
 			TileSet wt;
+			ObjSprites os;
+			memset(&os, 0, sizeof(os));
 			rc = tiles_load(raw[2], rl[2], &ts);
 			if (rc == 0) { rc = walltiles_load(raw[2], rl[2], &wt); if (rc) tiles_free(&ts); }
 			if (rc == 0) rc = floormaps_parse(raw[0], rl[0], &fm);
 			if (rc == 0) { rc = wallrecs_parse(raw[0], rl[0], &wr); if (rc) floormaps_free(&fm); }
 			if (rc == 0) rc = mp2_parse(raw[1], rl[1], &m);
+			if (rc == 0) rc = objsprites_load(raw[0], rl[0], &os);
 			unsigned h = 0x811C9DC5u;
 			int nrooms = 0;
 			if (rc == 0) {
@@ -244,12 +248,17 @@ int main(int argc, char **argv) {
 						room_render_shell(&ts, &wt, fm.map[r], r < wr.count ? wr.map[r] : NULL, r < wr.count ? wr.len[r] : 0, rw, rh, shell);
 						for (int j = 0; j < VIEW_W * VIEW_H; j++)
 							h = (h ^ shell[j]) * 0x01000193u;
+						int gx, gy;
+						floor_origin(rw, rh, &gx, &gy);
+						room_render_objects(&m, &os, r, gx, gy, shell);
+						for (int j = 0; j < VIEW_W * VIEW_H; j++)
+							h = (h ^ shell[j]) * 0x01000193u;
 					}
 					nrooms++;
 				}
 				if (ts.count != rv->tiles || nrooms != rv->rooms || h != rv->hash)
 					rc = -99;
-				tiles_free(&ts); tiles_free(&wt); floormaps_free(&fm); floormaps_free(&wr); mp2_free(&m);
+				tiles_free(&ts); tiles_free(&wt); floormaps_free(&fm); floormaps_free(&wr); mp2_free(&m); objsprites_free(&os);
 			}
 			if (rc) { printf("FAIL %s: rc=%d (rooms %d)\n", rv->dir, rc, nrooms); failed++; }
 			checked++;
