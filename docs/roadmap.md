@@ -52,12 +52,14 @@ the PC1 decoder and the file-name strings. New findings add rows as we go.
 ## Suggested order of work
 
 1. ~~Language strings~~ — **done** (`tools/lng.py`, `src/engine/lng.c`, `formats.md` §5).
-2. **Level data** — diff harness memory/VRAM before and after the level load
-   to attribute each part of `MP1/MP2/MP3` to a destination (tile graphics →
-   VRAM pages, room geometry → tables). `MP2` begins with a `(size,offset)`
-   record table (see `docs/formats.md`) — start there. Validate by rendering
-   the same room in the C port and comparing to harness frames
-   (`tools/emu_run.py`, `tools/dosbox_capture.sh`).
+2. **Level data** — structure of `MP2` (four sections) and `ANDATA` (six blocks)
+   is known; `MP1`, `MP3` partially. Next: find the *consumers* — hook reads of
+   the expanded tables (`ds:3DDA` rooms, `ds:5194`, `ds:5E13`, `ds:65E4`) with
+   the harness while walking the player (`Emu.scan_queue`) and histogram
+   `(cs, ip)`; name each field from how the code uses it. Compare compact records
+   (file) with expanded ones (memory) to learn the expansion rules. `ANDATA`
+   block 0 (8-byte entries) should give the sprite frame rectangles for
+   `PCMAN.DAT`, whose placement in VRAM is already known.
 3. **Renderer** — port the planar blitters to chunky C (masked blits by
    reading the AND/OR planes), driven by the object list. Match the harness
    frame pixel-for-pixel for level 1's first room.
