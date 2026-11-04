@@ -3,7 +3,7 @@
 import glob, os, struct, sys
 here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, here)
-import mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects
+import mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
 
 root = os.path.join(here, '..')
 
@@ -91,6 +91,13 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
             ob += struct.pack('<iii', bi, len(r[1]), len(r[2])) + r[0] + r[2]
             for (fw, fh, fpx) in r[1]:
                 ob += struct.pack('<ii', fw, fh) + fpx
+            if r[2]:
+                sc = [(w >> 8, w & 255) for w in objsprites.script(r[2])]
+                offs = objsprites.frame_offsets(r[2])
+                ast = dict(delay=0, frame=0, dir=0, pos=0, cnt=1, cad=1, dx=0, dy=0)
+                for _ in range(300):
+                    animation.step(ast, sc, offs)
+                    ob += struct.pack('<6i', ast['pos'], ast['frame'], ast['delay'], ast['dir'], ast['dx'], ast['dy'])
     obj_vec.append((os.path.relpath(d, root), nspr, fnv(ob)))
 intro_vec = []
 for g, key in (('cadaver1', 'cadaver'), ('cadaver2', 'payoff')):

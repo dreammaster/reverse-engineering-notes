@@ -94,12 +94,21 @@ typedef struct {
 	ObjSprites objs;
 	FloorMaps maps, wrecs;
 	Mp2 mp2;
+	RoomObjs ro;
+	int ro_key, ro_ticks;
 	uint16_t palette[16];
 	int ok;
 	char info[96];
 } RoomView;
 
+/* one 50 Hz timer tick: the game loop (and with it the object animation) steps every 2 ticks */
+static void roomview_tick(RoomView *rv) {
+	if (rv->ok && rv->ro_key && (++rv->ro_ticks & 1) == 0)
+		roomobjs_step(&rv->ro);
+}
+
 static void roomview_unload(RoomView *rv) {
+	rv->ro_key = 0;
 	if (rv->ok) {
 		tiles_free(&rv->tiles);
 		tiles_free(&rv->walls);
@@ -171,8 +180,15 @@ static int roomview_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	                  rv->room < rv->wrecs.count ? rv->wrecs.map[rv->room] : NULL,
 	                  rv->room < rv->wrecs.count ? rv->wrecs.len[rv->room] : 0, w, h, shell);
 	int gx = 0, gy = 0, nobj = 0;
-	if (floor_origin(w, h, &gx, &gy) == 0)
-		nobj = room_render_objects(&rv->mp2, &rv->objs, rv->room, gx, gy, shell);
+	if (floor_origin(w, h, &gx, &gy) == 0) {
+		int key = 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata;
+		if (rv->ro_key != key) {
+			roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy);
+			rv->ro_key = key;
+		}
+		roomobjs_draw(&rv->ro, shell, 1);
+		nobj = rv->ro.n;
+	}
 	for (int i = 0; i < VIEW_W * VIEW_H; i++)
 		if (shell[i] != TILE_TRANSPARENT)
 			scr->pixels[i] = shell[i];
@@ -244,6 +260,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		floor_origin(w, h, &gx, &gy);
 	}
 	wk->tick++;
+	roomview_tick(rv);
 	int dx = 0, dy = 0, dir = -1;
 	if (keys & 8) { dir = DIR_RIGHT; dx = 1; dy = wk->tick & 1; }
 	else if (keys & 4) { dir = DIR_LEFT; dx = -1; dy = -(wk->tick & 1); }
@@ -449,6 +466,16 @@ int main(int argc, char **argv) {
 			if (!last_ms) last_ms = now;
 			while (now - last_ms >= 20) {            /* ~50 Hz; the original advances the left flame by 2 or 3 frames per tick */
 				g_intro_acc += 228;
+				last_ms += 20;
+			}
+			load_scene(&g, scene, &scr);
+		}
+		if (scene == SCENE_ROOM) {
+			static Uint32 last_ms;
+			Uint32 now = SDL_GetTicks();
+			if (!last_ms) last_ms = now;
+			while (now - last_ms >= 20) {
+				roomview_tick(&g_room);
 				last_ms += 20;
 			}
 			load_scene(&g, scene, &scr);

@@ -17,6 +17,7 @@ add_library(cadaver_engine STATIC
   engine/intro.c
   engine/objsprites.c
   engine/roomobjs.c
+  engine/anim.c
   engine/gamefiles.c)
 target_include_directories(cadaver_engine PUBLIC engine)
 target_compile_options(cadaver_engine PRIVATE -Wall -Wextra)

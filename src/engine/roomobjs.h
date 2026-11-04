@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include "mp2.h"
 #include "objsprites.h"
+#include "anim.h"
 
 /* Screen position (top-left pixel of the sprite) of an object at (x1, y1, z0) whose sprite block header is `hdr`
  * (32 bytes as stored in the file, big-endian words), for a room whose tile (0,0) starts at pixel (gx, gy). */
@@ -25,6 +26,25 @@ int room_render_objects(const Mp2 *mp2, const ObjSprites *objs, int room, int gx
 /* Animated blocks: per-frame (dx, dy) offsets from the projected position (signed pixels) and the first frame of the script. */
 int objsprite_frame_offset(const ObjSprite *sp, int k, int *dx, int *dy);
 int objsprite_initial_frame(const ObjSprite *sp);
+
+#define ROOMOBJS_MAX 512
+typedef struct {
+	int thing, x1, y1, z0;
+	const ObjSprite *sp;
+	int sx, sy;                 /* projected top-left of the sprite */
+	int animated, first;
+	AnimState an;
+} RoomObj;
+typedef struct {
+	int n;
+	RoomObj o[ROOMOBJS_MAX];
+} RoomObjs;
+
+/* Runtime objects of a room: build once on entry, step every game step (2 timer ticks), draw every frame.
+ * use_state = 0 draws the first script frame of animated objects (static, used by the unit tests). */
+int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy);
+void roomobjs_step(RoomObjs *ro);
+void roomobjs_draw(const RoomObjs *ro, uint8_t *canvas, int use_state);
 
 const ObjSprite *objsprites_find(const ObjSprites *o, int block);
 

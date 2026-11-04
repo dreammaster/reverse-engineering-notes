@@ -1,5 +1,6 @@
 #include "roomobjs.h"
 #include "rooms.h"
+#include <string.h>
 
 /* CAD.EXE ds:F8CE as pixels (offset*8 + shift), index (y&7)*8 + (x&7). */
 static const int SUB[64] = {
@@ -58,12 +59,13 @@ int objsprite_initial_frame(const ObjSprite *sp) {
 	return 0;
 }
 
-int room_render_objects(const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, uint8_t *canvas) {
+int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy) {
+	ro->n = 0;
 	if (room < 0 || room >= mp2->sec[2].count || !mp2->sec[2].rec[room])
 		return 0;
 	const uint8_t *list = mp2->sec[2].rec[room];
-	int n = mp2->sec[2].len[room] / 2, drawn = 0;
-	for (int i = 0; i < n; i++) {
+	int n = mp2->sec[2].len[room] / 2;
+	for (int i = 0; i < n && ro->n < ROOMOBJS_MAX; i++) {
 		int id = (list[2 * i] << 8) | list[2 * i + 1], len;
 		const uint8_t *t = mp2_thing(mp2, id, &len);
 		if (!t || len < 8 || (t[3] & 0x80))
@@ -71,13 +73,49 @@ int room_render_objects(const Mp2 *mp2, const ObjSprites *objs, int room, int gx
 		const ObjSprite *sp = objsprites_find(objs, (t[6] << 8) | t[7]);
 		if (!sp)
 			continue;
-		int sx, sy;
-		object_project(t[0], t[1], t[2], sp->header, gx, gy, &sx, &sy);
-		int fk = objsprite_initial_frame(sp), dx, dy;
-		objsprite_frame_offset(sp, fk, &dx, &dy);
-		sx += dx;
-		sy += dy;
-		const ObjFrame *f = &sp->frames[fk];
+		RoomObj *o = &ro->o[ro->n++];
+		memset(o, 0, sizeof(*o));
+		o->thing = id;
+		o->x1 = t[0];
+		o->y1 = t[1];
+		o->z0 = t[2];
+		o->sp = sp;
+		object_project(o->x1, o->y1, o->z0, sp->header, gx, gy, &o->sx, &o->sy);
+		/* animation state = the thing record's tail at +rec[14]: delay, frame, dir, pos, (dx, dy), cnt, cad */
+		o->an.cnt = o->an.cad = 0;
+		int so = t[14];
+		if (anim_script_len(sp) && so >= 16 && so + 10 <= len) {
+			o->an.delay = t[so];
+			o->an.frame = t[so + 1];
+			o->an.dir = t[so + 2];
+			o->an.pos = t[so + 3];
+			o->an.cnt = t[so + 8];
+			o->an.cad = t[so + 9];
+		} else if (anim_script_len(sp)) {
+			o->an.cnt = o->an.cad = 1;
+		}
+		o->animated = anim_script_len(sp) > 0;
+		o->first = objsprite_initial_frame(sp);
+	}
+	return ro->n;
+}
+
+void roomobjs_step(RoomObjs *ro) {
+	for (int i = 0; i < ro->n; i++)
+		if (ro->o[i].animated)
+			anim_step(&ro->o[i].an, ro->o[i].sp, NULL);
+}
+
+void roomobjs_draw(const RoomObjs *ro, uint8_t *canvas, int use_state) {
+	for (int i = 0; i < ro->n; i++) {
+		const RoomObj *o = &ro->o[i];
+		int fk = use_state && o->animated ? o->an.frame : o->first, dx = 0, dy = 0;
+		if (o->sp->extra_len)
+			objsprite_frame_offset(o->sp, fk, &dx, &dy);
+		if (fk < 0 || fk >= o->sp->nframes)
+			continue;
+		const ObjFrame *f = &o->sp->frames[fk];
+		int sx = o->sx + dx, sy = o->sy + dy;
 		for (int y = 0; y < f->h; y++)
 			for (int x = 0; x < f->w; x++) {
 				uint8_t c = f->pixels[y * f->w + x];
@@ -85,7 +123,12 @@ int room_render_objects(const Mp2 *mp2, const ObjSprites *objs, int room, int gx
 				if (c && px >= 0 && px < VIEW_W && py >= 0 && py < VIEW_H)
 					canvas[py * VIEW_W + px] = c;
 			}
-		drawn++;
 	}
-	return drawn;
+}
+
+int room_render_objects(const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, uint8_t *canvas) {
+	static RoomObjs ro;
+	int n = roomobjs_build(&ro, mp2, objs, room, gx, gy);
+	roomobjs_draw(&ro, canvas, 0);
+	return n;
 }

@@ -378,10 +378,8 @@ bytes with `cs lodsb` — `0x80`/`0x81` terminate/continue a script — and call
 commands, …) is **native code in the level's TAD segment**, not a bytecode: a faithful port needs those routines either
 translated by hand (they are small) or run by a minimal 16-bit interpreter.
 
-Evidence from the engine: the animation updater `sub_13BC5` (CAD.EXE 1000:3BC5) steps an object's frame script (§6.12). A script word whose
-low byte is `0xF9..0xFF` is not a frame number but a *command*: the updater calls `sub_19C64(ax = 3C77h, dx = 0xFF - byte)`
-which (far-)calls into the TAD segment (3C77h in the traced run) with the command number — `FD00` at the end of a script is
-command 2, `F9xx` command 6 and so on.
+(The animation script commands — §6.12 — are *not* TAD calls: they are dispatched through a table inside CAD.EXE itself,
+`1000:3C77`. An earlier note here said otherwise; `3C77h` is a code offset, not the TAD segment.)
 
 The game also contains a bytecode interpreter (the in-house "ACL" language;
 INTRO's credits: *"cadaver uses an internal language … 'acl'. acl is copyright
@@ -512,8 +510,16 @@ write tracing):
   `dx, dy` are the frame's pixel offset from the projected sprite position (e.g. the flame bowl of level 1 room 0, block 86:
   frame 0 at `(0,5)`, frames 1–3 at `(0,4)`; frame 3 drawn by the game at tick 900 matches 100%). `ram_offset` is the position of the
   frame inside the game's expanded in-RAM copy (not needed here). The script words are frame numbers (`0..nframes-1`)
-  interleaved with command words (`F9xx`, `FC00–FC09`, `FEnn`, terminated by `FD00`); their timing semantics are not decoded —
-  the renderers show the first frame number in the script. `tools/objsprites.py frame_offsets/script`, `src/engine/roomobjs.c`.
+  interleaved with command words. **Animation runtime (verified against a trace of the running game and against the code,
+  `tools/animation.py`, `src/engine/anim.c`, `CAD.EXE sub_13B35/sub_13BC5`):** each animated object has a 10-byte state
+  (`delay, frame, dir, pos, dx(w), dy(w), cnt, cad`; initial values = the thing record's tail from `rec[+0Eh]`, e.g. `… 01 01` =
+  `cnt = cad = 1`). The game loop runs one animation step every **2 timer ticks** (25 Hz). A script word is a byte pair
+  `(command, argument)`: command 0 = plain frame `argument`; otherwise the handler `table[0xFF − command]` of the table at
+  `1000:3C77` runs: `FF` freeze, `FE n` wait n steps, `FD` jump to the start, `FC n` jump to n, `FB` run backwards, `FA` turn
+  round, `F9` freeze (delay `FE`) and fire a trigger, `F8/F7` queue an engine event, `F6/F5` decrement/increment a counter in the
+  object record, `F4/F3` set a flag. A step sets `frame := script[pos].argument` and advances `pos` only every `cad + 1` steps
+  (`cnt` counts down); `dx, dy` come from the block's frame table. Example (flame bowl, block 86): script frames
+  `0 1 2 3 2 0 3 1 2 3 2 3 1 2 3 2 FD00`, one position per 2 steps = 4 ticks.
 * Not plain sprites although things refer to them: the player (thing 0 → block 8, 29 424 bytes) and compound objects such as
   the rope (block 112–119 in level 1: a table of segment records) — undecoded.
 

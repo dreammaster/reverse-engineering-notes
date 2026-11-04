@@ -13,6 +13,7 @@
 #include "../engine/intro.h"
 #include "../engine/objsprites.h"
 #include "../engine/roomobjs.h"
+#include "../engine/anim.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -297,6 +298,16 @@ int main(int argc, char **argv) {
 							h = (h ^ ((fd[a] >> (8 * b)) & 0xFF)) * 0x01000193u;
 					for (int j = 0; j < sp->frames[f].w * sp->frames[f].h; j++)
 						h = (h ^ sp->frames[f].pixels[j]) * 0x01000193u;
+				}
+				if (sp->extra_len) {
+					AnimState as = {0, 0, 0, 0, 1, 1, 0, 0};
+					for (int s = 0; s < 300; s++) {
+						anim_step(&as, sp, NULL);
+						int32_t v[6] = {as.pos, as.frame, as.delay, as.dir, as.dx, as.dy};
+						for (int a = 0; a < 6; a++)
+							for (int b = 0; b < 4; b++)
+								h = (h ^ (((uint32_t)v[a] >> (8 * b)) & 0xFF)) * 0x01000193u;
+					}
 				}
 			}
 			if (os.count != ov->sprites || h != ov->hash)
