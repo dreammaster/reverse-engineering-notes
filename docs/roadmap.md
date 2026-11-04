@@ -63,7 +63,7 @@ the PC1 decoder and the file-name strings. New findings add rows as we go.
    (file) with expanded ones (memory) to learn the expansion rules. `ANDATA`
    block 0 (8-byte entries) should give the sprite frame rectangles for
    `PCMAN.DAT`, whose placement in VRAM is already known.
-3. **Renderer** — port the planar blitters to chunky C (masked blits by
+3. **Renderer** — the sprite format and the blit algorithm are known (formats.md §6.1/6.2); what is missing is *where room backgrounds and creature/object sprites come from* (they are not in the VRAM sprite area: only `PCMAN.DAT` is). — port the planar blitters to chunky C (masked blits by
    reading the AND/OR planes), driven by the object list. Match the harness
    frame pixel-for-pixel for level 1's first room.
 4. **Object/ACL layer** — decode the opcode table (jump table in `seg000` near

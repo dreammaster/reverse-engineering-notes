@@ -151,6 +151,16 @@ and sprite sheets in the top ~25 KB of each plane, and blits with the VGA latche
 (write mode 1) and AND/OR masks. Consequences: on-disk bitmaps are plane-separate
 (or ST-interleaved for `.PC1`), not chunky.
 
+**Sprite drawing** (`sprite_blit`, `CAD.EXE 1000:8E26`): x pixel in AX, y in DX (the
+scanline offset comes from the 200-word table `vram_row_offsets` at `ss:0000`:
+0, 40, 80, … 7960), the blit variant in CL, sprite data in RAM at `es:si`.
+The variants (`1000:8E81`, `9080`, `92FF`, `9602`; `sprite_blit_mode_table`
+at `1000:8E5D`) shift the data right by `x & 7` and draw it plane by plane: first
+AND the screen with the *inverted* mask plane (punching the silhouette out), then OR in
+colour planes 0–3 (`1000:9198…9273`, per-plane stride `ss:3B16`) — exactly the
+record layout of §6.2 (mask plane first, then four colour planes, each stored
+as consecutive rows).
+
 ### 6.2 `PCMAN.DAT` (the player's sprites) — *verified*
 
 48 frames of the player character (walking in all directions, sword swings, …),
@@ -230,7 +240,12 @@ sections of the same shape as MP2 (`data_len`, `alloc_len`, `count`, directory):
 `3002 / 10000 / 100` at `0x48`, `5358 / 32008 / 100` at `0xD9C`, and a third with
 `104 842 / 255 000 / 255` at `0x2424` (alloc = 255 × 1000). The directories
 here do *not* tile (the first has a last entry `(320, 3002)` past `data_len`),
-so the walker in `tools/mpsections.py` does not apply to MP1 yet. Only a fraction
+so the walker in `tools/mpsections.py` does not apply to MP1 yet. After the three
+sections come the level **palette** (§6.9) and a **1790-byte trailer**: a table of
+8-byte records `u16be id` + 6 bytes (the ids 84–93 followed by six spaces, then
+zeros) followed by `u16be id, u32be value` pairs ending with `0x4F 40000`, `0x50 45000`,
+`0x51 50000`, `0x52 60000` — looks like per-object attributes (prices / scores?) or a
+symbol table of the script compiler; not decoded. Only a fraction
 of the file appears verbatim in memory after loading (e.g. file `0x3C00–0x6330` at
 `4CF0:0006`); the rest is transformed by the loader.
 
