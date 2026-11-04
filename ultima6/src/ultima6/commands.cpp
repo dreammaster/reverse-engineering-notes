@@ -1,6 +1,7 @@
 #include "ultima6/session.h"
 
 #include "ultima6/describe.h"
+#include "ultima6/equipment.h"
 #include "ultima6/stats_view.h"
 
 #include <algorithm>
@@ -243,6 +244,57 @@ void Game::timePlayed(int &years, int &months, int &days) const {
 		years = months = days = 0;
 }
 
+// cmd_ready: "Ready-" and the name; only things with a place can be readied ("Can't be readied!"); the readied weights must stay within ten times the strength ("Too heavy!"); the place
+// (Equipment::target) must be free ("No place to put!"). A ring of invisibility (0x102) makes its wearer invisible.
+// APPROX(72): the storm cloak's light (type 0x51 sets byte_404B9 to 0x14) is not set up
+void Game::readyObject(int idx) {
+	int actor = _world.actors.partyRoster[_member];
+	World::Obj &o = _world.objects[idx];
+	message("Ready-" + std::string(o.type == 0x5A ? "torch" : Describe::object(_world, o)) + "\n");
+	int cls = Equipment::slotClassOf(_world, idx);
+	if (cls < 0) {
+		message("\nCan't be readied!\n");
+		prompt();
+		return;
+	}
+	int bare = _world.flags.block3[o.type & (TileFlags::BLOCK3 - 1)];
+	if (bare + Equipment::readiedWeight(_world, actor) > _world.actors.strength[actor] * 10) {
+		message("\nToo heavy!\n");
+		prompt();
+		return;
+	}
+	Equipment::Slots slots = Equipment::of(_world, actor);
+	if (slots.object[Equipment::target(_world, slots, cls)] >= 0) {
+		message("\nNo place to put!\n");
+		prompt();
+		return;
+	}
+	o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+	if (o.type == 0x102) {
+		int k = _world.actorObject(actor);
+		if (k >= 0)
+			_world.objects[k].status |= 0x02;
+	}
+	prompt();
+}
+
+// cmd_unready: "Unready-" and the name; an amulet stays on (sub_1E8B6)
+void Game::unreadyObject(int idx) {
+	World::Obj &o = _world.objects[idx];
+	message("Unready-" + Describe::object(_world, o) + "\n");
+	if (o.type == 0x4C) {
+		message("\nMagical energy prevents you from removing the amulet.\n");
+	} else {
+		o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
+		if (o.type == 0x102) { // the invisibility ring is off
+			int k = _world.actorObject(_world.actors.partyRoster[_member]);
+			if (k >= 0)
+				_world.objects[k].status &= ~0x02;
+		}
+	}
+	prompt();
+}
+
 bool Game::inventoryKey(int key) {
 	inventoryItems(_world, _stealing >= 0 ? 100 + _stealing : _member, _items);
 	int count = (int)_items.size();
@@ -267,12 +319,28 @@ bool Game::inventoryKey(int key) {
 	case KEY_RIGHT:
 		_selected = std::min(std::max(0, count - 1), _selected + 1);
 		break;
-	case KEY_UP:
-		_selected = std::max(0, _selected - 8);
+	case KEY_UP: { // what is readied is a column of places, the pack a grid four across
+		int eq = 0;
+		for (int i : _items)
+			eq += _world.objects[i].location() == ObjRecord::READIED;
+		if (_selected >= eq + 4)
+			_selected -= 4;
+		else if (_selected >= eq && eq > 0)
+			_selected = eq - 1;
+		else
+			_selected = std::max(0, _selected - 1);
 		break;
-	case KEY_DOWN:
-		_selected = std::min(std::max(0, count - 1), _selected + 8);
+	}
+	case KEY_DOWN: {
+		int eq = 0;
+		for (int i : _items)
+			eq += _world.objects[i].location() == ObjRecord::READIED;
+		if (_selected >= eq)
+			_selected = std::min(std::max(0, count - 1), _selected + 4);
+		else
+			_selected = std::min(std::max(0, count - 1), _selected + 1);
 		break;
+	}
 	case KEY_ENTER:
 		if (_stealing >= 0) {
 			stealItem(_selected < count ? _items[_selected] : -1);
@@ -293,12 +361,8 @@ bool Game::inventoryKey(int key) {
 				message("\nA torch is doused.\n");
 			} else if (o.type == 90) { // light one of the torches, which burns for a while in the hand
 				// use_torch (32661): both hands full means no light; the torch burns for 200 minutes (0xC8)
-				std::vector<int> held;
-				_world.inventory(actor, held, false);
-				int hands = 0;
-				for (int h : held)
-					hands += _world.objects[h].location() == ObjRecord::READIED;
-				if (hands >= 2) {
+				Equipment::Slots slots = Equipment::of(_world, actor);
+				if (slots.twoHanded || (slots.object[2] >= 0 && slots.object[5] >= 0)) {
 					message("\nNo free hand to hold the torch.\n");
 					break;
 				}
@@ -312,11 +376,9 @@ bool Game::inventoryKey(int key) {
 				_world.objects.push_back(lit);
 				message("\nTorch is lit.\n");
 			} else if (o.location() == ObjRecord::READIED) {
-				o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
-				message("\nUnreadied " + Describe::object(_world, o) + "\n");
-			} else if (Combat::weaponDamageOf(o.type) >= 0 || Combat::armourOf(o.type) > 0) {
-				o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
-				message("\nReadied " + Describe::object(_world, o) + "\n");
+				unreadyObject(_items[_selected]);
+			} else if (Equipment::slotClassOf(_world, _items[_selected]) >= 0) {
+				readyObject(_items[_selected]);
 			} else {
 				int idx = _items[_selected];
 				useObject(idx);

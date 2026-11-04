@@ -1,5 +1,6 @@
 #include "ultima6/stats_view.h"
 #include "ultima6/describe.h"
+#include "ultima6/equipment.h"
 #include "ultima6/ui.h"
 
 #include <algorithm>
@@ -37,14 +38,38 @@ static int actorOfMember(const World &world, int member) {
 }
 
 void inventoryItems(const World &world, int member, std::vector<int> &items) {
-	world.inventory(actorOfMember(world, member), items, false);
-	std::stable_sort(items.begin(), items.end(), [&](int a, int b) {
-		return (world.objects[a].location() == ObjRecord::READIED) > (world.objects[b].location() == ObjRecord::READIED);
-	});
+	int actor = actorOfMember(world, member);
+	Equipment::Slots slots = Equipment::of(world, actor);
+	std::vector<int> inv;
+	world.inventory(actor, inv, false);
+	items.clear();
+	for (int k = 0; k < Equipment::SLOTS; ++k)
+		if (slots.object[k] >= 0)
+			items.push_back(slots.object[k]);
+	size_t equipped = items.size();
+	for (int i : inv)
+		if (world.objects[i].location() != ObjRecord::READIED)
+			items.push_back(i);
+	for (int i : inv)
+		if (world.objects[i].location() == ObjRecord::READIED && std::find(items.begin(), items.begin() + equipped, i) == items.begin() + equipped)
+			items.push_back(i);
 }
 
-// APPROX(28): not the original's exact behaviour, see docs/approximations.md
-void drawInventoryView(Framebuffer &screen, const World &world, int member, int selected, std::vector<int> &items) {
+// The tile of a person's picture in the corner of the view: sub_19533 gives the frame of the direction 4 (south), for the people two frames a direction
+static int dollTile(const World &world, int actor) {
+	int type = world.actors.baseObjFrame[actor] & 0x3FF;
+	if (!type) {
+		int k = world.actorObject(actor);
+		type = k >= 0 ? world.objects[k].type : 0;
+	}
+	int frame = (type >= 0x178 && type <= 0x183) || type == 0x199 || type == 0x19A ? 4 * 2 + 1 : 0;
+	return world.baseTile.firstTile[type] + frame;
+}
+
+// sub_1DF45 / sub_1DB44: the name at the top; the doll's eight places for what is readied (the frame tile 0x19B behind the thing, 0x19A for a free place, 0x185 for the hand a two-handed
+// weapon holds), the person in the corner, a pack of twelve places (four across, three down) that scrolls by rows of four with arrows when there is more, and the weights.
+// APPROX(28): the weights lines and the cursor are not the original's
+void drawInventoryView(Framebuffer &screen, const World &world, int member, int selected, std::vector<int> &items, int &scroll) {
 	Ui::restorePaper(screen, world.paper, 176, 8, 136, 96);
 	const int FG = 0x48;
 	int actor = actorOfMember(world, member);
@@ -60,19 +85,64 @@ void drawInventoryView(Framebuffer &screen, const World &world, int member, int 
 	Ui::drawText(screen, world.font, 176 + (17 - (int)name.size()) / 2 * 8, 8, name, FG);
 
 	inventoryItems(world, member, items);
-	const int COLS = 8, X0 = 176 + 4, Y0 = 20;
-	for (size_t n = 0; n < items.size() && n < (size_t)COLS * 4; ++n) {
-		const World::Obj &o = world.objects[items[n]];
-		int x = X0 + ((int)n % COLS) * 16, y = Y0 + ((int)n / COLS) * 16;
-		Ui::drawTile(screen, world, world.baseTile.firstTile[o.type] + o.frame, x, y);
-		int kind = Describe::quantityKind(o.type);
-		if (kind && world.quantityOf(o) > 1)
+	Equipment::Slots slots = Equipment::of(world, actor);
+	int equipped = 0;
+	for (int o : slots.object)
+		equipped += o >= 0;
+	auto tileOf = [&](int idx) { return world.baseTile.firstTile[world.objects[idx].type] + world.objects[idx].frame; };
+	auto cell = [&](int idx, int x, int y) {
+		Ui::drawTile(screen, world, 0x19B, x, y);
+		Ui::drawTile(screen, world, tileOf(idx), x, y);
+		const World::Obj &o = world.objects[idx];
+		if (Describe::quantityKind(o.type) && world.quantityOf(o) > 1)
 			Ui::drawText(screen, world.font, x, y + 8, std::to_string(world.quantityOf(o) % 100), 0xFF);
-		if (o.location() == ObjRecord::READIED)
-			Ui::drawText(screen, world.font, x + 8, y, "*", 10);
+	};
+	for (int k = 0; k < Equipment::SLOTS; ++k) {
+		int x = Equipment::SLOT_X[k], y = Equipment::SLOT_Y[k];
+		if (slots.object[k] >= 0)
+			cell(slots.object[k], x, y);
+		else
+			Ui::drawTile(screen, world, k == 5 && slots.twoHanded ? 0x185 : 0x19A, x, y);
 	}
+	Ui::drawTile(screen, world, 0x19B, 272, 16);
+	Ui::drawTile(screen, world, dollTile(world, actor), 272, 16);
+
+	int packCount = (int)items.size() - equipped;
+	int row = selected >= equipped ? (selected - equipped) / 4 : -1;
+	if (row >= 0) {
+		if (row * 4 < scroll)
+			scroll = row * 4;
+		else if (row * 4 >= scroll + 12)
+			scroll = (row - 2) * 4;
+	}
+	if (scroll < 0 || scroll >= std::max(packCount, 1))
+		scroll = 0;
+	for (int n = 0; n < 12; ++n) {
+		int x = 248 + (n & 3) * 16, y = 32 + (n >> 2) * 16;
+		if (scroll + n < packCount)
+			cell(items[equipped + scroll + n], x, y);
+		else
+			Ui::drawTile(screen, world, 0x19A, x, y);
+	}
+	if (scroll != 0)
+		Ui::drawText(screen, world.font, 240, 32, std::string(1, (char)0x18), FG);
+	if (packCount > scroll + 12)
+		Ui::drawText(screen, world.font, 240, 72, std::string(1, (char)0x19), FG);
+
 	if (!items.empty() && selected >= 0 && selected < (int)items.size()) {
-		int x = X0 + (selected % COLS) * 16, y = Y0 + (selected / COLS) * 16;
+		int x, y;
+		if (selected < equipped) {
+			int k = 0;
+			for (; k < Equipment::SLOTS; ++k)
+				if (slots.object[k] == items[selected])
+					break;
+			x = Equipment::SLOT_X[k < Equipment::SLOTS ? k : 0];
+			y = Equipment::SLOT_Y[k < Equipment::SLOTS ? k : 0];
+		} else {
+			int n = selected - equipped - scroll;
+			x = 248 + (n & 3) * 16;
+			y = 32 + (n >> 2) * 16;
+		}
 		Ui::drawTile(screen, world, 0x16C, x, y);
 		const World::Obj &o = world.objects[items[selected]];
 		std::string d = Describe::object(world, o);

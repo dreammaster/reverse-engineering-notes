@@ -156,6 +156,8 @@ private:
 	bool _telekinesis = false; // Use from a distance (the Telekinesis spell)
 	void actorStatusDecay();
 	void useSilverHorn();
+	void readyObject(int idx);
+	void unreadyObject(int idx);
 	void dropStart(int idx);
 	void dropWhere(int count);
 	void moveItemStart(int idx);
@@ -168,6 +170,7 @@ private:
 	bool dropSurface(int tx, int ty) const;
 	bool dropRecipient(int target, int item) const;
 	void dropPlace(int item, int count, int tx, int ty, int recipient, bool free = true);
+	int _packScroll = 0;       // the first of the objects the pack view shows (a multiple of four)
 	bool _dropPending = false; // "Drop-" is waiting for the object to be chosen in the inventory
 	int _dropItem = -1;		// the object chosen, while "Location: " waits for its place
 	int _dropCount = 0;

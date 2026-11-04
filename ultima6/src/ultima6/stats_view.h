@@ -35,7 +35,7 @@ void drawStatsView(Framebuffer &screen, const World &world, int member);
 /** The objects the inventory panel lists for a member: readied ones first. */
 void inventoryItems(const World &world, int member, std::vector<int> &items);
 
-void drawInventoryView(Framebuffer &screen, const World &world, int member, int selected, std::vector<int> &items);
+void drawInventoryView(Framebuffer &screen, const World &world, int member, int selected, std::vector<int> &items, int &scroll);
 
 /** The panel while talking: the speaker's portrait. */
 void drawTalkView(Framebuffer &screen, const World &world, int actor);
