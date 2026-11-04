@@ -198,6 +198,48 @@ void drawStatsView(Framebuffer &screen, const World &world, int member) {
 	char buf[40];
 
 	std::string name = (const char *)a.partyNames[member];
+	if (world.game != GameId::Ultima6) {
+		// Martian Dreams / Savage Empire (MD sub_30B61): the text window is the box from (184, 2); a row is as high as the font, a column 8 wide. Row 0 the name, centred; rows 1 to 3
+		// STR, DEX and INT (label in column 10, number in column 14); 4 HP: and its number, 5 HM: the most, 6 Lev:, 7 Exper: and 8 its number. The portrait at (185, 16), the four buttons
+		// (tiles 0x11A, 0x117, 0x119, 0x11B) in a row at y 102.
+		// APPROX(74): the colours of the numbers (by the member's state, `word_402C4`...) are not taken; the digits of the name row use the label colour
+		int h = world.font.height();
+		auto at = [&](int col, int row) { return std::make_pair(184 + col * 8, 2 + row * h); };
+		auto put = [&](int col, int row, const std::string &s) {
+			std::pair<int, int> p = at(col, row);
+			Ui::drawText(screen, world.font, p.first, p.second, s, FG);
+		};
+		put((17 - (int)name.size()) / 2, 0, name);
+		Bytes portraitMd;
+		if (world.portrait(actor, portraitMd))
+			screen.blit(185, 16, &portraitMd[0], world.portraitW, world.portraitH, world.portraitW);
+		std::snprintf(buf, sizeof buf, "%d", a.strength[actor]);
+		put(10, 1, "STR:");
+		put(14, 1, buf);
+		std::snprintf(buf, sizeof buf, "%d", a.dexterity[actor]);
+		put(10, 2, "DEX:");
+		put(14, 2, buf);
+		std::snprintf(buf, sizeof buf, "%d", a.intelligence[actor]);
+		put(10, 3, "INT:");
+		put(14, 3, buf);
+		put(10, 4, "HP:");
+		std::snprintf(buf, sizeof buf, "%3d", a.hp[actor]);
+		put(14, 4, buf);
+		std::snprintf(buf, sizeof buf, "HM:%3d", ActorStats::maxHealth(world, actor));
+		put(10, 5, buf);
+		std::snprintf(buf, sizeof buf, "Lev:%2d", ActorStats::level(world, actor));
+		put(10, 6, buf);
+		put(10, 7, "Exper:");
+		std::snprintf(buf, sizeof buf, "  %4d", a.exp[actor]);
+		put(10, 8, buf);
+		if (member > 0)
+			Ui::drawTile(screen, world, 0x11A, 0xB8, 0x66);
+		Ui::drawTile(screen, world, 0x117, 0xC8, 0x66);
+		Ui::drawTile(screen, world, 0x119, 0xD8, 0x66);
+		if (member < a.partySize - 1)
+			Ui::drawTile(screen, world, 0x11B, 0xE8, 0x66);
+		return;
+	}
 	Ui::drawText(screen, world.font, 176 + (17 - (int)name.size()) / 2 * 8, 8, name, FG);
 
 	Bytes portrait;
