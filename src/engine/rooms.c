@@ -1,0 +1,118 @@
+#include "rooms.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+int tiles_load(const uint8_t *mp3, size_t len, TileSet *ts) {
+	memset(ts, 0, sizeof(*ts));
+	if (len < 4)
+		return -1;
+	size_t bytes = ((size_t)mp3[0] << 24) | (mp3[1] << 16) | (mp3[2] << 8) | mp3[3];
+	int n = (int)(bytes / 288);
+	if (4 + (size_t)n * 288 > len || n <= 0)
+		return -2;
+	ts->pixels = (uint8_t *)malloc((size_t)n * TILE_W * TILE_H);
+	if (!ts->pixels)
+		return -3;
+	ts->count = n;
+	for (int k = 0; k < n; k++) {
+		const uint8_t *t = mp3 + 4 + 288 * (size_t)k;
+		uint8_t *out = ts->pixels + (size_t)k * TILE_W * TILE_H;
+		for (int y = 0; y < TILE_H; y++) {
+			for (int g = 0; g < 2; g++) {
+				const uint8_t *w = t + y * 16 + g * 8;       /* four big-endian plane words */
+				unsigned pl[4];
+				for (int p = 0; p < 4; p++)
+					pl[p] = (unsigned)((w[p * 2] << 8) | w[p * 2 + 1]);
+				for (int b = 0; b < 16; b++) {
+					unsigned c = 0;
+					for (int p = 0; p < 4; p++)
+						c |= ((pl[p] >> (15 - b)) & 1u) << p;
+					int any = ((pl[0] | pl[1] | pl[2] | pl[3]) >> (15 - b)) & 1;
+					out[y * TILE_W + g * 16 + b] = any ? (uint8_t)c : TILE_TRANSPARENT;
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+void tiles_free(TileSet *ts) {
+	free(ts->pixels);
+	memset(ts, 0, sizeof(*ts));
+}
+
+int floormaps_parse(const uint8_t *mp1, size_t len, FloorMaps *fm) {
+	memset(fm, 0, sizeof(*fm));
+	const size_t p = 0x48;
+	if (len < p + 10)
+		return -1;
+	int cnt = (mp1[p + 8] << 8) | mp1[p + 9];
+	size_t dir = p + 10, data = dir + 4 * (size_t)cnt;
+	if (cnt <= 0 || data > len)
+		return -2;
+	fm->buf = (uint8_t *)malloc(len);
+	fm->map = (const uint8_t **)calloc((size_t)cnt, sizeof(uint8_t *));
+	fm->len = (int *)calloc((size_t)cnt, sizeof(int));
+	if (!fm->buf || !fm->map || !fm->len) {
+		floormaps_free(fm);
+		return -3;
+	}
+	memcpy(fm->buf, mp1, len);
+	fm->count = cnt;
+	for (int i = 0; i < cnt; i++) {
+		size_t size = ((size_t)mp1[dir + 4 * i] << 8) | mp1[dir + 4 * i + 1];
+		size_t off = ((size_t)mp1[dir + 4 * i + 2] << 8) | mp1[dir + 4 * i + 3];
+		if (data + off + size > len) {
+			floormaps_free(fm);
+			return -2;
+		}
+		fm->len[i] = (int)size;
+		fm->map[i] = size ? fm->buf + data + off : NULL;
+	}
+	return 0;
+}
+
+void floormaps_free(FloorMaps *fm) {
+	free(fm->buf);
+	free(fm->map);
+	free(fm->len);
+	memset(fm, 0, sizeof(*fm));
+}
+
+void floor_render(const TileSet *ts, const uint8_t *map, int w, int h, uint8_t *canvas) {
+	int cw, ch;
+	floor_canvas_size(w, h, &cw, &ch);
+	for (int row = 0; row < h; row++) {
+		for (int col = 0; col < w; col++) {
+			unsigned tid = map[row * w + col];
+			if (tid == 0 || (int)tid >= ts->count)
+				continue;
+			int ox = 16 * h + 16 * (col - row), oy = 8 * (col + row);
+			const uint8_t *t = ts->pixels + (size_t)tid * TILE_W * TILE_H;
+			for (int y = 0; y < TILE_H; y++) {
+				for (int x = 0; x < TILE_W; x++) {
+					uint8_t c = t[y * TILE_W + x];
+					if (c != TILE_TRANSPARENT && oy + y < ch && ox + x < cw)
+						canvas[(oy + y) * cw + ox + x] = c;
+				}
+			}
+		}
+	}
+}
+
+int mp1_palette(const uint8_t *mp1, size_t len, uint16_t pal[16]) {
+	size_t p = 0x48;
+	for (int s = 0; s < 3; s++) {
+		if (p + 10 > len)
+			return -1;
+		size_t dl = ((size_t)mp1[p] << 24) | (mp1[p + 1] << 16) | (mp1[p + 2] << 8) | mp1[p + 3];
+		size_t cnt = ((size_t)mp1[p + 8] << 8) | mp1[p + 9];
+		p = (p + 10 + 4 * cnt + dl + 1) & ~(size_t)1;
+	}
+	if (p + 32 > len)
+		return -1;
+	for (int i = 0; i < 16; i++)
+		pal[i] = (uint16_t)((mp1[p + 2 * i] << 8) | mp1[p + 2 * i + 1]);
+	return 0;
+}

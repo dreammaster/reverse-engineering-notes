@@ -9,6 +9,7 @@
 #include "../engine/lng.h"
 #include "../engine/sprites.h"
 #include "../engine/mp2.h"
+#include "../engine/rooms.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -174,6 +175,72 @@ int main(int argc, char **argv) {
 		checked++;
 		free(in);
 		free(raw);
+	}
+
+	for (size_t i = 0; i < sizeof(room_vectors) / sizeof(room_vectors[0]); i++) {
+		const RoomVector *rv = &room_vectors[i];
+		const char *names[3] = {"LEV?.MP1", "LEV?.MP2", "LEV?.MP3"};
+		uint8_t *raw[3] = {0, 0, 0};
+		size_t rl[3] = {0, 0, 0};
+		int rc = 0, have = 1;
+		char lev = rv->dir[strlen(rv->dir) - 1];
+		for (int f = 0; f < 3 && rc == 0; f++) {
+			char nm[64];
+			snprintf(nm, sizeof(nm), "LEV%c.MP%d", lev, f + 1);
+			snprintf(path, sizeof(path), "%s/%s/%s", root, rv->dir, nm);
+			size_t n;
+			uint8_t *in = slurp(path, &n);
+			if (!in) { have = 0; break; }
+			rc = mjm_unpack(in, n, &raw[f], &rl[f]);
+			free(in);
+		}
+		(void)names;
+		if (have && rc == 0) {
+			TileSet ts;
+			FloorMaps fm;
+			Mp2 m;
+			rc = tiles_load(raw[2], rl[2], &ts);
+			if (rc == 0) rc = floormaps_parse(raw[0], rl[0], &fm);
+			if (rc == 0) rc = mp2_parse(raw[1], rl[1], &m);
+			unsigned h = 0x811C9DC5u;
+			int nrooms = 0;
+			if (rc == 0) {
+				for (int j = 0; j < ts.count * TILE_W * TILE_H; j++)
+					h = (h ^ ts.pixels[j]) * 0x01000193u;
+				uint16_t pal[16];
+				if (mp1_palette(raw[0], rl[0], pal) != 0)
+					rc = -98;
+				for (int j = 0; j < 16; j++) {
+					h = (h ^ (pal[j] & 0xFF)) * 0x01000193u;
+					h = (h ^ (pal[j] >> 8)) * 0x01000193u;
+				}
+				for (int r = 0; r < fm.count && r < m.sec[0].count; r++) {
+					int rw = 0, rh = 0;
+					if (m.sec[0].len[r] >= 6 && m.sec[0].rec[r]) { rw = m.sec[0].rec[r][4]; rh = m.sec[0].rec[r][5]; }
+					if (!(rw * rh == fm.len[r] && fm.len[r]))
+						continue;
+					int cw, chh;
+					floor_canvas_size(rw, rh, &cw, &chh);
+					uint8_t *cv = (uint8_t *)malloc((size_t)cw * chh);
+					memset(cv, TILE_TRANSPARENT, (size_t)cw * chh);
+					floor_render(&ts, fm.map[r], rw, rh, cv);
+					uint32_t hdr[3] = {(uint32_t)r, (uint32_t)cw, (uint32_t)chh};
+					for (int a = 0; a < 3; a++)
+						for (int b = 0; b < 4; b++)
+							h = (h ^ ((hdr[a] >> (8 * b)) & 0xFF)) * 0x01000193u;
+					for (int j = 0; j < cw * chh; j++)
+						h = (h ^ cv[j]) * 0x01000193u;
+					free(cv);
+					nrooms++;
+				}
+				if (ts.count != rv->tiles || nrooms != rv->rooms || h != rv->hash)
+					rc = -99;
+				tiles_free(&ts); floormaps_free(&fm); mp2_free(&m);
+			}
+			if (rc) { printf("FAIL %s: rc=%d (rooms %d)\n", rv->dir, rc, nrooms); failed++; }
+			checked++;
+		}
+		for (int f = 0; f < 3; f++) free(raw[f]);
 	}
 
 	if (!checked) {

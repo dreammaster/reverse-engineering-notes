@@ -13,6 +13,7 @@ add_library(cadaver_engine STATIC
   engine/lng.c
   engine/sprites.c
   engine/mp2.c
+  engine/rooms.c
   engine/gamefiles.c)
 target_include_directories(cadaver_engine PUBLIC engine)
 target_compile_options(cadaver_engine PRIVATE -Wall -Wextra)

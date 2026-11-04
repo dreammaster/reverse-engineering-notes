@@ -19,10 +19,11 @@ building oracles so later work can be *verified* rather than guessed.
 | `FONT2.SPR` | Layout known (8×8, 4 plane bytes/row), colour mapping not pinned |
 | `*.LNG` text | **Done** — 6-bit packed text, Python + C, all 41 files verified, in-game strings confirmed in the emulator |
 | `PCMAN.DAT` (player sprites) | **Done** — directory + 5-plane records, Python + C, all 48 frames, viewer in the SDL app |
-| Palette | **Done** — 16 ST words, per level in `MP1` |
+| Palette | **Done** — 16 ST words, per level in `MP1` (all 9 levels) |
+| Floor tiles (`MP3`) and floor maps (`MP1` section 0) | **Done** — isometric floor of every room renders like the game; Python + C, unit-tested on 14 level dirs; room viewer in the SDL app |
 | `LEVn.MP2` | Sections, room lists and the thing table decoded and named (Python + C, unit-tested on all 9 levels); thing record fields only partly understood |
 | `ANDATA` blocks | Container known, contents not |
-| `LEVn.MP1`, `MP3`, `ROUTINEn.TAD` | Mostly undecoded |
+| `LEVn.MP1` sections 1–2, rest of `MP3`, `ROUTINEn.TAD` | Not decoded (walls/furniture, graphic blocks, scripts) |
 | Isometric renderer, objects, ACL interpreter, collision/AI, input, sound | **Not started** |
 | Cadaver 2 (Payoff) code differences | Not analysed (data differs only in `TATA/` and RNC-packed copies) |
 

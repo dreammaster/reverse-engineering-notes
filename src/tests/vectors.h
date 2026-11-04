@@ -177,3 +177,20 @@ static const Mp2Vector mp2_vectors[] = {
 	{"cadaver2/TATA/3/LEV3.MP2", 0x5DA557CBU},
 	{"cadaver2/TATA/4/LEV4.MP2", 0xA0F4B3E9U},
 };
+typedef struct { const char *dir; int tiles; int rooms; unsigned hash; } RoomVector;
+static const RoomVector room_vectors[] = {
+	{"cadaver1/DATA/1", 60, 71, 0xC06C737BU},
+	{"cadaver1/DATA/2", 70, 96, 0xFDE3069AU},
+	{"cadaver1/DATA/3", 70, 89, 0x085BD050U},
+	{"cadaver1/DATA/4", 60, 72, 0x32E65FABU},
+	{"cadaver1/DATA/5", 50, 49, 0x55C46E2AU},
+	{"cadaver2/DATA/1", 60, 71, 0xC06C737BU},
+	{"cadaver2/DATA/2", 70, 96, 0xFDE3069AU},
+	{"cadaver2/DATA/3", 70, 89, 0x085BD050U},
+	{"cadaver2/DATA/4", 60, 72, 0x32E65FABU},
+	{"cadaver2/DATA/5", 50, 49, 0x55C46E2AU},
+	{"cadaver2/TATA/1", 30, 30, 0x317DAAC8U},
+	{"cadaver2/TATA/2", 50, 66, 0x86BB3C0EU},
+	{"cadaver2/TATA/3", 70, 46, 0x5B4F0E67U},
+	{"cadaver2/TATA/4", 70, 45, 0x8108C630U},
+};

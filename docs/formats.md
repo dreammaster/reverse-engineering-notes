@@ -260,27 +260,53 @@ records back to back (not at a fixed 52-byte stride): level-1 script record 0
 Preceding it at `ds:3DC0` is a table of string ids `0085 0086 0087 …`
 (**room names are strings 133 + n**).
 
-### 6.5 `LEVn.MP1` — *partly understood*
+### 6.5 `LEVn.MP1` — *sections 0 and palette verified*
 
-Starts with a 72-byte preface (first word `0x0019`, a few small constants), then
-sections of the same shape as MP2 (`data_len`, `alloc_len`, `count`, directory):
-`3002 / 10000 / 100` at `0x48`, `5358 / 32008 / 100` at `0xD9C`, and a third with
-`104 842 / 255 000 / 255` at `0x2424` (alloc = 255 × 1000). The directories
-here do *not* tile (the first has a last entry `(320, 3002)` past `data_len`),
-so the walker in `tools/mpsections.py` does not apply to MP1 yet. After the three
-sections come the level **palette** (§6.9) and a **1790-byte trailer**: a table of
-8-byte records `u16be id` + 6 bytes (the ids 84–93 followed by six spaces, then
-zeros) followed by `u16be id, u32be value` pairs ending with `0x4F 40000`, `0x50 45000`,
-`0x51 50000`, `0x52 60000` — looks like per-object attributes (prices / scores?) or a
-symbol table of the script compiler; not decoded. Only a fraction
-of the file appears verbatim in memory after loading (e.g. file `0x3C00–0x6330` at
-`4CF0:0006`); the rest is transformed by the loader.
+```
+72-byte preface                     (first word 0x0019, a few small constants)
+3 sections, each starting on an EVEN offset (a pad byte follows odd-length data):
+    u32be data_len, u32be alloc_len, u16be count, count x (u16be size, u16be offset), data
+palette: 16 big-endian ST words      (right after the third section; §6.9)
+1790-byte trailer
+```
 
-### 6.6 `LEVn.MP3`
+| Section | count | alloc | contents |
+|---|---|---|---|
+| 0 | 100 | 10 000 (100 × 100) | **floor maps**: record *i* = `w*h` tile-id bytes for room *i* (row major, 0 = no tile), where `w`, `h` are bytes `+4`, `+5` of `LEVn.MP2` section-0 record *i*. The match `size == w*h` holds for ~98% of rooms in all nine levels; the others are 1-byte placeholders (27 of 100 records are empty in level 1). The loader inserts one empty column and row (11×11 for a 10×10 room) |
+| 1 | 100 | 32 008 | per-room records of byte ids (e.g. `06 00 37 38 39 00 00 00 18 17 16 …`, 42–122 bytes); sizes track the floor map sizes — probably walls/room furniture; not decoded |
+| 2 | 255 | 255 000 (255 × 1000) | 255 variable-size blocks (120 … 29 424 bytes) of big-endian words, e.g. `00 00 00 06 00 01 00 02 00 03 FF FF …`; not decoded |
 
-58 KB; starts `00 00 43 80` (17 280), zeros, then bit-mask style tables (`0003 C000
-000F F000 003F FC00 …`: progressively wider masks, probably clipping/edge masks)
-and graphics-like data. Not understood.
+Directory entries are `(size, offset)` with offsets contiguous in sections 1 and 2 of MP2; in
+MP1 section 0 of level 1 the last entry is `(320, 3002)`, past `data_len` (so use `data_len`
+for the section length). The trailer is a table of 8-byte records (`u16be id` + six
+spaces, then zeros) followed by `u16be id, u32be value` pairs ending with
+`0x4F 40000`, `0x50 45000`, `0x51 50000`, `0x52 60000` — probably per-object attributes
+(prices/scores?) or a script-compiler symbol table; not decoded.
+
+**Floor drawing** (verified; `room_draw_floor`, `CAD.EXE 1000:D1FA`): for each cell
+`(col, row)` of the room, tile id `t = map[row*w + col]`; if non-zero the 32×18
+tile `t` is drawn at screen position `(x0 + 16*(col-row), y0 + 8*(col+row))`
+(video offset `col*0x142 + row*0x13E`), rows top to bottom, OR-blitted with its
+mask. Rendering rooms this way reproduces the running game's floor
+(`tools/roomview.py`, `src/engine/rooms.c`; identical output for every room of all 14
+level directories, unit-tested).
+
+### 6.6 `LEVn.MP3` — *floor tiles, verified*
+
+```
+u32be tile_bytes (17 280 in level 1 = 60 tiles)
+tile_bytes / 288 tiles of 288 bytes; tile 0 is empty
+rest of the file (~41 KB)   not decoded
+```
+
+A tile is 32×18 pixels: 18 rows of 16 bytes; each row = two 16-pixel groups of four
+big-endian plane words (Atari-ST interleaved, plane 0 = colour bit 0 — like `.PC1`).
+The level loader (`CAD.EXE 1000:B7B5…B86D`, reading 288 bytes per tile with `mjm_read`)
+derives the mask as the OR of the four plane words and stores `mask + 4 planes`
+(5 × 72 = 360 bytes per tile, the same layout as the player sprites) at
+`36EF:000A + 360 * id`. Verified by finding the file bytes of tiles 1–3 in the RAM tiles
+and by rendering all 60 tiles (isometric diamonds with an edge: water, stepping
+stones, cave rock; in the Payoff paving and so on).
 
 ### 6.7 `ROUTINEn.TAD` and the script language
 
@@ -317,22 +343,20 @@ were provoked by walking the emulated player past objects.
 ### 6.9 Palette — *verified*
 
 The game uses one 16-colour palette (EGA mode 0Dh, DAC entries 0–15) stored as 16
-Atari-ST words (`0x0RGB`, 3 bits per channel, scaled `v*9` to the 6-bit DAC):
+Atari-ST words (`0x0RGB`, 3 bits per channel, scaled `v*9` to the 6-bit DAC). The
+base palette (Cadaver levels 1–5, Payoff levels 2 and 4):
 
 ```
 0000 0243 0400 0032 0310 0420 0111 0775 0555 0200 0752 0221 0333 0444 0531 0642
 ```
 
 It is in the executables as little-endian words (`CAD.EXE 1F17:F8C2`, `game_palette_st`)
-and **in every level's `MP1`, big endian**, directly after its three sections
-(`MP1` offsets `0x1C1B4`, `0x1E46E`, `0x1CCE2` for `DATA/1..3`, `0x19852` / `0x13484`
-for Payoff `TATA/3` / `TATA/4`), followed by a fixed 1790-byte trailer. Payoff
-level `TATA/3` has a *different* palette (`0000 0245 0610 0032 0310 0420 0111 0765 …`),
-so palettes are per level. (For `DATA/4–5` and `TATA/1–2` the section walk in 6.5
-does not reach the palette — their section headers differ — so it was not located
-there by offset; it can be found by searching.)
+and **in every level's `MP1`, big endian, right after the three sections** (§6.5; found
+in all nine levels). Payoff `TATA/1` and `TATA/3` differ slightly (entry 1: `0245`;
+`TATA/3` also `0610` for entry 2 and `0765` for entry 7). Per-level palette loading:
+`palette_set_from_st` (`1000:D4C6`).
 
-### 6.10 Room drawing — *observations only*
+### 6.10 Room drawing, other layers — *observations only*
 
 Traced in the harness while level 1's first room is built (ticks 737–760):
 
