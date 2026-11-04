@@ -789,6 +789,11 @@ void Game::getAt(int tx, int ty) {
 		int qty = _world.quantityOf(o);
 		int type = o.type, quality = o.quality, frame = o.frame;
 		bool litTorch = type == 0x5A && frame == 1;
+		// sub_2F7E3: a thing is free to take when it and what it holds carry the "free" bit of the status (0x01)
+		bool free = (o.status & 0x01) != 0;
+		for (const World::Obj &c : _world.objects)
+			if (!c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == pick && !(c.status & 0x01))
+				free = false;
 		World::Obj taken = o;
 		_world.spendMoves(actor, 3); // cmd_get: sub_26CC4(actor, 3)
 		_world.deleteObject(pick);
@@ -811,6 +816,26 @@ void Game::getAt(int tx, int ty) {
 							_world.objects[i].type = 0x1A4;
 					}
 			}
+		}
+		// cmd_get 3138F-3140F: taking what belongs to someone on the surface costs a point of karma; the first person who is on no side, awake, and can see it (within four squares) cries
+		// "Stop Thief!!!" and the town is alerted (sub_2CAFE), else it is "Stealing!!!"
+		if (!free && z == 0) {
+			ObjList &al = _world.actors;
+			if (al.globals.size() > 8)
+				al.globals[8] = (uint8_t)(al.globals[8] > 1 ? al.globals[8] - 1 : 0);
+			bool seen = false;
+			for (int i = 1; i < 0xE0 && !seen; ++i) {
+				int k = _world.actorObject(i);
+				if (k < 0 || _world.objects[k].deleted || (al.status[i] & 0x60) || (al.status[i] & 0x04))
+					continue;
+				if (std::abs((int)_world.objects[k].x - x) <= 4 && std::abs((int)_world.objects[k].y - y) <= 4 && _world.objects[k].z == z) {
+					message("\n\"Stop Thief!!!\"\n");
+					_combat.alertTownspeople();
+					seen = true;
+				}
+			}
+			if (!seen)
+				message("\nStealing!!!\n");
 		}
 	}
 	prompt();
