@@ -974,6 +974,7 @@ void Game::dropAt(int tx, int ty) {
 		} else {
 			_world.deleteObject(idx);
 		}
+		sfx(0xF);
 		message("\nIt broke!\n");
 		prompt();
 		return;

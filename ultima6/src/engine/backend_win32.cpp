@@ -71,12 +71,23 @@ public:
 		LeaveCriticalSection(&_lock);
 	}
 
+	void effect(const std::vector<int16_t> &samples) {
+		EnterCriticalSection(&_lock);
+		_effect = samples;
+		_effectPos = 0;
+		LeaveCriticalSection(&_lock);
+	}
+
 private:
 	enum { BUFFERS = 4, SAMPLES = 2048 };
 
 	void fill(int i) {
 		EnterCriticalSection(&_lock);
 		_player.render(_pcm[i], SAMPLES);
+		for (int n = 0; n < SAMPLES && _effectPos < _effect.size(); ++n, ++_effectPos) {
+			int v = _pcm[i][n] + _effect[_effectPos];
+			_pcm[i][n] = (int16_t)(v > 32767 ? 32767 : v < -32768 ? -32768 : v);
+		}
 		LeaveCriticalSection(&_lock);
 		waveOutWrite(_hwo, &_hdr[i], sizeof(WAVEHDR));
 	}
@@ -99,6 +110,8 @@ private:
 	WAVEHDR _hdr[BUFFERS];
 	int16_t _pcm[BUFFERS][SAMPLES];
 	MusicPlayer _player;
+	std::vector<int16_t> _effect;
+	size_t _effectPos = 0;
 };
 
 class Win32Backend : public Backend {
@@ -168,6 +181,12 @@ public:
 	void stopMusic() override {
 		if (_music)
 			_music->stop();
+	}
+
+	void playSound(const std::vector<int16_t> &samples) override {
+		if (!_music)
+			_music.reset(new MusicOutput);
+		_music->effect(samples);
 	}
 
 private:

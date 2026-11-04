@@ -48,6 +48,8 @@ public:
 	virtual void playMusic(const std::vector<uint8_t> &) {}
 	/** snd_stop. */
 	virtual void stopMusic() {}
+	/** A sound effect (Sfx::render) is mixed in over the music. */
+	virtual void playSound(const std::vector<int16_t> &) {}
 
 	int mouseX = 0, mouseY = 0; // where the last click was
 };

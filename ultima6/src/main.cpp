@@ -1,6 +1,7 @@
 #include "engine/backend.h"
 #include "engine/framebuffer.h"
 #include "engine/game_id.h"
+#include "engine/sfx.h"
 #include "files/music.h"
 #include "ultima6/ending.h"
 #include "ultima6/front_end.h"
@@ -149,6 +150,11 @@ int main(int argc, char **argv) {
 	}
 	Ultima6::Ultima6::Game game(world);
 	game.saveDir = saveDir;
+	Ultima6::BorlandRandom sfxRandom(7);
+	game.sound = [&](int effect, int param) {
+		if (!std::getenv("U6_NO_MUSIC"))
+			backend->playSound(Ultima6::Sfx::render(effect, param, sfxRandom));
+	};
 
 	bool running = true;
 	while (running) {

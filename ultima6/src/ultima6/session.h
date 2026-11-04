@@ -2,6 +2,7 @@
 #define ULTIMA6_ULTIMA6_SESSION_H
 
 #include "engine/backend.h"
+#include <functional>
 #include "ultima6/map_renderer.h"
 #include "ultima6/movement.h"
 #include "ultima6/actors.h"
@@ -13,6 +14,7 @@
 #include "ultima6/world.h"
 
 #include <memory>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -68,6 +70,8 @@ public:
 
 	/** Set when the Codex has been taken to the ending (use_vortex_cube): the front end then plays Ending. */
 	/** The music that goes with the place (sub_377C8): a track number for the list in MusicTrack names, 0 for none. */
+	/** Set by the host: plays sound effect `effect` of sub_36E85 with its first argument `param`. */
+	std::function<void(int, int)> sound;
 	int music() const {
 		return _music;
 	}
@@ -146,7 +150,11 @@ private:
 	void helpParty();
 	void avatarDied();
 	bool _combatMode = false;
-	int _music = 0; // the track that should be playing: 1 to 12 in the order of the list at ds:2955 (ULTIMA, BOOTUP, INTRO, CREATE, FOREST, HORNPIPE, ENGAGE, STONES, DUNGEON, BRIT, GARGOYLE, END), 0 none
+	int _music = 0;
+	void sfx(int effect, int param = 0) {
+		if (sound)
+			sound(effect, param);
+	} // the track that should be playing: 1 to 12 in the order of the list at ds:2955 (ULTIMA, BOOTUP, INTRO, CREATE, FOREST, HORNPIPE, ENGAGE, STONES, DUNGEON, BRIT, GARGOYLE, END), 0 none
 	void chooseMusic();
 	void drawGem(Framebuffer &screen) const;
 	bool _gem = false; // the overhead map of a gem is on the screen until a key is pressed
