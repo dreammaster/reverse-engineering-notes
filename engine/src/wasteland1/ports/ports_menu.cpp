@@ -2,6 +2,7 @@
 #include "wasteland1/ports/port.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/buttons.h"
+#include "wasteland1/charscreen.h"
 #include "wasteland1/combat.h"
 #include "wasteland1/combatmenu.h"
 #include "wasteland1/listmenu.h"
@@ -131,6 +132,10 @@ PORT(writeMemberAttribute) { writeMemberAttribute(m, r.b.b.l); }                
 PORT(writeMemberStats) { writeMemberStats(m); r.a.b.l = 0; r.d.x = 0; r.b.x = 0; }                      // 19506
 
 PORT(writeSummary) { writeSummary(m); }                                                  // 19362
+
+PORT(useItem) { useItem(m, r.a.b.l); }                                                   // 19202
+PORT(useItemScreen) { r.a.b.l = useItemScreen(m); }                                       // 19343
+PORT(characterInfo) { characterInfo(m, r.a.b.l); }                                        // 19130
 
 } // namespace rc
 } // namespace wl
