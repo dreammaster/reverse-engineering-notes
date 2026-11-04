@@ -369,10 +369,19 @@ pop ds; mov bx,27h; mov ax,2Ch; retf` followed at `+0x27` by
 `call word [078Ch]; retf`. i.e. the blob is loaded as a code segment, the game
 far-calls offset `0x10` to initialise it (it copies a 16-word table from the
 end of the blob and hands back BX=entry thunk, AX=data-table offset) and later
-calls the thunk, which dispatches through a pointer inside the blob. The bulk
-of the file after the stub is **not** x86 (looks like 16-bit tables and
-0xFFFF-terminated lists) — presumably the per-level ACL scripts / object
-behaviour tables.
+calls the thunk, which dispatches through a pointer inside the blob.
+
+**The rest of the blob is x86 code and data** (3.5–4.6 KB per level; `ndisasm -b 16` decodes it from
+`+0x3A0`, e.g. a routine at `+0x81` tests `[bp+0Fh]`, `[bp+0Ah]`, `[bp+0Eh]` of an object's position record, fetches script
+bytes with `cs lodsb` — `0x80`/`0x81` terminate/continue a script — and calls engine services through a far pointer at
+`ds:078E` with a service number in AX (`mov ax,40h … call far [078Eh]`). So per-level behaviour (creature AI, object animation
+commands, …) is **native code in the level's TAD segment**, not a bytecode: a faithful port needs those routines either
+translated by hand (they are small) or run by a minimal 16-bit interpreter.
+
+Evidence from the engine: the animation updater `sub_13BC5` (CAD.EXE 1000:3BC5) steps an object's frame script (§6.12). A script word whose
+low byte is `0xF9..0xFF` is not a frame number but a *command*: the updater calls `sub_19C64(ax = 3C77h, dx = 0xFF - byte)`
+which (far-)calls into the TAD segment (3C77h in the traced run) with the command number — `FD00` at the end of a script is
+command 2, `F9xx` command 6 and so on.
 
 The game also contains a bytecode interpreter (the in-house "ACL" language;
 INTRO's credits: *"cadaver uses an internal language … 'acl'. acl is copyright
