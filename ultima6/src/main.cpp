@@ -1,6 +1,7 @@
 #include "engine/backend.h"
 #include "engine/framebuffer.h"
 #include "engine/game_id.h"
+#include "files/music.h"
 #include "ultima6/ending.h"
 #include "ultima6/front_end.h"
 #include "ultima6/session.h"
@@ -11,6 +12,31 @@
 #include <cstring>
 #include <memory>
 #include <string>
+
+// Starts and stops the AdLib music as the game asks (the track numbers are those of the list at ds:2955 of GAME.EXE); U6_NO_MUSIC in the environment keeps it silent.
+class MusicSwitch {
+public:
+	MusicSwitch(Ultima6::Backend &backend, const std::string &dir) : _backend(backend), _dir(dir), _playing(0) {
+	}
+	void set(int track) {
+		static const char *const NAMES[12] = {"ULTIMA", "BOOTUP", "INTRO", "CREATE", "FOREST", "HORNPIPE", "ENGAGE", "STONES", "DUNGEON", "BRIT", "GARGOYLE", "END"};
+		if (track == _playing)
+			return;
+		_playing = track;
+		_backend.stopMusic();
+		if (track < 1 || track > 12 || std::getenv("U6_NO_MUSIC"))
+			return;
+		Ultima6::Bytes file;
+		Ultima6::MusicTrack t;
+		if (Ultima6::readFile(Ultima6::joinPath(_dir, std::string(NAMES[track - 1]) + ".M"), file) && t.load(file))
+			_backend.playMusic(t.data);
+	}
+
+private:
+	Ultima6::Backend &_backend;
+	std::string _dir;
+	int _playing;
+};
 
 static void usage(const char *prog) {
 	std::fprintf(stderr, "usage: %s <game directory> [--play] [--ending] [--save dir] [--keys <script>] [--shot file.png] [--scale n]\n", prog);
@@ -65,6 +91,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	Ultima6::Framebuffer screen;
+	MusicSwitch music(*backend, argv[1]);
 
 	// --ending: the ending alone, for a game of one year, two months and three days
 	if (endingOnly) {
@@ -74,6 +101,7 @@ int main(int argc, char **argv) {
 			return 1;
 		}
 		bool running = true;
+		music.set(12);
 		while (running) {
 			ending.render(screen);
 			backend->present(screen);
@@ -123,6 +151,7 @@ int main(int argc, char **argv) {
 
 	bool running = true;
 	while (running) {
+		music.set(game.music());
 		game.render(screen);
 		backend->present(screen);
 		int key = backend->waitKey();
@@ -137,6 +166,7 @@ int main(int argc, char **argv) {
 		Ultima6::Ultima6::Ending ending(argv[1], years, months, days);
 		if (ending.ok()) {
 			bool showing = true;
+			music.set(12);
 			while (showing) {
 				ending.render(screen);
 				backend->present(screen);
@@ -145,6 +175,7 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	music.set(0);
 	if (shot) {
 		game.render(screen);
 		if (!screen.savePng(shot, scale)) {

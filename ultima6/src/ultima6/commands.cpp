@@ -570,6 +570,7 @@ bool Game::boardOrLeave(int tx, int ty) {
 		_world.addToMap((int)_world.objects.size() - 1);
 		_aboard = false;
 		_shipBow = _shipStern = -1;
+		chooseMusic();
 		const ObjList &a = _world.actors;
 		for (int i = 0; i < a.partySize; ++i) {
 			int k = _world.actorObject(a.partyRoster[i]);
@@ -621,6 +622,7 @@ bool Game::boardOrLeave(int tx, int ty) {
 		int vx = b.x, vy = b.y;
 		_world.deleteObject(boardAt);
 		_aboard = true;
+		chooseMusic();
 		const ObjList &a = _world.actors;
 		for (int m = 1; m < a.partySize; ++m) {
 			int k = _world.actorObject(a.partyRoster[m]);
@@ -859,6 +861,7 @@ void Game::changeLevel(int nx, int ny, int nz) {
 	y = ny;
 	z = nz;
 	placeGates();
+	chooseMusic();
 }
 
 // Use: what the objects of a square do when used (the doors and ladders of the Use table; the rest answers "Not usable").
@@ -1139,6 +1142,7 @@ void Game::restCamp(int guard) {
 		x = _world.objects[lk].x;
 		y = _world.objects[lk].y;
 	}
+	chooseMusic(); // cmd_rest ends with sub_377C8
 }
 
 void Game::restKey(int key) {

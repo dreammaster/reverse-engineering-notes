@@ -1423,6 +1423,7 @@ void Game::toggleCombat() {
 	}
 	_combatMode = !_combatMode;
 	message(_combatMode ? "Begin combat!\n" : "Break off combat!\n");
+	chooseMusic(); // sub_2B0B8 plays ENGAGE, sub_2B1AC chooses again
 	for (int m = 1; m < a.partySize; ++m) {
 		int actor = a.partyRoster[m];
 		if (a.status[actor] & 0x10)

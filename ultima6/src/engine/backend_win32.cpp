@@ -3,12 +3,103 @@
 #include "engine/backend.h"
 
 #include <windows.h>
+#include <mmsystem.h>
+
+#include "engine/music_player.h"
 
 #include <deque>
+#include <memory>
 
 namespace Ultima6 {
 
 namespace {
+
+// The sound card: the AdLib driver (MusicPlayer) renders into four waveOut buffers from a thread of its own.
+class MusicOutput {
+public:
+	MusicOutput() : _hwo(nullptr), _thread(nullptr), _quit(false) {
+		InitializeCriticalSection(&_lock);
+		WAVEFORMATEX fmt = {};
+		fmt.wFormatTag = WAVE_FORMAT_PCM;
+		fmt.nChannels = 1;
+		fmt.nSamplesPerSec = Opl2::SAMPLE_RATE;
+		fmt.wBitsPerSample = 16;
+		fmt.nBlockAlign = 2;
+		fmt.nAvgBytesPerSec = fmt.nSamplesPerSec * 2;
+		_event = CreateEventA(nullptr, FALSE, FALSE, nullptr);
+		if (waveOutOpen(&_hwo, WAVE_MAPPER, &fmt, (DWORD_PTR)_event, 0, CALLBACK_EVENT) != MMSYSERR_NOERROR) {
+			_hwo = nullptr;
+			return;
+		}
+		for (int i = 0; i < BUFFERS; ++i) {
+			_hdr[i] = WAVEHDR();
+			_hdr[i].lpData = (LPSTR)_pcm[i];
+			_hdr[i].dwBufferLength = SAMPLES * 2;
+			waveOutPrepareHeader(_hwo, &_hdr[i], sizeof(WAVEHDR));
+			fill(i);
+		}
+		_thread = CreateThread(nullptr, 0, &MusicOutput::run, this, 0, nullptr);
+	}
+
+	~MusicOutput() {
+		_quit = true;
+		if (_thread) {
+			SetEvent(_event);
+			WaitForSingleObject(_thread, 2000);
+			CloseHandle(_thread);
+		}
+		if (_hwo) {
+			waveOutReset(_hwo);
+			for (int i = 0; i < BUFFERS; ++i)
+				waveOutUnprepareHeader(_hwo, &_hdr[i], sizeof(WAVEHDR));
+			waveOutClose(_hwo);
+		}
+		CloseHandle(_event);
+		DeleteCriticalSection(&_lock);
+	}
+
+	void play(const std::vector<uint8_t> &track) {
+		EnterCriticalSection(&_lock);
+		_player.stop();
+		_player.play(track);
+		LeaveCriticalSection(&_lock);
+	}
+
+	void stop() {
+		EnterCriticalSection(&_lock);
+		_player.stop();
+		LeaveCriticalSection(&_lock);
+	}
+
+private:
+	enum { BUFFERS = 4, SAMPLES = 2048 };
+
+	void fill(int i) {
+		EnterCriticalSection(&_lock);
+		_player.render(_pcm[i], SAMPLES);
+		LeaveCriticalSection(&_lock);
+		waveOutWrite(_hwo, &_hdr[i], sizeof(WAVEHDR));
+	}
+
+	static DWORD WINAPI run(LPVOID arg) {
+		MusicOutput *self = (MusicOutput *)arg;
+		while (!self->_quit) {
+			WaitForSingleObject(self->_event, 200);
+			for (int i = 0; i < BUFFERS && !self->_quit; ++i)
+				if (self->_hdr[i].dwFlags & WHDR_DONE)
+					self->fill(i);
+		}
+		return 0;
+	}
+
+	HWAVEOUT _hwo;
+	HANDLE _thread, _event;
+	volatile bool _quit;
+	CRITICAL_SECTION _lock;
+	WAVEHDR _hdr[BUFFERS];
+	int16_t _pcm[BUFFERS][SAMPLES];
+	MusicPlayer _player;
+};
 
 class Win32Backend : public Backend {
 public:
@@ -66,6 +157,17 @@ public:
 	void delay(unsigned ms) override {
 		Sleep(ms);
 		pump();
+	}
+
+	void playMusic(const std::vector<uint8_t> &track) override {
+		if (!_music)
+			_music.reset(new MusicOutput);
+		_music->play(track);
+	}
+
+	void stopMusic() override {
+		if (_music)
+			_music->stop();
 	}
 
 private:
@@ -144,6 +246,7 @@ private:
 	std::deque<int> _keys;
 	std::vector<uint32_t> _rgb;
 	Framebuffer _frame;
+	std::unique_ptr<MusicOutput> _music;
 };
 
 } // namespace

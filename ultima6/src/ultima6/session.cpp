@@ -42,6 +42,7 @@ Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(worl
 		scroll.setColours(0, world.paper.pixels[170 * world.paper.width + 200]); // black on the colour of the frame's message area
 	world.avatarPosition(x, y, z);
 	_leaderObject = world.actorObject(1);
+	chooseMusic();
 	_rules.questFlag = !world.actors.globals.empty() && world.actors.globals[0] != 0;
 	prompt();
 	const std::vector<uint8_t> &g = world.actors.globals;
@@ -112,6 +113,23 @@ void Game::minutePassed() {
 	_creatures.checkEggs(x, y, z, clock.hour);
 	if (_world.actors.hp[1] == 0 && (_world.actors.status[1] & 0x10))
 		avatarDied();
+}
+
+// sub_377C8: the track for where the party is: the gargoyle world (level 5) GARGOYLE, the surface one of STONES, ULTIMA, FOREST or BRIT by chance, any other level DUNGEON;
+// a ship or skiff under the leader HORNPIPE; combat ENGAGE. It is chosen again whenever the level, the vehicle or combat changes, and after resting.
+void Game::chooseMusic() {
+	if (_world.game != GameId::Ultima6) {
+		_music = 0;
+		return;
+	}
+	static const int SURFACE[4] = {8, 1, 5, 10};
+	int track = z == 5 ? 11 : z == 0 ? SURFACE[_rng.next() % 4] : 9;
+	int type = _leaderObject >= 0 ? _world.objects[_leaderObject].type : 0;
+	if (type == 0x19C || type == 0x19E)
+		track = 6;
+	if (_combatMode)
+		track = 7;
+	_music = track;
 }
 
 // sub_2A86A: the Avatar has died: darkness, a voice, and the Help spell (sub_1890C) brings the party back to Lord British's court

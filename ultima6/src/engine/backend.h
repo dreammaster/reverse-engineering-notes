@@ -3,7 +3,9 @@
 
 #include "engine/framebuffer.h"
 
+#include <cstdint>
 #include <string>
+#include <vector>
 
 namespace Ultima6 {
 
@@ -41,6 +43,11 @@ public:
 	/** Milliseconds. */
 	virtual unsigned ticks() = 0;
 	virtual void delay(unsigned ms) = 0;
+
+	/** Music: the AdLib track (MusicTrack::data) starts from its beginning; the one playing is stopped first. */
+	virtual void playMusic(const std::vector<uint8_t> &) {}
+	/** snd_stop. */
+	virtual void stopMusic() {}
 
 	int mouseX = 0, mouseY = 0; // where the last click was
 };
