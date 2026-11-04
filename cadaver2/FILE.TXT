@@ -1,0 +1,50 @@
+disk_space	1433600
+name	Cadaver
+ininame	Cadaver
+'source	a
+target	c
+setnoFkey
+id	D
+key	Joystick up,Up arrow,18432
+key	Joystick down,Down arrow,20480
+key	Joystick left,Left arrow,19200
+key	Joystick right,Right arrow,19712
+key	Joystick up left,Home,18176
+key	Joystick up right,Page Up,18688
+key	Joystick down left,End,20224
+key	Joystick down right,Page Down,20736
+key     Joystick fire,G,8807
+block	12
+block	13
+block	28
+block	57
+end_init
+'
+copy	-s*.* -t-n
+md	-t-n\data
+md      -t-n\tata
+copy    -sdata\*.* -t-n\data
+'
+md      -t-n\tata\1
+md      -t-n\tata\2
+md      -t-n\tata\3
+md      -t-n\tata\4
+copy    -s\tata\1\*.* -t-n\tata\1
+copy    -s\tata\2\*.* -t-n\tata\2
+copy    -s\tata\3\*.* -t-n\tata\3
+copy    -s\tata\4\*.* -t-n\tata\4
+'
+chg_dsk	2
+md	-t-n\data\1
+md	-t-n\data\2
+md	-t-n\data\3
+md	-t-n\data\4
+md	-t-n\data\5
+copy    -s2 -t-n
+copy    -s\data\1\*.* -t-n\data\1
+copy	-s\data\2\*.* -t-n\data\2
+copy	-s\data\3\*.* -t-n\data\3
+copy	-s\data\4\*.* -t-n\data\4
+copy	-s\data\5\*.* -t-n\data\5
+print	All Done. Press return key.
+wait
