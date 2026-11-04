@@ -93,7 +93,7 @@ and not carried, it works out whether it is inside the 40 x 40 window around the
 | 40 | Party panel buttons (the four tiles) do nothing; panel modes 0x91/0x92/0x9E (spell, inventory, other views) are not the original's; the status line below the map is missing | `stats_view.cpp` | own | `sub_16125`, `sub_13A67`, `sub_1D25C`, `sub_1E2B5`, `sub_2F969`. |
 | 41 | Save files: OBJLIST layout and OBJBLK record layout are the original's; **which block file holds inventory objects and contained objects, and their order, is my choice**; the original unloads/loads blocks as the party moves and keeps modified blocks as `.tmp` files; no `SAVED.GAM`-style names, no save slots | `world.cpp` `World::save` | partial | `save_objlist`, `update_object_blocks` (25911), `commit_objblk_tmp_files` (1C88A), `write_objblock`. |
 | 42 | Text window: simple word wrap at 17 columns and scrolling by whole lines | `text_window.cpp` | own | `scroll_print_wrapped`, `scroll_printf`, `sub_1753A`, `sub_17099` (input). |
-| 43 | Sound, music, the mouse and the animated intro are not implemented (the ending is approximated, #49-50) | - | - | see `u6_music.md`, `u6_drivers.md`, `u6_ending.md`. |
+| 43 | Sound, music and the animated intro are not implemented (the mouse: the command icons and the map only, `Game::mouseKey`, see its comment) (the ending is approximated, #49-50) | - | - | see `u6_music.md`, `u6_drivers.md`, `u6_ending.md`. |
 
 ## G. Things that were checked and are believed exact
 
