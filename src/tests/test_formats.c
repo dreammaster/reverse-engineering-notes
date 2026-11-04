@@ -10,6 +10,7 @@
 #include "../engine/sprites.h"
 #include "../engine/mp2.h"
 #include "../engine/rooms.h"
+#include "../engine/intro.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -245,6 +246,37 @@ int main(int argc, char **argv) {
 			checked++;
 		}
 		for (int f = 0; f < 3; f++) free(raw[f]);
+	}
+
+	for (size_t i = 0; i < sizeof(intro_vectors) / sizeof(intro_vectors[0]); i++) {
+		size_t n1, n2, n3, n4;
+		char pp[1024];
+		snprintf(pp, sizeof(pp), "%s/%s/LOADING2.PC1", root, intro_vectors[i].dir);
+		uint8_t *b1 = slurp(pp, &n1);
+		snprintf(pp, sizeof(pp), "%s/%s/FONT2.SPR", root, intro_vectors[i].dir);
+		uint8_t *b2 = slurp(pp, &n2);
+		snprintf(pp, sizeof(pp), "%s/%s/FLAME.DAT", root, intro_vectors[i].dir);
+		uint8_t *b3 = slurp(pp, &n3);
+		(void)n4;
+		if (b1 && b2 && b3) {
+			static Pc1Image bg;
+			static Font font;
+			static Flames fl;
+			static Screen scr;
+			int rc = pc1_decode(b1, n1, &bg);
+			if (rc == 0) rc = font_load(b2, n2, &font);
+			if (rc == 0) rc = flames_load(b3, n3, &fl);
+			unsigned h = 0x811C9DC5u;
+			if (rc == 0)
+				for (int lf = 0; lf < 6; lf++) {
+					intro_render_title(&scr, &bg, &font, &fl, strstr(intro_vectors[i].dir, "2") != NULL, lf);
+					for (int j = 0; j < SCREEN_W * SCREEN_H; j++)
+						h = (h ^ scr.pixels[j]) * 0x01000193u;
+				}
+			if (rc || h != intro_vectors[i].hash) { printf("FAIL intro %s: rc=%d\n", intro_vectors[i].dir, rc); failed++; }
+			checked++;
+		}
+		free(b1); free(b2); free(b3);
 	}
 
 	{

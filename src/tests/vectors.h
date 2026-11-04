@@ -194,3 +194,8 @@ static const RoomVector room_vectors[] = {
 	{"cadaver2/TATA/3", 70, 46, 0x8EFE7439U},
 	{"cadaver2/TATA/4", 70, 45, 0x41782F2AU},
 };
+typedef struct { const char *dir; unsigned hash; } IntroVector;
+static const IntroVector intro_vectors[] = {
+	{"cadaver1", 0xD35CEE8DU},
+	{"cadaver2", 0x8CDAD271U},
+};

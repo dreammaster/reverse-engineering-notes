@@ -1,7 +1,7 @@
 /*
  * Cadaver / Cadaver: The Payoff - reimplementation front end (SDL2).
  *
- *   cadaver [-g <game dir>] [--scene logo|loading|sprites|sprites2|room|tiles|walk] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]
+ *   cadaver [-g <game dir>] [--scene logo|loading|sprites|sprites2|room|tiles|walk|intro] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]
  *
  * Current state: asset pipeline + title/loading scenes. Gameplay is not
  * implemented yet (see docs/roadmap.md).
@@ -13,13 +13,14 @@
 #include "engine/mjm.h"
 #include "engine/mp2.h"
 #include "engine/rooms.h"
+#include "engine/intro.h"
 
 #include <SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-typedef enum { SCENE_LOGO, SCENE_LOADING, SCENE_SPRITES, SCENE_SPRITES_BIG, SCENE_ROOM, SCENE_TILES, SCENE_WALK, SCENE_COUNT } Scene;
+typedef enum { SCENE_LOGO, SCENE_LOADING, SCENE_SPRITES, SCENE_SPRITES_BIG, SCENE_ROOM, SCENE_TILES, SCENE_WALK, SCENE_INTRO, SCENE_COUNT } Scene;
 
 static int show_pc1(const GameFiles *g, const char *name, Screen *scr) {
 	uint8_t *data;
@@ -282,7 +283,33 @@ static int walk_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	return 0;
 }
 
+/* ---- the title scroll: LOADING2.PC1 + FONT2.SPR text + animated FLAME.DAT flames ---- */
+static Pc1Image g_intro_bg;
+static Font g_intro_font;
+static Flames g_intro_flames;
+static int g_intro_ok, g_intro_acc;   /* acc = flame phase in 1/100 frames */
+
+static int intro_draw(const GameFiles *g, Screen *scr) {
+	if (!g_intro_ok) {
+		uint8_t *a, *b, *c;
+		size_t la, lb, lc;
+		if (gamefiles_read(g, "loading2.pc1", -1, &a, &la) != 0) return -1;
+		if (gamefiles_read(g, "font2.spr", -1, &b, &lb) != 0) { free(a); return -1; }
+		if (gamefiles_read(g, "flame.dat", -1, &c, &lc) != 0) { free(a); free(b); return -1; }
+		int rc = pc1_decode(a, la, &g_intro_bg);
+		if (rc == 0) rc = font_load(b, lb, &g_intro_font);
+		if (rc == 0) rc = flames_load(c, lc, &g_intro_flames);
+		free(a); free(b); free(c);
+		if (rc) return -1;
+		g_intro_ok = 1;
+	}
+	intro_render_title(scr, &g_intro_bg, &g_intro_font, &g_intro_flames, g->id == GAME_PAYOFF, (g_intro_acc / 100) % 6);
+	return 0;
+}
+
 static int load_scene(const GameFiles *g, Scene s, Screen *scr) {
+	if (s == SCENE_INTRO)
+		return intro_draw(g, scr);
 	if (s == SCENE_WALK)
 		return walk_draw(&g_room, g, scr);
 	if (s == SCENE_TILES)
@@ -316,10 +343,10 @@ int main(int argc, char **argv) {
 			shot = argv[++i];
 		else if (!strcmp(argv[i], "--scene") && i + 1 < argc) {
 			++i;
-			scene = !strcmp(argv[i], "walk") ? SCENE_WALK : !strcmp(argv[i], "tiles") ? SCENE_TILES : !strcmp(argv[i], "room") ? SCENE_ROOM : !strcmp(argv[i], "loading") ? SCENE_LOADING : !strcmp(argv[i], "sprites") ? SCENE_SPRITES
+			scene = !strcmp(argv[i], "intro") ? SCENE_INTRO : !strcmp(argv[i], "walk") ? SCENE_WALK : !strcmp(argv[i], "tiles") ? SCENE_TILES : !strcmp(argv[i], "room") ? SCENE_ROOM : !strcmp(argv[i], "loading") ? SCENE_LOADING : !strcmp(argv[i], "sprites") ? SCENE_SPRITES
 			        : !strcmp(argv[i], "sprites2") ? SCENE_SPRITES_BIG : SCENE_LOGO;
 		} else {
-			fprintf(stderr, "usage: %s [-g gamedir] [--scene logo|loading|sprites|sprites2|room|tiles|walk] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]\n", argv[0]);
+			fprintf(stderr, "usage: %s [-g gamedir] [--scene logo|loading|sprites|sprites2|room|tiles|walk|intro] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]\n", argv[0]);
 			return 2;
 		}
 	}
@@ -381,6 +408,16 @@ int main(int argc, char **argv) {
 						SDL_SetWindowTitle(win, g_room.info);
 				}
 			}
+		}
+		if (scene == SCENE_INTRO) {
+			static Uint32 last_ms;
+			Uint32 now = SDL_GetTicks();
+			if (!last_ms) last_ms = now;
+			while (now - last_ms >= 20) {            /* ~50 Hz; the original advances the left flame by 2 or 3 frames per tick */
+				g_intro_acc += 228;
+				last_ms += 20;
+			}
+			load_scene(&g, scene, &scr);
 		}
 		if (scene == SCENE_WALK) {
 			static Uint32 last_ms;

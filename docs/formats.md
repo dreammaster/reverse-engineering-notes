@@ -86,12 +86,32 @@ Decompressed picture (`tools/pc1.py`):
 INTRO copies the palette to its palette table and writes the four plane words of
 each group to VGA planes 0..3 with the map-mask register (mode 0Dh, 320×200×16).
 
-## 4. `FONT2.SPR` — *partial*
+## 4. `FONT2.SPR`, `FLAME.DAT` and the title scroll — *verified*
 
-992 bytes = 31 glyphs × 32 bytes; each glyph is 8 rows × 4 bytes
-(one byte per bit-plane, bit 7 = leftmost pixel). Glyph order: `A`–`Z`
-followed by punctuation (`. , ? -` …). The planes encode fill/outline/shadow;
-exact colour assignment still to be pinned down from the text-drawing routine.
+Used by `INTRO.EXE`; the files are identical in both games, as are `LOADING2.PC1` and `LOGO.PC1`.
+Everything here was checked pixel for pixel against the running intro (0 differing pixels in a
+full 320×200 frame, `tools/intro.py`, `src/engine/intro.c`, unit-tested for both games).
+
+**`FONT2.SPR`**: 31 glyphs × 32 bytes, each 8 rows × 4 plane bytes (bit 7 = leftmost; colour =
+bits of the four plane bytes). Only the top-left **6×6** pixels are used, drawn **opaque**
+(the scroll colour is baked into the glyph; colour 0 only occurs outside the box). Order:
+`A`–`Z`, `.`, `,`, `?`, `-`, `'`. Text is upper-cased, advance 6 px, lines on a 6-px grid,
+space draws nothing.
+
+**`FLAME.DAT`**: 6 frames × 24 rows × 8 bytes (16 pixels per row as four big-endian plane
+words, ST interleaved), drawn as opaque 16×24 blocks (colour 0 = black — this wipes the static
+flame in the picture). Left flame at (14, 20), right flame at (296, 20). Animation (driven from
+the INT 8 handler at ~50 Hz; the original redraws as fast as it can): the left flame's frame
+advances by 2 or 3 (mod 6) per tick (about 2.28), the right flame shows frame `(left + 2) mod 6`
+(frames 2 and 4 are pixel-identical).
+
+**Title page** over `LOADING2.PC1`, text starting at x = 68, lines at y = 76, 82, 100, 106, 118, 130:
+`          cadaver` / `          -------` / `copyright nineteen ninety-one` /
+`    the bitmap brothers` / `          -------` / `  published by imageworks`
+(Cadaver 1) or `   published by renagade` (The Payoff). The story ("chapter thirteen — the story so
+far …") and the credits are further plain-text strings in `INTRO.EXE` (padded with spaces for
+centring); how those pages are sequenced is not yet analysed, and their text is not copied into
+this repository.
 
 ## 5. Language files `*.LNG` — *verified*
 

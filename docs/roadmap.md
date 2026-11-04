@@ -16,7 +16,7 @@ building oracles so later work can be *verified* rather than guessed.
 | Game detection / path resolution (Cadaver 1 vs Payoff, `DATA`/`TATA`, `?` disk placeholder, case-insensitivity) | **Done** (`src/engine/gamefiles.c`) |
 | SDL2 front end | Shows the title and scroll pictures of either game. **No gameplay.** |
 | Emulator harness + DOSBox capture | **Done** — runs the real game to the level-1 screen (see `docs/tools.md`) |
-| `FONT2.SPR` | Layout known (8×8, 4 plane bytes/row), colour mapping not pinned |
+| `FONT2.SPR`, `FLAME.DAT`, title scroll | **Done** — pixel-exact against the running intro; animated scene in the SDL app (`--scene intro`). The story/credits pages of the intro are not sequenced yet |
 | `*.LNG` text | **Done** — 6-bit packed text, Python + C, all 41 files verified, in-game strings confirmed in the emulator |
 | `PCMAN.DAT` (player sprites) | **Done** — directory + 5-plane records, Python + C, all 48 frames, viewer in the SDL app |
 | Palette | **Done** — 16 ST words, per level in `MP1` (all 9 levels) |
