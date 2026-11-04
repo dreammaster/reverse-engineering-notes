@@ -59,3 +59,15 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 ## 5. ScummVM integration, 6. Nuvie replacement
 
 - [ ] Not started.
+
+## 5. State after the fifth autonomous stretch (2026-11-05)
+
+- [x] Ultima VI: combat start (B key only), Drop, Move, horses (dismount), Talk refusals and keyword matching, the inventory doll with Ready / Unready, Look at a person, music (AdLib driver
+      and an OPL2 model through waveOut), PC-speaker effects (hits, glass, spells), three path searches a turn.
+- [x] Martian Dreams / Savage Empire: the party panel as MD's `sub_30B61` lays it out.
+- [ ] Open for Ultima VI: the animated title / BOOTUP sequence (U.EXE `title_sequence`), the other ~50 sound-effect call sites, the hand logic of the equipment slots (#72), the horse's second
+      sprite part, containers in the pack view, solo mode, `cmd_look` darkness and the rest of the partial entries of [approximations.md](approximations.md).
+- [ ] Open for Martian Dreams / Savage Empire: their own mechanics (barges, heat and cold, oxium and fuel lamps, dreams, the drawbridge text, powered levers: the strings of MD's `GAME.EXE`
+      from file offset 0x33000 list them), usable-object lists, panel colours, music (MD.TIM / MUSIC.LZC, Roland and AdLib), intros and endings.
+- [ ] Goals 5 and 6 (the ScummVM import, removing `nuvie/`, replacing every approximation) have not been started.
+
