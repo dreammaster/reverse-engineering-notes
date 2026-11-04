@@ -7,6 +7,7 @@
 #include "../engine/mjm.h"
 #include "../engine/pc1.h"
 #include "../engine/lng.h"
+#include "../engine/sprites.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -100,6 +101,43 @@ int main(int argc, char **argv) {
 		}
 		if (rc == 0)
 			lng_free(&t);
+		checked++;
+		free(in);
+		free(raw);
+	}
+
+	for (size_t i = 0; i < sizeof(sprite_vectors) / sizeof(sprite_vectors[0]); i++) {
+		snprintf(path, sizeof(path), "%s/%s", root, sprite_vectors[i].path);
+		size_t n, un;
+		uint8_t *in = slurp(path, &n), *raw = NULL;
+		if (!in)
+			continue;
+		static SpriteSet set;
+		int rc = mjm_unpack(in, n, &raw, &un);
+		if (rc == 0)
+			rc = pcman_load(raw, un, &set);
+		unsigned h = 0x811C9DC5u;
+		if (rc == 0) {
+			for (int k = 0; k < set.count; k++) {
+				const Sprite *sp = &set.sprites[k];
+				int hdr[4] = {sp->hot_x, sp->hot_y, sp->w, sp->h};
+				uint8_t b[12];
+				/* hot_x/hot_y are int16 little endian, w/h int32 little endian (matches the Python vector) */
+				b[0] = (uint8_t)hdr[0]; b[1] = (uint8_t)(hdr[0] >> 8);
+				b[2] = (uint8_t)hdr[1]; b[3] = (uint8_t)(hdr[1] >> 8);
+				for (int j = 0; j < 4; j++) { b[4 + j] = (uint8_t)(hdr[2] >> (8 * j)); b[8 + j] = (uint8_t)(hdr[3] >> (8 * j)); }
+				for (int j = 0; j < 12; j++)
+					h = (h ^ b[j]) * 0x01000193u;
+				for (int j = 0; j < sp->w * sp->h; j++)
+					h = (h ^ sp->pixels[j]) * 0x01000193u;
+			}
+		}
+		if (rc || set.count != sprite_vectors[i].count || h != sprite_vectors[i].hash) {
+			printf("FAIL %s: rc=%d\n", sprite_vectors[i].path, rc);
+			failed++;
+		}
+		if (rc == 0)
+			spriteset_free(&set);
 		checked++;
 		free(in);
 		free(raw);

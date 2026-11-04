@@ -406,6 +406,8 @@ class Vga:
         self.ac_idx = 0
         self.seq_idx = self.gc_idx = self.crtc_idx = 0
         self.mode = 3
+        self.read_trace = None   # optional callable(offset, size) for reads of the A000 window
+        self.write_trace = None
 
     def port_out(self, port, val):
         if port == 0x3C4:
@@ -429,6 +431,8 @@ class Vga:
             self.ac_flip ^= 1
 
     def mem_read(self, uc, off, size, user):
+        if self.read_trace:
+            self.read_trace(off, size)
         r = 0
         for i in range(size):
             a = (off + i) & 0xFFFF
@@ -445,6 +449,8 @@ class Vga:
         return r
 
     def mem_write(self, uc, off, size, value, user):
+        if self.write_trace:
+            self.write_trace(off, size, value)
         for i in range(size):
             self._wb((off + i) & 0xFFFF, (value >> (8 * i)) & 0xFF)
 

@@ -151,20 +151,39 @@ and sprite sheets in the top ~25 KB of each plane, and blits with the VGA latche
 (write mode 1) and AND/OR masks. Consequences: on-disk bitmaps are plane-separate
 (or ST-interleaved for `.PC1`), not chunky.
 
-### 6.2 `PCMAN.DAT` (the player's sprites) — *verified placement*
+### 6.2 `PCMAN.DAT` (the player's sprites) — *verified*
 
-Raw plane dumps, loaded unchanged into VRAM (found by matching emulator VRAM
-against the file):
+48 frames of the player character (walking in all directions, sword swings, …),
+identical in Cadaver 1 and 2. The unpacked file is two **raw VRAM plane dumps**,
+loaded unchanged into VRAM (found by matching emulator VRAM against the file):
 
-| File bytes | Destination |
-|---|---|
-| `0 … 24575` (24 576) | plane 2, VRAM offsets `A000h … FFFFh` |
-| `24576 … 41935` (17 360) | plane 3, VRAM offsets `A000h … E44Fh` |
+| File bytes | Destination | Sprites |
+|---|---|---|
+| `0 … 24575` (24 576) | plane 2, VRAM offsets `A000h … FFFFh` | 0–27 |
+| `24576 … 41935` (17 360) | plane 3, VRAM offsets `A000h … E44Fh` | 28–47 |
 
-Planes 0 and 1 of that region are zero, i.e. the sprites are 2-bit (colour
-= 4·p2 + 8·p3 → palette entries 0, 4, 8, 12). The sprites are **not** a plain
-40-byte-stride image (rendering them that way gives noise); frame rectangles
-come from `ANDATA.DAT`, which is not yet decoded.
+Each area starts with the **directory**: 48 × `u16le`, a paragraph offset per sprite
+(the directory itself fills the first 6 paragraphs; an `FFFF` follows the last entry).
+A directory word whose high byte is ≥ 6 refers to the plane 3 area (subtract `0600h`).
+Sprite data for entry `o` starts at byte `(o + 6) * 16` of its area:
+
+```
+i16le hot_x, i16le hot_y      small signed offsets (-6..+4); copied into the object by the loader
+u16le w                       width in 16-pixel words (always 2 -> 32 pixels)
+u16le h                       height in rows (38..45)
+5 bitplanes, one after the other, each h rows of 2*w bytes (MSB = leftmost pixel):
+    plane 0      transparency mask (1 = opaque; exactly the OR of the colour planes)
+    planes 1..4  colour bits 0..3
+(padded to a multiple of 16 bytes)
+```
+
+Colours index the game's 16-entry palette (§6.9). Verified by the game's own loader
+`sprite_load_from_vram` (`CAD.EXE 1000:8D86`; traced reading VRAM `A000h+(dir+6)*16`),
+by rendering all 48 frames (`tools/pcman.py`, `src/engine/sprites.c`; identical
+output, unit-tested for both games) and by comparing with the player in the
+running game (grey armour, brown boots). The loader copies `10·w·h + 4` words per
+sprite into RAM, i.e. more than the 5-plane record — it over-reads into the next
+record, presumably because the RAM sprite buffer is a fixed size; not investigated.
 
 ### 6.3 `ANDATA.DAT` — *container verified, contents unknown*
 
@@ -252,6 +271,24 @@ Ins `05`, Del `06`, End `80`. Keys not in the table are reported through
 `last_scancode`. Ctrl+C / Ctrl+Q are recorded in `abort_scancode`. The harness
 can inject scancodes (`Emu.scan_queue`), which is how the object names above
 were provoked by walking the emulated player past objects.
+
+### 6.9 Palette — *verified*
+
+The game uses one 16-colour palette (EGA mode 0Dh, DAC entries 0–15) stored as 16
+Atari-ST words (`0x0RGB`, 3 bits per channel, scaled `v*9` to the 6-bit DAC):
+
+```
+0000 0243 0400 0032 0310 0420 0111 0775 0555 0200 0752 0221 0333 0444 0531 0642
+```
+
+It is in the executables as little-endian words (`CAD.EXE 1F17:F8C2`, `game_palette_st`)
+and **in every level's `MP1`, big endian**, directly after its three sections
+(`MP1` offsets `0x1C1B4`, `0x1E46E`, `0x1CCE2` for `DATA/1..3`, `0x19852` / `0x13484`
+for Payoff `TATA/3` / `TATA/4`), followed by a fixed 1790-byte trailer. Payoff
+level `TATA/3` has a *different* palette (`0000 0245 0610 0032 0310 0420 0111 0765 …`),
+so palettes are per level. (For `DATA/4–5` and `TATA/1–2` the section walk in 6.5
+does not reach the palette — their section headers differ — so it was not located
+there by offset; it can be found by searching.)
 
 ## 7. Text strings recovered from the executables
 

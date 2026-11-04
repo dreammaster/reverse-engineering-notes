@@ -8,6 +8,7 @@ Everything here runs on Linux with Python 3 (`pillow`, `numpy`, `unicorn`),
 |---|---|
 | `tools/mjm.py` | Decode `mjm0/1/2` files (PKWARE DCL, RNC1). `python3 tools/mjm.py FILE...` prints sizes; import `mjm_unpack` for scripting. |
 | `tools/rnc1.py` | RNC method 1 decompressor (used by `mjm.py` and for the Cadaver 2 `.BIN` drivers). |
+| `tools/pcman.py` | `PCMAN.DAT` → sprite sheet PNG (`python3 tools/pcman.py cadaver1/DATA/PCMAN.DAT sheet.png`). |
 | `tools/lng.py` | `.LNG` language tables → text (`python3 tools/lng.py cadaver1/DATA/1/ENG1.LNG [index]`). |
 | `tools/mpsections.py` | Walks the section structure of `LEVn.MP2` and the block layout of `ANDATA.DAT`; flags the truncated Payoff file. |
 | `tools/pc1.py` | `*.PC1` → PNG (`python3 tools/pc1.py cadaver1/LOGO.PC1 out.png`). |

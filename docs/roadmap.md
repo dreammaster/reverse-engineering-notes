@@ -18,7 +18,10 @@ building oracles so later work can be *verified* rather than guessed.
 | Emulator harness + DOSBox capture | **Done** — runs the real game to the level-1 screen (see `docs/tools.md`) |
 | `FONT2.SPR` | Layout known (8×8, 4 plane bytes/row), colour mapping not pinned |
 | `*.LNG` text | **Done** — 6-bit packed text, Python + C, all 41 files verified, in-game strings confirmed in the emulator |
-| `LEVn.MP1/2/3`, `ANDATA.DAT`, `PCMAN.DAT`, `ROUTINEn.TAD` | Loaded into known places in memory; **formats not decoded** |
+| `PCMAN.DAT` (player sprites) | **Done** — directory + 5-plane records, Python + C, all 48 frames, viewer in the SDL app |
+| Palette | **Done** — 16 ST words, per level in `MP1` |
+| `LEVn.MP2` sections, `ANDATA` blocks | Structure known, contents not |
+| `LEVn.MP1`, `MP3`, `ROUTINEn.TAD` | Mostly undecoded |
 | Isometric renderer, objects, ACL interpreter, collision/AI, input, sound | **Not started** |
 | Cadaver 2 (Payoff) code differences | Not analysed (data differs only in `TATA/` and RNC-packed copies) |
 

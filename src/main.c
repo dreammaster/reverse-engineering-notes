@@ -1,7 +1,7 @@
 /*
  * Cadaver / Cadaver: The Payoff - reimplementation front end (SDL2).
  *
- *   cadaver [-g <game dir>] [--scene logo|loading] [--screenshot out.bmp]
+ *   cadaver [-g <game dir>] [--scene logo|loading|sprites|sprites2] [--screenshot out.bmp]
  *
  * Current state: asset pipeline + title/loading scenes. Gameplay is not
  * implemented yet (see docs/roadmap.md).
@@ -9,13 +9,15 @@
 #include "engine/gamefiles.h"
 #include "engine/pc1.h"
 #include "engine/screen.h"
+#include "engine/sprites.h"
+#include "engine/mjm.h"
 
 #include <SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-typedef enum { SCENE_LOGO, SCENE_LOADING, SCENE_COUNT } Scene;
+typedef enum { SCENE_LOGO, SCENE_LOADING, SCENE_SPRITES, SCENE_SPRITES_BIG, SCENE_COUNT } Scene;
 
 static int show_pc1(const GameFiles *g, const char *name, Screen *scr) {
 	uint8_t *data;
@@ -38,7 +40,50 @@ static int show_pc1(const GameFiles *g, const char *name, Screen *scr) {
 	return 0;
 }
 
+static void blit_sprite(Screen *scr, const Sprite *sp, int x, int y, int scale) {
+	for (int sy = 0; sy < sp->h * scale; sy++) {
+		for (int sx = 0; sx < sp->w * scale; sx++) {
+			int dx = x + sx, dy = y + sy;
+			uint8_t c = sp->pixels[(sy / scale) * sp->w + sx / scale];
+			if (c != SPRITE_TRANSPARENT && dx >= 0 && dx < SCREEN_W && dy >= 0 && dy < SCREEN_H)
+				scr->pixels[dy * SCREEN_W + dx] = c;
+		}
+	}
+}
+
+/* Player sprite sheet (PCMAN.DAT): page 0 = frames 0..39 at 1x, page 1 = frames 40..47 at 2x. */
+static int show_sprites(const GameFiles *g, Screen *scr, int big) {
+	uint8_t *data;
+	size_t len;
+	static SpriteSet set;
+	if (gamefiles_read_mjm(g, "data\\pcman.dat", -1, &data, &len) != 0) {
+		fprintf(stderr, "cannot read data/pcman.dat\n");
+		return -1;
+	}
+	int rc = pcman_load(data, len, &set);
+	free(data);
+	if (rc) {
+		fprintf(stderr, "pcman.dat: decode error %d\n", rc);
+		return -1;
+	}
+	memset(scr, 0, sizeof(*scr));
+	for (int i = 0; i < 16; i++)
+		st_word_to_rgb(game_palette_st[i], scr->palette[i]);
+	memset(scr->pixels, 12, sizeof(scr->pixels));
+	if (!big) {
+		for (int i = 0; i < 40 && i < set.count; i++)
+			blit_sprite(scr, &set.sprites[i], (i % 10) * 32, (i / 10) * 48 + 2, 1);
+	} else {
+		for (int i = 40; i < set.count; i++)
+			blit_sprite(scr, &set.sprites[i], ((i - 40) % 4) * 80, ((i - 40) / 4) * 98 + 2, 2);
+	}
+	spriteset_free(&set);
+	return 0;
+}
+
 static int load_scene(const GameFiles *g, Scene s, Screen *scr) {
+	if (s == SCENE_SPRITES || s == SCENE_SPRITES_BIG)
+		return show_sprites(g, scr, s == SCENE_SPRITES_BIG);
 	return show_pc1(g, s == SCENE_LOGO ? "logo.pc1" : "loading2.pc1", scr);
 }
 
@@ -53,9 +98,10 @@ int main(int argc, char **argv) {
 			shot = argv[++i];
 		else if (!strcmp(argv[i], "--scene") && i + 1 < argc) {
 			++i;
-			scene = !strcmp(argv[i], "loading") ? SCENE_LOADING : SCENE_LOGO;
+			scene = !strcmp(argv[i], "loading") ? SCENE_LOADING : !strcmp(argv[i], "sprites") ? SCENE_SPRITES
+			        : !strcmp(argv[i], "sprites2") ? SCENE_SPRITES_BIG : SCENE_LOGO;
 		} else {
-			fprintf(stderr, "usage: %s [-g gamedir] [--scene logo|loading] [--screenshot out.bmp]\n", argv[0]);
+			fprintf(stderr, "usage: %s [-g gamedir] [--scene logo|loading|sprites|sprites2] [--screenshot out.bmp]\n", argv[0]);
 			return 2;
 		}
 	}

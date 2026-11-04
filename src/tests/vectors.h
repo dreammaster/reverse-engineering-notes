@@ -155,3 +155,8 @@ static const LngVector lng_vectors[] = {
 	{"cadaver2/TATA/4/FRE4.LNG", 303, 0x2594012CU},
 	{"cadaver2/TATA/4/GER4.LNG", 305, 0x0D594C2EU},
 };
+typedef struct { const char *path; int count; unsigned hash; } SpriteVector;
+static const SpriteVector sprite_vectors[] = {
+	{"cadaver1/DATA/PCMAN.DAT", 48, 0x6FE6F421U},
+	{"cadaver2/DATA/PCMAN.DAT", 48, 0x6FE6F421U},
+};
