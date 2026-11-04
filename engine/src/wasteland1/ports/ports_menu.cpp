@@ -137,5 +137,9 @@ PORT(useItem) { useItem(m, r.a.b.l); }                                          
 PORT(useItemScreen) { r.a.b.l = useItemScreen(m); }                                       // 19343
 PORT(characterInfo) { characterInfo(m, r.a.b.l); }                                        // 19130
 
+PORT(cycleGroups) { cycleGroups(m, false); }                                              // 160A8
+PORT(cycleGroupsFromOrigin) { cycleGroups(m, true); }                                     // 160DC
+PORT(deleteCharacterMenu) { deleteCharacterMenu(m); }                                     // 1A430
+
 } // namespace rc
 } // namespace wl

@@ -10,6 +10,8 @@
 #include "wasteland1/rules.h"
 #include "wasteland1/text.h"
 #include "wasteland1/ui.h"
+#include "wasteland1/mapcells.h"
+#include "wasteland1/movement.h"
 
 namespace wl {
 
@@ -1089,6 +1091,48 @@ confirm:   // 1C9B9
 		if (key == 'Y') return;
 		if (key == 'N') { deleteCharacter(m, D(memberVar)); return; }
 	}
+}
+
+
+void cycleGroups(Machine &m, bool startWithOriginal) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	constexpr uint16_t current = 0xA6C3, origin = 0xA6C2;
+	if (!startWithOriginal) {
+		D(current) = D(uint16_t(g::saved2 + g::s2::activePartyGroup));
+		D(origin) = D(current);
+	} else if (!switchToGroup(m, D(origin))) {
+		call(m, 0x63C1);
+		return;
+	}
+	for (;;) {   // 160B1
+		uint8_t next = D(current) == D(uint16_t(g::saved2 + g::s2::totalPartyGroups)) ? 0 : uint8_t(D(current) + 1);
+		D(current) = next;
+		uint8_t group = next;
+		if (next == D(origin)) {   // all the other groups were refused: let a step of time pass
+			advanceTime(m);
+			drawStatusBar(m);
+			group = D(origin);
+		}
+		if (!switchToGroup(m, group)) {
+			call(m, 0x63C1);
+			return;
+		}
+	}
+}
+
+void deleteCharacterMenu(Machine &m) {
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	if (D(uint16_t(g::saved2 + g::s2::membersInGroup)) == 0) return;
+	deleteCharacterText(m, 5);
+	const uint8_t pick = pickGroupMember(m, false);
+	if (pick == 0) return;
+	D(0xCF1E) = pick;
+	setCurrentCharacter(m, pick);
+	deleteCharacterText(m, 6);
+	m.setD16(g::buttonMask1, 0x0004);
+	m.setD16(g::buttonMask2, 0);
+	waitForKeypress(m);
+	if (D(g::lastKey) == 'Y') deleteCharacter(m, D(0xCF1E));
 }
 
 } // namespace wl

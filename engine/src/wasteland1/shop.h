@@ -60,4 +60,11 @@ bool creationRow(Machine &m, uint8_t skill);
 // 1C6C9: the "create character" screen (the oracle and native runs only agree on dice rolled before the first keyboard poll: each poll stirs the generator with the portrait timer tick of 190F8): rolls attributes, asks name, sex and nationality, spends the skill points
 void createCharacter(Machine &m);
 
+// 1A3E1: message `id` of the roster texts
+void deleteCharacterText(Machine &m, uint8_t id);
+// 160A8 / 160DC: switches to the next group that can act (letting time pass when none can)
+void cycleGroups(Machine &m, bool startWithOriginal);
+// 1A430: the "delete character" menu
+void deleteCharacterMenu(Machine &m);
+
 } // namespace wl
