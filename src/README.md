@@ -12,7 +12,7 @@ Work in progress. Currently:
 | `engine/lng.[ch]` | `.LNG` language string tables (6-bit packed text) |
 | `engine/gamefiles.[ch]` | detects Cadaver / Cadaver: The Payoff, resolves DOS-style paths case-insensitively, loads + unpacks files |
 | `engine/screen.h` | 320×200 indexed framebuffer + palette |
-| `main.c` | SDL2 front end (title / scroll pictures and the player sprite sheet; Esc quits, any key switches scene; `--scene logo|loading|sprites|sprites2|room|tiles [--level N --room R --tata --scroll Y]`; in the room scene PgUp/PgDn = room, `[`/`]` = level, `T` = DATA/TATA (Payoff), arrows scroll) |
+| `main.c` | SDL2 front end (title / scroll pictures and the player sprite sheet; Esc quits, any key switches scene; `--scene logo|loading|sprites|sprites2|room|tiles|walk [--level N --room R --tata --scroll Y --sim right:30,down:10]`; in the room scene PgUp/PgDn = room, `[`/`]` = level, `T` = DATA/TATA (Payoff), arrows scroll; in the walk scene the arrow keys move the player along the room axes (headless: `--sim`)) |
 | `tools/cadaver_unpack.c` | command-line unpacker (`cadaver_unpack in out`, `-t` to test) |
 | `tests/` | `test_formats` compares the decoders with vectors from the Python reference (`tools/gen_test_vectors.py`) |
 

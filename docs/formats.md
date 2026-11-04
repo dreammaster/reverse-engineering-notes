@@ -395,6 +395,28 @@ Traced in the harness while level 1's first room is built (ticks 737–760):
   unknown. The loader copies a sprite column-wise into page 0 (`1000:8D55–8D70`,
   2392 bytes per plane at tick 158); not yet understood.
 
+### 6.11 Player movement and animation — *observed in the running game*
+
+Measured in the emulator harness on level 1 room 0 by logging the sprite number passed
+to `sprite_load_from_vram` and by template-matching the player's sprite in the frames
+(exact pixel matches, score 1.0), holding each key for 25 and 50 timer ticks (one tick
+= one INT 8, ~50 Hz):
+
+| Key (bit) | Walk cycle (PCMAN sprite numbers) | Idle frame after stopping | Screen motion per 25 ticks |
+|---|---|---|---|
+| Right (08) | 0, 1, 2, 3 | 16 | (+24, +12) — along +column (lower right) |
+| Left (04) | 7, 6, 5, 4 | 21 | up-left (blocked after a few steps in the test) |
+| Down (02) | 11, 10, 9, 8 | 26 | (−24, +12) — along +row (lower left) |
+| Up (01) | 12, 13, 14, 15 | 31 | (+24, −13) — upper right |
+| Up+Right, Down+Right (PgUp / PgDn) | same frames as Right / Down | 16 / 26 | — |
+
+So the four keys move along the four isometric grid axes (not along screen axes): about
+1 pixel horizontally and ½ pixel vertically per tick. The walk cycle advances every
+~6 ticks. The idle frames form 5-frame sets (16–20 right, 21–25 left, 26–30 down,
+31–35 up); frames 36–47 are other actions (not yet identified, probably sword swings /
+taking damage). In the first frame of level 1 the standing player (sprite 16) is at
+screen (148, 32), i.e. on floor tile (0,0) of the 10×10 room 0, whose top-left is at (144, 29).
+
 ## 7. Text strings recovered from the executables
 
 INTRO.EXE contains the plain-text story ("chapter thirteen — the story so far

@@ -1,7 +1,7 @@
 /*
  * Cadaver / Cadaver: The Payoff - reimplementation front end (SDL2).
  *
- *   cadaver [-g <game dir>] [--scene logo|loading|sprites|sprites2|room|tiles] [--level N --room R --tata --scroll Y] [--screenshot out.bmp]
+ *   cadaver [-g <game dir>] [--scene logo|loading|sprites|sprites2|room|tiles|walk] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]
  *
  * Current state: asset pipeline + title/loading scenes. Gameplay is not
  * implemented yet (see docs/roadmap.md).
@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef enum { SCENE_LOGO, SCENE_LOADING, SCENE_SPRITES, SCENE_SPRITES_BIG, SCENE_ROOM, SCENE_TILES, SCENE_COUNT } Scene;
+typedef enum { SCENE_LOGO, SCENE_LOADING, SCENE_SPRITES, SCENE_SPRITES_BIG, SCENE_ROOM, SCENE_TILES, SCENE_WALK, SCENE_COUNT } Scene;
 
 static int show_pc1(const GameFiles *g, const char *name, Screen *scr) {
 	uint8_t *data;
@@ -206,7 +206,85 @@ static int tiles_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	return 0;
 }
 
+/* ---- walk demo: the room floor plus the animated player (no collision data yet; stays on the floor area) ---- */
+enum { DIR_RIGHT, DIR_LEFT, DIR_DOWN, DIR_UP };
+typedef struct {
+	int x, y;            /* sprite top-left on screen */
+	int dir, moving, anim, tick;
+	int init_room;
+	SpriteSet set;
+	int set_ok;
+} Walker;
+static Walker g_walk;
+
+/* PCMAN sprite numbers observed in the running game (docs/formats.md 6.11) */
+static const int walk_frames[4][4] = {{0, 1, 2, 3}, {7, 6, 5, 4}, {11, 10, 9, 8}, {12, 13, 14, 15}};
+static const int idle_frame[4] = {16, 21, 26, 31};
+
+static int walker_in_room(const Walker *wk, int gx, int gy, int w, int h) {
+	int h_spr = wk->set.sprites[0].h ? 42 : 42;
+	double fx = wk->x + 16, fy = wk->y + h_spr - 2;
+	double cx = (fx - gx) / 16.0, cy = (fy - gy - 9) / 8.0;
+	double col = (cx - 1 + cy) / 2.0, row = (cy - (cx - 1)) / 2.0;
+	return col >= 0 && col < w && row >= 0 && row < h;
+}
+
+/* one 50 Hz game tick; dirs: bit0 up, bit1 down, bit2 left, bit3 right (the game's own input bits) */
+static void walker_tick(Walker *wk, RoomView *rv, int keys) {
+	int w = 0, h = 0, gx = 0, gy = 0;
+	if (rv->ok && rv->mp2.sec[0].rec[rv->room] && rv->mp2.sec[0].len[rv->room] >= 6) {
+		w = rv->mp2.sec[0].rec[rv->room][4];
+		h = rv->mp2.sec[0].rec[rv->room][5];
+		floor_origin(w, h, &gx, &gy);
+	}
+	wk->tick++;
+	int dx = 0, dy = 0, dir = -1;
+	if (keys & 8) { dir = DIR_RIGHT; dx = 1; dy = wk->tick & 1; }
+	else if (keys & 4) { dir = DIR_LEFT; dx = -1; dy = -(wk->tick & 1); }
+	else if (keys & 2) { dir = DIR_DOWN; dx = -1; dy = wk->tick & 1; }
+	else if (keys & 1) { dir = DIR_UP; dx = 1; dy = -(wk->tick & 1); }
+	if (dir < 0) { wk->moving = 0; wk->anim = 0; return; }
+	wk->dir = dir;
+	Walker t = *wk;
+	t.x += dx; t.y += dy;
+	if (w == 0 || walker_in_room(&t, gx, gy, w, h)) { wk->x = t.x; wk->y = t.y; }
+	wk->moving = 1;
+	if (wk->tick % 6 == 0) wk->anim = (wk->anim + 1) & 3;
+}
+
+static int walk_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
+	if (!g_walk.set_ok) {
+		uint8_t *data; size_t len;
+		if (gamefiles_read_mjm(g, "data\\pcman.dat", -1, &data, &len) != 0) return -1;
+		int rc = pcman_load(data, len, &g_walk.set);
+		free(data);
+		if (rc) return -1;
+		g_walk.set_ok = 1;
+	}
+	int sx = rv->scroll_x, sy = rv->scroll_y;
+	rv->scroll_x = rv->scroll_y = 0;
+	if (roomview_draw(rv, g, scr) != 0) { rv->scroll_x = sx; rv->scroll_y = sy; return -1; }
+	rv->scroll_x = sx; rv->scroll_y = sy;
+	if (g_walk.init_room != 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata) {
+		int w = 10, h = 10, gx = 0, gy = 0;
+		const uint8_t *rec = rv->mp2.sec[0].rec[rv->room];
+		if (rec && rv->mp2.sec[0].len[rv->room] >= 6) { w = rec[4]; h = rec[5]; }
+		if (floor_origin(w, h, &gx, &gy) != 0) { gx = 144; gy = 29; }
+		g_walk.x = gx + 4; g_walk.y = gy + 3;      /* (148, 32) for room 0 of level 1, as in the original */
+		g_walk.dir = DIR_RIGHT; g_walk.moving = 0; g_walk.anim = 0;
+		g_walk.init_room = 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata;
+	}
+	int f = g_walk.moving ? walk_frames[g_walk.dir][g_walk.anim] : idle_frame[g_walk.dir];
+	const Sprite *sp = &g_walk.set.sprites[f];
+	blit_sprite(scr, sp, g_walk.x + sp->hot_x, g_walk.y + sp->hot_y, 1);
+	snprintf(rv->info, sizeof(rv->info), "walk demo: %s level %d room %d - arrows move along the room axes",
+	         rv->use_tata ? "TATA" : "DATA", rv->level, rv->room);
+	return 0;
+}
+
 static int load_scene(const GameFiles *g, Scene s, Screen *scr) {
+	if (s == SCENE_WALK)
+		return walk_draw(&g_room, g, scr);
 	if (s == SCENE_TILES)
 		return tiles_draw(&g_room, g, scr);
 	if (s == SCENE_ROOM)
@@ -219,6 +297,7 @@ static int load_scene(const GameFiles *g, Scene s, Screen *scr) {
 int main(int argc, char **argv) {
 	const char *dir = ".";
 	const char *shot = NULL;
+	const char *sim = NULL;  /* headless walk simulation: right:30,down:10 */
 	Scene scene = SCENE_LOGO;
 	for (int i = 1; i < argc; i++) {
 		if (!strcmp(argv[i], "-g") && i + 1 < argc)
@@ -229,16 +308,18 @@ int main(int argc, char **argv) {
 			g_room.room = atoi(argv[++i]);
 		else if (!strcmp(argv[i], "--tata"))
 			g_room.use_tata = 1;
+		else if (!strcmp(argv[i], "--sim") && i + 1 < argc)
+			sim = argv[++i];
 		else if (!strcmp(argv[i], "--scroll") && i + 1 < argc)
 			g_room.scroll_y = atoi(argv[++i]);
 		else if (!strcmp(argv[i], "--screenshot") && i + 1 < argc)
 			shot = argv[++i];
 		else if (!strcmp(argv[i], "--scene") && i + 1 < argc) {
 			++i;
-			scene = !strcmp(argv[i], "tiles") ? SCENE_TILES : !strcmp(argv[i], "room") ? SCENE_ROOM : !strcmp(argv[i], "loading") ? SCENE_LOADING : !strcmp(argv[i], "sprites") ? SCENE_SPRITES
+			scene = !strcmp(argv[i], "walk") ? SCENE_WALK : !strcmp(argv[i], "tiles") ? SCENE_TILES : !strcmp(argv[i], "room") ? SCENE_ROOM : !strcmp(argv[i], "loading") ? SCENE_LOADING : !strcmp(argv[i], "sprites") ? SCENE_SPRITES
 			        : !strcmp(argv[i], "sprites2") ? SCENE_SPRITES_BIG : SCENE_LOGO;
 		} else {
-			fprintf(stderr, "usage: %s [-g gamedir] [--scene logo|loading|sprites|sprites2|room|tiles] [--level N --room R --tata --scroll Y] [--screenshot out.bmp]\n", argv[0]);
+			fprintf(stderr, "usage: %s [-g gamedir] [--scene logo|loading|sprites|sprites2|room|tiles|walk] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]\n", argv[0]);
 			return 2;
 		}
 	}
@@ -281,11 +362,11 @@ int main(int argc, char **argv) {
 				int changed = 1;
 				if (k == SDLK_ESCAPE)
 					running = 0;
-				else if (scene == SCENE_ROOM && k == SDLK_PAGEDOWN) { g_room.room++; g_room.scroll_x = g_room.scroll_y = 0; }
-				else if (scene == SCENE_ROOM && k == SDLK_PAGEUP) { g_room.room--; g_room.scroll_x = g_room.scroll_y = 0; }
-				else if ((scene == SCENE_ROOM || scene == SCENE_TILES) && k == SDLK_RIGHTBRACKET) { g_room.level = g_room.level % (g_room.use_tata ? 4 : 5) + 1; g_room.room = 0; }
-				else if ((scene == SCENE_ROOM || scene == SCENE_TILES) && k == SDLK_LEFTBRACKET) { g_room.level = (g_room.level + (g_room.use_tata ? 2 : 3)) % (g_room.use_tata ? 4 : 5) + 1; g_room.room = 0; }
-				else if ((scene == SCENE_ROOM || scene == SCENE_TILES) && k == SDLK_t && g.id == GAME_PAYOFF) { g_room.use_tata ^= 1; g_room.level = 1; g_room.room = 0; }
+				else if ((scene == SCENE_ROOM || scene == SCENE_WALK) && k == SDLK_PAGEDOWN) { g_room.room++; g_room.scroll_x = g_room.scroll_y = 0; }
+				else if ((scene == SCENE_ROOM || scene == SCENE_WALK) && k == SDLK_PAGEUP) { g_room.room--; g_room.scroll_x = g_room.scroll_y = 0; }
+				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK) && k == SDLK_RIGHTBRACKET) { g_room.level = g_room.level % (g_room.use_tata ? 4 : 5) + 1; g_room.room = 0; }
+				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK) && k == SDLK_LEFTBRACKET) { g_room.level = (g_room.level + (g_room.use_tata ? 2 : 3)) % (g_room.use_tata ? 4 : 5) + 1; g_room.room = 0; }
+				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK) && k == SDLK_t && g.id == GAME_PAYOFF) { g_room.use_tata ^= 1; g_room.level = 1; g_room.room = 0; }
 				else if (scene == SCENE_ROOM && k == SDLK_LEFT) g_room.scroll_x -= 16;
 				else if (scene == SCENE_ROOM && k == SDLK_RIGHT) g_room.scroll_x += 16;
 				else if ((scene == SCENE_ROOM || scene == SCENE_TILES) && k == SDLK_UP) g_room.scroll_y -= 16;
@@ -296,10 +377,35 @@ int main(int argc, char **argv) {
 					changed = 0;
 				if (changed && k != SDLK_ESCAPE) {
 					load_scene(&g, scene, &scr);
-					if (scene == SCENE_ROOM || scene == SCENE_TILES)
+					if (scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK)
 						SDL_SetWindowTitle(win, g_room.info);
 				}
 			}
+		}
+		if (scene == SCENE_WALK) {
+			static Uint32 last_ms;
+			Uint32 now = SDL_GetTicks();
+			if (!last_ms) last_ms = now;
+			const Uint8 *ks = SDL_GetKeyboardState(NULL);
+			int keys = (ks[SDL_SCANCODE_UP] ? 1 : 0) | (ks[SDL_SCANCODE_DOWN] ? 2 : 0) | (ks[SDL_SCANCODE_LEFT] ? 4 : 0) |
+			           (ks[SDL_SCANCODE_RIGHT] ? 8 : 0);
+			while (now - last_ms >= 20) {            /* the game runs at ~50 Hz */
+				walker_tick(&g_walk, &g_room, keys);
+				last_ms += 20;
+			}
+			if (sim && frames == 0) {                 /* headless: --sim right:30,down:10 */
+				for (const char *c = sim; *c;) {
+					int bits = !strncmp(c, "right", 5) ? 8 : !strncmp(c, "left", 4) ? 4 : !strncmp(c, "down", 4) ? 2 : !strncmp(c, "up", 2) ? 1 : 0;
+					const char *colon = strchr(c, ':');
+					if (!colon) break;
+					for (int n = atoi(colon + 1); n > 0; n--)
+						walker_tick(&g_walk, &g_room, bits);
+					c = strchr(colon, ',');
+					if (!c) break;
+					c++;
+				}
+			}
+			load_scene(&g, scene, &scr);
 		}
 		screen_to_rgb32(&scr, rgb);
 		SDL_UpdateTexture(tex, NULL, rgb, SCREEN_W * 4);
