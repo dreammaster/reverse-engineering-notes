@@ -27,6 +27,8 @@ struct GameTables {
 	int classCount = 0;
 	const CreatureStats *creatures = nullptr;
 	int creatureCount = 0;
+	int eggType = 335;         // the object that hatches the creatures round it (Ultima VI 0x14F, Martian Dreams 0x1D2, Savage Empire 0xE6)
+	bool u6Creatures = true;   // creatures are told by their object type being 342 or more (or 98), else by the creature table
 	std::vector<TypeValue> damage, range, armour; // weapon_damage, weapon_range and armour class lists
 };
 

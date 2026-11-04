@@ -1,4 +1,5 @@
 #include "ultima6/creatures.h"
+#include "ultima6/game_tables.h"
 
 #include <algorithm>
 #include <cstdlib>
@@ -31,7 +32,7 @@ void Creatures::scan() {
 	_eggs.clear();
 	for (size_t i = 0; i < _world.objects.size(); ++i) {
 		const World::Obj &o = _world.objects[i];
-		if (o.type == EGG && o.onMap() && !o.deleted)
+		if (o.type == activeTables().eggType && o.onMap() && !o.deleted)
 			_eggs.push_back((int)i);
 	}
 	_active.assign(_eggs.size(), false);
@@ -110,7 +111,7 @@ void Creatures::hatch(int egg, int hour) {
 		else if (e.quantity != 100)
 			qty = (_rng.next() % qty) + 1;
 		for (int n = 0; n < qty; ++n) {
-			if (o.type >= FIRST_CREATURE || o.type == 98 || o.quality != 0)
+			if (activeTables().u6Creatures ? (o.type >= FIRST_CREATURE || o.type == 98 || o.quality != 0) : Combat::stats(o.type) != nullptr)
 {
 				int actor = spawn(o.type, o.quality, e.x, e.y, e.z);
 				// the egg's quality names the side of what hatches: quality % 10 - 1 is shifted into the status bits 0x60 (sub_366B0 36793-36941)

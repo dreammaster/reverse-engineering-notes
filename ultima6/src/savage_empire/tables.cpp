@@ -20,6 +20,8 @@ const GameTables &tables() {
 	t.damage.assign(SE_DAMAGE, SE_DAMAGE + sizeof(SE_DAMAGE) / sizeof(SE_DAMAGE[0]));
 	t.range.assign(SE_RANGE, SE_RANGE + sizeof(SE_RANGE) / sizeof(SE_RANGE[0]));
 	t.armour.assign(SE_ARMOUR, SE_ARMOUR + sizeof(SE_ARMOUR) / sizeof(SE_ARMOUR[0]));
+	t.eggType = 0xE6;
+	t.u6Creatures = false;
 	return t;
 }
 
