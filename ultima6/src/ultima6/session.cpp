@@ -545,13 +545,16 @@ void Game::eyeKey(int key) {
 	prompt();
 }
 
-// The mouse (sub_16399 / sub_15D54): a click on the row of ten command icons under the map (screen 8,176 to 167,191) is the command of that icon (Attack, Cast, Talk, Look, Get, Drop,
+// The mouse (sub_16399 / sub_15D54): a click on the row of ten command icons (eight in the spin-offs) under the map (screen 8,176 to 167,191) is the command of that icon (Attack, Cast, Talk, Look, Get, Drop,
 // Move, Use, Rest, Combat); on the map a click is a step towards the cell clicked (or, while a cursor asks for a square, the square: the cursor goes there and is confirmed) and
 // a right click gives a question up. Returns the key it stands for, 0 for none. APPROX(43): the other regions of the original (the party panel and the inventory view) are not mapped,
 // and the cursor of the mouse is not drawn.
 int Game::mouseKey(int mx, int my, bool right) {
 	if (mx >= 8 && mx <= 167 && my >= 176 && my <= 191 && !right && !_cursor && !_pending && !_talk && !_inventory && !_textActive) {
 		static const char ICONS[10] = {'A', 'C', 'T', 'L', 'G', 'D', 'M', 'U', 'R', 'X'};
+		static const char SPINOFF_ICONS[8] = {'A', 'T', 'L', 'G', 'D', 'M', 'U', 'X'}; // Martian Dreams and Savage Empire: eight icons, 20 pixels each, no Cast and no Rest
+		if (_world.game != GameId::Ultima6)
+			return SPINOFF_ICONS[(mx - 8) / 20];
 		return ICONS[(mx - 8) >> 4];
 	}
 	if (mx >= 8 && mx <= 167 && my >= 8 && my <= 167) {
