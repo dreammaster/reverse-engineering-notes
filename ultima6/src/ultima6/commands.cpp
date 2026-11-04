@@ -818,6 +818,7 @@ void Game::castAt(int tx, int ty) {
 	int idx = _spell->index();
 	if (done && !_spellQuiet && idx != 34 && idx != 68 && idx != 96 && idx != 18 && idx != 17 && idx != 20 && idx != 5 && idx != 50 && idx != 49 && idx != 119 && idx != 0 && idx != 53 && idx != 121 && idx != 100 && idx != 39 && idx != 105 && idx != 83 && idx != 87 && idx != 98 && idx != 113 && idx != 37 && idx != 38 && idx != 54 && idx != 65 && idx != 85 && idx != 102 && idx != 103 && idx != 115 && idx != 116 && idx != 51 && idx != 55 && idx != 56 && idx != 64 && idx != 84 && idx != 66 && idx != 89)
 		message("\nSuccess\n");
+	sfx(done ? 0xE : 0xD); // sub_223BC: the chime for a spell that worked, the buzz for one that did not
 	_world.spendMoves(caster, _spell->circle * 3 + 10);
 	_spell = nullptr;
 	if (!_pending && _stealing < 0)
