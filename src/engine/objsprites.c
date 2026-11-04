@@ -80,7 +80,7 @@ int objsprites_load(const uint8_t *mp1, size_t len, ObjSprites *out) {
 	size_t pos = 0;
 	for (int i = 0; i < cnt; i++) {
 		unsigned sz = be16(mp1 + dir + 4 * i);
-		size_t stored = sz > 1 ? (sz + 1) / 2 : 0;
+		size_t stored = sz / 2;
 		if (data + pos + stored > len) {
 			objsprites_free(out);
 			return -2;

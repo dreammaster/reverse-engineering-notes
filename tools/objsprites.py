@@ -3,7 +3,7 @@
 Object sprites in LEVn.MP1 section 2.  See docs/formats.md section 6.5.
 
 Section 2 = u32be data_len, u32be alloc_len (255000), u16be count (255), count x (u16be size, u16be offset), data.
-Record i is stored in size/2 bytes (the declared `size` is the expanded size in RAM); records follow each other
+Record i is stored in floor(size/2) bytes (the declared `size` is the size in RAM; sum of floor(size/2) == data_len); records follow each other
 (size 0/1 entries are empty).  A *sprite block* is
 
     32-byte header (not yet decoded)
@@ -11,7 +11,7 @@ Record i is stored in size/2 bytes (the declared `size` is the expanded size in 
                            Atari-ST interleaved pixels (per row: for each 16-pixel group four big-endian plane words,
                            plane 0 = colour bit 0); colour 0 = transparent (the game derives the mask as the OR of the planes)
 
-About two thirds of the blocks parse this way and consume their stored size exactly (80/80 in level 1); the others
+Most blocks parse this way and consume their stored size exactly (96 of 124 in level 1); the others
 (headers/tables, e.g. the 29 424-byte block 8) are not sprites.   python objsprites.py <MP1> out.png
 """
 import os, struct, sys
@@ -31,7 +31,7 @@ def blocks(mp1):
     out, pos = [], 0
     for i in range(cnt):
         sz = ents[2 * i]
-        stored = (sz + 1) // 2 if sz > 1 else 0
+        stored = sz // 2
         out.append((sz, mp1[data + pos:data + pos + stored]))
         pos += stored
     return out
