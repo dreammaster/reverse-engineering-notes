@@ -305,6 +305,24 @@ so palettes are per level. (For `DATA/4–5` and `TATA/1–2` the section walk i
 does not reach the palette — their section headers differ — so it was not located
 there by offset; it can be found by searching.)
 
+### 6.10 Room drawing — *observations only*
+
+Traced in the harness while level 1's first room is built (ticks 737–760):
+
+* The room is composed from **tiles that live in VRAM** (`A000:xxxx`, offsets
+  seen: `05AA 087A 1252 13BA 1522 17F2 2BA2 40BA 492A` …, i.e. in the first pages)
+  with a **mask in RAM** at `36EF:xxxx` using the *same offset*. Each tile blit is a
+  pair of calls from `1000:D299`: the AND-with-inverted-mask variant (`1000:920E`,
+  ~180 times) and the OR variant `sub_19080` (~230 times, `cx = 1200h` = 18 rows × 256?),
+  with destinations in the room page (`di` = `049A`, `05DC`, `071E`, `0860`, …,
+  advancing by `0142h` per tile = one row of 8 pixels + 2 bytes).
+* Whole pages are then moved with `vram_copy_page` (`1000:D7E2`) from the room buffer
+  (`A600`) to the display pages, and `vram_clear_page` clears pages first.
+* How the tile atlas gets into VRAM (it is not `PCMAN.DAT`, which fills `A000h–FFFFh`
+  of planes 2/3 only) and what `MP1`'s big third section (255 records) holds is still
+  unknown. The loader copies a sprite column-wise into page 0 (`1000:8D55–8D70`,
+  2392 bytes per plane at tick 158); not yet understood.
+
 ## 7. Text strings recovered from the executables
 
 INTRO.EXE contains the plain-text story ("chapter thirteen — the story so far
