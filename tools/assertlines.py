@@ -37,7 +37,7 @@ def load(path):
             files = [x for x in strings if x.startswith("/home/")]
             exprs = [x for x in strings if not x.startswith("/home/")]
             if files and numbers:
-                found[(files[0].split("branchPillars/src/")[-1], exprs[0] if exprs else "")].update(numbers)
+                found[(files[0].split("/src/", 1)[-1], exprs[0] if exprs else "")].update(numbers)
     return found
 
 
