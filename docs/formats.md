@@ -461,8 +461,9 @@ write tracing):
   units; the object occupies the box `[x0,x1] × [y0,y1]`, the sprite block header gives its size as `extent + 1`),
   `+6` sprite segment, `+0A` pointer to its 16-byte position record, `+0C` video offset of the sprite's top-left,
   `+10h` screen y, `+11h` pixel shift, `+2A` sprite segment, `+2C` offset of the sprite data (what the blitter uses).
-* Measured over the 19 objects: **screen x = 158 + 2·(x0 − y1) exactly** (0 residual); screen y ≈ 26 + (x1 + y0 ... ) − z,
-  within ±2 px (the sprite's own offsets are in the block header; the exact formula is in `object_project`).
+* Measured over the 19 objects: **screen x = 158 + 2·(x0 − y1) exactly** (0 residual); the sprite's bottom edge (screen y + rows) ≈ 30 + ½·(x0 + x1 + y0 + y1) − z_base,
+  i.e. the projection of the footprint centre, within ±2 px over these 19 objects (too few samples to pin down the
+  exact rounding; the exact computation is `object_project` below).
 * The projection routine (`object_project`, `CAD.EXE 1000:5A61`): the position record gives `x, y, z` bytes; `x>>3, y>>3`
   select the cell, `x&7, y&7` the sub-cell; the cell's video offset comes from the table at `ds:08DC` (built by
   `room_setup_floor_origin` from the room's floor origin), the sub-cell's offset and pixel shift from a 64-entry table at
