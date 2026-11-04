@@ -34,6 +34,8 @@ public:
 	/** The schedule-walkers' part of every turn (sub_2A8DA / 2A3BA): actors that have reached their place take up its worktype, and those far from the party are put there. */
 	void scheduleUpdate(int px, int py, int pz);
 	/** One action of a non-party actor 2-0xDF that was chosen by the turn scheduler: walks towards its schedule place when it is going there, otherwise does nothing; always uses up moves. */
+	/** word_3EFF5: the path searches made this turn (sub_2A3BA allows three) */
+	int plans = 0;
 	void act(int actor, int px, int py, int pz);
 
 	/** Sets the frame of an actor's sprite for a step in direction 0-7 (0 north, 1 northeast, 2 east, 3 southeast, 4 south ... 7 northwest), sub_263D4. */

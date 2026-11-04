@@ -690,8 +690,11 @@ void ActorManager::act(int actor, int px, int py, int pz) {
 		a.moves[actor] = 0;
 		return;
 	}
-	if (!plan(actor, e.x, e.y, px, py, pz))
-		a.moves[actor] = 0; // out of the window or all tables in use: wait
+	if (plans >= 3 || !plan(actor, e.x, e.y, px, py, pz)) {
+		a.moves[actor] = 0; // three searches a turn, out of the window or all tables in use: wait
+		return;
+	}
+	++plans;
 }
 
 } // namespace Ultima6

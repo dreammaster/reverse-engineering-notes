@@ -159,6 +159,7 @@ void Game::advanceTime(int minutes) {
 // dexterity, acts. Actors far away simply lose their moves.
 void Game::runTurns() {
 	ObjList &a = _world.actors;
+	_actors.plans = 0;
 	_actors.scheduleUpdate(x, y, z);
 	_creatures.formation(x, y, z);
 	int mask = z == 0 ? 0x3FF : 0xFF;
