@@ -20,6 +20,7 @@ add_library(cadaver_engine STATIC
   engine/anim.c
   engine/collision.c
   engine/roomexits.c
+  engine/panel.c
   engine/gamefiles.c)
 target_include_directories(cadaver_engine PUBLIC engine)
 target_compile_options(cadaver_engine PRIVATE -Wall -Wextra)

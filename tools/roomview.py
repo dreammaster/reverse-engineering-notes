@@ -99,7 +99,7 @@ def wall_tile_placements(rec, w, h, gx, gy):
     return out
 
 
-VIEW_W, VIEW_H = 320, 136
+VIEW_W, VIEW_H = 320, 200
 
 
 def render_shell(tiles, walls, fmap, wrec, w, h):

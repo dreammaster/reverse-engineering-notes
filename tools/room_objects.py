@@ -8,7 +8,7 @@ import mjm, mpsections, roomview, objsprites, objplace, things, pcman
 
 
 def draw_objects(canvas, secs, blocks, room, gx, gy):
-    """Paint the objects of `room` into `canvas` (bytearray 320x136, colour 0 = transparent in sprites).
+    """Paint the objects of `room` into `canvas` (bytearray 320x200, colour 0 = transparent in sprites).
     -> [(thing id, block, (x, y, w, h) or None)]"""
     placed = []
     lists, thl = secs[2]['records'], secs[3]['records']
@@ -32,7 +32,7 @@ def draw_objects(canvas, secs, blocks, room, gx, gy):
         for yy in range(fh):
             for xx in range(fw):
                 c = px[yy * fw + xx]
-                if c and 0 <= y + yy < 136 and 0 <= x + xx < 320:
+                if c and 0 <= y + yy < roomview.VIEW_H and 0 <= x + xx < 320:
                     canvas[(y + yy) * 320 + x + xx] = c
         placed.append((t, b, (x, y, fw, fh)))
     return placed
@@ -56,9 +56,9 @@ def level_pal(mp1):
 if __name__ == '__main__':
     from PIL import Image
     px, placed, pal = render_room(sys.argv[1], int(sys.argv[2]))
-    im = Image.new('RGB', (320, 136), (0, 0, 0))
+    im = Image.new("RGB", (320, roomview.VIEW_H), (0, 0, 0))
     for i, c in enumerate(px):
         if c != 0xFF:
             im.putpixel((i % 320, i // 320), pal[c])
-    im.resize((640, 272), Image.NEAREST).save(sys.argv[3])
+    im.resize((640, 2 * roomview.VIEW_H), Image.NEAREST).save(sys.argv[3])
     print(len(placed), 'objects,', sum(1 for p in placed if p[2] is None), 'without a parsable sprite block')

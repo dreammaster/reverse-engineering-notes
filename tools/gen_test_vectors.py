@@ -3,7 +3,7 @@
 import glob, os, struct, sys
 here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, here)
-import mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
+import panel, mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
 
 root = os.path.join(here, '..')
 
@@ -57,6 +57,7 @@ for r in rows:
             for rec in sc['records']:
                 blob += struct.pack('<i', len(rec)) + rec
         mp2_vec.append((r[0], fnv(blob)))
+andata_b1 = mpsections.andata_blocks(mjm.mjm_unpack(open(os.path.join(root, 'cadaver1', 'DATA', 'ANDATA.DAT'), 'rb').read()))[1]
 room_vec = []
 obj_vec = []
 for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glob.glob(os.path.join(root, 'cadaver2', 'TATA', '[1-4]')) +
@@ -80,6 +81,9 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
                 gx, gy = roomview.floor_origin(w, h)
                 room_objects.draw_objects(shell, secs, objsprites.blocks(mp1), i, gx, gy)
                 blob += bytes(shell)
+                wsh = bytearray(shell)
+                panel.apply_wings(wsh, andata_b1)
+                blob += bytes(wsh)
             nrooms += 1
     room_vec.append((os.path.relpath(d, root), len(tiles), nrooms, fnv(blob)))
     ob = b''

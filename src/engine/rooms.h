@@ -41,7 +41,7 @@ int mp1_palette(const uint8_t *mp1, size_t len, uint16_t pal[16]);
 int floor_origin(int w, int h, int *x, int *y);
 
 #define VIEW_W 320
-#define VIEW_H 136
+#define VIEW_H 200
 
 /* The room as the game draws it into its 320x136 viewport: floor tiles, then the wall columns
  * (record layout: docs/formats.md 6.5). `canvas` is VIEW_W*VIEW_H bytes, pre-filled with TILE_TRANSPARENT.

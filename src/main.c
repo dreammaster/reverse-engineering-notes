@@ -18,6 +18,7 @@
 #include "engine/roomobjs.h"
 #include "engine/collision.h"
 #include "engine/roomexits.h"
+#include "engine/panel.h"
 
 #include <SDL.h>
 #include <stdio.h>
@@ -109,6 +110,23 @@ static void roomview_tick(RoomView *rv) {
 		roomobjs_step(&rv->ro);
 }
 
+/* the frame around the room view (ANDATA.DAT block 1) */
+static uint8_t *g_andata;
+static const uint8_t *g_b1;
+static size_t g_b1_len;
+static void panel_ensure(const GameFiles *g) {
+	if (g_andata)
+		return;
+	size_t len;
+	if (gamefiles_read_mjm(g, "data\\andata.dat", -1, &g_andata, &len) == 0)
+		andata_block(g_andata, len, 1, &g_b1, &g_b1_len);
+}
+static void panel_draw(const GameFiles *g, Screen *scr) {
+	panel_ensure(g);
+	if (g_b1)
+		panel_apply_wings(g_b1, g_b1_len, scr->pixels);
+}
+
 /* while the walk demo runs, objects in front of the player are drawn after it (see walk_draw) */
 static struct { int on, x1, y1, z0, z1; } g_plbox;
 
@@ -164,7 +182,7 @@ static int roomview_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	memset(scr, 0, sizeof(*scr));
 	for (int i = 0; i < 16; i++)
 		st_word_to_rgb(rv->palette[i], scr->palette[i]);
-	memset(scr->pixels, 6, sizeof(scr->pixels));
+	memset(scr->pixels, 0, sizeof(scr->pixels));
 	int count = rv->maps.count < rv->mp2.sec[0].count ? rv->maps.count : rv->mp2.sec[0].count;
 	if (rv->room < 0) rv->room = 0;
 	if (rv->room >= count) rv->room = count - 1;
@@ -200,6 +218,8 @@ static int roomview_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	for (int i = 0; i < VIEW_W * VIEW_H; i++)
 		if (shell[i] != TILE_TRANSPARENT)
 			scr->pixels[i] = shell[i];
+	if (!g_plbox.on)
+		panel_draw(g, scr);
 	snprintf(rv->info, sizeof(rv->info), "%s level %d room %d (%dx%d), %d objects", rv->use_tata ? "TATA" : "DATA", rv->level, rv->room, w, h, nobj);
 	return 0;
 }
@@ -426,6 +446,7 @@ static int walk_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	for (int i = 0; i < VIEW_W * VIEW_H; i++)
 		if (front[i] != TILE_TRANSPARENT)
 			scr->pixels[i] = front[i];
+	panel_draw(g, scr);
 	snprintf(rv->info, sizeof(rv->info), "walk: %s level %d room %d - arrows move along the room axes, exits change room",
 	         rv->use_tata ? "TATA" : "DATA", rv->level, rv->room);
 	return 0;

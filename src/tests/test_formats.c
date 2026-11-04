@@ -16,6 +16,7 @@
 #include "../engine/anim.h"
 #include "../engine/collision.h"
 #include "../engine/roomexits.h"
+#include "../engine/panel.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -242,6 +243,17 @@ int main(int argc, char **argv) {
 		free(raw);
 	}
 
+	uint8_t *andata_raw = NULL, *andata_un = NULL;
+	const uint8_t *andata_b1 = NULL;
+	size_t andata_b1_len = 0, andata_un_len = 0;
+	{
+		snprintf(path, sizeof(path), "%s/cadaver1/DATA/ANDATA.DAT", root);
+		size_t n;
+		andata_raw = slurp(path, &n);
+		if (andata_raw && mjm_unpack(andata_raw, n, &andata_un, &andata_un_len) == 0)
+			andata_block(andata_un, andata_un_len, 1, &andata_b1, &andata_b1_len);
+	}
+
 	for (size_t i = 0; i < sizeof(room_vectors) / sizeof(room_vectors[0]); i++) {
 		const RoomVector *rv = &room_vectors[i];
 		const char *names[3] = {"LEV?.MP1", "LEV?.MP2", "LEV?.MP3"};
@@ -315,6 +327,11 @@ int main(int argc, char **argv) {
 						room_render_objects(&m, &os, r, gx, gy, shell);
 						for (int j = 0; j < VIEW_W * VIEW_H; j++)
 							h = (h ^ shell[j]) * 0x01000193u;
+						if (andata_b1) {
+							if (panel_apply_wings(andata_b1, andata_b1_len, shell)) rc = -97;
+							for (int j = 0; j < VIEW_W * VIEW_H; j++)
+								h = (h ^ shell[j]) * 0x01000193u;
+						}
 					}
 					nrooms++;
 				}

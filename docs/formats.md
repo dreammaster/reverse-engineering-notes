@@ -215,13 +215,26 @@ running game (grey armour, brown boots). The loader copies `10·w·h + 4` words 
 sprite into RAM, i.e. more than the 5-plane record — it over-reads into the next
 record, presumably because the RAM sprite buffer is a fixed size; not investigated.
 
-### 6.3 `ANDATA.DAT` — *container verified, contents unknown*
+### 6.3 `ANDATA.DAT` — *block 1 verified (the screen frame)*
 
 `u16be count` (6), `count × u16be` block sizes (1904, 15840, 576, 920, 1104, 96),
 then the blocks back to back (the sizes tile the file exactly; `tools/mpsections.py`).
-Block 0 is a table of 8-byte entries (e.g. `80EE 0040 7F30 80FE`, with
-`FFFE 0000 0000 FFFE` as the empty entry); the 15 840-byte block is the largest.
 Identical in Cadaver 1 and 2.
+
+* **Block 1 (15 840 bytes) = the frame around the isometric room view** (verified, `tools/panel.py`, `src/engine/panel.c`).
+  The room is drawn into the whole 320×200 screen and then two wedge-shaped *wings* are laid over rows 115–199 (the diamond-shaped view is
+  cut off by diagonal edges; everything outside — the bone/skull ornament, the six inventory slots, the status area — is wing). `CAD.EXE
+  1000:D523` (called once, tick 751 of the trace) draws it from block 1 (ST-interleaved 16-pixel groups, 4 big-endian plane words each).
+  For row `r = 115 … 199` with `cl = -1` for the first 8 rows, `0` for the next 8, … (one more group every 8 rows) the block holds, in this
+  order: `cl+1` left-wing groups (columns 0…cl), the left edge group (column `cl+1`), the right edge group (column `18-cl`) and `cl+1`
+  right-wing groups (columns `19-cl…19`). The two edge groups are ORed over the room pixels that a stair-step mask lets through
+  (`bx = 0xFFFF >> 2·(row mod 8)` for the left edge, `bp = 0xFFFF << 2·(row mod 8)` for the right one: pixel = (old & mask) | wing; wings overwrite).
+  The first half of the block (7 920 bytes) is exactly this; **the second half (7 920 bytes) is a second set in the same layout** (selected by the
+  routine's `[401A]/[401C]` offsets — probably the alternate/dimmed or mask variant; not used on the first screen).
+  Composite of floor + walls + objects + wings equals **98.2% of the original's full 320×200 first frame** (level 1 room 0; the remainder is the
+  player, one animated object and the status text), unit-tested C vs Python on all rooms.
+* Blocks 3 and 4 (920 and 1104 bytes) look like 1-bit-per-pixel fonts (the status text "DAY 1", room name); block 2 (576 bytes) and 5 (96 bytes)
+  small sprites; block 0 (1904 bytes) a table of 8-byte entries (e.g. `80EE 0040 7F30 80FE`, `FFFE 0000 0000 FFFE` = empty). Not decoded.
 
 ### 6.4 `LEVn.MP2` — *structure verified*
 
