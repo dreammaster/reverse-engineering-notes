@@ -520,6 +520,17 @@ write tracing):
   object record, `F4/F3` set a flag. A step sets `frame := script[pos].argument` and advances `pos` only every `cad + 1` steps
   (`cnt` counts down); `dx, dy` come from the block's frame table. Example (flame bowl, block 86): script frames
   `0 1 2 3 2 0 3 1 2 3 2 3 1 2 3 2 FD00`, one position per 2 steps = 4 ticks.
+* **Object entry construction and collision (read from the code, not yet ported):** the room loader (`CAD.EXE 1000:4A00…4C50`,
+  inside `sub_14A00`) fills the 50-byte entries from the room list: `+0/+1/+5` ← thing `x1,y1,z0`; `+2/+3/+4` ← `x0 = x1-xs+1`,
+  `y0 = y1-ys+1`, `z_top = z0+zs-1` (sizes from the block header); `+6/+8` ← sprite segment / header offset; `+0A` ← the 16-byte position
+  record; `+26h` ← thing byte `+3` (flags; `0x80` = skip); `+27h` ← sprite header byte `0Ch` (bit 0 = flat/non-solid, `04` = animated,
+  `20` = special frame table, `08` = …); `+20h` starts at 4. Entry `+14h` is the "solid" marker: `FFh` for ordinary objects, the entry
+  number for those whose header flag `0Ch` bit 0 is set. `sub_116E0` (`collision_test`) takes a candidate `(x1, y1, z)` plus the mover's
+  box sizes and reports every entry whose x, y and z intervals overlap (all bounds inclusive), marking the result *blocked* when the
+  mover leaves the floor (`x1 >= 8w`, `y1 >= 8h`, `z < 0`), enters the wall corner (`x0 <= 2+8·cw` and `y0 <= 10+8·ch`,
+  `cw`/`ch` = number of columns with a wall), is closer than the wall thickness (`x0 < rec[+15h]`, `y0 < rec[+14h]` of the room record) or touches a
+  solid entry. The player's per-tick move is then `sub_167DF` (add `(dx, dy, dz)` to the box and position record of the player and
+  whatever it carries); on a hit the main loop retries with the deltas halved (`sar`) before giving up.
 * Not plain sprites although things refer to them: the player (thing 0 → block 8, 29 424 bytes) and compound objects such as
   the rope (block 112–119 in level 1: a table of segment records) — undecoded.
 
