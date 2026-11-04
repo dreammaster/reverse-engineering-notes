@@ -387,7 +387,7 @@ void Conversation::giveLine(const std::string &raw) {
 	_host.print("\n\n");
 	if (line.empty())
 		line = "bye";
-	else if (line == "look") {
+	else if (line.size() == 4 && std::tolower((unsigned char)line[0]) == 'l' && std::tolower((unsigned char)line[1]) == 'o' && std::tolower((unsigned char)line[2]) == 'o' && std::tolower((unsigned char)line[3]) == 'k') { // _stricmp(input, "look")
 		_host.print("You see " + _description + "\n");
 		_pos = _askPos; // back to the ASK that wanted the line
 		_waiting = false;
