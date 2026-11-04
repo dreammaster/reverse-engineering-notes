@@ -143,12 +143,13 @@ int main() {
 		CHECK(!inv.empty());
 		size_t carried = inv.size();
 		g5.handleKey('i');
-		g5.handleKey('d'); // drop the first object
-		g5.handleKey(KEY_ESC);
+		g5.handleKey('d'); // drop the first object: "Location: " (the party's own square is not possible, a body stands there), the square to the east
+		g5.handleKey(KEY_RIGHT);
+		g5.handleKey(KEY_ENTER);
 		w5.inventory(1, inv, false);
 		CHECK(inv.size() == carried - 1);
 		std::vector<int> here;
-		w5.objectsAt(g5.x, g5.y, g5.z, here);
+		w5.objectsAt(g5.x + 1, g5.y, g5.z, here);
 		bool dropped = false;
 		for (int i : here)
 			dropped |= w5.objects[i].actor < 0 && w5.objects[i].onMap() && w5.objects[i].type != 0x12F;

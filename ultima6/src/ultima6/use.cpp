@@ -850,31 +850,183 @@ void Game::readBook(int idx) {
 	message(out);
 }
 
-// Puts `count` of an inventory object (the whole stack if it is more) on the square of the party.
-void Game::dropObject(int idx, int count) {
+// cmd_drop (sub_30B6A), after the object has been chosen in the inventory: its name; an amulet that is worn cannot be taken off and a lit torch burns out (sub_1E8B6); a stack
+// asks "How many? " (ask_quantity); then "Location: " takes a square from the cursor.
+void Game::dropStart(int idx) {
+	bool fromCommand = _dropPending;
+	_dropPending = false;
+	World::Obj &o = _world.objects[idx];
+	message(Describe::object(_world, o) + "\n");
+	if (fromCommand)
+		_inventory = false;
+	if (o.location() == ObjRecord::READIED && o.type == 0x4C) {
+		message("\nMagical energy prevents you from removing the amulet.\n");
+		prompt();
+		return;
+	}
+	if (o.location() == ObjRecord::READIED && o.type == 0x5A && o.frame == 1) {
+		_world.deleteObject(idx);
+		message("\nA torch burned out.\n");
+		prompt();
+		return;
+	}
+	int have = _world.isStackable(o.type) ? _world.quantityOf(o) : 1;
+	_dropItem = idx;
+	if (have > 1 && o.location() != ObjRecord::READIED) { // ask_quantity
+		message("How many? ");
+		_inventory = false;
+		_textActive = true;
+		_textBuf.clear();
+		_textMax = 3;
+		_textPurpose = 5;
+		return;
+	}
+	dropWhere(1);
+}
+
+// "Location: " and the cursor for the place the object goes to.
+void Game::dropWhere(int count) {
+	_dropCount = count;
+	_inventory = false;
+	message("Location: ");
+	_pending = 'd';
+	_cursor = true;
+	_cx = _cy = 5;
+}
+
+// sub_309C0: the first thing on the square, from the top, that is a surface (flags3 bit 2) puts the dropped object on it; anything that blocks (flags1 bit 2) before one does not.
+bool Game::dropSurface(int tx, int ty) const {
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	for (size_t i = here.size(); i-- > 0;) {
+		int tile = _world.baseTile.firstTile[_world.objects[here[i]].type] + _world.objects[here[i]].frame;
+		if (_world.flags.flags3[tile & (TileFlags::TILES - 1)] & 2)
+			return true;
+		if (_world.flags.flags1[tile & (TileFlags::TILES - 1)] & 2)
+			return false;
+	}
+	return false;
+}
+
+// sub_2F739 / sub_2F712: a container (types 0x62, 0x63, 0x39, 0xBA, 0xBC, 0xBF, 0xC0, 0x153, 0x3E) takes things, except 0x39 and 0x153 and, shut (a frame but 0), 0x62, 0xBA and 0xC0;
+// the object itself must be none of the three that hold things themselves.
+bool Game::dropRecipient(int target, int item) const {
+	static const int HOLDERS[9] = {0x62, 0x63, 0x39, 0xBA, 0xBC, 0xBF, 0xC0, 0x153, 0x3E};
+	if (target < 0)
+		return false;
+	const World::Obj &t = _world.objects[target];
+	bool holder = false;
+	for (int h : HOLDERS)
+		holder |= t.type == h;
+	if (!holder || t.type == 0x39 || t.type == 0x153)
+		return false;
+	if ((t.type == 0x62 || t.type == 0xBA || t.type == 0xC0) && t.frame != 0)
+		return false;
+	int it = _world.objects[item].type;
+	return it != 0x62 && it != 0xBA && it != 0xC0;
+}
+
+// The place has been chosen: it must be somewhere the object can lie (can_actor_enter), a surface, or a container that takes it, and be in the line of sight within 8 squares; the
+// throw costs 3 moves; from further than one square a glass thing breaks (sub_2F7BC); otherwise it goes into the container, or onto the square, and is free to take (sub_2F82E).
+// APPROX(32): the flight of the object is not drawn (sub_2BB2F), and neither is the sound of breaking
+void Game::dropAt(int tx, int ty) {
+	int idx = _dropItem, count = _dropCount;
+	_dropItem = -1;
+	int member = actingActor(), mk = _world.actorObject(member);
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	int target = here.empty() ? -1 : here.back(); // sub_19C1A: the top thing there
+	bool ok = false;
+	MoveRules rules;
+	if (idx >= 0 && mk >= 0) {
+		ok = _movement.check(tx, ty, z, idx, rules).passable || dropSurface(tx, ty) || (target >= 0 && dropRecipient(target, idx));
+		std::vector<std::pair<int, int>> path;
+		if (ok)
+			ok = _world.boltPath(z, _world.objects[mk].x, _world.objects[mk].y, tx, ty, 8, path);
+	}
+	if (!ok) {
+		message("\nNot possible\n");
+		prompt();
+		return;
+	}
+	World::Obj &o = _world.objects[idx];
+	bool stack = _world.isStackable(o.type);
+	int type = o.type;
+	if (o.location() == ObjRecord::READIED)
+		o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
+	_world.spendMoves(member, 3);
+	int mx = _world.objects[mk].x, my = _world.objects[mk].y;
+	bool near = std::abs(tx - mx) <= 1 && std::abs(ty - my) <= 1;
+	static const int GLASS[15] = {0x53, 0x5C, 0x9B, 0x7B, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0xB7, 0xB8, 0x113, 0xA1, 0x1A1};
+	bool glass = false;
+	for (int g : GLASS)
+		glass |= type == g;
+	if (!near && glass) {
+		if (stack) {
+			int left = _world.quantityOf(o) - count;
+			if (left > 0)
+				_world.setQuantity(o, left);
+			else
+				_world.deleteObject(idx);
+		} else if (type == 0x1A1 || type == 0x7B) { // the broken one lies there
+			o.frame = type == 0x1A1 ? 1 : 2;
+			dropPlace(idx, 1, tx, ty, -1);
+		} else {
+			_world.deleteObject(idx);
+		}
+		message("\nIt broke!\n");
+		prompt();
+		return;
+	}
+	dropPlace(idx, count, tx, ty, target >= 0 && dropRecipient(target, idx) && !dropSurface(tx, ty) ? target : -1);
+	prompt();
+}
+
+// Puts `count` of an object into a container (a stack joins the one of its kind there) or onto a square, and marks it free to take.
+void Game::dropPlace(int idx, int count, int tx, int ty, int recipient) {
 	World::Obj &o = _world.objects[idx];
 	int have = _world.quantityOf(o);
-	int dropIdx = idx;
+	int placed = idx;
 	if (_world.isStackable(o.type) && count < have) {
 		World::Obj part = o;
 		_world.setQuantity(part, count);
 		_world.setQuantity(o, have - count);
 		_world.objects.push_back(part);
-		dropIdx = (int)_world.objects.size() - 1;
+		placed = (int)_world.objects.size() - 1;
 	}
-	World::Obj &d = _world.objects[dropIdx];
-	d.status = (uint8_t)(d.status & ~ObjRecord::LOCATION_MASK);
+	if (recipient >= 0) {
+		if (_world.isStackable(_world.objects[placed].type)) {
+			for (size_t i = 0; i < _world.objects.size(); ++i) {
+				World::Obj &c = _world.objects[i];
+				if ((int)i != placed && !c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == recipient && c.type == _world.objects[placed].type && c.frame == _world.objects[placed].frame) {
+					_world.setQuantity(c, _world.quantityOf(c) + _world.quantityOf(_world.objects[placed]));
+					c.status |= 0x01;
+					_world.deleteObject(placed);
+					return;
+				}
+			}
+		}
+		World::Obj &d = _world.objects[placed];
+		d.status = (uint8_t)((d.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_CONTAINER | 0x01);
+		d.parent = recipient;
+		d.x = d.y = 0;
+		d.z = 0;
+		return;
+	}
+	World::Obj &d = _world.objects[placed];
+	d.status = (uint8_t)((d.status & ~ObjRecord::LOCATION_MASK) | 0x01);
 	d.parent = -1;
-	d.x = (uint16_t)x;
-	d.y = (uint16_t)y;
+	d.x = (uint16_t)tx;
+	d.y = (uint16_t)ty;
 	d.z = (uint8_t)z;
-	_world.addToMap(dropIdx);
+	_world.addToMap(placed);
 }
 
 // A line of text typed after a prompt (sub_1737A): letters and digits are echoed, Backspace takes one back, Enter ends it, Escape gives it up.
 void Game::textKey(int key) {
 	if (key == KEY_ENTER || key == KEY_ESC) {
-		if (key == KEY_ESC)
+		bool escaped = key == KEY_ESC;
+		if (escaped)
 			_textBuf.clear();
 		_textActive = false;
 		message("\n");
@@ -909,12 +1061,19 @@ void Game::textKey(int key) {
 			prompt(); // a gate that is not there, or no number: the original only plays the failing sound (sub_36E85)
 			return;
 		}
-		if (_textPurpose == 5) { // how many to drop; the inventory view stays
-			int idx = _useItem;
-			_useItem = -1;
-			int n = _textBuf.empty() ? 0 : std::atoi(_textBuf.c_str());
-			if (n > 0 && idx >= 0)
-				dropObject(idx, n);
+		if (_textPurpose == 5) { // ask_quantity: nothing typed is all of them (sub_2F895: -1); more than there are, or none, is "0   " and ends the dropping
+			int idx = _dropItem;
+			int have = idx >= 0 ? _world.quantityOf(_world.objects[idx]) : 0;
+			int n = _textBuf.empty() ? (escaped ? -2 : have) : std::atoi(_textBuf.c_str());
+			if (n < 1 || n > have) {
+				_dropItem = -1;
+				message("0   \n");
+				prompt();
+				return;
+			}
+			if (_textBuf.empty())
+				message(std::to_string(n) + "\n");
+			dropWhere(n);
 			return;
 		}
 		if (_textPurpose == 2) {

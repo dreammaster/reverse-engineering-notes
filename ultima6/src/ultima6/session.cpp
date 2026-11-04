@@ -522,7 +522,8 @@ void Game::command(int key) {
 		break;
 	case 'D':
 		message("Drop-");
-		_inventory = true; // the item is chosen in the inventory view (D drops the selected one)
+		_inventory = true; // the object is chosen in the inventory view (Enter or D takes the selected one)
+		_dropPending = true;
 		_selected = 0;
 		break;
 	case 19: // ctrl-S
@@ -668,7 +669,7 @@ bool Game::handleKeyInner(int key) {
 		castKey(key);
 		return true;
 	}
-	if (_pending == 'L' || _pending == 'c' || _pending == 'a' || _pending == 'o') {
+	if (_pending == 'L' || _pending == 'c' || _pending == 'a' || _pending == 'o' || _pending == 'd') {
 		// the cursor: arrows move it, Enter looks at the cell, Escape gives up
 		switch (key) {
 		case KEY_UP:
@@ -686,13 +687,15 @@ bool Game::handleKeyInner(int key) {
 		case KEY_ENTER:
 		case KEY_SPACE: {
 			int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
-			bool casting = _pending == 'c', attacking = _pending == 'a', orb = _pending == 'o';
+			bool casting = _pending == 'c', attacking = _pending == 'a', orb = _pending == 'o', dropping = _pending == 'd';
 			_pending = 0;
 			_cursor = false;
 			if (orb) {
 				orbAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 				prompt();
-			} else if (attacking)
+			} else if (dropping)
+				dropAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
+			else if (attacking)
 				attackAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 			else if (casting)
 				castAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
@@ -701,6 +704,14 @@ bool Game::handleKeyInner(int key) {
 			break;
 		}
 		case KEY_ESC:
+			if (_pending == 'd') { // cmd_drop: no place chosen is "Not possible"
+				_dropItem = -1;
+				_pending = 0;
+				_cursor = false;
+				message("\nNot possible\n");
+				prompt();
+				break;
+			}
 			_pending = 0;
 			_cursor = false;
 			message("what?\n");

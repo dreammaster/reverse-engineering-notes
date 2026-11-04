@@ -150,7 +150,15 @@ private:
 	bool _telekinesis = false; // Use from a distance (the Telekinesis spell)
 	void actorStatusDecay();
 	void useSilverHorn();
-	void dropObject(int idx, int count);
+	void dropStart(int idx);
+	void dropWhere(int count);
+	void dropAt(int tx, int ty);
+	bool dropSurface(int tx, int ty) const;
+	bool dropRecipient(int target, int item) const;
+	void dropPlace(int item, int count, int tx, int ty, int recipient);
+	bool _dropPending = false; // "Drop-" is waiting for the object to be chosen in the inventory
+	int _dropItem = -1;		// the object chosen, while "Location: " waits for its place
+	int _dropCount = 0;
 	int _crystalLat = 0;
 	static bool degrees(const std::string &s, char plus, char minus, int &out);
 	bool _gemSpell = false; // the gem on show is the Peer spell's: "Done" follows it

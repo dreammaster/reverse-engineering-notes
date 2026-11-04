@@ -271,6 +271,11 @@ bool Game::inventoryKey(int key) {
 			stealItem(_selected < count ? _items[_selected] : -1);
 			break;
 		}
+		if (_dropPending) {
+			if (_selected < count)
+				dropStart(_items[_selected]);
+			break;
+		}
 		if (_selected < count) {
 			World::Obj &o = _world.objects[_items[_selected]];
 			int actor = _world.actors.partyRoster[_member];
@@ -317,29 +322,18 @@ bool Game::inventoryKey(int key) {
 		break;
 	case 'd':
 	case 'D':
-		if (_selected < count) {
-			int idx = _items[_selected];
-			World::Obj &o = _world.objects[idx];
-			message("\nDrop-" + Describe::object(_world, o) + "\n");
-			if (_world.isStackable(o.type) && _world.quantityOf(o) > 1) {
-				// ask_quantity: how many of the stack
-				message("How many? ");
-				_useItem = idx;
-				_textActive = true;
-				_textBuf.clear();
-				_textMax = 3;
-				_textPurpose = 5;
-				break;
-			}
-			dropObject(idx, 1);
-			_selected = std::max(0, _selected - 1);
-		}
+		if (_selected < count)
+			dropStart(_items[_selected]);
 		break;
 	case KEY_ESC:
 	case 'i':
 	case 'I':
 	case KEY_SPACE:
 		_inventory = false;
+		if (_dropPending) { // sub_17099 gave no object: "what?"
+			_dropPending = false;
+			message("what?\n");
+		}
 		prompt();
 		break;
 	default:
