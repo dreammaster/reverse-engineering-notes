@@ -376,6 +376,24 @@ void Game::talkAt(int tx, int ty) {
 		prompt();
 		return;
 	}
+	// cmd_talk (35130): who cannot be talked to, in the original's order
+	const ObjList &a = _world.actors;
+	if ((a.status[actor] & 0x80) && !memberNear(actor)) {
+		message("\nNot on screen.\n");
+		prompt();
+		return;
+	}
+	int wt = a.worktype[actor], side = a.status[actor] & 0x60;
+	if ((a.status[actor] & 0x10) || (a.status[actor] & 0x04) || (a.status[actor] & 0x02) || wt == 0x9B || wt == 0x13 || wt == 7 || wt == 0x12 || side == 0x20 || side == 0x60) {
+		message("\n\nNo response\n");
+		prompt();
+		return;
+	}
+	if (actor == actingActor()) {
+		message("\nTalking to yourself?\n");
+		prompt();
+		return;
+	}
 	startTalk(actor);
 }
 
