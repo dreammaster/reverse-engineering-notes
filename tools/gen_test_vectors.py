@@ -64,6 +64,8 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
     secs = mpsections.mp2_sections(mp2)
     tiles = roomview.load_tiles(mp3)
     fms = roomview.floor_maps(mp1)
+    wrecs = roomview.wall_columns(mp1)
+    wtiles = roomview.load_wall_tiles(mp3)
     blob = b''.join(tiles) + b''.join(roomview.load_wall_tiles(mp3)) + struct.pack('<16H', *roomview.level_palette(mp1))
     nrooms = 0
     for i, fm in enumerate(fms):
@@ -71,6 +73,7 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
         if w * h == len(fm) and len(fm):
             W, H, px = roomview.render_floor(tiles, fm, w, h)
             blob += struct.pack('<iii', i, W, H) + px
+            blob += roomview.render_shell(tiles, wtiles, fm, wrecs[i], w, h) if 3 <= w <= 10 and 3 <= h <= 10 else b''
             nrooms += 1
     room_vec.append((os.path.relpath(d, root), len(tiles), nrooms, fnv(blob)))
 intro_vec = []

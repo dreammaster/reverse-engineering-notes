@@ -293,7 +293,7 @@ palette: 16 big-endian ST words      (right after the third section; §6.9)
 | Section | count | alloc | contents |
 |---|---|---|---|
 | 0 | 100 | 10 000 (100 × 100) | **floor maps**: record *i* = `w*h` tile-id bytes for room *i* (row major, 0 = no tile), where `w`, `h` are bytes `+4`, `+5` of `LEVn.MP2` section-0 record *i*. The match `size == w*h` holds for ~98% of rooms in all nine levels; the others are 1-byte placeholders (27 of 100 records are empty in level 1). The loader inserts one empty column and row (11×11 for a 10×10 room) |
-| 1 | 100 | 32 008 | per-room records of wall-tile ids (e.g. `06 00 37 38 39 00 00 00 18 17 16 …`, 42–122 bytes; ids index the 80 wall tiles of `MP3` block 2). In RAM the record stays verbatim (level 1 room 0: linear `735D0`); it is read by `thing_expand_grid` (`1000:39F9`), which for a thing flagged `20h` fills a grid buffer at `ds:09C2` (2-byte cell stride, 16 bytes per row): byte 0 = number of columns, then a sub-record, then two layers of `thing[+4]` and `thing[+5]` rows of tile ids. Bytes with bit 7 set (`86`, `C6`, `82`, `C2`) are attribute-flagged ids. The exact meaning (room shell? composite things?) is not yet decoded |
+| 1 | 100 | 32 008 | **wall records**, one per room (verified): a 2-byte header (byte 0 = `slots`, the number of tile slots per column — 6 in level 1; byte 1 = 0) followed by `w + h` columns of `slots` bytes. Columns `0 … w-1` are the right-hand wall starting at the corner, columns `w … w+h-1` the left-hand wall going outward (so level 1 room 0, 10×10, is 2 + 20×6 = 122 bytes). Each column is a stack of wall-tile ids (`MP3` block 2), **bottom to top**; `0` and ids ≥ `0x80` (e.g. `86`, `C6`) occupy a slot but draw nothing. Placement, with `(gx, gy)` the floor origin of §6.5: right wall column `i` at x = `gx + 16·i`, left wall column `j` (1-based) at x = `gx − 16·j`; slot `k` of a column has its top at y = `gy − 17 + 8·i − 16·k` (right) or `gy − 17 + 8·j − 16·k` (left); tiles are clipped to the 320×136 viewport (a tile cut off at the top is drawn from the corresponding source row, 4 bytes per row per plane). Columns are drawn in record order, each bottom to top, after the floor. `thing_expand_grid` / `room_expand_wall_columns` (`1000:39F9`) expands this record into a buffer |
 | 2 | 255 | 255 000 (255 × 1000) | 255 variable-size blocks (120 … 29 424 bytes) of big-endian words, e.g. `00 00 00 06 00 01 00 02 00 03 FF FF …`; not decoded |
 
 Directory entries are `(size, offset)` with offsets contiguous in sections 1 and 2 of MP2; in
@@ -302,6 +302,13 @@ for the section length). The trailer is a table of 8-byte records (`u16be id` + 
 spaces, then zeros) followed by `u16be id, u32be value` pairs ending with
 `0x4F 40000`, `0x50 45000`, `0x51 50000`, `0x52 60000` — probably per-object attributes
 (prices/scores?) or a script-compiler symbol table; not decoded.
+
+**Room shell** (floor + walls, verified): `tools/roomview.py render_shell` and `src/engine/rooms.c
+room_render_shell` reproduce the room exactly as the game draws it into its 320×136 viewport. Compared with the
+running game's first frame (level 1 room 0) **89.8% of the 36 944 pixels they cover are identical, and every
+mismatch is an object or the player** (boat, barrel, mushrooms, pickaxe, coin, character): the whole shell is right.
+The C and Python renderers produce identical output for every room (sizes 3–10) of all 14 level directories
+(unit-tested).
 
 **Floor drawing** (verified; `room_draw_floor`, `CAD.EXE 1000:D1FA`): for each cell
 `(col, row)` of the room, tile id `t = map[row*w + col]`; if non-zero the 32×18

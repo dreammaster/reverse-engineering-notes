@@ -89,7 +89,7 @@ typedef struct {
 	int level, room, use_tata, scroll_x, scroll_y;
 	int loaded_level, loaded_tata;
 	TileSet tiles, walls;
-	FloorMaps maps;
+	FloorMaps maps, wrecs;
 	Mp2 mp2;
 	uint16_t palette[16];
 	int ok;
@@ -101,6 +101,7 @@ static void roomview_unload(RoomView *rv) {
 		tiles_free(&rv->tiles);
 		tiles_free(&rv->walls);
 		floormaps_free(&rv->maps);
+		floormaps_free(&rv->wrecs);
 		mp2_free(&rv->mp2);
 	}
 	rv->ok = 0;
@@ -121,6 +122,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 		}
 	}
 	int rc = floormaps_parse(f[0], fl[0], &rv->maps);
+	if (rc == 0) { rc = wallrecs_parse(f[0], fl[0], &rv->wrecs); if (rc) floormaps_free(&rv->maps); }
 	if (rc == 0) rc = mp2_parse(f[1], fl[1], &rv->mp2);
 	if (rc == 0) rc = tiles_load(f[2], fl[2], &rv->tiles);
 	if (rc == 0) { rc = walltiles_load(f[2], fl[2], &rv->walls); if (rc) tiles_free(&rv->tiles); }
@@ -154,23 +156,18 @@ static int roomview_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 		snprintf(rv->info, sizeof(rv->info), "%s level %d room %d: no floor map", rv->use_tata ? "TATA" : "DATA", rv->level, rv->room);
 		return 0;
 	}
-	int cw, ch;
-	floor_canvas_size(w, h, &cw, &ch);
-	uint8_t *cv = (uint8_t *)malloc((size_t)cw * ch);
-	if (!cv) return -1;
-	memset(cv, TILE_TRANSPARENT, (size_t)cw * ch);
-	floor_render(&rv->tiles, rv->maps.map[rv->room], w, h, cv);
-	int gx = 0, gy = 0;
-	/* the game's own placement (viewport is the upper 320x136 part of the screen) */
-	if (floor_origin(w, h, &gx, &gy) != 0) { gx = (SCREEN_W - cw) / 2 + 16 * h; gy = (SCREEN_H - ch) / 2; }
-	int ox = gx - 16 * h - rv->scroll_x, oy = gy - rv->scroll_y;
-	for (int y = 0; y < ch; y++)
-		for (int x = 0; x < cw; x++) {
-			int dx = ox + x, dy = oy + y;
-			if (cv[y * cw + x] != TILE_TRANSPARENT && dx >= 0 && dx < SCREEN_W && dy >= 0 && dy < SCREEN_H)
-				scr->pixels[dy * SCREEN_W + dx] = cv[y * cw + x];
-		}
-	free(cv);
+	if (w < 3 || w > 10 || h < 3 || h > 10) {
+		snprintf(rv->info, sizeof(rv->info), "%s level %d room %d: unsupported size %dx%d", rv->use_tata ? "TATA" : "DATA", rv->level, rv->room, w, h);
+		return 0;
+	}
+	static uint8_t shell[VIEW_W * VIEW_H];
+	memset(shell, TILE_TRANSPARENT, sizeof(shell));
+	room_render_shell(&rv->tiles, &rv->walls, rv->maps.map[rv->room],
+	                  rv->room < rv->wrecs.count ? rv->wrecs.map[rv->room] : NULL,
+	                  rv->room < rv->wrecs.count ? rv->wrecs.len[rv->room] : 0, w, h, shell);
+	for (int i = 0; i < VIEW_W * VIEW_H; i++)
+		if (shell[i] != TILE_TRANSPARENT)
+			scr->pixels[i] = shell[i];
 	snprintf(rv->info, sizeof(rv->info), "%s level %d room %d (%dx%d)", rv->use_tata ? "TATA" : "DATA", rv->level, rv->room, w, h);
 	return 0;
 }

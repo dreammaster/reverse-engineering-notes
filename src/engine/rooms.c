@@ -65,36 +65,46 @@ void tiles_free(TileSet *ts) {
 	memset(ts, 0, sizeof(*ts));
 }
 
-int floormaps_parse(const uint8_t *mp1, size_t len, FloorMaps *fm) {
+static int mp1_records(const uint8_t *mp1, size_t len, int section, FloorMaps *fm) {
 	memset(fm, 0, sizeof(*fm));
-	const size_t p = 0x48;
-	if (len < p + 10)
-		return -1;
-	int cnt = (mp1[p + 8] << 8) | mp1[p + 9];
-	size_t dir = p + 10, data = dir + 4 * (size_t)cnt;
-	if (cnt <= 0 || data > len)
-		return -2;
-	fm->buf = (uint8_t *)malloc(len);
-	fm->map = (const uint8_t **)calloc((size_t)cnt, sizeof(uint8_t *));
-	fm->len = (int *)calloc((size_t)cnt, sizeof(int));
-	if (!fm->buf || !fm->map || !fm->len) {
-		floormaps_free(fm);
-		return -3;
-	}
-	memcpy(fm->buf, mp1, len);
-	fm->count = cnt;
-	for (int i = 0; i < cnt; i++) {
-		size_t size = ((size_t)mp1[dir + 4 * i] << 8) | mp1[dir + 4 * i + 1];
-		size_t off = ((size_t)mp1[dir + 4 * i + 2] << 8) | mp1[dir + 4 * i + 3];
-		if (data + off + size > len) {
-			floormaps_free(fm);
-			return -2;
+	size_t p = 0x48;
+	for (int sec = 0; sec <= section; sec++) {
+		if (p + 10 > len)
+			return -1;
+		size_t dl = ((size_t)mp1[p] << 24) | (mp1[p + 1] << 16) | (mp1[p + 2] << 8) | mp1[p + 3];
+		int cnt = (mp1[p + 8] << 8) | mp1[p + 9];
+		size_t dir = p + 10, data = dir + 4 * (size_t)cnt;
+		if (sec == section) {
+			if (cnt <= 0 || data > len)
+				return -2;
+			fm->buf = (uint8_t *)malloc(len);
+			fm->map = (const uint8_t **)calloc((size_t)cnt, sizeof(uint8_t *));
+			fm->len = (int *)calloc((size_t)cnt, sizeof(int));
+			if (!fm->buf || !fm->map || !fm->len) {
+				floormaps_free(fm);
+				return -3;
+			}
+			memcpy(fm->buf, mp1, len);
+			fm->count = cnt;
+			for (int i = 0; i < cnt; i++) {
+				size_t size = ((size_t)mp1[dir + 4 * i] << 8) | mp1[dir + 4 * i + 1];
+				size_t off = ((size_t)mp1[dir + 4 * i + 2] << 8) | mp1[dir + 4 * i + 3];
+				if (data + off + size > len) {
+					floormaps_free(fm);
+					return -2;
+				}
+				fm->len[i] = (int)size;
+				fm->map[i] = size ? fm->buf + data + off : NULL;
+			}
+			return 0;
 		}
-		fm->len[i] = (int)size;
-		fm->map[i] = size ? fm->buf + data + off : NULL;
+		p = (data + dl + 1) & ~(size_t)1;
 	}
-	return 0;
+	return -1;
 }
+
+int floormaps_parse(const uint8_t *mp1, size_t len, FloorMaps *fm) { return mp1_records(mp1, len, 0, fm); }
+int wallrecs_parse(const uint8_t *mp1, size_t len, FloorMaps *fm) { return mp1_records(mp1, len, 1, fm); }
 
 void floormaps_free(FloorMaps *fm) {
 	free(fm->buf);
@@ -149,4 +159,54 @@ int floor_origin(int w, int h, int *x, int *y) {
 	*x = (int)(v % 40) * 8;
 	*y = (int)(v / 40);
 	return 0;
+}
+
+static void blit_clip(uint8_t *canvas, const uint8_t *px, int tw, int th, int ox, int oy) {
+	for (int y = 0; y < th; y++) {
+		int yy = oy + y;
+		if (yy < 0 || yy >= VIEW_H)
+			continue;
+		for (int x = 0; x < tw; x++) {
+			int xx = ox + x;
+			uint8_t c = px[y * tw + x];
+			if (xx >= 0 && xx < VIEW_W && c != TILE_TRANSPARENT)
+				canvas[yy * VIEW_W + xx] = c;
+		}
+	}
+}
+
+void room_render_shell(const TileSet *floor, const TileSet *walls, const uint8_t *fmap, const uint8_t *wrec, int wrec_len,
+                       int w, int h, uint8_t *canvas) {
+	int gx, gy;
+	if (floor_origin(w, h, &gx, &gy) != 0)
+		return;
+	for (int row = 0; row < h; row++)
+		for (int col = 0; col < w; col++) {
+			unsigned tid = fmap[row * w + col];
+			if (tid && (int)tid < floor->count)
+				blit_clip(canvas, floor->pixels + (size_t)tid * TILE_W * TILE_H, TILE_W, TILE_H, gx + 16 * (col - row),
+				          gy + 8 * (col + row));
+		}
+	if (!wrec || wrec_len < 2)
+		return;
+	int slots = wrec[0];
+	for (int c = 0; c < w + h; c++) {
+		int x, ybase;
+		if (c < w) {
+			x = gx + 16 * c;
+			ybase = gy - 17 + 8 * c;
+		} else {
+			int j = c - w + 1;
+			x = gx - 16 * j;
+			ybase = gy - 17 + 8 * j;
+		}
+		for (int k = 0; k < slots; k++) {
+			int idx = 2 + c * slots + k;
+			if (idx >= wrec_len)
+				break;
+			unsigned tid = wrec[idx];
+			if (tid && tid < 0x80 && (int)tid < walls->count)
+				blit_clip(canvas, walls->pixels + (size_t)tid * walls->w * walls->h, walls->w, walls->h, x, ybase - 16 * k);
+		}
+	}
 }

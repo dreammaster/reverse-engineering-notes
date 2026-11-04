@@ -7,7 +7,7 @@ Work in progress. Currently:
 | `engine/mjm.[ch]` | `mjm` container + PKWARE DCL explode + RNC1 unpacker |
 | `engine/pc1.[ch]` | `.PC1` picture decoder |
 | `engine/intro.[ch]` | title scroll: `FONT2.SPR` text, `FLAME.DAT` flames over `LOADING2.PC1` |
-| `engine/rooms.[ch]` | floor tiles (`MP3`), floor maps + palette (`MP1`), isometric floor renderer |
+| `engine/rooms.[ch]` | floor tiles + wall tiles (`MP3`), floor maps, wall records + palette (`MP1`), room shell (floor + walls) renderer |
 | `engine/sprites.[ch]` | `PCMAN.DAT` player sprites (48 frames) and the game palette |
 | `engine/mp2.[ch]` | `LEVn.MP2` section tables: script records, room lists, things |
 | `engine/lng.[ch]` | `.LNG` language string tables (6-bit packed text) |

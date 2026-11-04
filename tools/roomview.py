@@ -65,6 +65,72 @@ def floor_maps(mp1):
     return [mp1[data + ents[2 * i + 1]:data + ents[2 * i + 1] + ents[2 * i]] for i in range(cnt)]
 
 
+def wall_columns(mp1):
+    """MP1 section 1: per-room wall records.  Record = 2-byte header (byte 0 = slot count per column, 6),
+    then (w + h) columns of that many bytes: first the w columns of the right-hand wall starting at the corner,
+    then the h columns of the left-hand wall (bottom to top; 0 and ids >= 0x80 occupy a slot but draw nothing)."""
+    p = 0x48
+    dl, al, cnt = struct.unpack('>IIH', mp1[p:p + 10])
+    p = (p + 10 + 4 * cnt + dl + 1) & ~1
+    dl, al, cnt = struct.unpack('>IIH', mp1[p:p + 10])
+    dire = p + 10
+    data = dire + 4 * cnt
+    ents = struct.unpack('>%dH' % (2 * cnt), mp1[dire:data])
+    return [mp1[data + ents[2 * i + 1]:data + ents[2 * i + 1] + ents[2 * i]] for i in range(cnt)]
+
+
+def wall_tile_placements(rec, w, h, gx, gy):
+    """[(tile id, x, y)] in the order the game draws them (columns in record order, bottom to top).
+    (gx, gy) = screen position of floor tile (0,0)."""
+    if len(rec) < 2:
+        return []
+    slots = rec[0]
+    out = []
+    for c in range(w + h):
+        if c < w:
+            x, ybase = gx + 16 * c, gy - 17 + 8 * c
+        else:
+            j = c - w + 1
+            x, ybase = gx - 16 * j, gy - 17 + 8 * j
+        col = rec[2 + c * slots:2 + (c + 1) * slots]
+        for k, tid in enumerate(col):
+            if tid and tid < 0x80:
+                out.append((tid, x, ybase - 16 * k))
+    return out
+
+
+VIEW_W, VIEW_H = 320, 136
+
+
+def render_shell(tiles, walls, fmap, wrec, w, h):
+    """The room as the game draws it in its 320x136 viewport: floor tiles, then the wall columns.
+    -> bytes(320*136), 0xFF = nothing drawn."""
+    gx, gy = floor_origin(w, h)
+    canvas = bytearray([0xFF]) * (VIEW_W * VIEW_H)
+
+    def blit(px, tw, th, ox, oy):
+        for y in range(th):
+            yy = oy + y
+            if not 0 <= yy < VIEW_H:
+                continue
+            for x in range(tw):
+                xx = ox + x
+                if 0 <= xx < VIEW_W:
+                    c = px[y * tw + x]
+                    if c != 0xFF:
+                        canvas[yy * VIEW_W + xx] = c
+
+    for row in range(h):
+        for col in range(w):
+            tid = fmap[row * w + col]
+            if tid and tid < len(tiles):
+                blit(tiles[tid], 32, 18, gx + 16 * (col - row), gy + 8 * (col + row))
+    for tid, x, y in wall_tile_placements(wrec, w, h, gx, gy):
+        if tid < len(walls):
+            blit(walls[tid], 32, 32, x, y)
+    return bytes(canvas)
+
+
 def level_palette(mp1):
     """The level palette: 16 big-endian ST words right after MP1's three sections
     (each section starts on an even offset), followed by a fixed 1790-byte trailer."""

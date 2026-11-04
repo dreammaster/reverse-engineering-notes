@@ -24,8 +24,8 @@ building oracles so later work can be *verified* rather than guessed.
 | `LEVn.MP2` | Sections, room lists and the thing table decoded and named (Python + C, unit-tested on all 9 levels); thing record fields only partly understood |
 | `ANDATA` blocks | Container known, contents not |
 | Player movement/animation (observed) | Frames per direction and screen motion measured in the running game (`formats.md` §6.11); **walk demo** in the SDL app (floor + animated player, stays inside the room's floor area; no collision/walls/things yet) |
-| Wall tiles (`MP3` block 2: 80 × 32×32) | **Done** (Python + C + tile viewer); the wall *layout* in `MP1` section 1 is not decoded |
-| `LEVn.MP1` sections 1–2, `ROUTINEn.TAD` | Not decoded (wall layouts, graphic blocks, scripts) |
+| Wall tiles (`MP3` block 2) and wall layouts (`MP1` section 1) | **Done** — the complete room shell (floor + walls) reproduces the running game's first frame (all remaining differences are objects/the player); Python + C, unit-tested on all rooms of 14 level dirs; room viewer + walk demo draw it |
+| `LEVn.MP1` section 2, `ROUTINEn.TAD` | Not decoded (255 graphic/definition blocks, scripts) |
 | Isometric renderer, objects, ACL interpreter, collision/AI, input, sound | **Not started** |
 | Cadaver 2 (Payoff) code differences | Not analysed (data differs only in `TATA/` and RNC-packed copies) |
 
@@ -67,7 +67,7 @@ the PC1 decoder and the file-name strings. New findings add rows as we go.
    (file) with expanded ones (memory) to learn the expansion rules. `ANDATA`
    block 0 (8-byte entries) should give the sprite frame rectangles for
    `PCMAN.DAT`, whose placement in VRAM is already known.
-3. **Renderer** — **floors and the 140 tile bitmaps are done** (see the status table); still missing: the wall layout (MP1 section 1 → `thing_expand_grid`), thing/creature sprites (not in the VRAM sprite area; `ANDATA` blocks 2–5 are small 1-bit bitmaps, block 1 a 15 840-byte table), and the bottom status panel graphic, which is **not** present verbatim in any data file, in the unpacked executable, in a DCL stream inside it, or in `LOGO.PC1`/`LOADING2.PC1` (checked), so it is built by code or comes from a source not yet found. Original note:  the sprite format and the blit algorithm are known (formats.md §6.1/6.2); what is missing is *where room backgrounds and creature/object sprites come from* (they are not in the VRAM sprite area: only `PCMAN.DAT` is). — port the planar blitters to chunky C (masked blits by
+3. **Renderer** — **room shells (floor + walls) are done** (see the status table); still missing: thing/creature sprites (not in the VRAM sprite area; `ANDATA` blocks 2–5 are small 1-bit bitmaps, block 1 a 15 840-byte table), and the bottom status panel graphic, which is **not** present verbatim in any data file, in the unpacked executable, in a DCL stream inside it, or in `LOGO.PC1`/`LOADING2.PC1` (checked), so it is built by code or comes from a source not yet found. Original note:  the sprite format and the blit algorithm are known (formats.md §6.1/6.2); what is missing is *where room backgrounds and creature/object sprites come from* (they are not in the VRAM sprite area: only `PCMAN.DAT` is). — port the planar blitters to chunky C (masked blits by
    reading the AND/OR planes), driven by the object list. Match the harness
    frame pixel-for-pixel for level 1's first room.
 4. **Object/ACL layer** — decode the opcode table (jump table in `seg000` near

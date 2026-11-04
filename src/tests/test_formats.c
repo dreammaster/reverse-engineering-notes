@@ -198,12 +198,13 @@ int main(int argc, char **argv) {
 		(void)names;
 		if (have && rc == 0) {
 			TileSet ts;
-			FloorMaps fm;
+			FloorMaps fm, wr;
 			Mp2 m;
 			TileSet wt;
 			rc = tiles_load(raw[2], rl[2], &ts);
 			if (rc == 0) { rc = walltiles_load(raw[2], rl[2], &wt); if (rc) tiles_free(&ts); }
 			if (rc == 0) rc = floormaps_parse(raw[0], rl[0], &fm);
+			if (rc == 0) { rc = wallrecs_parse(raw[0], rl[0], &wr); if (rc) floormaps_free(&fm); }
 			if (rc == 0) rc = mp2_parse(raw[1], rl[1], &m);
 			unsigned h = 0x811C9DC5u;
 			int nrooms = 0;
@@ -236,11 +237,18 @@ int main(int argc, char **argv) {
 					for (int j = 0; j < cw * chh; j++)
 						h = (h ^ cv[j]) * 0x01000193u;
 					free(cv);
+					if (rw >= 3 && rw <= 10 && rh >= 3 && rh <= 10) {
+						static uint8_t shell[VIEW_W * VIEW_H];
+						memset(shell, TILE_TRANSPARENT, sizeof(shell));
+						room_render_shell(&ts, &wt, fm.map[r], r < wr.count ? wr.map[r] : NULL, r < wr.count ? wr.len[r] : 0, rw, rh, shell);
+						for (int j = 0; j < VIEW_W * VIEW_H; j++)
+							h = (h ^ shell[j]) * 0x01000193u;
+					}
 					nrooms++;
 				}
 				if (ts.count != rv->tiles || nrooms != rv->rooms || h != rv->hash)
 					rc = -99;
-				tiles_free(&ts); tiles_free(&wt); floormaps_free(&fm); mp2_free(&m);
+				tiles_free(&ts); tiles_free(&wt); floormaps_free(&fm); floormaps_free(&wr); mp2_free(&m);
 			}
 			if (rc) { printf("FAIL %s: rc=%d (rooms %d)\n", rv->dir, rc, nrooms); failed++; }
 			checked++;
