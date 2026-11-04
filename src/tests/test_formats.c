@@ -11,6 +11,7 @@
 #include "../engine/mp2.h"
 #include "../engine/rooms.h"
 #include "../engine/intro.h"
+#include "../engine/objsprites.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -254,6 +255,47 @@ int main(int argc, char **argv) {
 			checked++;
 		}
 		for (int f = 0; f < 3; f++) free(raw[f]);
+	}
+
+	for (size_t i = 0; i < sizeof(obj_vectors) / sizeof(obj_vectors[0]); i++) {
+		const ObjVector *ov = &obj_vectors[i];
+		char lev = ov->dir[strlen(ov->dir) - 1];
+		snprintf(path, sizeof(path), "%s/%s/LEV%c.MP1", root, ov->dir, lev);
+		size_t n, un;
+		uint8_t *in = slurp(path, &n), *raw = NULL;
+		if (!in)
+			continue;
+		ObjSprites os;
+		int rc = mjm_unpack(in, n, &raw, &un);
+		if (rc == 0)
+			rc = objsprites_load(raw, un, &os);
+		unsigned h = 0x811C9DC5u;
+		if (rc == 0) {
+			for (int k = 0; k < os.count; k++) {
+				const ObjSprite *sp = &os.sprites[k];
+				uint32_t hd[2] = {(uint32_t)sp->block, (uint32_t)sp->nframes};
+				for (int a = 0; a < 2; a++)
+					for (int b = 0; b < 4; b++)
+						h = (h ^ ((hd[a] >> (8 * b)) & 0xFF)) * 0x01000193u;
+				for (int j = 0; j < 32; j++)
+					h = (h ^ sp->header[j]) * 0x01000193u;
+				for (int f = 0; f < sp->nframes; f++) {
+					uint32_t fd[2] = {(uint32_t)sp->frames[f].w, (uint32_t)sp->frames[f].h};
+					for (int a = 0; a < 2; a++)
+						for (int b = 0; b < 4; b++)
+							h = (h ^ ((fd[a] >> (8 * b)) & 0xFF)) * 0x01000193u;
+					for (int j = 0; j < sp->frames[f].w * sp->frames[f].h; j++)
+						h = (h ^ sp->frames[f].pixels[j]) * 0x01000193u;
+				}
+			}
+			if (os.count != ov->sprites || h != ov->hash)
+				rc = -99;
+			objsprites_free(&os);
+		}
+		if (rc) { printf("FAIL objsprites %s: rc=%d\n", ov->dir, rc); failed++; }
+		checked++;
+		free(in);
+		free(raw);
 	}
 
 	for (size_t i = 0; i < sizeof(intro_vectors) / sizeof(intro_vectors[0]); i++) {

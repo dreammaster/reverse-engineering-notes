@@ -1,7 +1,7 @@
 /*
  * Cadaver / Cadaver: The Payoff - reimplementation front end (SDL2).
  *
- *   cadaver [-g <game dir>] [--scene logo|loading|sprites|sprites2|room|tiles|walk|intro] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]
+ *   cadaver [-g <game dir>] [--scene logo|loading|sprites|sprites2|room|tiles|walk|intro|objects] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]
  *
  * Current state: asset pipeline + title/loading scenes. Gameplay is not
  * implemented yet (see docs/roadmap.md).
@@ -14,13 +14,14 @@
 #include "engine/mp2.h"
 #include "engine/rooms.h"
 #include "engine/intro.h"
+#include "engine/objsprites.h"
 
 #include <SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-typedef enum { SCENE_LOGO, SCENE_LOADING, SCENE_SPRITES, SCENE_SPRITES_BIG, SCENE_ROOM, SCENE_TILES, SCENE_WALK, SCENE_INTRO, SCENE_COUNT } Scene;
+typedef enum { SCENE_LOGO, SCENE_LOADING, SCENE_SPRITES, SCENE_SPRITES_BIG, SCENE_ROOM, SCENE_TILES, SCENE_WALK, SCENE_INTRO, SCENE_OBJECTS, SCENE_COUNT } Scene;
 
 static int show_pc1(const GameFiles *g, const char *name, Screen *scr) {
 	uint8_t *data;
@@ -89,6 +90,7 @@ typedef struct {
 	int level, room, use_tata, scroll_x, scroll_y;
 	int loaded_level, loaded_tata;
 	TileSet tiles, walls;
+	ObjSprites objs;
 	FloorMaps maps, wrecs;
 	Mp2 mp2;
 	uint16_t palette[16];
@@ -100,6 +102,7 @@ static void roomview_unload(RoomView *rv) {
 	if (rv->ok) {
 		tiles_free(&rv->tiles);
 		tiles_free(&rv->walls);
+		objsprites_free(&rv->objs);
 		floormaps_free(&rv->maps);
 		floormaps_free(&rv->wrecs);
 		mp2_free(&rv->mp2);
@@ -127,6 +130,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	if (rc == 0) rc = tiles_load(f[2], fl[2], &rv->tiles);
 	if (rc == 0) { rc = walltiles_load(f[2], fl[2], &rv->walls); if (rc) tiles_free(&rv->tiles); }
 	if (rc == 0) rc = mp1_palette(f[0], fl[0], rv->palette);
+	if (rc == 0) rc = objsprites_load(f[0], fl[0], &rv->objs);
 	for (int i = 0; i < 3; i++) free(f[i]);
 	if (rc != 0) {
 		fprintf(stderr, "level %d: decode error %d\n", rv->level, rc);
@@ -304,7 +308,36 @@ static int intro_draw(const GameFiles *g, Screen *scr) {
 	return 0;
 }
 
+/* Object sprite sheet of the current level (MP1 section 2); Up/Down scrolls. */
+static int objects_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
+	if (!rv->ok || rv->loaded_level != rv->level || rv->loaded_tata != rv->use_tata)
+		if (roomview_load_level(rv, g) != 0)
+			return -1;
+	memset(scr, 0, sizeof(*scr));
+	for (int i = 0; i < 16; i++)
+		st_word_to_rgb(rv->palette[i], scr->palette[i]);
+	memset(scr->pixels, 6, sizeof(scr->pixels));
+	int n = 0, cols = 8, cw = 40, ch = 48;
+	for (int i = 0; i < rv->objs.count; i++)
+		for (int f = 0; f < rv->objs.sprites[i].nframes; f++, n++) {
+			const ObjFrame *fr = &rv->objs.sprites[i].frames[f];
+			int ox = (n % cols) * cw, oy = (n / cols) * ch - rv->scroll_y;
+			for (int y = 0; y < fr->h && y < ch - 2; y++)
+				for (int x = 0; x < fr->w && x < cw - 2; x++) {
+					uint8_t c = fr->pixels[y * fr->w + x];
+					int dx = ox + x + 1, dy = oy + y + 1;
+					if (c && dx >= 0 && dx < SCREEN_W && dy >= 0 && dy < SCREEN_H)
+						scr->pixels[dy * SCREEN_W + dx] = c;
+				}
+		}
+	snprintf(rv->info, sizeof(rv->info), "%s level %d: %d object sprites (%d frames)", rv->use_tata ? "TATA" : "DATA", rv->level,
+	         rv->objs.count, n);
+	return 0;
+}
+
 static int load_scene(const GameFiles *g, Scene s, Screen *scr) {
+	if (s == SCENE_OBJECTS)
+		return objects_draw(&g_room, g, scr);
 	if (s == SCENE_INTRO)
 		return intro_draw(g, scr);
 	if (s == SCENE_WALK)
@@ -340,10 +373,10 @@ int main(int argc, char **argv) {
 			shot = argv[++i];
 		else if (!strcmp(argv[i], "--scene") && i + 1 < argc) {
 			++i;
-			scene = !strcmp(argv[i], "intro") ? SCENE_INTRO : !strcmp(argv[i], "walk") ? SCENE_WALK : !strcmp(argv[i], "tiles") ? SCENE_TILES : !strcmp(argv[i], "room") ? SCENE_ROOM : !strcmp(argv[i], "loading") ? SCENE_LOADING : !strcmp(argv[i], "sprites") ? SCENE_SPRITES
+			scene = !strcmp(argv[i], "objects") ? SCENE_OBJECTS : !strcmp(argv[i], "intro") ? SCENE_INTRO : !strcmp(argv[i], "walk") ? SCENE_WALK : !strcmp(argv[i], "tiles") ? SCENE_TILES : !strcmp(argv[i], "room") ? SCENE_ROOM : !strcmp(argv[i], "loading") ? SCENE_LOADING : !strcmp(argv[i], "sprites") ? SCENE_SPRITES
 			        : !strcmp(argv[i], "sprites2") ? SCENE_SPRITES_BIG : SCENE_LOGO;
 		} else {
-			fprintf(stderr, "usage: %s [-g gamedir] [--scene logo|loading|sprites|sprites2|room|tiles|walk|intro] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]\n", argv[0]);
+			fprintf(stderr, "usage: %s [-g gamedir] [--scene logo|loading|sprites|sprites2|room|tiles|walk|intro|objects] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]\n", argv[0]);
 			return 2;
 		}
 	}
@@ -388,20 +421,20 @@ int main(int argc, char **argv) {
 					running = 0;
 				else if ((scene == SCENE_ROOM || scene == SCENE_WALK) && k == SDLK_PAGEDOWN) { g_room.room++; g_room.scroll_x = g_room.scroll_y = 0; }
 				else if ((scene == SCENE_ROOM || scene == SCENE_WALK) && k == SDLK_PAGEUP) { g_room.room--; g_room.scroll_x = g_room.scroll_y = 0; }
-				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK) && k == SDLK_RIGHTBRACKET) { g_room.level = g_room.level % (g_room.use_tata ? 4 : 5) + 1; g_room.room = 0; }
-				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK) && k == SDLK_LEFTBRACKET) { g_room.level = (g_room.level + (g_room.use_tata ? 2 : 3)) % (g_room.use_tata ? 4 : 5) + 1; g_room.room = 0; }
-				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK) && k == SDLK_t && g.id == GAME_PAYOFF) { g_room.use_tata ^= 1; g_room.level = 1; g_room.room = 0; }
+				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK || scene == SCENE_OBJECTS) && k == SDLK_RIGHTBRACKET) { g_room.level = g_room.level % (g_room.use_tata ? 4 : 5) + 1; g_room.room = 0; }
+				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK || scene == SCENE_OBJECTS) && k == SDLK_LEFTBRACKET) { g_room.level = (g_room.level + (g_room.use_tata ? 2 : 3)) % (g_room.use_tata ? 4 : 5) + 1; g_room.room = 0; }
+				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK || scene == SCENE_OBJECTS) && k == SDLK_t && g.id == GAME_PAYOFF) { g_room.use_tata ^= 1; g_room.level = 1; g_room.room = 0; }
 				else if (scene == SCENE_ROOM && k == SDLK_LEFT) g_room.scroll_x -= 16;
 				else if (scene == SCENE_ROOM && k == SDLK_RIGHT) g_room.scroll_x += 16;
-				else if ((scene == SCENE_ROOM || scene == SCENE_TILES) && k == SDLK_UP) g_room.scroll_y -= 16;
-				else if ((scene == SCENE_ROOM || scene == SCENE_TILES) && k == SDLK_DOWN) g_room.scroll_y += 16;
+				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_OBJECTS) && k == SDLK_UP) g_room.scroll_y -= 16;
+				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_OBJECTS) && k == SDLK_DOWN) g_room.scroll_y += 16;
 				else if (k == SDLK_SPACE || k == SDLK_RETURN)
 					scene = (Scene)((scene + 1) % SCENE_COUNT);
 				else
 					changed = 0;
 				if (changed && k != SDLK_ESCAPE) {
 					load_scene(&g, scene, &scr);
-					if (scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK)
+					if (scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK || scene == SCENE_OBJECTS)
 						SDL_SetWindowTitle(win, g_room.info);
 				}
 			}

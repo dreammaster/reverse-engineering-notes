@@ -3,7 +3,7 @@
 import glob, os, struct, sys
 here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, here)
-import mjm, pc1, lng, pcman, mpsections, roomview, intro
+import mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites
 
 root = os.path.join(here, '..')
 
@@ -58,6 +58,7 @@ for r in rows:
                 blob += struct.pack('<i', len(rec)) + rec
         mp2_vec.append((r[0], fnv(blob)))
 room_vec = []
+obj_vec = []
 for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glob.glob(os.path.join(root, 'cadaver2', 'TATA', '[1-4]')) +
                 glob.glob(os.path.join(root, 'cadaver2', 'DATA', '[1-5]'))):
     mp1, mp2, mp3 = roomview.level_files(d)
@@ -76,6 +77,16 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
             blob += roomview.render_shell(tiles, wtiles, fm, wrecs[i], w, h) if 3 <= w <= 10 and 3 <= h <= 10 else b''
             nrooms += 1
     room_vec.append((os.path.relpath(d, root), len(tiles), nrooms, fnv(blob)))
+    ob = b''
+    nspr = 0
+    for bi, (sz, blk) in enumerate(objsprites.blocks(mp1)):
+        r = objsprites.parse_sprite_block(blk)
+        if r:
+            nspr += 1
+            ob += struct.pack('<ii', bi, len(r[1])) + r[0]
+            for (fw, fh, fpx) in r[1]:
+                ob += struct.pack('<ii', fw, fh) + fpx
+    obj_vec.append((os.path.relpath(d, root), nspr, fnv(ob)))
 intro_vec = []
 for g, key in (('cadaver1', 'cadaver'), ('cadaver2', 'payoff')):
     d = os.path.join(root, g)
@@ -121,5 +132,10 @@ with open(os.path.join(root, 'src', 'tests', 'vectors.h'), 'w') as o:
     o.write('static const IntroVector intro_vectors[] = {\n')
     for r in intro_vec:
         o.write('\t{"%s", 0x%08XU},\n' % r)
+    o.write('};\n')
+    o.write('typedef struct { const char *dir; int sprites; unsigned hash; } ObjVector;\n')
+    o.write('static const ObjVector obj_vectors[] = {\n')
+    for r in obj_vec:
+        o.write('\t{"%s", %d, 0x%08XU},\n' % r)
     o.write('};\n')
 print(len(rows), 'mjm vectors,', len(pics), 'pictures,', len(lngs), 'language tables')

@@ -6,6 +6,7 @@ Work in progress. Currently:
 |---|---|
 | `engine/mjm.[ch]` | `mjm` container + PKWARE DCL explode + RNC1 unpacker |
 | `engine/pc1.[ch]` | `.PC1` picture decoder |
+| `engine/objsprites.[ch]` | object sprites (`MP1` section 2) |
 | `engine/intro.[ch]` | title scroll: `FONT2.SPR` text, `FLAME.DAT` flames over `LOADING2.PC1` |
 | `engine/rooms.[ch]` | floor tiles + wall tiles (`MP3`), floor maps, wall records + palette (`MP1`), room shell (floor + walls) renderer |
 | `engine/sprites.[ch]` | `PCMAN.DAT` player sprites (48 frames) and the game palette |
@@ -13,7 +14,7 @@ Work in progress. Currently:
 | `engine/lng.[ch]` | `.LNG` language string tables (6-bit packed text) |
 | `engine/gamefiles.[ch]` | detects Cadaver / Cadaver: The Payoff, resolves DOS-style paths case-insensitively, loads + unpacks files |
 | `engine/screen.h` | 320×200 indexed framebuffer + palette |
-| `main.c` | SDL2 front end (title / scroll pictures and the player sprite sheet; Esc quits, any key switches scene; `--scene logo|loading|sprites|sprites2|room|tiles|walk|intro [--level N --room R --tata --scroll Y --sim right:30,down:10]`; in the room scene PgUp/PgDn = room, `[`/`]` = level, `T` = DATA/TATA (Payoff), arrows scroll; in the walk scene the arrow keys move the player along the room axes (headless: `--sim`)) |
+| `main.c` | SDL2 front end (title / scroll pictures and the player sprite sheet; Esc quits, any key switches scene; `--scene logo|loading|sprites|sprites2|room|tiles|walk|intro|objects [--level N --room R --tata --scroll Y --sim right:30,down:10]`; in the room scene PgUp/PgDn = room, `[`/`]` = level, `T` = DATA/TATA (Payoff), arrows scroll; in the walk scene the arrow keys move the player along the room axes (headless: `--sim`)) |
 | `tools/cadaver_unpack.c` | command-line unpacker (`cadaver_unpack in out`, `-t` to test) |
 | `tests/` | `test_formats` compares the decoders with vectors from the Python reference (`tools/gen_test_vectors.py`) |
 

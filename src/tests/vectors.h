@@ -199,3 +199,20 @@ static const IntroVector intro_vectors[] = {
 	{"cadaver1", 0xD35CEE8DU},
 	{"cadaver2", 0x8CDAD271U},
 };
+typedef struct { const char *dir; int sprites; unsigned hash; } ObjVector;
+static const ObjVector obj_vectors[] = {
+	{"cadaver1/DATA/1", 80, 0xBFFCEBCBU},
+	{"cadaver1/DATA/2", 83, 0x5EFB4BC4U},
+	{"cadaver1/DATA/3", 77, 0xB8D2A34EU},
+	{"cadaver1/DATA/4", 80, 0x40E2567FU},
+	{"cadaver1/DATA/5", 51, 0x5865C4ADU},
+	{"cadaver2/DATA/1", 80, 0xBFFCEBCBU},
+	{"cadaver2/DATA/2", 83, 0x5EFB4BC4U},
+	{"cadaver2/DATA/3", 77, 0xB8D2A34EU},
+	{"cadaver2/DATA/4", 80, 0x40E2567FU},
+	{"cadaver2/DATA/5", 51, 0x5865C4ADU},
+	{"cadaver2/TATA/1", 57, 0x1A669B8DU},
+	{"cadaver2/TATA/2", 65, 0x456C92FAU},
+	{"cadaver2/TATA/3", 79, 0xDA7EC826U},
+	{"cadaver2/TATA/4", 78, 0x51952202U},
+};
