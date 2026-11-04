@@ -121,6 +121,12 @@ private:
 				default: break;
 				}
 				return 0;
+			case WM_LBUTTONDOWN:
+			case WM_RBUTTONDOWN:
+				self->mouseX = (int)(short)LOWORD(lp) / self->_scale;
+				self->mouseY = (int)(short)HIWORD(lp) / self->_scale;
+				self->_keys.push_back(msg == WM_LBUTTONDOWN ? KEY_MOUSE_LEFT : KEY_MOUSE_RIGHT);
+				return 0;
 			case WM_CHAR:
 				if (wp == 13 || wp == 8 || wp == 32 || (wp >= 33 && wp < 127))
 					self->_keys.push_back((int)wp);

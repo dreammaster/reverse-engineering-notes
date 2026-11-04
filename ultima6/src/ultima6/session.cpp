@@ -545,6 +545,41 @@ void Game::eyeKey(int key) {
 	prompt();
 }
 
+// The mouse (sub_16399 / sub_15D54): a click on the row of ten command icons under the map (screen 8,176 to 167,191) is the command of that icon (Attack, Cast, Talk, Look, Get, Drop,
+// Move, Use, Rest, Combat); on the map a click is a step towards the cell clicked (or, while a cursor asks for a square, the square: the cursor goes there and is confirmed) and
+// a right click gives a question up. Returns the key it stands for, 0 for none. APPROX(43): the other regions of the original (the party panel and the inventory view) are not mapped,
+// and the cursor of the mouse is not drawn.
+int Game::mouseKey(int mx, int my, bool right) {
+	if (mx >= 8 && mx <= 167 && my >= 176 && my <= 191 && !right && !_cursor && !_pending && !_talk && !_inventory && !_textActive) {
+		static const char ICONS[10] = {'A', 'C', 'T', 'L', 'G', 'D', 'M', 'U', 'R', 'X'};
+		return ICONS[(mx - 8) >> 4];
+	}
+	if (mx >= 8 && mx <= 167 && my >= 8 && my <= 167) {
+		int cx = mx / 16, cy = my / 16;
+		if (_cursor) {
+			if (right)
+				return KEY_ESC;
+			_cx = std::max(1, std::min(9, cx));
+			_cy = std::max(1, std::min(9, cy));
+			return KEY_ENTER;
+		}
+		if (right)
+			return _pending || _talk ? KEY_ESC : 0;
+		if (_pending || _talk || _inventory || _textActive)
+			return 0;
+		int dx = cx - 5, dy = cy - 5;
+		if (!dx && !dy)
+			return 0;
+		int ax = std::abs(dx), ay = std::abs(dy);
+		if (ax >= 2 * ay)
+			return dx > 0 ? KEY_RIGHT : KEY_LEFT;
+		if (ay >= 2 * ax)
+			return dy > 0 ? KEY_DOWN : KEY_UP;
+		return dx > 0 ? (dy > 0 ? KEY_PGDN : KEY_PGUP) : (dy > 0 ? KEY_END : KEY_HOME);
+	}
+	return 0;
+}
+
 bool Game::handleKey(int key) {
 	if (_ending == 1 && key != KEY_NONE) {
 		_ending = 2;
@@ -743,6 +778,18 @@ bool Game::handleKeyInner(int key) {
 		break;
 	case KEY_LEFT:
 		step(6);
+		break;
+	case KEY_PGUP: // the diagonals of the number pad
+		step(1);
+		break;
+	case KEY_PGDN:
+		step(3);
+		break;
+	case KEY_END:
+		step(5);
+		break;
+	case KEY_HOME:
+		step(7);
 		break;
 	default:
 		command(key);

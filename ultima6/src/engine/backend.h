@@ -22,6 +22,8 @@ enum Key {
 	KEY_END,
 	KEY_PGUP,
 	KEY_PGDN,
+	KEY_MOUSE_LEFT,  // a click: Backend::mouseX / mouseY say where (in the 320 x 200 screen)
+	KEY_MOUSE_RIGHT,
 	KEY_QUIT // window closed
 };
 
@@ -39,6 +41,8 @@ public:
 	/** Milliseconds. */
 	virtual unsigned ticks() = 0;
 	virtual void delay(unsigned ms) = 0;
+
+	int mouseX = 0, mouseY = 0; // where the last click was
 };
 
 /** Scripted keys, no window: for tests and screenshots. Keys are described by Backend::parseKeys. */

@@ -126,6 +126,8 @@ int main(int argc, char **argv) {
 		game.render(screen);
 		backend->present(screen);
 		int key = backend->waitKey();
+		if (key == Ultima6::KEY_MOUSE_LEFT || key == Ultima6::KEY_MOUSE_RIGHT)
+			key = game.mouseKey(backend->mouseX, backend->mouseY, key == Ultima6::KEY_MOUSE_RIGHT);
 		running = game.handleKey(key);
 	}
 

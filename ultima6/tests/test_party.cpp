@@ -44,7 +44,19 @@ int main() {
 		}
 	}
 	CHECK(!stacked);
-	if (failures == 0)
-		std::printf("ok\n");
+	// the mouse: an icon of the command row, a click on the map east of the party, a click north-west of it
+	CHECK(g.mouseKey(8 + 3 * 16 + 4, 180, false) == 'L');
+	CHECK(g.mouseKey(150, 88, false) == KEY_RIGHT);
+	CHECK(g.mouseKey(40, 40, false) == KEY_HOME);
+	CHECK(g.mouseKey(200, 100, false) == 0);
+	// the diagonal keys of the number pad walk
+	{
+		int bx = g.x, by = g.y;
+		bool moved = g.handleKey(KEY_PGUP);
+		CHECK(moved);
+		(void)bx;
+		(void)by;
+	}
+	if (failures == 0)		std::printf("ok\n");
 	return failures ? 1 : 0;
 }

@@ -44,6 +44,8 @@ public:
 
 	/** Handles one key; false when the game should end. */
 	bool handleKey(int key);
+	/** A click at (x, y) of the 320 x 200 screen as the key it stands for (0: none); see the definition. */
+	int mouseKey(int x, int y, bool right);
 	void render(Framebuffer &screen);
 
 	/** Moves the party leader one step in a direction (0 = north, clockwise); false if blocked. */
