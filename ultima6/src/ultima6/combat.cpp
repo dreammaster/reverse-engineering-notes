@@ -43,6 +43,26 @@ int Combat::weaponDamageOf(int type) {
 	return -1;
 }
 
+// sub_26D19: an actor that is held (movement flag 0x10, dragged under) gets one chance in its turn: a party member cries "ARGH!"; a roll of 1 to 30 below its (adjusted) strength and it is
+// "regurgitated!" and free (and goes on with its turn), else the hold does 1 to 15 damage (from the Avatar) and the turn and the moves are lost.
+bool Combat::dragStruggle(int actor) {
+	ObjList &a = _world.actors;
+	if (actor >= ObjList::ACTORS || !(a.movementFlags[actor] & 0x10))
+		return false;
+	if (a.worktype[actor] == 2)
+		_scroll.print("\n" + nameOf(actor) + ":\n>ARGH!\n");
+	if (random(1, 30) < adjustedStrength(actor)) {
+		if (onSfx)
+			onSfx(0xA, 0);
+		_scroll.print(nameOf(actor) + " regurgitated!\n");
+		a.movementFlags[actor] &= ~0x10;
+		return false;
+	}
+	applyDamage(1, actor, random(1, 15));
+	a.moves[actor] = 0;
+	return true;
+}
+
 int Combat::distance(int dx, int dy) {
 	static const uint8_t DIST[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
 									   {4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};

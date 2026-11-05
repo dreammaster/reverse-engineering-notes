@@ -218,6 +218,11 @@ void Game::runTurns() {
 			_actors.scheduleUpdate(x, y, z);
 			continue;
 		}
+		if (_combat.dragStruggle(best)) { // run_actor_turns 2ADD2: the held lose their turn
+			if (!_dead && a.hp[1] == 0 && (a.status[1] & 0x10))
+				avatarDied();
+			continue;
+		}
 		if (best == leader || a.worktype[best] == 2)
 			return; // the player's turn
 		int bw = a.worktype[best];

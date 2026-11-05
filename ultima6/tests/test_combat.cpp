@@ -5,6 +5,7 @@
 
 #include <cstdio>
 #include <string>
+#include <vector>
 
 using namespace Ultima6;
 using ::Ultima6::Ultima6::Combat;
@@ -65,6 +66,32 @@ int main() {
 	CHECK(w.objects.back().type == 339);
 	(void)exp0;
 	std::printf("killed actor %d (%s) in %d blows\n", victim, c.nameOf(victim).c_str(), blows);
+
+	// Held (dragged under, sub_26D19): a roll below the strength frees, else the hold hurts and the turn is lost
+	{
+		World w2;
+		w2.load("u6/game");
+		BorlandRandom rng2(11);
+		::Ultima6::Ultima6::TextWindow scroll2(22, 14, 17, 10);
+		Combat c2(w2, rng2, scroll2);
+		std::vector<int> heard;
+		c2.onSfx = [&](int e, int) { heard.push_back(e); };
+		CHECK(!c2.dragStruggle(2)); // not held
+		int freed = 0, held = 0;
+		for (int i = 0; i < 40 && w2.actors.hp[2] > 0; ++i) {
+			w2.actors.movementFlags[2] |= 0x10;
+			int hp = w2.actors.hp[2];
+			if (c2.dragStruggle(2)) {
+				++held;
+				CHECK(w2.actors.hp[2] < hp && (w2.actors.movementFlags[2] & 0x10));
+			} else {
+				++freed;
+				CHECK(!(w2.actors.movementFlags[2] & 0x10) && w2.actors.hp[2] == hp);
+			}
+		}
+		CHECK(held > 0 && freed > 0);
+		CHECK((int)heard.size() == freed && !heard.empty() && heard[0] == 0xA);
+	}
 
 	if (failures == 0)
 		std::printf("ok\n");
