@@ -28,7 +28,7 @@ the lifted code's labels - they found the bugs listed under "What the host found
   far address - or an RTLink stub - to the lifted function; a vector that still points at the host's `IRET` is a no-op.
 * **`longjmp`**: `_longjmp` throws a C++ exception; functions that call `_setjmp` (`main`'s command loop and `serialize_state?`'s I/O error exit) catch it, restore the
   registers from the jmp_buf and continue after their `_setjmp` call, exactly as the C runtime would. A jump to a buffer whose function is not running (a test calling
-  `save_game?` directly instead of through `main`) ends that call and is counted in `Host::stray`.
+  `read_game_state` directly instead of through `main`) ends that call and is counted in `Host::stray`.
 * **The PC** (`host_machine.cpp`):
   * DOS `int 21h`: open/create/read/write/seek/close on the game folder (files the program creates, like `restart.dat` and the save games, live in memory), memory allocation
     (48h/49h/4Ah), get/set vector (25h/35h, kept in the IVT at 0000:0000), date and time (the clock advances), terminate (throws `GameExit`).
@@ -52,7 +52,7 @@ the lifted code's labels - they found the bugs listed under "What the host found
 |---|---|
 | `init`: the original startup `init_game` | runs to completion on the emulated PC: reads `LEGEND.INI`, opens the data files, sets video mode 13h, installs the timer handler, creates and re-reads `restart.dat` (a 17,964-byte snapshot of the initial state) |
 | `text`: `ResourceText_GetStr` (the original decoder) vs `MessageFile` (the C++ port) | 5,542 strings, 0 mismatches |
-| `save`: the original save code writes `restart.dat` after the state was changed, then the original load code reads it back after a reset | 5 bytes differ from the initial snapshot; room and the desk's location are restored; the load ends in one `longjmp` to the main loop. **The IDB names are swapped**: `load_game?(1)` writes and `save_game?(1)` reads (mode 1 = `restart.dat`, 2 = a numbered slot, 3 = memory snapshot, 4 = `HELP.DAT`) |
+| `save`: the original save code writes `restart.dat` after the state was changed, then the original load code reads it back after a reset | 5 bytes differ from the initial snapshot; room and the desk's location are restored; the load ends in one `longjmp` to the main loop. **Names** (renamed from the swapped Shannara-derived `load_game?` / `save_game?`): `write_game_state(1)` writes and `read_game_state(1)` reads (mode 1 = `restart.dat`, 2 = a numbered slot, 3 = memory snapshot, 4 = `HELP.DAT`) |
 | `room 34`: `go_to_room` with the original room-entry code | the original code decodes `XANTH_02.PIC` image 0 (the bedroom) and the room items into the emulated VGA memory and sets the palette through the DAC ports: 32,791 non-black pixels; **the screen equals the C++ port's decode of image 0 for 30,791 of 31,823 pixels (96.8%) after the one-pixel shift the game itself applies** (`Image_OffsetPos` = (-1,-1) when the background is drawn; the rest are the items drawn on top: envelope, sticky note). The picture, its palette and the text (recorded) of the room are all produced by the original code |
 | `objects`: lifted `object_has_attr?` / `object_get_location?` / `object_get_prop_a?` / `object_parent_is?` vs the object table decoded independently by `xanth_objects.py` | 11,454 attribute checks, 414 locations, 484 `prop_a` values: 0 mismatches |
 | `look`: `run_command(LOOK_AT, obj)` through the real pipeline | the right descriptions, e.g. the desk listing its contents with the original list formatting |

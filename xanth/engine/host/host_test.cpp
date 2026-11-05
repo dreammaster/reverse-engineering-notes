@@ -358,7 +358,7 @@ static int testText(Host &h) {
 	return bad != 0;
 }
 
-// the original save/load code on the emulated file system. The IDB names are swapped: load_game?(1) WRITES restart.dat (mode 1), save_game?(1) READS it back.
+// the original save/load code on the emulated file system. write_game_state(1) writes restart.dat (mode 1), read_game_state(1) reads it back (the Shannara-derived names load_game? / save_game? were the opposite).
 static int testSave(Host &h) {
 	if (!startup(h)) return 1;
 	g_count = h.w(D_object_count);
@@ -369,18 +369,18 @@ static int testSave(Host &h) {
 	h.call("object_move_q", {35, 90, 0});                         // change some state
 	h.setw(D_current_room, 99);
 	h.cpu.steps = 0;
-	uint32_t w = h.call("load_game_q", {1}, 2);                   // write
+	uint32_t w = h.call("write_game_state", {1}, 2);                   // write
 	std::vector<uint8_t> second = h.machine.vfs["restart.dat"];
 	size_t diff = 0;
 	for (size_t i = 0; i < second.size() && i < first.size(); i++) diff += second[i] != first[i];
-	printf("write (load_game?(1)) returned %u: restart.dat %zu bytes, %zu bytes differ from the initial state\n", w & 0xFFFF, second.size(), diff);
+	printf("write (write_game_state(1)) returned %u: restart.dat %zu bytes, %zu bytes differ from the initial state\n", w & 0xFFFF, second.size(), diff);
 	h.setw(D_current_room, room0);
 	h.call("object_move_q", {35, desk0, 0});
 	printf("after reset: room %u (was %u), desk location %u\n", h.w(D_current_room), room0, h.call("object_get_location_q", {35}) & 0xFFFF);
 	h.cpu.steps = 0;
 	size_t strays = h.stray.size();
-	uint32_t r = h.call("save_game_q", {1}, 2);                   // read
-	printf("read (save_game?(1)) returned %u; room %u (saved 99), desk location %u (saved 90); %zu longjmp(s) to the main loop\n", r & 0xFFFF, h.w(D_current_room), h.call("object_get_location_q", {35}) & 0xFFFF, h.stray.size() - strays);
+	uint32_t r = h.call("read_game_state", {1}, 2);                   // read
+	printf("read (read_game_state(1)) returned %u; room %u (saved 99), desk location %u (saved 90); %zu longjmp(s) to the main loop\n", r & 0xFFFF, h.w(D_current_room), h.call("object_get_location_q", {35}) & 0xFFFF, h.stray.size() - strays);
 	return 0;
 }
 

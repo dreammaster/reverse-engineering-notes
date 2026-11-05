@@ -810,7 +810,6 @@ intptr_t disable_pic_regions_q(...);
 intptr_t event_pending(...);
 intptr_t game_over_screen_q(...);
 intptr_t go_to_room_q(...);
-intptr_t load_game_q(...);
 intptr_t lock_combination_correct(...);
 intptr_t move_to_current_room_q(...);
 intptr_t number_to_words(...);
@@ -878,6 +877,7 @@ intptr_t verbdef_Put_out_q(...);
 intptr_t wait_ticks_or_click(...);
 intptr_t word_7024E(...);
 intptr_t wputchar_q(...);
+intptr_t write_game_state(...);
 
 intptr_t conv_cb_01(int phase, int arg_2 = 0, int arg_4 = 0);
 intptr_t conv_cb_02(int phase, int arg_2 = 0, int arg_4 = 0);

@@ -1701,9 +1701,9 @@ conv_cb_15
       -> sub_4404C()
   if arg_2==0:
     RoomItem_Draw(0x10)
-    save_game?(2)
+    read_game_state(2)
     byte_86CC0 = 0
-    -> save_game?(2)
+    -> read_game_state(2)
 
 conv_cb_16
   if arg_2>=1:
@@ -11762,7 +11762,7 @@ objh_031   # objects: 34 bedroom
                     -> 0
                   if flag_85258_conv21!=0:
                     RoomItem_Draw(0x40)
-                    load_game?(2)
+                    write_game_state(2)
                     RoomItem_Draw(0x10)
                     flag_852C9_conv_text_13 = 0
                     flag_8525A_conv09 = 0
@@ -11780,7 +11780,7 @@ objh_031   # objects: 34 bedroom
                         -> 0
                       if flag_85258_conv21!=0:
                         RoomItem_Draw(0x40)
-                        load_game?(2)
+                        write_game_state(2)
                         RoomItem_Draw(0x10)
                         flag_852C9_conv_text_13 = 0
                         flag_8525A_conv09 = 0
@@ -11795,7 +11795,7 @@ objh_031   # objects: 34 bedroom
                         -> 0
                       if flag_85258_conv21!=0:
                         RoomItem_Draw(0x40)
-                        load_game?(2)
+                        write_game_state(2)
                         RoomItem_Draw(0x10)
                         flag_852C9_conv_text_13 = 0
                         flag_8525A_conv09 = 0
@@ -11810,7 +11810,7 @@ objh_031   # objects: 34 bedroom
                     -> 0
                   if flag_85258_conv21!=0:
                     RoomItem_Draw(0x40)
-                    load_game?(2)
+                    write_game_state(2)
                     RoomItem_Draw(0x10)
                     flag_852C9_conv_text_13 = 0
                     flag_8525A_conv09 = 0
@@ -11828,7 +11828,7 @@ objh_031   # objects: 34 bedroom
                         -> 0
                       if flag_85258_conv21!=0:
                         RoomItem_Draw(0x40)
-                        load_game?(2)
+                        write_game_state(2)
                         RoomItem_Draw(0x10)
                         flag_852C9_conv_text_13 = 0
                         flag_8525A_conv09 = 0
@@ -11842,7 +11842,7 @@ objh_031   # objects: 34 bedroom
                 -> 0
               if flag_85258_conv21!=0:
                 RoomItem_Draw(0x40)
-                load_game?(2)
+                write_game_state(2)
                 RoomItem_Draw(0x10)
                 flag_852C9_conv_text_13 = 0
                 flag_8525A_conv09 = 0
@@ -11865,7 +11865,7 @@ objh_031   # objects: 34 bedroom
                         -> 0
                       if flag_85258_conv21!=0:
                         RoomItem_Draw(0x40)
-                        load_game?(2)
+                        write_game_state(2)
                         RoomItem_Draw(0x10)
                         flag_852C9_conv_text_13 = 0
                         flag_8525A_conv09 = 0
@@ -11883,7 +11883,7 @@ objh_031   # objects: 34 bedroom
                             -> 0
                           if flag_85258_conv21!=0:
                             RoomItem_Draw(0x40)
-                            load_game?(2)
+                            write_game_state(2)
                             RoomItem_Draw(0x10)
                             flag_852C9_conv_text_13 = 0
                             flag_8525A_conv09 = 0
@@ -11898,7 +11898,7 @@ objh_031   # objects: 34 bedroom
                             -> 0
                           if flag_85258_conv21!=0:
                             RoomItem_Draw(0x40)
-                            load_game?(2)
+                            write_game_state(2)
                             RoomItem_Draw(0x10)
                             flag_852C9_conv_text_13 = 0
                             flag_8525A_conv09 = 0
@@ -11913,7 +11913,7 @@ objh_031   # objects: 34 bedroom
                         -> 0
                       if flag_85258_conv21!=0:
                         RoomItem_Draw(0x40)
-                        load_game?(2)
+                        write_game_state(2)
                         RoomItem_Draw(0x10)
                         flag_852C9_conv_text_13 = 0
                         flag_8525A_conv09 = 0
@@ -11931,7 +11931,7 @@ objh_031   # objects: 34 bedroom
                             -> 0
                           if flag_85258_conv21!=0:
                             RoomItem_Draw(0x40)
-                            load_game?(2)
+                            write_game_state(2)
                             RoomItem_Draw(0x10)
                             flag_852C9_conv_text_13 = 0
                             flag_8525A_conv09 = 0
@@ -11945,7 +11945,7 @@ objh_031   # objects: 34 bedroom
                     -> 0
                   if flag_85258_conv21!=0:
                     RoomItem_Draw(0x40)
-                    load_game?(2)
+                    write_game_state(2)
                     RoomItem_Draw(0x10)
                     flag_852C9_conv_text_13 = 0
                     flag_8525A_conv09 = 0
@@ -11965,7 +11965,7 @@ objh_031   # objects: 34 bedroom
                         -> 0
                       if flag_85258_conv21!=0:
                         RoomItem_Draw(0x40)
-                        load_game?(2)
+                        write_game_state(2)
                         RoomItem_Draw(0x10)
                         flag_852C9_conv_text_13 = 0
                         flag_8525A_conv09 = 0
@@ -11983,7 +11983,7 @@ objh_031   # objects: 34 bedroom
                             -> 0
                           if flag_85258_conv21!=0:
                             RoomItem_Draw(0x40)
-                            load_game?(2)
+                            write_game_state(2)
                             RoomItem_Draw(0x10)
                             flag_852C9_conv_text_13 = 0
                             flag_8525A_conv09 = 0
@@ -11998,7 +11998,7 @@ objh_031   # objects: 34 bedroom
                             -> 0
                           if flag_85258_conv21!=0:
                             RoomItem_Draw(0x40)
-                            load_game?(2)
+                            write_game_state(2)
                             RoomItem_Draw(0x10)
                             flag_852C9_conv_text_13 = 0
                             flag_8525A_conv09 = 0
@@ -12013,7 +12013,7 @@ objh_031   # objects: 34 bedroom
                         -> 0
                       if flag_85258_conv21!=0:
                         RoomItem_Draw(0x40)
-                        load_game?(2)
+                        write_game_state(2)
                         RoomItem_Draw(0x10)
                         flag_852C9_conv_text_13 = 0
                         flag_8525A_conv09 = 0
@@ -12031,7 +12031,7 @@ objh_031   # objects: 34 bedroom
                             -> 0
                           if flag_85258_conv21!=0:
                             RoomItem_Draw(0x40)
-                            load_game?(2)
+                            write_game_state(2)
                             RoomItem_Draw(0x10)
                             flag_852C9_conv_text_13 = 0
                             flag_8525A_conv09 = 0
@@ -12045,7 +12045,7 @@ objh_031   # objects: 34 bedroom
                     -> 0
                   if flag_85258_conv21!=0:
                     RoomItem_Draw(0x40)
-                    load_game?(2)
+                    write_game_state(2)
                     RoomItem_Draw(0x10)
                     flag_852C9_conv_text_13 = 0
                     flag_8525A_conv09 = 0
@@ -12065,7 +12065,7 @@ objh_031   # objects: 34 bedroom
                     -> 0
                   if flag_85258_conv21!=0:
                     RoomItem_Draw(0x40)
-                    load_game?(2)
+                    write_game_state(2)
                     RoomItem_Draw(0x10)
                     flag_852C9_conv_text_13 = 0
                     flag_8525A_conv09 = 0
@@ -12083,7 +12083,7 @@ objh_031   # objects: 34 bedroom
                         -> 0
                       if flag_85258_conv21!=0:
                         RoomItem_Draw(0x40)
-                        load_game?(2)
+                        write_game_state(2)
                         RoomItem_Draw(0x10)
                         flag_852C9_conv_text_13 = 0
                         flag_8525A_conv09 = 0
@@ -12098,7 +12098,7 @@ objh_031   # objects: 34 bedroom
                         -> 0
                       if flag_85258_conv21!=0:
                         RoomItem_Draw(0x40)
-                        load_game?(2)
+                        write_game_state(2)
                         RoomItem_Draw(0x10)
                         flag_852C9_conv_text_13 = 0
                         flag_8525A_conv09 = 0
@@ -12113,7 +12113,7 @@ objh_031   # objects: 34 bedroom
                     -> 0
                   if flag_85258_conv21!=0:
                     RoomItem_Draw(0x40)
-                    load_game?(2)
+                    write_game_state(2)
                     RoomItem_Draw(0x10)
                     flag_852C9_conv_text_13 = 0
                     flag_8525A_conv09 = 0
@@ -12131,7 +12131,7 @@ objh_031   # objects: 34 bedroom
                         -> 0
                       if flag_85258_conv21!=0:
                         RoomItem_Draw(0x40)
-                        load_game?(2)
+                        write_game_state(2)
                         RoomItem_Draw(0x10)
                         flag_852C9_conv_text_13 = 0
                         flag_8525A_conv09 = 0
@@ -12145,7 +12145,7 @@ objh_031   # objects: 34 bedroom
                 -> 0
               if flag_85258_conv21!=0:
                 RoomItem_Draw(0x40)
-                load_game?(2)
+                write_game_state(2)
                 RoomItem_Draw(0x10)
                 flag_852C9_conv_text_13 = 0
                 flag_8525A_conv09 = 0
@@ -12168,7 +12168,7 @@ objh_031   # objects: 34 bedroom
                         -> 0
                       if flag_85258_conv21!=0:
                         RoomItem_Draw(0x40)
-                        load_game?(2)
+                        write_game_state(2)
                         RoomItem_Draw(0x10)
                         flag_852C9_conv_text_13 = 0
                         flag_8525A_conv09 = 0
@@ -12186,7 +12186,7 @@ objh_031   # objects: 34 bedroom
                             -> 0
                           if flag_85258_conv21!=0:
                             RoomItem_Draw(0x40)
-                            load_game?(2)
+                            write_game_state(2)
                             RoomItem_Draw(0x10)
                             flag_852C9_conv_text_13 = 0
                             flag_8525A_conv09 = 0
@@ -12201,7 +12201,7 @@ objh_031   # objects: 34 bedroom
                             -> 0
                           if flag_85258_conv21!=0:
                             RoomItem_Draw(0x40)
-                            load_game?(2)
+                            write_game_state(2)
                             RoomItem_Draw(0x10)
                             flag_852C9_conv_text_13 = 0
                             flag_8525A_conv09 = 0
@@ -12216,7 +12216,7 @@ objh_031   # objects: 34 bedroom
                         -> 0
                       if flag_85258_conv21!=0:
                         RoomItem_Draw(0x40)
-                        load_game?(2)
+                        write_game_state(2)
                         RoomItem_Draw(0x10)
                         flag_852C9_conv_text_13 = 0
                         flag_8525A_conv09 = 0
@@ -12234,7 +12234,7 @@ objh_031   # objects: 34 bedroom
                             -> 0
                           if flag_85258_conv21!=0:
                             RoomItem_Draw(0x40)
-                            load_game?(2)
+                            write_game_state(2)
                             RoomItem_Draw(0x10)
                             flag_852C9_conv_text_13 = 0
                             flag_8525A_conv09 = 0
@@ -12248,7 +12248,7 @@ objh_031   # objects: 34 bedroom
                     -> 0
                   if flag_85258_conv21!=0:
                     RoomItem_Draw(0x40)
-                    load_game?(2)
+                    write_game_state(2)
                     RoomItem_Draw(0x10)
                     flag_852C9_conv_text_13 = 0
                     flag_8525A_conv09 = 0
@@ -12267,7 +12267,7 @@ objh_031   # objects: 34 bedroom
                 -> 0
               if flag_85258_conv21!=0:
                 RoomItem_Draw(0x40)
-                load_game?(2)
+                write_game_state(2)
                 RoomItem_Draw(0x10)
                 flag_852C9_conv_text_13 = 0
                 flag_8525A_conv09 = 0
@@ -12285,7 +12285,7 @@ objh_031   # objects: 34 bedroom
                     -> 0
                   if flag_85258_conv21!=0:
                     RoomItem_Draw(0x40)
-                    load_game?(2)
+                    write_game_state(2)
                     RoomItem_Draw(0x10)
                     flag_852C9_conv_text_13 = 0
                     flag_8525A_conv09 = 0
@@ -12300,7 +12300,7 @@ objh_031   # objects: 34 bedroom
                     -> 0
                   if flag_85258_conv21!=0:
                     RoomItem_Draw(0x40)
-                    load_game?(2)
+                    write_game_state(2)
                     RoomItem_Draw(0x10)
                     flag_852C9_conv_text_13 = 0
                     flag_8525A_conv09 = 0
@@ -12315,7 +12315,7 @@ objh_031   # objects: 34 bedroom
                 -> 0
               if flag_85258_conv21!=0:
                 RoomItem_Draw(0x40)
-                load_game?(2)
+                write_game_state(2)
                 RoomItem_Draw(0x10)
                 flag_852C9_conv_text_13 = 0
                 flag_8525A_conv09 = 0
@@ -12333,7 +12333,7 @@ objh_031   # objects: 34 bedroom
                     -> 0
                   if flag_85258_conv21!=0:
                     RoomItem_Draw(0x40)
-                    load_game?(2)
+                    write_game_state(2)
                     RoomItem_Draw(0x10)
                     flag_852C9_conv_text_13 = 0
                     flag_8525A_conv09 = 0
@@ -12347,7 +12347,7 @@ objh_031   # objects: 34 bedroom
             -> 0
           if flag_85258_conv21!=0:
             RoomItem_Draw(0x40)
-            load_game?(2)
+            write_game_state(2)
             RoomItem_Draw(0x10)
             flag_852C9_conv_text_13 = 0
             flag_8525A_conv09 = 0

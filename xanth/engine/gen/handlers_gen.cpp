@@ -7718,7 +7718,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 									}
 									if (flag_85258_conv21!=0) {
 										RoomItem_Draw(0x40);
-										load_game_q(2);
+										write_game_state(2);
 										RoomItem_Draw(0x10);
 										flag_852C9_conv_text_13 = 0;
 										flag_8525A_conv09 = 0;
@@ -7739,7 +7739,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 											}
 											if (flag_85258_conv21!=0) {
 												RoomItem_Draw(0x40);
-												load_game_q(2);
+												write_game_state(2);
 												RoomItem_Draw(0x10);
 												flag_852C9_conv_text_13 = 0;
 												flag_8525A_conv09 = 0;
@@ -7758,7 +7758,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 											}
 											if (flag_85258_conv21!=0) {
 												RoomItem_Draw(0x40);
-												load_game_q(2);
+												write_game_state(2);
 												RoomItem_Draw(0x10);
 												flag_852C9_conv_text_13 = 0;
 												flag_8525A_conv09 = 0;
@@ -7779,7 +7779,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 									}
 									if (flag_85258_conv21!=0) {
 										RoomItem_Draw(0x40);
-										load_game_q(2);
+										write_game_state(2);
 										RoomItem_Draw(0x10);
 										flag_852C9_conv_text_13 = 0;
 										flag_8525A_conv09 = 0;
@@ -7800,7 +7800,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 											}
 											if (flag_85258_conv21!=0) {
 												RoomItem_Draw(0x40);
-												load_game_q(2);
+												write_game_state(2);
 												RoomItem_Draw(0x10);
 												flag_852C9_conv_text_13 = 0;
 												flag_8525A_conv09 = 0;
@@ -7821,7 +7821,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 							}
 							if (flag_85258_conv21!=0) {
 								RoomItem_Draw(0x40);
-								load_game_q(2);
+								write_game_state(2);
 								RoomItem_Draw(0x10);
 								flag_852C9_conv_text_13 = 0;
 								flag_8525A_conv09 = 0;
@@ -7851,7 +7851,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 											}
 											if (flag_85258_conv21!=0) {
 												RoomItem_Draw(0x40);
-												load_game_q(2);
+												write_game_state(2);
 												RoomItem_Draw(0x10);
 												flag_852C9_conv_text_13 = 0;
 												flag_8525A_conv09 = 0;
@@ -7872,7 +7872,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 													}
 													if (flag_85258_conv21!=0) {
 														RoomItem_Draw(0x40);
-														load_game_q(2);
+														write_game_state(2);
 														RoomItem_Draw(0x10);
 														flag_852C9_conv_text_13 = 0;
 														flag_8525A_conv09 = 0;
@@ -7891,7 +7891,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 													}
 													if (flag_85258_conv21!=0) {
 														RoomItem_Draw(0x40);
-														load_game_q(2);
+														write_game_state(2);
 														RoomItem_Draw(0x10);
 														flag_852C9_conv_text_13 = 0;
 														flag_8525A_conv09 = 0;
@@ -7912,7 +7912,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 											}
 											if (flag_85258_conv21!=0) {
 												RoomItem_Draw(0x40);
-												load_game_q(2);
+												write_game_state(2);
 												RoomItem_Draw(0x10);
 												flag_852C9_conv_text_13 = 0;
 												flag_8525A_conv09 = 0;
@@ -7933,7 +7933,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 													}
 													if (flag_85258_conv21!=0) {
 														RoomItem_Draw(0x40);
-														load_game_q(2);
+														write_game_state(2);
 														RoomItem_Draw(0x10);
 														flag_852C9_conv_text_13 = 0;
 														flag_8525A_conv09 = 0;
@@ -7954,7 +7954,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 									}
 									if (flag_85258_conv21!=0) {
 										RoomItem_Draw(0x40);
-										load_game_q(2);
+										write_game_state(2);
 										RoomItem_Draw(0x10);
 										flag_852C9_conv_text_13 = 0;
 										flag_8525A_conv09 = 0;
@@ -7981,7 +7981,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 											}
 											if (flag_85258_conv21!=0) {
 												RoomItem_Draw(0x40);
-												load_game_q(2);
+												write_game_state(2);
 												RoomItem_Draw(0x10);
 												flag_852C9_conv_text_13 = 0;
 												flag_8525A_conv09 = 0;
@@ -8002,7 +8002,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 													}
 													if (flag_85258_conv21!=0) {
 														RoomItem_Draw(0x40);
-														load_game_q(2);
+														write_game_state(2);
 														RoomItem_Draw(0x10);
 														flag_852C9_conv_text_13 = 0;
 														flag_8525A_conv09 = 0;
@@ -8021,7 +8021,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 													}
 													if (flag_85258_conv21!=0) {
 														RoomItem_Draw(0x40);
-														load_game_q(2);
+														write_game_state(2);
 														RoomItem_Draw(0x10);
 														flag_852C9_conv_text_13 = 0;
 														flag_8525A_conv09 = 0;
@@ -8042,7 +8042,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 											}
 											if (flag_85258_conv21!=0) {
 												RoomItem_Draw(0x40);
-												load_game_q(2);
+												write_game_state(2);
 												RoomItem_Draw(0x10);
 												flag_852C9_conv_text_13 = 0;
 												flag_8525A_conv09 = 0;
@@ -8063,7 +8063,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 													}
 													if (flag_85258_conv21!=0) {
 														RoomItem_Draw(0x40);
-														load_game_q(2);
+														write_game_state(2);
 														RoomItem_Draw(0x10);
 														flag_852C9_conv_text_13 = 0;
 														flag_8525A_conv09 = 0;
@@ -8084,7 +8084,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 									}
 									if (flag_85258_conv21!=0) {
 										RoomItem_Draw(0x40);
-										load_game_q(2);
+										write_game_state(2);
 										RoomItem_Draw(0x10);
 										flag_852C9_conv_text_13 = 0;
 										flag_8525A_conv09 = 0;
@@ -8114,7 +8114,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 									}
 									if (flag_85258_conv21!=0) {
 										RoomItem_Draw(0x40);
-										load_game_q(2);
+										write_game_state(2);
 										RoomItem_Draw(0x10);
 										flag_852C9_conv_text_13 = 0;
 										flag_8525A_conv09 = 0;
@@ -8135,7 +8135,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 											}
 											if (flag_85258_conv21!=0) {
 												RoomItem_Draw(0x40);
-												load_game_q(2);
+												write_game_state(2);
 												RoomItem_Draw(0x10);
 												flag_852C9_conv_text_13 = 0;
 												flag_8525A_conv09 = 0;
@@ -8154,7 +8154,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 											}
 											if (flag_85258_conv21!=0) {
 												RoomItem_Draw(0x40);
-												load_game_q(2);
+												write_game_state(2);
 												RoomItem_Draw(0x10);
 												flag_852C9_conv_text_13 = 0;
 												flag_8525A_conv09 = 0;
@@ -8175,7 +8175,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 									}
 									if (flag_85258_conv21!=0) {
 										RoomItem_Draw(0x40);
-										load_game_q(2);
+										write_game_state(2);
 										RoomItem_Draw(0x10);
 										flag_852C9_conv_text_13 = 0;
 										flag_8525A_conv09 = 0;
@@ -8196,7 +8196,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 											}
 											if (flag_85258_conv21!=0) {
 												RoomItem_Draw(0x40);
-												load_game_q(2);
+												write_game_state(2);
 												RoomItem_Draw(0x10);
 												flag_852C9_conv_text_13 = 0;
 												flag_8525A_conv09 = 0;
@@ -8217,7 +8217,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 							}
 							if (flag_85258_conv21!=0) {
 								RoomItem_Draw(0x40);
-								load_game_q(2);
+								write_game_state(2);
 								RoomItem_Draw(0x10);
 								flag_852C9_conv_text_13 = 0;
 								flag_8525A_conv09 = 0;
@@ -8246,7 +8246,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 											}
 											if (flag_85258_conv21!=0) {
 												RoomItem_Draw(0x40);
-												load_game_q(2);
+												write_game_state(2);
 												RoomItem_Draw(0x10);
 												flag_852C9_conv_text_13 = 0;
 												flag_8525A_conv09 = 0;
@@ -8267,7 +8267,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 													}
 													if (flag_85258_conv21!=0) {
 														RoomItem_Draw(0x40);
-														load_game_q(2);
+														write_game_state(2);
 														RoomItem_Draw(0x10);
 														flag_852C9_conv_text_13 = 0;
 														flag_8525A_conv09 = 0;
@@ -8286,7 +8286,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 													}
 													if (flag_85258_conv21!=0) {
 														RoomItem_Draw(0x40);
-														load_game_q(2);
+														write_game_state(2);
 														RoomItem_Draw(0x10);
 														flag_852C9_conv_text_13 = 0;
 														flag_8525A_conv09 = 0;
@@ -8307,7 +8307,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 											}
 											if (flag_85258_conv21!=0) {
 												RoomItem_Draw(0x40);
-												load_game_q(2);
+												write_game_state(2);
 												RoomItem_Draw(0x10);
 												flag_852C9_conv_text_13 = 0;
 												flag_8525A_conv09 = 0;
@@ -8328,7 +8328,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 													}
 													if (flag_85258_conv21!=0) {
 														RoomItem_Draw(0x40);
-														load_game_q(2);
+														write_game_state(2);
 														RoomItem_Draw(0x10);
 														flag_852C9_conv_text_13 = 0;
 														flag_8525A_conv09 = 0;
@@ -8349,7 +8349,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 									}
 									if (flag_85258_conv21!=0) {
 										RoomItem_Draw(0x40);
-										load_game_q(2);
+										write_game_state(2);
 										RoomItem_Draw(0x10);
 										flag_852C9_conv_text_13 = 0;
 										flag_8525A_conv09 = 0;
@@ -8379,7 +8379,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 							}
 							if (flag_85258_conv21!=0) {
 								RoomItem_Draw(0x40);
-								load_game_q(2);
+								write_game_state(2);
 								RoomItem_Draw(0x10);
 								flag_852C9_conv_text_13 = 0;
 								flag_8525A_conv09 = 0;
@@ -8400,7 +8400,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 									}
 									if (flag_85258_conv21!=0) {
 										RoomItem_Draw(0x40);
-										load_game_q(2);
+										write_game_state(2);
 										RoomItem_Draw(0x10);
 										flag_852C9_conv_text_13 = 0;
 										flag_8525A_conv09 = 0;
@@ -8419,7 +8419,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 									}
 									if (flag_85258_conv21!=0) {
 										RoomItem_Draw(0x40);
-										load_game_q(2);
+										write_game_state(2);
 										RoomItem_Draw(0x10);
 										flag_852C9_conv_text_13 = 0;
 										flag_8525A_conv09 = 0;
@@ -8440,7 +8440,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 							}
 							if (flag_85258_conv21!=0) {
 								RoomItem_Draw(0x40);
-								load_game_q(2);
+								write_game_state(2);
 								RoomItem_Draw(0x10);
 								flag_852C9_conv_text_13 = 0;
 								flag_8525A_conv09 = 0;
@@ -8461,7 +8461,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 									}
 									if (flag_85258_conv21!=0) {
 										RoomItem_Draw(0x40);
-										load_game_q(2);
+										write_game_state(2);
 										RoomItem_Draw(0x10);
 										flag_852C9_conv_text_13 = 0;
 										flag_8525A_conv09 = 0;
@@ -8482,7 +8482,7 @@ intptr_t objh_031(int phase, int arg_2, int arg_4) {
 					}
 					if (flag_85258_conv21!=0) {
 						RoomItem_Draw(0x40);
-						load_game_q(2);
+						write_game_state(2);
 						RoomItem_Draw(0x10);
 						flag_852C9_conv_text_13 = 0;
 						flag_8525A_conv09 = 0;

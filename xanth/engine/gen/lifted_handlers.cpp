@@ -43,7 +43,7 @@ void L_conv_cb_15(Cpu &c) {
 	// push    ax
 	c.push(c.ax.x);
 	// call    sub_2F119
-	{ uint16_t _sp = c.sp; int _rw = c.retWords; c.retWords = 2; for (int _i = 0; _i < 2; _i++) c.push(0); c.popBytes = 4; if (c.onCall) c.onCall(c, "save_game?"); H_save_game_q(c); c.sp = (uint16_t)(_sp - 4 + c.popBytes); c.retWords = _rw; }
+	{ uint16_t _sp = c.sp; int _rw = c.retWords; c.retWords = 2; for (int _i = 0; _i < 2; _i++) c.push(0); c.popBytes = 4; if (c.onCall) c.onCall(c, "read_game_state"); H_read_game_state(c); c.sp = (uint16_t)(_sp - 4 + c.popBytes); c.retWords = _rw; }
 	// mov     sp, bp
 	c.sp = c.bp;
 	// mov     byte_86CC0, 0
