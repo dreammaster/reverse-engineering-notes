@@ -59,3 +59,20 @@ Conversations: `TALK.LZC` items hold the same scripts as Ultima VI's `CONVERSE.*
 ## Per-game tables
 
 `tools/extract_creatures.py <exe> <u6|md|se>` reads the creature table of a `GAME.EXE`: the object types that have a movement class of their own (a zero-terminated word array), seven byte columns (strength, dexterity, intelligence, experience, damage, hit points, alignment in bits 5-6), then a word of class flags per class (the creature flags of `CreatureStats` are those words with their 15 bits reversed). Ultima VI's output equals the hand-made `combat_tables.inc` (checked by script); the spin-offs differ in the capacity of the columns (Martian Dreams 50 bytes apart with 49 types, Savage Empire 48). `src/martian_dreams/tables.inc` and `src/savage_empire/tables.inc` are the results, `GameTables` (`game_tables.h`) hands the right ones to `Combat::stats` and `MovementClasses`, `World::load` chooses them by `World::game`. Not yet read: the weapon damage, weapon range and armour tables (found as word lists in Martian Dreams' data, not yet tied to code), the usable-object list, spells and texts.
+
+## Martian Dreams: the Use command (findings, not ported)
+
+MD's command loop is `sub_23C1A` (jump table at 243B2: events 130 Talk, 131 Look `sub_14ED4`, 132 Get, 133 Drop, 134 Move, 135 **Use `sub_361AC`**). Use is not Ultima VI's table of 85 usable types but a
+recipe system (`sub_35F0D`):
+
+1. `sub_35C31(type, buf)`: table 1 in `seg059` (file 0x31480, 125 records of 12 bytes: a word object type and up to ten recipe numbers ended by 0xFF) lists the recipes an object takes part in
+   (duplicates removed). None: "%s can't be used." (ds-relative seg057 string at file 0x2EF40 + 0x1C19).
+2. A recipe (`seg060`, file 0x31A70, 75 records of 36 bytes) has a list of first-partner object types at +0, a list of second-partner types at +0x10 (word lists ended by 0xFFFF; 0xFFFE
+   means anything, a list that is just 0xFFFF means no partner) and a far pointer to its action at +0x20.
+3. If some recipe wants a first partner the game asks "On - " and the player picks an object (`sub_35B9F`/`sub_35972`); the recipes whose list does not take its type are dropped
+   (`sub_35DCD`); none left: "%s on %s has no effect.\n" style messages. A second partner is asked for with "To -\n" likewise.
+4. `sub_35E6D` takes the recipe with the most specific partner lists (0xFFFE scores 0, no partner 1, a type 2) and calls its action with (item, first, second).
+
+The 75 actions are in the three overlay stub segments 0x2F8D, 0x2F98 and 0x2FA1 (Borland overlay thunks `CD 3F <offset> 00` after a 0x20-byte header); I have not yet resolved the thunks to the
+IDA segments (the overlay headers give file offset, code size and entry count: 0x2F8D 0x1A87 bytes, 0x2FA1 0x0B3D bytes) so none of the actions is read. The engine keeps using Ultima VI's use table
+for Martian Dreams and Savage Empire.
