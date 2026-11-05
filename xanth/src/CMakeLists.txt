@@ -23,8 +23,18 @@ add_library(legend STATIC
 	legend/audiofiles.cpp
 )
 
+# xanth/: Companions of Xanth
+add_library(xanth_engine STATIC
+	xanth/objects.cpp
+)
+target_link_libraries(xanth_engine legend)
+
 enable_testing()
 
 add_executable(test_formats tests/test_formats.cpp)
 target_link_libraries(test_formats legend)
 add_test(NAME formats COMMAND test_formats)
+
+add_executable(test_objects tests/test_objects.cpp)
+target_link_libraries(test_objects xanth_engine)
+add_test(NAME objects COMMAND test_objects)
