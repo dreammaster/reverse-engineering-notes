@@ -51,7 +51,7 @@ public:
 	void computeDarkness(int x, int y, int z, int hour, int partyLightRadius, uint8_t *out) const;
 
 private:
-	void drawTile(int tile, int px, int py);
+	void drawTile(int tile, int px, int py, int halo = 0);
 	void drawObject(const World::Obj &o, int cellX, int cellY);
 
 	void buildRemap();

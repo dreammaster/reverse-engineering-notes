@@ -25,7 +25,9 @@ void MapRenderer::buildRemap() {
 	}
 }
 
-void MapRenderer::drawTile(int tile, int px, int py) {
+// With `halo` (the driver's tile flags 0x0800, 0x1000 and 0x1800, entry 0x42: colours 0x0B, 0x0C and 9) only the black pixels of the tile are drawn, in that colour: the outline of
+// the thing, put over the thing itself
+void MapRenderer::drawTile(int tile, int px, int py, int halo) {
 	if (tile < 0 || tile >= TileSet::COUNT)
 		return;
 	tile = _remap[tile];
@@ -40,8 +42,12 @@ void MapRenderer::drawTile(int tile, int px, int py) {
 			if (x < 0 || x >= BUFFER_SIZE)
 				continue;
 			uint8_t v = src[j * CELL_SIZE + i];
-			if (!transparent || v != TileSet::TRANSPARENT_PIXEL)
+			if (halo) {
+				if (v == 0)
+					_buffer[y * BUFFER_SIZE + x] = (uint8_t)halo;
+			} else if (!transparent || v != TileSet::TRANSPARENT_PIXEL) {
 				_buffer[y * BUFFER_SIZE + x] = v;
+			}
 		}
 	}
 }
@@ -51,14 +57,29 @@ void MapRenderer::drawObject(const World::Obj &o, int cellX, int cellY) {
 	int px = cellX * CELL_SIZE, py = cellY * CELL_SIZE;
 	uint8_t f2 = _world.flags.flags2[tile & (TileSet::COUNT - 1)];
 	bool wide = f2 & 0x80, tall = f2 & 0x40;
-	drawTile(tile, px, py);
-	// a double-width or double-height tile is drawn together with the tiles that precede it
-	if (wide)
-		drawTile(tile - 1, px - CELL_SIZE, py);
-	if (tall) {
-		drawTile(tile - (wide ? 2 : 1), px, py - CELL_SIZE);
+	// sub_1CB82 1CD1D-1CD9E: an invisible thing of the party is drawn as its outline alone (colour 0x0B); a protected person has its outline in 0x0C and a cursed one in 9
+	int halo = 0;
+	if ((o.status & 0x02) && o.type < 0x1AA)
+		halo = 0x0B;
+	if (o.actor >= 0 && o.actor < 0x100) {
+		if (_world.actors.status[o.actor] & 0x01)
+			halo = 0x0C;
+		if (o.status & 0x40)
+			halo = 9;
+	}
+	for (int pass = 0; pass < 2; ++pass) {
+		int h = pass ? halo : 0;
+		if ((pass == 0 && (o.status & 0x02)) || (pass == 1 && !halo))
+			continue;
+		drawTile(tile, px, py, h);
+		// a double-width or double-height tile is drawn together with the tiles that precede it
 		if (wide)
-			drawTile(tile - 3, px - CELL_SIZE, py - CELL_SIZE);
+			drawTile(tile - 1, px - CELL_SIZE, py, h);
+		if (tall) {
+			drawTile(tile - (wide ? 2 : 1), px, py - CELL_SIZE, h);
+			if (wide)
+				drawTile(tile - 3, px - CELL_SIZE, py - CELL_SIZE, h);
+		}
 	}
 }
 
@@ -129,7 +150,12 @@ void MapRenderer::composite(Framebuffer &screen, int x, int y, int z, const View
 				_world.objectsAt((left + cx) & mask, (top + cy) & mask, z, here);
 				for (int idx : here) {
 					const World::Obj &o = _world.objects[idx];
-					if (o.invisible() || o.type == 335) // eggs are never drawn
+					if (o.type == 335) // eggs are never drawn
+						continue;
+					// sub_1CB82 1CC41-1CC6F: what is invisible shows only when it is a person of the party; somebody dragged under (movement flag 0x10) does not show
+					if (o.invisible() && !(o.actor >= 0 && o.actor < 0x100 && (_world.actors.status[o.actor] & 0x80)))
+						continue;
+					if (o.actor >= 0 && o.actor < 0x100 && (_world.actors.movementFlags[o.actor] & 0x10))
 						continue;
 					int tile = _world.baseTile.firstTile[o.type] + o.frame;
 					if (view && cx >= 0 && cx < CELLS && cy >= 0 && cy < CELLS) {
