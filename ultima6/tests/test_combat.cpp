@@ -67,6 +67,38 @@ int main() {
 	(void)exp0;
 	std::printf("killed actor %d (%s) in %d blows\n", victim, c.nameOf(victim).c_str(), blows);
 
+	// A glass sword shatters on the first blow that hits (perform_attack 2D73C); the 0x5B does no harm
+	{
+		World w3;
+		w3.load("u6/game");
+		BorlandRandom rng3(5);
+		::Ultima6::Ultima6::TextWindow scroll3(22, 14, 17, 10);
+		Combat c3(w3, rng3, scroll3);
+		int target = -1;
+		for (int a = 40; a < 0xE0 && target < 0; ++a) {
+			int k = w3.actorObject(a);
+			if (k >= 0 && w3.actors.hp[a] > 0 && !(w3.objects[k].status & 0x80))
+				target = a;
+		}
+		w3.addToInventory(2, 0x30, 0, 1);
+		for (World::Obj &o : w3.objects)
+			if (!o.deleted && o.type == 0x30 && o.location() == ObjRecord::IN_INVENTORY && o.parent == 2)
+				o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+		auto glass = [&]() {
+			int n = 0;
+			for (const World::Obj &o : w3.objects)
+				n += !o.deleted && o.type == 0x30 && o.parent == 2;
+			return n;
+		};
+		CHECK(glass() == 1);
+		int hp = w3.actors.hp[target];
+		c3.attackWith(2, target, 0x5B);
+		CHECK(w3.actors.hp[target] == hp); // no harm (the roll to hit may fail, either way)
+		for (int i = 0; i < 100 && glass(); ++i)
+			c3.attackWith(2, target, 0x30);
+		CHECK(glass() == 0);
+	}
+
 	// Held (dragged under, sub_26D19): a roll below the strength frees, else the hold hurts and the turn is lost
 	{
 		World w2;

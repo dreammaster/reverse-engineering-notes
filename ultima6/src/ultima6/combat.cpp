@@ -300,7 +300,27 @@ bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) 
 		const CreatureStats *own = stats(weapon);
 		maxDamage = own ? own->dmg : 1;
 	}
-	return strike(attacker, defender, maxDamage, commanded);
+	// perform_attack 2D6EC-2D75D: what is hit by a kind of creature with movement flag 0x80 takes half (rounded up) from every weapon but the glass sword, the triple crossbow and the
+	// magic bow; the 0x5B does no harm at all; a glass sword that hits shatters
+	bool killed = false;
+	if (defender != attacker) {
+		int cls = MovementClasses::classOf(_world.objects[kd].type);
+		if (cls >= 0 && (MovementClasses::flags(cls) & 0x80) && weapon != 0x30 && weapon != 0x32 && weapon != 0x36)
+			maxDamage = (maxDamage + 1) >> 1;
+		if (weapon != 0x5B)
+			killed = strike(attacker, defender, maxDamage, commanded);
+		if (weapon == 0x30) {
+			_scroll.print("Thy sword hath shattered!\n");
+			std::vector<int> inv;
+			_world.inventory(attacker, inv, false);
+			for (int i : inv)
+				if (_world.objects[i].type == 0x30 && _world.objects[i].location() == ObjRecord::READIED) {
+					_world.deleteObject(i);
+					break;
+				}
+		}
+	}
+	return killed;
 }
 
 // sub_2B9AF the armour class (what is worn, less 3 for a cursed wearer and plus 3 for a protected one) is armourClass; sub_2CD10 is this: the damage rolled from 1 to the most the blow can do
