@@ -93,7 +93,7 @@ private:
 	} _f;
 	int _winX = 0, _winY = 0, _fz = 0; // terrain_cache_x/y and the party's level
 	int _talkRequest = -1;
-	bool _revealed = false; // word_3F1B8
+	bool _revealed = true; // word_3F1B8 (dw 1 to begin with)
 	bool _shuffle = false;             // word_3F002: party members may share a square while the line forms
 	std::vector<int> _eggs;
 	std::vector<bool> _active;

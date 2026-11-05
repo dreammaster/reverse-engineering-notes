@@ -576,6 +576,7 @@ void Game::useKeyOn(int tx, int ty) {
 		// a lock pick may break: a random 1-30 below (45 - dexterity) / 2 (sub_323C4)
 		int roll = 1 + _rng.next() % 30;
 		if (roll < (45 - _combat.adjustedDexterity(actor)) / 2) {
+			sfx(0xD); // use_key_or_lockpick 32592
 			message("\nKey broke.\n");
 			consumeOne(item);
 			return;

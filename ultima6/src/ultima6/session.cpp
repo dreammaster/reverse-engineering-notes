@@ -38,8 +38,17 @@ void GameClock::advance(int minutes) {
 Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(world), _movement(world), _actors(world, _movement), _combat(world, _rng, scroll), _creatures(world, _movement, _actors, _combat, _rng, scroll), _magic(world, _combat, _rng, scroll) {
 	scroll.setFont(&world.font);
 	_combat.onHurt = [this](int actor) {
-		sfx(0xB); // sub_2CD10: a blow that hurts
 		_creatures.divide(actor);
+	};
+	_combat.onSfx = [this](int effect, int param) { sfx(effect, param); };
+	_combat.onSwing = [this](int defender) {
+		// perform_attack 2D63A: a blow that is not a missile makes its noise (effect 0x11) when it is struck within five squares of the party's place
+		int k = _world.actorObject(defender);
+		if (k < 0)
+			return;
+		int dx = std::abs((int)_world.objects[k].x - x), dy = std::abs((int)_world.objects[k].y - y);
+		if (dx < 8 && dy < 8 && Combat::distance(dx, dy) < 6)
+			sfx(0x11);
 	};
 	if (world.game != GameId::Ultima6)
 		scroll.setColours(0, world.paper.pixels[170 * world.paper.width + 200]); // black on the colour of the frame's message area
@@ -282,12 +291,16 @@ bool Game::step(int dir) {
 	}
 	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
 	int nx = (x + DIR_DX[dir]) & mask, ny = (y + DIR_DY[dir]) & mask;
-	if (!canWalk(nx, ny, z))
-		return false; // the original only plays a sound
+	if (!canWalk(nx, ny, z)) {
+		sfx(1, 0x137); // party_move 27AC9: a tone, the only answer
+		return false;
+	}
 	if (DIR_DX[dir] && DIR_DY[dir]) {
 		// a diagonal step needs one of the two squares it cuts across to be open (sub_2787E)
-		if (!canWalk((x + DIR_DX[dir]) & mask, y, z) && !canWalk(x, (y + DIR_DY[dir]) & mask, z))
+		if (!canWalk((x + DIR_DX[dir]) & mask, y, z) && !canWalk(x, (y + DIR_DY[dir]) & mask, z)) {
+			sfx(1, 0x137);
 			return false;
+		}
 	}
 	int oldX = x, oldY = y;
 	int cost = _world.moveCost(oldX, oldY, z);
@@ -297,8 +310,10 @@ bool Game::step(int dir) {
 		heading = shipHeading(dir);
 		int bx, by, sx, sy;
 		shipEnds(nx, ny, heading, bx, by, sx, sy);
-		if (!canWalk(bx, by, z) || !canWalk(sx, sy, z))
+		if (!canWalk(bx, by, z) || !canWalk(sx, sy, z)) {
+			sfx(1, 0x137);
 			return false;
+		}
 	}
 	// party_move 27B32-27C11: a member standing on the square the leader enters changes places with the leader (it goes to the square the leader leaves, facing the other way)
 	for (int m = 0; m < _world.actors.partySize; ++m) {

@@ -43,6 +43,12 @@ int Combat::weaponDamageOf(int type) {
 	return -1;
 }
 
+int Combat::distance(int dx, int dy) {
+	static const uint8_t DIST[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
+									   {4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
+	return dx < 8 && dy < 8 ? DIST[dx][dy] : 8;
+}
+
 int Combat::rangeOf(int type) {
 	for (const TypeValue &r : activeTables().range)
 		if (r.type == type)
@@ -255,6 +261,18 @@ bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) 
 	int ka = _world.actorObject(attacker), kd = _world.actorObject(defender);
 	if (ka < 0 || kd < 0)
 		return false;
+	if (onSwing) {
+		// perform_attack 2D2F8-2D376: a weapon is a missile when the target is not next to the attacker, or when it is one of the throwing and shooting weapons (the sling 0x28 and the 0x2F are not)
+		static const int MISSILES[] = {0x21, 0x25, 0x29, 0x2A, 0x31, 0x32, 0x53, 0x5B, 0x4F, 0x50};
+		bool missile = false;
+		if (weapon != 0x28 && weapon != 0x2F) {
+			missile = std::abs((int)_world.objects[ka].x - (int)_world.objects[kd].x) > 1 || std::abs((int)_world.objects[ka].y - (int)_world.objects[kd].y) > 1;
+			for (int m : MISSILES)
+				missile |= weapon == m;
+		}
+		if (!missile)
+			onSwing(defender);
+	}
 	if (!hitCheck(attacker, defender, weapon))
 		return false;
 	int maxDamage = weaponDamageOf(weapon);
@@ -289,6 +307,8 @@ bool Combat::strike(int attacker, int target, int damage, bool commanded) {
 	bool killed = false;
 	if (damage <= 0) {
 		if (a.status[target] & 0x04) { // sub_2C20F: a sleeper wakes
+			if (onSfx)
+				onSfx(4, 0);
 			a.status[target] &= ~0x04;
 			_world.objects[kt].type = a.baseObjFrame[target] & 0x3FF;
 			_world.objects[kt].frame = (uint8_t)(a.baseObjFrame[target] >> 10);
@@ -344,12 +364,16 @@ bool Combat::strike(int attacker, int target, int damage, bool commanded) {
 		return found;
 	};
 	if (cls == 8) {
+		if (onSfx)
+			onSfx(9, 0);
 		_scroll.print(name + " dragged under!\n");
 		a.movementFlags[target] |= 0x10;
 	}
 	if (cls == 0) {
 		int item = pick(0);
 		if (item >= 0) {
+			if (onSfx)
+				onSfx(0xB, 0);
 			_scroll.print("A slug dissolves " + name + "'s " + Describe::tileName(_world, _world.baseTile.firstTile[_world.objects[item].type], false) + "!\n");
 			_world.deleteObject(item);
 		}
@@ -357,6 +381,8 @@ bool Combat::strike(int attacker, int target, int damage, bool commanded) {
 	if (cls == 0x17) {
 		int item = pick(1);
 		if (item >= 0) {
+			if (onSfx)
+				onSfx(0xC, 0);
 			_scroll.print(name + " has been robbed!\n");
 			_world.deleteObject(item);
 		}

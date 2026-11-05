@@ -599,8 +599,16 @@ void Creatures::wake(int actor) {
 	int k = _world.actorObject(actor);
 	if (k < 0)
 		return;
-	if (_revealed && actor < 0x100)
-		a.movementFlags[actor] |= 8;
+	if (_revealed) {
+		// 2C224-2C2A2: one that is in the window of eleven squares gets the noise (effect 4)
+		int px, py, pz;
+		_world.avatarPosition(px, py, pz);
+		int dx = _world.objects[k].x - px + 5, dy = _world.objects[k].y - py + 5;
+		if (dx >= 0 && dx < 11 && dy >= 0 && dy < 11 && _combat.onSfx)
+			_combat.onSfx(4, 0);
+		if (actor < 0x100)
+			a.movementFlags[actor] |= 8;
+	}
 	if (a.status[actor] & 0x04) {
 		a.status[actor] &= ~0x04;
 		_world.objects[k].type = a.baseObjFrame[actor] & 0x3FF;

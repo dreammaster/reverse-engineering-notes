@@ -190,6 +190,7 @@ void Game::attackAt(int tx, int ty) {
 										   {4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
 		if (dx >= 8 || dy >= 8 || DIST[dx][dy] > Combat::rangeOf(weapon)) {
 			message("Out of range!\n");
+			sfx(0xC); // sub_2D865 2D9F3
 		} else {
 			if (ammo)
 				_world.removeFromInventory(attacker, ammo, 0, 1);
@@ -542,6 +543,7 @@ void Game::partyHazards() {
 			}
 			if (vanished) {
 				_world.deleteObject(i);
+				sfx(0xC); // advance_time 135AD
 				message(std::string("A ") + vanished + " has vanished!\n");
 			}
 		}
@@ -894,6 +896,7 @@ void Game::getAt(int tx, int ty) {
 			ObjList &al = _world.actors;
 			if (al.globals.size() > 8)
 				al.globals[8] = (uint8_t)(al.globals[8] > 1 ? al.globals[8] - 1 : 0);
+			sfx(0xD); // cmd_get 313A8
 			bool seen = false;
 			for (int i = 1; i < 0xE0 && !seen; ++i) {
 				int k = _world.actorObject(i);

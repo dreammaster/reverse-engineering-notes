@@ -40,10 +40,16 @@ public:
 
 	/** Called for an actor that has been hurt and lives (the slime divides). */
 	std::function<void(int)> onHurt;
+	/** Called for a sound effect (sub_36E85) the fight makes: the effect number and its parameter. */
+	std::function<void(int, int)> onSfx;
+	/** Called when a blow is struck with a weapon that is not a missile (perform_attack 2D63A), with the one it is struck at. */
+	std::function<void(int)> onSwing;
 
 	static const CreatureStats *stats(int type);
 	static int weaponDamageOf(int type); // -1 if the object type is no weapon
 	static int armourOf(int type);
+	/** sub_2AFFB: the distance between two squares that are dx and dy apart (a table; 8 and over for squares that are far). */
+	static int distance(int dx, int dy);
 	static int rangeOf(int type); // 1 for the weapons that are not in the range table
 
 	/** The weapon an actor fights with: the best readied weapon's type, or its own type when unarmed. */
