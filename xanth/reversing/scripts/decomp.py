@@ -138,9 +138,64 @@ def is_k(e):
     return e[0] == "k"
 
 
+def _linear(e, sign, terms, const):
+    if e[0] == "add":
+        const = _linear(e[1], sign, terms, const)
+        return _linear(e[2], sign, terms, const)
+    if e[0] == "sub":
+        const = _linear(e[1], sign, terms, const)
+        return _linear(e[2], -sign, terms, const)
+    if e[0] == "k":
+        return const + sign * e[1]
+    if e[0] == "mul" and e[2][0] == "k" and e[1][0] != "k":
+        return _linear(e[1], sign * e[2][1], terms, const)
+    if e[0] == "neg" and e[1][0] != "b2i":
+        return _linear(e[1], -sign, terms, const)
+    for i, (c, t) in enumerate(terms):
+        if t == e:
+            terms[i] = (c + sign, t)
+            return const
+    terms.append((sign, e))
+    return const
+
+
+def _rebuild(terms, const):
+    acc = None
+    for c, t in terms:
+        if c == 0:
+            continue
+        if abs(c) != 1:
+            t = ("mul", t, K(abs(c)))
+        if acc is None:
+            acc = t if c > 0 else ("neg", t)
+        else:
+            acc = ("add" if c > 0 else "sub", acc, t)
+    if acc is None:
+        return K(const)
+    if const > 0:
+        acc = ("add", acc, K(const))
+    elif const < 0:
+        acc = ("sub", acc, K(-const))
+    return acc
+
+
+def halve(e):
+    """e / 2 for an expression that is known to be even (a word index turned into a byte offset), or None"""
+    terms = []
+    const = _linear(e, 1, terms, 0)
+    if const % 2 or any(c % 2 for c, _ in terms):
+        return None
+    return _rebuild([(c // 2, t) for c, t in terms], const // 2)
+
+
 def simp(e):
     """light simplification of an expression tree"""
     op = e[0]
+    if op in ("add", "sub") and not (e[1][0] == "k" and e[2][0] == "k"):
+        terms = []
+        const = _linear(e, 1, terms, 0)
+        if len(terms) > 1 or any(c not in (0, 1) for c, _ in terms) or const != 0 or True:
+            return _rebuild(terms, const)
     if op in ("add", "sub", "and", "or", "xor", "shl", "shr", "sar", "mul"):
         a, b = e[1], e[2]
         if is_k(a) and is_k(b):
@@ -158,6 +213,8 @@ def simp(e):
                 return simp(("mul", a[1], K(a[2][1] + b[2][1])))
             if is_k(a) and not is_k(b):
                 a, b = b, a
+            if b[0] == "add" and is_k(b[2]) and not is_k(a):
+                return simp(("add", simp(("add", a, b[1])), b[2]))
             if is_k(b) and b[1] == 0:
                 return a
             if a[0] == "add" and is_k(a[2]) and is_k(b):
@@ -170,6 +227,10 @@ def simp(e):
         if op == "sub":
             if is_k(b) and b[1] == 0:
                 return a
+            if a[0] == "add" and a[2] == b:                  # (x + y) - y
+                return a[1]
+            if a[0] == "add" and a[1] == b:
+                return a[2]
             if a[0] == "sub" and is_k(a[2]) and is_k(b):
                 return simp(("sub", a[1], K(a[2][1] + b[1])))
             if a[0] == "add" and is_k(a[2]) and is_k(b):

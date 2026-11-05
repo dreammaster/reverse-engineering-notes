@@ -23,11 +23,29 @@ class Names:
             name = name[2:]
         return re.sub(r"[^A-Za-z0-9_]", "_", name.rstrip("?")) if name else name
 
+    def ident(self, name):
+        return re.sub(r"[^A-Za-z0-9_]", "_", name)
+
+    def call(self, tgt, args):
+        return "%s(%s)" % (self.func(tgt), ", ".join(args))
+
+    def header(self, name, params):
+        return "int %s(%s)" % (self.func(name), ", ".join("int " + p for p in params))
+
+    def prolog(self):
+        return []
+
     def const_cmp(self, lhs, value):
         return None
 
     def const_arg(self, fn, idx, value):
         return None
+
+    def addr(self, sym):
+        return "&" + sym
+
+    def kstring(self, off):
+        return "DSEG(0x%X)" % off
 
     def string(self, sym):
         t = self.ctx.strings.get(sym) if hasattr(self, "ctx") else None
@@ -74,14 +92,13 @@ class Renderer:
     def call_expr(self, tgt, args):
         if isinstance(tgt, tuple):
             return "callIndirect(%s)" % ", ".join([self.R(tgt[1])] + [self.R(a) for a in args])
-        nm = self.names.func(tgt)
         out = []
         for i, a in enumerate(args):
             c = None
             if is_k(a):
                 c = self.names.const_arg(tgt, i, a[1])
             out.append(c if c is not None else self.R(a))
-        return "%s(%s)" % (nm, ", ".join(out))
+        return self.names.call(tgt, out)
 
     def R(self, e, top=True):
         op = e[0]
@@ -130,7 +147,10 @@ class Renderer:
         if op == "b2i":
             return "(%s ? 1 : 0)" % self.R(e[1])
         if op == "sel":
-            return "(%s ? %s : %s)" % (self.par(self.R(e[1])), self.R(e[2]), self.R(e[3]))
+            c, a, b = e[1], e[2], e[3]
+            if c[0] == "lnot" or (c[0] == "eq" and is_k(c[2]) and c[2][1] == 0 and self.boolean(c[1])):
+                c, a, b = negate_cond(c), b, a
+            return "(%s ? %s : %s)" % (self.cond(c), self.R(a), self.R(b))
         if op == "neg":
             if e[1][0] == "b2i":
                 return "-(%s)" % self.R(e[1][1])
@@ -152,7 +172,7 @@ class Renderer:
         if op == "strlen":
             return "strlen(%s)" % self.R(e[1])
         if op == "addr":
-            return "&" + e[1]
+            return self.names.addr(e[1])
         if op == "segof":
             return "SEG(%s)" % e[1]
         if op == "addrof":
@@ -161,16 +181,35 @@ class Renderer:
             return "DS"
         if op == "mem":
             sg, off = e[1], e[2]
-            if sg == ("glob", "seg_8A9F0", 0, 2) and e[3] == 1 and off[0] == "add" and off[2] == K(0x66) and off[1][0] == "mul" and off[1][2] == K(6):
+            if sg[0] == "glob" and sg[1].startswith("seg_") and e[3] == 1 and off[0] == "add" and off[2] == K(0x66) and off[1][0] == "mul" and off[1][2] == K(6):
                 return "objectType(%s)" % self.R(off[1][1])
-            return "mem%d(%s:%s)" % (e[3] * 8, self.R(e[1], False), self.R(e[2], False))
+            return "mem%d(%s, %s)" % (e[3] * 8, self.R(e[1], False), self.R(e[2], False))
         if op == "msg":
             return self.names.msg(e[1], e[2])
         if op == "str":
             return self.names.string(e[1])
+        if op == "fptr":
+            if e[1] == ("dseg",):
+                return self.ptr(e[2])
+            return "FAR(%s, %s)" % (self.R(e[1]), self.R(e[2]))
+        if op == "scasb_cx":
+            return "(~strlen(%s) - 1)" % self.R(e[1])
+        if op == "kstr":
+            return self.names.kstring(e[1])
         if op == "far":
+            if e[2] == ("dseg",):
+                return self.ptr(e[1])
             return "FAR(%s, %s)" % (self.R(e[1]), self.R(e[2]))
         raise Unsupported("render " + op)
+
+    def ptr(self, e):
+        """an expression used as an offset into the data segment: constants are strings there"""
+        if e[0] == "k":
+            return self.names.kstring(e[1])
+        if e[0] == "sel":
+            c, a, b = e[1], e[2], e[3]
+            return "(%s ? %s : %s)" % (self.cond(c), self.ptr(a), self.ptr(b))
+        return self.R(e)
 
     PURE = re.compile(r"^(object_has_|object_get_|object_parent_is|event_pending|print_obj|_strlwr|strlen|number_to_words|object_is_|lock_combination)")
 

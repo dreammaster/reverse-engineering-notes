@@ -30,6 +30,10 @@ def pack_args(args):
                 out.append(("loc", a[1], a[2], 4))
                 i += 2
                 continue
+            if a[0] == "k" and b[0] == "dseg":
+                out.append(("kstr", a[1]))
+                i += 2
+                continue
             if b[0] == "dseg":
                 out.append(("far", a, b))
                 i += 2
@@ -84,6 +88,24 @@ def prepare(f):
                             b.term = ("if", subst(t[1], rep)) + t[2:]
                         elif t[0] == "ret":
                             b.term = ("ret",) + tuple(subst(x, rep) if isinstance(x, tuple) else x for x in t[1:])
+    # stores to si / di that nothing reads (they were only the operands of the compiler's inline string functions)
+    for reg in ("si", "di"):
+        read = any(x[0] == "loc" and x[1] == reg for b in f.blocks.values() for e in exprs_of(b) for x in walk(e) if not (False))
+        # exprs_of lists the target of a set as well: look at the values only
+        read = False
+        for b in f.blocks.values():
+            for s in b.stmts:
+                es = [s[2]] if s[0] == "set" else list(s[3])
+                if s[0] == "set" and s[1][0] == "mem":
+                    es.append(s[1])
+                if any(x[0] == "loc" and x[1] == reg for e in es for x in walk(e)):
+                    read = True
+            for e in exprs_of(Block_(b.term)):
+                if any(x[0] == "loc" and x[1] == reg for x in walk(e)):
+                    read = True
+        if not read:
+            for b in f.blocks.values():
+                b.stmts = [s for s in b.stmts if not (s[0] == "set" and s[1][0] == "loc" and s[1][1] == reg)]
     # dead temporaries
     changed = True
     while changed:
@@ -120,6 +142,66 @@ class Block_:
 
 
 # --------------------------------------------------------------------------------------------------------------------------------- structuring
+def merge_diamonds(f):
+    """if (c) x = a; else x = b;  ->  x = c ? a : b"""
+    changed = True
+    while changed:
+        changed = False
+        for pid in list(f.order):
+            p = f.blocks.get(pid)
+            if p is None or p.term[0] != "if":
+                continue
+            c, tid, fid = p.term[1], p.term[2], p.term[3]
+            if tid == fid:
+                continue
+            t, fl = f.blocks.get(tid), f.blocks.get(fid)
+            if t is None or fl is None or t.retonly or fl.retonly or t.pred != [pid] or fl.pred != [pid]:
+                continue
+            if t.term[0] != "goto" or fl.term[0] != "goto" or t.term[1] != fl.term[1]:
+                continue
+            if len(t.stmts) != len(fl.stmts) or not t.stmts:
+                continue
+            if not all(a[0] == "set" and b[0] == "set" and a[1] == b[1] and a[1][0] in ("phi", "tmp") for a, b in zip(t.stmts, fl.stmts)):
+                continue
+            for a, b in zip(t.stmts, fl.stmts):
+                p.stmts.append(("set", a[1], ("sel", c, a[2], b[2])))
+            jid = t.term[1]
+            j = f.blocks[jid]
+            j.pred = [x for x in j.pred if x not in (tid, fid)] + [pid]
+            p.term = ("goto", jid)
+            p.succ = [jid]
+            del f.blocks[tid]
+            del f.blocks[fid]
+            f.order.remove(tid)
+            f.order.remove(fid)
+            changed = True
+
+
+def forward_variables(f):
+    """a phi / temporary that is set and then used once, in the next statement, is replaced by its value"""
+    for b in f.blocks.values():
+        i = 0
+        while i < len(b.stmts) - 1:
+            s0 = b.stmts[i]
+            if s0[0] == "set" and s0[1][0] in ("phi", "tmp"):
+                v = s0[1]
+                total = sum(1 for bb in f.blocks.values() for e in exprs_of(bb) for x in walk(e) if x == v) - 1
+                nxt = b.stmts[i + 1]
+                es = [nxt[2]] if nxt[0] == "set" else list(nxt[3])
+                if nxt[0] == "set" and nxt[1][0] not in ("phi", "tmp", "loc", "glob"):
+                    es.append(nxt[1])
+                uses = sum(1 for e in es for x in walk(e) if x == v)
+                if total == 1 and uses == 1:
+                    rep = lambda e, v=v, val=s0[2]: val if e == v else None
+                    if nxt[0] == "set":
+                        b.stmts[i + 1] = ("set", subst(nxt[1], rep) if nxt[1][0] == "mem" else nxt[1], subst(nxt[2], rep))
+                    else:
+                        b.stmts[i + 1] = ("call", nxt[1], nxt[2], [subst(a, rep) for a in nxt[3]])
+                    del b.stmts[i]
+                    continue
+            i += 1
+
+
 def coalesce(f):
     """a block that only continues into a block with no other way in is one block"""
     changed = True
@@ -234,6 +316,55 @@ class Emitter:
         self.done = set()
         self.labels = set()
         self.rets_void = False
+        self.ended = None
+        self.active = []
+        self.latch_cond = {}
+        self.loop_exit = {}
+        self.after_loop = None
+        self.find_loops()
+
+    # ---- loops
+    def find_loops(self):
+        f = self.f
+        ids = [b for b in f.order if b in f.blocks and not getattr(f.blocks[b], "dead", False)]
+        succ = {b: [s for s in self.succ[b] if s in f.blocks] for b in ids}
+        pred = {b: [] for b in ids}
+        for b in ids:
+            for s in succ[b]:
+                if s in pred:
+                    pred[s].append(b)
+        dom = {b: set(ids) for b in ids}
+        dom[f.entry] = {f.entry}
+        changed = True
+        while changed:
+            changed = False
+            for b in ids:
+                if b == f.entry or not pred[b]:
+                    continue
+                new = set.intersection(*[dom[p] for p in pred[b]]) | {b}
+                if new != dom[b]:
+                    dom[b] = new
+                    changed = True
+        self.loop_info = {}
+        for u in ids:
+            for h in succ[u]:
+                if h in dom[u]:                      # back edge u -> h
+                    info = self.loop_info.setdefault(h, {"members": {h}, "latches": []})
+                    info["latches"].append(u)
+                    stack = [u]
+                    while stack:
+                        n = stack.pop()
+                        if n in info["members"]:
+                            continue
+                        info["members"].add(n)
+                        stack.extend(pred.get(n, []))
+        for h, info in self.loop_info.items():
+            ex = []
+            for n in sorted(info["members"]):
+                for s in succ.get(n, []):
+                    if s not in info["members"] and s not in ex:
+                        ex.append(s)
+            info["exits"] = ex
 
     def ind(self, lines):
         return [l if isinstance(l, tuple) else "\t" + l for l in lines]
@@ -244,15 +375,14 @@ class Emitter:
         for s in b.stmts:
             if s[0] == "set":
                 lhs, rhs = s[1], s[2]
-                if lhs[0] in ("loc", "glob", "tmp", "phi", "mem") or True:
-                    if lhs[0] == "mem":
-                        out.append("%s = %s;" % (r.R(lhs), r.R(rhs)))
-                    elif rhs[0] == "add" and rhs[1] == lhs and is_k(rhs[2]):
-                        out.append("%s += %s;" % (r.R(lhs), r.R(rhs[2])) if rhs[2][1] != 1 else "%s++;" % r.R(lhs))
-                    elif rhs[0] == "sub" and rhs[1] == lhs and is_k(rhs[2]):
-                        out.append("%s -= %s;" % (r.R(lhs), r.R(rhs[2])) if rhs[2][1] != 1 else "%s--;" % r.R(lhs))
-                    else:
-                        out.append("%s = %s;" % (r.R(lhs), r.R(rhs)))
+                if lhs[0] == "mem":
+                    out.append("%s = %s;" % (r.R(lhs), r.R(rhs)))
+                elif rhs[0] == "add" and rhs[1] == lhs and is_k(rhs[2]):
+                    out.append("%s += %s;" % (r.R(lhs), r.R(rhs[2])) if rhs[2][1] != 1 else "%s++;" % r.R(lhs))
+                elif rhs[0] == "sub" and rhs[1] == lhs and is_k(rhs[2]):
+                    out.append("%s -= %s;" % (r.R(lhs), r.R(rhs[2])) if rhs[2][1] != 1 else "%s--;" % r.R(lhs))
+                else:
+                    out.append("%s = %s;" % (r.R(lhs), r.R(rhs)))
             elif s[0] == "call":
                 cid = s[1]
                 if cid in r.inline:
@@ -269,20 +399,101 @@ class Emitter:
             return "return;" if self.rets_void else "return 0;"
         return "return %s;" % self.rn.R(ax)
 
-    def emit(self, bid, stop, depth=0):
+    # ---- emission
+    def leave(self, lines, ended, j):
+        """what an arm that stopped at block `ended` needs to say so that control goes there"""
+        if ended is None or ended == j:
+            return lines
+        if self.active and ended == self.active[-1]:
+            return lines + ["continue;"]
+        if self.active and ended == self.loop_exit.get(self.active[-1]):
+            return lines + ["break;"]
+        self.labels.add(ended)
+        return lines + ["goto L%d;" % ended]
+
+    def emit_loop(self, h, stop, depth):
+        f = self.f
+        info = self.loop_info[h]
+        members = info["members"]
+        exits = info["exits"]
+        E = None
+        if exits:
+            ip = self.ipdom.get(h)
+            E = ip if ip in exits else exits[0]
+        self.active.append(h)
+        self.loop_exit[h] = E
+        inner = set(stop) | {h} | ({E} if E is not None else set())
+        hb = f.blocks[h]
+        out = []
+        if not hb.stmts and hb.term[0] == "if" and h not in self.done:
+            c, tb, fb = hb.term[1], hb.term[2], hb.term[3]
+            if (tb in members) != (fb in members) and (fb if tb in members else tb) in exits:
+                inside, outside = (tb, fb) if tb in members else (fb, tb)
+                self.done.add(h)
+                cont = c if inside == tb else negate_cond(c)
+                body = self.arm(hb, inside, inner, depth)
+                body = self.leave(body, self.ended, None)
+                if body and not isinstance(body[-1], tuple) and body[-1] == "continue;":
+                    body = body[:-1]
+                out.append(("label", h))
+                out.append("while (%s) {" % self.rn.cond(cont))
+                out += self.ind(body)
+                out.append("}")
+                self.active.pop()
+                self.after_loop = outside
+                return out
+        # do ... while (c): one latch ending in a test that either repeats or leaves
+        latches = info["latches"]
+        dowhile = False
+        lcond = None
+        if len(latches) == 1:
+            lb = f.blocks[latches[0]]
+            if lb.term[0] == "if" and h in (lb.term[2], lb.term[3]) and (lb.term[2] if lb.term[3] == h else lb.term[3]) in exits:
+                c, tb, fb = lb.term[1], lb.term[2], lb.term[3]
+                lcond = c if tb == h else negate_cond(c)
+                self.latch_cond[latches[0]] = lcond
+                dowhile = True
+        body = self.emit(h, inner, depth + 1, first=h)
+        if not (dowhile and self.ended == h):
+            body = self.leave(body, self.ended, None) if self.ended != h else body
+        if not dowhile and body and not isinstance(body[-1], tuple) and body[-1] == "continue;":
+            body = body[:-1]
+        if dowhile:
+            out.append("do {")
+            out += self.ind(body)
+            out.append("} while (%s);" % self.rn.cond(lcond))
+        else:
+            out.append("for (;;) {")
+            out += self.ind(body)
+            out.append("}")
+        self.active.pop()
+        self.after_loop = E
+        return out
+
+    def emit(self, bid, stop, depth=0, first=None):
         out = []
         f = self.f
-        while bid is not None and bid not in stop:
+        self.ended = None
+        while bid is not None:
+            if bid in stop and bid != first:
+                self.ended = bid
+                return out
+            first = None
             b = f.blocks[bid]
             if bid in self.done:
                 self.labels.add(bid)
                 out.append("goto L%d;" % bid)
                 return out
+            if bid in self.loop_info and bid not in self.active:
+                out += self.emit_loop(bid, stop, depth)
+                bid = self.after_loop
+                continue
             self.done.add(bid)
-            if bid in self.labels:
-                pass
             out.append(("label", bid))
             out += self.stmts(b)
+            if bid in self.latch_cond:
+                self.ended = self.active[-1] if self.active else None
+                return out
             t = b.term
             k = t[0]
             if k == "goto":
@@ -295,19 +506,21 @@ class Emitter:
             if k == "ret":
                 out.append(self.ret_text(t[1], t[2]))
                 return out
-            if k == "retonly":
+            if k in ("retonly", "end"):
                 return out
             if k == "tail":
                 out.append("/* tail call to %s */ return %s();" % (t[1], self.names.func(t[1])))
                 return out
-            if k == "end":
-                return out
             if k == "if":
                 cond, tb, fb = t[1], t[2], t[3]
                 j = self.ipdom.get(bid)
-                stop2 = stop | ({j} if j is not None and j != -1 else set())
+                if j == -1:
+                    j = None
+                stop2 = stop | ({j} if j is not None else set())
                 then_arm = self.arm(b, fb, stop2, depth)
+                then_arm = self.leave(then_arm, self.ended, j)
                 else_arm = self.arm(b, tb, stop2, depth)
+                else_arm = self.leave(else_arm, self.ended, j)
                 c = cond
                 if not [l for l in then_arm if not isinstance(l, tuple)]:
                     out += [l for l in then_arm if isinstance(l, tuple)]
@@ -315,7 +528,6 @@ class Emitter:
                 if not [l for l in else_arm if not isinstance(l, tuple)]:
                     out += [l for l in else_arm if isinstance(l, tuple)]
                     else_arm = []
-                # prefer the shorter arm first, and put an arm that ends in a return first so the rest can follow without nesting
                 if not then_arm and else_arm:
                     out.append("if (%s) {" % self.rn.cond(c))
                     out += self.ind(else_arm)
@@ -345,7 +557,10 @@ class Emitter:
                         out.append("} else {")
                         out += self.ind(else_arm)
                         out.append("}")
-                if j is None or j == -1 or j in stop:
+                if j is None:
+                    return out
+                if j in stop:
+                    self.ended = j
                     return out
                 bid = j
                 continue
@@ -357,21 +572,29 @@ class Emitter:
                 if idx[0] == "sub" and is_k(idx[2]):
                     sw, base = idx[1], idx[2][1]
                 j = self.ipdom.get(bid)
-                stop2 = stop | ({j} if j is not None and j != -1 else set())
+                if j == -1:
+                    j = None
+                stop2 = stop | ({j} if j is not None else set())
                 out.append("switch (%s) {" % self.rn.R(sw))
                 seen = {}
                 for i, lab in enumerate(targets):
                     tb = f.labels_block[lab]
                     seen.setdefault(tb, []).append(i + base)
                 for tb, vals in seen.items():
+                    self.ended = None
                     body = self.emit(tb, stop2, depth + 1) if tb not in stop2 else []
-                    lines = ["case %s:" % self.rn.names.case(sw, v) if hasattr(self.rn.names, "case") else "case %d:" % v for v in vals]
-                    out += lines
+                    if tb in stop2:
+                        self.ended = tb
+                    body = self.leave(body, self.ended, j)
+                    out += ["case %d:" % v for v in vals]
                     out += self.ind(body)
                     if not self.terminates(body):
                         out.append("\tbreak;")
                 out.append("}")
-                if j is None or j == -1 or j in stop:
+                if j is None:
+                    return out
+                if j in stop:
+                    self.ended = j
                     return out
                 bid = j
                 continue
@@ -382,8 +605,10 @@ class Emitter:
         f = self.f
         tb = f.blocks[target]
         if tb.retonly:
+            self.ended = None
             return [self.ret_text(src.exit.regs.get("ax"), src.exit.regs.get("dx"))]
         if target in stop:
+            self.ended = target
             return []
         return self.emit(target, stop, depth + 1)
 
@@ -392,7 +617,7 @@ class Emitter:
             if isinstance(l, tuple):
                 continue
             s = l.strip()
-            return s.startswith(("return", "goto", "break", "continue")) or s.endswith("*/ return " + "")
+            return s.startswith(("return", "goto", "break", "continue"))
         return False
 
 
@@ -404,7 +629,9 @@ def render_function(ctx, name, names=None, void=None):
     f = eval_function(ctx, name)
     f.labels_block = {lab: next(b.id for b in f.blocks.values() if b.start == ctx.labels[lab]) for tb in ctx.tables.values() for lab in tb if lab in ctx.labels and any(b.start == ctx.labels[lab] for b in f.blocks.values())}
     prepare(f)
+    merge_diamonds(f)
     coalesce(f)
+    forward_variables(f)
     cnt = count_uses(f)
     f.force_inline, f.folded_calls = set(), {}
     fold_conditions(f, cnt)
@@ -478,10 +705,22 @@ def function_text(ctx, name, names=None, void=None):
     decl = sorted("r%d_%d" % c for c in temps)
     tmps = sorted({x[1] for b in f.blocks.values() for e in exprs_of(b) for x in walk(e) if x[0] == "tmp"} | {s[1][1] for b in f.blocks.values() for s in b.stmts if s[0] == "set" and s[1][0] == "tmp"})
     phis = sorted({"p%d_%s" % (x[2], x[1]) for b in f.blocks.values() for e in exprs_of(b) for x in walk(e) if x[0] == "phi"})
-    params = sorted((v[1], n) for n, v in f.locs.items() if n.startswith("arg_"))
-    head = ["// %s" % name, "int %s(%s) {" % (names.func(name) if names else name, ", ".join("int " + n for _, n in params))]
+    params = [names.loc(name, n, 0, 2) for _, n in sorted((v[1], n) for n, v in f.locs.items() if n.startswith("arg_"))]
+    used = [int(m) for m in re.findall(r"\barg(\d)\b", chr(10).join(lines))]
+    if used and len(params) <= max(used):
+        params = ["arg%d" % i for i in range(max(used) + 1)]
+    TAB = chr(9)
+    head = ["// " + name, names.header(name, params) + " {"] + [TAB + l for l in names.prolog()]
     vars_ = decl + ["t%d" % t for t in tmps] + phis
-    locs = sorted(n for n in f.locs if n.startswith("var_"))
-    if vars_ or locs:
-        head.append("\tint %s;" % ", ".join(locs + vars_))
-    return "\n".join(head + ["\t" + l for l in lines] + ["}"])
+    text = chr(10).join(lines)
+    named = {names.loc(name, n, 0, 2) for n in f.locs if not n.startswith(("arg_", "var_"))}
+    locs = sorted(set(re.findall(r"\bv[0-9A-F]+(?:_hi)?\b", text)) | {n for n in named | {"si", "di"} if re.search(r"\b%s\b" % re.escape(n), text)})
+    locs = [n for n in locs if not n.endswith("_hi")] + [n for n in locs if n.endswith("_hi")]
+    allv = locs + vars_
+    strs = [n for n in allv if re.search(r'(^|\s)%s = \(*([^;?]*\? )?"' % re.escape(n), text)]
+    ints = [n for n in allv if n not in strs]
+    if ints:
+        head.append(TAB + "int " + ", ".join(ints) + ";")
+    if strs:
+        head.append(TAB + "const char *" + ", *".join(strs) + ";")
+    return chr(10).join(head + [TAB + l for l in lines] + ["}"])

@@ -1,7 +1,7 @@
 """Symbolic evaluation of basic blocks (decomp.py)."""
 import re
 
-from decomp import (L, STRIP, REG16, REG8, SEGS, JCC, K, is_k, simp, cmp_expr, negate_cond, parse_operand, Unsupported, walk)
+from decomp import (L, STRIP, REG16, REG8, SEGS, JCC, K, is_k, simp, cmp_expr, negate_cond, parse_operand, Unsupported, walk, halve)
 from decomp_eval import CALLSIG, clean_target
 
 UNDEF = ("undef",)
@@ -12,12 +12,14 @@ class State:
         self.regs = {}          # ax bx cx dx es -> expr
         self.stack = []         # pushed words (expressions), top last
         self.flags = None       # ('cmp', a, b) | ('res', r) | ('cfnz', a)
+        self.shadow = {}        # si / di: the value last assigned in straight-line code (they are C variables, this is what the string instructions work on)
 
     def copy(self):
         s = State()
         s.regs = dict(self.regs)
         s.stack = list(self.stack)
         s.flags = self.flags
+        s.shadow = dict(self.shadow)
         return s
 
 
@@ -71,11 +73,11 @@ class Evaluator:
 
     def reg_get16(self, st, r, blk):
         if r in ("si", "di"):
-            return ("loc", r, 0, 2)
+            return st.shadow.get(r, ("loc", r, 0, 2))
         if r in ("bp", "sp"):
             raise Unsupported("use of " + r)
         if r == "ds":
-            return ("dseg",)
+            return st.regs.get("ds", ("dseg",))
         if r == "cs":
             return ("cseg",)
         if r == "ss":
@@ -157,7 +159,7 @@ class Evaluator:
             return ("loc", "bp%+d" % op.disp, 0, size or 2)
         if not op.base and nm is not None and op.seg in (None, "ds"):
             return ("glob", nm, op.disp, size or 2)
-        seg = {"es": st.regs.get("es", ("in", "es", blk)), "ds": ("dseg",), "ss": ("sseg",), "cs": ("cseg",), None: ("dseg",)}[op.seg]
+        seg = {"es": st.regs.get("es", ("in", "es", blk)), "ds": st.regs.get("ds", ("dseg",)), "ss": ("sseg",), "cs": ("cseg",), None: st.regs.get("ds", ("dseg",))}[op.seg]
         off = K(op.disp) if op.disp else None
         for b in op.base:
             v = self.reg_get16(st, b, blk)
@@ -206,11 +208,11 @@ class Evaluator:
             elif r in ("si", "di"):
                 self.materialize(st, stmts, lambda e: reads(e, r))
                 stmts.append(("set", ("loc", r, 0, 2), val))
-            elif r == "es":
-                st.regs["es"] = val
-            elif r in ("ds", "ss"):
-                if val[0] not in ("segof", "dseg", "sseg"):
-                    raise Unsupported("assignment to " + r)
+                st.shadow[r] = val
+            elif r in ("es", "ds"):
+                st.regs[r] = val
+            elif r == "ss":
+                raise Unsupported("assignment to ss")
             else:
                 st.regs[r] = val
             return
@@ -305,6 +307,8 @@ class Evaluator:
 
     def step(self, st, stmts, x, i, blk, term, b):
         mn, ops = x.mn, x.ops
+        if x.idx in self.skip and mn in ("movsw", "movsb", "adc"):
+            return
         if mn == "mov":
             size = self.operand_size(ops[0], ops[1])
             t0, t1 = ops[0].strip(), ops[1].strip()
@@ -386,6 +390,10 @@ class Evaluator:
             size = self.operand_size(ops[0])
             a = self.read(st, ops[0], blk, size)
             self.store(st, stmts, ops[0], simp(("not", a)), blk, size)
+        elif mn == "shr" and ops[0].strip() == "cx" and ops[1].strip() == "1" and self.string_copy(st, stmts, x, blk):
+            return
+        elif mn == "scasb":
+            self.scasb(st, x, blk)
         elif mn in ("shl", "sal", "shr", "sar"):
             size = self.operand_size(ops[0])
             a = self.read(st, ops[0], blk, size)
@@ -401,8 +409,13 @@ class Evaluator:
         elif mn == "xchg":
             a = self.read(st, ops[0], blk, 2)
             bb = self.read(st, ops[1], blk, 2)
-            self.store(st, stmts, ops[0], bb, blk, 2)
-            self.store(st, stmts, ops[1], a, blk, 2)
+            if any(reads(v, r) for v in (a, bb) for r in ("si", "di")) and {ops[0].strip(), ops[1].strip()} <= {"si", "di"}:
+                t = self.tmp(stmts, a)
+                self.store(st, stmts, ops[0], bb, blk, 2)
+                self.store(st, stmts, ops[1], t, blk, 2)
+            else:
+                self.store(st, stmts, ops[0], bb, blk, 2)
+                self.store(st, stmts, ops[1], a, blk, 2)
         elif mn == "cwd":
             st.regs["dx"] = ("sx16", self.reg_get16(st, "ax", blk))
         elif mn == "cbw":
@@ -449,6 +462,8 @@ class Evaluator:
                 idx = idx[1]
             elif idx[0] == "add" and idx[1] == idx[2]:
                 idx = idx[1]
+            elif halve(idx) is not None:
+                idx = halve(idx)
             else:
                 raise Unsupported("jump table index")
             b.term = ("jtable", m.group(1), idx)
@@ -464,7 +479,7 @@ class Evaluator:
         tgt = clean_target(op)
         self.ncall += 1
         cid = (blk, self.ncall)
-        indirect = tgt.startswith(("dword", "word", "es:", "cs:", "ds:", "[", "bx", "ax", "si", "di")) or ("[" in tgt)
+        indirect = tgt in ("ax", "bx", "cx", "dx", "si", "di") or tgt.startswith(("dword ptr", "word ptr", "es:", "cs:", "ds:", "ss:", "[")) or ("[" in tgt)
         nxt = self.insns[self.insns.index(x) + 1] if False else None
         idx = x.idx
         nx = self.insns[idx + 1] if idx + 1 < len(self.insns) else None
@@ -502,3 +517,56 @@ class Evaluator:
         st.regs["ax"] = ("res", cid, "ax")
         st.regs["dx"] = ("res", cid, "dx")
         st.flags = None
+
+
+    # ---- inline string functions (strlen / strcpy / strcat of the compiler's runtime)
+    def ptr(self, seg, off):
+        """a far pointer from its two halves"""
+        if seg[0] == "res" and off[0] == "res" and seg[1] == off[1] and off[2] == "ax" and seg[2] == "dx":
+            return ("res", off[1], "ax")
+        if seg[0] == "loc" and off[0] == "loc" and seg[1] == off[1] and seg[2] == off[2] + 2:
+            return ("loc", off[1], off[2], 4)
+        if off[0] == "addr" and seg[0] in ("dseg", "segof"):
+            return off
+        return ("fptr", seg, off)
+
+    def scasb(self, st, x, blk):
+        if x.pfx not in ("repne", "repnz"):
+            raise Unsupported("scasb without repne")
+        cx = st.regs.get("cx")
+        al = self.reg_get8(st, "al", blk)
+        if cx != K(0xFFFF) or al != K(0):
+            raise Unsupported("scasb that is not a strlen")
+        es = st.regs.get("es", ("in", "es", blk))
+        di = self.reg_get16(st, "di", blk)
+        p = self.ptr(es, di)
+        st.regs["cx"] = ("scasb_cx", p)
+        st.shadow["di"] = simp(("add", di, simp(("add", ("strlen", p), K(1)))))
+        st.flags = None
+
+    def string_copy(self, st, stmts, x, blk):
+        """shr cx,1 / rep movsw / adc cx,cx / rep movsb: a block copy of cx bytes from ds:si to es:di"""
+        idx = x.idx
+        n = self.insns[idx + 1:idx + 4]
+        if len(n) < 3 or not (n[0].mn == "movsw" and n[0].pfx == "rep" and n[1].mn == "adc" and n[2].mn == "movsb" and n[2].pfx == "rep"):
+            return False
+        count = self.reg_get16(st, "cx", blk)
+        es = st.regs.get("es", ("in", "es", blk))
+        ds = st.regs.get("ds", ("dseg",))
+        dst = self.ptr(es, self.reg_get16(st, "di", blk))
+        src = self.ptr(ds, self.reg_get16(st, "si", blk))
+        self.ncall += 1
+        cid = (blk, 1000 + self.ncall)
+        if dst[0] == "fptr" and dst[2][0] == "add" and dst[2][2][0] == "strlen":      # destination = end of the destination string: strcat
+            base = self.ptr(dst[1], dst[2][1])
+            if dst[2][2][1] == base or True:
+                stmts.append(("call", cid, "strcat", [base, src]))
+        elif count == simp(("add", ("strlen", src), K(1))):
+            stmts.append(("call", cid, "strcpy", [dst, src]))
+        else:
+            stmts.append(("call", cid, "memcpy", [dst, src, count]))
+        self.skip.update(i.idx for i in n)
+        st.regs["cx"] = K(0)
+        st.shadow.pop("di", None)
+        st.shadow.pop("si", None)
+        return True

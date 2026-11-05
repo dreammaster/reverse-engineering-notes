@@ -1,4 +1,5 @@
 """Driver: evaluate a function's blocks, resolve joins, structure the control flow, render C++ (decomp.py)."""
+import os
 import re
 import sys
 
@@ -14,6 +15,25 @@ class Ctx:
         learn_signatures(self.insns)
         self.ret_used = self.compute_ret_used()
         self.strings = self.load_strings()
+        try:
+            self.image = open(os.path.join(os.path.dirname(L.ASM), "game_out", "image.bin"), "rb").read()
+        except OSError:
+            self.image = b""
+
+    DSEG = 0x84FC0
+
+    def dseg_string(self, off):
+        """the NUL-terminated text at dseg:off of the original's memory image (None if there is none)"""
+        a = self.DSEG + off
+        if not self.image or a >= len(self.image):
+            return None
+        end = self.image.find(bytes(1), a)
+        if end < 0 or end - a > 200:
+            return None
+        t = self.image[a:end]
+        if not t or any(c < 32 or c > 126 for c in t):
+            return None
+        return t.decode("ascii")
 
     def load_strings(self):
         """data symbols defined as text: `aName db 'text',0`"""
@@ -116,8 +136,39 @@ def eval_function(ctx, name, entry=None):
         exit_state[bid] = ev.run(b, st)
         b.exit = exit_state[bid]
     f.exit_state = exit_state
+    inline_returns(f)
     resolve_phis(f)
     return f
+
+
+def inline_returns(f):
+    """a jump to a block that only returns becomes a return carrying the value the jumping block leaves in ax"""
+    for bid in list(f.blocks):
+        b = f.blocks[bid]
+        if b.retonly:
+            continue
+        t = b.term
+        if t[0] == "goto" and f.blocks[t[1]].retonly:
+            b.term = ("ret", b.exit.regs.get("ax"), b.exit.regs.get("dx"))
+            b.succ = []
+        elif t[0] == "if":
+            new = []
+            for k in (2, 3):
+                if f.blocks[t[k]].retonly:
+                    nid = max(f.blocks) + 1
+                    nb = Block(nid, f.blocks[t[k]].start)
+                    nb.insns = f.blocks[t[k]].insns
+                    nb.term = ("ret", b.exit.regs.get("ax"), b.exit.regs.get("dx"))
+                    nb.retonly = False
+                    nb.exit = b.exit
+                    nb.pred = [bid]
+                    f.blocks[nid] = nb
+                    f.order.append(nid)
+                    new.append(nid)
+                else:
+                    new.append(t[k])
+            b.term = ("if", t[1], new[0], new[1])
+            b.succ = [new[1], new[0]]
 
 
 def exprs_of(b):

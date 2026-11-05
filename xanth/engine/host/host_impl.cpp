@@ -78,7 +78,7 @@ void H_Font_WriteMessage(Cpu &c) {
 	e.text = expand(c, fmt, n);
 	h.events.push_back(e);
 	if (h.onText) h.onText(h);
-	if (host().draw) { L_Font_WriteMessage(c); return; }      // HOST_DRAW: the original code also draws the text
+	if (host().draw) { L_Font_WriteMessage(c); if (getenv("HOST_FWMRET")) fprintf(stderr, "Font_WriteMessage returned ax=%04X dx=%04X for: %.40s\n", c.ax.x, c.dx.x, e.text.c_str()); return; }      // HOST_DRAW: the original code also draws the text
 	c.ax.x = c.dx.x = 0;
 }
 

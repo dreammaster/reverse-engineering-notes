@@ -387,6 +387,19 @@ static int testPrintObj(Host &h, const char *outPath) {
 	return 0;
 }
 
+// what the original Font_WriteMessage returns (handlers return it as their "handled" result): call the real code for a few messages
+static int testFwm(Host &h) {
+	if (!startup(h)) return 1;
+	h.draw = true;
+	for (int blk = 5; blk <= 9; blk++)
+		for (int idx = 0; idx < 6; idx++) {
+			h.events.clear();
+			uint32_t r = h.call("Font_WriteMessage", {(uint16_t)idx, (uint16_t)(0xF000 | blk)}, 2);
+			printf("block %d index %d -> ax=%04X dx=%04X (%zu events)\n", blk, idx, r & 0xFFFF, r >> 16, h.events.size());
+		}
+	return 0;
+}
+
 // the original save/load code on the emulated file system. write_game_state(1) writes restart.dat (mode 1), read_game_state(1) reads it back (the Shannara-derived names load_game? / save_game? were the opposite).
 static int testSave(Host &h) {
 	if (!startup(h)) return 1;
@@ -452,6 +465,7 @@ static void debugHooks(Host &h) {
 		fprintf(stderr, "dialog: numButtons2=%d numButtons=%d buttons=%04X:%04X keyflags: pendingKey=%04X\n", (int16_t)c.rd16(c.ss, (uint16_t)(c.bp - 0x32)), (int16_t)c.rd16(c.ss, (uint16_t)(c.bp - 0x28)), bs, bo, c.rd16(c.ds, D_Events_pendingKey));
 		for (int i = 0; i < 3; i++) { uint16_t po = c.rd16(bs, (uint16_t)(bo + i * 4)), ps = c.rd16(bs, (uint16_t)(bo + i * 4 + 2)); fprintf(stderr, "  button %d: %04X:%04X '%.12s'\n", i, ps, po, host().str(ps, po, 12).c_str()); }
 	};
+	if (getenv("HOST_AXWATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { if (!strcmp(w, getenv("HOST_AXWATCH"))) fprintf(stderr, "axwatch %s ax=%04X dx=%04X arg0=%04X arg1=%04X sel=%04X\n", w, c.ax.x, c.dx.x, c.rd16(c.ss, (uint16_t)(c.bp + 6)), c.rd16(c.ss, (uint16_t)(c.bp + 8)), c.rd16(c.ds, D_selectedCommand)); };
 	if (getenv("HOST_WATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { if (!strcmp(w, getenv("HOST_WATCH"))) fprintf(stderr, "watch %s bp=%04X sp=%04X es=%04X args %04X %04X %04X locals C=%04X:%04X 2=%04X\n", w, c.bp, c.sp, c.es, c.rd16(c.ss, (uint16_t)(c.bp + 6)), c.rd16(c.ss, (uint16_t)(c.bp + 8)), c.rd16(c.ss, (uint16_t)(c.bp + 10)), c.rd16(c.ss, (uint16_t)(c.bp - 10)), c.rd16(c.ss, (uint16_t)(c.bp - 12)), c.rd16(c.ss, (uint16_t)(c.bp - 2))); };
 	if (getenv("HOST_MEMWATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { static uint16_t last = 0; static bool init = false; unsigned a = (unsigned)strtoul(getenv("HOST_MEMWATCH"), nullptr, 16); uint16_t sg = getenv("HOST_MEMWATCH_SEG") ? (uint16_t)strtoul(getenv("HOST_MEMWATCH_SEG"), nullptr, 16) : c.ss; uint16_t v = c.rd16(sg, (uint16_t)a); if (!init) { if (getenv("HOST_MEMWATCH_SEG") || !strcmp(w, "setup_pic_regions_q:loc_1CB07")) { init = true; last = v; } } else if (v != last) { fprintf(stderr, "mem %04X: %04X -> %04X before label %s (bp=%04X sp=%04X) prev %s %s %s\n", a, last, v, w, c.bp, c.sp, c.hist[(c.hpos - 2) & 63], c.hist[(c.hpos - 3) & 63], c.hist[(c.hpos - 4) & 63]); last = v; } };
 	if (getenv("HOST_DSWATCH")) h.cpu.onLabel = [](Cpu &c, const char *w) { static uint16_t last = 0x84FC; unsigned want = (unsigned)strtoul(getenv("HOST_DSWATCH"), nullptr, 16); if (c.ds != last) { if (c.ds == want || last == want) fprintf(stderr, "ds %04X -> %04X at %s prev %s %s %s\n", last, c.ds, w, c.hist[(c.hpos - 2) & 63], c.hist[(c.hpos - 3) & 63], c.hist[(c.hpos - 4) & 63]); last = c.ds; } };
@@ -696,6 +710,7 @@ int main(int argc, char **argv) {
 		if (cmd == "clock") return testClock(h);
 		if (cmd == "text") return testText(h);
 		if (cmd == "save") return testSave(h);
+			if (cmd == "fwm") return testFwm(h);
 			if (cmd == "printobj") return testPrintObj(h, argc > 5 ? argv[5] : "printobj.tsv");
 		if (cmd == "room") return testRoom(h, argc > 5 ? atoi(argv[5]) : 34);
 		fprintf(stderr, "unknown command\n");
