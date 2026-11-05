@@ -26,7 +26,7 @@ Workflow is the same as `shannara/reversing/notes/roadmap.md`: work on a copy of
 - Scenes (716 hotspots, region id = object id), room pictures (68), room music (66), object attributes (23), cutscene list: all data needed to *render and navigate* the Xanth world is located (overview sections 8-16).
 
 ## Next
-0. Host: the conversation menus work when clicked (see engine/host/README.md "Playing from a script"); the 77 `scan` scenarios that stop at a menu need a click on a text-window line; check the (-1,-1) `Image_OffsetPos` of the picture window against the window table; script `main`'s title/menu input.
+0. Host: the conversation menus work when clicked (see engine/host/README.md "Playing from a script"); the 77 `scan` scenarios that stop at a menu need a click on a text-window line; script `main`'s title/menu input.
 1. Write per-room/NPC story summaries from the digest (puzzles, flag logic) and name the remaining ~80 flag bytes meaningfully (they currently carry `flag_ADDR_<first writer>` labels).
 2. `*.RS` is decoded (6-bit PWM PCM, ~16.6 kHz, repeat byte unconfirmed). Still open: the digital player routines behind `word_891BA` (undisassembled driver segment) and the SoundBlaster voice rate; trace `play_music_entry` -> device selection for the two MIDI arrangements.
 3. Port the verified decoders (DCL, PIC, RGN, MUS directory, SHANSTR, VOC directory) to C++ and sketch the engine around `run_command` / `call_object_handler` / `Conversation_Show`.
