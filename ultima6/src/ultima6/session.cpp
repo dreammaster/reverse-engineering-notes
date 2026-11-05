@@ -779,7 +779,7 @@ bool Game::handleKeyInner(int key) {
 		castKey(key);
 		return true;
 	}
-	if (_pending == 'L' || _pending == 'c' || _pending == 'a' || _pending == 'o' || _pending == 'd') {
+	if (_pending == 'L' || _pending == 'Z' || _pending == 'c' || _pending == 'a' || _pending == 'o' || _pending == 'd') {
 		// the cursor: arrows move it, Enter looks at the cell, Escape gives up
 		switch (key) {
 		case KEY_UP:
@@ -797,10 +797,13 @@ bool Game::handleKeyInner(int key) {
 		case KEY_ENTER:
 		case KEY_SPACE: {
 			int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+			bool mdPick = _pending == 'Z';
 			bool casting = _pending == 'c', attacking = _pending == 'a', orb = _pending == 'o', dropping = _pending == 'd';
 			_pending = 0;
 			_cursor = false;
-			if (orb) {
+			if (mdPick) {
+				mdChosen((x + _cx - 5) & mask, (y + _cy - 5) & mask);
+			} else if (orb) {
 				orbAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 				prompt();
 			} else if (dropping)
@@ -814,6 +817,13 @@ bool Game::handleKeyInner(int key) {
 			break;
 		}
 		case KEY_ESC:
+			if (_pending == 'Z') { // Martian Dreams' Use: no partner chosen
+				_pending = 0;
+				_cursor = false;
+				message("nothing!\n");
+				mdContinue(_mdStage, -2);
+				break;
+			}
 			if (_pending == 'd') { // cmd_drop: no place chosen is "Not possible"
 				_dropItem = -1;
 				_pending = 0;

@@ -268,6 +268,17 @@ private:
 	int _solo = -1;      // byte_40513: the roster place of the member who walks alone (the digit keys), -1 for party mode
 	int _soloSaved = 0;  // byte_40514: the worktype the controlling member had before it was made to be controlled
 	void soloKey(int key);
+	// Martian Dreams' Use (md_use.cpp)
+	std::vector<int> mdRecipesOf(int type) const;
+	bool mdUsable(int type) const;
+	void mdUseObject(int idx);
+	void mdContinue(int stage, int partner);
+	void mdChosen(int tx, int ty);
+	void mdAction(int recipe, int item, int first, int second);
+	void mdLight(int lighter, int target);
+	bool _mdAsync = false;
+	int _mdItem = -1, _mdFirst = -1, _mdSecond = -1, _mdStage = 0;
+	std::vector<int> _mdRecipes;
 	void setControl(int index); // sub_13AE6
 	int _leaderObject; // index of the leader's body in the world's object list
 };

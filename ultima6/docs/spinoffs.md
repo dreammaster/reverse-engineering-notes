@@ -76,3 +76,11 @@ recipe system (`sub_35F0D`):
 The 75 actions are in the three overlay stub segments 0x2F8D, 0x2F98 and 0x2FA1 (Borland overlay thunks `CD 3F <offset> 00` after a 0x20-byte header); I have not yet resolved the thunks to the
 IDA segments (the overlay headers give file offset, code size and entry count: 0x2F8D 0x1A87 bytes, 0x2FA1 0x0B3D bytes) so none of the actions is read. The engine keeps using Ultima VI's use table
 for Martian Dreams and Savage Empire.
+
+Resolved: the thunks. The stub segments 0x2F8D, 0x2F98 and 0x2FA1 (file offset = 0x3400 + segment * 16) are IDA's `jmp sub_5xxxx` stubs at linear address segment * 16 + offset + 0x10000, so the 75 actions are the
+functions `sub_598F6`, `sub_5F166` ... `sub_5F25E` in `md/md_game.asm` (the list is in the git history of this file's author notes; recipe n -> `sub_` is read from the stub at seg060 + 36 * n + 0x20).
+Recipe meaning by the objects that use it: 0 tent, 1 book/note/scroll, 2 pool cue/gloves/tongs, 3 gong hammer on the gong, 4-6 wrench on switch bar/drill/panel, 7 sledge hammer on track, 8 pliers on cable,
+9-16 hoe/shovel/pick uses (dig, plant, fill barrow, furnace), 17-18 chisel/hammer/pry bar on crate/hatch, 19/28/29/63 fire and lamps, 20 knife on seed, 21-22 hammer on geode/chests, 23 barge controller,
+24 lever/switch, 25 cannon, 26 berry, 30 lamp oil, 31 switch bar, 32 spyglass, 33 sextant, 34 containers, 35 pool table, 36 pipe organ, 37 potash, 38 lens, 40 ray guns/combine, 41 cannonballs, 42 bucket,
+43 map, 44/56 doors, 45 panel, 46 belt, 47 radium chip, 48-49 sprayers, 50 oxium bin, 51 pigment, 52-54 dream machine and dreamstuff, 55 elixir, 57 instruments, 58-59 wormsbane, 60 potash/oil,
+61 radium, 62 shovel on dirt and hole, 64 many, 65 heart stone, 66 spittoon, 67 ruby slippers, 68 manuscript, 69 mirror, 70 gate, 71 buckets, 72 valve, 73 chip on man, 74 air bottle.

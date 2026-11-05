@@ -68,6 +68,17 @@ void Game::useObject(int idx) {
 	bool carried = carriedObject(o);
 	message(o.type == 0x1AF ? std::string("horse") : Describe::object(_world, o));
 	message("\n");
+	if (_world.game == GameId::MartianDreams) {
+		if (!carried && !_telekinesis) { // the original's reach: one square (APPROX(76))
+			int a = _world.actorObject(actingActor());
+			if (a >= 0 && (std::abs((int)_world.objects[a].x - (int)o.x) > 1 || std::abs((int)_world.objects[a].y - (int)o.y) > 1)) {
+				message("Out of range!\n");
+				return;
+			}
+		}
+		mdUseObject(idx);
+		return;
+	}
 	if (!usable(o.type)) {
 		message("\nNot usable\n");
 		return;
@@ -1871,7 +1882,7 @@ void Game::useAt(int tx, int ty) {
 			continue;
 		if (pick < 0)
 			pick = here[i];
-		if (usable(o.type)) {
+		if (_world.game == GameId::MartianDreams ? mdUsable(o.type) : usable(o.type)) {
 			pick = here[i];
 			break;
 		}
