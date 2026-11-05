@@ -264,7 +264,11 @@ private:
 	bool useVortexCube();
 	std::string _number;
 	int _restHours = 0; // digits typed for the Rest command
-	int _member = 0; // party member shown in the panel
+	int _member = 0; // party member shown in the panel (the one the player controls, byte_404A4, while no other is looked at in the inventory)
+	int _solo = -1;      // byte_40513: the roster place of the member who walks alone (the digit keys), -1 for party mode
+	int _soloSaved = 0;  // byte_40514: the worktype the controlling member had before it was made to be controlled
+	void soloKey(int key);
+	void setControl(int index); // sub_13AE6
 	int _leaderObject; // index of the leader's body in the world's object list
 };
 

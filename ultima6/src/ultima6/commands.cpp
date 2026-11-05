@@ -72,7 +72,9 @@ void Game::followLeader(int mode) {
 	ObjList &a = _world.actors;
 	if (_aboard)
 		return;
-	int leader = a.partyRoster[_member], lk = _world.actorObject(leader);
+	if (_solo >= 0)
+		return; // the others stand where they are
+	int leader = a.partyRoster[0], lk = _world.actorObject(leader);
 	if (lk < 0)
 		return;
 	int lx = _world.objects[lk].x, ly = _world.objects[lk].y, lt = _world.objects[lk].type;
@@ -660,6 +662,10 @@ bool Game::boardOrLeave(int tx, int ty) {
 		World::Obj &v = _world.objects[i];
 		if (v.actor >= 0 || (v.type != 414 && v.type != 415 && v.type != 412 && v.type != 423))
 			continue;
+		if (_solo >= 0) { // use_boat 34990
+			message("Not in solo mode!\n");
+			return true;
+		}
 		int boardAt = i, bow = -1, stern = -1;
 		if (v.type == 0x19C) {
 			int mid;
@@ -1036,6 +1042,8 @@ std::string Game::restCheck() {
 			return "Not while others are near!";
 	}
 	// sub_39F44: all the squares around must be enterable
+	if (_solo >= 0)
+		return "Not in solo mode!"; // cmd_rest 3A29C
 	MoveRules rules;
 	for (int dx = -1; dx <= 1; ++dx)
 		for (int dy = -1; dy <= 1; ++dy)
@@ -1257,6 +1265,92 @@ void Game::restKey(int key) {
 	}
 	_pending = 0;
 	restCamp(0x100);
+	prompt();
+}
+
+// sub_13AE6: the member at roster place `index` is the one the player controls; the view, `x`, `y` and `z` are where it stands
+void Game::setControl(int index) {
+	ObjList &a = _world.actors;
+	if (index == _member && _leaderObject == _world.actorObject(a.partyRoster[index]))
+		return;
+	_member = index;
+	_selected = 0;
+	int k = _world.actorObject(a.partyRoster[index]);
+	if (k < 0)
+		return;
+	_leaderObject = k;
+	x = _world.objects[k].x;
+	y = _world.objects[k].y;
+	z = _world.objects[k].z;
+}
+
+// The digit keys of command_loop (13E65-14090): '1' to '8' make that member walk alone (solo mode), '0' brings the party together again (party mode). A member that is dead, asleep,
+// paralysed, held, or charmed "fails to respond"; not aboard a ship and not in combat mode. Going solo gives back the worktype the member that was controlled had before (kept in
+// byte_40514), keeps the new member's and makes the others, who followed, stand still; party mode (sub_13B62) wants everyone within eight squares ("Not everyone is here."), puts the
+// leader's worktype away and makes the others follow again (those that are not charmed).
+void Game::soloKey(int key) {
+	ObjList &a = _world.actors;
+	if (key == '0') {
+		if (_aboard) {
+			message("Not while aboard ship!\n");
+			prompt();
+			return;
+		}
+		if (_combatMode) {
+			message("Not in combat mode!\n");
+			prompt();
+			return;
+		}
+		int px = x, py = y;
+		for (int m = 0; m < a.partySize; ++m) {
+			int k = _world.actorObject(a.partyRoster[m]);
+			if (k >= 0 && (std::abs((int)_world.objects[k].x - px) > 8 || std::abs((int)_world.objects[k].y - py) > 8)) {
+				message("Not everyone is here.\n");
+				prompt();
+				return;
+			}
+		}
+		message("Party mode\n");
+		int holder = _solo >= 0 ? _solo : 0;
+		a.worktype[a.partyRoster[holder]] = (uint8_t)_soloSaved;
+		_soloSaved = a.worktype[a.partyRoster[0]];
+		a.worktype[a.partyRoster[0]] = 2;
+		for (int m = 1; m < a.partySize; ++m) {
+			int k = _world.actorObject(a.partyRoster[m]);
+			if (k >= 0 && !(_world.objects[k].status & 4))
+				a.worktype[a.partyRoster[m]] = 1;
+		}
+		setControl(0);
+		_solo = -1;
+		prompt();
+		return;
+	}
+	int n = key - '1', actor = a.partyRoster[n], k = _world.actorObject(actor);
+	if ((a.status[actor] & 0x16) || (a.movementFlags[actor] & 0x10) || (k >= 0 && (_world.objects[k].status & 4))) {
+		message(_combat.nameOf(actor) + " fails to respond.\n");
+		prompt();
+		return;
+	}
+	if (_aboard) {
+		message("Not while aboard ship!\n");
+		prompt();
+		return;
+	}
+	if (_combatMode) {
+		message("Not in combat mode!\n");
+		prompt();
+		return;
+	}
+	int holder = _solo >= 0 ? _solo : 0;
+	a.worktype[a.partyRoster[holder]] = (uint8_t)_soloSaved;
+	_soloSaved = a.worktype[actor];
+	for (int m = 0; m < a.partySize; ++m)
+		if (a.worktype[a.partyRoster[m]] == 1)
+			a.worktype[a.partyRoster[m]] = 0;
+	setControl(n);
+	a.worktype[actor] = 2;
+	_solo = n;
+	message("Solo mode\n");
 	prompt();
 }
 

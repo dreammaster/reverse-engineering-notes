@@ -335,7 +335,7 @@ bool Game::step(int dir) {
 	x = nx;
 	y = ny;
 	_world.moveObject(_leaderObject, x, y, z);
-	_actors.face(1, dir);
+	_actors.face(_world.actors.partyRoster[_solo >= 0 ? _solo : 0], dir);
 	// party_move 27C11: what a step costs a vessel. A ship goes by the wind (if there is any) through the table at ds:180A, a skiff by the current (tiles 8-15) through ds:1812
 	static const uint8_t SHIP_COST[8] = {10, 5, 3, 4, 5, 4, 3, 5}, SKIFF_COST[8] = {3, 4, 5, 7, 10, 7, 5, 4};
 	if (vehicle == 0x19C) {
@@ -409,6 +409,11 @@ void Game::talkAt(int tx, int ty) {
 	int wt = a.worktype[actor], side = a.status[actor] & 0x60;
 	if ((a.status[actor] & 0x10) || (a.status[actor] & 0x04) || (a.status[actor] & 0x02) || wt == 0x9B || wt == 0x13 || wt == 7 || wt == 0x12 || side == 0x20 || side == 0x60) {
 		message("\n\nNo response\n");
+		prompt();
+		return;
+	}
+	if (_solo > 0) { // cmd_talk 20B08: only the Avatar talks when walking alone
+		message("\nNot in solo mode.\n");
 		prompt();
 		return;
 	}
@@ -571,6 +576,11 @@ void Game::command(int key) {
 		_pending = 'M';
 		break;
 	case 'B': // the Combat command (key 0x42 is event 0x8A of command_loop, 14178): the party fights by its members' own combat worktypes, or follows again
+		if (_solo >= 0) {
+			message("Not in solo mode!\n");
+			prompt();
+			break;
+		}
 		toggleCombat();
 		prompt();
 		break;
@@ -733,9 +743,15 @@ bool Game::handleKeyInner(int key) {
 		textKey(key);
 		return true;
 	}
-	if (key >= '1' && key <= '8' && !_talk && !_pending && !_confirmSave && !_moveTarget && key - '1' < _world.actors.partySize) {
-		_member = key - '1';
-		_selected = 0;
+	if (key >= '0' && key <= '8' && !_talk && !_pending && !_confirmSave && !_moveTarget && (key == '0' || key - '1' < _world.actors.partySize)) {
+		if (_inventory) {
+			if (key != '0') {
+				_member = key - '1';
+				_selected = 0;
+			}
+		} else {
+			soloKey(key);
+		}
 		return true;
 	}
 	if (_inventory && !_talk)

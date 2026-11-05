@@ -309,7 +309,10 @@ void Game::useObject(int idx) {
 		World::Obj &d = _world.objects[idx];
 		d.frame = (uint8_t)((d.frame == 1 || d.frame == 3) ? d.frame - 1 : d.frame + 1); // APPROX(46)
 	} else if (type == 0x131) {
-		useLadder(idx);
+		if (_solo >= 0)
+			message("\nNot in solo mode.\n"); // cmd_use 35DCD
+		else
+			useLadder(idx);
 	} else {
 		// APPROX(47): the other handlers of the table are not written yet
 		message("\nNot usable\n");
@@ -1416,8 +1419,8 @@ void Game::drawGem(Framebuffer &screen) const {
 
 // sub_2B0B8 / sub_2B1AC: "Begin combat!" gives every member (but the one the player controls) the combat worktype kept in the objlist (+0x12F1: 3 front, 4 rear, 5 flank ...);
 // "Break off combat!" makes the living members followers (worktype 1) again and the dead ones motionless (0).
-// Nothing else starts or ends combat: the flag (byte_40512) is written only here, so the companions never fight unless the player says so (the engine has no solo mode:
-// the original answers "Not in solo mode!" to this key there).
+// Nothing else starts or ends combat: the flag (byte_40512) is written only here, so the companions never fight unless the player says so; solo mode answers
+// "Not in solo mode!" to this key.
 // APPROX(65): the combat worktypes act as wt_combat_assault does (the originals, wt_combat_front 2E454, wt_combat_rear 2E4B9 and wt_combat_flank 2E7E2, are not traced)
 void Game::toggleCombat() {
 	ObjList &a = _world.actors;
