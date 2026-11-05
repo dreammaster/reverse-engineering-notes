@@ -71,3 +71,15 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
       from file offset 0x33000 list them), usable-object lists, panel colours, music (MD.TIM / MUSIC.LZC, Roland and AdLib), intros and endings.
 - [ ] Goals 5 and 6 (the ScummVM import, removing `nuvie/`, replacing every approximation) have not been started.
 
+## 6. State after the sixth autonomous stretch (2026-11-05)
+
+- [x] Ultima VI: PC-speaker effects at the call sites of the original (the blow noise, the refused step, spells, glass, locks, instruments, the rubber ducky ...), those held (dragged under) struggle
+      (`sub_26D19`), `perform_attack` with `sub_2BB89`'s missiles (arrows, bolts, flasks of oil, thrown weapons, wands, shots that miss or are stopped), "interferes!", the glass sword,
+      animated tiles (ANIMDATA) and the cycling palette, line of sight and light exactly as `sub_18F86` / `sub_18DB1` / `sub_1CB82` compute them (`view.cpp`), outlines for invisible, protected and
+      cursed people, a fuzz test over all three games.
+- [ ] Open for Ultima VI: the animated title / introduction (`title_sequence`, 3700 lines in U.EXE), the object draw order of `sub_1BE84` and the window frames of `sub_1CB82`, solo mode
+      (digits 1-8 in `command_loop`, '0' party mode), the equipment hand logic (#72), the triple crossbow, spell charges in `perform_attack`, the boomerang, the gem view, the rest of the
+      partial entries of [approximations.md](approximations.md).
+- [ ] Open for Martian Dreams / Savage Empire: everything of section 5, plus their own command functions (`sub_23C1A` is MD's command loop: look is `sub_14ED4`, with the clock, the ore
+      and the machines' states; get `sub_15BFE`; the use command has not been located; they all still run on Ultima VI's rules).
+- [ ] Goals 5 and 6 (the ScummVM import, removing `nuvie/`, replacing every approximation) have not been started.
