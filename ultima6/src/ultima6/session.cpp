@@ -459,9 +459,13 @@ void Game::look(int tx, int ty) {
 	std::string text;
 	if (top < 0) {
 		int tile = _world.map.tile(z, tx, ty);
-		text = Describe::article(_world, tile) + Describe::tileName(_world, tile, false) + ".\n";
-		if (std::abs(tx - x) <= 1 && std::abs(ty - y) <= 1) // looking at nothing on a square next to the party
-			text += "\nSearching here, you find nothing.\n";
+		if (tile == 0xFF || tile == 0x1BC) { // cmd_look 30348: a blank cell (word_48F2F, set by sub_15747) is "darkness."
+			text = "darkness.\n";
+		} else {
+			text = Describe::article(_world, tile) + Describe::tileName(_world, tile, false) + ".\n";
+			if (std::abs(tx - x) <= 1 && std::abs(ty - y) <= 1) // looking at nothing on a square next to the party
+				text += "\nSearching here, you find nothing.\n";
+		}
 	} else {
 		const World::Obj &o = _world.objects[top];
 		text = Describe::object(_world, o);
