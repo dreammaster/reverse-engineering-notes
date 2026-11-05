@@ -2,6 +2,7 @@
 #define ULTIMA6_ULTIMA6_MAP_RENDERER_H
 
 #include "engine/framebuffer.h"
+#include "ultima6/view.h"
 #include "ultima6/world.h"
 
 namespace Ultima6 {
@@ -36,6 +37,13 @@ public:
 	void draw(Framebuffer &screen, int x, int y, int z, const uint8_t *darkness = nullptr);
 
 	/**
+	 * The same as the original lays it out (sub_18F86, sub_1CB82): the terrain is what `view` says (black where nothing is seen or lit), things stand only on squares that are seen
+	 * and lit (with infravision on the dark ones too, if they are warm: tile flags3 bit 0x01), a wall that has an unseen square east or south of it does not show what is on it, and a
+	 * square lit 1 to 3 is shaded by the overlay tile 0x1BC + the light.
+	 */
+	void draw(Framebuffer &screen, int x, int y, int z, const ViewGrid &view, bool infravision);
+
+	/**
 	 * How dark each of the 11 x 11 cells is for a party at (x, y, z) at an hour (0 lit, 1 dim, 2 black): the surface is dark at night, dungeons always;
 	 * what the party carries (a lit torch, the Light spell) lights a few squares around it and lit lamps, torches, candles and campfires on the
 	 * map light their surroundings. An approximation of the original's light levels.
@@ -47,6 +55,7 @@ private:
 	void drawObject(const World::Obj &o, int cellX, int cellY);
 
 	void buildRemap();
+	void composite(Framebuffer &screen, int x, int y, int z, const ViewGrid *view, bool infravision, const uint8_t *darkness);
 
 	const World &_world;
 	std::vector<uint8_t> _buffer;

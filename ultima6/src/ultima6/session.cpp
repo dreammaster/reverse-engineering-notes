@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 namespace Ultima6 {
@@ -971,9 +972,18 @@ void Game::render(Framebuffer &screen) {
 		light = 4;
 	if (al.globals[0x12 + Magic::TIMER_LIGHT] > 100)
 		light = 7; // Great Light (APPROX(15): the original's radius for it is not traced)
-	uint8_t dark[MapRenderer::CELLS * MapRenderer::CELLS];
-	_renderer.computeDarkness(x, y, z, light >= 7 ? 12 : 0, light, dark);
-	_renderer.draw(screen, _eye ? _eyeX : _peek ? _peekX : x, _eye ? _eyeY : _peek ? _peekY : y, z, dark);
+	if (_peek) {
+		uint8_t dark[MapRenderer::CELLS * MapRenderer::CELLS];
+		_renderer.computeDarkness(x, y, z, light >= 7 ? 12 : 0, light, dark);
+		_renderer.draw(screen, _peekX, _peekY, z, dark);
+	} else {
+		// sub_18F86 and sub_1CB82: what the party sees from where it is (a Wizard Eye from where the eye is)
+		ViewGrid view;
+		ViewBuilder builder(_world);
+		int vx = _eye ? _eyeX : x, vy = _eye ? _eyeY : y;
+		builder.build(vx, vy, z, light, view);
+		_renderer.draw(screen, vx, vy, z, view, al.globals[0x12 + Magic::TIMER_INFRAVISION] != 0);
+	}
 	if (_actorView >= 0)
 		drawActorView(screen, _world, _actorView, _actorName);
 	else if (_talk)

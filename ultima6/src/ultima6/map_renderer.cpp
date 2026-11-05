@@ -102,15 +102,23 @@ void MapRenderer::computeDarkness(int x, int y, int z, int hour, int partyLightR
 		}
 }
 
-// APPROX(14): not the original's exact behaviour, see docs/approximations.md
 void MapRenderer::draw(Framebuffer &screen, int x, int y, int z, const uint8_t *darkness) {
+	composite(screen, x, y, z, nullptr, false, darkness);
+}
+
+void MapRenderer::draw(Framebuffer &screen, int x, int y, int z, const ViewGrid &view, bool infravision) {
+	composite(screen, x, y, z, &view, infravision, nullptr);
+}
+
+// APPROX(14): not the original's exact behaviour, see docs/approximations.md
+void MapRenderer::composite(Framebuffer &screen, int x, int y, int z, const ViewGrid *view, bool infravision, const uint8_t *darkness) {
 	int left = x - CELLS / 2, top = y - CELLS / 2;
 	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
 	buildRemap();
 
 	for (int cy = 0; cy < CELLS; ++cy)
 		for (int cx = 0; cx < CELLS; ++cx)
-			drawTile(_world.map.tile(z, (left + cx) & mask, (top + cy) & mask), cx * CELL_SIZE, cy * CELL_SIZE);
+			drawTile(view ? view->tile[cy][cx] : _world.map.tile(z, (left + cx) & mask, (top + cy) & mask), cx * CELL_SIZE, cy * CELL_SIZE);
 
 	// objects: rows from the top so that taller pieces overlap the cell above correctly; the ring one
 	// cell outside the view is included because of the double-size tiles
@@ -124,6 +132,15 @@ void MapRenderer::draw(Framebuffer &screen, int x, int y, int z, const uint8_t *
 					if (o.invisible() || o.type == 335) // eggs are never drawn
 						continue;
 					int tile = _world.baseTile.firstTile[o.type] + o.frame;
+					if (view && cx >= 0 && cx < CELLS && cy >= 0 && cy < CELLS) {
+						// sub_1C93C: nothing is put on a square that is not seen, nor on a dark one unless it is a warm thing and the party sees by infravision; sub_1CB82 takes
+						// the things off a wall that is not seen from the east or the south
+						int t = view->tile[cy][cx];
+						if (t == ViewGrid::UNSEEN || view->hideThings[cy][cx])
+							continue;
+						if (t == ViewGrid::DARK && !(infravision && (_world.flags.flags3[tile & (TileSet::COUNT - 1)] & 1)))
+							continue;
+					}
 					bool topTile = _world.flags.flags2[tile & (TileSet::COUNT - 1)] & 0x10;
 					if ((pass == 1) == topTile)
 						drawObject(o, cx, cy);
@@ -132,6 +149,15 @@ void MapRenderer::draw(Framebuffer &screen, int x, int y, int z, const uint8_t *
 		}
 	}
 
+	if (view) {
+		// the shade of a square that is lit only a little (sub_1CB82 1CF55-1CF8E): the overlay tile 0x1BC + the light, over what is there
+		for (int cy = 0; cy < CELLS; ++cy)
+			for (int cx = 0; cx < CELLS; ++cx) {
+				int l = view->light[cy][cx];
+				if (l > 0 && l < 4 && view->tile[cy][cx] != ViewGrid::UNSEEN && view->tile[cy][cx] != ViewGrid::DARK)
+					drawTile(ViewGrid::DARK + l, cx * CELL_SIZE, cy * CELL_SIZE);
+			}
+	}
 	if (darkness) {
 		for (int cy = 0; cy < CELLS; ++cy)
 			for (int cx = 0; cx < CELLS; ++cx) {
