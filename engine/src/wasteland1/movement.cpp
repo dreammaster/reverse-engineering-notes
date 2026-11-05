@@ -213,4 +213,60 @@ void randomEncounter(Machine &m) {
 	}
 }
 
+
+bool enterLocationMove(Machine &m, uint8_t al) {   // 16A13 (returns cf through the port): a party step onto a location cell
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	auto finishLoad = [&](uint8_t locationId) {   // 16AC7
+		D(0x4655) = locationId;
+		X86Regs x;
+		legacy::call(m, 0x8350, x);
+		legacy::call(m, 0x63CA, x);
+		mergeGroupsAtSamePosition(m);   // 16AD0
+	};
+	if (al != 0) return false;
+	if (D(0xAAD3) == 0) {
+		X86Regs x;
+		x.al = uint8_t(m.d8(m.d16(g::locationDetailsPtr)) & 0x3F);
+		legacy::call(m, 0x7920, x);   // 16B17
+	}
+	D(0xAAD3) = 0;
+	changeCellFromLocation(m, 4, D(0x46A6), D(0x46A7));   // 169B1
+	const uint16_t p = m.d16(g::partyIndexesPtr);
+	D(0xAAD1) = D(uint16_t(p + 11));
+	D(uint16_t(p + 11)) = D(0x46A6);
+	D(0xAAD0) = D(uint16_t(p + 12));
+	D(uint16_t(p + 12)) = D(0x46A7);
+	D(0xAAD2) = D(uint16_t(p + 13));
+	D(uint16_t(p + 13)) = D(0x4655);
+	const uint16_t loc = m.d16(g::locationDetailsPtr);
+	uint8_t dx, dy;
+	if (D(uint16_t(loc + 3)) == 0xFF) {   // 16A75: come back from where the party was
+		X86Regs x;
+		x.dl = D(0xAAD1);
+		x.bl = D(0xAAD0);
+		legacy::call(m, 0x7DE0, x);
+		D(0x464E) = x.dl;
+		D(0x464F) = x.bl;
+		finishLoad(D(0xAAD2));
+		return false;
+	}
+	if (int8_t(D(loc)) >= 0) {
+		dx = 0;
+		dy = 0;
+	} else {
+		dx = D(0x46A6);
+		dy = D(0x46A7);
+	}
+	D(0xAAD1) = dx;
+	D(0xAAD0) = dy;
+	X86Regs x;
+	x.dl = uint8_t(D(uint16_t(m.d16(g::locationDetailsPtr) + 1)) + D(0xAAD1));
+	x.bl = uint8_t(D(uint16_t(m.d16(g::locationDetailsPtr) + 2)) + D(0xAAD0));
+	legacy::call(m, 0x7DE0, x);
+	D(0x464E) = x.dl;
+	D(0x464F) = x.bl;
+	finishLoad(D(uint16_t(m.d16(g::locationDetailsPtr) + 3)));
+	return true;
+}
+
 } // namespace wl

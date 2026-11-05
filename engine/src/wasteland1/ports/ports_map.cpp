@@ -74,5 +74,7 @@ PORT(tryStep) { r.cf = tryStep(m, r.a.b.l); r.b.x = 0; r.d.x = 0; }             
 
 PORT(randomEncounter) { randomEncounter(m); }                                           // 16890
 
+PORT(enterLocationMove) { r.cf = enterLocationMove(m, r.a.b.l); }                          // 16A13
+
 } // namespace rc
 } // namespace wl

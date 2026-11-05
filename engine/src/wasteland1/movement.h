@@ -26,4 +26,7 @@ bool tryStep(Machine &m, uint8_t dir);
 // 16890: now and then places a random encounter next to the party (chance 1 in the map's rate)
 void randomEncounter(Machine &m);
 
+// 16A13: stepping onto a location cell; al != 0 does nothing. Returns the carry flag: false when al != 0 or the party came back, true otherwise
+bool enterLocationMove(Machine &m, uint8_t al);
+
 } // namespace wl
