@@ -383,7 +383,7 @@ bool Game::inventoryKey(int key) {
 			} else {
 				int idx = _items[_selected];
 				useObject(idx);
-				if (_pending) // a key, lock pick or potion asks for its target on the map
+				if (_pending || _instrument) // a key, lock pick or potion asks for its target on the map
 					_inventory = false;
 				inventoryItems(_world, _member, _items);
 				_selected = std::max(0, std::min(_selected, (int)_items.size() - 1));

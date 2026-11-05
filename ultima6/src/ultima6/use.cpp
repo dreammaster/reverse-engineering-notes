@@ -113,6 +113,7 @@ void Game::useObject(int idx) {
 	} else if (type == 0xD4) {
 		message("\nYou feel a breeze.\n");
 	} else if (type == 0xA9) {
+		sfx(0x16); // use_rubber_ducky
 		message("\nSqueak!\n");
 	} else if (type == 0x61) {
 		message("\nYou study the scroll!\n");
@@ -180,7 +181,8 @@ void Game::useObject(int idx) {
 			}
 		}
 	} else if (type == 0x99 || type == 0x9C || type == 0x9D || type == 0x9E || type == 0x128) {
-		// play_instrument (329EA): a tune, no text (there is no sound yet)
+		// play_instrument (329EA): no text; the digit keys play notes until another key is pressed (cmd_use's table: the harp 0x9D plays effect 2, the harpsichord 0x9C 3, the lute 0x9E 0x12, the panpipes 0x99 0x13, the xylophone 0x128 0x14)
+		_instrument = type == 0x9D ? 2 : type == 0x9C ? 3 : type == 0x9E ? 0x12 : type == 0x99 ? 0x13 : 0x14;
 	} else if (type == 0xEC || type == 0x1A3) {
 		// ring_bell: an animation and a sound, no text
 		} else if (type == 0x5D) {
@@ -1857,7 +1859,7 @@ void Game::useAt(int tx, int ty) {
 	} else {
 		useObject(pick);
 	}
-	if (!_pending)
+	if (!_pending && !_instrument)
 		prompt();
 }
 

@@ -178,6 +178,7 @@ private:
 	bool dropSurface(int tx, int ty) const;
 	bool dropRecipient(int target, int item) const;
 	void dropPlace(int item, int count, int tx, int ty, int recipient, bool free = true);
+	int _instrument = 0;       // play_instrument (329EA): the effect of the instrument being played; the digit keys are its notes until another key is pressed
 	int _actorView = -1;       // the person Look is showing (sub_2F969), until a key is pressed
 	std::string _actorName;
 	int _packScroll = 0;       // the first of the objects the pack view shows (a multiple of four)

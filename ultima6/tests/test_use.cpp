@@ -1030,6 +1030,24 @@ int main() {
 	}
 
 
+	// an instrument: the digit keys play notes (effect 2 for a harp, 0x9D, with the note's number) until another key is pressed
+	{
+		World wi;
+		wi.load("u6/game");
+		Game gi(wi);
+		std::vector<std::pair<int, int>> heard;
+		gi.sound = [&](int e, int p) { heard.push_back({e, p}); };
+		int px2 = gi.x, py2 = gi.y;
+		put(wi, 0x9D, 0, px2 + 1, py2, 0);
+		useEast(wi, gi, px2, py2);
+		gi.handleKey('3');
+		gi.handleKey('0');
+		CHECK(heard.size() == 2 && heard[0].first == 2 && heard[0].second == 0xF56 && heard[1].second == 0x1EAB);
+		gi.handleKey('x'); // ends it
+		gi.handleKey('3');
+		CHECK(heard.size() == 2);
+	}
+
 	std::printf("%s\n", failures ? "FAILED" : "ok");
 	return failures ? 1 : 0;
 }

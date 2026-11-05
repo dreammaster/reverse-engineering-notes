@@ -674,7 +674,7 @@ bool Game::handleKey(int key) {
 	}
 	bool more = handleKeyInner(key);
 	// after every completed command the actors take their turns (command_loop 145FD)
-	if (more && !_pending && !_talk && !_confirmSave && !_inventory && !_dead && !_eye)
+	if (more && !_pending && !_instrument && !_talk && !_confirmSave && !_inventory && !_dead && !_eye)
 		runTurns();
 	return more;
 }
@@ -694,6 +694,17 @@ bool Game::handleKeyInner(int key) {
 	}
 	if (_eye && key != KEY_NONE) {
 		eyeKey(key);
+		return true;
+	}
+	if (_instrument && key != KEY_NONE) {
+		// play_instrument 329F5: a digit key plays the note of ds:1CEE[digit] in the instrument's effect; any other key ends it
+		static const uint16_t NOTES[10] = {0x1EAB, 0x0C2C, 0x0DA9, 0x0F56, 0x103F, 0x123C, 0x1478, 0x16FA, 0x1857, 0x1B53};
+		if (key >= '0' && key <= '9') {
+			sfx(_instrument, NOTES[key - '0']);
+		} else {
+			_instrument = 0;
+			prompt();
+		}
 		return true;
 	}
 	if (_actorView >= 0 && key != KEY_NONE) { // sub_2F969 waits for a key
