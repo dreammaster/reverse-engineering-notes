@@ -74,6 +74,10 @@ public:
 	bool attackWith(int attacker, int defender, int weapon, bool commanded = false);
 	/** sub_2CD10: a blow of `damage` (the most it can do: a number from 1 to it is rolled; -1 for 1) at a target by an attacker, with what comes of it. */
 	bool strike(int attacker, int target, int damage, bool commanded);
+	/** perform_attack: whether the blow is a missile (not next to the target, or a throwing or shooting weapon). */
+	bool isMissile(int attacker, int defender, int weapon) const;
+	/** sub_2BA3E: the actor next to `attacker` that remembers striking it and so stops its missiles, or -1. */
+	int interferer(int attacker, bool timeStopped) const;
 	/** sub_26D19: an actor dragged under (movement flag 0x10) struggles when its turn comes. True when it is still held (its turn is lost). */
 	bool dragStruggle(int actor);
 	/** sub_2CAFE: a person yells for help: karma falls by 5, the guards come and the others nearby fight or run. */

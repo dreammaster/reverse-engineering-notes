@@ -198,7 +198,13 @@ void Game::attackAt(int tx, int ty) {
 				int fx = _world.objects[k].x - _world.objects[_world.actorObject(attacker)].x, fy = _world.objects[k].y - _world.objects[_world.actorObject(attacker)].y;
 				_actors.face(attacker, std::abs(fx) > std::abs(fy) ? (fx < 0 ? 6 : 2) : (fy < 0 ? 0 : 4));
 			}
-			_combat.attackWith(attacker, target, weapon, true);
+			int opp = _combat.isMissile(attacker, target, weapon) ? _combat.interferer(attacker, _timeStop > 0) : -1;
+			if (opp >= 0) { // perform_attack 2D248 and sub_2D865 2D9B2: somebody next to the shooter, who struck it, stops the shot
+				sfx(0xC);
+				message(_combat.nameOf(opp) + " interferes!\n");
+			} else {
+				_combat.attackWith(attacker, target, weapon, true);
+			}
 		}
 	}
 	_world.spendMoves(attacker, 10); // sub_2DA99: sub_26CC4(attacker, 0x0A)

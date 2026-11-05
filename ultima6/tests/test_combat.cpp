@@ -99,6 +99,34 @@ int main() {
 		CHECK(glass() == 0);
 	}
 
+	// Interference (sub_2BA3E): a member who remembers the one that struck it, who stands next to it and is awake, cannot shoot
+	{
+		World w4;
+		w4.load("u6/game");
+		BorlandRandom rng4(5);
+		::Ultima6::Ultima6::TextWindow scroll4(22, 14, 17, 10);
+		Combat c4(w4, rng4, scroll4);
+		int foe = 3; // any other party member's body will do as the one next to member 2
+		w4.actors.worktype[2] = 2;
+		w4.actors.unknown18f1[2] = (uint8_t)foe;
+		int k2 = w4.actorObject(2), kf = w4.actorObject(foe);
+		w4.objects[kf].x = w4.objects[k2].x + 1;
+		w4.objects[kf].y = w4.objects[k2].y;
+		w4.actors.status[foe] = 0;
+		w4.actors.movementFlags[foe] = 0;
+		CHECK(c4.interferer(2, false) == foe);
+		w4.actors.status[foe] = 0x04; // asleep: no
+		CHECK(c4.interferer(2, false) == -1);
+		w4.actors.status[foe] = 0;
+		w4.objects[kf].x = w4.objects[k2].x + 2; // two squares away: no
+		CHECK(c4.interferer(2, false) == -1);
+		w4.objects[kf].x = w4.objects[k2].x + 1;
+		CHECK(c4.interferer(2, true) == -1); // time stopped and the foe is not of the party
+		w4.actors.status[foe] = 0x80;
+		CHECK(c4.interferer(2, true) == foe);
+		CHECK(c4.isMissile(2, foe, 0x29) && !c4.isMissile(2, foe, 0x2B) && !c4.isMissile(2, foe, 0x28));
+	}
+
 	// Held (dragged under, sub_26D19): a roll below the strength frees, else the hold hurts and the turn is lost
 	{
 		World w2;

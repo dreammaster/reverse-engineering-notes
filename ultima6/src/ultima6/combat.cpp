@@ -277,22 +277,46 @@ bool Combat::attack(int attacker, int defender) {
 	return attackWith(attacker, defender, weaponType(attacker));
 }
 
+// perform_attack 2D2F8-2D376: a weapon is a missile when the target is not next to the attacker, or when it is one of the throwing and shooting weapons (the morning star 0x28 and the
+// halberd 0x2F reach two squares but are not missiles)
+bool Combat::isMissile(int attacker, int defender, int weapon) const {
+	int ka = _world.actorObject(attacker), kd = _world.actorObject(defender);
+	if (ka < 0 || kd < 0 || weapon == 0x28 || weapon == 0x2F)
+		return false;
+	static const int MISSILES[] = {0x21, 0x25, 0x29, 0x2A, 0x31, 0x32, 0x53, 0x5B, 0x4F, 0x50};
+	bool missile = std::abs((int)_world.objects[ka].x - (int)_world.objects[kd].x) > 1 || std::abs((int)_world.objects[ka].y - (int)_world.objects[kd].y) > 1;
+	for (int m : MISSILES)
+		missile |= weapon == m;
+	return missile;
+}
+
+// sub_2BA3E: who stops an actor from shooting. An actor going about its own affairs (worktype 2 to 15) that remembers who last struck it (objlist +0x18F1) and has that one next to it,
+// alive, awake, free to move and not stopped by time (during Time Stop only if of the party) cannot fire a missile: "<name> interferes!". -1 if nobody does.
+int Combat::interferer(int attacker, bool timeStopped) const {
+	const ObjList &a = _world.actors;
+	if (attacker >= 0x100 || a.worktype[attacker] <= 1 || a.worktype[attacker] >= 0x10)
+		return -1;
+	int opp = a.unknown18f1[attacker];
+	if (opp == attacker)
+		return -1;
+	int ko = _world.actorObject(opp), ka = _world.actorObject(attacker);
+	if (ko < 0 || ka < 0 || _world.objects[ko].deleted)
+		return -1;
+	if ((a.status[opp] & 0x16) || (a.movementFlags[opp] & 0x10))
+		return -1;
+	if (std::abs((int)_world.objects[ko].x - (int)_world.objects[ka].x) >= 2 || std::abs((int)_world.objects[ko].y - (int)_world.objects[ka].y) >= 2)
+		return -1;
+	if (timeStopped && !(a.status[opp] & 0x80))
+		return -1;
+	return opp;
+}
+
 bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) {
 	int ka = _world.actorObject(attacker), kd = _world.actorObject(defender);
 	if (ka < 0 || kd < 0)
 		return false;
-	if (onSwing) {
-		// perform_attack 2D2F8-2D376: a weapon is a missile when the target is not next to the attacker, or when it is one of the throwing and shooting weapons (the sling 0x28 and the 0x2F are not)
-		static const int MISSILES[] = {0x21, 0x25, 0x29, 0x2A, 0x31, 0x32, 0x53, 0x5B, 0x4F, 0x50};
-		bool missile = false;
-		if (weapon != 0x28 && weapon != 0x2F) {
-			missile = std::abs((int)_world.objects[ka].x - (int)_world.objects[kd].x) > 1 || std::abs((int)_world.objects[ka].y - (int)_world.objects[kd].y) > 1;
-			for (int m : MISSILES)
-				missile |= weapon == m;
-		}
-		if (!missile)
-			onSwing(defender);
-	}
+	if (onSwing && !isMissile(attacker, defender, weapon))
+		onSwing(defender);
 	if (!hitCheck(attacker, defender, weapon))
 		return false;
 	int maxDamage = weaponDamageOf(weapon);
