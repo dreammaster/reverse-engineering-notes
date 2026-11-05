@@ -51,6 +51,12 @@ int main() {
 			victim = a;
 	}
 	CHECK(victim > 0);
+	{ // blows are struck from next to the victim (anything farther is a missile)
+		int ka = w.actorObject(1), kv = w.actorObject(victim);
+		w.objects[kv].x = w.objects[ka].x;
+		w.objects[kv].y = (uint16_t)(w.objects[ka].y + 1);
+		w.objects[kv].z = w.objects[ka].z;
+	}
 	int exp0 = w.actors.exp[1];
 	int blows = 0;
 	bool died = false;
@@ -80,6 +86,12 @@ int main() {
 			if (k >= 0 && w3.actors.hp[a] > 0 && !(w3.objects[k].status & 0x80))
 				target = a;
 		}
+		{
+			int ka = w3.actorObject(2), kt = w3.actorObject(target);
+			w3.objects[kt].x = w3.objects[ka].x;
+			w3.objects[kt].y = (uint16_t)(w3.objects[ka].y + 1);
+			w3.objects[kt].z = w3.objects[ka].z;
+		}
 		w3.addToInventory(2, 0x30, 0, 1);
 		for (World::Obj &o : w3.objects)
 			if (!o.deleted && o.type == 0x30 && o.location() == ObjRecord::IN_INVENTORY && o.parent == 2)
@@ -97,6 +109,54 @@ int main() {
 		for (int i = 0; i < 100 && glass(); ++i)
 			c3.attackWith(2, target, 0x30);
 		CHECK(glass() == 0);
+	}
+
+	// A bow shot from three squares costs an arrow; a flask of oil costs a flask and sets a fire where it lands; a dagger thrown from afar leaves the pack
+	{
+		World w5;
+		w5.load("u6/game");
+		BorlandRandom rng5(9);
+		::Ultima6::Ultima6::TextWindow scroll5(22, 14, 17, 10);
+		Combat c5(w5, rng5, scroll5);
+		int target = -1;
+		for (int a = 40; a < 0xE0 && target < 0; ++a) {
+			int k = w5.actorObject(a);
+			if (k >= 0 && w5.actors.hp[a] > 0 && !(w5.objects[k].status & 0x80))
+				target = a;
+		}
+		int ka = w5.actorObject(1), kt = w5.actorObject(target);
+		w5.objects[kt].x = (uint16_t)(w5.objects[ka].x + 3);
+		w5.objects[kt].y = w5.objects[ka].y;
+		w5.objects[kt].z = w5.objects[ka].z;
+		std::vector<std::pair<int, int>> path;
+		bool open = w5.boltPath(w5.objects[ka].z, w5.objects[ka].x, w5.objects[ka].y, w5.objects[kt].x, w5.objects[kt].y, 6, path);
+		if (open) {
+			auto count = [&](int type) {
+				int n = 0;
+				for (const World::Obj &o : w5.objects)
+					if (!o.deleted && o.type == type && o.location() != ObjRecord::ON_MAP)
+						n += w5.quantityOf(o);
+				return n;
+			};
+			w5.addToInventory(1, 0x37, 0, 5);
+			w5.addToInventory(1, 0x53, 0, 2);
+			w5.addToInventory(1, 0x26, 0, 1);
+			int arrows = count(0x37);
+			c5.attackWith(1, target, 0x29, true);
+			CHECK(count(0x37) == arrows - 1);
+			int flasks = count(0x53);
+			size_t before = w5.objects.size();
+			w5.actors.hp[target] = 255;
+			c5.attackWith(1, target, 0x53, true);
+			CHECK(count(0x53) == flasks - 1);
+			bool fire = false;
+			for (size_t i = before; i < w5.objects.size(); ++i)
+				fire |= w5.objects[i].type == 0x13D;
+			CHECK(fire); // grass takes the fire
+			int daggers = count(0x26);
+			c5.attackWith(1, target, 0x26, true);
+			CHECK(count(0x26) == daggers - 1); // the dagger is in the target or on the ground
+		}
 	}
 
 	// Interference (sub_2BA3E): a member who remembers the one that struck it, who stands next to it and is awake, cannot shoot

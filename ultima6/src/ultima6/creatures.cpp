@@ -692,23 +692,7 @@ int Creatures::actorAt(int x, int y) const {
 // sub_2B827: whether an actor can be a target of another: not invisible (but party members see each other), not dead, not the hidden kind (type 0x165, tile flags3 bit 0x10)
 // and on the same level
 bool Creatures::validTarget(int actor, int target) const {
-	const ObjList &a = _world.actors;
-	int ka = _world.actorObject(actor), kt = _world.actorObject(target);
-	if (ka < 0 || kt < 0)
-		return false;
-	const World::Obj &t = _world.objects[kt];
-	bool ok = !(t.status & 2);
-	if ((a.status[actor] & 0x80) && !ok && target < 0x100 && (a.status[target] & 0x80))
-		ok = true;
-	if (target < 0x100 && (a.movementFlags[target] & 0x10))
-		ok = false;
-	if (t.type == 0x165 && t.frame == 0)
-		ok = false;
-	if (_world.flags.flags3[(_world.baseTile.firstTile[t.type] + t.frame) & (TileFlags::TILES - 1)] & 0x10)
-		ok = false;
-	if (_world.objects[ka].z != t.z)
-		ok = false;
-	return ok;
+	return _combat.validTarget(actor, target);
 }
 
 // sub_2BB2F: whether a missile flies from the actor to a square. APPROX(57): sub_37CBD flies it with its own Bresenham and may change the square it hits; here it is the

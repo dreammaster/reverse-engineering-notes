@@ -74,6 +74,10 @@ public:
 	bool attackWith(int attacker, int defender, int weapon, bool commanded = false);
 	/** sub_2CD10: a blow of `damage` (the most it can do: a number from 1 to it is rolled; -1 for 1) at a target by an attacker, with what comes of it. */
 	bool strike(int attacker, int target, int damage, bool commanded);
+	/** sub_2B827: whether `target` can be attacked by `actor` (visible, free, the same level). */
+	bool validTarget(int actor, int target) const;
+	/** sub_2B8E1: the actor on a square that `attacker` may attack, or -1. */
+	int targetAt(int attacker, int x, int y) const;
 	/** perform_attack: whether the blow is a missile (not next to the target, or a throwing or shooting weapon). */
 	bool isMissile(int attacker, int defender, int weapon) const;
 	/** sub_2BA3E: the actor next to `attacker` that remembers striking it and so stops its missiles, or -1. */

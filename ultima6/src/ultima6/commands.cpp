@@ -192,8 +192,6 @@ void Game::attackAt(int tx, int ty) {
 			message("Out of range!\n");
 			sfx(0xC); // sub_2D865 2D9F3
 		} else {
-			if (ammo)
-				_world.removeFromInventory(attacker, ammo, 0, 1);
 			if (weapon != 0x19C) { // perform_attack 2D1DE: the attacker turns to the target, along the longer way (west, east, north or south)
 				int fx = _world.objects[k].x - _world.objects[_world.actorObject(attacker)].x, fy = _world.objects[k].y - _world.objects[_world.actorObject(attacker)].y;
 				_actors.face(attacker, std::abs(fx) > std::abs(fy) ? (fx < 0 ? 6 : 2) : (fy < 0 ? 0 : 4));

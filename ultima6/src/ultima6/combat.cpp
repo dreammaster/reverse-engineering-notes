@@ -311,13 +311,155 @@ int Combat::interferer(int attacker, bool timeStopped) const {
 	return opp;
 }
 
+// sub_2B827: whether `target` can be the target of `actor`: not invisible (but party members see each other), not held, not the hidden kind (type 0x165, tile flags3 bit 0x10)
+// and on the same level
+bool Combat::validTarget(int actor, int target) const {
+	const ObjList &a = _world.actors;
+	int ka = _world.actorObject(actor), kt = _world.actorObject(target);
+	if (ka < 0 || kt < 0)
+		return false;
+	const World::Obj &t = _world.objects[kt];
+	bool ok = !(t.status & 2);
+	if ((a.status[actor] & 0x80) && !ok && target < 0x100 && (a.status[target] & 0x80))
+		ok = true;
+	if (target < 0x100 && (a.movementFlags[target] & 0x10))
+		ok = false;
+	if (t.type == 0x165 && t.frame == 0)
+		ok = false;
+	if (_world.flags.flags3[(_world.baseTile.firstTile[t.type] + t.frame) & (TileFlags::TILES - 1)] & 0x10)
+		ok = false;
+	if (_world.objects[ka].z != t.z)
+		ok = false;
+	return ok;
+}
+
+// sub_2B8E1: the actor on a square that `attacker` may attack (the topmost), or -1
+int Combat::targetAt(int attacker, int x, int y) const {
+	int ka = _world.actorObject(attacker);
+	if (ka < 0)
+		return -1;
+	std::vector<int> here;
+	_world.objectsAt(x, y, _world.objects[ka].z, here);
+	for (size_t i = here.size(); i-- > 0;) {
+		const World::Obj &o = _world.objects[here[i]];
+		if (o.actor >= 0 && !o.deleted && validTarget(attacker, o.actor))
+			return o.actor;
+	}
+	return -1;
+}
+
+// perform_attack (2D18B-2D7AD) for the blows with a weapon (the casting of the spell charges 0x150 and 0x39 is not done), with sub_2BB89 for the missiles. The weapon hits or misses
+// the one aimed at (hitCheck). A missile that misses lands up to one square off (a number from -1 to 1 added to each coordinate), on whoever stands there; a missile that is
+// stopped on its way (World::boltPath, reaching as far as the weapon does) lands on the last square it crossed. A missile that went astray hits (with another check) whoever is where
+// it landed. Missiles use up their things: a bow an arrow, a crossbow a bolt (the triple crossbow three), a thrown flask of oil is gone and sets a fire (0x13D) where it lands unless
+// the ground is impassable, a spear, axe or dagger thrown from afar is lost in whoever it hits and else lies where it landed (lost in water or lava), a wand burns out one time in a
+// hundred. A hit goes through `strike` unless the weapon is the 0x5B; the half damage and the glass sword are as in perform_attack 2D6EC-2D75D.
+// APPROX(18): the triple crossbow's three bolts, the Zu Ylem's effect (sub_21B90), the boomerang's flight and the spell charges are not done
 bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) {
 	int ka = _world.actorObject(attacker), kd = _world.actorObject(defender);
 	if (ka < 0 || kd < 0)
 		return false;
-	if (onSwing && !isMissile(attacker, defender, weapon))
+	bool missile = isMissile(attacker, defender, weapon);
+	if (onSwing && !missile)
 		onSwing(defender);
-	if (!hitCheck(attacker, defender, weapon))
+	int ax = _world.objects[ka].x, ay = _world.objects[ka].y, az = _world.objects[ka].z;
+	int tx = _world.objects[kd].x, ty = _world.objects[kd].y;
+	int victim = defender;
+	bool hit = hitCheck(attacker, defender, weapon);
+	bool recheck = false; // var_10 == -1: the shot was off its aim
+	if (!hit && missile) {
+		recheck = true;
+		tx += random(0, 2) - 1;
+		ty += random(0, 2) - 1;
+		victim = targetAt(attacker, tx, ty);
+	}
+	if (missile) {
+		int landX = tx, landY = ty;
+		std::vector<std::pair<int, int>> path;
+		int reach = std::max(rangeOf(weapon), distance(std::abs(tx - ax), std::abs(ty - ay)));
+		bool arrived = _world.boltPath(az, ax, ay, tx, ty, reach, path);
+		if (!arrived) {
+			recheck = true;
+			landX = path.empty() ? ax : path.back().first;
+			landY = path.empty() ? ay : path.back().second;
+			victim = targetAt(attacker, landX, landY);
+		}
+		std::vector<int> inv;
+		_world.inventory(attacker, inv);
+		auto find = [&](int type, bool packFirst) {
+			int found = -1;
+			for (int i : inv)
+				if (_world.objects[i].type == type && (found < 0 || (packFirst && _world.objects[i].location() == ObjRecord::IN_INVENTORY)))
+					found = i;
+			return found;
+		};
+		int ammo = (weapon == 0x29 || weapon == 0x36) ? 0x37 : (weapon == 0x2A || weapon == 0x32) ? 0x38 : 0;
+		if (ammo)
+			_world.removeFromInventory(attacker, ammo, 0, weapon == 0x32 ? 3 : 1);
+		if (weapon == 0x24 || weapon == 0x25 || weapon == 0x26) {
+			if (std::abs(tx - ax) > 1 || std::abs(ty - ay) > 1) {
+				int thrown = find(weapon, true);
+				if (thrown >= 0) {
+					if (victim >= 0 && victim < 0x100) {
+						_world.deleteObject(thrown);
+					} else {
+						int tile = _world.map.tile(az, landX, landY);
+						std::vector<int> there;
+						_world.objectsAt(landX, landY, az, there);
+						uint8_t f1 = _world.flags.flags1[tile & (TileFlags::TILES - 1)];
+						bool lost = (((f1 & 1) && (f1 & 2)) || (tile >= 0xFC && tile <= 0xFF)) && there.empty();
+						if (lost) {
+							_world.deleteObject(thrown);
+						} else {
+							World::Obj &d = _world.objects[thrown];
+							d.status = (uint8_t)((d.status & ~ObjRecord::LOCATION_MASK) | 0x01);
+							d.parent = -1;
+							d.x = (uint16_t)landX;
+							d.y = (uint16_t)landY;
+							d.z = (uint8_t)az;
+							_world.addToMap(thrown);
+						}
+					}
+				}
+			}
+		} else if (weapon == 0x53) {
+			_world.removeFromInventory(attacker, 0x53, 0, 1);
+			uint8_t f1 = _world.flags.flags1[_world.map.tile(az, landX, landY) & (TileFlags::TILES - 1)];
+			if (!(f1 & 1)) {
+				World::Obj fire;
+				fire.status = 0;
+				fire.x = (uint16_t)landX;
+				fire.y = (uint16_t)landY;
+				fire.z = (uint8_t)az;
+				fire.type = 0x13D;
+				fire.frame = 0;
+				fire.quantity = 1;
+				fire.quality = 0;
+				fire.actor = -1;
+				fire.parent = -1;
+				_world.objects.push_back(fire);
+				_world.addToMap((int)_world.objects.size() - 1);
+			}
+		} else if (weapon == 0x5B) {
+			_world.removeFromInventory(attacker, 0x5B, 0, 1);
+		} else if (weapon == 0x4F || weapon == 0x50) {
+			if (random(1, 100) == 0x25) {
+				int wand = find(weapon, false);
+				if (wand >= 0)
+					_world.deleteObject(wand);
+				_scroll.print("A wand has vanished!\n");
+			}
+		}
+	}
+	if (recheck) {
+		hit = true;
+		if (victim >= 0 && victim < 0x100)
+			hit = hitCheck(attacker, victim, weapon);
+	}
+	if (!hit || victim < 0)
+		return false;
+	int kv = _world.actorObject(victim);
+	if (kv < 0)
 		return false;
 	int maxDamage = weaponDamageOf(weapon);
 	if (maxDamage < 0) {
@@ -327,17 +469,17 @@ bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) 
 	// perform_attack 2D6EC-2D75D: what is hit by a kind of creature with movement flag 0x80 takes half (rounded up) from every weapon but the glass sword, the triple crossbow and the
 	// magic bow; the 0x5B does no harm at all; a glass sword that hits shatters
 	bool killed = false;
-	if (defender != attacker) {
-		int cls = MovementClasses::classOf(_world.objects[kd].type);
+	if (victim != attacker) {
+		int cls = MovementClasses::classOf(_world.objects[kv].type);
 		if (cls >= 0 && (MovementClasses::flags(cls) & 0x80) && weapon != 0x30 && weapon != 0x32 && weapon != 0x36)
 			maxDamage = (maxDamage + 1) >> 1;
 		if (weapon != 0x5B)
-			killed = strike(attacker, defender, maxDamage, commanded);
+			killed = strike(attacker, victim, maxDamage, commanded);
 		if (weapon == 0x30) {
 			_scroll.print("Thy sword hath shattered!\n");
-			std::vector<int> inv;
-			_world.inventory(attacker, inv, false);
-			for (int i : inv)
+			std::vector<int> held;
+			_world.inventory(attacker, held, false);
+			for (int i : held)
 				if (_world.objects[i].type == 0x30 && _world.objects[i].location() == ObjRecord::READIED) {
 					_world.deleteObject(i);
 					break;
