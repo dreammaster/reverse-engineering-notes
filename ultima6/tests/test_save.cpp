@@ -27,6 +27,36 @@ static size_t liveObjects(const World &w) {
 	return n;
 }
 
+static void roundTrip(const char *dir, GameId id, const char *save, const char *save2) {
+	static World w, r, r2;
+	w = World();
+	w.game = id;
+	if (!w.load(dir)) {
+		std::printf("skip %s (no game data)\n", dir);
+		return;
+	}
+	Game g(w);
+	g.saveDir = save;
+	g.handleKey(KEY_DOWN);
+	for (int i = 0; i < 30; ++i)
+		g.handleKey(KEY_SPACE);
+	g.handleKey(19);
+	g.handleKey('y');
+	r = World();
+	r.game = id;
+	CHECK(r.load(dir, nullptr, save));
+	CHECK(liveObjects(r) == liveObjects(w));
+	Game g2(r);
+	CHECK(g2.x == g.x && g2.y == g.y && g2.z == g.z);
+	CHECK(g2.clock.hour == g.clock.hour && g2.clock.minute == g.clock.minute);
+	r2 = World();
+	r2.game = id;
+	CHECK(r2.load(dir, nullptr, save));
+	CHECK(r2.save(save2));
+	Bytes a, b;
+	CHECK(readFile(std::string(save) + "/OBJLIST", a) && readFile(std::string(save2) + "/OBJLIST", b) && a == b);
+}
+
 int main() {
 	World w;
 	if (!w.load("u6/game")) {
