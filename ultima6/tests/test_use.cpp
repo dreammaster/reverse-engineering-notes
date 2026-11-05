@@ -84,6 +84,10 @@ int main() {
 	// a locked door stays locked and says so; a magically locked one says so
 	{
 		w.objects.reserve(w.objects.size() + 16);
+		std::vector<int> leftovers; // the chest of the test above: a door with something else on it is "Not now!"
+		w.objectsAt(px + 1, py, 0, leftovers);
+		for (int i : leftovers)
+			w.deleteObject(i);
 		int door = put(w, 297, 9, px + 1, py, 0);
 		useEast(w, g, px, py);
 		CHECK(w.objects[door].frame == 9);
@@ -92,6 +96,21 @@ int main() {
 		useEast(w, g, px, py);
 		CHECK(w.objects[door].frame == 13);
 		CHECK(logText(g).find("magically locked!") != std::string::npos);
+	}
+
+	// a door with a chest in front of it in the list ("first object of the square", sub_19C1A) is "Not now!"
+	{
+		std::vector<int> there;
+		w.objectsAt(px + 1, py, 0, there);
+		for (int i : there)
+			w.deleteObject(i);
+		put(w, 0x62, 1, px + 1, py, 0);
+		int door = put(w, 297, 1, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Not now!") != std::string::npos);
+		CHECK(w.objects[door].frame == 1);
+		w.deleteObject(door);
 	}
 
 	// food is eaten, a candle is lit and doused

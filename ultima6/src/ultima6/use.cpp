@@ -81,6 +81,25 @@ void Game::useObject(int idx) {
 		}
 	}
 	int type = o.type;
+	if ((type >= 0x129 && type <= 0x12C) || type == 0x14E) {
+		// cmd_use 35A27-35A9C: a door with something else lying on it, that is not to be ignored (tile flags3 0x10), and a secret door that is not on top, is "Not now!"
+		std::vector<int> there;
+		_world.objectsAt(o.x, o.y, o.z, there);
+		if (!there.empty()) {
+			const World::Obj &top = _world.objects[there.front()]; // sub_19C1A: the first object of the square in the chain (the order they are listed in)
+			bool notNow;
+			if (type == 0x14E) {
+				notNow = top.type != 0x14E;
+			} else {
+				int tile = _world.baseTile.firstTile[top.type] + top.frame;
+				notNow = !(top.type >= 0x129 && top.type <= 0x12C) && !(_world.flags.flags3[tile & (TileFlags::TILES - 1)] & 0x10);
+			}
+			if (notNow) {
+				message("\nNot now!\n");
+				return;
+			}
+		}
+	}
 	if (type == 0x3E) {
 		if (!useVortexCube())
 			message("\nNo effect\n");
