@@ -358,6 +358,35 @@ static int testText(Host &h) {
 	return bad != 0;
 }
 
+// print_obj of the original (lifted) for every object x style x verb: writes "obj<TAB>style<TAB>verb<TAB>text" lines to the file named by argv[5] (the standalone
+// project's grammar test compares its own output with this file; it holds game text, so it stays local and is never committed)
+static int testPrintObj(Host &h, const char *outPath) {
+	if (!startup(h)) return 1;
+	g_count = h.w(D_object_count);
+	FILE *f = fopen(outPath, "wb");
+	if (!f) { fprintf(stderr, "cannot write %s\n", outPath); return 1; }
+	static const char *verbs[] = {"", "are", "were", "have", "do", "go", "look", "carry", "fly", "cross", "push", "watch", "buzz", "is", "a", "x", "stay", "go away", "do it", "are here", "wash", "reply", "try", "hiss"};
+	long lines = 0;
+	for (int o = 0; o <= g_count + 1; o++)
+		for (int kind = 0; kind < 8; kind++)
+			for (int flags = 0; flags < 8; flags++) {
+				int style = kind | ((flags & 1) ? 0x10 : 0) | ((flags & 2) ? 0x20 : 0) | ((flags & 4) ? 0x40 : 0);
+				for (size_t v = 0; v < sizeof(verbs) / sizeof(verbs[0]); v++) {
+					if (!(style & 0x40) && v) break;
+					uint32_t vp = h.putString(verbs[v]);
+					h.setw(D_word_850CA, 0);       // the results live in a 128 byte ring buffer; every call starts it afresh
+					h.cpu.steps = 0;               // and with a fresh instruction budget
+					uint32_t r = h.call("print_obj", {(uint16_t)style, (uint16_t)o, (uint16_t)vp, (uint16_t)(vp >> 16)}, 2);
+					std::string t = (r == 0) ? std::string("<null>") : h.str((uint16_t)(r >> 16), (uint16_t)r, 400);
+					fprintf(f, "%d\t%d\t%s\t%s\n", o, style, verbs[v], t.c_str());
+					lines++;
+				}
+			}
+	fclose(f);
+	printf("print_obj: %ld results written to %s\n", lines, outPath);
+	return 0;
+}
+
 // the original save/load code on the emulated file system. write_game_state(1) writes restart.dat (mode 1), read_game_state(1) reads it back (the Shannara-derived names load_game? / save_game? were the opposite).
 static int testSave(Host &h) {
 	if (!startup(h)) return 1;
@@ -667,6 +696,7 @@ int main(int argc, char **argv) {
 		if (cmd == "clock") return testClock(h);
 		if (cmd == "text") return testText(h);
 		if (cmd == "save") return testSave(h);
+			if (cmd == "printobj") return testPrintObj(h, argc > 5 ? argv[5] : "printobj.tsv");
 		if (cmd == "room") return testRoom(h, argc > 5 ? atoi(argv[5]) : 34);
 		fprintf(stderr, "unknown command\n");
 		return 2;

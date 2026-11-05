@@ -26,6 +26,8 @@ add_library(legend STATIC
 # xanth/: Companions of Xanth
 add_library(xanth_engine STATIC
 	xanth/objects.cpp
+	xanth/objectnames.cpp
+	xanth/grammar.cpp
 	xanth/gamestate.cpp
 	xanth/tables/vars.cpp
 )
@@ -44,3 +46,7 @@ add_test(NAME objects COMMAND test_objects)
 add_executable(test_state tests/test_state.cpp)
 target_link_libraries(test_state xanth_engine)
 add_test(NAME state COMMAND test_state)
+
+add_executable(test_grammar tests/test_grammar.cpp)
+target_link_libraries(test_grammar xanth_engine)
+add_test(NAME grammar COMMAND test_grammar)
