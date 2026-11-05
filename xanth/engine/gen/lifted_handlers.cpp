@@ -8798,8 +8798,8 @@ void L_exit_fn_12(Cpu &c) {
 	c.push(c.ax.x);
 	// mov     ax, current_room
 	c.ax.x = c.rd16(c.ds, (uint16_t)((D_current_room)));
-	// mov     flag_8B9E2_exit_fn_12, ax
-	c.wr16(c.ds, (uint16_t)((D_flag_8B9E2_exit_fn_12)), c.ax.x);
+	// mov     previous_room, ax
+	c.wr16(c.ds, (uint16_t)((D_previous_room)), c.ax.x);
 	// push    ax
 	c.push(c.ax.x);
 	// call    call_object_handler
@@ -9586,8 +9586,8 @@ void L_objh_005(Cpu &c) {
 	// jmp     loc_5CEBB
 	goto loc_5CEBB;
 	loc_5D096: STEP("objh_005:loc_5D096");
-	// cmp     flag_8B9E2_exit_fn_12, 5Ah
-	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_flag_8B9E2_exit_fn_12))), (uint16_t)90);
+	// cmp     previous_room, 5Ah
+	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_previous_room))), (uint16_t)90);
 	// jz      short loc_5D0EE
 	if (c.ZF) goto loc_5D0EE;
 	// cmp     current_room, 0CDh
@@ -13082,8 +13082,8 @@ void L_objh_085(Cpu &c) {
 	loc_50BAF: STEP("objh_085:loc_50BAF");
 	// call    sub_1AAFB
 	{ uint16_t _sp = c.sp; int _rw = c.retWords; c.retWords = 2; for (int _i = 0; _i < 2; _i++) c.push(0); c.popBytes = 4; if (c.onCall) c.onCall(c, "sub_1AAFB"); H_sub_1AAFB(c); c.sp = (uint16_t)(_sp - 4 + c.popBytes); c.retWords = _rw; }
-	// cmp     flag_8B9E2_exit_fn_12, 22h
-	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_flag_8B9E2_exit_fn_12))), (uint16_t)34);
+	// cmp     previous_room, 22h
+	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_previous_room))), (uint16_t)34);
 	// jz      short loc_50BCA
 	if (c.ZF) goto loc_50BCA;
 	// cmp     companion_obj, 0
@@ -13104,8 +13104,8 @@ void L_objh_085(Cpu &c) {
 	// jmp     loc_50CCC
 	goto loc_50CCC;
 	loc_50BD4: STEP("objh_085:loc_50BD4");
-	// cmp     flag_8B9E2_exit_fn_12, 22h
-	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_flag_8B9E2_exit_fn_12))), (uint16_t)34);
+	// cmp     previous_room, 22h
+	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_previous_room))), (uint16_t)34);
 	// jnz     short loc_50BDE
 	if (!c.ZF) goto loc_50BDE;
 	// jmp     loc_50CA0
@@ -13266,8 +13266,8 @@ void L_objh_085(Cpu &c) {
 	(void)opSub<uint8_t>(c, c.rd8(c.ds, (uint16_t)((D_flag_85259_conv21))), (uint8_t)0);
 	// jz      short loc_50CF4
 	if (c.ZF) goto loc_50CF4;
-	// cmp     flag_8B9E2_exit_fn_12, 22h
-	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_flag_8B9E2_exit_fn_12))), (uint16_t)34);
+	// cmp     previous_room, 22h
+	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_previous_room))), (uint16_t)34);
 	// jz      short loc_50CEA
 	if (c.ZF) goto loc_50CEA;
 	// mov     byte_86CC0, 0
@@ -13345,8 +13345,8 @@ void L_objh_085(Cpu &c) {
 	// jmp     loc_50C00
 	goto loc_50C00;
 	loc_50D44: STEP("objh_085:loc_50D44");
-	// cmp     flag_8B9E2_exit_fn_12, 22h
-	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_flag_8B9E2_exit_fn_12))), (uint16_t)34);
+	// cmp     previous_room, 22h
+	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_previous_room))), (uint16_t)34);
 	// jnz     short loc_50D4E
 	if (!c.ZF) goto loc_50D4E;
 	// jmp     loc_50C00
@@ -24722,15 +24722,15 @@ void L_objh_197(Cpu &c) {
 	// jmp     short loc_5F66B
 	goto loc_5F66B;
 	loc_5F685: STEP("objh_197:loc_5F685");
-	// cmp     flag_8B9E2_exit_fn_12, 0EDh
-	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_flag_8B9E2_exit_fn_12))), (uint16_t)237);
+	// cmp     previous_room, 0EDh
+	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_previous_room))), (uint16_t)237);
 	// jnz     short loc_5F692
 	if (!c.ZF) goto loc_5F692;
 	// mov     byte_87D33, 1
 	c.wr8(c.ds, (uint16_t)((D_byte_87D33)), 1);
 	loc_5F692: STEP("objh_197:loc_5F692");
-	// cmp     flag_8B9E2_exit_fn_12, 0C9h
-	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_flag_8B9E2_exit_fn_12))), (uint16_t)201);
+	// cmp     previous_room, 0C9h
+	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_previous_room))), (uint16_t)201);
 	// jnz     short loc_5F6C1
 	if (!c.ZF) goto loc_5F6C1;
 	// cmp     word_85278, 1
@@ -29867,8 +29867,8 @@ void L_objh_249(Cpu &c) {
 	// jmp     loc_659D3
 	goto loc_659D3;
 	loc_657FC: STEP("objh_249:loc_657FC");
-	// cmp     flag_8B9E2_exit_fn_12, 125h
-	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_flag_8B9E2_exit_fn_12))), (uint16_t)293);
+	// cmp     previous_room, 125h
+	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_previous_room))), (uint16_t)293);
 	// jz      short loc_65807
 	if (c.ZF) goto loc_65807;
 	// jmp     loc_659D3
@@ -33237,8 +33237,8 @@ void L_objh_291(Cpu &c) {
 	// jmp     loc_706A2
 	goto loc_706A2;
 	loc_70433: STEP("objh_291:loc_70433");
-	// cmp     flag_8B9E2_exit_fn_12, 5Ah
-	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_flag_8B9E2_exit_fn_12))), (uint16_t)90);
+	// cmp     previous_room, 5Ah
+	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_previous_room))), (uint16_t)90);
 	// jnz     short loc_7047F
 	if (!c.ZF) goto loc_7047F;
 	// mov     ax, 1
@@ -33292,8 +33292,8 @@ void L_objh_291(Cpu &c) {
 	// add     sp, 4
 	c.sp = opAdd<uint16_t>(c, c.sp, (uint16_t)4);
 	loc_7047F: STEP("objh_291:loc_7047F");
-	// cmp     flag_8B9E2_exit_fn_12, 139h
-	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_flag_8B9E2_exit_fn_12))), (uint16_t)313);
+	// cmp     previous_room, 139h
+	(void)opSub<uint16_t>(c, c.rd16(c.ds, (uint16_t)((D_previous_room))), (uint16_t)313);
 	// jz      short loc_7048A
 	if (c.ZF) goto loc_7048A;
 	// jmp     loc_706A2

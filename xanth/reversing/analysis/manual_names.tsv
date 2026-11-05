@@ -62,3 +62,8 @@ flag_852A6_conv81	advisor_questions_asked	incremented by the information-menu ca
 flag_85250_sword	companion_obj	object id of the companion travelling with the player: 5 (Nada) after the manacles scene frees her, 0 when she is gone (sword handler); tested by Grundy, Jenny, the door and the Void exits ("especially alone" vs "Nada beckons you away")
 load_game?	write_game_state	verified by running: mode 1 writes RESTART.DAT (fopen "wb" + serialize_state? mode 2), mode 2 a numbered slot, 3 a memory snapshot, 4 HELP.DAT; the Shannara-derived name was the opposite
 save_game?	read_game_state	verified by running: reads the file back (restart.dat / slot) through serialize_state? and ends in a longjmp to the main loop; the Shannara-derived name was the opposite
+word_85224	score	added by add_score? (the "[N points]" messages); 5 after the first scripted puzzle step
+word_8521E	time_of_day_minutes	minutes of the day, 0..1439 (sub_1DBB7 adds the elapsed time and carries into day_count at 0x5A0); starts at 720 (noon), +1 per WAIT turn
+word_85220	day_count	incremented by sub_1DBB7 when time_of_day_minutes wraps past 1440
+flag_8B9E2_exit_fn_12	previous_room	the room the player came from: written by go_to_room? (65535 at the start, 34 after leaving the bedroom); read by exit functions
+unk_8B9CE	light_room	the room whose light state update_room_light? last evaluated (initially current_room, later the room found by the light search)

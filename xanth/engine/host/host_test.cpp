@@ -548,6 +548,19 @@ static int testInit(Host &h) {
 		}
 	};
 	debugHooks(h);
+	if (getenv("HOST_DUMP")) {            // "30000000:a.bin;40000000:b.bin"
+		std::string s = getenv("HOST_DUMP");
+		size_t p = 0;
+		while (p < s.size()) {
+			size_t semi = s.find(';', p);
+			std::string item = s.substr(p, semi == std::string::npos ? std::string::npos : semi - p);
+			size_t colon = item.find(':');
+			if (colon == std::string::npos) break;
+			h.machine.dumpScript.push_back({atol(item.c_str()), item.substr(colon + 1)});
+			if (semi == std::string::npos) break;
+			p = semi + 1;
+		}
+	}
 	if (getenv("HOST_CALL")) {            // "50000000:go_to_room_q:34;60000000:object_move_q:35,90,0" (lifted function names, decimal arguments)
 		std::string s = getenv("HOST_CALL");
 		size_t p = 0;

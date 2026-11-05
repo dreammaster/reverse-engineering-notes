@@ -219,6 +219,7 @@ std::string Host::message(uint32_t id, bool *ok) const {
 
 void Machine::reset() {
 	mouseTimeline.clear();
+	dumpScript.clear();
 	inputScript.clear();
 	keys.clear();
 	mouseButtons = 0;
@@ -262,6 +263,11 @@ void callThroughHook(Cpu &c, uint16_t seg, uint16_t off) { farHook(c, seg, off);
 // IRQ0: run the program's INT 08h service routine (if it installed one) as the CPU would: push FLAGS, CS, IP and jump to the vector
 void Machine::timerTick(Cpu &c) {
 	// scripted input: keys that become available once the program has run a given number of labels (HOST_INPUT="steps:key,steps:key")
+	while (!dumpScript.empty() && c.steps >= dumpScript.front().first) {      // HOST_DUMP="steps:file;...": the data segment at that label count (flag changes between two points identify what a command did)
+		FILE *f = fopen(dumpScript.front().second.c_str(), "wb");
+		if (f) { fwrite(host().mem + (size_t)SEG_dseg_para * 16, 1, 0x10000, f); fclose(f); }
+		dumpScript.pop_front();
+	}
 	while (!callScript.empty() && c.steps >= callScript.front().steps && !inIsr) {      // scripted engine call (HOST_CALL="steps:name:arg,arg"): run a lifted function between two instructions of the program
 		CallStep cs = callScript.front();
 		callScript.pop_front();

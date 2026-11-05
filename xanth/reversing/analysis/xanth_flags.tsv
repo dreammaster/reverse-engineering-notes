@@ -1,13 +1,13 @@
 address	name	size	written_by	tested_by
-85220	word_85220	2		
+85220	day_count	2		
 85745	unk_85745	1		
 85216	current_room	2	objh_085(90 screen)=0x22/0x5A/0x5B	conv_text_29; event_fn_01; event_fn_02; event_fn_06; event_fn_25; event_fn_26; event_fn_34; event_fn_36; event_fn_41; objh_004(4 Kim); objh_005(5 Nada); objh_006(6 Jenny)
-85224	word_85224	2		
-8b9e2	flag_8B9E2_exit_fn_12	2	exit_fn_12=current_room	objh_005(5 Nada); objh_018(19 Guardian); objh_085(90 screen); objh_189(197 road); objh_193(201 barrow entrance); objh_197(205 barrow); objh_219(244 tunnel); objh_249(274 living room); objh_304(335 road); objh_330(361 cave of winds); objh_352(388 castle gate)
+85224	score	2		
+8b9e2	previous_room	2	exit_fn_12=current_room	objh_005(5 Nada); objh_018(19 Guardian); objh_085(90 screen); objh_189(197 road); objh_193(201 barrow entrance); objh_197(205 barrow); objh_219(244 tunnel); objh_249(274 living room); objh_304(335 road); objh_330(361 cave of winds); objh_352(388 castle gate)
 8521c	turn_counter	2		
-8521e	word_8521E	2		
+8521e	time_of_day_minutes	2		
 85758	follower_obj	2	event_fn_05=0; event_fn_19=0/5; objh_085(90 screen)=0/5/flag_85256_conv21; objh_131(139 sword)=0; objh_215(240 manacles)=5	objh_203(213 mirror)
-8b9ce	unk_8B9CE	2		
+8b9ce	light_room	2		
 85258	flag_85258_conv21	1	conv_cb_21=1; conv_cb_46=1; event_fn_44=0	objh_031(34 bedroom); objh_085(90 screen)
 85254	flag_85254_conv21	2	conv_cb_21=current_room; conv_cb_46=current_room; event_fn_44=0	
 85256	flag_85256_conv21	2	conv_cb_21=companion_obj; conv_cb_46=companion_obj; event_fn_44=0	

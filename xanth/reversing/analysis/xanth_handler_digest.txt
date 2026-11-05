@@ -8325,7 +8325,7 @@ exit_fn_12
                               [bx+2C7Eh] or ?
                               call_object_handler(current_room, 0xF)
                               object_move?(1, current_room, 0)
-                              flag_8B9E2_exit_fn_12 = current_room
+                              previous_room = current_room
                               call_object_handler(current_room, 0xD)
                               call_object_handler(current_room, 0xA)
                               call_object_handler(current_room, 0xE)
@@ -8349,7 +8349,7 @@ exit_fn_12
                               [bx+2C7Eh] or ?
                               call_object_handler(current_room, 0xF)
                               object_move?(1, current_room, 0)
-                              flag_8B9E2_exit_fn_12 = current_room
+                              previous_room = current_room
                               call_object_handler(current_room, 0xD)
                               call_object_handler(current_room, 0xA)
                               call_object_handler(current_room, 0xE)
@@ -8373,7 +8373,7 @@ exit_fn_12
                             [bx+2C7Eh] or ?
                             call_object_handler(current_room, 0xF)
                             object_move?(1, current_room, 0)
-                            flag_8B9E2_exit_fn_12 = current_room
+                            previous_room = current_room
                             call_object_handler(current_room, 0xD)
                             call_object_handler(current_room, 0xA)
                             call_object_handler(current_room, 0xE)
@@ -8397,7 +8397,7 @@ exit_fn_12
                           [bx+2C7Eh] or ?
                           call_object_handler(current_room, 0xF)
                           object_move?(1, current_room, 0)
-                          flag_8B9E2_exit_fn_12 = current_room
+                          previous_room = current_room
                           call_object_handler(current_room, 0xD)
                           call_object_handler(current_room, 0xA)
                           call_object_handler(current_room, 0xE)
@@ -8421,7 +8421,7 @@ exit_fn_12
                         [bx+2C7Eh] or ?
                         call_object_handler(current_room, 0xF)
                         object_move?(1, current_room, 0)
-                        flag_8B9E2_exit_fn_12 = current_room
+                        previous_room = current_room
                         call_object_handler(current_room, 0xD)
                         call_object_handler(current_room, 0xA)
                         call_object_handler(current_room, 0xE)
@@ -8452,7 +8452,7 @@ exit_fn_12
                                     [bx+2C7Eh] or ?
                                     call_object_handler(current_room, 0xF)
                                     object_move?(1, current_room, 0)
-                                    flag_8B9E2_exit_fn_12 = current_room
+                                    previous_room = current_room
                                     call_object_handler(current_room, 0xD)
                                     call_object_handler(current_room, 0xA)
                                     call_object_handler(current_room, 0xE)
@@ -8476,7 +8476,7 @@ exit_fn_12
                                     [bx+2C7Eh] or ?
                                     call_object_handler(current_room, 0xF)
                                     object_move?(1, current_room, 0)
-                                    flag_8B9E2_exit_fn_12 = current_room
+                                    previous_room = current_room
                                     call_object_handler(current_room, 0xD)
                                     call_object_handler(current_room, 0xA)
                                     call_object_handler(current_room, 0xE)
@@ -8500,7 +8500,7 @@ exit_fn_12
                                   [bx+2C7Eh] or ?
                                   call_object_handler(current_room, 0xF)
                                   object_move?(1, current_room, 0)
-                                  flag_8B9E2_exit_fn_12 = current_room
+                                  previous_room = current_room
                                   call_object_handler(current_room, 0xD)
                                   call_object_handler(current_room, 0xA)
                                   call_object_handler(current_room, 0xE)
@@ -8524,7 +8524,7 @@ exit_fn_12
                                 [bx+2C7Eh] or ?
                                 call_object_handler(current_room, 0xF)
                                 object_move?(1, current_room, 0)
-                                flag_8B9E2_exit_fn_12 = current_room
+                                previous_room = current_room
                                 call_object_handler(current_room, 0xD)
                                 call_object_handler(current_room, 0xA)
                                 call_object_handler(current_room, 0xE)
@@ -8548,7 +8548,7 @@ exit_fn_12
                               [bx+2C7Eh] or ?
                               call_object_handler(current_room, 0xF)
                               object_move?(1, current_room, 0)
-                              flag_8B9E2_exit_fn_12 = current_room
+                              previous_room = current_room
                               call_object_handler(current_room, 0xD)
                               call_object_handler(current_room, 0xA)
                               call_object_handler(current_room, 0xE)
@@ -8580,7 +8580,7 @@ exit_fn_12
                                   [bx+2C7Eh] or ?
                                   call_object_handler(current_room, 0xF)
                                   object_move?(1, current_room, 0)
-                                  flag_8B9E2_exit_fn_12 = current_room
+                                  previous_room = current_room
                                   call_object_handler(current_room, 0xD)
                                   call_object_handler(current_room, 0xA)
                                   call_object_handler(current_room, 0xE)
@@ -8604,7 +8604,7 @@ exit_fn_12
                                   [bx+2C7Eh] or ?
                                   call_object_handler(current_room, 0xF)
                                   object_move?(1, current_room, 0)
-                                  flag_8B9E2_exit_fn_12 = current_room
+                                  previous_room = current_room
                                   call_object_handler(current_room, 0xD)
                                   call_object_handler(current_room, 0xA)
                                   call_object_handler(current_room, 0xE)
@@ -8628,7 +8628,7 @@ exit_fn_12
                                 [bx+2C7Eh] or ?
                                 call_object_handler(current_room, 0xF)
                                 object_move?(1, current_room, 0)
-                                flag_8B9E2_exit_fn_12 = current_room
+                                previous_room = current_room
                                 call_object_handler(current_room, 0xD)
                                 call_object_handler(current_room, 0xA)
                                 call_object_handler(current_room, 0xE)
@@ -8652,7 +8652,7 @@ exit_fn_12
                               [bx+2C7Eh] or ?
                               call_object_handler(current_room, 0xF)
                               object_move?(1, current_room, 0)
-                              flag_8B9E2_exit_fn_12 = current_room
+                              previous_room = current_room
                               call_object_handler(current_room, 0xD)
                               call_object_handler(current_room, 0xA)
                               call_object_handler(current_room, 0xE)
@@ -8676,7 +8676,7 @@ exit_fn_12
                             [bx+2C7Eh] or ?
                             call_object_handler(current_room, 0xF)
                             object_move?(1, current_room, 0)
-                            flag_8B9E2_exit_fn_12 = current_room
+                            previous_room = current_room
                             call_object_handler(current_room, 0xD)
                             call_object_handler(current_room, 0xA)
                             call_object_handler(current_room, 0xE)
@@ -8708,7 +8708,7 @@ exit_fn_12
                             [bx+2C7Eh] or ?
                             call_object_handler(current_room, 0xF)
                             object_move?(1, current_room, 0)
-                            flag_8B9E2_exit_fn_12 = current_room
+                            previous_room = current_room
                             call_object_handler(current_room, 0xD)
                             call_object_handler(current_room, 0xA)
                             call_object_handler(current_room, 0xE)
@@ -8732,7 +8732,7 @@ exit_fn_12
                             [bx+2C7Eh] or ?
                             call_object_handler(current_room, 0xF)
                             object_move?(1, current_room, 0)
-                            flag_8B9E2_exit_fn_12 = current_room
+                            previous_room = current_room
                             call_object_handler(current_room, 0xD)
                             call_object_handler(current_room, 0xA)
                             call_object_handler(current_room, 0xE)
@@ -8756,7 +8756,7 @@ exit_fn_12
                           [bx+2C7Eh] or ?
                           call_object_handler(current_room, 0xF)
                           object_move?(1, current_room, 0)
-                          flag_8B9E2_exit_fn_12 = current_room
+                          previous_room = current_room
                           call_object_handler(current_room, 0xD)
                           call_object_handler(current_room, 0xA)
                           call_object_handler(current_room, 0xE)
@@ -8780,7 +8780,7 @@ exit_fn_12
                         [bx+2C7Eh] or ?
                         call_object_handler(current_room, 0xF)
                         object_move?(1, current_room, 0)
-                        flag_8B9E2_exit_fn_12 = current_room
+                        previous_room = current_room
                         call_object_handler(current_room, 0xD)
                         call_object_handler(current_room, 0xA)
                         call_object_handler(current_room, 0xE)
@@ -8804,7 +8804,7 @@ exit_fn_12
                       [bx+2C7Eh] or ?
                       call_object_handler(current_room, 0xF)
                       object_move?(1, current_room, 0)
-                      flag_8B9E2_exit_fn_12 = current_room
+                      previous_room = current_room
                       call_object_handler(current_room, 0xD)
                       call_object_handler(current_room, 0xA)
                       call_object_handler(current_room, 0xE)
@@ -8835,7 +8835,7 @@ exit_fn_12
                                   [bx+2C7Eh] or ?
                                   call_object_handler(current_room, 0xF)
                                   object_move?(1, current_room, 0)
-                                  flag_8B9E2_exit_fn_12 = current_room
+                                  previous_room = current_room
                                   call_object_handler(current_room, 0xD)
                                   call_object_handler(current_room, 0xA)
                                   call_object_handler(current_room, 0xE)
@@ -8859,7 +8859,7 @@ exit_fn_12
                                   [bx+2C7Eh] or ?
                                   call_object_handler(current_room, 0xF)
                                   object_move?(1, current_room, 0)
-                                  flag_8B9E2_exit_fn_12 = current_room
+                                  previous_room = current_room
                                   call_object_handler(current_room, 0xD)
                                   call_object_handler(current_room, 0xA)
                                   call_object_handler(current_room, 0xE)
@@ -8883,7 +8883,7 @@ exit_fn_12
                                 [bx+2C7Eh] or ?
                                 call_object_handler(current_room, 0xF)
                                 object_move?(1, current_room, 0)
-                                flag_8B9E2_exit_fn_12 = current_room
+                                previous_room = current_room
                                 call_object_handler(current_room, 0xD)
                                 call_object_handler(current_room, 0xA)
                                 call_object_handler(current_room, 0xE)
@@ -8907,7 +8907,7 @@ exit_fn_12
                               [bx+2C7Eh] or ?
                               call_object_handler(current_room, 0xF)
                               object_move?(1, current_room, 0)
-                              flag_8B9E2_exit_fn_12 = current_room
+                              previous_room = current_room
                               call_object_handler(current_room, 0xD)
                               call_object_handler(current_room, 0xA)
                               call_object_handler(current_room, 0xE)
@@ -8931,7 +8931,7 @@ exit_fn_12
                             [bx+2C7Eh] or ?
                             call_object_handler(current_room, 0xF)
                             object_move?(1, current_room, 0)
-                            flag_8B9E2_exit_fn_12 = current_room
+                            previous_room = current_room
                             call_object_handler(current_room, 0xD)
                             call_object_handler(current_room, 0xA)
                             call_object_handler(current_room, 0xE)
@@ -8982,7 +8982,7 @@ exit_fn_12
                             [bx+2C7Eh] or ?
                             call_object_handler(current_room, 0xF)
                             object_move?(1, current_room, 0)
-                            flag_8B9E2_exit_fn_12 = current_room
+                            previous_room = current_room
                             call_object_handler(current_room, 0xD)
                             call_object_handler(current_room, 0xA)
                             call_object_handler(current_room, 0xE)
@@ -9006,7 +9006,7 @@ exit_fn_12
                             [bx+2C7Eh] or ?
                             call_object_handler(current_room, 0xF)
                             object_move?(1, current_room, 0)
-                            flag_8B9E2_exit_fn_12 = current_room
+                            previous_room = current_room
                             call_object_handler(current_room, 0xD)
                             call_object_handler(current_room, 0xA)
                             call_object_handler(current_room, 0xE)
@@ -9030,7 +9030,7 @@ exit_fn_12
                           [bx+2C7Eh] or ?
                           call_object_handler(current_room, 0xF)
                           object_move?(1, current_room, 0)
-                          flag_8B9E2_exit_fn_12 = current_room
+                          previous_room = current_room
                           call_object_handler(current_room, 0xD)
                           call_object_handler(current_room, 0xA)
                           call_object_handler(current_room, 0xE)
@@ -9054,7 +9054,7 @@ exit_fn_12
                         [bx+2C7Eh] or ?
                         call_object_handler(current_room, 0xF)
                         object_move?(1, current_room, 0)
-                        flag_8B9E2_exit_fn_12 = current_room
+                        previous_room = current_room
                         call_object_handler(current_room, 0xD)
                         call_object_handler(current_room, 0xA)
                         call_object_handler(current_room, 0xE)
@@ -9078,7 +9078,7 @@ exit_fn_12
                       [bx+2C7Eh] or ?
                       call_object_handler(current_room, 0xF)
                       object_move?(1, current_room, 0)
-                      flag_8B9E2_exit_fn_12 = current_room
+                      previous_room = current_room
                       call_object_handler(current_room, 0xD)
                       call_object_handler(current_room, 0xA)
                       call_object_handler(current_room, 0xE)
@@ -9109,7 +9109,7 @@ exit_fn_12
                                   [bx+2C7Eh] or ?
                                   call_object_handler(current_room, 0xF)
                                   object_move?(1, current_room, 0)
-                                  flag_8B9E2_exit_fn_12 = current_room
+                                  previous_room = current_room
                                   call_object_handler(current_room, 0xD)
                                   call_object_handler(current_room, 0xA)
                                   call_object_handler(current_room, 0xE)
@@ -9124,7 +9124,7 @@ exit_fn_12
                                   [bx+2C7Eh] or ?
                                   call_object_handler(current_room, 0xF)
                                   object_move?(1, current_room, 0)
-                                  flag_8B9E2_exit_fn_12 = current_room
+                                  previous_room = current_room
                                   call_object_handler(current_room, 0xD)
                                   call_object_handler(current_room, 0xA)
                                   call_object_handler(current_room, 0xE)
@@ -9139,7 +9139,7 @@ exit_fn_12
                                 [bx+2C7Eh] or ?
                                 call_object_handler(current_room, 0xF)
                                 object_move?(1, current_room, 0)
-                                flag_8B9E2_exit_fn_12 = current_room
+                                previous_room = current_room
                                 call_object_handler(current_room, 0xD)
                                 call_object_handler(current_room, 0xA)
                                 call_object_handler(current_room, 0xE)
@@ -9154,7 +9154,7 @@ exit_fn_12
                               [bx+2C7Eh] or ?
                               call_object_handler(current_room, 0xF)
                               object_move?(1, current_room, 0)
-                              flag_8B9E2_exit_fn_12 = current_room
+                              previous_room = current_room
                               call_object_handler(current_room, 0xD)
                               call_object_handler(current_room, 0xA)
                               call_object_handler(current_room, 0xE)
@@ -9169,7 +9169,7 @@ exit_fn_12
                             [bx+2C7Eh] or ?
                             call_object_handler(current_room, 0xF)
                             object_move?(1, current_room, 0)
-                            flag_8B9E2_exit_fn_12 = current_room
+                            previous_room = current_room
                             call_object_handler(current_room, 0xD)
                             call_object_handler(current_room, 0xA)
                             call_object_handler(current_room, 0xE)
@@ -9192,7 +9192,7 @@ exit_fn_12
                                 [bx+2C7Eh] or ?
                                 call_object_handler(current_room, 0xF)
                                 object_move?(1, current_room, 0)
-                                flag_8B9E2_exit_fn_12 = current_room
+                                previous_room = current_room
                                 call_object_handler(current_room, 0xD)
                                 call_object_handler(current_room, 0xA)
                                 call_object_handler(current_room, 0xE)
@@ -9215,7 +9215,7 @@ exit_fn_12
                           [bx+2C7Eh] or ?
                           call_object_handler(current_room, 0xF)
                           object_move?(1, current_room, 0)
-                          flag_8B9E2_exit_fn_12 = current_room
+                          previous_room = current_room
                           call_object_handler(current_room, 0xD)
                           call_object_handler(current_room, 0xA)
                           call_object_handler(current_room, 0xE)
@@ -9994,7 +9994,7 @@ objh_004   # objects: 4 Kim
 
 objh_005   # objects: 5 Nada
   if phase==0x1A:
-    if flag_8B9E2_exit_fn_12!=0x5A:
+    if previous_room!=0x5A:
       if current_room==0xCD:
         Font_WriteMessage(msg(6:4))
         -> 1
@@ -10010,7 +10010,7 @@ objh_005   # objects: 5 Nada
           if [bp+var_3A]<?:
             if [bx]==current_room:
               -> 1
-    if flag_8B9E2_exit_fn_12==0x5A:
+    if previous_room==0x5A:
       -> 0
   if phase:other:
     -> 0
@@ -10763,10 +10763,10 @@ objh_018   # objects: 19 Guardian
         if guardian_riddle_count!=0xA:
           -> 1
       if guardian_riddle_count>=0xA:
-        if flag_8B9E2_exit_fn_12==0x169:
+        if previous_room==0x169:
           show_compendium(0x3EE, 0x5A18)
           -> 1
-        if flag_8B9E2_exit_fn_12!=0x169:
+        if previous_room!=0x169:
           show_compendium(0x3F3, 0x5A18)
           -> 1
     if cmd==LOOK_AT:
@@ -16728,13 +16728,13 @@ objh_085   # objects: 90 screen
   if phase==0xD:
     if byte_8524E!=0:
       sub_1AAFB()
-      if flag_8B9E2_exit_fn_12!=0x22:
+      if previous_room!=0x22:
         if companion_obj!=0:
           follower_obj = 0
           companion_obj = 0
           if flag_85258_conv21==0:
             if flag_85259_conv21!=0:
-              if flag_8B9E2_exit_fn_12!=0x22:
+              if previous_room!=0x22:
                 byte_86CC0 = 0
                 show_compendium(0x45, 0x5A00)
                 follower_obj = 0
@@ -16780,7 +16780,7 @@ objh_085   # objects: 90 screen
                     go_to_room?(0x5B)
                     flag_852C9_conv_text_13 = 0
                     -> 0
-              if flag_8B9E2_exit_fn_12==0x22:
+              if previous_room==0x22:
                 show_compendium(0x47, 0x5A00)
                 follower_obj = flag_85256_conv21
                 companion_obj = flag_85256_conv21
@@ -16876,7 +16876,7 @@ objh_085   # objects: 90 screen
                     flag_852C9_conv_text_13 = 0
                     -> 0
               if byte_85301==0:
-                if flag_8B9E2_exit_fn_12==0x22:
+                if previous_room==0x22:
                   if flag_8525A_conv09!=0:
                     flag_8525A_conv09 = 0
                     current_room = 0x22
@@ -16917,7 +16917,7 @@ objh_085   # objects: 90 screen
                       go_to_room?(0x5B)
                       flag_852C9_conv_text_13 = 0
                       -> 0
-                if flag_8B9E2_exit_fn_12!=0x22:
+                if previous_room!=0x22:
                   flag_8525A_conv09 = 0
                   byte_86CC0 = 0
                   if (story_stage - 1)>0x1A:
@@ -17113,7 +17113,7 @@ objh_085   # objects: 90 screen
                       loop
                       -> loop
           if flag_85258_conv21!=0:
-            if flag_8B9E2_exit_fn_12==0x22:
+            if previous_room==0x22:
               show_compendium(0x44, 0x5A00)
               follower_obj = flag_85256_conv21
               companion_obj = flag_85256_conv21
@@ -17158,7 +17158,7 @@ objh_085   # objects: 90 screen
                   go_to_room?(0x5B)
                   flag_852C9_conv_text_13 = 0
                   -> 0
-            if flag_8B9E2_exit_fn_12!=0x22:
+            if previous_room!=0x22:
               byte_86CC0 = 0
               show_compendium(0x43, 0x5A00)
               follower_obj = 0
@@ -17207,7 +17207,7 @@ objh_085   # objects: 90 screen
         if companion_obj==0:
           if flag_85258_conv21==0:
             if flag_85259_conv21!=0:
-              if flag_8B9E2_exit_fn_12!=0x22:
+              if previous_room!=0x22:
                 byte_86CC0 = 0
                 show_compendium(0x45, 0x5A00)
                 follower_obj = 0
@@ -17253,7 +17253,7 @@ objh_085   # objects: 90 screen
                     go_to_room?(0x5B)
                     flag_852C9_conv_text_13 = 0
                     -> 0
-              if flag_8B9E2_exit_fn_12==0x22:
+              if previous_room==0x22:
                 show_compendium(0x47, 0x5A00)
                 follower_obj = flag_85256_conv21
                 companion_obj = flag_85256_conv21
@@ -17349,7 +17349,7 @@ objh_085   # objects: 90 screen
                     flag_852C9_conv_text_13 = 0
                     -> 0
               if byte_85301==0:
-                if flag_8B9E2_exit_fn_12==0x22:
+                if previous_room==0x22:
                   if flag_8525A_conv09!=0:
                     flag_8525A_conv09 = 0
                     current_room = 0x22
@@ -17390,7 +17390,7 @@ objh_085   # objects: 90 screen
                       go_to_room?(0x5B)
                       flag_852C9_conv_text_13 = 0
                       -> 0
-                if flag_8B9E2_exit_fn_12!=0x22:
+                if previous_room!=0x22:
                   flag_8525A_conv09 = 0
                   byte_86CC0 = 0
                   if (story_stage - 1)>0x1A:
@@ -17586,7 +17586,7 @@ objh_085   # objects: 90 screen
                       loop
                       -> loop
           if flag_85258_conv21!=0:
-            if flag_8B9E2_exit_fn_12==0x22:
+            if previous_room==0x22:
               show_compendium(0x44, 0x5A00)
               follower_obj = flag_85256_conv21
               companion_obj = flag_85256_conv21
@@ -17631,7 +17631,7 @@ objh_085   # objects: 90 screen
                   go_to_room?(0x5B)
                   flag_852C9_conv_text_13 = 0
                   -> 0
-            if flag_8B9E2_exit_fn_12!=0x22:
+            if previous_room!=0x22:
               byte_86CC0 = 0
               show_compendium(0x43, 0x5A00)
               follower_obj = 0
@@ -17677,10 +17677,10 @@ objh_085   # objects: 90 screen
                   go_to_room?(0x5B)
                   flag_852C9_conv_text_13 = 0
                   -> 0
-      if flag_8B9E2_exit_fn_12==0x22:
+      if previous_room==0x22:
         if flag_85258_conv21==0:
           if flag_85259_conv21!=0:
-            if flag_8B9E2_exit_fn_12!=0x22:
+            if previous_room!=0x22:
               byte_86CC0 = 0
               show_compendium(0x45, 0x5A00)
               follower_obj = 0
@@ -17726,7 +17726,7 @@ objh_085   # objects: 90 screen
                   go_to_room?(0x5B)
                   flag_852C9_conv_text_13 = 0
                   -> 0
-            if flag_8B9E2_exit_fn_12==0x22:
+            if previous_room==0x22:
               show_compendium(0x47, 0x5A00)
               follower_obj = flag_85256_conv21
               companion_obj = flag_85256_conv21
@@ -17822,7 +17822,7 @@ objh_085   # objects: 90 screen
                   flag_852C9_conv_text_13 = 0
                   -> 0
             if byte_85301==0:
-              if flag_8B9E2_exit_fn_12==0x22:
+              if previous_room==0x22:
                 if flag_8525A_conv09!=0:
                   flag_8525A_conv09 = 0
                   current_room = 0x22
@@ -17863,7 +17863,7 @@ objh_085   # objects: 90 screen
                     go_to_room?(0x5B)
                     flag_852C9_conv_text_13 = 0
                     -> 0
-              if flag_8B9E2_exit_fn_12!=0x22:
+              if previous_room!=0x22:
                 flag_8525A_conv09 = 0
                 byte_86CC0 = 0
                 if (story_stage - 1)>0x1A:
@@ -18059,7 +18059,7 @@ objh_085   # objects: 90 screen
                     loop
                     -> loop
         if flag_85258_conv21!=0:
-          if flag_8B9E2_exit_fn_12==0x22:
+          if previous_room==0x22:
             show_compendium(0x44, 0x5A00)
             follower_obj = flag_85256_conv21
             companion_obj = flag_85256_conv21
@@ -18091,13 +18091,13 @@ objh_085   # objects: 90 screen
                   object_move?([bp+var_2], 1, 0)
                   if [bp+var_4]==0:
                     sub_1AAFB()
-                    if flag_8B9E2_exit_fn_12!=0x22:
+                    if previous_room!=0x22:
                       if companion_obj!=0:
                         follower_obj = 0
                         companion_obj = 0
                         if flag_85258_conv21==0:
                           if flag_85259_conv21!=0:
-                            if flag_8B9E2_exit_fn_12!=0x22:
+                            if previous_room!=0x22:
                               byte_86CC0 = 0
                               show_compendium(0x45, 0x5A00)
                               follower_obj = 0
@@ -27802,9 +27802,9 @@ objh_189   # objects: 197 road
     byte_87B76 = 0
     -> 0
   if phase==0xD:
-    if flag_8B9E2_exit_fn_12!=0xBE:
+    if previous_room!=0xBE:
       -> 0
-    if flag_8B9E2_exit_fn_12==0xBE:
+    if previous_room==0xBE:
       conversation_set_enabled(0x8026, 0xC, 0)
       conversation_set_enabled(0x8026, 0xD, 0)
       conversation_set_enabled(0x8026, 0xE, 0)
@@ -28006,13 +28006,13 @@ objh_193   # objects: 201 barrow entrance
     if byte_8BE1C!=1:
       -> 0
   if phase==0xD:
-    if flag_8B9E2_exit_fn_12==0xCD:
+    if previous_room==0xCD:
       if event_pending(0x14)!=0:
         cancel_event(0x14)
         -> 0
       if event_pending(0x14)==0:
         -> 0
-    if flag_8B9E2_exit_fn_12!=0xCD:
+    if previous_room!=0xCD:
       -> 0
   if phase=={12,14,16,17,18,19,20,21}:
     -> 0
@@ -29309,9 +29309,9 @@ objh_197   # objects: 205 barrow
     byte_87D32 = 0
     -> 0
   if phase==0xE:
-    if flag_8B9E2_exit_fn_12==0xED:
+    if previous_room==0xED:
       byte_87D33 = 1
-      if flag_8B9E2_exit_fn_12==0xC9:
+      if previous_room==0xC9:
         if word_85278==1:
           if event_pending(0x14)==0:
             schedule_event?(0x14, 6)
@@ -31716,10 +31716,10 @@ objh_219   # objects: 244 tunnel
   if phase=={12,14,16,17,18,19,20,21,23}:
     -> 0
   if phase=={9,10,11}:
-    if flag_8B9E2_exit_fn_12==0xCD:
+    if previous_room==0xCD:
       Font_WriteMessage(msg(32:0), &aDown_2)
       -> 0
-    if flag_8B9E2_exit_fn_12!=0xCD:
+    if previous_room!=0xCD:
       Font_WriteMessage(msg(32:0), &aUp_2)
       -> 0
   if phase==8:
@@ -35113,9 +35113,9 @@ objh_249   # objects: 274 living room
                   byte_88182 = 0
                   -> 0
   if phase==0xE:
-    if flag_8B9E2_exit_fn_12!=0x125:
+    if previous_room!=0x125:
       -> 0
-    if flag_8B9E2_exit_fn_12==0x125:
+    if previous_room==0x125:
       if object_is_at(0x127, 0x11, 0)!=0:
         -> 0
       if object_is_at(0x127, 0x11, 0)==0:
@@ -39741,9 +39741,9 @@ objh_304   # objects: 335 road
     byte_88528 = 0
     -> 0
   if phase==0xE:
-    if flag_8B9E2_exit_fn_12!=0x13E:
+    if previous_room!=0x13E:
       -> 0
-    if flag_8B9E2_exit_fn_12==0x13E:
+    if previous_room==0x13E:
       add_score?(3, 1, 1)
       wait_ticks_or_click(0x1B58)
       show_compendium(0x18B, 0x5A03)
@@ -41140,9 +41140,9 @@ objh_330   # objects: 361 cave of winds
   if phase=={12,13,14,16,17,18,19,20,21}:
     -> 0
   if phase=={9,10,11}:
-    if flag_8B9E2_exit_fn_12==0x170:
+    if previous_room==0x170:
       -> 0
-    if flag_8B9E2_exit_fn_12!=0x170:
+    if previous_room!=0x170:
       if windbag_opened!=0:
         if windbag_opened!=0:
           Font_WriteMessage(msg(62:2), &aWindy, msg(62:3))
@@ -43060,18 +43060,18 @@ objh_352   # objects: 388 castle gate
       Font_WriteMessage(msg(69:2))
       add_score?(0xF, 1, 1)
       wait_ticks_or_click(0x1770)
-      if flag_8B9E2_exit_fn_12!=0x180:
+      if previous_room!=0x180:
         -> 0
-      if flag_8B9E2_exit_fn_12==0x180:
+      if previous_room==0x180:
         show_compendium(0x2C1, 0x5A01)
         flag_85324_sammy = 1
         popup_window_event?()
         MouseCursor_SetSmallArrow()
         -> 0
     if object_has_attr?(0x184, 0xA)!=0:
-      if flag_8B9E2_exit_fn_12!=0x180:
+      if previous_room!=0x180:
         -> 0
-      if flag_8B9E2_exit_fn_12==0x180:
+      if previous_room==0x180:
         show_compendium(0x2C1, 0x5A01)
         flag_85324_sammy = 1
         popup_window_event?()
