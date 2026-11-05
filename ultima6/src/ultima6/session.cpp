@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <cstring>
 
 namespace Ultima6 {
 namespace Ultima6 {
@@ -921,7 +922,28 @@ bool Game::handleKeyInner(int key) {
 }
 
 void Game::render(Framebuffer &screen) {
-	screen.setPalette(_world.palette.rgb);
+	// sub_114D0: the palette turns round. The grey of colour 0xFF swells and fades (a triangle from 12 to 19 and back), 0xE0-0xE7 and 0xE8-0xEF each pass their eight colours on one place a
+	// tick, 0xF0-0xF3, 0xF4-0xF7 and 0xF8-0xFB their four colours one place every second tick
+	uint8_t cycled[256][3];
+	std::memcpy(cycled, _world.palette.rgb, sizeof cycled);
+	{
+		int tri = _palTick & 0xF;
+		if (tri > 7)
+			tri = 15 - tri;
+		cycled[0xFF][0] = cycled[0xFF][1] = cycled[0xFF][2] = (uint8_t)(tri + 0xC);
+		for (int i = 0; i < 8; ++i) {
+			std::memcpy(cycled[0xE0 + ((_palTick - i) & 7)], _world.palette.rgb[0xE7 - i], 3);
+			std::memcpy(cycled[0xE8 + ((_palTick - i) & 7)], _world.palette.rgb[0xEF - i], 3);
+		}
+		for (int i = 0; i < 4; ++i) {
+			int step = (_palTick >> 1) - i;
+			std::memcpy(cycled[0xF0 + (step & 3)], _world.palette.rgb[0xF3 - i], 3);
+			std::memcpy(cycled[0xF4 + (step & 3)], _world.palette.rgb[0xF7 - i], 3);
+			std::memcpy(cycled[0xF8 + (step & 3)], _world.palette.rgb[0xFB - i], 3);
+		}
+	}
+	_renderer.setFrame(_animTick);
+	screen.setPalette(cycled);
 	screen.clear(0);
 	screen.blit(0, 0, &_world.paper.pixels[0], _world.paper.width, _world.paper.height, _world.paper.width);
 	// the daylight (advance_time 13984-13A05): 0 in a dungeon, at night (hours 20-4) and during an eclipse (the first day of every third month, or the spell), 7 by day, climbing

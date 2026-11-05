@@ -6,9 +6,29 @@
 namespace Ultima6 {
 namespace Ultima6 {
 
+// sub_12023 12040-12090: for every entry of ANIMDATA the driver is told (call 0x4B) to show frame `first + ((mask & counter) >> shift)` in place of the tile; an entry that is switched
+// off shows its first frame (the bell 0xEC, 0x120 and 0x125 of Ultima VI)
+void MapRenderer::buildRemap() {
+	for (int i = 0; i < TileSet::COUNT; ++i)
+		_remap[i] = (uint16_t)i;
+	const AnimData &a = _world.anim;
+	for (int i = 0; i < (int)a.count && i < AnimData::MAX; ++i) {
+		int tile = a.tileToAnimate[i];
+		if (tile >= TileSet::COUNT)
+			continue;
+		bool still = false;
+		if (_world.game == GameId::Ultima6)
+			for (int type : {0x125, 0x120, 0xEC})
+				still |= tile == _world.baseTile.firstTile[type];
+		int frame = still ? 0 : (int)((a.andMasks[i] & _frame) >> a.shiftValues[i]);
+		_remap[tile] = (uint16_t)((a.firstFrame[i] + frame) & (TileSet::COUNT - 1));
+	}
+}
+
 void MapRenderer::drawTile(int tile, int px, int py) {
 	if (tile < 0 || tile >= TileSet::COUNT)
 		return;
+	tile = _remap[tile];
 	const uint8_t *src = _world.tiles.pixels[tile];
 	bool transparent = _world.tiles.transparent(tile);
 	for (int j = 0; j < CELL_SIZE; ++j) {
@@ -86,6 +106,7 @@ void MapRenderer::computeDarkness(int x, int y, int z, int hour, int partyLightR
 void MapRenderer::draw(Framebuffer &screen, int x, int y, int z, const uint8_t *darkness) {
 	int left = x - CELLS / 2, top = y - CELLS / 2;
 	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
+	buildRemap();
 
 	for (int cy = 0; cy < CELLS; ++cy)
 		for (int cx = 0; cx < CELLS; ++cx)

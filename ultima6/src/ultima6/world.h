@@ -77,6 +77,7 @@ public:
 	GameId game = GameId::Ultima6; // set before load(): which of the three games' data the directory holds
 	TileSet tiles;
 	TileFlags flags;
+	AnimData anim; // ANIMDATA: the tiles that change with the frame counter (sub_12023)
 	BaseTile baseTile;
 	Palette palette;
 	Font font;

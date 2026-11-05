@@ -24,6 +24,14 @@ public:
 		_buffer.assign(BUFFER_SIZE * BUFFER_SIZE, 0);
 	}
 
+	/**
+	 * The frame counter (word_3DB88 of sub_12023, which counts the redraws): the tiles of ANIMDATA show the frame (counter & mask) >> shift after their first frame; a tile whose
+	 * entry is switched off shows its first frame. Ultima VI's bell, the 0x120 and the 0x125 only move when something makes them (sub_11FF9), which is not done: they stand still.
+	 */
+	void setFrame(unsigned counter) {
+		_frame = counter;
+	}
+
 	/** Draws the view centred on tile (x, y, z) onto the screen. */
 	void draw(Framebuffer &screen, int x, int y, int z, const uint8_t *darkness = nullptr);
 
@@ -38,8 +46,12 @@ private:
 	void drawTile(int tile, int px, int py);
 	void drawObject(const World::Obj &o, int cellX, int cellY);
 
+	void buildRemap();
+
 	const World &_world;
 	std::vector<uint8_t> _buffer;
+	unsigned _frame = 0;
+	uint16_t _remap[TileSet::COUNT];
 };
 
 } // namespace Ultima6

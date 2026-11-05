@@ -49,6 +49,16 @@ public:
 	/** A click at (x, y) of the 320 x 200 screen as the key it stands for (0: none); see the definition. */
 	int mouseKey(int x, int y, bool right);
 	void render(Framebuffer &screen);
+	/**
+	 * One redraw of the idle game (the key poll sub_154AE redraws the map, sub_12C6C): the frame counter of the animated tiles (word_3DB88) and the counter of the palette cycling
+	 * (byte_3DA22, sub_114D0) both step; neither does while time is stopped (byte_404BA). The host calls it about eight times a second while it waits for a key. APPROX(75)
+	 */
+	void animate() {
+		if (_timeStop <= 0) {
+			++_animTick;
+			++_palTick;
+		}
+	}
 
 	/** Moves the party leader one step in a direction (0 = north, clockwise); false if blocked. */
 	bool step(int dir);
@@ -145,6 +155,8 @@ private:
 	bool _haveVanished = false;
 	void operateDrawbridge(int crank);
 	bool _eclipse = false; // byte_404BB: the Eclipse spell
+	unsigned _animTick = 0;    // word_3DB88
+	uint8_t _palTick = 0;      // byte_3DA22
 	int _timeStop = 0; // minutes of time stop left (byte_404BA)
 	void toggleCombat();
 	void helpParty();

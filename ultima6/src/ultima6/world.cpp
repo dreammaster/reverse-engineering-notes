@@ -56,6 +56,9 @@ bool World::load(const std::string &dir, const NewCharacter *newGame, const std:
 		return fail("TILEFLAG");
 	if (!readFile(joinPath(dir, "BASETILE"), d) || !baseTile.load(d))
 		return fail("BASETILE");
+	anim.count = 0;
+	if (readFile(joinPath(dir, "ANIMDATA"), d) && !anim.load(d))
+		anim.count = 0; // without it nothing moves
 	const bool spinoff = game != GameId::Ultima6;
 	Bytes mapTiles, maskType, objTiles, index;
 	Bytes raw;

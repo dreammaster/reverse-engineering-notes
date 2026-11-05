@@ -157,11 +157,29 @@ int main(int argc, char **argv) {
 	};
 
 	bool running = true;
+	const bool idleAnimation = !(keys || shot); // a window: the map goes on moving (water, fire, the cycling palette) while a key is waited for
+	unsigned lastTick = backend->ticks();
 	while (running) {
 		music.set(game.music());
 		game.render(screen);
 		backend->present(screen);
-		int key = backend->waitKey();
+		int key;
+		if (idleAnimation) {
+			while ((key = backend->pollKey()) == Ultima6::KEY_NONE) {
+				unsigned now = backend->ticks();
+				if (now - lastTick >= 125) { // about eight redraws a second (APPROX 75)
+					lastTick = now;
+					game.animate();
+					music.set(game.music());
+					game.render(screen);
+					backend->present(screen);
+				} else {
+					backend->delay(10);
+				}
+			}
+		} else {
+			key = backend->waitKey();
+		}
 		if (key == Ultima6::KEY_MOUSE_LEFT || key == Ultima6::KEY_MOUSE_RIGHT)
 			key = game.mouseKey(backend->mouseX, backend->mouseY, key == Ultima6::KEY_MOUSE_RIGHT);
 		running = game.handleKey(key);
