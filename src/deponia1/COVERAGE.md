@@ -1,0 +1,785 @@
+# Functions of the original that the reconstruction has no function of the same name for
+
+Made on 7 Nov 2026 from `tools/crosscompare.py deponia1 --missing` (the original's `.symtab`, 19,964 function names in `.text`) with the functions removed whose class and name the reconstruction has under another signature. A function listed here may still be done in the reconstruction (inlined, or by a differently named function); it is not a list of bugs. It is the list of what has to be reimplemented, or shown to be covered, so that the stand-alone player runs the same code as the original and a play-through can be trusted.
+
+
+## Library code that is linked into the original (not the engine's own): 239 functions, 41536 bytes of code
+
+- **sha1** (6, 8559 bytes)
+  - `sha1::(anonymous namespace)::innerHash(unsigned int*, unsigned int*)` 5129
+  - `sha1::doBlock(unsigned char const*, unsigned int*, unsigned int*)` 1155
+  - `sha1::base64_encode(unsigned char const*, unsigned int)` 926
+  - `sha1::base64_decode(std::string const&)` 917
+  - `sha1::finish(unsigned char const*, unsigned int*, unsigned long, unsigned long, unsigned int*, unsigned char*)` 379
+  - `sha1::initResult()` 53
+- **wxFileName** (33, 6138 bytes)
+- **MaxRectsBinPack** (12, 5594 bytes)
+- **wxString** (40, 4539 bytes)
+- **wxCmdLineParser** (12, 3926 bytes)
+- **__gnu_cxx** (117, 3454 bytes)
+- **wxDir** (5, 3266 bytes)
+  - `wxDir::GetAllFiles(wxString const&, std::vector<wxString, std::allocator<wxString> >&, wxString const&)` 2482
+  - `wxDir::GetNext(wxString*)` 401
+  - `wxDir::Open(wxString const&)` 171
+  - `wxDir::Exists(wxString const&)` 123
+  - `wxDir::GetFirst(wxString*, wxString const&, wxDirFlag)` 89
+- **saveObject** (1, 1896 bytes)
+  - `saveObject(_IO_FILE*, void*, int) [clone .constprop.175]` 1896
+- **loadObject** (1, 1208 bytes)
+  - `loadObject(_IO_FILE*, void*, int, int) [clone .constprop.174]` 1208
+- **make_structure** (1, 1196 bytes)
+  - `make_structure(bin_structure&, _IO_FILE*)` 1196
+- **argsort** (1, 754 bytes)
+  - `void argsort<__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > > >(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::al` 754
+- **p2t** (6, 748 bytes)
+  - `p2t::Triangle::DebugPrint()` 349
+  - `p2t::Triangle::Clear()` 253
+  - `p2t::AdvancingFront::LocateNode(double const&)` 90
+  - `p2t::Triangle::ClearNeighbor(p2t::Triangle*)` 49
+  - `p2t::AdvancingFront::FindSearchNode(double const&)` 5
+  - `p2t::AdvancingFront::~AdvancingFront()` 2
+- **wxStringTokenizer** (4, 258 bytes)
+  - `wxStringTokenizer::GetNextToken()` 131
+  - `wxStringTokenizer::wxStringTokenizer(wxString, wchar_t)` 93
+  - `wxStringTokenizer::HasMoreTokens()` 21
+  - `wxStringTokenizer::CountTokens()` 13
+
+## Rendering, sound and picture machinery the reconstruction does with its own classes: 190 functions, 102952 bytes of code
+
+- **soundengine** (118, 45560 bytes)
+- **TGraphicsInterface** (19, 20693 bytes)
+- **TFreetypeFont** (12, 15735 bytes)
+- **TPicturePNG** (9, 9586 bytes)
+- **TPicturePCX** (6, 3348 bytes)
+  - `TPicturePCX::ReadData(TFile&, TPictureMEM&)` 2915
+  - `TPicturePCX::ReadHeader(TFile&, int*, int*)` 219
+  - `TPicturePCX::ReadHeader(TFile&, int*, int*) [clone .part.0]` 171
+  - `TPicturePCX::TPicturePCX()` 25
+  - `TPicturePCX::~TPicturePCX()` 12
+  - `TPicturePCX::CleanUp()` 6
+- **TPictureGIF** (7, 2868 bytes)
+- **TPreloadedPicManager** (7, 2772 bytes)
+- **TMovie** (3, 1099 bytes)
+  - `TMovie::InitSDL()` 1028
+  - `TMovie::QuitSDL()` 69
+  - `TMovie::SetInScene()` 2
+- **TSpriteCache** (2, 502 bytes)
+  - `TSpriteCache::RemoveFromCache(std::_Rb_tree_iterator<std::pair<wxString const, TSpriteHandle*> >)` 297
+  - `TSpriteCache::TSpriteCache()` 205
+- **TPictureIO** (3, 402 bytes)
+  - `TPictureIO::SavePicture(wxFileName const&, bool)` 180
+  - `TPictureIO::IsTransparent(wxPoint const&)` 172
+  - `TPictureIO::WritePicture(TPictureFormat&, wxFileName const&)` 50
+- **TFontManager** (4, 387 bytes)
+  - `TFontManager::TFontManager()` 239
+  - `TFontManager::GetFont(TVisObjRef const&)` 116
+  - `TFontManager::GetCurrentFont()` 19
+  - `TFontManager::GetFontCount() const` 13
+
+## Editor, debugging, platform SDK and project writing: 195 functions, 148046 bytes of code
+
+- **TConsole** (57, 49396 bytes)
+- **TXMLProjectReader** (5, 20764 bytes)
+  - `TXMLProjectReader::parseNodes(rapidxml::xml_node<char>*, UserData*)` 16496
+  - `TXMLProjectReader::ReadXMLDoc(TVedFile&, wxString const&, eXMLNamesIntern, TLoadingTypeEnum, int*, TSignalSlot*, EventHandler*, int)` 4260
+  - `TXMLProjectReader::TXMLProjectReader(TVisionaire*)` 4
+  - `TXMLProjectReader::Clear()` 2
+  - `TXMLProjectReader::~TXMLProjectReader()` 2
+- **TVisionaireGame** (5, 12324 bytes)
+  - `TVisionaireGame::PopulateList(int, TVList&, bool)` 9981
+  - `TVisionaireGame::BeforeSave()` 1711
+  - `TVisionaireGame::PasteFromClipboard(TVisObjRef&, int, TVList&)` 370
+  - `TVisionaireGame::CopyToClipboard(TVList const&)` 250
+  - `TVisionaireGame::~TVisionaireGame()` 12
+- **TDiagnostic** (9, 12032 bytes)
+- **TArgSyntax** (16, 11280 bytes)
+- **LoadConfigFile** (1, 8590 bytes)
+  - `LoadConfigFile(wxString&, wxString*, bool*, bool*, bool*, eResolution*, bool*, wxSize&, wxLogLevel*, long*, wxString*, long*, long*, long*, long*, lon` 8590
+- **TSteamSDK** (9, 6396 bytes)
+- **UserData** (2, 4871 bytes)
+  - `UserData::UserData(TVisionaire*, bool, eXMLNamesIntern, TLoadingTypeEnum, int*, TSignalSlot*, EventHandler*, int)` 4445
+  - `UserData::~UserData()` 426
+- **TComposedFile** (1, 4749 bytes)
+  - `TComposedFile::AddFile(wxFileName, wxFileName&, StringHashMap<wxString, wxString, wchar_t const*, StringHash<wchar_t const*> >&, int)` 4749
+- **TTCharacter** (3, 2490 bytes)
+  - `TTCharacter::PrintCharacters(std::list<wxString, std::allocator<wxString> >&, TVisionaireGame&)` 2480
+  - `TTCharacter::TTCharacter(TVisObjRef const&)` 5
+  - `TTCharacter::TTCharacter()` 5
+- **TTScene** (3, 2462 bytes)
+  - `TTScene::PrintScenes(std::list<wxString, std::allocator<wxString> >&, TVisionaireGame&)` 2452
+  - `TTScene::TTScene(TVisObjRef const&)` 5
+  - `TTScene::TTScene()` 5
+- **TCPDebuggerClient** (10, 2095 bytes)
+- **TTValue** (3, 1684 bytes)
+  - `TTValue::PrintValues(std::list<wxString, std::allocator<wxString> >&, TVisionaireGame&)` 1674
+  - `TTValue::TTValue(TVisObjRef const&)` 5
+  - `TTValue::TTValue()` 5
+- **TTCondition** (3, 1623 bytes)
+  - `TTCondition::PrintConditions(std::list<wxString, std::allocator<wxString> >&, TVisionaireGame&)` 1613
+  - `TTCondition::TTCondition(TVisObjRef const&)` 5
+  - `TTCondition::TTCondition()` 5
+- **TTAction** (4, 1337 bytes)
+  - `TTAction::Format(bool)` 1232
+  - `TTAction::IsImmediateExecutionType(TypeActionExecution)` 95
+  - `TTAction::TTAction(TVisObjRef const&)` 5
+  - `TTAction::TTAction()` 5
+- **TGalaxySDK** (5, 1327 bytes)
+  - `TGalaxySDK::GetError()` 622
+  - `TGalaxySDK::TGalaxySDK()` 374
+  - `TGalaxySDK::~TGalaxySDK()` 308
+  - `TGalaxySDK::~TGalaxySDK()` 18
+  - `TGalaxySDK::GetClient()` 5
+- **TTActionPart** (8, 1167 bytes)
+- **CmdGetObject** (1, 491 bytes)
+  - `CmdGetObject::~CmdGetObject()` 491
+- **CmdGetTime** (1, 424 bytes)
+  - `CmdGetTime::~CmdGetTime()` 424
+- **CmdStartTween** (1, 172 bytes)
+  - `CmdStartTween::~CmdStartTween()` 172
+- **CmdStartObjectTween** (1, 140 bytes)
+  - `CmdStartObjectTween::~CmdStartObjectTween()` 140
+- **CmdInitGameClient** (1, 137 bytes)
+  - `CmdInitGameClient::~CmdInitGameClient()` 137
+- **CmdShaderCompile** (1, 137 bytes)
+  - `CmdShaderCompile::~CmdShaderCompile()` 137
+- **CmdRegisterEventHandler** (1, 106 bytes)
+  - `CmdRegisterEventHandler::~CmdRegisterEventHandler()` 106
+- **CmdUnregisterEventHandler** (1, 106 bytes)
+  - `CmdUnregisterEventHandler::~CmdUnregisterEventHandler()` 106
+- **CmdCreateScreenshot** (1, 92 bytes)
+  - `CmdCreateScreenshot::~CmdCreateScreenshot()` 92
+- **CmdGetGameClientAchievement** (1, 92 bytes)
+  - `CmdGetGameClientAchievement::~CmdGetGameClientAchievement()` 92
+- **CmdGetGameClientStat** (1, 92 bytes)
+  - `CmdGetGameClientStat::~CmdGetGameClientStat()` 92
+- **CmdGetSoundId** (1, 92 bytes)
+  - `CmdGetSoundId::~CmdGetSoundId()` 92
+- **CmdGetSoundProperty** (1, 92 bytes)
+  - `CmdGetSoundProperty::~CmdGetSoundProperty()` 92
+- **CmdRegisterHookFunction** (1, 92 bytes)
+  - `CmdRegisterHookFunction::~CmdRegisterHookFunction()` 92
+- **CmdReplaceGame** (1, 92 bytes)
+  - `CmdReplaceGame::~CmdReplaceGame()` 92
+- **CmdSetGameClientAchievement** (1, 92 bytes)
+  - `CmdSetGameClientAchievement::~CmdSetGameClientAchievement()` 92
+- **CmdSetGameClientStat** (1, 92 bytes)
+  - `CmdSetGameClientStat::~CmdSetGameClientStat()` 92
+- **CmdSetWindowTitle** (1, 92 bytes)
+  - `CmdSetWindowTitle::~CmdSetWindowTitle()` 92
+- **CmdStartDefaultBrowser** (1, 92 bytes)
+  - `CmdStartDefaultBrowser::~CmdStartDefaultBrowser()` 92
+- **CmdStartSound** (1, 92 bytes)
+  - `CmdStartSound::~CmdStartSound()` 92
+- **CmdStartAction** (1, 74 bytes)
+  - `CmdStartAction::~CmdStartAction()` 74
+- **CmdStartAnimation** (1, 74 bytes)
+  - `CmdStartAnimation::~CmdStartAnimation()` 74
+- **CmdStopAction** (1, 74 bytes)
+  - `CmdStopAction::~CmdStopAction()` 74
+- **CmdStopAnimation** (1, 74 bytes)
+  - `CmdStopAnimation::~CmdStopAnimation()` 74
+- **CmdIsPointInsidePolygon** (1, 34 bytes)
+  - `CmdIsPointInsidePolygon::~CmdIsPointInsidePolygon()` 34
+- **CmdCreateEvent** (1, 12 bytes)
+  - `CmdCreateEvent::~CmdCreateEvent()` 12
+- **CmdCreateHapticEffectCondition** (1, 12 bytes)
+  - `CmdCreateHapticEffectCondition::~CmdCreateHapticEffectCondition()` 12
+- **CmdCreateHapticEffectConstant** (1, 12 bytes)
+  - `CmdCreateHapticEffectConstant::~CmdCreateHapticEffectConstant()` 12
+- **CmdCreateHapticEffectLeftRight** (1, 12 bytes)
+  - `CmdCreateHapticEffectLeftRight::~CmdCreateHapticEffectLeftRight()` 12
+- **CmdCreateHapticEffectPeriodic** (1, 12 bytes)
+  - `CmdCreateHapticEffectPeriodic::~CmdCreateHapticEffectPeriodic()` 12
+- **CmdCreateHapticEffectRamp** (1, 12 bytes)
+  - `CmdCreateHapticEffectRamp::~CmdCreateHapticEffectRamp()` 12
+- **CmdGetCursorPos** (1, 12 bytes)
+  - `CmdGetCursorPos::~CmdGetCursorPos()` 12
+- **CmdGetProperty** (1, 12 bytes)
+  - `CmdGetProperty::~CmdGetProperty()` 12
+- **CmdGetVolume** (1, 12 bytes)
+  - `CmdGetVolume::~CmdGetVolume()` 12
+- **CmdGetWindowBrightness** (1, 12 bytes)
+  - `CmdGetWindowBrightness::~CmdGetWindowBrightness()` 12
+- **CmdGetWindowMode** (1, 12 bytes)
+  - `CmdGetWindowMode::~CmdGetWindowMode()` 12
+- **CmdResetGameClientStats** (1, 12 bytes)
+  - `CmdResetGameClientStats::~CmdResetGameClientStats()` 12
+- **CmdSetCursorPos** (1, 12 bytes)
+  - `CmdSetCursorPos::~CmdSetCursorPos()` 12
+- **CmdSetSoundProperty** (1, 12 bytes)
+  - `CmdSetSoundProperty::~CmdSetSoundProperty()` 12
+- **CmdSetVolume** (1, 12 bytes)
+  - `CmdSetVolume::~CmdSetVolume()` 12
+- **CmdSetWindowBrightness** (1, 12 bytes)
+  - `CmdSetWindowBrightness::~CmdSetWindowBrightness()` 12
+- **CmdSetWindowSize** (1, 12 bytes)
+  - `CmdSetWindowSize::~CmdSetWindowSize()` 12
+- **CmdShaderSetOptions** (1, 12 bytes)
+  - `CmdShaderSetOptions::~CmdShaderSetOptions()` 12
+- **CmdShaderUniform** (1, 12 bytes)
+  - `CmdShaderUniform::~CmdShaderUniform()` 12
+- **CmdStartHapticEffect** (1, 12 bytes)
+  - `CmdStartHapticEffect::~CmdStartHapticEffect()` 12
+- **CmdStartHapticRumble** (1, 12 bytes)
+  - `CmdStartHapticRumble::~CmdStartHapticRumble()` 12
+- **CmdStopHapticEffect** (1, 12 bytes)
+  - `CmdStopHapticEffect::~CmdStopHapticEffect()` 12
+- **CmdStopHapticRumble** (1, 12 bytes)
+  - `CmdStopHapticRumble::~CmdStopHapticRumble()` 12
+- **CmdStopSound** (1, 12 bytes)
+  - `CmdStopSound::~CmdStopSound()` 12
+- **CmdToggleSoundPause** (1, 12 bytes)
+  - `CmdToggleSoundPause::~CmdToggleSoundPause()` 12
+- **CmdToggleWindowMode** (1, 12 bytes)
+  - `CmdToggleWindowMode::~CmdToggleWindowMode()` 12
+
+## Engine code to check (game logic, scripting, particles, events, small accessors): 422 functions, 46284 bytes of code
+
+- **Noise1234** (8, 6118 bytes)
+  - `Noise1234::pnoise(float, float, float, float, int, int, int, int)` 3277
+  - `Noise1234::pnoise(float, float, float, int, int, int)` 1523
+  - `Noise1234::pnoise(float, float, int, int)` 745
+  - `Noise1234::pnoise(float, int)` 248
+  - `Noise1234::grad(int, float, float)` 101
+  - `Noise1234::grad(int, float, float, float, float)` 96
+  - `Noise1234::grad(int, float, float, float)` 82
+  - `Noise1234::grad(int, float)` 46
+- **TVisionaire** (13, 5936 bytes)
+  - `TVisionaire::SaveDataGame(wxFileName const&, EventHandler*)` 4306
+  - `TVisionaire::SaveData(TProjectFileWriter&, EventHandler*, bool) [clone .constprop.136]` 1004
+  - `TVisionaire::CopyObject(TVisionaireObject const*, TVisionaireObject*, int, bool) [clone .constprop.145]` 323
+  - `TVisionaire::GetMappedId(TId const&)` 246
+  - `TVisionaire::IsMasterProject() const` 9
+  - `TVisionaire::SetModified(bool)` 8
+  - `TVisionaire::IsModified() const` 8
+  - `TVisionaire::IsSlaveProject() const` 8
+  - `TVisionaire::GetPath() const` 8
+  - `TVisionaire::SetRevision(int)` 4
+  - `TVisionaire::SetProjectType(int)` 4
+  - `TVisionaire::GetRevision() const` 4
+  - `TVisionaire::GetGameId() const` 4
+- **TDataGroup** (13, 4020 bytes)
+  - `TDataGroup::ForEachCall(eActivity, void*, void*) [clone .constprop.220]` 2968
+  - `TDataGroup::RemoveLink(int, TId const&, bool) [clone .part.134]` 916
+  - `TDataGroup::GetLastModified() const` 38
+  - `TDataGroup::SetTemporary(bool)` 23
+  - `TDataGroup::SetOrderContainsPosition(bool)` 23
+  - `TDataGroup::IsOrderContainsPosition() const` 11
+  - `TDataGroup::IsTemporary() const` 10
+  - `TDataGroup::IsDirty() const` 8
+  - `TDataGroup::GetTypeGroupPtrNonConst()` 5
+  - `TDataGroup::SetDirty()` 5
+  - `TDataGroup::GetTypeGroupPtr() const` 5
+  - `TDataGroup::GetNameNonConst()` 4
+  - `TDataGroup::GetName() const` 4
+- **Emitter** (1, 3861 bytes)
+  - `Emitter::SerializeEmmiter(std::string&)` 3861
+- **ParticleContainer** (2, 2872 bytes)
+  - `ParticleContainer::Update(bool, vec2 const&, float, bool) [clone .constprop.161]` 1600
+  - `ParticleContainer::Serialize(std::string&)` 1272
+- **TSoundFFMPEG** (4, 2694 bytes)
+  - `TSoundFFMPEG::Play(wxFileName const&, int, int, bool, bool, bool, TSoundTypeEnum, int)` 2186
+  - `TSoundFFMPEG::UpdateStreamEnded()` 269
+  - `TSoundFFMPEG::UpdateFinishedStreams()` 227
+  - `TSoundFFMPEG::IsSoundInitialized()` 12
+- **TArgument** (2, 1823 bytes)
+  - `TArgument::CopyTo(TArgument&) const` 1816
+  - `TArgument::TArgument()` 7
+- **MinMaxFloatCurveEvaluater** (2, 1729 bytes)
+  - `MinMaxFloatCurveEvaluater::Serialize(std::string&)` 1638
+  - `MinMaxFloatCurveEvaluater::eval(float, float)` 91
+- **ColorCurveEvaluater** (2, 1173 bytes)
+  - `ColorCurveEvaluater::Serialize(std::string&)` 738
+  - `ColorCurveEvaluater::eval(float)` 435
+- **TManagedObject** (13, 1120 bytes)
+  - `TManagedObject::TManagedObject(TVisObjRef const&)` 284
+  - `TManagedObject::TManagedObject()` 284
+  - `TManagedObject::SetDestAlpha(int, int)` 219
+  - `TManagedObject::UpdateAlpha()` 138
+  - `TManagedObject::RemoveAnimations()` 83
+  - `TManagedObject::ClearAnimations()` 39
+  - `TManagedObject::TextFinished(TGText*)` 25
+  - `TManagedObject::DecreaseLifetime()` 17
+  - `TManagedObject::GetBoundingRect() const` 9
+  - `TManagedObject::GetAlpha() const` 9
+  - `TManagedObject::IsActive() const` 5
+  - `TManagedObject::SetLifetime(int)` 4
+  - `TManagedObject::GetLifetime() const` 4
+- **TVisionaireObject** (11, 1014 bytes)
+  - `TVisionaireObject::GetLinks(int, eTypeOrder, TVList&) const` 738
+  - `TVisionaireObject::SetValue(int, void*, eTypeData, TSendEventEnum)` 177
+  - `TVisionaireObject::GetOrder() const` 38
+  - `TVisionaireObject::SetOrder(int)` 20
+  - `TVisionaireObject::IsMemoryBlocked() const` 10
+  - `TVisionaireObject::IsAnyObject() const` 8
+  - `TVisionaireObject::GetVisionaire() const` 5
+  - `TVisionaireObject::GetParentField() const` 5
+  - `TVisionaireObject::GetId() const` 5
+  - `TVisionaireObject::GetLuaObject()` 4
+  - `TVisionaireObject::SetLuaObject(int)` 4
+- **FloatCurveEvaluater** (2, 1010 bytes)
+  - `FloatCurveEvaluater::Serialize(std::string&)` 756
+  - `FloatCurveEvaluater::eval(float)` 254
+- **TGAnimation** (1, 962 bytes)
+  - `TGAnimation::HideAnimation(std::_List_iterator<TGAnimation*>, TVisObjRef const&)` 962
+- **TMasterControl** (3, 938 bytes)
+  - `TMasterControl::TMasterControl()` 922
+  - `TMasterControl::IsScrolling()` 8
+  - `TMasterControl::IsVideoPlaying()` 8
+- **Event** (22, 500 bytes)
+  - `Event::Event(Event const&)` 130
+  - `Event::IsButton()` 54
+  - `Event::GetPosition()` 49
+  - `Event::Dragging()` 46
+  - `Event::IsKeyboard()` 38
+  - `Event::ButtonUp()` 30
+  - `Event::ButtonDown()` 26
+  - `Event::FocusEvent(EventType, Component*)` 18
+  - `Event::IsMouse()` 13
+  - `Event::LeftDClick()` 8
+  - `Event::RightDClick()` 8
+  - `Event::ButtonDClick()` 8
+  - `Event::LeftUp()` 8
+  - `Event::Moving()` 8
+  - `Event::KeyDown()` 8
+  - `Event::Leaving()` 8
+  - `Event::LeftDown()` 8
+  - `Event::MouseOut()` 8
+  - `Event::MouseOver()` 8
+  - `Event::RightDown()` 8
+  - `Event::GetWheelDelta()` 4
+  - `Event::GetWheelRotation()` 4
+- **LoadSaveProgressEvent** (3, 450 bytes)
+  - `LoadSaveProgressEvent::Clone()` 234
+  - `LoadSaveProgressEvent::LoadSaveProgressEvent(LoadSaveProgressEvent const&)` 125
+  - `LoadSaveProgressEvent::~LoadSaveProgressEvent()` 91
+- **PointCurveEvaluater** (1, 408 bytes)
+  - `PointCurveEvaluater::eval(float)` 408
+- **GetTypeGroup** (1, 381 bytes)
+  - `GetTypeGroup(eVisionaireTable)` 381
+- **TSpriteHandle** (3, 375 bytes)
+  - `TSpriteHandle::TSpriteHandle()` 222
+  - `TSpriteHandle::AddSpritePart(TSpritePartHandle const&)` 150
+  - `TSpriteHandle::GetMemorySize() const` 3
+- **ImageEmitter** (3, 362 bytes)
+  - `ImageEmitter::SerializeEmmiter(std::string&)` 151
+  - `ImageEmitter::~ImageEmitter()` 129
+  - `ImageEmitter::UpdateEmitter(float)` 82
+- **TVector3D** (8, 352 bytes)
+  - `TVector3D::operator/(float) const` 48
+  - `TVector3D::operator-(TVector3D const&) const` 47
+  - `TVector3D::operator+(TVector3D const&) const` 47
+  - `TVector3D::operator-=(TVector3D const&)` 46
+  - `TVector3D::operator+=(TVector3D const&)` 46
+  - `TVector3D::operator*(float) const` 41
+  - `TVector3D::operator*=(float)` 40
+  - `TVector3D::operator*(TVector3D const&) const` 37
+- **TLoadingControl** (2, 342 bytes)
+  - `TLoadingControl::TLoadingControl()` 193
+  - `TLoadingControl::~TLoadingControl()` 149
+- **TPictureJPG** (5, 321 bytes)
+  - `TPictureJPG::ReadData(TFile&, TPictureMEM&)` 180
+  - `TPictureJPG::ReadHeader(TFile&, int*, int*)` 98
+  - `TPictureJPG::TPictureJPG()` 25
+  - `TPictureJPG::~TPictureJPG()` 12
+  - `TPictureJPG::CleanUp()` 6
+- **load** (1, 299 bytes)
+  - `load(TCharHolder&, _IO_FILE*) [clone .constprop.176]` 299
+- **TTable** (8, 280 bytes)
+  - `TTable::GetObject(TId const&) const [clone .part.16]` 224
+  - `TTable::GetTypeGroup(int&, TTypeGroup const**) const` 18
+  - `TTable::GetCount() const` 13
+  - `TTable::SetVersionedId(long)` 7
+  - `TTable::GetTypeGroup()` 5
+  - `TTable::GetTableName() const` 5
+  - `TTable::GetIdentifier() const` 4
+  - `TTable::GetDescription() const` 4
+- **TMatrix3** (2, 266 bytes)
+  - `TMatrix3::operator==(TMatrix3 const&) const` 141
+  - `TMatrix3::operator*(TVector3D const&) const` 125
+- **TSprite** (23, 266 bytes)
+  - `TSprite::SetMirrored(bool)` 23
+  - `TSprite::SetPosition(wxPoint const&, float)` 23
+  - `TSprite::IsEmpty() const` 21
+  - `TSprite::SetTransparency(eTransparencyMode, unsigned int)` 20
+  - `TSprite::GetSizedWidth() const` 19
+  - `TSprite::GetSizedHeight() const` 19
+  - `TSprite::GetName() const` 18
+  - `TSprite::GetPath() const` 18
+  - `TSprite::GetPosition() const` 15
+  - `TSprite::SetTransparentColor(unsigned int const&)` 13
+  - `TSprite::IsMirrored() const` 10
+  - `TSprite::SetName(TCharHolder const&)` 9
+  - `TSprite::SetPath(TCharHolder const&)` 9
+  - `TSprite::SetImageSize(int, int)` 7
+  - `TSprite::GetSize() const` 6
+  - `TSprite::GetNameNonConst()` 5
+  - `TSprite::GetPathNonConst()` 5
+  - `TSprite::SetPause(int)` 5
+  - `TSprite::GetPause() const` 5
+  - `TSprite::GetTransparency() const` 4
+  - `TSprite::GetTransparentColor() const` 4
+  - `TSprite::GetWidth() const` 4
+  - `TSprite::GetHeight() const` 4
+- **TTypeData** (16, 263 bytes)
+  - `TTypeData::operator=(TTypeData const&)` 70
+  - `TTypeData::TTypeData(TTypeData const&)` 67
+  - `TTypeData::IsFittingSaveGameType(bool) const` 55
+  - `TTypeData::operator==(TTypeData const&) const` 24
+  - `TTypeData::IsTempType() const` 5
+  - `TTypeData::IsInFile() const` 5
+  - `TTypeData::GetTypeLink() const` 4
+  - `TTypeData::GetVersionIn() const` 4
+  - `TTypeData::GetVersionOut() const` 4
+  - `TTypeData::GetSaveGameType() const` 4
+  - `TTypeData::GetVersionSaveGameIn() const` 4
+  - `TTypeData::GetVersionSaveGameOut() const` 4
+  - `TTypeData::GetType() const` 4
+  - `TTypeData::GetOffset() const` 4
+  - `TTypeData::GetDescription() const` 3
+  - `TTypeData::~TTypeData()` 2
+- **BuildProgressEvent** (2, 262 bytes)
+  - `BuildProgressEvent::Clone()` 171
+  - `BuildProgressEvent::~BuildProgressEvent()` 91
+- **TVedFile** (7, 240 bytes)
+  - `TVedFile::TVedFile()` 117
+  - `TVedFile::~TVedFile()` 92
+  - `TVedFile::SetReferencePath(wxFileName const&)` 9
+  - `TVedFile::SetVersion(int, int)` 7
+  - `TVedFile::SetSaveGame(bool)` 5
+  - `TVedFile::IsSaveGame() const` 5
+  - `TVedFile::IsBinary() const` 5
+- **SLoadingScreen** (2, 212 bytes)
+  - `SLoadingScreen::~SLoadingScreen()` 116
+  - `SLoadingScreen::SLoadingScreen()` 96
+- **TXMLWriter** (1, 208 bytes)
+  - `TXMLWriter::TXMLWriter()` 208
+- **TFile** (12, 200 bytes)
+  - `TFile::Seek(unsigned long, wxSeekMode)` 133
+  - `TFile::IsContentEncrypted() const` 8
+  - `TFile::IsContentCompressed() const` 8
+  - `TFile::IsPNGHeaderEncrypted() const` 8
+  - `TFile::IsContentCompressedChunks() const` 8
+  - `TFile::EncryptHeader(wxFileName const&, wxString const&)` 5
+  - `TFile::SetContentFlags(long)` 5
+  - `TFile::SetUncompressedLength(long)` 5
+  - `TFile::GetFileLength() const` 5
+  - `TFile::GetFilePointer() const` 5
+  - `TFile::GetOriginalPath() const` 5
+  - `TFile::GetPath() const` 5
+- **CmdStartObjectTween** (1, 199 bytes)
+  - `CmdStartObjectTween::CmdStartObjectTween()` 199
+- **TVList** (12, 186 bytes)
+  - `TVList::insert(__gnu_cxx::__normal_iterator<TVisionaireObject**, std::vector<TVisionaireObject*, std::allocator<TVisionaireObject*> > >, TVisionaireOb` 73
+  - `TVList::at(int)` 38
+  - `TVList::size() const` 12
+  - `TVList::rbegin()` 11
+  - `TVList::empty() const` 11
+  - `TVList::rend()` 10
+  - `TVList::back()` 9
+  - `TVList::end()` 5
+  - `TVList::end() const` 5
+  - `TVList::begin()` 4
+  - `TVList::front()` 4
+  - `TVList::begin() const` 4
+- **BoxEmitter** (3, 175 bytes)
+  - `BoxEmitter::UpdateEmitter(float)` 82
+  - `BoxEmitter::SerializeEmmiter(std::string&)` 81
+  - `BoxEmitter::~BoxEmitter()` 12
+- **CircleEmitter** (3, 175 bytes)
+  - `CircleEmitter::UpdateEmitter(float)` 82
+  - `CircleEmitter::SerializeEmmiter(std::string&)` 81
+  - `CircleEmitter::~CircleEmitter()` 12
+- **PointEmitter** (3, 175 bytes)
+  - `PointEmitter::UpdateEmitter(float)` 82
+  - `PointEmitter::SerializeEmmiter(std::string&)` 81
+  - `PointEmitter::~PointEmitter()` 12
+- **SquareEmitter** (3, 175 bytes)
+  - `SquareEmitter::UpdateEmitter(float)` 82
+  - `SquareEmitter::SerializeEmmiter(std::string&)` 81
+  - `SquareEmitter::~SquareEmitter()` 12
+- **InitCommands** (1, 174 bytes)
+  - `InitCommands(TVisionaireGame*, wxString const&, wxString, wxString)` 174
+- **TCAnimation** (10, 173 bytes)
+  - `TCAnimation::SetModelAnimationCurrentTick(int)` 66
+  - `TCAnimation::SetModelAnimation(ModelAnimation*)` 27
+  - `TCAnimation::IsSpriteAnimation() const` 25
+  - `TCAnimation::GetDataObject() const` 18
+  - `TCAnimation::IsBonesAnimation() const` 9
+  - `TCAnimation::IsModelAnimation() const` 9
+  - `TCAnimation::GetCurrentSprite()` 5
+  - `TCAnimation::SetPaused(bool)` 5
+  - `TCAnimation::GetModelAnimation() const` 5
+  - `TCAnimation::GetModelAnimationCurrentTick() const` 4
+- **TTextLanguage** (2, 150 bytes)
+  - `TTextLanguage::TTextLanguage(TTextLanguage const&)` 78
+  - `TTextLanguage::TTextLanguage()` 72
+- **CmdStartAction** (1, 144 bytes)
+  - `CmdStartAction::CmdStartAction()` 144
+- **CmdStartAnimation** (1, 144 bytes)
+  - `CmdStartAnimation::CmdStartAnimation()` 144
+- **CmdStopAction** (1, 144 bytes)
+  - `CmdStopAction::CmdStopAction()` 144
+- **CmdStopAnimation** (1, 144 bytes)
+  - `CmdStopAnimation::CmdStopAnimation()` 144
+- **TCursorControl** (3, 144 bytes)
+  - `TCursorControl::TCursorControl()` 91
+  - `TCursorControl::GetOwnerName()` 32
+  - `TCursorControl::GetOwnerId()` 21
+- **TPolygonList** (14, 135 bytes)
+  - `TPolygonList::at(int)` 38
+  - `TPolygonList::size() const` 12
+  - `TPolygonList::rbegin()` 11
+  - `TPolygonList::empty() const` 11
+  - `TPolygonList::rend()` 10
+  - `TPolygonList::back()` 9
+  - `TPolygonList::operator[](unsigned long)` 8
+  - `TPolygonList::operator[](unsigned long) const` 8
+  - `TPolygonList::pop_back()` 6
+  - `TPolygonList::end()` 5
+  - `TPolygonList::end() const` 5
+  - `TPolygonList::begin()` 4
+  - `TPolygonList::front()` 4
+  - `TPolygonList::begin() const` 4
+- **TDataCompareInfo** (1, 122 bytes)
+  - `TDataCompareInfo::~TDataCompareInfo()` 122
+- **TFieldValue** (1, 122 bytes)
+  - `TFieldValue::~TFieldValue()` 122
+- **TLink** (7, 119 bytes)
+  - `TLink::TLink(TLink const&)` 67
+  - `TLink::operator=(TLink const&)` 23
+  - `TLink::IsAnyLink() const` 10
+  - `TLink::IsParentLink() const` 8
+  - `TLink::GetField() const` 5
+  - `TLink::GetId() const` 4
+  - `TLink::~TLink()` 2
+- **SimplexNoise1234** (2, 107 bytes)
+  - `SimplexNoise1234::grad(int, float, float)` 69
+  - `SimplexNoise1234::grad(int, float)` 38
+- **save** (1, 107 bytes)
+  - `save(wxFileName, _IO_FILE*)` 107
+- **GLCharBuffer** (1, 103 bytes)
+  - `GLCharBuffer::GLCharBuffer()` 103
+- **SEntryInfo** (2, 103 bytes)
+  - `SEntryInfo::~SEntryInfo()` 55
+  - `SEntryInfo::SEntryInfo()` 48
+- **RandomGenerator** (1, 102 bytes)
+  - `RandomGenerator::setSeed(RandomGenerator::Seed)` 102
+- **TFFMPEGSoundItem** (1, 99 bytes)
+  - `TFFMPEGSoundItem::TFFMPEGSoundItem()` 99
+- **LineEmitter** (2, 93 bytes)
+  - `LineEmitter::SerializeEmmiter(std::string&)` 81
+  - `LineEmitter::~LineEmitter()` 12
+- **TGObjectManager** (3, 89 bytes)
+  - `TGObjectManager::~TGObjectManager()` 56
+  - `TGObjectManager::TGObjectManager()` 24
+  - `TGObjectManager::RegisterHookFunctionGetActionText(wxString const&)` 9
+- **TMSavegameArea** (1, 83 bytes)
+  - `TMSavegameArea::TMSavegameArea(wxRect const&)` 83
+- **TCharHolder** (4, 82 bytes)
+  - `TCharHolder::Clear()` 34
+  - `TCharHolder::dealloc()` 34
+  - `TCharHolder::IsOk() const` 9
+  - `TCharHolder::size() const` 5
+- **TMouseEventHandler** (1, 72 bytes)
+  - `TMouseEventHandler::~TMouseEventHandler()` 72
+- **TSceneActionArea** (1, 67 bytes)
+  - `TSceneActionArea::~TSceneActionArea()` 67
+- **TKeyboardEventHandler** (1, 55 bytes)
+  - `TKeyboardEventHandler::~TKeyboardEventHandler()` 55
+- **TTypeGroup** (12, 52 bytes)
+  - `TTypeGroup::SetNameInList(wxString (*)(TVisionaireObject const*))` 5
+  - `TTypeGroup::SetInit(void (*)(TVisionaireObject*))` 5
+  - `TTypeGroup::SetCreate(void (*)(TVisionaireObject*))` 5
+  - `TTypeGroup::GetNeededTypes() const` 5
+  - `TTypeGroup::GetSizeData() const` 4
+  - `TTypeGroup::GetVersionIn() const` 4
+  - `TTypeGroup::GetVersionOut() const` 4
+  - `TTypeGroup::GetDescription() const` 4
+  - `TTypeGroup::GetTypeElement() const` 4
+  - `TTypeGroup::GetSaveGameType() const` 4
+  - `TTypeGroup::GetSizeTempData() const` 4
+  - `TTypeGroup::GetTypes() const` 4
+- **TXMLStringWriter** (2, 52 bytes)
+  - `TXMLStringWriter::TXMLStringWriter()` 29
+  - `TXMLStringWriter::~TXMLStringWriter()` 23
+- **TTButton** (4, 50 bytes)
+  - `TTButton::IsCommand() const` 35
+  - `TTButton::TTButton(TVisObjRef const&)` 5
+  - `TTButton::TTButton()` 5
+  - `TTButton::~TTButton()` 5
+- **TPaintControl** (1, 48 bytes)
+  - `TPaintControl::TPaintControl()` 48
+- **TPictureFormat** (7, 48 bytes)
+  - `TPictureFormat::TPictureFormat()` 15
+  - `TPictureFormat::~TPictureFormat()` 12
+  - `TPictureFormat::~TPictureFormat()` 8
+  - `TPictureFormat::GetFormat()` 4
+  - `TPictureFormat::ReadHeader(char*, unsigned long, int*, int*)` 3
+  - `TPictureFormat::Write(wxFileName const&, TPictureMEM&, int, int, int, bool)` 3
+  - `TPictureFormat::ReadData(TPictureMEM&)` 3
+- **TGActionArea** (1, 37 bytes)
+  - `TGActionArea::TGActionArea(TVisObjRef const&, TGInterface*)` 37
+- **TGCommand** (1, 37 bytes)
+  - `TGCommand::TGCommand(TVisObjRef const&, TGInterface*)` 37
+- **TGPlaceHolder** (1, 37 bytes)
+  - `TGPlaceHolder::TGPlaceHolder(TVisObjRef const&, TGInterface*)` 37
+- **bin_structure** (1, 34 bytes)
+  - `bin_structure::~bin_structure()` 34
+- **TMemoryBuffer** (3, 33 bytes)
+  - `TMemoryBuffer::TMemoryBuffer()` 24
+  - `TMemoryBuffer::GetLen() const` 5
+  - `TMemoryBuffer::GetData() const` 4
+- **TTText** (5, 32 bytes)
+  - `TTText::ShowIdInTextNames(bool)` 8
+  - `TTText::GetLanguageId()` 7
+  - `TTText::GetSpeechLanguageId()` 7
+  - `TTText::TTText(TVisObjRef const&)` 5
+  - `TTText::TTText()` 5
+- **TCommandQueue** (1, 31 bytes)
+  - `TCommandQueue::TCommandQueue()` 31
+- **TVisObjRef** (3, 31 bytes)
+  - `TVisObjRef::GetLinks(int, eTypeOrder, TVList&) const` 19
+  - `TVisObjRef::TVisObjRef()` 8
+  - `TVisObjRef::GetObjectPointer() const` 4
+- **TGParticleEmitter** (2, 30 bytes)
+  - `TGParticleEmitter::TGParticleEmitter()` 18
+  - `TGParticleEmitter::~TGParticleEmitter()` 12
+- **TGScene** (3, 23 bytes)
+  - `TGScene::GetSnoopAnimAlpha() const` 9
+  - `TGScene::GetLightMap() const` 8
+  - `TGScene::GetBrightness() const` 6
+- **TGCharacter** (1, 21 bytes)
+  - `TGCharacter::GetOppositeDirection(int)` 21
+- **TMemoryFile** (2, 21 bytes)
+  - `TMemoryFile::TMemoryFile()` 16
+  - `TMemoryFile::GetSize() const` 5
+- **TSoundInterface** (5, 20 bytes)
+  - `TSoundInterface::GetMovieVolume() const` 4
+  - `TSoundInterface::GetMusicVolume() const` 4
+  - `TSoundInterface::GetSoundVolume() const` 4
+  - `TSoundInterface::GetGlobalVolume() const` 4
+  - `TSoundInterface::GetSpeechVolume() const` 4
+- **Easing** (1, 19 bytes)
+  - `Easing::Ease::Calc(double)` 19
+- **TParticleSystem** (1, 19 bytes)
+  - `TParticleSystem::GetWindowSize()` 19
+- **TGParticleSystem** (1, 18 bytes)
+  - `TGParticleSystem::TGParticleSystem()` 18
+- **TGDialog** (4, 16 bytes)
+  - `TGDialog::IsActiveDialogPart() const` 8
+  - `TGDialog::GetCurrentDialogPart() const` 4
+  - `TGDialog::Load()` 2
+  - `TGDialog::Save()` 2
+- **TTObject** (3, 15 bytes)
+  - `TTObject::TTObject(TVisObjRef const&)` 5
+  - `TTObject::TTObject()` 5
+  - `TTObject::~TTObject()` 5
+- **TGItem** (1, 11 bytes)
+  - `TGItem::SetCenteredPosition(wxPoint const&)` 11
+- **TSAction** (2, 10 bytes)
+  - `TSAction::TSAction(TVisObjRef const&)` 5
+  - `TSAction::TSAction()` 5
+- **TSAnimation** (2, 10 bytes)
+  - `TSAnimation::TSAnimation(TVisObjRef const&)` 5
+  - `TSAnimation::TSAnimation()` 5
+- **TTActionArea** (2, 10 bytes)
+  - `TTActionArea::TTActionArea(TVisObjRef const&)` 5
+  - `TTActionArea::TTActionArea()` 5
+- **TTAnimation** (2, 10 bytes)
+  - `TTAnimation::TTAnimation(TVisObjRef const&)` 5
+  - `TTAnimation::TTAnimation()` 5
+- **TTAnimationFrame** (2, 10 bytes)
+  - `TTAnimationFrame::TTAnimationFrame(TVisObjRef const&)` 5
+  - `TTAnimationFrame::TTAnimationFrame()` 5
+- **TTAreaAction** (2, 10 bytes)
+  - `TTAreaAction::TTAreaAction(TVisObjRef const&)` 5
+  - `TTAreaAction::TTAreaAction()` 5
+- **TTAudioBus** (2, 10 bytes)
+  - `TTAudioBus::TTAudioBus(TVisObjRef const&)` 5
+  - `TTAudioBus::TTAudioBus()` 5
+- **TTClipboardObject** (2, 10 bytes)
+  - `TTClipboardObject::TTClipboardObject(TVisObjRef const&)` 5
+  - `TTClipboardObject::TTClipboardObject()` 5
+- **TTCommentSet** (2, 10 bytes)
+  - `TTCommentSet::TTCommentSet(TVisObjRef const&)` 5
+  - `TTCommentSet::TTCommentSet()` 5
+- **TTCommentSetEntry** (2, 10 bytes)
+  - `TTCommentSetEntry::TTCommentSetEntry(TVisObjRef const&)` 5
+  - `TTCommentSetEntry::TTCommentSetEntry()` 5
+- **TTCursor** (2, 10 bytes)
+  - `TTCursor::TTCursor(TVisObjRef const&)` 5
+  - `TTCursor::TTCursor()` 5
+- **TTDialog** (2, 10 bytes)
+  - `TTDialog::TTDialog(TVisObjRef const&)` 5
+  - `TTDialog::TTDialog()` 5
+- **TTDialogPart** (2, 10 bytes)
+  - `TTDialogPart::TTDialogPart(TVisObjRef const&)` 5
+  - `TTDialogPart::TTDialogPart()` 5
+- **TTEvent** (2, 10 bytes)
+  - `TTEvent::TTEvent(TVisObjRef const&)` 5
+  - `TTEvent::TTEvent()` 5
+- **TTFont** (2, 10 bytes)
+  - `TTFont::TTFont(TVisObjRef const&)` 5
+  - `TTFont::TTFont()` 5
+- **TTGame** (2, 10 bytes)
+  - `TTGame::TTGame(TVisObjRef const&)` 5
+  - `TTGame::TTGame()` 5
+- **TTInterface** (2, 10 bytes)
+  - `TTInterface::TTInterface(TVisObjRef const&)` 5
+  - `TTInterface::TTInterface()` 5
+- **TTInterfaceClass** (2, 10 bytes)
+  - `TTInterfaceClass::TTInterfaceClass(TVisObjRef const&)` 5
+  - `TTInterfaceClass::TTInterfaceClass()` 5
+- **TTLanguage** (2, 10 bytes)
+  - `TTLanguage::TTLanguage(TVisObjRef const&)` 5
+  - `TTLanguage::TTLanguage()` 5
+- **TTLoading** (2, 10 bytes)
+  - `TTLoading::TTLoading(TVisObjRef const&)` 5
+  - `TTLoading::TTLoading()` 5
+- **TTModel** (2, 10 bytes)
+  - `TTModel::TTModel(TVisObjRef const&)` 5
+  - `TTModel::TTModel()` 5
+- **TTOutfit** (2, 10 bytes)
+  - `TTOutfit::TTOutfit(TVisObjRef const&)` 5
+  - `TTOutfit::TTOutfit()` 5
+- **TTParticleContainer** (2, 10 bytes)
+  - `TTParticleContainer::TTParticleContainer(TVisObjRef const&)` 5
+  - `TTParticleContainer::TTParticleContainer()` 5
+- **TTParticles** (2, 10 bytes)
+  - `TTParticles::TTParticles(TVisObjRef const&)` 5
+  - `TTParticles::TTParticles()` 5
+- **TTPoint** (2, 10 bytes)
+  - `TTPoint::TTPoint(TVisObjRef const&)` 5
+  - `TTPoint::TTPoint()` 5
+- **TTScript** (2, 10 bytes)
+  - `TTScript::TTScript(TVisObjRef const&)` 5
+  - `TTScript::TTScript()` 5
+- **TTScriptVariable** (2, 10 bytes)
+  - `TTScriptVariable::TTScriptVariable(TVisObjRef const&)` 5
+  - `TTScriptVariable::TTScriptVariable()` 5
+- **TTShader** (2, 10 bytes)
+  - `TTShader::TTShader(TVisObjRef const&)` 5
+  - `TTShader::TTShader()` 5
+- **TTSprite** (2, 10 bytes)
+  - `TTSprite::TTSprite(TVisObjRef const&)` 5
+  - `TTSprite::TTSprite()` 5
+- **TTTextLanguage** (2, 10 bytes)
+  - `TTTextLanguage::TTTextLanguage(TVisObjRef const&)` 5
+  - `TTTextLanguage::TTTextLanguage()` 5
+- **TTWaySystem** (2, 10 bytes)
+  - `TTWaySystem::TTWaySystem(TVisObjRef const&)` 5
+  - `TTWaySystem::TTWaySystem()` 5
+- **TParticleEmitter** (2, 6 bytes)
+  - `TParticleEmitter::Paint()` 3
+  - `TParticleEmitter::Update()` 3
+- **TPictureMEM** (1, 5 bytes)
+  - `TPictureMEM::GetMemoryData() const` 5
+- **TSoundBase** (1, 5 bytes)
+  - `TSoundBase::GetList() const` 5
+- **TMSavegame** (1, 2 bytes)
+  - `TMSavegame::SetSaveDataOnline(bool)` 2
+- **TTimer** (1, 2 bytes)
+  - `TTimer::~TTimer()` 2
+
+Total: 1046 functions.
