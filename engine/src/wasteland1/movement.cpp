@@ -269,4 +269,31 @@ bool enterLocationMove(Machine &m, uint8_t al) {   // 16A13 (returns cf through 
 	return true;
 }
 
+
+void loadLocationMap(Machine &m) {   // 18350: makes the map of saved2.field7 the current one
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	const uint8_t id = D(0x4655);
+	if (id == D(0x46E0)) return;
+	X86Regs x;
+	legacy::call(m, 0x83B1, x);
+	D(0x46E0) = D(0x4655);
+	legacy::call(m, 0x841F, x);
+	D(0x46A3) = 19;
+	const uint16_t loc = m.d16(0x46B0);
+	D(0x46A4) = D(uint16_t(loc + 44));
+	D(0x46A5) = D(uint16_t(loc + 44));
+	D(0x46A8) = 9;
+	D(0x46A9) = 4;
+	D(0x4722) = 0;
+	D(0x46B2) = 0xFF;
+	const uint8_t shared = D(uint16_t(m.d16(0x46B0) + 48));
+	if (shared != D(0xBF13)) {
+		D(0xBF13) = shared;
+		D(0x4655) = shared;
+		legacy::call(m, 0x86B6, x);
+		D(0x4655) = D(0x46E0);
+	}
+	legacy::call(m, 0x0003, x);   // j_processTitlePic
+}
+
 } // namespace wl

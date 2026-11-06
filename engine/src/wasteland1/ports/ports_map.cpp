@@ -76,5 +76,7 @@ PORT(randomEncounter) { randomEncounter(m); }                                   
 
 PORT(enterLocationMove) { r.cf = enterLocationMove(m, r.a.b.l); }                          // 16A13
 
+PORT(loadLocationMap) { loadLocationMap(m); }
+
 } // namespace rc
 } // namespace wl

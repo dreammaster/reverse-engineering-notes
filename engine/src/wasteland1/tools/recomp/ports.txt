@@ -460,3 +460,4 @@ A1EF moreButton junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=CDDE-C
 A25B moreButtonPressed junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
 A308 rosterButtons junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=B250-B251,722F-722F,8DD0-8DD7,4661-4662,465C-4660,CDC0-CE00,BA00-BA11,468C-468C
 6A13 enterLocationMove junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0,4655-4655,464E-464F
+8350 loadLocationMap junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf,dx

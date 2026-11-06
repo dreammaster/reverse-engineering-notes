@@ -29,4 +29,7 @@ void randomEncounter(Machine &m);
 // 16A13: stepping onto a location cell; al != 0 does nothing. Returns the carry flag: false when al != 0 or the party came back, true otherwise
 bool enterLocationMove(Machine &m, uint8_t al);
 
+// 18350: loads the map ds:4655 unless it is the current one
+void loadLocationMap(Machine &m);
+
 } // namespace wl
