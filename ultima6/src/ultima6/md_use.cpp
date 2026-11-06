@@ -235,6 +235,22 @@ std::string Game::mdLookExtra(const World::Obj &o) const {
 		return o.quality == 0x0F ? "It is growing." + nl : o.quality == 0x10 ? "It is ripe." + nl : "It is not growing." + nl;
 	if (t == 0x19B)
 		return o.quality == 1 ? nl + "It seems to be loose." + nl : o.quality == 2 ? nl + "It is not installed." + nl : "";
+	if (t == 0x1CA) { // controls: what they are for, by their quantity (4 to 7), else by the frame
+		switch (o.quantity) {
+		case 4:
+			return "It appears to control a dream machine." + nl;
+		case 5:
+			return "It appears to control a spray system." + nl;
+		case 6:
+			return "It appears to control the ruby lens system." + nl;
+		case 7:
+			return "It appears to control the cistern valves." + nl;
+		case 0:
+			return o.frame == 0 ? "These appear to be mechanical controls." + nl : o.frame == 1 ? "These appear to be valve controls." + nl : o.frame == 2 ? "These appear to be electrical controls." + nl : "";
+		default:
+			return "You cannot decipher its purpose." + nl;
+		}
+	}
 	if (t == 0x11F)
 		return o.quality ? "It has a heartstone." + nl : "";
 	if (t == 0x5B || t == 0x62) {
