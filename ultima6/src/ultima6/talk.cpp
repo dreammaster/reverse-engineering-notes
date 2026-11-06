@@ -18,8 +18,8 @@ enum {
 	G_GENDER = 0x1C71 - 0x1BF1
 };
 
-Talk::Talk(World &world, TextWindow &scroll, BorlandRandom &rng, const GameClock &clock, int actor)
-	: _world(world), _scroll(scroll), _rng(rng), _clock(clock), _actor(actor), _portrait(actor) {
+Talk::Talk(World &world, TextWindow &scroll, BorlandRandom &rng, const GameClock &gameClock, int actor)
+	: _world(world), _scroll(scroll), _rng(rng), _clock(gameClock), _actor(actor), _portrait(actor) {
 }
 
 bool Talk::load(Bytes &script) const {
@@ -127,7 +127,7 @@ std::string Talk::timeOfDay() {
 	return _clock.hour < 12 ? "morning" : _clock.hour < 18 ? "afternoon" : "evening";
 }
 
-int Talk::random(int lo, int hi) {
+int Talk::roll(int lo, int hi) {
 	return lo + _rng.next() % (hi - lo + 1);
 }
 

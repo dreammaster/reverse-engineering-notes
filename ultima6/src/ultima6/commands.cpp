@@ -240,9 +240,9 @@ bool Game::useVortexCube() {
 }
 
 void Game::timePlayed(int &years, int &months, int &days) const {
-	days = clock.day - 4;
-	months = clock.month - 7;
-	years = clock.year - 161;
+	days = gameClock.day - 4;
+	months = gameClock.month - 7;
+	years = gameClock.year - 161;
 	if (days < 0) {
 		days += 28;
 		--months;

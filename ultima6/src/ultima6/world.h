@@ -58,7 +58,7 @@ public:
 	/**
 	 * Writes the world as a SAVEGAME directory: OBJLIST (the actors' arrays and the globals) and one OBJBLK file per
 	 * block holding the other objects. Inventories go with the block their owner stands in, contents with their container.
-	 * `clock` etc. are in the globals, which the caller keeps current.
+	 * `gameClock` etc. are in the globals, which the caller keeps current.
 	 */
 	bool save(const std::string &saveDir);
 

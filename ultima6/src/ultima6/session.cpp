@@ -61,24 +61,24 @@ Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(worl
 	prompt();
 	const std::vector<uint8_t> &g = world.actors.globals;
 	// objlist +0x1BF3: minute, hour, day, month, year (u16)
-	clock.minute = g[2];
-	clock.hour = g[3];
-	clock.day = g[4];
-	clock.month = g[5];
-	clock.year = g[6] | (g[7] << 8);
-	_actors.hourChanged(clock);
+	gameClock.minute = g[2];
+	gameClock.hour = g[3];
+	gameClock.day = g[4];
+	gameClock.month = g[5];
+	gameClock.year = g[6] | (g[7] << 8);
+	_actors.hourChanged(gameClock);
 	updateMoons();
-	_creatures.checkEggs(x, y, z, clock.hour);
+	_creatures.checkEggs(x, y, z, gameClock.hour);
 }
 
 bool Game::save() {
 	std::vector<uint8_t> &g = _world.actors.globals;
-	g[2] = (uint8_t)clock.minute;
-	g[3] = (uint8_t)clock.hour;
-	g[4] = (uint8_t)clock.day;
-	g[5] = (uint8_t)clock.month;
-	g[6] = (uint8_t)(clock.year & 0xFF);
-	g[7] = (uint8_t)(clock.year >> 8);
+	g[2] = (uint8_t)gameClock.minute;
+	g[3] = (uint8_t)gameClock.hour;
+	g[4] = (uint8_t)gameClock.day;
+	g[5] = (uint8_t)gameClock.month;
+	g[6] = (uint8_t)(gameClock.year & 0xFF);
+	g[7] = (uint8_t)(gameClock.year >> 8);
 	return !saveDir.empty() && _world.save(saveDir);
 }
 
@@ -91,9 +91,9 @@ void Game::minutePassed() {
 		return;
 	}
 	_timeStop = 0;
-	clock.advance(1);
-	if (clock.minute == 0) {
-		_actors.hourChanged(clock);
+	gameClock.advance(1);
+	if (gameClock.minute == 0) {
+		_actors.hourChanged(gameClock);
 		updateMoons();
 		if (_restCooldown > 0)
 			--_restCooldown;
@@ -103,7 +103,7 @@ void Game::minutePassed() {
 	for (int t = 0; t < 16; ++t)
 		if (_world.actors.globals[0x12 + t])
 			--_world.actors.globals[0x12 + t];
-	if (clock.minute == 0) {
+	if (gameClock.minute == 0) {
 		// every hour the people with magic recover as many magic points as their level
 		ObjList &al = _world.actors;
 		for (int m = 0; m < al.partySize; ++m) {
@@ -117,14 +117,14 @@ void Game::minutePassed() {
 				al.unknown13f1[actor] = (uint8_t)std::min<int>(most, al.unknown13f1[actor] + al.level[actor]);
 		}
 	}
-	if (clock.hour == 0 && clock.minute == 0)
+	if (gameClock.hour == 0 && gameClock.minute == 0)
 		_fishedToday = false; // the fish bite again each day
 	if (_kegTimer > 0 && --_kegTimer == 0)
 		explodeKeg();
 	actorStatusDecay();
 	partyHazards();
 	_creatures.despawn(x, y, z);
-	_creatures.checkEggs(x, y, z, clock.hour);
+	_creatures.checkEggs(x, y, z, gameClock.hour);
 	if (_world.actors.hp[1] == 0 && (_world.actors.status[1] & 0x10))
 		avatarDied();
 }
@@ -350,7 +350,7 @@ bool Game::step(int dir) {
 	followLeader();
 	_rules.deniedPending = true;
 	_world.spendMoves(1, cost); // sub_28F67, counted on the square that was left
-	_creatures.checkEggs(x, y, z, clock.hour);
+	_creatures.checkEggs(x, y, z, gameClock.hour);
 	enterMoongate(x, y);
 	return true;
 }
@@ -427,7 +427,7 @@ void Game::talkAt(int tx, int ty) {
 
 // sub_1EBEC: a conversation with a person begins (the player talked to them, or they walked up to the party)
 void Game::startTalk(int actor) {
-	std::unique_ptr<Talk> t(new Talk(_world, scroll, _rng, clock, actor));
+	std::unique_ptr<Talk> t(new Talk(_world, scroll, _rng, gameClock, actor));
 	if (!Talk::canTalk(_world, actor)) {
 		message("\nFunny, no response.\n");
 		prompt();
@@ -435,7 +435,7 @@ void Game::startTalk(int actor) {
 	}
 	t->onSleep = [this]() {
 		// the party sleeps until six in the morning (at least an hour), healing as it rests. APPROX(31): the same healing as the Rest command
-		int hours = (6 - clock.hour + 24) % 24;
+		int hours = (6 - gameClock.hour + 24) % 24;
 		if (hours == 0)
 			hours = 24;
 		for (int h = 0; h < hours; ++h) {
@@ -982,14 +982,14 @@ void Game::render(Framebuffer &screen) {
 	// 1-6 through the hour from five and falling 6-1 through the hour from seven in the evening; a torch or the Light spell make it 4 at least. It is the radius (in squares) in which
 	// the party sees.
 	const ObjList &al = _world.actors;
-	bool eclipse = (clock.day == 1 && clock.month % 3 == 0) || _eclipse;
+	bool eclipse = (gameClock.day == 1 && gameClock.month % 3 == 0) || _eclipse;
 	int light;
-	if (eclipse || clock.hour < 5 || clock.hour > 19 || (z > 0 && z < 5))
+	if (eclipse || gameClock.hour < 5 || gameClock.hour > 19 || (z > 0 && z < 5))
 		light = 0;
-	else if (clock.hour == 5)
-		light = clock.minute / 10 + 1;
-	else if (clock.hour == 19)
-		light = (59 - clock.minute) / 10 + 1;
+	else if (gameClock.hour == 5)
+		light = gameClock.minute / 10 + 1;
+	else if (gameClock.hour == 19)
+		light = (59 - gameClock.minute) / 10 + 1;
 	else
 		light = 7;
 	bool lit = al.globals[0x12 + Magic::TIMER_LIGHT] != 0;
@@ -1030,7 +1030,7 @@ void Game::render(Framebuffer &screen) {
 		static const char *const WIND[9] = {"C ", "N ", "NE", "E ", "SE", "S ", "SW", "W ", "NW"};
 		int w = _world.actors.globals.size() > 9 ? (int8_t)_world.actors.globals[9] : -1;
 		char line[40];
-		std::snprintf(line, sizeof line, "%2d-%02d-%04d Wind:%2s", clock.month, clock.day, clock.year, WIND[w >= -1 && w < 8 ? w + 1 : 0]);
+		std::snprintf(line, sizeof line, "%2d-%02d-%04d Wind:%2s", gameClock.month, gameClock.day, gameClock.year, WIND[w >= -1 && w < 8 ? w + 1 : 0]);
 		Ui::drawText(screen, _world.font, 16, 168, line, 0x48);
 	}
 	scroll.draw(screen, _world.font);

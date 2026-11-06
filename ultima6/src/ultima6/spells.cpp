@@ -37,7 +37,7 @@ void Game::helpParty() {
 	if (_combatMode)
 		toggleCombat();
 	changeLevel(0x133, 0x160, 0);
-	while (!((clock.hour >= 8 && clock.hour <= 11) || (clock.hour >= 14 && clock.hour <= 17)))
+	while (!((gameClock.hour >= 8 && gameClock.hour <= 11) || (gameClock.hour >= 14 && gameClock.hour <= 17)))
 		advanceTime(15);
 }
 
@@ -395,7 +395,7 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 	case 113: { // Death Wind (sub_24E78, sub_38A7B, sub_37CBD): five bolts fly from the caster to the target square and its neighbours at right angles to the line
 		int ck = _world.actorObject(caster);
 		int cx = _world.objects[ck].x, cy = _world.objects[ck].y;
-		auto random = [&](int lo, int hi) { return lo + (int)(_rng.next() % (hi - lo + 1)); };
+		auto roll = [&](int lo, int hi) { return lo + (int)(_rng.next() % (hi - lo + 1)); };
 		if (tx == cx && ty == cy) {
 			message("\nNo effect\n");
 			return true;
@@ -432,14 +432,14 @@ bool Game::spellSpecial(const Magic::SpellInfo &spell, int caster, int tx, int t
 			switch (index) {
 			case 83: // sub_222F2
 				if (!(cs && (cs->flags & 8)))
-					_combat.applyDamage(caster, t, cs && (cs->flags & 0x10) ? random(1, 20) * 2 : random(1, 20));
+					_combat.applyDamage(caster, t, cs && (cs->flags & 0x10) ? roll(1, 20) * 2 : roll(1, 20));
 				break;
 			case 87: // sub_21BF2
-				if (!(cs && (cs->flags & 4)) && !((_combat.adjustedStrength(t) / 2 + 30 - _combat.adjustedIntelligence(caster)) / 2 > random(1, 30)))
+				if (!(cs && (cs->flags & 4)) && !((_combat.adjustedStrength(t) / 2 + 30 - _combat.adjustedIntelligence(caster)) / 2 > roll(1, 30)))
 					a.status[t] |= 0x08;
 				break;
 			case 98:
-				_combat.applyDamage(caster, t, random(1, 30));
+				_combat.applyDamage(caster, t, roll(1, 30));
 				break;
 			default: // sub_21E06: the living that are not flagged (2) and do not resist die
 				if (!(a.status[t] & 0x10) && !(cs && (cs->flags & 2)) && !_combat.resists(t, caster))

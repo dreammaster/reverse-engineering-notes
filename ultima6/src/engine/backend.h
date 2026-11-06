@@ -29,7 +29,7 @@ enum Key {
 	KEY_QUIT // window closed
 };
 
-/** Screen, keyboard and clock of the machine the game runs on. */
+/** Screen, keyboard and gameClock of the machine the game runs on. */
 class Backend {
 public:
 	virtual ~Backend() {}

@@ -66,7 +66,7 @@ public:
 	/** Takes `damage` hit points off the defender (spells and traps too): prints how badly it is hurt, kills it and rewards the attacker. */
 	bool applyDamage(int attacker, int defender, int damage);
 	int randomBetween(int lo, int hi) {
-		return random(lo, hi);
+		return roll(lo, hi);
 	}
 	/** One attack; prints what happened. True if the defender died. */
 	bool attack(int attacker, int defender);
@@ -90,7 +90,7 @@ public:
 private:
 	bool hitCheck(int attacker, int defender, int weapon);
 	void die(int actor);
-	int random(int lo, int hi) {
+	int roll(int lo, int hi) {
 		return lo + _rng.next() % (hi - lo + 1);
 	}
 

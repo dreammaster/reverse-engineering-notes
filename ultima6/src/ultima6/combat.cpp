@@ -51,14 +51,14 @@ bool Combat::dragStruggle(int actor) {
 		return false;
 	if (a.worktype[actor] == 2)
 		_scroll.print("\n" + nameOf(actor) + ":\n>ARGH!\n");
-	if (random(1, 30) < adjustedStrength(actor)) {
+	if (roll(1, 30) < adjustedStrength(actor)) {
 		if (onSfx)
 			onSfx(0xA, 0);
 		_scroll.print(nameOf(actor) + " regurgitated!\n");
 		a.movementFlags[actor] &= ~0x10;
 		return false;
 	}
-	applyDamage(1, actor, random(1, 15));
+	applyDamage(1, actor, roll(1, 15));
 	a.moves[actor] = 0;
 	return true;
 }
@@ -169,7 +169,7 @@ int Combat::adjustedIntelligence(int actor) const {
 
 bool Combat::resists(int target, int caster) {
 	int x = adjustedIntelligence(target) / 2 + 15 - adjustedIntelligence(caster);
-	return x > random(1, 30);
+	return x > roll(1, 30);
 }
 
 bool Combat::hitCheck(int attacker, int defender, int weapon) {
@@ -184,7 +184,7 @@ bool Combat::hitCheck(int attacker, int defender, int weapon) {
 		useStrength = true;
 	int atk = useStrength ? adjustedStrength(attacker) : adjustedDexterity(attacker);
 	int foeDex = adjustedDexterity(defender);
-	return random(1, 30) >= (foeDex + 30 - atk) / 2; // a roll below half the difference misses
+	return roll(1, 30) >= (foeDex + 30 - atk) / 2; // a roll below half the difference misses
 }
 
 void Combat::die(int actor) {
@@ -369,8 +369,8 @@ bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) 
 	bool recheck = false; // var_10 == -1: the shot was off its aim
 	if (!hit && missile) {
 		recheck = true;
-		tx += random(0, 2) - 1;
-		ty += random(0, 2) - 1;
+		tx += roll(0, 2) - 1;
+		ty += roll(0, 2) - 1;
 		victim = targetAt(attacker, tx, ty);
 	}
 	if (missile) {
@@ -443,7 +443,7 @@ bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) 
 		} else if (weapon == 0x5B) {
 			_world.removeFromInventory(attacker, 0x5B, 0, 1);
 		} else if (weapon == 0x4F || weapon == 0x50) {
-			if (random(1, 100) == 0x25) {
+			if (roll(1, 100) == 0x25) {
 				int wand = find(weapon, false);
 				if (wand >= 0)
 					_world.deleteObject(wand);
@@ -506,10 +506,10 @@ bool Combat::strike(int attacker, int target, int damage, bool commanded) {
 	if (damage == -1)
 		damage = 1;
 	else if (damage > 1 && damage < 255)
-		damage = random(1, damage);
+		damage = roll(1, damage);
 	int ac = target < 0x100 ? armourClass(target) : 0;
 	if (ac > 0 && damage < 255)
-		damage -= random(1, ac);
+		damage -= roll(1, ac);
 	bool killed = false;
 	if (damage <= 0) {
 		if (a.status[target] & 0x04) { // sub_2C20F: a sleeper wakes
@@ -564,7 +564,7 @@ bool Combat::strike(int attacker, int target, int damage, bool commanded) {
 			bool match = false;
 			for (int n = 0; list[n]; ++n)
 				match |= _world.objects[i].type == list[n];
-			if (match && (found < 0 || random(0, 1) != 0))
+			if (match && (found < 0 || roll(0, 1) != 0))
 				found = i;
 		}
 		return found;
@@ -593,7 +593,7 @@ bool Combat::strike(int attacker, int target, int damage, bool commanded) {
 			_world.deleteObject(item);
 		}
 	}
-	if (cls >= 0 && (MovementClasses::flags(cls) & 0x40) && random(0, 3) == 0) {
+	if (cls >= 0 && (MovementClasses::flags(cls) & 0x40) && roll(0, 3) == 0) {
 		_scroll.print(name + " poisoned!\n");
 		a.status[target] |= 0x08;
 	}
@@ -652,7 +652,7 @@ bool Combat::applyDamage(int attacker, int defender, int damage) {
 		return false; // a balloon takes nothing
 	if ((type == 0x19E || type == 0x19F) && a.partySize > 0) {
 		// a boat that is hit passes the blow on to a random member of the party (sub_2C2E5 2C350)
-		int member = a.partyRoster[a.partySize > 1 ? random(0, a.partySize - 1) : 0];
+		int member = a.partyRoster[a.partySize > 1 ? roll(0, a.partySize - 1) : 0];
 		if (member != defender)
 			return applyDamage(attacker, member, damage);
 	}

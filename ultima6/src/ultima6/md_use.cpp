@@ -284,7 +284,7 @@ std::string Game::mdLookExtra(const World::Obj &o) const {
 	if (t == 0x11F)
 		return o.quality ? "It has a heartstone." + nl : "";
 	if (t == 0x5B || t == 0x62) {
-		int h = clock.hour, m = clock.minute;
+		int h = gameClock.hour, m = gameClock.minute;
 		char buf[32];
 		if (h == 0)
 			std::snprintf(buf, sizeof buf, "12:%02d A.M.", m);

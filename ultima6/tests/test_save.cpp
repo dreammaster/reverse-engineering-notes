@@ -48,7 +48,7 @@ static void roundTrip(const char *dir, GameId id, const char *save, const char *
 	CHECK(liveObjects(r) == liveObjects(w));
 	Game g2(r);
 	CHECK(g2.x == g.x && g2.y == g.y && g2.z == g.z);
-	CHECK(g2.clock.hour == g.clock.hour && g2.clock.minute == g.clock.minute);
+	CHECK(g2.gameClock.hour == g.gameClock.hour && g2.gameClock.minute == g.gameClock.minute);
 	r2 = World();
 	r2.game = id;
 	CHECK(r2.load(dir, nullptr, save));
@@ -78,7 +78,7 @@ int main() {
 	CHECK(liveObjects(r) == liveObjects(w));
 	Game g2(r);
 	CHECK(g2.x == g.x && g2.y == g.y && g2.z == g.z);
-	CHECK(g2.clock.hour == g.clock.hour && g2.clock.minute == g.clock.minute && g2.clock.day == g.clock.day);
+	CHECK(g2.gameClock.hour == g.gameClock.hour && g2.gameClock.minute == g.gameClock.minute && g2.gameClock.day == g.gameClock.day);
 	// every actor stands where it stood
 	int same = 0, total = 0;
 	for (int a = 0; a < 256; ++a) {

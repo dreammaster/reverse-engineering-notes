@@ -43,20 +43,20 @@ int main() {
 
 	Game game(world);
 	// A new game starts at 8:00 on day 4 of month 7, year 161 (the date END.EXE's playing time counts from)
-	CHECK(game.clock.hour == 8 && game.clock.minute == 0 && game.clock.day == 4 && game.clock.month == 7 && game.clock.year == 161);
+	CHECK(game.gameClock.hour == 8 && game.gameClock.minute == 0 && game.gameClock.day == 4 && game.gameClock.month == 7 && game.gameClock.year == 161);
 	CHECK(game.x == 307 && game.y == 352 && game.z == 0);
 
 	// Walking takes a minute a step; walls stop you and cost nothing.
 	int moved = 0;
 	for (int i = 0; i < 12; ++i)
 		moved += game.handleKey(KEY_UP) && game.y != 352 ? 0 : 0;
-	int before = game.clock.minute;
+	int before = game.gameClock.minute;
 	int x0 = game.x, y0 = game.y;
 	bool ok = game.step(0);
 	if (ok) {
-		CHECK(game.y == y0 - 1 && game.x == x0 && game.clock.minute == before + 1);
+		CHECK(game.y == y0 - 1 && game.x == x0 && game.gameClock.minute == before + 1);
 	} else {
-		CHECK(game.y == y0 && game.clock.minute == before);
+		CHECK(game.y == y0 && game.gameClock.minute == before);
 	}
 	(void)moved;
 	// The throne room is closed in: no amount of walking leaves it quickly
@@ -190,7 +190,7 @@ int main() {
 		g6.handleKey(KEY_ENTER);
 		g6.handleKey(KEY_ENTER); // the cursor starts on the caster
 		CHECK(w6.actors.hp[1] != 10); // healed (a creature nearby may have hurt the Avatar since: the turns run after the command)
-		CHECK(w6.actors.unknown13f1[1] == mana - 1 + (g6.clock.minute % 10 == 0 ? 1 : 0) || w6.actors.unknown13f1[1] == mana - 1);
+		CHECK(w6.actors.unknown13f1[1] == mana - 1 + (g6.gameClock.minute % 10 == 0 ? 1 : 0) || w6.actors.unknown13f1[1] == mana - 1);
 		int ginseng2 = 0;
 		for (int i = 0; i < (int)w6.objects.size(); ++i)
 			if (!w6.objects[i].deleted && w6.objects[i].parent == 1 && w6.objects[i].type == 68)

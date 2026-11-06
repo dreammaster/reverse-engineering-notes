@@ -14,10 +14,10 @@ namespace Ultima6 {
 static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1};
 static const int DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
 
-void ActorManager::hourChanged(const GameClock &clock) {
+void ActorManager::hourChanged(const GameClock &gameClock) {
 	const Schedule &sc = _world.schedule;
 	ObjList &a = _world.actors;
-	int dow = clock.dayOfWeek();
+	int dow = gameClock.dayOfWeek();
 	for (int actor = 2; actor < 0xE0; ++actor) {
 		if (a.worktype[actor] == 0x9B)
 			a.worktype[actor] = GO_TO_SCHEDULE;
@@ -40,7 +40,7 @@ void ActorManager::hourChanged(const GameClock &clock) {
 		int first = sc.index[actor];
 		for (int i = first + count - 1; i >= first; --i) {
 			Schedule::Entry e = sc.entry(i);
-			if (e.hour != clock.hour)
+			if (e.hour != gameClock.hour)
 				continue;
 			if (e.dayOfWeek != dow && e.dayOfWeek != 0)
 				continue;

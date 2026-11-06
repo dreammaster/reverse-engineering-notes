@@ -207,8 +207,8 @@ int main(int argc, char **argv) {
 			std::fprintf(stderr, "cannot write %s\n", shot);
 			return 1;
 		}
-		std::printf("wrote %s, party at %d,%d,%d, %02d:%02d day %d month %d year %d\n", shot, game.x, game.y, game.z, game.clock.hour,
-					game.clock.minute, game.clock.day, game.clock.month, game.clock.year);
+		std::printf("wrote %s, party at %d,%d,%d, %02d:%02d day %d month %d year %d\n", shot, game.x, game.y, game.z, game.gameClock.hour,
+					game.gameClock.minute, game.gameClock.day, game.gameClock.month, game.gameClock.year);
 	}
 	return 0;
 }

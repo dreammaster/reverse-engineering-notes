@@ -26,7 +26,7 @@ public:
 	virtual std::string genderTitle() = 0; // "milord" or "milady"
 	virtual std::string timeOfDay() = 0;   // "morning", "afternoon" or "evening"
 	virtual void showPortrait(int npc) = 0;
-	virtual int random(int lo, int hi) = 0;
+	virtual int roll(int lo, int hi) = 0;
 	virtual std::string scriptName(int npc) = 0; // the name in an actor's script header
 	virtual std::string partyName(int npc, bool &inParty) = 0;
 

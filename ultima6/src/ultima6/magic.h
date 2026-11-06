@@ -60,7 +60,7 @@ public:
 	bool bookHas(int caster, int spellIndex);
 
 private:
-	int random(int lo, int hi) {
+	int roll(int lo, int hi) {
 		return lo + _rng.next() % (hi - lo + 1);
 	}
 

@@ -53,7 +53,7 @@ int main() {
 			g.y = yy;
 			int buddy = w.actors.partyRoster[2];
 			w.actors.hp[buddy] = 5;
-			int hour = g.clock.hour;
+			int hour = g.gameClock.hour;
 			g.handleKey('R');
 			g.handleKey('5');
 			g.handleKey('2');
@@ -65,7 +65,7 @@ int main() {
 			CHECK(all.find("Dupre stands guard while the party rests.") != std::string::npos, "the guard");
 			CHECK(all.find("has healed.") != std::string::npos || all.find("You hear something!") != std::string::npos, "healed or heard something");
 			CHECK(w.actors.hp[buddy] > 5 || all.find("You hear something!") != std::string::npos, "the party mended");
-			CHECK(g.clock.hour != hour, "time passed");
+			CHECK(g.gameClock.hour != hour, "time passed");
 			if (failures == 0)
 				std::printf("ok\n");
 			return failures ? 1 : 0;

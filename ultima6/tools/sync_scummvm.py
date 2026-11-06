@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+"""Copies the stand-alone engine (src/) into a ScummVM tree as engines/ultima/ultima6/.
+
+    python tools/sync_scummvm.py C:/dev/scummvm
+
+The stand-alone sources stay the single source of truth until Nuvie is removed: every run regenerates the copies (never edit them in the ScummVM tree).
+What it does to each file:
+  * the include paths get the "ultima/ultima6/" prefix,
+  * the namespace Ultima6 (and the ::Ultima6:: qualifiers) moves inside namespace Ultima,
+  * a ScummVM licence header goes in front,
+and it leaves out what the host provides (the window backend, the headless backend) and replaces what the host does differently (scummvm/overlay/*).
+The glue (the Engine class and the metaengine hooks) is in scummvm/glue/ and is copied as it is, then engines/ultima/module.mk and configure.engine are patched between markers.
+"""
+import os
+import re
+import shutil
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SRC = os.path.join(ROOT, 'src')
+DIRS = ['engine', 'files', 'ultima6', 'martian_dreams', 'savage_empire']
+SKIP = {'engine/backend.cpp', 'engine/backend_win32.cpp'}
+OVERLAY = os.path.join(ROOT, 'scummvm', 'overlay')
+GLUE = os.path.join(ROOT, 'scummvm', 'glue')
+
+HEADER = '''/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+'''
+INCLUDE = re.compile(r'#include "(engine|files|ultima6|martian_dreams|savage_empire)/')
+
+
+def transform(text):
+    text = text.replace('\r\n', '\n')
+    text = INCLUDE.sub(r'#include "ultima/ultima6/\1/', text)
+    # qualified references from the global namespace
+    text = text.replace('::Ultima6::', '::Ultima::Ultima6::')
+    # the outer namespace: the first `namespace Ultima6 {` opens it, the last `} // namespace Ultima6` closes it
+    first = text.find('namespace Ultima6 {')
+    if first >= 0:
+        text = text[:first] + 'namespace Ultima {\n' + text[first:]
+        last = text.rfind('} // namespace Ultima6')
+        end = last + len('} // namespace Ultima6')
+        text = text[:end] + '\n} // namespace Ultima' + text[end:]
+    return text
+
+
+def patch(rel, text):
+    if rel == 'engine/framebuffer.cpp':
+        # no PNG writer in the host: the function stays, doing nothing
+        a = text.index('bool Framebuffer::savePng')
+        b = text.index(chr(10) + '}' + chr(10), a) + 3
+        stub = 'bool Framebuffer::savePng(const std::string &, int) const {' + chr(10) + chr(9) + 'return false;' + chr(10) + '}' + chr(10)
+        text = text[:a] + stub + text[b:]
+        text = text.replace('#include <cstdio>' + chr(10), '')
+    return text
+
+
+def write(path, text):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w', newline='\n') as f:
+        f.write(text)
+
+
+def main(dest_root):
+    dest = os.path.join(dest_root, 'engines', 'ultima', 'ultima6')
+    if os.path.isdir(dest):
+        shutil.rmtree(dest)
+    objs = []
+    for d in DIRS:
+        for name in sorted(os.listdir(os.path.join(SRC, d))):
+            rel = d + '/' + name
+            if rel in SKIP:
+                continue
+            overlay = os.path.join(OVERLAY, d, name)
+            path = overlay if os.path.exists(overlay) else os.path.join(SRC, d, name)
+            text = open(path, encoding='utf-8').read()
+            if name.endswith(('.cpp', '.h')):
+                text = HEADER + patch(rel, transform(text))
+            write(os.path.join(dest, d, name), text)
+            if name.endswith('.cpp'):
+                objs.append('ultima6/%s/%s.o' % (d, name[:-4]))
+    # files that exist only as overlays
+    for d in os.listdir(OVERLAY) if os.path.isdir(OVERLAY) else []:
+        for name in os.listdir(os.path.join(OVERLAY, d)):
+            if not os.path.exists(os.path.join(SRC, d, name)):
+                text = open(os.path.join(OVERLAY, d, name), encoding='utf-8').read()
+                if name.endswith(('.cpp', '.h')):
+                    text = HEADER + text
+                write(os.path.join(dest, d, name), text)
+                if name.endswith('.cpp'):
+                    objs.append('ultima6/%s/%s.o' % (d, name[:-4]))
+    for name in sorted(os.listdir(GLUE)) if os.path.isdir(GLUE) else []:
+        text = open(os.path.join(GLUE, name), encoding='utf-8').read()
+        if name.endswith(('.cpp', '.h')):
+            text = HEADER + text
+        write(os.path.join(dest, name), text)
+        if name.endswith('.cpp'):
+            objs.append('ultima6/%s.o' % name[:-4])
+    # module.mk: the block between the markers
+    mk = os.path.join(dest_root, 'engines', 'ultima', 'module.mk')
+    block = '# BEGIN generated by tools/sync_scummvm.py\nifdef ENABLE_ULTIMA6NEW\nMODULE_OBJS += \\\n' + ' \\\n'.join('\t' + o for o in sorted(objs)) + '\nendif\n# END generated\n'
+    text = open(mk, encoding='utf-8').read()
+    if '# BEGIN generated by tools/sync_scummvm.py' in text:
+        text = re.sub(r'# BEGIN generated by tools/sync_scummvm.py.*?# END generated\n', lambda m: block, text, flags=re.S)
+    else:
+        text = text.rstrip('\n') + '\n\n' + block
+    write(mk, text)
+    print('%d objects' % len(objs))
+
+
+if __name__ == '__main__':
+    main(sys.argv[1] if len(sys.argv) > 1 else 'C:/dev/scummvm')

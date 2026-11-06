@@ -22,7 +22,7 @@ struct GameClock;
  */
 class Talk : public ConversationHost {
 public:
-	Talk(World &world, TextWindow &scroll, BorlandRandom &rng, const GameClock &clock, int actor);
+	Talk(World &world, TextWindow &scroll, BorlandRandom &rng, const GameClock &gameClock, int actor);
 
 	/** False if the actor cannot talk (no script, or a creature that is not one of the speaking kinds). */
 	bool start();
@@ -49,7 +49,7 @@ public:
 	void showPortrait(int npc) override {
 		_portrait = npc;
 	}
-	int random(int lo, int hi) override;
+	int roll(int lo, int hi) override;
 	std::string scriptName(int npc) override;
 	std::string partyName(int npc, bool &inParty) override;
 	int talkFlags(int npc) override;

@@ -70,7 +70,7 @@ public:
 		}
 		off();
 	}
-	int random(int a, int b) {
+	int roll(int a, int b) {
 		if (a > b)
 			std::swap(a, b);
 		return a + _rng.next() % (b - a + 1);
@@ -127,8 +127,8 @@ std::vector<int16_t> Sfx::render(int effect, int param, BorlandRandom &rng) {
 	case 5:
 		di = 2000 - di * 16;
 		for (int i = 0; i < 40; ++i) {
-			if (s.random(0, 3) == 0) {
-				int f = s.random(0, 200) + di - 100;
+			if (s.roll(0, 3) == 0) {
+				int f = s.roll(0, 200) + di - 100;
 				if (f > 19)
 					s.tone(f);
 			} else {
@@ -141,8 +141,8 @@ std::vector<int16_t> Sfx::render(int effect, int param, BorlandRandom &rng) {
 	case 6:
 		di = 1000 - di * 8;
 		for (int i = 0; i < 40; ++i) {
-			if (s.random(0, 7) == 0) {
-				int f = s.random(0, di * 2) + di;
+			if (s.roll(0, 7) == 0) {
+				int f = s.roll(0, di * 2) + di;
 				if (f > 19)
 					s.tone(f);
 			} else {
@@ -159,8 +159,8 @@ std::vector<int16_t> Sfx::render(int effect, int param, BorlandRandom &rng) {
 		}
 		for (int i = 0; i < 40; ++i) {
 			if (di > 19) {
-				if (s.random(0, 7) == 0)
-					s.tone(s.random(0, 40) + di);
+				if (s.roll(0, 7) == 0)
+					s.tone(s.roll(0, 40) + di);
 				else
 					s.off();
 			}
@@ -170,7 +170,7 @@ std::vector<int16_t> Sfx::render(int effect, int param, BorlandRandom &rng) {
 		break;
 	case 8:
 		for (int i = 0; i < 40; ++i) {
-			s.tone(s.random(200, 19));
+			s.tone(s.roll(200, 19));
 			s.delay(1, 8);
 		}
 		s.off();
@@ -183,7 +183,7 @@ std::vector<int16_t> Sfx::render(int effect, int param, BorlandRandom &rng) {
 		break;
 	case 11:
 		for (int i = 0; i < 20; ++i)
-			s.noise(s.random(4800, 600), 350, 1);
+			s.noise(s.roll(4800, 600), 350, 1);
 		break;
 	case 12:
 	case 13:
@@ -199,8 +199,8 @@ std::vector<int16_t> Sfx::render(int effect, int param, BorlandRandom &rng) {
 	case 16:
 		di = 1000 - di * 8;
 		for (int i = 0; i < 40; ++i) {
-			if (s.random(0, 1) != 0 && di > 20)
-				s.tone(s.random(s.random(di, 20), 19));
+			if (s.roll(0, 1) != 0 && di > 20)
+				s.tone(s.roll(s.roll(di, 20), 19));
 			else
 				s.off();
 			s.delay(1, 8);

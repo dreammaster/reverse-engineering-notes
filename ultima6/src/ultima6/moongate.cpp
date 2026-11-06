@@ -14,11 +14,11 @@ static const uint8_t MOON_GATES[28][2] = {{0, 0}, {7, 0}, {7, 7}, {6, 6}, {6, 5}
 										   {0, 4}, {7, 3}, {7, 2}, {6, 1}, {6, 0}, {5, 0}, {5, 7}, {4, 6}, {3, 5}, {3, 4}, {2, 3}, {2, 2}, {1, 1}, {1, 0}};
 
 void Game::updateMoons() {
-	int day = clock.day < 1 ? 1 : (clock.day > 28 ? 28 : clock.day);
+	int day = gameClock.day < 1 ? 1 : (gameClock.day > 28 ? 28 : gameClock.day);
 	_gateA = MOON_GATES[day - 1][0];
 	_gateB = MOON_GATES[day - 1][1];
-	_phaseA = (uint8_t)((_gateA * 3 + 0x12 - clock.hour) % 24);
-	_phaseB = (uint8_t)((_gateB * 3 + 0x14 - clock.hour) % 24);
+	_phaseA = (uint8_t)((_gateA * 3 + 0x12 - gameClock.hour) % 24);
+	_phaseB = (uint8_t)((_gateB * 3 + 0x14 - gameClock.hour) % 24);
 	placeGates();
 }
 
@@ -111,12 +111,12 @@ bool Game::enterMoongate(int px, int py) {
 	for (int idx : here) {
 		const World::Obj &o = _world.objects[idx];
 		if (o.type == 0x55) {
-			if (clock.hour == 0 && clock.minute < 10) {
+			if (gameClock.hour == 0 && gameClock.minute < 10) {
 				changeLevel(0x18, 0x1D, 1);
 				advanceTime(10);
 			} else {
 				int d = std::abs(7 - (int)_phaseA) - std::abs(7 - (int)_phaseB);
-				bool first = d < 0 || (d == 0 && (clock.minute < 30) == (_phaseA < _phaseB));
+				bool first = d < 0 || (d == 0 && (gameClock.minute < 30) == (_phaseA < _phaseB));
 				gateTo(first ? _gateA : _gateB);
 			}
 			return true;

@@ -164,12 +164,12 @@ bool Magic::cast(int caster, const SpellInfo &spell, int target) {
 			_scroll.print("\nFailed\n");
 			return true;
 		}
-		_combat.applyDamage(caster, target, random(1, 10));
+		_combat.applyDamage(caster, target, roll(1, 10));
 		return true;
 	case 6: // Heal
 		if (!haveTarget || a.hp[target] == 0)
 			break;
-		a.hp[target] = (uint8_t)std::min<int>(std::max(1, std::min(255, a.level[target] * 30)), a.hp[target] + random(1, 30));
+		a.hp[target] = (uint8_t)std::min<int>(std::max(1, std::min(255, a.level[target] * 30)), a.hp[target] + roll(1, 30));
 		return true;
 	case 52: // Great Heal
 		if (!haveTarget || a.hp[target] == 0)
@@ -189,11 +189,11 @@ bool Magic::cast(int caster, const SpellInfo &spell, int target) {
 		if (!haveTarget)
 			break;
 		int x = (_combat.adjustedDexterity(target) / 2 + 30 - _combat.adjustedIntelligence(caster)) / 2;
-		if (x > random(1, 30)) {
+		if (x > roll(1, 30)) {
 			_scroll.print("\nFailed\n");
 			return true;
 		}
-		_combat.applyDamage(caster, target, random(1, 10));
+		_combat.applyDamage(caster, target, roll(1, 10));
 		return true;
 	}
 	case 18: { // Poison (sub_21BF2, sub_212F2): immune creatures (flag 4) say "No effect"; the target resists when half its strength + 30 less the caster's intelligence, halved, beats a roll of 1-30
@@ -205,7 +205,7 @@ bool Magic::cast(int caster, const SpellInfo &spell, int target) {
 			return true;
 		}
 		int x = (_combat.adjustedStrength(target) / 2 + 30 - _combat.adjustedIntelligence(caster)) / 2;
-		if (x > random(1, 30)) {
+		if (x > roll(1, 30)) {
 			_scroll.print("\nFailed\n");
 			return true;
 		}
@@ -218,14 +218,14 @@ bool Magic::cast(int caster, const SpellInfo &spell, int target) {
 		const CreatureStats *cs = Combat::stats(_world.objects[tk].type);
 		if (cs && (cs->flags & 8))
 			break;
-		int dmg = random(1, 20);
+		int dmg = roll(1, 20);
 		_combat.applyDamage(caster, target, cs && (cs->flags & 0x10) ? dmg * 2 : dmg);
 		return true;
 	}
 	case 68: // Lightning
 		if (!haveTarget)
 			break;
-		_combat.applyDamage(caster, target, random(1, 30));
+		_combat.applyDamage(caster, target, roll(1, 30));
 		return true;
 	default:
 		break;

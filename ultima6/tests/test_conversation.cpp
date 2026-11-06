@@ -39,7 +39,7 @@ public:
 	std::string genderTitle() override { return "milord"; }
 	std::string timeOfDay() override { return "morning"; }
 	void showPortrait(int) override {}
-	int random(int lo, int) override { return lo; }
+	int roll(int lo, int) override { return lo; }
 	std::string scriptName(int npc) override { return "Npc" + std::to_string(npc); }
 	std::string partyName(int, bool &in) override { in = false; return ""; }
 	int talkFlags(int n) override { return flags[n]; }

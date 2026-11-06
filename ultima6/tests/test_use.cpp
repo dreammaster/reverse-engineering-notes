@@ -738,7 +738,7 @@ int main() {
 		gw.handleKey(KEY_ENTER);
 		CHECK(ww.actors.hp[buddy] > 3 && !(ww.actors.status[buddy] & 0x08));
 		CHECK(gw.x == 307 && gw.y == 352 && gw.z == 0);
-		bool held = (gw.clock.hour >= 8 && gw.clock.hour <= 11) || (gw.clock.hour >= 14 && gw.clock.hour <= 17);
+		bool held = (gw.gameClock.hour >= 8 && gw.gameClock.hour <= 11) || (gw.gameClock.hour >= 14 && gw.gameClock.hour <= 17);
 		CHECK(held);
 	}
 

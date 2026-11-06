@@ -28,7 +28,7 @@ public:
 	ActorManager(World &world, const Movement &movement) : _world(world), _movement(movement) {
 	}
 
-	void hourChanged(const GameClock &clock);
+	void hourChanged(const GameClock &gameClock);
 	/** One game minute; (px, py, pz) is the party's position. */
 	void tick(int px, int py, int pz);
 	/** The schedule-walkers' part of every turn (sub_2A8DA / 2A3BA): actors that have reached their place take up its worktype, and those far from the party are put there. */

@@ -591,7 +591,7 @@ bool Conversation::evop(std::vector<TypedValue> &st) {
 	case OP_RAND:
 		v[1] = pop(st);
 		v[0] = pop(st);
-		out.val = v[0] >= v[1] ? v[0] : (uint32_t)_host.random((int)v[0], (int)v[1]);
+		out.val = v[0] >= v[1] ? v[0] : (uint32_t)_host.roll((int)v[0], (int)v[1]);
 		break;
 	case OP_FLAG:
 		v[1] = pop(st);

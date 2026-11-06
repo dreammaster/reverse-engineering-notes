@@ -22,7 +22,7 @@ namespace Ultima6 {
 namespace Ultima6 {
 
 /**
- * The game clock as the saved game keeps it (objlist +0x1BF3..): minute, hour, day (1-28), month
+ * The game gameClock as the saved game keeps it (objlist +0x1BF3..): minute, hour, day (1-28), month
  * (1-13) and year; GAME.EXE's time advance (sub_13305) steps it by minutes.
  */
 struct GameClock {
@@ -36,7 +36,7 @@ struct GameClock {
 };
 
 /**
- * The running game: party position, clock, message log and the commands. Movement and time follow the
+ * The running game: party position, gameClock, message log and the commands. Movement and time follow the
  * original in structure (one step is one minute; directions are the eight-way table at ds:01A2 / 01AA
  * with north first, clockwise); walkability is the port of GAME.EXE's sub_25D7F in Movement.
  */
@@ -65,12 +65,12 @@ public:
 	/** Whether the party leader can enter a tile. */
 	bool canWalk(int x, int y, int z);
 
-	/** Lets game time pass: the clock, the hourly schedules and the people walking about. */
+	/** Lets game time pass: the gameClock, the hourly schedules and the people walking about. */
 	void advanceTime(int minutes);
 	/** sub_2AB7A: runs the actors' turns after a command until it is the player's turn again; a game minute passes whenever nobody has moves left. */
 	void runTurns();
 
-	/** Writes the saved game (the world and the clock) to `saveDir`. */
+	/** Writes the saved game (the world and the gameClock) to `saveDir`. */
 	bool save();
 	std::string saveDir;
 
@@ -92,7 +92,7 @@ public:
 	void timePlayed(int &years, int &months, int &days) const;
 
 	int x, y, z;
-	GameClock clock;
+	GameClock gameClock;
 	std::vector<std::string> log;
 	TextWindow scroll; // the text scroll of the play screen
 
