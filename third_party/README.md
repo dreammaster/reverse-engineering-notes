@@ -15,6 +15,7 @@ Source of the libraries of the original game that Deponia 1 needs, at the versio
 | `vorbis` | https://github.com/xiph/vorbis | v1.3.5 (f409320) | BSD 3-clause |
 | `SDL2` | https://github.com/libsdl-org/SDL | release-2.30.9 (c98c4fb) | zlib |
 | `freetype` | https://github.com/freetype/freetype | VER-2-8 (2.8.0, a12a344) | FreeType License (FTL) |
+| `lua54` | https://www.lua.org/ftp/lua-5.4.0.tar.gz | 5.4.0 (sha256 eac0836e...) | MIT |
 
 Not changed: the files are as upstream (see each `COPYING`; FreeType: `FTL.TXT`). FreeType is the `include/` and `src/` of the release without its
 `src/tools` and build files; all its modules are built (the default `ftmodule.h`). HarfBuzz is `src/` of the release (with the UCDN
@@ -29,3 +30,5 @@ and `build/make/rtcd.pl --arch=generic` make (`vpx_version.h` by hand, "v1.7.0")
 `SDL2` is `include/`, `src/` and the CMake files of the release, built with cmake and ninja (`tools/build_third_party.py sdl2`) for the standalone player
 (`SDL=1 tools/build.sh deponia1`). The original has SDL2 ~2.0.4 (THIRD_PARTY.md); a newer 2.x is used because the old sources do not build with a current
 compiler - the API the player uses is the same.
+
+`lua54` is `src/` of Lua 5.4.0 without `lua.c` and `luac.c`: the Lua of Night of the Rabbit's executable (its `$LuaVersion` string says "Lua 5.4.0  Copyright (C) 1994-2020"). The other games run Lua 5.1 (ScummVM's `common/lua`); `src/nightoftherabbit` is built against this one (`tools/tbuild.py ... --game nightoftherabbit`). The files are compiled as C++ (all of them, so that the names match the engine's); no change to the sources.
