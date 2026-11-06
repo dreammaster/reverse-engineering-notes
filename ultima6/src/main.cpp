@@ -124,6 +124,8 @@ int main(int argc, char **argv) {
 			std::fprintf(stderr, "cannot load the menu files\n");
 			return 1;
 		}
+		if (const char *env = std::getenv("U6_TRANSFER_DIR"))
+			front.transferDir = env;
 		bool running = true;
 		while (running) {
 			music.set(front.music());

@@ -155,9 +155,9 @@ std::string Conversation::format(const std::string &in) {
 				out += _ystring;
 			else if (c == '$' && k == 'Z')
 				out += _svars[VAR_INPUT];
-			else if (c == '$' && std::isdigit((unsigned char)k))
+			else if (c == '$' && ((unsigned char)k >= '0' && (unsigned char)k <= '9'))
 				out += _svars[std::min<long>(std::strtol(&in[i + 1], nullptr, 10), VAR_LAST)];
-			else if (c == '#' && std::isdigit((unsigned char)k)) {
+			else if (c == '#' && ((unsigned char)k >= '0' && (unsigned char)k <= '9')) {
 				_lastValue = var((int)std::strtol(&in[i + 1], nullptr, 10));
 				out += std::to_string(_lastValue);
 			} else {
@@ -174,7 +174,7 @@ std::string Conversation::format(const std::string &in) {
 		case '~': // speech cue
 			if (i + 3 <= len) {
 				++i;
-				for (++i; i < len && std::isdigit((unsigned char)in[i]);)
+				for (++i; i < len && ((unsigned char)in[i] >= '0' && (unsigned char)in[i] <= '9');)
 					++i;
 			}
 			break;

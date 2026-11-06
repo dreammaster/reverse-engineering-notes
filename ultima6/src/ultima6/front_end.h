@@ -31,6 +31,9 @@ public:
 
 	explicit FrontEnd(const std::string &dir);
 
+	/** A folder to look for the characters of Ultima V and IV in as well (the host sets it). */
+	std::string transferDir;
+
 	bool ok() const {
 		return _ok;
 	}

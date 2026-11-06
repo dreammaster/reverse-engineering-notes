@@ -48,6 +48,19 @@ HEADER = '''/* ScummVM - Graphic Adventure Engine
 INCLUDE = re.compile(r'#include "(engine|files|ultima6|martian_dreams|savage_empire)/')
 
 
+def with_std(rel, text):
+    if rel == 'engine/std_headers.h':
+        return text
+    first_inc = text.find('#include')
+    guard = text.find('#ifndef')
+    marker = '#include "ultima/ultima6/engine/std_headers.h"' + chr(10)
+    if rel.endswith('.h') and guard >= 0 and (first_inc < 0 or guard < first_inc):
+        # after the include guard
+        end = text.index(chr(10), text.index('#define', guard)) + 1
+        return text[:end] + chr(10) + marker + text[end:]
+    return marker + chr(10) + text
+
+
 def transform(text):
     text = text.replace('\r\n', '\n')
     text = INCLUDE.sub(r'#include "ultima/ultima6/\1/', text)
@@ -66,8 +79,9 @@ def transform(text):
 def patch(rel, text):
     if rel == 'engine/framebuffer.cpp':
         # no PNG writer in the host: the function stays, doing nothing
-        a = text.index('bool Framebuffer::savePng')
-        b = text.index(chr(10) + '}' + chr(10), a) + 3
+        # (the helpers in the anonymous namespace above it use FILE, which the host forbids)
+        a = text.index('namespace {')
+        b = text.index(chr(10) + '}' + chr(10), text.index('bool Framebuffer::savePng')) + 3
         stub = 'bool Framebuffer::savePng(const std::string &, int) const {' + chr(10) + chr(9) + 'return false;' + chr(10) + '}' + chr(10)
         text = text[:a] + stub + text[b:]
         text = text.replace('#include <cstdio>' + chr(10), '')
@@ -94,7 +108,7 @@ def main(dest_root):
             path = overlay if os.path.exists(overlay) else os.path.join(SRC, d, name)
             text = open(path, encoding='utf-8').read()
             if name.endswith(('.cpp', '.h')):
-                text = HEADER + patch(rel, transform(text))
+                text = HEADER + with_std(rel, patch(rel, transform(text)))
             write(os.path.join(dest, d, name), text)
             if name.endswith('.cpp'):
                 objs.append('ultima6/%s/%s.o' % (d, name[:-4]))

@@ -1520,7 +1520,7 @@ void Game::useSilverHorn() {
 bool Game::degrees(const std::string &s, char plus, char minus, int &out) {
 	size_t i = 0;
 	int n = 0;
-	while (i < s.size() && std::isdigit((unsigned char)s[i]))
+	while (i < s.size() && ((unsigned char)s[i] >= '0' && (unsigned char)s[i] <= '9'))
 		n = n * 10 + (s[i++] - '0');
 	if (i == 0 || i >= s.size())
 		return false;

@@ -233,8 +233,8 @@ void FrontEnd::render(Framebuffer &screen) {
 void FrontEnd::startTransfer() {
 	_found.clear();
 	std::vector<std::string> dirs;
-	if (const char *env = std::getenv("U6_TRANSFER_DIR"))
-		dirs.push_back(env);
+	if (!transferDir.empty())
+		dirs.push_back(transferDir);
 	dirs.push_back(_dir);
 	dirs.push_back(joinPath(_dir, "ULTIMA"));
 	dirs.push_back(joinPath(_dir, "SAVEGAME"));
