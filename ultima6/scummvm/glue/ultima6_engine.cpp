@@ -7,6 +7,8 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/fs.h"
+#include "common/file.h"
+#include "common/str.h"
 #include "common/mutex.h"
 #include "common/system.h"
 #include "engines/util.h"
@@ -82,7 +84,15 @@ private:
 // The screen, the input and the sound of ScummVM for the games.
 class ScummBackend : public Backend {
 public:
-	ScummBackend() : _stream(nullptr), _quit(false) {
+	ScummBackend() : _stream(nullptr), _quit(false), _scripted(false), _scriptPos(0) {
+		// A test aid, as --keys and --shot of the stand-alone program: the keys of "ultima6_keys" (plain characters and {up} {down} {left} {right} {enter} {esc} {space} {bs})
+		// are pressed one after the other, then the screen is written to "ultima6_shot" (a BMP) and the game ends.
+		if (ConfMan.hasKey("ultima6_keys")) {
+			_scripted = true;
+			parseScript(ConfMan.get("ultima6_keys").c_str());
+			if (ConfMan.hasKey("ultima6_shot"))
+				_shot = ConfMan.get("ultima6_shot").c_str();
+		}
 	}
 
 	~ScummBackend() override {
@@ -111,6 +121,14 @@ public:
 		pump();
 		if (_quit)
 			return KEY_QUIT;
+		if (_scripted) {
+			if (_scriptPos < _script.size())
+				return _script[_scriptPos++];
+			if (!_shot.empty())
+				saveShot();
+			_quit = true;
+			return KEY_QUIT;
+		}
 		if (_keys.empty())
 			return KEY_NONE;
 		Input in = _keys.front();
@@ -157,6 +175,63 @@ private:
 	struct Input {
 		int key, x, y;
 	};
+
+	void parseScript(const char *s) {
+		static const struct {
+			const char *name;
+			int key;
+		} NAMES[] = {{"up", KEY_UP}, {"down", KEY_DOWN}, {"left", KEY_LEFT}, {"right", KEY_RIGHT}, {"enter", KEY_ENTER}, {"esc", KEY_ESC}, {"space", KEY_SPACE}, {"bs", KEY_BACKSPACE}};
+		for (; *s; ++s) {
+			if (*s != '{') {
+				_script.push_back((unsigned char)*s);
+				continue;
+			}
+			const char *end = s;
+			while (*end && *end != '}')
+				++end;
+			if (!*end)
+				break;
+			std::string name(s + 1, end);
+			for (size_t i = 0; i < sizeof(NAMES) / sizeof(NAMES[0]); ++i)
+				if (name == NAMES[i].name)
+					_script.push_back(NAMES[i].key);
+			s = end;
+		}
+	}
+
+	void saveShot() {
+		byte palette[256 * 3];
+		g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+		Graphics::Surface *surface = g_system->lockScreen();
+		Common::DumpFile out;
+		if (surface && out.open(Common::Path(_shot.c_str(), '/'))) {
+			const uint32 pitch = Framebuffer::WIDTH, size = pitch * Framebuffer::HEIGHT;
+			out.writeUint16LE(0x4D42);
+			out.writeUint32LE(14 + 40 + 1024 + size);
+			out.writeUint32LE(0);
+			out.writeUint32LE(14 + 40 + 1024);
+			out.writeUint32LE(40);
+			out.writeUint32LE(Framebuffer::WIDTH);
+			out.writeUint32LE(Framebuffer::HEIGHT);
+			out.writeUint16LE(1);
+			out.writeUint16LE(8);
+			out.writeUint32LE(0);
+			out.writeUint32LE(size);
+			out.writeUint32LE(2835);
+			out.writeUint32LE(2835);
+			out.writeUint32LE(256);
+			out.writeUint32LE(0);
+			for (int i = 0; i < 256; ++i) {
+				out.writeByte(palette[i * 3 + 2]);
+				out.writeByte(palette[i * 3 + 1]);
+				out.writeByte(palette[i * 3]);
+				out.writeByte(0);
+			}
+			for (int y = Framebuffer::HEIGHT - 1; y >= 0; --y)
+				out.write((const byte *)surface->getBasePtr(0, y), pitch);
+		}
+		g_system->unlockScreen();
+	}
 
 	void open() {
 		if (_stream)
@@ -216,7 +291,10 @@ private:
 
 	SoundStream *_stream;
 	Audio::SoundHandle _handle;
-	bool _quit;
+	bool _quit, _scripted;
+	size_t _scriptPos;
+	std::vector<int> _script;
+	std::string _shot;
 	std::vector<Input> _keys;
 };
 
@@ -301,12 +379,14 @@ Common::Error Ultima6Engine::run() {
 
 	// The menu and character creation (U.EXE), then the game (GAME.EXE).
 	// Martian Dreams and Savage Empire have no menus of their own yet: the saved game is walked about in.
-	Ultima6::World world;
+	std::unique_ptr<Ultima6::World> worldHolder(new Ultima6::World); // (big: not on the stack)
+	Ultima6::World &world = *worldHolder;
 	world.game = id;
 	bool created = false;
 	Ultima6::NewCharacter character;
 	if (id == GameId::Ultima6) {
-		Ultima6::FrontEnd front("");
+		std::unique_ptr<Ultima6::FrontEnd> frontHolder(new Ultima6::FrontEnd(""));
+		Ultima6::FrontEnd &front = *frontHolder;
 		if (!front.ok())
 			return Common::Error(Common::kReadingFailed, "cannot load the menu files");
 		bool running = true;
@@ -330,7 +410,8 @@ Common::Error Ultima6Engine::run() {
 	bool haveSave = readFile(joinPath(SAVE_DIR, "OBJLIST"), probe);
 	if (!world.load("", created ? &character : nullptr, !created && haveSave ? std::string(SAVE_DIR) : std::string()))
 		return Common::Error(Common::kReadingFailed, world.error().c_str());
-	Ultima6::Game game(world);
+	std::unique_ptr<Ultima6::Game> gameHolder(new Ultima6::Game(world));
+	Ultima6::Game &game = *gameHolder;
 	game.saveDir = SAVE_DIR;
 	BorlandRandom sfxRandom(7);
 	game.sound = [&](int effect, int param) {

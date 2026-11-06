@@ -69,7 +69,7 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
       sprite part, containers in the pack view, solo mode, `cmd_look` darkness and the rest of the partial entries of [approximations.md](approximations.md).
 - [ ] Open for Martian Dreams / Savage Empire: their own mechanics (barges, heat and cold, oxium and fuel lamps, dreams, the drawbridge text, powered levers: the strings of MD's `GAME.EXE`
       from file offset 0x33000 list them), usable-object lists, panel colours, music (MD.TIM / MUSIC.LZC, Roland and AdLib), intros and endings.
-- [ ] Goals 5 and 6 (the ScummVM import, removing `nuvie/`, replacing every approximation) have not been started.
+- [x] Goal 5 is started: the engine runs inside ScummVM as the sub-engine `ultima6new` (see `docs/scummvm.md`); goal 6 (removing `nuvie/`, replacing every approximation) is not.
 
 ## 6. State after the sixth autonomous stretch (2026-11-05)
 
@@ -81,11 +81,11 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
       partial entries of [approximations.md](approximations.md).
 - [ ] Open for Martian Dreams / Savage Empire: everything of section 5, plus their own command functions (`sub_23C1A` is MD's command loop: look is `sub_14ED4`, with the clock, the ore
       and the machines' states; get `sub_15BFE`; the use command has not been located; they all still run on Ultima VI's rules).
-- [ ] Goals 5 and 6 (the ScummVM import, removing `nuvie/`, replacing every approximation) have not been started.
+- [x] Goal 5 is started: the engine runs inside ScummVM as the sub-engine `ultima6new` (see `docs/scummvm.md`); goal 6 (removing `nuvie/`, replacing every approximation) is not.
 
 ## 7. Blockers and next steps (2026-11-06)
 
 - Martian Dreams Use: the dispatch and 9 of 75 actions are ported (#76); the rest need the plot-flag globals (`byte_469xx`), the cutscene calls (`sub_3F864`) and the digging helpers.
 - Savage Empire Use: the table of 80 types and the handler list are extracted ([spinoffs.md](spinoffs.md)); the handlers are inline blocks whose pairing with the types needs checking before porting.
-- Goal 5 (the ScummVM import) needs a ScummVM source tree, which is not in this repository (`nuvie/` is only the old engine's folder): the engine's interfaces (`Backend`, `Framebuffer`, `Game`) are ready to be wrapped once one is at hand.
+- Goal 5: done for a first version, see `docs/scummvm.md` for what is checked and what is open.
 - Goal 6 (replace every approximation) is tracked entry by entry in [approximations.md](approximations.md).
