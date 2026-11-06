@@ -251,6 +251,25 @@ std::string Game::mdLookExtra(const World::Obj &o) const {
 			return "You cannot decipher its purpose." + nl;
 		}
 	}
+	if (t == 0x13A) { // a panel: loose (quality bit 1, when it is not carried) and broken (bit 2)
+		std::string out;
+		if ((o.quality & 1) && !carriedObject(o))
+			out += "It appears to be loose." + nl;
+		if (o.quality & 2)
+			out += "It appears to be broken." + nl;
+		return out;
+	}
+	if (t == 0x1C9) { // the remote controls
+		static const char *const TEXT[7] = {"a mechanical system", "a valve system", "an electrical system", "this dream machine", "this spray system", "the ruby lens system", "the cistern valves"};
+		if (o.quality >= 1 && o.quality <= 7)
+			return std::string("It appears to control ") + TEXT[o.quality - 1] + "." + nl;
+		return "You cannot decipher what it controls." + nl;
+	}
+	if (t == 0xB3 || t == 0xE3) { // doors: locked (quality bit 0x80), rusted shut when the bits 0xC0 are set
+		if (!(o.quality & 0x80))
+			return "";
+		return (o.quality & 0x7F) >= 0x40 ? "It is apparently rusted shut." + nl : "It is apparently locked." + nl;
+	}
 	if (t == 0x11F)
 		return o.quality ? "It has a heartstone." + nl : "";
 	if (t == 0x5B || t == 0x62) {
