@@ -316,6 +316,24 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		break;
 	}
+	case 33: { // sub_5C8D9: the sextant, on the surface: degrees of longitude (x - 512) * 360 / 1024 (W, 0 and 180 blank, E past it) and of latitude (y - 512) * 240 / 1024 (S, blank at 0, N)
+		if (z != 0) {
+			message("Not while underground.\n");
+			break;
+		}
+		int k = _world.actorObject(actingActor());
+		int px = _world.objects[k].x, py = _world.objects[k].y;
+		int lon = (px - 512) * 360 / 1024, lat = (py - 512) * 240 / 1024;
+		char ns = lat > 0 ? 'S' : lat == 0 ? ' ' : 'N', ew = 'W';
+		if (lon == 180 || lon == -180 || lon == 0)
+			ew = ' ';
+		else if (lon < 0)
+			ew = 'E';
+		lon = 180 - std::abs(lon);
+		lat = std::abs(lat);
+		message("You are somewhere near " + std::string(1, 10) + "Lat:" + std::to_string(lat) + " " + std::string(1, ns) + std::string(1, 10) + "Long:" + std::to_string(lon) + " " + std::string(1, ew) + std::string(1, 10));
+		break;
+	}
 	case 66: // sub_5CE18: the spittoon, by what the member can still spit (the status flag 0x40 of the person)
 		message((_world.actors.status[actingActor()] & 0x40) ? "Your mouth is too dry.\n" : "You spit into the spittoon.\n");
 		break;

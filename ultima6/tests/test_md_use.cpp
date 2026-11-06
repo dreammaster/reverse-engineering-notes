@@ -124,6 +124,21 @@ int main() {
 		w.deleteObject(gate);
 	}
 
+	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
+	{
+		std::vector<int> here;
+		w.objectsAt(px + 1, py, 0, here);
+		for (int i : here)
+			if (w.objects[i].actor < 0)
+				w.deleteObject(i);
+		int sextant = put(w, 0x60, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You are somewhere near") != std::string::npos);
+		CHECK(logText(g).find("S") != std::string::npos);
+		w.deleteObject(sextant);
+	}
+
 	// a thing with no recipe (type 0x1FE has none)
 	int thing = put(w, 0x1FE, 0, px + 1, py, 0);
 	(void)thing;
