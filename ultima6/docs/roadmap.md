@@ -82,3 +82,10 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 - [ ] Open for Martian Dreams / Savage Empire: everything of section 5, plus their own command functions (`sub_23C1A` is MD's command loop: look is `sub_14ED4`, with the clock, the ore
       and the machines' states; get `sub_15BFE`; the use command has not been located; they all still run on Ultima VI's rules).
 - [ ] Goals 5 and 6 (the ScummVM import, removing `nuvie/`, replacing every approximation) have not been started.
+
+## 7. Blockers and next steps (2026-11-06)
+
+- Martian Dreams Use: the dispatch and 9 of 75 actions are ported (#76); the rest need the plot-flag globals (`byte_469xx`), the cutscene calls (`sub_3F864`) and the digging helpers.
+- Savage Empire Use: the table of 80 types and the handler list are extracted ([spinoffs.md](spinoffs.md)); the handlers are inline blocks whose pairing with the types needs checking before porting.
+- Goal 5 (the ScummVM import) needs a ScummVM source tree, which is not in this repository (`nuvie/` is only the old engine's folder): the engine's interfaces (`Backend`, `Framebuffer`, `Game`) are ready to be wrapped once one is at hand.
+- Goal 6 (replace every approximation) is tracked entry by entry in [approximations.md](approximations.md).
