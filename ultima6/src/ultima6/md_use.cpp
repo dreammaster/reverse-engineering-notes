@@ -260,6 +260,8 @@ std::string Game::mdLookExtra(const World::Obj &o) const {
 			out += std::string(LOAD[o.quality - 1]) + nl;
 		return out;
 	}
+	if (t == 0x14D) // the cannon, when it is loaded (quality)
+		return o.quality ? "The cannon will fire steel cannon balls." + nl : "";
 	if (t == 0x13A) { // a panel: loose (quality bit 1, when it is not carried) and broken (bit 2)
 		std::string out;
 		if ((o.quality & 1) && !carriedObject(o))
