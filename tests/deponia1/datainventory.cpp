@@ -30,6 +30,8 @@ int main(int argc, char **argv) {
 	wxLog::loglevel = 0;
 
 	graphics = new NullGraphics();
+	if (getenv("GAME_PASSW"))
+		passw = wxString(getenv("GAME_PASSW"));
 	THGameControl *control = new THGameControl();
 	g_pGameControl = control;
 	TVisionaire::SetVisPlayerMode(true);
