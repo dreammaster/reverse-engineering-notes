@@ -873,6 +873,12 @@ void Game::getAt(int tx, int ty) {
 	} else if (_world.actors.strength[actor] * 20 < w + _world.carriedWeight(actor)) {
 		message("\nThe total is too heavy.\n");
 	} else {
+		if (_world.game == GameId::MartianDreams && (o.type == 0x13A || o.type == 0xCE) && !(o.quality & 1)) {
+			// sub_163AE 166C0-16A00: a panel (0x13A) or a 0xCE can only be taken when it is loose (quality bit 1)
+			message("Won't budge !\n");
+			prompt();
+			return;
+		}
 		if (_world.game == GameId::MartianDreams && (o.type == 0x1C0 || o.type == 0x1C1) && actor != 6) {
 			// MD's get (sub_163AE 16720-167F5): radium is hot; taken without tongs (0x88) in either hand it burns the one who takes it
 			bool tongs = false;
