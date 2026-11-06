@@ -84,3 +84,15 @@ Recipe meaning by the objects that use it: 0 tent, 1 book/note/scroll, 2 pool cu
 24 lever/switch, 25 cannon, 26 berry, 30 lamp oil, 31 switch bar, 32 spyglass, 33 sextant, 34 containers, 35 pool table, 36 pipe organ, 37 potash, 38 lens, 40 ray guns/combine, 41 cannonballs, 42 bucket,
 43 map, 44/56 doors, 45 panel, 46 belt, 47 radium chip, 48-49 sprayers, 50 oxium bin, 51 pigment, 52-54 dream machine and dreamstuff, 55 elixir, 57 instruments, 58-59 wormsbane, 60 potash/oil,
 61 radium, 62 shovel on dirt and hole, 64 many, 65 heart stone, 66 spittoon, 67 ruby slippers, 68 manuscript, 69 mirror, 70 gate, 71 buckets, 72 valve, 73 chip on man, 74 air bottle.
+
+## Savage Empire: the Use command (findings, not ported)
+
+SE's command loop (jump table at 0x15564 in `se/se_game.asm`: events 129 `sub_302B8`, 130 `sub_2FBBA`, 131 `sub_2F530`, 132 **Use `sub_35E46`**, 133 a flag, 134 `sub_2EE8D`) is built like Ultima VI's, not like Martian
+Dreams': `sub_35E46` picks the object (messages "Out of range!" 0x1FE, "Not possible." 0x374, "Not in solo mode!", "`%s can't use that!") and looks its type up in a table of 80 word types at cs:0x8965
+(file 0x29937, sorted: 0x0A 0x14 0x16 0x19 0x1D 0x2A ... 0x12E 0x133) with a parallel table of 80 handler offsets 0xA2 bytes later (inline code blocks that end in `jmp loc_36508`).
+The handlers call (in address order, names by the objects that use them): bottle of liquor `sub_31C2D`, jug `sub_354BC`, crate `sub_18AB9`/`sub_2EC8A`, bell `sub_31293`, bones `sub_3215F`, bean and corn stalk
+`sub_33F4B`/`sub_33E52`, burnt logs `sub_33EA5`, mortar and grinding stone `sub_35150`, magnesium ribbon `sub_353D0`, door `sub_31DF5`, clay `sub_310AD`, crystal garden `sub_34F6B`, turtle bait `sub_346A8`,
+digging stick `sub_3204A`, vine `sub_35D54`, rope `sub_34783`, hole in the ceiling `sub_31F60`, fishing pole `sub_34FDE`, loom `sub_19505`, knives `sub_31B48`, jungle drum `sub_343E9`, tar pit `sub_33F9E`,
+metal bucket `sub_34C0A`, notebook `sub_32488`, camera `sub_3542B`, hammers `sub_335A9`, grenade `sub_34147`, flintlock `sub_34D88`, oven and fires `sub_34EDF`, cloth strips `sub_3423A`/`sub_31436`,
+torches `sub_34302`/`sub_31671`, rafts `sub_31E67`, totems `sub_33777`, turtle `sub_33C06`, machine `sub_35686`, wire screen `sub_31C98` (the pairing of the later blocks with their types may be one off).
+The engine still uses Ultima VI's table for Savage Empire.
