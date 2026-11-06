@@ -54,3 +54,18 @@ add_test(NAME state COMMAND test_state)
 add_executable(test_grammar tests/test_grammar.cpp)
 target_link_libraries(test_grammar xanth_engine)
 add_test(NAME grammar COMMAND test_grammar)
+
+# The tests that compare with the original need its data and the analysis tables from the surrounding reverse-engineering tree (not part of a stand-alone checkout):
+# when they exist their absolute paths are handed to the tests, otherwise those comparisons are skipped. XANTH_ROOT is the folder that holds game/, game_out/ and reversing/.
+set(XANTH_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/.." CACHE PATH "folder with the original's game files and the analysis database")
+set(XANTH_TEST_ENV "")
+if(EXISTS "${XANTH_ROOT}/game")
+	list(APPEND XANTH_TEST_ENV "XANTH_DATA=${XANTH_ROOT}/game")
+endif()
+if(EXISTS "${XANTH_ROOT}/reversing/analysis/xanth_objects.tsv")
+	list(APPEND XANTH_TEST_ENV "XANTH_OBJECTS=${XANTH_ROOT}/reversing/analysis/xanth_objects.tsv")
+endif()
+if(EXISTS "${XANTH_ROOT}/game_out/restart.dat")
+	list(APPEND XANTH_TEST_ENV "XANTH_RESTART=${XANTH_ROOT}/game_out/restart.dat")
+endif()
+set_tests_properties(formats objects state grammar PROPERTIES ENVIRONMENT "${XANTH_TEST_ENV}")
