@@ -2,6 +2,7 @@
 #include "ultima6/session.h"
 
 #include <algorithm>
+#include <cstdio>
 #include <cstdlib>
 
 namespace Ultima6 {
@@ -203,6 +204,53 @@ void Game::mdLight(int lighter, int target) {
 		else
 			_world.deleteObject(lighter);
 	}
+}
+
+// MD's look (sub_14ED4 15119-157F5) after the name and the full stop: a lamp, candle or torch says how much fuel or wick is left, a growing plant how it grows, a ship's part whether it is
+// loose or not installed, a robot's heart stone, a clock the time. APPROX(76): the other kinds (the loads of a gun, the controls' purposes, the piles) are not ported
+std::string Game::mdLookExtra(const World::Obj &o) const {
+	static const int LIT[5] = {0x6E, 0x70, 0x72, 0x74, 0x76}, UNLIT[5] = {0x6D, 0x6F, 0x71, 0x73, 0x75};
+	int t = o.type;
+	bool lamp = false;
+	for (int i = 0; i < 5; ++i)
+		lamp |= t == LIT[i] || t == UNLIT[i];
+	std::string nl(1, 10);
+	if (lamp) {
+		if ((t == 0x6D || t == 0x6E) && _world.quantityOf(o) > 1)
+			return "";
+		bool oil = t == 0x73 || t == 0x75 || t == 0x74 || t == 0x76;
+		int q = o.quality;
+		std::string out;
+		if (q > 0x1E)
+			out = nl + "Plenty of ";
+		else if (q > 6)
+			out = nl + "It has " + std::to_string(q) + " more minutes of ";
+		else if (q > 0)
+			out = nl + "It's almost out of " + nl;
+		else
+			out = nl + (oil ? "No " : "Plenty of ");
+		return out + (oil ? "fuel." : "wick.") + nl;
+	}
+	if (t == 0xFB && o.frame <= 3)
+		return o.quality == 0x0F ? "It is growing." + nl : o.quality == 0x10 ? "It is ripe." + nl : "It is not growing." + nl;
+	if (t == 0x19B)
+		return o.quality == 1 ? nl + "It seems to be loose." + nl : o.quality == 2 ? nl + "It is not installed." + nl : "";
+	if (t == 0x11F)
+		return o.quality ? "It has a heartstone." + nl : "";
+	if (t == 0x5B || t == 0x62) {
+		int h = clock.hour, m = clock.minute;
+		char buf[32];
+		if (h == 0)
+			std::snprintf(buf, sizeof buf, "12:%02d A.M.", m);
+		else if (h < 12)
+			std::snprintf(buf, sizeof buf, "%d:%02d A.M.", h, m);
+		else if (h == 12)
+			std::snprintf(buf, sizeof buf, "12:%02d P.M.", m);
+		else
+			std::snprintf(buf, sizeof buf, "%d:%02d P.M.", h - 12, m);
+		return nl + nl + "The time is " + buf + nl;
+	}
+	return "";
 }
 
 // The actions of the recipes (the far pointers of seg060 +0x20, resolved through the overlay thunks to sub_598F6 ...), with (item, first partner, second partner).

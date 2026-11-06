@@ -276,6 +276,7 @@ private:
 	void mdChosen(int tx, int ty);
 	void mdAction(int recipe, int item, int first, int second);
 	void mdLight(int lighter, int target);
+	std::string mdLookExtra(const World::Obj &o) const;
 	bool _mdAsync = false;
 	int _mdItem = -1, _mdFirst = -1, _mdSecond = -1, _mdStage = 0;
 	std::vector<int> _mdRecipes;

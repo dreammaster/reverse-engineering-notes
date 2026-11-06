@@ -486,6 +486,11 @@ void Game::look(int tx, int ty) {
 			prompt();
 			return;
 		}
+		if (o.actor < 0 && _world.game == GameId::MartianDreams) { // MD's own look: the name and what the thing tells of its state
+			message(text + ".\n" + mdLookExtra(o));
+			prompt();
+			return;
+		}
 		if (o.actor < 0) {
 			// cmd_look (30567-30653): the weight when it is 1-254 (". It weighs" / ". They weigh" N.M "stones"), what the thing can do as a weapon and
 			// absorb as armour

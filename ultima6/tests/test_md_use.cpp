@@ -139,6 +139,31 @@ int main() {
 		w.deleteObject(sextant);
 	}
 
+	// Look at a lit torch with 12 minutes left, and at a pocket watch
+	{
+		std::vector<int> here;
+		w.objectsAt(px + 1, py, 0, here);
+		for (int i : here)
+			if (w.objects[i].actor < 0)
+				w.deleteObject(i);
+		int torch = put(w, 0x6E, 0, px + 1, py, 0);
+		w.objects[torch].quality = 12;
+		g.log.clear();
+		g.handleKey('l');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("It has 12 more minutes of ") != std::string::npos);
+		CHECK(logText(g).find("wick.") != std::string::npos);
+		w.deleteObject(torch);
+		int watch = put(w, 0x5B, 0, px + 1, py, 0);
+		g.log.clear();
+		g.handleKey('l');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("The time is ") != std::string::npos);
+		w.deleteObject(watch);
+	}
+
 	// a thing with no recipe (type 0x1FE has none)
 	int thing = put(w, 0x1FE, 0, px + 1, py, 0);
 	(void)thing;
