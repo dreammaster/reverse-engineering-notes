@@ -1,0 +1,69 @@
+cmdLookAt	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+cmdThrow	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+conv_cb_03	instruction div (div     cx)
+conv_cb_06	register bx read before it is set
+conv_cb_18	instruction div (div     cx)
+conv_cb_21	instruction movsw (movsw)
+conv_cb_46	instruction movsw (movsw)
+conv_text_01	operand word ptr (dword_86A3E+2)[bx] (mov     dx, word ptr (dword_86A3E+2)[bx])
+conv_text_05	does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
+conv_text_16	instruction movsw (movsw)
+conv_text_20	operand word ptr (dword_86ADA+2)[bx] (mov     dx, word ptr (dword_86ADA+2)[bx])
+conv_text_55	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
+conv_text_57	does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
+conv_text_77	render nneg
+conv_text_82	does not compile yet: cannot convert 'Xanth::TextRef' to 'const char*'
+conv_text_83	does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
+conv_text_86	does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
+conv_text_87	does not compile yet: cannot convert 'Xanth::TextRef' to 'const char*'
+event_fn_00	instruction idiv (idiv    cx)
+event_fn_05	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
+event_fn_07	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+event_fn_11	instruction idiv (idiv    cx)
+event_fn_14	instruction idiv (idiv    cx)
+event_fn_17	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+event_fn_25	use of bp (push    [bp+si+var_22])
+event_fn_35	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+event_fn_37	does not compile yet: operands to '?:' have different types 'char*' and 'int'
+event_fn_40	instruction idiv (idiv    cx)
+event_fn_43	instruction div (div     cx)
+event_fn_44	instruction movsw (movsw)
+exit_fn_12	render lo8set
+go_to_room?	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+number_to_words	instruction idiv (idiv    cx)
+objh_025	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+objh_045	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+objh_047	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+objh_056	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_080	does not compile yet: operands to '?:' have different types 'char*' and 'int'
+objh_089	does not compile yet: operands to '?:' have different types 'char*' and 'int'
+objh_104	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+objh_127	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_128	render sseg
+objh_129	does not compile yet: operands to '?:' have different types 'char*' and 'int'
+objh_130	does not compile yet: operands to '?:' have different types 'char*' and 'int'
+objh_140	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+objh_147	does not compile yet: operands to '?:' have different types 'char*' and 'int'
+objh_151	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+objh_155	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+objh_168	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+objh_183	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+objh_193	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_197	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+objh_198	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_207	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_291	does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
+objh_295	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_296	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_334	does not compile yet: operands to '?:' have different types 'char*' and 'int'
+objh_341	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_345	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_353	does not compile yet: operands to '?:' have different types 'char*' and 'int'
+objh_358	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_360	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_364	does not compile yet: operands to '?:' have different types 'int' and 'char*'
+objh_367	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_378	does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
+objh_380	does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
+objh_443	does not compile yet: operands to '?:' have different types 'char*' and 'int'
+sub_1EF11	instruction imul (imul    cx)

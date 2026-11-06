@@ -181,7 +181,7 @@ class Evaluator:
         if op.kind == "imm":
             return K(op.val)
         if op.kind == "offset":
-            return ("addr", op.sym)
+            return ("addr", op.sym) if not op.disp else simp(("add", ("addr", op.sym), K(op.disp)))
         if op.kind == "segof":
             return ("segof", op.sym)
         return self.mem_expr(st, op, blk, op.size or size)

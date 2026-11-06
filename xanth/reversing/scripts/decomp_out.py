@@ -35,6 +35,12 @@ class Names:
     def prolog(self):
         return []
 
+    def min_params(self, name):
+        return 0
+
+    def returns_far(self, name):
+        return False
+
     def const_cmp(self, lhs, value):
         return None
 
@@ -150,7 +156,13 @@ class Renderer:
             c, a, b = e[1], e[2], e[3]
             if c[0] == "lnot" or (c[0] == "eq" and is_k(c[2]) and c[2][1] == 0 and self.boolean(c[1])):
                 c, a, b = negate_cond(c), b, a
-            return "(%s ? %s : %s)" % (self.cond(c), self.R(a), self.R(b))
+            ra, rb = self.R(a), self.R(b)
+            isp = lambda t: t.startswith(("ES(", '"', "g.print_obj", "g.ResourceText", "DSEG"))
+            if isp(ra) and b == K(0):
+                rb = "nullptr"
+            if isp(rb) and a == K(0):
+                ra = "nullptr"
+            return "(%s ? %s : %s)" % (self.cond(c), ra, rb)
         if op == "neg":
             if e[1][0] == "b2i":
                 return "-(%s)" % self.R(e[1][1])
@@ -176,7 +188,7 @@ class Renderer:
         if op == "segof":
             return "SEG(%s)" % e[1]
         if op == "addrof":
-            return "&" + self.R(e[1], False)
+            return "(intptr_t)&" + self.R(e[1], False)
         if op == "dseg":
             return "DS"
         if op == "mem":
@@ -194,6 +206,10 @@ class Renderer:
             return "FAR(%s, %s)" % (self.R(e[1]), self.R(e[2]))
         if op == "scasb_cx":
             return "(~strlen(%s) - 1)" % self.R(e[1])
+        if op == "words":
+            return "TextRef::fromWords(%s, %s)" % (self.R(e[1]), self.R(e[2]))
+        if op == "null":
+            return "nullptr"
         if op == "kstr":
             return self.names.kstring(e[1])
         if op == "far":
@@ -204,6 +220,8 @@ class Renderer:
 
     def ptr(self, e):
         """an expression used as an offset into the data segment: constants are strings there"""
+        if e[0] == "null":
+            return "nullptr"
         if e[0] == "k":
             return self.names.kstring(e[1])
         if e[0] == "sel":

@@ -75,6 +75,11 @@ def parse_operand(text, proc_locals):
     s = STRIP.sub("", s)
     if s in REG16 or s in REG8 or s in SEGS:
         return Op("reg", reg=s)
+    m = re.match(r"^\(?offset\s+([A-Za-z_][\w?.$@]*)\s*([+-][0-9A-Fa-f]+h?)?\)?$", s)
+    if m:
+        o = Op("offset", sym=m.group(1))
+        o.disp = parse_int(m.group(2)) if m.group(2) else 0
+        return o
     m = re.match(r"^offset\s+(.*)$", s)
     if m:
         return Op("offset", sym=m.group(1).strip().strip("()"))
@@ -265,6 +270,10 @@ def simp(e):
                 return simp(("mul", a, K(1 << b[1])))
             return ("shl", a, b)
         return (op, a, b)
+    if op == "sx16":
+        if is_k(e[1]):
+            return K(0xFFFF if e[1][1] & 0x8000 else 0)
+        return e
     if op == "neg":
         a = e[1]
         if is_k(a):

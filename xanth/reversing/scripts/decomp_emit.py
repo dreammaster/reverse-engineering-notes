@@ -30,6 +30,14 @@ def pack_args(args):
                 out.append(("loc", a[1], a[2], 4))
                 i += 2
                 continue
+            if a[0] == "sel" and b[0] == "sel" and a[1] == b[1] and b[2] == ("dseg",) and b[3] == K(0) and a[3] == K(0):
+                out.append(("sel", a[1], ("far", a[2], ("dseg",)), ("null",)))
+                i += 2
+                continue
+            if b[0] == "k" and (b[1] & 0xFF00) == 0xF000 and a[0] != "k":
+                out.append(("words", a, b))
+                i += 2
+                continue
             if a[0] == "k" and b[0] == "dseg":
                 out.append(("kstr", a[1]))
                 i += 2
@@ -95,6 +103,8 @@ def prepare(f):
         read = False
         for b in f.blocks.values():
             for s in b.stmts:
+                if s[0] == "set" and s[1] == ("loc", reg, 0, 2):
+                    continue
                 es = [s[2]] if s[0] == "set" else list(s[3])
                 if s[0] == "set" and s[1][0] == "mem":
                     es.append(s[1])
@@ -142,6 +152,33 @@ class Block_:
 
 
 # --------------------------------------------------------------------------------------------------------------------------------- structuring
+def repack_calls(f):
+    for b in f.blocks.values():
+        b.stmts = [("call", s[1], s[2], pack_args(s[3])) if s[0] == "call" else s for s in b.stmts]
+
+
+def pair_far_sets(f):
+    """two stores that fill the halves of a far pointer variable become one store of the pointer"""
+    for b in f.blocks.values():
+        st = b.stmts
+        i = 0
+        while i < len(st) - 1:
+            a, c = st[i], st[i + 1]
+            if a[0] == "set" and c[0] == "set" and a[1][0] == "loc" and c[1][0] == "loc" and a[1][1] == c[1][1] and c[1][2] == a[1][2] + 2:
+                lo, hi = a[2], c[2]
+                new = None
+                if lo[0] == "res" and hi[0] == "res" and lo[1] == hi[1] and lo[2] == "ax" and hi[2] == "dx":
+                    new = lo
+                elif lo[0] == "addr" and hi[0] in ("segof", "dseg"):
+                    new = lo
+                elif lo[0] == "str" or (lo[0] == "kstr" and hi[0] == "dseg"):
+                    new = lo
+                if new is not None:
+                    st[i:i + 2] = [("set", ("loc", a[1][1], a[1][2], 4), new)]
+                    continue
+            i += 1
+
+
 def merge_diamonds(f):
     """if (c) x = a; else x = b;  ->  x = c ? a : b"""
     changed = True
@@ -177,6 +214,10 @@ def merge_diamonds(f):
             changed = True
 
 
+def has_res_of_calls(e):
+    return any(x[0] == "res" for x in walk(e))
+
+
 def forward_variables(f):
     """a phi / temporary that is set and then used once, in the next statement, is replaced by its value"""
     for b in f.blocks.values():
@@ -186,7 +227,11 @@ def forward_variables(f):
             if s0[0] == "set" and s0[1][0] in ("phi", "tmp"):
                 v = s0[1]
                 total = sum(1 for bb in f.blocks.values() for e in exprs_of(bb) for x in walk(e) if x == v) - 1
-                nxt = b.stmts[i + 1]
+                k = i + 1
+                nxt = b.stmts[k]
+                while nxt[0] == "call" and Renderer.PURE.match(str(nxt[2])) and not any(x == v for a in nxt[3] for x in walk(a)) and k + 1 < len(b.stmts):
+                    k += 1
+                    nxt = b.stmts[k]
                 es = [nxt[2]] if nxt[0] == "set" else list(nxt[3])
                 if nxt[0] == "set" and nxt[1][0] not in ("phi", "tmp", "loc", "glob"):
                     es.append(nxt[1])
@@ -194,9 +239,9 @@ def forward_variables(f):
                 if total == 1 and uses == 1:
                     rep = lambda e, v=v, val=s0[2]: val if e == v else None
                     if nxt[0] == "set":
-                        b.stmts[i + 1] = ("set", subst(nxt[1], rep) if nxt[1][0] == "mem" else nxt[1], subst(nxt[2], rep))
+                        b.stmts[k] = ("set", subst(nxt[1], rep) if nxt[1][0] == "mem" else nxt[1], subst(nxt[2], rep))
                     else:
-                        b.stmts[i + 1] = ("call", nxt[1], nxt[2], [subst(a, rep) for a in nxt[3]])
+                        b.stmts[k] = ("call", nxt[1], nxt[2], [subst(a, rep) for a in nxt[3]])
                     del b.stmts[i]
                     continue
             i += 1
@@ -321,6 +366,13 @@ class Emitter:
         self.latch_cond = {}
         self.loop_exit = {}
         self.after_loop = None
+        self.ptr_vars = set()
+        for b in f.blocks.values():
+            for st in b.stmts:
+                if st[0] == "call":
+                    for a in st[3]:
+                        if a[0] == "far" and a[2] == ("dseg",) and a[1][0] in ("phi", "tmp"):
+                            self.ptr_vars.add(a[1])
         self.find_loops()
 
     # ---- loops
@@ -375,7 +427,9 @@ class Emitter:
         for s in b.stmts:
             if s[0] == "set":
                 lhs, rhs = s[1], s[2]
-                if lhs[0] == "mem":
+                if lhs in self.ptr_vars:
+                    out.append("%s = %s;" % (r.R(lhs), r.ptr(rhs)))
+                elif lhs[0] == "mem":
                     out.append("%s = %s;" % (r.R(lhs), r.R(rhs)))
                 elif rhs[0] == "add" and rhs[1] == lhs and is_k(rhs[2]):
                     out.append("%s += %s;" % (r.R(lhs), r.R(rhs[2])) if rhs[2][1] != 1 else "%s++;" % r.R(lhs))
@@ -396,7 +450,14 @@ class Emitter:
 
     def ret_text(self, ax, dx):
         if self.rets_void or ax is None:
-            return "return;" if self.rets_void else "return 0;"
+            return "return 0;"
+        if getattr(self, "far_return", False) and dx is not None:
+            if ax == K(0) and dx == K(0):
+                return "return TextRef();"
+            p = pack_args([ax, dx])
+            if len(p) == 1:
+                return "return %s;" % self.rn.R(p[0])
+            return "return TextRef::fromWords(%s, %s);" % (self.rn.R(ax), self.rn.R(dx))
         return "return %s;" % self.rn.R(ax)
 
     # ---- emission
@@ -483,6 +544,7 @@ class Emitter:
             if bid in self.done:
                 self.labels.add(bid)
                 out.append("goto L%d;" % bid)
+                self.ended = None
                 return out
             if bid in self.loop_info and bid not in self.active:
                 out += self.emit_loop(bid, stop, depth)
@@ -500,16 +562,20 @@ class Emitter:
                 nb = f.blocks[t[1]]
                 if nb.retonly:
                     out.append(self.ret_text(b.exit.regs.get("ax"), b.exit.regs.get("dx")))
+                    self.ended = None
                     return out
                 bid = t[1]
                 continue
             if k == "ret":
                 out.append(self.ret_text(t[1], t[2]))
+                self.ended = None
                 return out
             if k in ("retonly", "end"):
+                self.ended = None
                 return out
             if k == "tail":
                 out.append("/* tail call to %s */ return %s();" % (t[1], self.names.func(t[1])))
+                self.ended = None
                 return out
             if k == "if":
                 cond, tb, fb = t[1], t[2], t[3]
@@ -558,6 +624,7 @@ class Emitter:
                         out += self.ind(else_arm)
                         out.append("}")
                 if j is None:
+                    self.ended = None
                     return out
                 if j in stop:
                     self.ended = j
@@ -632,6 +699,8 @@ def render_function(ctx, name, names=None, void=None):
     merge_diamonds(f)
     coalesce(f)
     forward_variables(f)
+    repack_calls(f)
+    pair_far_sets(f)
     cnt = count_uses(f)
     f.force_inline, f.folded_calls = set(), {}
     fold_conditions(f, cnt)
@@ -681,6 +750,7 @@ def render_function(ctx, name, names=None, void=None):
     rn = Renderer(f, names, inline, temps)
     rn.calls = calls
     em = Emitter(f, names, rn)
+    em.far_return = names.returns_far(name)
     em.rets_void = void if void is not None else (not re.match(r"^(objh_|exit_fn_|event_fn_|conv_cb_|conv_text_|cmd[A-Z])", name) and ctx.ret_used.get(name, 0) == 0)
     body = em.emit(f.entry, set())
     return f, em, rn, body, temps
@@ -707,8 +777,9 @@ def function_text(ctx, name, names=None, void=None):
     phis = sorted({"p%d_%s" % (x[2], x[1]) for b in f.blocks.values() for e in exprs_of(b) for x in walk(e) if x[0] == "phi"})
     params = [names.loc(name, n, 0, 2) for _, n in sorted((v[1], n) for n, v in f.locs.items() if n.startswith("arg_"))]
     used = [int(m) for m in re.findall(r"\barg(\d)\b", chr(10).join(lines))]
-    if used and len(params) <= max(used):
-        params = ["arg%d" % i for i in range(max(used) + 1)]
+    want = max(max(used) + 1 if used else 0, len(params), names.min_params(name))
+    if want > len(params):
+        params = ["arg%d" % i for i in range(want)]
     TAB = chr(9)
     head = ["// " + name, names.header(name, params) + " {"] + [TAB + l for l in names.prolog()]
     vars_ = decl + ["t%d" % t for t in tmps] + phis
@@ -717,10 +788,20 @@ def function_text(ctx, name, names=None, void=None):
     locs = sorted(set(re.findall(r"\bv[0-9A-F]+(?:_hi)?\b", text)) | {n for n in named | {"si", "di"} if re.search(r"\b%s\b" % re.escape(n), text)})
     locs = [n for n in locs if not n.endswith("_hi")] + [n for n in locs if n.endswith("_hi")]
     allv = locs + vars_
-    strs = [n for n in allv if re.search(r'(^|\s)%s = \(*([^;?]*\? )?"' % re.escape(n), text)]
+    ptr_src = r'("|ES\(|g\.print_obj\(|g\.ResourceText_GetStr\(|_strlwr\(|_strupr\(|nullptr|number_to_words)'
+    strs = {n for n in allv if re.search(r'(^|\s)%s = \(*([^;?]*\? )?' % re.escape(n) + ptr_src, text)}
+    strs |= {n for n in allv if re.search(r'(strcpy|strcat)\(%s,' % re.escape(n), text)}
+    copies = [(m.group(1), m.group(2)) for m in re.finditer(r'(?:^|\s)(' + "|".join(re.escape(n) for n in allv) + r') = ('  + "|".join(re.escape(n) for n in allv) + r');', text)] if allv else []
+    changed = True
+    while changed:
+        changed = False
+        for a, b2 in copies:
+            if (a in strs) != (b2 in strs):
+                strs |= {a, b2}
+                changed = True
     ints = [n for n in allv if n not in strs]
     if ints:
-        head.append(TAB + "int " + ", ".join(ints) + ";")
+        head.append(TAB + "intptr_t " + ", ".join(ints) + ";")
     if strs:
-        head.append(TAB + "const char *" + ", *".join(strs) + ";")
+        head.append(TAB + "char *" + ", *".join(sorted(strs)) + ";")
     return chr(10).join(head + [TAB + l for l in lines] + ["}"])

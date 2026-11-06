@@ -24,12 +24,16 @@ add_library(legend STATIC
 )
 
 # xanth/: Companions of Xanth
+file(GLOB XANTH_LOGIC CONFIGURE_DEPENDS xanth/logic/*.cpp)
 add_library(xanth_engine STATIC
 	xanth/objects.cpp
 	xanth/objectnames.cpp
 	xanth/grammar.cpp
 	xanth/gamestate.cpp
+	xanth/game.cpp
+	xanth/logic_support.cpp
 	xanth/tables/vars.cpp
+	${XANTH_LOGIC}
 )
 target_link_libraries(xanth_engine legend)
 

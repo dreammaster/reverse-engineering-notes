@@ -15,6 +15,7 @@ class Ctx:
         learn_signatures(self.insns)
         self.ret_used = self.compute_ret_used()
         self.strings = self.load_strings()
+        self.arrays, self.kinds = self.load_data()
         try:
             self.image = open(os.path.join(os.path.dirname(L.ASM), "game_out", "image.bin"), "rb").read()
         except OSError:
@@ -34,6 +35,22 @@ class Ctx:
         if not t or any(c < 32 or c > 126 for c in t):
             return None
         return t.decode("ascii")
+
+    def load_data(self):
+        """data symbols of the listing: arrays (`name dw 20h dup(0)`) -> (element size, count); scalars -> db / dw / dd"""
+        arrays, kinds = {}, {}
+        size = {"db": 1, "dw": 2, "dd": 4}
+        for line in open(L.ASM, encoding="utf-8", errors="replace"):
+            m = re.match(r"^(\w+)\s+(db|dw|dd)\s+([0-9A-Fa-f]+h?)\s+dup\(", line)
+            if m:
+                n = m.group(3)
+                cnt = int(n[:-1], 16) if n.lower().endswith("h") else int(n)
+                arrays[m.group(1)] = (size[m.group(2)], cnt)
+                continue
+            m = re.match(r"^(\w+)\s+(db|dw|dd)\s", line)
+            if m:
+                kinds[m.group(1)] = m.group(2)
+        return arrays, kinds
 
     def load_strings(self):
         """data symbols defined as text: `aName db 'text',0`"""
