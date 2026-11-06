@@ -461,3 +461,4 @@ A25B moreButtonPressed junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
 A308 rosterButtons junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=B250-B251,722F-722F,8DD0-8DD7,4661-4662,465C-4660,CDC0-CE00,BA00-BA11,468C-468C
 6A13 enterLocationMove junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0,4655-4655,464E-464F
 8350 loadLocationMap junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf,dx
+BE50 generalStore junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=DCE0-DCF0,AA30-AA50,CDC0-CE00,465C-4660,BA00-BA11,4661-4664,B1D0-B1E0,A420-A470,4680-4681,467F-4680,466B-466D,4682-4684,CD40-CD50,B240-B243,DBF0-DBF8,DBF0-DBF8,CCE0-CCF0,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4661-4664,4665-4666,467F-4681,466B-466D,4682-4684,B240-B243,CD40-CD50,B1D0-B1E0,4696-4699,469C-469F,4720-4721,71C0-7200,8D00-8F00,B250-B251,A410-A470

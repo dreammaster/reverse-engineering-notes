@@ -100,6 +100,7 @@ PORT(switchToGroup) { r.cf = switchToGroup(m, r.a.b.l); }                       
 
 PORT(payNumberValue) { r.cf = payNumberValue(m); }                                        // 17B15
 PORT(poolMoney) { poolMoney(m, r.a.b.l); r.cf = true; }                                               // 19B81
+PORT(generalStore) { r.cf = generalStore(m); }                                            // 1BE50
 PORT(doctorShop) { r.cf = doctorShop(m); }                                               // 1C260
 
 PORT(raiseMaxCon) { r.sf = raiseMaxCon(m, r.a.b.l); r.b.b.l = 0x1C; }          // 1BB32

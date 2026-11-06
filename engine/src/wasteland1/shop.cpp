@@ -105,6 +105,77 @@ void poolMoney(Machine &m, uint8_t member) {
 	}
 }
 
+bool generalStore(Machine &m) {   // 1BE50: the shop where the party buys, sells and pools money
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	constexpr uint16_t mode = 0xDBF4, member = 0xDBF5, flag = 0xDBF6, changed = 0xDBF7, locationSection = 0x46C4;
+	auto message = [&](uint8_t id) {   // 1C213
+		setWriteCharacterFn(m);
+		m.setD16(g::textPointer1, 0xDBF8);
+		writeEncodedText(m, id);
+	};
+	D(locationSection) = rec(m, 6);
+	call(m, 0x85E6);   // loadItemDetails
+	const uint8_t keepPicture = D(0x46FA), keepRoster = D(g::rosterLocOn);
+	for (uint8_t i = 0; i != 13; ++i) D(uint16_t(0x7201 + i)) = rec(m, uint8_t(7 + i));
+	call(m, 0x90A6, 1);   // writeRosterLocation2
+	D(changed) = 0;
+	m.setD16(0x46EC, uint16_t(m.d16(g::locationDetailsPtr) + 20));
+	D(locationSection) = rec(m, 6);
+	D(0x46C3) = rec(m, 3);
+	D(0x46C2) = rec(m, 4);
+	D(mode) = rec(m, 5);
+screen:   // 1BEBA
+	call(m, 0x728C);
+	D(flag) = 0;
+	D(0x4699) = 1;
+	printMapMessage(m, D(mode));
+	D(member) = 1;
+	if (D(uint16_t(g::saved2 + g::s2::membersInGroup)) != 1) {
+		message(2);
+		const uint8_t pick = pickGroupMember(m, false);
+		if (pick == 0) goto leave;
+		D(member) = pick;
+	}
+	if (isMemberUnconscious(m, D(member))) {
+		message(3);
+		goto screen;
+	}
+	redrawRosterRow(m, D(member), 0xFF);
+	clearRect(m);
+	newline(m);
+	message(6);
+	newline(m);
+total:   // 1BF29
+	showMoney(m);
+	for (;;) {   // 1BF2C
+		m.setD16(g::buttonMask1, 0x8404);
+		m.setD16(g::buttonMask2, 0);
+		waitForKeypress(m);
+		const uint8_t key = D(g::lastKey);
+		if (key == 0x1B) {
+			if (D(uint16_t(g::saved2 + g::s2::membersInGroup)) == 1) goto leave;
+			goto screen;
+		}
+		if (key == 'S') {
+			sellScreen(m);
+			goto screen;
+		}
+		if (key == 'B') {
+			buyScreen(m);
+			goto screen;
+		}
+		if (key == 'P') {
+			poolMoney(m, D(member));
+			goto total;
+		}
+	}
+leave:   // 1BEF8
+	if (D(changed)) call(m, 0xA2B1);
+	D(g::rosterLocOn) = keepRoster;
+	D(0x46FA) = keepPicture;
+	return true;
+}
+
 bool doctorShop(Machine &m) {
 	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
 	const uint8_t keepPicture = D(0x46FA), keepRoster = D(g::rosterLocOn);

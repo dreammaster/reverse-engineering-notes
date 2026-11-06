@@ -8,6 +8,8 @@ namespace wl {
 bool payNumberValue(Machine &m);
 // 19B81: gives all the group's money to party member `member`
 void poolMoney(Machine &m, uint8_t member);
+// 1BE50: the general store (buy, sell, pool money); always returns true (CF)
+bool generalStore(Machine &m);
 // 1C260: the doctor: heals hit points, cures afflictions and talks about prices; always returns true (CF)
 bool doctorShop(Machine &m);
 
