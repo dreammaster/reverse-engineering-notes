@@ -251,6 +251,15 @@ std::string Game::mdLookExtra(const World::Obj &o) const {
 			return "You cannot decipher its purpose." + nl;
 		}
 	}
+	if (t == 0x19A || t == 0x10C) { // a wheelbarrow or a rail car: empty, or so many loads (the quantity) of what the quality names
+		if (o.quantity == 0)
+			return "It is empty." + nl;
+		static const char *const LOAD[4] = {"dirt.", "rock.", "iron ore.", "coal."};
+		std::string out = "It has " + std::to_string(o.quantity) + " load" + (o.quantity == 1 ? "" : "s") + " of ";
+		if (o.quality >= 1 && o.quality <= 4)
+			out += std::string(LOAD[o.quality - 1]) + nl;
+		return out;
+	}
 	if (t == 0x13A) { // a panel: loose (quality bit 1, when it is not carried) and broken (bit 2)
 		std::string out;
 		if ((o.quality & 1) && !carriedObject(o))
