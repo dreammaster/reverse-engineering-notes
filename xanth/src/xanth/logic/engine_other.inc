@@ -10,6 +10,7 @@ int Mouse_update(Word a0 = 0) { return other("Mouse_update", a0); }
 int Palette_proc1(Word a0 = 0) { return other("Palette_proc1", a0); }
 int Screen_FadeOut(Word a0 = 0) { return other("Screen_FadeOut", a0); }
 int Screen_RestoreSubPalettes(Word a0 = 0) { return other("Screen_RestoreSubPalettes", a0); }
+int _sprintf(Word a0 = 0, Word a1 = 0, Word a2 = 0) { return other("_sprintf", a0, a1, a2); }
 int clear_text_area(Word a0 = 0) { return other("clear_text_area", a0); }
 int disable_pic_regions(Word a0 = 0, Word a1 = 0, Word a2 = 0) { return other("disable_pic_regions", a0, a1, a2); }
 int game_over_screen(Word a0 = 0) { return other("game_over_screen", a0); }

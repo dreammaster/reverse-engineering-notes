@@ -72,6 +72,9 @@ public:
 	const Legend::MessageFile &messages;
 	const ObjectNames &objectNames;
 
+	/** The current name of an object: the callback of the 49 objects that have one (their name depends on what the player knows), else the name in the record. */
+	std::string objectName(int obj);
+
 	/** A new game: the state of the original after its start-up. */
 	void newGame();
 
@@ -147,6 +150,9 @@ public:
 #include "xanth/logic/engine_other.inc"
 
 	/** Placeholders for the logic that indexes the original's data segment by pointer (see the function list in logic/manual_review.txt); they read a private copy. */
+	/** Byte / word of the original's static tables at segment:offset (the logic indexes them through segment variables); 0x84FC is the data segment placeholder. */
+	uint8 &exe8(int seg, int off);
+	uint16 &exe16(int seg, int off) { return *reinterpret_cast<uint16 *>(&exe8(seg, off)); }
 	uint16 &dseg16(int off) { return *reinterpret_cast<uint16 *>(&_dseg[off & 0xFFFE]); }
 	uint8 &dseg8(int off) { return _dseg[off & 0xFFFF]; }
 
@@ -164,6 +170,8 @@ private:
 	char *keep(const std::string &s);
 	unsigned _seed;
 	uint8 _dseg[0x10000];
+	uint8 _tables[0x34000 - 0x31550];
+	uint8 _scratch[2];
 };
 
 } // namespace Xanth

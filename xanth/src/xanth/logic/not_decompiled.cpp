@@ -5,7 +5,6 @@ namespace Xanth {
 
 // Functions the decompiler could not translate yet; until a hand-written replacement exists they do nothing.
 int cmdLookAt(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int cmdThrow(Game &) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
 int conv_cb_03(Game &, Word) { return 0; }  // instruction div (div     cx)
 int conv_cb_06(Game &, Word, Word) { return 0; }  // register bx read before it is set
 int conv_cb_18(Game &, Word, Word) { return 0; }  // instruction div (div     cx)
@@ -35,12 +34,10 @@ int event_fn_40(Game &) { return 0; }  // instruction idiv (idiv    cx)
 int event_fn_43(Game &) { return 0; }  // instruction div (div     cx)
 int event_fn_44(Game &) { return 0; }  // instruction movsw (movsw)
 int exit_fn_12(Game &, Word) { return 0; }  // render lo8set
-int go_to_room(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
 TextRef number_to_words(Game &, Word) { return TextRef(); }  // instruction idiv (idiv    cx)
 int objh_025(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
 int objh_045(Game &) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
 int objh_047(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
-int objh_056(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_080(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'char*' and 'int'
 int objh_089(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'char*' and 'int'
 int objh_104(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
@@ -49,12 +46,11 @@ int objh_128(Game &, Word) { return 0; }  // render sseg
 int objh_129(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'char*' and 'int'
 int objh_130(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'char*' and 'int'
 int objh_140(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
-int objh_147(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'char*' and 'int'
+int objh_147(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_151(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
 int objh_155(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
 int objh_168(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
 int objh_183(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
-int objh_193(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_197(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
 int objh_198(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_207(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
@@ -68,10 +64,10 @@ int objh_353(Game &, Word) { return 0; }  // does not compile yet: operands to '
 int objh_358(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_360(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_364(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'int' and 'char*'
-int objh_367(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_378(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
 int objh_380(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
 int objh_443(Game &, Word) { return 0; }  // does not compile yet: operands to '?:' have different types 'char*' and 'int'
 int sub_1EF11(Game &, Word, Word) { return 0; }  // instruction imul (imul    cx)
+TextRef sub_4FB5F(Game &, Word, Word) { return TextRef(); }  // does not compile yet: 'FAR' was not declared in this scope
 
 } // namespace Xanth

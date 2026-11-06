@@ -103,6 +103,8 @@ class Ctx:
 # --------------------------------------------------------------------------------------------------------------------------------- evaluation of a function
 def retonly(ctx, b):
     """a block that only returns (pops, mov sp,bp, retf)"""
+    if ctx.insns[b.insns[-1]].mn not in ("retf", "retn", "ret"):
+        return False
     for i in b.insns:
         x = ctx.insns[i]
         if not (x.mn in ("pop", "retf", "retn", "ret", "nop") or (x.mn == "mov" and x.ops[0].strip() == "sp")):

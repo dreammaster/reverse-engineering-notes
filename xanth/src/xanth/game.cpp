@@ -23,6 +23,10 @@ enum {
 	ATTR_HOLDS_ACTOR = 0x10   // the actor's location is a vehicle / container the actor is carried in
 };
 
+static const uint8 kExeTables[] = {
+#include "xanth/logic/exe_tables.inc"
+};
+
 Game::Game(Ui &ui_, const Legend::MessageFile &messages_, const ObjectNames &names)
     : ui(ui_), messages(messages_), objectNames(names), _textNext(0), _seed(1) {
 	newGame();
@@ -30,6 +34,8 @@ Game::Game(Ui &ui_, const Legend::MessageFile &messages_, const ObjectNames &nam
 
 void Game::newGame() {
 	state.reset();
+	memset(_dseg, 0, sizeof(_dseg));
+	memcpy(_tables, kExeTables, sizeof(_tables));
 	memset(&rt, 0, sizeof(rt));
 	rt.object_count = (uint16)state.objects.count();
 	rt.player_obj = 1;
@@ -257,10 +263,35 @@ char *Game::keep(const std::string &s) {
 	return &slot[0];
 }
 
+std::string Game::objectName(int obj) {
+	for (unsigned i = 0; i < kNameCallbackCount; i++) {
+		if (kNameCallbacks[i].obj == obj) {
+			TextRef t = kNameCallbacks[i].fn(*this, 0x10, obj);
+			if (t.isMessage())
+				return messages.string(t.id);
+			if (t.text)
+				return t.text;
+			break;
+		}
+	}
+	return objectNames.name(state.objects.nameOffset(obj));
+}
+
+namespace {
+class GameNames : public NameProvider {
+public:
+	explicit GameNames(Game &g) : _g(g) {}
+	virtual std::string objectName(int obj) { return _g.objectName(obj); }
+
+private:
+	Game &_g;
+};
+} // namespace
+
 char *Game::print_obj(int style, int obj, const char *verb) {
 	if (!state.objects.valid(obj))
 		return nullptr;
-	RecordNames names(state.objects, objectNames);
+	GameNames names(*this);
 	GrammarContext ctx(state.objects, names, rt.player_obj, rt.player_obj);
 	std::string s = formatObject(ctx, (unsigned)style, obj, verb ? verb : "");
 	state.objects.setAttr(obj, 6);
@@ -304,6 +335,17 @@ std::string Game::format(const std::string &fmt, const FmtArg *args) {
 
 int Game::writeMessage(const std::string &fmt, const FmtArg *args) {
 	return ui.printText(format(fmt, args));
+}
+
+
+uint8 &Game::exe8(int seg, int off) {
+	unsigned lin = (unsigned)((seg & 0xFFFF) * 16 + (off & 0xFFFF));
+	if ((seg & 0xFFFF) == 0x84FC)
+		return _dseg[off & 0xFFFF];
+	if (lin >= 0x31550 && lin + 1 < 0x34000)
+		return _tables[lin - 0x31550];
+	_scratch[0] = _scratch[1] = 0;
+	return _scratch[0];
 }
 
 int Game::_rand() {

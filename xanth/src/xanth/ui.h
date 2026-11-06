@@ -38,6 +38,7 @@ public:
 class RecordingUi : public Ui {
 public:
 	std::vector<std::string> log;
+	std::vector<std::string> others;       // names of the routines reached through other(), in call order
 
 	virtual int printText(const std::string &text) { log.push_back("Font_WriteMessage|" + text); return 0; }
 	virtual int putChar(int ch) {
@@ -51,7 +52,7 @@ public:
 	virtual int playSound(const std::string &file) { log.push_back("realsound_play|" + file); return 0; }
 	virtual int waitTicksOrClick(int) { return 0; }
 	virtual bool askYesNo(const std::string &) { return false; }
-	virtual int other(const char *, const intptr_t *, int) { return 0; }
+	virtual int other(const char *name, const intptr_t *, int) { others.push_back(name); return 0; }
 };
 
 } // namespace Xanth

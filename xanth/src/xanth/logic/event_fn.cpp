@@ -7,8 +7,7 @@ namespace Xanth {
 int event_fn_01(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	intptr_t v2, p6_dx;
-	char *p6_ax, *v4;
+	char *p6_ax;
 	g.clear_text_area();
 	g.object_move(0x50, 0x3E, 1);
 	g.object_set_attr(0x50, 6);
@@ -17,12 +16,9 @@ int event_fn_01(Game &g) {
 		v.byte_852E2 = 1;
 		return 1;
 	} else {
-		p6_ax = (v.current_room != 0x33 ? ES(40) : nullptr);
-		p6_dx = (v.current_room != 0x33 ? DS : sext(0));
-		v4 = p6_ax;
-		v2 = p6_dx;
-		g.Font_WriteMessage(MSG(21, 65), p6_ax, p6_dx);
-		g.realsound_play(ES(41));
+		p6_ax = (v.current_room != 0x33 ? ES(43) : nullptr);
+		g.Font_WriteMessage(MSG(21, 65), p6_ax);
+		g.realsound_play(ES(44));
 		v.byte_852E2 = 1;
 		return 1;
 	}
@@ -40,14 +36,14 @@ int event_fn_02(Game &g) {
 	if (v.flag_871F0_telephone < 6) {
 		g.schedule_event(3, 1);
 		g.wputchar(0x2E);
-		g.realsound_play(ES(42));
+		g.realsound_play(ES(45));
 		return 1;
 	} else {
 		v.flag_871F0_telephone = 0;
 		v.flag_871EE_telephone = 0;
 		g.schedule_event(3, 0xC);
-		g.Font_WriteMessage(ES(43));
-		g.realsound_play(ES(42));
+		g.Font_WriteMessage(ES(46));
+		g.realsound_play(ES(45));
 		return 1;
 	}
 }
@@ -76,7 +72,7 @@ int event_fn_03(Game &g) {
 		g.object_set_attr(p8_ax, 0xE);
 	}
 	g.popup_window_event();
-	g.Font_WriteMessage(ES(44), v4, v2);
+	g.Font_WriteMessage(ES(47), v4, v2);
 	g.wait_ticks_or_click(0x2710);
 	g.Screen_FadeOut();
 	v.story_stage = 3;
@@ -106,7 +102,7 @@ int event_fn_04(Game &g) {
 	L9:;
 		v2 = 0xF016;
 	}
-	g.Font_WriteMessage(ES(45), v4, v2);
+	g.Font_WriteMessage(ES(48), v4, v2);
 	v.word_85262++;
 	if ((int16)v.word_85262 > 3) {
 		g.object_set_attr(0x5D, 0xE);
@@ -221,7 +217,7 @@ int event_fn_13(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	intptr_t p7_ax;
-	g.Font_WriteMessage(ES(46), g.print_obj(0x12, 0xA7));
+	g.Font_WriteMessage(ES(49), g.print_obj(0x12, 0xA7));
 	rt.word_87952++;
 	if (rt.word_87952 == 1) {
 		g.object_set_prop_a(0xA7, 0x126);
@@ -508,7 +504,7 @@ int event_fn_26(Game &g) {
 	L10:;
 			v2 = 0xF021;
 		}
-		g.Font_WriteMessage(ES(47), v4, v2);
+		g.Font_WriteMessage(ES(50), v4, v2);
 	}
 	if ((int16)v.word_85282 < 4) {
 		g.schedule_event(0x1B, 1);
@@ -540,7 +536,7 @@ int event_fn_26(Game &g) {
 int event_fn_27(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	g.Font_WriteMessage(ES(46), g.print_obj(0x12, 0xE));
+	g.Font_WriteMessage(ES(49), g.print_obj(0x12, 0xE));
 	if (!(g.object_parent_is(0x100, 1))) {
 		g.Font_WriteMessage(MSG(33, 84));
 		g.object_move(0x100, 1, 0);
@@ -688,7 +684,7 @@ int event_fn_31(Game &g) {
 			goto L5;
 		} else {
 			g.Font_WriteMessage(MSG(40, 73));
-			g.realsound_play(ES(48));
+			g.realsound_play(ES(51));
 			g.wait_ticks_or_click(0x1388);
 			v.byte_852CE = 1;
 			rt.byte_8ADF4 = 0;
@@ -739,7 +735,7 @@ int event_fn_33(Game &g) {
 			g.popup_window_event();
 			if ((mem16(v8_hi, v8)) == 0x179) {
 				g.MouseCursor_SetHourglass();
-				g.realsound_play(ES(49));
+				g.realsound_play(ES(52));
 			}
 			g.wait_ticks_or_click(0x1388);
 			g.show_compendium(mem16(rt.word_8AAEA, v4 + 2), mem16(rt.word_8AAEA, v4 + 4));
@@ -747,7 +743,7 @@ int event_fn_33(Game &g) {
 				g.Font_WriteMessage(MSG(44, 18));
 			}
 			t1 = mem16(rt.word_8AAEA, v4 - 4);
-			g.Font_WriteMessage(ES(50), g.print_obj(0x12, mem16(v8_hi, v8)), mem16(rt.word_8AAEA, v4 - 6), t1);
+			g.Font_WriteMessage(ES(53), g.print_obj(0x12, mem16(v8_hi, v8)), mem16(rt.word_8AAEA, v4 - 6), t1);
 			g.wait_ticks_or_click(0xBB8);
 			g.object_move(mem16(v8_hi, v8), 0, 0);
 		}
@@ -799,7 +795,7 @@ int event_fn_38(Game &g) {
 	g.wputchar(0xB);
 	g.wait_ticks_or_click(0xBB8);
 	g.Font_WriteMessage(MSG(46, 23));
-	g.realsound_play(ES(51));
+	g.realsound_play(ES(54));
 	g.wait_ticks_or_click(0x1770);
 	v.story_stage = 0x1B;
 	go_to_room(g, 0x5A);
@@ -835,7 +831,7 @@ int event_fn_41(Game &g) {
 	p3_ax = (v.current_room == 0x40 ? 0x71 : 0x70);
 	g.Font_WriteMessage(TextRef::fromWords(p3_ax, 0xF005));
 	v.flag_871F0_telephone++;
-	g.realsound_play(ES(42));
+	g.realsound_play(ES(45));
 	g.schedule_event(0x2A, 1);
 	return 1;
 }

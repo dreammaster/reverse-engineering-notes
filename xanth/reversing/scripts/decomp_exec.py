@@ -417,7 +417,7 @@ class Evaluator:
                 self.store(st, stmts, ops[0], bb, blk, 2)
                 self.store(st, stmts, ops[1], a, blk, 2)
         elif mn == "cwd":
-            st.regs["dx"] = ("sx16", self.reg_get16(st, "ax", blk))
+            st.regs["dx"] = simp(("sx16", self.reg_get16(st, "ax", blk)))
         elif mn == "cbw":
             st.regs["ax"] = ("sx8", self.reg_get8(st, "al", blk))
         elif mn in ("les", "lds"):

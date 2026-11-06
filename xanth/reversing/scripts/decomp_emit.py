@@ -30,6 +30,10 @@ def pack_args(args):
                 out.append(("loc", a[1], a[2], 4))
                 i += 2
                 continue
+            if a[0] in ("phi", "in") and b[0] in ("phi", "in") and a[1] == "ax" and b[1] == "dx" and a[2] == b[2]:
+                out.append(("phi" if a[0] == "phi" else "in",) + a[1:])         # a far pointer built in two phi variables: the segment half carries nothing here
+                i += 2
+                continue
             if a[0] == "sel" and b[0] == "sel" and a[1] == b[1] and b[2] == ("dseg",) and b[3] == K(0) and a[3] == K(0):
                 out.append(("sel", a[1], ("far", a[2], ("dseg",)), ("null",)))
                 i += 2
@@ -152,6 +156,46 @@ class Block_:
 
 
 # --------------------------------------------------------------------------------------------------------------------------------- structuring
+def remove_dead_vars(f):
+    """sets of phi variables and temporaries that nothing reads"""
+    changed = True
+    while changed:
+        changed = False
+        used = set()
+        for b in f.blocks.values():
+            for s in b.stmts:
+                es = [s[2]] if s[0] == "set" else list(s[3])
+                if s[0] == "set" and s[1][0] == "mem":
+                    es.append(s[1])
+                for e in es:
+                    for x in walk(e):
+                        if x[0] in ("phi", "tmp", "in"):
+                            used.add(("phi",) + x[1:] if x[0] == "in" else x)
+            for e in exprs_of(Block_(b.term)):
+                for x in walk(e):
+                    if x[0] in ("phi", "tmp", "in"):
+                        used.add(("phi",) + x[1:] if x[0] == "in" else x)
+        locs_read = set()
+        for b in f.blocks.values():
+            for s in b.stmts:
+                es = [s[2]] if s[0] == "set" else list(s[3])
+                if s[0] == "set" and s[1][0] == "mem":
+                    es.append(s[1])
+                for e in es:
+                    for x in walk(e):
+                        if x[0] == "loc":
+                            locs_read.add(x[1])
+            for e in exprs_of(Block_(b.term)):
+                for x in walk(e):
+                    if x[0] == "loc":
+                        locs_read.add(x[1])
+        for b in f.blocks.values():
+            keep = [s for s in b.stmts if not (s[0] == "set" and (s[1][0] in ("phi", "tmp") and s[1] not in used or s[1][0] == "loc" and s[1][1] not in locs_read and s[1][1] not in ("si", "di") and not s[1][1].startswith("arg")))]
+            if len(keep) != len(b.stmts):
+                b.stmts = keep
+                changed = True
+
+
 def repack_calls(f):
     for b in f.blocks.values():
         b.stmts = [("call", s[1], s[2], pack_args(s[3])) if s[0] == "call" else s for s in b.stmts]
@@ -164,12 +208,20 @@ def pair_far_sets(f):
         i = 0
         while i < len(st) - 1:
             a, c = st[i], st[i + 1]
-            if a[0] == "set" and c[0] == "set" and a[1][0] == "loc" and c[1][0] == "loc" and a[1][1] == c[1][1] and c[1][2] == a[1][2] + 2:
+            adjacent = False
+            if a[0] == "set" and c[0] == "set" and a[1][0] == "loc" and c[1][0] == "loc":
+                if a[1][1] == c[1][1] and c[1][2] == a[1][2] + 2:
+                    adjacent = True
+                elif a[1][1] in f.locs and c[1][1] in f.locs and a[1][2] == 0 and c[1][2] == 0 and f.locs[c[1][1]][1] == f.locs[a[1][1]][1] + 2:
+                    adjacent = True        # two names of one dword (var_4 / var_2)
+            if adjacent:
                 lo, hi = a[2], c[2]
                 new = None
                 if lo[0] == "res" and hi[0] == "res" and lo[1] == hi[1] and lo[2] == "ax" and hi[2] == "dx":
                     new = lo
                 elif lo[0] == "addr" and hi[0] in ("segof", "dseg"):
+                    new = lo
+                elif lo[0] in ("phi", "in") and hi[0] in ("phi", "in") and lo[1] == "ax" and hi[1] == "dx" and lo[2] == hi[2]:
                     new = lo
                 elif lo[0] == "str" or (lo[0] == "kstr" and hi[0] == "dseg"):
                     new = lo
@@ -371,8 +423,8 @@ class Emitter:
             for st in b.stmts:
                 if st[0] == "call":
                     for a in st[3]:
-                        if a[0] == "far" and a[2] == ("dseg",) and a[1][0] in ("phi", "tmp"):
-                            self.ptr_vars.add(a[1])
+                        if a[0] == "far" and a[2] == ("dseg",) and a[1][0] in ("phi", "tmp", "in"):
+                            self.ptr_vars.add(("phi",) + a[1][1:] if a[1][0] == "in" else a[1])
         self.find_loops()
 
     # ---- loops
@@ -701,6 +753,7 @@ def render_function(ctx, name, names=None, void=None):
     forward_variables(f)
     repack_calls(f)
     pair_far_sets(f)
+    remove_dead_vars(f)
     cnt = count_uses(f)
     f.force_inline, f.folded_calls = set(), {}
     fold_conditions(f, cnt)
@@ -751,7 +804,7 @@ def render_function(ctx, name, names=None, void=None):
     rn.calls = calls
     em = Emitter(f, names, rn)
     em.far_return = names.returns_far(name)
-    em.rets_void = void if void is not None else (not re.match(r"^(objh_|exit_fn_|event_fn_|conv_cb_|conv_text_|cmd[A-Z])", name) and ctx.ret_used.get(name, 0) == 0)
+    em.rets_void = void if void is not None else (not em.far_return and not re.match(r"^(objh_|exit_fn_|event_fn_|conv_cb_|conv_text_|cmd[A-Z])", name) and ctx.ret_used.get(name, 0) == 0)
     body = em.emit(f.entry, set())
     return f, em, rn, body, temps
 

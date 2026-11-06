@@ -1,6 +1,6 @@
 Conversation_GetEntry	2
 DialogBtn_show	3
-Font_WriteMessage	6
+Font_WriteMessage	5
 Image_Free	1
 MouseCursor_SetHourglass	0
 MouseCursor_SetSmallArrow	0
@@ -13,6 +13,7 @@ RoomItem_Draw	1
 Screen_FadeOut	0
 Screen_RestoreSubPalettes	0
 _rand	0
+_sprintf	3
 add_score	3
 advance_time	2
 call_object_handler	2
@@ -48,6 +49,7 @@ reset_color_cycle	4
 rtlink_thunk	0
 run_command	3
 schedule_event	2
+set_room_music	1
 setup_pic_regions	2
 showCutscene	1
 show_compendium	2

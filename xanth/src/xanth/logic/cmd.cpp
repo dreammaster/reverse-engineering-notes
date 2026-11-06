@@ -16,7 +16,7 @@ int cmdAttach(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	char *p3_ax;
-	p3_ax = (g.random_percent(0x32) ? ES(0) : ES(1));
+	p3_ax = (!(g.random_percent(0x32)) ? ES(0) : ES(1));
 	g.Font_WriteMessage(MSG(18, 1), g.print_obj(2, rt.dobj), p3_ax);
 	return 1;
 }
@@ -73,20 +73,13 @@ int cmdClimb(Game &g) {
 int cmdClose(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	intptr_t v2;
-	char *r13_13, *v4;
 	if (rt.dobj == 1) {
 	L11:;
 		if (rt.dobj == 1) {
-			v4 = ES(3);
-			v2 = DS;
 			g.Font_WriteMessage(MSG(41, 1), ES(3));
 			return 1;
 		} else {
-			r13_13 = g.print_obj(2, rt.dobj);
-			v4 = r13_13;
-			v2 = hi(r13_13);
-			g.Font_WriteMessage(MSG(41, 1), r13_13);
+			g.Font_WriteMessage(MSG(41, 1), g.print_obj(2, rt.dobj));
 			return 1;
 		}
 	} else {
@@ -803,6 +796,16 @@ int cmdTaste(Game &g) {
 	return 1;
 }
 
+// cmdThrow
+int cmdThrow(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	char *p3_ax;
+	p3_ax = (!(g.object_has_attr(v.current_room, 0x15)) ? ES(17) : ES(18));
+	g.Font_WriteMessage(MSG(18, 76), g.print_obj(2, rt.dobj), g.print_obj(2, rt.iobj), g.print_obj(0x54, rt.dobj, ES(19)), p3_ax);
+	return 1;
+}
+
 // cmdTie
 int cmdTie(Game &g) {
 	Vars &v = g.state.v;
@@ -815,7 +818,7 @@ int cmdTie(Game &g) {
 int cmdTouch(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	g.Font_WriteMessage(MSG(18, 78), g.print_obj(2, rt.dobj), g.print_obj(0x54, rt.dobj, ES(17)));
+	g.Font_WriteMessage(MSG(18, 78), g.print_obj(2, rt.dobj), g.print_obj(0x54, rt.dobj, ES(20)));
 	return 1;
 }
 
@@ -888,7 +891,7 @@ int cmdWait(Game &g) {
 			v4 = 1;
 		}
 		if (!(g.event_pending(5))) {
-			g.Font_WriteMessage(ES(18));
+			g.Font_WriteMessage(ES(21));
 			g.advance_time(1, v4);
 			return 1;
 		} else {
@@ -929,7 +932,7 @@ int cmdWear(Game &g) {
 		g.Font_WriteMessage(MSG(18, 85), g.print_obj(2, rt.dobj));
 		return 1;
 	}
-	g.Font_WriteMessage(ES(19), g.print_obj(2, rt.dobj));
+	g.Font_WriteMessage(ES(22), g.print_obj(2, rt.dobj));
 	g.object_move(rt.dobj, 1, 1);
 	if ((g.object_get_default_verb(rt.dobj)) == 0x53) {
 		g.object_set_default_verb(rt.dobj, 0x3B);

@@ -199,8 +199,10 @@ def simp(e):
     if op in ("add", "sub") and not (e[1][0] == "k" and e[2][0] == "k"):
         terms = []
         const = _linear(e, 1, terms, 0)
-        if len(terms) > 1 or any(c not in (0, 1) for c, _ in terms) or const != 0 or True:
-            return _rebuild(terms, const)
+        r = _rebuild(terms, const)
+        if r[0] == "add" and r[1][0] == "neg" and r[1][1][0] == "b2i" and r[2][0] == "k":      # -(c) + k  ==  c ? k - 1 : k
+            return ("sel", r[1][1][1], K(r[2][1] - 1), r[2])
+        return r
     if op in ("add", "sub", "and", "or", "xor", "shl", "shr", "sar", "mul"):
         a, b = e[1], e[2]
         if is_k(a) and is_k(b):

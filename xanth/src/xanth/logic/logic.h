@@ -17,6 +17,14 @@ struct VerbHandler {
 	HandlerFn fn;
 };
 
+/** Objects whose name depends on the game state: the callback gets phase 0x10 and the object and returns the name (or nothing, for the name in the object record). */
+struct NameCallback {
+	int obj;
+	TextRef (*fn)(Game &g, Word phase, Word obj);
+};
+extern const NameCallback kNameCallbacks[];
+extern const unsigned kNameCallbackCount;
+
 extern const HandlerFn kObjectHandlers[448];
 extern const HandlerFn kExitFunctions[];
 extern const HandlerFn kEventFunctions[];
@@ -35,13 +43,13 @@ char *engineString(unsigned index);
 
 // Constructs the decompiler could not turn into plain C++ yet (the functions that use them are listed in manual_review.txt); they compile but do not work.
 #define objectType(o) (g.state.objects.type(o))
-#define DS 0
+#define DS 0x84FC
 #define SEG(x) 0
 #define sext(x) ((int16)(x))
 #define hi(x) 0
-#define mem8(seg, off) (g.dseg8(off))
-#define mem16(seg, off) (g.dseg16(off))
-#define mem32(seg, off) (g.dseg16(off))
+#define mem8(seg, off) (g.exe8((seg), (off)))
+#define mem16(seg, off) (g.exe16((seg), (off)))
+#define mem32(seg, off) (g.exe16((seg), (off)))
 #define callIndirect(...) (g.other("callIndirect"))
 
 #include "xanth/logic/functions.inc"

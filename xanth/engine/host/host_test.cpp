@@ -231,6 +231,72 @@ static int testScan(Host &h) {
 	return 0;
 }
 
+// FNV-1a over the saved part of the state: the object records, the 205 save regions in the original's order, and (separately) the event queue
+static uint64_t fnv(uint64_t h, const uint8_t *p, size_t n) {
+	for (size_t i = 0; i < n; i++) h = (h ^ p[i]) * 1099511628211ull;
+	return h;
+}
+
+// The scan of testScan, but every scenario is written out: "obj phase verb TAB ax TAB hash(records+regions) TAB hash(events) TAB events" so that the standalone
+// engine's headless run can be compared line by line. Events are the text-producing engine calls (Font_WriteMessage, wputchar, show_text_box, realsound_play, Font_WriteString).
+static int testScanLog(Host &h, const char *outPath) {
+	h.reset();
+	g_count = h.w(D_object_count);
+	struct Region { uint32_t addr; unsigned size; };
+	std::vector<Region> regions;
+	{
+		FILE *rf = fopen("reversing/analysis/xanth_save_regions.tsv", "rb");
+		if (!rf) { fprintf(stderr, "run from xanth/: reversing/analysis/xanth_save_regions.tsv not found\n"); return 1; }
+		char line[256];
+		fgets(line, sizeof(line), rf);
+		while (fgets(line, sizeof(line), rf)) {
+			unsigned idx, size; unsigned addr;
+			if (sscanf(line, "%u %x %u", &idx, &addr, &size) == 3) regions.push_back({addr, size});
+		}
+		fclose(rf);
+	}
+	FILE *out = fopen(outPath, "wb");
+	if (!out) return 1;
+	static const int verbs[] = {0, 19, 25, 68, 69, 70, 71, 5, 33, 40, 55, 7, 12, 22, 47, 60};
+	static const unsigned recSize[] = {0, 18, 28, 32, 14, 32};
+	long scenarios = 0;
+	for (int o = 1; o <= g_count && o < (int)objs.size(); o++) {
+		if (!objs[o].handler) continue;
+		for (int phase = 1; phase <= 6; phase++)
+			for (int v : verbs) {
+				h.reset();
+				h.tracing = true;
+				bool asIobj = phase == 3 || phase == 4;
+				setupCommand(h, v, asIobj ? 7 : o, asIobj ? o : 8);
+				h.problems.clear();
+				h.events.clear();
+				uint32_t r = h.call("call_object_handler", {(uint16_t)o, (uint16_t)phase});
+				uint64_t hs = 1469598103934665603ull;
+				uint32_t objSeg = (uint32_t)h.w(D_seg_8A9E4) * 16;
+				for (int id = 1; id <= g_count; id++) {
+					uint32_t p = objSeg + (uint32_t)id * 6;
+					uint32_t rec = (uint32_t)(h.mem[p + 0x6A] | (h.mem[p + 0x6B] << 8)) * 16 + (h.mem[p + 0x68] | (h.mem[p + 0x69] << 8));
+					hs = fnv(hs, &h.mem[rec], recSize[objs[id].type]);
+				}
+				for (const Region &rg : regions) hs = fnv(hs, &h.mem[rg.addr], rg.size);
+				uint64_t he = 1469598103934665603ull;
+				unsigned count = h.w(D_event_count);
+				uint32_t evSeg = (uint32_t)h.w(D_seg_8A9E2) * 16;
+				he = fnv(he, &h.mem[evSeg + 0x32], count * 4);
+				std::string ev;
+				for (auto &e : h.events) {
+					if (e.name != "Font_WriteMessage" && e.name != "wputchar?" && e.name != "show_text_box" && e.name != "realsound_play" && e.name != "Font_WriteString") continue;
+					ev += (e.name == "wputchar?" ? "wputchar" : e.name) + "|" + e.text + "\x1f";
+				}
+				fprintf(out, "%d %d %d\t%u\t%016llx\t%016llx\t%u\t%s\n", o, phase, v, r & 0xFFFF, (unsigned long long)hs, (unsigned long long)he, count, ev.c_str());
+				scenarios++;
+			}
+	}
+	fclose(out);
+	printf("scanlog: %ld scenarios written to %s\n", scenarios, outPath);
+	return 0;
+}
+
 static int testLook(Host &h, int room) {
 	h.reset();
 	g_count = h.w(D_object_count);
@@ -704,6 +770,7 @@ int main(int argc, char **argv) {
 		std::string cmd = argv[4];
 		if (cmd == "objects") return testObjects(h) ? 1 : 0;
 		if (cmd == "scan") return testScan(h);
+			if (cmd == "scanlog") return testScanLog(h, argc > 5 ? argv[5] : "scanlog.tsv");
 		if (cmd == "look") return testLook(h, argc > 5 ? atoi(argv[5]) : 0);
 		if (cmd == "rooms") return testRooms(h);
 		if (cmd == "init") return testInit(h);

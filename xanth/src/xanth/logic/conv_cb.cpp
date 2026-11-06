@@ -358,7 +358,7 @@ int conv_cb_30(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	if (rt.voc_enabled == 0) {
-		return g.realsound_play(ES(20));
+		return g.realsound_play(ES(23));
 	} else {
 		return 0;
 	}

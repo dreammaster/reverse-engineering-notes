@@ -14,6 +14,7 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+_ALL = "--all" in sys.argv
 sys.argv, _argv = [sys.argv[0]], sys.argv
 import decomp_gen as G
 from decomp_emit import function_text, render_function
@@ -113,11 +114,11 @@ class LogicNames(Names):
         return logic_name(STUBS.get(name, name))
 
     def returns_far(self, name):
-        return name.startswith("conv_text") or name == "number_to_words"
+        return name.startswith("conv_text") or name == "number_to_words" or logic_name(name) in getattr(self, "namecb", ())
 
     def min_params(self, name):
         want = logic_name(name)
-        best = 0
+        best = 2 if want in getattr(self, "namecb", ()) else 0
         for k, v in CALLSIG.items():
             if logic_name(STUBS.get(k, k)) == want:
                 best = max(best, max(v))
@@ -180,6 +181,34 @@ def write(path, text):
         fh.write(text)
 
 
+def name_callbacks(ctx):
+    """the 49 objects whose name comes from a callback: (object id, target routine)"""
+    lines = open(os.path.join(HERE, "..", "..", "xanth.asm"), encoding="utf-8", errors="replace").read().split(NL)
+    i = [k for k, l in enumerate(lines) if l.startswith("off_34E52")][0]
+    cur, out = [], []
+    k = i - 3
+    while not lines[k].startswith("off_34F84"):
+        m = re.match(r"^" + BS + "s*(?:" + BS + "w+" + BS + "s+)?db" + BS + "s+([0-9A-Fa-f]+h?)", lines[k])
+        d = re.match(r"^" + BS + "s*(?:" + BS + "w+" + BS + "s+)?dd" + BS + "s+(" + BS + "w+)", lines[k])
+        if m and not d:
+            v = m.group(1)
+            cur.append(int(v[:-1], 16) if v.lower().endswith("h") else int(v))
+        elif d and len(cur) >= 2:
+            out.append((cur[-2] | (cur[-1] << 8), d.group(1)))
+            cur = []
+        k += 1
+    res = []
+    for obj, stub in out:
+        idx = ctx.procs.get(stub, ctx.labels.get(stub))
+        tgt = None
+        if idx is not None and ctx.insns[idx].mn == "call" and G.STRIP.sub("", ctx.insns[idx].ops[0].strip()) == "rtlink_thunk":
+            nx = ctx.insns[idx + 1]
+            if nx.mn == "jmp":
+                tgt = G.STRIP.sub("", nx.ops[0].strip())
+        res.append((obj, tgt or stub))
+    return res
+
+
 def enum_values(prefix):
     out = {}
     for line in open(os.path.join(HERE, "..", "analysis", "xanth_enums.tsv"), encoding="utf-8"):
@@ -190,21 +219,23 @@ def enum_values(prefix):
 
 
 def main():
-    args = sys.argv[1:]
+    args = [a for a in sys.argv[1:] if a != "--all"]
     out_dir = os.path.join(SRC, "xanth", "logic")
     if "--out" in args:
         i = args.index("--out")
         out_dir = args[i + 1]
         del args[i:i + 2]
     ctx = G.Ctx()
-    todo = args or sorted(n for n in ctx.procs if FAMILY.match(n)) + [n for n in ENGINE_LOGIC if n in ctx.procs]
+    namecb = name_callbacks(ctx)
+    todo = args or sorted(n for n in ctx.procs if FAMILY.match(n)) + [n for n in ENGINE_LOGIC if n in ctx.procs] + sorted({t for _, t in namecb if t in ctx.procs})
     generated = {logic_name(n) for n in todo}
     names = LogicNames(ctx, load_vars(), generated)
+    names.namecb = {logic_name(t) for _, t in namecb}
     os.makedirs(out_dir, exist_ok=True)
     ok, bad, chunks = [], {}, {}
     manual = {}
     mp = os.path.join(HERE, "..", "analysis", "xanth_logic_manual.tsv")
-    if os.path.exists(mp):
+    if os.path.exists(mp) and "--all" not in sys.argv:
         for line in open(mp, encoding="utf-8"):
             p = line.rstrip(NL).split(TAB)
             if len(p) >= 2:
@@ -238,13 +269,13 @@ def main():
     # declarations; the functions that could not be generated are declared too and stubbed so that the tables link
     decl = [HDR]
     for n in sorted(todo):
-        ret, k = names.sig.get(n, ("TextRef " if n.startswith("conv_text") or n == "number_to_words" else "int ", argc(ctx, n)))
+        ret, k = names.sig.get(n, ("TextRef " if n.startswith("conv_text") or n == "number_to_words" or logic_name(n) in names.namecb else "int ", 2 if logic_name(n) in names.namecb else argc(ctx, n)))
         decl.append("%s%s(Game &g%s);%s" % (ret, logic_name(n), "".join(", Word a%d" % i for i in range(k)), "  // not decompiled" if n in bad else ""))
     write(os.path.join(out_dir, "functions.inc"), NL.join(decl) + NL)
     stubs = [HDR, '#include "xanth/logic/logic.h"', "", "namespace Xanth {", "", "// Functions the decompiler could not translate yet; until a hand-written replacement exists they do nothing."]
     for n in sorted(bad):
         params = ", ".join(["Game &"] + ["Word"] * argc(ctx, n))
-        ret, k = names.sig.get(n, ("TextRef " if n.startswith("conv_text") or n == "number_to_words" else "int ", argc(ctx, n)))
+        ret, k = names.sig.get(n, ("TextRef " if n.startswith("conv_text") or n == "number_to_words" or logic_name(n) in names.namecb else "int ", 2 if logic_name(n) in names.namecb else argc(ctx, n)))
         params = ", ".join(["Game &"] + ["Word"] * k)
         stubs.append("%s%s(%s) { return %s; }  // %s" % (ret, logic_name(n), params, "TextRef()" if ret.startswith("TextRef") else "0", bad[n]))
     stubs.append("")
@@ -285,6 +316,14 @@ def main():
     for t, i in sorted(names.estr.items(), key=lambda kv: kv[1]):
         lines.append("/* %d */ %s," % (i, '"' + t.replace(BS, BS + BS).replace('"', BS + '"') + '"'))
     write(os.path.join(out_dir, "engine_strings.inc"), NL.join(lines) + NL)
+    # the tables the logic indexes through segment variables (static data of the original program, linear 0x31550-0x33FFF)
+    if ctx.image:
+        lo, hi = 0x31550, 0x34000
+        data = ctx.image[lo:hi]
+        rows = [HDR.replace("Game", "game") + " Static tables of the original program that the logic reads by segment:offset (linear %05X-%05X)." % (lo, hi)]
+        for i in range(0, len(data), 24):
+            rows.append(",".join("0x%02X" % c for c in data[i:i + 24]) + ",")
+        write(os.path.join(out_dir, "exe_tables.inc"), NL.join(rows) + NL)
     # dispatch tables
     cmds = enum_values("CMD")
     write(os.path.join(out_dir, "commands.h"), HDR + NL + "#ifndef XANTH_LOGIC_COMMANDS_H" + NL + "#define XANTH_LOGIC_COMMANDS_H" + NL + NL + "namespace Xanth {" + NL + NL + "enum Command {" + NL +
@@ -314,6 +353,13 @@ def main():
     for c, f in wh:
         t.append("\t{%s, wrap_%s}," % (c, f))
     t.append("};")
+    t.append("")
+    t.append("const NameCallback kNameCallbacks[%d] = {" % len(namecb))
+    for obj, tgt in namecb:
+        t.append("	{%d, %s}," % (obj, logic_name(tgt)))
+    t.append("};")
+    t.append("")
+    t.append("const unsigned kNameCallbackCount = %d;" % len(namecb))
     t.append("")
     t.append("const unsigned kExitFunctionCount = %d, kEventFunctionCount = %d, kVerbHandlerCount = %d;" % (len(exits), len(ev), len(wh)))
     t.append("")

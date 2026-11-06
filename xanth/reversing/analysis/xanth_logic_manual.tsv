@@ -1,5 +1,4 @@
 cmdLookAt	invalid conversion from 'int' to 'char*' [-fpermissive]
-cmdThrow	operands to '?:' have different types 'int' and 'char*'
 conv_text_05	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 conv_text_55	invalid conversion from 'char*' to 'int' [-fpermissive]
 conv_text_57	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
@@ -12,11 +11,9 @@ event_fn_07	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_17	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_35	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_37	operands to '?:' have different types 'char*' and 'int'
-go_to_room	operands to '?:' have different types 'int' and 'char*'
 objh_025	operands to '?:' have different types 'int' and 'char*'
 objh_045	operands to '?:' have different types 'int' and 'char*'
 objh_047	operands to '?:' have different types 'int' and 'char*'
-objh_056	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_080	operands to '?:' have different types 'char*' and 'int'
 objh_089	operands to '?:' have different types 'char*' and 'int'
 objh_104	operands to '?:' have different types 'int' and 'char*'
@@ -24,12 +21,11 @@ objh_127	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_129	operands to '?:' have different types 'char*' and 'int'
 objh_130	operands to '?:' have different types 'char*' and 'int'
 objh_140	operands to '?:' have different types 'int' and 'char*'
-objh_147	operands to '?:' have different types 'char*' and 'int'
+objh_147	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_151	operands to '?:' have different types 'int' and 'char*'
 objh_155	operands to '?:' have different types 'int' and 'char*'
 objh_168	operands to '?:' have different types 'int' and 'char*'
 objh_183	operands to '?:' have different types 'int' and 'char*'
-objh_193	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_197	operands to '?:' have different types 'int' and 'char*'
 objh_198	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_207	invalid conversion from 'int' to 'char*' [-fpermissive]
@@ -43,7 +39,7 @@ objh_353	operands to '?:' have different types 'char*' and 'int'
 objh_358	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_360	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_364	operands to '?:' have different types 'int' and 'char*'
-objh_367	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_378	cannot convert 'Xanth::TextRef' to 'char*' in assignment
 objh_380	cannot convert 'Xanth::TextRef' to 'char*' in assignment
 objh_443	operands to '?:' have different types 'char*' and 'int'
+sub_4FB5F	'FAR' was not declared in this scope
