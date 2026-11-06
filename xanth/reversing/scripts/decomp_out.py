@@ -160,8 +160,9 @@ class Renderer:
             isp = lambda t: t.startswith(("ES(", '"', "g.print_obj", "g.ResourceText", "DSEG"))
             if isp(ra) and b == K(0):
                 rb = "nullptr"
-            if isp(rb) and a == K(0):
+            elif isp(rb) and a == K(0):
                 ra = "nullptr"
+
             return "(%s ? %s : %s)" % (self.cond(c), ra, rb)
         if op == "neg":
             if e[1][0] == "b2i":
@@ -208,6 +209,10 @@ class Renderer:
             return "(~strlen(%s) - 1)" % self.R(e[1])
         if op == "words":
             return "TextRef::fromWords(%s, %s)" % (self.R(e[1]), self.R(e[2]))
+        if op == "text":
+            return "TextRef(%s)" % self.R(e[1])
+        if op == "textvar":
+            return self.R(e[1])
         if op == "null":
             return "nullptr"
         if op == "kstr":

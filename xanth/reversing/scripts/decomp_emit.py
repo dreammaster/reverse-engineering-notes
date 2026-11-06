@@ -7,6 +7,9 @@ from decomp_out import Renderer, Names, CMPOP
 
 
 # --------------------------------------------------------------------------------------------------------------------------------- argument packing
+TEXTVARS = set()      # phi variables that hold a text reference (pointer or message id) built from two halves
+
+
 def pack_args(args):
     out = []
     i = 0
@@ -30,8 +33,15 @@ def pack_args(args):
                 out.append(("loc", a[1], a[2], 4))
                 i += 2
                 continue
+            if a == K(0) and b == K(0):
+                out.append(("null",))
+                i += 2
+                continue
             if a[0] in ("phi", "in") and b[0] in ("phi", "in") and a[1] == "ax" and b[1] == "dx" and a[2] == b[2]:
-                out.append(("phi" if a[0] == "phi" else "in",) + a[1:])         # a far pointer built in two phi variables: the segment half carries nothing here
+                if ("phi",) + a[1:] in TEXTVARS:
+                    out.append(("textvar", ("phi",) + a[1:]))
+                else:
+                    out.append(("phi" if a[0] == "phi" else "in",) + a[1:])         # a far pointer built in two phi variables: the segment half carries nothing here
                 i += 2
                 continue
             if a[0] == "sel" and b[0] == "sel" and a[1] == b[1] and b[2] == ("dseg",) and b[3] == K(0) and a[3] == K(0):
@@ -252,8 +262,20 @@ def merge_diamonds(f):
                 continue
             if not all(a[0] == "set" and b[0] == "set" and a[1] == b[1] and a[1][0] in ("phi", "tmp") for a, b in zip(t.stmts, fl.stmts)):
                 continue
-            for a, b in zip(t.stmts, fl.stmts):
-                p.stmts.append(("set", a[1], ("sel", c, a[2], b[2])))
+            pairs = list(zip(t.stmts, fl.stmts))
+            skip = set()
+            for ia, (a, b) in enumerate(pairs):
+                if a[1][0] == "phi" and a[1][1] == "ax":
+                    for ib, (d, e) in enumerate(pairs):
+                        if d[1][0] == "phi" and d[1][1] == "dx" and d[1][2] == a[1][2]:
+                            t1, t2 = pack_args([a[2], d[2]]), pack_args([b[2], e[2]])
+                            if len(t1) == 1 and len(t2) == 1:
+                                TEXTVARS.add(a[1])
+                                p.stmts.append(("set", a[1], ("sel", c, ("text", t1[0]), ("text", t2[0]))))
+                                skip.update((ia, ib))
+            for ia, (a, b) in enumerate(pairs):
+                if ia not in skip:
+                    p.stmts.append(("set", a[1], ("sel", c, a[2], b[2])))
             jid = t.term[1]
             j = f.blocks[jid]
             j.pred = [x for x in j.pred if x not in (tid, fid)] + [pid]
@@ -804,7 +826,9 @@ def render_function(ctx, name, names=None, void=None):
     rn.calls = calls
     em = Emitter(f, names, rn)
     em.far_return = names.returns_far(name)
-    em.rets_void = void if void is not None else (not em.far_return and not re.match(r"^(objh_|exit_fn_|event_fn_|conv_cb_|conv_text_|cmd[A-Z])", name) and ctx.ret_used.get(name, 0) == 0)
+    rets = [b.term[1] for b in f.blocks.values() if b.term and b.term[0] == "ret" and not getattr(b, "dead", False)]
+    defined = any(r is not None and r[0] not in ("res", "in", "undef") for r in rets)
+    em.rets_void = void if void is not None else (not defined and not em.far_return and not re.match(r"^(objh_|exit_fn_|event_fn_|conv_cb_|conv_text_|cmd[A-Z])", name) and ctx.ret_used.get(name, 0) == 0)
     body = em.emit(f.entry, set())
     return f, em, rn, body, temps
 
@@ -852,9 +876,25 @@ def function_text(ctx, name, names=None, void=None):
             if (a in strs) != (b2 in strs):
                 strs |= {a, b2}
                 changed = True
-    ints = [n for n in allv if n not in strs]
+    txts = {n for n in allv if re.search(r'(^|\s)%s = .*TextRef\(' % re.escape(n), text)}
+    strs -= txts
+    ints = [n for n in allv if n not in strs and n not in txts]
+    # assignments between the two kinds of variable need a cast
+    ptr_like = re.compile(r"^(ES\(|g\.print_obj\(|g\.ResourceText_GetStr\(|_strlwr\(|_strupr\(|nullptr|" + "|".join(re.escape(n) for n in sorted(strs)) + r")") if strs else re.compile(r"^(ES\(|g\.print_obj\(|nullptr)")
+    fixed = []
+    for ln in lines:
+        m = re.match(r"^(\s*)(\w+) = (.*);$", ln)
+        if m and m.group(2) in allv and "?" not in m.group(3):
+            rhs = m.group(3)
+            is_ptr = bool(ptr_like.match(rhs))
+            if m.group(2) not in strs and is_ptr:
+                ln = "%s%s = (intptr_t)(%s);" % (m.group(1), m.group(2), rhs)
+        fixed.append(ln)
+    lines = fixed
     if ints:
         head.append(TAB + "intptr_t " + ", ".join(ints) + ";")
     if strs:
         head.append(TAB + "char *" + ", *".join(sorted(strs)) + ";")
+    if txts:
+        head.append(TAB + "TextRef " + ", ".join(sorted(txts)) + ";")
     return chr(10).join(head + [TAB + l for l in lines] + ["}"])

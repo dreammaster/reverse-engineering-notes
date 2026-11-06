@@ -318,6 +318,8 @@ std::string Game::format(const std::string &fmt, const FmtArg *args) {
 		if (k == 's') {
 			if (args[n].text)
 				out += args[n].text;
+			else if (args[n].id)
+				out += messages.string(args[n].id);
 			n++;
 		} else if (k == 'd') {
 			out += std::to_string((int)(int16)args[n++].number);

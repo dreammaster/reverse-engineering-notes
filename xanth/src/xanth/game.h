@@ -51,12 +51,13 @@ struct FmtArg {
 	bool isString;
 	int number;
 	const char *text;
-	FmtArg() : isString(false), number(0), text(nullptr) {}
-	FmtArg(int n) : isString(false), number(n), text(nullptr) {}
-	FmtArg(unsigned n) : isString(false), number((int)n), text(nullptr) {}
-	FmtArg(intptr_t n) : isString(false), number((int)n), text(nullptr) {}
-	FmtArg(const char *s) : isString(true), number(0), text(s) {}
-	FmtArg(const TextRef &t) : isString(true), number(0), text(t.text) {}
+	uint32 id;                 // a message id passed where a string is expected
+	FmtArg() : isString(false), number(0), text(nullptr), id(0) {}
+	FmtArg(int n) : isString(false), number(n), text(nullptr), id(0) {}
+	FmtArg(unsigned n) : isString(false), number((int)n), text(nullptr), id(0) {}
+	FmtArg(intptr_t n) : isString(false), number((int)n), text(nullptr), id(0) {}
+	FmtArg(const char *s) : isString(true), number(0), text(s), id(0) {}
+	FmtArg(const TextRef &t) : isString(true), number(0), text(t.text), id(t.id) {}
 };
 
 /** Message id as the original passes it: 0xF0BBIIII = block BB, index IIII of the message file. */

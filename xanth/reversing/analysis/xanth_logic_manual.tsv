@@ -1,45 +1,107 @@
 cmdLookAt	invalid conversion from 'int' to 'char*' [-fpermissive]
+conv_cb_07	too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
+conv_cb_37	too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
+conv_cb_49	too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 conv_text_05	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
+conv_text_42	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+conv_text_43	too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 conv_text_55	invalid conversion from 'char*' to 'int' [-fpermissive]
+conv_text_56	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 conv_text_57	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
+conv_text_58	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+conv_text_60	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+conv_text_75	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+conv_text_76	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 conv_text_82	cannot convert 'Xanth::TextRef' to 'const char*'
 conv_text_83	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
+conv_text_84	too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 conv_text_86	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 conv_text_87	cannot convert 'Xanth::TextRef' to 'const char*'
 event_fn_05	invalid conversion from 'char*' to 'int' [-fpermissive]
+event_fn_06	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
 event_fn_07	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_17	invalid conversion from 'int' to 'char*' [-fpermissive]
+event_fn_18	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+event_fn_19	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+event_fn_26	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+event_fn_27	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+event_fn_31	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+event_fn_33	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
 event_fn_35	invalid conversion from 'int' to 'char*' [-fpermissive]
-event_fn_37	operands to '?:' have different types 'char*' and 'int'
-objh_025	operands to '?:' have different types 'int' and 'char*'
-objh_045	operands to '?:' have different types 'int' and 'char*'
-objh_047	operands to '?:' have different types 'int' and 'char*'
-objh_080	operands to '?:' have different types 'char*' and 'int'
-objh_089	operands to '?:' have different types 'char*' and 'int'
-objh_104	operands to '?:' have different types 'int' and 'char*'
+exit_fn_17	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_003	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_005	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_008	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_013	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_015	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_017	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_018	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_020	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_034	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_045	cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
+objh_071	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+objh_076	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+objh_094	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_103	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+objh_104	cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
+objh_109	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_111	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_112	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_114	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+objh_115	too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
+objh_122	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 objh_127	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_129	operands to '?:' have different types 'char*' and 'int'
-objh_130	operands to '?:' have different types 'char*' and 'int'
-objh_140	operands to '?:' have different types 'int' and 'char*'
+objh_129	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_131	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_136	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+objh_137	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+objh_139	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+objh_140	cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
+objh_141	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_142	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 objh_147	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_151	operands to '?:' have different types 'int' and 'char*'
-objh_155	operands to '?:' have different types 'int' and 'char*'
-objh_168	operands to '?:' have different types 'int' and 'char*'
-objh_183	operands to '?:' have different types 'int' and 'char*'
-objh_197	operands to '?:' have different types 'int' and 'char*'
+objh_149	cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
+objh_151	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_181	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+objh_182	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 objh_198	invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_203	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
 objh_207	invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_210	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+objh_213	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_215	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_219	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_225	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_226	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_227	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_230	cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
+objh_243	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_249	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_264	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_265	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_266	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
+objh_267	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_268	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 objh_291	cannot convert 'Xanth::TextRef' to 'char*' in assignment
 objh_295	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_296	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_334	operands to '?:' have different types 'char*' and 'int'
+objh_297	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+objh_310	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+objh_323	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_324	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_329	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_334	invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_337	no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
 objh_341	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_345	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_353	operands to '?:' have different types 'char*' and 'int'
 objh_358	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_360	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_364	operands to '?:' have different types 'int' and 'char*'
+objh_370	no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
 objh_378	cannot convert 'Xanth::TextRef' to 'char*' in assignment
 objh_380	cannot convert 'Xanth::TextRef' to 'char*' in assignment
-objh_443	operands to '?:' have different types 'char*' and 'int'
+objh_385	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_428	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+objh_435	no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
+sub_443EB	invalid conversion from 'char*' to 'int' [-fpermissive]
 sub_4FB5F	'FAR' was not declared in this scope
+sub_7D0DF	invalid conversion from 'int' to 'char*' [-fpermissive]

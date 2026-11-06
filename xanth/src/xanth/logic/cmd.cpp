@@ -460,7 +460,7 @@ int cmdOpen(Game &g) {
 		g.object_set_attr(rt.dobj, 0xE);
 		g.object_set_attr(rt.dobj, 5);
 		g.Font_WriteMessage(ES(9), g.print_obj(2, rt.dobj));
-		if (g.object_has_attr(rt.dobj, 0x11) && !(g.object_has_attr(rt.dobj, 0xD)) && g.sub_2F501(rt.dobj, 1)) {
+		if (g.object_has_attr(rt.dobj, 0x11) && !(g.object_has_attr(rt.dobj, 0xD)) && sub_40B7A(g, rt.dobj, 1)) {
 			g.Font_WriteMessage(ES(10));
 			describe_contents(g, rt.dobj, 1);
 			v2 = 1;
@@ -622,7 +622,7 @@ int cmdPut(Game &g) {
 int cmdQuit(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	if ((g.DialogBtn_show(ES_UNKNOWN(aQuit_), 0, 0)) == 1) {
+	if ((g.DialogBtn_show(ES_UNKNOWN(aQuit_), nullptr)) == 1) {
 		g.sub_2F515();
 		return 1;
 	} else {

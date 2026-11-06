@@ -35,7 +35,16 @@ def main():
     log = open(sys.argv[1], encoding="utf-8", errors="replace").read().split(NL)
     bad = {}
     cache = {}
+    last_fn = None
     for line in log:
+        mf = re.search(r"In function '[^']*Xanth::(\w+)\(", line)
+        if mf:
+            last_fn = mf.group(1)
+            continue
+        me = re.match(r"^.*?[/\\]logic[/\\]logic\.h:\d+:\d+: error: (.*)$", line)
+        if me and last_fn:
+            bad.setdefault(last_fn, me.group(1)[:90])
+            continue
         m = re.match(r"^(.*?[/\\]logic[/\\]([\w.]+\.cpp)):(\d+):\d+: error: (.*)$", line)
         if not m:
             continue

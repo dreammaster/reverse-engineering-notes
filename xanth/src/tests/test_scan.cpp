@@ -96,6 +96,10 @@ int main() {
 				s.obj = o;
 				s.phase = phase;
 				s.verb = verb;
+				if (getenv("XANTH_SCANTRACE")) {
+					fprintf(stderr, "%d %d %d\n", o, phase, verb);
+					fflush(stderr);
+				}
 				s.ret = (unsigned)g.call_object_handler(o, phase);
 				Common::Bytes saved;
 				g.state.save(saved);

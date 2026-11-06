@@ -181,6 +181,35 @@ def write(path, text):
         fh.write(text)
 
 
+UI_CALLEE = re.compile(r"^(Image_|Screen_|Windows_|Font_(?!WriteMessage|WriteLines2)|Mouse|MouseCursor_|Palette_|Events_|DialogBtn_|Gfx_|pic_|vga_|Picture|PicFile|load_pic|sub_2[0-9A-F]{4}$|wputchar|show_text_box|Conversation_Show|realsound|voc_|mus_|memAlloc|Memory_|set_mouse|disable_pic|setup_pic|overlay|RoomItem_|popup_|game_over|new_handle|rtlink_)")
+
+
+def stub_targets(ctx):
+    """overlay entry points (`call rtlink_thunk / jmp target`): stub name -> target routine"""
+    out = {}
+    for n, e in ctx.procs.items():
+        i = e
+        if i + 1 < len(ctx.insns) and ctx.insns[i].mn == "call" and ctx.insns[i].ops and G.STRIP.sub("", ctx.insns[i].ops[0].strip()) == "rtlink_thunk" and ctx.insns[i + 1].mn == "jmp":
+            out[n] = G.STRIP.sub("", ctx.insns[i + 1].ops[0].strip())
+    return out
+
+
+def is_logic(ctx, target):
+    """a routine that is game logic rather than drawing: small, and it calls none of the drawing / device routines"""
+    if target not in ctx.procs:
+        return False
+    idxs = G.L.reachable(ctx.insns, ctx.labels, ctx.tables, ctx.procs[target])
+    if len(idxs) > 250:
+        return False
+    for i in idxs:
+        x = ctx.insns[i]
+        if x.mn == "call" and x.ops:
+            c = G.STRIP.sub("", x.ops[0].strip())
+            if UI_CALLEE.match(c.rstrip("?")):
+                return False
+    return True
+
+
 def name_callbacks(ctx):
     """the 49 objects whose name comes from a callback: (object id, target routine)"""
     lines = open(os.path.join(HERE, "..", "..", "xanth.asm"), encoding="utf-8", errors="replace").read().split(NL)
@@ -226,8 +255,13 @@ def main():
         out_dir = args[i + 1]
         del args[i:i + 2]
     ctx = G.Ctx()
+    stubs_all = stub_targets(ctx)
+    for stub, tgt in stubs_all.items():
+        if stub not in STUBS and tgt != stub and is_logic(ctx, tgt) and not FAMILY.match(stub) and not re.match(r"^(objh|exit_fn|event_fn|conv_cb|conv_text|cmd)", stub):
+            STUBS[stub] = tgt
     namecb = name_callbacks(ctx)
-    todo = args or sorted(n for n in ctx.procs if FAMILY.match(n)) + [n for n in ENGINE_LOGIC if n in ctx.procs] + sorted({t for _, t in namecb if t in ctx.procs})
+    todo = args or sorted(n for n in ctx.procs if FAMILY.match(n)) + [n for n in ENGINE_LOGIC if n in ctx.procs] + sorted({t for _, t in namecb if t in ctx.procs}) + sorted({t for st, t in STUBS.items() if t in ctx.procs and t not in ENGINE_LOGIC and not FAMILY.match(t) and logic_name(t) not in HAND and is_logic(ctx, t)})
+    todo = list(dict.fromkeys(todo))
     generated = {logic_name(n) for n in todo}
     names = LogicNames(ctx, load_vars(), generated)
     names.namecb = {logic_name(t) for _, t in namecb}
