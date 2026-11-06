@@ -106,6 +106,24 @@ int main() {
 		w.deleteObject(lamp);
 	}
 
+	// a sliding gate (0xB5, recipe 70): frame 0 goes to 3; locked it will not
+	{
+		std::vector<int> here;
+		w.objectsAt(px + 1, py, 0, here);
+		for (int i : here)
+			if (w.objects[i].actor < 0)
+				w.deleteObject(i);
+		int gate = put(w, 0xB5, 0, px + 1, py, 0);
+		useEast(w, g, px, py);
+		CHECK(w.objects[gate].frame == 3);
+		w.objects[gate].frame = 0;
+		w.objects[gate].quality = 0x80;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(w.objects[gate].frame == 0 && logText(g).find("locked") != std::string::npos);
+		w.deleteObject(gate);
+	}
+
 	// a thing with no recipe (type 0x1FE has none)
 	int thing = put(w, 0x1FE, 0, px + 1, py, 0);
 	(void)thing;

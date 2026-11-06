@@ -257,6 +257,65 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		if (first >= 0)
 			mdLight(item, first);
 		break;
+	case 17:
+	case 22: { // sub_59E49: a tool on a crate or chest (first): a nailed one (frame 2) is pried open (frame 1); a shut one (frame 1) is nailed shut again by a 0x111; else no effect
+		if (first < 0)
+			break;
+		World::Obj &c = _world.objects[first];
+		if (c.frame == 2) {
+			c.frame = 1;
+			message("You pried the nails out of the crate.\n");
+		} else if (c.frame == 1 && o.type == 0x111) {
+			c.frame = 2;
+			message("You nail the crate shut.\n");
+		} else {
+			message("It has no effect.\n");
+		}
+		break;
+	}
+	case 65: { // sub_59FD7: a heart stone in a metal woman (first), once; the stone is used up
+		if (first < 0)
+			break;
+		World::Obj &m = _world.objects[first];
+		if (m.quality & 1) {
+			message("The robot already has a heartstone.\n");
+		} else {
+			m.quality = 1;
+			_world.deleteObject(item);
+			message("The heartstone is installed.\n");
+		}
+		break;
+	}
+	case 70: { // sub_5EE03: a sliding gate: locked (quality bit 0x80) it will not move; the frames 0 and 1 go to 3 (1 a square west), 2 and 3 to 1 (a square east), 4 and 5 to 7, 6 and 7 to 5.
+		       // APPROX(76): sub_2CFE2 is taken to be a plain move
+		if (o.quality & 0x80) {
+			message("It is apparently locked.\n");
+			break;
+		}
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		switch (o.frame) {
+		case 0:
+			o.frame = 3;
+			break;
+		case 1:
+			o.frame = 3;
+			_world.moveObject(item, (o.x - 1) & mask, o.y, o.z);
+			break;
+		case 2:
+		case 3:
+			o.frame = 1;
+			_world.moveObject(item, (o.x + 1) & mask, o.y, o.z);
+			break;
+		case 4:
+		case 5:
+			o.frame = 7;
+			break;
+		default:
+			o.frame = 5;
+			break;
+		}
+		break;
+	}
 	case 66: // sub_5CE18: the spittoon, by what the member can still spit (the status flag 0x40 of the person)
 		message((_world.actors.status[actingActor()] & 0x40) ? "Your mouth is too dry.\n" : "You spit into the spittoon.\n");
 		break;
