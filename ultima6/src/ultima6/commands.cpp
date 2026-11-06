@@ -873,6 +873,18 @@ void Game::getAt(int tx, int ty) {
 	} else if (_world.actors.strength[actor] * 20 < w + _world.carriedWeight(actor)) {
 		message("\nThe total is too heavy.\n");
 	} else {
+		if (_world.game == GameId::MartianDreams && (o.type == 0x1C0 || o.type == 0x1C1) && actor != 6) {
+			// MD's get (sub_163AE 16720-167F5): radium is hot; taken without tongs (0x88) in either hand it burns the one who takes it
+			bool tongs = false;
+			std::vector<int> held;
+			_world.inventory(actor, held, false);
+			for (int i : held)
+				tongs |= _world.objects[i].type == 0x88 && _world.objects[i].location() == ObjRecord::READIED;
+			if (!tongs) {
+				_world.actors.status[actor] |= 0x08;
+				message("\nOUCH. It is very hot.\n");
+			}
+		}
 		int qty = _world.quantityOf(o);
 		int type = o.type, quality = o.quality, frame = o.frame;
 		bool litTorch = type == 0x5A && frame == 1;
