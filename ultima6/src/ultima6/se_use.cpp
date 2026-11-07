@@ -283,17 +283,24 @@ void Game::seAction(uint32_t sub, int idx) {
 			message("Not in solo mode!\n");
 		}
 		break;
-	case 0x36206: // a brazier with frame bit 2: "Not possible."; else the fire routine (sub_3215F, not done)
+	case 0x36206: // a brazier with frame bit 2: "Not possible."; else the fire routine (sub_3215F)
 		if (o.frame & 2)
 			message("Not possible.\n");
+		else
+			seFire();
 		break;
-	case 0x3623D: // burnt logs: frame 0 "Not possible.", 1 starts a fire (frame 2), 2 the fire routine (sub_3215F, not done)
+	case 0x3623D: // burnt logs: frame 0 "Not possible.", 1 starts a fire (frame 2), 2 the fire routine (sub_3215F)
 		if (o.frame == 0) {
 			message("Not possible.\n");
 		} else if (o.frame == 1) {
 			o.frame = 2;
 			message("\nYou started a fire.\n");
+		} else if (o.frame == 2) {
+			seFire();
 		}
+		break;
+	case 0x3215F: // an oven or a fire
+		seFire();
 		break;
 	case 0x31F60: { // the digging stick: of the eight squares around the member the first with clay in the ground (terrain tile 0x20-0x2F or 0xBE: sub_2E5F9) gives a lump
 		int a = _world.actorObject(actor);
@@ -762,9 +769,171 @@ void Game::seAction(uint32_t sub, int idx) {
 		});
 		break;
 	}
+	case 0x31E67: { // the flintlock (frame 1 = loaded): one gunpowder (0xCC) from the pack loads it
+		if (o.frame == 1) {
+			message("\nFlintlock already loaded.\n");
+			break;
+		}
+		int powder = sePackItem(actor, 0xCC);
+		if (powder < 0) {
+			message("\nYou don't have any gunpowder.\n");
+			break;
+		}
+		consumeOne(powder);
+		_world.objects[idx].frame = 1;
+		message("\nFlintlock loaded.\n");
+		break;
+	}
+	case 0x34C0A: { // gunpowder: on a flintlock (0x32) that is not loaded it loads it and one of the powder is used up
+		int powder = idx;
+		seAsk([this, powder](int obj, int tx, int ty) {
+			if (obj < 0) {
+				message("nothing!\n");
+				return;
+			}
+			World::Obj &t = _world.objects[obj];
+			if (!seReach(t, tx, ty))
+				return;
+			if (t.type != 0x32) {
+				message("No effect.\n");
+				return;
+			}
+			if (t.frame == 1) {
+				message("\nFlintlock already loaded.\n");
+				return;
+			}
+			t.frame = 1;
+			consumeOne(powder);
+			message("\nFlintlock loaded.\n");
+		});
+		break;
+	}
+	case 0x310AD: { // the mortar and the grinding stone: corn (0x6C) alone is ground into flour (0x5D); charcoal (0x81), sulphur powder (0x7B) and 0x82 together are mixed into gunpowder (0xCC), as much as the smallest heap
+		int slot[3] = {-1, -1, -1}; // 0x81, 0x7B, 0x82
+		int corn = -1, least = 0;
+		bool any = false;
+		for (size_t i = 0; i < _world.objects.size(); ++i) {
+			const World::Obj &c = _world.objects[i];
+			if (c.deleted || c.location() != ObjRecord::IN_CONTAINER || c.parent != idx)
+				continue;
+			any = true;
+			if (c.type == 0x6C)
+				corn = (int)i;
+			else if (c.type == 0x81)
+				slot[0] = (int)i;
+			else if (c.type == 0x7B)
+				slot[1] = (int)i;
+			else if (c.type == 0x82)
+				slot[2] = (int)i;
+			else {
+				message("\nYou can't grind that!\n");
+				goto done;
+			}
+			if (corn >= 0)
+				break;
+			least = (c.quantity > least && least != 0) ? least : c.quantity;
+		}
+		if (!any) {
+			message("\nThere's nothing to grind!\n");
+			break;
+		}
+		if (corn >= 0) {
+			if (slot[0] < 0 && slot[1] < 0 && slot[2] < 0) {
+				message("\nYou grind the corn into corn flour.\n");
+				int n = _world.objects[corn].quantity ? _world.objects[corn].quantity : 1;
+				_world.deleteObject(corn);
+				seFill(idx, 0x5D, n);
+			} else {
+				message("\nThe mixture in the " + Describe::object(_world, o) + " is wrong.\n");
+			}
+			break;
+		}
+		for (int s : slot) {
+			if (s < 0) {
+				message("\nYou're missing some ingredients.\n");
+				goto done;
+			}
+			if (_world.objects[s].quantity > least)
+				_world.objects[s].quantity = (uint8_t)(_world.objects[s].quantity - least);
+			else
+				_world.deleteObject(s);
+		}
+		seFill(idx, 0xCC, least);
+		message("\nYou mix a batch of gunpowder.\n");
+	done:
+		break;
+	}
 	default: // APPROX(79): not ported yet
 		break;
 	}
+}
+
+// sub_3215F, what is done at a fire: "On " a clay pot (0x84) fires it (0x85), corn flour (0x5D) becomes tortillas (0x66), a log (0xCE) charcoal (0x81, ten),
+// the things on the table at ds:118A burn up, gunpowder (0xCC) explodes. APPROX(81): the explosion (sub_29A41: sound, damage 1-20 to what is around, the flash of sub_318F5) is only its sound; the powder is gone.
+void Game::seFire() {
+	int actor = actingActor();
+	seAsk([this, actor](int obj, int tx, int ty) {
+		static const uint16_t BURNS[16] = {0x04, 0x05, 0x0D, 0x07, 0x09, 0x24, 0x27, 0x2A, 0x11, 0x2D, 0x86, 0xB7, 0xB4, 0xBF, 0xD2, 0xAB};
+		if (obj < 0) {
+			message("nothing!\n");
+			return;
+		}
+		World::Obj &t = _world.objects[obj];
+		if (!seReach(t, tx, ty))
+			return;
+		int a = _world.actorObject(actor);
+		int px = a >= 0 ? _world.objects[a].x : 0, py = a >= 0 ? _world.objects[a].y : 0;
+		bool held = carriedObject(t) && t.parent == actor;
+		auto one = [&]() {
+			World::Obj &u = _world.objects[obj];
+			if (u.quantity > 1)
+				--u.quantity;
+			else
+				_world.deleteObject(obj);
+		};
+		auto give = [&](int type, int quantity, int sx, int sy) {
+			if (!seGive(actor, type, quantity))
+				seMake(type, sx, sy, z, quantity);
+		};
+		int type = t.type, quantity = t.quantity;
+		bool burns = false;
+		for (uint16_t b : BURNS)
+			burns |= b == type;
+		if (type == 0x84) {
+			message("\nYou fired the pot.\n");
+			one();
+			give(0x85, 1, px, py);
+		} else if (type == 0x5D) {
+			if (held)
+				give(0x66, quantity, tx, ty);
+			else
+				seMake(0x66, tx, ty, z, quantity);
+			_world.deleteObject(obj);
+			message("\nYou made corn tortillas.\n");
+		} else if (type == 0xCE) {
+			message("\nYou made some charcoal.\n");
+			one();
+			give(0x81, 10, px, py);
+		} else if (burns) {
+			message("\nYou incinerated the " + Describe::object(_world, t) + ".\n");
+			_world.deleteObject(obj);
+		} else if (type == 0xCC) {
+			sfx(6);
+			_world.deleteObject(obj);
+		} else {
+			message("No effect.\n");
+		}
+	});
+}
+
+// sub_1ADDA: the first thing of the type that the actor holds and does not wear or wield (status 0x18 is readied), -1 if there is none
+int Game::sePackItem(int actor, int type) const {
+	for (size_t i = 0; i < _world.objects.size(); ++i) {
+		const World::Obj &c = _world.objects[i];
+		if (!c.deleted && c.type == type && carriedObject(c) && c.location() != ObjRecord::READIED && c.parent == actor)
+			return (int)i;
+	}
+	return -1;
 }
 
 // the sums of the "On " handlers

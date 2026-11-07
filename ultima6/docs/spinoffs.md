@@ -121,9 +121,9 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | 2B bell | 31293 | "On -": "You put the bell on the dinosaur's neck." (target type 118, frames 0D / 11; frame 11 names the head by its quality; the actor needs status bit 4 and no talk flags; actor B5 also sets bit 0x80 of actor 20's talk flags) (**ported**) |
 | 2F turtle bait | 34783 | "You must be near water." / "Nothing takes the bait." |
 | 31 notebook | 34D88 | Jimmys shorthand (**ported**) |
-| 32 flintlock | 31E67 | loading with gunpowder |
+| 32 flintlock | 31E67 | one gunpowder (CC) from the pack loads it (frame 1): "Flintlock loaded.", "Flintlock already loaded.", "You don't have any gunpowder." (**ported**) |
 | 33 camera | 34EDF | the film is ported, the flash (`sub_34DD4`: the picture, the ghost whispering "Closer...", actor 0x19) is not |
-| 3B, 3C mortar, grinding stone | 310AD | grind corn / mix gunpowder |
+| 3B, 3C mortar, grinding stone | 310AD | corn (6C) alone gives corn flour (5D) in the mortar; charcoal (81), sulphur powder (7B) and 82 together give gunpowder (CC) as much as the smallest heap; "You can't grind that!", "The mixture in the %s is wrong." (**ported**) |
 | 3F jug | 354BC | "On -": on a spear (1A) the spear of Shamap (type 1) goes into the pack (else on the floor), the spear and the jug are used up; else "No effect." (**ported**) |
 | 56-58 totems | 3646E | placing (`sub_1C1C3`, `sub_22EF7`, "`%s can't use that!") |
 | 5C folded skin | 35C2E | unfolding it |
@@ -135,13 +135,13 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | 8F machine | 35B44 | a gem in the machine |
 | 94 jungle drum | 3542B | |
 | A5 loom | 33F9E | weaving flax |
-| AD, F2, FE, 101 oven, fires | 3215F | fire the pot, make charcoal, incinerate |
+| AD, F2, FE, 101 oven, fires | 3215F | "On -": a clay pot (84) is fired (85), corn flour (5D) becomes tortillas (66), a log (CE) ten charcoal (81), the things of ds:118A burn up ("You incinerated the %s."), gunpowder explodes (APPROX 81) (**ported**) |
 | B1 wire screen | 33B10 | sift sulphur (**ported**) |
-| BA brazier, CF burnt logs | 36206, 3623D | frames, then 3215F |
+| BA brazier, CF burnt logs | 36206, 3623D | frames, then 3215F (**ported**) |
 | BE metal head | 34147 | replacing the statue's head |
 | BF tarred cloth | 33777 | torch, grenade |
 | C0 clay | 3204A | shaping a pot (**ported**) |
-| CC gunpowder | 34C0A | loading the flintlock |
+| CC gunpowder | 34C0A | "On -": a flintlock (32) is loaded (**ported**) |
 | D1 lit torch | 35686 | "On -": burn things (dinosaur egg ...) |
 | D4 fishing pole | 31B48 | deep water (terrain 0x0C) on the diagonal, one catch in five (**ported**) |
 | D8 crystal garden | 35D54 | potassium nitrate (Johann) |

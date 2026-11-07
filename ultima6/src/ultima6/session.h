@@ -286,6 +286,8 @@ private:
 	bool _seAsync = false;
 	std::function<void(int, int, int)> _seThen; // what a handler does with the object chosen by "On " (-2 for none chosen) and its square
 	void seAsk(std::function<void(int, int, int)> then);
+	void seFire();                                                              // sub_3215F
+	int sePackItem(int actor, int type) const;                                  // sub_1ADDA
 	int seRoll(int lo, int hi);                                                 // sub_3B58F
 	int seStrength(int actor) const;                                            // sub_285A0: the strength, less 3 / plus 3 by the status bits
 	int seMaxHp(int actor) const;                                               // sub_2872A: twice the strength and four times the level, 1 to 255

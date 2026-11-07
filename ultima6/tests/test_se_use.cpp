@@ -318,6 +318,69 @@ int main() {
 			bones |= w.objects[i].type == 0x52 && !w.objects[i].deleted;
 		CHECK(bones);
 		w.deleteObject(knife);
+		// the flintlock (0x32) needs gunpowder (0xCC) in the pack; loaded it is frame 1
+		clearEast(w, px, py);
+		int gun = put(w, 0x32, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You don't have any gunpowder") != std::string::npos);
+		int powder = w.addToInventory(w.actors.partyRoster[0], 0xCC, 0, 1);
+		(void)powder;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Flintlock loaded") != std::string::npos && w.objects[gun].frame == 1);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Flintlock already loaded") != std::string::npos);
+		w.deleteObject(gun);
+		// the mortar (0x3B): corn alone becomes corn flour (0x5D); nothing in it is "nothing to grind"; charcoal, sulphur powder and 0x82 make gunpowder
+		auto inside = [&](int mortar, int type, int qty) {
+			World::Obj c;
+			c.status = ObjRecord::IN_CONTAINER;
+			c.x = c.y = 0;
+			c.z = 0;
+			c.type = (uint16_t)type;
+			c.frame = 0;
+			c.quantity = (uint8_t)qty;
+			c.quality = 0;
+			c.actor = -1;
+			c.parent = mortar;
+			w.objects.push_back(c);
+			return (int)w.objects.size() - 1;
+		};
+		clearEast(w, px, py);
+		int mortar = put(w, 0x3B, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("nothing to grind") != std::string::npos);
+		int corn = inside(mortar, 0x6C, 3);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("corn into corn flour") != std::string::npos && w.objects[corn].deleted);
+		for (size_t i = 0; i < w.objects.size(); ++i) // (the flour stays in the mortar: it cannot be ground again)
+			if (!w.objects[i].deleted && w.objects[i].parent == mortar && w.objects[i].location() == ObjRecord::IN_CONTAINER)
+				w.deleteObject((int)i);
+		int a1 = inside(mortar, 0x81, 5), a2 = inside(mortar, 0x7B, 2), a3 = inside(mortar, 0x82, 4);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("mix a batch of gunpowder") != std::string::npos);
+		CHECK(w.objects[a2].deleted && w.objects[a1].quantity == 3 && w.objects[a3].quantity == 2);
+		w.deleteObject(mortar);
+		// an oven (0xAD): "On -" a clay pot (0x84) fires it into 0x85, a log (0xCE) gives ten charcoal, corn flour (0x5D) becomes tortillas (0x66), a lamp-post-like 0x04 burns up
+		int oven = toolOn(0xAD, 0x84, 0, target, made);
+		CHECK(logText(g).find("You fired the pot") != std::string::npos && w.objects[target].deleted);
+		w.deleteObject(oven);
+		oven = toolOn(0xAD, 0x5D, 0, target, made);
+		CHECK(logText(g).find("corn tortillas") != std::string::npos && w.objects[target].deleted);
+		CHECK(made >= 0 && w.objects[made].type == 0x66);
+		w.deleteObject(oven);
+		oven = toolOn(0xAD, 0xCE, 0, target, made);
+		CHECK(logText(g).find("some charcoal") != std::string::npos);
+		w.deleteObject(oven);
+		oven = toolOn(0xAD, 0x30, 0, target, made);
+		CHECK(logText(g).find("No effect.") != std::string::npos);
+		w.deleteObject(oven);
+		w.deleteObject(target);
 		// the fire extinguisher (0x5E) puts out a fire (0xF2) and turns burning logs (0xCF frame 2) back to frame 0
 		int ext = toolOn(0x5E, 0xF2, 0, target, made);
 		CHECK(w.objects[target].deleted && !w.objects[ext].deleted);
