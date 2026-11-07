@@ -27,6 +27,7 @@ static TGameControl *gameControl() {
 }
 
 std::vector<TGAction *> TGAction::s_runningActions;
+std::map<int, std::string> TGAction::actionPartHook;
 std::unordered_map<int, int> TGAction::s_actionIdToRunningAction;
 bool TGAction::s_deletedActions = false;
 TVisObjRef TGAction::s_saveAction;

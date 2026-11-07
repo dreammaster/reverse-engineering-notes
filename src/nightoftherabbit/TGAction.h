@@ -26,6 +26,8 @@
 #pragma once
 
 #include <list>
+#include <map>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -151,6 +153,12 @@ protected:
 	bool _executing;    // +0x13
 	TTimer _timer;      // +0x18
 	TVisObjRef _data;   // +0x28
+
+public:
+	/** (Night of the Rabbit, TGAction::actionPartHook) The Lua function that is asked before an action part of a command is
+	 *  executed, by the number of the command: a true answer means that the script has done the part. Set with
+	 *  system.registerActionPartHook(command, "functionName"); an empty name takes it away. */
+	static std::map<int, std::string> actionPartHook;
 
 private:
 	static std::vector<TGAction *> s_runningActions;

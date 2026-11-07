@@ -12,6 +12,9 @@
 #include "vsplayer/control/gameControl.h"
 #include "vsplayer/control/masterControl.h"
 #include "vstables/fieldIds.h"
+#include "vscommon/scripting/argument.h"
+#include "vscommon/scripting/lua.h"
+#include "vscommon/scripting/visLua.h"
 #include "vstables/visionaireGame.h"
 
 // How many parts an action may do in one call before it is taken to be in an endless loop.
@@ -173,7 +176,26 @@ void TGAction::Execute(bool skip, t_SkipCutsceneInfo *skipInfo) {
 				_active.SetValue(kActionContinueWaitForEndIfElse, depth - 1, TSendEventEnum::kSendEvent);
 			}
 		} else if ((unsigned int)(command - 5) <= 0x9B) {
-			executor.run(command);
+			// (Night of the Rabbit) a script that registered a hook for the command is asked first; true: it has done the part
+			auto hook = actionPartHook.find(command);
+			bool handled = false;
+
+			if (hook != actionPartHook.end()) {
+				static TArgument parameter;
+				static TArgument returnValue;
+
+				parameter.Set(part);
+				returnValue.SetType(TArgType::kBool);
+
+				std::vector<TArgument *> arguments = {&parameter};
+				std::vector<TArgument *> results = {&returnValue};
+
+				LuaDebugName("ObjectRenderHook"); // (the original's label for it, as it is)
+				handled = LuaExecuteFunction(hook->second, arguments, results) && returnValue.GetBool();
+			}
+
+			if (!handled)
+				executor.run(command);
 		}
 
 		if (executor._quit)

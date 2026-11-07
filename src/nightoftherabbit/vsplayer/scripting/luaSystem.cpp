@@ -136,6 +136,19 @@ static int system_pauseCurrentAnimations(lua_State *) {
 }
 
 // Confirmed (asm lines 286451-286476)
+// Confirmed (Night of the Rabbit, system_registerActionPartHook): the hook function of a command (its number, then the name of
+// the Lua function) for TGAction::Execute(); an empty name takes the hook away.
+static int system_registerActionPartHook(lua_State *state) {
+	int command = static_cast<int>(luaL_checkinteger(state, 1));
+	const char *name = luaL_checklstring(state, 2, nullptr);
+
+	if (*name == '\0')
+		TGAction::actionPartHook.erase(command);
+	else
+		TGAction::actionPartHook[command] = name;
+	return 0;
+}
+
 static int system_resumeAllActions(lua_State *) {
 	for (TGAction *action : TGAction::GetRunningActions())
 		action->SetPaused(false);
@@ -347,6 +360,7 @@ static const luaL_Reg system_meths[] = {
 	{"joystickIsController", system_controllerisgame},
 	{"pauseCurrentActions", system_pauseCurrentActions},
 	{"resumeAllActions", system_resumeAllActions},
+	{"registerActionPartHook", system_registerActionPartHook},
 	{"pauseCurrentAnimations", system_pauseCurrentAnimations},
 	{"resumeAllAnimations", system_resumeAllAnimations},
 	{"pauseBackgroundMusic", system_pauseBackgroundMusic},
