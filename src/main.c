@@ -386,10 +386,14 @@ static void walker_enter(Walker *wk, RoomView *rv, int room, int door) {
 	wk->world_key = 0;
 	walker_world(wk, rv);
 	int placed = 0;
-	for (int i = 0; i < wk->world.nexits; i++)
+	for (int i = 0; i < wk->world.nexits && !placed; i++)
 		if (wk->exits[i].id == door) {
-			const ColBox *e = &wk->exits[i];
-			placed = walker_find_free(wk, (e->x0 + e->x1) / 2, (e->y0 + e->y1) / 2);
+			int lx, ly;
+			room_landing(&rv->mp2, room, &wk->exits[i], &lx, &ly);
+			ColResult cr;
+			collision_test(&wk->world, lx, ly, 0, PL_XS, PL_YS, PL_ZS, -1, 1, &cr);
+			if (cr.zf) { wk->x1 = lx; wk->y1 = ly; wk->z = 0; placed = 1; }
+			else placed = walker_find_free(wk, lx, ly);
 		}
 	if (!placed)
 		walker_find_free(wk, wk->world.w8 / 2, wk->world.h8 / 2);

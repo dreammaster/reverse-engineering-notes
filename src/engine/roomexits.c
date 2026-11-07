@@ -47,3 +47,13 @@ int room_build_exits(const Mp2 *mp2, const ObjSprites *objs, int room, ColBox ou
 	}
 	return n;
 }
+
+void room_landing(const Mp2 *mp2, int room, const ColBox *e, int *x1, int *y1) {
+	const uint8_t *rr = mp2->sec[0].rec[room];
+	int w8 = rr[4] * 8, h8 = rr[5] * 8;
+	int ey0 = e->y0 & 0xFF, ex0 = e->x0 & 0xFF;
+	if (ey0 == 0) { *x1 = e->x1 - 7; *y1 = rr[20] + 7; }
+	else if (ey0 >= h8) { *x1 = e->x1 - 7; *y1 = h8 - 1; }
+	else if (ex0 == 0) { *x1 = rr[21] + 7; *y1 = e->y1 - 7; }
+	else { *x1 = w8 - 1; *y1 = e->y1 - 7; }
+}

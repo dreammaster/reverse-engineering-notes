@@ -189,7 +189,7 @@ def collision_vector(seed):
 coll_vec = [(s, collision_vector(s)) for s in range(1, 41)]
 
 # room exits of every room of every level directory: Python roomexits.py vs src/engine/roomexits.c
-import roomexits, objplace
+import roomexits, objplace, landing
 exit_vec = []
 for d in sorted(glob.glob(os.path.join(root, 'cadaver*', '*', '[0-9]'))):
     mp1 = mjm.mjm_unpack(open(glob.glob(os.path.join(d, 'LEV*.MP1'))[0], 'rb').read())
@@ -211,7 +211,7 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver*', '*', '[0-9]'))):
         ex = roomexits.room_exits(rec, secs[1]['records'], hd, rec[21] if len(rec) > 21 else 0, rec[20] if len(rec) > 20 else 0)
         for e in ex:
             cnt += 1
-            for v in (n,) + tuple(e):
+            for v in (n,) + tuple(e) + landing.landing(e, rec):
                 for sh in (0, 8, 16, 24):
                     h = ((h ^ ((v >> sh) & 0xFF)) * 0x01000193) & 0xFFFFFFFF
         if not secs[3]['present']:

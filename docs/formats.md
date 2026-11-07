@@ -564,6 +564,11 @@ write tracing):
   the target room of an exit is the *other* room that lists it. (Ground truth: the room-entry routine `sub_1DA60` can be called for any room in
   the emulator, `tools/emu_call.py`, `tools/oracle_rooms.py N` — the exits and the bounds of every room were read back that way; the level
   number is forced by writing `ds:0708 = level-1` before the files are opened.)
+* **Landing after a door (verified, `tools/landing.py`, `src/engine/roomexits.c room_landing`):** the player appears at the same door *in the
+  new room*, just inside it: north door (box `y0 == 0`) `x1 = box.x1 − 7, y1 = rec[20] + 7`; south door (`y0 ≥ 8h`) `x1 = box.x1 − 7, y1 = 8h − 1`;
+  west door (`x0 == 0`) `x1 = rec[21] + 7, y1 = box.y1 − 7`; east door (`x0 ≥ 8w`) `x1 = 8w − 1, y1 = box.y1 − 7` (7 = the player's box size, z = 0).
+  101 door crossings in level 1 (the player placed next to each exit in the emulator and walked through) gave exactly these positions
+  (`tools/oracle_landing.py`, `tools/verify_landing.py`); the position along the wall does *not* depend on where the player left.
 * **The player's move and pushing (verified, ported — `tools/push.py`, `src/engine/push.c`).** The player moves one unit per game step
   (every 2 ticks) along the pressed axis. The candidate position is tested with `collision_test`; *every overlapped object that is not
   solid is pushed* by the same `(dx, dy)`: each pushed object costs its sprite header byte 13 (its weight; 1 for a small flat thing,

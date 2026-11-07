@@ -451,9 +451,11 @@ int main(int argc, char **argv) {
 					int ne = room_build_exits(&m, &os, r, ex);
 					for (int k = 0; k < ne; k++) {
 						cnt++;
-						uint32_t v[8] = {(uint32_t)r, (uint8_t)ex[k].x1, (uint8_t)ex[k].y1, (uint8_t)ex[k].x0, (uint8_t)ex[k].y0,
-						                 (uint8_t)ex[k].zt, (uint8_t)ex[k].zb, (uint32_t)ex[k].id};
-						for (int a = 0; a < 8; a++)
+						int lx, ly;
+						room_landing(&m, r, &ex[k], &lx, &ly);
+						uint32_t v[10] = {(uint32_t)r, (uint8_t)ex[k].x1, (uint8_t)ex[k].y1, (uint8_t)ex[k].x0, (uint8_t)ex[k].y0,
+						                 (uint8_t)ex[k].zt, (uint8_t)ex[k].zb, (uint32_t)ex[k].id, (uint32_t)lx, (uint32_t)ly};
+						for (int a = 0; a < 10; a++)
 							for (int b = 0; b < 32; b += 8)
 								h = (h ^ ((v[a] >> b) & 0xFF)) * 0x01000193u;
 					}
