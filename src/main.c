@@ -110,6 +110,7 @@ typedef struct RoomView_ {
 	struct { int active, id, timer; } msgs[4];   /* message scrolls (slots 0..3) */
 	uint8_t verbs[VERB_SLOTS];  /* verb icons of the touched object (slots) */
 	int nverbs;
+	int energy_max_cfg;        /* from LEVn.MP1 */
 	int label_id;              /* name shown above the room name: string id of the last touched object (-1 none) */
 	AclVM vm;                  /* script state: thing flags / variables */
 	int vm_ok;
@@ -156,6 +157,7 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 	panel_ensure(g);
 	if (g_b1)
 		panel_apply_wings(g_b1, g_b1_len, scr->pixels);
+	energy_bar_draw(scr->pixels, rv->vm.energy, rv->vm.energy_max);
 	if (g_icons && rv->nverbs)
 		verbs_draw(scr->pixels, rv->verbs, rv->nverbs, g_icons, g_icons_len);
 	if (g_font && rv->names_ok && rv->room >= 0 && rv->room < rv->mp2.sec[0].count && rv->mp2.sec[0].rec[rv->room]) {
@@ -205,6 +207,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 		}
 	}
 	int rc = floormaps_parse(f[0], fl[0], &rv->maps);
+	rv->energy_max_cfg = level_energy_max(f[0], fl[0]);
 	if (rv->names_ok) { lng_free(&rv->names); rv->names_ok = 0; }
 	if (rc == 0 && status_name_table(f[0], fl[0], rv->name_tbl) == 0) {
 		uint8_t *lg; size_t ll;
@@ -225,6 +228,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 		return -1;
 	}
 	acl_init(&rv->vm, &rv->mp2);
+	rv->vm.energy = rv->vm.energy_max = rv->energy_max_cfg;
 	memset(rv->visited, 0, sizeof(rv->visited));
 	rv->vm_ok = 1;
 	rv->ok = 1;

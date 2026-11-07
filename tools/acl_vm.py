@@ -19,6 +19,8 @@ class VM:
         self.disarm = False
         self.unsupported = []
         self.messages = []
+        self.energy = 100              # ds:23A (current) and ds:700 (maximum, LEVn.MP1 offset 60)
+        self.energy_max = 100
         self.selected = 0              # ds:27A, the thing id of the currently selected / carried item
         self.reg = 0                   # ds:704, the 'random / variable' register
         self.rand = None               # callable(lo, hi) -> int (the game uses its own seeded generator)
@@ -117,6 +119,11 @@ class VM:
                     self.vars[0x1A + idx] = dly
             if op == 90:
                 self.messages.append((8, 0x1E))
+        elif op == 45:                              # change energy by the signed word a (1000:81C8): clamp to the maximum, <= 0 = dead (energy 0)
+            d = int.from_bytes(a[:2], 'big')
+            d -= 0x10000 if d >= 0x8000 else 0
+            e = self.energy + d
+            self.energy = 0 if e <= 0 else min(e, self.energy_max)
         elif op == 81:                              # reg = var[a]
             self.reg = self.vars[a[0]]
         elif op == 43:                              # test the room of a thing

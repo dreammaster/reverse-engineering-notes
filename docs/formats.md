@@ -471,6 +471,9 @@ verb 2 if `h[12] & 2` and `!(rec15 & 4)`; the class verb `ds:FA36[h[0x17]]` (`04
 verb 10 (`0Ah`, "?") if `h[12] & 1`, `!(rec15 & 4)` and `!(ds:703 & 0x20)`; verb 11 (`0Bh`) unless `h[0x17] == 6` or `h[0x16] & 0x80`; then verb 6. Slot positions (`ds:FD8A`): (9,145) (36,152) (9,169) (36,177) (63,175) (90,177).
 The icons stay until the next touch. The verb handlers (`1000:2E0B`, 17 entries) turn a chosen verb into events — 11: event 16 (look/script) when `rec[3] & 0x20`, 4 and 7: event 5, 2: event 0, 1: event 21 + pick-up into the inventory, 16: event 1 — and
 holding End switches the direction keys from walking to moving a highlight over the slots (not decoded further).
+**Energy (`ds:23A`, maximum `ds:700`).** The maximum — and the starting value — is the big-endian word at **offset 60 of the unpacked `LEVn.MP1`** (Cadaver levels 1–5: 100, 200, 350, 500, 1000; read by the loader `1000:B568` together with five more
+words, one of them the random seed `ds:242`). The panel bar (`1000:D8C3`/`D8DE`): the 22×6 box at (277,143) is cleared to colour 0, then 22·energy/max pixels are filled with colour 4. Op `2Dh` (45) adds a signed word to the energy
+(`1000:81C8`: clamp to the maximum, ≤ 0 = death, energy 0; verified against the original for 60 random cases).
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input

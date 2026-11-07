@@ -44,4 +44,9 @@ int verbs_list(const uint8_t hdr[32], int flags2, int ds703, uint8_t out[VERB_SL
 /* Draw the n verb icons (the rest of the six slots get the empty icon 0). icons = ANDATA block 0 (17 icons of 112 bytes). */
 void verbs_draw(uint8_t *canvas, const uint8_t *verbs, int n, const uint8_t *icons, size_t icons_len);
 
+/* Energy bar (1000:D8C3 / D8DE): 22 x 6 box at (277,143) cleared, then filled with colour 4 for 22 * energy / max pixels. */
+void energy_bar_draw(uint8_t *canvas, int energy, int energy_max);
+/* The level's maximum energy: big-endian word at offset 60 of the unpacked LEVn.MP1 (also the initial energy). */
+int level_energy_max(const uint8_t *mp1, size_t len);
+
 #endif

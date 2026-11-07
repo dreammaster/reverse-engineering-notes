@@ -19,6 +19,7 @@ static int cond_len(int type) {
 void acl_init(AclVM *vm, const Mp2 *mp2) {
 	memset(vm, 0, sizeof(*vm));
 	vm->timer_delay = -1;
+	vm->energy = vm->energy_max = 100;
 	for (int t = 0; t < ACL_THINGS; t++) {
 		int len;
 		const uint8_t *r = mp2_thing(mp2, t, &len);
@@ -101,6 +102,11 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 				vm->vars[0x1A + idx] = (uint8_t)dly;
 			}
 		}
+		break;
+	}
+	case 45: {
+		int e = vm->energy + (int16_t)w;
+		vm->energy = e <= 0 ? 0 : e > vm->energy_max ? vm->energy_max : e;
 		break;
 	}
 	case 28: if (vm->msg_n < 16) vm->msg[vm->msg_n++] = w; break;

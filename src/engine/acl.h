@@ -26,6 +26,7 @@ typedef struct {
 	void *user;
 	int queue_n;                    /* room events queued by ops (op 9 -> type 19) */
 	struct { int type, arg; } queue[16];
+	int energy, energy_max;         /* ds:23A / ds:700 */
 	int msg_n;                      /* op 28 (say): string ids waiting to be shown */
 	int msg[16];
 	int timer_arg, timer_delay;     /* one-shot room timer (op 42): delay in timer units, -1 = none */

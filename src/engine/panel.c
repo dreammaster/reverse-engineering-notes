@@ -192,3 +192,15 @@ void verbs_draw(uint8_t *canvas, const uint8_t *verbs, int n, const uint8_t *ico
 	for (int i = 0; i < VERB_SLOTS; i++)
 		icon_draw(canvas, verb_slots[i][0], verb_slots[i][1], icons, icons_len, i < n ? verbs[i] : 0);
 }
+
+void energy_bar_draw(uint8_t *canvas, int energy, int energy_max) {
+	for (int r = 0; r < 6; r++)
+		memset(canvas + (143 + r) * 320 + 277, 0, 22);
+	if (energy > 0 && energy_max > 0) {
+		int w = 22 * energy / energy_max;
+		for (int r = 0; r < 6; r++)
+			memset(canvas + (143 + r) * 320 + 277, 4, (size_t)w);
+	}
+}
+
+int level_energy_max(const uint8_t *mp1, size_t len) { return len >= 62 ? (int)be16(mp1 + 60) : 100; }
