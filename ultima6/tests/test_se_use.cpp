@@ -151,6 +151,46 @@ int main() {
 	CHECK(logText(g).find("You started a fire") != std::string::npos);
 	w.deleteObject(logs);
 
+	// a metal bucket (0x88): next to a tar pit (0xE5) it fills with tar (frame 1); full of water (frame 2) it is poured onto a fire (0xF2), which goes out
+	clearEast(w, px, py);
+	int bucket = put(w, 0x88, 0, px + 1, py, 0);
+	int pit = put(w, 0xE5, 0, px, py - 1, 0);
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(w.objects[bucket].frame == 1);
+	CHECK(logText(g).find("tar in the bucket") != std::string::npos);
+	w.deleteObject(pit);
+	w.objects[bucket].frame = 2;
+	std::vector<int> below;
+	w.objectsAt(px, py + 1, 0, below);
+	for (int i : below)
+		if (w.objects[i].actor < 0)
+			w.deleteObject(i);
+	int fire = put(w, 0xF2, 0, px, py + 1, 0);
+	g.log.clear();
+	useEast(w, g, px, py);
+	g.handleKey(KEY_DOWN);
+	g.handleKey(KEY_ENTER);
+	CHECK(w.objects[fire].deleted);
+	CHECK(w.objects[bucket].frame == 0);
+	CHECK(logText(g).find("You put the fire out") != std::string::npos);
+	w.deleteObject(bucket);
+
+	// the digging stick (0x83) finds clay (terrain 0x20-0x2F, 0xBE) around the member or says there is nothing to dig; clay (0xC0) is shaped into a pot (0x84)
+	clearEast(w, px, py);
+	int stick = put(w, 0x83, 0, px + 1, py, 0);
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(logText(g).find("clay") != std::string::npos || logText(g).find("nothing to dig") != std::string::npos);
+	w.deleteObject(stick);
+	clearEast(w, px, py);
+	int clay = put(w, 0xC0, 0, px + 1, py, 0);
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(logText(g).find("You shaped a small, soft pot") != std::string::npos);
+	CHECK(w.objects[clay].deleted);
+	CHECK(g.log.size() > 0);
+
 	// a torch (0xD0) is lit in a free hand: a lit torch (0xD1) with 100 minutes appears readied
 	clearEast(w, px, py);
 	int actor = w.actors.partyRoster[0];

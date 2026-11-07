@@ -90,8 +90,11 @@ def main():
     path = sys.argv[1]
     for name in sys.argv[2:]:
         lines = load(path, name)
-        for l in pretty(lines):
-            if re.match(r'[0-9A-F]{5} (push\s+(bp|si|di)|pop\s+(bp|si|di)|mov\s+bp, sp)$', l):
+        body = pretty(lines)
+        for n, l in enumerate(body):
+            if re.match(r'[0-9A-F]{5} (push\s+(bp|si|di)|mov\s+bp, sp)$', l) and n < 8:
+                continue
+            if re.match(r'[0-9A-F]{5} (pop\s+(bp|si|di)|mov\s+sp, bp)$', l) and n > len(body) - 8:
                 continue
             print(l[:130])
 

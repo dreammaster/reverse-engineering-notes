@@ -86,6 +86,21 @@ int Game::seFind(int type, int x, int y) const {
 	return -1;
 }
 
+// sub_1B5FA into a container: a new thing inside
+void Game::seFill(int container, int type, int quantity) {
+	World::Obj o;
+	o.status = ObjRecord::IN_CONTAINER;
+	o.x = o.y = 0;
+	o.z = 0;
+	o.type = (uint16_t)type;
+	o.frame = 0;
+	o.quantity = (uint8_t)quantity;
+	o.quality = 0;
+	o.actor = -1;
+	o.parent = container;
+	_world.objects.push_back(o);
+}
+
 // sub_1B5FA with a quantity: the thing goes into the pack of the actor unless it would be too heavy (the original's "carrying too much already")
 bool Game::seGive(int actor, int type, int quantity) {
 	if (_world.carriedWeight(actor) + _world.weightOfType(type, quantity) > _world.actors.strength[actor] * 20)
@@ -110,7 +125,8 @@ void Game::seUseObject(int idx) {
 	uint32_t sub = handlerOf(o.type);
 	if (sub)
 		seAction(sub, idx);
-	seEnd();
+	if (_pending != 'Y') // (a handler that asks "On " ends when the object is chosen)
+		seEnd();
 }
 
 // loc_36508: five moves; the prompt comes after a handler that waited for a key
@@ -120,6 +136,35 @@ void Game::seEnd() {
 		_seAsync = false;
 		prompt();
 	}
+}
+
+// "On ": the cursor chooses an object; `then` is called with the object (-1 for an empty square, -2 when none was chosen) and the square
+void Game::seAsk(std::function<void(int, int, int)> then) {
+	message("On ");
+	_seThen = then;
+	_seAsync = true;
+	_pending = 'Y';
+	_cursor = true;
+	_cx = _cy = 5;
+}
+
+// the object the cursor chose: the one on top of the square (a person too); its name is printed
+void Game::seChosen(int tx, int ty) {
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	int pick = -1;
+	for (size_t i = here.size(); i-- > 0;)
+		if (!_world.objects[here[i]].invisible()) {
+			pick = here[i];
+			break;
+		}
+	if (pick >= 0)
+		message(Describe::object(_world, _world.objects[pick]) + "\n");
+	std::function<void(int, int, int)> then = _seThen;
+	_seThen = nullptr;
+	if (then)
+		then(pick, tx, ty);
+	seEnd();
 }
 
 // the handler named by the routine it calls
@@ -250,6 +295,130 @@ void Game::seAction(uint32_t sub, int idx) {
 			message("\nYou started a fire.\n");
 		}
 		break;
+	case 0x31F60: { // the digging stick: of the eight squares around the member the first with clay in the ground (terrain tile 0x20-0x2F or 0xBE: sub_2E5F9) gives a lump
+		int a = _world.actorObject(actor);
+		if (a < 0)
+			break;
+		int px = _world.objects[a].x, py = _world.objects[a].y;
+		bool found = false;
+		for (int dx = 0; dx < 3 && !found; ++dx) {
+			for (int dy = 0; dy < 3 && !found; ++dy) {
+				if (dx == 1 && dy == 1)
+					continue;
+				int tx = px + dx - 1, ty = py + dy - 1;
+				int tile = _world.map.tile(z, tx & (z == 0 ? 0x3FF : 0xFF), ty & (z == 0 ? 0x3FF : 0xFF));
+				if (!((tile >= 0x20 && tile <= 0x2F) || tile == 0xBE))
+					continue;
+				message("\nYou get some clay.\n");
+				found = true;
+				if (!seGive(actor, 0xC0, 1))
+					seMake(0xC0, tx, ty, z, 1);
+			}
+		}
+		if (!found)
+			message("\nThere is nothing to dig!\n");
+		break;
+	}
+	case 0x3204A: { // clay: one lump becomes a pot (0x84), in the pack if the clay was carried, else on the square of the clay (a carried one that does not fit is put at the member's feet)
+		int a = _world.actorObject(actor);
+		bool carried = carriedObject(o);
+		int ox = o.x, oy = o.y;
+		consumeOne(idx);
+		if (carried) {
+			if (!seGive(actor, 0x84, 1) && a >= 0)
+				seMake(0x84, _world.objects[a].x, _world.objects[a].y, z, 1);
+		} else {
+			seMake(0x84, ox, oy, z, 1);
+		}
+		message("\nYou shaped a small, soft pot from the clay.\n");
+		break;
+	}
+	case 0x335A9: { // the metal bucket: empty (frame 0) it takes tar from a tar pit or water from water next to the member; with water (frame 2) it is poured onto something
+		int a = _world.actorObject(actor);
+		if (a < 0)
+			break;
+		int px = _world.objects[a].x, py = _world.objects[a].y;
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		if (o.frame == 2) { // sub_33364
+			int bucket = idx;
+			seAsk([this, bucket, actor](int obj, int tx, int ty) {
+				World::Obj &b = _world.objects[bucket];
+				auto empty = [&]() {
+					for (size_t i = 0; i < _world.objects.size(); ++i)
+						if (!_world.objects[i].deleted && _world.objects[i].location() == ObjRecord::IN_CONTAINER && _world.objects[i].parent == bucket && _world.objects[i].type == 0x8C)
+							_world.deleteObject((int)i);
+					b.frame = 0;
+				};
+				if (obj == -2) {
+					message("nothing!\n");
+					return;
+				}
+				int ax = 0, ay = 0;
+				int k = _world.actorObject(actor);
+				if (k >= 0) {
+					ax = _world.objects[k].x;
+					ay = _world.objects[k].y;
+				}
+				if (obj >= 0 && !carriedObject(_world.objects[obj]) && (std::abs(tx - ax) > 1 || std::abs(ty - ay) > 1)) {
+					message("Out of range!\n");
+					return;
+				}
+				if (obj < 0) {
+					int tile = _world.map.tile(z, tx & (z == 0 ? 0x3FF : 0xFF), ty & (z == 0 ? 0x3FF : 0xFF));
+					message(Describe::article(_world, tile) + Describe::tileName(_world, tile, false) + "\n");
+					empty();
+					message("\nYou pour the water out.\n");
+					return;
+				}
+				World::Obj &t = _world.objects[obj];
+				if (t.type == 0xF2 || t.type == 0xFE) {
+					empty();
+					message("\nYou put the fire out.\n");
+					_world.deleteObject(obj);
+				} else if (t.type == 0xCF && t.frame == 2) {
+					empty();
+					message("\nYou put the fire out.\n");
+					t.frame = 0;
+				} else {
+					empty();
+					message("\nYou pour the water out.\n");
+				}
+			});
+			break;
+		}
+		if (o.frame == 1)
+			break; // APPROX(79): pouring tar (sub_32D11: tarred cloth strips, pteranodon nests, webs) is not ported
+		bool got = false;
+		for (int dx = 0; dx < 3 && !got; ++dx) {
+			for (int dy = 0; dy < 3 && !got; ++dy) {
+				if (dx == 1 && dy == 1)
+					continue;
+				int sx = (px + dx - 1) & mask, sy = (py + dy - 1) & mask;
+				std::vector<int> here;
+				_world.objectsAt(sx, sy, z, here);
+				int top = here.empty() ? -1 : (int)_world.objects[here.front()].type;
+				if (top == 0xE5) { // a tar pit
+					seFill(idx, 0x8B, 10);
+					o.frame = (uint8_t)(o.frame + 1);
+					message("\nYou got some tar in the bucket.\n");
+					got = true;
+				} else {
+					// (the original asks the terrain of the square (x, y - dx + dy), a slip of its own)
+					int tile = _world.map.tile(z, sx, (py + dy - dx) & mask);
+					bool water = (_world.flags.flags1[tile & (TileFlags::TILES - 1)] & 1) || top == 0xA2 || top == 0xC8 || top == 0xA6 || top == 0x96 || top == 0x97;
+					if (water) {
+						seFill(idx, 0x8C, 10);
+						o.frame = (uint8_t)(o.frame + 2);
+						message("\nYou got some water in the bucket.\n");
+						got = true;
+					}
+				}
+			}
+		}
+		if (!got)
+			message("\nThere is nothing to get in the bucket.\n");
+		break;
+	}
 	default: // APPROX(79): not ported yet
 		break;
 	}

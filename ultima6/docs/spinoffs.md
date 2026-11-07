@@ -128,9 +128,9 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | 56-58 totems | 3646E | placing (`sub_1C1C3`, `sub_22EF7`, "`%s can't use that!") |
 | 5C folded skin | 35C2E | unfolding it |
 | 5E fire extinguisher | 343E9 | "On -": puts a fire out, hardens lava |
-| 83 digging stick | 31F60 | "You get some clay." / "There is nothing to dig!" |
+| 83 digging stick | 31F60 | "You get some clay." / "There is nothing to dig!" (**ported**) |
 | 86 cloth strip | 33C06 | binds wounds |
-| 88 metal bucket | 335A9 | tar, water |
+| 88 metal bucket | 335A9 | frame 0 fills with tar or water, frame 2 pours water (`sub_33364`) (**ported**); frame 1 pours tar (`sub_32D11`: tars cloth strips, makes pteranodon nests and webs) is not |
 | 89, F0 grenade, device | 31671 | "Device activated." |
 | 8F machine | 35B44 | a gem in the machine |
 | 94 jungle drum | 3542B | |
@@ -140,7 +140,7 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | BA brazier, CF burnt logs | 36206, 3623D | frames, then 3215F |
 | BE metal head | 34147 | replacing the statue's head |
 | BF tarred cloth | 33777 | torch, grenade |
-| C0 clay | 3204A | shaping a pot |
+| C0 clay | 3204A | shaping a pot (**ported**) |
 | CC gunpowder | 34C0A | loading the flintlock |
 | D1 lit torch | 35686 | "On -": burn things (dinosaur egg ...) |
 | D4 fishing pole | 31B48 | "You need to stand next to deep water." |

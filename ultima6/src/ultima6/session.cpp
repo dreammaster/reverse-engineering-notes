@@ -786,7 +786,7 @@ bool Game::handleKeyInner(int key) {
 		castKey(key);
 		return true;
 	}
-	if (_pending == 'L' || _pending == 'Z' || _pending == 'c' || _pending == 'a' || _pending == 'o' || _pending == 'd') {
+	if (_pending == 'L' || _pending == 'Z' || _pending == 'Y' || _pending == 'c' || _pending == 'a' || _pending == 'o' || _pending == 'd') {
 		// the cursor: arrows move it, Enter looks at the cell, Escape gives up
 		switch (key) {
 		case KEY_UP:
@@ -804,11 +804,13 @@ bool Game::handleKeyInner(int key) {
 		case KEY_ENTER:
 		case KEY_SPACE: {
 			int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
-			bool mdPick = _pending == 'Z';
+			bool mdPick = _pending == 'Z', sePick = _pending == 'Y';
 			bool casting = _pending == 'c', attacking = _pending == 'a', orb = _pending == 'o', dropping = _pending == 'd';
 			_pending = 0;
 			_cursor = false;
-			if (mdPick) {
+			if (sePick) {
+				seChosen((x + _cx - 5) & mask, (y + _cy - 5) & mask);
+			} else if (mdPick) {
 				mdChosen((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 			} else if (orb) {
 				orbAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
@@ -824,6 +826,16 @@ bool Game::handleKeyInner(int key) {
 			break;
 		}
 		case KEY_ESC:
+			if (_pending == 'Y') { // Savage Empire's Use: no object chosen
+				_pending = 0;
+				_cursor = false;
+				std::function<void(int, int, int)> then = _seThen;
+				_seThen = nullptr;
+				if (then)
+					then(-2, -1, -1);
+				seEnd();
+				break;
+			}
 			if (_pending == 'Z') { // Martian Dreams' Use: no partner chosen
 				_pending = 0;
 				_cursor = false;

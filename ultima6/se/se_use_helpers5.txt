@@ -1,0 +1,110 @@
+=== sub_2E5F9 2E5F9-2E61C
+2E5F9 push    bp
+2E5FA mov     bp, sp
+2E5FC push    si
+2E5FD mov     si, [bp+arg_0]
+2E600 cmp     si, 20h
+2E603 jl      short loc_2E60A
+2E605 cmp     si, 2Fh
+2E608 jle     short loc_2E610
+2E60A cmp     si, 0BEh
+2E60E jnz     short loc_2E615
+2E610 mov     ax, 1
+2E613 jmp     short loc_2E617
+2E615 xor     ax, ax
+2E617 pop     si
+2E618 pop     bp
+2E619 retf    2
+=== sub_2E645 2E645-2E66C
+2E645 push    bp
+2E646 mov     bp, sp
+2E648 push    si
+2E649 xor     si, si
+2E64B jmp     short loc_2E660
+2E64D mov     bx, si
+2E64F shl     bx, 1
+2E651 mov     ax, [bx+1134h]
+2E655 cmp     ax, [bp+arg_0]
+2E658 jnz     short loc_2E65F
+2E65A mov     ax, 1
+2E65D jmp     short loc_2E667
+2E65F inc     si
+2E660 cmp     si, 13h
+2E663 jl      short loc_2E64D
+2E665 xor     ax, ax
+2E667 pop     si
+2E668 pop     bp
+2E669 retf    2
+=== sub_2E61C 2E61C-2E645
+2E61C push    bp
+2E61D mov     bp, sp
+2E61F push    si
+2E620 mov     si, [bp+arg_0]
+2E623 cmp     si, 0Fh
+2E626 jl      short loc_2E62D
+2E628 cmp     si, 1Bh
+2E62B jle     short loc_2E639
+2E62D cmp     si, 0AAh
+2E631 jz      short loc_2E639
+2E633 cmp     si, 0ABh
+2E637 jnz     short loc_2E63E
+2E639 mov     ax, 1
+2E63C jmp     short loc_2E640
+2E63E xor     ax, ax
+2E640 pop     si
+2E641 pop     bp
+2E642 retf    2
+=== sub_2E51A 2E51A-2E540
+2E51A push    bp
+2E51B mov     bp, sp
+2E51D mov     al, byte_42252
+2E520 cmp     al, byte_49756
+2E524 jnz     short loc_2E52B
+2E526 mov     ax, word_47344
+2E529 jmp     short loc_2E539
+2E52B mov     ax, [bp+arg_0]
+2E52E mov     dx, 3
+2E531 imul    dx
+2E533 mov     bx, ax
+2E535 mov     ax, [bx+78E4h]
+2E539 and     ax, 3FFh
+2E53C pop     bp
+2E53D retf    2
+=== sub_2E540 2E540-2E56A
+2E540 push    bp
+2E541 mov     bp, sp
+2E543 mov     al, byte_42252
+2E546 cmp     al, byte_49756
+2E54A jnz     short loc_2E551
+2E54C mov     ax, word_47344+1
+2E54F jmp     short loc_2E55F
+2E551 mov     ax, [bp+arg_0]
+2E554 mov     dx, 3
+2E557 imul    dx
+2E559 mov     bx, ax
+2E55B mov     ax, [bx+78E5h]
+2E55F sar     ax, 1
+2E561 sar     ax, 1
+2E563 and     ax, 3FFh
+2E566 pop     bp
+2E567 retf    2
+=== sub_2E66C 2E66C-2E693
+2E66C push    bp
+2E66D mov     bp, sp
+2E66F push    si
+2E670 xor     si, si
+2E672 jmp     short loc_2E687
+2E674 mov     bx, si
+2E676 shl     bx, 1
+2E678 mov     ax, [bx+115Ah]
+2E67C cmp     ax, [bp+arg_0]
+2E67F jnz     short loc_2E686
+2E681 mov     ax, 1
+2E684 jmp     short loc_2E68E
+2E686 inc     si
+2E687 cmp     si, 0Bh
+2E68A jl      short loc_2E674
+2E68C xor     ax, ax
+2E68E pop     si
+2E68F pop     bp
+2E690 retf    2
