@@ -280,6 +280,8 @@ private:
 	void seEnd();
 	bool seInView(int actor) const;
 	bool seGive(int actor, int type, int quantity);
+	int seMake(int type, int x, int y, int z, int quantity, int quality = 0); // sub_1B486: a new object on the map
+	int seFind(int type, int x, int y) const;                                  // sub_1AC47: an object of the type on the square
 	bool _seAsync = false;
 	void mdContinue(int stage, int partner);
 	void mdChosen(int tx, int ty);

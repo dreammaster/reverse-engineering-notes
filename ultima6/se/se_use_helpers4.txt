@@ -1,0 +1,416 @@
+=== sub_34DD4 34DD4-34EDF
+34DD4 push    bp
+34DD5 mov     bp, sp
+34DD7 sub     sp, 4
+34DDA push    si
+34DDB push    di
+34DDC mov     di, [bp+arg_2]
+34DDF mov     si, [bp+arg_0]
+34DE2 mov     [bp+var_2], 0
+34DE7 mov     al, byte_42253
+34DEA cbw
+34DEB mov     [bp+var_4], ax
+34DEE call    sub_1A0C7
+34DF3 mov     ax, 108h
+34DF6 push    ax
+34DF7 mov     ax, di
+34DF9 sub     ax, word_42254
+34DFD add     ax, 5
+34E00 push    ax
+34E01 mov     ax, si
+34E03 sub     ax, word_42256
+34E07 add     ax, 5
+34E0A push    ax
+34E0B mov     ax, 2
+34E0E push    ax
+34E0F call    sub_1D96C
+34E14 mov     ax, 1
+34E17 push    ax
+34E18 call    sub_140B3
+34E1D mov     byte_42253, 7
+34E22 call    sub_1A0C7
+34E27 mov     ax, 1
+34E2A push    ax
+34E2B call    sub_140B3
+34E30 mov     al, byte ptr [bp+var_4]
+34E33 mov     byte_42253, al
+34E36 call    sub_1A0C7
+34E3B mov     ax, 1
+34E3E push    ax
+34E3F call    sub_140B3
+34E44 mov     al, byte_4695F
+34E47 mov     ah, 0
+34E49 test    ax, 2
+34E4C jz      short loc_34E51
+34E4E jmp     loc_34ED7
+34E51 mov     al, byte_46991
+34E54 mov     ah, 0
+34E56 test    ax, 80h
+34E59 jnz     short loc_34ED7
+34E5B mov     ax, 19h
+34E5E push    ax
+34E5F call    sub_1ABE3
+34E64 or      ax, ax
+34E66 jz      short loc_34ED7
+34E68 mov     ax, word_4738F
+34E6B and     ax, 3FFh
+34E6E mov     dx, di
+34E70 sub     dx, ax
+34E72 cmp     dx, 1
+34E75 jg      short loc_34EAC
+34E77 mov     ax, word_4738F+1
+34E7A sar     ax, 1
+34E7C sar     ax, 1
+34E7E and     ax, 3FFh
+34E81 mov     dx, si
+34E83 sub     dx, ax
+34E85 cmp     dx, 1
+34E88 jg      short loc_34EAC
+34E8A mov     ax, word_4738F
+34E8D and     ax, 3FFh
+34E90 mov     dx, di
+34E92 sub     dx, ax
+34E94 cmp     dx, 0FFFEh
+34E97 jl      short loc_34EAC
+34E99 mov     ax, word_4738F+1
+34E9C sar     ax, 1
+34E9E sar     ax, 1
+34EA0 and     ax, 3FFh
+34EA3 mov     dx, si
+34EA5 sub     dx, ax
+34EA7 cmp     dx, 0FFFEh
+34EAA jge     short loc_34EBA
+34EAC push    ds
+34EAD mov     ax, 2037h   ; "<NL>You hear a barely audible voice whisper, "Closer...".<NL>"
+34EB0 push    ax
+34EB1 call    sub_18AB9
+34EB8 jmp     short loc_34ED7
+34EBA mov     byte_46975, 28h
+34EBF mov     al, byte_46991
+34EC2 or      al, 80h
+34EC4 mov     byte_46991, al
+34EC7 mov     ax, 1
+34ECA push    ax
+34ECB mov     ax, 19h
+34ECE push    ax
+34ECF xor     ax, ax
+34ED1 push    ax
+34ED2 call    sub_1F870
+34ED7 pop     di
+34ED8 pop     si
+34ED9 mov     sp, bp
+34EDB pop     bp
+34EDC retf    4
+=== sub_2800B 2800B-2810D
+2800B push    bp
+2800C mov     bp, sp
+2800E sub     sp, 6
+28011 push    si
+28012 push    di
+28013 mov     si, 2
+28016 jmp     loc_280FE
+28019 les     bx, dword_44166
+2801D cmp     byte ptr es:[bx+si], 9Bh
+28021 jnz     short loc_28027
+28023 mov     byte ptr es:[bx+si], 81h
+28027 les     bx, dword_42CF8
+2802B test    byte ptr es:[bx+si], 80h
+2802F jz      short loc_28047
+28031 mov     al, [si+6CF0h]
+28035 mov     ah, 0
+28037 test    ax, 80h
+2803A jnz     short loc_28047
+2803C les     bx, dword_44166
+28040 mov     byte ptr es:[bx+si], 92h
+28044 jmp     loc_280FD
+28047 mov     bx, si
+28049 shl     bx, 1
+2804B cmp     word ptr [bx-6306h], 0
+28050 jnz     short loc_28055
+28052 jmp     loc_280FD
+28055 les     bx, dword_44166
+28059 cmp     byte ptr es:[bx+si], 80h
+2805D jnb     short loc_28068
+2805F cmp     byte ptr es:[bx+si], 7
+28063 jz      short loc_28068
+28065 jmp     loc_280FD
+28068 mov     al, [si+6CF0h]
+2806C mov     ah, 0
+2806E test    ax, 80h
+28071 jz      short loc_28076
+28073 jmp     loc_280FD
+28076 mov     bx, si
+28078 shl     bx, 1
+2807A mov     ax, [bx+4EF4h]
+2807E mov     [bp+var_4], ax
+28081 mov     bx, si
+28083 shl     bx, 1
+28085 mov     ax, [bx+4EF6h]
+28089 dec     ax
+2808A mov     [bp+var_6], ax
+2808D cmp     ax, [bp+var_4]
+28090 jl      short loc_280FD
+28092 mov     [bp+var_2], ax
+28095 jmp     short loc_280F5
+28097 mov     ax, [bp+var_2]
+2809A mov     dx, 5
+2809D imul    dx
+2809F les     bx, dword_44950
+280A3 add     bx, ax
+280A5 mov     al, es:[bx]
+280A8 mov     ah, 0
+280AA mov     di, ax
+280AC and     ax, 1Fh
+280AF mov     dl, byte_4224B
+280B3 mov     dh, 0
+280B5 cmp     ax, dx
+280B7 jnz     short loc_280F2
+280B9 mov     ax, di
+280BB mov     cl, 5
+280BD sar     ax, cl
+280BF mov     dl, byte_4224C
+280C3 mov     dh, 0
+280C5 dec     dx
+280C6 mov     bx, 7
+280C9 push    ax
+280CA mov     ax, dx
+280CC cwd
+280CD idiv    bx
+280CF inc     dx
+280D0 pop     ax
+280D1 cmp     ax, dx
+280D3 jz      short loc_280DB
+280D5 test    di, 0E0h
+280D9 jnz     short loc_280F2
+280DB les     bx, dword_4405A
+280DF mov     al, byte ptr [bp+var_2]
+280E2 sub     al, byte ptr [bp+var_4]
+280E5 mov     es:[bx+si], al
+280E8 les     bx, dword_44166
+280EC mov     byte ptr es:[bx+si], 81h
+280F0 jmp     short loc_280FD
+280F2 dec     [bp+var_2]
+280F5 mov     ax, [bp+var_2]
+280F8 cmp     ax, [bp+var_4]
+280FB jge     short loc_28097
+280FD inc     si
+280FE cmp     si, 98h
+28102 jge     short loc_28107
+28104 jmp     loc_28019
+28107 pop     di
+28108 pop     si
+28109 mov     sp, bp
+2810B pop     bp
+2810C retf
+=== sub_1AC47 1AC47-1ACDD
+1AC47 push    bp
+1AC48 mov     bp, sp
+1AC4A push    si
+1AC4B push    di
+1AC4C mov     di, 0FFFFh
+1AC4F push    [bp+arg_2]
+1AC52 push    [bp+arg_0]
+1AC55 xor     ax, ax
+1AC57 push    ax
+1AC59 call    near ptr sub_1A72C
+1AC5C mov     si, ax
+1AC5E jmp     short loc_1AC9C
+1AC60 test    byte ptr [si+329Ch], 18h
+1AC65 jnz     short loc_1AC94
+1AC67 mov     ax, si
+1AC69 mov     dx, 3
+1AC6C imul    dx
+1AC6E mov     bx, ax
+1AC70 mov     al, [bx+78E6h]
+1AC74 mov     ah, 0
+1AC76 mov     cl, 4
+1AC78 sar     ax, cl
+1AC7A cmp     ax, word_42258
+1AC7E jnz     short loc_1AC94
+1AC80 mov     bx, si
+1AC82 shl     bx, 1
+1AC84 mov     ax, [bx-6306h]
+1AC88 and     ax, 3FFh
+1AC8B cmp     ax, [bp+arg_4]
+1AC8E jnz     short loc_1AC94
+1AC90 mov     di, si
+1AC92 jmp     short loc_1ACD5
+1AC94 mov     bx, si
+1AC96 shl     bx, 1
+1AC98 mov     si, [bx-3E84h]
+1AC9C or      si, si
+1AC9E jl      short loc_1ACD5
+1ACA0 test    byte ptr [si+329Ch], 18h
+1ACA5 jnz     short loc_1AC60
+1ACA7 mov     ax, si
+1ACA9 mov     dx, 3
+1ACAC imul    dx
+1ACAE mov     bx, ax
+1ACB0 mov     ax, [bx+78E4h]
+1ACB4 and     ax, 3FFh
+1ACB7 cmp     ax, [bp+arg_2]
+1ACBA jnz     short loc_1ACD5
+1ACBC mov     ax, si
+1ACBE mov     dx, 3
+1ACC1 imul    dx
+1ACC3 mov     bx, ax
+1ACC5 mov     ax, [bx+78E5h]
+1ACC9 sar     ax, 1
+1ACCB sar     ax, 1
+1ACCD and     ax, 3FFh
+1ACD0 cmp     ax, [bp+arg_0]
+1ACD3 jz      short loc_1AC60
+1ACD5 mov     ax, di
+1ACD7 pop     di
+1ACD8 pop     si
+1ACD9 pop     bp
+1ACDA retf    6
+=== sub_1B015 1B015-1B070
+1B015 push    bp
+1B016 mov     bp, sp
+1B018 push    si
+1B019 push    di
+1B01A cmp     [bp+arg_4], 0
+1B01E jge     short loc_1B025
+1B020 mov     ax, 0FFFFh
+1B023 jmp     short loc_1B06A
+1B025 mov     di, 0FFFFh
+1B028 mov     bx, [bp+arg_4]
+1B02B shl     bx, 1
+1B02D mov     si, [bx-3E84h]
+1B031 test    byte ptr [si+329Ch], 18h
+1B036 jz      short loc_1B068
+1B038 mov     ax, si
+1B03A mov     dx, 3
+1B03D imul    dx
+1B03F mov     bx, ax
+1B041 mov     ax, [bx+78E4h]
+1B045 cmp     ax, [bp+arg_4]
+1B048 jnz     short loc_1B068
+1B04A mov     di, si
+1B04C mov     word_40213, si
+1B050 mov     ax, [bp+arg_4]
+1B053 mov     word_40215, ax
+1B056 mov     ax, [bp+arg_2]
+1B059 mov     word_40217, ax
+1B05C mov     ax, [bp+arg_0]
+1B05F mov     word_40219, ax
+1B063 call    near ptr sub_1AF6C
+1B066 mov     di, ax
+1B068 mov     ax, di
+1B06A pop     di
+1B06B pop     si
+1B06C pop     bp
+1B06D retf    6
+=== sub_1B486 1B486-1B5A6
+1B486 push    bp
+1B487 mov     bp, sp
+1B489 sub     sp, 4
+1B48C push    si
+1B48D push    di
+1B48E mov     di, [bp+arg_2]
+1B491 cmp     [bp+arg_0], 0
+1B495 jz      short loc_1B49C
+1B497 mov     ax, 0FFh
+1B49A jmp     short loc_1B49F
+1B49C mov     ax, 3FFh
+1B49F mov     [bp+var_4], ax
+1B4A2 and     [bp+arg_4], ax
+1B4A5 and     di, ax
+1B4A7 push    [bp+arg_4]
+1B4AA push    di
+1B4AB push    [bp+arg_0]
+1B4AF call    near ptr sub_1A5D1
+1B4B2 or      ax, ax
+1B4B4 jnz     short loc_1B4BC
+1B4B6 mov     ax, 0FFFFh
+1B4B9 jmp     loc_1B59E
+1B4BC mov     ax, 1
+1B4BF push    ax
+1B4C1 call    near ptr sub_1A715
+1B4C4 mov     si, ax
+1B4C6 or      ax, ax
+1B4C8 jge     short loc_1B4CD
+1B4CA jmp     loc_1B59C
+1B4CD push    [bp+arg_4]
+1B4D0 push    di
+1B4D1 mov     ax, 1
+1B4D4 push    ax
+1B4D6 call    near ptr sub_1A72C
+1B4D9 mov     [bp+var_2], ax
+1B4DC mov     bx, word_4D3EA
+1B4E0 shl     bx, 1
+1B4E2 mov     ax, [bx-3E84h]
+1B4E6 mov     word_4D3EA, ax
+1B4E9 dec     word_4E086
+1B4ED mov     al, [bp+arg_8]
+1B4F0 mov     [si+329Ch], al
+1B4F4 mov     al, [si+329Ch]
+1B4F8 or      al, 20h
+1B4FA mov     [si+329Ch], al
+1B4FE mov     ax, si
+1B500 mov     dx, 3
+1B503 imul    dx
+1B505 mov     dl, byte ptr [bp+arg_0]
+1B508 mov     cl, 4
+1B50A shl     dl, cl
+1B50C mov     bx, ax
+1B50E mov     [bx+78E6h], dl
+1B512 mov     ax, si
+1B514 mov     dx, 3
+1B517 imul    dx
+1B519 mov     dx, [bp+arg_4]
+1B51C mov     bx, ax
+1B51E mov     [bx+78E4h], dx
+1B522 mov     ax, di
+1B524 shl     ax, 1
+1B526 shl     ax, 1
+1B528 push    ax
+1B529 mov     ax, si
+1B52B mov     dx, 3
+1B52E imul    dx
+1B530 mov     bx, ax
+1B532 pop     ax
+1B533 or      [bx+78E5h], ax
+1B537 mov     bx, si
+1B539 shl     bx, 1
+1B53B mov     ax, [bp+arg_A]
+1B53E mov     [bx-6306h], ax
+1B542 mov     bx, si
+1B544 shl     bx, 1
+1B546 mov     ax, [bp+arg_6]
+1B549 mov     [bx+54F0h], ax
+1B54D mov     bx, [bp+var_2]
+1B550 shl     bx, 1
+1B552 mov     ax, [bx-3E84h]
+1B556 mov     bx, si
+1B558 shl     bx, 1
+1B55A mov     [bx-3E84h], ax
+1B55E mov     bx, [bp+var_2]
+1B561 shl     bx, 1
+1B563 mov     [bx-3E84h], si
+1B567 mov     ax, [bp+arg_4]
+1B56A sub     ax, word_4B55E
+1B56E and     ax, 3FFh
+1B571 mov     [bp+arg_4], ax
+1B574 mov     ax, di
+1B576 sub     ax, word_4B560
+1B57A and     ax, 3FFh
+1B57D mov     di, ax
+1B57F cmp     [bp+arg_4], 28h
+1B583 jge     short loc_1B59C
+1B585 cmp     ax, 28h
+1B588 jge     short loc_1B59C
+1B58A mov     dx, 50h
+1B58D imul    dx
+1B58F mov     dx, [bp+arg_4]
+1B592 shl     dx, 1
+1B594 add     ax, dx
+1B596 mov     bx, ax
+1B598 mov     [bx-2674h], si
+1B59C mov     ax, si
+1B59E pop     di
+1B59F pop     si
+1B5A0 mov     sp, bp
+1B5A2 pop     bp
+1B5A3 retf    0Ch

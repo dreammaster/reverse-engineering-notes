@@ -58,6 +58,34 @@ bool Game::seInView(int actor) const {
 	return std::abs((int)_world.objects[a].x - (int)_world.objects[l].x) <= 5 && std::abs((int)_world.objects[a].y - (int)_world.objects[l].y) <= 4;
 }
 
+// sub_1B486: a new object lies on the map
+int Game::seMake(int type, int x, int y, int z, int quantity, int quality) {
+	World::Obj o;
+	o.status = 0;
+	o.x = (uint16_t)x;
+	o.y = (uint16_t)y;
+	o.z = (uint8_t)z;
+	o.type = (uint16_t)type;
+	o.frame = 0;
+	o.quantity = (uint8_t)quantity;
+	o.quality = (uint8_t)quality;
+	o.actor = -1;
+	o.parent = -1;
+	_world.objects.push_back(o);
+	_world.addToMap((int)_world.objects.size() - 1);
+	return (int)_world.objects.size() - 1;
+}
+
+// sub_1AC47: the first object of the type on a square of the level the party is on, -1 if there is none
+int Game::seFind(int type, int x, int y) const {
+	std::vector<int> here;
+	_world.objectsAt(x, y, z, here);
+	for (int i : here)
+		if (_world.objects[i].type == type && !_world.objects[i].deleted)
+			return i;
+	return -1;
+}
+
 // sub_1B5FA with a quantity: the thing goes into the pack of the actor unless it would be too heavy (the original's "carrying too much already")
 bool Game::seGive(int actor, int type, int quantity) {
 	if (_world.carriedWeight(actor) + _world.weightOfType(type, quantity) > _world.actors.strength[actor] * 20)
@@ -153,6 +181,75 @@ void Game::seAction(uint32_t sub, int idx) {
 			message("You are carrying too much already.\n");
 		break;
 	}
+	case 0x34D88: // the notebook: Jimmy reads his shorthand, nobody else can
+		if (_world.actors.baseObjFrame[actor] == 0x138) {
+			message("\nJimmy says, \"Hey, boss, you'll never be able to figure out my ");
+			message("shorthand.\"\n\n\"Why don't you just ask me what ");
+			message("you want to know?\"\n");
+		} else {
+			message("\nYou can't read Jimmy's shorthand.\n");
+		}
+		break;
+	case 0x34EDF: { // the camera: the film (the quality) counts down, the flash works without it
+		bool carried = carriedObject(o);
+		(void)carried;
+		if (o.quality > 0) {
+			--o.quality;
+			message("\nYou take a picture.\n");
+		} else {
+			message("\nThe camera's out of film, ");
+			message("but the flash still works.\n");
+		}
+		// APPROX(79): the flash itself (sub_34DD4: the picture at the member's square and the whisper of the ghost, actor 0x19, "Closer...", the start of its conversation) is not done
+		break;
+	}
+	case 0x33B10: { // the wire screen: sifting at a square of the eight around the member where there is a 0xE7 gives ten of 0x7B (sulphur powder)
+		int a = _world.actorObject(actor);
+		if (a < 0)
+			break;
+		int px = _world.objects[a].x, py = _world.objects[a].y;
+		bool made = false;
+		for (int dx = 0; dx < 3 && !made; ++dx) {
+			for (int dy = 0; dy < 3 && !made; ++dy) {
+				if (dx == 1 && dy == 1)
+					continue;
+				if (seFind(0xE7, px + dx - 1, py + dy - 1) < 0)
+					continue;
+				message("\nYou made some sulphur powder.\n");
+				if (!seGive(actor, 0x7B, 10))
+					seMake(0x7B, px, py, z, 10);
+				made = true;
+			}
+		}
+		if (!made)
+			message("\nThere is nothing to sift.\n");
+		break;
+	}
+	case 0x362F7: // a rope: only in party mode (else "Not in solo mode!"), then the descent (sub_19505, not done)
+		if (_solo != -1)
+			message("Not in solo mode!\n");
+		break;
+	case 0x36312: // a hole in the ceiling: frame 1 with the party together is the way down (sub_19505, not done), frame 0 needs a rope from above
+		if (_solo == -1 && o.frame == 1) {
+			// APPROX(79): the descent into the underground city (sub_19505)
+		} else if (o.frame == 0) {
+			message("\nYou need a rope dropped from above.\n");
+		} else {
+			message("Not in solo mode!\n");
+		}
+		break;
+	case 0x36206: // a brazier with frame bit 2: "Not possible."; else the fire routine (sub_3215F, not done)
+		if (o.frame & 2)
+			message("Not possible.\n");
+		break;
+	case 0x3623D: // burnt logs: frame 0 "Not possible.", 1 starts a fire (frame 2), 2 the fire routine (sub_3215F, not done)
+		if (o.frame == 0) {
+			message("Not possible.\n");
+		} else if (o.frame == 1) {
+			o.frame = 2;
+			message("\nYou started a fire.\n");
+		}
+		break;
 	default: // APPROX(79): not ported yet
 		break;
 	}

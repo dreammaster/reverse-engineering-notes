@@ -120,9 +120,9 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | 2A vine | 34FDE | "On -": "You can't use a rope here!" |
 | 2B bell | 31293 | "On -": "You put the bell on the dinosaur's neck." (target type 118, frames 0D / 11) |
 | 2F turtle bait | 34783 | "You must be near water." / "Nothing takes the bait." |
-| 31 notebook | 34D88 | Jimmy's shorthand |
+| 31 notebook | 34D88 | Jimmys shorthand (**ported**) |
 | 32 flintlock | 31E67 | loading with gunpowder |
-| 33 camera | 34EDF | the flash, film |
+| 33 camera | 34EDF | the film is ported, the flash (`sub_34DD4`: the picture, the ghost whispering "Closer...", actor 0x19) is not |
 | 3B, 3C mortar, grinding stone | 310AD | grind corn / mix gunpowder |
 | 3F jug | 354BC | "On -": pour (target type 1A) |
 | 56-58 totems | 3646E | placing (`sub_1C1C3`, `sub_22EF7`, "`%s can't use that!") |
@@ -136,7 +136,7 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | 94 jungle drum | 3542B | |
 | A5 loom | 33F9E | weaving flax |
 | AD, F2, FE, 101 oven, fires | 3215F | fire the pot, make charcoal, incinerate |
-| B1 wire screen | 33B10 | sift sulphur |
+| B1 wire screen | 33B10 | sift sulphur (**ported**) |
 | BA brazier, CF burnt logs | 36206, 3623D | frames, then 3215F |
 | BE metal head | 34147 | replacing the statue's head |
 | BF tarred cloth | 33777 | torch, grenade |

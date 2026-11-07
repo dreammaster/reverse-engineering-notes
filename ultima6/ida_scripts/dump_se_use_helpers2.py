@@ -1,5 +1,5 @@
 import idc, ida_funcs, re
-names = '2E4FC 2EB7B'.split()
+names = '34DD4 2800B 1AC47 1B015 1B486'.split()
 DS = 0x3FA60
 S50 = 0x3F650
 
@@ -12,7 +12,7 @@ def cstr(ea):
         s += bytes([b])
     return s.decode("latin1").replace(chr(10), "<NL>")
 
-out = open(r"C:\dev\ultima\ultima6\se\se_use_helpers3.txt", "w")
+out = open(r"C:\dev\ultima\ultima6\se\se_use_helpers4.txt", "w")
 for n in names:
     ea = int(n, 16)
     f = ida_funcs.get_func(ea)

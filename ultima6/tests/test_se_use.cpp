@@ -121,6 +121,36 @@ int main() {
 	CHECK(logText(g).find("Not possible.") != std::string::npos);
 	CHECK(logText(g).find("nothing") != std::string::npos);
 
+	// a notebook (0x31): only Jimmy (base type 0x138) can read it
+	clearEast(w, px, py);
+	int note = put(w, 0x31, 0, px + 1, py, 0);
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(logText(g).find("can't read Jimmy's shorthand") != std::string::npos);
+	w.deleteObject(note);
+
+	// a wire screen (0xB1) beside an 0xE7 sifts ten of 0x7B (sulphur powder); without one there is nothing to sift
+	clearEast(w, px, py);
+	int screen = put(w, 0xB1, 0, px + 1, py, 0);
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(logText(g).find("nothing to sift") != std::string::npos);
+	int ore = put(w, 0xE7, 0, px, py - 1, 0);
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(logText(g).find("You made some sulphur powder") != std::string::npos);
+	w.deleteObject(ore);
+	w.deleteObject(screen);
+
+	// burnt logs (0xCF): frame 0 is "Not possible.", frame 1 starts a fire (frame 2)
+	clearEast(w, px, py);
+	int logs = put(w, 0xCF, 1, px + 1, py, 0);
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(w.objects[logs].frame == 2);
+	CHECK(logText(g).find("You started a fire") != std::string::npos);
+	w.deleteObject(logs);
+
 	// a torch (0xD0) is lit in a free hand: a lit torch (0xD1) with 100 minutes appears readied
 	clearEast(w, px, py);
 	int actor = w.actors.partyRoster[0];
