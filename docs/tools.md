@@ -23,6 +23,7 @@ Everything here runs on Linux with Python 3 (`pillow`, `numpy`, `unicorn`),
 | `ida_scripts/apply_renames.py`, `ida_scripts/export_renames.py` | IDA 8.3 scripts (run through `run_ida_script.ps1`): apply a table to your local `.idb`, or dump the names already in an `.idb`. |
 | `tools/test_renames.py` | Tests for the above (the apply script is run against a fake IDA API backed by the real binaries). |
 | `tools/gen_test_vectors.py` | Regenerates `src/tests/vectors.h` (sizes + FNV hashes from the Python decoders) for the C unit test. |
+| `tools/status.py` | Reference renderer for the status line ("DAY n" + room name, ANDATA block 4 font; formats.md §6.3a). |
 
 ## Reproducing the in-game frame
 
