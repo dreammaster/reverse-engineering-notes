@@ -381,6 +381,47 @@ int main() {
 		CHECK(logText(g).find("No effect.") != std::string::npos);
 		w.deleteObject(oven);
 		w.deleteObject(target);
+		// tarred cloth (0xBF) on a log (0xCE) makes a torch (0xD0); the loom (0xA5) weaves flax (0xD2) into cloth (0xB4); a tar pit (0xE5) tars cloth strips (0x86)
+		int tc = toolOn(0xBF, 0xCE, 0, target, made);
+		CHECK(logText(g).find("You make a torch") != std::string::npos && w.objects[tc].deleted && w.objects[target].deleted);
+		CHECK(made >= 0 && w.objects[made].type == 0xD0);
+		w.deleteObject(made);
+		int loom = toolOn(0xA5, 0xD2, 0, target, made);
+		CHECK(logText(g).find("wove cloth") != std::string::npos && w.objects[target].deleted);
+		CHECK(made >= 0 && w.objects[made].type == 0xB4);
+		w.deleteObject(made);
+		w.deleteObject(loom);
+		int pit2 = toolOn(0xE5, 0x86, 0, target, made);
+		CHECK(w.objects[target].deleted && made >= 0 && w.objects[made].type == 0xBF);
+		w.deleteObject(made);
+		w.deleteObject(pit2);
+		// a grenade: tarred cloth on a fired pot (0x85) needs five pinches of gunpowder
+		int pot = 0;
+		tc = toolOn(0xBF, 0x85, 0, pot, made);
+		CHECK(logText(g).find("five pinches of gunpowder") != std::string::npos && !w.objects[pot].deleted);
+		w.deleteObject(tc);
+		int five = w.addToInventory(w.actors.partyRoster[0], 0xCC, 0, 5);
+		tc = toolOn(0xBF, 0x85, 0, pot, made);
+		CHECK(logText(g).find("You made a grenade") != std::string::npos && w.objects[pot].deleted && w.objects[five].deleted);
+		CHECK(made >= 0 && w.objects[made].type == 0x89);
+		w.deleteObject(made);
+		// a sliding door (0xEA, frame 1) slides east to frame 5 unless something solid is in the way
+		clearEast(w, px, py);
+		std::vector<int> beyond;
+		w.objectsAt(px + 2, py, 0, beyond);
+		for (int i : beyond)
+			if (w.objects[i].actor < 0)
+				w.deleteObject(i);
+		int block = put(w, 0x3F, 0, px + 2, py, 0);
+		int door = put(w, 0xEA, 1, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("The door is blocked") != std::string::npos && w.objects[door].frame == 1);
+		w.deleteObject(block);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(w.objects[door].x == px + 2 && w.objects[door].frame == 5);
+		w.deleteObject(door);
 		// the fire extinguisher (0x5E) puts out a fire (0xF2) and turns burning logs (0xCF frame 2) back to frame 0
 		int ext = toolOn(0x5E, 0xF2, 0, target, made);
 		CHECK(w.objects[target].deleted && !w.objects[ext].deleted);

@@ -791,6 +791,147 @@ void Game::seAction(uint32_t sub, int idx) {
 		seMake(0xC5, mx, my, z, 1);
 		break;
 	}
+	case 0x35150: { // a sliding door (0xEA): frames 1 and 3 slide it one square east / south (to frame 5 / 7) unless something solid is there, frames 5 and 7 slide it back (to frame 1 / 3)
+		int f = o.frame, ox = o.x, oy = o.y;
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		if (f == 1 || f == 3) {
+			int nx = (ox + (f == 1 ? 1 : 0)) & mask, ny = (oy + (f == 3 ? 1 : 0)) & mask;
+			std::vector<int> here;
+			_world.objectsAt(nx, ny, z, here);
+			bool blocked = false;
+			for (int i : here) {
+				const World::Obj &c = _world.objects[i];
+				if (c.deleted || c.type == 0xEA || c.type == 0xEC || c.type == 0xE2)
+					continue;
+				if (!(_world.flags.flags2[(_world.baseTile.firstTile[c.type & 0x3FF] + c.frame) & (TileFlags::TILES - 1)] & 0x10))
+					blocked = true;
+			}
+			if (blocked) {
+				message("\nThe door is blocked.\n");
+				break;
+			}
+			_world.moveObject(idx, nx, ny, z);
+			_world.objects[idx].frame = (uint8_t)(f + 4);
+		} else if (f == 5) {
+			_world.moveObject(idx, (ox - 1) & mask, oy, z);
+			_world.objects[idx].frame = 1;
+			// the door at 184,235 on the surface lets actor 4, if in view and not yet met, join: APPROX(82): the conversation that follows is left out
+			if (ox == 0x184 && oy == 0x235 && z == 0 && !(_world.actors.talkFlags[4] & 0x10) && seInView(4)) {
+				_world.actors.status[4] &= 0xFB;
+				_world.actors.talkFlags[4] |= 0x10;
+				_world.joinParty(4);
+			}
+		} else if (f == 7) {
+			_world.moveObject(idx, ox, (oy - 1) & mask, z);
+			_world.objects[idx].frame = 3;
+		}
+		break;
+	}
+	case 0x33777: { // tarred cloth: "On -" a log (0xCE) it makes a torch (0xD0); on a fired pot (0x85) with five pinches of gunpowder (0xCC) a grenade (0x89)
+		int cloth = idx;
+		seAsk([this, cloth, actor](int obj, int tx, int ty) {
+			if (obj < 0) {
+				message("nothing!\n");
+				return;
+			}
+			if (!seReach(_world.objects[obj], tx, ty))
+				return;
+			int type = _world.objects[obj].type;
+			bool held = carriedObject(_world.objects[obj]) && _world.objects[obj].parent == actor;
+			int a = _world.actorObject(actor);
+			int px = a >= 0 ? _world.objects[a].x : 0, py = a >= 0 ? _world.objects[a].y : 0;
+			auto one = [&](int i) {
+				World::Obj &u = _world.objects[i];
+				if (u.quantity > 1)
+					--u.quantity;
+				else
+					_world.deleteObject(i);
+			};
+			auto product = [&](int made) {
+				if (held) {
+					one(obj);
+					if (!seGive(actor, made, 1))
+						seMake(made, px, py, z, 1);
+				} else {
+					seMake(made, tx, ty, z, 1);
+					one(obj);
+				}
+			};
+			if (type == 0xCE) {
+				message("\nYou make a torch\n");
+				one(cloth);
+				product(0xD0);
+			} else if (type == 0x85) {
+				int powder = sePackItem(actor, 0xCC);
+				if (powder < 0 || _world.objects[powder].quantity < 5) {
+					message("\nYou need five pinches of gunpowder to make a grenade.\n");
+					return;
+				}
+				if (_world.objects[powder].quantity == 5)
+					_world.deleteObject(powder);
+				else
+					_world.objects[powder].quantity = (uint8_t)(_world.objects[powder].quantity - 5);
+				one(cloth);
+				message("\nYou made a grenade.\n");
+				product(0x89);
+			} else {
+				message("No effect.\n");
+			}
+		});
+		break;
+	}
+	case 0x33F9E: { // the loom: on flax (0xD2) cloth (0xB4) is woven, in the pack if the flax was carried, else on the flax's square; the flax is used up
+		seAsk([this, actor](int obj, int tx, int ty) {
+			if (obj < 0) {
+				message("nothing!\n");
+				return;
+			}
+			World::Obj &t = _world.objects[obj];
+			if (!seReach(t, tx, ty))
+				return;
+			if (t.type != 0xD2) {
+				message("No effect.\n");
+				return;
+			}
+			message("\nYou wove cloth from the flax.\n");
+			int a = _world.actorObject(actor);
+			int px = a >= 0 ? _world.objects[a].x : 0, py = a >= 0 ? _world.objects[a].y : 0;
+			if (carriedObject(t)) {
+				if (!seGive(actor, 0xB4, 1))
+					seMake(0xB4, px, py, z, 1);
+			} else {
+				seMake(0xB4, tx, ty, z, 1);
+			}
+			World::Obj &flax = _world.objects[obj];
+			if (flax.quantity > 1)
+				--flax.quantity;
+			else
+				_world.deleteObject(obj);
+		});
+		break;
+	}
+	case 0x33211: { // a tar pit: "On -" cloth strips (0x86): all of them become tarred cloth strips (0xBF)
+		seAsk([this, actor](int obj, int tx, int ty) {
+			if (obj < 0) {
+				message("No effect.\n");
+				return;
+			}
+			World::Obj &t = _world.objects[obj];
+			if (!seReach(t, tx, ty))
+				return;
+			if (t.type != 0x86) {
+				message("No effect.\n");
+				return;
+			}
+			int n = t.quantity;
+			message("cloth strips\n");
+			bool held = carriedObject(t) && t.parent == actor;
+			if (!held || !seGive(actor, 0xBF, n))
+				seMake(0xBF, tx, ty, z, n);
+			_world.deleteObject(obj);
+		});
+		break;
+	}
 	case 0x35C2E: { // the folded skin: a free 2 x 2 patch up and to the left of it (nothing on the two squares of the left column, the three squares passable) lets it be unfolded into a big skin (type 0xF5, three frames on); not while it is carried
 		int mask = z == 0 ? 0x3FF : 0xFF;
 		bool blocked = carriedObject(o);

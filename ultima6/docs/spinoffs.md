@@ -134,20 +134,20 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | 89, F0 grenade, device | 31671 | "Device activated." |
 | 8F machine | 35B44 | a gem (48, 49, 4A) of the member goes in, an object C5 comes out on the machine's square; "You don't have any gems." (**ported**) |
 | 94 jungle drum | 3542B | |
-| A5 loom | 33F9E | weaving flax |
+| A5 loom | 33F9E | "On -": flax (D2) becomes cloth (B4): "You wove cloth from the flax." (**ported**) |
 | AD, F2, FE, 101 oven, fires | 3215F | "On -": a clay pot (84) is fired (85), corn flour (5D) becomes tortillas (66), a log (CE) ten charcoal (81), the things of ds:118A burn up ("You incinerated the %s."), gunpowder explodes (APPROX 81) (**ported**) |
 | B1 wire screen | 33B10 | sift sulphur (**ported**) |
 | BA brazier, CF burnt logs | 36206, 3623D | frames, then 3215F (**ported**) |
 | BE metal head | 34147 | next to the headless statue (F7) both go; Yunapotli (actor 0B) is moved to the member, joins the party and gets talk flag 0x40: "You replace the statue's missing head." (**ported**) |
-| BF tarred cloth | 33777 | torch, grenade |
+| BF tarred cloth | 33777 | "On -": a log (CE) gives a torch (D0); a fired pot (85) with five pinches of gunpowder (CC) a grenade (89) (**ported**) |
 | C0 clay | 3204A | shaping a pot (**ported**) |
 | CC gunpowder | 34C0A | "On -": a flintlock (32) is loaded (**ported**) |
 | D1 lit torch | 35686 | "On -": burn things (dinosaur egg ...) |
 | D4 fishing pole | 31B48 | deep water (terrain 0x0C) on the diagonal, one catch in five (**ported**) |
 | D8 crystal garden | 35D54 | Rafkin (actor 7) or else Johann (actor 5), in the party, awake and in view, identifies potassium nitrate (82): ten for the member (**ported**) |
-| E5 tar pit | 33211 | cloth strips |
+| E5 tar pit | 33211 | "On -": all the cloth strips (86) become tarred cloth strips (BF) (**ported**) |
 | E9, ED rafts | 31C98 | boarding |
-| EA door | 35150 | "The door is blocked." |
+| EA door | 35150 | sliding door: frames 1 / 3 slide it east / south to frame 5 / 7 ("The door is blocked." by an object without the top-tile flag), 5 / 7 slide it back; the door at 184,235 makes actor 4 join (APPROX 82) (**ported**) |
 | F7 headless statue | 3423A | the same with a head (BE) from the member's pack, Yunapotli appears at the statue (**ported**) |
 | FC crystal | 35972 | "On -": the same with full hit points and the poison bit (status 0x08) cleared: "%s is healed." (**ported**) |
 | 113 | 346A8 | a door: frames 1 and 3 become 4 (**ported**, without the call of `sub_2DBFE` when the party is close) |
