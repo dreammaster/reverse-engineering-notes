@@ -1424,7 +1424,7 @@ void Game::seTotem(int totem) {
 	} else if (type == 0x58) {
 		message("Aphazz!\n");
 		base = 0x10;
-	} else if (_world.actors.globals.size() > 0x70 && _world.actors.globals[0x70] == 1) {
+	} else if (_world.actors.globals.size() > 0x78 && _world.actors.globals[0x78] == 1) {
 		message("Motazz!\n");
 		base = 0x20;
 	} else {

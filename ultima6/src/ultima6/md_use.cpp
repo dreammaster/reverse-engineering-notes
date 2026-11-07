@@ -524,6 +524,85 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		break;
 	}
+	case 27: { // sub_5EC84: the battle frenzy elixir: only in combat; the member gets the flag 0x80 (wild) and the elixir is used up
+		if (_world.actors.globals.size() <= 0x34 || !_world.actors.globals[0x34]) {
+			message("That would be a waste outside of combat.\n");
+			sfx(5);
+			break;
+		}
+		int me = _world.actorObject(actingActor());
+		if (me >= 0 && !(_world.objects[me].status & 0x80)) {
+			message(_combat.nameOf(actingActor()) + " enters a battle frenzy!\n");
+			sfx(0x32);
+		}
+		if (me >= 0)
+			_world.objects[me].status |= 0x80;
+		consumeOne(item);
+		break;
+	}
+	case 30: { // sub_5D93E: lamp oil (item) into a lamp (first): lamps 0x75 / 0x76 take it up to 0x7E (then 0xB4), 0x73 / 0x74 up to 0xB2 (then 0xFF)
+		if (first < 0)
+			break;
+		World::Obj &lamp = _world.objects[first];
+		int t = lamp.type, q = lamp.quality;
+		if (((t == 0x75 || t == 0x76) && q >= 0x7E) || ((t == 0x73 || t == 0x74) && q >= 0xB2)) {
+			message("\nIt's already full.\n");
+			sfx(5);
+			break;
+		}
+		consumeOne(item);
+		_world.objects[first].quality = (t == 0x75 || t == 0x76) ? 0xB4 : 0xFF;
+		break;
+	}
+	case 63: { // sub_5D4B0: a lit light used on itself: a torch that is not readied burns out, a lamp or candle is put out (0x70 -> 0x6F, 0x72 -> 0x71, 0x74 -> 0x73, 0x76 -> 0x75); on another thing "It's already lit."
+		if (item != first) {
+			message("It's already lit.\n");
+			break;
+		}
+		if (o.type == 0x6E) {
+			if ((o.status & 0x18) == 0x18) {
+				message("No.\n");
+			} else {
+				_world.deleteObject(item);
+				message("A torch burns out.\n");
+			}
+			break;
+		}
+		static const int OUT[7] = {0x6F, -1, 0x71, -1, 0x73, -1, 0x75};
+		int d = o.type - 0x70;
+		if (d >= 0 && d <= 6 && OUT[d] >= 0)
+			o.type = (uint16_t)OUT[d];
+		message("The " + Describe::object(_world, o) + " is extinguished.\n");
+		break;
+	}
+	case 71: { // sub_5F25E: the contents of a bucket (the frame says what is in it) poured into another that is empty
+		int a = item, b = first;
+		if (b < 0)
+			break;
+		if (a == b) {
+			message("\n\nAn item can't be placed inside itself!\n");
+			sfx(5);
+			break;
+		}
+		int fa = _world.objects[a].frame, fb = _world.objects[b].frame;
+		if (fa == 0 && fb > 0) {
+			std::swap(a, b);
+			std::swap(fa, fb);
+		}
+		if (fb > 0) {
+			message("There is already something in the bucket.\n");
+			sfx(5);
+			break;
+		}
+		if (fa == 0) {
+			message("There is nothing in the bucket.\n");
+			sfx(5);
+			break;
+		}
+		_world.objects[b].frame = (uint8_t)fa;
+		_world.objects[a].frame = 0;
+		break;
+	}
 	case 44: { // sub_5EFC8: a door (or hatch) opens and shuts: locked (quality bit 0x80) it is not; somebody in it blocks it; else frame bit 2 turns over
 		if (o.quality & 0x80) {
 			message("It is locked.\n");
