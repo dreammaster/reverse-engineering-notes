@@ -546,6 +546,14 @@ write tracing):
   `x0 <= ds:5DF and y0 <= ds:5E0` (always 2 and 10 in level 1), `x0 < rec[21]`, `y0 < rec[20]`, or a door rectangle (`ds:54`, unused in
   level 1); results `flag = FDh` mark a solid overlap. If the mover leaves the room the routine looks for an **exit entry**
   (list at `ss:[3A]`, 50-byte entries in the *stack* segment) it touches and returns `count = FEh` with that exit's id.
+* **Doors in the wall columns (verified on levels 2–4, `roomview.render_shell(door_sprites=…)`, `room_render_shell_doors`):** wall tile ids
+  `>= 0xC0` mark a door; the low nibble `n` selects sprite block `n−1` of MP1 section 2 (blocks 0–7: 8×16 / 16×8 door-opening boxes, and the real door
+  graphics 48×57 in blocks 0/1: grille, face door …). The first frame is drawn at `(x, y−26)` from the leading tile's place (`x − 16` for doors on the left-hand wall,
+  `x` on the right-hand wall), **after the floor but before all wall columns** (so the neighbouring pillars cover its edge); first-room frames of levels 2/3/4 went from
+  97.4/93.4/91.8% to 98.6/97.3/93.4% equal to the original. Tiles `>= 0x80` below `0xC0` stay invisible.
+* **Initial state is not just the file:** thing byte `+3` bit `0x80` means "not placed", but the game clears it for some things at start
+  (level 4 room 0: the six carpets 704–709 covering the pit tiles 50–55 are entries in the original — with the flag still set in the file —, so the
+  first screen shows an orange carpet where the file-only view shows an open pit). That state is set by the start-up scripts (ACL / TAD), not decoded yet.
 * **Collision box trimming (`sub_14CB9`, verified):** the entry's box is the sprite box (sizes = header words 8..10) *trimmed* by
   three header bytes: byte `0Eh` (z: top −= low nibble, base += high nibble), byte `1Ah` (x: `x1` −= low, `x0` += high) and
   byte `1Bh` (y: `y1` −= low, `y0` += high). `tools/objplace.py trimmed_box`, `object_trimmed_box` in `src/engine/roomobjs.c`.

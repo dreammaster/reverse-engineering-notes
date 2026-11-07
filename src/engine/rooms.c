@@ -175,8 +175,8 @@ static void blit_clip(uint8_t *canvas, const uint8_t *px, int tw, int th, int ox
 	}
 }
 
-void room_render_shell(const TileSet *floor, const TileSet *walls, const uint8_t *fmap, const uint8_t *wrec, int wrec_len,
-                       int w, int h, uint8_t *canvas) {
+void room_render_shell_doors(const TileSet *floor, const TileSet *walls, const ObjSprites *doors, const uint8_t *fmap, const uint8_t *wrec,
+                             int wrec_len, int w, int h, uint8_t *canvas) {
 	int gx, gy;
 	if (floor_origin(w, h, &gx, &gy) != 0)
 		return;
@@ -190,6 +190,41 @@ void room_render_shell(const TileSet *floor, const TileSet *walls, const uint8_t
 	if (!wrec || wrec_len < 2)
 		return;
 	int slots = wrec[0];
+	if (doors) {
+		/* door tiles (id >= 0xC0, low nibble n) are drawn as sprite block n-1 before the wall columns */
+		for (int c = 0; c < w + h; c++)
+			for (int k = 0; k < slots; k++) {
+				int idx = 2 + c * slots + k;
+				if (idx >= wrec_len)
+					break;
+				unsigned tid = wrec[idx];
+				if (tid < 0xC0)
+					continue;
+				const ObjSprite *sp = NULL;
+				for (int i = 0; i < doors->count && i < 8 + 255; i++)
+					if (doors->sprites[i].block == (int)(tid & 15) - 1 && doors->sprites[i].nframes > 0)
+						sp = &doors->sprites[i];
+				if (!sp)
+					continue;
+				int x, y;
+				if (c < w) {
+					x = gx + 16 * c;
+					y = gy - 17 + 8 * c - 16 * k - 26;
+				} else {
+					int j = c - w + 1;
+					x = gx - 16 * j - 16;
+					y = gy - 17 + 8 * j - 16 * k - 26;
+				}
+				const ObjFrame *f = &sp->frames[0];
+				for (int yy = 0; yy < f->h; yy++)
+					for (int xx = 0; xx < f->w; xx++) {
+						uint8_t col = f->pixels[yy * f->w + xx];
+						int px = x + xx, py = y + yy;
+						if (col && px >= 0 && px < VIEW_W && py >= 0 && py < VIEW_H)
+							canvas[py * VIEW_W + px] = col;
+					}
+			}
+	}
 	for (int c = 0; c < w + h; c++) {
 		int x, ybase;
 		if (c < w) {
@@ -209,4 +244,9 @@ void room_render_shell(const TileSet *floor, const TileSet *walls, const uint8_t
 				blit_clip(canvas, walls->pixels + (size_t)tid * walls->w * walls->h, walls->w, walls->h, x, ybase - 16 * k);
 		}
 	}
+}
+
+void room_render_shell(const TileSet *floor, const TileSet *walls, const uint8_t *fmap, const uint8_t *wrec, int wrec_len, int w, int h,
+                       uint8_t *canvas) {
+	room_render_shell_doors(floor, walls, NULL, fmap, wrec, wrec_len, w, h, canvas);
 }

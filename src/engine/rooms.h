@@ -7,6 +7,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "objsprites.h"
 
 #define TILE_W 32
 #define TILE_H 18
@@ -48,6 +49,10 @@ int floor_origin(int w, int h, int *x, int *y);
  * w and h must be 3..10; wrec may be NULL. */
 void room_render_shell(const TileSet *floor, const TileSet *walls, const uint8_t *fmap, const uint8_t *wrec, int wrec_len,
                        int w, int h, uint8_t *canvas);
+
+/* Same, with the door sprites (MP1 section 2 blocks 0..7) drawn between the floor and the wall columns; doors may be NULL. */
+void room_render_shell_doors(const TileSet *floor, const TileSet *walls, const ObjSprites *doors, const uint8_t *fmap, const uint8_t *wrec,
+                             int wrec_len, int w, int h, uint8_t *canvas);
 
 /* Size of the canvas needed for a w x h room floor. */
 static inline void floor_canvas_size(int w, int h, int *cw, int *ch) {

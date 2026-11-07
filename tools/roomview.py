@@ -102,7 +102,7 @@ def wall_tile_placements(rec, w, h, gx, gy):
 VIEW_W, VIEW_H = 320, 200
 
 
-def render_shell(tiles, walls, fmap, wrec, w, h):
+def render_shell(tiles, walls, fmap, wrec, w, h, door_sprites=None):
     """The room as the game draws it in its 320x136 viewport: floor tiles, then the wall columns.
     -> bytes(320*136), 0xFF = nothing drawn."""
     gx, gy = floor_origin(w, h)
@@ -125,6 +125,19 @@ def render_shell(tiles, walls, fmap, wrec, w, h):
             tid = fmap[row * w + col]
             if tid and tid < len(tiles):
                 blit(tiles[tid], 32, 18, gx + 16 * (col - row), gy + 8 * (col + row))
+    if door_sprites and len(wrec) >= 2:
+        # door tiles (id >= 0xC0, low nibble n) are drawn as sprite block n-1 *before* the wall columns (verified on levels 2-4)
+        slots = wrec[0]
+        for c in range(w + h):
+            for k, tid in enumerate(wrec[2 + c * slots:2 + (c + 1) * slots]):
+                spr = door_sprites.get((tid & 15) - 1) if tid >= 0xC0 else None
+                if spr:
+                    if c < w:
+                        x, y = gx + 16 * c, gy - 17 + 8 * c - 16 * k - 26
+                    else:
+                        j = c - w + 1
+                        x, y = gx - 16 * j - 16, gy - 17 + 8 * j - 16 * k - 26
+                    blit(spr[2], spr[0], spr[1], x, y)
     for tid, x, y in wall_tile_placements(wrec, w, h, gx, gy):
         if tid < len(walls):
             blit(walls[tid], 32, 32, x, y)

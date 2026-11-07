@@ -337,7 +337,7 @@ int main(int argc, char **argv) {
 					if (rw >= 3 && rw <= 10 && rh >= 3 && rh <= 10) {
 						static uint8_t shell[VIEW_W * VIEW_H];
 						memset(shell, TILE_TRANSPARENT, sizeof(shell));
-						room_render_shell(&ts, &wt, fm.map[r], r < wr.count ? wr.map[r] : NULL, r < wr.count ? wr.len[r] : 0, rw, rh, shell);
+						room_render_shell_doors(&ts, &wt, &os, fm.map[r], r < wr.count ? wr.map[r] : NULL, r < wr.count ? wr.len[r] : 0, rw, rh, shell);
 						for (int j = 0; j < VIEW_W * VIEW_H; j++)
 							h = (h ^ shell[j]) * 0x01000193u;
 						int gx, gy;

@@ -38,12 +38,23 @@ def draw_objects(canvas, secs, blocks, room, gx, gy):
     return placed
 
 
+def door_sprites(mp1):
+    """{block: (w, h, pixels with 0xFF = transparent)} for the door sprites (blocks 0..7, first frame)."""
+    out = {}
+    for i, (sz, blk) in enumerate(objsprites.blocks(mp1)[:8]):
+        p = objsprites.parse_sprite_block(blk) if sz > 1 else None
+        if p:
+            fw, fh, px = p[1][0]
+            out[i] = (fw, fh, bytes(c if c else 0xFF for c in px))
+    return out
+
+
 def render_room(d, room):
     mp1, mp2, mp3 = roomview.level_files(d)
     secs = mpsections.mp2_sections(mp2)
     w, h = roomview.room_size(secs, room)
     tiles, wtiles = roomview.load_tiles(mp3), roomview.load_wall_tiles(mp3)
-    shell = bytearray(roomview.render_shell(tiles, wtiles, roomview.floor_maps(mp1)[room], roomview.wall_columns(mp1)[room], w, h))
+    shell = bytearray(roomview.render_shell(tiles, wtiles, roomview.floor_maps(mp1)[room], roomview.wall_columns(mp1)[room], w, h, door_sprites(mp1)))
     gx, gy = roomview.floor_origin(w, h)
     placed = draw_objects(shell, secs, objsprites.blocks(mp1), room, gx, gy)
     return bytes(shell), placed, level_pal(mp1)

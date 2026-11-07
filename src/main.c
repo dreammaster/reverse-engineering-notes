@@ -200,7 +200,7 @@ static int roomview_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	}
 	static uint8_t shell[VIEW_W * VIEW_H];
 	memset(shell, TILE_TRANSPARENT, sizeof(shell));
-	room_render_shell(&rv->tiles, &rv->walls, rv->maps.map[rv->room],
+	room_render_shell_doors(&rv->tiles, &rv->walls, &rv->objs, rv->maps.map[rv->room],
 	                  rv->room < rv->wrecs.count ? rv->wrecs.map[rv->room] : NULL,
 	                  rv->room < rv->wrecs.count ? rv->wrecs.len[rv->room] : 0, w, h, shell);
 	int gx = 0, gy = 0, nobj = 0;

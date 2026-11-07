@@ -76,7 +76,7 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
             W, H, px = roomview.render_floor(tiles, fm, w, h)
             blob += struct.pack('<iii', i, W, H) + px
             if 3 <= w <= 10 and 3 <= h <= 10:
-                shell = bytearray(roomview.render_shell(tiles, wtiles, fm, wrecs[i], w, h))
+                shell = bytearray(roomview.render_shell(tiles, wtiles, fm, wrecs[i], w, h, room_objects.door_sprites(mp1)))
                 blob += bytes(shell)
                 gx, gy = roomview.floor_origin(w, h)
                 room_objects.draw_objects(shell, secs, objsprites.blocks(mp1), i, gx, gy)
