@@ -154,6 +154,8 @@ public:
 	bool AddItem(const TVisObjRef &item, bool scrollIntoView);
 	void AddItems(const TVList &items);
 	bool RemoveItem(const TVisObjRef &item);
+	/** (Night of the Rabbit) Whether the item is one of the character's items. */
+	bool HasItem(const TVisObjRef &item) const;
 };
 
 class TTClipboardObject : public TVisObjRef {

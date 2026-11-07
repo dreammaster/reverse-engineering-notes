@@ -236,6 +236,35 @@ void LuaDoString(const std::string &code, const std::string &chunkName) {
 	profileClean();
 }
 
+// Confirmed (Night of the Rabbit, LuaDoStringWithReturn(std::string const &, std::string const &), asm lines 1547577-1548084): the
+// text runs under the error handler `debugfunc` like in LuaDoString, with one result (lua_pcallk with 1) that stays on the stack. The
+// original removes 'the entry below the top' with lua_remove(-3), which with the stack empty below is the function slot of the base
+// of the stack (see the WORKAROUND above): here the handler is removed, the result stays.
+void LuaDoStringWithReturn(const std::string &code, const std::string &chunkName) {
+	debugger.BeginArea(ProfileArea::kValue2, chunkName, -1);
+	lua_getglobal(L, "debugfunc");
+
+	if (luaL_loadbuffer(L, code.data(), code.size(), chunkName.c_str()) != 0) {
+		logScriptError(lua_tolstring(L, -1, nullptr), code);
+		lua_settop(L, -3);
+		profileClean();
+		debugger.EndArea(ProfileArea::kValue2, -1);
+		return;
+	}
+
+	int status = lua_pcall(L, 0, 1, lua_gettop(L) - 1);
+
+	if (status != 0) {
+		logScriptError(lua_tolstring(L, -1, nullptr), code);
+		lua_settop(L, -3);
+	} else {
+		lua_remove(L, -2);
+	}
+
+	debugger.EndArea(ProfileArea::kValue2, -1);
+	profileClean();
+}
+
 static void logResultError(const char *format, const std::string &name, int number) {
 	if (wxLog::loglevel < 0)
 		return;

@@ -250,6 +250,17 @@ void TMasterControl::Draw(bool lock) {
 	}
 
 	matricesActive = false;
+
+	// Confirmed (Night of the Rabbit, TMasterControl::Draw, asm lines 485442-485570): the layer of a color over everything of the game that
+	// the action FadeOverlay sets: a box of the size of the window, its visibility (a percent) as the alpha.
+	const int overlay = _visionaire->GetGame().GetInt(kGameOverlayVisibility);
+
+	if (overlay != 0) {
+		const unsigned int color = static_cast<unsigned int>(_visionaire->GetGame().GetInt(kGameOverlayColor));
+
+		graphics->DrawBox(wxRect{0, 0, graphics->GetWidth(), graphics->GetHeight()}, color, overlay * 0.01f);
+	}
+
 	DisplayInSceneConsole();
 
 	if (lock) {

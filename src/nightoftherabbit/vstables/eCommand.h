@@ -113,5 +113,13 @@ enum eCommand {
 	kCommandWaitTalking = 157,
 	kCommandMoveObjectBy = 158,
 	kCommandMoveObjectTo = 159,
-	kCommandIfCharacterDirection = 160
+	kCommandIfCharacterDirection = 160,
+	// Night of the Rabbit's (the names are invented, from what each does)
+	kCommandIfCharacterHasItem = 161,
+	kCommandFadeOverlay = 162,
+	kCommandIfScript = 163,
+	kCommandWaitValue = 164,
+	kCommandWaitCondition = 165,
+	kCommandFadeSound = 166,
+	kCommandWaitAction = 167
 };

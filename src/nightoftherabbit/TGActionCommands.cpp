@@ -85,6 +85,8 @@ void TGActionPartExecutor::run(int command) {
 	case kCommandElse:
 		cmdElse();
 		break;
+	case kCommandEndIf:
+		break;
 	case kCommandChangeScene:
 		cmdChangeScene();
 		break;
@@ -391,8 +393,28 @@ void TGActionPartExecutor::run(int command) {
 	case kCommandMoveObjectTo:
 		cmdMoveObject(false);
 		break;
+	case kCommandIfCharacterHasItem:
+		cmdIfCharacterHasItem();
+		break;
+	case kCommandFadeOverlay:
+		cmdFadeOverlay();
+		break;
+	case kCommandIfScript:
+		cmdIfScript();
+		break;
+	case kCommandWaitValue:
+		cmdWaitValue();
+		break;
+	case kCommandWaitCondition:
+		cmdWaitCondition();
+		break;
+	case kCommandFadeSound:
+		cmdFadeSound();
+		break;
+	case kCommandWaitAction:
+		cmdWaitAction();
+		break;
 	default:
-		// TODO: the commands 161-167 that Night of the Rabbit has are not reconstructed yet (they come here too)
 		cmdPluginPart(command);
 		break;
 	}

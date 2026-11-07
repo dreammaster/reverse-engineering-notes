@@ -203,6 +203,20 @@ std::vector<TGAction *> &TGAction::GetRunningActions() {
 	return s_runningActions;
 }
 
+// Confirmed (Night of the Rabbit, TGAction::GetRunningAction(TVisObjRef const &), asm lines 110994-111056): the table from the id
+// of the data object to the place in the running actions (a finished action stays in it until DeleteFinishedActions()).
+TGAction *TGAction::GetRunningAction(const TVisObjRef &data) {
+	if (data.IsEmpty())
+		return nullptr;
+
+	auto found = s_actionIdToRunningAction.find(dataId(data));
+
+	if (found == s_actionIdToRunningAction.end())
+		return nullptr;
+
+	return s_runningActions[found->second];
+}
+
 // Confirmed (asm lines 195778-196100)
 void TGAction::DeleteRunningAction(const TVisObjRef &id, bool byData) {
 	for (TGAction *action : s_runningActions) {

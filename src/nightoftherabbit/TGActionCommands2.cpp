@@ -21,6 +21,9 @@
 #include "vscommon/fontManager.h"
 #include "vscommon/scripting/id.h"
 #include "vscommon/scripting/lua.h"
+#include "vscommon/scripting/visLua.h"
+#include <lauxlib.h>
+#include <lua.h>
 #include "vsplayer/animationGame.h"
 #include "vsplayer/control/cursorControl.h"
 #include "vsplayer/control/gameControl.h"
@@ -1019,4 +1022,178 @@ void TGActionPartExecutor::cmdMoveObject(bool by) {
 	Tween y(offset.y, endY, duration, Easing::LinearIn, false, false);
 
 	gameControl()->StartTween(TVisObjTween(x, object, kObjectOffset, y));
+}
+
+// ---- Night of the Rabbit's commands 161-167 (TGAction::Execute, the cases 161-167 of its switch; the names are invented)
+
+// What a wait does when the thing waited for has not happened: the part is looked at again on the next frame.
+void TGActionPartExecutor::waitWhile(bool waiting) {
+	if (waiting)
+		_wait = true;
+}
+
+// Confirmed (Night of the Rabbit, TGAction::Execute case 161, asm lines 118444-118478 of rabbit.asm): IF a character (the link) has an
+// item (the second link): TTCharacter::HasItem. One of the ifs that IsIFActionPart() counts (0xA1).
+void TGActionPartExecutor::cmdIfCharacterHasItem() {
+	TTCharacter owner(gameControl()->GetCharacter(link())->GetRef());
+
+	if (!owner.HasItem(altLink()))
+		ifFalse();
+}
+
+// Confirmed (case 162, asm lines 118077-118195): the picture of the game gets a layer of a color over it (TMasterControl::Draw draws it
+// with the visibility as the alpha): the visibility `GameOverlayVisibility` (a percent) goes in the time of the part's integer (ms) to
+// the second integer (a tween, easing LinearInOut), and the color `GameOverlayColor` is the third integer at once. There is no skip
+// mode: it does the same when a cutscene is skipped.
+void TGActionPartExecutor::cmdFadeOverlay() {
+	const double duration = _part.GetInt(kActionPartInt);
+	const double target = _part.GetInt(kActionPartAltInt);
+	const int color = _part.GetInt(kActionPartAltInt2);
+
+	Tween none(0.0, 0.0, 0.0, Easing::LinearIn, false, false);
+	Tween fade(_game.GetInt(kGameOverlayVisibility), target, duration, Easing::LinearInOut, false, false);
+
+	gameControl()->StartTween(TVisObjTween(fade, _game, kGameOverlayVisibility, none));
+	_game.SetValue(kGameOverlayColor, color, TSendEventEnum::kSendEvent);
+}
+
+// Confirmed (case 163, asm lines 118332-118443 and 122577-122640): IF the part's own text, run as a script, returns true (the same
+// text as kCommandRunPartScript, with `currentAction` set while it runs). A script that returns nothing, or something that is not a
+// boolean, gives the message "Action part '%s' must return a boolean" (with the text) and the part is taken as true.
+// (The original leaves the result on the stack; here it is taken off.)
+void TGActionPartExecutor::cmdIfScript() {
+	LuaSetCurrentAction(active());
+
+	const int top = lua_gettop(L);
+	wxString code = _part.GetStr(kActionPartString);
+
+	code.Replace(wxString(L"<br/>"), wxString(L"\n"), true);
+	LuaDoStringWithReturn(std::string(code.mb_str()), IdStrStd(_part.GetId()));
+
+	if (lua_gettop(L) > top && lua_type(L, -1) == LUA_TBOOLEAN) {
+		if (!lua_toboolean(L, -1))
+			ifFalse();
+	} else if (wxLog::loglevel >= 0) {
+		wxLog::logexpanded(L"Action part '%s' must return a boolean", code.wc_str());
+	}
+
+	lua_settop(L, top);
+	LuaSetCurrentAction(TVisObjRef());
+}
+
+// Confirmed (case 164, asm lines 115039-115103, 121471-121483, 122646-122665, 124894-124937 and 126156-126164): waits for
+// a variable (the link) against a number (a variable of the second link, or the part's second integer) as the first integer says. The part
+// is done when that is no longer so:
+//   0  the variable changed since the part started (its value then is kept in the action's `ActionSavedValue`),
+//   1  waits while the variable is not equal, 2 while equal, 3 while greater, 4 while greater or equal, 5 while less, 6 while less or equal
+//      (what the code computes is the case of waiting; read the other way it is: until equal, until not equal, until less or equal ...),
+//   another number: not waiting.
+// In the skip mode of a cutscene it is done at once.
+void TGActionPartExecutor::cmdWaitValue() {
+	TTValue variable(link());
+	const int left = variable.GetInt(kValueInt);
+	TTValue other(altLink());
+	const int right = other.IsEmpty() ? _part.GetInt(kActionPartAltInt) : other.GetInt(kValueInt);
+	const int mode = _part.GetInt(kActionPartInt);
+
+	if (!started() && mode == 0) {
+		active().SetValue(kActionSavedValue, left, TSendEventEnum::kSendEvent);
+		setStarted(true);
+	}
+
+	if (_skip) {
+		setStarted(false);
+		return;
+	}
+
+	bool waiting;
+
+	switch (mode) {
+	case 0:
+		if (left != active().GetInt(kActionSavedValue)) {
+			setStarted(false);
+			return;
+		}
+
+		waiting = true;
+		break;
+	case 1:
+		waiting = (right != left);
+		break;
+	case 2:
+		waiting = (right == left);
+		break;
+	case 3:
+		waiting = (right < left);
+		break;
+	case 4:
+		waiting = (right <= left);
+		break;
+	case 5:
+		waiting = (right > left);
+		break;
+	case 6:
+		waiting = (right >= left);
+		break;
+	default:
+		waiting = false;
+		break;
+	}
+
+	waitWhile(waiting);
+}
+
+// Confirmed (case 165, asm lines 117468-117520, 121911-121920, 122993-123020 and 124107-124145): waits for a condition (the link):
+// 0 until it changes (its value at the start is kept in `ActionSavedValue`), 1 until it is true, 2 until it is not; another number does not
+// wait. In the skip mode it is done at once.
+void TGActionPartExecutor::cmdWaitCondition() {
+	TTCondition condition(link());
+	const int mode = _part.GetInt(kActionPartInt);
+
+	if (!started() && mode == 0) {
+		active().SetValue(kActionSavedValue, condition.IsTrue() ? 1 : 0, TSendEventEnum::kSendEvent);
+		setStarted(true);
+	}
+
+	if (_skip) {
+		setStarted(false);
+		return;
+	}
+
+	switch (mode) {
+	case 0:
+		if ((condition.IsTrue() ? 1 : 0) != active().GetInt(kActionSavedValue))
+			setStarted(false);
+		else
+			_wait = true;
+
+		break;
+	case 1:
+		waitWhile(!condition.IsTrue());
+		break;
+	case 2:
+		waitWhile(condition.IsTrue());
+		break;
+	default:
+		break;
+	}
+}
+
+// Confirmed (case 167, asm lines 115008-115030): waits for the action (the link, a data object) to be over: while it is in the running
+// actions (a finished one that is not deleted yet counts). There is no skip mode.
+void TGActionPartExecutor::cmdWaitAction() {
+	waitWhile(TGAction::GetRunningAction(link()) != nullptr);
+}
+
+// Case 166 (asm lines 115107-115170 and 121481-121558 of rabbit.asm), read but NOT reconstructed: the sound of the part's path fades. With
+// the sound manager's GetExistingSoundID(path) (virtual 0x60; -1: it is not loaded, nothing happens): normally FadeSound(id, the second
+// integer = the time in ms, the first integer = the target volume in dB, true) (virtual 0xE0, new in this engine); in the skip mode of a
+// cutscene SetStats(id, the volume, GetBalance(id), a type that is 1 unless the sound is the scene's background music, false, 0) at once.
+// FadeSound gives the sound a fade (its `+0x14` the time, `+0x18` the duration, `+0x1C` and `+0x20` the start and end factors, `+0x28` and
+// `+0x29` flags), which the new TSoundFFMPEG::Update goes through: that is the audio bus rework (TSoundFFMPEG::LoadMixers/FindMixer, the Play
+// with a bus, FadeAll in TSceneControl::ToScene instead of StartSoundFade) that this reconstruction does not have yet, so the command
+// does nothing but say so.
+void TGActionPartExecutor::cmdFadeSound() {
+	if (wxLog::loglevel > 0)
+		wxLog::logexpanded(L"The action part 'fade sound' (166) is not reconstructed: the sound does not fade");
 }

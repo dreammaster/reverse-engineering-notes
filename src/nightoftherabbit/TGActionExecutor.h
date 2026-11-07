@@ -163,4 +163,15 @@ private:
 	void cmdClearObjectText();
 	void cmdWaitTalking();
 	void cmdMoveObject(bool by);
+	// Night of the Rabbit's commands 161-167
+	void cmdIfCharacterHasItem();
+	void cmdFadeOverlay();
+	void cmdIfScript();
+	void cmdWaitValue();
+	void cmdWaitCondition();
+	void cmdFadeSound();
+	void cmdWaitAction();
+	/** What a wait that is not done leaves: the part is looked at again on the next frame. `waiting`: the thing waited for has not
+	 *  happened yet. */
+	void waitWhile(bool waiting);
 };

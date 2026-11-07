@@ -110,6 +110,8 @@ public:
 
 	// The running actions.
 	static std::vector<TGAction *> &GetRunningActions();
+	/** (Night of the Rabbit) The running action whose data object is `data` (null: it is not running, or `data` is empty). */
+	static TGAction *GetRunningAction(const TVisObjRef &data);
 	/** Starts the action `action`, once: the one that is running already is returned when it is
 	 *  (null: the action is empty). */
 	static TGAction *AddRunningAction(const TVisObjRef &action);

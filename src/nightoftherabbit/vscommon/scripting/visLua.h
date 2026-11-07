@@ -58,6 +58,10 @@ void LuaDoRef(int ref);
  *  chunk with a name in the player's mode). */
 void LuaDoString(const std::string &code);
 void LuaDoString(const std::string &code, const std::string &chunkName);
+
+/** (Night of the Rabbit) Runs a piece of text like LuaDoString() and keeps what it returns (one value) on the stack: the caller
+ *  finds it with lua_gettop() above where it was; an error is logged and leaves nothing. */
+void LuaDoStringWithReturn(const std::string &code, const std::string &chunkName);
 /** Calls the function `name` of the scripts with `arguments`; its return values go to `results`
  *  (they have their types already). False if the call fails or a result is not of its type. */
 bool LuaExecuteFunction(const std::string &name, std::vector<TArgument *> &arguments,

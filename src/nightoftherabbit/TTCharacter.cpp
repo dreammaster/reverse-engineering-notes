@@ -81,6 +81,20 @@ void TTCharacter::AddItems(const TVList &newItems) {
 	SetValue(kCharacterItems, items, true);
 }
 
+// Confirmed (Night of the Rabbit, TTCharacter::HasItem, asm lines 1594429-1594498): the ids of the items in CharacterItems
+// are compared with the id of the item.
+bool TTCharacter::HasItem(const TVisObjRef &item) const {
+	TVList items;
+
+	GetLinks(kCharacterItems, TypeOrder::kValue0, items);
+	for (TVisionaireObject *existing : items) {
+		if (sameId(item, existing))
+			return true;
+	}
+
+	return false;
+}
+
 // Confirmed (asm lines 1475549-1475645)
 bool TTCharacter::RemoveItem(const TVisObjRef &item) {
 	TVList items;

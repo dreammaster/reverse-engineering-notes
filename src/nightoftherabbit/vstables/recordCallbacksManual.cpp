@@ -189,6 +189,8 @@ void TTOutfit::OnCreate(TVisionaireObject *object) {
 	object->SetValue(kOutfitModelAmbientOcclusion, 50, TSendEventEnum::kSendEvent);
 	object->SetValue(kOutfitRandomMinTime, 10000, TSendEventEnum::kSendEvent);
 	object->SetValue(kOutfitRandomMaxTime, 30000, TSendEventEnum::kSendEvent);
+	// Confirmed (Night of the Rabbit, TTOutfit::OnCreate): the turn speed of a model character (the upgrade of old data gives 100 too)
+	object->SetValue(kOutfitModelTurnSpeed, 100, TSendEventEnum::kSendEvent);
 }
 
 void TTParticles::OnCreate(TVisionaireObject * /*object*/) {

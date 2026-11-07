@@ -20,8 +20,8 @@
 // How many parts an action may do in one call before it is taken to be in an endless loop.
 static const int kMaxPartsPerCall = 10000;
 
-// Confirmed (TTActionPart::IsIFActionPart(), Deponia_Linux.asm lines 1446716-1446750): the
-// commands that start an if (and so are counted, with the end ifs, when a branch is skipped).
+// Confirmed (TTActionPart::IsIFActionPart(), Deponia_Linux.asm lines 1446716-1446750; Night of the Rabbit's has 0xA1 and 0xA3 as well,
+// the ifs of an item and of a script): the commands that start an if (and so are counted, with the end ifs, when a branch is skipped).
 static bool isIfCommand(int command) {
 	switch (command) {
 	case 0x45:
@@ -34,6 +34,8 @@ static bool isIfCommand(int command) {
 	case 0x7B:
 	case 0x8C:
 	case 0xA0:
+	case 0xA1:
+	case 0xA3:
 		return true;
 	default:
 		return false;

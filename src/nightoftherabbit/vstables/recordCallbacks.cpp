@@ -108,7 +108,8 @@ void TTButton::OnCreate(TVisionaireObject *object) {
 		TVisObjRef parent(object);
 		object->GetVisionaire()->CreateObject(13, parent, kButtonInactiveSprite);
 	}
-	object->SetValue(kButtonType, 3, TSendEventEnum::kSendEvent);
+	// (Night of the Rabbit: 4, where Deponia 1 has 3; what the new value stands for is not known)
+	object->SetValue(kButtonType, 4, TSendEventEnum::kSendEvent);
 	object->SetValue(kButtonCommandType, 0, TSendEventEnum::kSendEvent);
 	object->SetValue(kButtonUse, 2, TSendEventEnum::kSendEvent);
 	object->SetValue(kButtonDraggable, false, TSendEventEnum::kSendEvent);
@@ -122,6 +123,8 @@ void TTButton::OnInit(TVisionaireObject *object) {
 	object->SetValue(kButtonScaleX, 0.0f, TSendEventEnum::kSendEvent);
 	object->SetValue(kButtonScaleY, 0.0f, TSendEventEnum::kSendEvent);
 	object->SetValue(kButtonMatrixId, 1, TSendEventEnum::kSendEvent);
+	// Confirmed (Night of the Rabbit, TTButton::OnInit): the new visibility of a button, in percent
+	object->SetValue(kButtonVisibility, 100, TSendEventEnum::kSendEvent);
 }
 
 void TTCharacter::OnInit(TVisionaireObject *object) {
@@ -292,6 +295,10 @@ void TTGame::OnInit(TVisionaireObject *object) {
 	object->SetValue(kGameTextSpeed, 100, TSendEventEnum::kNoEvent);
 	object->SetValue(kGameVideoSubtitlePosition, wxPoint{-1, -1}, TSendEventEnum::kNoEvent);
 	object->SetValue(kGameShaderExclude, 0, TSendEventEnum::kNoEvent);
+	// Confirmed (Night of the Rabbit, TTGame::OnInit, asm lines 1601794-1601860): the layer over the picture (FadeOverlay) starts
+	// with no visibility and the color 0; without them the unset values of an int are -1 (a layer that is drawn)
+	object->SetValue(kGameOverlayVisibility, 0, TSendEventEnum::kNoEvent);
+	object->SetValue(kGameOverlayColor, 0, TSendEventEnum::kNoEvent);
 }
 
 void TTInterface::OnInit(TVisionaireObject *object) {
@@ -301,6 +308,9 @@ void TTInterface::OnInit(TVisionaireObject *object) {
 	object->SetValue(kInterfaceTimeToDestVisibility, 0, TSendEventEnum::kNoEvent);
 	object->SetValue(kInterfaceItemsScrollPosition, 0, TSendEventEnum::kNoEvent);
 	object->SetValue(kInterfaceMatrixId, 1, TSendEventEnum::kSendEvent);
+	// Confirmed (Night of the Rabbit, TTInterface::OnInit): the new scale and the center of rotation of an interface
+	object->SetValue(kInterfaceScale, 1.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kInterfaceRotationCenter, wxPoint{0, 0}, TSendEventEnum::kSendEvent);
 }
 
 void TTInterfaceClass::OnCreate(TVisionaireObject *object) {
