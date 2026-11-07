@@ -501,6 +501,29 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		_world.actors.talkFlags[0x75] |= 8;
 		break;
 	}
+	case 21: { // sub_5A17C: a hammer on a geode (first) that is whole (frame 0): it breaks (frame 1) and 2 to 100 of the stuff inside (0x83) fall out, in the pack of whoever has it or on its square
+		if (first < 0)
+			break;
+		World::Obj &geode = _world.objects[first];
+		if (geode.frame != 0) {
+			message("It has no effect.\n");
+			break;
+		}
+		sfx(0x20);
+		geode.frame = 1;
+		int n = seRoll(1, 50) + seRoll(1, 50);
+		bool held = carriedObject(geode);
+		int holder = geode.parent, gx = geode.x, gy = geode.y, gz = geode.z;
+		if (held) {
+			if (!seGive(holder, 0x83, n)) {
+				int a = _world.actorObject(holder);
+				seMake(0x83, a >= 0 ? _world.objects[a].x : gx, a >= 0 ? _world.objects[a].y : gy, z, n);
+			}
+		} else {
+			seMake(0x83, gx, gy, gz, n);
+		}
+		break;
+	}
 	case 44: { // sub_5EFC8: a door (or hatch) opens and shuts: locked (quality bit 0x80) it is not; somebody in it blocks it; else frame bit 2 turns over
 		if (o.quality & 0x80) {
 			message("It is locked.\n");
