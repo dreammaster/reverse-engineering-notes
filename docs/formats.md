@@ -394,12 +394,18 @@ translated by hand (they are small) or run by a minimal 16-bit interpreter.
 (The animation script commands — §6.12 — are *not* TAD calls: they are dispatched through a table inside CAD.EXE itself,
 `1000:3C77`. An earlier note here said otherwise; `3C77h` is a code offset, not the TAD segment.)
 
-The game also contains a bytecode interpreter (the in-house "ACL" language;
-INTRO's credits: *"cadaver uses an internal language … 'acl'. acl is copyright
-the bitmap brothers"*). Likely opcode handlers (small routines that fetch
-operands with `lodsb`/`lodsw` from SI and poke object fields via `DI`) sit in
-`CAD.EXE seg000` around `1000:7AE0–7C50`; **the link between the `.TAD` data
-and the interpreter is not yet confirmed.**
+**The ACL interpreter (found, structure verified by reading the code; opcodes not decoded yet).** The game's logic is data-driven by small
+scripts stored in the *tail of the thing records* (and of the room records). `CAD.EXE sub_10247` calls `1000:7634` once per game step; it drains the
+**event queue** (`ds:5A` = queue pointer, `ds:226` = count, entries of 3 words: `event type` (bit 15 of the high byte = extra argument word follows),
+`object` = the position record that the event concerns, `argument`). For an event of type `cl` the object's **handler list** is searched: at
+`[object+10h]` (or `[object+20h]` when the event word has bit 14 set) a list of `[object+0Bh]` (`+1Fh`) entries; each entry starts with a
+condition byte (low 7 bits = event type to match, bit 7 = "keep the handler armed"). When the type matches, the *condition test* `table[0x76FC + 2·type]`
+(29 event types: use, look, take, push/contact `9`, step-on, timer …) must pass; then the **op stream** is executed: `lodsb` opcode, `call [cs:0x7819 + 2·op]`, until opcode `0x17`
+(end). Operands are read from the same stream (`lodsb`/`lodsw`, big-endian words). The handlers (`1000:78D5 … 826D`, ≥ 50 of them) do things like *set / clear thing flag bits*
+(`and [obj+3], 7Fh` = "place the object", `or [obj+0Fh], 4`), print messages (strings = LNG ids), move objects, start sounds, change level (`mov [0708h], n` — the level number)
+and queue further events. Things 704–709 of level 4 (the carpets over the pit) are made visible by such a script at start-up. A faithful game needs this VM (plus the
+per-level `ROUTINEn.TAD` native code, which handles creatures and animation hooks).
+`CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input
 
