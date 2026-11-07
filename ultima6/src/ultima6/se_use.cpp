@@ -270,13 +270,15 @@ void Game::seAction(uint32_t sub, int idx) {
 			message("\nThere is nothing to sift.\n");
 		break;
 	}
-	case 0x362F7: // a rope: only in party mode (else "Not in solo mode!"), then the descent (sub_19505, not done)
+	case 0x362F7: // a rope: only in party mode (else "Not in solo mode!"), then sub_19505 takes the party to the square its quality names (table ds:4D4 + 4 x (9 + quality)) on level 1, where the hole gets its rope (frame 1)
 		if (_solo != -1)
 			message("Not in solo mode!\n");
+		else
+			seClimb(idx);
 		break;
-	case 0x36312: // a hole in the ceiling: frame 1 with the party together is the way down (sub_19505, not done), frame 0 needs a rope from above
+	case 0x36312: // a hole in the ceiling: frame 1 with the party together is the way up (sub_19505: table ds:4D4 by quality, level 0, or 2 for quality 8), frame 0 needs a rope from above
 		if (_solo == -1 && o.frame == 1) {
-			// APPROX(79): the descent into the underground city (sub_19505)
+			seClimb(idx);
 		} else if (o.frame == 0) {
 			message("\nYou need a rope dropped from above.\n");
 		} else {
@@ -1296,6 +1298,41 @@ void Game::seExplode(int ex, int ey, bool device) {
 				_world.deleteObject(web);
 		}
 	}
+}
+
+// sub_19505 for a rope (0x14) and a hole in the ceiling (0x16): the destinations are the table at ds:4D4 (x, y words by quality; the rope reads it from entry 9, where ds:4F8 begins).
+// APPROX(83): the ladders 0xA3 / 0xE3 / 0x103 / 0xA0 of the same routine read tables (ds:38C, 3DC) that hold other data in the file; they are not used here (Ultima VI's ladder code serves them).
+void Game::seClimb(int idx) {
+	static const uint16_t WHERE[19][2] = {{0xFFFF, 0xFFFF}, {396, 68}, {600, 223}, {138, 457}, {139, 509}, {368, 336}, {633, 464}, {666, 689}, {234, 61}, {353, 633},
+										  {139, 11}, {218, 27}, {19, 83}, {11, 203}, {98, 83}, {235, 84}, {227, 179}, {243, 204}, {51, 243}};
+	const World::Obj o = _world.objects[idx];
+	int q = o.quality;
+	bool rope = o.type == 0x14;
+	int at = rope ? 9 + q : q;
+	if (at < 0 || at >= 19)
+		return;
+	int nx = WHERE[at][0], ny = WHERE[at][1], nz = rope ? 1 : (q == 8 ? 2 : 0);
+	if (nx == 0xFFFF)
+		return;
+	if (rope) { // the hole there hangs its rope (frame 1); another hole is replaced
+		int hole = -1;
+		std::vector<int> here;
+		_world.objectsAt(nx, ny, nz, here);
+		for (int i : here)
+			if (!_world.objects[i].deleted && _world.objects[i].type == 0x16)
+				hole = i;
+		if (hole >= 0 && _world.objects[hole].quality == q) {
+			_world.objects[hole].frame = 1;
+		} else {
+			if (hole >= 0)
+				_world.deleteObject(hole);
+			int n = seMake(0x16, nx, ny, nz, 0, q);
+			_world.objects[n].frame = 1;
+		}
+	}
+	message("\n");
+	changeLevel(nx, ny, nz);
+	advanceTime(0);
 }
 
 // sub_1ADDA: the first thing of the type that the actor holds and does not wear or wield (status 0x18 is readied), -1 if there is none

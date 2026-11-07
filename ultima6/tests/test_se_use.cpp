@@ -485,6 +485,34 @@ int main() {
 		CHECK(w.objects[head].deleted && w.objects[statue].deleted);
 	}
 
+	// a hole in the ceiling (0x16, frame 1, quality 1) takes the party up to the surface square its quality names (396,68); a rope (0x14, quality 8) takes it to the hole at 243,204 on level 1
+	{
+		clearEast(w, px, py);
+		int hole = put(w, 0x16, 1, px + 1, py, 0);
+		w.objects[hole].quality = 1;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(g.x == 396 && g.y == 68 && g.z == 0);
+		int leader = w.actorObject(w.actors.partyRoster[0]);
+		CHECK(w.objects[leader].x == 396 && w.objects[leader].y == 68);
+		g.x = px;
+		g.y = py;
+		for (int i = 0; i < w.actors.partySize; ++i)
+			w.moveObject(w.actorObject(w.actors.partyRoster[i]), px, py, 0);
+		w.deleteObject(hole);
+		clearEast(w, px, py);
+		int rope = put(w, 0x14, 0, px + 1, py, 0);
+		w.objects[rope].quality = 8;
+		useEast(w, g, px, py);
+		CHECK(g.x == 243 && g.y == 204 && g.z == 1);
+		g.z = 0;
+		for (int i = 0; i < w.actors.partySize; ++i)
+			w.moveObject(w.actorObject(w.actors.partyRoster[i]), px, py, 0);
+		g.x = px;
+		g.y = py;
+		w.deleteObject(rope);
+	}
+
 	// a torch (0xD0) is lit in a free hand: a lit torch (0xD1) with 100 minutes appears readied
 	clearEast(w, px, py);
 	int actor = w.actors.partyRoster[0];

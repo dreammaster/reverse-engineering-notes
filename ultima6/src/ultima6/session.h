@@ -286,6 +286,7 @@ private:
 	bool _seAsync = false;
 	std::function<void(int, int, int)> _seThen; // what a handler does with the object chosen by "On " (-2 for none chosen) and its square
 	void seAsk(std::function<void(int, int, int)> then);
+	void seClimb(int idx);                                                      // sub_19505 for ropes and holes
 	void seFire();                                                              // sub_3215F
 	int sePackItem(int actor, int type) const;                                  // sub_1ADDA
 	int seRoll(int lo, int hi);                                                 // sub_3B58F
