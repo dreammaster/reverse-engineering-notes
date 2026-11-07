@@ -130,7 +130,7 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | 5E fire extinguisher | 343E9 | "On -": a fire (F2, FE) goes out, burning logs (CF frame 2) go back to frame 0, lava next to the member (tiles 0F-1B, AA, AB) hardens into an object 39 whose frame is the place of the tile in that table ("The lava is too far below you." on level 3) (**ported**) |
 | 83 digging stick | 31F60 | "You get some clay." / "There is nothing to dig!" (**ported**) |
 | 86 cloth strip | 33C06 | "On -": an actor gets 1 to 5 hit points back up to `sub_2872A` (2 x strength + 4 x level, 1 to 255); a body is "beyond help" (**ported**) |
-| 88 metal bucket | 335A9 | frame 0 fills with tar or water, frame 2 pours water (`sub_33364`) (**ported**); frame 1 pours tar (`sub_32D11`: tars cloth strips, makes pteranodon nests and webs) is not |
+| 88 metal bucket | 335A9 | tar, water; full of tar (frame 1) poured onto cloth strips (86) tars them (BF) (`sub_32D11`; its fires are not ported: APPROX 84) (**ported**) |
 | 89, F0 grenade, device | 31671 | a grenade / device (frame 0) is lit as 8A / F1 and a timer of 3 minutes (words ds:422A2 / 422A4 = globals 5A / 5C, run down by `sub_14746` = advance_time) starts; at 0 `sub_31838` explodes it where it (or its holder) is: `sub_29A41` (sound 6, 1-20 damage to the persons in the 3 x 3 squares) or, for a device, `sub_29AC1` (sounds 12, 1D, 1-35 damage to types 143 / 148 only), then `sub_318F5` sets off grenades around and tears webs down (**ported**, APPROX 81) |
 | 8F machine | 35B44 | a gem (48, 49, 4A) of the member goes in, an object C5 comes out on the machine's square; "You don't have any gems." (**ported**) |
 | 94 jungle drum | 3542B | |
@@ -142,7 +142,7 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | BF tarred cloth | 33777 | "On -": a log (CE) gives a torch (D0); a fired pot (85) with five pinches of gunpowder (CC) a grenade (89) (**ported**) |
 | C0 clay | 3204A | shaping a pot (**ported**) |
 | CC gunpowder | 34C0A | "On -": a flintlock (32) is loaded (**ported**) |
-| D1 lit torch | 35686 | "On -": burn things (dinosaur egg ...) |
+| D1 lit torch | 35686 | "On -": a pteranodon nest (AB) or the egg (6F) in it: burnt remains (4C frame 3) and the fire `sub_32B5E` (here `seBurn`: webs pass it on to the webs next to them, what burns on the table of ds:118A is deleted; an egg alone only prints "dinosaur egg"); a web (11); things on the burning list ("You incinerated the %s."); gunpowder (CC) hurts its holder 1-30 and explodes (**ported**, APPROX 84) |
 | D4 fishing pole | 31B48 | deep water (terrain 0x0C) on the diagonal, one catch in five (**ported**) |
 | D8 crystal garden | 35D54 | Rafkin (actor 7) or else Johann (actor 5), in the party, awake and in view, identifies potassium nitrate (82): ten for the member (**ported**) |
 | E5 tar pit | 33211 | "On -": all the cloth strips (86) become tarred cloth strips (BF) (**ported**) |

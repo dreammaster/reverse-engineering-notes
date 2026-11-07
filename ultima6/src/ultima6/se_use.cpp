@@ -395,8 +395,45 @@ void Game::seAction(uint32_t sub, int idx) {
 			});
 			break;
 		}
-		if (o.frame == 1)
-			break; // APPROX(79): pouring tar (sub_32D11: tarred cloth strips, pteranodon nests, webs) is not ported
+		if (o.frame == 1) { // sub_32D11: tar poured onto cloth strips (0x86) tars as many as the bucket holds (the tar is used up as many as there are strips). APPROX(79): the fires it can start (eggs, nests, webs, the ground: sub_32B5E) are not ported
+			int bucket = idx;
+			seAsk([this, bucket, actor](int obj, int tx, int ty) {
+				if (obj < 0) {
+					message("No effect.\n");
+					return;
+				}
+				if (!seReach(_world.objects[obj], tx, ty))
+					return;
+				if (_world.objects[obj].type != 0x86) {
+					message("No effect.\n");
+					return;
+				}
+				int tar = -1;
+				for (size_t i = 0; i < _world.objects.size(); ++i)
+					if (!_world.objects[i].deleted && _world.objects[i].location() == ObjRecord::IN_CONTAINER && _world.objects[i].parent == bucket && _world.objects[i].type == 0x8B)
+						tar = (int)i;
+				int have = tar >= 0 ? _world.objects[tar].quantity : 0, strips = _world.objects[obj].quantity;
+				int n = std::min(have, strips);
+				message("cloth strips\n\nYou tarred some cloth strips.\n");
+				bool held = carriedObject(_world.objects[obj]) && _world.objects[obj].parent == actor;
+				int sx = _world.objects[obj].x, sy = _world.objects[obj].y;
+				if (!held || !seGive(actor, 0xBF, n))
+					seMake(0xBF, sx, sy, z, n);
+				if (have >= strips)
+					_world.deleteObject(obj);
+				else
+					_world.objects[obj].quantity = (uint8_t)(strips - have);
+				if (have <= strips) { // the bucket is empty now
+					for (size_t i = 0; i < _world.objects.size(); ++i)
+						if (!_world.objects[i].deleted && _world.objects[i].location() == ObjRecord::IN_CONTAINER && _world.objects[i].parent == bucket && _world.objects[i].type == 0x8B)
+							_world.deleteObject((int)i);
+					_world.objects[bucket].frame = 0;
+				} else {
+					_world.objects[tar].quantity = (uint8_t)(have - strips);
+				}
+			});
+			break;
+		}
 		bool got = false;
 		for (int dx = 0; dx < 3 && !got; ++dx) {
 			for (int dy = 0; dy < 3 && !got; ++dy) {
@@ -1059,6 +1096,44 @@ void Game::seAction(uint32_t sub, int idx) {
 		message(grenade ? "\nGrenade lit!\n" : "\nDevice activated.\n");
 		break;
 	}
+	case 0x35686: { // a lit torch: "On -" a pteranodon nest (0xAB) or the egg in it (0x6F), a web (0x11) or anything on the burning list sets it alight; gunpowder (0xCC) explodes
+		seAsk([this](int obj, int tx, int ty) {
+			if (obj < 0) {
+				message("nothing!\n");
+				return;
+			}
+			World::Obj &t = _world.objects[obj];
+			if (!seReach(t, tx, ty))
+				return;
+			int type = t.type, ox = t.x, oy = t.y;
+			if (type == 0xAB || type == 0x6F) {
+				int nest = type == 0xAB ? obj : seFind(0xAB, ox, oy);
+				if (nest < 0) {
+					message("dinosaur egg\n"); // (the fire the original makes here is out again at once: an egg does not burn)
+					return;
+				}
+				message("pteranodon nest\n");
+				seMake(0x4C, ox, oy, z, 0);
+				_world.objects[(int)_world.objects.size() - 1].frame = 3;
+				seBurn(ox, oy);
+			} else if (type == 0x11) {
+				message("web\n");
+				seBurn(tx, ty);
+			} else if (seBurns(type)) {
+				message("\nYou incinerated the " + Describe::object(_world, t) + ".\n");
+				_world.deleteObject(obj);
+			} else if (type == 0xCC) {
+				int holder = carriedObject(t) ? t.parent : -1;
+				if (holder >= 0)
+					_combat.applyDamage(1, holder, seRoll(1, 30));
+				_world.deleteObject(obj);
+				seExplode(tx, ty, false);
+			} else {
+				message("No effect.\n");
+			}
+		});
+		break;
+	}
 	case 0x31E67: { // the flintlock (frame 1 = loaded): one gunpowder (0xCC) from the pack loads it
 		if (o.frame == 1) {
 			message("\nFlintlock already loaded.\n");
@@ -1163,7 +1238,6 @@ void Game::seAction(uint32_t sub, int idx) {
 void Game::seFire() {
 	int actor = actingActor();
 	seAsk([this, actor](int obj, int tx, int ty) {
-		static const uint16_t BURNS[16] = {0x04, 0x05, 0x0D, 0x07, 0x09, 0x24, 0x27, 0x2A, 0x11, 0x2D, 0x86, 0xB7, 0xB4, 0xBF, 0xD2, 0xAB};
 		if (obj < 0) {
 			message("nothing!\n");
 			return;
@@ -1186,9 +1260,7 @@ void Game::seFire() {
 				seMake(type, sx, sy, z, quantity);
 		};
 		int type = t.type, quantity = t.quantity;
-		bool burns = false;
-		for (uint16_t b : BURNS)
-			burns |= b == type;
+		bool burns = seBurns(type);
 		if (type == 0x84) {
 			message("\nYou fired the pot.\n");
 			one();
@@ -1333,6 +1405,53 @@ void Game::seClimb(int idx) {
 	message("\n");
 	changeLevel(nx, ny, nz);
 	advanceTime(0);
+}
+
+// the table at ds:118A (sub_2E7A2): what burns up
+bool Game::seBurns(int type) const {
+	static const uint16_t BURNS[16] = {0x04, 0x05, 0x0D, 0x07, 0x09, 0x24, 0x27, 0x2A, 0x11, 0x2D, 0x86, 0xB7, 0xB4, 0xBF, 0xD2, 0xAB};
+	for (uint16_t b : BURNS)
+		if (b == type)
+			return true;
+	return false;
+}
+
+// sub_32B5E / sub_32A28 / sub_32C39: a fire at a square burns up what burns there (and the things in a 0xE6), a web or a nest passes it on to the webs next to it, until it is out
+void Game::seBurn(int bx, int by) {
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	std::vector<std::pair<int, int>> todo;
+	todo.push_back({bx & mask, by & mask});
+	for (size_t k = 0; k < todo.size() && k < 400; ++k) {
+		int fx = todo[k].first, fy = todo[k].second;
+		std::vector<int> here;
+		_world.objectsAt(fx, fy, z, here);
+		for (int i : here) {
+			World::Obj &c = _world.objects[i];
+			if (c.deleted || c.actor >= 0)
+				continue;
+			int type = c.type;
+			if (!seBurns(type) && type != 0xE6)
+				continue;
+			if (type == 0x11 || type == 0xAB) {
+				_world.deleteObject(i);
+				for (int dx = -1; dx <= 1; ++dx)
+					for (int dy = -1; dy <= 1; ++dy) {
+						if (dx == 0 && dy == 0)
+							continue;
+						int nx = (fx + dx) & mask, ny = (fy + dy) & mask;
+						if (seFind(0x11, nx, ny) >= 0)
+							todo.push_back({nx, ny});
+					}
+			} else if (type == 0xE6) {
+				for (size_t j = 0; j < _world.objects.size(); ++j)
+					if (!_world.objects[j].deleted && _world.objects[j].location() == ObjRecord::IN_CONTAINER && _world.objects[j].parent == i)
+						_world.deleteObject((int)j);
+				_world.deleteObject(i);
+			} else {
+				_world.deleteObject(i);
+			}
+		}
+	}
 }
 
 // sub_1ADDA: the first thing of the type that the actor holds and does not wear or wield (status 0x18 is readied), -1 if there is none

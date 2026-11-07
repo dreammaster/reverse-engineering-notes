@@ -395,6 +395,51 @@ int main() {
 		CHECK(w.objects[target].deleted && made >= 0 && w.objects[made].type == 0xBF);
 		w.deleteObject(made);
 		w.deleteObject(pit2);
+		// a bucket with tar (frame 1) poured on four cloth strips tars them (0xBF) and uses up four tar
+		{
+			clearEast(w, px, py);
+			int bk = put(w, 0x88, 1, px + 1, py, 0);
+			int tar = inside(bk, 0x8B, 10);
+			std::vector<int> below;
+			w.objectsAt(px, py + 1, 0, below);
+			for (int i : below)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+			int strips = put(w, 0x86, 0, px, py + 1, 0);
+			w.objects[strips].quantity = 4;
+			size_t before = w.objects.size();
+			g.log.clear();
+			useEast(w, g, px, py);
+			g.handleKey(KEY_DOWN);
+			g.handleKey(KEY_ENTER);
+			CHECK(logText(g).find("You tarred some cloth strips") != std::string::npos && w.objects[strips].deleted);
+			CHECK(w.objects.size() == before + 1 && w.objects[before].type == 0xBF && w.objects[before].quantity == 4);
+			CHECK(w.objects[tar].quantity == 6 && w.objects[bk].frame == 1);
+			w.deleteObject((int)before);
+			w.deleteObject(tar);
+			w.deleteObject(bk);
+		}
+		// a lit torch (0xD1): on a web (0x11) it burns the web and the webs next to it (and what burns on those squares); on a nest (0xAB) it leaves burnt remains (0x4C frame 3)
+		{
+			clearEast(w, px, py);
+			std::vector<int> there;
+			for (int sx = px - 1; sx <= px + 1; ++sx)
+				for (int sy = py + 1; sy <= py + 2; ++sy) {
+					w.objectsAt(sx, sy, 0, there);
+					for (int i : there)
+						if (w.objects[i].actor < 0)
+							w.deleteObject(i);
+				}
+			int web1 = put(w, 0x11, 0, px, py + 1, 0), web2 = put(w, 0x11, 0, px, py + 2, 0), cloth = put(w, 0xB4, 0, px, py + 2, 0);
+			int torch2 = put(w, 0xD1, 0, px + 1, py, 0);
+			g.log.clear();
+			useEast(w, g, px, py);
+			g.handleKey(KEY_DOWN);
+			g.handleKey(KEY_ENTER);
+			CHECK(logText(g).find("web") != std::string::npos);
+			CHECK(w.objects[web1].deleted && w.objects[web2].deleted && w.objects[cloth].deleted);
+			w.deleteObject(torch2);
+		}
 		// a grenade: tarred cloth on a fired pot (0x85) needs five pinches of gunpowder
 		int pot = 0;
 		tc = toolOn(0xBF, 0x85, 0, pot, made);
