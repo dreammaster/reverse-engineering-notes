@@ -68,15 +68,18 @@ void Game::useObject(int idx) {
 	bool carried = carriedObject(o);
 	message(o.type == 0x1AF ? std::string("horse") : Describe::object(_world, o));
 	message("\n");
-	if (_world.game == GameId::MartianDreams) {
-		if (!carried && !_telekinesis) { // the original's reach: one square (APPROX(76))
+	if (_world.game == GameId::MartianDreams || _world.game == GameId::SavageEmpire) {
+		if (!carried && !_telekinesis) { // the original's reach: one square (APPROX(76), Savage Empire's cmd_use tests it the same way)
 			int a = _world.actorObject(actingActor());
 			if (a >= 0 && (std::abs((int)_world.objects[a].x - (int)o.x) > 1 || std::abs((int)_world.objects[a].y - (int)o.y) > 1)) {
 				message("Out of range!\n");
 				return;
 			}
 		}
-		mdUseObject(idx);
+		if (_world.game == GameId::SavageEmpire)
+			seUseObject(idx);
+		else
+			mdUseObject(idx);
 		return;
 	}
 	if (!usable(o.type)) {
@@ -1882,7 +1885,7 @@ void Game::useAt(int tx, int ty) {
 			continue;
 		if (pick < 0)
 			pick = here[i];
-		if (_world.game == GameId::MartianDreams ? mdUsable(o.type) : usable(o.type)) {
+		if (_world.game == GameId::MartianDreams ? mdUsable(o.type) : _world.game == GameId::SavageEmpire ? seUsable(o.type) : usable(o.type)) {
 			pick = here[i];
 			break;
 		}

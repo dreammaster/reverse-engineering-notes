@@ -103,6 +103,8 @@ void Game::minutePassed() {
 	for (int t = 0; t < 16; ++t)
 		if (_world.actors.globals[0x12 + t])
 			--_world.actors.globals[0x12 + t];
+	if (_world.game == GameId::SavageEmpire && _world.actors.globals.size() > 0x26 && _world.actors.globals[0x26]) // the liquor's counter (byte_4226E) goes down with the minutes (sub_14746)
+		--_world.actors.globals[0x26];
 	if (gameClock.minute == 0) {
 		// every hour the people with magic recover as many magic points as their level
 		ObjList &al = _world.actors;

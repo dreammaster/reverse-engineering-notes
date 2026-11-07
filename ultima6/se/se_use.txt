@@ -1,0 +1,743 @@
+sub_35E46 35E46, segment base 2DBD2
+type 00A handler 86DE linear 362B0
+type 014 handler 8727 linear 362F9
+type 016 handler 8742 linear 36314
+type 019 handler 87D2 linear 363A4
+type 01D handler 881E linear 363F0
+type 02A handler 871C linear 362EE
+type 02B handler 862B linear 361FD
+type 02C handler 87D2 linear 363A4
+type 02F handler 8706 linear 362D8
+type 031 handler 8801 linear 363D3
+type 032 handler 883F linear 36411
+type 033 handler 8808 linear 363DA
+type 034 handler 87D2 linear 363A4
+type 03B handler 86D3 linear 362A5
+type 03C handler 86D3 linear 362A5
+type 03D handler 8666 linear 36238
+type 03E handler 865F linear 36231
+type 03F handler 85DF linear 361B1
+type 04F handler 8658 linear 3622A
+type 050 handler 8658 linear 3622A
+type 051 handler 8658 linear 3622A
+type 052 handler 8658 linear 3622A
+type 056 handler 889E linear 36470
+type 057 handler 889E linear 36470
+type 058 handler 889E linear 36470
+type 05C handler 8893 linear 36465
+type 05D handler 86C8 linear 3629A
+type 05E handler 87A6 linear 36378
+type 05F handler 85D4 linear 361A6
+type 066 handler 86C8 linear 3629A
+type 067 handler 86C8 linear 3629A
+type 068 handler 86C8 linear 3629A
+type 069 handler 86C8 linear 3629A
+type 06A handler 86C8 linear 3629A
+type 06B handler 86C8 linear 3629A
+type 06C handler 86C8 linear 3629A
+type 06D handler 86C8 linear 3629A
+type 06E handler 86C8 linear 3629A
+type 06F handler 86C8 linear 3629A
+type 071 handler 86C8 linear 3629A
+type 072 handler 86C8 linear 3629A
+type 077 handler 881E linear 363F0
+type 078 handler 86C8 linear 3629A
+type 083 handler 8711 linear 362E3
+type 086 handler 8867 linear 36439
+type 088 handler 87EB linear 363BD
+type 089 handler 8834 linear 36406
+type 08F handler 8926 linear 364F8
+type 094 handler 87DD linear 363AF
+type 0A1 handler 86BD linear 3628F
+type 0A5 handler 87B1 linear 36383
+type 0AD handler 8855 linear 36427
+type 0B1 handler 8930 linear 36502
+type 0BA handler 8636 linear 36208
+type 0BC handler 85EA linear 361BC
+type 0BE handler 87F6 linear 363C8
+type 0BF handler 885C linear 3642E
+type 0C0 handler 86F4 linear 362C6
+type 0C5 handler 86C8 linear 3629A
+type 0CC handler 87BC linear 3638E
+type 0CF handler 866D linear 3623F
+type 0D0 handler 8872 linear 36444
+type 0D1 handler 887D linear 3644F
+type 0D4 handler 879B linear 3636D
+type 0D5 handler 86C8 linear 3629A
+type 0D6 handler 86C8 linear 3629A
+type 0D8 handler 86FF linear 362D1
+type 0E5 handler 87E4 linear 363B6
+type 0E9 handler 8888 linear 3645A
+type 0EA handler 86B2 linear 36284
+type 0ED handler 8888 linear 3645A
+type 0F0 handler 8834 linear 36406
+type 0F2 handler 8855 linear 36427
+type 0F7 handler 8813 linear 363E5
+type 0FC handler 87C7 linear 36399
+type 0FE handler 8855 linear 36427
+type 101 handler 8855 linear 36427
+type 113 handler 86E9 linear 362BB
+type 12E handler 8912 linear 364E4
+type 133 handler 891C linear 364EE
+type 8829 handler 8B55 linear 36727
+=== code
+35E46 push    bp
+35E47 mov     bp, sp
+35E49 sub     sp, 0Eh
+35E4C push    si
+35E4D push    di
+35E4E mov     bx, word_3FE4C
+35E52 mov     al, [bx+8]
+35E55 or      al, 10h
+35E57 mov     [bx+8], al
+35E5A push    word_4B0A2
+35E5E call    sub_2B429
+35E63 mov     word_4B0A2, ax
+35E66 mov     bx, word_4B0A2
+35E6A shl     bx, 1
+35E6C mov     ax, [bx-6306h]
+35E70 and     ax, 3FFh
+35E73 mov     si, ax
+35E75 cmp     word_4B0A2, 0FFh
+35E7B jg      short loc_35E99
+35E7D cmp     word_4B0CA, 0FFFFh
+35E82 jz      short loc_35E99
+35E84 mov     al, byte_42252
+35E87 cmp     al, byte_49756
+35E8B jz      short loc_35E99
+35E8D cmp     si, 12Eh
+35E91 jz      short loc_35E99
+35E93 cmp     si, 133h
+35E97 jnz     short loc_35ECD
+35E99 mov     bx, word_4B0A2
+35E9D shl     bx, 1
+35E9F mov     ax, [bx-6306h]
+35EA3 and     ax, 3FFh
+35EA6 shl     ax, 1
+35EA8 les     bx, dword_46954
+35EAC add     bx, ax
+35EAE mov     ax, es:[bx]
+35EB1 mov     bx, word_4B0A2
+35EB5 shl     bx, 1
+35EB7 mov     dx, [bx-6306h]
+35EBB mov     cl, 0Ah
+35EBD shr     dx, cl
+35EBF add     ax, dx
+35EC1 les     bx, dword_470A0
+35EC5 add     bx, ax
+35EC7 test    byte ptr es:[bx], 10h
+35ECB jz      short loc_35ED8
+35ECD push    word_4B0A2
+35ED1 push    cs
+35ED2 call    near ptr sub_2EC00
+35ED5 mov     word_4B0A2, ax
+35ED8 cmp     word_4B0A2, 0FFFFh
+35EDD jz      short loc_35EE2
+35EDF jmp     loc_35FF8
+35EE2 cmp     word_4B0CA, 0FFFFh
+35EE7 jnz     short loc_35EEC
+35EE9 jmp     loc_35FF8
+35EEC cmp     word_4B0CC, 0FFFFh
+35EF1 jnz     short loc_35EF6
+35EF3 jmp     loc_35FF8
+35EF6 mov     al, byte_42252
+35EF9 mov     ah, 0
+35EFB mov     bx, ax
+35EFD mov     al, [bx+4EDAh]
+35F01 mov     ah, 0
+35F03 mov     dx, 3
+35F06 imul    dx
+35F08 mov     bx, ax
+35F0A mov     ax, [bx+78E4h]
+35F0E and     ax, 3FFh
+35F11 mov     [bp+var_4], ax
+35F14 mov     al, byte_42252
+35F17 mov     ah, 0
+35F19 mov     bx, ax
+35F1B mov     al, [bx+4EDAh]
+35F1F mov     ah, 0
+35F21 mov     dx, 3
+35F24 imul    dx
+35F26 mov     bx, ax
+35F28 mov     ax, [bx+78E5h]
+35F2C sar     ax, 1
+35F2E sar     ax, 1
+35F30 and     ax, 3FFh
+35F33 mov     [bp+var_6], ax
+35F36 mov     ax, word_4B0CA
+35F39 sub     ax, [bp+var_4]
+35F3C push    ax
+35F3D call    sub_111F5
+35F42 pop     cx
+35F43 cmp     ax, 1
+35F46 jg      short loc_35F5A
+35F48 mov     ax, word_4B0CC
+35F4B sub     ax, [bp+var_6]
+35F4E push    ax
+35F4F call    sub_111F5
+35F54 pop     cx
+35F55 cmp     ax, 1
+35F58 jle     short loc_35F72
+35F5A mov     ax, seg seg050
+35F5D push    ax
+35F5E mov     ax, 1FEh
+35F61 push    ax
+35F62 call    sub_18AB9
+35F67 pop     cx
+35F68 pop     cx
+35F69 mov     word_3FE11, 1
+35F6F jmp     loc_3652F
+35F72 push    word_4B0CA
+35F76 push    word_4B0CC
+35F7A push    word_42258
+35F7E call    sub_19D2B
+35F83 mov     ah, 0
+35F85 mov     di, ax
+35F87 push    ax
+35F88 push    cs
+35F89 call    near ptr sub_2E645
+35F8C or      ax, ax
+35F8E jz      short loc_35FB9
+35F90 push    ds
+35F91 mov     ax, 2309h
+35F94 push    ax
+35F95 call    sub_18AB9
+35F9A pop     cx
+35F9B pop     cx
+35F9C push    cs
+35F9D call    near ptr sub_33DFF
+35FA0 mov     al, byte_42252
+35FA3 mov     ah, 0
+35FA5 mov     bx, ax
+35FA7 mov     al, [bx+4EDAh]
+35FAB mov     ah, 0
+35FAD push    ax
+35FAE mov     ax, 5
+35FB1 push    ax
+35FB2 call    sub_24EBC
+35FB7 jmp     short loc_35F69
+35FB9 push    di
+35FBA push    cs
+35FBB call    near ptr sub_2E61C
+35FBE or      ax, ax
+35FC0 jz      short loc_35FD4
+35FC2 push    ds
+35FC3 mov     ax, 1F06h
+35FC6 push    ax
+35FC7 call    sub_18AB9
+35FCC pop     cx
+35FCD pop     cx
+35FCE push    cs
+35FCF call    near ptr sub_3215F
+35FD2 jmp     short loc_35FA0
+35FD4 cmp     di, 34h ; '4'
+35FD7 jnz     short loc_35FEB
+35FD9 push    ds
+35FDA mov     ax, 230Fh
+35FDD push    ax
+35FDE call    sub_18AB9
+35FE3 pop     cx
+35FE4 pop     cx
+35FE5 push    cs
+35FE6 call    near ptr sub_33EF8
+35FE9 jmp     short loc_35FA0
+35FEB mov     ax, seg seg050
+35FEE push    ax
+35FEF mov     ax, 0E4h
+35FF2 jmp     loc_35F61
+35FF5 jmp     loc_35F69
+35FF8 push    word_4B0A2
+35FFC call    sub_2B429
+36001 mov     word_4B0A2, ax
+36004 cmp     si, 133h
+36008 jnz     short loc_36018
+3600A push    ds
+3600B mov     ax, 231Ch
+3600E push    ax
+3600F call    sub_18AB9
+36014 pop     cx
+36015 pop     cx
+36016 jmp     short loc_36039
+36018 mov     word_3FE0F, 0
+3601E push    ds
+3601F push    word_4B0A2
+36023 call    sub_1E046
+36028 push    ax
+36029 call    sub_18AB9
+3602E pop     cx
+3602F pop     cx
+36030 mov     ax, 0Ah
+36033 push    ax
+36034 call    sub_18858
+36039 mov     bx, word_4B0A2
+3603D shl     bx, 1
+3603F mov     ax, [bx-6306h]
+36043 and     ax, 3FFh
+36046 mov     si, ax
+36048 push    ax
+36049 push    cs
+3604A call    near ptr sub_2E85C
+3604D or      ax, ax
+3604F jnz     short loc_36063
+36051 mov     ax, seg seg050
+36054 push    ax
+36055 mov     ax, 374h
+36058 push    ax
+36059 call    sub_18AB9
+3605E pop     cx
+3605F pop     cx
+36060 jmp     loc_3652F
+36063 mov     al, byte_42252
+36066 cmp     al, byte_49756
+3606A jnz     short loc_3608E
+3606C push    word_4B0A2
+36070 push    cs
+36071 call    near ptr sub_31E5E
+36074 or      ax, ax
+36076 jz      short loc_3608E
+36078 push    ds
+36079 mov     ax, 129Ah
+3607C push    ax
+3607D call    sub_18AB9
+36082 pop     cx
+36083 pop     cx
+36084 mov     ax, seg seg050
+36087 push    ax
+36088 mov     ax, 20Dh
+3608B jmp     loc_35F61
+3608E mov     bx, word_4B0A2
+36092 test    byte ptr [bx+329Ch], 18h
+36097 jz      short loc_3609C
+36099 jmp     loc_36133
+3609C push    word_4B048
+360A0 push    word_4B04A
+360A4 call    sub_15D66
+360A9 mov     [bp+var_C], ax
+360AC cmp     ax, 0FFFFh
+360AF jz      short loc_360CC
+360B1 mov     al, byte_42252
+360B4 mov     ah, 0
+360B6 mov     bx, ax
+360B8 mov     al, [bx+4EDAh]
+360BC mov     ah, 0
+360BE push    ax
+360BF push    [bp+var_C]
+360C2 call    sub_242E4
+360C7 call    sub_1A0C7
+360CC mov     al, byte_42252
+360CF mov     ah, 0
+360D1 mov     bx, ax
+360D3 mov     al, [bx+4EDAh]
+360D7 mov     ah, 0
+360D9 mov     dx, 3
+360DC imul    dx
+360DE mov     bx, ax
+360E0 mov     ax, [bx+78E4h]
+360E4 and     ax, 3FFh
+360E7 mov     [bp+var_4], ax
+360EA mov     al, byte_42252
+360ED mov     ah, 0
+360EF mov     bx, ax
+360F1 mov     al, [bx+4EDAh]
+360F5 mov     ah, 0
+360F7 mov     dx, 3
+360FA imul    dx
+360FC mov     bx, ax
+360FE mov     ax, [bx+78E5h]
+36102 sar     ax, 1
+36104 sar     ax, 1
+36106 and     ax, 3FFh
+36109 mov     [bp+var_6], ax
+3610C mov     ax, word_4B0CA
+3610F sub     ax, [bp+var_4]
+36112 push    ax
+36113 call    sub_111F5
+36118 pop     cx
+36119 cmp     ax, 1
+3611C jg      short loc_36130
+3611E mov     ax, word_4B0CC
+36121 sub     ax, [bp+var_6]
+36124 push    ax
+36125 call    sub_111F5
+3612A pop     cx
+3612B cmp     ax, 1
+3612E jle     short loc_36133
+36130 jmp     loc_35F5A
+36133 mov     ax, word_4B0A2
+36136 mov     dx, 3
+36139 imul    dx
+3613B mov     bx, ax
+3613D mov     ax, [bx+78E4h]
+36141 and     ax, 3FFh
+36144 push    ax
+36145 mov     ax, word_4B0A2
+36148 mov     dx, 3
+3614B imul    dx
+3614D mov     bx, ax
+3614F mov     ax, [bx+78E5h]
+36153 sar     ax, 1
+36155 sar     ax, 1
+36157 and     ax, 3FFh
+3615A push    ax
+3615B push    word_42258
+3615F call    sub_1AB94
+36164 mov     [bp+var_8], ax
+36167 mov     bx, [bp+var_8]
+3616A shl     bx, 1
+3616C mov     ax, [bx-6306h]
+36170 and     ax, 3FFh
+36173 mov     [bp+var_A], ax
+36176 mov     bx, word_4B0A2
+3617A shl     bx, 1
+3617C mov     ax, [bx-6306h]
+36180 mov     cl, 0Ah
+36182 shr     ax, cl
+36184 mov     [bp+var_2], ax
+36187 mov     [bp+var_E], si
+3618A mov     cx, 51h ; 'Q'
+3618D mov     bx, 8965h
+36190 mov     ax, cs:[bx]
+36193 cmp     ax, [bp+var_E]
+36196 jz      short loc_3619F
+36198 inc     bx
+36199 inc     bx
+3619A loop    loc_36190
+3619C jmp     loc_36508
+3619F jmp     word ptr cs:[bx+0A2h]
+361A4 push    word_4B0A2
+361A8 push    cs
+361A9 call    near ptr sub_31C2D
+361AC jmp     loc_36508
+361AF push    word_4B0A2
+361B3 push    cs
+361B4 call    near ptr sub_354BC
+361B7 jmp     loc_36508
+361BA cmp     [bp+var_2], 1
+361BE jnz     short loc_361D9
+361C0 mov     bx, word_4B0A2
+361C4 shl     bx, 1
+361C6 mov     ax, [bx-6306h]
+361CA and     ax, 3FFh
+361CD mov     bx, word_4B0A2
+361D1 shl     bx, 1
+361D3 mov     [bx-6306h], ax
+361D7 jmp     short loc_361E8
+361D9 mov     ax, seg seg050
+361DC push    ax
+361DD mov     ax, 374h
+361E0 push    ax
+361E1 call    sub_18AB9
+361E6 pop     cx
+361E7 pop     cx
+361E8 push    word_4B0A2
+361EC push    word_4B0CA
+361F0 push    word_4B0CC
+361F4 push    cs
+361F5 call    near ptr sub_2EC8A
+361F8 jmp     loc_36508
+361FB push    word_4B0A2
+361FF push    cs
+36200 call    near ptr sub_31293
+36203 jmp     loc_36508
+36206 cmp     si, 0BAh
+3620A jnz     short loc_3621D
+3620C test    [bp+var_2], 2
+36211 jz      short loc_3621D
+36213 mov     ax, seg seg050
+36216 push    ax
+36217 mov     ax, 374h
+3621A jmp     loc_3634E
+3621D push    word_4B0A2
+36221 push    cs
+36222 call    near ptr sub_3215F
+36225 jmp     loc_36508
+36228 push    cs
+36229 call    near ptr sub_33F4B
+3622C jmp     loc_36508
+3622F push    cs
+36230 call    near ptr sub_33E52
+36233 jmp     loc_36508
+36236 push    cs
+36237 call    near ptr sub_33EA5
+3623A jmp     loc_36508
+3623D mov     bx, word_4B0A2
+36241 shl     bx, 1
+36243 mov     ax, [bx-6306h]
+36247 mov     cl, 0Ah
+36249 shr     ax, cl
+3624B or      ax, ax
+3624D jz      short loc_3625C
+3624F cmp     ax, 1
+36252 jz      short loc_36261
+36254 cmp     ax, 2
+36257 jz      short loc_3625E
+36259 jmp     loc_36508
+3625C jmp     short loc_36213
+3625E jmp     loc_36425
+36261 mov     bx, word_4B0A2
+36265 shl     bx, 1
+36267 mov     ax, [bx-6306h]
+3626B and     ax, 3FFh
+3626E add     ax, 800h
+36271 mov     bx, word_4B0A2
+36275 shl     bx, 1
+36277 mov     [bx-6306h], ax
+3627B push    ds
+3627C mov     ax, 2324h
+3627F jmp     loc_3634E
+36282 push    word_4B0A2
+36286 push    cs
+36287 call    near ptr sub_35150
+3628A jmp     loc_36508
+3628D push    word_4B0A2
+36291 push    cs
+36292 call    near ptr sub_353D0
+36295 jmp     loc_36508
+36298 push    word_4B0A2
+3629C push    cs
+3629D call    near ptr sub_31DF5
+362A0 jmp     loc_36508
+362A3 push    word_4B0A2
+362A7 push    cs
+362A8 call    near ptr sub_310AD
+362AB jmp     loc_36508
+362AE push    word_4B0A2
+362B2 push    cs
+362B3 call    near ptr sub_34F6B
+362B6 jmp     loc_36508
+362B9 push    word_4B0A2
+362BD push    cs
+362BE call    near ptr sub_346A8
+362C1 jmp     loc_36508
+362C4 push    word_4B0A2
+362C8 push    cs
+362C9 call    near ptr sub_3204A
+362CC jmp     loc_36508
+362CF push    cs
+362D0 call    near ptr sub_35D54
+362D3 jmp     loc_36508
+362D6 push    word_4B0A2
+362DA push    cs
+362DB call    near ptr sub_34783
+362DE jmp     loc_36508
+362E1 push    word_4B0A2
+362E5 push    cs
+362E6 call    near ptr sub_31F60
+362E9 jmp     loc_36508
+362EC push    word_4B0A2
+362F0 push    cs
+362F1 call    near ptr sub_34FDE
+362F4 jmp     loc_36508
+362F7 cmp     byte_422C1, 0FFh
+362FC jnz     short loc_36300
+362FE jmp     short loc_3632C
+36300 mov     ax, seg seg050
+36303 push    ax
+36304 mov     ax, 29Dh
+36307 push    ax
+36308 call    sub_18AB9
+3630D pop     cx
+3630E pop     cx
+3630F jmp     loc_36508
+36312 cmp     byte_422C1, 0FFh
+36317 jnz     short loc_36338
+36319 mov     bx, word_4B0A2
+3631D shl     bx, 1
+3631F mov     ax, [bx-6306h]
+36323 mov     cl, 0Ah
+36325 shr     ax, cl
+36327 cmp     ax, 1
+3632A jnz     short loc_36338
+3632C push    word_4B0A2
+36330 call    sub_19505
+36335 jmp     loc_36508
+36338 mov     bx, word_4B0A2
+3633C shl     bx, 1
+3633E mov     ax, [bx-6306h]
+36342 mov     cl, 0Ah
+36344 shr     ax, cl
+36346 or      ax, ax
+36348 jnz     short loc_36359
+3634A push    ds
+3634B mov     ax, 233Ah
+3634E push    ax
+3634F call    sub_18AB9
+36354 pop     cx
+36355 pop     cx
+36356 jmp     loc_36508
+36359 mov     ax, seg seg050
+3635C push    ax
+3635D mov     ax, 29Dh
+36360 push    ax
+36361 call    sub_18AB9
+36366 pop     cx
+36367 pop     cx
+36368 jmp     loc_36508
+3636B push    word_4B0A2
+3636F push    cs
+36370 call    near ptr sub_31B48
+36373 jmp     loc_36508
+36376 push    word_4B0A2
+3637A push    cs
+3637B call    near ptr sub_343E9
+3637E jmp     loc_36508
+36381 push    word_4B0A2
+36385 push    cs
+36386 call    near ptr sub_33F9E
+36389 jmp     loc_36508
+3638C push    word_4B0A2
+36390 push    cs
+36391 call    near ptr sub_34C0A
+36394 jmp     loc_36508
+36397 push    word_4B0A2
+3639B push    cs
+3639C call    near ptr sub_35972
+3639F jmp     loc_36508
+363A2 push    word_4B0A2
+363A6 push    cs
+363A7 call    near ptr sub_32488
+363AA jmp     loc_36508
+363AD push    cs
+363AE call    near ptr sub_3542B
+363B1 jmp     loc_36508
+363B4 push    cs
+363B5 call    near ptr sub_33211
+363B8 jmp     loc_36508
+363BB push    word_4B0A2
+363BF push    cs
+363C0 call    near ptr sub_335A9
+363C3 jmp     loc_36508
+363C6 push    word_4B0A2
+363CA push    cs
+363CB call    near ptr sub_34147
+363CE jmp     loc_36508
+363D1 push    cs
+363D2 call    near ptr sub_34D88
+363D5 jmp     loc_36508
+363D8 push    word_4B0A2
+363DC push    cs
+363DD call    near ptr sub_34EDF
+363E0 jmp     loc_36508
+363E3 push    word_4B0A2
+363E7 push    cs
+363E8 call    near ptr sub_3423A
+363EB jmp     loc_36508
+363EE push    word_4B0A2
+363F2 push    cs
+363F3 call    near ptr sub_31436
+363F6 jmp     loc_36508
+363F9 push    word_4B0A2
+363FD push    cs
+363FE call    near ptr sub_34302
+36401 jmp     loc_36508
+36404 push    word_4B0A2
+36408 push    cs
+36409 call    near ptr sub_31671
+3640C jmp     loc_36508
+3640F push    word_4B0A2
+36413 mov     bx, word_3FE25
+36417 mov     al, [bx+4EDAh]
+3641B mov     ah, 0
+3641D push    ax
+3641E push    cs
+3641F call    near ptr sub_31E67
+36422 jmp     loc_36508
+36425 push    cs
+36426 call    near ptr sub_3215F
+36429 jmp     loc_36508
+3642C push    word_4B0A2
+36430 push    cs
+36431 call    near ptr sub_33777
+36434 jmp     loc_36508
+36437 push    word_4B0A2
+3643B push    cs
+3643C call    near ptr sub_33C06
+3643F jmp     loc_36508
+36442 push    word_4B0A2
+36446 push    cs
+36447 call    near ptr sub_30ECC
+3644A jmp     loc_36508
+3644D push    word_4B0A2
+36451 push    cs
+36452 call    near ptr sub_35686
+36455 jmp     loc_36508
+36458 push    word_4B0A2
+3645C push    cs
+3645D call    near ptr sub_31C98
+36460 jmp     loc_36508
+36463 push    word_4B0A2
+36467 push    cs
+36468 call    near ptr sub_35C2E
+3646B jmp     loc_36508
+3646E push    word_4B0A2
+36472 mov     bx, word_3FE25
+36476 mov     al, [bx+4EDAh]
+3647A mov     ah, 0
+3647C push    ax
+3647D call    sub_1C1C3
+36482 or      ax, ax
+36484 jz      short loc_36493
+36486 mov     bx, word_3FE25
+3648A cmp     byte ptr [bx+4EDAh], 9
+3648F jz      short loc_36493
+36491 jmp     short loc_364B9
+36493 mov     al, byte_42252
+36496 mov     ah, 0
+36498 mov     bx, ax
+3649A cmp     byte ptr [bx+4EDAh], 9
+3649F jz      short loc_364D7
+364A1 push    word_4B0A2
+364A5 mov     bx, word_3FE25
+364A9 mov     al, [bx+4EDAh]
+364AD mov     ah, 0
+364AF push    ax
+364B0 call    sub_1C1C3
+364B5 or      ax, ax
+364B7 jnz     short loc_364D7
+364B9 mov     ax, word_3FE25
+364BC mov     dx, 0Eh
+364BF imul    dx
+364C1 add     ax, 5104h
+364C4 push    ax
+364C5 mov     ax, seg seg050
+364C8 push    ax
+364C9 mov     ax, 3C1h
+364CC push    ax
+364CD call    sub_18AB9
+364D2 add     sp, 6
+364D5 jmp     short loc_36508
+364D7 push    word_4B0A2
+364DB call    sub_22EF7
+364E0 jmp     short loc_36508
+364E2 push    word_4B0A2
+364E6 push    cs
+364E7 call    near ptr sub_34B00
+364EA jmp     short loc_36508
+364EC push    word_4B0A2
+364F0 push    cs
+364F1 call    near ptr sub_349A9
+364F4 jmp     short loc_36508
+364F6 push    word_4B0A2
+364FA push    cs
+364FB call    near ptr sub_35B44
+364FE jmp     short loc_36508
+36500 push    word_4B0A2
+36504 push    cs
+36505 call    near ptr sub_33B10
+36508 mov     al, byte_42252
+3650B mov     ah, 0
+3650D mov     bx, ax
+3650F mov     al, [bx+4EDAh]
+36513 mov     ah, 0
+36515 push    ax
+36516 mov     ax, 5
+36519 push    ax
+3651A call    sub_24EBC
+3651F mov     word_3FE11, 1
+36525 call    sub_1A0C7
+3652A call    sub_14264
+3652F pop     di
+36530 pop     si
+36531 mov     sp, bp
+36533 pop     bp
+36534 retf

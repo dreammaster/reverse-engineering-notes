@@ -1,0 +1,855 @@
+string at 3FF04
+offset 4A4 hits [('0x1617a', '0x16221'), ('0x165b7', '0x1661a')]
+=== func 1617A-165B7
+1617A push    bp
+1617B mov     bp, sp
+1617D push    si
+1617E push    di
+1617F mov     ax, 0FFFFh
+16182 mov     word_3FF36, ax
+16185 mov     word_3FF34, ax
+16188 mov     word_3FF32, ax
+1618B mov     ax, 1
+1618E push    ax
+1618F call    sub_3A8A8
+16194 mov     ax, 492h
+16197 push    ax
+16198 call    file_open
+1619D mov     si, ax
+1619F push    ax
+161A0 xor     ax, ax
+161A2 xor     dx, dx
+161A4 push    ax
+161A5 push    dx
+161A6 mov     dx, 202h
+161A9 push    ax
+161AA push    dx
+161AB push    ds
+161AC mov     ax, 4EF4h
+161AF push    ax
+161B0 call    file_read
+161B5 push    si
+161B6 mov     ax, 0FFFFh
+161B9 mov     dx, 0FFFFh
+161BC push    ax
+161BD push    dx
+161BE mov     ax, word_44B54
+161C1 cwd
+161C2 push    ax
+161C3 push    dx
+161C4 xor     dx, dx
+161C6 mov     ax, 5
+161C9 pop     cx
+161CA pop     bx
+161CB call    sub_11C1B
+161D0 push    dx
+161D1 push    ax
+161D2 push    word ptr dword_44950+2
+161D6 push    word ptr dword_44950
+161DA call    file_read
+161DF push    si
+161E0 call    file_close
+161E5 mov     ax, 1
+161E8 push    ax
+161E9 call    sub_3A8A8
+161EE mov     ax, 49Bh
+161F1 push    ax
+161F2 call    file_open
+161F7 mov     si, ax
+161F9 push    ax
+161FA xor     ax, ax
+161FC xor     dx, dx
+161FE push    ax
+161FF push    dx
+16200 mov     dx, 800h
+16203 push    ax
+16204 push    dx
+16205 push    word ptr dword_46954+2
+16209 push    word ptr dword_46954
+1620D call    file_read
+16212 push    si
+16213 call    file_close
+16218 mov     ax, 8
+1621B push    ax
+1621C call    sub_3A8A8
+16221 mov     ax, 4A4h
+16224 push    ax
+16225 call    file_open
+1622A mov     si, ax
+1622C push    ax
+1622D xor     ax, ax
+1622F xor     dx, dx
+16231 push    ax
+16232 push    dx
+16233 mov     dx, 100h
+16236 push    ax
+16237 push    dx
+16238 push    ds
+16239 mov     ax, 329Ch
+1623C push    ax
+1623D call    file_read
+16242 push    si
+16243 mov     ax, 0FFFFh
+16246 mov     dx, 0FFFFh
+16249 push    ax
+1624A push    dx
+1624B xor     ax, ax
+1624D mov     dx, 300h
+16250 push    ax
+16251 push    dx
+16252 push    ds
+16253 mov     ax, 78E4h
+16256 push    ax
+16257 call    file_read
+1625C push    si
+1625D mov     ax, 0FFFFh
+16260 mov     dx, 0FFFFh
+16263 push    ax
+16264 push    dx
+16265 xor     ax, ax
+16267 mov     dx, 200h
+1626A push    ax
+1626B push    dx
+1626C push    ds
+1626D mov     ax, 9CFAh
+16270 push    ax
+16271 call    file_read
+16276 push    si
+16277 mov     ax, 0FFFFh
+1627A mov     dx, 0FFFFh
+1627D push    ax
+1627E push    dx
+1627F xor     ax, ax
+16281 mov     dx, 200h
+16284 push    ax
+16285 push    dx
+16286 push    ds
+16287 mov     ax, 54F0h
+1628A push    ax
+1628B call    file_read
+16290 push    si
+16291 mov     ax, 0FFFFh
+16294 mov     dx, 0FFFFh
+16297 push    ax
+16298 push    dx
+16299 xor     ax, ax
+1629B mov     dx, 100h
+1629E push    ax
+1629F push    dx
+162A0 push    ds
+162A1 mov     ax, 6CF0h
+162A4 push    ax
+162A5 call    file_read
+162AA push    si
+162AB mov     ax, 0FFFFh
+162AE mov     dx, 0FFFFh
+162B1 push    ax
+162B2 push    dx
+162B3 xor     ax, ax
+162B5 mov     dx, 100h
+162B8 push    ax
+162B9 push    dx
+162BA push    ds
+162BB mov     ax, 53E8h
+162BE push    ax
+162BF call    file_read
+162C4 push    si
+162C5 mov     ax, 0FFFFh
+162C8 mov     dx, 0FFFFh
+162CB push    ax
+162CC push    dx
+162CD xor     ax, ax
+162CF mov     dx, 100h
+162D2 push    ax
+162D3 push    dx
+162D4 push    ds
+162D5 mov     ax, 4606h
+162D8 push    ax
+162D9 call    file_read
+162DE push    si
+162DF mov     ax, 0FFFFh
+162E2 mov     dx, 0FFFFh
+162E5 push    ax
+162E6 push    dx
+162E7 xor     ax, ax
+162E9 mov     dx, 100h
+162EC push    ax
+162ED push    dx
+162EE push    ds
+162EF mov     ax, 7644h
+162F2 push    ax
+162F3 call    file_read
+162F8 push    si
+162F9 mov     ax, 0FFFFh
+162FC mov     dx, 0FFFFh
+162FF push    ax
+16300 push    dx
+16301 xor     ax, ax
+16303 mov     dx, 200h
+16306 push    ax
+16307 push    dx
+16308 push    ds
+16309 mov     ax, 51E4h
+1630C push    ax
+1630D call    file_read
+16312 push    si
+16313 mov     ax, 0FFFFh
+16316 mov     dx, 0FFFFh
+16319 push    ax
+1631A push    dx
+1631B xor     ax, ax
+1631D mov     dx, 100h
+16320 push    ax
+16321 push    dx
+16322 push    ds
+16323 mov     ax, 6DF4h
+16326 push    ax
+16327 call    file_read
+1632C push    si
+1632D mov     ax, 0FFFFh
+16330 mov     dx, 0FFFFh
+16333 push    ax
+16334 push    dx
+16335 xor     ax, ax
+16337 mov     dx, 0E0h
+1633A push    ax
+1633B push    dx
+1633C push    ds
+1633D mov     ax, 5104h
+16340 push    ax
+16341 call    file_read
+16346 push    si
+16347 mov     ax, 0FFFFh
+1634A mov     dx, 0FFFFh
+1634D push    ax
+1634E push    dx
+1634F xor     ax, ax
+16351 mov     dx, 10h
+16354 push    ax
+16355 push    dx
+16356 push    ds
+16357 mov     ax, 4EDAh
+1635A push    ax
+1635B call    file_read
+16360 push    si
+16361 mov     ax, 0FFFFh
+16364 mov     dx, 0FFFFh
+16367 push    ax
+16368 push    dx
+16369 xor     ax, ax
+1636B mov     dx, 1
+1636E push    ax
+1636F push    dx
+16370 push    ds
+16371 mov     ax, 9CF6h
+16374 push    ax
+16375 call    file_read
+1637A push    si
+1637B mov     ax, 0FFFFh
+1637E mov     dx, 0FFFFh
+16381 push    ax
+16382 push    dx
+16383 xor     ax, ax
+16385 mov     dx, 100h
+16388 push    ax
+16389 push    dx
+1638A push    word ptr dword_4494C+2
+1638E push    word ptr dword_4494C
+16392 call    file_read
+16397 push    si
+16398 mov     ax, 0FFFFh
+1639B mov     dx, 0FFFFh
+1639E push    ax
+1639F push    dx
+163A0 xor     ax, ax
+163A2 mov     dx, 100h
+163A5 push    ax
+163A6 push    dx
+163A7 push    word ptr dword_4405A+2
+163AB push    word ptr dword_4405A
+163AF call    file_read
+163B4 push    si
+163B5 mov     ax, 0FFFFh
+163B8 mov     dx, 0FFFFh
+163BB push    ax
+163BC push    dx
+163BD xor     ax, ax
+163BF mov     dx, 100h
+163C2 push    ax
+163C3 push    dx
+163C4 push    word ptr dword_44166+2
+163C8 push    word ptr dword_44166
+163CC call    file_read
+163D1 push    si
+163D2 mov     ax, 0FFFFh
+163D5 mov     dx, 0FFFFh
+163D8 push    ax
+163D9 push    dx
+163DA xor     ax, ax
+163DC mov     dx, 100h
+163DF push    ax
+163E0 push    dx
+163E1 push    word ptr dword_42CF8+2
+163E5 push    word ptr dword_42CF8
+163E9 call    file_read
+163EE push    si
+163EF mov     ax, 0FFFFh
+163F2 mov     dx, 0FFFFh
+163F5 push    ax
+163F6 push    dx
+163F7 xor     ax, ax
+163F9 mov     dx, 100h
+163FC push    ax
+163FD push    dx
+163FE push    word ptr dword_44E44+2
+16402 push    word ptr dword_44E44
+16406 call    file_read
+1640B push    si
+1640C mov     ax, 0FFFFh
+1640F mov     dx, 0FFFFh
+16412 push    ax
+16413 push    dx
+16414 xor     ax, ax
+16416 mov     dx, 100h
+16419 push    ax
+1641A push    dx
+1641B push    ds
+1641C mov     ax, 44FAh
+1641F push    ax
+16420 call    file_read
+16425 push    si
+16426 mov     ax, 0FFFFh
+16429 mov     dx, 0FFFFh
+1642C push    ax
+1642D push    dx
+1642E xor     ax, ax
+16430 mov     dx, 100h
+16433 push    ax
+16434 push    dx
+16435 push    ds
+16436 mov     ax, 44FAh
+16439 push    ax
+1643A call    file_read
+1643F push    si
+16440 mov     ax, 0FFFFh
+16443 mov     dx, 0FFFFh
+16446 push    ax
+16447 push    dx
+16448 xor     ax, ax
+1644A mov     dx, 200h
+1644D push    ax
+1644E push    dx
+1644F push    word ptr dword_4AF9E+2
+16453 push    word ptr dword_4AF9E
+16457 call    file_read
+1645C push    si
+1645D mov     ax, 0FFFFh
+16460 mov     dx, 0FFFFh
+16463 push    ax
+16464 push    dx
+16465 xor     ax, ax
+16467 mov     dx, 100h
+1646A push    ax
+1646B push    dx
+1646C push    ds
+1646D mov     ax, 6EFCh
+16470 push    ax
+16471 call    file_read
+16476 push    si
+16477 mov     ax, 0FFFFh
+1647A mov     dx, 0FFFFh
+1647D push    ax
+1647E push    dx
+1647F xor     ax, ax
+16481 mov     dx, 100h
+16484 push    ax
+16485 push    dx
+16486 push    word ptr dword_44B60+2
+1648A push    word ptr dword_44B60
+1648E call    file_read
+16493 push    si
+16494 mov     ax, 0FFFFh
+16497 mov     dx, 0FFFFh
+1649A push    ax
+1649B push    dx
+1649C xor     ax, ax
+1649E mov     dx, 100h
+164A1 push    ax
+164A2 push    dx
+164A3 push    word ptr dword_44062+2
+164A7 push    word ptr dword_44062
+164AB call    file_read
+164B0 push    si
+164B1 mov     ax, 0FFFFh
+164B4 mov     dx, 0FFFFh
+164B7 push    ax
+164B8 push    dx
+164B9 xor     ax, ax
+164BB mov     dx, 100h
+164BE push    ax
+164BF push    dx
+164C0 push    word ptr dword_4405E+2
+164C4 push    word ptr dword_4405E
+164C8 call    file_read
+164CD push    si
+164CE mov     ax, 0FFFFh
+164D1 mov     dx, 0FFFFh
+164D4 push    ax
+164D5 push    dx
+164D6 mov     ax, 286Ah
+164D9 sub     ax, 27E8h
+164DC cwd
+164DD push    dx
+164DE push    ax
+164DF push    ds
+164E0 mov     ax, 27E8h
+164E3 push    ax
+164E4 call    file_read
+164E9 push    si
+164EA call    file_close
+164EF call    sub_1DEDD
+164F4 mov     al, byte_42248
+164F7 mov     ah, 0
+164F9 mov     word_4B08E, ax
+164FC mov     byte_422C0, 0
+16501 mov     al, byte_42252
+16504 mov     ah, 0
+16506 mov     bx, ax
+16508 mov     al, [bx+4EDAh]
+1650C mov     ah, 0
+1650E mov     dx, 3
+16511 imul    dx
+16513 mov     bx, ax
+16515 mov     ax, [bx+78E4h]
+16519 and     ax, 3FFh
+1651C mov     word_42254, ax
+1651F mov     al, byte_42252
+16522 mov     ah, 0
+16524 mov     bx, ax
+16526 mov     al, [bx+4EDAh]
+1652A mov     ah, 0
+1652C mov     dx, 3
+1652F imul    dx
+16531 mov     bx, ax
+16533 mov     ax, [bx+78E5h]
+16537 sar     ax, 1
+16539 sar     ax, 1
+1653B and     ax, 3FFh
+1653E mov     word_42256, ax
+16541 mov     al, byte_42252
+16544 mov     ah, 0
+16546 mov     bx, ax
+16548 mov     al, [bx+4EDAh]
+1654C mov     ah, 0
+1654E mov     dx, 3
+16551 imul    dx
+16553 mov     bx, ax
+16555 mov     al, [bx+78E6h]
+16559 mov     ah, 0
+1655B mov     cl, 4
+1655D sar     ax, cl
+1655F mov     word_42258, ax
+16562 xor     di, di
+16564 jmp     short loc_1656C
+16566 mov     byte ptr [di-4A90h], 1
+1656B inc     di
+1656C cmp     di, word_49758
+16570 jl      short loc_16566
+16572 mov     al, byte_422C3
+16575 mov     ah, 0
+16577 push    ax
+16578 call    sub_171F0
+1657D push    word_42254
+16581 push    word_42256
+16585 push    word_42258
+16589 call    sub_1D653
+1658E push    word_42254
+16592 push    word_42256
+16596 push    word_42258
+1659A call    sub_18D80
+1659F mov     ax, 3
+165A2 push    ax
+165A3 call    sub_3A8A8
+165A8 mov     word_401FE, 1
+165AE call    sub_191EA
+165B3 pop     di
+165B4 pop     si
+165B5 pop     bp
+165B6 retf
+=== func 165B7-168F5
+165B7 push    bp
+165B8 mov     bp, sp
+165BA push    si
+165BB push    di
+165BC mov     word_424DA, 20h
+165C2 mov     ax, 0FFFFh
+165C5 mov     word_3FF36, ax
+165C8 mov     word_3FF34, ax
+165CB mov     word_3FF32, ax
+165CE mov     al, byte_42252
+165D1 cmp     al, byte_49756
+165D5 jnz     short loc_165FD
+165D7 xor     di, di
+165D9 jmp     short loc_165F4
+165DB mov     al, [di+4EDAh]
+165DF mov     ah, 0
+165E1 push    ax
+165E2 push    word_42254
+165E6 push    word_42256
+165EA push    word_42258
+165EE call    sub_1C246
+165F3 inc     di
+165F4 mov     al, byte_49756
+165F7 mov     ah, 0
+165F9 cmp     ax, di
+165FB jg      short loc_165DB
+165FD mov     ax, 8
+16600 push    ax
+16601 call    sub_3A8A8
+16606 call    sub_1D89C
+1660B mov     al, byte ptr word_4B08E
+1660E mov     byte_42248, al
+16611 mov     ax, 8
+16614 push    ax
+16615 call    sub_3A8A8
+1661A mov     ax, 4A4h
+1661D push    ax
+1661E call    file_create
+16623 mov     si, ax
+16625 push    ax
+16626 xor     ax, ax
+16628 xor     dx, dx
+1662A push    ax
+1662B push    dx
+1662C mov     dx, 100h
+1662F push    ax
+16630 push    dx
+16631 push    ds
+16632 mov     ax, 329Ch
+16635 push    ax
+16636 call    file_write
+1663B push    si
+1663C mov     ax, 0FFFFh
+1663F mov     dx, 0FFFFh
+16642 push    ax
+16643 push    dx
+16644 xor     ax, ax
+16646 mov     dx, 300h
+16649 push    ax
+1664A push    dx
+1664B push    ds
+1664C mov     ax, 78E4h
+1664F push    ax
+16650 call    file_write
+16655 push    si
+16656 mov     ax, 0FFFFh
+16659 mov     dx, 0FFFFh
+1665C push    ax
+1665D push    dx
+1665E xor     ax, ax
+16660 mov     dx, 200h
+16663 push    ax
+16664 push    dx
+16665 push    ds
+16666 mov     ax, 9CFAh
+16669 push    ax
+1666A call    file_write
+1666F push    si
+16670 mov     ax, 0FFFFh
+16673 mov     dx, 0FFFFh
+16676 push    ax
+16677 push    dx
+16678 xor     ax, ax
+1667A mov     dx, 200h
+1667D push    ax
+1667E push    dx
+1667F push    ds
+16680 mov     ax, 54F0h
+16683 push    ax
+16684 call    file_write
+16689 push    si
+1668A mov     ax, 0FFFFh
+1668D mov     dx, 0FFFFh
+16690 push    ax
+16691 push    dx
+16692 xor     ax, ax
+16694 mov     dx, 100h
+16697 push    ax
+16698 push    dx
+16699 push    ds
+1669A mov     ax, 6CF0h
+1669D push    ax
+1669E call    file_write
+166A3 push    si
+166A4 mov     ax, 0FFFFh
+166A7 mov     dx, 0FFFFh
+166AA push    ax
+166AB push    dx
+166AC xor     ax, ax
+166AE mov     dx, 100h
+166B1 push    ax
+166B2 push    dx
+166B3 push    ds
+166B4 mov     ax, 53E8h
+166B7 push    ax
+166B8 call    file_write
+166BD push    si
+166BE mov     ax, 0FFFFh
+166C1 mov     dx, 0FFFFh
+166C4 push    ax
+166C5 push    dx
+166C6 xor     ax, ax
+166C8 mov     dx, 100h
+166CB push    ax
+166CC push    dx
+166CD push    ds
+166CE mov     ax, 4606h
+166D1 push    ax
+166D2 call    file_write
+166D7 push    si
+166D8 mov     ax, 0FFFFh
+166DB mov     dx, 0FFFFh
+166DE push    ax
+166DF push    dx
+166E0 xor     ax, ax
+166E2 mov     dx, 100h
+166E5 push    ax
+166E6 push    dx
+166E7 push    ds
+166E8 mov     ax, 7644h
+166EB push    ax
+166EC call    file_write
+166F1 push    si
+166F2 mov     ax, 0FFFFh
+166F5 mov     dx, 0FFFFh
+166F8 push    ax
+166F9 push    dx
+166FA xor     ax, ax
+166FC mov     dx, 200h
+166FF push    ax
+16700 push    dx
+16701 push    ds
+16702 mov     ax, 51E4h
+16705 push    ax
+16706 call    file_write
+1670B push    si
+1670C mov     ax, 0FFFFh
+1670F mov     dx, 0FFFFh
+16712 push    ax
+16713 push    dx
+16714 xor     ax, ax
+16716 mov     dx, 100h
+16719 push    ax
+1671A push    dx
+1671B push    ds
+1671C mov     ax, 6DF4h
+1671F push    ax
+16720 call    file_write
+16725 push    si
+16726 mov     ax, 0FFFFh
+16729 mov     dx, 0FFFFh
+1672C push    ax
+1672D push    dx
+1672E xor     ax, ax
+16730 mov     dx, 0E0h
+16733 push    ax
+16734 push    dx
+16735 push    ds
+16736 mov     ax, 5104h
+16739 push    ax
+1673A call    file_write
+1673F push    si
+16740 mov     ax, 0FFFFh
+16743 mov     dx, 0FFFFh
+16746 push    ax
+16747 push    dx
+16748 xor     ax, ax
+1674A mov     dx, 10h
+1674D push    ax
+1674E push    dx
+1674F push    ds
+16750 mov     ax, 4EDAh
+16753 push    ax
+16754 call    file_write
+16759 push    si
+1675A mov     ax, 0FFFFh
+1675D mov     dx, 0FFFFh
+16760 push    ax
+16761 push    dx
+16762 xor     ax, ax
+16764 mov     dx, 1
+16767 push    ax
+16768 push    dx
+16769 push    ds
+1676A mov     ax, 9CF6h
+1676D push    ax
+1676E call    file_write
+16773 push    si
+16774 mov     ax, 0FFFFh
+16777 mov     dx, 0FFFFh
+1677A push    ax
+1677B push    dx
+1677C xor     ax, ax
+1677E mov     dx, 100h
+16781 push    ax
+16782 push    dx
+16783 push    word ptr dword_4494C+2
+16787 push    word ptr dword_4494C
+1678B call    file_write
+16790 push    si
+16791 mov     ax, 0FFFFh
+16794 mov     dx, 0FFFFh
+16797 push    ax
+16798 push    dx
+16799 xor     ax, ax
+1679B mov     dx, 100h
+1679E push    ax
+1679F push    dx
+167A0 push    word ptr dword_4405A+2
+167A4 push    word ptr dword_4405A
+167A8 call    file_write
+167AD push    si
+167AE mov     ax, 0FFFFh
+167B1 mov     dx, 0FFFFh
+167B4 push    ax
+167B5 push    dx
+167B6 xor     ax, ax
+167B8 mov     dx, 100h
+167BB push    ax
+167BC push    dx
+167BD push    word ptr dword_44166+2
+167C1 push    word ptr dword_44166
+167C5 call    file_write
+167CA push    si
+167CB mov     ax, 0FFFFh
+167CE mov     dx, 0FFFFh
+167D1 push    ax
+167D2 push    dx
+167D3 xor     ax, ax
+167D5 mov     dx, 100h
+167D8 push    ax
+167D9 push    dx
+167DA push    word ptr dword_42CF8+2
+167DE push    word ptr dword_42CF8
+167E2 call    file_write
+167E7 push    si
+167E8 mov     ax, 0FFFFh
+167EB mov     dx, 0FFFFh
+167EE push    ax
+167EF push    dx
+167F0 xor     ax, ax
+167F2 mov     dx, 100h
+167F5 push    ax
+167F6 push    dx
+167F7 push    word ptr dword_44E44+2
+167FB push    word ptr dword_44E44
+167FF call    file_write
+16804 push    si
+16805 mov     ax, 0FFFFh
+16808 mov     dx, 0FFFFh
+1680B push    ax
+1680C push    dx
+1680D xor     ax, ax
+1680F mov     dx, 100h
+16812 push    ax
+16813 push    dx
+16814 push    ds
+16815 mov     ax, 44FAh
+16818 push    ax
+16819 call    file_write
+1681E push    si
+1681F mov     ax, 0FFFFh
+16822 mov     dx, 0FFFFh
+16825 push    ax
+16826 push    dx
+16827 xor     ax, ax
+16829 mov     dx, 100h
+1682C push    ax
+1682D push    dx
+1682E push    ds
+1682F mov     ax, 44FAh
+16832 push    ax
+16833 call    file_write
+16838 push    si
+16839 mov     ax, 0FFFFh
+1683C mov     dx, 0FFFFh
+1683F push    ax
+16840 push    dx
+16841 xor     ax, ax
+16843 mov     dx, 200h
+16846 push    ax
+16847 push    dx
+16848 push    word ptr dword_4AF9E+2
+1684C push    word ptr dword_4AF9E
+16850 call    file_write
+16855 push    si
+16856 mov     ax, 0FFFFh
+16859 mov     dx, 0FFFFh
+1685C push    ax
+1685D push    dx
+1685E xor     ax, ax
+16860 mov     dx, 100h
+16863 push    ax
+16864 push    dx
+16865 push    ds
+16866 mov     ax, 6EFCh
+16869 push    ax
+1686A call    file_write
+1686F push    si
+16870 mov     ax, 0FFFFh
+16873 mov     dx, 0FFFFh
+16876 push    ax
+16877 push    dx
+16878 xor     ax, ax
+1687A mov     dx, 100h
+1687D push    ax
+1687E push    dx
+1687F push    word ptr dword_44B60+2
+16883 push    word ptr dword_44B60
+16887 call    file_write
+1688C push    si
+1688D mov     ax, 0FFFFh
+16890 mov     dx, 0FFFFh
+16893 push    ax
+16894 push    dx
+16895 xor     ax, ax
+16897 mov     dx, 100h
+1689A push    ax
+1689B push    dx
+1689C push    word ptr dword_44062+2
+168A0 push    word ptr dword_44062
+168A4 call    file_write
+168A9 push    si
+168AA mov     ax, 0FFFFh
+168AD mov     dx, 0FFFFh
+168B0 push    ax
+168B1 push    dx
+168B2 xor     ax, ax
+168B4 mov     dx, 100h
+168B7 push    ax
+168B8 push    dx
+168B9 push    word ptr dword_4405E+2
+168BD push    word ptr dword_4405E
+168C1 call    file_write
+168C6 push    si
+168C7 mov     ax, 0FFFFh
+168CA mov     dx, 0FFFFh
+168CD push    ax
+168CE push    dx
+168CF mov     ax, 286Ah
+168D2 sub     ax, 27E8h
+168D5 cwd
+168D6 push    dx
+168D7 push    ax
+168D8 push    ds
+168D9 mov     ax, 27E8h
+168DC push    ax
+168DD call    file_write
+168E2 push    si
+168E3 call    file_close
+168E8 call    sub_191EA
+168ED inc     byte_3FC62
+168F1 pop     di
+168F2 pop     si
+168F3 pop     bp
+168F4 retf

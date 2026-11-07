@@ -1,0 +1,139 @@
+// Savage Empire's Use (cmd_use = sub_35E46): the table of 80 types, "Not possible." for the rest, drinking, eating, the crate that opens and gives up what is in it, the torch that is lit.
+// Skipped without the game data.
+
+#include "ultima6/session.h"
+
+#include <cstdio>
+#include <string>
+#include <vector>
+
+using namespace Ultima6;
+using ::Ultima6::Ultima6::Game;
+using ::Ultima6::Ultima6::World;
+
+static int failures = 0;
+
+#define CHECK(cond)                                                              \
+	do {                                                                         \
+		if (!(cond)) {                                                           \
+			std::printf("FAIL %s:%d: %s\n", __FILE__, __LINE__, #cond);          \
+			++failures;                                                          \
+		}                                                                        \
+	} while (0)
+
+static std::string logText(const Game &g) {
+	std::string s;
+	for (const std::string &l : g.log)
+		s += l;
+	return s;
+}
+
+static int put(World &w, int type, int frame, int x, int y, int z) {
+	World::Obj o;
+	o.status = 0;
+	o.x = (uint16_t)x;
+	o.y = (uint16_t)y;
+	o.z = (uint8_t)z;
+	o.type = (uint16_t)type;
+	o.frame = (uint8_t)frame;
+	o.quantity = 1;
+	o.quality = 0;
+	o.actor = -1;
+	o.parent = -1;
+	w.objects.push_back(o);
+	w.addToMap((int)w.objects.size() - 1);
+	return (int)w.objects.size() - 1;
+}
+
+static void clearEast(World &w, int px, int py) {
+	std::vector<int> here;
+	w.objectsAt(px + 1, py, 0, here);
+	for (int i : here)
+		if (w.objects[i].actor < 0)
+			w.deleteObject(i);
+}
+
+static void useEast(World &w, Game &g, int px, int py) {
+	w.moveObject(w.actorObject(1), px, py, 0);
+	g.x = px;
+	g.y = py;
+	g.z = 0;
+	g.handleKey('u');
+	g.handleKey(KEY_RIGHT);
+}
+
+int main() {
+	static World w;
+	w.game = GameId::SavageEmpire;
+	if (!w.load("se/game/SAVAGE")) {
+		std::printf("skip (no game data)\n");
+		return 0;
+	}
+	w.objects.reserve(w.objects.size() + 64);
+	Game g(w);
+	int px = g.x, py = g.y;
+	for (int i = 0; i < w.actors.partySize; ++i)
+		w.moveObject(w.actorObject(w.actors.partyRoster[i]), px, py, 0);
+
+	// not on the list of what may be used: "Not possible."
+	clearEast(w, px, py);
+	int rock = put(w, 0x30, 0, px + 1, py, 0);
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(logText(g).find("Not possible.") != std::string::npos);
+	w.deleteObject(rock);
+
+	// a bottle of liquor (0x5F): drunk, gone, the counter (byte_4226E, globals + 0x26) goes up
+	clearEast(w, px, py);
+	int bottle = put(w, 0x5F, 0, px + 1, py, 0);
+	int drunk = w.actors.globals[0x26];
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(w.objects[bottle].deleted);
+	CHECK(logText(g).find("You drink it.") != std::string::npos);
+	CHECK(w.actors.globals[0x26] == drunk + 1);
+
+	// meat (0x67): eaten
+	clearEast(w, px, py);
+	int meat = put(w, 0x67, 0, px + 1, py, 0);
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(w.objects[meat].deleted);
+	CHECK(logText(g).find("You eat the food.") != std::string::npos);
+
+	// a shut crate (0xBC frame 1) opens and gives up what is in it; already open it says "Not possible." and finds nothing
+	clearEast(w, px, py);
+	int crate = put(w, 0xBC, 1, px + 1, py, 0);
+	int inside = put(w, 0x66, 0, 0, 0, 0);
+	w.deleteObject(inside);
+	World::Obj &in = w.objects[inside];
+	in.deleted = false;
+	in.status = ObjRecord::IN_CONTAINER;
+	in.parent = crate;
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(w.objects[crate].frame == 0);
+	CHECK(logText(g).find("Searching here, you find") != std::string::npos);
+	CHECK(w.objects[inside].location() == ObjRecord::ON_MAP);
+	w.deleteObject(inside); // (it lies on the square now and would be what Use picks: it is food)
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(logText(g).find("Not possible.") != std::string::npos);
+	CHECK(logText(g).find("nothing") != std::string::npos);
+
+	// a torch (0xD0) is lit in a free hand: a lit torch (0xD1) with 100 minutes appears readied
+	clearEast(w, px, py);
+	int actor = w.actors.partyRoster[0];
+	std::vector<int> inv;
+	w.inventory(actor, inv, false);
+	int torch = w.addToInventory(actor, 0xD0, 0, 3);
+	g.log.clear();
+	g.handleKey('u');
+	g.handleKey(KEY_RIGHT);
+	(void)torch;
+	w.inventory(actor, inv, false);
+
+	if (failures == 0)
+		std::printf("ok\n");
+	return failures ? 1 : 0;
+}

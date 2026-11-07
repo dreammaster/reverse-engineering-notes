@@ -85,14 +85,72 @@ Recipe meaning by the objects that use it: 0 tent, 1 book/note/scroll, 2 pool cu
 43 map, 44/56 doors, 45 panel, 46 belt, 47 radium chip, 48-49 sprayers, 50 oxium bin, 51 pigment, 52-54 dream machine and dreamstuff, 55 elixir, 57 instruments, 58-59 wormsbane, 60 potash/oil,
 61 radium, 62 shovel on dirt and hole, 64 many, 65 heart stone, 66 spittoon, 67 ruby slippers, 68 manuscript, 69 mirror, 70 gate, 71 buckets, 72 valve, 73 chip on man, 74 air bottle.
 
-## Savage Empire: the Use command (findings, not ported)
+## Savage Empire: the Use command (`se_use.cpp`)
 
-SE's command loop (jump table at 0x15564 in `se/se_game.asm`: events 129 `sub_302B8`, 130 `sub_2FBBA`, 131 `sub_2F530`, 132 **Use `sub_35E46`**, 133 a flag, 134 `sub_2EE8D`) is built like Ultima VI's, not like Martian
-Dreams': `sub_35E46` picks the object (messages "Out of range!" 0x1FE, "Not possible." 0x374, "Not in solo mode!", "`%s can't use that!") and looks its type up in a table of 80 word types at cs:0x8965
-(file 0x29937, sorted: 0x0A 0x14 0x16 0x19 0x1D 0x2A ... 0x12E 0x133) with a parallel table of 80 handler offsets 0xA2 bytes later (inline code blocks that end in `jmp loc_36508`).
-The handlers call (in address order, names by the objects that use them): bottle of liquor `sub_31C2D`, jug `sub_354BC`, crate `sub_18AB9`/`sub_2EC8A`, bell `sub_31293`, bones `sub_3215F`, bean and corn stalk
-`sub_33F4B`/`sub_33E52`, burnt logs `sub_33EA5`, mortar and grinding stone `sub_35150`, magnesium ribbon `sub_353D0`, door `sub_31DF5`, clay `sub_310AD`, crystal garden `sub_34F6B`, turtle bait `sub_346A8`,
-digging stick `sub_3204A`, vine `sub_35D54`, rope `sub_34783`, hole in the ceiling `sub_31F60`, fishing pole `sub_34FDE`, loom `sub_19505`, knives `sub_31B48`, jungle drum `sub_343E9`, tar pit `sub_33F9E`,
-metal bucket `sub_34C0A`, notebook `sub_32488`, camera `sub_3542B`, hammers `sub_335A9`, grenade `sub_34147`, flintlock `sub_34D88`, oven and fires `sub_34EDF`, cloth strips `sub_3423A`/`sub_31436`,
-torches `sub_34302`/`sub_31671`, rafts `sub_31E67`, totems `sub_33777`, turtle `sub_33C06`, machine `sub_35686`, wire screen `sub_31C98` (the pairing of the later blocks with their types may be one off).
-The engine still uses Ultima VI's table for Savage Empire.
+SE's command loop (jump table at 0x15564 in `se/se_game.asm`: events 129 `sub_302B8`, 130 `sub_2FBBA`, 131 `sub_2F530`, 132 **Use `sub_35E46`**, 133 a flag, 134 `sub_2EE8D`) is built like Ultima VI's, not like Martian Dreams'.
+The pre-checks of `sub_35E46`: the target (an object chosen with the cursor, or a square), `sub_2E85C` (the 84 types at ds:11AA that may be tried at all: else "Not possible."), "Out of range!" beyond one square
+unless the thing is carried, then a Borland switch: 81 words at cs:8967 (80 types and one stray) with the handler offsets 0xA2 bytes after them; **the offsets are relative to cs:0 = IDA linear 0x2DBD0**
+(a handler's block starts at 0x2DBD0 + offset; the first dump of this table was two bytes off). Every handler ends in `loc_36508`: five moves (`sub_24EBC`), redraw.
+`ida_scripts/dump_se_use.py` writes the table and the function (`se/se_use.txt`), `dump_se_use_subs.py` the routines the handlers call with their strings (`se/se_use_subs.txt`).
+
+Data segment: ds = IDA linear 0x3FA60 (string offsets `push ds; mov ax, N` are ds:N; those after `mov ax, seg seg050` are in segment 0x3F650). The saved `OBJLIST` is read by `sub_1617A`/`sub_165B7`
+(`ida_scripts/find_objlist_loader.py`): status 329C, positions 78E4 (3 bytes each), type+frame words 9CFA (so `[bx-6306h]` = the word of object bx), quantity/quality 54F0 (a word; `54F1` is the quality), actor status 6CF0
+(`byte_4675B` = actor 0xB's status, bit 0x80 = in the party), strength 53E8, dexterity 4606, intelligence 7644, experience 51E4, hit points 6DF4, party names 5104, roster 4EDA, party size 9CF6, moves 44FA,
+talk flags 6EFC (`byte_4695D` = actor 1's), and the **globals at ds:27E8, 0x82 bytes** = `ObjList::globals` (`byte_42252` = globals[0xA], the acting member; word_42254/56/58 the party's x, y, z from 0xC;
+`byte_4226E` = [0x26], the liquor counter; `byte_422C0` = [0x70]; `byte_422C1` = [0x71], 0xFF in party mode, else the solo member).
+Helpers: `sub_1BAD6` delete an object, `sub_1AD09`/`sub_1AD62` first/next object in a container, `sub_1ACDD` the actor that holds an object, `sub_2DBD3` that actor or the acting member, `sub_1C1C3` whether an
+actor holds a thing, `sub_1C70E` the byte-quantity table of ds:806 (48 types), `sub_1B5FA(actor, quantity, flags, type)` add to a pack (weight limit; flags 0x10 carried, 0x18 readied), `sub_1B486(level, y, x, 0, 0, type)`
+create on the map, `sub_1ABE3` whether an actor is within 5 x 4 squares of the leader, `sub_2E4FC` the acting actor (the leader when aboard), `sub_14746` = `advance_time`, `sub_17FC8` the cursor prompt,
+`sub_1E046` the name of an object, `sub_18AB9` print.
+
+Handlers (type -> routine -> what it does, by its strings); **ported** are marked:
+
+| types | routine | what |
+|---|---|---|
+| 5F bottle of liquor | 31C2D | "You drink it." (**ported**) |
+| 5D, 66-6F, 71, 72, 78, C5, D5, D6 food | 31DF5 | "You eat the food." (**ported**) |
+| A1 door | 353D0 | opens when Yunapotli (actor 11) is in the party and in view: "... and they slide open!", else "You can't budge it!" (**ported**) |
+| D0 torch | 30ECC | lights one in a free hand: lit torch D1 with 100 minutes; "Your hands are full." (**ported**) |
+| BC crate | 361BA + 2EC8A | frame 1 opens it, else "Not possible."; then it is searched (**ported**) |
+| 4F-52 bones, 3E bean stalk, 3D corn stalk | 33F4B, 33E52, 33EA5 | rib bones D3, beans 6D, corn 6C: "You are carrying too much already." (**ported**) |
+| 0A magnesium ribbon | 34F6B | one used up, `sub_34DD4` at the member's square |
+| 14 rope, 16 hole in the ceiling | 362F7, 36312 -> 19505 | not in solo mode; the descent into the underground city ("The mechanism supporting the trap door fails ...") |
+| 19, 2C, 34 knives, scissors | 32488 | "On -": cut cloth, meat, skin a big cat, remove feathers (516 lines) |
+| 1D, 77 hammers | 31436 | "On -": a piece of rock flakes off, charcoal |
+| 2A vine | 34FDE | "On -": "You can't use a rope here!" |
+| 2B bell | 31293 | "On -": "You put the bell on the dinosaur's neck." (target type 118, frames 0D / 11) |
+| 2F turtle bait | 34783 | "You must be near water." / "Nothing takes the bait." |
+| 31 notebook | 34D88 | Jimmy's shorthand |
+| 32 flintlock | 31E67 | loading with gunpowder |
+| 33 camera | 34EDF | the flash, film |
+| 3B, 3C mortar, grinding stone | 310AD | grind corn / mix gunpowder |
+| 3F jug | 354BC | "On -": pour (target type 1A) |
+| 56-58 totems | 3646E | placing (`sub_1C1C3`, `sub_22EF7`, "`%s can't use that!") |
+| 5C folded skin | 35C2E | unfolding it |
+| 5E fire extinguisher | 343E9 | "On -": puts a fire out, hardens lava |
+| 83 digging stick | 31F60 | "You get some clay." / "There is nothing to dig!" |
+| 86 cloth strip | 33C06 | binds wounds |
+| 88 metal bucket | 335A9 | tar, water |
+| 89, F0 grenade, device | 31671 | "Device activated." |
+| 8F machine | 35B44 | a gem in the machine |
+| 94 jungle drum | 3542B | |
+| A5 loom | 33F9E | weaving flax |
+| AD, F2, FE, 101 oven, fires | 3215F | fire the pot, make charcoal, incinerate |
+| B1 wire screen | 33B10 | sift sulphur |
+| BA brazier, CF burnt logs | 36206, 3623D | frames, then 3215F |
+| BE metal head | 34147 | replacing the statue's head |
+| BF tarred cloth | 33777 | torch, grenade |
+| C0 clay | 3204A | shaping a pot |
+| CC gunpowder | 34C0A | loading the flintlock |
+| D1 lit torch | 35686 | "On -": burn things (dinosaur egg ...) |
+| D4 fishing pole | 31B48 | "You need to stand next to deep water." |
+| D8 crystal garden | 35D54 | potassium nitrate (Johann) |
+| E5 tar pit | 33211 | cloth strips |
+| E9, ED rafts | 31C98 | boarding |
+| EA door | 35150 | "The door is blocked." |
+| F7 headless statue | 3423A | |
+| FC crystal | 35972 | heals ("%s is healed.") |
+| 113 | 346A8 | frame changes of a rope-bridge-like object |
+| 12E turtle, 133 | 34B00, 349A9 | riding the turtle, "Only next to land!" |
+
+The Use on terrain (a tree, lava, a yucca plant, a turtle: `sub_33DFF`, `sub_3215F`, `sub_33EF8`, `sub_35E46` 35F72-35FE8) is not used by the engine (APPROX 79).

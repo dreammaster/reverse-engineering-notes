@@ -272,6 +272,15 @@ private:
 	std::vector<int> mdRecipesOf(int type) const;
 	bool mdUsable(int type) const;
 	void mdUseObject(int idx);
+	// Savage Empire's Use (se_use.cpp)
+	void seUseObject(int idx);
+	bool seUsable(int type) const;
+	void seAction(uint32_t sub, int idx);
+	void seSearch(int idx);
+	void seEnd();
+	bool seInView(int actor) const;
+	bool seGive(int actor, int type, int quantity);
+	bool _seAsync = false;
 	void mdContinue(int stage, int partner);
 	void mdChosen(int tx, int ty);
 	void mdAction(int recipe, int item, int first, int second);

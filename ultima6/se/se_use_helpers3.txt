@@ -1,0 +1,71 @@
+=== sub_2E4FC 2E4FC-2E51A
+2E4FC push    bp
+2E4FD mov     bp, sp
+2E4FF mov     al, byte_42252
+2E502 cmp     al, byte_49756
+2E506 jnz     short loc_2E50D
+2E508 mov     al, byte_4493A
+2E50B jmp     short loc_2E514
+2E50D mov     bx, [bp+arg_0]
+2E510 mov     al, [bx+4EDAh]
+2E514 mov     ah, 0
+2E516 pop     bp
+2E517 retf    2
+=== sub_2EB7B 2EB7B-2EC00
+2EB7B push    bp
+2EB7C mov     bp, sp
+2EB7E dec     sp
+2EB7F dec     sp
+2EB80 push    si
+2EB81 push    di
+2EB82 mov     di, [bp+arg_0]
+2EB85 mov     bx, di
+2EB87 shl     bx, 1
+2EB89 mov     ax, [bx-6306h]
+2EB8D and     ax, 3FFh
+2EB90 push    ax
+2EB91 call    sub_1C70E
+2EB96 mov     [bp+var_2], ax
+2EB99 cmp     ax, 4
+2EB9C jnz     short loc_2EBB6
+2EB9E mov     bx, di
+2EBA0 shl     bx, 1
+2EBA2 mov     si, [bx+54F0h]
+2EBA6 push    si
+2EBA7 push    ds
+2EBA8 mov     ax, 12A8h   ; "%d "
+2EBAB push    ax
+2EBAC call    sub_18AB9
+2EBB1 add     sp, 6
+2EBB4 jmp     short loc_2EBF6
+2EBB6 cmp     [bp+var_2], 2
+2EBBA jnz     short loc_2EBCA
+2EBBC mov     bx, di
+2EBBE shl     bx, 1
+2EBC0 mov     al, [bx+54F0h]
+2EBC4 mov     ah, 0
+2EBC6 mov     si, ax
+2EBC8 jmp     short loc_2EBA6
+2EBCA mov     si, 1
+2EBCD mov     bx, di
+2EBCF shl     bx, 1
+2EBD1 mov     ax, [bx-6306h]
+2EBD5 and     ax, 3FFh
+2EBD8 shl     ax, 1
+2EBDA les     bx, dword_46954
+2EBDE add     bx, ax
+2EBE0 mov     ax, es:[bx]
+2EBE3 mov     bx, di
+2EBE5 shl     bx, 1
+2EBE7 mov     dx, [bx-6306h]
+2EBEB mov     cl, 0Ah
+2EBED shr     dx, cl
+2EBEF add     ax, dx
+2EBF1 push    ax
+2EBF3 call    near ptr sub_2EB3C
+2EBF6 mov     ax, si
+2EBF8 pop     di
+2EBF9 pop     si
+2EBFA mov     sp, bp
+2EBFC pop     bp
+2EBFD retf    2

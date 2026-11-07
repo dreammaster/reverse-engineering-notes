@@ -1,0 +1,4 @@
+3FE4C seg dseg 3FA60-4EA40 sel 3FA6
+4B0A2 seg dseg 3FA60-4EA40 sel 3FA6
+2DBD3 seg seg013 2DBD3-36670 sel 2DBD
+seg050 3F650 sel 3F65
