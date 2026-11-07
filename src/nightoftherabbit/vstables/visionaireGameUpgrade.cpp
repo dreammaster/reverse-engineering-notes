@@ -9,6 +9,9 @@
 // fields below is just 100 (percent).
 #include "vstables/visionaireGameUpgrade.h"
 
+#include <climits>
+#include <cmath>
+
 #include "TTextLanguage.h"
 #include "TTText.h"
 #include "Diagnostics.h"
@@ -1504,6 +1507,67 @@ void applyVersionFixes(TVisionaireGame &game, int version) {
 		fixac(game);
 }
 
+// Night of the Rabbit (read in its listing, TVisionaireGame::UpdateVersion; the steps above 0xB8 are not in Deponia 1).
+// The conditions: a condition combines a list of conditions (ConditionConditions) with a flag for each (ConditionConditionsNegate)
+// where it had two, with a flag each. The old fields are read here and not any more afterwards.
+static void fixba(TVisionaireGame &game) {
+	forEach(game, 10, [](TVisObjRef &condition) {
+		if (condition.GetBool(kConditionIsVariable))
+			return;
+
+		TVList links;
+		std::vector<bool> negate;
+		TVisObjRef first = condition.GetLink(kConditionCondition1);
+
+		if (!first.IsEmpty()) {
+			links.push_back(first);
+			negate.push_back(condition.GetBool(kConditionCondition1Negate));
+		}
+
+		TVisObjRef second = condition.GetLink(kConditionCondition2);
+
+		if (!second.IsEmpty()) {
+			links.push_back(second);
+			negate.push_back(condition.GetBool(kConditionCondition2Negate));
+		}
+
+		condition.SetValue(kConditionConditions, links, true);
+		condition.SetValue(kConditionConditionsNegate, negate, Event::kSendEvent);
+	});
+}
+
+// The outfits get a turn speed for their models: 100.
+static void fixbd(TVisionaireGame &game) {
+	forEach(game, 17, [](TVisObjRef &outfit) {
+		outfit.SetValue(kOutfitModelTurnSpeed, 100, Event::kSendEvent);
+	});
+}
+
+// The volumes of the scenes' music, of the sounds of an animation's frames and of the sound commands were percents; they become
+// decibels, round(20 * log10(percent / 100)) (0 percent has no finite value: the conversion of the processor gives the smallest int).
+static int percentToDecibels(int percent) {
+	float decibels = roundf(log10f(static_cast<float>(percent) / 100.0f) * 20.0f);
+
+	if (!(decibels > -2147483648.0f) || !(decibels < 2147483648.0f))
+		return INT_MIN;
+	return static_cast<int>(decibels);
+}
+
+static void fixbe(TVisionaireGame &game) {
+	forEach(game, 4, [](TVisObjRef &scene) {
+		scene.SetValue(kSceneMusicVolume, percentToDecibels(scene.GetInt(kSceneMusicVolume)), Event::kSendEvent);
+	});
+	forEach(game, 28, [](TVisObjRef &frame) {
+		frame.SetValue(kAnimationFrameSoundVolume, percentToDecibels(frame.GetInt(kAnimationFrameSoundVolume)), Event::kSendEvent);
+	});
+	forEach(game, 8, [](TVisObjRef &part) {
+		const int command = part.GetInt(kActionPartCommand);
+
+		if (command == 0x18 || command == 0x3B || command == 0x48 || command == 0x4D || command == 0xA6)
+			part.SetValue(kActionPartInt, percentToDecibels(part.GetInt(kActionPartInt)), Event::kSendEvent);
+	});
+}
+
 void applyLateVersionFixes(TVisionaireGame &game, int version) {
 	if (version <= 0xB3)
 		fixb3(game);
@@ -1511,4 +1575,10 @@ void applyLateVersionFixes(TVisionaireGame &game, int version) {
 		fixb6(game);
 	if (version <= 0xB8)
 		fixb8(game);
+	if (version <= 0xBA)
+		fixba(game);
+	if (version <= 0xBD)
+		fixbd(game);
+	if (version <= 0xBE)
+		fixbe(game);
 }

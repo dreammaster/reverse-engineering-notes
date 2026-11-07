@@ -240,6 +240,11 @@ void TVisObjRef::GetInts(int fieldId, std::vector<int> &outInts) const {
 		_object->GetInts(fieldId, outInts);
 }
 
+void TVisObjRef::GetBools(int fieldId, std::vector<bool> &outBools) const {
+	if (_object)
+		_object->GetBools(fieldId, outBools);
+}
+
 void TVisObjRef::GetFloats(int fieldId, std::vector<float> &outFloats) const {
 	if (_object)
 		_object->GetFloats(fieldId, outFloats);
@@ -344,6 +349,11 @@ void TVisObjRef::SetPathList(int fieldId, const std::vector<TCharHolder> &value,
 }
 
 void TVisObjRef::SetValue(int fieldId, const std::vector<int> &value, TSendEventEnum event) {
+	if (_object)
+		_object->SetValue(fieldId, value, event);
+}
+
+void TVisObjRef::SetValue(int fieldId, const std::vector<bool> &value, TSendEventEnum event) {
 	if (_object)
 		_object->SetValue(fieldId, value, event);
 }

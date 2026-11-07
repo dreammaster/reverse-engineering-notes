@@ -575,6 +575,10 @@ bool TVisionaireObject::SetValue(int field, const std::vector<int> &value, TSend
 	return SetValue(field, &value, eTypeData::kIntList, event);
 }
 
+bool TVisionaireObject::SetValue(int field, const std::vector<bool> &value, TSendEventEnum event) {
+	return SetValue(field, &value, eTypeData::kBoolList, event);
+}
+
 bool TVisionaireObject::SetValue(int field, const std::vector<float> &value, TSendEventEnum event) {
 	return SetValue(field, &value, eTypeData::kFloatList, event);
 }
@@ -723,6 +727,11 @@ void TVisionaireObject::GetStrings(int field, std::vector<TCharHolder> &out) con
 void TVisionaireObject::GetInts(int field, std::vector<int> &out) const {
 	if (isValid())
 		out = GetRefVInt(_data->GetValue(field, eTypeData::kIntList));
+}
+
+void TVisionaireObject::GetBools(int field, std::vector<bool> &out) const {
+	if (isValid())
+		out = GetRefVBool(_data->GetValue(field, eTypeData::kBoolList));
 }
 
 void TVisionaireObject::GetFloats(int field, std::vector<float> &out) const {

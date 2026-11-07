@@ -75,6 +75,42 @@ int main() {
 			printf("command %3d: %d action parts\n", c.first, c.second);
 	}
 
+	// the conditions: how many have the lists of Night of the Rabbit (ConditionConditions and ConditionConditionsNegate), and whether they agree
+	{
+		TVList list;
+		int variables = 0;
+		int withList = 0;
+		int mismatch = 0;
+		int oldLinks = 0;
+		std::map<int, int> sizes;
+
+		control->GetVisionaire()->GetList(10, list, false);
+		for (TVisionaireObject *object : list) {
+			TVisObjRef ref(object);
+
+			if (ref.GetBool(kConditionIsVariable)) {
+				variables++;
+				continue;
+			}
+
+			TVList items;
+			std::vector<bool> negate;
+
+			ref.GetLinks(kConditionConditions, TypeOrder::kValue0, items);
+			ref.GetBools(kConditionConditionsNegate, negate);
+			if (!items.empty())
+				withList++;
+			sizes[(int)items.size()]++;
+			if (items.size() != negate.size())
+				mismatch++;
+			if (!ref.GetLink(kConditionCondition1).IsEmpty() || !ref.GetLink(kConditionCondition2).IsEmpty())
+				oldLinks++;
+		}
+		printf("conditions: %d, variables %d, with a list %d, list and flags of different size %d, with the old two links %d\n", (int)list.size(), variables, withList, mismatch, oldLinks);
+		for (auto &e : sizes)
+			printf("conditions with %d sub-conditions: %d\n", e.first, e.second);
+	}
+
 	// scenes, objects, buttons and characters: what needs more than pictures and sounds from a renderer
 	{
 		struct Feature {

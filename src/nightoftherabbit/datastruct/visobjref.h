@@ -109,6 +109,7 @@ public:
 	void GetPaths(int fieldId, std::vector<TCharHolder> **outPaths) const;
 	void GetPaths(int fieldId, std::vector<TCharHolder> &outPaths) const;
 	void GetInts(int fieldId, std::vector<int> &outInts) const;
+	void GetBools(int fieldId, std::vector<bool> &outBools) const;
 	void GetFloats(int fieldId, std::vector<float> &outFloats) const;
 	void GetTexts(int fieldId, std::vector<TTextLanguage> **outTexts) const;
 	void GetTextsCopy(int fieldId, std::vector<TTextLanguage> &outTexts) const;
@@ -132,6 +133,7 @@ public:
 	void SetValue(int fieldId, const std::vector<TCharHolder> &value, TSendEventEnum event);
 	void SetPathList(int fieldId, const std::vector<TCharHolder> &value, TSendEventEnum event);
 	void SetValue(int fieldId, const std::vector<int> &value, TSendEventEnum event);
+	void SetValue(int fieldId, const std::vector<bool> &value, TSendEventEnum event);
 	void SetValue(int fieldId, const std::vector<float> &value, TSendEventEnum event);
 	void SetValue(int fieldId, const std::vector<TTextLanguage> &value, TSendEventEnum event);
 

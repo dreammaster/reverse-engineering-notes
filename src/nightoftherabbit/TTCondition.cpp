@@ -40,30 +40,52 @@ bool TTCondition::IsTrue(TVList &evaluating) const {
 		return false;
 	}
 
-	TTCondition first(GetLink(kConditionCondition1));
-	TTCondition second(GetLink(kConditionCondition2));
+	// Night of the Rabbit (read in its listing): a condition combines any number of conditions, ConditionConditions (links), each
+	// inverted when its flag in ConditionConditionsNegate (a list of booleans) says so; ConditionOperator 0 is the AND of all of
+	// them, 1 the OR of all of them, any other operator gives false. Condition1 and Condition2 are only read by the upgrade of
+	// projects of the older format (TVisionaireGame::UpdateVersion).
+	TVList conditions;
+	std::vector<bool> negate;
+
+	GetLinks(kConditionConditions, TypeOrder::kValue0, conditions);
+	GetBools(kConditionConditionsNegate, negate);
 
 	evaluating.push_back(*this);
-	bool a = first.IsTrue(evaluating);
-	bool b = second.IsTrue(evaluating);
+
+	std::vector<bool> results;
+	size_t index = 0;
+
+	for (TVisionaireObject *object : conditions) {
+		if (object && !object->IsEmpty()) {
+			TTCondition condition{TVisObjRef(object)};
+			bool value = condition.IsTrue(evaluating);
+
+			if (index < negate.size() && negate[index])
+				value = !value;
+			results.push_back(value);
+		}
+		index++;
+	}
 	evaluating.pop_back();
 
-	if (GetBool(kConditionCondition1Negate))
-		a = !a;
-	if (GetBool(kConditionCondition2Negate))
-		b = !b;
+	// (the value of ConditionIsVariable, false here, when there is no result at all)
+	bool result = false;
 
-	bool result;
-	if (GetInt(kConditionOperator) == 0)
-		result = a && b;
-	else
-		result = (GetInt(kConditionOperator) == 1) ? (a || b) : a;
+	if (results.size() == 1) {
+		result = results[0];
+	} else if (results.size() > 1) {
+		int op = GetInt(kConditionOperator);
 
-	// a missing operand leaves the other one
-	if (first.IsEmpty())
-		result = b;
-	if (second.IsEmpty())
-		result = a;
+		if (op == 0) {
+			result = results[0];
+			for (size_t i = 1; i < results.size(); i++)
+				result = result && results[i];
+		} else if (op == 1) {
+			result = results[0];
+			for (size_t i = 1; i < results.size(); i++)
+				result = result || results[i];
+		}
+	}
 
 	if (GetBool(kConditionReturnNegate))
 		result = !result;

@@ -1,4 +1,7 @@
 #include "vstables/visionaireGame.h"
+
+#include <cstdio>
+#include <cstdlib>
 #include "vstables/visionaireGameUpgrade.h"
 
 #include <EventHandler.h>
@@ -23,7 +26,7 @@
 // registered with the same order, ids and names as the original. The field
 // lookup table and the record types are built once per run
 // (InitWithVersion), then the (empty) main object is created.
-TVisionaireGame::TVisionaireGame() : TVisionaire(TTGame::GetTypeGroup(), 0xBA) {
+TVisionaireGame::TVisionaireGame() : TVisionaire(TTGame::GetTypeGroup(), 0xC0) {
 	static bool initTypeGroups = false;
 
 	InitXMLNames();
@@ -72,7 +75,7 @@ TVisionaireGame::TVisionaireGame() : TVisionaire(TTGame::GetTypeGroup(), 0xBA) {
 	CompleteTables();
 
 	if (!initTypeGroups) {
-		InitWithVersion(0xBA);
+		InitWithVersion(0xC0);
 		initTypeGroups = true;
 	}
 
@@ -193,8 +196,8 @@ bool TVisionaireGame::LoadDataGame(const wxFileName &file, const wxString &extra
 	if (handler)
 		handler->AddPendingEvent(new LoadSaveProgressEvent(wxString(L"ProgressLoadFinalizing")));
 
-	if (version != 0xBA) {
-		InitWithVersion(0xBA);
+	if (version != 0xC0) {
+		InitWithVersion(0xC0);
 		RemoveTempData();
 	}
 
@@ -304,6 +307,9 @@ bool TVisionaireGame::UpdateVersionGame(int version) {
 // Games older than version 99 are rejected as in the original.
 bool TVisionaireGame::UpdateVersion(int version, bool allAtOnce) {
 	TVList list;
+	if (getenv("VIS_TRACE_VERSION"))
+		fprintf(stderr, "UpdateVersion(%d, %d)\n", version, (int)allAtOnce);
+
 	TVisObjRef game = GetGame();
 
 	if (version <= 0x62) {

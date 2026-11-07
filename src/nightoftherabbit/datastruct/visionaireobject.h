@@ -199,6 +199,7 @@ public:
 	bool SetValue(int field, const std::vector<TCharHolder> &value, TSendEventEnum event);
 	bool SetPathList(int field, const std::vector<TCharHolder> &value, TSendEventEnum event);
 	bool SetValue(int field, const std::vector<int> &value, TSendEventEnum event);
+	bool SetValue(int field, const std::vector<bool> &value, TSendEventEnum event);
 	bool SetValue(int field, const std::vector<float> &value, TSendEventEnum event);
 	bool SetValue(int field, const std::vector<TTextLanguage> &value, TSendEventEnum event);
 	/** Replaces a link-list field by the objects of the list. */
@@ -224,6 +225,7 @@ public:
 	void GetPaths(int field, std::vector<TCharHolder> &out) const;
 	void GetStrings(int field, std::vector<TCharHolder> &out) const;
 	void GetInts(int field, std::vector<int> &out) const;
+	void GetBools(int field, std::vector<bool> &out) const;
 	void GetFloats(int field, std::vector<float> &out) const;
 	void GetTextsCopy(int field, std::vector<TTextLanguage> &out) const;
 

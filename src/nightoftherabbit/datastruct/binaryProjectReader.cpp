@@ -465,7 +465,7 @@ bool TVisionaire::BinaryLoad(TVedFile &file, TLoadingTypeEnum type, TSignalSlot 
 	if (outVersion)
 		*outVersion = version;
 
-	if (version != 0xBA) {
+	if (version != 0xC0) {
 		InitWithVersion(version);
 		CreateTempData();
 	}

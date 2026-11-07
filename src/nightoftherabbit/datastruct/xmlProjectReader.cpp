@@ -150,7 +150,7 @@ static bool openRoot(XmlNode *node, int nr, UserData *ud) {
 
 	TVisionaire *visionaire = ud->visionaire;
 
-	if (version != 0xBA) {
+	if (version != 0xC0) {
 		visionaire->InitWithVersion(version);
 		visionaire->GetMainObject()->GetData()->CreateTempData();
 
