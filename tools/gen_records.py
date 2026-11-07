@@ -25,7 +25,7 @@ GAME = sys.argv[1] if len(sys.argv) > 1 else "src/deponia1"
 TYPE_NAMES = {0: "kBool", 1: "kInt", 2: "kString", 3: "kPath", 4: "kFloat", 5: "kUnused5", 6: "kRectList",
               7: "kSpriteList", 8: "kPointList", 9: "kStringList", 10: "kIntList", 11: "kPathList",
               12: "kFloatList", 13: "kPoint", 14: "kRect", 15: "kSprite", 16: "kLink", 17: "kLinkList",
-              18: "kTextList"}
+              18: "kTextList", 20: "kBoolList"}
 
 # Classes that already have a hand-written header: (header, class)
 HAND_HEADERS = {"TTScene": "TTScene.h", "TTAction": "TTAction.h", "TTButton": "TTButton.h",

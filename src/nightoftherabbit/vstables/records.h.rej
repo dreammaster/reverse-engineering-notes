@@ -1,0 +1,37 @@
+--- records.h	2026-11-06 16:23:41.798613600 +1100
++++ records.h.generated	2026-11-06 16:24:00.418276900 +1100
+@@ -73,6 +73,12 @@
+ 	static void OnCreate(TVisionaireObject *object);
+ 	static void OnInit(TVisionaireObject *object);
+ 	void SetMirrored(bool mirrored);
++	/** Whether the animation (data object) plays a 3D model: it belongs to an
++	 *  outfit that has a model file. */
++	static bool IsModelAnimation(const TVisObjRef &animation);
++	/** Whether it plays a skeleton: it belongs to an outfit with model files, or to
++	 *  an object that has a model. */
++	static bool IsBonesAnimation(const TVisObjRef &animation);
+ };
+ 
+ class TTAnimationFrame : public TVisObjRef {
+@@ -205,6 +211,10 @@
+ 	explicit TTDialogPart(const TVisObjRef &ref) : TVisObjRef(ref) {
+ 	}
+ 
++	/** The name an editor gives the part: the position of each dialog part on the way to it ("1.2."),
++	 *  then the start of its text. */
++	wxString GenerateName() const;
++
+ 	static TTypeGroup &GetTypeGroup();
+ 	static void InitType(int versionLow, int versionHigh);
+ 	static void OnCreate(TVisionaireObject *object);
+@@ -319,6 +329,10 @@
+ 	static void OnCreate(TVisionaireObject *object);
+ 	static void OnInit(TVisionaireObject *object);
+ 	static bool cmpY(const TVisionaireObject *a, const TVisionaireObject *b);
++
++	/** The name of the object as shown to the player: the text of its name (kObjectName), or the name it has in the
++	 *  data when that text is empty. Empty for an empty object. */
++	wxString GetLanguageName() const;
+ };
+ 
+ class TTOutfit : public TVisObjRef {

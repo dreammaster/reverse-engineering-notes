@@ -1,0 +1,305 @@
+// Reconstructed from Deponia_Linux.asm, TMasterControl methods at asm lines
+// 485602-491098+ (address range 0x623ED0-0x627A18+). See NOTES.md.
+//
+// Original path confirmed via the x_assert() in Signal()'s default case:
+// src/vsplayer/control/masterControl.cpp - see manifest/source_layout.tsv.
+//
+// TMasterControl is the engine's abstract render/game-loop hub: it
+// multiply-inherits TPaintControl (confirmed from its vtable dump - a
+// secondary vtable section whose slots default to TPaintControl::Prepare/
+// Draw) and declares 8 of its own pure virtual methods, all named directly
+// from `vtable for TGameControl`'s own dump (see vsplayer/control/
+// gameControl.h/.cpp for the concrete overrides): Update, DisplayDialog,
+// DisplayTexts, DisplayConsole, DisplayInSceneConsole, HandleMouseMove,
+// HandleMouseUp, HandleMouseHolding. It owns essentially every other
+// subsystem controller (scene, cursor, game controller, loading, sound,
+// font, platform SDK) as members.
+//
+// This is a partial reconstruction. Depth varies a lot by method:
+//   - Fully traced: all simple accessors/mutators, StartEarthquake/
+//     StopEarthquake, DrawInterfaces, Draw, VideoFrame/IsVideoPlaying,
+//     Register/UnregisterEngineEventHandler, RegisterMouseEventHandler.
+//   - Structurally faithful but with named-but-unconfirmed opaque
+//     TVisObjRef field ids: Draw, Signal.
+//   - Approximated/lighter treatment (real dependency classes - TMovie's
+//     Play API, the video/controller event pump - are far too deep to
+//     responsibly reconstruct without reversing them first): PlayAVI,
+//     MovieEvent, ScrollUpdate's exact easing constants, ProcessMessage's
+//     second (float,float,int) overload.
+#pragma once
+
+#include <list>
+#include <string>
+#include <vector>
+
+#include "TCharHolder.h"
+#include "TGInterface.h"
+#include "TGObjectManager.h"
+#include "TGameClientSDK.h"
+#include "TMovie.h"
+#include "TPaintControl.h"
+#include "TSignalData.h"
+#include "TSignalSlot.h"
+#include "TSoundFFMPEG.h"
+#include "TSprite.h"
+#include "TTimer.h"
+#include "WxStub.h"
+#include "datastruct/visionaire.h"
+#include "vscommon/fontManager.h"
+#include "vstables/visionaireGame.h"
+#include "vsplayer/control/cursorControl.h"
+#include "vsplayer/control/loadingControl.h"
+#include "vstables/fieldIds.h"
+
+class TSceneControl;
+class TGameController;
+
+/** What happens to the sounds while a movie plays (the "handle sounds" of the part "play video", asm 487099): 0 and 1 pause them
+ *  all (and let them go on when the movie is over - only for 1), 2 leaves them alone, 3 stops them all. */
+enum class HandleSoundsEnum { kDefault = 0, kPause = 1, kContinue = 2, kStop = 3 };
+// What the mouse did, as ShowFrame() (AppFunctions.cpp) makes it a message for the game (asm 497745-498889): the move
+// (1, every frame), the left button going down (3) and up (4: a short click; 2: a second one within 449 ms, a double
+// click; 5: after it was held for GameMinDownTime), the left button held (6, once, when it has been down that long),
+// the right button (8 down, 9 up; a ctrl-click or three fingers is one too), the middle button (10, 11) and the wheel
+// (12 up, 13 down). TGameControl::HandleMouseUp() is called for 2, 4, 5, 9, 11, 12 and 13, HandleMouseHolding() for 6
+// and HandleMouseMove() for 1 (TMasterControl::ProcessMessage()); 7 is not made by anything that is reconstructed.
+enum class TMouseMessageEnum {
+	kNone = 0,
+	kMove = 1,
+	kLeftDoubleClick = 2,
+	kLeftDown = 3,
+	kLeftUp = 4,
+	kLeftLongClick = 5,
+	kLeftHold = 6,
+	kValue7 = 7,
+	kRightDown = 8,
+	kRightUp = 9,
+	kMiddleDown = 10,
+	kMiddleUp = 11,
+	kWheelUp = 12,
+	kWheelDown = 13,
+};
+// What happened at the keyboard or a controller (Deponia_Linux.asm: ShowFrame, lines 497745-498889, makes the
+// messages of the SDL events; TGameControl::HandleControllerButtonHit/Release/Axis make 4, 5 and 6). The values 1 and 2
+// were named kKeyDown = 0 and kKeyUp = 1 before ShowFrame was read: 1 is the key going down and 2 going up (the game
+// actions of a key have 1, with 10000 added to the key code 2, and the escape key that skips a cutscene is a 2).
+enum class TKeyboardMessageEnum {
+	kKeyDown = 1,
+	kKeyUp = 2,
+	kText = 3,
+	kControllerButtonHit = 4,
+	kControllerButtonRelease = 5,
+	kAxisMove = 6,
+	kControllerAdded = 7,
+	kControllerRemoved = 8,
+	kControllerRemapped = 9,
+};
+
+// Field order/sizes are recovered from TMasterControl::SetLoadingScreen's
+// memberwise copy; several fields' real meaning is unconfirmed (see
+// NOTES.md) - names are best-effort guesses at "a loading screen needs
+// this."
+struct SLoadingScreen {
+	TCharHolder backgroundImage;
+	long long field18 = 0;
+	long long field20 = 0;
+	int field28 = 0;
+	TCharHolder progressBarImage;
+	bool field40 = false;
+	int field44 = 0;
+	float field48 = 0.0f;
+	TCharHolder soundOrOverlayImage;
+	long long field68 = 0;
+	long long field70 = 0;
+	int field78 = 0;
+	TCharHolder anotherImage;
+	bool field90 = false;
+	int field94 = 0;
+	unsigned short field9C = 0;
+	unsigned char fieldA0 = 0;
+	std::wstring text;
+	long long fieldB0 = 0;
+	int fieldB8 = 0;
+	int fieldBC = 0;
+};
+
+// Confirmed a free function, not a member (TGameControl::PreLoad,
+// Deponia_Linux.asm line 464520) - populates an SLoadingScreen from a
+// TVisObjRef's own fields (presumably the same ones SetLoadingScreen's own
+// confirmed layout above lists); not reversed beyond that call shape.
+void FillLoadingScreen(SLoadingScreen &screen, const TVisObjRef &source);
+
+struct TMouseEventHandler {
+	wxString name;
+	std::vector<unsigned int> mouseButtonFilter;  // the messages it is called for (none: never called)
+};
+
+struct TKeyboardEventHandler {
+	wxString name;
+};
+
+class TMasterControl : public TSignalSlot, public TPaintControl {
+public:
+	TMasterControl();
+	virtual ~TMasterControl();
+
+	void Signal(const TSignalData &signal, TSignalData &result) override;
+
+	// The 8 pure virtuals from the original vtable (offsets 0x18-0x50);
+	// TGameControl provides the real overrides (confirmed from
+	// vtable-for-TGameControl's own dump, which names every slot directly -
+	// no guessing needed here, unlike when this was first written against
+	// TMasterControl alone).
+	virtual bool Update() = 0;
+	virtual bool DisplayDialog() = 0;
+	virtual bool DisplayTexts() = 0;
+	virtual bool DisplayConsole() = 0;
+	virtual void DisplayInSceneConsole() = 0;
+	virtual void HandleMouseMove(const wxPoint &pos, bool isHolding) = 0;
+	virtual void HandleMouseUp(const wxPoint &pos, TMouseMessageEnum msg) = 0;
+	virtual void HandleMouseHolding(const wxPoint &pos) = 0;
+
+	void QuitGame();
+	bool GetQuitGame() const;
+	void SetClearMessage();
+	bool GetClearMessage();
+
+	TPaintControl *GetMainControl();
+	TCursorControl *GetCursorControl();
+	TGameController *GetGameController();
+	TSoundFFMPEG *GetSoundManager() const;
+	TFontManager *GetFontManager();
+	TGameClientSDK *GetGameClientSDK() const;
+
+	void SetLoadingScreen(SLoadingScreen &screen);
+	void ShowLoadingScreen();
+
+	void CleanUp();
+	void EnableMovies(bool enable);
+
+	// Hides (doesn't override) TPaintControl::Draw() - the original really
+	// does have two distinct Draw entry points (this one and the inherited
+	// TPaintControl::Draw() reached via the secondary vtable) - so making
+	// that explicit rather than suppressing the compiler's warning.
+	using TPaintControl::Draw;
+	void Draw(bool lock);
+	void DrawInterfaces();
+	void ScrollUpdate();
+
+	int PlayAVI(const wxFileName &file, bool skippable, HandleSoundsEnum handleSounds);
+	bool IsVideoPlaying() const;
+	bool VideoFrame();
+	void MovieEvent(void *sdlEvent);
+
+	bool UnregisterEngineEventHandler(const wxString &name);
+	bool UnregisterKeyboardEventHandler(const wxString &name);
+	bool UnregisterMouseEventHandler(const wxString &name);
+	void RegisterEngineEventHandler(const wxString &name);
+	void RegisterMouseEventHandler(const wxString &name, const std::vector<int> &filter);
+	void RegisterKeyboardEventHandler(const wxString &name);
+	void ProcessMessage(TMouseMessageEnum msg, const wxPoint &pos);
+	void ProcessMessage(TMouseMessageEnum msg, const wxPoint &pos, float a, float b, int c);
+
+	void GetWindowSize(int *width, int *height) const;
+	const wxPoint &GetMousePos() const;
+	bool IsScrolling() const;
+
+	void StartEarthquake(int amount, int jitterInterval);
+	void StopEarthquake();
+
+protected:
+	// TGameControl embeds an actual TSceneControl by value and points this
+	// at it (TMasterControl's own constructor never sets it - see
+	// gameControl.cpp); protected rather than private for that reason.
+	TSceneControl *_sceneControl = nullptr;
+
+	// TGameControl reads this directly (confirmed: SkipCurrentText() and
+	// UpdateAspectRatio() both do `_visionaire->GetGame()` on it) - a
+	// TMasterControl-only accessor was never called at those sites, so this
+	// is protected rather than private for the same reason as
+	// _sceneControl above.
+	TVisionaireGame *_visionaire = nullptr;
+
+	// TGameControl reads both directly (GetInterface/GetAllInterfaces/
+	// GetActiveInterfaces/GetObject, asm lines 456603-466193) - same
+	// reasoning as _sceneControl/_visionaire above. _allInterfaces is
+	// every registered interface; _activeInterfaces (formerly named
+	// _interfaces, also used by DrawInterfaces above) is the subset
+	// currently being drawn.
+	std::list<TGInterface *> _allInterfaces;
+	std::list<TGInterface *> _activeInterfaces;
+
+	// TGameControl reads this directly (HandleEngineEvent, Deponia_Linux.asm
+	// lines 469160-469504: iterates it via raw begin()/end() pointers, not a
+	// TMasterControl-only accessor) - same reasoning as _sceneControl/
+	// _visionaire above. Only its size is read there, not any element's
+	// content - see HandleEngineEvent's own comment.
+	std::vector<std::string> _engineEventHandlerNames;
+
+	// TGameControl reads both directly (LoadAndInitGame, Deponia_Linux.asm
+	// lines 467746-467747, 468227-468230: InitControl()/EndLoading() called
+	// straight on these, not through TMasterControl's own accessors) - same
+	// reasoning as _sceneControl/_visionaire above.
+	TLoadingControl *_loadingControl = nullptr;
+	TSoundFFMPEG *_soundManager = nullptr;
+
+	// TGameControl reads this directly (HandleKeyEvent, Deponia_Linux.asm
+	// lines 471062-471068: iterates it via raw begin()/end() pointers, not a
+	// TMasterControl-only accessor) - same reasoning as
+	// _engineEventHandlerNames above. Only its size is read there, not any
+	// element's content.
+	std::vector<TKeyboardEventHandler> _keyboardEventHandlers;
+
+	// +0x254: whether the game scrolls smoothly (kGameSmoothScrolling): set at the top of every ScrollUpdate() call and
+	// read by that and by TGameControl::MoveScene(), which eases the speed in and out when it is set and moves at once
+	// when it is not.
+	bool _smoothScrolling = false;
+
+	// +0x250: the scroll speed of the game (kGameScrollSpeed) in 1/1000: a time in milliseconds times this is the step
+	// ScrollUpdate() and TGameControl::MoveScene() move the scene by.
+	float _timingValueSeconds = 0.0f;
+
+	// TGameControl reads this directly (SaveEventHandlers, Deponia_Linux.asm
+	// lines 457678-457702: iterates it via raw begin()/end() pointers to
+	// rebuild the "mouseEvent:name|filter..." section) - same reasoning as
+	// _engineEventHandlerNames/_keyboardEventHandlers above.
+	std::vector<TMouseEventHandler> _mouseEventHandlers;
+
+	// +0xE8, +0xEC: the size of the game's window (the resolution of the game, or the render size when the aspect ratio
+	// is unlocked); GetWindowSize() answers them, TGameControl::LoadAndInitGame() sets them.
+	int _windowWidth = 0;
+	int _windowHeight = 0;
+
+private:
+	TMovie _movie;
+	TSprite _sprite1;
+	TSprite _sprite2;
+
+	SLoadingScreen _loadingScreen;
+	TCursorControl *_cursorControl = nullptr;
+	TGameController *_gameController = nullptr;
+	TFontManager *_fontManager = nullptr;
+	TGameClientSDK *_gameClientSDK = nullptr;
+
+	TPictureIO *_pauseScreen = nullptr;  // +0xC0, the picture of kGameVideoPauseScreen for the movie that plays (deleted when it is over)
+	int _handleSounds = 0;               // +0x4C, the HandleSoundsEnum of the movie that plays
+	bool _videoPlaying = false;          // +0xB8
+	int _loadingScreenCachedWidth = 0;   // +0x248
+	int _loadingScreenCachedHeight = 0;  // +0x24C
+	wxPoint _mousePos;                   // +0x258
+	bool _isScrolling = false;           // +0x260
+	bool _quitGame = false;              // +0x255
+	bool _clearMessage = false;          // +0x256
+	bool _earthquakeActive = false;      // +0x261
+	int _earthquakeAmount = 0;           // +0x264
+	int _earthquakeJitterInterval = 0;   // +0x268
+	int _earthquakeOffsetX = 0;          // +0x26C
+	int _earthquakeOffsetY = 0;          // +0x270
+	TTimer _earthquakeTimer;             // +0x278
+	bool _moviesEnabled = true;          // +0x288
+	// A function-local static TTimer in the original
+	// (ScrollUpdate(void)::scrollTimer, magic-statics-initialized on first
+	// call) - a plain member here since TMasterControl is effectively a
+	// singleton anyway.
+	TTimer _scrollTimer;
+};

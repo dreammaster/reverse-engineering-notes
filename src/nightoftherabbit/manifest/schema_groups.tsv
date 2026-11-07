@@ -1,0 +1,45 @@
+class	desc	desc_name	table	version_in	version_out	form	callbacks	save_type	save_in	save_out
+TSAction	533	ActiveAction	25	-1	-1	save	OnCreate,OnInit	1	-1	-1
+TSAnimation	535	ActiveAnimation	26	-1	-1	save	OnCreate,OnInit	1	-1	-1
+TSText	531	ActiveText	24	-1	-1	save	OnCreate,OnInit	1	-1	-1
+TTAction	158	Action	7	-1	-1	save	OnCreate,OnInit	0	-1	-1
+TTActionArea	673	ActionArea	32	120	-1	save	OnCreate,OnInit	0	-1	-1
+TTActionPart	178	ActionPart	8	-1	-1	save	GetNameInList,OnCreate,OnInit	0	-1	-1
+TTAnimation	182	Animation	9	-1	-1	save	OnCreate,OnInit	0	-1	-1
+TTAnimationFrame	570	AnimationFrame	28	54	-1	save	OnCreate,OnInit	0	-1	-1
+TTAreaAction	677	AreaAction	33	120	-1	save	OnCreate,OnInit	0	-1	-1
+TTAudioBus	827	AudioBus	37	184	-1	plain	OnCreate,OnInit		-1	-1
+TTBlock	872	Block	41	192	-1	plain	OnCreate,OnInit		-1	-1
+TTBlockContainer	869	BlockContainer	40	192	-1	plain	OnCreate,OnInit		-1	-1
+TTButton	152	Button	2	-1	-1	save	OnCreate,OnInit	0	-1	-1
+TTCharacter	148	Character	0	-1	-1	plain	OnCreate,OnInit		-1	-1
+TTClipboardObject	37	Clipboard	-1	-1	-1	plain			-1	-1
+TTCommentSet	263	CommentSet	16	23	-1	save	OnCreate,OnInit	0	-1	-1
+TTCommentSetEntry	558	CommentSetEntry	27	48	-1	save	OnCreate,OnInit	0	-1	-1
+TTCondition	192	Condition	10	-1	-1	plain	OnCreate,OnInit		-1	-1
+TTCursor	226	Cursor	15	15	-1	save	OnCreate,OnInit	0	-1	-1
+TTDialog	201	Dialog	11	-1	-1	save	OnCreate,OnInit	0	-1	-1
+TTDialogPart	203	DialogPart	12	-1	-1	plain	OnCreate,OnInit		-1	-1
+TTEvent	832	Event	38	184	-1	plain	OnCreate,OnInit		-1	-1
+TTFont	141	Font	3	-1	-1	save	OnCreate,OnInit	0	-1	-1
+TTGame	116	Game	-1	-1	-1	plain	OnCreate,OnInit		-1	-1
+TTInterface	137	Interface	1	1	-1	save	OnCreate,OnInit	2	100	-1
+TTInterfaceClass	658	InterfaceClass	31	114	-1	save	OnCreate,OnInit	0	-1	-1
+TTLanguage	261	Language	18	23	-1	save	OnCreate,OnInit	0	-1	-1
+TTLoading	352	Loading	21	26	-1	save	OnCreate,OnInit	0	-1	-1
+TTModel	705	Model	35	140	143	save	OnCreate,OnInit	2	140	145
+TTObject	163	Object	6	1	-1	save	OnCreate,OnInit	2	100	-1
+TTOutfit	266	Outfit	17	23	-1	save	OnCreate,OnInit	2	100	-1
+TTParticleContainer	450	ParticleContainer	23	41	-1	save	OnCreate,OnInit	0	-1	-1
+TTParticles	391	Particle	22	41	-1	save	OnCreate,OnInit	0	-1	-1
+TTPlugin	859	Plugin	39	189	-1	plain	OnCreate,OnInit		-1	-1
+TTPoint	144	Pͯint	5	-1	-1	save	OnCreate,OnInit	0	-1	-1
+TTScene	129	Scene	4	1	-1	save	OnCreate,OnInit	2	43	-1
+TTScript	650	Script	30	100	-1	save	OnCreate,OnInit	0	-1	-1
+TTScriptVariable	693	ScriptVariable	30	-1	-1	save	OnCreate,OnInit	1	133	-1
+TTShader	817	Shader	36	181	-1	plain	OnCreate,OnInit		-1	-1
+TTSprite	207	Sprite	13	-1	-1	save	OnCreate,OnInit	0	-1	-1
+TTText	209	Text	14	-1	-1	save	GetNameInList,OnCreate,OnInit	0	-1	-1
+TTTextLanguage	255	TextLanguage	19	23	165	save	OnCreate,OnInit	0	-1	-1
+TTValue	327	Value	20	24	-1	plain	OnCreate,OnInit		-1	-1
+TTWaySystem	637	WaySystem	29	99	-1	save	OnCreate,OnInit	0	-1	-1

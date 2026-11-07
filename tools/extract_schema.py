@@ -64,6 +64,7 @@ def parse_fields(lines, cls, start, names):
     fields = []
     regs = {}
     stack = {}
+    pushed = []  # (the immediates pushed for the stack arguments: GCC 7 pushes them, GCC 4.x moves them to [rsp+..])
     order = 0
     callbacks = {}
     for l in lines[start + 1:start + 12000]:
@@ -89,7 +90,15 @@ def parse_fields(lines, cls, start, names):
                     stack[off] = to_int(m.group(3))
                 except ValueError:
                     stack[off] = None
+        m = re.match(r"^\s+push\s+(-?[0-9A-F]+h?)\s*(?:;.*)?$", l)
+        if m and not re.match(r"^\s+push\s+(r[a-z0-9]+|e[a-z]+)", l):
+            tok = m.group(1)
+            v = int(tok[:-1], 16) if tok.endswith("h") else int(tok)
+            pushed.append(v - (1 << 64) if v >= (1 << 63) else v)
         if re.search(r"call\s+_ZN9TTypeDataC2", l):
+            if len(pushed) >= 2 and 0 not in stack and 8 not in stack:
+                stack[0], stack[8] = pushed[-1], pushed[-2]
+            pushed = []
             if "eSaveGame" in l:
                 kind = "save"
             elif "eVisionaireTable" in l:

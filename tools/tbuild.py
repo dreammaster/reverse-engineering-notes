@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Incremental parallel build of the reconstructed sources + one test (tests/deponia1/<name>.cpp).
 Usage: tools/tbuild.py <name.cpp> [-32] [-g] [-c] [-r] [--game NAME]   (-> build/tests-<bits>/<name>.exe; -r runs it from tests/deponia1/work;
---game NAME builds src/NAME instead of src/deponia1 (into build/tests-<bits>-NAME);
+--game NAME builds src/NAME instead of src/deponia1 (into build/tests-<bits>-NAME; nightoftherabbit with Lua 5.4);
 -c builds with gcov coverage into build/tests-<bits>c, see tools/coverage.py)"""
 import os
 import subprocess
@@ -23,6 +23,11 @@ FLAGS = ["-std=c++17", "-Wall", "-Wextra", "-I", SRC, "-I", r"C:\dev\scummvm", "
 LUA_EXCLUDE = {"scummvm_file.cpp", "lua_persist.cpp", "lua_persistence_util.cpp", "lua_unpersist.cpp", "liolib.cpp", "loslib.cpp", "loadlib.cpp", "double_serialization.cpp"}
 LUA_SOURCES = [os.path.join(r"C:\dev\scummvm\common\lua", f) for f in sorted(os.listdir(r"C:\dev\scummvm\common\lua")) if f.endswith(".cpp") and f not in LUA_EXCLUDE] + ["C:/dev/visionnaire/tools/luashim/luashim.cpp"]
 
+if GAME == "nightoftherabbit":
+    # (Night of the Rabbit's executable has Lua 5.4.0 linked in, not ScummVM's 5.1: third_party/lua54, every file built as C++ so that the names are the engine's)
+    LUA_SOURCES = [os.path.join(TP, "lua54", "src", f) for f in sorted(os.listdir(os.path.join(TP, "lua54", "src"))) if f.endswith(".c")]
+    FLAGS += ["-I", os.path.join(TP, "lua54", "src")]
+
 if not (os.path.exists(os.path.join(TPLIB, "libwebp.a")) and os.path.exists(os.path.join(TPLIB, "libfreetype.a")) and os.path.exists(os.path.join(TPLIB, "libharfbuzz.a")) and os.path.exists(os.path.join(TPLIB, "libvpx.a")) and os.path.exists(os.path.join(TPLIB, "libvorbis.a"))):
     subprocess.run([sys.executable, os.path.join(ROOT, "tools", "build_third_party.py")] + (["-32"] if bits == 32 else []), check=True)
 test = [a for a in sys.argv[1:] if not a.startswith("-") and a != GAME][0]
@@ -37,7 +42,7 @@ for root, _, files in os.walk(SRC):
                 continue
             sources.append((p, os.path.join(OBJ, os.path.relpath(p, SRC)[:-4] + ".o")))
 for p in LUA_SOURCES:
-    sources.append((p, os.path.join(OBJ, "lua", os.path.basename(p)[:-4] + ".o")))
+    sources.append((p, os.path.join(OBJ, "lua", os.path.splitext(os.path.basename(p))[0] + ".o")))
 sources.append((test, os.path.join(OBJ, "test_" + os.path.basename(test)[:-4] + ".o")))
 
 
@@ -61,7 +66,7 @@ def stale(src, obj):
 def compile_one(item):
     src, obj = item
     os.makedirs(os.path.dirname(obj), exist_ok=True)
-    r = subprocess.run([CXX] + FLAGS + (["-w"] if "scummvm" in src or "luashim" in src else []) + ["-c", src, "-o", obj], capture_output=True, text=True)
+    r = subprocess.run([CXX] + FLAGS + (["-w"] if "scummvm" in src or "luashim" in src or "lua54" in src else []) + (["-x", "c++"] if src.endswith(".c") else []) + ["-c", src, "-o", obj], capture_output=True, text=True)
     if r.returncode != 0:
         return src, r.stdout + r.stderr
     return src, None
