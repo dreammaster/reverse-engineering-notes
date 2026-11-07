@@ -530,6 +530,63 @@ int main() {
 		CHECK(w.objects[head].deleted && w.objects[statue].deleted);
 	}
 
+	// totems: only the shaman (actor 9) can invoke one; Heluzz (0x56) with the offering 0x36 gives light, Aphazz (0x58) with 0x37 heals, 0x38 on Aphazz protects the party
+	{
+		clearEast(w, px, py);
+		int totem = put(w, 0x56, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("can't use that") != std::string::npos);
+		int joined = w.joinParty(9);
+		if (joined != 0) std::printf("joinParty(9) = %d, party %d: %d %d %d %d\n", joined, w.actors.partySize, w.actors.partyRoster[0], w.actors.partyRoster[1], w.actors.partyRoster[2], w.actors.partyRoster[3]);
+		CHECK(joined == 0 || joined == 3);
+		if (joined == 0 || joined == 3) {
+			int shaman = 0;
+			for (int i = 0; i < w.actors.partySize; ++i)
+				if (w.actors.partyRoster[i] == 9)
+					shaman = i;
+			w.actors.globals[0xA] = (uint8_t)shaman;
+			g.handleKey((int)('1' + shaman)); // (the digit keys: the member walks alone)
+			w.moveObject(w.actorObject(9), px, py, 0);
+			auto offer = [&](int tot, int offering) {
+				clearEast(w, px, py);
+				std::vector<int> below;
+				w.objectsAt(px, py + 1, 0, below);
+				for (int i : below)
+					if (w.objects[i].actor < 0)
+						w.deleteObject(i);
+				int t = put(w, tot, 0, px + 1, py, 0);
+				int o = put(w, offering, 0, px, py + 1, 0);
+				g.log.clear();
+				useEast(w, g, px, py);
+				g.handleKey(KEY_DOWN);
+				g.handleKey(KEY_ENTER);
+				(void)t;
+				return o;
+			};
+			w.actors.globals[0x12] = 0;
+			int o1 = offer(0x56, 0x36);
+			CHECK(logText(g).find("Invoke: Heluzz!") != std::string::npos && logText(g).find("creates light") != std::string::npos);
+			CHECK(w.actors.globals[0x12] == 0xC8 && w.objects[o1].deleted);
+			int hurt = w.actors.partyRoster[0];
+			w.actors.hp[hurt] = 1;
+			int o2 = offer(0x58, 0x37);
+			CHECK(logText(g).find("Aphazz!") != std::string::npos && logText(g).find("healed.") != std::string::npos);
+			CHECK(w.actors.hp[hurt] > 1 && w.objects[o2].deleted);
+			int o3 = offer(0x58, 0x38);
+			CHECK(logText(g).find("Aphazz protects the party") != std::string::npos && (w.actors.status[hurt] & 1));
+			(void)o3;
+			int o4 = offer(0x56, 0x30);
+			CHECK(logText(g).find("Offering refused") != std::string::npos && !w.objects[o4].deleted);
+			int o5 = offer(0x56, 0x37);
+			(void)o5;
+			CHECK(logText(g).find("Triolo senses") != std::string::npos || logText(g).find("looks down") != std::string::npos);
+			g.handleKey('0');
+			w.actors.globals[0xA] = 0;
+		}
+		w.deleteObject(totem);
+	}
+
 	// a hole in the ceiling (0x16, frame 1, quality 1) takes the party up to the surface square its quality names (396,68); a rope (0x14, quality 8) takes it to the hole at 243,204 on level 1
 	{
 		clearEast(w, px, py);

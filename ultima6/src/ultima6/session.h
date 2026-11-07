@@ -266,6 +266,7 @@ private:
 	int _restHours = 0; // digits typed for the Rest command
 	int _member = 0; // party member shown in the panel (the one the player controls, byte_404A4, while no other is looked at in the inventory)
 	int _solo = -1;      // byte_40513: the roster place of the member who walks alone (the digit keys), -1 for party mode
+	int _seAid = 0;      // word_4E53E: the helper Motazz sent (0 for none)
 	int _soloSaved = 0;  // byte_40514: the worktype the controlling member had before it was made to be controlled
 	void soloKey(int key);
 	// Martian Dreams' Use (md_use.cpp)
@@ -286,6 +287,11 @@ private:
 	bool _seAsync = false;
 	std::function<void(int, int, int)> _seThen; // what a handler does with the object chosen by "On " (-2 for none chosen) and its square
 	void seAsk(std::function<void(int, int, int)> then);
+	void seTotem(int totem);                                                    // sub_22EF7
+	void seRitual(int code);                                                    // sub_22D86
+	void seDanger();                                                            // sub_227AB
+	void seGroup(int code);                                                     // sub_229F8
+	void seAid(int member);                                                     // sub_2259E
 	void seClimb(int idx);                                                      // sub_19505 for ropes and holes
 	bool seBurns(int type) const;                                               // sub_2E7A2
 	void seBurn(int x, int y);                                                  // sub_32B5E

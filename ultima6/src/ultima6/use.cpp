@@ -1462,6 +1462,8 @@ void Game::toggleCombat() {
 		return;
 	}
 	_combatMode = !_combatMode;
+	if (_world.game == GameId::SavageEmpire && a.globals.size() > 0x70)
+		a.globals[0x70] = _combatMode ? 1 : 0; // byte_422C0 (Savage Empire's totems, helpers and the lit rooms read it)
 	message(_combatMode ? "Begin combat!\n" : "Break off combat!\n");
 	chooseMusic(); // sub_2B0B8 plays ENGAGE, sub_2B1AC chooses again
 	for (int m = 1; m < a.partySize; ++m) {

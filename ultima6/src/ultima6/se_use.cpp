@@ -1134,6 +1134,12 @@ void Game::seAction(uint32_t sub, int idx) {
 		});
 		break;
 	}
+	case 0x3646E: // a totem (0x56 Heluzz, 0x57 Motazz, 0x58 Aphazz): only the shaman (actor 9) can invoke one
+		if (actor == 9)
+			seTotem(idx);
+		else
+			message("`" + _combat.nameOf(actor) + " can't use that!\n");
+		break;
 	case 0x31E67: { // the flintlock (frame 1 = loaded): one gunpowder (0xCC) from the pack loads it
 		if (o.frame == 1) {
 			message("\nFlintlock already loaded.\n");
@@ -1405,6 +1411,311 @@ void Game::seClimb(int idx) {
 	message("\n");
 	changeLevel(nx, ny, nz);
 	advanceTime(0);
+}
+
+// sub_22EF7: the shaman invokes a totem and makes an offering (an object, 0x36 / 0x37 / 0x38), which picks one of the totem's three powers and is used up.
+// The code of the ritual is the totem's (Heluzz 0, Aphazz 0x10, Motazz 0x20, the last only in combat) with the offering's 1 (0x36), 0 (0x37) or 2 (0x38) added.
+void Game::seTotem(int totem) {
+	int type = _world.objects[totem].type;
+	int base = 0;
+	message("\nInvoke: ");
+	if (type == 0x56) {
+		message("Heluzz!\n");
+	} else if (type == 0x58) {
+		message("Aphazz!\n");
+		base = 0x10;
+	} else if (_world.actors.globals.size() > 0x70 && _world.actors.globals[0x70] == 1) {
+		message("Motazz!\n");
+		base = 0x20;
+	} else {
+		sfx(0x21);
+		message("Motazz aids only those who are in mortal combat.\n");
+		return;
+	}
+	message("offering-- ");
+	seAsk([this, base](int obj, int tx, int ty) {
+		if (obj < 0) {
+			message("nothing!\n");
+			return;
+		}
+		if (!seReach(_world.objects[obj], tx, ty))
+			return;
+		int t = _world.objects[obj].type, code;
+		if (t == 0x36)
+			code = base | 1;
+		else if (t == 0x37)
+			code = base;
+		else if (t == 0x38)
+			code = base | 2;
+		else {
+			message("\nOffering refused.\n");
+			return;
+		}
+		World::Obj &offering = _world.objects[obj];
+		if (offering.quantity > 1 && _world.isStackable(offering.type))
+			--offering.quantity;
+		else
+			_world.deleteObject(obj);
+		seRitual(code);
+	});
+}
+
+// sub_22D86: what the offering buys. Heluzz: 0 the shaman's spirit looks down at the party (APPROX(85): the picture is not drawn), 1 light for 200 minutes, 2 a sense of the danger around.
+// Aphazz: 0x10 heals, 0x11 charms, 0x12 protects. Motazz: 0x20 curses, 0x21 calls a helper (not underground), 0x22 makes the party wild.
+void Game::seRitual(int code) {
+	message("\n");
+	std::vector<uint8_t> &g = _world.actors.globals;
+	switch (code) {
+	case 0:
+		message("\nTriolo leaves his body and looks down at the party!\n");
+		break;
+	case 1:
+		if (g.size() > 0x12)
+			g[0x12] = 0xC8;
+		sfx(0x10);
+		message("\nTriolo creates light.\n");
+		advanceTime(0);
+		break;
+	case 2:
+		seDanger();
+		break;
+	case 0x21:
+		if (z != 0) {
+			message("\nNo help available.\n");
+			sfx(0x21);
+		} else {
+			seAid(actingActor());
+		}
+		break;
+	case 0x10:
+	case 0x11:
+	case 0x12:
+	case 0x20:
+	case 0x22:
+		seGroup(code);
+		break;
+	default:
+		break;
+	}
+}
+
+// sub_227AB: Triolo senses the enemies (actors 0x10 and up on this level, awake, evil or on the attack with worktype 0x9B) within 25 squares by the compass. APPROX-free copy of the original:
+// it takes absolute differences, so the directions it names are the original's (north for what is mostly above or below, east for what is mostly beside, southeast for the rest).
+void Game::seDanger() {
+	static const char *NAMES[8] = {"north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"};
+	int count[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+	for (int actor = 0x10; actor < 0x100; ++actor) {
+		int k = _world.actorObject(actor);
+		if (k < 0 || _world.objects[k].deleted || _world.objects[k].z != z)
+			continue;
+		if (_world.actors.status[actor] & 0x10)
+			continue;
+		if (!(_world.actors.status[actor] & 0x20) && _world.actors.worktype[actor] != 0x9B)
+			continue;
+		int a = std::abs((int)_world.objects[k].x - x), b = std::abs((int)_world.objects[k].y - y);
+		if (a > 25 || b > 25)
+			continue;
+		if (b == 0)
+			b = -1;
+		if (a == 0)
+			a = -1;
+		if (std::abs(a) < (std::abs(b) >> 1))
+			++count[b > 0 ? 0 : 4];
+		else if (std::abs(b) < (std::abs(a) >> 1))
+			++count[a > 0 ? 2 : 6];
+		else if (a > 0)
+			++count[b > 0 ? 3 : 1];
+		else
+			++count[b > 0 ? 5 : 7];
+	}
+	int n = 0;
+	for (int c : count)
+		n += c != 0;
+	message("\nTriolo senses ");
+	if (n == 0) {
+		message("no danger.\n");
+		sfx(0x21);
+		return;
+	}
+	if (n == 8) {
+		message("danger all around!\n");
+		sfx(0x10);
+		return;
+	}
+	message("danger to the ");
+	bool first = true;
+	for (int left = n; left > 0; --left) {
+		for (int i = 0; i < 8; ++i) {
+			if (!count[i])
+				continue;
+			if (!first)
+				message(left > 1 ? ", " : " and ");
+			first = false;
+			message(NAMES[i]);
+			count[i] = 0;
+			break;
+		}
+	}
+	message(".\n");
+	sfx(0x10);
+}
+
+// sub_229F8 with sub_226E4: the people in the 11 x 9 squares round the acting member (not those with movement flag 0x10, not the parts of the big creatures) are picked by the power and
+// affected; the ones picked are named ("Aphazz protects the party." for 0x12).
+void Game::seGroup(int code) {
+	ObjList &a = _world.actors;
+	int member = actingActor();
+	int me = _world.actorObject(member);
+	if (me < 0)
+		return;
+	int mx = _world.objects[me].x, my = _world.objects[me].y;
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	std::vector<int> around;
+	for (int dx = 0; dx < 11 && around.size() < 0x3F; ++dx) {
+		for (int dy = 0; dy < 9 && around.size() < 0x3F; ++dy) {
+			std::vector<int> here;
+			_world.objectsAt((mx + dx - 5) & mask, (my + dy - 4) & mask, z, here);
+			for (int i : here) {
+				const World::Obj &o = _world.objects[i];
+				if (o.deleted || o.actor < 0 || around.size() >= 0x3F)
+					continue;
+				if (a.movementFlags[o.actor] & 0x10)
+					continue;
+				around.push_back(o.actor);
+			}
+		}
+	}
+	auto part = [](int type) { // sub_1B3BF: the tails of the big creatures
+		int i = type - 0x11C;
+		static const bool TAIL[23] = {1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1};
+		return i >= 0 && i <= 0x16 && TAIL[i];
+	};
+	auto charmable = [](int type) { // sub_231DD
+		return (type >= 0x133 && type <= 0x146) || type >= 0x150 || type == 0x12D || type == 0x12E || type == 0x12B || type == 0x123 || type == 0x11A || type == 0x124;
+	};
+	auto resists = [&](int target) { // sub_28662 (the intelligence of sub_2862A, less 3 when cursed or wild)
+		int type = _world.objects[_world.actorObject(target)].type;
+		if (type == 0x143)
+			return seRoll(1, 10) == 1;
+		if (type == 0x148)
+			return false;
+		auto intel = [&](int who) {
+			int v = a.intelligence[who];
+			int st = _world.objects[_world.actorObject(who)].status;
+			if ((st & 0x40) || ((st & 0x80) && who != 1))
+				v = std::max(1, v - 3);
+			return v;
+		};
+		return intel(target) - intel(member) > seRoll(-12, 12);
+	};
+	std::vector<int> picked;
+	for (int who : around) {
+		int k = _world.actorObject(who);
+		if (k < 0 || part(_world.objects[k].type))
+			continue;
+		World::Obj &ob = _world.objects[k];
+		switch (code) {
+		case 0x22:
+			if ((a.status[who] & 0x80) && !(ob.status & 0x80)) {
+				ob.status |= 0x80;
+				if (who != 1)
+					picked.push_back(who);
+			}
+			break;
+		case 0x12:
+			if ((a.status[who] & 0x80) && !(a.status[who] & 1))
+				a.status[who] |= 1;
+			break;
+		case 0x20:
+			if ((a.status[who] & 0x20) && !(ob.status & 0x40) && !resists(who) && charmable(ob.type)) {
+				picked.push_back(who);
+				ob.status |= 0x40;
+			}
+			break;
+		case 0x10:
+			if ((a.status[who] & 0x80) && !(a.status[who] & 0x10) && (seMaxHp(who) > a.hp[who] || (a.status[who] & 8)))
+				picked.push_back(who);
+			break;
+		case 0x11:
+			if ((a.status[who] & 0x20) && !(ob.status & 4) && !resists(who) && charmable(ob.type))
+				picked.push_back(who);
+			break;
+		default:
+			break;
+		}
+	}
+	if (code == 0x12) {
+		sfx(0xE);
+		message("\nAphazz protects the party.\n");
+		return;
+	}
+	const char *what = "";
+	if (code == 0x22) {
+		sfx(0xF);
+		what = "wild!";
+	} else if (code == 0x20) {
+		sfx(0xC);
+		what = "cursed!";
+	} else if (code == 0x10) {
+		sfx(0xD);
+		what = "healed.";
+		for (int who : picked) {
+			int add = seRoll(1, 10);
+			int most = seMaxHp(who);
+			a.hp[who] = (uint8_t)(most > a.hp[who] + add ? a.hp[who] + add : most);
+			a.status[who] &= 0xF7;
+		}
+	} else if (code == 0x11) {
+		sfx(0xB);
+		what = "charmed.";
+		for (int who : picked) {
+			a.movementFlags[who] = (uint8_t)((a.movementFlags[who] & 0x9F) | (a.status[who] & 0x60));
+			_world.objects[_world.actorObject(who)].status |= 4;
+			a.status[who] = (uint8_t)((a.status[who] & 0x9F) | (a.status[member] & 0x60));
+			a.worktype[who] = 8;
+		}
+	}
+	if (picked.empty()) {
+		sfx(0x21);
+		message("No effect.\n");
+		return;
+	}
+	message("\n");
+	size_t n = picked.size();
+	for (size_t i = 0; i + 2 < n; ++i)
+		message(_combat.nameOf(picked[i]) + ", ");
+	if (n > 1)
+		message(_combat.nameOf(picked[n - 2]) + " and " + _combat.nameOf(picked[n - 1]) + " are ");
+	else
+		message(_combat.nameOf(picked[0]) + " is ");
+	message(std::string(what) + "\n");
+}
+
+// sub_2259E: Motazz sends a helper (type 0x12C, or 0x14B when the shaman is of type 0x133) to fight beside the party, once at a time: it appears within five squares, takes the member's side
+// and goes when the fight is over (advance_time). APPROX(85): the creature's numbers are the engine's default for a type it has no table for, and the square is the engine's idea of a free one.
+void Game::seAid(int member) {
+	sfx(0xA);
+	int k = _world.actorObject(member);
+	int type = k >= 0 && _world.objects[k].type == 0x133 ? 0x12C : 0x14B;
+	if (_seAid != 0) {
+		message("Failed.\n");
+		sfx(0x21);
+		return;
+	}
+	for (int tries = 0; tries < 8; ++tries) {
+		int dx = seRoll(0, 10), dy = seRoll(0, 10);
+		int actor = _creatures.spawn(type, 8, x + dx - 5, y + dy - 5, z, true);
+		if (actor < 0)
+			continue;
+		_world.actors.status[actor] = (uint8_t)((_world.actors.status[actor] & 0x9F) | (_world.actors.status[member] & 0x60));
+		_world.actors.worktype[actor] = 8;
+		_seAid = actor;
+		message("Success!\n");
+		sfx(0x1B);
+		return;
+	}
+	message("Failed.\n");
+	sfx(0x21);
 }
 
 // the table at ds:118A (sub_2E7A2): what burns up

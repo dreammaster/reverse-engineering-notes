@@ -105,6 +105,11 @@ void Game::minutePassed() {
 			--_world.actors.globals[0x12 + t];
 	if (_world.game == GameId::SavageEmpire && _world.actors.globals.size() > 0x26 && _world.actors.globals[0x26]) // the liquor's counter (byte_4226E) goes down with the minutes (sub_14746)
 		--_world.actors.globals[0x26];
+	if (_world.game == GameId::SavageEmpire && _seAid != 0 && _world.actors.globals.size() > 0x70 && _world.actors.globals[0x70] == 0) { // the helper Motazz sent goes when the fight is over (sub_14746 14881)
+		_world.actors.worktype[_seAid] = 0x13;
+		_world.actors.status[_seAid] = (uint8_t)((_world.actors.status[_seAid] & 0x9F) | 0x60);
+		_seAid = 0;
+	}
 	if (gameClock.minute == 0) {
 		// every hour the people with magic recover as many magic points as their level
 		ObjList &al = _world.actors;
