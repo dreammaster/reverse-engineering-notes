@@ -405,6 +405,17 @@ condition byte (low 7 bits = event type to match, bit 7 = "keep the handler arme
 (`and [obj+3], 7Fh` = "place the object", `or [obj+0Fh], 4`), print messages (strings = LNG ids), move objects, start sounds, change level (`mov [0708h], n` — the level number)
 and queue further events. Things 704–709 of level 4 (the carpets over the pit) are made visible by such a script at start-up. A faithful game needs this VM (plus the
 per-level `ROUTINEn.TAD` native code, which handles creatures and animation hooks).
+**Script format (parsed and checked on 2453 records of all levels, `tools/acl.py`).** A handler list entry is
+`[len][type | 80h keep-armed][condition operands][ops …][17h][pad]` (`len` counts itself, is always even: one padding byte when the entry would be odd).
+Things: list at record offset 16, count = byte 11 (this byte of the 16-byte position record is the handler count; byte 10 the room); rooms: list at `+0x20`, count at `+0x1F`
+(room events carry bit 14 in the event word). Operand lengths of all 94 opcodes were measured by running every handler of the table `CS:7819` in the emulator
+(`tools/acl.py OPLEN`; a few depend on the data: `3E/3F/40` = *set variable* with a 16-bit address whose bit 15 selects a byte value, the IF opcodes `0E, 30h, 3Ah, 3Bh` nest blocks
+ended by `16h`, optional ELSE `0Fh len …`). Event condition operand lengths (29 types): 1→1, 4→2, 9→2, 10→2, 12→1, 13→1, 15→1, 17→1, 18→2, 19→1, 20→1, 24→1, 26→2, others 0.
+With these rules 2391 of 2453 handler-bearing records parse to exactly their length (the rest are mostly the truncated Payoff TATA/2 dump).
+Semantics read so far: `01` place a thing (clears its hidden bit 0x80 — this is how the level-4 carpets appear), `1A` hide it, `05` add to the score, `1C` print a message, `25h` change room
+(room, landing offsets, z → `room_enter`), `27h` add to a script variable (`ds:611+n`), `28h` compare a variable → condition flag `ds:605`, `0Eh` IF on that flag, `1Eh/20h` test/set bit 0 of the
+current object's flags; the others (`48h` look/describe, `2Dh` change energy, …) are listed in `tools/acl.py`. Event queue entries use the position record of the object; the level-start event (type 14 on the room record) runs the
+room's start-up ops.
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input
