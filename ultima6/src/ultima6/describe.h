@@ -19,7 +19,7 @@ namespace Describe {
 std::string tileName(const World &world, int tile, bool plural);
 std::string article(const World &world, int tile);
 /** The names of the 21 object types that stack (sub_1B687): 1 = a word quantity (gold), 2 = a byte quantity, 0 = not stackable. */
-int quantityKind(int type);
+int quantityKind(const World &world, int type);
 
 /** "a torch", "3 torches", "the Avatar": the prefix and the name. */
 std::string object(const World &world, const World::Obj &o);

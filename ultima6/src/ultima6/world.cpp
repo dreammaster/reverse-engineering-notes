@@ -273,7 +273,7 @@ void World::setQuantity(Obj &o, int q) const {
 }
 
 bool World::isStackable(int type) const {
-	return Describe::quantityKind(type) != 0;
+	return Describe::quantityKind(*this, type) != 0;
 }
 
 void World::inventory(int actor, std::vector<int> &out, bool nested) const {

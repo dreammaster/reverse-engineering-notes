@@ -129,7 +129,7 @@ void drawInventoryView(Framebuffer &screen, const World &world, int member, int 
 		Ui::drawTile(screen, world, 0x19B, x, y);
 		Ui::drawTile(screen, world, tileOf(idx), x, y);
 		const World::Obj &o = world.objects[idx];
-		if (Describe::quantityKind(o.type) && world.quantityOf(o) > 1)
+		if (Describe::quantityKind(world, o.type) && world.quantityOf(o) > 1)
 			Ui::drawText(screen, world.font, x, y + 8, std::to_string(world.quantityOf(o) % 100), 0xFF);
 	};
 	drawDoll(screen, world, slots, 0, 0);
