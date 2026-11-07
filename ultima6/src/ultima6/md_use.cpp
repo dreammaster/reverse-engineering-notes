@@ -304,6 +304,203 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 	(void)second;
 	World::Obj &o = _world.objects[item];
 	switch (recipe) {
+	case 3:
+	case 57: { // sub_5F166: an instrument (or the hammer-like 0xE7 on one: the instrument is then the first partner) is played
+		int inst = o.type == 0xE7 ? first : item;
+		if (inst < 0)
+			break;
+		int t = _world.objects[inst].type;
+		switch (t) {
+		case 0x11A:
+			message("Thump! Thump!\n");
+			sfx(0x34);
+			sfx(0x34);
+			break;
+		case 0x118:
+			message("Ching!\n");
+			sfx(0x36);
+			break;
+		case 0x119:
+			message("Shing!\n");
+			sfx(0x35);
+			break;
+		case 0x11B:
+			message("Wheeeeze\n");
+			sfx(0x37);
+			break;
+		case 0x12A:
+			message("GONG!!!!\n");
+			sfx(0xF);
+			break;
+		default:
+			message("You play the " + Describe::object(_world, _world.objects[inst]) + ".\n");
+			break;
+		}
+		break;
+	}
+	case 4: { // sub_59964: a switch bar (first): a loose one (quality 1) is fastened if its base (0x19D, up and to the left) is there, else it is made loose
+		if (first < 0)
+			break;
+		World::Obj &sw = _world.objects[first];
+		if (sw.quality == 1) {
+			int base = seFind(0x19D, sw.x - 1, sw.y - 1);
+			if (base < 0) {
+				message("This switch cannot be fixed.\n");
+				sfx(5);
+				break;
+			}
+			sw.frame = _world.objects[base].frame;
+			sw.quality = 0;
+			sfx(0x1F);
+			message("The switch is fastened.\n");
+		} else {
+			sw.quality = 1;
+			sfx(0x1F);
+			message("The switch is loose.\n");
+		}
+		break;
+	}
+	case 5: { // sub_59A5E: a drill (first) is installed onto the drill cart (0x1B7) on its square: both go and a drill cart with a drill (0x1B9, frame 1) takes their place
+		if (first < 0)
+			break;
+		int dx = _world.objects[first].x, dy = _world.objects[first].y;
+		int cart = seFind(0x1B7, dx, dy);
+		if (cart < 0) {
+			message("The drill must be installed onto a drill cart.\n");
+			break;
+		}
+		int n = seMake(0x1B9, dx, dy, z, 1);
+		_world.objects[n].frame = 1;
+		_world.deleteObject(first);
+		_world.deleteObject(cart);
+		sfx(0x1F);
+		message("The drill's power is connected.\n");
+		break;
+	}
+	case 6: { // sub_59B41: a control panel (first), not carried: loose (quality 0 -> 1); installed onto the cabinet (0x1C9) on its square if the cabinet wants this kind; "It must be repaired first." with quality bit 2
+		if (first < 0)
+			break;
+		World::Obj &pn = _world.objects[first];
+		if (carriedObject(pn)) {
+			message("It has no effect.\n");
+			break;
+		}
+		int q = pn.quality, kind = pn.quantity;
+		if (q == 0) {
+			pn.quality = 1;
+			sfx(0x1F);
+			message("The panel is loose.\n");
+			break;
+		}
+		if (q & 2) {
+			message("It must be repaired first.\n");
+			sfx(5);
+			break;
+		}
+		int cab = seFind(0x1C9, pn.x, pn.y);
+		if (cab < 0) {
+			message("Panels are only installed onto cabinets.\n");
+			sfx(5);
+			break;
+		}
+		int cq = _world.objects[cab].quality;
+		bool fits;
+		if (cq == 0)
+			fits = kind == 0;
+		else if (cq <= 3 && kind == 0)
+			fits = pn.frame == cq - 1;
+		else
+			fits = cq == kind;
+		if (!fits) {
+			message("This cabinet requires a different type of panel.\n");
+			sfx(5);
+			break;
+		}
+		pn.quality = (uint8_t)(pn.quality - 1);
+		sfx(0x1F);
+		message("The panel is fastened.\n");
+		if (pn.quality == 4) { // (the original tests the quality it has just left)
+			_world.actors.talkFlags[0x74] |= 8;
+			if (_world.actors.talkFlags[0x74] & 1)
+				_world.actors.talkFlags[0x60] |= 4;
+		}
+		break;
+	}
+	case 7: // sub_59CC9: a sledge hammer (item) on a track: the first partner is used up and the second becomes the mended rail (0x19E)
+		sfx(0x20);
+		message("Which section of rail needs fixing -\n");
+		if (first >= 0)
+			_world.deleteObject(first);
+		if (second >= 0) {
+			_world.objects[second].type = 0x19E;
+		}
+		break;
+	case 9:
+	case 64: { // sub_5A27E: what the thing says when it is used by itself, by its type
+		static const struct {
+			int type;
+			const char *text;
+		} SAYS[] = {{0x41, "You can't dig any deeper.\n"}, {0x42, "You can't dig any deeper.\n"}, {0x43, "You can't dig any deeper.\n"}, {0x4D, "The berries are not edible.\n"}, {0x4E, "The berries are not edible.\n"},
+					{0x83, "You will chew it instinctively.\n"}, {0xB8, "The plate in the camera has already been exposed.\n"}, {0xC7, "You need to use pliers to attach the cable.\n"},
+					{0x107, "You can't dig any deeper.\n"}, {0x10B, "You can't dig any deeper.\n"}, {0x120, "The control panel operates the dream machine.\n"}, {0x125, "You can't determine how to read the time.\n"},
+					{0x143, "You don't know how it works.\n"}, {0x147, "You can't dig any deeper.\n"}, {0x1AB, "You can't dig any deeper.\n"}, {0x1BA, "You must use a shovel to move that.\n"},
+					{0x1BB, "You must use a shovel to move that.\n"}, {0x1BC, "You must use a shovel to move that.\n"}};
+		const char *text = "It has no effect.\n";
+		for (const auto &e : SAYS)
+			if (e.type == o.type)
+				text = e.text;
+		message(text);
+		break;
+	}
+	case 41: { // sub_5BC07: steel cannon balls (item) into the cannon (first), once
+		if (first < 0)
+			break;
+		World::Obj &cannon = _world.objects[first];
+		if (cannon.quality != 0) {
+			message("It already has steel cannon balls.\n");
+		} else {
+			cannon.quality = 1;
+			message("The cannon will fire steel cannon balls.\n");
+			_world.deleteObject(item);
+		}
+		break;
+	}
+	case 51: { // sub_5F06C: rubber (0x14C) or dye (0x7B) into the sprayer system (first)
+		if (first < 0)
+			break;
+		World::Obj &sp = _world.objects[first];
+		if (o.type == 0x14C) {
+			_world.deleteObject(item);
+			sp.quality |= 1;
+			message("The sprayer system now has rubber.\n");
+		} else if (o.type == 0x7B) {
+			_world.deleteObject(item);
+			sp.quality |= 2;
+			message("The sprayer system now has dye.\n");
+		}
+		break;
+	}
+	case 56: { // sub_5F0DE: a door that works by itself: rusted shut (quality bits 0xC0), locked (0x80), or without power (flags of actor 0x73: 4 for the 0xE3, 0x10 for the 0xB3)
+		message("`It is automatic and can't be opened by hand.\n");
+		int q = o.quality, f = _world.actors.talkFlags[0x73];
+		if ((q & 0xC0) == 0xC0)
+			message("It is apparently rusted shut.\n");
+		else if (q & 0x80)
+			message("It is apparently locked.\n");
+		else if ((o.type == 0xE3 && !(f & 4)) || (o.type == 0xB3 && !(f & 0x10)))
+			message("It has no power.\n");
+		break;
+	}
+	case 73: { // sub_5B412: a radium chip (item) into the mechanical man (actor 0x75): one is used up, the man changes (frame + 9) and his flag 8 is set; anyone else is told he has it
+		if (first < 0 || _world.objects[first].actor != 0x75) {
+			message("This mechanical man already has radium.\n");
+			break;
+		}
+		consumeOne(item);
+		_world.objects[first].frame = (uint8_t)(_world.objects[first].frame + 9);
+		_world.actors.talkFlags[0x75] |= 8;
+		break;
+	}
 	case 44: { // sub_5EFC8: a door (or hatch) opens and shuts: locked (quality bit 0x80) it is not; somebody in it blocks it; else frame bit 2 turns over
 		if (o.quality & 0x80) {
 			message("It is locked.\n");

@@ -1,0 +1,6632 @@
+##### recipe 0
+=== sub_59480
+xor     di, di
+cmp     byte_41155, 0FFh
+jz      short loc_594AC
+; seg057:315 = "Not while in solo mode!\n"
+loc_59498:
+push    ax
+call    sub_35778
+loc_594A0:
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     loc_59639
+loc_594AC:
+mov     al, byte_4112A
+cmp     al, byte_49770
+jnz     short loc_594BE
+; seg057:1E0 = "You can't sleep in a dream.\n"
+jmp     short loc_59498
+loc_594BE:
+mov     bx, [bp+arg_4]
+test    byte ptr [bx+3266h], 18h
+jz      short loc_594D8
+mov     [bp+var_A], 0
+mov     ax, word_4112C
+mov     [bp+var_2], ax
+mov     ax, word_4112E
+jmp     short loc_59506
+loc_594D8:
+mov     [bp+var_A], 1
+ax = X([bp+arg_4])
+mov     [bp+var_2], ax
+ax = Y([bp+arg_4])
+loc_59506:
+mov     [bp+var_4], ax
+mov     word_4165A, 0
+call    sub_2EEA8
+call    sub_22301
+mov     ax, [bp+var_2]
+dec     ax
+and     ax, 3FFh
+push    ax
+mov     ax, [bp+var_4]
+add     ax, 0FFFEh
+and     ax, 3FFh
+push    ax
+mov     ax, [bp+var_2]
+inc     ax
+and     ax, 3FFh
+push    ax
+push    [bp+var_4]
+call    sub_2BF6E
+mov     si, ax
+cmp     ax, 0FFFFh
+jz      short loc_5959E
+loc_59542:
+test    byte ptr [si+6CBAh], 80h
+jnz     short loc_59589
+ax = TYPE(si)
+shl     ax, 1
+les     bx, dword_4696E
+add     bx, ax
+mov     ax, es:[bx]
+dx = FRAME(si)
+add     ax, dx
+les     bx, dword_470BA
+add     bx, ax
+test    byte ptr es:[bx], 10h
+jnz     short loc_59589
+ax = TYPE(si)
+cmp     ax, 6Ah
+jnz     short loc_59592
+loc_59589:
+call    sub_2BE67
+mov     si, ax
+jmp     short loc_59595
+loc_59592:
+mov     di, 1
+loc_59595:
+or      di, di
+jnz     short loc_5959E
+cmp     si, 0FFFFh
+jnz     short loc_59542
+loc_5959E:
+or      di, di
+jnz     short loc_595F6
+mov     [bp+var_6], 0FFFFh
+jmp     short loc_595F0
+loc_595A9:
+mov     [bp+var_8], 0FFFEh
+jmp     short loc_595E3
+loc_595B0:
+mov     ax, [bp+var_2]
+add     ax, [bp+var_6]
+and     ax, 3FFh
+push    ax
+mov     ax, [bp+var_4]
+add     ax, [bp+var_8]
+and     ax, 3FFh
+push    ax
+push    word_41130
+call    sub_263B2
+mov     ah, 0
+les     bx, dword_4AF74
+add     bx, ax
+test    byte ptr es:[bx], 2
+jz      short loc_595E0
+mov     di, 1
+jmp     short loc_595E9
+loc_595E0:
+inc     [bp+var_8]
+loc_595E3:
+cmp     [bp+var_8], 0
+jle     short loc_595B0
+loc_595E9:
+or      di, di
+jnz     short loc_595F6
+inc     [bp+var_6]
+loc_595F0:
+cmp     [bp+var_6], 1
+jl      short loc_595A9
+loc_595F6:
+or      di, di
+jz      short loc_5962E
+cmp     si, 0FFFFh
+jnz     short loc_59611
+PRINT "The ground is not flat enough.\n"
+jmp     loc_594A0
+loc_59611:
+push    si
+call    sub_2F7E9
+push    ax
+PRINT "The %s is in the way.\n"
+add     sp, 6
+jmp     loc_594A0
+jmp     loc_594A0
+loc_5962E:
+push    [bp+var_2]
+push    [bp+var_4]
+call    sub_3F7EF
+loc_59639:
+retf    6
+
+##### recipe 1
+=== sub_59641
+mov     ax, 1
+push    ax
+call    sub_1FFCB
+mov     ax, word_4E6F2
+mov     [bp+var_4], ax
+mov     ax, word_4168B
+mov     [bp+var_2], ax
+mov     ax, 0EBE2h
+push    ax
+call    sub_34F8A
+mov     bx, word_4168B
+mov     al, [bx+8]
+or      al, 20h
+mov     [bx+8], al
+mov     al, [bx+8]
+or      al, 10h
+mov     [bx+8], al
+xor     ax, ax
+push    ax
+push    ax
+call    sub_34FC1
+mov     bx, word_4168B
+mov     al, [bx+3]
+mov     ah, 0
+mov     word_4E6F2, ax
+; QUAL([bp+arg_4]): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_6], ax
+or      ax, ax
+jz      short loc_596A5
+jmp     loc_59774
+loc_596A5:
+mov     word_4E6DC, 50CEh
+mov     word_409C8, 0
+PRINT "--Affidavit--\n\n"
+PRINT "The undersigned do hereby vouch for the "
+PRINT "trust-\nworthiness of $P, who bears "
+PRINT "this chit, commending same to the members "
+PRINT "of the Olympus Mons outpost."
+PRINT "\n\n*Signed:\n"
+test    byte_4697B, 8
+jz      short loc_5971B
+; seg057:65B = " Richard Sherman\n"
+jmp     short loc_5971F
+loc_5971B:
+push    ds
+mov     ax, 28FBh
+loc_5971F:
+push    ax
+call    sub_35778
+test    byte_4698F, 8
+jz      short loc_59737
+; seg057:66D = " Capt. Gregory Duprey\n"
+jmp     short loc_5973B
+loc_59737:
+push    ds
+mov     ax, 28FBh
+loc_5973B:
+push    ax
+call    sub_35778
+test    byte_46990, 8
+jz      short loc_59753
+; seg057:684 = " Doctor David Yellin\n"
+jmp     short loc_59757
+loc_59753:
+push    ds
+mov     ax, 28FBh
+loc_59757:
+push    ax
+call    sub_35778
+PRINT "\n*"
+mov     word_409C8, 1
+jmp     loc_5980B
+loc_59774:
+; ds:28F0 = "mdtext.lzc"
+mov     ax, [bp+var_6]
+dec     ax
+push    ax
+push    word ptr dword_46972+2
+push    word ptr dword_46972
+xor     ax, ax
+push    ax
+push    word_43932
+push    word_43930
+call    sub_3AAAD
+or      ax, dx
+jz      short loc_597FC
+mov     [bp+var_8], 0
+xor     di, di
+jmp     short loc_597F4
+loc_597A3:
+xor     si, si
+loc_597A5:
+les     bx, dword_46972
+mov     al, es:[bx+di]
+mov     [bp+si+var_62], al
+cmp     byte ptr es:[bx+di], 0
+jnz     short loc_597BC
+mov     [bp+var_8], 1
+jmp     short loc_597ED
+loc_597BC:
+cmp     [bp+si+var_62], 0Ah
+jz      short loc_597C7
+cmp     si, 4Fh
+jnz     short loc_597EC
+loc_597C7:
+mov     [bp+si+var_61], 0
+mov     word_409C8, 0
+lea     ax, [bp+var_62]
+push    ax
+PRINT "%s"
+add     sp, 6
+mov     word_409C8, 1
+xor     si, si
+jmp     short loc_597ED
+loc_597EC:
+inc     si
+loc_597ED:
+inc     di
+cmp     [bp+var_8], 0
+jz      short loc_597A5
+loc_597F4:
+cmp     [bp+var_8], 0
+jz      short loc_597A3
+jmp     short loc_5980B
+loc_597FC:
+PRINT "You can't read it.\n"
+loc_5980B:
+PRINT "\nPress any key..."
+mov     byte_41634, 0
+mov     word_41680, 1
+mov     word_409C8, 0
+call    sub_343E9
+mov     word_409C8, 1
+mov     word_41680, 5
+push    [bp+var_2]
+call    sub_34F8A
+mov     word_41640, 1
+mov     ax, [bp+var_4]
+mov     word_4E6F2, ax
+mov     byte_4163D, 1
+call    sub_21882
+mov     word_402BE, 1
+xor     ax, ax
+push    ax
+call    sub_22164
+PRINT "\n"
+retf    6
+
+##### recipe 2
+=== sub_598F6
+mov     si, [bp+arg_4]
+test    byte ptr [si+3266h], 18h
+jnz     short loc_5993B
+push    si
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+push    ax
+mov     ax, 10h
+push    ax
+call    sub_2D42C
+cmp     ax, 0FFFFh
+jnz     short loc_5993B
+PRINT "You are carrying too much already.\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     short loc_5995F
+loc_5993B:
+mov     al, [si+3266h]
+mov     ah, 0
+and     ax, 18h
+cmp     ax, 18h
+jz      short loc_59952
+mov     word_4E67E, si
+call    sub_31E9C
+loc_59952:
+cmp     word_4165C, 92h
+jnz     short loc_5995F
+call    sub_315A4
+loc_5995F:
+retf    6
+
+##### recipe 3
+=== sub_5F166
+mov     si, [bp+arg_4]
+ax = TYPE(si)
+cmp     ax, 0E7h
+jnz     short loc_5F188
+mov     di, si
+mov     si, [bp+arg_2]
+mov     [bp+arg_2], di
+loc_5F188:
+ax = TYPE(si)
+mov     [bp+var_2], ax
+mov     cx, 5
+mov     bx, 1D9Ah
+loc_5F19C:
+mov     ax, cs:[bx]
+cmp     ax, [bp+var_2]
+jz      short loc_5F1AB
+inc     bx
+inc     bx
+loop    loc_5F19C
+jmp     loc_5F22E
+loc_5F1AB:
+jmp     word ptr cs:[bx+0Ah]
+PRINT "Thump! Thump!\n"
+mov     ax, 34h
+push    ax
+call    sub_303A9
+mov     ax, 7
+mov     dx, 45B8h
+push    ax
+push    dx
+call    sub_36E34
+mov     ax, 34h
+loc_5F1D9:
+push    ax
+call    sub_303A9
+jmp     short loc_5F242
+PRINT "Ching!\n"
+mov     ax, 36h
+jmp     short loc_5F1D9
+PRINT "Shing!\n"
+mov     ax, 35h
+jmp     short loc_5F1D9
+PRINT "Wheeeeze\n"
+mov     ax, 37h
+jmp     short loc_5F1D9
+PRINT "GONG!!!!\n"
+mov     ax, 0Fh
+jmp     short loc_5F1D9
+loc_5F22E:
+push    si
+call    sub_2F7E9
+push    ax
+PRINT "You play the %s.\n"
+add     sp, 6
+loc_5F242:
+retf    6
+
+##### recipe 4
+=== sub_59964
+mov     si, [bp+arg_2]
+; QUAL(si): cmp     byte ptr [bx+54BBh], 1
+jz      short loc_5997D
+jmp     loc_59A28
+loc_5997D:
+ax = X(si)
+dec     ax
+and     ax, 3FFh
+mov     [bp+var_2], ax
+ax = Y(si)
+dec     ax
+and     ax, 3FFh
+mov     [bp+var_4], ax
+mov     di, 0FFFFh
+mov     ax, 19Dh
+push    ax
+push    [bp+var_2]
+push    [bp+var_4]
+call    sub_2BA57
+mov     di, ax
+cmp     ax, 0FFFFh
+jnz     short loc_599E2
+PRINT "This switch cannot be fixed.\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     short loc_59A49
+loc_599E2:
+ax = TYPE(si)
+dx = FRAME(di)
+shl     dx, cl
+add     ax, dx
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+; QUAL(si): mov     byte ptr [bx+54BBh], 0
+mov     ax, 1Fh
+push    ax
+call    sub_303A9
+PRINT "The switch is fastened.\n"
+jmp     short loc_59A49
+loc_59A28:
+; QUAL(si): mov     byte ptr [bx+54BBh], 1
+mov     ax, 1Fh
+push    ax
+call    sub_303A9
+PRINT "The switch is loose.\n"
+loc_59A49:
+cmp     word_4165C, 92h
+jnz     short loc_59A56
+call    sub_315A4
+loc_59A56:
+retf    6
+
+##### recipe 5
+=== sub_59A5E
+mov     di, [bp+arg_2]
+mov     ax, 1B7h
+push    ax
+ax = X(di)
+push    ax
+ax = Y(di)
+push    ax
+call    sub_2BA57
+mov     [bp+var_2], ax
+cmp     ax, 0FFFFh
+jnz     short loc_59AA9
+; seg057:180C = "The drill must be installed onto a drill cart.\n"
+jmp     loc_59B31
+loc_59AA9:
+mov     ax, 1B9h
+push    ax
+xor     ax, ax
+push    ax
+mov     ax, 1
+push    ax
+ax = X(di)
+push    ax
+ax = Y(di)
+push    ax
+push    word_41130
+call    sub_2C1FE
+mov     si, ax
+cmp     ax, 0FFFFh
+jnz     short loc_59AF3
+; seg057:22F1 = "Aargh!\n"
+jmp     short loc_59B31
+loc_59AF3:
+mov     al, [si+3266h]
+and     al, 0DFh
+mov     [si+3266h], al
+ax = TYPE(si)
+add     ax, 400h
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+push    di
+call    sub_2C902
+push    [bp+var_2]
+call    sub_2C902
+mov     ax, 1Fh
+push    ax
+call    sub_303A9
+; seg057:83A = "The drill's power is connected.\n"
+loc_59B31:
+push    ax
+call    sub_35778
+retf    6
+
+##### recipe 6
+=== sub_59B41
+mov     si, [bp+arg_2]
+test    byte ptr [si+3266h], 18h
+jz      short loc_59B65
+PRINT "It has no effect.\n"
+jmp     loc_59CC1
+loc_59B65:
+; QUAL(si): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_2], ax
+; QTY(si): mov     al, [bx+54BAh]
+mov     ah, 0
+mov     di, ax
+cmp     [bp+var_2], 0
+jnz     short loc_59B87
+jmp     loc_59C8F
+loc_59B87:
+test    [bp+var_2], 2
+jz      short loc_59BA9
+; seg057:99A = "It must be repaired first.\n"
+loc_59B95:
+push    ax
+call    sub_35778
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     loc_59CB4
+loc_59BA9:
+mov     ax, 1C9h
+push    ax
+ax = X(si)
+push    ax
+ax = Y(si)
+push    ax
+call    sub_2BA57
+mov     [bp+var_4], ax
+cmp     ax, 0FFFFh
+jnz     short loc_59BE9
+; seg057:0A16 = "Panels are only installed onto cabinets.\n"
+jmp     short loc_59B95
+loc_59BE9:
+; QUAL([bp+var_4]): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_2], ax
+or      ax, ax
+jnz     short loc_59C01
+or      di, di
+jz      short loc_59C41
+jmp     short loc_59C26
+loc_59C01:
+cmp     [bp+var_2], 3
+jg      short loc_59C21
+or      di, di
+jnz     short loc_59C21
+ax = FRAME(si)
+mov     dx, [bp+var_2]
+dec     dx
+cmp     ax, dx
+jz      short loc_59C41
+jmp     short loc_59C26
+loc_59C21:
+cmp     [bp+var_2], di
+jz      short loc_59C41
+loc_59C26:
+PRINT "This cabinet requires a different type of panel.\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     loc_59CC1
+loc_59C41:
+; QUAL(si): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_2], ax
+mov     bx, si
+shl     bx, 1
+mov     al, byte ptr [bp+var_2]
+add     al, 0FFh
+mov     [bx+54BBh], al
+mov     ax, 1Fh
+push    ax
+call    sub_303A9
+PRINT "The panel is fastened.\n"
+cmp     [bp+var_2], 4
+jnz     short loc_59CB4
+mov     al, byte_469EA
+or      al, 8
+mov     byte_469EA, al
+test    al, 1
+jz      short loc_59CB4
+mov     al, byte_469D6
+or      al, 4
+mov     byte_469D6, al
+jmp     short loc_59CB4
+loc_59C8F:
+mov     bx, si
+shl     bx, 1
+mov     al, byte ptr [bp+var_2]
+or      al, 1
+mov     [bx+54BBh], al
+mov     ax, 1Fh
+push    ax
+call    sub_303A9
+PRINT "The panel is loose.\n"
+loc_59CB4:
+cmp     word_4165C, 92h
+jnz     short loc_59CC1
+call    sub_315A4
+loc_59CC1:
+retf    6
+
+##### recipe 7
+=== sub_59CC9
+mov     ax, 20h
+push    ax
+call    sub_303A9
+PRINT "Which section of rail needs fixing -\n"
+push    [bp+arg_2]
+call    sub_2C902
+ax = WORD([bp+arg_0])
+and     ax, 0FC00h
+add     ax, 19Eh
+mov     bx, [bp+arg_0]
+shl     bx, 1
+mov     [bx-633Ch], ax
+cmp     word_4165C, 92h
+jnz     short loc_59D11
+call    sub_315A4
+loc_59D11:
+retf    6
+
+##### recipe 8
+=== sub_59D15
+cmp     word_4E6F6, 1
+jle     short loc_59D35
+; seg057:126E = "The work is too precise to perform telekinetically.\n"
+loc_59D2A:
+push    ax
+call    sub_35778
+jmp     loc_59E41
+loc_59D35:
+mov     al, byte_469E9
+mov     ah, 0
+test    ax, 4
+jz      short loc_59D46
+test    byte_469E7, 8
+jz      short loc_59D4F
+loc_59D46:
+; seg057:2112 = "The cable does not need replacement.\n"
+jmp     short loc_59D2A
+loc_59D4F:
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     si, ax
+cmp     ax, 1
+jz      short loc_59D95
+mov     al, byte_41155
+cbw
+mov     [bp+var_2], ax
+mov     byte_41155, 0FFh
+mov     al, byte_46978
+or      al, 10h
+mov     byte_46978, al
+mov     ax, 1
+push    ax
+push    si
+xor     ax, ax
+push    ax
+call    sub_3F864
+mov     al, byte_46978
+and     al, 0EFh
+mov     byte_46978, al
+mov     al, byte ptr [bp+var_2]
+mov     byte_41155, al
+jmp     loc_59E41
+loc_59D95:
+push    si
+mov     ax, 26h
+push    ax
+mov     ax, 0FFFFh
+push    ax
+call    sub_2C0B6
+jmp     short loc_59DAA
+loc_59DA5:
+call    sub_2C00D
+loc_59DAA:
+mov     di, ax
+cmp     di, 0FFFFh
+jz      short loc_59DBF
+mov     al, [di+3266h]
+mov     ah, 0
+and     ax, 18h
+cmp     ax, 18h
+jnz     short loc_59DA5
+loc_59DBF:
+cmp     di, 0FFFFh
+jnz     short loc_59E11
+push    si
+call    sub_18F7D
+push    si
+xor     ax, ax
+push    ax
+push    si
+call    sub_1835E
+sar     ax, 1
+push    ax
+call    sub_36D07
+push    ax
+xor     ax, ax
+push    ax
+call    sub_19A74
+mov     ax, 2
+push    ax
+call    sub_3F85A
+or      ax, ax
+jz      short loc_59E41
+mov     al, byte_46978
+or      al, 4
+mov     byte_46978, al
+push    si
+mov     ax, 2
+push    ax
+xor     ax, ax
+push    ax
+call    sub_3F864
+mov     al, byte_46978
+and     al, 4
+mov     byte_46978, al
+jmp     short loc_59E41
+loc_59E11:
+mov     ax, 1Fh
+push    ax
+call    sub_303A9
+push    [bp+arg_2]
+call    sub_2C902
+cmp     word_4165C, 92h
+jnz     short loc_59E2F
+call    sub_315A4
+loc_59E2F:
+mov     al, byte_469E9
+or      al, 10h
+mov     byte_469E9, al
+call    sub_3F745
+call    sub_3F798
+loc_59E41:
+retf    6
+
+##### recipe 9
+=== sub_5A27E
+ax = TYPE([bp+arg_4])
+mov     si, ax
+mov     cx, 12h
+mov     bx, 0E93h
+loc_5A296:
+cmp     cs:[bx], ax
+jz      short loc_5A2A1
+inc     bx
+inc     bx
+loop    loc_5A296
+jmp     short loc_5A2FF
+loc_5A2A1:
+jmp     word ptr cs:[bx+24h]
+; seg057:18B3 = "You can't dig any deeper.\n"
+jmp     short loc_5A306
+; seg057:18CE = "It is stuck.\n"
+jmp     short loc_5A306
+; seg057:18DC = "The control panel operates the dream machine.\n"
+jmp     short loc_5A306
+; seg057:190B = "You need to use pliers to attach the cable.\n"
+jmp     short loc_5A306
+; seg057:1938 = "You will chew it instinctively.\n"
+jmp     short loc_5A306
+; seg057:1F4E = "The plate in the camera has already been exposed.\n"
+jmp     short loc_5A306
+; seg057:1F81 = "You must use a shovel to move that.\n"
+jmp     short loc_5A306
+; seg057:1FD1 = "You can't determine how to read the time.\n"
+jmp     short loc_5A306
+; seg057:2244 = "The berries are not edible.\n"
+jmp     short loc_5A306
+; seg057:22D3 = "You don't know how it works.\n"
+jmp     short loc_5A306
+loc_5A2FF:
+; seg057:2A4 = "It has no effect.\n"
+loc_5A306:
+push    ax
+call    sub_35778
+retf    6
+
+##### recipe 10
+=== sub_5A39C
+mov     [bp+var_4], 0FFFFh
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     [bp+var_2], ax
+xor     si, si
+jmp     short loc_5A433
+loc_5A3BD:
+ax = X([bp+var_2])
+push    ax
+mov     al, [si+0AEh]
+cbw
+pop     dx
+add     dx, ax
+and     dx, 3FFh
+mov     [bp+var_8], dx
+ax = Y([bp+var_2])
+push    ax
+mov     al, [si+0B6h]
+cbw
+pop     dx
+add     dx, ax
+and     dx, 3FFh
+mov     [bp+var_A], dx
+push    [bp+var_8]
+push    dx
+call    sub_2B94C
+cmp     ax, 0FFFFh
+jnz     short loc_5A432
+push    [bp+var_8]
+push    [bp+var_A]
+push    word_41130
+call    sub_263B2
+mov     ah, 0
+les     bx, dword_4AF74
+add     bx, ax
+mov     al, es:[bx]
+mov     ah, 0
+test    ax, 2
+jz      short loc_5A438
+loc_5A432:
+inc     si
+loc_5A433:
+cmp     si, 8
+jl      short loc_5A3BD
+loc_5A438:
+cmp     si, 8
+jz      short loc_5A49B
+mov     ax, 102h
+push    ax
+xor     ax, ax
+push    ax
+mov     ax, 1
+push    ax
+ax = X([bp+var_2])
+push    ax
+mov     al, [si+0AEh]
+cbw
+pop     dx
+add     dx, ax
+and     dx, 3FFh
+push    dx
+ax = Y([bp+var_2])
+push    ax
+mov     al, [si+0B6h]
+cbw
+pop     dx
+add     dx, ax
+and     dx, 3FFh
+push    dx
+push    word_41130
+call    sub_2C1FE
+mov     [bp+var_4], ax
+cmp     ax, 0FFFFh
+jnz     short loc_5A4AD
+loc_5A49B:
+; seg057:0B79 = "You can't dig here.\n"
+loc_5A4A2:
+push    ax
+call    sub_35778
+jmp     loc_5A5BD
+loc_5A4AD:
+mov     bx, [bp+var_4]
+mov     al, [bx+3266h]
+and     al, 0DFh
+mov     [bx+3266h], al
+mov     [bp+var_6], 0FFFFh
+mov     ax, 101h
+push    ax
+ax = X([bp+arg_2])
+push    ax
+ax = Y([bp+arg_2])
+push    ax
+call    sub_2BA57
+mov     [bp+var_6], ax
+cmp     ax, 0FFFFh
+jnz     short loc_5A501
+; seg057:2A4 = "It has no effect.\n"
+jmp     short loc_5A4A2
+loc_5A501:
+push    [bp+var_6]
+call    sub_2BBAD
+mov     di, ax
+cmp     ax, 0FFFFh
+jz      short loc_5A580
+ax = TYPE(di)
+cmp     ax, 0FCh
+jnz     short loc_5A580
+ax = FRAME(di)
+or      ax, ax
+jnz     short loc_5A546
+ax = TYPE(di)
+add     ax, 400h
+mov     bx, di
+shl     bx, 1
+mov     [bx-633Ch], ax
+loc_5A546:
+push    di
+ax = X([bp+arg_2])
+push    ax
+ax = Y([bp+arg_2])
+push    ax
+push    word_41130
+call    sub_2CFE2
+jmp     short loc_5A580
+loc_5A57A:
+push    di
+call    sub_2C902
+loc_5A580:
+call    sub_2BC06
+mov     di, ax
+cmp     ax, 0FFFFh
+jnz     short loc_5A57A
+ax = FRAME([bp+arg_2])
+or      ax, ax
+jbe     short loc_5A5AC
+PRINT "You uprooted the pod plant.\n"
+loc_5A5AC:
+mov     ax, 1Bh
+push    ax
+call    sub_303A9
+push    [bp+arg_2]
+call    sub_2C902
+loc_5A5BD:
+retf    6
+
+##### recipe 11
+=== sub_5A5C5
+cmp     [bp+arg_2], 0FFFFh
+jz      short loc_5A613
+ax = TYPE([bp+arg_2])
+shl     ax, 1
+les     bx, dword_4696E
+add     bx, ax
+mov     ax, es:[bx]
+dx = FRAME([bp+arg_2])
+add     ax, dx
+les     bx, dword_470BA
+add     bx, ax
+mov     al, es:[bx]
+mov     ah, 0
+test    ax, 10h
+jnz     short loc_5A613
+; seg057:1959 = "The ground is not clear for digging.\n"
+jmp     loc_5A7AF
+loc_5A613:
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     [bp+var_8], ax
+push    word_4E6A6
+push    word_4E6A8
+push    word_41130
+call    sub_263B2
+mov     ah, 0
+push    ax
+call    sub_3231F
+mov     [bp+var_2], ax
+or      ax, ax
+jnz     short loc_5A646
+jmp     loc_5A7A8
+loc_5A646:
+cmp     ax, 102h
+jnz     short loc_5A652
+mov     [bp+var_4], 101h
+jmp     short loc_5A665
+loc_5A652:
+cmp     [bp+var_2], 100h
+jnz     short loc_5A660
+mov     [bp+var_4], 0FFh
+jmp     short loc_5A665
+loc_5A660:
+mov     [bp+var_4], 102h
+loc_5A665:
+push    [bp+var_4]
+xor     ax, ax
+push    ax
+mov     ax, 1
+push    ax
+push    word_4E6A6
+push    word_4E6A8
+push    word_41130
+call    sub_2C1FE
+mov     di, ax
+or      ax, ax
+jl      short loc_5A690
+mov     al, [di+3266h]
+and     al, 0DFh
+mov     [di+3266h], al
+loc_5A690:
+mov     [bp+var_6], 0FFFFh
+xor     si, si
+jmp     short loc_5A70F
+loc_5A699:
+ax = X([bp+var_8])
+push    ax
+mov     al, [si+0AEh]
+cbw
+pop     dx
+add     dx, ax
+and     dx, 3FFh
+mov     [bp+var_A], dx
+ax = Y([bp+var_8])
+push    ax
+mov     al, [si+0B6h]
+cbw
+pop     dx
+add     dx, ax
+and     dx, 3FFh
+mov     [bp+var_C], dx
+push    [bp+var_A]
+push    dx
+call    sub_2B94C
+cmp     ax, 0FFFFh
+jnz     short loc_5A70E
+push    [bp+var_A]
+push    [bp+var_C]
+push    word_41130
+call    sub_263B2
+mov     ah, 0
+les     bx, dword_4AF74
+add     bx, ax
+mov     al, es:[bx]
+mov     ah, 0
+test    ax, 2
+jz      short loc_5A714
+loc_5A70E:
+inc     si
+loc_5A70F:
+cmp     si, 8
+jl      short loc_5A699
+loc_5A714:
+cmp     si, 8
+jz      short loc_5A776
+push    [bp+var_2]
+xor     ax, ax
+push    ax
+mov     ax, 1
+push    ax
+ax = X([bp+var_8])
+push    ax
+mov     al, [si+0AEh]
+cbw
+pop     dx
+add     dx, ax
+and     dx, 3FFh
+push    dx
+ax = Y([bp+var_8])
+push    ax
+mov     al, [si+0B6h]
+cbw
+pop     dx
+add     dx, ax
+and     dx, 3FFh
+push    dx
+push    word_41130
+call    sub_2C1FE
+mov     [bp+var_6], ax
+cmp     ax, 0FFFFh
+jnz     short loc_5A790
+loc_5A776:
+PRINT "You can't dig here.\n"
+push    di
+call    sub_2C902
+mov     di, 0FFFFh
+jmp     short loc_5A7B7
+loc_5A790:
+mov     ax, 1Bh
+push    ax
+call    sub_303A9
+mov     bx, [bp+var_6]
+mov     al, [bx+3266h]
+and     al, 0DFh
+mov     [bx+3266h], al
+jmp     short loc_5A7B7
+loc_5A7A8:
+; seg057:2A4 = "It has no effect.\n"
+loc_5A7AF:
+push    ax
+call    sub_35778
+loc_5A7B7:
+retf    6
+
+##### recipe 12
+=== sub_5A9C5
+mov     si, [bp+arg_2]
+mov     ax, word_4E6A6
+mov     [bp+var_6], ax
+mov     di, word_4E6A8
+ax = X(si)
+mov     [bp+var_2], ax
+ax = Y(si)
+mov     [bp+var_4], ax
+mov     word_4EB7A, 0
+push    [bp+var_6]
+push    di
+push    word_41130
+call    sub_263B2
+mov     ah, 0
+les     bx, dword_4AF74
+add     bx, ax
+test    byte ptr es:[bx], 2
+jz      short loc_5AA45
+PRINT "That is not possible.\n"
+loc_5AA34:
+mov     ax, 5
+push    ax
+call    sub_303A9
+mov     word_4EB7A, 0FFFFh
+jmp     short loc_5AA99
+loc_5AA45:
+push    [bp+var_6]
+push    di
+call    sub_2B94C
+cmp     ax, 0FFFFh
+jz      short loc_5AA55
+jmp     short loc_5AA34
+loc_5AA55:
+mov     ax, 1Bh
+push    ax
+call    sub_303A9
+push    si
+push    [bp+var_6]
+push    di
+push    word_41130
+call    sub_2CFE2
+ax = FRAME(si)
+or      ax, ax
+jz      short loc_5AA8F
+ax = TYPE(si)
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+loc_5AA8F:
+push    [bp+var_2]
+push    [bp+var_4]
+call    near ptr sub_5A35B
+loc_5AA99:
+retf    6
+
+##### recipe 13
+=== sub_5A7BF
+mov     si, [bp+arg_0]
+ax = TYPE([bp+arg_2])
+mov     di, ax
+ax = TYPE(si)
+mov     [bp+var_2], ax
+mov     word_4EB7A, 0
+cmp     ax, 10Ch
+jnz     short loc_5A860
+; QTY(si): cmp     byte ptr [bx+54BAh], 1
+jnz     short loc_5A81D
+loc_5A7FC:
+; seg057:0A8F = "There is no more room.\n"
+loc_5A803:
+push    ax
+call    sub_35778
+mov     ax, 5
+push    ax
+call    sub_303A9
+mov     word_4EB7A, 1
+jmp     loc_5A934
+loc_5A81D:
+mov     ax, 1Bh
+push    ax
+call    sub_303A9
+; QTY(si): mov     byte ptr [bx+54BAh], 1
+push    di
+call    near ptr sub_5987C
+; QUAL(si): mov     [bx+54BBh], al
+push    [bp+arg_2]
+call    sub_2F7E9
+push    ax
+PRINT "You put the %s into the wheelbarrow.\n"
+add     sp, 6
+push    [bp+arg_2]
+call    sub_2C902
+jmp     loc_5A934
+loc_5A860:
+cmp     [bp+var_2], 19Ah
+jz      short loc_5A86A
+jmp     loc_5A934
+loc_5A86A:
+; QTY(si): mov     al, [bx+54BAh]
+mov     ah, 0
+mov     [bp+var_4], ax
+cmp     ax, 7
+jnz     short loc_5A87F
+jmp     loc_5A7FC
+loc_5A87F:
+cmp     [bp+var_4], 0
+jz      short loc_5A89E
+push    di
+call    near ptr sub_5987C
+; QUAL(si): cmp     al, [bx+54BBh]
+jz      short loc_5A89E
+; seg057:0ACD = "You can't mix different things in the same load!\n"
+jmp     loc_5A803
+loc_5A89E:
+inc     [bp+var_4]
+push    di
+call    near ptr sub_5987C
+; QUAL(si): mov     [bx+54BBh], al
+cmp     [bp+var_4], 7
+jnz     short loc_5A8D4
+ax = TYPE(si)
+dx = FRAME(si)
+and     dx, 1
+add     dx, 4
+jmp     short loc_5A8F1
+loc_5A8D4:
+ax = TYPE(si)
+dx = FRAME(si)
+and     dx, 1
+inc     dx
+inc     dx
+loc_5A8F1:
+mov     cl, 0Ah
+shl     dx, cl
+add     ax, dx
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+mov     bx, si
+shl     bx, 1
+mov     al, byte ptr [bp+var_4]
+mov     [bx+54BAh], al
+mov     ax, 1Bh
+push    ax
+call    sub_303A9
+push    [bp+arg_2]
+call    sub_2F7E9
+push    ax
+PRINT "You put the %s into the rail car.\n"
+add     sp, 6
+push    [bp+arg_2]
+call    sub_2C902
+loc_5A934:
+retf    6
+
+##### recipe 14
+=== sub_5AE03
+mov     si, [bp+arg_2]
+mov     word_4EB7A, 0
+; QTY(si): cmp     byte ptr [bx+54BAh], 0
+jnz     short loc_5AE3A
+; seg057:0A72 = "There is nothing to unload.\n"
+loc_5AE26:
+push    ax
+call    sub_35778
+mov     ax, 5
+push    ax
+call    sub_303A9
+loc_5AE37:
+jmp     loc_5AF91
+loc_5AE3A:
+; QUAL(si): mov     al, [bx+54BBh]
+push    ax
+call    near ptr sub_598BF
+mov     [bp+var_2], ax
+push    ax
+xor     ax, ax
+push    ax
+mov     ax, 1
+push    ax
+ax = X(si)
+push    ax
+ax = Y(si)
+push    ax
+push    word_41130
+call    sub_2C1FE
+mov     di, ax
+cmp     ax, 0FFFFh
+jnz     short loc_5AE91
+; seg057:22F1 = "Aargh!\n"
+jmp     short loc_5AE26
+loc_5AE91:
+mov     al, [di+3266h]
+and     al, 0DFh
+mov     [di+3266h], al
+cmp     [bp+arg_0], 0FFFFh
+jnz     short loc_5AEAE
+push    [bp+arg_4]
+push    di
+push    [bp+arg_0]
+call    near ptr sub_5A9C5
+jmp     short loc_5AF0A
+loc_5AEAE:
+ax = TYPE([bp+arg_0])
+mov     [bp+var_4], ax
+mov     [bp+var_8], ax
+mov     cx, 4
+mov     bx, 1B19h
+loc_5AEC6:
+mov     ax, cs:[bx]
+cmp     ax, [bp+var_8]
+jz      short loc_5AED4
+inc     bx
+inc     bx
+loop    loc_5AEC6
+jmp     short loc_5AEFF
+loc_5AED4:
+jmp     word ptr cs:[bx+8]
+push    [bp+arg_4]
+push    di
+push    [bp+arg_0]
+call    near ptr sub_5A7BF
+jmp     short loc_5AF0A
+push    [bp+arg_4]
+push    di
+push    [bp+arg_0]
+call    near ptr sub_5ADA9
+jmp     short loc_5AF0A
+push    [bp+arg_4]
+push    di
+push    [bp+arg_0]
+call    near ptr sub_5A93C
+jmp     short loc_5AF0A
+loc_5AEFF:
+push    [bp+arg_4]
+push    di
+push    [bp+arg_0]
+call    near ptr sub_5AAA1
+loc_5AF0A:
+cmp     word_4EB7A, 0
+jz      short loc_5AF1A
+push    di
+call    sub_2C902
+jmp     loc_5AE37
+loc_5AF1A:
+; QTY(si): mov     al, [bx+54BAh]
+mov     ah, 0
+dec     ax
+mov     [bp+var_6], ax
+mov     bx, si
+shl     bx, 1
+mov     al, byte ptr [bp+var_6]
+mov     [bx+54BAh], al
+ax = TYPE(si)
+cmp     ax, 19Ah
+jnz     short loc_5AF91
+cmp     [bp+var_6], 0
+jnz     short loc_5AF66
+ax = TYPE(si)
+dx = FRAME(si)
+and     dx, 1
+jmp     short loc_5AF83
+loc_5AF66:
+ax = TYPE(si)
+dx = FRAME(si)
+and     dx, 1
+inc     dx
+inc     dx
+loc_5AF83:
+mov     cl, 0Ah
+shl     dx, cl
+add     ax, dx
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+loc_5AF91:
+retf    6
+
+##### recipe 15
+=== sub_5AAA1
+mov     di, [bp+arg_2]
+mov     [bp+var_4], 0FFFFh
+mov     [bp+var_6], 0
+ax = X(di)
+mov     [bp+var_E], ax
+ax = Y(di)
+mov     [bp+var_10], ax
+mov     [bp+var_8], 102h
+cmp     [bp+arg_0], 0FFFFh
+jnz     short loc_5AAF9
+push    [bp+arg_4]
+push    di
+push    [bp+arg_0]
+call    near ptr sub_5A9C5
+jmp     loc_5ADA1
+loc_5AAF9:
+cmp     [bp+arg_0], 100h
+jge     short loc_5AB21
+cmp     [bp+arg_0], 0
+jl      short loc_5AB21
+mov     ax, 5
+push    ax
+call    sub_303A9
+; seg057:11D7 = "`Don't bury people on Mars!\n"
+loc_5AB16:
+push    ax
+call    sub_35778
+jmp     loc_5ACE5
+loc_5AB21:
+mov     ax, [bp+arg_4]
+cmp     ax, [bp+arg_0]
+jnz     short loc_5AB3B
+mov     ax, 5
+push    ax
+call    sub_303A9
+; seg057:20EA = "You can't bury something using itself!\n"
+jmp     short loc_5AB16
+loc_5AB3B:
+ax = X([bp+arg_0])
+mov     [bp+var_12], ax
+ax = Y([bp+arg_0])
+mov     [bp+var_14], ax
+mov     ax, 102h
+push    ax
+push    [bp+var_12]
+push    [bp+var_14]
+call    sub_2BA57
+mov     si, ax
+cmp     ax, 0FFFFh
+jnz     short loc_5AB8E
+mov     ax, 0FBh
+push    ax
+push    [bp+var_12]
+push    [bp+var_14]
+call    sub_2BA57
+mov     si, ax
+loc_5AB8E:
+cmp     si, 0FFFFh
+jz      short loc_5ABA6
+mov     ax, 5
+push    ax
+call    sub_303A9
+; seg057:12A3 = "You can't pile any more dirt there.\n"
+jmp     loc_5AB16
+loc_5ABA6:
+mov     ax, 101h
+push    ax
+push    [bp+var_12]
+push    [bp+var_14]
+call    sub_2BA57
+mov     [bp+var_2], ax
+cmp     ax, 0FFFFh
+jnz     short loc_5ABD9
+push    [bp+arg_0]
+call    sub_2F7E9
+push    ax
+PRINT "You must bury the %s in a hole.\n"
+add     sp, 6
+jmp     loc_5ACE5
+loc_5ABD9:
+mov     [bp+var_8], 102h
+mov     [bp+var_C], 0
+mov     ax, 1Bh
+push    ax
+call    sub_303A9
+push    [bp+var_12]
+push    [bp+var_14]
+push    word_41130
+call    sub_2B868
+jmp     short loc_5AC4F
+loc_5ABFD:
+inc     [bp+var_C]
+cmp     si, 100h
+jge     short loc_5AC20
+or      si, si
+jl      short loc_5AC20
+; seg057:11D7 = "`Don't bury people on Mars!\n"
+loc_5AC11:
+push    ax
+call    sub_35778
+mov     [bp+var_6], 1
+jmp     short loc_5AC66
+loc_5AC20:
+ax = TYPE(si)
+mov     [bp+var_A], ax
+cmp     ax, 0FCh
+jnz     short loc_5AC4A
+cmp     [bp+var_4], 0FFFFh
+jz      short loc_5AC42
+; seg057:0B22 = "You can't bury anything here.\n"
+jmp     short loc_5AC11
+loc_5AC42:
+mov     [bp+var_4], si
+mov     [bp+var_8], 0FBh
+loc_5AC4A:
+call    sub_2B3BA
+loc_5AC4F:
+mov     si, ax
+cmp     si, 0FFFFh
+jz      short loc_5AC66
+ax = TYPE(si)
+cmp     ax, 101h
+jnz     short loc_5ABFD
+loc_5AC66:
+cmp     [bp+var_6], 0
+jz      short loc_5AC77
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     short loc_5ACE5
+loc_5AC77:
+push    [bp+var_12]
+push    [bp+var_14]
+push    word_41130
+call    sub_2B868
+jmp     short loc_5ACF3
+loc_5AC88:
+ax = TYPE(si)
+shl     ax, 1
+les     bx, dword_4696E
+add     bx, ax
+mov     ax, es:[bx]
+dx = FRAME(si)
+add     ax, dx
+les     bx, dword_470BA
+add     bx, ax
+mov     al, es:[bx]
+mov     ah, 0
+test    ax, 10h
+jnz     short loc_5ACEE
+push    si
+push    [bp+var_2]
+mov     ax, 8
+push    ax
+call    sub_2D42C
+cmp     ax, 0FFFFh
+jnz     short loc_5ACEE
+PRINT "Aargh!\n"
+push    [bp+var_2]
+call    sub_14D04
+loc_5ACE5:
+mov     word_4EB7A, 1
+jmp     loc_5ADA1
+loc_5ACEE:
+call    sub_2B3BA
+loc_5ACF3:
+mov     si, ax
+cmp     si, 0FFFFh
+jz      short loc_5AD0D
+ax = TYPE(si)
+cmp     ax, 101h
+jz      short loc_5AD0D
+jmp     loc_5AC88
+loc_5AD0D:
+push    di
+push    [bp+var_12]
+push    [bp+var_14]
+push    word_41130
+call    sub_2CFE2
+ax = FRAME(di)
+or      ax, ax
+jz      short loc_5AD40
+ax = TYPE(di)
+mov     bx, di
+shl     bx, 1
+mov     [bx-633Ch], ax
+loc_5AD40:
+mov     al, [di+3266h]
+and     al, 0DFh
+mov     [di+3266h], al
+mov     ax, 1Bh
+push    ax
+call    sub_303A9
+cmp     [bp+var_8], 0FBh
+jnz     short loc_5AD79
+ax = WORD(di)
+and     ax, 0FC00h
+add     ax, 0FBh
+mov     bx, di
+shl     bx, 1
+mov     [bx-633Ch], ax
+; seg057:0B41 = "You planted the Martian seed.\n"
+jmp     short loc_5AD8F
+loc_5AD79:
+cmp     [bp+var_C], 1
+jnz     short loc_5AD88
+; seg057:19A0 = "It is covered with dirt.\n"
+jmp     short loc_5AD8F
+loc_5AD88:
+; seg057:19BA = "They have been covered with dirt.\n"
+loc_5AD8F:
+push    ax
+call    sub_35778
+push    [bp+var_E]
+push    [bp+var_10]
+call    near ptr sub_5A35B
+loc_5ADA1:
+retf    6
+
+##### recipe 16
+=== sub_5ADA9
+ax = TYPE([bp+arg_2])
+mov     si, ax
+ax = FRAME([bp+arg_0])
+mov     di, ax
+mov     ax, 1Bh
+push    ax
+call    sub_303A9
+push    [bp+arg_2]
+call    sub_2C902
+cmp     si, 1BCh
+jz      short loc_5ADF3
+PRINT "It has no effect.\n"
+jmp     short loc_5ADFD
+loc_5ADF3:
+cmp     di, 4
+jge     short loc_5ADFD
+call    sub_3F540
+loc_5ADFD:
+retf    6
+
+##### recipe 17
+=== sub_59E49
+mov     si, [bp+arg_2]
+ax = FRAME(si)
+cmp     ax, 2
+jnz     short loc_59E89
+ax = TYPE(si)
+add     ax, 400h
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+mov     ax, 1Fh
+push    ax
+call    sub_303A9
+; seg057:0BD9 = "You pried the nails out of the crate.\n"
+jmp     short loc_59EDA
+loc_59E89:
+ax = FRAME(si)
+cmp     ax, 1
+jnz     short loc_59ED3
+ax = TYPE([bp+arg_4])
+cmp     ax, 111h
+jnz     short loc_59ED3
+ax = TYPE(si)
+add     ax, 800h
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+mov     ax, 20h
+push    ax
+call    sub_303A9
+; seg057:1FFC = "You nail the crate shut.\n"
+jmp     short loc_59EDA
+loc_59ED3:
+; seg057:2A4 = "It has no effect.\n"
+loc_59EDA:
+push    ax
+call    sub_35778
+retf    6
+
+##### recipe 18
+=== sub_59EE7
+mov     si, [bp+arg_2]
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     di, ax
+cmp     ax, 1
+jz      short loc_59F1D
+push    ax
+call    sub_2F7E9
+push    ax
+PRINT "%s is not strong enough.\n"
+add     sp, 6
+jmp     loc_59FD1
+loc_59F1D:
+mov     al, byte_46986
+mov     ah, 0
+test    ax, 10h
+jnz     short loc_59F42
+mov     al, byte_46986
+or      al, 4
+mov     byte_46986, al
+mov     ax, 1
+push    ax
+mov     ax, 10h
+push    ax
+xor     ax, ax
+push    ax
+call    sub_3F864
+jmp     loc_59FD1
+loc_59F42:
+call    sub_3F78E
+mov     al, byte_46988
+or      al, 48h
+mov     byte_46988, al
+mov     ax, 1
+push    ax
+mov     ax, 12h
+push    ax
+xor     ax, ax
+push    ax
+call    sub_3F864
+ax = WORD(si)
+and     ax, 0FC00h
+add     ax, 1ACh
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+mov     al, byte_46986
+or      al, 20h
+mov     byte_46986, al
+ax = TYPE(si)
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+push    si
+ax = X(si)
+inc     ax
+and     ax, 3FFh
+push    ax
+ax = Y(si)
+inc     ax
+and     ax, 3FFh
+push    ax
+push    word_41130
+call    sub_2CFE2
+mov     ax, 1
+push    ax
+call    sub_22B27
+loc_59FD1:
+retf    6
+
+##### recipe 19
+=== sub_5D5A7
+mov     di, [bp+arg_2]
+ax = TYPE(di)
+mov     si, ax
+cmp     ax, 84h
+jnz     short loc_5D5C9
+push    di
+call    sub_3F66E
+jmp     short loc_5D613
+loc_5D5C9:
+push    si
+call    sub_202F7
+or      ax, ax
+jz      short loc_5D5FB
+push    di
+call    sub_2F7E9
+push    ax
+PRINT "\nYou incinerated the %s.\n"
+add     sp, 6
+mov     ax, 9
+push    ax
+call    sub_303A9
+push    di
+call    sub_2C902
+jmp     short loc_5D613
+loc_5D5FB:
+PRINT "It has no effect.\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+loc_5D613:
+cmp     word_4165C, 92h
+jnz     short loc_5D620
+call    sub_315A4
+loc_5D620:
+xor     ax, ax
+push    ax
+call    sub_22B27
+retf    6
+
+##### recipe 20
+=== sub_5A01D
+mov     si, [bp+arg_2]
+ax = FRAME(si)
+cmp     ax, 3
+jz      short loc_5A039
+jmp     loc_5A14D
+loc_5A039:
+ax = TYPE(si)
+add     ax, 1000h
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+mov     ax, word_4115A
+and     ax, 10h
+or      ax, 0
+jz      short loc_5A0D4
+mov     ax, 56h
+push    ax
+ax = X(si)
+push    ax
+ax = Y(si)
+push    ax
+push    word_41130
+call    sub_2CFE2
+call    sub_2EEA8
+mov     word_409C8, 1
+call    sub_22301
+mov     ax, 3
+mov     dx, 0A2DCh
+push    ax
+push    dx
+call    sub_36E34
+mov     al, byte_469CC
+or      al, 88h
+mov     byte_469CC, al
+mov     ax, 1
+push    ax
+mov     ax, 56h
+push    ax
+xor     ax, ax
+push    ax
+call    sub_3F864
+mov     ax, 56h
+push    ax
+call    sub_3F615
+call    sub_3F61A
+jmp     short loc_5A13B
+loc_5A0D4:
+mov     ax, 123h
+push    ax
+xor     ax, ax
+push    ax
+mov     ax, 1
+push    ax
+ax = X(si)
+push    ax
+ax = Y(si)
+push    ax
+push    word_41130
+call    sub_2C1FE
+mov     di, ax
+PRINT "An unconscious Martian falls out of the pod.\n"
+mov     al, [di+3266h]
+and     al, 0DFh
+mov     [di+3266h], al
+mov     al, [si+3266h]
+or      al, 20h
+mov     [si+3266h], al
+mov     al, byte_469D7
+or      al, 8
+mov     byte_469D7, al
+loc_5A13B:
+call    sub_21882
+mov     word_409C8, 1
+call    sub_22301
+jmp     short loc_5A176
+loc_5A14D:
+ax = FRAME(si)
+cmp     ax, 3
+jnb     short loc_5A167
+; seg057:0C00 = "It is not fully grown.\n"
+jmp     short loc_5A16E
+loc_5A167:
+; seg057:1899 = "The pod is already open.\n"
+loc_5A16E:
+push    ax
+call    sub_35778
+loc_5A176:
+retf    6
+
+##### recipe 21
+=== sub_5A17C
+mov     si, [bp+arg_2]
+ax = FRAME(si)
+or      ax, ax
+jz      short loc_5A197
+jmp     loc_5A269
+loc_5A197:
+mov     ax, 20h
+push    ax
+call    sub_303A9
+ax = TYPE(si)
+add     ax, 400h
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+test    byte ptr [si+3266h], 18h
+jnz     short loc_5A226
+mov     ax, 83h
+push    ax
+xor     ax, ax
+push    ax
+mov     ax, 1
+push    ax
+mov     ax, 32h
+push    ax
+call    sub_36D07
+push    ax
+mov     ax, 1
+push    ax
+mov     ax, 32h
+push    ax
+call    sub_36D07
+pop     dx
+add     dx, ax
+push    dx
+ax = X(si)
+push    ax
+ax = Y(si)
+push    ax
+mov     ax, si
+mov     dx, 3
+imul    dx
+mov     bx, ax
+mov     al, [bx+78B0h]
+mov     ah, 0
+mov     cl, 4
+sar     ax, cl
+push    ax
+call    sub_2C1FE
+mov     di, ax
+jmp     short loc_5A278
+loc_5A226:
+mov     ax, 83h
+push    ax
+mov     al, [si+3266h]
+mov     ah, 0
+and     ax, 18h
+push    ax
+mov     ax, 1
+push    ax
+mov     ax, 32h
+push    ax
+call    sub_36D07
+push    ax
+mov     ax, 1
+push    ax
+mov     ax, 32h
+push    ax
+call    sub_36D07
+pop     dx
+add     dx, ax
+push    dx
+mov     ax, si
+mov     dx, 3
+imul    dx
+mov     bx, ax
+push    word ptr [bx+78AEh]
+call    sub_2C37E
+mov     di, ax
+jmp     short loc_5A278
+loc_5A269:
+PRINT "It has no effect.\n"
+loc_5A278:
+retf    6
+
+##### recipe 23
+=== sub_5C7C4
+mov     si, [bp+arg_4]
+mov     al, byte_469EC
+mov     ah, 0
+test    ax, 20h
+jz      short loc_5C7E0
+mov     al, byte_469EC
+mov     ah, 0
+test    ax, 40h
+jnz     short loc_5C7FD
+loc_5C7E0:
+mov     ax, word_4115A
+and     ax, 10h
+or      ax, 0
+jnz     short loc_5C7FD
+PRINT "the lever seems stuck.\n"
+jmp     loc_5C8D3
+loc_5C7FD:
+mov     word_4165A, 0
+ax = X(si)
+sub     ax, word_4112C
+push    ax
+call    sub_26441
+mov     cl, 4
+shl     al, cl
+add     al, 58h
+mov     byte_41666, al
+ax = Y(si)
+sub     ax, word_4112E
+push    ax
+call    sub_26441
+mov     cl, 4
+shl     al, cl
+add     al, 58h
+mov     byte_41667, al
+PRINT "Push lever to "
+call    sub_34C4C
+mov     di, ax
+mov     ax, 11h
+push    ax
+call    sub_303A9
+mov     byte_41666, 58h
+mov     byte_41667, 58h
+call    sub_32571
+cmp     di, 80h
+jz      short loc_5C89D
+PRINT "center.\n"
+ax = TYPE(si)
+add     ax, 1000h
+jmp     short loc_5C8CB
+loc_5C89D:
+mov     bx, word_4E622
+shl     bx, 1
+push    word ptr [bx+0BEh]
+PRINT "%s.\n"
+add     sp, 6
+ax = TYPE(si)
+mov     dx, word_4E622
+sar     dx, 1
+mov     cl, 0Ah
+shl     dx, cl
+add     ax, dx
+loc_5C8CB:
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+loc_5C8D3:
+retf    6
+
+##### recipe 24
+=== sub_52F40
+mov     si, [bp+arg_4]
+; QUAL(si): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_2], ax
+mov     di, ax
+mov     cx, 5
+mov     bx, 62h
+loc_52F5F:
+cmp     cs:[bx], di
+jz      short loc_52F6A
+inc     bx
+inc     bx
+loop    loc_52F5F
+jmp     short loc_52F8E
+loc_52F6A:
+jmp     word ptr cs:[bx+0Ah]
+push    si
+nop
+call    near ptr sub_52FB6
+loc_52F74:
+jmp     short loc_52F9A
+push    si
+call    sub_3F5A0
+jmp     short loc_52F74
+push    si
+nop
+call    near ptr sub_5328B
+jmp     short loc_52F74
+push    si
+nop
+call    near ptr sub_53496
+jmp     short loc_52F74
+loc_52F8E:
+PRINT "What an odd lever!\n"
+loc_52F9A:
+retf    6
+
+##### recipe 25
+=== sub_5B993
+mov     [bp+var_C], 0
+PRINT "\nFire!\n"
+mov     ax, 30h
+push    ax
+call    sub_303A9
+ax = FRAME([bp+arg_4])
+shl     ax, 1
+mov     di, ax
+ax = X([bp+arg_4])
+push    ax
+mov     al, [di+0AEh]
+cbw
+pop     dx
+add     dx, ax
+and     dx, 3FFh
+mov     [bp+var_2], dx
+ax = Y([bp+arg_4])
+push    ax
+mov     al, [di+0B6h]
+cbw
+pop     dx
+add     dx, ax
+and     dx, 3FFh
+mov     [bp+var_4], dx
+xor     si, si
+jmp     short loc_5BA48
+loc_5BA13:
+xor     ax, ax
+push    ax
+push    [bp+var_2]
+push    [bp+var_4]
+call    sub_2C111
+or      ax, ax
+jge     short loc_5BA4D
+mov     al, [di+0AEh]
+cbw
+mov     dx, [bp+var_2]
+add     dx, ax
+and     dx, 3FFh
+mov     [bp+var_2], dx
+mov     al, [di+0B6h]
+cbw
+mov     dx, [bp+var_4]
+add     dx, ax
+and     dx, 3FFh
+mov     [bp+var_4], dx
+inc     si
+loc_5BA48:
+cmp     si, 6
+jl      short loc_5BA13
+loc_5BA4D:
+push    [bp+arg_4]
+lea     ax, [bp+var_2]
+push    ax
+lea     ax, [bp+var_4]
+push    ax
+mov     ax, 6
+push    ax
+mov     ax, 105h
+push    ax
+call    sub_18A0C
+or      ax, ax
+jz      short loc_5BA6C
+jmp     loc_5BB22
+loc_5BA6C:
+push    [bp+var_2]
+push    [bp+var_4]
+push    word_41130
+call    sub_2B868
+jmp     short loc_5BAE2
+loc_5BA7D:
+ax = TYPE(si)
+cmp     ax, 0ADh
+jnz     short loc_5BADD
+ax = FRAME(si)
+mov     [bp+var_E], ax
+cmp     ax, 4
+jge     short loc_5BADD
+; QUAL([bp+arg_4]): cmp     byte ptr [bx+54BBh], 0
+jnz     short loc_5BAB4
+mov     [bp+var_C], 1
+jmp     short loc_5BADD
+loc_5BAB4:
+ax = TYPE(si)
+mov     dx, [bp+var_E]
+inc     dx
+inc     dx
+mov     cl, 0Ah
+shl     dx, cl
+add     ax, dx
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+cmp     [bp+var_E], 1
+jle     short loc_5BADD
+mov     [bp+var_C], 0FFFFh
+loc_5BADD:
+call    sub_2B3BA
+loc_5BAE2:
+mov     si, ax
+or      si, si
+jge     short loc_5BA7D
+cmp     [bp+var_C], 0FFFFh
+jz      short loc_5BB22
+mov     bx, di
+add     bx, 4
+and     bx, 7
+mov     al, [bx+0AEh]
+cbw
+mov     dx, [bp+var_2]
+add     dx, ax
+and     dx, 3FFh
+mov     [bp+var_2], dx
+mov     bx, di
+add     bx, 4
+and     bx, 7
+mov     al, [bx+0B6h]
+cbw
+mov     dx, [bp+var_4]
+add     dx, ax
+and     dx, 3FFh
+mov     [bp+var_4], dx
+loc_5BB22:
+mov     ax, 0Bh
+push    ax
+call    sub_303A9
+push    [bp+var_2]
+push    [bp+var_4]
+mov     ax, 107h
+push    ax
+call    sub_1F08A
+mov     word ptr [bp+var_8], ax
+mov     word ptr [bp+var_8+2], dx
+jmp     short loc_5BBB0
+loc_5BB42:
+les     bx, [bp+var_8]
+ax = TYPE(es:[bx])
+mov     [bp+var_A], ax
+mov     bx, word ptr [bp+var_8]
+cmp     word ptr es:[bx], 100h
+jge     short loc_5BB64
+cmp     word ptr es:[bx], 0
+jge     short loc_5BB7F
+loc_5BB64:
+push    [bp+var_A]
+call    sub_2043E
+or      ax, ax
+jz      short loc_5BBAC
+les     bx, [bp+var_8]
+; QTY(es:[bx]): cmp     byte ptr [bx+54BAh], 0
+jz      short loc_5BBAC
+loc_5BB7F:
+les     bx, [bp+var_8]
+push    word ptr es:[bx]
+mov     ax, 1
+push    ax
+mov     ax, 0Fh
+push    ax
+call    sub_36D07
+push    ax
+mov     ax, 1
+push    ax
+mov     ax, 0Fh
+push    ax
+call    sub_36D07
+pop     dx
+add     dx, ax
+push    dx
+xor     ax, ax
+push    ax
+call    sub_19A74
+loc_5BBAC:
+add     word ptr [bp+var_8], 2
+loc_5BBB0:
+les     bx, [bp+var_8]
+cmp     word ptr es:[bx], 0
+jge     short loc_5BB42
+cmp     [bp+var_C], 0
+jz      short loc_5BBFF
+cmp     [bp+var_C], 0
+jle     short loc_5BBDF
+PRINT "Splat! There is no effect.\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     short loc_5BBFF
+loc_5BBDF:
+PRINT "Kaboom! You blew the door down!\n"
+mov     ax, 4
+push    ax
+call    sub_303A9
+mov     al, byte_469B7
+or      al, 4
+mov     byte_469B7, al
+loc_5BBFF:
+retf    6
+
+##### recipe 26
+=== sub_5E988
+mov     di, [bp+arg_4]
+ax = TYPE(di)
+sub     ax, 49h
+mov     [bp+var_2], ax
+test    byte ptr [di+3266h], 18h
+jz      short loc_5E9B0
+mov     ax, 1
+jmp     short loc_5E9B2
+loc_5E9B0:
+xor     ax, ax
+loc_5E9B2:
+mov     [bp+var_4], ax
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+cmp     byte ptr [bx+4EA4h], 6
+jnz     short loc_5E9D5
+; seg057:1F26 = "A mechanical person can't eat berries!\n"
+loc_5E9CA:
+push    ax
+call    sub_35778
+jmp     loc_5EC6C
+loc_5E9D5:
+mov     ax, 32h
+push    ax
+call    sub_303A9
+mov     bx, [bp+var_2]
+cmp     bx, 3
+ja      short def_5E9E8
+shl     bx, 1
+jmp     cs:jpt_5E9E8[bx]
+loc_5E9ED:
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+shl     ax, 1
+mov     bx, ax
+mov     al, [bx+16B0h]
+and     ax, 0Fh
+or      ax, ax
+jz      short loc_5EA23
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+les     bx, dword_44966
+add     bx, ax
+mov     al, es:[bx]
+mov     ah, 0
+jmp     short loc_5EA25
+loc_5EA23:
+xor     ax, ax
+loc_5EA25:
+mov     si, ax
+jmp     short loc_5EA62
+loc_5EA29:
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+shl     ax, 1
+mov     bx, ax
+mov     al, [bx+16B0h]
+mov     cl, 4
+shr     ax, cl
+jmp     short loc_5EA59
+loc_5EA44:
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+shl     ax, 1
+mov     bx, ax
+mov     al, [bx+16B1h]
+loc_5EA59:
+and     ax, 0Fh
+jmp     short loc_5EA25
+loc_5EA5E:
+jmp     short $+2
+def_5E9E8:
+xor     si, si
+loc_5EA62:
+or      si, si
+jz      short loc_5EA6B
+mov     ax, 29AFh
+jmp     short loc_5EA6E
+loc_5EA6B:
+mov     ax, 29C2h
+loc_5EA6E:
+push    ax
+PRINT "You eat a Martian berry. You feel %s strange "
+add     sp, 6
+mov     bx, [bp+var_2]
+cmp     bx, 3
+jbe     short loc_5EA8A
+jmp     def_5EA8C
+loc_5EA8A:
+shl     bx, 1
+jmp     cs:jpt_5EA8C[bx]
+loc_5EA91:
+PRINT "relationship with things around you.\n"
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+shl     ax, 1
+mov     bx, ax
+mov     al, [bx+16B0h]
+and     ax, 0Fh
+inc     ax
+and     ax, 0Fh
+mov     dl, byte_4112A
+mov     dh, 0
+mov     bx, dx
+mov     dl, [bx+4EA4h]
+mov     dh, 0
+shl     dx, 1
+mov     bx, dx
+and     byte ptr [bx+16B0h], 0F0h
+mov     dx, ax
+loc_5EAD5:
+or      [bx+16B0h], al
+loc_5EAD9:
+mov     si, dx
+jmp     loc_5EC1A
+loc_5EADE:
+PRINT "sensitivity to the feelings of objects around you.\n"
+or      si, si
+jnz     short loc_5EAF7
+mov     word_40EE1, 1
+loc_5EAF7:
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+shl     ax, 1
+mov     bx, ax
+mov     al, [bx+16B0h]
+mov     cl, 4
+shr     ax, cl
+and     ax, 0Fh
+inc     ax
+and     ax, 0Fh
+mov     dl, byte_4112A
+mov     dh, 0
+mov     bx, dx
+mov     dl, [bx+4EA4h]
+mov     dh, 0
+shl     dx, 1
+mov     bx, dx
+and     byte ptr [bx+16B0h], 0Fh
+mov     dx, ax
+shl     ax, cl
+jmp     short loc_5EAD5
+loc_5EB34:
+PRINT "sense of your spatial location.\n"
+or      si, si
+jnz     short loc_5EB4D
+mov     word_40EE1, 1
+loc_5EB4D:
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+shl     ax, 1
+mov     bx, ax
+mov     al, [bx+16B1h]
+and     ax, 0Fh
+inc     ax
+and     ax, 0Fh
+mov     dl, byte_4112A
+mov     dh, 0
+mov     bx, dx
+mov     dl, [bx+4EA4h]
+mov     dh, 0
+shl     dx, 1
+mov     bx, dx
+and     byte ptr [bx+16B1h], 0F0h
+mov     dx, ax
+or      [bx+16B1h], al
+jmp     loc_5EAD9
+loc_5EB89:
+PRINT "sudden flush, dizziness, and nausea.\n"
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+push    ax
+mov     ax, 5
+push    ax
+mov     ax, 14h
+push    ax
+call    sub_36D07
+push    ax
+mov     ax, 5
+push    ax
+mov     ax, 14h
+push    ax
+call    sub_36D07
+pop     dx
+add     dx, ax
+push    dx
+mov     ax, 2
+push    ax
+call    sub_19A74
+mov     ax, 1
+push    ax
+mov     ax, 2
+push    ax
+call    sub_36D07
+mov     dl, byte_41136
+add     dl, al
+mov     byte_41136, dl
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+6CBAh]
+and     al, 0F7h
+mov     dl, byte_4112A
+mov     dh, 0
+mov     bx, dx
+mov     dl, [bx+4EA4h]
+mov     dh, 0
+mov     bx, dx
+mov     [bx+6CBAh], al
+jmp     short loc_5EC1A
+def_5EA8C:
+; seg057:904 = "feelings, like the berries were really odd.\n"
+jmp     loc_5E9CA
+loc_5EC1A:
+; QTY(di): cmp     byte ptr [bx+54BAh], 1
+jbe     short loc_5EC39
+; QTY(di): mov     al, [bx+54BAh]
+add     al, 0FFh
+; QTY(di): mov     [bx+54BAh], al
+jmp     short loc_5EC3F
+loc_5EC39:
+push    di
+call    sub_2C902
+loc_5EC3F:
+cmp     [bp+var_4], 0
+jnz     short loc_5EC50
+mov     ax, word_4115A
+and     ax, 10h
+or      ax, 0
+jz      short loc_5EC59
+loc_5EC50:
+push    word_41654
+call    sub_3195D
+loc_5EC59:
+cmp     word_4165C, 91h
+jnz     short loc_5EC6C
+mov     al, byte_4153A
+mov     ah, 0
+push    ax
+call    sub_3080D
+loc_5EC6C:
+retf    6
+
+##### recipe 27
+=== sub_5EC84
+mov     di, [bp+arg_4]
+test    byte ptr [di+3266h], 18h
+jz      short loc_5EC9A
+mov     ax, 1
+jmp     short loc_5EC9C
+loc_5EC9A:
+xor     ax, ax
+loc_5EC9C:
+mov     [bp+var_2], ax
+mov     al, byte_41154
+cbw
+or      ax, ax
+jnz     short loc_5ECC2
+PRINT "That would be a waste outside of combat.\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     loc_5ED6E
+loc_5ECC2:
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     si, ax
+mov     al, [si+3266h]
+mov     ah, 0
+test    ax, 80h
+jnz     short loc_5ED03
+mov     al, byte_4112A
+mov     ah, 0
+mov     dx, 0Eh
+imul    dx
+add     ax, 50CEh
+push    ax
+PRINT "%s enters a battle frenzy!\n"
+add     sp, 6
+mov     ax, 32h
+push    ax
+call    sub_303A9
+loc_5ED03:
+mov     al, [si+3266h]
+or      al, 80h
+mov     [si+3266h], al
+; QTY(di): cmp     byte ptr [bx+54BAh], 1
+jbe     short loc_5ED2C
+; QTY(di): mov     al, [bx+54BAh]
+add     al, 0FFh
+; QTY(di): mov     [bx+54BAh], al
+jmp     short loc_5ED32
+loc_5ED2C:
+push    di
+call    sub_2C902
+loc_5ED32:
+cmp     [bp+var_2], 0
+jz      short loc_5ED3D
+call    sub_315A4
+loc_5ED3D:
+cmp     word_4165C, 91h
+jnz     short loc_5ED52
+mov     al, byte_4153A
+mov     ah, 0
+push    ax
+call    sub_3080D
+jmp     short loc_5ED6E
+loc_5ED52:
+cmp     word_4165C, 90h
+jnz     short loc_5ED6E
+mov     al, byte_4112A
+mov     ah, 0
+cmp     ax, word_41654
+jnz     short loc_5ED6E
+push    word_41654
+call    sub_30B61
+loc_5ED6E:
+retf    6
+
+##### recipe 28
+=== sub_5D8CA
+mov     si, 0FFFFh
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     di, ax
+cmp     si, 0FFFFh
+jnz     short loc_5D8F2
+push    ax
+mov     ax, 6Ch
+push    ax
+call    sub_2BC7E
+mov     si, ax
+loc_5D8F2:
+cmp     si, 0FFFFh
+jnz     short loc_5D903
+push    di
+mov     ax, 6Bh
+push    ax
+call    sub_2BC7E
+mov     si, ax
+loc_5D903:
+cmp     si, 0FFFFh
+jnz     short loc_5D92C
+push    [bp+arg_4]
+call    sub_2F7E9
+push    ax
+PRINT "\nNothing to light the %s with.\n"
+add     sp, 6
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     short loc_5D938
+loc_5D92C:
+push    si
+push    [bp+arg_4]
+mov     ax, 0FFFFh
+push    ax
+call    near ptr sub_5D62E
+loc_5D938:
+retf    6
+
+##### recipe 29
+=== sub_5D62E
+mov     si, [bp+arg_2]
+ax = TYPE(si)
+mov     di, ax
+test    byte ptr [si+3266h], 18h
+jnz     short loc_5D650
+jmp     loc_5D6F9
+loc_5D650:
+mov     al, [si+3266h]
+mov     ah, 0
+and     ax, 18h
+cmp     ax, 18h
+jnz     short loc_5D661
+jmp     loc_5D6EA
+loc_5D661:
+cmp     di, 6Dh
+jnz     short loc_5D6D3
+; QTY(si): mov     al, [bx+54BAh]
+mov     ah, 0
+mov     [bp+var_8], ax
+mov     [bp+var_6], si
+mov     ax, 6Dh
+push    ax
+mov     ax, 18h
+push    ax
+mov     ax, 1
+push    ax
+mov     bx, word_41654
+mov     al, [bx+4EA4h]
+mov     ah, 0
+push    ax
+call    sub_2C37E
+mov     si, ax
+or      ax, ax
+jge     short loc_5D6B3
+loc_5D698:
+; seg057:449 = "\nYour hands are full.\n"
+loc_5D69F:
+push    ax
+call    sub_35778
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     loc_5D8B0
+loc_5D6B3:
+cmp     [bp+var_8], 1
+jle     short loc_5D6C9
+mov     bx, [bp+var_6]
+shl     bx, 1
+mov     al, byte ptr [bp+var_8]
+add     al, 0FFh
+mov     [bx+54BAh], al
+jmp     short loc_5D6EA
+loc_5D6C9:
+push    [bp+var_6]
+call    sub_2C902
+jmp     short loc_5D6EA
+loc_5D6D3:
+mov     word_4E67E, si
+call    sub_31E9C
+cmp     word_4E5B8, si
+jz      short loc_5D6EA
+cmp     word_4E5BE, si
+jz      short loc_5D6EA
+jmp     short loc_5D698
+loc_5D6EA:
+mov     ax, si
+mov     dx, 3
+imul    dx
+mov     bx, ax
+mov     ax, [bx+78AEh]
+jmp     short loc_5D706
+loc_5D6F9:
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+loc_5D706:
+mov     [bp+var_2], ax
+ax = TYPE([bp+arg_4])
+cmp     ax, 6Bh
+jz      short loc_5D724
+push    [bp+arg_4]
+call    sub_2F7E9
+jmp     short loc_5D727
+loc_5D724:
+mov     ax, 29A2h
+loc_5D727:
+push    ax
+PRINT "`(using %s)"
+add     sp, 6
+push    di
+call    sub_20284
+or      ax, ax
+jnz     short loc_5D745
+jmp     loc_5D843
+loc_5D745:
+mov     bx, si
+shl     bx, 1
+mov     bx, [bx-633Ch]
+and     bx, 3FFh
+sub     bx, 6Dh
+cmp     bx, 8
+ja      short def_5D75B
+shl     bx, 1
+jmp     cs:jpt_5D75B[bx]
+loc_5D760:
+mov     [bp+var_A], 6Eh
+jmp     short loc_5D791
+loc_5D767:
+mov     [bp+var_A], 70h
+jmp     short loc_5D791
+loc_5D76E:
+mov     [bp+var_A], 76h
+jmp     short loc_5D791
+loc_5D775:
+mov     [bp+var_A], 72h
+jmp     short loc_5D791
+loc_5D77C:
+mov     [bp+var_A], 74h
+jmp     short loc_5D791
+def_5D75B:
+ax = TYPE(si)
+mov     [bp+var_A], ax
+loc_5D791:
+; QUAL(si): cmp     byte ptr [bx+54BBh], 0
+jz      short loc_5D79F
+jmp     loc_5D82D
+loc_5D79F:
+cmp     di, 73h
+jz      short loc_5D7A9
+cmp     di, 75h
+jnz     short loc_5D80D
+loc_5D7A9:
+push    [bp+var_2]
+mov     ax, 7Ch
+push    ax
+call    sub_2BC7E
+mov     [bp+var_4], ax
+cmp     ax, 0FFFFh
+jnz     short loc_5D7C7
+; seg057:435 = "\nThere is no fuel.\n"
+jmp     loc_5D69F
+loc_5D7C7:
+; QTY([bp+var_4]): mov     al, [bx+54BAh]
+mov     ah, 0
+mov     [bp+var_8], ax
+cmp     ax, 1
+jle     short loc_5D7EA
+mov     bx, [bp+var_4]
+shl     bx, 1
+mov     al, byte ptr [bp+var_8]
+add     al, 0FFh
+mov     [bx+54BAh], al
+jmp     short loc_5D7F2
+loc_5D7EA:
+push    [bp+var_4]
+call    sub_2C902
+loc_5D7F2:
+cmp     di, 73h
+jnz     short loc_5D802
+; QUAL(si): mov     byte ptr [bx+54BBh], 0FFh
+jmp     short loc_5D82D
+loc_5D802:
+; QUAL(si): mov     byte ptr [bx+54BBh], 0B4h
+jmp     short loc_5D82D
+loc_5D80D:
+cmp     di, 6Fh
+jnz     short loc_5D814
+jmp     short loc_5D819
+loc_5D814:
+cmp     di, 71h
+jnz     short loc_5D824
+loc_5D819:
+; QUAL(si): mov     byte ptr [bx+54BBh], 64h
+jmp     short loc_5D82D
+loc_5D824:
+; QUAL(si): mov     byte ptr [bx+54BBh], 0B4h
+loc_5D82D:
+ax = WORD(si)
+and     ax, 0FC00h
+add     ax, [bp+var_A]
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+loc_5D843:
+ax = TYPE([bp+arg_4])
+cmp     ax, 6Bh
+jnz     short loc_5D87F
+; QTY([bp+arg_4]): mov     al, [bx+54BAh]
+mov     ah, 0
+mov     [bp+var_8], ax
+cmp     ax, 1
+jle     short loc_5D877
+mov     bx, [bp+arg_4]
+shl     bx, 1
+mov     al, byte ptr [bp+var_8]
+add     al, 0FFh
+mov     [bx+54BAh], al
+jmp     short loc_5D87F
+loc_5D877:
+push    [bp+arg_4]
+call    sub_2C902
+loc_5D87F:
+mov     al, byte_4112B
+cbw
+mov     [bp+var_8], ax
+mov     byte_4112B, 7
+call    sub_21882
+call    sub_22301
+mov     al, byte ptr [bp+var_8]
+mov     byte_4112B, al
+xor     ax, ax
+push    ax
+call    sub_22B27
+cmp     word_4165C, 92h
+jnz     short loc_5D8B0
+call    sub_315A4
+loc_5D8B0:
+retf    6
+
+##### recipe 30
+=== sub_5D93E
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     [bp+var_2], ax
+ax = TYPE([bp+arg_2])
+mov     si, ax
+; QUAL([bp+arg_2]): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     di, ax
+cmp     si, 75h
+jz      short loc_5D97B
+cmp     si, 76h
+jnz     short loc_5D980
+loc_5D97B:
+cmp     di, 7Eh
+jge     short loc_5D990
+loc_5D980:
+cmp     si, 73h
+jz      short loc_5D98A
+cmp     si, 74h
+jnz     short loc_5D9AA
+loc_5D98A:
+cmp     di, 0B2h
+jl      short loc_5D9AA
+loc_5D990:
+PRINT "\nIt's already full.\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     short loc_5DA0A
+loc_5D9AA:
+; QTY([bp+arg_4]): mov     al, [bx+54BAh]
+mov     ah, 0
+mov     [bp+var_4], ax
+cmp     ax, 1
+jle     short loc_5D9CD
+mov     bx, [bp+arg_4]
+shl     bx, 1
+mov     al, byte ptr [bp+var_4]
+add     al, 0FFh
+mov     [bx+54BAh], al
+jmp     short loc_5D9D5
+loc_5D9CD:
+push    [bp+arg_4]
+call    sub_2C902
+loc_5D9D5:
+cmp     si, 75h
+jz      short loc_5D9DF
+cmp     si, 76h
+jnz     short loc_5D9EB
+loc_5D9DF:
+; QUAL([bp+arg_2]): mov     byte ptr [bx+54BBh], 0B4h
+jmp     short loc_5D9F5
+loc_5D9EB:
+; QUAL([bp+arg_2]): mov     byte ptr [bx+54BBh], 0FFh
+loc_5D9F5:
+cmp     word_4165C, 92h
+jnz     short loc_5DA02
+call    sub_315A4
+loc_5DA02:
+xor     ax, ax
+push    ax
+call    sub_22B27
+loc_5DA0A:
+retf    6
+
+##### recipe 31
+=== sub_5DA12
+mov     di, 0FFFFh
+mov     [bp+var_2], 0FFFFh
+mov     [bp+var_4], 0FFFFh
+ax = FRAME([bp+arg_4])
+or      ax, ax
+jz      short loc_5DA3C
+xor     ax, ax
+jmp     short loc_5DA3F
+loc_5DA3C:
+mov     ax, 1
+loc_5DA3F:
+mov     si, ax
+; QUAL([bp+arg_4]): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_C], ax
+ax = X([bp+arg_4])
+dec     ax
+and     ax, 3FFh
+mov     [bp+var_8], ax
+ax = Y([bp+arg_4])
+dec     ax
+and     ax, 3FFh
+mov     [bp+var_A], ax
+push    [bp+var_8]
+push    ax
+push    word_41130
+call    sub_2B868
+jmp     short loc_5DAB9
+loc_5DA92:
+ax = TYPE(di)
+mov     [bp+var_6], ax
+cmp     ax, 19Dh
+jnz     short loc_5DAAA
+mov     [bp+var_2], di
+jmp     short loc_5DAB4
+loc_5DAAA:
+cmp     [bp+var_6], 19Ah
+jnz     short loc_5DAB4
+mov     [bp+var_4], di
+loc_5DAB4:
+call    sub_2B3BA
+loc_5DAB9:
+mov     di, ax
+cmp     di, 0FFFFh
+jnz     short loc_5DA92
+cmp     [bp+var_2], 0FFFFh
+jnz     short loc_5DAE1
+PRINT "It has no effect.\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     loc_5DB71
+loc_5DAE1:
+ax = TYPE([bp+arg_4])
+mov     dx, si
+mov     cl, 0Ah
+shl     dx, cl
+add     ax, dx
+mov     bx, [bp+arg_4]
+shl     bx, 1
+mov     [bx-633Ch], ax
+cmp     [bp+var_C], 1
+jz      short loc_5DB62
+ax = TYPE([bp+var_2])
+mov     dx, si
+shl     dx, cl
+add     ax, dx
+mov     bx, [bp+var_2]
+shl     bx, 1
+mov     [bx-633Ch], ax
+cmp     [bp+var_4], 0FFFFh
+jz      short loc_5DB71
+ax = WORD([bp+var_4])
+shr     ax, cl
+mov     si, ax
+mov     bx, 2
+cwd
+idiv    bx
+or      dx, dx
+jz      short loc_5DB41
+mov     ax, si
+dec     ax
+jmp     short loc_5DB44
+loc_5DB41:
+mov     ax, si
+inc     ax
+loc_5DB44:
+mov     cl, 0Ah
+shl     ax, cl
+dx = TYPE([bp+var_4])
+add     dx, ax
+mov     bx, [bp+var_4]
+shl     bx, 1
+mov     [bx-633Ch], dx
+jmp     short loc_5DB71
+loc_5DB62:
+PRINT "It turns loosely.\n"
+loc_5DB71:
+retf    6
+
+##### recipe 32
+=== sub_5DECB
+mov     di, 28h
+mov     [bp+var_6], 0
+cmp     word_41130, 0
+jz      short loc_5DF02
+cmp     word_41130, 2
+jz      short loc_5DF02
+cmp     word_41130, 3
+jz      short loc_5DF02
+; seg057:364 = "Not while underground.\n"
+loc_5DEF7:
+push    ax
+call    sub_35778
+jmp     loc_5E0EA
+loc_5DF02:
+cmp     word_41130, 0
+jnz     short loc_5DF20
+cmp     byte_41125, 5
+jb      short loc_5DF17
+cmp     byte_41125, 11h
+jbe     short loc_5DF20
+loc_5DF17:
+; seg057:2EB = "Not at night!\n"
+jmp     short loc_5DEF7
+loc_5DF20:
+mov     ax, word_4112C
+add     ax, 0FFFAh
+and     ax, 3FFh
+push    ax
+mov     ax, word_4112E
+add     ax, 0FFFBh
+and     ax, 3FFh
+push    ax
+mov     ax, word_4112C
+add     ax, 7
+and     ax, 3FFh
+push    ax
+mov     ax, word_4112E
+add     ax, 5
+and     ax, 3FFh
+push    ax
+call    sub_2BF6E
+jmp     short loc_5DF74
+loc_5DF4F:
+ax = TYPE(si)
+cmp     ax, 198h
+jnz     short loc_5DF6F
+test    byte ptr [si+3266h], 20h
+jz      short loc_5DF6F
+; seg057:2261 = "There are too many moving trees nearby.\n"
+jmp     short loc_5DEF7
+loc_5DF6F:
+call    sub_2BE67
+loc_5DF74:
+mov     si, ax
+or      si, si
+jge     short loc_5DF4F
+mov     ax, word_4112C
+mov     [bp+var_2], ax
+mov     ax, word_4112E
+mov     [bp+var_4], ax
+mov     ax, word_40954
+mov     [bp+var_8], ax
+mov     bx, [bp+arg_4]
+test    byte ptr [bx+3266h], 18h
+jnz     short loc_5DFAF
+ax = X([bp+arg_4])
+mov     word_4112C, ax
+mov     ax, [bp+arg_4]
+jmp     short loc_5DFDD
+loc_5DFAF:
+mov     ax, [bp+arg_4]
+jmp     short loc_5DFB6
+loc_5DFB4:
+mov     ax, si
+loc_5DFB6:
+mov     dx, 3
+imul    dx
+mov     bx, ax
+mov     si, [bx+78AEh]
+test    byte ptr [si+3266h], 18h
+jnz     short loc_5DFB4
+ax = X(si)
+mov     word_4112C, ax
+mov     ax, si
+loc_5DFDD:
+mov     dx, 3
+imul    dx
+mov     bx, ax
+mov     ax, [bx+78AFh]
+sar     ax, 1
+sar     ax, 1
+and     ax, 3FFh
+mov     word_4112E, ax
+call    sub_258AF
+call    sub_2EEA8
+call    sub_22301
+PRINT "Direction-\n"
+mov     word_4165A, 0
+call    sub_34C4C
+cmp     ax, 80h
+jz      short loc_5E02A
+; seg057:3F8 = "nowhere.\n"
+jmp     loc_5DEF7
+loc_5E02A:
+mov     bx, word_4E622
+shl     bx, 1
+push    word ptr [bx+0BEh]
+PRINT "%s.\n"
+add     sp, 6
+mov     word_40954, 1
+mov     word_402BE, 1
+call    sub_258AF
+call    sub_2EEA8
+call    sub_22301
+jmp     short loc_5E0AE
+loc_5E05E:
+mov     bx, word_4E622
+mov     al, [bx+0AEh]
+cbw
+mov     dx, word_4112C
+add     dx, ax
+and     dx, 3FFh
+mov     word_4112C, dx
+mov     al, [bx+0B6h]
+cbw
+mov     dx, word_4112E
+add     dx, ax
+and     dx, 3FFh
+mov     word_4112E, dx
+call    sub_258AF
+call    sub_2EEA8
+call    sub_22301
+dec     di
+push    word_4112C
+push    word_4112E
+push    word_41130
+call    sub_263B2
+mov     ah, 0
+mov     [bp+var_6], ax
+loc_5E0AE:
+or      di, di
+jl      short loc_5E0B9
+cmp     [bp+var_6], 0FFh
+jl      short loc_5E05E
+loc_5E0B9:
+mov     ax, [bp+var_8]
+mov     word_40954, ax
+mov     ax, [bp+var_2]
+mov     word_4112C, ax
+mov     ax, [bp+var_4]
+mov     word_4112E, ax
+call    sub_258AF
+call    sub_2EEA8
+mov     byte_409C2, 1
+call    sub_23994
+mov     word_402BE, 1
+call    sub_22301
+loc_5E0EA:
+retf    6
+
+##### recipe 33
+=== sub_5C8D9
+cmp     word_41130, 0
+jz      short loc_5C8FA
+PRINT "Not while underground.\n"
+jmp     loc_5C9F0
+loc_5C8FA:
+mov     [bp+var_1], 4Eh
+mov     [bp+var_2], 57h
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     [bp+var_4], ax
+xor     ax, ax
+mov     dx, 400h
+push    ax
+push    dx
+ax = X([bp+var_4])
+cwd
+add     ax, 0FE00h
+adc     dx, 0FFFFh
+push    ax
+push    dx
+xor     dx, dx
+mov     ax, 168h
+pop     bx
+call    sub_126DD
+push    dx
+push    ax
+call    sub_12718
+mov     si, ax
+xor     ax, ax
+mov     dx, 400h
+push    ax
+push    dx
+ax = Y([bp+var_4])
+cwd
+add     ax, 0FE00h
+adc     dx, 0FFFFh
+push    ax
+push    dx
+xor     dx, dx
+mov     ax, 0F0h
+pop     bx
+call    sub_126DD
+push    dx
+push    ax
+call    sub_12718
+mov     di, ax
+or      ax, ax
+jle     short loc_5C98C
+mov     [bp+var_1], 53h
+jmp     short loc_5C994
+loc_5C98C:
+or      di, di
+jnz     short loc_5C994
+mov     [bp+var_1], 20h
+loc_5C994:
+cmp     si, 0B4h
+jz      short loc_5C9A4
+cmp     si, 0FF4Ch
+jz      short loc_5C9A4
+or      si, si
+jnz     short loc_5C9AA
+loc_5C9A4:
+mov     [bp+var_2], 20h
+jmp     short loc_5C9B2
+loc_5C9AA:
+or      si, si
+jge     short loc_5C9B2
+mov     [bp+var_2], 45h
+loc_5C9B2:
+push    si
+call    sub_1128B
+mov     dx, 0B4h
+sub     dx, ax
+mov     si, dx
+push    di
+call    sub_1128B
+mov     di, ax
+mov     ax, 4
+push    ax
+call    sub_303A9
+mov     al, [bp+var_2]
+mov     ah, 0
+push    ax
+push    si
+mov     al, [bp+var_1]
+mov     ah, 0
+push    ax
+push    di
+PRINT "You are somewhere near \nLat:%d %c\nLong:%d %c\n"
+add     sp, 0Ch
+loc_5C9F0:
+retf    6
+
+##### recipe 34
+=== sub_5EF0C
+mov     si, [bp+arg_4]
+ax = TYPE(si)
+mov     [bp+var_2], ax
+ax = FRAME(si)
+mov     di, ax
+cmp     ax, 2
+jnz     short loc_5EF66
+cmp     [bp+var_2], 56h
+jz      short loc_5EF44
+cmp     [bp+var_2], 11Ch
+jnz     short loc_5EF55
+loc_5EF44:
+PRINT "It is nailed shut.\n"
+jmp     short loc_5EF9C
+loc_5EF55:
+PRINT "It is locked.\n"
+jmp     short loc_5EF9C
+loc_5EF66:
+cmp     di, 1
+jnz     short loc_5EF86
+ax = TYPE(si)
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+push    si
+call    sub_14D04
+jmp     short loc_5EF9C
+loc_5EF86:
+ax = TYPE(si)
+add     ax, 400h
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+loc_5EF9C:
+test    byte ptr [si+3266h], 18h
+jz      short loc_5EFA8
+mov     byte_409C2, 1
+loc_5EFA8:
+retf    6
+
+##### recipe 35
+=== sub_5B490
+les     bx, dword_4696E
+mov     ax, es:[bx+322h]
+sub     ax, es:[bx+320h]
+dec     ax
+mov     [bp+var_8], ax
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+push    ax
+mov     ax, 191h
+push    ax
+mov     ax, 0FFFFh
+push    ax
+call    sub_2C0B6
+jmp     short loc_5B4CC
+loc_5B4C7:
+call    sub_2C00D
+loc_5B4CC:
+mov     si, ax
+cmp     si, 0FFFFh
+jz      short loc_5B4E1
+mov     al, [si+3266h]
+mov     ah, 0
+and     ax, 18h
+cmp     ax, 18h
+jnz     short loc_5B4C7
+loc_5B4E1:
+cmp     si, 0FFFFh
+jnz     short loc_5B4F0
+; seg057:0CB4 = "You need a cue stick in your hands.\n"
+jmp     loc_5B6E7
+loc_5B4F0:
+ax = X([bp+arg_4])
+mov     si, ax
+ax = Y([bp+arg_4])
+mov     [bp+var_6], ax
+mov     ax, 190h
+push    ax
+mov     ax, si
+dec     ax
+and     ax, 3FFh
+push    ax
+push    [bp+var_6]
+call    sub_2BA57
+mov     [bp+var_2], ax
+or      ax, ax
+jge     short loc_5B564
+xor     ax, ax
+push    ax
+push    [bp+var_8]
+call    sub_36D07
+mov     cl, 0Ah
+shl     ax, cl
+mov     dx, 190h
+or      dx, ax
+push    dx
+xor     ax, ax
+push    ax
+push    ax
+mov     ax, si
+dec     ax
+and     ax, 3FFh
+push    ax
+push    [bp+var_6]
+push    word_41130
+call    sub_2C1FE
+mov     [bp+var_2], ax
+loc_5B564:
+cmp     [bp+var_2], 0
+jge     short loc_5B56C
+jmp     short loc_5B5AB
+loc_5B56C:
+mov     ax, 190h
+push    ax
+push    si
+push    [bp+var_6]
+call    sub_2BA57
+mov     di, ax
+or      ax, ax
+jge     short loc_5B5A7
+xor     ax, ax
+push    ax
+push    [bp+var_8]
+call    sub_36D07
+mov     cl, 0Ah
+shl     ax, cl
+mov     dx, 190h
+or      dx, ax
+push    dx
+xor     ax, ax
+push    ax
+push    ax
+push    si
+push    [bp+var_6]
+push    word_41130
+call    sub_2C1FE
+mov     di, ax
+loc_5B5A7:
+or      di, di
+jge     short loc_5B5B5
+loc_5B5AB:
+; seg057:22F1 = "Aargh!\n"
+jmp     loc_5B6E7
+loc_5B5B5:
+mov     [bp+var_4], 0
+loc_5B5BA:
+cmp     [bp+var_4], 0
+jz      short loc_5B5E5
+mov     ax, 0C8h
+push    ax
+mov     ax, 1F4h
+push    ax
+call    sub_36D07
+cwd
+push    ax
+push    dx
+xor     dx, dx
+mov     ax, 94Fh
+pop     bx
+call    sub_126DD
+push    dx
+push    ax
+call    sub_36E34
+loc_5B5E5:
+xor     ax, ax
+push    ax
+mov     ax, 2
+push    ax
+call    sub_36D07
+add     ax, 1Ch
+push    ax
+call    sub_303A9
+mov     ax, 0Ah
+push    ax
+mov     ax, 0C8h
+push    ax
+call    sub_36D07
+cwd
+push    ax
+push    dx
+xor     dx, dx
+mov     ax, 94Fh
+pop     bx
+call    sub_126DD
+push    dx
+push    ax
+call    sub_36E34
+xor     ax, ax
+push    ax
+mov     ax, 2
+push    ax
+call    sub_36D07
+add     ax, 1Ch
+push    ax
+call    sub_303A9
+xor     ax, ax
+push    ax
+push    [bp+var_8]
+call    sub_36D07
+mov     cl, 0Ah
+shl     ax, cl
+dx = TYPE([bp+var_2])
+add     dx, ax
+mov     bx, [bp+var_2]
+shl     bx, 1
+mov     [bx-633Ch], dx
+xor     ax, ax
+push    ax
+push    [bp+var_8]
+call    sub_36D07
+mov     cl, 0Ah
+shl     ax, cl
+dx = TYPE(di)
+add     dx, ax
+mov     bx, di
+shl     bx, 1
+mov     [bx-633Ch], dx
+call    sub_2EEA8
+mov     word_409C8, 1
+call    sub_22301
+inc     [bp+var_4]
+xor     ax, ax
+push    ax
+mov     ax, 28h
+push    ax
+call    sub_36D07
+push    ax
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+push    ax
+call    sub_18286
+pop     dx
+cmp     dx, ax
+jge     short loc_5B6BB
+jmp     loc_5B5BA
+loc_5B6BB:
+xor     ax, ax
+push    ax
+mov     ax, 28h
+push    ax
+call    sub_36D07
+push    ax
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+push    ax
+call    sub_18286
+pop     dx
+cmp     dx, ax
+jge     short loc_5B6EF
+; seg057:130F = "Good shot, old bean!\n"
+loc_5B6E7:
+push    ax
+call    sub_35778
+loc_5B6EF:
+retf    6
+
+##### recipe 36
+=== sub_5B6F7
+mov     di, [bp+arg_4]
+mov     si, 0FFFFh
+ax = TYPE(di)
+cmp     ax, 199h
+jnz     short loc_5B771
+test    byte ptr [di+3266h], 18h
+jnz     short loc_5B76F
+mov     si, di
+mov     ax, 0A5h
+push    ax
+ax = X(di)
+inc     ax
+and     ax, 3FFh
+push    ax
+ax = Y(di)
+push    ax
+call    sub_2BA57
+mov     [bp+var_2], ax
+or      ax, ax
+jge     short loc_5B76A
+loc_5B758:
+PRINT "Organ music must be played on a pipe organ.\n"
+jmp     loc_5B832
+loc_5B76A:
+mov     di, [bp+var_2]
+jmp     short loc_5B771
+loc_5B76F:
+jmp     short loc_5B758
+loc_5B771:
+cmp     si, 0FFFFh
+jnz     short loc_5B7C4
+ax = X(di)
+dec     ax
+push    ax
+ax = Y(di)
+push    ax
+push    word_41130
+call    sub_2B868
+jmp     short loc_5B7AD
+loc_5B7A8:
+call    sub_2B3BA
+loc_5B7AD:
+mov     si, ax
+cmp     si, 0FFFFh
+jz      short loc_5B7C4
+ax = TYPE(si)
+cmp     ax, 199h
+jnz     short loc_5B7A8
+loc_5B7C4:
+or      si, si
+jl      short loc_5B7DE
+PRINT "Tocatta and Fugue in D minor (J.S. Bach).\n"
+call    sub_306A5
+jmp     short loc_5B832
+loc_5B7DE:
+mov     ax, 0FFFFh
+push    ax
+call    sub_2FC44
+PRINT "Press keys 1-0 to play -"
+mov     [bp+var_4], 0
+jmp     short loc_5B827
+loc_5B7FD:
+mov     ax, 1
+push    ax
+call    sub_2005C
+mov     [bp+var_6], ax
+or      ax, ax
+jz      short loc_5B7FD
+cmp     ax, 30h
+jl      short loc_5B822
+cmp     ax, 39h
+jg      short loc_5B822
+add     ax, 0FFF6h
+push    ax
+call    sub_303A9
+jmp     short loc_5B827
+loc_5B822:
+mov     [bp+var_4], 1
+loc_5B827:
+cmp     [bp+var_4], 0
+jz      short loc_5B7FD
+call    sub_2FD45
+loc_5B832:
+retf    6
+
+##### recipe 37
+=== sub_5E445
+mov     di, [bp+arg_2]
+ax = FRAME([bp+arg_4])
+mov     [bp+var_2], ax
+mov     ax, 0FCh
+push    ax
+ax = X(di)
+push    ax
+ax = Y(di)
+push    ax
+call    sub_2BA57
+mov     si, ax
+or      ax, ax
+jge     short loc_5E4DB
+mov     ax, 101h
+push    ax
+ax = X(di)
+push    ax
+ax = Y(di)
+push    ax
+call    sub_2BA57
+mov     [bp+var_6], ax
+or      ax, ax
+jl      short loc_5E4DB
+push    ax
+mov     ax, 0FCh
+push    ax
+mov     ax, 0FFFFh
+push    ax
+call    sub_2C0B6
+mov     si, ax
+loc_5E4DB:
+cmp     si, 0FFFFh
+jnz     short loc_5E4FA
+push    [bp+arg_4]
+call    sub_2C902
+PRINT "It has no effect.\n"
+jmp     loc_5E67E
+loc_5E4FA:
+; QUAL(di): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_4], ax
+mov     bx, [bp+var_2]
+cmp     bx, 4
+jbe     short loc_5E512
+jmp     def_5E514
+loc_5E512:
+shl     bx, 1
+jmp     cs:jpt_5E514[bx]
+loc_5E519:
+test    [bp+var_4], 1
+jnz     short loc_5E537
+PRINT "You pour the nitrogen compound onto the mound.\n"
+or      [bp+var_4], 1
+jmp     loc_5E63F
+loc_5E537:
+PRINT "It has no effect.\n"
+jmp     loc_5E63F
+loc_5E549:
+test    [bp+var_4], 2
+jnz     short loc_5E567
+PRINT "You pour the phosphorous solution onto the mound.\n"
+or      [bp+var_4], 2
+jmp     loc_5E63F
+loc_5E567:
+PRINT "It has no effect.\n"
+jmp     loc_5E63F
+loc_5E579:
+test    [bp+var_4], 4
+jnz     short loc_5E597
+PRINT "You pour the potash mixture onto the mound.\n"
+or      [bp+var_4], 4
+jmp     loc_5E63F
+loc_5E597:
+PRINT "It has no effect.\n"
+jmp     loc_5E63F
+loc_5E5A9:
+cmp     [bp+var_2], 2
+jnz     short loc_5E5E4
+cmp     si, 0FFFFh
+jz      short loc_5E5E4
+PRINT "The seed is destroyed by acid.\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+push    si
+call    sub_2C902
+ax = WORD(di)
+and     ax, 0FC00h
+add     ax, 102h
+mov     bx, di
+jmp     short loc_5E611
+loc_5E5E4:
+cmp     si, 0FFFFh
+jz      short loc_5E629
+PRINT "The seed is poisoned by oil.\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+ax = TYPE(si)
+add     ax, 400h
+mov     bx, si
+loc_5E611:
+shl     bx, 1
+mov     [bx-633Ch], ax
+; QUAL(si): mov     byte ptr [bx+54BBh], 0
+; QTY(si): mov     byte ptr [bx+54BAh], 0
+loc_5E629:
+mov     [bp+var_4], 0
+jmp     short loc_5E63F
+def_5E514:
+PRINT "It has no effect.\n"
+loc_5E63F:
+mov     bx, di
+shl     bx, 1
+mov     al, byte ptr [bp+var_4]
+mov     [bx+54BBh], al
+push    [bp+arg_4]
+call    sub_2C902
+cmp     [bp+var_4], 0Fh
+jnz     short loc_5E67E
+ax = FRAME(si)
+or      ax, ax
+jnz     short loc_5E67E
+mov     bx, si
+shl     bx, 1
+mov     al, byte_41126
+mov     [bx+54BBh], al
+mov     bx, si
+shl     bx, 1
+mov     al, byte_41127
+mov     [bx+54BAh], al
+loc_5E67E:
+retf    6
+
+##### recipe 38
+=== sub_5E7E8
+mov     si, [bp+arg_2]
+; QUAL([bp+arg_4]): test    byte ptr [bx+54BBh], 2
+jz      short loc_5E81B
+push    [bp+arg_4]
+call    sub_2F7E9
+push    ax
+PRINT "The %s is broken.\n"
+add     sp, 6
+jmp     loc_5E980
+loc_5E81B:
+ax = TYPE([bp+arg_4])
+cmp     ax, 0CEh
+jnz     short loc_5E844
+test    byte_469A4, 80h
+jz      short loc_5E83D
+loc_5E833:
+; seg057:2A4 = "It has no effect.\n"
+jmp     loc_5E922
+loc_5E83D:
+mov     [bp+var_6], 0
+jmp     short loc_5E852
+loc_5E844:
+test    byte_469AF, 80h
+jz      short loc_5E84D
+jmp     short loc_5E833
+loc_5E84D:
+mov     [bp+var_6], 1
+loc_5E852:
+ax = TYPE(si)
+mov     [bp+var_2], ax
+ax = FRAME(si)
+mov     [bp+var_4], ax
+cmp     ax, [bp+var_6]
+jnz     short loc_5E877
+jmp     loc_5E92C
+loc_5E877:
+mov     si, 0FFFFh
+ax = X(si)
+dec     ax
+and     ax, 3FFh
+push    ax
+ax = Y(si)
+dec     ax
+and     ax, 3FFh
+push    ax
+ax = X(si)
+inc     ax
+and     ax, 3FFh
+push    ax
+ax = Y(si)
+inc     ax
+and     ax, 3FFh
+push    ax
+call    sub_2BF6E
+jmp     short loc_5E90F
+loc_5E8DD:
+ax = TYPE(di)
+mov     [bp+var_2], ax
+ax = FRAME(di)
+cmp     ax, [bp+var_6]
+jnz     short loc_5E90A
+cmp     [bp+var_2], 0CAh
+jnz     short loc_5E90A
+mov     si, di
+mov     di, 0FFFFh
+jmp     short loc_5E911
+loc_5E90A:
+call    sub_2BE67
+loc_5E90F:
+mov     di, ax
+loc_5E911:
+cmp     di, 0FFFFh
+jnz     short loc_5E8DD
+cmp     si, 0FFFFh
+jnz     short loc_5E92C
+; seg057:1BFB = "You cannot install it there.\n"
+loc_5E922:
+push    ax
+call    sub_35778
+jmp     short loc_5E980
+loc_5E92C:
+push    [bp+arg_4]
+ax = X(si)
+push    ax
+ax = Y(si)
+push    ax
+push    word_41130
+call    sub_2CFE2
+; QUAL([bp+arg_4]): mov     byte ptr [bx+54BBh], 0
+cmp     [bp+var_6], 0
+jz      short loc_5E978
+mov     al, byte_469AF
+or      al, 80h
+mov     byte_469AF, al
+jmp     short loc_5E980
+loc_5E978:
+mov     al, byte_469A4
+or      al, 80h
+mov     byte_469A4, al
+loc_5E980:
+retf    6
+
+##### recipe 39
+=== sub_5DB79
+mov     si, 0FFFFh
+mov     ax, 10h
+push    ax
+call    sub_303A9
+ax = FRAME([bp+arg_4])
+mov     [bp+var_2], ax
+cmp     ax, 1
+jnz     short loc_5DBCE
+ax = X([bp+arg_4])
+dec     ax
+loc_5DBB4:
+mov     [bp+var_4], ax
+ax = Y([bp+arg_4])
+jmp     short loc_5DC44
+loc_5DBCE:
+cmp     [bp+var_2], 3
+jnz     short loc_5DC00
+ax = X([bp+arg_4])
+mov     [bp+var_4], ax
+ax = Y([bp+arg_4])
+dec     ax
+jmp     short loc_5DC44
+loc_5DC00:
+cmp     [bp+var_2], 4
+jnz     short loc_5DC1A
+ax = X([bp+arg_4])
+inc     ax
+jmp     short loc_5DBB4
+loc_5DC1A:
+ax = X([bp+arg_4])
+mov     [bp+var_4], ax
+ax = Y([bp+arg_4])
+inc     ax
+loc_5DC44:
+mov     di, ax
+push    [bp+var_4]
+push    di
+push    word_41130
+call    sub_2B868
+jmp     short loc_5DC5A
+loc_5DC55:
+call    sub_2B3BA
+loc_5DC5A:
+mov     si, ax
+cmp     si, 0FFFFh
+jz      short loc_5DC91
+ax = TYPE(si)
+cmp     ax, 1BDh
+jz      short loc_5DC91
+ax = TYPE(si)
+cmp     ax, 1BEh
+jz      short loc_5DC91
+ax = TYPE(si)
+cmp     ax, 0D5h
+jnz     short loc_5DC55
+loc_5DC91:
+cmp     si, 0FFFFh
+jnz     short loc_5DD0D
+push    [bp+var_4]
+push    di
+push    word_41130
+call    sub_263B2
+mov     ah, 0
+push    ax
+call    sub_32364
+or      ax, ax
+jz      short loc_5DCB7
+mov     [bp+var_6], 1BAh
+jmp     loc_5DD40
+loc_5DCB7:
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+push    ax
+push    [bp+var_4]
+push    di
+call    sub_188F1
+mov     si, ax
+or      ax, ax
+jl      short loc_5DCF2
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+push    ax
+push    si
+mov     ax, 28h
+push    ax
+xor     ax, ax
+push    ax
+call    sub_1A45C
+jmp     loc_5DEC3
+loc_5DCF2:
+PRINT "There is nothing to drill into.\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     loc_5DEC3
+loc_5DD0D:
+ax = TYPE(si)
+cmp     ax, 1BDh
+jnz     short loc_5DD24
+mov     [bp+var_6], 1BBh
+jmp     short loc_5DD40
+loc_5DD24:
+ax = TYPE(si)
+cmp     ax, 1BEh
+jnz     short loc_5DD3B
+mov     [bp+var_6], 1BCh
+jmp     short loc_5DD40
+loc_5DD3B:
+mov     [bp+var_6], 0FFFFh
+loc_5DD40:
+cmp     [bp+var_6], 0FFFFh
+jnz     short loc_5DD49
+jmp     loc_5DE8B
+loc_5DD49:
+mov     ax, [bp+var_2]
+cmp     ax, 1
+jz      short loc_5DD5D
+cmp     ax, 3
+jz      short loc_5DD64
+cmp     ax, 4
+jz      short loc_5DD6B
+jmp     short loc_5DD72
+loc_5DD5D:
+mov     [bp+var_E], 0
+jmp     short loc_5DD77
+loc_5DD64:
+mov     [bp+var_E], 2
+jmp     short loc_5DD77
+loc_5DD6B:
+mov     [bp+var_E], 4
+jmp     short loc_5DD77
+loc_5DD72:
+mov     [bp+var_E], 6
+loc_5DD77:
+mov     [bp+var_C], 0FFFFh
+loc_5DD7C:
+cmp     [bp+var_C], 8
+jnz     short loc_5DD85
+jmp     loc_5DE3F
+loc_5DD85:
+inc     [bp+var_C]
+ax = X([bp+arg_4])
+push    ax
+mov     ax, [bp+var_C]
+add     ax, [bp+var_E]
+mov     bx, 8
+cwd
+idiv    bx
+mov     bx, dx
+mov     al, [bx+0AEh]
+cbw
+pop     dx
+add     dx, ax
+and     dx, 3FFh
+mov     [bp+var_4], dx
+ax = Y([bp+arg_4])
+push    ax
+mov     ax, [bp+var_C]
+add     ax, [bp+var_E]
+mov     bx, 8
+cwd
+idiv    bx
+mov     bx, dx
+mov     al, [bx+0B6h]
+cbw
+pop     dx
+add     dx, ax
+and     dx, 3FFh
+mov     di, dx
+push    [bp+var_4]
+push    dx
+call    sub_2B94C
+mov     [bp+var_A], ax
+ax = TYPE([bp+var_A])
+mov     [bp+var_12], ax
+cmp     ax, 14Eh
+jz      short loc_5DE13
+cmp     ax, 14Fh
+jz      short loc_5DE13
+cmp     ax, 150h
+jnz     short loc_5DE18
+loc_5DE13:
+mov     [bp+var_A], 0FFFFh
+loc_5DE18:
+push    [bp+var_4]
+push    di
+push    word_41130
+call    sub_263B2
+mov     ah, 0
+les     bx, dword_4AF74
+add     bx, ax
+test    byte ptr es:[bx], 2
+jz      short loc_5DE36
+jmp     loc_5DD7C
+loc_5DE36:
+cmp     [bp+var_A], 0FFFFh
+jz      short loc_5DE3F
+jmp     loc_5DD7C
+loc_5DE3F:
+cmp     [bp+var_C], 8
+jnz     short loc_5DE4E
+; seg057:816 = "There is no room left for the ore.\n"
+jmp     short loc_5DE74
+loc_5DE4E:
+push    [bp+var_6]
+xor     ax, ax
+push    ax
+mov     ax, 1
+push    ax
+push    [bp+var_4]
+push    di
+push    word_41130
+call    sub_2C1FE
+mov     [bp+var_8], ax
+cmp     ax, 0FFFFh
+jnz     short loc_5DE7E
+; seg057:32E = "Not now.\n"
+loc_5DE74:
+push    ax
+call    sub_35778
+jmp     short loc_5DEC3
+loc_5DE7E:
+mov     bx, [bp+var_8]
+mov     al, [bx+3266h]
+and     al, 0DFh
+mov     [bx+3266h], al
+loc_5DE8B:
+cmp     si, 0FFFFh
+jz      short loc_5DEB7
+; QUAL(si): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_10], ax
+cmp     ax, 1
+jnz     short loc_5DEAA
+push    si
+call    sub_2C902
+jmp     short loc_5DEB7
+loc_5DEAA:
+mov     bx, si
+shl     bx, 1
+mov     al, byte ptr [bp+var_10]
+add     al, 0FFh
+mov     [bx+54BBh], al
+loc_5DEB7:
+cmp     [bp+var_6], 0FFFFh
+jnz     short loc_5DEC3
+push    si
+call    sub_2C902
+loc_5DEC3:
+retf    6
+
+##### recipe 40
+=== sub_5AFA9
+mov     di, [bp+arg_4]
+; QUAL(di): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_2], ax
+or      ax, ax
+jz      short loc_5AFD3
+cmp     ax, 1
+jle     short loc_5AFCE
+mov     ax, 2916h
+jmp     short loc_5AFD1
+loc_5AFCE:
+mov     ax, 291Eh
+loc_5AFD1:
+jmp     short loc_5AFD6
+loc_5AFD3:
+mov     ax, 2924h
+loc_5AFD6:
+push    ax
+PRINT "It is set to "%s"."
+add     sp, 6
+ax = TYPE(di)
+cmp     ax, 2Dh
+jz      short loc_5B00C
+; QTY(di): mov     al, [bx+54BAh]
+mov     ah, 0
+push    ax
+PRINT "  It has %d charges left."
+add     sp, 6
+loc_5B00C:
+PRINT "  New setting (R%/S%/C)?\n"
+loc_5B01B:
+call    sub_33683
+push    ax
+call    sub_11147
+mov     si, ax
+cmp     ax, 53h
+jz      short loc_5B042
+cmp     ax, 52h
+jz      short loc_5B042
+cmp     ax, 43h
+jz      short loc_5B042
+cmp     ax, 0Ah
+jz      short loc_5B042
+cmp     ax, 0Dh
+jnz     short loc_5B01B
+loc_5B042:
+mov     ax, si
+cmp     ax, 43h
+jz      short loc_5B083
+cmp     ax, 52h
+jz      short loc_5B06C
+cmp     ax, 53h
+jz      short loc_5B055
+jmp     short loc_5B098
+loc_5B055:
+PRINT "Shotgun\n"
+; QUAL(di): mov     byte ptr [bx+54BBh], 2
+jmp     short loc_5B098
+loc_5B06C:
+PRINT "Rifle\n"
+; QUAL(di): mov     byte ptr [bx+54BBh], 1
+jmp     short loc_5B098
+loc_5B083:
+PRINT "Combination\n"
+; QUAL(di): mov     byte ptr [bx+54BBh], 0
+loc_5B098:
+loc_5B09C:
+retf    6
+
+##### recipe 41
+=== sub_5BC07
+; QUAL([bp+arg_2]): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     si, ax
+or      ax, ax
+jz      short loc_5BC2D
+PRINT "It already has steel cannon balls.\n"
+jmp     short loc_5BC4E
+loc_5BC2D:
+; QUAL([bp+arg_2]): mov     byte ptr [bx+54BBh], 1
+PRINT "The cannon will fire steel cannon balls.\n"
+push    [bp+arg_4]
+call    sub_2C902
+loc_5BC4E:
+retf    6
+
+##### recipe 42
+=== sub_5E0F2
+mov     di, [bp+arg_4]
+mov     si, [bp+arg_2]
+ax = FRAME(di)
+mov     [bp+var_2], ax
+test    byte ptr [di+3266h], 18h
+jz      short loc_5E11B
+mov     byte_409C2, 1
+loc_5E11B:
+cmp     [bp+var_2], 2
+jnz     short loc_5E15B
+PRINT "`Dump out the ice? "
+call    sub_34C4C
+mov     [bp+var_C], ax
+cmp     ax, 79h
+jz      short loc_5E145
+cmp     ax, 59h
+jz      short loc_5E145
+jmp     loc_5E43D
+loc_5E145:
+ax = TYPE(di)
+mov     bx, di
+shl     bx, 1
+mov     [bx-633Ch], ax
+jmp     loc_5E43D
+loc_5E15B:
+cmp     si, 0FFFFh
+jnz     short loc_5E1D5
+test    byte_469EC, 20h
+jz      short loc_5E1D5
+push    word_4E6A6
+push    word_4E6A8
+push    word_41130
+call    sub_263B2
+cmp     al, 1
+jb      short loc_5E191
+push    word_4E6A6
+push    word_4E6A8
+push    word_41130
+call    sub_263B2
+cmp     al, 4
+jbe     short loc_5E1B5
+loc_5E191:
+test    byte_469EC, 40h
+jz      short loc_5E1D5
+push    word_4E6A6
+push    word_4E6A8
+push    word_41130
+call    sub_263B2
+mov     ah, 0
+push    ax
+call    sub_322C8
+or      ax, ax
+jz      short loc_5E1D5
+loc_5E1B5:
+PRINT "`You fill the bucket with water.\n"
+ax = TYPE(di)
+add     ax, 400h
+jmp     loc_5E435
+loc_5E1D5:
+cmp     [bp+var_2], 0
+jnz     short loc_5E1F6
+PRINT "There is nothing in the bucket.\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     loc_5E43D
+loc_5E1F6:
+cmp     si, 0FFFFh
+jnz     short loc_5E248
+push    word_4E6A6
+push    word_4E6A8
+push    word_41130
+call    sub_263B2
+mov     ah, 0
+push    ax
+call    sub_2F774
+push    ax
+PRINT "The %s is all wet.\n"
+add     sp, 6
+call    sub_30674
+mov     ax, word_4115A
+and     ax, 10h
+or      ax, 0
+jnz     short loc_5E248
+ax = TYPE(di)
+mov     bx, di
+shl     bx, 1
+mov     [bx-633Ch], ax
+loc_5E248:
+ax = TYPE(si)
+mov     [bp+var_4], ax
+cmp     ax, 0FBh
+jz      short loc_5E25E
+jmp     loc_5E324
+loc_5E25E:
+mov     ax, 0FCh
+push    ax
+push    word_4E6A6
+push    word_4E6A8
+call    sub_2BA57
+mov     [bp+var_8], ax
+or      ax, ax
+jge     short loc_5E29F
+mov     ax, 101h
+push    ax
+push    word_4E6A6
+push    word_4E6A8
+call    sub_2BA57
+mov     [bp+var_A], ax
+or      ax, ax
+jl      short loc_5E29F
+push    ax
+mov     ax, 0FCh
+push    ax
+mov     ax, 0FFFFh
+push    ax
+call    sub_2C0B6
+mov     [bp+var_8], ax
+loc_5E29F:
+cmp     [bp+var_8], 0FFFFh
+jnz     short loc_5E2B7
+PRINT "You pour the water onto the ground.\n"
+jmp     loc_5E41A
+loc_5E2B7:
+; QUAL(si): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_6], ax
+mov     bx, si
+shl     bx, 1
+or      [bp+var_6], 8
+mov     ax, [bp+var_6]
+mov     [bx+54BBh], al
+mov     ax, 4
+push    ax
+call    sub_303A9
+PRINT "You pour the water onto the seed.\n"
+cmp     [bp+var_6], 0Fh
+jz      short loc_5E2F5
+jmp     loc_5E41F
+loc_5E2F5:
+ax = FRAME([bp+var_8])
+or      ax, ax
+jz      short loc_5E309
+jmp     loc_5E41F
+loc_5E309:
+mov     bx, [bp+var_8]
+shl     bx, 1
+mov     al, byte_41126
+mov     [bx+54BBh], al
+mov     bx, [bp+var_8]
+shl     bx, 1
+mov     al, byte_41127
+mov     [bx+54BAh], al
+jmp     loc_5E41F
+loc_5E324:
+cmp     [bp+var_4], 9Eh
+jnz     short loc_5E37A
+mov     bx, word_4E67E
+test    byte ptr [bx+3266h], 18h
+jnz     short loc_5E368
+push    word_4E6A6
+push    word_4E6A8
+push    word_41130
+call    sub_263B2
+mov     ah, 0
+push    ax
+call    sub_3231F
+or      ax, ax
+jz      short loc_5E368
+mov     ax, 4
+push    ax
+call    sub_303A9
+mov     bx, si
+shl     bx, 1
+mov     word ptr [bx-633Ch], 9Dh
+jmp     short loc_5E3B2
+loc_5E368:
+PRINT "It has no effect.\n"
+jmp     loc_5E41F
+loc_5E37A:
+cmp     [bp+var_4], 9Dh
+jnz     short loc_5E3DF
+ax = FRAME(word_4E67E)
+or      ax, ax
+jnz     short loc_5E3CE
+mov     ax, 4
+push    ax
+call    sub_303A9
+ax = TYPE(si)
+add     ax, 400h
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+loc_5E3B2:
+mov     ax, 0Ah
+push    ax
+mov     ax, 0Fh
+push    ax
+call    sub_36D07
+; QUAL(si): mov     [bx+54BBh], al
+call    sub_2EEA8
+jmp     short loc_5E41F
+loc_5E3CE:
+PRINT "It has no effect.\n"
+jmp     short loc_5E41F
+loc_5E3DF:
+cmp     [bp+var_4], 112h
+jnz     short loc_5E3E9
+jmp     loc_5E1B5
+loc_5E3E9:
+cmp     si, 100h
+jge     short loc_5E403
+or      si, si
+jl      short loc_5E403
+push    si
+call    sub_2F7E9
+push    ax
+; seg057:703 = "%s is all wet.\n"
+jmp     short loc_5E411
+loc_5E403:
+push    si
+call    sub_2F7E9
+push    ax
+; seg057:713 = "The %s is all wet.\n"
+loc_5E411:
+push    ax
+call    sub_35778
+add     sp, 6
+loc_5E41A:
+call    sub_30674
+loc_5E41F:
+mov     ax, word_4115A
+and     ax, 10h
+or      ax, 0
+jnz     short loc_5E43D
+ax = TYPE(di)
+loc_5E435:
+mov     bx, di
+shl     bx, 1
+mov     [bx-633Ch], ax
+loc_5E43D:
+retf    6
+
+##### recipe 43
+=== sub_5EFB0
+; QUAL([bp+arg_4]): mov     al, [bx+54BBh]
+mov     ah, 0
+push    ax
+call    sub_3F7BB
+retf    6
+
+##### recipe 44
+=== sub_5EFC8
+mov     si, [bp+arg_4]
+; QUAL(si): test    byte ptr [bx+54BBh], 80h
+jz      short loc_5EFEB
+PRINT "It is locked.\n"
+jmp     short loc_5F067
+loc_5EFEB:
+xor     ax, ax
+push    ax
+ax = X(si)
+push    ax
+ax = Y(si)
+push    ax
+call    sub_2C111
+or      ax, ax
+jl      short loc_5F037
+PRINT "Blocked!\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     short loc_5F067
+loc_5F037:
+mov     ax, 31h
+push    ax
+call    sub_303A9
+ax = TYPE(si)
+dx = FRAME(si)
+xor     dx, 2
+shl     dx, cl
+add     ax, dx
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+loc_5F067:
+retf    6
+
+##### recipe 45
+=== sub_5C2E3
+mov     si, 0FFFFh
+; QUAL([bp+arg_4]): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     di, ax
+test    ax, 2
+jz      short loc_5C307
+; seg057:9E3 = "The panel is broken.\n"
+jmp     loc_5C3FA
+loc_5C307:
+test    di, 1
+jz      short loc_5C317
+; seg057:9F9 = "The panel is not installed.\n"
+jmp     loc_5C3FA
+loc_5C317:
+mov     ax, 1C9h
+push    ax
+ax = X([bp+arg_4])
+push    ax
+ax = Y([bp+arg_4])
+push    ax
+call    sub_2BA57
+mov     si, ax
+cmp     ax, 0FFFFh
+jnz     short loc_5C359
+; seg057:0A16 = "Panels are only installed onto cabinets.\n"
+jmp     loc_5C3FA
+loc_5C359:
+; QUAL(si): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     di, ax
+mov     bx, di
+cmp     bx, 7
+jbe     short loc_5C36F
+jmp     def_5C371
+loc_5C36F:
+shl     bx, 1
+jmp     cs:jpt_5C371[bx]
+loc_5C376:
+; seg057:1709 = "You are completely unsure what you just did.\n"
+jmp     short loc_5C3FA
+loc_5C37F:
+; seg057:166B = "You actuate the mechanism to no apparent effect.\n"
+jmp     short loc_5C3FA
+loc_5C388:
+; seg057:169D = "Status lights change but you see no other effect.\n"
+jmp     short loc_5C3FA
+loc_5C391:
+; seg057:16D0 = "Lights flash and change color but nothing else happens.\n"
+jmp     short loc_5C3FA
+loc_5C39A:
+push    [bp+arg_4]
+push    si
+call    near ptr sub_5BC53
+loc_5C3A2:
+jmp     short loc_5C402
+loc_5C3A4:
+push    [bp+arg_4]
+push    si
+call    near ptr sub_5BFBF
+jmp     short loc_5C3A2
+loc_5C3AE:
+call    near ptr sub_5C183
+jmp     short loc_5C402
+loc_5C3B4:
+test    byte_469EC, 40h
+jz      short loc_5C3C4
+; seg057:12C8 = "The canals are already working.\n"
+jmp     short loc_5C3FA
+loc_5C3C4:
+test    byte_469EC, 20h
+jz      short loc_5C3E2
+mov     al, byte_469EC
+or      al, 40h
+mov     byte_469EC, al
+xor     ax, ax
+push    ax
+call    sub_14722
+call    sub_3F7AC
+jmp     short loc_5C402
+loc_5C3E2:
+PRINT "There is no water pressure in the valve system.\n"
+jmp     short loc_5C402
+def_5C371:
+; seg057:2A4 = "It has no effect.\n"
+loc_5C3FA:
+push    ax
+call    sub_35778
+loc_5C402:
+retf    6
+
+##### recipe 46
+=== sub_5B83A
+ax = X([bp+arg_2])
+mov     di, ax
+ax = Y([bp+arg_2])
+mov     [bp+var_2], ax
+mov     si, [bp+arg_2]
+jmp     short loc_5B897
+loc_5B872:
+ax = X(si)
+dec     ax
+and     ax, 3FFh
+mov     di, ax
+mov     ax, 0C0h
+push    ax
+push    di
+push    [bp+var_2]
+call    sub_2BA57
+mov     si, ax
+loc_5B897:
+ax = FRAME(si)
+or      ax, ax
+jz      short loc_5B8BC
+cmp     si, 0FFFFh
+jz      short loc_5B8BC
+ax = TYPE(si)
+cmp     ax, 0C0h
+jz      short loc_5B872
+loc_5B8BC:
+cmp     si, 0FFFFh
+jz      short loc_5B8D1
+ax = TYPE(si)
+cmp     ax, 0C0h
+jz      short loc_5B8E3
+loc_5B8D1:
+PRINT "Ooops. These rollers can never be fixed!\n"
+jmp     loc_5B98B
+loc_5B8E3:
+mov     [bp+var_8], si
+mov     [bp+var_6], 4
+jmp     short loc_5B968
+loc_5B8ED:
+ax = WORD([bp+var_8])
+and     ax, 0FC00h
+add     ax, 0BCh
+mov     bx, [bp+var_8]
+shl     bx, 1
+mov     [bx-633Ch], ax
+cmp     [bp+var_6], 0
+jnz     short loc_5B94D
+mov     [bp+var_6], 4
+mov     ax, 0BDh
+push    ax
+mov     ax, 1
+push    ax
+xor     ax, ax
+push    ax
+push    di
+push    [bp+var_2]
+push    word_41130
+call    sub_2C1FE
+mov     [bp+var_4], ax
+or      ax, ax
+jl      short loc_5B93E
+mov     bx, [bp+var_4]
+mov     al, [bx+3266h]
+and     al, 0DFh
+mov     [bx+3266h], al
+jmp     short loc_5B94D
+loc_5B93E:
+PRINT "Aargh!\n"
+loc_5B94D:
+dec     [bp+var_6]
+mov     ax, di
+inc     ax
+and     ax, 3FFh
+mov     di, ax
+mov     ax, 0C0h
+push    ax
+push    di
+push    [bp+var_2]
+call    sub_2BA57
+mov     [bp+var_8], ax
+loc_5B968:
+cmp     [bp+var_8], 0
+jl      short loc_5B971
+jmp     loc_5B8ED
+loc_5B971:
+push    [bp+arg_4]
+call    sub_2C902
+call    sub_2EEA8
+call    sub_22301
+mov     al, byte_469E8
+or      al, 4
+mov     byte_469E8, al
+loc_5B98B:
+retf    6
+
+##### recipe 47
+=== sub_5B0A0
+mov     di, [bp+arg_4]
+mov     si, [bp+arg_2]
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     [bp+var_6], ax
+ax = TYPE(si)
+mov     [bp+var_2], ax
+test    byte ptr [di+3266h], 18h
+jz      short loc_5B0D8
+mov     byte_409C2, 1
+loc_5B0D8:
+cmp     si, di
+jz      short loc_5B0DF
+jmp     loc_5B18E
+loc_5B0DF:
+cmp     [bp+var_2], 1C0h
+jz      short loc_5B0E9
+jmp     loc_5B18E
+loc_5B0E9:
+test    byte ptr [si+3266h], 18h
+jz      short loc_5B0F3
+jmp     loc_5B18B
+loc_5B0F3:
+mov     bx, si
+shl     bx, 1
+mov     ax, [bx-3A64h]
+mov     [bp+var_C], ax
+mov     bx, [bp+var_C]
+test    byte ptr [bx+3266h], 18h
+jnz     short loc_5B175
+mov     dx, 3
+imul    dx
+mov     bx, ax
+mov     ax, [bx+78AEh]
+and     ax, 3FFh
+push    ax
+ax = X(si)
+pop     dx
+cmp     dx, ax
+jnz     short loc_5B175
+ax = Y([bp+var_C])
+push    ax
+ax = Y(si)
+pop     dx
+cmp     dx, ax
+jnz     short loc_5B175
+mov     ax, [bp+var_C]
+mov     dx, 3
+imul    dx
+mov     bx, ax
+mov     al, [bx+78B0h]
+mov     ah, 0
+mov     cl, 4
+sar     ax, cl
+cmp     ax, word_41130
+jz      short loc_5B178
+loc_5B175:
+jmp     loc_5B3FB
+loc_5B178:
+mov     si, [bp+var_C]
+ax = TYPE(si)
+mov     [bp+var_2], ax
+jmp     short loc_5B18E
+loc_5B18B:
+jmp     loc_5B3FB
+loc_5B18E:
+push    [bp+var_6]
+mov     ax, 88h
+push    ax
+mov     ax, 0FFFFh
+push    ax
+call    sub_2C0B6
+jmp     short loc_5B1A5
+loc_5B1A0:
+call    sub_2C00D
+loc_5B1A5:
+mov     [bp+var_E], ax
+cmp     [bp+var_E], 0FFFFh
+jz      short loc_5B1BF
+mov     bx, [bp+var_E]
+mov     al, [bx+3266h]
+mov     ah, 0
+and     ax, 18h
+cmp     ax, 18h
+jnz     short loc_5B1A0
+loc_5B1BF:
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+shl     ax, 1
+mov     bx, ax
+mov     al, [bx+16B0h]
+and     ax, 0Fh
+or      ax, ax
+jz      short loc_5B1F5
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+les     bx, dword_44966
+add     bx, ax
+mov     al, es:[bx]
+mov     ah, 0
+jmp     short loc_5B1F7
+loc_5B1F5:
+xor     ax, ax
+loc_5B1F7:
+or      ax, ax
+jnz     short loc_5B252
+cmp     [bp+var_E], 0FFFFh
+jnz     short loc_5B252
+cmp     [bp+var_6], 6
+jz      short loc_5B252
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+push    ax
+call    sub_18F7D
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+6CBAh]
+or      al, 8
+mov     dl, byte_4112A
+mov     dh, 0
+mov     bx, dx
+mov     dl, [bx+4EA4h]
+mov     dh, 0
+mov     bx, dx
+mov     [bx+6CBAh], al
+PRINT "OUCH. It is very hot.\n"
+loc_5B252:
+PRINT "\n"
+ax = TYPE(di)
+cmp     ax, 1C0h
+jnz     short loc_5B2E5
+cmp     [bp+var_2], 122h
+jnz     short loc_5B2D3
+cmp     [bp+var_A], 1
+jnz     short loc_5B285
+; seg057:0D2C = "Radium has already been installed.\n"
+jmp     loc_5B402
+loc_5B285:
+push    di
+call    sub_2C902
+mov     ax, 4
+push    ax
+call    sub_303A9
+PRINT "The radium has been installed.\n"
+ax = TYPE(si)
+add     ax, 400h
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+mov     al, byte_469EA
+or      al, 4
+mov     byte_469EA, al
+test    al, 1
+jnz     short loc_5B2C8
+jmp     loc_5B40A
+loc_5B2C8:
+mov     al, byte_469D6
+or      al, 4
+mov     byte_469D6, al
+jmp     loc_5B40A
+loc_5B2D3:
+PRINT "It has no effect.\n"
+jmp     loc_5B40A
+loc_5B2E5:
+ax = TYPE(di)
+cmp     ax, 1C1h
+jz      short loc_5B2F8
+jmp     loc_5B3FB
+loc_5B2F8:
+; QTY(si): mov     al, [bx+54BAh]
+mov     ah, 0
+mov     [bp+var_4], ax
+cmp     ax, 0D2h
+jle     short loc_5B324
+push    si
+call    sub_2F7E9
+push    ax
+PRINT "The %s is fully charged.\n"
+add     sp, 6
+jmp     loc_5B40A
+loc_5B324:
+mov     [bp+var_8], 0
+push    di
+call    sub_159A9
+mov     [bp+var_8], ax
+or      ax, ax
+jnz     short loc_5B339
+jmp     loc_5B40A
+loc_5B339:
+mov     ax, [bp+var_8]
+mov     dx, 1Eh
+imul    dx
+mov     dx, [bp+var_4]
+add     dx, ax
+cmp     dx, 0F0h
+jle     short loc_5B38A
+mov     ax, 0F0h
+sub     ax, [bp+var_4]
+mov     bx, 1Eh
+cwd
+idiv    bx
+mov     [bp+var_8], ax
+push    ax
+push    si
+call    sub_2F7E9
+push    ax
+PRINT "The %s only needed %d radium blocks.\n"
+add     sp, 8
+push    si
+call    sub_2F7E9
+push    ax
+PRINT "The %s is fully charged.\n"
+add     sp, 6
+loc_5B38A:
+mov     ax, [bp+var_8]
+mov     dx, 1Eh
+imul    dx
+add     [bp+var_4], ax
+mov     bx, si
+shl     bx, 1
+mov     al, byte ptr [bp+var_4]
+mov     [bx+54BAh], al
+test    byte ptr [di+3266h], 18h
+jnz     short loc_5B3AF
+mov     word_409C8, 1
+jmp     short loc_5B3CF
+loc_5B3AF:
+cmp     word_4165C, 92h
+jnz     short loc_5B3CF
+mov     ax, di
+mov     dx, 3
+imul    dx
+mov     bx, ax
+mov     ax, [bx+78AEh]
+cmp     ax, word_4E5C8
+jnz     short loc_5B3CF
+mov     byte_409C2, 1
+loc_5B3CF:
+; QTY(di): mov     al, [bx+54BAh]
+mov     ah, 0
+cmp     ax, [bp+var_8]
+jnz     short loc_5B3E6
+push    di
+call    sub_2C902
+jmp     short loc_5B40A
+loc_5B3E6:
+; QTY(di): mov     al, [bx+54BAh]
+sub     al, byte ptr [bp+var_8]
+; QTY(di): mov     [bx+54BAh], al
+jmp     short loc_5B40A
+loc_5B3FB:
+; seg057:2A4 = "It has no effect.\n"
+loc_5B402:
+push    ax
+call    sub_35778
+loc_5B40A:
+retf    6
+
+##### recipe 48
+=== sub_5C418
+mov     si, [bp+arg_2]
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     [bp+var_6], ax
+mov     dx, 3
+imul    dx
+mov     bx, ax
+mov     ax, [bx+78AEh]
+and     ax, 3FFh
+mov     [bp+var_2], ax
+ax = Y([bp+var_6])
+mov     [bp+var_4], ax
+ax = TYPE([bp+arg_4])
+mov     di, ax
+; QTY(si): mov     al, [bx+54BAh]
+mov     ah, 0
+mov     [bp+var_8], ax
+; QUAL(si): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_A], ax
+cmp     di, 77h
+jnz     short loc_5C4B0
+or      ax, ax
+jnz     short loc_5C4B0
+PRINT "The spray gun now contains 20 charges of green paint.\n"
+; QTY(si): mov     byte ptr [bx+54BAh], 14h
+; QUAL(si): mov     byte ptr [bx+54BBh], 1
+jmp     short loc_5C508
+loc_5C4B0:
+cmp     di, 80h
+jnz     short loc_5C4DF
+cmp     [bp+var_A], 0
+jz      short loc_5C4DF
+PRINT "The spray gun now contains 10 charges of weed killer.\n"
+; QTY(si): mov     byte ptr [bx+54BAh], 0Ah
+; QUAL(si): mov     byte ptr [bx+54BBh], 0
+jmp     short loc_5C508
+loc_5C4DF:
+add     [bp+var_8], 0Ah
+cmp     [bp+var_8], 1Eh
+jle     short loc_5C4EE
+mov     [bp+var_8], 1Eh
+loc_5C4EE:
+mov     bx, si
+shl     bx, 1
+mov     al, byte ptr [bp+var_8]
+mov     [bx+54BAh], al
+PRINT "The spray gun has 10 more charges.\n"
+loc_5C508:
+push    [bp+arg_4]
+call    sub_2C902
+retf    6
+
+##### recipe 49
+=== sub_5C518
+mov     si, [bp+arg_2]
+; QTY([bp+arg_4]): mov     al, [bx+54BAh]
+mov     ah, 0
+mov     [bp+var_2], ax
+; QUAL([bp+arg_4]): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_4], ax
+cmp     [bp+var_2], 0
+jnz     short loc_5C54F
+; seg057:20A8 = "There is nothing in the gun.\n"
+jmp     loc_5C6B7
+loc_5C54F:
+ax = TYPE(si)
+mov     di, ax
+cmp     [bp+var_4], 0
+jnz     short loc_5C565
+jmp     loc_5C5F0
+loc_5C565:
+mov     bx, [bp+arg_4]
+shl     bx, 1
+mov     al, byte ptr [bp+var_2]
+add     al, 0FFh
+mov     [bx+54BAh], al
+cmp     si, 100h
+jge     short loc_5C5B3
+or      si, si
+jl      short loc_5C5B3
+cmp     di, 91h
+jnz     short loc_5C5B3
+ax = WORD(si)
+and     ax, 0FC00h
+add     ax, 16Ch
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+push    si
+call    sub_2F7E9
+push    ax
+PRINT "`%s becomes visible!\n"
+add     sp, 6
+jmp     loc_5C6BF
+loc_5C5B3:
+test    byte ptr [si+3266h], 2
+jz      short loc_5C5DE
+mov     al, [si+3266h]
+and     al, 0FDh
+mov     [si+3266h], al
+push    si
+call    sub_2F7E9
+push    ax
+PRINT "`%s becomes visible!\n"
+add     sp, 6
+jmp     loc_5C6BF
+loc_5C5DE:
+PRINT "It has no effect.\n"
+jmp     loc_5C6BF
+loc_5C5F0:
+cmp     si, 100h
+jge     short loc_5C639
+or      si, si
+jl      short loc_5C639
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+push    ax
+ax = X(si)
+push    ax
+ax = Y(si)
+push    ax
+push    [bp+arg_4]
+call    sub_1A6F2
+jmp     loc_5C6BF
+loc_5C639:
+push    di
+call    sub_204C0
+or      ax, ax
+jz      short loc_5C6A2
+mov     bx, [bp+arg_4]
+shl     bx, 1
+mov     al, byte ptr [bp+var_2]
+add     al, 0FFh
+mov     [bx+54BAh], al
+push    si
+call    sub_18F7D
+PRINT "You killed the plant.\n"
+cmp     di, 0CDh
+jnz     short loc_5C67C
+mov     al, byte_469A6
+or      al, 80h
+mov     byte_469A6, al
+push    si
+call    sub_2C902
+jmp     short loc_5C6BF
+loc_5C67C:
+cmp     di, 198h
+jnz     short loc_5C69A
+ax = WORD(si)
+and     ax, 0FC00h
+add     ax, 0A6h
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+jmp     short loc_5C6BF
+loc_5C69A:
+push    si
+call    sub_2C902
+jmp     short loc_5C6BF
+loc_5C6A2:
+mov     bx, [bp+arg_4]
+shl     bx, 1
+mov     al, byte ptr [bp+var_2]
+add     al, 0FFh
+mov     [bx+54BAh], al
+; seg057:2A4 = "It has no effect.\n"
+loc_5C6B7:
+push    ax
+call    sub_35778
+loc_5C6BF:
+retf    6
+
+##### recipe 50
+=== sub_5C9F8
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     si, ax
+ax = X([bp+arg_4])
+mov     [bp+var_2], ax
+ax = Y([bp+arg_4])
+mov     [bp+var_4], ax
+push    [bp+var_2]
+push    ax
+ax = X(si)
+push    ax
+ax = Y(si)
+push    ax
+call    sub_1B2B8
+mov     di, ax
+cmp     ax, 1
+jle     short loc_5CA9B
+push    si
+lea     ax, [bp+var_2]
+push    ax
+lea     ax, [bp+var_4]
+push    ax
+mov     ax, 9
+push    ax
+xor     ax, ax
+push    ax
+call    sub_18A0C
+or      ax, ax
+jnz     short loc_5CA9B
+; seg057:230 = "Blocked!\n"
+loc_5CA91:
+push    ax
+call    sub_35778
+jmp     short loc_5CAF2
+loc_5CA9B:
+mov     ax, 83h
+push    ax
+mov     ax, 10h
+push    ax
+mov     ax, 14h
+push    ax
+push    si
+call    sub_2C37E
+cmp     ax, 0FFFFh
+jnz     short loc_5CABB
+; seg057:24E = "You are carrying too much already.\n"
+jmp     short loc_5CA91
+loc_5CABB:
+cmp     di, 1
+jle     short loc_5CADB
+push    si
+lea     ax, [bp+var_2]
+push    ax
+lea     ax, [bp+var_4]
+push    ax
+mov     ax, 9
+push    ax
+les     bx, dword_4696E
+push    word ptr es:[bx+106h]
+call    sub_18A0C
+loc_5CADB:
+PRINT "You get two handfuls of oxium from the bin.\n"
+mov     al, byte_46988
+or      al, 10h
+mov     byte_46988, al
+loc_5CAF2:
+retf    6
+
+##### recipe 51
+=== sub_5F06C
+mov     di, [bp+arg_2]
+ax = TYPE([bp+arg_4])
+mov     si, ax
+cmp     ax, 14Ch
+jnz     short loc_5F0AA
+push    [bp+arg_4]
+call    sub_2C902
+; QUAL(di): mov     al, [bx+54BBh]
+or      al, 1
+; QUAL(di): mov     [bx+54BBh], al
+; seg057:0E6B = "The sprayer system now has rubber.\n"
+jmp     short loc_5F0D0
+loc_5F0AA:
+cmp     si, 7Bh
+jnz     short loc_5F0D8
+push    [bp+arg_4]
+call    sub_2C902
+; QUAL(di): mov     al, [bx+54BBh]
+or      al, 2
+; QUAL(di): mov     [bx+54BBh], al
+; seg057:0E8F = "The sprayer system now has dye.\n"
+loc_5F0D0:
+push    ax
+call    sub_35778
+loc_5F0D8:
+retf    6
+
+##### recipe 52
+=== sub_5C6C7
+mov     di, [bp+arg_2]
+ax = TYPE(di)
+cmp     ax, 121h
+jnz     short loc_5C729
+mov     ax, 120h
+push    ax
+ax = X(di)
+push    ax
+ax = Y(di)
+push    ax
+call    sub_2BA57
+mov     si, ax
+cmp     ax, 0FFFFh
+jnz     short loc_5C727
+; seg057:2A4 = "It has no effect.\n"
+loc_5C71C:
+push    ax
+call    sub_35778
+jmp     loc_5C7BE
+loc_5C727:
+mov     di, si
+loc_5C729:
+mov     ax, 64h
+push    ax
+mov     ax, 1
+push    ax
+xor     ax, ax
+push    ax
+ax = X(di)
+push    ax
+ax = Y(di)
+push    ax
+push    word_41130
+call    sub_2C1FE
+mov     si, ax
+cmp     ax, 0FFFFh
+jnz     short loc_5C773
+; seg057:32E = "Not now.\n"
+jmp     short loc_5C71C
+loc_5C773:
+mov     al, [si+3266h]
+and     al, 0DFh
+mov     [si+3266h], al
+push    [bp+arg_4]
+call    sub_2C902
+ax = TYPE(si)
+add     ax, 400h
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+PRINT "The headgear is installed.\n"
+mov     al, byte_469EA
+or      al, 10h
+mov     byte_469EA, al
+test    al, 1
+jz      short loc_5C7BE
+mov     al, byte_469D6
+or      al, 4
+mov     byte_469D6, al
+loc_5C7BE:
+retf    6
+
+##### recipe 53
+=== sub_5D046
+mov     ax, 32h
+push    ax
+call    sub_303A9
+PRINT "You imagine "
+push    [bp+arg_4]
+call    sub_2BBAD
+mov     di, ax
+or      ax, ax
+jge     short loc_5D086
+loc_5D074:
+PRINT "nothing!\n"
+jmp     loc_5D288
+loc_5D086:
+ax = TYPE(di)
+mov     [bp+var_2], ax
+cmp     ax, 156h
+jl      short loc_5D09C
+jmp     loc_5D12D
+loc_5D09C:
+push    di
+call    sub_14BF5
+push    di
+call    sub_2F7E9
+push    ax
+PRINT "%s\n"
+add     sp, 6
+mov     bx, [bp+arg_4]
+test    byte ptr [bx+3266h], 18h
+jnz     short loc_5D106
+push    di
+ax = X([bp+arg_4])
+push    ax
+ax = Y([bp+arg_4])
+push    ax
+mov     ax, [bp+arg_4]
+mov     dx, 3
+imul    dx
+mov     bx, ax
+mov     al, [bx+78B0h]
+mov     ah, 0
+mov     cl, 4
+sar     ax, cl
+push    ax
+call    sub_2CFE2
+jmp     loc_5D280
+loc_5D106:
+push    di
+mov     ax, [bp+arg_4]
+mov     dx, 3
+imul    dx
+mov     bx, ax
+push    word ptr [bx+78AEh]
+mov     bx, [bp+arg_4]
+mov     al, [bx+3266h]
+mov     ah, 0
+and     ax, 18h
+push    ax
+call    sub_2D42C
+jmp     loc_5D280
+jmp     loc_5D280
+loc_5D12D:
+push    [bp+var_2]
+push    word_4112C
+push    word_4112E
+push    word_41130
+call    sub_2652C
+mov     si, ax
+or      ax, ax
+jge     short loc_5D14A
+jmp     loc_5D074
+loc_5D14A:
+ax = TYPE(si)
+dx = FRAME(di)
+shl     dx, cl
+add     ax, dx
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+mov     al, [di+3266h]
+mov     ah, 0
+test    ax, 20h
+jnz     short loc_5D182
+mov     al, [si+3266h]
+and     al, 0DFh
+mov     [si+3266h], al
+loc_5D182:
+mov     [bp+var_4], 0
+jmp     short loc_5D1CB
+loc_5D189:
+mov     bx, [bp+var_4]
+mov     al, [bx+0AEh]
+cbw
+mov     dx, word_4112C
+add     dx, ax
+mov     [bp+var_6], dx
+mov     al, [bx+0B6h]
+cbw
+mov     dx, word_4112E
+add     dx, ax
+mov     [bp+var_8], dx
+push    si
+push    [bp+var_6]
+push    dx
+call    sub_204E7
+or      ax, ax
+jz      short loc_5D1C8
+push    si
+push    [bp+var_6]
+push    [bp+var_8]
+push    word_41130
+call    sub_2CFE2
+jmp     short loc_5D1D1
+loc_5D1C8:
+inc     [bp+var_4]
+loc_5D1CB:
+cmp     [bp+var_4], 7
+jle     short loc_5D189
+loc_5D1D1:
+cmp     [bp+var_4], 7
+jle     short loc_5D1F7
+push    si
+xor     ax, ax
+push    ax
+call    sub_18126
+or      ax, ax
+jnz     short loc_5D1F7
+PRINT "nothing!\n"
+push    si
+jmp     loc_5D283
+loc_5D1F7:
+; QUAL([bp+arg_4]): mov     al, [bx+54BBh]
+mov     ah, 0
+dec     ax
+mov     bx, ax
+cmp     bx, 3
+ja      short def_5D20C
+shl     bx, 1
+jmp     cs:jpt_5D20C[bx]
+loc_5D211:
+mov     al, [si+6CBAh]
+and     al, 9Fh
+jmp     short loc_5D235
+loc_5D219:
+mov     al, [si+6CBAh]
+and     al, 9Fh
+or      al, 20h
+jmp     short loc_5D235
+loc_5D223:
+mov     al, [si+6CBAh]
+and     al, 9Fh
+or      al, 40h
+jmp     short loc_5D235
+loc_5D22D:
+mov     al, [si+6CBAh]
+and     al, 9Fh
+or      al, 60h
+loc_5D235:
+mov     [si+6CBAh], al
+def_5D20C:
+; QUAL(di): mov     al, [bx+54BBh]
+les     bx, dword_44180
+mov     es:[bx+si], al
+les     bx, dword_44E5E
+mov     es:[bx+si], al
+test    byte ptr [di+3266h], 80h
+jz      short loc_5D260
+mov     al, [si+3266h]
+or      al, 80h
+mov     [si+3266h], al
+loc_5D260:
+push    di
+call    sub_14BB6
+push    di
+call    sub_2F7E9
+push    ax
+PRINT "%s\n"
+add     sp, 6
+push    di
+call    sub_2C902
+loc_5D280:
+push    [bp+arg_4]
+loc_5D283:
+call    sub_2C902
+loc_5D288:
+retf    6
+
+##### recipe 54
+=== sub_5CF05
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+shl     ax, 1
+mov     bx, ax
+mov     al, [bx+16B0h]
+mov     cl, 4
+shr     ax, cl
+and     ax, 0Fh
+or      ax, ax
+jnz     short loc_5CF36
+; seg057:10B9 = "You lack the mental power to affect the dreamstuff hoard.\n"
+jmp     loc_5D036
+loc_5CF36:
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     si, ax
+push    word_4E6A6
+push    word_4E6A8
+mov     dx, 3
+imul    dx
+mov     bx, ax
+mov     ax, [bx+78AEh]
+and     ax, 3FFh
+push    ax
+ax = Y(si)
+push    ax
+call    sub_1B2B8
+mov     di, ax
+cmp     ax, 1
+jle     short loc_5CFA0
+push    si
+mov     ax, 0EBF6h
+push    ax
+mov     ax, 0EBF8h
+push    ax
+mov     ax, 9
+push    ax
+xor     ax, ax
+push    ax
+call    sub_18A0C
+or      ax, ax
+jnz     short loc_5CFA0
+; seg057:230 = "Blocked!\n"
+jmp     loc_5D036
+loc_5CFA0:
+mov     ax, 14Bh
+push    ax
+mov     ax, 10h
+push    ax
+xor     ax, ax
+push    ax
+push    si
+call    sub_2C37E
+mov     [bp+var_2], ax
+cmp     ax, 0FFFFh
+jnz     short loc_5CFC2
+; seg057:24E = "You are carrying too much already.\n"
+jmp     short loc_5D036
+loc_5CFC2:
+cmp     di, 1
+jle     short loc_5CFE2
+push    si
+mov     ax, 0EBF6h
+push    ax
+mov     ax, 0EBF8h
+push    ax
+mov     ax, 9
+push    ax
+les     bx, dword_4696E
+push    word ptr es:[bx+296h]
+call    sub_18A0C
+loc_5CFE2:
+PRINT "You pull some of the dreamstuff from the hoard.\n"
+; QUAL([bp+arg_4]): cmp     byte ptr [bx+54BBh], 0
+jz      short loc_5D002
+mov     ax, 139h
+jmp     short loc_5D00F
+loc_5D002:
+mov     ax, 31h
+push    ax
+mov     ax, 38h
+push    ax
+call    sub_36D07
+loc_5D00F:
+push    ax
+mov     ax, 8
+push    ax
+xor     ax, ax
+push    ax
+push    [bp+var_2]
+call    sub_2C37E
+or      ax, ax
+jl      short loc_5D02F
+; QUAL([bp+arg_4]): mov     byte ptr [bx+54BBh], 0
+jmp     short loc_5D03E
+loc_5D02F:
+; seg057:22F1 = "Aargh!\n"
+loc_5D036:
+push    ax
+call    sub_35778
+loc_5D03E:
+retf    6
+
+##### recipe 55
+=== sub_5D298
+cmp     word_4E67E, 68h
+jnz     short loc_5D2BE
+mov     al, byte_469DE
+or      al, 40h
+mov     byte_469DE, al
+mov     al, byte_4112A
+mov     ah, 0
+push    ax
+mov     ax, 68h
+push    ax
+xor     ax, ax
+push    ax
+call    sub_3F864
+jmp     short loc_5D30F
+loc_5D2BE:
+cmp     word_4E67E, 0
+jnz     short loc_5D300
+mov     ax, 1
+push    ax
+call    sub_1835E
+mov     dl, byte_4686E
+mov     dh, 0
+cmp     ax, dx
+jle     short loc_5D300
+mov     ax, 1
+push    ax
+call    sub_2F7E9
+push    ax
+PRINT "\n%s is healed.\n"
+add     sp, 6
+mov     ax, 1
+push    ax
+call    sub_1835E
+mov     byte_4686E, al
+jmp     short loc_5D30F
+loc_5D300:
+PRINT "It has no effect.\n"
+loc_5D30F:
+retf    6
+
+##### recipe 56
+=== sub_5F0DE
+mov     di, [bp+arg_4]
+ax = TYPE(di)
+mov     si, ax
+PRINT "`It is automatic and can't be opened by hand.\n"
+; QUAL(di): mov     al, [bx+54BBh]
+mov     ah, 0
+and     ax, 0C0h
+cmp     ax, 0C0h
+jnz     short loc_5F11D
+; seg057:1223 = "It is apparently rusted shut.\n"
+jmp     short loc_5F158
+loc_5F11D:
+; QUAL(di): test    byte ptr [bx+54BBh], 80h
+jz      short loc_5F131
+; seg057:1242 = "It is apparently locked.\n"
+jmp     short loc_5F158
+loc_5F131:
+cmp     si, 0E3h
+jnz     short loc_5F141
+mov     al, byte_469E9
+mov     ah, 0
+test    ax, 4
+jz      short loc_5F151
+loc_5F141:
+cmp     si, 0B3h
+jnz     short loc_5F160
+mov     al, byte_469E9
+mov     ah, 0
+test    ax, 10h
+jnz     short loc_5F160
+loc_5F151:
+; seg057:125C = "It has no power.\n"
+loc_5F158:
+push    ax
+call    sub_35778
+loc_5F160:
+retf    6
+
+##### recipe 58
+=== sub_5CAFA
+mov     di, [bp+arg_4]
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     si, ax
+ax = X(di)
+mov     [bp+var_6], ax
+ax = Y(di)
+mov     [bp+var_8], ax
+push    [bp+var_6]
+push    ax
+ax = X(si)
+push    ax
+ax = Y(si)
+push    ax
+call    sub_1B2B8
+mov     [bp+var_4], ax
+cmp     ax, 1
+jle     short loc_5CBA0
+push    si
+lea     ax, [bp+var_6]
+push    ax
+lea     ax, [bp+var_8]
+push    ax
+mov     ax, 9
+push    ax
+xor     ax, ax
+push    ax
+call    sub_18A0C
+or      ax, ax
+jnz     short loc_5CBA0
+; seg057:230 = "Blocked!\n"
+loc_5CB95:
+push    ax
+call    sub_35778
+jmp     loc_5CC3D
+loc_5CBA0:
+ax = FRAME(di)
+cmp     ax, 1
+jnb     short loc_5CBBA
+; seg057:1A37 = "No seed to harvest yet.\n"
+jmp     short loc_5CB95
+loc_5CBBA:
+mov     ax, 9Eh
+push    ax
+mov     ax, 10h
+push    ax
+mov     ax, 1
+push    ax
+push    si
+call    sub_2C37E
+mov     [bp+var_2], ax
+or      ax, ax
+jge     short loc_5CBDC
+; seg057:24E = "You are carrying too much already.\n"
+jmp     short loc_5CB95
+loc_5CBDC:
+cmp     [bp+var_4], 1
+jle     short loc_5CBFD
+push    si
+lea     ax, [bp+var_6]
+push    ax
+lea     ax, [bp+var_8]
+push    ax
+mov     ax, 9
+push    ax
+les     bx, dword_4696E
+push    word ptr es:[bx+13Ch]
+call    sub_18A0C
+loc_5CBFD:
+ax = TYPE(di)
+mov     bx, di
+shl     bx, 1
+mov     [bx-633Ch], ax
+mov     ax, 0Ah
+push    ax
+mov     ax, 0Fh
+push    ax
+call    sub_36D07
+; QUAL(di): mov     [bx+54BBh], al
+call    sub_2EEA8
+cmp     word_4165C, 92h
+jnz     short loc_5CC37
+mov     byte_409C2, 1
+loc_5CC37:
+mov     word_409C8, 1
+loc_5CC3D:
+retf    6
+
+##### recipe 59
+=== sub_5CC45
+mov     si, [bp+arg_4]
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     di, ax
+PRINT "Location: "
+mov     word_4165A, 1
+cmp     byte_41634, 0
+jz      short loc_5CC90
+xor     ax, ax
+push    ax
+call    sub_34097
+mov     byte_41634, 1
+mov     al, 5
+mov     byte_41636, al
+mov     byte_41635, al
+loc_5CC90:
+call    sub_34C4C
+mov     [bp+var_2], ax
+cmp     ax, 8Eh
+jnz     short loc_5CCAB
+cmp     word_4E6A6, 0
+jl      short loc_5CCAB
+cmp     word_4E6A8, 0
+jge     short loc_5CCB5
+loc_5CCAB:
+; seg057:3F8 = "nowhere.\n"
+jmp     loc_5CE08
+loc_5CCB5:
+mov     ax, 0Ah
+push    ax
+call    sub_35517
+mov     ax, word_4E6A6
+mov     [bp+var_4], ax
+mov     ax, word_4E6A8
+mov     [bp+var_6], ax
+push    [bp+var_4]
+push    ax
+ax = X(di)
+push    ax
+ax = Y(di)
+push    ax
+call    sub_1B2B8
+mov     [bp+var_8], ax
+cmp     ax, 1
+jle     short loc_5CD35
+push    di
+lea     ax, [bp+var_4]
+push    ax
+lea     ax, [bp+var_6]
+push    ax
+mov     ax, 9
+push    ax
+xor     ax, ax
+push    ax
+call    sub_18A0C
+or      ax, ax
+jnz     short loc_5CD35
+PRINT "Blocked!\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     loc_5CE10
+loc_5CD35:
+push    [bp+var_4]
+push    [bp+var_6]
+push    word_41130
+call    sub_263B2
+mov     ah, 0
+push    ax
+call    sub_3231F
+or      ax, ax
+jnz     short loc_5CD6B
+PRINT "Won't grow there!\n"
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     loc_5CE10
+loc_5CD6B:
+cmp     [bp+var_8], 1
+jle     short loc_5CD8C
+push    di
+lea     ax, [bp+var_4]
+push    ax
+lea     ax, [bp+var_6]
+push    ax
+mov     ax, 9
+push    ax
+les     bx, dword_4696E
+push    word ptr es:[bx+13Ch]
+call    sub_18A0C
+loc_5CD8C:
+test    byte ptr [si+3266h], 18h
+jz      short loc_5CD98
+mov     byte_409C2, 1
+loc_5CD98:
+; QTY(si): cmp     byte ptr [bx+54BAh], 1
+jbe     short loc_5CDE6
+; QTY(si): mov     al, [bx+54BAh]
+add     al, 0FFh
+; QTY(si): mov     [bx+54BAh], al
+mov     ax, 9Eh
+push    ax
+xor     ax, ax
+push    ax
+mov     ax, 1
+push    ax
+push    [bp+var_4]
+push    [bp+var_6]
+push    word_41130
+call    sub_2C1FE
+mov     si, ax
+or      ax, ax
+jge     short loc_5CDF6
+PRINT "Aargh!\n"
+jmp     short loc_5CDF6
+loc_5CDE6:
+push    si
+push    [bp+var_4]
+push    [bp+var_6]
+push    word_41130
+call    sub_2CFE2
+loc_5CDF6:
+call    sub_2EEA8
+mov     word_409C8, 1
+; seg057:1A6E = "Now it just needs watering.\n"
+loc_5CE08:
+push    ax
+call    sub_35778
+loc_5CE10:
+retf    6
+
+##### recipe 60
+=== sub_5E690
+mov     di, [bp+arg_4]
+ax = TYPE(di)
+cmp     ax, 0EBh
+jnz     short loc_5E6BF
+ax = FRAME(di)
+cmp     ax, 4
+jz      short loc_5E6BF
+jmp     loc_5E7D1
+loc_5E6BF:
+cmp     [bp+arg_2], 0FFFFh
+jnz     short loc_5E715
+push    word_4E6A6
+push    word_4E6A8
+push    word_41130
+call    sub_263B2
+cmp     al, 8
+jnz     short loc_5E703
+mov     al, byte_469C7
+or      al, 40h
+mov     byte_469C7, al
+mov     ax, 1
+push    ax
+mov     ax, 51h
+push    ax
+xor     ax, ax
+push    ax
+call    sub_3F864
+mov     ax, 51h
+push    ax
+call    sub_3F615
+call    sub_3F61A
+jmp     loc_5E7E0
+loc_5E703:
+PRINT "It has no effect.\n"
+jmp     loc_5E7E0
+loc_5E715:
+ax = TYPE([bp+arg_2])
+mov     si, ax
+cmp     ax, 0B3h
+jz      short loc_5E744
+cmp     ax, 0E3h
+jz      short loc_5E744
+cmp     ax, 1A5h
+jz      short loc_5E744
+cmp     ax, 98h
+jz      short loc_5E744
+cmp     ax, 0DBh
+jz      short loc_5E744
+cmp     ax, 0DEh
+jz      short loc_5E744
+jmp     loc_5E7D1
+loc_5E744:
+; QUAL([bp+arg_2]): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_2], ax
+add     ax, 0FF80h
+cmp     ax, 40h
+jl      short loc_5E7C0
+mov     bx, [bp+arg_2]
+shl     bx, 1
+mov     al, byte ptr [bp+var_2]
+add     al, 80h
+mov     [bx+54BBh], al
+PRINT "The door is unstuck.\n"
+mov     ax, 4
+push    ax
+call    sub_303A9
+push    di
+call    sub_20345
+or      ax, ax
+jz      short loc_5E7B8
+; QTY(di): mov     al, [bx+54BAh]
+mov     ah, 0
+mov     [bp+var_4], ax
+cmp     ax, 1
+jle     short loc_5E7B0
+; QTY(di): mov     al, [bx+54BAh]
+add     al, 0FFh
+; QTY(di): mov     [bx+54BAh], al
+jmp     short loc_5E7E0
+loc_5E7B0:
+push    di
+call    sub_2C902
+jmp     short loc_5E7E0
+loc_5E7B8:
+push    di
+call    sub_2C902
+jmp     short loc_5E7E0
+loc_5E7C0:
+PRINT "This door is not rusted.\n"
+jmp     short loc_5E7E0
+loc_5E7D1:
+PRINT "It has no effect.\n"
+loc_5E7E0:
+retf    6
+
+##### recipe 62
+=== sub_5A93C
+mov     di, [bp+arg_0]
+mov     word_4EB7A, 0
+push    di
+call    sub_2BBAD
+mov     si, ax
+or      ax, ax
+jl      short loc_5A964
+push    di
+call    sub_14D04
+mov     word_4EB7A, 1
+jmp     short loc_5A9BF
+loc_5A964:
+ax = X([bp+arg_2])
+push    ax
+ax = Y([bp+arg_2])
+push    ax
+call    near ptr sub_5A35B
+push    [bp+arg_2]
+call    sub_2C902
+push    di
+call    sub_2C902
+mov     ax, 1Bh
+push    ax
+call    sub_303A9
+mov     ax, 1Bh
+push    ax
+call    sub_303A9
+PRINT "You filled in the hole.\n"
+loc_5A9BF:
+retf    6
+
+##### recipe 63
+=== sub_5D4B0
+mov     di, [bp+arg_2]
+cmp     [bp+arg_4], di
+jz      short loc_5D4C0
+jmp     loc_5D56F
+loc_5D4C0:
+ax = TYPE([bp+arg_4])
+cmp     ax, 6Eh
+jnz     short loc_5D505
+mov     bx, [bp+arg_4]
+mov     al, [bx+3266h]
+mov     ah, 0
+and     ax, 18h
+cmp     ax, 18h
+jnz     short loc_5D4EC
+; seg057:2CF = "No.\n"
+jmp     loc_5D576
+loc_5D4EC:
+push    [bp+arg_4]
+call    sub_2C902
+PRINT "A torch burns out.\n"
+jmp     short loc_5D57E
+loc_5D505:
+mov     bx, di
+shl     bx, 1
+mov     bx, [bx-633Ch]
+and     bx, 3FFh
+sub     bx, 70h
+cmp     bx, 6
+ja      short def_5D51B
+shl     bx, 1
+jmp     cs:jpt_5D51B[bx]
+loc_5D520:
+mov     si, 6Fh
+jmp     short loc_5D541
+loc_5D525:
+mov     si, 75h
+jmp     short loc_5D541
+loc_5D52A:
+mov     si, 71h
+jmp     short loc_5D541
+loc_5D52F:
+mov     si, 73h
+jmp     short loc_5D541
+def_5D51B:
+ax = TYPE(di)
+mov     si, ax
+loc_5D541:
+ax = WORD(di)
+and     ax, 0FC00h
+add     ax, si
+mov     bx, di
+shl     bx, 1
+mov     [bx-633Ch], ax
+push    di
+call    sub_2F7E9
+push    ax
+PRINT "The %s is extinguished.\n"
+add     sp, 6
+jmp     short loc_5D57E
+loc_5D56F:
+; seg057:1FD = "It's already lit.\n"
+loc_5D576:
+push    ax
+call    sub_35778
+loc_5D57E:
+cmp     word_4165C, 92h
+jnz     short loc_5D58B
+call    sub_315A4
+loc_5D58B:
+xor     ax, ax
+push    ax
+call    sub_22B27
+retf    6
+
+##### recipe 65
+=== sub_59FD7
+; QUAL([bp+arg_2]): test    byte ptr [bx+54BBh], 1
+jz      short loc_59FEF
+; seg057:1856 = "The robot already has a heartstone.\n"
+jmp     short loc_5A011
+loc_59FEF:
+; QUAL([bp+arg_2]): mov     byte ptr [bx+54BBh], 1
+mov     ax, 1Fh
+push    ax
+call    sub_303A9
+push    [bp+arg_4]
+call    sub_2C902
+; seg057:187B = "The heartstone is installed.\n"
+loc_5A011:
+push    ax
+call    sub_35778
+retf    6
+
+##### recipe 66
+=== sub_5CE18
+mov     al, byte_4112A
+mov     ah, 0
+mov     bx, ax
+mov     al, [bx+4EA4h]
+mov     ah, 0
+mov     bx, ax
+test    byte ptr [bx+3266h], 40h
+jz      short loc_5CE3A
+; seg057:1A8B = "Your mouth is too dry.\n"
+jmp     short loc_5CE41
+loc_5CE3A:
+; seg057:1AA3 = "You spit into the spittoon.\n"
+loc_5CE41:
+push    ax
+call    sub_35778
+retf    6
+
+##### recipe 67
+=== sub_5CE4D
+mov     di, [bp+arg_4]
+mov     al, [di+3266h]
+mov     ah, 0
+and     ax, 18h
+cmp     ax, 18h
+jz      short loc_5CE73
+push    di
+mov     ax, 0FFFFh
+push    ax
+push    ax
+call    sub_3F8F0
+jmp     loc_5CEFD
+loc_5CE73:
+; QUAL(di): mov     al, [bx+54BBh]
+mov     ah, 0
+mov     [bp+var_2], ax
+cmp     ax, 2
+jge     short loc_5CEA3
+mov     bx, di
+shl     bx, 1
+mov     al, byte ptr [bp+var_2]
+inc     al
+mov     [bx+54BBh], al
+PRINT "Click.\n"
+jmp     short loc_5CEFD
+loc_5CEA3:
+PRINT "You may use the ruby slippers to go home. If you choose to, you may now view the Grand Finale.\n\n*"
+PRINT "Afterwards, you will exit to DOS. You will be able to resume play from your last saved game.\n\n*"
+PRINT "Would you like to see the Grand Finale now? If so, press Y. To resume play now, hit N: (Y N)\n"
+xor     si, si
+jmp     short loc_5CEE2
+loc_5CED4:
+call    sub_33683
+push    ax
+call    sub_11147
+mov     si, ax
+loc_5CEE2:
+cmp     si, 59h
+jz      short loc_5CEEC
+cmp     si, 4Eh
+jnz     short loc_5CED4
+loc_5CEEC:
+cmp     si, 4Eh
+jnz     short loc_5CEF8
+call    sub_3F77F
+jmp     short loc_5CEFD
+loc_5CEF8:
+call    far ptr sub_3F789
+loc_5CEFD:
+retf    6
+
+##### recipe 68
+=== sub_5ED76
+mov     al, byte_469CD
+or      al, 40h
+mov     byte_469CD, al
+mov     ax, 1
+push    ax
+mov     ax, 57h
+push    ax
+xor     ax, ax
+push    ax
+call    sub_3F864
+mov     ax, 57h
+push    ax
+call    sub_3F615
+call    sub_3F61A
+retf    6
+
+##### recipe 69
+=== sub_5EDA3
+cmp     word_4112C, 76h
+jl      short loc_5EDF3
+cmp     word_4112C, 78h
+jg      short loc_5EDF3
+cmp     word_4112E, 0CAh
+jl      short loc_5EDF3
+cmp     word_4112E, 0CCh
+jg      short loc_5EDF3
+cmp     word_41130, 2
+jnz     short loc_5EDF3
+mov     al, byte_469C6
+or      al, 40h
+mov     byte_469C6, al
+mov     ax, 1
+push    ax
+mov     ax, 50h
+push    ax
+xor     ax, ax
+push    ax
+call    sub_3F864
+mov     ax, 50h
+push    ax
+call    sub_3F615
+call    sub_3F61A
+jmp     short loc_5EDFF
+loc_5EDF3:
+PRINT "You see yourself.\n"
+loc_5EDFF:
+retf    6
+
+##### recipe 70
+=== sub_5EE03
+mov     si, [bp+arg_4]
+ax = X(si)
+mov     di, ax
+ax = Y(si)
+mov     [bp+var_2], ax
+; QUAL(si): test    byte ptr [bx+54BBh], 80h
+jz      short loc_5EE53
+PRINT "It is apparently locked.\n"
+jmp     def_5EE69
+loc_5EE53:
+mov     bx, si
+shl     bx, 1
+mov     bx, [bx-633Ch]
+mov     cl, 0Ah
+shr     bx, cl
+cmp     bx, 7
+jbe     short loc_5EE67
+jmp     def_5EE69
+loc_5EE67:
+shl     bx, 1
+jmp     cs:jpt_5EE69[bx]
+loc_5EE6E:
+mov     ax, di
+inc     ax
+and     ax, 3FFh
+mov     di, ax
+loc_5EE76:
+ax = TYPE(si)
+add     ax, 0C00h
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+push    si
+mov     ax, di
+dec     ax
+and     ax, 3FFh
+push    ax
+push    [bp+var_2]
+push    word_41130
+call    sub_2CFE2
+jmp     short def_5EE69
+loc_5EEA2:
+ax = TYPE(si)
+add     ax, 400h
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+push    si
+mov     ax, di
+inc     ax
+and     ax, 3FFh
+push    ax
+push    [bp+var_2]
+push    word_41130
+call    sub_2CFE2
+jmp     short def_5EE69
+loc_5EECE:
+ax = TYPE(si)
+add     ax, 1C00h
+jmp     short loc_5EEEC
+loc_5EEDE:
+ax = TYPE(si)
+add     ax, 1400h
+loc_5EEEC:
+mov     bx, si
+shl     bx, 1
+mov     [bx-633Ch], ax
+def_5EE69:
+retf    6
+
+##### recipe 71
+=== sub_5F25E
+mov     di, [bp+arg_2]
+ax = FRAME([bp+arg_4])
+mov     [bp+var_2], ax
+ax = WORD(di)
+shr     ax, cl
+mov     [bp+var_4], ax
+cmp     [bp+arg_4], di
+jnz     short loc_5F2A6
+; seg057:1ECD = "\n\nAn item can't be placed inside itself!\n"
+loc_5F292:
+push    ax
+call    sub_35778
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     loc_5F341
+loc_5F2A6:
+cmp     [bp+var_2], 0
+jnz     short loc_5F2C6
+cmp     [bp+var_4], 0
+jle     short loc_5F2C6
+mov     si, di
+mov     di, [bp+arg_4]
+mov     [bp+arg_4], si
+mov     si, [bp+var_4]
+mov     ax, [bp+var_2]
+mov     [bp+var_4], ax
+mov     [bp+var_2], si
+loc_5F2C6:
+cmp     [bp+var_4], 0
+jle     short loc_5F2D5
+; seg057:1FA6 = "There is already something in the bucket.\n"
+jmp     short loc_5F292
+loc_5F2D5:
+cmp     [bp+var_2], 0
+jnz     short loc_5F2E4
+; seg057:69A = "There is nothing in the bucket.\n"
+jmp     short loc_5F292
+loc_5F2E4:
+ax = TYPE(di)
+mov     dx, [bp+var_2]
+mov     cl, 0Ah
+shl     dx, cl
+add     ax, dx
+mov     bx, di
+shl     bx, 1
+mov     [bx-633Ch], ax
+ax = TYPE([bp+arg_4])
+mov     bx, [bp+arg_4]
+shl     bx, 1
+mov     [bx-633Ch], ax
+test    byte ptr [di+3266h], 18h
+jnz     short loc_5F326
+mov     bx, [bp+arg_4]
+test    byte ptr [bx+3266h], 18h
+jz      short loc_5F32B
+loc_5F326:
+mov     byte_409C2, 1
+loc_5F32B:
+test    byte ptr [di+3266h], 18h
+jz      short loc_5F33C
+mov     bx, [bp+arg_4]
+test    byte ptr [bx+3266h], 18h
+jnz     short loc_5F341
+loc_5F33C:
+call    sub_2EEA8
+loc_5F341:
+retf    6
+
+##### recipe 72
+=== sub_5D313
+test    byte_469EC, 40h
+jz      short loc_5D326
+; seg057:12C8 = "The canals are already working.\n"
+jmp     short loc_5D34B
+loc_5D326:
+test    byte_469EC, 20h
+jz      short loc_5D344
+mov     al, byte_469EC
+or      al, 40h
+mov     byte_469EC, al
+xor     ax, ax
+push    ax
+call    sub_14722
+call    sub_3F7AC
+jmp     short loc_5D353
+loc_5D344:
+; seg057:111C = "There is no water pressure in the valve system.\n"
+loc_5D34B:
+push    ax
+call    sub_35778
+loc_5D353:
+retf    6
+
+##### recipe 73
+=== sub_5B412
+mov     si, [bp+arg_4]
+mov     di, [bp+arg_2]
+test    byte ptr [si+3266h], 18h
+jz      short loc_5B42B
+mov     byte_409C2, 1
+loc_5B42B:
+cmp     di, 75h
+jz      short loc_5B43E
+PRINT "This mechanical man already has radium.\n"
+jmp     short loc_5B483
+loc_5B43E:
+; QTY(si): mov     al, [bx+54BAh]
+mov     ah, 0
+mov     [bp+var_2], ax
+cmp     ax, 1
+jnz     short loc_5B458
+push    si
+call    sub_2C902
+jmp     short loc_5B465
+loc_5B458:
+mov     bx, si
+shl     bx, 1
+mov     al, byte ptr [bp+var_2]
+add     al, 0FFh
+mov     [bx+54BAh], al
+loc_5B465:
+ax = TYPE(di)
+add     ax, 2400h
+mov     bx, di
+shl     bx, 1
+mov     [bx-633Ch], ax
+mov     al, byte_469EB
+or      al, 8
+mov     byte_469EB, al
+loc_5B483:
+retf    6
+
+##### recipe 74
+=== sub_5D357
+mov     si, [bp+arg_2]
+ax = TYPE(si)
+mov     [bp+var_2], ax
+cmp     ax, 155h
+jz      short loc_5D3AC
+cmp     si, 100h
+jge     short loc_5D389
+or      si, si
+jl      short loc_5D389
+mov     al, [si+6CBAh]
+mov     ah, 0
+test    ax, 80h
+jnz     short loc_5D3AC
+loc_5D389:
+push    si
+call    sub_2F7E9
+push    ax
+PRINT "The %s doesn't need oxygenated air.\n"
+add     sp, 6
+mov     ax, 5
+push    ax
+call    sub_303A9
+loc_5D3A9:
+jmp     loc_5D4A2
+loc_5D3AC:
+cmp     [bp+var_2], 155h
+jnz     short loc_5D42A
+cmp     di, 10h
+jge     short loc_5D408
+push    si
+call    sub_3F570
+mov     di, ax
+or      ax, ax
+jge     short loc_5D3E6
+push    si
+call    sub_2F7E9
+push    ax
+PRINT "%s is beyond help.\n"
+add     sp, 6
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     short loc_5D454
+loc_5D3E6:
+push    di
+call    sub_2F7E9
+push    ax
+PRINT "%s is revived!\n"
+add     sp, 6
+mov     ax, 4
+push    ax
+call    sub_303A9
+jmp     short loc_5D454
+loc_5D408:
+push    si
+call    sub_2F7E9
+push    ax
+PRINT "%s is beyond help.\n"
+add     sp, 6
+mov     ax, 5
+push    ax
+call    sub_303A9
+jmp     short loc_5D454
+loc_5D42A:
+push    si
+call    sub_2F7E9
+push    ax
+PRINT "%s is revived!\n"
+add     sp, 6
+mov     ax, 4
+push    ax
+call    sub_303A9
+push    si
+call    sub_1835E
+mov     [si+6DBEh], al
+loc_5D454:
+cmp     word_4165C, 91h
+jz      short loc_5D472
+cmp     word_4165C, 90h
+jnz     short loc_5D477
+mov     bx, word_41654
+mov     al, [bx+4EA4h]
+mov     ah, 0
+cmp     ax, si
+jnz     short loc_5D477
+loc_5D472:
+mov     byte_409C2, 1
+loc_5D477:
+; QTY([bp+arg_4]): cmp     byte ptr [bx+54BAh], 1
+jnz     short loc_5D48E
+push    [bp+arg_4]
+call    sub_2C902
+jmp     loc_5D3A9
+loc_5D48E:
+; QTY([bp+arg_4]): mov     al, [bx+54BAh]
+add     al, 0FFh
+; QTY([bp+arg_4]): mov     [bx+54BAh], al
+loc_5D4A2:
+retf    6
+

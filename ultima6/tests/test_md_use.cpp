@@ -124,6 +124,25 @@ int main() {
 		w.deleteObject(gate);
 	}
 
+	// an instrument (0x11B, recipe 57) is played ("Wheeeeze"); a thing that has only a message (0x143, recipe 64) says it
+	{
+		for (int type : {0x11B, 0x143}) {
+			std::vector<int> here;
+			w.objectsAt(px + 1, py, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+			int thing = put(w, type, 0, px + 1, py, 0);
+			g.log.clear();
+			useEast(w, g, px, py);
+			if (type == 0x11B)
+				CHECK(logText(g).find("Wheeeeze") != std::string::npos);
+			else
+				CHECK(logText(g).find("You don't know how it works") != std::string::npos);
+			w.deleteObject(thing);
+		}
+	}
+
 	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
 	{
 		std::vector<int> here;
