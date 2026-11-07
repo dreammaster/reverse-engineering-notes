@@ -276,6 +276,23 @@ static const ExitVector exit_vectors[] = {
 	{"cadaver2/TATA/3", 365000094, 0xE8238A76U},
 	{"cadaver2/TATA/4", 443000092, 0xEFC0B47DU},
 };
+typedef struct { const char *dir; int rooms; unsigned hash; } StatusVector;
+static const StatusVector status_vectors[] = {
+	{"cadaver1/DATA/1", 72, 0x4123B686U},
+	{"cadaver1/DATA/2", 97, 0xFA85791BU},
+	{"cadaver1/DATA/3", 91, 0x74297E93U},
+	{"cadaver1/DATA/4", 78, 0xE5BFC58EU},
+	{"cadaver1/DATA/5", 53, 0xC3244063U},
+	{"cadaver2/DATA/1", 72, 0x4123B686U},
+	{"cadaver2/DATA/2", 97, 0xFA85791BU},
+	{"cadaver2/DATA/3", 91, 0x74297E93U},
+	{"cadaver2/DATA/4", 78, 0xE5BFC58EU},
+	{"cadaver2/DATA/5", 53, 0xC3244063U},
+	{"cadaver2/TATA/1", 32, 0xEBBF4513U},
+	{"cadaver2/TATA/2", 72, 0xA82686B4U},
+	{"cadaver2/TATA/3", 53, 0xEA7CF8F0U},
+	{"cadaver2/TATA/4", 46, 0x99F45EE1U},
+};
 typedef struct { const char *dir; int rooms; unsigned hash; } AclVector;
 static const AclVector acl_vectors[] = {
 	{"cadaver1/DATA/1", 10, 0x10A2B948U},

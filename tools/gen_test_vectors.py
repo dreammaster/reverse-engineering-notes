@@ -3,7 +3,7 @@
 import glob, os, struct, sys
 here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, here)
-import push, panel, mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
+import status, push, panel, mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
 
 root = os.path.join(here, '..')
 
@@ -103,6 +103,28 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
                     animation.step(ast, sc, offs)
                     ob += struct.pack('<6i', ast['pos'], ast['frame'], ast['delay'], ast['dir'], ast['dx'], ast['dy'])
     obj_vec.append((os.path.relpath(d, root), nspr, fnv(ob)))
+# ---- status text: room names + DAY n on a blank canvas, every room of every level
+font = mpsections.andata_blocks(mjm.mjm_unpack(open(os.path.join(root, 'cadaver1', 'DATA', 'ANDATA.DAT'), 'rb').read()))[4]
+status_vec = []
+for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glob.glob(os.path.join(root, 'cadaver2', 'TATA', '[1-4]')) +
+                glob.glob(os.path.join(root, 'cadaver2', 'DATA', '[1-5]'))):
+    mp1, mp2, mp3 = roomview.level_files(d)
+    secs = mpsections.mp2_sections(mp2)
+    names = lng.load(glob.glob(os.path.join(d, 'ENG*.LNG'))[0])
+    tbl = status.name_table_of(mp1)
+    h, cnt = 0x811C9DC5, 0
+    for r, rec in enumerate(secs[0]['records']):
+        if len(rec) < 0x1B:
+            continue
+        nm = status.room_name_string(rec, tbl, names)
+        cv = bytearray(64000)
+        x, y, w = status.DAY_BOX
+        status.draw_centred(cv, status.DAY_BOX, 'DAY %d' % (1 + r % 12), font)
+        status.draw_centred(cv, status.NAME_BOX, nm, font)
+        for c in nm.encode() + b'\0' + bytes(cv):
+            h = ((h ^ c) * 0x01000193) & 0xFFFFFFFF
+        cnt += 1
+    status_vec.append((os.path.relpath(d, root), cnt, h))
 intro_vec = []
 for g, key in (('cadaver1', 'cadaver'), ('cadaver2', 'payoff')):
     d = os.path.join(root, g)
@@ -307,6 +329,11 @@ with open(os.path.join(root, 'src', 'tests', 'vectors.h'), 'w') as o:
     o.write('typedef struct { const char *dir; int exits; unsigned hash; } ExitVector;\n')
     o.write('static const ExitVector exit_vectors[] = {\n')
     for r in exit_vec:
+        o.write('\t{"%s", %d, 0x%08XU},\n' % r)
+    o.write('};\n')
+    o.write('typedef struct { const char *dir; int rooms; unsigned hash; } StatusVector;\n')
+    o.write('static const StatusVector status_vectors[] = {\n')
+    for r in status_vec:
         o.write('\t{"%s", %d, 0x%08XU},\n' % r)
     o.write('};\n')
     o.write('typedef struct { const char *dir; int rooms; unsigned hash; } AclVector;\n')

@@ -233,8 +233,26 @@ Identical in Cadaver 1 and 2.
   routine's `[401A]/[401C]` offsets — probably the alternate/dimmed or mask variant; not used on the first screen).
   Composite of floor + walls + objects + wings equals **98.2% of the original's full 320×200 first frame** (level 1 room 0; the remainder is the
   player, one animated object and the status text), unit-tested C vs Python on all rooms.
-* Blocks 3 and 4 (920 and 1104 bytes) look like 1-bit-per-pixel fonts (the status text "DAY 1", room name); block 2 (576 bytes) and 5 (96 bytes)
-  small sprites; block 0 (1904 bytes) a table of 8-byte entries (e.g. `80EE 0040 7F30 80FE`, `FFFE 0000 0000 FFFE` = empty). Not decoded.
+* **Block 4 (1104 bytes) = the status-text font** (verified, §6.3a): 46 glyphs of 6 rows × 4 plane bytes (8 pixels wide). Block 3 (920 bytes) is
+  another font (not used by the status line); block 2 (576 bytes) and 5 (96 bytes) small sprites; block 0 (1904 bytes) a table of 8-byte entries (e.g. `80EE 0040 7F30 80FE`, `FFFE 0000 0000 FFFE` = empty). Not decoded.
+
+### 6.3a Status text ("DAY n", room name) — *verified* (`tools/status.py`, `src/engine/panel.c`)
+
+Drawn by `room_draw_name` (`1000:DD40`) and `status_draw_day` (`1000:DDB5`) with the text routine `1000:8776`:
+
+* Every character advances **7 pixels** (a space is only an advance). A glyph is 6 rows × 4 plane bytes (24 bytes, ANDATA block 4, 46 glyphs) and
+  acts like a transparent sprite: pixels where any plane bit is set replace the screen, colours come straight from the planes. `A`–`Z` = glyph
+  `c − 'A'`; characters below `A` go through the 32-byte table at `ds:FA40` (index `c − 0x21`):
+  `"`→42 `%`→39 `,`→37 `-`→40 `.`→36 `/`→38 `0`–`9`→26–35 `<=>`→43 44 45 `?`→41, everything else 0.
+* "DAY n" (n = `ds:5B2 + 1`): the 60×7 box at (252,157) is cleared to colour 0 and the text is centred in it (x = 252 + (60 − 7·len)/2).
+* The room name is centred in the 108-pixel box at x = 202, y = 186 (x = 202 + (108 − 7·len)/2), after being built as
+  **prefix + ' ' + base** (the order flips when `ds:70B == 1`, i.e. another language) and cut to **15 characters**:
+  *prefix* = string id in the big-endian word at room record `+0x18` (`MP2` section 0; `0xFFFF` = none, the space is still added, so
+  level 1's first room reads `" CAVERN"`); *base* = string id `table[rec[+0x1A]]` (byte ≥ 0x80 = none), where `table` is **20 big-endian words
+  at offset 1630 of the 1790-byte `LEVn.MP1` trailer** (`126 127 128 …` in levels 1–3, `128…` in level 4, `144…` in level 5, `135…` in the Payoff's
+  `TATA` levels). The strings are the level's `ENGn.LNG`.
+* Verified: the first screen of levels 1–5 has all 198/146/296/354/280 text pixels equal to the emulator's frame; vectors (every room of all 13 level
+  sets) test the C code against the Python reference.
 
 ### 6.4 `LEVn.MP2` — *structure verified*
 

@@ -21,6 +21,7 @@
 #include "engine/panel.h"
 #include "engine/push.h"
 #include "engine/acl.h"
+#include "engine/lng.h"
 
 #include <SDL.h>
 #include <stdio.h>
@@ -92,7 +93,7 @@ static int show_sprites(const GameFiles *g, Screen *scr, int big) {
 }
 
 /* ---- room floor viewer: PgUp/PgDn = room, [ ] = level, T = DATA/TATA set (Payoff), arrows = scroll ---- */
-typedef struct {
+typedef struct RoomView_ {
 	int level, room, use_tata, scroll_x, scroll_y;
 	int loaded_level, loaded_tata;
 	TileSet tiles, walls;
@@ -104,6 +105,9 @@ typedef struct {
 	AclVM vm;                  /* script state: thing flags / variables */
 	int vm_ok;
 	uint16_t palette[16];
+	uint16_t name_tbl[20];     /* room-name string ids (MP1 trailer) */
+	LngTable names;            /* ENGn.LNG */
+	int names_ok;
 	int ok;
 	char info[96];
 } RoomView;
@@ -116,19 +120,29 @@ static void roomview_tick(RoomView *rv) {
 
 /* the frame around the room view (ANDATA.DAT block 1) */
 static uint8_t *g_andata;
-static const uint8_t *g_b1;
-static size_t g_b1_len;
+static const uint8_t *g_b1, *g_font;
+static size_t g_b1_len, g_font_len;
 static void panel_ensure(const GameFiles *g) {
 	if (g_andata)
 		return;
 	size_t len;
 	if (gamefiles_read_mjm(g, "data\\andata.dat", -1, &g_andata, &len) == 0)
+	{
 		andata_block(g_andata, len, 1, &g_b1, &g_b1_len);
+		andata_block(g_andata, len, 4, &g_font, &g_font_len);
+	}
 }
-static void panel_draw(const GameFiles *g, Screen *scr) {
+/* wings + the status text ("DAY n" and the room name) */
+static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 	panel_ensure(g);
 	if (g_b1)
 		panel_apply_wings(g_b1, g_b1_len, scr->pixels);
+	if (g_font && rv->names_ok && rv->room >= 0 && rv->room < rv->mp2.sec[0].count && rv->mp2.sec[0].rec[rv->room]) {
+		char nm[48];
+		status_room_name(rv->mp2.sec[0].rec[rv->room], (size_t)rv->mp2.sec[0].len[rv->room], rv->name_tbl, rv->names.strings,
+		                 rv->names.count, nm, sizeof(nm));
+		status_draw(scr->pixels, g_font, g_font_len, nm, 1);
+	}
 }
 
 /* while the walk demo runs, objects in front of the player are drawn after it (see walk_draw) */
@@ -162,6 +176,14 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 		}
 	}
 	int rc = floormaps_parse(f[0], fl[0], &rv->maps);
+	if (rv->names_ok) { lng_free(&rv->names); rv->names_ok = 0; }
+	if (rc == 0 && status_name_table(f[0], fl[0], rv->name_tbl) == 0) {
+		uint8_t *lg; size_t ll;
+		if (gamefiles_read_mjm(g, rv->use_tata ? "tata\\?\\eng?.lng" : "data\\?\\eng?.lng", rv->level, &lg, &ll) == 0) {
+			rv->names_ok = lng_parse(lg, ll, &rv->names) == 0;
+			free(lg);
+		}
+	}
 	if (rc == 0) { rc = wallrecs_parse(f[0], fl[0], &rv->wrecs); if (rc) floormaps_free(&rv->maps); }
 	if (rc == 0) rc = mp2_parse(f[1], fl[1], &rv->mp2);
 	if (rc == 0) rc = tiles_load(f[2], fl[2], &rv->tiles);
@@ -227,7 +249,7 @@ static int roomview_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 		if (shell[i] != TILE_TRANSPARENT)
 			scr->pixels[i] = shell[i];
 	if (!g_plbox.on)
-		panel_draw(g, scr);
+		panel_draw(g, scr, rv);
 	snprintf(rv->info, sizeof(rv->info), "%s level %d room %d (%dx%d), %d objects", rv->use_tata ? "TATA" : "DATA", rv->level, rv->room, w, h, nobj);
 	return 0;
 }
@@ -489,7 +511,7 @@ static int walk_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	for (int i = 0; i < VIEW_W * VIEW_H; i++)
 		if (front[i] != TILE_TRANSPARENT)
 			scr->pixels[i] = front[i];
-	panel_draw(g, scr);
+	panel_draw(g, scr, rv);
 	snprintf(rv->info, sizeof(rv->info), "walk: %s level %d room %d - arrows move along the room axes, exits change room",
 	         rv->use_tata ? "TATA" : "DATA", rv->level, rv->room);
 	return 0;

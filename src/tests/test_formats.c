@@ -481,6 +481,56 @@ int main(int argc, char **argv) {
 		free(raw[0]); free(raw[1]);
 	}
 
+	{
+		const uint8_t *font = NULL;
+		size_t font_len = 0;
+		if (andata_un)
+			andata_block(andata_un, andata_un_len, 4, &font, &font_len);
+		for (size_t i = 0; i < sizeof(status_vectors) / sizeof(status_vectors[0]) && font; i++) {
+			const StatusVector *sv = &status_vectors[i];
+			char lev = sv->dir[strlen(sv->dir) - 1];
+			uint8_t *f1 = NULL, *f2 = NULL, *f3 = NULL, *u1 = NULL, *u2 = NULL, *u3 = NULL;
+			size_t n1, n2, n3, un1, un2, un3;
+			snprintf(path, sizeof(path), "%s/%s/LEV%c.MP1", root, sv->dir, lev);
+			f1 = slurp(path, &n1);
+			snprintf(path, sizeof(path), "%s/%s/LEV%c.MP2", root, sv->dir, lev);
+			f2 = slurp(path, &n2);
+			snprintf(path, sizeof(path), "%s/%s/ENG%c.LNG", root, sv->dir, lev);
+			f3 = slurp(path, &n3);
+			if (!f1 || !f2 || !f3) { free(f1); free(f2); free(f3); continue; }
+			Mp2 m;
+			LngTable lt;
+			uint16_t tbl[20];
+			int rc = mjm_unpack(f1, n1, &u1, &un1);
+			if (!rc) rc = mjm_unpack(f2, n2, &u2, &un2);
+			if (!rc) rc = mjm_unpack(f3, n3, &u3, &un3);
+			if (!rc) rc = status_name_table(u1, un1, tbl);
+			if (!rc) rc = mp2_parse(u2, un2, &m);
+			if (!rc && (rc = lng_parse(u3, un3, &lt))) { mp2_free(&m); }
+			if (!rc) {
+				unsigned h = 0x811C9DC5u;
+				int cnt = 0;
+				static uint8_t cv[64000];
+				for (int r = 0; r < m.sec[0].count; r++) {
+					if (m.sec[0].len[r] < 0x1B || !m.sec[0].rec[r])
+						continue;
+					char nm[64];
+					status_room_name(m.sec[0].rec[r], (size_t)m.sec[0].len[r], tbl, lt.strings, lt.count, nm, sizeof(nm));
+					memset(cv, 0, sizeof(cv));
+					status_draw(cv, font, font_len, nm, 1 + r % 12);
+					for (const char *c = nm; ; c++) { h = (h ^ (uint8_t)*c) * 0x01000193u; if (!*c) break; }
+					for (int j = 0; j < 64000; j++) h = (h ^ cv[j]) * 0x01000193u;
+					cnt++;
+				}
+				if (cnt != sv->rooms || h != sv->hash) { printf("FAIL status %s: %d rooms hash %08X\n", sv->dir, cnt, h); failed++; }
+				mp2_free(&m);
+				lng_free(&lt);
+			} else { printf("FAIL status %s rc=%d\n", sv->dir, rc); failed++; }
+			checked++;
+			free(f1); free(f2); free(f3); free(u1); free(u2); free(u3);
+		}
+	}
+
 	for (size_t i = 0; i < sizeof(acl_vectors) / sizeof(acl_vectors[0]); i++) {
 		const AclVector *av = &acl_vectors[i];
 		char lev = av->dir[strlen(av->dir) - 1];

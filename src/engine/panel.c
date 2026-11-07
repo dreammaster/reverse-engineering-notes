@@ -1,5 +1,8 @@
 #include "panel.h"
 
+#include <stdio.h>
+#include <string.h>
+
 static unsigned be16(const uint8_t *p) { return (unsigned)((p[0] << 8) | p[1]); }
 
 int andata_block(const uint8_t *data, size_t len, int index, const uint8_t **block, size_t *blen) {
@@ -61,4 +64,83 @@ int panel_apply_wings(const uint8_t *b1, size_t len, uint8_t *canvas) {
 		}
 	}
 	return 0;
+}
+
+/* ---- status text ---- */
+static const uint8_t status_punct[32] = {0x00, 0x2a, 0x00, 0x00, 0x27, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x25, 0x28, 0x24, 0x26, 0x1a,
+                                         0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x00, 0x00, 0x2b, 0x2c, 0x2d, 0x29, 0x00};
+
+int status_glyph_index(char ch) {
+	unsigned c = (unsigned char)ch;
+	if (c == 0x20)
+		return -1;
+	if (c >= 0x41)
+		return (int)(c - 0x41);
+	if (c < 0x21)
+		return -1;
+	return status_punct[c - 0x21];
+}
+
+void status_draw_string(uint8_t *canvas, int x, int y, const char *s, const uint8_t *font, size_t font_len) {
+	for (; *s; s++, x += STATUS_ADVANCE) {
+		int g = status_glyph_index(*s);
+		if (g < 0 || (size_t)(g + 1) * 24 > font_len)
+			continue;
+		for (int r = 0; r < STATUS_GLYPH_H; r++) {
+			const uint8_t *p = font + g * 24 + r * 4;
+			for (int b = 0; b < 8; b++) {
+				unsigned col = 0;
+				for (int k = 0; k < 4; k++)
+					col |= (unsigned)((p[k] >> (7 - b)) & 1) << k;
+				int xx = x + b, yy = y + r;
+				if (col && xx >= 0 && xx < 320 && yy >= 0 && yy < 200)
+					canvas[yy * 320 + xx] = (uint8_t)col;
+			}
+		}
+	}
+}
+
+void status_draw_centred(uint8_t *canvas, int bx, int by, int bw, const char *s, const uint8_t *font, size_t font_len) {
+	status_draw_string(canvas, bx + ((bw - STATUS_ADVANCE * (int)strlen(s)) >> 1), by, s, font, font_len);
+}
+
+int status_name_table(const uint8_t *mp1, size_t len, uint16_t table[20]) {
+	if (len < 1790)
+		return -1;
+	const uint8_t *p = mp1 + len - 1790 + 1630;
+	for (int i = 0; i < 20; i++)
+		table[i] = (uint16_t)be16(p + 2 * i);
+	return 0;
+}
+
+size_t status_room_name(const uint8_t *rec, size_t rec_len, const uint16_t table[20], char *const *strings, int count,
+                        char *out, size_t outsz) {
+	size_t n = 0;
+	if (!outsz)
+		return 0;
+	out[0] = 0;
+	if (rec_len < 0x1B)
+		return 0;
+	unsigned pre = be16(rec + 0x18);
+	if (!(pre & 0x8000) && (int)pre < count)
+		for (const char *s = strings[pre]; *s && n + 1 < outsz; s++)
+			out[n++] = *s;
+	if (n + 1 < outsz)
+		out[n++] = ' ';
+	if (!(rec[0x1A] & 0x80) && rec[0x1A] < 20 && table[rec[0x1A]] < count)
+		for (const char *s = strings[table[rec[0x1A]]]; *s && n + 1 < outsz; s++)
+			out[n++] = *s;
+	if (n > STATUS_NAME_MAX)
+		n = STATUS_NAME_MAX;
+	out[n] = 0;
+	return n;
+}
+
+void status_draw(uint8_t *canvas, const uint8_t *font, size_t font_len, const char *room_name, int day) {
+	char buf[32];
+	for (int r = 0; r < 7; r++)
+		memset(canvas + (157 + r) * 320 + 252, 0, 60);
+	snprintf(buf, sizeof(buf), "DAY %d", day);
+	status_draw_centred(canvas, 252, 157, 60, buf, font, font_len);
+	status_draw_centred(canvas, 202, 186, 108, room_name, font, font_len);
 }
