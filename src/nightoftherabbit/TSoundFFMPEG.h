@@ -62,11 +62,13 @@ public:
 	bool IsLoop() const override;
 	void Pause() override;
 
-	TSoundStream *_stream = nullptr;  // +0x20
-	int _baseVolume = 0;              // +0x28, the volume the sound was given (percent)
-	float _volume = 0.0f;             // +0x2C, that volume with the general ones (SetStats, AdjustVolume)
-	float _pan = 0.0f;                // +0x30
-	int _offset = 0;                  // +0x34, where the sound begins (the milliseconds Play() was given)
+	TSoundStream *_stream = nullptr;  // +0x30
+	float _decibels = 0.0f;           // +0x3C, the volume the sound was given (-100 to 0)
+	float _percent = 100.0f;          // +0x40, that volume as a percent (100 * 10^(dB / 20))
+	float _pan = 0.0f;                // +0x44, the balance / 100
+	float _scale = 1.0f;              // +0x48, the factor of its fade now
+	float _busFactor = 1.0f;          // +0x4C, the factor of its bus (its kind's general volume / 100)
+	int _offset = 0;                  // +0x58, where the sound begins (the milliseconds Play() was given)
 };
 
 class TSoundFFMPEG : public TSoundBase {
@@ -74,17 +76,19 @@ public:
 	TSoundFFMPEG();
 	~TSoundFFMPEG() override;
 
-	/** Slot 0x100: the sounds that have ended are let go. */
+	/** Slot 0xF8: the sounds that have ended are let go, and the fades go on. */
 	void Update() override;
-	/** Slot 0x108: whether there is a sound device. */
+	/** Slot 0x100: whether there is a sound device. */
 	bool IsSoundSystemReady() const override;
-	/** Slot 0x110: plays the file (the id of the sound; -1: it cannot). `streamed`: the sound is kept when it is over and used
-	 *  again for the same file; `fadeIn`: it begins silent and is faded in. */
-	int PlaySound(const wxFileName &file, int volume, int balance, bool loop, bool streamed, bool fadeIn,
+	/** Slot 0x108: plays the file (the id of the sound; -1: it cannot) with the volume in decibels. `streamed`: the sound is kept when it
+	 *  is over and used again for the same file; `fadeInMs`: it begins silent and fades in in that time. */
+	int PlaySound(const wxFileName &file, const TVisObjRef &bus, int volume, int balance, bool loop, bool streamed, int fadeInMs,
 	              TSoundTypeEnum type, int offset) override;
-	/** Slot 0x120 */
+	/** Slot 0xE0 */
+	void FadeSound(int id, int milliseconds, int decibels, bool keep) override;
+	/** Slot 0x110: the movie and the global volume (the others are read from the general volumes by Update()). */
 	void AdjustVolume(int music, int sound, int speech, int movie, int global) override;
-	/** Slot 0x128 */
+	/** Slot 0x118: the volume is in decibels (-100 to 0), the balance -100 to 100. */
 	bool SetStats(TSoundItem *item, int volume, int balance, TSoundTypeEnum type, bool loop, int offset) override;
 
 	using TSoundBase::SetStats;
@@ -108,6 +112,8 @@ protected:
 private:
 	void updateFinishedStreams();
 	void updateStreamEnded();
+	/** The factor of the bus of a kind of sound (the general volume of the kind / 100). */
+	float busFactorOf(TSoundTypeEnum type) const;
 
 	int _movieBase;                     // +0x60 (percent)
 	float _adjustedMovieVolume;         // +0x64

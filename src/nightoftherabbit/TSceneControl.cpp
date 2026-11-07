@@ -144,21 +144,18 @@ void TSceneControl::ToScene(bool fade, TVisObjRef &scene, const TVisObjRef &char
 	if (!flag && scene.GetBool(kSceneContinueMusic))
 		scene.SetValue(kSceneBackgroundMusic, _currentScene->GetRef().GetPath(kSceneBackgroundMusic), TSendEventEnum::kNoEvent);
 
-	sounds->KeepCurrentBackgroundMusicIfSameAs(scene.GetPath(kSceneBackgroundMusic));
-
 	// a menu is entered: the picture the savegames show is made while the game is still on the screen
 	if (!_currentScene->GetRef().GetBool(kSceneIsMenu) && scene.GetBool(kSceneIsMenu))
 		graphics->MakeSnapshotForSavegame(false);
 
 	if (effect != 0 && fade) {
-		sounds->FinishSoundFade();
-
+		// (Night of the Rabbit: the sounds of the old scene fade out with FadeAll(); the music fades by itself when the new one plays)
 		if (effect == 2) {
-			sounds->StartSoundFade(TFadeEnum::kOut, fadeTime, true);
+			sounds->FadeAll(fadeTime, 0);
 			graphics->FadeIn(2, fadeTime, nullptr, nullptr, sounds, control);
 		} else {
 			if (effect == 3 || effect == 7)
-				sounds->StartSoundFade(TFadeEnum::kOut, fadeTime / 2, true);
+				sounds->FadeAll(fadeTime / 2, 0);
 
 			if (effect == 3)
 				graphics->FadeIn(2, fadeTime / 2, nullptr, nullptr, sounds, control);
@@ -189,7 +186,6 @@ void TSceneControl::ToScene(bool fade, TVisObjRef &scene, const TVisObjRef &char
 
 	_currentScene->BeginScene();
 	_currentScene->BeforeFade();
-	sounds->FinishSoundFade();
 
 	TVList busses;
 
@@ -198,18 +194,14 @@ void TSceneControl::ToScene(bool fade, TVisObjRef &scene, const TVisObjRef &char
 
 	wxFileName music = scene.GetPath(kSceneBackgroundMusic);
 
+	// the new music fades in over the time of the effect (half of it when the picture goes dark first)
+	const int musicFade = (effect == 3 || effect == 7) ? fadeTime / 2 : fadeTime;
+
 	if (music.GetName().IsEmpty())
 		sounds->StopBackgroundMusic(effect != 2);
 	else
-		sounds->Play(music, scene.GetInt(kSceneMusicVolume), scene.GetInt(kSceneMusicBalance), true, TSoundTypeEnum::kMusic,
-		             effect != 2, 0);
-
-	if (effect == 5 || effect == 6)
-		sounds->StartSoundFade(TFadeEnum::kToNew, fadeTime, true);
-	else if (effect == 3 || effect == 7)
-		sounds->StartSoundFade(TFadeEnum::kIn, fadeTime / 2, true);
-	else if (effect != 2)
-		sounds->StartSoundFade(static_cast<TFadeEnum>(effect), fadeTime, true);
+		sounds->Play(music, TVisObjRef(), scene.GetInt(kSceneMusicVolume), scene.GetInt(kSceneMusicBalance), true, TSoundTypeEnum::kMusic,
+		             musicFade, 0);
 
 	if ((effect & ~2) != 0 && fade) {
 		if (effect == 1)
@@ -229,7 +221,6 @@ void TSceneControl::ToScene(bool fade, TVisObjRef &scene, const TVisObjRef &char
 	}
 
 	_hasOldScene = false;
-	sounds->FinishSoundFade();
 	control->GetCursorControl()->SetActive(!game.GetBool(kGameHideCursor));
 	_fadingToNewScene = false;
 	control->SetClearMessage();

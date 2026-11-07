@@ -1,6 +1,7 @@
 // Confirmed (Deponia_Linux.asm lines 388789-420390): the commands of the scripts that only the player has
 // ("VisPlayerCmds" in the help of the editor), with InitPlayerCommands() (asm 425066) that registers them. The name
 // of the file is not recovered. See vscommon/scripting/command.h for how a command is made and called.
+#include <cmath>
 #include <cstring>
 #include <functional>
 
@@ -1014,7 +1015,11 @@ bool CmdStartSound::Do() {
 bool CmdStartSound::Redo() {
 	TSoundInterface *sound = gameControl()->GetSoundManager();
 
-	Result.Set(sound->Play(_sound, _volume, _balance, _loop, TSoundTypeEnum::kSound, false, _offset));
+	// Confirmed (Night of the Rabbit, CmdStartSound::Do): the script gives the volume as a percent, the engine takes decibels:
+	// 20 * log10(percent / 100) (nothing at 0)
+	const int decibels = (_volume > 0) ? static_cast<int>(std::log10(_volume / 100.0) * 20.0) : -100;
+
+	Result.Set(sound->Play(_sound, TVisObjRef(), decibels, _balance, _loop, TSoundTypeEnum::kSound, 0, _offset));
 	Result.ToLua();
 	return true;
 }

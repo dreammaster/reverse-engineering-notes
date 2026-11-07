@@ -619,9 +619,11 @@ void TGActionPartExecutor::cmdShowText() {
 		setStarted(false);
 }
 
-// Confirmed (asm lines 206177-206221, 208197-208218, 206065-206110, 210197-210218): plays a sound
-// (`loop`: the command that plays it again and again); the sound is kept in the sound manager
-// when the part says so.
+// Confirmed (Night of the Rabbit, TGAction::Execute, cases 24 and 72): plays a sound of the part's path on the audio bus of the part's
+// link (none: the one of its kind) with the volume (decibels) and the balance of the part's integers; `loop` is the command that
+// plays it again and again. The sound command (not the loop) can wait for its end: when the third integer is 1 the id of the
+// sound is kept in the action's `ActionSavedValue` and the part is not done until the sound is not playing any more. Nothing plays
+// when a cutscene is skipped.
 void TGActionPartExecutor::cmdPlaySound(bool loop) {
 	if (_skip)
 		return;
@@ -632,14 +634,26 @@ void TGActionPartExecutor::cmdPlaySound(bool loop) {
 		return;
 
 	wxFileName path = _part.GetPath(kActionPartPath);
-	int sound = sounds->Play(path, _part.GetInt(kActionPartInt), _part.GetInt(kActionPartAltInt), loop,
-	                         TSoundTypeEnum::kSound, true, 0);
+	const bool waitForEnd = !loop && _part.GetInt(kActionPartAltInt2) == 1;
 
-	if (sound == -1)
+	if (waitForEnd && started()) {
+		if (sounds->IsPlaying(path))
+			_wait = true;
+		else
+			setStarted(false);
+
+		return;
+	}
+
+	int sound = sounds->Play(path, link(), _part.GetInt(kActionPartInt), _part.GetInt(kActionPartAltInt), loop, TSoundTypeEnum::kSound, 0,
+	                         0);
+
+	if (sound == -1 || !waitForEnd)
 		return;
 
-	if (_part.GetInt(kActionPartAltInt2) == 0)
-		sounds->Keep(path);
+	active().SetValue(kActionSavedValue, sound, TSendEventEnum::kSendEvent);
+	setStarted(true);
+	_wait = true;
 }
 
 // Confirmed (asm lines 202038-202056, 207314-207360, 207388-207399, 207850-207852): waits for a
@@ -933,7 +947,16 @@ void TGActionPartExecutor::cmdSceneMusic() {
 	scene.SetValue(kSceneMusicBalance, _part.GetInt(kActionPartAltInt), TSendEventEnum::kNoEvent);
 
 	if (!_skip) {
-		scene.SetValue(kSceneBackgroundMusic, _part.GetPath(kActionPartPath), TSendEventEnum::kSendEvent);
+		// Confirmed (Night of the Rabbit): the music is set without telling the scene (no event), and when the scene is the one that is
+		// shown it plays at once, fading in over the third integer
+		scene.SetValue(kSceneBackgroundMusic, _part.GetPath(kActionPartPath), TSendEventEnum::kNoEvent);
+
+		if (gameControl()->GetScene()->GetRef() == scene) {
+			gameControl()->GetSoundManager()->Play(scene.GetPath(kSceneBackgroundMusic), TVisObjRef(), scene.GetInt(kSceneMusicVolume),
+			                                       scene.GetInt(kSceneMusicBalance), false, TSoundTypeEnum::kMusic,
+			                                       _part.GetInt(kActionPartAltInt2), 0);
+		}
+
 		return;
 	}
 

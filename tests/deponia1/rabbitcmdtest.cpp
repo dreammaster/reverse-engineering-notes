@@ -236,6 +236,11 @@ int main() {
 		LuaDoString("slowDone = 0 waiterDone = 0 waiterSawSlow = -1");
 		frames(20);
 
+		// the three default audio mixes are made when the game is loaded (the data of this game has none)
+		CHECK(!find(37, "eMusicVolume").IsEmpty());
+		CHECK(!find(37, "eSoundVolume").IsEmpty());
+		CHECK(!find(37, "eSpeechVolume").IsEmpty());
+
 		// (the items are not part of the saved data: the hero is given the key now)
 		TTCharacter(find(0, "Hero")).AddItem(find(6, "Key"), false);
 

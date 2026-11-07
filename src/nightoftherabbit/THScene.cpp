@@ -52,16 +52,11 @@ void THScene::OnEvent(TEventEnum /*event*/, int field, TVisionaireObject * /*obj
 		g_pGameControl->GetSoundManager()->SetStats(scene.GetPath(kSceneBackgroundMusic), scene.GetInt(kSceneMusicVolume),
 		        scene.GetInt(kSceneMusicBalance), TSoundTypeEnum::kMusic, false, 0);
 		break;
-	case kSceneBackgroundMusic: {
-		// new music: the old one is let go, the new one plays (and is faded in)
-		TSoundFFMPEG *sounds = g_pGameControl->GetSoundManager();
-
-		sounds->FinishSoundFade();
-		g_pGameControl->GetSoundManager()->Play(scene.GetPath(kSceneBackgroundMusic), scene.GetInt(kSceneMusicVolume),
-		                                        scene.GetInt(kSceneMusicBalance), true, TSoundTypeEnum::kMusic, true, 0);
-		g_pGameControl->GetSoundManager()->StartSoundFade(TFadeEnum::kToNew, 3000, false);
+	case kSceneBackgroundMusic:
+		// Confirmed (Night of the Rabbit, THScene::OnEvent): new music plays (the music that plays fades out) with a fade of 3 seconds
+		g_pGameControl->GetSoundManager()->Play(scene.GetPath(kSceneBackgroundMusic), TVisObjRef(), scene.GetInt(kSceneMusicVolume),
+		                                        scene.GetInt(kSceneMusicBalance), false, TSoundTypeEnum::kMusic, 3000, 0);
 		break;
-	}
 	case kSceneBrightness: {
 		// kept between 0 and 100, also in the data
 		int brightness = scene.GetInt(kSceneBrightness);

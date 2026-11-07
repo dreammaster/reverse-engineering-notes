@@ -20,16 +20,16 @@
 //   0x88 IsPlaying(int) const, 0x90 IsPaused(int) const, 0x98 GetVolume(int) const,
 //   0xA0 GetBalance(int) const, 0xA8 GetOffset(int) const, 0xB0 GetDuration(int) const,
 //   0xB8 GetSampleAvg(int) const, 0xC0 IsLoop(int) const, 0xC8 BusActivate(TVList *),
-//   0xD0 BusValuesUpdate(), 0xD8 FinishSoundFade(), 0xE0 StartSoundFade(TFadeEnum, int, bool),
-//   0xE8 UpdateSoundFade(bool), 0xF0 PrintSounds(std::list<wxString> &) const,
-//   0xF8 Keep(wxFileName const &), 0x100 Update() (TSoundFFMPEG's), 0x108 IsSoundInitialized() (the sound system
-//   works), 0x110 Play() (plays a sound, TSoundFFMPEG::Play), 0x118 FadeOut(wxFileName const &),
-//   0x120 AdjustVolume(music, sound, speech, movie, global) (the volumes changed), 0x128 SetStats(TSoundItem *, ...).
+//   0xD0 BusValuesUpdate(), 0xD8 LoadMixers(TVisionaire *), 0xE0 FadeSound(int, int, int, bool), 0xE8 FadeAll(int, int),
+//   0xF0 PrintSounds(std::list<wxString> &) const, 0xF8 Update() (TSoundFFMPEG's), 0x100 IsSoundInitialized() (the sound
+//   system works), 0x108 Play() (plays a sound, TSoundFFMPEG::Play), 0x110 AdjustVolume(music, sound, speech, movie,
+//   global) (the volumes changed), 0x118 SetStats(TSoundItem *, ...). (Night of the Rabbit's; Deponia 1's has FinishSoundFade,
+//   StartSoundFade, UpdateSoundFade, Keep and FadeOut in their places, which moves the ones after them by 0x10.)
 //
-// Original layout: +0x08 whether sounds are turned off, +0x09 whether the sounds are muted (answers
-// kSignalSoundFlag), +0x0C the fade that is running (TFadeEnum, 0: none), +0x10 the timer of the fade, +0x20 the time
-// of the fade in milliseconds (float), +0x28 the background music's file, +0x30 the volume of the sounds,
-// +0x34 of the music, +0x38 of the speech, +0x3C of the movies, +0x40 of all (percent).
+// Layout of Night of the Rabbit's: +0x08 whether sounds are turned off, +0x09 whether the sounds are muted (answers
+// kSignalSoundFlag), +0x10 the timer (since the last Update()), +0x20 the id of the background music (-1: none), +0x28 the
+// background music's file, +0x30 the volume of the sounds, +0x34 of the music, +0x38 of the speech, +0x3C of the movies,
+// +0x40 of all (percent: the general volumes). Every volume that is given to a sound is in decibels (-100 to 0).
 #pragma once
 
 #include <list>
@@ -38,8 +38,9 @@
 #include "TTimer.h"
 #include "WxStub.h"
 #include "datastruct/vlist.h"
+#include "datastruct/visobjref.h"
 
-// The kinds of sound (what volume they play with: AdjustToGeneralVolume()). Named by the volume
+// The kinds of sound (the general volume of the bus they play on). Named by the volume
 // they are adjusted with: 0 the music (the background music of a scene, THScene), 1 the sounds (of the
 // action parts and the frame sounds of TGAnimation), 2 the speech, 3 the sounds again (the
 // walking sound of TGCharacter), 4 the movies, 5 the global volume.
@@ -52,10 +53,8 @@ enum class TSoundTypeEnum {
 	kGlobal = 5
 };
 
-// How a sound is faded (StartSoundFade(); TSoundBase::GetFadeTypeAsString() has the names): the new sounds
-// fade in, the old ones out, or both one after the other, or the old ones out while the new ones come in (a new
-// background music, THScene). For a sound itself the value says what it is doing in the fade (kNone, kIn: it is
-// new, kOut: it goes) or kKeep: it is kept (Keep()).
+// The kinds of picture fade (TGraphicsInterface::FadeIn takes one as a number). Deponia 1's sound engine also used it for the
+// fade of its sounds; Night of the Rabbit's does not (a sound has its own fade, see FadeSound() and FadeAll()).
 enum class TFadeEnum {
 	kNone = 0,
 	kIn = 1,
@@ -77,15 +76,15 @@ public:
 	 *  and plays and stops a file. */
 	void Signal(const TSignalData &signal, TSignalData &result) override;
 
-	/** Plays `file` with the volume and the balance (`loop`: again and again); the id of the sound
-	 *  that plays (-1: none). `flag`: for the music, the same music goes on (and is kept) and
-	 *  another one fades the old one out; `value`: given on to the engine, 0 wherever it is called.
-	 *  The background music is told by the name before a '#' in it. */
-	int Play(const wxFileName &file, int volume, int balance, bool loop, TSoundTypeEnum type, bool flag, int value);
-	/** The background music stops (fades out, with `fade`). */
+	/** Plays `file` (Night of the Rabbit's, TSoundInterface::Play(wxFileName const &, TVisObjRef const &, int, int, bool, TSoundTypeEnum, int,
+	 *  int)) on the audio bus `bus` (empty: the one of its kind) with the volume (decibels, -100 to 0) and the balance (-100 to 100)
+	 *  (`loop`: again and again); `fadeMs` is how long it takes to fade in; the id of the sound that plays (-1: none). The background
+	 *  music (the kind 0) is told by the name before a '#' in it: the one that plays goes on (-1), another fades the old one out
+	 *  (`fadeMs`, to -100 dB) and plays, looped, whatever `loop` says. */
+	int Play(const wxFileName &file, const TVisObjRef &bus, int volume, int balance, bool loop, TSoundTypeEnum type, int fadeMs,
+	         int offset);
+	/** The background music stops (fades out in a second, with `fade`). */
 	void StopBackgroundMusic(bool fade);
-	void KeepCurrentBackgroundMusic();
-	void KeepCurrentBackgroundMusicIfSameAs(const wxFileName &file);
 
 	/** Sets the volumes (percent; a volume above 100 is not changed). */
 	void SetVolume(int music, int sound, int speech, int movie, int global);
@@ -104,8 +103,6 @@ public:
 	int GetGlobalVolume() const {
 		return _globalVolume;
 	}
-	/** `volume` (percent) of a sound of `type` with the volume of its kind. */
-	int AdjustToGeneralVolume(int volume, TSoundTypeEnum type) const;
 
 	// What the sound engine does (see the list above).
 	virtual void Mute(bool mute);
@@ -146,22 +143,19 @@ public:
 	/** Changes the volume and the balance of a sound that is playing, and its kind. */
 	virtual void SetStats(const wxFileName &file, int volume, int balance, TSoundTypeEnum type, bool flag, int value);
 	virtual bool IsPlaying(const wxFileName &file) const;
-	virtual void FinishSoundFade();
-	virtual void StartSoundFade(TFadeEnum fade, int milliseconds, bool flag);
-	virtual void UpdateSoundFade(bool update);
-	/** Keeps the sound of `file` loaded after it has played. */
-	virtual void Keep(const wxFileName &file);
+	/** Slot 0xE0: the sound with the id fades in `milliseconds` to `decibels` (-100: silent, then it is let go); `keep`: the volume it has
+	 *  then is the new volume of the sound. */
+	virtual void FadeSound(int id, int milliseconds, int decibels, bool keep);
+	/** Slot 0xE8: every sound that is not fading fades in `milliseconds` to `percent` of its volume. */
+	virtual void FadeAll(int milliseconds, int percent);
 	/** Slot 0x100: the engine goes on (the sounds that have ended are let go). */
 	virtual void Update();
 	/** Whether the sound system works (a game without one has no speech). */
 	virtual bool IsSoundSystemReady() const;
-	/** Slot 0x110: the sound engine plays `file`; the id (-1: none). `streamed`: the sound is kept when it is over and
-	 *  used again for the same file (the walking sound); `fadeIn`: it starts silently, to be faded in. See Play() for
-	 *  the others. */
-	virtual int PlaySound(const wxFileName &file, int volume, int balance, bool loop, bool streamed, bool fadeIn,
+	/** Slot 0x108: the sound engine plays `file`; the id (-1: none). `streamed`: the sound is kept when it is over and
+	 *  used again for the same file (the walking sound); `fadeInMs`: it starts silently and fades in. See Play() for the others. */
+	virtual int PlaySound(const wxFileName &file, const TVisObjRef &bus, int volume, int balance, bool loop, bool streamed, int fadeInMs,
 	                      TSoundTypeEnum type, int offset);
-	/** The sound of `file` fades out. */
-	virtual void FadeOut(const wxFileName &file);
 	/** Slot 0x120: the volumes have changed (-1: that one has not). */
 	virtual void AdjustVolume(int music, int sound, int speech, int movie, int global);
 
@@ -174,9 +168,8 @@ public:
 protected:
 	bool _disabled;               // +0x08
 	bool _muted;                  // +0x09
-	int _soundFade;               // +0x0C, the fade that runs (TFadeEnum)
-	TTimer _timer;                // +0x10, since the fade began
-	float _fadeDuration;          // +0x20, milliseconds
+	TTimer _timer;                // +0x10, since the last Update()
+	int _musicId;                 // +0x20, the sound of the background music (-1: none)
 	wxFileName _backgroundMusic;  // +0x28
 	int _soundVolume;             // +0x30
 	int _musicVolume;             // +0x34

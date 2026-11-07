@@ -19,8 +19,8 @@ static wxString musicName(const wxFileName &file) {
 
 // Confirmed (asm lines 1106061-1106085)
 TSoundInterface::TSoundInterface()
-	: _disabled(false), _muted(false), _soundFade(0), _fadeDuration(0.0f), _soundVolume(100), _musicVolume(100), _speechVolume(100),
-	  _movieVolume(100), _globalVolume(100) {
+	: _disabled(false), _muted(false), _musicId(-1), _soundVolume(100), _musicVolume(100), _speechVolume(100), _movieVolume(100),
+	  _globalVolume(100) {
 }
 
 TSoundInterface::~TSoundInterface() {
@@ -70,15 +70,16 @@ void TSoundInterface::Signal(const TSignalData &signal, TSignalData &result) {
 		result.value = _globalVolume;
 		break;
 	case kSignalSoundPlay:
-		result.value = Play(wxFileName(signal.speechFile.ToStdWstring()), signal.value, signal.value2, signal.value3 != 0,
-		                    static_cast<TSoundTypeEnum>(signal.value4), true, 0);
+		// (Night of the Rabbit: the sound is played on the audio bus of the message, none here; no fade, no offset)
+		result.value = Play(wxFileName(signal.speechFile.ToStdWstring()), TVisObjRef(), signal.value, signal.value2, signal.value3 != 0,
+		                    static_cast<TSoundTypeEnum>(signal.value4), 0, 0);
 		break;
 	case kSignalSoundStop:
 		Stop(wxFileName(signal.speechFile.ToStdWstring()));
 		break;
 	case kSignalSoundFade:
-		// (the fade is updated, and the answer is the one of the next message)
-		UpdateSoundFade(signal.value != 0);
+		// (Night of the Rabbit: the engine goes on, and the answer is the one of the next message)
+		Update();
 	// fall through
 	case kSignalSoundSystemReady:
 		result.type = kSignalSoundSystemReady;
@@ -90,55 +91,41 @@ void TSoundInterface::Signal(const TSignalData &signal, TSignalData &result) {
 	}
 }
 
-// Confirmed (asm lines 1106106-1106510)
-int TSoundInterface::Play(const wxFileName &file, int volume, int balance, bool loop, TSoundTypeEnum type, bool flag,
-                          int value) {
+// Confirmed (Night of the Rabbit, TSoundInterface::Play(wxFileName const &, TVisObjRef const &, int, int, bool, TSoundTypeEnum, int, int),
+// asm lines 1215018-1215657): with the sounds turned off nothing plays. A sound of the kind 3 (the walking sound) is kept when it is
+// over and used again for the same file (streamed), the others are not. The music: the one of the same name goes on (-1); another
+// fades the old one out (to -100 dB in `fadeMs`) and is played looped, whatever `loop` is, with `fadeMs` to fade in.
+int TSoundInterface::Play(const wxFileName &file, const TVisObjRef &bus, int volume, int balance, bool loop, TSoundTypeEnum type,
+                          int fadeMs, int offset) {
 	if (_disabled)
 		return -1;
 
-	if (type != TSoundTypeEnum::kMusic) {
-		// a sound: the speech (2) and the walking sound (3) are told to the engine as such
-		return PlaySound(file, volume, balance, loop, type == TSoundTypeEnum::kSound2, false, type, value);
-	}
+	if (type != TSoundTypeEnum::kMusic)
+		return PlaySound(file, bus, volume, balance, loop, type == TSoundTypeEnum::kSound2, 0, type, offset);
 
-	if (musicName(file).Cmp(musicName(_backgroundMusic)) == 0) {
-		// the music that plays already goes on
-		if (flag)
-			Keep(_backgroundMusic);
-
+	if (musicName(file).Cmp(musicName(_backgroundMusic)) == 0)
 		return -1;
-	}
 
-	// another music: the old one fades out (when the flag says so)
-	if (flag)
-		FadeOut(_backgroundMusic);
+	if (_musicId != -1)
+		FadeSound(_musicId, fadeMs, -100, false);
 
 	_backgroundMusic = file;
-	return PlaySound(_backgroundMusic, volume, balance, true, false, flag, TSoundTypeEnum::kMusic, value);
+	_musicId = PlaySound(file, bus, volume, balance, true, false, fadeMs, TSoundTypeEnum::kMusic, offset);
+	return _musicId;
 }
 
-// Confirmed (asm lines 1106703-1106745)
+// Confirmed (Night of the Rabbit, TSoundInterface::StopBackgroundMusic): without `fade` the sound of the file stops, with it the sound
+// fades to -100 dB in a second (FadeSound); the music is forgotten either way. (The id of the music is kept, as in the original.)
 void TSoundInterface::StopBackgroundMusic(bool fade) {
 	if (!_backgroundMusic.IsOk())
 		return;
 
 	if (fade)
-		FadeOut(_backgroundMusic);
+		FadeSound(GetExistingSoundID(_backgroundMusic), 1000, -100, false);
 	else
 		Stop(_backgroundMusic);
 
 	_backgroundMusic.Clear();
-}
-
-// Confirmed (asm lines 1106762-1106768)
-void TSoundInterface::KeepCurrentBackgroundMusic() {
-	Keep(_backgroundMusic);
-}
-
-// Confirmed (asm lines 1106778-1107064)
-void TSoundInterface::KeepCurrentBackgroundMusicIfSameAs(const wxFileName &file) {
-	if (musicName(file).Cmp(musicName(_backgroundMusic)) == 0)
-		Keep(_backgroundMusic);
 }
 
 // Confirmed (asm lines 1107076-1107107)
@@ -159,26 +146,6 @@ void TSoundInterface::SetVolume(int music, int sound, int speech, int movie, int
 		_globalVolume = global;
 
 	AdjustVolume(music, sound, speech, movie, global);
-}
-
-// Confirmed (asm lines 1107204-1107268)
-int TSoundInterface::AdjustToGeneralVolume(int volume, TSoundTypeEnum type) const {
-	switch (type) {
-	case TSoundTypeEnum::kMusic:
-		return volume * _musicVolume / 100;
-	case TSoundTypeEnum::kSound:
-	case TSoundTypeEnum::kSound2:
-		return volume * _soundVolume / 100;
-	case TSoundTypeEnum::kSpeech:
-		return volume * _speechVolume / 100;
-	case TSoundTypeEnum::kMovie:
-		return volume * _movieVolume / 100;
-	case TSoundTypeEnum::kGlobal:
-		return volume * _globalVolume / 100;
-	}
-
-	x_assert(false, "false", kSourceFile, 0x16D);
-	return 0;
 }
 
 // The sound engine (not reconstructed): nothing plays.
@@ -259,28 +226,19 @@ bool TSoundInterface::IsPlaying(const wxFileName &/*file*/) const {
 	return false;
 }
 
-void TSoundInterface::FinishSoundFade() {
+void TSoundInterface::FadeSound(int /*id*/, int /*milliseconds*/, int /*decibels*/, bool /*keep*/) {
 }
 
-void TSoundInterface::StartSoundFade(TFadeEnum /*fade*/, int /*milliseconds*/, bool /*flag*/) {
-}
-
-void TSoundInterface::UpdateSoundFade(bool /*update*/) {
-}
-
-void TSoundInterface::Keep(const wxFileName &/*file*/) {
+void TSoundInterface::FadeAll(int /*milliseconds*/, int /*percent*/) {
 }
 
 bool TSoundInterface::IsSoundSystemReady() const {
 	return false;
 }
 
-int TSoundInterface::PlaySound(const wxFileName &/*file*/, int /*volume*/, int /*balance*/, bool /*loop*/,
-                               bool /*streamed*/, bool /*fadeIn*/, TSoundTypeEnum /*type*/, int /*offset*/) {
+int TSoundInterface::PlaySound(const wxFileName &/*file*/, const TVisObjRef &/*bus*/, int /*volume*/, int /*balance*/, bool /*loop*/,
+                               bool /*streamed*/, int /*fadeInMs*/, TSoundTypeEnum /*type*/, int /*offset*/) {
 	return -1;
-}
-
-void TSoundInterface::FadeOut(const wxFileName &/*file*/) {
 }
 
 void TSoundInterface::AdjustVolume(int /*music*/, int /*sound*/, int /*speech*/, int /*movie*/, int /*global*/) {

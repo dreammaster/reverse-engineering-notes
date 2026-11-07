@@ -143,11 +143,10 @@ bool TGameControl::Update() {
 	if (!EngineUpdatePaused)
 		_ownedSceneControl.GetScene()->UpdateSnoopAnimAlpha();
 
-	// Confirmed (asm lines 469761-469767): the sound manager (TMasterControl +0x178) is updated - the streams it plays -
-	// and its running fade is carried on (vtable slots 0x100 Update() and 0xE8 UpdateSoundFade(false)).
+	// Confirmed (asm lines 469761-469767; Night of the Rabbit has only the first): the sound manager (TMasterControl +0x178) is
+	// updated - the streams it plays, and the fades of its sounds (vtable slot 0x100 Update()).
 	debugger.BeginArea(ProfileArea::kValue4, "Sounds", -1);
 	GetSoundManager()->Update();
-	GetSoundManager()->UpdateSoundFade(false);
 	debugger.EndArea(ProfileArea::kValue4, -1);
 
 	debugger.BeginArea(ProfileArea::kValue1, "create <sprite path>", -1);

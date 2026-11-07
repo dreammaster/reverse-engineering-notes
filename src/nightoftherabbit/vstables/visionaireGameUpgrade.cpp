@@ -1568,6 +1568,37 @@ static void fixbe(TVisionaireGame &game) {
 	});
 }
 
+// Confirmed (Night of the Rabbit, TVisionaireGame::UpdateVersion, asm lines 1675880-1676000 and 1683880-1683990): after the steps, for any
+// version, the game has the three default audio mixes `eMusicVolume`, `eSoundVolume` and `eSpeechVolume` (records of the table 37 of the
+// game's `GameAudioMixLinks` with the bus type 1): the ones that are not there are made, in that order. (The sound engine of this
+// reconstruction has no mixes: the general volumes are the factors of the busses of the kinds of sound.)
+static void createDefaultMixes(TVisionaireGame &game) {
+	static const char *const kNames[3] = {"eMusicVolume", "eSoundVolume", "eSpeechVolume"};
+	TVList busses;
+	bool found[3] = {false, false, false};
+
+	game.GetList(37, busses, false);
+
+	for (TVisionaireObject *bus : busses) {
+		for (int i = 0; i < 3; i++) {
+			if (bus->GetName() == kNames[i])
+				found[i] = true;
+		}
+	}
+
+	TVisObjRef gameRecord = game.GetGame();
+
+	for (int i = 0; i < 3; i++) {
+		if (found[i])
+			continue;
+
+		TVisObjRef bus = game.CreateObject(37, gameRecord, kGameAudioMixLinks);
+
+		bus.SetValue(kAudioBusType, 1, TSendEventEnum::kSendEvent);
+		bus.SetName(TCharHolder(kNames[i]));
+	}
+}
+
 void applyLateVersionFixes(TVisionaireGame &game, int version) {
 	if (version <= 0xB3)
 		fixb3(game);
@@ -1581,4 +1612,6 @@ void applyLateVersionFixes(TVisionaireGame &game, int version) {
 		fixbd(game);
 	if (version <= 0xBE)
 		fixbe(game);
+
+	createDefaultMixes(game);
 }

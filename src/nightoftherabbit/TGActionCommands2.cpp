@@ -58,10 +58,11 @@ void TGActionPartExecutor::cmdSetMusicVolume() {
 	int volume = _part.GetInt(kActionPartInt);
 	int balance = _part.GetInt(kActionPartAltInt);
 
+	// (Night of the Rabbit: the volume is in decibels and is not scaled by the general volumes here: they are the factor of the bus)
 	if (path.GetFullPath().Cmp(sceneMusic.GetFullPath()) == 0)
-		sounds->SetStats(path, volume * sounds->GetMusicVolume() / 100, balance, TSoundTypeEnum::kMusic, false, 0);
+		sounds->SetStats(path, volume, balance, TSoundTypeEnum::kMusic, false, 0);
 	else
-		sounds->SetStats(path, volume * sounds->GetSoundVolume() / 100, balance, TSoundTypeEnum::kSound, false, 0);
+		sounds->SetStats(path, volume, balance, TSoundTypeEnum::kSound, false, 0);
 }
 
 // Confirmed (asm lines 202395-202431, 204844-204866): the action goes on at another part: the one
@@ -1185,15 +1186,26 @@ void TGActionPartExecutor::cmdWaitAction() {
 	waitWhile(TGAction::GetRunningAction(link()) != nullptr);
 }
 
-// Case 166 (asm lines 115107-115170 and 121481-121558 of rabbit.asm), read but NOT reconstructed: the sound of the part's path fades. With
-// the sound manager's GetExistingSoundID(path) (virtual 0x60; -1: it is not loaded, nothing happens): normally FadeSound(id, the second
-// integer = the time in ms, the first integer = the target volume in dB, true) (virtual 0xE0, new in this engine); in the skip mode of a
-// cutscene SetStats(id, the volume, GetBalance(id), a type that is 1 unless the sound is the scene's background music, false, 0) at once.
-// FadeSound gives the sound a fade (its `+0x14` the time, `+0x18` the duration, `+0x1C` and `+0x20` the start and end factors, `+0x28` and
-// `+0x29` flags), which the new TSoundFFMPEG::Update goes through: that is the audio bus rework (TSoundFFMPEG::LoadMixers/FindMixer, the Play
-// with a bus, FadeAll in TSceneControl::ToScene instead of StartSoundFade) that this reconstruction does not have yet, so the command
-// does nothing but say so.
+// Confirmed (case 166, asm lines 115107-115170 and 121481-121558 of rabbit.asm): the sound of the part's path fades (the volume it has then is
+// its volume): FadeSound(id, the second integer = the time in ms, the first integer = the target volume in decibels, keep) on the sound
+// manager; a sound that is not loaded does nothing. When a cutscene is skipped the volume is set at once with SetStats (the balance it
+// has, the kind of music when the sound is the music of the scene, else of sound).
 void TGActionPartExecutor::cmdFadeSound() {
-	if (wxLog::loglevel > 0)
-		wxLog::logexpanded(L"The action part 'fade sound' (166) is not reconstructed: the sound does not fade");
+	TSoundFFMPEG *sounds = gameControl()->GetSoundManager();
+	wxFileName path = _part.GetPath(kActionPartPath);
+	const int id = sounds->GetExistingSoundID(path);
+
+	if (id == -1)
+		return;
+
+	if (_skip) {
+		wxFileName sceneMusic = gameControl()->GetScene()->GetRef().GetPath(kSceneBackgroundMusic);
+		const bool isMusic = path.GetFullPath().Cmp(sceneMusic.GetFullPath()) == 0;
+
+		sounds->SetStats(id, _part.GetInt(kActionPartInt), sounds->GetBalance(id),
+		                 isMusic ? TSoundTypeEnum::kMusic : TSoundTypeEnum::kSound, false, 0);
+		return;
+	}
+
+	sounds->FadeSound(id, _part.GetInt(kActionPartAltInt), _part.GetInt(kActionPartInt), true);
 }

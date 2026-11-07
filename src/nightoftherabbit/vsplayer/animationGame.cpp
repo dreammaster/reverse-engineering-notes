@@ -154,7 +154,7 @@ void TGAnimation::NextSpriteSelected() const {
 			int volume = frame->GetInt(kAnimationFrameSoundVolume);
 			int balance = frame->GetInt(kAnimationFrameSoundBalance);
 
-			gameControl()->GetSoundManager()->Play(sound, volume, balance, false, TSoundTypeEnum::kSound, true, 0);
+			gameControl()->GetSoundManager()->Play(sound, TVisObjRef(), volume, balance, false, TSoundTypeEnum::kSound, 0, 0);
 		}
 
 		TVisObjRef action(frame->GetLink(kAnimationFrameAction));

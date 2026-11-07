@@ -486,7 +486,8 @@ void TGCharacter::CheckWalkingSound() {
 	if (!(size > 100.0f))
 		volume = (0.0f > size) ? 0 : (int)size;
 
-	sounds->Play(_walkingSound, volume, pan, true, TSoundTypeEnum::kSound2, true, 0);
+	// (Night of the Rabbit passes the percent that it works out as the volume, which is in decibels: a number above 0 is full volume)
+	sounds->Play(_walkingSound, TVisObjRef(), volume, pan, true, TSoundTypeEnum::kSound2, 0, 0);
 	_walkingSoundPlaying = true;
 }
 

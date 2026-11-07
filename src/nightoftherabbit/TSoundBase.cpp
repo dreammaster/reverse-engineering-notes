@@ -311,173 +311,21 @@ void TSoundBase::BusValuesUpdate() {
 	// TODO (asm lines 1050713-1050790): see BusActivate().
 }
 
-// The sounds that go with a fade (kOut) are stopped and let go.
-void TSoundBase::removeFadeOutSounds() {
-	for (auto it = _items.begin(); it != _items.end();) {
-		TSoundItem *item = *it;
-
-		if (item->_fade == TFadeEnum::kOut) {
-			it = _items.erase(it);
-			item->Stop();
-			delete item;
-		} else {
-			++it;
-		}
-	}
-}
-
-// The new sounds of a fade (kIn) begin to play.
-void TSoundBase::startNewSounds() {
+// Confirmed (Night of the Rabbit, TSoundBase::FadeAll(int, int), asm lines 1215917-1215970): every sound that is not fading and
+// is not the music (the kind 0) starts a fade from its present volume (percent / 100) to `percent` / 100 in `milliseconds`; the
+// volume is not changed at the end (not `keep`).
+void TSoundBase::FadeAll(int milliseconds, int percent) {
 	for (TSoundItem *item : _items) {
-		if (item->_fade != TFadeEnum::kIn)
+		if (item->_fading || item->_type == TSoundTypeEnum::kMusic)
 			continue;
 
-		if (_muted)
-			item->ResetVolume();
-
-		item->Play();
+		item->_fading = true;
+		item->_fadeKeep = false;
+		item->_fadeElapsed = 0;
+		item->_fadeDuration = milliseconds;
+		item->_fadeFrom = static_cast<float>(item->GetVolume()) / 100.0f;
+		item->_fadeTo = static_cast<float>(percent) / 100.0f;
 	}
-}
-
-// The new sounds get their own volume, and the kept ones are like the others again.
-void TSoundBase::clearFadeStates() {
-	for (TSoundItem *item : _items) {
-		if (item->_fade == TFadeEnum::kIn) {
-			if (!_muted)
-				item->UpdateVolume();
-
-			item->_fade = TFadeEnum::kNone;
-		} else if (item->_fade == TFadeEnum::kKeep) {
-			item->_fade = TFadeEnum::kNone;
-		}
-	}
-}
-
-// Confirmed (asm lines 1102644-1102800): the fade is over at once.
-void TSoundBase::FinishSoundFade() {
-	wxCriticalSectionLocker locker(_lock);
-
-	if (_soundFade == 0)
-		return;
-
-	removeFadeOutSounds();
-
-	if (_soundFade >= static_cast<int>(TFadeEnum::kOut) && _soundFade <= static_cast<int>(TFadeEnum::kToNew))
-		startNewSounds();
-
-	clearFadeStates();
-	_soundFade = 0;
-}
-
-// Confirmed (asm lines 1102808-1103095): the volumes of the sounds are scaled by the time that is gone; when the time
-// is over (or `finish`) the fade ends - the new sounds begin and the old ones go, in a kInAndOut fade the old ones go
-// first and the fade of the new ones begins then.
-void TSoundBase::UpdateSoundFade(bool finish) {
-	wxCriticalSectionLocker locker(_lock);
-
-	if (_soundFade == 0)
-		return;
-
-	float elapsed = static_cast<float>(_timer.GetTime());
-
-	if (_fadeDuration > elapsed && !finish) {
-		if (_muted)
-			return;
-
-		for (TSoundItem *item : _items) {
-			if (item->_fade == TFadeEnum::kOut) {
-				if (_soundFade >= static_cast<int>(TFadeEnum::kOut) && _soundFade <= static_cast<int>(TFadeEnum::kToNew))
-					item->ScaleVolume(1.0f - elapsed / _fadeDuration);
-			} else if (item->_fade == TFadeEnum::kIn) {
-				if (_soundFade == static_cast<int>(TFadeEnum::kToNew) || _soundFade == static_cast<int>(TFadeEnum::kIn))
-					item->ScaleVolume(elapsed / _fadeDuration);
-			}
-		}
-
-		return;
-	}
-
-	removeFadeOutSounds();
-
-	if (_soundFade == static_cast<int>(TFadeEnum::kInAndOut)) {
-		startNewSounds();
-		_soundFade = static_cast<int>(TFadeEnum::kIn);
-		_timer.SetTime();
-		return;
-	}
-
-	if (_soundFade == static_cast<int>(TFadeEnum::kOut))
-		startNewSounds();
-
-	clearFadeStates();
-	_soundFade = 0;
-}
-
-// Confirmed (asm lines 1103103-1103320): the sounds that are there are marked to go when `markExisting`; the new ones
-// play at once in a fade that takes the old ones out and brings them in at the same time (kToNew), or in kIn, or when
-// there is no fade.
-void TSoundBase::StartSoundFade(TFadeEnum fade, int milliseconds, bool markExisting) {
-	wxCriticalSectionLocker locker(_lock);
-
-	x_assert(_soundFade == 0, "m_eSoundFade == eFadeNo", kSourceFile, 0x1DB);
-	_soundFade = static_cast<int>(fade);
-	_fadeDuration = (fade == TFadeEnum::kInAndOut) ? static_cast<float>(milliseconds >> 1) : static_cast<float>(milliseconds);
-
-	if (markExisting) {
-		for (TSoundItem *item : _items) {
-			if (item->_fade == TFadeEnum::kNone)
-				item->_fade = TFadeEnum::kOut;
-		}
-	}
-
-	if (fade == TFadeEnum::kNone || fade == TFadeEnum::kIn)
-		removeFadeOutSounds();
-
-	if (fade == TFadeEnum::kToNew || fade == TFadeEnum::kIn || fade == TFadeEnum::kNone)
-		startNewSounds();
-
-	if (fade != TFadeEnum::kNone) {
-		_timer.SetTime();
-		return;
-	}
-
-	clearFadeStates();
-	_soundFade = 0;
-	_timer.SetTime();
-}
-
-// Confirmed (asm lines 1103494-1103550)
-void TSoundBase::StartFadeInSounds() {
-	startNewSounds();
-}
-
-// Confirmed (asm lines 1103554-1103610)
-void TSoundBase::StopFadeOutSounds() {
-	removeFadeOutSounds();
-}
-
-// Confirmed (asm lines 1103612-1103670)
-void TSoundBase::FinishFadeIn() {
-	clearFadeStates();
-	_soundFade = 0;
-}
-
-// Confirmed (asm lines 1103974-1104055): the sound of the file fades out in the next fade.
-void TSoundBase::FadeOut(const wxFileName &file) {
-	wxCriticalSectionLocker locker(_lock);
-	TSoundItem *item = GetSoundItem(file.GetFullPath());
-
-	if (item && item->_fade == TFadeEnum::kNone)
-		item->_fade = TFadeEnum::kOut;
-}
-
-// Confirmed (asm lines 1104063-1104140): the sound of the file is not touched by the fade.
-void TSoundBase::Keep(const wxFileName &file) {
-	wxCriticalSectionLocker locker(_lock);
-	TSoundItem *item = GetSoundItem(file.GetFullPath());
-
-	if (item)
-		item->_fade = TFadeEnum::kKeep;
 }
 
 // Confirmed (asm lines 1103676-1103865)
@@ -528,26 +376,6 @@ void TSoundBase::DeleteSoundItem(TSoundItem *item) {
 	}
 }
 
-// Confirmed (asm lines 1104658-1104910)
-wxString TSoundBase::GetFadeTypeAsString(TFadeEnum fade) const {
-	switch (fade) {
-	case TFadeEnum::kNone:
-		return wxString(L"No Fade");
-	case TFadeEnum::kIn:
-		return wxString(L"Fade In");
-	case TFadeEnum::kOut:
-		return wxString(L"Fade Out");
-	case TFadeEnum::kInAndOut:
-		return wxString(L"Fade InAndOut");
-	case TFadeEnum::kToNew:
-		return wxString(L"Fade To New");
-	case TFadeEnum::kKeep:
-		return wxString(L"Keep");
-	}
-
-	return wxString();
-}
-
 // Confirmed (asm lines 1104918-1105850): the lines for the console.
 void TSoundBase::PrintSounds(std::list<wxString> &lines) const {
 	wxCriticalSectionLocker locker(_lock);
@@ -555,11 +383,6 @@ void TSoundBase::PrintSounds(std::list<wxString> &lines) const {
 	if (_items.empty()) {
 		lines.push_back(wxString(L"No Loaded Sounds"));
 		return;
-	}
-
-	if (_soundFade != 0) {
-		lines.push_back(wxString(L"Current Sound Fade: ") + GetFadeTypeAsString(static_cast<TFadeEnum>(_soundFade)));
-		lines.push_back(wxString());
 	}
 
 	lines.push_back(wxString(L"Loaded Sounds:"));
@@ -575,8 +398,8 @@ void TSoundBase::PrintSounds(std::list<wxString> &lines) const {
 		              static_cast<long>(item->GetVolume()), static_cast<long>(item->GetPan()),
 		              item->_paused ? L"True" : L"False", item->_stopped ? L"True" : L"False");
 		lines.push_back(wxString(text));
-		std::swprintf(text, sizeof(text) / sizeof(text[0]), L"Streamed: %ls, Sound Fade: %ls",
-		              item->_streamed ? L"True" : L"False", GetFadeTypeAsString(item->_fade).wc_str());
+		std::swprintf(text, sizeof(text) / sizeof(text[0]), L"Streamed: %ls, Fading: %ls", item->_streamed ? L"True" : L"False",
+		              item->_fading ? L"True" : L"False");
 		lines.push_back(wxString(text));
 		lines.push_back(wxString());
 	}

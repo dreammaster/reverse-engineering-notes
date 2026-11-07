@@ -44,6 +44,13 @@ public:
 	bool _stopped = false;           // +0x15, the sound is over, but kept for the next use (_streamed)
 	bool _streamed = false;          // +0x16, a sound that is kept when it is over, for the same file
 	bool _dead = false;              // +0x17, the sound has ended and is let go (the engine does that)
-	TFadeEnum _fade = TFadeEnum::kNone;  // +0x18, what it does in the fade of the sounds
-	TSoundTypeEnum _type = TSoundTypeEnum::kMusic;  // +0x1C
+	TSoundTypeEnum _type = TSoundTypeEnum::kMusic;  // (kept by this reconstruction: the kind of sound, for its bus)
+
+	// Night of the Rabbit: the fade of the sound (TSoundFFMPEG::Update goes through it, FadeSound() and FadeAll() start it).
+	int _fadeElapsed = 0;       // +0x14, milliseconds
+	int _fadeDuration = 0;      // +0x18, milliseconds
+	float _fadeFrom = 0.0f;     // +0x1C, the factor it starts at
+	float _fadeTo = 0.0f;       // +0x20, the factor it ends at
+	bool _fading = false;       // +0x28
+	bool _fadeKeep = false;     // +0x29, at the end the end factor becomes the volume
 };
