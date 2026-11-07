@@ -22,6 +22,8 @@ class VM:
         self.selected = 0              # ds:27A, the thing id of the currently selected / carried item
         self.reg = 0                   # ds:704, the 'random / variable' register
         self.rand = None               # callable(lo, hi) -> int (the game uses its own seeded generator)
+        self.queue = []                # room events queued by ops: (type, arg)   (op 09 -> type 19)
+        self.timer = None              # one-shot room timer set by op 2A: (arg, delay)   -> event 20
 
     # -- operand helpers -------------------------------------------------------------------
     def obj(self, tid):
@@ -103,6 +105,10 @@ class VM:
             self.reg = self.rand(a[0], a[1]) if self.rand else a[0]
         elif op == 80:                              # test reg == a
             self.c605 = (self.c605 + 1) & 255 if self.reg == a[0] else 0
+        elif op == 9:                               # queue room event 19 with a byte argument
+            self.queue.append((19, a[0]))
+        elif op == 42:                              # one-shot room timer: after `delay` timer units fire event 20 with arg
+            self.timer = (a[0], a[1])
         elif op == 81:                              # reg = var[a]
             self.reg = self.vars[a[0]]
         elif op == 43:                              # test the room of a thing
@@ -154,4 +160,31 @@ def fire(vm, entries, event, armed=None):
         run_ops(vm, h['ops'])
         if not h['keep'] or vm.disarm:
             armed[i] = False
+    return armed
+
+
+def cond_match(h, typ, arg):
+    """Condition test of a handler entry for a room event (CS:76FC table): types 6, 14, 28 always match; 15, 17, 19, 20, 24 compare the
+    operand byte with the low byte of the event argument."""
+    if typ in (15, 17, 19, 20, 24):
+        return h['cond'][0] == (arg & 0xFF)
+    return True
+
+
+def fire_event(vm, entries, typ, arg=0, armed=None):
+    """Deliver one room event (and everything the handlers queue, in order) to a room's handler list, like 1000:7634."""
+    armed = armed if armed is not None else [True] * len(entries)
+    pending = [(typ, arg)]
+    while pending:
+        t, a = pending.pop(0)
+        for i, h in enumerate(entries):
+            if h['type'] != t or not armed[i] or not cond_match(h, t, a):
+                continue
+            vm.disarm = False
+            vm.c605 = 0
+            vm.queue = []
+            run_ops(vm, h['ops'])
+            pending.extend(vm.queue)
+            if not h['keep'] or vm.disarm:
+                armed[i] = False
     return armed

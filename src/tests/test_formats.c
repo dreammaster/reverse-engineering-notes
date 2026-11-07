@@ -552,18 +552,18 @@ int main(int argc, char **argv) {
 				if (!rr || m.sec[0].len[r] <= 0x20 || !rr[0x1F])
 					continue;
 				/* only rooms that have a start-up (14) handler and whose whole list parses: same rule as the Python side */
-				int has14 = 0, bad = 0;
+				int has14 = 0, bad = 0; /* any of the visit events 28/6/14 */
 				size_t p = 0x20;
 				for (int k = 0; k < rr[0x1F]; k++) {
 					if (p + 2 > (size_t)m.sec[0].len[r]) { bad = 1; break; }
-					if ((rr[p + 1] & 0x7F) == 14) has14 = 1;
+					{ int ty = rr[p + 1] & 0x7F; if (ty == 14 || ty == 6 || ty == 28) has14 = 1; }
 					p += rr[p] ? rr[p] : 1000;
 				}
 				if (!has14 || bad || acl_room_parse_ok(&m, r) == 0)
 					continue;
 				acl_init(&vm, &m);
 				vm.room_no = r;
-				acl_fire_room(&vm, &m, r, 14);
+				{ static const int seq[4] = {28, 6, 14, 14}; for (int q = 0; q < 4; q++) acl_room_event(&vm, &m, r, seq[q], 0); }
 				cnt++;
 				h = (h ^ (unsigned)(r & 0xFF)) * 0x01000193u;
 				for (int t = 0; t < ACL_THINGS; t++) if (vm.present[t]) h = (h ^ vm.flags[t]) * 0x01000193u;

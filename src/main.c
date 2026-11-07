@@ -102,6 +102,10 @@ typedef struct RoomView_ {
 	Mp2 mp2;
 	RoomObjs ro;
 	int ro_key, ro_ticks;
+	uint8_t visited[128];      /* rooms entered so far (event 28 fires on the first visit only) */
+	int tm_div, tm_period, tm_cnt;   /* room timer: every 17 game steps count down rv->tm_cnt, at 0 fire event 14 (period = room record byte 2) */
+	uint8_t flags_seen[ACL_THINGS];  /* thing flags the objects were built with */
+	int pending_rebuild;
 	AclVM vm;                  /* script state: thing flags / variables */
 	int vm_ok;
 	uint16_t palette[16];
@@ -113,9 +117,15 @@ typedef struct RoomView_ {
 } RoomView;
 
 /* one 50 Hz timer tick: the game loop (and with it the object animation) steps every 2 ticks */
+static int room_key(const RoomView *rv) { return 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata; }
+static void roomview_game_step(RoomView *rv);
+static void walk_refresh_world(RoomView *rv);
+static void roomview_ensure_objs(RoomView *rv, int gx, int gy);
 static void roomview_tick(RoomView *rv) {
-	if (rv->ok && rv->ro_key && (++rv->ro_ticks & 1) == 0)
+	if (rv->ok && rv->ro_key && (++rv->ro_ticks & 1) == 0) {
 		roomobjs_step(&rv->ro);
+		roomview_game_step(rv);
+	}
 }
 
 /* the frame around the room view (ANDATA.DAT block 1) */
@@ -196,6 +206,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 		return -1;
 	}
 	acl_init(&rv->vm, &rv->mp2);
+	memset(rv->visited, 0, sizeof(rv->visited));
 	rv->vm_ok = 1;
 	rv->ok = 1;
 	rv->loaded_level = rv->level;
@@ -232,13 +243,7 @@ static int roomview_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	                  rv->room < rv->wrecs.count ? rv->wrecs.len[rv->room] : 0, w, h, shell);
 	int gx = 0, gy = 0, nobj = 0;
 	if (floor_origin(w, h, &gx, &gy) == 0) {
-		int key = 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata;
-		if (rv->ro_key != key) {
-			rv->vm.room_no = rv->room;
-			acl_fire_room(&rv->vm, &rv->mp2, rv->room, 14);
-			roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy, rv->vm.flags);
-			rv->ro_key = key;
-		}
+		roomview_ensure_objs(rv, gx, gy);
 		if (g_plbox.on)
 			roomobjs_draw_rel(&rv->ro, shell, 1, g_plbox.x1, g_plbox.y1, g_plbox.z0, g_plbox.z1, 0);
 		else
@@ -302,6 +307,11 @@ typedef struct {
 	int set_ok;
 } Walker;
 static Walker g_walk;
+static void walker_world(Walker *wk, RoomView *rv);
+static void walk_refresh_world(RoomView *rv) {
+	if (g_walk.world_key)
+		walker_world(&g_walk, rv);
+}
 
 #define PL_XS 7
 #define PL_YS 7
@@ -319,14 +329,65 @@ static int roomview_geom(RoomView *rv, int *w, int *h, int *gx, int *gy) {
 	return *w >= 3 && *w <= 10 && *h >= 3 && *h <= 10 && floor_origin(*w, *h, gx, gy) == 0;
 }
 
-static int room_key(const RoomView *rv) { return 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata; }
+
+
+/* the script flags changed (things hidden / placed): rebuild the objects, keeping the positions and animations of those that stay */
+static void roomview_rebuild_objs(RoomView *rv, int gx, int gy) {
+	static RoomObjs old;
+	memcpy(&old, &rv->ro, sizeof(old));
+	roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy, rv->vm.flags);
+	for (int i = 0; i < rv->ro.n; i++)
+		for (int k = 0; k < old.n; k++)
+			if (old.o[k].thing == rv->ro.o[i].thing) {
+				rv->ro.o[i].x1 = old.o[k].x1; rv->ro.o[i].y1 = old.o[k].y1;
+				rv->ro.o[i].an = old.o[k].an;
+				roomobj_moved(&rv->ro.o[i], gx, gy);
+				break;
+			}
+	memcpy(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen));
+	walk_refresh_world(rv);          /* collision world must be rebuilt (the player keeps its position) */
+}
+
+/* one game step (25 Hz): the room timers of 1000:11EB5 (units of 17 steps) -> events 14 and 20 */
+static void roomview_game_step(RoomView *rv) {
+	if (rv->room < 0 || rv->room >= 128 || --rv->tm_div > 0)
+		return;
+	rv->tm_div = 17;
+	if (rv->tm_period && --rv->tm_cnt <= 0) {
+		rv->tm_cnt = rv->tm_period;
+		acl_room_event(&rv->vm, &rv->mp2, rv->room, 14, 0);
+	}
+	if (rv->vm.timer_delay >= 0 && --rv->vm.timer_delay == 0) {
+		int a = rv->vm.timer_arg;
+		rv->vm.timer_delay = -1;
+		acl_room_event(&rv->vm, &rv->mp2, rv->room, 20, a);
+	}
+	rv->pending_rebuild = memcmp(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen)) != 0;
+}
+
+/* entering a room: first visit event (28), entry event (6), timer set up from room record byte 2 (1000:DA60) */
+static void roomview_enter(RoomView *rv, int gx, int gy) {
+	rv->vm.room_no = rv->room;
+	if (rv->room >= 0 && rv->room < 128 && !rv->visited[rv->room]) {
+		rv->visited[rv->room] = 1;
+		acl_room_event(&rv->vm, &rv->mp2, rv->room, 28, 0);
+	}
+	acl_room_event(&rv->vm, &rv->mp2, rv->room, 6, 0);
+	const uint8_t *rec = rv->mp2.sec[0].rec[rv->room];
+	rv->tm_period = rv->tm_cnt = rec && rv->mp2.sec[0].len[rv->room] > 2 ? rec[2] : 0;
+	rv->tm_div = 17;
+	rv->vm.timer_delay = -1;
+	roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy, rv->vm.flags);
+	memcpy(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen));
+	rv->ro_key = room_key(rv);
+}
 
 static void roomview_ensure_objs(RoomView *rv, int gx, int gy) {
-	if (rv->ro_key != room_key(rv)) {
-		rv->vm.room_no = rv->room;
-		acl_fire_room(&rv->vm, &rv->mp2, rv->room, 14);
-		roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy, rv->vm.flags);
-		rv->ro_key = room_key(rv);
+	if (rv->ro_key != room_key(rv))
+		roomview_enter(rv, gx, gy);
+	else if (rv->pending_rebuild) {
+		rv->pending_rebuild = 0;
+		roomview_rebuild_objs(rv, gx, gy);
 	}
 }
 

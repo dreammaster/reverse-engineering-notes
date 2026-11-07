@@ -18,6 +18,7 @@ static int cond_len(int type) {
 
 void acl_init(AclVM *vm, const Mp2 *mp2) {
 	memset(vm, 0, sizeof(*vm));
+	vm->timer_delay = -1;
 	for (int t = 0; t < ACL_THINGS; t++) {
 		int len;
 		const uint8_t *r = mp2_thing(mp2, t, &len);
@@ -88,6 +89,8 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 	case 79: vm->reg = vm->rand_range ? vm->rand_range(a[0], a[1], vm->user) : a[0]; break;
 	case 80: test_res(vm, vm->reg == a[0]); break;
 	case 81: vm->reg = vm->vars[a[0] & 0x3F]; break;
+	case 9: if (vm->queue_n < 16) { vm->queue[vm->queue_n].type = 19; vm->queue[vm->queue_n++].arg = a[0]; } break;
+	case 42: vm->timer_arg = a[0]; vm->timer_delay = a[1]; break;
 	case 28: case 72: break;      /* messages */
 	default: vm->skipped++; break;
 	}
@@ -134,28 +137,50 @@ static size_t exec_ops(AclVM *vm, const uint8_t *b, size_t len, size_t p, int en
 	return p;
 }
 
-void acl_fire_room(AclVM *vm, const Mp2 *mp2, int room, int event) {
+static int cond_match(int type, const uint8_t *cond, int arg) {
+	switch (type) {
+	case 15: case 17: case 19: case 20: case 24: return cond[0] == (arg & 0xFF);
+	default: return 1;
+	}
+}
+
+void acl_room_event(AclVM *vm, const Mp2 *mp2, int room, int type, int arg) {
 	if (room < 0 || room >= mp2->sec[0].count || !mp2->sec[0].rec[room])
 		return;
 	const uint8_t *r = mp2->sec[0].rec[room];
 	int len = mp2->sec[0].len[room];
 	if (len <= 0x20 || r[0x1F] == 0 || room >= 128)
 		return;
-	size_t p = 0x20;
-	for (int i = 0; i < r[0x1F] && i < 64 && p + 2 <= (size_t)len; i++) {
-		int ln = r[p], type = r[p + 1] & 0x7F, keep = r[p + 1] & 0x80;
-		if (ln < 2)
-			break;
-		if (type == event && !(vm->armed[room][i / 8] & (1 << (i % 8)))) {
-			vm->disarm = 0;
-			vm->c605 = 0;
-			exec_ops(vm, r, (size_t)len, p + 2 + (size_t)cond_len(type), 0x17, 1, NULL);
-			if (!keep || vm->disarm)
-				vm->armed[room][i / 8] |= (uint8_t)(1 << (i % 8));
+	struct { int type, arg; } pend[64];
+	int head = 0, tail = 0;
+	pend[tail].type = type; pend[tail++].arg = arg;
+	while (head < tail) {
+		int t = pend[head].type, a = pend[head].arg;
+		head++;
+		size_t p = 0x20;
+		for (int i = 0; i < r[0x1F] && i < 64 && p + 2 <= (size_t)len; i++) {
+			int ln = r[p], ty = r[p + 1] & 0x7F, keep = r[p + 1] & 0x80, cl = cond_len(ty);
+			if (ln < 2)
+				break;
+			if (ty == t && !(vm->armed[room][i / 8] & (1 << (i % 8))) && p + 2 + (size_t)cl <= (size_t)len &&
+			    cond_match(ty, r + p + 2, a)) {
+				vm->disarm = 0;
+				vm->c605 = 0;
+				vm->queue_n = 0;
+				exec_ops(vm, r, (size_t)len, p + 2 + (size_t)cl, 0x17, 1, NULL);
+				for (int q = 0; q < vm->queue_n && tail < 64; q++) {
+					pend[tail].type = vm->queue[q].type;
+					pend[tail++].arg = vm->queue[q].arg;
+				}
+				if (!keep || vm->disarm)
+					vm->armed[room][i / 8] |= (uint8_t)(1 << (i % 8));
+			}
+			p += (size_t)ln;
 		}
-		p += (size_t)ln;
 	}
 }
+
+void acl_fire_room(AclVM *vm, const Mp2 *mp2, int room, int event) { acl_room_event(vm, mp2, room, event, 0); }
 
 int acl_room_parse_ok(const Mp2 *mp2, int room) {
 	if (room < 0 || room >= mp2->sec[0].count || !mp2->sec[0].rec[room])

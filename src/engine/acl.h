@@ -24,12 +24,18 @@ typedef struct {
 	int skipped;                    /* number of unsupported opcodes skipped so far */
 	int (*rand_range)(int lo, int hi, void *user);
 	void *user;
+	int queue_n;                    /* room events queued by ops (op 9 -> type 19) */
+	struct { int type, arg; } queue[16];
+	int timer_arg, timer_delay;     /* one-shot room timer (op 42): delay in timer units, -1 = none */
 	uint8_t armed[128 + ACL_THINGS][64 / 8];   /* per record (rooms first, then things) and entry: 1 = disarmed */
 } AclVM;
 
 void acl_init(AclVM *vm, const Mp2 *mp2);
 /* run all armed handlers of `event` in the handler list of a room record (kind 0) */
 void acl_fire_room(AclVM *vm, const Mp2 *mp2, int room, int event);
+/* deliver one room event (type 6 enter, 14 timer, 19/20/24 with a byte argument, 28 first visit ...) to the room's handler list and everything the
+ * handlers queue, like 1000:7634. Handlers whose condition operand differs from the argument's low byte are skipped. */
+void acl_room_event(AclVM *vm, const Mp2 *mp2, int room, int type, int arg);
 /* 1 when the whole handler list of the room parses to exactly its length (the rule the Python parser uses) */
 int acl_room_parse_ok(const Mp2 *mp2, int room);
 

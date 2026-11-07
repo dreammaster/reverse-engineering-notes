@@ -226,11 +226,13 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver*', '*', '[0-9]'))):
             hs = acl.room_handlers(rr)
         except Exception:
             continue
-        if not any(x['type'] == 14 for x in hs):
+        if not any(x['type'] in (28, 6, 14) for x in hs):
             continue
         things_ = {t: bytearray(r[:16]) for t, r in enumerate(thr) if len(r) >= 16 and secs[3]['present'][t] and t < 1000}
         vm = acl_vm.VM(things_, cur=0, room=n)
-        acl_vm.fire(vm, hs, 14)
+        arm = [True] * len(hs)
+        for t in (28, 6, 14, 14):
+            acl_vm.fire_event(vm, hs, t, 0, arm)
         cnt += 1
         for v in [n] + [things_[t][3] for t in sorted(things_)] + [things_[t][15] for t in sorted(things_)] + list(vm.vars):
             h = ((h ^ (v & 0xFF)) * 0x01000193) & 0xFFFFFFFF

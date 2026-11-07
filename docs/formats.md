@@ -441,6 +441,17 @@ Semantics read so far: `01` place a thing (clears its hidden bit 0x80 — this i
 (room, landing offsets, z → `room_enter`), `27h` add to a script variable (`ds:611+n`), `28h` compare a variable → condition flag `ds:605`, `0Eh` IF on that flag, `1Eh/20h` test/set bit 0 of the
 current object's flags; the others (`48h` look/describe, `2Dh` change energy, …) are listed in `tools/acl.py`. Event queue entries use the position record of the object; the level-start event (type 14 on the room record) runs the
 room's start-up ops.
+**Event sources and condition tests (read from the code and the emulator).** The dispatcher `1000:7634` takes `(type, object, argument)` triples; bit 14 of the type word = the room record's
+list, bit 15 = an extra argument word follows. The condition table `CS:76FC` (operands are read from the entry after the type byte; a handler runs only when the test returns 0): types
+0 3 5 6 7 11 14 21 22 25 27 28 always match; 2 never; 4 operand word == argument; 9 18 26 operand word == argument or negative (wildcard); 10 operand byte == current room and next byte == argument;
+12 13 19 20 24 operand byte == argument's low byte; 15 17 same, and on a match the current object `ds:9C` becomes the extra argument; 1 compares a per-thing attribute byte;
+16 clears flag `0x20` of the object; 23 adds the thing's value to the score (`ds:24C`). Enqueue sites (inline `inc ds:226`): 9 = contact (collision test `116E0`, `165D2`, `16B02`, `122C4`, …),
+7/8 = step events, 10/16/18/… = thing events, and for rooms (bit 14): **28** (`0x401C`) the first time a room is entered (flag `0x40` of the room record byte `+0x17`), **6** (`0x4006`) on every entry (`room_enter`, `1000:DA60`),
+**14** (`0x400E`) the room **timer**: `room_enter` loads `ds:6C1/6C2` from room record byte `+2`; `1000:11EB5` (once per game step) counts `ds:6C3` down from 17, and every 17 steps decrements `6C2`, at 0 it fires event 14 and reloads
+(level 1 room 0: byte = 15 → every 510 ticks; level 4 room 0: 1 → every 34 ticks), **20** (`0x4014`) the one-shot timer set by op `2Ah` (arg, delay in the same units; `ds:6C5/6C4`), **19** (`0x4013`) queued by op `09` with a byte
+argument, 15/17 (`0xC00F`, `0xC011`) from `12108`, 24 (`0x4018`). So "level start" scripts are the *first timer event* (14) or the entry events 28/6 — the earlier assumption that 14 is a one-time start event was only half right
+(level 4 room 0's carpets appear when its timer first fires, 34 ticks after entering). Replaying the sequence 28, 6, 14, 14 through the original dispatcher and through `tools/acl_vm.py` (`fire_event`, with condition matching and the queue)
+gives identical thing flags and variables in every room that has such handlers except two (one uses the unmodelled animation ops 3/74, one draws a different random number in the second timer firing, which the harness cannot reproduce).
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Fire the room-start event (type 14) of every room in the original (emulator) and in tools/acl_vm.py and compare the effect on thing flags
-and script variables.   python3 tools/verify_acl_rooms.py [level]"""
+"""Deliver the room events of a visit (28 first visit, 6 entry, 14 timer x2) to every room in the original (emulator, dispatcher 1000:7634) and
+in tools/acl_vm.py and compare the effect on thing flags and script variables.   python3 tools/verify_acl_rooms.py [level]"""
 import sys, os, struct
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from acl_oracle import *
@@ -18,15 +18,16 @@ for n, rr in enumerate(secs[0]['records']):
         hs = acl.room_handlers(rr)
     except Exception:
         continue
-    if not any(h['type'] == 14 for h in hs):
+    SEQ = (28, 6, 14, 14)
+    if not any(h['type'] in SEQ for h in hs):
         continue
     o.restore()
     r = call(e, 0x410E, eax=3, edx=n, ds=0x1F17)
     rp = r['edi'] & 0xFFFF
     base = struct.unpack('<H', e.rd(0x1F17, 0x5A, 2))[0]
-    e.wr(0x1F17, base, struct.pack('<3H', 14 | 0x4000, rp, 0))
-    e.wr(0x1F17, 0x84, struct.pack('<H', base + 6))
-    e.wr(0x1F17, 0x226, struct.pack('<H', 1))
+    e.wr(0x1F17, base, b''.join(struct.pack('<3H', t | 0x4000, rp, 0) for t in SEQ))
+    e.wr(0x1F17, 0x84, struct.pack('<H', base + 6 * len(SEQ)))
+    e.wr(0x1F17, 0x226, struct.pack('<H', len(SEQ)))
     e.wr(0x1F17, 0x232, struct.pack('<H', n))
     before = o.state()
     try:
@@ -39,7 +40,9 @@ for n, rr in enumerate(secs[0]['records']):
     vm.selected = struct.unpack('<H', e.rd(0x1F17, 0x27A, 2))[0]
     vm.reg = before['glob'][0x704]
     vm.rand = lambda lo, hi: after['glob'][0x704]      # the game's random numbers cannot be reproduced: take the emulator's draw
-    acl_vm.fire(vm, hs, 14)
+    arm = [True] * len(hs)
+    for t in SEQ:
+        acl_vm.fire_event(vm, hs, t, 0, arm)
     errs = []
     for k, rec in vm.things.items():
         if (rec[3] & ~0x08) != (after['rec'][k][3] & ~0x08) or rec[15] != after['rec'][k][15]:
