@@ -1014,6 +1014,49 @@ void Game::seAction(uint32_t sub, int idx) {
 		else if (o.frame == 3)
 			o.frame = 4;
 		break;
+	case 0x31671: { // a grenade (0x89) or a device (0xF0), frame 0: it is lit (0x8A) or activated (0xF1) and goes off after three minutes (sub_31838, in advanceTime)
+		bool grenade = o.type == 0x89;
+		if (o.frame != 0) {
+			message("No effect.\n");
+			break;
+		}
+		if (seTimerLeft() != 0) {
+			message(grenade ? "\nA grenade has already been lit.\n" : "\nA device has already been activated.\n");
+			break;
+		}
+		int holder = -1, container = -1;
+		if (carriedObject(o)) {
+			holder = o.parent;
+			container = o.parent;
+		} else if (o.location() == ObjRecord::IN_CONTAINER) {
+			container = o.parent;
+			int up = container;
+			while (up >= 0 && _world.objects[up].location() == ObjRecord::IN_CONTAINER)
+				up = _world.objects[up].parent;
+			holder = up >= 0 && carriedObject(_world.objects[up]) ? _world.objects[up].parent : -1;
+		}
+		int ox = o.x, oy = o.y;
+		consumeOne(idx);
+		int made;
+		int type = grenade ? 0x8A : 0xF1;
+		if (container >= 0 && container == holder && seGive(holder, type, 1)) {
+			made = sePackItem(holder, type);
+		} else if (container >= 0 && container != holder) {
+			seFill(container, type, 1);
+			made = (int)_world.objects.size() - 1;
+		} else {
+			int hx = ox, hy = oy;
+			int ha = holder >= 0 ? _world.actorObject(holder) : -1;
+			if (ha >= 0) {
+				hx = _world.objects[ha].x;
+				hy = _world.objects[ha].y;
+			}
+			made = seMake(type, hx, hy, z, 1);
+		}
+		seSetTimer(3, made);
+		message(grenade ? "\nGrenade lit!\n" : "\nDevice activated.\n");
+		break;
+	}
 	case 0x31E67: { // the flintlock (frame 1 = loaded): one gunpowder (0xCC) from the pack loads it
 		if (o.frame == 1) {
 			message("\nFlintlock already loaded.\n");
@@ -1114,7 +1157,7 @@ void Game::seAction(uint32_t sub, int idx) {
 }
 
 // sub_3215F, what is done at a fire: "On " a clay pot (0x84) fires it (0x85), corn flour (0x5D) becomes tortillas (0x66), a log (0xCE) charcoal (0x81, ten),
-// the things on the table at ds:118A burn up, gunpowder (0xCC) explodes. APPROX(81): the explosion (sub_29A41: sound, damage 1-20 to what is around, the flash of sub_318F5) is only its sound; the powder is gone.
+// the things on the table at ds:118A burn up, gunpowder (0xCC) explodes. The explosion is seExplode.
 void Game::seFire() {
 	int actor = actingActor();
 	seAsk([this, actor](int obj, int tx, int ty) {
@@ -1163,12 +1206,96 @@ void Game::seFire() {
 			message("\nYou incinerated the " + Describe::object(_world, t) + ".\n");
 			_world.deleteObject(obj);
 		} else if (type == 0xCC) {
-			sfx(6);
+			int ex = held ? px : tx, ey = held ? py : ty;
 			_world.deleteObject(obj);
+			seExplode(ex, ey, false);
 		} else {
 			message("No effect.\n");
 		}
 	});
+}
+
+// the device timer of sub_14746: words at ds:422A2 / 422A4 = globals 0x5A / 0x5C, minutes left and the object that goes off
+int Game::seTimerLeft() const {
+	const std::vector<uint8_t> &g = _world.actors.globals;
+	return g.size() > 0x5B ? g[0x5A] | (g[0x5B] << 8) : 0;
+}
+void Game::seSetTimer(int minutes, int object) {
+	std::vector<uint8_t> &g = _world.actors.globals;
+	if (g.size() <= 0x5D)
+		return;
+	g[0x5A] = (uint8_t)minutes;
+	g[0x5B] = (uint8_t)(minutes >> 8);
+	g[0x5C] = (uint8_t)object;
+	g[0x5D] = (uint8_t)(object >> 8);
+}
+
+// sub_14746's first lines: the timer runs down by the minutes that pass; when it is out the lit grenade or device (sub_31838) goes off where it is (where its holder is)
+void Game::seTimerTick(int minutes) {
+	int left = seTimerLeft();
+	if (left == 0)
+		return;
+	if (left > minutes) {
+		seSetTimer(left - minutes, _world.actors.globals[0x5C] | (_world.actors.globals[0x5D] << 8));
+		return;
+	}
+	int obj = (int16_t)(_world.actors.globals[0x5C] | (_world.actors.globals[0x5D] << 8));
+	seSetTimer(0, 0xFFFF);
+	if (obj < 0 || obj >= (int)_world.objects.size() || _world.objects[obj].deleted)
+		return;
+	int at = obj;
+	while (at >= 0 && !_world.objects[at].onMap() && _world.objects[at].parent >= 0 && _world.objects[at].location() != ObjRecord::ON_MAP) {
+		int p = _world.objects[at].parent;
+		at = _world.objects[at].location() == ObjRecord::IN_CONTAINER ? p : _world.actorObject(p);
+	}
+	int ex = at >= 0 ? _world.objects[at].x : _world.objects[obj].x, ey = at >= 0 ? _world.objects[at].y : _world.objects[obj].y;
+	bool device = _world.objects[obj].type == 0xF1;
+	_world.deleteObject(obj);
+	seExplode(ex, ey, device);
+}
+
+// sub_29A41 (a grenade) and sub_29AC1 (a device): the 3 x 3 squares around are hit, then sub_318F5 sets off the grenades that lie around and tears the webs down.
+// APPROX(81): the flash (sub_37A40), the damage to objects that are not persons (sub_2A99B's other half: doors, walls, the things of ds:...) and the objects 0xA7 / 0x107 of sub_318F5 are not done;
+// the persons are hurt by Combat::applyDamage, which credits a kill to the avatar.
+void Game::seExplode(int ex, int ey, bool device) {
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	if (device) {
+		sfx(0x12);
+		sfx(0x1D);
+	} else {
+		sfx(6);
+	}
+	for (int dx = -1; dx <= 1; ++dx) {
+		for (int dy = -1; dy <= 1; ++dy) {
+			std::vector<int> here;
+			_world.objectsAt((ex + dx) & mask, (ey + dy) & mask, z, here);
+			for (int i : here) {
+				if (_world.objects[i].deleted || _world.objects[i].actor < 0)
+					continue;
+				int who = _world.objects[i].actor, type = _world.objects[i].type;
+				if (device) {
+					if (type == 0x143 || type == 0x148)
+						_combat.applyDamage(1, who, seRoll(1, 35));
+				} else {
+					_combat.applyDamage(1, who, seRoll(1, 20));
+				}
+			}
+		}
+	}
+	// sub_318F5: a grenade in the squares around goes off at once, a web goes
+	for (int dx = -1; dx <= 1; ++dx) {
+		for (int dy = -1; dy <= 1; ++dy) {
+			int sx = (ex + dx) & mask, sy = (ey + dy) & mask;
+			int nade = seFind(0x89, sx, sy);
+			if (nade >= 0) {
+				consumeOne(nade);
+				seExplode(sx, sy, false);
+			}
+			int web = seFind(0x11, sx, sy);
+			if (web >= 0)
+				_world.deleteObject(web);
+		}
+	}
 }
 
 // sub_1ADDA: the first thing of the type that the actor holds and does not wear or wield (status 0x18 is readied), -1 if there is none

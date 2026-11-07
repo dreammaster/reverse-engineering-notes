@@ -422,6 +422,24 @@ int main() {
 		useEast(w, g, px, py);
 		CHECK(w.objects[door].x == px + 2 && w.objects[door].frame == 5);
 		w.deleteObject(door);
+		// a grenade (0x89) is lit (0x8A) and goes off after three minutes, hurting whoever stands within a square
+		{
+			clearEast(w, px, py);
+			int nade = put(w, 0x89, 0, px + 1, py, 0);
+			int victim = w.actors.partyRoster[1];
+			w.moveObject(w.actorObject(victim), px + 2, py, 0);
+			w.actors.hp[victim] = 200;
+			g.log.clear();
+			useEast(w, g, px, py);
+			CHECK(logText(g).find("Grenade lit!") != std::string::npos && w.objects[nade].deleted);
+			CHECK(w.actors.globals[0x5A] == 3);
+			g.advanceTime(2);
+			CHECK(w.actors.globals[0x5A] == 1 && w.actors.hp[victim] == 200);
+			g.advanceTime(1);
+			CHECK(w.actors.globals[0x5A] == 0 && w.actors.hp[victim] < 200);
+			w.moveObject(w.actorObject(victim), px, py, 0);
+			clearEast(w, px, py);
+		}
 		// the fire extinguisher (0x5E) puts out a fire (0xF2) and turns burning logs (0xCF frame 2) back to frame 0
 		int ext = toolOn(0x5E, 0xF2, 0, target, made);
 		CHECK(w.objects[target].deleted && !w.objects[ext].deleted);

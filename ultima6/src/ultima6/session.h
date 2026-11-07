@@ -291,6 +291,10 @@ private:
 	int seRoll(int lo, int hi);                                                 // sub_3B58F
 	int seStrength(int actor) const;                                            // sub_285A0: the strength, less 3 / plus 3 by the status bits
 	int seMaxHp(int actor) const;                                               // sub_2872A: twice the strength and four times the level, 1 to 255
+	void seExplode(int ex, int ey, bool device);                                // sub_29A41 / sub_29AC1 with the chain of sub_318F5
+	int seTimerLeft() const;
+	void seSetTimer(int minutes, int object);
+	void seTimerTick(int minutes);                                              // the device timer of sub_14746 (globals 0x5A / 0x5C)
 	bool seTooWeak(int strength);                                               // sub_30E72: a roll of 1-30 below (45 - strength) / 2
 	bool seReach(const World::Obj &target, int tx, int ty);                     // the "Out of range!" test of the "On " handlers (prints it)
 	void seChosen(int tx, int ty);

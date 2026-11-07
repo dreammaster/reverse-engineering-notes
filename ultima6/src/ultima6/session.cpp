@@ -159,6 +159,8 @@ void Game::avatarDied() {
 
 // Time that passes without anyone acting (resting): minutes at a time.
 void Game::advanceTime(int minutes) {
+	if (_world.game == GameId::SavageEmpire)
+		seTimerTick(minutes);
 	for (int i = 0; i < minutes && !_dead; ++i) {
 		minutePassed();
 		_actors.scheduleUpdate(x, y, z);

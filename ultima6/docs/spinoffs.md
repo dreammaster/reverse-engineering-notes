@@ -131,7 +131,7 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | 83 digging stick | 31F60 | "You get some clay." / "There is nothing to dig!" (**ported**) |
 | 86 cloth strip | 33C06 | "On -": an actor gets 1 to 5 hit points back up to `sub_2872A` (2 x strength + 4 x level, 1 to 255); a body is "beyond help" (**ported**) |
 | 88 metal bucket | 335A9 | frame 0 fills with tar or water, frame 2 pours water (`sub_33364`) (**ported**); frame 1 pours tar (`sub_32D11`: tars cloth strips, makes pteranodon nests and webs) is not |
-| 89, F0 grenade, device | 31671 | "Device activated." |
+| 89, F0 grenade, device | 31671 | a grenade / device (frame 0) is lit as 8A / F1 and a timer of 3 minutes (words ds:422A2 / 422A4 = globals 5A / 5C, run down by `sub_14746` = advance_time) starts; at 0 `sub_31838` explodes it where it (or its holder) is: `sub_29A41` (sound 6, 1-20 damage to the persons in the 3 x 3 squares) or, for a device, `sub_29AC1` (sounds 12, 1D, 1-35 damage to types 143 / 148 only), then `sub_318F5` sets off grenades around and tears webs down (**ported**, APPROX 81) |
 | 8F machine | 35B44 | a gem (48, 49, 4A) of the member goes in, an object C5 comes out on the machine's square; "You don't have any gems." (**ported**) |
 | 94 jungle drum | 3542B | |
 | A5 loom | 33F9E | "On -": flax (D2) becomes cloth (B4): "You wove cloth from the flax." (**ported**) |
