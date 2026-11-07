@@ -563,6 +563,205 @@ void Game::seAction(uint32_t sub, int idx) {
 		});
 		break;
 	}
+	case 0x354BC: { // the jug of plachta: on a spear (0x1A) it makes the spear of Shamap (type 1) in the member's pack (else at the member's feet); the jug is used up
+		int jug = idx;
+		seAsk([this, jug, actor](int obj, int tx, int ty) {
+			if (obj < 0) {
+				message("nothing!\n");
+				return;
+			}
+			World::Obj &t = _world.objects[obj];
+			if (!seReach(t, tx, ty))
+				return;
+			if (t.type != 0x1A) {
+				message("No effect.\n");
+				return;
+			}
+			int a = _world.actorObject(actor);
+			int px = a >= 0 ? _world.objects[a].x : 0, py = a >= 0 ? _world.objects[a].y : 0;
+			bool held = carriedObject(t) && t.parent == actor;
+			if (t.quantity > 1)
+				--t.quantity;
+			else
+				_world.deleteObject(obj);
+			if (!held || !seGive(actor, 1, 1))
+				seMake(1, px, py, z, 1);
+			_world.deleteObject(jug);
+		});
+		break;
+	}
+	case 0x34FDE: { // the vine: on a hole (0xA8) a rope (0x14) hangs from the square up and to the left, with the quality of the hole; else "You can't use a rope here!"
+		int vine = idx;
+		seAsk([this, vine](int obj, int tx, int ty) {
+			if (obj < 0) {
+				message("nothing!\n");
+				return;
+			}
+			World::Obj &t = _world.objects[obj];
+			if (!seReach(t, tx, ty))
+				return;
+			if (t.type != 0xA8) {
+				message("\nYou can't use a rope here!\n");
+				return;
+			}
+			int quality = t.quality, hx = t.x, hy = t.y;
+			_world.deleteObject(vine);
+			seMake(0x14, hx - 1, hy - 1, z, 0, quality);
+		});
+		break;
+	}
+	case 0x343E9: { // the fire extinguisher: puts out a fire (0xF2, 0xFE: gone) or burning logs (0xCF frame 2: frame 0); on lava next to the member it hardens (an object 0x39 whose frame is the place of the tile in the table of lava tiles)
+		seAsk([this](int obj, int tx, int ty) {
+			static const int LAVA[15] = {0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0xAA, 0xAB};
+			if (obj >= 0) {
+				World::Obj &t = _world.objects[obj];
+				if (!seReach(t, tx, ty))
+					return;
+				if (t.type == 0xF2 || t.type == 0xFE) {
+					sfx(0x1D);
+					message("\nYou put the fire out.\n");
+					_world.deleteObject(obj);
+				} else if (t.type == 0xCF && t.frame == 2) {
+					sfx(0x1D);
+					message("\nYou put the fire out.\n");
+					t.frame = 0;
+				} else {
+					message("No effect.\n");
+				}
+				return;
+			}
+			if (obj != -1)
+				return;
+			int a = _world.actorObject(actingActor());
+			if (a >= 0 && (std::abs(tx - (int)_world.objects[a].x) > 1 || std::abs(ty - (int)_world.objects[a].y) > 1)) {
+				message("Out of range!\n");
+				return;
+			}
+			int mask = z == 0 ? 0x3FF : 0xFF;
+			int tile = _world.map.tile(z, tx & mask, ty & mask);
+			int at = -1;
+			for (int i = 0; i < 15; ++i)
+				if (LAVA[i] == tile)
+					at = i;
+			if (at < 0) {
+				message("nothing!\n");
+				return;
+			}
+			if (z == 3) {
+				message("\nThe lava is too far below you.\n");
+				return;
+			}
+			sfx(0x1D);
+			message("Lava\n");
+			message("You harden some of the lava.\n");
+			int n = seMake(0x39, tx, ty, z, 0);
+			_world.objects[n].frame = (uint8_t)at;
+		});
+		break;
+	}
+	case 0x32488: { // knives and scissors: cloth (0xB4) becomes ten strips; the dead (0x118, by frame) are butchered; a body part (0xF9) loses its feathers (frame 15) or is made a mess of (frame 11)
+		int knife = actor;
+		seAsk([this, knife](int obj, int tx, int ty) {
+			if (obj < 0) {
+				message("nothing!\n");
+				return;
+			}
+			World::Obj &t = _world.objects[obj];
+			if (!seReach(t, tx, ty))
+				return;
+			int a = _world.actorObject(knife);
+			int px = a >= 0 ? _world.objects[a].x : 0, py = a >= 0 ? _world.objects[a].y : 0;
+			int x = t.x, y = t.y;
+			// something lands in the pack, or on the square if it does not fit
+			auto give = [&](int type, int quantity, int sx, int sy) {
+				if (!seGive(knife, type, quantity))
+					seMake(type, sx, sy, z, quantity);
+			};
+			auto gore = [&](int sx, int sy) {
+				int n = seMake(0xF8, sx, sy, z, 0);
+				_world.objects[n].frame = (uint8_t)seRoll(0, 2);
+			};
+			auto meat = [&]() {
+				message("\nYou cut up some meat.\n");
+				give(0x6E, seRoll(2, 7), x, y);
+			};
+			if (t.type == 0xB4) {
+				bool held = carriedObject(t) && t.parent == knife;
+				if (!held || !seGive(knife, 0x86, 10))
+					seMake(0x86, px, py, z, 10);
+				World::Obj &cloth = _world.objects[obj]; // (the creation above may have moved the vector)
+				if (cloth.quantity > 1)
+					--cloth.quantity;
+				else
+					_world.deleteObject(obj);
+				message("\nYou made some cloth strips.\n");
+			} else if (t.type == 0x118) {
+				// what each frame (1 to 47) of the dead is: G ghoul, H tough hide, M meat, C clank, S big cat, X a mess, B meat and a skeleton
+				static const char KIND[48] = "G.HH.H.HH.H...H.H...M.CCC.HH.HH.H.H.S.M.M.H.MXB";
+				int f = t.frame;
+				char k = f >= 1 && f <= 47 ? KIND[f - 1] : '.';
+				switch (k) {
+				case 'G':
+					message("\nYou ghoul!\n");
+					break;
+				case 'H':
+					message("\nThe hide is too tough.\n");
+					break;
+				case 'C':
+					message("\nClank!\n");
+					break;
+				case 'M': {
+					int bones = seMake(0x52, x, y, z, 0);
+					_world.objects[bones].frame = 1;
+					gore(x, y);
+					gore(x - 1, y);
+					_world.deleteObject(obj);
+					meat();
+					break;
+				}
+				case 'B': {
+					seMake(0x50, x, y, z, 0);
+					gore(x, y);
+					_world.deleteObject(obj);
+					meat();
+					break;
+				}
+				case 'S': {
+					int bones = seMake(0x52, x, y, z, 0);
+					_world.objects[bones].frame = 1;
+					gore(x, y);
+					gore(x - 1, y);
+					_world.deleteObject(obj);
+					message("\nYou skinned the big cat.\n");
+					give(0x6E, seRoll(2, 7), x, y);
+					give(0x5C, 1, x, y);
+					break;
+				}
+				case 'X':
+					message("\nYou make a mess.\n");
+					seMake(0xF8, x, y, z, 0);
+					break;
+				default:
+					break;
+				}
+			} else if (t.type == 0xF9) {
+				if (t.frame == 0x0F) {
+					gore(x, y);
+					_world.deleteObject(obj);
+					message("\nYou remove the feathers.\n");
+					give(0x30, seRoll(5, 20), x, y);
+				} else if (t.frame == 0x0B) {
+					message("\nYou make a mess.\n");
+					seMake(0xF8, x, y, z, 0);
+				} else {
+					message("\nYou ghoul!\n");
+				}
+			} else {
+				message("No effect.\n");
+			}
+		});
+		break;
+	}
 	default: // APPROX(79): not ported yet
 		break;
 	}

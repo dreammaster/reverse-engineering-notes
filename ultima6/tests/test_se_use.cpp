@@ -261,6 +261,72 @@ int main() {
 		int other = hammerOn(0x30, 0);
 		CHECK(logText(g).find("No effect.") != std::string::npos);
 		w.deleteObject(other);
+
+		// a tool east of the member used on a thing south of it
+		auto toolOn = [&](int tool, int type, int frame, int &target, int &made) {
+			clearEast(w, px, py);
+			std::vector<int> below;
+			w.objectsAt(px, py + 1, 0, below);
+			for (int i : below)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+			target = put(w, type, frame, px, py + 1, 0);
+			int t = put(w, tool, 0, px + 1, py, 0);
+			size_t before = w.objects.size();
+			g.log.clear();
+			useEast(w, g, px, py);
+			g.handleKey(KEY_DOWN);
+			g.handleKey(KEY_ENTER);
+			made = w.objects.size() > before ? (int)before : -1;
+			return t;
+		};
+		int target, made;
+		// the jug (0x3F) on a spear (0x1A) makes the spear of Shamap (type 1); the jug is used up
+		int jug = toolOn(0x3F, 0x1A, 0, target, made);
+		CHECK(w.objects[jug].deleted && w.objects[target].deleted);
+		CHECK(made >= 0 && w.objects[made].type == 1);
+		// a vine (0x2A) on a hole (0xA8) hangs a rope (0x14) one square up and to the left
+		int vine = toolOn(0x2A, 0xA8, 0, target, made);
+		CHECK(w.objects[vine].deleted);
+		CHECK(made >= 0 && w.objects[made].type == 0x14 && w.objects[made].x == px - 1 && w.objects[made].y == py + 1 - 1);
+		w.deleteObject(target);
+		int vine2 = toolOn(0x2A, 0x30, 0, target, made);
+		CHECK(logText(g).find("You can't use a rope here!") != std::string::npos);
+		w.deleteObject(vine2);
+		w.deleteObject(target);
+		// a knife (0x2C): cloth (0xB4) becomes ten cloth strips; a dead creature (0x118) by its frame: 1 "You ghoul!", 3 a tough hide, 21 meat (and gore and bones), 23 "Clank!"
+		int knife = toolOn(0x2C, 0xB4, 0, target, made);
+		CHECK(w.objects[target].deleted);
+		CHECK(logText(g).find("You made some cloth strips") != std::string::npos);
+		w.deleteObject(knife);
+		knife = toolOn(0x2C, 0x118, 1, target, made);
+		CHECK(logText(g).find("You ghoul!") != std::string::npos && !w.objects[target].deleted);
+		w.deleteObject(target);
+		w.deleteObject(knife);
+		knife = toolOn(0x2C, 0x118, 3, target, made);
+		CHECK(logText(g).find("The hide is too tough") != std::string::npos);
+		w.deleteObject(target);
+		w.deleteObject(knife);
+		knife = toolOn(0x2C, 0x118, 23, target, made);
+		CHECK(logText(g).find("Clank!") != std::string::npos);
+		w.deleteObject(target);
+		w.deleteObject(knife);
+		knife = toolOn(0x2C, 0x118, 21, target, made);
+		CHECK(logText(g).find("You cut up some meat") != std::string::npos && w.objects[target].deleted);
+		bool bones = false;
+		for (size_t i = (size_t)made; i < w.objects.size(); ++i)
+			bones |= w.objects[i].type == 0x52 && !w.objects[i].deleted;
+		CHECK(bones);
+		w.deleteObject(knife);
+		// the fire extinguisher (0x5E) puts out a fire (0xF2) and turns burning logs (0xCF frame 2) back to frame 0
+		int ext = toolOn(0x5E, 0xF2, 0, target, made);
+		CHECK(w.objects[target].deleted && !w.objects[ext].deleted);
+		CHECK(logText(g).find("You put the fire out") != std::string::npos);
+		w.deleteObject(ext);
+		ext = toolOn(0x5E, 0xCF, 2, target, made);
+		CHECK(w.objects[target].frame == 0);
+		w.deleteObject(target);
+		w.deleteObject(ext);
 	}
 
 	// a torch (0xD0) is lit in a free hand: a lit torch (0xD1) with 100 minutes appears readied

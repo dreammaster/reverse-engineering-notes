@@ -115,19 +115,19 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | 4F-52 bones, 3E bean stalk, 3D corn stalk | 33F4B, 33E52, 33EA5 | rib bones D3, beans 6D, corn 6C: "You are carrying too much already." (**ported**) |
 | 0A magnesium ribbon | 34F6B | one used up, `sub_34DD4` at the member's square |
 | 14 rope, 16 hole in the ceiling | 362F7, 36312 -> 19505 | not in solo mode; the descent into the underground city ("The mechanism supporting the trap door fails ...") |
-| 19, 2C, 34 knives, scissors | 32488 | "On -": cut cloth, meat, skin a big cat, remove feathers (516 lines) |
+| 19, 2C, 34 knives, scissors | 32488 | "On -": cloth (B4) gives ten cloth strips (86); the dead (118) by frame (1 to 47: `KIND` in `se_use.cpp`, from the switch at cs:jpt_3265E): "You ghoul!", "The hide is too tough.", "Clank!", meat 2-7 (6E) with bones (52 frame 1 or 50) and gore (F8), the big cat (frame 37) also a skin (5C), "You make a mess."; a body part (F9) frame 15 gives 5-20 feathers (30), frame 11 a mess (**ported**) |
 | 1D, 77 hammers | 31436 | "On -": on a boulder (AC) a strength roll (`sub_30E72`: 1-30 below (45 - strength) / 2 fails: "Glanced off!") else "A piece of rock flakes off." (3A); on cold burnt logs (CF frame 0) 1 to strength charcoal (81); else "No effect." (**ported**) |
-| 2A vine | 34FDE | "On -": "You can't use a rope here!" |
+| 2A vine | 34FDE | "On -": on a hole (A8) a rope (14) hangs one square up and to the left, with the quality of the hole; else "You can't use a rope here!" (**ported**) |
 | 2B bell | 31293 | "On -": "You put the bell on the dinosaur's neck." (target type 118, frames 0D / 11; frame 11 names the head by its quality; the actor needs status bit 4 and no talk flags; actor B5 also sets bit 0x80 of actor 20's talk flags) (**ported**) |
 | 2F turtle bait | 34783 | "You must be near water." / "Nothing takes the bait." |
 | 31 notebook | 34D88 | Jimmys shorthand (**ported**) |
 | 32 flintlock | 31E67 | loading with gunpowder |
 | 33 camera | 34EDF | the film is ported, the flash (`sub_34DD4`: the picture, the ghost whispering "Closer...", actor 0x19) is not |
 | 3B, 3C mortar, grinding stone | 310AD | grind corn / mix gunpowder |
-| 3F jug | 354BC | "On -": pour (target type 1A) |
+| 3F jug | 354BC | "On -": on a spear (1A) the spear of Shamap (type 1) goes into the pack (else on the floor), the spear and the jug are used up; else "No effect." (**ported**) |
 | 56-58 totems | 3646E | placing (`sub_1C1C3`, `sub_22EF7`, "`%s can't use that!") |
 | 5C folded skin | 35C2E | unfolding it |
-| 5E fire extinguisher | 343E9 | "On -": puts a fire out, hardens lava |
+| 5E fire extinguisher | 343E9 | "On -": a fire (F2, FE) goes out, burning logs (CF frame 2) go back to frame 0, lava next to the member (tiles 0F-1B, AA, AB) hardens into an object 39 whose frame is the place of the tile in that table ("The lava is too far below you." on level 3) (**ported**) |
 | 83 digging stick | 31F60 | "You get some clay." / "There is nothing to dig!" (**ported**) |
 | 86 cloth strip | 33C06 | "On -": an actor gets 1 to 5 hit points back up to `sub_2872A` (2 x strength + 4 x level, 1 to 255); a body is "beyond help" (**ported**) |
 | 88 metal bucket | 335A9 | frame 0 fills with tar or water, frame 2 pours water (`sub_33364`) (**ported**); frame 1 pours tar (`sub_32D11`: tars cloth strips, makes pteranodon nests and webs) is not |
