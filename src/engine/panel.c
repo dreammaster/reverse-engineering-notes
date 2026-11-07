@@ -144,3 +144,51 @@ void status_draw(uint8_t *canvas, const uint8_t *font, size_t font_len, const ch
 	status_draw_centred(canvas, 252, 157, 60, buf, font, font_len);
 	status_draw_centred(canvas, 202, 186, 108, room_name, font, font_len);
 }
+
+/* ---- verb icons ---- */
+static const int verb_slots[VERB_SLOTS][2] = {{9, 145}, {36, 152}, {9, 169}, {36, 177}, {63, 175}, {90, 177}};
+static const uint8_t class_verb[10] = {0x00, 0x04, 0x09, 0xFF, 0x07, 0x03, 0x08, 0xFF, 0xFF, 0xFF};
+
+int verbs_list(const uint8_t hdr[32], int flags2, int ds703, uint8_t out[VERB_SLOTS]) {
+	int n = 0;
+	int h12 = hdr[12], h16 = hdr[0x16], h17 = hdr[0x17], h1d = hdr[0x1D];
+	uint8_t all[8];
+	int m = 0;
+	if ((h12 & 2) && !(flags2 & 4))
+		all[m++] = 2;
+	if (h17 && !(flags2 & 0x40)) {
+		int c = h17 < 10 ? class_verb[h17] : 0xFF;
+		if (!(c & 0x80))
+			all[m++] = (uint8_t)c;
+	}
+	if (h1d == 0x12)
+		all[m++] = 0x0E;
+	if ((h12 & 1) && !(flags2 & 4) && !(ds703 & 0x20))
+		all[m++] = 0x0A;
+	if (h17 != 6 && !(h16 & 0x80))
+		all[m++] = 0x0B;
+	all[m++] = 6;
+	for (int i = 0; i < m && n < VERB_SLOTS; i++)
+		out[n++] = all[i];
+	return n;
+}
+
+static void icon_draw(uint8_t *canvas, int x, int y, const uint8_t *icons, size_t len, int n) {
+	if ((size_t)(n + 1) * 112 > len)
+		return;
+	for (int r = 0; r < 14; r++) {
+		const uint8_t *p = icons + n * 112 + r * 8;
+		for (int b = 0; b < 16; b++) {
+			unsigned col = 0;
+			for (int k = 0; k < 4; k++)
+				col |= (unsigned)((be16(p + 2 * k) >> (15 - b)) & 1) << k;
+			if (col && x + b < 320 && y + r < 200)
+				canvas[(y + r) * 320 + x + b] = (uint8_t)col;
+		}
+	}
+}
+
+void verbs_draw(uint8_t *canvas, const uint8_t *verbs, int n, const uint8_t *icons, size_t icons_len) {
+	for (int i = 0; i < VERB_SLOTS; i++)
+		icon_draw(canvas, verb_slots[i][0], verb_slots[i][1], icons, icons_len, i < n ? verbs[i] : 0);
+}

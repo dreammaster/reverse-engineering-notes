@@ -634,6 +634,47 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	{
+		const uint8_t *icons = NULL;
+		size_t icons_len = 0;
+		if (andata_un)
+			andata_block(andata_un, andata_un_len, 0, &icons, &icons_len);
+		for (size_t i = 0; i < sizeof(verb_vectors) / sizeof(verb_vectors[0]) && icons; i++) {
+			const StatusVector *sv = &verb_vectors[i];
+			char lev = sv->dir[strlen(sv->dir) - 1];
+			snprintf(path, sizeof(path), "%s/%s/LEV%c.MP1", root, sv->dir, lev);
+			size_t n, un;
+			uint8_t *in = slurp(path, &n), *raw = NULL;
+			if (!in)
+				continue;
+			ObjSprites os;
+			int rc = mjm_unpack(in, n, &raw, &un);
+			if (!rc) rc = objsprites_load(raw, un, &os);
+			if (!rc) {
+				unsigned h = 0x811C9DC5u;
+				int cnt = 0;
+				static uint8_t cv[64000];
+				for (int k = 0; k < os.count; k++) {
+					const ObjSprite *sp = &os.sprites[k];
+					for (int q = 0; q < 4; q++) {
+						static const int fl2[4] = {0, 4, 0x40, 0x44};
+						uint8_t vl[VERB_SLOTS];
+						int nv = verbs_list(sp->header, fl2[q], 0, vl);
+						memset(cv, 0, sizeof(cv));
+						verbs_draw(cv, vl, nv, icons, icons_len);
+						for (int j = 0; j < nv; j++) h = (h ^ vl[j]) * 0x01000193u;
+						for (int j = 145 * 320; j < 196 * 320; j++) h = (h ^ cv[j]) * 0x01000193u;
+					}
+					cnt++;
+				}
+				if (cnt != sv->rooms || h != sv->hash) { printf("FAIL verbs %s: %d blocks hash %08X\n", sv->dir, cnt, h); failed++; }
+				objsprites_free(&os);
+			} else { printf("FAIL verbs %s rc=%d\n", sv->dir, rc); failed++; }
+			checked++;
+			free(in); free(raw);
+		}
+	}
+
 	for (size_t i = 0; i < sizeof(acl_vectors) / sizeof(acl_vectors[0]); i++) {
 		const AclVector *av = &acl_vectors[i];
 		char lev = av->dir[strlen(av->dir) - 1];

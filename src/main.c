@@ -108,6 +108,8 @@ typedef struct RoomView_ {
 	uint8_t flags_seen[ACL_THINGS];  /* thing flags the objects were built with */
 	int pending_rebuild;
 	struct { int active, id, timer; } msgs[4];   /* message scrolls (slots 0..3) */
+	uint8_t verbs[VERB_SLOTS];  /* verb icons of the touched object (slots) */
+	int nverbs;
 	int label_id;              /* name shown above the room name: string id of the last touched object (-1 none) */
 	AclVM vm;                  /* script state: thing flags / variables */
 	int vm_ok;
@@ -133,8 +135,8 @@ static void roomview_tick(RoomView *rv) {
 
 /* the frame around the room view (ANDATA.DAT block 1) */
 static uint8_t *g_andata;
-static const uint8_t *g_b1, *g_font, *g_tiles, *g_font3;
-static size_t g_b1_len, g_font_len, g_tiles_len, g_font3_len;
+static const uint8_t *g_b1, *g_font, *g_tiles, *g_font3, *g_icons;
+static size_t g_b1_len, g_font_len, g_tiles_len, g_font3_len, g_icons_len;
 static void panel_ensure(const GameFiles *g) {
 	if (g_andata)
 		return;
@@ -145,6 +147,7 @@ static void panel_ensure(const GameFiles *g) {
 		andata_block(g_andata, len, 4, &g_font, &g_font_len);
 		andata_block(g_andata, len, 2, &g_tiles, &g_tiles_len);
 		andata_block(g_andata, len, 3, &g_font3, &g_font3_len);
+		andata_block(g_andata, len, 0, &g_icons, &g_icons_len);
 	}
 }
 static int msg_rnd(void *u) { (void)u; return 3; }
@@ -153,6 +156,8 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 	panel_ensure(g);
 	if (g_b1)
 		panel_apply_wings(g_b1, g_b1_len, scr->pixels);
+	if (g_icons && rv->nverbs)
+		verbs_draw(scr->pixels, rv->verbs, rv->nverbs, g_icons, g_icons_len);
 	if (g_font && rv->names_ok && rv->room >= 0 && rv->room < rv->mp2.sec[0].count && rv->mp2.sec[0].rec[rv->room]) {
 		char nm[48];
 		status_room_name(rv->mp2.sec[0].rec[rv->room], (size_t)rv->mp2.sec[0].len[rv->room], rv->name_tbl, rv->names.strings,
@@ -421,6 +426,7 @@ static void roomview_enter(RoomView *rv, int gx, int gy) {
 	memcpy(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen));
 	rv->ro_key = room_key(rv);
 	rv->label_id = -1;
+	rv->nverbs = 0;
 }
 
 static void roomview_ensure_objs(RoomView *rv, int gx, int gy) {
@@ -546,6 +552,7 @@ static void walker_touch(Walker *wk, RoomView *rv, const ColResult *cr) {
 			continue;
 		int nm = (o->sp->header[10] << 8) | o->sp->header[11];
 		rv->label_id = nm < 0x8000 ? nm : -1;
+		rv->nverbs = verbs_list(o->sp->header, rv->vm.flags2[o->thing], 0, rv->verbs);
 		rv->vm.queue_n = 0;
 		acl_thing_event(&rv->vm, &rv->mp2, o->thing, 9, 0);
 		acl_thing_event(&rv->vm, &rv->mp2, o->thing, 7, 0);

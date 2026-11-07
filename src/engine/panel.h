@@ -36,4 +36,12 @@ size_t status_room_name(const uint8_t *rec, size_t rec_len, const uint16_t table
 /* "DAY n" (box cleared first) and the room name. */
 void status_draw(uint8_t *canvas, const uint8_t *font, size_t font_len, const char *room_name, int day);
 
+/* ---- verb icons in the six slots while touching an object (docs/formats.md 6.7b, tools/verbs.py) ---- */
+#define VERB_SLOTS 6
+/* hdr = 32-byte sprite block header (file order), flags2 = rec[15] of the touched thing, ds703 = game flag word (bit 0x20: no "look" verb).
+ * Fills out[] (at most 6) and returns the count (the last verb is always 6). */
+int verbs_list(const uint8_t hdr[32], int flags2, int ds703, uint8_t out[VERB_SLOTS]);
+/* Draw the n verb icons (the rest of the six slots get the empty icon 0). icons = ANDATA block 0 (17 icons of 112 bytes). */
+void verbs_draw(uint8_t *canvas, const uint8_t *verbs, int n, const uint8_t *icons, size_t icons_len);
+
 #endif

@@ -465,6 +465,12 @@ and shown in one of four slots (`1000:3555`; slot *s* at x = 32 + 16 s, y = 20 +
 of **ANDATA block 2** (18 tiles × 32 bytes, 4 plane bytes per row): top rows `0 1 2` / `5 E C`, `fill` = ⌊6w/8⌋ columns of tile `D`, middle rows (⌊6·lines/8⌋ of them) with a random left tile from `6 7 7 8 8 8 8 8` and right tile
 from `B A A 9 9 9 9 9`, bottom rows `10 F 11` / `3 1 4`; the lines follow in the **block 3 font** (5 rows × 4 plane bytes = 20 bytes per glyph, same glyph numbers as the status font, advance 6, line pitch 6, first line at y + 13,
 each line centred in the 8·(fill+2) pixel width). Everything matches the emulator's pixels except the random edge tiles. The text appears over ~4 ticks (typewriter), not modelled.
+**Verb icons (`tools/verbs.py`, `src/engine/panel.c`, pixel-exact against the emulator).** While an object is touched the six inventory slots of the panel show its *verbs*: **ANDATA block 0** holds 17 icons of 16 × 14 pixels (8 bytes per row =
+4 big-endian plane words, colour 0 transparent; icon 0 = the empty slot). `1000:22C4` builds the list (at most six, always ending with verb 6) from the sprite-block header (file order: byte 12 flags, `0x16`, `0x17` class, `0x1D`) and the thing's `rec[15]`:
+verb 2 if `h[12] & 2` and `!(rec15 & 4)`; the class verb `ds:FA36[h[0x17]]` (`04 09 FF 07 03 08 FF FF FF` for classes 1…9, negative = none) if `h[0x17] != 0` and `!(rec15 & 0x40)`; verb 14 (`0Eh`) if `h[0x1D] == 0x12`;
+verb 10 (`0Ah`, "?") if `h[12] & 1`, `!(rec15 & 4)` and `!(ds:703 & 0x20)`; verb 11 (`0Bh`) unless `h[0x17] == 6` or `h[0x16] & 0x80`; then verb 6. Slot positions (`ds:FD8A`): (9,145) (36,152) (9,169) (36,177) (63,175) (90,177).
+The icons stay until the next touch. The verb handlers (`1000:2E0B`, 17 entries) turn a chosen verb into events — 11: event 16 (look/script) when `rec[3] & 0x20`, 4 and 7: event 5, 2: event 0, 1: event 21 + pick-up into the inventory, 16: event 1 — and
+holding End switches the direction keys from walking to moving a highlight over the slots (not decoded further).
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input

@@ -3,7 +3,7 @@
 import glob, os, struct, sys
 here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, here)
-import message, status, push, panel, mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
+import verbs, message, status, push, panel, mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
 
 root = os.path.join(here, '..')
 
@@ -144,6 +144,23 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
             h = ((h ^ c) * 0x01000193) & 0xFFFFFFFF
         cnt += 1
     msg_vec.append((os.path.relpath(d, root), cnt, h))
+# ---- verb lists + icon drawing for every sprite block header of every level
+verb_vec = []
+for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glob.glob(os.path.join(root, 'cadaver2', 'TATA', '[1-4]')) +
+                glob.glob(os.path.join(root, 'cadaver2', 'DATA', '[1-5]'))):
+    mp1 = roomview.level_files(d)[0]
+    h, cnt = 0x811C9DC5, 0
+    for bi, (sz, blk) in enumerate(objsprites.blocks(mp1)):
+        if sz <= 1 or not objsprites.parse_sprite_block(blk):
+            continue
+        for fl2 in (0, 4, 0x40, 0x44):
+            vl = verbs.verb_list(blk[:32], fl2, 0)
+            cv = bytearray(64000)
+            verbs.draw_verbs(cv, vl, _an[0])
+            for c in bytes(vl) + bytes(cv[145 * 320:196 * 320]):
+                h = ((h ^ c) * 0x01000193) & 0xFFFFFFFF
+        cnt += 1
+    verb_vec.append((os.path.relpath(d, root), cnt, h))
 intro_vec = []
 for g, key in (('cadaver1', 'cadaver'), ('cadaver2', 'payoff')):
     d = os.path.join(root, g)
@@ -391,6 +408,10 @@ with open(os.path.join(root, 'src', 'tests', 'vectors.h'), 'w') as o:
     o.write('};\n')
     o.write('static const StatusVector msg_vectors[] = {\n')
     for r in msg_vec:
+        o.write('\t{"%s", %d, 0x%08XU},\n' % r)
+    o.write('};\n')
+    o.write('static const StatusVector verb_vectors[] = {\n')
+    for r in verb_vec:
         o.write('\t{"%s", %d, 0x%08XU},\n' % r)
     o.write('};\n')
     o.write('typedef struct { const char *dir; int rooms; unsigned hash; } AclVector;\n')
