@@ -286,6 +286,11 @@ private:
 	bool _seAsync = false;
 	std::function<void(int, int, int)> _seThen; // what a handler does with the object chosen by "On " (-2 for none chosen) and its square
 	void seAsk(std::function<void(int, int, int)> then);
+	int seRoll(int lo, int hi);                                                 // sub_3B58F
+	int seStrength(int actor) const;                                            // sub_285A0: the strength, less 3 / plus 3 by the status bits
+	int seMaxHp(int actor) const;                                               // sub_2872A: twice the strength and four times the level, 1 to 255
+	bool seTooWeak(int strength);                                               // sub_30E72: a roll of 1-30 below (45 - strength) / 2
+	bool seReach(const World::Obj &target, int tx, int ty);                     // the "Out of range!" test of the "On " handlers (prints it)
 	void seChosen(int tx, int ty);
 	void mdContinue(int stage, int partner);
 	void mdChosen(int tx, int ty);

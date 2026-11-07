@@ -443,9 +443,170 @@ void Game::seAction(uint32_t sub, int idx) {
 			message("\nYou need to stand next to deep water.\n");
 		break;
 	}
+	case 0x33C06: // a cloth strip binds wounds: 1 to 5 hit points back
+	case 0x35972: { // a crystal heals completely and cures poison
+		bool crystal = sub == 0x35972;
+		int strip = idx;
+		seAsk([this, strip, crystal](int obj, int tx, int ty) {
+			if (obj < 0) {
+				message("nothing\n");
+				return;
+			}
+			World::Obj &t = _world.objects[obj];
+			if (!seReach(t, tx, ty))
+				return;
+			if (t.actor < 0 && t.type != 0xF8 && t.type != 0xF9) {
+				message("nothing\n");
+				return;
+			}
+			if (t.actor < 0) {
+				message("a body.\n\nThat person is beyond help.\n");
+				return;
+			}
+			int who = t.actor;
+			std::string name = Describe::object(_world, t);
+			message(name + "\n");
+			int most = seMaxHp(who);
+			int hp = _world.actors.hp[who];
+			if (most <= hp) {
+				message(crystal ? "\n" + name + " Doesn't need any help.\n" : "\n" + name + " doesn't need any help.\n");
+				return;
+			}
+			if (crystal) {
+				_world.actors.hp[who] = (uint8_t)most;
+				_world.actors.status[who] &= 0xF7;
+				message("\n" + name + " is healed.\n");
+			} else {
+				int add = seRoll(1, 5);
+				_world.actors.hp[who] = (uint8_t)(most > hp + add ? hp + add : most);
+				message("\n" + name + "'s wounds are bound.\n");
+			}
+			World::Obj &s = _world.objects[strip];
+			if (s.quantity > 1)
+				--s.quantity;
+			else
+				_world.deleteObject(strip);
+		});
+		break;
+	}
+	case 0x31436: { // hammers: on a boulder (0xAC) a piece of rock flakes off, on cold burnt logs (0xCF, frame 0) charcoal is made
+		int actorNo = actor;
+		seAsk([this, actorNo](int obj, int tx, int ty) {
+			if (obj < 0) {
+				message("nothing!\n");
+				return;
+			}
+			World::Obj &t = _world.objects[obj];
+			if (!seReach(t, tx, ty))
+				return;
+			int a = _world.actorObject(actorNo);
+			int px = a >= 0 ? _world.objects[a].x : 0, py = a >= 0 ? _world.objects[a].y : 0;
+			if (t.type == 0xAC) {
+				if (seTooWeak(seStrength(actorNo))) {
+					message("\nGlanced off!\n");
+					return;
+				}
+				message("\nA piece of rock flakes off.\n");
+				if (!seGive(actorNo, 0x3A, 1))
+					seMake(0x3A, px, py, z, 1);
+			} else if (t.type == 0xCF && t.frame == 0) {
+				int count = seRoll(1, seStrength(actorNo));
+				int stack = -1;
+				for (size_t i = 0; i < _world.objects.size() && stack < 0; ++i) {
+					const World::Obj &c = _world.objects[i];
+					if (!c.deleted && c.type == 0x81 && carriedObject(c) && c.parent == actorNo && c.quantity + count <= 255)
+						stack = (int)i;
+				}
+				if (stack < 0) {
+					message("\nYou made some charcoal.\n");
+					if (!seGive(actorNo, 0x81, count))
+						seMake(0x81, px, py, z, count);
+				} else {
+					_world.objects[stack].quantity = (uint8_t)(_world.objects[stack].quantity + count);
+				}
+			} else {
+				message("No effect.\n");
+			}
+		});
+		break;
+	}
+	case 0x31293: { // the bell: on a tame, still unbelled dinosaur (0x118, frames 0D / 11: the second kind points at its head by the quality) it is hung round its neck
+		int bell = idx;
+		seAsk([this, bell](int obj, int tx, int ty) {
+			if (obj < 0) {
+				message("nothing!\n");
+				return;
+			}
+			World::Obj &t = _world.objects[obj];
+			if (!seReach(t, tx, ty))
+				return;
+			if (t.type != 0x118 || (t.frame != 0x0D && t.frame != 0x11)) {
+				message("No effect.\n");
+				return;
+			}
+			int who = t.frame == 0x11 ? t.quality : t.actor;
+			if (who < 0 || who > 255)
+				return;
+			if (!(_world.actors.status[who] & 4)) {
+				message("No effect.\n");
+				return;
+			}
+			if (_world.actors.talkFlags[who]) {
+				message("\nIt already has a bell on its neck.\n");
+				return;
+			}
+			_world.deleteObject(bell);
+			_world.actors.talkFlags[who] = 0xFF;
+			message("\nYou put the bell on the dinosaur's neck.\n");
+			if (who == 0xB5)
+				_world.actors.talkFlags[0x14] |= 0x80;
+		});
+		break;
+	}
 	default: // APPROX(79): not ported yet
 		break;
 	}
+}
+
+// the sums of the "On " handlers
+int Game::seRoll(int lo, int hi) {
+	return lo + (int)(_rng.next() % (unsigned)(hi - lo + 1));
+}
+
+// sub_285A0
+int Game::seStrength(int actor) const {
+	int s = _world.actors.strength[actor];
+	int a = _world.actorObject(actor);
+	int st = a >= 0 ? _world.objects[a].status : 0;
+	if (st & 0x40) {
+		s = std::max(1, s - 3);
+		if (st & 0x80)
+			s = std::min(30, s + 3);
+	}
+	return s;
+}
+
+// sub_2872A (APPROX(80): the other places that use a maximum of 30 hit points per level are Ultima VI's)
+int Game::seMaxHp(int actor) const {
+	int h = seStrength(actor) * 2 + _world.actors.level[actor] * 4;
+	return h == 0 ? 1 : std::min(h, 255);
+}
+
+// sub_30E72
+bool Game::seTooWeak(int strength) {
+	return seRoll(1, 30) < (45 - strength) / 2;
+}
+
+// the first part of the "On " handlers after the object is named: a thing that is not carried must be within one square of the member
+bool Game::seReach(const World::Obj &target, int tx, int ty) {
+	if (carriedObject(target))
+		return true;
+	int a = _world.actorObject(actingActor());
+	if (a >= 0 && (std::abs(tx - (int)_world.objects[a].x) > 1 || std::abs(ty - (int)_world.objects[a].y) > 1)) {
+		message("Out of range!\n");
+		return false;
+	}
+	return true;
 }
 
 // sub_2EC8A: searching a container or surface next to the member (the types of the table at ds:1122 and 0xF9; a crate must be open): what is inside lands on the square

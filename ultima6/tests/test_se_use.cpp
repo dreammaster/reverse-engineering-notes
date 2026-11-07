@@ -199,6 +199,70 @@ int main() {
 	CHECK(logText(g).find("deep water") != std::string::npos || logText(g).find("fish") != std::string::npos);
 	w.deleteObject(pole);
 
+	// "On -" handlers aimed at the square below the member: a cloth strip (0x86) binds a wound, a crystal (0xFC) heals and cures poison, a hammer (0x1D) breaks a rock off a boulder or makes charcoal, a bell (0x2B) on a person has no effect
+	if (w.actors.partySize > 1) {
+		int hurt = w.actors.partyRoster[1];
+		auto stand = [&]() {
+			clearEast(w, px, py);
+			w.moveObject(w.actorObject(hurt), px, py + 1, 0);
+		};
+		auto aim = [&](int type) {
+			stand();
+			int o = put(w, type, 0, px + 1, py, 0);
+			g.log.clear();
+			useEast(w, g, px, py);
+			g.handleKey(KEY_DOWN);
+			g.handleKey(KEY_ENTER);
+			return o;
+		};
+		w.actors.hp[hurt] = 1;
+		int strip = aim(0x86);
+		CHECK(logText(g).find("wounds are bound") != std::string::npos);
+		CHECK(w.actors.hp[hurt] > 1 && w.actors.hp[hurt] <= 6);
+		CHECK(w.objects[strip].deleted);
+		w.actors.hp[hurt] = 1;
+		w.actors.status[hurt] |= 8;
+		int crystal = aim(0xFC);
+		CHECK(logText(g).find("is healed") != std::string::npos);
+		CHECK(w.actors.hp[hurt] > 6 && !(w.actors.status[hurt] & 8));
+		CHECK(w.objects[crystal].deleted);
+		aim(0xFC); // (now it needs no help)
+		CHECK(logText(g).find("Doesn't need any help") != std::string::npos);
+		stand();
+		int bell = aim(0x2B);
+		CHECK(logText(g).find("No effect.") != std::string::npos);
+		CHECK(!w.objects[bell].deleted);
+		w.deleteObject(bell);
+		w.moveObject(w.actorObject(hurt), px, py, 0);
+	}
+	{
+		auto hammerOn = [&](int type, int frame) {
+			clearEast(w, px, py);
+			std::vector<int> below;
+			w.objectsAt(px, py + 1, 0, below);
+			for (int i : below)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+			int target = put(w, type, frame, px, py + 1, 0);
+			int hammer = put(w, 0x1D, 0, px + 1, py, 0);
+			g.log.clear();
+			useEast(w, g, px, py);
+			g.handleKey(KEY_DOWN);
+			g.handleKey(KEY_ENTER);
+			w.deleteObject(hammer);
+			return target;
+		};
+		int boulder = hammerOn(0xAC, 0);
+		CHECK(logText(g).find("flakes off") != std::string::npos || logText(g).find("Glanced off") != std::string::npos);
+		w.deleteObject(boulder);
+		int cold = hammerOn(0xCF, 0);
+		CHECK(logText(g).find("charcoal") != std::string::npos);
+		w.deleteObject(cold);
+		int other = hammerOn(0x30, 0);
+		CHECK(logText(g).find("No effect.") != std::string::npos);
+		w.deleteObject(other);
+	}
+
 	// a torch (0xD0) is lit in a free hand: a lit torch (0xD1) with 100 minutes appears readied
 	clearEast(w, px, py);
 	int actor = w.actors.partyRoster[0];
