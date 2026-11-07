@@ -113,7 +113,7 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | D0 torch | 30ECC | lights one in a free hand: lit torch D1 with 100 minutes; "Your hands are full." (**ported**) |
 | BC crate | 361BA + 2EC8A | frame 1 opens it, else "Not possible."; then it is searched (**ported**) |
 | 4F-52 bones, 3E bean stalk, 3D corn stalk | 33F4B, 33E52, 33EA5 | rib bones D3, beans 6D, corn 6C: "You are carrying too much already." (**ported**) |
-| 0A magnesium ribbon | 34F6B | one used up, `sub_34DD4` at the member's square |
+| 0A magnesium ribbon | 34F6B | one used up (the flash `sub_34DD4` is not done: APPROX 79) (**ported**) |
 | 14 rope, 16 hole in the ceiling | 362F7, 36312 -> 19505 | not in solo mode; the descent into the underground city ("The mechanism supporting the trap door fails ...") |
 | 19, 2C, 34 knives, scissors | 32488 | "On -": cloth (B4) gives ten cloth strips (86); the dead (118) by frame (1 to 47: `KIND` in `se_use.cpp`, from the switch at cs:jpt_3265E): "You ghoul!", "The hide is too tough.", "Clank!", meat 2-7 (6E) with bones (52 frame 1 or 50) and gore (F8), the big cat (frame 37) also a skin (5C), "You make a mess."; a body part (F9) frame 15 gives 5-20 feathers (30), frame 11 a mess (**ported**) |
 | 1D, 77 hammers | 31436 | "On -": on a boulder (AC) a strength roll (`sub_30E72`: 1-30 below (45 - strength) / 2 fails: "Glanced off!") else "A piece of rock flakes off." (3A); on cold burnt logs (CF frame 0) 1 to strength charcoal (81); else "No effect." (**ported**) |
@@ -126,31 +126,31 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | 3B, 3C mortar, grinding stone | 310AD | corn (6C) alone gives corn flour (5D) in the mortar; charcoal (81), sulphur powder (7B) and 82 together give gunpowder (CC) as much as the smallest heap; "You can't grind that!", "The mixture in the %s is wrong." (**ported**) |
 | 3F jug | 354BC | "On -": on a spear (1A) the spear of Shamap (type 1) goes into the pack (else on the floor), the spear and the jug are used up; else "No effect." (**ported**) |
 | 56-58 totems | 3646E | placing (`sub_1C1C3`, `sub_22EF7`, "`%s can't use that!") |
-| 5C folded skin | 35C2E | unfolding it |
+| 5C folded skin | 35C2E | unfolds into a big skin (F5, frame + 3) when nothing lies on the two squares to its left, the three squares are passable (tile flag 2) and it is not carried: else "There is not enough room to unfold the skin." (**ported**) |
 | 5E fire extinguisher | 343E9 | "On -": a fire (F2, FE) goes out, burning logs (CF frame 2) go back to frame 0, lava next to the member (tiles 0F-1B, AA, AB) hardens into an object 39 whose frame is the place of the tile in that table ("The lava is too far below you." on level 3) (**ported**) |
 | 83 digging stick | 31F60 | "You get some clay." / "There is nothing to dig!" (**ported**) |
 | 86 cloth strip | 33C06 | "On -": an actor gets 1 to 5 hit points back up to `sub_2872A` (2 x strength + 4 x level, 1 to 255); a body is "beyond help" (**ported**) |
 | 88 metal bucket | 335A9 | frame 0 fills with tar or water, frame 2 pours water (`sub_33364`) (**ported**); frame 1 pours tar (`sub_32D11`: tars cloth strips, makes pteranodon nests and webs) is not |
 | 89, F0 grenade, device | 31671 | "Device activated." |
-| 8F machine | 35B44 | a gem in the machine |
+| 8F machine | 35B44 | a gem (48, 49, 4A) of the member goes in, an object C5 comes out on the machine's square; "You don't have any gems." (**ported**) |
 | 94 jungle drum | 3542B | |
 | A5 loom | 33F9E | weaving flax |
 | AD, F2, FE, 101 oven, fires | 3215F | "On -": a clay pot (84) is fired (85), corn flour (5D) becomes tortillas (66), a log (CE) ten charcoal (81), the things of ds:118A burn up ("You incinerated the %s."), gunpowder explodes (APPROX 81) (**ported**) |
 | B1 wire screen | 33B10 | sift sulphur (**ported**) |
 | BA brazier, CF burnt logs | 36206, 3623D | frames, then 3215F (**ported**) |
-| BE metal head | 34147 | replacing the statue's head |
+| BE metal head | 34147 | next to the headless statue (F7) both go; Yunapotli (actor 0B) is moved to the member, joins the party and gets talk flag 0x40: "You replace the statue's missing head." (**ported**) |
 | BF tarred cloth | 33777 | torch, grenade |
 | C0 clay | 3204A | shaping a pot (**ported**) |
 | CC gunpowder | 34C0A | "On -": a flintlock (32) is loaded (**ported**) |
 | D1 lit torch | 35686 | "On -": burn things (dinosaur egg ...) |
 | D4 fishing pole | 31B48 | deep water (terrain 0x0C) on the diagonal, one catch in five (**ported**) |
-| D8 crystal garden | 35D54 | potassium nitrate (Johann) |
+| D8 crystal garden | 35D54 | Rafkin (actor 7) or else Johann (actor 5), in the party, awake and in view, identifies potassium nitrate (82): ten for the member (**ported**) |
 | E5 tar pit | 33211 | cloth strips |
 | E9, ED rafts | 31C98 | boarding |
 | EA door | 35150 | "The door is blocked." |
-| F7 headless statue | 3423A | |
+| F7 headless statue | 3423A | the same with a head (BE) from the member's pack, Yunapotli appears at the statue (**ported**) |
 | FC crystal | 35972 | "On -": the same with full hit points and the poison bit (status 0x08) cleared: "%s is healed." (**ported**) |
-| 113 | 346A8 | frame changes of a rope-bridge-like object |
+| 113 | 346A8 | a door: frames 1 and 3 become 4 (**ported**, without the call of `sub_2DBFE` when the party is close) |
 | 12E turtle, 133 | 34B00, 349A9 | riding the turtle, "Only next to land!" |
 
 The Use on terrain (a tree, lava, a yucca plant, a turtle: `sub_33DFF`, `sub_3215F`, `sub_33EF8`, `sub_35E46` 35F72-35FE8) is not used by the engine (APPROX 79).

@@ -392,6 +392,40 @@ int main() {
 		w.deleteObject(ext);
 	}
 
+	// the machine (0x8F) takes a gem (0x48) from the pack and gives an 0xC5; the folded skin (0x5C) has no room to unfold beside the party; the metal head (0xBE) next to the headless statue (0xF7) brings Yunapotli to life
+	{
+		clearEast(w, px, py);
+		int machine = put(w, 0x8F, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You don't have any gems") != std::string::npos);
+		int member = w.actors.partyRoster[0];
+		int gem = w.addToInventory(member, 0x48, 0, 1);
+		size_t before = w.objects.size();
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You put a gem in the machine") != std::string::npos && w.objects[gem].deleted);
+		CHECK(w.objects.size() == before + 1 && w.objects[before].type == 0xC5);
+		w.deleteObject((int)before);
+		w.deleteObject(machine);
+		clearEast(w, px, py);
+		int skin = put(w, 0x5C, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("not enough room to unfold") != std::string::npos && w.objects[skin].type == 0x5C);
+		w.deleteObject(skin);
+		clearEast(w, px, py);
+		int head = put(w, 0xBE, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("No effect.") != std::string::npos && !w.objects[head].deleted);
+		int statue = put(w, 0xF7, 0, px, py - 1, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("replace the statue's missing head") != std::string::npos);
+		CHECK(w.objects[head].deleted && w.objects[statue].deleted);
+	}
+
 	// a torch (0xD0) is lit in a free hand: a lit torch (0xD1) with 100 minutes appears readied
 	clearEast(w, px, py);
 	int actor = w.actors.partyRoster[0];

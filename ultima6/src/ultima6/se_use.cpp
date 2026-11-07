@@ -769,6 +769,110 @@ void Game::seAction(uint32_t sub, int idx) {
 		});
 		break;
 	}
+	case 0x34F6B: // a magnesium ribbon: one is used up and it flashes at the member's square (APPROX(79): the flash itself, sub_34DD4, as for the camera)
+		consumeOne(idx);
+		message("");
+		break;
+	case 0x35B44: { // the machine: a gem (0x48, 0x49 or 0x4A) from the member's pack goes in and an 0xC5 comes out on the machine's square
+		int mx = o.x, my = o.y;
+		int gem = -1;
+		for (size_t i = 0; i < _world.objects.size() && gem < 0; ++i) {
+			const World::Obj &c = _world.objects[i];
+			if (!c.deleted && (c.type == 0x48 || c.type == 0x49 || c.type == 0x4A) && carriedObject(c) && c.parent == actor)
+				gem = (int)i;
+		}
+		if (gem < 0) {
+			message("\nYou don't have any gems.\n");
+			break;
+		}
+		consumeOne(gem);
+		sfx(0x20);
+		message("\nYou put a gem in the machine.\n");
+		seMake(0xC5, mx, my, z, 1);
+		break;
+	}
+	case 0x35C2E: { // the folded skin: a free 2 x 2 patch up and to the left of it (nothing on the two squares of the left column, the three squares passable) lets it be unfolded into a big skin (type 0xF5, three frames on); not while it is carried
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		bool blocked = carriedObject(o);
+		for (int dy = 0; dy < 2 && !blocked; ++dy) {
+			std::vector<int> here;
+			_world.objectsAt((o.x - 1) & mask, (o.y - dy) & mask, z, here);
+			blocked = !here.empty();
+		}
+		int sq[3][2] = {{o.x - 1, o.y}, {o.x, o.y - 1}, {o.x - 1, o.y - 1}};
+		for (auto &s : sq)
+			blocked |= (_world.flags.flags1[_world.map.tile(z, s[0] & mask, s[1] & mask) & (TileFlags::TILES - 1)] & 2) != 0;
+		if (blocked) {
+			message("\nThere is not enough room to unfold the skin.\n");
+			break;
+		}
+		o.type = 0xF5;
+		o.frame = (uint8_t)(o.frame + 3);
+		break;
+	}
+	case 0x34147: // the metal head: next to the member (the eight squares around) the headless statue (0xF7) gets it back
+	case 0x3423A: { // the headless statue: the member's pack must hold a metal head (0xBE)
+		bool head = sub == 0x34147;
+		int a = _world.actorObject(actor);
+		if (a < 0)
+			break;
+		int statue = idx, hd = idx;
+		int mx = _world.objects[a].x, my = _world.objects[a].y;
+		if (head) {
+			statue = -1;
+			for (int dx = 0; dx < 3 && statue < 0; ++dx)
+				for (int dy = 0; dy < 3 && statue < 0; ++dy)
+					if (!(dx == 1 && dy == 1))
+						statue = seFind(0xF7, mx + dx - 1, my + dy - 1);
+		} else {
+			hd = -1;
+			for (size_t i = 0; i < _world.objects.size() && hd < 0; ++i) {
+				const World::Obj &c = _world.objects[i];
+				if (!c.deleted && c.type == 0xBE && carriedObject(c) && c.parent == actor)
+					hd = (int)i;
+			}
+		}
+		if (statue < 0 || hd < 0) {
+			message("No effect.\n");
+			break;
+		}
+		int sx = head ? mx : _world.objects[statue].x, sy = head ? my : _world.objects[statue].y;
+		_world.deleteObject(hd);
+		_world.deleteObject(statue);
+		int yuna = _world.actorObject(0xB);
+		if (yuna >= 0)
+			_world.moveObject(yuna, sx, sy, z);
+		_world.joinParty(0xB);
+		_world.actors.talkFlags[0xB] |= 0x40;
+		message("\nYou replace the statue's missing head.\n");
+		break;
+	}
+	case 0x35D54: { // the crystal garden: Rafkin (actor 7) or else Johann (actor 5), in the party, awake, in view, identifies potassium nitrate (0x82): ten of it
+		int who = -1;
+		for (int c : {7, 5}) {
+			uint8_t st = _world.actors.status[c];
+			if (who < 0 && (st & 0x80) && !(st & 0x10) && !(st & 4) && seInView(c))
+				who = c;
+		}
+		if (who < 0) {
+			message("\nThere is nobody in the party who can identify which crystals are useful.\n");
+			break;
+		}
+		if (!seGive(actor, 0x82, 10)) {
+			message("You are carrying too much already.\n");
+			break;
+		}
+		message(who == 7 ? "\nRafkin " : "\nJohann ");
+		message("identifies some potassium nitrate, ");
+		message("and you scrape a quantity from the crystal.\n");
+		break;
+	}
+	case 0x346A8: // a door (0x113): frame 1 opens to frame 4, frame 3 to frame 4 as well (APPROX(79): the sub_2DBFE call when the party is close is left out)
+		if (o.frame == 1)
+			o.frame = 4;
+		else if (o.frame == 3)
+			o.frame = 4;
+		break;
 	case 0x31E67: { // the flintlock (frame 1 = loaded): one gunpowder (0xCC) from the pack loads it
 		if (o.frame == 1) {
 			message("\nFlintlock already loaded.\n");
