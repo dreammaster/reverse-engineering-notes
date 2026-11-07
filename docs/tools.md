@@ -26,6 +26,7 @@ Everything here runs on Linux with Python 3 (`pillow`, `numpy`, `unicorn`),
 | `tools/status.py` | Reference renderer for the status line ("DAY n" + room name, ANDATA block 4 font; formats.md §6.3a). |
 | `tools/message.py` | Reference renderer for message scrolls (layout, box, text; formats.md §6.7). |
 | `tools/verbs.py` | Reference for the verb list / verb icons shown in the panel slots while touching an object (formats.md §6.7). |
+| `tools/x86.py`, `tools/verify_x86.py` | 8086 interpreter (Python reference) for the native routines in `ROUTINEn.TAD`, and its verification against Unicorn running the same routines (timer + behaviour entries of all five levels, random start states, identical memory/registers/service-call traces). |
 
 ## Reproducing the in-game frame
 
