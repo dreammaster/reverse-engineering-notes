@@ -59,6 +59,7 @@ differently, and the exact comparisons of the geometry (`LineInPolygonSet`) then
 | fonttest | the fonts of pictures: letter widths, the space, kerning of pairs and single letters, the size of texts and lines, a font that stands for another, wrong kerning, the manager |
 | ftfonttest | a TrueType font of the game data (needs the game folder as the working directory and `GAME_PASSW`; `tools/tbuild.py ftfonttest.cpp --game deponia4`, which is where it applies): the width of a space with and without letter spacing, a tab, `StringLength` with spacing, the pen of a drawn string at scale 1 and 2, a new line, the top of a line following the highest glyph made so far, the same baseline for mixed heights, and `LockHeight()` |
 | censustest | not a test: counts the records, commands and fields of the real data of a game that need more than pictures, sounds and scripts (`GAME_PASSW`, run from the game folder); the result is in `PLAYER.md` |
+| plugintest | Night of the Rabbit only (`tools/tbuild.py plugintest.cpp --game nightoftherabbit`; Lua 5.4): a plugin folder (`plugins/demo`) with `config.ini` and `player.lua`, action parts of its own (the commands 10000 and up), the action part hook, and conditions of lists after a binary save and load |
 | chartest | the walk and stand animations of a character for all directions |
 | texttest | a character says a text: talk animation, skip by click, end by time |
 | charstest | two characters in two scenes: changing the controlled one moves the scene and the interface |

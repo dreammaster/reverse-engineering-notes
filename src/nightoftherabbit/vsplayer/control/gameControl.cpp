@@ -29,6 +29,12 @@
 #include <cwchar>
 #include "vscommon/scripting/lua.h"
 #include "vstables/fieldIds.h"
+#include "WxFileConfig.h"
+#include "baselib/memfile.h"
+#include "vscommon/scripting/visLua.h"
+#include <lauxlib.h>
+#include <lua.h>
+#include <map>
 
 namespace {
 // Confirmed global (not per-instance) engine-event queue guarded by a
@@ -861,6 +867,139 @@ void TGameControl::InitFonts() {
 	GetFontManager()->Initialize(fonts);
 }
 
+// The names of the action parts of the plugin that is being loaded, with the numbers of their commands (the original keeps them in a global of
+// this name): the Lua file of the plugin registers a function for each by name.
+static std::map<std::string, int> fieldsForCurrentPlugin;
+
+// Confirmed (Night of the Rabbit, registeractionpart(lua_State *), the Lua function registerActionPart(name, function)): the function is
+// kept in the registry (luaL_ref) and put in TGAction::ActionPartToLuaRef under the number of the command of the name; a name that is
+// not one of the plugin's, or something else than a function, gives "%s id not found or wrong arg type".
+static int registeractionpart(lua_State *state) {
+	const char *name = luaL_checklstring(state, 1, nullptr);
+	auto known = fieldsForCurrentPlugin.find(std::string(name));
+
+	if (known != fieldsForCurrentPlugin.end() && lua_type(state, 2) == LUA_TFUNCTION) {
+		int reference = luaL_ref(state, LUA_REGISTRYINDEX);
+
+		TGAction::ActionPartToLuaRef[known->second] = reference;
+		return 0;
+	}
+
+	if (wxLog::loglevel >= 0) {
+		wxString text;
+
+		toUTF(&text, name);
+		wxLog::logexpanded(L"%s id not found or wrong arg type", text.wc_str());
+	}
+	return 0;
+}
+
+// The plugins of the game (Night of the Rabbit, read in TGameControl::InitScripts: the records of the game's `GamePlugins` that are active).
+// A plugin is a folder `plugins/<directory>` with `config.ini` and `player.lua`, or its files are in the data (the directory then ends with
+// `#`, as a reference to a file of a container does: the config is that file and the Lua is the record's own text). The config says
+// `Name`, `Author`, `Date`, `Version`, `Description` and `ActionParts`: the names of the action parts that the plugin brings, separated by commas.
+// Each of them has to be a name in the game's list of the custom action parts (`GameCustomActionParts`); its command number is 10000 plus the
+// place of the name in that list (an inference: the original takes the number from the same list). The plugin's Lua then registers a function for each name.
+static void loadPlugins(TVisionaireGame &visionaire) {
+	TVisObjRef game = visionaire.GetGame();
+	TVList plugins;
+	std::vector<TCharHolder> customParts;
+
+	game.GetList(kGamePlugins, plugins);
+	game.GetStrings(kGameCustomActionParts, customParts);
+
+	wxString root = wxFileName::GetCwd();
+
+	root += wxString(L"/plugins");
+
+	for (TVisionaireObject *plugin : plugins) {
+		wxString directory = plugin->GetStr(kPluginDirectory);
+		const std::wstring directoryText(directory.wc_str());
+		const bool embedded = !directoryText.empty() && directoryText.back() == L'#';
+		wxFileConfig config;
+
+		if (!plugin->GetBool(kPluginActive))
+			continue;
+
+		if (embedded) {
+			TMemoryFile file;
+
+			TComposedFileManager::GetMemoryFile(file, wxFileName(directoryText));
+			config = wxFileConfig(reinterpret_cast<const char *>(file.GetBuffer()), file.GetSize(), true);
+		} else {
+			wxString folder = root + wxString(L"/") + directory;
+
+			if (!wxDir::Exists(folder) || !wxFile::Exists(folder + wxString(L"/config.ini"))) {
+				if (wxLog::loglevel >= 0)
+					wxLog::logexpanded(L"plugin directory '%s' or files missing", directory.wc_str());
+				continue;
+			}
+			config = wxFileConfig(wxFileName(std::wstring((folder + wxString(L"/config.ini")).wc_str())), true);
+		}
+
+		wxString name;
+		wxString author;
+		wxString date;
+		wxString version;
+		wxString description;
+		wxString actionParts;
+
+		if (!config.Read(wxString(L"Name"), &name)) {
+			if (wxLog::loglevel >= 0)
+				wxLog::logexpanded(L"plugin info '%s' missing", directory.wc_str());
+			continue;
+		}
+
+		config.Read(wxString(L"Author"), &author);
+		config.Read(wxString(L"Date"), &date);
+		config.Read(wxString(L"Version"), &version);
+		config.Read(wxString(L"Description"), &description);
+		config.Read(wxString(L"ActionParts"), &actionParts);
+
+		// the names of the plugin's action parts, each of them one of the game's custom ones and none twice
+		fieldsForCurrentPlugin.clear();
+
+		std::wstring list(actionParts.wc_str());
+		size_t start = 0;
+
+		while (start <= list.size() && !list.empty()) {
+			size_t end = list.find(L',', start);
+
+			if (end == std::wstring::npos)
+				end = list.size();
+
+			wxString part(list.substr(start, end - start).c_str());
+			start = end + 1;
+
+			for (size_t i = 0; i < customParts.size(); i++) {
+				if (!(customParts[i] == part))
+					continue;
+
+				std::string narrow(static_cast<const char *>(part.mb_str()));
+
+				if (fieldsForCurrentPlugin.count(narrow)) {
+					if (wxLog::loglevel >= 0)
+						wxLog::logexpanded(L"tried to register a claimed action part");
+				} else {
+					fieldsForCurrentPlugin[narrow] = 10000 + static_cast<int>(i);
+				}
+				break;
+			}
+		}
+
+		if (embedded) {
+			wxString code = plugin->GetStr(kPluginData);
+			std::string narrowCode(static_cast<const char *>(code.mb_str()));
+
+			LuaDoString(narrowCode, IdStrStd(plugin->GetId()));
+		} else {
+			LuaDoFile(wxFileName(std::wstring((root + wxString(L"/") + directory + wxString(L"/player.lua")).wc_str())));
+		}
+	}
+
+	fieldsForCurrentPlugin.clear();
+}
+
 void TGameControl::InitScripts() {
 	// Confirmed (asm lines 458341-458620+). Field ids 0x28B (the game's
 	// script-object links, TypeOrder::kValue1), 0x28D (a script "type" flag -
@@ -879,6 +1018,11 @@ void TGameControl::InitScripts() {
 		file.Close();
 		LuaDoString(buf, "controller");
 	}
+
+	// (Night of the Rabbit) the function that the scripts of the plugins register their action parts with, and the plugins
+	lua_pushcclosure(L, registeractionpart, 0);
+	lua_setglobal(L, "registerActionPart");
+	loadPlugins(*_visionaireGame);
 
 	TVList scriptLinks;
 	_visionaire->GetGame().GetLinks(kGameScriptLinks, TypeOrder::kValue1, scriptLinks);

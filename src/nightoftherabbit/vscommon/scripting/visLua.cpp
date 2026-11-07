@@ -257,14 +257,17 @@ static void logWrongResult(const char *withNumber, const char *alone, const std:
 // with the arguments as Lua values, and reads its return values into `results`, one result
 // after the other from the top of the stack (so the first result gets the last value the function
 // returned - the original does that). Every result is checked against its type.
-bool LuaExecuteFunction(const std::string &name, std::vector<TArgument *> &arguments,
-                        std::vector<TArgument *> &results) {
+static bool executeFunction(const std::string &name, int reference, std::vector<TArgument *> &arguments,
+                            std::vector<TArgument *> &results) {
 	debugger.BeginArea(ProfileArea::kValue2, name, -1);
 	lua_getglobal(L, "debugfunc");
 
 	int handler = lua_gettop(L);
 
-	lua_getglobal(L, name.c_str());
+	if (reference >= 0)
+		lua_rawgeti(L, LUA_REGISTRYINDEX, reference);
+	else
+		lua_getglobal(L, name.c_str());
 
 	for (TArgument *argument : arguments) {
 		switch (argument->GetType()) {
@@ -429,6 +432,18 @@ bool LuaExecuteFunction(const std::string &name, std::vector<TArgument *> &argum
 	lua_remove(L, handler);
 	debugger.EndArea(ProfileArea::kValue2, -1);
 	return ok;
+}
+
+bool LuaExecuteFunction(const std::string &name, std::vector<TArgument *> &arguments,
+                        std::vector<TArgument *> &results) {
+	return executeFunction(name, -1, arguments, results);
+}
+
+// Confirmed (Night of the Rabbit, LuaExecuteFunction(int, ...)): the same for a function that luaL_ref put in the registry (the
+// action parts that a plugin registered); `name` is only what the messages call it.
+bool LuaExecuteFunction(int reference, const std::string &name, std::vector<TArgument *> &arguments,
+                        std::vector<TArgument *> &results) {
+	return executeFunction(name, reference, arguments, results);
 }
 
 // Confirmed (asm lines 1409018-1409566)

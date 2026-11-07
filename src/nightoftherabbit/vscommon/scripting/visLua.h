@@ -62,6 +62,10 @@ void LuaDoString(const std::string &code, const std::string &chunkName);
  *  (they have their types already). False if the call fails or a result is not of its type. */
 bool LuaExecuteFunction(const std::string &name, std::vector<TArgument *> &arguments,
                         std::vector<TArgument *> &results);
+
+/** The same for a function in the Lua registry (a reference from luaL_ref); `name` is for the messages. */
+bool LuaExecuteFunction(int reference, const std::string &name, std::vector<TArgument *> &arguments,
+                        std::vector<TArgument *> &results);
 /** Calls the function `handler` of the scripts with a data object. */
 bool LuaExecuteEventHandler(const std::string &handler, const TVisObjRef &object);
 

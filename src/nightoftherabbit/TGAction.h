@@ -155,6 +155,10 @@ protected:
 	TVisObjRef _data;   // +0x28
 
 public:
+	/** (Night of the Rabbit, the global ActionPartToLuaRef) The Lua function (a reference in the registry) that a plugin registered for a
+	 *  command that the engine does not know, by the number of the command. */
+	static std::map<int, int> ActionPartToLuaRef;
+
 	/** (Night of the Rabbit, TGAction::actionPartHook) The Lua function that is asked before an action part of a command is
 	 *  executed, by the number of the command: a true answer means that the script has done the part. Set with
 	 *  system.registerActionPartHook(command, "functionName"); an empty name takes it away. */

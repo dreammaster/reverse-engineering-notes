@@ -11,6 +11,8 @@
 #include "TTText.h"
 #include "datastruct/visionaire.h"
 #include "datastruct/visionaireobject.h"
+#include "vscommon/scripting/argument.h"
+#include "vscommon/scripting/visLua.h"
 #include "vscommon/fontManager.h"
 #include "vsplayer/animationGame.h"
 #include "vsplayer/control/gameControl.h"
@@ -390,8 +392,36 @@ void TGActionPartExecutor::run(int command) {
 		cmdMoveObject(false);
 		break;
 	default:
+		// TODO: the commands 161-167 that Night of the Rabbit has are not reconstructed yet (they come here too)
+		cmdPluginPart(command);
 		break;
 	}
+}
+
+// Confirmed (Night of the Rabbit, TGAction::Execute, the default case of the switch over the commands): the function that a plugin registered
+// for the command (ActionPartToLuaRef) is called with the action and the part; what it answers (a boolean) is not used. When there is none: "no plugin
+// registered action part %d".
+void TGActionPartExecutor::cmdPluginPart(int command) {
+	auto registered = TGAction::ActionPartToLuaRef.find(command);
+
+	if (registered == TGAction::ActionPartToLuaRef.end()) {
+		if (wxLog::loglevel >= 0)
+			wxLog::logexpanded(L"no plugin registered action part %d", command);
+		return;
+	}
+
+	TArgument action;
+	TArgument part;
+	TArgument result;
+
+	action.Set(_action._active);
+	part.Set(_part);
+	result.SetType(TArgType::kBool);
+
+	std::vector<TArgument *> arguments = {&action, &part};
+	std::vector<TArgument *> results = {&result};
+
+	LuaExecuteFunction(registered->second, "action part", arguments, results);
 }
 
 // Confirmed (asm lines 202218-202227): an else that is come to from a branch that was done: what

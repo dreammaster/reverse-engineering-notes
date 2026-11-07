@@ -23,7 +23,7 @@ public:
 	TGActionPartExecutor(TGAction &action, const TVisObjRef &part, const TVisObjRef &game, const TVList &parts,
 	                     bool skip, t_SkipCutsceneInfo *skipInfo, bool &dialogEnded);
 
-	/** Does the command of the part (a command that is not known does nothing). */
+	/** Does the command of the part (a command that is not known is one that a plugin may have registered a function for). */
 	void run(int command);
 
 	bool _wait;
@@ -33,6 +33,9 @@ public:
 	int _newPosition;
 
 private:
+	/** A command that is not known: the function that a plugin registered for it is called with the action and the part. */
+	void cmdPluginPart(int command);
+
 	TGAction &_action;
 	TVisObjRef _part;
 	TVisObjRef _game;

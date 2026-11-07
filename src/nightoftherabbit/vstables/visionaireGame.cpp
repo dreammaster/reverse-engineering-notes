@@ -30,7 +30,7 @@ TVisionaireGame::TVisionaireGame() : TVisionaire(TTGame::GetTypeGroup(), 0xC0) {
 	static bool initTypeGroups = false;
 
 	InitXMLNames();
-	CreateTables(0x27);
+	CreateTables(0x2A); // (Night of the Rabbit: 42 tables, Deponia 1: 39)
 
 	AddTable(351, 21, L"eLoadings", L"Loading", L"Loadings", TTLoading::GetTypeGroup(), -1, true);
 	AddTable(105, 0, L"eCharacters", L"Character", L"Characters", TTCharacter::GetTypeGroup(), -1, false);
@@ -71,6 +71,9 @@ TVisionaireGame::TVisionaireGame() : TVisionaire(TTGame::GetTypeGroup(), 0xC0) {
 	AddTable(816, 36, L"eShaders", L"Shader", L"Shaders", TTShader::GetTypeGroup(), -1, false);
 	AddTable(828, 37, L"eAudioBusses", L"AudioBus", L"AudioBusses", TTAudioBus::GetTypeGroup(), -1, false);
 	AddTable(833, 38, L"eEvents", L"Event", L"Events", TTEvent::GetTypeGroup(), -1, false);
+	AddTable(858, 39, L"ePlugins", L"Plugin", L"Plugins", TTPlugin::GetTypeGroup(), -1, false);
+	AddTable(868, 40, L"eBlockContainers", L"BlockContainer", L"BlockContainers", TTBlockContainer::GetTypeGroup(), -1, false);
+	AddTable(871, 41, L"eBlocks", L"Block", L"Blocks", TTBlock::GetTypeGroup(), -1, false);
 
 	CompleteTables();
 
@@ -90,7 +93,7 @@ void TVisionaireGame::InitWithVersion(int versionLow) {
 		g_lookupTable.pEntries = new TLookupEntry[0x372];
 		g_lookupTable.numEntries = 0x372; // (Night of the Rabbit: one for each field id, 0x348 in Deponia 1)
 	}
-	for (int i = 0; i < 0x348; i++)
+	for (int i = 0; i < g_lookupTable.numEntries; i++)
 		g_lookupTable.pEntries[i].valid = false;
 
 	TTGame::InitType(versionLow, _version);
@@ -133,6 +136,9 @@ void TVisionaireGame::InitWithVersion(int versionLow) {
 	TTShader::InitType(versionLow, _version);
 	TTAudioBus::InitType(versionLow, _version);
 	TTEvent::InitType(versionLow, _version);
+	TTPlugin::InitType(versionLow, _version);
+	TTBlockContainer::InitType(versionLow, _version);
+	TTBlock::InitType(versionLow, _version);
 }
 
 // Confirmed (asm lines 1499936-1499976): TVisionaire::NewGame(), then the new
@@ -307,9 +313,6 @@ bool TVisionaireGame::UpdateVersionGame(int version) {
 // Games older than version 99 are rejected as in the original.
 bool TVisionaireGame::UpdateVersion(int version, bool allAtOnce) {
 	TVList list;
-	if (getenv("VIS_TRACE_VERSION"))
-		fprintf(stderr, "UpdateVersion(%d, %d)\n", version, (int)allAtOnce);
-
 	TVisObjRef game = GetGame();
 
 	if (version <= 0x62) {

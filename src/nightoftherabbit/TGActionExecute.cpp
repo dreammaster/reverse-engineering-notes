@@ -175,7 +175,7 @@ void TGAction::Execute(bool skip, t_SkipCutsceneInfo *skipInfo) {
 			} else if (command == kCommandEndIf) {
 				_active.SetValue(kActionContinueWaitForEndIfElse, depth - 1, TSendEventEnum::kSendEvent);
 			}
-		} else if ((unsigned int)(command - 5) <= 0x9B) {
+		} else {
 			// (Night of the Rabbit) a script that registered a hook for the command is asked first; true: it has done the part
 			auto hook = actionPartHook.find(command);
 			bool handled = false;
@@ -195,7 +195,7 @@ void TGAction::Execute(bool skip, t_SkipCutsceneInfo *skipInfo) {
 			}
 
 			if (!handled)
-				executor.run(command);
+				executor.run(command); // (a command that it does not know goes to the plugins' functions)
 		}
 
 		if (executor._quit)
