@@ -17,6 +17,7 @@
 #include "../engine/collision.h"
 #include "../engine/roomexits.h"
 #include "../engine/panel.h"
+#include "../engine/message.h"
 #include "../engine/push.h"
 #include "../engine/acl.h"
 #include "vectors.h"
@@ -121,6 +122,8 @@ static unsigned collision_vector(unsigned seed) {
 	}
 	return h;
 }
+
+static int msg_const3(void *u) { (void)u; return 3; }
 
 int main(int argc, char **argv) {
 	const char *root = argc > 1 ? argv[1] : ".";
@@ -578,6 +581,57 @@ int main(int argc, char **argv) {
 			mp2_free(&m);
 		} else { printf("FAIL acl things %s rc=%d\n", av->dir, rc); failed++; }
 		checked++;
+	}
+
+	{
+		const uint8_t *tiles = NULL, *font3 = NULL;
+		size_t tiles_len = 0, font3_len = 0;
+		if (andata_un) {
+			andata_block(andata_un, andata_un_len, 2, &tiles, &tiles_len);
+			andata_block(andata_un, andata_un_len, 3, &font3, &font3_len);
+		}
+		for (size_t i = 0; i < sizeof(msg_vectors) / sizeof(msg_vectors[0]) && tiles && font3; i++) {
+			const StatusVector *sv = &msg_vectors[i];
+			char lev = sv->dir[strlen(sv->dir) - 1];
+			snprintf(path, sizeof(path), "%s/%s/ENG%c.LNG", root, sv->dir, lev);
+			size_t n, un;
+			uint8_t *in = slurp(path, &n), *raw = NULL;
+			if (!in)
+				continue;
+			LngTable lt;
+			int rc = mjm_unpack(in, n, &raw, &un);
+			if (!rc) rc = lng_parse(raw, un, &lt);
+			if (!rc) {
+				unsigned h = 0x811C9DC5u;
+				int cnt = 0;
+				static uint8_t cv[64000];
+				for (int k = 0; k < lt.count; k += 7) {
+					const char *t = lt.strings[k];
+					if (!t[0] || strlen(t) > 200)
+						continue;
+					memset(cv, 0, sizeof(cv));
+					int slot = k % 4;
+					message_draw(cv, t, slot, tiles, tiles_len, font3, font3_len, msg_const3, NULL);
+					MsgLayout l;
+					message_layout(t, &l);
+					int x, y, w, hh;
+					message_rect(&l, slot, &x, &y, &w, &hh);
+					h = (h ^ (unsigned)l.w) * 0x01000193u;
+					h = (h ^ (unsigned)l.nlines) * 0x01000193u;
+					for (int q = 0; q < l.nlines; q++) {
+						for (const char *c = l.lines[q]; ; c++) { h = (h ^ (uint8_t)*c) * 0x01000193u; if (!*c) break; }
+					}
+					for (int r = 0; r < hh; r++)
+						for (int c = 0; c < w; c++)
+							h = (h ^ cv[(y + r) * 320 + x + c]) * 0x01000193u;
+					cnt++;
+				}
+				if (cnt != sv->rooms || h != sv->hash) { printf("FAIL message %s: %d strings hash %08X\n", sv->dir, cnt, h); failed++; }
+				lng_free(&lt);
+			} else { printf("FAIL message %s rc=%d\n", sv->dir, rc); failed++; }
+			checked++;
+			free(in); free(raw);
+		}
 	}
 
 	for (size_t i = 0; i < sizeof(acl_vectors) / sizeof(acl_vectors[0]); i++) {

@@ -24,6 +24,7 @@ Everything here runs on Linux with Python 3 (`pillow`, `numpy`, `unicorn`),
 | `tools/test_renames.py` | Tests for the above (the apply script is run against a fake IDA API backed by the real binaries). |
 | `tools/gen_test_vectors.py` | Regenerates `src/tests/vectors.h` (sizes + FNV hashes from the Python decoders) for the C unit test. |
 | `tools/status.py` | Reference renderer for the status line ("DAY n" + room name, ANDATA block 4 font; formats.md §6.3a). |
+| `tools/message.py` | Reference renderer for message scrolls (layout, box, text; formats.md §6.7). |
 
 ## Reproducing the in-game frame
 

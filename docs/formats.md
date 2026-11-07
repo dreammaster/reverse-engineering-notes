@@ -459,7 +459,12 @@ and the table at `ds:FA36`; the menu itself is `1000:2E2D`, handler table `1000:
 (`1000:6441` lets each ordered pair through once per step). Thing events are matched with the same condition table as room events (`tools/acl_vm.py` `cond_match`, `src/engine/acl.c`); replaying 7 and 9 on every thing that has such handlers gives identical
 flags/variables in the original and the VM in all five levels (`tools/verify_acl_things.py`; one level-5 thing differs because ops 62–64 write to raw RAM addresses). Ops `31h` (49) and `5Ah` (90) start **native-routine countdown timers**
 (`ds:62B+i` = delay in units of 17 steps, count `ds:62A`, reload copy at `+0x34`); when one expires `1000:11EB5` far-calls the level's `ROUTINEn.TAD` code (via `ds:788`) with a routine id — creature behaviour lives there.
-Messages (`op 1C/48h`, event 8 `1000:5C9C`) are drawn as a parchment scroll that types out its text and stays ~75 steps (`1000:3555`, up to four at once); not ported yet.
+**Message scrolls (op `1Ch` = say; `tools/message.py`, `src/engine/message.c`, verified against the emulator's screen).** The text (a string id, big-endian word operand) is copied into a buffer **with a trailing space**
+(it counts for width and centring), wrapped to `w` columns (`1000:5DCB`: `w` starts at 12 and grows while the text is longer than `4w + (w+1) + (w+2) + …`; a word is added to the line while the line stays ≤ `w`; a longer word is cut at `w`)
+and shown in one of four slots (`1000:3555`; slot *s* at x = 32 + 16 s, y = 20 + 16 s; the same string already on screen only restarts its timer; the timer is 75 game steps = 150 ticks, measured). The box (`1000:8A87`) is built from opaque 8×8 tiles
+of **ANDATA block 2** (18 tiles × 32 bytes, 4 plane bytes per row): top rows `0 1 2` / `5 E C`, `fill` = ⌊6w/8⌋ columns of tile `D`, middle rows (⌊6·lines/8⌋ of them) with a random left tile from `6 7 7 8 8 8 8 8` and right tile
+from `B A A 9 9 9 9 9`, bottom rows `10 F 11` / `3 1 4`; the lines follow in the **block 3 font** (5 rows × 4 plane bytes = 20 bytes per glyph, same glyph numbers as the status font, advance 6, line pitch 6, first line at y + 13,
+each line centred in the 8·(fill+2) pixel width). Everything matches the emulator's pixels except the random edge tiles. The text appears over ~4 ticks (typewriter), not modelled.
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input

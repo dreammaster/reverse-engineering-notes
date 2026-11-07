@@ -103,7 +103,8 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		}
 		break;
 	}
-	case 28: case 72: break;      /* messages */
+	case 28: if (vm->msg_n < 16) vm->msg[vm->msg_n++] = w; break;
+	case 72: break;               /* describe */
 	default: vm->skipped++; break;
 	}
 }

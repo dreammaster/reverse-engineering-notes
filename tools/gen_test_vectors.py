@@ -3,7 +3,7 @@
 import glob, os, struct, sys
 here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, here)
-import status, push, panel, mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
+import message, status, push, panel, mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
 
 root = os.path.join(here, '..')
 
@@ -125,6 +125,25 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
             h = ((h ^ c) * 0x01000193) & 0xFFFFFFFF
         cnt += 1
     status_vec.append((os.path.relpath(d, root), cnt, h))
+# ---- message scrolls: layout + rendered rectangle of every 7th string of every level's language file
+_an = mpsections.andata_blocks(mjm.mjm_unpack(open(os.path.join(root, 'cadaver1', 'DATA', 'ANDATA.DAT'), 'rb').read()))
+msg_vec = []
+for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glob.glob(os.path.join(root, 'cadaver2', 'TATA', '[1-4]')) +
+                glob.glob(os.path.join(root, 'cadaver2', 'DATA', '[1-5]'))):
+    names = lng.load(glob.glob(os.path.join(d, 'ENG*.LNG'))[0])
+    h, cnt = 0x811C9DC5, 0
+    for i in range(0, len(names), 7):
+        t = names[i]
+        if not t or len(t) > 200:
+            continue
+        cv = bytearray(64000)
+        w, lines, fill, mrows = message.draw_message(cv, t, i % 4, _an[2], _an[3], rnd=lambda: 3)
+        x, y = 0x20 + 16 * (i % 4), 0x14 + 16 * (i % 4)
+        crop = b''.join(bytes(cv[(y + r) * 320 + x:(y + r) * 320 + x + 8 * (fill + 2)]) for r in range(8 * (mrows + 4)))
+        for c in bytes([w, len(lines)]) + '\0'.join(lines).encode() + b'\0' + crop:
+            h = ((h ^ c) * 0x01000193) & 0xFFFFFFFF
+        cnt += 1
+    msg_vec.append((os.path.relpath(d, root), cnt, h))
 intro_vec = []
 for g, key in (('cadaver1', 'cadaver'), ('cadaver2', 'payoff')):
     d = os.path.join(root, g)
@@ -368,6 +387,10 @@ with open(os.path.join(root, 'src', 'tests', 'vectors.h'), 'w') as o:
     o.write('};\n')
     o.write('static const StatusVector aclt_vectors[] = {\n')
     for r in aclt_vec:
+        o.write('\t{"%s", %d, 0x%08XU},\n' % r)
+    o.write('};\n')
+    o.write('static const StatusVector msg_vectors[] = {\n')
+    for r in msg_vec:
         o.write('\t{"%s", %d, 0x%08XU},\n' % r)
     o.write('};\n')
     o.write('typedef struct { const char *dir; int rooms; unsigned hash; } AclVector;\n')

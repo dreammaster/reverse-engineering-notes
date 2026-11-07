@@ -22,6 +22,7 @@
 #include "engine/push.h"
 #include "engine/acl.h"
 #include "engine/lng.h"
+#include "engine/message.h"
 
 #include <SDL.h>
 #include <stdio.h>
@@ -106,6 +107,7 @@ typedef struct RoomView_ {
 	int tm_div, tm_period, tm_cnt;   /* room timer: every 17 game steps count down rv->tm_cnt, at 0 fire event 14 (period = room record byte 2) */
 	uint8_t flags_seen[ACL_THINGS];  /* thing flags the objects were built with */
 	int pending_rebuild;
+	struct { int active, id, timer; } msgs[4];   /* message scrolls (slots 0..3) */
 	int label_id;              /* name shown above the room name: string id of the last touched object (-1 none) */
 	AclVM vm;                  /* script state: thing flags / variables */
 	int vm_ok;
@@ -131,8 +133,8 @@ static void roomview_tick(RoomView *rv) {
 
 /* the frame around the room view (ANDATA.DAT block 1) */
 static uint8_t *g_andata;
-static const uint8_t *g_b1, *g_font;
-static size_t g_b1_len, g_font_len;
+static const uint8_t *g_b1, *g_font, *g_tiles, *g_font3;
+static size_t g_b1_len, g_font_len, g_tiles_len, g_font3_len;
 static void panel_ensure(const GameFiles *g) {
 	if (g_andata)
 		return;
@@ -141,8 +143,11 @@ static void panel_ensure(const GameFiles *g) {
 	{
 		andata_block(g_andata, len, 1, &g_b1, &g_b1_len);
 		andata_block(g_andata, len, 4, &g_font, &g_font_len);
+		andata_block(g_andata, len, 2, &g_tiles, &g_tiles_len);
+		andata_block(g_andata, len, 3, &g_font3, &g_font3_len);
 	}
 }
+static int msg_rnd(void *u) { (void)u; return 3; }
 /* wings + the status text ("DAY n" and the room name) */
 static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 	panel_ensure(g);
@@ -153,6 +158,9 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 		status_room_name(rv->mp2.sec[0].rec[rv->room], (size_t)rv->mp2.sec[0].len[rv->room], rv->name_tbl, rv->names.strings,
 		                 rv->names.count, nm, sizeof(nm));
 		status_draw(scr->pixels, g_font, g_font_len, nm, 1);
+		for (int sl = 0; sl < 4 && g_tiles && g_font3; sl++)
+			if (rv->msgs[sl].active && rv->msgs[sl].id >= 0 && rv->msgs[sl].id < rv->names.count)
+				message_draw(scr->pixels, rv->names.strings[rv->msgs[sl].id], sl, g_tiles, g_tiles_len, g_font3, g_font3_len, msg_rnd, NULL);
 		if (rv->label_id > 0 && rv->label_id < rv->names.count) {
 			char lb[16];
 			snprintf(lb, sizeof(lb), "%.12s", rv->names.strings[rv->label_id]);
@@ -337,6 +345,27 @@ static int roomview_geom(RoomView *rv, int *w, int *h, int *gx, int *gy) {
 
 
 
+/* show the messages queued by script ops (op 28): first free slot, else the one that expires first (1000:3555) */
+static void roomview_flush_messages(RoomView *rv) {
+	for (int k = 0; k < rv->vm.msg_n; k++) {
+		int sl = -1, best = 1 << 30;
+		for (int i = 0; i < 4; i++)           /* the same string is already shown: only its timer restarts */
+			if (rv->msgs[i].active && rv->msgs[i].id == rv->vm.msg[k]) { sl = i; break; }
+		if (sl >= 0) {
+			rv->msgs[sl].timer = MSG_STEPS;
+			continue;
+		}
+		for (int i = 0; i < 4; i++) {
+			if (!rv->msgs[i].active) { sl = i; break; }
+			if (rv->msgs[i].timer < best) { best = rv->msgs[i].timer; sl = i; }
+		}
+		rv->msgs[sl].active = 1;
+		rv->msgs[sl].id = rv->vm.msg[k];
+		rv->msgs[sl].timer = MSG_STEPS;
+	}
+	rv->vm.msg_n = 0;
+}
+
 /* the script flags changed (things hidden / placed): rebuild the objects, keeping the positions and animations of those that stay */
 static void roomview_rebuild_objs(RoomView *rv, int gx, int gy) {
 	static RoomObjs old;
@@ -356,6 +385,9 @@ static void roomview_rebuild_objs(RoomView *rv, int gx, int gy) {
 
 /* one game step (25 Hz): the room timers of 1000:11EB5 (units of 17 steps) -> events 14 and 20 */
 static void roomview_game_step(RoomView *rv) {
+	for (int i = 0; i < 4; i++)
+		if (rv->msgs[i].active && --rv->msgs[i].timer <= 0)
+			rv->msgs[i].active = 0;
 	if (rv->room < 0 || rv->room >= 128 || --rv->tm_div > 0)
 		return;
 	rv->tm_div = 17;
@@ -369,6 +401,7 @@ static void roomview_game_step(RoomView *rv) {
 		acl_room_event(&rv->vm, &rv->mp2, rv->room, 20, a);
 	}
 	rv->pending_rebuild = memcmp(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen)) != 0;
+	roomview_flush_messages(rv);
 }
 
 /* entering a room: first visit event (28), entry event (6), timer set up from room record byte 2 (1000:DA60) */
@@ -379,6 +412,7 @@ static void roomview_enter(RoomView *rv, int gx, int gy) {
 		acl_room_event(&rv->vm, &rv->mp2, rv->room, 28, 0);
 	}
 	acl_room_event(&rv->vm, &rv->mp2, rv->room, 6, 0);
+	roomview_flush_messages(rv);
 	const uint8_t *rec = rv->mp2.sec[0].rec[rv->room];
 	rv->tm_period = rv->tm_cnt = rec && rv->mp2.sec[0].len[rv->room] > 2 ? rec[2] : 0;
 	rv->tm_div = 17;
@@ -518,6 +552,7 @@ static void walker_touch(Walker *wk, RoomView *rv, const ColResult *cr) {
 		for (int q = 0; q < rv->vm.queue_n; q++)
 			acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
 		rv->pending_rebuild |= memcmp(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen)) != 0;
+		roomview_flush_messages(rv);
 		return;
 	}
 }
