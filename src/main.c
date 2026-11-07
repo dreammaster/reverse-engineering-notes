@@ -106,6 +106,7 @@ typedef struct RoomView_ {
 	int tm_div, tm_period, tm_cnt;   /* room timer: every 17 game steps count down rv->tm_cnt, at 0 fire event 14 (period = room record byte 2) */
 	uint8_t flags_seen[ACL_THINGS];  /* thing flags the objects were built with */
 	int pending_rebuild;
+	int label_id;              /* name shown above the room name: string id of the last touched object (-1 none) */
 	AclVM vm;                  /* script state: thing flags / variables */
 	int vm_ok;
 	uint16_t palette[16];
@@ -152,6 +153,11 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 		status_room_name(rv->mp2.sec[0].rec[rv->room], (size_t)rv->mp2.sec[0].len[rv->room], rv->name_tbl, rv->names.strings,
 		                 rv->names.count, nm, sizeof(nm));
 		status_draw(scr->pixels, g_font, g_font_len, nm, 1);
+		if (rv->label_id > 0 && rv->label_id < rv->names.count) {
+			char lb[16];
+			snprintf(lb, sizeof(lb), "%.12s", rv->names.strings[rv->label_id]);
+			status_draw_centred(scr->pixels, 229, 172, 84, lb, g_font, g_font_len);
+		}
 	}
 }
 
@@ -380,6 +386,7 @@ static void roomview_enter(RoomView *rv, int gx, int gy) {
 	roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy, rv->vm.flags);
 	memcpy(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen));
 	rv->ro_key = room_key(rv);
+	rv->label_id = -1;
 }
 
 static void roomview_ensure_objs(RoomView *rv, int gx, int gy) {
@@ -493,6 +500,28 @@ static void walker_enter(Walker *wk, RoomView *rv, int room, int door) {
 
 /* one 50 Hz timer tick; keys: bit0 up, bit1 down, bit2 left, bit3 right (the game's own input bits). The game loop (and
  * the player's move of one unit) runs every 2 ticks. */
+/* the player pressed against objects (1000:22C4): the first object that is not "ignored" (header flag 0x40) gets its name shown (header word 5 =
+ * string id, 12 characters) and receives the events 9 (argument 0) and 7; queued room events are delivered afterwards */
+static void walker_touch(Walker *wk, RoomView *rv, const ColResult *cr) {
+	(void)wk;
+	for (int k = 0; k < cr->n; k++) {
+		const RoomObj *o = NULL;
+		for (int i = 0; i < rv->ro.n; i++)
+			if (rv->ro.o[i].thing == cr->ids[k]) { o = &rv->ro.o[i]; break; }
+		if (!o || (o->sp->header[12] & 0x40))
+			continue;
+		int nm = (o->sp->header[10] << 8) | o->sp->header[11];
+		rv->label_id = nm < 0x8000 ? nm : -1;
+		rv->vm.queue_n = 0;
+		acl_thing_event(&rv->vm, &rv->mp2, o->thing, 9, 0);
+		acl_thing_event(&rv->vm, &rv->mp2, o->thing, 7, 0);
+		for (int q = 0; q < rv->vm.queue_n; q++)
+			acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+		rv->pending_rebuild |= memcmp(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen)) != 0;
+		return;
+	}
+}
+
 static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	roomview_tick(rv);
 	wk->tick++;
@@ -521,6 +550,8 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		if (t >= 0) walker_enter(wk, rv, t, cr.exit_id);
 		return;
 	}
+	if (!cr.zf && cr.count != 0xFF && cr.count != 0xFE)
+		walker_touch(wk, rv, &cr);
 	static PushObj po[ROOMOBJS_MAX];
 	for (int i = 0; i < rv->ro.n; i++) {
 		const RoomObj *o = &rv->ro.o[i];

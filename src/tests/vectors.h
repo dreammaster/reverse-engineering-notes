@@ -293,6 +293,22 @@ static const StatusVector status_vectors[] = {
 	{"cadaver2/TATA/3", 53, 0xEA7CF8F0U},
 	{"cadaver2/TATA/4", 46, 0x99F45EE1U},
 };
+static const StatusVector aclt_vectors[] = {
+	{"cadaver1/DATA/1", 44, 0xC3D39766U},
+	{"cadaver1/DATA/2", 92, 0x8A62DBA8U},
+	{"cadaver1/DATA/3", 110, 0x7B9769CEU},
+	{"cadaver1/DATA/4", 39, 0x19CBDEA6U},
+	{"cadaver1/DATA/5", 30, 0x1A58C3C8U},
+	{"cadaver2/DATA/1", 44, 0xC3D39766U},
+	{"cadaver2/DATA/2", 92, 0x8A62DBA8U},
+	{"cadaver2/DATA/3", 110, 0x7B9769CEU},
+	{"cadaver2/DATA/4", 39, 0x19CBDEA6U},
+	{"cadaver2/DATA/5", 30, 0x1A58C3C8U},
+	{"cadaver2/TATA/1", 46, 0x69A245DEU},
+	{"cadaver2/TATA/2", 50, 0x83F4E603U},
+	{"cadaver2/TATA/3", 25, 0x3441D6A9U},
+	{"cadaver2/TATA/4", 32, 0x5B135D38U},
+};
 typedef struct { const char *dir; int rooms; unsigned hash; } AclVector;
 static const AclVector acl_vectors[] = {
 	{"cadaver1/DATA/1", 24, 0xABFAC6D1U},
@@ -305,8 +321,8 @@ static const AclVector acl_vectors[] = {
 	{"cadaver2/DATA/3", 35, 0x0FFB6544U},
 	{"cadaver2/DATA/4", 27, 0xAFF08AD7U},
 	{"cadaver2/DATA/5", 15, 0xA6D0FAD7U},
-	{"cadaver2/TATA/1", 17, 0xB1041CD0U},
-	{"cadaver2/TATA/2", 26, 0x392701D3U},
-	{"cadaver2/TATA/3", 21, 0x0CAE8996U},
-	{"cadaver2/TATA/4", 28, 0x99736878U},
+	{"cadaver2/TATA/1", 17, 0x4A5718D0U},
+	{"cadaver2/TATA/2", 26, 0x99972DF1U},
+	{"cadaver2/TATA/3", 21, 0x4F9F0216U},
+	{"cadaver2/TATA/4", 28, 0x3F58FFF8U},
 };

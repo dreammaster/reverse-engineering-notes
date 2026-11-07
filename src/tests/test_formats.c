@@ -531,6 +531,55 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	for (size_t i = 0; i < sizeof(aclt_vectors) / sizeof(aclt_vectors[0]); i++) {
+		const StatusVector *av = &aclt_vectors[i];
+		char lev = av->dir[strlen(av->dir) - 1];
+		snprintf(path, sizeof(path), "%s/%s/LEV%c.MP2", root, av->dir, lev);
+		size_t n, un;
+		uint8_t *in = slurp(path, &n), *raw = NULL;
+		if (!in)
+			continue;
+		Mp2 m;
+		int rc = mjm_unpack(in, n, &raw, &un);
+		if (rc == 0)
+			rc = mp2_parse(raw, un, &m);
+		if (rc == 0) {
+			unsigned h = 0x811C9DC5u;
+			int cnt = 0;
+			static AclVM vm;
+			for (int t = 0; t < ACL_THINGS; t++) {
+				int len;
+				const uint8_t *rr = mp2_thing(&m, t, &len);
+				if (!rr || len <= 16 || !rr[11])
+					continue;
+				int has = 0, bad = 0;
+				size_t p = 16;
+				for (int k = 0; k < rr[11]; k++) {
+					if (p + 2 > (size_t)len) { bad = 1; break; }
+					int ty = rr[p + 1] & 0x7F;
+					if (ty == 7 || ty == 9) has = 1;
+					p += rr[p] ? rr[p] : 1000;
+				}
+				if (!has || bad)
+					continue;
+				if (!acl_thing_parse_ok(&m, t))
+					continue;
+				acl_init(&vm, &m);
+				vm.room_no = 0;
+				acl_thing_event(&vm, &m, t, 7, 0);
+				acl_thing_event(&vm, &m, t, 9, 0);
+				cnt++;
+				h = (h ^ (unsigned)(t & 0xFF)) * 0x01000193u;
+				for (int k = 0; k < ACL_THINGS; k++) if (vm.present[k]) h = (h ^ vm.flags[k]) * 0x01000193u;
+				for (int k = 0; k < ACL_THINGS; k++) if (vm.present[k]) h = (h ^ vm.flags2[k]) * 0x01000193u;
+				for (int v = 0; v < 0x40; v++) h = (h ^ vm.vars[v]) * 0x01000193u;
+			}
+			if (cnt != av->rooms || h != av->hash) { printf("FAIL acl things %s: %d things hash %08X\n", av->dir, cnt, h); failed++; }
+			mp2_free(&m);
+		} else { printf("FAIL acl things %s rc=%d\n", av->dir, rc); failed++; }
+		checked++;
+	}
+
 	for (size_t i = 0; i < sizeof(acl_vectors) / sizeof(acl_vectors[0]); i++) {
 		const AclVector *av = &acl_vectors[i];
 		char lev = av->dir[strlen(av->dir) - 1];

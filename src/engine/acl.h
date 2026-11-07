@@ -36,8 +36,14 @@ void acl_fire_room(AclVM *vm, const Mp2 *mp2, int room, int event);
 /* deliver one room event (type 6 enter, 14 timer, 19/20/24 with a byte argument, 28 first visit ...) to the room's handler list and everything the
  * handlers queue, like 1000:7634. Handlers whose condition operand differs from the argument's low byte are skipped. */
 void acl_room_event(AclVM *vm, const Mp2 *mp2, int room, int type, int arg);
+/* deliver a thing event (7 = touched, 9 = contact with the thing id `arg`, ...) to the thing's handler list; vm->cur = thing. Events queued by ops
+ * are left in vm->queue for the caller (they belong to the room's list). */
+void acl_thing_event(AclVM *vm, const Mp2 *mp2, int thing, int type, int arg);
 /* 1 when the whole handler list of the room parses to exactly its length (the rule the Python parser uses) */
 int acl_room_parse_ok(const Mp2 *mp2, int room);
+
+/* same for the handler list of a thing record */
+int acl_thing_parse_ok(const Mp2 *mp2, int thing);
 
 /* number of operand bytes of opcode `op` (-1 = structured / unknown) */
 int acl_oplen(int op);

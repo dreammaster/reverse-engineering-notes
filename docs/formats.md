@@ -452,6 +452,14 @@ list, bit 15 = an extra argument word follows. The condition table `CS:76FC` (op
 argument, 15/17 (`0xC00F`, `0xC011`) from `12108`, 24 (`0x4018`). So "level start" scripts are the *first timer event* (14) or the entry events 28/6 — the earlier assumption that 14 is a one-time start event was only half right
 (level 4 room 0's carpets appear when its timer first fires, 34 ticks after entering). Replaying the sequence 28, 6, 14, 14 through the original dispatcher and through `tools/acl_vm.py` (`fire_event`, with condition matching and the queue)
 gives identical thing flags and variables in every room that has such handlers except two (one uses the unmodelled animation ops 3/74, one draws a different random number in the second timer firing, which the harness cannot reproduce).
+**Touching objects (`1000:22C4`, verified by hooks in the emulator).** After the player's move test (`collision_test`) hits objects, the game calls `1000:22C4` with the list of hit objects: the first object whose
+sprite-block header byte 12 does not have bit `0x40` ("ignore") is the *touched* object; its **name** — the string whose id is the **big-endian word at header bytes 10–11 of its sprite block** (header word 5, e.g. block 0x36 → 215 SILVER COIN),
+cut to 12 characters — is drawn centred in the box x=229, y=172, width 84 (the line above the room name; it stays until another object replaces it), a verb list is built for the six panel icons (look "?", take …, driven by the definition bytes `+0x0C/+0x16/+0x17`
+and the table at `ds:FA36`; the menu itself is `1000:2E2D`, handler table `1000:2E0B`, 17 entries), and unless the action key (End) is held, events **9** (argument 0) and **7** are queued for the touched thing
+(`1000:6441` lets each ordered pair through once per step). Thing events are matched with the same condition table as room events (`tools/acl_vm.py` `cond_match`, `src/engine/acl.c`); replaying 7 and 9 on every thing that has such handlers gives identical
+flags/variables in the original and the VM in all five levels (`tools/verify_acl_things.py`; one level-5 thing differs because ops 62–64 write to raw RAM addresses). Ops `31h` (49) and `5Ah` (90) start **native-routine countdown timers**
+(`ds:62B+i` = delay in units of 17 steps, count `ds:62A`, reload copy at `+0x34`); when one expires `1000:11EB5` far-calls the level's `ROUTINEn.TAD` code (via `ds:788`) with a routine id — creature behaviour lives there.
+Messages (`op 1C/48h`, event 8 `1000:5C9C`) are drawn as a parchment scroll that types out its text and stays ~75 steps (`1000:3555`, up to four at once); not ported yet.
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input

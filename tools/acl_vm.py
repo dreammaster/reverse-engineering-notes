@@ -109,6 +109,14 @@ class VM:
             self.queue.append((19, a[0]))
         elif op == 42:                              # one-shot room timer: after `delay` timer units fire event 20 with arg
             self.timer = (a[0], a[1])
+        elif op in (49, 90):                        # start a native-routine countdown timer: T[idx] = delay (ds:62B+idx, count ds:62A); 90 starts idx 0 and 1
+            for idx, dly in ((a[0], a[1]),) if op == 49 else ((0, a[1]), (1, a[2])):
+                if idx + 0x1A < 0x40:
+                    if self.vars[0x1A + idx] == 0:
+                        self.vars[0x19] = (self.vars[0x19] + 1) & 255
+                    self.vars[0x1A + idx] = dly
+            if op == 90:
+                self.messages.append((8, 0x1E))
         elif op == 81:                              # reg = var[a]
             self.reg = self.vars[a[0]]
         elif op == 43:                              # test the room of a thing
@@ -164,16 +172,29 @@ def fire(vm, entries, event, armed=None):
 
 
 def cond_match(h, typ, arg):
-    """Condition test of a handler entry for a room event (CS:76FC table): types 6, 14, 28 always match; 15, 17, 19, 20, 24 compare the
-    operand byte with the low byte of the event argument."""
-    if typ in (15, 17, 19, 20, 24):
-        return h['cond'][0] == (arg & 0xFF)
+    """Condition test of a handler entry (CS:76FC table, 1000:7736..7806).  Types 2 never matches; 4 = operand word == arg; 9, 18, 26 = operand
+    word == arg or negative; 10 = operand byte 0 == current room (not modelled here: always true) and byte 1 == arg low byte; 12, 13, 15, 17, 19, 20, 24
+    = operand byte == arg low byte; 1 (attribute byte of the argument thing), 16, 23 (side effects only) and the rest always match."""
+    c = h['cond']
+    if typ == 2:
+        return False
+    if typ == 4:
+        return int.from_bytes(c[:2], 'big') == arg
+    if typ in (9, 18, 26):
+        w = int.from_bytes(c[:2], 'big')
+        return w >= 0x8000 or w == arg
+    if typ == 10:
+        return c[1] == (arg & 0xFF)
+    if typ in (12, 13, 15, 17, 19, 20, 24):
+        return c[0] == (arg & 0xFF)
     return True
 
 
-def fire_event(vm, entries, typ, arg=0, armed=None):
+def fire_event(vm, entries, typ, arg=0, armed=None, cur=None, follow=True):
     """Deliver one room event (and everything the handlers queue, in order) to a room's handler list, like 1000:7634."""
     armed = armed if armed is not None else [True] * len(entries)
+    if cur is not None:
+        vm.cur = cur
     pending = [(typ, arg)]
     while pending:
         t, a = pending.pop(0)
@@ -184,7 +205,8 @@ def fire_event(vm, entries, typ, arg=0, armed=None):
             vm.c605 = 0
             vm.queue = []
             run_ops(vm, h['ops'])
-            pending.extend(vm.queue)
+            if follow:
+                pending.extend(vm.queue)
             if not h['keep'] or vm.disarm:
                 armed[i] = False
     return armed

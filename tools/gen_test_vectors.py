@@ -238,6 +238,34 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver*', '*', '[0-9]'))):
             h = ((h ^ (v & 0xFF)) * 0x01000193) & 0xFFFFFFFF
     acl_vec.append((os.path.relpath(d, root), cnt, h))
 
+# thing events 7 (touched) and 9 (contact, argument 0) of every thing that has such handlers
+aclt_vec = []
+for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glob.glob(os.path.join(root, 'cadaver2', 'TATA', '[1-4]')) +
+                glob.glob(os.path.join(root, 'cadaver2', 'DATA', '[1-5]'))):
+    mp1, mp2, mp3 = roomview.level_files(d)
+    secs = mpsections.mp2_sections(mp2)
+    thr = secs[3]['records']
+    h = 0x811C9DC5
+    cnt = 0
+    for t, rr in enumerate(thr):
+        if t >= 1000 or not secs[3]['present'][t] or len(rr) <= 16 or not rr[11]:
+            continue
+        try:
+            hs = acl.thing_handlers(rr)
+        except Exception:
+            continue
+        if not any(x['type'] in (7, 9) for x in hs):
+            continue
+        things_ = {k: bytearray(r[:16]) for k, r in enumerate(thr) if len(r) >= 16 and secs[3]['present'][k] and k < 1000}
+        vm = acl_vm.VM(things_, cur=t, room=0)
+        arm = [True] * len(hs)
+        for ty in (7, 9):
+            acl_vm.fire_event(vm, hs, ty, 0, arm, cur=t, follow=False)
+        cnt += 1
+        for v in [t] + [things_[k][3] for k in sorted(things_)] + [things_[k][15] for k in sorted(things_)] + list(vm.vars):
+            h = ((h ^ (v & 0xFF)) * 0x01000193) & 0xFFFFFFFF
+    aclt_vec.append((os.path.relpath(d, root), cnt, h))
+
 # room exits of every room of every level directory: Python roomexits.py vs src/engine/roomexits.c
 import roomexits, objplace, landing
 exit_vec = []
@@ -336,6 +364,10 @@ with open(os.path.join(root, 'src', 'tests', 'vectors.h'), 'w') as o:
     o.write('typedef struct { const char *dir; int rooms; unsigned hash; } StatusVector;\n')
     o.write('static const StatusVector status_vectors[] = {\n')
     for r in status_vec:
+        o.write('\t{"%s", %d, 0x%08XU},\n' % r)
+    o.write('};\n')
+    o.write('static const StatusVector aclt_vectors[] = {\n')
+    for r in aclt_vec:
         o.write('\t{"%s", %d, 0x%08XU},\n' % r)
     o.write('};\n')
     o.write('typedef struct { const char *dir; int rooms; unsigned hash; } AclVector;\n')
