@@ -419,6 +419,30 @@ void Game::seAction(uint32_t sub, int idx) {
 			message("\nThere is nothing to get in the bucket.\n");
 		break;
 	}
+	case 0x31B48: { // the fishing pole: deep water (terrain 0x0C) on the diagonal through the member's square (the original asks (x + i - 1, y + i - 1) for both loops), a catch one time in five
+		int a = _world.actorObject(actor);
+		if (a < 0)
+			break;
+		int px = _world.objects[a].x, py = _world.objects[a].y;
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		bool found = false;
+		for (int i = 0; i < 3 && !found; ++i) {
+			for (int j = 0; j < 3 && !found; ++j) {
+				if (i == 1 && j == 1)
+					continue;
+				if (_world.map.tile(z, (px + i - 1) & mask, (py + i - 1) & mask) != 0x0C)
+					continue;
+				found = true;
+				if (_rng.next() % 5 == 0 && seGive(actor, 0xD5, 1))
+					message("\nYou caught a fish!\n");
+				else
+					message("\nYou didn't get a fish.\n");
+			}
+		}
+		if (!found)
+			message("\nYou need to stand next to deep water.\n");
+		break;
+	}
 	default: // APPROX(79): not ported yet
 		break;
 	}

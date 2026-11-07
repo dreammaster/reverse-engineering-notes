@@ -143,7 +143,7 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | C0 clay | 3204A | shaping a pot (**ported**) |
 | CC gunpowder | 34C0A | loading the flintlock |
 | D1 lit torch | 35686 | "On -": burn things (dinosaur egg ...) |
-| D4 fishing pole | 31B48 | "You need to stand next to deep water." |
+| D4 fishing pole | 31B48 | deep water (terrain 0x0C) on the diagonal, one catch in five (**ported**) |
 | D8 crystal garden | 35D54 | potassium nitrate (Johann) |
 | E5 tar pit | 33211 | cloth strips |
 | E9, ED rafts | 31C98 | boarding |

@@ -191,6 +191,14 @@ int main() {
 	CHECK(w.objects[clay].deleted);
 	CHECK(g.log.size() > 0);
 
+	// a fishing pole (0xD4) wants deep water (terrain 0x0C) on the diagonal through the member
+	clearEast(w, px, py);
+	int pole = put(w, 0xD4, 0, px + 1, py, 0);
+	g.log.clear();
+	useEast(w, g, px, py);
+	CHECK(logText(g).find("deep water") != std::string::npos || logText(g).find("fish") != std::string::npos);
+	w.deleteObject(pole);
+
 	// a torch (0xD0) is lit in a free hand: a lit torch (0xD1) with 100 minutes appears readied
 	clearEast(w, px, py);
 	int actor = w.actors.partyRoster[0];
