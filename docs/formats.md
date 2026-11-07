@@ -564,9 +564,16 @@ write tracing):
   the target room of an exit is the *other* room that lists it. (Ground truth: the room-entry routine `sub_1DA60` can be called for any room in
   the emulator, `tools/emu_call.py`, `tools/oracle_rooms.py N` — the exits and the bounds of every room were read back that way; the level
   number is forced by writing `ds:0708 = level-1` before the files are opened.)
-* The player's per-tick move is `sub_167DF` (add `(dx, dy, dz)` to the box and position record of the player and whatever it carries —
-  objects such as the small flat thing at (40, 23) in level 1 room 0 are *pushed* along until they hit something, which is what
-  stops the player at x1 = 69 there). Not ported: pushing, climbing onto low solid objects, the halving retry.
+* **The player's move and pushing (verified, ported — `tools/push.py`, `src/engine/push.c`).** The player moves one unit per game step
+  (every 2 ticks) along the pressed axis. The candidate position is tested with `collision_test`; *every overlapped object that is not
+  solid is pushed* by the same `(dx, dy)`: each pushed object costs its sprite header byte 13 (its weight; 1 for a small flat thing,
+  10 for the stone sign, 30 for the big sign…) against the player's strength `ds:59C` (= 50 in level 1), the pushed object is
+  tested the same way (using its position record `x1, y1, z0` and header sizes, itself skipped) and its overlaps are pushed in turn
+  (depth < 32); if anything on the way is blocked (room edge, wall corner, exit, solid object) or the budget runs out the whole move is
+  cancelled. The position record and the entry box move together (`sub_167DF`). Replaying 8 random key sequences (hundreds of
+  steps, pushing chains of two objects against the room wall) in the original and in the model gave **identical positions for every
+  object after every step** (`tools/verify_push.py`); one unexplained event (a pushed sign vanished: probably pushed onto a hole/water tile) and the
+  halving retry / climbing onto low solid objects are not modelled.
 * Not plain sprites although things refer to them: the player (thing 0 → block 8, 29 424 bytes) and compound objects such as
   the rope (block 112–119 in level 1: a table of segment records) — undecoded.
 

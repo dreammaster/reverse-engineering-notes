@@ -69,6 +69,14 @@ int objsprite_initial_frame(const ObjSprite *sp) {
 	return 0;
 }
 
+void roomobj_moved(RoomObj *o, int gx, int gy) {
+	object_project(o->x1, o->y1, o->z0, o->sp->header, gx, gy, &o->sx, &o->sy);
+	object_box(o->x1, o->y1, o->z0, o->sp->header, &o->x0, &o->y0, &o->zt);
+	int8_t tb[6];
+	object_trimmed_box(o->x1, o->y1, o->z0, o->sp->header, tb);
+	o->cx1 = tb[0]; o->cy1 = tb[1]; o->cx0 = tb[2]; o->cy0 = tb[3]; o->czt = tb[4]; o->czb = tb[5];
+}
+
 int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy) {
 	ro->n = 0;
 	if (room < 0 || room >= mp2->sec[2].count || !mp2->sec[2].rec[room])
@@ -111,6 +119,8 @@ int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int roo
 			o->cx1 = tb[0]; o->cy1 = tb[1]; o->cx0 = tb[2]; o->cy0 = tb[3]; o->czt = tb[4]; o->czb = tb[5];
 		}
 		o->solid = !(sp->header[12] & 1);
+		o->weight = sp->header[13];
+		o->xs = hw(sp->header, 8); o->ys = hw(sp->header, 9); o->zs = hw(sp->header, 10);
 		o->animated = anim_script_len(sp) > 0;
 		o->first = objsprite_initial_frame(sp);
 	}

@@ -37,6 +37,8 @@ typedef struct {
 	int x0, y0, zt;             /* untrimmed box: x0..x1, y0..y1, z0..zt */
 	int cx1, cy1, cx0, cy0, czt, czb;   /* collision box kept by the game (trimmed by header bytes 0Eh, 1Ah, 1Bh) */
 	int solid;                  /* sprite header flag (file byte 12) bit 0 clear: blocks movement */
+	int weight;                 /* header byte 13: cost of pushing it (the player can push 50 units in total) */
+	int xs, ys, zs;             /* header words 8..10: box size */
 	const ObjSprite *sp;
 	int sx, sy;                 /* projected top-left of the sprite */
 	int animated, first;
@@ -59,6 +61,9 @@ void roomobjs_draw_rel(const RoomObjs *ro, uint8_t *canvas, int use_state, int p
 
 /* Raw 32-byte header of a block of section 2 (also for blocks that are not plain sprites, e.g. the player's block 8). */
 const uint8_t *objsprites_header(const ObjSprites *o, int block);
+
+/* Recompute box and screen position after the object's (x1, y1) changed (e.g. pushed). */
+void roomobj_moved(RoomObj *o, int gx, int gy);
 
 const ObjSprite *objsprites_find(const ObjSprites *o, int block);
 

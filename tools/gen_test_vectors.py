@@ -3,7 +3,7 @@
 import glob, os, struct, sys
 here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, here)
-import panel, mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
+import push, panel, mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
 
 root = os.path.join(here, '..')
 
@@ -172,6 +172,17 @@ def collision_vector(seed):
         res = collision.collision_test(ds, x, y, z, xs, ys, zs, si, ss)
         for v in (res['zf'], res['count'], res['flag'], len(res['ptrs'])) + tuple(res['ptrs']) + ((res['di'] or 0),):
             mix(v)
+    # pushing: each object has a weight and a size; the mover is the entry `selfk` or a free mover
+    ents = []
+    for i, (rec, marker, flag4, box) in enumerate(objs):
+        ents.append(dict(rec=rec, pos=[b(box[0]), b(box[1]), b(box[5])], w=(i * 7 + seed) % 23, sz=(1 + (i + seed) % 7, 1 + (i * 3 + seed) % 6, 1 + (i * 5 + seed) % 20)))
+    pl = dict(rec=0x2FF0, pos=[r.rnd(100), r.rnd(100), r.rnd(5)], w=0, sz=(7, 7, 30))
+    for q in range(20):
+        dx, dy = [(1, 0), (-1, 0), (0, 1), (0, -1)][r.rnd(4)]
+        pl['pos'] = [b(r.rnd(110) - 5), b(r.rnd(110) - 5), r.rnd(5)]
+        st, mv = push.push_move(bytes(ds), bytes(ss), ents, pl, dx, dy, 50)
+        mix(['moved', 'free', 'blocked', 'solid', 'pushfail'].index(st)); mix(len(mv))
+        for j in mv: mix(j)
     return h
 
 

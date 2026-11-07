@@ -17,6 +17,7 @@
 #include "../engine/collision.h"
 #include "../engine/roomexits.h"
 #include "../engine/panel.h"
+#include "../engine/push.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -99,6 +100,23 @@ static unsigned collision_vector(unsigned seed) {
 		MIX(r.zf); MIX(r.count); MIX(r.flag); MIX(r.n);
 		for (int k = 0; k < r.n; k++) MIX(r.ids[k]);
 		MIX(r.count == 0xFE ? r.exit_id : 0);
+	}
+	static PushObj po[32];
+	for (int i = 0; i < nobj; i++) {
+		po[i].x1 = (uint8_t)objs[i].x1; po[i].y1 = (uint8_t)objs[i].y1; po[i].z0 = (uint8_t)objs[i].zb;
+		po[i].weight = (i * 7 + (int)seed) % 23;
+		po[i].xs = 1 + (i + (int)seed) % 7; po[i].ys = 1 + (i * 3 + (int)seed) % 6; po[i].zs = 1 + (i * 5 + (int)seed) % 20;
+	}
+	rnd(100); rnd(100); rnd(5);
+	for (int q = 0; q < 20; q++) {
+		static const int dd[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+		int d = rnd(4);
+		int px = (rnd(110) - 5) & 0xFF, py = (rnd(110) - 5) & 0xFF, pz = rnd(5);
+		int moved[PUSH_MAX], nm;
+		int st = push_move(&w, po, px, py, pz, 7, 7, 30, 0x2FF0, dd[d][0], dd[d][1], 50, moved, &nm);
+		static const int map[5] = {1, 0, 2, 3, 4};      /* python list order: moved, free, blocked, solid, pushfail */
+		MIX(map[st]); MIX(nm);
+		for (int k = 0; k < nm; k++) MIX(moved[k]);
 	}
 	return h;
 }

@@ -19,6 +19,7 @@
 #include "engine/collision.h"
 #include "engine/roomexits.h"
 #include "engine/panel.h"
+#include "engine/push.h"
 
 #include <SDL.h>
 #include <stdio.h>
@@ -327,6 +328,16 @@ static void walker_world(Walker *wk, RoomView *rv) {
 	}
 }
 
+/* copy the current object boxes into the collision world (objects move when pushed) */
+static void walker_sync_boxes(Walker *wk, RoomView *rv) {
+	for (int i = 0; i < rv->ro.n; i++) {
+		const RoomObj *o = &rv->ro.o[i];
+		ColBox *b = &wk->objs[i];
+		b->x1 = (int8_t)o->cx1; b->y1 = (int8_t)o->cy1; b->x0 = (int8_t)o->cx0; b->y0 = (int8_t)o->cy0;
+		b->zt = (int8_t)o->czt; b->zb = (int8_t)o->czb;
+	}
+}
+
 /* free spot near (cx, cy): spiral search for a position where the player's box overlaps nothing and is inside the room */
 static int walker_find_free(Walker *wk, int cx, int cy) {
 	for (int r = 0; r < 40; r++)
@@ -404,6 +415,9 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	wk->dir = dir;
 	wk->moving = 1;
 	wk->world.dirbits = (keys & 3) ? 1 : 0;
+	int gw, gh, gx, gy;
+	if (!roomview_geom(rv, &gw, &gh, &gx, &gy))
+		return;
 	ColResult cr;
 	collision_test(&wk->world, wk->x1 + dx, wk->y1 + dy, wk->z, PL_XS, PL_YS, PL_ZS, -1, 1, &cr);
 	if (cr.count == 0xFE) {
@@ -411,7 +425,23 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		if (t >= 0) walker_enter(wk, rv, t, cr.exit_id);
 		return;
 	}
-	if (cr.count != 0xFF && cr.flag != 0xFD) { wk->x1 += dx; wk->y1 += dy; }
+	static PushObj po[ROOMOBJS_MAX];
+	for (int i = 0; i < rv->ro.n; i++) {
+		const RoomObj *o = &rv->ro.o[i];
+		po[i].x1 = o->x1; po[i].y1 = o->y1; po[i].z0 = o->z0;
+		po[i].xs = o->xs; po[i].ys = o->ys; po[i].zs = o->zs; po[i].weight = o->weight;
+	}
+	int moved[PUSH_MAX], nm;
+	int st = push_move(&wk->world, po, wk->x1, wk->y1, wk->z, PL_XS, PL_YS, PL_ZS, -1, dx, dy, 50, moved, &nm);
+	if (st == PUSH_MOVED || st == PUSH_FREE) {
+		wk->x1 += dx; wk->y1 += dy;
+		for (int k = 0; k < nm; k++) {
+			RoomObj *o = &rv->ro.o[moved[k]];
+			o->x1 += dx; o->y1 += dy;
+			roomobj_moved(o, gx, gy);
+		}
+		if (nm) walker_sync_boxes(wk, rv);
+	}
 	if ((wk->tick / 2) % 3 == 0) wk->anim = (wk->anim + 1) & 3;
 }
 
