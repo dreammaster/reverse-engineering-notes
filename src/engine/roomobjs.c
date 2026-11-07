@@ -77,7 +77,7 @@ void roomobj_moved(RoomObj *o, int gx, int gy) {
 	o->cx1 = tb[0]; o->cy1 = tb[1]; o->cx0 = tb[2]; o->cy0 = tb[3]; o->czt = tb[4]; o->czb = tb[5];
 }
 
-int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy) {
+int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, const uint8_t *thing_flags) {
 	ro->n = 0;
 	if (room < 0 || room >= mp2->sec[2].count || !mp2->sec[2].rec[room])
 		return 0;
@@ -86,7 +86,8 @@ int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int roo
 	for (int i = 0; i < n && ro->n < ROOMOBJS_MAX; i++) {
 		int id = (list[2 * i] << 8) | list[2 * i + 1], len;
 		const uint8_t *t = mp2_thing(mp2, id, &len);
-		if (!t || len < 8 || (t[3] & 0x80))
+		int fl = (thing_flags && id < 1000) ? thing_flags[id] : (t ? t[3] : 0);
+		if (!t || len < 8 || (fl & 0x80))
 			continue;
 		const ObjSprite *sp = objsprites_find(objs, (t[6] << 8) | t[7]);
 		if (!sp)
@@ -171,7 +172,7 @@ const uint8_t *objsprites_header(const ObjSprites *o, int block) {
 
 int room_render_objects(const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, uint8_t *canvas) {
 	static RoomObjs ro;
-	int n = roomobjs_build(&ro, mp2, objs, room, gx, gy);
+	int n = roomobjs_build(&ro, mp2, objs, room, gx, gy, NULL);
 	roomobjs_draw(&ro, canvas, 0);
 	return n;
 }

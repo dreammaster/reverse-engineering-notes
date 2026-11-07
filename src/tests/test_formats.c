@@ -18,6 +18,7 @@
 #include "../engine/roomexits.h"
 #include "../engine/panel.h"
 #include "../engine/push.h"
+#include "../engine/acl.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -460,7 +461,7 @@ int main(int argc, char **argv) {
 								h = (h ^ ((v[a] >> b) & 0xFF)) * 0x01000193u;
 					}
 					static RoomObjs ro;
-					roomobjs_build(&ro, &m, &os, r, 0, 0);
+					roomobjs_build(&ro, &m, &os, r, 0, 0, NULL);
 					for (int k = 0; k < ro.n; k++) {
 						const RoomObj *o = &ro.o[k];
 						uint32_t v[8] = {(uint32_t)r, (uint32_t)o->thing, (uint8_t)o->cx1, (uint8_t)o->cy1, (uint8_t)o->cx0, (uint8_t)o->cy0,
@@ -478,6 +479,52 @@ int main(int argc, char **argv) {
 			checked++;
 		}
 		free(raw[0]); free(raw[1]);
+	}
+
+	for (size_t i = 0; i < sizeof(acl_vectors) / sizeof(acl_vectors[0]); i++) {
+		const AclVector *av = &acl_vectors[i];
+		char lev = av->dir[strlen(av->dir) - 1];
+		snprintf(path, sizeof(path), "%s/%s/LEV%c.MP2", root, av->dir, lev);
+		size_t n, un;
+		uint8_t *in = slurp(path, &n), *raw = NULL;
+		if (!in)
+			continue;
+		Mp2 m;
+		int rc = mjm_unpack(in, n, &raw, &un);
+		if (rc == 0)
+			rc = mp2_parse(raw, un, &m);
+		if (rc == 0) {
+			unsigned h = 0x811C9DC5u;
+			int cnt = 0;
+			static AclVM vm;
+			for (int r = 0; r < m.sec[0].count && r < 128; r++) {
+				const uint8_t *rr = m.sec[0].rec[r];
+				if (!rr || m.sec[0].len[r] <= 0x20 || !rr[0x1F])
+					continue;
+				/* only rooms that have a start-up (14) handler and whose whole list parses: same rule as the Python side */
+				int has14 = 0, bad = 0;
+				size_t p = 0x20;
+				for (int k = 0; k < rr[0x1F]; k++) {
+					if (p + 2 > (size_t)m.sec[0].len[r]) { bad = 1; break; }
+					if ((rr[p + 1] & 0x7F) == 14) has14 = 1;
+					p += rr[p] ? rr[p] : 1000;
+				}
+				if (!has14 || bad || acl_room_parse_ok(&m, r) == 0)
+					continue;
+				acl_init(&vm, &m);
+				vm.room_no = r;
+				acl_fire_room(&vm, &m, r, 14);
+				cnt++;
+				h = (h ^ (unsigned)(r & 0xFF)) * 0x01000193u;
+				for (int t = 0; t < ACL_THINGS; t++) if (vm.present[t]) h = (h ^ vm.flags[t]) * 0x01000193u;
+				for (int t = 0; t < ACL_THINGS; t++) if (vm.present[t]) h = (h ^ vm.flags2[t]) * 0x01000193u;
+				for (int v = 0; v < 0x40; v++) h = (h ^ vm.vars[v]) * 0x01000193u;
+			}
+			if (cnt != av->rooms || h != av->hash) { printf("FAIL acl %s: %d rooms hash %08X\n", av->dir, cnt, h); failed++; }
+			mp2_free(&m);
+		} else { printf("FAIL acl %s rc=%d\n", av->dir, rc); failed++; }
+		checked++;
+		free(in); free(raw);
 	}
 
 	for (size_t i = 0; i < sizeof(intro_vectors) / sizeof(intro_vectors[0]); i++) {

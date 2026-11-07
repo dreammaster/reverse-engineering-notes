@@ -20,6 +20,7 @@
 #include "engine/roomexits.h"
 #include "engine/panel.h"
 #include "engine/push.h"
+#include "engine/acl.h"
 
 #include <SDL.h>
 #include <stdio.h>
@@ -100,6 +101,8 @@ typedef struct {
 	Mp2 mp2;
 	RoomObjs ro;
 	int ro_key, ro_ticks;
+	AclVM vm;                  /* script state: thing flags / variables */
+	int vm_ok;
 	uint16_t palette[16];
 	int ok;
 	char info[96];
@@ -170,6 +173,8 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 		fprintf(stderr, "level %d: decode error %d\n", rv->level, rc);
 		return -1;
 	}
+	acl_init(&rv->vm, &rv->mp2);
+	rv->vm_ok = 1;
 	rv->ok = 1;
 	rv->loaded_level = rv->level;
 	rv->loaded_tata = rv->use_tata;
@@ -207,7 +212,9 @@ static int roomview_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	if (floor_origin(w, h, &gx, &gy) == 0) {
 		int key = 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata;
 		if (rv->ro_key != key) {
-			roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy);
+			rv->vm.room_no = rv->room;
+			acl_fire_room(&rv->vm, &rv->mp2, rv->room, 14);
+			roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy, rv->vm.flags);
 			rv->ro_key = key;
 		}
 		if (g_plbox.on)
@@ -294,7 +301,9 @@ static int room_key(const RoomView *rv) { return 1 + rv->room + 100 * rv->level 
 
 static void roomview_ensure_objs(RoomView *rv, int gx, int gy) {
 	if (rv->ro_key != room_key(rv)) {
-		roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy);
+		rv->vm.room_no = rv->room;
+		acl_fire_room(&rv->vm, &rv->mp2, rv->room, 14);
+		roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy, rv->vm.flags);
 		rv->ro_key = room_key(rv);
 	}
 }

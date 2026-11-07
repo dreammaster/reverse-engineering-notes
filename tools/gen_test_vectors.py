@@ -188,6 +188,32 @@ def collision_vector(seed):
 
 coll_vec = [(s, collision_vector(s)) for s in range(1, 41)]
 
+# ACL: run the start-up event (14) of every room with handlers; Python tools/acl_vm.py vs src/engine/acl.c
+import acl, acl_vm
+acl_vec = []
+for d in sorted(glob.glob(os.path.join(root, 'cadaver*', '*', '[0-9]'))):
+    mp2 = mjm.mjm_unpack(open(glob.glob(os.path.join(d, 'LEV*.MP2'))[0], 'rb').read())
+    secs = mpsections.mp2_sections(mp2)
+    thr = secs[3]['records']
+    h = 0x811C9DC5
+    cnt = 0
+    for n, rr in enumerate(secs[0]['records']):
+        if not secs[0]['present'][n] or len(rr) <= 0x20 or not rr[0x1F] or n >= 128:
+            continue
+        try:
+            hs = acl.room_handlers(rr)
+        except Exception:
+            continue
+        if not any(x['type'] == 14 for x in hs):
+            continue
+        things_ = {t: bytearray(r[:16]) for t, r in enumerate(thr) if len(r) >= 16 and secs[3]['present'][t] and t < 1000}
+        vm = acl_vm.VM(things_, cur=0, room=n)
+        acl_vm.fire(vm, hs, 14)
+        cnt += 1
+        for v in [n] + [things_[t][3] for t in sorted(things_)] + [things_[t][15] for t in sorted(things_)] + list(vm.vars):
+            h = ((h ^ (v & 0xFF)) * 0x01000193) & 0xFFFFFFFF
+    acl_vec.append((os.path.relpath(d, root), cnt, h))
+
 # room exits of every room of every level directory: Python roomexits.py vs src/engine/roomexits.c
 import roomexits, objplace, landing
 exit_vec = []
@@ -281,6 +307,11 @@ with open(os.path.join(root, 'src', 'tests', 'vectors.h'), 'w') as o:
     o.write('typedef struct { const char *dir; int exits; unsigned hash; } ExitVector;\n')
     o.write('static const ExitVector exit_vectors[] = {\n')
     for r in exit_vec:
+        o.write('\t{"%s", %d, 0x%08XU},\n' % r)
+    o.write('};\n')
+    o.write('typedef struct { const char *dir; int rooms; unsigned hash; } AclVector;\n')
+    o.write('static const AclVector acl_vectors[] = {\n')
+    for r in acl_vec:
         o.write('\t{"%s", %d, 0x%08XU},\n' % r)
     o.write('};\n')
 print(len(rows), 'mjm vectors,', len(pics), 'pictures,', len(lngs), 'language tables')

@@ -13,6 +13,8 @@ inventory, combat, sound) is not implemented. Currently:
 | `engine/anim.[ch]` | sprite animation scripts (the game's step + command table) |
 | `engine/collision.[ch]` | the game's box collision test (verified against the original routine) |
 | `engine/roomexits.[ch]` | door boxes / exits of a room (verified for all rooms of levels 1-5) |
+| `engine/acl.[ch]` | ACL script interpreter (subset: thing flags, variables, conditions, IF blocks; room-start events) |
+| `engine/push.[ch]` | pushing objects |
 | `engine/panel.[ch]` | `ANDATA.DAT` block 1: the frame around the room view |
 | `engine/intro.[ch]` | title scroll: `FONT2.SPR` text, `FLAME.DAT` flames over `LOADING2.PC1` |
 | `engine/rooms.[ch]` | floor tiles + wall tiles (`MP3`), floor maps, wall records + palette (`MP1`), room shell (floor + walls) renderer |

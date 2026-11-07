@@ -49,9 +49,10 @@ typedef struct {
 	RoomObj o[ROOMOBJS_MAX];
 } RoomObjs;
 
+/* thing_flags: current rec[3] of every thing (ACL state, AclVM.flags) or NULL to use the file's initial flags. */
 /* Runtime objects of a room: build once on entry, step every game step (2 timer ticks), draw every frame.
  * use_state = 0 draws the first script frame of animated objects (static, used by the unit tests). */
-int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy);
+int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, const uint8_t *thing_flags);
 void roomobjs_step(RoomObjs *ro);
 void roomobjs_draw(const RoomObjs *ro, uint8_t *canvas, int use_state);
 /* Same, but only the objects that are behind (front = 0) or in front of (front = 1) a moving box (px1, py1 = far corner, pz1 = top,

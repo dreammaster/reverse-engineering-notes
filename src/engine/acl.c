@@ -1,0 +1,180 @@
+#include "acl.h"
+#include <stdlib.h>
+#include <string.h>
+
+static const int8_t OPLEN[94] = {
+	2, 2, 0, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, -1, 2, 2, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 3, 2, 0, 0, 0, 0, 0, 2, 2, 6, 4, 2, 2, 3, 6, 2, 3, 6, 2, 0, 2,
+	-1, 2, 2, 0, 2, 2, 2, 2, 9, 2, -1, -1, 4, 1, 4, 4, 5, 3, 3, 2, 2, 5, 1, 0, 2, 4, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 8, 2, 2, 1, 1, 2, 3, 1, 2, 2};
+
+int acl_oplen(int op) { return op >= 0 && op < 94 ? OPLEN[op] : -1; }
+
+static int cond_len(int type) {
+	switch (type) {
+	case 1: case 12: case 13: case 15: case 17: case 19: case 20: case 24: return 1;
+	case 4: case 9: case 10: case 18: case 26: return 2;
+	default: return 0;
+	}
+}
+
+void acl_init(AclVM *vm, const Mp2 *mp2) {
+	memset(vm, 0, sizeof(*vm));
+	for (int t = 0; t < ACL_THINGS; t++) {
+		int len;
+		const uint8_t *r = mp2_thing(mp2, t, &len);
+		if (r && len >= 16) {
+			vm->present[t] = 1;
+			vm->flags[t] = r[3];
+			vm->room[t] = r[10];
+			vm->flags2[t] = r[15];
+		}
+	}
+}
+
+static void test_res(AclVM *vm, int ok) { vm->c605 = ok ? ((vm->c605 + 1) & 255) : 0; }
+
+static uint8_t *tflag(AclVM *vm, int id, int second) {
+	if (id == 0xFFFF)
+		id = vm->cur;
+	if (id < 0 || id >= ACL_THINGS || !vm->present[id])
+		return NULL;
+	return second ? &vm->flags2[id] : &vm->flags[id];
+}
+
+static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
+	int w = n >= 2 ? (a[0] << 8) | a[1] : 0;
+	uint8_t *f = n >= 2 ? tflag(vm, w, 0) : NULL, *f2 = n >= 2 ? tflag(vm, w, 1) : NULL;
+	uint8_t *cur = tflag(vm, vm->cur, 0);
+	int tid = w == 0xFFFF ? vm->cur : w;
+	switch (op) {
+	case 1:
+		if (f) {
+			int had = *f & 0x80;
+			*f &= 0x7F;
+			if (had && vm->room[tid] != (vm->room_no & 255))
+				*f |= 0x08;
+		}
+		break;
+	case 26: if (f) *f |= 0x80; break;
+	case 15: case 16: test_res(vm, f && (*f & 1)); break;
+	case 17: if (f) *f |= 1; break;
+	case 24: if (f) *f ^= 1; break;
+	case 18: if (f) *f &= 0xFE; break;
+	case 19: test_res(vm, f && (*f & 2)); break;
+	case 20: if (f) *f |= 2; break;
+	case 25: if (f) *f ^= 2; break;
+	case 21: if (f) *f &= 0xFD; break;
+	case 54: if (f2) *f2 |= 4; break;
+	case 55: if (f2) *f2 &= 0xFB; break;
+	case 68: if (f2) *f2 |= 0x40; break;
+	case 67: if (f2) *f2 &= 0xBF; break;
+	case 30: test_res(vm, cur && (*cur & 1)); break;
+	case 31: if (cur) *cur &= 0xFE; break;
+	case 32: if (cur) *cur |= 1; break;
+	case 33: if (cur) *cur ^= 1; break;
+	case 29: vm->disarm = 1; break;
+	case 38: vm->vars[a[0] & 0x3F] = a[1]; break;
+	case 39: vm->vars[a[0] & 0x3F] = (uint8_t)(vm->vars[a[0] & 0x3F] + a[1]); break;
+	case 40: {
+		int v = vm->vars[a[0] & 0x3F], mode = a[1], k = a[2];
+		test_res(vm, mode == 0 ? v > k : mode == 1 ? v < k : mode == 2 ? v == k : v != k);
+		break;
+	}
+	case 43: {
+		int room = a[2] == 0xFE ? vm->room_no : a[2];
+		test_res(vm, f && vm->room[tid] == room);
+		break;
+	}
+	case 47: test_res(vm, f && (w == 0xFFFF ? vm->cur != 0 : w != 0)); break;
+	case 79: vm->reg = vm->rand_range ? vm->rand_range(a[0], a[1], vm->user) : a[0]; break;
+	case 80: test_res(vm, vm->reg == a[0]); break;
+	case 81: vm->reg = vm->vars[a[0] & 0x3F]; break;
+	case 28: case 72: break;      /* messages */
+	default: vm->skipped++; break;
+	}
+}
+
+/* Execute (execute != 0) or just skip an op sequence up to the terminator `end`; returns the position after it. */
+static size_t exec_ops(AclVM *vm, const uint8_t *b, size_t len, size_t p, int end, int execute, int *bad) {
+	while (p < len) {
+		int op = b[p++];
+		if (op == end)
+			return p;
+		if (op >= 94 && bad)
+			*bad = 1;
+		int n = op < 94 ? OPLEN[op] : 0;
+		if (n < 0) {                                  /* IF-like block */
+			int extra = (op == 58 || op == 59) ? 1 : 0;
+			uint8_t hdr = extra && p < len ? b[p] : 0;
+			p += extra + 1;
+			int cond = 0;
+			if (execute) {
+				cond = op == 14 ? vm->c605 != 0 : op == 48 ? vm->c605 == 0 : op == 58 ? vm->c605 == hdr : vm->c605 != hdr;
+				vm->c605 = 0;
+			}
+			p = exec_ops(vm, b, len, p, 0x16, execute && cond, bad);
+			if (p < len && b[p] == 0x0F) {
+				p++;
+				p++;
+				p = exec_ops(vm, b, len, p, 0x16, execute && !cond, bad);
+			}
+			continue;
+		}
+		if (op == 62 || op == 63 || op == 64) {
+			if (p < len && b[p] >= 0x80)
+				n--;
+		}
+		if (execute && p + (size_t)n <= len) {
+			if (op == 62 || op == 63 || op == 64)
+				vm->skipped++;
+			else
+				do_op(vm, op, b + p, n);
+		}
+		p += (size_t)n;
+	}
+	return p;
+}
+
+void acl_fire_room(AclVM *vm, const Mp2 *mp2, int room, int event) {
+	if (room < 0 || room >= mp2->sec[0].count || !mp2->sec[0].rec[room])
+		return;
+	const uint8_t *r = mp2->sec[0].rec[room];
+	int len = mp2->sec[0].len[room];
+	if (len <= 0x20 || r[0x1F] == 0 || room >= 128)
+		return;
+	size_t p = 0x20;
+	for (int i = 0; i < r[0x1F] && i < 64 && p + 2 <= (size_t)len; i++) {
+		int ln = r[p], type = r[p + 1] & 0x7F, keep = r[p + 1] & 0x80;
+		if (ln < 2)
+			break;
+		if (type == event && !(vm->armed[room][i / 8] & (1 << (i % 8)))) {
+			vm->disarm = 0;
+			vm->c605 = 0;
+			exec_ops(vm, r, (size_t)len, p + 2 + (size_t)cond_len(type), 0x17, 1, NULL);
+			if (!keep || vm->disarm)
+				vm->armed[room][i / 8] |= (uint8_t)(1 << (i % 8));
+		}
+		p += (size_t)ln;
+	}
+}
+
+int acl_room_parse_ok(const Mp2 *mp2, int room) {
+	if (room < 0 || room >= mp2->sec[0].count || !mp2->sec[0].rec[room])
+		return 0;
+	const uint8_t *r = mp2->sec[0].rec[room];
+	size_t len = (size_t)mp2->sec[0].len[room], p = 0x20;
+	if (len <= 0x20)
+		return 0;
+	AclVM *dummy = (AclVM *)calloc(1, sizeof(AclVM));
+	int ok = 1;
+	for (int i = 0; i < r[0x1F] && ok; i++) {
+		if (p + 2 > len) { ok = 0; break; }
+		size_t ln = r[p];
+		int bad = 0;
+		size_t q = exec_ops(dummy, r, len, p + 2 + (size_t)cond_len(r[p + 1] & 0x7F), 0x17, 0, &bad);
+		if (bad || ln == 0 || (q != p + ln && !(q + 1 == p + ln && ln % 2 == 0)))
+			ok = 0;
+		p += ln;
+	}
+	free(dummy);
+	return ok;
+}
