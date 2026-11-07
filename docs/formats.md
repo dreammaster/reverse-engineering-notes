@@ -405,6 +405,14 @@ condition byte (low 7 bits = event type to match, bit 7 = "keep the handler arme
 (`and [obj+3], 7Fh` = "place the object", `or [obj+0Fh], 4`), print messages (strings = LNG ids), move objects, start sounds, change level (`mov [0708h], n` — the level number)
 and queue further events. Things 704–709 of level 4 (the carpets over the pit) are made visible by such a script at start-up. A faithful game needs this VM (plus the
 per-level `ROUTINEn.TAD` native code, which handles creatures and animation hooks).
+**ACL virtual machine, first working subset (`tools/acl_vm.py`, verified).** The condition mechanism is a counter `ds:605`: every *test* opcode
+increments it on success and zeroes it on failure; `IF` (`0Eh`) runs its block when it is non-zero (and clears it), `30h` is the negated IF, `3Ah/3Bh` compare it with a constant (so
+a list of tests followed by `IF = k` means "all k tests passed"). Verified opcode effects (fuzzed against the original handlers, `tools/verify_acl_ops.py`, 24 ops × many random operands/pre-states, no mismatch):
+`01` place (clear `rec[3]` bit 7; if the thing belongs to another room only set bit 3), `1A` hide, `11h/18h/12h` set / toggle / clear `rec[3]` bit 0, `14h/19h/15h` bit 1, `0Fh/10h/13h/1Eh` test bit 0/bit 1 (also of the current object), `1Fh/20h/21h` clear/set/toggle bit 0 of the current object, `36h/37h`
+flags2 (`rec[15]`) bit 2 / bit 6, `05` score, `26h/27h/28h` set / add / compare script variable (`ds:611+n`; modes `>`, `<`, `==`, `!=`), `2Bh` test the thing's room (`FEh` = current), `2Fh` test that the thing exists,
+`4Fh/50h/51h` the register `ds:704` (random(a,b) / test / copy from variable), `1Dh` disarm the running handler. **Replaying the room-start event (type 14) of every room that has one in the original and in the VM gives identical thing flags and
+variables in 76 of 77 rooms of levels 1–5** (`tools/verify_acl_rooms.py`; the original's random draws are fed to the VM, the remaining room uses animation opcodes 3/74 which are not modelled). Level 4 room 0's start script
+(`01 02C0 … 01 02C5`) makes the six carpets over the pit visible, as in the original's first screen. Unmodelled opcodes (animation 3/4/74/75, spawn `24h`, moves, sounds, level change, energy …) are skipped and listed in `VM.unsupported`.
 **Script format (parsed and checked on 2453 records of all levels, `tools/acl.py`).** A handler list entry is
 `[len][type | 80h keep-armed][condition operands][ops …][17h][pad]` (`len` counts itself, is always even: one padding byte when the entry would be odd).
 Things: list at record offset 16, count = byte 11 (this byte of the 16-byte position record is the handler count; byte 10 the room); rooms: list at `+0x20`, count at `+0x1F`
