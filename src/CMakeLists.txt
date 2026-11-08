@@ -23,6 +23,7 @@ add_library(cadaver_engine STATIC
   engine/panel.c
   engine/message.c
   engine/x86.c
+  engine/tad.c
   engine/push.c
   engine/acl.c
   engine/gamefiles.c)

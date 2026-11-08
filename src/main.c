@@ -23,6 +23,7 @@
 #include "engine/acl.h"
 #include "engine/lng.h"
 #include "engine/message.h"
+#include "engine/tad.h"
 
 #include <SDL.h>
 #include <stdio.h>
@@ -113,6 +114,7 @@ typedef struct RoomView_ {
 	int energy_max_cfg;        /* from LEVn.MP1 */
 	int label_id;              /* name shown above the room name: string id of the last touched object (-1 none) */
 	AclVM vm;                  /* script state: thing flags / variables */
+	TadRt tad;                 /* native routines of ROUTINEn.TAD (timers) */
 	int vm_ok;
 	uint16_t palette[16];
 	uint16_t name_tbl[20];     /* room-name string ids (MP1 trailer) */
@@ -124,6 +126,12 @@ typedef struct RoomView_ {
 
 /* one 50 Hz timer tick: the game loop (and with it the object animation) steps every 2 ticks */
 static int room_key(const RoomView *rv) { return 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata; }
+static int game_rand(int lo, int hi, void *u) {
+	(void)u;
+	static unsigned s = 12345;
+	s = s * 1103515245u + 12345u;
+	return hi <= lo ? lo : lo + (int)((s >> 16) % (unsigned)(hi - lo + 1));
+}
 static void roomview_game_step(RoomView *rv);
 static void walk_refresh_world(RoomView *rv);
 static void roomview_ensure_objs(RoomView *rv, int gx, int gy);
@@ -228,6 +236,15 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 		return -1;
 	}
 	acl_init(&rv->vm, &rv->mp2);
+	rv->vm.rand_range = game_rand;
+	if (rv->tad.loaded) tad_free(&rv->tad);
+	{
+		uint8_t *tb; size_t tl;
+		if (gamefiles_read_mjm(g, rv->use_tata ? "tata\\?\\routine?.tad" : "data\\?\\routine?.tad", rv->level, &tb, &tl) == 0) {
+			tad_load(&rv->tad, tb, tl);
+			free(tb);
+		}
+	}
 	rv->vm.energy = rv->vm.energy_max = rv->energy_max_cfg;
 	memset(rv->visited, 0, sizeof(rv->visited));
 	rv->vm_ok = 1;
@@ -400,6 +417,7 @@ static void roomview_game_step(RoomView *rv) {
 	if (rv->room < 0 || rv->room >= 128 || --rv->tm_div > 0)
 		return;
 	rv->tm_div = 17;
+	tad_timer_unit(&rv->tad, &rv->vm);
 	if (rv->tm_period && --rv->tm_cnt <= 0) {
 		rv->tm_cnt = rv->tm_period;
 		acl_room_event(&rv->vm, &rv->mp2, rv->room, 14, 0);

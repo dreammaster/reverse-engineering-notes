@@ -94,12 +94,17 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 	case 42: vm->timer_arg = a[0]; vm->timer_delay = a[1]; break;
 	case 49: case 90: {
 		int n = op == 49 ? 1 : 2;
+		if (op == 90) {
+			vm->g[0x6A9 - 0x590] = a[0];                    /* ds:6A9 = first operand (the TAD routines read it) */
+			if (vm->msg_n < 16) vm->msg[vm->msg_n++] = 0x1E;  /* event 8, message 30 */
+		}
 		for (int k = 0; k < n; k++) {
 			int idx = op == 49 ? a[0] : k, dly = op == 49 ? a[1] : a[1 + k];
 			if (idx + 0x1A < 0x40) {
 				if (vm->vars[0x1A + idx] == 0)
 					vm->vars[0x19]++;
 				vm->vars[0x1A + idx] = (uint8_t)dly;
+				vm->g[0x81 + 0x1A + 0x34 + idx] = (uint8_t)dly;      /* reload copy at ds:62B+0x34+idx */
 			}
 		}
 		break;

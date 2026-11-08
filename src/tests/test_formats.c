@@ -21,6 +21,7 @@
 #include "../engine/push.h"
 #include "../engine/acl.h"
 #include "../engine/x86.h"
+#include "../engine/tad.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -767,6 +768,36 @@ int main(int argc, char **argv) {
 					cnt++;
 				}
 			if (cnt != tv->rooms || h != tv->hash) { printf("FAIL tad %s: %d scenarios hash %08X\n", tv->dir, cnt, h); failed++; }
+			checked++;
+		}
+		free(in); free(raw);
+	}
+
+	{
+		/* TAD timers end to end (level 1): timer 1 of ROUTINE1.TAD damages the player by ds:6A9 once; timer 0 shows message 0x2D when ds:6A9 is set */
+		snprintf(path, sizeof(path), "%s/cadaver1/DATA/1/ROUTINE1.TAD", root);
+		size_t n, un;
+		uint8_t *in = slurp(path, &n), *raw = NULL;
+		if (in && mjm_unpack(in, n, &raw, &un) == 0) {
+			static TadRt tr;
+			static AclVM vm;
+			memset(&vm, 0, sizeof(vm));
+			vm.timer_delay = -1;
+			vm.energy = vm.energy_max = 100;
+			if (tad_load(&tr, raw, un)) { printf("FAIL tad_load\n"); failed++; }
+			else {
+				vm.g[0x6A9 - 0x590] = 7;
+				vm.vars[0x19] = 1; vm.vars[0x1A + 1] = 1;
+				tad_timer_unit(&tr, &vm);                      /* timer 1: damage 7 */
+				int e1 = vm.energy;
+				vm.vars[0x19] = 1; vm.vars[0x1A + 0] = 1;
+				tad_timer_unit(&tr, &vm);                      /* timer 0: message 0x2D, clears 6A9 */
+				if (e1 != 93 || vm.msg_n != 1 || vm.msg[0] != 0x2D || vm.vars[0x19] != 0 || vm.g[0x6A9 - 0x590] != 0) {
+					printf("FAIL tad timers: energy %d msgs %d (%d) active %d 6A9 %d\n", vm.energy, vm.msg_n, vm.msg_n ? vm.msg[0] : -1, vm.vars[0x19], vm.g[0x6A9 - 0x590]);
+					failed++;
+				}
+				tad_free(&tr);
+			}
 			checked++;
 		}
 		free(in); free(raw);

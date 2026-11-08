@@ -15,7 +15,14 @@ typedef struct {
 	uint8_t flags[ACL_THINGS];      /* rec[3]  */
 	uint8_t flags2[ACL_THINGS];     /* rec[15] */
 	uint8_t room[ACL_THINGS];       /* rec[10] */
-	uint8_t vars[0x40];             /* ds:611.. */
+	union {                         /* script globals ds:590..71F (the TAD routines see them as part of the data segment) */
+		uint8_t g[0x190];
+		struct {
+			uint8_t pre[0x81];      /* ds:590..610 */
+			uint8_t vars[0x40];     /* ds:611.. */
+			uint8_t post[0x190 - 0x81 - 0x40];
+		};
+	};
 	int c605;                       /* condition counter */
 	int cur;                        /* current object (thing id) */
 	int room_no;                    /* ds:232 */
