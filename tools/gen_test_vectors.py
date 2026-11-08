@@ -248,6 +248,90 @@ coll_vec = [(s, collision_vector(s)) for s in range(1, 41)]
 
 # ACL: run the start-up event (14) of every room with handlers; Python tools/acl_vm.py vs src/engine/acl.c
 import acl, acl_vm
+# ---- native routines of ROUTINEn.TAD: deterministic scenarios on the Python 8086 interpreter (tools/x86.py)
+import x86
+def tad_entries(u):
+    t = struct.unpack_from('<5H', u, 0x2C)
+    ents = []
+    p = t[3]
+    while p + 2 <= len(u):
+        w = struct.unpack_from('<H', u, p)[0]
+        if w == 0 or w > 0x1000:
+            break
+        ents.append(w)
+        p += 2
+    for k in range(9, 16):
+        if 0x2C + 4 * k + 2 <= len(u):
+            w = struct.unpack_from('<H', u, 0x2C + 4 * k)[0]
+            if 0x40 < w < 0x1000:
+                ents.append(w + 2)
+    return ents
+
+
+def tad_scenario(u, ent, seed):
+    r = Rng(seed)
+    mem = bytearray(0x100000)
+    DSG, SSG, TADG, HKG = 0x1000, 0x2100, 0x3000, 0x4000
+    mem[TADG * 16:TADG * 16 + len(u)] = u
+    ds = DSG * 16
+    mem[ds + 0x78E:ds + 0x792] = struct.pack('<HH', 1, HKG)
+    mem[ds + 0xB6:ds + 0xB8] = struct.pack('<H', 0x100)
+    for i in range(32):
+        mem[SSG * 16 + 0x100 + 2 * i:SSG * 16 + 0x102 + 2 * i] = struct.pack('<H', r.next() & 0xFFFF)
+    for _ in range(r.rnd(40)):
+        a = 0x590 + r.rnd(0x190)
+        k = r.rnd(7)
+        mem[ds + a] = (0, 1, 2, 4, 8, 0xFF)[k] if k < 6 else r.rnd(256)
+    for _ in range(r.rnd(30)):
+        mem[ds + 0x3D00 + r.rnd(0x300)] = r.rnd(256)
+    cpu = x86.CPU(mem)
+    cpu.r['ax'] = r.rnd(12)
+    for n in ('bx', 'cx', 'dx', 'si', 'di'):
+        cpu.r[n] = r.next() & 0xFFFF
+    cpu.r['bp'] = 0x3DDA + 0x10 * r.rnd(4)
+    cpu.r['sp'] = 0xFF00 - 2
+    cpu.s.update(ds=DSG, es=DSG, ss=SSG, cs=TADG)
+    cpu.ww(SSG, 0xFF00 - 2, 1)
+    cpu.ip = ent
+    trace = []
+
+    def hook(c):
+        s792 = c.rw(DSG, 0x792)
+        trace.append((s792, c.r['ax'], c.r['bx'], c.r['cx'], c.r['dx'], c.r['si'], c.r['di'], c.r['bp']))
+        c.r['ax'] = (c.r['ax'] * 31 + s792 + c.r['bx'] * 7 + c.r['cx'] * 3 + c.r['dx']) & 0xFFFF
+        c.ip = c.pop()
+        c.s['cs'] = c.pop()
+    cpu.hooks[(HKG, 1)] = hook
+    h = 0x811C9DC5
+    try:
+        cpu.run(stop=(TADG, 1), max_steps=100000)
+        okf = 1
+    except x86.X86Error:
+        okf = 0
+    vals = [okf] + [cpu.r[n] for n in ('ax', 'bx', 'cx', 'dx', 'si', 'di', 'bp', 'sp')]
+    for t in trace:
+        vals += list(t)
+    for a in list(range(0x590, 0x720)) + list(range(0x3D00, 0x4000)):
+        vals.append(mem[ds + a])
+    return vals
+
+
+tad_vec = []
+for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glob.glob(os.path.join(root, 'cadaver2', 'TATA', '[1-4]')) +
+                glob.glob(os.path.join(root, 'cadaver2', 'DATA', '[1-5]'))):
+    fs = glob.glob(os.path.join(d, 'ROUTINE*.TAD'))
+    if not fs:
+        continue
+    u = mjm.mjm_unpack(open(fs[0], 'rb').read())
+    h, cnt = 0x811C9DC5, 0
+    for ei, ent in enumerate(tad_entries(u)):
+        for sc in range(4):
+            for v in tad_scenario(u, ent, 1000 + ei * 17 + sc):
+                for b in (v & 0xFFFF).to_bytes(2, 'little'):
+                    h = ((h ^ b) * 0x01000193) & 0xFFFFFFFF
+            cnt += 1
+    tad_vec.append((os.path.relpath(d, root), cnt, h))
+
 acl_vec = []
 for d in sorted(glob.glob(os.path.join(root, 'cadaver*', '*', '[0-9]'))):
     mp2 = mjm.mjm_unpack(open(glob.glob(os.path.join(d, 'LEV*.MP2'))[0], 'rb').read())
@@ -412,6 +496,10 @@ with open(os.path.join(root, 'src', 'tests', 'vectors.h'), 'w') as o:
     o.write('};\n')
     o.write('static const StatusVector verb_vectors[] = {\n')
     for r in verb_vec:
+        o.write('\t{"%s", %d, 0x%08XU},\n' % r)
+    o.write('};\n')
+    o.write('static const StatusVector tad_vectors[] = {\n')
+    for r in tad_vec:
         o.write('\t{"%s", %d, 0x%08XU},\n' % r)
     o.write('};\n')
     o.write('typedef struct { const char *dir; int rooms; unsigned hash; } AclVector;\n')

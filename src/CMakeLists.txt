@@ -22,6 +22,7 @@ add_library(cadaver_engine STATIC
   engine/roomexits.c
   engine/panel.c
   engine/message.c
+  engine/x86.c
   engine/push.c
   engine/acl.c
   engine/gamefiles.c)

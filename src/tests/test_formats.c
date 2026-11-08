@@ -20,6 +20,7 @@
 #include "../engine/message.h"
 #include "../engine/push.h"
 #include "../engine/acl.h"
+#include "../engine/x86.h"
 #include "vectors.h"
 
 #include <stdio.h>
@@ -121,6 +122,26 @@ static unsigned collision_vector(unsigned seed) {
 		for (int k = 0; k < nm; k++) MIX(moved[k]);
 	}
 	return h;
+}
+
+/* ---- native TAD routines: the same deterministic scenarios as tools/gen_test_vectors.py (xorshift32 like Python's Rng) */
+typedef struct { uint32_t s; } TRng;
+static uint32_t trng_next(TRng *r) { uint32_t x = r->s; x ^= x << 13; x ^= x >> 17; x ^= x << 5; r->s = x; return x; }
+static unsigned trng_rnd(TRng *r, unsigned n) { return trng_next(r) % n; }
+typedef struct { int n; uint16_t t[2048][8]; } TadTrace;
+static void tad_hook(X86 *c, void *user) {
+	TadTrace *tr = (TadTrace *)user;
+	if (tr->n < 2048) {
+		uint16_t *t = tr->t[tr->n++];
+		t[0] = x86_rw(c, 0x1000, 0x792); t[1] = c->ax; t[2] = c->bx; t[3] = c->cx; t[4] = c->dx; t[5] = c->si; t[6] = c->di; t[7] = c->bp;
+	}
+	c->ax = (uint16_t)(c->ax * 31 + x86_rw(c, 0x1000, 0x792) + c->bx * 7 + c->cx * 3 + c->dx);
+	c->ip = (uint16_t)x86_pop(c);
+	c->cs = (uint16_t)x86_pop(c);
+}
+static void fnv16(unsigned *h, unsigned v) {
+	*h = (*h ^ (v & 0xFF)) * 0x01000193u;
+	*h = (*h ^ ((v >> 8) & 0xFF)) * 0x01000193u;
 }
 
 static int msg_const3(void *u) { (void)u; return 3; }
@@ -673,6 +694,82 @@ int main(int argc, char **argv) {
 			checked++;
 			free(in); free(raw);
 		}
+	}
+
+	for (size_t i = 0; i < sizeof(tad_vectors) / sizeof(tad_vectors[0]); i++) {
+		const StatusVector *tv = &tad_vectors[i];
+		char lev = tv->dir[strlen(tv->dir) - 1];
+		snprintf(path, sizeof(path), "%s/%s/ROUTINE%c.TAD", root, tv->dir, lev);
+		size_t n, un;
+		uint8_t *in = slurp(path, &n), *raw = NULL;
+		if (!in)
+			continue;
+		if (mjm_unpack(in, n, &raw, &un) == 0 && un > 0x40) {
+			static uint8_t mem[X86_MEM];
+			unsigned h = 0x811C9DC5u;
+			int cnt = 0;
+			uint16_t ents[40];
+			int ne = 0;
+			unsigned p = (unsigned)(raw[0x2C + 6] | (raw[0x2C + 7] << 8));
+			while (p + 2 <= un && ne < 24) {
+				unsigned w = (unsigned)(raw[p] | (raw[p + 1] << 8));
+				if (w == 0 || w > 0x1000) break;
+				ents[ne++] = (uint16_t)w;
+				p += 2;
+			}
+			for (int k = 9; k < 16; k++)
+				if ((size_t)(0x2C + 4 * k + 2) <= un) {
+					unsigned w = (unsigned)(raw[0x2C + 4 * k] | (raw[0x2C + 4 * k + 1] << 8));
+					if (w > 0x40 && w < 0x1000 && ne < 40) ents[ne++] = (uint16_t)(w + 2);
+				}
+			for (int ei = 0; ei < ne; ei++)
+				for (int sc = 0; sc < 4; sc++) {
+					TRng r = {(uint32_t)(1000 + ei * 17 + sc) & 0xFFFFFFFFu};
+					if (!r.s) r.s = 1;
+					memset(mem, 0, sizeof(mem));
+					memcpy(mem + 0x30000, raw, un);
+					uint8_t *ds = mem + 0x10000;
+					ds[0x78E] = 1; ds[0x78F] = 0; ds[0x790] = 0; ds[0x791] = 0x40;
+					ds[0xB6] = 0x00; ds[0xB7] = 0x01;
+					for (int q = 0; q < 32; q++) {
+						unsigned v = trng_next(&r) & 0xFFFF;
+						mem[0x21000 + 0x100 + 2 * q] = (uint8_t)v; mem[0x21000 + 0x101 + 2 * q] = (uint8_t)(v >> 8);
+					}
+					unsigned nn = trng_rnd(&r, 40);
+					for (unsigned q = 0; q < nn; q++) {
+						unsigned a = 0x590 + trng_rnd(&r, 0x190), k = trng_rnd(&r, 7);
+						static const uint8_t cv[6] = {0, 1, 2, 4, 8, 0xFF};
+						ds[a] = k < 6 ? cv[k] : (uint8_t)trng_rnd(&r, 256);
+					}
+					nn = trng_rnd(&r, 30);
+					for (unsigned q = 0; q < nn; q++)
+						ds[0x3D00 + trng_rnd(&r, 0x300)] = (uint8_t)trng_rnd(&r, 256);
+					X86 c;
+					x86_init(&c, mem);
+					c.ax = (uint16_t)trng_rnd(&r, 12);
+					c.bx = (uint16_t)trng_next(&r); c.cx = (uint16_t)trng_next(&r); c.dx = (uint16_t)trng_next(&r);
+					c.si = (uint16_t)trng_next(&r); c.di = (uint16_t)trng_next(&r);
+					c.bp = (uint16_t)(0x3DDA + 0x10 * trng_rnd(&r, 4));
+					c.sp = 0xFF00 - 2;
+					c.ds = 0x1000; c.es = 0x1000; c.ss = 0x2100; c.cs = 0x3000;
+					x86_ww(&c, 0x2100, 0xFF00 - 2, 1);
+					c.ip = ents[ei];
+					static TadTrace tr;
+					tr.n = 0;
+					c.hook_cs = 0x4000; c.hook_ip = 1; c.hook = tad_hook; c.hook_user = &tr;
+					int okf = x86_run(&c, 0x3000, 1, 100000) >= 0;
+					fnv16(&h, (unsigned)okf);
+					fnv16(&h, c.ax); fnv16(&h, c.bx); fnv16(&h, c.cx); fnv16(&h, c.dx); fnv16(&h, c.si); fnv16(&h, c.di); fnv16(&h, c.bp); fnv16(&h, c.sp);
+					for (int q = 0; q < tr.n; q++)
+						for (int z = 0; z < 8; z++) fnv16(&h, tr.t[q][z]);
+					for (unsigned a = 0x590; a < 0x720; a++) fnv16(&h, ds[a]);
+					for (unsigned a = 0x3D00; a < 0x4000; a++) fnv16(&h, ds[a]);
+					cnt++;
+				}
+			if (cnt != tv->rooms || h != tv->hash) { printf("FAIL tad %s: %d scenarios hash %08X\n", tv->dir, cnt, h); failed++; }
+			checked++;
+		}
+		free(in); free(raw);
 	}
 
 	for (size_t i = 0; i < sizeof(acl_vectors) / sizeof(acl_vectors[0]); i++) {
