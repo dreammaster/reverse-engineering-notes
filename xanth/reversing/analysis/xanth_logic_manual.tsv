@@ -3,25 +3,23 @@ cmdLookAt	invalid conversion from 'int' to 'char*' [-fpermissive]
 conv_text_05	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 conv_text_55	invalid conversion from 'char*' to 'int' [-fpermissive]
 conv_text_57	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
-conv_text_82	cannot convert 'Xanth::TextRef' to 'const char*'
+conv_text_82	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 conv_text_83	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 conv_text_86	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
-conv_text_87	cannot convert 'Xanth::TextRef' to 'const char*'
 event_fn_05	invalid conversion from 'char*' to 'int' [-fpermissive]
 event_fn_07	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_17	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_35	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_045	cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-objh_104	cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
+objh_045	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
+objh_104	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_127	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_129	cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-objh_140	cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
+objh_129	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
+objh_140	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_147	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_149	cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
+objh_149	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_198	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_207	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_230	cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-objh_291	cannot convert 'Xanth::TextRef' to 'char*' in assignment
+objh_230	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_295	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_296	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_334	invalid conversion from 'int' to 'char*' [-fpermissive]
@@ -29,8 +27,10 @@ objh_341	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_345	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_358	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_360	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_378	cannot convert 'Xanth::TextRef' to 'char*' in assignment
-objh_380	cannot convert 'Xanth::TextRef' to 'char*' in assignment
-sub_443EB	invalid conversion from 'char*' to 'int' [-fpermissive]
+objh_380	invalid conversion from 'char*' to 'int' [-fpermissive]
+objh_390	invalid conversion from 'char*' to 'int' [-fpermissive]
+sub_44130	invalid conversion from 'char*' to 'int' [-fpermissive]
+sub_442EF	no matching function for call to 'Xanth::Game::__aFuldiv(Xanth::Word&, Xanth::Word&, intpt
 sub_4FB5F	'FAR' was not declared in this scope
+sub_60460	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 sub_7D0DF	invalid conversion from 'int' to 'char*' [-fpermissive]

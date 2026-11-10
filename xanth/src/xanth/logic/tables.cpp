@@ -483,7 +483,7 @@ static int wrap_objh_287(Game &g, int a) { (void)a; return objh_287(g, a); }
 static int wrap_objh_288(Game &g, int a) { (void)a; return objh_288(g, a); }
 static int wrap_objh_289(Game &g, int a) { (void)a; return objh_289(g, a); }
 static int wrap_objh_290(Game &g, int a) { (void)a; return objh_290(g, a); }
-static int wrap_objh_291(Game &g, int a) { (void)a; return objh_291(g); }
+static int wrap_objh_291(Game &g, int a) { (void)a; return objh_291(g, a); }
 static int wrap_objh_292(Game &g, int a) { (void)a; return objh_292(g, a); }
 static int wrap_objh_293(Game &g, int a) { (void)a; return objh_293(g, a); }
 static int wrap_objh_294(Game &g, int a) { (void)a; return objh_294(g, a); }

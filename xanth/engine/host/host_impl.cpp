@@ -45,8 +45,12 @@ static std::string expand(Cpu &c, const std::string &fmt, int n) {
 		if (k == 's') {
 			uint16_t off = c.arg(n), seg = c.arg(n + 1);
 			n += 2;
-			bool ok;
-			std::string s = h.str(seg, off, 400, &ok);
+			bool ok = true;
+			std::string s;
+			if ((seg & 0xFF00) == 0xF000 && h.msgs && h.msgs->has(((uint32_t)seg << 16) | off))
+				s = h.msgs->string(((uint32_t)seg << 16) | off);       // a message id where a string is expected: the original's text routine resolves it
+			else
+				s = h.str(seg, off, 400, &ok);
 			if (!ok) {
 				char b[96];
 				snprintf(b, sizeof(b), "%%s argument %04X:%04X is not a NUL-terminated string", seg, off);

@@ -33,6 +33,21 @@ int conv_cb_02(Game &g, Word arg0, Word arg1) {
 	}
 }
 
+// conv_cb_03
+int conv_cb_03(Game &g, Word arg0, Word arg1) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	if (arg1 == 1) {
+		return g.schedule_event(3, 0xC);
+	}
+	if (arg1 == 3) {
+		v.flag_8526E_conv03 = (uint16)(g._rand()) % (uint16)3;
+		return g.schedule_event(3, 0xC);
+	} else {
+		return arg1 - 3;
+	}
+}
+
 // conv_cb_04
 int conv_cb_04(Game &g, Word arg0, Word arg1) {
 	Vars &v = g.state.v;
@@ -232,6 +247,80 @@ int conv_cb_17(Game &g, Word arg0, Word arg1) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	return conversation_set_enabled(g, arg0, arg1, 0);
+}
+
+// conv_cb_18
+int conv_cb_18(Game &g, Word arg0, Word arg1) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	intptr_t r11_13, r14_7, r16_1;
+	if (arg1 > 0x16) {
+		return arg1;
+	}
+	switch (arg1) {
+	case 0:
+	case 1:
+	case 2:
+	case 12:
+	case 17:
+		return conversation_set_enabled(g, arg0, arg1, 0);
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 19:
+	case 20:
+	case 21:
+		break;
+	case 9:
+		conversation_set_enabled(g, arg0, arg1, 0);
+		return conversation_set_enabled(g, arg0, 0xA, 1);
+	case 10:
+		conversation_set_enabled(g, arg0, arg1, 0);
+		conversation_set_enabled(g, arg0, 0xB, 1);
+	L8:;
+		v.flag_852D6_conv_text_23 = 1;
+		return 0;
+	case 11:
+		goto L8;
+	case 13:
+		v.word_8526C += 5;
+		if ((int16)v.word_8526C >= 0x15) {
+			conversation_set_enabled(g, arg0, arg1, 0);
+			conversation_set_enabled(g, arg0, 0xE, 0);
+			conversation_set_enabled(g, arg0, 0xF, 0);
+			g.cancel_event(0xF);
+			g.schedule_event(0xF, 0);
+		}
+	L11:;
+		r11_13 = g._rand();
+		v.word_85270 = (uint16)r11_13 % (uint16)5;
+		return (uint16)r11_13 / (uint16)5;
+	case 14:
+		goto L11;
+	case 15:
+		if ((int16)(v.word_8526C - 5) > 0) {
+			v.word_8526C -= 5;
+		}
+		goto L11;
+	case 16:
+		conversation_set_enabled(g, arg0, arg1, 0);
+		r14_7 = conversation_set_enabled(g, arg0, 0x11, 1);
+		v.byte_852DC = 1;
+		return r14_7;
+	case 18:
+		v.byte_852E0 = 1;
+		conversation_set_enabled(g, 0x8122, 3, 1);
+		conversation_set_enabled(g, 0x8123, 0, 1);
+		conversation_set_enabled(g, 0x8126, 2, 1);
+		return conversation_set_enabled(g, 0x8127, 0, 1);
+	case 22:
+		r16_1 = g._rand();
+		v.word_85272 = r16_1 & 3;
+		return r16_1 & 3;
+	}
 }
 
 // conv_cb_19

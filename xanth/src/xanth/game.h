@@ -45,6 +45,7 @@ struct TextRef {
 	static TextRef message(uint32 i) { TextRef t; t.id = i; return t; }
 	static TextRef fromWords(Word lo, Word hi) { TextRef t; t.id = ((uint32)(uint16)(int)hi << 16) | (uint16)(int)lo; return t; }
 	bool isMessage() const { return id != 0; }
+	operator char *() const { return const_cast<char *>(text); }
 };
 
 /** An argument of a formatted message: a number for %d / %u / %c or a string for %s. */

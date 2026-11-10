@@ -209,6 +209,10 @@ class Renderer:
             return "(~strlen(%s) - 1)" % self.R(e[1])
         if op == "words":
             return "TextRef::fromWords(%s, %s)" % (self.R(e[1]), self.R(e[2]))
+        if op in ("sdiv", "smod"):
+            return "(int16)%s %s (int16)%s" % (self.par(self.R(e[1], False)), "/" if op == "sdiv" else "%", self.par(self.R(e[2], False)))
+        if op in ("udiv", "umod"):
+            return "(uint16)%s %s (uint16)%s" % (self.par(self.R(e[1], False)), "/" if op == "udiv" else "%", self.par(self.R(e[2], False)))
         if op == "lo8set":
             if e[1] == ("undef",):
                 return self.R(e[2])

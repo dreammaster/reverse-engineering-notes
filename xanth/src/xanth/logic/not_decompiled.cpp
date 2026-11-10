@@ -5,12 +5,9 @@ namespace Xanth {
 
 // Functions the decompiler could not translate yet; until a hand-written replacement exists they do nothing.
 int Conversation_GetEntry(Game &, Word, Word) { return 0; }  // does not compile yet: 'convId_hi' was not declared in this scope; did you mean 'convId'?
-int Palette_proc1(Game &) { return 0; }  // instruction imul (imul    byte ptr es:game_palette.r[bx])
-int Screen_RestoreSubPalettes(Game &) { return 0; }  // instruction idiv (idiv    bx)
+int Screen_RestoreSubPalettes(Game &) { return 0; }  // instruction movsw (movsw)
 int cmdLookAt(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int conv_cb_03(Game &, Word) { return 0; }  // instruction div (div     cx)
 int conv_cb_06(Game &, Word, Word) { return 0; }  // register bx read before it is set
-int conv_cb_18(Game &, Word, Word) { return 0; }  // instruction div (div     cx)
 int conv_cb_21(Game &, Word) { return 0; }  // instruction movsw (movsw)
 int conv_cb_46(Game &, Word) { return 0; }  // instruction movsw (movsw)
 TextRef conv_text_01(Game &) { return TextRef(); }  // operand word ptr (dword_86A3E+2)[bx] (mov     dx, word ptr (dword_86A3E+2)[bx])
@@ -20,36 +17,28 @@ TextRef conv_text_20(Game &) { return TextRef(); }  // operand word ptr (dword_8
 TextRef conv_text_55(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 TextRef conv_text_57(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 TextRef conv_text_77(Game &) { return TextRef(); }  // render nneg
-TextRef conv_text_82(Game &) { return TextRef(); }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'const char*'
+TextRef conv_text_82(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 TextRef conv_text_83(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 TextRef conv_text_86(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
-TextRef conv_text_87(Game &) { return TextRef(); }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'const char*'
-int event_fn_00(Game &) { return 0; }  // instruction idiv (idiv    cx)
 int event_fn_05(Game &) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int event_fn_07(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int event_fn_11(Game &) { return 0; }  // instruction idiv (idiv    cx)
-int event_fn_14(Game &) { return 0; }  // instruction idiv (idiv    cx)
 int event_fn_17(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int event_fn_25(Game &) { return 0; }  // use of bp (push    [bp+si+var_22])
 int event_fn_35(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int event_fn_40(Game &) { return 0; }  // instruction idiv (idiv    cx)
-int event_fn_43(Game &) { return 0; }  // instruction div (div     cx)
 int event_fn_44(Game &) { return 0; }  // instruction movsw (movsw)
-int get_number_suffix(Game &, Word) { return 0; }  // instruction idiv (idiv    cx)
 int init_random(Game &) { return 0; }  // render sseg
-TextRef number_to_words(Game &, Word) { return TextRef(); }  // instruction idiv (idiv    cx)
-int objh_045(Game &) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-int objh_104(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
+TextRef number_to_words(Game &, Word) { return TextRef(); }  // instruction movsw (movsw)
+int objh_045(Game &) { return 0; }  // does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
+int objh_104(Game &, Word) { return 0; }  // does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 int objh_127(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_128(Game &, Word) { return 0; }  // render sseg
-int objh_129(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-int objh_140(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
+int objh_129(Game &, Word) { return 0; }  // does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
+int objh_140(Game &, Word) { return 0; }  // does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 int objh_147(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_149(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
+int objh_149(Game &, Word) { return 0; }  // does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 int objh_198(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_207(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_230(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-int objh_291(Game &) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
+int objh_230(Game &, Word) { return 0; }  // does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 int objh_295(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_296(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_334(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
@@ -57,18 +46,16 @@ int objh_341(Game &, Word) { return 0; }  // does not compile yet: invalid conve
 int objh_345(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_358(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_360(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_378(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
-int objh_380(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
+int objh_380(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
+int objh_390(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int sub_1AAFB(Game &) { return 0; }  // instruction stosw (stosw)
 int sub_1C4ED(Game &, Word, Word, Word, Word) { return 0; }  // use of bp (lea     ax, [bp+si+var_4E])
-int sub_1EF11(Game &, Word, Word) { return 0; }  // instruction imul (imul    cx)
 int sub_2A333(Game &) { return 0; }  // carry after res (adc     [bx+2], dx)
+int sub_44130(Game &, Word, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int sub_44233(Game &) { return 0; }  // render sseg
-int sub_442EF(Game &, Word, Word) { return 0; }  // instruction idiv (idiv    [bp+var_6])
-int sub_443EB(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
-int sub_4E600(Game &) { return 0; }  // instruction div (div     cx)
+int sub_442EF(Game &, Word, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::__aFuldiv(Xanth::Word&, Xanth::Word&, intpt
 TextRef sub_4FB5F(Game &, Word, Word) { return TextRef(); }  // does not compile yet: 'FAR' was not declared in this scope
-int sub_60460(Game &) { return 0; }  // instruction div (div     cx)
+int sub_60460(Game &) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 int sub_7D0DF(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 
 } // namespace Xanth

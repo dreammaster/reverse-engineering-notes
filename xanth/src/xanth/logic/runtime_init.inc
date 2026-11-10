@@ -30,6 +30,7 @@
 		rt.seg_8A9E4 = 13217;
 		rt.seg_8A9F8 = 13217;
 		rt.seg_8A9FE = 12899;
+		rt.seg_8AA02 = 34044;
 		rt.seg_8AA04 = 12899;
 		rt.seg_8AA06 = 13217;
 		rt.seg_8AA08 = 12899;
@@ -38,6 +39,7 @@
 		rt.seg_8AA14 = 34044;
 		rt.seg_8AA18 = 13153;
 		rt.seg_8AA1E = 13217;
+		rt.seg_8AA54 = 12899;
 		rt.seg_8AA58 = 12899;
 		rt.seg_8AA5A = 12899;
 		rt.seg_8AA5C = 12899;
@@ -62,6 +64,7 @@
 		rt.unk_656E0 = 44;
 		rt.unk_6F3B4 = 114;
 		rt.unk_70104 = 103;
+		rt.unk_71B24 = 76;
 		rt.unk_727C4 = 103;
 		rt.unk_73198 = 97;
 		rt.unk_73BA4 = 103;
@@ -108,15 +111,19 @@
 		rt.word_86B04 = 61493;
 		rt.word_871F4 = 74;
 		rt.word_8AA28 = 12620;
+		rt.word_8AA46 = 12628;
 		rt.word_8AA4A = 12629;
 		rt.word_8AA64 = 12701;
 		rt.word_8AA66 = 12701;
 		rt.word_8AA74 = 13023;
 		rt.word_8AA76 = 13023;
+		rt.word_8AA7C = 13007;
 		rt.word_8AA86 = 13195;
 		rt.word_8AA8A = 13175;
+		rt.word_8AA98 = 13050;
 		rt.word_8AA9A = 13137;
 		rt.word_8AA9C = 13158;
+		rt.word_8AAE8 = 13245;
 		rt.word_8AAEA = 13026;
 		rt.word_8AAEE = 13138;
 		rt.word_8AAF4 = 12934;

@@ -428,6 +428,30 @@ class Evaluator:
             hi = self.mem_expr(st, op2, blk, 2)
             self.store(st, stmts, ops[0], lo, blk, 2)
             st.regs["es" if mn == "les" else "ds"] = hi
+        elif mn in ("div", "idiv", "mul", "imul") and len(ops) == 1:
+            size = self.operand_size(ops[0]) or 2
+            den = self.read(st, ops[0], blk, size)
+            if mn in ("mul", "imul"):
+                if size == 1:
+                    st.regs["ax"] = simp(("mul", self.reg_get8(st, "al", blk), den))
+                else:
+                    a = self.reg_get16(st, "ax", blk)
+                    st.regs["dx"] = ("mulhi", a, den)
+                    st.regs["ax"] = simp(("mul", a, den))
+                st.flags = None
+            else:
+                if size != 2:
+                    raise Unsupported("byte division")
+                ax = self.reg_get16(st, "ax", blk)
+                dx = st.regs.get("dx")
+                signed = mn == "idiv"
+                if signed and not (dx is not None and dx[0] == "sx16" and dx[1] == ax):
+                    raise Unsupported("32-bit signed division")
+                if not signed and dx != K(0):
+                    raise Unsupported("32-bit unsigned division")
+                st.regs["ax"] = ("sdiv" if signed else "udiv", ax, den)
+                st.regs["dx"] = ("smod" if signed else "umod", ax, den)
+                st.flags = None
         elif mn in ("cmc", "cld", "std", "cli", "sti", "nop", "clc", "stc"):
             return
         elif mn == "call":

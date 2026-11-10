@@ -77,6 +77,7 @@ class LogicNames(Names):
         self.calls = {}               # routines reached through Game: name -> max argument count
         self.estr = {}                # program text -> index
         self.sig = {}                 # generated function -> (return type, parameter count)
+        self.farfns = set()           # generated functions that return a far pointer (text)
         self.cur = None
         for n in CORE:
             self.rt[n] = 2
@@ -114,7 +115,7 @@ class LogicNames(Names):
         return logic_name(STUBS.get(name, name))
 
     def returns_far(self, name):
-        return name.startswith("conv_text") or name == "number_to_words" or logic_name(name) in getattr(self, "namecb", ())
+        return name.startswith("conv_text") or name == "number_to_words" or logic_name(name) in getattr(self, "namecb", ()) or logic_name(name) in getattr(self, "farfns", ())
 
     def min_params(self, name):
         want = logic_name(name)
@@ -302,6 +303,19 @@ def main():
             p = line.rstrip(NL).split(TAB)
             if len(p) >= 2:
                 manual[p[0]] = p[1]
+    if not args:
+        # first pass: only to learn which functions return text, so that their callers are typed right
+        for n in todo:
+            if logic_name(n) in manual:
+                continue
+            try:
+                function_text(ctx, n, names)
+            except Exception:
+                pass
+        far = set(names.farfns)
+        names = LogicNames(ctx, load_vars(), generated)
+        names.namecb = {logic_name(t) for _, t in namecb}
+        names.farfns = far
     for n in todo:
         if logic_name(n) in manual:
             bad[n] = "does not compile yet: " + manual[logic_name(n)]

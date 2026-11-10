@@ -827,6 +827,14 @@ def render_function(ctx, name, names=None, void=None):
     em = Emitter(f, names, rn)
     em.far_return = names.returns_far(name)
     rets = [b.term[1] for b in f.blocks.values() if b.term and b.term[0] == "ret" and not getattr(b, "dead", False)]
+    if not em.far_return and hasattr(names, "farfns"):
+        for b in f.blocks.values():
+            if b.term and b.term[0] == "ret" and not getattr(b, "dead", False) and b.term[1] is not None and b.term[2] is not None:
+                p2 = pack_args([b.term[1], b.term[2]])
+                if len(p2) == 1 and p2[0][0] in ("str", "kstr", "far", "textvar", "null"):
+                    em.far_return = True
+                    names.farfns.add(re.sub(r"[^A-Za-z0-9_]", "_", re.sub(r"^j_", "", name.rstrip("?"))))
+                    break
     defined = any(r is not None and r[0] not in ("res", "in", "undef") for r in rets)
     em.rets_void = void if void is not None else (not defined and not em.far_return and not re.match(r"^(objh_|exit_fn_|event_fn_|conv_cb_|conv_text_|cmd[A-Z])", name) and ctx.ret_used.get(name, 0) == 0)
     body = em.emit(f.entry, set())
@@ -865,7 +873,7 @@ def function_text(ctx, name, names=None, void=None):
     locs = sorted(set(re.findall(r"\bv[0-9A-F]+(?:_hi)?\b", text)) | {n for n in named | {"si", "di"} if re.search(r"\b%s\b" % re.escape(n), text)})
     locs = [n for n in locs if not n.endswith("_hi")] + [n for n in locs if n.endswith("_hi")]
     allv = locs + vars_
-    ptr_src = r'("|ES\(|g\.print_obj\(|g\.ResourceText_GetStr\(|_strlwr\(|_strupr\(|nullptr|number_to_words)'
+    ptr_src = r'("|ES\(|g\.print_obj\(|g\.ResourceText_GetStr\(|_strlwr\(|_strupr\(|nullptr|number_to_words' + "".join(r"|" + fn + r"\(g" for fn in getattr(names, "farfns", ())) + r')'
     strs = {n for n in allv if re.search(r'(^|\s)%s = \(*([^;?]*\? )?' % re.escape(n) + ptr_src, text)}
     strs |= {n for n in allv if re.search(r'(strcpy|strcat)\(%s,' % re.escape(n), text)}
     copies = [(m.group(1), m.group(2)) for m in re.finditer(r'(?:^|\s)(' + "|".join(re.escape(n) for n in allv) + r') = ('  + "|".join(re.escape(n) for n in allv) + r');', text)] if allv else []
