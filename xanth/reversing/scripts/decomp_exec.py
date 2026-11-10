@@ -392,6 +392,19 @@ class Evaluator:
             self.store(st, stmts, ops[0], simp(("not", a)), blk, size)
         elif mn == "shr" and ops[0].strip() == "cx" and ops[1].strip() == "1" and self.string_copy(st, stmts, x, blk):
             return
+        elif mn in ("movsw", "movsb") and x.pfx == "rep" and x.idx not in self.skip:
+            unit = 2 if mn == "movsw" else 1
+            count = self.reg_get16(st, "cx", blk)
+            es = st.regs.get("es", ("in", "es", blk))
+            ds = st.regs.get("ds", ("dseg",))
+            dst = self.ptr(es, self.reg_get16(st, "di", blk))
+            src = self.ptr(ds, self.reg_get16(st, "si", blk))
+            self.ncall += 1
+            nbytes = simp(("mul", count, K(unit))) if unit != 1 else count
+            stmts.append(("call", (blk, 1000 + self.ncall), "memcpy", [dst, src, nbytes]))
+            st.regs["cx"] = K(0)
+            st.shadow.pop("di", None)
+            st.shadow.pop("si", None)
         elif mn == "scasb":
             self.scasb(st, x, blk)
         elif mn in ("shl", "sal", "shr", "sar"):

@@ -111,6 +111,7 @@
 		rt.word_86B04 = 61493;
 		rt.word_871F4 = 74;
 		rt.word_8AA28 = 12620;
+		rt.word_8AA44 = 12623;
 		rt.word_8AA46 = 12628;
 		rt.word_8AA4A = 12629;
 		rt.word_8AA64 = 12701;
@@ -130,7 +131,6 @@
 		rt.word_8AD44 = 65535;
 		rt.word_8AD52 = 65535;
 		rt.word_8AD54 = 65535;
-		rt.word_8ADB8 = 65535;
 		rt.word_8ADBA = 65535;
 		rt.word_8BDFA = 65535;
 		rt.word_8BE02 = 65535;

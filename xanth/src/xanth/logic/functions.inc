@@ -363,7 +363,7 @@ int exit_fn_54(Game &g, Word a0);
 int exit_fn_55(Game &g, Word a0);
 TextRef get_number_suffix(Game &g, Word a0);
 int go_to_room(Game &g, Word a0);
-int init_random(Game &g);  // not decompiled
+int init_random(Game &g);
 int loc_701CD(Game &g, Word a0);
 int lock_combination_correct(Game &g);
 int move_to_current_room(Game &g, Word a0);
@@ -850,7 +850,7 @@ int sub_40A4B(Game &g, Word a0, Word a1);
 int sub_40B67(Game &g, Word a0);
 int sub_40B7A(Game &g, Word a0, Word a1);
 int sub_44130(Game &g, Word a0, Word a1);  // not decompiled
-int sub_44233(Game &g);  // not decompiled
+int sub_44233(Game &g);
 int sub_442EF(Game &g, Word a0, Word a1);  // not decompiled
 TextRef sub_443EB(Game &g, Word a0);
 int sub_4A206(Game &g);

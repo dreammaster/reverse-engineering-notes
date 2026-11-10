@@ -7,6 +7,9 @@ int MouseCursor_SetTick(Word a0 = 0) { return other("MouseCursor_SetTick", a0); 
 int Mouse_removeCursorFromScreen(Word a0 = 0) { return other("Mouse_removeCursorFromScreen", a0); }
 int Mouse_update(Word a0 = 0) { return other("Mouse_update", a0); }
 int Screen_FadeOut(Word a0 = 0) { return other("Screen_FadeOut", a0); }
+int _localtime(Word a0 = 0) { return other("_localtime", a0); }
+int _srand(Word a0 = 0) { return other("_srand", a0); }
+int _time(Word a0 = 0) { return other("_time", a0); }
 int clear_text_area(Word a0 = 0) { return other("clear_text_area", a0); }
 int disable_pic_regions(Word a0 = 0, Word a1 = 0, Word a2 = 0) { return other("disable_pic_regions", a0, a1, a2); }
 int game_over_screen(Word a0 = 0) { return other("game_over_screen", a0); }
@@ -41,6 +44,7 @@ int sub_31301(Word a0 = 0) { return other("sub_31301", a0); }
 int sub_3130B(Word a0 = 0) { return other("sub_3130B", a0); }
 int sub_3F6D0(Word a0 = 0) { return other("sub_3F6D0", a0); }
 int sub_3F731(Word a0 = 0) { return other("sub_3F731", a0); }
+int sub_3F96D(Word a0 = 0) { return other("sub_3F96D", a0); }
 int sub_58F87(Word a0 = 0) { return other("sub_58F87", a0); }
 int sub_5F96C(Word a0 = 0) { return other("sub_5F96C", a0); }
 int write_game_state(Word a0 = 0) { return other("write_game_state", a0); }

@@ -47,9 +47,10 @@ static std::string expand(Cpu &c, const std::string &fmt, int n) {
 			n += 2;
 			bool ok = true;
 			std::string s;
-			if ((seg & 0xFF00) == 0xF000 && h.msgs && h.msgs->has(((uint32_t)seg << 16) | off))
-				s = h.msgs->string(((uint32_t)seg << 16) | off);       // a message id where a string is expected: the original's text routine resolves it
-			else
+			bool isMsg = false;
+			if ((seg & 0xFF00) == 0xF000)
+				s = h.message(((uint32_t)seg << 16) | off, &isMsg);   // a message id where a string is expected: the original's text routine resolves it
+			if (!isMsg)
 				s = h.str(seg, off, 400, &ok);
 			if (!ok) {
 				char b[96];

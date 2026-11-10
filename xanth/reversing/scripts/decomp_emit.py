@@ -52,6 +52,10 @@ def pack_args(args, null_ok=False):
                 out.append(("words", a, b))
                 i += 2
                 continue
+            if a[0] == "addrof" and b[0] == "sseg":
+                out.append(a)                  # a pointer to a local variable
+                i += 2
+                continue
             if a[0] == "k" and b[0] == "dseg":
                 out.append(("kstr", a[1]))
                 i += 2
@@ -124,7 +128,7 @@ def prepare(f):
                     es.append(s[1])
                 if any(x[0] == "loc" and x[1] == reg for e in es for x in walk(e)):
                     read = True
-            for e in exprs_of(Block_(b.term)):
+            for e in exprs_of(Block_(b.term, getattr(b, "void_ret", False))):
                 if any(x[0] == "loc" and x[1] == reg for x in walk(e)):
                     read = True
         if not read:
@@ -160,9 +164,10 @@ def prepare(f):
 
 class Block_:
     """adapter so exprs_of can be used on a terminator alone"""
-    def __init__(self, term):
+    def __init__(self, term, void_ret=False):
         self.stmts = []
         self.term = term
+        self.void_ret = void_ret
 
 
 # --------------------------------------------------------------------------------------------------------------------------------- structuring
@@ -181,7 +186,7 @@ def remove_dead_vars(f):
                     for x in walk(e):
                         if x[0] in ("phi", "tmp", "in"):
                             used.add(("phi",) + x[1:] if x[0] == "in" else x)
-            for e in exprs_of(Block_(b.term)):
+            for e in exprs_of(Block_(b.term, getattr(b, "void_ret", False))):
                 for x in walk(e):
                     if x[0] in ("phi", "tmp", "in"):
                         used.add(("phi",) + x[1:] if x[0] == "in" else x)
@@ -195,7 +200,7 @@ def remove_dead_vars(f):
                     for x in walk(e):
                         if x[0] == "loc":
                             locs_read.add(x[1])
-            for e in exprs_of(Block_(b.term)):
+            for e in exprs_of(Block_(b.term, getattr(b, "void_ret", False))):
                 for x in walk(e):
                     if x[0] == "loc":
                         locs_read.add(x[1])
@@ -769,6 +774,18 @@ def render_function(ctx, name, names=None, void=None):
         names.ctx = ctx
     f = eval_function(ctx, name)
     f.labels_block = {lab: next(b.id for b in f.blocks.values() if b.start == ctx.labels[lab]) for tb in ctx.tables.values() for lab in tb if lab in ctx.labels and any(b.start == ctx.labels[lab] for b in f.blocks.values())}
+    rets0 = [b.term[1] for b in f.blocks.values() if b.term and b.term[0] == "ret" and not getattr(b, "dead", False)]
+    far0 = names.returns_far(name)
+    if not far0 and hasattr(names, "farfns"):
+        for b in f.blocks.values():
+            if b.term and b.term[0] == "ret" and b.term[1] is not None and b.term[2] is not None:
+                p2 = pack_args([b.term[1], b.term[2]])
+                if len(p2) == 1 and p2[0][0] in ("str", "kstr", "far", "textvar", "null"):
+                    far0 = True
+    defined0 = any(r is not None and r[0] not in ("res", "in", "undef") for r in rets0)
+    void0 = void if void is not None else (not defined0 and not far0 and not re.match(r"^(objh_|exit_fn_|event_fn_|conv_cb_|conv_text_|cmd[A-Z])", name) and ctx.ret_used.get(name, 0) == 0)
+    for b in f.blocks.values():
+        b.void_ret = void0
     prepare(f)
     merge_diamonds(f)
     coalesce(f)
@@ -816,7 +833,7 @@ def render_function(ctx, name, names=None, void=None):
                             continue
                         break
                     else:
-                        es = exprs_of(Block_(b.term)) if b.term[0] in ("if", "ret", "jtable") else []
+                        es = exprs_of(Block_(b.term, getattr(b, "void_ret", False))) if b.term[0] in ("if", "ret", "jtable") else []
                         if any(x == me for e in es for x in walk(e)):
                             nres = sum(1 for e in es for x in walk(e) if x[0] == "res" and x[1] not in inline)
                             ok = nres == 1 or pure_me

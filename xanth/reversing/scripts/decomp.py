@@ -310,7 +310,7 @@ def cmp_expr(cc, a, b):
             if a[3][1] == 0 and a[2][1] != 0:
                 return ("lnot", a[1]) if cc == "eq" else a[1]
     if cc in ("neg", "nneg"):
-        return ("lt" if cc == "neg" else "ge", a, K(0)) if is_k(b) and b[1] == 0 else (cc, a, b)
+        return ("lt" if cc == "neg" else "ge", a, b)
     return (cc, a, b)
 
 

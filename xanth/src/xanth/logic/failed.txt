@@ -1,16 +1,16 @@
 Conversation_GetEntry	does not compile yet: 'convId_hi' was not declared in this scope; did you mean 'convId'?
-Screen_RestoreSubPalettes	instruction movsw (movsw)
+Screen_RestoreSubPalettes	does not compile yet: 'FAR' was not declared in this scope
 cmdLookAt	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 conv_cb_06	register bx read before it is set
-conv_cb_21	instruction movsw (movsw)
-conv_cb_46	instruction movsw (movsw)
+conv_cb_21	does not compile yet: 'FAR' was not declared in this scope
+conv_cb_46	does not compile yet: 'FAR' was not declared in this scope
 conv_text_01	operand word ptr (dword_86A3E+2)[bx] (mov     dx, word ptr (dword_86A3E+2)[bx])
 conv_text_05	does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 conv_text_16	instruction movsw (movsw)
 conv_text_20	operand word ptr (dword_86ADA+2)[bx] (mov     dx, word ptr (dword_86ADA+2)[bx])
 conv_text_55	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 conv_text_57	does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
-conv_text_77	render nneg
+conv_text_77	does not compile yet: incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'
 conv_text_82	does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 conv_text_83	does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 conv_text_86	does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
@@ -19,13 +19,12 @@ event_fn_07	does not compile yet: invalid conversion from 'int' to 'char*' [-fpe
 event_fn_17	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_25	use of bp (push    [bp+si+var_22])
 event_fn_35	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-event_fn_44	instruction movsw (movsw)
-init_random	render sseg
+event_fn_44	does not compile yet: 'FAR' was not declared in this scope
 number_to_words	instruction movsw (movsw)
 objh_045	does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_104	does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_127	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_128	render sseg
+objh_128	does not compile yet: invalid conversion from 'intptr_t' {aka 'long long int'} to 'char*' [-fpermissive]
 objh_129	does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_140	does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_147	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
@@ -46,7 +45,6 @@ sub_1AAFB	instruction stosw (stosw)
 sub_1C4ED	use of bp (lea     ax, [bp+si+var_4E])
 sub_2A333	carry after res (adc     [bx+2], dx)
 sub_44130	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
-sub_44233	render sseg
 sub_442EF	does not compile yet: no matching function for call to 'Xanth::Game::__aFuldiv(Xanth::Word&, Xanth::Word&, intpt
 sub_4FB5F	does not compile yet: 'FAR' was not declared in this scope
 sub_60460	does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'

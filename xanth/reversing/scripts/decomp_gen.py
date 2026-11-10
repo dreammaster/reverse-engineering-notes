@@ -207,7 +207,7 @@ def exprs_of(b):
     elif t[0] == "jtable":
         out.append(t[2])
     elif t[0] == "ret":
-        if isinstance(t[1], tuple):
+        if isinstance(t[1], tuple) and not getattr(b, "void_ret", False):
             out.append(t[1])
     elif t[0] == "tail":
         out.extend(x for x in t[2:4] if isinstance(x, tuple))

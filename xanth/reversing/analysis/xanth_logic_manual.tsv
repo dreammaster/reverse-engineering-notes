@@ -1,8 +1,12 @@
 Conversation_GetEntry	'convId_hi' was not declared in this scope; did you mean 'convId'?
+Screen_RestoreSubPalettes	'FAR' was not declared in this scope
 cmdLookAt	invalid conversion from 'int' to 'char*' [-fpermissive]
+conv_cb_21	'FAR' was not declared in this scope
+conv_cb_46	'FAR' was not declared in this scope
 conv_text_05	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 conv_text_55	invalid conversion from 'char*' to 'int' [-fpermissive]
 conv_text_57	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
+conv_text_77	incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'
 conv_text_82	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 conv_text_83	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 conv_text_86	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
@@ -10,9 +14,11 @@ event_fn_05	invalid conversion from 'char*' to 'int' [-fpermissive]
 event_fn_07	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_17	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_35	invalid conversion from 'int' to 'char*' [-fpermissive]
+event_fn_44	'FAR' was not declared in this scope
 objh_045	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_104	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_127	invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_128	invalid conversion from 'intptr_t' {aka 'long long int'} to 'char*' [-fpermissive]
 objh_129	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_140	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_147	invalid conversion from 'int' to 'char*' [-fpermissive]

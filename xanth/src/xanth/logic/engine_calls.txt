@@ -1,5 +1,5 @@
 DialogBtn_show	3
-Font_WriteMessage	5
+Font_WriteMessage	10
 Image_Free	1
 MouseCursor_SetHourglass	0
 MouseCursor_SetSmallArrow	0
@@ -9,8 +9,11 @@ Mouse_update	1
 ResourceText_GetStr	1
 RoomItem_Draw	1
 Screen_FadeOut	0
+_localtime	1
 _rand	0
 _sprintf	3
+_srand	1
+_time	1
 add_score	3
 advance_time	2
 call_object_handler	2
@@ -74,6 +77,7 @@ sub_31301	0
 sub_3130B	1
 sub_3F6D0	0
 sub_3F731	0
+sub_3F96D	0
 sub_58F87	0
 sub_5F96C	0
 wait_ticks_or_click	1
