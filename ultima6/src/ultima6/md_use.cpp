@@ -177,6 +177,21 @@ void Game::mdChosen(int tx, int ty) {
 	mdContinue(_mdStage, pick);
 }
 
+// sub_2CFE2: an object is put on a square of the map, from wherever it was (a pack, a container) or from another square
+void Game::mdPlace(int idx, int x, int y, int zz) {
+	World::Obj &o = _world.objects[idx];
+	if (!o.onMap()) {
+		o.status = (uint8_t)(o.status & ~ObjRecord::LOCATION_MASK);
+		o.parent = -1;
+		o.x = (uint16_t)x;
+		o.y = (uint16_t)y;
+		o.z = (uint8_t)zz;
+		_world.addToMap(idx);
+	} else {
+		_world.moveObject(idx, x, y, zz);
+	}
+}
+
 // the terrain of a square with its article (sub_2F774 of the tile sub_263B2 finds)
 std::string Game::mdGroundName(int tx, int ty) const {
 	int mask = z == 0 ? 0x3FF : 0xFF;
@@ -828,6 +843,71 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		box.quantity = (uint8_t)(box.quantity - 1);
 		if (box.type == 0x19A)
 			box.frame = (uint8_t)((box.frame & 1) + (box.quantity == 0 ? 0 : 2));
+		break;
+	}
+	case 31: { // sub_5DA12: a switch bar turns over (frame 0 <-> 1) together with its base (0x19D) up and to the left; the rail car (0x19A) on that square turns with it; a loose bar (quality 1) only turns loosely
+		int bx = o.x - 1, by = o.y - 1;
+		int base = -1, car = -1;
+		std::vector<int> there;
+		_world.objectsAt(bx, by, z, there);
+		for (int i : there) {
+			if (_world.objects[i].type == 0x19D)
+				base = i;
+			else if (_world.objects[i].type == 0x19A)
+				car = i;
+		}
+		if (base < 0) {
+			message("It has no effect.\n");
+			sfx(5);
+			break;
+		}
+		int next = o.frame == 0 ? 1 : 0;
+		o.frame = (uint8_t)next;
+		if (o.quality == 1) {
+			message("It turns loosely.\n");
+			break;
+		}
+		_world.objects[base].frame = (uint8_t)next;
+		if (car >= 0) {
+			int f = _world.objects[car].frame;
+			_world.objects[car].frame = (uint8_t)((f & 1) ? f - 1 : f + 1);
+		}
+		break;
+	}
+	case 38: { // sub_5E7E8: a lens (0xCE: socket frame 0, else frame 1; once each) put into its socket (0xCA of that frame) on or next to the thing chosen; a broken one (quality bit 2) will not go
+		if (first < 0)
+			break;
+		if (o.quality & 2) {
+			message("The " + Describe::object(_world, o) + " is broken.\n");
+			break;
+		}
+		int slot = o.type == 0xCE ? 0 : 1;
+		uint8_t &done = _world.actors.talkFlags[slot == 0 ? 0x2E : 0x39];
+		if (done & 0x80) {
+			message("It has no effect.\n");
+			break;
+		}
+		int sock = first;
+		if (_world.objects[first].frame != slot) {
+			sock = -1;
+			int fx = _world.objects[first].x, fy = _world.objects[first].y;
+			for (int dx = -1; dx <= 1; ++dx)
+				for (int dy = -1; dy <= 1; ++dy) {
+					std::vector<int> here;
+					_world.objectsAt(fx + dx, fy + dy, z, here);
+					for (int i : here)
+						if (_world.objects[i].type == 0xCA && _world.objects[i].frame == slot && sock < 0)
+							sock = i;
+				}
+			if (sock < 0) {
+				message("You cannot install it there.\n");
+				break;
+			}
+		}
+		int sx = _world.objects[sock].x, sy = _world.objects[sock].y;
+		mdPlace(item, sx, sy, z);
+		_world.objects[item].quality = 0;
+		done |= 0x80;
 		break;
 	}
 	case 44: { // sub_5EFC8: a door (or hatch) opens and shuts: locked (quality bit 0x80) it is not; somebody in it blocks it; else frame bit 2 turns over

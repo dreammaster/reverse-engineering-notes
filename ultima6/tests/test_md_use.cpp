@@ -297,6 +297,72 @@ int main() {
 		w.deleteObject(shovel);
 	}
 
+	// a switch bar (0x19B, recipe 31) with its base (0x19D) up and to the left and a rail car (0x19A) on the base's square turns over together; a loose one (quality 1) only turns loosely; without a base it has no effect
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px, py - 1)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		int bar = put(w, 0x19B, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("It has no effect") != std::string::npos && w.objects[bar].frame == 0);
+		int base = put(w, 0x19D, 0, px, py - 1, 0);
+		int car = put(w, 0x19A, 0, px, py - 1, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(w.objects[bar].frame == 1 && w.objects[base].frame == 1 && w.objects[car].frame == 1);
+		w.objects[bar].quality = 1;
+		useEast(w, g, px, py);
+		CHECK(w.objects[bar].frame == 0 && w.objects[base].frame == 1 && logText(g).find("It turns loosely") != std::string::npos);
+		w.deleteObject(bar);
+		w.deleteObject(base);
+		w.deleteObject(car);
+	}
+
+	// a lens (0xCE, recipe 38) is put into its socket (0xCA, frame 0) to the south: it lands on the socket's square and the flag of that lens is set; a second one "has no effect"; a broken one says so
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px, py + 1)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		w.actors.talkFlags[0x2E] &= 0x7F;
+		int lens = put(w, 0xCE, 0, px + 1, py, 0);
+		int socket = put(w, 0xCA, 0, px, py + 1, 0);
+		w.objects[lens].quality = 2;
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("is broken") != std::string::npos);
+		w.objects[lens].quality = 0;
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		CHECK(w.objects[lens].x == px && w.objects[lens].y == py + 1 && (w.actors.talkFlags[0x2E] & 0x80));
+		w.moveObject(lens, px + 1, py, 0);
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("It has no effect") != std::string::npos);
+		w.actors.talkFlags[0x2E] &= 0x7F;
+		w.deleteObject(lens);
+		w.deleteObject(socket);
+	}
+
 	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
 	{
 		std::vector<int> here;
