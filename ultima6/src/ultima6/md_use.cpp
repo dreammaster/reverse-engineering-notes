@@ -910,6 +910,96 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		done |= 0x80;
 		break;
 	}
+	case 48: { // sub_5C418: paint (0x77) into an empty spray gun (first: quality 0) gives 20 charges of green paint (quality 1); weed killer (0x80) into one with paint (quality not 0) 10 charges of weed killer (quality 0); else ten more charges up to thirty
+		if (first < 0)
+			break;
+		World::Obj &gun = _world.objects[first];
+		int ty = o.type, charges = gun.quantity, kind = gun.quality;
+		if (ty == 0x77 && kind == 0) {
+			message("The spray gun now contains 20 charges of green paint.\n");
+			gun.quantity = 20;
+			gun.quality = 1;
+		} else if (ty == 0x80 && kind != 0) {
+			message("The spray gun now contains 10 charges of weed killer.\n");
+			gun.quantity = 10;
+			gun.quality = 0;
+		} else {
+			charges = std::min(charges + 10, 30);
+			gun.quantity = (uint8_t)charges;
+			message("The spray gun has 10 more charges.\n");
+		}
+		_world.deleteObject(item);
+		break;
+	}
+	case 50: { // sub_5C9F8: the oxium bin: twenty of the stuff (0x83) into the member's pack ("You are carrying too much already."); the flag 0x10 of actor 0x12 is set. APPROX(76): the line of sight to the bin ("Blocked!") is left out
+		int actor = actingActor();
+		if (!seGive(actor, 0x83, 20)) {
+			message("You are carrying too much already.\n");
+			break;
+		}
+		message("You get two handfuls of oxium from the bin.\n");
+		_world.actors.talkFlags[0x12] |= 0x10;
+		break;
+	}
+	case 49: { // sub_5C518: a spray gun (item) at something: empty "There is nothing in the gun."; with green paint (quality not 0) a person of type 0x91 or anything invisible becomes visible; with weed killer (quality 0) a plant (the types of ds:0E86) is killed: 0xCD sets a flag of actor 0x30 and goes, 0x198 becomes 0xA6, the others go. APPROX(76): weed killer on a person (sub_1A6F2) does nothing
+		if (first < 0)
+			break;
+		int charges = o.quantity, kind = o.quality;
+		if (charges == 0) {
+			message("There is nothing in the gun.\n");
+			break;
+		}
+		static const int PLANTS[8] = {0xCD, 0x198, 0xA8, 0xAA, 0xAB, 0x12C, 0x133, 0x12B};
+		World::Obj &t = _world.objects[first];
+		int ty = t.type;
+		if (kind != 0) {
+			o.quantity = (uint8_t)(charges - 1);
+			if (t.actor >= 0 && ty == 0x91) {
+				t.type = 0x16C;
+				message("`" + Describe::object(_world, t) + " becomes visible!\n");
+			} else if (t.status & 2) {
+				t.status &= 0xFD;
+				message("`" + Describe::object(_world, t) + " becomes visible!\n");
+			} else {
+				message("It has no effect.\n");
+			}
+			break;
+		}
+		if (t.actor >= 0)
+			break;
+		bool plant = false;
+		for (int p : PLANTS)
+			plant |= p == ty;
+		o.quantity = (uint8_t)(charges - 1);
+		if (!plant) {
+			message("It has no effect.\n");
+			break;
+		}
+		message("You killed the plant.\n");
+		if (ty == 0xCD) {
+			_world.actors.talkFlags[0x30] |= 0x80;
+			_world.deleteObject(first);
+		} else if (ty == 0x198) {
+			t.type = 0xA6;
+		} else {
+			_world.deleteObject(first);
+		}
+		break;
+	}
+	case 58: { // sub_5CAFA: the seed plant (item): from frame 1 on one seed (0x9E) can be taken, the plant starts again at frame 0 with a growth number of 10 to 15 in its quality
+		if (o.frame < 1) {
+			message("No seed to harvest yet.\n");
+			break;
+		}
+		if (!seGive(actingActor(), 0x9E, 1)) {
+			message("You are carrying too much already.\n");
+			break;
+		}
+		World::Obj &plant = _world.objects[item];
+		plant.frame = 0;
+		plant.quality = (uint8_t)seRoll(10, 15);
+		break;
+	}
 	case 44: { // sub_5EFC8: a door (or hatch) opens and shuts: locked (quality bit 0x80) it is not; somebody in it blocks it; else frame bit 2 turns over
 		if (o.quality & 0x80) {
 			message("It is locked.\n");

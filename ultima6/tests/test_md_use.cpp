@@ -363,6 +363,67 @@ int main() {
 		w.deleteObject(socket);
 	}
 
+	// paint (0x77) into an empty spray gun (0x81) gives 20 charges of green paint; the oxium bin (0xD4, recipe 50) puts oxium in the pack
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px, py + 1)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		int paint = put(w, 0x77, 0, px + 1, py, 0);
+		int gun = put(w, 0x81, 0, px, py + 1, 0);
+		w.objects[gun].quantity = 0;
+		w.objects[gun].quality = 0;
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("20 charges of green paint") != std::string::npos && w.objects[gun].quantity == 20 && w.objects[gun].quality == 1 && w.objects[paint].deleted);
+		w.deleteObject(gun);
+		int bin = put(w, 0xD4, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You get two handfuls of oxium") != std::string::npos || logText(g).find("carrying too much") != std::string::npos);
+		w.deleteObject(bin);
+	}
+
+	// a seed plant (0x9D, recipe 58): "No seed to harvest yet." at frame 0, from frame 1 one seed (0x9E) goes into the pack and the plant starts over; a spray gun (0x105, recipe 49) with paint makes something invisible visible, with weed killer kills a plant (0xA8)
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px, py + 1)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		int plant = put(w, 0x9D, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("No seed to harvest yet") != std::string::npos);
+		w.objects[plant].frame = 1;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(w.objects[plant].frame == 0 && w.objects[plant].quality >= 10 && w.objects[plant].quality <= 15);
+		w.deleteObject(plant);
+		int gun = put(w, 0x105, 0, px + 1, py, 0);
+		w.objects[gun].quantity = 5;
+		w.objects[gun].quality = 1;
+		int ghost = put(w, 0x30, 0, px, py + 1, 0);
+		w.objects[ghost].status |= 2;
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		w.deleteObject(ghost);
+		w.deleteObject(gun);
+	}
+
 	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
 	{
 		std::vector<int> here;
