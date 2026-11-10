@@ -1111,6 +1111,81 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		});
 		break;
 	}
+	case 25: { // sub_5B993: the cannon fires in the direction of its frame (0 north, 1 east, 2 south, 3 west): the ball flies up to six squares to the first square with a person; a door (0xAD, frame below 4) there is shaken (with steel balls, quality not 0: two frames on, "Kaboom! You blew the door down!" from frame 2) or "Splat!" without; the burst hurts everybody in the 3 x 3 squares (1-15 twice) and the things of ds:0E5C that have a quantity.
+		// APPROX(76): the flight (sub_18A0C / sub_1E453: the animation and a wall that stops the ball) is not traced: the ball goes straight
+		static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+		static const int BURSTS[5] = {0xB3, 0x184, 0x133, 0x12C, 0xD9};
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		int dir = (o.frame & 3) * 2, cannon = item;
+		message("\nFire!\n");
+		sfx(0x30);
+		int ex = (o.x + DX[dir]) & mask, ey = (o.y + DY[dir]) & mask;
+		auto personAt = [&](int sx, int sy) {
+			std::vector<int> here;
+			_world.objectsAt(sx, sy, z, here);
+			for (int i : here)
+				if (!_world.objects[i].deleted && _world.objects[i].actor >= 0 && !(_world.actors.status[_world.objects[i].actor] & 0x10))
+					return true;
+			return false;
+		};
+		for (int step = 0; step < 6 && !personAt(ex, ey); ++step) {
+			ex = (ex + DX[dir]) & mask;
+			ey = (ey + DY[dir]) & mask;
+		}
+		int door = 0; // 1 splat, -1 blown down
+		std::vector<int> there;
+		_world.objectsAt(ex, ey, z, there);
+		for (int i : there) {
+			World::Obj &d = _world.objects[i];
+			if (d.deleted || d.type != 0xAD || d.frame >= 4)
+				continue;
+			if (_world.objects[cannon].quality == 0) {
+				door = 1;
+			} else {
+				int before = d.frame;
+				d.frame = (uint8_t)(before + 2);
+				if (before > 1)
+					door = -1;
+			}
+		}
+		if (door != -1) {
+			ex = (ex + DX[(dir + 4) & 7]) & mask;
+			ey = (ey + DY[(dir + 4) & 7]) & mask;
+		}
+		sfx(0xB);
+		for (int dx = -1; dx <= 1; ++dx)
+			for (int dy = -1; dy <= 1; ++dy) {
+				std::vector<int> around;
+				_world.objectsAt((ex + dx) & mask, (ey + dy) & mask, z, around);
+				for (int i : around) {
+					if (_world.objects[i].deleted)
+						continue;
+					int dmg = seRoll(1, 15) + seRoll(1, 15);
+					if (_world.objects[i].actor >= 0) {
+						_combat.applyDamage(1, _world.objects[i].actor, dmg);
+					} else {
+						bool burst = false;
+						for (int t : BURSTS)
+							burst |= t == _world.objects[i].type;
+						if (burst && _world.objects[i].quantity != 0) {
+							if (_world.objects[i].quantity > dmg)
+								_world.objects[i].quantity = (uint8_t)(_world.objects[i].quantity - dmg);
+							else
+								_world.deleteObject(i);
+						}
+					}
+				}
+			}
+		if (door > 0) {
+			message("Splat! There is no effect.\n");
+			sfx(5);
+		} else if (door < 0) {
+			message("Kaboom! You blew the door down!\n");
+			sfx(4);
+			_world.actors.talkFlags[0x41] |= 4;
+		}
+		break;
+	}
 	case 44: { // sub_5EFC8: a door (or hatch) opens and shuts: locked (quality bit 0x80) it is not; somebody in it blocks it; else frame bit 2 turns over
 		if (o.quality & 0x80) {
 			message("It is locked.\n");

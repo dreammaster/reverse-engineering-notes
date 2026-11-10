@@ -461,6 +461,39 @@ int main() {
 		w.deleteObject(organ);
 	}
 
+	// the cannon (0x14D, recipe 25) facing east shoots six squares: a door (0xAD) there is shaken by steel balls (frame 0 -> 2, then "Kaboom!"), "Splat!" without them; a cannon facing west hits the party's own square
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px + 8, py)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		int cannon = put(w, 0x14D, 1, px + 1, py, 0);
+		int door = put(w, 0xAD, 0, px + 8, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Fire!") != std::string::npos && logText(g).find("Splat!") != std::string::npos && w.objects[door].frame == 0);
+		w.objects[cannon].quality = 1;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(w.objects[door].frame == 2 && logText(g).find("Kaboom") == std::string::npos);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(w.objects[door].frame == 4 && logText(g).find("You blew the door down") != std::string::npos);
+		w.deleteObject(door);
+		w.objects[cannon].frame = 3;
+		int victim = w.actors.partyRoster[1];
+		w.moveObject(w.actorObject(victim), px, py, 0);
+		w.actors.hp[victim] = 200;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(w.actors.hp[victim] < 200);
+		w.deleteObject(cannon);
+	}
+
 	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
 	{
 		std::vector<int> here;
