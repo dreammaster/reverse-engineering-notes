@@ -35,6 +35,9 @@ class Names:
     def prolog(self):
         return []
 
+    def ptr_sources(self):
+        return []
+
     def min_params(self, name):
         return 0
 
@@ -217,6 +220,8 @@ class Renderer:
             if e[1] == ("undef",):
                 return self.R(e[2])
             return "((%s & 0xFF00) | (%s & 0xFF))" % (self.R(e[1], False), self.R(e[2], False))
+        if op == "memptr":
+            return "g.exeText(%s, %s)" % (self.R(e[1]), self.R(e[2]))
         if op == "text":
             return "TextRef(%s)" % self.R(e[1])
         if op == "textvar":

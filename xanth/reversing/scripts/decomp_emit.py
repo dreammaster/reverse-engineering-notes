@@ -7,6 +7,11 @@ from decomp_out import Renderer, Names, CMPOP
 
 
 # --------------------------------------------------------------------------------------------------------------------------------- argument packing
+def loc_off(name):
+    m = re.match(r"^var_([0-9A-Fa-f]+)$", name)
+    return -int(m.group(1), 16) if m else None
+
+
 TEXTVARS = set()      # phi variables that hold a text reference (pointer or message id) built from two halves
 
 
@@ -31,6 +36,14 @@ def pack_args(args, null_ok=False):
                 continue
             if a[0] == "loc" and b[0] == "loc" and a[1] == b[1] and b[2] == a[2] + 2:
                 out.append(("loc", a[1], a[2], 4))
+                i += 2
+                continue
+            if a[0] == "loc" and b[0] == "loc" and a[1] != b[1] and a[2] == 0 and b[2] == 0 and loc_off(a[1]) is not None and loc_off(b[1]) == loc_off(a[1]) + 2:
+                out.append(("loc", a[1], 0, 4))          # two names (var_4 / var_2) of one far pointer
+                i += 2
+                continue
+            if a[0] == "mem" and b[0] == "mem" and a[1] == b[1] and a[3] == 2 and b[3] == 2 and simp(("sub", b[2], a[2])) == K(2):
+                out.append(("memptr", a[1], a[2]))      # a far pointer / message id read from a table of dwords
                 i += 2
                 continue
             if null_ok and a == K(0) and b == K(0):
@@ -229,6 +242,8 @@ def pair_far_sets(f):
                     adjacent = True
                 elif a[1][1] in f.locs and c[1][1] in f.locs and a[1][2] == 0 and c[1][2] == 0 and f.locs[c[1][1]][1] == f.locs[a[1][1]][1] + 2:
                     adjacent = True        # two names of one dword (var_4 / var_2)
+                elif a[1][2] == 0 and c[1][2] == 0 and loc_off(a[1][1]) is not None and loc_off(c[1][1]) == loc_off(a[1][1]) + 2:
+                    adjacent = True
             if adjacent:
                 lo, hi = a[2], c[2]
                 new = None
@@ -240,6 +255,8 @@ def pair_far_sets(f):
                     new = lo
                 elif lo[0] == "str" or (lo[0] == "kstr" and hi[0] == "dseg"):
                     new = lo
+                elif lo[0] == "k" and hi[0] == "dseg":
+                    new = ("kstr", lo[1])
                 if new is not None:
                     st[i:i + 2] = [("set", ("loc", a[1][1], a[1][2], 4), new)]
                     continue
@@ -450,7 +467,7 @@ class Emitter:
             for st in b.stmts:
                 if st[0] == "call":
                     for a in st[3]:
-                        if a[0] == "far" and a[2] == ("dseg",) and a[1][0] in ("phi", "tmp", "in"):
+                        if a[0] == "far" and a[2] == ("dseg",) and a[1][0] in ("phi", "tmp", "in", "loc"):
                             self.ptr_vars.add(("phi",) + a[1][1:] if a[1][0] == "in" else a[1])
         self.find_loops()
 
@@ -780,7 +797,7 @@ def render_function(ctx, name, names=None, void=None):
         for b in f.blocks.values():
             if b.term and b.term[0] == "ret" and b.term[1] is not None and b.term[2] is not None:
                 p2 = pack_args([b.term[1], b.term[2]])
-                if len(p2) == 1 and p2[0][0] in ("str", "kstr", "far", "textvar", "null"):
+                if len(p2) == 1 and p2[0][0] in ("str", "kstr", "far", "textvar", "null", "memptr"):
                     far0 = True
     defined0 = any(r is not None and r[0] not in ("res", "in", "undef") for r in rets0)
     void0 = void if void is not None else (not defined0 and not far0 and not re.match(r"^(objh_|exit_fn_|event_fn_|conv_cb_|conv_text_|cmd[A-Z])", name) and ctx.ret_used.get(name, 0) == 0)
@@ -848,7 +865,7 @@ def render_function(ctx, name, names=None, void=None):
         for b in f.blocks.values():
             if b.term and b.term[0] == "ret" and not getattr(b, "dead", False) and b.term[1] is not None and b.term[2] is not None:
                 p2 = pack_args([b.term[1], b.term[2]])
-                if len(p2) == 1 and p2[0][0] in ("str", "kstr", "far", "textvar", "null"):
+                if len(p2) == 1 and p2[0][0] in ("str", "kstr", "far", "textvar", "null", "memptr"):
                     em.far_return = True
                     names.farfns.add(re.sub(r"[^A-Za-z0-9_]", "_", re.sub(r"^j_", "", name.rstrip("?"))))
                     break
@@ -890,7 +907,7 @@ def function_text(ctx, name, names=None, void=None):
     locs = sorted(set(re.findall(r"\bv[0-9A-F]+(?:_hi)?\b", text)) | {n for n in named | {"si", "di"} if re.search(r"\b%s\b" % re.escape(n), text)})
     locs = [n for n in locs if not n.endswith("_hi")] + [n for n in locs if n.endswith("_hi")]
     allv = locs + vars_
-    ptr_src = r'("|ES\(|g\.print_obj\(|g\.ResourceText_GetStr\(|_strlwr\(|_strupr\(|nullptr|number_to_words' + "".join(r"|" + fn + r"\(g" for fn in getattr(names, "farfns", ())) + r')'
+    ptr_src = r'("|ES\(|g\.print_obj\(|g\.ResourceText_GetStr\(|_strlwr\(|_strupr\(|nullptr|number_to_words' + "".join(r"|" + fn + r"\(g" for fn in getattr(names, "farfns", ())) + "".join(r"|" + x for x in names.ptr_sources()) + r')'
     strs = {n for n in allv if re.search(r'(^|\s)%s = \(*([^;?]*\? )?' % re.escape(n) + ptr_src, text)}
     strs |= {n for n in allv if re.search(r'(strcpy|strcat)\(%s,' % re.escape(n), text)}
     copies = [(m.group(1), m.group(2)) for m in re.finditer(r'(?:^|\s)(' + "|".join(re.escape(n) for n in allv) + r') = ('  + "|".join(re.escape(n) for n in allv) + r');', text)] if allv else []
@@ -905,7 +922,7 @@ def function_text(ctx, name, names=None, void=None):
     strs -= txts
     ints = [n for n in allv if n not in strs and n not in txts]
     # assignments between the two kinds of variable need a cast
-    ptr_like = re.compile(r"^(ES\(|g\.print_obj\(|g\.ResourceText_GetStr\(|_strlwr\(|_strupr\(|nullptr|" + "|".join(re.escape(n) for n in sorted(strs)) + r")") if strs else re.compile(r"^(ES\(|g\.print_obj\(|nullptr)")
+    ptr_like = re.compile(r"^(ES\(|g\.print_obj\(|g\.ResourceText_GetStr\(|_strlwr\(|_strupr\(|nullptr|" + "".join(x + "|" for x in names.ptr_sources()) + "|".join(re.escape(n) for n in sorted(strs)) + r")") if strs else re.compile(r"^(ES\(|g\.print_obj\(|nullptr)")
     fixed = []
     for ln in lines:
         m = re.match(r"^(\s*)(\w+) = (.*);$", ln)

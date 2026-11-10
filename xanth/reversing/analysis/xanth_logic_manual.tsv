@@ -7,9 +7,7 @@ conv_text_05	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'}
 conv_text_55	invalid conversion from 'char*' to 'int' [-fpermissive]
 conv_text_57	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 conv_text_77	incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'
-conv_text_82	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
-conv_text_83	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
-conv_text_86	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
+conv_text_83	operands to '?:' have different types 'char*' and 'int'
 event_fn_05	invalid conversion from 'char*' to 'int' [-fpermissive]
 event_fn_07	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_17	invalid conversion from 'int' to 'char*' [-fpermissive]
@@ -31,12 +29,10 @@ objh_296	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_334	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_341	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_345	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_358	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_360	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_380	invalid conversion from 'char*' to 'int' [-fpermissive]
 objh_390	invalid conversion from 'char*' to 'int' [-fpermissive]
 sub_44130	invalid conversion from 'char*' to 'int' [-fpermissive]
-sub_442EF	no matching function for call to 'Xanth::Game::__aFuldiv(Xanth::Word&, Xanth::Word&, intpt
 sub_4FB5F	'FAR' was not declared in this scope
-sub_60460	no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
+sub_60460	invalid conversion from 'char*' to 'int' [-fpermissive]
 sub_7D0DF	invalid conversion from 'int' to 'char*' [-fpermissive]

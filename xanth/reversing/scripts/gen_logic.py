@@ -114,6 +114,10 @@ class LogicNames(Names):
     def func(self, name):
         return logic_name(STUBS.get(name, name))
 
+    def ptr_sources(self):
+        """regular-expression alternatives for expressions that are pointers to text / buffers"""
+        return [r"rt\.(" + "|".join(sorted(re.escape(self.ident(a)) for a in self.ctx.arrays)) + r")"]
+
     def returns_far(self, name):
         return name.startswith("conv_text") or name == "number_to_words" or logic_name(name) in getattr(self, "namecb", ()) or logic_name(name) in getattr(self, "farfns", ())
 
