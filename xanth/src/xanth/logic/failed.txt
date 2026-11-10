@@ -1,127 +1,55 @@
 cmdLookAt	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 conv_cb_03	instruction div (div     cx)
 conv_cb_06	register bx read before it is set
-conv_cb_07	does not compile yet: too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 conv_cb_18	instruction div (div     cx)
 conv_cb_21	instruction movsw (movsw)
-conv_cb_37	does not compile yet: too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 conv_cb_46	instruction movsw (movsw)
-conv_cb_49	does not compile yet: too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 conv_text_01	operand word ptr (dword_86A3E+2)[bx] (mov     dx, word ptr (dword_86A3E+2)[bx])
 conv_text_05	does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 conv_text_16	instruction movsw (movsw)
 conv_text_20	operand word ptr (dword_86ADA+2)[bx] (mov     dx, word ptr (dword_86ADA+2)[bx])
-conv_text_42	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-conv_text_43	does not compile yet: too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 conv_text_55	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
-conv_text_56	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 conv_text_57	does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
-conv_text_58	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-conv_text_60	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-conv_text_75	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-conv_text_76	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 conv_text_77	render nneg
 conv_text_82	does not compile yet: cannot convert 'Xanth::TextRef' to 'const char*'
 conv_text_83	does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
-conv_text_84	does not compile yet: too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 conv_text_86	does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 conv_text_87	does not compile yet: cannot convert 'Xanth::TextRef' to 'const char*'
 event_fn_00	instruction idiv (idiv    cx)
 event_fn_05	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
-event_fn_06	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
 event_fn_07	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_11	instruction idiv (idiv    cx)
 event_fn_14	instruction idiv (idiv    cx)
 event_fn_17	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-event_fn_18	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-event_fn_19	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 event_fn_25	use of bp (push    [bp+si+var_22])
-event_fn_26	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-event_fn_27	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-event_fn_31	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-event_fn_33	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
 event_fn_35	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_40	instruction idiv (idiv    cx)
 event_fn_43	instruction div (div     cx)
 event_fn_44	instruction movsw (movsw)
 exit_fn_12	render lo8set
-exit_fn_17	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 init_random	render sseg
 number_to_words	instruction idiv (idiv    cx)
-objh_003	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_005	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_008	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_013	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_015	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_017	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_018	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_020	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_034	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
 objh_045	does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-objh_071	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-objh_076	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-objh_094	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_103	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
 objh_104	does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-objh_109	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_111	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_112	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_114	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-objh_115	does not compile yet: too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
-objh_122	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 objh_127	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_128	render sseg
-objh_129	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_131	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_136	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-objh_137	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-objh_139	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+objh_129	does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
 objh_140	does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-objh_141	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_142	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 objh_147	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_149	does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-objh_151	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_181	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-objh_182	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 objh_198	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_203	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
 objh_207	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_210	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-objh_213	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_215	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_219	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_225	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_226	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_227	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 objh_230	does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-objh_243	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_249	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_264	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_265	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_266	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-objh_267	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_268	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 objh_291	does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
 objh_295	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_296	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_297	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-objh_310	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-objh_323	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_324	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_329	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 objh_334	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_337	does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
 objh_341	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_345	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_358	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_360	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_370	does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
 objh_378	does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
 objh_380	does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
-objh_385	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_428	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-objh_435	does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 sub_1EF11	instruction imul (imul    cx)
 sub_44233	render sseg
 sub_442EF	instruction idiv (idiv    [bp+var_6])

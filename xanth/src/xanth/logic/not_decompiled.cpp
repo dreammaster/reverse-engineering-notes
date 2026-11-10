@@ -7,127 +7,55 @@ namespace Xanth {
 int cmdLookAt(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int conv_cb_03(Game &, Word) { return 0; }  // instruction div (div     cx)
 int conv_cb_06(Game &, Word, Word) { return 0; }  // register bx read before it is set
-int conv_cb_07(Game &, Word, Word) { return 0; }  // does not compile yet: too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 int conv_cb_18(Game &, Word, Word) { return 0; }  // instruction div (div     cx)
 int conv_cb_21(Game &, Word) { return 0; }  // instruction movsw (movsw)
-int conv_cb_37(Game &, Word) { return 0; }  // does not compile yet: too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 int conv_cb_46(Game &, Word) { return 0; }  // instruction movsw (movsw)
-int conv_cb_49(Game &, Word) { return 0; }  // does not compile yet: too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 TextRef conv_text_01(Game &) { return TextRef(); }  // operand word ptr (dword_86A3E+2)[bx] (mov     dx, word ptr (dword_86A3E+2)[bx])
 TextRef conv_text_05(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 TextRef conv_text_16(Game &) { return TextRef(); }  // instruction movsw (movsw)
 TextRef conv_text_20(Game &) { return TextRef(); }  // operand word ptr (dword_86ADA+2)[bx] (mov     dx, word ptr (dword_86ADA+2)[bx])
-TextRef conv_text_42(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-TextRef conv_text_43(Game &) { return TextRef(); }  // does not compile yet: too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 TextRef conv_text_55(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
-TextRef conv_text_56(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 TextRef conv_text_57(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
-TextRef conv_text_58(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-TextRef conv_text_60(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-TextRef conv_text_75(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-TextRef conv_text_76(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 TextRef conv_text_77(Game &) { return TextRef(); }  // render nneg
 TextRef conv_text_82(Game &) { return TextRef(); }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'const char*'
 TextRef conv_text_83(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
-TextRef conv_text_84(Game &) { return TextRef(); }  // does not compile yet: too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
 TextRef conv_text_86(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 TextRef conv_text_87(Game &) { return TextRef(); }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'const char*'
 int event_fn_00(Game &) { return 0; }  // instruction idiv (idiv    cx)
 int event_fn_05(Game &) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
-int event_fn_06(Game &) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
 int event_fn_07(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int event_fn_11(Game &) { return 0; }  // instruction idiv (idiv    cx)
 int event_fn_14(Game &) { return 0; }  // instruction idiv (idiv    cx)
 int event_fn_17(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int event_fn_18(Game &) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int event_fn_19(Game &) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 int event_fn_25(Game &) { return 0; }  // use of bp (push    [bp+si+var_22])
-int event_fn_26(Game &) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int event_fn_27(Game &) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int event_fn_31(Game &) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-int event_fn_33(Game &) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
 int event_fn_35(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int event_fn_40(Game &) { return 0; }  // instruction idiv (idiv    cx)
 int event_fn_43(Game &) { return 0; }  // instruction div (div     cx)
 int event_fn_44(Game &) { return 0; }  // instruction movsw (movsw)
 int exit_fn_12(Game &, Word) { return 0; }  // render lo8set
-int exit_fn_17(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 int init_random(Game &) { return 0; }  // render sseg
 TextRef number_to_words(Game &, Word) { return TextRef(); }  // instruction idiv (idiv    cx)
-int objh_003(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_005(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_008(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_013(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_015(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_017(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_018(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_020(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_034(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
 int objh_045(Game &) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-int objh_071(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-int objh_076(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-int objh_094(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_103(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
 int objh_104(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-int objh_109(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_111(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_112(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_114(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-int objh_115(Game &, Word) { return 0; }  // does not compile yet: too few arguments to function 'int Xanth::conversation_set_enabled(Game&, Word, Word, Word
-int objh_122(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 int objh_127(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_128(Game &, Word) { return 0; }  // render sseg
-int objh_129(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_131(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_136(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-int objh_137(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-int objh_139(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
+int objh_129(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
 int objh_140(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-int objh_141(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_142(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 int objh_147(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_149(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-int objh_151(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_181(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-int objh_182(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 int objh_198(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_203(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
 int objh_207(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_210(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-int objh_213(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_215(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_219(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_225(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_226(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_227(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 int objh_230(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
-int objh_243(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_249(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_264(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_265(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_266(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
-int objh_267(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_268(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 int objh_291(Game &) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
 int objh_295(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_296(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_297(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-int objh_310(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
-int objh_323(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_324(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_329(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 int objh_334(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_337(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::add_score(int, std::nullptr_t)'
 int objh_341(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_345(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_358(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_360(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_370(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(uint16&, std::nullptr_t)'
 int objh_378(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
 int objh_380(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
-int objh_385(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_428(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
-int objh_435(Game &, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::object_move(int, std::nullptr_t)'
 int sub_1EF11(Game &, Word, Word) { return 0; }  // instruction imul (imul    cx)
 int sub_44233(Game &) { return 0; }  // render sseg
 int sub_442EF(Game &, Word, Word) { return 0; }  // instruction idiv (idiv    [bp+var_6])

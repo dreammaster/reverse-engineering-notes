@@ -55,6 +55,28 @@ int conv_cb_05(Game &g, Word arg0, Word arg1) {
 	}
 }
 
+// conv_cb_07
+int conv_cb_07(Game &g, Word arg0, Word arg1) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	if (arg1 == 1) {
+		conversation_set_enabled(g, arg0, arg1, 0);
+		return conversation_set_enabled(g, 0x8009, 1, 0);
+	}
+	if (arg1 == 3) {
+		return conversation_set_enabled(g, arg0, arg1, 0);
+	}
+	if (arg1 != 5) {
+		return arg1 - 5;
+	} else {
+		conversation_set_enabled(g, arg0, 0, 0);
+		conversation_set_enabled(g, arg0, 1, 0);
+		conversation_set_enabled(g, arg0, 2, 0);
+		conversation_set_enabled(g, arg0, 3, 0);
+		return conversation_set_enabled(g, arg0, 4, 0);
+	}
+}
+
 // conv_cb_08
 int conv_cb_08(Game &g, Word arg0, Word arg1) {
 	Vars &v = g.state.v;
@@ -408,6 +430,25 @@ int conv_cb_36(Game &g, Word arg0, Word arg1) {
 	}
 }
 
+// conv_cb_37
+int conv_cb_37(Game &g, Word arg0, Word arg1) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	v.flag_852A4_conv37++;
+	if (arg1 != 2) {
+		return arg1 - 2;
+	}
+	v.flag_85333_conv37 = 1;
+	v.flag_852A2_conv37++;
+	if ((int16)v.flag_852A2_conv37 > 4) {
+		g.cancel_event(0x27);
+		g.schedule_event(0x28, 0);
+		return conversation_set_enabled(g, 0x8104, 0, 0);
+	} else {
+		return arg1 - 2;
+	}
+}
+
 // conv_cb_38
 int conv_cb_38(Game &g, Word arg0, Word arg1) {
 	Vars &v = g.state.v;
@@ -548,6 +589,25 @@ int conv_cb_48(Game &g, Word arg0, Word arg1) {
 	}
 	if ((int16)(arg1 - 2) <= 0) {
 		return conversation_set_enabled(g, arg0, arg1, 0);
+	} else {
+		return arg1 - 2;
+	}
+}
+
+// conv_cb_49
+int conv_cb_49(Game &g, Word arg0, Word arg1) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	v.flag_852A4_conv37++;
+	if (arg1 != 2) {
+		return arg1 - 2;
+	}
+	v.flag_85333_conv37 = 1;
+	v.flag_852A2_conv37++;
+	if ((int16)v.flag_852A2_conv37 > 4) {
+		g.cancel_event(0x27);
+		g.schedule_event(0x28, 0);
+		return conversation_set_enabled(g, 0x8104, 0, 0);
 	} else {
 		return arg1 - 2;
 	}

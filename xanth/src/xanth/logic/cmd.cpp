@@ -622,7 +622,7 @@ int cmdPut(Game &g) {
 int cmdQuit(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	if ((g.DialogBtn_show(ES_UNKNOWN(aQuit_), nullptr)) == 1) {
+	if ((g.DialogBtn_show(ES_UNKNOWN(aQuit_), 0, 0)) == 1) {
 		g.sub_2F515();
 		return 1;
 	} else {

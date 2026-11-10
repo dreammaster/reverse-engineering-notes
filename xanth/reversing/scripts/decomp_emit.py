@@ -10,7 +10,7 @@ from decomp_out import Renderer, Names, CMPOP
 TEXTVARS = set()      # phi variables that hold a text reference (pointer or message id) built from two halves
 
 
-def pack_args(args):
+def pack_args(args, null_ok=False):
     out = []
     i = 0
     while i < len(args):
@@ -33,7 +33,7 @@ def pack_args(args):
                 out.append(("loc", a[1], a[2], 4))
                 i += 2
                 continue
-            if a == K(0) and b == K(0):
+            if null_ok and a == K(0) and b == K(0):
                 out.append(("null",))
                 i += 2
                 continue
@@ -268,7 +268,7 @@ def merge_diamonds(f):
                 if a[1][0] == "phi" and a[1][1] == "ax":
                     for ib, (d, e) in enumerate(pairs):
                         if d[1][0] == "phi" and d[1][1] == "dx" and d[1][2] == a[1][2]:
-                            t1, t2 = pack_args([a[2], d[2]]), pack_args([b[2], e[2]])
+                            t1, t2 = pack_args([a[2], d[2]], True), pack_args([b[2], e[2]], True)
                             if len(t1) == 1 and len(t2) == 1:
                                 TEXTVARS.add(a[1])
                                 p.stmts.append(("set", a[1], ("sel", c, ("text", t1[0]), ("text", t2[0]))))
