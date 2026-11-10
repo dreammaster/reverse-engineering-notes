@@ -102,11 +102,11 @@ void Game::mdContinue(int stage, int partner) {
 			prompt();
 		return;
 	} else if (stage == 1) {
-		_mdFirst = partner;
-		int type = _world.objects[partner].type;
+		bool ground = partner == -3; // a square without an object: its type is not any of the recipes' (the original reads a stray word)
+		_mdFirst = ground ? -1 : partner;
+		int type = ground ? 0 : _world.objects[partner].type;
 		if (!filter(1, type)) {
-			message("\n" + Describe::object(_world, item) + " has no effect on " + Describe::object(_world, _world.objects[partner]) + ".\n");
-			if (_mdAsync)
+			message("\n" + Describe::object(_world, item) + " has no effect on " + (ground ? mdGroundName(_mdSqX[1], _mdSqY[1]) : Describe::object(_world, _world.objects[partner])) + ".\n");
 			if (_mdAsync)
 				prompt();
 			return;
@@ -120,12 +120,12 @@ void Game::mdContinue(int stage, int partner) {
 			return;
 		}
 	} else {
-		_mdSecond = partner;
-		int type = _world.objects[partner].type;
+		bool ground = partner == -3;
+		_mdSecond = ground ? -1 : partner;
+		int type = ground ? 0 : _world.objects[partner].type;
 		if (!filter(2, type)) {
-			message("\n" + Describe::object(_world, item) + " on " + Describe::object(_world, _world.objects[_mdFirst]) + " to " + Describe::object(_world, _world.objects[partner]) +
-					" has no effect.\n");
-			if (_mdAsync)
+			message("\n" + Describe::object(_world, item) + " on " + (_mdFirst >= 0 ? Describe::object(_world, _world.objects[_mdFirst]) : mdGroundName(_mdSqX[1], _mdSqY[1])) + " to " +
+					(ground ? mdGroundName(_mdSqX[2], _mdSqY[2]) : Describe::object(_world, _world.objects[partner])) + " has no effect.\n");
 			if (_mdAsync)
 				prompt();
 			return;
@@ -159,13 +159,36 @@ void Game::mdChosen(int tx, int ty) {
 			pick = here[i];
 			break;
 		}
-	if (pick < 0) {
-		message("nothing!\n");
-		mdContinue(_mdStage, -2);
+	_mdSqX[_mdStage] = tx;
+	_mdSqY[_mdStage] = ty;
+	if (pick < 0) { // the ground (sub_35972 returns -1 and leaves the square): its name, and it must be within reach
+		int a = _world.actorObject(actingActor());
+		message(mdGroundName(tx, ty) + ".\n");
+		if (a >= 0 && (std::abs(tx - (int)_world.objects[a].x) > 1 || std::abs(ty - (int)_world.objects[a].y) > 1)) {
+			message("Out of range!\n");
+			sfx(5);
+			mdContinue(_mdStage, -2);
+			return;
+		}
+		mdContinue(_mdStage, -3);
 		return;
 	}
 	message(Describe::object(_world, _world.objects[pick]) + ".\n");
 	mdContinue(_mdStage, pick);
+}
+
+// the terrain of a square with its article (sub_2F774 of the tile sub_263B2 finds)
+std::string Game::mdGroundName(int tx, int ty) const {
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	int tile = _world.map.tile(z, tx & mask, ty & mask);
+	return Describe::article(_world, tile) + Describe::tileName(_world, tile, false);
+}
+
+// sub_5A35B: a hole (0x101) on the square lets go of what is in it
+void Game::mdSpill(int x, int y) {
+	int hole = seFind(0x101, x, y);
+	if (hole >= 0)
+		searchHere(hole);
 }
 
 // sub_5D62E: a source of fire (arg_4: a match, a lit thing) lights a lamp, candle or torch (arg_2). It says "(using ...)", a lamp without fuel (quality 0) takes what an oil lamp (0x73) or a
@@ -601,6 +624,142 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		_world.objects[b].frame = (uint8_t)fa;
 		_world.objects[a].frame = 0;
+		break;
+	}
+	case 11: { // sub_5A5C5: a hoe, pick or shovel on a square: the terrain decides what is dug (soil: a hole 0x101 and a dirt pile 0x102, ice: a hole in the ice 0xFF and a chunk 0x100), the pile goes on the first free square of the eight round the member
+		if (first >= 0) {
+			const World::Obj &t = _world.objects[first];
+			if (!(_world.flags.flags2[(_world.baseTile.firstTile[t.type & 0x3FF] + t.frame) & (TileFlags::TILES - 1)] & 0x10)) {
+				message("The ground is not clear for digging.\n");
+				break;
+			}
+		}
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		int sx = _mdSqX[1], sy = _mdSqY[1];
+		int tile = _world.map.tile(z, sx & mask, sy & mask);
+		int cls = ((tile >= 0x20 && tile <= 0x24) || tile == 0x0C || tile == 0x0D || (tile >= 0x28 && tile <= 0x3F)) ? 0x102 : (tile == 0x7C || tile == 0x7D || tile == 0x7F) ? 0x100 : 0; // sub_3231F
+		if (cls == 0) {
+			message("It has no effect.\n");
+			break;
+		}
+		int hole = seMake(cls == 0x102 ? 0x101 : 0xFF, sx, sy, z, 1);
+		int me = _world.actorObject(actingActor());
+		static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+		int at = -1, nx = 0, ny = 0;
+		for (int i = 0; i < 8 && at < 0 && me >= 0; ++i) {
+			nx = (_world.objects[me].x + DX[i]) & mask;
+			ny = (_world.objects[me].y + DY[i]) & mask;
+			std::vector<int> here;
+			_world.objectsAt(nx, ny, z, here);
+			if (!here.empty())
+				continue;
+			if (_world.flags.flags1[_world.map.tile(z, nx, ny) & (TileFlags::TILES - 1)] & 2)
+				continue;
+			at = i;
+		}
+		if (at < 0) {
+			message("You can't dig here.\n");
+			_world.deleteObject(hole);
+			break;
+		}
+		seMake(cls, nx, ny, z, 1);
+		sfx(0x1B);
+		break;
+	}
+	case 12: { // sub_5A9C5: a shovel moves a pile (first: rocks, iron ore, coal) onto an empty, passable square (the second partner's): what was under it is let go
+		if (first < 0)
+			break;
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		int tx = _mdSqX[2] & mask, ty = _mdSqY[2] & mask;
+		std::vector<int> there;
+		_world.objectsAt(tx, ty, z, there);
+		if ((_world.flags.flags1[_world.map.tile(z, tx, ty) & (TileFlags::TILES - 1)] & 2) || !there.empty()) {
+			message("That is not possible.\n");
+			sfx(5);
+			break;
+		}
+		sfx(0x1B);
+		int ox = _world.objects[first].x, oy = _world.objects[first].y;
+		_world.moveObject(first, tx, ty, z);
+		_world.objects[first].frame = 0;
+		mdSpill(ox, oy);
+		break;
+	}
+	case 62: { // sub_5A93C: a dirt pile (first) shovelled into a hole (second): if the hole holds something that is let go, else both go and the hole under the pile spills
+		if (first < 0 || second < 0)
+			break;
+		int inside = -1;
+		for (size_t i = 0; i < _world.objects.size() && inside < 0; ++i)
+			if (!_world.objects[i].deleted && _world.objects[i].location() == ObjRecord::IN_CONTAINER && _world.objects[i].parent == second)
+				inside = (int)i;
+		if (inside >= 0) {
+			searchHere(second);
+			break;
+		}
+		int px = _world.objects[first].x, py = _world.objects[first].y;
+		mdSpill(px, py);
+		_world.deleteObject(first);
+		_world.deleteObject(second);
+		sfx(0x1B);
+		sfx(0x1B);
+		message("You filled in the hole.\n");
+		break;
+	}
+	case 16: { // sub_5ADA9: a pile (first) shovelled into the furnace (second): the pile goes; coal (0x1BC) into a furnace that is not yet full (frame below 4) sets the belt going (APPROX(76): the animation of sub_4EEB0 is left out)
+		if (first < 0 || second < 0)
+			break;
+		int t = _world.objects[first].type, fr = _world.objects[second].frame;
+		sfx(0x1B);
+		_world.deleteObject(first);
+		if (t != 0x1BC) {
+			message("It has no effect.\n");
+		} else if (fr < 4) {
+			message("The coal begins moving down the belt.\n");
+			_world.actors.talkFlags[0x73] |= 4;
+			_world.actors.talkFlags[0x71] |= 8;
+		}
+		break;
+	}
+	case 13: { // sub_5A7BF: a pile (first: dirt 0x102, rocks, iron ore, coal) shovelled into a wheelbarrow (0x10C: one load) or a rail car (0x19A: up to seven of one kind); the quality says which kind (sub_5987C)
+		if (first < 0 || second < 0)
+			break;
+		auto kind = [](int type) { // sub_5987C
+			return type == 0x1BA ? 2 : type == 0x1BB ? 3 : type == 0x1BC ? 4 : 1;
+		};
+		int k = kind(_world.objects[first].type);
+		std::string what = Describe::object(_world, _world.objects[first]);
+		World::Obj &box = _world.objects[second];
+		if (box.type == 0x10C) {
+			if (box.quantity == 1) {
+				message("There is no more room.\n");
+				sfx(5);
+				break;
+			}
+			sfx(0x1B);
+			box.quantity = 1;
+			box.quality = (uint8_t)k;
+			message("You put the " + what + " into the wheelbarrow.\n");
+			_world.deleteObject(first);
+		} else if (box.type == 0x19A) {
+			int n = box.quantity;
+			if (n == 7) {
+				message("There is no more room.\n");
+				sfx(5);
+				break;
+			}
+			if (n != 0 && k != box.quality) {
+				message("You can't mix different things in the same load!\n");
+				sfx(5);
+				break;
+			}
+			++n;
+			box.quality = (uint8_t)k;
+			box.frame = (uint8_t)((box.frame & 1) + (n == 7 ? 4 : 2));
+			box.quantity = (uint8_t)n;
+			sfx(0x1B);
+			message("You put the " + what + " into the rail car.\n");
+			_world.deleteObject(first);
+		}
 		break;
 	}
 	case 44: { // sub_5EFC8: a door (or hatch) opens and shuts: locked (quality bit 0x80) it is not; somebody in it blocks it; else frame bit 2 turns over

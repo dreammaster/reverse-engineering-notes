@@ -143,6 +143,100 @@ int main() {
 		}
 	}
 
+	// digging (recipe 11): a shovel (0x42) used on a square of soil (the terrain classes of sub_3231F) makes a hole (0x101) there and a dirt pile (0x102) on a free square round the member; a square of the ground that
+	// is not soil has no effect. Found by looking over the surface round the start for a place with soil to the south and room round it.
+	{
+		auto digClass = [&](int tile) { return ((tile >= 0x20 && tile <= 0x24) || tile == 0x0C || tile == 0x0D || (tile >= 0x28 && tile <= 0x3F)) ? 0x102 : (tile == 0x7C || tile == 0x7D || tile == 0x7F) ? 0x100 : 0; };
+		auto clear = [&](int x, int y) {
+			std::vector<int> here;
+			w.objectsAt(x, y, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0 && !w.objects[i].deleted)
+					return false;
+			return true;
+		};
+		int fx = -1, fy = -1;
+		for (int dy = -30; dy <= 30 && fx < 0; ++dy)
+			for (int dx = -30; dx <= 30 && fx < 0; ++dx) {
+				int cx = px + dx, cy = py + dy;
+				int below = w.map.tile(0, cx, cy + 1);
+				if (digClass(below) != 0x102 || !clear(cx, cy + 1) || !clear(cx + 1, cy) || !clear(cx, cy - 1) || !clear(cx - 1, cy))
+					continue;
+				if (w.flags.flags1[w.map.tile(0, cx, cy - 1)] & 2)
+					continue;
+				fx = cx;
+				fy = cy;
+			}
+		if (fx < 0) {
+			std::printf("no soil found to dig in (skipped)\n");
+		} else {
+			int shovel = put(w, 0x42, 0, fx + 1, fy, 0);
+			w.moveObject(w.actorObject(1), fx, fy, 0);
+			for (int i = 1; i < w.actors.partySize; ++i)
+				w.moveObject(w.actorObject(w.actors.partyRoster[i]), fx, fy, 0);
+			g.x = fx;
+			g.y = fy;
+			g.z = 0;
+			size_t before = w.objects.size();
+			g.log.clear();
+			g.handleKey('u');
+			g.handleKey(KEY_RIGHT);
+			g.handleKey(KEY_DOWN);
+			g.handleKey(KEY_ENTER);
+			bool hole = false, pile = false;
+			for (size_t i = before; i < w.objects.size(); ++i) {
+				hole |= w.objects[i].type == 0x101 && w.objects[i].x == fx && w.objects[i].y == fy + 1;
+				pile |= w.objects[i].type == 0x102;
+			}
+			CHECK(hole && pile);
+			w.deleteObject(shovel);
+			for (size_t i = before; i < w.objects.size(); ++i)
+				if (w.objects[i].type == 0x101 || w.objects[i].type == 0x102)
+					w.deleteObject((int)i);
+			for (int i = 0; i < w.actors.partySize; ++i)
+				w.moveObject(w.actorObject(w.actors.partyRoster[i]), px, py, 0);
+			g.x = px;
+			g.y = py;
+		}
+	}
+
+	// a shovel (0x42): a pile of rocks (0x1BA) to the south goes into the wheelbarrow (0x10C) to the north (recipe 13), then a second one is refused: "There is no more room."
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px, py + 1), std::make_pair(px, py - 1)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		int shovel = put(w, 0x42, 0, px + 1, py, 0);
+		int rocks = put(w, 0x1BA, 0, px, py + 1, 0);
+		int barrow = put(w, 0x10C, 0, px, py - 1, 0);
+		w.objects[barrow].quantity = 0; // (empty)
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		g.handleKey(KEY_UP);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("You put the") != std::string::npos && logText(g).find("into the wheelbarrow") != std::string::npos);
+		CHECK(w.objects[rocks].deleted && w.objects[barrow].quantity == 1 && w.objects[barrow].quality == 2);
+		int rocks2 = put(w, 0x1BA, 0, px, py + 1, 0);
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		g.handleKey(KEY_UP);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("There is no more room") != std::string::npos && !w.objects[rocks2].deleted);
+		w.deleteObject(rocks2);
+		w.deleteObject(barrow);
+		w.deleteObject(shovel);
+	}
+
 	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
 	{
 		std::vector<int> here;

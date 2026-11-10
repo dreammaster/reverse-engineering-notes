@@ -314,6 +314,9 @@ private:
 	std::string mdLookExtra(const World::Obj &o) const;
 	bool _mdAsync = false;
 	int _mdItem = -1, _mdFirst = -1, _mdSecond = -1, _mdStage = 0;
+	int _mdSqX[3] = {0, 0, 0}, _mdSqY[3] = {0, 0, 0}; // word_4E6A6 / word_4E6A8: the square chosen as the first (1) and as the second (2) partner; the object-less ones are the ground
+	std::string mdGroundName(int tx, int ty) const;                           // the terrain of a square, as "a ..."
+	void mdSpill(int x, int y);                                                // sub_5A35B: what is in a hole on the square spills out
 	std::vector<int> _mdRecipes;
 	void setControl(int index); // sub_13AE6
 	int _leaderObject; // index of the leader's body in the world's object list
