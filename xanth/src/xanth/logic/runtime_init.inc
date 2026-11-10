@@ -121,6 +121,8 @@
 		rt.word_8AAEE = 13138;
 		rt.word_8AAF4 = 12934;
 		rt.word_8AD44 = 65535;
+		rt.word_8AD52 = 65535;
+		rt.word_8AD54 = 65535;
 		rt.word_8ADB8 = 65535;
 		rt.word_8ADBA = 65535;
 		rt.word_8BDFA = 65535;

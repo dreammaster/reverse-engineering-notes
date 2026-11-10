@@ -235,6 +235,8 @@ uint16 word_8AAEA;
 uint16 word_8AAEE;
 uint16 word_8AAF4;
 uint16 word_8AD44;
+uint16 word_8AD52;
+uint16 word_8AD54;
 char word_8ADAC[12];
 uint16 word_8ADB8;
 uint16 word_8ADBA;

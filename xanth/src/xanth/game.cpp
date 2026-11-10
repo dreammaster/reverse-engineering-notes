@@ -23,6 +23,10 @@ enum {
 	ATTR_HOLDS_ACTOR = 0x10   // the actor's location is a vehicle / container the actor is carried in
 };
 
+static const uint8 kExeDseg[] = {
+#include "xanth/logic/exe_dseg.inc"
+};
+
 static const uint8 kExeTables[] = {
 #include "xanth/logic/exe_tables.inc"
 };
@@ -35,8 +39,9 @@ Game::Game(Ui &ui_, const Legend::MessageFile &messages_, const ObjectNames &nam
 void Game::newGame() {
 	state.reset();
 	memset(_dseg, 0, sizeof(_dseg));
+	memcpy(_dseg, kExeDseg, sizeof(kExeDseg));
 	memcpy(_tables, kExeTables, sizeof(_tables));
-	memset(&rt, 0, sizeof(rt));
+	rt = Runtime();
 	rt.object_count = (uint16)state.objects.count();
 	rt.player_obj = 1;
 	rt.actor_obj = 1;

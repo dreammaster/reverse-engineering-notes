@@ -168,6 +168,8 @@ class LogicNames(Names):
         """text that is part of the program (not of the message file) is kept out of the generated source: ES(n) is an index into engine_strings.inc"""
         t = self.ctx.strings.get(sym)
         if t is None:
+            if sym in self.ctx.procs:
+                return "FN(%s), 0" % logic_name(sym)      # a callback is a far pointer: two words
             return self.addr(sym)           # not text: a buffer or other data the original passes by address
         return self.es(t)
 
@@ -270,6 +272,15 @@ def main():
             n = queue.pop()
             for i in G.L.reachable(ctx.insns, ctx.labels, ctx.tables, ctx.procs[n]):
                 x = ctx.insns[i]
+                for o in x.ops:
+                    mo = re.match(r"^offset\s+([A-Za-z_][\w?]*)$", o.strip())
+                    if mo and mo.group(1) in ctx.procs and x.mn != "call":       # a routine passed as a callback
+                        cb = mo.group(1)
+                        lcb = logic_name(cb)
+                        if lcb not in seen and lcb not in HAND and lcb not in CLIB and is_logic(ctx, cb):
+                            seen.add(lcb)
+                            todo.append(cb)
+                            queue.append(cb)
                 if x.mn != "call" or not x.ops:
                     continue
                 c = G.STRIP.sub("", x.ops[0].strip())
@@ -375,6 +386,13 @@ def main():
         for i in range(0, len(data), 24):
             rows.append(",".join("0x%02X" % c for c in data[i:i + 24]) + ",")
         write(os.path.join(out_dir, "exe_tables.inc"), NL.join(rows) + NL)
+    # the data segment's initial contents: static tables the logic indexes by pointer (mem16(DS, ...))
+    if ctx.image:
+        data = ctx.image[ctx.DSEG:ctx.DSEG + 0x6000]
+        rows = [HDR + " Initial contents of the original's data segment (first 0x6000 bytes), for the tables the logic indexes by pointer."]
+        for i in range(0, len(data), 24):
+            rows.append(",".join("0x%02X" % c for c in data[i:i + 24]) + ",")
+        write(os.path.join(out_dir, "exe_dseg.inc"), NL.join(rows) + NL)
     # dispatch tables
     cmds = enum_values("CMD")
     write(os.path.join(out_dir, "commands.h"), HDR + NL + "#ifndef XANTH_LOGIC_COMMANDS_H" + NL + "#define XANTH_LOGIC_COMMANDS_H" + NL + NL + "namespace Xanth {" + NL + NL + "enum Command {" + NL +

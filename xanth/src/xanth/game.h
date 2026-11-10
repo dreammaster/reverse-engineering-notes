@@ -31,6 +31,7 @@ struct Word {
 	Word(unsigned x) : v((int)x) {}
 	Word(intptr_t x) : v(x) {}
 	Word(const char *p) : v((intptr_t)p) {}
+	template <class R, class... A> Word(R (*f)(A...)) : v((intptr_t)f) {}
 	operator int() const { return (int)v; }
 };
 

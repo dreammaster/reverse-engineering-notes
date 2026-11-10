@@ -209,6 +209,10 @@ class Renderer:
             return "(~strlen(%s) - 1)" % self.R(e[1])
         if op == "words":
             return "TextRef::fromWords(%s, %s)" % (self.R(e[1]), self.R(e[2]))
+        if op == "lo8set":
+            if e[1] == ("undef",):
+                return self.R(e[2])
+            return "((%s & 0xFF00) | (%s & 0xFF))" % (self.R(e[1], False), self.R(e[2], False))
         if op == "text":
             return "TextRef(%s)" % self.R(e[1])
         if op == "textvar":

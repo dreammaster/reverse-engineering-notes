@@ -2,6 +2,7 @@
 int Conversation_GetEntry(Game &g, Word a0, Word a1);  // not decompiled
 int Palette_proc1(Game &g);  // not decompiled
 int Screen_RestoreSubPalettes(Game &g);  // not decompiled
+int bitset_set(Game &g, Word a0, Word a1);
 int cmdAnswer(Game &g);
 int cmdAttach(Game &g);
 int cmdAttack(Game &g);
@@ -316,7 +317,7 @@ int exit_fn_08(Game &g, Word a0);
 int exit_fn_09(Game &g, Word a0);
 int exit_fn_10(Game &g, Word a0);
 int exit_fn_11(Game &g, Word a0);
-int exit_fn_12(Game &g, Word a0);  // not decompiled
+int exit_fn_12(Game &g, Word a0);
 int exit_fn_13(Game &g, Word a0);
 int exit_fn_14(Game &g, Word a0);
 int exit_fn_15(Game &g, Word a0);
@@ -866,8 +867,8 @@ TextRef sub_540A4(Game &g, Word a0, Word a1);
 TextRef sub_5535D(Game &g, Word a0, Word a1);
 TextRef sub_55388(Game &g, Word a0, Word a1);
 int sub_5745A(Game &g);
-int sub_58210(Game &g, Word a0);  // not decompiled
-int sub_58262(Game &g);  // not decompiled
+int sub_58210(Game &g, Word a0);
+int sub_58262(Game &g);
 TextRef sub_58F23(Game &g, Word a0, Word a1);
 TextRef sub_5AF74(Game &g, Word a0, Word a1);
 TextRef sub_5B478(Game &g, Word a0, Word a1);
@@ -888,7 +889,7 @@ TextRef sub_628A2(Game &g, Word a0, Word a1);
 TextRef sub_63AEA(Game &g, Word a0, Word a1);
 TextRef sub_646FD(Game &g, Word a0, Word a1);
 int sub_659D9(Game &g);
-int sub_70120(Game &g, Word a0);  // not decompiled
+int sub_70120(Game &g, Word a0);
 int sub_7016A(Game &g);
 int sub_7027F(Game &g);
 TextRef sub_7179C(Game &g, Word a0, Word a1);
@@ -901,6 +902,6 @@ int sub_77A60(Game &g);
 TextRef sub_77D32(Game &g, Word a0, Word a1);
 int sub_7A860(Game &g);
 int sub_7D0DF(Game &g);  // not decompiled
-int update_room_light(Game &g, Word a0);  // not decompiled
+int update_room_light(Game &g, Word a0);
 int verbdef_Put_out(Game &g, Word a0);
 int word_7024E(Game &g, Word a0);

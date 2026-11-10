@@ -34,4 +34,3 @@ objh_380	cannot convert 'Xanth::TextRef' to 'char*' in assignment
 sub_443EB	invalid conversion from 'char*' to 'int' [-fpermissive]
 sub_4FB5F	'FAR' was not declared in this scope
 sub_7D0DF	invalid conversion from 'int' to 'char*' [-fpermissive]
-update_room_light	'bitset_set' was not declared in this scope

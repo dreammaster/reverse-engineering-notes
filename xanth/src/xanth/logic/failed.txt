@@ -29,7 +29,6 @@ event_fn_35	does not compile yet: invalid conversion from 'int' to 'char*' [-fpe
 event_fn_40	instruction idiv (idiv    cx)
 event_fn_43	instruction div (div     cx)
 event_fn_44	instruction movsw (movsw)
-exit_fn_12	render lo8set
 get_number_suffix	instruction idiv (idiv    cx)
 init_random	render sseg
 number_to_words	instruction idiv (idiv    cx)
@@ -63,9 +62,5 @@ sub_442EF	instruction idiv (idiv    [bp+var_6])
 sub_443EB	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 sub_4E600	instruction div (div     cx)
 sub_4FB5F	does not compile yet: 'FAR' was not declared in this scope
-sub_58210	render lo8set
-sub_58262	render lo8set
 sub_60460	instruction div (div     cx)
-sub_70120	render lo8set
 sub_7D0DF	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-update_room_light?	does not compile yet: 'bitset_set' was not declared in this scope

@@ -35,7 +35,6 @@ int event_fn_35(Game &) { return 0; }  // does not compile yet: invalid conversi
 int event_fn_40(Game &) { return 0; }  // instruction idiv (idiv    cx)
 int event_fn_43(Game &) { return 0; }  // instruction div (div     cx)
 int event_fn_44(Game &) { return 0; }  // instruction movsw (movsw)
-int exit_fn_12(Game &, Word) { return 0; }  // render lo8set
 int get_number_suffix(Game &, Word) { return 0; }  // instruction idiv (idiv    cx)
 int init_random(Game &) { return 0; }  // render sseg
 TextRef number_to_words(Game &, Word) { return TextRef(); }  // instruction idiv (idiv    cx)
@@ -69,11 +68,7 @@ int sub_442EF(Game &, Word, Word) { return 0; }  // instruction idiv (idiv    [b
 int sub_443EB(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int sub_4E600(Game &) { return 0; }  // instruction div (div     cx)
 TextRef sub_4FB5F(Game &, Word, Word) { return TextRef(); }  // does not compile yet: 'FAR' was not declared in this scope
-int sub_58210(Game &, Word) { return 0; }  // render lo8set
-int sub_58262(Game &) { return 0; }  // render lo8set
 int sub_60460(Game &) { return 0; }  // instruction div (div     cx)
-int sub_70120(Game &, Word) { return 0; }  // render lo8set
 int sub_7D0DF(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int update_room_light(Game &, Word) { return 0; }  // does not compile yet: 'bitset_set' was not declared in this scope
 
 } // namespace Xanth
