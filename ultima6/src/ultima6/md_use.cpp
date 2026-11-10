@@ -676,6 +676,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		if ((_world.flags.flags1[_world.map.tile(z, tx, ty) & (TileFlags::TILES - 1)] & 2) || !there.empty()) {
 			message("That is not possible.\n");
 			sfx(5);
+			_mdFail = -1;
 			break;
 		}
 		sfx(0x1B);
@@ -694,6 +695,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 				inside = (int)i;
 		if (inside >= 0) {
 			searchHere(second);
+			_mdFail = 1;
 			break;
 		}
 		int px = _world.objects[first].x, py = _world.objects[first].y;
@@ -733,6 +735,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			if (box.quantity == 1) {
 				message("There is no more room.\n");
 				sfx(5);
+				_mdFail = 1;
 				break;
 			}
 			sfx(0x1B);
@@ -745,11 +748,13 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			if (n == 7) {
 				message("There is no more room.\n");
 				sfx(5);
+				_mdFail = 1;
 				break;
 			}
 			if (n != 0 && k != box.quality) {
 				message("You can't mix different things in the same load!\n");
 				sfx(5);
+				_mdFail = 1;
 				break;
 			}
 			++n;
@@ -760,6 +765,69 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			message("You put the " + what + " into the rail car.\n");
 			_world.deleteObject(first);
 		}
+		break;
+	}
+	case 1: { // sub_59641: reading a book, note or sign: quality 0 is the affidavit that vouches for the member (signed by those whose flag 8 is set: actors 5, 0x19, 0x1A), else MDTEXT.LZC item quality - 1. APPROX(76): the text window of the original (a page of its own, "Press any key...") is the scroll here
+		int q = o.quality;
+		if (q == 0) {
+			message("--Affidavit--\n\nThe undersigned do hereby vouch for the trust-\nworthiness of " + _combat.nameOf(actingActor()) + ", who bears this chit, commending same to the members of the Olympus Mons outpost.\n\nSigned:\n");
+			const ObjList &a = _world.actors;
+			message((a.talkFlags[5] & 8) ? " Richard Sherman\n" : "");
+			message((a.talkFlags[0x19] & 8) ? " Capt. Gregory Duprey\n" : "");
+			message((a.talkFlags[0x1A] & 8) ? " Doctor David Yellin\n" : "");
+			message("\n");
+			break;
+		}
+		std::string text = _world.mdTextItem(q - 1);
+		if (text.empty()) {
+			message("You can't read it.\n");
+			break;
+		}
+		std::string out;
+		for (size_t i = 0; i < text.size(); ++i) {
+			char c = text[i];
+			if (c == '\r')
+				continue;
+			if (c == '*') { // (a page break)
+				out += "\n";
+				continue;
+			}
+			out += c;
+		}
+		message(out + "\n");
+		break;
+	}
+	case 14: { // sub_5AE03: a shovel unloads a wheelbarrow or rail car (first): a pile of its kind (sub_598BF: 1 dirt, 2 rocks, 3 iron ore, 4 coal) appears on its square and is put to the second partner as the loading recipes would (the ground: 12, a container: 13, the furnace: 16, a hole: 62); if that does not work the pile goes again, else the load is down by one
+		if (first < 0)
+			break;
+		_mdFail = 0;
+		int cx = _world.objects[first].x, cy = _world.objects[first].y, cq = _world.objects[first].quality;
+		if (_world.objects[first].quantity == 0) {
+			message("There is nothing to unload.\n");
+			sfx(5);
+			break;
+		}
+		int pile = seMake(cq == 2 ? 0x1BA : cq == 3 ? 0x1BB : cq == 4 ? 0x1BC : 0x102, cx, cy, _world.objects[first].z, 1);
+		int t = second >= 0 ? _world.objects[second].type : -1;
+		if (second < 0)
+			mdAction(12, item, pile, -1);
+		else if (t == 0x10C || t == 0x19A)
+			mdAction(13, item, pile, second);
+		else if (t == 0xE9)
+			mdAction(16, item, pile, second);
+		else if (t == 0x101)
+			mdAction(62, item, pile, second);
+		else
+			message("It has no effect.\n"); // APPROX(76): the recipe 15 (sub_5AAA1: a pile onto anything) is not ported
+		if (_mdFail != 0 || !(t == -1 || t == 0x10C || t == 0x19A || t == 0xE9 || t == 0x101)) {
+			if (!_world.objects[pile].deleted)
+				_world.deleteObject(pile);
+			break;
+		}
+		World::Obj &box = _world.objects[first];
+		box.quantity = (uint8_t)(box.quantity - 1);
+		if (box.type == 0x19A)
+			box.frame = (uint8_t)((box.frame & 1) + (box.quantity == 0 ? 0 : 2));
 		break;
 	}
 	case 44: { // sub_5EFC8: a door (or hatch) opens and shuts: locked (quality bit 0x80) it is not; somebody in it blocks it; else frame bit 2 turns over

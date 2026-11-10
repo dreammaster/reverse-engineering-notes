@@ -91,6 +91,9 @@ public:
 	Bytes faces; // MDFACES.LZC / FACES.LZC
 	mutable int portraitW = 56, portraitH = 64; // the size of the portrait the last call of portrait() produced
 	Bytes talk; // TALK.LZC of Martian Dreams / Savage Empire
+	Bytes mdText; // MDTEXT.LZC of Martian Dreams: the books, notes and signs (item = quality - 1)
+	/** The text of item `n` of MDTEXT.LZC, "" if there is none (sub_3AAAD). */
+	std::string mdTextItem(int n) const;
 	mutable std::vector<int> _talkItem; // actor -> item of TALK.LZC  // CONVERSE.A and CONVERSE.B
 	MapData map;
 	ObjList actors;

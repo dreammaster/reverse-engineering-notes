@@ -237,6 +237,66 @@ int main() {
 		w.deleteObject(shovel);
 	}
 
+	// a book (0x94, recipe 1): its quality names the item of MDTEXT.LZC (quality 2: the power generation system); a quality that has no text can't be read
+	{
+		std::vector<int> here;
+		w.objectsAt(px + 1, py, 0, here);
+		for (int i : here)
+			if (w.objects[i].actor < 0)
+				w.deleteObject(i);
+		int book = put(w, 0x94, 0, px + 1, py, 0);
+		w.objects[book].quality = 2;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Operation of the Power Generation System") != std::string::npos);
+		w.objects[book].quality = 120;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You can't read it") != std::string::npos);
+		w.deleteObject(book);
+	}
+
+	// a shovel on a loaded wheelbarrow (rocks) to the north and then the ground to the south unloads it: a pile of rocks lands on the ground square and the barrow is empty
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px, py + 1), std::make_pair(px, py - 1)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		int shovel = put(w, 0x42, 0, px + 1, py, 0);
+		int barrow = put(w, 0x10C, 0, px, py - 1, 0);
+		w.objects[barrow].quantity = 1;
+		w.objects[barrow].quality = 2;
+		size_t before = w.objects.size();
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_UP);
+		g.handleKey(KEY_ENTER);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		bool pile = false;
+		for (size_t i = before; i < w.objects.size(); ++i)
+			pile |= w.objects[i].type == 0x1BA && !w.objects[i].deleted && w.objects[i].x == px && w.objects[i].y == py + 1;
+		CHECK(pile && w.objects[barrow].quantity == 0);
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_UP);
+		g.handleKey(KEY_ENTER);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("There is nothing to unload") != std::string::npos);
+		for (size_t i = before; i < w.objects.size(); ++i)
+			if (w.objects[i].type == 0x1BA)
+				w.deleteObject((int)i);
+		w.deleteObject(barrow);
+		w.deleteObject(shovel);
+	}
+
 	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
 	{
 		std::vector<int> here;

@@ -140,6 +140,8 @@ bool World::load(const std::string &dir, const NewCharacter *newGame, const std:
 		return fail("CONVERSE");
 	if (spinoff) {
 		readFile(joinPath(dir, "TALK.LZC"), talk);
+		if (game == GameId::MartianDreams)
+			readFile(joinPath(dir, "MDTEXT.LZC"), mdText);
 		readFile(joinPath(dir, game == GameId::MartianDreams ? "MDFACES.LZC" : "FACES.LZC"), faces);
 	}
 
@@ -329,6 +331,14 @@ bool World::script(int actor, ConverseScript &out) const {
 				_talkItem[item[1]] = (int)i;
 	}
 	return _talkItem[actor] >= 0 && lib.get(_talkItem[actor], item) && out.fromBytes(item);
+}
+
+std::string World::mdTextItem(int n) const {
+	LibN lib;
+	Bytes item;
+	if (n < 0 || mdText.empty() || !lib.load(mdText, true) || !lib.present((size_t)n) || !lib.get((size_t)n, item))
+		return "";
+	return std::string(item.begin(), item.end());
 }
 
 bool World::resurrect(int dead) {
