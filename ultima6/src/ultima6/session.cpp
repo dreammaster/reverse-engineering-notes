@@ -301,6 +301,11 @@ void Game::windChanges() {
 
 bool Game::step(int dir) {
 	dir = vehicleDirection(dir);
+	// sub_28167: dizzy from a bad berry (byte_41136, the counter in globals[0x16] that counts down with the minutes) half the steps go in a random direction
+	if (_world.game == GameId::MartianDreams && dir >= 0 && _world.actors.globals.size() > 0x16 && _world.actors.globals[0x16] && seRoll(0, 1)) {
+		message("you are dizzy!\n");
+		dir = seRoll(0, 7);
+	}
 	if (dir < 0) {
 		message("Thou canst not move without wind!\n");
 		return false;

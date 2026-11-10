@@ -523,6 +523,67 @@ int main() {
 		w.deleteObject(door);
 	}
 
+	// Martian berries (recipe 26): 0x49, 0x4A and 0x4B raise the psychic numbers 0, 1 and 2 of the acting member (the first "a strange", later "an increase in the strange"), the berry is used up; the
+	// fourth kind (0x4C) hurts and makes the member dizzy; the dreamstuff hoard (0x1C7, recipe 54) needs power 1
+	{
+		std::vector<int> here;
+		w.objectsAt(px + 1, py, 0, here);
+		for (int i : here)
+			if (w.objects[i].actor < 0)
+				w.deleteObject(i);
+		int me = g.actingActor();
+		w.actors.level[me] = 3;
+		for (int kind = 0; kind < 3; ++kind) {
+			int berry = put(w, 0x49 + kind, 0, px + 1, py, 0);
+			CHECK(g.mdPsychic(me, kind) == 0);
+			g.log.clear();
+			useEast(w, g, px, py);
+			CHECK(logText(g).find("You eat a Martian berry. You feel a strange ") != std::string::npos);
+			CHECK(g.mdPsychic(me, kind) == 1 && w.objects[berry].deleted);
+			for (int other = 0; other < 3; ++other)
+				CHECK(other == kind || g.mdPsychic(me, other) == (other < kind ? 1 : 0));
+		}
+		int berry = put(w, 0x4A, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("an increase in the strange sensitivity") != std::string::npos && g.mdPsychic(me, 1) == 2 && w.objects[berry].deleted);
+		// the hoard
+		int hoard = put(w, 0x1C7, 0, px + 1, py, 0);
+		w.objects[hoard].quality = 1;
+		g.mdSetPsychic(me, 1, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You lack the mental power") != std::string::npos && w.objects[hoard].quality == 1);
+		g.mdSetPsychic(me, 1, 1);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You pull some of the dreamstuff from the hoard") != std::string::npos && w.objects[hoard].quality == 0);
+		int vial = -1, special = 0;
+		std::vector<int> inv;
+		w.inventory(me, inv, true);
+		for (int i : inv)
+			if (w.objects[i].type == 0x14B)
+				vial = i;
+		CHECK(vial >= 0);
+		for (size_t i = 0; i < w.objects.size(); ++i)
+			if (!w.objects[i].deleted && w.objects[i].parent == vial && w.objects[i].type == 0x139)
+				special = 1;
+		CHECK(special);
+		w.deleteObject(hoard);
+		// the sick berry
+		int bad = put(w, 0x4C, 0, px + 1, py, 0);
+		int hp = w.actors.hp[me];
+		w.actors.hp[me] = 255;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("sudden flush, dizziness, and nausea") != std::string::npos && w.actors.hp[me] < 255 && w.actors.hp[me] >= 255 - 40 && w.objects[bad].deleted);
+		CHECK(w.actors.globals[0x16] >= 1 && w.actors.globals[0x16] <= 2);
+		w.actors.hp[me] = (uint8_t)hp;
+		w.actors.globals[0x16] = 0;
+		w.actors.globals[0x40 + 2 * me] = 0;
+		w.actors.globals[0x41 + 2 * me] = 0;
+	}
+
 	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
 	{
 		std::vector<int> here;

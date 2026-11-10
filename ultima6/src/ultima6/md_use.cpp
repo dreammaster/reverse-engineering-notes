@@ -156,6 +156,24 @@ void Game::mdAskKey(std::function<bool(int)> hook) {
 	_keyHook = hook;
 }
 
+// The psychic powers of a member (Martian Dreams): three numbers of 0-10 in the globals from ds:16B0 on, two bytes a member (the low and the high half of the first byte, the low half of the second):
+// 0 is raised by the berry 0x49, 1 by 0x4A (and is the power over the dreamstuff hoard), 2 by 0x4B; sub_22B27 keeps them within 10
+int Game::mdPsychic(int actor, int which) const {
+	size_t at = 0x40 + 2 * (size_t)actor + (which == 2 ? 1 : 0);
+	if (actor < 0 || actor > 15 || at >= _world.actors.globals.size())
+		return 0;
+	uint8_t b = _world.actors.globals[at];
+	return which == 1 ? b >> 4 : b & 15;
+}
+
+void Game::mdSetPsychic(int actor, int which, int value) {
+	size_t at = 0x40 + 2 * (size_t)actor + (which == 2 ? 1 : 0);
+	if (actor < 0 || actor > 15 || at >= _world.actors.globals.size())
+		return;
+	uint8_t &b = _world.actors.globals[at];
+	b = (uint8_t)(which == 1 ? (b & 0x0F) | (value << 4) : (b & 0xF0) | (value & 15));
+}
+
 void Game::mdFinish() {
 	_world.spendMoves(actingActor(), 5);
 	if (_mdAsync)
@@ -1024,6 +1042,58 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		} else {
 			_world.deleteObject(first);
 		}
+		break;
+	}
+	case 26: { // sub_5E988: a Martian berry (0x49-0x4C) is eaten: the three psychic numbers of the acting member (ds:16B0, `mdPsychic`) go up by one (a number of 10 stays within 0-15 and wraps there), or the fourth kind makes the eater ill
+		if (actingActor() == 6) {
+			message("A mechanical person can't eat berries!\n");
+			break;
+		}
+		int actor = actingActor(), kind = o.type - 0x49, sensed = 0;
+		sfx(0x32);
+		if (kind == 0)
+			sensed = mdPsychic(actor, 0) ? _world.actors.level[actor] : 0;
+		else if (kind == 1 || kind == 2)
+			sensed = mdPsychic(actor, kind);
+		else if (kind != 3) {
+			message("You eat a Martian berry. You feel a strange feelings, like the berries were really odd.\n");
+			break;
+		}
+		message(std::string("You eat a Martian berry. You feel ") + (sensed ? "an increase in the" : "a") + " strange ");
+		if (kind == 0) {
+			message("relationship with things around you.\n");
+			mdSetPsychic(actor, 0, (mdPsychic(actor, 0) + 1) & 15);
+		} else if (kind == 1) {
+			message("sensitivity to the feelings of objects around you.\n");
+			mdSetPsychic(actor, 1, (mdPsychic(actor, 1) + 1) & 15);
+		} else if (kind == 2) {
+			message("sense of your spatial location.\n");
+			mdSetPsychic(actor, 2, (mdPsychic(actor, 2) + 1) & 15);
+		} else {
+			message("sudden flush, dizziness, and nausea.\n");
+			_combat.applyDamage(actor, actor, seRoll(5, 20) + seRoll(5, 20));
+			_world.actors.globals[0x16] = (uint8_t)(_world.actors.globals[0x16] + seRoll(1, 2)); // the counter of the dizziness (byte_41136; Game::step)
+			_world.actors.status[actor] &= 0xF7;
+		}
+		consumeOne(item);
+		break;
+	}
+	case 54: { // sub_5CF05: the dreamstuff hoard (0x1C7): somebody with the second psychic power (the high half of ds:16B0) pulls out a vial (0x14B) holding one thing, 0x31-0x38 by chance or, the first time (quality not 0), 0x139
+		// APPROX(76): the "Blocked!" line-of-sight test and the missile that carries the dreamstuff across a gap (sub_1B2B8, sub_18A0C) are left out; Use reaches one square
+		int actor = actingActor();
+		if (mdPsychic(actor, 1) == 0) {
+			message("You lack the mental power to affect the dreamstuff hoard.\n");
+			break;
+		}
+		if (_world.carriedWeight(actor) + _world.weightOfType(0x14B, 1) > _world.actors.strength[actor] * 20) {
+			message("You are carrying too much already.\n");
+			break;
+		}
+		int vial = _world.addToInventory(actor, 0x14B, 0, 1);
+		message("You pull some of the dreamstuff from the hoard.\n");
+		int thing = _world.objects[item].quality ? 0x139 : seRoll(0x31, 0x38);
+		seFill(vial, thing, 1);
+		_world.objects[item].quality = 0;
 		break;
 	}
 	case 58: { // sub_5CAFA: the seed plant (item): from frame 1 on one seed (0x9E) can be taken, the plant starts again at frame 0 with a growth number of 10 to 15 in its quality

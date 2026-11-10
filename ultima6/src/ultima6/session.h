@@ -96,6 +96,10 @@ public:
 	std::vector<std::string> log;
 	TextWindow scroll; // the text scroll of the play screen
 
+	int actingActor() const;
+	int mdPsychic(int actor, int which) const; // Martian Dreams: the psychic numbers of a member (ds:16B0)
+	void mdSetPsychic(int actor, int which, int value);
+
 private:
 	World &_world;
 	MapRenderer _renderer;
@@ -230,7 +234,6 @@ private:
 	void useKeyOn(int tx, int ty);
 	void usePotionOn(int actor);
 	void consumeOne(int idx);
-	int actingActor() const;
 	int findInInventory(int type);
 	void fillBucket(bool milk);
 	void useFishingPole();
