@@ -1186,6 +1186,36 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		break;
 	}
+	case 60: { // sub_5E690: oil (0xEB) on a rusted door (quality 0xC0 or more): "The door is unstuck." (the 0x80 bit goes), the oil is used up; on a door that is not rusted "This door is not rusted."; on the ground of terrain 8 a story flag of actor 0x51 is set (APPROX(76): the scene that follows, sub_3F864 / sub_3F615, is left out)
+		if (o.type == 0xEB && o.frame != 4) {
+			message("It has no effect.\n");
+			break;
+		}
+		if (first < 0) {
+			int mask = z == 0 ? 0x3FF : 0xFF;
+			if (_world.map.tile(z, _mdSqX[1] & mask, _mdSqY[1] & mask) == 8)
+				_world.actors.talkFlags[0x51] |= 0x40;
+			else
+				message("It has no effect.\n");
+			break;
+		}
+		World::Obj &door = _world.objects[first];
+		int t = door.type;
+		if (!(t == 0xB3 || t == 0xE3 || t == 0x1A5 || t == 0x98 || t == 0xDB || t == 0xDE)) {
+			message("It has no effect.\n");
+			break;
+		}
+		int q = door.quality;
+		if (q - 0x80 < 0x40) {
+			message("This door is not rusted.\n");
+			break;
+		}
+		door.quality = (uint8_t)(q + 0x80);
+		message("The door is unstuck.\n");
+		sfx(4);
+		consumeOne(item);
+		break;
+	}
 	case 44: { // sub_5EFC8: a door (or hatch) opens and shuts: locked (quality bit 0x80) it is not; somebody in it blocks it; else frame bit 2 turns over
 		if (o.quality & 0x80) {
 			message("It is locked.\n");

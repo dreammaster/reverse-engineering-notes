@@ -494,6 +494,35 @@ int main() {
 		w.deleteObject(cannon);
 	}
 
+	// lamp oil (0x7C, recipe 60) on a door (0xDE): one that is rusted shut (quality 0xC0) is unstuck (0x40), another is "not rusted"
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px, py + 1)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		int oil = put(w, 0x7C, 0, px + 1, py, 0);
+		int door = put(w, 0xDE, 0, px, py + 1, 0);
+		w.objects[door].quality = 0x40;
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("This door is not rusted") != std::string::npos && !w.objects[oil].deleted);
+		w.objects[door].quality = 0xC0;
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("The door is unstuck") != std::string::npos && w.objects[door].quality == 0x40 && w.objects[oil].deleted);
+		w.deleteObject(door);
+	}
+
 	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
 	{
 		std::vector<int> here;
