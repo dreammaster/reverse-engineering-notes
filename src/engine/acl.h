@@ -33,6 +33,7 @@ typedef struct {
 	void *user;
 	int queue_n;                    /* room events queued by ops (op 9 -> type 19) */
 	struct { int type, arg; } queue[16];
+	uint32_t money, score;          /* ds:248 / ds:24C */
 	int energy, energy_max;         /* ds:23A / ds:700 */
 	int msg_n;                      /* op 28 (say): string ids waiting to be shown */
 	int msg[16];

@@ -109,6 +109,9 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		}
 		break;
 	}
+	case 5: vm->score += a[0]; break;
+	case 6: vm->money += a[0]; vm->score += a[0] >> 2; break;       /* verified: ds:248 += a, ds:24C += a >> 2 */
+	case 2: if (cur) *cur |= 0x80; break;                           /* the current object is removed (its effect on the engine's entries is not modelled) */
 	case 45: {
 		int e = vm->energy + (int16_t)w;
 		vm->energy = e <= 0 ? 0 : e > vm->energy_max ? vm->energy_max : e;

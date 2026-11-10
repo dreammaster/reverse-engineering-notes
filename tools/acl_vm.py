@@ -86,6 +86,12 @@ class VM:
             cur[3] ^= 1
         elif op == 29:                              # disarm the running handler
             self.disarm = True
+        elif op == 6:                               # money += n, score += n >> 2 (verified against the original)
+            self.money = (getattr(self, 'money', 0) + a[0]) & 0xFFFFFFFF
+            self.score = (self.score + (a[0] >> 2)) & 0xFFFFFFFF
+        elif op == 2:                               # remove the current object (the engine entries are not modelled: flag 0x80 here)
+            if cur is not None:
+                cur[3] |= 0x80
         elif op == 5:                               # score += n
             self.score = (self.score + a[0]) & 0xFFFFFFFF
         elif op == 38:                              # var[i] = k

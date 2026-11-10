@@ -112,7 +112,7 @@ typedef struct RoomView_ {
 	uint8_t verbs[VERB_SLOTS];  /* verb icons of the touched object (slots) */
 	int nverbs;
 	int energy_max_cfg;        /* from LEVn.MP1 */
-	int menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
+	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
 	int label_id;              /* name shown above the room name: string id of the last touched object (-1 none) */
 	AclVM vm;                  /* script state: thing flags / variables */
 	TadRt tad;                 /* native routines of ROUTINEn.TAD (timers) */
@@ -582,6 +582,7 @@ static void walker_touch(Walker *wk, RoomView *rv, const ColResult *cr, int keys
 		rv->label_id = nm < 0x8000 ? nm : -1;
 		rv->nverbs = verbs_list(o->sp->header, rv->vm.flags2[o->thing], 0, rv->verbs);
 		rv->touch_thing = o->thing;
+		rv->touch_age = 0;
 		if ((keys & 0x80) && !rv->menu_open) {         /* End while touching: the verb menu opens (1000:244C -> 2A33) */
 			rv->menu_open = 1; rv->menu_sel = 0; rv->menu_delay = 0; rv->menu_released = 0;
 			return;
@@ -644,7 +645,12 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	{
 		int end = (keys & 0x80) != 0, edge = end && !rv->end_prev;
 		rv->end_prev = end;
+		if (rv->touch_age < 1000) rv->touch_age++;
 		if (rv->menu_open) { menu_step(rv, keys, edge); return; }
+		if (edge && rv->nverbs && rv->touch_age < 12 && !(keys & 15)) {   /* End tapped right after touching an object (menu2 trace) */
+			rv->menu_open = 1; rv->menu_sel = 0; rv->menu_delay = 0; rv->menu_released = 0;
+			return;
+		}
 	}
 	int dx = 0, dy = 0, dir = -1;
 	if (keys & 8) { dir = DIR_RIGHT; dx = 1; }

@@ -494,6 +494,8 @@ the TAD routine `word at [table+2+4·(type+9)] + index·2` with `bp` = the thing
 `di` = record, `si`/`es` = the engine's per-object state. In level 1 room 0 the list holds one thing, 900 (runtime-created, no file record), with behaviour 4 (`TAD:0278`: two calls to blob helpers `03A0`, `0407`). The routines read/write the tail (`[bp+8]` countdown, `[bp+9]` reload, `[bp+0Ah]`
 pointer into script bytes in the blob — `0x80` end, `0x81` restart — `[bp+0Eh]`, `[bp+0Fh]` flags) and the object entries (`[si]`, `[si+0Ch]`, `[si+0Dh]`, `[di+3]`, `[di+0Fh]`), and call services (random `20h`, sound `24h`, record lookups `00`/`04`, move helpers). Running them
 needs the engine's RAM object entries (50-byte entries at `ds:2A`, expanded thing records) mirrored in the interpreter's data image — not done. Op `33h` (51) changes the level (`ds:708` = operand + 1, restarts the loader); only level 3 room 80 uses it.
+**More ops.** `06` (6) adds its byte to the money counter `ds:248` (32 bit) and `byte >> 2` to the score `ds:24C` (verified against the original); `05` adds to the score; `02` (2) removes the current object (`1000:78DE`; modelled as flag `0x80`). Verb 2 raises event 0, whose handlers
+are mostly `06 n; 02` — i.e. verb 2 hands the object in (sell/sacrifice: money and score, object gone).
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input
