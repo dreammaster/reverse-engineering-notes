@@ -8,7 +8,7 @@ Method: `tests/deponia1/censustest.cpp` loads the game's data with the reconstru
 | scenes | 74 | 94 | 131 | 168 | 95 |
 | characters | 84 | 166 | 265 | 328 | 64 |
 | scenes with a light map (shown as the tint of the objects) | 27 | 38 | 19 | 97 | 61 |
-| particle system records (table 22) | 0 | 0 | 0 | 0 | **3** |
+| particle system records (table 22) | 0 | 0 | 0 | 0 | 3 (**no scene, object or script uses them**: 0 of 95 scenes, 0 of 5,522 objects, no script says `particle`; checked 10 Nov 2026) |
 | scenes, objects, buttons, characters with a shader set | 0 | 0 | 0 | 0 | 0 |
 | shader, audio bus, event, plugin, block records | 0 | 0 | 0 | 0 | 0 |
 | model and Spine ("bones") animations | 0 | 0 | 0 | 0 | 0 |
@@ -23,6 +23,6 @@ What this says for each game (the engine's code is the same in all of them excep
   Every one of the 82 commands the data uses has its case in `TGAction::Execute` (`vstables/eCommand.h`; command 6, `EndIf`, has none because the original does nothing for it).
 - **Deponia 2 and 3** (older engine): the same, with fewer features in the engine; the data loads with the Deponia 1 build (`src/deponia1`, or a copy with the older behaviours of `src/deponia2/VERSIONS.md`).
 - **Deponia 4**: the data runs a Shader Toolkit written in Lua (`shaderCompile` and the effects) on the card: **it needs the GL backend** (`TGraphicsSubSystemGL`, `TShader`, `TShaderConstantBuffer`, `TFramebuffer`, the shader commands of `playerCommands`), which the player does not have; without it the effects are not drawn (the scripts keep their shader list but make no shaders, see TODO.md). Needs `string.dump` to fail without stopping the engine (`src/deponia4` does).
-- **Night of the Rabbit**: needs **Lua 5.4** (the scripts do not even compile in Lua 5.1), the three particle systems drawn, and the engine changes in `src/nightoftherabbit/VERSIONS.md` (the conditions lists, the volumes in decibels, plugins, `TGraphicsInterface` with the batch and texture slots).
+- **Night of the Rabbit**: needs **Lua 5.4** (the scripts do not even compile in Lua 5.1), and the engine changes in `src/nightoftherabbit/VERSIONS.md` (the conditions lists, the volumes in decibels, plugins, `TGraphicsInterface` with the batch and texture slots).
 
-Order of work, by what stops a game from being played: (1) play Deponia 1 through and fix what is found; (2) the Lua 5.4 build for Night of the Rabbit (a vendored Lua 5.4 for the stand-alone player only; ScummVM keeps its own), its engine changes and the particle drawing; (3) the GL backend for Deponia 4's Shader Toolkit, reimplemented from the original's `TGraphicsSubSystemGL` / `TShader` family and run through SDL's OpenGL; (4) the rest of the functions of `src/deponia1/COVERAGE.md` that the original has and the reconstruction has not (the audio bus system, the picture preloader thread, the debug console), so that every function with a symbol is reimplemented.
+Order of work, by what stops a game from being played: (1) play Deponia 1 through and fix what is found; (2) the Lua 5.4 build for Night of the Rabbit (a vendored Lua 5.4 for the stand-alone player only; ScummVM keeps its own), its engine changes; (3) the GL backend for Deponia 4's Shader Toolkit, reimplemented from the original's `TGraphicsSubSystemGL` / `TShader` family and run through SDL's OpenGL; (4) the rest of the functions of `src/deponia1/COVERAGE.md` that the original has and the reconstruction has not (the audio bus system, the picture preloader thread, the debug console), so that every function with a symbol is reimplemented.

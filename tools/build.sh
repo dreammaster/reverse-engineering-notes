@@ -38,7 +38,15 @@ fi
 lua_exclude="scummvm_file.cpp lua_persist.cpp lua_persistence_util.cpp lua_unpersist.cpp liolib.cpp loslib.cpp loadlib.cpp double_serialization.cpp"
 
 mapfile -t sources < <(find "$src_dir" -name '*.cpp' | sort)
-if [ -d "$scummvm/common/lua" ]; then
+lua_flags=""
+if [ "$game" = "nightoftherabbit" ]; then
+    # (Night of the Rabbit's executable has Lua 5.4.0 linked in, not ScummVM's 5.1: third_party/lua54, every file built as C++ so that the
+    # names are the engine's, as in tools/tbuild.py)
+    for f in "$tp"/lua54/src/*.c; do
+        sources+=("$f")
+    done
+    lua_flags="-I $tp/lua54/src"
+elif [ -d "$scummvm/common/lua" ]; then
     for f in "$scummvm"/common/lua/*.cpp; do
         case " $lua_exclude " in *" $(basename "$f") "*) continue ;; esac
         sources+=("$f")
@@ -63,7 +71,7 @@ for src in "${sources[@]}"; do
         "$src_dir"/*) rel="${src#$src_dir/}" ;;
         *) rel="ext/$(basename "$src")" ;;
     esac
-    obj="$obj_dir/${rel%.cpp}.o"
+    obj="$obj_dir/${rel%.*}.o"
     objects+=("$obj")
     if [ ! -f "$obj" ] || [ "$src" -nt "$obj" ] || [ -n "$(find "$src_dir" -name '*.h' -newer "$obj" -print -quit)" ]; then
         jobs+=("$src|$obj")
@@ -74,10 +82,11 @@ compile() {
     local src="${1%%|*}" obj="${1##*|}" flags=(-std=c++17 -Wall -Wextra)
     mkdir -p "$(dirname "$obj")"
     case "$src" in "$SRC_DIR"/*) ;; *) flags=(-std=c++17 -w) ;; esac
-    "$GXX" "${flags[@]}" -I "$SRC_DIR" -I "$SCUMMVM" -I "$TP/libwebp/src" -I "$TP/opusfile/include" -I "$TP/opus/include" -I "$TP/ogg/include" -I "$TP/freetype/include" -I "$TP/harfbuzz/src" -I "$TP/libvpx" -I "$TP/vorbis/include" -I "$TPLIB/gen" $EXTRA_FLAGS -c "$src" -o "$obj"
+    case "$src" in *.c) flags+=(-x c++) ;; esac
+    "$GXX" "${flags[@]}" $LUA_FLAGS -I "$SRC_DIR" -I "$SCUMMVM" -I "$TP/libwebp/src" -I "$TP/opusfile/include" -I "$TP/opus/include" -I "$TP/ogg/include" -I "$TP/freetype/include" -I "$TP/harfbuzz/src" -I "$TP/libvpx" -I "$TP/vorbis/include" -I "$TPLIB/gen" $EXTRA_FLAGS -c "$src" -o "$obj"
 }
 export -f compile
-export GXX="$gxx" SRC_DIR="$src_dir" SCUMMVM="$scummvm" TP="$tp" TPLIB="$tplib"
+export GXX="$gxx" SRC_DIR="$src_dir" SCUMMVM="$scummvm" TP="$tp" TPLIB="$tplib" LUA_FLAGS="$lua_flags"
 # (an array cannot be exported to the compile function that xargs runs: the flags are a string)
 EXTRA_FLAGS="${extra_args[*]:-}"
 if [ "${SDL:-0}" = "1" ]; then EXTRA_FLAGS="$EXTRA_FLAGS -DUSE_REAL_SDL -I $tp/SDL2/include"; fi

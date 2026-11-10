@@ -193,7 +193,69 @@ void TTOutfit::OnCreate(TVisionaireObject *object) {
 	object->SetValue(kOutfitModelTurnSpeed, 100, TSendEventEnum::kSendEvent);
 }
 
-void TTParticles::OnCreate(TVisionaireObject * /*object*/) {
+// Confirmed (Night of the Rabbit, TTParticles::OnCreate, asm lines 1611495-1611913; Deponia 1's sets only six of these): the defaults of a new
+// particle system of the editor: soft additive material, one tile, the type 1 (a tile by chance) at (200, 200) with a point emitter, 250
+// particles of 0.03 to 0.3, 60 steps of life, the curves 100 numbers long (the colour curves and the tile curve 0, the size curve 1, the
+// control points of the editor 1 at both ends).
+void TTParticles::OnCreate(TVisionaireObject *object) {
+	const std::vector<float> zeros(100, 0.0f);
+	const std::vector<float> ones(100, 1.0f);
+	std::vector<int> controls(100, 0);
+
+	controls[0] = 1;
+	controls[99] = 1;
+
+	object->SetValue(kParticleTexture, TCharHolder(), TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleMaterialMode, 2, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleTilesX, 1, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleTilesY, 1, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleType, 1, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticlePosX, 200, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticlePosY, 200, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleEmitterType, 1, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleEmitterSizeX, 200, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleEmitterSizeY, 200, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleEmitterSizeZ, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleMaxParticles, 250, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticlePerTime, 1.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticlePhiX, 22, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticlePhiY, 22, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleMinSize, 0.0299999993f, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleMaxSize, 0.300000012f, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleMinVelocity, 0.00999999978f, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleMaxVelocity, 0.0199999996f, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleMinLife, 60, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleMaxLife, 60, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleMinColor, 8355711, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleMaxColor, 16777215, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleRotationX, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleRotationZ, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleActiveStages, 1, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleBlendColor0, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleBlendColor1, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleBlendColor2, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleBlendColor3, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleBlendColorCurve0, zeros, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleBlendColorCurve1, zeros, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleBlendColorCurve2, zeros, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleBlendColorCurve3, zeros, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleColorControlPoints0, controls, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleColorControlPoints1, controls, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleColorControlPoints2, controls, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleColorControlPoints3, controls, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleForceType, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleForceStrength, 0.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleForceRotationX, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleForceRotationZ, 0, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleForceXPos, 0.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleForceYPos, 0.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleForceZPos, 0.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleForceBlend, 0.999000013f, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleBlendSizeCurve, ones, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleSizeControlPoints, controls, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleBlendMaxTile, -1, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleBlendTilesCurve, zeros, TSendEventEnum::kSendEvent);
+	object->SetValue(kParticleBlendTilesControlPoints, controls, TSendEventEnum::kSendEvent);
 }
 
 // The editor-list names of actions parts and texts (a long switch over the
