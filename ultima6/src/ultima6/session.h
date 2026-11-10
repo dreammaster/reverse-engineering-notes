@@ -315,7 +315,11 @@ private:
 	bool _mdAsync = false;
 	int _mdItem = -1, _mdFirst = -1, _mdSecond = -1, _mdStage = 0;
 	int _mdFail = 0; // word_4EB7A: set by the loading and unloading recipes when the thing was not done
-	int _mdSqX[3] = {0, 0, 0}, _mdSqY[3] = {0, 0, 0}; // word_4E6A6 / word_4E6A8: the square chosen as the first (1) and as the second (2) partner; the object-less ones are the ground
+	std::function<bool(int)> _keyHook; // a recipe waiting for keys: called with each key, true when it is done (then mdFinish)
+	void mdAskKey(std::function<bool(int)> hook);
+	void mdFinish();                    // the end of a Use that waited: five moves and the prompt
+	void mdPlant(int tx, int ty);       // sub_5CC45 after the location is chosen
+	int _mdSqX[4] = {0, 0, 0, 0}, _mdSqY[4] = {0, 0, 0, 0}; // word_4E6A6 / word_4E6A8: the square chosen as the first (1) and as the second (2) partner; the object-less ones are the ground
 	void mdPlace(int idx, int x, int y, int zz);                              // sub_2CFE2
 	std::string mdGroundName(int tx, int ty) const;                           // the terrain of a square, as "a ..."
 	void mdSpill(int x, int y);                                                // sub_5A35B: what is in a hole on the square spills out

@@ -143,6 +143,20 @@ void Game::mdContinue(int stage, int partner) {
 	message("\n");
 	if (best >= 0)
 		mdAction(best, _mdItem, _mdFirst, _mdSecond);
+	if (_keyHook || _pending == 'Z') // (the action waits for a key or a location: mdFinish / mdChosen end the command)
+		return;
+	_world.spendMoves(actingActor(), 5);
+	if (_mdAsync)
+		prompt();
+}
+
+// a recipe that waits for keys: the hook gets each one; the command ends when it says so
+void Game::mdAskKey(std::function<bool(int)> hook) {
+	_mdAsync = true;
+	_keyHook = hook;
+}
+
+void Game::mdFinish() {
 	_world.spendMoves(actingActor(), 5);
 	if (_mdAsync)
 		prompt();
@@ -161,6 +175,10 @@ void Game::mdChosen(int tx, int ty) {
 		}
 	_mdSqX[_mdStage] = tx;
 	_mdSqY[_mdStage] = ty;
+	if (_mdStage == 3) { // the location of a seed
+		mdPlant(tx, ty);
+		return;
+	}
 	if (pick < 0) { // the ground (sub_35972 returns -1 and leaves the square): its name, and it must be within reach
 		int a = _world.actorObject(actingActor());
 		message(mdGroundName(tx, ty) + ".\n");
@@ -190,6 +208,28 @@ void Game::mdPlace(int idx, int x, int y, int zz) {
 	} else {
 		_world.moveObject(idx, x, y, zz);
 	}
+}
+
+// sub_5CC45 after the location: the ground must be of a class that can be dug (sub_3231F), then the seed (one of a stack) lies there
+void Game::mdPlant(int tx, int ty) {
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	int tile = _world.map.tile(z, tx & mask, ty & mask);
+	bool ground = (tile >= 0x20 && tile <= 0x24) || tile == 0x0C || tile == 0x0D || (tile >= 0x28 && tile <= 0x3F) || tile == 0x7C || tile == 0x7D || tile == 0x7F;
+	if (!ground) {
+		message("Won't grow there!\n");
+		sfx(5);
+		mdFinish();
+		return;
+	}
+	World::Obj &seed = _world.objects[_mdItem];
+	if (seed.quantity > 1) {
+		--seed.quantity;
+		seMake(0x9E, tx, ty, z, 1);
+	} else {
+		mdPlace(_mdItem, tx, ty, z);
+	}
+	message("Now it just needs watering.\n");
+	mdFinish();
 }
 
 // the terrain of a square with its article (sub_2F774 of the tile sub_263B2 finds)
@@ -998,6 +1038,77 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		World::Obj &plant = _world.objects[item];
 		plant.frame = 0;
 		plant.quality = (uint8_t)seRoll(10, 15);
+		break;
+	}
+	case 40: { // sub_5AFA9: a ray gun (0x2D has no charges to count) says its setting and asks for a new one: R rifle (quality 1), S shotgun (2), C combination (0); Enter leaves it
+		int q = o.quality;
+		message(std::string("It is set to \"") + (q == 0 ? "Combination" : q > 1 ? "Shotgun" : "Rifle") + "\".");
+		if (o.type != 0x2D)
+			message("  It has " + std::to_string((int)o.quantity) + " charges left.");
+		message("  New setting (R/S/C)?\n");
+		int gun = item;
+		mdAskKey([this, gun](int key) {
+			int c = key >= 'a' && key <= 'z' ? key - 32 : key;
+			if (c != 'S' && c != 'R' && c != 'C' && c != KEY_ENTER && c != '\n' && c != '\r')
+				return false;
+			if (c == 'C') {
+				message("Combination\n");
+				_world.objects[gun].quality = 0;
+			} else if (c == 'R') {
+				message("Rifle\n");
+				_world.objects[gun].quality = 1;
+			} else if (c == 'S') {
+				message("Shotgun\n");
+				_world.objects[gun].quality = 2;
+			}
+			return true;
+		});
+		break;
+	}
+	case 59: { // sub_5CC45: a seed (item): "Location: " asks for a square (the cursor; none is "nowhere."); the seed must go in ground that can be dug (the classes of sub_3231F), "Won't grow there!" else
+		message("Location: ");
+		_mdStage = 3;
+		_pending = 'Z';
+		_cursor = true;
+		_cx = _cy = 5;
+		_mdAsync = true;
+		break;
+	}
+	case 36: { // sub_5B6F7: the pipe organ: organ music (0x199) on the organ (0xA5 next to it) or an organ with the music beside it (up and to the left) plays the Toccata; else the keys 1-0 play notes until another key is pressed. APPROX(76): the Toccata itself (sub_306A5) is only named
+		int music = -1;
+		int organ = item;
+		if (o.type == 0x199) {
+			if (carriedObject(o)) {
+				message("Organ music must be played on a pipe organ.\n");
+				break;
+			}
+			music = item;
+			organ = seFind(0xA5, o.x + 1, o.y);
+			if (organ < 0) {
+				message("Organ music must be played on a pipe organ.\n");
+				break;
+			}
+		}
+		if (music < 0) {
+			int ox = _world.objects[organ].x - 1, oy = _world.objects[organ].y;
+			std::vector<int> there;
+			_world.objectsAt(ox, oy, z, there);
+			for (int i : there)
+				if (_world.objects[i].type == 0x199 && music < 0)
+					music = i;
+		}
+		if (music >= 0) {
+			message("Tocatta and Fugue in D minor (J.S. Bach).\n");
+			break;
+		}
+		message("Press keys 1-0 to play -");
+		mdAskKey([this](int key) {
+			if (key >= '0' && key <= '9') {
+				sfx(key - 10);
+				return false;
+			}
+			return true;
+		});
 		break;
 	}
 	case 44: { // sub_5EFC8: a door (or hatch) opens and shuts: locked (quality bit 0x80) it is not; somebody in it blocks it; else frame bit 2 turns over

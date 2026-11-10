@@ -424,6 +424,43 @@ int main() {
 		w.deleteObject(gun);
 	}
 
+	// recipes that wait for keys: a ray gun (0x2D, recipe 40) says its setting and takes R (rifle) / S / C; a seed (0x9E, recipe 59) asks for a location (a bare spot of rock: "Won't grow there!" or planted); the pipe organ (0xA5, recipe 36) plays the keys 1-0 until another key
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px, py + 1)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		int gun = put(w, 0x2D, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("It is set to \"Combination\"") != std::string::npos && logText(g).find("New setting") != std::string::npos);
+		g.handleKey('x'); // (not a setting: still waiting)
+		g.handleKey('r');
+		CHECK(w.objects[gun].quality == 1 && logText(g).find("Rifle") != std::string::npos);
+		w.deleteObject(gun);
+		int seed = put(w, 0x9E, 0, px + 1, py, 0);
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		CHECK(logText(g).find("Location:") != std::string::npos);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("Won't grow there") != std::string::npos || logText(g).find("Now it just needs watering") != std::string::npos);
+		w.deleteObject(seed);
+		int organ = put(w, 0xA5, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Press keys 1-0 to play") != std::string::npos);
+		g.handleKey('5');
+		g.handleKey('7');
+		g.handleKey(KEY_ENTER); // (any other key ends it)
+		w.deleteObject(organ);
+	}
+
 	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
 	{
 		std::vector<int> here;

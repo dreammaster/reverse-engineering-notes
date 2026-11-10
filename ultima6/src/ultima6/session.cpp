@@ -753,6 +753,13 @@ bool Game::handleKeyInner(int key) {
 		prompt();
 		return true;
 	}
+	if (_keyHook && key != KEY_NONE) {
+		if (_keyHook(key)) {
+			_keyHook = nullptr;
+			mdFinish();
+		}
+		return true;
+	}
 	if (_textActive) {
 		textKey(key);
 		return true;
@@ -846,8 +853,11 @@ bool Game::handleKeyInner(int key) {
 			if (_pending == 'Z') { // Martian Dreams' Use: no partner chosen
 				_pending = 0;
 				_cursor = false;
-				message("nothing!\n");
-				mdContinue(_mdStage, -2);
+				message(_mdStage == 3 ? "nowhere.\n" : "nothing!\n");
+				if (_mdStage == 3)
+					mdFinish();
+				else
+					mdContinue(_mdStage, -2);
 				break;
 			}
 			if (_pending == 'd') { // cmd_drop: no place chosen is "Not possible"
