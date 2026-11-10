@@ -40,6 +40,7 @@ void Game::newGame() {
 	state.reset();
 	memset(_dseg, 0, sizeof(_dseg));
 	memcpy(_dseg, kExeDseg, sizeof(kExeDseg));
+	_seed = kExeDseg[0x5812] | (kExeDseg[0x5813] << 8) | ((unsigned)kExeDseg[0x5814] << 16) | ((unsigned)kExeDseg[0x5815] << 24);   // the C runtime's seed (word_8A7D2/4)
 	memcpy(_tables, kExeTables, sizeof(_tables));
 	rt = Runtime();
 	rt.object_count = (uint16)state.objects.count();

@@ -109,10 +109,9 @@ int main() {
 				s.eventCount = (unsigned)g.state.events.size();
 				for (size_t k = 0; k < ui.log.size(); k++) {
 					const std::string &e = ui.log[k];
-					if (e.compare(0, 8, "wputchar") == 0 && e.size() == 9)       // a non-printable character: the original logs the call with no text
-						s.text += e + "\x1f";
-					else
-						s.text += e + "\x1f";
+					if (e.compare(0, 14, "realsound_play") == 0)     // the oracle runs the original's sound routine and does not log it
+						continue;
+					s.text += e + "\x1f";
 				}
 				scenarios++;
 				bool conversation = false;
