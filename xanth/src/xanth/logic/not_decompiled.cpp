@@ -17,9 +17,7 @@ TextRef conv_text_20(Game &) { return TextRef(); }  // operand word ptr (dword_8
 TextRef conv_text_55(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 TextRef conv_text_57(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 TextRef conv_text_77(Game &) { return TextRef(); }  // does not compile yet: incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'
-TextRef conv_text_82(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
-TextRef conv_text_83(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
-TextRef conv_text_86(Game &) { return TextRef(); }  // does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
+TextRef conv_text_83(Game &) { return TextRef(); }  // does not compile yet: operands to '?:' have different types 'char*' and 'int'
 int event_fn_05(Game &) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int event_fn_07(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int event_fn_17(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
@@ -51,7 +49,7 @@ int sub_1C4ED(Game &, Word, Word, Word, Word) { return 0; }  // use of bp (lea  
 int sub_2A333(Game &) { return 0; }  // carry after res (adc     [bx+2], dx)
 int sub_44130(Game &, Word, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 TextRef sub_4FB5F(Game &, Word, Word) { return TextRef(); }  // does not compile yet: 'FAR' was not declared in this scope
-int sub_60460(Game &) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
+int sub_60460(Game &) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int sub_7D0DF(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 
 } // namespace Xanth

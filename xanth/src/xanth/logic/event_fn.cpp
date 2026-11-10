@@ -25,9 +25,9 @@ int event_fn_01(Game &g) {
 		v.byte_852E2 = 1;
 		return 1;
 	} else {
-		p6_ax = (v.current_room != 0x33 ? TextRef(ES(44)) : TextRef(nullptr));
+		p6_ax = (v.current_room != 0x33 ? TextRef(ES(46)) : TextRef(nullptr));
 		g.Font_WriteMessage(MSG(21, 65), p6_ax);
-		g.realsound_play(ES(45));
+		g.realsound_play(ES(47));
 		v.byte_852E2 = 1;
 		return 1;
 	}
@@ -45,14 +45,14 @@ int event_fn_02(Game &g) {
 	if (v.flag_871F0_telephone < 6) {
 		g.schedule_event(3, 1);
 		g.wputchar(0x2E);
-		g.realsound_play(ES(46));
+		g.realsound_play(ES(48));
 		return 1;
 	} else {
 		v.flag_871F0_telephone = 0;
 		v.flag_871EE_telephone = 0;
 		g.schedule_event(3, 0xC);
-		g.Font_WriteMessage(ES(47));
-		g.realsound_play(ES(46));
+		g.Font_WriteMessage(ES(49));
+		g.realsound_play(ES(48));
 		return 1;
 	}
 }
@@ -79,7 +79,7 @@ int event_fn_03(Game &g) {
 		g.object_set_attr(p8_ax, 0xE);
 	}
 	g.popup_window_event();
-	g.Font_WriteMessage(ES(48), v4);
+	g.Font_WriteMessage(ES(50), v4);
 	g.wait_ticks_or_click(0x2710);
 	g.Screen_FadeOut();
 	v.story_stage = 3;
@@ -108,7 +108,7 @@ int event_fn_04(Game &g) {
 		v4 = 0x2C;
 	L9:;
 	}
-	g.Font_WriteMessage(ES(49), v4);
+	g.Font_WriteMessage(ES(51), v4);
 	v.word_85262++;
 	if ((int16)v.word_85262 > 3) {
 		g.object_set_attr(0x5D, 0xE);
@@ -229,9 +229,9 @@ int event_fn_11(Game &g) {
 			g.object_set_prop_a(0x7E, 0x13D);
 		}
 	}
-	strcat(msg, ES(50));
+	strcat(msg, ES(52));
 	g.Font_WriteMessage(msg);
-	g.realsound_play(ES(51));
+	g.realsound_play(ES(53));
 	g.schedule_event(0xC, ((int16)(g._rand()) % (int16)5) + 2);
 	return 1;
 }
@@ -252,7 +252,7 @@ int event_fn_13(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	intptr_t p7_ax;
-	g.Font_WriteMessage(ES(52), g.print_obj(0x12, 0xA7));
+	g.Font_WriteMessage(ES(54), g.print_obj(0x12, 0xA7));
 	rt.word_87952++;
 	if (rt.word_87952 == 1) {
 		g.object_set_prop_a(0xA7, 0x126);
@@ -287,9 +287,9 @@ int event_fn_14(Game &g) {
 	g.wputchar(0xB);
 	g.wait_ticks_or_click(0x9C4);
 	g.Font_WriteMessage(MSG(25, 32));
-	p3_ax = ((int16)v.word_8526C < 0x15 ? ES(53) : ES(54));
+	p3_ax = ((int16)v.word_8526C < 0x15 ? ES(55) : ES(56));
 	g.Font_WriteMessage(p3_ax);
-	g.Font_WriteMessage(ES(55), (v.word_8526C != 0x15 ? TextRef(nullptr) : TextRef(MSG(25, 33))));
+	g.Font_WriteMessage(ES(57), (v.word_8526C != 0x15 ? TextRef(nullptr) : TextRef(MSG(25, 33))));
 	v.byte_852D9 = 1;
 	g.schedule_event(0xF, ((int16)(g._rand()) % (int16)7) + 2);
 	if (v.flag_852DA_conv_text_24 != 0 && v.byte_852DB == 0) {
@@ -568,7 +568,7 @@ int event_fn_26(Game &g) {
 			v4 = 0x51;
 	L10:;
 		}
-		g.Font_WriteMessage(ES(56), v4);
+		g.Font_WriteMessage(ES(58), v4);
 	}
 	if ((int16)v.word_85282 < 4) {
 		g.schedule_event(0x1B, 1);
@@ -600,7 +600,7 @@ int event_fn_26(Game &g) {
 int event_fn_27(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	g.Font_WriteMessage(ES(52), g.print_obj(0x12, 0xE));
+	g.Font_WriteMessage(ES(54), g.print_obj(0x12, 0xE));
 	if (!(g.object_parent_is(0x100, 1))) {
 		g.Font_WriteMessage(MSG(33, 84));
 		g.object_move(0x100, 1, 0);
@@ -748,7 +748,7 @@ int event_fn_31(Game &g) {
 			goto L5;
 		} else {
 			g.Font_WriteMessage(MSG(40, 73));
-			g.realsound_play(ES(57));
+			g.realsound_play(ES(59));
 			g.wait_ticks_or_click(0x1388);
 			v.byte_852CE = 1;
 			rt.byte_8ADF4 = 0;
@@ -792,22 +792,22 @@ int event_fn_33(Game &g) {
 	for (;;) {
 		if ((mem16(rt.word_8AAEA, v4 - 2)) == v.current_room) {
 			g.wait_ticks_or_click(0xBB8);
-			g.show_text_box(mem16(rt.word_8AAEA, v4 - 0xA), mem16(rt.word_8AAEA, v4 - 8));
+			g.show_text_box(g.exeText(rt.word_8AAEA, v4 - 0xA));
 			v8 = v4;
 			v8_hi = rt.word_8AAEA;
 			g.object_move(mem16(rt.word_8AAEA, v4), v.current_room, 0);
 			g.popup_window_event();
 			if ((mem16(v8_hi, v8)) == 0x179) {
 				g.MouseCursor_SetHourglass();
-				g.realsound_play(ES(58));
+				g.realsound_play(ES(60));
 			}
 			g.wait_ticks_or_click(0x1388);
-			g.show_compendium(mem16(rt.word_8AAEA, v4 + 2), mem16(rt.word_8AAEA, v4 + 4));
+			g.show_compendium(g.exeText(rt.word_8AAEA, v4 + 2));
 			if ((mem16(v8_hi, v8)) == 0x17D) {
 				g.Font_WriteMessage(MSG(44, 18));
 			}
 			t1 = mem16(rt.word_8AAEA, v4 - 4);
-			g.Font_WriteMessage(ES(59), g.print_obj(0x12, mem16(v8_hi, v8)), mem16(rt.word_8AAEA, v4 - 6), t1);
+			g.Font_WriteMessage(ES(61), g.print_obj(0x12, mem16(v8_hi, v8)), mem16(rt.word_8AAEA, v4 - 6), t1);
 			g.wait_ticks_or_click(0xBB8);
 			g.object_move(mem16(v8_hi, v8), 0, 0);
 		}
@@ -858,7 +858,7 @@ int event_fn_37(Game &g) {
 	Runtime &rt = g.rt;
 	TextRef p3_ax;
 	v.word_852A0++;
-	p3_ax = ((int16)v.word_852A0 < 4 ? TextRef(ES(60)) : TextRef(MSG(46, 22)));
+	p3_ax = ((int16)v.word_852A0 < 4 ? TextRef(ES(62)) : TextRef(MSG(46, 22)));
 	g.Font_WriteMessage(MSG(46, 21), p3_ax);
 	if ((int16)v.word_852A0 < 4) {
 		g.schedule_event(0x26, 2);
@@ -878,7 +878,7 @@ int event_fn_38(Game &g) {
 	g.wputchar(0xB);
 	g.wait_ticks_or_click(0xBB8);
 	g.Font_WriteMessage(MSG(46, 23));
-	g.realsound_play(ES(61));
+	g.realsound_play(ES(63));
 	g.wait_ticks_or_click(0x1770);
 	v.story_stage = 0x1B;
 	go_to_room(g, 0x5A);
@@ -910,7 +910,7 @@ int event_fn_40(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	char *p3_ax;
-	p3_ax = (!(g.random_percent(0x32)) ? ES(62) : ES(63));
+	p3_ax = (!(g.random_percent(0x32)) ? ES(64) : ES(65));
 	g.realsound_play(p3_ax);
 	g.schedule_event(0x29, ((int16)(g._rand()) % (int16)4) + 2);
 	return 0;
@@ -925,7 +925,7 @@ int event_fn_41(Game &g) {
 	p3_ax = (v.current_room == 0x40 ? 0x71 : 0x70);
 	g.Font_WriteMessage(TextRef::fromWords(p3_ax, 0xF005));
 	v.flag_871F0_telephone++;
-	g.realsound_play(ES(46));
+	g.realsound_play(ES(48));
 	g.schedule_event(0x2A, 1);
 	return 1;
 }
@@ -934,9 +934,7 @@ int event_fn_41(Game &g) {
 int event_fn_43(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	intptr_t r0_1;
-	r0_1 = g._rand();
-	g.Font_WriteMessage(MSG(31, 46), mem16(rt.word_8AA98, (((uint16)r0_1 % (uint16)5) * 4) + 0x6C), mem16(rt.word_8AA98, (((uint16)r0_1 % (uint16)5) * 4) + 0x6E));
+	g.Font_WriteMessage(MSG(31, 46), g.exeText(rt.word_8AA98, (((uint16)(g._rand()) % (uint16)5) * 4) + 0x6C));
 	g.schedule_event(0x2C, ((int16)(g._rand()) % (int16)3) + 1);
 	return 1;
 }

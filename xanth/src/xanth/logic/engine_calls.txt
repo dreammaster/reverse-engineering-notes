@@ -1,5 +1,5 @@
 DialogBtn_show	3
-Font_WriteMessage	10
+Font_WriteMessage	9
 Image_Free	1
 MouseCursor_SetHourglass	0
 MouseCursor_SetSmallArrow	0
@@ -56,7 +56,7 @@ set_room_music	1
 setup_pic_regions	2
 showCutscene	1
 show_compendium	2
-show_text_box	2
+show_text_box	1
 sub_1D99F	0
 sub_1EDBC	0
 sub_1EED9	0

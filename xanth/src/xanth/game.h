@@ -46,6 +46,7 @@ struct TextRef {
 	static TextRef fromWords(Word lo, Word hi) { TextRef t; t.id = ((uint32)(uint16)(int)hi << 16) | (uint16)(int)lo; return t; }
 	bool isMessage() const { return id != 0; }
 	operator char *() const { return const_cast<char *>(text); }
+	operator Word() const { return Word(text ? (intptr_t)text : (intptr_t)id); }
 };
 
 /** An argument of a formatted message: a number for %d / %u / %c or a string for %s. */
@@ -146,6 +147,10 @@ public:
 		memcpy(dest, s.c_str(), s.size() + 1);
 		return (int)s.size();
 	}
+	template <class... A> int show_text_box(TextRef t, A... args) {
+		FmtArg a[] = {FmtArg(args)..., FmtArg()};
+		return ui.showTextBox(format(t.isMessage() ? messages.string(t.id) : std::string(t.text ? t.text : ""), a));
+	}
 	int wputchar(int ch) { return ui.putChar(ch); }
 	int wait_ticks_or_click(int ticks) { return ui.waitTicksOrClick(ticks); }
 	int realsound_play(const char *file) { return ui.playSound(file); }
@@ -163,6 +168,8 @@ public:
 	/** Byte / word of the original's static tables at segment:offset (the logic indexes them through segment variables); 0x84FC is the data segment placeholder. */
 	uint8 &exe8(int seg, int off);
 	uint16 &exe16(int seg, int off) { return *reinterpret_cast<uint16 *>(&exe8(seg, off)); }
+	/** The far pointer / message id stored as a dword in one of the static tables. */
+	TextRef exeText(int seg, int off) { return TextRef::fromWords(exe16(seg, off), exe16(seg, off + 2)); }
 	uint16 &dseg16(int off) { return *reinterpret_cast<uint16 *>(&_dseg[off & 0xFFFE]); }
 	uint8 &dseg8(int off) { return _dseg[off & 0xFFFF]; }
 
