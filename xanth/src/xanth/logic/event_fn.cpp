@@ -614,7 +614,7 @@ int event_fn_31(Game &g) {
 		goto L5;
 	}
 	if (v.flag_8B9DE_cylinder != 0x4E && v.flag_8B9DE_cylinder != 0xAD && v.flag_8B9DE_cylinder != 0x14E) {
-		v2 = ((g.sub_70120(v.flag_8B9DE_cylinder)) & 0xFF);
+		v2 = ((sub_70120(g, v.flag_8B9DE_cylinder)) & 0xFF);
 	L5:;
 		v4 = mem8(rt.seg_8AAE6, ((v.word_85290 * 0x50) + (v.word_85292 * 0x10)) + 0x5C0);
 		if ((mem8(rt.seg_8AAE6, ((v.word_85290 * 0x50) + (v.word_85292 * 0x10)) + 0x5C0)) == 0x58) {

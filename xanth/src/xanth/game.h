@@ -137,6 +137,13 @@ public:
 	int RoomItem_Draw(int what) { return other("RoomItem_Draw", what); }
 	int set_room_music(int room) { return other("set_room_music", room); }
 	int sub_1DBB7(int a) { return other("sub_1DBB7", a); }
+	/** sprintf into one of the original's static buffers (the C runtime's, with %s / %d / %u / %c). */
+	template <class... A> int _sprintf(char *dest, const char *fmt, A... args) {
+		FmtArg a[] = {FmtArg(args)..., FmtArg()};
+		std::string s = format(fmt, a);
+		memcpy(dest, s.c_str(), s.size() + 1);
+		return (int)s.size();
+	}
 	int wputchar(int ch) { return ui.putChar(ch); }
 	int wait_ticks_or_click(int ticks) { return ui.waitTicksOrClick(ticks); }
 	int realsound_play(const char *file) { return ui.playSound(file); }

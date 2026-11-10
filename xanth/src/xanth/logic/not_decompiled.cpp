@@ -4,6 +4,9 @@
 namespace Xanth {
 
 // Functions the decompiler could not translate yet; until a hand-written replacement exists they do nothing.
+int Conversation_GetEntry(Game &, Word, Word) { return 0; }  // does not compile yet: 'convId_hi' was not declared in this scope; did you mean 'convId'?
+int Palette_proc1(Game &) { return 0; }  // instruction imul (imul    byte ptr es:game_palette.r[bx])
+int Screen_RestoreSubPalettes(Game &) { return 0; }  // instruction idiv (idiv    bx)
 int cmdLookAt(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int conv_cb_03(Game &, Word) { return 0; }  // instruction div (div     cx)
 int conv_cb_06(Game &, Word, Word) { return 0; }  // register bx read before it is set
@@ -33,6 +36,7 @@ int event_fn_40(Game &) { return 0; }  // instruction idiv (idiv    cx)
 int event_fn_43(Game &) { return 0; }  // instruction div (div     cx)
 int event_fn_44(Game &) { return 0; }  // instruction movsw (movsw)
 int exit_fn_12(Game &, Word) { return 0; }  // render lo8set
+int get_number_suffix(Game &, Word) { return 0; }  // instruction idiv (idiv    cx)
 int init_random(Game &) { return 0; }  // render sseg
 TextRef number_to_words(Game &, Word) { return TextRef(); }  // instruction idiv (idiv    cx)
 int objh_045(Game &) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} in assignment
@@ -56,11 +60,20 @@ int objh_358(Game &, Word) { return 0; }  // does not compile yet: invalid conve
 int objh_360(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_378(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
 int objh_380(Game &, Word) { return 0; }  // does not compile yet: cannot convert 'Xanth::TextRef' to 'char*' in assignment
+int sub_1AAFB(Game &) { return 0; }  // instruction stosw (stosw)
+int sub_1C4ED(Game &, Word, Word, Word, Word) { return 0; }  // use of bp (lea     ax, [bp+si+var_4E])
 int sub_1EF11(Game &, Word, Word) { return 0; }  // instruction imul (imul    cx)
+int sub_2A333(Game &) { return 0; }  // carry after res (adc     [bx+2], dx)
 int sub_44233(Game &) { return 0; }  // render sseg
 int sub_442EF(Game &, Word, Word) { return 0; }  // instruction idiv (idiv    [bp+var_6])
 int sub_443EB(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
+int sub_4E600(Game &) { return 0; }  // instruction div (div     cx)
 TextRef sub_4FB5F(Game &, Word, Word) { return TextRef(); }  // does not compile yet: 'FAR' was not declared in this scope
+int sub_58210(Game &, Word) { return 0; }  // render lo8set
+int sub_58262(Game &) { return 0; }  // render lo8set
+int sub_60460(Game &) { return 0; }  // instruction div (div     cx)
+int sub_70120(Game &, Word) { return 0; }  // render lo8set
 int sub_7D0DF(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+int update_room_light(Game &, Word) { return 0; }  // does not compile yet: 'bitset_set' was not declared in this scope
 
 } // namespace Xanth

@@ -39,7 +39,7 @@ ENGINE_LOGIC = ["conversation_set_enabled", "lock_combination_correct", "update_
 HAND = {"object_has_attr", "object_set_attr", "object_clear_attr", "object_parent_is", "object_move", "object_get_location", "object_get_slot", "object_get_list_head",
         "object_get_next_sibling", "object_get_points", "object_set_points", "object_get_prop_a", "object_set_prop_a", "object_get_default_verb", "object_set_default_verb",
         "object_is_at", "object_is_within", "print_obj", "ResourceText_GetStr", "Font_WriteMessage", "show_text_box", "wputchar", "wait_ticks_or_click", "realsound_play",
-        "Font_WriteString", "_rand", "random_percent", "run_command", "call_object_handler", "exec_word_handler", "advance_time", "schedule_event",
+        "Font_WriteString", "_sprintf", "_rand", "random_percent", "run_command", "call_object_handler", "exec_word_handler", "advance_time", "schedule_event",
         "cancel_event", "event_pending", "add_score", "RoomItem_Draw", "set_room_music", "sub_1DBB7"}
 CLIB = {"strcpy", "strcat", "memcpy", "strlen", "_strlwr", "_strupr"}
 STUBS = {"show_text_box_stub": "show_text_box", "conversation_set_enabled_stub": "conversation_set_enabled", "lock_combination_correct_stub": "lock_combination_correct",
@@ -168,7 +168,7 @@ class LogicNames(Names):
         """text that is part of the program (not of the message file) is kept out of the generated source: ES(n) is an index into engine_strings.inc"""
         t = self.ctx.strings.get(sym)
         if t is None:
-            return "ES_UNKNOWN(%s)" % self.ident(sym)
+            return self.addr(sym)           # not text: a buffer or other data the original passes by address
         return self.es(t)
 
 
@@ -196,7 +196,7 @@ def stub_targets(ctx):
 
 def is_logic(ctx, target):
     """a routine that is game logic rather than drawing: small, and it calls none of the drawing / device routines"""
-    if target not in ctx.procs:
+    if target not in ctx.procs or re.match(r"^(j_)?_", target):       # C runtime routines are not game logic
         return False
     idxs = G.L.reachable(ctx.insns, ctx.labels, ctx.tables, ctx.procs[target])
     if len(idxs) > 250:
@@ -262,6 +262,23 @@ def main():
     namecb = name_callbacks(ctx)
     todo = args or sorted(n for n in ctx.procs if FAMILY.match(n)) + [n for n in ENGINE_LOGIC if n in ctx.procs] + sorted({t for _, t in namecb if t in ctx.procs}) + sorted({t for st, t in STUBS.items() if t in ctx.procs and t not in ENGINE_LOGIC and not FAMILY.match(t) and logic_name(t) not in HAND and is_logic(ctx, t)})
     todo = list(dict.fromkeys(todo))
+    if not args:
+        # the small helpers the generated logic calls (and that call no drawing routine) are logic too
+        seen = {logic_name(n) for n in todo}
+        queue = list(todo)
+        while queue:
+            n = queue.pop()
+            for i in G.L.reachable(ctx.insns, ctx.labels, ctx.tables, ctx.procs[n]):
+                x = ctx.insns[i]
+                if x.mn != "call" or not x.ops:
+                    continue
+                c = G.STRIP.sub("", x.ops[0].strip())
+                c = STUBS.get(c, c)
+                ln = logic_name(c)
+                if c in ctx.procs and ln not in seen and ln not in HAND and ln not in CLIB and not re.match(r"^(rtlink|loc_)", c) and is_logic(ctx, c):
+                    seen.add(ln)
+                    todo.append(c)
+                    queue.append(c)
     generated = {logic_name(n) for n in todo}
     names = LogicNames(ctx, load_vars(), generated)
     names.namecb = {logic_name(t) for _, t in namecb}
@@ -303,13 +320,13 @@ def main():
     # declarations; the functions that could not be generated are declared too and stubbed so that the tables link
     decl = [HDR]
     for n in sorted(todo):
-        ret, k = names.sig.get(n, ("TextRef " if n.startswith("conv_text") or n == "number_to_words" or logic_name(n) in names.namecb else "int ", 2 if logic_name(n) in names.namecb else argc(ctx, n)))
+        ret, k = names.sig.get(n, ("TextRef " if n.startswith("conv_text") or n == "number_to_words" or logic_name(n) in names.namecb else "int ", max(argc(ctx, n), names.min_params(n))))
         decl.append("%s%s(Game &g%s);%s" % (ret, logic_name(n), "".join(", Word a%d" % i for i in range(k)), "  // not decompiled" if n in bad else ""))
     write(os.path.join(out_dir, "functions.inc"), NL.join(decl) + NL)
     stubs = [HDR, '#include "xanth/logic/logic.h"', "", "namespace Xanth {", "", "// Functions the decompiler could not translate yet; until a hand-written replacement exists they do nothing."]
     for n in sorted(bad):
         params = ", ".join(["Game &"] + ["Word"] * argc(ctx, n))
-        ret, k = names.sig.get(n, ("TextRef " if n.startswith("conv_text") or n == "number_to_words" or logic_name(n) in names.namecb else "int ", 2 if logic_name(n) in names.namecb else argc(ctx, n)))
+        ret, k = names.sig.get(n, ("TextRef " if n.startswith("conv_text") or n == "number_to_words" or logic_name(n) in names.namecb else "int ", max(argc(ctx, n), names.min_params(n))))
         params = ", ".join(["Game &"] + ["Word"] * k)
         stubs.append("%s%s(%s) { return %s; }  // %s" % (ret, logic_name(n), params, "TextRef()" if ret.startswith("TextRef") else "0", bad[n]))
     stubs.append("")
@@ -403,7 +420,7 @@ def main():
     for n in sorted(generated):
         if FAMILY.match(n) and not n.startswith(("conv_", "cmd")) or n in {f for _, f in wh}:
             orig = [m for m in todo if logic_name(m) == n][0]
-            k = names.sig.get(orig, ("", argc(ctx, orig)))[1]
+            k = names.sig.get(orig, ("", max(argc(ctx, orig), names.min_params(orig))))[1]
             wr.append("static int wrap_%s(Game &g, int a) { (void)a; return %s(g%s); }" % (n, n, ", a" * min(k, 1) + ", 0" * max(k - 1, 0)))
     wr.append("")
     write(os.path.join(out_dir, "tables.cpp"), NL.join(t[:6]) + NL + NL.join(wr[4:]) + NL + NL.join(t[6:]) + NL)

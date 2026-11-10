@@ -622,7 +622,7 @@ int cmdPut(Game &g) {
 int cmdQuit(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	if ((g.DialogBtn_show(ES_UNKNOWN(aQuit_), 0, 0)) == 1) {
+	if ((g.DialogBtn_show((intptr_t)&rt.aQuit_, 0, 0)) == 1) {
 		g.sub_2F515();
 		return 1;
 	} else {
@@ -899,7 +899,7 @@ int cmdWait(Game &g) {
 			return 1;
 		}
 	} while (v6 < 0x3E);
-	v4 = (g.sub_1AC45(mem16(rt.word_8AA74, v2 * 4))) + 1;
+	v4 = (sub_1AC45(g, mem16(rt.word_8AA74, v2 * 4))) + 1;
 	goto L7;
 }
 

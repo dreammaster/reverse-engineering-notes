@@ -25,7 +25,7 @@ def function_ranges(path):
         if m:
             if cur:
                 out.append((cur[0], i - 1, cur[1]))
-            cur = (i, re.sub(r"[^A-Za-z0-9_]", "_", m.group(1).rstrip("?")))
+            cur = (i, re.sub(r"[^A-Za-z0-9_]", "_", re.sub(r"^j_", "", m.group(1).rstrip("?"))))
     if cur:
         out.append((cur[0], 10 ** 9, cur[1]))
     return out

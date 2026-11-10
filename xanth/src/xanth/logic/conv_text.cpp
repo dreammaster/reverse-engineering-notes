@@ -197,7 +197,7 @@ TextRef conv_text_19(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	if (v.word_8526C == 0x15) {
-		return ES_UNKNOWN(aHuh_);
+		return (intptr_t)&rt.aHuh_;
 	}
 	if (v.word_8526C > 0x15) {
 		return TextRef();
@@ -900,7 +900,7 @@ TextRef conv_text_51(Game &g) {
 	intptr_t p3_ax;
 	p3_ax = (v.flag_852C2_conv39 == 0 ? 4 : 3);
 	strcpy(rt.word_81A66, g.ResourceText_GetStr(TextRef::fromWords(p3_ax, 0xF036)));
-	return ES_UNKNOWN(word_81A66);
+	return rt.word_81A66;
 }
 
 // conv_text_52
@@ -910,7 +910,7 @@ TextRef conv_text_52(Game &g) {
 	intptr_t p3_ax;
 	p3_ax = (v.flag_852C3_conv39 == 0 ? 8 : 7);
 	strcpy(rt.word_81A66, g.ResourceText_GetStr(TextRef::fromWords(p3_ax, 0xF036)));
-	return ES_UNKNOWN(word_81A66);
+	return rt.word_81A66;
 }
 
 // conv_text_53
