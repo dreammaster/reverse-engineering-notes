@@ -22,14 +22,16 @@ building oracles so later work can be *verified* rather than guessed.
 | Palette | **Done** — 16 ST words, per level in `MP1` (all 9 levels) |
 | Floor tiles (`MP3`) and floor maps (`MP1` section 0) | **Done** — isometric floor of every room renders like the game; Python + C, unit-tested on 14 level dirs; room viewer in the SDL app |
 | `LEVn.MP2` | Sections, room lists and the thing table decoded and named (Python + C, unit-tested on all 9 levels); thing record fields only partly understood |
-| `ANDATA` blocks | Container known, contents not |
+| `ANDATA` blocks | **Done** — 0 verb icons, 1 screen frame, 2 scroll tiles, 3 message font, 4 status font (5 = small sprites, not used yet); all verified against the running game |
 | Player movement/animation (observed) | Frames per direction and screen motion measured in the running game (`formats.md` §6.11); **walk demo** in the SDL app (floor + animated player, stays inside the room's floor area; no collision/walls/things yet) |
 | Wall tiles (`MP3` block 2) and wall layouts (`MP1` section 1) | **Done** — the complete room shell (floor + walls) reproduces the running game's first frame (all remaining differences are objects/the player); Python + C, unit-tested on all rooms of 14 level dirs; room viewer + walk demo draw it |
 | Screen frame (ANDATA block 1) | **Done** — wings with slots and ornament, 98.2% of the original first frame with the room composite, unit-tested |
 | Object sprites (`MP1` section 2, ~80 per level) | **Done** — format verified (blocks parse exactly), Python + C, unit-tested on 14 level dirs, sheet viewer in the SDL app. blocks are stored at `floor(size/2)` bytes (all 255 blocks now delimited exactly). The 32-byte header is partly decoded (box sizes etc.) |
 | Objects in rooms | **Done for static sprites** — thing → sprite block (`rec[+6]`) and the exact screen position (`object_project`, 17/17 sprites exact) reproduce level 1 room 0; Python + C, unit-tested on every room of 14 level dirs; shown by `--scene room`. The SDL walk scene (`--scene walk`) uses the game's own collision test (verified) in 1/8-cell units, room exits lead to the next room, objects are depth-sorted approximately. Animated blocks are decoded and animated (script + per-frame offsets, 25 Hz step, verified against the running game). **Not yet**: draw order for moving objects, the player entity, creature behaviour (TAD x86 code) |
-| `ROUTINEn.TAD`, other `MP1` section 2 blocks | Not decoded (scripts, tables) |
-| Isometric renderer, objects, ACL interpreter, collision/AI, input, sound | **Not started** |
+| `ROUTINEn.TAD` / Cadaver 2 `ROUTINEn.PAK` | **Runs** — 8086 interpreter (Python + C, verified against Unicorn on every timer/behaviour routine of levels 1–5); timer routines are executed in the walk scene (energy, random, sound services; event-8 messages). Not yet: the behaviour (creature) routines, most engine services, the Payoff's new levels (other stub) |
+| Status line, labels, messages, verbs, energy bar | **Done** — "DAY n" + room name, touched-object name, parchment message scrolls, verb icons and the energy bar are pixel-exact against the emulator (`formats.md` §6.3a, §6.7). Verb *selection* (hold End + direction) and inventory are not decoded |
+| ACL interpreter | **Largely done** — event dispatch with condition tests, room events (28 first visit, 6 entry, 14/20 timers, 19), thing events (7 touch, 9 contact), ~35 ops verified against the original handlers; missing ops: spawn/move/animation/change room/inventory etc. |
+| Creature AI, inventory, combat, level progression, sound | **Not started** (creature behaviour = the TAD behaviour routines + their engine services) |
 | Cadaver 2 (Payoff) code differences | Not analysed (data differs only in `TATA/` and RNC-packed copies) |
 
 ## What was learned about the engine (for the next steps)

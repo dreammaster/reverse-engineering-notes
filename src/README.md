@@ -1,8 +1,8 @@
 # Cadaver C reimplementation
 
 Work in progress: the data decoders, the full room picture (floor, walls, objects, animations, screen frame) and an exploration
-prototype (walk around, collide with objects, leave through the doors into the next room) work; game logic (scripts, creatures,
-inventory, combat, sound) is not implemented. Currently:
+prototype (walk around, collide with objects, leave through the doors into the next room) work; scripts (ACL events, timers), the native TAD routines (timers), messages, labels, verb icons and the energy bar run; creatures,
+inventory, combat, level progression and sound are not implemented. Currently:
 
 | File | |
 |---|---|
@@ -15,6 +15,8 @@ inventory, combat, sound) is not implemented. Currently:
 | `engine/roomexits.[ch]` | door boxes / exits of a room (verified for all rooms of levels 1-5) |
 | `engine/acl.[ch]` | ACL script interpreter (subset: thing flags, variables, conditions, IF blocks; room-start events) |
 | `engine/push.[ch]` | pushing objects |
+| `engine/x86.[ch]` | 8086 interpreter for the native routines of `ROUTINEn.TAD` / `.PAK` |
+| `engine/tad.[ch]` | TAD runtime: data-segment image, service table (energy, random, sound), countdown timers |
 | `engine/message.[ch]` | message scrolls: wrapped text in a parchment box (ANDATA blocks 2 and 3) |
 | `engine/panel.[ch]` | `ANDATA.DAT` block 1 (the frame around the room view) and block 4 (status text: "DAY n", room name) |
 | `engine/intro.[ch]` | title scroll: `FONT2.SPR` text, `FLAME.DAT` flames over `LOADING2.PC1` |
