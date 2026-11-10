@@ -112,6 +112,7 @@ typedef struct RoomView_ {
 	uint8_t verbs[VERB_SLOTS];  /* verb icons of the touched object (slots) */
 	int nverbs;
 	int energy_max_cfg;        /* from LEVn.MP1 */
+	int menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
 	int label_id;              /* name shown above the room name: string id of the last touched object (-1 none) */
 	AclVM vm;                  /* script state: thing flags / variables */
 	TadRt tad;                 /* native routines of ROUTINEn.TAD (timers) */
@@ -166,8 +167,11 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 	if (g_b1)
 		panel_apply_wings(g_b1, g_b1_len, scr->pixels);
 	energy_bar_draw(scr->pixels, rv->vm.energy, rv->vm.energy_max);
-	if (g_icons && rv->nverbs)
+	if (g_icons && rv->nverbs) {
 		verbs_draw(scr->pixels, rv->verbs, rv->nverbs, g_icons, g_icons_len);
+		if (rv->menu_open)
+			verbs_highlight(scr->pixels, rv->menu_sel);
+	}
 	if (g_font && rv->names_ok && rv->room >= 0 && rv->room < rv->mp2.sec[0].count && rv->mp2.sec[0].rec[rv->room]) {
 		char nm[48];
 		status_room_name(rv->mp2.sec[0].rec[rv->room], (size_t)rv->mp2.sec[0].len[rv->room], rv->name_tbl, rv->names.strings,
@@ -566,7 +570,7 @@ static void walker_enter(Walker *wk, RoomView *rv, int room, int door) {
  * the player's move of one unit) runs every 2 ticks. */
 /* the player pressed against objects (1000:22C4): the first object that is not "ignored" (header flag 0x40) gets its name shown (header word 5 =
  * string id, 12 characters) and receives the events 9 (argument 0) and 7; queued room events are delivered afterwards */
-static void walker_touch(Walker *wk, RoomView *rv, const ColResult *cr) {
+static void walker_touch(Walker *wk, RoomView *rv, const ColResult *cr, int keys) {
 	(void)wk;
 	for (int k = 0; k < cr->n; k++) {
 		const RoomObj *o = NULL;
@@ -577,6 +581,11 @@ static void walker_touch(Walker *wk, RoomView *rv, const ColResult *cr) {
 		int nm = (o->sp->header[10] << 8) | o->sp->header[11];
 		rv->label_id = nm < 0x8000 ? nm : -1;
 		rv->nverbs = verbs_list(o->sp->header, rv->vm.flags2[o->thing], 0, rv->verbs);
+		rv->touch_thing = o->thing;
+		if ((keys & 0x80) && !rv->menu_open) {         /* End while touching: the verb menu opens (1000:244C -> 2A33) */
+			rv->menu_open = 1; rv->menu_sel = 0; rv->menu_delay = 0; rv->menu_released = 0;
+			return;
+		}
 		rv->vm.queue_n = 0;
 		acl_thing_event(&rv->vm, &rv->mp2, o->thing, 9, 0);
 		acl_thing_event(&rv->vm, &rv->mp2, o->thing, 7, 0);
@@ -585,6 +594,41 @@ static void walker_touch(Walker *wk, RoomView *rv, const ColResult *cr) {
 		rv->pending_rebuild |= memcmp(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen)) != 0;
 		roomview_flush_messages(rv);
 		return;
+	}
+}
+
+/* run the chosen verb (handler table 1000:2E0B): 11 = look (event 16 when the thing has flag 0x20, else message 3), 4 and 7 = event 5, 2 = event 0;
+ * the other verbs (take, drop, use ...) are not decoded yet */
+static void menu_choose(RoomView *rv, int verb) {
+	int t = rv->touch_thing;
+	rv->vm.queue_n = 0;
+	if (verb == 11) {
+		if (t >= 0 && t < ACL_THINGS && (rv->vm.flags[t] & 0x20)) acl_thing_event(&rv->vm, &rv->mp2, t, 16, 0);
+		else if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 3;
+	} else if (verb == 4 || verb == 7) {
+		acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
+	} else if (verb == 2) {
+		acl_thing_event(&rv->vm, &rv->mp2, t, 0, 0);
+	}
+	for (int q = 0; q < rv->vm.queue_n; q++)
+		acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+	rv->pending_rebuild |= memcmp(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen)) != 0;
+	roomview_flush_messages(rv);
+}
+
+/* one game step with the verb menu open (1000:2A33): Left/Right move the highlight (every 13 steps while held), End chooses, Space/End-less cancel */
+static void menu_step(RoomView *rv, int keys, int end_edge) {
+	if (!(keys & 0x80)) rv->menu_released = 1;
+	if (rv->menu_delay > 0) rv->menu_delay--;
+	if (end_edge && rv->menu_released) {
+		int verb = rv->verbs[rv->menu_sel];
+		rv->menu_open = 0;
+		menu_choose(rv, verb);
+		return;
+	}
+	if (rv->menu_delay == 0 && rv->nverbs > 0) {
+		if (keys & 8) { rv->menu_sel = (rv->menu_sel + 1) % rv->nverbs; rv->menu_delay = 13; }
+		else if (keys & 4) { rv->menu_sel = (rv->menu_sel + rv->nverbs - 1) % rv->nverbs; rv->menu_delay = 13; }
 	}
 }
 
@@ -597,6 +641,11 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	}
 	if (wk->tick & 1)
 		return;
+	{
+		int end = (keys & 0x80) != 0, edge = end && !rv->end_prev;
+		rv->end_prev = end;
+		if (rv->menu_open) { menu_step(rv, keys, edge); return; }
+	}
 	int dx = 0, dy = 0, dir = -1;
 	if (keys & 8) { dir = DIR_RIGHT; dx = 1; }
 	else if (keys & 4) { dir = DIR_LEFT; dx = -1; }
@@ -617,7 +666,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		return;
 	}
 	if (!cr.zf && cr.count != 0xFF && cr.count != 0xFE)
-		walker_touch(wk, rv, &cr);
+		walker_touch(wk, rv, &cr, keys);
 	static PushObj po[ROOMOBJS_MAX];
 	for (int i = 0; i < rv->ro.n; i++) {
 		const RoomObj *o = &rv->ro.o[i];
@@ -856,14 +905,14 @@ int main(int argc, char **argv) {
 			if (!last_ms) last_ms = now;
 			const Uint8 *ks = SDL_GetKeyboardState(NULL);
 			int keys = (ks[SDL_SCANCODE_UP] ? 1 : 0) | (ks[SDL_SCANCODE_DOWN] ? 2 : 0) | (ks[SDL_SCANCODE_LEFT] ? 4 : 0) |
-			           (ks[SDL_SCANCODE_RIGHT] ? 8 : 0);
+			           (ks[SDL_SCANCODE_RIGHT] ? 8 : 0) | (ks[SDL_SCANCODE_END] ? 0x80 : 0);
 			while (now - last_ms >= 20) {            /* the game runs at ~50 Hz */
 				walker_tick(&g_walk, &g_room, keys);
 				last_ms += 20;
 			}
 			if (sim && frames == 0) {                 /* headless: --sim right:30,down:10 */
 				for (const char *c = sim; *c;) {
-					int bits = !strncmp(c, "right", 5) ? 8 : !strncmp(c, "left", 4) ? 4 : !strncmp(c, "down", 4) ? 2 : !strncmp(c, "up", 2) ? 1 : 0;
+					int bits = !strncmp(c, "rend", 4) ? 0x88 : !strncmp(c, "right", 5) ? 8 : !strncmp(c, "left", 4) ? 4 : !strncmp(c, "down", 4) ? 2 : !strncmp(c, "up", 2) ? 1 : !strncmp(c, "end", 3) ? 0x80 : 0;
 					const char *colon = strchr(c, ':');
 					if (!colon) break;
 					for (int n = atoi(colon + 1); n > 0; n--)

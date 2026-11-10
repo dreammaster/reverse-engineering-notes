@@ -49,4 +49,7 @@ void energy_bar_draw(uint8_t *canvas, int energy, int energy_max);
 /* The level's maximum energy: big-endian word at offset 60 of the unpacked LEVn.MP1 (also the initial energy). */
 int level_energy_max(const uint8_t *mp1, size_t len);
 
+/* The menu cursor: a 18 x 16 frame (outer colour 0xA, inner 0xE) around slot `slot` (1000:2C36). */
+void verbs_highlight(uint8_t *canvas, int slot);
+
 #endif

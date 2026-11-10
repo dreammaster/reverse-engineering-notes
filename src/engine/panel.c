@@ -204,3 +204,15 @@ void energy_bar_draw(uint8_t *canvas, int energy, int energy_max) {
 }
 
 int level_energy_max(const uint8_t *mp1, size_t len) { return len >= 62 ? (int)be16(mp1 + 60) : 100; }
+
+void verbs_highlight(uint8_t *canvas, int slot) {
+	if (slot < 0 || slot >= VERB_SLOTS)
+		return;
+	int x0 = verb_slots[slot][0] - 1, y0 = verb_slots[slot][1] - 1;
+	for (int r = 0; r < 16; r++)
+		for (int c = 0; c < 18; c++) {
+			int edge = r == 0 || r == 15 || c == 0 || c == 17, inner = r == 1 || r == 14 || c == 1 || c == 16;
+			if (edge) canvas[(y0 + r) * 320 + x0 + c] = 0xA;
+			else if (inner) canvas[(y0 + r) * 320 + x0 + c] = 0xE;
+		}
+}

@@ -470,7 +470,9 @@ each line centred in the 8·(fill+2) pixel width). Everything matches the emulat
 verb 2 if `h[12] & 2` and `!(rec15 & 4)`; the class verb `ds:FA36[h[0x17]]` (`04 09 FF 07 03 08 FF FF FF` for classes 1…9, negative = none) if `h[0x17] != 0` and `!(rec15 & 0x40)`; verb 14 (`0Eh`) if `h[0x1D] == 0x12`;
 verb 10 (`0Ah`, "?") if `h[12] & 1`, `!(rec15 & 4)` and `!(ds:703 & 0x20)`; verb 11 (`0Bh`) unless `h[0x17] == 6` or `h[0x16] & 0x80`; then verb 6. Slot positions (`ds:FD8A`): (9,145) (36,152) (9,169) (36,177) (63,175) (90,177).
 The icons stay until the next touch. The verb handlers (`1000:2E0B`, 17 entries) turn a chosen verb into events — 11: event 16 (look/script) when `rec[3] & 0x20`, 4 and 7: event 5, 2: event 0, 1: event 21 + pick-up into the inventory, 16: event 1 — and
-holding End switches the direction keys from walking to moving a highlight over the slots (not decoded further).
+**the verb menu** (`1000:2A33`, read from the code; highlight frame pixel-exact): End pressed while touching an object (`1000:244C`) waits for the keys to be released, then Left/Right move a highlight over the verbs (wrapping; one move per 13 steps while held;
+Up/Down switch between two pages of six), End chooses (Space = verb 6), and the chosen verb is dispatched through the table at `1000:2E0B`. The highlight is a 18 × 16 frame around the slot (outer ring colour `A`, inner ring `E`, icon untouched). `src/main.c` implements the menu with
+the verbs 11, 4, 7, 2 (events 16/5/0); take / drop / use are not ported.
 **Energy (`ds:23A`, maximum `ds:700`).** The maximum — and the starting value — is the big-endian word at **offset 60 of the unpacked `LEVn.MP1`** (Cadaver levels 1–5: 100, 200, 350, 500, 1000; read by the loader `1000:B568` together with five more
 words, one of them the random seed `ds:242`). The panel bar (`1000:D8C3`/`D8DE`): the 22×6 box at (277,143) is cleared to colour 0, then 22·energy/max pixels are filled with colour 4. Op `2Dh` (45) adds a signed word to the energy
 (`1000:81C8`: clamp to the maximum, ≤ 0 = death, energy 0; verified against the original for 60 random cases).
