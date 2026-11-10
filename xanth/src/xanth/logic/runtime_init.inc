@@ -5,6 +5,7 @@
 		rt.byte_8521A = 1;
 		rt.byte_85744 = 1;
 		rt.byte_86CC0 = 1;
+		rt.byte_8AD74 = 255;
 		rt.byte_8ADF4 = 255;
 		rt.byte_8B9D3 = 255;
 		rt.byte_8B9D4 = 255;
@@ -71,6 +72,7 @@
 		rt.unk_74C40 = 44;
 		rt.unk_763FC = 67;
 		rt.unk_76D30 = 44;
+		rt.unk_779E4 = 103;
 		rt.unk_782E8 = 97;
 		rt.unk_78300 = 44;
 		rt.unk_796A8 = 97;

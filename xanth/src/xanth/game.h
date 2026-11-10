@@ -56,7 +56,7 @@ struct FmtArg {
 	uint32 id;                 // a message id passed where a string is expected
 	FmtArg() : isString(false), number(0), text(nullptr), id(0) {}
 	FmtArg(int n) : isString(false), number(n), text(nullptr), id(0) {}
-	FmtArg(unsigned n) : isString(false), number((int)n), text(nullptr), id(0) {}
+	FmtArg(unsigned n) : isString((n >> 24) == 0xF0), number((int)n), text(nullptr), id((n >> 24) == 0xF0 ? n : 0) {}     // a message id passed for %s
 	FmtArg(intptr_t n) : isString(false), number((int)n), text(nullptr), id(0) {}
 	FmtArg(const char *s) : isString(true), number(0), text(s), id(0) {}
 	FmtArg(const TextRef &t) : isString(true), number(0), text(t.text), id(t.id) {}

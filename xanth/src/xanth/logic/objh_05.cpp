@@ -3,6 +3,60 @@
 
 namespace Xanth {
 
+// objh_420
+int objh_420(Game &g, Word arg0) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	if (arg0 != 4) {
+		if (arg0 != 6) {
+			return 0;
+		}
+		if (rt.selectedCommand == 0x45) {
+			verbdef_Put_out(g, rt.dobj);
+			return 1;
+		}
+		if (rt.selectedCommand > 0x45) {
+			return 0;
+		}
+		if ((rt.selectedCommand & 0xFF) == 0x13) {
+			g.Font_WriteMessage(MSG(73, 79));
+			g.play_scream();
+			return 1;
+		}
+		if ((rt.selectedCommand & 0xFF) <= 0x13) {
+			if ((rt.selectedCommand & 0xFF) == 8) {
+				g.Font_WriteMessage(MSG(73, 81));
+				return 1;
+			}
+			if ((rt.selectedCommand & 0xFF) != 0xE) {
+				return 0;
+			} else {
+				g.Font_WriteMessage(MSG(73, 82));
+				g.play_scream();
+				return 1;
+			}
+		} else {
+			if ((rt.selectedCommand & 0xFF) == 0x2C) {
+				g.Font_WriteMessage(ES(305));
+				return 1;
+			}
+			if ((rt.selectedCommand & 0xFF) != 0x44) {
+				return 0;
+			} else {
+				g.Font_WriteMessage(MSG(73, 80));
+				return 1;
+			}
+		}
+	} else {
+		if (rt.selectedCommand != 0x38) {
+			return 0;
+		} else {
+			g.Font_WriteMessage(MSG(73, 83), g.print_obj(0x22, rt.dobj));
+			return 1;
+		}
+	}
+}
+
 // objh_421
 int objh_421(Game &g, Word arg0) {
 	Vars &v = g.state.v;
@@ -83,9 +137,9 @@ int objh_422(Game &g, Word arg0) {
 		if (g.object_parent_is(0x1B7, 0x1B1)) {
 			p6_ax = g.print_obj(3, 0x1B7);
 		} else {
-			p6_ax = ES(303);
+			p6_ax = ES(306);
 		}
-		p9_ax = (g.object_parent_is(0x1D4, 0x1CE) ? TextRef(nullptr) : TextRef(ES(304)));
+		p9_ax = (g.object_parent_is(0x1D4, 0x1CE) ? TextRef(nullptr) : TextRef(ES(307)));
 		g.Font_WriteMessage(MSG(74, 1), p9_ax, p6_ax);
 		if (g.object_parent_is(0x1C3, 0x1CE)) {
 			g.Font_WriteMessage(MSG(74, 2));
@@ -896,7 +950,7 @@ int objh_437(Game &g, Word arg0) {
 	if ((rt.selectedCommand & 0xFF) != 0x2C) {
 		return 0;
 	} else {
-		g.Font_WriteMessage(ES(302));
+		g.Font_WriteMessage(ES(305));
 		return 1;
 	}
 }
@@ -1162,7 +1216,7 @@ int objh_443(Game &g, Word arg0) {
 		if ((rt.selectedCommand & 0xFF) <= 0x2C) {
 			if ((rt.selectedCommand & 0xFF) == 8) {
 	L21:;
-				p24_ax = (rt.selectedCommand != 0x2C ? TextRef(ES(305)) : TextRef(MSG(76, 31)));
+				p24_ax = (rt.selectedCommand != 0x2C ? TextRef(ES(308)) : TextRef(MSG(76, 31)));
 				g.Font_WriteMessage(MSG(76, 30), p24_ax);
 				return 1;
 			}

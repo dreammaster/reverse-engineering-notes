@@ -7,6 +7,9 @@ int MouseCursor_SetTick(Word a0 = 0) { return other("MouseCursor_SetTick", a0); 
 int Mouse_removeCursorFromScreen(Word a0 = 0) { return other("Mouse_removeCursorFromScreen", a0); }
 int Mouse_update(Word a0 = 0) { return other("Mouse_update", a0); }
 int Screen_FadeOut(Word a0 = 0) { return other("Screen_FadeOut", a0); }
+int __aFNauldiv(Word a0 = 0, Word a1 = 0, Word a2 = 0) { return other("__aFNauldiv", a0, a1, a2); }
+int __aFuldiv(Word a0 = 0, Word a1 = 0, Word a2 = 0, Word a3 = 0, Word a4 = 0) { return other("__aFuldiv", a0, a1, a2, a3, a4); }
+int __aFulrem(Word a0 = 0) { return other("__aFulrem", a0); }
 int _localtime(Word a0 = 0) { return other("_localtime", a0); }
 int _srand(Word a0 = 0) { return other("_srand", a0); }
 int _time(Word a0 = 0) { return other("_time", a0); }

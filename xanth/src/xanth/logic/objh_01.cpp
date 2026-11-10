@@ -1645,7 +1645,7 @@ int objh_110(Game &g, Word arg0) {
 int objh_111(Game &g, Word arg0) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	intptr_t v2, v4, vC;
+	intptr_t v2, vC;
 	char *v6;
 	if (arg0 != 4) {
 		if (arg0 != 6) {
@@ -1674,11 +1674,11 @@ int objh_111(Game &g, Word arg0) {
 				}
 				if (v2 == 0) {
 					v6 = ES(128);
-					g.Font_WriteMessage(MSG(48, 10), v6, v4);
+					g.Font_WriteMessage(MSG(48, 10), v6);
 					return 1;
 				} else {
 					v6 = g.print_obj(3, v2);
-					g.Font_WriteMessage(MSG(48, 10), v6, v4);
+					g.Font_WriteMessage(MSG(48, 10), v6);
 					return 1;
 				}
 			} else {

@@ -61,10 +61,9 @@ int event_fn_02(Game &g) {
 int event_fn_03(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	intptr_t v2, v4, p8_ax;
+	intptr_t v4, p8_ax;
 	if (v.companion_obj == 6) {
 		v4 = 0x26;
-		v2 = 0xF016;
 		p8_ax = 0x5C;
 		goto L8;
 	}
@@ -75,13 +74,12 @@ int event_fn_03(Game &g) {
 	if (v.companion_obj == 0xB) {
 		v4 = 0x27;
 	L7:;
-		v2 = 0xF016;
 		p8_ax = 0x5E;
 	L8:;
 		g.object_set_attr(p8_ax, 0xE);
 	}
 	g.popup_window_event();
-	g.Font_WriteMessage(ES(48), v4, v2);
+	g.Font_WriteMessage(ES(48), v4);
 	g.wait_ticks_or_click(0x2710);
 	g.Screen_FadeOut();
 	v.story_stage = 3;
@@ -93,7 +91,7 @@ int event_fn_03(Game &g) {
 int event_fn_04(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	intptr_t v2, v4;
+	intptr_t v4;
 	if (v.word_85262 == 0) {
 		v4 = 0x29;
 		goto L9;
@@ -109,9 +107,8 @@ int event_fn_04(Game &g) {
 	if (v.word_85262 == 3) {
 		v4 = 0x2C;
 	L9:;
-		v2 = 0xF016;
 	}
-	g.Font_WriteMessage(ES(49), v4, v2);
+	g.Font_WriteMessage(ES(49), v4);
 	v.word_85262++;
 	if ((int16)v.word_85262 > 3) {
 		g.object_set_attr(0x5D, 0xE);
@@ -552,7 +549,7 @@ int event_fn_24(Game &g) {
 int event_fn_26(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	intptr_t v2, v4, p19_ax;
+	intptr_t v4, p19_ax;
 	v.word_85282++;
 	if (g.object_is_within(0xFF, 1)) {
 		if (v.word_85282 == 1) {
@@ -570,9 +567,8 @@ int event_fn_26(Game &g) {
 		if (v.word_85282 == 4) {
 			v4 = 0x51;
 	L10:;
-			v2 = 0xF021;
 		}
-		g.Font_WriteMessage(ES(56), v4, v2);
+		g.Font_WriteMessage(ES(56), v4);
 	}
 	if ((int16)v.word_85282 < 4) {
 		g.schedule_event(0x1B, 1);

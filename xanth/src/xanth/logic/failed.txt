@@ -37,7 +37,6 @@ objh_296	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermi
 objh_334	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_341	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_345	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_358	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_360	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_380	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 objh_390	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
@@ -45,7 +44,6 @@ sub_1AAFB	instruction stosw (stosw)
 sub_1C4ED	use of bp (lea     ax, [bp+si+var_4E])
 sub_2A333	carry after res (adc     [bx+2], dx)
 sub_44130	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
-sub_442EF	does not compile yet: no matching function for call to 'Xanth::Game::__aFuldiv(Xanth::Word&, Xanth::Word&, intpt
 sub_4FB5F	does not compile yet: 'FAR' was not declared in this scope
 sub_60460	does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 sub_7D0DF	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]

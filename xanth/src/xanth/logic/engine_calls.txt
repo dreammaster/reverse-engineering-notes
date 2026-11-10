@@ -9,6 +9,9 @@ Mouse_update	1
 ResourceText_GetStr	1
 RoomItem_Draw	1
 Screen_FadeOut	0
+__aFNauldiv	3
+__aFuldiv	5
+__aFulrem	1
 _localtime	1
 _rand	0
 _sprintf	3

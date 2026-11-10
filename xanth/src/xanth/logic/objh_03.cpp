@@ -2164,7 +2164,7 @@ int objh_284(Game &g, Word arg0) {
 int objh_285(Game &g, Word arg0) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	intptr_t v2, v4, r20_26;
+	intptr_t v4, r20_26;
 	if (arg0 != 6) {
 		return 0;
 	}
@@ -2191,23 +2191,20 @@ int objh_285(Game &g, Word arg0) {
 		r20_26 = g.object_get_location(rt.dobj);
 		if (r20_26 == 1) {
 			v4 = 0x15;
-			v2 = 0xF027;
-			g.Font_WriteMessage(ES(245), v4, v2);
+			g.Font_WriteMessage(ES(245), v4);
 			return 1;
 		}
 		if (r20_26 == 0x128) {
 			v4 = 0x16;
-			v2 = 0xF027;
-			g.Font_WriteMessage(ES(245), v4, v2);
+			g.Font_WriteMessage(ES(245), v4);
 			return 1;
 		}
 		if (r20_26 != 0x137) {
-			g.Font_WriteMessage(ES(245), v4, v2);
+			g.Font_WriteMessage(ES(245), v4);
 			return 1;
 		} else {
 			v4 = 0x14;
-			v2 = 0xF027;
-			g.Font_WriteMessage(ES(245), v4, v2);
+			g.Font_WriteMessage(ES(245), v4);
 			return 1;
 		}
 	} else {
@@ -2829,7 +2826,7 @@ int objh_294(Game &g, Word arg0) {
 int objh_297(Game &g, Word arg0) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	intptr_t v2, v4, v6;
+	intptr_t v2, v4;
 	char *v8;
 	if (arg0 != 4) {
 		if (arg0 != 6) {
@@ -2937,7 +2934,7 @@ int objh_297(Game &g, Word arg0) {
 				} else {
 					v8 = g.print_obj(2, v2);
 				}
-				g.Font_WriteMessage(MSG(40, 27), g.print_obj(2, rt.dobj), v8, v6, g.print_obj(0x22, rt.iobj));
+				g.Font_WriteMessage(MSG(40, 27), g.print_obj(2, rt.dobj), v8, g.print_obj(0x22, rt.iobj));
 				g.object_move(rt.dobj, 0x145, 1);
 				return 1;
 			}

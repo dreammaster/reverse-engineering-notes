@@ -43,7 +43,6 @@ int objh_296(Game &, Word) { return 0; }  // does not compile yet: invalid conve
 int objh_334(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_341(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_345(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_358(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_360(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_380(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int objh_390(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
@@ -51,7 +50,6 @@ int sub_1AAFB(Game &) { return 0; }  // instruction stosw (stosw)
 int sub_1C4ED(Game &, Word, Word, Word, Word) { return 0; }  // use of bp (lea     ax, [bp+si+var_4E])
 int sub_2A333(Game &) { return 0; }  // carry after res (adc     [bx+2], dx)
 int sub_44130(Game &, Word, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
-int sub_442EF(Game &, Word, Word) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::__aFuldiv(Xanth::Word&, Xanth::Word&, intpt
 TextRef sub_4FB5F(Game &, Word, Word) { return TextRef(); }  // does not compile yet: 'FAR' was not declared in this scope
 int sub_60460(Game &) { return 0; }  // does not compile yet: no matching function for call to 'Xanth::Game::ResourceText_GetStr(uint16&, uint16&)'
 int sub_7D0DF(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
