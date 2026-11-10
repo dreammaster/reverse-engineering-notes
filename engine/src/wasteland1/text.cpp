@@ -3,6 +3,7 @@
 #include "wasteland1/text.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
+#include "wasteland1/mouse.h"
 #include "wasteland1/rules.h"
 #include "wasteland1/ui.h"
 #include <algorithm>
@@ -73,6 +74,7 @@ uint8_t checkKeypress(Machine &m, uint8_t caseDelta) {   // 18EFE
 	bool haveKey = false;
 	if (m.d8(g::macroPlaySlot) != 0) {   // playing back a recorded macro
 		pollSpeedKeys(m);
+		if (m.d8(g::mousePresent) != 0) { uint8_t ignored; pollMouse(m, ignored); }
 		const uint16_t base = uint16_t(0xC062 + (uint16_t(m.d8(g::macroPlaySlot) - 1) << 8));
 		uint8_t pos = m.d8(g::macroPos);
 		al = m.d8(uint16_t(base + pos));
@@ -83,7 +85,8 @@ uint8_t checkKeypress(Machine &m, uint8_t caseDelta) {   // 18EFE
 	if (!haveKey) {
 		pollSpeedKeys(m);   // initMouse? starts with sub_19004
 		uint16_t key;
-		if (!biosKeyPending(m, key)) al = 0;
+		if (m.d8(g::mousePresent) != 0 && pollMouse(m, al)) haveKey = true;   // a click on a hot spot acts like a key
+		else if (!biosKeyPending(m, key)) al = 0;
 		else {
 			biosKeyRead(m);
 			al = uint8_t(key);

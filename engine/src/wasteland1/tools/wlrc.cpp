@@ -31,13 +31,23 @@ int main(int argc, char **argv) {
 	int waitPolls = 0, next = 3;
 	try {
 		rc::boot(m, shared::readFile(argv[1]), argv[2], r);
+		if (std::getenv("WL_MOUSE")) {   // mouse driver present (commands move / click)
+			m.input.mouseEnabled = true;
+			const uint8_t ivt[4] = {0x10, 0x00, 0x10, 0xF0};
+			for (int i = 0; i < 4; ++i) m.mem[0xCC + i] = ivt[i];
+		}
 		if (const char *e = std::getenv("WL_MAXEDGES")) m.sys->maxEdges = uint64_t(std::atoll(e));
+		bool release = false;
 		m.onIdle = [&]() {
+			m.input.pump(m);
 			if (waitPolls > 0) { --waitPolls; return; }
+			if (release) { release = false; Event e; e.type = Event::MouseUp; e.x = m.input.mouseX; e.y = m.input.mouseY; e.button = BUTTON_LEFT; m.input.post(e); m.input.pump(m); waitPolls = 6; return; }
 			while (next < argc) {
 				const std::string cmd = argv[next++];
 				if (cmd == "key" && next < argc) m.keys.push_back(uint16_t(std::strtoul(argv[next++], nullptr, 16)));
 				else if (cmd == "keys" && next < argc) { for (const char *p = argv[next++]; *p; ++p) m.keys.push_back(uint16_t(uint8_t(*p))); }
+				else if (cmd == "move" && next + 1 < argc) { Event e; e.type = Event::MouseMove; e.x = std::atoi(argv[next]); e.y = std::atoi(argv[next + 1]); next += 2; m.input.post(e); m.input.pump(m); waitPolls = 6; return; }
+				else if (cmd == "click" && next + 1 < argc) { Event e; e.type = Event::MouseDown; e.x = std::atoi(argv[next]); e.y = std::atoi(argv[next + 1]); e.button = BUTTON_LEFT; next += 2; m.input.post(e); m.input.pump(m); release = true; waitPolls = 6; return; }
 				else if (cmd == "wait" && next < argc) { waitPolls = std::atoi(argv[next++]); return; }
 				else if (cmd == "shot" && next < argc) screenshot(m.ega).writePng(argv[next++]);
 				else if (cmd == "save" && next < argc) m.saveState(argv[next++]);

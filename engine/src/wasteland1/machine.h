@@ -6,6 +6,7 @@
 #include "wasteland1/ega.h"
 #include "shared/bytes.h"
 #include <deque>
+#include "wasteland1/input.h"
 #include <functional>
 #include <memory>
 #include <string>
@@ -43,6 +44,7 @@ struct Machine {
 	uint16_t regs[14] = {};                  // ax cx dx bx sp bp si di es cs ss ds ip flags (as saved by wlemu)
 
 	// BIOS-level inputs the ported routines poll (not part of the state file)
+	Input input;                            // front end events (keys end up in `keys`, the mouse is read by int 33h)
 	std::deque<uint16_t> keys;              // keyboard buffer: scancode << 8 | ascii
 	std::function<void()> onIdle;           // called while a routine waits for input or time (lets the front end run)
 	std::shared_ptr<rc::Sys> sys;           // DOS/BIOS state of the recompiled program (see recomp_rt.h)

@@ -50,7 +50,7 @@ struct Sys {
 void boot(Machine &m, const Bytes &image, const std::string &gameDir, Regs &r);   // maps the unpacked image (1000:0), sets up the IVT and the start registers
 void run(Machine &m, Regs &r);                                  // runs the program from its entry point
 void deliverTimer(Machine &m, Regs &r);
-void scrambleJunk(Machine &m, Regs &r, uint32_t junkMask);
+void scrambleJunk(Machine &m, Regs &r, uint32_t junkMask, uint16_t entry);   // env WL_SCRAMBLE_RANGE=lo-hi (hex) limits it to ports in that range
 void installCallbacks(Machine &m);   // callLegacy / onPortraitTick: lets ported routines call generated ones
 void f_10B6(Machine &m, Regs &r);
 

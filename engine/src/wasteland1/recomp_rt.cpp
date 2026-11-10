@@ -250,14 +250,31 @@ void intr(Machine &m, Regs &r, int n) {
 		r.a.x = 0;
 		return;
 	case 0x17: r.a.x = 0x9000; return;
-	case 0x33: if (r.a.x == 0) r.a.x = 0; return;   // no mouse
+	case 0x33: {   // mouse driver, fed by Input (see input.h)
+		Input &in = m.input;
+		if (std::getenv("MOUSEDBG")) std::fprintf(stderr, "int33 ax=%04X en=%d\n", r.a.x, int(in.mouseEnabled));
+		switch (r.a.x) {
+		case 0: r.a.x = in.mouseEnabled ? 0xFFFF : 0; r.b.x = in.mouseEnabled ? 2 : 0; break;
+		case 3: r.b.x = in.buttons; r.c.x = uint16_t(std::clamp(in.mouseX, 0, in.rangeMaxX)); r.d.x = uint16_t(std::clamp(in.mouseY, 0, in.rangeMaxY)); break;
+		case 7: in.rangeMaxX = r.d.x; break;
+		case 8: in.rangeMaxY = r.d.x; break;
+		default: break;   // show/hide cursor, mickey ratio, ...: the game draws its own cursor
+		}
+		return;
+	}
 	case 0x25: case 0x26: r.a.x = 0x0101; r.cf = true; return;
 	case 3: throw Fault("int3");
 	default: throw Fault("unsupported interrupt");
 	}
 }
 
-void scrambleJunk(Machine &m, Regs &r, uint32_t mask) {
+void scrambleJunk(Machine &m, Regs &r, uint32_t mask, uint16_t entry) {
+	static const char *range = std::getenv("WL_SCRAMBLE_RANGE");
+	if (range) {
+		unsigned lo = 0, hi = 0xFFFF;
+		std::sscanf(range, "%x-%x", &lo, &hi);
+		if (entry < lo || entry > hi) return;
+	}
 	Sys &s = *m.sys;
 	static const bool all = std::getenv("WL_SCRAMBLE") && std::getenv("WL_SCRAMBLE")[0] == 'a';   // sanity check: scramble everything
 	if (all) mask = 0x7FFFF;

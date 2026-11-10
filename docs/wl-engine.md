@@ -117,3 +117,25 @@ A ported function is accepted when every check below passes:
 Pitfalls found so far: IDA function boundaries hide fall-through chains (for example 129D5 -> 129DC -> 129E9 and
 15C19 -> 15C27), so a port has to continue into the code that follows; waiting for a key in the oracle and the port
 consumes a different number of random numbers, so tests that wait diverge in later random draws (declared as scratch).
+
+## Input events and the mouse
+
+`engine/src/wasteland1/input.h` defines the engine's event model, shaped like ScummVM's `Common::Event` / `EventManager` (and
+SDL's queue): a front end posts `Event`s (`KeyDown`, `MouseMove`, `MouseDown/Up`, `Tick`, `Quit`; keys carry a ScummVM-style
+keycode, ascii and modifiers; mouse positions are game pixels 0..319 x 0..199) and `Input::pump()` dispatches them:
+key presses become BIOS key words in `Machine::keys` (read by int 16h and `checkKeypress`), mouse events update the state
+that the int 33h emulation (`recomp_rt.cpp`) returns, `Quit` sets a flag the front end turns into an exit. The Win32 front end
+(`platform/win32_wl.cpp`) is the reference producer; an SDL or ScummVM `OSystem` front end only has to translate its events.
+
+The mouse is off unless `Input::mouseEnabled` is set (the oracle has none, so tests are unaffected); the front end also has to
+make the int 33h vector non-zero (both low bytes) so the start-up code finds a driver. `mouse.cpp` ports the original poll
+(`18860`/`18928`): the position and buttons come from `Input`, the hot spot table at ds:CAEB maps a click to a handler of the
+original code (cursor shape, button rows, roster rows, map movement), and that handler's key code is returned from `checkKeypress`.
+`WL_MOUSE_LEGACY=1` runs the recompiled original poll instead, for comparisons. Headless: `WL_MOUSE=1 wlrc ... move X Y | click X Y`.
+Status: clicks on the title button, bottom buttons and the map were identical to the original poll in 7 screenshots; the main loop
+(`16B3C`) is still the recompiled one.
+
+Debugging aid: `WL_SCRAMBLE_RANGE=lo-hi` (hex code offsets) restricts the junk scrambling of `scramblecheck.sh` to ports in a range.
+Known issue: scrambling ports in 6000-7FFF together still gives differences in the combat/menus scripts although each sub-range
+alone is clean, i.e. some junk lists are wider than the original's behaviour (callers pass dx through); the ports themselves
+match the oracle.

@@ -119,6 +119,7 @@ constexpr uint16_t macroPos = 0xCA62;            // IDB byte_29882
 constexpr uint16_t hintPass = 0xCA6B;            // IDB byte_2988B
 constexpr uint16_t hintMask = 0xCA69;            // IDB word_29889
 constexpr uint16_t keyCaseDelta = 0xC058;        // IDB byte_28E78: 20h subtracts the case bit
+constexpr uint16_t mousePresent = 0x8DDB;           // IDB byte_25BFB: 1 when a mouse driver answered at start-up
 constexpr uint16_t lastKey = 0x4667;             // IDB unk_21487: the key checkKeypress returned
 constexpr uint16_t textSuppressed = 0x46F0;      // IDB byte_21510
 constexpr uint16_t captureNextChar = 0x4703;     // IDB byte_21523

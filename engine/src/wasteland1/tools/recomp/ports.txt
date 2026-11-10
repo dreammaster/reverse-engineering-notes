@@ -382,7 +382,7 @@ AD73 combatRound junk=al,bl,cf,ch,cl,di,dl,es,si scratch=CF80-CF87,7931-8030,A4A
 7451 drawButtonPlain junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=B250-B251,722F-722F,8DD0-8DD7,4661-4662,465C-4660,CDC0-CE00
 744C drawButtonHighlighted junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=B250-B251,722F-722F,8DD0-8DD7,4661-4662,465C-4660,CDC0-CE00
 73D2 drawButtonsRow junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=B250-B251,722F-722F,8DD0-8DD7,4661-4662,465C-4660,CDC0-CE00
-7574 buttonKey junk=ah,al,bl,bp,ch,cl,cf,di,dl,dh,es,pf,sf,si,zf scratch=B250-B251,722F-722F,8DD0-8DD7,4661-4662,465C-4660,CDC0-CE00,AA30-AA50,B1D0-B1E0,B240-B243,A420-A470,BA00-BA11,B260-B270,A600-A630
+7574 buttonKey junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,dl,dh scratch=B250-B251,722F-722F,8DD0-8DD7,4661-4662,465C-4660,CDC0-CE00,AA30-AA50,B1D0-B1E0,B240-B243,A420-A470,BA00-BA11,B260-B270,A600-A630
 7748 textInput junk=ah,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=B264-B264,467B-467B,CDC0-CE00,465C-4660,4682-4684
 7745 textInputAl junk=ah,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=B264-B264,467B-467B,CDC0-CE00,465C-4660,4682-4684
 5160 askKeyword junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=A650-A653,7931-7932,79B1-79F0,4684-4684,4682-4682,467B-467B,B264-B264,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4661-4664,4665-4666
@@ -412,36 +412,36 @@ CAD1 rollAttribute junk=ah,bl,cl,dl,dh,si,pf,sf,zf,cf scratch=DFF0-DFF6,465C-466
 C9DE startingItems junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=DEB0-DEC7,DFF0-DFF6,D430-D436,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4661-4666,467F-4681,466B-466D,4682-4684,B240-B243,CD40-CD50,B1D0-B1E0,4696-4699,469C-469F,4720-4721,71C0-7200,8D00-8F00,7931-7960,A410-A470,4663-4664,C059-C059
 C61F creationRowPort junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=DEB0-DEC7,DFF0-DFF6,D430-D436,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4661-4666,467F-4681,466B-466D,4682-4684,B240-B243,CD40-CD50,B1D0-B1E0,4696-4699,469C-469F,4720-4721,71C0-7200,8D00-8F00,7931-7960,A410-A470,4663-4664
 7750 textInputCaseSensitive junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=DEB0-DEC7,DFF0-DFF6,D430-D436,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4661-4666,467F-4681,466B-466D,4682-4684,B240-B243,CD40-CD50,B1D0-B1E0,4696-4699,469C-469F,4720-4721,71C0-7200,8D00-8F00,7931-7960,A410-A470,4663-4664
-25B1 rosterLocationOn junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-25B7 rosterLocationOff junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-2728 textSpeedOn junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-272E textSpeedOff junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-2955 loadA4AE junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-3EC0 loadA5D7 junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-3C52 markMemberRow junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
-3E32 npcOfCurrent junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,cf
-3435 selectNewCharacter junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
-4B93 monsterStepIndex junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-4F43 addPendingX junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-4F50 addPendingY junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-4F67 loadPendingFromSlot junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-514B loadA632 junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-5939 loadActionPair junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-5B9C slotHasMonsters junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,cf
-634F restoreRosterFlag junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-6376 copyB265 junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-64D7 loadStepResult junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-6508 decBl junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-650D incBl junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-6512 decDl junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-6517 incDl junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-6837 loadAA3E junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-6880 loadAA3C junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
-69A8 loadAA38 junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-69B1 changeCellAtParty junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
-5DC4 selectActiveGroupLeaves junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-6B09 setPendingFlags junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
-6CBD textTableAB3E junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
+25B1 rosterLocationOn junk=ah,bl,bp,ch,cl,di,es,si
+25B7 rosterLocationOff junk=ah,bl,bp,ch,cl,di,es,si
+2728 textSpeedOn junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+272E textSpeedOff junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+2955 loadA4AE junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+3EC0 loadA5D7 junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+3C52 markMemberRow junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
+3E32 npcOfCurrent junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,cf
+3435 selectNewCharacter junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
+4B93 monsterStepIndex junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+4F43 addPendingX junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+4F50 addPendingY junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+4F67 loadPendingFromSlot junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+514B loadA632 junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+5939 loadActionPair junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+5B9C slotHasMonsters junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,cf
+634F restoreRosterFlag junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+6376 copyB265 junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+64D7 loadStepResult junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+6508 decBl junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+650D incBl junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+6512 decDl junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+6517 incDl junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+6837 loadAA3E junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+6880 loadAA3C junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
+69A8 loadAA38 junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+69B1 changeCellAtParty junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
+5DC4 selectActiveGroupLeaves junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+6B09 setPendingFlags junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+6CBD textTableAB3E junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
 9579 writeMemberAttribute junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4690-4690,467F-4681,466B-466D,71C0-7200,8D00-8F00
 9506 writeMemberStats junk=ah,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4690-4690,467F-4681,466B-466D,71C0-7200,8D00-8F00
 9362 writeSummary junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,466A-466A,467F-4681,466B-466D,71C0-7200,8D00-8F00
