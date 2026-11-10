@@ -703,6 +703,10 @@ int main(int argc, char **argv) {
 		snprintf(path, sizeof(path), "%s/%s/ROUTINE%c.TAD", root, tv->dir, lev);
 		size_t n, un;
 		uint8_t *in = slurp(path, &n), *raw = NULL;
+		if (!in) {
+			snprintf(path, sizeof(path), "%s/%s/ROUTINE%c.PAK", root, tv->dir, lev);
+			in = slurp(path, &n);
+		}
 		if (!in)
 			continue;
 		if (mjm_unpack(in, n, &raw, &un) == 0 && un > 0x40) {

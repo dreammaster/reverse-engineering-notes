@@ -240,10 +240,12 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	if (rv->tad.loaded) tad_free(&rv->tad);
 	{
 		uint8_t *tb; size_t tl;
-		if (gamefiles_read_mjm(g, rv->use_tata ? "tata\\?\\routine?.tad" : "data\\?\\routine?.tad", rv->level, &tb, &tl) == 0) {
-			tad_load(&rv->tad, tb, tl);
-			free(tb);
-		}
+		const char *pat[2] = {rv->use_tata ? "tata\\?\\routine?.tad" : "data\\?\\routine?.tad", rv->use_tata ? "tata\\?\\routine?.pak" : "data\\?\\routine?.pak"};
+		for (int k = 0; k < 2 && !rv->tad.loaded; k++)      /* Cadaver 1: .TAD, Cadaver 2: .PAK (same packing, same code for levels 1-5) */
+			if (gamefiles_read_mjm(g, pat[k], rv->level, &tb, &tl) == 0) {
+				tad_load(&rv->tad, tb, tl);
+				free(tb);
+			}
 	}
 	rv->vm.energy = rv->vm.energy_max = rv->energy_max_cfg;
 	memset(rv->visited, 0, sizeof(rv->visited));

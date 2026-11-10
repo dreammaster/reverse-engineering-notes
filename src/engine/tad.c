@@ -12,8 +12,8 @@
 
 int tad_load(TadRt *t, const uint8_t *raw, size_t len) {
 	memset(t, 0, sizeof(*t));
-	if (len < 0x40 || len > 0xF000)
-		return -1;
+	if (len < 0x40 || len > 0xF000 || raw[0x20] != 0xBB || raw[0x21] != 0x27 || raw[0x22] != 0x00)
+		return -1;           /* only the Cadaver 1 layout (thunk at +0x27); the Payoff's new levels use a different stub (thunk at +0x2E) */
 	t->mem = (uint8_t *)calloc(1, X86_MEM);
 	if (!t->mem)
 		return -1;

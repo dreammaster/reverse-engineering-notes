@@ -319,10 +319,12 @@ def tad_scenario(u, ent, seed):
 tad_vec = []
 for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glob.glob(os.path.join(root, 'cadaver2', 'TATA', '[1-4]')) +
                 glob.glob(os.path.join(root, 'cadaver2', 'DATA', '[1-5]'))):
-    fs = glob.glob(os.path.join(d, 'ROUTINE*.TAD'))
+    fs = glob.glob(os.path.join(d, 'ROUTINE*.TAD')) + glob.glob(os.path.join(d, 'ROUTINE*.PAK'))
     if not fs:
         continue
     u = mjm.mjm_unpack(open(fs[0], 'rb').read())
+    if u[0x20:0x23] != b'\xbb\x27\x00':
+        continue                  # the Payoff's new levels use another stub
     h, cnt = 0x811C9DC5, 0
     for ei, ent in enumerate(tad_entries(u)):
         for sc in range(4):

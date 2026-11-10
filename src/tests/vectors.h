@@ -347,6 +347,14 @@ static const StatusVector tad_vectors[] = {
 	{"cadaver1/DATA/3", 60, 0x54323F7EU},
 	{"cadaver1/DATA/4", 52, 0x235F5AEBU},
 	{"cadaver1/DATA/5", 20, 0x0FB0E34EU},
+	{"cadaver2/DATA/1", 60, 0xC7749262U},
+	{"cadaver2/DATA/2", 60, 0xB2A8DB4BU},
+	{"cadaver2/DATA/3", 60, 0x54323F7EU},
+	{"cadaver2/DATA/4", 52, 0x235F5AEBU},
+	{"cadaver2/DATA/5", 20, 0x0FB0E34EU},
+	{"cadaver2/TATA/2", 4, 0xB9EC7B92U},
+	{"cadaver2/TATA/3", 4, 0xACBB84B2U},
+	{"cadaver2/TATA/4", 4, 0x4F8EA678U},
 };
 typedef struct { const char *dir; int rooms; unsigned hash; } AclVector;
 static const AclVector acl_vectors[] = {
