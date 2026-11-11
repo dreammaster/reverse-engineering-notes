@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 namespace Ultima6 {
 namespace Ultima6 {
@@ -1083,6 +1084,239 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		break;
 	}
+	case 10: { // sub_5A39C: a digging tool (item) on a pod plant (first, 0xFB): a dirt pile (0x102) goes on the first free square round the member (none: "You can't dig here."), the seed (0xFC) in the hole under the plant (0x101) is laid on its square with frame 1, what else was in the hole is thrown away, and the plant is pulled up
+		if (first < 0)
+			break;
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		int me = _world.actorObject(actingActor());
+		static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+		int nx = 0, ny = 0;
+		bool found = false;
+		for (int i = 0; i < 8 && !found && me >= 0; ++i) {
+			nx = (_world.objects[me].x + DX[i]) & mask;
+			ny = (_world.objects[me].y + DY[i]) & mask;
+			std::vector<int> here;
+			_world.objectsAt(nx, ny, z, here);
+			if (!here.empty() || (_world.flags.flags1[_world.map.tile(z, nx, ny) & (TileFlags::TILES - 1)] & 2))
+				continue;
+			found = true;
+		}
+		if (!found) {
+			message("You can't dig here.\n");
+			break;
+		}
+		seMake(0x102, nx, ny, z, 1);
+		int plant = first, px = _world.objects[plant].x, py = _world.objects[plant].y;
+		int hole = seFind(0x101, px, py);
+		if (hole < 0) {
+			message("It has no effect.\n");
+			break;
+		}
+		bool firstOne = true;
+		for (size_t i = 0; i < _world.objects.size(); ++i) {
+			World::Obj &c = _world.objects[i];
+			if (c.deleted || c.location() != ObjRecord::IN_CONTAINER || c.parent != hole)
+				continue;
+			if (firstOne && c.type == 0xFC) {
+				if (c.frame == 0)
+					c.frame = 1;
+				mdPlace((int)i, px, py, z);
+			} else if (!firstOne) {
+				_world.deleteObject((int)i);
+			}
+			firstOne = false;
+		}
+		if (_world.objects[plant].frame > 0)
+			message("You uprooted the pod plant.\n");
+		sfx(0x1B);
+		_world.deleteObject(plant);
+		break;
+	}
+	case 37: { // sub_5E445: a bottle of the potash puzzle (item 0xEB, its frame: 0 potash, 1 phosphorous, 2 acid, 3 nitrogen) on a mound (first, 0xFB) with a seed (0xFC) on its square or in the hole there (0x101): each of the three compounds can be poured once, bit 4, 2, 1 of the mound's quality; acid destroys the seed and turns the mound into a pile; the bottle is used up (also when there is no seed: "It has no effect."); with 0xF the seed gets the time as its growth stamp
+		if (first < 0)
+			break;
+		int mound = first, mx = _world.objects[mound].x, my = _world.objects[mound].y, kind = _world.objects[item].frame;
+		int seed = seFind(0xFC, mx, my);
+		if (seed < 0) {
+			int hole = seFind(0x101, mx, my);
+			if (hole >= 0)
+				for (size_t i = 0; i < _world.objects.size() && seed < 0; ++i) {
+					const World::Obj &c = _world.objects[i];
+					if (!c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == hole && c.type == 0xFC)
+						seed = (int)i;
+				}
+		}
+		if (seed < 0) {
+			_world.deleteObject(item);
+			message("It has no effect.\n");
+			break;
+		}
+		int q = _world.objects[mound].quality;
+		auto pour = [&](int bit, const char *text) {
+			if (!(q & bit)) {
+				message(text);
+				q |= bit;
+			} else {
+				message("It has no effect.\n");
+			}
+		};
+		if (kind == 0) {
+			pour(4, "You pour the potash mixture onto the mound.\n");
+		} else if (kind == 1) {
+			pour(2, "You pour the phosphorous solution onto the mound.\n");
+		} else if (kind == 3) {
+			pour(1, "You pour the nitrogen compound onto the mound.\n");
+		} else if (kind == 2) {
+			message("The seed is destroyed by acid.\n");
+			sfx(5);
+			_world.deleteObject(seed);
+			_world.objects[mound].type = 0x102;
+			_world.objects[mound].quantity = 0;
+			q = 0;
+		} else {
+			message("It has no effect.\n");
+		}
+		_world.objects[mound].quality = (uint8_t)q;
+		_world.deleteObject(item);
+		if (q == 0xF && !_world.objects[seed].deleted && _world.objects[seed].frame == 0 && _world.actors.globals.size() > 7) {
+			_world.objects[seed].quality = _world.actors.globals[6]; // (the time: byte_41126 / byte_41127)
+			_world.objects[seed].quantity = _world.actors.globals[7];
+		}
+		break;
+	}
+	case 74: { // sub_5D357: a bottle of oxygenated air (item) on a member of the party or on a dead body (0x155, quality = the actor): the member is "revived!" with all the hit points, a body of a member (actor below 0x10) gets up, another is "beyond help" (and goes); one bottle is used up
+		// APPROX(76): the body is raised by World::resurrect (spells), not by sub_4F360 (which looks for a free square round the body and gives the side 0x40)
+		if (first < 0)
+			break;
+		const World::Obj &t = _world.objects[first];
+		bool member = t.actor >= 0 && (_world.actors.status[t.actor] & 0x80);
+		auto bare = [&](const World::Obj &o) {
+			std::string s = Describe::object(_world, o);
+			for (const char *a : {"a ", "an ", "the "})
+				if (s.compare(0, strlen(a), a) == 0)
+					return s.substr(strlen(a));
+			return s;
+		};
+		if (t.type != 0x155 && !member) {
+			message("The " + bare(t) + " doesn't need oxygenated air.\n");
+			sfx(5);
+			break;
+		}
+		if (t.type == 0x155) {
+			int dead = t.quality;
+			if (dead >= 0x10 || !_world.resurrect(dead)) {
+				message("The " + bare(t) + " is beyond help.\n");
+				sfx(5);
+				if (dead >= 0x10)
+					_world.deleteObject(first);
+			} else {
+				_world.actors.status[dead] = (uint8_t)((_world.actors.status[dead] & 0x9F & 0xF7) | 0x40);
+				int k = _world.actorObject(dead);
+				message(Describe::object(_world, _world.objects[k]) + " is revived!\n");
+				sfx(4);
+			}
+		} else {
+			message(Describe::object(_world, t) + " is revived!\n");
+			sfx(4);
+			_world.actors.hp[t.actor] = (uint8_t)ActorStats::maxHealth(_world, t.actor);
+		}
+		consumeOne(item);
+		break;
+	}
+	case 52: { // sub_5C6C7: the headgear (item, 0x128) on a dream machine chair (0x120, or 0x121: the one at its square): the chair gets its headgear (a new thing 0x64, frame 1), the headgear is used up, and the story flags 0x74 bit 4 (and 0x60 bit 4 if 0x74 has bit 1) are set
+		if (first < 0)
+			break;
+		int chair = first;
+		if (_world.objects[chair].type == 0x121) {
+			chair = seFind(0x120, _world.objects[chair].x, _world.objects[chair].y);
+			if (chair < 0) {
+				message("It has no effect.\n");
+				break;
+			}
+		}
+		int cx = _world.objects[chair].x, cy = _world.objects[chair].y;
+		int head = seMake(0x64, cx, cy, z, 0, 0);
+		_world.objects[head].status = 1;
+		_world.objects[head].frame = 1;
+		_world.deleteObject(item);
+		message("The headgear is installed.\n");
+		_world.actors.talkFlags[0x74] |= 0x10;
+		if (_world.actors.talkFlags[0x74] & 1)
+			_world.actors.talkFlags[0x60] |= 4;
+		break;
+	}
+	case 46: { // sub_5B83A: a belt part (item, 0x90) on a roller (0xC0, first): from its leftmost roller whose frame is 0 on to the right every roller becomes 0xBC and every fifth gets a 0xBD by it; rollers that are not whole ("Ooops. These rollers can never be fixed!") do nothing; the item is used up and flag 4 of actor 0x72 set
+		if (first < 0)
+			break;
+		int y0 = _world.objects[first].y, dx = _world.objects[first].x, r = first;
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		while (r >= 0 && _world.objects[r].frame != 0 && _world.objects[r].type == 0xC0) { // (to the left until a roller with frame 0)
+			dx = (_world.objects[r].x - 1) & mask;
+			r = seFind(0xC0, dx, y0);
+		}
+		if (r < 0 || _world.objects[r].type != 0xC0) {
+			message("Ooops. These rollers can never be fixed!\n");
+			break;
+		}
+		int count = 4;
+		while (r >= 0) {
+			_world.objects[r].type = 0xBC;
+			if (count == 0) {
+				count = 4;
+				int belt = seMake(0xBD, dx, y0, z, 0, 0);
+				_world.objects[belt].status = 1;
+			}
+			--count;
+			dx = (dx + 1) & mask;
+			r = seFind(0xC0, dx, y0);
+		}
+		_world.deleteObject(item);
+		_world.actors.talkFlags[0x72] |= 4;
+		break;
+	}
+	case 19: { // sub_5D5A7: fire (a lit torch or lamp, item) on something: paper money (0x84) flares into a pyre; what is in the list of ds:0D94 is "incinerated"; anything else "It has no effect."
+		// APPROX(76): the burning of the pyre (sub_513BC, which spreads the fire) and the burn of the carrier of paper money are not done
+		if (first < 0)
+			break;
+		static const uint16_t BURNS[15] = {0x18, 0x84, 0xB9, 0x3E, 0x65, 0x6B, 0x94, 0x96, 0x97, 0x9E, 0xF3, 0xFC, 0x1BC, 0x1BF, 0x100};
+		const World::Obj &t = _world.objects[first];
+		if (t.type == 0x84) {
+			message("The paper money flares into a great pyre!\n");
+			if (!carriedObject(t)) {
+				int px = t.x, py = t.y;
+				seMake(0x85, px, py, z, 0, 0);
+			}
+			_world.deleteObject(first);
+			break;
+		}
+		bool burns = false;
+		for (uint16_t b : BURNS)
+			burns |= b == t.type;
+		if (burns) {
+			std::string s = Describe::object(_world, t);
+			for (const char *a : {"a ", "an ", "the "})
+				if (s.compare(0, strlen(a), a) == 0) {
+					s = s.substr(strlen(a));
+					break;
+				}
+			message("\nYou incinerated the " + s + ".\n");
+			sfx(9);
+			_world.deleteObject(first);
+		} else {
+			message("It has no effect.\n");
+			sfx(5);
+		}
+		break;
+	}
+	case 69: // sub_5EDA3: the mirror (0x93): only at one place (x 0x76-0x78, y 0xCA-0xCC, level 2) does it show somebody (flag 0x40 of actor 0x50, who talks); elsewhere "You see yourself."
+		// APPROX(76): the end of the dream scene (sub_3F615 / sub_3F61A) is left out
+		if (x >= 0x76 && x <= 0x78 && y >= 0xCA && y <= 0xCC && z == 2) {
+			_world.actors.talkFlags[0x50] |= 0x40;
+			startTalk(0x50);
+		} else {
+			message("You see yourself.\n");
+		}
+		break;
 	case 0: // sub_59480: the folded tent: the camp (md_rest.cpp)
 		mdTent(item);
 		break;

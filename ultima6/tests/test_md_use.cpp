@@ -818,6 +818,136 @@ int main() {
 			w.moveObject(moved[i].first, moved[i].second.first, moved[i].second.second, 0);
 	}
 
+	// more recipes: air (74), headgear (52), belt rollers (46), fire (19), the mirror (69)
+	{
+		auto clearArea = [&]() {
+			std::vector<int> here;
+			for (int sx = px - 2; sx <= px + 5; ++sx)
+				for (int sy = py - 1; sy <= py + 2; ++sy) {
+					here.clear();
+					w.objectsAt(sx, sy, 0, here);
+					for (int i : here)
+						if (w.objects[i].actor < 0)
+							w.deleteObject(i);
+				}
+		};
+		auto useOnSouth = [&]() { // the item east of the party, the partner south of it
+			g.log.clear();
+			g.handleKey('u');
+			g.handleKey(KEY_RIGHT);
+			g.handleKey(KEY_DOWN);
+			g.handleKey(KEY_ENTER);
+		};
+		clearArea();
+		int me = g.actingActor();
+		// air on a thing that does not breathe, on the body of nobody who can be saved, on the body of a member
+		int air = put(w, 0x144, 0, px + 1, py, 0);
+		w.objects[air].quantity = 3;
+		int barrel = put(w, 0x68, 0, px, py + 1, 0);
+		useOnSouth();
+		CHECK(logText(g).find("doesn't need oxygenated air") != std::string::npos && w.objects[air].quantity == 3);
+		w.deleteObject(barrel);
+		int body = put(w, 0x155, 0, px, py + 1, 0);
+		w.objects[body].quality = 0x30;
+		useOnSouth();
+		CHECK(logText(g).find("is beyond help") != std::string::npos && w.objects[body].deleted && w.objects[air].quantity == 2);
+		body = put(w, 0x155, 0, px, py + 1, 0);
+		w.objects[body].quality = 3;
+		int mate = w.actors.partyRoster[2];
+		CHECK(mate == 3);
+		w.actors.status[mate] |= 0x10;
+		w.actors.hp[mate] = 0;
+		useOnSouth();
+		CHECK(logText(g).find("is revived!") != std::string::npos && !(w.actors.status[mate] & 0x10) && w.actors.hp[mate] > 0 && w.objects[body].deleted && w.objects[air].quantity == 1);
+		w.deleteObject(air);
+		clearArea();
+		// headgear on a chair
+		int head = put(w, 0x128, 0, px + 1, py, 0);
+		int chair = put(w, 0x120, 0, px, py + 1, 0);
+		w.actors.talkFlags[0x74] = 1;
+		w.actors.talkFlags[0x60] = 0;
+		size_t before = w.objects.size();
+		useOnSouth();
+		CHECK(logText(g).find("The headgear is installed") != std::string::npos && w.objects[head].deleted && w.objects.size() == before + 1 && w.objects.back().type == 0x64 && w.objects.back().frame == 1);
+		CHECK((w.actors.talkFlags[0x74] & 0x10) && (w.actors.talkFlags[0x60] & 4));
+		w.deleteObject(w.objects.size() - 1);
+		w.deleteObject(chair);
+		clearArea();
+		// rollers: a row of six on the south row, the first with frame 0: all turn into 0xBC and the fifth one gets a 0xBD
+		int part = put(w, 0x90, 0, px + 1, py, 0);
+		int rollers[6];
+		for (int i = 0; i < 6; ++i)
+			rollers[i] = put(w, 0xC0, i == 0 ? 0 : 1, px - 1 + i, py + 1, 0);
+		before = w.objects.size();
+		useOnSouth();
+		bool all = true;
+		for (int i = 0; i < 6; ++i)
+			all &= w.objects[rollers[i]].type == 0xBC;
+		CHECK(all && w.objects[part].deleted && w.objects.size() == before + 1 && w.objects.back().type == 0xBD && w.objects.back().x == px + 3 && (w.actors.talkFlags[0x72] & 4));
+		for (int i = 0; i < 6; ++i)
+			w.deleteObject(rollers[i]);
+		w.deleteObject(w.objects.size() - 1);
+		clearArea();
+		// rollers that are all not whole
+		part = put(w, 0x90, 0, px + 1, py, 0);
+		int r1 = put(w, 0xC0, 1, px, py + 1, 0);
+		useOnSouth();
+		CHECK(logText(g).find("These rollers can never be fixed") != std::string::npos && w.objects[r1].type == 0xC0 && !w.objects[part].deleted);
+		w.deleteObject(r1);
+		w.deleteObject(part);
+		clearArea();
+		// fire on a book (0x94) and on a thing that does not burn
+		int torch = put(w, 0x72, 0, px + 1, py, 0);
+		int book = put(w, 0x94, 0, px, py + 1, 0);
+		useOnSouth();
+		CHECK(logText(g).find("You incinerated the") != std::string::npos && w.objects[book].deleted);
+		int rock = put(w, 0x1BA, 0, px, py + 1, 0);
+		useOnSouth();
+		CHECK(logText(g).find("It has no effect") != std::string::npos && !w.objects[rock].deleted);
+		w.deleteObject(rock);
+		w.deleteObject(torch);
+		// the potash puzzle: a bottle (0xEB, frame 0: potash) on a mound (0xFB) over a seed (0xFC); each compound once; acid destroys the seed
+		int seed = put(w, 0xFC, 0, px, py + 1, 0);
+		int mound = put(w, 0xFB, 0, px, py + 1, 0);
+		auto pourBottle = [&](int frame) {
+			int bottle = put(w, 0xEB, frame, px + 1, py, 0);
+			useOnSouth();
+			return bottle;
+		};
+		int bottle = pourBottle(0);
+		CHECK(logText(g).find("You pour the potash mixture onto the mound") != std::string::npos && (w.objects[mound].quality & 4) && w.objects[bottle].deleted);
+		bottle = pourBottle(0);
+		CHECK(logText(g).find("It has no effect") != std::string::npos && w.objects[mound].quality == 4 && w.objects[bottle].deleted);
+		bottle = pourBottle(1);
+		bottle = pourBottle(3);
+		CHECK(w.objects[mound].quality == 7 && !w.objects[seed].deleted);
+		bottle = pourBottle(2);
+		CHECK(logText(g).find("The seed is destroyed by acid") != std::string::npos && w.objects[seed].deleted && w.objects[mound].type == 0x102 && w.objects[mound].quality == 0);
+		w.deleteObject(mound);
+		clearArea();
+		// a shovel (0x42, recipe 10) on a pod plant (0xFB): a pile goes beside the member; with a hole under the plant it is uprooted
+		int shovel = put(w, 0x42, 0, px + 1, py, 0);
+		int plant = put(w, 0xFB, 2, px, py + 1, 0);
+		size_t objects = w.objects.size();
+		useOnSouth();
+		CHECK(logText(g).find("It has no effect") != std::string::npos && !w.objects[plant].deleted && w.objects.size() == objects + 1 && w.objects.back().type == 0x102);
+		w.deleteObject(w.objects.size() - 1);
+		int hole = put(w, 0x101, 0, px, py + 1, 0);
+		plant = put(w, 0xFB, 2, px, py + 1, 0);
+		useOnSouth();
+		CHECK(logText(g).find("You uprooted the pod plant") != std::string::npos && w.objects[plant].deleted);
+		w.deleteObject(hole);
+		w.deleteObject(shovel);
+		clearArea();
+		// the mirror away from its place
+		int mirror = put(w, 0x93, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You see yourself") != std::string::npos);
+		w.deleteObject(mirror);
+		(void)me;
+	}
+
 	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
 	{
 		std::vector<int> here;
