@@ -104,7 +104,11 @@ def draw_box(canvas, x, y, fill, rows, tiles, rnd=None):
 
 
 def draw_text_centred(canvas, x, y, width, s, font):
-    xx = x + ((width - ADV * len(s)) >> 1)
+    draw_text(canvas, x + ((width - ADV * len(s)) >> 1), y, s, font)
+
+
+def draw_text(canvas, xx, y, s, font):
+    """Left-aligned text in the small (block 3) font: 5 rows, advance 6."""
     for ch in s:
         g = status.glyph_index(ch)
         if g is not None:

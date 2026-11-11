@@ -3,7 +3,7 @@
 import glob, os, struct, sys
 here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, here)
-import verbs, message, status, push, panel, mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
+import statuspanel, verbs, message, status, push, panel, mjm, pc1, lng, pcman, mpsections, roomview, intro, objsprites, room_objects, animation
 
 root = os.path.join(here, '..')
 
@@ -161,6 +161,23 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
                 h = ((h ^ c) * 0x01000193) & 0xFFFFFFFF
         cnt += 1
     verb_vec.append((os.path.relpath(d, root), cnt, h))
+# ---- character status dialog: a few states per level, rendered rectangle
+sd_vec = []
+for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glob.glob(os.path.join(root, 'cadaver2', 'TATA', '[1-4]')) +
+                glob.glob(os.path.join(root, 'cadaver2', 'DATA', '[1-5]'))):
+    names = lng.load(glob.glob(os.path.join(d, 'ENG*.LNG'))[0])
+    mp1 = roomview.level_files(d)[0]
+    tb = statuspanel.rank_table(mp1)
+    h, cnt = 0x811C9DC5, 0
+    for k in range(6):
+        sc = (k * 7919 * 13) % 65000
+        st = (k * 37 % 100 + 1, 100, k * 211 % 5000, sc, 1 + k % 5, k * 17 % 100)
+        cv = bytearray(64000)
+        statuspanel.draw_dialog(cv, _an[2], _an[3], names, st[0], st[1], st[2], st[3], st[4], st[5], statuspanel.rank_string(tb, sc))
+        for c in bytes(cv[10 * 320:74 * 320]):
+            h = ((h ^ c) * 0x01000193) & 0xFFFFFFFF
+        cnt += 1
+    sd_vec.append((os.path.relpath(d, root), cnt, h))
 intro_vec = []
 for g, key in (('cadaver1', 'cadaver'), ('cadaver2', 'payoff')):
     d = os.path.join(root, g)
@@ -502,6 +519,10 @@ with open(os.path.join(root, 'src', 'tests', 'vectors.h'), 'w') as o:
     o.write('};\n')
     o.write('static const StatusVector tad_vectors[] = {\n')
     for r in tad_vec:
+        o.write('\t{"%s", %d, 0x%08XU},\n' % r)
+    o.write('};\n')
+    o.write('static const StatusVector sd_vectors[] = {\n')
+    for r in sd_vec:
         o.write('\t{"%s", %d, 0x%08XU},\n' % r)
     o.write('};\n')
     o.write('typedef struct { const char *dir; int rooms; unsigned hash; } AclVector;\n')

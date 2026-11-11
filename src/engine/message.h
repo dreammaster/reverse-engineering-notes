@@ -28,4 +28,16 @@ void message_draw(uint8_t *canvas, const char *text, int slot, const uint8_t *ti
 /* Screen rectangle of a message in slot `slot` with this layout: x, y, w, h in pixels. */
 void message_rect(const MsgLayout *l, int slot, int *x, int *y, int *w, int *h);
 
+/* Left-aligned text in the small (block 3) font: 5 rows, advance 6. */
+void message_text(uint8_t *canvas, int x, int y, const char *s, const uint8_t *font, size_t font_len);
+
+/* The character status dialog (1000:2FD4, tools/statuspanel.py): box at (64,10), labels = LNG string 13 (lines separated by CR), values column at x = 134.
+ * rank: the 20 (string id, threshold) pairs from the end of LEVn.MP1; rank_title = the chosen string. */
+typedef struct { uint16_t id[20]; uint32_t thr[20]; } RankTable;
+int rank_table_load(const uint8_t *mp1, size_t len, RankTable *rt);
+int rank_string_id(const RankTable *rt, uint32_t score);
+int complete_percent(unsigned rooms_visited, unsigned six_fa, unsigned tad_w5);
+void status_dialog_draw(uint8_t *canvas, const uint8_t *tiles, size_t tiles_len, const uint8_t *font, size_t font_len, const char *labels, int energy, int energy_max,
+                        uint32_t money, uint32_t score, int level, int percent, const char *rank_title, int (*rnd)(void *), void *user);
+
 #endif

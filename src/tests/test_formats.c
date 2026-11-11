@@ -825,6 +825,41 @@ int main(int argc, char **argv) {
 		free(in); free(raw);
 	}
 
+	{
+		const uint8_t *tiles = NULL, *font3 = NULL;
+		size_t tiles_len = 0, font3_len = 0;
+		if (andata_un) {
+			andata_block(andata_un, andata_un_len, 2, &tiles, &tiles_len);
+			andata_block(andata_un, andata_un_len, 3, &font3, &font3_len);
+		}
+		for (size_t i = 0; i < sizeof(sd_vectors) / sizeof(sd_vectors[0]) && tiles && font3; i++) {
+			const StatusVector *sv = &sd_vectors[i];
+			char lev = sv->dir[strlen(sv->dir) - 1];
+			snprintf(path, sizeof(path), "%s/%s/ENG%c.LNG", root, sv->dir, lev);
+			size_t n1, u1, n2, u2;
+			uint8_t *in1 = slurp(path, &n1), *raw1 = NULL, *in2, *raw2 = NULL;
+			snprintf(path, sizeof(path), "%s/%s/LEV%c.MP1", root, sv->dir, lev);
+			in2 = slurp(path, &n2);
+			LngTable lt;
+			RankTable rt;
+			if (in1 && in2 && mjm_unpack(in1, n1, &raw1, &u1) == 0 && lng_parse(raw1, u1, &lt) == 0 && mjm_unpack(in2, n2, &raw2, &u2) == 0 && rank_table_load(raw2, u2, &rt) == 0) {
+				unsigned h = 0x811C9DC5u;
+				static uint8_t cv[64000];
+				for (int k = 0; k < 6; k++) {
+					uint32_t sc = (uint32_t)((k * 7919 * 13) % 65000);
+					memset(cv, 0, sizeof(cv));
+					status_dialog_draw(cv, tiles, tiles_len, font3, font3_len, lt.strings[13], k * 37 % 100 + 1, 100, (uint32_t)(k * 211 % 5000), sc, 1 + k % 5, k * 17 % 100,
+					                   lt.strings[rank_string_id(&rt, sc)], msg_const3, NULL);
+					for (int j = 10 * 320; j < 74 * 320; j++) h = (h ^ cv[j]) * 0x01000193u;
+				}
+				if (h != sv->hash) { printf("FAIL status dialog %s: hash %08X\n", sv->dir, h); failed++; }
+				lng_free(&lt);
+			} else { printf("FAIL status dialog %s load\n", sv->dir); failed++; }
+			checked++;
+			free(in1); free(in2); free(raw1); free(raw2);
+		}
+	}
+
 	for (size_t i = 0; i < sizeof(acl_vectors) / sizeof(acl_vectors[0]); i++) {
 		const AclVector *av = &acl_vectors[i];
 		char lev = av->dir[strlen(av->dir) - 1];

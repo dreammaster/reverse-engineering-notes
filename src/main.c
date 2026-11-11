@@ -117,6 +117,8 @@ typedef struct RoomView_ {
 	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
 	int restarting;            /* level torn down after a death; the next draw reloads it */
 	int dead_timer;            /* > 0: the player died (energy 0), counts game steps until the level restarts */
+	RankTable ranks; int ranks_ok; unsigned six_fa;   /* status dialog data (MP1) */
+	int show_status;           /* 'I': the character status dialog */
 	int label_id;              /* name shown above the room name: string id of the last touched object (-1 none) */
 	AclVM vm;                  /* script state: thing flags / variables */
 	TadRt tad;                 /* native routines of ROUTINEn.TAD (timers) */
@@ -171,6 +173,15 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 	if (g_b1)
 		panel_apply_wings(g_b1, g_b1_len, scr->pixels);
 	energy_bar_draw(scr->pixels, rv->vm.energy, rv->vm.energy_max);
+	if (rv->show_status && g_tiles && g_font3 && rv->names_ok && rv->ranks_ok) {
+		unsigned vis = 0;
+		for (int i = 0; i < 128; i++) vis += rv->visited[i];
+		unsigned w5 = rv->tad.loaded ? (unsigned)(rv->tad.mem[0x30000 + 0x36] | (rv->tad.mem[0x30000 + 0x37] << 8)) : 2;
+		int rid = rank_string_id(&rv->ranks, rv->vm.score);
+		status_dialog_draw(scr->pixels, g_tiles, g_tiles_len, g_font3, g_font3_len, rv->names.count > 13 ? rv->names.strings[13] : "",
+		                   rv->vm.energy, rv->vm.energy_max, rv->vm.money, rv->vm.score, rv->level, complete_percent(vis, rv->six_fa, w5),
+		                   rid < rv->names.count ? rv->names.strings[rid] : "", msg_rnd, NULL);
+	}
 	if (g_icons && rv->nverbs) {
 		verbs_draw(scr->pixels, rv->verbs, rv->nverbs, g_icons, g_icons_len);
 		if (rv->menu_open)
@@ -224,6 +235,8 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	}
 	int rc = floormaps_parse(f[0], fl[0], &rv->maps);
 	rv->energy_max_cfg = level_energy_max(f[0], fl[0]);
+	rv->ranks_ok = rank_table_load(f[0], fl[0], &rv->ranks) == 0;
+	rv->six_fa = fl[0] > 66 ? (unsigned)((f[0][64] << 8) | f[0][65]) : 72;
 	if (rv->names_ok) { lng_free(&rv->names); rv->names_ok = 0; }
 	if (rc == 0 && status_name_table(f[0], fl[0], rv->name_tbl) == 0) {
 		uint8_t *lg; size_t ll;
@@ -942,6 +955,7 @@ int main(int argc, char **argv) {
 					if (scene == SCENE_INTRO) { scene = SCENE_WALK; g_room.level = 1; g_room.room = 0; g_room.use_tata = 0; }
 					else changed = 0;
 				}
+				else if (scene == SCENE_WALK && k == SDLK_i) { g_room.show_status ^= 1; changed = 0; }
 				else if (k == SDLK_SPACE || k == SDLK_RETURN)
 					scene = (Scene)((scene + 1) % SCENE_COUNT);
 				else
@@ -989,6 +1003,7 @@ int main(int argc, char **argv) {
 					int bits = !strncmp(c, "rend", 4) ? 0x88 : !strncmp(c, "right", 5) ? 8 : !strncmp(c, "left", 4) ? 4 : !strncmp(c, "down", 4) ? 2 : !strncmp(c, "up", 2) ? 1 : !strncmp(c, "end", 3) ? 0x80 : 0;
 					const char *colon = strchr(c, ':');
 					if (!colon) break;
+					if (!strncmp(c, "info", 4)) g_room.show_status ^= 1;
 					for (int n = atoi(colon + 1); n > 0; n--)
 						walker_tick(&g_walk, &g_room, bits);
 					c = strchr(colon, ',');

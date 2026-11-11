@@ -1,5 +1,6 @@
 #include "message.h"
 #include "panel.h"
+#include <stdio.h>
 #include <string.h>
 
 static const uint8_t TOP[2][3] = {{0, 1, 2}, {5, 0x0E, 0x0C}};
@@ -134,4 +135,90 @@ void message_draw(uint8_t *canvas, const char *text, int slot, const uint8_t *ti
 				}
 		}
 	}
+}
+
+void message_text(uint8_t *canvas, int xx, int y, const char *s, const uint8_t *font, size_t font_len) {
+	for (; *s; s++, xx += 6) {
+		int g = status_glyph_index(*s);
+		if (g < 0 || (size_t)(g + 1) * 20 > font_len)
+			continue;
+		for (int r = 0; r < 5; r++)
+			for (int b = 0; b < 8; b++) {
+				unsigned col = 0;
+				for (int k = 0; k < 4; k++)
+					col |= (unsigned)((font[g * 20 + r * 4 + k] >> (7 - b)) & 1) << k;
+				if (col && xx + b >= 0 && xx + b < 320 && y + r >= 0 && y + r < 200)
+					canvas[(y + r) * 320 + xx + b] = (uint8_t)col;
+			}
+	}
+}
+
+int rank_table_load(const uint8_t *mp1, size_t len, RankTable *rt) {
+	if (len < 120)
+		return -1;
+	const uint8_t *p = mp1 + len - 120;
+	for (int i = 0; i < 20; i++) {
+		rt->id[i] = (uint16_t)((p[6 * i] << 8) | p[6 * i + 1]);
+		rt->thr[i] = ((uint32_t)((p[6 * i + 2] << 8) | p[6 * i + 3]) << 16) | (uint32_t)((p[6 * i + 4] << 8) | p[6 * i + 5]);
+	}
+	return 0;
+}
+
+int rank_string_id(const RankTable *rt, uint32_t score) {
+	for (int i = 0; i < 20; i++)
+		if (score <= rt->thr[i])
+			return rt->id[i];
+	return rt->id[19];
+}
+
+int complete_percent(unsigned rooms_visited, unsigned six_fa, unsigned tad_w5) {
+	int d = (int)six_fa - (int)tad_w5;
+	return d > 0 ? (int)(((0x6400u / (unsigned)d) * rooms_visited) >> 8) : 0;
+}
+
+void status_dialog_draw(uint8_t *canvas, const uint8_t *tiles, size_t tiles_len, const uint8_t *font, size_t font_len, const char *labels, int energy, int energy_max,
+                        uint32_t money, uint32_t score, int level, int percent, const char *rank_title, int (*rnd)(void *), void *user) {
+	/* box: 16 fill columns, 4 middle rows at (64,10) */
+	int x = 64, y = 10, fill = 16, rows = 4, yy = y;
+	for (int s2 = 0; s2 < 2; s2++) {
+		tile_blit(canvas, x, yy, tiles, tiles_len, TOP[s2][0]);
+		for (int i = 0; i < fill; i++) tile_blit(canvas, x + 8 + 8 * i, yy, tiles, tiles_len, TOP[s2][1]);
+		tile_blit(canvas, x + 8 + 8 * fill, yy, tiles, tiles_len, TOP[s2][2]);
+		yy += 8;
+	}
+	for (int r = 0; r < rows; r++) {
+		tile_blit(canvas, x, yy, tiles, tiles_len, LEFT[(rnd ? rnd(user) : 0) & 7]);
+		for (int i = 0; i < fill; i++) tile_blit(canvas, x + 8 + 8 * i, yy, tiles, tiles_len, FILL);
+		tile_blit(canvas, x + 8 + 8 * fill, yy, tiles, tiles_len, RIGHT[(rnd ? rnd(user) : 0) & 7]);
+		yy += 8;
+	}
+	for (int s2 = 0; s2 < 2; s2++) {
+		tile_blit(canvas, x, yy, tiles, tiles_len, BOTTOM[s2][0]);
+		for (int i = 0; i < fill; i++) tile_blit(canvas, x + 8 + 8 * i, yy, tiles, tiles_len, BOTTOM[s2][1]);
+		tile_blit(canvas, x + 8 + 8 * fill, yy, tiles, tiles_len, BOTTOM[s2][2]);
+		yy += 8;
+	}
+	int ty = y + 13;
+	char line[48];
+	const char *p = labels;
+	while (*p) {
+		size_t n = 0;
+		while (p[n] && p[n] != '\r' && n < sizeof(line) - 1) { line[n] = p[n]; n++; }
+		line[n] = 0;
+		message_text(canvas, 78, ty, line, font, font_len);
+		ty += 6;
+		p += n;
+		if (*p == '\r') p++;
+		else if (*p) p++;
+	}
+	char v[6][40];
+	snprintf(v[0], 40, "%d/%d", energy, energy_max);
+	snprintf(v[1], 40, "%u", money);
+	snprintf(v[2], 40, "%u", score);
+	snprintf(v[3], 40, "%d", level);
+	snprintf(v[4], 40, "%d%%", percent);
+	snprintf(v[5], 40, "%s", rank_title);
+	ty = y + 13;
+	for (int i = 0; i < 6; i++, ty += 6)
+		message_text(canvas, 134, ty, v[i], font, font_len);
 }

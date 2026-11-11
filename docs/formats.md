@@ -509,6 +509,10 @@ In the C walk scene things whose `rec[10]` differs from the room list's room are
 increased until the spot is free (limit `2Ch`). Used by type-5 handlers of ladders/trapdoors (level 1: things 2, 56, 86, 129, 162). The walk scene applies it (`walker_teleport`).
 **Death.** When `1000:81C8` brings the energy to 0 it plays sound `1Ch`, empties the bar, waits for a key (≤ 0x400 polls), copies the player statistics (`ds:248/24A/24C/24E/23A`, the day counter `ds:5B2…5B8`) into a record at segment `0400h` (this is the "THE GODS DEMAND A PRICE TO SAVE YOUR POSITION OF …" text, string 60) and jumps back to the game start `1000:0071`.
 The walk scene shows the message (string 60) for 150 steps and restarts the level; the saved-record mechanism is not modelled. `CAD_ENERGY=n` starts a level with that energy (debugging).
+**The character status dialog (`1000:2FD4`, verb 8 on class-7 objects; `tools/statuspanel.py`, `engine/message.c`; pixel-exact against the emulator except the random edge tiles).** A message-scroll box at (64,10) with 16 fill columns and 4 middle rows (x = `0x44` rounded down to a tile column),
+text in the small block-3 font (the routine is entered at `1000:8776` without resetting the font chosen by the previous `8714` call: 5 rows, advance 6, line pitch 6). Labels: LNG string 13 (`HEALTH CR GOLD CR XP CR LEVEL CR COMPLETE CR LEVEL`) at (78,23); values at x = 134:
+`energy/max`, **GOLD = money `ds:248`, XP = score `ds:24C`**, level number (`ds:708 + 1`), **COMPLETE** = `((0x6400 / (ds:6FA − TAD word at +0x36)) × visited_rooms(ds:582)) >> 8` percent (`ds:6FA` = third word at `LEVn.MP1` offset 60, 72 in level 1), and the **rank title**: the 20-entry table at
+the end of `LEVn.MP1` (120 bytes: big-endian string id, score high word, score low word; `PEASANT 1000, NOVICE 2000, INITIATE 3000, ROGUE 4000, TRACKER 5000, … GOD 60000`) — the first entry whose threshold is ≥ the score. In the SDL walk scene `I` toggles it (`--sim info:1`).
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input
