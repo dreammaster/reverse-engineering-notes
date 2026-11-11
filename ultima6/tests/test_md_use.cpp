@@ -584,6 +584,161 @@ int main() {
 		w.actors.globals[0x41 + 2 * me] = 0;
 	}
 
+	// the reach of Use (sub_35972): one square, three more with the first psychic power and level 3; the elixir (0x79, recipe 55) on a barrel is no use but says so
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px + 3, py)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		int me = g.actingActor();
+		CHECK(g.mdDistance(10, 10, 13, 10) == 3 && g.mdDistance(10, 10, 12, 12) == 2 && g.mdDistance(0, 0, 8, 0) == 9 && g.mdDistance(1020, 5, 2, 5) == 6);
+		int elixir = put(w, 0x79, 0, px + 1, py, 0);
+		int barrel = put(w, 0x68, 0, px + 3, py, 0);
+		w.actors.level[me] = 3;
+		g.mdSetPsychic(me, 0, 0);
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		for (int i = 0; i < 3; ++i)
+			g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("Out of range!") != std::string::npos && logText(g).find("It has no effect") == std::string::npos);
+		g.mdSetPsychic(me, 0, 1);
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		for (int i = 0; i < 3; ++i)
+			g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("Out of range!") == std::string::npos && logText(g).find("It has no effect") != std::string::npos && !w.objects[elixir].deleted);
+		g.mdSetPsychic(me, 0, 0);
+		w.deleteObject(barrel);
+		w.deleteObject(elixir);
+	}
+
+	// a ritual pod knife (0xF2, recipe 20) on a covered seed (0xFB): not yet ripe, ripe (frame 3: an unconscious Martian lies by it, flag 8 of actor 0x61), then open
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px, py + 1)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		int knife = put(w, 0xF2, 0, px + 1, py, 0);
+		int pod = put(w, 0xFB, 1, px, py + 1, 0);
+		auto cut = [&]() {
+			g.log.clear();
+			g.handleKey('u');
+			g.handleKey(KEY_RIGHT);
+			g.handleKey(KEY_DOWN);
+			g.handleKey(KEY_ENTER);
+		};
+		cut();
+		CHECK(logText(g).find("It is not fully grown") != std::string::npos);
+		w.objects[pod].frame = 3;
+		size_t before = w.objects.size();
+		cut();
+		CHECK(logText(g).find("An unconscious Martian falls out of the pod") != std::string::npos && w.objects[pod].frame == 4 && (w.objects[pod].status & 0x20));
+		CHECK(w.objects.size() == before + 1 && w.objects.back().type == 0x123 && w.objects.back().x == px && w.objects.back().y == py + 1);
+		CHECK(w.actors.talkFlags[0x61] & 8);
+		w.deleteObject(w.objects.size() - 1);
+		cut();
+		CHECK(logText(g).find("The pod is already open") != std::string::npos);
+		w.deleteObject(pod);
+		w.deleteObject(knife);
+	}
+
+	// pliers (0x35, recipe 8) on a cable spool (0xC7) to a power cable (0xD7): the story must be at the point (flags 0x73 bit 4), the Avatar needs rubber gloves (0x26) worn or is shocked
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px, py + 1), std::make_pair(px - 1, py)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		int pliers = put(w, 0x35, 0, px + 1, py, 0);
+		int spool = put(w, 0xC7, 0, px, py + 1, 0);
+		int cable = put(w, 0xD7, 0, px - 1, py, 0);
+		auto fix = [&]() {
+			g.log.clear();
+			g.handleKey('u');
+			g.handleKey(KEY_RIGHT);
+			g.handleKey(KEY_DOWN);
+			g.handleKey(KEY_ENTER);
+			g.handleKey(KEY_LEFT);
+			g.handleKey(KEY_ENTER);
+		};
+		w.actors.talkFlags[0x73] = 0;
+		fix();
+		CHECK(logText(g).find("The cable does not need replacement") != std::string::npos && !w.objects[spool].deleted);
+		w.actors.talkFlags[0x73] = 4;
+		w.actors.talkFlags[0x71] = 0;
+		int hp = w.actors.hp[1];
+		w.actors.hp[1] = 200;
+		fix(); // no gloves: a shock
+		for (int n = 0; g.talking() && n < 40; ++n) { // (somebody who saw it talks)
+			for (char c : std::string("bye"))
+				g.handleKey(c);
+			g.handleKey(KEY_ENTER);
+		}
+		CHECK(!g.talking());
+		CHECK(w.actors.hp[1] < 200 && !w.objects[spool].deleted && !(w.actors.talkFlags[0x73] & 0x10));
+		int gloves = w.addToInventory(1, 0x26, 0, 1);
+		w.objects[gloves].status |= 0x18;
+		w.actors.hp[1] = 200;
+		fix();
+		CHECK(w.actors.hp[1] == 200 && w.objects[spool].deleted && (w.actors.talkFlags[0x73] & 0x10));
+		w.actors.hp[1] = (uint8_t)hp;
+		w.actors.talkFlags[0x73] = 0;
+		w.deleteObject(gloves);
+		w.deleteObject(cable);
+		w.deleteObject(pliers);
+	}
+
+	// a tool (0x66, recipe 18) on the hatch (0x1AB): the first time the people talk (flag 4 of actor 0x10), once flag 0x10 is set the hatch breaks (0x1AC), moves one square down and right, and a minute passes
+	{
+		std::vector<int> here;
+		for (auto sq : {std::make_pair(px + 1, py), std::make_pair(px, py + 1), std::make_pair(px + 1, py + 1)}) {
+			here.clear();
+			w.objectsAt(sq.first, sq.second, 0, here);
+			for (int i : here)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+		}
+		int tool = put(w, 0x66, 0, px + 1, py, 0);
+		int hatch = put(w, 0x1AB, 0, px, py + 1, 0);
+		auto pry = [&]() {
+			g.log.clear();
+			g.handleKey('u');
+			g.handleKey(KEY_RIGHT);
+			g.handleKey(KEY_DOWN);
+			g.handleKey(KEY_ENTER);
+			for (int n = 0; g.talking() && n < 40; ++n) {
+				for (char c : std::string("bye"))
+					g.handleKey(c);
+				g.handleKey(KEY_ENTER);
+			}
+		};
+		w.actors.talkFlags[0x10] = 0;
+		pry();
+		CHECK(w.objects[hatch].type == 0x1AB);
+		w.actors.talkFlags[0x10] |= 0x10;
+		pry();
+		CHECK(w.objects[hatch].type == 0x1AC && w.objects[hatch].x == px + 1 && w.objects[hatch].y == py + 2 && (w.actors.talkFlags[0x10] & 0x20));
+		w.actors.talkFlags[0x10] = 0;
+		w.actors.talkFlags[0x12] = 0;
+		w.deleteObject(hatch);
+		w.deleteObject(tool);
+	}
+
 	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
 	{
 		std::vector<int> here;

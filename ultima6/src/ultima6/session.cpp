@@ -444,6 +444,7 @@ void Game::startTalk(int actor) {
 	std::unique_ptr<Talk> t(new Talk(_world, scroll, _rng, gameClock, actor));
 	if (!Talk::canTalk(_world, actor)) {
 		message("\nFunny, no response.\n");
+		talkEnded();
 		prompt();
 		return;
 	}
@@ -464,8 +465,18 @@ void Game::startTalk(int actor) {
 	};
 	_talk = std::move(t);
 	_talk->start();
-	if (_talk->actor() < 0)
+	if (_talk->actor() < 0) {
 		_talk.reset();
+		talkEnded();
+	}
+}
+
+// What a Martian Dreams scene does when its conversation is over (the original starts it with sub_3F864 and goes on afterwards)
+void Game::talkEnded() {
+	std::function<void()> then;
+	then.swap(_talkEnd);
+	if (then)
+		then();
 }
 
 // APPROX(29): not the original's exact behaviour, see docs/approximations.md
@@ -786,6 +797,7 @@ bool Game::handleKeyInner(int key) {
 		if (!_talk->key(key)) {
 			_talk.reset();
 			message("\n");
+			talkEnded();
 			prompt();
 		}
 		return true;

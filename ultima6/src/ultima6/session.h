@@ -97,8 +97,14 @@ public:
 	TextWindow scroll; // the text scroll of the play screen
 
 	int actingActor() const;
+	bool talking() const {
+		return _talk != nullptr;
+	}
 	int mdPsychic(int actor, int which) const; // Martian Dreams: the psychic numbers of a member (ds:16B0)
 	void mdSetPsychic(int actor, int which, int value);
+	int mdDistance(int x1, int y1, int x2, int y2) const; // sub_1B2B8
+	int mdReach() const;
+	bool mdInReach(int tx, int ty);
 
 private:
 	World &_world;
@@ -137,6 +143,9 @@ private:
 	std::vector<int> _attackWeapons; // sub_2D7B5: the readied weapons (up to 8) the Attack command goes through, one target for each
 	size_t _attackIndex = 0;
 	std::unique_ptr<Talk> _talk; // a conversation in progress
+	std::function<void()> _talkEnd; // what to do when it is over (a Martian Dreams scene)
+	void talkEnded();
+	int _mdDist = 1; // word_4E6F6: the distance of the partner chosen last (a carried one is 1)
 	int _cx = 5, _cy = 5;        // cursor cell in the map view while targeting with it
 	bool _cursor = false;
 	void look(int tx, int ty);

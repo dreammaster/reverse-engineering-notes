@@ -1,5 +1,6 @@
 #include "ultima6/describe.h"
 #include "ultima6/session.h"
+#include "ultima6/stats_view.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -58,7 +59,7 @@ bool Game::mdUsable(int type) const {
 
 // sub_35F0D after the object is chosen: the recipes of the object; if none take a partner the best one is carried out; else "On - " asks for the first partner (and "To -" for a
 // second), the recipes that do not take the partner are dropped, and the one that is most particular about its partners is carried out with (item, first, second).
-// APPROX(76): only some of the 75 recipe actions are ported (mdAction); the others do nothing. The reach of the objects' Use (a table at ds:16B0 / dword_44966) is taken as one square
+// APPROX(76): only some of the 75 recipe actions are ported (mdAction); the others do nothing. Recipe 0 (the tent, sub_59480: checks, then sub_553F7 = Martian Dreams' whole Rest command with the tent objects and the dreams) is not ported.
 void Game::mdUseObject(int idx) {
 	_mdItem = idx;
 	_mdAsync = false;
@@ -174,6 +175,40 @@ void Game::mdSetPsychic(int actor, int which, int value) {
 	b = (uint8_t)(which == 1 ? (b & 0x0F) | (value << 4) : (b & 0xF0) | (value & 15));
 }
 
+// sub_1B2B8: the distance between two squares, a table (ds:06C0) of 0-9 over the two differences (each wrapped round the map, sub_26469, 9 from 8 on)
+int Game::mdDistance(int x1, int y1, int x2, int y2) const {
+	static const uint8_t TABLE[8][8] = {{0, 1, 2, 3, 4, 5, 6, 7}, {1, 1, 2, 3, 4, 5, 6, 7}, {2, 2, 2, 3, 4, 5, 6, 7}, {3, 3, 3, 4, 5, 6, 7, 7},
+		{4, 4, 4, 5, 6, 7, 7, 8}, {5, 5, 5, 6, 7, 7, 8, 8}, {6, 6, 6, 7, 7, 8, 8, 8}, {7, 7, 7, 7, 8, 8, 8, 8}};
+	auto delta = [](int a, int b) {
+		int d = std::abs(a - b);
+		return d > 0x200 ? 0x400 - d : d;
+	};
+	int dx = delta(x1, x2), dy = delta(y1, y2);
+	return dx >= 8 || dy >= 8 ? 9 : TABLE[dx][dy];
+}
+
+// How far the acting member's Use reaches (sub_361AC, sub_35972): one square, and as many more as the level when the first psychic power (telekinesis) is there
+int Game::mdReach() const {
+	int actor = actingActor();
+	return 1 + (mdPsychic(actor, 0) ? _world.actors.level[actor] : 0);
+}
+
+// Is the square within reach of the acting member? Says "Out of range!" if not; a farther one makes the telekinetic sound
+bool Game::mdInReach(int tx, int ty) {
+	int a = _world.actorObject(actingActor());
+	if (a < 0)
+		return true;
+	int dist = mdDistance(_world.objects[a].x, _world.objects[a].y, tx, ty);
+	_mdDist = dist;
+	if (mdReach() < dist) {
+		message("Out of range!\n");
+		return false;
+	}
+	if (dist > 1)
+		sfx(0x32);
+	return true;
+}
+
 void Game::mdFinish() {
 	_world.spendMoves(actingActor(), 5);
 	if (_mdAsync)
@@ -198,10 +233,8 @@ void Game::mdChosen(int tx, int ty) {
 		return;
 	}
 	if (pick < 0) { // the ground (sub_35972 returns -1 and leaves the square): its name, and it must be within reach
-		int a = _world.actorObject(actingActor());
 		message(mdGroundName(tx, ty) + ".\n");
-		if (a >= 0 && (std::abs(tx - (int)_world.objects[a].x) > 1 || std::abs(ty - (int)_world.objects[a].y) > 1)) {
-			message("Out of range!\n");
+		if (!mdInReach(tx, ty)) {
 			sfx(5);
 			mdContinue(_mdStage, -2);
 			return;
@@ -210,6 +243,12 @@ void Game::mdChosen(int tx, int ty) {
 		return;
 	}
 	message(Describe::object(_world, _world.objects[pick]) + ".\n");
+	_mdDist = 1;
+	if (!carriedObject(_world.objects[pick]) && !mdInReach(tx, ty)) {
+		sfx(5);
+		mdContinue(_mdStage, -2);
+		return;
+	}
 	mdContinue(_mdStage, pick);
 }
 
@@ -1041,6 +1080,101 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			t.type = 0xA6;
 		} else {
 			_world.deleteObject(first);
+		}
+		break;
+	}
+	case 8: { // sub_59D15: pliers (item) on a cable spool (first, used up) to a tower top or a power cable (second): needs the story to be at the right point (flags 0x73 bit 4 and 0x71 bit 8), and rubber gloves (0x26) worn by the Avatar, else a shock; the others in the party only comment
+		// APPROX(76): the lamps of the hour (sub_3F745) and the reset of the scene (sub_3F798, which removes the machine-gun things round the towers) are left out
+		ObjList &al = _world.actors;
+		if (_mdDist > 1) {
+			message("The work is too precise to perform telekinetically.\n");
+			break;
+		}
+		if (!(al.talkFlags[0x73] & 4) || (al.talkFlags[0x71] & 8)) {
+			message("The cable does not need replacement.\n");
+			break;
+		}
+		int actor = actingActor();
+		if (actor != 1) {
+			al.talkFlags[2] |= 0x10;
+			_talkEnd = [this]() { _world.actors.talkFlags[2] &= 0xEF; };
+			startTalk(actor);
+			break;
+		}
+		int gloves = -1;
+		for (size_t i = 0; i < _world.objects.size(); ++i) {
+			const World::Obj &c = _world.objects[i];
+			if (!c.deleted && c.type == 0x26 && carriedObject(c) && c.location() == ObjRecord::READIED && c.parent == actor)
+				gloves = (int)i;
+		}
+		if (gloves < 0) { // the shock (sub_18F7D is its flash)
+			_combat.applyDamage(actor, actor, seRoll(0, ActorStats::maxHealth(_world, actor) / 2));
+			if (memberNear(2)) {
+				al.talkFlags[2] |= 4;
+				_talkEnd = [this]() { _world.actors.talkFlags[2] &= 4; };
+				startTalk(2);
+			}
+			break;
+		}
+		sfx(0x1F);
+		consumeOne(first);
+		al.talkFlags[0x73] |= 0x10;
+		break;
+	}
+	case 18: { // sub_59EE7: a tool (item) on the hatch (first, 0x1AB): only the Avatar is strong enough; the first time (flag 0x10 of actor 0x10 not yet set) the people nearby talk (flag 4), the next time the hatch breaks (0x1AC), another scene talks (actor 0x12, flags 0x48) and a minute goes by
+		// APPROX(76): sub_3F78E (the scene's redraw) is left out; the broken hatch moves one square down and right (sub_2CFE2) as the original does
+		ObjList &al = _world.actors;
+		int actor = actingActor();
+		if (actor != 1) {
+			message(Describe::object(_world, _world.objects[_world.actorObject(actor)]) + " is not strong enough.\n");
+			break;
+		}
+		if (!(al.talkFlags[0x10] & 0x10)) {
+			al.talkFlags[0x10] |= 4;
+			startTalk(0x10);
+			break;
+		}
+		al.talkFlags[0x12] |= 0x48;
+		int hatch = first;
+		_talkEnd = [this, hatch]() { // after the talk
+			World::Obj &h = _world.objects[hatch];
+			h.type = 0x1AC;
+			h.frame = 0;
+			_world.actors.talkFlags[0x10] |= 0x20;
+			int mask = z == 0 ? 0x3FF : 0xFF;
+			mdPlace(hatch, (h.x + 1) & mask, (h.y + 1) & mask, h.z);
+			advanceTime(1);
+		};
+		startTalk(0x12);
+		break;
+	}
+	case 20: { // sub_5A01D: a knife (item) on a covered Martian seed (first, 0xFB): only a ripe one (frame 3) opens, and then (frame 4) an unconscious Martian (0x123) falls out and the seed is temporary; "It is not fully grown." / "The pod is already open." otherwise
+		// APPROX(76): the branch while dreaming (word_4115A bit 4: the dream scene 0x56, sub_3F615) is not there: the engine has no dreams yet
+		World::Obj &pod = _world.objects[first];
+		if (pod.frame != 3) {
+			message(pod.frame < 3 ? "It is not fully grown.\n" : "The pod is already open.\n");
+			break;
+		}
+		pod.frame = 4;
+		int px = pod.x, py = pod.y, pz = pod.z;
+		int martian = seMake(0x123, px, py, pz, 1, 0);
+		(void)martian;
+		message("An unconscious Martian falls out of the pod.\n");
+		_world.objects[first].status |= 0x20;
+		_world.actors.talkFlags[0x61] |= 8;
+		break;
+	}
+	case 55: { // sub_5D298: the magical healing elixir (item) on somebody (first): on actor 0x68 it starts his scene (flag 0x40); on the Avatar it heals him to the full if he is hurt, "It has no effect." otherwise
+		ObjList &al = _world.actors;
+		int who = first >= 0 ? _world.objects[first].actor : -1;
+		if (who == 0x68) {
+			al.talkFlags[0x68] |= 0x40;
+			startTalk(0x68);
+		} else if (who == 1 && al.hp[1] < ActorStats::maxHealth(_world, 1)) {
+			message("\n" + Describe::object(_world, _world.objects[_world.actorObject(1)]) + " is healed.\n");
+			al.hp[1] = (uint8_t)ActorStats::maxHealth(_world, 1);
+		} else {
+			message("It has no effect.\n");
 		}
 		break;
 	}

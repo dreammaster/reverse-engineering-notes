@@ -69,11 +69,16 @@ void Game::useObject(int idx) {
 	message(o.type == 0x1AF ? std::string("horse") : Describe::object(_world, o));
 	message("\n");
 	if (_world.game == GameId::MartianDreams || _world.game == GameId::SavageEmpire) {
-		if (!carried && !_telekinesis) { // the original's reach: one square (APPROX(76), Savage Empire's cmd_use tests it the same way)
-			int a = _world.actorObject(actingActor());
-			if (a >= 0 && (std::abs((int)_world.objects[a].x - (int)o.x) > 1 || std::abs((int)_world.objects[a].y - (int)o.y) > 1)) {
-				message("Out of range!\n");
-				return;
+		if (!carried && !_telekinesis) {
+			if (_world.game == GameId::MartianDreams) { // sub_361AC: the reach of the first psychic power (a distance table, one square more for each level)
+				if (!mdInReach(o.x, o.y))
+					return;
+			} else { // Savage Empire's cmd_use: one square (APPROX(79))
+				int a = _world.actorObject(actingActor());
+				if (a >= 0 && (std::abs((int)_world.objects[a].x - (int)o.x) > 1 || std::abs((int)_world.objects[a].y - (int)o.y) > 1)) {
+					message("Out of range!\n");
+					return;
+				}
 			}
 		}
 		if (_world.game == GameId::SavageEmpire)
