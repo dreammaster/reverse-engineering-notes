@@ -12,14 +12,17 @@
 
 int tad_load(TadRt *t, const uint8_t *raw, size_t len) {
 	memset(t, 0, sizeof(*t));
-	if (len < 0x40 || len > 0xF000 || raw[0x20] != 0xBB || raw[0x21] != 0x27 || raw[0x22] != 0x00)
-		return -1;           /* only the Cadaver 1 layout (thunk at +0x27); the Payoff's new levels use a different stub (thunk at +0x2E) */
+	if (len < 0x40 || len > 0xF000 || raw[0x20] != 0xBB || raw[0x23] != 0xB8)
+		return -1;           /* init stub: mov bx,<thunk>; mov ax,<data table> (Cadaver 1: 27h/2Ch; the Payoff's new levels: 2Eh/80h) */
+	unsigned base = (unsigned)(raw[0x24] | (raw[0x25] << 8));
+	if (base + 0x10 > len)
+		return -1;
 	t->mem = (uint8_t *)calloc(1, X86_MEM);
 	if (!t->mem)
 		return -1;
 	memcpy(t->mem + TADG * 16, raw, len);
 	t->len = len;
-	unsigned p = (unsigned)(raw[0x2C + 6] | (raw[0x2C + 7] << 8));
+	unsigned p = (unsigned)(raw[base + 6] | (raw[base + 7] << 8));
 	while (p + 2 <= len && t->ntimers < TAD_TIMERS) {
 		unsigned w = (unsigned)(raw[p] | (raw[p + 1] << 8));
 		if (w == 0 || w > 0x1000)

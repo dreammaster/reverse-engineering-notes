@@ -715,7 +715,8 @@ int main(int argc, char **argv) {
 			int cnt = 0;
 			uint16_t ents[40];
 			int ne = 0;
-			unsigned p = (unsigned)(raw[0x2C + 6] | (raw[0x2C + 7] << 8));
+			unsigned base = (unsigned)(raw[0x24] | (raw[0x25] << 8));
+			unsigned p = (unsigned)(raw[base + 6] | (raw[base + 7] << 8));
 			while (p + 2 <= un && ne < 24) {
 				unsigned w = (unsigned)(raw[p] | (raw[p + 1] << 8));
 				if (w == 0 || w > 0x1000) break;
@@ -723,8 +724,8 @@ int main(int argc, char **argv) {
 				p += 2;
 			}
 			for (int k = 9; k < 16; k++)
-				if ((size_t)(0x2C + 4 * k + 2) <= un) {
-					unsigned w = (unsigned)(raw[0x2C + 4 * k] | (raw[0x2C + 4 * k + 1] << 8));
+				if ((size_t)(base + 4 * k + 2) <= un) {
+					unsigned w = (unsigned)(raw[base + 4 * k] | (raw[base + 4 * k + 1] << 8));
 					if (w > 0x40 && w < 0x1000 && ne < 40) ents[ne++] = (uint16_t)(w + 2);
 				}
 			for (int ei = 0; ei < ne; ei++)

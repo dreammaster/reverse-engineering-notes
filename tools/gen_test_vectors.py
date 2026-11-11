@@ -268,7 +268,8 @@ import acl, acl_vm
 # ---- native routines of ROUTINEn.TAD: deterministic scenarios on the Python 8086 interpreter (tools/x86.py)
 import x86
 def tad_entries(u):
-    t = struct.unpack_from('<5H', u, 0x2C)
+    base = struct.unpack_from('<H', u, 0x24)[0]            # mov ax, <data table offset> in the init stub (0x2C; the Payoff's new levels: 0x80)
+    t = struct.unpack_from('<5H', u, base)
     ents = []
     p = t[3]
     while p + 2 <= len(u):
@@ -278,8 +279,8 @@ def tad_entries(u):
         ents.append(w)
         p += 2
     for k in range(9, 16):
-        if 0x2C + 4 * k + 2 <= len(u):
-            w = struct.unpack_from('<H', u, 0x2C + 4 * k)[0]
+        if base + 4 * k + 2 <= len(u):
+            w = struct.unpack_from('<H', u, base + 4 * k)[0]
             if 0x40 < w < 0x1000:
                 ents.append(w + 2)
     return ents
@@ -340,8 +341,8 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
     if not fs:
         continue
     u = mjm.mjm_unpack(open(fs[0], 'rb').read())
-    if u[0x20:0x23] != b'\xbb\x27\x00':
-        continue                  # the Payoff's new levels use another stub
+    if u[0x20] != 0xBB or u[0x23] != 0xB8:
+        continue                  # not the known init stub
     h, cnt = 0x811C9DC5, 0
     for ei, ent in enumerate(tad_entries(u)):
         for sc in range(4):
