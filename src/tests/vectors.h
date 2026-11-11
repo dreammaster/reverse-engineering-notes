@@ -352,9 +352,10 @@ static const StatusVector tad_vectors[] = {
 	{"cadaver2/DATA/3", 60, 0x54323F7EU},
 	{"cadaver2/DATA/4", 52, 0x235F5AEBU},
 	{"cadaver2/DATA/5", 20, 0x0FB0E34EU},
-	{"cadaver2/TATA/2", 4, 0xB9EC7B92U},
-	{"cadaver2/TATA/3", 4, 0xACBB84B2U},
-	{"cadaver2/TATA/4", 4, 0x4F8EA678U},
+	{"cadaver2/TATA/1", 56, 0xC3B5B51BU},
+	{"cadaver2/TATA/2", 60, 0xF4D67056U},
+	{"cadaver2/TATA/3", 52, 0x3D2FF8A5U},
+	{"cadaver2/TATA/4", 56, 0xE7616244U},
 };
 static const StatusVector sd_vectors[] = {
 	{"cadaver1/DATA/1", 6, 0x6E3E1F6AU},
