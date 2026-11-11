@@ -1011,6 +1011,20 @@ int main() {
 		w.actors.dexterity[1] = (uint8_t)dexterity;
 		w.deleteObject(cue);
 		w.deleteObject(table);
+		// the drill (0x1B9, recipe 39) facing east (frame 4): nothing there; an iron vein (0x1BB ore on the free square south of the drill, the vein's quality counts down)
+		int drill = put(w, 0x1B9, 4, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("There is nothing to drill into") != std::string::npos);
+		int vein = put(w, 0x1BD, 0, px + 2, py, 0);
+		w.objects[vein].quality = 2;
+		size_t made = w.objects.size();
+		useEast(w, g, px, py);
+		CHECK(w.objects.size() == made + 1 && w.objects.back().type == 0x1BB && w.objects.back().x == px + 1 && w.objects.back().y == py + 1 && w.objects[vein].quality == 1);
+		useEast(w, g, px, py);
+		CHECK(w.objects[vein].deleted);
+		w.deleteObject(drill);
+		clearArea();
 		// dreamstuff (0x14B, recipe 53): empty it is nothing; with a hatchet inside the hatchet lies where it was and it is gone
 		int stuff = put(w, 0x14B, 0, px + 1, py, 0);
 		g.log.clear();

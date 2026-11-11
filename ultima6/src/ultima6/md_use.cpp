@@ -1084,6 +1084,78 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		break;
 	}
+	case 39: { // sub_5DB79: the drill (item, 0x1B9) bores the square its frame faces (frame 1 west, 3 north, 4 east, else south): an iron vein (0x1BD) gives iron ore (0x1BB), a coal vein (0x1BE) coal (0x1BC), the rock terrain 0xF0-0xFB rocks (0x1BA); somebody there is hurt (1-40); else "There is nothing to drill into." The ore lies on the first free square round the drill, starting by where it points ("There is no room left for the ore."), and a vein is used up by its quality
+		static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		int actor = actingActor(), fr = o.frame, ix = o.x, iy = o.y;
+		sfx(0x10);
+		int fx = fr == 1 ? ix - 1 : fr == 4 ? ix + 1 : ix, fy = fr == 3 ? iy - 1 : fr == 1 || fr == 4 ? iy : iy + 1;
+		fx &= mask;
+		fy &= mask;
+		std::vector<int> here;
+		_world.objectsAt(fx, fy, z, here);
+		int vein = -1, ore = -1;
+		for (int i : here) {
+			int t = _world.objects[i].type;
+			if (!_world.objects[i].deleted && (t == 0x1BD || t == 0x1BE || t == 0xD5)) {
+				vein = i;
+				break;
+			}
+		}
+		if (vein < 0) {
+			int tile = _world.map.tile(z, fx, fy);
+			if (tile >= 0xF0 && tile <= 0xFB) {
+				ore = 0x1BA;
+			} else {
+				int victim = -1;
+				for (size_t k = here.size(); k-- > 0 && victim < 0;) {
+					const World::Obj &c = _world.objects[here[k]];
+					if (!c.deleted && c.actor >= 0 && !(_world.actors.status[c.actor] & 0x10))
+						victim = c.actor;
+				}
+				if (victim >= 0)
+					_combat.applyDamage(actor, victim, seRoll(1, 40));
+				else {
+					message("There is nothing to drill into.\n");
+					sfx(5);
+				}
+				break;
+			}
+		} else {
+			int t = _world.objects[vein].type;
+			ore = t == 0x1BD ? 0x1BB : t == 0x1BE ? 0x1BC : -1;
+		}
+		if (ore >= 0) {
+			int start = fr == 1 ? 0 : fr == 3 ? 2 : fr == 4 ? 4 : 6, n = 0, ox = 0, oy = 0;
+			for (; n < 8; ++n) {
+				int d = (n + start) % 8;
+				ox = (ix + DX[d]) & mask;
+				oy = (iy + DY[d]) & mask;
+				std::vector<int> there;
+				_world.objectsAt(ox, oy, z, there);
+				bool free = true;
+				for (int i : there) {
+					int t = _world.objects[i].type;
+					if (!_world.objects[i].deleted && !(t >= 0x14E && t <= 0x150))
+						free = false;
+				}
+				if (free && !(_world.flags.flags1[_world.map.tile(z, ox, oy) & (TileFlags::TILES - 1)] & 2))
+					break;
+			}
+			if (n == 8) {
+				message("There is no room left for the ore.\n");
+				break;
+			}
+			seMake(ore, ox, oy, z, 1, 0);
+		}
+		if (vein >= 0) {
+			if (ore < 0 || _world.objects[vein].quality == 1)
+				_world.deleteObject(vein);
+			else
+				--_world.objects[vein].quality;
+		}
+		break;
+	}
 	case 53: { // sub_5D046: dreamstuff (item, 0x14B, a container) is imagined into what it holds: "You imagine nothing!" when empty; a thing (type below 0x156) is named and laid where the dreamstuff lay, or put in the pack of whoever has it, and the dreamstuff is used up
 		// APPROX(76): a creature in the dreamstuff (a type from 0x156, brought to life by sub_2652C beside the party with the side that the quality names) is not done
 		sfx(0x32);
