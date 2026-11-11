@@ -37,6 +37,7 @@ typedef struct {
 	uint32_t money, score;          /* ds:248 / ds:24C */
 	int energy, energy_max;         /* ds:23A / ds:700 */
 	struct { int pending, room, x, y, z; } go;   /* op 37 (change room): destination, applied by the caller */
+	int next_level;                 /* op 51: level to load next (0 = none) */
 	int msg_n;                      /* op 28 (say): string ids waiting to be shown */
 	int msg[16];
 	int timer_arg, timer_delay;     /* one-shot room timer (op 42): delay in timer units, -1 = none */

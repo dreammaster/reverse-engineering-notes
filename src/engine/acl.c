@@ -3,8 +3,9 @@
 #include <string.h>
 
 static const int8_t OPLEN[94] = {
-	2, 2, 0, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, -1, 2, 2, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 3, 2, 0, 0, 0, 0, 0, 2, 2, 6, 4, 2, 2, 3, 6, 2, 3, 6, 2, 0, 2,
-	-1, 2, 2, 0, 2, 2, 2, 2, 9, 2, -1, -1, 4, 1, 4, 4, 5, 3, 3, 2, 2, 5, 1, 0, 2, 4, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 8, 2, 2, 1, 1, 2, 3, 1, 2, 2};
+	2, 2, 0, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, -1, 2, 2, 2, 2, 2, 2, 2, 0, 0, 2, 2, 2, 3, 2, 0, 0, 0,
+	0, 0, 2, 2, 6, 4, 2, 2, 3, 6, 2, 3, 6, 2, 0, 2, -1, 2, 2, 1, 2, 2, 2, 2, 9, 2, -1, -1, 4, 1, 4, 4,
+	5, 3, 3, 2, 2, 5, 1, 0, 2, 4, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 8, 2, 2, 1, 1, 2, 3, 1, 2, 2};
 
 int acl_oplen(int op) { return op >= 0 && op < 94 ? OPLEN[op] : -1; }
 
@@ -110,6 +111,9 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		}
 		break;
 	}
+	case 51:                                            /* change level: operand = current level index (0..3); next level number = operand + 2 */
+		if (a[0] <= 9) vm->next_level = a[0] + 2;
+		break;
 	case 37:                                            /* change room: [room dx dy z]; landing = (dx + room rec[1], dy + room rec[3], z) (verified) */
 		vm->go.pending = 1;
 		vm->go.room = a[0]; vm->go.x = a[1]; vm->go.y = a[2]; vm->go.z = a[3];
