@@ -807,6 +807,24 @@ int main(int argc, char **argv) {
 		free(in); free(raw);
 	}
 
+	{
+		/* op 37 (change room) in level 1: thing 86 event 5 -> room 0x22, offsets 2, 2, z 0 */
+		snprintf(path, sizeof(path), "%s/cadaver1/DATA/1/LEV1.MP2", root);
+		size_t n, un;
+		uint8_t *in = slurp(path, &n), *raw = NULL;
+		Mp2 m;
+		if (in && mjm_unpack(in, n, &raw, &un) == 0 && mp2_parse(raw, un, &m) == 0) {
+			static AclVM vm;
+			acl_init(&vm, &m);
+			vm.room_no = 37;
+			acl_thing_event(&vm, &m, 86, 5, 0);
+			if (!vm.go.pending || vm.go.room != 0x22 || vm.go.x != 2 || vm.go.y != 2 || vm.go.z != 0) { printf("FAIL op 37 go %d %d\n", vm.go.pending, vm.go.room); failed++; }
+			mp2_free(&m);
+			checked++;
+		}
+		free(in); free(raw);
+	}
+
 	for (size_t i = 0; i < sizeof(acl_vectors) / sizeof(acl_vectors[0]); i++) {
 		const AclVector *av = &acl_vectors[i];
 		char lev = av->dir[strlen(av->dir) - 1];

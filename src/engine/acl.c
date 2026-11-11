@@ -110,6 +110,10 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		}
 		break;
 	}
+	case 37:                                            /* change room: [room dx dy z]; landing = (dx + room rec[1], dy + room rec[3], z) (verified) */
+		vm->go.pending = 1;
+		vm->go.room = a[0]; vm->go.x = a[1]; vm->go.y = a[2]; vm->go.z = a[3];
+		break;
 	case 85: {                                          /* score += signed word (negative: subtract the raw word, clamp at 0) */
 		unsigned wv = (unsigned)w & 0xFFFF;
 		if (wv < 0x8000) vm->score += wv;

@@ -652,12 +652,34 @@ static void menu_step(RoomView *rv, int keys, int end_edge) {
 	}
 }
 
+/* op 37: put the player into `room` at (x + rec[1], y + rec[3], z) like 1000:7F3C; z grows until the spot is free */
+static void walker_teleport(Walker *wk, RoomView *rv, int room, int x, int y, int z) {
+	const uint8_t *rec = room >= 0 && room < rv->mp2.sec[0].count ? rv->mp2.sec[0].rec[room] : NULL;
+	if (!rec || rv->mp2.sec[0].len[room] < 6)
+		return;
+	rv->room = room;
+	wk->world_key = 0;
+	walker_world(wk, rv);
+	int lx = (x + rec[1]) & 0xFF, ly = (y + rec[3]) & 0xFF, lz = z;
+	for (; lz < 0x2C; lz++) {
+		ColResult cr;
+		collision_test(&wk->world, lx, ly, lz, PL_XS, PL_YS, PL_ZS, -1, 1, &cr);
+		if (cr.zf) { wk->x1 = lx; wk->y1 = ly; wk->z = lz; return; }
+	}
+	walker_find_free(wk, lx, ly);
+}
+
 static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	roomview_tick(rv);
 	wk->tick++;
 	if (wk->world_key != room_key(rv)) {
 		walker_world(wk, rv);
 		walker_place_default(wk, rv);
+	}
+	if (rv->vm.go.pending) {
+		rv->vm.go.pending = 0;
+		walker_teleport(wk, rv, rv->vm.go.room, rv->vm.go.x, rv->vm.go.y, rv->vm.go.z);
+		return;
 	}
 	if (wk->tick & 1)
 		return;
