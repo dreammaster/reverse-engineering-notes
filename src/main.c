@@ -115,6 +115,8 @@ typedef struct RoomView_ {
 	int nverbs;
 	int energy_max_cfg;        /* from LEVn.MP1 */
 	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
+	int restarting;            /* level torn down after a death; the next draw reloads it */
+	int dead_timer;            /* > 0: the player died (energy 0), counts game steps until the level restarts */
 	int label_id;              /* name shown above the room name: string id of the last touched object (-1 none) */
 	AclVM vm;                  /* script state: thing flags / variables */
 	TadRt tad;                 /* native routines of ROUTINEn.TAD (timers) */
@@ -254,8 +256,11 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 			}
 	}
 	rv->vm.energy = rv->vm.energy_max = rv->energy_max_cfg;
+	if (getenv("CAD_ENERGY")) rv->vm.energy = atoi(getenv("CAD_ENERGY"));     /* debugging aid: start with this energy */
 	memset(rv->visited, 0, sizeof(rv->visited));
 	rv->vm_ok = 1;
+	rv->restarting = 0;
+	rv->dead_timer = 0;
 	rv->ok = 1;
 	rv->loaded_level = rv->level;
 	rv->loaded_tata = rv->use_tata;
@@ -670,6 +675,7 @@ static void walker_teleport(Walker *wk, RoomView *rv, int room, int x, int y, in
 }
 
 static void walker_tick(Walker *wk, RoomView *rv, int keys) {
+	if (rv->restarting) return;
 	roomview_tick(rv);
 	wk->tick++;
 	if (wk->world_key != room_key(rv)) {
@@ -679,6 +685,21 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (rv->vm.go.pending) {
 		rv->vm.go.pending = 0;
 		walker_teleport(wk, rv, rv->vm.go.room, rv->vm.go.x, rv->vm.go.y, rv->vm.go.z);
+		return;
+	}
+	if (rv->dead_timer == 0 && rv->vm.energy <= 0 && rv->ok && rv->vm.energy_max > 0) {   /* death (1000:81C8): the gods' message, then the game starts over */
+		rv->dead_timer = 150;
+		if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 60;
+		roomview_flush_messages(rv);
+	}
+	if (rv->dead_timer > 0) {
+		if ((wk->tick & 1) == 0 && --rv->dead_timer == 0) {
+			int lv = rv->level, tata = rv->use_tata;
+			roomview_unload(rv);
+			rv->level = lv; rv->use_tata = tata; rv->room = 0;
+			wk->world_key = 0; wk->placed = 0;
+			rv->restarting = 1;
+		}
 		return;
 	}
 	if (wk->tick & 1)

@@ -507,6 +507,8 @@ food things in the emulator changed no tracked state (energy stays), so eating g
 In the C walk scene things whose `rec[10]` differs from the room list's room are skipped and things moved into the room are appended (`roomobjs_build_ex`).
 **Op 25h (37, change room), decoded and verified.** `[room dx dy z]` (`1000:7F3C`): the player record is zeroed, `ds:232` = room, the landing is **(dx + room_rec[1], dy + room_rec[3], z)** (`ds:592/594/596`; checked on 25 random rooms against the original), then `room_enter` runs and the player is placed at the landing with `z`
 increased until the spot is free (limit `2Ch`). Used by type-5 handlers of ladders/trapdoors (level 1: things 2, 56, 86, 129, 162). The walk scene applies it (`walker_teleport`).
+**Death.** When `1000:81C8` brings the energy to 0 it plays sound `1Ch`, empties the bar, waits for a key (≤ 0x400 polls), copies the player statistics (`ds:248/24A/24C/24E/23A`, the day counter `ds:5B2…5B8`) into a record at segment `0400h` (this is the "THE GODS DEMAND A PRICE TO SAVE YOUR POSITION OF …" text, string 60) and jumps back to the game start `1000:0071`.
+The walk scene shows the message (string 60) for 150 steps and restarts the level; the saved-record mechanism is not modelled. `CAD_ENERGY=n` starts a level with that energy (debugging).
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input
