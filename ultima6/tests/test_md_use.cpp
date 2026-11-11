@@ -939,6 +939,99 @@ int main() {
 		w.deleteObject(hole);
 		w.deleteObject(shovel);
 		clearArea();
+		// burying (recipe 15): a shovel with a dirt pile (0x102) on a barrel that stands over a hole (0x101): it goes into the hole and the pile covers it; a seed (0xFC) makes a seed mound
+		auto bury = [&]() {
+			g.log.clear();
+			g.handleKey('u');
+			g.handleKey(KEY_RIGHT);
+			g.handleKey(KEY_DOWN);
+			g.handleKey(KEY_ENTER);
+			g.handleKey(KEY_LEFT);
+			g.handleKey(KEY_ENTER);
+		};
+		int digger = put(w, 0x42, 0, px + 1, py, 0);
+		int pile = put(w, 0x102, 0, px, py + 1, 0);
+		int target = put(w, 0x68, 0, px - 1, py, 0);
+		bury();
+		CHECK(logText(g).find("You must bury the") != std::string::npos && w.objects[pile].y == py + 1);
+		int hole2 = put(w, 0x101, 0, px - 1, py, 0);
+		w.deleteObject(target);
+		target = put(w, 0x68, 0, px - 1, py, 0);
+		bury();
+		bool inside = false;
+		for (size_t i = 0; i < w.objects.size(); ++i)
+			inside |= !w.objects[i].deleted && w.objects[i].type == 0x68 && w.objects[i].location() == ObjRecord::IN_CONTAINER && w.objects[i].parent == hole2;
+		CHECK(logText(g).find("It is covered with dirt") != std::string::npos && inside && w.objects[target].deleted && w.objects[pile].x == px - 1 && w.objects[pile].y == py);
+		// another pile there: no more
+		int pile2 = put(w, 0x102, 0, px, py + 1, 0);
+		bury();
+		CHECK(logText(g).find("You can't pile any more dirt there") != std::string::npos);
+		w.deleteObject(pile2);
+		w.deleteObject(pile);
+		w.deleteObject(hole2);
+		w.deleteObject(digger);
+		clearArea();
+		// radium: without tongs or telekinesis it burns (poison); a chunk (0x1C0) into a machine (0x122); blocks (0x1C1) charge a battery (0xF0) 30 each up to 0xF0
+		int chunk = put(w, 0x1C0, 0, px + 1, py, 0);
+		int machine = put(w, 0x122, 0, px, py + 1, 0);
+		w.actors.talkFlags[0x74] = 1;
+		w.actors.talkFlags[0x60] = 0;
+		w.actors.status[me] &= 0xF7;
+		useOnSouth();
+		CHECK(logText(g).find("OUCH. It is very hot") != std::string::npos && (w.actors.status[me] & 8));
+		CHECK(logText(g).find("The radium has been installed") != std::string::npos && w.objects[chunk].deleted && w.objects[machine].frame == 1);
+		CHECK((w.actors.talkFlags[0x74] & 4) && (w.actors.talkFlags[0x60] & 4));
+		w.actors.status[me] &= 0xF7;
+		w.deleteObject(machine);
+		g.mdSetPsychic(me, 0, 1); // (telekinesis: no burn)
+		int blocks = put(w, 0x1C1, 0, px + 1, py, 0);
+		w.objects[blocks].quantity = 2;
+		int battery = put(w, 0xF0, 0, px, py + 1, 0);
+		w.objects[battery].quantity = 200;
+		useOnSouth();
+		CHECK(logText(g).find("OUCH") == std::string::npos && logText(g).find("only needed 1 radium blocks") != std::string::npos && w.objects[battery].quantity == 230 && w.objects[blocks].quantity == 1 && !w.objects[blocks].deleted);
+		useOnSouth();
+		CHECK(logText(g).find("is fully charged") != std::string::npos && w.objects[battery].quantity == 230);
+		g.mdSetPsychic(me, 0, 0);
+		w.deleteObject(battery);
+		w.deleteObject(blocks);
+		clearArea();
+		// the pool table (0x18F): a cue stick is needed; then two balls and, with a dexterity above any roll, a good shot
+		int table = put(w, 0x18F, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You need a cue stick in your hands") != std::string::npos);
+		int cue = w.addToInventory(1, 0x191, 0, 1);
+		w.objects[cue].status |= 0x18;
+		int dexterity = w.actors.dexterity[1];
+		w.actors.dexterity[1] = 100;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Good shot, old bean!") != std::string::npos);
+		w.actors.dexterity[1] = (uint8_t)dexterity;
+		w.deleteObject(cue);
+		w.deleteObject(table);
+		// dreamstuff (0x14B, recipe 53): empty it is nothing; with a hatchet inside the hatchet lies where it was and it is gone
+		int stuff = put(w, 0x14B, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You imagine nothing!") != std::string::npos && !w.objects[stuff].deleted);
+		World::Obj inner;
+		inner.status = ObjRecord::IN_CONTAINER;
+		inner.parent = stuff;
+		inner.x = inner.y = 0;
+		inner.z = 0;
+		inner.type = 0x31;
+		inner.frame = 0;
+		inner.quantity = 1;
+		inner.quality = 0;
+		inner.actor = -1;
+		w.objects.push_back(inner);
+		int hatchet = (int)w.objects.size() - 1;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You imagine a hatchet") != std::string::npos && w.objects[stuff].deleted && !w.objects[hatchet].deleted && w.objects[hatchet].x == px + 1 && w.objects[hatchet].y == py);
+		w.deleteObject(hatchet);
 		// the mirror away from its place
 		int mirror = put(w, 0x93, 0, px + 1, py, 0);
 		g.log.clear();

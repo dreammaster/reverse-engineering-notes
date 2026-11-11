@@ -1084,6 +1084,238 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		break;
 	}
+	case 53: { // sub_5D046: dreamstuff (item, 0x14B, a container) is imagined into what it holds: "You imagine nothing!" when empty; a thing (type below 0x156) is named and laid where the dreamstuff lay, or put in the pack of whoever has it, and the dreamstuff is used up
+		// APPROX(76): a creature in the dreamstuff (a type from 0x156, brought to life by sub_2652C beside the party with the side that the quality names) is not done
+		sfx(0x32);
+		message("You imagine ");
+		int inside = -1;
+		for (size_t i = 0; i < _world.objects.size() && inside < 0; ++i)
+			if (!_world.objects[i].deleted && _world.objects[i].location() == ObjRecord::IN_CONTAINER && _world.objects[i].parent == item)
+				inside = (int)i;
+		if (inside < 0) {
+			message("nothing!\n");
+			break;
+		}
+		World::Obj thing = _world.objects[inside];
+		if (thing.type >= 0x156)
+			break;
+		message(Describe::object(_world, thing) + "\n");
+		World::Obj &d = _world.objects[item];
+		if (!carriedObject(d)) {
+			int dx = d.x, dy = d.y, dz = d.z;
+			mdPlace(inside, dx, dy, dz);
+		} else {
+			const World::Obj *top = &d;
+			while (top->location() == ObjRecord::IN_CONTAINER && top->parent >= 0)
+				top = &_world.objects[top->parent];
+			int holder = top->parent; // (the actor who has it)
+			int got = _world.addToInventory(holder, thing.type, thing.quality, thing.quantity);
+			_world.objects[got].frame = thing.frame;
+			_world.deleteObject(inside);
+		}
+		_world.deleteObject(item);
+		break;
+	}
+	case 35: { // sub_5B490: the pool table (item, 0x18F): a cue stick (0x191) must be in the hands; two balls (0x190, made with a random frame if missing) lie on the table's square and the one to the west; they are knocked about (random frames, clicks 0x1C-0x1E) until a roll of 0-40 is under the member's dexterity; then, with another such roll, "Good shot, old bean!"
+		int actor = actingActor();
+		bool cue = false;
+		for (size_t i = 0; i < _world.objects.size(); ++i) {
+			const World::Obj &c = _world.objects[i];
+			cue |= !c.deleted && c.type == 0x191 && carriedObject(c) && c.location() == ObjRecord::READIED && c.parent == actor;
+		}
+		if (!cue) {
+			message("You need a cue stick in your hands.\n");
+			break;
+		}
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		int tx = o.x, ty = o.y;
+		int frames = _world.baseTile.firstTile[0x191] - _world.baseTile.firstTile[0x190] - 1;
+		auto ball = [&](int bx) {
+			int b = seFind(0x190, bx, ty);
+			if (b < 0) {
+				b = seMake(0x190, bx, ty, z, 0, 0);
+				_world.objects[b].frame = (uint8_t)seRoll(0, frames);
+			}
+			return b;
+		};
+		int b1 = ball((tx - 1) & mask), b2 = ball(tx);
+		int dex = _world.actors.dexterity[actor];
+		int ok = _world.actorObject(actor);
+		if (ok >= 0) {
+			int st = _world.objects[ok].status;
+			if (st & 0x40)
+				dex = std::max(1, dex - 3);
+			if (st & 0x80)
+				dex = std::min(30, dex + 3);
+		}
+		if (_world.actors.status[actor] & 4)
+			dex = 1;
+		for (int n = 0; n < 1000; ++n) {
+			if (n)
+				sfx(0x1C + seRoll(0, 2));
+			sfx(0x1C + seRoll(0, 2));
+			_world.objects[b1].frame = (uint8_t)seRoll(0, frames);
+			_world.objects[b2].frame = (uint8_t)seRoll(0, frames);
+			if (seRoll(0, 40) >= dex)
+				continue;
+			break;
+		}
+		if (seRoll(0, 40) < dex)
+			message("Good shot, old bean!\n");
+		break;
+	}
+	case 47:
+	case 61: { // sub_5B0A0: radium. A chunk (0x1C0) used on itself on the ground uses the thing beneath it; touching it without tongs (0x88, worn), without telekinesis and not as the mechanical man poisons ("OUCH. It is very hot."). A chunk into a machine (0x122): "The radium has been installed." (frame + 1, flags 0x74 bit 4, and 0x60 bit 4 if 0x74 has bit 1); radium blocks (0x1C1) charge a battery (0xF0 / 0xF1: its quantity up to 0xF0, 30 a block, "fully charged" above 0xD2)
+		// APPROX(76): the number of blocks is not asked (sub_159A9): all of them go in, up to what is needed
+		int other = first, actor = actingActor();
+		if (other < 0)
+			break;
+		int type = _world.objects[other].type;
+		if (item == other && type == 0x1C0) {
+			if (carriedObject(_world.objects[other])) {
+				message("It has no effect.\n");
+				break;
+			}
+			int under = -1;
+			std::vector<int> here;
+			_world.objectsAt(_world.objects[other].x, _world.objects[other].y, _world.objects[other].z, here);
+			for (size_t i = 0; i < here.size(); ++i)
+				if (here[i] == other && i > 0)
+					under = here[i - 1];
+			if (under < 0 || carriedObject(_world.objects[under])) {
+				message("It has no effect.\n");
+				break;
+			}
+			other = under;
+			type = _world.objects[other].type;
+		}
+		bool tongs = false;
+		for (size_t i = 0; i < _world.objects.size(); ++i) {
+			const World::Obj &c = _world.objects[i];
+			tongs |= !c.deleted && c.type == 0x88 && carriedObject(c) && c.location() == ObjRecord::READIED && c.parent == actor;
+		}
+		if (!mdPsychic(actor, 0) && !tongs && actor != 6) {
+			_world.actors.status[actor] |= 8;
+			message("OUCH. It is very hot.\n");
+		}
+		message("\n");
+		const World::Obj &it = _world.objects[item];
+		if (it.type == 0x1C0) {
+			if (type != 0x122) {
+				message("It has no effect.\n");
+				break;
+			}
+			_world.deleteObject(item);
+			sfx(4);
+			message("The radium has been installed.\n");
+			_world.objects[other].frame = 1;
+			_world.actors.talkFlags[0x74] |= 4;
+			if (_world.actors.talkFlags[0x74] & 1)
+				_world.actors.talkFlags[0x60] |= 4;
+		} else if (it.type == 0x1C1) {
+			World::Obj &bat = _world.objects[other];
+			int have = bat.quantity, blocks = _world.quantityOf(it);
+			if (have > 0xD2) {
+				message("The " + std::string(Describe::object(_world, bat)) + " is fully charged.\n");
+				break;
+			}
+			if (have + blocks * 30 > 0xF0) {
+				blocks = (0xF0 - have) / 30;
+				message("The " + std::string(Describe::object(_world, bat)) + " only needed " + std::to_string(blocks) + " radium blocks.\n");
+				message("The " + std::string(Describe::object(_world, bat)) + " is fully charged.\n");
+			}
+			bat.quantity = (uint8_t)(have + blocks * 30);
+			if (_world.quantityOf(it) == blocks)
+				_world.deleteObject(item);
+			else
+				_world.setQuantity(_world.objects[item], _world.quantityOf(it) - blocks);
+		} else {
+			message("It has no effect.\n");
+		}
+		break;
+	}
+	case 15: { // sub_5AAA1: a shovel (item) with a dirt pile (first) on another thing (second): on the ground it is recipe 12; things are buried in a hole (0x101) under them by throwing the pile over them: not people, not the shovel itself, not where there is a pile (0x102 or 0xFB) already, a hole is needed, only one seed (0xFC) at a time; everything above the hole goes into it, the pile covers it (a seed makes it a seed mound 0xFB: "You planted the Martian seed."), and what lay in the hole where the pile was spills out
+		if (first < 0)
+			break;
+		if (second < 0) {
+			mdAction(12, item, first, second);
+			break;
+		}
+		auto fail = [&](const std::string &text) {
+			message(text);
+			sfx(5);
+			_mdFail = 1;
+		};
+		const World::Obj target = _world.objects[second];
+		if (target.actor >= 0) {
+			fail("Don't bury people on Mars!\n");
+			break;
+		}
+		if (item == second) {
+			fail("You can't bury something using itself!\n");
+			break;
+		}
+		int tx = target.x, ty = target.y;
+		if (seFind(0x102, tx, ty) >= 0 || seFind(0xFB, tx, ty) >= 0) {
+			fail("You can't pile any more dirt there.\n");
+			break;
+		}
+		int hole = seFind(0x101, tx, ty);
+		if (hole < 0) {
+			message("You must bury the " + std::string(Describe::object(_world, target)) + " in a hole.\n");
+			_mdFail = 1;
+			break;
+		}
+		sfx(0x1B);
+		std::vector<int> here, above;
+		_world.objectsAt(tx, ty, z, here);
+		int newType = 0x102, count = 0, seeds = 0;
+		bool failed = false;
+		for (size_t i = here.size(); i-- > 0 && !failed;) { // (from the top down to the hole)
+			const World::Obj &o = _world.objects[here[i]];
+			if (o.type == 0x101)
+				break;
+			++count;
+			if (o.actor >= 0) {
+				fail("Don't bury people on Mars!\n");
+				failed = true;
+			} else if (o.type == 0xFC) {
+				if (seeds++) {
+					fail("You can't bury anything here.\n");
+					failed = true;
+				}
+				newType = 0xFB;
+			}
+			above.push_back(here[i]);
+		}
+		if (failed)
+			break;
+		for (int i : above) {
+			World::Obj o = _world.objects[i];
+			int tile = _world.baseTile.firstTile[o.type] + o.frame;
+			if (_world.flags.flags3[tile & (TileFlags::TILES - 1)] & 0x10)
+				continue; // (to be ignored)
+			o.status = ObjRecord::IN_CONTAINER;
+			o.parent = hole;
+			o.x = o.y = 0;
+			o.z = 0;
+			_world.objects.push_back(o);
+			_world.deleteObject(i);
+		}
+		int pile = first, ox = _world.objects[pile].x, oy = _world.objects[pile].y;
+		mdPlace(pile, tx, ty, z);
+		_world.objects[pile].frame = 0;
+		_world.objects[pile].status &= 0xDF;
+		sfx(0x1B);
+		if (newType == 0xFB) {
+			_world.objects[pile].type = 0xFB;
+			message("You planted the Martian seed.\n");
+		} else {
+			message(count == 1 ? "It is covered with dirt.\n" : "They have been covered with dirt.\n");
+		}
+		mdSpill(ox, oy);
+		break;
+	}
 	case 10: { // sub_5A39C: a digging tool (item) on a pod plant (first, 0xFB): a dirt pile (0x102) goes on the first free square round the member (none: "You can't dig here."), the seed (0xFC) in the hole under the plant (0x101) is laid on its square with frame 1, what else was in the hole is thrown away, and the plant is pulled up
 		if (first < 0)
 			break;
