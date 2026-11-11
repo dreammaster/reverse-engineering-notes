@@ -27,6 +27,7 @@ void acl_init(AclVM *vm, const Mp2 *mp2) {
 			vm->present[t] = 1;
 			vm->flags[t] = r[3];
 			vm->room[t] = r[10];
+			vm->pos[3 * t] = r[0]; vm->pos[3 * t + 1] = r[1]; vm->pos[3 * t + 2] = r[2];
 			vm->flags2[t] = r[15];
 		}
 	}
@@ -109,6 +110,20 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		}
 		break;
 	}
+	case 85: {                                          /* score += signed word (negative: subtract the raw word, clamp at 0) */
+		unsigned wv = (unsigned)w & 0xFFFF;
+		if (wv < 0x8000) vm->score += wv;
+		else vm->score = vm->score > wv ? vm->score - wv : 0;
+		break;
+	}
+	case 41:                                            /* move a thing: [id16] room x y z (0xFE = current room); another room: flag 0x08 */
+		if (f && n >= 6 && tid >= 0 && tid < ACL_THINGS) {
+			int room = a[2] == 0xFE ? vm->room_no : a[2];
+			vm->pos[3 * tid] = a[3]; vm->pos[3 * tid + 1] = a[4]; vm->pos[3 * tid + 2] = a[5];
+			if (room != vm->room_no) *f |= 8;
+			vm->room[tid] = (uint8_t)room;
+		}
+		break;
 	case 5: vm->score += a[0]; break;
 	case 6: vm->money += a[0]; vm->score += a[0] >> 2; break;       /* verified: ds:248 += a, ds:24C += a >> 2 */
 	case 2: if (cur) *cur |= 0x80; break;                           /* the current object is removed (its effect on the engine's entries is not modelled) */

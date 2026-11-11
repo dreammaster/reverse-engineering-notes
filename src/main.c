@@ -107,6 +107,8 @@ typedef struct RoomView_ {
 	uint8_t visited[128];      /* rooms entered so far (event 28 fires on the first visit only) */
 	int tm_div, tm_period, tm_cnt;   /* room timer: every 17 game steps count down rv->tm_cnt, at 0 fire event 14 (period = room record byte 2) */
 	uint8_t flags_seen[ACL_THINGS];  /* thing flags the objects were built with */
+	uint8_t room_seen[ACL_THINGS];   /* ... and their rooms / positions */
+	uint8_t pos_seen[ACL_THINGS * 3];
 	int pending_rebuild;
 	struct { int active, id, timer; } msgs[4];   /* message scrolls (slots 0..3) */
 	uint8_t verbs[VERB_SLOTS];  /* verb icons of the touched object (slots) */
@@ -377,6 +379,16 @@ static int roomview_geom(RoomView *rv, int *w, int *h, int *gx, int *gy) {
 
 
 
+static int rv_changed(const RoomView *rv) {
+	return memcmp(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen)) || memcmp(rv->room_seen, rv->vm.room, sizeof(rv->room_seen)) ||
+	       memcmp(rv->pos_seen, rv->vm.pos, sizeof(rv->pos_seen));
+}
+static void rv_remember(RoomView *rv) {
+	memcpy(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen));
+	memcpy(rv->room_seen, rv->vm.room, sizeof(rv->room_seen));
+	memcpy(rv->pos_seen, rv->vm.pos, sizeof(rv->pos_seen));
+}
+
 /* show the messages queued by script ops (op 28): first free slot, else the one that expires first (1000:3555) */
 static void roomview_flush_messages(RoomView *rv) {
 	for (int k = 0; k < rv->vm.msg_n; k++) {
@@ -402,16 +414,18 @@ static void roomview_flush_messages(RoomView *rv) {
 static void roomview_rebuild_objs(RoomView *rv, int gx, int gy) {
 	static RoomObjs old;
 	memcpy(&old, &rv->ro, sizeof(old));
-	roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy, rv->vm.flags);
+	roomobjs_build_ex(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy, rv->vm.flags, rv->vm.room, rv->vm.pos);
 	for (int i = 0; i < rv->ro.n; i++)
 		for (int k = 0; k < old.n; k++)
 			if (old.o[k].thing == rv->ro.o[i].thing) {
+				int t3 = 3 * rv->ro.o[i].thing;
+				if (memcmp(rv->vm.pos + t3, rv->pos_seen + t3, 3) != 0) break;       /* a script moved it: keep the new position */
 				rv->ro.o[i].x1 = old.o[k].x1; rv->ro.o[i].y1 = old.o[k].y1;
 				rv->ro.o[i].an = old.o[k].an;
 				roomobj_moved(&rv->ro.o[i], gx, gy);
 				break;
 			}
-	memcpy(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen));
+	rv_remember(rv);
 	walk_refresh_world(rv);          /* collision world must be rebuilt (the player keeps its position) */
 }
 
@@ -433,7 +447,7 @@ static void roomview_game_step(RoomView *rv) {
 		rv->vm.timer_delay = -1;
 		acl_room_event(&rv->vm, &rv->mp2, rv->room, 20, a);
 	}
-	rv->pending_rebuild = memcmp(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen)) != 0;
+	rv->pending_rebuild = rv_changed(rv);
 	roomview_flush_messages(rv);
 }
 
@@ -450,8 +464,8 @@ static void roomview_enter(RoomView *rv, int gx, int gy) {
 	rv->tm_period = rv->tm_cnt = rec && rv->mp2.sec[0].len[rv->room] > 2 ? rec[2] : 0;
 	rv->tm_div = 17;
 	rv->vm.timer_delay = -1;
-	roomobjs_build(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy, rv->vm.flags);
-	memcpy(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen));
+	roomobjs_build_ex(&rv->ro, &rv->mp2, &rv->objs, rv->room, gx, gy, rv->vm.flags, rv->vm.room, rv->vm.pos);
+	rv_remember(rv);
 	rv->ro_key = room_key(rv);
 	rv->label_id = -1;
 	rv->nverbs = 0;
@@ -592,7 +606,7 @@ static void walker_touch(Walker *wk, RoomView *rv, const ColResult *cr, int keys
 		acl_thing_event(&rv->vm, &rv->mp2, o->thing, 7, 0);
 		for (int q = 0; q < rv->vm.queue_n; q++)
 			acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
-		rv->pending_rebuild |= memcmp(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen)) != 0;
+		rv->pending_rebuild |= rv_changed(rv);
 		roomview_flush_messages(rv);
 		return;
 	}
@@ -618,7 +632,7 @@ static void menu_choose(RoomView *rv, int verb) {
 	}
 	for (int q = 0; q < rv->vm.queue_n; q++)
 		acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
-	rv->pending_rebuild |= memcmp(rv->flags_seen, rv->vm.flags, sizeof(rv->flags_seen)) != 0;
+	rv->pending_rebuild |= rv_changed(rv);
 	roomview_flush_messages(rv);
 }
 

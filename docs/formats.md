@@ -502,6 +502,9 @@ label and the verb icons are cleared; the thing's position-record slot is reused
 items are drawn in the six slots (and what `ds:5A0`/`6AD` hold at start: `0020`/`00`) is not decoded.
 **Verb 14 (`0Eh`, shown for sprites with header byte `0x1D == 0x12`: leg of meat, loaf, chicken).** `1000:3483`: class `0x17 == 7` → event 5; otherwise the thing is simply queued for deletion (`1000:62A9` appends its id to the list at `ds:2F6`) and sound `0Ah` plays. Calling it on the three
 food things in the emulator changed no tracked state (energy stays), so eating gives no energy through this verb. `src/main.c` removes the thing.
+**Ops 41 and 85 (verified against the original, 60 random cases).** `29h` (41) moves a thing: `[id16] room x y z` (room `FEh` = the current one): the position bytes `rec[0..2]` are set, `rec[10]` = the room, and when the room differs from the current one `rec[3] |= 08h`
+(the thing then leaves/enters the room on the next visit; for the current room the original runs a collision-aware placement `1000:1CC1` that can adjust the position — not modelled). `55h` (85) adds a signed word to the score (negative: subtracts the raw word, clamped at 0).
+In the C walk scene things whose `rec[10]` differs from the room list's room are skipped and things moved into the room are appended (`roomobjs_build_ex`).
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input

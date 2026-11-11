@@ -53,6 +53,10 @@ typedef struct {
 /* Runtime objects of a room: build once on entry, step every game step (2 timer ticks), draw every frame.
  * use_state = 0 draws the first script frame of animated objects (static, used by the unit tests). */
 int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, const uint8_t *thing_flags);
+/* Same with the scripts' view of the things: thing_room[id] = current room (rec[10]; things whose room differs from the list's are skipped / added),
+ * thing_pos[3 * id] = x1, y1, z0 (NULL: the file's). */
+int roomobjs_build_ex(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, const uint8_t *thing_flags, const uint8_t *thing_room,
+                      const uint8_t *thing_pos);
 void roomobjs_step(RoomObjs *ro);
 void roomobjs_draw(const RoomObjs *ro, uint8_t *canvas, int use_state);
 /* Same, but only the objects that are behind (front = 0) or in front of (front = 1) a moving box (px1, py1 = far corner, pz1 = top,

@@ -77,14 +77,38 @@ void roomobj_moved(RoomObj *o, int gx, int gy) {
 	o->cx1 = tb[0]; o->cy1 = tb[1]; o->cx0 = tb[2]; o->cy0 = tb[3]; o->czt = tb[4]; o->czb = tb[5];
 }
 
-int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, const uint8_t *thing_flags) {
+int roomobjs_build_ex(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, const uint8_t *thing_flags, const uint8_t *thing_room,
+                      const uint8_t *thing_pos) {
 	ro->n = 0;
-	if (room < 0 || room >= mp2->sec[2].count || !mp2->sec[2].rec[room])
+	if (room < 0 || room >= mp2->sec[2].count)
 		return 0;
 	const uint8_t *list = mp2->sec[2].rec[room];
-	int n = mp2->sec[2].len[room] / 2;
+	int nlist = list ? mp2->sec[2].len[room] / 2 : 0;
+	int n = nlist;
+	if (thing_room) {                       /* things moved into the room by scripts follow the listed ones */
+		for (int t = 0; t < 1000; t++)
+			if (thing_room[t] == room && n < ROOMOBJS_MAX + nlist) {
+				int in = 0;
+				for (int k = 0; k < nlist; k++) if (((list[2 * k] << 8) | list[2 * k + 1]) == t) { in = 1; break; }
+				if (!in) n++;
+			}
+	}
+	int extra_t = 0;
 	for (int i = 0; i < n && ro->n < ROOMOBJS_MAX; i++) {
-		int id = (list[2 * i] << 8) | list[2 * i + 1], len;
+		int id, len;
+		if (i < nlist) id = (list[2 * i] << 8) | list[2 * i + 1];
+		else {
+			id = -1;
+			for (; extra_t < 1000; extra_t++) {
+				if (thing_room[extra_t] != room) continue;
+				int in = 0;
+				for (int k = 0; k < nlist; k++) if (((list[2 * k] << 8) | list[2 * k + 1]) == extra_t) { in = 1; break; }
+				if (!in) { id = extra_t++; break; }
+			}
+			if (id < 0) break;
+		}
+		if (thing_room && i < nlist && thing_room[id & 1023] != room && id < 1000)
+			continue;                       /* listed thing that a script moved away */
 		const uint8_t *t = mp2_thing(mp2, id, &len);
 		int fl = (thing_flags && id < 1000) ? thing_flags[id] : (t ? t[3] : 0);
 		if (!t || len < 8 || (fl & 0x80))
@@ -95,9 +119,9 @@ int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int roo
 		RoomObj *o = &ro->o[ro->n++];
 		memset(o, 0, sizeof(*o));
 		o->thing = id;
-		o->x1 = t[0];
-		o->y1 = t[1];
-		o->z0 = t[2];
+		o->x1 = thing_pos ? thing_pos[3 * id] : t[0];
+		o->y1 = thing_pos ? thing_pos[3 * id + 1] : t[1];
+		o->z0 = thing_pos ? thing_pos[3 * id + 2] : t[2];
 		o->sp = sp;
 		object_project(o->x1, o->y1, o->z0, sp->header, gx, gy, &o->sx, &o->sy);
 		/* animation state = the thing record's tail at +rec[14]: delay, frame, dir, pos, (dx, dy), cnt, cad */
@@ -126,6 +150,10 @@ int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int roo
 		o->first = objsprite_initial_frame(sp);
 	}
 	return ro->n;
+}
+
+int roomobjs_build(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int room, int gx, int gy, const uint8_t *thing_flags) {
+	return roomobjs_build_ex(ro, mp2, objs, room, gx, gy, thing_flags, NULL, NULL);
 }
 
 void roomobjs_step(RoomObjs *ro) {

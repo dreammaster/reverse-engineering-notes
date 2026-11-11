@@ -15,6 +15,7 @@ typedef struct {
 	uint8_t flags[ACL_THINGS];      /* rec[3]  */
 	uint8_t flags2[ACL_THINGS];     /* rec[15] */
 	uint8_t room[ACL_THINGS];       /* rec[10] */
+	uint8_t pos[ACL_THINGS * 3];    /* rec[0..2]: x1, y1, z0 */
 	union {                         /* script globals ds:590..71F (the TAD routines see them as part of the data segment) */
 		uint8_t g[0x190];
 		struct {
