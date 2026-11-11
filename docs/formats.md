@@ -500,6 +500,8 @@ are mostly `06 n; 02`: **verb 2 collects valuables** — verified in the emulato
 (equal → message `0x35`), otherwise calls `3E6D` (detach the thing from its container/room: `rec[10]` `0xFF`/`0xFE` are the special owners "carried"/"nowhere", container counters `[di+1D]`, `[di+1B]`, `[di+1C]` are decremented) and `3F35` (add to the carried list), then queues **event 0** for the thing. The
 label and the verb icons are cleared; the thing's position-record slot is reused by the next thing (the record at `ds:8C42` held thing 412 before and thing 413 after), so the engine keeps its thing records in a packed array that shifts when objects are taken or created. How carried
 items are drawn in the six slots (and what `ds:5A0`/`6AD` hold at start: `0020`/`00`) is not decoded.
+**Verb 14 (`0Eh`, shown for sprites with header byte `0x1D == 0x12`: leg of meat, loaf, chicken).** `1000:3483`: class `0x17 == 7` → event 5; otherwise the thing is simply queued for deletion (`1000:62A9` appends its id to the list at `ds:2F6`) and sound `0Ah` plays. Calling it on the three
+food things in the emulator changed no tracked state (energy stays), so eating gives no energy through this verb. `src/main.c` removes the thing.
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input

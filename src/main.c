@@ -610,6 +610,11 @@ static void menu_choose(RoomView *rv, int verb) {
 		acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
 	} else if (verb == 2) {
 		acl_thing_event(&rv->vm, &rv->mp2, t, 0, 0);
+	} else if (verb == 14) {          /* 1000:3483: class 7 things get event 5, everything else is removed (queued for deletion, 1000:62A9) */
+		const RoomObj *o = NULL;
+		for (int i = 0; i < rv->ro.n; i++) if (rv->ro.o[i].thing == t) { o = &rv->ro.o[i]; break; }
+		if (o && o->sp->header[0x17] == 7) acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
+		else if (t >= 0 && t < ACL_THINGS) rv->vm.flags[t] |= 0x80;
 	}
 	for (int q = 0; q < rv->vm.queue_n; q++)
 		acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
