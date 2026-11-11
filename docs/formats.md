@@ -517,7 +517,9 @@ the end of `LEVn.MP1` (120 bytes: big-endian string id, score high word, score l
 It occurs exactly once per level: level 1 thing 84 (event 5, operand 0), level 2 room 88 (event 15, 1), level 3 room 80 (event 15, 2), level 4 room 35 (event 15, 3); level 5 has none (the game ends). All 2453 handler records still parse. The walk scene loads the next level and carries money, score and energy over.
 **Taking things (emulator, `1000:2EA9` called on the level-1 sword, helmet and breastplate things).** Verb 2 is offered for 35 of the level-1 sprite blocks (swords, armour, helms, bags …; coins are the same verb with an event-0 handler that adds money and deletes the thing). The handler sets the thing's
 **`rec[10]` to `0xFF` ("carried")** and queues event 0 (`rec[3]`, position and the other bytes stay); the carried things are exactly those with `rec[10] == 0xFF` (`0xFE` = "nowhere"). The capacity test compares `ds:6AD` (carried count, 0 at start) with the word at `ds:5A0` (`0x0020` at start).
-How carried things are drawn in the six slots could not be captured: calling the handler by hand corrupts the emulated game (the run ends in an invalid read at `1000:AB5B`), and reaching a sword through the real game needs a scripted walk to room 33. Not ported.
+A scripted run through the real game (hold Right to the coin, take it, walk on, take the **pickaxe** at (73,23) of level 1 room 0 with End, End) gave `ds:6AD = 1` — so the pickaxe is carried — but the six panel slots stay **empty**, the touched-object label disappears, and
+`ds:27A` (the selected item) stays 0; Insert/Delete (`0x52/0x53`, input bits 05/06) are *diagonal moves*, not inventory keys. So carried things are not shown as icons in the slots during normal play; the inventory is presumably reached through the containers' verb 3 (`1000:31A3`, `THERE IS NO ROOM TO PUT THIS OBJECT IN`, string 27) —
+not decoded. (Calling the handler by hand corrupts the emulated game: invalid read at `1000:AB5B`.) Not ported.
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input
