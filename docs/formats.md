@@ -496,6 +496,10 @@ pointer into script bytes in the blob — `0x80` end, `0x81` restart — `[bp+0E
 needs the engine's RAM object entries (50-byte entries at `ds:2A`, expanded thing records) mirrored in the interpreter's data image — not done. Op `33h` (51) changes the level (`ds:708` = operand + 1, restarts the loader); only level 3 room 80 uses it.
 **More ops.** `06` (6) adds its byte to the money counter `ds:248` (32 bit) and `byte >> 2` to the score `ds:24C` (verified against the original); `05` adds to the score; `02` (2) removes the current object (`1000:78DE`; modelled as flag `0x80`). Verb 2 raises event 0, whose handlers
 are mostly `06 n; 02` — i.e. verb 2 hands the object in (sell/sacrifice: money and score, object gone).
+**Choosing verb 2 in the original (emulator trace, level 1 silver coin).** Open the menu (End tap while touching), End again: `1000:2BCB` → `2E2D` → `2EA9` run; the handler compares the carry capacity `ds:6AD` with the carried count `ds:5A0`
+(equal → message `0x35`), otherwise calls `3E6D` (detach the thing from its container/room: `rec[10]` `0xFF`/`0xFE` are the special owners "carried"/"nowhere", container counters `[di+1D]`, `[di+1B]`, `[di+1C]` are decremented) and `3F35` (add to the carried list), then queues **event 0** for the thing. The
+label and the verb icons are cleared; the thing's position-record slot is reused by the next thing (the record at `ds:8C42` held thing 412 before and thing 413 after), so the engine keeps its thing records in a packed array that shifts when objects are taken or created. How carried
+items are drawn in the six slots (and what `ds:5A0`/`6AD` hold at start: `0020`/`00`) is not decoded.
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input
