@@ -627,6 +627,158 @@ int main() {
 	(void)torch;
 	w.inventory(actor, inv, false);
 
+	// the jungle drum (0x94): drumsticks (0x5B) are needed; with every friend's flag the drum sets flag 8 of actor 1
+	clearEast(w, px, py);
+	{
+		int drum = put(w, 0x94, 0, px + 1, py, 0);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("You have nothing with which to play the drum") != std::string::npos);
+		int sticks = w.addToInventory(actor, 0x5B, 0, 1);
+		static const int FRIENDS[11] = {0x10, 0x11, 0x13, 0x14, 0x1B, 0x1D, 0x20, 0x22, 0x28, 0x30, 0x35};
+		uint8_t saved[11];
+		for (int i = 0; i < 11; ++i) {
+			saved[i] = w.actors.talkFlags[FRIENDS[i]];
+			w.actors.talkFlags[FRIENDS[i]] |= 0x80;
+		}
+		w.actors.talkFlags[1] &= 0xF7;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(w.actors.talkFlags[1] & 8);
+		for (int i = 0; i < 11; ++i)
+			w.actors.talkFlags[FRIENDS[i]] = saved[i];
+		w.actors.talkFlags[1] &= 0xF7;
+		w.deleteObject(sticks);
+		w.deleteObject(drum);
+	}
+
+	// a turtle (the creature 0x12E): the Avatar climbs on (body 0x133 on its square), using himself he steps ashore to land and leaves a turtle behind
+	clearEast(w, px, py);
+	{
+		int ta = -1;
+		for (int a = 0x80; a < 0x100 && ta < 0; ++a)
+			if (w.actorFree(a))
+				ta = a;
+		int tk = w.addActor(ta, 0x12E, px + 1, py, 0);
+		w.actors.status[ta] = 0x40;
+		g.log.clear();
+		useEast(w, g, px, py);
+		int me = w.actorObject(1);
+		CHECK(w.objects[tk].deleted && w.objects[me].type == 0x133 && w.objects[me].x == px + 1 && w.objects[me].y == py);
+		g.handleKey('u');
+		g.handleKey(KEY_ENTER);
+		CHECK(w.objects[me].type != 0x133 && !(w.objects[me].x == px + 1 && w.objects[me].y == py));
+		bool left = false;
+		for (size_t i = 0; i < w.objects.size(); ++i)
+			left |= !w.objects[i].deleted && w.objects[i].type == 0x12E && w.objects[i].x == px + 1 && w.objects[i].y == py;
+		CHECK(left);
+		for (size_t i = 0; i < w.objects.size(); ++i)
+			if (!w.objects[i].deleted && w.objects[i].type == 0x12E && w.objects[i].x == px + 1 && w.objects[i].y == py)
+				w.deleteObject((int)i);
+		w.moveObject(me, px, py, 0);
+		g.x = px;
+		g.y = py;
+	}
+
+	// turtle bait (0x2F): in the lake a turtle comes up on a water square next to the member; away from water "You must be near water."
+	{
+		int wx = -1, wy = -1;
+		for (int sy = 0xE7; sy <= 0x1E7 && wx < 0; ++sy)
+			for (int sx = 0x335; sx <= 0x3ED && wx < 0; ++sx) {
+				int f = w.flags.flags1[w.map.tile(0, sx, sy) & (TileFlags::TILES - 1)];
+				std::vector<int> here;
+				w.objectsAt(sx, sy, 0, here);
+				if ((f & 3) == 3 && here.empty()) {
+					wx = sx;
+					wy = sy;
+				}
+			}
+		if (wx >= 0) {
+			clearEast(w, wx - 1, wy);
+			int bait = put(w, 0x2F, 0, wx, wy - 1, 0);
+			w.moveObject(w.actorObject(1), wx - 1, wy, 0);
+			g.x = wx - 1;
+			g.y = wy;
+			g.log.clear();
+			g.handleKey('u');
+			g.handleKey(KEY_UP);
+			bool turtleThere = false;
+			for (size_t i = 0; i < w.objects.size(); ++i)
+				turtleThere |= !w.objects[i].deleted && w.objects[i].type == 0x12E;
+			CHECK(turtleThere || logText(g).find("Nothing takes the bait") != std::string::npos);
+			(void)bait;
+		} else {
+			std::printf("no lake water found (skipped)\n");
+		}
+		w.moveObject(w.actorObject(1), px, py, 0);
+		g.x = px;
+		g.y = py;
+	}
+
+	// a square without an object (Use on terrain): a tree gives a branch (0xCE), the yucca plant flax (0xD2); a bare square is "Not possible."
+	{
+		int treeX = -1, treeY = -1, yuccaX = -1, yuccaY = -1, bareX = -1, bareY = -1;
+		static const int TREES[19] = {0x32, 0x33, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0xC0, 0xC1, 0xC2, 0xC3, 0xC6, 0xB3, 0xB4, 0x82};
+		for (int dy = -150; dy <= 150; ++dy)
+			for (int dx = -150; dx <= 150; ++dx) {
+				int sx = (px + dx) & 0x3FF, sy = (py + dy) & 0x3FF;
+				int t = w.map.tile(0, sx, sy);
+				std::vector<int> here;
+				w.objectsAt(sx, sy, 0, here);
+				if (!here.empty())
+					continue;
+				for (int tt : TREES)
+					if (tt == t && treeX < 0) {
+						treeX = sx;
+						treeY = sy;
+					}
+				if (t == 0x34 && yuccaX < 0) {
+					yuccaX = sx;
+					yuccaY = sy;
+				}
+				if (t == 0x05 && bareX < 0) {
+					bareX = sx;
+					bareY = sy;
+				}
+			}
+		auto useAtSquare = [&](int sx, int sy) {
+			w.moveObject(w.actorObject(1), sx - 1, sy, 0);
+			g.x = sx - 1;
+			g.y = sy;
+			g.z = 0;
+			g.log.clear();
+			g.handleKey('u');
+			g.handleKey(KEY_RIGHT);
+		};
+		auto has = [&](int type) {
+			std::vector<int> mine;
+			w.inventory(actor, mine, true);
+			for (int i : mine)
+				if (w.objects[i].type == type)
+					return true;
+			return false;
+		};
+		if (treeX >= 0) {
+			useAtSquare(treeX, treeY);
+			CHECK(logText(g).find("You pulled a branch from the tree") != std::string::npos && has(0xCE));
+		} else {
+			std::printf("no tree found (skipped)\n");
+		}
+		if (yuccaX >= 0) {
+			useAtSquare(yuccaX, yuccaY);
+			CHECK(logText(g).find("You got some flax from the yucca plant") != std::string::npos && has(0xD2));
+		} else {
+			std::printf("no yucca found (skipped)\n");
+		}
+		if (bareX >= 0) {
+			useAtSquare(bareX, bareY);
+			CHECK(logText(g).find("Not possible.") != std::string::npos);
+		}
+		g.x = px;
+		g.y = py;
+		w.moveObject(w.actorObject(1), px, py, 0);
+	}
+
 	if (failures == 0)
 		std::printf("ok\n");
 	return failures ? 1 : 0;

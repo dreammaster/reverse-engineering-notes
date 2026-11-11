@@ -58,6 +58,24 @@ bool Game::seInView(int actor) const {
 	return std::abs((int)_world.objects[a].x - (int)_world.objects[l].x) <= 5 && std::abs((int)_world.objects[a].y - (int)_world.objects[l].y) <= 4;
 }
 
+// sub_34DD4: a flash at a square (of the camera or a magnesium ribbon). Once the story has not yet come to it (flag 2 of actor 3 not set) and the ghost (actor 0x19) has not been seen (flag 0x80 of actor 0x35),
+// a ghost within two squares to the west and one to the east (and the same north and south) of the flash starts to talk (its flag is 0x28), a ghost that is only in view whispers "Closer...".
+// APPROX(79): the picture of the flash (the palette goes white for a moment) is not drawn
+void Game::seFlash(int fx, int fy) {
+	ObjList &al = _world.actors;
+	if ((al.talkFlags[3] & 2) || (al.talkFlags[0x35] & 0x80) || !seInView(0x19))
+		return;
+	int g = _world.actorObject(0x19);
+	int dx = fx - (int)_world.objects[g].x, dy = fy - (int)_world.objects[g].y;
+	if (dx > 1 || dy > 1 || dx < -2 || dy < -2) {
+		message("\nYou hear a barely audible voice whisper, \"Closer...\".\n");
+		return;
+	}
+	al.talkFlags[0x19] = 0x28;
+	al.talkFlags[0x35] |= 0x80;
+	startTalk(0x19);
+}
+
 // sub_1B486: a new object lies on the map
 int Game::seMake(int type, int x, int y, int z, int quantity, int quality) {
 	World::Obj o;
@@ -182,6 +200,121 @@ void Game::seAction(uint32_t sub, int idx) {
 		message("\nYou eat the food.\n");
 		consumeOne(idx);
 		break;
+	case 0x34B00: { // a turtle (the creature 0x12E, sub_34B00): the acting member climbs on (its body becomes 0x133 with the turtle's frame, on the turtle's square, sub_34965); if that member is on a turtle already, another member next to the turtle does; none: "You're already on a turtle!"
+		int rider = actor, tx = o.x, ty = o.y, turtleActor = o.actor, frame = o.frame;
+		int rk = _world.actorObject(rider);
+		if (rk >= 0 && _world.objects[rk].type == 0x133) {
+			rider = -1;
+			for (int m = 0; m < _world.actors.partySize && rider < 0; ++m) {
+				int a = _world.actors.partyRoster[m], k = _world.actorObject(a);
+				if (k >= 0 && std::abs((int)_world.objects[k].x - tx) <= 1 && std::abs((int)_world.objects[k].y - ty) <= 1 && _world.objects[k].type != 0x133)
+					rider = a;
+			}
+			if (rider < 0) {
+				message("\nYou're already on a turtle!\n");
+				break;
+			}
+		}
+		_world.deleteObject(idx);
+		if (turtleActor >= 0)
+			_world.actors.hp[turtleActor] = 0;
+		int k = _world.actorObject(rider);
+		_world.moveObject(k, tx, ty, z);
+		_world.objects[k].type = 0x133;
+		_world.objects[k].frame = (uint8_t)frame;
+		if (k == _leaderObject) {
+			x = tx;
+			y = ty;
+		}
+		break;
+	}
+	case 0x349A9: { // a member on a turtle (0x133, sub_349A9): steps to a square of land next to it (the first of the eight round it that can be walked on), and the turtle (0x12E, friendly) is left in the water; "Only next to land!" if there is none
+		if (o.actor < 0)
+			break;
+		int who = o.actor, ox = o.x, oy = o.y, mask = z == 0 ? 0x3FF : 0xFF, lx = -1, ly = -1;
+		for (int dx = 0; dx < 3 && lx < 0; ++dx)
+			for (int dy = 0; dy < 3 && lx < 0; ++dy) {
+				if (dx == 1 && dy == 1)
+					continue;
+				int sx = (ox + dx - 1) & mask, sy = (oy + dy - 1) & mask;
+				if (!(_world.flags.flags1[_world.map.tile(z, sx, sy) & (TileFlags::TILES - 1)] & 2)) {
+					lx = sx;
+					ly = sy;
+				}
+			}
+		if (lx < 0) {
+			message("\nOnly next to land!\n");
+			break;
+		}
+		int k = _world.actorObject(who);
+		_world.moveObject(k, lx, ly, z);
+		_world.objects[k].type = _world.actors.baseObjFrame[who] & 0x3FF;
+		_world.objects[k].frame = (uint8_t)(_world.actors.baseObjFrame[who] >> 10);
+		if (k == _leaderObject) {
+			x = lx;
+			y = ly;
+		}
+		int turtle = _creatures.spawn(0x12E, 0x8F, ox, oy, z, false);
+		if (turtle >= 0)
+			_world.actors.status[turtle] = (uint8_t)((_world.actors.status[turtle] & 0x9F) | 0x40);
+		break;
+	}
+	case 0x3542B: { // the jungle drum (sub_3542B): drumsticks (0x5B) must be in the pack, else "You have nothing with which to play the drum."; once the tribes are friends (flag 0x80 of the eleven actors 0x10, 0x11, 0x13, 0x14, 0x1B, 0x1D, 0x20, 0x22, 0x28, 0x30 and 0x35) and the drum has not been played (flag 8 of actor 1) it starts the story's last scene
+		// APPROX(79): the scene itself (sub_2E1AC: its pictures and conversation) is not done; only its flag (8 of actor 1) is set
+		if (sePackItem(actor, 0x5B) < 0) {
+			message("You have nothing with which to play the drum.\n");
+			break;
+		}
+		ObjList &al = _world.actors;
+		static const int FRIENDS[11] = {0x10, 0x11, 0x13, 0x14, 0x1B, 0x1D, 0x20, 0x22, 0x28, 0x30, 0x35};
+		bool all = !(al.talkFlags[1] & 8);
+		for (int f : FRIENDS)
+			all &= (al.talkFlags[f] & 0x80) != 0;
+		if (all)
+			al.talkFlags[1] |= 8;
+		break;
+	}
+	case 0x34783: { // turtle bait (sub_34783): a turtle (0x12E, friendly, standing still) comes up on a water square (tiles with flag 1 and 2) next to the member: "You must be near water." if there is none (the bait is kept); in the lake (x 0x335-0x3ED, y 0xE7-0x1E7) it stays, anywhere else, or when no square is free, "Nothing takes the bait."; the bait is used up
+		int me = _world.actorObject(actor);
+		if (me < 0)
+			break;
+		int hx = _world.objects[me].x, hy = _world.objects[me].y, mask = z == 0 ? 0x3FF : 0xFF;
+		bool water = false;
+		int px = -1, py = -1;
+		for (int dx = 0; dx < 3 && px < 0; ++dx)
+			for (int dy = 0; dy < 3 && px < 0; ++dy) {
+				if (dx == 1 && dy == 1)
+					continue;
+				int sx = (hx + dx - 1) & mask, sy = (hy + dy - 1) & mask;
+				int f = _world.flags.flags1[_world.map.tile(z, sx, sy) & (TileFlags::TILES - 1)];
+				water |= (f & 1) != 0;
+				if (!(f & 1) || !(f & 2))
+					continue;
+				std::vector<int> there;
+				_world.objectsAt(sx, sy, z, there);
+				bool free = true;
+				for (int i : there)
+					free &= _world.objects[i].deleted || _world.objects[i].actor < 0; // (nobody stands there)
+				if (free) {
+					px = sx;
+					py = sy;
+				}
+			}
+		if (px < 0 && !water) {
+			message("\nYou must be near water.\n");
+			break;
+		}
+		bool lake = hx >= 0x335 && hx <= 0x3ED && hy >= 0xE7 && hy <= 0x1E7;
+		if (px >= 0 && lake) {
+			int turtle = _creatures.spawn(0x12E, 0, px, py, z, false);
+			if (turtle >= 0)
+				_world.actors.status[turtle] = (uint8_t)((_world.actors.status[turtle] & 0x9F) | 0x40);
+		} else {
+			message("\nNothing takes the bait.\n");
+		}
+		consumeOne(idx);
+		break;
+	}
 	case 0x353D0: { // the sealed door: Yunapotli (actor 11) in the party and in view makes it slide open
 		bool open = (_world.actors.status[0xB] & 0x80) && seInView(0xB);
 		if (open) {
@@ -237,7 +370,6 @@ void Game::seAction(uint32_t sub, int idx) {
 		break;
 	case 0x34EDF: { // the camera: the film (the quality) counts down, the flash works without it
 		bool carried = carriedObject(o);
-		(void)carried;
 		if (o.quality > 0) {
 			--o.quality;
 			message("\nYou take a picture.\n");
@@ -245,7 +377,11 @@ void Game::seAction(uint32_t sub, int idx) {
 			message("\nThe camera's out of film, ");
 			message("but the flash still works.\n");
 		}
-		// APPROX(79): the flash itself (sub_34DD4: the picture at the member's square and the whisper of the ghost, actor 0x19, "Closer...", the start of its conversation) is not done
+		{
+			int hk = carried ? _world.actorObject(actor) : idx;
+			if (hk >= 0)
+				seFlash(_world.objects[hk].x, _world.objects[hk].y);
+		}
 		break;
 	}
 	case 0x33B10: { // the wire screen: sifting at a square of the eight around the member where there is a 0xE7 gives ten of 0x7B (sulphur powder)
@@ -808,10 +944,13 @@ void Game::seAction(uint32_t sub, int idx) {
 		});
 		break;
 	}
-	case 0x34F6B: // a magnesium ribbon: one is used up and it flashes at the member's square (APPROX(79): the flash itself, sub_34DD4, as for the camera)
+	case 0x34F6B: { // a magnesium ribbon: one is used up and it flashes at the member's square (sub_34DD4, as for the camera)
 		consumeOne(idx);
-		message("");
+		int hk = _world.actorObject(actor);
+		if (hk >= 0)
+			seFlash(_world.objects[hk].x, _world.objects[hk].y);
 		break;
+	}
 	case 0x35B44: { // the machine: a gem (0x48, 0x49 or 0x4A) from the member's pack goes in and an 0xC5 comes out on the machine's square
 		int mx = o.x, my = o.y;
 		int gem = -1;
@@ -1237,6 +1376,44 @@ void Game::seAction(uint32_t sub, int idx) {
 	default: // APPROX(79): not ported yet
 		break;
 	}
+}
+
+// The Use of a square without an object (sub_35E46 35F72-35FE8, sub_33DFF, sub_33EF8): beyond one square "Out of range!"; a tree (the tiles of ds:1134) gives a branch (0xCE), the yucca plant (tile
+// 0x34) flax (0xD2), lava (the tiles 0xF-0x1B, 0xAA, 0xAB) is a fire (seFire); anything else "Not possible.". Five moves are spent.
+void Game::seUseTerrain(int tx, int ty) {
+	static const uint16_t TREES[19] = {0x32, 0x33, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0xC0, 0xC1, 0xC2, 0xC3, 0xC6, 0xB3, 0xB4, 0x82};
+	int actor = actingActor();
+	int a = _world.actorObject(actor);
+	if (a >= 0 && (std::abs(tx - (int)_world.objects[a].x) > 1 || std::abs(ty - (int)_world.objects[a].y) > 1)) {
+		message("Out of range!\n");
+		return;
+	}
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	int tile = _world.map.tile(z, tx & mask, ty & mask);
+	bool tree = false;
+	for (uint16_t t : TREES)
+		tree |= t == tile;
+	if (tree) {
+		message("Tree\n");
+		if (seGive(actor, 0xCE, 1))
+			message("\nYou pulled a branch from the tree.\n");
+		else
+			message("You are carrying too much already.\n");
+	} else if (tile == 0x34) {
+		message("Yucca plant\n");
+		if (seGive(actor, 0xD2, 1))
+			message("\nYou got some flax from the yucca plant.\n");
+		else
+			message("You are carrying too much already.\n");
+	} else if ((tile >= 0xF && tile <= 0x1B) || tile == 0xAA || tile == 0xAB) {
+		message("Lava\n");
+		seFire();
+		return; // ("On " waits for its object)
+	} else {
+		message("Not possible.\n");
+		return;
+	}
+	_world.spendMoves(actor, 5);
 }
 
 // sub_3215F, what is done at a fire: "On " a clay pot (0x84) fires it (0x85), corn flour (0x5D) becomes tortillas (0x66), a log (0xCE) charcoal (0x81, ten),

@@ -113,16 +113,16 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | D0 torch | 30ECC | lights one in a free hand: lit torch D1 with 100 minutes; "Your hands are full." (**ported**) |
 | BC crate | 361BA + 2EC8A | frame 1 opens it, else "Not possible."; then it is searched (**ported**) |
 | 4F-52 bones, 3E bean stalk, 3D corn stalk | 33F4B, 33E52, 33EA5 | rib bones D3, beans 6D, corn 6C: "You are carrying too much already." (**ported**) |
-| 0A magnesium ribbon | 34F6B | one used up (the flash `sub_34DD4` is not done: APPROX 79) (**ported**) |
+| 0A magnesium ribbon | 34F6B | one used up, then the flash `sub_34DD4` (`seFlash`: the ghost, actor 0x19, within 2 squares starts to talk, further it whispers "Closer..."; the picture is not drawn) (**ported**) |
 | 14 rope, 16 hole in the ceiling | 362F7, 36312 -> 19505 | not in solo mode; `sub_19505` takes the party to the square of the table ds:4D4 named by the quality (the rope from entry 9, i.e. ds:4F8) on level 1 (rope) or level 0 / 2 (hole, quality 8 = 2) and hangs the rope in the hole there (**ported** for these two; the ladders A3, E3, 103, A0 of the routine are not: APPROX 83) |
 | 19, 2C, 34 knives, scissors | 32488 | "On -": cloth (B4) gives ten cloth strips (86); the dead (118) by frame (1 to 47: `KIND` in `se_use.cpp`, from the switch at cs:jpt_3265E): "You ghoul!", "The hide is too tough.", "Clank!", meat 2-7 (6E) with bones (52 frame 1 or 50) and gore (F8), the big cat (frame 37) also a skin (5C), "You make a mess."; a body part (F9) frame 15 gives 5-20 feathers (30), frame 11 a mess (**ported**) |
 | 1D, 77 hammers | 31436 | "On -": on a boulder (AC) a strength roll (`sub_30E72`: 1-30 below (45 - strength) / 2 fails: "Glanced off!") else "A piece of rock flakes off." (3A); on cold burnt logs (CF frame 0) 1 to strength charcoal (81); else "No effect." (**ported**) |
 | 2A vine | 34FDE | "On -": on a hole (A8) a rope (14) hangs one square up and to the left, with the quality of the hole; else "You can't use a rope here!" (**ported**) |
 | 2B bell | 31293 | "On -": "You put the bell on the dinosaur's neck." (target type 118, frames 0D / 11; frame 11 names the head by its quality; the actor needs status bit 4 and no talk flags; actor B5 also sets bit 0x80 of actor 20's talk flags) (**ported**) |
-| 2F turtle bait | 34783 | "You must be near water." / "Nothing takes the bait." |
+| 2F turtle bait | 34783 | "You must be near water." / "Nothing takes the bait."; in the lake a friendly turtle (12E) comes up on a water square next to the member (**ported**) |
 | 31 notebook | 34D88 | Jimmys shorthand (**ported**) |
 | 32 flintlock | 31E67 | one gunpowder (CC) from the pack loads it (frame 1): "Flintlock loaded.", "Flintlock already loaded.", "You don't have any gunpowder." (**ported**) |
-| 33 camera | 34EDF | the film is ported, the flash (`sub_34DD4`: the picture, the ghost whispering "Closer...", actor 0x19) is not |
+| 33 camera | 34EDF | the film and the flash (`seFlash`) (**ported**) |
 | 3B, 3C mortar, grinding stone | 310AD | corn (6C) alone gives corn flour (5D) in the mortar; charcoal (81), sulphur powder (7B) and 82 together give gunpowder (CC) as much as the smallest heap; "You can't grind that!", "The mixture in the %s is wrong." (**ported**) |
 | 3F jug | 354BC | "On -": on a spear (1A) the spear of Shamap (type 1) goes into the pack (else on the floor), the spear and the jug are used up; else "No effect." (**ported**) |
 | 56-58 totems | 3646E -> 22EF7 | only the shaman (actor 9) may ("`%s can't use that!"): "Invoke: Heluzz! / Aphazz! / Motazz!" (Motazz only in combat, `globals[0x78]` = byte_422C0), "offering-- " an object 36 / 37 / 38 (+1 / +0 / +2, else "Offering refused."), which is used up; ritual `sub_22D86` by code: 0 the spirit looks down (not drawn), 1 light (globals[0x12] = 200), 2 `sub_227AB` the danger by compass, 10 / 11 / 12 `sub_229F8` heal / charm / protect (Aphazz), 20 curse / 22 wild (Motazz), 21 a helper `sub_2259E` (Motazz, surface only) (**ported**, APPROX 85) |
@@ -133,7 +133,7 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | 88 metal bucket | 335A9 | tar, water; full of tar (frame 1) poured onto cloth strips (86) tars them (BF) (`sub_32D11`; its fires are not ported: APPROX 84) (**ported**) |
 | 89, F0 grenade, device | 31671 | a grenade / device (frame 0) is lit as 8A / F1 and a timer of 3 minutes (words ds:422A2 / 422A4 = globals 5A / 5C, run down by `sub_14746` = advance_time) starts; at 0 `sub_31838` explodes it where it (or its holder) is: `sub_29A41` (sound 6, 1-20 damage to the persons in the 3 x 3 squares) or, for a device, `sub_29AC1` (sounds 12, 1D, 1-35 damage to types 143 / 148 only), then `sub_318F5` sets off grenades around and tears webs down (**ported**, APPROX 81) |
 | 8F machine | 35B44 | a gem (48, 49, 4A) of the member goes in, an object C5 comes out on the machine's square; "You don't have any gems." (**ported**) |
-| 94 jungle drum | 3542B | |
+| 94 jungle drum | 3542B | drumsticks (5B) needed; with the flags 0x80 of the eleven friends it sets flag 8 of actor 1 (the scene `sub_2E1AC` itself is not done) (**ported**) |
 | A5 loom | 33F9E | "On -": flax (D2) becomes cloth (B4): "You wove cloth from the flax." (**ported**) |
 | AD, F2, FE, 101 oven, fires | 3215F | "On -": a clay pot (84) is fired (85), corn flour (5D) becomes tortillas (66), a log (CE) ten charcoal (81), the things of ds:118A burn up ("You incinerated the %s."), gunpowder explodes (APPROX 81) (**ported**) |
 | B1 wire screen | 33B10 | sift sulphur (**ported**) |
@@ -146,11 +146,11 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | D4 fishing pole | 31B48 | deep water (terrain 0x0C) on the diagonal, one catch in five (**ported**) |
 | D8 crystal garden | 35D54 | Rafkin (actor 7) or else Johann (actor 5), in the party, awake and in view, identifies potassium nitrate (82): ten for the member (**ported**) |
 | E5 tar pit | 33211 | "On -": all the cloth strips (86) become tarred cloth strips (BF) (**ported**) |
-| E9, ED rafts | 31C98 | boarding |
+| E9, ED rafts | 31C98 | boarding (not ported: the raft is an actor 0 with the party's bodies inside, `sub_252BB`, `sub_25433`, `sub_1C4AB`) |
 | EA door | 35150 | sliding door: frames 1 / 3 slide it east / south to frame 5 / 7 ("The door is blocked." by an object without the top-tile flag), 5 / 7 slide it back; the door at 184,235 makes actor 4 join (APPROX 82) (**ported**) |
 | F7 headless statue | 3423A | the same with a head (BE) from the member's pack, Yunapotli appears at the statue (**ported**) |
 | FC crystal | 35972 | "On -": the same with full hit points and the poison bit (status 0x08) cleared: "%s is healed." (**ported**) |
 | 113 | 346A8 | a door: frames 1 and 3 become 4 (**ported**, without the call of `sub_2DBFE` when the party is close) |
-| 12E turtle, 133 | 34B00, 349A9 | riding the turtle, "Only next to land!" |
+| 12E turtle, 133 | 34B00, 349A9 | a member climbs on (his body becomes 133 on the turtle's square), and steps ashore to the first land square of the eight round him, leaving a turtle ("Only next to land!") (**ported**) |
 
-The Use on terrain (a tree, lava, a yucca plant, a turtle: `sub_33DFF`, `sub_3215F`, `sub_33EF8`, `sub_35E46` 35F72-35FE8) is not used by the engine (APPROX 79).
+The Use on terrain (a tree gives a branch, the yucca plant flax, lava is a fire: `sub_33DFF`, `sub_3215F`, `sub_33EF8`, `sub_35E46` 35F72-35FE8) is `Game::seUseTerrain`; the turtles and their riders are actors that `useAt` lets Savage Empire's Use pick.

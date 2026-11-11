@@ -1890,7 +1890,8 @@ void Game::useAt(int tx, int ty) {
 	int pick = -1;
 	for (size_t i = here.size(); i-- > 0;) {
 		const World::Obj &o = _world.objects[here[i]];
-		if (o.actor >= 0 || o.invisible())
+		bool turtle = _world.game == GameId::SavageEmpire && (o.type == 0x12E || o.type == 0x133); // (the turtles and their riders are actors that Savage Empire's Use works on)
+		if ((o.actor >= 0 && !turtle) || o.invisible())
 			continue;
 		if (pick < 0)
 			pick = here[i];
@@ -1900,7 +1901,10 @@ void Game::useAt(int tx, int ty) {
 		}
 	}
 	if (pick < 0) {
-		message("nothing\n");
+		if (_world.game == GameId::SavageEmpire)
+			seUseTerrain(tx, ty);
+		else
+			message("nothing\n");
 	} else {
 		useObject(pick);
 	}
