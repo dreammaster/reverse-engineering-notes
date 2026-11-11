@@ -31,8 +31,41 @@ int Equipment::slotClass(int tile) {
 	return -1;
 }
 
+// sub_20370: what Martian Dreams may ready is decided by the type of the thing (not by the tile): 1-5 head, 6-8 and 0xEA neck, 9-0xF feet, 0x11-0x17 and 0x5A body, 0x19-0x1E and 0x21-0x27 the
+// arms (6 and 3), then three lists of types: ds:0E00 (guns, the cue stick, ..) class 8, ds:0E2C (tools and weapons, the tongs) class 2, ds:0E48 (lamps and torches) class 5
+// APPROX(76): the original keeps the state of the hands in word_4E5B8 / word_4E5BE (sub_31E9C); here Equipment::target works it out from what is readied
+static int mdSlotClass(int type) {
+	static const uint16_t BIG[22] = {0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x34, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x191, 0xF0, 0xF1, 0x139, 0xA2, 0xA1, 0x28};
+	static const uint16_t HAND[14] = {0x29, 0x2A, 0x31, 0x32, 0x33, 0x36, 0x37, 0x38, 0x10, 0xF2, 0x81, 0x105, 0x88, 0x66};
+	static const uint16_t LIGHT[10] = {0x6D, 0x6F, 0x71, 0x73, 0x75, 0x6E, 0x70, 0x72, 0x74, 0x76};
+	if (type >= 1 && type <= 5)
+		return 0;
+	if ((type >= 6 && type <= 8) || type == 0xEA)
+		return 1;
+	if (type >= 9 && type <= 0xF)
+		return 7;
+	if ((type >= 0x11 && type <= 0x17) || type == 0x5A)
+		return 4;
+	if (type >= 0x19 && type <= 0x1E)
+		return 6;
+	if (type >= 0x21 && type <= 0x27)
+		return 3;
+	for (uint16_t t : BIG)
+		if (t == type)
+			return 8;
+	for (uint16_t t : HAND)
+		if (t == type)
+			return 2;
+	for (uint16_t t : LIGHT)
+		if (t == type)
+			return 5;
+	return -1;
+}
+
 int Equipment::slotClassOf(const World &world, int index) {
 	const World::Obj &o = world.objects[index];
+	if (world.game == GameId::MartianDreams)
+		return mdSlotClass(o.type);
 	return slotClass(world.baseTile.firstTile[o.type] + o.frame);
 }
 

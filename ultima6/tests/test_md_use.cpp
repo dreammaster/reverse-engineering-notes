@@ -1,5 +1,6 @@
 // Martian Dreams' Use (the recipes of seg059 / seg060): an object without a recipe "can't be used", a door of recipe 44 opens and shuts, a locked one says so (skipped without data).
 
+#include "ultima6/equipment.h"
 #include "ultima6/session.h"
 
 #include <cstdio>
@@ -1011,6 +1012,104 @@ int main() {
 		w.actors.dexterity[1] = (uint8_t)dexterity;
 		w.deleteObject(cue);
 		w.deleteObject(table);
+		// rubber gloves (0x26) and tongs (0x88) on the ground (recipe 2) are taken and readied by their types; the gloves go to an arm, the tongs to a hand
+		for (int type : {0x26, 0x88}) {
+			int thing = put(w, type, 0, px + 1, py, 0);
+			g.log.clear();
+			useEast(w, g, px, py);
+			std::vector<int> mine;
+			w.inventory(1, mine, true);
+			int found = -1;
+			for (int i : mine)
+				if (w.objects[i].type == type)
+					found = i;
+			CHECK(w.objects[thing].deleted && found >= 0 && w.objects[found].location() == ObjRecord::READIED);
+			if (type == 0x88)
+				CHECK(logText(g).find("The tongs will now protect your hands") != std::string::npos);
+			CHECK(::Ultima6::Ultima6::Equipment::slotClassOf(w, found) == (type == 0x26 ? 3 : 2));
+			if (found >= 0)
+				w.deleteObject(found);
+		}
+		// the spyglass (0x5E, recipe 32): not at night; by day it asks a direction
+		int glass = put(w, 0x5E, 0, px + 1, py, 0);
+		g.gameClock.hour = 22;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Not at night!") != std::string::npos);
+		g.gameClock.hour = 12;
+		g.log.clear();
+		useEast(w, g, px, py);
+		g.handleKey(KEY_RIGHT);
+		CHECK(logText(g).find("Direction-") != std::string::npos && logText(g).find("East.") != std::string::npos);
+		w.deleteObject(glass);
+		// the bucket (0xA0, recipe 42): empty it holds nothing; with water it wets a barrel, and waters a seed on a mound (bit 8 of the mound's quality); ice is dumped out on a Y
+		int bucket = put(w, 0xA0, 0, px + 1, py, 0);
+		int barrel2 = put(w, 0x68, 0, px, py + 1, 0);
+		w.actors.talkFlags[0x76] = 0;
+		useOnSouth();
+		CHECK(logText(g).find("There is nothing in the bucket") != std::string::npos && w.objects[bucket].frame == 0);
+		w.objects[bucket].frame = 1;
+		useOnSouth();
+		CHECK(logText(g).find("is all wet") != std::string::npos && w.objects[bucket].frame == 0);
+		w.deleteObject(barrel2);
+		int seed2 = put(w, 0xFC, 0, px, py + 1, 0);
+		int mound2 = put(w, 0xFB, 0, px, py + 1, 0);
+		w.objects[bucket].frame = 1;
+		useOnSouth();
+		CHECK(logText(g).find("You pour the water onto the seed") != std::string::npos && (w.objects[mound2].quality & 8) && w.objects[bucket].frame == 0 && !w.objects[seed2].deleted);
+		w.objects[bucket].frame = 2;
+		useOnSouth();
+		g.handleKey('y');
+		CHECK(w.objects[bucket].frame == 0);
+		w.deleteObject(mound2);
+		w.deleteObject(seed2);
+		w.deleteObject(bucket);
+		// the barge's lever (0x1A2, recipe 23): stuck until the story allows; then the arrow chooses the frame (east: 1), another key is the centre (4)
+		int barge = put(w, 0x1A2, 0, px + 1, py, 0);
+		w.actors.talkFlags[0x76] = 0;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("the lever seems stuck") != std::string::npos);
+		w.actors.talkFlags[0x76] = 0x60;
+		g.log.clear();
+		useEast(w, g, px, py);
+		g.handleKey(KEY_RIGHT);
+		CHECK(logText(g).find("Push lever to ") != std::string::npos && logText(g).find("East.") != std::string::npos && w.objects[barge].frame == 1);
+		useEast(w, g, px, py);
+		g.handleKey('x');
+		CHECK(w.objects[barge].frame == 4);
+		w.actors.talkFlags[0x76] = 0;
+		w.deleteObject(barge);
+		// the manuscript (0x58, recipe 68) on 0x54 sets the flag 0x40 of actor 0x57 and starts his talk
+		int paper = put(w, 0x58, 0, px + 1, py, 0);
+		int sign = put(w, 0x54, 0, px, py + 1, 0);
+		w.actors.talkFlags[0x57] = 0;
+		g.log.clear();
+		g.handleKey('u');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_DOWN);
+		g.handleKey(KEY_ENTER);
+		CHECK(w.actors.talkFlags[0x57] & 0x40);
+		for (int n = 0; g.talking() && n < 40; ++n) {
+			for (char c : std::string("bye"))
+				g.handleKey(c);
+			g.handleKey(KEY_ENTER);
+		}
+		w.deleteObject(sign);
+		w.deleteObject(paper);
+		w.actors.talkFlags[0x57] = 0;
+		// a map (0x96, recipe 43) shows its picture until a key
+		int map = put(w, 0x96, 0, px + 1, py, 0);
+		w.objects[map].quality = 1;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Press any key...") != std::string::npos);
+		g.handleKey(' ');
+		g.log.clear();
+		g.handleKey('u');
+		CHECK(logText(g).find("Use") != std::string::npos);
+		g.handleKey(KEY_ESC);
+		w.deleteObject(map);
 		// the valve (0xDC, recipe 72) and a panel (0x1CA, recipe 45) on a cabinet (0x1C9)
 		int valve = put(w, 0xDC, 0, px + 1, py, 0);
 		w.actors.talkFlags[0x76] = 0;

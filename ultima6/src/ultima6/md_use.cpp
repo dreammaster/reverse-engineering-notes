@@ -1,5 +1,7 @@
 #include "ultima6/describe.h"
+#include "ultima6/equipment.h"
 #include "ultima6/session.h"
+#include "files/shape.h"
 #include "ultima6/stats_view.h"
 
 #include <algorithm>
@@ -1082,6 +1084,209 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		} else {
 			_world.deleteObject(first);
 		}
+		break;
+	}
+	case 2: { // sub_598F6 / sub_31E9C: a cue stick, rubber gloves or tongs (item): lying about it is taken ("You are carrying too much already.") and then readied by the Ready command: "Ready-" and the name, "Can't be readied!", "No place to put!" when the place is taken; tongs say "The tongs will now protect your hands."
+		// APPROX(76): the hand state words of sub_31E9C (word_4E5B8, word_4E5BE), the splitting of a stack and the hidden thing readying 0xF on level 2 makes are left out
+		int actor = actingActor();
+		int idx = item;
+		if (!carriedObject(_world.objects[idx])) {
+			World::Obj copy = _world.objects[idx];
+			if (_world.carriedWeight(actor) + _world.weightOfType(copy.type, copy.quantity) > _world.actors.strength[actor] * 20) {
+				message("You are carrying too much already.\n");
+				sfx(5);
+				break;
+			}
+			idx = _world.addToInventory(actor, copy.type, copy.quality, copy.quantity);
+			_world.objects[idx].frame = copy.frame;
+			_world.deleteObject(item);
+		}
+		if (_world.objects[idx].location() == ObjRecord::READIED)
+			break;
+		message("Ready-" + Describe::object(_world, _world.objects[idx]) + "\n");
+		int cls = Equipment::slotClassOf(_world, idx);
+		if (cls < 0) {
+			message("\nCan't be readied!\n");
+			break;
+		}
+		Equipment::Slots slots = Equipment::of(_world, actor);
+		if (slots.object[Equipment::target(_world, slots, cls)] >= 0) {
+			message("\nNo place to put!\n");
+			break;
+		}
+		World::Obj &r = _world.objects[idx];
+		r.status = (uint8_t)((r.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+		if (r.type == 0x88)
+			message("The tongs will now protect your hands.\n");
+		break;
+	}
+	case 32: { // sub_5DECB: the spyglass (item, 0x5E): not underground (only on the surface and levels 2 and 3), not at night on the surface (before five or after five in the evening), not with moving trees (0x198 with status 0x20) near; "Direction-" asks a direction, any other key than an arrow is "nowhere."
+		// APPROX(76): the original scrolls the view up to 40 squares in that direction (until a blank cell) and back with redraws; only the checks and the direction are done
+		static const char *const NAMES[8] = {"North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"};
+		if (z != 0 && z != 2 && z != 3) {
+			message("Not while underground.\n");
+			break;
+		}
+		if (z == 0 && (gameClock.hour < 5 || gameClock.hour > 17)) {
+			message("Not at night!\n");
+			break;
+		}
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		for (int sx = x - 6; sx <= x + 7; ++sx)
+			for (int sy = y - 5; sy <= y + 5; ++sy) {
+				std::vector<int> here;
+				_world.objectsAt(sx & mask, sy & mask, z, here);
+				for (int i : here)
+					if (!_world.objects[i].deleted && _world.objects[i].type == 0x198 && (_world.objects[i].status & 0x20)) {
+						message("There are too many moving trees nearby.\n");
+						return;
+					}
+			}
+		message("Direction-\n");
+		mdAskKey([this](int key) {
+			int dir = key == KEY_UP ? 0 : key == KEY_PGUP ? 1 : key == KEY_RIGHT ? 2 : key == KEY_PGDN ? 3 : key == KEY_DOWN ? 4 : key == KEY_END ? 5 : key == KEY_LEFT ? 6 : key == KEY_HOME ? 7 : -1;
+			message(dir < 0 ? std::string("nowhere.\n") : std::string(NAMES[dir]) + ".\n");
+			return true;
+		});
+		break;
+	}
+	case 42: { // sub_5E0F2: the bucket (item, 0xA0; frame 0 empty, 1 water, 2 ice). Ice is dumped out on a "Y". Water is taken from the ground where there is water (the tiles 1-4, or once the valve is on (flags 0x76 bit 0x20) the canal tiles 0x10-0x17 and 0xC0-0xC3 if bit 0x40 too), an empty bucket has "nothing in the bucket"; full, it is poured onto the ground ("is all wet"), onto a seed mound 0xFB with a seed (bit 8 of the mound's quality of the potash puzzle; "You pour the water onto the seed."), onto a seed 0x9E on soil (it sprouts: 0x9D) or a sprout 0x9D of frame 0 (frame 1), each with a growth number 10-15 in its quality, or into a canal 0x112; the bucket is then empty
+		// APPROX(76): the wetting of the party (sub_30674) is left out; the original goes on to a second message when the ground is chosen, which looks like a slip of the programmers
+		World::Obj &b = _world.objects[item];
+		int bucket = item, fill = b.frame;
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		int sx = _mdSqX[1] & mask, sy = _mdSqY[1] & mask;
+		ObjList &al = _world.actors;
+		if (fill == 2) {
+			message("Dump out the ice? ");
+			mdAskKey([this, bucket](int key) {
+				if (key == 'y' || key == 'Y')
+					_world.objects[bucket].frame = 0;
+				message(std::string(1, (char)key) + "\n");
+				return true;
+			});
+			break;
+		}
+		auto empty = [&]() { _world.objects[bucket].frame = 0; };
+		auto bare = [&](const World::Obj &t) {
+			std::string s = Describe::object(_world, t);
+			for (const char *a : {"a ", "an ", "the "})
+				if (s.compare(0, strlen(a), a) == 0)
+					return s.substr(strlen(a));
+			return s;
+		};
+		int tile = first < 0 ? _world.map.tile(z, sx, sy) : 0;
+		bool canal = (tile >= 0x10 && tile <= 0x17) || (tile >= 0xC0 && tile <= 0xC3);
+		bool water = first < 0 && (al.talkFlags[0x76] & 0x20) && ((tile >= 1 && tile <= 4) || ((al.talkFlags[0x76] & 0x40) && canal));
+		if (water || (first >= 0 && _world.objects[first].type == 0x112)) {
+			message("You fill the bucket with water.\n");
+			_world.objects[bucket].frame = 1;
+			break;
+		}
+		if (fill == 0) {
+			message("There is nothing in the bucket.\n");
+			sfx(5);
+			break;
+		}
+		if (first < 0) {
+			message("The " + Describe::tileName(_world, tile, false) + " is all wet.\n");
+			empty();
+			break;
+		}
+		int type = _world.objects[first].type;
+		if (type == 0xFB) {
+			int seed = seFind(0xFC, sx, sy);
+			if (seed < 0) {
+				int hole = seFind(0x101, sx, sy);
+				for (size_t i = 0; i < _world.objects.size() && hole >= 0 && seed < 0; ++i) {
+					const World::Obj &c = _world.objects[i];
+					if (!c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == hole && c.type == 0xFC)
+						seed = (int)i;
+				}
+			}
+			if (seed < 0) {
+				message("You pour the water onto the ground.\n");
+			} else {
+				int q = _world.objects[first].quality | 8;
+				_world.objects[first].quality = (uint8_t)q;
+				sfx(4);
+				message("You pour the water onto the seed.\n");
+				if (q == 0xF && _world.objects[seed].frame == 0 && al.globals.size() > 7) {
+					_world.objects[seed].quality = al.globals[6];
+					_world.objects[seed].quantity = al.globals[7];
+				}
+			}
+		} else if (type == 0x9E) {
+			int t2 = _world.map.tile(z, sx, sy);
+			bool soil = (t2 >= 0x20 && t2 <= 0x24) || t2 == 0x0C || t2 == 0x0D || (t2 >= 0x28 && t2 <= 0x3F) || t2 == 0x7C || t2 == 0x7D || t2 == 0x7F;
+			if (!carriedObject(_world.objects[first]) && soil) {
+				sfx(4);
+				_world.objects[first].type = 0x9D;
+				_world.objects[first].frame = 0;
+				_world.objects[first].quality = (uint8_t)seRoll(10, 15);
+			} else {
+				message("It has no effect.\n");
+			}
+		} else if (type == 0x9D) {
+			if (_world.objects[first].frame == 0) {
+				sfx(4);
+				_world.objects[first].frame = 1;
+				_world.objects[first].quality = (uint8_t)seRoll(10, 15);
+			} else {
+				message("It has no effect.\n");
+			}
+		} else if (_world.objects[first].actor >= 0) {
+			message(Describe::object(_world, _world.objects[first]) + " is all wet.\n");
+		} else {
+			message("The " + bare(_world.objects[first]) + " is all wet.\n");
+		}
+		empty();
+		break;
+	}
+	case 23: { // sub_5C7C4: the barge's lever (item, 0x1A2) moves only once the story has come to it (flags 0x76 bits 0x20 and 0x40): "the lever seems stuck." else "Push lever to " and the direction it is pushed (the lever's frame is the direction halved: 0-3), any other key is "center." (frame 4)
+		// APPROX(76): the original takes the direction from where the mouse was clicked (sub_32571); the arrow keys and the diagonals of the number pad do it here; the barge itself is moved by other code
+		ObjList &al = _world.actors;
+		if (!((al.talkFlags[0x76] & 0x20) && (al.talkFlags[0x76] & 0x40))) {
+			message("the lever seems stuck.\n");
+			break;
+		}
+		static const char *const NAMES[8] = {"North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"};
+		int lever = item;
+		message("Push lever to ");
+		mdAskKey([this, lever](int key) {
+			int dir = key == KEY_UP ? 0 : key == KEY_PGUP ? 1 : key == KEY_RIGHT ? 2 : key == KEY_PGDN ? 3 : key == KEY_DOWN ? 4 : key == KEY_END ? 5 : key == KEY_LEFT ? 6 : key == KEY_HOME ? 7 : -1;
+			sfx(0x11);
+			if (dir < 0) {
+				message("center.\n");
+				_world.objects[lever].frame = 4;
+			} else {
+				message(std::string(NAMES[dir]) + ".\n");
+				_world.objects[lever].frame = (uint8_t)(dir >> 1);
+			}
+			return true;
+		});
+		break;
+	}
+	case 68: // sub_5ED76: the manuscript (item, 0x58) on 0x54: the scene of actor 0x57 (his flag 0x40 is set and he talks)
+		// APPROX(76): the end of the dream scene (sub_3F615 / sub_3F61A) is left out
+		_world.actors.talkFlags[0x57] |= 0x40;
+		startTalk(0x57);
+		break;
+	case 43: { // sub_5EFB0 / sub_53C8D: a map (item, 0x96): the picture of MDMAP.LZC that its quality names fills the middle of the screen until a key is pressed ("Press any key...")
+		Bytes pic;
+		Shape shape;
+		if (!_world.mdMapItem(o.quality, pic) || pic.size() <= 4 || !shape.load(&pic[4], pic.size() - 4))
+			break;
+		_mapPixels = shape.pixels;
+		_mapW = shape.width;
+		_mapH = shape.height;
+		_mapShow = true;
+		message("Press any key...");
+		mdAskKey([this](int) {
+			_mapShow = false;
+			message("\n");
+			return true;
+		});
 		break;
 	}
 	case 72: { // sub_5D313: the valve (0xDC): "The canals are already working." (flag 0x40 of actor 0x76), or with flag 0x20 it is turned on (flag 0x40), else "There is no water pressure in the valve system."

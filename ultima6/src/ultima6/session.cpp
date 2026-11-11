@@ -1071,6 +1071,8 @@ void Game::render(Framebuffer &screen) {
 		drawInventoryView(screen, _world, _stealing >= 0 ? 100 + _stealing : _member, _selected, _items, _packScroll);
 	else
 		drawStatsView(screen, _world, _member);
+	if (_mapShow) // a map of Martian Dreams (sub_53C8D): a 160 x 144 picture of MDMAP.LZC in the middle of the screen
+		screen.blit(80, 28, &_mapPixels[0], _mapW, _mapH, _mapW, 255);
 	if (_gem)
 		drawGem(screen);
 	if (_world.game == GameId::Ultima6) {

@@ -94,6 +94,8 @@ public:
 	Bytes mdText; // MDTEXT.LZC of Martian Dreams: the books, notes and signs (item = quality - 1)
 	/** The text of item `n` of MDTEXT.LZC, "" if there is none (sub_3AAAD). */
 	std::string mdTextItem(int n) const;
+	Bytes mdMap; // MDMAP.LZC of Martian Dreams: the maps and pictures that a map or a sign shows (item = quality)
+	bool mdMapItem(int n, Bytes &out) const;
 	mutable std::vector<int> _talkItem; // actor -> item of TALK.LZC  // CONVERSE.A and CONVERSE.B
 	MapData map;
 	ObjList actors;

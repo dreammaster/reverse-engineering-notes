@@ -154,6 +154,9 @@ private:
 	std::unique_ptr<Talk> _talk; // a conversation in progress
 	std::function<void()> _talkEnd; // what to do when it is over (a Martian Dreams scene)
 	void talkEnded();
+	bool _mapShow = false; // a map picture of Martian Dreams is on the screen
+	std::vector<uint8_t> _mapPixels;
+	int _mapW = 0, _mapH = 0;
 	int _mdDist = 1; // word_4E6F6: the distance of the partner chosen last (a carried one is 1)
 	int _cx = 5, _cy = 5;        // cursor cell in the map view while targeting with it
 	bool _cursor = false;
