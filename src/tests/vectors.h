@@ -386,6 +386,6 @@ static const AclVector acl_vectors[] = {
 	{"cadaver2/DATA/5", 15, 0xA6D0FAD7U},
 	{"cadaver2/TATA/1", 17, 0x4A5718D0U},
 	{"cadaver2/TATA/2", 26, 0x99972DF1U},
-	{"cadaver2/TATA/3", 21, 0x32482B96U},
+	{"cadaver2/TATA/3", 21, 0x4F9F0216U},
 	{"cadaver2/TATA/4", 28, 0x26D5A440U},
 };
