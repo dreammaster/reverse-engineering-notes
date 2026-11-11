@@ -739,6 +739,85 @@ int main() {
 		w.deleteObject(tool);
 	}
 
+	// the tent (0x6A, recipe 0): the camp comes up, "Rest until sunrise?" and any key but N sleeps until then; a member whose experience has come to the number of the level dreams and picks what grows
+	{
+		std::vector<int> here;
+		for (int sx = px - 1; sx <= px + 3; ++sx)
+			for (int sy = py - 3; sy <= py + 1; ++sy) {
+				here.clear();
+				w.objectsAt(sx, sy, 0, here);
+				for (int i : here)
+					if (w.objects[i].actor < 0)
+						w.deleteObject(i);
+			}
+		std::vector<std::pair<int, std::pair<int, int>>> moved; // (people who stand near would be in the way: the test sends them away, and again after the sleep, when they have walked back)
+		auto sendAway = [&]() {
+			for (int a = 4; a < 0x100; ++a) {
+				int k = w.actorObject(a);
+				if (k >= 0 && !w.objects[k].deleted && std::abs((int)w.objects[k].x - px) <= 45 && std::abs((int)w.objects[k].y - py) <= 45) {
+					moved.push_back({k, {w.objects[k].x, w.objects[k].y}});
+					w.moveObject(k, px + 60, py + 60, 0);
+				}
+			}
+		};
+		sendAway();
+		int tent = put(w, 0x6A, 0, px + 1, py, 0);
+		int me = g.actingActor();
+		w.actors.level[me] = 1;
+		w.actors.exp[me] = 150;
+		int str = w.actors.strength[me], dex = w.actors.dexterity[me];
+		g.gameClock.hour = 22;
+		g.log.clear();
+		useEast(w, g, px, py);
+		std::string text = logText(g);
+		if (text.find("Rest until sunrise?") == std::string::npos)
+			std::printf("tent log: [%s]\n", text.c_str());
+		CHECK(text.find("Rest until sunrise?") != std::string::npos);
+		int pieces = 0;
+		for (size_t i = 0; i < w.objects.size(); ++i)
+			if (!w.objects[i].deleted && w.objects[i].type == 0x86)
+				++pieces;
+		CHECK(pieces == 5);
+		g.log.clear();
+		g.handleKey('y'); // the sleep: the Avatar has a dream
+		text = logText(g);
+		CHECK(text.find("has a dream") != std::string::npos && text.find("Which (B H S)") != std::string::npos);
+		CHECK(w.actors.level[me] == 2);
+		g.handleKey('x'); // (not a choice)
+		CHECK(w.actors.strength[me] == str);
+		g.handleKey('S');
+		CHECK(w.actors.strength[me] == str + 1 && w.actors.dexterity[me] == dex);
+		pieces = 0;
+		for (size_t i = 0; i < w.objects.size(); ++i)
+			if (!w.objects[i].deleted && w.objects[i].type == 0x86)
+				++pieces;
+		CHECK(pieces == 0 && !w.objects[tent].deleted);
+		CHECK(g.gameClock.hour == 7 || g.gameClock.hour == 8);
+		// poisoned: asks; "n" ends without a camp. With the third psychic power nobody can sleep.
+		sendAway();
+		w.actors.status[me] |= 8;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("is poisoned!") != std::string::npos && logText(g).find("Do you really want to sleep anyway?") != std::string::npos);
+		g.handleKey('n');
+		pieces = 0;
+		for (size_t i = 0; i < w.objects.size(); ++i)
+			if (!w.objects[i].deleted && w.objects[i].type == 0x86)
+				++pieces;
+		CHECK(pieces == 0);
+		w.actors.status[me] &= 0xF7;
+		g.mdSetPsychic(me, 2, 3);
+		sendAway();
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("complains of too much light.") != std::string::npos && logText(g).find("Nobody can sleep.") != std::string::npos);
+		g.mdSetPsychic(me, 2, 0);
+		w.deleteObject(tent);
+		w.actors.strength[me] = (uint8_t)str;
+		for (size_t i = moved.size(); i-- > 0;)
+			w.moveObject(moved[i].first, moved[i].second.first, moved[i].second.second, 0);
+	}
+
 	// the sextant (0x60, recipe 33) on the surface: (y - 512) * 240 / 1024 = 27 south, (x - 512) * 360 / 1024 gives east
 	{
 		std::vector<int> here;

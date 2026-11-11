@@ -1083,6 +1083,9 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		break;
 	}
+	case 0: // sub_59480: the folded tent: the camp (md_rest.cpp)
+		mdTent(item);
+		break;
 	case 8: { // sub_59D15: pliers (item) on a cable spool (first, used up) to a tower top or a power cable (second): needs the story to be at the right point (flags 0x73 bit 4 and 0x71 bit 8), and rubber gloves (0x26) worn by the Avatar, else a shock; the others in the party only comment
 		// APPROX(76): the lamps of the hour (sub_3F745) and the reset of the scene (sub_3F798, which removes the machine-gun things round the towers) are left out
 		ObjList &al = _world.actors;

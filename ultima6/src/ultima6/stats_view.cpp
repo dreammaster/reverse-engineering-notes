@@ -11,6 +11,15 @@ namespace Ultima6 {
 namespace Ultima6 {
 
 int ActorStats::maxHealth(const World &w, int actor) {
+	if (w.game == GameId::MartianDreams) {
+		// sub_1835E: the mechanical man (actor 6) has 0xF0; a member of the party twice the strength and 24 for each level (the others take it from a table of the creatures: APPROX(76) kept at 30 a level)
+		if (actor == 6)
+			return 0xF0;
+		if (w.actors.status[actor] & 0x80) {
+			int v = w.actors.strength[actor] * 2 + w.actors.level[actor] * 24;
+			return v == 0 ? 1 : v > 255 ? 255 : v;
+		}
+	}
 	int v = w.actors.level[actor] * 30;
 	if (v == 0)
 		v = 1;

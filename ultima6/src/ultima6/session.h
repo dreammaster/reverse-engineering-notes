@@ -103,6 +103,15 @@ public:
 	int mdPsychic(int actor, int which) const; // Martian Dreams: the psychic numbers of a member (ds:16B0)
 	void mdSetPsychic(int actor, int which, int value);
 	int mdDistance(int x1, int y1, int x2, int y2) const; // sub_1B2B8
+	void mdTent(int idx);                                 // recipe 0 (md_rest.cpp)
+	void mdRestStart(int tx, int ty);
+	bool mdRestCamp();
+	bool mdRestSleep();
+	bool mdRestRun();
+	bool mdDream(int actor);
+	bool mdMale(int actor);
+	std::string mdMemberName(int actor) const;
+	int _mdRestX = 0, _mdRestY = 0, _mdRestHours = 0, _mdRestStep = 0, _mdTent[5] = {0, 0, 0, 0, 0};
 	int mdReach() const;
 	bool mdInReach(int tx, int ty);
 
