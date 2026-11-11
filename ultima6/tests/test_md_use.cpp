@@ -1011,6 +1011,73 @@ int main() {
 		w.actors.dexterity[1] = (uint8_t)dexterity;
 		w.deleteObject(cue);
 		w.deleteObject(table);
+		// the valve (0xDC, recipe 72) and a panel (0x1CA, recipe 45) on a cabinet (0x1C9)
+		int valve = put(w, 0xDC, 0, px + 1, py, 0);
+		w.actors.talkFlags[0x76] = 0;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("There is no water pressure in the valve system") != std::string::npos);
+		w.actors.talkFlags[0x76] = 0x20;
+		useEast(w, g, px, py);
+		CHECK(w.actors.talkFlags[0x76] == 0x60);
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("The canals are already working") != std::string::npos);
+		w.deleteObject(valve);
+		int cabinet = put(w, 0x1C9, 0, px + 1, py, 0);
+		int panel = put(w, 0x1CA, 0, px + 1, py, 0);
+		w.objects[cabinet].quality = 2;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Status lights change but you see no other effect") != std::string::npos);
+		w.objects[panel].quality = 2;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("The panel is broken") != std::string::npos);
+		w.actors.talkFlags[0x76] = 0;
+		w.deleteObject(panel);
+		w.deleteObject(cabinet);
+		// the ruby slippers (0xC, recipe 67) on the ground are picked up
+		int slippers = put(w, 0xC, 0, px + 1, py, 0);
+		useEast(w, g, px, py);
+		bool carriedNow = false;
+		std::vector<int> pack;
+		w.inventory(1, pack, true);
+		for (int i : pack)
+			carriedNow |= w.objects[i].type == 0xC;
+		CHECK(w.objects[slippers].deleted && carriedNow);
+		for (int i : pack)
+			if (w.objects[i].type == 0xC)
+				w.deleteObject(i);
+		// a lever (0x137, recipe 24) with the number 0x7E: quality 1 locks and unlocks the door that has it (0xB3), quality 2 opens and shuts it once the story allows
+		int lever = put(w, 0x137, 0, px + 1, py, 0);
+		w.objects[lever].quality = 1;
+		w.objects[lever].quantity = 0x7E;
+		int door7 = put(w, 0xB3, 0, px + 3, py + 1, 0);
+		w.objects[door7].quality = 0x7E;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK((w.objects[door7].quality & 0x80) && w.objects[lever].frame == 0);
+		useEast(w, g, px, py);
+		CHECK(!(w.objects[door7].quality & 0x80) && w.objects[lever].frame == 1);
+		w.objects[lever].quality = 2;
+		w.actors.talkFlags[0x73] = 0;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("the lever seems stuck") != std::string::npos && w.objects[door7].frame == 0);
+		w.actors.talkFlags[0x73] = 0x10;
+		useEast(w, g, px, py);
+		CHECK(w.objects[door7].frame == 9 && w.objects[lever].frame == 1);
+		useEast(w, g, px, py);
+		CHECK(w.objects[door7].frame == 1 && w.objects[lever].frame == 0);
+		w.objects[door7].quality = 0x7D;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Strangely, nothing happens") != std::string::npos);
+		w.actors.talkFlags[0x73] = 0;
+		w.deleteObject(door7);
+		w.deleteObject(lever);
+		clearArea();
 		// the drill (0x1B9, recipe 39) facing east (frame 4): nothing there; an iron vein (0x1BB ore on the free square south of the drill, the vein's quality counts down)
 		int drill = put(w, 0x1B9, 4, px + 1, py, 0);
 		g.log.clear();

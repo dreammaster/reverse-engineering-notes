@@ -1084,6 +1084,139 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		break;
 	}
+	case 72: { // sub_5D313: the valve (0xDC): "The canals are already working." (flag 0x40 of actor 0x76), or with flag 0x20 it is turned on (flag 0x40), else "There is no water pressure in the valve system."
+		// APPROX(76): the water that then fills the canals (sub_14722, sub_3F7AC) is not done
+		ObjList &al = _world.actors;
+		if (al.talkFlags[0x76] & 0x40)
+			message("The canals are already working.\n");
+		else if (al.talkFlags[0x76] & 0x20)
+			al.talkFlags[0x76] |= 0x40;
+		else
+			message("There is no water pressure in the valve system.\n");
+		break;
+	}
+	case 45: { // sub_5C2E3: a panel (item, 0x1CA) works the cabinet (0x1C9) on its square by the cabinet's quality: 0-3 only say what happened, 4-6 are the scenes of sub_5BC53, sub_5BFBF and sub_5C183, 7 the valve; a broken (quality bit 2) or loose (bit 1) panel does nothing
+		// APPROX(76): the scenes 4-6 are not done
+		int q = o.quality;
+		if (q & 2) {
+			message("The panel is broken.\n");
+			break;
+		}
+		if (q & 1) {
+			message("The panel is not installed.\n");
+			break;
+		}
+		int cabinet = seFind(0x1C9, o.x, o.y);
+		if (cabinet < 0) {
+			message("Panels are only installed onto cabinets.\n");
+			break;
+		}
+		switch (_world.objects[cabinet].quality) {
+		case 0:
+			message("You are completely unsure what you just did.\n");
+			break;
+		case 1:
+			message("You actuate the mechanism to no apparent effect.\n");
+			break;
+		case 2:
+			message("Status lights change but you see no other effect.\n");
+			break;
+		case 3:
+			message("Lights flash and change color but nothing else happens.\n");
+			break;
+		case 7:
+			mdAction(72, item, first, second);
+			break;
+		case 4:
+		case 5:
+		case 6:
+			break;
+		default:
+			message("It has no effect.\n");
+			break;
+		}
+		break;
+	}
+	case 67: { // sub_5CE4D: the ruby slippers (item, 0xC): on the ground they are picked up; in the pack each use (quality 0, 1) says "Click."; the third offers the Grand Finale
+		// APPROX(76): picking up is not sub_3F8F0 (the Get command's weight and ownership checks); the Grand Finale (sub_3F789) and the way back to play (sub_3F77F) are not done: either key ends the question
+		World::Obj &s = _world.objects[item];
+		if (!carriedObject(s)) {
+			int holder = actingActor();
+			World::Obj copy = s;
+			int got = _world.addToInventory(holder, copy.type, copy.quality, copy.quantity);
+			_world.objects[got].frame = copy.frame;
+			_world.deleteObject(item);
+			break;
+		}
+		if (s.quality < 2) {
+			++s.quality;
+			message("Click.\n");
+			break;
+		}
+		message("You may use the ruby slippers to go home. If you choose to, you may now view the Grand Finale.\n\n");
+		message("Afterwards, you will exit to DOS. You will be able to resume play from your last saved game.\n\n");
+		message("Would you like to see the Grand Finale now? If so, press Y. To resume play now, hit N: (Y N)\n");
+		mdAskKey([](int key) { return key == 'y' || key == 'Y' || key == 'n' || key == 'N'; });
+		break;
+	}
+	case 24: { // sub_52F40: a lever or switch (0xC4, 0x137, 0x138): its quality says what it does (the table at cs:0062), its quantity is the number it shares with what it works. Quality 1 locks / unlocks the door (0xB3 or 0xE3 with that number in the low 7 bits of its quality) and sets the levers' frames; 2 opens / closes it (if the story has come to that: flag 0x73 bit 4 for the 0xE3, bit 0x10 for the 0xB3, else "the lever seems stuck.") and sets the levers' frames; 0xA, 0x14 and 0x15 are scenes (sub_3F5A0, sub_5328B, sub_53496); another is "What an odd lever!"
+		// APPROX(76): the three scenes and the part of quality 2 that is for a dream (sub_3F615) are not done; the sound of the door (sub_3058D) is left out
+		int q = o.quality, id = o.quantity;
+		if (q == 0xA || q == 0x14 || q == 0x15)
+			break;
+		if (q != 1 && q != 2) {
+			message("What an odd lever!\n");
+			break;
+		}
+		int door = -1;
+		std::vector<int> levers;
+		for (size_t i = 0; i < _world.objects.size(); ++i) {
+			const World::Obj &c = _world.objects[i];
+			if (c.deleted || c.actor >= 0 || !c.onMap())
+				continue;
+			if (c.type == 0xB3 || c.type == 0xE3) {
+				if ((c.quality & 0x7F) == id)
+					door = (int)i;
+			} else if ((c.type == 0x137 || c.type == 0x138 || c.type == 0xC4) && c.quality <= 2 && c.quantity == id && levers.size() < 4) {
+				levers.push_back((int)i);
+			}
+		}
+		if (door < 0) {
+			message("Strangely, nothing happens.\n");
+			break;
+		}
+		if (levers.empty()) {
+			message("Strangely, it doesn't move.\n");
+			break;
+		}
+		int state = 0;
+		if (q == 1) {
+			World::Obj &d = _world.objects[door];
+			if (d.quality & 0x80) {
+				d.quality &= 0x7F;
+				state = 1;
+			} else {
+				d.quality |= 0x80;
+			}
+		} else {
+			World::Obj &d = _world.objects[door];
+			int f = d.frame;
+			if ((d.type == 0xE3 && !(_world.actors.talkFlags[0x73] & 4)) || (d.type == 0xB3 && !(_world.actors.talkFlags[0x73] & 0x10))) {
+				message("the lever seems stuck.\n");
+				break;
+			}
+			if (f < 4) {
+				d.frame = (uint8_t)((f & 2) + 9);
+				state = 1;
+			} else {
+				d.frame = (uint8_t)((f & 2) + 1);
+			}
+		}
+		for (int l : levers)
+			_world.objects[l].frame = (uint8_t)state;
+		sfx(0x11);
+		break;
+	}
 	case 39: { // sub_5DB79: the drill (item, 0x1B9) bores the square its frame faces (frame 1 west, 3 north, 4 east, else south): an iron vein (0x1BD) gives iron ore (0x1BB), a coal vein (0x1BE) coal (0x1BC), the rock terrain 0xF0-0xFB rocks (0x1BA); somebody there is hurt (1-40); else "There is nothing to drill into." The ore lies on the first free square round the drill, starting by where it points ("There is no room left for the ore."), and a vein is used up by its quality
 		static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
 		int mask = z == 0 ? 0x3FF : 0xFF;
