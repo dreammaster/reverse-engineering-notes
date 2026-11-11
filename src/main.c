@@ -1,7 +1,7 @@
 /*
  * Cadaver / Cadaver: The Payoff - reimplementation front end (SDL2).
  *
- *   cadaver [-g <game dir>] [--scene logo|loading|sprites|sprites2|room|tiles|walk|intro|objects] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]
+ *   cadaver [-g <game dir>] [--scene game|logo|loading|sprites|sprites2|room|tiles|walk|intro|objects] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]
  *
  * Current state: asset pipeline + title/loading scenes. Gameplay is not
  * implemented yet (see docs/roadmap.md).
@@ -864,6 +864,7 @@ int main(int argc, char **argv) {
 	const char *shot = NULL;
 	const char *sim = NULL;  /* headless walk simulation: right:30,down:10 */
 	Scene scene = SCENE_LOGO;
+	int game_mode = 0;           /* --scene game: title scroll, then Space/Return starts level 1 in the walk scene */
 	for (int i = 1; i < argc; i++) {
 		if (!strcmp(argv[i], "-g") && i + 1 < argc)
 			dir = argv[++i];
@@ -881,7 +882,8 @@ int main(int argc, char **argv) {
 			shot = argv[++i];
 		else if (!strcmp(argv[i], "--scene") && i + 1 < argc) {
 			++i;
-			scene = !strcmp(argv[i], "objects") ? SCENE_OBJECTS : !strcmp(argv[i], "intro") ? SCENE_INTRO : !strcmp(argv[i], "walk") ? SCENE_WALK : !strcmp(argv[i], "tiles") ? SCENE_TILES : !strcmp(argv[i], "room") ? SCENE_ROOM : !strcmp(argv[i], "loading") ? SCENE_LOADING : !strcmp(argv[i], "sprites") ? SCENE_SPRITES
+			if (!strcmp(argv[i], "game")) game_mode = 1;
+			scene = game_mode ? SCENE_INTRO : !strcmp(argv[i], "objects") ? SCENE_OBJECTS : !strcmp(argv[i], "intro") ? SCENE_INTRO : !strcmp(argv[i], "walk") ? SCENE_WALK : !strcmp(argv[i], "tiles") ? SCENE_TILES : !strcmp(argv[i], "room") ? SCENE_ROOM : !strcmp(argv[i], "loading") ? SCENE_LOADING : !strcmp(argv[i], "sprites") ? SCENE_SPRITES
 			        : !strcmp(argv[i], "sprites2") ? SCENE_SPRITES_BIG : SCENE_LOGO;
 		} else {
 			fprintf(stderr, "usage: %s [-g gamedir] [--scene logo|loading|sprites|sprites2|room|tiles|walk|intro|objects] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]\n", argv[0]);
@@ -936,6 +938,10 @@ int main(int argc, char **argv) {
 				else if (scene == SCENE_ROOM && k == SDLK_RIGHT) g_room.scroll_x += 16;
 				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_OBJECTS) && k == SDLK_UP) g_room.scroll_y -= 16;
 				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_OBJECTS) && k == SDLK_DOWN) g_room.scroll_y += 16;
+				else if (game_mode && (k == SDLK_SPACE || k == SDLK_RETURN)) {
+					if (scene == SCENE_INTRO) { scene = SCENE_WALK; g_room.level = 1; g_room.room = 0; g_room.use_tata = 0; }
+					else changed = 0;
+				}
 				else if (k == SDLK_SPACE || k == SDLK_RETURN)
 					scene = (Scene)((scene + 1) % SCENE_COUNT);
 				else
