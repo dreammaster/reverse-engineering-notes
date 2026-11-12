@@ -419,6 +419,14 @@ class Evaluator:
             e = self.mem_expr(st, op, blk, None)
             e = ("addrof", e) if e[0] in ("loc", "glob") else (e[2] if e[0] == "mem" else e)
             self.store(st, stmts, ops[0], e, blk, 2)
+        elif mn == "xchg" and ops[0].strip() in ("ax", "bx", "cx", "dx") and ops[1].strip() in ("ax", "bx", "cx", "dx"):
+            ra, rb = ops[0].strip(), ops[1].strip()
+            va, vb = st.regs.get(ra), st.regs.get(rb)
+            for r, v2 in ((ra, vb), (rb, va)):
+                if v2 is None:
+                    st.regs.pop(r, None)         # swapping with a register that holds nothing useful: the other one holds nothing either
+                else:
+                    st.regs[r] = v2
         elif mn == "xchg":
             a = self.read(st, ops[0], blk, 2)
             bb = self.read(st, ops[1], blk, 2)

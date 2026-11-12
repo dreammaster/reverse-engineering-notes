@@ -44,7 +44,7 @@ int cmdLight(Game &g);
 int cmdListen(Game &g);
 int cmdLock(Game &g);
 int cmdLook(Game &g);
-int cmdLookAt(Game &g);  // not decompiled
+int cmdLookAt(Game &g);
 int cmdLookIn(Game &g);
 int cmdLower(Game &g);
 int cmdMove(Game &g);
@@ -96,7 +96,7 @@ int conv_cb_02(Game &g, Word a0, Word a1);
 int conv_cb_03(Game &g, Word a0, Word a1);
 int conv_cb_04(Game &g, Word a0, Word a1);
 int conv_cb_05(Game &g, Word a0, Word a1);
-int conv_cb_06(Game &g, Word a0, Word a1);  // not decompiled
+int conv_cb_06(Game &g, Word a0, Word a1);
 int conv_cb_07(Game &g, Word a0, Word a1);
 int conv_cb_08(Game &g, Word a0, Word a1);
 int conv_cb_09(Game &g, Word a0, Word a1);
@@ -225,7 +225,7 @@ TextRef conv_text_51(Game &g);
 TextRef conv_text_52(Game &g);
 TextRef conv_text_53(Game &g);
 TextRef conv_text_54(Game &g);
-TextRef conv_text_55(Game &g);  // not decompiled
+TextRef conv_text_55(Game &g);
 TextRef conv_text_56(Game &g);
 TextRef conv_text_57(Game &g);  // not decompiled
 TextRef conv_text_58(Game &g);
@@ -664,7 +664,7 @@ int objh_291(Game &g, Word a0);
 int objh_292(Game &g, Word a0);
 int objh_293(Game &g, Word a0);
 int objh_294(Game &g, Word a0);
-int objh_295(Game &g, Word a0);  // not decompiled
+int objh_295(Game &g, Word a0);
 int objh_296(Game &g, Word a0);  // not decompiled
 int objh_297(Game &g, Word a0);
 int objh_298(Game &g, Word a0);
@@ -703,7 +703,7 @@ int objh_330(Game &g, Word a0);
 int objh_331(Game &g, Word a0);
 int objh_332(Game &g, Word a0);
 int objh_333(Game &g, Word a0);
-int objh_334(Game &g, Word a0);  // not decompiled
+int objh_334(Game &g, Word a0);
 int objh_335(Game &g, Word a0);
 int objh_336(Game &g, Word a0);
 int objh_337(Game &g, Word a0);
@@ -714,7 +714,7 @@ int objh_341(Game &g, Word a0);  // not decompiled
 int objh_342(Game &g, Word a0);
 int objh_343(Game &g, Word a0);
 int objh_344(Game &g, Word a0);
-int objh_345(Game &g, Word a0);  // not decompiled
+int objh_345(Game &g, Word a0);
 int objh_346(Game &g, Word a0);
 int objh_347(Game &g, Word a0);
 int objh_348(Game &g, Word a0);

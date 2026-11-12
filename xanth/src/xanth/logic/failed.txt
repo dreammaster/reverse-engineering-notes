@@ -1,15 +1,12 @@
 Conversation_GetEntry	does not compile yet: 'convId_hi' was not declared in this scope; did you mean 'convId'?
 Screen_RestoreSubPalettes	does not compile yet: 'FAR' was not declared in this scope
-cmdLookAt	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-conv_cb_06	register bx read before it is set
 conv_cb_21	does not compile yet: 'FAR' was not declared in this scope
 conv_cb_46	does not compile yet: 'FAR' was not declared in this scope
 conv_text_05	does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 conv_text_16	instruction movsw (movsw)
-conv_text_55	does not compile yet: operands to '?:' have different types 'char*' and 'int'
 conv_text_57	does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 conv_text_77	does not compile yet: incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'
-conv_text_83	does not compile yet: operands to '?:' have different types 'char*' and 'int'
+conv_text_83	does not compile yet: 'FAR' was not declared in this scope
 event_fn_07	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_17	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_25	use of bp (push    [bp+si+var_22])
@@ -20,18 +17,15 @@ objh_045	does not compile yet: invalid user-defined conversion from 'Xanth::Text
 objh_104	does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_127	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_128	does not compile yet: invalid conversion from 'intptr_t' {aka 'long long int'} to 'char*' [-fpermissive]
-objh_129	does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
+objh_129	does not compile yet: conversion from 'int' to 'Xanth::TextRef' is ambiguous
 objh_140	does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_147	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_149	does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
-objh_198	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_198	does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_207	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_230	does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
-objh_295	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_296	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_334	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_341	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_345	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_360	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_390	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 sub_1AAFB	instruction stosw (stosw)

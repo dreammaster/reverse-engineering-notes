@@ -1,13 +1,11 @@
 Conversation_GetEntry	'convId_hi' was not declared in this scope; did you mean 'convId'?
 Screen_RestoreSubPalettes	'FAR' was not declared in this scope
-cmdLookAt	invalid conversion from 'int' to 'char*' [-fpermissive]
 conv_cb_21	'FAR' was not declared in this scope
 conv_cb_46	'FAR' was not declared in this scope
 conv_text_05	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
-conv_text_55	operands to '?:' have different types 'char*' and 'int'
 conv_text_57	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 conv_text_77	incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'
-conv_text_83	operands to '?:' have different types 'char*' and 'int'
+conv_text_83	'FAR' was not declared in this scope
 event_fn_07	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_17	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_35	invalid conversion from 'int' to 'char*' [-fpermissive]
@@ -16,18 +14,15 @@ objh_045	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {ak
 objh_104	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_127	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_128	invalid conversion from 'intptr_t' {aka 'long long int'} to 'char*' [-fpermissive]
-objh_129	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
+objh_129	conversion from 'int' to 'Xanth::TextRef' is ambiguous
 objh_140	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_147	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_149	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
-objh_198	invalid conversion from 'int' to 'char*' [-fpermissive]
+objh_198	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_207	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_230	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
-objh_295	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_296	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_334	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_341	invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_345	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_360	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_390	invalid conversion from 'char*' to 'int' [-fpermissive]
 sub_44130	invalid conversion from 'char*' to 'int' [-fpermissive]

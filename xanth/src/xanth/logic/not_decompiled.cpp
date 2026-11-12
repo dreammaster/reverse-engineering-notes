@@ -6,16 +6,13 @@ namespace Xanth {
 // Functions the decompiler could not translate yet; until a hand-written replacement exists they do nothing.
 int Conversation_GetEntry(Game &, Word, Word) { return 0; }  // does not compile yet: 'convId_hi' was not declared in this scope; did you mean 'convId'?
 int Screen_RestoreSubPalettes(Game &) { return 0; }  // does not compile yet: 'FAR' was not declared in this scope
-int cmdLookAt(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int conv_cb_06(Game &, Word, Word) { return 0; }  // register bx read before it is set
 int conv_cb_21(Game &, Word) { return 0; }  // does not compile yet: 'FAR' was not declared in this scope
 int conv_cb_46(Game &, Word) { return 0; }  // does not compile yet: 'FAR' was not declared in this scope
 TextRef conv_text_05(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 TextRef conv_text_16(Game &) { return TextRef(); }  // instruction movsw (movsw)
-TextRef conv_text_55(Game &) { return TextRef(); }  // does not compile yet: operands to '?:' have different types 'char*' and 'int'
 TextRef conv_text_57(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 TextRef conv_text_77(Game &) { return TextRef(); }  // does not compile yet: incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'
-TextRef conv_text_83(Game &) { return TextRef(); }  // does not compile yet: operands to '?:' have different types 'char*' and 'int'
+TextRef conv_text_83(Game &) { return TextRef(); }  // does not compile yet: 'FAR' was not declared in this scope
 int event_fn_07(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int event_fn_17(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int event_fn_25(Game &) { return 0; }  // use of bp (push    [bp+si+var_22])
@@ -26,18 +23,15 @@ int objh_045(Game &) { return 0; }  // does not compile yet: invalid user-define
 int objh_104(Game &, Word) { return 0; }  // does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 int objh_127(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_128(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'intptr_t' {aka 'long long int'} to 'char*' [-fpermissive]
-int objh_129(Game &, Word) { return 0; }  // does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
+int objh_129(Game &, Word) { return 0; }  // does not compile yet: conversion from 'int' to 'Xanth::TextRef' is ambiguous
 int objh_140(Game &, Word) { return 0; }  // does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 int objh_147(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_149(Game &, Word) { return 0; }  // does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
-int objh_198(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
+int objh_198(Game &, Word) { return 0; }  // does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 int objh_207(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_230(Game &, Word) { return 0; }  // does not compile yet: invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
-int objh_295(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_296(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_334(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_341(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_345(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_360(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_390(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int sub_1AAFB(Game &) { return 0; }  // instruction stosw (stosw)

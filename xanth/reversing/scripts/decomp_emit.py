@@ -257,6 +257,8 @@ def pair_far_sets(f):
                     new = lo
                 elif lo[0] == "k" and hi[0] == "dseg":
                     new = ("kstr", lo[1])
+                elif lo[0] == "k" and hi[0] == "k" and (hi[1] & 0xFF00) == 0xF000:
+                    new = ("msg", hi[1] & 0xFF, lo[1])        # a message id held in a far-pointer variable
                 if new is not None:
                     st[i:i + 2] = [("set", ("loc", a[1][1], a[1][2], 4), new)]
                     continue
@@ -523,7 +525,9 @@ class Emitter:
         for s in b.stmts:
             if s[0] == "set":
                 lhs, rhs = s[1], s[2]
-                if lhs in self.ptr_vars:
+                if lhs[0] == "loc" and len(lhs) > 3 and lhs[3] == 4 and rhs[0] in ("msg", "kstr", "str", "words", "far", "null"):
+                    out.append("%s = TextRef(%s);" % (r.R(lhs), r.R(rhs)))
+                elif lhs in self.ptr_vars:
                     out.append("%s = %s;" % (r.R(lhs), r.ptr(rhs)))
                 elif lhs[0] == "mem":
                     out.append("%s = %s;" % (r.R(lhs), r.R(rhs)))

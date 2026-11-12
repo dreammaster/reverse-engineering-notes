@@ -70,6 +70,31 @@ int conv_cb_05(Game &g, Word arg0, Word arg1) {
 	}
 }
 
+// conv_cb_06
+int conv_cb_06(Game &g, Word arg0, Word arg1) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	if (arg1 > 5) {
+		return arg1;
+	}
+	switch (arg1) {
+	case 0:
+	case 5:
+		return g.schedule_event(0xD, 0xA);
+	case 1:
+	case 3:
+		return conversation_set_enabled(g, arg0, arg1, 0);
+	case 2:
+		conversation_set_enabled(g, arg0, arg1, 0);
+		conversation_set_enabled(g, arg0, 3, 1);
+		conversation_set_enabled(g, arg0, 4, 1);
+		return conversation_set_enabled(g, arg0, 5, 1);
+	case 4:
+		v.byte_852B5 = 1;
+		return 0;
+	}
+}
+
 // conv_cb_07
 int conv_cb_07(Game &g, Word arg0, Word arg1) {
 	Vars &v = g.state.v;
@@ -447,7 +472,7 @@ int conv_cb_30(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	if (rt.voc_enabled == 0) {
-		return g.realsound_play(ES(23));
+		return g.realsound_play(ES(27));
 	} else {
 		return 0;
 	}

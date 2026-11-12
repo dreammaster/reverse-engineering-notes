@@ -37,6 +37,7 @@
 		rt.seg_8AA14 = 34044;
 		rt.seg_8AA18 = 13153;
 		rt.seg_8AA1E = 13217;
+		rt.seg_8AA4E = 32877;
 		rt.seg_8AA52 = 12899;
 		rt.seg_8AA54 = 12899;
 		rt.seg_8AA58 = 12899;
@@ -69,6 +70,7 @@
 		rt.unk_73198 = 97;
 		rt.unk_73BA4 = 103;
 		rt.unk_74C40 = 44;
+		rt.unk_76364 = 103;
 		rt.unk_763FC = 67;
 		rt.unk_76D30 = 44;
 		rt.unk_779E4 = 103;

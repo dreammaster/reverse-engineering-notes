@@ -69,6 +69,49 @@ def chain_of(f, insns, start):
         cur = b.succ[0]
 
 
+def split_pending_calls(f, insns):
+    """a block several paths enter whose first call takes arguments the paths pushed (a shared `Font_WriteMessage(...)` tail) is cut after that call, so that the
+    part up to the call can be copied per path (each path then supplies its own argument words)"""
+    for bid in list(f.blocks):
+        b = f.blocks.get(bid)
+        if b is None or bid == f.entry or len(b.pred) < 2 or bid in f.jtable_targets:
+            continue
+        pushes = 0
+        for k, i in enumerate(b.insns):
+            x = insns[i]
+            if x.mn == "push":
+                pushes += 1
+            if x.mn == "call" and x.ops:
+                tgt = clean_target(x.ops[0])
+                j = k + 1
+                words = None
+                if j < len(b.insns) and insns[b.insns[j]].mn == "add" and insns[b.insns[j]].ops[0].strip() == "sp":
+                    try:
+                        words = L.num(insns[b.insns[j]].ops[1]) // 2
+                    except Exception:
+                        words = None
+                    j += 1
+                elif j < len(b.insns) and insns[b.insns[j]].mn == "mov" and insns[b.insns[j]].ops[0].strip() == "sp":
+                    j += 1
+                    sig = CALLSIG.get(tgt)
+                    words = max(sig) if sig else None
+                if words is not None and pushes < words and j < len(b.insns):
+                    rest = Block(max(f.blocks) + 1, insns[b.insns[j]].idx)
+                    rest.insns = b.insns[j:]
+                    rest.succ = list(b.succ)
+                    rest.term = b.term
+                    rest.pred = [bid]
+                    f.blocks[rest.id] = rest
+                    for sid in rest.succ:
+                        if sid is not None:
+                            f.blocks[sid].pred = [rest.id if x == bid else x for x in f.blocks[sid].pred]
+                    b.insns = b.insns[:j]
+                    b.succ = [rest.id]
+                    b.term = None
+                    b.split_tail = True
+                break
+
+
 def duplicate_blocks(f, insns, max_tail=12):
     """a test that several paths share (each with its own flags) and a short block that only finishes the function are copied per predecessor"""
     changed = True
@@ -81,7 +124,7 @@ def duplicate_blocks(f, insns, max_tail=12):
             if b is None or bid == f.entry or len(b.pred) < 2 or bid in f.jtable_targets:
                 continue
             last = insns[b.insns[-1]]
-            is_test = len(b.insns) == 1 and last.mn in JCC and last.mn not in ("jo", "jno")
+            is_test = (len(b.insns) == 1 and last.mn in JCC and last.mn not in ("jo", "jno")) or getattr(b, "split_tail", False)
             ch = None if is_test else chain_of(f, insns, bid)
             if not is_test and (ch is None or ch[1] * (len(b.pred) - 1) > 400 or ch[1] > max_tail):
                 continue
@@ -196,6 +239,7 @@ def build_cfg(insns, labels, tables, procs, name, entry):
     for b in blocks:
         if b.term and b.term[0] == "jtable":
             f.jtable_targets.update(b.succ)
+    split_pending_calls(f, insns)
     duplicate_blocks(f, insns)
     blocks = list(f.blocks.values())
     # reverse post order
