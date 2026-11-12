@@ -54,6 +54,7 @@ class Evaluator:
         self.entry_insn = entry_insn
         self.ncall = 0
         self.skip = set()       # `add sp, N` instructions that belong to a call
+        self.strfn = any(insns[i].mn in ("scasb", "movsw", "movsb") for i in L.reachable(insns, labels, tables, entry_insn))
 
     # ---- helpers
     def tmp(self, stmts, e):
@@ -73,6 +74,8 @@ class Evaluator:
 
     def reg_get16(self, st, r, blk):
         if r in ("si", "di"):
+            if self.strfn and r not in st.shadow:
+                raise Unsupported("%s read before it is set (string function)" % r)
             return st.shadow.get(r, ("loc", r, 0, 2))
         if r in ("bp", "sp"):
             raise Unsupported("use of " + r)
@@ -206,6 +209,9 @@ class Evaluator:
             if r in REG8:
                 self.reg_set8(st, r, val, blk)
             elif r in ("si", "di"):
+                if self.strfn:
+                    st.shadow[r] = val             # only the operands of the inline string instructions: no variable
+                    return
                 self.materialize(st, stmts, lambda e: reads(e, r))
                 stmts.append(("set", ("loc", r, 0, 2), val))
                 st.shadow[r] = val

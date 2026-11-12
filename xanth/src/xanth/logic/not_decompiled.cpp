@@ -11,7 +11,7 @@ int conv_cb_46(Game &, Word) { return 0; }  // does not compile yet: 'FAR' was n
 TextRef conv_text_05(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 TextRef conv_text_16(Game &) { return TextRef(); }  // instruction movsw (movsw)
 TextRef conv_text_57(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
-TextRef conv_text_77(Game &) { return TextRef(); }  // does not compile yet: incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'
+TextRef conv_text_77(Game &) { return TextRef(); }  // di read before it is set (string function) (scasb)
 TextRef conv_text_83(Game &) { return TextRef(); }  // does not compile yet: 'FAR' was not declared in this scope
 int event_fn_07(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int event_fn_17(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]

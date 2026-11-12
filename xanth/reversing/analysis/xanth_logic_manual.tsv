@@ -4,7 +4,6 @@ conv_cb_21	'FAR' was not declared in this scope
 conv_cb_46	'FAR' was not declared in this scope
 conv_text_05	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 conv_text_57	invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
-conv_text_77	incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'
 conv_text_83	'FAR' was not declared in this scope
 event_fn_07	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_17	invalid conversion from 'int' to 'char*' [-fpermissive]

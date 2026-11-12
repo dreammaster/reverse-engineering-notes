@@ -5,7 +5,7 @@ conv_cb_46	does not compile yet: 'FAR' was not declared in this scope
 conv_text_05	does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 conv_text_16	instruction movsw (movsw)
 conv_text_57	does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
-conv_text_77	does not compile yet: incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'
+conv_text_77	di read before it is set (string function) (scasb)
 conv_text_83	does not compile yet: 'FAR' was not declared in this scope
 event_fn_07	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_17	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
