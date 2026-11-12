@@ -5,11 +5,13 @@
 #include "files/music.h"
 #include "ultima6/ending.h"
 #include "ultima6/front_end.h"
+#include "ultima6/md_front_end.h"
 #include "ultima6/session.h"
 #include "ultima6/world.h"
 
 #include <cstdio>
 #include <cstdlib>
+#include <algorithm>
 #include <cstring>
 #include <memory>
 #include <string>
@@ -61,7 +63,7 @@ int main(int argc, char **argv) {
 
 	const char *keys = nullptr, *shot = nullptr;
 	int scale = 3;
-	bool play = id != Ultima6::GameId::Ultima6, endingOnly = false;
+	bool play = id == Ultima6::GameId::SavageEmpire, endingOnly = false; // Martian Dreams has its menu; Savage Empire's saved game is walked about in
 	std::string saveDir = id == Ultima6::GameId::MartianDreams ? "mdsave" : id == Ultima6::GameId::SavageEmpire ? "sesave" : "u6save"; // our own save directory; the game's files are never written
 	for (int i = 2; i < argc; ++i) {
 		if (!std::strcmp(argv[i], "--keys") && i + 1 < argc)
@@ -118,7 +120,26 @@ int main(int argc, char **argv) {
 	world.game = id;
 	bool created = false;
 	Ultima6::Ultima6::NewCharacter character;
-	if (!play) {
+	std::string newName; // Martian Dreams: the name typed in its menu
+	if (!play && id == Ultima6::GameId::MartianDreams) {
+		Ultima6::Ultima6::MdFrontEnd front(argv[1]);
+		if (!front.ok()) {
+			std::fprintf(stderr, "cannot load the menu files\n");
+			return 1;
+		}
+		bool running = true;
+		while (running) {
+			front.render(screen);
+			backend->present(screen);
+			running = front.handleKey(backend->waitKey());
+		}
+		if (!front.wantsGame()) {
+			if (shot)
+				screen.savePng(shot, scale);
+			return 0;
+		}
+		newName = front.name();
+	} else if (!play) {
 		Ultima6::Ultima6::FrontEnd front(argv[1]);
 		if (!front.ok()) {
 			std::fprintf(stderr, "cannot load the menu files\n");
@@ -149,6 +170,11 @@ int main(int argc, char **argv) {
 	if (!world.load(argv[1], created ? &character : nullptr, !created && haveSave ? saveDir : std::string())) {
 		std::fprintf(stderr, "cannot load %s\n", world.error().c_str());
 		return 1;
+	}
+	if (!newName.empty()) { // the name of a new character of Martian Dreams (the party's first name, 13 letters)
+		Ultima6::ObjList &al = world.actors;
+		std::memset(al.partyNames[0], 0, sizeof al.partyNames[0]);
+		std::memcpy(al.partyNames[0], newName.c_str(), std::min<size_t>(newName.size(), 13));
 	}
 	Ultima6::Ultima6::Game game(world);
 	game.saveDir = saveDir;
