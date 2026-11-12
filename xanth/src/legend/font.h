@@ -43,8 +43,15 @@ public:
 	 *  whole cell (advance x lineHeight) is filled with it first, like Font_WriteChar. */
 	int drawChar(Surface &dst, int x, int y, int ch, byte color, int background = -1) const;
 	int drawText(Surface &dst, int x, int y, const std::string &text, byte color, int background = -1) const;
+	/** Font_WriteChar with the override colour set: the glyph in `color`, surrounded by a one-pixel outline in `outline` (every pixel next to a glyph pixel, diagonals
+	 *  included); the cell is two pixels wider and higher than the glyph and the pen advances one pixel more. Monochrome fonts only. Returns the advance. */
+	int drawCharOutlined(Surface &dst, int x, int y, int ch, byte color, byte outline) const;
+	int drawTextOutlined(Surface &dst, int x, int y, const std::string &text, byte color, byte outline) const;
+	/** Width of the text as Font_stringWidth gives it with the override colour set (one pixel more per character). */
+	int textWidthOutlined(const std::string &text) const { return textWidth(text) + (int)text.size(); }
 
 private:
+	bool glyphBit(int ch, int col, int row) const;
 	int _bpp, _bytesPerRow, _first, _last, _lineSpacing, _height, _width, _spacing;
 	std::vector<byte> _widths, _spacings, _glyphs;
 };

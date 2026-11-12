@@ -125,6 +125,7 @@ int main() {
 		Legend::Surface screen(320, 200);
 		ms.drawFrame(screen);
 		CHECK(ms.drawRoomPicture(screen, gf, 0x0200), "the bedroom picture draws");
+		ms.drawCompassArrows(screen, getenv("XANTH_EXITS") ? (unsigned)atoi(getenv("XANTH_EXITS")) : 0x80u);
 		static const char *kVerbs[] = {"Take", "Put", "Look at", "Open", "Close", "Talk to", "Look"};
 		ms.drawVerbs(screen, std::vector<std::string>(kVerbs, kVerbs + ARRAYSIZE(kVerbs)));
 		ms.printMessage(screen, "You are sitting at your desk, watching the gathering storm through your window.");
@@ -134,6 +135,33 @@ int main() {
 			printf("main screen against %s:\n", oracleShot);
 			std::string diffPath = shots ? std::string(shots) + "/diff.ppm" : std::string();
 			compareScreens(screen, oracle, shots ? diffPath.c_str() : NULL);
+		}
+		if (getenv("XANTH_LABELSEARCH") && !oracle.empty()) {
+			for (int fi = 0; fi < ARRAYSIZE(kFonts); fi++) {
+				Common::Bytes fd;
+				Legend::Font f;
+				if (!gf.load(kFonts[fi], fd) || !f.load(fd))
+					continue;
+				int best = 1 << 30, bx = 0, by = 0;
+				for (int y = 100; y < 126; y++) {
+					for (int x = 130; x < 240; x++) {
+						Legend::Surface t(screen);
+						f.drawTextOutlined(t, x, y, "computer", 15, 0);
+						std::vector<byte> rgb(320 * 200 * 3);
+						t.toRgb(&rgb[0]);
+						int bad = 0;
+						for (int yy = 100; yy < 128; yy++)
+							for (int xx = 130; xx < 250; xx++)
+								bad += memcmp(&rgb[(yy * 320 + xx) * 3], &oracle[(yy * 320 + xx) * 3], 3) != 0;
+						if (bad < best) {
+							best = bad;
+							bx = x;
+							by = y;
+						}
+					}
+				}
+				printf("label search: %s best %d differing pixels at (%d,%d)\n", kFonts[fi], best, bx, by);
+			}
 		}
 		if (shots)
 			screen.savePpm(std::string(shots) + "/screen.ppm");

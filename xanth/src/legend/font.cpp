@@ -99,4 +99,39 @@ int Font::drawText(Surface &dst, int x, int y, const std::string &text, byte col
 	return x - start;
 }
 
+bool Font::glyphBit(int ch, int col, int row) const {
+	if (!hasGlyph(ch) || col < 0 || row < 0 || row >= _height || col >= charWidth(ch))
+		return false;
+	const byte *g = &_glyphs[(size_t)(ch - _first) * _bytesPerRow * _height];
+	return (g[(size_t)row * _bytesPerRow + (col >> 3)] & (0x80 >> (col & 7))) != 0;
+}
+
+int Font::drawCharOutlined(Surface &dst, int x, int y, int ch, byte color, byte outline) const {
+	x += lead(ch);
+	int w = charWidth(ch);
+	for (int cy = 0; cy < _height + 2; cy++) {
+		for (int cx = 0; cx < w + 2; cx++) {
+			int gx = cx - 1, gy = cy - 1;
+			if (glyphBit(ch, gx, gy)) {
+				dst.put(x + cx, y + cy, color);
+				continue;
+			}
+			bool near = false;
+			for (int dy = -1; dy <= 1 && !near; dy++)
+				for (int dx = -1; dx <= 1 && !near; dx++)
+					near = glyphBit(ch, gx + dx, gy + dy);
+			if (near)
+				dst.put(x + cx, y + cy, outline);
+		}
+	}
+	return advance(ch) + 1;
+}
+
+int Font::drawTextOutlined(Surface &dst, int x, int y, const std::string &text, byte color, byte outline) const {
+	int start = x;
+	for (size_t i = 0; i < text.size(); i++)
+		x += drawCharOutlined(dst, x, y, (byte)text[i], color, outline);
+	return x - start;
+}
+
 } // namespace Legend

@@ -21,6 +21,8 @@ bool MainScreen::load(const Common::GameFiles &files) {
 	          p1.decode(0, _interfacePalette);
 	for (int i = 0; i < 5; i++)
 		ok = ok && p0.decode(21 + i, _buttons[i]);
+	for (int i = 0; i < 10; i++)
+		ok = ok && p0.decode(1 + i, _arrows[i]);
 	return ok;
 }
 
@@ -74,6 +76,12 @@ void MainScreen::drawVerbs(Surface &s, const std::vector<std::string> &verbs) co
 		_font1.drawText(s, 2, y, verbs[i], 15);
 		y += _font1.lineHeight();
 	}
+}
+
+void MainScreen::drawCompassArrows(Surface &s, unsigned exits) const {
+	for (int i = 0; i < 10; i++)
+		if (exits & (1u << i))
+			pic(s, _arrows[i], 4, 129);
 }
 
 void MainScreen::printMessage(Surface &s, const std::string &text) const {

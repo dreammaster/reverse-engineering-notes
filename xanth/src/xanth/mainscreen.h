@@ -32,12 +32,15 @@ public:
 	/** The text window (window 2, font 10, colours 15 on 23): prints a message like Font_WriteLines does. */
 	void printMessage(Legend::Surface &s, const std::string &text) const;
 
+	/** The compass: arrow i (bit i of `exits`) is drawn exclusive-or onto the compass picture (sub_2B236 draws only the arrows whose state changed). */
+	void drawCompassArrows(Legend::Surface &s, unsigned exits) const;
+
 	/** The interface palette entries applied over a picture's palette (Screen_RestoreSubPalettes). */
 	void restoreSubPalettes(byte *palette768) const;
 
 private:
 	Legend::Font _font1, _font10;
-	Legend::PicImage _marble, _compass, _slotPanel, _listPanel, _scrollPanel, _buttons[5], _interfacePalette;
+	Legend::PicImage _marble, _compass, _slotPanel, _listPanel, _scrollPanel, _buttons[5], _arrows[10], _interfacePalette;
 };
 
 } // namespace Xanth
