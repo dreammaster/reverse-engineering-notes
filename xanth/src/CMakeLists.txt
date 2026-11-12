@@ -24,6 +24,7 @@ add_library(legend STATIC
 	legend/font.cpp
 	legend/surface.cpp
 	legend/draw.cpp
+	legend/textwindow.cpp
 )
 
 # xanth/: Companions of Xanth

@@ -11,6 +11,7 @@
 #define XANTH_MAINSCREEN_H
 
 #include "common/files.h"
+#include "legend/font.h"
 #include "legend/pic.h"
 #include "legend/surface.h"
 
@@ -26,10 +27,16 @@ public:
 	/** Draws a room picture (file XANTH_nn.PIC, entry) in the picture window and takes over its palette. */
 	bool drawRoomPicture(Legend::Surface &s, const Common::GameFiles &files, int picNum) const;
 
+	/** The verb list: each name twice, black one pixel down and to the right and white on top (sub_18CBE, font 1). */
+	void drawVerbs(Legend::Surface &s, const std::vector<std::string> &verbs) const;
+	/** The text window (window 2, font 10, colours 15 on 23): prints a message like Font_WriteLines does. */
+	void printMessage(Legend::Surface &s, const std::string &text) const;
+
 	/** The interface palette entries applied over a picture's palette (Screen_RestoreSubPalettes). */
 	void restoreSubPalettes(byte *palette768) const;
 
 private:
+	Legend::Font _font1, _font10;
 	Legend::PicImage _marble, _compass, _slotPanel, _listPanel, _scrollPanel, _buttons[5], _interfacePalette;
 };
 

@@ -66,7 +66,12 @@ int Font::textWidth(const std::string &text) const {
 	return w;
 }
 
-int Font::drawChar(Surface &dst, int x, int y, int ch, byte color) const {
+int Font::drawChar(Surface &dst, int x, int y, int ch, byte color, int background) const {
+	if (background >= 0) {
+		for (int row = 0; row < lineHeight(); row++)
+			for (int col = 0; col < advance(ch); col++)
+				dst.put(x + col, y + row, (byte)background);
+	}
 	if (hasGlyph(ch)) {
 		x += lead(ch);
 		const byte *g = &_glyphs[(size_t)(ch - _first) * _bytesPerRow * _height];
@@ -87,10 +92,10 @@ int Font::drawChar(Surface &dst, int x, int y, int ch, byte color) const {
 	return advance(ch);
 }
 
-int Font::drawText(Surface &dst, int x, int y, const std::string &text, byte color) const {
+int Font::drawText(Surface &dst, int x, int y, const std::string &text, byte color, int background) const {
 	int start = x;
 	for (size_t i = 0; i < text.size(); i++)
-		x += drawChar(dst, x, y, (byte)text[i], color);
+		x += drawChar(dst, x, y, (byte)text[i], color, background);
 	return x - start;
 }
 

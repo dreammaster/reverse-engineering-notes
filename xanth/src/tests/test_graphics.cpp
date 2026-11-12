@@ -125,6 +125,9 @@ int main() {
 		Legend::Surface screen(320, 200);
 		ms.drawFrame(screen);
 		CHECK(ms.drawRoomPicture(screen, gf, 0x0200), "the bedroom picture draws");
+		static const char *kVerbs[] = {"Take", "Put", "Look at", "Open", "Close", "Talk to", "Look"};
+		ms.drawVerbs(screen, std::vector<std::string>(kVerbs, kVerbs + ARRAYSIZE(kVerbs)));
+		ms.printMessage(screen, "You are sitting at your desk, watching the gathering storm through your window.");
 		const char *oracleShot = getenv("XANTH_ORACLE_SHOT");
 		std::vector<byte> oracle;
 		if (oracleShot && loadPpm(oracleShot, oracle)) {

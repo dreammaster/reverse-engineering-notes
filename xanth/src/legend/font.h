@@ -21,6 +21,12 @@ public:
 
 	int height() const { return _height; }
 	int lineSpacing() const { return _lineSpacing; }
+	/** Pixels from one line to the next (Font_LineHeight): glyph height + line spacing. */
+	int lineHeight() const { return _height + _lineSpacing; }
+	/** Font_xCenter: half the advance of an 'M' - the margin the text windows keep. */
+	int xCenter() const { return advance('M') / 2; }
+	/** Font_yCenter: half the line height. */
+	int yCenter() const { return lineHeight() / 2; }
 	int firstChar() const { return _first; }
 	int lastChar() const { return _last; }
 	bool hasGlyph(int ch) const { return ch >= _first && ch <= _last; }
@@ -33,9 +39,10 @@ public:
 	int advance(int ch) const;
 	int textWidth(const std::string &text) const;
 
-	/** Draws one glyph with its top-left corner at (x, y) in `color` (monochrome fonts) or in its own colours (8 bpp fonts); returns the advance. */
-	int drawChar(Surface &dst, int x, int y, int ch, byte color) const;
-	int drawText(Surface &dst, int x, int y, const std::string &text, byte color) const;
+	/** Draws one glyph with its top-left corner at (x, y) in `color` (monochrome fonts) or in its own colours (8 bpp fonts); returns the advance. If `background` >= 0 the
+	 *  whole cell (advance x lineHeight) is filled with it first, like Font_WriteChar. */
+	int drawChar(Surface &dst, int x, int y, int ch, byte color, int background = -1) const;
+	int drawText(Surface &dst, int x, int y, const std::string &text, byte color, int background = -1) const;
 
 private:
 	int _bpp, _bytesPerRow, _first, _last, _lineSpacing, _height, _width, _spacing;

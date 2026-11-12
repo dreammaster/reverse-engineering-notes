@@ -3,6 +3,7 @@
 #include <cstdio>
 
 #include "legend/draw.h"
+#include "legend/textwindow.h"
 
 namespace Xanth {
 
@@ -11,6 +12,9 @@ using namespace Legend;
 bool MainScreen::load(const Common::GameFiles &files) {
 	Common::Bytes d0, d1;
 	PicFile p0, p1;
+	Common::Bytes f1, f10;
+	if (!files.load("XANTH_01.FNT", f1) || !_font1.load(f1) || !files.load("XANTH_10.FNT", f10) || !_font10.load(f10))
+		return false;
 	if (!files.load("XANTH_00.PIC", d0) || !files.load("XANTH_01.PIC", d1) || !p0.load(d0) || !p1.load(d1))
 		return false;
 	bool ok = p0.decode(31, _marble) && p0.decode(0, _compass) && p1.decode(1, _slotPanel) && p1.decode(2, _listPanel) && p1.decode(4, _scrollPanel) &&
@@ -61,6 +65,21 @@ void MainScreen::drawFrame(Surface &s) const {
 		buttonFrame(s, b[0], b[1], b[2], b[3], true);
 		pic(s, _buttons[kButtonPic[i]], b[0] + 2, b[1] + 2);
 	}
+}
+
+void MainScreen::drawVerbs(Surface &s, const std::vector<std::string> &verbs) const {
+	int y = 4;
+	for (size_t i = 0; i < verbs.size(); i++) {
+		_font1.drawText(s, 2 + 1, y + 1, verbs[i], 0);
+		_font1.drawText(s, 2, y, verbs[i], 15);
+		y += _font1.lineHeight();
+	}
+}
+
+void MainScreen::printMessage(Surface &s, const std::string &text) const {
+	TextWindow w;
+	w.setup(51, 128, 314, 151, &_font10, 15, 23);
+	w.print(s, text);
 }
 
 bool MainScreen::drawRoomPicture(Surface &s, const Common::GameFiles &files, int picNum) const {
