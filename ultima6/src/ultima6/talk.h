@@ -40,6 +40,9 @@ public:
 	static bool canTalk(const World &world, int actor);
 	/** What the game does when a conversation puts the party to sleep (an inn): set by the game. */
 	std::function<void()> onSleep;
+	/** Martian Dreams: the game's story events (the script command 0xD1) and the moving of an object by its index (0xC8). */
+	std::function<void(int)> onEvent;
+	std::function<void(int, int)> onMoveObject;
 
 	// ConversationHost
 	void print(const std::string &text) override;
@@ -79,6 +82,8 @@ public:
 	void addKarma(int n) override;
 	void subtractKarma(int n) override;
 	void sleep() override;
+	void event(int n) override;
+	void moveObjectTo(int obj, int actor) override;
 
 private:
 	bool load(Bytes &script) const;

@@ -100,10 +100,15 @@ public:
 	bool talking() const {
 		return _talk != nullptr;
 	}
+	void mdEvent(int n); // a story event of a Martian Dreams conversation (the script command 0xD1, md_events.cpp)
+	int mdExit() const {
+		return _mdExit;
+	}
 	int mdPsychic(int actor, int which) const; // Martian Dreams: the psychic numbers of a member (ds:16B0)
 	void mdSetPsychic(int actor, int which, int value);
 	int mdDistance(int x1, int y1, int x2, int y2) const; // sub_1B2B8
 	void mdTalk(int tx, int ty);
+	int _mdExit = -1;                                     // word_41F2A: the exit code a story event left for the conversation
 	void mdGet(int tx, int ty);                           // Martian Dreams' Get (md_commands.cpp)
 	int mdThingAt(int tx, int ty) const;
 	int mdTake(int idx, int actor, int location);

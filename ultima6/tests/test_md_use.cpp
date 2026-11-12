@@ -1167,6 +1167,42 @@ int main() {
 			w.deleteObject(rad);
 			clearArea();
 		}
+		// the story events of the conversations (the script command 0xD1): objects at fixed places, flags, exit codes, the Avatar made whole
+		{
+			for (auto sq : {std::make_pair(0x2C3, 0x1F3), std::make_pair(0x2C4, 0x1F3), std::make_pair(0x2C2, 0x1F3), std::make_pair(0x13F, 0x194)}) { // (the real ones are put aside)
+				std::vector<int> there;
+				w.objectsAt(sq.first, sq.second, 0, there);
+				for (int i : there)
+					if (w.objects[i].actor < 0)
+						w.deleteObject(i);
+			}
+			g.log.clear();
+			g.mdEvent(6); // (nothing there: "Aargh!" twice)
+			CHECK(logText(g).find("Aargh!") != std::string::npos);
+			int first = put(w, 0xB5, 0, 0x2C3, 0x1F3, 0), second = put(w, 0xB5, 0, 0x2C4, 0x1F3, 0);
+			g.mdEvent(6);
+			CHECK(w.objects[first].frame == 3 && w.objects[first].x == 0x2C2 && w.objects[first].y == 0x1F3 && w.objects[second].frame == 7);
+			w.deleteObject(first);
+			w.deleteObject(second);
+			int p1 = w.addToInventory(1, 0x1CA, 0, 1);
+			w.objects[p1].quality = 2;
+			w.actors.talkFlags[0x39] = 0;
+			g.mdEvent(1);
+			CHECK(!(w.objects[p1].quality & 2) && w.objects[p1].quantity == 4 && !(w.actors.talkFlags[0x39] & 8));
+			w.deleteObject(p1);
+			g.mdEvent(9);
+			CHECK(g.mdExit() == 9);
+			int keep = w.actors.hp[1];
+			w.actors.hp[1] = 1;
+			g.mdEvent(0x6F);
+			CHECK(w.actors.hp[1] > 1);
+			w.actors.hp[1] = (uint8_t)keep;
+			int crate = put(w, 0x98, 0, 0x13F, 0x194, 0);
+			w.objects[crate].quality = 5;
+			g.mdEvent(11);
+			CHECK(w.objects[crate].quality == 0 && w.objects[crate].frame == 7);
+			w.deleteObject(crate);
+		}
 		// Martian Dreams' Talk: a thing is read by psychometry, which needs the second psychic power and the thing's status bit 1
 		{
 			int saw = put(w, 0xF7, 0, px + 1, py, 0);

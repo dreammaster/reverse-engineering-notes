@@ -130,7 +130,7 @@ static void check(const char *dir, int schedules) {
 		}
 		CHECK(found > 40);
 		// every script runs to its first question and then ends on "bye"
-		int asked = 0;
+		int asked = 0, unknown = 0;
 		for (int actor = 1; actor < 224; ++actor) {
 			ConverseScript cs;
 			if (!w.script(actor, cs))
@@ -143,9 +143,14 @@ static void check(const char *dir, int schedules) {
 				st = c.run();
 			}
 			asked += st == Conversation::NEED_LINE;
+			if (h.out.find("[Unknown command]") != std::string::npos) {
+				std::printf("%s: the script of actor %d has a command the interpreter does not know\n", dir, actor);
+				++unknown;
+			}
 		}
 		std::printf("%s: %d scripts reach a question\n", dir, asked);
 		CHECK(asked > found / 2);
+		CHECK(unknown == 0);
 		std::printf("%s: %d conversation scripts\n", dir, found);
 	}
 

@@ -331,5 +331,15 @@ void Talk::sleep() {
 		onSleep();
 }
 
+void Talk::event(int n) {
+	if (onEvent)
+		onEvent(n);
+}
+
+void Talk::moveObjectTo(int obj, int actor) {
+	if (onMoveObject)
+		onMoveObject(obj, actor);
+}
+
 } // namespace Ultima6
 } // namespace Ultima6

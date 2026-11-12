@@ -58,6 +58,11 @@ public:
 	virtual void addKarma(int n) = 0;
 	virtual void subtractKarma(int n) = 0;
 	virtual void sleep() = 0;
+	/** Martian Dreams' script command 0xD1: a story event by its number (sub_3F869); 0xC8 moves an object by its index into an actor's pack. */
+	virtual void event(int) {
+	}
+	virtual void moveObjectTo(int, int) {
+	}
 };
 
 /**

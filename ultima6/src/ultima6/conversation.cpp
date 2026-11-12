@@ -22,6 +22,7 @@ enum {
 	C_DECL = 0xA6, C_ASSIGN = 0xA8, C_JUMP = 0xB0, C_DPRINT = 0xB5, C_BYE = 0xB6, C_NEW = 0xB9, C_DELETE = 0xBA,
 	C_INVENTORY = 0xBE, C_PORTRAIT = 0xBF, C_ADDKARMA = 0xC4, C_SUBKARMA = 0xC5, C_GIVE = 0xC9, C_WAIT = 0xCB,
 	C_WORKTYPE = 0xCD, C_RESURRECT = 0xD6, C_SETNAME = 0xD8, C_HEAL = 0xD9, C_CURE = 0xDB,
+	C_MOVEOBJ = 0xC8, C_DELAY = 0xD0, C_EVENT = 0xD1, C_SPEAKER = 0xDF, // Martian Dreams' own commands
 	C_ENDANSWER = 0xEE, C_KEYWORDS = 0xEF, C_SLOOK = 0xF1, C_SCONVERSE = 0xF2, C_SPREFIX = 0xF3, C_ANSWER = 0xF6,
 	C_ASK = 0xF7, C_ASKC = 0xF8, C_INPUTSTR = 0xF9, C_INPUT = 0xFB, C_INPUTNUM = 0xFC, C_SIDENT = 0xFF
 };
@@ -783,6 +784,20 @@ bool Conversation::op(std::vector<TypedValue> &st) {
 		v[2] = pop(st); // from
 		v[3] = pop(st); // to
 		_host.giveObject((int)v[0], (int)v[1], npcNumber(v[2]), npcNumber(v[3]));
+		break;
+	case C_MOVEOBJ: // (Martian Dreams) the object with this index goes into the pack of the actor
+		v[0] = pop(st);
+		v[1] = pop(st);
+		_host.moveObjectTo((int)v[0], npcNumber(v[1]));
+		break;
+	case C_DELAY: // (Martian Dreams) a pause of so many twentieths of a second
+		pop(st);
+		break;
+	case C_EVENT: // (Martian Dreams) a story event
+		_host.event((int)pop(st));
+		break;
+	case C_SPEAKER: // (Martian Dreams) the name the script is to use for somebody (sub_3F86E)
+		pop(st);
 		break;
 	case C_ADDKARMA:
 		_host.addKarma((int)pop(st));

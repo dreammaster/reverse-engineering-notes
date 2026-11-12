@@ -463,6 +463,10 @@ void Game::startTalk(int actor) {
 			}
 		}
 	};
+	if (_world.game == GameId::MartianDreams) { // the script command 0xD1 (sub_3F869)
+		_mdExit = -1;
+		t->onEvent = [this](int n) { mdEvent(n); };
+	}
 	_talk = std::move(t);
 	_talk->start();
 	if (_talk->actor() < 0) {

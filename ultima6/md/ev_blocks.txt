@@ -1,0 +1,952 @@
+=== event 1 (0x1) at cs:0D51 linear 56B62
+56B62  mov     [bp+var_2], 0
+56B66  xor     si, si
+56B68  jmp     short loc_56BAF
+56B6A  mov     al, [si+4EA4h]
+56B6E  mov     ah, 0
+56B70  push    ax
+56B71  mov     ax, 1CAh
+56B74  push    ax
+56B75  call    sub_2BC7E
+56B7A  jmp     short loc_56BA8
+56B7C  inc     [bp+var_2]
+56B7F  mov     ax, 4
+56B82  push    ax
+56B83  call    sub_303A9
+56B88  mov     bx, di
+56B8A  shl     bx, 1
+56B8C  mov     al, [bx+54BBh]
+56B90  and     al, 0FDh
+56B92  mov     bx, di
+56B94  shl     bx, 1
+56B96  mov     [bx+54BBh], al
+56B9A  mov     bx, di
+56B9C  shl     bx, 1
+56B9E  mov     byte ptr [bx+54BAh], 4
+56BA3  call    sub_2BD34
+56BA8  mov     di, ax
+56BAA  or      di, di
+56BAC  jge     short loc_56B7C
+56BAE  inc     si
+56BAF  mov     al, byte_49770
+56BB2  mov     ah, 0
+56BB4  cmp     ax, si
+56BB6  jg      short loc_56B6A
+56BB8  cmp     [bp+var_2], 1
+56BBC  jle     short loc_56BC9
+56BBE  mov     al, byte_469AF
+56BC1  or      al, 8
+56BC3  mov     byte_469AF, al
+56BC6  jmp     loc_5748C
+56BC9  mov     al, byte_469AF
+56BCC  and     al, 0F7h
+56BCE  mov     byte_469AF, al
+56BD1  jmp     loc_5748C
+56BD4  mov     ax, 3Ch ; '<'
+=== event 2 (0x2) at cs:0DC4 linear 56BD5
+56BD5  mov     ax, 3Ch ; '<'
+56BD7  push    ax
+56BD8  call    sub_19300
+56BDD  jmp     loc_5748C
+56BE0  les     bx, dword_42D12
+=== event 3 (0x3) at cs:167C linear 5748D
+5748D  pop     si
+5748E  mov     sp, bp
+57490  pop     bp
+57491  retf    2
+57494  db 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 0
+=== event 4 (0x4) at cs:0DD0 linear 56BE1
+56BE1  les     bx, dword_42D12
+56BE4  mov     al, es:[bx+1Eh]
+56BE8  and     al, 7Fh
+56BEA  mov     es:[bx+1Eh], al
+56BEE  mov     al, es:[bx+18h]
+56BF2  and     al, 7Fh
+56BF4  mov     es:[bx+18h], al
+56BF8  jmp     loc_5748C
+56BFB  les     bx, dword_42D12
+=== event 5 (0x5) at cs:0DEB linear 56BFC
+56BFC  les     bx, dword_42D12
+56BFF  mov     al, es:[bx+18h]
+56C03  or      al, 80h
+56C05  mov     es:[bx+18h], al
+56C09  les     bx, dword_44180
+56C0D  mov     byte ptr es:[bx+18h], 0
+56C12  mov     ax, 18h
+56C15  push    ax
+56C16  push    ax
+56C17  push    ax
+56C18  mov     ax, 6
+56C1B  push    ax
+56C1C  call    sub_2CFE2
+56C21  jmp     loc_572B1
+56C24  mov     ax, 0B5h
+=== event 6 (0x6) at cs:0E14 linear 56C25
+56C25  mov     ax, 0B5h
+56C27  push    ax
+56C28  mov     ax, 2C3h
+56C2B  push    ax
+56C2C  mov     ax, 1F3h
+56C2F  push    ax
+56C30  call    sub_2BA57
+56C35  mov     si, ax
+56C37  or      ax, ax
+56C39  jge     short loc_56C4C
+56C3B  mov     ax, seg seg057
+56C3E  push    ax
+56C3F  mov     ax, 22F1h
+56C42  push    ax
+56C43  call    sub_35778
+56C48  pop     cx
+56C49  pop     cx
+56C4A  jmp     short loc_56C73
+56C4C  mov     bx, si
+56C4E  shl     bx, 1
+56C50  mov     ax, [bx-633Ch]
+56C54  and     ax, 3FFh
+56C57  add     ax, 0C00h
+56C5A  mov     bx, si
+56C5C  shl     bx, 1
+56C5E  mov     [bx-633Ch], ax
+56C62  push    si
+56C63  mov     ax, 2C2h
+56C66  push    ax
+56C67  mov     ax, 1F3h
+56C6A  push    ax
+56C6B  xor     ax, ax
+56C6D  push    ax
+56C6E  call    sub_2CFE2
+56C73  mov     ax, 0B5h
+56C76  push    ax
+56C77  mov     ax, 2C4h
+56C7A  push    ax
+56C7B  mov     ax, 1F3h
+56C7E  push    ax
+56C7F  call    sub_2BA57
+56C84  mov     si, ax
+56C86  or      ax, ax
+56C88  jge     short loc_56C8D
+56C8A  jmp     loc_573F3
+56C8D  mov     bx, si
+56C8F  shl     bx, 1
+56C91  mov     ax, [bx-633Ch]
+56C95  and     ax, 3FFh
+56C98  add     ax, 1C00h
+56C9B  mov     bx, si
+56C9D  shl     bx, 1
+56C9F  mov     [bx-633Ch], ax
+56CA3  jmp     loc_5748C
+56CA6  mov     ax, 98h
+=== event 7 (0x7) at cs:0E96 linear 56CA7
+56CA7  mov     ax, 98h
+56CA9  push    ax
+56CAA  mov     ax, 2C7h
+56CAD  push    ax
+56CAE  mov     ax, 1DCh
+56CB1  push    ax
+56CB2  call    sub_2BA57
+56CB7  mov     si, ax
+56CB9  or      ax, ax
+56CBB  jge     short loc_56CC0
+56CBD  jmp     loc_573F3
+56CC0  mov     bx, si
+56CC2  shl     bx, 1
+56CC4  mov     ax, [bx-633Ch]
+56CC8  and     ax, 3FFh
+56CCB  add     ax, 1C00h
+56CCE  mov     bx, si
+56CD0  shl     bx, 1
+56CD2  mov     [bx-633Ch], ax
+56CD6  jmp     loc_5748C
+56CD9  mov     ax, 9Ah
+=== event 8 (0x8) at cs:0EC9 linear 56CDA
+56CDA  mov     ax, 9Ah
+56CDC  push    ax
+56CDD  mov     ax, 0BBh
+56CE0  push    ax
+56CE1  mov     ax, 0AAh
+56CE4  push    ax
+56CE5  mov     ax, 0CBh
+56CE8  push    ax
+56CE9  call    sub_2BF6E
+56CEE  jmp     short loc_56D2C
+56CF0  mov     bx, si
+56CF2  shl     bx, 1
+56CF4  mov     ax, [bx-633Ch]
+56CF8  and     ax, 3FFh
+56CFB  cmp     ax, 19Ah
+56CFE  jnz     short loc_56D27
+56D00  mov     bx, si
+56D02  shl     bx, 1
+56D04  mov     ax, [bx-633Ch]
+56D08  mov     cl, 0Ah
+56D0A  shr     ax, cl
+56D0C  cmp     ax, 3
+56D0F  jbe     short loc_56D27
+56D11  mov     bx, si
+56D13  shl     bx, 1
+56D15  cmp     byte ptr [bx+54BBh], 3
+56D1A  jnz     short loc_56D27
+56D1C  mov     al, byte_469B0
+56D1F  or      al, 4
+56D21  mov     byte_469B0, al
+56D24  jmp     loc_5748C
+56D27  call    sub_2BE67
+56D2C  mov     si, ax
+56D2E  or      si, si
+56D30  jge     short loc_56CF0
+56D32  jmp     loc_5748C
+56D35  mov     word_41F2A, 9
+=== event 9 (0x9) at cs:0F25 linear 56D36
+56D36  mov     word_41F2A, 9
+56D3B  jmp     loc_5748C
+56D3E  mov     word_41F2A, 0Ah
+=== event 10 (0xA) at cs:0F2E linear 56D3F
+56D3F  mov     word_41F2A, 0Ah
+56D44  jmp     loc_5748C
+56D47  mov     ax, 98h
+=== event 11 (0xB) at cs:0F37 linear 56D48
+56D48  mov     ax, 98h
+56D4A  push    ax
+56D4B  mov     ax, 13Fh
+56D4E  push    ax
+56D4F  mov     ax, 194h
+56D52  push    ax
+56D53  call    sub_2BA57
+56D58  mov     si, ax
+56D5A  or      ax, ax
+56D5C  jge     short loc_56D61
+56D5E  jmp     loc_573F3
+56D61  mov     bx, si
+56D63  shl     bx, 1
+56D65  mov     byte ptr [bx+54BBh], 0
+56D6A  mov     bx, si
+56D6C  shl     bx, 1
+56D6E  mov     ax, [bx-633Ch]
+56D72  and     ax, 3FFh
+56D75  add     ax, 1C00h
+56D78  mov     bx, si
+56D7A  shl     bx, 1
+56D7C  mov     [bx-633Ch], ax
+56D80  jmp     loc_5748C
+56D83  mov     ax, 4Fh ; 'O'
+=== event 51 (0x33) at cs:0F73 linear 56D84
+56D84  mov     ax, 4Fh ; 'O'
+56D86  push    ax
+56D87  mov     ax, 9
+56D8A  push    ax
+56D8B  mov     ax, 1Fh
+56D8E  push    ax
+56D8F  call    sub_2BA57
+56D94  mov     si, ax
+56D96  or      ax, ax
+56D98  jge     short loc_56D9D
+56D9A  jmp     loc_573F3
+56D9D  mov     bx, si
+56D9F  shl     bx, 1
+56DA1  mov     ax, [bx-633Ch]
+56DA5  and     ax, 3FFh
+56DA8  add     ax, 400h
+56DAB  mov     bx, si
+56DAD  shl     bx, 1
+56DAF  mov     [bx-633Ch], ax
+56DB3  jmp     loc_5748C
+56DB6  mov     ax, 5Ch ; '\'
+=== event 52 (0x34) at cs:0FA6 linear 56DB7
+56DB7  mov     ax, 5Ch ; '\'
+56DB9  push    ax
+56DBA  call    sub_3F615
+56DBF  mov     word_41F2A, 34h ; '4'
+56DC5  jmp     loc_5748C
+56DC8  call    sub_2FF7D
+=== event 53 (0x35) at cs:0FB8 linear 56DC9
+56DC9  call    sub_2FF7D
+56DCD  mov     byte_41153, 0
+56DD2  xor     si, si
+56DD4  jmp     short loc_56E1B
+56DD6  mov     ax, 91h
+56DD9  push    ax
+56DDA  push    word_4112C
+56DDE  push    word_4112E
+56DE2  push    word_41130
+56DE6  call    sub_2652C
+56DEB  mov     di, ax
+56DED  or      ax, ax
+56DEF  jl      short loc_56E1A
+56DF1  push    ax
+56DF2  xor     ax, ax
+56DF4  push    ax
+56DF5  call    sub_18126
+56DFA  or      ax, ax
+56DFC  jz      short loc_56E14
+56DFE  les     bx, dword_44180
+56E02  mov     al, 8
+56E04  mov     es:[bx+di], al
+56E07  les     bx, dword_44E5E
+56E0B  mov     es:[bx+di], al
+56E0E  inc     byte_41153
+56E12  jmp     short loc_56E1A
+56E14  push    di
+56E15  call    sub_2C902
+56E1A  inc     si
+56E1B  cmp     si, 6
+56E1E  jl      short loc_56DD6
+56E20  mov     al, byte_41153
+56E23  mov     ah, 0
+56E25  or      ax, ax
+56E27  jz      short loc_56E2C
+56E29  jmp     loc_5748C
+56E2C  mov     ax, seg seg057
+56E2F  push    ax
+56E30  mov     ax, 22F1h
+56E33  push    ax
+56E34  call    sub_35778
+56E39  pop     cx
+56E3A  pop     cx
+56E3B  jmp     loc_5748C
+56E3E  mov     ax, 52h ; 'R'
+=== event 54 (0x36) at cs:102E linear 56E3F
+56E3F  mov     ax, 52h ; 'R'
+56E41  push    ax
+56E42  call    sub_3F615
+56E47  mov     word_41F2A, 36h ; '6'
+56E4D  jmp     loc_5748C
+56E50  mov     ax, 56h ; 'V'
+=== event 55 (0x37) at cs:1040 linear 56E51
+56E51  mov     ax, 56h ; 'V'
+56E53  push    ax
+56E54  push    ax
+56E55  push    ax
+56E56  mov     ax, 6
+56E59  push    ax
+56E5A  call    sub_2CFE2
+56E5F  mov     ax, 0FFFFh
+56E62  push    ax
+56E63  push    ax
+56E64  push    ax
+56E65  call    sub_2CAAD
+56E6A  mov     ax, 9Eh
+56E6D  push    ax
+56E6E  mov     ax, 10h
+56E71  push    ax
+56E72  mov     ax, 4
+56E75  push    ax
+56E76  xor     ax, ax
+56E78  push    ax
+56E79  call    sub_2C37E
+56E7E  mov     si, ax
+56E80  or      ax, ax
+56E82  jge     short loc_56E87
+56E84  jmp     loc_573F3
+56E87  mov     ax, 0F2h
+56E8A  push    ax
+56E8B  mov     ax, 10h
+56E8E  push    ax
+56E8F  xor     ax, ax
+56E91  push    ax
+56E92  push    ax
+56E93  call    sub_2C37E
+56E98  mov     si, ax
+56E9A  or      ax, ax
+56E9C  jge     short loc_56EA1
+56E9E  jmp     loc_573F3
+56EA1  mov     ax, 4A0h
+56EA4  push    ax
+56EA5  mov     ax, 10h
+56EA8  push    ax
+56EA9  xor     ax, ax
+56EAB  push    ax
+56EAC  push    ax
+56EAD  call    sub_2C37E
+56EB2  mov     si, ax
+56EB4  or      ax, ax
+56EB6  jge     short loc_56EBB
+56EB8  jmp     loc_573F3
+56EBB  mov     ax, 101h
+56EBE  push    ax
+56EBF  xor     ax, ax
+56EC1  push    ax
+56EC2  push    ax
+56EC3  mov     ax, 19h
+56EC6  push    ax
+56EC7  mov     ax, 6Fh ; 'o'
+56ECA  push    ax
+56ECB  push    word_41130
+56ECF  call    sub_2C1FE
+56ED4  mov     si, ax
+56ED6  or      ax, ax
+56ED8  jge     short loc_56EDD
+56EDA  jmp     loc_573F3
+56EDD  mov     ax, 0FBh
+56EE0  push    ax
+56EE1  xor     ax, ax
+56EE3  push    ax
+56EE4  mov     ax, 0F00h
+56EE7  push    ax
+56EE8  mov     ax, 19h
+56EEB  push    ax
+56EEC  mov     ax, 6Fh ; 'o'
+56EEF  push    ax
+56EF0  push    word_41130
+56EF4  call    sub_2C1FE
+56EF9  mov     di, ax
+56EFB  or      ax, ax
+56EFD  jge     short loc_56F02
+56EFF  jmp     loc_573F3
+56F02  mov     ax, 0FCh
+56F05  push    ax
+56F06  mov     ax, 8
+56F09  push    ax
+56F0A  xor     ax, ax
+56F0C  push    ax
+56F0D  push    si
+56F0E  call    sub_2C37E
+56F13  mov     di, ax
+56F15  or      ax, ax
+56F17  jge     short loc_56F1C
+56F19  jmp     loc_573F3
+56F1C  xor     si, si
+56F1E  jmp     short loc_56F71
+56F20  mov     ax, 56Eh
+56F23  push    ax
+56F24  mov     ax, 0Ah
+56F27  push    ax
+56F28  mov     ax, 6Fh ; 'o'
+56F2B  push    ax
+56F2C  push    word_41130
+56F30  call    sub_2652C
+56F35  mov     di, ax
+56F37  or      ax, ax
+56F39  jl      short loc_56F61
+56F3B  les     bx, dword_44180
+56F3F  mov     al, 18h
+56F41  mov     es:[bx+di], al
+56F44  les     bx, dword_44E5E
+56F48  mov     es:[bx+di], al
+56F4B  push    di
+56F4C  mov     ax, 1
+56F4F  push    ax
+56F50  call    sub_18126
+56F55  or      ax, ax
+56F57  jnz     short loc_56F70
+56F59  push    di
+56F5A  call    sub_2C902
+56F5F  jmp     short loc_56F70
+56F61  mov     ax, seg seg057
+56F64  push    ax
+56F65  mov     ax, 22F1h
+56F68  push    ax
+56F69  call    sub_35778
+56F6E  pop     cx
+56F6F  pop     cx
+56F70  inc     si
+56F71  cmp     si, 4
+56F74  jl      short loc_56F20
+56F76  xor     si, si
+56F78  jmp     short loc_56FCB
+56F7A  mov     ax, 56Eh
+56F7D  push    ax
+56F7E  mov     ax, 19h
+56F81  push    ax
+56F82  mov     ax, 60h ; '`'
+56F85  push    ax
+56F86  push    word_41130
+56F8A  call    sub_2652C
+56F8F  mov     di, ax
+56F91  or      ax, ax
+56F93  jl      short loc_56FBB
+56F95  les     bx, dword_44180
+56F99  mov     al, 18h
+56F9B  mov     es:[bx+di], al
+56F9E  les     bx, dword_44E5E
+56FA2  mov     es:[bx+di], al
+56FA5  push    di
+56FA6  mov     ax, 1
+56FA9  push    ax
+56FAA  call    sub_18126
+56FAF  or      ax, ax
+56FB1  jnz     short loc_56FCA
+56FB3  push    di
+56FB4  call    sub_2C902
+56FB9  jmp     short loc_56FCA
+56FBB  mov     ax, seg seg057
+56FBE  push    ax
+56FBF  mov     ax, 22F1h
+56FC2  push    ax
+56FC3  call    sub_35778
+56FC8  pop     cx
+56FC9  pop     cx
+56FCA  inc     si
+56FCB  cmp     si, 4
+56FCE  jl      short loc_56F7A
+56FD0  xor     si, si
+56FD2  jmp     short loc_57025
+56FD4  mov     ax, 56Eh
+56FD7  push    ax
+56FD8  mov     ax, 28h ; '('
+56FDB  push    ax
+56FDC  mov     ax, 6Fh ; 'o'
+56FDF  push    ax
+56FE0  push    word_41130
+56FE4  call    sub_2652C
+56FE9  mov     di, ax
+56FEB  or      ax, ax
+56FED  jl      short loc_57015
+56FEF  les     bx, dword_44180
+56FF3  mov     al, 18h
+56FF5  mov     es:[bx+di], al
+56FF8  les     bx, dword_44E5E
+56FFC  mov     es:[bx+di], al
+56FFF  push    di
+57000  mov     ax, 1
+57003  push    ax
+57004  call    sub_18126
+57009  or      ax, ax
+5700B  jnz     short loc_57024
+5700D  push    di
+5700E  call    sub_2C902
+57013  jmp     short loc_57024
+57015  mov     ax, seg seg057
+57018  push    ax
+57019  mov     ax, 22F1h
+5701C  push    ax
+5701D  call    sub_35778
+57022  pop     cx
+57023  pop     cx
+57024  inc     si
+57025  cmp     si, 4
+57028  jl      short loc_56FD4
+5702A  call    sub_21882
+5702F  mov     word_409C8, 1
+57035  call    sub_2FF7D
+5703A  jmp     loc_5748C
+5703D  mov     al, byte_469CB
+=== event 56 (0x38) at cs:122D linear 5703E
+5703E  mov     al, byte_469CB
+57040  or      al, 18h
+57042  mov     byte_469CB, al
+57045  and     al, 0FBh
+57047  mov     byte_469CB, al
+5704A  mov     [bp+var_2], 0
+5704F  mov     [bp+var_4], 0
+57054  mov     ax, 49h ; 'I'
+57057  push    ax
+57058  mov     ax, 30h ; '0'
+5705B  push    ax
+5705C  mov     ax, 57h ; 'W'
+5705F  push    ax
+57060  mov     ax, 51h ; 'Q'
+57063  push    ax
+57064  call    sub_2BF6E
+57069  jmp     short loc_570DB
+5706B  mov     bx, [bp+var_6]
+5706E  shl     bx, 1
+57070  mov     ax, [bx-633Ch]
+57074  and     ax, 3FFh
+57077  cmp     ax, 84h
+5707A  jz      short loc_57088
+5707C  cmp     ax, 1A9h
+5707F  jz      short loc_570CE
+57081  cmp     ax, 1AAh
+57084  jz      short loc_570CE
+57086  jmp     short loc_570D6
+57088  inc     [bp+var_2]
+5708B  mov     al, byte_469CB
+5708E  and     al, 0EFh
+57090  mov     byte_469CB, al
+57093  cmp     [bp+var_4], 0
+57097  jz      short loc_570B8
+57099  mov     bx, [bp+var_6]
+5709C  shl     bx, 1
+5709E  mov     al, [bx+54BAh]
+570A2  mov     ah, 0
+570A4  cmp     ax, [bp+var_4]
+570A7  jz      short loc_570B8
+570A9  mov     al, byte_469CB
+570AC  and     al, 0F7h
+570AE  mov     byte_469CB, al
+570B1  mov     [bp+var_4], 0FFFFh
+570B6  jmp     short loc_570D6
+570B8  cmp     [bp+var_4], 0
+570BC  jnz     short loc_570D6
+570BE  mov     bx, [bp+var_6]
+570C1  shl     bx, 1
+570C3  mov     al, [bx+54BAh]
+570C7  mov     ah, 0
+570C9  mov     [bp+var_4], ax
+570CC  jmp     short loc_570D6
+570CE  mov     al, byte_469CB
+570D1  or      al, 4
+570D3  mov     byte_469CB, al
+570D6  call    sub_2BE67
+570DB  mov     [bp+var_6], ax
+570DE  cmp     [bp+var_6], 0
+570E2  jge     short loc_5706B
+570E4  xor     ax, ax
+570E6  push    ax
+570E7  call    sub_2BBAD
+570EC  jmp     short loc_57124
+570EE  mov     bx, [bp+var_6]
+570F1  shl     bx, 1
+570F3  mov     ax, [bx-633Ch]
+570F7  and     ax, 3FFh
+570FA  cmp     ax, 84h
+570FD  jz      short loc_5710B
+570FF  cmp     ax, 1A9h
+57102  jz      short loc_57117
+57104  cmp     ax, 1AAh
+57107  jz      short loc_57117
+57109  jmp     short loc_5711F
+5710B  mov     al, byte_469CB
+5710E  and     al, 0E7h
+57110  mov     byte_469CB, al
+57113  or      al, 20h
+57115  jmp     short loc_5711C
+57117  mov     al, byte_469CB
+5711A  or      al, 4
+5711C  mov     byte_469CB, al
+5711F  call    sub_2BC06
+57124  mov     [bp+var_6], ax
+57127  cmp     [bp+var_6], 0
+5712B  jge     short loc_570EE
+5712D  cmp     [bp+var_2], 0
+57131  jz      short loc_57141
+57133  cmp     [bp+var_2], 19h
+57137  jz      short loc_57141
+57139  mov     al, byte_469CB
+5713C  and     al, 0F7h
+5713E  mov     byte_469CB, al
+57141  cmp     [bp+var_4], 0
+57145  jz      short loc_57155
+57147  cmp     [bp+var_4], 0Ah
+5714B  jz      short loc_57155
+5714D  mov     al, byte_469CB
+57150  and     al, 0F7h
+57152  mov     byte_469CB, al
+57155  mov     word_41F2A, 38h ; '8'
+5715B  jmp     loc_5748C
+5715E  mov     ax, 8
+=== event 57 (0x39) at cs:134E linear 5715F
+5715F  mov     ax, 8
+57161  push    ax
+57162  mov     ax, 18h
+57165  push    ax
+57166  mov     ax, 16h
+57169  push    ax
+5716A  mov     ax, 39h ; '9'
+5716D  push    ax
+5716E  call    sub_2BF6E
+57173  jmp     short loc_57195
+57175  mov     bx, si
+57177  shl     bx, 1
+57179  mov     ax, [bx-633Ch]
+5717D  and     ax, 3FFh
+57180  cmp     ax, 155h
+57183  jnz     short loc_57190
+57185  mov     bx, si
+57187  shl     bx, 1
+57189  cmp     byte ptr [bx+54BBh], 5Bh ; '['
+5718E  jz      short loc_5719B
+57190  call    sub_2BE67
+57195  mov     si, ax
+57197  or      si, si
+57199  jge     short loc_57175
+5719B  or      si, si
+5719D  jge     short loc_571A2
+5719F  jmp     loc_573F3
+571A2  push    si
+571A3  call    sub_2CE85
+571A8  mov     al, byte_467C5
+571AB  and     al, 0EFh
+571AD  mov     byte_467C5, al
+571B0  mov     ax, 5Bh ; '['
+571B3  push    ax
+571B4  call    sub_1835E
+571B9  mov     byte_468C9, al
+571BC  mov     al, byte_467C5
+571BF  and     al, 0F7h
+571C1  mov     byte_467C5, al
+571C4  les     bx, dword_4AFB8
+571C8  mov     ax, es:[bx+0B6h]
+571CD  mov     word_4982A, ax
+571D0  mov     al, byte_467C5
+571D3  and     al, 9Fh
+571D5  mov     byte_467C5, al
+571D8  mov     al, byte_469D1
+571DB  and     al, 0EFh
+571DD  mov     byte_469D1, al
+571E0  jmp     loc_5748C
+571E3  call    sub_2FF7D
+=== event 101 (0x65) at cs:13D3 linear 571E4
+571E4  call    sub_2FF7D
+571E8  mov     word_41F2A, 65h ; 'e'
+571EE  jmp     loc_5748C
+571F1  call    sub_2FF7D
+=== event 102 (0x66) at cs:13E1 linear 571F2
+571F2  call    sub_2FF7D
+571F6  mov     word_41F2A, 66h ; 'f'
+571FC  jmp     loc_5748C
+571FF  mov     word_41F2A, 67h ; 'g'
+=== event 103 (0x67) at cs:13EF linear 57200
+57200  mov     word_41F2A, 67h ; 'g'
+57205  jmp     loc_5748C
+57208  call    sub_2FF7D
+=== event 104 (0x68) at cs:13F8 linear 57209
+57209  call    sub_2FF7D
+5720D  mov     word_41F2A, 68h ; 'h'
+57213  jmp     loc_5748C
+57216  mov     ax, 32h ; '2'
+=== event 105 (0x69) at cs:1406 linear 57217
+57217  mov     ax, 32h ; '2'
+57219  push    ax
+5721A  call    sub_303A9
+5721F  mov     ax, word_47493
+57222  and     ax, 3FFh
+57225  cmp     ax, 2Ch ; ','
+57228  jnz     short loc_57254
+5722A  mov     ax, 0DBh
+5722D  push    ax
+5722E  mov     ax, 3Bh ; ';'
+57231  push    ax
+57232  mov     ax, 0Ch
+57235  push    ax
+57236  call    sub_2BA57
+5723B  mov     si, ax
+5723D  or      ax, ax
+5723F  jge     short loc_57244
+57241  jmp     loc_573F3
+57244  mov     bx, si
+57246  shl     bx, 1
+57248  mov     ax, [bx-633Ch]
+5724C  and     ax, 3FFh
+5724F  add     ax, 0C00h
+57252  jmp     short loc_5727C
+57254  mov     ax, 0DBh
+57257  push    ax
+57258  mov     ax, 2Bh ; '+'
+5725B  push    ax
+5725C  mov     ax, 0Fh
+5725F  push    ax
+57260  call    sub_2BA57
+57265  mov     si, ax
+57267  or      ax, ax
+57269  jge     short loc_5726E
+5726B  jmp     loc_573F3
+5726E  mov     bx, si
+57270  shl     bx, 1
+57272  mov     ax, [bx-633Ch]
+57276  and     ax, 3FFh
+57279  add     ax, 1C00h
+5727C  mov     bx, si
+5727E  shl     bx, 1
+57280  mov     [bx-633Ch], ax
+57284  mov     ax, word_49842
+57287  and     ax, 0FC00h
+5728A  add     ax, 171h
+5728D  mov     word_49842, ax
+57290  mov     word_41F2A, 69h ; 'i'
+57296  jmp     loc_5748C
+57299  mov     al, byte_41134
+=== event 106 (0x6A) at cs:1489 linear 5729A
+5729A  mov     al, byte_41134
+5729C  mov     ah, 0
+5729E  push    ax
+5729F  mov     al, byte_41135
+572A2  mov     ah, 0
+572A4  push    ax
+572A5  push    word_41130
+572A9  xor     ax, ax
+572AB  push    ax
+572AC  call    sub_25C46
+572B1  jmp     loc_5748C
+572B4  mov     ax, 4
+=== event 107 (0x6B) at cs:14A4 linear 572B5
+572B5  mov     ax, 4
+572B7  push    ax
+572B8  call    sub_303A9
+572BD  mov     ax, 0FFFFh
+572C0  push    ax
+572C1  push    ax
+572C2  push    ax
+572C3  call    sub_2CAAD
+572C8  mov     ax, 6Ah ; 'j'
+572CB  push    ax
+572CC  mov     ax, 2Ch ; ','
+572CF  push    ax
+572D0  push    word_41130
+572D4  xor     ax, ax
+572D6  push    ax
+572D7  call    sub_25C46
+572DC  xor     ax, ax
+572DE  push    ax
+572DF  call    sub_2F9F3
+572E4  mov     byte_41134, 6Ah ; 'j'
+572E9  mov     byte_41135, 2Ch ; ','
+572EE  mov     word_41184, 0E4h
+572F4  jmp     loc_5748C
+572F7  mov     al, byte_41154
+=== event 108 (0x6C) at cs:14E7 linear 572F8
+572F8  mov     al, byte_41154
+572FA  cbw
+572FB  or      ax, ax
+572FD  jnz     short loc_57304
+572FF  call    sub_17ECB
+57304  mov     byte_41153, 6
+57309  mov     ax, 0FFFFh
+5730C  push    ax
+5730D  push    ax
+5730E  push    ax
+5730F  call    sub_2CAAD
+57314  mov     word_40EA0, 1
+5731A  mov     ax, 6Eh ; 'n'
+5731D  push    ax
+5731E  mov     ax, 17h
+57321  push    ax
+57322  push    word_41130
+57326  xor     ax, ax
+57328  push    ax
+57329  call    sub_25C46
+5732E  mov     word_40EA0, 0
+57334  mov     ax, 0E0h
+57337  push    ax
+57338  mov     ax, 75h ; 'u'
+5733B  push    ax
+5733C  mov     ax, 17h
+5733F  push    ax
+57340  call    sub_2BA57
+57345  mov     si, ax
+57347  or      ax, ax
+57349  jl      short loc_5734E
+5734B  jmp     loc_5748C
+5734E  mov     ax, 0CE0h
+57351  push    ax
+57352  xor     ax, ax
+57354  push    ax
+57355  push    ax
+57356  mov     ax, 75h ; 'u'
+57359  push    ax
+5735A  mov     ax, 17h
+5735D  push    ax
+5735E  push    word_41130
+57362  call    sub_2C1FE
+57367  mov     si, ax
+57369  or      ax, ax
+5736B  jge     short loc_57370
+5736D  jmp     loc_573F3
+57370  mov     al, [si+3266h]
+57374  and     al, 0DFh
+57376  mov     [si+3266h], al
+5737A  jmp     loc_5748C
+5737D  mov     al, byte_41154
+=== event 109 (0x6D) at cs:156D linear 5737E
+5737E  mov     al, byte_41154
+57380  cbw
+57381  or      ax, ax
+57383  jnz     short loc_5738A
+57385  call    sub_17ECB
+5738A  mov     byte_41153, 6
+5738F  mov     word_40EA0, 1
+57395  mov     ax, 0FFFFh
+57398  push    ax
+57399  push    ax
+5739A  push    ax
+5739B  call    sub_2CAAD
+573A0  mov     ax, 7Ah ; 'z'
+573A3  push    ax
+573A4  mov     ax, 0Dh
+573A7  push    ax
+573A8  push    word_41130
+573AC  xor     ax, ax
+573AE  push    ax
+573AF  call    sub_25C46
+573B4  mov     word_40EA0, 0
+573BA  mov     ax, 0E0h
+573BD  push    ax
+573BE  mov     ax, 7Ah ; 'z'
+573C1  push    ax
+573C2  mov     ax, 12h
+573C5  push    ax
+573C6  call    sub_2BA57
+573CB  mov     si, ax
+573CD  or      ax, ax
+573CF  jl      short loc_573D4
+573D1  jmp     loc_5748C
+573D4  mov     ax, 1CE0h
+573D7  push    ax
+573D8  xor     ax, ax
+573DA  push    ax
+573DB  push    ax
+573DC  mov     ax, 7Ah ; 'z'
+573DF  push    ax
+573E0  mov     ax, 12h
+573E3  push    ax
+573E4  push    word_41130
+573E8  call    sub_2C1FE
+573ED  mov     si, ax
+573EF  or      ax, ax
+573F1  jge     short loc_57405
+573F3  mov     ax, seg seg057
+573F6  push    ax
+573F7  mov     ax, 22F1h
+573FA  push    ax
+573FB  call    sub_35778
+57400  pop     cx
+57401  pop     cx
+57402  jmp     loc_5748C
+57405  mov     al, [si+3266h]
+57409  and     al, 0DFh
+5740B  mov     [si+3266h], al
+5740F  jmp     short loc_5748C
+57411  mov     al, byte_41154
+=== event 110 (0x6E) at cs:1601 linear 57412
+57412  mov     al, byte_41154
+57414  cbw
+57415  or      ax, ax
+57417  jnz     short loc_5741E
+57419  call    sub_17ECB
+5741E  mov     word_40EA0, 1
+57424  mov     ax, 0FFFFh
+57427  push    ax
+57428  push    ax
+57429  push    ax
+5742A  call    sub_2CAAD
+5742F  mov     ax, 82h
+57432  push    ax
+57433  mov     ax, 18h
+57436  push    ax
+57437  push    word_41130
+5743B  xor     ax, ax
+5743D  push    ax
+5743E  call    sub_25C46
+57443  mov     word_40EA0, 0
+57449  jmp     short loc_5748C
+5744B  mov     ax, 1
+=== event 111 (0x6F) at cs:163B linear 5744C
+5744C  mov     ax, 1
+5744E  push    ax
+5744F  call    sub_1835E
+57454  mov     byte_4686E, al
+57457  jmp     short loc_5748C
+57459  inc     byte_41136
+=== event 254 (0xFE) at cs:1649 linear 5745A
+5745A  inc     byte_41136
+5745D  jmp     short loc_5748C
+5745F  call    sub_2DD62
+=== event 255 (0xFF) at cs:164F linear 57460
+57460  call    sub_2DD62
+57464  call    sub_36680
+57469  mov     ax, 8
+5746C  push    ax
+5746D  call    sub_3A0B6
+57472  pop     cx
+57473  xor     ax, ax
+57475  push    ax
+57476  call    sub_10881
+5747B  pop     cx
+5747C  push    [bp+arg_0]
+5747F  push    ds
+57480  mov     ax, 27F1h
+57483  push    ax
+57484  call    sub_35778
+57489  add     sp, 6
+5748C  pop     di
