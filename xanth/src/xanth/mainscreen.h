@@ -24,8 +24,9 @@ public:
 
 	/** Draws the whole frame (RoomItem_Draw 0x10 without the text and the room picture) on `s` and sets its palette. */
 	void drawFrame(Legend::Surface &s) const;
-	/** Draws a room picture (file XANTH_nn.PIC, entry) in the picture window and takes over its palette. */
-	bool drawRoomPicture(Legend::Surface &s, const Common::GameFiles &files, int picNum) const;
+	/** Draws a room picture (picNum = file number << 8 | entry) in the picture window and takes over its palette. `overlays` are further picture numbers
+	 *  (setup_pic_regions: the items of the room that are visible) whose pixels are exclusive-ored onto the picture at their own positions. */
+	bool drawRoomPicture(Legend::Surface &s, const Common::GameFiles &files, int picNum, const std::vector<int> &overlays = std::vector<int>()) const;
 
 	/** The verb list: each name twice, black one pixel down and to the right and white on top (sub_18CBE, font 1). */
 	void drawVerbs(Legend::Surface &s, const std::vector<std::string> &verbs) const;

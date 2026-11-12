@@ -90,7 +90,7 @@ void MainScreen::printMessage(Surface &s, const std::string &text) const {
 	w.print(s, text);
 }
 
-bool MainScreen::drawRoomPicture(Surface &s, const Common::GameFiles &files, int picNum) const {
+bool MainScreen::drawRoomPicture(Surface &s, const Common::GameFiles &files, int picNum, const std::vector<int> &overlays) const {
 	char name[16];
 	snprintf(name, sizeof(name), "XANTH_%02d.PIC", picNum >> 8);
 	Common::Bytes d;
@@ -103,6 +103,14 @@ bool MainScreen::drawRoomPicture(Surface &s, const Common::GameFiles &files, int
 	restoreSubPalettes(pal);
 	s.setPalette(pal);
 	pic(s, img, 51, 4);
+	for (size_t i = 0; i < overlays.size(); i++) {
+		snprintf(name, sizeof(name), "XANTH_%02d.PIC", overlays[i] >> 8);
+		Common::Bytes od;
+		PicFile of;
+		PicImage ov;
+		if (files.load(name, od) && of.load(od) && of.decode(overlays[i] & 255, ov))
+			pic(s, ov, 51, 4);
+	}
 	return true;
 }
 

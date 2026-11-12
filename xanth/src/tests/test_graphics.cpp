@@ -4,6 +4,7 @@
 #include <cstdlib>
 
 #include "common/files.h"
+#include "legend/draw.h"
 #include "legend/font.h"
 #include "legend/pic.h"
 #include "legend/surface.h"
@@ -124,44 +125,24 @@ int main() {
 		CHECK(ms.load(gf), "the interface pictures load");
 		Legend::Surface screen(320, 200);
 		ms.drawFrame(screen);
-		CHECK(ms.drawRoomPicture(screen, gf, 0x0200), "the bedroom picture draws");
+		CHECK(ms.drawRoomPicture(screen, gf, 0x0200, std::vector<int>({0x0201, 0x0202, 0x0214, 0x0215})), "the bedroom picture draws");
 		ms.drawCompassArrows(screen, getenv("XANTH_EXITS") ? (unsigned)atoi(getenv("XANTH_EXITS")) : 0x80u);
 		static const char *kVerbs[] = {"Take", "Put", "Look at", "Open", "Close", "Talk to", "Look"};
 		ms.drawVerbs(screen, std::vector<std::string>(kVerbs, kVerbs + ARRAYSIZE(kVerbs)));
 		ms.printMessage(screen, "You are sitting at your desk, watching the gathering storm through your window.");
+		{
+			// the hover label of the object under the pointer: outline font 1, white on black
+			Common::Bytes fd;
+			Legend::Font f1;
+			CHECK(gf.load("XANTH_01.FNT", fd) && f1.load(fd), "font 1 loads");
+			f1.drawTextOutlined(screen, 151, 114, "computer", 15, 0);
+		}
 		const char *oracleShot = getenv("XANTH_ORACLE_SHOT");
 		std::vector<byte> oracle;
 		if (oracleShot && loadPpm(oracleShot, oracle)) {
 			printf("main screen against %s:\n", oracleShot);
 			std::string diffPath = shots ? std::string(shots) + "/diff.ppm" : std::string();
 			compareScreens(screen, oracle, shots ? diffPath.c_str() : NULL);
-		}
-		if (getenv("XANTH_LABELSEARCH") && !oracle.empty()) {
-			for (int fi = 0; fi < ARRAYSIZE(kFonts); fi++) {
-				Common::Bytes fd;
-				Legend::Font f;
-				if (!gf.load(kFonts[fi], fd) || !f.load(fd))
-					continue;
-				int best = 1 << 30, bx = 0, by = 0;
-				for (int y = 100; y < 126; y++) {
-					for (int x = 130; x < 240; x++) {
-						Legend::Surface t(screen);
-						f.drawTextOutlined(t, x, y, "computer", 15, 0);
-						std::vector<byte> rgb(320 * 200 * 3);
-						t.toRgb(&rgb[0]);
-						int bad = 0;
-						for (int yy = 100; yy < 128; yy++)
-							for (int xx = 130; xx < 250; xx++)
-								bad += memcmp(&rgb[(yy * 320 + xx) * 3], &oracle[(yy * 320 + xx) * 3], 3) != 0;
-						if (bad < best) {
-							best = bad;
-							bx = x;
-							by = y;
-						}
-					}
-				}
-				printf("label search: %s best %d differing pixels at (%d,%d)\n", kFonts[fi], best, bx, by);
-			}
 		}
 		if (shots)
 			screen.savePpm(std::string(shots) + "/screen.ppm");
