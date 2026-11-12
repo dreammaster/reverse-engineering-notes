@@ -21,6 +21,8 @@ add_library(legend STATIC
 	legend/rgn.cpp
 	legend/messages.cpp
 	legend/audiofiles.cpp
+	legend/font.cpp
+	legend/surface.cpp
 )
 
 # xanth/: Companions of Xanth
@@ -51,6 +53,10 @@ add_executable(test_state tests/test_state.cpp)
 target_link_libraries(test_state xanth_engine)
 add_test(NAME state COMMAND test_state)
 
+add_executable(test_graphics tests/test_graphics.cpp)
+target_link_libraries(test_graphics legend)
+add_test(NAME graphics COMMAND test_graphics)
+
 add_executable(test_scan tests/test_scan.cpp)
 target_link_libraries(test_scan xanth_engine)
 add_test(NAME scan COMMAND test_scan)
@@ -72,4 +78,4 @@ endif()
 if(EXISTS "${XANTH_ROOT}/game_out/restart.dat")
 	list(APPEND XANTH_TEST_ENV "XANTH_RESTART=${XANTH_ROOT}/game_out/restart.dat")
 endif()
-set_tests_properties(formats objects state grammar scan PROPERTIES ENVIRONMENT "${XANTH_TEST_ENV}")
+set_tests_properties(formats objects state grammar scan graphics PROPERTIES ENVIRONMENT "${XANTH_TEST_ENV}")
