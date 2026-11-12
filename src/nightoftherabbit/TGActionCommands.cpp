@@ -81,6 +81,12 @@ void TGActionPartExecutor::ifFalse() {
 // jpt_562CD8, the command minus 5 is the index; the commands that are not in it, and the
 // ones whose entry is the table's default, do nothing).
 void TGActionPartExecutor::run(int command) {
+	// (not in the original: DEPONIA_TRACE bit 4 says each part that is done)
+	if ((g_traceFlags & 4) && wxLog::loglevel > 1) {
+		wxLog::logexpanded(L"Action part: command %d of \"%s\" (data id: %d)", command, _action._data.GetName().c_str().wc_str(),
+		                   dataId(_action._data));
+	}
+
 	switch (command) {
 	case kCommandElse:
 		cmdElse();

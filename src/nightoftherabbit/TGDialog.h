@@ -76,6 +76,10 @@ public:
 	const std::vector<wxRect> &GetLineRects() const {
 		return _lineRects;
 	}
+	/** (Night of the Rabbit) The first line that is shown (the scroll position of the lines). */
+	int GetCurrentScrollPosition() const {
+		return _scroll;
+	}
 	/** The character the dialog is of (the dialog record's own character, or the one above). */
 	TVisObjRef GetDialogCharacter() const;
 

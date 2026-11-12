@@ -711,6 +711,8 @@ void TGCharacter::UpdateActionAreas() {
 			inside.erase(found);
 			++it;
 		} else {
+			// (Night of the Rabbit: the scripts that registered for the area events are told first)
+			gameControl()->ActionAreaEvent(false, **it, _objRef);
 			runAreaActions(**it, _objRef, kExecuteLeaveArea);
 			it = _activeAreas.erase(it);
 		}
@@ -718,6 +720,7 @@ void TGCharacter::UpdateActionAreas() {
 
 	// the ones it has entered
 	for (TSceneActionArea *area : inside) {
+		gameControl()->ActionAreaEvent(true, *area, _objRef);
 		runAreaActions(*area, _objRef, kExecuteEnterArea);
 		_activeAreas.push_back(area);
 	}

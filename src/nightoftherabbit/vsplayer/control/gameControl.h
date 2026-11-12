@@ -224,6 +224,11 @@ public:
 	void SetDelay(double seconds, const std::string &name);
 	void SetDelay(double seconds, int id);
 	void RegisterEventHandlerMainLoop(const wxString &name);
+	/** (Night of the Rabbit) The Lua function `name` is called when a character enters or leaves an action area. */
+	void RegisterEventHandlerActionArea(const wxString &name);
+	bool UnregisterEventHandlerActionArea(const wxString &name);
+	/** The registered functions are called with "ENTER" (`enter`) or "LEAVE", the area and the character. */
+	void ActionAreaEvent(bool enter, TVisObjRef &area, TVisObjRef &character);
 	void GetWalkingSounds(std::vector<wxFileName> &outSounds);
 	void StartTween(const TVisObjTween &tween);
 	void LoadEventHandlers();
@@ -280,6 +285,8 @@ protected:
 	// either narrow or wide COW strings under this project's old-ABI
 	// assumption).
 	std::vector<std::wstring> _engineEventHandlerNamesMainLoop;
+	/** (Night of the Rabbit, +0x9F8) The functions for the action area events; not saved with the other handlers. */
+	std::vector<std::wstring> _engineEventHandlerNamesActionArea;
 	// Confirmed embedded by value (asm line 456751, GetObjectManager():
 	// `lea rax,[rdi+0D0h]; retn`) - not owned by TMasterControl as first
 	// guessed.

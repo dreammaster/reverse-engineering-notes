@@ -722,9 +722,9 @@ void TVisionaire::BeginPaste() {
 }
 
 // Confirmed (asm lines 613460-613496)
-void TVisionaire::EndPaste() {
+void TVisionaire::EndPaste(bool notify) {
 	for (TTable *table : _tableList)
-		table->EndPaste();
+		table->EndPaste(notify);
 	_mappedIds.clear();
 }
 

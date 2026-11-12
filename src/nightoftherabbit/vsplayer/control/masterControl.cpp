@@ -471,13 +471,29 @@ bool TMasterControl::VideoFrame() {
 	return false;
 }
 
+// Confirmed (Night of the Rabbit, TMasterControl::MoviePause / MovieResume / SkipMovie): only while a movie plays.
+void TMasterControl::MoviePause() {
+	if (_videoPlaying)
+		_movie.Pause();
+}
+
+void TMasterControl::MovieResume() {
+	if (_videoPlaying)
+		_movie.Resume();
+}
+
+void TMasterControl::SkipMovie() {
+	if (_videoPlaying)
+		_movie.Finish();
+}
+
 // Confirmed (asm lines 490064-490700): an event of the mouse, a touch screen or a controller while a movie plays. A
 // controller that is added, removed or remapped is told to the game controller and the key handler (7, 8, 9); everything
 // else is given to the script function movieEvent(name, ...) if there is one: "mouseDown" / "mouseUp" with the place
 // as a point, "touchDown" / "touchUp" with the place as a point (of the position as the integer part of the
 // 0 to 1 numbers the screen gives), "controllerDown" / "controllerUp" with the key of the button (as
 // TGameControl::ConvertControllerButtonToSymKey() has it) and the number of the controller. (Another kind of event is
-// given with the name "".)
+// not given at all: the script of the game fails on a name it does not know.)
 void TMasterControl::MovieEvent(void *sdlEvent) {
 	SDL_Event *event = static_cast<SDL_Event *>(sdlEvent);
 	TGameControl *control = static_cast<TGameControl *>(g_pGameControl);
@@ -546,6 +562,11 @@ void TMasterControl::MovieEvent(void *sdlEvent) {
 	default:
 		break;
 	}
+
+	// (the game's script answers every name that it is given with an event of its own and pushes it: a mouse that moves, a window that
+	// changes, which have no name, would make it fail each time, so they are not given to it)
+	if (name[0] == 0)
+		return;
 
 	TArgument nameArgument;
 	TArgument secondArgument;

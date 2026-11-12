@@ -1,5 +1,6 @@
 #include "AppFunctions.h"
 
+#include <cstdlib>
 #include <cstdio>
 #include <algorithm>
 #include <cmath>
@@ -229,6 +230,11 @@ static bool isNoCase(const wxString &text, const wchar_t *expected) {
 // always OpenGL after the file was read.
 bool Init(const wxString &/*appName*/, wxSize &surfaceSize, wxSize &renderSize, int argc, char **/*argv*/,
           wxCmdLineParser &parser) {
+	// (not in the original: DEPONIA_TRACE=<flags> sets g_traceFlags, for finding what a game waits for: 1 animations, 2 actions, with
+	// `-ll max`)
+	if (const char *trace = std::getenv("DEPONIA_TRACE"))
+		g_traceFlags = std::atoi(trace);
+
 	wxString file;
 	wxString language;
 	bool fullscreen = true;

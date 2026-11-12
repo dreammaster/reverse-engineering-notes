@@ -189,6 +189,10 @@ public:
 	int PlayAVI(const wxFileName &file, bool skippable, HandleSoundsEnum handleSounds);
 	bool IsVideoPlaying() const;
 	bool VideoFrame();
+	/** (Night of the Rabbit) What a script does to the movie that plays: nothing when none does. */
+	void MoviePause();
+	void MovieResume();
+	void SkipMovie();
 	void MovieEvent(void *sdlEvent);
 
 	bool UnregisterEngineEventHandler(const wxString &name);

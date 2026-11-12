@@ -50,13 +50,17 @@ void RegisterConditionHandlers(TEventHandlerInterface *handler, TVisObjRef &cond
 
 	path.push_back(condition);
 
-	TVisObjRef first = condition.GetLink(kConditionCondition1);
-	TVisObjRef second = condition.GetLink(kConditionCondition2);
+	// (Night of the Rabbit: a condition lists the conditions it is made of, any number of them, in ConditionConditions)
+	TVList conditions;
 
-	if (!first.IsEmpty())
-		RegisterConditionHandlers(handler, first, path, variables);
-	if (!second.IsEmpty())
-		RegisterConditionHandlers(handler, second, path, variables);
+	condition.GetLinks(kConditionConditions, TypeOrder::kValue0, conditions);
+
+	for (TVisionaireObject *item : conditions) {
+		TVisObjRef child(item);
+
+		if (!child.IsEmpty())
+			RegisterConditionHandlers(handler, child, path, variables);
+	}
 
 	path.pop_back();
 }

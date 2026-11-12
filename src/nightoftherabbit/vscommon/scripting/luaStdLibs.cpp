@@ -275,8 +275,8 @@ static int openLfs(lua_State *state) {
 // UTF8StringFix script puts its pure-Lua functions into the very same `utf8`; without the name there a new game would
 // save the table without its functions and give it back empty. Here are the functions that are plain (len, sub,
 // char, byte, reverse, lower, upper: the places are those of the characters, from 1, and negative from the end).
-// TODO: offset, charpos, next, codes, codepoint, remove, insert, escape, title, fold, ncasecmp, width, widthindex and
-// the four that work with patterns (find, match, gmatch, gsub) are not done; the scripts replace them all anyway.
+// TODO: offset, charpos, next, codes, codepoint, remove, insert, escape, title, fold, ncasecmp, width and widthindex are not done (Lua 5.4's
+// own utf8 has offset, codes and codepoint); find, match, gmatch and gsub are made of the `string` ones below.
 
 /** The code point at the start of s (up to `end`) and the bytes it takes; a byte that does not start a sequence is itself. */
 static unsigned decodeUtf8(const char *s, const char *end, int &size) {
@@ -484,6 +484,26 @@ static const luaL_Reg utf8Extras[] = {
 	{nullptr, nullptr}
 };
 
+// The four functions of lua-utf8 that work with patterns (find, match, gmatch, gsub), made of Lua's own `string` ones: the patterns of the
+// scripts are of ASCII characters, for which the two libraries give the same; `find` gives the places (and takes `init`) as the
+// numbers of the characters, as lua-utf8's does, not of the bytes. (A pattern class that is meant to take a whole multi-byte character,
+// like `.` for one, takes a byte here.)
+static const char *const kUtf8Patterns =
+	"local string, utf8, table = string, utf8, table\n"
+	"utf8.match = string.match\n"
+	"utf8.gmatch = string.gmatch\n"
+	"utf8.gsub = string.gsub\n"
+	"function utf8.find(s, pattern, init, plain)\n"
+	"  local byteInit = nil\n"
+	"  if init then byteInit = utf8.offset(s, init) or (#s + 1) end\n"
+	"  local result = table.pack(string.find(s, pattern, byteInit, plain))\n"
+	"  if result[1] == nil then return nil end\n"
+	"  local first = utf8.len(s, 1, result[1]) or result[1]\n"
+	"  local last = utf8.len(s, 1, result[2]) or result[2]\n"
+	"  result[1], result[2] = first, last\n"
+	"  return table.unpack(result, 1, result.n)\n"
+	"end\n";
+
 void OpenLuaStdLibs(lua_State *state) {
 	// utf8: the original has the lua-utf8 library, which has the functions of Lua 5.4's own and more; here Lua 5.4's utf8 gets the plain
 	// functions of lua-utf8 that it has not (the others of lua-utf8 are in the TODO above)
@@ -492,6 +512,9 @@ void OpenLuaStdLibs(lua_State *state) {
 	if (lua_istable(state, -1))
 		luaL_setfuncs(state, utf8Extras, 0);
 	lua_settop(state, -2);
+
+	if (luaL_dostring(state, kUtf8Patterns) != 0)
+		lua_settop(state, -2);
 
 	// lfs is built in (luaopen_lfs, asm 5a73c0): a global, and in package.loaded for require("lfs")
 	luaL_requiref(state, "lfs", openLfs, 1);

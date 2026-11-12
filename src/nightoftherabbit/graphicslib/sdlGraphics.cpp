@@ -8,8 +8,12 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <list>
+
 #include "AppGlobals.h"
+#include "TGAction.h"
 #include "TSpriteHandle.h"
+#include "vscommon/scripting/visLua.h"
 #include "soundengine/audioMixer.h"
 
 TSdlGraphics::TSdlGraphics(const TGraphicsStartup &startup) : _startup(startup) {
@@ -402,6 +406,41 @@ void TSdlGraphics::Swap() {
 		if (_shotsLeft > 0 && _shotEvery > 0 && _shown % _shotEvery == 0) {
 			SaveShot(_shotDirectory + "/shot_" + std::to_string(_shown) + ".bmp");
 			_shotsLeft--;
+		}
+
+		// (not in the original: DEPONIA_ACTIONS=<every> prints the actions that run, with the part each is at, every that many frames)
+		static const int actionsEvery = std::getenv("DEPONIA_ACTIONS") ? std::atoi(std::getenv("DEPONIA_ACTIONS")) : 0;
+
+		if (actionsEvery > 0 && _shown % actionsEvery == 0) {
+			std::list<wxString> lines;
+
+			TGAction::PrintRunningActions(lines);
+
+			for (const wxString &line : lines)
+				std::fprintf(stderr, "ACTIONS@%d: %ls\n", _shown, line.c_str());
+		}
+
+		// (not in the original: DEPONIA_LUA=<frame>:<file> runs the Lua file in the game once, at that frame, for looking at the state of a game)
+		static const char *luaSetting = std::getenv("DEPONIA_LUA");
+		static bool luaDone = false;
+
+		if (luaSetting && !luaDone && _shown == std::atoi(luaSetting)) {
+			const char *colon = std::strchr(luaSetting, ':');
+			std::FILE *file = colon ? std::fopen(colon + 1, "rb") : nullptr;
+
+			luaDone = true;
+
+			if (file) {
+				std::string code;
+				char buffer[4096];
+				size_t count;
+
+				while ((count = std::fread(buffer, 1, sizeof(buffer), file)) > 0)
+					code.append(buffer, count);
+
+				std::fclose(file);
+				LuaDoString(code);
+			}
 		}
 
 		_shown++;

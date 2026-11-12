@@ -96,7 +96,8 @@ public:
 	/** Copies an object into this table under a new id. */
 	TVisionaireObject *PasteObject(const TVisionaireObject *source, const TId &parentId, int parentField);
 	void BeginPaste();
-	void EndPaste();
+	/** (Night of the Rabbit: EndPaste(bool)) `notify` is passed on to the parent when a pasted object is linked into its list. */
+	void EndPaste(bool notify = false);
 
 	/** Removes an object from the table (dropping the table's reference). */
 	bool RemoveObject(TVisionaireObject *object);

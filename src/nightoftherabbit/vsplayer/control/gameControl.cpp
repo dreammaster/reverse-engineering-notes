@@ -2781,6 +2781,45 @@ void TGameControl::RegisterEventHandlerMainLoop(const wxString &name) {
 	_engineEventHandlerNamesMainLoop.push_back(name.ToStdWstring());
 }
 
+// Confirmed (Night of the Rabbit, TGameControl::RegisterEventHandlerActionArea / UnregisterEventHandlerActionArea): a name is kept once.
+void TGameControl::RegisterEventHandlerActionArea(const wxString &name) {
+	for (const std::wstring &existing : _engineEventHandlerNamesActionArea) {
+		if (existing == name.ToStdWstring())
+			return;
+	}
+	_engineEventHandlerNamesActionArea.push_back(name.ToStdWstring());
+}
+
+bool TGameControl::UnregisterEventHandlerActionArea(const wxString &name) {
+	for (size_t i = 0; i < _engineEventHandlerNamesActionArea.size(); ++i) {
+		if (_engineEventHandlerNamesActionArea[i] == name.ToStdWstring()) {
+			_engineEventHandlerNamesActionArea.erase(_engineEventHandlerNamesActionArea.begin() + static_cast<long>(i));
+			return true;
+		}
+	}
+	return false;
+}
+
+// Confirmed (Night of the Rabbit, TGameControl::ActionAreaEvent, asm lines 456234-456420): each function registered is called (debug name
+// "ActionAreaEvent") with "ENTER" or "LEAVE", the action area and the character; what it answers is not used.
+void TGameControl::ActionAreaEvent(bool enter, TVisObjRef &area, TVisObjRef &character) {
+	for (size_t i = 0; i < _engineEventHandlerNamesActionArea.size(); i++) {
+		TArgument kind;
+		TArgument areaArgument;
+		TArgument characterArgument;
+
+		kind.Set(wxString(enter ? L"ENTER" : L"LEAVE"));
+		areaArgument.Set(area);
+		characterArgument.Set(character);
+
+		std::vector<TArgument *> arguments = {&kind, &areaArgument, &characterArgument};
+		std::vector<TArgument *> results;
+
+		LuaDebugName("ActionAreaEvent");
+		LuaExecuteFunction(std::string(wxString(_engineEventHandlerNamesActionArea[i]).mb_str()), arguments, results);
+	}
+}
+
 void TGameControl::GetWalkingSounds(std::vector<wxFileName> &outSounds) {
 	// Confirmed (asm lines 474770-474985): field ids 0x1F7 (scene link,
 	// matches CenterScene's usage) and 0x110 (a filesystem path) are both

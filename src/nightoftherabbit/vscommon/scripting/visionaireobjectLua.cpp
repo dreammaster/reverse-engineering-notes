@@ -10,6 +10,7 @@
 // {tableId = n} with the metatable "Visionaire.TVisionaireTable" whose __index finds the object of that
 // name (or number); the tables of linked objects that getLinks() makes have the same metatable (they have no
 // tableId), and for those the names are looked up in an index made together with the table.
+#include <cstdio>
 #include "vscommon/scripting/visLuaObjects.h"
 
 #include <cstring>
@@ -512,6 +513,21 @@ static int GetFloats(lua_State *state) {
 	return 1;
 }
 
+// Confirmed (Night of the Rabbit, GetBools(lua_State *)): the list of booleans of a field (a number) as a table.
+static int GetBools(lua_State *state) {
+	int field;
+	TVisionaireObject *object = objectAndField(state, field);
+
+	if (!object)
+		return 0;
+
+	std::vector<bool> values;
+
+	object->GetBools(field, values);
+	ConvertToLua(values);
+	return 1;
+}
+
 // Confirmed (asm lines 1420710-1420844)
 static int GetPaths(lua_State *state) {
 	int field;
@@ -536,6 +552,173 @@ static int SetName(lua_State *state) {
 
 	self->object->SetName(TCharHolder(utf(lua_tolstring(state, 1, nullptr))));
 	return 0;
+}
+
+// ---------------------------------------------------------------------------------------------------------
+// Making, copying and removing objects while the game runs (Night of the Rabbit: the objects the scripts make are temporary: they are
+// not saved, and only they can be removed again)
+
+// Confirmed (Night of the Rabbit, DeleteVisObjectGame(TVisObjRef const &)): the children go first, then the object (out of the
+// game, its links undone).
+static void deleteVisObjectGame(const TVisObjRef &object) {
+	TVList children;
+
+	object.GetChildren(children);
+
+	for (TVisionaireObject *child : children)
+		deleteVisObjectGame(TVisObjRef(child));
+
+	// (a reference of its own is given up by Remove(), as it is by the TVisObjRef that removes its object)
+	TVisObjRef own(object);
+
+	own.Remove();
+}
+
+// Confirmed (Night of the Rabbit, DuplicateVisObjectGame(TVisObjRef const &, wxString &, TVisObjRef &, TVisObjRef, int)): a copy of the
+// object with all that is under it, pasted in `parent` (empty: the parent of the original) at `field` (-1: the field of the
+// original), all temporary; the copy gets the name and is pushed to Lua.
+static bool duplicateVisObjectGame(lua_State *state, const TVisObjRef &source, const wxString &name, TVisObjRef &result, TVisObjRef parent,
+                                   int field) {
+	TVisionaire *game = GetLuaGame();
+	TVList all;
+
+	all.push_back(source);
+
+	for (size_t i = 0; i < all.size(); i++) {
+		TVisObjRef current(all.at(static_cast<int>(i)));
+		TVList children;
+
+		current.GetChildren(children);
+
+		for (TVisionaireObject *child : children)
+			all.push_back(child);
+	}
+
+	all.erase(all.begin());
+	game->BeginPaste();
+
+	if (parent.IsEmpty())
+		parent = source.GetParent();
+
+	if (field == -1)
+		field = source.GetParentField();
+
+	const std::uint8_t *parentId = parent.GetId();
+
+	result = game->PasteObject(source, TId(parentId[0] + (parentId[1] << 8) + (static_cast<signed char>(parentId[2]) << 16), parentId[3]), field);
+	result.SetTemporary(true);
+
+	for (TVisionaireObject *child : all) {
+		TVisObjRef pasted = game->PasteObject(TVisObjRef(child), TId(-1, -1), -1);
+
+		pasted.SetTemporary(true);
+	}
+
+	game->EndPaste(true);
+
+	if (!result.IsEmpty()) {
+		// the list the copy is in has changed (a table of it that a script has is out of date)
+		TVisObjRef copyParent = result.GetParent();
+
+		if (!copyParent.IsEmpty())
+			UnrefLuaFieldsCache(idOf(copyParent.GetObjectPointer()), result.GetParentField());
+	}
+
+	if (!result.IsEmpty())
+		result.SetName(TCharHolder(name));
+
+	CreateVisionaireObject(state, result.GetObjectPointer());
+	return true;
+}
+
+// The new object goes up its list until it is behind `after` (the ones the scripts make are put at the end), and the parent is told.
+static void moveBehind(TVisObjRef &object, TVisionaireObject *after) {
+	long last = -1;
+
+	while (object.GetOrder() > after->GetOrder()) {
+		if (last == object.GetOrder())
+			break;
+
+		last = object.GetOrder();
+		object.ChangeOrder(TMoveOrderEnum::kUp);
+	}
+
+	TVisObjRef parent = object.GetParent();
+
+	parent.GetObjectPointer()->GetData()->NotifyEvent(object.GetParentField(), TEventEnum::kChanged, nullptr);
+}
+
+// Confirmed (Night of the Rabbit, Create(lua_State *)): object:create(field, name [, after]) makes an object in the list of a link field
+// of this one (the table of the objects is the one that the field links to), names it, makes it temporary and gives it. `after`
+// (an object of the same list) is the one it is put behind.
+static int Create(lua_State *state) {
+	LuaVisionaireObject *self = CheckVisionaireObject(state, 1, true);
+	int field = static_cast<int>(luaL_checkinteger(state, 1));
+	wxString name = utf(luaL_checklstring(state, 2, nullptr));
+	LuaVisionaireObject *after = static_cast<LuaVisionaireObject *>(lua_touserdata(state, 3));
+	int table = -2;
+
+	for (const TTypeData *type : self->object->GetTypeGroup()->GetTypes()) {
+		if (type->GetDescription() == field) {
+			table = type->GetTypeLink();
+			break;
+		}
+	}
+
+	if (table == -2) {
+		char message[80];
+
+		std::snprintf(message, sizeof(message), "don't know which table the field %d has", field);
+		lua_pushstring(state, message);
+		return lua_error(state);
+	}
+
+	TVisObjRef parent(self->object);
+	TVisObjRef created = GetLuaGame()->CreateObject(table, parent, field);
+
+	if (!created.IsEmpty())
+		created.SetName(TCharHolder(name));
+
+	created.SetTemporary(true);
+	UnrefLuaFieldsCache(idOf(self->object), field);
+
+	if (after && after->object && !after->object->IsEmpty())
+		moveBehind(created, after->object);
+
+	CreateVisionaireObject(state, created.GetObjectPointer());
+	return 1;
+}
+
+// Confirmed (Night of the Rabbit, Remove(lua_State *)): only a temporary object can be removed (with what is under it).
+static int Remove(lua_State *state) {
+	LuaVisionaireObject *self = CheckVisionaireObject(state, 1, true);
+
+	if (!self->object->IsTemporary()) {
+		lua_pushstring(state, "can't remove an object which is not temporary");
+		return lua_error(state);
+	}
+
+	deleteVisObjectGame(TVisObjRef(self->object));
+	return 0;
+}
+
+// Confirmed (Night of the Rabbit, Duplicate(lua_State *)): object:duplicate(name [, parent [, field [, after]]]) (the object is not taken
+// off the stack here: the name is the second argument). The copy is temporary.
+static int Duplicate(lua_State *state) {
+	LuaVisionaireObject *self = CheckVisionaireObject(state, 1, false);
+	wxString name = utf(luaL_checklstring(state, 2, nullptr));
+	LuaVisionaireObject *parent = static_cast<LuaVisionaireObject *>(lua_touserdata(state, 3));
+	int field = static_cast<int>(luaL_optinteger(state, 4, -1));
+	LuaVisionaireObject *after = static_cast<LuaVisionaireObject *>(lua_touserdata(state, 5));
+	TVisObjRef result;
+
+	duplicateVisObjectGame(state, TVisObjRef(self->object), name, result, parent ? TVisObjRef(parent->object) : TVisObjRef(), field);
+	result.SetTemporary(true);
+
+	if (after && after->object && !after->object->IsEmpty())
+		moveBehind(result, after->object);
+
+	return 1;
 }
 
 // Confirmed (asm lines 1420965-1421263): tostring(object) is `Name (table,id)`.
@@ -925,6 +1108,8 @@ static int callGetter(lua_State *state, eTypeData type) {
 		return GetPaths(state);
 	case eTypeData::kFloatList:
 		return GetFloats(state);
+	case eTypeData::kBoolList:
+		return GetBools(state);
 	case eTypeData::kPoint:
 		return GetPoint(state);
 	case eTypeData::kRect:
@@ -1188,6 +1373,13 @@ static int SetValue(lua_State *state) {
 			done = object->SetValue(field, value, TSendEventEnum::kSendEvent);
 			break;
 		}
+		case static_cast<int>(eTypeData::kBoolList): {
+			std::vector<bool> value;
+
+			ConvertFromLua(value, 2);
+			done = object->SetValue(field, value, TSendEventEnum::kSendEvent);
+			break;
+		}
 		default:
 			break;
 		}
@@ -1444,11 +1636,15 @@ const LuaMethod kObjectMethods[] = {
 	{"getPoints", GetPoints},
 	{"getRects", GetRects},
 	{"getSprites", GetSprites},
+	{"getBools", GetBools},
 	{"getPaths", GetPaths},
 	{"getInts", GetInts},
 	{"getFloats", GetFloats},
 	{"getTexts", GetTexts},
 	{"getTextStr", GetTextStr},
+	{"duplicate", Duplicate},
+	{"create", Create},
+	{"remove", Remove},
 	{"to", VisObjTo},
 	{"info", VisObjInfo},
 };

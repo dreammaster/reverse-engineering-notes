@@ -200,6 +200,19 @@ void ConvertToLua(const std::vector<int> &values) {
 	}
 }
 
+// Confirmed (Night of the Rabbit, ConvertToLua(std::vector<bool> const &)): a table 1..n of booleans.
+void ConvertToLua(const std::vector<bool> &values) {
+	lua_createtable(L, 0, (int)values.size());
+
+	lua_Integer key = 1;
+
+	for (bool value : values) {
+		lua_pushinteger(L, key++);
+		lua_pushboolean(L, value);
+		lua_settable(L, -3);
+	}
+}
+
 // Confirmed (asm lines 557313-557354): (the original sets these with a raw set)
 void ConvertToLua(const std::vector<float> &values) {
 	lua_createtable(L, 0, (int)values.size());
@@ -370,6 +383,28 @@ bool ConvertFromLua(std::vector<int> &values, int index) {
 		}
 
 		values.push_back((int)lua_tonumber(L, -1));
+		lua_settop(L, -2);
+	}
+}
+
+// Confirmed (Night of the Rabbit, ConvertFromLua(std::vector<bool> &, int)): the booleans of the table 1, 2 ... up to the first nil; a value that
+// is not a boolean ends it with false.
+bool ConvertFromLua(std::vector<bool> &values, int index) {
+	for (lua_Integer key = 1;; key++) {
+		lua_pushinteger(L, key);
+		lua_gettable(L, index);
+
+		if (lua_type(L, -1) == LUA_TNIL) {
+			lua_settop(L, -2);
+			return true;
+		}
+
+		if (lua_type(L, -1) != LUA_TBOOLEAN) {
+			lua_settop(L, -2);
+			return false;
+		}
+
+		values.push_back(lua_toboolean(L, -1) != 0);
 		lua_settop(L, -2);
 	}
 }

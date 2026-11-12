@@ -11,13 +11,19 @@
 #include "AppGlobals.h"
 #include "SdlStub.h"
 #include "TGAction.h"
+#include "TGDialog.h"
+#include "TComposedFileManager.h"
 #include "TGScene.h"
+#include "vsplayer/control/masterControl.h"
+#include "vscommon/scripting/luaConversion.h"
 #include "TSoundFFMPEG.h"
 #include "sha1.h"
 #include <lauxlib.h>
 #include "graphicslib/graphics.h"
 #include "graphicslib/subsys.h"
 #include "vscommon/canimation.h"
+#include "vscommon/scripting/visLuaObjects.h"
+#include "vstables/records.h"
 #include "vsplayer/animationGame.h"
 #include "vsplayer/control/gameControl.h"
 #include "vsplayer/control/gameController.h"
@@ -252,6 +258,62 @@ static int system_systemInfo(lua_State *state) {
 	return 1;
 }
 
+// Confirmed (Night of the Rabbit, system_getCondition): system.getCondition(condition) is whether the condition is true (an empty object gives
+// whatever the empty condition is: true).
+static int system_getCondition(lua_State *state) {
+	LuaVisionaireObject *self = CheckVisionaireObject(state, 1, false);
+
+	if (!self->object) {
+		lua_pushboolean(state, 0);
+		return 1;
+	}
+
+	TTCondition condition((TVisObjRef(self->object)));
+
+	lua_pushboolean(state, condition.IsTrue());
+	return 1;
+}
+
+// Confirmed (Night of the Rabbit, system_getDesktopDisplayMode): the size of the first display's desktop as "WIDTHxHEIGHT".
+static int system_getDesktopDisplayMode(lua_State *state) {
+	SDL_DisplayMode mode;
+
+	SDL_GetDesktopDisplayMode(0, &mode);
+
+	char text[40];
+
+	std::snprintf(text, sizeof(text), "%dx%d", mode.w, mode.h);
+	lua_pushstring(state, text);
+	return 1;
+}
+
+// Confirmed (Night of the Rabbit): the movie of the game pauses, goes on, is skipped; the text that is shown is skipped; the cutscene that
+// runs is skipped.
+static int system_pauseVideo(lua_State *) {
+	static_cast<TMasterControl *>(g_pGameControl)->MoviePause();
+	return 0;
+}
+
+static int system_resumeVideo(lua_State *) {
+	static_cast<TMasterControl *>(g_pGameControl)->MovieResume();
+	return 0;
+}
+
+static int system_skipVideo(lua_State *) {
+	static_cast<TMasterControl *>(g_pGameControl)->SkipMovie();
+	return 0;
+}
+
+static int system_skipText(lua_State *) {
+	static_cast<TGameControl *>(g_pGameControl)->SkipCurrentText();
+	return 0;
+}
+
+static int system_skipCutscene(lua_State *) {
+	TGAction::SkipCutscene();
+	return 0;
+}
+
 // Confirmed (asm lines 287051-287250): the modes of the first display with 32 bits for a pixel, as "WIDTHxHEIGHT"
 // texts in a list. A mode with the same width or the same height as the one before it (the list of SDL is sorted)
 // is left out.
@@ -313,7 +375,33 @@ static int system_index(lua_State *state) {
 		return 1;
 	}
 
-	if (std::strcmp(name, "vramUsed") == 0) {
+	// Confirmed (Night of the Rabbit, system_index): fingersDown (the fingers on the touch screen), screenResolution (the size the game is
+	// drawn at), windowResolution (the window), dialogScrollPosition, isGameCompiled, isVideoPlaying.
+	if (std::strcmp(name, "fingersDown") == 0) {
+		lua_pushinteger(state, numFingers);
+	} else if (std::strcmp(name, "screenResolution") == 0) {
+		wxPoint size;
+
+		size.x = renderSize.width;
+		size.y = renderSize.height;
+		ConvertToLua(size);
+	} else if (std::strcmp(name, "windowResolution") == 0) {
+		int width = 0;
+		int height = 0;
+
+		SDL_GetWindowSize(VSPlayerWindow, &width, &height);
+		wxPoint size;
+
+		size.x = width;
+		size.y = height;
+		ConvertToLua(size);
+	} else if (std::strcmp(name, "dialogScrollPosition") == 0) {
+		lua_pushinteger(state, gameControl()->GetDialog()->GetCurrentScrollPosition());
+	} else if (std::strcmp(name, "isGameCompiled") == 0) {
+		lua_pushboolean(state, TComposedFileManager::IsGameCompiled());
+	} else if (std::strcmp(name, "isVideoPlaying") == 0) {
+		lua_pushboolean(state, static_cast<TMasterControl *>(g_pGameControl)->IsVideoPlaying());
+	} else if (std::strcmp(name, "vramUsed") == 0) {
 		lua_pushinteger(state, static_cast<lua_Integer>(getGPUMem() >> 20));
 	} else if (std::strcmp(name, "memoryUsed") == 0) {
 		lua_pushinteger(state, static_cast<lua_Integer>(getProcessMem() >> 20));
@@ -368,6 +456,13 @@ static const luaL_Reg system_meths[] = {
 	{"resumeBackgroundMusic", system_resumeBackgroundMusic},
 	{"resumeAllSounds", system_resumeAllSounds},
 	{"systemInfo", system_systemInfo},
+	{"getCondition", system_getCondition},
+	{"getDesktopDisplayMode", system_getDesktopDisplayMode},
+	{"pauseVideo", system_pauseVideo},
+	{"resumeVideo", system_resumeVideo},
+	{"skipVideo", system_skipVideo},
+	{"skipText", system_skipText},
+	{"skipCutscene", system_skipCutscene},
 	{nullptr, nullptr}
 };
 

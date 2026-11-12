@@ -319,17 +319,41 @@ void TTable::BeginPaste() {
 	_pasteBase = _nextId;
 }
 
-// Confirmed in shape (asm lines 665092-665316): the objects made since
-// BeginPaste() get their parent ids mapped and their links validated.
-void TTable::EndPaste() {
+// Confirmed (asm lines 665092-665316; Night of the Rabbit, TTable::EndPaste(bool), which also gives the pasted object to its parent): the
+// objects made since BeginPaste() get their parent ids mapped and their links validated. One whose parent was not pasted too (the
+// mapping of the parent is empty) is put in the parent's list: a link of the parent's field (the field of a list of links gives the
+// object the next order of it if it has none) and the field of the parent is changed.
+void TTable::EndPaste(bool notify) {
 	if (_pasteBase >= 0 && _pasteBase < _nextId) {
-		for (TVisionaireObject *object : _objects) {
-			if (object->GetId24() < _pasteBase)
-				continue;
+		std::vector<TVisionaireObject *> pasted;
 
+		for (TVisionaireObject *object : _objects) {
+			if (object->GetId24() >= _pasteBase)
+				pasted.push_back(object);
+		}
+
+		for (TVisionaireObject *object : pasted) {
 			TId mapped = _visionaire->GetMappedId(object->GetParentId());
-			if (!isEmptyId(mapped))
+
+			if (!isEmptyId(mapped)) {
 				object->SetParent(mapped, object->GetParentField());
+			} else {
+				TVisionaireObject *parent = _visionaire->GetObjectById(object->GetParentId());
+
+				if (!parent) {
+					x_assert(false, "false", kSourceFile, 0x516);
+				} else {
+					int field = object->GetParentField();
+
+					if (parent->GetTypeField(field) == (int)eTypeData::kLinkList && object->GetOrder() == -1) {
+						x_assert(!object->GetData()->IsOrderContainsPosition(), "!(*node)->Data->IsOrderContainsPosition()", kSourceFile, 0x50B);
+						object->SetOrder(parent->GetLinksHighestOrder(field) + 1);
+					}
+
+					parent->GetData()->SetParentLink(field, object->GetTId(), notify);
+				}
+			}
+
 			object->GetData()->ValidateAndAdaptLinks();
 		}
 	}

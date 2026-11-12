@@ -401,7 +401,8 @@ enum {
 	kEventMainLoop = 4,
 	kEventMouse = 5,
 	kEventKey = 6,
-	kEventEngine = 7
+	kEventEngine = 7,
+	kEventActionArea = 8   // (Night of the Rabbit) a character enters or leaves an action area
 };
 
 /** The code of an event handler's event from its name, or -1 (the first four are only for registering). */
@@ -418,6 +419,7 @@ static int eventFromName(const wxString &name, bool all) {
 		{L"mouseEvent", kEventMouse},
 		{L"keyEvent", kEventKey},
 		{L"engineEvent", kEventEngine},
+		{L"actionArea", kEventActionArea},
 	};
 
 	for (const auto &event : kEvents) {
@@ -509,6 +511,9 @@ bool CmdRegisterEventHandler::Redo() {
 	case kEventMainLoop:
 		gameControl()->RegisterEventHandlerMainLoop(_handler);
 		break;
+	case kEventActionArea:
+		gameControl()->RegisterEventHandlerActionArea(_handler);
+		break;
 	case kEventMouse:
 		g_pGameControl->RegisterMouseEventHandler(_handler, _flags);
 		break;
@@ -571,6 +576,9 @@ bool CmdUnregisterEventHandler::Redo() {
 	switch (_event) {
 	case kEventMainLoop:
 		gameControl()->UnregisterEventHandlerMainLoop(_handler);
+		break;
+	case kEventActionArea:
+		gameControl()->UnregisterEventHandlerActionArea(_handler);
 		break;
 	case kEventMouse:
 		g_pGameControl->UnregisterMouseEventHandler(_handler);

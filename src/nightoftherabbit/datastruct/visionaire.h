@@ -209,7 +209,7 @@ public:
 
 	// Pasting and merging objects from another project.
 	void BeginPaste();
-	void EndPaste();
+	void EndPaste(bool notify = false);
 	void EndMerge();
 	/** The id an imported object got, or the empty id. */
 	TId GetMappedId(const TId &id) const;
