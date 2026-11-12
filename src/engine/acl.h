@@ -15,6 +15,7 @@ typedef struct {
 	uint8_t flags[ACL_THINGS];      /* rec[3]  */
 	uint8_t flags2[ACL_THINGS];     /* rec[15] */
 	uint8_t room[ACL_THINGS];       /* rec[10] */
+	uint8_t tail[ACL_THINGS][6];    /* first bytes of the thing's tail (rec[rec[12]..]): chest content, key, flags, trap */
 	uint8_t pos[ACL_THINGS * 3];    /* rec[0..2]: x1, y1, z0 */
 	union {                         /* script globals ds:590..71F (the TAD routines see them as part of the data segment) */
 		uint8_t g[0x190];
@@ -53,6 +54,9 @@ void acl_room_event(AclVM *vm, const Mp2 *mp2, int room, int type, int arg);
 /* deliver a thing event (7 = touched, 9 = contact with the thing id `arg`, ...) to the thing's handler list; vm->cur = thing. Events queued by ops
  * are left in vm->queue for the caller (they belong to the room's list). */
 void acl_thing_event(AclVM *vm, const Mp2 *mp2, int thing, int type, int arg);
+/* Verb 3 on a chest (sprite header 0x16 == 8, 1000:31A3): trap damage, key check, content, open bit. Returns 1 when the chest changed state;
+ * *content = thing id to place into the room (or 0). Messages / energy changes go through the VM. */
+int acl_chest_toggle(AclVM *vm, const Mp2 *mp2, int thing, int *content);
 /* 1 when the whole handler list of the room parses to exactly its length (the rule the Python parser uses) */
 int acl_room_parse_ok(const Mp2 *mp2, int room);
 

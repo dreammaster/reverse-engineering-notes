@@ -878,6 +878,30 @@ int main(int argc, char **argv) {
 		free(in); free(raw);
 	}
 
+	{
+		/* chests (verb 3) in level 1: thing 83 holds thing 145, no key; thing 224 needs thing 184 */
+		snprintf(path, sizeof(path), "%s/cadaver1/DATA/1/LEV1.MP2", root);
+		size_t n, un;
+		uint8_t *in = slurp(path, &n), *raw = NULL;
+		Mp2 m;
+		if (in && mjm_unpack(in, n, &raw, &un) == 0 && mp2_parse(raw, un, &m) == 0) {
+			static AclVM vm;
+			acl_init(&vm, &m);
+			int c = 0;
+			int ok1 = acl_chest_toggle(&vm, &m, 83, &c);
+			int bad = !ok1 || c != 145 || !(vm.tail[83][4] & 1);
+			int c2 = 0;
+			int ok2 = acl_chest_toggle(&vm, &m, 224, &c2);              /* locked: key 184 not carried */
+			vm.room[184] = 0xFF;
+			int ok3 = acl_chest_toggle(&vm, &m, 224, &c2);
+			bad |= ok2 || !ok3 || c2 != 143;
+			if (bad) { printf("FAIL chest: %d %d (%d) %d %d (%d)\n", ok1, c, vm.tail[83][4], ok2, ok3, c2); failed++; }
+			mp2_free(&m);
+			checked++;
+		}
+		free(in); free(raw);
+	}
+
 	for (size_t i = 0; i < sizeof(acl_vectors) / sizeof(acl_vectors[0]); i++) {
 		const AclVector *av = &acl_vectors[i];
 		char lev = av->dir[strlen(av->dir) - 1];

@@ -648,6 +648,26 @@ static void menu_choose(RoomView *rv, int verb) {
 		acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
 	} else if (verb == 2) {
 		acl_thing_event(&rv->vm, &rv->mp2, t, 0, 0);
+	} else if (verb == 3) {           /* 1000:31A3: open / close a chest; the content is placed on top of it (the original's collision-aware placement is approximated by raising z) */
+		int content = 0;
+		if (acl_chest_toggle(&rv->vm, &rv->mp2, t, &content)) {
+			if (content > 0 && content < ACL_THINGS) {
+				int len, cz = rv->vm.pos[3 * t + 2];
+				const uint8_t *cr = mp2_thing(&rv->mp2, content, &len);
+				const ObjSprite *sp = cr && len >= 8 ? objsprites_find(&rv->objs, (cr[6] << 8) | cr[7]) : NULL;
+				int xs = sp ? (sp->header[16] << 8 | sp->header[17]) : 7, ys = sp ? (sp->header[18] << 8 | sp->header[19]) : 7, zs = sp ? (sp->header[20] << 8 | sp->header[21]) : 7;
+				int x = rv->vm.pos[3 * t], y = rv->vm.pos[3 * t + 1], z = cz;
+				for (; z < 0x2C; z++) {
+					ColResult cr2;
+					collision_test(&g_walk.world, x, y, z, xs, ys, zs, content, 0, &cr2);
+					if (cr2.zf) break;
+				}
+				rv->vm.pos[3 * content] = (uint8_t)x; rv->vm.pos[3 * content + 1] = (uint8_t)y; rv->vm.pos[3 * content + 2] = (uint8_t)z;
+				rv->vm.room[content] = (uint8_t)rv->room;
+				rv->vm.flags[content] &= 0x7F;           /* inside a container -> in the room */
+			}
+			acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
+		}
 	} else if (verb == 14) {          /* 1000:3483: class 7 things get event 5, everything else is removed (queued for deletion, 1000:62A9) */
 		const RoomObj *o = NULL;
 		for (int i = 0; i < rv->ro.n; i++) if (rv->ro.o[i].thing == t) { o = &rv->ro.o[i]; break; }

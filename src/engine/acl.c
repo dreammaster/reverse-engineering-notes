@@ -28,6 +28,7 @@ void acl_init(AclVM *vm, const Mp2 *mp2) {
 			vm->present[t] = 1;
 			vm->flags[t] = r[3];
 			vm->room[t] = r[10];
+			if (r[12] >= 16 && (size_t)r[12] + 6 <= (size_t)len) memcpy(vm->tail[t], r + r[12], 6);
 			vm->pos[3 * t] = r[0]; vm->pos[3 * t + 1] = r[1]; vm->pos[3 * t + 2] = r[2];
 			vm->flags2[t] = r[15];
 		}
@@ -291,4 +292,32 @@ int acl_thing_parse_ok(const Mp2 *mp2, int thing) {
 	int len;
 	const uint8_t *r = mp2_thing(mp2, thing, &len);
 	return r && len > 16 && list_parse_ok(r, (size_t)len, 16, r[11]);
+}
+
+int acl_chest_toggle(AclVM *vm, const Mp2 *mp2, int thing, int *content) {
+	(void)mp2;
+	*content = 0;
+	if (thing < 0 || thing >= ACL_THINGS || !vm->present[thing])
+		return 0;
+	uint8_t *tl = vm->tail[thing];
+	if (!(tl[4] & 1)) {                                  /* closed: trap, key, content */
+		if (tl[5]) {
+			int e = vm->energy - tl[5];
+			vm->energy = e <= 0 ? 0 : e;
+			if (vm->msg_n < 16) vm->msg[vm->msg_n++] = 0x32;
+			return 0;
+		}
+		int key = (tl[2] << 8) | tl[3];
+		if (key) {
+			if (key >= ACL_THINGS || vm->room[key] != 0xFF)
+				return 0;                                /* the key is not carried */
+			tl[2] = tl[3] = 0;
+			if (tl[4] & 2) vm->flags[key] |= 0x80;       /* the key is used up */
+		}
+		if (tl[4] & 4) vm->flags[thing] |= 0x80;         /* the chest disappears */
+		int c = (tl[0] << 8) | tl[1];
+		if (c) { *content = c; tl[0] = tl[1] = 0; }
+	}
+	tl[4] ^= 1;
+	return 1;
 }
