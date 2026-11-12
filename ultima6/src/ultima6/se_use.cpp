@@ -200,6 +200,77 @@ void Game::seAction(uint32_t sub, int idx) {
 		message("\nYou eat the food.\n");
 		consumeOne(idx);
 		break;
+	case 0x31C98: { // a raft (0xE9 lying about, or 0xED under the party: sub_31C98): not in solo mode, at least four members of whom four have a paddle (0x0C), else the refusals; boarded the party is the raft (the leader's body 0xED, frame 3, the others out of sight), left (Use on it) next to land (the raft's square or one of the three squares to its west and north that can be walked on: "Only next to land.") the raft (0xE9, with its hit points) is put down where it was
+		// APPROX(79): the original keeps the raft as actor 0 beyond the roster, with the members inside it (sub_252BB, sub_25433, sub_1C4AB); here the leader's body takes its type as on Ultima VI's boats, and the party steps ashore onto the land square found
+		ObjList &al = _world.actors;
+		int mask = z == 0 ? 0x3FF : 0xFF;
+		if (_aboard && o.actor >= 0) {
+			int ox = o.x, oy = o.y, lx = -1, ly = -1;
+			for (int dx = 0; dx < 2 && lx < 0; ++dx)
+				for (int dy = 0; dy < 2 && lx < 0; ++dy) {
+					int sx = (ox - dx) & mask, sy = (oy - dy) & mask;
+					if (!(_world.flags.flags1[_world.map.tile(z, sx, sy) & (TileFlags::TILES - 1)] & 2)) {
+						lx = sx;
+						ly = sy;
+					}
+				}
+			if (lx < 0) {
+				message("\nOnly next to land.\n");
+				break;
+			}
+			o.type = (uint16_t)_footType;
+			o.frame = (uint8_t)_footFrame;
+			int raft = seMake(0xE9, ox, oy, z, _shipQuantity, 0);
+			_world.objects[raft].frame = 3;
+			_aboard = false;
+			for (int m = 0; m < al.partySize; ++m) {
+				int k = _world.actorObject(al.partyRoster[m]);
+				if (k >= 0) {
+					_world.objects[k].status &= ~0x02;
+					_world.moveObject(k, lx, ly, z);
+				}
+			}
+			x = lx;
+			y = ly;
+			chooseMusic();
+			break;
+		}
+		if (_solo >= 0) {
+			message("Not in solo mode!\n");
+			break;
+		}
+		if (al.partySize < 4) {
+			message("You don't have enough people to paddle.\n");
+			break;
+		}
+		int paddlers = 0;
+		for (int m = 0; m < al.partySize && paddlers < 4; ++m)
+			if (sePackItem(al.partyRoster[m], 0x0C) >= 0)
+				++paddlers;
+		if (paddlers < 4) {
+			message("You would need at least four people carrying paddles to operate the raft effectively.\n");
+			break;
+		}
+		World::Obj &me = _world.objects[_leaderObject];
+		_footType = me.type;
+		_footFrame = me.frame;
+		me.type = 0xED;
+		me.frame = 3;
+		_shipQuantity = o.quantity;
+		int vx = o.x, vy = o.y;
+		_world.deleteObject(idx);
+		_aboard = true;
+		for (int m = 1; m < al.partySize; ++m) {
+			int k = _world.actorObject(al.partyRoster[m]);
+			if (k >= 0)
+				_world.objects[k].status |= 0x02;
+		}
+		_world.moveObject(_leaderObject, vx, vy, z);
+		x = vx;
+		y = vy;
+		chooseMusic();
+		break;
+	}
 	case 0x34B00: { // a turtle (the creature 0x12E, sub_34B00): the acting member climbs on (its body becomes 0x133 with the turtle's frame, on the turtle's square, sub_34965); if that member is on a turtle already, another member next to the turtle does; none: "You're already on a turtle!"
 		int rider = actor, tx = o.x, ty = o.y, turtleActor = o.actor, frame = o.frame;
 		int rk = _world.actorObject(rider);

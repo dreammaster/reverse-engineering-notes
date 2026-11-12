@@ -680,6 +680,52 @@ int main() {
 		g.y = py;
 	}
 
+	// a raft (0xE9): refused with fewer than four members, then without four paddles (0x0C); then the leader's body is the raft (0xED), and using it on land puts the raft down again
+	clearEast(w, px, py);
+	{
+		int raft = put(w, 0xE9, 3, px + 1, py, 0);
+		w.objects[raft].quantity = 77;
+		int members = w.actors.partySize;
+		g.log.clear();
+		useEast(w, g, px, py);
+		bool few = w.actors.partySize < 4;
+		CHECK(!few || logText(g).find("You don't have enough people to paddle") != std::string::npos);
+		for (int a = 5; w.actors.partySize < 4 && a < 40; ++a)
+			if (w.actorObject(a) >= 0)
+				w.joinParty(a);
+		if (w.actors.partySize >= 4) {
+			g.log.clear();
+			useEast(w, g, px, py);
+			CHECK(logText(g).find("at least four people carrying paddles") != std::string::npos && !w.objects[raft].deleted);
+			std::vector<int> paddles;
+			for (int m = 0; m < 4; ++m)
+				paddles.push_back(w.addToInventory(w.actors.partyRoster[m], 0x0C, 0, 1));
+			g.log.clear();
+			useEast(w, g, px, py);
+			int lead = w.actorObject(w.actors.partyRoster[0]);
+			CHECK(w.objects[raft].deleted && w.objects[lead].type == 0xED && w.objects[lead].frame == 3);
+			g.handleKey('u');
+			g.handleKey(KEY_ENTER);
+			CHECK(w.objects[lead].type != 0xED);
+			int found = -1;
+			for (size_t i = 0; i < w.objects.size(); ++i)
+				if (!w.objects[i].deleted && w.objects[i].type == 0xE9 && w.objects[i].quantity == 77)
+					found = (int)i;
+			CHECK(found >= 0);
+			if (found >= 0)
+				w.deleteObject(found);
+			for (int p : paddles)
+				w.deleteObject(p);
+		} else {
+			std::printf("could not make a party of four (skipped)\n");
+		}
+		(void)members;
+		for (int i = 0; i < w.actors.partySize; ++i)
+			w.moveObject(w.actorObject(w.actors.partyRoster[i]), px, py, 0);
+		g.x = px;
+		g.y = py;
+	}
+
 	// turtle bait (0x2F): in the lake a turtle comes up on a water square next to the member; away from water "You must be near water."
 	{
 		int wx = -1, wy = -1;

@@ -146,7 +146,7 @@ Handlers (type -> routine -> what it does, by its strings); **ported** are marke
 | D4 fishing pole | 31B48 | deep water (terrain 0x0C) on the diagonal, one catch in five (**ported**) |
 | D8 crystal garden | 35D54 | Rafkin (actor 7) or else Johann (actor 5), in the party, awake and in view, identifies potassium nitrate (82): ten for the member (**ported**) |
 | E5 tar pit | 33211 | "On -": all the cloth strips (86) become tarred cloth strips (BF) (**ported**) |
-| E9, ED rafts | 31C98 | boarding (not ported: the raft is an actor 0 with the party's bodies inside, `sub_252BB`, `sub_25433`, `sub_1C4AB`) |
+| E9, ED rafts | 31C98 | refusals (solo mode, fewer than four members, fewer than four paddles 0C), boarding (the leader's body becomes 0ED frame 3, the others are out of sight, the raft's hit points are kept) and leaving next to land (the raft goes back down as E9; "Only next to land.") (**ported**; APPROX 79: the original makes the raft actor 0 beyond the roster with the members inside, `sub_252BB`, `sub_25433`, `sub_1C4AB`); the raft moves over water as the skiff does (`Movement::check`) |
 | EA door | 35150 | sliding door: frames 1 / 3 slide it east / south to frame 5 / 7 ("The door is blocked." by an object without the top-tile flag), 5 / 7 slide it back; the door at 184,235 makes actor 4 join (APPROX 82) (**ported**) |
 | F7 headless statue | 3423A | the same with a head (BE) from the member's pack, Yunapotli appears at the statue (**ported**) |
 | FC crystal | 35972 | "On -": the same with full hit points and the poison bit (status 0x08) cleared: "%s is healed." (**ported**) |

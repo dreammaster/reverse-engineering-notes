@@ -83,7 +83,7 @@ MoveResult Movement::check(int x, int y, int z, int mover, const MoveRules &rule
 	int cls = MovementClasses::classOf(type);
 	int cflags = MovementClasses::flags(cls);
 	bool fly = cflags & MovementClasses::FLIES;
-	bool tail = type == 0x19E || type == 0x19F || type == 0x19C; // APPROX: the ship (0x19C) is moved by sub_26CC4 in the original, with wind; here it moves like a raft // the skiff and the raft
+	bool tail = type == 0x19E || type == 0x19F || type == 0x19C || (type == 0xED && _world.game == GameId::SavageEmpire); // APPROX: the ship (0x19C) is moved by sub_26CC4 in the original, with wind; here it moves like a raft // the skiff and the raft
 	bool water = (cflags & MovementClasses::SWIMS) || tail;
 	bool ghost = cflags & MovementClasses::IGNORES_OBJECTS;
 	bool walker = (!water && !fly) || cls == 1;

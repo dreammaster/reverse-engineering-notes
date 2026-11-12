@@ -1890,7 +1890,7 @@ void Game::useAt(int tx, int ty) {
 	int pick = -1;
 	for (size_t i = here.size(); i-- > 0;) {
 		const World::Obj &o = _world.objects[here[i]];
-		bool turtle = _world.game == GameId::SavageEmpire && (o.type == 0x12E || o.type == 0x133); // (the turtles and their riders are actors that Savage Empire's Use works on)
+		bool turtle = _world.game == GameId::SavageEmpire && (o.type == 0x12E || o.type == 0x133 || (_aboard && o.type == 0xED)); // (the turtles, their riders and the raft with the party on it are actors that Savage Empire's Use works on)
 		if ((o.actor >= 0 && !turtle) || o.invisible())
 			continue;
 		if (pick < 0)
