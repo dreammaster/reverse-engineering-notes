@@ -574,7 +574,13 @@ void Game::command(int key) {
 	switch (c) {
 	case 'T':
 		message("Talk-");
-		_pending = 'T';
+		if (_world.game == GameId::MartianDreams) { // the cursor chooses (sub_23C1A case 130)
+			_pending = 't';
+			_cursor = true;
+			_cx = _cy = 5;
+		} else {
+			_pending = 'T';
+		}
 		break;
 	case 'C':
 		message("Cast-");
@@ -835,7 +841,7 @@ bool Game::handleKeyInner(int key) {
 		castKey(key);
 		return true;
 	}
-	if (_pending == 'L' || _pending == 'Z' || _pending == 'g' || _pending == 'Y' || _pending == 'c' || _pending == 'a' || _pending == 'o' || _pending == 'd') {
+	if (_pending == 'L' || _pending == 'Z' || _pending == 'g' || _pending == 't' || _pending == 'Y' || _pending == 'c' || _pending == 'a' || _pending == 'o' || _pending == 'd') {
 		// the cursor: arrows move it, Enter looks at the cell, Escape gives up
 		switch (key) {
 		case KEY_UP:
@@ -853,7 +859,7 @@ bool Game::handleKeyInner(int key) {
 		case KEY_ENTER:
 		case KEY_SPACE: {
 			int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
-			bool mdPick = _pending == 'Z', sePick = _pending == 'Y', mdGetPick = _pending == 'g';
+			bool mdPick = _pending == 'Z', sePick = _pending == 'Y', mdGetPick = _pending == 'g', mdTalkPick = _pending == 't';
 			bool casting = _pending == 'c', attacking = _pending == 'a', orb = _pending == 'o', dropping = _pending == 'd';
 			_pending = 0;
 			_cursor = false;
@@ -861,6 +867,8 @@ bool Game::handleKeyInner(int key) {
 				seChosen((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 			} else if (mdPick) {
 				mdChosen((x + _cx - 5) & mask, (y + _cy - 5) & mask);
+			} else if (mdTalkPick) {
+				mdTalk((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 			} else if (mdGetPick) {
 				mdGet((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 			} else if (orb) {

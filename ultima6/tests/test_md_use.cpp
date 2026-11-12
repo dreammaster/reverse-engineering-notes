@@ -1133,6 +1133,61 @@ int main() {
 		CHECK(logText(g).find("Searching here, you find a hatchet.") != std::string::npos && w.objects[storedIdx].onMap());
 		w.deleteObject(storedIdx);
 		w.deleteObject(barrelL);
+		// Martian Dreams' Move: "Where? " and a direction push a thing; a control panel (0x1CA) that is not loose is "fastened securely"; a panel (0x13A) is not pushed onto bare ground; radium burns
+		{
+			auto moveEast = [&](int dirKey) {
+				g.log.clear();
+				g.handleKey('m');
+				g.handleKey(KEY_RIGHT);
+				if (dirKey)
+					g.handleKey(dirKey);
+			};
+			clearArea();
+			int axeM = put(w, 0x32, 0, px + 1, py, 0);
+			moveEast(KEY_RIGHT);
+			CHECK(logText(g).find("Where? ") != std::string::npos && logText(g).find("East.") != std::string::npos && w.objects[axeM].x == px + 2 && w.objects[axeM].y == py);
+			w.deleteObject(axeM);
+			int controls = put(w, 0x1CA, 0, px + 1, py, 0);
+			w.objects[controls].quality = 0;
+			moveEast(0);
+			CHECK(logText(g).find("It is fastened securely.") != std::string::npos && w.objects[controls].x == px + 1);
+			w.deleteObject(controls);
+			int loose = put(w, 0x13A, 0, px + 1, py, 0);
+			w.objects[loose].quality = 1;
+			moveEast(KEY_RIGHT);
+			CHECK(logText(g).find("cannot be moved onto the ground") != std::string::npos && w.objects[loose].x == px + 1);
+			w.deleteObject(loose);
+			int rad = put(w, 0x1C0, 0, px + 1, py, 0);
+			w.actors.status[me] &= 0xF7;
+			g.mdSetPsychic(me, 0, 0);
+			moveEast(0);
+			CHECK(logText(g).find("OUCH. It is very hot") != std::string::npos);
+			g.handleKey(KEY_ESC);
+			w.actors.status[me] &= 0xF7;
+			w.deleteObject(rad);
+			clearArea();
+		}
+		// Martian Dreams' Talk: a thing is read by psychometry, which needs the second psychic power and the thing's status bit 1
+		{
+			int saw = put(w, 0xF7, 0, px + 1, py, 0);
+			auto talkEast = [&]() {
+				g.log.clear();
+				g.handleKey('t');
+				g.handleKey(KEY_RIGHT);
+				g.handleKey(KEY_ENTER);
+			};
+			g.mdSetPsychic(me, 1, 0);
+			talkEast();
+			CHECK(logText(g).find("nothing!") != std::string::npos);
+			g.mdSetPsychic(me, 1, 1);
+			talkEast();
+			CHECK(logText(g).find("You receive no psychic impressions.") != std::string::npos);
+			w.objects[saw].status |= 1;
+			talkEast();
+			CHECK(logText(g).find("This saw was used by a Martian doctor, or \"Arborist\", for surgery.") != std::string::npos);
+			g.mdSetPsychic(me, 1, 0);
+			w.deleteObject(saw);
+		}
 		// Martian Dreams' Drop: radium (0x1C0) burns whoever has no tongs or telekinesis, then lies where the cursor says; a panel (0x13A) is not dropped on bare ground
 		{
 			int radium = w.addToInventory(1, 0x1C0, 0, 1);

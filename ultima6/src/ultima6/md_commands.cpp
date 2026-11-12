@@ -150,5 +150,91 @@ void Game::mdGet(int tx, int ty) {
 	end();
 }
 
+// sub_55F77 (Talk, mode 1) after the cursor has chosen a square: the top thing there. A thing (not a person) is read by psychometry: that needs the second psychic power (the high half of the first
+// number, `mdPsychic(actor, 1)`), the thing's status bit 1, and a type of the table at cs:0871: some tell a history, some call a voice (the ghosts 0x72, 0x73, 0x74) that is then talked to.
+// A person who is only for the telepaths (status bit 1) is "nothing!" to the others; to oneself "You aren't yet that insane."; a child (type 0x187) is scolded; anybody else is named and the
+// conversation begins.
+// APPROX(76): what the original does when the conversation ends (word_41F2A, the ten codes of cs:0849: the scenes that move the party, make things at fixed places, kill actor 0x68 ..) is not done
+void Game::mdTalk(int tx, int ty) {
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	int pick = -1;
+	for (size_t i = here.size(); i-- > 0 && pick < 0;)
+		if (!_world.objects[here[i]].deleted && !_world.objects[here[i]].invisible())
+			pick = here[i];
+	auto nothing = [&]() {
+		message("nothing!\n");
+		prompt();
+	};
+	if (pick < 0) {
+		nothing();
+		return;
+	}
+	int me = actingActor();
+	int who = _world.objects[pick].actor;
+	if (who < 0) { // a thing: psychometry
+		const World::Obj &o = _world.objects[pick];
+		if (mdPsychic(me, 1) == 0) {
+			nothing();
+			return;
+		}
+		if (!(o.status & 1)) {
+			message("You receive no psychic impressions.\n");
+			prompt();
+			return;
+		}
+		static const struct {
+			uint16_t type;
+			int ghost;
+			const char *text;
+		} TABLE[19] = {
+			{0xBC, 0x72, nullptr}, {0xBF, 0x72, nullptr}, {0xC0, 0x72, nullptr}, {0xC8, 0x73, nullptr}, {0xC9, 0x73, nullptr}, {0xD6, 0x73, nullptr}, {0xD7, 0x73, nullptr},
+			{0x64, 0x74, nullptr}, {0x120, 0x74, nullptr}, {0x121, 0x74, nullptr}, {0x122, 0x74, nullptr},
+			{0xF7, 0, "This saw was used by a Martian doctor, or \"Arborist\", for surgery.\n"},
+			{0xF9, 0, "This device was used by a Martian doctor, or \"Arborist\", on patients.\n"},
+			{0x5C, 0, "This was worn last by a dying man.\n"},
+			{0x0C, 0, "You receive a momentary impression of a house falling on you.\n"},
+			{0xE7, 0, "This was used by a Martian whose entire life focussed on measuring time.\n"},
+			{0xEA, 0, "This jewelry was worn by a distinguished Martian, a mayor or \"Agrarian\".\n"},
+			{0xF6, 0, "These footbags were worn by an elderly, distinguished Martian whose job, \"Gatherer\", has no human analog - a combination of undertaker, dustman, and treasurer.\n"},
+			{0x113, 0, "This sculpture had great ritual or religious significance to a city, or \"Grove\", of Martians.  The image is of \"very proud soil\".\n"}};
+		for (const auto &row : TABLE) {
+			if (row.type != o.type)
+				continue;
+			if (row.text) {
+				message(row.text);
+				prompt();
+				return;
+			}
+			who = row.ghost;
+			break;
+		}
+		if (who < 0) {
+			nothing();
+			return;
+		}
+	}
+	int wk = _world.actorObject(who);
+	if (wk < 0 || ((_world.objects[wk].status & 1) && mdPsychic(me, 1) == 0)) {
+		nothing();
+		return;
+	}
+	if (who <= 1) { // oneself
+		message("yourself\n");
+		message(_solo >= 0 ? "Not while in solo mode!\n" : "You aren't yet that insane.\n");
+		prompt();
+		return;
+	}
+	std::string name = Describe::object(_world, _world.objects[wk]);
+	if (_world.objects[wk].type == 0x187) { // a child
+		message(name + "\n");
+		message(std::string("No backtalk from you, young ") + (_world.actors.globals.size() > 0x38 && _world.actors.globals[0x38] ? "wo" : "") + "man!\n");
+		prompt();
+		return;
+	}
+	message(name + "\n");
+	startTalk(who);
+}
+
 } // namespace Ultima6
 } // namespace Ultima6

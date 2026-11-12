@@ -1726,6 +1726,34 @@ void Game::moveSelect(int tx, int ty) {
 	message(Describe::object(_world, o));
 	message("\n");
 	int a = _world.actorObject(actingActor());
+	if (_world.game == GameId::MartianDreams && !carriedObject(o)) { // sub_16E45: the psychic reach of Use, radium that burns, and a fixture that is not loose
+		if (a >= 0 && mdReach() < mdDistance(_world.objects[a].x, _world.objects[a].y, o.x, o.y)) {
+			message("Out of range!\n");
+			sfx(5);
+			prompt();
+			return;
+		}
+		int actor = actingActor();
+		if (o.type == 0x1C0 || o.type == 0x1C1) {
+			Equipment::Slots slots = Equipment::of(_world, actor);
+			bool tongs = false;
+			for (int h : {2, 5})
+				tongs |= slots.object[h] >= 0 && _world.objects[slots.object[h]].type == 0x88;
+			if (!mdPsychic(actor, 0) && actor != 6 && !tongs) {
+				_world.actors.status[actor] |= 8;
+				message("OUCH. It is very hot.\n");
+			}
+		}
+		if ((o.type == 0x19B || o.type == 0x1CA) && !(o.quality & 1)) {
+			message("It is fastened securely.\n");
+			prompt();
+			return;
+		}
+		_useItem = pick;
+		_pending = 'm';
+		message("Where? ");
+		return;
+	}
 	if (a >= 0 && (std::abs((int)_world.objects[a].x - (int)o.x) > 1 || std::abs((int)_world.objects[a].y - (int)o.y) > 1)) {
 		message("\nOut of range!\n");
 		prompt();
@@ -1770,7 +1798,18 @@ void Game::moveTo(int key) {
 	World::Obj &o = _world.objects[idx];
 	int w = _world.weightOf(idx) + _world.contentsWeight(idx);
 	bool reduced = o.type == 0x58 || (o.type >= 0x41 && o.type <= 0x48);
-	if ((w == 0 && !reduced) || o.type == 0x19B) {
+	if (_world.game == GameId::MartianDreams) { // sub_16E45: the things that weigh a tenth (ds:0DB2) may weigh 0, a weight of 0xFF is too much
+		static const uint16_t TENTH[18] = {0x39, 0x3A, 0x3B, 0x3C, 0x3F, 0x40, 0x5B, 0x5D, 0x5C, 0x6B, 0x83, 0x49, 0x4A, 0x4B, 0x4D, 0x14B, 0x18, 0x84};
+		reduced = false;
+		for (uint16_t t : TENTH)
+			reduced |= o.type == t;
+		if ((w == 0 && !reduced) || w >= 10000) {
+			message("That is not possible.\n");
+			sfx(5);
+			prompt();
+			return;
+		}
+	} else if ((w == 0 && !reduced) || o.type == 0x19B) {
 		message("\nNot possible\n");
 		prompt();
 		return;
@@ -1780,7 +1819,9 @@ void Game::moveTo(int key) {
 		int chance = (_combat.adjustedStrength(o.actor) / 2 + 30 - _combat.adjustedStrength(member)) / 2;
 		bool fails = chance > 1 + (int)(_rng.next() % 30) || o.actor == member || ((o.frame & 3) == 3 && o.type != 0x153);
 		if (fails) {
-			message("\nFailed\n");
+			message(_world.game == GameId::MartianDreams ? "Failed.\n" : "\nFailed\n");
+			if (_world.game == GameId::MartianDreams)
+				sfx(5);
 			prompt();
 			return;
 		}
@@ -1793,6 +1834,25 @@ void Game::moveTo(int key) {
 	std::vector<int> there;
 	_world.objectsAt(nx, ny, z, there);
 	int occupant = there.empty() ? -1 : there.back();
+	if (_world.game == GameId::MartianDreams) { // sub_16E45: ice goes into an empty bucket; a panel (0x13A) or 0xCE is only moved onto a surface
+		if (occupant >= 0 && o.type == 0x100 && _world.objects[occupant].type == 0xA0 && _world.objects[occupant].frame == 0) {
+			_world.deleteObject(idx);
+			_world.objects[occupant].frame = 2;
+			prompt();
+			return;
+		}
+		if ((o.type == 0x13A || o.type == 0xCE) && !dropSurface(nx, ny)) {
+			std::string name = Describe::object(_world, o);
+			for (const char *art : {"a ", "an ", "the "})
+				if (name.compare(0, strlen(art), art) == 0) {
+					name = name.substr(strlen(art));
+					break;
+				}
+			message("The " + name + " cannot be moved onto the ground.\n");
+			prompt();
+			return;
+		}
+	}
 	if (occupant >= 0 && dropRecipient(occupant, idx) && w < 0xFF) { // a container takes it
 		dropPlace(idx, 1, nx, ny, occupant, false);
 		prompt();
@@ -1800,7 +1860,9 @@ void Game::moveTo(int key) {
 	}
 	bool turns = o.type == 0xDD && o.frame != (dir >> 1); // a cannon
 	if (moveBlocked(idx, ox, oy, dir)) {
-		message("\nBlocked\n");
+		message(_world.game == GameId::MartianDreams ? "Blocked!\n" : "\nBlocked\n");
+		if (_world.game == GameId::MartianDreams)
+			sfx(5);
 		if (turns)
 			o.frame = (uint8_t)((dir >> 1) & 3);
 	} else if (turns) {
