@@ -23,6 +23,7 @@ add_library(legend STATIC
 	legend/audiofiles.cpp
 	legend/font.cpp
 	legend/surface.cpp
+	legend/draw.cpp
 )
 
 # xanth/: Companions of Xanth
@@ -33,6 +34,7 @@ add_library(xanth_engine STATIC
 	xanth/grammar.cpp
 	xanth/gamestate.cpp
 	xanth/game.cpp
+	xanth/mainscreen.cpp
 	xanth/logic_support.cpp
 	xanth/tables/vars.cpp
 	${XANTH_LOGIC}
@@ -54,7 +56,7 @@ target_link_libraries(test_state xanth_engine)
 add_test(NAME state COMMAND test_state)
 
 add_executable(test_graphics tests/test_graphics.cpp)
-target_link_libraries(test_graphics legend)
+target_link_libraries(test_graphics xanth_engine)
 add_test(NAME graphics COMMAND test_graphics)
 
 add_executable(test_scan tests/test_scan.cpp)
