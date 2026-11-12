@@ -331,7 +331,7 @@ static int roomview_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	return 0;
 }
 
-static RoomView g_room = {1, 0, 0, 0, 0, 0, 0};
+static RoomView g_room = {.level = 1};
 
 /* Tile sheet: floor tiles (60 x 32x18) then wall blocks (80 x 32x32); Up/Down scrolls. */
 static void blit_tileset(Screen *scr, const TileSet *ts, int x0, int y0, int cell_h) {
