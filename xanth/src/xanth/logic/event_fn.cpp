@@ -124,6 +124,32 @@ int event_fn_04(Game &g) {
 	}
 }
 
+// event_fn_05
+int event_fn_05(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	intptr_t p3_ax;
+	char *msg, *r0_1, *v4, *v8;
+	mem16(rt.seg_8AA82, 0x1396) = rt.word_8745C;
+	r0_1 = g.print_obj(0x12, 0x6D);
+	v8 = rt.word_81A66;
+	strcat(rt.word_81A66, r0_1);
+	strcat(v8, g.ResourceText_GetStr(ES(52)));
+	p3_ax = (v.can_climb != 0 ? 0x4C : 0x4B);
+	v4 = g.ResourceText_GetStr(TextRef::fromWords(p3_ax, 0xF009));
+	msg = rt.word_81A66;
+	strcat(rt.word_81A66, v4);
+	strcat(msg, DSEG(0x24AA));
+	g.object_move(0x6D, 0, 0);
+	g.Font_WriteMessage(msg);
+	g.wait_ticks_or_click(0x1B58);
+	g.Screen_FadeOut();
+	v.follower_obj = 0;
+	v.story_stage = 8;
+	go_to_room(g, 0x5A);
+	return 1;
+}
+
 // event_fn_06
 int event_fn_06(Game &g) {
 	Vars &v = g.state.v;
@@ -229,9 +255,9 @@ int event_fn_11(Game &g) {
 			g.object_set_prop_a(0x7E, 0x13D);
 		}
 	}
-	strcat(msg, ES(52));
+	strcat(msg, ES(53));
 	g.Font_WriteMessage(msg);
-	g.realsound_play(ES(53));
+	g.realsound_play(ES(54));
 	g.schedule_event(0xC, ((int16)(g._rand()) % (int16)5) + 2);
 	return 1;
 }
@@ -252,7 +278,7 @@ int event_fn_13(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	intptr_t p7_ax;
-	g.Font_WriteMessage(ES(54), g.print_obj(0x12, 0xA7));
+	g.Font_WriteMessage(ES(55), g.print_obj(0x12, 0xA7));
 	rt.word_87952++;
 	if (rt.word_87952 == 1) {
 		g.object_set_prop_a(0xA7, 0x126);
@@ -287,9 +313,9 @@ int event_fn_14(Game &g) {
 	g.wputchar(0xB);
 	g.wait_ticks_or_click(0x9C4);
 	g.Font_WriteMessage(MSG(25, 32));
-	p3_ax = ((int16)v.word_8526C < 0x15 ? ES(55) : ES(56));
+	p3_ax = ((int16)v.word_8526C < 0x15 ? ES(56) : ES(57));
 	g.Font_WriteMessage(p3_ax);
-	g.Font_WriteMessage(ES(57), (v.word_8526C != 0x15 ? TextRef(nullptr) : TextRef(MSG(25, 33))));
+	g.Font_WriteMessage(ES(58), (v.word_8526C != 0x15 ? TextRef(nullptr) : TextRef(MSG(25, 33))));
 	v.byte_852D9 = 1;
 	g.schedule_event(0xF, ((int16)(g._rand()) % (int16)7) + 2);
 	if (v.flag_852DA_conv_text_24 != 0 && v.byte_852DB == 0) {
@@ -568,7 +594,7 @@ int event_fn_26(Game &g) {
 			v4 = 0x51;
 	L10:;
 		}
-		g.Font_WriteMessage(ES(58), v4);
+		g.Font_WriteMessage(ES(59), v4);
 	}
 	if ((int16)v.word_85282 < 4) {
 		g.schedule_event(0x1B, 1);
@@ -600,7 +626,7 @@ int event_fn_26(Game &g) {
 int event_fn_27(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	g.Font_WriteMessage(ES(54), g.print_obj(0x12, 0xE));
+	g.Font_WriteMessage(ES(55), g.print_obj(0x12, 0xE));
 	if (!(g.object_parent_is(0x100, 1))) {
 		g.Font_WriteMessage(MSG(33, 84));
 		g.object_move(0x100, 1, 0);
@@ -748,7 +774,7 @@ int event_fn_31(Game &g) {
 			goto L5;
 		} else {
 			g.Font_WriteMessage(MSG(40, 73));
-			g.realsound_play(ES(59));
+			g.realsound_play(ES(60));
 			g.wait_ticks_or_click(0x1388);
 			v.byte_852CE = 1;
 			rt.byte_8ADF4 = 0;
@@ -799,7 +825,7 @@ int event_fn_33(Game &g) {
 			g.popup_window_event();
 			if ((mem16(v8_hi, v8)) == 0x179) {
 				g.MouseCursor_SetHourglass();
-				g.realsound_play(ES(60));
+				g.realsound_play(ES(61));
 			}
 			g.wait_ticks_or_click(0x1388);
 			g.show_compendium(g.exeText(rt.word_8AAEA, v4 + 2));
@@ -807,7 +833,7 @@ int event_fn_33(Game &g) {
 				g.Font_WriteMessage(MSG(44, 18));
 			}
 			t1 = mem16(rt.word_8AAEA, v4 - 4);
-			g.Font_WriteMessage(ES(61), g.print_obj(0x12, mem16(v8_hi, v8)), mem16(rt.word_8AAEA, v4 - 6), t1);
+			g.Font_WriteMessage(ES(62), g.print_obj(0x12, mem16(v8_hi, v8)), mem16(rt.word_8AAEA, v4 - 6), t1);
 			g.wait_ticks_or_click(0xBB8);
 			g.object_move(mem16(v8_hi, v8), 0, 0);
 		}
@@ -858,7 +884,7 @@ int event_fn_37(Game &g) {
 	Runtime &rt = g.rt;
 	TextRef p3_ax;
 	v.word_852A0++;
-	p3_ax = ((int16)v.word_852A0 < 4 ? TextRef(ES(62)) : TextRef(MSG(46, 22)));
+	p3_ax = ((int16)v.word_852A0 < 4 ? TextRef(ES(63)) : TextRef(MSG(46, 22)));
 	g.Font_WriteMessage(MSG(46, 21), p3_ax);
 	if ((int16)v.word_852A0 < 4) {
 		g.schedule_event(0x26, 2);
@@ -878,7 +904,7 @@ int event_fn_38(Game &g) {
 	g.wputchar(0xB);
 	g.wait_ticks_or_click(0xBB8);
 	g.Font_WriteMessage(MSG(46, 23));
-	g.realsound_play(ES(63));
+	g.realsound_play(ES(64));
 	g.wait_ticks_or_click(0x1770);
 	v.story_stage = 0x1B;
 	go_to_room(g, 0x5A);
@@ -910,7 +936,7 @@ int event_fn_40(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	char *p3_ax;
-	p3_ax = (!(g.random_percent(0x32)) ? ES(64) : ES(65));
+	p3_ax = (!(g.random_percent(0x32)) ? ES(65) : ES(66));
 	g.realsound_play(p3_ax);
 	g.schedule_event(0x29, ((int16)(g._rand()) % (int16)4) + 2);
 	return 0;

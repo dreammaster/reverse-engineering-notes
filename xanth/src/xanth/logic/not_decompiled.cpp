@@ -10,15 +10,12 @@ int cmdLookAt(Game &) { return 0; }  // does not compile yet: invalid conversion
 int conv_cb_06(Game &, Word, Word) { return 0; }  // register bx read before it is set
 int conv_cb_21(Game &, Word) { return 0; }  // does not compile yet: 'FAR' was not declared in this scope
 int conv_cb_46(Game &, Word) { return 0; }  // does not compile yet: 'FAR' was not declared in this scope
-TextRef conv_text_01(Game &) { return TextRef(); }  // operand word ptr (dword_86A3E+2)[bx] (mov     dx, word ptr (dword_86A3E+2)[bx])
 TextRef conv_text_05(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 TextRef conv_text_16(Game &) { return TextRef(); }  // instruction movsw (movsw)
-TextRef conv_text_20(Game &) { return TextRef(); }  // operand word ptr (dword_86ADA+2)[bx] (mov     dx, word ptr (dword_86ADA+2)[bx])
-TextRef conv_text_55(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
+TextRef conv_text_55(Game &) { return TextRef(); }  // does not compile yet: operands to '?:' have different types 'char*' and 'int'
 TextRef conv_text_57(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'intptr_t' {aka 'long long int'} [-fpermissive]
 TextRef conv_text_77(Game &) { return TextRef(); }  // does not compile yet: incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'
 TextRef conv_text_83(Game &) { return TextRef(); }  // does not compile yet: operands to '?:' have different types 'char*' and 'int'
-int event_fn_05(Game &) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int event_fn_07(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int event_fn_17(Game &) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int event_fn_25(Game &) { return 0; }  // use of bp (push    [bp+si+var_22])
@@ -42,7 +39,6 @@ int objh_334(Game &, Word) { return 0; }  // does not compile yet: invalid conve
 int objh_341(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_345(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
 int objh_360(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_380(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int objh_390(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int sub_1AAFB(Game &) { return 0; }  // instruction stosw (stosw)
 int sub_1C4ED(Game &, Word, Word, Word, Word) { return 0; }  // use of bp (lea     ax, [bp+si+var_4E])

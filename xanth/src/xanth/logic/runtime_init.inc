@@ -17,11 +17,8 @@
 		rt.dobj = 65535;
 		rt.dobj_type = 65535;
 		rt.event_index = 65535;
-		rt.exit_function_table = 6647393;
 		rt.iobj = 65535;
 		rt.iobj_type = 255;
-		rt.loc_31812 = 116;
-		rt.loc_31813 = 116;
 		rt.object_count = 498;
 		rt.off_34624 = 1937064480;
 		rt.picNum = 65535;
@@ -48,6 +45,7 @@
 		rt.seg_8AA5E = 12899;
 		rt.seg_8AA60 = 12899;
 		rt.seg_8AA62 = 12899;
+		rt.seg_8AA82 = 32877;
 		rt.seg_8AA94 = 12899;
 		rt.seg_8AAE6 = 12899;
 		rt.selectedCommand = 65535;
@@ -78,6 +76,8 @@
 		rt.unk_78300 = 44;
 		rt.unk_796A8 = 97;
 		rt.unk_796CC = 67;
+		rt.unk_79714 = 114;
+		rt.unk_7975C = 87;
 		rt.unk_7A818 = 97;
 		rt.unk_7C174 = 103;
 		rt.unk_7C838 = 97;
@@ -113,6 +113,7 @@
 		rt.word_86B02 = 12;
 		rt.word_86B04 = 61493;
 		rt.word_871F4 = 74;
+		rt.word_8745C = 32;
 		rt.word_8AA28 = 12620;
 		rt.word_8AA44 = 12623;
 		rt.word_8AA46 = 12628;
@@ -135,6 +136,3 @@
 		rt.word_8AD52 = 65535;
 		rt.word_8AD54 = 65535;
 		rt.word_8ADBA = 65535;
-		rt.word_8BDFA = 65535;
-		rt.word_8BE02 = 65535;
-		rt.word_8BE0A = 65535;

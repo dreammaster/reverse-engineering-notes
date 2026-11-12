@@ -38,6 +38,9 @@ class Names:
     def ptr_sources(self):
         return []
 
+    def dsoff(self, sym):
+        return sym
+
     def min_params(self, name):
         return 0
 
@@ -188,6 +191,8 @@ class Renderer:
         if op == "strlen":
             return "strlen(%s)" % self.R(e[1])
         if op == "addr":
+            if getattr(self, "offmode", False):
+                return self.names.dsoff(e[1])
             return self.names.addr(e[1])
         if op == "segof":
             return "SEG(%s)" % e[1]
@@ -199,7 +204,11 @@ class Renderer:
             sg, off = e[1], e[2]
             if sg[0] == "glob" and sg[1].startswith("seg_") and e[3] == 1 and off[0] == "add" and off[2] == K(0x66) and off[1][0] == "mul" and off[1][2] == K(6):
                 return "objectType(%s)" % self.R(off[1][1])
-            return "mem%d(%s, %s)" % (e[3] * 8, self.R(e[1], False), self.R(e[2], False))
+            self.offmode = True
+            try:
+                return "mem%d(%s, %s)" % (e[3] * 8, self.R(e[1], False), self.R(e[2], False))
+            finally:
+                self.offmode = False
         if op == "msg":
             return self.names.msg(e[1], e[2])
         if op == "str":
@@ -221,7 +230,11 @@ class Renderer:
                 return self.R(e[2])
             return "((%s & 0xFF00) | (%s & 0xFF))" % (self.R(e[1], False), self.R(e[2], False))
         if op == "memptr":
-            return "g.exeText(%s, %s)" % (self.R(e[1]), self.R(e[2]))
+            self.offmode = True
+            try:
+                return "g.exeText(%s, %s)" % (self.R(e[1]), self.R(e[2]))
+            finally:
+                self.offmode = False
         if op == "text":
             return "TextRef(%s)" % self.R(e[1])
         if op == "textvar":

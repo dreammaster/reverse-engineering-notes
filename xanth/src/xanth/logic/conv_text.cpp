@@ -11,6 +11,13 @@ TextRef conv_text_00(Game &g) {
 	return MSG(52, 0);
 }
 
+// conv_text_01
+TextRef conv_text_01(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	return g.exeText(DS, (v.flag_8526E_conv03 * 4) + 0x1A7E);
+}
+
 // conv_text_02
 TextRef conv_text_02(Game &g) {
 	Vars &v = g.state.v;
@@ -216,6 +223,13 @@ TextRef conv_text_19(Game &g) {
 	} else {
 		return TextRef::fromWords(rt.word_86B02, rt.word_86B04);
 	}
+}
+
+// conv_text_20
+TextRef conv_text_20(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	return g.exeText(DS, (v.word_85272 * 4) + 0x1B1A);
 }
 
 // conv_text_22

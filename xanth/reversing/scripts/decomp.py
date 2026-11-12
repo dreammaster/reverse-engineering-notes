@@ -96,6 +96,11 @@ def parse_operand(text, proc_locals):
         seg, s = m.group(1), m.group(2)
     base, disp, sym, idx = [], 0, None, None
     # symbol with index: off_34E52[bx] / tbl[bx+si]
+    m = re.match(r"^\(([A-Za-z_][\w?.$@]*)([+-][0-9A-Fa-f]+h?)?\)\[(.*)\]$", s)
+    if m:        # (symbol+2)[bx]: an element of a table of dwords, high word
+        d0 = parse_int(m.group(2)) if m.group(2) else 0
+        regs = [r.strip() for r in m.group(3).split("+") if r.strip() in REG16]
+        return Op("mem", seg=seg, base=regs, disp=d0, sym=m.group(1), size=size)
     m = re.match(r"^([A-Za-z_][\w?.$@]*)((?:[+-][0-9A-Fa-f]+h?)?)\[(.*)\]$", s)
     if m:
         sym = m.group(1)

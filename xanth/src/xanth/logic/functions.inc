@@ -174,7 +174,7 @@ int conv_cb_80(Game &g, Word a0, Word a1);
 int conv_cb_81(Game &g, Word a0, Word a1);
 int conv_cb_82(Game &g, Word a0, Word a1);
 TextRef conv_text_00(Game &g);
-TextRef conv_text_01(Game &g);  // not decompiled
+TextRef conv_text_01(Game &g);
 TextRef conv_text_02(Game &g);
 TextRef conv_text_03(Game &g);
 TextRef conv_text_04(Game &g);
@@ -193,7 +193,7 @@ TextRef conv_text_16(Game &g);  // not decompiled
 TextRef conv_text_17(Game &g);
 TextRef conv_text_18(Game &g);
 TextRef conv_text_19(Game &g);
-TextRef conv_text_20(Game &g);  // not decompiled
+TextRef conv_text_20(Game &g);
 TextRef conv_text_22(Game &g);
 TextRef conv_text_23(Game &g);
 TextRef conv_text_24(Game &g);
@@ -266,7 +266,7 @@ int event_fn_01(Game &g);
 int event_fn_02(Game &g);
 int event_fn_03(Game &g);
 int event_fn_04(Game &g);
-int event_fn_05(Game &g);  // not decompiled
+int event_fn_05(Game &g);
 int event_fn_06(Game &g);
 int event_fn_07(Game &g);  // not decompiled
 int event_fn_08(Game &g);
@@ -749,7 +749,7 @@ int objh_376(Game &g, Word a0);
 int objh_377(Game &g, Word a0);
 int objh_378(Game &g, Word a0);
 int objh_379(Game &g, Word a0);
-int objh_380(Game &g, Word a0);  // not decompiled
+int objh_380(Game &g, Word a0);
 int objh_381(Game &g, Word a0);
 int objh_382(Game &g, Word a0);
 int objh_383(Game &g, Word a0);

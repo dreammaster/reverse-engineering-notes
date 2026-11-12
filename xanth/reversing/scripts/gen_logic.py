@@ -114,6 +114,17 @@ class LogicNames(Names):
     def func(self, name):
         return logic_name(STUBS.get(name, name))
 
+    def dsoff(self, sym):
+        """offset of a data symbol in the data segment (for tables indexed through DS)"""
+        if not hasattr(self, "_doff"):
+            self._doff = {}
+            for line in open(os.path.join(HERE, "..", "..", "engine", "host", "gen", "lifted_data.h"), encoding="utf-8", errors="replace"):
+                m = re.match(r"constexpr uint16_t D_(" + BS + "w+) = (0x[0-9A-Fa-f]+);", line)
+                if m:
+                    self._doff[m.group(1)] = int(m.group(2), 16)
+        n = self.ident(sym)
+        return "0x%X" % self._doff[n] if n in self._doff else "0 /* %s */" % n
+
     def ptr_sources(self):
         """regular-expression alternatives for expressions that are pointers to text / buffers"""
         return [r"rt\.(" + "|".join(sorted(re.escape(self.ident(a)) for a in self.ctx.arrays)) + r")"]
