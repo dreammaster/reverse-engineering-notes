@@ -1,10 +1,12 @@
 #include "ultima6/session.h"
 
 #include "ultima6/describe.h"
+#include "ultima6/equipment.h"
 #include "ultima6/stats_view.h"
 
 #include <algorithm>
 #include <cstdlib>
+#include <cstring>
 
 namespace Ultima6 {
 namespace Ultima6 {
@@ -903,12 +905,35 @@ void Game::dropStart(int idx) {
 	message(Describe::object(_world, o) + "\n");
 	if (fromCommand)
 		_inventory = false;
-	if (o.location() == ObjRecord::READIED && o.type == 0x4C) {
+	if (_world.game == GameId::MartianDreams) { // sub_15BFE / sub_3213D: radium burns whoever has no tongs, telekinesis or is not the mechanical man; a worn torch burns out, gloves (0x0F) "won't come off"
+		int actor = actingActor();
+		if (o.type == 0x1C0 || o.type == 0x1C1) {
+			Equipment::Slots slots = Equipment::of(_world, actor);
+			bool tongs = false;
+			for (int h : {2, 5})
+				tongs |= slots.object[h] >= 0 && _world.objects[slots.object[h]].type == 0x88;
+			if (!mdPsychic(actor, 0) && actor != 6 && !tongs) {
+				_world.actors.status[actor] |= 8;
+				message("OUCH. It is very hot.\n");
+			}
+		}
+		if (o.location() == ObjRecord::READIED && o.type == 0x6E && o.frame == 0) {
+			_world.deleteObject(idx);
+			message("\nA torch burns out.\n");
+			prompt();
+			return;
+		}
+		if (o.location() == ObjRecord::READIED && o.type == 0x0F) {
+			message("They won't come off!\n");
+			prompt();
+			return;
+		}
+	} else if (o.location() == ObjRecord::READIED && o.type == 0x4C) {
 		message("\nMagical energy prevents you from removing the amulet.\n");
 		prompt();
 		return;
 	}
-	if (o.location() == ObjRecord::READIED && o.type == 0x5A && o.frame == 1) {
+	if (_world.game != GameId::MartianDreams && o.location() == ObjRecord::READIED && o.type == 0x5A && o.frame == 1) {
 		_world.deleteObject(idx);
 		message("\nA torch burned out.\n");
 		prompt();
@@ -958,6 +983,27 @@ bool Game::dropRecipient(int target, int item) const {
 	static const int HOLDERS[9] = {0x62, 0x63, 0x39, 0xBA, 0xBC, 0xBF, 0xC0, 0x153, 0x3E};
 	if (target < 0)
 		return false;
+	if (_world.game == GameId::MartianDreams) { // sub_1485A: a shut-frame (0) container of the list at ds:0D60 (not the body 0x155) takes what is not a container itself and not a lit light (frame above 0 of 0x6D 0x6F 0x71 0x73 0x75); ice (0x100) goes into an empty bucket (0xA0)
+		static const uint16_t MD_HOLDERS[15] = {0x50, 0x51, 0x52, 0x53, 0x55, 0x56, 0x57, 0x59, 0x130, 0x8B, 0x155, 0x101, 0x68, 0x11C, 0x11D};
+		const World::Obj &t = _world.objects[target];
+		const World::Obj &d = _world.objects[item];
+		if (d.type == 0x100 && t.type == 0xA0 && t.frame == 0)
+			return true;
+		bool holder = false, itemHolder = false;
+		for (uint16_t h : MD_HOLDERS) {
+			holder |= t.type == h;
+			itemHolder |= d.type == h;
+		}
+		if (!holder || t.frame != 0 || t.type == 0x155 || itemHolder)
+			return false;
+		for (int lamp : {0x6D, 0x6F, 0x71, 0x73, 0x75})
+			if (d.type == lamp && d.frame > 0)
+				return false;
+		int count = 0;
+		for (const World::Obj &c : _world.objects)
+			count += !c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == target;
+		return count < 16;
+	}
 	const World::Obj &t = _world.objects[target];
 	bool holder = false;
 	for (int h : HOLDERS)
@@ -1005,6 +1051,12 @@ void Game::dropAt(int tx, int ty) {
 	bool glass = false;
 	for (int g : GLASS)
 		glass |= type == g;
+	if (_world.game == GameId::MartianDreams) { // sub_2025D: only the 0x133 breaks, and only beyond the telepath's reach (his level, none without the first power)
+		int reach = mdPsychic(member, 0) ? _world.actors.level[member] : 0;
+		int d = mdDistance(mx, my, tx, ty);
+		glass = type == 0x133;
+		near = !(d > 1 && reach < d);
+	}
 	if (!near && glass) {
 		if (stack) {
 			int left = _world.quantityOf(o) - count;
@@ -1022,6 +1074,25 @@ void Game::dropAt(int tx, int ty) {
 		message("\nIt broke!\n");
 		prompt();
 		return;
+	}
+	if (_world.game == GameId::MartianDreams) {
+		if (target >= 0 && type == 0x100 && _world.objects[target].type == 0xA0 && _world.objects[target].frame == 0) { // ice into an empty bucket
+			_world.deleteObject(idx);
+			_world.objects[target].frame = 2;
+			prompt();
+			return;
+		}
+		if ((type == 0x13A || type == 0xCE) && !dropSurface(tx, ty)) { // (sub_15913: only onto a surface)
+			std::string name = Describe::object(_world, _world.objects[idx]);
+			for (const char *art : {"a ", "an ", "the "})
+				if (name.compare(0, strlen(art), art) == 0) {
+					name = name.substr(strlen(art));
+					break;
+				}
+			message("The " + name + " cannot be dropped on the ground.\n");
+			prompt();
+			return;
+		}
 	}
 	dropPlace(idx, count, tx, ty, target >= 0 && dropRecipient(target, idx) && !dropSurface(tx, ty) ? target : -1);
 	prompt();

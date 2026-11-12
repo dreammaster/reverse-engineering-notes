@@ -426,7 +426,13 @@ int World::weightOfType(int type, int quantity) const {
 		w *= quantity;
 	else if (isStackable(type))
 		w *= 1;
-	if (type == 0x58 || (type >= 0x41 && type <= 0x48))
+	if (game == GameId::MartianDreams) {
+		// sub_30F0D / sub_2031E: the types of ds:0DB2 weigh a tenth
+		static const uint16_t TENTH[18] = {0x39, 0x3A, 0x3B, 0x3C, 0x3F, 0x40, 0x5B, 0x5D, 0x5C, 0x6B, 0x83, 0x49, 0x4A, 0x4B, 0x4D, 0x14B, 0x18, 0x84};
+		for (uint16_t t : TENTH)
+			if (t == type)
+				w /= 10;
+	} else if (type == 0x58 || (type >= 0x41 && type <= 0x48))
 		w /= 10;
 	if (w == 0xFF)
 		w = 10000;

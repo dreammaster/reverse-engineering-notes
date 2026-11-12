@@ -398,6 +398,40 @@ std::string Game::mdLookExtra(const World::Obj &o) const {
 			out += std::string(LOAD[o.quality - 1]) + nl;
 		return out;
 	}
+	if (t == 0x2D || t == 0xF0 || t == 0xF1) { // a ray gun: its setting (quality 0 the combination, 1 the rifle, more the shotgun) and, but for the 0x2D, its charges
+		std::string out = std::string("It is set to '") + (o.quality == 0 ? "Combination" : o.quality > 1 ? "Shotgun" : "Rifle") + "'";
+		if (t == 0x2D)
+			return out + ".\n";
+		return out + ", and has " + std::to_string((int)o.quantity) + " charge" + (o.quantity == 1 ? "" : "s") + " left.\n";
+	}
+	if (t == 0x81 || t == 0x105) { // a gun: what it is loaded with (the tile name of type 0x77 with a quality, 0x80 without) and its charges
+		int tile = _world.baseTile.firstTile[o.quality ? 0x77 : 0x80];
+		return "It's loaded with " + Describe::tileName(_world, tile, true) + ", and has " + std::to_string((int)o.quantity) + " charge" + (o.quantity == 1 ? "" : "s") + " left.\n";
+	}
+	if (t == 0x114) { // the sprayer: rubber (quality bit 1) and, once the story flag 0x20 of actor 0x3E is set, its colour (bit 2)
+		int q = o.quality;
+		bool story = (_world.actors.talkFlags[0x3E] & 0x20) != 0;
+		if (!(q & 1))
+			return std::string("There is no rubber in the sprayer system.\n") + (story && !(q & 2) ? "It is also not flesh-colored.\n" : "");
+		if (story && !(q & 2))
+			return "The rubber in the sprayer system is not flesh-colored.\n";
+		return "It is ready to use.\n";
+	}
+	if (t == 0xAC && z == 0) { // a marker of a place: its name by the quality (1-12), then where it is (Mars' degrees: latitude (y - 512) * 240 / 1024, longitude (x - 512) * 360 / 1024)
+		static const char *const NAMES[13] = {"", "Coprates Chasma", "Arsia Mons", "Pavonis Mons", "Ascraeus Mons", "Alber Tholus", "Elysium Mons", "Hecates Tholus", "Terra Sirenum", "Noctis Labyrinthus", "Deuteronicus Mensae", "Syrtis Major Planum", "Olympus Mons"};
+		std::string out = o.quality > 12 ? "Aargh!\n" : NAMES[o.quality];
+		int lat = ((int)o.y - 512) * 240 / 1024, lon = ((int)o.x - 512) * 360 / 1024;
+		out += lat > 0 ? " " + std::to_string(lat) + "S " : lat < 0 ? " " + std::to_string(-lat) + "N " : " 0 ";
+		if (lon == 180 || lon == -180 || lon == 0)
+			out += std::to_string(lon) + "\n";
+		else if (lon > 0)
+			out += " " + std::to_string(180 - lon) + "W\n";
+		else
+			out += " " + std::to_string(lon + 180) + "E\n";
+		return out;
+	}
+	if (t == 0xE8) // a plaque: quality 1 is its name, a larger one a slip
+		return o.quality > 1 ? "Aargh!\n" : o.quality == 1 ? "Test Plaque\n" : "";
 	if (t == 0x14D) // the cannon, when it is loaded (quality)
 		return o.quality ? "The cannon will fire steel cannon balls." + nl : "";
 	if (t == 0x13A) { // a panel: loose (quality bit 1, when it is not carried) and broken (bit 2)

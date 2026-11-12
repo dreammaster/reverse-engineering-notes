@@ -513,6 +513,18 @@ void Game::look(int tx, int ty) {
 		}
 		if (o.actor < 0 && _world.game == GameId::MartianDreams) { // MD's own look: the name and what the thing tells of its state
 			message(text + ".\n" + mdLookExtra(o));
+			if (o.type == 0x1CC) { // sub_14ED4: a thing that starts a scene (flag 0x40 of actor 2 and his talk)
+				_world.actors.talkFlags[2] |= 0x40;
+				startTalk(2);
+				return;
+			}
+			// sub_14D04: a container (the types of ds:0D60) that is not carried, within a square, and open (a frame 0 below type 0x151) gives up what it holds
+			static const uint16_t HOLDERS[15] = {0x50, 0x51, 0x52, 0x53, 0x55, 0x56, 0x57, 0x59, 0x130, 0x8B, 0x155, 0x101, 0x68, 0x11C, 0x11D};
+			bool holder = false;
+			for (uint16_t h : HOLDERS)
+				holder |= o.type == h;
+			if (holder && !carriedObject(o) && (o.type >= 0x151 || o.frame == 0))
+				searchHere(top);
 			prompt();
 			return;
 		}
@@ -595,7 +607,13 @@ void Game::command(int key) {
 		break;
 	case 'G':
 		message("Get-");
-		_pending = 'G';
+		if (_world.game == GameId::MartianDreams) { // Martian Dreams chooses with the cursor, so that the psychic reach can be used
+			_pending = 'g';
+			_cursor = true;
+			_cx = _cy = 5;
+		} else {
+			_pending = 'G';
+		}
 		break;
 	case 'U':
 		message("Use-");
@@ -817,7 +835,7 @@ bool Game::handleKeyInner(int key) {
 		castKey(key);
 		return true;
 	}
-	if (_pending == 'L' || _pending == 'Z' || _pending == 'Y' || _pending == 'c' || _pending == 'a' || _pending == 'o' || _pending == 'd') {
+	if (_pending == 'L' || _pending == 'Z' || _pending == 'g' || _pending == 'Y' || _pending == 'c' || _pending == 'a' || _pending == 'o' || _pending == 'd') {
 		// the cursor: arrows move it, Enter looks at the cell, Escape gives up
 		switch (key) {
 		case KEY_UP:
@@ -835,7 +853,7 @@ bool Game::handleKeyInner(int key) {
 		case KEY_ENTER:
 		case KEY_SPACE: {
 			int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
-			bool mdPick = _pending == 'Z', sePick = _pending == 'Y';
+			bool mdPick = _pending == 'Z', sePick = _pending == 'Y', mdGetPick = _pending == 'g';
 			bool casting = _pending == 'c', attacking = _pending == 'a', orb = _pending == 'o', dropping = _pending == 'd';
 			_pending = 0;
 			_cursor = false;
@@ -843,6 +861,8 @@ bool Game::handleKeyInner(int key) {
 				seChosen((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 			} else if (mdPick) {
 				mdChosen((x + _cx - 5) & mask, (y + _cy - 5) & mask);
+			} else if (mdGetPick) {
+				mdGet((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 			} else if (orb) {
 				orbAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 				prompt();

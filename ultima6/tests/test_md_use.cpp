@@ -1042,6 +1042,135 @@ int main() {
 		g.handleKey(KEY_RIGHT);
 		CHECK(logText(g).find("Direction-") != std::string::npos && logText(g).find("East.") != std::string::npos);
 		w.deleteObject(glass);
+		// Martian Dreams' Get: the cursor chooses; an axe is taken; a panel (0x13A) with an even quality "won't budge", with an odd one it comes; a far thing is out of range, in reach of a telepath
+		auto getAt = [&](int dx) {
+			g.log.clear();
+			g.handleKey('g');
+			for (int i = 0; i < dx; ++i)
+				g.handleKey(KEY_RIGHT);
+			g.handleKey(KEY_ENTER);
+		};
+		auto has = [&](int type) {
+			std::vector<int> mine;
+			w.inventory(1, mine, true);
+			for (int i : mine)
+				if (w.objects[i].type == type)
+					return i;
+			return -1;
+		};
+		int axe = put(w, 0x32, 0, px + 1, py, 0);
+		getAt(1);
+		CHECK(w.objects[axe].deleted && has(0x32) >= 0);
+		w.deleteObject(has(0x32));
+		int panelG = put(w, 0x13A, 0, px + 1, py, 0);
+		w.objects[panelG].quality = 2;
+		getAt(1);
+		CHECK(logText(g).find("Won't budge") != std::string::npos && !w.objects[panelG].deleted);
+		w.objects[panelG].quality = 3;
+		getAt(1);
+		CHECK(w.objects[panelG].deleted && has(0x13A) >= 0 && w.objects[has(0x13A)].quality == 3);
+		w.deleteObject(has(0x13A));
+		int far = put(w, 0x32, 0, px + 3, py, 0);
+		g.mdSetPsychic(me, 0, 0);
+		getAt(3);
+		CHECK(logText(g).find("Out of range!") != std::string::npos && !w.objects[far].deleted);
+		w.actors.level[me] = 3;
+		g.mdSetPsychic(me, 0, 1);
+		getAt(3);
+		CHECK(w.objects[far].deleted && has(0x32) >= 0);
+		w.deleteObject(has(0x32));
+		g.mdSetPsychic(me, 0, 0);
+		int corpse = put(w, 0x155, 0, px + 1, py, 0);
+		World::Obj held;
+		held.status = ObjRecord::IN_CONTAINER;
+		held.parent = corpse;
+		held.x = held.y = 0;
+		held.z = 0;
+		held.type = 0x31;
+		held.frame = 0;
+		held.quantity = 1;
+		held.quality = 0;
+		held.actor = -1;
+		w.objects.push_back(held);
+		int hatchetG = (int)w.objects.size() - 1;
+		getAt(1);
+		CHECK(logText(g).find("Searching the body, you find a hatchet.") != std::string::npos && !w.objects[hatchetG].deleted && w.objects[hatchetG].onMap() && has(0x155) >= 0);
+		if (has(0x155) >= 0)
+			w.deleteObject(has(0x155));
+		w.deleteObject(hatchetG);
+		clearArea();
+		// Martian Dreams' Look: a ray gun says its setting and charges; a barrel (0x68) beside the party gives up what it holds
+		auto lookEast = [&]() {
+			g.log.clear();
+			g.handleKey('l');
+			g.handleKey(KEY_RIGHT);
+			g.handleKey(KEY_ENTER);
+		};
+		int gun = put(w, 0xF0, 0, px + 1, py, 0);
+		w.objects[gun].quality = 2;
+		w.objects[gun].quantity = 3;
+		lookEast();
+		CHECK(logText(g).find("It is set to 'Shotgun', and has 3 charges left.") != std::string::npos);
+		w.objects[gun].quantity = 1;
+		w.objects[gun].quality = 0;
+		lookEast();
+		CHECK(logText(g).find("It is set to 'Combination', and has 1 charge left.") != std::string::npos);
+		w.deleteObject(gun);
+		int barrelL = put(w, 0x68, 0, px + 1, py, 0);
+		World::Obj stored;
+		stored.status = ObjRecord::IN_CONTAINER;
+		stored.parent = barrelL;
+		stored.x = stored.y = 0;
+		stored.z = 0;
+		stored.type = 0x31;
+		stored.frame = 0;
+		stored.quantity = 1;
+		stored.quality = 0;
+		stored.actor = -1;
+		w.objects.push_back(stored);
+		int storedIdx = (int)w.objects.size() - 1;
+		lookEast();
+		CHECK(logText(g).find("Searching here, you find a hatchet.") != std::string::npos && w.objects[storedIdx].onMap());
+		w.deleteObject(storedIdx);
+		w.deleteObject(barrelL);
+		// Martian Dreams' Drop: radium (0x1C0) burns whoever has no tongs or telekinesis, then lies where the cursor says; a panel (0x13A) is not dropped on bare ground
+		{
+			int radium = w.addToInventory(1, 0x1C0, 0, 1);
+			int panel = w.addToInventory(1, 0x13A, 0, 1);
+			std::vector<int> pack;
+			w.inventory(1, pack, false);
+			auto dropNth = [&](int type, int dx) {
+				w.inventory(1, pack, false);
+				int nth = 0;
+				for (size_t k = 0; k < pack.size(); ++k)
+					if (w.objects[pack[k]].type == type)
+						nth = (int)k;
+				g.log.clear();
+				g.handleKey('d');
+				for (int k = 0; k < nth; ++k)
+					g.handleKey(KEY_RIGHT);
+				g.handleKey(KEY_ENTER);
+				for (int k = 0; k < dx; ++k)
+					g.handleKey(KEY_RIGHT);
+				g.handleKey(KEY_ENTER);
+			};
+			g.mdSetPsychic(me, 0, 0);
+			w.actors.status[me] &= 0xF7;
+			dropNth(0x13A, 1);
+			CHECK(logText(g).find("cannot be dropped on the ground") != std::string::npos && !w.objects[panel].deleted);
+			dropNth(0x1C0, 1);
+			CHECK(logText(g).find("OUCH. It is very hot") != std::string::npos && (w.actors.status[me] & 8));
+			bool lying = false;
+			for (size_t i = 0; i < w.objects.size(); ++i)
+				lying |= !w.objects[i].deleted && w.objects[i].type == 0x1C0 && w.objects[i].onMap() && w.objects[i].x == px + 1 && w.objects[i].y == py;
+			CHECK(lying);
+			w.actors.status[me] &= 0xF7;
+			for (size_t i = 0; i < w.objects.size(); ++i)
+				if (!w.objects[i].deleted && (w.objects[i].type == 0x1C0 || w.objects[i].type == 0x13A))
+					w.deleteObject((int)i);
+			(void)radium;
+		}
+		clearArea();
 		// the bucket (0xA0, recipe 42): empty it holds nothing; with water it wets a barrel, and waters a seed on a mound (bit 8 of the mound's quality); ice is dumped out on a Y
 		int bucket = put(w, 0xA0, 0, px + 1, py, 0);
 		int barrel2 = put(w, 0x68, 0, px, py + 1, 0);
