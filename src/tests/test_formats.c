@@ -902,6 +902,33 @@ int main(int argc, char **argv) {
 		free(in); free(raw);
 	}
 
+	{
+		/* chase behaviour (TAD:0278) in level 1: velocity towards the player, none inside the dead zone */
+		snprintf(path, sizeof(path), "%s/cadaver1/DATA/1/ROUTINE1.TAD", root);
+		size_t n, un;
+		uint8_t *in = slurp(path, &n), *raw = NULL;
+		if (in && mjm_unpack(in, n, &raw, &un) == 0) {
+			static TadRt tr;
+			static AclVM vm;
+			memset(&vm, 0, sizeof(vm));
+			vm.timer_delay = -1;
+			if (tad_load(&tr, raw, un) == 0) {
+				int vx[6], vy[6];
+				int ok = 1;
+				static const int pos[6][4] = {{50, 50, 80, 50}, {50, 50, 20, 50}, {50, 50, 50, 80}, {50, 50, 50, 20}, {50, 50, 51, 51}, {50, 50, 80, 80}};
+				for (int i = 0; i < 6; i++)
+					ok &= tad_run_behaviour(&tr, &vm, 5, pos[i][0], pos[i][1], pos[i][2], pos[i][3], &vx[i], &vy[i]) == 0;
+				if (!ok || !(vx[0] != 0 && vx[0] == -vx[1] && vy[0] == 0) || !(vy[2] != 0 && vy[2] == -vy[3] && vx[2] == 0) || vx[4] || vy[4] || !vx[5] || !vy[5]) {
+					printf("FAIL chase:"); for (int i = 0; i < 6; i++) printf(" (%d,%d)", vx[i], vy[i]); printf("\n");
+					failed++;
+				}
+				tad_free(&tr);
+			}
+			checked++;
+		}
+		free(in); free(raw);
+	}
+
 	for (size_t i = 0; i < sizeof(acl_vectors) / sizeof(acl_vectors[0]); i++) {
 		const AclVector *av = &acl_vectors[i];
 		char lev = av->dir[strlen(av->dir) - 1];

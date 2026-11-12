@@ -30,6 +30,14 @@ int tad_load(TadRt *t, const uint8_t *raw, size_t len) {
 		t->timer_entry[t->ntimers++] = (uint16_t)w;
 		p += 2;
 	}
+	t->base = base;
+	for (int k = 9; k < 25 && t->nbeh < 16; k++) {
+		unsigned off = base + 4u * (unsigned)k;
+		if (off + 2 > len) break;
+		unsigned w = (unsigned)(raw[off] | (raw[off + 1] << 8));
+		if (w == 0xFFFF || w == 0 || w >= 0x1000) { t->beh_entry[t->nbeh++] = 0; continue; }
+		t->beh_entry[t->nbeh++] = (uint16_t)(w + 2);
+	}
 	/* far pointer ds:78E -> hook, service table at ss:[ds:B6] */
 	uint8_t *ds = t->mem + DSG * 16;
 	ds[0x78E] = SENT; ds[0x78F] = 0; ds[0x790] = HKG & 0xFF; ds[0x791] = HKG >> 8;
@@ -122,4 +130,39 @@ void tad_timer_unit(TadRt *t, AclVM *vm) {
 		else
 			vm->vars[0x1A + i] = vm->g[0x81 + 0x1A + 0x34 + i];   /* the routine re-armed it: reload */
 	}
+}
+
+#define PLAYER_REC 0x3000
+#define CREAT_REC 0x3100
+
+int tad_run_behaviour(TadRt *t, AclVM *vm, int b, int cx, int cy, int px, int py, int *vx, int *vy) {
+	if (!t->loaded || b < 0 || b >= t->nbeh || !t->beh_entry[b])
+		return -1;
+	uint8_t *ds = t->mem + DSG * 16;
+	memcpy(ds + 0x590, vm->g, sizeof(vm->g));
+	ds[0x5C] = PLAYER_REC & 0xFF; ds[0x5D] = PLAYER_REC >> 8;                  /* ds:5C = the player's record */
+	memset(ds + PLAYER_REC, 0, 0x40);
+	ds[PLAYER_REC] = (uint8_t)px; ds[PLAYER_REC + 1] = (uint8_t)py;
+	memset(ds + CREAT_REC, 0, 0x40);
+	ds[CREAT_REC] = (uint8_t)cx; ds[CREAT_REC + 1] = (uint8_t)cy;
+	ds[CREAT_REC + 0xD] = 0x10;                                               /* movement state at +0x10 */
+	ds[CREAT_REC + 0xE] = 0x20;                                               /* tail at +0x20 */
+	ds[0x226] = ds[0x227] = 0;
+	ds[0x84] = QBASE & 0xFF; ds[0x85] = QBASE >> 8;
+	t->vm = vm;
+	X86 *c = &t->cpu;
+	x86_init(c, t->mem);
+	c->ax = (uint16_t)(b + 9);
+	c->di = CREAT_REC; c->bx = CREAT_REC + 0x20; c->bp = CREAT_REC + 0x20; c->si = CREAT_REC + 0x10;
+	c->sp = 0xFF00 - 2;
+	c->ds = DSG; c->es = DSG; c->ss = SSG; c->cs = TADG;
+	x86_ww(c, SSG, 0xFF00 - 2, SENT);
+	c->ip = t->beh_entry[b];
+	c->hook_cs = HKG; c->hook_ip = SENT; c->hook = svc_hook; c->hook_user = t;
+	int n = x86_run(c, TADG, SENT, 200000);
+	if (n < 0)
+		return -1;
+	*vx = (int8_t)ds[CREAT_REC + 0x10 + 3];
+	*vy = (int8_t)ds[CREAT_REC + 0x10 + 4];
+	return 0;
 }
