@@ -544,26 +544,66 @@ static void walker_sync_boxes(Walker *wk, RoomView *rv) {
 	}
 }
 
+/* One move attempt of a creature (1000:6F62 -> 1000:116E0): if the target box overlaps the player the creature stays and the player is hit — energy -= A[1] (the
+ * creature's tail byte 1, 1000:72EC -> 81C8) and event 9 (argument 0) is raised for the creature; otherwise the game's collision test decides. */
+static void creature_move(Walker *wk, RoomView *rv, RoomObj *o, int ddx, int ddy, int gx, int gy, int *moved, int *hit) {
+	int tx = o->x1 + ddx, ty = o->y1 + ddy;
+	int ox0 = tx - o->xs, oy0 = ty - o->ys;
+	if (wk->x1 >= ox0 && wk->x1 - PL_XS <= tx && wk->y1 >= oy0 && wk->y1 - PL_YS <= ty) {
+		if (!*hit) {                                   /* one hit per creature and step */
+			*hit = 1;
+			int e = rv->vm.energy - rv->vm.tail[o->thing][1];
+			rv->vm.energy = e < 0 ? 0 : e;
+			rv->vm.queue_n = 0;
+			acl_thing_event(&rv->vm, &rv->mp2, o->thing, 9, 0);
+			for (int q = 0; q < rv->vm.queue_n; q++)
+				acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+			rv->pending_rebuild |= rv_changed(rv);
+			roomview_flush_messages(rv);
+		}
+		return;
+	}
+	ColResult cr;
+	collision_test(&wk->world, tx, ty, o->z0, o->xs, o->ys, o->zs, o->thing, 0, &cr);
+	if (cr.zf) {
+		o->x1 = tx; o->y1 = ty;
+		rv->vm.pos[3 * o->thing] = (uint8_t)tx; rv->vm.pos[3 * o->thing + 1] = (uint8_t)ty;
+		rv->pos_seen[3 * o->thing] = rv->vm.pos[3 * o->thing]; rv->pos_seen[3 * o->thing + 1] = rv->vm.pos[3 * o->thing + 1];
+		roomobj_moved(o, gx, gy);
+		*moved = 1;
+	}
+}
+
 /* Creatures: things whose sprite header byte 0x16 is 3 and whose tail[5] bit 7 is clear are "active" (1000:6041, at most 6). Each game step the movement routine
  * 1000:6F62 looks at the movement state B (rec[rec[13]..]): mode 3 = velocity driven: the TAD behaviour routine of tail[1] (index + 9; verified code, tad_run_behaviour) sets
  * the sign of the velocity counters, the speed gate B[9] (low nibble counts down, at 0 it reloads from the high nibble and the creature moves) lets it step by B[6], B[7] units
- * per axis; mode 0 = scripted movement tables (not decoded: the creature stands still). Overlap with the player raises event 9 (argument 0). */
+ * per axis; mode 0/2 = scripted movement tables (see formats.md 6.7). */
 static void creatures_step(Walker *wk, RoomView *rv) {
 	if (!rv->tad.loaded)
 		return;
-	int active = 0, moved = 0;
+	int active = 0, moved = 0, gw, gh, gx, gy;
+	if (!roomview_geom(rv, &gw, &gh, &gx, &gy))
+		return;
 	for (int i = 0; i < rv->ro.n && active < 6; i++) {
 		RoomObj *o = &rv->ro.o[i];
 		if (o->sp->header[0x16] != 3 || (rv->vm.tail[o->thing][5] & 0x80) || (rv->vm.flags[o->thing] & 0x80))
 			continue;
 		active++;
 		uint8_t *ms = rv->vm.mstate[o->thing];
-		if (ms[0] == 0 || ms[0] == 2) {                   /* scripted movement (1000:6F62 mode 0 / wait mode 2): table entries 00 = move by counters, 01 = jump, 02 = wait */
-			int go = 1;
-			if (ms[9]) {
-				if ((ms[9] & 0xF) > 0) { ms[9]--; go = 0; }
-				else ms[9] |= (uint8_t)(ms[9] >> 4);
+		int hit = 0;
+		int go = 1;
+		if (ms[9]) {                                             /* speed gate */
+			if ((ms[9] & 0xF) > 0) { ms[9]--; go = 0; }
+			else ms[9] |= (uint8_t)(ms[9] >> 4);
+		}
+		if (ms[0] == 3) {
+			int vx, vy;
+			if (go && tad_run_behaviour(&rv->tad, &rv->vm, rv->vm.tail[o->thing][1], o->x1, o->y1, wk->x1, wk->y1, &vx, &vy) == 0) {
+				int dx = vx > 0 ? ms[6] : vx < 0 ? -ms[6] : 0, dy = vy > 0 ? ms[7] : vy < 0 ? -ms[7] : 0;
+				if (dx) creature_move(wk, rv, o, dx, 0, gx, gy, &moved, &hit);
+				if (dy) creature_move(wk, rv, o, 0, dy, gx, gy, &moved, &hit);
 			}
+		} else if (ms[0] == 0 || ms[0] == 2) {                   /* scripted: 00 = move by counters, 01 = jump, 02 = wait */
 			if (ms[0] == 2) {
 				if (ms[2] > 0 && --ms[2] == 0) ms[0] = 0;
 			} else if (go) {
@@ -575,22 +615,8 @@ static void creatures_step(Walker *wk, RoomView *rv) {
 						int dx = cn[0] > 0 ? ms[6] : cn[0] < 0 ? -ms[6] : 0, dy = cn[1] > 0 ? ms[7] : cn[1] < 0 ? -ms[7] : 0;
 						if (cn[0]) cn[0] += cn[0] > 0 ? -1 : 1;
 						if (cn[1]) cn[1] += cn[1] > 0 ? -1 : 1;
-						int gw, gh, gx, gy;
-						if (roomview_geom(rv, &gw, &gh, &gx, &gy)) {
-							for (int axis = 0; axis < 2; axis++) {
-								int ddx = axis == 0 ? dx : 0, ddy = axis == 1 ? dy : 0;
-								if (!ddx && !ddy) continue;
-								ColResult cr;
-								collision_test(&wk->world, o->x1 + ddx, o->y1 + ddy, o->z0, o->xs, o->ys, o->zs, o->thing, 0, &cr);
-								if (cr.zf) {
-									o->x1 += ddx; o->y1 += ddy;
-									rv->vm.pos[3 * o->thing] = (uint8_t)o->x1; rv->vm.pos[3 * o->thing + 1] = (uint8_t)o->y1;
-									rv->pos_seen[3 * o->thing] = rv->vm.pos[3 * o->thing]; rv->pos_seen[3 * o->thing + 1] = rv->vm.pos[3 * o->thing + 1];
-									roomobj_moved(o, gx, gy);
-									moved = 1;
-								}
-							}
-						}
+						if (dx) creature_move(wk, rv, o, dx, 0, gx, gy, &moved, &hit);
+						if (dy) creature_move(wk, rv, o, 0, dy, gx, gy, &moved, &hit);
 						break;
 					}
 					int ix = ms[1];
@@ -602,43 +628,6 @@ static void creatures_step(Walker *wk, RoomView *rv) {
 					else break;
 				}
 			}
-		}
-		if (ms[0] == 3) {
-			int vx, vy;
-			if (tad_run_behaviour(&rv->tad, &rv->vm, rv->vm.tail[o->thing][1], o->x1, o->y1, wk->x1, wk->y1, &vx, &vy) == 0) {
-				int go = 1;
-				if (ms[9]) {                                     /* speed gate */
-					if ((ms[9] & 0xF) > 0) { ms[9]--; go = 0; }
-					else ms[9] |= (uint8_t)(ms[9] >> 4);
-				}
-				int dx = vx > 0 ? ms[6] : vx < 0 ? -ms[6] : 0, dy = vy > 0 ? ms[7] : vy < 0 ? -ms[7] : 0;
-				int gw, gh, gx, gy;
-				if (go && roomview_geom(rv, &gw, &gh, &gx, &gy)) {
-					for (int axis = 0; axis < 2; axis++) {
-						int ddx = axis == 0 ? dx : 0, ddy = axis == 1 ? dy : 0;
-						if (!ddx && !ddy) continue;
-						ColResult cr;
-						collision_test(&wk->world, o->x1 + ddx, o->y1 + ddy, o->z0, o->xs, o->ys, o->zs, o->thing, 0, &cr);
-						if (cr.zf) {
-							o->x1 += ddx; o->y1 += ddy;
-							rv->vm.pos[3 * o->thing] = (uint8_t)o->x1; rv->vm.pos[3 * o->thing + 1] = (uint8_t)o->y1;
-							rv->pos_seen[3 * o->thing] = rv->vm.pos[3 * o->thing]; rv->pos_seen[3 * o->thing + 1] = rv->vm.pos[3 * o->thing + 1];
-							roomobj_moved(o, gx, gy);
-							moved = 1;
-						}
-					}
-				}
-			}
-		}
-		/* contact with the player: boxes overlap (the player's box is 7 x 7 x 30, far corner x1, y1) */
-		int ox0 = o->x1 - o->xs, oy0 = o->y1 - o->ys;
-		if (wk->x1 >= ox0 && wk->x1 - PL_XS <= o->x1 && wk->y1 >= oy0 && wk->y1 - PL_YS <= o->y1) {
-			rv->vm.queue_n = 0;
-			acl_thing_event(&rv->vm, &rv->mp2, o->thing, 9, 0);
-			for (int q = 0; q < rv->vm.queue_n; q++)
-				acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
-			rv->pending_rebuild |= rv_changed(rv);
-			roomview_flush_messages(rv);
 		}
 	}
 	if (moved)
