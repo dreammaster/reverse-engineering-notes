@@ -145,6 +145,11 @@ void Display::beginCommand() {
 	_text.home();
 }
 
+void Display::pressButton(int button) {
+	static const int kLeft[4] = {4, 25, 4, 25}, kBottom[4] = {181, 181, 195, 195};
+	_screen.put(kLeft[button], kBottom[button], 4);
+}
+
 void Display::selectVerb(int index) {
 	_selectedVerb = index;
 	_ms.drawVerbs(_screen, _verbs, index);

@@ -40,6 +40,8 @@ public:
 	int verbAt(int x, int y) const;
 	/** The compass arrow (0..9, bit i of the exit mask) under a point if it is lit, -1 otherwise. */
 	int compassAt(int x, int y) const;
+	/** A click on one of the four buttons (0 WAIT, 1 menu, 2 MAP, 3 UNDO): the original draws the button pressed and raised again, which leaves one pixel of its frame different. */
+	void pressButton(int button);
 	/** Marks a verb of the list (yellow) or none (-1). */
 	void selectVerb(int index);
 	/** The start of a command (execute_command): the text window is emptied (and shrunk again if it had grown). */

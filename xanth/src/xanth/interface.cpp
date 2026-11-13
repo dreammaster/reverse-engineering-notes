@@ -40,6 +40,12 @@ void Interface::click(int x, int y) {
 		_display.selectVerb(v);
 		return;
 	}
+	if (x >= 4 && x <= 24 && y >= 168 && y <= 181) {      // the WAIT button
+		_verb = 80;
+		_display.pressButton(0);
+		execute(0, 0);
+		return;
+	}
 	int arrow = _display.compassAt(x, y);
 	if (arrow >= 0) {
 		_verb = 0x51;                               // walk: the direction code is the arrow number + 1
