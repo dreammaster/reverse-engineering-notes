@@ -80,7 +80,7 @@
 0x2EA8E	1F1C:F8CE	data		subcell_screen_table	verified	256	00 00 00 00 28 00 02 00 50 00 04 00 78 00 06 00	ds:F8CE (initialised data in CAD.EXE, file offset 0x1EAEE): 64 entries (word video offset, word pixel shift) indexed (y&7)*8+(x&7) = screen displacement of an object sub-cell (1/8 cell units) from its cell origin. Irregular, not a formula (e.g. (7,1)=9 rows, (6,3)=11 rows); used by object_project. As pixels (offset*8+shift) the table is in tools/objplace.py SUB. [ported from cadaver1/cad 0x2ea3e by content match]
 0x7040E	6C3A:406E	data		sound_effect_table	verified	140		ds:406E: sound id -> driver effect number (bit 7 = looping effect); same table as Cadaver 1's ds:4064.
 0x7049A	6C3A:40FA	data		sound_flags	verified	128		ds:40FA: looping-sound flags, one byte per effect number (Cadaver 1: ds:40F0).
-0x70F10	6C3A:4B70	data		sound_card_letter	likely	1	CC	First letter of the CADAVER.INI sound line ('B' Beeper ...); Cadaver 1: ds:4C30.
+0x70F10	6C3A:4B70	data		sound_card_letter	likely	1	00	First letter of the CADAVER.INI sound line ('B' Beeper ...); Cadaver 1: ds:4C30.
 0x70F12	6C3A:4B72	data		path_adlib_bin	verified	10	61 64 6C 69 62 2E 62 69 6E 00	ASCIIZ file name 'adlib.bin' (in the initialised stack segment, ss:4C32). [ported from cadaver1/cad 0x70cb2 by content match]
 0x70F1C	6C3A:4B7C	data		path_beeper_bin	verified	11	62 65 65 70 65 72 2E 62 69 6E 00	ASCIIZ file name 'beeper.bin' (in the initialised stack segment, ss:4C3C). [ported from cadaver1/cad 0x70cbc by content match]
 0x70F27	6C3A:4B87	data		path_roland_bin	verified	11	72 6F 6C 61 6E 64 2E 62 69 6E 00	ASCIIZ file name 'roland.bin' (in the initialised stack segment, ss:4C47). [ported from cadaver1/cad 0x70cc7 by content match]

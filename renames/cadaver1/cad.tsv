@@ -108,7 +108,7 @@
 0x6C080	6C08:0000	data		vram_row_offsets	verified	400		200 little-endian words, 0, 40, 80 ... 7960: byte offset of each scan line in a plane page (40 bytes per line). Start of the initialised stack segment (ss).
 0x700E4	6C08:4064	data		sound_effect_table	verified	140		ds:4064: sound id -> driver effect number (bit 7 = looping effect). Identical in Cadaver 1 and 2 (there at ds:406E).
 0x70170	6C08:40F0	data		sound_flags	verified	128		ds:40F0: one byte per effect number, non-zero = looping sound is on (set by sound_play, cleared by sound_stop, replayed by sound_restart_looping).
-0x70CB0	6C08:4C30	data		sound_card_letter	likely	1	A9	First letter of the sound line of CADAVER.INI ('B' Beeper, 'T' Tandy, 'A' AdLib, 'R' Roland, 'S' SoundBlaster); selects the driver file name (4C32 adlib.bin ...) and the sound_play code path.
+0x70CB0	6C08:4C30	data		sound_card_letter	likely	1	00	First letter of the sound line of CADAVER.INI ('B' Beeper, 'T' Tandy, 'A' AdLib, 'R' Roland, 'S' SoundBlaster); selects the driver file name (4C32 adlib.bin ...) and the sound_play code path.
 0x70CB2	6C08:4C32	data		path_adlib_bin	verified	10	61 64 6C 69 62 2E 62 69 6E 00	ASCIIZ file name 'adlib.bin' (in the initialised stack segment, ss:4C32).
 0x70CBC	6C08:4C3C	data		path_beeper_bin	verified	11	62 65 65 70 65 72 2E 62 69 6E 00	ASCIIZ file name 'beeper.bin' (in the initialised stack segment, ss:4C3C).
 0x70CC7	6C08:4C47	data		path_roland_bin	verified	11	72 6F 6C 61 6E 64 2E 62 69 6E 00	ASCIIZ file name 'roland.bin' (in the initialised stack segment, ss:4C47).
