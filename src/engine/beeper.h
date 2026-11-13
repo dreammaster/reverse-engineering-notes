@@ -38,6 +38,8 @@ unsigned beeper_tick(Beeper *b);
 void beeper_play(Beeper *b, int id);
 /* Stop the looping sound `id` (1000:1613). */
 void beeper_stop(Beeper *b, int id);
+/* The tune of the intro (INTRO.EXE 10F78 / 10F93): on = start it unless it is playing, off = stop. */
+void beeper_music(Beeper *b, int on);
 /* Silence everything and forget the looping sounds (1000:15EB at a level change). */
 void beeper_silence(Beeper *b);
 /* Is the driver busy with an effect? ([0Ah] != 0) */

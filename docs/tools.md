@@ -59,7 +59,7 @@ the game is drawing, so a 400 M run takes several minutes.
 * Only the INT 21h/10h/16h/1Ah calls these games use are implemented; unknown
   ones are logged with `verbose=True`. Sound drivers are loaded (the game
   reads `BEEPER.BIN`) but no audio is produced; `tools/beeper.py` runs the driver on `tools/x86.py`
-  (`python3 tools/beeper.py EFFECT [TICKS]` prints the divisor changes) and `tools/verify_beeper.py` checks it against Unicorn.
+  (`python3 tools/beeper.py EFFECT [TICKS]` prints the divisor changes, `python3 tools/beeper.py wav ID|music OUT.wav [SECONDS]` writes a WAV) and `tools/verify_beeper.py` checks it against Unicorn.
 * Useful pattern for finding a decoder without reading the unlabeled disassembly:
   subclass `Emu`, override `on_read` to learn where a file's bytes landed, then
   `uc.hook_add(UC_HOOK_MEM_READ, …)` over that range and histogram

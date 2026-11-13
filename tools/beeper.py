@@ -93,6 +93,14 @@ class Beeper:
             return
         self.poke(0xA, e)
 
+    def music(self, on):
+        """INTRO.EXE 10F78 / 10F93: start the music unless it is playing ([9] == 1), or stop it ([8] = FFh)."""
+        if on:
+            if self.peek(9) != 1:
+                self.poke(8, 1)
+        else:
+            self.poke(8, 0xFF)
+
     def stop(self, sid):
         """Stop sound `sid` (1000:1613 + 1000:1685)."""
         if not hasattr(self, 'flags'):
@@ -114,7 +122,38 @@ def _sndtab():
 SNDTAB = _sndtab()
 
 
+def write_wav(path, what, seconds=10, rate=22050):
+    """Render sound id `what` (int) or the intro tune ('music') to a 16-bit mono WAV (one square wave per 20 ms tick)."""
+    import struct, wave
+    b = Beeper()
+    if what == 'music':
+        b.music(True)
+    else:
+        b.play(int(what, 0))
+    out = bytearray()
+    phase = 0.0
+    per = rate // 50
+    for _ in range(int(seconds * 50)):
+        f = b.tick()
+        if what == 'music':
+            b.music(True)
+        for _ in range(per):
+            if f:
+                phase = (phase + f / rate) % 1.0
+                out += struct.pack('<h', 6000 if phase < 0.5 else -6000)
+            else:
+                out += b'\0\0'
+    with wave.open(path, 'wb') as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(rate)
+        w.writeframes(bytes(out))
+
+
 if __name__ == '__main__':
+    if len(sys.argv) > 3 and sys.argv[1] == 'wav':        # beeper.py wav ID|music OUT.wav [seconds]
+        write_wav(sys.argv[3], sys.argv[2], float(sys.argv[4]) if len(sys.argv) > 4 else 10)
+        sys.exit(0)
     b = Beeper()
     eff = int(sys.argv[1], 0) if len(sys.argv) > 1 else 1
     n = int(sys.argv[2]) if len(sys.argv) > 2 else 100

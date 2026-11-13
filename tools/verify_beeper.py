@@ -70,5 +70,20 @@ for eff in range(1, 0x46):
             print('effect %#x tick %d: x86.py %d unicorn %d' % (eff, t, xd, y))
             bad += 1
             break
+a = beeper.Beeper()
+u = UcDrv()
+a.poke(8, 1)
+u.poke(8, 1)
+for t in range(1200):
+    if t == 900:
+        a.poke(8, 0xFF)
+        u.poke(8, 0xFF)
+    x = a.tick()
+    y = u.tick()
+    xd = round(1193182 / x) if x else 0
+    if xd != y:
+        print('music tick %d: x86.py %d unicorn %d' % (t, xd, y))
+        bad += 1
+        break
 print('mismatches', bad)
 sys.exit(1 if bad else 0)

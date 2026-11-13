@@ -1009,10 +1009,11 @@ int main(int argc, char **argv) {
 	}
 
 	{ /* Beeper driver: BEEPER.BIN on the interpreter, divisors per 50 Hz tick */
-		static const int sc[3][16][2] = { /* op: 1 play, 2 stop, 3 ticks; {0,0} ends */
+		static const int sc[4][16][2] = { /* op: 1 play, 2 stop, 3 ticks, 4 music; {0,0} ends */
 			{{1, 1}, {3, 30}, {1, 12}, {3, 40}, {1, 7}, {3, 40}, {2, 11}, {3, 60}},
 			{{1, 34}, {3, 20}, {1, 2}, {3, 60}, {2, 1}, {3, 20}, {1, 5}, {3, 30}},
-			{{1, 0x0b}, {3, 10}, {1, 0x0c}, {3, 10}, {1, 0x1d}, {3, 100}, {2, 0x0b}, {3, 30}, {2, 0x1d}, {3, 50}}};
+			{{1, 0x0b}, {3, 10}, {1, 0x0c}, {3, 10}, {1, 0x1d}, {3, 100}, {2, 0x0b}, {3, 30}, {2, 0x1d}, {3, 50}},
+			{{4, 1}, {3, 400}, {4, 1}, {3, 400}, {4, 0}, {3, 60}}};
 		static const char *bins[2] = {"cadaver1/BEEPER.BIN", "cadaver2/BEEPER.BIN"};
 		for (int g = 0; g < 2; g++) {
 			snprintf(path, sizeof(path), "%s/%s", root, bins[g]);
@@ -1039,6 +1040,7 @@ int main(int argc, char **argv) {
 						int op = sc[v->id][k][0], a = sc[v->id][k][1];
 						if (op == 1) beeper_play(&b, a);
 						else if (op == 2) beeper_stop(&b, a);
+						else if (op == 4) beeper_music(&b, a);
 						else BTICKS(a)
 					}
 				}

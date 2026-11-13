@@ -74,4 +74,5 @@ static const BeeperVector beeper_vectors[] = {
 	{1, 0, 0x4F329551U, 170},
 	{1, 1, 0x5F2E644BU, 26},
 	{1, 2, 0xD6DB135FU, 98},
+	{1, 3, 0xDDBC21BEU, 266},
 };

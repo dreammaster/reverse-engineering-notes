@@ -37,6 +37,7 @@ scen = [
     [('play', 1), ('t', 30), ('play', 12), ('t', 40), ('play', 7), ('t', 40), ('stop', 11), ('t', 60)],
     [('play', 34), ('t', 20), ('play', 2), ('t', 60), ('stop', 1), ('t', 20), ('play', 5), ('t', 30)],
     [('play', 0x0b), ('t', 10), ('play', 0x0c), ('t', 10), ('play', 0x1d), ('t', 100), ('stop', 0x0b), ('t', 30), ('stop', 0x1d), ('t', 50)],
+    [('music', 1), ('t', 400), ('music', 1), ('t', 400), ('music', 0), ('t', 60)],
 ]
 for k, sc in enumerate(scen):
     b = beeper.Beeper()
@@ -46,6 +47,8 @@ for k, sc in enumerate(scen):
             b.play(v)
         elif op == 'stop':
             b.stop(v)
+        elif op == 'music':
+            b.music(v)
         else:
             seq += divs(b, v)
     rows.append(('scenario', k, 0, fnv(seq), sum(1 for x in seq if x)))

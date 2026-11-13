@@ -154,6 +154,10 @@ static void snd_stop(int id) {
 	if (!g_snd_ok) return;
 	snd_lock(1); beeper_stop(&g_snd, id); snd_lock(0);
 }
+static void snd_music(int on) {
+	if (!g_snd_ok) return;
+	snd_lock(1); beeper_music(&g_snd, on); snd_lock(0);
+}
 /* level change / restart (1000:15EB): silence everything */
 static void snd_silence(void) {
 	if (!g_snd_ok) return;
@@ -1165,7 +1169,13 @@ int main(int argc, char **argv) {
 	}
 
 	int running = 1, frames = 0;
+	Scene prev_scene = scene;
 	while (running) {
+		if (scene != prev_scene) {                     /* the title tune (INTRO.EXE 10F78) plays while the title scroll is shown */
+			if (prev_scene == SCENE_INTRO) snd_music(0);
+			prev_scene = scene;
+		}
+		if (scene == SCENE_INTRO) snd_music(1);
 		SDL_Event ev;
 		while (SDL_PollEvent(&ev)) {
 			if (ev.type == SDL_QUIT)
