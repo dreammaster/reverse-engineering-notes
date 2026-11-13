@@ -6,6 +6,7 @@
 #include "ultima6/ending.h"
 #include "ultima6/front_end.h"
 #include "ultima6/md_front_end.h"
+#include "ultima6/md_intro.h"
 #include "ultima6/session.h"
 #include "ultima6/world.h"
 
@@ -97,6 +98,27 @@ int main(int argc, char **argv) {
 	MusicSwitch music(*backend, argv[1]);
 
 	// --ending: the ending alone, for a game of one year, two months and three days
+	if (endingOnly && id == Ultima6::GameId::MartianDreams) { // Martian Dreams' ending: the script of MARTIAN.EXE's routine sub_15C84
+		Ultima6::Ultima6::MdIntro ending(argv[1], Ultima6::Ultima6::MdIntro::ENDING);
+		if (!ending.ok()) {
+			std::fprintf(stderr, "cannot load the ending files\n");
+			return 1;
+		}
+		unsigned last = backend->ticks();
+		while (!ending.finished()) {
+			ending.render(screen);
+			backend->present(screen);
+			if (backend->pollKey() != Ultima6::KEY_NONE)
+				break;
+			unsigned now = backend->ticks();
+			ending.tick(now - last);
+			last = now;
+			backend->delay(15);
+		}
+		if (shot)
+			screen.savePng(shot, scale);
+		return 0;
+	}
 	if (endingOnly) {
 		Ultima6::Ultima6::Ending ending(argv[1], 1, 2, 3);
 		if (!ending.ok()) {

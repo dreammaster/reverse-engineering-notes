@@ -1,0 +1,14235 @@
+{
+"ops": [
+{
+"call": "load",
+"item": 0,
+"file": 1714,
+"tag": 16385
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16385,
+"y": 0,
+"x": 0
+},
+{
+"call": "fadein"
+},
+{
+"call": "wait",
+"ms": 4000
+},
+{
+"call": "free",
+"handle": 16385
+},
+{
+"call": "load",
+"item": 1,
+"file": 1724,
+"tag": 16386
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16386,
+"y": 0,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 4000
+},
+{
+"call": "free",
+"handle": 16386
+},
+{
+"call": "load",
+"item": 2,
+"file": 1734,
+"tag": 16387
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16387,
+"y": 0,
+"x": 15
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 3000
+},
+{
+"call": "free",
+"handle": 16387
+},
+{
+"call": "load",
+"item": 0,
+"file": 1744,
+"tag": 16388
+},
+{
+"call": "load",
+"item": 1,
+"file": 1753,
+"tag": 16389
+},
+{
+"call": "load",
+"item": 2,
+"file": 1762,
+"tag": 16390
+},
+{
+"call": "load",
+"item": 3,
+"file": 1771,
+"tag": 16391
+},
+{
+"call": "load",
+"item": 4,
+"file": 1780,
+"tag": 16392
+},
+{
+"call": "load",
+"item": 5,
+"file": 1789,
+"tag": 16393
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 190
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 190
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 190
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 190
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 190
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 190
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 190
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 190
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 190
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 190
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 320
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 190
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 320
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -1
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 319
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -2
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 188
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 238
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -3
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 317
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -2
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 318
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -4
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 186
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 236
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -6
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 314
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -3
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 317
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -6
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 184
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 234
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -9
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 311
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -4
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 316
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -8
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 182
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 232
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -12
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 308
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -5
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 315
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -10
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 180
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 230
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -15
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 305
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -6
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 314
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -12
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 178
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 228
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -18
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 302
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -7
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 313
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -14
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 176
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 226
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -21
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 299
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -8
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 312
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -16
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 174
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 224
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -24
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 296
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -9
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 311
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -18
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 172
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 222
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -27
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 293
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -10
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 310
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -20
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 170
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 220
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -30
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 290
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -11
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 309
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -22
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 168
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 218
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -33
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 287
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -12
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 308
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -24
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 166
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 216
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -36
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 284
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -13
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 307
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -26
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 164
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 214
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -39
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 281
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -14
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 306
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -28
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 162
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 212
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -42
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 278
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -15
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 305
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 160
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 210
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -45
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 275
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -16
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 304
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -32
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 158
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 208
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -48
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 272
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -17
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 303
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -34
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 156
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 206
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -51
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 269
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -18
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 302
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -36
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 154
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 204
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -54
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 266
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -19
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 301
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -38
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 152
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 202
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -57
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 263
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -20
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 300
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -40
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 150
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 200
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -60
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 260
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -21
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 299
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -42
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 148
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 198
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -63
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 257
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -22
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 298
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -44
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 146
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 196
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -66
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 254
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -23
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 297
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -46
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 144
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 194
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -69
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 251
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -24
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 296
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -48
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 142
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 192
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -72
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 248
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -25
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 295
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -50
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 140
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 190
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -75
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 245
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -26
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 294
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -52
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 138
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 188
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -78
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 242
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -27
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 293
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -54
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 136
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 186
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -81
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 239
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -28
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 292
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -56
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 134
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 184
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -84
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 236
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -29
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 291
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -58
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 132
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 182
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -87
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 233
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -30
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 290
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -60
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 130
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 180
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -90
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 230
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -31
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 289
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -62
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 128
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 178
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -93
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 227
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -32
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 288
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -64
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 126
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 176
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -96
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 224
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -33
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 287
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -66
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 124
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 174
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -99
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 221
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -34
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 286
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -68
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 122
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 172
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -102
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 218
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -35
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 285
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -70
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 120
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 170
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -105
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 215
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -36
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 284
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -72
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 118
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 168
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -108
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 212
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -37
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 283
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -74
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 166
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -111
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 209
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -38
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 282
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -76
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 114
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 164
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -114
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 206
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -39
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 281
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -78
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 112
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 162
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -117
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 203
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -40
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 280
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 110
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 160
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -120
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 200
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -41
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 279
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -82
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 108
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 158
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -123
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 197
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -42
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 278
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -84
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 106
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 156
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -126
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 194
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -43
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 277
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -86
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 104
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 154
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -129
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 191
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -44
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 276
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -88
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 102
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 152
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -132
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 188
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -45
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 275
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -90
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 100
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 150
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -135
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 185
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -46
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 274
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -92
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 98
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 148
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -138
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 182
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -47
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 273
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -94
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 96
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 146
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -141
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 179
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -48
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 272
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -96
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 94
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 144
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -144
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 176
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -49
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 271
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -98
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 92
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 142
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -147
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 173
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -50
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 270
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -100
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 90
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 140
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -150
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 170
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -51
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 269
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -102
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 88
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 138
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -153
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 167
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -52
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 268
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -104
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 86
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 136
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -156
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 164
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -53
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 267
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -106
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 84
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 134
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -159
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 161
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -54
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 266
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -108
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 82
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 132
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -162
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 158
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -55
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 265
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -110
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 130
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -165
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 155
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -56
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 264
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -112
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 78
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 128
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -168
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 152
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -57
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 263
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -114
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 76
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 126
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -171
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 149
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -58
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 262
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -116
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 74
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 124
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -174
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 146
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -59
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 261
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -118
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 72
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 122
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -177
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 143
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -60
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 260
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -120
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 70
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 120
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -180
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 140
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -61
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 259
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -122
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 68
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 118
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -183
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 137
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -62
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 258
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -124
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 66
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -186
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 134
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -63
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 257
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -126
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 64
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 114
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -189
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 131
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -64
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 256
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -128
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 62
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 112
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -192
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 128
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -65
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 255
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -130
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 60
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 110
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -195
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 125
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -66
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 254
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -132
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 58
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 108
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -198
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 122
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -67
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 253
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -134
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 56
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 106
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -201
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 119
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -68
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 252
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -136
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 54
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 104
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -204
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 116
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -69
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 251
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -138
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 52
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 102
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -207
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 113
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -70
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 250
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -140
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 50
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 100
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -210
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 110
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -71
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 249
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -142
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 48
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 98
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -213
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 107
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -72
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 248
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -144
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 46
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 96
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -216
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 104
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -73
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 247
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -146
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 44
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 94
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -219
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 101
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -74
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 246
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -148
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 42
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 92
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -222
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 98
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -75
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 245
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16390,
+"y": 24,
+"x": -150
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 40
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 90
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -225
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 95
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -76
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 244
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16390,
+"y": 24,
+"x": -152
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 38
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 88
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -228
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 92
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -77
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 243
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16390,
+"y": 24,
+"x": -154
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 36
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 86
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -231
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 89
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -78
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 242
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16390,
+"y": 24,
+"x": -156
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 34
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 84
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -234
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 86
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16388,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16389,
+"y": 24,
+"x": -79
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16389,
+"y": 24,
+"x": 241
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16390,
+"y": 24,
+"x": -158
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16391,
+"y": 24,
+"x": 32
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16392,
+"y": 24,
+"x": 82
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16393,
+"y": 24,
+"x": -237
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16393,
+"y": 24,
+"x": 83
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "wait",
+"ms": 1000
+},
+{
+"call": "free",
+"handle": 16388
+},
+{
+"call": "free",
+"handle": 16389
+},
+{
+"call": "free",
+"handle": 16390
+},
+{
+"call": "free",
+"handle": 16391
+},
+{
+"call": "free",
+"handle": 16392
+},
+{
+"call": "free",
+"handle": 16393
+},
+{
+"call": "load",
+"item": 0,
+"file": 1798,
+"tag": 16394
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "clear"
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16394,
+"y": 0,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 3000
+},
+{
+"call": "free",
+"handle": 16394
+},
+{
+"call": "load",
+"item": 0,
+"file": 1810,
+"tag": 16395
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 5,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 6,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 7,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 8,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 9,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 10,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 11,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 12,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 13,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 14,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 15,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 16,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 17,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 18,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 19,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 20,
+"handle": 16395,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "free",
+"handle": 16395
+},
+{
+"call": "load",
+"item": 1,
+"file": 1821,
+"tag": 16396
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "clear"
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16396,
+"y": 0,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 3000
+},
+{
+"call": "free",
+"handle": 16396
+},
+{
+"call": "load",
+"item": 0,
+"file": 1833,
+"tag": 16397
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 5,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 6,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 7,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 8,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 9,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 10,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 11,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 12,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 13,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 14,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 15,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 16,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 17,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 18,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 19,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 20,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 21,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 22,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 23,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 24,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 25,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 26,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 27,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 28,
+"handle": 16397,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 50
+},
+{
+"call": "free",
+"handle": 16397
+},
+{
+"call": "load",
+"item": 2,
+"file": 1842,
+"tag": 16398
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "clear"
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16398,
+"y": 0,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 3000
+},
+{
+"call": "free",
+"handle": 16398
+},
+{
+"call": "load",
+"item": 0,
+"file": 1854,
+"tag": 16399
+},
+{
+"call": "load",
+"item": 1,
+"file": 1863,
+"tag": 16400
+},
+{
+"call": "load",
+"item": 3,
+"file": 1872,
+"tag": 16401
+},
+{
+"call": "load",
+"item": 4,
+"file": 1881,
+"tag": 16402
+},
+{
+"call": "load",
+"item": 0,
+"file": 1890,
+"tag": 16403
+},
+{
+"call": "load",
+"item": 1,
+"file": 1900,
+"tag": 16404
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16403,
+"y": 24,
+"x": 80
+},
+{
+"call": "sub_20951",
+"args": [
+0,
+192,
+255,
+0,
+0,
+1227
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16403,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16403,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16403,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16403,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 5,
+"handle": 16403,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 6,
+"handle": 16403,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 7,
+"handle": 16403,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 8,
+"handle": 16403,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 9,
+"handle": 16403,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16404,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16404,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16404,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16404,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16404,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 5,
+"handle": 16404,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 6,
+"handle": 16404,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 7,
+"handle": 16404,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16399,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16400,
+"y": 24,
+"x": -80
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16400,
+"y": 24,
+"x": 240
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16401,
+"y": 24,
+"x": 30
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16402,
+"y": 24,
+"x": 80
+},
+{
+"call": "draw",
+"frame": 8,
+"handle": 16404,
+"y": 24,
+"x": 80
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 75
+},
+{
+"call": "free",
+"handle": 16399
+},
+{
+"call": "free",
+"handle": 16400
+},
+{
+"call": "free",
+"handle": 16401
+},
+{
+"call": "free",
+"handle": 16402
+},
+{
+"call": "free",
+"handle": 16403
+},
+{
+"call": "free",
+"handle": 16404
+},
+{
+"call": "load",
+"item": 3,
+"file": 1910,
+"tag": 16405
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "clear"
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16405,
+"y": 0,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 3000
+},
+{
+"call": "free",
+"handle": 16405
+},
+{
+"call": "load",
+"item": 0,
+"file": 1922,
+"tag": 16406
+},
+{
+"call": "load",
+"item": 1,
+"file": 1933,
+"tag": 16407
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16406,
+"y": 24,
+"x": 0
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+0,
+0,
+0,
+20480,
+16407,
+140,
+270,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16406,
+"y": 24,
+"x": 0
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+4,
+0,
+0,
+20480,
+16407,
+138,
+266,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16406,
+"y": 24,
+"x": 0
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+16,
+0,
+0,
+20480,
+16407,
+132,
+254,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16406,
+"y": 24,
+"x": 0
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+36,
+0,
+0,
+20480,
+16407,
+122,
+234,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16406,
+"y": 24,
+"x": 0
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+64,
+0,
+0,
+20480,
+16407,
+108,
+206,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16406,
+"y": 24,
+"x": 0
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+100,
+0,
+0,
+20480,
+16407,
+90,
+170,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16406,
+"y": 24,
+"x": 0
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+144,
+0,
+0,
+20480,
+16407,
+68,
+126,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16406,
+"y": 24,
+"x": 0
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+196,
+0,
+0,
+20480,
+16407,
+42,
+74,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16406,
+"y": 24,
+"x": 0
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+0,
+0,
+20480,
+16407,
+12,
+14,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16406,
+"y": 24,
+"x": 0
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+324,
+0,
+0,
+20480,
+16407,
+-22,
+-54,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16406,
+"y": 24,
+"x": 0
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+400,
+0,
+0,
+20480,
+16407,
+-60,
+-130,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16406,
+"y": 24,
+"x": 0
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+484,
+0,
+0,
+20480,
+16407,
+-102,
+-214,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "free",
+"handle": 16406
+},
+{
+"call": "free",
+"handle": 16407
+},
+{
+"call": "load",
+"item": 0,
+"file": 1944,
+"tag": 16408
+},
+{
+"call": "load",
+"item": 1,
+"file": 1954,
+"tag": 16409
+},
+{
+"call": "load",
+"item": 3,
+"file": 1964,
+"tag": 16410
+},
+{
+"call": "load",
+"item": 4,
+"file": 1974,
+"tag": 16411
+},
+{
+"call": "load",
+"item": 5,
+"file": 1984,
+"tag": 16412
+},
+{
+"call": "load",
+"item": 6,
+"file": 1994,
+"tag": 16413
+},
+{
+"call": "load",
+"item": 2,
+"file": 2004,
+"tag": 16414
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+0,
+0,
+20480,
+16410,
+-150,
+-900,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+0,
+0,
+20480,
+16411,
+15,
+62,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+0,
+0,
+20480,
+16412,
+0,
+-150,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+0,
+0,
+20480,
+16413,
+0,
+-500,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+0,
+0,
+20480,
+16414,
+50,
+0,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+32,
+0,
+20480,
+16410,
+-134,
+-836,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+16,
+0,
+20480,
+16411,
+23,
+94,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+32,
+0,
+20480,
+16412,
+8,
+-118,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+16,
+0,
+20480,
+16413,
+4,
+-468,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+320,
+0,
+0,
+20480,
+16414,
+52,
+-4,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+64,
+0,
+20480,
+16410,
+-118,
+-772,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+32,
+0,
+20480,
+16411,
+31,
+126,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+64,
+0,
+20480,
+16412,
+16,
+-86,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+32,
+0,
+20480,
+16413,
+8,
+-436,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+384,
+0,
+0,
+20480,
+16414,
+58,
+-8,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 5,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+96,
+0,
+20480,
+16410,
+-102,
+-708,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+48,
+0,
+20480,
+16411,
+39,
+158,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+96,
+0,
+20480,
+16412,
+24,
+-54,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+48,
+0,
+20480,
+16413,
+12,
+-404,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+448,
+0,
+0,
+20480,
+16414,
+68,
+-12,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 6,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+128,
+0,
+20480,
+16410,
+-86,
+-644,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+64,
+0,
+20480,
+16411,
+47,
+190,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+128,
+0,
+20480,
+16412,
+32,
+-22,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+64,
+0,
+20480,
+16413,
+16,
+-372,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+512,
+0,
+0,
+20480,
+16414,
+82,
+-16,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 7,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 5,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+160,
+0,
+20480,
+16410,
+-70,
+-580,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+80,
+0,
+20480,
+16411,
+55,
+222,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+160,
+0,
+20480,
+16412,
+40,
+10,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+80,
+0,
+20480,
+16413,
+20,
+-340,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+576,
+0,
+0,
+20480,
+16414,
+100,
+-20,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 8,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 6,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+192,
+0,
+20480,
+16410,
+-54,
+-516,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+96,
+0,
+20480,
+16411,
+63,
+254,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+192,
+0,
+20480,
+16412,
+48,
+42,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+96,
+0,
+20480,
+16413,
+24,
+-308,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+640,
+0,
+0,
+20480,
+16414,
+122,
+-24,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 9,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 7,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+224,
+0,
+20480,
+16410,
+-38,
+-452,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+112,
+0,
+20480,
+16411,
+43,
+286,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+224,
+0,
+20480,
+16412,
+56,
+74,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+112,
+0,
+20480,
+16413,
+28,
+-276,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+704,
+0,
+0,
+20480,
+16414,
+148,
+-28,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 10,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 8,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+256,
+0,
+20480,
+16410,
+-22,
+-388,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+128,
+0,
+20480,
+16411,
+47,
+318,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+256,
+0,
+20480,
+16412,
+64,
+106,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+128,
+0,
+20480,
+16413,
+32,
+-244,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+768,
+0,
+0,
+20480,
+16414,
+178,
+-32,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 11,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 9,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+288,
+0,
+20480,
+16410,
+-6,
+-324,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+144,
+0,
+20480,
+16411,
+51,
+350,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+288,
+0,
+20480,
+16412,
+72,
+138,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+144,
+0,
+20480,
+16413,
+36,
+-212,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+832,
+0,
+0,
+20480,
+16414,
+212,
+-36,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 12,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 10,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+320,
+0,
+20480,
+16410,
+10,
+-260,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+160,
+0,
+20480,
+16411,
+55,
+382,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+320,
+0,
+20480,
+16412,
+80,
+170,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+160,
+0,
+20480,
+16413,
+40,
+-180,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+896,
+0,
+0,
+20480,
+16414,
+250,
+-40,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 13,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 11,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+352,
+0,
+20480,
+16410,
+26,
+-196,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+176,
+0,
+20480,
+16411,
+59,
+414,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+352,
+0,
+20480,
+16412,
+88,
+202,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+176,
+0,
+20480,
+16413,
+44,
+-148,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+960,
+0,
+0,
+20480,
+16414,
+292,
+-44,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 14,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 12,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+24,
+0,
+20480,
+16410,
+42,
+-132,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+192,
+0,
+20480,
+16411,
+63,
+446,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+24,
+0,
+20480,
+16412,
+96,
+234,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+192,
+0,
+20480,
+16413,
+48,
+-116,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1024,
+0,
+0,
+20480,
+16414,
+338,
+-48,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 13,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+56,
+0,
+20480,
+16410,
+58,
+-68,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+208,
+0,
+20480,
+16411,
+67,
+478,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+56,
+0,
+20480,
+16412,
+104,
+266,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+208,
+0,
+20480,
+16413,
+52,
+-84,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1088,
+0,
+0,
+20480,
+16414,
+388,
+-52,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 14,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+88,
+0,
+20480,
+16410,
+74,
+-4,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+224,
+0,
+20480,
+16411,
+71,
+510,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+88,
+0,
+20480,
+16412,
+112,
+298,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+224,
+0,
+20480,
+16413,
+56,
+-52,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1152,
+0,
+0,
+20480,
+16414,
+442,
+-56,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+120,
+0,
+20480,
+16410,
+90,
+60,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+240,
+0,
+20480,
+16411,
+75,
+542,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+120,
+0,
+20480,
+16412,
+120,
+330,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+240,
+0,
+20480,
+16413,
+60,
+-20,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1216,
+0,
+0,
+20480,
+16414,
+500,
+-60,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+152,
+0,
+20480,
+16410,
+106,
+124,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+256,
+0,
+20480,
+16411,
+79,
+574,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+152,
+0,
+20480,
+16412,
+128,
+362,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+256,
+0,
+20480,
+16413,
+64,
+12,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1280,
+0,
+0,
+20480,
+16414,
+562,
+-64,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+184,
+0,
+20480,
+16410,
+122,
+188,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+272,
+0,
+20480,
+16411,
+83,
+606,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+184,
+0,
+20480,
+16412,
+136,
+394,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+272,
+0,
+20480,
+16413,
+68,
+44,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1344,
+0,
+0,
+20480,
+16414,
+628,
+-68,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 5,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+216,
+0,
+20480,
+16410,
+138,
+252,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+288,
+0,
+20480,
+16411,
+87,
+638,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+216,
+0,
+20480,
+16412,
+144,
+426,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+288,
+0,
+20480,
+16413,
+72,
+76,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1408,
+0,
+0,
+20480,
+16414,
+698,
+-72,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 6,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 4,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+248,
+0,
+20480,
+16410,
+154,
+316,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+304,
+0,
+20480,
+16411,
+91,
+670,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+248,
+0,
+20480,
+16412,
+152,
+458,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+304,
+0,
+20480,
+16413,
+76,
+108,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1472,
+0,
+0,
+20480,
+16414,
+772,
+-76,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 7,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 5,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+280,
+0,
+20480,
+16410,
+170,
+380,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+320,
+0,
+20480,
+16411,
+95,
+702,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+280,
+0,
+20480,
+16412,
+160,
+490,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+320,
+0,
+20480,
+16413,
+80,
+140,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1536,
+0,
+0,
+20480,
+16414,
+850,
+-80,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 8,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 6,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+312,
+0,
+20480,
+16410,
+186,
+444,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+336,
+0,
+20480,
+16411,
+99,
+734,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+312,
+0,
+20480,
+16412,
+168,
+522,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+336,
+0,
+20480,
+16413,
+84,
+172,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1600,
+0,
+0,
+20480,
+16414,
+932,
+-84,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 9,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 7,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+344,
+0,
+20480,
+16410,
+202,
+508,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+352,
+0,
+20480,
+16411,
+103,
+766,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+344,
+0,
+20480,
+16412,
+176,
+554,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+352,
+0,
+20480,
+16413,
+88,
+204,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1664,
+0,
+0,
+20480,
+16414,
+1018,
+-88,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 10,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 8,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+16,
+0,
+20480,
+16410,
+218,
+572,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+8,
+0,
+20480,
+16411,
+107,
+798,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+16,
+0,
+20480,
+16412,
+184,
+586,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+8,
+0,
+20480,
+16413,
+92,
+236,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1728,
+0,
+0,
+20480,
+16414,
+1108,
+-92,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 11,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 9,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+48,
+0,
+20480,
+16410,
+234,
+636,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+24,
+0,
+20480,
+16411,
+111,
+830,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+48,
+0,
+20480,
+16412,
+192,
+618,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+24,
+0,
+20480,
+16413,
+96,
+268,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1792,
+0,
+0,
+20480,
+16414,
+1202,
+-96,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 12,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 10,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+80,
+0,
+20480,
+16410,
+250,
+700,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+40,
+0,
+20480,
+16411,
+115,
+862,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+80,
+0,
+20480,
+16412,
+200,
+650,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+40,
+0,
+20480,
+16413,
+100,
+300,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1856,
+0,
+0,
+20480,
+16414,
+1300,
+-100,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 13,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 11,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+112,
+0,
+20480,
+16410,
+266,
+764,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+56,
+0,
+20480,
+16411,
+119,
+894,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+112,
+0,
+20480,
+16412,
+208,
+682,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+56,
+0,
+20480,
+16413,
+104,
+332,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1920,
+0,
+0,
+20480,
+16414,
+1402,
+-104,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 14,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 12,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+144,
+0,
+20480,
+16410,
+282,
+828,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+72,
+0,
+20480,
+16411,
+123,
+926,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+144,
+0,
+20480,
+16412,
+216,
+714,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+72,
+0,
+20480,
+16413,
+108,
+364,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+1984,
+0,
+0,
+20480,
+16414,
+1508,
+-108,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 13,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+176,
+0,
+20480,
+16410,
+298,
+892,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+88,
+0,
+20480,
+16411,
+127,
+958,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+176,
+0,
+20480,
+16412,
+224,
+746,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+88,
+0,
+20480,
+16413,
+112,
+396,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+2048,
+0,
+0,
+20480,
+16414,
+1618,
+-112,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16408,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16409,
+"y": 28,
+"x": 116
+},
+{
+"call": "draw",
+"frame": 14,
+"handle": 16409,
+"y": 53,
+"x": 222
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+208,
+0,
+20480,
+16410,
+314,
+956,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+104,
+0,
+20480,
+16411,
+131,
+990,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+208,
+0,
+20480,
+16412,
+232,
+778,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+256,
+104,
+0,
+20480,
+16413,
+116,
+428,
+9092
+]
+},
+{
+"call": "dword_2817A",
+"args": [
+0,
+2112,
+0,
+0,
+20480,
+16414,
+1732,
+-116,
+9092
+]
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 5
+},
+{
+"call": "free",
+"handle": 16408
+},
+{
+"call": "free",
+"handle": 16409
+},
+{
+"call": "free",
+"handle": 16410
+},
+{
+"call": "free",
+"handle": 16411
+},
+{
+"call": "free",
+"handle": 16412
+},
+{
+"call": "free",
+"handle": 16413
+},
+{
+"call": "free",
+"handle": 16414
+},
+{
+"call": "load",
+"item": 4,
+"file": 2014,
+"tag": 16415
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "clear"
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16415,
+"y": 0,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 3000
+},
+{
+"call": "free",
+"handle": 16415
+},
+{
+"call": "load",
+"item": 0,
+"file": 2026,
+"tag": 16416
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "wait",
+"ms": 60
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "wait",
+"ms": 60
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "wait",
+"ms": 60
+},
+{
+"call": "wait",
+"ms": 1000
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "wait",
+"ms": 420
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "wait",
+"ms": 420
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 80
+},
+{
+"call": "wait",
+"ms": 420
+},
+{
+"call": "wait",
+"ms": 1000
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "wait",
+"ms": 60
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "wait",
+"ms": 60
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 3,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 2,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "draw",
+"frame": 1,
+"handle": 16416,
+"y": 24,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 20
+},
+{
+"call": "wait",
+"ms": 60
+},
+{
+"call": "wait",
+"ms": 1000
+},
+{
+"call": "free",
+"handle": 16416
+},
+{
+"call": "load",
+"item": 5,
+"file": 2035,
+"tag": 16417
+},
+{
+"call": "other",
+"fn": "sub_1F2AE",
+"args": []
+},
+{
+"call": "clear"
+},
+{
+"call": "clear"
+},
+{
+"call": "draw",
+"frame": 0,
+"handle": 16417,
+"y": 0,
+"x": 0
+},
+{
+"call": "other",
+"fn": "sub_1CB71",
+"args": []
+},
+{
+"call": "present"
+},
+{
+"call": "wait",
+"ms": 3000
+},
+{
+"call": "fadeout"
+},
+{
+"call": "free",
+"handle": 16417
+}
+],
+"handles": {
+"16385": {
+"item": 0,
+"file": 1714
+},
+"16386": {
+"item": 1,
+"file": 1724
+},
+"16387": {
+"item": 2,
+"file": 1734
+},
+"16388": {
+"item": 0,
+"file": 1744
+},
+"16389": {
+"item": 1,
+"file": 1753
+},
+"16390": {
+"item": 2,
+"file": 1762
+},
+"16391": {
+"item": 3,
+"file": 1771
+},
+"16392": {
+"item": 4,
+"file": 1780
+},
+"16393": {
+"item": 5,
+"file": 1789
+},
+"16394": {
+"item": 0,
+"file": 1798
+},
+"16395": {
+"item": 0,
+"file": 1810
+},
+"16396": {
+"item": 1,
+"file": 1821
+},
+"16397": {
+"item": 0,
+"file": 1833
+},
+"16398": {
+"item": 2,
+"file": 1842
+},
+"16399": {
+"item": 0,
+"file": 1854
+},
+"16400": {
+"item": 1,
+"file": 1863
+},
+"16401": {
+"item": 3,
+"file": 1872
+},
+"16402": {
+"item": 4,
+"file": 1881
+},
+"16403": {
+"item": 0,
+"file": 1890
+},
+"16404": {
+"item": 1,
+"file": 1900
+},
+"16405": {
+"item": 3,
+"file": 1910
+},
+"16406": {
+"item": 0,
+"file": 1922
+},
+"16407": {
+"item": 1,
+"file": 1933
+},
+"16408": {
+"item": 0,
+"file": 1944
+},
+"16409": {
+"item": 1,
+"file": 1954
+},
+"16410": {
+"item": 3,
+"file": 1964
+},
+"16411": {
+"item": 4,
+"file": 1974
+},
+"16412": {
+"item": 5,
+"file": 1984
+},
+"16413": {
+"item": 6,
+"file": 1994
+},
+"16414": {
+"item": 2,
+"file": 2004
+},
+"16415": {
+"item": 4,
+"file": 2014
+},
+"16416": {
+"item": 0,
+"file": 2026
+},
+"16417": {
+"item": 5,
+"file": 2035
+}
+}
+}

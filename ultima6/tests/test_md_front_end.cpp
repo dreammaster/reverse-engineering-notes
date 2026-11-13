@@ -6,6 +6,7 @@
 
 using namespace Ultima6;
 using ::Ultima6::Ultima6::MdFrontEnd;
+using ::Ultima6::Ultima6::MdIntro;
 
 static int failures = 0;
 
@@ -52,7 +53,21 @@ int main() {
 		menu.tick(500);
 	CHECK(menu.state() == MdFrontEnd::MENU && guard < 2000 && guard > 100); // some ten minutes of pictures
 	CHECK(menu.handleKey('1') && menu.state() == MdFrontEnd::INTRO && menu.handleKey(KEY_ESC) && menu.state() == MdFrontEnd::MENU);
-	CHECK(menu.handleKey('4') && menu.state() == MdFrontEnd::MENU);
+	// the credits are a script of their own; the ending too (MdIntro::ENDING), both end by themselves
+	CHECK(menu.handleKey('4') && menu.state() == MdFrontEnd::INTRO && menu.animating());
+	guard = 0;
+	while (menu.animating() && guard++ < 2000)
+		menu.tick(500);
+	CHECK(menu.state() == MdFrontEnd::MENU && guard < 2000 && guard > 40);
+	CHECK(menu.handleKey('4') && menu.handleKey(KEY_ESC) && menu.state() == MdFrontEnd::MENU);
+	{
+		MdIntro ending("md/game/MARTIAN", MdIntro::ENDING);
+		CHECK(ending.ok() && !ending.finished());
+		ending.tick(7000);
+		CHECK(!ending.lines().empty());
+		ending.runToEnd();
+		CHECK(ending.finished());
+	}
 	CHECK(menu.handleKey('2') && menu.state() == MdFrontEnd::NAME);
 	for (char c : std::string("Tesla"))
 		menu.handleKey(c);

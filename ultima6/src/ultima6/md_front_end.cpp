@@ -136,8 +136,12 @@ bool MdFrontEnd::handleKey(int key) {
 	case 2:
 		_state = DONE;
 		return false;
-	case 3:
-		_message = "MARTIAN DREAMS (c) 1991 Origin Systems";
+	case 3: // the credits: the logos, the fair, the people, the flight to Mars
+		_intro.reset(new MdIntro(_dir, MdIntro::CREDITS));
+		if (_intro->ok())
+			_state = INTRO;
+		else
+			_message = "The credits' files are missing.";
 		break;
 	default:
 		break;

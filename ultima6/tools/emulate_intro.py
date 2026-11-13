@@ -11,12 +11,15 @@ import re
 import sys
 
 ASM, EXE, OUT = sys.argv[1:4]
+FUNC = sys.argv[4] if len(sys.argv) > 4 else 'sub_19266'
+PRESET = dict(a.split('=') for a in sys.argv[5:])  # globals to set before the run, e.g. word_29B98=0x157
+RET = {'sub_11AB3': 1, 'sub_11947': 1}  # file calls: a read gets its item, an open a handle
 exe = open(EXE, 'rb').read()
 DS = 0x186A0
 
 lines = open(ASM, encoding='utf-8', errors='replace').read().split('\n')
-start = next(i for i, l in enumerate(lines) if re.match(r'sub_19266\s+proc', l))
-end = next(i for i in range(start, len(lines)) if re.match(r'sub_19266\s+endp', lines[i]))
+start = next(i for i, l in enumerate(lines) if re.match(FUNC + r'\s+proc', l))
+end = next(i for i in range(start, len(lines)) if re.match(FUNC + r'\s+endp', lines[i]))
 
 varoff = {}
 instrs = []
@@ -38,7 +41,7 @@ for l in lines[start:end]:
     if m:
         labels[m.group(1)] = len(instrs)
         continue
-    if re.match(r'\s*sub_19266\s+proc', code):
+    if re.match(r'\s*' + FUNC + r'\s+proc', code):
         continue
     s = code.strip()
     if not s:
@@ -198,7 +201,8 @@ def setf(res, a=None, b=None, sub=False, width=16):
             flags['o'] = 0
 
 
-ARITY = {'sub_151F3': 3, 'sub_15177': 2, 'sub_15610': 1, 'dword_2814E': 2, 'dword_2813A': 6, 'dword_2814A': 2, 'sub_152B5': 7, 'sub_234C5': 2, 'sub_155DB': 0, 'sub_155A5': 0,
+randn = [0]
+ARITY = {'sub_1E59F': 2, 'sub_151F3': 3, 'sub_15177': 2, 'sub_15610': 1, 'dword_2814E': 2, 'dword_2813A': 6, 'dword_2814A': 2, 'sub_152B5': 7, 'sub_234C5': 2, 'sub_155DB': 0, 'sub_155A5': 0,
          'sub_218FC': 1, 'sub_21EB8': 2, 'dword_2817A': 9, 'dword_28172': 5, 'sub_20951': 6, 'sub_20D32': 3, 'sub_132A6': 0, 'sub_1313C': 0}
 NAMES = {}
 for l in lines:
@@ -219,6 +223,8 @@ def handle_arg(v_off):
     return handles.get(v_off, ('?', v_off))
 
 
+for k, v in PRESET.items():
+    bss[k] = int(v, 0)
 ip = 0
 steps = 0
 while ip < len(instrs) and steps < 2000000:
@@ -341,7 +347,24 @@ while ip < len(instrs) and steps < 2000000:
         last_push_cs[0] = False
         n = ARITY.get(target)
         if n is None:
-            raise Exception('unknown callee ' + target + ' near ' + str(ip))
+            # the arguments are the words the caller takes off after the call (add sp, N or pairs of inc sp)
+            n = 0
+            k = ip
+            if k < len(instrs) and instrs[k][0] == 'add' and instrs[k][1].startswith('sp,'):
+                n = int(instrs[k][1].split(',')[1].strip().rstrip('h') or '0', 16 if instrs[k][1].strip().endswith('h') else 10) // 2
+            else:
+                while k + 1 < len(instrs) and instrs[k][0] == 'inc' and instrs[k][1] == 'sp' and instrs[k + 1][0] == 'inc' and instrs[k + 1][1] == 'sp':
+                    n += 1
+                    k += 2
+            raw = []
+            for q in range(n):
+                a = regs['sp'] + 2 * q
+                raw.append(mem[a] | (mem[a + 1] << 8))
+            raw.reverse()
+            ops.append({'call': 'other', 'fn': target, 'args': [s16(v) for v in raw]})
+            regs['ax'] = RET.get(target, 0)
+            regs['dx'] = 0
+            continue
         # the arguments in the order they were pushed
         raw = []
         for k in range(n):
@@ -391,6 +414,12 @@ while ip < len(instrs) and steps < 2000000:
             ops.append({'call': 'music', 'fn': target, 'args': [s16(v) for v in raw]})
         elif target in ('dword_2817A', 'dword_28172', 'sub_20951', 'sub_20D32'):
             ops.append({'call': target, 'args': [s16(v) for v in raw]})
+        elif target == 'sub_1E59F':
+            # rand(a, b) (the routine takes its two arguments off the stack itself); a fixed series stands for the random numbers
+            lo, hi = sorted((raw[0], raw[1]))
+            randn[0] += 1
+            regs['ax'] = lo + (randn[0] * 7919 + 13) % (hi - lo + 1)
+            regs['sp'] += 4
         elif target in ('sub_132A6', 'sub_1313C'):
             regs['ax'] = 0
         else:

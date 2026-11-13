@@ -16,13 +16,17 @@ namespace Ultima6 {
  * 320 x 128 window (y 24-151), puts a line of SCENETXT.LZC under it, shows it, waits, and goes on; the calls it makes were got by running that routine on tools/emulate_intro.py, and
  * md_intro_script.inc holds them (tools/gen_intro_script.py). Any key ends the introduction, as it does in the original.
  *
+ * The same player plays the ending (sub_15C84, the files ENDGAME.LZC and MOONGATE.LZC) and the credits (sub_1675E: LOGOS, FAIR, CREDITS, LOWELL, FUSE, FLASH, FLIGHT, CABIN and MARS .LZC), whose
+ * calls were got the same way (MD_SCRIPT_START holds where each script starts).
+ *
  * APPROX(90): the drawing driver (TM.DRV) is not disassembled: a shape is put so that its hot spot is at the place given; the pan of the hand with the map (driver entry 0x2817A) and the dots of
  * the thrown orb (0x28172) are guessed; the fades (sub_155DB, sub_155A5) last half a second; the flashes of the palette (sub_20951), the music and the colour of the lines are left out; the
  * lines are centred in gold.
  */
 class MdIntro {
 public:
-	explicit MdIntro(const std::string &dir);
+	enum Script { INTRODUCTION = 0, ENDING = 1, CREDITS = 2 };
+	explicit MdIntro(const std::string &dir, Script script = INTRODUCTION);
 
 	bool ok() const {
 		return _ok;
@@ -49,8 +53,8 @@ public:
 
 private:
 	struct Draw {
-		int kind; // 0 shape, 1 pan, 2 dot
-		int frame, handle, x, y;
+		int kind; // 0 shape, 1 pan, 2 dot, 3 shape of the driver's entry 0x2817A
+		int frame, handle, x, y, size;
 	};
 	struct Handle {
 		int file = -1, item = 0;
@@ -62,11 +66,11 @@ private:
 	void compose();
 	const std::vector<Shape> &shapes(int handle);
 	const std::string &line(int set, int index);
-	void shapeAt(int handle, int frame, int x, int y, int dy = 0);
+	void shapeAt(int handle, int frame, int x, int y, int dy = 0, int size = 256);
 
 	std::string _dir;
 	bool _ok = false, _finished = false;
-	size_t _pc = 0;
+	size_t _pc = 0, _end = 0;
 	int _wait = 0;
 	int _fade = 0;     // 1 in, -1 out, 0 none
 	int _fadeLeft = 0; // ms

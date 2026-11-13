@@ -32,7 +32,9 @@ bool nestedShape(const Bytes &item, size_t k, Shape &out) {
 
 } // namespace
 
-MdIntro::MdIntro(const std::string &dir) : _dir(dir) {
+MdIntro::MdIntro(const std::string &dir, Script script) : _dir(dir) {
+	_pc = MD_SCRIPT_START[script];
+	_end = MD_SCRIPT_START[script + 1];
 	std::memset(_font.glyph, 0, sizeof _font.glyph);
 	// the colours: the CMAP chunk of the IFF picture MD_TITLE.PAL (8 bits a colour, the screen takes 6)
 	Bytes iff;
@@ -108,22 +110,46 @@ const std::string &MdIntro::line(int set, int index) {
 	return index >= 0 && index < (int)t.size() ? t[index] : empty;
 }
 
-void MdIntro::shapeAt(int handle, int frame, int x, int y, int dy) {
+void MdIntro::shapeAt(int handle, int frame, int x, int y, int dy, int size) {
 	const std::vector<Shape> &list = shapes(handle);
-	if (frame < 0 || frame >= (int)list.size())
+	if (frame < 0 || frame >= (int)list.size() || size <= 0)
 		return;
 	const Shape &s = list[frame];
-	int left = x - s.hotX, top = y - s.hotY + dy;
-	for (int r = 0; r < s.height; ++r) {
-		int sy = top + r;
-		if (sy < WINDOW_TOP || sy >= WINDOW_BOTTOM)
-			continue;
-		for (int c = 0; c < s.width; ++c) {
-			int sx = left + c;
-			uint8_t p = s.pixels[r * s.width + c];
-			if (sx < 0 || sx >= 320 || p == Shape::TRANSPARENT)
+	// the pictures of the whole screen (the credits' cards) are not kept in the window
+	const int top0 = s.height >= 185 ? 0 : WINDOW_TOP, bottom0 = s.height >= 185 ? 200 : WINDOW_BOTTOM;
+	if (size == 256) {
+		int left = x - s.hotX, top = y - s.hotY + dy;
+		for (int r = 0; r < s.height; ++r) {
+			int sy = top + r;
+			if (sy < top0 || sy >= bottom0)
 				continue;
-			_front[sy * 320 + sx] = p;
+			for (int c = 0; c < s.width; ++c) {
+				int sx = left + c;
+				uint8_t p = s.pixels[r * s.width + c];
+				if (sx < 0 || sx >= 320 || p == Shape::TRANSPARENT)
+					continue;
+				_front[sy * 320 + sx] = p;
+			}
+		}
+		return;
+	}
+	// a shape of another size: each place of the screen takes the point of the shape that is under it (size in 256ths)
+	int w = s.width * size / 256, h = s.height * size / 256;
+	int left = x - s.hotX * size / 256, top = y - s.hotY * size / 256 + dy;
+	for (int r = 0; r < h; ++r) {
+		int sy = top + r;
+		if (sy < top0 || sy >= bottom0)
+			continue;
+		for (int c = 0; c < w; ++c) {
+			int sx = left + c;
+			if (sx < 0 || sx >= 320)
+				continue;
+			int pc = c * 256 / size, pr = r * 256 / size;
+			if (pc >= s.width || pr >= s.height)
+				continue;
+			uint8_t p = s.pixels[pr * s.width + pc];
+			if (p != Shape::TRANSPARENT)
+				_front[sy * 320 + sx] = p;
 		}
 	}
 }
@@ -133,6 +159,8 @@ void MdIntro::compose() {
 	for (const Draw &d : _draws) {
 		if (d.kind == 0) {
 			shapeAt(d.handle, d.frame, d.x, d.y);
+		} else if (d.kind == 3) {
+			shapeAt(d.handle, d.frame, d.x, d.y, 0, d.size);
 		} else if (d.kind == 1) { // the hand with the map moves up and to the left over the window
 			shapeAt(d.handle, d.frame, d.x, WINDOW_TOP, d.y);
 		} else if (d.y >= WINDOW_TOP && d.y < WINDOW_BOTTOM && d.x >= 0 && d.x < 320) { // a dot of the orb
@@ -190,7 +218,7 @@ void MdIntro::compose() {
 }
 
 void MdIntro::run() {
-	const size_t count = sizeof MD_INTRO_OPS / sizeof MD_INTRO_OPS[0];
+	const size_t count = _end;
 	while (_pc < count && _wait <= 0 && _fade == 0 && !_finished) {
 		const MdIntroOp &o = MD_INTRO_OPS[_pc++];
 		switch (o.op) {
@@ -208,7 +236,7 @@ void MdIntro::run() {
 			_lines.clear();
 			break;
 		case 3:
-			_draws.push_back({0, o.a, o.b, o.c, o.d});
+			_draws.push_back({0, o.a, o.b, o.c, o.d, 256});
 			break;
 		case 4: {
 			_lines.clear();
@@ -244,10 +272,13 @@ void MdIntro::run() {
 			_fadeLeft = FADE_MS;
 			break;
 		case 9:
-			_draws.push_back({1, o.a, o.b, o.c, o.d});
+			_draws.push_back({1, o.a, o.b, o.c, o.d, 256});
 			break;
 		case 10:
-			_draws.push_back({2, 0, 0, o.a, o.b});
+			_draws.push_back({2, 0, 0, o.a, o.b, 256});
+			break;
+		case 11:
+			_draws.push_back({3, o.a, o.b, o.c, o.d, o.e});
 			break;
 		}
 	}

@@ -18,7 +18,7 @@ namespace Ultima6 {
  * What MARTIAN.EXE shows first: the menu of MDMENU.LZC (item 1: a 320 x 200 picture of the title and the four choices, and a frame of 266 x 19 that is put round the one chosen; the palette
  * is the CMAP of MD_TITLE.PAL, a picture of the IFF kind whose colours are 8 bits). The choices are "Run Introduction", "Create Character", "Continue Game" and "About Martian Dreams".
  *
- * APPROX(89): the introduction is MdIntro, played from the script of MARTIAN.EXE's routine; the creation of a character (CREATE.LZC) only asks for a name and the credits only say a line; the keys,
+ * APPROX(89): the introduction is MdIntro, played from the script of MARTIAN.EXE's routine; the creation of a character (CREATE.LZC) only asks for a name and the credits are MdIntro's script of the routine sub_1675E; the keys,
  * the place of the frame (the text lines are at y 133, 150, 167 and 184, the frame 3 above them) and the message are not traced.
  */
 class MdFrontEnd {
