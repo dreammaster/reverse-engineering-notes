@@ -33,6 +33,8 @@ public:
 	int objectAt(int x, int y);
 	/** The verb list entry under a point (index into the verbs set with setVerbs), -1 if none. */
 	int verbAt(int x, int y) const;
+	/** The compass arrow (0..9, bit i of the exit mask) under a point if it is lit, -1 otherwise. */
+	int compassAt(int x, int y) const;
 	/** Marks a verb of the list (yellow) or none (-1). */
 	void selectVerb(int index);
 	/** The start of a command (execute_command): the text window is emptied (and shrunk again if it had grown). */

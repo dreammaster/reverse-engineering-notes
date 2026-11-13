@@ -1,12 +1,53 @@
-// The standalone game on screen: a new game, entering the bedroom, rendered by Display and compared with an oracle screenshot of the same moment
-// (XANTH_ORACLE_SHOT=<ppm from engine/host/play.sh>; XANTH_SHOTS=<folder> receives our screen and a diff).
+// The standalone game on screen: new games driven by clicks, rendered by Display and compared with oracle screenshots of the same moments
+// (engine/host/play.sh "<mouse script>" <steps> out.ppm). Environment: XANTH_DATA (game files), XANTH_SHOTS (folder for our screens and diffs) and the oracle's
+// screens XANTH_ORACLE_SHOT (the opening), XANTH_ORACLE_LOOK (click Look at, then the computer), XANTH_ORACLE_WALK (click the north-west arrow of the compass).
 #include <cstdio>
 #include <cstdlib>
+#include <memory>
 
 #include "common/files.h"
 #include "tests/screen_compare.h"
 #include "xanth/display.h"
 #include "xanth/interface.h"
+
+static int g_failures = 0;
+
+struct World {
+	Xanth::Display display;
+	std::unique_ptr<Xanth::Game> game;
+	std::unique_ptr<Xanth::Interface> ui;
+	World(const Common::GameFiles &gf) : display(gf) {}
+};
+
+static std::unique_ptr<World> newWorld(const Common::GameFiles &gf, const Legend::MessageFile &messages, const Xanth::ObjectNames &names) {
+	std::unique_ptr<World> w(new World(gf));
+	if (!w->display.init())
+		return std::unique_ptr<World>();
+	w->game.reset(new Xanth::Game(w->display, messages, names));
+	w->display.attach(w->game.get());
+	w->game->newGame();
+	w->ui.reset(new Xanth::Interface(*w->game, w->display));
+	w->ui->start();
+	return w;
+}
+
+/** Compares with an oracle screenshot (if its path is in the environment); `allowed` is the number of differing pixels that are known (animation phase, cursor, hover label). */
+static void check(World &w, const char *what, const char *envName, const char *file, int allowed) {
+	const char *shots = getenv("XANTH_SHOTS");
+	if (shots)
+		w.display.screen().savePpm(std::string(shots) + "/" + file + ".ppm");
+	const char *path = getenv(envName);
+	std::vector<byte> oracle;
+	if (!path || !loadPpm(path, oracle))
+		return;
+	printf("%s, against %s:\n", what, path);
+	std::string diffPath = shots ? std::string(shots) + "/" + file + "_diff.ppm" : std::string();
+	int diff = compareScreens(w.display.screen(), oracle, shots ? diffPath.c_str() : NULL);
+	if (diff > allowed) {
+		printf("FAIL: %s: %d pixels differ (at most %d expected)\n", what, diff, allowed);
+		g_failures++;
+	}
+}
 
 int main() {
 	const char *dir = getenv("XANTH_DATA");
@@ -30,64 +71,36 @@ int main() {
 			printf(m[k] >= 32 && m[k] < 127 ? "%c" : "<%02X>", (unsigned char)m[k]);
 		printf("\n");
 	}
-	Xanth::Display display(gf);
-	if (!display.init()) {
-		printf("test_screen: cannot load the interface pictures and fonts\n");
-		return 1;
-	}
-	Xanth::Game game(display, messages, names);
-	display.attach(&game);
-	game.newGame();
-	static const char *kVerbs[] = {"Take", "Put", "Look at", "Open", "Close", "Talk to", "Look"};
-	display.setVerbs(std::vector<std::string>(kVerbs, kVerbs + 7));
-	Xanth::Interface ui(game, display);
-	ui.start();
-	display.advance(0);          // the oracle's screenshot was taken two frames into the rain
-	display.advance(100);
 
-	int failures = 0;
-	int roomPixels = 0;                       // the picture window must show the room, not the marble
-	for (int y = 4; y < 126; y++)
-		for (int x = 51; x < 315; x++)
-			roomPixels += display.screen().get(x, y) >= 80;
-	if (roomPixels < 5000) {
-		printf("FAIL: the picture window shows no room (%d pixels)\n", roomPixels);
-		failures++;
-	}
-	const char *shots = getenv("XANTH_SHOTS");
-	if (shots)
-		display.screen().savePpm(std::string(shots) + "/game.ppm");
-	const char *oracleShot = getenv("XANTH_ORACLE_SHOT");
-	std::vector<byte> oracle;
-	if (oracleShot && loadPpm(oracleShot, oracle)) {
-		printf("new game, bedroom, against %s:\n", oracleShot);
-		std::string diffPath = shots ? std::string(shots) + "/game_diff.ppm" : std::string();
-		int diff = compareScreens(display.screen(), oracle, shots ? diffPath.c_str() : NULL);
+	{   // the opening: a new game in the bedroom
+		std::unique_ptr<World> w = newWorld(gf, messages, names);
+		if (!w) {
+			printf("test_screen: cannot load the interface pictures and fonts\n");
+			return 1;
+		}
+		w->display.advance(0);          // the oracle's screenshot was taken two frames into the rain
+		w->display.advance(100);
+		int roomPixels = 0;             // the picture window must show the room, not the marble
+		for (int y = 4; y < 126; y++)
+			for (int x = 51; x < 315; x++)
+				roomPixels += w->display.screen().get(x, y) >= 80;
+		if (roomPixels < 5000) {
+			printf("FAIL: the picture window shows no room (%d pixels)\n", roomPixels);
+			g_failures++;
+		}
 		// the oracle's screen also has the mouse cursor (51 pixels) and a hover label (about 400) that the game logic does not draw
-		if (diff > 500) {
-			printf("FAIL: %d pixels differ\n", diff);
-			failures++;
-		}
+		check(*w, "the bedroom", "XANTH_ORACLE_SHOT", "game", 500);
+
+		// click "Look at", then the computer: the answer is in the grown text window (the rain, cursor and hover label differ: about 1,200 pixels)
+		w->ui->click(20, 28);
+		w->ui->click(160, 100);
+		check(*w, "look at the computer", "XANTH_ORACLE_LOOK", "game_look", 1300);
 	}
-	// a command: click "Look at", then the computer; the oracle's screen of the same moment has the answer in the grown text window
-	{
-		ui.click(20, 28);
-		ui.click(160, 100);
-		if (shots)
-			display.screen().savePpm(std::string(shots) + "/game_look.ppm");
-		const char *lookShot = getenv("XANTH_ORACLE_LOOK");
-		std::vector<byte> look;
-		if (lookShot && loadPpm(lookShot, look)) {
-			printf("look at the computer, against %s:\n", lookShot);
-			std::string diffPath = shots ? std::string(shots) + "/game_look_diff.ppm" : std::string();
-			int diff = compareScreens(display.screen(), look, shots ? diffPath.c_str() : NULL);
-			// everything but the picture window (rain phase, cursor, hover label: about 1,200 pixels) and 3 pixels of text is identical
-			if (diff > 1300) {
-				printf("FAIL: %d pixels differ\n", diff);
-				failures++;
-			}
-		}
+	{   // walk: the north-west arrow of the compass leads to the entrance
+		std::unique_ptr<World> w = newWorld(gf, messages, names);
+		w->ui->click(11, 137);
+		check(*w, "walk north-west", "XANTH_ORACLE_WALK", "game_walk", 1300);
 	}
-	printf("test_screen: %d failures\n", failures);
-	return failures ? 1 : 0;
+	printf("test_screen: %d failures\n", g_failures);
+	return g_failures ? 1 : 0;
 }

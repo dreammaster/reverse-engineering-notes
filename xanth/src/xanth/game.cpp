@@ -148,17 +148,23 @@ void Game::executeCommand(int verb, int dobj, int iobj) {
 	Vars &v = state.v;
 	rt.actor_obj = rt.player_obj;
 	rt.byte_850AB = 0;
+	if (verb == 0x51) {                          // walking: the direction goes to byte_8BE1C
+		rt.byte_8BE1C = (uint8)dobj;
+		dobj = 0;
+	}
 	rt.selectedCommand = (uint16)verb;
 	rt.dobj = (uint16)dobj;
 	rt.iobj = (uint16)iobj;
 	rt.dobj_type = (uint16)typeOf(state.objects, dobj);
 	rt.iobj_type = (uint16)typeOf(state.objects, iobj);
+	rt.run_command_depth = 0;
 	run_command(rt.selectedCommand, rt.dobj, rt.iobj);
 	call_object_handler(rt.player_obj, 7);
 	call_object_handler(v.current_room, 7);
-	advance_time(rt.word_85222, 0);
+	advance_time(0, rt.word_85222);
 	rt.word_85222 = 1;
 	v.turn_counter++;
+	rt.byte_850AB = 0;
 	RoomItem_Draw(0x20);
 }
 

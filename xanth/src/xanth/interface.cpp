@@ -27,6 +27,12 @@ void Interface::click(int x, int y) {
 		_display.selectVerb(v);
 		return;
 	}
+	int arrow = _display.compassAt(x, y);
+	if (arrow >= 0) {
+		_verb = 0x51;                               // walk: the direction code is the arrow number + 1
+		execute(arrow + 1, 0);
+		return;
+	}
 	int obj = _display.objectAt(x, y);
 	if (!obj || !_verb)
 		return;

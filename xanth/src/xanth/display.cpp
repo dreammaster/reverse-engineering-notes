@@ -77,6 +77,17 @@ int Display::verbAt(int x, int y) const {
 	return row < (int)_verbs.size() ? row : -1;
 }
 
+int Display::compassAt(int x, int y) const {
+	// regionRefs of the original: the rectangles of the arrows, relative to the compass picture at (4, 129)
+	static const signed char kRects[10][4] = {{15, 2, 27, 11}, {30, 3, 38, 11}, {30, 13, 39, 25}, {30, 27, 38, 35}, {15, 27, 27, 36},
+	                                          {4, 27, 12, 35}, {3, 13, 12, 25}, {4, 3, 12, 11}, {16, 13, 26, 18}, {16, 20, 26, 25}};
+	for (int i = 0; i < 10; i++) {
+		if (x >= 4 + kRects[i][0] && x <= 4 + kRects[i][2] && y >= 129 + kRects[i][1] && y <= 129 + kRects[i][3])
+			return (_compass & (1u << i)) ? i : -1;
+	}
+	return -1;
+}
+
 int Display::objectAt(int x, int y) {
 	if (_picNum < 0 || x < 51 || x > 314 || y < 4 || y > 125)
 		return 0;
@@ -228,14 +239,22 @@ int Display::setupPicRegions(unsigned address, unsigned count) {
 		return 0;
 	if (count > table->count)
 		count = table->count;
+	if (getenv("XANTH_TRACE"))
+		for (unsigned i = 0; i < count; i++)
+			fprintf(stderr, "  overlay %X[%u] pic %X visible %d drawn %d\n", address, i, table->records[i].pic, overlayVisible(table->records[i]) ? 1 : 0, _drawn[i] ? 1 : 0);
 	int changed = 0;
 	// pictures that were drawn and are not visible any more: exclusive-or them out again
 	for (unsigned i = 0; i < count; i++) {
 		if (_drawn[i] && !overlayVisible(table->records[i])) {
 			changed = 1;
 			PicImage ov;
-			if (MainScreen::loadPicture(_files, table->records[i].pic, ov))
+			if (MainScreen::loadPicture(_files, table->records[i].pic, ov)) {
 				MainScreen::xorOverlay(_room, _roomPixels, ov);
+				if (ov.hasPalette) {                 // opening a picture loads its palette too
+					memcpy(_room.palette, ov.palette, 768);
+					_room.hasPalette = true;
+				}
+			}
 			_drawn[i] = false;
 		}
 	}
@@ -243,8 +262,13 @@ int Display::setupPicRegions(unsigned address, unsigned count) {
 	for (unsigned i = 0; i < count; i++) {
 		if (!_drawn[i] && overlayVisible(table->records[i])) {
 			PicImage ov;
-			if (MainScreen::loadPicture(_files, table->records[i].pic, ov))
+			if (MainScreen::loadPicture(_files, table->records[i].pic, ov)) {
 				MainScreen::xorOverlay(_room, _roomPixels, ov);
+				if (ov.hasPalette) {
+					memcpy(_room.palette, ov.palette, 768);
+					_room.hasPalette = true;
+				}
+			}
 			_drawn[i] = true;
 			changed = 1;
 		}
