@@ -32,6 +32,8 @@ class CPU:
         self.fl = 2
         self.hooks = {}                 # (cs, ip) -> callable(cpu) executed instead of the code there
         self.halted = False
+        self.io_out = None              # callable(port, value, width)
+        self.io_in = None               # callable(port, width) -> value
         self.steps = 0
 
     # -- memory -------------------------------------------------------------------------
@@ -208,6 +210,19 @@ class CPU:
             r = self.alu(0 if op < 0x48 else 5, a, 1, 1)
             self.fl = (self.fl & ~CF) | c
             self.r[R16[n]] = r
+        elif op in (0x06, 0x0E, 0x16, 0x1E):              # push es / cs / ss / ds
+            self.push(self.s[SEGS[(op >> 3) & 3]])
+        elif op in (0x07, 0x17, 0x1F):                    # pop es / ss / ds
+            self.s[SEGS[(op >> 3) & 3]] = self.pop()
+        elif op in (0xE4, 0xE5, 0xEC, 0xED):              # in al/ax, port
+            w = op & 1
+            port = self.fetch8() if op < 0xE8 else self.r['dx']
+            self.setreg(0, w, self.io_in(port, w) if self.io_in else 0)
+        elif op in (0xE6, 0xE7, 0xEE, 0xEF):              # out port, al/ax
+            w = op & 1
+            port = self.fetch8() if op < 0xE8 else self.r['dx']
+            if self.io_out:
+                self.io_out(port, self.reg(0, w), w)
         elif 0x50 <= op < 0x58:
             self.push(self.r[R16[op & 7]] if op & 7 != 4 else (self.r['sp'] - 2) & M16)
         elif 0x58 <= op < 0x60:
