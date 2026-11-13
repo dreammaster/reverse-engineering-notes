@@ -34,7 +34,7 @@ building oracles so later work can be *verified* rather than guessed.
 | Creatures | **Walk scene**: active creatures (sprite class 3) run the real TAD behaviour routines on the interpreter, move with the engine's movement-state rules (speed gate, step size, patrol tables), spawn through op 36, hit the player (energy −tail[1]); the engine's exact velocity application and creature/creature interaction are approximated |
 | Verbs, chests, level progression, death, game clock | Verbs 2/3/4/7/11/14 act (valuables → money/score, chests open, events 0/5/16); op 37 changes room, op 51 the level (money/score/energy carry over); death restarts the level; the day counter follows the real-time clock; `--scene game` starts from the title |
 | Inventory (carried things), take/drop/use | **Not done** — taking sets `rec[10] = 0xFF` but no view of carried things was found |
-| Sound (PC speaker) | **Runs** — `BEEPER.BIN` on the interpreter (`engine/beeper.c`), SDL square-wave output; walking, pushing, chest, eating, death, TAD sound service. Other triggers and music not yet |
+| Sound (PC speaker) | **Runs** — `BEEPER.BIN` on the interpreter (`engine/beeper.c`), SDL square-wave output; walking, pushing, chest, eating, death, creature ambient, TAD sound service, intro tune. Other triggers not yet |
 | Cadaver 2 (Payoff) code differences | Not analysed (data differs only in `TATA/` and RNC-packed copies) |
 
 ## What was learned about the engine (for the next steps)
@@ -85,8 +85,8 @@ the PC1 decoder and the file-name strings. New findings add rows as we go.
 6. **Sound** — *PC speaker done*: `BEEPER.BIN` runs on the 8086 interpreter
    (50 Hz tick, effect request/stop protocol of `1000:156C/1613`), SDL plays
    the resulting square wave; walking, pushing, chests, eating, death and the TAD
-   sound service trigger sounds. Missing: the other call sites (creature hits,
-   items, ambient), music (the intro) and the AdLib/SoundBlaster/Roland drivers.
+   sound service trigger sounds, the intro tune plays. Missing: the other call
+   sites (creature hits, items) and the AdLib/SoundBlaster/Roland drivers.
 7. **Cadaver 2** — diff `GAME.EXE` against `CAD.EXE` function by function
    (the data directories are shared, so most of the engine should be identical)
    and add the `TATA/` levels and Roland support.
