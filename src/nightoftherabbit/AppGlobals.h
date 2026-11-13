@@ -160,6 +160,11 @@ extern bool MainLoopsPaused;
 // frames per second and the time the last frame took in milliseconds (`system.frameTime`, `system.lastFrameTime`).
 extern bool CanLoseFocus;
 extern bool g_bMoviePauseAllowed;
+// Night of the Rabbit: named globals (the strings that the scripts set with system.protectedEngineEventHandler, system.subtitleHook and
+// system.waysystemHook; the protected handler is called for each engine event after the registered ones, and survives a loaded game).
+extern std::string protectedEngineEventHandler;
+extern std::string subtitleHook;
+extern std::string g_waysystemHook;
 
 // Confirmed a real, named global (asm: g_loadingScreenLock): the loading screen draws from a thread of its own while the
 // game loads; whoever else changes the matrices of the graphics at that time holds this (TMovie::Finish()).

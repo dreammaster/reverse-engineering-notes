@@ -143,3 +143,8 @@ Found by running `nightoftherabbit_sdl.exe` in the game folder (set `SDL_RENDER_
 - `TMasterControl::MovieEvent` gives the script only events that have a name (the script fails on others).
 - Debug hooks, not in the original: `DEPONIA_TRACE` (1 animations, 2 actions, 4 parts, with `-ll max`), `DEPONIA_ACTIONS=<every>`, `DEPONIA_LUA=<frame>:<file>`; `tests/deponia1/actiondump.cpp` lists the parts of actions (`<id>`, `<name>`, `of:<owner>`).
 - Open: "New Game" from the menu ends on a black scene `sys_core` with the loading hourglass (the actions finish; the script side does not go on to `start_act1`); `Interfaces[...]` lookups of 11 framework interfaces fail 64 times; "Could not find interface with class 'Dialogue'...". The three rabbit tests were not rerun after these changes.
+
+### New Game now reaches the first scene
+- `system.protectedEngineEventHandler`, `system.subtitleHook`, `system.waysystemHook` (strings; the names are the original's globals `protectedEngineEventHandler`, `subtitleHook`; read in `system_newindex`). `TGameControl::HandleEngineEvent` calls the protected handler last (debug name "ProtectedEngineEventHandler"). Without it a loaded game (the engine events the framework needs, `LoadingSavegameSuccess` above all) reached no script, so the new game, which loads the autosave 0 that `GoToStart` made, never went on to `start_act1`. The subtitle and way system hooks are only stored, not used yet.
+- Action part command 145 is "Load/Save autosave" (`int` 0 loads, 1 saves; `alt` is the slot), 123 is if-savegame; `sys_continue` loads slot 0 for a new game.
+- Run: New Game from the menu shows the first scene of act 1 (a cutscene with the mist; checked with frames). `DEPONIA_TRACE` bit 8 prints the engine events.

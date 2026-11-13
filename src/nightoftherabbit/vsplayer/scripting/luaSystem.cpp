@@ -72,6 +72,19 @@ static int system_newindex(lua_State *state) {
 		return 1;
 	}
 
+	if (type == LUA_TSTRING) {
+		// Confirmed (Night of the Rabbit, system_newindex): the names of three script functions.
+		const char *value = lua_tolstring(state, 3, nullptr);
+
+		if (std::strcmp(name, "protectedEngineEventHandler") == 0)
+			protectedEngineEventHandler = value;
+		else if (std::strcmp(name, "subtitleHook") == 0)
+			subtitleHook = value;
+		else if (std::strcmp(name, "waysystemHook") == 0)
+			g_waysystemHook = value;
+		return 0;
+	}
+
 	if (type != LUA_TBOOLEAN)
 		return 0;
 

@@ -2633,6 +2633,11 @@ bool TGameControl::ReplaceGame(wxFileName file, bool isEditor) {
 void TGameControl::HandleEngineEvent(const std::string &name, const std::string &arg) {
 	// Confirmed (asm lines 469160-469504): each function registered for the engine events
 	// (RegisterEngineEventHandler) is called with the name of the event and its argument ("EngineEventHandler").
+	if ((g_traceFlags & 8) && wxLog::loglevel > 1) {
+		wxLog::logexpanded(L"Engine event \"%s\" for %d functions", wxString(name.c_str()).wc_str(),
+		                   static_cast<int>(_engineEventHandlerNames.size()));
+	}
+
 	for (size_t i = 0; i < _engineEventHandlerNames.size(); i++) {
 		wxString convertedName;
 		toUTF(&convertedName, name.c_str());
@@ -2649,6 +2654,26 @@ void TGameControl::HandleEngineEvent(const std::string &name, const std::string 
 
 		LuaDebugName("EngineEventHandler");
 		LuaExecuteFunction(_engineEventHandlerNames[i], arguments, results);
+	}
+
+	// Confirmed (Night of the Rabbit, TGameControl::HandleEngineEvent): the protected handler (set with
+	// system.protectedEngineEventHandler, kept over a loaded game) is called last, with the same two arguments.
+	if (!protectedEngineEventHandler.empty()) {
+		wxString convertedName;
+		toUTF(&convertedName, name.c_str());
+		TArgument nameArg;
+		nameArg.Set(convertedName);
+
+		wxString convertedArg;
+		toUTF(&convertedArg, arg.c_str());
+		TArgument argArg;
+		argArg.Set(convertedArg);
+
+		std::vector<TArgument *> arguments = {&nameArg, &argArg};
+		std::vector<TArgument *> results;
+
+		LuaDebugName("ProtectedEngineEventHandler");
+		LuaExecuteFunction(protectedEngineEventHandler, arguments, results);
 	}
 }
 

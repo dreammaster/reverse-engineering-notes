@@ -82,7 +82,8 @@ void TGActionPartExecutor::ifFalse() {
 // ones whose entry is the table's default, do nothing).
 void TGActionPartExecutor::run(int command) {
 	// (not in the original: DEPONIA_TRACE bit 4 says each part that is done)
-	if ((g_traceFlags & 4) && wxLog::loglevel > 1) {
+	if ((g_traceFlags & 4) && wxLog::loglevel > 1 && _action._data.GetName() != TCharHolder(L"loop") &&
+	        _action._data.GetName() != TCharHolder(L"run_checks") && _action._data.GetName() != TCharHolder(L"sys_setLightmap")) {
 		wxLog::logexpanded(L"Action part: command %d of \"%s\" (data id: %d)", command, _action._data.GetName().c_str().wc_str(),
 		                   dataId(_action._data));
 	}

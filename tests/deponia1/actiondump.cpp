@@ -47,7 +47,7 @@ static void dumpAction(TVisionaireGame *game, TVisionaireObject *action, int dep
 
 	TVList parts;
 
-	TVisObjRef(action).GetLinks(kActionActionParts, TypeOrder::kValue0, parts);
+	TVisObjRef(action).GetList(kActionActionParts, parts);
 
 	for (TVisionaireObject *part : parts)
 		dumpPart(game, part, depth + 1);
@@ -85,6 +85,29 @@ int main(int argc, char **argv) {
 
 	for (int i = 1; i < argc; i++) {
 		int id = std::atoi(argv[i]);
+
+		// `cmd:<n>` lists the parts that have the command n, with their action and the owner of it
+		if (std::strncmp(argv[i], "cmd:", 4) == 0) {
+			int command = std::atoi(argv[i] + 4);
+
+			for (TVisionaireObject *action : actions) {
+				TVList parts;
+
+				TVisObjRef(action).GetList(kActionActionParts, parts);
+
+				for (TVisionaireObject *part : parts) {
+					if (part->GetInt(kActionPartCommand) != command)
+						continue;
+
+					TVisObjRef owner = TVisObjRef(action).GetParent();
+
+					std::printf("action '%ls' id %d (of %ls): part %d int %d alt %d\n", action->GetName().c_str().c_str(), action->GetId24(),
+					            owner.IsEmpty() ? L"-" : owner.GetName().c_str().c_str(), part->GetId24(), part->GetInt(kActionPartInt),
+					            part->GetInt(kActionPartAltInt));
+				}
+			}
+			continue;
+		}
 
 		for (TVisionaireObject *action : actions) {
 			bool match = id > 0 ? action->GetId24() == id : action->GetName() == TCharHolder(wxString(argv[i]));
