@@ -159,7 +159,13 @@ int main(int argc, char **argv) {
 				text.replace(pos, 5, "\n");
 				pos++;
 			}
-			std::string name = std::string(argv[1]) + "/script_" + std::to_string(script->GetId24()) + "_" + std::string(script->GetName().mb_str()) + ".lua";
+			std::string plain(script->GetName().mb_str());
+
+			for (char &c : plain) {
+				if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_'))
+					c = '_';
+			}
+			std::string name = std::string(argv[1]) + "/script_" + std::to_string(script->GetId24()) + "_" + plain + ".lua";
 			FILE *f = fopen(name.c_str(), "wb");
 
 			if (f) {

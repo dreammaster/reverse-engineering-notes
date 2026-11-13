@@ -714,6 +714,12 @@ void TGActionPartExecutor::cmdCharacterGoToObject() {
 			return;
 	}
 
+	if ((g_traceFlags & 4) && wxLog::loglevel > 1 && waitForEnd) {
+		wxLog::logexpanded(L"GoToObject: walking %d, destination %d,%d, position %d,%d", (int)character->IsWalking(),
+		                   character->GetRef().GetPoint(kCharacterDestination)->x, character->GetRef().GetPoint(kCharacterDestination)->y,
+		                   character->GetRef().GetPoint(kCharacterPosition)->x, character->GetRef().GetPoint(kCharacterPosition)->y);
+	}
+
 	if (!_skip && character->IsWalking())
 		_wait = true;
 	else

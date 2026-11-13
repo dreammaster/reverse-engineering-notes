@@ -95,8 +95,10 @@ private:
 		int x;
 		int y;
 		int button;
+		bool done = false;
 	};
 	std::vector<Click> _clicks;   // DEPONIA_CLICKS
+	int _swaps = 0;               // the frames that were swapped, drawn again or not (the time of the clicks of a test)
 
 	std::mutex _spritesLock;
 	std::map<TSpriteHandle *, Sprite> _sprites;

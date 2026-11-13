@@ -402,6 +402,9 @@ void TSdlGraphics::Swap() {
 	if (!_renderer)
 		return;
 
+	if (!_dirty)
+		PushClicks();
+
 	if (_dirty) {
 		if (_shotsLeft > 0 && _shotEvery > 0 && _shown % _shotEvery == 0) {
 			SaveShot(_shotDirectory + "/shot_" + std::to_string(_shown) + ".bmp");
@@ -424,7 +427,9 @@ void TSdlGraphics::Swap() {
 		static const char *luaSetting = std::getenv("DEPONIA_LUA");
 		static bool luaDone = false;
 
-		if (luaSetting && !luaDone && _shown == std::atoi(luaSetting)) {
+		static const bool luaRepeat = std::getenv("DEPONIA_LUA_EVERY") != nullptr;
+
+		if (luaSetting && (!luaDone || luaRepeat) && (luaRepeat ? (_shown >= std::atoi(luaSetting) && _shown % std::atoi(std::getenv("DEPONIA_LUA_EVERY")) == 0) : _shown == std::atoi(luaSetting))) {
 			const char *colon = std::strchr(luaSetting, ':');
 			std::FILE *file = colon ? std::fopen(colon + 1, "rb") : nullptr;
 
@@ -516,9 +521,13 @@ void TSdlGraphics::Swap() {
 
 // The mouse of a test: a move, the button down and the button up, at the place of the window that the game's place has.
 void TSdlGraphics::PushClicks() {
-	for (const Click &click : _clicks) {
-		if (click.frame != _shown)
+	_swaps++;
+
+	for (Click &click : _clicks) {
+		if (click.done || _swaps < click.frame)
 			continue;
+
+		click.done = true;
 
 		int x = _area.x + click.x * _area.width / std::max(1, _renderSize.width);
 		int y = _area.y + click.y * _area.height / std::max(1, _renderSize.height);

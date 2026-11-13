@@ -1277,7 +1277,9 @@ static int SetValue(lua_State *state) {
 	case LUA_TNUMBER:
 		switch (object->GetTypeField(field)) {
 		case static_cast<int>(eTypeData::kInt):
-			done = object->SetValue(field, static_cast<int>(lua_tointeger(state, 2)), TSendEventEnum::kSendEvent);
+			// (Lua 5.4: lua_tointeger gives 0 for a number with a fraction, such as 215 * 0.85; the original takes the number
+			// and cuts it, as Lua 5.1 did)
+			done = object->SetValue(field, static_cast<int>(lua_tonumber(state, 2)), TSendEventEnum::kSendEvent);
 			break;
 		case static_cast<int>(eTypeData::kBool):
 			done = object->SetValue(field, lua_toboolean(state, 2) != 0, TSendEventEnum::kSendEvent);

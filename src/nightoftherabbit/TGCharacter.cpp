@@ -1353,6 +1353,20 @@ void TGCharacter::WalkWay() {
 	if (perSecond)
 		step = step / 1000.0f * elapsed;
 
+	if ((g_traceFlags & 16) && wxLog::loglevel > 1) {
+		std::vector<float> traceSteps;
+
+		if (_currentAnimation)
+			_currentAnimation->GetDataObject().GetFloats(kAnimationWalkSteps, traceSteps);
+
+		wxLog::logexpanded(L"WalkWay: speed %f, step %f, elapsed %f, size %f, animation %d, per second %d, outfit speed %d, slide %d, "
+		                   L"frame %d, steps %d (first %f)",
+		                   speed, step, elapsed, _objRef.GetFloat(kCharacterSize), _currentAnimation ? 1 : 0, perSecond ? 1 : 0,
+		                   _outfit.GetInt(kOutfitCharacterSpeed), (int)_outfit.GetBool(kOutfitSlideWalkAnimation),
+		                   _currentAnimation ? _currentAnimation->GetCurrentSpriteIndexOrTick() : -2, (int)traceSteps.size(),
+		                   traceSteps.empty() ? 0.0f : traceSteps[0]);
+	}
+
 	_walkTimer.SetTime();
 
 	int angle = -1;
