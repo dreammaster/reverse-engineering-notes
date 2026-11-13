@@ -35,3 +35,24 @@ The pixel-block and shape findings are folded into `u6_graphics.md` and the C++ 
 `U6ADLIB`, `U6CMS`, `U6COVOX`, `U6INNOVA`, `U6ROLAND`, `U6TMUS` (Tandy music) share one interface: 0 `snd_init(port)` (AdLib: base port 0x388),
 1 `snd_silence`, 2 `snd_play(far ptr to music data)` (saves INT 08h, reprograms the PIT and plays from the timer interrupt), 3 `snd_stop`; the Roland
 driver adds 4, a per-channel set-up. The timer interrupt handler (`snd_timer_isr`, at `3A0` in the AdLib driver) plays the track; the music format is in [u6_music.md](u6_music.md).
+
+## Martian Dreams: `TM.DRV` and `SUPERTM.DRV`
+
+Martian Dreams (MARTIAN.EXE, `sub_200F0` and `sub_2024B`) loads two video drivers of another kind than Ultima VI's. Each file is a LibN with a size header whose items are LZW blocks, one per display
+(item 0 = VGA, word_29658 = 0; 1 EGA; 3 Tandy or CGA; 2 is the same as 4's item). The unpacked block (`tools/extract_md_drivers.py`, the databases `md/md_drv_tm_vga` and `md/md_drv_supertm_vga`,
+`ida_scripts/create_md_drivers.ps1`) begins with a table of near entry offsets: word 0 is a flag (`cs:0`) the entries set while they run, word *n* is the entry *n*; the game copies them into its far
+pointers (`TM`: words 1-21 become word_287A4 ... dword_28172 and word_2818A, with the game's resource locator `sub_222E8` stored at 0x2E; `SUPERTM`: dword_2817A, word_2817E, dword_28182, word_28186,
+word_2818E, the locator at 0xC). A picture is a handle the entry gives to that locator (far call at `cs:0xC`/`cs:0x2E`, answers `dx:ax`): memory that holds the archive of a *.LZC item behind its 4-byte
+size, so the entry *k* of its table (at 4 + 4k) is the shape's offset from the start. The screen argument is a 12-byte structure: segment of the pixels, the offset of a table of row offsets, and the
+clipping rectangle left, top, right, bottom (`sub_1F26A` sets 0, 0, 319, 199: the whole screen; the window of the scenes is only the 128-line height of the pictures).
+
+`TM` entries used by the scenes: dword_2813A (offset 0xE86 of the VGA block) draw a shape, dword_2814E clear, dword_2814A present, dword_28172 (0x441F) fill a circle (colour, ry, rx, y, x, screen).
+
+`SUPERTM` dword_2817A (offset 0x15E9) draws a shape turned and scaled about its hot spot: the arguments pushed in order are flags (0 or the mirror bits 0x10/0x20), size (256ths: 256 is as it is, the
+code keeps `size` below 256 in a decimating loop, above in a replicating one), angle (degrees, -359 to 359, negative added to 360; the sine and cosine are 8-bit tables at 0x10 and 0x6A: the quarter
+turn is 255 * sin, the sign and the quarter in the tables at 0x1D2 and 0x33A), frame, the picture's segment and offset, y, x and the screen. The dispatch (`cs:4AC`, `4EC` for the box only) chooses
+one of 32 inner loops by quarter-turn code (exactly 0, below 90, exactly 90, below 180), size above 256, mirror flags and the second half-turn; a size of 256 at angle 0 with no flags jumps to the plain
+draw at 0x71BE. A shape is a row list (`u16 count` of the bytes in the run, 0 ends; x and y from the hot spot; the run's pixels as plain bytes or as (length << 1 | 1, value) fills inside) and the
+loops walk its rows in step with 8-bit accumulators. The game scenes (the photograph on the book, the ship, the cabin that turns, the Mars that grows) use it.
+
+`src/engine/cpu8086.cpp` runs the entry (see approximation 92); `tests/test_md_driver.cpp` compares it with the checksums of the same calls on the Unicorn emulator.

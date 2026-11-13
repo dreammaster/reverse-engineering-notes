@@ -15,7 +15,6 @@ namespace Ultima6 {
 
 namespace {
 
-const int WINDOW_TOP = 24, WINDOW_BOTTOM = 152; // the picture is 128 lines high, 24 down
 const int FADE_MS = 500;
 
 // The pictures of the *.LZC are archives inside the item of an archive: a table of u32 that start at 4 bytes less than they say, the shapes behind it
@@ -53,6 +52,8 @@ MdIntro::MdIntro(const std::string &dir, Script script) : _dir(dir) {
 	}
 	if (!found)
 		return;
+	if (!_driver.load(dir))
+		return;
 	Bytes fontRaw, fontData;
 	LibN fontLib;
 	if (readFile(joinPath(dir, "FONTS.LZC"), fontRaw) && fontLib.load(fontRaw, true) && fontLib.get(0, fontData))
@@ -83,6 +84,11 @@ const std::vector<Shape> &MdIntro::shapes(int handle) {
 	return h.shapes;
 }
 
+const Bytes &MdIntro::archive(int handle) {
+	shapes(handle);
+	return _handles[handle].raw;
+}
+
 // a line of SCENETXT.LZC: the lines of an item are cut at the carriage returns, the first piece (before the first) is line 0
 const std::string &MdIntro::line(int set, int index) {
 	static const std::string empty;
@@ -110,46 +116,22 @@ const std::string &MdIntro::line(int set, int index) {
 	return index >= 0 && index < (int)t.size() ? t[index] : empty;
 }
 
-void MdIntro::shapeAt(int handle, int frame, int x, int y, int dy, int size) {
+void MdIntro::shapeAt(int handle, int frame, int x, int y) {
 	const std::vector<Shape> &list = shapes(handle);
-	if (frame < 0 || frame >= (int)list.size() || size <= 0)
+	if (frame < 0 || frame >= (int)list.size())
 		return;
 	const Shape &s = list[frame];
-	// the pictures of the whole screen (the credits' cards) are not kept in the window
-	const int top0 = s.height >= 185 ? 0 : WINDOW_TOP, bottom0 = s.height >= 185 ? 200 : WINDOW_BOTTOM;
-	if (size == 256) {
-		int left = x - s.hotX, top = y - s.hotY + dy;
-		for (int r = 0; r < s.height; ++r) {
-			int sy = top + r;
-			if (sy < top0 || sy >= bottom0)
-				continue;
-			for (int c = 0; c < s.width; ++c) {
-				int sx = left + c;
-				uint8_t p = s.pixels[r * s.width + c];
-				if (sx < 0 || sx >= 320 || p == Shape::TRANSPARENT)
-					continue;
-				_front[sy * 320 + sx] = p;
-			}
-		}
-		return;
-	}
-	// a shape of another size: each place of the screen takes the point of the shape that is under it (size in 256ths)
-	int w = s.width * size / 256, h = s.height * size / 256;
-	int left = x - s.hotX * size / 256, top = y - s.hotY * size / 256 + dy;
-	for (int r = 0; r < h; ++r) {
+	int left = x - s.hotX, top = y - s.hotY;
+	for (int r = 0; r < s.height; ++r) {
 		int sy = top + r;
-		if (sy < top0 || sy >= bottom0)
+		if (sy < 0 || sy >= 200)
 			continue;
-		for (int c = 0; c < w; ++c) {
+		for (int c = 0; c < s.width; ++c) {
 			int sx = left + c;
-			if (sx < 0 || sx >= 320)
+			uint8_t p = s.pixels[r * s.width + c];
+			if (sx < 0 || sx >= 320 || p == Shape::TRANSPARENT)
 				continue;
-			int pc = c * 256 / size, pr = r * 256 / size;
-			if (pc >= s.width || pr >= s.height)
-				continue;
-			uint8_t p = s.pixels[pr * s.width + pc];
-			if (p != Shape::TRANSPARENT)
-				_front[sy * 320 + sx] = p;
+			_front[sy * 320 + sx] = p;
 		}
 	}
 }
@@ -160,14 +142,12 @@ void MdIntro::compose() {
 		if (d.kind == 0) {
 			shapeAt(d.handle, d.frame, d.x, d.y);
 		} else if (d.kind == 3) {
-			shapeAt(d.handle, d.frame, d.x, d.y, 0, d.size);
-		} else if (d.kind == 1) { // the hand with the map moves up and to the left over the window
-			shapeAt(d.handle, d.frame, d.x, WINDOW_TOP, d.y);
-		} else if (d.y >= WINDOW_TOP && d.y < WINDOW_BOTTOM && d.x >= 0 && d.x < 320) { // a dot of the orb
-			for (int dy = -1; dy <= 1; ++dy)
-				for (int dx = -1; dx <= 1; ++dx)
-					if (d.y + dy >= WINDOW_TOP && d.y + dy < WINDOW_BOTTOM && d.x + dx >= 0 && d.x + dx < 320)
-						_front[(d.y + dy) * 320 + d.x + dx] = 0xFF;
+			_driver.draw(&_front[0], archive(d.handle), d.frame, d.x, d.y, d.angle, d.size);
+		} else { // a dot of the orb: a circle of radius 1 of the driver's colour, five pixels
+			static const int PLUS[5][2] = {{0, -1}, {-1, 0}, {0, 0}, {1, 0}, {0, 1}};
+			for (const int *p : PLUS)
+				if (d.x + p[0] >= 0 && d.x + p[0] < 320 && d.y + p[1] >= 0 && d.y + p[1] < 200)
+					_front[(d.y + p[1]) * 320 + d.x + p[0]] = (uint8_t)d.size;
 		}
 	}
 	// a line that is wider than the window is broken at a space
@@ -236,7 +216,7 @@ void MdIntro::run() {
 			_lines.clear();
 			break;
 		case 3:
-			_draws.push_back({0, o.a, o.b, o.c, o.d, 256});
+			_draws.push_back({0, o.a, o.b, o.c, o.d, 256, 0});
 			break;
 		case 4: {
 			_lines.clear();
@@ -271,14 +251,11 @@ void MdIntro::run() {
 			_fade = -1;
 			_fadeLeft = FADE_MS;
 			break;
-		case 9:
-			_draws.push_back({1, o.a, o.b, o.c, o.d, 256});
-			break;
 		case 10:
-			_draws.push_back({2, 0, 0, o.a, o.b, 256});
+			_draws.push_back({2, 0, 0, o.a, o.b, o.c, 0});
 			break;
 		case 11:
-			_draws.push_back({3, o.a, o.b, o.c, o.d, o.e});
+			_draws.push_back({3, o.a, o.b, o.c, o.d, o.e, o.f});
 			break;
 		}
 	}

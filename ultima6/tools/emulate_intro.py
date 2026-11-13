@@ -203,7 +203,7 @@ def setf(res, a=None, b=None, sub=False, width=16):
 
 randn = [0]
 ARITY = {'sub_1E59F': 2, 'sub_151F3': 3, 'sub_15177': 2, 'sub_15610': 1, 'dword_2814E': 2, 'dword_2813A': 6, 'dword_2814A': 2, 'sub_152B5': 7, 'sub_234C5': 2, 'sub_155DB': 0, 'sub_155A5': 0,
-         'sub_218FC': 1, 'sub_21EB8': 2, 'dword_2817A': 9, 'dword_28172': 5, 'sub_20951': 6, 'sub_20D32': 3, 'sub_132A6': 0, 'sub_1313C': 0}
+         'sub_218FC': 1, 'sub_21EB8': 2, 'dword_2817A': 9, 'dword_28172': 6, 'sub_20951': 6, 'sub_20D32': 3, 'sub_132A6': 0, 'sub_1313C': 0}
 NAMES = {}
 for l in lines:
     pass

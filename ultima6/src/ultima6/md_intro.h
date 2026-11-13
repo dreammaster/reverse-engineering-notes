@@ -4,6 +4,7 @@
 #include "engine/framebuffer.h"
 #include "files/shape.h"
 #include "files/tile_data.h"
+#include "ultima6/md_driver.h"
 
 #include <string>
 #include <vector>
@@ -19,9 +20,11 @@ namespace Ultima6 {
  * The same player plays the ending (sub_15C84, the files ENDGAME.LZC and MOONGATE.LZC) and the credits (sub_1675E: LOGOS, FAIR, CREDITS, LOWELL, FUSE, FLASH, FLIGHT, CABIN and MARS .LZC), whose
  * calls were got the same way (MD_SCRIPT_START holds where each script starts).
  *
- * APPROX(90): the drawing driver (TM.DRV) is not disassembled: a shape is put so that its hot spot is at the place given; the pan of the hand with the map (driver entry 0x2817A) and the dots of
- * the thrown orb (0x28172) are guessed; the fades (sub_155DB, sub_155A5) last half a second; the flashes of the palette (sub_20951), the music and the colour of the lines are left out; the
- * lines are centred in gold.
+ * The shapes that turn and grow (the driver entry 0x2817A of SUPERTM.DRV) are drawn by the driver's own code on Cpu8086 (MdDriver); a plain shape is put with its hot spot at the place given, as the
+ * driver does, and the dots of the thrown orb (0x28172, a filled circle of radius 1: five pixels) are drawn by hand; everything is clipped to the whole screen, as the screen the game gives them.
+ *
+ * APPROX(90): the other drawing routines of TM.DRV are not run; the fades (sub_155DB, sub_155A5) last half a second; the flashes of the palette (sub_20951), the music and the colour of the
+ * lines are left out; the lines are centred in gold.
  */
 class MdIntro {
 public:
@@ -53,20 +56,22 @@ public:
 
 private:
 	struct Draw {
-		int kind; // 0 shape, 1 pan, 2 dot, 3 shape of the driver's entry 0x2817A
-		int frame, handle, x, y, size;
+		int kind; // 0 shape, 2 dot, 3 shape of the driver's entry 0x2817A
+		int frame, handle, x, y, size, angle;
 	};
 	struct Handle {
 		int file = -1, item = 0;
 		bool loaded = false;
+		Bytes raw; // the item of the archive
 		std::vector<Shape> shapes;
 	};
 
 	void run();
 	void compose();
 	const std::vector<Shape> &shapes(int handle);
+	const Bytes &archive(int handle);
 	const std::string &line(int set, int index);
-	void shapeAt(int handle, int frame, int x, int y, int dy = 0, int size = 256);
+	void shapeAt(int handle, int frame, int x, int y);
 
 	std::string _dir;
 	bool _ok = false, _finished = false;
@@ -83,6 +88,7 @@ private:
 	std::vector<uint8_t> _front;
 	Palette _palette;
 	Font _font;
+	MdDriver _driver; // SUPERTM.DRV: the draws that turn and scale a shape
 };
 
 } // namespace Ultima6
