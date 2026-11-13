@@ -31,7 +31,9 @@ building oracles so later work can be *verified* rather than guessed.
 | `ROUTINEn.TAD` / Cadaver 2 `ROUTINEn.PAK` | **Runs** — 8086 interpreter (Python + C, verified against Unicorn on every timer/behaviour routine of levels 1–5); timer routines are executed in the walk scene (energy, random, sound services; event-8 messages). Not yet: the behaviour (creature) routines, most engine services, the Payoff's new levels (other stub) |
 | Status line, labels, messages, verbs, energy bar | **Done** — "DAY n" + room name, touched-object name, parchment message scrolls, verb icons and the energy bar are pixel-exact against the emulator (`formats.md` §6.3a, §6.7). Verb *selection* (hold End + direction) and inventory are not decoded |
 | ACL interpreter | **Largely done** — event dispatch with condition tests, room events (28 first visit, 6 entry, 14/20 timers, 19), thing events (7 touch, 9 contact), ~35 ops verified against the original handlers; missing ops: spawn/move/animation/change room/inventory etc. |
-| Creature AI, inventory, combat, level progression, sound | **Not started** (creature behaviour = the TAD behaviour routines + their engine services) |
+| Creatures | **Walk scene**: active creatures (sprite class 3) run the real TAD behaviour routines on the interpreter, move with the engine's movement-state rules (speed gate, step size, patrol tables), spawn through op 36, hit the player (energy −tail[1]); the engine's exact velocity application and creature/creature interaction are approximated |
+| Verbs, chests, level progression, death, game clock | Verbs 2/3/4/7/11/14 act (valuables → money/score, chests open, events 0/5/16); op 37 changes room, op 51 the level (money/score/energy carry over); death restarts the level; the day counter follows the real-time clock; `--scene game` starts from the title |
+| Inventory (carried things), take/drop/use, sound | **Not done** — taking sets `rec[10] = 0xFF` but no view of carried things was found; no sound |
 | Cadaver 2 (Payoff) code differences | Not analysed (data differs only in `TATA/` and RNC-packed copies) |
 
 ## What was learned about the engine (for the next steps)
