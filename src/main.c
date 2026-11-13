@@ -121,6 +121,7 @@ typedef struct RoomView_ {
 	RankTable ranks; int ranks_ok; unsigned six_fa;   /* status dialog data (MP1) */
 	int show_status;           /* 'I': the character status dialog */
 	int creature_tick;
+	unsigned clock_ticks; int day;   /* the game clock: 50 Hz ticks; one day = 30 minutes (1000:1514: ds:5B7/5B5/5B4/5B2) */
 	int label_id;              /* name shown above the room name: string id of the last touched object (-1 none) */
 	AclVM vm;                  /* script state: thing flags / variables */
 	TadRt tad;                 /* native routines of ROUTINEn.TAD (timers) */
@@ -144,7 +145,12 @@ static int game_rand(int lo, int hi, void *u) {
 static void roomview_game_step(RoomView *rv);
 static void walk_refresh_world(RoomView *rv);
 static void roomview_ensure_objs(RoomView *rv, int gx, int gy);
+static void roomview_flush_messages(RoomView *rv);
 static void roomview_tick(RoomView *rv) {
+	if (rv->ok && ++rv->clock_ticks % (50u * 60u * 30u) == 0) {      /* the timer interrupt: 50 ticks = 1 s, 60 s = 1 min, 30 min = a day -> message 28 "A DAY PASSES ..." */
+		rv->day++;
+		if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 28;
+	}
 	if (rv->ok && rv->ro_key && (++rv->ro_ticks & 1) == 0) {
 		roomobjs_step(&rv->ro);
 		roomview_game_step(rv);
@@ -193,7 +199,7 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 		char nm[48];
 		status_room_name(rv->mp2.sec[0].rec[rv->room], (size_t)rv->mp2.sec[0].len[rv->room], rv->name_tbl, rv->names.strings,
 		                 rv->names.count, nm, sizeof(nm));
-		status_draw(scr->pixels, g_font, g_font_len, nm, 1);
+		status_draw(scr->pixels, g_font, g_font_len, nm, rv->day + 1);
 		for (int sl = 0; sl < 4 && g_tiles && g_font3; sl++)
 			if (rv->msgs[sl].active && rv->msgs[sl].id >= 0 && rv->msgs[sl].id < rv->names.count)
 				message_draw(scr->pixels, rv->names.strings[rv->msgs[sl].id], sl, g_tiles, g_tiles_len, g_font3, g_font3_len, msg_rnd, NULL);
@@ -456,6 +462,7 @@ static void roomview_rebuild_objs(RoomView *rv, int gx, int gy) {
 
 /* one game step (25 Hz): the room timers of 1000:11EB5 (units of 17 steps) -> events 14 and 20 */
 static void roomview_game_step(RoomView *rv) {
+	if (rv->vm.msg_n) roomview_flush_messages(rv);
 	for (int i = 0; i < 4; i++)
 		if (rv->msgs[i].active && --rv->msgs[i].timer <= 0)
 			rv->msgs[i].active = 0;

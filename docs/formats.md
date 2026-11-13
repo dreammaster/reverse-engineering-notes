@@ -545,6 +545,8 @@ movement through `[+1]` stepping 4-byte entries `(dx,dy,dz …)` — not decoded
 blocked by the room's walls or by objects simply does not move that step. `src/main.c` `creature_move` does this (the armour absorption is not modelled).
 **Ops `3Eh/3Fh/40h` (62/63/64) are not raw memory writes (corrects the earlier note).** Their first word is a *pseudo address* (bit 15 = byte-sized value): `1000:80CC` maps `048E` → the current room `ds:232`, `0864` → `ds:5A0` (the carry capacity) and **anything else → the energy `ds:23A`**. `3E` sets, `3F` adds, `40` compares (value, then a mode byte `0 >`, `1 <`, `2 ==`, `3 !=` → condition counter).
 Level 4 uses `3E 0864 0028` (capacity 40) and `40 0496 003C 01` (energy < 60), level 5 `40 0496 000A 00` (energy > 10) and `40 048E 001B 02` (room == 27). Implemented in `tools/acl_vm.py` and `src/engine/acl.c`.
+**The game clock and the day counter (timer interrupt `1000:14F0…1549`).** The INT 8 handler counts down `ds:5B7` from `ds:5B8` (= `0x32` = 50 ticks, set at start `1000:0F17`) → one second (`ds:5B5` seconds, `0x3C` → `ds:5B4` minutes, `0x1E` = **30** → `ds:5B6 = 1` (the "day passed" flag), **`ds:5B2` (the day, shown as "DAY n+1") += 1**, `ds:5B3` += 1, minutes reset); `1000:11EBE` then queues message 28 (**"A DAY PASSES …"**) and clears the flag.
+So a game day is **30 minutes of real time** (90 000 ticks). Nothing else reads the day counter. The walk scene counts the same ticks, updates "DAY n" and shows message 28. (`1000:0EF4…` also initialises `ds:5A0 = 0x20`, `ds:59C = 0x32`.)
 `CAD.EXE` `1000:7AC6…` contains examples of the small handlers (clear/set bits of a record, `7B0F`: *change level n* …).
 
 ### 6.8 Input
