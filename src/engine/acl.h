@@ -16,6 +16,8 @@ typedef struct {
 	uint8_t flags2[ACL_THINGS];     /* rec[15] */
 	uint8_t room[ACL_THINGS];       /* rec[10] */
 	uint8_t tail[ACL_THINGS][6];    /* first bytes of the thing's tail (rec[rec[12]..]): chest content, key, flags, trap */
+	uint8_t mtab[ACL_THINGS][48];   /* B + 14: scripted movement entries (move x y z counters / jump / wait ...) */
+	uint8_t mtab_len[ACL_THINGS];
 	uint8_t mstate[ACL_THINGS][10]; /* movement state B (rec[rec[13]..]): [0] mode (3 = velocity driven, 0 = scripted), [6..8] step sizes, [9] speed gate (low nibble counter, high nibble period) */
 	uint8_t pos[ACL_THINGS * 3];    /* rec[0..2]: x1, y1, z0 */
 	union {                         /* script globals ds:590..71F (the TAD routines see them as part of the data segment) */

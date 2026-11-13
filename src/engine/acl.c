@@ -30,6 +30,12 @@ void acl_init(AclVM *vm, const Mp2 *mp2) {
 			vm->room[t] = r[10];
 			if (r[12] >= 16 && (size_t)r[12] + 6 <= (size_t)len) memcpy(vm->tail[t], r + r[12], 6);
 			if (r[13] >= 16 && (size_t)r[13] + 10 <= (size_t)len) memcpy(vm->mstate[t], r + r[13], 10);
+			if (r[13] >= 16 && r[14] > r[13] + 14 && (size_t)r[14] <= (size_t)len) {
+				size_t tl = (size_t)r[14] - r[13] - 14;
+				if (tl > 48) tl = 48;
+				memcpy(vm->mtab[t], r + r[13] + 14, tl);
+				vm->mtab_len[t] = (uint8_t)tl;
+			}
 			vm->pos[3 * t] = r[0]; vm->pos[3 * t + 1] = r[1]; vm->pos[3 * t + 2] = r[2];
 			vm->flags2[t] = r[15];
 		}

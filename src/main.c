@@ -558,6 +558,51 @@ static void creatures_step(Walker *wk, RoomView *rv) {
 			continue;
 		active++;
 		uint8_t *ms = rv->vm.mstate[o->thing];
+		if (ms[0] == 0 || ms[0] == 2) {                   /* scripted movement (1000:6F62 mode 0 / wait mode 2): table entries 00 = move by counters, 01 = jump, 02 = wait */
+			int go = 1;
+			if (ms[9]) {
+				if ((ms[9] & 0xF) > 0) { ms[9]--; go = 0; }
+				else ms[9] |= (uint8_t)(ms[9] >> 4);
+			}
+			if (ms[0] == 2) {
+				if (ms[2] > 0 && --ms[2] == 0) ms[0] = 0;
+			} else if (go) {
+				const uint8_t *tab = rv->vm.mtab[o->thing];
+				int tl = rv->vm.mtab_len[o->thing];
+				for (int guard = 0; guard < 6; guard++) {
+					int8_t *cn = (int8_t *)&ms[3];
+					if (cn[0] || cn[1]) {
+						int dx = cn[0] > 0 ? ms[6] : cn[0] < 0 ? -ms[6] : 0, dy = cn[1] > 0 ? ms[7] : cn[1] < 0 ? -ms[7] : 0;
+						if (cn[0]) cn[0] += cn[0] > 0 ? -1 : 1;
+						if (cn[1]) cn[1] += cn[1] > 0 ? -1 : 1;
+						int gw, gh, gx, gy;
+						if (roomview_geom(rv, &gw, &gh, &gx, &gy)) {
+							for (int axis = 0; axis < 2; axis++) {
+								int ddx = axis == 0 ? dx : 0, ddy = axis == 1 ? dy : 0;
+								if (!ddx && !ddy) continue;
+								ColResult cr;
+								collision_test(&wk->world, o->x1 + ddx, o->y1 + ddy, o->z0, o->xs, o->ys, o->zs, o->thing, 0, &cr);
+								if (cr.zf) {
+									o->x1 += ddx; o->y1 += ddy;
+									rv->vm.pos[3 * o->thing] = (uint8_t)o->x1; rv->vm.pos[3 * o->thing + 1] = (uint8_t)o->y1;
+									rv->pos_seen[3 * o->thing] = rv->vm.pos[3 * o->thing]; rv->pos_seen[3 * o->thing + 1] = rv->vm.pos[3 * o->thing + 1];
+									roomobj_moved(o, gx, gy);
+									moved = 1;
+								}
+							}
+						}
+						break;
+					}
+					int ix = ms[1];
+					if (ix + 2 > tl) break;
+					int op = tab[ix];
+					if (op == 0 && ix + 4 <= tl) { ms[3] = tab[ix + 1]; ms[4] = tab[ix + 2]; ms[5] = tab[ix + 3]; ms[1] = (uint8_t)(ix + 4); }
+					else if (op == 1) ms[1] = (uint8_t)(ix + (int8_t)tab[ix + 1]);
+					else if (op == 2) { ms[2] = tab[ix + 1]; ms[0] = 2; ms[1] = (uint8_t)(ix + 2); break; }
+					else break;
+				}
+			}
+		}
 		if (ms[0] == 3) {
 			int vx, vy;
 			if (tad_run_behaviour(&rv->tad, &rv->vm, rv->vm.tail[o->thing][1], o->x1, o->y1, wk->x1, wk->y1, &vx, &vy) == 0) {
