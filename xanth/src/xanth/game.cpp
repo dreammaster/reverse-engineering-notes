@@ -380,6 +380,60 @@ uint8 &Game::exe8(int seg, int off) {
 	return _scratch[0];
 }
 
+void Game::walkContents(int root, bool visibleOnly, const std::function<bool(int)> &visit) {
+	struct Frame {
+		int obj, slot, kind;
+	};
+	std::vector<Frame> stack;
+	int cur = root, slot = 0, kind = -1, childKind = 0;
+	while (cur != 0) {
+		if (visit(cur))
+			return;
+		for (;;) {
+			int head = 0;
+			int slots = state.objects.valid(cur) ? (state.objects.type(cur) == OT_CONTAINER ? 2 : state.objects.type(cur) == OT_CHARACTER ? 3 : 1) : 0;
+			for (; slot < slots; slot++) {
+				if (!visibleOnly || sub_1DA1E(*this, cur, slot)) {
+					head = state.objects.listHead(cur, slot);
+					if (head)
+						break;
+				}
+			}
+			if (head) {
+				if (cur == root && state.objects.type(root) == OT_ROOM)
+					childKind = 0;
+				else if (cur == rt.actor_obj)
+					childKind = 1;
+				else if (kind == 0)
+					childKind = 2;
+				else if (kind == 1)
+					childKind = 3;
+				Frame f = {cur, slot, kind};
+				stack.push_back(f);
+				cur = head;
+				slot = 0;
+				kind = childKind;
+				break;                          // visit the first child
+			}
+			if (stack.empty()) {
+				cur = 0;
+				break;
+			}
+			int sibling = state.objects.nextSibling(cur);
+			if (sibling) {
+				cur = sibling;
+				slot = 0;
+				break;                          // visit the next sibling
+			}
+			Frame f = stack.back();             // back to the parent, on to its next slot
+			stack.pop_back();
+			cur = f.obj;
+			slot = f.slot + 1;
+			kind = f.kind;
+		}
+	}
+}
+
 int Game::sub_1FB15(int index, int phase) {
 	if ((unsigned)index < kExitFunctionCount && kExitFunctions[index])
 		return kExitFunctions[index](*this, phase);

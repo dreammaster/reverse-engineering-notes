@@ -6,6 +6,8 @@
 #ifndef XANTH_GAME_H
 #define XANTH_GAME_H
 
+#include <functional>
+
 #include "legend/messages.h"
 #include "xanth/gamestate.h"
 #include "xanth/grammar.h"
@@ -102,6 +104,9 @@ public:
 	/** Calls exit function `index` (the 56 of the exit table, kinds 3 and 4) with a phase; it returns the room it leads to (<= 0: blocked). */
 	int sub_1FB15(int index, int phase);
 	int sub_1B8C5(int room) { return exitField(room, 0x10, 2); }
+
+	/** sub_1C4ED: visits an object and, depth first, everything inside it (every slot, or only the slots whose contents can be seen if `visibleOnly`); `visit` returns true to stop. */
+	void walkContents(int root, bool visibleOnly, const std::function<bool(int)> &visit);
 
 	// ---- objects (the original's names)
 	int object_has_attr(int obj, int attr) { return state.objects.hasAttr(obj, attr) ? 1 : 0; }

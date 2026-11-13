@@ -12,7 +12,7 @@ using namespace Legend;
 
 static const int kTextBottom = 151, kExpandedBottom = 165, kSavedTop = 149, kSavedBottom = 196;
 
-Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false), _mouseX(160), _mouseY(100), _expanded(false), _selectedVerb(-1), _rgnFile(-1) {
+Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false), _mouseX(160), _mouseY(100), _expanded(false), _selectedVerb(-1), _inventoryScroll(0), _rgnFile(-1) {
 	memset(_drawn, 0, sizeof(_drawn));
 }
 
@@ -50,6 +50,80 @@ void Display::expandText() {
 		darkenPixel(_screen, 50, 150);
 	}
 	lightenPixel(_screen, 315, 150);
+}
+
+void Display::drawSlot(int picNum, int x, int y) {
+	PicImage img;
+	if (!MainScreen::loadPicture(_files, picNum ? picNum : 0x100, img))
+		return;
+	drawPicture(_screen, x + img.x, y + img.y, &img.pixels[0], img.width, img.height, (img.flags & 0x40) != 0);
+}
+
+void Display::drawInventory() {
+	struct Entry {
+		int pic, obj;
+	};
+	// the people with you (sub_1DD59): a portrait each
+	std::vector<Entry> companions;
+	switch (_game->state.v.companion_obj) {
+	case 5:
+		companions.push_back({0x181, 5});
+		if (_game->state.v.flag_85318_cart)
+			companions.push_back({0x186, 9});
+		break;
+	case 6:
+		companions.push_back({0x182, 6});
+		companions.push_back({0x183, 7});
+		break;
+	case 10:
+		companions.push_back({0x184, 10});
+		break;
+	case 11:
+		companions.push_back({0x185, 11});
+		break;
+	default:
+		break;
+	}
+	// what you carry (sub_1DDDA): everything inside the player, with its picture number
+	std::vector<Entry> items;
+	_game->walkContents(_game->rt.player_obj, true, [&](int obj) {
+		if (obj != _game->rt.player_obj && items.size() < 48) {
+			int pic = _game->object_get_prop_a(obj);
+			Entry e = {pic ? pic : 0x100, obj};
+			items.push_back(e);
+		}
+		return false;
+	});
+	if (items.size() <= 14)
+		_inventoryScroll = 0;
+	// sub_25C55: cells 28 x 22 pixels in a window, left to right and top to bottom
+	int x = 55, y = 152, n = 0;
+	for (;;) {
+		drawSlot(n < (int)companions.size() ? companions[n].pic : 0, x, y);
+		n++;
+		x += 28;
+		if (x > 82) {
+			x = 55;
+			y += 22;
+			if (y > 195)
+				break;
+		}
+	}
+	x = 92, y = 152, n = _inventoryScroll;
+	for (;;) {
+		drawSlot(n < (int)items.size() ? items[n].pic : 0, x, y);
+		n++;
+		x += 28;
+		if (x > 287) {
+			x = 92;
+			y += 22;
+			if (y > 195)
+				break;
+		}
+	}
+	PicImage arrows;
+	if (MainScreen::loadPicture(_files, items.size() > 14 ? 0x103 : 0x104, arrows))
+		drawPicture(_screen, 293 + arrows.x, 152 + arrows.y, &arrows.pixels[0], arrows.width, arrows.height, false);
 }
 
 void Display::collapseText() {
@@ -157,8 +231,12 @@ int Display::printText(const std::string &text) {
 }
 
 int Display::putChar(int ch) {
-	if (_frameDrawn && ch == '\n')
+	if (!_frameDrawn)
+		return 0;
+	if (ch == '\n')
 		_text.newLine(_screen);
+	else if (ch >= 0x20 && ch < 0x7F)
+		printText(std::string(1, (char)ch));          // wputchar: one character through the same word wrap
 	return 0;
 }
 
@@ -320,6 +398,8 @@ int Display::other(const char *name, const intptr_t *args, int) {
 			redrawAll();
 		else if (args[0] == 0x20)
 			updateCompass();
+		if ((args[0] == 0x10 || args[0] == 0x20) && !_expanded)
+			drawInventory();
 		_picNum = -1;
 		popupWindowEvent();
 		_game->call_object_handler(_game->state.v.current_room, 0x17);

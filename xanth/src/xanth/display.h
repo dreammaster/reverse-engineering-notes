@@ -58,6 +58,8 @@ public:
 private:
 	void drawRoom();
 	void expandText();
+	void drawInventory();
+	void drawSlot(int picNum, int x, int y);
 	void collapseText();
 	void popupWindowEvent();
 	int setupPicRegions(unsigned address, unsigned count);
@@ -97,6 +99,7 @@ private:
 	bool _expanded;                      // the text window has grown over the inventory
 	std::vector<byte> _below;            // what it covers
 	int _selectedVerb;
+	int _inventoryScroll;                // first of the carried things shown (word_85024)
 	Legend::RgnFile _rgn;
 	int _rgnFile;
 };

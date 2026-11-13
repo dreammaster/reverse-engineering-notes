@@ -63,6 +63,9 @@ add_executable(test_graphics tests/test_graphics.cpp)
 target_link_libraries(test_graphics xanth_engine)
 add_test(NAME graphics COMMAND test_graphics)
 
+add_executable(xanth_play tools/playcli.cpp)
+target_link_libraries(xanth_play xanth_engine)
+
 add_executable(test_screen tests/test_screen.cpp)
 target_link_libraries(test_screen xanth_engine)
 
