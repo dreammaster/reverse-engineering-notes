@@ -15,6 +15,9 @@ namespace Legend {
 /** Gfx_FillArea with a solid colour. */
 void fillArea(Surface &s, int x1, int y1, int x2, int y2, byte color);
 
+/** One pixel of the grey ramp lightened as the bottom and right edges of a bevel do. */
+void lightenPixel(Surface &s, int x, int y);
+
 /** Gfx_FrameRect flag 0x10: an inset bevel made by darkening the pixels on the left and top edge and lightening those on the right and bottom edge along the grey ramp 0x11..0x1F. (With flags 0x14 the original does the opposite with slightly different edge ranges; not needed yet.) */
 void bevelFrame(Surface &s, int x1, int y1, int x2, int y2);
 

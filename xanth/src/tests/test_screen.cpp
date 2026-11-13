@@ -6,6 +6,7 @@
 #include "common/files.h"
 #include "tests/screen_compare.h"
 #include "xanth/display.h"
+#include "xanth/interface.h"
 
 int main() {
 	const char *dir = getenv("XANTH_DATA");
@@ -21,6 +22,14 @@ int main() {
 		printf("test_screen: cannot load OBJECT.DAT / XANTHSTR.DAT\n");
 		return 1;
 	}
+	if (getenv("XANTH_MSG")) {
+		int b = 0, i = 0;
+		sscanf(getenv("XANTH_MSG"), "%d,%d", &b, &i);
+		std::string m = messages.string(MSG(b, i));
+		for (size_t k = 0; k < m.size(); k++)
+			printf(m[k] >= 32 && m[k] < 127 ? "%c" : "<%02X>", (unsigned char)m[k]);
+		printf("\n");
+	}
 	Xanth::Display display(gf);
 	if (!display.init()) {
 		printf("test_screen: cannot load the interface pictures and fonts\n");
@@ -31,8 +40,8 @@ int main() {
 	game.newGame();
 	static const char *kVerbs[] = {"Take", "Put", "Look at", "Open", "Close", "Talk to", "Look"};
 	display.setVerbs(std::vector<std::string>(kVerbs, kVerbs + 7));
-	display.redrawAll();
-	game.go_to_room(game.state.v.current_room);
+	Xanth::Interface ui(game, display);
+	ui.start();
 	display.advance(0);          // the oracle's screenshot was taken two frames into the rain
 	display.advance(100);
 
@@ -58,6 +67,25 @@ int main() {
 		if (diff > 500) {
 			printf("FAIL: %d pixels differ\n", diff);
 			failures++;
+		}
+	}
+	// a command: click "Look at", then the computer; the oracle's screen of the same moment has the answer in the grown text window
+	{
+		ui.click(20, 28);
+		ui.click(160, 100);
+		if (shots)
+			display.screen().savePpm(std::string(shots) + "/game_look.ppm");
+		const char *lookShot = getenv("XANTH_ORACLE_LOOK");
+		std::vector<byte> look;
+		if (lookShot && loadPpm(lookShot, look)) {
+			printf("look at the computer, against %s:\n", lookShot);
+			std::string diffPath = shots ? std::string(shots) + "/game_look_diff.ppm" : std::string();
+			int diff = compareScreens(display.screen(), look, shots ? diffPath.c_str() : NULL);
+			// everything but the picture window (rain phase, cursor, hover label: about 1,200 pixels) and 3 pixels of text is identical
+			if (diff > 1300) {
+				printf("FAIL: %d pixels differ\n", diff);
+				failures++;
+			}
 		}
 	}
 	printf("test_screen: %d failures\n", failures);

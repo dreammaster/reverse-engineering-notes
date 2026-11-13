@@ -37,6 +37,8 @@ add_library(xanth_engine STATIC
 	xanth/game.cpp
 	xanth/mainscreen.cpp
 	xanth/display.cpp
+	xanth/verbs.cpp
+	xanth/interface.cpp
 	xanth/logic_support.cpp
 	xanth/tables/vars.cpp
 	${XANTH_LOGIC}

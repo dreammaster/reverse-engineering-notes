@@ -10,7 +10,9 @@ namespace Xanth {
 
 using namespace Legend;
 
-Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false) {
+static const int kTextBottom = 151, kExpandedBottom = 165, kSavedTop = 149, kSavedBottom = 196;
+
+Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false), _expanded(false), _selectedVerb(-1), _rgnFile(-1) {
 	memset(_drawn, 0, sizeof(_drawn));
 }
 
@@ -21,15 +23,95 @@ bool Display::init() {
 void Display::redrawAll() {
 	_ms.drawFrame(_screen);
 	_ms.drawVerbs(_screen, _verbs);
-	_text.setup(51, 128, 314, 151, &_ms.font10(), 15, 23);
+	_expanded = false;
+	_selectedVerb = -1;
+	_text.setup(51, 128, 314, kTextBottom, &_ms.font10(), 15, 23);
 	_compass = 0;
 	_frameDrawn = true;
 	updateCompass();
 }
 
+void Display::expandText() {
+	if (_expanded)
+		return;
+	_below.clear();
+	for (int y = kSavedTop; y <= kSavedBottom; y++)
+		for (int x = 50; x <= 316; x++)
+			_below.push_back(_screen.get(x, y));
+	_expanded = true;
+	_text.setBottom(kExpandedBottom);
+	_ms.restoreMarble(_screen, 50, kExpandedBottom, 316, kSavedBottom);   // the inventory below the grown window is gone until the next command
+	fillArea(_screen, 51, 129, 314, kExpandedBottom - 1, 23);
+	for (int x = 50; x <= 315; x++)                                       // the bottom edge of the grown window is lit like the one of a bevel
+		lightenPixel(_screen, x, kExpandedBottom);
+}
+
+void Display::collapseText() {
+	if (!_expanded)
+		return;
+	size_t k = 0;
+	for (int y = kSavedTop; y <= kSavedBottom; y++)
+		for (int x = 50; x <= 316; x++)
+			_screen.put(x, y, _below[k++]);
+	_expanded = false;
+	_text.setBottom(kTextBottom);
+}
+
+void Display::beginCommand() {
+	if (!_frameDrawn)
+		return;
+	collapseText();
+	fillArea(_screen, 51, 129, 314, 148, 23);
+	_text.home();
+}
+
+void Display::selectVerb(int index) {
+	_selectedVerb = index;
+	_ms.drawVerbs(_screen, _verbs, index);
+}
+
+int Display::verbAt(int x, int y) const {
+	if (x < 2 || x > 49 || y < 4)
+		return -1;
+	int row = (y - 4) / 10;
+	return row < (int)_verbs.size() ? row : -1;
+}
+
+int Display::objectAt(int x, int y) {
+	if (_picNum < 0 || x < 51 || x > 314 || y < 4 || y > 125)
+		return 0;
+	if (_rgnFile != (_picNum >> 8)) {
+		char name[16];
+		snprintf(name, sizeof(name), "XANTH_%02d.RGN", _picNum >> 8);
+		Common::Bytes d;
+		_rgn = Legend::RgnFile();
+		if (_files.load(name, d))
+			_rgn.load(d);
+		_rgnFile = _picNum >> 8;
+	}
+	size_t scene = _picNum & 255;
+	if (scene >= _rgn.size())
+		return 0;
+	// regions are tested from the last one added: what was added later lies on top (the computer on the desk)
+	const std::vector<Legend::RgnFile::Region> &regions = _rgn.scene(scene).regions;
+	for (size_t i = regions.size(); i-- > 0;)
+		if (regions[i].contains(x - 51, y - 4))
+			return regions[i].id;
+	return 0;
+}
+
 int Display::printText(const std::string &text) {
 	if (!_frameDrawn)
 		return 0;
+	if (!_expanded) {
+		Surface scratch(_screen);
+		TextWindow probe = _text;
+		probe.print(scratch, text);
+		if (probe.scrolled()) {
+			expandText();
+			_text.home();
+		}
+	}
 	_text.print(_screen, text);
 	return 0;
 }

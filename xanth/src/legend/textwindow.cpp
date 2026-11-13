@@ -2,7 +2,7 @@
 
 namespace Legend {
 
-TextWindow::TextWindow() : _font(NULL), _x1(0), _y1(0), _x2(0), _y2(0), _left(0), _fg(15), _bg(-1), _xpos(0), _ypos(0) {
+TextWindow::TextWindow() : _font(NULL), _x1(0), _y1(0), _x2(0), _y2(0), _left(0), _fg(15), _bg(-1), _xpos(0), _ypos(0), _scrolled(false) {
 }
 
 void TextWindow::setup(int x1, int y1, int x2, int y2, const Font *font, int foreground, int background) {
@@ -41,6 +41,7 @@ void TextWindow::newLine(Surface &s) {
 	if (_y2 - _y1 - 2 * lineHeight >= _ypos) {
 		_ypos += lineHeight;
 	} else {
+		_scrolled = true;
 		// scroll_up?: the lines below the first move up by one line, the last line is cleared
 		int top = _y1 + _font->yCenter(), bottom = _y2 - _font->yCenter(), left = _x1 + _font->xCenter(), right = _x2 - 1;
 		for (int y = top; y + lineHeight <= bottom; y++)

@@ -28,8 +28,8 @@ public:
 	 *  (setup_pic_regions: the items of the room that are visible) whose pixels are exclusive-ored onto the picture at their own positions. */
 	bool drawRoomPicture(Legend::Surface &s, const Common::GameFiles &files, int picNum, const std::vector<int> &overlays = std::vector<int>()) const;
 
-	/** The verb list: each name twice, black one pixel down and to the right and white on top (sub_18CBE, font 1). */
-	void drawVerbs(Legend::Surface &s, const std::vector<std::string> &verbs) const;
+	/** The verb list (the selected verb is yellow): each name twice, black one pixel down and to the right and white on top (sub_18CBE, font 1). */
+	void drawVerbs(Legend::Surface &s, const std::vector<std::string> &verbs, int selected = -1) const;
 	/** The text window (window 2, font 10, colours 15 on 23): prints a message like Font_WriteLines does. */
 	void printMessage(Legend::Surface &s, const std::string &text) const;
 	const Legend::Font &font10() const { return _font10; }
@@ -42,6 +42,9 @@ public:
 	static void xorOverlay(const Legend::PicImage &room, std::vector<byte> &pixels, const Legend::PicImage &overlay);
 	/** Draws the compass arrows whose bit is set in `bits` (exclusive-or: calling it twice erases them). */
 	void toggleCompassArrows(Legend::Surface &s, unsigned bits) const { drawCompassArrows(s, bits); }
+
+	/** Puts the marble background back in a rectangle (inclusive), e.g. over the inventory when the text window has grown over it. */
+	void restoreMarble(Legend::Surface &s, int x1, int y1, int x2, int y2) const;
 
 	/** The compass: arrow i (bit i of `exits`) is drawn exclusive-or onto the compass picture (sub_2B236 draws only the arrows whose state changed). */
 	void drawCompassArrows(Legend::Surface &s, unsigned exits) const;

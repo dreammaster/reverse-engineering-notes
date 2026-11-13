@@ -127,6 +127,23 @@ int Game::run_command(int verb, int dobj, int iobj) {
 	return result;
 }
 
+void Game::beginGame() {
+	Vars &v = state.v;
+	object_set_prop_a(0x56, 0x128);              // the CD-ROM version
+	object_clear_attr(0x31, 0xE);
+	object_set_default_verb(0x31, 0x2C);
+	schedule_event(1, 7);
+	schedule_event(3, 0xC);
+	v.light_room = v.current_room;
+	RoomItem_Draw(0x10);
+	set_room_music(v.current_room);
+	call_object_handler(v.current_room, 0x19);
+	call_object_handler(v.current_room, 9);
+	wputchar(0xB);
+	object_set_attr(v.current_room, 6);
+	object_set_attr(v.current_room, 5);
+}
+
 void Game::executeCommand(int verb, int dobj, int iobj) {
 	Vars &v = state.v;
 	rt.actor_obj = rt.player_obj;
@@ -142,6 +159,7 @@ void Game::executeCommand(int verb, int dobj, int iobj) {
 	advance_time(rt.word_85222, 0);
 	rt.word_85222 = 1;
 	v.turn_counter++;
+	RoomItem_Draw(0x20);
 }
 
 int Game::go_to_room(int room) {

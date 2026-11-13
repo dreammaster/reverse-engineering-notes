@@ -28,6 +28,13 @@ public:
 	/** Clears the window to the background colour and puts the pen at the start. */
 	void clear(Surface &s);
 
+	/** Moves the bottom edge (the window grows over what lies below it). */
+	void setBottom(int y2) { _y2 = y2; }
+	/** True once the window had to scroll (the text did not fit). */
+	bool scrolled() const { return _scrolled; }
+	/** The pen back at the start of the window, without touching the pixels. */
+	void home() { _xpos = _font->xCenter(); _ypos = _font->yCenter(); _scrolled = false; }
+
 	int penX() const { return _left + _xpos; }
 	int penY() const { return _y1 + _ypos; }
 
@@ -37,6 +44,7 @@ private:
 
 	const Font *_font;
 	int _x1, _y1, _x2, _y2, _left, _fg, _bg, _xpos, _ypos;
+	bool _scrolled;
 };
 
 } // namespace Legend

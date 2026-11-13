@@ -69,13 +69,19 @@ void MainScreen::drawFrame(Surface &s) const {
 	}
 }
 
-void MainScreen::drawVerbs(Surface &s, const std::vector<std::string> &verbs) const {
+void MainScreen::drawVerbs(Surface &s, const std::vector<std::string> &verbs, int selected) const {
 	int y = 4;
 	for (size_t i = 0; i < verbs.size(); i++) {
 		_font1.drawText(s, 2 + 1, y + 1, verbs[i], 0);
-		_font1.drawText(s, 2, y, verbs[i], 15);
+		_font1.drawText(s, 2, y, verbs[i], (int)i == selected ? 16 : 15);
 		y += _font1.lineHeight();
 	}
+}
+
+void MainScreen::restoreMarble(Surface &s, int x1, int y1, int x2, int y2) const {
+	for (int y = y1; y <= y2; y++)
+		for (int x = x1; x <= x2; x++)
+			s.put(x, y, _marble.pixels[(size_t)y * _marble.width + x]);
 }
 
 void MainScreen::drawCompassArrows(Surface &s, unsigned exits) const {

@@ -7,6 +7,7 @@
 #define XANTH_DISPLAY_H
 
 #include "common/files.h"
+#include "legend/rgn.h"
 #include "legend/surface.h"
 #include "legend/textwindow.h"
 #include "xanth/game.h"
@@ -28,6 +29,14 @@ public:
 	void setVerbs(const std::vector<std::string> &verbs) { _verbs = verbs; }
 	/** Lets `ms` milliseconds pass for the animations of the room (update_animation: frame deltas are exclusive-ored onto the picture window when their time has come). */
 	void advance(unsigned ms);
+	/** The object under a point of the screen (a hotspot of the room picture), 0 if none. */
+	int objectAt(int x, int y);
+	/** The verb list entry under a point (index into the verbs set with setVerbs), -1 if none. */
+	int verbAt(int x, int y) const;
+	/** Marks a verb of the list (yellow) or none (-1). */
+	void selectVerb(int index);
+	/** The start of a command (execute_command): the text window is emptied (and shrunk again if it had grown). */
+	void beginCommand();
 	/** RoomItem_Draw(0x10): the whole interface, the room and the text window. */
 	void redrawAll();
 
@@ -41,6 +50,8 @@ public:
 
 private:
 	void drawRoom();
+	void expandText();
+	void collapseText();
 	void popupWindowEvent();
 	int setupPicRegions(unsigned address, unsigned count);
 	void updateCompass();
@@ -74,6 +85,11 @@ private:
 	bool _drawn[64];                     // per record of the current overlay table: is its picture XORed into the pixels
 	unsigned _compass;                   // the arrows that are drawn
 	bool _frameDrawn;
+	bool _expanded;                      // the text window has grown over the inventory
+	std::vector<byte> _below;            // what it covers
+	int _selectedVerb;
+	Legend::RgnFile _rgn;
+	int _rgnFile;
 };
 
 } // namespace Xanth

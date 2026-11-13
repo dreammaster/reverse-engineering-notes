@@ -9,6 +9,7 @@ void fillArea(Surface &s, int x1, int y1, int x2, int y2, byte color) {
 	s.fillRect(Common::Rect((int16)x1, (int16)y1, (int16)(x2 + 1), (int16)(y2 + 1)), color);
 }
 
+void lightenPixel(Surface &s, int x, int y);
 static void lighten(Surface &s, int x, int y) {
 	int v = s.get(x, y) + kLighten;
 	s.put(x, y, (byte)(v > kRampHigh ? kRampHigh : v));
@@ -17,6 +18,10 @@ static void lighten(Surface &s, int x, int y) {
 static void darken(Surface &s, int x, int y) {
 	int v = s.get(x, y) - kDarken;
 	s.put(x, y, (byte)(v < kRampLow ? kRampLow : v));
+}
+
+void lightenPixel(Surface &s, int x, int y) {
+	lighten(s, x, y);
 }
 
 void bevelFrame(Surface &s, int x1, int y1, int x2, int y2) {

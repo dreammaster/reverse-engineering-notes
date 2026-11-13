@@ -482,6 +482,29 @@ def main():
         for i in range(0, len(data), 24):
             rows.append(",".join("0x%02X" % c for c in data[i:i + 24]) + ",")
         write(os.path.join(out_dir, "exe_tables.inc"), NL.join(rows) + NL)
+    # the verb table (seg045: 8-byte records {name, preposition, argument count, verb id}) and the list of verbs the interface starts with
+    if ctx.image:
+        import struct
+        base = 0x32F60
+        vrows = [HDR.replace("Game", "game") + " The verb table of the original: {id, name, preposition (or 0), number of objects}."]
+        for i in range(89):
+            nm, prep, nobj, vid = struct.unpack_from("<HHHH", ctx.image, base + 8 * i)
+            name = ctx.dseg_string(nm)
+            pr = ctx.dseg_string(prep) if prep else None
+            if name is None:
+                raise SystemExit("verb %d: no name at %d" % (vid, nm))
+            vrows.append('{%d, "%s", %s, %d},' % (vid, name, '"%s"' % pr if pr else "nullptr", nobj))
+        pat = b"D" + bytes(1) + b"8" + bytes(1) + bytes([0x13, 0, 0x2C, 0, 8, 0, 0x45, 0, 0x26, 0, 0, 0])
+        at = ctx.image.find(pat)
+        words = []
+        k = at
+        while struct.unpack_from("<H", ctx.image, k)[0]:
+            words.append(struct.unpack_from("<H", ctx.image, k)[0])
+            k += 2
+        vrows.append("// the verbs of the verb list at the start (show_intro: sub_1CD87 over the words at aD)")
+        vrows.append("// initial: " + ",".join(str(w) for w in words))
+        write(os.path.join(SRC, "xanth", "tables", "verb_table.inc"), NL.join(vrows) + NL)
+        write(os.path.join(SRC, "xanth", "tables", "initial_verbs.inc"), HDR.replace("Game", "game") + " The verbs of the verb list at the start." + NL + ",".join(str(w) for w in words) + NL)
     # the data segment's initial contents: static tables the logic indexes by pointer (mem16(DS, ...))
     if ctx.image:
         data = ctx.image[ctx.DSEG:ctx.DSEG + 0x6000]

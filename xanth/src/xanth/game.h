@@ -81,6 +81,8 @@ public:
 
 	/** A new game: the state of the original after its start-up. */
 	void newGame();
+	/** The start of play after the intro (sub_1DE58): the first room is drawn and entered, the first events are scheduled. */
+	void beginGame();
 
 	// ---- the turn (execute_command and what it calls)
 	/** Runs the command that the interface built (selected verb, direct and indirect object). Returns after the timed events have run. */
