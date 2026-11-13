@@ -21,6 +21,7 @@ void acl_init(AclVM *vm, const Mp2 *mp2) {
 	memset(vm, 0, sizeof(*vm));
 	vm->timer_delay = -1;
 	vm->energy = vm->energy_max = 100;
+	vm->cap = 0x20;
 	for (int t = 0; t < ACL_THINGS; t++) {
 		int len;
 		const uint8_t *r = mp2_thing(mp2, t, &len);
@@ -126,6 +127,21 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		vm->go.pending = 1;
 		vm->go.room = a[0]; vm->go.x = a[1]; vm->go.y = a[2]; vm->go.z = a[3];
 		break;
+	case 62: case 63: case 64: {                        /* set / add / compare room (0x48E), capacity (0x864) or energy (anything else), 1000:80AB */
+		unsigned addr = ((unsigned)a[0] << 8) | a[1];
+		int byte = (addr & 0x8000) != 0;
+		int which = (addr & 0x7FFF) == 0x48E ? 0 : (addr & 0x7FFF) == 0x864 ? 1 : 2;
+		int val = byte ? a[2] : (a[2] << 8) | a[3];
+		int *tv = which == 0 ? &vm->room_no : which == 1 ? &vm->cap : &vm->energy;
+		if (op == 64) {
+			int mode = (byte ? a[3] : a[4]) & 3, v = byte ? (*tv & 0xFF) : *tv;
+			test_res(vm, mode == 0 ? v > val : mode == 1 ? v < val : mode == 2 ? v == val : v != val);
+		} else {
+			int nv = op == 62 ? val : *tv + val;
+			*tv = byte ? nv & 0xFF : nv & 0xFFFF;
+		}
+		break;
+	}
 	case 85: {                                          /* score += signed word (negative: subtract the raw word, clamp at 0) */
 		unsigned wv = (unsigned)w & 0xFFFF;
 		if (wv < 0x8000) vm->score += wv;
@@ -194,10 +210,7 @@ static size_t exec_ops(AclVM *vm, const uint8_t *b, size_t len, size_t p, int en
 				n--;
 		}
 		if (execute && p + (size_t)n <= len) {
-			if (op == 62 || op == 63 || op == 64)
-				vm->skipped++;
-			else
-				do_op(vm, op, b + p, n);
+			do_op(vm, op, b + p, n);
 		}
 		p += (size_t)n;
 	}

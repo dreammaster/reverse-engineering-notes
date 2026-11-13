@@ -19,6 +19,7 @@ class VM:
         self.disarm = False
         self.unsupported = []
         self.messages = []
+        self.cap = 0x20                # ds:5A0 (capacity)
         self.energy = 100              # ds:23A (current) and ds:700 (maximum, LEVn.MP1 offset 60)
         self.energy_max = 100
         self.selected = 0              # ds:27A, the thing id of the currently selected / carried item
@@ -93,6 +94,23 @@ class VM:
         elif op == 2:                               # remove the current object (the engine entries are not modelled: flag 0x80 here)
             if cur is not None:
                 cur[3] |= 0x80
+        elif op in (62, 63, 64):                    # set / add / compare one of three variables: word at +0 (bit 15 = byte mode) = pseudo address
+            addr = (a[0] << 8) | a[1]
+            tgt = 'room' if (addr & 0x7FFF) == 0x48E else 'cap' if (addr & 0x7FFF) == 0x864 else 'energy'
+            byte = bool(addr & 0x8000)
+            val = a[2] if byte else (a[2] << 8) | a[3]
+            cur_v = self.room if tgt == 'room' else self.cap if tgt == 'cap' else self.energy
+            if op == 64:
+                mode = a[3] if byte else a[4]
+                v = cur_v & 0xFF if byte else cur_v
+                ok = (v > val, v < val, v == val, v != val)[mode & 3]
+                self.c605 = (self.c605 + 1) & 255 if ok else 0
+            else:
+                nv = val if op == 62 else cur_v + val
+                nv = nv & 0xFF if byte else nv & 0xFFFF
+                if tgt == 'room': self.room = nv
+                elif tgt == 'cap': self.cap = nv
+                else: self.energy = nv
         elif op == 85:                              # score += signed word (negative: subtract the raw word, clamp at 0)
             w = int.from_bytes(a[:2], 'big')
             self.score = (self.score + w) & 0xFFFFFFFF if w < 0x8000 else max(0, self.score - w)

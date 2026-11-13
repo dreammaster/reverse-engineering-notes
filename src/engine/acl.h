@@ -39,6 +39,7 @@ typedef struct {
 	int queue_n;                    /* room events queued by ops (op 9 -> type 19) */
 	struct { int type, arg; } queue[16];
 	uint32_t money, score;          /* ds:248 / ds:24C */
+	int cap;                        /* ds:5A0 */
 	int energy, energy_max;         /* ds:23A / ds:700 */
 	struct { int pending, room, x, y, z; } go;   /* op 37 (change room): destination, applied by the caller */
 	int next_level;                 /* op 51: level to load next (0 = none) */
