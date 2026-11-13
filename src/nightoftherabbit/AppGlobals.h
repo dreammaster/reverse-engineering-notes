@@ -164,7 +164,6 @@ extern bool g_bMoviePauseAllowed;
 // system.waysystemHook; the protected handler is called for each engine event after the registered ones, and survives a loaded game).
 extern std::string protectedEngineEventHandler;
 extern std::string subtitleHook;
-extern std::string g_waysystemHook;
 
 // Confirmed a real, named global (asm: g_loadingScreenLock): the loading screen draws from a thread of its own while the
 // game loads; whoever else changes the matrices of the graphics at that time holds this (TMovie::Finish()).

@@ -73,6 +73,8 @@ public:
 	/** Where the way ends: the last way point when walking along way points,
 	 *  else the destination ((-1, -1) when the way is empty). */
 	wxPoint GetDestination() const;
+	/** (Night of the Rabbit) The way is the list of points that a script gave: they are walked to from the first. */
+	void SetPath(const std::vector<wxPoint> &path);
 	/** The direction (degrees) from `position` to the destination. */
 	int GetDirectionToNextDestination(const wxPoint &position) const;
 	bool IsWalkingToWayPoint() const;

@@ -153,3 +153,8 @@ Found by running `nightoftherabbit_sdl.exe` in the game folder (set `SDL_RENDER_
 
 ### The `steam` and `galaxy` Lua objects
 Read in `lua_open_system` (`steam_meths`, `galaxy_meths`): `steam` has 21 functions in this build (`getFormFactor`, `isSteamDeck`, `getMotionData` and `showBindingPanel` are new against Deponia 1; Deponia 4 has the last two), `galaxy` has `dlcInstalled` and `getCurrentGameLanguage` in all three. They are made in `luaSystem.cpp` for all three games and answer as when the SDK does not run (no licenses, no DLC, no controllers, empty language); the SDKs are the vendors'. The scripts' `Platform` code asks `steam.*` only when `getProperty("steam_initialized")`.
+
+### The two hooks of `system` that were only stored
+- `system.subtitleHook = "name"`: `TFontManager::Signal` (print text lines) gives the text to that function and prints what it answers (asm 1493342 on; when the call fails the text stays). Used by the framework's `TextManager`.
+- `system.waysystemHook = "name"`: `TGCharacter::RegisterHookFunctionCalcWay` stores the name (static `HookCalculateWay`); `SetFreeDestination` asks it first, with the character, the destination and whether the triangles are used (debug name "CharacterCalculateWay"); an answer that is a list of points becomes the way (`TGWaySystem::SetPath`, new) and the rest of the function goes on as for a way that was found there. Used by the framework's `NavigationSystem`.
+- Run: with a savegame in the folder, New Game shows the framework's confirmation box ("Do you really want to start a new game?").

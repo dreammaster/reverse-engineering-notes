@@ -850,3 +850,8 @@ void argsort(const std::vector<int> &values, std::vector<size_t> &indices) {
 	for (const std::pair<size_t, const int *> &pair : pairs)
 		indices.push_back(pair.first);
 }
+
+void TGWaySystem::SetPath(const std::vector<wxPoint> &path) {
+	_path = path;
+	_pathIndex = path.empty() ? -1 : 0;
+}

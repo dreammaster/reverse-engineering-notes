@@ -108,6 +108,9 @@ public:
 	/** The registered name of the Lua function that chooses the animation index for a
 	 *  direction ("CharacterDirectionHook"). */
 	static void RegisterHookFunctionGetCharacterAnimationIndex(const wxString &name);
+	/** (Night of the Rabbit) The Lua function that finds a way for the character (`system.waysystemHook`): called with the character, the
+	 *  destination and whether the triangles are to be used, it answers a list of points (the way) or nothing. */
+	static void RegisterHookFunctionCalcWay(const wxString &name);
 
 	// Setting a character up.
 	/** Takes the outfit, comment set, walking sound and random time from the data. */
@@ -255,4 +258,5 @@ protected:
 	 *  direction (the original's recovered static of this name; only stored, see
 	 *  GetDirectionIndex()). */
 	static wxString HookFunctionGetCharacterAnimationIndex;
+	static wxString HookCalculateWay;
 };

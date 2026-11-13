@@ -75,7 +75,6 @@ bool CanLoseFocus = true;
 bool g_bMoviePauseAllowed = true;
 std::string protectedEngineEventHandler;
 std::string subtitleHook;
-std::string g_waysystemHook;
 wxCriticalSection g_loadingScreenLock;
 unsigned int lastFrameEnd = 0;
 float fps = 0.0f;

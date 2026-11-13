@@ -20,6 +20,7 @@
 #include "vsplayer/control/gameControl.h"
 #include "vscommon/scripting/argument.h"
 #include "vscommon/scripting/lua.h"
+#include "vscommon/scripting/visLua.h"
 #include "vstables/fieldIds.h"
 #include "vstables/visionaireGame.h"
 
@@ -42,6 +43,7 @@ static const int kExecuteLeaveArea = 0x1E;
 wxPoint failedPoint;
 
 wxString TGCharacter::HookFunctionGetCharacterAnimationIndex;
+wxString TGCharacter::HookCalculateWay;
 
 // Confirmed (asm lines 176344-176365): the smallest of the three ways round the circle.
 int diff(int first, int second) {
@@ -65,6 +67,11 @@ int mirror(int direction) {
 // Confirmed (asm lines 178316-178323).
 void TGCharacter::RegisterHookFunctionGetCharacterAnimationIndex(const wxString &name) {
 	HookFunctionGetCharacterAnimationIndex = name;
+}
+
+// Confirmed (Night of the Rabbit, TGCharacter::RegisterHookFunctionCalcWay).
+void TGCharacter::RegisterHookFunctionCalcWay(const wxString &name) {
+	HookCalculateWay = name;
 }
 
 // Confirmed (asm lines 178993-179152)
@@ -1524,7 +1531,41 @@ void TGCharacter::SetFreeDestination(wxPoint destination, bool keepDestinationOb
 
 	int previousDirection = _directionIndex;
 
-	if (useTriangles) {
+	// Confirmed (Night of the Rabbit, asm 161671-161900): when a script has registered a function for the way, it is asked first (debug name
+	// "CharacterCalculateWay"): with the answer, a list of points, that is the way; with none the way is found as always.
+	bool hooked = false;
+
+	if (!HookCalculateWay.IsEmpty()) {
+		TArgument characterArgument;
+		TArgument destinationArgument;
+		TArgument trianglesArgument;
+		TArgument answer;
+
+		characterArgument.Set(_objRef);
+		destinationArgument.Set(destination);
+		trianglesArgument.Set(useTriangles);
+		answer.SetType(TArgType::kPointList);
+
+		std::vector<TArgument *> arguments = {&characterArgument, &destinationArgument, &trianglesArgument};
+		std::vector<TArgument *> results = {&answer};
+
+		LuaDebugName("CharacterCalculateWay");
+
+		if (LuaExecuteFunction(std::string(HookCalculateWay.mb_str()), arguments, results)) {
+			_waySystem.SetPath(answer.GetPointList());
+			_objRef.SetValue(kCharacterDestination, _waySystem.GetDestination(), TSendEventEnum::kSendEvent);
+
+			int angle = _waySystem.GetDirectionToNextDestination(_position);
+
+			_directionIndex = GetDirectionIndex(angle, TCharacterAnimEnum::kNone);
+			CheckTurning(angle);
+			hooked = true;
+		}
+	}
+
+	if (hooked) {
+		// (the rest is as after a way that was found here)
+	} else if (useTriangles) {
 		if (_waySystem.CalculateWayTriangles(_position, destination)) {
 			_objRef.SetValue(kCharacterDestination, _waySystem.GetDestination(), TSendEventEnum::kNoEvent);
 			CheckTurning(_waySystem.GetDirectionToNextDestination(_position));

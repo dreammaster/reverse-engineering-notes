@@ -4,6 +4,8 @@
 #include "vscommon/cfont.h"
 #include "TSignalData.h"
 #include "datastruct/visionaireobject.h"
+#include "vscommon/scripting/argument.h"
+#include "vscommon/scripting/visLua.h"
 
 TFontManager::~TFontManager() {
 	for (TCFont *font : _fonts)
@@ -116,9 +118,26 @@ void TFontManager::Signal(const TSignalData &signal, TSignalData &result) {
 		auto it = _fontsById.find(signal.fontId);
 		_currentFont = it != _fontsById.end() ? it->second : nullptr;
 
+		// Confirmed (Night of the Rabbit, TFontManager::Signal): the script function set with system.subtitleHook gets the text and
+		// answers the text that is printed (when it runs; else the text stays).
+		wxString text = signal.text;
+
+		if (_currentFont != nullptr && !subtitleHook.empty()) {
+			TArgument textArgument;
+			TArgument answer;
+
+			textArgument.Set(signal.text);
+
+			std::vector<TArgument *> arguments = {&textArgument};
+			std::vector<TArgument *> results = {&answer};
+
+			if (LuaExecuteFunction(subtitleHook, arguments, results))
+				text = answer.GetString();
+		}
+
 		std::list<wxString> lines;
 		std::vector<int> lineWidths;
-		wxStringTokenizer tok(signal.text, L'\n');
+		wxStringTokenizer tok(text, L'\n');
 		while (tok.HasMoreTokens()) {
 			wxString line = tok.GetNextToken();
 			lines.push_back(line);

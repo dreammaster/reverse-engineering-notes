@@ -81,7 +81,7 @@ static int system_newindex(lua_State *state) {
 		else if (std::strcmp(name, "subtitleHook") == 0)
 			subtitleHook = value;
 		else if (std::strcmp(name, "waysystemHook") == 0)
-			g_waysystemHook = value;
+			TGCharacter::RegisterHookFunctionCalcWay(wxString(value));
 		return 0;
 	}
 
