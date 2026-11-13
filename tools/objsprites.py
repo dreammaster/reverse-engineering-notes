@@ -69,6 +69,8 @@ def parse_sprite_block(blk):
         p = 40 + sl
         if p + 2 <= len(blk) and struct.unpack('>H', blk[p:p + 2])[0] == 8 * nf:
             fr = _frames(blk, p + 8 * nf)
+            if not (fr and len(fr) == nf):
+                fr = _frames(blk[:-4], p + 8 * nf)           # creature sheets carry 4 extra bytes after the frames
             if fr and len(fr) == nf:
                 return blk[:32], fr, blk[32:p + 8 * nf]
     fr = _frames(blk, 32)

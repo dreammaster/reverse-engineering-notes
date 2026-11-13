@@ -95,6 +95,10 @@ class VM:
         elif op == 85:                              # score += signed word (negative: subtract the raw word, clamp at 0)
             w = int.from_bytes(a[:2], 'big')
             self.score = (self.score + w) & 0xFFFFFFFF if w < 0x8000 else max(0, self.score - w)
+        elif op == 36 and r is not None:            # spawn: [id16] x y z room (FE = current): modelled as placing the thing there (the original copies the record)
+            room = self.room if a[5] == 0xFE else a[5]
+            r[0], r[1], r[2] = a[2], a[3], a[4]
+            r[10] = room
         elif op == 41 and r is not None:            # move a thing: [id16] room x y z (room 0xFE = current); another room: position + flag 0x08 (pending)
             room = self.room if a[2] == 0xFE else a[2]
             r[0], r[1], r[2] = a[3], a[4], a[5]

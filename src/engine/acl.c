@@ -125,6 +125,12 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		else vm->score = vm->score > wv ? vm->score - wv : 0;
 		break;
 	}
+	case 36:                                            /* spawn [id16] x y z room: the original copies the thing record and queues a spawn request; here the thing is placed */
+		if (f && n >= 6 && tid >= 0 && tid < ACL_THINGS) {
+			vm->pos[3 * tid] = a[2]; vm->pos[3 * tid + 1] = a[3]; vm->pos[3 * tid + 2] = a[4];
+			vm->room[tid] = a[5] == 0xFE ? (uint8_t)vm->room_no : a[5];
+		}
+		break;
 	case 41:                                            /* move a thing: [id16] room x y z (0xFE = current room); another room: flag 0x08 */
 		if (f && n >= 6 && tid >= 0 && tid < ACL_THINGS) {
 			int room = a[2] == 0xFE ? vm->room_no : a[2];

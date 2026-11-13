@@ -68,6 +68,13 @@ static int parse_block(const uint8_t *b, size_t n, ObjSprite *sp) {
 		size_t q = 40 + be16(b + 34);
 		if (q + 2 <= n && be16(b + q) == 8 * nf) {
 			cnt = parse_frames(b, n, q + 8 * nf, &fr);
+			if (cnt != (int)nf) {                      /* creature sheets carry 4 extra bytes after the frames */
+				for (int i = 0; i < cnt; i++)
+					free(fr[i].pixels);
+				free(fr);
+				fr = NULL;
+				cnt = n > 4 ? parse_frames(b, n - 4, q + 8 * nf, &fr) : 0;
+			}
 			if (cnt == (int)nf)
 				p = q + 8 * nf;
 			else if (cnt) {
