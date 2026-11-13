@@ -36,19 +36,21 @@ int main() {
 	for (int i = 0; i < Framebuffer::WIDTH * Framebuffer::HEIGHT; ++i)
 		lit += screen.pixels()[i] != 0;
 	CHECK(lit > 5000); // the picture is there
-	// the introduction: a page for each line of the three scenes, any key goes on, the end is the menu again; the credits only say a line; Create Character asks for a name
-	CHECK(menu.handleKey('1') && menu.state() == MdFrontEnd::INTRO && menu.introPages() > 30);
+	// the introduction is the script of MARTIAN.EXE's routine: it fades in on the study, shows lines, and ends by itself (a key ends it too)
+	CHECK(menu.handleKey('1') && menu.state() == MdFrontEnd::INTRO && menu.animating());
+	menu.tick(2000);
 	menu.render(screen);
 	lit = 0;
 	for (int i = 0; i < Framebuffer::WIDTH * 128; ++i)
 		lit += screen.pixels()[i] != 0;
 	CHECK(lit > 4000); // a backdrop
-	size_t pages = menu.introPages();
-	for (size_t i = 0; i + 1 < pages; ++i)
-		menu.handleKey(' ');
-	CHECK(menu.state() == MdFrontEnd::INTRO && menu.introPage() == pages - 1);
-	menu.handleKey(' ');
-	CHECK(menu.state() == MdFrontEnd::MENU);
+	CHECK(menu.intro() && !menu.intro()->lines().empty() && menu.intro()->lines()[0] == "Come in.");
+	menu.tick(4000);
+	CHECK(menu.intro()->lines().size() >= 1 && menu.intro()->lines()[0] != "Come in.");
+	int guard = 0;
+	while (menu.animating() && guard++ < 2000)
+		menu.tick(500);
+	CHECK(menu.state() == MdFrontEnd::MENU && guard < 2000 && guard > 100); // some ten minutes of pictures
 	CHECK(menu.handleKey('1') && menu.state() == MdFrontEnd::INTRO && menu.handleKey(KEY_ESC) && menu.state() == MdFrontEnd::MENU);
 	CHECK(menu.handleKey('4') && menu.state() == MdFrontEnd::MENU);
 	CHECK(menu.handleKey('2') && menu.state() == MdFrontEnd::NAME);

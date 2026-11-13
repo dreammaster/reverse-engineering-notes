@@ -51,110 +51,17 @@ MdFrontEnd::MdFrontEnd(const std::string &dir) : _dir(dir) {
 		_font.loadWou(fontData);
 }
 
-// The lines the introduction says (SCENETXT.LZC, items 1-3 for the three scenes) are separated by 0x0D and a '^' breaks one inside; the backdrops of a scene are its 320 x 128 pictures
-bool MdFrontEnd::loadIntro() {
-	if (!_pages.empty())
-		return true;
-	Bytes raw, palRaw, textRaw;
-	LibN textLib;
-	if (!readFile(joinPath(_dir, "MDPAL"), palRaw) || !_gamePalette.load(palRaw) || !readFile(joinPath(_dir, "SCENETXT.LZC"), textRaw) || !textLib.load(textRaw, false))
-		return false;
-	static const char *const FILES[3] = {"SCENE1.LZC", "SCENE2.LZC", "SCENE3.LZC"};
-	for (int scene = 0; scene < 3; ++scene) {
-		LibN lib;
-		Bytes sraw, item, text;
-		if (!readFile(joinPath(_dir, FILES[scene]), sraw) || !lib.load(sraw, false) || !textLib.get((size_t)scene + 1, text))
-			return false;
-		std::vector<size_t> backdrops;
-		for (size_t i = 1; i < lib.count(); ++i) {
-			if (!lib.present(i) || !lib.get(i, item))
-				continue;
-			for (size_t k = 0; k < 4; ++k) {
-				Shape s;
-				if (nested(item, k, s) && s.width == 320 && s.height == 128) {
-					_pictures.push_back(s);
-					backdrops.push_back(_pictures.size() - 1);
-				}
-			}
-		}
-		std::vector<std::string> captions;
-		std::string line;
-		for (uint8_t c : text) {
-			if (c == 0x0D) {
-				if (!line.empty())
-					captions.push_back(line);
-				line.clear();
-			} else {
-				line += c == '^' ? '\n' : (char)c;
-			}
-		}
-		if (!line.empty())
-			captions.push_back(line);
-		if (backdrops.empty())
-			continue;
-		for (size_t i = 0; i < captions.size(); ++i) {
-			Page p;
-			p.picture = backdrops[i * backdrops.size() / captions.size()];
-			p.text = captions[i];
-			_pages.push_back(p);
-		}
+void MdFrontEnd::tick(unsigned ms) {
+	if (_state == INTRO && _intro) {
+		_intro->tick(ms);
+		if (_intro->finished())
+			_state = MENU;
 	}
-	return !_pages.empty();
-}
-
-// the text broken into lines of at most 300 pixels, at the spaces and at the newlines that stand for the original's '^'
-void MdFrontEnd::wrap(const std::string &text, std::vector<std::string> &lines) const {
-	std::string cur, word;
-	int width = 0, wordWidth = 0;
-	auto endWord = [&]() {
-		if (word.empty())
-			return;
-		int space = cur.empty() ? 0 : _font.width(' ');
-		if (!cur.empty() && width + space + wordWidth > 300) {
-			lines.push_back(cur);
-			cur.clear();
-			width = 0;
-			space = 0;
-		}
-		cur += (cur.empty() ? "" : " ") + word;
-		width += space + wordWidth;
-		word.clear();
-		wordWidth = 0;
-	};
-	for (char c : text) {
-		if (c == '\n') {
-			endWord();
-			lines.push_back(cur);
-			cur.clear();
-			width = 0;
-		} else if (c == ' ') {
-			endWord();
-		} else {
-			word += c;
-			wordWidth += _font.width((uint8_t)c);
-		}
-	}
-	endWord();
-	if (!cur.empty())
-		lines.push_back(cur);
 }
 
 void MdFrontEnd::render(Framebuffer &screen) {
-	if (_state == INTRO && _page < _pages.size()) {
-		screen.setPalette(_gamePalette.rgb);
-		screen.clear(0);
-		const Shape &s = _pictures[_pages[_page].picture];
-		screen.blit(0, 0, &s.pixels[0], 320, 128, 320);
-		std::vector<std::string> lines;
-		wrap(_pages[_page].text, lines);
-		int y = 134;
-		for (const std::string &l : lines) {
-			int w = 0;
-			for (char c : l)
-				w += _font.width((uint8_t)c);
-			Ui::drawText(screen, _font, (320 - w) / 2, y, l, 0xE6); // APPROX(89): the colour of the caption
-			y += _font.height() + 1;
-		}
+	if (_state == INTRO && _intro) {
+		_intro->render(screen);
 		return;
 	}
 	screen.setPalette(_palette);
@@ -178,8 +85,8 @@ bool MdFrontEnd::handleKey(int key) {
 		return false;
 	}
 	if (_state == INTRO) {
-		if (key == KEY_ESC || ++_page >= _pages.size())
-			_state = MENU;
+		_intro->stop(); // any key ends it, as in the original
+		_state = MENU;
 		return true;
 	}
 	if (_state == NAME) {
@@ -215,8 +122,8 @@ bool MdFrontEnd::handleKey(int key) {
 	}
 	switch (choice) {
 	case 0:
-		if (loadIntro()) {
-			_page = 0;
+		_intro.reset(new MdIntro(_dir));
+		if (_intro->ok()) {
 			_state = INTRO;
 		} else {
 			_message = "The introduction's files are missing.";

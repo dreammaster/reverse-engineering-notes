@@ -131,7 +131,25 @@ int main(int argc, char **argv) {
 		while (running) {
 			front.render(screen);
 			backend->present(screen);
-			running = front.handleKey(backend->waitKey());
+			int key;
+			if (front.animating()) { // the introduction goes on by itself, a key ends it
+				unsigned last = backend->ticks();
+				while ((key = backend->pollKey()) == Ultima6::KEY_NONE) {
+					unsigned now = backend->ticks();
+					front.tick(now - last);
+					last = now;
+					if (!front.animating())
+						break;
+					front.render(screen);
+					backend->present(screen);
+					backend->delay(15);
+				}
+				if (key == Ultima6::KEY_NONE)
+					continue;
+			} else {
+				key = backend->waitKey();
+			}
+			running = front.handleKey(key);
 		}
 		if (!front.wantsGame()) {
 			if (shot)
