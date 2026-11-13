@@ -39,6 +39,8 @@ typedef struct {
 	int energy, energy_max;         /* ds:23A / ds:700 */
 	struct { int pending, room, x, y, z; } go;   /* op 37 (change room): destination, applied by the caller */
 	int next_level;                 /* op 51: level to load next (0 = none) */
+	struct { int thing, type; } tev[8];   /* thing events queued by ops (op 50 -> event 23) */
+	int tev_n, tev_depth;
 	int msg_n;                      /* op 28 (say): string ids waiting to be shown */
 	int msg[16];
 	int timer_arg, timer_delay;     /* one-shot room timer (op 42): delay in timer units, -1 = none */

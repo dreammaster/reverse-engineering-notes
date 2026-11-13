@@ -24,6 +24,7 @@ class VM:
         self.selected = 0              # ds:27A, the thing id of the currently selected / carried item
         self.reg = 0                   # ds:704, the 'random / variable' register
         self.rand = None               # callable(lo, hi) -> int (the game uses its own seeded generator)
+        self.tqueue = []               # thing events queued by ops: (thing id, type)  (op 50 -> 23)
         self.queue = []                # room events queued by ops: (type, arg)   (op 09 -> type 19)
         self.timer = None              # one-shot room timer set by op 2A: (arg, delay)   -> event 20
 
@@ -95,6 +96,8 @@ class VM:
         elif op == 85:                              # score += signed word (negative: subtract the raw word, clamp at 0)
             w = int.from_bytes(a[:2], 'big')
             self.score = (self.score + w) & 0xFFFFFFFF if w < 0x8000 else max(0, self.score - w)
+        elif op == 50 and r is not None:            # queue event 23 for the thing (FFFF = current)
+            self.tqueue.append((self.cur if w == 0xFFFF else w, 23))
         elif op == 36 and r is not None:            # spawn: [id16] x y z room (FE = current): modelled as placing the thing there (the original copies the record)
             room = self.room if a[5] == 0xFE else a[5]
             r[0], r[1], r[2] = a[2], a[3], a[4]
@@ -233,6 +236,10 @@ def fire_event(vm, entries, typ, arg=0, armed=None, cur=None, follow=True):
             run_ops(vm, h['ops'])
             if follow:
                 pending.extend(vm.queue)
+            for (tt, ty) in vm.tqueue:                  # events queued for the same thing run on its handler list
+                if tt == vm.cur:
+                    pending.append((ty, 0))
+            vm.tqueue = []
             if not h['keep'] or vm.disarm:
                 armed[i] = False
     return armed

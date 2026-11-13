@@ -120,6 +120,7 @@ typedef struct RoomView_ {
 	int dead_timer;            /* > 0: the player died (energy 0), counts game steps until the level restarts */
 	RankTable ranks; int ranks_ok; unsigned six_fa;   /* status dialog data (MP1) */
 	int show_status;           /* 'I': the character status dialog */
+	int creature_tick;
 	int label_id;              /* name shown above the room name: string id of the last touched object (-1 none) */
 	AclVM vm;                  /* script state: thing flags / variables */
 	TadRt tad;                 /* native routines of ROUTINEn.TAD (timers) */
@@ -543,6 +544,53 @@ static void walker_sync_boxes(Walker *wk, RoomView *rv) {
 	}
 }
 
+/* Creatures (approximation): things whose sprite header byte 0x16 is 3 and whose tail[5] bit 7 is clear are "active" (1000:6041, at most 6); every second game
+ * step the TAD behaviour routine of tail[1] (index + 9) gives a velocity towards the player (verified code, tad_run_behaviour) which is applied as a step of one
+ * unit per axis with the game's collision test; the real velocity application of the engine is not decoded. Overlap with the player raises event 9 (argument 0). */
+static void creatures_step(Walker *wk, RoomView *rv) {
+	if (!rv->tad.loaded || (++rv->creature_tick & 1))
+		return;
+	int active = 0, moved = 0;
+	for (int i = 0; i < rv->ro.n && active < 6; i++) {
+		RoomObj *o = &rv->ro.o[i];
+		if (o->sp->header[0x16] != 3 || (rv->vm.tail[o->thing][5] & 0x80) || (rv->vm.flags[o->thing] & 0x80))
+			continue;
+		active++;
+		int vx, vy;
+		if (tad_run_behaviour(&rv->tad, &rv->vm, rv->vm.tail[o->thing][1], o->x1, o->y1, wk->x1, wk->y1, &vx, &vy) != 0)
+			continue;
+		int dx = vx > 0 ? 1 : vx < 0 ? -1 : 0, dy = vy > 0 ? 1 : vy < 0 ? -1 : 0;
+		int gw, gh, gx, gy;
+		if (!roomview_geom(rv, &gw, &gh, &gx, &gy))
+			return;
+		for (int axis = 0; axis < 2; axis++) {
+			int ddx = axis == 0 ? dx : 0, ddy = axis == 1 ? dy : 0;
+			if (!ddx && !ddy) continue;
+			ColResult cr;
+			collision_test(&wk->world, o->x1 + ddx, o->y1 + ddy, o->z0, o->xs, o->ys, o->zs, o->thing, 0, &cr);
+			if (cr.zf) {
+				o->x1 += ddx; o->y1 += ddy;
+				rv->vm.pos[3 * o->thing] = (uint8_t)o->x1; rv->vm.pos[3 * o->thing + 1] = (uint8_t)o->y1;
+				rv->pos_seen[3 * o->thing] = rv->vm.pos[3 * o->thing]; rv->pos_seen[3 * o->thing + 1] = rv->vm.pos[3 * o->thing + 1];
+				roomobj_moved(o, gx, gy);
+				moved = 1;
+			}
+		}
+		/* contact with the player: boxes overlap (the player's box is 7 x 7 x 30, far corner x1, y1) */
+		int ox0 = o->x1 - o->xs, oy0 = o->y1 - o->ys;
+		if (wk->x1 >= ox0 && wk->x1 - PL_XS <= o->x1 && wk->y1 >= oy0 && wk->y1 - PL_YS <= o->y1) {
+			rv->vm.queue_n = 0;
+			acl_thing_event(&rv->vm, &rv->mp2, o->thing, 9, 0);
+			for (int q = 0; q < rv->vm.queue_n; q++)
+				acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+			rv->pending_rebuild |= rv_changed(rv);
+			roomview_flush_messages(rv);
+		}
+	}
+	if (moved)
+		walker_sync_boxes(wk, rv);
+}
+
 /* free spot near (cx, cy): spiral search for a position where the player's box overlaps nothing and is inside the room */
 static int walker_find_free(Walker *wk, int cx, int cy) {
 	for (int r = 0; r < 40; r++)
@@ -717,6 +765,8 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (rv->restarting) return;
 	roomview_tick(rv);
 	wk->tick++;
+	if ((wk->tick & 1) == 0 && wk->world_key == room_key(rv) && !rv->menu_open && rv->dead_timer == 0)
+		creatures_step(wk, rv);
 	if (wk->world_key != room_key(rv)) {
 		walker_world(wk, rv);
 		walker_place_default(wk, rv);

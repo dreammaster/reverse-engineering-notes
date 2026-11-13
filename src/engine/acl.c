@@ -125,6 +125,9 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		else vm->score = vm->score > wv ? vm->score - wv : 0;
 		break;
 	}
+	case 50:                                            /* queue event 23 for the thing (FFFF = current): verified with the oracle (events + (23, record, 0)) */
+		if (vm->tev_n < 8 && tid >= 0 && tid < ACL_THINGS) { vm->tev[vm->tev_n].thing = tid; vm->tev[vm->tev_n++].type = 23; }
+		break;
 	case 36:                                            /* spawn [id16] x y z room: the original copies the thing record and queues a spawn request; here the thing is placed */
 		if (f && n >= 6 && tid >= 0 && tid < ACL_THINGS) {
 			vm->pos[3 * tid] = a[2]; vm->pos[3 * tid + 1] = a[3]; vm->pos[3 * tid + 2] = a[4];
@@ -208,6 +211,20 @@ static int cond_match(int type, const uint8_t *cond, int arg) {
 	}
 }
 
+void acl_thing_event(AclVM *vm, const Mp2 *mp2, int thing, int type, int arg);
+static void flush_thing_events(AclVM *vm, const Mp2 *mp2) {
+	if (vm->tev_depth >= 4)
+		return;
+	vm->tev_depth++;
+	while (vm->tev_n > 0) {
+		int tt = vm->tev[0].thing, ty = vm->tev[0].type;
+		memmove(&vm->tev[0], &vm->tev[1], sizeof(vm->tev[0]) * (size_t)(vm->tev_n - 1));
+		vm->tev_n--;
+		acl_thing_event(vm, mp2, tt, ty, 0);
+	}
+	vm->tev_depth--;
+}
+
 void acl_room_event(AclVM *vm, const Mp2 *mp2, int room, int type, int arg) {
 	if (room < 0 || room >= mp2->sec[0].count || !mp2->sec[0].rec[room])
 		return;
@@ -242,6 +259,7 @@ void acl_room_event(AclVM *vm, const Mp2 *mp2, int room, int type, int arg) {
 			p += (size_t)ln;
 		}
 	}
+	flush_thing_events(vm, mp2);
 }
 
 void acl_thing_event(AclVM *vm, const Mp2 *mp2, int thing, int type, int arg) {
@@ -266,6 +284,7 @@ void acl_thing_event(AclVM *vm, const Mp2 *mp2, int thing, int type, int arg) {
 		}
 		p += (size_t)ln;
 	}
+	flush_thing_events(vm, mp2);
 }
 
 void acl_fire_room(AclVM *vm, const Mp2 *mp2, int room, int event) { acl_room_event(vm, mp2, room, event, 0); }
