@@ -117,6 +117,7 @@ typedef struct RoomView_ {
 	int energy_max_cfg;        /* from LEVn.MP1 */
 	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
 	int carry_pending, carry_energy; uint32_t carry_money, carry_score;   /* stats carried into the next level */
+	int room_snd[8], nroom_snd, snd_key; /* sounds of the room's creatures (stopped when the room changes) */
 	int push_snd;              /* looping sound of the object being pushed (0 = none) */
 	int restarting;            /* level torn down after a death; the next draw reloads it */
 	int dead_timer;            /* > 0: the player died (energy 0), counts game steps until the level restarts */
@@ -244,6 +245,8 @@ static struct { int on, x1, y1, z0, z1; } g_plbox;
 static void roomview_unload(RoomView *rv) {
 	rv->ro_key = 0;
 	rv->push_snd = 0;
+	rv->nroom_snd = 0;
+	rv->snd_key = 0;
 	snd_silence();
 	if (rv->ok) {
 		tiles_free(&rv->tiles);
@@ -547,6 +550,21 @@ static void walker_world(Walker *wk, RoomView *rv) {
 	if (!roomview_geom(rv, &w, &h, &gx, &gy))
 		return;
 	roomview_ensure_objs(rv, gx, gy);
+	/* 1000:51E2 / 5114: an active object (creature) of the room plays the sound in its sprite header byte 1Eh (FFh and 3Bh = none) while it is in the room */
+	if (rv->snd_key != room_key(rv)) {
+	for (int i = 0; i < rv->nroom_snd; i++) snd_stop(rv->room_snd[i]);
+	rv->nroom_snd = 0;
+	rv->snd_key = room_key(rv);
+	for (int i = 0, active = 0; i < rv->ro.n && active < 6; i++) {
+		const RoomObj *o = &rv->ro.o[i];
+		if (o->sp->header[0x16] != 3 || (rv->vm.tail[o->thing][5] & 0x80) || (rv->vm.flags[o->thing] & 0x80)) continue;
+		active++;
+		int id = o->sp->header[0x1E];
+		if (id == 0xFF || id == 0x3B) continue;
+		snd_play(id);
+		if (rv->nroom_snd < 8) rv->room_snd[rv->nroom_snd++] = id;
+	}
+	}
 	const uint8_t *rec = rv->mp2.sec[0].rec[rv->room];
 	ColWorld *cw = &wk->world;
 	memset(cw, 0, sizeof(*cw));
