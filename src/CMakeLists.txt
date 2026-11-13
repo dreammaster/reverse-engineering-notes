@@ -24,6 +24,7 @@ add_library(cadaver_engine STATIC
   engine/message.c
   engine/x86.c
   engine/tad.c
+  engine/beeper.c
   engine/push.c
   engine/acl.c
   engine/gamefiles.c)

@@ -23,6 +23,10 @@ struct X86 {
 	uint16_t hook_cs, hook_ip;
 	X86Hook hook;
 	void *hook_user;
+	/* port I/O (sound drivers): out(port, value, width), in(port, width) */
+	void (*io_out)(void *user, unsigned port, unsigned v, int w);
+	unsigned (*io_in)(void *user, unsigned port, int w);
+	void *io_user;
 };
 
 void x86_init(X86 *c, uint8_t *mem);

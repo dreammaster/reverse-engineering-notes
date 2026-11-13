@@ -298,6 +298,18 @@ void x86_step(X86 *c) {
 		unsigned res = alu(c, op < 0x48 ? 0 : 5, *p, 1, 1);
 		c->fl = (uint16_t)((c->fl & ~CF) | cf);
 		*p = (uint16_t)res;
+	} else if (op == 0x06 || op == 0x0E || op == 0x16 || op == 0x1E) {
+		x86_push(c, *SEG(c, (op >> 3) & 3));
+	} else if (op == 0x07 || op == 0x17 || op == 0x1F) {
+		*SEG(c, (op >> 3) & 3) = (uint16_t)x86_pop(c);
+	} else if (op == 0xE4 || op == 0xE5 || op == 0xEC || op == 0xED) {
+		int w = op & 1;
+		unsigned port = op < 0xE8 ? fetch8(c) : c->dx;
+		setreg(c, 0, w, c->io_in ? c->io_in(c->io_user, port, w) : 0);
+	} else if (op == 0xE6 || op == 0xE7 || op == 0xEE || op == 0xEF) {
+		int w = op & 1;
+		unsigned port = op < 0xE8 ? fetch8(c) : c->dx;
+		if (c->io_out) c->io_out(c->io_user, port, reg(c, 0, w), w);
 	} else if (op >= 0x50 && op < 0x58) {
 		x86_push(c, (op & 7) != 4 ? *R16(c, op & 7) : (uint16_t)(c->sp - 2));
 	} else if (op >= 0x58 && op < 0x60) {
