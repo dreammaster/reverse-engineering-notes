@@ -1046,6 +1046,19 @@ int main(int argc, char **argv) {
 				checked++;
 				beeper_free(&b);
 			}
+			{ /* synthesis: sound id 7 = effect 8 sounds for 13 ticks (11466 samples at 44.1 kHz), then silence */
+				Beeper b;
+				static int16_t buf[44100];
+				if (beeper_init(&b, bin, bl, 44100) == 0) {
+					beeper_play(&b, 7);
+					beeper_render(&b, buf, 44100);
+					int first = 0, last = 0;
+					for (int i = 0; i < 44100; i++) if (buf[i]) { if (!first) first = i + 1; last = i + 1; }
+					if (first != 1 || last < 11000 || last > 12000) { printf("FAIL beeper render %s: %d..%d\n", bins[g], first, last); failed++; }
+					checked++;
+					beeper_free(&b);
+				}
+			}
 			if (bin != in) free(bin);
 			free(in);
 		}

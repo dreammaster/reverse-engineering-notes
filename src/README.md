@@ -2,7 +2,7 @@
 
 Work in progress: the data decoders, the full room picture (floor, walls, objects, animations, screen frame) and an exploration
 prototype (walk around, collide with objects, leave through the doors into the next room) work; scripts (ACL events, timers), the native TAD routines (timers), messages, labels, verb icons and the energy bar run; creatures,
-inventory, combat, level progression and sound are not implemented. Currently:
+inventory and combat are not implemented; sound (PC speaker, `BEEPER.BIN` on the interpreter) works for the triggers decoded so far. Currently:
 
 | File | |
 |---|---|
@@ -17,6 +17,7 @@ inventory, combat, level progression and sound are not implemented. Currently:
 | `engine/push.[ch]` | pushing objects |
 | `engine/x86.[ch]` | 8086 interpreter for the native routines of `ROUTINEn.TAD` / `.PAK` |
 | `engine/tad.[ch]` | TAD runtime: data-segment image, service table (energy, random, sound), countdown timers |
+| `engine/beeper.[ch]` | PC-speaker sound driver: `BEEPER.BIN` run on the interpreter (50 Hz tick), play/stop protocol of `1000:156C/1613`, square-wave synthesis |
 | `engine/message.[ch]` | message scrolls: wrapped text in a parchment box (ANDATA blocks 2 and 3) |
 | `engine/panel.[ch]` | `ANDATA.DAT` block 1 (the frame around the room view) and block 4 (status text: "DAY n", room name) |
 | `engine/intro.[ch]` | title scroll: `FONT2.SPR` text, `FLAME.DAT` flames over `LOADING2.PC1` |

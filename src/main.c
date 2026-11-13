@@ -24,6 +24,7 @@
 #include "engine/lng.h"
 #include "engine/message.h"
 #include "engine/tad.h"
+#include "engine/beeper.h"
 
 #include <SDL.h>
 #include <stdio.h>
@@ -116,6 +117,7 @@ typedef struct RoomView_ {
 	int energy_max_cfg;        /* from LEVn.MP1 */
 	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
 	int carry_pending, carry_energy; uint32_t carry_money, carry_score;   /* stats carried into the next level */
+	int push_snd;              /* looping sound of the object being pushed (0 = none) */
 	int restarting;            /* level torn down after a death; the next draw reloads it */
 	int dead_timer;            /* > 0: the player died (energy 0), counts game steps until the level restarts */
 	RankTable ranks; int ranks_ok; unsigned six_fa;   /* status dialog data (MP1) */
@@ -136,6 +138,31 @@ typedef struct RoomView_ {
 
 /* one 50 Hz timer tick: the game loop (and with it the object animation) steps every 2 ticks */
 static int room_key(const RoomView *rv) { return 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata; }
+/* ---- sound: BEEPER.BIN on the interpreter (engine/beeper.c); ids as the game's 1000:156C / 1000:1613 take them ---- */
+static Beeper g_snd;
+static int g_snd_ok, g_snd_log;
+static SDL_AudioDeviceID g_adev;
+static void snd_lock(int on) { if (g_adev) { if (on) SDL_LockAudioDevice(g_adev); else SDL_UnlockAudioDevice(g_adev); } }
+static void snd_play(int id) {
+	if (g_snd_log) fprintf(stderr, "SND play %d\n", id);
+	if (!g_snd_ok) return;
+	snd_lock(1); beeper_play(&g_snd, id); snd_lock(0);
+}
+static void snd_stop(int id) {
+	if (g_snd_log) fprintf(stderr, "SND stop %d\n", id);
+	if (!g_snd_ok) return;
+	snd_lock(1); beeper_stop(&g_snd, id); snd_lock(0);
+}
+/* level change / restart (1000:15EB): silence everything */
+static void snd_silence(void) {
+	if (!g_snd_ok) return;
+	snd_lock(1); beeper_silence(&g_snd); snd_lock(0);
+}
+static void snd_callback(void *u, Uint8 *stream, int len) { (void)u; beeper_render(&g_snd, (int16_t *)stream, len / 2); }
+static void game_sound(int id, void *u) { (void)u; snd_play(id); }
+/* ds:FED9: sound class of a pushed object (sprite header byte 1Dh) -> looping sound id */
+static const uint8_t push_sound[19] = {0x39, 0x10, 0x39, 0x33, 0x34, 0x39, 0x33, 0x39, 0x39, 0x39, 0x33, 0x39, 0x33, 0x39, 0x39, 0x34, 0x34, 0x34, 0x39};
+
 static int game_rand(int lo, int hi, void *u) {
 	(void)u;
 	static unsigned s = 12345;
@@ -216,6 +243,8 @@ static struct { int on, x1, y1, z0, z1; } g_plbox;
 
 static void roomview_unload(RoomView *rv) {
 	rv->ro_key = 0;
+	rv->push_snd = 0;
+	snd_silence();
 	if (rv->ok) {
 		tiles_free(&rv->tiles);
 		tiles_free(&rv->walls);
@@ -266,6 +295,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	}
 	acl_init(&rv->vm, &rv->mp2);
 	rv->vm.rand_range = game_rand;
+	rv->vm.sound = game_sound;
 	if (rv->tad.loaded) tad_free(&rv->tad);
 	{
 		uint8_t *tb; size_t tl;
@@ -759,6 +789,7 @@ static void menu_choose(RoomView *rv, int verb) {
 	} else if (verb == 3) {           /* 1000:31A3: open / close a chest; the content is placed on top of it (the original's collision-aware placement is approximated by raising z) */
 		int content = 0;
 		if (acl_chest_toggle(&rv->vm, &rv->mp2, t, &content)) {
+			snd_play(0x38);
 			if (content > 0 && content < ACL_THINGS) {
 				int len, cz = rv->vm.pos[3 * t + 2];
 				const uint8_t *cr = mp2_thing(&rv->mp2, content, &len);
@@ -780,7 +811,7 @@ static void menu_choose(RoomView *rv, int verb) {
 		const RoomObj *o = NULL;
 		for (int i = 0; i < rv->ro.n; i++) if (rv->ro.o[i].thing == t) { o = &rv->ro.o[i]; break; }
 		if (o && o->sp->header[0x17] == 7) acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
-		else if (t >= 0 && t < ACL_THINGS) rv->vm.flags[t] |= 0x80;
+		else if (t >= 0 && t < ACL_THINGS) { rv->vm.flags[t] |= 0x80; snd_play(0x0A); }
 	}
 	for (int q = 0; q < rv->vm.queue_n; q++)
 		acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
@@ -848,6 +879,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	}
 	if (rv->dead_timer == 0 && rv->vm.energy <= 0 && rv->ok && rv->vm.energy_max > 0) {   /* death (1000:81C8): the gods' message, then the game starts over */
 		rv->dead_timer = 150;
+		snd_play(0x1C);
 		if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 60;
 		roomview_flush_messages(rv);
 	}
@@ -878,7 +910,11 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	else if (keys & 4) { dir = DIR_LEFT; dx = -1; }
 	else if (keys & 2) { dir = DIR_DOWN; dy = 1; }
 	else if (keys & 1) { dir = DIR_UP; dy = -1; }
-	if (dir < 0) { wk->moving = 0; wk->anim = 0; return; }
+	if (dir < 0) {
+		wk->moving = 0; wk->anim = 0;
+		if (rv->push_snd) { snd_stop(rv->push_snd); rv->push_snd = 0; }
+		return;
+	}
 	wk->dir = dir;
 	wk->moving = 1;
 	wk->world.dirbits = (keys & 3) ? 1 : 0;
@@ -911,7 +947,22 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		}
 		if (nm) walker_sync_boxes(wk, rv);
 	}
-	if ((wk->tick / 2) % 3 == 0) wk->anim = (wk->anim + 1) & 3;
+	{
+		int want = 0;
+		if (st == PUSH_MOVED && nm > 0 && rv->ro.o[moved[0]].sp) {         /* 1000:121B0: looping scrape sound of the pushed object's class */
+			int cls = rv->ro.o[moved[0]].sp->header[0x1D];
+			want = cls < (int)sizeof(push_sound) ? push_sound[cls] : 0;
+		}
+		if (want != rv->push_snd) {
+			if (rv->push_snd) snd_stop(rv->push_snd);
+			if (want) snd_play(want);
+			rv->push_snd = want;
+		}
+	}
+	if ((wk->tick / 2) % 3 == 0) {
+		wk->anim = (wk->anim + 1) & 3;
+		if (wk->anim & 1) snd_play(0);                         /* the walking animation script's FC 00: a step every 6 game steps */
+	}
 }
 
 static int walk_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
@@ -1062,7 +1113,17 @@ int main(int argc, char **argv) {
 	if (load_scene(&g, scene, &scr) != 0)
 		return 1;
 
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+	g_snd_log = getenv("CAD_SNDLOG") != NULL;
+	{
+		uint8_t *bin; size_t bl;
+		if (gamefiles_read(&g, "beeper.bin", -1, &bin, &bl) == 0) {
+			uint8_t *un = NULL; size_t ul = 0;
+			if (bl > 4 && !memcmp(bin, "RNC\1", 4) && rnc1_unpack(bin, bl, &un, &ul) == 0) { free(bin); bin = un; bl = ul; }
+			g_snd_ok = beeper_init(&g_snd, bin, bl, 44100) == 0;
+			free(bin);
+		}
+	}
+	if (SDL_Init(SDL_INIT_VIDEO | ((g_snd_ok && !sim && !shot) ? SDL_INIT_AUDIO : 0)) != 0) {
 		fprintf(stderr, "SDL_Init: %s\n", SDL_GetError());
 		return 1;
 	}
@@ -1076,6 +1137,14 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	SDL_RenderSetLogicalSize(ren, SCREEN_W, SCREEN_H);
+	if (g_snd_ok && SDL_WasInit(SDL_INIT_AUDIO)) {
+		SDL_AudioSpec want;
+		SDL_zero(want);
+		want.freq = 44100; want.format = AUDIO_S16SYS; want.channels = 1; want.samples = 1024; want.callback = snd_callback;
+		g_adev = SDL_OpenAudioDevice(NULL, 0, &want, NULL, 0);
+		if (g_adev) SDL_PauseAudioDevice(g_adev, 0);
+		else fprintf(stderr, "no audio: %s\n", SDL_GetError());
+	}
 
 	int running = 1, frames = 0;
 	while (running) {
@@ -1173,6 +1242,7 @@ int main(int argc, char **argv) {
 		}
 		SDL_Delay(16);
 	}
+	if (g_adev) SDL_CloseAudioDevice(g_adev);
 	SDL_DestroyTexture(tex);
 	SDL_DestroyRenderer(ren);
 	SDL_DestroyWindow(win);

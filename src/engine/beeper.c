@@ -94,6 +94,12 @@ void beeper_stop(Beeper *b, int id) {
 		if (b->flags[i]) beeper_play(b, b->flags[i] - 1);
 }
 
+void beeper_silence(Beeper *b) {
+	memset(b->flags, 0, sizeof(b->flags));
+	b->mem[(BSEG << 4) + CMD_REQ] = 0x46;          /* an effect number above 45h: the driver switches both voices off (BEEPER.BIN 05AB) */
+	b->mem[(BSEG << 4) + CMD_REQ + 1] = 0;
+}
+
 void beeper_render(Beeper *b, int16_t *out, int n) {
 	for (int i = 0; i < n; i++) {
 		if (b->left <= 0) {

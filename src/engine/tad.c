@@ -74,7 +74,8 @@ static void svc_hook(X86 *c, void *user) {
 		c->ax = (uint16_t)(t->vm->rand_range ? t->vm->rand_range(lo, hi, t->vm->user) : lo);
 		break;
 	}
-	case 0x24:                                   /* 164E: start a sound */
+	case 0x24:                                   /* 164E: start a sound (al = id) */
+		if (t->vm && t->vm->sound) t->vm->sound(c->ax & 0xFF, t->vm->user);
 		break;
 	default:
 		t->unsupported++;

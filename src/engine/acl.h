@@ -35,6 +35,7 @@ typedef struct {
 	int disarm;
 	int skipped;                    /* number of unsupported opcodes skipped so far */
 	int (*rand_range)(int lo, int hi, void *user);
+	void (*sound)(int id, void *user);        /* 1000:164E: start sound `id` (NULL = silent) */
 	void *user;
 	int queue_n;                    /* room events queued by ops (op 9 -> type 19) */
 	struct { int type, arg; } queue[16];

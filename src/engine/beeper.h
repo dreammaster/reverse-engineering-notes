@@ -38,6 +38,8 @@ unsigned beeper_tick(Beeper *b);
 void beeper_play(Beeper *b, int id);
 /* Stop the looping sound `id` (1000:1613). */
 void beeper_stop(Beeper *b, int id);
+/* Silence everything and forget the looping sounds (1000:15EB at a level change). */
+void beeper_silence(Beeper *b);
 /* Is the driver busy with an effect? ([0Ah] != 0) */
 int beeper_busy(const Beeper *b);
 /* Synthesise n mono samples. */
