@@ -357,6 +357,70 @@ static const luaL_Reg system_meths[] = {
 	{nullptr, nullptr}
 };
 
+// The `steam` and `galaxy` objects (asm `steam_meths`, `galaxy_meths`: glue for the SDKs of Steam and GOG Galaxy, which are
+// the vendors' and not reconstructed). They answer as they do when the SDK is not running: no licenses and no DLC, no controllers, no language.
+static int steam_false(lua_State *state) {
+	lua_pushboolean(state, 0);
+	return 1;
+}
+
+static int steam_zero(lua_State *state) {
+	lua_pushinteger(state, 0);
+	return 1;
+}
+
+static int steam_noString(lua_State *state) {
+	lua_pushstring(state, "");
+	return 1;
+}
+
+static int steam_emptyTable(lua_State *state) {
+	lua_createtable(state, 0, 0);
+	return 1;
+}
+
+static int steam_minusOne(lua_State *state) {
+	lua_pushinteger(state, -1);
+	return 1;
+}
+
+static int steam_nothing(lua_State *) {
+	return 0;
+}
+
+static const luaL_Reg steam_meths[] = {
+	{"hasLicenseForApp", steam_false},
+	{"dlcInstalled", steam_false},
+	{"getCurrentGameLanguage", steam_noString},
+	{"getControllers", steam_emptyTable},
+	{"getStringForActionOrigin", steam_noString},
+	{"getGlyphForActionOrigin", steam_noString},
+	{"getDigitalActionOrigins", steam_emptyTable},
+	{"getAnalogActionOrigins", steam_emptyTable},
+	{"getCurrentActionSet", steam_zero},
+	{"getDigitalActionHandle", steam_zero},
+	{"getAnalogActionHandle", steam_zero},
+	{"getActionSetHandle", steam_zero},
+	{"activateActionSet", steam_nothing},
+	{"getGamepadIndexForController", steam_minusOne},
+	{"getControllerForGamepadIndex", steam_zero},
+	{"getAnalogActionData", steam_emptyTable},
+	{"getDigitalActionData", steam_emptyTable},
+	{nullptr, nullptr}
+};
+
+static const luaL_Reg galaxy_meths[] = {
+	{"dlcInstalled", steam_false},
+	{"getCurrentGameLanguage", steam_noString},
+	{nullptr, nullptr}
+};
+
+static void openSdkObject(lua_State *state, const char *name, const luaL_Reg *methods) {
+	lua_createtable(state, 0, 0);
+	luaL_openlib(state, nullptr, methods, 0);
+	lua_setfield(state, LUA_GLOBALSINDEX, name);
+}
+
 // Confirmed (asm lines 288742-289015)
 void lua_open_system(lua_State *state) {
 	luaL_newmetatable(state, "Visionaire.TSystem");
@@ -372,6 +436,9 @@ void lua_open_system(lua_State *state) {
 	lua_getfield(state, LUA_REGISTRYINDEX, "Visionaire.TSystem");
 	lua_setmetatable(state, -2);
 	lua_setfield(state, LUA_GLOBALSINDEX, "system");
+
+	openSdkObject(state, "steam", steam_meths);
+	openSdkObject(state, "galaxy", galaxy_meths);
 }
 
 // Confirmed (asm lines 440291-440333): sha1("text") is the hash as 40 hex digits.
