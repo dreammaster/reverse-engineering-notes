@@ -63,6 +63,11 @@ add_executable(test_graphics tests/test_graphics.cpp)
 target_link_libraries(test_graphics xanth_engine)
 add_test(NAME graphics COMMAND test_graphics)
 
+if(WIN32)
+	add_executable(xanth_win32 frontend/win32main.cpp)
+	target_link_libraries(xanth_win32 xanth_engine gdi32 user32)
+endif()
+
 add_executable(xanth_play tools/playcli.cpp)
 target_link_libraries(xanth_play xanth_engine)
 
