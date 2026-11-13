@@ -674,7 +674,7 @@ class Emitter:
                 self.ended = None
                 return out
             if k == "tail":
-                out.append("/* tail call to %s */ return %s();" % (t[1], self.names.func(t[1])))
+                out.append("/* tail call to %s */ return %s;" % (t[1], self.names.call(t[1], [])))
                 self.ended = None
                 return out
             if k == "if":

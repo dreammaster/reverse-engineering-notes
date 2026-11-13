@@ -9,6 +9,7 @@ event_fn_07	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_17	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_35	invalid conversion from 'int' to 'char*' [-fpermissive]
 event_fn_44	'FAR' was not declared in this scope
+loc_4E632	too many arguments to function 'int Xanth::sub_4E621(Game&)'
 objh_045	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_104	invalid user-defined conversion from 'Xanth::TextRef' to 'intptr_t' {aka 'long long int'} 
 objh_127	invalid conversion from 'int' to 'char*' [-fpermissive]
@@ -24,6 +25,8 @@ objh_296	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_341	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_360	invalid conversion from 'int' to 'char*' [-fpermissive]
 objh_390	invalid conversion from 'char*' to 'int' [-fpermissive]
+sub_312E3	too few arguments to function 'int Xanth::sub_5E2D0(Game&, Word)'
+sub_312ED	too few arguments to function 'int Xanth::sub_5EC63(Game&, Word)'
 sub_44130	invalid conversion from 'char*' to 'int' [-fpermissive]
 sub_4FB5F	'FAR' was not declared in this scope
 sub_60460	invalid conversion from 'char*' to 'int' [-fpermissive]

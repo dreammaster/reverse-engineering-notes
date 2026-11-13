@@ -25,6 +25,20 @@ struct NameCallback {
 extern const NameCallback kNameCallbacks[];
 extern const unsigned kNameCallbackCount;
 
+/** One picture overlay of a room (the records setup_pic_regions / disable_pic_regions walk): the picture `pic` (file << 8 | entry) is shown while the object `object`
+ *  (0 = no object) is inside `parent`, has attribute `attr` (when the fields are not 0) and the callback (when there is one) returns true. */
+struct OverlayRecord {
+	uint16 object, parent, pic, attr;
+	int (*visible)(Game &g);
+};
+struct OverlayTable {
+	unsigned address;               // the table's address in the original's memory image: the value the logic passes to setup_pic_regions
+	unsigned count;
+	const OverlayRecord *records;
+};
+extern const OverlayTable kOverlayTables[];
+extern const unsigned kOverlayTableCount;
+
 extern const HandlerFn kObjectHandlers[448];
 extern const HandlerFn kExitFunctions[];
 extern const HandlerFn kEventFunctions[];

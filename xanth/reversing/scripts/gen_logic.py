@@ -176,6 +176,8 @@ class LogicNames(Names):
             return self.string(sym)
         if sym in self.ctx.procs:
             return "FN(%s)" % logic_name(sym)
+        if sym in getattr(self, "overlay_syms", ()):
+            return "0x%s" % sym[4:]           # an overlay table of the original: passed as its address, the tables are in overlays.cpp
         n = self.ident(sym)
         self.rt[n] = max(self.rt.get(n, 0), 1)
         return "rt." + n if sym in self.ctx.arrays else "(intptr_t)&rt." + n
@@ -228,6 +230,65 @@ def is_logic(ctx, target):
     return True
 
 
+def overlay_tables(ctx):
+    """the picture-overlay tables passed to setup_pic_regions / disable_pic_regions: {linear address: record count}; records are 12 bytes
+    {u16 object, u16 parent, u16 picNum, u16 attribute, far pointer to a visibility callback}"""
+    def value(k, reg):
+        for j in range(k - 1, max(k - 8, 0), -1):
+            x = ctx.insns[j]
+            if x.mn == "mov" and len(x.ops) == 2 and x.ops[0].strip() == reg:
+                return x.ops[1].strip()
+            if x.mn == "xor" and len(x.ops) == 2 and x.ops[0].strip() == reg == x.ops[1].strip():
+                return "0"
+        return None
+    out = {}
+    for k, x in enumerate(ctx.insns):
+        if x.mn != "call" or not x.ops or G.STRIP.sub("", x.ops[0].strip()) not in ("setup_pic_regions?", "disable_pic_regions?"):
+            continue
+        pushes, j = [], k - 1
+        while j > 0 and len(pushes) < 3:
+            y = ctx.insns[j]
+            if y.mn == "push":
+                pushes.append((j, y.ops[0].strip()))
+            j -= 1
+        if len(pushes) < 3:
+            continue
+        ops = [value(j, op) if re.match(r"^([a-d][xl]|[sd]i)$", op) else op for j, op in pushes]
+        m = re.match(r"^offset unk_([0-9A-F]+)$", ops[0] or "")
+        c = ops[2]
+        if not m or not c:
+            continue
+        cnt = int(c[:-1], 16) if c.lower().endswith("h") else int(c)
+        addr = int(m.group(1), 16)
+        out[addr] = max(out.get(addr, 0), cnt)
+    return out
+
+
+def overlay_records(ctx, tables):
+    """-> {address: [(object, parent, picNum, attr, callback routine or None)]}, and the set of callback routines"""
+    import struct
+    recs, cbs = {}, []
+    for addr, cnt in sorted(tables.items()):
+        rows = []
+        for i in range(cnt):
+            o, par, pic, attr, off, seg = struct.unpack_from("<HHHHHH", ctx.image, addr + i * 12)
+            tgt = None
+            if off or seg:
+                lin = seg * 16 + off
+                for nm in ("loc_%X" % lin, "sub_%X" % lin):
+                    if nm in ctx.procs or nm in ctx.labels:
+                        tgt = nm
+                        break
+                if tgt is None:
+                    raise SystemExit("overlay table %X: no routine at %04X:%04X" % (addr, seg, off))
+                if tgt not in ctx.procs:
+                    ctx.procs[tgt] = ctx.labels[tgt]
+                cbs.append(tgt)
+            rows.append((o, par, pic, attr, tgt))
+        recs[addr] = rows
+    return recs, sorted(set(cbs))
+
+
 def name_callbacks(ctx):
     """the 49 objects whose name comes from a callback: (object id, target routine)"""
     lines = open(os.path.join(HERE, "..", "..", "xanth.asm"), encoding="utf-8", errors="replace").read().split(NL)
@@ -278,7 +339,9 @@ def main():
         if stub not in STUBS and tgt != stub and is_logic(ctx, tgt) and not FAMILY.match(stub) and not re.match(r"^(objh|exit_fn|event_fn|conv_cb|conv_text|cmd)", stub):
             STUBS[stub] = tgt
     namecb = name_callbacks(ctx)
-    todo = args or sorted(n for n in ctx.procs if FAMILY.match(n)) + [n for n in ENGINE_LOGIC if n in ctx.procs] + sorted({t for _, t in namecb if t in ctx.procs}) + sorted({t for st, t in STUBS.items() if t in ctx.procs and t not in ENGINE_LOGIC and not FAMILY.match(t) and logic_name(t) not in HAND and is_logic(ctx, t)})
+    ovl_tables = overlay_tables(ctx)
+    ovl_records, ovl_cbs = overlay_records(ctx, ovl_tables)
+    todo = args or ovl_cbs + sorted(n for n in ctx.procs if FAMILY.match(n)) + [n for n in ENGINE_LOGIC if n in ctx.procs] + sorted({t for _, t in namecb if t in ctx.procs}) + sorted({t for st, t in STUBS.items() if t in ctx.procs and t not in ENGINE_LOGIC and not FAMILY.match(t) and logic_name(t) not in HAND and is_logic(ctx, t)})
     todo = list(dict.fromkeys(todo))
     if not args:
         # the small helpers the generated logic calls (and that call no drawing routine) are logic too
@@ -309,6 +372,7 @@ def main():
     generated = {logic_name(n) for n in todo}
     names = LogicNames(ctx, load_vars(), generated)
     names.namecb = {logic_name(t) for _, t in namecb}
+    names.overlay_syms = {"unk_%X" % a for a in ovl_tables}
     os.makedirs(out_dir, exist_ok=True)
     ok, bad, chunks = [], {}, {}
     manual = {}
@@ -471,6 +535,26 @@ def main():
             wr.append("static int wrap_%s(Game &g, int a) { (void)a; return %s(g%s); }" % (n, n, ", a" * min(k, 1) + ", 0" * max(k - 1, 0)))
     wr.append("")
     write(os.path.join(out_dir, "tables.cpp"), NL.join(t[:6]) + NL + NL.join(wr[4:]) + NL + NL.join(t[6:]) + NL)
+    # picture overlay tables (setup_pic_regions / disable_pic_regions): the records and their visibility callbacks
+    ov = [HDR, '#include "xanth/logic/logic.h"', "", "namespace Xanth {", ""]
+    for cb in ovl_cbs:
+        k = names.sig.get(cb, ("", max(argc(ctx, cb), names.min_params(cb))))[1]
+        ov.append("static int ovl_%s(Game &g) { return %s(g%s); }" % (logic_name(cb), logic_name(cb), ", 0" * k))
+    ov.append("")
+    for addr in sorted(ovl_records):
+        ov.append("static const OverlayRecord kOverlay%X[] = {" % addr)
+        for o, par, pic, attr, tgt in ovl_records[addr]:
+            ov.append("	{%d, %d, 0x%X, %d, %s}," % (o, par, pic, attr, "ovl_" + logic_name(tgt) if tgt else "nullptr"))
+        ov.append("};")
+    ov.append("")
+    ov.append("const OverlayTable kOverlayTables[%d] = {" % len(ovl_records))
+    for addr in sorted(ovl_records):
+        ov.append("	{0x%X, %d, kOverlay%X}," % (addr, len(ovl_records[addr]), addr))
+    ov.append("};")
+    ov.append("const unsigned kOverlayTableCount = %d;" % len(ovl_records))
+    ov.append("")
+    ov.append("} // namespace Xanth")
+    write(os.path.join(out_dir, "overlays.cpp"), NL.join(ov) + NL)
 
 
 if __name__ == "__main__":
