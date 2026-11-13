@@ -12,7 +12,7 @@ using namespace Legend;
 
 static const int kTextBottom = 151, kExpandedBottom = 165, kSavedTop = 149, kSavedBottom = 196;
 
-Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false), _mouseX(160), _mouseY(100), _expanded(false), _selectedVerb(-1), _inventoryScroll(0), _rgnFile(-1) {
+Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false), _mouseX(160), _mouseY(100), _expanded(false), _input(NULL), _convPicW(0), _convPicH(0), _convBubbleRight(0), _convMenuBottom(0), _selectedVerb(-1), _inventoryScroll(0), _rgnFile(-1) {
 	memset(_drawn, 0, sizeof(_drawn));
 }
 
@@ -183,6 +183,158 @@ void Display::render(Surface &out) const {
 				out.put(_mouseX + col, _mouseY + row, v);
 		}
 	}
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------ conversations
+// The scene of Conversation_Show: the picture in a frame at the top left on the marble, the replies in a window below it, the speech to its right.
+void Display::conversationBegin(int picNum) {
+	PicImage img;
+	_ms.restoreMarble(_screen, 0, 0, 319, 199);
+	_frameDrawn = true;
+	if (!MainScreen::loadPicture(_files, picNum, img))
+		return;
+	byte pal[768];
+	memcpy(pal, img.hasPalette ? img.palette : _screen.palette, 768);
+	_ms.restoreSubPalettes(pal);
+	_screen.setPalette(pal);
+	_convPicW = img.width;
+	_convPicH = img.height;
+	_convBubbleRight = 0;
+	_convMenuBottom = 0;
+	bevelFrame(_screen, 3, 3, img.width + 4, img.height + 4);
+	drawPicture(_screen, 4 + img.x, 4 + img.y, &img.pixels[0], img.width, img.height, false);
+	_picNum = -1;
+}
+
+void Display::clearConversationBubble() {
+	// a new line of speech: the speech to the right of the picture and everything below it go back to the marble
+	if (_convBubbleRight)
+		_ms.restoreMarble(_screen, _convPicW + 6, 4, 319, _convPicH + 6);
+	if (_convMenuBottom)
+		_ms.restoreMarble(_screen, 0, _convPicH + 6, 319, 199);
+	_convBubbleRight = _convMenuBottom = 0;
+}
+
+void Display::conversationLine(const std::string &text, bool wait) {
+	clearConversationBubble();
+	const Font &font = _ms.font10();
+	int x1 = _convPicW + 8, x2 = 315;
+	int w = font.textWidth(text) + font.advance('M');
+	if (w > 307 - _convPicW)
+		w = 307 - _convPicW;
+	Surface nothing(1, 1);
+	TextWindow probe;
+	probe.setup(x1, 0, x1 + w, 4000, &font, 15, 23);
+	probe.print(nothing, text);
+	int textHeight = probe.penY() + font.lineHeight() - font.yCenter();   // the pen's line plus the margin below
+	int y1 = (_convPicH - textHeight) / 2 + 4;
+	if (y1 < 4)
+		y1 = 4;
+	int y2 = y1 + textHeight;
+	bevelFrame(_screen, x1 - 1, y1 - 1, x1 + w + 1, y2 + 1);
+	fillArea(_screen, x1, y1, x1 + w, y2, 23);
+	TextWindow bubble;
+	bubble.setup(x1, y1, x1 + w, y2, &font, 15, -1);
+	bubble.print(_screen, text);
+	(void)x2;
+	_convBubbleRight = x1 + w + 2;
+	if (wait && _input) {
+		for (;;) {
+			InputEvent e = _input->wait();
+			if (e.type == InputEvent::Click || e.type == InputEvent::Key || e.type == InputEvent::Quit)
+				break;
+		}
+	}
+}
+
+int Display::conversationMenu(const std::vector<std::string> &options, int initial) {
+	if (_convMenuBottom) {                      // (the speech to the right stays while the player chooses)
+		_ms.restoreMarble(_screen, 0, _convPicH + 6, 319, 199);
+		_convMenuBottom = 0;
+	}
+	const Font &font = _ms.font10();
+	int y1 = _convPicH + 7;
+	int maxW = 0;
+	for (size_t i = 0; i < options.size(); i++) {
+		int w = font.textWidth(options[i]) + font.advance('M');
+		if (w > maxW)
+			maxW = w;
+	}
+	if (maxW > 311)
+		maxW = 311;
+	// the height of every option: the lines it wraps to
+	std::vector<int> top(options.size() + 1, 0);
+	int h = font.yCenter();
+	for (size_t i = 0; i < options.size(); i++) {
+		Surface nothing(1, 1);
+		TextWindow probe;
+		probe.setup(4, 0, 4 + maxW, 4000, &font, 15, -1);
+		probe.print(nothing, options[i]);
+		top[i] = h;
+		h += probe.penY() + font.lineHeight() - font.yCenter() - font.yCenter() + (int)0;
+	}
+	top[options.size()] = h;
+	int y2 = y1 + h + font.yCenter();
+	if (y2 > 199)
+		y2 = 199;
+	bevelFrame(_screen, 3, y1 - 1, 4 + maxW + 1, y2 + 1);
+	fillArea(_screen, 4, y1, 4 + maxW, y2, 23);
+	_convMenuBottom = y2 + 2;
+	int sel = initial < 0 || initial >= (int)options.size() ? 0 : initial;
+	auto draw = [&](int i, int color) {
+		TextWindow line;
+		line.setup(4, y1 + top[i] - font.yCenter(), 4 + maxW, y2, &font, color, -1);
+		line.print(_screen, options[i]);
+	};
+	for (size_t i = 0; i < options.size(); i++)
+		draw((int)i, (int)i == sel ? 16 : 15);
+	if (!_input)
+		return sel;
+	for (;;) {
+		InputEvent e = _input->wait();
+		if (e.type == InputEvent::Quit)
+			return sel;
+		int hit = -1;
+		if (e.type == InputEvent::Move || e.type == InputEvent::Click) {
+			if (e.x >= 4 && e.x <= 4 + maxW) {
+				for (size_t i = 0; i < options.size(); i++)
+					if (e.y >= y1 + top[i] - font.yCenter() / 2 && e.y < y1 + top[i + 1] - font.yCenter() / 2 + (i + 1 == options.size() ? 99 : 0))
+						hit = (int)i;
+			}
+		}
+		if (e.type == InputEvent::Key) {
+			int old = sel;
+			if (e.key == 0x148 && sel > 0)
+				sel--;
+			else if (e.key == 0x150 && sel + 1 < (int)options.size())
+				sel++;
+			else if (e.key == 0x0D)
+				return sel;
+			if (sel != old) {
+				fillArea(_screen, 4, y1, 4 + maxW, y2, 23);
+				for (size_t i = 0; i < options.size(); i++)
+					draw((int)i, (int)i == sel ? 16 : 15);
+			}
+		} else if (hit >= 0 && hit != sel) {
+			sel = hit;
+			fillArea(_screen, 4, y1, 4 + maxW, y2, 23);
+			for (size_t i = 0; i < options.size(); i++)
+				draw((int)i, (int)i == sel ? 16 : 15);
+		}
+		if (e.type == InputEvent::Click && hit >= 0)
+			return hit;
+	}
+}
+
+void Display::conversationEnd() {
+	clearConversationBubble();
+	_convPicW = _convPicH = 0;
+}
+
+int Display::waitTicksOrClick(int ticks) {
+	// the headless game does not wait; with an input source a click (or key) ends the wait, the timing is the frontend's business
+	(void)ticks;
+	return 0;
 }
 
 int Display::compassAt(int x, int y) const {

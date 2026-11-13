@@ -64,6 +64,7 @@ int objh_082(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_083
@@ -98,6 +99,7 @@ int objh_083(Game &g, Word arg0) {
 	} else {
 		return 0;
 	}
+	return 0;
 }
 
 // objh_084
@@ -204,6 +206,7 @@ int objh_084(Game &g, Word arg0) {
 			return g.run_command(0x3C, rt.iobj, rt.dobj);
 		}
 	}
+	return 0;
 }
 
 // objh_085
@@ -452,6 +455,7 @@ int objh_085(Game &g, Word arg0) {
 	case 25:
 		goto L79;
 	}
+	return 0;
 }
 
 // objh_086
@@ -535,6 +539,7 @@ int objh_086(Game &g, Word arg0) {
 		g.disable_pic_regions(0x51AE4, 3);
 		goto L24;
 	}
+	return 0;
 }
 
 // objh_087
@@ -574,6 +579,7 @@ int objh_087(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_088
@@ -623,6 +629,7 @@ int objh_088(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_089
@@ -671,6 +678,7 @@ int objh_089(Game &g, Word arg0) {
 			return 0;
 		}
 	}
+	return 0;
 }
 
 // objh_090
@@ -703,6 +711,7 @@ int objh_090(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_091
@@ -733,6 +742,7 @@ int objh_091(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(22, 21));
 		return 1;
 	}
+	return 0;
 }
 
 // objh_092
@@ -789,6 +799,7 @@ int objh_092(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_093
@@ -815,6 +826,7 @@ int objh_093(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(22, 27), g.print_obj(0x12, rt.dobj));
 		return 1;
 	}
+	return 0;
 }
 
 // objh_094
@@ -838,7 +850,7 @@ int objh_094(Game &g, Word arg0) {
 			g.show_compendium(0x114, 0x5A03);
 			v.byte_852CA = 1;
 			g.add_score(9, 0, 0);
-			conversation_set_enabled(g, 0x8026, 0, 1);
+			g.conversation_set_enabled(0x8026, 0, 1);
 			return 0;
 		} else {
 			return 0;
@@ -852,6 +864,7 @@ int objh_094(Game &g, Word arg0) {
 			return 0;
 		}
 	}
+	return 0;
 }
 
 // objh_095
@@ -867,6 +880,7 @@ int objh_095(Game &g, Word arg0) {
 	} else {
 		return 0;
 	}
+	return 0;
 }
 
 // objh_096
@@ -882,6 +896,7 @@ int objh_096(Game &g, Word arg0) {
 	} else {
 		return 0;
 	}
+	return 0;
 }
 
 // objh_097
@@ -901,6 +916,7 @@ int objh_097(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(22, 32));
 		return 1;
 	}
+	return 0;
 }
 
 // objh_098
@@ -920,6 +936,7 @@ int objh_098(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(22, 34));
 		return 1;
 	}
+	return 0;
 }
 
 // objh_099
@@ -973,6 +990,7 @@ int objh_099(Game &g, Word arg0) {
 		g.disable_pic_regions(0x873A4, 1);
 		goto L14;
 	}
+	return 0;
 }
 
 // objh_100
@@ -1022,6 +1040,7 @@ int objh_100(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_101
@@ -1085,6 +1104,7 @@ int objh_101(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_102
@@ -1145,6 +1165,7 @@ int objh_102(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_103
@@ -1210,6 +1231,7 @@ int objh_103(Game &g, Word arg0) {
 			return 0;
 		}
 	}
+	return 0;
 }
 
 // objh_105
@@ -1263,6 +1285,7 @@ int objh_105(Game &g, Word arg0) {
 			return g.run_command(rt.selectedCommand, rt.dobj, 0x6E);
 		}
 	}
+	return 0;
 }
 
 // objh_106
@@ -1301,6 +1324,7 @@ int objh_106(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_107
@@ -1336,6 +1360,7 @@ int objh_107(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_108
@@ -1405,6 +1430,7 @@ int objh_108(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // objh_109
@@ -1564,7 +1590,7 @@ int objh_109(Game &g, Word arg0) {
 						g.object_set_attr(rt.dobj, 0xA);
 					}
 					g.object_move(rt.dobj, rt.iobj, 1);
-					conversation_set_enabled(g, 0x8026, 5, 1);
+					g.conversation_set_enabled(0x8026, 5, 1);
 					return 1;
 				}
 			}
@@ -1580,6 +1606,7 @@ int objh_109(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // objh_110
@@ -1647,6 +1674,7 @@ int objh_110(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_111
@@ -1788,6 +1816,7 @@ int objh_111(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_112
@@ -1891,6 +1920,7 @@ int objh_112(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // objh_113
@@ -1974,6 +2004,7 @@ int objh_113(Game &g, Word arg0) {
 			goto L19;
 		}
 	}
+	return 0;
 }
 
 // objh_114
@@ -2020,6 +2051,7 @@ int objh_114(Game &g, Word arg0) {
 			return 0;
 		}
 	}
+	return 0;
 }
 
 // objh_115
@@ -2058,11 +2090,11 @@ int objh_115(Game &g, Word arg0) {
 			} else {
 				p14_ax = (rt.byte_8B9D6 != 0 ? 0xB : 0xA);
 			}
-			conversation_set_enabled(g, 0x8026, p14_ax, 1);
-			conversation_set_enabled(g, 0x8026, 0, 0);
+			g.conversation_set_enabled(0x8026, p14_ax, 1);
+			g.conversation_set_enabled(0x8026, 0, 0);
 			return 0;
 		} else {
-			conversation_set_enabled(g, 0x8026, 0, 0);
+			g.conversation_set_enabled(0x8026, 0, 0);
 			goto L26;
 		}
 		break;
@@ -2077,9 +2109,9 @@ int objh_115(Game &g, Word arg0) {
 	case 15:
 		v.flag_852D6_conv_text_23 = 0;
 		g.cancel_event(0xC);
-		conversation_set_enabled(g, 0x8026, 9, 0);
-		conversation_set_enabled(g, 0x8026, 0xA, 0);
-		conversation_set_enabled(g, 0x8026, 0xB, 0);
+		g.conversation_set_enabled(0x8026, 9, 0);
+		g.conversation_set_enabled(0x8026, 0xA, 0);
+		g.conversation_set_enabled(0x8026, 0xB, 0);
 	L25:;
 		g.sub_2A386();
 		g.sub_2A5B4();
@@ -2105,6 +2137,7 @@ int objh_115(Game &g, Word arg0) {
 	case 24:
 		goto L25;
 	}
+	return 0;
 }
 
 // objh_116
@@ -2145,6 +2178,7 @@ int objh_116(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_117
@@ -2185,6 +2219,7 @@ int objh_117(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_118
@@ -2259,6 +2294,7 @@ int objh_118(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_119
@@ -2288,8 +2324,8 @@ int objh_119(Game &g, Word arg0) {
 				if (!(g.object_has_attr(0x7D, 0xA))) {
 					g.show_compendium(0x66, 0x5A03);
 					g.object_set_attr(0x7D, 0xA);
-					conversation_set_enabled(g, 0x8026, 9, 0);
-					conversation_set_enabled(g, 0x8026, 0xA, 1);
+					g.conversation_set_enabled(0x8026, 9, 0);
+					g.conversation_set_enabled(0x8026, 0xA, 1);
 					return 1;
 				}
 				if (g.object_parent_is(0xBD, 1)) {
@@ -2338,6 +2374,7 @@ int objh_119(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_120
@@ -2378,6 +2415,7 @@ int objh_120(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_121
@@ -2438,6 +2476,7 @@ int objh_121(Game &g, Word arg0) {
 			return g.run_command(0x14, rt.dobj, rt.iobj);
 		}
 	}
+	return 0;
 }
 
 // objh_122
@@ -2556,6 +2595,7 @@ int objh_122(Game &g, Word arg0) {
 		g.disable_pic_regions(0x55BEC, 0xA);
 		goto L48;
 	}
+	return 0;
 }
 
 // objh_123
@@ -2608,6 +2648,7 @@ int objh_123(Game &g, Word arg0) {
 			return 0;
 		}
 	}
+	return 0;
 }
 
 // objh_124
@@ -2648,6 +2689,7 @@ int objh_124(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_125
@@ -2768,6 +2810,7 @@ int objh_125(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_126
@@ -2793,6 +2836,7 @@ int objh_126(Game &g, Word arg0) {
 			return 0;
 		}
 	}
+	return 0;
 }
 
 // objh_130
@@ -2930,6 +2974,7 @@ int objh_130(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_131
@@ -3052,6 +3097,7 @@ int objh_131(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // objh_132
@@ -3124,23 +3170,23 @@ int objh_132(Game &g, Word arg0) {
 	case 13:
 		rt.selectedCommand = 0x13;
 		if (v.flag_852C7_conv_text_37 == 0) {
-			conversation_set_enabled(g, 0x8026, 6, 1);
+			g.conversation_set_enabled(0x8026, 6, 1);
 		}
 		if (!(g.object_parent_is(0x91, 0x8D))) {
 			goto L46;
 		}
 		if (v.flag_852C6_conv_text_32 == 0) {
-			conversation_set_enabled(g, 0x8026, 3, 1);
+			g.conversation_set_enabled(0x8026, 3, 1);
 			return 0;
 		} else {
-			conversation_set_enabled(g, 0x8026, 4, 1);
+			g.conversation_set_enabled(0x8026, 4, 1);
 			return 0;
 		}
 		break;
 	case 15:
-		conversation_set_enabled(g, 0x8026, 3, 0);
-		conversation_set_enabled(g, 0x8026, 4, 0);
-		conversation_set_enabled(g, 0x8026, 6, 0);
+		g.conversation_set_enabled(0x8026, 3, 0);
+		g.conversation_set_enabled(0x8026, 4, 0);
+		g.conversation_set_enabled(0x8026, 6, 0);
 		if (g.object_parent_is(0x91, 0x8D)) {
 			g.schedule_event(0x25, 5);
 		}
@@ -3174,6 +3220,7 @@ int objh_132(Game &g, Word arg0) {
 	case 24:
 		goto L45;
 	}
+	return 0;
 }
 
 // objh_133
@@ -3241,6 +3288,7 @@ int objh_133(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_134
@@ -3305,6 +3353,7 @@ int objh_134(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_135
@@ -3356,6 +3405,7 @@ int objh_135(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // objh_136
@@ -3443,6 +3493,7 @@ int objh_136(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_137
@@ -3566,6 +3617,7 @@ int objh_137(Game &g, Word arg0) {
 			return g.run_command(0x48, rt.iobj, rt.dobj);
 		}
 	}
+	return 0;
 }
 
 // objh_138
@@ -3627,6 +3679,7 @@ int objh_138(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // objh_139
@@ -3706,6 +3759,7 @@ int objh_139(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // objh_141
@@ -3861,6 +3915,7 @@ int objh_141(Game &g, Word arg0) {
 			return g.run_command(0xD, rt.iobj, rt.dobj);
 		}
 	}
+	return 0;
 }
 
 // objh_142
@@ -3974,6 +4029,7 @@ int objh_142(Game &g, Word arg0) {
 			return g.run_command(0xD, rt.iobj, rt.dobj);
 		}
 	}
+	return 0;
 }
 
 // objh_143
@@ -4052,6 +4108,7 @@ int objh_143(Game &g, Word arg0) {
 	case 24:
 		goto L22;
 	}
+	return 0;
 }
 
 // objh_144
@@ -4107,12 +4164,12 @@ int objh_144(Game &g, Word arg0) {
 		if (g.object_has_attr(0x73, 0xA)) {
 			goto L34;
 		} else {
-			conversation_set_enabled(g, 0x8026, 5, 1);
+			g.conversation_set_enabled(0x8026, 5, 1);
 			return 0;
 		}
 		break;
 	case 15:
-		conversation_set_enabled(g, 0x8026, 5, 0);
+		g.conversation_set_enabled(0x8026, 5, 0);
 		if (v.byte_852B2 != 0 && !(g.object_parent_is(0x8A, 0x9B))) {
 			v.word_85264 = 0;
 			rt.byte_8774A = 0;
@@ -4160,7 +4217,7 @@ int objh_144(Game &g, Word arg0) {
 			g.wait_ticks_or_click(0xBB8);
 			v.byte_852C8 = 0;
 			v.byte_852B2 = 1;
-			conversation_set_enabled(g, 0x8026, 5, 0);
+			g.conversation_set_enabled(0x8026, 5, 0);
 			g.sub_2A333();
 		}
 		if (rt.byte_8774D == 0) {
@@ -4179,6 +4236,7 @@ int objh_144(Game &g, Word arg0) {
 	case 24:
 		goto L33;
 	}
+	return 0;
 }
 
 // objh_145
@@ -4291,6 +4349,7 @@ int objh_145(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_146
@@ -4379,6 +4438,7 @@ int objh_146(Game &g, Word arg0) {
 		g.disable_pic_regions(0x59020, 2);
 		goto L38;
 	}
+	return 0;
 }
 
 // objh_148
@@ -4445,6 +4505,7 @@ int objh_148(Game &g, Word arg0) {
 		g.disable_pic_regions(0x87770, 1);
 		goto L23;
 	}
+	return 0;
 }
 
 // objh_150
@@ -4509,6 +4570,7 @@ int objh_150(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_151
@@ -4601,6 +4663,7 @@ int objh_151(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // objh_152
@@ -4686,6 +4749,7 @@ int objh_152(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_153
@@ -4712,6 +4776,7 @@ int objh_153(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(16, 26));
 		return 1;
 	}
+	return 0;
 }
 
 // objh_154
@@ -4738,6 +4803,7 @@ int objh_154(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(16, 28));
 		return 1;
 	}
+	return 0;
 }
 
 // objh_155
@@ -4828,6 +4894,7 @@ int objh_155(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // objh_156
@@ -4923,6 +4990,7 @@ int objh_156(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_157
@@ -4979,6 +5047,7 @@ int objh_157(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_158
@@ -5026,6 +5095,7 @@ int objh_158(Game &g, Word arg0) {
 			goto L14;
 		}
 	}
+	return 0;
 }
 
 // objh_159
@@ -5145,6 +5215,7 @@ int objh_159(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // objh_160
@@ -5171,6 +5242,7 @@ int objh_160(Game &g, Word arg0) {
 		sub_1EB3A(g, 1);
 		return 1;
 	}
+	return 0;
 }
 
 // objh_161
@@ -5225,6 +5297,7 @@ int objh_161(Game &g, Word arg0) {
 		g.disable_pic_regions(0x87968, 1);
 		goto L12;
 	}
+	return 0;
 }
 
 // objh_162
@@ -5265,6 +5338,7 @@ int objh_162(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // objh_163
@@ -5300,6 +5374,7 @@ int objh_163(Game &g, Word arg0) {
 			return 0;
 		}
 	}
+	return 0;
 }
 
 // objh_164
@@ -5328,6 +5403,7 @@ int objh_164(Game &g, Word arg0) {
 			return 0;
 		}
 	}
+	return 0;
 }
 
 // objh_165
@@ -5396,6 +5472,7 @@ int objh_165(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // objh_166
@@ -5462,6 +5539,7 @@ int objh_166(Game &g, Word arg0) {
 		g.disable_pic_regions(0x8798E, 1);
 		goto L17;
 	}
+	return 0;
 }
 
 // objh_167
@@ -5506,6 +5584,7 @@ int objh_167(Game &g, Word arg0) {
 			return 0;
 		}
 	}
+	return 0;
 }
 
 // objh_168
@@ -5552,6 +5631,7 @@ int objh_168(Game &g, Word arg0) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 } // namespace Xanth

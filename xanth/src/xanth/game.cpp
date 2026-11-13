@@ -1,3 +1,5 @@
+#include <cstdlib>
+#include <cstdio>
 #include "xanth/game.h"
 
 #include "xanth/logic/logic.h"
@@ -47,6 +49,99 @@ void Game::newGame() {
 	rt.player_obj = 1;
 	rt.actor_obj = 1;
 	rt.word_85222 = 1;
+	_convLines.resize(kConvLineCount);
+	for (unsigned i = 0; i < kConvLineCount; i++)
+		_convLines[i] = kConvLines[i].enabled;
+	_convOptions.resize(kConvOptionCount);
+	for (unsigned i = 0; i < kConvOptionCount; i++)
+		_convOptions[i] = kConvOptions[i].enabled;
+	_convMenus.resize(kConvMenuCount);
+	for (unsigned i = 0; i < kConvMenuCount; i++)
+		_convMenus[i] = kConvMenus[i].flag;
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------ conversations
+uint8 *Game::Conversation_GetEntry(int convId, int subId) {
+	unsigned id = (unsigned)convId & 0xFFFF;
+	if (id >= 0x8000) {
+		id &= 0x7FFF;
+		if (id >= kConvMenuCount)
+			return nullptr;
+		if ((int16)subId < 0)
+			return &_convMenus[id];
+		if ((int)kConvMenus[id].count > subId)
+			return &_convOptions[kConvMenus[id].first + subId];
+		return &_convMenus[id];
+	}
+	return id < kConvLineCount ? &_convLines[id] : nullptr;
+}
+
+int Game::conversation_set_enabled(int convId, int subId, int on) {
+	uint8 *e = Conversation_GetEntry(convId, subId);
+	if (e)
+		*e = on ? (*e | 1) : (*e & 0xFE);
+	return 0;
+}
+
+std::string Game::textOf(const ConvEntry &e) {
+	TextRef t = e.text ? e.text(*this) : TextRef::message(e.msg);
+	return std::string(ResourceText_GetStr(t));
+}
+
+int Game::show_compendium(int convNum, int picNum) {
+	ui.conversationBegin(picNum);
+	unsigned convId = (unsigned)convNum & 0xFFFF;
+	int lastMenu = -1, nextChoice = -1;                 // var_8C / var_8E: the menu shown last and the entry after the one chosen there
+	for (int steps = 0; convId != 0xFFFF && steps < 100000; steps++) {
+		if (getenv("XANTH_TRACE_CONV"))
+			fprintf(stderr, "conv %X\n", convId);
+		if (convId >= 0x8000) {
+			unsigned m = convId & 0x7FFF;
+			if (m >= kConvMenuCount)
+				break;
+			const ConvMenu &menu = kConvMenus[m];
+			std::vector<int> shown;                       // the options that are enabled
+			std::vector<std::string> texts;
+			for (unsigned j = 0; j < menu.count; j++) {
+				uint8 *flag = Conversation_GetEntry((int)convId, (int)j);
+				if (flag && (*flag & 1)) {
+					shown.push_back((int)j);
+					texts.push_back(textOf(kConvOptions[menu.first + j]));
+				}
+			}
+			if (getenv("XANTH_TRACE_CONV"))
+				fprintf(stderr, " menu %u: %d of %u shown\n", m, (int)shown.size(), menu.count);
+			int initial = 0;
+			if (lastMenu == (int)convId) {
+				for (size_t k = 0; k < shown.size(); k++)
+					if (shown[k] == nextChoice)
+						initial = (int)k;
+			} else {
+				lastMenu = (int)convId;
+			}
+			int sel = shown.empty() ? 0 : ui.conversationMenu(texts, initial);
+			if (shown.empty() || sel < 0 || sel >= (int)shown.size())
+				break;
+			nextChoice = sel + 1 < (int)shown.size() ? shown[sel + 1] : 0xFFFF;
+			int j = shown[sel];
+			if (menu.callback)
+				menu.callback(*this, (int)convId, j);
+			convId = kConvOptions[menu.first + j].next;
+		} else {
+			if (convId >= kConvLineCount)
+				break;
+			const ConvEntry &line = kConvLines[convId];
+			uint8 *flag = Conversation_GetEntry((int)convId, 0);
+			if (flag && (*flag & 1))
+				ui.conversationLine(textOf(line), line.next == 0xFFFF || line.next < 0x8000);
+			convId = line.next;
+		}
+	}
+	ui.conversationEnd();
+	if (rt.byte_86CC0)
+		RoomItem_Draw(0x10);
+	rt.byte_86CC0 = 1;
+	return 0;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------ the turn
@@ -135,6 +230,7 @@ void Game::beginGame() {
 	schedule_event(1, 7);
 	schedule_event(3, 0xC);
 	v.light_room = v.current_room;
+	rt.byte_86CC0 = 1;                           // (the intro has shown a conversation already)
 	RoomItem_Draw(0x10);
 	set_room_music(v.current_room);
 	call_object_handler(v.current_room, 0x19);

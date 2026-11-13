@@ -127,7 +127,7 @@ uint8 unk_8AC1C;
 uint8 unk_8B9E0;
 uint16 voc_enabled;
 uint16 voice_track;
-char word_81A66[64];
+char word_81A66[256];
 uint16 word_85016;
 uint16 word_85018;
 uint16 word_85024;

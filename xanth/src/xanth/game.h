@@ -108,6 +108,15 @@ public:
 	/** sub_1C4ED: visits an object and, depth first, everything inside it (every slot, or only the slots whose contents can be seen if `visibleOnly`); `visit` returns true to stop. */
 	void walkContents(int root, bool visibleOnly, const std::function<bool(int)> &visit);
 
+	// ---- conversations
+	/** The enabled flag (bit 0) of a conversation line, menu option (subId = option number) or menu (subId < 0) - Conversation_GetEntry; null for an invalid id. */
+	uint8 *Conversation_GetEntry(int convId, int subId);
+	int conversation_set_enabled(int convId, int subId, int on);
+	/** Conversation_Show: plays a conversation (a line, or a menu 0x8000 | n) over the picture `picNum`. */
+	int show_compendium(int convNum, int picNum);
+	/** The logic reads (conversation, picture) as one dword from a table. */
+	int show_compendium(TextRef both) { return show_compendium((int)(both.id & 0xFFFF), (int)(both.id >> 16)); }
+
 	// ---- objects (the original's names)
 	int object_has_attr(int obj, int attr) { return state.objects.hasAttr(obj, attr) ? 1 : 0; }
 	int object_set_attr(int obj, int attr) { state.objects.setAttr(obj, attr); return 0; }
@@ -192,6 +201,8 @@ public:
 	int random_percent(int percent) { return (_rand() % 100) < percent ? 1 : 0; }
 
 private:
+	std::string textOf(const struct ConvEntry &e);
+	std::vector<uint8> _convLines, _convOptions, _convMenus;     // the enabled flags (Conversation_ENTRIES1 / 2 / 3)
 	int exitField(int room, int offset, int size) const;
 	std::string format(const std::string &fmt, const FmtArg *args);
 	int writeMessage(const std::string &fmt, const FmtArg *args);

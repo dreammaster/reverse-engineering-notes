@@ -31,6 +31,7 @@ int event_fn_01(Game &g) {
 		v.byte_852E2 = 1;
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_02
@@ -55,6 +56,7 @@ int event_fn_02(Game &g) {
 		g.realsound_play(ES(53));
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_03
@@ -123,6 +125,7 @@ int event_fn_04(Game &g) {
 		g.schedule_event(5, 1);
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_05
@@ -173,6 +176,7 @@ int event_fn_06(Game &g) {
 	} else {
 		return 0;
 	}
+	return 0;
 }
 
 // event_fn_08
@@ -210,6 +214,7 @@ int event_fn_08(Game &g) {
 		go_to_room(g, 0x5A);
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_09
@@ -304,6 +309,7 @@ int event_fn_13(Game &g) {
 		rt.word_87952 = 0;
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_14
@@ -321,19 +327,20 @@ int event_fn_14(Game &g) {
 	g.schedule_event(0xF, ((int16)(g._rand()) % (int16)7) + 2);
 	if (v.flag_852DA_conv_text_24 != 0 && v.byte_852DB == 0) {
 		v.flag_852DA_conv_text_24 = 0;
-		conversation_set_enabled(g, 0x8026, 0xC, 0);
-		conversation_set_enabled(g, 0x8026, 0xD, 1);
-		conversation_set_enabled(g, 0x8026, 0xE, 1);
-		conversation_set_enabled(g, 0x8026, 0xF, 1);
+		g.conversation_set_enabled(0x8026, 0xC, 0);
+		g.conversation_set_enabled(0x8026, 0xD, 1);
+		g.conversation_set_enabled(0x8026, 0xE, 1);
+		g.conversation_set_enabled(0x8026, 0xF, 1);
 		v.byte_852DB = 1;
 		return 1;
 	}
 	if (v.byte_852DB == 0) {
-		conversation_set_enabled(g, 0x8026, 0xC, 1);
+		g.conversation_set_enabled(0x8026, 0xC, 1);
 		return 1;
 	} else {
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_15
@@ -376,7 +383,7 @@ int event_fn_18(Game &g) {
 	if (v.word_85276 != 3) {
 		if (v.word_85276 == 4) {
 			g.show_compendium(0x2FB, 0x5A04);
-			conversation_set_enabled(g, 0x8026, 0x12, 0);
+			g.conversation_set_enabled(0x8026, 0x12, 0);
 			g.object_move(0xA, 0, 0);
 			v.byte_852EA = 1;
 			v.word_85278++;
@@ -394,6 +401,7 @@ int event_fn_18(Game &g) {
 	} else {
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_19
@@ -473,6 +481,7 @@ int event_fn_19(Game &g) {
 	} else {
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_20
@@ -491,6 +500,7 @@ int event_fn_20(Game &g) {
 		g.show_compendium(0x2E1, 0x5A01);
 		return 0;
 	}
+	return 0;
 }
 
 // event_fn_21
@@ -509,6 +519,7 @@ int event_fn_21(Game &g) {
 		g.show_compendium(0x2E2, 0x5A01);
 		return 0;
 	}
+	return 0;
 }
 
 // event_fn_22
@@ -538,6 +549,7 @@ int event_fn_23(Game &g) {
 		v.byte_852EE = 1;
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_24
@@ -565,6 +577,7 @@ int event_fn_24(Game &g) {
 	} else {
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_26
@@ -616,6 +629,7 @@ int event_fn_26(Game &g) {
 		g.add_score(0xA, 1, 0);
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_27
@@ -634,6 +648,7 @@ int event_fn_27(Game &g) {
 		g.schedule_event(0x1C, 2);
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_28
@@ -673,6 +688,7 @@ int event_fn_29(Game &g) {
 		go_to_room(g, 0x5A);
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_30
@@ -784,6 +800,7 @@ int event_fn_31(Game &g) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // event_fn_32
@@ -803,6 +820,7 @@ int event_fn_32(Game &g) {
 		g.RoomItem_Draw(0x10);
 		return 0;
 	}
+	return 0;
 }
 
 // event_fn_33
@@ -857,6 +875,7 @@ int event_fn_34(Game &g) {
 		g.popup_window_event();
 		return 0;
 	}
+	return 0;
 }
 
 // event_fn_36
@@ -872,6 +891,7 @@ int event_fn_36(Game &g) {
 		g.show_compendium(0x196, 0x5A03);
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_37
@@ -891,6 +911,7 @@ int event_fn_37(Game &g) {
 		rt.byte_8874A = 0;
 		return 1;
 	}
+	return 0;
 }
 
 // event_fn_38

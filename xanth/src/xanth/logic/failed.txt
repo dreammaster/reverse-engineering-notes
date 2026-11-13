@@ -1,4 +1,3 @@
-Conversation_GetEntry	does not compile yet: 'convId_hi' was not declared in this scope; did you mean 'convId'?
 Screen_RestoreSubPalettes	does not compile yet: 'FAR' was not declared in this scope
 conv_cb_21	does not compile yet: 'FAR' was not declared in this scope
 conv_cb_46	does not compile yet: 'FAR' was not declared in this scope

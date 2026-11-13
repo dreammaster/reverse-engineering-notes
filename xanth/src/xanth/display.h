@@ -17,6 +17,19 @@ namespace Xanth {
 
 struct OverlayRecord;
 
+/** What the player does: the frontend (or a test) implements this; the game waits for events through it where the original waits for the mouse or keyboard. */
+struct InputEvent {
+	enum Type { Move, Click, Key, Quit } type;
+	int x, y, key;
+	InputEvent() : type(Quit), x(0), y(0), key(0) {}
+};
+class InputSource {
+public:
+	virtual ~InputSource() {}
+	/** Blocks until the next event; the screen may be shown first (a frontend presents it here). */
+	virtual InputEvent wait() = 0;
+};
+
 class Display : public Ui {
 public:
 	Display(const Common::GameFiles &files);
@@ -25,6 +38,8 @@ public:
 	void attach(Game *game) { _game = game; }
 
 	const Legend::Surface &screen() const { return _screen; }
+	/** Where the clicks and keys come from while the game waits for them (conversations, "click to go on"); without one the game does not wait. */
+	void setInput(InputSource *input) { _input = input; }
 	/** The verbs of the list at the top left. */
 	void setVerbs(const std::vector<std::string> &verbs) { _verbs = verbs; }
 	/** Lets `ms` milliseconds pass for the animations of the room (update_animation: frame deltas are exclusive-ored onto the picture window when their time has come). */
@@ -53,12 +68,17 @@ public:
 	virtual int putChar(int ch);
 	virtual int showTextBox(const std::string &text) { return printText(text); }
 	virtual int playSound(const std::string &) { return 0; }
-	virtual int waitTicksOrClick(int) { return 0; }
+	virtual int waitTicksOrClick(int ticks);
+	virtual void conversationBegin(int picNum);
+	virtual void conversationLine(const std::string &text, bool wait);
+	virtual int conversationMenu(const std::vector<std::string> &options, int initial);
+	virtual void conversationEnd();
 	virtual bool askYesNo(const std::string &) { return false; }
 	virtual int other(const char *name, const intptr_t *args, int count);
 
 private:
 	void drawRoom();
+	void clearConversationBubble();
 	void expandText();
 	void drawInventory();
 	void drawSlot(int picNum, int x, int y);
@@ -100,6 +120,8 @@ private:
 	std::string _hover;
 	bool _expanded;                      // the text window has grown over the inventory
 	std::vector<byte> _below;            // what it covers
+	InputSource *_input;
+	int _convPicW, _convPicH, _convBubbleRight, _convMenuBottom;
 	int _selectedVerb;
 	int _inventoryScroll;                // first of the carried things shown (word_85024)
 	Legend::RgnFile _rgn;

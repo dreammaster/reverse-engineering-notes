@@ -943,4 +943,10 @@ def function_text(ctx, name, names=None, void=None):
         head.append(TAB + "char *" + ", *".join(sorted(strs)) + ";")
     if txts:
         head.append(TAB + "TextRef " + ", ".join(sorted(txts)) + ";")
-    return chr(10).join(head + [TAB + l for l in lines] + ["}"])
+    tail = []
+    if void is None or not void:
+        # falling off the end of a function (a case that ends without a return: the original leaves whatever is in ax) must not be undefined behaviour
+        last = lines[-1].strip() if lines else ""
+        if not last.startswith("return"):
+            tail = [TAB + ("return TextRef();" if head[1].startswith("TextRef ") else "return 0;")]
+    return chr(10).join(head + [TAB + l for l in lines] + tail + ["}"])

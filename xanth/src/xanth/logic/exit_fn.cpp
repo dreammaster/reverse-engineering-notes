@@ -16,6 +16,7 @@ int exit_fn_00(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(4, 75));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_01
@@ -27,6 +28,7 @@ int exit_fn_01(Game &g, Word arg0) {
 	} else {
 		return (g.object_has_attr(0x5D, 0xE) ? 0 : 0xFF9C) + 0x63;
 	}
+	return 0;
 }
 
 // exit_fn_02
@@ -45,6 +47,7 @@ int exit_fn_02(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(9, 77), ES(75), p4_ax);
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_03
@@ -61,6 +64,7 @@ int exit_fn_03(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(14, 36));
 		return 0x97;
 	}
+	return 0;
 }
 
 // exit_fn_04
@@ -80,6 +84,7 @@ int exit_fn_04(Game &g, Word arg0) {
 	} else {
 		return 0x98;
 	}
+	return 0;
 }
 
 // exit_fn_05
@@ -91,6 +96,7 @@ int exit_fn_05(Game &g, Word arg0) {
 	} else {
 		return 0x9D;
 	}
+	return 0;
 }
 
 // exit_fn_06
@@ -107,6 +113,7 @@ int exit_fn_06(Game &g, Word arg0) {
 	} else {
 		return 0x9A;
 	}
+	return 0;
 }
 
 // exit_fn_07
@@ -140,6 +147,7 @@ int exit_fn_07(Game &g, Word arg0) {
 			return 0xBE;
 		}
 	}
+	return 0;
 }
 
 // exit_fn_08
@@ -174,6 +182,7 @@ int exit_fn_08(Game &g, Word arg0) {
 			return 0;
 		}
 	}
+	return 0;
 }
 
 // exit_fn_09
@@ -190,6 +199,7 @@ int exit_fn_09(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(26, 5));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_10
@@ -213,6 +223,7 @@ int exit_fn_10(Game &g, Word arg0) {
 		g.show_compendium(0x2FD, 0x5A04);
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_11
@@ -225,6 +236,7 @@ int exit_fn_11(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(27, 18));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_12
@@ -321,6 +333,7 @@ int exit_fn_12(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // exit_fn_13
@@ -336,6 +349,7 @@ int exit_fn_13(Game &g, Word arg0) {
 	} else {
 		return 0xCD;
 	}
+	return 0;
 }
 
 // exit_fn_14
@@ -349,6 +363,7 @@ int exit_fn_14(Game &g, Word arg0) {
 	} else {
 		return 0xCD;
 	}
+	return 0;
 }
 
 // exit_fn_15
@@ -379,6 +394,7 @@ int exit_fn_15(Game &g, Word arg0) {
 			return 0x102;
 		}
 	}
+	return 0;
 }
 
 // exit_fn_16
@@ -390,6 +406,7 @@ int exit_fn_16(Game &g, Word arg0) {
 	} else {
 		return (v.byte_852E9 == 0 ? 0xFEFA : 0) + 0x105;
 	}
+	return 0;
 }
 
 // exit_fn_17
@@ -420,6 +437,7 @@ int exit_fn_17(Game &g, Word arg0) {
 		g.object_move(0x4D, 0, 0);
 		return 0x107;
 	}
+	return 0;
 }
 
 // exit_fn_18
@@ -432,6 +450,7 @@ int exit_fn_18(Game &g, Word arg0) {
 		g.show_compendium(0x169, 0x5A03);
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_19
@@ -447,6 +466,7 @@ int exit_fn_19(Game &g, Word arg0) {
 	} else {
 		return 0x132;
 	}
+	return 0;
 }
 
 // exit_fn_20
@@ -465,6 +485,7 @@ int exit_fn_20(Game &g, Word arg0) {
 	} else {
 		return 0x10C;
 	}
+	return 0;
 }
 
 // exit_fn_21
@@ -477,6 +498,7 @@ int exit_fn_21(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(37, 91));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_22
@@ -504,6 +526,7 @@ int exit_fn_22(Game &g, Word arg0) {
 	} else {
 		return 0x125;
 	}
+	return 0;
 }
 
 // exit_fn_23
@@ -520,6 +543,7 @@ int exit_fn_23(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(39, 49), ES(78));
 		return 0x132;
 	}
+	return 0;
 }
 
 // exit_fn_24
@@ -535,6 +559,7 @@ int exit_fn_24(Game &g, Word arg0) {
 	} else {
 		return 0x139;
 	}
+	return 0;
 }
 
 // exit_fn_25
@@ -547,6 +572,7 @@ int exit_fn_25(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(40, 75));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_26
@@ -568,6 +594,7 @@ int exit_fn_26(Game &g, Word arg0) {
 		g.RoomItem_Draw(0x10);
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_27
@@ -580,6 +607,7 @@ int exit_fn_27(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(57, 66));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_28
@@ -591,6 +619,7 @@ int exit_fn_28(Game &g, Word arg0) {
 	} else {
 		return (g.object_parent_is(0x15F, 8) ? 0 : 0xFE87) + 0x178;
 	}
+	return 0;
 }
 
 // exit_fn_29
@@ -607,6 +636,7 @@ int exit_fn_29(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(61, 8));
 		return 0x169;
 	}
+	return 0;
 }
 
 // exit_fn_30
@@ -623,6 +653,7 @@ int exit_fn_30(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(62, 70), 0, 0);
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_31
@@ -640,6 +671,7 @@ int exit_fn_31(Game &g, Word arg0) {
 	} else {
 		return 0x174;
 	}
+	return 0;
 }
 
 // exit_fn_32
@@ -655,6 +687,7 @@ int exit_fn_32(Game &g, Word arg0) {
 	} else {
 		return 0x169;
 	}
+	return 0;
 }
 
 // exit_fn_33
@@ -730,6 +763,7 @@ int exit_fn_33(Game &g, Word arg0) {
 			}
 		}
 	}
+	return 0;
 }
 
 // exit_fn_34
@@ -742,6 +776,7 @@ int exit_fn_34(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(44, 13));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_35
@@ -757,6 +792,7 @@ int exit_fn_35(Game &g, Word arg0) {
 	} else {
 		return 0x17F;
 	}
+	return 0;
 }
 
 // exit_fn_36
@@ -769,6 +805,7 @@ int exit_fn_36(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(44, 14));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_37
@@ -781,6 +818,7 @@ int exit_fn_37(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(46, 8));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_38
@@ -793,6 +831,7 @@ int exit_fn_38(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(46, 6));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_39
@@ -809,6 +848,7 @@ int exit_fn_39(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(46, 7), ES(81));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_40
@@ -821,6 +861,7 @@ int exit_fn_40(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(69, 36));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_41
@@ -836,6 +877,7 @@ int exit_fn_41(Game &g, Word arg0) {
 	} else {
 		return 0x18A;
 	}
+	return 0;
 }
 
 // exit_fn_42
@@ -851,6 +893,7 @@ int exit_fn_42(Game &g, Word arg0) {
 	} else {
 		return 0x18D;
 	}
+	return 0;
 }
 
 // exit_fn_43
@@ -866,6 +909,7 @@ int exit_fn_43(Game &g, Word arg0) {
 	} else {
 		return 0x18A;
 	}
+	return 0;
 }
 
 // exit_fn_44
@@ -881,6 +925,7 @@ int exit_fn_44(Game &g, Word arg0) {
 	} else {
 		return 0x197;
 	}
+	return 0;
 }
 
 // exit_fn_45
@@ -901,6 +946,7 @@ int exit_fn_45(Game &g, Word arg0) {
 			return 0xFFFF;
 		}
 	}
+	return 0;
 }
 
 // exit_fn_46
@@ -913,6 +959,7 @@ int exit_fn_46(Game &g, Word arg0) {
 	} else {
 		return 0x197;
 	}
+	return 0;
 }
 
 // exit_fn_47
@@ -929,6 +976,7 @@ int exit_fn_47(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(71, 32));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_48
@@ -941,6 +989,7 @@ int exit_fn_48(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(47, 10));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_49
@@ -953,6 +1002,7 @@ int exit_fn_49(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(72, 40));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_50
@@ -969,6 +1019,7 @@ int exit_fn_50(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(72, 77));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_51
@@ -981,6 +1032,7 @@ int exit_fn_51(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(73, 91));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_52
@@ -998,6 +1050,7 @@ int exit_fn_52(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(73, 93), g.print_obj(0x12, 0x1BE));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_53
@@ -1018,6 +1071,7 @@ int exit_fn_53(Game &g, Word arg0) {
 		g.popup_window_event();
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_54
@@ -1034,6 +1088,7 @@ int exit_fn_54(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(75, 42));
 		return 0;
 	}
+	return 0;
 }
 
 // exit_fn_55
@@ -1046,6 +1101,7 @@ int exit_fn_55(Game &g, Word arg0) {
 		g.Font_WriteMessage(MSG(77, 9));
 		return 0;
 	}
+	return 0;
 }
 
 } // namespace Xanth

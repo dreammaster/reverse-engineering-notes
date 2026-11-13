@@ -22,6 +22,7 @@ advance_time	2
 call_object_handler	2
 cancel_event	1
 clear_text_area	0
+conversation_set_enabled	3
 disable_pic_regions	3
 event_pending	1
 game_over_screen	1

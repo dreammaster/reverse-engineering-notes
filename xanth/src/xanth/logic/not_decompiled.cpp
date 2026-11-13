@@ -4,7 +4,6 @@
 namespace Xanth {
 
 // Functions the decompiler could not translate yet; until a hand-written replacement exists they do nothing.
-int Conversation_GetEntry(Game &, Word, Word) { return 0; }  // does not compile yet: 'convId_hi' was not declared in this scope; did you mean 'convId'?
 int Screen_RestoreSubPalettes(Game &) { return 0; }  // does not compile yet: 'FAR' was not declared in this scope
 int conv_cb_21(Game &, Word) { return 0; }  // does not compile yet: 'FAR' was not declared in this scope
 int conv_cb_46(Game &, Word) { return 0; }  // does not compile yet: 'FAR' was not declared in this scope

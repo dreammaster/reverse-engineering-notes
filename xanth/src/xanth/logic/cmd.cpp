@@ -103,6 +103,7 @@ int cmdClose(Game &g) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // cmdCrack
@@ -192,6 +193,7 @@ int cmdEmpty(Game &g) {
 		g.Font_WriteMessage(MSG(18, 20), g.print_obj(2, rt.dobj));
 		return 1;
 	}
+	return 0;
 }
 
 // cmdEnjoy
@@ -219,6 +221,7 @@ int cmdFill(Game &g) {
 		g.Font_WriteMessage(MSG(18, 25));
 		return 1;
 	}
+	return 0;
 }
 
 // cmdFillOut
@@ -264,6 +267,7 @@ int cmdGetOn(Game &g) {
 		g.Font_WriteMessage(MSG(18, 46), g.print_obj(2, rt.dobj));
 		return 1;
 	}
+	return 0;
 }
 
 // cmdGive
@@ -277,6 +281,7 @@ int cmdGive(Game &g) {
 		g.Font_WriteMessage(MSG(41, 5), g.print_obj(0x52, rt.iobj, ES(6)), g.print_obj(0x22, rt.dobj));
 		return 1;
 	}
+	return 0;
 }
 
 // cmdGoto
@@ -364,6 +369,7 @@ int cmdLead(Game &g) {
 		g.wputchar(0x2E);
 		return 1;
 	}
+	return 0;
 }
 
 // cmdLight
@@ -456,6 +462,7 @@ int cmdLookAt(Game &g) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // cmdLookIn
@@ -536,6 +543,7 @@ int cmdOpen(Game &g) {
 			return 1;
 		}
 	}
+	return 0;
 }
 
 // cmdPeerAt
@@ -597,6 +605,7 @@ int cmdPoke(Game &g) {
 		g.Font_WriteMessage(MSG(18, 54), g.print_obj(2, rt.dobj));
 		return 1;
 	}
+	return 0;
 }
 
 // cmdPop
@@ -676,6 +685,7 @@ int cmdPut(Game &g) {
 		g.Font_WriteMessage(MSG(41, 24), g.print_obj(2, rt.dobj), v2, g.print_obj(2, rt.iobj));
 		return 1;
 	}
+	return 0;
 }
 
 // cmdQuit
@@ -688,6 +698,7 @@ int cmdQuit(Game &g) {
 	} else {
 		return 1;
 	}
+	return 0;
 }
 
 // cmdRaise
@@ -722,6 +733,7 @@ int cmdRemove(Game &g) {
 	} else {
 		return 1;
 	}
+	return 0;
 }
 
 // cmdRub
@@ -773,6 +785,7 @@ int cmdSpread(Game &g) {
 		g.Font_WriteMessage(MSG(18, 71), g.print_obj(2, rt.dobj), g.print_obj(2, rt.iobj));
 		return 1;
 	}
+	return 0;
 }
 
 // cmdSquirt
@@ -833,6 +846,7 @@ int cmdTake(Game &g) {
 		g.object_set_attr(rt.dobj, 5);
 		return 1;
 	}
+	return 0;
 }
 
 // cmdTalkTo
@@ -846,6 +860,7 @@ int cmdTalkTo(Game &g) {
 		g.Font_WriteMessage(MSG(41, 31), g.print_obj(0x52, rt.dobj, ES(6)));
 		return 1;
 	}
+	return 0;
 }
 
 // cmdTaste
@@ -961,6 +976,7 @@ int cmdWait(Game &g) {
 	} while (v6 < 0x3E);
 	v4 = (sub_1AC45(g, mem16(rt.word_8AA74, v2 * 4))) + 1;
 	goto L7;
+	return 0;
 }
 
 // cmdWalk
@@ -974,6 +990,7 @@ int cmdWalk(Game &g) {
 		g.Font_WriteMessage(MSG(41, 0));
 		return 1;
 	}
+	return 0;
 }
 
 // cmdWash
@@ -1000,6 +1017,7 @@ int cmdWear(Game &g) {
 	} else {
 		return 1;
 	}
+	return 0;
 }
 
 } // namespace Xanth

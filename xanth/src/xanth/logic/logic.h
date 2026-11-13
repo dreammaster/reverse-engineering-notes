@@ -39,6 +39,25 @@ struct OverlayTable {
 extern const OverlayTable kOverlayTables[];
 extern const unsigned kOverlayTableCount;
 
+/** A line of a conversation (a simple line, or one option of a menu): a message id or a function that builds the text, the line (< 0x8000), menu (0x8000 | n) or end (0xFFFF) it
+ *  leads to, and whether it starts enabled. */
+struct ConvEntry {
+	uint32 msg;
+	TextRef (*text)(Game &g);
+	uint16 next;
+	uint8 enabled;
+};
+/** A menu: its options are kConvOptions[first .. first + count - 1]; `callback` (or null) runs with (menu id, option number) after a choice. */
+struct ConvMenu {
+	uint8 flag, b1;
+	uint16 first, count;
+	int (*callback)(Game &g, Word convId, Word option);
+};
+extern const ConvEntry kConvLines[];
+extern const ConvEntry kConvOptions[];
+extern const ConvMenu kConvMenus[];
+extern const unsigned kConvLineCount, kConvOptionCount, kConvMenuCount;
+
 extern const HandlerFn kObjectHandlers[448];
 extern const HandlerFn kExitFunctions[];
 extern const HandlerFn kEventFunctions[];

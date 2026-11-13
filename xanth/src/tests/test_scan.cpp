@@ -116,7 +116,9 @@ int main() {
 				scenarios++;
 				bool conversation = false;
 				for (size_t k = 0; k < ui.others.size(); k++)
-					conversation |= ui.others[k] == "show_compendium" || ui.others[k] == "showCutscene";
+					conversation |= ui.others[k] == "showCutscene";
+				for (size_t k = 0; k < ui.log.size(); k++)
+					conversation |= ui.log[k].compare(0, 13, "conversation|") == 0;
 				if (conversation) {
 					// the oracle cannot run a conversation or cutscene without a window and a player: it stops somewhere inside, so these scenarios are not compared
 					skipped++;

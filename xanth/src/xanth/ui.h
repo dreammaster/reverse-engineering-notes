@@ -9,6 +9,8 @@
 #ifndef XANTH_UI_H
 #define XANTH_UI_H
 
+#include <cstdio>
+
 #include "common/types.h"
 
 namespace Xanth {
@@ -29,6 +31,16 @@ public:
 	virtual int waitTicksOrClick(int ticks) = 0;
 	/** Asks a yes/no question; true for yes (show_yes_no_dialog). */
 	virtual bool askYesNo(const std::string &question) = 0;
+
+	// ---- conversations (Conversation_Show)
+	/** Starts a conversation scene: the picture (file << 8 | entry) in a frame on the marble background. */
+	virtual void conversationBegin(int picNum) { (void)picNum; }
+	/** One line of speech (shown to the right of the picture); `wait`: wait for a click before going on. */
+	virtual void conversationLine(const std::string &text, bool wait) { (void)text; (void)wait; }
+	/** A menu of replies below the picture; `initial` is the entry that starts highlighted; returns the entry chosen. */
+	virtual int conversationMenu(const std::vector<std::string> &options, int initial) { (void)options; return initial < 0 ? 0 : initial; }
+	/** The end of the conversation: the scene is taken down and the game screen comes back. */
+	virtual void conversationEnd() {}
 
 	/** A routine of the original that draws, animates or plays; `name` is its name in the original (sub_XXXXX where nothing better is known), `args` the words it was called with. */
 	virtual int other(const char *name, const intptr_t *args, int count) = 0;
@@ -53,6 +65,13 @@ public:
 	virtual int waitTicksOrClick(int) { return 0; }
 	virtual bool askYesNo(const std::string &) { return false; }
 	virtual int other(const char *name, const intptr_t *, int) { others.push_back(name); return 0; }
+	virtual void conversationBegin(int picNum) { char b[32]; snprintf(b, sizeof(b), "conversation|%X", picNum); log.push_back(b); }
+	virtual void conversationLine(const std::string &text, bool) { log.push_back("conversation_line|" + text); }
+	virtual int conversationMenu(const std::vector<std::string> &options, int initial) {
+		for (size_t i = 0; i < options.size(); i++)
+			log.push_back("conversation_option|" + options[i]);
+		return initial < 0 ? 0 : initial;
+	}
 };
 
 } // namespace Xanth

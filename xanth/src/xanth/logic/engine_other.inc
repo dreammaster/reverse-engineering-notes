@@ -23,7 +23,6 @@ int read_game_state(Word a0 = 0) { return other("read_game_state", a0); }
 int rtlink_thunk(Word a0 = 0) { return other("rtlink_thunk", a0); }
 int setup_pic_regions(Word a0 = 0, Word a1 = 0) { return other("setup_pic_regions", a0, a1); }
 int showCutscene(Word a0 = 0) { return other("showCutscene", a0); }
-int show_compendium(Word a0 = 0, Word a1 = 0) { return other("show_compendium", a0, a1); }
 int sub_1D99F(Word a0 = 0) { return other("sub_1D99F", a0); }
 int sub_1EDBC(Word a0 = 0) { return other("sub_1EDBC", a0); }
 int sub_1EED9(Word a0 = 0) { return other("sub_1EED9", a0); }
