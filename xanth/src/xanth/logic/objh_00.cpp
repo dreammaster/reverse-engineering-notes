@@ -2002,7 +2002,7 @@ int objh_031(Game &g, Word arg0) {
 				g.MouseCursor_SetSmallArrow();
 			}
 			rt.byte_8525D = 0;
-			sub_2A333(g);
+			g.sub_2A333();
 		}
 		if (rt.byte_8525E != 0) {
 			g.sub_2A386();
@@ -2012,16 +2012,16 @@ int objh_031(Game &g, Word arg0) {
 				g.MouseCursor_SetSmallArrow();
 			}
 			rt.byte_8525E = 0;
-			sub_2A333(g);
+			g.sub_2A333();
 		}
 		if (rt.byte_86E92 == 0) {
 			g.sub_2A386();
 			g.sub_2A5B4();
 			g.sub_2A207(0x214, 0xA, 0, 0);
 			rt.byte_86E92 = 1;
-			return g.setup_pic_regions((intptr_t)&rt.unk_4D880, 9);
+			return g.setup_pic_regions(0x4D880, 9);
 		} else {
-			return g.setup_pic_regions((intptr_t)&rt.unk_4D880, 9);
+			return g.setup_pic_regions(0x4D880, 9);
 		}
 		break;
 	case 23:
@@ -2034,11 +2034,11 @@ int objh_031(Game &g, Word arg0) {
 			}
 			g.realsound_play(ES(107));
 			rt.byte_852E5 = 0;
-			sub_2A333(g);
-			g.disable_pic_regions((intptr_t)&rt.unk_4D8EC, 9);
+			g.sub_2A333();
+			g.disable_pic_regions(0x4D8EC, 9);
 			return 0;
 		} else {
-			g.disable_pic_regions((intptr_t)&rt.unk_4D8EC, 9);
+			g.disable_pic_regions(0x4D8EC, 9);
 			goto L69;
 		}
 		break;
@@ -2945,20 +2945,20 @@ int objh_047(Game &g, Word arg0) {
 			}
 		}
 		if (rt.byte_87002 != 0) {
-			return g.setup_pic_regions((intptr_t)&rt.unk_4F1A8, 3);
+			return g.setup_pic_regions(0x4F1A8, 3);
 		}
 		if (g.object_has_attr(0x34, 0xE)) {
 			g.sub_2A386();
 			g.sub_2A5B4();
 			g.sub_2A207(0x22D, 0x14, 0, 0);
 			rt.byte_87002 = 1;
-			return g.setup_pic_regions((intptr_t)&rt.unk_4F1A8, 3);
+			return g.setup_pic_regions(0x4F1A8, 3);
 		} else {
-			return g.setup_pic_regions((intptr_t)&rt.unk_4F1A8, 3);
+			return g.setup_pic_regions(0x4F1A8, 3);
 		}
 		break;
 	case 23:
-		g.disable_pic_regions((intptr_t)&rt.unk_4F1CC, 5);
+		g.disable_pic_regions(0x4F1CC, 5);
 		goto L41;
 	}
 }
@@ -3540,14 +3540,14 @@ int objh_060(Game &g, Word arg0) {
 		if (rt.byte_871F2 == 0) {
 			g.sub_2A207(0x24A, 0xA, 0, 0);
 			rt.byte_871F2 = 1;
-			sub_2A333(g);
-			return g.setup_pic_regions((intptr_t)&rt.unk_50840, 5);
+			g.sub_2A333();
+			return g.setup_pic_regions(0x50840, 5);
 		} else {
-			return g.setup_pic_regions((intptr_t)&rt.unk_50840, 5);
+			return g.setup_pic_regions(0x50840, 5);
 		}
 		break;
 	case 23:
-		g.disable_pic_regions((intptr_t)&rt.unk_5087C, 5);
+		g.disable_pic_regions(0x5087C, 5);
 		goto L17;
 	}
 }

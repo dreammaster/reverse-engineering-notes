@@ -32,6 +32,7 @@ int sub_29608(Word a0 = 0, Word a1 = 0) { return other("sub_29608", a0, a1); }
 int sub_29E46(Word a0 = 0, Word a1 = 0, Word a2 = 0) { return other("sub_29E46", a0, a1, a2); }
 int sub_29F77(Word a0 = 0, Word a1 = 0, Word a2 = 0) { return other("sub_29F77", a0, a1, a2); }
 int sub_2A207(Word a0 = 0, Word a1 = 0, Word a2 = 0, Word a3 = 0) { return other("sub_2A207", a0, a1, a2, a3); }
+int sub_2A333(Word a0 = 0) { return other("sub_2A333", a0); }
 int sub_2A386(Word a0 = 0) { return other("sub_2A386", a0); }
 int sub_2A5B4(Word a0 = 0) { return other("sub_2A5B4", a0); }
 int sub_2B236(Word a0 = 0) { return other("sub_2B236", a0); }

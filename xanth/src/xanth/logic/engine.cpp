@@ -1434,46 +1434,6 @@ int move_to_current_room(Game &g, Word arg0) {
 	}
 }
 
-// sub_1B877
-int sub_1B877(Game &g, Word arg0) {
-	Vars &v = g.state.v;
-	Runtime &rt = g.rt;
-	intptr_t v4, v4_hi;
-	if ((int16)arg0 <= 0) {
-		return 0;
-	}
-	if (arg0 > rt.object_count) {
-		return 0;
-	}
-	v4 = mem16(rt.seg_8A9E4, (arg0 * 6) + 0x68);
-	v4_hi = mem16(rt.seg_8A9E4, (arg0 * 6) + 0x6A);
-	if ((objectType(arg0)) == 1) {
-		return mem8(v4_hi, v4 + 0xE);
-	} else {
-		return 0;
-	}
-}
-
-// sub_1B8C5
-int sub_1B8C5(Game &g, Word arg0) {
-	Vars &v = g.state.v;
-	Runtime &rt = g.rt;
-	intptr_t v4, v4_hi;
-	if ((int16)arg0 <= 0) {
-		return 0;
-	}
-	if (arg0 > rt.object_count) {
-		return 0;
-	}
-	v4 = mem16(rt.seg_8A9E4, (arg0 * 6) + 0x68);
-	v4_hi = mem16(rt.seg_8A9E4, (arg0 * 6) + 0x6A);
-	if ((objectType(arg0)) == 1) {
-		return mem16(v4_hi, v4 + 0x10);
-	} else {
-		return 0;
-	}
-}
-
 // sub_1B5CB
 int sub_1B5CB(Game &g, Word arg0, Word arg1) {
 	Vars &v = g.state.v;
@@ -1574,8 +1534,8 @@ int sub_1DBDC(Game &g) {
 	Runtime &rt = g.rt;
 	intptr_t v10, v12, v14, v16, v18, v1A, v2, v4, v6, v8, vC, vE, r0_2;
 	v6 = 0;
-	vE = sub_1B877(g, v.current_room);
-	r0_2 = sub_1B8C5(g, v.current_room);
+	vE = g.sub_1B877(v.current_room);
+	r0_2 = g.sub_1B8C5(v.current_room);
 	v10 = r0_2;
 	if (v10 == 0) {
 		return r0_2;
@@ -1643,8 +1603,8 @@ int sub_1EB3A(Game &g, Word arg0) {
 	Runtime &rt = g.rt;
 	intptr_t v10, v12, v4, v6, v8, vA, p15_ax;
 	vA = 0;
-	v4 = sub_1B877(g, v.current_room);
-	v6 = sub_1B8C5(g, v.current_room);
+	v4 = g.sub_1B877(v.current_room);
+	v6 = g.sub_1B8C5(v.current_room);
 	if (v6 == 0) {
 		g.Font_WriteMessage(ES(323));
 		return 0;

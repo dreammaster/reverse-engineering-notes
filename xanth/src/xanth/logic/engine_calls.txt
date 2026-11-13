@@ -57,6 +57,8 @@ setup_pic_regions	2
 showCutscene	1
 show_compendium	2
 show_text_box	1
+sub_1B877	1
+sub_1B8C5	1
 sub_1D99F	0
 sub_1EDBC	0
 sub_1EED9	0
@@ -65,6 +67,7 @@ sub_29608	2
 sub_29E46	3
 sub_29F77	3
 sub_2A207	4
+sub_2A333	0
 sub_2A386	0
 sub_2A5B4	0
 sub_2B236	1

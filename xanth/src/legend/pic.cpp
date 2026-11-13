@@ -20,6 +20,8 @@ bool PicFile::load(const Common::Bytes &data, bool compressed) {
 		e.flags = s.readByte();
 		e.width = s.readUint16LE();
 		e.height = s.readUint16LE();
+		e.delayBase = s.readByte();
+		e.delayRandom = s.readByte();
 		e.end = 0;
 		_entries.push_back(e);
 		if ((i + 1) * 12 >= _entries[0].offset)         // the directory ends where the first picture's data starts
@@ -41,6 +43,8 @@ bool PicFile::decode(size_t i, PicImage &out) const {
 	out.height = e.height;
 	out.flags = e.flags;
 	out.frames = e.frames;
+	out.delayBase = e.delayBase;
+	out.delayRandom = e.delayRandom;
 	Common::ReadStream s(_d);
 	s.seek(e.offset);
 	for (unsigned f = 0; f < e.frames; f++) {

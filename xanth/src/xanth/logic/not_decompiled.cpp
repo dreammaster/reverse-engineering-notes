@@ -43,7 +43,6 @@ int objh_360(Game &, Word) { return 0; }  // does not compile yet: invalid conve
 int objh_390(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int sub_1AAFB(Game &) { return 0; }  // instruction stosw (stosw)
 int sub_1C4ED(Game &, Word, Word, Word, Word) { return 0; }  // use of bp (lea     ax, [bp+si+var_4E])
-int sub_2A333(Game &) { return 0; }  // carry after res (adc     [bx+2], dx)
 int sub_312E3(Game &) { return 0; }  // does not compile yet: too few arguments to function 'int Xanth::sub_5E2D0(Game&, Word)'
 int sub_312ED(Game &) { return 0; }  // does not compile yet: too few arguments to function 'int Xanth::sub_5EC63(Game&, Word)'
 int sub_44130(Game &, Word, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]

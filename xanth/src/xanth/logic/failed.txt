@@ -37,7 +37,6 @@ objh_360	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermi
 objh_390	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 sub_1AAFB	instruction stosw (stosw)
 sub_1C4ED	use of bp (lea     ax, [bp+si+var_4E])
-sub_2A333	carry after res (adc     [bx+2], dx)
 sub_312E3	does not compile yet: too few arguments to function 'int Xanth::sub_5E2D0(Game&, Word)'
 sub_312ED	does not compile yet: too few arguments to function 'int Xanth::sub_5EC63(Game&, Word)'
 sub_44130	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]

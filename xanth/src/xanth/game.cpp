@@ -350,10 +350,17 @@ uint8 &Game::exe8(int seg, int off) {
 	unsigned lin = (unsigned)((seg & 0xFFFF) * 16 + (off & 0xFFFF));
 	if ((seg & 0xFFFF) == 0x84FC)
 		return _dseg[off & 0xFFFF];
-	if (lin >= 0x31550 && lin + 1 < 0x34000)
+	if (lin >= 0x31550 && lin + 1 < 0x35400)
 		return _tables[lin - 0x31550];
 	_scratch[0] = _scratch[1] = 0;
 	return _scratch[0];
+}
+
+int Game::exitField(int room, int offset, int size) const {
+	if (state.objects.type(room) != OT_ROOM)
+		return 0;
+	const byte *r = state.objects.record(room);
+	return size == 1 ? r[offset] : (r[offset] | (r[offset + 1] << 8));
 }
 
 int Game::_rand() {

@@ -24,12 +24,13 @@ struct PicImage {
 	uint16 width, height;
 	byte flags;
 	uint8 frames;                    // number of position pairs (animation frames); 0 for a plain picture
+	uint8 delayBase, delayRandom;    // the last two bytes of the directory entry: for an animation frame the time to the next one is 50 * delayBase + random(50 * delayRandom + 1) (milliseconds)
 	std::vector<Common::Point> framePos;
 	bool hasPalette;
 	byte palette[768];               // 6-bit VGA components (valid if hasPalette)
 	Common::Bytes pixels;            // width*height palette indices
 
-	PicImage() : x(0), y(0), width(0), height(0), flags(0), frames(0), hasPalette(false) { memset(palette, 0, sizeof(palette)); }
+	PicImage() : x(0), y(0), width(0), height(0), flags(0), frames(0), delayBase(0), delayRandom(0), hasPalette(false) { memset(palette, 0, sizeof(palette)); }
 };
 
 class PicFile {
@@ -40,6 +41,7 @@ public:
 		uint8 frames;
 		byte flags;
 		uint16 width, height;
+		uint8 delayBase, delayRandom;
 	};
 
 	/** Takes ownership of the file's bytes; false if the directory is corrupt. */

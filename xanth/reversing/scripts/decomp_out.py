@@ -197,6 +197,8 @@ class Renderer:
         if op == "segof":
             return "SEG(%s)" % e[1]
         if op == "addrof":
+            if e[1][0] == "glob" and e[1][1] in getattr(self.names, "overlay_syms", ()):
+                return "0x" + e[1][1][4:]           # an overlay table of the original: passed as its address (overlays.cpp)
             return "(intptr_t)&" + self.R(e[1], False)
         if op == "dseg":
             return "DS"

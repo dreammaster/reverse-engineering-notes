@@ -36,6 +36,7 @@ add_library(xanth_engine STATIC
 	xanth/gamestate.cpp
 	xanth/game.cpp
 	xanth/mainscreen.cpp
+	xanth/display.cpp
 	xanth/logic_support.cpp
 	xanth/tables/vars.cpp
 	${XANTH_LOGIC}
@@ -60,6 +61,9 @@ add_executable(test_graphics tests/test_graphics.cpp)
 target_link_libraries(test_graphics xanth_engine)
 add_test(NAME graphics COMMAND test_graphics)
 
+add_executable(test_screen tests/test_screen.cpp)
+target_link_libraries(test_screen xanth_engine)
+
 add_executable(test_scan tests/test_scan.cpp)
 target_link_libraries(test_scan xanth_engine)
 add_test(NAME scan COMMAND test_scan)
@@ -81,4 +85,5 @@ endif()
 if(EXISTS "${XANTH_ROOT}/game_out/restart.dat")
 	list(APPEND XANTH_TEST_ENV "XANTH_RESTART=${XANTH_ROOT}/game_out/restart.dat")
 endif()
-set_tests_properties(formats objects state grammar scan graphics PROPERTIES ENVIRONMENT "${XANTH_TEST_ENV}")
+add_test(NAME screen COMMAND test_screen)
+set_tests_properties(formats objects state grammar scan graphics screen PROPERTIES ENVIRONMENT "${XANTH_TEST_ENV}")

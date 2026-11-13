@@ -90,6 +90,32 @@ void MainScreen::printMessage(Surface &s, const std::string &text) const {
 	w.print(s, text);
 }
 
+bool MainScreen::loadPicture(const Common::GameFiles &files, int picNum, PicImage &out) {
+	char name[16];
+	snprintf(name, sizeof(name), "XANTH_%02d.PIC", picNum >> 8);
+	Common::Bytes d;
+	PicFile pf;
+	return files.load(name, d) && pf.load(d) && pf.decode(picNum & 255, out);
+}
+
+void MainScreen::drawPictureWindow(Surface &s, const PicImage &room, const std::vector<byte> &pixels) const {
+	byte pal[768];
+	memcpy(pal, room.hasPalette ? room.palette : s.palette, 768);
+	restoreSubPalettes(pal);
+	s.setPalette(pal);
+	drawPicture(s, 51 + room.x, 4 + room.y, &pixels[0], room.width, room.height, false);
+}
+
+void MainScreen::xorOverlay(const PicImage &room, std::vector<byte> &pixels, const PicImage &ov) {
+	for (int y = 0; y < ov.height; y++) {
+		for (int x = 0; x < ov.width; x++) {
+			int rx = ov.x + x - room.x, ry = ov.y + y - room.y;
+			if (rx >= 0 && ry >= 0 && rx < room.width && ry < room.height)
+				pixels[(size_t)ry * room.width + rx] ^= ov.pixels[(size_t)y * ov.width + x];
+		}
+	}
+}
+
 bool MainScreen::drawRoomPicture(Surface &s, const Common::GameFiles &files, int picNum, const std::vector<int> &overlays) const {
 	char name[16];
 	snprintf(name, sizeof(name), "XANTH_%02d.PIC", picNum >> 8);

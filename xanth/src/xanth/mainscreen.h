@@ -32,6 +32,16 @@ public:
 	void drawVerbs(Legend::Surface &s, const std::vector<std::string> &verbs) const;
 	/** The text window (window 2, font 10, colours 15 on 23): prints a message like Font_WriteLines does. */
 	void printMessage(Legend::Surface &s, const std::string &text) const;
+	const Legend::Font &font10() const { return _font10; }
+
+	/** Decodes a picture by number (file << 8 | entry). */
+	static bool loadPicture(const Common::GameFiles &files, int picNum, Legend::PicImage &out);
+	/** Puts the pixels of a room picture (possibly changed by overlays) in the picture window and takes over the picture's palette (+ the interface colours). */
+	void drawPictureWindow(Legend::Surface &s, const Legend::PicImage &room, const std::vector<byte> &pixels) const;
+	/** XORs picture `overlay` (frame position from the picture itself) into a room picture's pixels, as setup_pic_regions does for an item. */
+	static void xorOverlay(const Legend::PicImage &room, std::vector<byte> &pixels, const Legend::PicImage &overlay);
+	/** Draws the compass arrows whose bit is set in `bits` (exclusive-or: calling it twice erases them). */
+	void toggleCompassArrows(Legend::Surface &s, unsigned bits) const { drawCompassArrows(s, bits); }
 
 	/** The compass: arrow i (bit i of `exits`) is drawn exclusive-or onto the compass picture (sub_2B236 draws only the arrows whose state changed). */
 	void drawCompassArrows(Legend::Surface &s, unsigned exits) const;

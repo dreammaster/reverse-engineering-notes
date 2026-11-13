@@ -1027,7 +1027,7 @@ int objh_268(Game &g, Word arg0) {
 		if (v.flag_8530D_faucet == 0) {
 	L46:;
 			if (rt.byte_8838E != 0) {
-				return g.setup_pic_regions((intptr_t)&rt.unk_6F330, 0xB);
+				return g.setup_pic_regions(0x6F330, 0xB);
 			}
 			g.sub_2A386();
 			g.sub_2A5B4();
@@ -1038,10 +1038,10 @@ int objh_268(Game &g, Word arg0) {
 				p51_s0 = (r48_82 ? 0 : r48_82);
 				g.sub_2A207(p51_ax, 0xA, p51_s1, p51_s0);
 				rt.byte_8838E = 1;
-				return g.setup_pic_regions((intptr_t)&rt.unk_6F330, 0xB);
+				return g.setup_pic_regions(0x6F330, 0xB);
 			} else {
 				rt.byte_8838E = 1;
-				return g.setup_pic_regions((intptr_t)&rt.unk_6F330, 0xB);
+				return g.setup_pic_regions(0x6F330, 0xB);
 			}
 		} else {
 			g.wputchar(0xB);
@@ -1136,7 +1136,7 @@ int objh_268(Game &g, Word arg0) {
 			g.object_move(0x12D, 0, 0);
 		}
 		if (v.flag_8530E_sink == 0) {
-			g.disable_pic_regions((intptr_t)&rt.unk_6F3B4, 6);
+			g.disable_pic_regions(0x6F3B4, 6);
 			goto L79;
 		}
 		g.wputchar(0xB);
@@ -1166,7 +1166,7 @@ int objh_268(Game &g, Word arg0) {
 			g.Image_Free((intptr_t)&rt._background);
 			rt.byte_8838E = 0;
 			g.popup_window_event();
-			g.disable_pic_regions((intptr_t)&rt.unk_6F3B4, 6);
+			g.disable_pic_regions(0x6F3B4, 6);
 			return 0;
 		}
 		if (rt.word_85018 != 0) {
@@ -1823,7 +1823,7 @@ int objh_278(Game &g, Word arg0) {
 	g.Font_WriteMessage(MSG(38, 77), g.print_obj(2, rt.dobj), g.print_obj(2, mem16(DS, (v2 * 2) + 0x3442)));
 	g.object_set_attr(rt.dobj, 0xA);
 	g.object_clear_attr(mem16(DS, (v2 * 2) + 0x3442), 0xA);
-	g.setup_pic_regions((intptr_t)&rt.unk_6F330, 0xB);
+	g.setup_pic_regions(0x6F330, 0xB);
 	if (rt.dobj != 0x130) {
 		return 1;
 	}
@@ -1878,7 +1878,7 @@ int objh_279(Game &g, Word arg0) {
 		goto L16;
 	case 22:
 		if (rt.byte_88440 != 0) {
-			return g.setup_pic_regions((intptr_t)&rt.unk_700E0, 3);
+			return g.setup_pic_regions(0x700E0, 3);
 		}
 		g.sub_2A386();
 		g.sub_2A5B4();
@@ -1886,14 +1886,14 @@ int objh_279(Game &g, Word arg0) {
 			p12_ax = (g.object_parent_is(0x138, 0x137) ? 0xB3B : 0xB30);
 			g.sub_2A207(p12_ax, 0xB, 0, 0);
 			rt.byte_88440 = 1;
-			return g.setup_pic_regions((intptr_t)&rt.unk_700E0, 3);
+			return g.setup_pic_regions(0x700E0, 3);
 		} else {
 			rt.byte_88440 = 1;
-			return g.setup_pic_regions((intptr_t)&rt.unk_700E0, 3);
+			return g.setup_pic_regions(0x700E0, 3);
 		}
 		break;
 	case 23:
-		g.disable_pic_regions((intptr_t)&rt.unk_70104, 2);
+		g.disable_pic_regions(0x70104, 2);
 		goto L16;
 	}
 }
@@ -2614,7 +2614,7 @@ int objh_291(Game &g, Word arg0) {
 		rt.byte_8ADF4 = 0;
 		goto L61;
 	case 22:
-		v4 = g.setup_pic_regions((intptr_t)&rt.unk_71B24, 0xA);
+		v4 = g.setup_pic_regions(0x71B24, 0xA);
 		if (rt.byte_8ADF4 != 0) {
 			return v4;
 		}
@@ -2680,7 +2680,7 @@ int objh_291(Game &g, Word arg0) {
 		}
 		break;
 	case 23:
-		g.disable_pic_regions((intptr_t)&rt.unk_71B9C, 0xF);
+		g.disable_pic_regions(0x71B9C, 0xF);
 		goto L61;
 	}
 }
@@ -3443,13 +3443,13 @@ int objh_304(Game &g, Word arg0) {
 			g.sub_2A5B4();
 			g.sub_2A207(0xF04, 6, 0, 0);
 			rt.byte_88528 = 1;
-			return g.setup_pic_regions((intptr_t)&rt.unk_727A0, 3);
+			return g.setup_pic_regions(0x727A0, 3);
 		} else {
-			return g.setup_pic_regions((intptr_t)&rt.unk_727A0, 3);
+			return g.setup_pic_regions(0x727A0, 3);
 		}
 		break;
 	case 23:
-		g.disable_pic_regions((intptr_t)&rt.unk_727C4, 5);
+		g.disable_pic_regions(0x727C4, 5);
 		goto L20;
 	}
 }
@@ -4004,13 +4004,13 @@ int objh_313(Game &g, Word arg0) {
 			g.sub_2A5B4();
 			g.sub_2A207(0xF0D, 0x16, 0, 0);
 			rt.byte_8856C = 1;
-			return g.setup_pic_regions((intptr_t)&rt.unk_73180, 2);
+			return g.setup_pic_regions(0x73180, 2);
 		} else {
-			return g.setup_pic_regions((intptr_t)&rt.unk_73180, 2);
+			return g.setup_pic_regions(0x73180, 2);
 		}
 		break;
 	case 23:
-		g.disable_pic_regions((intptr_t)&rt.unk_73198, 3);
+		g.disable_pic_regions(0x73198, 3);
 		goto L14;
 	}
 }
@@ -4643,7 +4643,7 @@ int objh_323(Game &g, Word arg0) {
 		goto L33;
 	case 22:
 		if (rt.byte_885BC != 0) {
-			return g.setup_pic_regions((intptr_t)&rt.unk_73B80, 3);
+			return g.setup_pic_regions(0x73B80, 3);
 		}
 		g.sub_2A386();
 		g.sub_2A5B4();
@@ -4651,21 +4651,21 @@ int objh_323(Game &g, Word arg0) {
 		if (!r23_16) {
 			g.sub_2A207(0xF71, 0xA, r23_16, r23_16);
 			rt.byte_885BC = 1;
-			return g.setup_pic_regions((intptr_t)&rt.unk_73B80, 3);
+			return g.setup_pic_regions(0x73B80, 3);
 		} else {
 			g.sub_2A207(0xF8B, 8, 0, 0);
 			rt.byte_885BC = 1;
-			return g.setup_pic_regions((intptr_t)&rt.unk_73B80, 3);
+			return g.setup_pic_regions(0x73B80, 3);
 		}
 		break;
 	case 23:
 		if (!(g.object_has_attr(0x165, 0xA))) {
-			g.disable_pic_regions((intptr_t)&rt.unk_73BA4, 4);
+			g.disable_pic_regions(0x73BA4, 4);
 			goto L33;
 		}
 		g.object_clear_attr(0x165, 0xA);
 		if (rt.word_85016 == 1) {
-			g.disable_pic_regions((intptr_t)&rt.unk_73BA4, 4);
+			g.disable_pic_regions(0x73BA4, 4);
 			return 0;
 		}
 		if (rt.word_85018 == 0) {
@@ -4675,10 +4675,10 @@ int objh_323(Game &g, Word arg0) {
 			g.sub_29F77(0xF7B, 0x10, 0);
 			g.object_move(0x164, 0, 0);
 			g.MouseCursor_SetSmallArrow();
-			g.disable_pic_regions((intptr_t)&rt.unk_73BA4, 4);
+			g.disable_pic_regions(0x73BA4, 4);
 			return 0;
 		} else {
-			g.disable_pic_regions((intptr_t)&rt.unk_73BA4, 4);
+			g.disable_pic_regions(0x73BA4, 4);
 			return 0;
 		}
 		break;
@@ -4916,9 +4916,9 @@ int objh_327(Game &g, Word arg0) {
 	case 21:
 		goto L9;
 	case 22:
-		return g.setup_pic_regions((intptr_t)&rt.unk_88618, 1);
+		return g.setup_pic_regions(0x88618, 1);
 	case 23:
-		g.disable_pic_regions((intptr_t)&rt.unk_88624, 1);
+		g.disable_pic_regions(0x88624, 1);
 		goto L9;
 	}
 }
@@ -5091,26 +5091,26 @@ int objh_330(Game &g, Word arg0) {
 		goto L37;
 	case 22:
 		if (rt.byte_8863C != 0) {
-			return g.setup_pic_regions((intptr_t)&rt.unk_74C10, 4);
+			return g.setup_pic_regions(0x74C10, 4);
 		}
 		g.sub_2A386();
 		g.sub_2A5B4();
 		if (v.windbag_opened == 0) {
 			rt.byte_8863C = 1;
-			return g.setup_pic_regions((intptr_t)&rt.unk_74C10, 4);
+			return g.setup_pic_regions(0x74C10, 4);
 		}
 		if (g.object_parent_is(0x157, 0x16D)) {
 			g.sub_2A207(0xF9A, 0xA, 0, 0);
 			rt.byte_8863C = 1;
-			return g.setup_pic_regions((intptr_t)&rt.unk_74C10, 4);
+			return g.setup_pic_regions(0x74C10, 4);
 		} else {
 			rt.byte_8863C = 1;
-			return g.setup_pic_regions((intptr_t)&rt.unk_74C10, 4);
+			return g.setup_pic_regions(0x74C10, 4);
 		}
 		break;
 	case 23:
 		if (v.flag_85322_windbag == 0) {
-			g.disable_pic_regions((intptr_t)&rt.unk_74C40, 5);
+			g.disable_pic_regions(0x74C40, 5);
 			goto L37;
 		} else {
 			v.flag_85322_windbag = 0;

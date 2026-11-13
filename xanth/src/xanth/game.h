@@ -95,6 +95,10 @@ public:
 	int event_pending(int id);
 	int add_score(int points, int quiet, int silent);
 
+	/** The number of exits of a room and the 1-based index of its first exit in the exit table (sub_1B877 / sub_1B8C5; 0 for anything but a room). */
+	int sub_1B877(int room) { return exitField(room, 0xE, 1); }
+	int sub_1B8C5(int room) { return exitField(room, 0x10, 2); }
+
 	// ---- objects (the original's names)
 	int object_has_attr(int obj, int attr) { return state.objects.hasAttr(obj, attr) ? 1 : 0; }
 	int object_set_attr(int obj, int attr) { state.objects.setAttr(obj, attr); return 0; }
@@ -179,6 +183,7 @@ public:
 	int random_percent(int percent) { return (_rand() % 100) < percent ? 1 : 0; }
 
 private:
+	int exitField(int room, int offset, int size) const;
 	std::string format(const std::string &fmt, const FmtArg *args);
 	int writeMessage(const std::string &fmt, const FmtArg *args);
 
@@ -187,7 +192,7 @@ private:
 	char *keep(const std::string &s);
 	unsigned _seed;
 	uint8 _dseg[0x10000];
-	uint8 _tables[0x34000 - 0x31550];
+	uint8 _tables[0x35400 - 0x31550];
 	uint8 _scratch[2];
 };
 

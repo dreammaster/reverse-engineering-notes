@@ -919,8 +919,6 @@ int sub_192F9(Game &g);
 int sub_1AAFB(Game &g);  // not decompiled
 int sub_1AC45(Game &g, Word a0);
 int sub_1B5CB(Game &g, Word a0, Word a1);
-int sub_1B877(Game &g, Word a0);
-int sub_1B8C5(Game &g, Word a0);
 int sub_1C2EA(Game &g, Word a0, Word a1, Word a2);
 int sub_1C4ED(Game &g, Word a0, Word a1, Word a2, Word a3);  // not decompiled
 TextRef sub_1DA04(Game &g, Word a0);
@@ -938,7 +936,6 @@ int sub_1EFCF(Game &g);
 int sub_1F006(Game &g, Word a0);
 int sub_1FB15(Game &g, Word a0, Word a1);
 int sub_23B9B(Game &g);
-int sub_2A333(Game &g);  // not decompiled
 int sub_312D9(Game &g);
 int sub_312E3(Game &g);  // not decompiled
 int sub_312ED(Game &g);  // not decompiled
