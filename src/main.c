@@ -625,6 +625,16 @@ static void creatures_step(Walker *wk, RoomView *rv) {
 					if (op == 0 && ix + 4 <= tl) { ms[3] = tab[ix + 1]; ms[4] = tab[ix + 2]; ms[5] = tab[ix + 3]; ms[1] = (uint8_t)(ix + 4); }
 					else if (op == 1) ms[1] = (uint8_t)(ix + (int8_t)tab[ix + 1]);
 					else if (op == 2) { ms[2] = tab[ix + 1]; ms[0] = 2; ms[1] = (uint8_t)(ix + 2); break; }
+					else if (op == 3) { ms[0] = 4; break; }                       /* stop */
+					else if (op == 4) {                                           /* event 12 with the argument byte for this thing */
+						ms[1] = (uint8_t)(ix + 2);
+						rv->vm.queue_n = 0;
+						acl_thing_event(&rv->vm, &rv->mp2, o->thing, 12, tab[ix + 1]);
+						for (int q = 0; q < rv->vm.queue_n; q++)
+							acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+						rv->pending_rebuild |= rv_changed(rv);
+						roomview_flush_messages(rv);
+					}
 					else break;
 				}
 			}
