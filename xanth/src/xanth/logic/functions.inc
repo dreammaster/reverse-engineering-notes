@@ -934,7 +934,6 @@ int sub_1EFAB(Game &g);
 int sub_1EFB6(Game &g);
 int sub_1EFCF(Game &g);
 int sub_1F006(Game &g, Word a0);
-int sub_1FB15(Game &g, Word a0, Word a1);
 int sub_23B9B(Game &g);
 int sub_312D9(Game &g);
 int sub_312E3(Game &g);  // not decompiled

@@ -15,6 +15,8 @@ namespace Legend {
 /** Gfx_FillArea with a solid colour. */
 void fillArea(Surface &s, int x1, int y1, int x2, int y2, byte color);
 
+/** One pixel of the grey ramp darkened (floor 0x11), as the left and top edges of a bevel do. */
+void darkenPixel(Surface &s, int x, int y);
 /** One pixel of the grey ramp lightened as the bottom and right edges of a bevel do. */
 void lightenPixel(Surface &s, int x, int y);
 

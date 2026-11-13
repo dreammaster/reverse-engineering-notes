@@ -18,6 +18,8 @@ public:
 
 	/** Starts the game on the screen: the interface, the first room. */
 	void start();
+	/** The pointer moved: the name of the object under it is shown. */
+	void move(int x, int y);
 	/** A click (left button) at a point of the 320x200 screen. */
 	void click(int x, int y);
 

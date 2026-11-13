@@ -31,18 +31,25 @@ static std::unique_ptr<World> newWorld(const Common::GameFiles &gf, const Legend
 	return w;
 }
 
+/** The screen with hover name and pointer (what the player sees). */
+static void showTo(World &w, Legend::Surface &out) {
+	w.display.render(out);
+}
+
 /** Compares with an oracle screenshot (if its path is in the environment); `allowed` is the number of differing pixels that are known (animation phase, cursor, hover label). */
 static void check(World &w, const char *what, const char *envName, const char *file, int allowed) {
 	const char *shots = getenv("XANTH_SHOTS");
+	Legend::Surface shown;
+	showTo(w, shown);
 	if (shots)
-		w.display.screen().savePpm(std::string(shots) + "/" + file + ".ppm");
+		shown.savePpm(std::string(shots) + "/" + file + ".ppm");
 	const char *path = getenv(envName);
 	std::vector<byte> oracle;
 	if (!path || !loadPpm(path, oracle))
 		return;
 	printf("%s, against %s:\n", what, path);
 	std::string diffPath = shots ? std::string(shots) + "/" + file + "_diff.ppm" : std::string();
-	int diff = compareScreens(w.display.screen(), oracle, shots ? diffPath.c_str() : NULL);
+	int diff = compareScreens(shown, oracle, shots ? diffPath.c_str() : NULL);
 	if (diff > allowed) {
 		printf("FAIL: %s: %d pixels differ (at most %d expected)\n", what, diff, allowed);
 		g_failures++;
@@ -88,18 +95,20 @@ int main() {
 			printf("FAIL: the picture window shows no room (%d pixels)\n", roomPixels);
 			g_failures++;
 		}
-		// the oracle's screen also has the mouse cursor (51 pixels) and a hover label (about 400) that the game logic does not draw
-		check(*w, "the bedroom", "XANTH_ORACLE_SHOT", "game", 500);
+		w->ui->move(160, 100);          // where the oracle's pointer was: it shows the computer's name and the arrow
+		check(*w, "the bedroom", "XANTH_ORACLE_SHOT", "game", 0);
 
-		// click "Look at", then the computer: the answer is in the grown text window (the rain, cursor and hover label differ: about 1,200 pixels)
+		// click "Look at", then the computer: the answer is in the grown text window
 		w->ui->click(20, 28);
 		w->ui->click(160, 100);
-		check(*w, "look at the computer", "XANTH_ORACLE_LOOK", "game_look", 1300);
+		w->display.advance(100);        // the oracle's screenshot is four frames into the rain
+		w->display.advance(100);
+		check(*w, "look at the computer", "XANTH_ORACLE_LOOK", "game_look", 0);
 	}
 	{   // walk: the north-west arrow of the compass leads to the entrance
 		std::unique_ptr<World> w = newWorld(gf, messages, names);
 		w->ui->click(11, 137);
-		check(*w, "walk north-west", "XANTH_ORACLE_WALK", "game_walk", 1300);
+		check(*w, "walk north-west", "XANTH_ORACLE_WALK", "game_walk", 0);
 	}
 	printf("test_screen: %d failures\n", g_failures);
 	return g_failures ? 1 : 0;

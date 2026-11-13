@@ -24,6 +24,10 @@ void lightenPixel(Surface &s, int x, int y) {
 	lighten(s, x, y);
 }
 
+void darkenPixel(Surface &s, int x, int y) {
+	darken(s, x, y);
+}
+
 void bevelFrame(Surface &s, int x1, int y1, int x2, int y2) {
 	// the original walks the left edge upwards, the top edge to the right, the right edge downwards and the bottom edge to the left; every edge pixel is changed
 	// once (the colour is read before it is written)

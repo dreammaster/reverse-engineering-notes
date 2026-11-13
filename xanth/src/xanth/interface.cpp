@@ -18,7 +18,20 @@ void Interface::start() {
 	_game.beginGame();
 }
 
+void Interface::move(int x, int y) {
+	_display.setMouse(x, y);
+	int obj = _display.objectAt(x, y);
+	std::string name;
+	if (obj) {
+		name = _game.objectNames.name(_game.state.objects.altNameOffset(obj));
+		if (name.empty())
+			name = _game.objectName(obj);
+	}
+	_display.setHoverName(name);
+}
+
 void Interface::click(int x, int y) {
+	move(x, y);
 	int v = _display.verbAt(x, y);
 	if (v >= 0) {
 		_selected = v;

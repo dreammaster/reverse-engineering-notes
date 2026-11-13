@@ -99,6 +99,8 @@ public:
 
 	/** The number of exits of a room and the 1-based index of its first exit in the exit table (sub_1B877 / sub_1B8C5; 0 for anything but a room). */
 	int sub_1B877(int room) { return exitField(room, 0xE, 1); }
+	/** Calls exit function `index` (the 56 of the exit table, kinds 3 and 4) with a phase; it returns the room it leads to (<= 0: blocked). */
+	int sub_1FB15(int index, int phase);
 	int sub_1B8C5(int room) { return exitField(room, 0x10, 2); }
 
 	// ---- objects (the original's names)

@@ -62,6 +62,7 @@ sub_1B8C5	1
 sub_1D99F	0
 sub_1EDBC	0
 sub_1EED9	0
+sub_1FB15	2
 sub_23C92	0
 sub_29608	2
 sub_29E46	3

@@ -33,6 +33,7 @@ public:
 	/** The text window (window 2, font 10, colours 15 on 23): prints a message like Font_WriteLines does. */
 	void printMessage(Legend::Surface &s, const std::string &text) const;
 	const Legend::Font &font10() const { return _font10; }
+	const Legend::Font &font1() const { return _font1; }
 
 	/** Decodes a picture by number (file << 8 | entry). */
 	static bool loadPicture(const Common::GameFiles &files, int picNum, Legend::PicImage &out);

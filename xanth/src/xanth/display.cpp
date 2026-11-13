@@ -12,7 +12,7 @@ using namespace Legend;
 
 static const int kTextBottom = 151, kExpandedBottom = 165, kSavedTop = 149, kSavedBottom = 196;
 
-Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false), _expanded(false), _selectedVerb(-1), _rgnFile(-1) {
+Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false), _mouseX(160), _mouseY(100), _expanded(false), _selectedVerb(-1), _rgnFile(-1) {
 	memset(_drawn, 0, sizeof(_drawn));
 }
 
@@ -44,6 +44,12 @@ void Display::expandText() {
 	fillArea(_screen, 51, 129, 314, kExpandedBottom - 1, 23);
 	for (int x = 50; x <= 315; x++)                                       // the bottom edge of the grown window is lit like the one of a bevel
 		lightenPixel(_screen, x, kExpandedBottom);
+	// three pixels of the old frames that the original's window popup darkens / lights further (as seen in the oracle's screen)
+	for (int i = 0; i < 3; i++) {
+		darkenPixel(_screen, 50, 149);
+		darkenPixel(_screen, 50, 150);
+	}
+	lightenPixel(_screen, 315, 150);
 }
 
 void Display::collapseText() {
@@ -75,6 +81,29 @@ int Display::verbAt(int x, int y) const {
 		return -1;
 	int row = (y - 4) / 10;
 	return row < (int)_verbs.size() ? row : -1;
+}
+
+// the small arrow cursor of the original (SMALL_ARROW_CURSOR): the usual DOS mouse masks, 16 words that are ANDed with the screen and 16 that are then XORed
+static const uint16 kSmallArrow[32] = {
+	0x3FFF, 0x1FFF, 0x0FFF, 0x07FF, 0x03FF, 0x01FF, 0x00FF, 0x00FF, 0x01FF, 0xE1FF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+	0x0000, 0x4000, 0x6000, 0x7000, 0x7800, 0x7C00, 0x7E00, 0x5800, 0x0C00, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
+
+void Display::render(Surface &out) const {
+	out = _screen;
+	if (!_hover.empty() && _frameDrawn) {
+		// the name of the object under the pointer: outline font 1, centred in the picture window, just above its bottom edge
+		int w = _ms.font1().textWidthOutlined(_hover);
+		_ms.font1().drawTextOutlined(out, 181 - w / 2, 114, _hover, 15, 0);   // (centre found from the oracle: 151 for "computer")
+	}
+	for (int row = 0; row < 16; row++) {
+		for (int col = 0; col < 16; col++) {
+			unsigned bit = 0x8000u >> col;
+			byte old = out.get(_mouseX + col, _mouseY + row);
+			byte v = (byte)((old & ((kSmallArrow[row] & bit) ? 0xFF : 0)) ^ ((kSmallArrow[16 + row] & bit) ? 0xFF : 0));
+			if (_mouseX + col >= 0 && _mouseY + row >= 0)
+				out.put(_mouseX + col, _mouseY + row, v);
+		}
+	}
 }
 
 int Display::compassAt(int x, int y) const {

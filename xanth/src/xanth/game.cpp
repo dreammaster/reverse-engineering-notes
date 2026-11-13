@@ -380,6 +380,12 @@ uint8 &Game::exe8(int seg, int off) {
 	return _scratch[0];
 }
 
+int Game::sub_1FB15(int index, int phase) {
+	if ((unsigned)index < kExitFunctionCount && kExitFunctions[index])
+		return kExitFunctions[index](*this, phase);
+	return 0;
+}
+
 int Game::exitField(int room, int offset, int size) const {
 	if (state.objects.type(room) != OT_ROOM)
 		return 0;

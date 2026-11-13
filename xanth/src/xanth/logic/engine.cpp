@@ -1517,17 +1517,6 @@ TextRef object_get_list_slot(Game &g, Word arg0) {
 	}
 }
 
-// sub_1FB15
-int sub_1FB15(Game &g, Word arg0, Word arg1) {
-	Vars &v = g.state.v;
-	Runtime &rt = g.rt;
-	if (arg0 < 0x38) {
-		return callIndirect(mem32(rt.seg_8AA1E, (arg0 * 4) + 0x135A), arg1);
-	} else {
-		return 0;
-	}
-}
-
 // sub_1DBDC
 int sub_1DBDC(Game &g) {
 	Vars &v = g.state.v;
@@ -1570,7 +1559,7 @@ int sub_1DBDC(Game &g) {
 					if ((mem8(rt.seg_8AA06, v16 + 1)) == 4) {
 						v2 = rt.byte_8BE1C;
 						rt.byte_8BE1C = mem8(rt.seg_8AA06, v16);
-						v4 = sub_1FB15(g, v12, 1);
+						v4 = g.sub_1FB15(v12, 1);
 						rt.byte_8BE1C = v2;
 						if ((int16)v4 > 0 && (int16)v4 <= rt.object_count) {
 	L19:;
@@ -1643,7 +1632,7 @@ int sub_1EB3A(Game &g, Word arg0) {
 				return 1;
 			}
 		} else {
-			v10 = sub_1FB15(g, v8, 0xF);
+			v10 = g.sub_1FB15(v8, 0xF);
 			if ((int16)v10 < 0) {
 				goto L11;
 			}

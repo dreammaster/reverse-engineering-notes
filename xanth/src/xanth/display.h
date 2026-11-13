@@ -29,6 +29,11 @@ public:
 	void setVerbs(const std::vector<std::string> &verbs) { _verbs = verbs; }
 	/** Lets `ms` milliseconds pass for the animations of the room (update_animation: frame deltas are exclusive-ored onto the picture window when their time has come). */
 	void advance(unsigned ms);
+	/** The mouse pointer position and the name shown at the bottom of the picture window for the object under it ("" = none). */
+	void setMouse(int x, int y) { _mouseX = x; _mouseY = y; }
+	void setHoverName(const std::string &name) { _hover = name; }
+	/** The screen as the player sees it: the game screen plus the hover name and the mouse pointer (neither is part of what the game draws). */
+	void render(Legend::Surface &out) const;
 	/** The object under a point of the screen (a hotspot of the room picture), 0 if none. */
 	int objectAt(int x, int y);
 	/** The verb list entry under a point (index into the verbs set with setVerbs), -1 if none. */
@@ -87,6 +92,8 @@ private:
 	bool _drawn[64];                     // per record of the current overlay table: is its picture XORed into the pixels
 	unsigned _compass;                   // the arrows that are drawn
 	bool _frameDrawn;
+	int _mouseX, _mouseY;
+	std::string _hover;
 	bool _expanded;                      // the text window has grown over the inventory
 	std::vector<byte> _below;            // what it covers
 	int _selectedVerb;
