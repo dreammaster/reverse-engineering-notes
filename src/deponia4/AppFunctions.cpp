@@ -141,7 +141,7 @@ bool CreateWindowGL(const wxSize &windowSize, wxSize &renderSize, long brightnes
 		if (!VSPlayerContext)
 			VSPlayerContext = SDL_GL_CreateContext(VSPlayerWindow);
 
-		SDL_GL_SetSwapInterval(1);
+		// (SDL's renderer sets the interval of the swaps: SDL_RENDER_VSYNC)
 	}
 
 	TDiagnostic::EndFixedRegion();

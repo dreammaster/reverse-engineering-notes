@@ -10,6 +10,8 @@
 
 #include "AppGlobals.h"
 #include "TSpriteHandle.h"
+#include "graphicslib/glBackend.h"
+#include "vscommon/scripting/visLua.h"
 #include "soundengine/audioMixer.h"
 
 TSdlGraphics::TSdlGraphics(const TGraphicsStartup &startup) : _startup(startup) {
@@ -88,6 +90,12 @@ bool TSdlGraphics::InitGraphics(const wxSize &windowSize, wxSize &renderSize, wx
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, _startup.nearestNeighbor ? "0" : "1");
 
+	// (the shaders of the scripts need OpenGL: SDL's OpenGL renderer is asked for first, unless DEPONIA_GL=0)
+	const char *wantGl = std::getenv("DEPONIA_GL");
+
+	if (!wantGl || std::strcmp(wantGl, "0") != 0)
+		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+
 	_renderer = SDL_CreateRenderer(VSPlayerWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 	if (!_renderer)
@@ -120,6 +128,18 @@ bool TSdlGraphics::InitGraphics(const wxSize &windowSize, wxSize &renderSize, wx
 
 				frame = nullptr;
 			}
+		}
+	}
+
+	// the backend of the shaders, when the renderer is the OpenGL one (the context is SDL's)
+	if (SDL_GetRendererInfo(_renderer, &info) == 0 && info.name && std::strcmp(info.name, "opengl") == 0) {
+		TSubSysGL *subSys = new TSubSysGL(_renderer);
+
+		if (subSys->IsReady()) {
+			g_subSys = subSys;
+			VSPlayerContext = SDL_GL_GetCurrentContext();
+		} else {
+			delete subSys;
 		}
 	}
 
@@ -257,8 +277,14 @@ SDL_Texture *TSdlGraphics::textureOf(Sprite &sprite) {
 
 	SDL_Texture *texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, sprite.width, sprite.height);
 
-	if (!texture)
+	if (!texture) {
+		static int reported = 0;
+
+		if (reported++ < 5 && wxLog::loglevel >= 0)
+			wxLog::logexpanded(L"SDL_CreateTexture %dx%d failed: %s", sprite.width, sprite.height, wxString(SDL_GetError()).wc_str());
+
 		return nullptr;
+	}
 
 	if (!_premultiplied) {
 		// (straight colours for SDL's own blend: the colour goes back up by the alpha)
@@ -344,8 +370,13 @@ void TSdlGraphics::Draw(TSpriteHandle *sprite, const wxRect &sourceRect, const F
 	center.x = centerX - destination.x;
 	center.y = centerY - destination.y;
 	_dirty = true;
-	SDL_RenderCopyExF(_renderer, texture, &source, &destination, static_cast<double>(rotation) * 180.0 / 3.14159265358979323846, &center,
-	                  mirrored ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+	if (SDL_RenderCopyExF(_renderer, texture, &source, &destination, static_cast<double>(rotation) * 180.0 / 3.14159265358979323846, &center,
+	                      mirrored ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE) != 0) {
+		static int reported = 0;
+
+		if (reported++ < 5 && wxLog::loglevel >= 0)
+			wxLog::logexpanded(L"SDL_RenderCopy failed: %s", wxString(SDL_GetError()).wc_str());
+	}
 }
 
 void TSdlGraphics::DrawBox(const wxRect &rect, unsigned int color, float alpha) {
@@ -399,9 +430,35 @@ void TSdlGraphics::Swap() {
 		return;
 
 	if (_dirty) {
+		std::string windowShot;   // (the window as the passes of the shaders drew it: a shot beside the one of the game's picture)
+
 		if (_shotsLeft > 0 && _shotEvery > 0 && _shown % _shotEvery == 0) {
 			SaveShot(_shotDirectory + "/shot_" + std::to_string(_shown) + ".bmp");
 			_shotsLeft--;
+			windowShot = _shotDirectory + "/window_" + std::to_string(_shown) + ".bmp";
+		}
+
+		// (not in the original: DEPONIA_LUA=<frame>:<file> runs the Lua file in the game once, at that frame, for looking at the state of a game)
+		static const char *luaSetting = std::getenv("DEPONIA_LUA");
+		static bool luaDone = false;
+
+		if (luaSetting && !luaDone && _shown == std::atoi(luaSetting)) {
+			const char *colon = std::strchr(luaSetting, ':');
+			std::FILE *file = colon ? std::fopen(colon + 1, "rb") : nullptr;
+
+			luaDone = true;
+
+			if (file) {
+				std::string code;
+				char buffer[4096];
+				size_t count;
+
+				while ((count = std::fread(buffer, 1, sizeof(buffer), file)) > 0)
+					code.append(buffer, count);
+
+				std::fclose(file);
+				LuaDoString(code);
+			}
 		}
 
 		_shown++;
@@ -419,7 +476,31 @@ void TSdlGraphics::Swap() {
 			where.y = _area.y;
 			where.w = _area.width;
 			where.h = _area.height;
-			SDL_RenderCopy(_renderer, _frames[_current], nullptr, &where);
+
+			// the passes of the shaders (the Shader Toolkit of the scripts) draw the picture of the game into the window; without any it is
+			// copied
+			TSubSysGL *glSubSys = dynamic_cast<TSubSysGL *>(g_subSys);
+
+			if (!glSubSys || !glSubSys->RunPasses(_frames[_current], _renderSize.width, _renderSize.height, _area, _windowHeight))
+				SDL_RenderCopy(_renderer, _frames[_current], nullptr, &where);
+		}
+
+		if (!windowShot.empty()) {
+			int width = 0;
+			int height = 0;
+
+			SDL_GetWindowSize(VSPlayerWindow, &width, &height);
+
+			std::vector<unsigned char> pixels(static_cast<size_t>(width) * static_cast<size_t>(height) * 4);
+
+			if (SDL_RenderReadPixels(_renderer, nullptr, SDL_PIXELFORMAT_ABGR8888, pixels.data(), width * 4) == 0) {
+				SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormatFrom(pixels.data(), width, height, 32, width * 4, SDL_PIXELFORMAT_ABGR8888);
+
+				if (surface) {
+					SDL_SaveBMP(surface, windowShot.c_str());
+					SDL_FreeSurface(surface);
+				}
+			}
 		}
 
 		SDL_RenderPresent(_renderer);

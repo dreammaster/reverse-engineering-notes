@@ -58,7 +58,7 @@ std::vector<std::string> luaDrawAfterInterfaces;
 float b2xoffset = 0.0f;
 float b2yoffset = 0.0f;
 
-wxString passw("ykgT6QsrRNv9XR");
+wxString passw("RHgPi6dmqvu6uT");
 unsigned int Vflags = 0;
 wxString FirstSceneName;
 wxString VSPlayerTitle(L"Visionaire Player");
