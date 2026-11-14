@@ -343,9 +343,15 @@ void Display::conversationEnd() {
 }
 
 int Display::waitTicksOrClick(int ticks) {
-	// the headless game does not wait; with an input source a click (or key) ends the wait, the timing is the frontend's business
-	(void)ticks;
-	return 0;
+	// wait_ticks_or_click: a click or a key ends the wait; ticks (of about 55 ms) end it too, 0 waits for the player alone
+	if (!_input)
+		return 0;
+	unsigned ms = (unsigned)ticks * 55u;
+	for (;;) {
+		InputEvent e = ticks ? _input->wait(ms) : _input->wait();
+		if (e.type == InputEvent::Click || e.type == InputEvent::Key || e.type == InputEvent::Quit || e.type == InputEvent::Timeout)
+			return e.type == InputEvent::Click ? 1 : 0;
+	}
 }
 
 int Display::inventoryObjectAt(int x, int y) const {
@@ -623,6 +629,20 @@ int Display::other(const char *name, const intptr_t *args, int) {
 		_picNum = -1;
 		popupWindowEvent();
 		_game->call_object_handler(_game->state.v.current_room, 0x17);
+	} else if (!strcmp(name, "game_over_screen")) {
+		// a full-screen picture (the letter, the endings): no frame, the picture's own palette; the caller waits for a click and redraws the game
+		PicImage img;
+		if (MainScreen::loadPicture(_files, (int)args[0], img)) {
+			_screen.clear(0);
+			if (img.hasPalette)
+				_screen.setPalette(img.palette);
+			drawPicture(_screen, img.x, img.y, &img.pixels[0], img.width, img.height, false);
+			_frameDrawn = false;
+			_picNum = -1;
+		}
+	} else if (!strcmp(name, "sub_1EED9")) {
+		const intptr_t redraw[5] = {0x10, 0, 0, 0, 0};
+		other("RoomItem_Draw", redraw, 5);
 	} else if (!strcmp(name, "popup_window_event")) {
 		popupWindowEvent();
 	} else if (!strcmp(name, "setup_pic_regions")) {

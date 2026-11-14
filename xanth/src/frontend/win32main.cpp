@@ -56,9 +56,11 @@ struct App : Xanth::InputSource {
 	}
 
 	// the next thing the player does, while the game waits (a conversation, "click to go on")
-	virtual Xanth::InputEvent wait() {
+	virtual Xanth::InputEvent wait() { return wait(0xFFFFFFFFu); }
+	virtual Xanth::InputEvent wait(unsigned ms) {
 		Xanth::InputEvent e;
 		MSG m;
+		DWORD deadline = ms == 0xFFFFFFFFu ? 0 : GetTickCount() + ms;
 		repaint();
 		while (!quit && GetMessage(&m, NULL, 0, 0)) {
 			if (m.message == WM_MOUSEMOVE || m.message == WM_LBUTTONDOWN) {
@@ -73,8 +75,13 @@ struct App : Xanth::InputSource {
 				e.key = m.wParam == VK_UP ? 0x148 : m.wParam == VK_DOWN ? 0x150 : m.wParam == VK_RETURN ? 0x0D : (int)m.wParam;
 				return e;
 			}
-			if (m.message == WM_TIMER)
+			if (m.message == WM_TIMER) {
 				tick();
+				if (deadline && (int)(GetTickCount() - deadline) >= 0) {
+					e.type = Xanth::InputEvent::Timeout;
+					return e;
+				}
+			}
 			else {
 				TranslateMessage(&m);
 				DispatchMessage(&m);

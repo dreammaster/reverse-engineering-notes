@@ -19,7 +19,7 @@ struct OverlayRecord;
 
 /** What the player does: the frontend (or a test) implements this; the game waits for events through it where the original waits for the mouse or keyboard. */
 struct InputEvent {
-	enum Type { Move, Click, Key, Quit } type;
+	enum Type { Move, Click, Key, Quit, Timeout } type;
 	int x, y, key;
 	InputEvent() : type(Quit), x(0), y(0), key(0) {}
 };
@@ -28,6 +28,8 @@ public:
 	virtual ~InputSource() {}
 	/** Blocks until the next event; the screen may be shown first (a frontend presents it here). */
 	virtual InputEvent wait() = 0;
+	/** Like wait(), but gives up after `ms` milliseconds with a Timeout event (a frontend overrides this; the default waits without a limit). */
+	virtual InputEvent wait(unsigned ms) { (void)ms; return wait(); }
 };
 
 class Display : public Ui {
