@@ -28,6 +28,9 @@ for path in sys.argv[3:]:
         if c == 'other' and o['fn'] == 'sub_1F2AE':  # the wait for the vertical retrace (70 a second)
             out.append((6, 14, 0, 0, 0, 0, 0))
             continue
+        if c == 'other' and o['fn'] == 'sub_1CB71':  # puts the picture on the screen with black colours and fades them in
+            out.append((7, 0, 0, 0, 0, 0, 0))
+            continue
         if c in ('free', 'music', 'sub_20951', 'sub_20D32', 'other'):
             continue
         if c == 'load':

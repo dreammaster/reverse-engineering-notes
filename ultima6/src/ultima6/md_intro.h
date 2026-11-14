@@ -67,6 +67,7 @@ private:
 	};
 
 	void run();
+	void startFade();
 	void compose();
 	const std::vector<Shape> &shapes(int handle);
 	const Bytes &archive(int handle);
@@ -79,6 +80,7 @@ private:
 	int _wait = 0;
 	int _fade = 0;     // 1 in, -1 out, 0 none
 	int _fadeLeft = 0; // ms
+	int _fadeTotal = 0, _fadeSteps = 0;
 	bool _black = true;
 	std::vector<Handle> _handles;
 	std::vector<std::vector<std::string>> _texts;

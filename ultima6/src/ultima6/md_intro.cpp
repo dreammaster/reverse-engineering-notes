@@ -15,7 +15,7 @@ namespace Ultima6 {
 
 namespace {
 
-const int FADE_MS = 500;
+const int FRAME_US = 14268; // a vertical retrace of the VGA (70.086 a second): the fades move one step each
 
 // The pictures of the *.LZC are archives inside the item of an archive: a table of u32 that start at 4 bytes less than they say, the shapes behind it
 bool nestedShape(const Bytes &item, size_t k, Shape &out) {
@@ -236,7 +236,6 @@ void MdIntro::run() {
 		}
 		case 5:
 			compose();
-			_black = false;
 			break;
 		case 6:
 			_wait = o.a;
@@ -245,11 +244,11 @@ void MdIntro::run() {
 			compose();
 			_black = false;
 			_fade = 1;
-			_fadeLeft = FADE_MS;
+			startFade();
 			break;
 		case 8:
 			_fade = -1;
-			_fadeLeft = FADE_MS;
+			startFade();
 			break;
 		case 10:
 			_draws.push_back({2, 0, 0, o.a, o.b, o.c, 0});
@@ -261,6 +260,20 @@ void MdIntro::run() {
 	}
 	if (_pc >= count && _wait <= 0 && _fade == 0)
 		_finished = true;
+}
+
+// The fades of the original (sub_1CB71 in, sub_1CC95 out) change the colours the picture uses to or from black, one step for each retrace, in as many steps as the greatest of the colour values.
+void MdIntro::startFade() {
+	bool used[256] = {};
+	for (uint8_t p : _front)
+		used[p] = true;
+	int most = 0;
+	for (int c = 0; c < 256; ++c)
+		if (used[c])
+			for (int k = 0; k < 3; ++k)
+				most = std::max(most, (int)_palette.rgb[c][k]);
+	_fadeSteps = most;
+	_fadeTotal = _fadeLeft = (most + (_fade < 0 ? 1 : 0)) * FRAME_US / 1000;
 }
 
 void MdIntro::tick(unsigned ms) {
@@ -295,14 +308,28 @@ void MdIntro::runToEnd() {
 
 void MdIntro::render(Framebuffer &screen) const {
 	uint8_t pal[256][3];
-	int level = _black ? 0 : 1000;
-	if (_fade > 0)
-		level = 1000 * (FADE_MS - _fadeLeft) / FADE_MS;
-	else if (_fade < 0)
-		level = 1000 * _fadeLeft / FADE_MS;
+	int step = 0; // the step of a fade the palette is at
+	if (_fade != 0)
+		step = std::min(_fadeSteps, (_fadeTotal - _fadeLeft) * 1000 / FRAME_US);
 	for (int c = 0; c < 256; ++c)
-		for (int k = 0; k < 3; ++k)
-			pal[c][k] = (uint8_t)(_palette.rgb[c][k] * level / 1000);
+		for (int k = 0; k < 3; ++k) {
+			int v = _palette.rgb[c][k];
+			if (_black) {
+				v = 0;
+			} else if (_fade != 0) {
+				// sub_1FF0B: each colour component goes to its goal in as many steps as the greatest of the changes, by the accumulating rule of a line
+				int acc = _fadeSteps / 2, moved = 0;
+				for (int t = 0; t < step; ++t) {
+					acc += v;
+					if (acc > _fadeSteps) {
+						acc -= _fadeSteps;
+						++moved;
+					}
+				}
+				v = _fade > 0 ? moved : v - moved;
+			}
+			pal[c][k] = (uint8_t)v;
+		}
 	screen.setPalette(pal);
 	screen.clear(0);
 	screen.blit(0, 0, &_front[0], 320, 200, 320);
