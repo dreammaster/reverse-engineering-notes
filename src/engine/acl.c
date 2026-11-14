@@ -174,7 +174,10 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		break;
 	}
 	case 28: if (vm->msg_n < 16) vm->msg[vm->msg_n++] = w; break;
-	case 72: break;               /* describe */
+	case 72:                      /* 48h describe: a string id word; the original shows it as a message next to the thing's picture */
+		if (vm->msg_n < 16) vm->msg[vm->msg_n++] = w | 0x8000;        /* bit 15: the original ends a description with a full stop */
+		vm->describe = vm->cur + 1;
+		break;
 	default: vm->skipped++; break;
 	}
 }

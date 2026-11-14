@@ -90,10 +90,15 @@ void message_rect(const MsgLayout *l, int slot, int *x, int *y, int *w, int *h) 
 
 void message_draw(uint8_t *canvas, const char *text, int slot, const uint8_t *tiles, size_t tiles_len, const uint8_t *font, size_t font_len,
                   int (*rnd)(void *), void *user) {
+	message_draw_at(canvas, text, 0x20 + 16 * slot, 0x14 + 16 * slot, tiles, tiles_len, font, font_len, rnd, user);
+}
+
+void message_draw_at(uint8_t *canvas, const char *text, int x, int y, const uint8_t *tiles, size_t tiles_len, const uint8_t *font, size_t font_len,
+                     int (*rnd)(void *), void *user) {
 	MsgLayout l;
 	message_layout(text, &l);
 	int fill = (l.w * 6) / 8, rows = (6 * l.nlines) / 8;
-	int x = 0x20 + 16 * slot, y = 0x14 + 16 * slot, yy = y;
+	int yy = y;
 	for (int s = 0; s < 2; s++) {
 		tile_blit(canvas, x, yy, tiles, tiles_len, TOP[s][0]);
 		for (int i = 0; i < fill; i++)
@@ -221,4 +226,23 @@ void status_dialog_draw(uint8_t *canvas, const uint8_t *tiles, size_t tiles_len,
 	ty = y + 13;
 	for (int i = 0; i < 6; i++, ty += 6)
 		message_text(canvas, 134, ty, v[i], font, font_len);
+}
+
+void message_box(uint8_t *canvas, int x, int y, int fill, int rows, const uint8_t *tiles, size_t tiles_len, int (*rnd)(void *), void *user) {
+	int yy = y;
+	for (int s = 0; s < 2; s++, yy += 8) {
+		tile_blit(canvas, x, yy, tiles, tiles_len, TOP[s][0]);
+		for (int i = 0; i < fill; i++) tile_blit(canvas, x + 8 + 8 * i, yy, tiles, tiles_len, TOP[s][1]);
+		tile_blit(canvas, x + 8 + 8 * fill, yy, tiles, tiles_len, TOP[s][2]);
+	}
+	for (int r = 0; r < rows; r++, yy += 8) {
+		tile_blit(canvas, x, yy, tiles, tiles_len, LEFT[rnd ? rnd(user) & 7 : 0]);
+		for (int i = 0; i < fill; i++) tile_blit(canvas, x + 8 + 8 * i, yy, tiles, tiles_len, FILL);
+		tile_blit(canvas, x + 8 + 8 * fill, yy, tiles, tiles_len, RIGHT[rnd ? rnd(user) & 7 : 0]);
+	}
+	for (int s = 0; s < 2; s++, yy += 8) {
+		tile_blit(canvas, x, yy, tiles, tiles_len, BOTTOM[s][0]);
+		for (int i = 0; i < fill; i++) tile_blit(canvas, x + 8 + 8 * i, yy, tiles, tiles_len, BOTTOM[s][1]);
+		tile_blit(canvas, x + 8 + 8 * fill, yy, tiles, tiles_len, BOTTOM[s][2]);
+	}
 }

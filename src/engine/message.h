@@ -25,6 +25,11 @@ void message_layout(const char *text, MsgLayout *out);
 /* Draw slot 0..3 onto a 320x200 colour-index canvas. tiles = ANDATA block 2, font = ANDATA block 3. rnd(user) -> 0..7 picks the ragged edge tiles. */
 void message_draw(uint8_t *canvas, const char *text, int slot, const uint8_t *tiles, size_t tiles_len, const uint8_t *font, size_t font_len,
                   int (*rnd)(void *), void *user);
+/* Same at pixel position (x, y) (the "look at a carried thing" layout puts the scroll at (208, 20)). */
+void message_draw_at(uint8_t *canvas, const char *text, int x, int y, const uint8_t *tiles, size_t tiles_len, const uint8_t *font, size_t font_len,
+                     int (*rnd)(void *), void *user);
+/* A text-less box: `fill` columns, `rows` middle rows. */
+void message_box(uint8_t *canvas, int x, int y, int fill, int rows, const uint8_t *tiles, size_t tiles_len, int (*rnd)(void *), void *user);
 /* Screen rectangle of a message in slot `slot` with this layout: x, y, w, h in pixels. */
 void message_rect(const MsgLayout *l, int slot, int *x, int *y, int *w, int *h);
 

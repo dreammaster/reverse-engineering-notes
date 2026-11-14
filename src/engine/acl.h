@@ -30,6 +30,7 @@ typedef struct {
 	};
 	int c605;                       /* condition counter */
 	int cur;                        /* current object (thing id) */
+	int describe;                   /* op 48h (look): thing+1 whose picture goes with the message just queued (0 = none) */
 	int room_no;                    /* ds:232 */
 	int reg;                        /* ds:704 */
 	int disarm;
