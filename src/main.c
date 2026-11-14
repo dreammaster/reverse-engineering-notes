@@ -118,6 +118,7 @@ typedef struct RoomView_ {
 	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
 	int carry_pending, carry_energy; uint32_t carry_money, carry_score;   /* stats carried into the next level */
 	int room_snd[8], nroom_snd, snd_key; /* sounds of the room's creatures (stopped when the room changes) */
+	int ruck_open, ruck_sel, ruck_delay, last_item, space_prev, ret_prev;   /* rucksack view (Space / Return while carrying things) */
 	int push_snd;              /* looping sound of the object being pushed (0 = none) */
 	int restarting;            /* level torn down after a death; the next draw reloads it */
 	int dead_timer;            /* > 0: the player died (energy 0), counts game steps until the level restarts */
@@ -206,6 +207,8 @@ static void panel_ensure(const GameFiles *g) {
 		andata_block(g_andata, len, 0, &g_icons, &g_icons_len);
 	}
 }
+static const ObjSprite *thing_sprite(const RoomView *rv, int t);
+static void ruck_picture(uint8_t *px, const ObjSprite *sp);
 static int msg_rnd(void *u) { (void)u; return 3; }
 /* wings + the status text ("DAY n" and the room name) */
 static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
@@ -231,16 +234,19 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 		char nm[48];
 		status_room_name(rv->mp2.sec[0].rec[rv->room], (size_t)rv->mp2.sec[0].len[rv->room], rv->name_tbl, rv->names.strings,
 		                 rv->names.count, nm, sizeof(nm));
-		status_draw(scr->pixels, g_font, g_font_len, nm, rv->day + 1);
+		if (!rv->ruck_open) status_draw(scr->pixels, g_font, g_font_len, nm, rv->day + 1);
 		for (int sl = 0; sl < 4 && g_tiles && g_font3; sl++)
 			if (rv->msgs[sl].active && rv->msgs[sl].id >= 0 && rv->msgs[sl].id < rv->names.count)
 				message_draw(scr->pixels, rv->names.strings[rv->msgs[sl].id], sl, g_tiles, g_tiles_len, g_font3, g_font3_len, msg_rnd, NULL);
-		if (rv->label_id > 0 && rv->label_id < rv->names.count) {
+		if (rv->ruck_open && rv->label_id > 0 && rv->label_id < rv->names.count)       /* the item's name replaces the room name */
+			status_draw_centred(scr->pixels, 202, 186, 108, rv->names.strings[rv->label_id], g_font, g_font_len);
+		else if (rv->label_id > 0 && rv->label_id < rv->names.count) {
 			char lb[16];
 			snprintf(lb, sizeof(lb), "%.12s", rv->names.strings[rv->label_id]);
 			status_draw_centred(scr->pixels, 229, 172, 84, lb, g_font, g_font_len);
 		}
 	}
+	if (rv->ruck_open) ruck_picture(scr->pixels, thing_sprite(rv, rv->touch_thing));
 }
 
 /* while the walk demo runs, objects in front of the player are drawn after it (see walk_draw) */
@@ -780,6 +786,7 @@ static void walker_touch(Walker *wk, RoomView *rv, const ColResult *cr, int keys
 		rv->label_id = nm < 0x8000 ? nm : -1;
 		rv->nverbs = verbs_list(o->sp->header, rv->vm.flags2[o->thing], 0, rv->verbs);
 		rv->touch_thing = o->thing;
+		if (g_snd_log && rv->touch_age) { fprintf(stderr, "TOUCH %d verbs:", o->thing); for (int q = 0; q < rv->nverbs; q++) fprintf(stderr, " %d", rv->verbs[q]); fprintf(stderr, "\n"); }
 		rv->touch_age = 0;
 		if ((keys & 0x80) && !rv->menu_open) {         /* End while touching: the verb menu opens (1000:244C -> 2A33) */
 			rv->menu_open = 1; rv->menu_sel = 0; rv->menu_delay = 0; rv->menu_released = 0;
@@ -796,10 +803,74 @@ static void walker_touch(Walker *wk, RoomView *rv, const ColResult *cr, int keys
 	}
 }
 
+/* ---- the rucksack (docs/formats.md 6.8): things whose room byte is FFh are carried; Space / Return shows the last handled one ---- */
+static int ruck_list(const RoomView *rv, int *out, int max) {
+	int n = 0;
+	for (int t = 0; t < ACL_THINGS && n < max; t++)
+		if (rv->vm.present[t] && rv->vm.room[t] == 0xFF && !(rv->vm.flags[t] & 0x80)) out[n++] = t;
+	return n;
+}
+static const ObjSprite *thing_sprite(const RoomView *rv, int t) {
+	int len;
+	const uint8_t *r = mp2_thing(&rv->mp2, t, &len);
+	return r && len >= 8 ? objsprites_find(&rv->objs, (r[6] << 8) | r[7]) : NULL;
+}
+/* verbs of a carried thing (slots as seen in the original: look, the class verb, drop, joystick) */
+static void ruck_show(RoomView *rv, int t) {
+	const ObjSprite *sp = thing_sprite(rv, t);
+	rv->nverbs = 0;
+	rv->touch_thing = t;
+	rv->last_item = t;
+	if (!sp) return;
+	int h16 = sp->header[0x16], h17 = sp->header[0x17];
+	if (h17 != 6 && !(h16 & 0x80)) rv->verbs[rv->nverbs++] = 0x0B;
+	if ((sp->header[12] & 1) && !(rv->vm.flags2[t] & 4)) rv->verbs[rv->nverbs++] = 0x0D;   /* the touched list's 0Ah (icon 10) shows as icon 13 when carried */
+	if (h17 && !(rv->vm.flags2[t] & 0x40)) {
+		static const uint8_t cv[10] = {0x00, 0x04, 0x09, 0xFF, 0x07, 0x03, 0x08, 0xFF, 0xFF, 0xFF};
+		int c = h17 < 10 ? cv[h17] : 0xFF;
+		if (!(c & 0x80)) rv->verbs[rv->nverbs++] = (uint8_t)c;
+	}
+	rv->verbs[rv->nverbs++] = 1;
+	rv->verbs[rv->nverbs++] = 6;
+	int nm = (sp->header[10] << 8) | sp->header[11];
+	rv->label_id = nm < 0x8000 ? nm : -1;
+	rv->menu_sel = 0;
+}
+static void ruck_open(RoomView *rv) {
+	int l[64], n = ruck_list(rv, l, 64);
+	if (!n) return;
+	int t = l[n - 1];
+	for (int i = 0; i < n; i++) if (l[i] == rv->last_item) t = l[i];
+	rv->ruck_open = 1;
+	rv->ruck_delay = 0;
+	rv->menu_open = 1; rv->menu_released = 0;
+	ruck_show(rv, t);
+}
+static void ruck_close(RoomView *rv) {
+	rv->ruck_open = rv->menu_open = 0;
+	rv->nverbs = 0;
+	rv->label_id = -1;
+}
+/* the picture window of the right panel: black outline, brown 32 x 32 interior, the item's first frame near the middle (placement of wide sprites unverified) */
+static void ruck_picture(uint8_t *px, const ObjSprite *sp) {
+	for (int y = 142; y <= 175; y++)
+		for (int x = 266; x <= 299; x++)
+			px[y * SCREEN_W + x] = (x == 266 || x == 299 || y == 142 || y == 175) ? 0 : 14;
+	if (!sp || sp->nframes < 1) return;
+	const ObjFrame *f = &sp->frames[0];
+	int ox = 267 + 5 + (32 - f->w) / 2, oy = 143 + (32 - f->h) / 2;
+	for (int j = 0; j < f->h; j++)
+		for (int i = 0; i < f->w; i++) {
+			int x = ox + i, y = oy + j;
+			if (f->pixels[j * f->w + i] && x >= 267 && x <= 298 && y >= 143 && y <= 174) px[y * SCREEN_W + x] = f->pixels[j * f->w + i];
+		}
+}
+
 /* run the chosen verb (handler table 1000:2E0B): 11 = look (event 16 when the thing has flag 0x20, else message 3), 4 and 7 = event 5, 2 = event 0;
  * the other verbs (take, drop, use ...) are not decoded yet */
 static void menu_choose(RoomView *rv, int verb) {
 	int t = rv->touch_thing;
+	if (g_snd_log) fprintf(stderr, "VERB %d thing %d\n", verb, t);
 	rv->vm.queue_n = 0;
 	if (verb == 11) {
 		if (t >= 0 && t < ACL_THINGS && (rv->vm.flags[t] & 0x20)) acl_thing_event(&rv->vm, &rv->mp2, t, 16, 0);
@@ -807,7 +878,15 @@ static void menu_choose(RoomView *rv, int verb) {
 	} else if (verb == 4 || verb == 7) {
 		acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
 	} else if (verb == 2) {
-		acl_thing_event(&rv->vm, &rv->mp2, t, 0, 0);
+		int l[64];
+		if (ruck_list(rv, l, 64) >= 0x20) {                      /* 1000:2EA9: the capacity ds:5A0 is reached -> message 35h */
+			if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x35;
+		} else if (t >= 0 && t < ACL_THINGS) {
+			acl_thing_event(&rv->vm, &rv->mp2, t, 0, 0);          /* event 0 first (the handlers of coins delete the thing) */
+			if (!(rv->vm.flags[t] & 0x80)) { rv->vm.room[t] = 0xFF; rv->last_item = t; }   /* carried */
+			rv->pending_rebuild = 1;
+			rv->nverbs = 0; rv->label_id = -1;
+		}
 	} else if (verb == 3) {           /* 1000:31A3: open / close a chest; the content is placed on top of it (the original's collision-aware placement is approximated by raising z) */
 		int content = 0;
 		if (acl_chest_toggle(&rv->vm, &rv->mp2, t, &content)) {
@@ -838,7 +917,50 @@ static void menu_choose(RoomView *rv, int verb) {
 	for (int q = 0; q < rv->vm.queue_n; q++)
 		acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
 	rv->pending_rebuild |= rv_changed(rv);
+	if (g_snd_log) fprintf(stderr, "  after verb: money %u flags %02x room %d\n", rv->vm.money, t >= 0 ? rv->vm.flags[t] : 0, t >= 0 ? rv->vm.room[t] : -1);
 	roomview_flush_messages(rv);
+}
+
+/* one game step in the rucksack view: Left/Right move the highlight (past the ends: the previous / next carried thing), End or Return runs the verb, Space leaves */
+static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int space_edge) {
+	if (!(keys & 0x80)) rv->menu_released = 1;
+	if (rv->ruck_delay > 0) rv->ruck_delay--;
+	if (space_edge) { ruck_close(rv); return; }
+	if (fire_edge && rv->menu_released && rv->nverbs > 0) {
+		int verb = rv->verbs[rv->menu_sel], t = rv->touch_thing;
+		if (g_snd_log) fprintf(stderr, "RUCK verb %d sel %d of %d\n", verb, rv->menu_sel, rv->nverbs);
+		if (verb == 6) ruck_close(rv);
+		else if (verb == 1 && t >= 0 && t < ACL_THINGS) {               /* drop: back into the room at the player's position */
+			const ObjSprite *sp = thing_sprite(rv, t);
+			int xs = sp ? (sp->header[16] << 8 | sp->header[17]) : 7, ys = sp ? (sp->header[18] << 8 | sp->header[19]) : 7, zs = sp ? (sp->header[20] << 8 | sp->header[21]) : 7;
+			int z = wk->z;
+			for (; z < 0x2C; z++) {
+				ColResult cr;
+				collision_test(&wk->world, wk->x1, wk->y1, z, xs, ys, zs, t, 0, &cr);
+				if (cr.zf) break;
+			}
+			if (g_snd_log) fprintf(stderr, "DROP %d at %d,%d z %d (player %d,%d,%d)\n", t, wk->x1, wk->y1, z, wk->x1, wk->y1, wk->z);
+			rv->vm.pos[3 * t] = (uint8_t)wk->x1; rv->vm.pos[3 * t + 1] = (uint8_t)wk->y1; rv->vm.pos[3 * t + 2] = (uint8_t)z;
+			rv->vm.room[t] = (uint8_t)rv->room;
+			rv->pending_rebuild = 1;
+			ruck_close(rv);
+		} else if (verb == 11) {
+			menu_choose(rv, 11);
+		}
+		return;
+	}
+	if (rv->ruck_delay == 0 && (keys & 12)) {
+		int l[64], n = ruck_list(rv, l, 64), k = 0;
+		for (int i = 0; i < n; i++) if (l[i] == rv->touch_thing) k = i;
+		if (keys & 8) {
+			if (rv->menu_sel + 1 < rv->nverbs) rv->menu_sel++;
+			else if (n > 1) ruck_show(rv, l[(k + 1) % n]);
+		} else {
+			if (rv->menu_sel > 0) rv->menu_sel--;
+			else if (n > 1) { ruck_show(rv, l[(k + n - 1) % n]); rv->menu_sel = rv->nverbs - 1; }
+		}
+		rv->ruck_delay = 13;
+	}
 }
 
 /* one game step with the verb menu open (1000:2A33): Left/Right move the highlight (every 13 steps while held), End chooses, Space/End-less cancel */
@@ -878,6 +1000,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (rv->restarting) return;
 	roomview_tick(rv);
 	wk->tick++;
+	if (rv->pending_rebuild && wk->world_key == room_key(rv)) walker_world(wk, rv);   /* things changed: rebuild objects and collision world now, not at the next draw */
 	if ((wk->tick & 1) == 0 && wk->world_key == room_key(rv) && !rv->menu_open && rv->dead_timer == 0)
 		creatures_step(wk, rv);
 	if (wk->world_key != room_key(rv)) {
@@ -921,6 +1044,10 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		int end = (keys & 0x80) != 0, edge = end && !rv->end_prev;
 		rv->end_prev = end;
 		if (rv->touch_age < 1000) rv->touch_age++;
+		int sp = (keys & 0x10) != 0, spe = sp && !rv->space_prev, rt = (keys & 0x20) != 0, rte = rt && !rv->ret_prev;
+		rv->space_prev = sp; rv->ret_prev = rt;
+		if (rv->ruck_open) { ruck_step(wk, rv, keys, edge || rte, spe); return; }
+		if ((spe || rte) && !rv->menu_open) { ruck_open(rv); if (rv->ruck_open) return; }
 		if (rv->menu_open) { menu_step(rv, keys, edge); return; }
 		if (edge && rv->nverbs && rv->touch_age < 12 && !(keys & 15)) {   /* End tapped right after touching an object (menu2 trace) */
 			rv->menu_open = 1; rv->menu_sel = 0; rv->menu_delay = 0; rv->menu_released = 0;
@@ -1236,14 +1363,14 @@ int main(int argc, char **argv) {
 			if (!last_ms) last_ms = now;
 			const Uint8 *ks = SDL_GetKeyboardState(NULL);
 			int keys = (ks[SDL_SCANCODE_UP] ? 1 : 0) | (ks[SDL_SCANCODE_DOWN] ? 2 : 0) | (ks[SDL_SCANCODE_LEFT] ? 4 : 0) |
-			           (ks[SDL_SCANCODE_RIGHT] ? 8 : 0) | (ks[SDL_SCANCODE_END] ? 0x80 : 0);
+			           (ks[SDL_SCANCODE_RIGHT] ? 8 : 0) | (ks[SDL_SCANCODE_END] ? 0x80 : 0) | (ks[SDL_SCANCODE_SPACE] ? 0x10 : 0) | (ks[SDL_SCANCODE_RETURN] ? 0x20 : 0);
 			while (now - last_ms >= 20) {            /* the game runs at ~50 Hz */
 				walker_tick(&g_walk, &g_room, keys);
 				last_ms += 20;
 			}
 			if (sim && frames == 0) {                 /* headless: --sim right:30,down:10 */
 				for (const char *c = sim; *c;) {
-					int bits = !strncmp(c, "rend", 4) ? 0x88 : !strncmp(c, "right", 5) ? 8 : !strncmp(c, "left", 4) ? 4 : !strncmp(c, "down", 4) ? 2 : !strncmp(c, "up", 2) ? 1 : !strncmp(c, "end", 3) ? 0x80 : 0;
+					int bits = !strncmp(c, "rend", 4) ? 0x88 : !strncmp(c, "right", 5) ? 8 : !strncmp(c, "left", 4) ? 4 : !strncmp(c, "down", 4) ? 2 : !strncmp(c, "up", 2) ? 1 : !strncmp(c, "end", 3) ? 0x80 : !strncmp(c, "space", 5) ? 0x10 : !strncmp(c, "ret", 3) ? 0x20 : 0;
 					const char *colon = strchr(c, ':');
 					if (!colon) break;
 					if (!strncmp(c, "info", 4)) g_room.show_status ^= 1;
