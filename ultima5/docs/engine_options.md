@@ -10,7 +10,7 @@ the `MATCHING_BUILD` path, which u5d byte-matches against the EXE, so it is what
 | id | name | original behaviour | optional fix | evidence | source |
 |---|---|---|---|---|---|
 | `armour_works` | Armour counts | Equipment defence is never added (`cmp si,0FFFFh; jna` always jumps); only the +3 for one tile type applies | Add defence from equipped armour (and add it to the hit calculation in combat) | binary | `6000.c` `ULTIMA_6da8`, `combat.c:1297` (`ENABLE_BUG_FIX`) |
-| `equip_def_refresh` | Equipment change updates defence | After equipping, defence is recalculated by `ULTIMA_6da8` but the result is discarded | Store the result (only meaningful together with `armour_works`) | C annotation (`// BUG`) | `6000.c:786` |
+| `equip_def_refresh` | Equipment change updates defence | After equipping, `ULTIMA_6da8` is called and its result ignored (nothing stored) | Store the result (only meaningful together with `armour_works`) | binary (`ULTIMA+6f11`: `call 6da8`, AX not used) | `6000.c:786` |
 | `numeric_prompt_empty` | Empty number entry | Returns a value derived from uninitialised stack | Return 0 | binary | `3000.c:764` `ULTIMA_3b9e` |
 | `shop_price_overflow` | Shop price formula | Unsigned long division; INT > 33 overflows to huge prices (e.g. 23,593 for INT 40) | Clamp / use signed arithmetic | binary (observed in-game) | shops code (`ULTIMA_*` price routine) |
 | `begone_vermin_hostile` | "Begone, vermin!" | `TOWN_10da` gets a stray SI argument; NPC never turns hostile | Pass the real NPC index so qualifying NPCs turn hostile | binary | `talk.c:304` |
@@ -19,11 +19,11 @@ the `MATCHING_BUILD` path, which u5d byte-matches against the EXE, so it is what
 | `look_record_scan` | Look-object scan | Stops at the 0xff terminator (already restored in `src/`) | n/a | binary | `lookobj.c:552` |
 | `npc_lookahead` | NPC schedule look-ahead | Tests `arr[si-1]` (reads past the array) | Use `arr[si-5]` | binary; negligible effect | `npc.c:549` |
 | `xit_anywhere` | Xit (exit transport) location check | Test `map_id < 0x20 && map_id > 0x29` is always false, so "Not here!" never prints and the command is attempted everywhere | Restrict to the intended map range (`0x20..0x29`; confirm intent first) | binary (`CMDS+0eb4`: `cmp [5893],20; jnc` then `cmp [5893],29; jna` both skip the message) | `cmds.c:927` |
-| `board_uninit_hull` | Board command hull HP | `local_a` is uninitialised when the tile is not a skiff (`(D_587c & 0xfc) != 0x24`), and is stored into the vehicle record | Initialise from the vehicle table | u5d-match | `cmds.c:1028` |
-| `herbalist_gender` | Herbalist honorific | Uses the gender of the selected party member (`'F'` → "milady", else "sir"); annotated `// BUG` in u5d | Decide after checking which character should be addressed | C annotation | `shoppes2.c:559` |
+| `xit_vehicle_field` | Xit command: new vehicle record byte `_7` | On dismounting a horse/skiff/carpet the byte stored into the new `D_5c5a[]._7` is an uninitialised stack local (only the ship cases set it; `_7` is the ship hull value) | Store 0 | u5d-match (this is `CMDS_0eb4_XitCmd`, not Board) | `cmds.c:1028` |
+| `herbalist_gender` | Herbalist honorific | "milady" if the purchasing party member is female (`[member+9]=='F'`), else "sir". Binary matches the C; the `// BUG` comment is u5d's, behaviour is sensible | none needed | binary (`SHOPPES2+085a`) | `shoppes2.c:559` |
 | `conflict_message` | "*** CONFLICT ***" | Printed unconditionally (the `!= 0x80 \|\| != 4` test is always true) | Print only on a real conflict | u5d-match | `6000.c:620` |
 | `cmds_always_true` | Command tile filter | `(local_10 & 0xf8) != 0x78 && (local_10 & 0xfc) != 0x2f` is always true | none needed (only a wasted test) | u5d-match | `cmds.c:796` |
-| `food_double_decrement` | Talk/food decrement | `DecreaseByte(&D_57ad,1)` after the loop is annotated `BUG?` | Verify intent before changing | C annotation | `talk.c:1422` |
+| `theft_extra_decrement` | Theft decrement (`TALK_1180`) | The trailing `DecreaseByte(&D_57ad,1)` in the C is unreachable (the retry loop only exits through `return`); the binary has no such code. Theft takes exactly one item | none | binary (`TALK+1180`) | `talk.c:1422` |
 
 ## B. Modern-build behaviour (default: original; option: modern)
 
@@ -32,7 +32,7 @@ the `MATCHING_BUILD` path, which u5d byte-matches against the EXE, so it is what
 | `fm_towns_music` | FM Towns CD music | PC-speaker effects only | Per-map background music | C only | `ENABLE_BGM` (34 blocks), `AUDIO_Dispatch*` |
 | `speed_fixes` | Timed delays | CPU-calibrated busy-waits | Sleep-based timing | C only; keep (pacing only) | `ENABLE_SPEED_FIX` (12) |
 | `los_edge_guards` | LOS at map edges | Reads neighbouring memory when a ray leaves the buffer | Skips such rays | **not verified** | `5000.c:499-576` |
-| `gog_prompts` | GOG-style start-up | Floppy/hard-disk drive prompts | Skips them | **not verified**; irrelevant for ScummVM | `GOG_BUILD` (8) |
+| `gog_prompts` | GOG-style start-up | "Insert disk / press drive letter" prompts | Skips them (disk-swap only; no achievements involved) | C only; irrelevant for ScummVM | `GOG_BUILD` (8) |
 | `move_result_codes` | Movement return values | AX leaks through after "On foot!"/"Attacked at entrance!" | Returns 0 | partly binary: the direction-move path (`MAINOUT+0490`) returns `MAINOUT_00da`'s AX exactly as modern; the "On foot!"/"Attacked at entrance!" exits of `MAINOUT+0790` return whatever AX holds after `PrintString`/`Combat` (indeterminate), modern returns 0 | `mainout.c:360-436, 609-650` |
 | `translation` | Translation hooks | none | Alternate string tables | C only | `ENABLE_TRANSLATION` |
 | `grap_overlay` | Graphics overlay | none | Debug/overlay drawing | C only | `ENABLE_GRAP_OVERLAY*` |
@@ -53,5 +53,5 @@ whatever is left in AX; the C keeps the shape of the original. They affect calle
 
 ## Still to verify against the binary
 
-`los_edge_guards` (large flood routine, deferred), `gog_prompts` (irrelevant for ScummVM), and the C-annotation rows (`equip_def_refresh`,
-`herbalist_gender`, `food_double_decrement`). The `*u5d-match*` rows rely on u5d's byte-matching claim for those functions.
+`los_edge_guards` (large flood routine). `gog_prompts` are only the disk-swap / drive-letter prompts (no achievement code exists in the
+sources), so they need no option. The *u5d-match* rows rely on u5d's byte-matching claim for those functions.
