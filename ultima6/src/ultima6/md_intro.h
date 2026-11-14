@@ -23,8 +23,7 @@ namespace Ultima6 {
  * The shapes that turn and grow (the driver entry 0x2817A of SUPERTM.DRV) are drawn by the driver's own code on Cpu8086 (MdDriver); a plain shape is put with its hot spot at the place given, as the
  * driver does, and the dots of the thrown orb (0x28172, a filled circle of radius 1: five pixels) are drawn by hand; everything is clipped to the whole screen, as the screen the game gives them.
  *
- * APPROX(90): the other drawing routines of TM.DRV are not run; the fades (sub_155DB, sub_155A5) last half a second; the flashes of the palette (sub_20951), the music and the colour of the
- * lines are left out; the lines are centred in gold.
+ * APPROX(90): the other drawing routines of TM.DRV are not run; the music and sound effects are left out; the lines are centred and broken at a space when wider than the picture.
  */
 class MdIntro {
 public:
@@ -85,7 +84,7 @@ private:
 	std::vector<Handle> _handles;
 	std::vector<std::vector<std::string>> _texts;
 	std::vector<std::string> _lines; // the caption now
-	int _captionY = 160;
+	int _captionY = 160, _captionColour = 14;
 	std::vector<Draw> _draws;
 	std::vector<uint8_t> _front;
 	Palette _palette;

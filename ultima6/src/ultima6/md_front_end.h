@@ -5,6 +5,7 @@
 #include "engine/framebuffer.h"
 #include "files/shape.h"
 #include "files/tile_data.h"
+#include "ultima6/md_create.h"
 #include "ultima6/md_intro.h"
 
 #include <memory>
@@ -18,16 +19,16 @@ namespace Ultima6 {
  * What MARTIAN.EXE shows first: the menu of MDMENU.LZC (item 1: a 320 x 200 picture of the title and the four choices, and a frame of 266 x 19 that is put round the one chosen; the palette
  * is the CMAP of MD_TITLE.PAL, a picture of the IFF kind whose colours are 8 bits). The choices are "Run Introduction", "Create Character", "Continue Game" and "About Martian Dreams".
  *
- * APPROX(89): the introduction is MdIntro, played from the script of MARTIAN.EXE's routine; the creation of a character (CREATE.LZC) only asks for a name and the credits are MdIntro's script of the routine sub_1675E; the keys,
+ * APPROX(89): the introduction is MdIntro, played from the script of MARTIAN.EXE's routine; the credits are MdIntro's script of the routine sub_1675E; the keys,
  * the place of the frame (the text lines are at y 133, 150, 167 and 184, the frame 3 above them) and the message are not traced.
  */
 class MdFrontEnd {
 public:
-	enum State { MENU, NAME, INTRO, DONE, QUIT };
+	enum State { MENU, INTRO, CREATE, DONE, QUIT };
 	enum { CHOICES = 4 };
-	/** True while the introduction plays: the caller feeds it the time with tick(). */
+	/** True while the introduction or the creation of a character plays: the caller feeds it the time with tick(). */
 	bool animating() const {
-		return _state == INTRO;
+		return _state == INTRO || _state == CREATE;
 	}
 	void tick(unsigned ms);
 	const MdIntro *intro() const {
@@ -48,9 +49,15 @@ public:
 	bool wantsGame() const {
 		return _state == DONE;
 	}
-	/** The name typed for a new character ("" when the saved game is continued). */
-	const std::string &name() const {
-		return _name;
+	/** The character that was created (hasNewCharacter(); else the saved game is continued). */
+	bool hasNewCharacter() const {
+		return _hasCharacter;
+	}
+	const MdNewCharacter &character() const {
+		return _character;
+	}
+	const MdCreation *creation() const {
+		return _create.get();
 	}
 	int selected() const {
 		return _selected;
@@ -59,12 +66,15 @@ public:
 private:
 	bool nested(const Bytes &item, size_t k, Shape &out) const;
 	std::unique_ptr<MdIntro> _intro;
+	std::unique_ptr<MdCreation> _create;
+	bool _hasCharacter = false, _asked = false;
+	MdNewCharacter _character;
 
 	std::string _dir;
 	bool _ok = false;
 	State _state = MENU;
 	int _selected = 2;
-	std::string _message, _name;
+	std::string _message;
 	Shape _picture, _frame, _frameOff;
 	uint8_t _palette[256][3];
 	Font _font;

@@ -5,6 +5,7 @@
 #include "ultima6/ui.h"
 
 #include <cstring>
+#include <ctime>
 
 namespace Ultima6 {
 namespace Ultima6 {
@@ -56,6 +57,17 @@ void MdFrontEnd::tick(unsigned ms) {
 		_intro->tick(ms);
 		if (_intro->finished())
 			_state = MENU;
+	} else if (_state == CREATE && _create) {
+		_create->tick(ms);
+		if (_create->finished()) {
+			// the original writes the new savegame and is back in the menu: "Continue Game" plays it
+			_character = _create->result();
+			_hasCharacter = true;
+			_asked = true;
+			_state = MENU;
+		} else if (_create->cancelled()) {
+			_state = MENU;
+		}
 	}
 }
 
@@ -64,18 +76,21 @@ void MdFrontEnd::render(Framebuffer &screen) {
 		_intro->render(screen);
 		return;
 	}
+	if (_state == CREATE && _create) {
+		_create->render(screen);
+		return;
+	}
 	screen.setPalette(_palette);
 	screen.clear(0);
 	screen.blit(0, 0, &_picture.pixels[0], 320, 200, 320);
-	if (_state == MENU || _state == NAME) {
+	if (_state == MENU) {
 		int y = 130 + 17 * _selected;
 		screen.blit(27, y, &_frameOff.pixels[0], _frameOff.width, _frameOff.height, _frameOff.width, 255);
 		screen.blit(27, y, &_frame.pixels[0], _frame.width, _frame.height, _frame.width, 255);
 	}
-	if (_state == NAME || !_message.empty()) {
+	if (!_message.empty()) {
 		screen.fillRect(20, 96, 280, 22, 0);
-		std::string line = _state == NAME ? "Name: " + _name + "_" : _message;
-		Ui::drawText(screen, _font, 26, 102, line, 221);
+		Ui::drawText(screen, _font, 26, 102, _message, 221);
 	}
 }
 
@@ -89,21 +104,10 @@ bool MdFrontEnd::handleKey(int key) {
 		_state = MENU;
 		return true;
 	}
-	if (_state == NAME) {
-		if (key == KEY_ESC) {
-			_name.clear();
+	if (_state == CREATE) { // the keys of the scenes (Escape leaves, as nothing in the original does)
+		_create->key(key);
+		if (_create->cancelled())
 			_state = MENU;
-		} else if (key == KEY_ENTER) {
-			if (!_name.empty()) {
-				_state = DONE;
-				return false;
-			}
-		} else if (key == KEY_BACKSPACE) {
-			if (!_name.empty())
-				_name.erase(_name.size() - 1);
-		} else if (key >= 32 && key < 127 && _name.size() < 13) {
-			_name += (char)key;
-		}
 		return true;
 	}
 	_message.clear();
@@ -129,9 +133,17 @@ bool MdFrontEnd::handleKey(int key) {
 			_message = "The introduction's files are missing.";
 		}
 		break;
-	case 1:
-		_state = NAME;
-		_name.clear();
+	case 1: // Dr. Freud's questions; a character that was made stays (the original's byte_27E97)
+		if (_asked) {
+			_message = "Run INSTALL to remove your existing character before creating another.";
+		} else {
+			_create.reset(new MdCreation(_dir, (uint32_t)std::time(nullptr)));
+			if (_create->ok()) {
+				_state = CREATE;
+			} else {
+				_message = "The creation's files are missing.";
+			}
+		}
 		break;
 	case 2:
 		_state = DONE;

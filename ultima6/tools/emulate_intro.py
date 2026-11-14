@@ -51,6 +51,10 @@ for l in lines[start:end]:
 
 mem = bytearray(0x10000)  # the stack segment
 bss = {}
+for l in lines:  # the data the executable starts with: name db/dw value
+    m = re.match(r'((?:byte|word)_[0-9A-F]+)\s+d([bw])\s+([0-9A-F]+)(h?)\s*(;.*)?$', l)
+    if m:
+        bss[m.group(1)] = int(m.group(3), 16 if m.group(4) else 10)
 regs = {'ax': 0, 'bx': 0, 'cx': 0, 'dx': 0, 'si': 0, 'di': 0, 'bp': 0xF000, 'sp': 0xF000}
 flags = {'z': 0, 's': 0, 'c': 0, 'o': 0}
 BASE = 0xF000
@@ -399,7 +403,7 @@ while ip < len(instrs) and steps < 2000000:
             ops.append({'call': 'draw', 'frame': s16(raw[0]), 'handle': raw[2], 'y': s16(raw[3]), 'x': s16(raw[4])})
         elif target == 'sub_152B5':
             # pushed: colour, font, seg, off, y, x, dest
-            ops.append({'call': 'caption', 'text': raw[3], 'y': s16(raw[4]), 'x': s16(raw[5])})
+            ops.append({'call': 'caption', 'text': raw[3], 'y': s16(raw[4]), 'x': s16(raw[5]), 'colour': raw[0] & 0xFF, 'font': raw[1] & 0xFF})
         elif target == 'dword_2814E':
             ops.append({'call': 'clear'})
         elif target == 'dword_2814A':

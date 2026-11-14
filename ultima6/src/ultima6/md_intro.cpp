@@ -192,7 +192,7 @@ void MdIntro::compose() {
 		Ui::drawText(tmp, _font, (320 - w) / 2, y, l, 1);
 		for (int i = 0; i < 320 * 200; ++i)
 			if (tmp.pixels()[i])
-				_front[i] = 0xDD; // APPROX(90): the colour of the lines
+				_front[i] = (uint8_t)_captionColour; // the colour the call gives (a palette entry, the first sixteen are the EGA colours)
 		y += 12;
 	}
 }
@@ -232,6 +232,7 @@ void MdIntro::run() {
 			}
 			_lines.push_back(cur);
 			_captionY = o.c;
+			_captionColour = o.d;
 			break;
 		}
 		case 5:

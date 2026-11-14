@@ -1,5 +1,6 @@
 // Martian Dreams' menu (MDMENU.LZC, MD_TITLE.PAL): the four choices, the frame that moves, the name of a new character. Skipped without the game data.
 
+#include "files/world_data.h"
 #include "ultima6/md_front_end.h"
 
 #include <cstdio>
@@ -7,6 +8,8 @@
 using namespace Ultima6;
 using ::Ultima6::Ultima6::MdFrontEnd;
 using ::Ultima6::Ultima6::MdIntro;
+using ::Ultima6::Ultima6::MdCreation;
+using ::Ultima6::Ultima6::MdNewCharacter;
 
 static int failures = 0;
 
@@ -68,14 +71,71 @@ int main() {
 		ending.runToEnd();
 		CHECK(ending.finished());
 	}
-	CHECK(menu.handleKey('2') && menu.state() == MdFrontEnd::NAME);
-	for (char c : std::string("Tesla"))
-		menu.handleKey(c);
-	menu.handleKey(KEY_BACKSPACE);
-	menu.handleKey('a');
-	CHECK(!menu.handleKey(KEY_ENTER) && menu.wantsGame() && menu.name() == "Tesla");
+	// Dr. Freud's questions: A to every question, the name Tesla (a letter too many, taken away again); the scenes go on by themselves and wait for the keys
+	CHECK(menu.handleKey('2') && menu.state() == MdFrontEnd::CREATE && menu.animating());
+	int steps = 0;
+	bool typedName = false;
+	while (menu.state() == MdFrontEnd::CREATE && steps++ < 20000) {
+		menu.tick(100);
+		const MdCreation *c = menu.creation();
+		if (c && c->typing()) {
+			if (!typedName) {
+				typedName = true;
+				for (char k : std::string("Teslab"))
+					menu.handleKey(k);
+				menu.handleKey(KEY_BACKSPACE);
+				menu.handleKey(KEY_ENTER);
+			}
+		} else {
+			menu.handleKey('a');
+		}
+	}
+	for (int i = 0; i < 300 && menu.state() != MdFrontEnd::MENU; ++i)
+		menu.tick(100);
+	CHECK(typedName && menu.state() == MdFrontEnd::MENU && menu.hasNewCharacter());
+	const MdNewCharacter &ch = menu.character();
+	CHECK(ch.name == "Tesla" && !ch.female);
+	CHECK(ch.strength >= 18 && ch.strength <= 26 && ch.dexterity >= 18 && ch.dexterity <= 26 && ch.intelligence >= 18 && ch.intelligence <= 26);
+	// a second character is refused with the original's message
+	CHECK(menu.handleKey('2') && menu.state() == MdFrontEnd::MENU);
+	Framebuffer asked;
+	menu.render(asked);
+	CHECK(!menu.handleKey('3') && menu.wantsGame());
 	MdFrontEnd second("md/game/MARTIAN");
-	CHECK(!second.handleKey('3') && second.wantsGame() && second.name().empty());
+	CHECK(!second.handleKey('3') && second.wantsGame() && !second.hasNewCharacter());
+	{ // the character is put into the saved game: actor 1's stats, level 4, 600 experience, the sex in the body's type
+		ObjList list;
+		Bytes d;
+		CHECK(readFile("md/game/MARTIAN/SAVEGAME/OBJLIST", d));
+		d.erase(d.begin() + 0x14F1, d.begin() + 0x15F1);
+		CHECK(list.load(d));
+		MdNewCharacter w = ch;
+		w.female = true;
+		w.applyTo(list);
+		CHECK(list.strength[1] == w.strength && list.level[1] == 4 && list.exp[1] == 600 && list.hp[1] == (uint8_t)(96 + 2 * w.strength));
+		CHECK((list.objFrame[1] & 0x3FF) == 0x158 && std::string((const char *)list.partyNames[0]) == "Tesla");
+	}
+	// the questions are a decision tree: B to everything gives a woman or a man by the first answer, and reaches the last scene
+	{
+		MdCreation b("md/game/MARTIAN", 5);
+		CHECK(b.ok());
+		int guard = 0;
+		bool typedB = false;
+		while (!b.finished() && !b.cancelled() && guard++ < 20000) {
+			b.tick(100);
+			if (b.typing()) {
+				if (!typedB) {
+					typedB = true;
+					for (char k : std::string("freud"))
+						b.key(k);
+					b.key(KEY_ENTER);
+				}
+			} else {
+				b.key('b');
+			}
+		}
+		CHECK(b.finished() && b.result().female && b.result().name == "freud");
+	}
 	if (failures == 0)
 		std::printf("ok\n");
 	return failures ? 1 : 0;

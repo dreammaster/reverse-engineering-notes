@@ -6,6 +6,7 @@
 #include "ultima6/ending.h"
 #include "ultima6/front_end.h"
 #include "ultima6/md_front_end.h"
+#include "ultima6/md_create.h"
 #include "ultima6/md_intro.h"
 #include "ultima6/session.h"
 #include "ultima6/world.h"
@@ -142,7 +143,8 @@ int main(int argc, char **argv) {
 	world.game = id;
 	bool created = false;
 	Ultima6::Ultima6::NewCharacter character;
-	std::string newName; // Martian Dreams: the name typed in its menu
+	Ultima6::Ultima6::MdNewCharacter mdCharacter; // Martian Dreams: the character made in its menu
+	bool mdCreated = false;
 	if (!play && id == Ultima6::GameId::MartianDreams) {
 		Ultima6::Ultima6::MdFrontEnd front(argv[1]);
 		if (!front.ok()) {
@@ -178,7 +180,8 @@ int main(int argc, char **argv) {
 				screen.savePng(shot, scale);
 			return 0;
 		}
-		newName = front.name();
+		mdCreated = front.hasNewCharacter();
+			mdCharacter = front.character();
 	} else if (!play) {
 		Ultima6::Ultima6::FrontEnd front(argv[1]);
 		if (!front.ok()) {
@@ -211,11 +214,8 @@ int main(int argc, char **argv) {
 		std::fprintf(stderr, "cannot load %s\n", world.error().c_str());
 		return 1;
 	}
-	if (!newName.empty()) { // the name of a new character of Martian Dreams (the party's first name, 13 letters)
-		Ultima6::ObjList &al = world.actors;
-		std::memset(al.partyNames[0], 0, sizeof al.partyNames[0]);
-		std::memcpy(al.partyNames[0], newName.c_str(), std::min<size_t>(newName.size(), 13));
-	}
+	if (mdCreated) // the character of Martian Dreams' questions is put into the saved game as the original's creation does
+		mdCharacter.applyTo(world.actors);
 	Ultima6::Ultima6::Game game(world);
 	game.saveDir = saveDir;
 	Ultima6::BorlandRandom sfxRandom(7);
