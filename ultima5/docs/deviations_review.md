@@ -24,11 +24,16 @@ For each item the ScummVM engine needs a decision: reproduce the original, keep 
    does (a C compiler folds it to "always true"); the modern build uses `(s8)a > -1`, i.e. armour counts, and `combat.c:1297`
    (`ENABLE_BUG_FIX`) additionally adds the defence into the hit calculation. This is the well-known DOS armour bug.
    *Original behaviour = defence from equipment is 0.*
-2. **NPC schedule look-ahead** (`npc.c:549`). Original: `local_10[local_16 - 1] != 99` (an index that does not match the test
-   two lines below it); modern: `local_16 - 5`, marked "BUGFIX?". The `MATCHING_BUILD` branch is the one that equals the binary.
-3. **Spell effect precondition** (`cast.c:2098-2105`). Original: `CAST2_0306(param_1)` (an argument the callee ignores; the author
-   notes "original code error?") and no check of the result; modern: `CAST2_0306()` and the spell body runs only if it returned
-   non-zero (taken from the FM Towns version).
+2. **NPC schedule look-ahead** (`npc.c:549`, `NPC_06e4`). *Confirmed in the binary:* the original keeps four pointers into the
+   four-entry distance array; the guard `!= 99` is applied through a pointer that is `&arr[si-1]` (which for `si` 5..7 points past the
+   array at the function's other locals) while the equality test uses `&arr[si-5]`. So the `MATCHING_BUILD` line (`local_10[local_16 - 1]`)
+   is what the binary does. The modern `local_16 - 5` additionally refuses invalid directions (value 99) in the equality test; the two only
+   differ when the NPC's current distance is itself 99. Practical effect: negligible.
+3. **Spell precondition** (`cast.c:2098-2105`, `CAST_1f60`). *Confirmed in the binary, both halves:* the original pushes `param_1` before
+   the call to `CAST2_0306` (stub `80e2`), which takes no arguments and returns with a plain `ret`, so the pushed word is simply leaked
+   until the function's `mov sp,bp`; and it stores the returned key in `[bp-10ch]` and goes on to cast regardless. `CAST2_0306` returns 0 for
+   Space ("Pass"), so in the original a spell is still carried out when the player passes at the "Direction-" prompt (with direction value 0);
+   the FM Towns-derived `if (local_10e != 0)` makes the modern build abort the spell instead. *Original behaviour = no abort.*
 4. **Talk with `0xfe` response** (`talk.c:304`). *Confirmed in the binary.* The original calls `TOWN_10da` with **no argument**
    (the call at `TALK:03d3` has nothing pushed), so the callee reads the caller's saved `SI` — a pointer into the NPC table, not an
    index — and `TOWN_08d4` then indexes `D_659e[]` with it, far outside the table (indeterminate memory beyond the data segment).
@@ -65,6 +70,6 @@ For each item the ScummVM engine needs a decision: reproduce the original, keep 
 
 ## Method note
 
-Items 1, 4, 5, 6, 8 and 11 and the "checked and equivalent" entries were confirmed against the disassembly (`ULTIMA_6da8`,
-`COMSUBS_0c52`, `TALK_031e`/`TOWN_08d4`, `ULTIMA_4402`, the data bytes in `DATA.OVL`, `LOOKOBJ_07e4`). Items 2 and 3 are taken from the
-`MATCHING_BUILD` branches and source comments; 7, 9 and 10 are described from the C only.
+Items 1–6, 8 and 11 and the "checked and equivalent" entries were confirmed against the disassembly (`ULTIMA_6da8`,
+`NPC_06e4`, `CAST_1f60`/`CAST2_0306`, `COMSUBS_0c52`, `TALK_031e`/`TOWN_08d4`, `ULTIMA_4402`, the data bytes in `DATA.OVL`, `LOOKOBJ_07e4`).
+Items 7, 9 and 10 are described from the C only.
