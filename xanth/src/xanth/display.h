@@ -47,12 +47,18 @@ public:
 	/** The mouse pointer position and the name shown at the bottom of the picture window for the object under it ("" = none). */
 	void setMouse(int x, int y) { _mouseX = x; _mouseY = y; }
 	void setHoverName(const std::string &name) { _hover = name; }
+	int mouseX() const { return _mouseX; }
+	int mouseY() const { return _mouseY; }
 	/** The screen as the player sees it: the game screen plus the hover name and the mouse pointer (neither is part of what the game draws). */
 	void render(Legend::Surface &out) const;
-	/** The object under a point of the screen (a hotspot of the room picture), 0 if none. */
-	int objectAt(int x, int y);
+	/** The object under a point of the screen (a hotspot of the room picture), 0 if none; with `orRoom` the room itself for a point of the picture that has no hotspot (a click there is a command on the room). */
+	int objectAt(int x, int y, bool orRoom = false);
 	/** The verb list entry under a point (index into the verbs set with setVerbs), -1 if none. */
 	int verbAt(int x, int y) const;
+	/** The thing carried (or the person with you) whose icon is under a point of the inventory, 0 if none. */
+	int inventoryObjectAt(int x, int y) const;
+	/** A click on the scroll arrows of the inventory (up: top half, down: bottom half); true if the list scrolled. */
+	bool scrollInventory(int x, int y);
 	/** The compass arrow (0..9, bit i of the exit mask) under a point if it is lit, -1 otherwise. */
 	int compassAt(int x, int y) const;
 	/** A click on one of the four buttons (0 WAIT, 1 menu, 2 MAP, 3 UNDO): the original draws the button pressed and raised again, which leaves one pixel of its frame different. */
@@ -66,7 +72,7 @@ public:
 
 	virtual int printText(const std::string &text);
 	virtual int putChar(int ch);
-	virtual int showTextBox(const std::string &text) { return printText(text); }
+	virtual int showTextBox(const std::string &text);
 	virtual int playSound(const std::string &) { return 0; }
 	virtual int waitTicksOrClick(int ticks);
 	virtual void conversationBegin(int picNum);
@@ -124,6 +130,11 @@ private:
 	InputSource *_input;
 	int _convPicW, _convPicH, _convBubbleRight, _convMenuBottom;
 	int _selectedVerb;
+	struct Cell {
+		int x, y, obj;
+	};
+	std::vector<Cell> _cells;            // the icons drawn in the inventory (24 x 20 each)
+	int _inventoryCount;
 	int _inventoryScroll;                // first of the carried things shown (word_85024)
 	Legend::RgnFile _rgn;
 	int _rgnFile;

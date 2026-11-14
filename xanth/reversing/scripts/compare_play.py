@@ -1,6 +1,6 @@
 """
 compare_play.py "<script>" [--every]: plays the same clicks in the original (the oracle, engine/host/play.sh) and in the standalone game (xanth_play) and compares the
-screens. Script: "c X Y" clicks separated by ';' ("c 20 28;c 160 100"); each prefix of the script is run when --every is given, else only the whole script.
+screens. Script: "c X Y" clicks and "m X Y" moves separated by ';' ("c 20 28;m 160 100"); each prefix of the script is run when --every is given, else only the whole script.
 Screens go to the scratch folder (env SCRATCH, default %TEMP%/cmp); regions: verbs, picture window, text window, compass, buttons, inventory.
 The picture window may differ in the rain's animation phase (the oracle's clock is a step count): its count is reported but a run is only 'ok' if everything else
 is identical.
@@ -23,11 +23,10 @@ def oracle(actions, out):
     t = BASE
     for a in actions:
         op, x, y = a.split()[0], int(a.split()[1]), int(a.split()[2])
-        if op != "c":
-            continue
         tl.append("%d:%d,%d,0" % (t, x, y))
-        tl.append("%d:%d,%d,1" % (t + 400000, x, y))
-        tl.append("%d:%d,%d,0" % (t + 800000, x, y))
+        if op == "c":
+            tl.append("%d:%d,%d,1" % (t + 400000, x, y))
+            tl.append("%d:%d,%d,0" % (t + 800000, x, y))
         t += GAP
     subprocess.run(["bash", "play.sh", ",".join(tl), str(t + 3000000), out], cwd=HOST, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=900)
 

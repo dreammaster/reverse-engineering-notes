@@ -36,6 +36,10 @@ public:
 	/** The pen back at the start of the window, without touching the pixels. */
 	void home() { _xpos = _font->xCenter(); _ypos = _font->yCenter(); _scrolled = false; }
 
+	/** The pen is at the start of a line (just after a new line), and its distance from the window top. */
+	bool atLineStart() const { return _xpos == _font->xCenter(); }
+	int penOffsetY() const { return _ypos; }
+
 	int penX() const { return _left + _xpos; }
 	int penY() const { return _y1 + _ypos; }
 

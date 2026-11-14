@@ -12,7 +12,7 @@ using namespace Legend;
 
 static const int kTextBottom = 151, kSavedTop = 149, kSavedBottom = 196;
 
-Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false), _mouseX(160), _mouseY(100), _expanded(false), _input(NULL), _convPicW(0), _convPicH(0), _convBubbleRight(0), _convMenuBottom(0), _selectedVerb(-1), _inventoryScroll(0), _rgnFile(-1) {
+Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false), _mouseX(160), _mouseY(100), _expanded(false), _input(NULL), _convPicW(0), _convPicH(0), _convBubbleRight(0), _convMenuBottom(0), _selectedVerb(-1), _inventoryCount(0), _inventoryScroll(0), _rgnFile(-1) {
 	memset(_drawn, 0, sizeof(_drawn));
 }
 
@@ -96,10 +96,16 @@ void Display::drawInventory() {
 	});
 	if (items.size() <= 14)
 		_inventoryScroll = 0;
+	_inventoryCount = (int)items.size();
+	_cells.clear();
 	// sub_25C55: cells 28 x 22 pixels in a window, left to right and top to bottom
 	int x = 55, y = 152, n = 0;
 	for (;;) {
 		drawSlot(n < (int)companions.size() ? companions[n].pic : 0, x, y);
+		if (n < (int)companions.size()) {
+			Cell c = {x, y, companions[n].obj};
+			_cells.push_back(c);
+		}
 		n++;
 		x += 28;
 		if (x > 82) {
@@ -112,6 +118,10 @@ void Display::drawInventory() {
 	x = 92, y = 152, n = _inventoryScroll;
 	for (;;) {
 		drawSlot(n < (int)items.size() ? items[n].pic : 0, x, y);
+		if (n < (int)items.size()) {
+			Cell c = {x, y, items[n].obj};
+			_cells.push_back(c);
+		}
 		n++;
 		x += 28;
 		if (x > 287) {
@@ -338,6 +348,29 @@ int Display::waitTicksOrClick(int ticks) {
 	return 0;
 }
 
+int Display::inventoryObjectAt(int x, int y) const {
+	if (_expanded)
+		return 0;
+	for (size_t i = 0; i < _cells.size(); i++)
+		if (x >= _cells[i].x && x <= _cells[i].x + 23 && y >= _cells[i].y && y <= _cells[i].y + 19)
+			return _cells[i].obj;
+	return 0;
+}
+
+bool Display::scrollInventory(int x, int y) {
+	if (_expanded || _inventoryCount <= 14 || x < 293 || x > 314 || y < 152 || y > 195)
+		return false;
+	if (y <= 173) {
+		_inventoryScroll -= 7;
+		if (_inventoryScroll < 7)
+			_inventoryScroll = 0;
+	} else if (_inventoryScroll + 14 < _inventoryCount) {
+		_inventoryScroll += 7;
+	}
+	drawInventory();
+	return true;
+}
+
 int Display::compassAt(int x, int y) const {
 	// regionRefs of the original: the rectangles of the arrows, relative to the compass picture at (4, 129)
 	static const signed char kRects[10][4] = {{15, 2, 27, 11}, {30, 3, 38, 11}, {30, 13, 39, 25}, {30, 27, 38, 35}, {15, 27, 27, 36},
@@ -349,9 +382,11 @@ int Display::compassAt(int x, int y) const {
 	return -1;
 }
 
-int Display::objectAt(int x, int y) {
-	if (_picNum < 0 || x < 51 || x > 314 || y < 4 || y > 125)
+int Display::objectAt(int x, int y, bool orRoom) {
+	if (x < 51 || x > 314 || y < 4 || y > 125)
 		return 0;
+	if (_picNum < 0)
+		return orRoom ? _game->state.v.current_room : 0;
 	if (_rgnFile != (_picNum >> 8)) {
 		char name[16];
 		snprintf(name, sizeof(name), "XANTH_%02d.RGN", _picNum >> 8);
@@ -363,13 +398,13 @@ int Display::objectAt(int x, int y) {
 	}
 	size_t scene = _picNum & 255;
 	if (scene >= _rgn.size())
-		return 0;
+		return orRoom ? _game->state.v.current_room : 0;
 	// regions are tested from the last one added: what was added later lies on top (the computer on the desk)
 	const std::vector<Legend::RgnFile::Region> &regions = _rgn.scene(scene).regions;
 	for (size_t i = regions.size(); i-- > 0;)
 		if (regions[i].contains(x - 51, y - 4))
 			return regions[i].id;
-	return 0;
+	return orRoom ? _game->state.v.current_room : 0;
 }
 
 int Display::printText(const std::string &text) {
@@ -385,10 +420,14 @@ int Display::printText(const std::string &text) {
 			tall.print(nothing, _turnText[i]);
 		tall.print(nothing, text);
 		const Font &font = _ms.font10();
-		int lines = (tall.penY() - 128 - font.yCenter()) / font.lineHeight() + 1;
-		int edge = lines > 2 ? 133 + font.lineHeight() * lines : kTextBottom;
-		if (edge > 190)
-			edge = 190;
+		// the window ends below the last line (half a line below the pen when it just started a line); more than the two lines of the normal window makes it grow
+		int edge = 128 + tall.penOffsetY() + (tall.atLineStart() ? font.yCenter() : font.lineHeight()) + 1;
+		if (getenv("XANTH_TRACE_TEXT"))
+			fprintf(stderr, "text edge %d (pen %d, start %d) for \"%s\"\n", edge, tall.penOffsetY(), tall.atLineStart() ? 1 : 0, text.c_str());
+		if (edge <= kTextBottom)
+			edge = kTextBottom;
+		if (edge > 193)                      // (the window grows no further than this: longer text scrolls)
+			edge = 193;
 		if (edge > kTextBottom && (!_expanded || edge > _text.bottom())) {
 			expandText(edge);
 			_text.home();
@@ -399,6 +438,16 @@ int Display::printText(const std::string &text) {
 	_turnText.push_back(text);
 	_text.print(_screen, text);
 	return 0;
+}
+
+int Display::showTextBox(const std::string &text) {
+	// a text box replaces what the text window showed (it grows to fit the box's text)
+	if (_frameDrawn) {
+		fillArea(_screen, 51, 129, 314, (_expanded ? _text.bottom() : kTextBottom) - 3, 23);
+		_text.home();
+		_turnText.clear();
+	}
+	return printText(text);
 }
 
 int Display::putChar(int ch) {
@@ -595,6 +644,7 @@ int Display::other(const char *name, const intptr_t *args, int) {
 		return addAnimation((int)args[0], (int)args[1], (int8)args[2], (unsigned)args[3]);
 	} else if (!strcmp(name, "clear_text_area")) {
 		_text.clear(_screen);
+		_turnText.clear();
 	}
 	return 0;
 }

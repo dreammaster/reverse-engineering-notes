@@ -28,6 +28,7 @@ public:
 
 private:
 	void execute(int dobj, int iobj);
+	std::string shortName(int obj);
 
 	Game &_game;
 	Display &_display;

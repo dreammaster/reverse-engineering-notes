@@ -18,14 +18,37 @@ void Interface::start() {
 	_game.beginGame();
 }
 
+/** The short form of an object in the sentence line: its alternative name with an article ("the computer"), a proper name as it is. */
+std::string Interface::shortName(int obj) {
+	std::string alt = _game.objectNames.name(_game.state.objects.altNameOffset(obj));
+	if (alt.empty() || _game.state.objects.hasAttr(obj, 2))
+		return _game.print_obj(2, obj);
+	return "the " + alt;
+}
+
 void Interface::move(int x, int y) {
 	_display.setMouse(x, y);
-	int obj = _display.objectAt(x, y);
+	int obj = _display.inventoryObjectAt(x, y);
+	if (!obj)
+		obj = _display.objectAt(x, y);
+	// the line at the bottom of the picture: the sentence so far ("Look at the computer"), or just the name of the thing under the pointer
 	std::string name;
 	if (obj) {
 		name = _game.objectNames.name(_game.state.objects.altNameOffset(obj));
 		if (name.empty())
 			name = _game.objectName(obj);
+	}
+	if (_verb) {
+		const VerbInfo *info = findVerb(_verb);
+		std::string line = info ? info->name : "";
+		if (_dobj) {
+			line += " " + shortName(_dobj);
+			if (info && info->preposition)
+				line += std::string(" ") + info->preposition;
+		}
+		if (obj && info && info->objects > 0)
+			line += " " + shortName(obj);
+		name = line;
 	}
 	_display.setHoverName(name);
 }
@@ -38,6 +61,10 @@ void Interface::click(int x, int y) {
 		_verb = _verbIds[v];
 		_dobj = 0;
 		_display.selectVerb(v);
+		const VerbInfo *info = findVerb(_verb);
+		if (info && info->objects == 0)       // a verb without objects ("Look") is a complete sentence
+			execute(0, 0);
+		move(x, y);                           // the sentence line shows the verb
 		return;
 	}
 	if (x >= 4 && x <= 24 && y >= 168 && y <= 181) {      // the WAIT button
@@ -52,7 +79,11 @@ void Interface::click(int x, int y) {
 		execute(arrow + 1, 0);
 		return;
 	}
-	int obj = _display.objectAt(x, y);
+	if (_display.scrollInventory(x, y))
+		return;
+	int obj = _display.inventoryObjectAt(x, y);
+	if (!obj)
+		obj = _display.objectAt(x, y, true);
 	if (!obj || !_verb)
 		return;
 	const VerbInfo *info = findVerb(_verb);
@@ -71,6 +102,7 @@ void Interface::execute(int dobj, int iobj) {
 	_verb = 0;
 	_dobj = 0;
 	_selected = -1;
+	move(_display.mouseX(), _display.mouseY());
 }
 
 } // namespace Xanth
