@@ -305,6 +305,7 @@ public:
 	}
 
 	void SetUniform(const char *name, int value) override {
+		logUniform(name, value, 0, 0, 0, 1);
 		Uniform &uniform = _uniforms[name];
 
 		uniform.type = kInt;
@@ -312,6 +313,7 @@ public:
 	}
 
 	void SetUniform(const char *name, float value) override {
+		logUniform(name, value, 0, 0, 0, 1);
 		Uniform &uniform = _uniforms[name];
 
 		uniform.type = kVec1;
@@ -319,6 +321,7 @@ public:
 	}
 
 	void SetUniform(const char *name, float x, float y) override {
+		logUniform(name, x, y, 0, 0, 2);
 		Uniform &uniform = _uniforms[name];
 
 		uniform.type = kVec2;
@@ -327,6 +330,7 @@ public:
 	}
 
 	void SetUniform(const char *name, float x, float y, float z) override {
+		logUniform(name, x, y, z, 0, 3);
 		Uniform &uniform = _uniforms[name];
 
 		uniform.type = kVec3;
@@ -336,6 +340,7 @@ public:
 	}
 
 	void SetUniform(const char *name, float x, float y, float z, float w) override {
+		logUniform(name, x, y, z, w, 4);
 		Uniform &uniform = _uniforms[name];
 
 		uniform.type = kVec4;
@@ -433,6 +438,11 @@ public:
 	}
 
 private:
+	void logUniform(const char *name, float a, float b, float c, float d, int count) {
+		if (std::getenv("DEPONIA_PASSLOG"))
+			std::fprintf(stderr, "UNIFORM program %u %s = %g %g %g %g (%d)\n", _program, name, a, b, c, d, count);
+	}
+
 	enum Kind { kInt, kVec1, kVec2, kVec3, kVec4, kMat3, kMat4 };
 
 	struct Uniform {
@@ -565,14 +575,9 @@ void TSubSysGL::freeBuffers() {
 	_buffers.clear();
 }
 
-// A buffer of the passes (1 and up; 0 is the picture of the game and the window): a texture of the size of the game's picture with a
-// framebuffer to draw into it.
-bool TSubSysGL::ensureBuffer(unsigned index, int width, int height) {
-	if (_buffers.size() <= index)
-		_buffers.resize(index + 1);
-
-	Buffer &buffer = _buffers[index];
-
+// A buffer of the passes (1 and up; the screen of the passes is one too): a texture of the size of the game's picture with a framebuffer to
+// draw into it.
+static bool makeBuffer(TSubSysGL::Buffer &buffer, int width, int height) {
 	if (buffer.texture && buffer.width == width && buffer.height == height)
 		return true;
 
@@ -582,7 +587,7 @@ bool TSubSysGL::ensureBuffer(unsigned index, int width, int height) {
 	if (buffer.texture)
 		gl.DeleteTextures(1, &buffer.texture);
 
-	buffer = Buffer();
+	buffer = TSubSysGL::Buffer();
 	buffer.width = width;
 	buffer.height = height;
 	gl.GenTextures(1, &buffer.texture);
@@ -599,7 +604,94 @@ bool TSubSysGL::ensureBuffer(unsigned index, int width, int height) {
 	return gl.CheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 }
 
-bool TSubSysGL::RunPasses(SDL_Texture *scene, int sceneWidth, int sceneHeight, const wxRect &area, int windowHeight) {
+bool TSubSysGL::ensureBuffer(unsigned index, int width, int height) {
+	if (_buffers.size() <= index)
+		_buffers.resize(index + 1);
+
+	return makeBuffer(_buffers[index], width, height);
+}
+
+namespace {
+
+// What SDL's renderer had set in OpenGL, put back after the drawing here (its renderer keeps its own idea of the state: the blend function,
+// the program, the framebuffer, the texture, the viewport).
+struct GLState {
+	GLint program = 0;
+	GLint framebuffer = 0;
+	GLint texture = 0;
+	GLint viewport[4] = {0, 0, 0, 0};
+	GLint blend[4] = {1, 0, 1, 0};   // (source and destination of the colour and of the alpha)
+	GLboolean wasBlend = 0;
+	GLboolean wasScissor = 0;
+	GLboolean wasDepth = 0;
+	GLboolean wasCull = 0;
+
+	void save() {
+		wasBlend = gl.IsEnabled(GL_BLEND);
+		wasScissor = gl.IsEnabled(GL_SCISSOR_TEST);
+		wasDepth = gl.IsEnabled(GL_DEPTH_TEST);
+		wasCull = gl.IsEnabled(GL_CULL_FACE);
+		gl.GetIntegerv(GL_CURRENT_PROGRAM, &program);
+		gl.GetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
+		gl.GetIntegerv(GL_VIEWPORT, viewport);
+		gl.GetIntegerv(0x80C9, &blend[0]);
+		gl.GetIntegerv(0x80C8, &blend[1]);
+		gl.GetIntegerv(0x80CB, &blend[2]);
+		gl.GetIntegerv(0x80CA, &blend[3]);
+		gl.ActiveTexture(GL_TEXTURE0);
+		gl.GetIntegerv(GL_TEXTURE_BINDING_2D, &texture);
+		gl.Disable(GL_SCISSOR_TEST);
+		gl.Disable(GL_DEPTH_TEST);
+		gl.Disable(GL_CULL_FACE);
+	}
+
+	void restore() {
+		gl.UseProgram(static_cast<GLuint>(program));
+		gl.BindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>(framebuffer));
+		gl.ActiveTexture(GL_TEXTURE0);
+		gl.BindTexture(GL_TEXTURE_2D, static_cast<GLuint>(texture));
+		gl.Viewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+		gl.BlendFuncSeparate(static_cast<GLenum>(blend[0]), static_cast<GLenum>(blend[1]), static_cast<GLenum>(blend[2]),
+		                     static_cast<GLenum>(blend[3]));
+
+		if (wasBlend)
+			gl.Enable(GL_BLEND);
+		else
+			gl.Disable(GL_BLEND);
+
+		if (wasScissor)
+			gl.Enable(GL_SCISSOR_TEST);
+
+		if (wasDepth)
+			gl.Enable(GL_DEPTH_TEST);
+
+		if (wasCull)
+			gl.Enable(GL_CULL_FACE);
+	}
+};
+
+// The quad that covers the target (the corners of the clip space) with the part `scale` of the texture, upside down for the game's own
+// texture.
+void drawQuad(float scale, bool flip) {
+	const float top = flip ? scale : 0.0f;
+	const float bottom = flip ? 0.0f : scale;
+	const float positions[8] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
+	const float uvs[8] = {0.0f, top, scale, top, 0.0f, bottom, scale, bottom};
+
+	gl.EnableVertexAttribArray(kPositionAttribute);
+	gl.EnableVertexAttribArray(kUvAttribute);
+	gl.VertexAttribPointer(kPositionAttribute, 2, GL_FLOAT, 0, 0, positions);
+	gl.VertexAttribPointer(kUvAttribute, 2, GL_FLOAT, 0, 0, uvs);
+	gl.DrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	gl.DisableVertexAttribArray(kPositionAttribute);
+	gl.DisableVertexAttribArray(kUvAttribute);
+}
+
+const float kIdentity[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+
+}  // namespace
+
+bool TSubSysGL::RunPasses(SDL_Texture *scene, int sceneWidth, int sceneHeight) {
 	if (!_ready || shader_renderpasses.empty() || shader_renderpasses[0].empty() || std::getenv("DEPONIA_NOPASS"))
 		return false;
 
@@ -614,49 +706,63 @@ bool TSubSysGL::RunPasses(SDL_Texture *scene, int sceneWidth, int sceneHeight, c
 		                             "void main() { gl_FragColor = texture2D(composite, texcoord); }\n");
 	}
 
-	// what SDL had set is put back at the end (its renderer keeps its own idea of the state)
+	if (std::getenv("DEPONIA_PASSLOG")) {
+		static std::string lastSignature;
+		std::string signature;
+
+		for (const TRenderPass &pass : passes) {
+			char text[120];
+
+			std::snprintf(text, sizeof(text), "[shader %d source %d target %d down %.1f src %d dst %d clear %d] ", pass.shader, pass.source, pass.target,
+			              pass.downsize, pass.compSrc, pass.compDst, pass.clear);
+			signature += text;
+		}
+
+		if (signature != lastSignature) {
+			lastSignature = signature;
+			std::fprintf(stderr, "PASSES (%d shaders): %s\n", static_cast<int>(shader_list.size()), signature.c_str());
+		}
+	}
+
 	SDL_RenderFlush(_renderer);
 
-	GLint previousProgram = 0;
-	GLint previousFramebuffer = 0;
-	GLint previousTexture = 0;
-	GLint previousViewport[4] = {0, 0, 0, 0};
-	GLint previousBlend[4] = {1, 0, 1, 0};   // (source and destination of the colour and of the alpha)
-	GLboolean wasBlend = gl.IsEnabled(GL_BLEND);
-	GLboolean wasScissor = gl.IsEnabled(GL_SCISSOR_TEST);
-	GLboolean wasDepth = gl.IsEnabled(GL_DEPTH_TEST);
-	GLboolean wasCull = gl.IsEnabled(GL_CULL_FACE);
+	GLState state;
 
-	gl.GetIntegerv(GL_CURRENT_PROGRAM, &previousProgram);
-	gl.GetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFramebuffer);
-	gl.GetIntegerv(GL_VIEWPORT, previousViewport);
-	gl.GetIntegerv(0x80C9, &previousBlend[0]);
-	gl.GetIntegerv(0x80C8, &previousBlend[1]);
-	gl.GetIntegerv(0x80CB, &previousBlend[2]);
-	gl.GetIntegerv(0x80CA, &previousBlend[3]);
-	gl.ActiveTexture(GL_TEXTURE0);
-	gl.GetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture);
+	state.save();
 
 	float textureWidth = 1.0f;
 	float textureHeight = 1.0f;
 
-	if (SDL_GL_BindTexture(scene, &textureWidth, &textureHeight) != 0)
+	if (SDL_GL_BindTexture(scene, &textureWidth, &textureHeight) != 0) {
+		state.restore();
 		return false;
+	}
 
 	GLint sceneTexture = 0;
 
 	gl.GetIntegerv(GL_TEXTURE_BINDING_2D, &sceneTexture);
 	SDL_GL_UnbindTexture(scene);
 
-	gl.Disable(GL_SCISSOR_TEST);
-	gl.Disable(GL_DEPTH_TEST);
-	gl.Disable(GL_CULL_FACE);
+	if (!makeBuffer(_output, sceneWidth, sceneHeight)) {
+		state.restore();
+		return false;
+	}
 
-	static const float kIdentity[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+	// the screen of the passes starts black
+	gl.BindFramebuffer(GL_FRAMEBUFFER, _output.framebuffer);
+	gl.Viewport(0, 0, sceneWidth, sceneHeight);
+	gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	gl.Clear(GL_COLOR_BUFFER_BIT);
+
 	bool done = true;
 
 	for (size_t number = 0; number < passes.size() && done; number++) {
 		const TRenderPass &pass = passes[number];
+
+		if (const char *skip = std::getenv("DEPONIA_PASSSKIP")) {
+			if (pass.shader == std::atoi(skip))
+				continue;
+		}
 
 		// the shader of the pass: the number of a script's shader from 1
 		GLShader *shader = nullptr;
@@ -698,8 +804,8 @@ bool TSubSysGL::RunPasses(SDL_Texture *scene, int sceneWidth, int sceneHeight, c
 
 		// where the pass draws
 		if (target == 0) {
-			gl.BindFramebuffer(GL_FRAMEBUFFER, 0);
-			gl.Viewport(area.x, windowHeight - area.y - area.height, area.width, area.height);
+			gl.BindFramebuffer(GL_FRAMEBUFFER, _output.framebuffer);
+			gl.Viewport(0, 0, sceneWidth, sceneHeight);
 		} else {
 			if (!ensureBuffer(target, sceneWidth, sceneHeight)) {
 				done = false;
@@ -728,44 +834,32 @@ bool TSubSysGL::RunPasses(SDL_Texture *scene, int sceneWidth, int sceneHeight, c
 		shader->SetEngineUniform("composite", 0);
 		shader->SetEngineUniform("renderpass", static_cast<int>(number));
 		shader->SetEngineMatrix("mvp_mat", kIdentity);
-
-		// the picture of the game: the whole window (the corners of the clip space), its texture upside down
-		const float top = flip ? scale : 0.0f;
-		const float bottom = flip ? 0.0f : scale;
-		const float positions[8] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
-		const float uvs[8] = {0.0f, top, scale, top, 0.0f, bottom, scale, bottom};
-
-		gl.EnableVertexAttribArray(kPositionAttribute);
-		gl.EnableVertexAttribArray(kUvAttribute);
-		gl.VertexAttribPointer(kPositionAttribute, 2, GL_FLOAT, 0, 0, positions);
-		gl.VertexAttribPointer(kUvAttribute, 2, GL_FLOAT, 0, 0, uvs);
-		gl.DrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		gl.DisableVertexAttribArray(kPositionAttribute);
-		gl.DisableVertexAttribArray(kUvAttribute);
+		drawQuad(scale, flip);
 	}
 
-	gl.UseProgram(static_cast<GLuint>(previousProgram));
-	gl.BindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>(previousFramebuffer));
-	gl.BindTexture(GL_TEXTURE_2D, static_cast<GLuint>(previousTexture));
-	gl.Viewport(previousViewport[0], previousViewport[1], previousViewport[2], previousViewport[3]);
-	gl.BlendFuncSeparate(static_cast<GLenum>(previousBlend[0]), static_cast<GLenum>(previousBlend[1]), static_cast<GLenum>(previousBlend[2]),
-	                     static_cast<GLenum>(previousBlend[3]));
-
-	if (wasBlend)
-		gl.Enable(GL_BLEND);
-	else
-		gl.Disable(GL_BLEND);
-
-	if (wasScissor)
-		gl.Enable(GL_SCISSOR_TEST);
-
-	if (wasDepth)
-		gl.Enable(GL_DEPTH_TEST);
-
-	if (wasCull)
-		gl.Enable(GL_CULL_FACE);
-
+	state.restore();
 	return done;
+}
+
+void TSubSysGL::DrawOutput(const wxRect &area, int windowHeight) {
+	if (!_ready || !_output.texture || !_copyShader || !_copyShader->IsReady())
+		return;
+
+	SDL_RenderFlush(_renderer);
+
+	GLState state;
+
+	state.save();
+	gl.BindFramebuffer(GL_FRAMEBUFFER, 0);
+	gl.Viewport(area.x, windowHeight - area.y - area.height, area.width, area.height);
+	gl.Disable(GL_BLEND);
+	gl.ActiveTexture(GL_TEXTURE0);
+	gl.BindTexture(GL_TEXTURE_2D, _output.texture);
+	_copyShader->Use();
+	_copyShader->SetEngineUniform("composite", 0);
+	_copyShader->SetEngineMatrix("mvp_mat", kIdentity);
+	drawQuad(1.0f, false);
+	state.restore();
 }
 
 #endif

@@ -27,16 +27,7 @@ public:
 		return _ready;
 	}
 
-	TShader *CreateShader() override;
-	void WindowResized(int width, int height, bool fullscreen) override;
-	std::string GetGPUName() override;
-
-	/** Runs the passes of the first render configuration over the picture `scene` (the game's picture, `sceneWidth` x `sceneHeight`) and
-	 *  draws the last one into the window, in `area` (a window of the height `windowHeight`). False when there is nothing to do (the
-	 *  caller draws the picture as always) or it could not be done. */
-	bool RunPasses(SDL_Texture *scene, int sceneWidth, int sceneHeight, const wxRect &area, int windowHeight);
-
-private:
+	/** A texture of the passes with the framebuffer that draws into it. */
 	struct Buffer {
 		unsigned texture = 0;
 		unsigned framebuffer = 0;
@@ -45,6 +36,19 @@ private:
 		float scale = 1.0f;   ///< the part of the texture that the last pass wrote (1 / downsize)
 	};
 
+	TShader *CreateShader() override;
+	void WindowResized(int width, int height, bool fullscreen) override;
+	std::string GetGPUName() override;
+
+	/** Runs the passes of the first render configuration over the picture `scene` (the game's picture, `sceneWidth` x `sceneHeight`); what the
+	 *  passes that have the target 0 (the screen) draw is kept for DrawOutput(). False when there is nothing to do (the caller draws the
+	 *  picture as always) or it could not be done. */
+	bool RunPasses(SDL_Texture *scene, int sceneWidth, int sceneHeight);
+	/** Draws what the last RunPasses() made into the window, in `area` (a window of the height `windowHeight`). */
+	void DrawOutput(const wxRect &area, int windowHeight);
+
+
+private:
 	bool ensureBuffer(unsigned index, int width, int height);
 	void freeBuffers();
 
@@ -52,6 +56,7 @@ private:
 	bool _ready = false;
 	std::string _gpu;
 	std::vector<Buffer> _buffers;
+	Buffer _output;   ///< the screen of the passes (target 0)
 	class GLShader *_copyShader = nullptr;
 	int _pass = 0;
 };

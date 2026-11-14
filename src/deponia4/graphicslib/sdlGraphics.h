@@ -73,6 +73,9 @@ private:
 	// the window that keeps the proportions, and the other one is drawn into next: what the last frame was stays to be read (the snapshots of the
 	// savegames take it between two frames, when the picture of the window is not the one to read any more).
 	SDL_Texture *_frames[2] = {nullptr, nullptr};
+	/** What is drawn after the passes of the shaders (the part of the game that they do not change): it goes over their picture. */
+	SDL_Texture *_overlay = nullptr;
+	bool _passesDone = false;   ///< the passes ran in this frame: the drawing goes to the overlay
 	int _current = 0;
 	bool _hasLast = false;
 	wxSize _renderSize;

@@ -121,6 +121,11 @@ bool TSdlGraphics::InitGraphics(const wxSize &windowSize, wxSize &renderSize, wx
 		for (SDL_Texture *&frame : _frames)
 			frame = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, renderSize.width, renderSize.height);
 
+		_overlay = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, renderSize.width, renderSize.height);
+
+		if (_overlay)
+			SDL_SetTextureBlendMode(_overlay, _blend);
+
 		if (!_frames[0] || !_frames[1]) {
 			for (SDL_Texture *&frame : _frames) {
 				if (frame)
@@ -420,9 +425,29 @@ void TSdlGraphics::DrawLine(const wxPoint &from, const wxPoint &to, unsigned int
 }
 
 // The frame is shown (once: a transition shows its frames with AfterDrawScene(true, true), the master control's frame calls Swap() after it).
-void TSdlGraphics::AfterDrawScene(bool a, bool b) {
-	if (a && b)
+// Confirmed in shape (TGraphicsOGL::AfterDrawScene(bool, bool), asm 1222775 on): the engine calls it with `runPasses` where the scene, the
+// interfaces or the texts are done (kGameShaderExclude) and at the end of the frame, and the passes of the render configuration are run over
+// what was drawn so far. Here they make their picture (in OpenGL) from the frame, and the rest of the frame goes into a transparent
+// texture that is put over it at Swap().
+void TSdlGraphics::AfterDrawScene(bool a, bool runPasses) {
+	if (a && runPasses) {
 		Swap();
+		return;
+	}
+
+	TSubSysGL *glSubSys = dynamic_cast<TSubSysGL *>(g_subSys);
+
+	if (!runPasses || !glSubSys || !_frames[0] || !_overlay || _passesDone)
+		return;
+
+	if (!glSubSys->RunPasses(_frames[_current], _renderSize.width, _renderSize.height))
+		return;
+
+	_passesDone = true;
+	SDL_SetRenderTarget(_renderer, _overlay);
+	SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_NONE);
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 0);
+	SDL_RenderClear(_renderer);
 }
 
 void TSdlGraphics::Swap() {
@@ -442,7 +467,10 @@ void TSdlGraphics::Swap() {
 		static const char *luaSetting = std::getenv("DEPONIA_LUA");
 		static bool luaDone = false;
 
-		if (luaSetting && !luaDone && _shown == std::atoi(luaSetting)) {
+		static const bool luaRepeat = std::getenv("DEPONIA_LUA_EVERY") != nullptr;
+
+		if (luaSetting && (!luaDone || luaRepeat) &&
+		    (luaRepeat ? (_shown >= std::atoi(luaSetting) && _shown % std::atoi(std::getenv("DEPONIA_LUA_EVERY")) == 0) : _shown == std::atoi(luaSetting))) {
 			const char *colon = std::strchr(luaSetting, ':');
 			std::FILE *file = colon ? std::fopen(colon + 1, "rb") : nullptr;
 
@@ -477,12 +505,22 @@ void TSdlGraphics::Swap() {
 			where.w = _area.width;
 			where.h = _area.height;
 
-			// the passes of the shaders (the Shader Toolkit of the scripts) draw the picture of the game into the window; without any it is
-			// copied
+			// the passes of the shaders (the Shader Toolkit of the scripts) made their picture from the game's in AfterDrawScene(); what was
+			// drawn after them goes over it. Without passes the picture is copied.
 			TSubSysGL *glSubSys = dynamic_cast<TSubSysGL *>(g_subSys);
 
-			if (!glSubSys || !glSubSys->RunPasses(_frames[_current], _renderSize.width, _renderSize.height, _area, _windowHeight))
+			if (_passesDone && glSubSys) {
+				glSubSys->DrawOutput(_area, _windowHeight);
+
+				if (!std::getenv("DEPONIA_NOOVERLAY"))
+					SDL_RenderCopy(_renderer, _overlay, nullptr, &where);
+			} else if (glSubSys && glSubSys->RunPasses(_frames[_current], _renderSize.width, _renderSize.height)) {
+				glSubSys->DrawOutput(_area, _windowHeight);
+			} else {
 				SDL_RenderCopy(_renderer, _frames[_current], nullptr, &where);
+			}
+
+			_passesDone = false;
 		}
 
 		if (!windowShot.empty()) {
