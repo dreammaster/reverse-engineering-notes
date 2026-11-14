@@ -31,7 +31,7 @@ the `MATCHING_BUILD` path, which u5d byte-matches against the EXE, so it is what
 |---|---|---|---|---|---|
 | `fm_towns_music` | FM Towns CD music | PC-speaker effects only | Per-map background music | C only | `ENABLE_BGM` (34 blocks), `AUDIO_Dispatch*` |
 | `speed_fixes` | Timed delays | CPU-calibrated busy-waits | Sleep-based timing | C only; keep (pacing only) | `ENABLE_SPEED_FIX` (12) |
-| `los_edge_guards` | LOS at map edges | Reads neighbouring memory when a ray leaves the buffer | Skips such rays | **not verified** | `5000.c:499-576` |
+| `los_edge_guards` | LOS flood at buffer edges | Reads the bytes after the 32x32 combat map (DS:b114..) when a ray leaves it; the extra `local_20c != 0` test is provably equivalent | Skips such rays | instrumented run: the guard fires in ordinary combat (map row 23 + offset 9 = row 32, i.e. one row past the map) so the original really reads out-of-map memory; effect limited to off-map cells, contents depend on neighbouring globals | `5000.c:499-576` |
 | `gog_prompts` | GOG-style start-up | "Insert disk / press drive letter" prompts | Skips them (disk-swap only; no achievements involved) | C only; irrelevant for ScummVM | `GOG_BUILD` (8) |
 | `move_result_codes` | Movement return values | AX leaks through after "On foot!"/"Attacked at entrance!" | Returns 0 | partly binary: the direction-move path (`MAINOUT+0490`) returns `MAINOUT_00da`'s AX exactly as modern; the "On foot!"/"Attacked at entrance!" exits of `MAINOUT+0790` return whatever AX holds after `PrintString`/`Combat` (indeterminate), modern returns 0 | `mainout.c:360-436, 609-650` |
 | `translation` | Translation hooks | none | Alternate string tables | C only | `ENABLE_TRANSLATION` |
@@ -53,5 +53,4 @@ whatever is left in AX; the C keeps the shape of the original. They affect calle
 
 ## Still to verify against the binary
 
-`los_edge_guards` (large flood routine). `gog_prompts` are only the disk-swap / drive-letter prompts (no achievement code exists in the
-sources), so they need no option. The *u5d-match* rows rely on u5d's byte-matching claim for those functions.
+Whether the out-of-map LOS reads (`los_edge_guards`) can ever change a visible on-map cell (needs a differential run against the original). `gog_prompts` are only the disk-swap / drive-letter prompts (no achievement code exists in the sources). The *u5d-match* rows rely on u5d's byte-matching claim for those functions.
