@@ -101,6 +101,13 @@ fingerprint singled out.
   `D_6708_map` (206 stale bytes in the image, overwritten at run time) and `D_b21e` (runtime scratch buffer, beyond the image).
   `D_1a58` also differed — see below.
 
+### Observation: shop prices overflow at INT above 33 (in the original too)
+
+Buying with a party whose INT was 40 showed a Dagger at 23,593 gold. The price code (`shoppes.c`, `shoppes2.c`, 8 places) is
+`price += price * -((s32)(INT * 3) - 100) / (u32)100`; the original calls the *unsigned* long-division helper (`aNuldiv`) for it, so a
+negative numerator (INT >= 34) becomes a huge unsigned value. The port reproduces this faithfully; it is an original bug, not a
+porting error. Tests use INT 30 for shop fixtures. (To decide for ScummVM: reproduce or fix.)
+
 ### Defects found (all fixed in `src/`)
 
 1. **`D_1a58` reversed** (`vars.c`). The table of leading spaces used to centre the character name in the stats header
@@ -164,9 +171,11 @@ capture), CGA and Hercules modes. `tools/refdiff.py` aligns a capture with one o
 
 ### Runtime coverage, save files, deviations
 
-* **Coverage** (`tools/coverage.py`, `make COVERAGE=1`; report in [audit/coverage.md](../audit/coverage.md)): the 15 scripted scenarios
-  run 454 of 919 engine functions (49%, 27% of lines). Modules never reached: Blackthorn's palace (`blckthrn`), shops (`shoppes*`),
-  the ending (`endgame`), character creation and most of `intro`, `font`, `cast`, most of `cmds`, `sjog`, `dnglook`, `lookobj`.
+* **Coverage** (`tools/coverage.py`, `make COVERAGE=1`; report in [audit/coverage.md](../audit/coverage.md)): the 18 scripted scenarios
+  run 508 of 919 engine functions (55%, 33% of lines). Reached since the first pass: character creation (name, gender, the gypsy's
+  seven questions), the Introduction and Acknowledgements screens, and a weapons shop (buy and sell). Still never reached:
+  Blackthorn's palace (`blckthrn`), the other shop types (`shoppes2`, `shoppes3`, most of `shoppes`), the ending (`endgame`),
+  most of `cast`, `cmds`, `sjog`, `dnglook`, `lookobj`.
   Save fixtures reaching them can be made by patching a save (`tools/make_fixture.py`: location, party strength, items,
   spell mixtures). Shrines (full mantra/quest flow), Britain, Empath Abbey, a dungeon level and combat are covered.
 * **Save files**: `tools/save_roundtrip.py` (part of `make unit`) loads every fixture through `FILE_ReadSavegameFile` and writes it

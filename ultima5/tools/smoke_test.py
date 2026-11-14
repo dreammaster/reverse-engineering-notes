@@ -71,6 +71,25 @@ SCENARIOS = {
     "spells": ("j{sleep:6000}e{sleep:8000}" + "".join("c{sleep:600}1{sleep:900}%s{enter}{sleep:2500}{shot:spell%d.png}" % (sp, i)
                for i, sp in enumerate(["il", "an", "im", "vl", "iz", "ax"])) + "{quit}",
                ["spell%d.png" % i for i in range(6)], 300),
+    # pristine = the shipped INIT.GAM (no character): the intro menu's Create New Character flow, name "zed", male, answering
+    # the gypsy's seven virtue questions a/b alternately; then Ultima V Introduction ('u') and Acknowledgements ('a')
+    "create": ("j{sleep:3000}{space}{sleep:3000}c{sleep:3000}zed{enter}{sleep:3000}{shot:create_name.png}m{sleep:3000}{enter}{sleep:3000}"
+               "{shot:create_q0.png}" + "".join("%s{sleep:3000}{shot:create_q%d.png}{enter}{sleep:2000}" % ("ab"[i % 2], i + 1) for i in range(7)) +
+               "{sleep:3000}{shot:create_done.png}{enter}{sleep:3000}{shot:create_game.png}{quit}",
+               ["create_name.png", "create_q0.png", "create_q1.png", "create_q7.png", "create_done.png", "create_game.png"], 400),
+    "intro-menus": ("j{sleep:3000}{space}{sleep:3000}u{sleep:4000}{shot:intro_u1.png}{space}{sleep:3000}{shot:intro_u2.png}{space}{sleep:3000}"
+                    "{shot:intro_u3.png}{esc}{sleep:3000}{shot:intro_menu.png}a{sleep:4000}{shot:intro_ack1.png}{space}{sleep:3000}"
+                    "{shot:intro_ack2.png}{quit}", ["intro_u1.png", "intro_u2.png", "intro_u3.png", "intro_menu.png", "intro_ack1.png",
+                                                    "intro_ack2.png"], 300),
+    # gate-britain-shop = gate-britain-magic with INT 30 (an INT above 33 makes the unsigned price formula overflow, as in the
+    # original): walk to Iolo's Bows (path from the TOWNE.DAT map), buy a Bow, then sell a Leather Helm
+    "shop": ("j{sleep:6000}e{sleep:8000}" + "{up}{sleep:400}" * 9 + "{left}{sleep:400}" * 10 + "{sleep:1000}{shot:shop_door.png}"
+             "t{sleep:500}{up}{sleep:2500}{shot:shop_greet.png}{space}{sleep:2500}{shot:shop_menu.png}b{sleep:3000}{shot:shop_list.png}"
+             "c{sleep:3000}{shot:shop_price.png}y{sleep:3000}{shot:shop_bought.png}{space}{sleep:3000}{shot:shop_leave.png}"
+             "t{sleep:500}{up}{sleep:2500}{space}{sleep:2500}s{sleep:3000}{shot:sell_pick.png}{enter}{sleep:3000}{shot:sell_offer.png}"
+             "y{sleep:3000}{shot:sell_done.png}{quit}",
+             ["shop_door.png", "shop_greet.png", "shop_menu.png", "shop_list.png", "shop_price.png", "shop_bought.png", "shop_leave.png",
+              "sell_pick.png", "sell_offer.png", "sell_done.png"], 400),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
 
@@ -194,6 +213,10 @@ def main():
         keys, shots, timeout = SCENARIOS[name]
         if name in ("play", "stats", "look"):
             install_fixture("paula")
+        elif name in ("create", "intro-menus"):
+            install_fixture("pristine")
+        elif name == "shop":
+            install_fixture("gate-britain-shop")
         elif name == "spells":
             install_fixture("gate-britain-magic")
         elif name == "shrine":
