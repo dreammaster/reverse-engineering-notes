@@ -118,6 +118,7 @@ typedef struct RoomView_ {
 	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
 	int carry_pending, carry_energy; uint32_t carry_money, carry_score;   /* stats carried into the next level */
 	int room_snd[8], nroom_snd, snd_key; /* sounds of the room's creatures (stopped when the room changes) */
+	int held;                  /* thing held (verb 13), 0 = none */
 	int ruck_open, ruck_sel, ruck_delay, last_item, space_prev, ret_prev;   /* rucksack view (Space / Return while carrying things) */
 	int push_snd;              /* looping sound of the object being pushed (0 = none) */
 	int restarting;            /* level torn down after a death; the next draw reloads it */
@@ -875,8 +876,14 @@ static void menu_choose(RoomView *rv, int verb) {
 	if (verb == 11) {
 		if (t >= 0 && t < ACL_THINGS && (rv->vm.flags[t] & 0x20)) acl_thing_event(&rv->vm, &rv->mp2, t, 16, 0);
 		else if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 3;
-	} else if (verb == 4 || verb == 7) {
+	} else if (verb == 4 || verb == 7) {      /* 1000:3159 / 3163: sound 30h / 3Dh, then event 5 */
+		snd_play(verb == 4 ? 0x30 : 0x3D);
 		acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
+	} else if (verb == 13) {          /* 1000:340D: hold / unhold; holding queues event 27 (1Bh) */
+		if (rv->held == t) rv->held = 0;
+		else { rv->held = t; acl_thing_event(&rv->vm, &rv->mp2, t, 27, 0); }
+	} else if (verb == 16) {          /* 1000:2E40: event 1 */
+		acl_thing_event(&rv->vm, &rv->mp2, t, 1, 0);
 	} else if (verb == 2) {
 		int l[64];
 		if (ruck_list(rv, l, 64) >= 0x20) {                      /* 1000:2EA9: the capacity ds:5A0 is reached -> message 35h */
@@ -943,9 +950,16 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 			rv->vm.pos[3 * t] = (uint8_t)wk->x1; rv->vm.pos[3 * t + 1] = (uint8_t)wk->y1; rv->vm.pos[3 * t + 2] = (uint8_t)z;
 			rv->vm.room[t] = (uint8_t)rv->room;
 			rv->pending_rebuild = 1;
+			if (rv->held == t) rv->held = 0;
+			rv->vm.queue_n = 0;                                          /* 1000:2F0E: event 21 (15h) for the dropped thing */
+			acl_thing_event(&rv->vm, &rv->mp2, t, 21, 0);
+			for (int q = 0; q < rv->vm.queue_n; q++)
+				acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+			rv->pending_rebuild |= rv_changed(rv);
+			roomview_flush_messages(rv);
 			ruck_close(rv);
-		} else if (verb == 11) {
-			menu_choose(rv, 11);
+		} else if (verb == 11 || verb == 13 || verb == 4 || verb == 7 || verb == 16) {
+			menu_choose(rv, verb);
 		}
 		return;
 	}
