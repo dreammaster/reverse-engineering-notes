@@ -24,6 +24,9 @@ EXE = os.path.abspath(os.environ.get("U5_EXE") or os.path.join(ROOT, "build", "u
 RUN = os.path.join(ROOT, "run")
 
 # name -> (keys, [screenshots expected], timeout seconds)
+SPELLS_TOWN = [("IL", ""), ("AZ", "1{enter}"), ("AN", "1{enter}"), ("M", "1{enter}"), ("AY", "{up}"), ("AS", "{up}"), ("IMX", ""), ("LV", ""),
+               ("IS", ""), ("AEP", "{up}"), ("EIP", "{up}"), ("MV", "1{enter}"), ("RT", ""), ("AI", ""), ("AWY", ""), ("IQW", "")]
+
 SCENARIOS = {
     "boot": ("{sleep:500}{shot:boot.png}{quit}", ["boot.png"], 120),
     # 'J' at the very first key poll is the original "Journey Onward" shortcut; the pristine SAVED.GAM has no
@@ -68,9 +71,10 @@ SCENARIOS = {
                  "h{sleep:800}{esc}{sleep:600}{shot:cmd4.png}{quit}", ["cmd1.png", "cmd2.png", "cmd3.png", "cmd4.png"], 240),
     # "gate-britain-magic" = gate-britain plus 9 of every spell mixture and equipment item: cast several spells in Britain
     # (spell words are typed by initial letter: il = In Lor (light), an = An Nox (cure), im = In Mani (heal), ...)
-    "spells": ("j{sleep:6000}e{sleep:8000}" + "".join("c{sleep:600}1{sleep:900}%s{enter}{sleep:2500}{shot:spell%d.png}" % (sp, i)
-               for i, sp in enumerate(["il", "an", "im", "vl", "iz", "ax"])) + "{quit}",
-               ["spell%d.png" % i for i in range(6)], 300),
+    # spell letters per spell (index into D_1c30) that work in a town; each is cast by player 1 ('1' then Enter confirms the player)
+    "spells": ("j{sleep:6000}e{sleep:8000}" + "".join("c{sleep:700}1{enter}{sleep:700}%s{enter}{sleep:1500}%s{sleep:1800}{shot:spell%d.png}" % (sp, extra, i)
+               for i, (sp, extra) in enumerate(SPELLS_TOWN)) + "{quit}",
+               ["spell%d.png" % i for i in range(len(SPELLS_TOWN))], 400),
     # pristine = the shipped INIT.GAM (no character): the intro menu's Create New Character flow, name "zed", male, answering
     # the gypsy's seven virtue questions a/b alternately; then Ultima V Introduction ('u') and Acknowledgements ('a')
     "create": ("j{sleep:3000}{space}{sleep:3000}c{sleep:3000}zed{enter}{sleep:3000}{shot:create_name.png}m{sleep:3000}{enter}{sleep:3000}"
@@ -238,7 +242,7 @@ def main():
         elif name == "shop":
             install_fixture("gate-britain-shop")
         elif name == "spells":
-            install_fixture("gate-britain-magic")
+            install_fixture("gate-britain-caster")
         elif name == "shrine":
             install_fixture("gate-compassion")
         elif name == "dungeon":
