@@ -27,6 +27,9 @@ RUN = os.path.join(ROOT, "run")
 SPELLS_TOWN = [("IL", ""), ("AZ", "1{enter}"), ("AN", "1{enter}"), ("M", "1{enter}"), ("AY", "{up}"), ("AS", "{up}"), ("IMX", ""), ("LV", ""),
                ("IS", ""), ("AEP", "{up}"), ("EIP", "{up}"), ("MV", "1{enter}"), ("RT", ""), ("AI", ""), ("AWY", ""), ("IQW", "")]
 
+VEHICLE_CMDS = {"ship": ["f{left}", "f{up}", "h", "1{sleep:3000}", "k", "x", "b", "x"], "horse": ["h", "1{sleep:3000}", "k", "x", "b", "x"],
+                "skiff": ["f{up}", "k", "x", "b"], "carpet": ["h", "1{sleep:3000}", "k", "x", "b"]}
+
 SCENARIOS = {
     "boot": ("{sleep:500}{shot:boot.png}{quit}", ["boot.png"], 120),
     # 'J' at the very first key poll is the original "Journey Onward" shortcut; the pristine SAVED.GAM has no
@@ -110,6 +113,10 @@ SCENARIOS = {
                "{shot:horse_bought.png}{quit}", ["horse_greet.png", "horse_price.png", "horse_bought.png"], 300),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
+for _v, _c in VEHICLE_CMDS.items():
+    SCENARIOS[_v] = ("j{sleep:6000}" + "".join("%s{sleep:1500}{shot:v_%s%d.png}" % (c, _v, i) for i, c in enumerate(_c)) + "{quit}",
+                     ["v_%s%d.png" % (_v, i) for i in range(len(_c))], 300)
+
 
 
 def load_png_rgb(path):
@@ -243,6 +250,8 @@ def main():
             install_fixture("gate-britain-shop")
         elif name == "spells":
             install_fixture("gate-britain-caster")
+        elif name in VEHICLE_CMDS:
+            install_fixture("gate-vehicle-" + name)
         elif name == "shrine":
             install_fixture("gate-compassion")
         elif name == "dungeon":
