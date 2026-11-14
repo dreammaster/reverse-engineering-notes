@@ -162,6 +162,19 @@ capture), CGA and Hercules modes. `tools/refdiff.py` aligns a capture with one o
   CGA; the 720x348 monochrome mode with its own glyph size, 24-byte characters and dithered tiles for Hercules; Tandy) is not
   ported. The references are the targets for porting those modes, if ScummVM should offer them.
 
+### Runtime coverage, save files, deviations
+
+* **Coverage** (`tools/coverage.py`, `make COVERAGE=1`; report in [audit/coverage.md](../audit/coverage.md)): the 15 scripted scenarios
+  run 454 of 919 engine functions (49%, 27% of lines). Modules never reached: Blackthorn's palace (`blckthrn`), shops (`shoppes*`),
+  the ending (`endgame`), character creation and most of `intro`, `font`, `cast`, most of `cmds`, `sjog`, `dnglook`, `lookobj`.
+  Save fixtures reaching them can be made by patching a save (`tools/make_fixture.py`: location, party strength, items,
+  spell mixtures). Shrines (full mantra/quest flow), Britain, Empath Abbey, a dungeon level and combat are covered.
+* **Save files**: `tools/save_roundtrip.py` (part of `make unit`) loads every fixture through `FILE_ReadSavegameFile` and writes it
+  back with `FILE_WriteSavegameFile`: all 13 fixtures come back byte for byte (4,192 bytes), so the host loader/writer are exact
+  inverses of the original `SAVED.GAM` layout.
+* **Deviations**: reviewed in [deviations_review.md](deviations_review.md) — 11 behavioural differences from the IBM code (the armour bug
+  being the most significant) and a list of what is equivalent.
+
 ## Gaps and what to do about them
 
 | gap | status | note |

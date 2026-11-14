@@ -107,8 +107,14 @@ $(BUILD)/tests/%.o: tests/%.c | $(BUILD)/.dirs
 $(UNIT): $(BUILD)/tests/test_asm_ports.o $(TEST_OBJS)
 	$(CC) -o $@ $^ $(BACKEND_LIBS)
 
-unit: $(UNIT)
+SAVETOOL := $(BUILD)/savetool.exe
+
+$(SAVETOOL): $(BUILD)/tests/savetool.o $(TEST_OBJS)
+	$(CC) -o $@ $^ $(BACKEND_LIBS)
+
+unit: $(UNIT) $(SAVETOOL)
 	$(UNIT)
+	$(PYTHON) tools/save_roundtrip.py
 
 clean:
 	$(U5TOOL) rmtree $(BUILD)

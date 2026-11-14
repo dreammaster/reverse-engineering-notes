@@ -49,6 +49,14 @@ F12 in the window saves `screenshot.png`. At the very first key poll `J` is the 
 * Audit fixes: `vars.c` `D_1a58` (table was reversed), `6000.c` `ULTIMA_6f1e` (FM Towns semantics replaced by the IBM routine),
   `2000.c` random generator and clock seed (original generator in every build).
 
+## Test tooling
+
+* `tools/make_fixture.py` patches a save (map/position, `--strong` party, `--fill`/`--poke` raw bytes) to reach places that are hard to
+  walk to: `gate-britain` stands on Britain's tile, `gate-compassion` on a shrine, `dungeon-deceit` is inside Deceit.
+* `tools/coverage.py` (with `mingw32-make COVERAGE=1`, then `U5_EXE=build-cov/u5.exe python tools/smoke_test.py`) lists the engine
+  functions the scenarios never run; `tools/montage.py` tiles screenshot regions; `tools/refdiff.py` compares with real-game captures.
+* `mingw32-make unit` also round-trips every fixture save through the loader/writer.
+
 ## Re-running the audit
 
 ```
