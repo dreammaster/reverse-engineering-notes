@@ -11,6 +11,7 @@
 #   GAME_DIR=C:/games/ultima5       original game files (never modified; run/ holds the working copy and saves)
 #   BACKEND=win32|sdl               win32 (default) = GDI window, no audio.  sdl needs SDL3 + SDL3_mixer
 #                                   (SDL3_CFLAGS / SDL3_LIBS are taken from pkg-config if not given)
+#   COVERAGE=1                      gcov build in build-cov/ (see tools/coverage.py)
 #   DEBUG=1                         -O0 -g, runtime asserts
 #   WARN=1                          show compiler warnings (the decompiled code is very noisy; off by default)
 
@@ -21,7 +22,11 @@ PYTHON ?= python
 U5TOOL := $(PYTHON) tools/u5tool.py
 GAME_DIR ?= C:/games/ultima5
 BACKEND ?= win32
+ifeq ($(COVERAGE),1)
+BUILD   := build-cov
+else
 BUILD   := build
+endif
 SRC     := src
 TARGET  := $(BUILD)/u5.exe
 RUN_DIR := run
@@ -52,7 +57,10 @@ DEPS := $(OBJS:.o=.d)
 # -std=gnu11: the code predates C23 (bool/true/false are typedef'd/defined in common.h)
 # -fno-strict-aliasing, -fwrapv: the decompiled code reinterprets memory and relies on 16/32-bit wraparound
 CFLAGS := -std=gnu11 -I$(SRC) -fno-strict-aliasing -fwrapv -fno-delete-null-pointer-checks -MMD -MP $(BACKEND_CFLAGS)
-ifeq ($(DEBUG),1)
+ifeq ($(COVERAGE),1)
+CFLAGS += -O0 -g --coverage
+BACKEND_LIBS += --coverage
+else ifeq ($(DEBUG),1)
 CFLAGS += -O0 -g
 else
 CFLAGS += -O2

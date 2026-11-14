@@ -7,3 +7,4 @@ __pycache__/
 *.pyc
 # generated audit data (the .md reports are kept)
 /audit/*.json
+/build-cov/

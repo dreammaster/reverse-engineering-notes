@@ -20,7 +20,7 @@ import zlib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-EXE = os.path.join(ROOT, "build", "u5.exe")
+EXE = os.path.abspath(os.environ.get("U5_EXE") or os.path.join(ROOT, "build", "u5.exe"))
 RUN = os.path.join(ROOT, "run")
 
 # name -> (keys, [screenshots expected], timeout seconds)
@@ -50,6 +50,27 @@ SCENARIOS = {
                "{shot:combat_start.png}a{sleep:500}{up}{sleep:5000}{shot:combat_attack.png}p{sleep:3000}{shot:combat_pass.png}"
                "a{sleep:500}{up}{sleep:5000}{shot:combat_round2.png}{quit}",
                ["combat_start.png", "combat_attack.png", "combat_pass.png", "combat_round2.png"], 300),
+    # location-patched fixtures (tools/make_fixture.py): gate-compassion = standing on the Shrine of Compassion tile,
+    # gate-britain = on Britain's town tile, dungeon-deceit = inside Deceit (level 1, facing east), all with a strong party
+    "shrine": ("j{sleep:6000}e{sleep:8000}{shot:shrine_enter.png}compassion{enter}{sleep:4000}mu{enter}{sleep:2000}mu{enter}{sleep:2000}"
+               "mu{enter}{sleep:3000}{shot:shrine_mantra.png}3{enter}{sleep:30000}{shot:shrine_quest.png}{quit}",
+               ["shrine_enter.png", "shrine_mantra.png", "shrine_quest.png"], 300),
+    "dungeon": ("j{sleep:8000}i{sleep:2000}{shot:dungeon_dark.png}{up}{sleep:1500}{shot:dungeon_walk.png}{left}{sleep:1500}{up}{sleep:1500}"
+                "{shot:dungeon_turn.png}{right}{sleep:1500}{right}{sleep:1500}{shot:dungeon_turn2.png}k{sleep:1500}{shot:dungeon_klimb.png}{quit}",
+                ["dungeon_dark.png", "dungeon_walk.png", "dungeon_turn.png", "dungeon_turn2.png", "dungeon_klimb.png"], 240),
+    "britain": ("j{sleep:6000}e{sleep:8000}{shot:britain_enter.png}{up}{sleep:700}{up}{sleep:700}{shot:britain_gate.png}"
+                "t{sleep:500}{left}{sleep:2500}{shot:britain_talk.png}{down}{sleep:700}{down}{sleep:700}{down}{sleep:700}{shot:britain_street.png}{quit}",
+                ["britain_enter.png", "britain_gate.png", "britain_talk.png", "britain_street.png"], 240),
+    # a tour of the one-key commands in the start room (prompts are dismissed with Esc); checks for crashes/hangs
+    "commands": ("j{sleep:6000}i{sleep:800}s{sleep:300}{up}{sleep:800}g{sleep:300}{up}{sleep:800}p{sleep:300}{up}{sleep:800}{shot:cmd1.png}"
+                 "u{sleep:600}{esc}{sleep:600}r{sleep:600}{esc}{sleep:600}w{sleep:600}{esc}{sleep:600}v{sleep:800}{shot:cmd2.png}"
+                 "m{sleep:800}{esc}{sleep:600}c{sleep:800}{esc}{sleep:600}y{sleep:800}{enter}{sleep:600}n{sleep:800}{esc}{sleep:600}{shot:cmd3.png}"
+                 "h{sleep:800}{esc}{sleep:600}{shot:cmd4.png}{quit}", ["cmd1.png", "cmd2.png", "cmd3.png", "cmd4.png"], 240),
+    # "gate-britain-magic" = gate-britain plus 9 of every spell mixture and equipment item: cast several spells in Britain
+    # (spell words are typed by initial letter: il = In Lor (light), an = An Nox (cure), im = In Mani (heal), ...)
+    "spells": ("j{sleep:6000}e{sleep:8000}" + "".join("c{sleep:600}1{sleep:900}%s{enter}{sleep:2500}{shot:spell%d.png}" % (sp, i)
+               for i, sp in enumerate(["il", "an", "im", "vl", "iz", "ax"])) + "{quit}",
+               ["spell%d.png" % i for i in range(6)], 300),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
 
@@ -172,6 +193,16 @@ def main():
     for name in args.scenarios or SCENARIOS:
         keys, shots, timeout = SCENARIOS[name]
         if name in ("play", "stats", "look"):
+            install_fixture("paula")
+        elif name == "spells":
+            install_fixture("gate-britain-magic")
+        elif name == "shrine":
+            install_fixture("gate-compassion")
+        elif name == "dungeon":
+            install_fixture("dungeon-deceit")
+        elif name == "britain":
+            install_fixture("gate-britain")
+        elif name == "commands":
             install_fixture("paula")
         elif name == "combat":
             install_fixture("paula-abbey-strong")
