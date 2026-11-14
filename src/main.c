@@ -118,6 +118,7 @@ typedef struct RoomView_ {
 	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
 	int carry_pending, carry_energy; uint32_t carry_money, carry_score;   /* stats carried into the next level */
 	int room_snd[8], nroom_snd, snd_key; /* sounds of the room's creatures (stopped when the room changes) */
+	int ruck_target;           /* thing touched when the rucksack was opened (insert / give target), -1 = none */
 	int held;                  /* thing held (verb 13), 0 = none */
 	int ruck_open, ruck_sel, ruck_delay, last_item, space_prev, ret_prev;   /* rucksack view (Space / Return while carrying things) */
 	int push_snd;              /* looping sound of the object being pushed (0 = none) */
@@ -831,6 +832,7 @@ static void ruck_show(RoomView *rv, int t) {
 		int c = h17 < 10 ? cv[h17] : 0xFF;
 		if (!(c & 0x80)) rv->verbs[rv->nverbs++] = (uint8_t)c;
 	}
+	if (rv->ruck_target >= 0 && rv->ruck_target != t) rv->verbs[rv->nverbs++] = 15;   /* insert / give into what is touched */
 	rv->verbs[rv->nverbs++] = 1;
 	rv->verbs[rv->nverbs++] = 6;
 	int nm = (sp->header[10] << 8) | sp->header[11];
@@ -842,6 +844,7 @@ static void ruck_open(RoomView *rv) {
 	if (!n) return;
 	int t = l[n - 1];
 	for (int i = 0; i < n; i++) if (l[i] == rv->last_item) t = l[i];
+	rv->ruck_target = (rv->touch_age < 12 && rv->nverbs && rv->touch_thing >= 0) ? rv->touch_thing : -1;
 	rv->ruck_open = 1;
 	rv->ruck_delay = 0;
 	rv->menu_open = 1; rv->menu_released = 0;
@@ -953,6 +956,14 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 			if (rv->held == t) rv->held = 0;
 			rv->vm.queue_n = 0;                                          /* 1000:2F0E: event 21 (15h) for the dropped thing */
 			acl_thing_event(&rv->vm, &rv->mp2, t, 21, 0);
+			for (int q = 0; q < rv->vm.queue_n; q++)
+				acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+			rv->pending_rebuild |= rv_changed(rv);
+			roomview_flush_messages(rv);
+			ruck_close(rv);
+		} else if (verb == 15 && rv->ruck_target >= 0) {                  /* 1000:344D: event 26 (1Ah) for the touched thing, argument = the carried thing */
+			rv->vm.queue_n = 0;
+			acl_thing_event(&rv->vm, &rv->mp2, rv->ruck_target, 26, t);
 			for (int q = 0; q < rv->vm.queue_n; q++)
 				acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
 			rv->pending_rebuild |= rv_changed(rv);
