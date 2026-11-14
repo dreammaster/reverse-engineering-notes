@@ -29,20 +29,31 @@ For each item the ScummVM engine needs a decision: reproduce the original, keep 
 3. **Spell effect precondition** (`cast.c:2098-2105`). Original: `CAST2_0306(param_1)` (an argument the callee ignores; the author
    notes "original code error?") and no check of the result; modern: `CAST2_0306()` and the spell body runs only if it returned
    non-zero (taken from the FM Towns version).
-4. **Talk with `0xfe` response** (`talk.c:304`). Original passes an uninitialised `SI` to `TOWN_10da`; modern passes `param_1`.
-5. **Empty name on the keyboard prompt** (`3000.c:764`). Modern returns immediately when nothing was typed; the original falls
-   into the `while (--local_c > 0)` loop with `local_c == 0` (underflow).
-6. **Combat map read with y < 0** (`4000.c:243`). The original computes an address outside the combat map (reads whatever is in
-   memory before it); modern returns a dummy byte. Only reachable by actors at the map edge.
-7. **Map drawing past the edge** (`5000.c:499-576`). Modern clips reads outside the 32x32 view buffers; the original reads
-   neighbouring memory, which can show stray tiles at the border.
-8. **`D_2e90`/`D_2e9a` tables padded to 12 bytes** (`vars.c`). Original size 10, indexed out of range by one caller; the modern
-   build pads (as the FM Towns version does). The values read past the end in the original are the next variable's bytes.
+4. **Talk with `0xfe` response** (`talk.c:304`). *Confirmed in the binary.* The original calls `TOWN_10da` with **no argument**
+   (the call at `TALK:03d3` has nothing pushed), so the callee reads the caller's saved `SI` — a pointer into the NPC table, not an
+   index — and `TOWN_08d4` then indexes `D_659e[]` with it, far outside the table (indeterminate memory beyond the data segment).
+   In practice the "Begone, vermin!" reply never turns the NPC hostile. The modern build passes the real NPC index, so the NPC does
+   turn hostile (`0xfd`, schedule type 3) when it qualifies. *Original behaviour = no state change.*
+5. **Empty number entry** (`3000.c:764`, `ULTIMA_3b9e`, the numeric prompt — not a name prompt as I first wrote). With nothing typed
+   the original skips the digit loop (`--local_c > 0` is false) and then evaluates the *uninitialised* `local_8[0]`, so it returns
+   a value derived from stack garbage; modern returns 0.
+6. **Combat map access with y < 0** (`4000.c:243`). *Confirmed:* the original `ULTIMA_4402` is just `0xad14 + y*32 + x` with no check
+   (the overworld branch masks with `& 0x1f`; the combat branch does not), so a negative `y` reads the bytes before the combat map.
+   Modern returns a dummy byte. Only reachable by an actor at the map edge.
+7. **Line-of-sight flood past the edge** (`5000.c:499-576`). Modern skips rays that leave the 32x32 / 11x32 buffers and tests an extra
+   condition; the original reads the neighbouring memory. Not verified how the original's neighbours look; edge visibility in combat
+   and on the viewport border may differ.
+8. **`D_2e90`/`D_2e9a` read past their end** (`dungeon.c:1319`, `1395`). The callers index up to `[12]`; the original reads into the
+   following data (`D_2e90[10..12] = 0e 17 32`, `D_2e9a[10..12] = 5a 73 52`). **Fixed in `src/`**: both tables now carry those exact
+   original bytes (the previous zero padding was wrong, and index 12 was still out of range on the host).
 9. **GOG_BUILD** (`2000.c:271-335`, `intro.c:1125-1177`): skips the "which drive" prompts and the drive-letter echo; matches the
-   GOG release, not the 1.16 floppy/hard-disk flow.
-10. **Movement result codes** (`mainout.c:360-436`): modern returns `MAINOUT_00da`'s value to the caller; the original tests it and
-    returns nothing.
-11. **Bounds loop in `lookobj.c:552`**: modern stops at the end of the scratch buffer; the original scans until it finds a zero byte.
+   GOG release, not the 1.16 floppy/hard-disk flow. Not individually checked.
+10. **Movement result codes** (`mainout.c:360-436`, `MAINOUT_0490`). Where the original does `if (MAINOUT_00da(x)) return;`, AX still holds
+    `MAINOUT_00da`'s non-zero result, which modern returns explicitly (equivalent). The "On foot!" and "Attacked at entrance!" paths
+    return whatever AX holds after a call (modern: 0); the caller stores it in `local_a`. Possible difference in whether a turn passes.
+11. **Look-object record scan** (`lookobj.c:552`, `LOOKOBJ_07e4`). The original stops at the `0xff` record terminator; the modern
+    non-matching code ended only at the end of the 1500-byte scratch buffer, so it kept scanning leftover bytes after the last record
+    and could match stale data. **Fixed in `src/`**: the terminator test is back (buffer end kept as a safety stop).
 
 ## Checked and equivalent
 
@@ -54,6 +65,6 @@ For each item the ScummVM engine needs a decision: reproduce the original, keep 
 
 ## Method note
 
-Items 1, 2, 3 and the "checked and equivalent" entries were confirmed against the disassembly of `ULTIMA_6da8`, `COMSUBS_0c52`
-and the surrounding code. Items 4–11 were read in the C and their original behaviour inferred from the `MATCHING_BUILD` branch and
-the source comments, not individually disassembled; confirm any of them against the binary before relying on it.
+Items 1, 4, 5, 6, 8 and 11 and the "checked and equivalent" entries were confirmed against the disassembly (`ULTIMA_6da8`,
+`COMSUBS_0c52`, `TALK_031e`/`TOWN_08d4`, `ULTIMA_4402`, the data bytes in `DATA.OVL`, `LOOKOBJ_07e4`). Items 2 and 3 are taken from the
+`MATCHING_BUILD` branches and source comments; 7, 9 and 10 are described from the C only.

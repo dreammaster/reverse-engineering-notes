@@ -556,7 +556,8 @@ static void LOOKOBJ_07e4(byte param_1, byte param_2, byte param_3)
                             break;
                     }
 
-                    local_4 = local_6 == SCRATCH_SIZE;
+                    // end of the records is the 0xff terminator, as in the original; the buffer end is only a safety stop
+                    local_4 = (local_6 >= SCRATCH_SIZE || D_b21e[local_6] == 0xff) ? 1 : 0;
 #else
                     while (D_b21e[local_6++] != 0)
                     {
