@@ -1,6 +1,6 @@
 // xanth_play <game folder> <out.ppm> "<script>": plays a new game headless with scripted clicks and writes the final screen (with the mouse pointer) as a PPM.
 // Script: actions separated by ';' - "c X Y" (click at X, Y on the 320x200 screen), "m X Y" (move the pointer), "a N" (let N animation frames of 100 ms pass),
-// "t CONV PIC STEPS" (play conversation CONV over picture PIC pressing Enter, and write the screen when STEPS waits have been answered).
+// "q X Y" (queue a click for the next time the game waits, e.g. a choice in a menu), "t CONV PIC STEPS" (play conversation CONV over picture PIC pressing Enter, and write the screen when STEPS waits have been answered).
 // The same click script, as a HOST_MOUSE timeline, drives the oracle (see tools/compare_play.py).
 #include <cstdio>
 #include <cstdlib>
@@ -13,10 +13,21 @@
 
 struct Stepper : Xanth::InputSource {
 	int budget;
+	std::vector<Xanth::InputEvent> queue;      // clicks queued by "q X Y": what the next waits of the game get
 	std::string out;
 	Xanth::Display *display;
 	Stepper() : budget(-1), display(NULL) {}
 	virtual Xanth::InputEvent wait() {
+		if (!queue.empty()) {
+			Xanth::InputEvent e = queue.front();
+			queue.erase(queue.begin());
+			return e;
+		}
+		if (budget < 0) {
+			Xanth::InputEvent e;
+			e.type = Xanth::InputEvent::Quit;
+			return e;
+		}
 		if (budget == 0) {
 			Legend::Surface shown;
 			display->render(shown);
@@ -58,6 +69,10 @@ int main(int argc, char **argv) {
 	game.newGame();
 	Xanth::Interface ui(game, display);
 	Stepper stepper;
+	stepper.display = &display;
+	stepper.out = argv[2];
+	display.setInput(&stepper);
+	ui.setSaveFiles(&gf);
 	ui.start();
 	std::stringstream script(argv[3]);
 	std::string action;
@@ -66,15 +81,17 @@ int main(int argc, char **argv) {
 		std::string op;
 		int x = 0, y = 0;
 		a >> op >> x >> y;
-		if (op == "t") {
+		if (op == "q") {
+			Xanth::InputEvent e;
+			e.type = Xanth::InputEvent::Click;
+			e.x = x;
+			e.y = y;
+			stepper.queue.push_back(e);
+		} else if (op == "t") {
 			int steps = 0;
 			a >> steps;
 			stepper.budget = steps;
-			stepper.out = argv[2];
-			stepper.display = &display;
-			display.setInput(&stepper);
 			game.show_compendium(x, y);
-			display.setInput(NULL);
 		} else if (op == "c")
 			ui.click(x, y);
 		else if (op == "m")

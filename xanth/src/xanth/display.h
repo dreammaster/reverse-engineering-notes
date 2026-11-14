@@ -61,6 +61,8 @@ public:
 	int inventoryObjectAt(int x, int y) const;
 	/** A click on the scroll arrows of the inventory (up: top half, down: bottom half); true if the list scrolled. */
 	bool scrollInventory(int x, int y);
+	/** A popup menu of buttons on the marble, centred on the screen (the disk button's menu, a list of saved games): returns the index chosen, -1 for a click outside or Escape. */
+	int popupMenu(const std::vector<std::string> &labels);
 	/** The compass arrow (0..9, bit i of the exit mask) under a point if it is lit, -1 otherwise. */
 	int compassAt(int x, int y) const;
 	/** A click on one of the four buttons (0 WAIT, 1 menu, 2 MAP, 3 UNDO): the original draws the button pressed and raised again, which leaves one pixel of its frame different. */

@@ -105,6 +105,22 @@ bool GameFiles::loadPart(const std::string &name, size_t offset, size_t size, By
 	return got == size;
 }
 
+bool GameFiles::loadSaved(const std::string &name, Bytes &out) const {
+	std::string dir = _saveFolder.empty() ? _folder : _saveFolder;
+	if (!dir.empty() && dir[dir.size() - 1] != '/' && dir[dir.size() - 1] != '\\')
+		dir += '/';
+	FILE *fp = fopen((dir + name).c_str(), "rb");
+	if (!fp)
+		return false;
+	fseek(fp, 0, SEEK_END);
+	long n = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	out.resize(n > 0 ? (size_t)n : 0);
+	bool ok = out.empty() || fread(&out[0], 1, out.size(), fp) == out.size();
+	fclose(fp);
+	return ok;
+}
+
 bool GameFiles::save(const std::string &name, const Bytes &data) const {
 	std::string dir = _saveFolder.empty() ? _folder : _saveFolder;
 	if (!dir.empty() && dir[dir.size() - 1] != '/' && dir[dir.size() - 1] != '\\')

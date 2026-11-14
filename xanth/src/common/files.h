@@ -50,6 +50,8 @@ public:
 
 	/** Writes a file in the save folder (the game folder unless setSaveFolder was called). */
 	bool save(const std::string &name, const Bytes &data) const;
+	/** Reads a file from the save folder (it need not have existed when the folder was scanned). */
+	bool loadSaved(const std::string &name, Bytes &out) const;
 	void setSaveFolder(const std::string &folder) { _saveFolder = folder; }
 
 private:

@@ -113,6 +113,8 @@ LRESULT CALLBACK proc(HWND w, UINT msg, WPARAM wp, LPARAM lp) {
 	case WM_LBUTTONDOWN:
 		g_app.ui->click((short)LOWORD(lp) / kScale, (short)HIWORD(lp) / kScale);
 		g_app.repaint();
+		if (g_app.ui->quitRequested())
+			DestroyWindow(w);
 		return 0;
 	case WM_TIMER:
 		g_app.tick();
@@ -149,6 +151,7 @@ int main(int argc, char **argv) {
 	display.attach(&game);
 	game.newGame();
 	Xanth::Interface ui(game, display);
+	ui.setSaveFiles(&gf);
 	g_app.display = &display;
 	g_app.ui = &ui;
 	display.setInput(&g_app);

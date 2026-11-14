@@ -4,6 +4,8 @@
 #include <cstdlib>
 
 #include "legend/draw.h"
+#include <algorithm>
+
 #include "xanth/logic/logic.h"
 
 namespace Xanth {
@@ -24,6 +26,7 @@ void Display::redrawAll() {
 	_ms.drawFrame(_screen);
 	_ms.drawVerbs(_screen, _verbs);
 	_expanded = false;
+	_turnText.clear();
 	_selectedVerb = -1;
 	_text.setup(51, 128, 314, kTextBottom, &_ms.font10(), 15, 23);
 	_compass = 0;
@@ -375,6 +378,61 @@ bool Display::scrollInventory(int x, int y) {
 	}
 	drawInventory();
 	return true;
+}
+
+int Display::popupMenu(const std::vector<std::string> &labels) {
+	if (labels.empty())
+		return -1;
+	const Font &font = _ms.font1();
+	int w = 0;
+	for (size_t i = 0; i < labels.size(); i++)
+		w = std::max(w, font.textWidth(labels[i]));
+	int bw = w + 16, step = 16;
+	int ww = bw + 10, wh = (int)labels.size() * step + 8;
+	int x1 = 160 - ww / 2, y1 = 100 - wh / 2;
+	Surface saved = _screen;
+	_ms.restoreMarble(_screen, x1, y1, x1 + ww, y1 + wh);
+	bevelFrame(_screen, x1 - 1, y1 - 1, x1 + ww + 1, y1 + wh + 1);
+	std::vector<int> top(labels.size());
+	auto draw = [&](size_t i, bool lit) {
+		int bx = x1 + 5, by = y1 + 4 + (int)i * step;
+		top[i] = by;
+		buttonFrame(_screen, bx, by, bx + bw - 1, by + 11, true);
+		font.drawText(_screen, bx + (bw - font.textWidth(labels[i])) / 2, by + 2, labels[i], lit ? 16 : 0);
+	};
+	for (size_t i = 0; i < labels.size(); i++)
+		draw(i, false);
+	int result = -1;
+	if (_input) {
+		size_t lit = labels.size();
+		for (;;) {
+			InputEvent e = _input->wait();
+			if (e.type == InputEvent::Quit)
+				break;
+			int hit = -1;
+			if ((e.type == InputEvent::Move || e.type == InputEvent::Click) && e.x >= x1 + 5 && e.x < x1 + 5 + bw)
+				for (size_t i = 0; i < labels.size(); i++)
+					if (e.y >= top[i] && e.y <= top[i] + 11)
+						hit = (int)i;
+			if (e.type == InputEvent::Key && e.key == 27)
+				break;
+			if (e.type == InputEvent::Click) {
+				result = hit;
+				break;
+			}
+			if (hit != (int)lit && e.type == InputEvent::Move) {
+				if (lit < labels.size())
+					draw(lit, false);
+				lit = hit >= 0 ? (size_t)hit : labels.size();
+				if (lit < labels.size())
+					draw(lit, true);
+			}
+			_mouseX = e.x;
+			_mouseY = e.y;
+		}
+	}
+	_screen = saved;
+	return result;
 }
 
 int Display::compassAt(int x, int y) const {
