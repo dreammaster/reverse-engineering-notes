@@ -30,7 +30,7 @@ The Win32 backend honours these environment variables (used by `tools/smoke_test
 |---|---|
 | `U5_HEADLESS=1` | no window; the game runs and can still take screenshots |
 | `U5_FAST=1` | skip delays longer than 20 ms (animations); keyboard-loop pacing is kept |
-| `U5_KEYS="..."` | key script: plain characters, `{enter} {esc} {space} {bs} {tab} {up} {down} {left} {right} {home} {end} {pgup} {pgdn}`, `{wait:N}` (N polls), `{sleep:MS}` (real time), `{shot:file.png}`, `{quit}` |
+| `U5_KEYS="..."` | key script: plain characters, `{enter} {esc} {space} {bs} {tab} {up} {down} {left} {right} {home} {end} {pgup} {pgdn}`, `{wait:N}` (N polls), `{sleep:MS}` (real time), `{shot:file.png}`, `{dump}` (print town NPC positions), `{go:x,y}` (walk to a town tile; plans over the map and learns blocked tiles), `{tm:N}` (walk up to the merchant with dialog number N and talk), `{quit}` |
 | `U5_KEYS_EXIT=1` | exit when the key script runs out |
 | `U5_KEYS_TRACE=1` | print each key the game receives |
 | `U5_SEED=n` | fixed random seed |
@@ -55,6 +55,7 @@ F12 in the window saves `screenshot.png`. At the very first key poll `J` is the 
   walk to: `gate-britain` stands on Britain's tile, `gate-compassion` on a shrine, `dungeon-deceit` is inside Deceit.
 * `tools/coverage.py` (with `mingw32-make COVERAGE=1`, then `U5_EXE=build-cov/u5.exe python tools/smoke_test.py`) lists the engine
   functions the scenarios never run; `tools/montage.py` tiles screenshot regions; `tools/refdiff.py` compares with real-game captures.
+* `tools/town_path.py` / `tools/find_stand.py` plan routes from the town map files (offline); the in-game `{go}`/`{tm}` tokens are usually easier.
 * `mingw32-make unit` also round-trips every fixture save through the loader/writer.
 
 ## Re-running the audit

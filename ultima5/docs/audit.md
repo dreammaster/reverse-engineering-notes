@@ -171,10 +171,11 @@ capture), CGA and Hercules modes. `tools/refdiff.py` aligns a capture with one o
 
 ### Runtime coverage, save files, deviations
 
-* **Coverage** (`tools/coverage.py`, `make COVERAGE=1`; report in [audit/coverage.md](../audit/coverage.md)): the 18 scripted scenarios
-  run 508 of 919 engine functions (55%, 33% of lines). Reached since the first pass: character creation (name, gender, the gypsy's
-  seven questions), the Introduction and Acknowledgements screens, and a weapons shop (buy and sell). Still never reached:
-  Blackthorn's palace (`blckthrn`), the other shop types (`shoppes2`, `shoppes3`, most of `shoppes`), the ending (`endgame`),
+* **Coverage** (`tools/coverage.py`, `make COVERAGE=1`; report in [audit/coverage.md](../audit/coverage.md)): the 22 scripted scenarios
+  run 528 of 921 engine functions (57%, 36% of lines). Reached since the first pass: character creation (name, gender, the gypsy's
+  seven questions), the Introduction and Acknowledgements screens, a weapons shop (buy and sell), an inn (rent a room, sleep), a tavern, a herbalist (reagents) and a horse dealer. Still never reached:
+  Blackthorn's palace (`blckthrn`), the shops on upper floors and the guild/healer-type merchants (dialog 132, 134, 135: Minoc's gate
+  and the upstairs shops need more route-finding), the ending (`endgame`),
   most of `cast`, `cmds`, `sjog`, `dnglook`, `lookobj`.
   Save fixtures reaching them can be made by patching a save (`tools/make_fixture.py`: location, party strength, items,
   spell mixtures). Shrines (full mantra/quest flow), Britain, Empath Abbey, a dungeon level and combat are covered.

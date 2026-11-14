@@ -90,6 +90,20 @@ SCENARIOS = {
              "y{sleep:3000}{shot:sell_done.png}{quit}",
              ["shop_door.png", "shop_greet.png", "shop_menu.png", "shop_list.png", "shop_price.png", "shop_bought.png", "shop_leave.png",
               "sell_pick.png", "sell_offer.png", "sell_done.png"], 400),
+    # merchants by dialog number (129 weapons, 130 tavern, 131 horses, 133 herbalist, 136 inn): {tm:N} walks up to the merchant
+    # (they wander with the schedule) and presses T + direction.  gate-moonglow / gate-trinsic are gate-britain-shop moved to
+    # those towns' tiles.
+    "inn": ("j{sleep:6000}e{sleep:8000}{tm:136}{sleep:3000}{shot:inn_greet.png}y{sleep:3000}{shot:inn_menu.png}r{sleep:3000}{shot:inn_price.png}"
+            "y{sleep:6000}{shot:inn_room.png}{sleep:30000}{shot:inn_morning.png}{quit}",
+            ["inn_greet.png", "inn_menu.png", "inn_price.png", "inn_room.png", "inn_morning.png"], 400),
+    "tavern": ("j{sleep:6000}e{sleep:8000}{tm:130}{sleep:3000}{shot:tavern_greet.png}y{sleep:3000}{shot:tavern_menu.png}a{sleep:3000}"
+               "{shot:tavern_ale.png}{enter}{sleep:3000}{shot:tavern_leave.png}{quit}",
+               ["tavern_greet.png", "tavern_menu.png", "tavern_ale.png", "tavern_leave.png"], 300),
+    "herbalist": ("j{sleep:6000}e{sleep:8000}{tm:133}{sleep:3000}{shot:herb_greet.png}y{sleep:3000}{shot:herb_list.png}a{sleep:3000}"
+                  "{shot:herb_ask.png}y{sleep:3000}{shot:herb_bought.png}{enter}{sleep:3000}{shot:herb_leave.png}{quit}",
+                  ["herb_greet.png", "herb_list.png", "herb_ask.png", "herb_bought.png", "herb_leave.png"], 300),
+    "horses": ("j{sleep:6000}e{sleep:8000}{tm:131}{sleep:3000}{shot:horse_greet.png}y{sleep:3000}{shot:horse_price.png}y{sleep:3000}"
+               "{shot:horse_bought.png}{quit}", ["horse_greet.png", "horse_price.png", "horse_bought.png"], 300),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
 
@@ -215,6 +229,12 @@ def main():
             install_fixture("paula")
         elif name in ("create", "intro-menus"):
             install_fixture("pristine")
+        elif name in ("inn", "tavern"):
+            install_fixture("gate-britain-shop")
+        elif name == "herbalist":
+            install_fixture("gate-moonglow")
+        elif name == "horses":
+            install_fixture("gate-trinsic")
         elif name == "shop":
             install_fixture("gate-britain-shop")
         elif name == "spells":
