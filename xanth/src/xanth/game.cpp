@@ -313,6 +313,12 @@ int Game::event_pending(int id) {
 
 int Game::advance_time(int mayInterrupt, int turns) {
 	std::vector<ScheduledEvent> &ev = state.events;
+	if (getenv("XANTH_TRACE_TURN")) {
+		fprintf(stderr, "advance_time(%d, %d) skip=%d:", mayInterrupt, turns, rt.byte_850AB);
+		for (size_t i = 0; i < ev.size(); i++)
+			fprintf(stderr, " [%u in %d]", ev[i].a, (int16)ev[i].b);
+		fprintf(stderr, "\n");
+	}
 	if (rt.byte_850AB) {
 		rt.byte_850AB = 0;
 		return 0;
@@ -333,7 +339,7 @@ int Game::advance_time(int mayInterrupt, int turns) {
 					} else {
 						int id = ev[at].a & 0xFF;
 						int before = (int16)ev[at].b;
-						if (run_event(*this, id))
+						if (run_event(id))
 							fired++;
 						if ((int16)rt.word_85222 > 1) {
 							if (turns < (int16)rt.word_85222)
@@ -528,6 +534,15 @@ void Game::walkContents(int root, bool visibleOnly, const std::function<bool(int
 			kind = f.kind;
 		}
 	}
+}
+
+int Game::run_event(int id) {
+	if ((int16)id <= 0 || id > 0x2D)
+		return 0;
+	unsigned idx = (unsigned)id - 1;
+	if (idx < kEventFunctionCount && kEventFunctions[idx])
+		return kEventFunctions[idx](*this, 0);
+	return 0;
 }
 
 int Game::sub_1FB15(int index, int phase) {

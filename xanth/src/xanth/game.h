@@ -103,6 +103,8 @@ public:
 	int sub_1B877(int room) { return exitField(room, 0xE, 1); }
 	/** Calls exit function `index` (the 56 of the exit table, kinds 3 and 4) with a phase; it returns the room it leads to (<= 0: blocked). */
 	int sub_1FB15(int index, int phase);
+	/** run_event: calls the function of timed event `id` (event_fn_(id - 1)); returns what it returns (non-zero: it printed or changed something). */
+	int run_event(int id);
 	int sub_1B8C5(int room) { return exitField(room, 0x10, 2); }
 
 	/** sub_1C4ED: visits an object and, depth first, everything inside it (every slot, or only the slots whose contents can be seen if `visibleOnly`); `visit` returns true to stop. */

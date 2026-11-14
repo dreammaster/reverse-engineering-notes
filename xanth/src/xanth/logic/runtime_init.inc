@@ -35,7 +35,6 @@
 		rt.seg_8AA0A = 34044;
 		rt.seg_8AA12 = 13217;
 		rt.seg_8AA14 = 34044;
-		rt.seg_8AA18 = 13153;
 		rt.seg_8AA4E = 32877;
 		rt.seg_8AA52 = 12899;
 		rt.seg_8AA54 = 12899;

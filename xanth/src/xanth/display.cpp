@@ -10,7 +10,7 @@ namespace Xanth {
 
 using namespace Legend;
 
-static const int kTextBottom = 151, kExpandedBottom = 165, kSavedTop = 149, kSavedBottom = 196;
+static const int kTextBottom = 151, kSavedTop = 149, kSavedBottom = 196;
 
 Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false), _mouseX(160), _mouseY(100), _expanded(false), _input(NULL), _convPicW(0), _convPicH(0), _convBubbleRight(0), _convMenuBottom(0), _selectedVerb(-1), _inventoryScroll(0), _rgnFile(-1) {
 	memset(_drawn, 0, sizeof(_drawn));
@@ -31,19 +31,19 @@ void Display::redrawAll() {
 	updateCompass();
 }
 
-void Display::expandText() {
+void Display::expandText(int edge) {
 	if (_expanded)
-		return;
+		collapseText();
 	_below.clear();
 	for (int y = kSavedTop; y <= kSavedBottom; y++)
 		for (int x = 50; x <= 316; x++)
 			_below.push_back(_screen.get(x, y));
 	_expanded = true;
-	_text.setBottom(kExpandedBottom);
-	_ms.restoreMarble(_screen, 50, kExpandedBottom, 316, kSavedBottom);   // the inventory below the grown window is gone until the next command
-	fillArea(_screen, 51, 129, 314, kExpandedBottom - 1, 23);
+	_text.setBottom(edge);
+	_ms.restoreMarble(_screen, 50, edge, 316, kSavedBottom);              // the inventory below the grown window is gone until the next command
+	fillArea(_screen, 51, 129, 314, edge - 1, 23);
 	for (int x = 50; x <= 315; x++)                                       // the bottom edge of the grown window is lit like the one of a bevel
-		lightenPixel(_screen, x, kExpandedBottom);
+		lightenPixel(_screen, x, edge);
 	// three pixels of the old frames that the original's window popup darkens / lights further (as seen in the oracle's screen)
 	for (int i = 0; i < 3; i++) {
 		darkenPixel(_screen, 50, 149);
@@ -143,6 +143,7 @@ void Display::beginCommand() {
 	collapseText();
 	fillArea(_screen, 51, 129, 314, 148, 23);
 	_text.home();
+	_turnText.clear();
 }
 
 void Display::pressButton(int button) {
@@ -374,15 +375,28 @@ int Display::objectAt(int x, int y) {
 int Display::printText(const std::string &text) {
 	if (!_frameDrawn)
 		return 0;
-	if (!_expanded) {
-		Surface scratch(_screen);
-		TextWindow probe = _text;
-		probe.print(scratch, text);
-		if (probe.scrolled()) {
-			expandText();
+	// how much room the text of this turn needs: the window grows by lines, from its edge at 133 + 8 * lines
+	{
+		Surface nothing(1, 1);
+		TextWindow tall = _text;
+		tall.home();
+		tall.setBottom(4000);
+		for (size_t i = 0; i < _turnText.size(); i++)
+			tall.print(nothing, _turnText[i]);
+		tall.print(nothing, text);
+		const Font &font = _ms.font10();
+		int lines = (tall.penY() - 128 - font.yCenter()) / font.lineHeight() + 1;
+		int edge = lines > 2 ? 133 + font.lineHeight() * lines : kTextBottom;
+		if (edge > 190)
+			edge = 190;
+		if (edge > kTextBottom && (!_expanded || edge > _text.bottom())) {
+			expandText(edge);
 			_text.home();
+			for (size_t i = 0; i < _turnText.size(); i++)      // the grown window starts again at the top with everything of this turn
+				_text.print(_screen, _turnText[i]);
 		}
 	}
+	_turnText.push_back(text);
 	_text.print(_screen, text);
 	return 0;
 }

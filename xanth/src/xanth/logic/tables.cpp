@@ -1152,7 +1152,7 @@ const HandlerFn kExitFunctions[56] = {
 	wrap_exit_fn_55,
 };
 
-const HandlerFn kEventFunctions[44] = {
+const HandlerFn kEventFunctions[45] = {       // indexed by the number in the name (event id - 1)
 	wrap_event_fn_00,
 	wrap_event_fn_01,
 	wrap_event_fn_02,
@@ -1195,6 +1195,7 @@ const HandlerFn kEventFunctions[44] = {
 	wrap_event_fn_39,
 	wrap_event_fn_40,
 	wrap_event_fn_41,
+	nullptr,
 	wrap_event_fn_43,
 	wrap_event_fn_44,
 };
@@ -1344,6 +1345,6 @@ const NameCallback kNameCallbacks[49] = {
 
 const unsigned kNameCallbackCount = 49;
 
-const unsigned kExitFunctionCount = 56, kEventFunctionCount = 44, kVerbHandlerCount = 88;
+const unsigned kExitFunctionCount = 56, kEventFunctionCount = 45, kVerbHandlerCount = 88;
 
 } // namespace Xanth

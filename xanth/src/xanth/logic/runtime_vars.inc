@@ -106,7 +106,6 @@ uint16 seg_8AA08;
 uint16 seg_8AA0A;
 uint16 seg_8AA12;
 uint16 seg_8AA14;
-uint16 seg_8AA18;
 uint16 seg_8AA4E;
 uint16 seg_8AA52;
 uint16 seg_8AA54;

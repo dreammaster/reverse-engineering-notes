@@ -1929,21 +1929,6 @@ int sub_1DF24(Game &g, Word arg0) {
 	return 0;
 }
 
-// run_event
-int run_event(Game &g, Word arg0) {
-	Vars &v = g.state.v;
-	Runtime &rt = g.rt;
-	if ((int16)arg0 <= 0) {
-		return 0;
-	}
-	if (arg0 <= 0x2D) {
-		return callIndirect(mem32(rt.seg_8AA18, (arg0 * 4) - 4));
-	} else {
-		return 0;
-	}
-	return 0;
-}
-
 // go_to_room?
 int go_to_room(Game &g, Word arg0) {
 	Vars &v = g.state.v;

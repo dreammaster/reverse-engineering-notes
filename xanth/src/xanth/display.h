@@ -79,7 +79,7 @@ public:
 private:
 	void drawRoom();
 	void clearConversationBubble();
-	void expandText();
+	void expandText(int edge);
 	void drawInventory();
 	void drawSlot(int picNum, int x, int y);
 	void collapseText();
@@ -119,6 +119,7 @@ private:
 	int _mouseX, _mouseY;
 	std::string _hover;
 	bool _expanded;                      // the text window has grown over the inventory
+	std::vector<std::string> _turnText;  // what was printed since the command began (printed again when the window grows)
 	std::vector<byte> _below;            // what it covers
 	InputSource *_input;
 	int _convPicW, _convPicH, _convBubbleRight, _convMenuBottom;

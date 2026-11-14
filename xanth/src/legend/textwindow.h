@@ -30,6 +30,7 @@ public:
 
 	/** Moves the bottom edge (the window grows over what lies below it). */
 	void setBottom(int y2) { _y2 = y2; }
+	int bottom() const { return _y2; }
 	/** True once the window had to scroll (the text did not fit). */
 	bool scrolled() const { return _scrolled; }
 	/** The pen back at the start of the window, without touching the pixels. */
