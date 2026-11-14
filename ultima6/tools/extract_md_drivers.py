@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unpacks the video drivers of Martian Dreams (TM.DRV, SUPERTM.DRV) into their raw 16-bit code blocks.
+"""Unpacks the drivers of Martian Dreams (the video drivers TM.DRV and SUPERTM.DRV, the sound driver STRAX.DRV) into their raw 16-bit code blocks.
 
     extract_md_drivers.py md/game/MARTIAN md/game/drv
 
@@ -18,7 +18,7 @@ lzw = ns['lzw']
 
 indir, outdir = sys.argv[1], sys.argv[2]
 os.makedirs(outdir, exist_ok=True)
-for name in ('TM', 'SUPERTM'):
+for name in ('TM', 'SUPERTM', 'STRAX'):
     d = open(os.path.join(indir, name + '.DRV'), 'rb').read()
     first = struct.unpack_from('<I', d, 4)[0] & 0xFFFFFF
     n = (first - 4) // 4
