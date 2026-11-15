@@ -43,13 +43,28 @@ The `// sic` returns (`cast.c` ×6, `cmds.c` ×3, `combat.c` ×2, `mainout.c` ×
 whatever is left in AX; the C keeps the shape of the original. They affect callers only when the caller tests the value. `cast.c:620`
 (`map_id > 0x7f && D_58a3 == 0`) is annotated `sic` too: odd, but it is what the binary compiles.
 
-## Suggested ScummVM option set
+## Decision: what ScummVM exposes
 
-1. **Armour fix** (`armour_works` + `equip_def_refresh`) — the most requested fan fix.
-2. **Original spell / vermin behaviour** — off by default; on = fixed versions of `spell_pass_aborts`, `begone_vermin_hostile`.
-3. **Price fix** (`shop_price_overflow`).
-4. **Music** (`fm_towns_music`) as an audio option, not a gameplay one.
-5. Everything else stays at original behaviour (crash-avoiding guards on out-of-range reads are applied silently).
+Agreed with the project owner: **only the options below are exposed to the player, and all of them are ON by default.** Every other row
+above (silent robustness fixes, entries needing no change, and the modern-build features) is simply applied, with no option.
+
+| option | rows covered | default |
+|---|---|---|
+| Armour fix | `armour_works`, `equip_def_refresh` | on |
+| Shop price fix | `shop_price_overflow` | on |
+| Spell and vermin fixes | `spell_pass_aborts`, `begone_vermin_hostile` | on |
+| Music | `fm_towns_music` (see below) | on (when music data is found) |
+
+`xit_anywhere` and `conflict_message` are also applied without an option (decided with the rest of the "just apply" group).
+
+### Music
+
+The sources' `ENABLE_BGM` code plays **FM Towns CD-audio tracks** (`audio/aud_cdda.c`); nothing in `src/` reads XMI/MIDI. The IBM 1.16
+install used for this audit has no music data at all (its only drivers are the four video drivers `CGA/EGA/HER/T1K.DRV`), and the
+u5d `GOG_BUILD` patches only remove the disk-swap prompts, which suggests the GOG executable has no music driver either. **Whether the
+GOG package ships music files has not been checked** (no GOG install was available to inspect). The fan upgrade pack's XMI music is a
+separate source. So the option should be defined as "play background music from music data supplied with the game files (XMI, or the
+FM Towns tracks), if present"; which formats and which per-map track list to support is a ScummVM-thread decision.
 
 ## Still to verify against the binary
 
