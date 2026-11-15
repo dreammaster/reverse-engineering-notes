@@ -133,6 +133,34 @@ SCENARIOS = {
                "{shot:horse_bought.png}{quit}", ["horse_greet.png", "horse_price.png", "horse_bought.png"], 300),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
+# gate-gems = gems in the pack: V shows the overview map of the world (any key dismisses it)
+SCENARIOS["viewgem"] = ("j{sleep:6000}v{sleep:2500}{shot:viewgem1.png}{space}{sleep:1500}{shot:viewgem2.png}{quit}", ["viewgem1.png", "viewgem2.png"], 300)
+
+# Britain: stand at several waypoints and Look in all four directions (fountain, signs, shelves, beds, clocks...); the fountain asks who drinks
+_LK = "".join("{go:%d,%d}{sleep:800}" % w + "".join("l{sleep:300}%s{sleep:900}1{enter}{sleep:600}{enter}{sleep:300}" % d for d in ("{up}", "{right}", "{down}", "{left}"))
+              for w in [(14, 28), (16, 28), (14, 15), (10, 20), (20, 20), (12, 8), (6, 6), (25, 6), (8, 25), (24, 25)])
+SCENARIOS["lookaround"] = ("j{sleep:6000}e{sleep:8000}" + _LK + "{shot:lookaround_end.png}{quit}", ["lookaround_end.png"], 900)
+
+# the Castle of Lord British (gate-lb) explored with a seeded pseudo-random key sequence: moves plus Look/Open/Get/Jimmy/Push/Search/Klimb in
+# every direction, to reach the object code (LOOKOBJ, SJOG, CMDS) without mapping the castle
+import random as _random2
+_rng2 = _random2.Random(11)
+_DIRS = ["{up}", "{down}", "{left}", "{right}"]
+def _twalk_key():
+    d = _rng2.choice(_DIRS)
+    c = _rng2.choice(["move"] * 10 + ["l", "o", "g", "p", "k", "s", "j", "t"])
+    if c == "move":
+        return d + "{sleep:200}"
+    if c in ("s", "j"):
+        return c + "{sleep:300}" + (d if c == "j" else "") + "{sleep:300}1{enter}{sleep:500}"
+    if c == "k":
+        return "k{sleep:400}{esc}{sleep:200}"
+    if c == "t":
+        return "t{sleep:300}" + d + "{sleep:600}{enter}{sleep:300}{enter}{sleep:300}"
+    return c + "{sleep:300}" + d + "{sleep:500}"
+_TW = "".join(_twalk_key() for _ in range(700))
+SCENARIOS["twalk"] = ("j{sleep:6000}e{sleep:9000}" + _TW + "{shot:twalk_end.png}{quit}", ["twalk_end.png"], 1800)
+
 # dungeon-caster explored with a seeded pseudo-random key sequence (moves, turns and the object commands) to reach doors, chests, traps
 # and monsters without mapping the dungeon; 1 = move, 2/3 = turn, o/g/j = open/get/jimmy, i = ignite torch
 import random as _random
@@ -356,6 +384,12 @@ def main():
             install_fixture("gate-sail")
         elif name == "dwalk":
             install_fixture("dungeon-caster")
+        elif name == "twalk":
+            install_fixture("gate-lb")
+        elif name == "lookaround":
+            install_fixture("gate-britain-caster")
+        elif name == "viewgem":
+            install_fixture("gate-gems")
         elif name == "shrine":
             install_fixture("gate-compassion")
         elif name == "dungeon":

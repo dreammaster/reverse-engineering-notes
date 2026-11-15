@@ -128,6 +128,7 @@
  "klimb.png": "79e1a669741ca0bc17853fdef456e773235f49bc",
  "leave.png": "39c18d74924dde9baf28d861e46dde56321a9411",
  "look.png": "6926cf0f63564e6b4b385067fee125f9995f74f0",
+ "lookaround_end.png": "0428380e7b34e74059e1a7576c2e8fd3f8980442",
  "overworld1.png": "2a39d3d683fa5eecfe45630e08b8992bafc90a6f",
  "overworld2.png": "3a4667f934b2f18e6813550f1c0b0b4f0f6478d6",
  "overworld_stats.png": "cb6a057b324c4c6b42fd854b34185d2c68a3ed15",
@@ -184,6 +185,7 @@
  "tavern_greet.png": "a24335e8ff9649815bc19495e83aa74470561483",
  "tavern_leave.png": "68c519f187f4e965833a30f252de64f84f921081",
  "tavern_menu.png": "397aa094a2d9175fe46e2a70957d8eb467622de1",
+ "twalk_end.png": "c368946a8bc445273dfde03e9a43af5aaa080510",
  "use0.png": "bde41447bca62d19a9442c584fe9232e0d6330ed",
  "use1.png": "c0185696438e2254d5502b879db3b65847c3a410",
  "use10.png": "a533231f36f3a07b7549eb5764a655f7274e7d77",
@@ -231,5 +233,7 @@
  "v_skiff0.png": "e1120b6a736cdd421e138f77b9f11487d11e5cb7",
  "v_skiff1.png": "964a2a4b1492c445d3d1eb83903ea013a4a560e2",
  "v_skiff2.png": "a389bac49bf4e2964b937063c35efbb0958c2215",
- "v_skiff3.png": "9489cf5e4bd0612be3d1f478243ca772d6ed2a5f"
+ "v_skiff3.png": "9489cf5e4bd0612be3d1f478243ca772d6ed2a5f",
+ "viewgem1.png": "da5baaf5152835231490e9cb98514c4ff04986eb",
+ "viewgem2.png": "d2c17d178809906e4cf6c1eff1ff51fdeb1a754a"
 }
