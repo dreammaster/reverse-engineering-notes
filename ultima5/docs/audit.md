@@ -185,6 +185,29 @@ capture), CGA and Hercules modes. `tools/refdiff.py` aligns a capture with one o
 * **Deviations**: reviewed in [deviations_review.md](deviations_review.md) — 11 behavioural differences from the IBM code (the armour bug
   being the most significant) and a list of what is equivalent.
 
+## Final status of the analysis
+
+| area | result |
+|---|---|
+| Missing logic | none: every original function has a C counterpart (see Summary) |
+| Genuine defects in the C | 4 fixed in `src/`: `D_1a58` (reversed table), `ULTIMA_6f1e` (FM Towns search semantics), the random generator and clock seed, plus `D_2e90`/`D_2e9a` (wrong tail bytes) and the look-object record scan (terminator); the combat-map edge assert is now a range check |
+| Assembly-derived functions | all 74 compared with the disassembly |
+| Deviations from the original | 157 conditional blocks catalogued ([deviations.md](../audit/deviations.md)); every behavioural one reviewed and, where possible, confirmed in the binary ([deviations_review.md](deviations_review.md)) |
+| Candidate ScummVM engine options | [engine_options.md](engine_options.md): 15 original defects (default: keep) and 7 modern-build differences, with evidence level and source location |
+| Original quirks verified | armour never applies, shop prices overflow at INT > 33, spells proceed when the direction prompt is passed, "Begone, vermin!" never turns an NPC hostile, the Xit range check is always false, LOS reads past the combat map edge |
+| Runtime coverage | 722 of 922 engine functions (78%) execute in the 46 scripted scenarios; screenshots are compared with masked golden hashes and with real-game captures (EGA) |
+| Save files | every fixture round-trips through the loader/writer (`mingw32-make unit`) |
+
+Scenarios drive the real game: boot/intro/character creation, towns, all shop types (weapons, tavern, horses, reagents, healer,
+shipwright, guild, inn incl. leave/pick-up), combat (melee and 38 spells), 16 town and 21 dungeon spells, the Use command (scrolls,
+potions, artifacts, shards), the vehicle commands, sailing, a dungeon and a castle explored by seeded random walks, Look/View,
+death, arrest, the Blackthorn capture and the ending. Two test hooks (not in the original, non-DOS builds only) shorten the routes:
+`U5_ENDGAME=1` and `U5_MERCHANT=n`.
+
+Still unreached (all documented, none a known defect): the entrance code from the overworld into a dungeon (`MAINOUT_0790`), whirlpools
+and the troll toll, wells (`LOOKOBJ_0042`), most door/chest handling in `sjog.c`, the Hole up/Push/Escape paths in `cmds.c`, part of
+`talk.c`/`zstats.c`, and the CGA/Hercules/Tandy video modes (not implemented; to be done directly in ScummVM).
+
 ## Gaps and what to do about them
 
 | gap | status | note |
@@ -199,10 +222,7 @@ capture), CGA and Hercules modes. `tools/refdiff.py` aligns a capture with one o
 
 ## Next steps
 
-1. Port the CGA and Hercules (and Tandy) video modes using the reference captures; capture more EGA references (combat, dungeon,
-   shops, intro) to extend the pixel comparison.
-2. Decide the keep/revert policy for the deviation list; make `MATCHING_BUILD`-style behaviour selectable at run time.
-3. Build a save-game fixture with a party (the pristine `SAVED.GAM` has none) so the headless harness can drive towns, combat and
-   dungeons, and record golden screenshots from the original-matching configuration.
-4. Document the data formats the ScummVM engine will read (maps, `*.TLK/*.NPC`, `*.CBT`, `*.DAT`, `*.16/*.4` image formats); the
-   structures are already declared in `src/structs.h` and `src/macros.h`.
+1. Start the ScummVM engine (separate thread): the C in `src/` is the reference, `engine_options.md` lists the options to expose.
+2. Implement CGA/Hercules/Tandy rendering against the reference captures; capture further EGA references.
+3. Reach the remaining unreached code if wanted (see *Final status*), mostly by more fixtures.
+4. Document the data formats the engine reads (maps, `*.TLK/*.NPC`, `*.CBT`, `*.DAT`, `*.16/*.4`); the structures are declared in `src/structs.h`.
