@@ -30,6 +30,9 @@ SPELLS_TOWN = [("IL", ""), ("AZ", "1{enter}"), ("AN", "1{enter}"), ("M", "1{ente
 VEHICLE_CMDS = {"ship": ["f{left}", "f{up}", "h", "1{sleep:3000}", "k", "x", "b", "x"], "horse": ["h", "1{sleep:3000}", "k", "x", "b", "x"],
                 "skiff": ["f{up}", "k", "x", "b"], "carpet": ["h", "1{sleep:3000}", "k", "x", "b"]}
 
+# item list index -> keys for the prompt that follows ("On who:" takes a digit and Enter, "Direction-" an arrow); carpet (16) skipped
+USE_ITEMS = [(n, "{up}" if n in (1, 17) else "1{enter}" if n in (6, 8, 9, 10, 11, 12, 13, 14, 15) else "") for n in range(26) if n != 16]
+
 SCENARIOS = {
     "boot": ("{sleep:500}{shot:boot.png}{quit}", ["boot.png"], 120),
     # 'J' at the very first key poll is the original "Journey Onward" shortcut; the pristine SAVED.GAM has no
@@ -113,6 +116,9 @@ SCENARIOS = {
                "{shot:horse_bought.png}{quit}", ["horse_greet.png", "horse_price.png", "horse_bought.png"], 300),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
+SCENARIOS["use"] = ("j{sleep:6000}" + "".join("u{sleep:1000}" + "{down}{sleep:150}" * n + "{enter}{sleep:1800}%s{sleep:1200}{shot:use%d.png}" % (x, n)
+                    for n, x in USE_ITEMS) + "{quit}", ["use%d.png" % n for n, _ in USE_ITEMS], 600)
+
 for _v, _c in VEHICLE_CMDS.items():
     SCENARIOS[_v] = ("j{sleep:6000}" + "".join("%s{sleep:1500}{shot:v_%s%d.png}" % (c, _v, i) for i, c in enumerate(_c)) + "{quit}",
                      ["v_%s%d.png" % (_v, i) for i in range(len(_c))], 300)
@@ -252,6 +258,8 @@ def main():
             install_fixture("gate-britain-caster")
         elif name in VEHICLE_CMDS:
             install_fixture("gate-vehicle-" + name)
+        elif name == "use":
+            install_fixture("gate-items")
         elif name == "shrine":
             install_fixture("gate-compassion")
         elif name == "dungeon":
