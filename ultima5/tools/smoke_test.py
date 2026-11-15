@@ -33,6 +33,12 @@ VEHICLE_CMDS = {"ship": ["f{left}", "f{up}", "h", "1{sleep:3000}", "k", "x", "b"
 # item list index -> keys for the prompt that follows ("On who:" takes a digit and Enter, "Direction-" an arrow); carpet (16) skipped
 USE_ITEMS = [(n, "{up}" if n in (1, 17) else "1{enter}" if n in (6, 8, 9, 10, 11, 12, 13, 14, 15) else "") for n in range(26) if n != 16]
 
+# dungeon: spells usable underground with the keys for their follow-up prompt; PU ("Up!") leaves the dungeon so it goes last
+DUNGEON_PRE = ["i", "{up}", "h", "1{sleep:1500}n{sleep:3000}", "s{up}", "g{up}", "o{up}", "{up}", "{left}", "j{up}", "u{sleep:600}{esc}"]
+SPELLS_DUNGEON = [("IL", ""), ("AZ", "1{enter}"), ("AN", "1{enter}"), ("M", "1{enter}"), ("AS", ""), ("IMX", ""), ("LV", ""), ("FGI", ""),
+                  ("GIN", ""), ("GIZ", ""), ("AG", ""), ("IS", ""), ("GIS", ""), ("DP", ""), ("MV", "1{enter}"), ("RT", ""), ("AI", ""),
+                  ("IQW", ""), ("CIM", "1{enter}"), ("AT", ""), ("PU", "")]
+
 SCENARIOS = {
     "boot": ("{sleep:500}{shot:boot.png}{quit}", ["boot.png"], 120),
     # 'J' at the very first key poll is the original "Journey Onward" shortcut; the pristine SAVED.GAM has no
@@ -116,6 +122,11 @@ SCENARIOS = {
                "{shot:horse_bought.png}{quit}", ["horse_greet.png", "horse_price.png", "horse_bought.png"], 300),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
+SCENARIOS["dspells"] = ("j{sleep:7000}" + "".join("%s{sleep:1500}{shot:dpre%d.png}" % (c, i) for i, c in enumerate(DUNGEON_PRE)) +
+                       "".join("c{sleep:700}1{enter}{sleep:700}%s{enter}{sleep:1500}%s{sleep:1500}{shot:dsp%d.png}" % (sp, x, i)
+                               for i, (sp, x) in enumerate(SPELLS_DUNGEON)) + "{quit}",
+                       ["dpre%d.png" % i for i in range(len(DUNGEON_PRE))] + ["dsp%d.png" % i for i in range(len(SPELLS_DUNGEON))], 900)
+
 SCENARIOS["use"] = ("j{sleep:6000}" + "".join("u{sleep:1000}" + "{down}{sleep:150}" * n + "{enter}{sleep:1800}%s{sleep:1200}{shot:use%d.png}" % (x, n)
                     for n, x in USE_ITEMS) + "{quit}", ["use%d.png" % n for n, _ in USE_ITEMS], 600)
 
@@ -260,6 +271,8 @@ def main():
             install_fixture("gate-vehicle-" + name)
         elif name == "use":
             install_fixture("gate-items")
+        elif name == "dspells":
+            install_fixture("dungeon-caster")
         elif name == "shrine":
             install_fixture("gate-compassion")
         elif name == "dungeon":
