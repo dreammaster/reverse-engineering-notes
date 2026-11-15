@@ -133,6 +133,19 @@ SCENARIOS = {
                "{shot:horse_bought.png}{quit}", ["horse_greet.png", "horse_price.png", "horse_bought.png"], 300),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
+# dungeon-caster explored with a seeded pseudo-random key sequence (moves, turns and the object commands) to reach doors, chests, traps
+# and monsters without mapping the dungeon; 1 = move, 2/3 = turn, o/g/j = open/get/jimmy, i = ignite torch
+import random as _random
+_rng = _random.Random(5)
+_DW = "i{sleep:600}" + "".join(_rng.choice(["{up}{sleep:250}"] * 6 + ["{left}{sleep:250}", "{right}{sleep:250}", "{down}{sleep:250}", "o{sleep:400}", "g{sleep:400}", "j{sleep:400}1{enter}{sleep:400}", "k{sleep:400}", "a{sleep:500}{up}{sleep:500}"]) for _ in range(500))
+SCENARIOS["dwalk"] = ("j{sleep:7000}" + _DW + "{shot:dwalk_end.png}{quit}", ["dwalk_end.png"], 1500)
+
+# gate-sail = the party aboard a frigate in the open sea (128,128); a fixed zig-zag course of ~700 moves meets sea creatures, whirlpools
+# and storms (MAINOUT hazards); attack keys are mixed in for the combats
+_SAIL = "".join(("{%s}{sleep:120}" % d) * n + ("a{sleep:300}{%s}{sleep:400}" % d if k % 3 == 0 else "")
+                for k, (d, n) in enumerate([("up", 20), ("right", 25), ("down", 40), ("left", 45), ("up", 40), ("right", 30), ("down", 30), ("left", 20)] * 3))
+SCENARIOS["sail"] = ("j{sleep:6000}" + _SAIL + "{shot:sail_end.png}{quit}", ["sail_end.png"], 1500)
+
 # shop conversations started directly with the U5_MERCHANT test hook (the merchants of Minoc/Skara Brae are awkward to walk to):
 # fixtures put the party in the town (map 5 = Minoc, 8 = Skara Brae); gate-minoc-hurt has a poisoned, a dead and a wounded member and 999 gold,
 # gate-minoc-rich has 5000 gold, INT 20 (INT 40 makes the original price formula overflow)
@@ -339,6 +352,10 @@ def main():
             install_fixture("gate-bt-weak")
         elif name in MERCHANT_FIXTURES:
             install_fixture(MERCHANT_FIXTURES[name])
+        elif name == "sail":
+            install_fixture("gate-sail")
+        elif name == "dwalk":
+            install_fixture("dungeon-caster")
         elif name == "shrine":
             install_fixture("gate-compassion")
         elif name == "dungeon":
