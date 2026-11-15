@@ -149,6 +149,9 @@ _merchant("shipwright-poor", 132, "gate-minoc-hurt2", "y{sleep:2500}f{sleep:2500
 _merchant("guild", 134, "gate-town8-in2", "y{sleep:2500}a{sleep:2500}{shot:guild1.png}y{sleep:2500}{shot:guild2.png}b{sleep:2500}{shot:guild3.png}y{sleep:2500}c{sleep:2500}y{sleep:2500}{shot:guild4.png}n{sleep:2500}{shot:guild5.png}", 5)
 _merchant("reagents", 133, "gate-britain-in", "y{sleep:2500}a{sleep:2500}y{sleep:2500}{shot:reagents1.png}b{sleep:2500}y{sleep:2500}c{sleep:2500}n{sleep:2500}{shot:reagents2.png}{enter}{sleep:2500}{shot:reagents3.png}", 3)
 _merchant("tavern2", 130, "gate-britain-in", "y{sleep:2500}a{sleep:2500}y{sleep:2500}r{sleep:2500}2{enter}{sleep:2500}{shot:tavern21.png}y{sleep:2500}c{sleep:2500}job{enter}{sleep:2500}{shot:tavern22.png}n{sleep:2500}{shot:tavern23.png}", 3)
+_merchant("inn-leave", 136, "gate-town2-in", "y{sleep:3000}l{sleep:3000}{down}{sleep:600}{enter}{sleep:3000}{shot:inn-leave1.png}y{sleep:3000}{shot:inn-leave2.png}", 2)
+# gate-town2-left = a fourth member (Zed) left at the inn of map 2; the pick-up fee is more than the party has
+_merchant("inn-pickup", 136, "gate-town2-left", "y{sleep:3000}p{sleep:3000}{shot:inn-pickup1.png}{enter}{sleep:3000}{shot:inn-pickup2.png}y{sleep:3000}{shot:inn-pickup3.png}", 3)
 
 # gate-bt-weak = at the Palace of Blackthorn on the overworld with a 1 HP party: {go} into the palace gets the party caught by the guards
 # and Blackthorn asks for the mantra of Honesty (the BLCKTHRN capture sequence); AHM is the right answer
