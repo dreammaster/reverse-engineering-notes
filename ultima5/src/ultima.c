@@ -21,6 +21,10 @@
 #include "town.h"
 #include "talk.h"
 
+#if defined(ENABLE_U5_MUSIC)
+#include "audio/u5music.h"
+#endif
+
 #if !defined(TARGET_DOS16)
 extern int g_enableDebugOverlay;
 #endif
@@ -88,7 +92,15 @@ int CDECL main(int argc, char** argv/*, char** envp*/)
     D_b11c = D_b21e;
     D_538c = 1;
 
+#if defined(ENABLE_U5_MUSIC)
+    U5MUSIC_Init();
+#endif
+
     INTRO_0986_Main(); // 00ad
+
+#if defined(ENABLE_U5_MUSIC)
+    U5MUSIC_AutoOn();
+#endif
     ULTIMA_2900_UpdateVitalsDisplay();
 
 #if !defined(TARGET_DOS16)
@@ -176,4 +188,8 @@ int CDECL main(int argc, char** argv/*, char** envp*/)
     } while (local_2 == 0);
 
     ULTIMA_0878_RestoreVideoMode();
+
+#if defined(ENABLE_U5_MUSIC)
+    U5MUSIC_Stop();
+#endif
 }

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 #include "audio/aud_mus.h"
+#include "audio/u5music.h"
 
 #include "blckthrn.h"
 #include "cast2.h"
@@ -710,7 +711,13 @@ int MAINOUT_08de_EnterCmd(void)
 
         ULTIMA_1850_PrintString(D_1f4e[local_6]);
         ULTIMA_16ba_PrintChar('\n');
+#if defined(ENABLE_U5_MUSIC)
+        U5MUSIC_PlayStones(); // upgrade wrapper +e50 (the Codex shrine below is not wrapped)
+#endif
         CAST2_0e76_Shrine();
+#if defined(ENABLE_U5_MUSIC)
+        U5MUSIC_AutoOn();
+#endif
         break;
 
     case TILE_MAP_HUT:
@@ -843,7 +850,13 @@ static void MAINOUT_0a84_MainLoop(void)
             }
             // 0ae1
             ULTIMA_25d8_WriteFileToDisk(OUTSUBS_0368_GetWorldSavefile(), D_5c5a, 0x100);
+#if defined(ENABLE_U5_MUSIC)
+            U5MUSIC_Stop(); // upgrade wrapper +e7c: no music during the death sequence
+#endif
             BLCKTHRN_0910_Death();
+#if defined(ENABLE_U5_MUSIC)
+            U5MUSIC_AutoOn();
+#endif
             local_c = 1;
             local_a = 0;
         }

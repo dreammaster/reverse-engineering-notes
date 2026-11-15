@@ -34,7 +34,7 @@ RUN_DIR := run
 COMMON_SRCS := \
 	town mainout dungeon intro npc combat blckthrn lookobj dnglook outsubs shoppes endgame sjog cmds cast talk cast2 \
 	zstats comsubs shoppes2 shoppes3 font vars ultima 0000 1000 2000 3000 4000 5000 6000 7000 savegame grap_drv \
-	audio/audio audio/aud_mus audio/aud_sfx backend/backend common/file common/util common/settings common/debug \
+	audio/audio audio/aud_mus audio/u5music audio/aud_sfx backend/backend common/file common/util common/settings common/debug \
 	common/lzw common/memory graphics/animate graphics/image graphics/grap_buf graphics/origin graphics/grap \
 	graphics/reveal graphics/wd
 
@@ -115,6 +115,7 @@ $(SAVETOOL): $(BUILD)/tests/savetool.o $(TEST_OBJS)
 unit: $(UNIT) $(SAVETOOL)
 	$(UNIT)
 	$(PYTHON) tools/save_roundtrip.py
+	-$(PYTHON) tools/verify_midrv.py --runs 100
 
 clean:
 	$(U5TOOL) rmtree $(BUILD)

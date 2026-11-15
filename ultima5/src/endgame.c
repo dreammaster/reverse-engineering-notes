@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 #include "audio/aud_mus.h"
+#include "audio/u5music.h"
 #include "key/key.h"
 
 #include "endgame.h"
@@ -102,7 +103,7 @@ static void ENDGAME_0000(void)
         if (local_8 != 0)
         {
             // a40e
-            while (ULTIMA_1d5e_PollKey() == 0)
+            while (MUSIC_POLLKEY_ENDING(local_8) == 0) // ENDGAME.OVL +aee: track for the slide
                 ;
         }
 
@@ -116,7 +117,7 @@ static void ENDGAME_0000(void)
     ULTIMA_0fdc_FreeBitImage(local_c);
 
     // a476
-    while (ULTIMA_1d5e_PollKey() == 0)
+    while (MUSIC_POLLKEY_ENDING(local_8) == 0)
         ;
 
     ULTIMA_0c22_GRAP_0f_SelectPage(1);
@@ -303,7 +304,11 @@ static void ENDGAME_0326(void)
         ULTIMA_20fa_WaitTicks(1);
         KEY_PollKey(); // lets the key script (screenshots, quit) run on the final screen
 #endif
+#if defined(ENABLE_U5_MUSIC)
+        U5MUSIC_PlayRuleBritannia(); // the upgrade replaces local_4++ by ENDGAME.OVL +b0b (any key leaves the game, else Rule Britannia)
+#else
         local_4++;
+#endif
     } while (1);
 }
 
@@ -423,6 +428,9 @@ void ENDGAME_0648_EndgameMain(void)
     ActorFmt* local_6;
 
     D_589e = 0xff;
+#if defined(ENABLE_U5_MUSIC)
+    U5MUSIC_PlayReunion(); // upgrade wrapper at ENDGAME.OVL +aff, in front of the call
+#endif
     ULTIMA_2900_UpdateVitalsDisplay();
     ULTIMA_6f9e(1);
     ULTIMA_256e_ReadFileFromDisk(/*0x8480*/ "MISCMAPS.DAT", D_ac64, 0xb0, 0x210);
@@ -642,5 +650,8 @@ void ENDGAME_0648_EndgameMain(void)
         ENDGAME_05a2(3);
         ENDGAME_05a2(4);
         ENDGAME_05a2(5);
+#if defined(ENABLE_U5_MUSIC)
+        U5MUSIC_PlayRuleBritannia(); // ENDGAME.OVL +b1f at the end of every pass
+#endif
     } while (1);
 }

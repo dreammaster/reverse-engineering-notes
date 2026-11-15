@@ -60,6 +60,10 @@ F12 in the window saves `screenshot.png`. At the very first key poll `J` is the 
 * `tools/town_path.py` / `tools/find_stand.py` plan routes from the town map files (offline); the in-game `{go}`/`{tm}` tokens are usually easier.
 * `mingw32-make unit` also round-trips every fixture save through the loader/writer.
 
+## Ultima V Upgrade music
+
+The optional `u5upgrade/` folder (the freely available *Exodus Project Ultima V Upgrade*, git-ignored) is the source of the XMI music cues. See [docs/u5upgrade_music.md](docs/u5upgrade_music.md): the upgrade's patches were diffed against the game (`tools/patch_sites.py`, `tools/dis_diff.py`), its driver was ported to `src/audio/u5music.c` and verified against the original machine code (`tools/verify_midrv.py`, needs `pip install unicorn`), and the call sites are in the sources behind `ENABLE_U5_MUSIC`. `U5_MUSIC_LOG=file` writes the cues (`start TRACK` / `stop`) that `tests/golden_music.json` records per scenario.
+
 ## Re-running the audit
 
 ```

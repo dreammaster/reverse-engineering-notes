@@ -5,6 +5,7 @@
 #include "tiles.h"
 
 #include "grap_drv.h"
+#include "audio/u5music.h"
 #include "sjog.h"
 
 #include <string.h>
@@ -174,7 +175,13 @@ void ULTIMA_6150_Combat(int param_1)
 void ULTIMA_6360_Camping(int param_1, int param_2)
 {
     ULTIMA_60ec_LoadSpecialMap(0);
+#if defined(ENABLE_U5_MUSIC)
+    U5MUSIC_PlayStones(); // upgrade wrapper +e5a
+#endif
     ULTIMA_5f86_SpecialMapHandler(4, param_1, param_2);
+#if defined(ENABLE_U5_MUSIC)
+    U5MUSIC_AutoOn();
+#endif
     ULTIMA_5e4a();
 }
 

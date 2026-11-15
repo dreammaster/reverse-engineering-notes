@@ -11,6 +11,7 @@
 #include "time/time.h"
 
 #include "font.h"
+#include "audio/u5music.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -729,7 +730,7 @@ u16 ULTIMA_1b38_PollKeyWithCursor(void)
 
     ULTIMA_16ba_PrintChar(D_5390 + D_540c++); // animate cursor
 
-    local_6 = ULTIMA_1d5e_PollKey();
+    local_6 = MUSIC_POLLKEY();
     if ((int)D_540c >= (int)D_5392)
     {
         D_540c = 0;

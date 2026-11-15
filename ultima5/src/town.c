@@ -7,6 +7,7 @@
 #include <memory.h>
 
 #include "audio/aud_mus.h"
+#include "audio/u5music.h"
 
 #include "blckthrn.h"
 #include "cast2.h"
@@ -1169,7 +1170,13 @@ static int TOWN_12ae(void)
     {
         if (ULTIMA_39fc_GetFirstActivePartyMember() >= 0)
         {
+#if defined(ENABLE_U5_MUSIC)
+            U5MUSIC_Stop(); // upgrade wrapper +e72: no music during the capture
+#endif
             BLCKTHRN_060e_Capture();
+#if defined(ENABLE_U5_MUSIC)
+            U5MUSIC_AutoOn();
+#endif
             TOWN_11f0_Entry(1);
         }
     }
@@ -1293,7 +1300,13 @@ void TOWN_141e_MainLoop(void)
         }
         else if (local_a == -1)
         {
+#if defined(ENABLE_U5_MUSIC)
+            U5MUSIC_Stop(); // upgrade code at TOWN.OVL +1862: Stop, Death, AutoOn
+#endif
             BLCKTHRN_0910_Death();
+#if defined(ENABLE_U5_MUSIC)
+            U5MUSIC_AutoOn();
+#endif
             local_c = 0;
         }
         else

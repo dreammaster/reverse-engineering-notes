@@ -1,4 +1,5 @@
 #include "audio/audio.h"
+#include "audio/u5music.h"
 #include "common/common.h"
 #include "funcs.h"
 #include "grap_drv.h"
@@ -228,7 +229,7 @@ static void INTRO_014e_Introduction(void)
         if (local_a != 0)
         {
             ULTIMA_1b16_ClearKbdBuffer();
-            while (ULTIMA_1d5e_PollKey() == 0)
+            while (MUSIC_POLLKEY_INTRO(local_a) == 0) // INTRO.OVL +adc: track for the scene
                 ;
         }
 
@@ -247,7 +248,7 @@ static void INTRO_014e_Introduction(void)
     ULTIMA_0fdc_FreeBitImage(local_c);
 
     ULTIMA_1b16_ClearKbdBuffer();
-    while (ULTIMA_1d5e_PollKey() == 0)
+    while (MUSIC_POLLKEY_INTRO(local_a) == 0) // local_a is 0x15 here
         ;
 
     ULTIMA_0c22_GRAP_0f_SelectPage(1);
@@ -320,6 +321,10 @@ static void INTRO_05b0_DisplayTitle(int param_1) // (0 for fast display)
 {
     byte* local_4;
     int local_6; // unused
+
+#if defined(ENABLE_U5_MUSIC)
+    U5MUSIC_PlayTheme(); // upgrade code at INTRO.OVL +ad0, called in front of the first statement
+#endif
 
     D_a9bd[1] = 2;
     if (D_5893_map_id != 0x40)
@@ -448,7 +453,7 @@ static void INTRO_072e_Acknowledgements(void)
     INTRO_04e0_DrawMenuBorders();
     INTRO_06bc_BuildMainMenu(4);
 
-    while (ULTIMA_1d5e_PollKey() == 0)
+    while (MUSIC_POLLKEY() == 0) // INTRO.OVL +852: music refresh
     {
     }
 
@@ -880,12 +885,18 @@ void INTRO_0986_Main(void) // intro_main (initialize video) (8b46)
 #endif
 
             ULTIMA_16ba_PrintChar(CTRL_CHAR_CLEAR_WINDOW);
+#if defined(ENABLE_U5_MUSIC)
+            U5MUSIC_PlayAmiga(); // upgrade wrapper +af9
+#endif
             INTRO_132a_TransferFromU4();
             goto L_0fab; // TODO: get rid of goto
             // break;
 
         case 0x43: // 'C'
             // 0fa8
+#if defined(ENABLE_U5_MUSIC)
+            U5MUSIC_PlayAmiga(); // upgrade wrapper +aed
+#endif
             FONT_0b0a();
         L_0fab:
             ULTIMA_1c22_SetTextWindowSize(0, 0, 0, 0x27, 0x18);

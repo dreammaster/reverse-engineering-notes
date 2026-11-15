@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "audio/aud_mus.h"
+#include "audio/u5music.h"
 
 #include "cmds.h"
 #include "combat.h"
@@ -874,6 +875,10 @@ void ULTIMA_5f86_SpecialMapHandler(int param_1, int param_2, int param_3)
     // 605c
     D_589e = D_587b = 0xff;
     D_58a3 = 0;
+
+#if defined(ENABLE_U5_MUSIC)
+    U5MUSIC_AutoOn(); // the upgrade's wrapper at +e49: auto music (combat) before the combat main loop
+#endif
 
     COMBAT_0b94_MainLoop(); // COMBAT.0b94
 

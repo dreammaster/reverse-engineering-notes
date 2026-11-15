@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "audio/audio.h"
+#include "audio/u5music.h"
 
 #include "font.h"
 #include "intro.h"
@@ -556,7 +557,7 @@ static void FONT_09c8(byte* param_1, byte* param_2)
 
     do
     {
-        local_4 = ULTIMA_2032_ToUpper(ULTIMA_1d5e_PollKey());
+        local_4 = ULTIMA_2032_ToUpper(MUSIC_POLLKEY()); // FONT.OVL +ab4: music refresh
         if (local_4 == 'A')
             break;
     } while (local_4 != 'B');
@@ -663,7 +664,7 @@ void FONT_0b0a(void)
 
         D_5150 = 200;
 
-        while (ULTIMA_1d5e_PollKey() == 0) {}
+        while (MUSIC_POLLKEY() == 0) {} // FONT.OVL +c9b
 
         D_bd3c = D_55a8_party[0].intel;
         D_bd3d = D_55a8_party[0].dex;
@@ -711,7 +712,7 @@ void FONT_0b0a(void)
         D_5154 = 5;
         ULTIMA_0f6e_GRAP_1b_TransferFullscreen(1, 0);
 
-        while (ULTIMA_1d5e_PollKey() == 0)
+        while (MUSIC_POLLKEY() == 0) // FONT.OVL +d9c
         {}
 
         ULTIMA_0be4_FreeImage(local_6);

@@ -6,6 +6,8 @@
 #include "macros.h"
 #include "tiles.h"
 
+#include "audio/u5music.h"
+
 #include "cast.h"
 #include "cast2.h"
 #include "cmds.h"
@@ -925,7 +927,13 @@ static void ULTIMA_3c9a_HoleUpCmd(void)
                     D_58a1 = 6;
                     DNGLOOK_1130();
                     DNGLOOK_0d3e();
+#if defined(ENABLE_U5_MUSIC)
+                    U5MUSIC_PlayStones(); // upgrade wrapper +e66
+#endif
                     ULTIMA_5f86_SpecialMapHandler(D_58a1, local_8, local_10);
+#if defined(ENABLE_U5_MUSIC)
+                    U5MUSIC_AutoOn();
+#endif
                     ULTIMA_251e_SwitchDisks(2);
                     DNGLOOK_109e(); // NOTE: sic (bug?)
 

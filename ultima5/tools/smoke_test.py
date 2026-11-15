@@ -257,6 +257,9 @@ def distinct_colors(path):
 
 
 GOLDEN = os.path.join(ROOT, "tests", "golden.json")
+# music cues (src/audio/u5music.c logs "start TRACK" / "stop" to U5_MUSIC_LOG); one list of events per scenario
+MUSIC_GOLDEN = os.path.join(ROOT, "tests", "golden_music.json")
+MUSIC = {"golden": {}, "update": None}
 # regions that legitimately vary between runs: wind banner, text cursor line
 MASKS = [(96, 362, 300, 388), (384, 340, 640, 392)]
 
@@ -308,6 +311,10 @@ def run_scenario(name, keys, shots, timeout, golden=None, update=None):
     if name == "endgame":
         env["U5_ENDGAME"] = "1"
     env.update(SCENARIO_ENV.get(name, {}))
+    music_log = os.path.join(RUN, "music.log")
+    if os.path.exists(music_log):
+        os.remove(music_log)
+    env["U5_MUSIC_LOG"] = music_log
     for s in shots:
         p = os.path.join(RUN, s)
         if os.path.exists(p):
@@ -329,6 +336,11 @@ def run_scenario(name, keys, shots, timeout, golden=None, update=None):
                 return "screenshot %s differs from golden" % s
         elif update is not None:
             update[s] = screen_hash(p)
+    events = open(music_log).read().splitlines() if os.path.exists(music_log) else []
+    if MUSIC["update"] is not None:
+        MUSIC["update"][name] = events
+    elif name in MUSIC["golden"] and MUSIC["golden"][name] != events:
+        return "music cues differ from golden: %s (expected %s)" % (events, MUSIC["golden"][name])
     return None
 
 
@@ -344,6 +356,9 @@ def main():
     subprocess.run([sys.executable, os.path.join(ROOT, "tools", "u5tool.py"), "rundir", args.game_dir, RUN], check=True)
 
     golden = json.load(open(GOLDEN)) if os.path.exists(GOLDEN) else {}
+    MUSIC["golden"] = json.load(open(MUSIC_GOLDEN)) if os.path.exists(MUSIC_GOLDEN) else {}
+    if args.update_golden:
+        MUSIC["update"] = {}
     update = {} if args.update_golden else None
     failed = 0
     for name in args.scenarios or SCENARIOS:
@@ -416,6 +431,8 @@ def main():
     if update:
         golden.update(update)
         json.dump(golden, open(GOLDEN, "w"), indent=1, sort_keys=True)
+        MUSIC["golden"].update(MUSIC["update"])
+        json.dump(MUSIC["golden"], open(MUSIC_GOLDEN, "w"), indent=1, sort_keys=True)
         print("recorded %d golden hashes" % len(update))
     sys.exit(1 if failed else 0)
 

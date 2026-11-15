@@ -11,6 +11,7 @@
 #include "dungeon.h"
 #include "endgame.h"
 #include "audio/aud_mus.h"
+#include "audio/u5music.h"
 
 void DNGLOOK_109e(int param_1);
 
@@ -1023,7 +1024,13 @@ void DUNGEON_0e2e_MainLoop(int param_1)
 
     if (local_10 < 0)
     {
+#if defined(ENABLE_U5_MUSIC)
+        U5MUSIC_Stop(); // upgrade wrapper +e7c
+#endif
         BLCKTHRN_0910_Death();
+#if defined(ENABLE_U5_MUSIC)
+        U5MUSIC_AutoOn();
+#endif
     }
 }
 

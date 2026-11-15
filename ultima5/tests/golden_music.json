@@ -1,0 +1,262 @@
+{
+ "abbey": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start FANFARE"
+ ],
+ "blackthorn": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start BLCKTHRN",
+  "stop",
+  "stop",
+  "start BLCKTHRN"
+ ],
+ "boot": [],
+ "britain": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start TRNTLLA"
+ ],
+ "capture": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start MONARCH",
+  "stop",
+  "start ENGGMNT",
+  "stop",
+  "stop",
+  "start MONARCH"
+ ],
+ "carpet": [
+  "stop",
+  "start BRITLAND"
+ ],
+ "combat": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start FANFARE",
+  "stop",
+  "start ENGGMNT"
+ ],
+ "commands": [
+  "stop",
+  "start GREYSON"
+ ],
+ "create": [
+  "stop",
+  "start THEME",
+  "stop",
+  "start AMIGA",
+  "stop",
+  "start THEME",
+  "stop",
+  "start GREYSON"
+ ],
+ "cspells": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start FANFARE",
+  "stop",
+  "start ENGGMNT"
+ ],
+ "death": [
+  "stop",
+  "stop",
+  "start MONARCH"
+ ],
+ "dspells": [
+  "stop",
+  "start HALLS",
+  "stop",
+  "start STONES",
+  "stop",
+  "start HALLS"
+ ],
+ "dungeon": [
+  "stop",
+  "start HALLS"
+ ],
+ "dwalk": [
+  "stop",
+  "start HALLS",
+  "stop",
+  "start ENGGMNT",
+  "stop",
+  "start HALLS",
+  "stop",
+  "start ENGGMNT",
+  "stop",
+  "start HALLS",
+  "stop",
+  "start ENGGMNT",
+  "stop",
+  "start HALLS"
+ ],
+ "endgame": [
+  "stop",
+  "start REUNION",
+  "stop",
+  "start STONES",
+  "stop",
+  "start LADYNAN"
+ ],
+ "guild": [
+  "stop",
+  "start TRNTLLA"
+ ],
+ "healer": [
+  "stop",
+  "start TRNTLLA"
+ ],
+ "herbalist": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start TRNTLLA"
+ ],
+ "horse": [
+  "stop",
+  "start BRITLAND"
+ ],
+ "horses": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start TRNTLLA"
+ ],
+ "inn": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start TRNTLLA"
+ ],
+ "inn-leave": [
+  "stop",
+  "start TRNTLLA"
+ ],
+ "inn-pickup": [
+  "stop",
+  "start TRNTLLA"
+ ],
+ "intro-menus": [
+  "stop",
+  "start THEME"
+ ],
+ "journey": [
+  "stop",
+  "start BRITLAND"
+ ],
+ "look": [
+  "stop",
+  "start GREYSON"
+ ],
+ "lookaround": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start TRNTLLA"
+ ],
+ "overworld": [
+  "stop",
+  "start GREYSON",
+  "stop",
+  "start BRITLAND"
+ ],
+ "play": [
+  "stop",
+  "start GREYSON"
+ ],
+ "reagents": [
+  "stop",
+  "start TRNTLLA"
+ ],
+ "sail": [
+  "stop",
+  "start HORNPIPE"
+ ],
+ "ship": [
+  "stop",
+  "start HORNPIPE",
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start HORNPIPE",
+  "stop",
+  "start BRITLAND"
+ ],
+ "shipwright": [
+  "stop",
+  "start TRNTLLA"
+ ],
+ "shipwright-poor": [
+  "stop",
+  "start TRNTLLA"
+ ],
+ "shipwright-skiff": [
+  "stop",
+  "start TRNTLLA"
+ ],
+ "shop": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start TRNTLLA"
+ ],
+ "shrine": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start STONES",
+  "stop",
+  "start BRITLAND"
+ ],
+ "skiff": [
+  "stop",
+  "start BRITLAND"
+ ],
+ "spells": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start TRNTLLA"
+ ],
+ "stats": [
+  "stop",
+  "start GREYSON"
+ ],
+ "talk": [
+  "stop",
+  "start FANFARE"
+ ],
+ "tavern": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start TRNTLLA"
+ ],
+ "tavern2": [
+  "stop",
+  "start TRNTLLA"
+ ],
+ "twalk": [
+  "stop",
+  "start BRITLAND",
+  "stop",
+  "start MONARCH"
+ ],
+ "use": [
+  "stop",
+  "start BRITLAND"
+ ],
+ "viewgem": [
+  "stop",
+  "start BRITLAND"
+ ]
+}

@@ -45,26 +45,30 @@ whatever is left in AX; the C keeps the shape of the original. They affect calle
 
 ## Decision: what ScummVM exposes
 
-Agreed with the project owner: **only the three options below are exposed to the player, and all of them are ON by default.** Music is not an option: it is picked up automatically when the data is present (see below). Every other row
-above (silent robustness fixes, entries needing no change, and the modern-build features) is simply applied, with no option.
+Agreed with the project owner: **only the options below are exposed to the player, and all of them are ON by default.** Ultima V gets a
+single detection entry (no separate "original" entry as the earlier Ultima engines had for their fan packs); the options can be turned
+off for the original experience. Every other row above (silent robustness fixes, entries needing no change, and the modern-build
+features) is simply applied, with no option.
 
 | option | rows covered | default |
 |---|---|---|
 | Armour fix | `armour_works`, `equip_def_refresh` | on |
 | Shop price fix | `shop_price_overflow` | on |
 | Spell and vermin fixes | `spell_pass_aborts`, `begone_vermin_hostile` | on |
+| Music (XMI) | the Ultima V Upgrade's music cues, see [u5upgrade_music.md](u5upgrade_music.md) | on (needs the XMI files in the game folder) |
 
 `xit_anywhere` and `conflict_message` are also applied without an option (decided with the rest of the "just apply" group).
 
 ### Music
 
-Music is supported automatically, with no player-visible option: if the music data is found in the game folder the engine plays it,
-otherwise the game stays silent apart from the PC-speaker effects. The sources' `ENABLE_BGM` code plays **FM Towns CD-audio tracks** (`audio/aud_cdda.c`); nothing in `src/` reads XMI/MIDI. The IBM 1.16
-install used for this audit has no music data at all (its only drivers are the four video drivers `CGA/EGA/HER/T1K.DRV`), and the
-u5d `GOG_BUILD` patches only remove the disk-swap prompts, which suggests the GOG executable has no music driver either. **Whether the
-GOG package ships music files has not been checked** (no GOG install was available to inspect). The fan upgrade pack's XMI music is a
-separate source. So the engine should detect music data supplied with the game files (FM Towns tracks, and possibly XMI) and play it when present;
-which formats and which per-map track list to support is a ScummVM-thread decision.
+The music source is the *Exodus Project Ultima V Upgrade*: 16 XMI files that the upgrade's patched game code starts at fixed points of the
+game. Its game-side driver and all call sites have been analysed and are in the C sources (`src/audio/u5music.[ch]`, enabled by
+`ENABLE_U5_MUSIC`); the music option simply turns those calls on or off, and the engine needs an XMI player behind `U5MusicHost`.
+The upgrade only adds music (the main user-interface differences it makes are a forced EGA mode and an exit key, neither is ported).
+
+The FM Towns CD-audio code (`ENABLE_BGM`, `audio/aud_cdda.c`) is a different, older source of music from the u5d sources with its own
+call sites; it is not part of this option and can be dropped for ScummVM unless FM Towns data is ever to be supported. The IBM 1.16 and the
+GOG packages as inspected here carry no music files (only the upgrade does).
 
 ## Still to verify against the binary
 

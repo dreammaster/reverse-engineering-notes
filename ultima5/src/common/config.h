@@ -16,6 +16,9 @@
 // Enable BGM
 //#define ENABLE_BGM 1
 
+// Enable the XMI music cues of the Exodus Project Ultima V Upgrade (audio/u5music.h)
+//#define ENABLE_U5_MUSIC 1
+
 // Enable speed fixes for modern build
 //#define ENABLE_SPEED_FIX 1
 
@@ -30,6 +33,7 @@
 
 #if !defined(TARGET_DOS16)
 #define ENABLE_BGM 1
+#define ENABLE_U5_MUSIC 1
 #define ENABLE_SPEED_FIX 1
 #define ENABLE_BUG_FIX 1
 //#define ENABLE_TRANSLATION 1
