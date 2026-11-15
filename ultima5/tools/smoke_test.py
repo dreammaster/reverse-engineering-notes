@@ -131,6 +131,12 @@ SCENARIOS = {
                "{shot:horse_bought.png}{quit}", ["horse_greet.png", "horse_price.png", "horse_bought.png"], 300),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
+# gate-bt-weak = at the Palace of Blackthorn on the overworld with a 1 HP party: {go} into the palace gets the party caught by the guards
+# and Blackthorn asks for the mantra of Honesty (the BLCKTHRN capture sequence); AHM is the right answer
+SCENARIOS["blackthorn"] = ("j{sleep:6000}e{sleep:9000}{shot:bt_gate.png}{go:21,25}{sleep:3000}{shot:bt_guards.png}{space}{sleep:2500}{space}{sleep:2500}{shot:bt_question.png}"
+                           "ahm{enter}{sleep:3000}{shot:bt_answer.png}{space}{sleep:3000}{shot:bt_after.png}{quit}",
+                           ["bt_gate.png", "bt_guards.png", "bt_question.png", "bt_answer.png", "bt_after.png"], 600)
+
 # U5_ENDGAME=1 (test hook in ultima.c) plays the ending right after the intro; the fixture is any strong party
 SCENARIOS["endgame"] = ("j{sleep:4000}{shot:end0.png}{space}{sleep:2000}{shot:end1.png}y{sleep:6000}{shot:end2.png}" + "".join("{space}{sleep:3000}{shot:end%d.png}" % n for n in range(3, 14)) + "{quit}", ["end%d.png" % n for n in range(14)], 400)
 
@@ -306,6 +312,8 @@ def main():
             install_fixture("gate-dead")
         elif name == "endgame":
             install_fixture("gate-items")
+        elif name == "blackthorn":
+            install_fixture("gate-bt-weak")
         elif name == "shrine":
             install_fixture("gate-compassion")
         elif name == "dungeon":
