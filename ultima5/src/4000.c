@@ -241,8 +241,9 @@ byte* ULTIMA_4402_GetTileAddr(int x, int y)
 		// 440f
         // There are cases where y < 0. original bug
 #if !defined(MATCHING_BUILD)
-		ASSERT(x >= 0 && x < 0xb && y < 0xb);
-		if (y < 0)
+		// the original does no checking at all: a neighbour cell (x = -1 or 11) reads the adjacent byte of the 32-wide map,
+		// only an offset outside the map itself is replaced by a dummy byte
+		if (y * 0x20 + x < 0 || y * 0x20 + x >= 0x400)
 			return &D_6a07; // return unused byte
 #endif
 

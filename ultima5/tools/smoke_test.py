@@ -39,6 +39,15 @@ SPELLS_DUNGEON = [("IL", ""), ("AZ", "1{enter}"), ("AN", "1{enter}"), ("M", "1{e
                   ("GIN", ""), ("GIZ", ""), ("AG", ""), ("IS", ""), ("GIS", ""), ("DP", ""), ("MV", "1{enter}"), ("RT", ""), ("AI", ""),
                   ("IQW", ""), ("CIM", "1{enter}"), ("AT", ""), ("PU", "")]
 
+# combat: the abbey fight with Negate Time poked in (guards cannot "interfere"); each spell is followed by passes for the other party members
+_D = "{left}"
+_A = "{up}{up}{up}{enter}"
+SPELLS_COMBAT = [("GP", _A), ("AZ", "1{enter}"), ("AN", "1{enter}"), ("M", "1{enter}"), ("AY", _D), ("AS", _D), ("ACX", ""), ("KX", ""), ("IMX", ""),
+                 ("FV", _A), ("FGI", _A), ("GIN", _A), ("GIZ", _A), ("IP", ""), ("AG", _D), ("IS", ""), ("GIS", _A), ("QW", ""), ("BIX", ""),
+                 ("AEP", _D), ("EIP", _D), ("MV", "1{enter}"), ("IZ", _D), ("RT", ""), ("IPVY", ""), ("AQW", ""), ("AI", ""), ("AEX", _A),
+                 ("BRX", _A), ("LS", ""), ("CX", _A), ("IQX", _A), ("HIN", _D), ("CIQ", ""), ("CKX", ""), ("CGIV", _D),
+                 ("FHI", _D), ("AT", "")]
+
 SCENARIOS = {
     "boot": ("{sleep:500}{shot:boot.png}{quit}", ["boot.png"], 120),
     # 'J' at the very first key poll is the original "Journey Onward" shortcut; the pristine SAVED.GAM has no
@@ -122,6 +131,11 @@ SCENARIOS = {
                "{shot:horse_bought.png}{quit}", ["horse_greet.png", "horse_price.png", "horse_bought.png"], 300),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
+_COMBAT_PRE = "j{sleep:6000}{left}{sleep:2000}e{sleep:8000}" + "{up}{sleep:700}" * 4 + "{left}{sleep:700}a{sleep:500}{left}{sleep:6000}"
+SCENARIOS["cspells"] = (_COMBAT_PRE + "".join("c{sleep:800}%s{enter}{sleep:1500}%s{sleep:1500}{space}{sleep:600}{space}{sleep:600}{space}{sleep:600}%s" % (sp, x, "{shot:csp%d.png}" % i if i % 4 == 0 else "")
+                                              for i, (sp, x) in enumerate(SPELLS_COMBAT)) + "{shot:csp_end.png}{quit}",
+                        ["csp%d.png" % i for i in range(0, len(SPELLS_COMBAT), 4)] + ["csp_end.png"], 1200)
+
 SCENARIOS["dspells"] = ("j{sleep:7000}" + "".join("%s{sleep:1500}{shot:dpre%d.png}" % (c, i) for i, c in enumerate(DUNGEON_PRE)) +
                        "".join("c{sleep:700}1{enter}{sleep:700}%s{enter}{sleep:1500}%s{sleep:1500}{shot:dsp%d.png}" % (sp, x, i)
                                for i, (sp, x) in enumerate(SPELLS_DUNGEON)) + "{quit}",
@@ -273,6 +287,8 @@ def main():
             install_fixture("gate-items")
         elif name == "dspells":
             install_fixture("dungeon-caster")
+        elif name == "cspells":
+            install_fixture("abbey-caster")
         elif name == "shrine":
             install_fixture("gate-compassion")
         elif name == "dungeon":
