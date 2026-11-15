@@ -131,6 +131,15 @@ SCENARIOS = {
                "{shot:horse_bought.png}{quit}", ["horse_greet.png", "horse_price.png", "horse_bought.png"], 300),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
+# U5_ENDGAME=1 (test hook in ultima.c) plays the ending right after the intro; the fixture is any strong party
+SCENARIOS["endgame"] = ("j{sleep:4000}{shot:end0.png}{space}{sleep:2000}{shot:end1.png}y{sleep:6000}{shot:end2.png}" + "".join("{space}{sleep:3000}{shot:end%d.png}" % n for n in range(3, 14)) + "{quit}", ["end%d.png" % n for n in range(14)], 400)
+
+# gate-lb = at the door of the Castle of Lord British; attacking a guard inside gets the party captured by Blackthorn (BLCKTHRN Capture)
+_CAP_RND = "a{sleep:500}{left}{sleep:2500}" + "{space}{sleep:1200}" * 3
+SCENARIOS["capture"] = ("j{sleep:6000}e{sleep:9000}{up}{sleep:800}{up}{sleep:800}{left}{sleep:800}a{sleep:600}{left}{sleep:3000}" + _CAP_RND * 10 + "{shot:capture.png}{quit}", ["capture.png"], 900)
+# gate-dead = whole party dead on the overworld: one move triggers the Death sequence and the rescue
+SCENARIOS["death"] = ("j{sleep:6000}{left}{sleep:3000}{shot:death1.png}{sleep:8000}{shot:death2.png}{quit}", ["death1.png", "death2.png"], 300)
+
 _COMBAT_PRE = "j{sleep:6000}{left}{sleep:2000}e{sleep:8000}" + "{up}{sleep:700}" * 4 + "{left}{sleep:700}a{sleep:500}{left}{sleep:6000}"
 SCENARIOS["cspells"] = (_COMBAT_PRE + "".join("c{sleep:800}%s{enter}{sleep:1500}%s{sleep:1500}{space}{sleep:600}{space}{sleep:600}{space}{sleep:600}%s" % (sp, x, "{shot:csp%d.png}" % i if i % 4 == 0 else "")
                                               for i, (sp, x) in enumerate(SPELLS_COMBAT)) + "{shot:csp_end.png}{quit}",
@@ -227,6 +236,8 @@ def install_fixture(name):
 
 def run_scenario(name, keys, shots, timeout, golden=None, update=None):
     env = dict(os.environ, U5_HEADLESS="1", U5_FAST="1", U5_SEED="7", U5_VCLOCK="1", U5_KEYS=keys)
+    if name == "endgame":
+        env["U5_ENDGAME"] = "1"
     for s in shots:
         p = os.path.join(RUN, s)
         if os.path.exists(p):
@@ -289,6 +300,12 @@ def main():
             install_fixture("dungeon-caster")
         elif name == "cspells":
             install_fixture("abbey-caster")
+        elif name == "capture":
+            install_fixture("gate-lb")
+        elif name == "death":
+            install_fixture("gate-dead")
+        elif name == "endgame":
+            install_fixture("gate-items")
         elif name == "shrine":
             install_fixture("gate-compassion")
         elif name == "dungeon":

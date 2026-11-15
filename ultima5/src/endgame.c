@@ -3,9 +3,11 @@
 #include "vars.h"
 #include "macros.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "audio/aud_mus.h"
+#include "key/key.h"
 
 #include "endgame.h"
 #include "font.h"
@@ -299,6 +301,7 @@ static void ENDGAME_0326(void)
         // infinite loop
 #if !defined(TARGET_DOS16)
         ULTIMA_20fa_WaitTicks(1);
+        KEY_PollKey(); // lets the key script (screenshots, quit) run on the final screen
 #endif
         local_4++;
     } while (1);

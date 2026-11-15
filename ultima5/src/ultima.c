@@ -14,6 +14,7 @@
 #endif
 
 #include "dungeon.h"
+#include "endgame.h"
 #include "intro.h"
 #include "mainout.h"
 #include "outsubs.h"
@@ -91,6 +92,25 @@ int CDECL main(int argc, char** argv/*, char** envp*/)
 
 #if !defined(TARGET_DOS16)
     g_enableDebugOverlay = 1;
+#endif
+
+#if !defined(TARGET_DOS16)
+    // test hook (not in the original): U5_ENDGAME=1 plays the ending sequence straight away
+    if (getenv("U5_ENDGAME"))
+    {
+        // the party arrives from the final combat, so start its actors at combat-map positions
+        for (int i = 0; i < 8; i++)
+        {
+            D_5c5a[i]._2_x = 5;
+            D_5c5a[i]._3_y = 9;
+        }
+        D_5893_map_id = 0xff; // the combat map, as set by the dungeon code before the final fight
+        D_58a1 = 0x82;
+        D_5896_map_x = 5;
+        D_5897_map_y = 9;
+        ENDGAME_0648_EndgameMain();
+        return 0;
+    }
 #endif
 
     local_8 = 0;
