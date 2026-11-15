@@ -19,6 +19,7 @@
 #include "mainout.h"
 #include "outsubs.h"
 #include "town.h"
+#include "talk.h"
 
 #if !defined(TARGET_DOS16)
 extern int g_enableDebugOverlay;
@@ -135,6 +136,14 @@ int CDECL main(int argc, char** argv/*, char** envp*/)
             if (D_5893_map_id < 0x21)
             {
                 TOWN_11f0_Entry(local_2 != 0 || local_8 != 0);
+#if !defined(TARGET_DOS16)
+                // test hook (not in the original): U5_MERCHANT=n starts the shop conversation of dialog n on arrival
+                if (getenv("U5_MERCHANT") && *getenv("U5_MERCHANT"))
+                {
+                    TALK_TestMerchant(atoi(getenv("U5_MERCHANT")));
+                    _putenv("U5_MERCHANT=");
+                }
+#endif
                 TOWN_141e_MainLoop();
                 local_8 = 0;
             }

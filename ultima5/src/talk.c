@@ -249,6 +249,13 @@ static int TALK_01e2(void)
     }
 }
 
+#if !defined(TARGET_DOS16)
+void TALK_TestMerchant(int param_1)
+{
+    TALK_00e6_TalkToMerchant(param_1);
+}
+#endif
+
 // CHECKED
 // talk to npc
 int TALK_031e_TalkToNpc(int param_1)

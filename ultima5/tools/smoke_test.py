@@ -48,6 +48,8 @@ SPELLS_COMBAT = [("GP", _A), ("AZ", "1{enter}"), ("AN", "1{enter}"), ("M", "1{en
                  ("BRX", _A), ("LS", ""), ("CX", _A), ("IQX", _A), ("HIN", _D), ("CIQ", ""), ("CKX", ""), ("CGIV", _D),
                  ("FHI", _D), ("AT", "")]
 
+SCENARIO_ENV = {}  # extra environment per scenario (U5_MERCHANT: see TALK_TestMerchant)
+
 SCENARIOS = {
     "boot": ("{sleep:500}{shot:boot.png}{quit}", ["boot.png"], 120),
     # 'J' at the very first key poll is the original "Journey Onward" shortcut; the pristine SAVED.GAM has no
@@ -131,6 +133,21 @@ SCENARIOS = {
                "{shot:horse_bought.png}{quit}", ["horse_greet.png", "horse_price.png", "horse_bought.png"], 300),
     "journey": ("j{sleep:1500}{shot:noactive.png}{quit}", ["noactive.png"], 120),
 }
+# shop conversations started directly with the U5_MERCHANT test hook (the merchants of Minoc/Skara Brae are awkward to walk to):
+# fixtures put the party in the town (map 5 = Minoc, 8 = Skara Brae); gate-minoc-hurt has a poisoned, a dead and a wounded member and 999 gold,
+# gate-minoc-rich has 5000 gold, INT 20 (INT 40 makes the original price formula overflow)
+def _merchant(name, dlg, fixture, body, shots):
+    SCENARIOS[name] = ("j{sleep:6000}" + body + "{quit}", ["%s%d.png" % (name, i) for i in range(1, shots + 1)], 400)
+    SCENARIO_ENV[name] = {"U5_MERCHANT": str(dlg)}
+    MERCHANT_FIXTURES[name] = fixture
+
+MERCHANT_FIXTURES = {}
+_merchant("healer", 135, "gate-minoc-hurt", "y{sleep:2500}c{sleep:2500}1{enter}{sleep:2500}{shot:healer1.png}y{sleep:2500}h{sleep:2500}3{enter}{sleep:2500}{shot:healer2.png}y{sleep:2500}r{sleep:2500}2{enter}{sleep:2500}{shot:healer3.png}y{sleep:2500}{shot:healer4.png}n{sleep:2500}{shot:healer5.png}", 5)
+_merchant("shipwright", 132, "gate-minoc-rich", "y{sleep:2500}f{sleep:2500}{shot:shipwright1.png}y{sleep:3000}{shot:shipwright2.png}", 2)
+_merchant("shipwright-skiff", 132, "gate-minoc-rich", "y{sleep:2500}s{sleep:2500}{shot:shipwright-skiff1.png}y{sleep:3000}{shot:shipwright-skiff2.png}", 2)
+_merchant("shipwright-poor", 132, "gate-minoc-hurt2", "y{sleep:2500}f{sleep:2500}y{sleep:3000}{shot:shipwright-poor1.png}", 1)
+_merchant("guild", 134, "gate-town8-in2", "y{sleep:2500}a{sleep:2500}{shot:guild1.png}y{sleep:2500}{shot:guild2.png}b{sleep:2500}{shot:guild3.png}y{sleep:2500}c{sleep:2500}y{sleep:2500}{shot:guild4.png}n{sleep:2500}{shot:guild5.png}", 5)
+
 # gate-bt-weak = at the Palace of Blackthorn on the overworld with a 1 HP party: {go} into the palace gets the party caught by the guards
 # and Blackthorn asks for the mantra of Honesty (the BLCKTHRN capture sequence); AHM is the right answer
 SCENARIOS["blackthorn"] = ("j{sleep:6000}e{sleep:9000}{shot:bt_gate.png}{go:21,25}{sleep:3000}{shot:bt_guards.png}{space}{sleep:2500}{space}{sleep:2500}{shot:bt_question.png}"
@@ -244,6 +261,7 @@ def run_scenario(name, keys, shots, timeout, golden=None, update=None):
     env = dict(os.environ, U5_HEADLESS="1", U5_FAST="1", U5_SEED="7", U5_VCLOCK="1", U5_KEYS=keys)
     if name == "endgame":
         env["U5_ENDGAME"] = "1"
+    env.update(SCENARIO_ENV.get(name, {}))
     for s in shots:
         p = os.path.join(RUN, s)
         if os.path.exists(p):
@@ -314,6 +332,8 @@ def main():
             install_fixture("gate-items")
         elif name == "blackthorn":
             install_fixture("gate-bt-weak")
+        elif name in MERCHANT_FIXTURES:
+            install_fixture(MERCHANT_FIXTURES[name])
         elif name == "shrine":
             install_fixture("gate-compassion")
         elif name == "dungeon":
