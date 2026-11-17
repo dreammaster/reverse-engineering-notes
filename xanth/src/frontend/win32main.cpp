@@ -116,6 +116,10 @@ LRESULT CALLBACK proc(HWND w, UINT msg, WPARAM wp, LPARAM lp) {
 		if (g_app.ui->quitRequested())
 			DestroyWindow(w);
 		return 0;
+	case WM_LBUTTONDBLCLK:
+		g_app.ui->doubleClick((short)LOWORD(lp) / kScale, (short)HIWORD(lp) / kScale);
+		g_app.repaint();
+		return 0;
 	case WM_TIMER:
 		g_app.tick();
 		return 0;
@@ -158,6 +162,7 @@ int main(int argc, char **argv) {
 
 	WNDCLASSA wc;
 	memset(&wc, 0, sizeof(wc));
+	wc.style = CS_DBLCLKS;
 	wc.lpfnWndProc = proc;
 	wc.hInstance = GetModuleHandle(NULL);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);

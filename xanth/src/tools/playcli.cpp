@@ -81,7 +81,26 @@ int main(int argc, char **argv) {
 		std::string op;
 		int x = 0, y = 0;
 		a >> op >> x >> y;
-		if (op == "q") {
+		if (op == "f") {                       // "f N SEED": N random clicks (a robustness test: the game must neither crash nor hang)
+			unsigned seed = (unsigned)y ? (unsigned)y : 1u;
+			for (int k = 0; k < x; k++) {
+				seed = seed * 1103515245u + 12345u;
+				int cx = (int)((seed >> 8) % 320u);
+				seed = seed * 1103515245u + 12345u;
+				int cy = (int)((seed >> 8) % 200u);
+				if (k % 3 == 0) {                           // a verb, then a point of the room picture or the inventory
+					ui.click(20, 4 + 10 * (int)((seed >> 12) % 7u));
+					cx = 51 + (int)((seed >> 4) % 264u);
+					cy = (seed >> 3) % 5u == 0 ? 152 + (int)((seed >> 9) % 44u) : 4 + (int)((seed >> 9) % 122u);
+				} else if (k % 7 == 3) {                    // the compass
+					cx = 8 + (int)((seed >> 5) % 36u);
+					cy = 132 + (int)((seed >> 9) % 34u);
+				}
+				ui.click(cx, cy);
+				if (ui.quitRequested())
+					break;
+			}
+		} else if (op == "q") {
 			Xanth::InputEvent e;
 			e.type = Xanth::InputEvent::Click;
 			e.x = x;

@@ -26,6 +26,8 @@ public:
 
 	/** Where saved games are written and read (the game folder by default); without it Save and Restore do nothing. */
 	void setSaveFiles(const Common::GameFiles *files) { _files = files; }
+	/** A double click: the thing under the pointer gets its default verb (what the sentence line shows while hovering). */
+	void doubleClick(int x, int y);
 	/** True once the player chose Quit. */
 	bool quitRequested() const { return _quit; }
 
@@ -36,6 +38,11 @@ private:
 	void execute(int dobj, int iobj);
 	std::string shortName(int obj);
 	void diskMenu();
+	std::vector<int> verbsOf(int obj);
+	void showObjectVerbs(int obj);
+	void undo();
+	Common::Bytes _undoState;
+	bool _canUndo;
 	void saveGame();
 	void restoreGame();
 	std::string slotName(int slot) const;
@@ -44,7 +51,8 @@ private:
 
 	Game &_game;
 	Display &_display;
-	std::vector<int> _verbIds;
+	std::vector<int> _verbIds, _extraIds;      // the usual verb list and the verbs of the clicked thing
+	int _pendingObj;                           // the thing clicked while no verb was chosen
 	int _selected;               // index into _verbIds, -1 = none
 	int _verb, _dobj;
 };

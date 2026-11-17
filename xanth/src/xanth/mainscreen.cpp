@@ -90,6 +90,11 @@ void MainScreen::drawCompassArrows(Surface &s, unsigned exits) const {
 			pic(s, _arrows[i], 4, 129);
 }
 
+void MainScreen::drawVerbLine(Surface &s, const std::string &text, int y, bool selected) const {
+	_font1.drawText(s, 2 + 1, y + 1, text, 0);
+	_font1.drawText(s, 2, y, text, selected ? 16 : 15);
+}
+
 void MainScreen::printMessage(Surface &s, const std::string &text) const {
 	TextWindow w;
 	w.setup(51, 128, 314, 151, &_font10, 15, 23);

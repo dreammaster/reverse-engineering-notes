@@ -30,6 +30,8 @@ public:
 
 	/** The verb list (the selected verb is yellow): each name twice, black one pixel down and to the right and white on top (sub_18CBE, font 1). */
 	void drawVerbs(Legend::Surface &s, const std::vector<std::string> &verbs, int selected = -1) const;
+	/** One line of the verb column at height y (shadow, then white or, if selected, yellow). */
+	void drawVerbLine(Legend::Surface &s, const std::string &text, int y, bool selected) const;
 	/** The text window (window 2, font 10, colours 15 on 23): prints a message like Font_WriteLines does. */
 	void printMessage(Legend::Surface &s, const std::string &text) const;
 	const Legend::Font &font10() const { return _font10; }

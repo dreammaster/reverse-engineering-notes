@@ -7,7 +7,7 @@
 
 namespace Xanth {
 
-Interface::Interface(Game &game, Display &display) : _game(game), _display(display), _files(NULL), _quit(false), _selected(-1), _verb(0), _dobj(0) {
+Interface::Interface(Game &game, Display &display) : _game(game), _display(display), _files(NULL), _quit(false), _canUndo(false), _pendingObj(0), _selected(-1), _verb(0), _dobj(0) {
 	_verbIds = initialVerbs();
 }
 
@@ -49,6 +49,8 @@ void Interface::move(int x, int y) {
 			if (info && info->preposition)
 				line += std::string(" ") + info->preposition;
 		}
+		if (!obj && _pendingObj && !_dobj)
+			obj = _pendingObj;
 		if (obj && info && info->objects > 0)
 			line += " " + shortName(obj);
 		name = line;
@@ -56,17 +58,67 @@ void Interface::move(int x, int y) {
 	_display.setHoverName(name);
 }
 
+/** The verbs listed for a thing (the list its record points to in the original's table): its own, usually the special ones like "Push". */
+std::vector<int> Interface::verbsOf(int obj) {
+	std::vector<int> out;
+	if (!_game.state.objects.valid(obj))
+		return out;
+	const byte *r = _game.state.objects.record(obj);
+	int type = _game.state.objects.type(obj), at = type == 2 ? 0x18 : type == 4 ? 0x0A : (type == 3 || type == 5) ? 0x1C : -1;
+	if (at < 0)
+		return out;
+	unsigned idx = r[at] | (r[at + 1] << 8);
+	if (!idx)
+		return out;
+	for (int i = 0; i < 16; i++) {
+		int w = _game.exe16(0x3000, (int)(0x4624 + idx * 2 + 2 + i * 2));
+		if (!w)
+			break;
+		out.push_back(w);
+	}
+	return out;
+}
+
+void Interface::showObjectVerbs(int obj) {
+	_pendingObj = obj;
+	_extraIds = verbsOf(obj);
+	std::vector<std::string> names;
+	for (size_t i = 0; i < _extraIds.size(); i++) {
+		const VerbInfo *v = findVerb(_extraIds[i]);
+		names.push_back(v ? v->name : "?");
+	}
+	_display.setExtraVerbs(names);
+	_verb = 0;
+	int def = _game.object_get_default_verb(obj);      // the thing's usual verb is chosen already
+	for (size_t i = 0; i < _extraIds.size(); i++)
+		if (_extraIds[i] == def) {
+			_verb = def;
+			_display.selectVerb(100 + (int)i);
+		}
+	for (size_t i = 0; i < _verbIds.size() && !_verb; i++)
+		if (_verbIds[i] == def) {
+			_verb = def;
+			_display.selectVerb((int)i);
+		}
+}
+
 void Interface::click(int x, int y) {
 	move(x, y);
 	int v = _display.verbAt(x, y);
 	if (v >= 0) {
 		_selected = v;
-		_verb = _verbIds[v];
+		_verb = v < 100 ? _verbIds[v] : _extraIds[v - 100];
 		_dobj = 0;
 		_display.selectVerb(v);
 		const VerbInfo *info = findVerb(_verb);
-		if (info && info->objects == 0)       // a verb without objects ("Look") is a complete sentence
+		if (info && info->objects == 0) {       // a verb without objects ("Look") is a complete sentence
 			execute(0, 0);
+		} else if (_pendingObj) {                // a thing was clicked first: it is the (first) object
+			if (info && info->objects == 2)
+				_dobj = _pendingObj;
+			else
+				execute(_pendingObj, 0);
+		}
 		move(x, y);                           // the sentence line shows the verb
 		return;
 	}
@@ -81,6 +133,11 @@ void Interface::click(int x, int y) {
 		diskMenu();
 		return;
 	}
+	if (x >= 25 && x <= 45 && y >= 182 && y <= 195) {      // UNDO
+		undo();
+		_display.pressButton(3);
+		return;
+	}
 	int arrow = _display.compassAt(x, y);
 	if (arrow >= 0) {
 		_verb = 0x51;                               // walk: the direction code is the arrow number + 1
@@ -92,8 +149,13 @@ void Interface::click(int x, int y) {
 	int obj = _display.inventoryObjectAt(x, y);
 	if (!obj)
 		obj = _display.objectAt(x, y, true);
-	if (!obj || !_verb)
+	if (!obj)
 		return;
+	if (!_verb) {                                // no verb yet: the thing's own verbs are listed
+		showObjectVerbs(obj);
+		move(x, y);
+		return;
+	}
 	const VerbInfo *info = findVerb(_verb);
 	bool two = info && info->objects == 2;
 	if (two && !_dobj) {
@@ -107,6 +169,30 @@ std::string Interface::slotName(int slot) const {
 	char b[24];
 	snprintf(b, sizeof(b), "XANTH_%02d.SAV", slot);
 	return b;
+}
+
+void Interface::undo() {
+	_display.beginCommand();
+	if (!_canUndo) {
+		_game.Font_WriteMessage("[You can't use \"undo\" after that.]");
+		return;
+	}
+	if (_game.state.load(_undoState)) {
+		_canUndo = false;
+		_game.RoomItem_Draw(0x10);
+		_game.Font_WriteMessage(" [Undone.]");
+	}
+}
+
+void Interface::doubleClick(int x, int y) {
+	int obj = _display.inventoryObjectAt(x, y);
+	if (!obj)
+		obj = _display.objectAt(x, y);
+	if (!obj)
+		return;
+	int verb = _game.object_get_default_verb(obj);
+	_verb = verb ? verb : 19;                         // LOOK_AT when the thing has no default verb
+	execute(obj, 0);
 }
 
 void Interface::diskMenu() {
@@ -193,12 +279,17 @@ void Interface::restoreGame() {
 }
 
 void Interface::execute(int dobj, int iobj) {
+	_game.state.save(_undoState);               // every command can be undone: the state before it is kept
+	_canUndo = true;
 	_display.beginCommand();
 	_display.selectVerb(-1);
 	_game.executeCommand(_verb, dobj, iobj);
 	_verb = 0;
 	_dobj = 0;
 	_selected = -1;
+	_pendingObj = 0;
+	_extraIds.clear();
+	_display.setExtraVerbs(std::vector<std::string>());
 	move(_display.mouseX(), _display.mouseY());
 }
 

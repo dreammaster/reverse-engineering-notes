@@ -24,6 +24,7 @@ bool Display::init() {
 
 void Display::redrawAll() {
 	_ms.drawFrame(_screen);
+	_extraVerbs.clear();
 	_ms.drawVerbs(_screen, _verbs);
 	_expanded = false;
 	_turnText.clear();
@@ -164,16 +165,31 @@ void Display::pressButton(int button) {
 	_screen.put(kLeft[button], kBottom[button], 4);
 }
 
+void Display::setExtraVerbs(const std::vector<std::string> &verbs) {
+	_extraVerbs = verbs;
+	_ms.restoreMarble(_screen, 0, 80, 49, 127);
+	_selectedVerb = -1;
+	for (size_t i = 0; i < _extraVerbs.size(); i++)
+		_ms.drawVerbLine(_screen, _extraVerbs[i], 84 + 10 * (int)i, false);
+}
+
 void Display::selectVerb(int index) {
+	// the usual list (0..) and the extra one (100..): the chosen one is yellow, the rest white
 	_selectedVerb = index;
 	_ms.drawVerbs(_screen, _verbs, index);
+	for (size_t i = 0; i < _extraVerbs.size(); i++)
+		_ms.drawVerbLine(_screen, _extraVerbs[i], 84 + 10 * (int)i, index == 100 + (int)i);
 }
 
 int Display::verbAt(int x, int y) const {
 	if (x < 2 || x > 49 || y < 4)
 		return -1;
 	int row = (y - 4) / 10;
-	return row < (int)_verbs.size() ? row : -1;
+	if (row < (int)_verbs.size())
+		return row;
+	if (row >= 8 && row - 8 < (int)_extraVerbs.size())
+		return 100 + row - 8;
+	return -1;
 }
 
 // the small arrow cursor of the original (SMALL_ARROW_CURSOR): the usual DOS mouse masks, 16 words that are ANDed with the screen and 16 that are then XORed

@@ -69,6 +69,8 @@ public:
 	void pressButton(int button);
 	/** Marks a verb of the list (yellow) or none (-1). */
 	void selectVerb(int index);
+	/** The verbs of the thing that was clicked, shown below the usual list (one line of space between); indices from verbAt are 100 + position for these. */
+	void setExtraVerbs(const std::vector<std::string> &verbs);
 	/** The start of a command (execute_command): the text window is emptied (and shrunk again if it had grown). */
 	void beginCommand();
 	/** RoomItem_Draw(0x10): the whole interface, the room and the text window. */
@@ -118,7 +120,7 @@ private:
 	MainScreen _ms;
 	Legend::Surface _screen;
 	Legend::TextWindow _text;
-	std::vector<std::string> _verbs;
+	std::vector<std::string> _verbs, _extraVerbs;
 
 	int _picNum;                         // the room picture loaded (-1 = none)
 	Legend::PicImage _room;              // its picture and palette
