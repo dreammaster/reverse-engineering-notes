@@ -7,7 +7,7 @@
 
 namespace Xanth {
 
-Interface::Interface(Game &game, Display &display) : _game(game), _display(display), _files(NULL), _quit(false), _canUndo(false), _pendingObj(0), _selected(-1), _verb(0), _dobj(0) {
+Interface::Interface(Game &game, Display &display) : _game(game), _display(display), _files(NULL), _quit(false), _canUndo(false), _fromDefault(false), _pendingObj(0), _selected(-1), _verb(0), _dobj(0) {
 	_verbIds = initialVerbs();
 }
 
@@ -79,8 +79,20 @@ std::vector<int> Interface::verbsOf(int obj) {
 	return out;
 }
 
+/** The verb a thing gets when no verb is chosen (build_command_line?): TAKE for something portable that is not carried, else its own default verb,
+ *  else LOOK_AT (0x45 for what is alive or one of the two special things). */
+int Interface::defaultVerb(int obj) {
+	if (_game.object_has_attr(obj, 0xC) && !_game.object_parent_is(obj, 1))
+		return 0x44;
+	int v = _game.object_get_default_verb(obj);
+	if (v)
+		return v;
+	return (!_game.object_has_attr(obj, 0x17) && obj != 0x182 && obj != 0x183) ? 0x13 : 0x45;
+}
+
 void Interface::showObjectVerbs(int obj) {
 	_pendingObj = obj;
+	_fromDefault = true;
 	_extraIds = verbsOf(obj);
 	std::vector<std::string> names;
 	for (size_t i = 0; i < _extraIds.size(); i++) {
@@ -89,7 +101,7 @@ void Interface::showObjectVerbs(int obj) {
 	}
 	_display.setExtraVerbs(names);
 	_verb = 0;
-	int def = _game.object_get_default_verb(obj);      // the thing's usual verb is chosen already
+	int def = defaultVerb(obj);                          // the thing's usual verb is chosen already
 	for (size_t i = 0; i < _extraIds.size(); i++)
 		if (_extraIds[i] == def) {
 			_verb = def;
@@ -106,18 +118,32 @@ void Interface::click(int x, int y) {
 	move(x, y);
 	int v = _display.verbAt(x, y);
 	if (v >= 0) {
+		int id = v < 100 ? _verbIds[v] : _extraIds[v - 100];
+		if (id == _verb && !_fromDefault) {       // the verb that is chosen is clicked again: not chosen any more
+			_verb = 0;
+			_dobj = 0;
+			_selected = -1;
+			_display.selectVerb(-1);
+			move(x, y);
+			return;
+		}
+		_fromDefault = false;
 		_selected = v;
-		_verb = v < 100 ? _verbIds[v] : _extraIds[v - 100];
+		_verb = id;
+		int first = _dobj ? _dobj : _pendingObj;       // the thing clicked last, before this verb was chosen
 		_dobj = 0;
 		_display.selectVerb(v);
 		const VerbInfo *info = findVerb(_verb);
-		if (info && info->objects == 0) {       // a verb without objects ("Look") is a complete sentence
+		if (info && info->objects == 0 && _verb == 38 && first) {      // "Look" with a thing already clicked is "Look at" it
+			_verb = 19;
+			execute(first, 0);
+		} else if (info && info->objects == 0) {       // a verb without objects ("Look") is a complete sentence
 			execute(0, 0);
-		} else if (_pendingObj) {                // a thing was clicked first: it is the (first) object
+		} else if (first) {                      // a thing was clicked first: it is the (first) object
 			if (info && info->objects == 2)
-				_dobj = _pendingObj;
+				_dobj = first;
 			else
-				execute(_pendingObj, 0);
+				execute(first, 0);
 		}
 		move(x, y);                           // the sentence line shows the verb
 		return;
@@ -160,6 +186,8 @@ void Interface::click(int x, int y) {
 	bool two = info && info->objects == 2;
 	if (two && !_dobj) {
 		_dobj = obj;
+		_pendingObj = obj;
+		move(x, y);
 		return;
 	}
 	execute(two ? _dobj : obj, two ? obj : 0);
@@ -190,8 +218,7 @@ void Interface::doubleClick(int x, int y) {
 		obj = _display.objectAt(x, y);
 	if (!obj)
 		return;
-	int verb = _game.object_get_default_verb(obj);
-	_verb = verb ? verb : 19;                         // LOOK_AT when the thing has no default verb
+	_verb = defaultVerb(obj);
 	execute(obj, 0);
 }
 
@@ -288,6 +315,7 @@ void Interface::execute(int dobj, int iobj) {
 	_dobj = 0;
 	_selected = -1;
 	_pendingObj = 0;
+	_fromDefault = false;
 	_extraIds.clear();
 	_display.setExtraVerbs(std::vector<std::string>());
 	move(_display.mouseX(), _display.mouseY());

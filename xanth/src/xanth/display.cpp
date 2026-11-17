@@ -481,9 +481,14 @@ int Display::objectAt(int x, int y, bool orRoom) {
 		return orRoom ? _game->state.v.current_room : 0;
 	// regions are tested from the last one added: what was added later lies on top (the computer on the desk)
 	const std::vector<Legend::RgnFile::Region> &regions = _rgn.scene(scene).regions;
-	for (size_t i = regions.size(); i-- > 0;)
-		if (regions[i].contains(x - 51, y - 4))
-			return regions[i].id;
+	for (size_t i = regions.size(); i-- > 0;) {
+		if (!regions[i].contains(x - 51, y - 4))
+			continue;
+		if (std::find(_disabledRegions.begin(), _disabledRegions.end(), (int)i + 1) != _disabledRegions.end() ||
+		    std::find(_disabledObjects.begin(), _disabledObjects.end(), (int)regions[i].id) != _disabledObjects.end())
+			continue;
+		return regions[i].id;
+	}
 	return orRoom ? _game->state.v.current_room : 0;
 }
 
@@ -616,6 +621,8 @@ void Display::advance(unsigned ms) {
 }
 
 void Display::popupWindowEvent() {
+	_disabledRegions.clear();                    // the hotspots of the room are loaded afresh
+	_disabledObjects.clear();
 	int pic = sub_1DB4E(*_game, _game->state.v.current_room);
 	if (pic != 0xFFFF && pic != _picNum)
 		loadRoom(pic);
@@ -635,6 +642,23 @@ bool Display::overlayVisible(const OverlayRecord &r) {
 	if (r.attr && !_game->object_has_attr(r.object, r.attr))
 		return false;
 	return true;
+}
+
+void Display::disablePicRegions(unsigned address, unsigned count) {
+	// disable_pic_regions: what is not visible (see overlayVisible) cannot be clicked: its hotspot is switched off, by region number or, when the record has none, by object
+	for (unsigned t = 0; t < kOverlayTableCount; t++) {
+		if (kOverlayTables[t].address != address)
+			continue;
+		for (unsigned i = 0; i < count && i < kOverlayTables[t].count; i++) {
+			const OverlayRecord &r = kOverlayTables[t].records[i];
+			if (overlayVisible(r))
+				continue;
+			if (r.pic)
+				_disabledRegions.push_back(r.pic);
+			else
+				_disabledObjects.push_back(r.object);
+		}
+	}
 }
 
 int Display::setupPicRegions(unsigned address, unsigned count) {
@@ -719,6 +743,8 @@ int Display::other(const char *name, const intptr_t *args, int) {
 		other("RoomItem_Draw", redraw, 5);
 	} else if (!strcmp(name, "popup_window_event")) {
 		popupWindowEvent();
+	} else if (!strcmp(name, "disable_pic_regions")) {
+		disablePicRegions((unsigned)args[0], (unsigned)args[1]);
 	} else if (!strcmp(name, "setup_pic_regions")) {
 		return setupPicRegions((unsigned)args[0], (unsigned)args[1]);
 	} else if (!strcmp(name, "sub_2B236")) {

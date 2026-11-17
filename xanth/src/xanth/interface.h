@@ -37,6 +37,7 @@ public:
 private:
 	void execute(int dobj, int iobj);
 	std::string shortName(int obj);
+	int defaultVerb(int obj);
 	void diskMenu();
 	std::vector<int> verbsOf(int obj);
 	void showObjectVerbs(int obj);
@@ -52,6 +53,7 @@ private:
 	Game &_game;
 	Display &_display;
 	std::vector<int> _verbIds, _extraIds;      // the usual verb list and the verbs of the clicked thing
+	bool _fromDefault;                         // the chosen verb was chosen for a clicked thing (its default), not by the player
 	int _pendingObj;                           // the thing clicked while no verb was chosen
 	int _selected;               // index into _verbIds, -1 = none
 	int _verb, _dobj;

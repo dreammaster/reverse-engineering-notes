@@ -97,6 +97,7 @@ private:
 	void collapseText();
 	void popupWindowEvent();
 	int setupPicRegions(unsigned address, unsigned count);
+	void disablePicRegions(unsigned address, unsigned count);
 	void updateCompass();
 	bool overlayVisible(const OverlayRecord &r);
 	bool loadRoom(int picNum);
@@ -142,6 +143,8 @@ private:
 	std::vector<Cell> _cells;            // the icons drawn in the inventory (24 x 20 each)
 	int _inventoryCount;
 	int _inventoryScroll;                // first of the carried things shown (word_85024)
+	std::vector<int> _disabledRegions;   // hotspots switched off for this picture: region numbers (1-based) and object ids
+	std::vector<int> _disabledObjects;
 	Legend::RgnFile _rgn;
 	int _rgnFile;
 };
