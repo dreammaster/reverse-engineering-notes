@@ -175,8 +175,20 @@ void Interface::click(int x, int y) {
 	int obj = _display.inventoryObjectAt(x, y);
 	if (!obj)
 		obj = _display.objectAt(x, y, true);
-	if (!obj)
+	if (!obj) {                                  // a click on nothing: what was chosen so far is dropped (sub_1923E)
+		if (_verb || _dobj || _pendingObj) {
+			_verb = 0;
+			_dobj = 0;
+			_pendingObj = 0;
+			_fromDefault = false;
+			_selected = -1;
+			_extraIds.clear();
+			_display.setExtraVerbs(std::vector<std::string>());
+			_display.selectVerb(-1);
+			move(x, y);
+		}
 		return;
+	}
 	if (!_verb) {                                // no verb yet: the thing's own verbs are listed
 		showObjectVerbs(obj);
 		move(x, y);

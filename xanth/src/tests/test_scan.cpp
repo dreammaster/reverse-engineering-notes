@@ -17,7 +17,7 @@ static uint64_t fnv(uint64_t h, const uint8 *p, size_t n) {
 	return h;
 }
 
-static const int kVerbs[] = {0, 19, 25, 68, 69, 70, 71, 5, 33, 40, 55, 7, 12, 22, 47, 60};
+static std::vector<int> g_verbs;     // the verbs the scenarios run (all 0..92 with XANTH_ALLVERBS)
 
 struct Scenario {
 	int obj, phase, verb;
@@ -71,6 +71,15 @@ int main() {
 	}
 
 	FILE *dump = getenv("XANTH_SCANOUT") ? fopen(getenv("XANTH_SCANOUT"), "wb") : nullptr;
+	{
+		static const int kDefault[] = {0, 19, 25, 68, 69, 70, 71, 5, 33, 40, 55, 7, 12, 22, 47, 60};
+		g_verbs.assign(kDefault, kDefault + ARRAYSIZE(kDefault));
+		if (getenv("XANTH_ALLVERBS")) {
+			g_verbs.clear();
+			for (int v = 0; v <= 92; v++)
+				g_verbs.push_back(v);
+		}
+	}
 	long scenarios = 0, skipped = 0, same = 0, retDiff = 0, stateDiff = 0, eventDiff = 0, textDiff = 0;
 	int shown = 0;
 	Xanth::RecordingUi ui;
@@ -79,8 +88,8 @@ int main() {
 		if (!g.state.objects.handlerIndex(o))
 			continue;
 		for (int phase = 1; phase <= 6; phase++)
-			for (size_t vi = 0; vi < ARRAYSIZE(kVerbs); vi++) {
-				int verb = kVerbs[vi];
+			for (size_t vi = 0; vi < g_verbs.size(); vi++) {
+				int verb = g_verbs[vi];
 				g.newGame();
 				ui.log.clear();
 				ui.others.clear();
