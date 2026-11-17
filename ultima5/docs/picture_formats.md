@@ -43,7 +43,7 @@ First picture starts at `2 + 4n`. Offsets are from the start of the uncompressed
 | | row size | pixel layout |
 |---|---|---|
 | `.4` CGA | `(width + 3) / 4` bytes | 2 bits per pixel, leftmost pixel in the top bits; a partial last byte holds the leftmost pixels |
-| `.16` EGA | `((width + 7) / 8) * 4` bytes | four bit planes per row, plane 0 first; each plane `(width+7)/8` bytes, leftmost pixel = most significant bit; pixel = plane0 | plane1<<1 | plane2<<2 | plane3<<3 |
+| `.16` EGA | `((width + 7) / 8) * 4` bytes | **nibble packed**: 2 pixels per byte, high nibble = left pixel, EGA colour 0-15; the row is padded to a multiple of 4 bytes (e.g. width 24 = 12 bytes, width 20 = 12 bytes with 2 unused) |
 
 **Mask block** (`table[2i+1]`, identical in `.4` and `.16`): `u16 width`, `u16 height`, then `height` rows of `(width + 7) / 8` bytes, 1 bit per
 pixel, leftmost = most significant bit. A **1 bit keeps the background** (transparent); a 0 bit draws the image pixel. CGA.DRV's masked

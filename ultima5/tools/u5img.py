@@ -68,15 +68,13 @@ def picture(data, idx, cga):
                 r += [(b >> 6) & 3, (b >> 4) & 3, (b >> 2) & 3, b & 3]
             px += r[:w]
     else:
-        plane = (w + 7) // 8
-        stride = plane * 4
+        stride = ((w + 7) // 8) * 4            # nibble packed (2 pixels per byte, high nibble first), rows padded to a multiple of 4 bytes
         for y in range(h):
             row = data[io + 4 + y * stride:io + 4 + (y + 1) * stride]
-            for x in range(w):
-                v = 0
-                for p in range(4):
-                    v |= ((row[p * plane + (x >> 3)] >> (7 - (x & 7))) & 1) << p
-                px.append(v)
+            r = []
+            for b in row:
+                r += [b >> 4, b & 15]
+            px += r[:w]
     mask = None
     if mo:
         mw, mh = struct.unpack_from("<HH", data, mo)
