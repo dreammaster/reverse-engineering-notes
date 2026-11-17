@@ -24,7 +24,6 @@
 		rt.picNum = 65535;
 		rt.player_obj = 1;
 		rt.rtlink_segments = 108;
-		rt.seg_8A9E2 = 32877;
 		rt.seg_8A9E4 = 13217;
 		rt.seg_8A9F8 = 13217;
 		rt.seg_8A9FE = 12899;
@@ -67,7 +66,6 @@
 		rt.word_8AA4A = 12629;
 		rt.word_8AA64 = 12701;
 		rt.word_8AA66 = 12701;
-		rt.word_8AA74 = 13023;
 		rt.word_8AA76 = 13023;
 		rt.word_8AA7C = 13007;
 		rt.word_8AA86 = 13195;

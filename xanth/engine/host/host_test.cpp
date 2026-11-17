@@ -773,6 +773,13 @@ int main(int argc, char **argv) {
 			if (cmd == "scanlog") return testScanLog(h, argc > 5 ? argv[5] : "scanlog.tsv");
 		if (cmd == "look") return testLook(h, argc > 5 ? atoi(argv[5]) : 0);
 		if (cmd == "rooms") return testRooms(h);
+		if (cmd == "mem") {                       // mem <segment hex> <offset hex> <words>: the words of the emulated memory after start-up
+			if (!startup(h)) return 1;
+			unsigned sg = argc > 5 ? (unsigned)strtoul(argv[5], nullptr, 16) : 0, off = argc > 6 ? (unsigned)strtoul(argv[6], nullptr, 16) : 0, n = argc > 7 ? (unsigned)atoi(argv[7]) : 16;
+			for (unsigned i = 0; i < n; i++) printf("%u ", h.cpu.rd16((uint16_t)sg, (uint16_t)(off + 2 * i)));
+			printf("\n");
+			return 0;
+		}
 		if (cmd == "init") return testInit(h);
 		if (cmd == "clock") return testClock(h);
 		if (cmd == "text") return testText(h);

@@ -536,6 +536,13 @@ void Game::walkContents(int root, bool visibleOnly, const std::function<bool(int
 	}
 }
 
+int Game::sub_1AC45(int id) {
+	for (size_t i = 0; i < state.events.size(); i++)
+		if ((state.events[i].a & 0xFF) == (id & 0xFF))
+			return state.events[i].b;
+	return 0x7FFF;
+}
+
 int Game::run_event(int id) {
 	if ((int16)id <= 0 || id > 0x2D)
 		return 0;

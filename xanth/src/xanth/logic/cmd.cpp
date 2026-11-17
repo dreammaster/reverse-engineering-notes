@@ -944,41 +944,6 @@ int cmdUse(Game &g) {
 	return 1;
 }
 
-// cmdWait
-int cmdWait(Game &g) {
-	Vars &v = g.state.v;
-	Runtime &rt = g.rt;
-	intptr_t v2, v4, v6;
-	v4 = 0;
-	rt.word_85222 = 0;
-	v2 = 0;
-	v6 = 2;
-	do {
-		if (g.event_pending(mem16(rt.word_8AA74, v6 - 2)) && ((mem16(rt.word_8AA74, v6)) == v.current_room || (mem16(rt.word_8AA74, v6)) == 0)) {
-			break;
-		} else {
-			v2++;
-			v6 += 4;
-			continue;
-		}
-	L7:;
-		if (v4 == 0) {
-			v4 = 1;
-		}
-		if (!(g.event_pending(5))) {
-			g.Font_WriteMessage(ES(25));
-			g.advance_time(1, v4);
-			return 1;
-		} else {
-			g.advance_time(1, v4);
-			return 1;
-		}
-	} while (v6 < 0x3E);
-	v4 = (sub_1AC45(g, mem16(rt.word_8AA74, v2 * 4))) + 1;
-	goto L7;
-	return 0;
-}
-
 // cmdWalk
 int cmdWalk(Game &g) {
 	Vars &v = g.state.v;
@@ -1009,7 +974,7 @@ int cmdWear(Game &g) {
 		g.Font_WriteMessage(MSG(18, 85), g.print_obj(2, rt.dobj));
 		return 1;
 	}
-	g.Font_WriteMessage(ES(26), g.print_obj(2, rt.dobj));
+	g.Font_WriteMessage(ES(25), g.print_obj(2, rt.dobj));
 	g.object_move(rt.dobj, 1, 1);
 	if ((g.object_get_default_verb(rt.dobj)) == 0x53) {
 		g.object_set_default_verb(rt.dobj, 0x3B);

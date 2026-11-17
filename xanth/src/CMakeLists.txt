@@ -40,6 +40,7 @@ add_library(xanth_engine STATIC
 	xanth/verbs.cpp
 	xanth/interface.cpp
 	xanth/logic_support.cpp
+	xanth/logic_hand.cpp
 	xanth/tables/vars.cpp
 	${XANTH_LOGIC}
 )

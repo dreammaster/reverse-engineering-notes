@@ -914,7 +914,6 @@ int objh_448(Game &g, Word a0);
 int reset_color_cycle(Game &g, Word a0, Word a1, Word a2, Word a3);
 int sub_192F9(Game &g);
 int sub_1AAFB(Game &g);  // not decompiled
-int sub_1AC45(Game &g, Word a0);
 int sub_1B5CB(Game &g, Word a0, Word a1);
 int sub_1C2EA(Game &g, Word a0, Word a1, Word a2);
 int sub_1C4ED(Game &g, Word a0, Word a1, Word a2, Word a3);  // not decompiled
