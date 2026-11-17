@@ -54,6 +54,9 @@ int main() {
 		std::string l, cur;
 		// a scenario's text can contain line breaks: lines that do not start with "obj phase verb<TAB>" continue the previous one
 		auto flush = [&]() {
+				// the original's word wrap writes the two bytes F0 FF into the string it prints where it breaks the line: not part of the text
+				for (size_t p; (p = cur.find(std::string("ря", 2))) != std::string::npos;)
+					cur.erase(p, 2);
 			size_t tab = cur.find('\t');
 			if (tab != std::string::npos)
 				golden[cur.substr(0, tab)] = cur;
@@ -163,12 +166,12 @@ int main() {
 					}
 					dst.push_back(src.substr(pos));
 				}
-				bool r = fa[1] != fb[1], st = fa[2] != fb[2], ev = fa[3] != fb[3], tx = fa.size() > 6 && fb.size() > 6 && fa[6] != fb[6];
+				bool r = fa[1] != fb[1], st = fa[2] != fb[2], ev = fa[3] != fb[3], tx = fa[5] != fb[5];
 				retDiff += r;
 				stateDiff += st;
 				eventDiff += ev;
 				textDiff += tx;
-				if (shown++ < 15)
+				if (shown++ < (getenv("XANTH_SCANSHOW") ? atoi(getenv("XANTH_SCANSHOW")) : 15))
 					printf("  scenario %s: ret %s/%s%s%s%s\n", key, fa[1].c_str(), fb[1].c_str(), st ? " state" : "", ev ? " events" : "", tx ? " text" : "");
 			}
 	}

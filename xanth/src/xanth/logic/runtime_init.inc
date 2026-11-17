@@ -37,12 +37,14 @@
 		rt.seg_8AA4E = 32877;
 		rt.seg_8AA52 = 12899;
 		rt.seg_8AA54 = 12899;
+		rt.seg_8AA56 = 32877;
 		rt.seg_8AA58 = 12899;
 		rt.seg_8AA5A = 12899;
 		rt.seg_8AA5C = 12899;
 		rt.seg_8AA5E = 12899;
 		rt.seg_8AA60 = 12899;
 		rt.seg_8AA62 = 12899;
+		rt.seg_8AA80 = 32877;
 		rt.seg_8AA82 = 32877;
 		rt.seg_8AA94 = 12899;
 		rt.seg_8AAE6 = 12899;
@@ -81,3 +83,10 @@
 		rt.word_8AD52 = 65535;
 		rt.word_8AD54 = 65535;
 		rt.word_8ADBA = 65535;
+		rt.word_8ADBC = 65535;
+		rt.word_8ADBE = 65535;
+		rt.word_8ADC0 = 65535;
+		rt.word_8ADC2 = 65535;
+		rt.word_8ADC4 = 65535;
+		rt.word_8ADC6 = 65535;
+		rt.word_8ADC8 = 65535;

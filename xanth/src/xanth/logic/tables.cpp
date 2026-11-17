@@ -237,7 +237,7 @@ static int wrap_objh_041(Game &g, int a) { (void)a; return objh_041(g, a); }
 static int wrap_objh_042(Game &g, int a) { (void)a; return objh_042(g, a); }
 static int wrap_objh_043(Game &g, int a) { (void)a; return objh_043(g, a); }
 static int wrap_objh_044(Game &g, int a) { (void)a; return objh_044(g, a); }
-static int wrap_objh_045(Game &g, int a) { (void)a; return objh_045(g); }
+static int wrap_objh_045(Game &g, int a) { (void)a; return objh_045(g, a); }
 static int wrap_objh_046(Game &g, int a) { (void)a; return objh_046(g, a); }
 static int wrap_objh_047(Game &g, int a) { (void)a; return objh_047(g, a); }
 static int wrap_objh_048(Game &g, int a) { (void)a; return objh_048(g, a); }
@@ -262,7 +262,7 @@ static int wrap_objh_066(Game &g, int a) { (void)a; return objh_066(g, a); }
 static int wrap_objh_067(Game &g, int a) { (void)a; return objh_067(g, a); }
 static int wrap_objh_068(Game &g, int a) { (void)a; return objh_068(g, a); }
 static int wrap_objh_069(Game &g, int a) { (void)a; return objh_069(g, a); }
-static int wrap_objh_070(Game &g, int a) { (void)a; return objh_070(g, a, 0); }
+static int wrap_objh_070(Game &g, int a) { (void)a; return objh_070(g, a); }
 static int wrap_objh_071(Game &g, int a) { (void)a; return objh_071(g, a); }
 static int wrap_objh_072(Game &g, int a) { (void)a; return objh_072(g, a); }
 static int wrap_objh_073(Game &g, int a) { (void)a; return objh_073(g, a); }

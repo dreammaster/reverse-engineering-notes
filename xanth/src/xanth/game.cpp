@@ -434,6 +434,18 @@ char *Game::print_obj(int style, int obj, const char *verb) {
 	return keep(s);
 }
 
+char *Game::farPtr(int seg, int off) {
+	if ((seg & 0xFF00) == 0xF000)
+		return ResourceText_GetStr((((uint32)seg & 0xFFFF) << 16) | ((uint32)off & 0xFFFF));
+	unsigned lin = (unsigned)((seg & 0xFFFF) * 16 + (off & 0xFFFF));
+	if ((seg & 0xFFFF) == 0x84FC || (lin >= 0x31550 && lin + 1 < 0x35400))
+		return (char *)&exe8(seg, off);
+	// memory of the original that is not modelled (the logic copies blocks to and from it): a scratch area big enough for any such copy
+	if (_farScratch.empty())
+		_farScratch.assign(0x20000, 0);
+	return (char *)&_farScratch[off & 0xFFFF];
+}
+
 char *Game::ResourceText_GetStr(uint32 id) {
 	return keep(messages.string(id));
 }

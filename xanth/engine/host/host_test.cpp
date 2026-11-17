@@ -257,7 +257,8 @@ static int testScanLog(Host &h, const char *outPath) {
 	}
 	FILE *out = fopen(outPath, "wb");
 	if (!out) return 1;
-	static const int verbs[] = {0, 19, 25, 68, 69, 70, 71, 5, 33, 40, 55, 7, 12, 22, 47, 60};
+	std::vector<int> verbs = {0, 19, 25, 68, 69, 70, 71, 5, 33, 40, 55, 7, 12, 22, 47, 60};
+	if (getenv("XANTH_ALLVERBS")) { verbs.clear(); for (int v = 0; v <= 92; v++) verbs.push_back(v); }   // every verb of the verb table (and 0)
 	static const unsigned recSize[] = {0, 18, 28, 32, 14, 32};
 	long scenarios = 0;
 	for (int o = 1; o <= g_count && o < (int)objs.size(); o++) {

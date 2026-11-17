@@ -49,6 +49,24 @@ TextRef conv_text_04(Game &g) {
 	return v4;
 }
 
+// conv_text_05
+TextRef conv_text_05(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	intptr_t p5_ax;
+	char *r5_3, *v4;
+	if (v.flag_852B7_conv12 == 0 && v.flag_852B8_conv13 == 0 && v.flag_852B9_conv11 == 0) {
+		p5_ax = 0xC;
+	} else {
+		p5_ax = 0xB;
+	}
+	strcpy(rt.word_81A66, g.ResourceText_GetStr(TextRef::fromWords(p5_ax, 0xF034)));
+	r5_3 = g.ResourceText_GetStr(MSG(52, 13));
+	v4 = rt.word_81A66;
+	strcat(rt.word_81A66, r5_3);
+	return v4;
+}
+
 // conv_text_06
 TextRef conv_text_06(Game &g) {
 	Vars &v = g.state.v;
@@ -980,6 +998,28 @@ TextRef conv_text_56(Game &g) {
 	Runtime &rt = g.rt;
 	g.object_move(3, 0, 0);
 	return MSG(54, 0);
+}
+
+// conv_text_57
+TextRef conv_text_57(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	char *v4;
+	if (v.flag_852C5_conv40 != 0) {
+		strcpy(rt.word_81A66, g.ResourceText_GetStr(MSG(54, 10)));
+		rt.voice_track = 0x477;
+	} else {
+		if (v.flag_852C4_conv_text_55 != 0) {
+			strcpy(rt.word_81A66, g.ResourceText_GetStr(MSG(54, 11)));
+			rt.voice_track = 0x478;
+		} else {
+			strcpy(rt.word_81A66, g.ResourceText_GetStr(MSG(54, 12)));
+			rt.voice_track = 0x479;
+		}
+	}
+	v4 = rt.word_81A66;
+	strcat(rt.word_81A66, ES(37));
+	return v4;
 }
 
 // conv_text_58

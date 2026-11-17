@@ -106,6 +106,8 @@ class LogicNames(Names):
         if m:
             off = int(m.group(1))
             name = "var_%X" % -off if off < 0 else "arg_%X" % (off - 6)
+        if name.startswith("arg_") and name in self.ctx.locs.get(func, {}):
+            name = "arg_%X" % (self.ctx.locs[func][name][1] - 6)         # (IDA numbers the arguments of a far function from its own idea of the frame: use the offset)
         n = {"arg_0": "arg0", "arg_2": "arg1", "arg_4": "arg2", "arg_6": "arg3", "arg_8": "arg4"}.get(name, name)
         n = re.sub(r"^var_", "v", n)
         if disp:
@@ -128,7 +130,7 @@ class LogicNames(Names):
 
     def ptr_sources(self):
         """regular-expression alternatives for expressions that are pointers to text / buffers"""
-        return [r"rt\.(" + "|".join(sorted(re.escape(self.ident(a)) for a in self.ctx.arrays)) + r")"]
+        return [r"rt\.(" + "|".join(sorted(re.escape(self.ident(a)) for a in set(self.ctx.arrays) | getattr(self, "textbufs", set()))) + r")\b"]
 
     def returns_far(self, name):
         return name.startswith("conv_text") or name == "number_to_words" or logic_name(name) in getattr(self, "namecb", ()) or logic_name(name) in getattr(self, "farfns", ())
@@ -387,18 +389,22 @@ def main():
                 manual[p[0]] = p[1]
     if not args:
         # first pass: only to learn which functions return text, so that their callers are typed right
+        first = []
         for n in todo:
             if logic_name(n) in manual:
                 continue
             try:
-                function_text(ctx, n, names)
+                first.append(function_text(ctx, n, names))
             except Exception:
                 pass
+        # the variables the program uses as text buffers (strcpy / strcat destinations) although its listing declares a single word
+        textbufs = set(re.findall(r"(?:strcpy|strcat)\(rt\.(\w+),", NL.join(first)))
         far = set(names.farfns)
         names = LogicNames(ctx, load_vars(), generated)
         names.namecb = {logic_name(t) for _, t in namecb}
         names.overlay_syms = {"unk_%X" % a for a in ovl_tables}
         names.farfns = far
+        names.textbufs = textbufs
     for n in todo:
         if logic_name(n) in HANDWRITTEN:
             continue

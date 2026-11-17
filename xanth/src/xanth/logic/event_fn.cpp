@@ -71,12 +71,13 @@ int event_fn_03(Game &g) {
 		goto L8;
 	}
 	if (v.companion_obj == 0xA) {
-		v4 = 0x28;
+		v4.setLo(0x28);
 		goto L7;
 	}
 	if (v.companion_obj == 0xB) {
-		v4 = 0x27;
+		v4.setLo(0x27);
 	L7:;
+		v4.setHi(0xF016);
 		p8_ax = 0x5E;
 	L8:;
 		g.object_set_attr(p8_ax, 0xE);
@@ -94,22 +95,23 @@ int event_fn_03(Game &g) {
 int event_fn_04(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	intptr_t v4;
+	TextRef v4;
 	if (v.word_85262 == 0) {
-		v4 = 0x29;
+		v4.setLo(0x29);
 		goto L9;
 	}
 	if (v.word_85262 == 1) {
-		v4 = 0x2A;
+		v4.setLo(0x2A);
 		goto L9;
 	}
 	if (v.word_85262 == 2) {
-		v4 = 0x2B;
+		v4.setLo(0x2B);
 		goto L9;
 	}
 	if (v.word_85262 == 3) {
-		v4 = 0x2C;
+		v4.setLo(0x2C);
 	L9:;
+		v4.setHi(0xF016);
 	}
 	g.Font_WriteMessage(ES(55), v4);
 	v.word_85262++;
@@ -175,6 +177,50 @@ int event_fn_06(Game &g) {
 		return 0;
 	} else {
 		return 0;
+	}
+	return 0;
+}
+
+// event_fn_07
+int event_fn_07(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	intptr_t p8_ax, p9_ax, p9_s0;
+	TextRef p9_txt;
+	v.flag_85286_buttercups++;
+	g.Font_WriteMessage(ES(57), g.print_obj(0x12, 0x76));
+	if (v.flag_85286_buttercups == 1) {
+		g.object_set_prop_a(0x76, 0x137);
+		p9_txt = TextRef(ES(58));
+		goto L9;
+	}
+	if (v.flag_85286_buttercups == 2) {
+		g.object_set_prop_a(0x76, 0x138);
+		p8_ax = 0x35;
+		goto L8;
+	}
+	if (v.flag_85286_buttercups == 3) {
+		g.object_set_prop_a(0x76, 0x139);
+		p8_ax = 0x36;
+	L8:;
+		p9_txt = TextRef(TextRef::fromWords(p8_ax, 0xF030));
+	L9:;
+		g.Font_WriteMessage(p9_txt);
+		goto L11;
+	}
+	if (v.flag_85286_buttercups == 4) {
+		g.Font_WriteMessage(MSG(48, 55));
+		g.object_move(0x76, 0, 0);
+		g.object_set_prop_a(0x76, 0x136);
+	L11:;
+	}
+	g.Font_WriteMessage(ES(59));
+	if ((int16)v.flag_85286_buttercups < 4) {
+		g.schedule_event(8, 5);
+		return 1;
+	} else {
+		v.flag_85286_buttercups = 0;
+		return 1;
 	}
 	return 0;
 }
@@ -261,9 +307,9 @@ int event_fn_11(Game &g) {
 			g.object_set_prop_a(0x7E, 0x13D);
 		}
 	}
-	strcat(msg, ES(57));
+	strcat(msg, ES(59));
 	g.Font_WriteMessage(msg);
-	g.realsound_play(ES(58));
+	g.realsound_play(ES(60));
 	g.schedule_event(0xC, ((int16)(g._rand()) % (int16)5) + 2);
 	return 1;
 }
@@ -284,7 +330,7 @@ int event_fn_13(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	intptr_t p7_ax;
-	g.Font_WriteMessage(ES(59), g.print_obj(0x12, 0xA7));
+	g.Font_WriteMessage(ES(61), g.print_obj(0x12, 0xA7));
 	rt.word_87952++;
 	if (rt.word_87952 == 1) {
 		g.object_set_prop_a(0xA7, 0x126);
@@ -320,9 +366,9 @@ int event_fn_14(Game &g) {
 	g.wputchar(0xB);
 	g.wait_ticks_or_click(0x9C4);
 	g.Font_WriteMessage(MSG(25, 32));
-	p3_ax = ((int16)v.word_8526C < 0x15 ? ES(60) : ES(61));
+	p3_ax = ((int16)v.word_8526C < 0x15 ? ES(62) : ES(63));
 	g.Font_WriteMessage(p3_ax);
-	g.Font_WriteMessage(ES(62), (v.word_8526C != 0x15 ? TextRef(nullptr) : TextRef(MSG(25, 33))));
+	g.Font_WriteMessage(ES(64), (v.word_8526C != 0x15 ? TextRef(nullptr) : TextRef(MSG(25, 33))));
 	v.byte_852D9 = 1;
 	g.schedule_event(0xF, ((int16)(g._rand()) % (int16)7) + 2);
 	if (v.flag_852DA_conv_text_24 != 0 && v.byte_852DB == 0) {
@@ -361,6 +407,43 @@ int event_fn_16(Game &g) {
 	g.wait_ticks_or_click(0x1388);
 	g.show_compendium(0x127, 0x5A03);
 	return 1;
+}
+
+// event_fn_17
+int event_fn_17(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	TextRef v4;
+	v.word_85274++;
+	if (v.word_85274 != 1) {
+		if (v.word_85274 == 2) {
+			v4.setLo(0x19);
+			goto L9;
+		}
+		if (v.word_85274 == 3) {
+			v4.setLo(0x1A);
+			goto L9;
+		}
+		if (v.word_85274 == 4) {
+			v4.setLo(0x1B);
+	L9:;
+			v4.setHi(0xF017);
+		}
+	} else {
+		v4 = ES(65);
+	}
+	g.Font_WriteMessage(ES(66), v4);
+	if (v.word_85274 == 4) {
+		g.wputchar(0xB);
+		g.wait_ticks_or_click(0xBB8);
+		v.story_stage = 7;
+		go_to_room(g, 0x5A);
+		return 1;
+	} else {
+		g.schedule_event(0x12, 1);
+		return 1;
+	}
+	return 0;
 }
 
 // event_fn_18
@@ -584,26 +667,28 @@ int event_fn_24(Game &g) {
 int event_fn_26(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	intptr_t v4, p19_ax;
+	intptr_t p19_ax;
+	TextRef v4;
 	v.word_85282++;
 	if (g.object_is_within(0xFF, 1)) {
 		if (v.word_85282 == 1) {
-			v4 = 0x4E;
+			v4.setLo(0x4E);
 			goto L10;
 		}
 		if (v.word_85282 == 2) {
-			v4 = 0x4F;
+			v4.setLo(0x4F);
 			goto L10;
 		}
 		if (v.word_85282 == 3) {
-			v4 = 0x50;
+			v4.setLo(0x50);
 			goto L10;
 		}
 		if (v.word_85282 == 4) {
-			v4 = 0x51;
+			v4.setLo(0x51);
 	L10:;
+			v4.setHi(0xF021);
 		}
-		g.Font_WriteMessage(ES(63), v4);
+		g.Font_WriteMessage(ES(67), v4);
 	}
 	if ((int16)v.word_85282 < 4) {
 		g.schedule_event(0x1B, 1);
@@ -636,7 +721,7 @@ int event_fn_26(Game &g) {
 int event_fn_27(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	g.Font_WriteMessage(ES(59), g.print_obj(0x12, 0xE));
+	g.Font_WriteMessage(ES(61), g.print_obj(0x12, 0xE));
 	if (!(g.object_parent_is(0x100, 1))) {
 		g.Font_WriteMessage(MSG(33, 84));
 		g.object_move(0x100, 1, 0);
@@ -786,7 +871,7 @@ int event_fn_31(Game &g) {
 			goto L5;
 		} else {
 			g.Font_WriteMessage(MSG(40, 73));
-			g.realsound_play(ES(64));
+			g.realsound_play(ES(68));
 			g.wait_ticks_or_click(0x1388);
 			v.byte_852CE = 1;
 			rt.byte_8ADF4 = 0;
@@ -839,7 +924,7 @@ int event_fn_33(Game &g) {
 			g.popup_window_event();
 			if ((mem16(v8_hi, v8)) == 0x179) {
 				g.MouseCursor_SetHourglass();
-				g.realsound_play(ES(65));
+				g.realsound_play(ES(69));
 			}
 			g.wait_ticks_or_click(0x1388);
 			g.show_compendium(g.exeText(rt.word_8AAEA, v4 + 2));
@@ -847,7 +932,7 @@ int event_fn_33(Game &g) {
 				g.Font_WriteMessage(MSG(44, 18));
 			}
 			t1 = mem16(rt.word_8AAEA, v4 - 4);
-			g.Font_WriteMessage(ES(66), g.print_obj(0x12, mem16(v8_hi, v8)), mem16(rt.word_8AAEA, v4 - 6), t1);
+			g.Font_WriteMessage(ES(70), g.print_obj(0x12, mem16(v8_hi, v8)), mem16(rt.word_8AAEA, v4 - 6), t1);
 			g.wait_ticks_or_click(0xBB8);
 			g.object_move(mem16(v8_hi, v8), 0, 0);
 		}
@@ -878,6 +963,39 @@ int event_fn_34(Game &g) {
 	return 0;
 }
 
+// event_fn_35
+int event_fn_35(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	TextRef v4;
+	v.word_8529E++;
+	if (v.word_8529E != 1) {
+		if (v.word_8529E == 2) {
+			v4.setLo(0x21);
+			goto L7;
+		}
+		if (v.word_8529E == 3) {
+			v4.setLo(0x22);
+	L7:;
+			v4.setHi(0xF046);
+		}
+	} else {
+		v4 = ES(71);
+	}
+	g.Font_WriteMessage(MSG(70, 35), v4);
+	if ((int16)v.word_8529E < 3) {
+		g.schedule_event(0x24, 1);
+		return 1;
+	} else {
+		g.wputchar(0xB);
+		g.wait_ticks_or_click(0x1388);
+		g.show_compendium(0x2CA, 0x5A01);
+		v.byte_8532C = 1;
+		return 1;
+	}
+	return 0;
+}
+
 // event_fn_36
 int event_fn_36(Game &g) {
 	Vars &v = g.state.v;
@@ -900,7 +1018,7 @@ int event_fn_37(Game &g) {
 	Runtime &rt = g.rt;
 	TextRef p3_ax;
 	v.word_852A0++;
-	p3_ax = ((int16)v.word_852A0 < 4 ? TextRef(ES(67)) : TextRef(MSG(46, 22)));
+	p3_ax = ((int16)v.word_852A0 < 4 ? TextRef(ES(72)) : TextRef(MSG(46, 22)));
 	g.Font_WriteMessage(MSG(46, 21), p3_ax);
 	if ((int16)v.word_852A0 < 4) {
 		g.schedule_event(0x26, 2);
@@ -921,7 +1039,7 @@ int event_fn_38(Game &g) {
 	g.wputchar(0xB);
 	g.wait_ticks_or_click(0xBB8);
 	g.Font_WriteMessage(MSG(46, 23));
-	g.realsound_play(ES(68));
+	g.realsound_play(ES(73));
 	g.wait_ticks_or_click(0x1770);
 	v.story_stage = 0x1B;
 	go_to_room(g, 0x5A);
@@ -953,7 +1071,7 @@ int event_fn_40(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	char *p3_ax;
-	p3_ax = (!(g.random_percent(0x32)) ? ES(69) : ES(70));
+	p3_ax = (!(g.random_percent(0x32)) ? ES(74) : ES(75));
 	g.realsound_play(p3_ax);
 	g.schedule_event(0x29, ((int16)(g._rand()) % (int16)4) + 2);
 	return 0;
@@ -980,6 +1098,23 @@ int event_fn_43(Game &g) {
 	g.Font_WriteMessage(MSG(31, 46), g.exeText(rt.word_8AA98, (((uint16)(g._rand()) % (uint16)5) * 4) + 0x6C));
 	g.schedule_event(0x2C, ((int16)(g._rand()) % (int16)3) + 1);
 	return 1;
+}
+
+// event_fn_44
+int event_fn_44(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	memcpy(FAR(rt.seg_8AA80, 0x32), FAR(SEG(seg193), 0x1356), 0x40);
+	rt.event_count = v.flag_8524C_conv21;
+	v.flag_85256_conv21 = 0;
+	g.wputchar(0xB);
+	rt.byte_85743 = 1;
+	go_to_room(g, v.flag_85254_conv21);
+	v.flag_85254_conv21 = 0;
+	g.schedule_event((v.flag_85259_conv21 == 0 ? 0x15 : 0x16), 0);
+	v.flag_85258_conv21 = 0;
+	v.flag_85259_conv21 = 0;
+	return 0;
 }
 
 } // namespace Xanth

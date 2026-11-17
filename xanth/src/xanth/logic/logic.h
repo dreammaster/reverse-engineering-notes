@@ -77,6 +77,7 @@ char *engineString(unsigned index);
 // Constructs the decompiler could not turn into plain C++ yet (the functions that use them are listed in manual_review.txt); they compile but do not work.
 #define objectType(o) (g.state.objects.type(o))
 #define DS 0x84FC
+#define FAR(seg, off) (g.farPtr((seg), (off)))
 #define SEG(x) 0
 #define sext(x) ((int16)(x))
 #define hi(x) 0

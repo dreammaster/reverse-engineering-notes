@@ -9,9 +9,13 @@ from decomp_out import Renderer, Names, CMPOP
 # --------------------------------------------------------------------------------------------------------------------------------- argument packing
 def loc_off(name):
     m = re.match(r"^var_([0-9A-Fa-f]+)$", name)
-    return -int(m.group(1), 16) if m else None
+    if m:
+        return -int(m.group(1), 16)
+    m = re.match(r"^bp-(\d+)$", name)
+    return -int(m.group(1)) if m else None
 
 
+PAIR_HI = {}          # high half local (var_2) -> low half local (var_4) of far pointer locals whose halves are stored apart
 TEXTVARS = set()      # phi variables that hold a text reference (pointer or message id) built from two halves
 
 
@@ -40,6 +44,7 @@ def pack_args(args, null_ok=False):
                 continue
             if a[0] == "loc" and b[0] == "loc" and a[1] != b[1] and a[2] == 0 and b[2] == 0 and loc_off(a[1]) is not None and loc_off(b[1]) == loc_off(a[1]) + 2:
                 out.append(("loc", a[1], 0, 4))          # two names (var_4 / var_2) of one far pointer
+                PAIR_HI[b[1]] = a[1]
                 i += 2
                 continue
             if a[0] == "mem" and b[0] == "mem" and a[1] == b[1] and a[3] == 2 and b[3] == 2 and simp(("sub", b[2], a[2])) == K(2):
@@ -217,6 +222,7 @@ def remove_dead_vars(f):
                 for x in walk(e):
                     if x[0] == "loc":
                         locs_read.add(x[1])
+        locs_read |= {h for h, l in PAIR_HI.items() if l in locs_read}
         for b in f.blocks.values():
             keep = [s for s in b.stmts if not (s[0] == "set" and (s[1][0] in ("phi", "tmp") and s[1] not in used or s[1][0] == "loc" and s[1][1] not in locs_read and s[1][1] not in ("si", "di") and not s[1][1].startswith("arg")))]
             if len(keep) != len(b.stmts):
@@ -891,8 +897,76 @@ def flatten(lines, labels):
     return out
 
 
+def pair_text_locals(lines, pairs):
+    """a far pointer local whose two halves are stored in different places (the low half a message index or a string, the high half 0xF0BB or DS) is one
+    TextRef variable: the high half stores set the block, the low half stores that are numbers set the index"""
+    done = []
+    for hi, lo in pairs:
+        if not any(re.match(r"^\s*%s = " % hi, ln) for ln in lines):
+            continue
+        his = [re.match(r"^\s*%s = (.*);$" % hi, ln) for ln in lines if re.match(r"^\s*%s = " % hi, ln)]
+        if any(m is None or not re.match(r"^(DS|0|0xF0[0-9A-F]{2})$", m.group(1)) for m in his):
+            continue
+        res = []
+        for ln in lines:
+            m = re.match(r"^(\s*)%s = (.*);$" % hi, ln)
+            if m:
+                if m.group(2) != "DS":
+                    res.append("%s%s.setHi(%s);" % (m.group(1), lo, m.group(2)))
+                continue
+            m = re.match(r"^(\s*)%s = (.*);$" % lo, ln)
+            if m and not re.match(r"^(ES\(|g\.print_obj\(|g\.ResourceText_GetStr\(|TextRef|nullptr|\")", m.group(2)) and not re.match(r"^p\d+_ax$", m.group(2)):
+                res.append("%s%s.setLo(%s);" % (m.group(1), lo, m.group(2)))
+                continue
+            res.append(ln)
+        lines = res
+        done.append(lo)
+    return lines, done
+
+
+def pair_text_phis(lines):
+    """a text reference selected among several branches lives in two phi variables (pN_ax: offset or message index, pN_s0: segment or 0xF0BB); where every
+    store and every use of the pair is of the recognised form they become one TextRef variable"""
+    src = chr(10).join(lines)
+    names = []
+    for pn in sorted(set(re.findall(r"\b(p\d+)_s0\b", src))):
+        stores = re.findall(r"^\s*%s_ax = .*;\n\s*%s_s0 = (?:DS|0xF0[0-9A-F]{2});$" % (pn, pn), src, re.M)
+        uses = re.findall(r"\(%s_ax, %s_s0\)" % (pn, pn), src)
+        n_s0 = len(re.findall(r"\b%s_s0\b" % pn, src))
+        if n_s0 != len(stores) + len(uses) or not stores:
+            continue
+        names.append(pn)
+    if not names:
+        return lines, []
+    i = 0
+    res = []
+    while i < len(lines):
+        ln = lines[i]
+        done = False
+        for pn in names:
+            m = re.match(r"^(\s*)%s_ax = (.*);$" % pn, ln)
+            if m and i + 1 < len(lines):
+                m2 = re.match(r"^\s*%s_s0 = (DS|0xF0[0-9A-F]{2});$" % pn, lines[i + 1])
+                if m2:
+                    if m2.group(1) == "DS":
+                        res.append("%s%s_txt = TextRef(%s);" % (m.group(1), pn, m.group(2)))
+                    else:
+                        res.append("%s%s_txt = TextRef(TextRef::fromWords(%s, %s));" % (m.group(1), pn, m.group(2), m2.group(1)))
+                    i += 2
+                    done = True
+                    break
+        if done:
+            continue
+        for pn in names:
+            ln = ln.replace("(%s_ax, %s_s0)" % (pn, pn), "(%s_txt)" % pn)
+        res.append(ln)
+        i += 1
+    return res, ["%s_txt" % pn for pn in names if any(("%s_txt" % pn) in r for r in res)]
+
+
 def function_text(ctx, name, names=None, void=None):
     names = names or Names()
+    PAIR_HI.clear()
     f, em, rn, body, temps = render_function(ctx, name, names, void)
     lines = flatten(body, em.labels)
     decl = sorted("r%d_%d" % c for c in temps)
@@ -905,11 +979,20 @@ def function_text(ctx, name, names=None, void=None):
         params = ["arg%d" % i for i in range(want)]
     TAB = chr(9)
     head = ["// " + name, names.header(name, params) + " {"] + [TAB + l for l in names.prolog()]
+    lines, pairvars = pair_text_locals(lines, [(names.loc(name, h, 0, 2), names.loc(name, l, 0, 2)) for h, l in PAIR_HI.items()])
+    lines, txtvars = pair_text_phis(lines)
+    phis = phis + txtvars
     vars_ = decl + ["t%d" % t for t in tmps] + phis
     text = chr(10).join(lines)
     named = {names.loc(name, n, 0, 2) for n in f.locs if not n.startswith(("arg_", "var_"))}
     locs = sorted(set(re.findall(r"\bv[0-9A-F]+(?:_hi)?\b", text)) | {n for n in named | {"si", "di"} if re.search(r"\b%s\b" % re.escape(n), text)})
     locs = [n for n in locs if not n.endswith("_hi")] + [n for n in locs if n.endswith("_hi")]
+    # local text buffers: a stack variable the program copies a string into
+    bufs = sorted(set(re.findall(r"(?:strcpy|strcat)\(\(intptr_t\)&(v[0-9A-F]+),", text)))
+    if bufs:
+        lines = [re.sub(r"\(intptr_t\)&(%s)\b" % "|".join(bufs), r"\1", ln) for ln in lines]
+        text = chr(10).join(lines)
+        locs = [n for n in locs if n not in bufs]
     allv = locs + vars_
     ptr_src = r'("|ES\(|g\.print_obj\(|g\.ResourceText_GetStr\(|_strlwr\(|_strupr\(|nullptr|number_to_words' + "".join(r"|" + fn + r"\(g" for fn in getattr(names, "farfns", ())) + "".join(r"|" + x for x in names.ptr_sources()) + r')'
     strs = {n for n in allv if re.search(r'(^|\s)%s = \(*([^;?]*\? )?' % re.escape(n) + ptr_src, text)}
@@ -922,7 +1005,16 @@ def function_text(ctx, name, names=None, void=None):
             if (a in strs) != (b2 in strs):
                 strs |= {a, b2}
                 changed = True
-    txts = {n for n in allv if re.search(r'(^|\s)%s = .*TextRef\(' % re.escape(n), text)}
+    txts = {n for n in allv if re.search(r'(^|\s)%s = .*TextRef\(' % re.escape(n), text)} | {n for n in pairvars if n in allv}
+    strs -= set(pairvars)
+    # a variable a text reference is copied into holds a text reference
+    changed = True
+    while changed:
+        changed = False
+        for a, b2 in copies:
+            if b2 in txts and a not in txts:
+                txts.add(a)
+                changed = True
     strs -= txts
     ints = [n for n in allv if n not in strs and n not in txts]
     # assignments between the two kinds of variable need a cast
@@ -933,10 +1025,12 @@ def function_text(ctx, name, names=None, void=None):
         if m and m.group(2) in allv and "?" not in m.group(3):
             rhs = m.group(3)
             is_ptr = bool(ptr_like.match(rhs))
-            if m.group(2) not in strs and is_ptr:
+            if m.group(2) not in strs and m.group(2) not in pairvars and is_ptr:
                 ln = "%s%s = (intptr_t)(%s);" % (m.group(1), m.group(2), rhs)
         fixed.append(ln)
     lines = fixed
+    for b in bufs:
+        head.append(TAB + "char %s[64];" % b)
     if ints:
         head.append(TAB + "intptr_t " + ", ".join(ints) + ";")
     if strs:

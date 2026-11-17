@@ -46,6 +46,8 @@ struct TextRef {
 	TextRef(uint32 i) : id(i), text(nullptr) {}
 	static TextRef message(uint32 i) { TextRef t; t.id = i; return t; }
 	static TextRef fromWords(Word lo, Word hi) { TextRef t; t.id = ((uint32)(uint16)(int)hi << 16) | (uint16)(int)lo; return t; }
+	void setLo(Word lo) { id = (id & 0xFFFF0000u) | (uint16)(int)lo; text = nullptr; }      // (a far pointer local whose halves are stored separately)
+	void setHi(Word hi) { id = (id & 0xFFFFu) | ((uint32)(uint16)(int)hi << 16); text = nullptr; }
 	bool isMessage() const { return id != 0; }
 	operator char *() const { return const_cast<char *>(text); }
 	operator Word() const { return Word(text ? (intptr_t)text : (intptr_t)id); }
@@ -145,6 +147,8 @@ public:
 	char *print_obj(int style, int obj, const char *verb = nullptr);
 	/** A message of the message file as text (ResourceText_GetStr); valid until a few more calls have been made. */
 	char *ResourceText_GetStr(uint32 id);
+	/** A far pointer (segment, offset) as the logic builds it: a message id (segment 0xF0BB, offset = index) or an address in the original's data. */
+	char *farPtr(int seg, int off);
 	char *ResourceText_GetStr(TextRef t) { return t.isMessage() ? ResourceText_GetStr(t.id) : const_cast<char *>(t.text ? t.text : ""); }
 	/** Prints a message or a format string with arguments (Font_WriteMessage). */
 	template <class... A> int Font_WriteMessage(uint32 msg, A... args) {
@@ -211,6 +215,7 @@ private:
 	std::string format(const std::string &fmt, const FmtArg *args);
 	int writeMessage(const std::string &fmt, const FmtArg *args);
 
+	std::vector<uint8> _farScratch;  // see farPtr
 	std::vector<char> _text[8];     // results of print_obj / ResourceText_GetStr
 	unsigned _textNext;
 	char *keep(const std::string &s);
