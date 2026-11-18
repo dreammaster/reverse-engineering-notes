@@ -2,8 +2,36 @@
 
 #include "vsplayer/control/masterControl.h"
 
-void TLoadingControl::Init(SLoadingScreen &/*screen*/, TSoundInterface */*soundManager*/) {
-	// Not reversed - see this class's own header comment for why.
+// Confirmed (asm lines 481265-481687): the picture of the screen is loaded and put in the middle of the window, the sound starts, the bar is loaded and
+// put in the screen's place for it, and the part of it that is drawn is the whole (the bar that fills starts with none of it).
+void TLoadingControl::Init(SLoadingScreen &screen, TSoundInterface *soundManager) {
+	_backgroundPic.LoadPicture(screen.background.GetPath(), TPictureIO::eLoadSetting::Normal);
+
+	int offsetX = (screen.windowWidth - _backgroundPic.GetWidth()) / 2;
+	int offsetY = (screen.windowHeight - _backgroundPic.GetHeight()) / 2;
+
+	screen.background.SetPosition(wxPoint{offsetX, offsetY}, -1.0f);
+
+	if (soundManager) {
+		_soundPath = wxFileName(screen.music);
+
+		if (_soundPath.IsOk())
+			soundManager->Play(_soundPath, TVisObjRef(), 100, 0, true, TSoundTypeEnum::kMusic, 0, 0);
+	}
+
+	_progressFillsForward = screen.fillForward;
+	_progressBarPic.LoadPicture(screen.status.GetPath(), TPictureIO::eLoadSetting::Normal);
+
+	_totalRect.x = screen.statusPosition.x;
+	_totalRect.y = screen.statusPosition.y;
+	_totalRect.width = _progressBarPic.GetWidth();
+	_totalRect.height = _progressBarPic.GetHeight();
+	_fillOrigin = wxPoint{offsetX + _totalRect.GetLeft(), offsetY + _totalRect.GetTop()};
+	_progressBarPic.SetPosition(_fillOrigin, -1.0f);
+	_fillRect.SetLeft(0);
+	_fillRect.SetTop(0);
+	_fillRect.SetWidth(_progressFillsForward ? 0 : _progressBarPic.GetWidth());
+	_fillRect.SetHeight(_progressBarPic.GetHeight());
 }
 
 void TLoadingControl::UpdateStatus(int current, int total) {

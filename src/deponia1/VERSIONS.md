@@ -36,3 +36,6 @@ watched it (no automatic comparison exists).
 - Windows and macOS builds of Deponia 1: not looked at. The things to compare first are the graphics layer (Direct3D or
   OpenGL, `Device` in `config.ini`), the sound (OpenAL, XAudio), the movie player (ffmpeg or Media Foundation) and the
   fonts, and the paths of the save games and the logs.
+
+### The loading screen (`FillLoadingScreen`, `TLoadingControl::Init`, `ShowLoadingScreen`; 18 Nov 2026)
+Reconstructed from the listing (the three games read the same): `SLoadingScreen` is two `TSprite`s (the picture of the screen, `kLoadingSprite`, +0x00; the status bar, `kLoadingStatusSprite`, +0x50), whether the bar fills (`!kLoadingStatusCover`, +0xA0), the sound (`kLoadingMusic`, +0xA8), the place of the bar (+0xB0) and the window's size (+0xB8/+0xBC, put there by `ShowLoadingScreen`). `Init` loads the two pictures, puts the screen's in the middle of the window, starts the sound (volume 100, looping, music), puts the bar in its place and sets the part of it that is drawn (all of it; none for a bar that fills). The three functions were empty before: the loading screen drew nothing. Checked only that the picture is loaded (`sys_loadingscreen.webp` in the rabbit); the frames of the engine's own screen are not swapped before the game's first frame in the stand-alone player.

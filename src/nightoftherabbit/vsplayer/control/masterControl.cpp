@@ -89,7 +89,13 @@ TGameClientSDK *TMasterControl::GetGameClientSDK() const {
 	return _gameClientSDK;
 }
 
-void FillLoadingScreen(SLoadingScreen &/*screen*/, const TVisObjRef &/*source*/) {
+// Confirmed (asm lines 462404-462521): the two pictures, whether the bar fills (the status cover is not set), the sound and the place of the bar.
+void FillLoadingScreen(SLoadingScreen &screen, const TVisObjRef &source) {
+	screen.status = source.GetSprite(kLoadingStatusSprite);
+	screen.statusPosition = screen.status.GetPosition();
+	screen.background = source.GetSprite(kLoadingSprite);
+	screen.fillForward = !source.GetBool(kLoadingStatusCover);
+	screen.music = source.GetPath(kLoadingMusic).GetFullPath().ToStdWstring();
 }
 
 void TMasterControl::SetLoadingScreen(SLoadingScreen &screen) {
@@ -99,11 +105,12 @@ void TMasterControl::SetLoadingScreen(SLoadingScreen &screen) {
 void TMasterControl::ShowLoadingScreen() {
 	if (!_loadingControl)
 		return;
+	// Confirmed (ShowLoadingScreen): the window's size is put in the screen (it is the cached one), then the control is set up.
 	_loadingScreenCachedWidth = _windowWidth;
 	_loadingScreenCachedHeight = _windowHeight;
-	// Real TLoadingControl::Init(SLoadingScreen&, TSoundInterface*) not
-	// reversed yet; TSoundInterface appears to be an interface TSoundFFMPEG
-	// implements, so passing it directly here is a reasonable placeholder.
+	_loadingScreen.windowWidth = _windowWidth;
+	_loadingScreen.windowHeight = _windowHeight;
+	_loadingControl->Init(_loadingScreen, _soundManager);
 }
 
 void TMasterControl::CleanUp() {

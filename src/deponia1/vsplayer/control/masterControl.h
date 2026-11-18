@@ -95,32 +95,16 @@ enum class TKeyboardMessageEnum {
 	kControllerRemapped = 9,
 };
 
-// Field order/sizes are recovered from TMasterControl::SetLoadingScreen's
-// memberwise copy; several fields' real meaning is unconfirmed (see
-// NOTES.md) - names are best-effort guesses at "a loading screen needs
-// this."
+// Confirmed (FillLoadingScreen, TLoadingControl::Init, TMasterControl::SetLoadingScreen / ShowLoadingScreen; the sprites are TSprites of 0x50
+// bytes): what the loading screen is made of, taken from the first loading record of the game.
 struct SLoadingScreen {
-	TCharHolder backgroundImage;
-	long long field18 = 0;
-	long long field20 = 0;
-	int field28 = 0;
-	TCharHolder progressBarImage;
-	bool field40 = false;
-	int field44 = 0;
-	float field48 = 0.0f;
-	TCharHolder soundOrOverlayImage;
-	long long field68 = 0;
-	long long field70 = 0;
-	int field78 = 0;
-	TCharHolder anotherImage;
-	bool field90 = false;
-	int field94 = 0;
-	unsigned short field9C = 0;
-	unsigned char fieldA0 = 0;
-	std::wstring text;
-	long long fieldB0 = 0;
-	int fieldB8 = 0;
-	int fieldBC = 0;
+	TSprite background;          // +0x00: the picture of the screen (kLoadingSprite)
+	TSprite status;              // +0x50: the picture of the status bar (kLoadingStatusSprite)
+	bool fillForward = false;    // +0xA0: the bar is not a cover that is pushed away (not kLoadingStatusCover)
+	std::wstring music;          // +0xA8: the sound that plays while it is shown (kLoadingMusic)
+	wxPoint statusPosition;      // +0xB0: where the bar is, in the picture (the position of the status sprite)
+	int windowWidth = 0;         // +0xB8: the window (set by ShowLoadingScreen), that the picture is put in the middle of
+	int windowHeight = 0;        // +0xBC
 };
 
 // Confirmed a free function, not a member (TGameControl::PreLoad,
