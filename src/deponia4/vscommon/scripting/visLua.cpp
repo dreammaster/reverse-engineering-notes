@@ -1,3 +1,6 @@
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
 #include "vscommon/scripting/visLua.h"
 #include "vscommon/scripting/luaStdLibs.h"
 
@@ -90,8 +93,64 @@ bool IsInternalGlobalVar(const wxString &name) {
 // WORKAROUND: ScummVM's Lua has no lua_dump (it calls the fatal error()), and a script that does `pcall(string.dump, f)` to tell the C functions
 // from the others (the DataDumper of the "Shader Toolkit" module of the Deponia 4 data, run at load) ends the program. In the original (LuaJIT),
 // string.dump raises a Lua error for a C function; here it raises one for every function.
+//
+// A Lua function (the Shader Toolkit's `bind()` and `DataDumper` do it to a closure, to keep it with the saved state) gets a token instead of the
+// bytecode: the text "--visionaire-dumped-function:" and a number, with the function itself kept in the registry; the replacement of `loadstring` below gives the
+// function back for the token. It lives as long as the Lua state (a saved game of a session before is not made again from it).
+static const size_t kTokenLength = 29;   // (the length of the text that begins a token)
+
 static int stringDumpUnsupported(lua_State *state) {
-	return luaL_error(state, "unable to dump given function");
+	luaL_checktype(state, 1, LUA_TFUNCTION);
+
+	if (lua_iscfunction(state, 1))
+		return luaL_error(state, "unable to dump given function");
+
+	lua_getfield(state, LUA_REGISTRYINDEX, "VisionaireDumpedFunctions");
+
+	if (lua_isnil(state, -1)) {
+		lua_settop(state, -2);
+		lua_createtable(state, 0, 0);
+		lua_pushvalue(state, -1);
+		lua_setfield(state, LUA_REGISTRYINDEX, "VisionaireDumpedFunctions");
+	}
+
+	int number = static_cast<int>(lua_objlen(state, -1)) + 1;
+	char token[40];
+
+	std::snprintf(token, sizeof(token), "--visionaire-dumped-function:%d", number);
+	lua_pushvalue(state, 1);
+	lua_rawseti(state, -2, number);
+	lua_settop(state, -2);
+	lua_pushstring(state, token);
+	return 1;
+}
+
+// `loadstring` that knows the tokens of stringDumpUnsupported() (the function), and otherwise is the one of Lua (kept as the upvalue).
+static int loadstringWithTokens(lua_State *state) {
+	size_t length = 0;
+	const char *text = lua_tolstring(state, 1, &length);
+
+	if (text && length > kTokenLength && std::strncmp(text, "--visionaire-dumped-function:", kTokenLength) == 0) {
+		int number = std::atoi(text + kTokenLength);
+
+		lua_getfield(state, LUA_REGISTRYINDEX, "VisionaireDumpedFunctions");
+
+		if (lua_istable(state, -1)) {
+			lua_rawgeti(state, -1, number);
+
+			if (lua_isfunction(state, -1))
+				return 1;
+		}
+
+		lua_pushnil(state);
+		lua_pushstring(state, "unknown token of a dumped function");
+		return 2;
+	}
+
+	lua_pushvalue(state, lua_upvalueindex(1));
+	lua_insert(state, 1);
+	lua_call(state, lua_gettop(state) - 1, LUA_MULTRET);
+	return lua_gettop(state);
 }
 
 // Confirmed (asm lines 1406409-1406643)
@@ -104,6 +163,10 @@ void InitLua(TVisionaireGame *game, const wxString &appDir, const wxString &reso
 	lua_pushcclosure(L, stringDumpUnsupported, 0);
 	lua_setfield(L, -2, "dump");
 	lua_settop(L, -2);
+
+	lua_getfield(L, LUA_GLOBALSINDEX, "loadstring");
+	lua_pushcclosure(L, loadstringWithTokens, 1);
+	lua_setfield(L, LUA_GLOBALSINDEX, "loadstring");
 
 	lua_pushcclosure(L, LuaPrint, 0);
 	lua_setfield(L, LUA_GLOBALSINDEX, "print");
