@@ -8,6 +8,8 @@
 // GetTypeGroup()/InitType().
 #pragma once
 
+#include <list>
+
 #include "datastruct/typegrp.h"
 #include "datastruct/visobjref.h"
 
@@ -117,8 +119,12 @@ public:
 	static void OnInit(TVisionaireObject *object);
 };
 
+class TVisionaireGame;
+
 class TTCharacter : public TVisObjRef {
 public:
+	/** The lines of the console's list of the characters (by name). */
+	static void PrintCharacters(std::list<wxString> &lines, TVisionaireGame &game);
 	TTCharacter() = default;
 	explicit TTCharacter(const TVisObjRef &ref) : TVisObjRef(ref) {
 	}
@@ -168,6 +174,8 @@ public:
 
 class TTCondition : public TVisObjRef {
 public:
+	/** The lines of the console's list of the conditions (by name). */
+	static void PrintConditions(std::list<wxString> &lines, TVisionaireGame &game);
 	TTCondition() = default;
 	explicit TTCondition(const TVisObjRef &ref) : TVisObjRef(ref) {
 	}
@@ -446,6 +454,8 @@ public:
 
 class TTValue : public TVisObjRef {
 public:
+	/** The lines of the console's list of the values (by name). */
+	static void PrintValues(std::list<wxString> &lines, TVisionaireGame &game);
 	TTValue() = default;
 	explicit TTValue(const TVisObjRef &ref) : TVisObjRef(ref) {
 	}

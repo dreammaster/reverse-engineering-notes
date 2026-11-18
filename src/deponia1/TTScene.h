@@ -7,11 +7,14 @@
 
 #include "datastruct/typegrp.h"
 
+#include <list>
 #include <vector>
 
 #include "TCharHolder.h"
 #include "WxStub.h"
 #include "datastruct/visobjref.h"
+
+class TVisionaireGame;
 
 class TTScene : public TVisObjRef {
 public:
@@ -33,4 +36,6 @@ public:
 	/** The files of the sounds that the actions of the scene start (the commands to play a sound, the scene music, loop a sound
 	 *  and set the walking sound); the vector is emptied first. */
 	void GetSoundsOnScene(std::vector<TCharHolder> &sounds) const;
+	/** The lines of the console's list of the scenes (by name): the name, the id, menu or playable, the brightness, the music. */
+	static void PrintScenes(std::list<wxString> &lines, TVisionaireGame &game);
 };

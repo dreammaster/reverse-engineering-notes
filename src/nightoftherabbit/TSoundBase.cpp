@@ -398,8 +398,9 @@ void TSoundBase::PrintSounds(std::list<wxString> &lines) const {
 		              static_cast<long>(item->GetVolume()), static_cast<long>(item->GetPan()),
 		              item->_paused ? L"True" : L"False", item->_stopped ? L"True" : L"False");
 		lines.push_back(wxString(text));
-		std::swprintf(text, sizeof(text) / sizeof(text[0]), L"Streamed: %ls, Fading: %ls", item->_streamed ? L"True" : L"False",
-		              item->_fading ? L"True" : L"False");
+		// Confirmed (Night of the Rabbit, TSoundBase::PrintSounds; the strings are at F30520-F306D8): the line has nothing but the streaming
+		// (Deponia 1's has the fade too).
+		std::swprintf(text, sizeof(text) / sizeof(text[0]), L"Streamed: %ls", item->_streamed ? L"True" : L"False");
 		lines.push_back(wxString(text));
 		lines.push_back(wxString());
 	}
