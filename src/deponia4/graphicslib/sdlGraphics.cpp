@@ -319,7 +319,7 @@ void TSdlGraphics::SetOffset(float x, float y) {
 // A picture with its tint and alpha, turned and scaled about the centre as the other backends do (the scale first, then the turn).
 void TSdlGraphics::Draw(TSpriteHandle *sprite, const wxRect &sourceRect, const FloatRect &destRect, float alpha, bool mirrored,
                         const unsigned int &color, int /*shader*/, float rotation, const wxPoint &rotationCenter, float scaleX, float scaleY,
-                        int /*matrixId*/) {
+                        int matrixId) {
 	if (!_renderer || destRect.width <= 0.0f || destRect.height <= 0.0f)
 		return;
 
@@ -370,11 +370,78 @@ void TSdlGraphics::Draw(TSpriteHandle *sprite, const wxRect &sourceRect, const F
 	                       static_cast<Uint8>(((color >> 16) & 0xFF) * colorScale));
 	SDL_SetTextureAlphaMod(texture, static_cast<Uint8>(tintAlpha * 255.0f));
 
+	_dirty = true;
+
+	// Confirmed (TGraphicsOGL::Draw, asm 1214131): with the matrices on, `matrix1` set (9 numbers) and a matrix id other than 0, the drawing's
+	// matrix is multiplied by matrix1, a 3 x 3 on the pixels of the picture (the camera of the Shader Toolkit: zoom, turn and pan of the
+	// scene). Here the four corners are moved through it and the picture is drawn as two triangles.
+	if (matricesActive && matrixId != 0 && matrix1.size() == 9) {
+		int textureWidth = 0;
+		int textureHeight = 0;
+
+		SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
+
+		if (textureWidth > 0 && textureHeight > 0) {
+			const std::vector<float> &m = matrix1;
+			float angle = rotation;
+			float cosine = std::cos(angle);
+			float sine = std::sin(angle);
+
+			float corners[4][2] = {{destination.x, destination.y},
+			                       {destination.x + destination.w, destination.y},
+			                       {destination.x + destination.w, destination.y + destination.h},
+			                       {destination.x, destination.y + destination.h}};
+			float u0 = static_cast<float>(source.x) / textureWidth;
+			float u1 = static_cast<float>(source.x + source.w) / textureWidth;
+			float v0 = static_cast<float>(source.y) / textureHeight;
+			float v1 = static_cast<float>(source.y + source.h) / textureHeight;
+
+			if (mirrored)
+				std::swap(u0, u1);
+
+			float uvs[4][2] = {{u0, v0}, {u1, v0}, {u1, v1}, {u0, v1}};
+			SDL_Vertex vertices[4];
+
+			for (int i = 0; i < 4; i++) {
+				float x = corners[i][0];
+				float y = corners[i][1];
+
+				if (angle != 0.0f) {
+					float relativeX = x - centerX;
+					float relativeY = y - centerY;
+
+					x = centerX + relativeX * cosine - relativeY * sine;
+					y = centerY + relativeX * sine + relativeY * cosine;
+				}
+
+				float w = m[2] * x + m[5] * y + m[8];
+
+				if (w == 0.0f)
+					w = 1.0f;
+
+				vertices[i].position.x = (m[0] * x + m[3] * y + m[6]) / w;
+				vertices[i].position.y = (m[1] * x + m[4] * y + m[7]) / w;
+				vertices[i].color.r = vertices[i].color.g = vertices[i].color.b = vertices[i].color.a = 255;
+				vertices[i].tex_coord.x = uvs[i][0];
+				vertices[i].tex_coord.y = uvs[i][1];
+			}
+
+			static const int indices[6] = {0, 1, 2, 0, 2, 3};
+
+			if (SDL_RenderGeometry(_renderer, texture, vertices, 4, indices, 6) != 0) {
+				static int reported = 0;
+
+				if (reported++ < 5 && wxLog::loglevel >= 0)
+					wxLog::logexpanded(L"SDL_RenderGeometry failed: %s", wxString(SDL_GetError()).wc_str());
+			}
+			return;
+		}
+	}
+
 	SDL_FPoint center;
 
 	center.x = centerX - destination.x;
 	center.y = centerY - destination.y;
-	_dirty = true;
 	if (SDL_RenderCopyExF(_renderer, texture, &source, &destination, static_cast<double>(rotation) * 180.0 / 3.14159265358979323846, &center,
 	                      mirrored ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE) != 0) {
 		static int reported = 0;
