@@ -224,7 +224,7 @@ def remove_dead_vars(f):
                         locs_read.add(x[1])
         locs_read |= {h for h, l in PAIR_HI.items() if l in locs_read}
         for b in f.blocks.values():
-            keep = [s for s in b.stmts if not (s[0] == "set" and (s[1][0] in ("phi", "tmp") and s[1] not in used or s[1][0] == "loc" and s[1][1] not in locs_read and s[1][1] not in ("si", "di") and not s[1][1].startswith("arg")))]
+            keep = [s for s in b.stmts if not (s[0] == "set" and (s[1][0] in ("phi", "tmp") and s[1] not in used and not (s[1][0] == "phi" and s[1][1] == "dx" and (s[2] == ("dseg",) or (s[2][0] == "k" and (s[2][1] & 0xFF00) == 0xF000))) or s[1][0] == "loc" and s[1][1] not in locs_read and s[1][1] not in ("si", "di") and not s[1][1].startswith("arg")))]
             if len(keep) != len(b.stmts):
                 b.stmts = keep
                 changed = True
@@ -925,17 +925,18 @@ def pair_text_locals(lines, pairs):
 
 
 def pair_text_phis(lines):
-    """a text reference selected among several branches lives in two phi variables (pN_ax: offset or message index, pN_s0: segment or 0xF0BB); where every
-    store and every use of the pair is of the recognised form they become one TextRef variable"""
+    """a text reference selected among several branches lives in two phi variables (pN_ax: offset or message index, pN_s0 / pN_dx: segment or 0xF0BB); where every
+    store of the pair is of the recognised form they become one TextRef variable"""
     src = chr(10).join(lines)
-    names = []
-    for pn in sorted(set(re.findall(r"\b(p\d+)_s0\b", src))):
-        stores = re.findall(r"^\s*%s_ax = .*;\n\s*%s_s0 = (?:DS|0xF0[0-9A-F]{2});$" % (pn, pn), src, re.M)
-        uses = re.findall(r"\(%s_ax, %s_s0\)" % (pn, pn), src)
-        n_s0 = len(re.findall(r"\b%s_s0\b" % pn, src))
-        if n_s0 != len(stores) + len(uses) or not stores:
+    names = {}
+    for pn, suf in sorted(set(re.findall(r"\b(p\d+)_(s0|dx)\b", src))):
+        stores = re.findall(r"^\s*%s_ax = .*;\n\s*%s_%s = (?:DS|0xF0[0-9A-F]{2});$" % (pn, pn, suf), src, re.M)
+        uses = re.findall(r"\(%s_ax, %s_%s\)" % (pn, pn, suf), src)
+        n_seg = len(re.findall(r"\b%s_%s\b" % (pn, suf), src))
+        n_ax_stores = len(re.findall(r"^\s*%s_ax = " % pn, src, re.M))
+        if n_seg != len(stores) + len(uses) or not stores or n_ax_stores != len(stores):
             continue
-        names.append(pn)
+        names[pn] = suf
     if not names:
         return lines, []
     i = 0
@@ -943,10 +944,10 @@ def pair_text_phis(lines):
     while i < len(lines):
         ln = lines[i]
         done = False
-        for pn in names:
+        for pn, suf in names.items():
             m = re.match(r"^(\s*)%s_ax = (.*);$" % pn, ln)
             if m and i + 1 < len(lines):
-                m2 = re.match(r"^\s*%s_s0 = (DS|0xF0[0-9A-F]{2});$" % pn, lines[i + 1])
+                m2 = re.match(r"^\s*%s_%s = (DS|0xF0[0-9A-F]{2});$" % (pn, suf), lines[i + 1])
                 if m2:
                     if m2.group(1) == "DS":
                         res.append("%s%s_txt = TextRef(%s);" % (m.group(1), pn, m.group(2)))
@@ -957,8 +958,10 @@ def pair_text_phis(lines):
                     break
         if done:
             continue
-        for pn in names:
-            ln = ln.replace("(%s_ax, %s_s0)" % (pn, pn), "(%s_txt)" % pn)
+        for pn, suf in names.items():
+            ln = ln.replace("(%s_ax, %s_%s)" % (pn, pn, suf), "(%s_txt)" % pn)
+            ln = ln.replace("(intptr_t)(%s_ax)" % pn, "%s_txt" % pn)
+            ln = re.sub(r"= %s_ax;" % pn, "= %s_txt;" % pn, ln)
         res.append(ln)
         i += 1
     return res, ["%s_txt" % pn for pn in names if any(("%s_txt" % pn) in r for r in res)]

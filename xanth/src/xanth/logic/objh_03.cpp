@@ -3162,7 +3162,7 @@ int objh_290(Game &g, Word arg0) {
 int objh_291(Game &g, Word arg0) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
-	intptr_t v10, v2, v4, r13_44;
+	intptr_t v10, v2, v4, r13_44, p10_dx;
 	char *p10_ax, *p13_ax, *vE;
 	TextRef vA;
 	g.rtlink_thunk();
@@ -3190,6 +3190,7 @@ int objh_291(Game &g, Word arg0) {
 		g.call_object_handler(0x13E, 0xA);
 		if (!(sub_7016A(g))) {
 			p10_ax = ES(310);
+			p10_dx = DS;
 		} else {
 			p10_ax = number_to_words(g, sub_7016A(g));
 		}
@@ -3813,6 +3814,7 @@ int objh_297(Game &g, Word arg0) {
 int objh_298(Game &g, Word arg0) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
+	intptr_t p20_dx;
 	char *p20_ax;
 	if (arg0 != 4) {
 		if (arg0 != 6) {
@@ -3832,6 +3834,7 @@ int objh_298(Game &g, Word arg0) {
 				p20_ax = g.print_obj(3, g.object_get_list_head(rt.dobj, 1));
 			} else {
 				p20_ax = ES(144);
+				p20_dx = DS;
 			}
 			g.Font_WriteMessage(ES(318), g.print_obj(0x12, rt.dobj), p20_ax);
 			return 1;

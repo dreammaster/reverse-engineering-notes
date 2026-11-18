@@ -12,11 +12,8 @@ loc_5F4C9	write to ah (mov     ah, [bx+2C91h])
 loc_5F4E5	write to ah (mov     ah, [bx+2C91h])
 loc_5F501	write to ah (mov     ah, [bx+2C91h])
 number_to_words	instruction movsw (movsw)
-objh_341	does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-objh_390	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 sub_1AAFB	instruction stosw (stosw)
 sub_1C4ED	use of bp (lea     ax, [bp+si+var_4E])
 sub_312E3	does not compile yet: too few arguments to function 'int Xanth::sub_5E2D0(Game&, Word)'
 sub_312ED	does not compile yet: too few arguments to function 'int Xanth::sub_5EC63(Game&, Word)'
-sub_44130	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 sub_60460	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]

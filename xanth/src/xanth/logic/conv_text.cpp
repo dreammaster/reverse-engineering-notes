@@ -855,6 +855,7 @@ TextRef conv_text_43(Game &g) {
 TextRef conv_text_44(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
+	intptr_t p5_dx;
 	char *p5_ax, *r2_1, *v4, *v8;
 	if (v.flag_852BE_conv_text_44 == 0) {
 		v.flag_852BE_conv_text_44 = 1;
@@ -866,6 +867,7 @@ TextRef conv_text_44(Game &g) {
 		strcpy(rt.word_81A66, r2_1);
 		if (v.can_climb != 0) {
 			p5_ax = ES(35);
+			p5_dx = DS;
 		} else {
 			p5_ax = g.ResourceText_GetStr(ES(36));
 		}

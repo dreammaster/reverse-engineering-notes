@@ -85,6 +85,7 @@ int main() {
 	}
 	long scenarios = 0, skipped = 0, same = 0, retDiff = 0, stateDiff = 0, eventDiff = 0, textDiff = 0;
 	int shown = 0;
+	std::map<std::string, long> others;        // the routines of the original that only draw (Ui::other) and how often the scenarios call them
 	Xanth::RecordingUi ui;
 	Xanth::Game g(ui, messages, names);
 	for (int o = 1; o <= g.state.objects.count(); o++) {
@@ -127,8 +128,10 @@ int main() {
 				}
 				scenarios++;
 				bool conversation = false;
-				for (size_t k = 0; k < ui.others.size(); k++)
+				for (size_t k = 0; k < ui.others.size(); k++) {
 					conversation |= ui.others[k] == "showCutscene";
+					others[ui.others[k]]++;
+				}
 				for (size_t k = 0; k < ui.log.size(); k++)
 					conversation |= ui.log[k].compare(0, 13, "conversation|") == 0;
 				if (conversation) {
@@ -177,6 +180,9 @@ int main() {
 	}
 	if (dump)
 		fclose(dump);
+	if (getenv("XANTH_SCANOTHERS"))
+		for (std::map<std::string, long>::const_iterator it = others.begin(); it != others.end(); ++it)
+			printf("  other %s: %ld\n", it->first.c_str(), it->second);
 	printf("test_scan: %ld scenarios run (%ld start a conversation or cutscene and are not compared)", scenarios, skipped);
 	if (!golden.empty())
 		printf(", %ld identical to the oracle; differences: %ld return value, %ld state, %ld event queue, %ld text", same, retDiff, stateDiff, eventDiff, textDiff);

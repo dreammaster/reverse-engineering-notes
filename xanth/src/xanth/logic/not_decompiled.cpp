@@ -18,13 +18,10 @@ int loc_5F4C9(Game &) { return 0; }  // write to ah (mov     ah, [bx+2C91h])
 int loc_5F4E5(Game &) { return 0; }  // write to ah (mov     ah, [bx+2C91h])
 int loc_5F501(Game &) { return 0; }  // write to ah (mov     ah, [bx+2C91h])
 TextRef number_to_words(Game &, Word) { return TextRef(); }  // instruction movsw (movsw)
-int objh_341(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'int' to 'char*' [-fpermissive]
-int objh_390(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int sub_1AAFB(Game &) { return 0; }  // instruction stosw (stosw)
 int sub_1C4ED(Game &, Word, Word, Word, Word) { return 0; }  // use of bp (lea     ax, [bp+si+var_4E])
 int sub_312E3(Game &) { return 0; }  // does not compile yet: too few arguments to function 'int Xanth::sub_5E2D0(Game&, Word)'
 int sub_312ED(Game &) { return 0; }  // does not compile yet: too few arguments to function 'int Xanth::sub_5EC63(Game&, Word)'
-int sub_44130(Game &, Word, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int sub_60460(Game &) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 
 } // namespace Xanth

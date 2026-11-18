@@ -155,6 +155,25 @@ int Game::call_object_handler(int obj, int phase) {
 	return fn ? fn(*this, phase) : 0;
 }
 
+int Game::verbListOffset(int obj) {
+	if (!state.objects.valid(obj))
+		return 0;
+	const byte *r = state.objects.record(obj);
+	int type = state.objects.type(obj), at = type == 2 ? 0x18 : type == 4 ? 0x0A : (type == 3 || type == 5) ? 0x1C : -1;
+	if (at < 0)
+		return 0;
+	unsigned idx = r[at] | (r[at + 1] << 8);
+	return idx ? (int)(0x4624 + idx * 2 + 2) : 0;
+}
+
+int Game::object_list_append(int obj) {
+	int off = verbListOffset(obj);
+	if (off)
+		for (; exe16(0x3000, off) != 0; off += 2)
+			exe16(0x3000, off) = 0;
+	return 0;
+}
+
 int Game::exec_word_handler(int verb) {
 	for (unsigned i = 0; i < kVerbHandlerCount; i++)
 		if (kVerbHandlers[i].verb == verb)

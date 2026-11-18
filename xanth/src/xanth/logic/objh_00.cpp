@@ -2328,6 +2328,7 @@ int objh_035(Game &g, Word arg0) {
 int objh_036(Game &g, Word arg0) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
+	intptr_t p40_dx;
 	char *p37_ax, *p40_ax, *p49_ax, *p58_ax, *p61_ax, *p69_ax, *r40_47;
 	if (arg0 != 4) {
 		if (arg0 != 6) {
@@ -2357,6 +2358,7 @@ int objh_036(Game &g, Word arg0) {
 				p40_ax = g.print_obj(3, 0x56);
 			} else {
 				p40_ax = ES(108);
+				p40_dx = DS;
 			}
 			g.Font_WriteMessage(MSG(50, 1), p40_ax);
 			r40_47 = g.print_obj(1, 0x31);

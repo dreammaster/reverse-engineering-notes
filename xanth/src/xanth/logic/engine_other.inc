@@ -16,7 +16,6 @@ int _time(Word a0 = 0) { return other("_time", a0); }
 int clear_text_area(Word a0 = 0) { return other("clear_text_area", a0); }
 int disable_pic_regions(Word a0 = 0, Word a1 = 0, Word a2 = 0) { return other("disable_pic_regions", a0, a1, a2); }
 int game_over_screen(Word a0 = 0) { return other("game_over_screen", a0); }
-int object_list_append(Word a0 = 0) { return other("object_list_append", a0); }
 int play_scream(Word a0 = 0) { return other("play_scream", a0); }
 int popup_window_event(Word a0 = 0) { return other("popup_window_event", a0); }
 int read_game_state(Word a0 = 0) { return other("read_game_state", a0); }

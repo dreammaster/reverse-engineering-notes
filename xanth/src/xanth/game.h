@@ -131,6 +131,10 @@ public:
 	int object_move(int obj, int parent, int slot) { state.objects.move(obj, parent, slot); return 0; }
 	int object_get_location(int obj) { return state.objects.location(obj); }
 	int object_get_slot(int obj) { return state.objects.slot(obj); }
+	/** The verb list of a thing (the words its record points to in the original's table, segment 0x3000): the offset of its first word, 0 = it has none. The list ends with 0. */
+	int verbListOffset(int obj);
+	/** (object_list_append? in the original) empties the verb list of a thing. */
+	int object_list_append(int obj);
 	int object_get_list_head(int parent, int slot) { return state.objects.listHead(parent, slot); }
 	int object_get_next_sibling(int obj) { return state.objects.nextSibling(obj); }
 	int object_get_points(int obj) { return state.objects.points(obj); }
