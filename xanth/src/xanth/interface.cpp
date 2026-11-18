@@ -7,7 +7,7 @@
 
 namespace Xanth {
 
-Interface::Interface(Game &game, Display &display) : _game(game), _display(display), _files(NULL), _quit(false), _canUndo(false), _fromDefault(false), _pendingObj(0), _selected(-1), _verb(0), _dobj(0) {
+Interface::Interface(Game &game, Display &display) : _game(game), _display(display), _files(NULL), _quit(false), _canUndo(false), _fromDefault(false), _defaultSel(-1), _putHover(false), _pendingObj(0), _selected(-1), _verb(0), _dobj(0) {
 	_verbIds = initialVerbs();
 }
 
@@ -41,6 +41,24 @@ void Interface::move(int x, int y) {
 		if (name.empty())
 			name = _game.objectName(obj);
 	}
+	// a thing waits with its default verb and the pointer is over another one: the sentence turns into "Put the first on the second" (verb 0x38)
+	bool putMode = _fromDefault && _pendingObj && !_dobj && obj && obj != _pendingObj;
+	if (putMode) {
+		const VerbInfo *info = findVerb(0x38);
+		if (info) {
+			for (size_t i = 0; i < _verbIds.size(); i++)
+				if (_verbIds[i] == 0x38)
+					_display.selectVerb((int)i);
+			_putHover = true;
+			name = std::string(info->name) + " " + shortName(_pendingObj) + (info->preposition ? std::string(" ") + info->preposition : "") + " " + shortName(obj);
+			_display.setHoverName(name);
+			return;
+		}
+	}
+	if (_putHover) {
+		_putHover = false;
+		_display.selectVerb(_defaultSel);
+	}
 	if (_verb) {
 		const VerbInfo *info = findVerb(_verb);
 		std::string line = info ? info->name : "";
@@ -51,7 +69,7 @@ void Interface::move(int x, int y) {
 		}
 		if (!obj && _pendingObj && !_dobj)
 			obj = _pendingObj;
-		if (obj && info && info->objects > 0)
+		if (obj && info && info->objects > 0 && obj != _dobj)
 			line += " " + shortName(obj);
 		name = line;
 	}
@@ -93,6 +111,8 @@ int Interface::defaultVerb(int obj) {
 void Interface::showObjectVerbs(int obj) {
 	_pendingObj = obj;
 	_fromDefault = true;
+	_defaultSel = -1;
+	_putHover = false;
 	_extraIds = verbsOf(obj);
 	std::vector<std::string> names;
 	for (size_t i = 0; i < _extraIds.size(); i++) {
@@ -105,11 +125,13 @@ void Interface::showObjectVerbs(int obj) {
 	for (size_t i = 0; i < _extraIds.size(); i++)
 		if (_extraIds[i] == def) {
 			_verb = def;
+			_defaultSel = 100 + (int)i;
 			_display.selectVerb(100 + (int)i);
 		}
 	for (size_t i = 0; i < _verbIds.size() && !_verb; i++)
 		if (_verbIds[i] == def) {
 			_verb = def;
+			_defaultSel = (int)i;
 			_display.selectVerb((int)i);
 		}
 }
@@ -194,11 +216,24 @@ void Interface::click(int x, int y) {
 		move(x, y);
 		return;
 	}
+	if (_fromDefault && _pendingObj && !_dobj && obj != _pendingObj) {       // the first thing waits with its default verb: a second one is "Put the first on the second"
+		_verb = 0x38;
+		_putHover = false;
+		execute(_pendingObj, obj);
+		return;
+	}
 	const VerbInfo *info = findVerb(_verb);
 	bool two = info && info->objects == 2;
 	if (two && !_dobj) {
 		_dobj = obj;
 		_pendingObj = obj;
+		_extraIds = verbsOf(obj);                    // the thing's own verbs are listed while the sentence waits for the second one
+		std::vector<std::string> names;
+		for (size_t i = 0; i < _extraIds.size(); i++) {
+			const VerbInfo *vi = findVerb(_extraIds[i]);
+			names.push_back(vi ? vi->name : "?");
+		}
+		_display.setExtraVerbs(names);
 		move(x, y);
 		return;
 	}
@@ -328,6 +363,7 @@ void Interface::execute(int dobj, int iobj) {
 	_selected = -1;
 	_pendingObj = 0;
 	_fromDefault = false;
+	_putHover = false;
 	_extraIds.clear();
 	_display.setExtraVerbs(std::vector<std::string>());
 	move(_display.mouseX(), _display.mouseY());

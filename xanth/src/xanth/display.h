@@ -95,6 +95,8 @@ private:
 	void drawInventory();
 	void drawSlot(int picNum, int x, int y);
 	void collapseText();
+	/** "- MORE -" is on the screen: waits for a click or a key. */
+	bool waitMore();
 	void popupWindowEvent();
 	int setupPicRegions(unsigned address, unsigned count);
 	void disablePicRegions(unsigned address, unsigned count);
@@ -131,6 +133,7 @@ private:
 	bool _frameDrawn;
 	int _mouseX, _mouseY;
 	std::string _hover;
+	bool _paging;                        // the text of this turn is longer than the grown window: "- MORE -" pages (set_window_pause?)
 	bool _expanded;                      // the text window has grown over the inventory
 	std::vector<std::string> _turnText;  // what was printed since the command began (printed again when the window grows)
 	std::vector<byte> _below;            // what it covers

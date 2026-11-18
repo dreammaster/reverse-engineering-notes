@@ -53,6 +53,8 @@ private:
 	Game &_game;
 	Display &_display;
 	std::vector<int> _verbIds, _extraIds;      // the usual verb list and the verbs of the clicked thing
+	int _defaultSel;                           // the display index of the verb chosen for the clicked thing, -1 = none
+	bool _putHover;                            // the pointer is over a second thing while the first one is only waiting with its default verb: "Put" is shown
 	bool _fromDefault;                         // the chosen verb was chosen for a clicked thing (its default), not by the player
 	int _pendingObj;                           // the thing clicked while no verb was chosen
 	int _selected;               // index into _verbIds, -1 = none

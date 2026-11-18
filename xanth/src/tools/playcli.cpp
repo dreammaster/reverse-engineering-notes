@@ -6,6 +6,8 @@
 #include <cstdlib>
 #include <memory>
 #include <sstream>
+#include <string>
+#include <vector>
 
 #include "common/files.h"
 #include "xanth/display.h"
@@ -16,11 +18,27 @@ struct Stepper : Xanth::InputSource {
 	std::vector<Xanth::InputEvent> queue;      // clicks queued by "q X Y": what the next waits of the game get
 	std::string out;
 	Xanth::Display *display;
-	Stepper() : budget(-1), display(NULL) {}
+	std::vector<std::string> *actions;         // the script: what the game waits for (a "- MORE -", say) takes the next clicks and moves from here
+	size_t next;
+	Stepper() : budget(-1), display(NULL), actions(NULL), next(0) {}
 	virtual Xanth::InputEvent wait() {
 		if (!queue.empty()) {
 			Xanth::InputEvent e = queue.front();
 			queue.erase(queue.begin());
+			return e;
+		}
+		while (actions && next < actions->size()) {
+			std::stringstream a((*actions)[next]);
+			std::string op;
+			int x = 0, y = 0;
+			a >> op >> x >> y;
+			if (op != "c" && op != "m")
+				break;
+			next++;
+			Xanth::InputEvent e;
+			e.type = op == "c" ? Xanth::InputEvent::Click : Xanth::InputEvent::Move;
+			e.x = x;
+			e.y = y;
 			return e;
 		}
 		if (budget < 0) {
@@ -76,8 +94,12 @@ int main(int argc, char **argv) {
 	ui.start();
 	std::stringstream script(argv[3]);
 	std::string action;
-	while (std::getline(script, action, ';')) {
-		std::stringstream a(action);
+	std::vector<std::string> actions;
+	while (std::getline(script, action, ';'))
+		actions.push_back(action);
+	stepper.actions = &actions;
+	while (stepper.next < actions.size()) {
+		std::stringstream a(actions[stepper.next++]);
 		std::string op;
 		int x = 0, y = 0;
 		a >> op >> x >> y;

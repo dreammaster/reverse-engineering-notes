@@ -2,7 +2,7 @@
 
 namespace Legend {
 
-TextWindow::TextWindow() : _font(NULL), _x1(0), _y1(0), _x2(0), _y2(0), _left(0), _fg(15), _bg(-1), _xpos(0), _ypos(0), _scrolled(false) {
+TextWindow::TextWindow() : _font(NULL), _x1(0), _y1(0), _x2(0), _y2(0), _left(0), _fg(15), _bg(-1), _xpos(0), _ypos(0), _pause(-1), _scrolled(false), _stopped(false) {
 }
 
 void TextWindow::setup(int x1, int y1, int x2, int y2, const Font *font, int foreground, int background) {
@@ -15,6 +15,7 @@ void TextWindow::setup(int x1, int y1, int x2, int y2, const Font *font, int for
 	_bg = background;
 	_xpos = font->xCenter();
 	_ypos = font->yCenter();
+	_stopped = false;
 }
 
 void TextWindow::clear(Surface &s) {
@@ -37,6 +38,8 @@ void TextWindow::writeRange(Surface &s, const std::string &t, size_t from, size_
 }
 
 void TextWindow::newLine(Surface &s) {
+	if (_stopped)
+		return;
 	int lineHeight = _font->lineHeight();
 	if (_y2 - _y1 - 2 * lineHeight >= _ypos) {
 		_ypos += lineHeight;
@@ -53,6 +56,22 @@ void TextWindow::newLine(Surface &s) {
 				s.put(x, y, (byte)fill);
 	}
 	_xpos = _font->xCenter();
+	// the pen is on the last line: a page of text has been written (write_window_cr?)
+	if (_y2 - _y1 - 2 * lineHeight < _ypos) {
+		if (_pause >= lineHeight) {
+			_pause -= lineHeight;
+		} else if (_pause != -1) {
+			_pause = _ypos - _font->yCenter() - lineHeight;
+			static const std::string more = "- MORE -";
+			writeRange(s, more, 0, more.size());
+			if (_more && !_more()) {
+				_stopped = true;                       // (the screen stays as the player saw it)
+				return;
+			}
+			int x1 = _left + _font->xCenter(), y1 = _y1 + _ypos;
+			s.fillRect(Common::Rect((int16)x1, (int16)y1, (int16)(x1 + wordWidth(more, 0, more.size())), (int16)(y1 + lineHeight)), (byte)(_bg < 0 ? 0 : _bg));
+		}
+	}
 }
 
 int TextWindow::print(Surface &s, const std::string &t) {
@@ -60,7 +79,7 @@ int TextWindow::print(Surface &s, const std::string &t) {
 	const int spaceWidth = _font->advance(' ');
 	int count = 0;
 	size_t msg = 0;
-	while (msg < t.size()) {
+	while (msg < t.size() && !_stopped) {
 		size_t end = msg;
 		while (end < t.size() && t[end] != ' ' && t[end] != '\t' && t[end] != '\n' && t[end] != '-')
 			end++;

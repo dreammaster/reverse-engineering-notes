@@ -14,7 +14,7 @@ using namespace Legend;
 
 static const int kTextBottom = 151, kSavedTop = 149, kSavedBottom = 196;
 
-Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false), _mouseX(160), _mouseY(100), _expanded(false), _input(NULL), _convPicW(0), _convPicH(0), _convBubbleRight(0), _convMenuBottom(0), _selectedVerb(-1), _inventoryCount(0), _inventoryScroll(0), _rgnFile(-1) {
+Display::Display(const Common::GameFiles &files) : _now(0), _files(files), _game(NULL), _screen(320, 200), _picNum(-1), _compass(0), _frameDrawn(false), _mouseX(160), _mouseY(100), _paging(false), _expanded(false), _input(NULL), _convPicW(0), _convPicH(0), _convBubbleRight(0), _convMenuBottom(0), _selectedVerb(-1), _inventoryCount(0), _inventoryScroll(0), _rgnFile(-1) {
 	memset(_drawn, 0, sizeof(_drawn));
 }
 
@@ -30,6 +30,8 @@ void Display::redrawAll() {
 	_turnText.clear();
 	_selectedVerb = -1;
 	_text.setup(51, 128, 314, kTextBottom, &_ms.font10(), 15, 23);
+	_text.setMoreHandler([this]() { return waitMore(); });
+	_paging = false;
 	_compass = 0;
 	_frameDrawn = true;
 	updateCompass();
@@ -140,7 +142,25 @@ void Display::drawInventory() {
 		drawPicture(_screen, 293 + arrows.x, 152 + arrows.y, &arrows.pixels[0], arrows.width, arrows.height, false);
 }
 
+bool Display::waitMore() {
+	if (!_input)
+		return true;
+	for (;;) {
+		InputEvent e = _input->wait();
+		if (e.type == InputEvent::Quit)
+			return false;
+		if (e.type == InputEvent::Move || e.type == InputEvent::Click) {
+			setMouse(e.x, e.y);
+			setHoverName("");
+		}
+		if (e.type == InputEvent::Click || e.type == InputEvent::Key)
+			return true;
+	}
+}
+
 void Display::collapseText() {
+	_paging = false;
+	_text.clearPause();
 	if (!_expanded)
 		return;
 	size_t k = 0;
@@ -499,6 +519,8 @@ int Display::printText(const std::string &text) {
 	{
 		Surface nothing(1, 1);
 		TextWindow tall = _text;
+		tall.setMoreHandler(std::function<bool()>());
+		tall.clearPause();
 		tall.home();
 		tall.setBottom(4000);
 		for (size_t i = 0; i < _turnText.size(); i++)
@@ -511,11 +533,20 @@ int Display::printText(const std::string &text) {
 			fprintf(stderr, "text edge %d (pen %d, start %d) for \"%s\"\n", edge, tall.penOffsetY(), tall.atLineStart() ? 1 : 0, text.c_str());
 		if (edge <= kTextBottom)
 			edge = kTextBottom;
-		if (edge > 193)                      // (the window grows no further than this: longer text scrolls)
+		bool tooLong = edge > 193;
+		if (tooLong)                         // (the window grows no further than this: longer text is shown a page at a time, "- MORE -")
 			edge = 193;
-		if (edge > kTextBottom && (!_expanded || edge > _text.bottom())) {
-			expandText(edge);
+		bool grow = edge > kTextBottom && (!_expanded || edge > _text.bottom());
+		if (grow || (tooLong && !_paging)) {
+			if (grow)
+				expandText(edge);
+			else
+				fillArea(_screen, 51, 129, 314, _text.bottom() - 1, 23);
 			_text.home();
+			if (tooLong) {
+				_paging = true;
+				_text.setPause();
+			}
 			for (size_t i = 0; i < _turnText.size(); i++)      // the grown window starts again at the top with everything of this turn
 				_text.print(_screen, _turnText[i]);
 		}
