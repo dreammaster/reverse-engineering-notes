@@ -5,6 +5,7 @@
 #include <chrono>
 #include <cstdarg>
 #include <cstdio>
+#include <cstdlib>
 #include <ctime>
 #include <cwctype>
 #include <direct.h>
@@ -87,6 +88,20 @@ void wxLog::logexpanded(const wchar_t *fmt, ...) {
 	text.resize(static_cast<size_t>(length));
 	va_end(args);
 
+	// (not in the original: the stand-alone player writes a lot of lines (the scripts print each frame), and a flush to a file or a pipe for
+	// each of them took most of the time of a scene's load: the output is buffered and flushed every 100 ms and at the end; the environment
+	// variable DEPONIA_FLUSH makes each line go out at once, for looking at a crash)
+	static const bool flushEach = std::getenv("DEPONIA_FLUSH") != nullptr;
+	static bool buffered = false;
+	static std::clock_t lastFlush = 0;
+
+	if (!buffered) {
+		buffered = true;
+
+		if (!flushEach)
+			std::setvbuf(stderr, nullptr, _IOFBF, 1 << 16);
+	}
+
 	std::fputws(text.c_str(), stderr);
 	std::fputws(L"\n", stderr);
 
@@ -95,7 +110,18 @@ void wxLog::logexpanded(const wchar_t *fmt, ...) {
 		std::string line = toUtf8(text) + "\n";
 
 		std::fwrite(line.data(), 1, line.size(), g_activeLogTarget->GetFile());
-		std::fflush(g_activeLogTarget->GetFile());
+
+		if (flushEach)
+			std::fflush(g_activeLogTarget->GetFile());
+	}
+
+	if (!flushEach && std::clock() - lastFlush > CLOCKS_PER_SEC / 10) {
+		std::fflush(stderr);
+
+		if (g_activeLogTarget && g_activeLogTarget->GetFile() && g_activeLogTarget->GetFile() != stderr)
+			std::fflush(g_activeLogTarget->GetFile());
+
+		lastFlush = std::clock();
 	}
 }
 
