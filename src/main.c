@@ -145,6 +145,7 @@ typedef struct RoomView_ {
 /* one 50 Hz timer tick: the game loop (and with it the object animation) steps every 2 ticks */
 static int room_key(const RoomView *rv) { return 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata; }
 /* ---- sound: BEEPER.BIN on the interpreter (engine/beeper.c); ids as the game's 1000:156C / 1000:1613 take them ---- */
+static int g_payoff;                  /* Cadaver 2 is installed (The Payoff follows Cadaver's last level) */
 static Beeper g_snd;
 static int g_snd_ok, g_snd_log;
 static SDL_AudioDeviceID g_adev;
@@ -1211,6 +1212,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		int energy = rv->vm.energy, nl = rv->vm.next_level, tata = rv->use_tata;
 		roomview_unload(rv);
 		rv->level = nl > (tata ? 4 : 5) ? 1 : nl; rv->use_tata = tata; rv->room = 0;
+		if (!tata && nl > 5 && g_payoff) { rv->use_tata = 1; rv->level = 1; }     /* the Payoff picks up where Cadaver ends */
 		wk->world_key = 0; wk->placed = 0;
 		rv->restarting = 1;
 		rv->carry_pending = 1; rv->carry_money = money; rv->carry_score = score; rv->carry_energy = energy;
@@ -1448,6 +1450,7 @@ int main(int argc, char **argv) {
 	const char *shot = NULL;
 	const char *sim = NULL;  /* headless walk simulation: right:30,down:10 */
 	Scene scene = SCENE_LOGO;
+	int start_tata = 0;          /* --tata with --scene game: Space starts The Payoff directly */
 	int game_mode = 0;           /* --scene game: title scroll, then Space/Return starts level 1 in the walk scene */
 	for (int i = 1; i < argc; i++) {
 		if (!strcmp(argv[i], "-g") && i + 1 < argc)
@@ -1457,7 +1460,7 @@ int main(int argc, char **argv) {
 		else if (!strcmp(argv[i], "--room") && i + 1 < argc)
 			g_room.room = atoi(argv[++i]);
 		else if (!strcmp(argv[i], "--tata"))
-			g_room.use_tata = 1;
+			start_tata = g_room.use_tata = 1;
 		else if (!strcmp(argv[i], "--sim") && i + 1 < argc)
 			sim = argv[++i];
 		else if (!strcmp(argv[i], "--scroll") && i + 1 < argc)
@@ -1481,6 +1484,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	printf("Found: %s\n", gamefiles_name(g.id));
+	g_payoff = g.id == GAME_PAYOFF;
 
 	static Screen scr;
 	static uint32_t rgb[SCREEN_W * SCREEN_H];
@@ -1546,8 +1550,9 @@ int main(int argc, char **argv) {
 				else if (scene == SCENE_ROOM && k == SDLK_RIGHT) g_room.scroll_x += 16;
 				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_OBJECTS) && k == SDLK_UP) g_room.scroll_y -= 16;
 				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_OBJECTS) && k == SDLK_DOWN) g_room.scroll_y += 16;
-				else if (game_mode && (k == SDLK_SPACE || k == SDLK_RETURN)) {
-					if (scene == SCENE_INTRO) { scene = SCENE_WALK; g_room.level = 1; g_room.room = 0; g_room.use_tata = 0; }
+				else if (game_mode && (k == SDLK_SPACE || k == SDLK_RETURN || (k == SDLK_p && g.id == GAME_PAYOFF))) {
+					/* the launcher of Cadaver 2 asks "Cadaver or The Payoff": Space = Cadaver (DATA), P = The Payoff (TATA) */
+					if (scene == SCENE_INTRO) { scene = SCENE_WALK; g_room.level = 1; g_room.room = 0; g_room.use_tata = (k == SDLK_p) || start_tata; }
 					else changed = 0;
 				}
 				else if (scene == SCENE_WALK && k == SDLK_F5) { game_save(&g_walk, &g_room); changed = 0; }
