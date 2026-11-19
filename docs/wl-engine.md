@@ -133,7 +133,7 @@ make the int 33h vector non-zero (both low bytes) so the start-up code finds a d
 original code (cursor shape, button rows, roster rows, map movement), and that handler's key code is returned from `checkKeypress`.
 `WL_MOUSE_LEGACY=1` runs the recompiled original poll instead, for comparisons. Headless: `WL_MOUSE=1 wlrc ... move X Y | click X Y`.
 Status: clicks on the title button, bottom buttons and the map were identical to the original poll in 7 screenshots; the main loop
-(`16B3C`) is still the recompiled one.
+(`16B3C`) is now native: `mainloop.cpp` (`explorationLoop`, with the USE command 13A80/13AAF, digit keys 12760, and the message scroll-back 179B7/17A35/17A4D). The loop drives the timer itself through `rc::backedge` (it has no generated back edges), calls the not yet ported helpers (63C4, 63CA, 656D, CBD3, CB30, C570 game over, B170 print) through `legacy::call`, and was checked by whole-game `difftest.py` runs against the oracle.
 
 Debugging aid: `WL_SCRAMBLE_RANGE=lo-hi` (hex code offsets) restricts the junk scrambling of `scramblecheck.sh` to ports in a range.
 Known issue: scrambling ports in 6000-7FFF together still gives differences in the combat/menus scripts although each sub-range
