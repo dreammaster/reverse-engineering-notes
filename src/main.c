@@ -284,6 +284,7 @@ static void roomview_unload(RoomView *rv) {
 	rv->ok = 0;
 }
 
+static void game_load_apply(RoomView *rv);
 static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	roomview_unload(rv);
 	const char *set = rv->use_tata ? "tata" : "data";
@@ -342,6 +343,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 		rv->vm.money = rv->carry_money; rv->vm.score = rv->carry_score;
 		rv->vm.energy = rv->carry_energy > rv->vm.energy_max ? rv->vm.energy_max : rv->carry_energy;
 	}
+	game_load_apply(rv);
 	rv->vm_ok = 1;
 	rv->restarting = 0;
 	rv->dead_timer = 0;
@@ -1115,6 +1117,72 @@ static void walker_teleport(Walker *wk, RoomView *rv, int room, int x, int y, in
 	walker_find_free(wk, lx, ly);
 }
 
+/* ---- quick save / load (F5 / F9, file cadaver.sav in the working directory; the original's own save format, data\\mike_save, is not decoded): the whole script VM plus the
+ * player's place and the clock ---- */
+typedef struct {
+	char magic[4];
+	int32_t version, level, room, tata, x1, y1, z, dir, day;
+	uint32_t clock_ticks;
+	int32_t held, last_item;
+	uint8_t visited[128];
+	int32_t vm_size;
+} SaveHead;
+static uint8_t *g_sav;               /* loaded save waiting for the level to be (re)loaded */
+static size_t g_sav_len;
+static int g_sav_place;              /* ... and for the player to be placed */
+static int game_save(const Walker *wk, const RoomView *rv) {
+	if (!rv->ok) return -1;
+	FILE *f = fopen("cadaver.sav", "wb");
+	if (!f) return -1;
+	SaveHead h;
+	memset(&h, 0, sizeof(h));
+	memcpy(h.magic, "CSAV", 4);
+	h.version = 1; h.level = rv->level; h.room = rv->room; h.tata = rv->use_tata;
+	h.x1 = wk->x1; h.y1 = wk->y1; h.z = wk->z; h.dir = wk->dir; h.day = rv->day; h.clock_ticks = rv->clock_ticks;
+	h.held = rv->held; h.last_item = rv->last_item;
+	memcpy(h.visited, rv->visited, sizeof(h.visited));
+	h.vm_size = (int32_t)sizeof(AclVM);
+	fwrite(&h, sizeof(h), 1, f);
+	fwrite(&rv->vm, sizeof(AclVM), 1, f);
+	fclose(f);
+	return 0;
+}
+/* reads the file, tears the level down and lets the next draw reload it; the VM is restored by roomview_load_level */
+static int game_load(RoomView *rv) {
+	FILE *f = fopen("cadaver.sav", "rb");
+	if (!f) return -1;
+	fseek(f, 0, SEEK_END);
+	long n = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	SaveHead h;
+	if (n < (long)sizeof(h) || fread(&h, sizeof(h), 1, f) != 1 || memcmp(h.magic, "CSAV", 4) || h.version != 1 || h.vm_size != (int32_t)sizeof(AclVM) || n != (long)(sizeof(h) + sizeof(AclVM))) { fclose(f); return -1; }
+	free(g_sav);
+	g_sav = malloc((size_t)n);
+	fseek(f, 0, SEEK_SET);
+	if (!g_sav || fread(g_sav, 1, (size_t)n, f) != (size_t)n) { fclose(f); free(g_sav); g_sav = NULL; return -1; }
+	fclose(f);
+	g_sav_len = (size_t)n;
+	roomview_unload(rv);
+	rv->level = h.level; rv->room = h.room; rv->use_tata = h.tata;
+	rv->restarting = 1;
+	rv->dead_timer = 0;
+	g_walk.world_key = 0; g_walk.placed = 0;
+	return 0;
+}
+/* called by roomview_load_level after the level is loaded */
+static void game_load_apply(RoomView *rv) {
+	if (!g_sav) return;
+	const SaveHead *h = (const SaveHead *)g_sav;
+	AclVM keep = rv->vm;
+	memcpy(&rv->vm, g_sav + sizeof(SaveHead), sizeof(AclVM));
+	rv->vm.rand_range = keep.rand_range; rv->vm.sound = keep.sound; rv->vm.user = keep.user;
+	rv->vm.msg_n = 0; rv->vm.queue_n = 0; rv->vm.tev_n = 0; rv->vm.go.pending = 0; rv->vm.next_level = 0;
+	memcpy(rv->visited, h->visited, sizeof(rv->visited));
+	rv->day = h->day; rv->clock_ticks = h->clock_ticks; rv->held = h->held; rv->last_item = h->last_item;
+	rv->room = h->room;
+	g_sav_place = 1;
+}
+
 static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (rv->restarting) return;
 	roomview_tick(rv);
@@ -1126,6 +1194,12 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (wk->world_key != room_key(rv)) {
 		walker_world(wk, rv);
 		walker_place_default(wk, rv);
+		if (g_sav_place && g_sav) {                         /* a loaded game: the saved place */
+			const SaveHead *h = (const SaveHead *)g_sav;
+			wk->x1 = h->x1; wk->y1 = h->y1; wk->z = h->z; wk->dir = h->dir;
+			free(g_sav); g_sav = NULL; g_sav_place = 0;
+			walker_world(wk, rv);
+		}
 	}
 	if (rv->vm.go.pending) {
 		rv->vm.go.pending = 0;
@@ -1476,6 +1550,8 @@ int main(int argc, char **argv) {
 					if (scene == SCENE_INTRO) { scene = SCENE_WALK; g_room.level = 1; g_room.room = 0; g_room.use_tata = 0; }
 					else changed = 0;
 				}
+				else if (scene == SCENE_WALK && k == SDLK_F5) { game_save(&g_walk, &g_room); changed = 0; }
+				else if (scene == SCENE_WALK && k == SDLK_F9) { game_load(&g_room); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_F1) { map_open_view(&g_room); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_i) { g_room.show_status ^= 1; changed = 0; }
 				else if (k == SDLK_SPACE || k == SDLK_RETURN)
@@ -1527,6 +1603,8 @@ int main(int argc, char **argv) {
 					if (!colon) break;
 					if (!strncmp(c, "info", 4)) g_room.show_status ^= 1;
 					if (!strncmp(c, "map", 3)) map_open_view(&g_room);
+					if (!strncmp(c, "save", 4)) game_save(&g_walk, &g_room);
+					if (!strncmp(c, "load", 4)) { game_load(&g_room); load_scene(&g, scene, &scr); }
 					for (int n = atoi(colon + 1); n > 0; n--)
 						walker_tick(&g_walk, &g_room, bits);
 					c = strchr(colon, ',');

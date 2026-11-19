@@ -40,3 +40,7 @@ ctest --test-dir build --output-on-failure
 Verification tools (Python, need Unicorn and the unpacked executables): `tools/verify_collision.py`, `tools/oracle_rooms.py` +
 `tools/verify_exits.py` / `tools/verify_objects.py` compare the reimplementation with the original CAD.EXE running in an emulator.
 See `docs/roadmap.md` for what is missing.
+
+## Keys (`--scene game` / `--scene walk`)
+
+Arrows (and Insert/Delete/PgUp/PgDn for diagonals) move, End = fire (take the touched object's verb menu / jump), Space or Return = rucksack, F1 = map (arrows scroll, Return zooms in, `-` out, End leaves), `I` = status dialog, F5 = quick save, F9 = quick load (`cadaver.sav` in the working directory: the whole script VM plus the player's place and the clock; the original's `data\\mike_save` format is not decoded). `--sim` tokens: `right left up down rdown ldown rup lup end rend space ret wait info map save load`.
