@@ -165,8 +165,8 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 			vm->room[tid] = (uint8_t)room;
 		}
 		break;
-	case 5: vm->score += a[0]; break;
-	case 6: vm->money += a[0]; vm->score += a[0] >> 2; break;       /* verified: ds:248 += a, ds:24C += a >> 2 */
+	case 5: if (vm->sound) vm->sound(0x1A, vm->user); vm->score += a[0]; break;               /* 1000:7A1A: sound 1Ah */
+	case 6: if (vm->sound) vm->sound(3, vm->user); vm->money += a[0]; vm->score += a[0] >> 2; break;       /* verified: ds:248 += a, ds:24C += a >> 2 */
 	case 2: if (cur) *cur |= 0x80; break;                           /* the current object is removed (its effect on the engine's entries is not modelled) */
 	case 45: {
 		int e = vm->energy + (int16_t)w;

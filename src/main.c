@@ -1029,6 +1029,7 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 	if (space_edge) { ruck_close(rv); return; }
 	if (fire_edge && rv->menu_released && rv->nverbs > 0) {
 		int verb = rv->verbs[rv->menu_sel], t = rv->touch_thing;
+		snd_play(0x37);
 		if (g_snd_log) fprintf(stderr, "RUCK verb %d sel %d of %d\n", verb, rv->menu_sel, rv->nverbs);
 		if (verb == 6) ruck_close(rv);
 		else if (verb == 1 && t >= 0 && t < ACL_THINGS) {               /* drop: back into the room at the player's position */
@@ -1076,6 +1077,7 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 			else if (n > 1) { ruck_show(rv, l[(k + n - 1) % n]); rv->menu_sel = rv->nverbs - 1; }
 		}
 		rv->ruck_delay = 13;
+		snd_play(2);
 	}
 }
 
@@ -1086,12 +1088,13 @@ static void menu_step(RoomView *rv, int keys, int end_edge) {
 	if (end_edge && rv->menu_released) {
 		int verb = rv->verbs[rv->menu_sel];
 		rv->menu_open = 0;
+		snd_play(0x37);                                           /* 1000:2BD3: every chosen verb */
 		menu_choose(rv, verb);
 		return;
 	}
 	if (rv->menu_delay == 0 && rv->nverbs > 0) {
-		if (keys & 8) { rv->menu_sel = (rv->menu_sel + 1) % rv->nverbs; rv->menu_delay = 13; }
-		else if (keys & 4) { rv->menu_sel = (rv->menu_sel + rv->nverbs - 1) % rv->nverbs; rv->menu_delay = 13; }
+		if (keys & 8) { rv->menu_sel = (rv->menu_sel + 1) % rv->nverbs; rv->menu_delay = 13; snd_play(2); }          /* 1000:2B60: highlight click */
+		else if (keys & 4) { rv->menu_sel = (rv->menu_sel + rv->nverbs - 1) % rv->nverbs; rv->menu_delay = 13; snd_play(2); }
 	}
 }
 
@@ -1184,7 +1187,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		if (wk->z > 0) { collision_test(&wk->world, wk->x1, wk->y1, wk->z - 1, PL_XS, PL_YS, PL_ZS, -1, 1, &jc); below_free = jc.zf; }
 		if (!wk->jumping) {
 			if (wk->jcool > 0) wk->jcool--;
-			else if (end && wk->jhold >= 3 && !below_free) { wk->jumping = 1; wk->jstep = 0; wk->fall = 0; }
+			else if (end && wk->jhold >= 3 && !below_free) { wk->jumping = 1; wk->jstep = 0; wk->fall = 0; snd_play(0x0E); }          /* 1000:2DF1 */
 		}
 		if (wk->jumping) {
 			int nz = wk->z + zprof[wk->jstep];
@@ -1193,7 +1196,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 			if (jc.zf) { wk->z = nz; wk->jstep++; }
 			else if (wk->jstep < 10) wk->jstep = 10;                  /* hit a ceiling: start falling */
 			else { wk->jumping = 0; wk->jcool = 2; }                  /* landed on something */
-			if (wk->jstep >= 20) { wk->jumping = 0; wk->jcool = 2; }
+			if (wk->jstep >= 20) { wk->jumping = 0; wk->jcool = 2; snd_play(0x18); }     /* landing: 1000:0548 */
 		} else if (below_free) {                                       /* walked off an object: fall */
 			int d = 1 + wk->fall++; if (d > 5) d = 5;
 			int nz = wk->z - d; if (nz < 0) nz = 0;
