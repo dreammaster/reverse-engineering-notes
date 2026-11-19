@@ -16,4 +16,9 @@ void useMember(Machine &m, uint8_t member);
 // 13A80: the USE button: picks the member first
 void useButton(Machine &m);
 
+// 179B7: redraws the message window from the scroll-back buffer, the last line shown being `last`; 17A35 / 17A4D scroll it
+void showMessageLines(Machine &m, uint8_t last);
+void scrollMessagesUp(Machine &m);
+void scrollMessagesDown(Machine &m);
+
 } // namespace wl

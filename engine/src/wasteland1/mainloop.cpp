@@ -1,5 +1,6 @@
 #include "wasteland1/mainloop.h"
 #include "wasteland1/character.h"
+#include "wasteland1/buttons.h"
 #include "wasteland1/charscreen.h"
 #include "wasteland1/interact.h"
 #include "wasteland1/menu.h"
@@ -9,6 +10,7 @@
 #include "wasteland1/party.h"
 #include "wasteland1/recomp_rt.h"
 #include "wasteland1/text.h"
+#include "wasteland1/ui.h"
 #include <cstdio>
 #include <cstdlib>
 
@@ -31,6 +33,41 @@ bool currentDown(Machine &m) {   // 172BE: the current character is dead or unco
 	if (high & 0x80) return true;
 	return (high | m.d8(uint16_t(c + 29))) == 0;
 }
+}
+
+void showMessageLines(Machine &m, uint8_t last) {   // 179B7: redraws the message window from the scroll-back buffer (ends with line `last`)
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	if (D(0x46FE) != 0) moreButton(m);
+	const uint8_t savedX = D(g::rectTextX), savedY = D(g::rectTextY);
+	D(0x8DF7) = last;
+	uint16_t bx = uint16_t(uint8_t(last - 5) * 40 + 0x8CE0);
+	D(g::rectTextY) = 18;
+	do {
+		for (uint8_t x = 1; x != 39; ++x) {
+			D(g::rectTextX) = x;
+			writeCharacterAt(m, m.mem[0x2AE20 + uint16_t(bx + x)]);
+		}
+		bx = uint16_t(bx + 0x28);
+		if (bx >= 0xB4DF) bx = uint16_t(bx - 0x2800);
+		++D(g::rectTextY);
+	} while (D(g::rectTextY) != 24);
+	D(g::rectTextX) = savedX;
+	D(g::rectTextY) = savedY;
+	D(0x46FE) = 0;
+}
+
+void scrollMessagesUp(Machine &m) {   // 17A35: PgUp
+	const uint8_t shown = m.d8(0x8DF7), oldest = m.d8(0x8DF6);
+	uint8_t line = uint8_t(shown - 1);
+	if (uint8_t(line - oldest) < 6) line = uint8_t(oldest + 6);
+	showMessageLines(m, line);
+}
+
+void scrollMessagesDown(Machine &m) {   // 17A4D: PgDn
+	const uint8_t shown = m.d8(0x8DF7), oldest = m.d8(0x8DF6);
+	uint8_t line = uint8_t(shown + 1);
+	if (uint8_t(line - oldest) <= 6) line = oldest;
+	showMessageLines(m, line);
 }
 
 void characterKey(Machine &m, uint8_t key) {   // 12760: digit keys open the character screen of that party member
@@ -134,9 +171,9 @@ void explorationLoop(Machine &m) {
 		if (key == 'P' && D(inCombatHint) != 0) {
 			call(m, 0xB170);   // print
 		} else if (key == 0xC9) {
-			call(m, 0x7A35);
+			scrollMessagesUp(m);
 		} else if (key == 0xD1) {
-			call(m, 0x7A4D);
+			scrollMessagesDown(m);
 		} else if (key >= '1' && key < '8') {
 			characterKey(m, key);
 		} else {

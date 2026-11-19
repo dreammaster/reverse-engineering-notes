@@ -82,6 +82,9 @@ PORT(loadLocationMap) { loadLocationMap(m); }
 PORT(characterKey) { characterKey(m, r.a.b.l); }                                             // 12760
 PORT(useMember) { useMember(m, r.a.b.l); }                                                // 13AAF
 PORT(useButton) { useButton(m); }                                                     // 13A80
+PORT(showMessageLines) { showMessageLines(m, r.a.b.l); r.b.x = 0; }                         // 179B7
+PORT(scrollMessagesUp) { scrollMessagesUp(m); r.b.x = 0; }                                  // 17A35
+PORT(scrollMessagesDown) { scrollMessagesDown(m); r.b.x = 0; }                                // 17A4D
 PORT(explorationLoop) { explorationLoop(m); }                                            // 16B3C
 
 } // namespace rc
