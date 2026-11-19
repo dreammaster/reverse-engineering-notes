@@ -164,4 +164,32 @@ int sub_1C4ED(Game &g, Word root, Word callback, Word callbackSegment, Word visi
 	return 0;
 }
 
+// event_fn_25 (event 26): the countdown of the cellar scene - a message each step (when the player is in room 0xFB), the next step of the event scheduled, and the two properties of object
+// 0xD9 / 0xFE set from a table. (The decompiler cannot follow the local tables it indexes with the step.)
+int event_fn_25(Game &g) {
+	Vars &v = g.state.v;
+	static const uint16 message[5] = {0, 0x4A, 0x4B, 0x4C, 0x4D};
+	static const uint16 propA[5] = {0, 0, 0x155, 0x156, 0};
+	static const uint16 propB[5] = {0, 0, 0x160, 0x161, 0};
+	v.word_85280++;
+	unsigned n = v.word_85280 < 5 ? v.word_85280 : 0;
+	if (v.current_room == 0xFB)
+		g.Font_WriteMessage(" %s.", TextRef::fromWords(message[n], 0xF021));
+	if (v.word_85280 < 3)
+		g.schedule_event(0x1A, 1);
+	else
+		g.schedule_event(0x1D, 2);
+	if (propA[n]) {
+		g.object_set_prop_a(0xD9, propA[n]);
+		g.object_set_prop_a(0xFE, propB[n]);
+	}
+	return 1;
+}
+
+// sub_1AAFB: empties the event queue.
+int sub_1AAFB(Game &g) {
+	g.state.events.clear();
+	return 0;
+}
+
 } // namespace Xanth

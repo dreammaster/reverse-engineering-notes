@@ -284,7 +284,7 @@ int event_fn_21(Game &g);
 int event_fn_22(Game &g);
 int event_fn_23(Game &g);
 int event_fn_24(Game &g);
-int event_fn_25(Game &g);  // not decompiled
+int event_fn_25(Game &g);
 int event_fn_26(Game &g);
 int event_fn_27(Game &g);
 int event_fn_28(Game &g);
@@ -913,7 +913,7 @@ int objh_447(Game &g, Word a0);
 int objh_448(Game &g, Word a0);
 int reset_color_cycle(Game &g, Word a0, Word a1, Word a2, Word a3);
 int sub_192F9(Game &g);
-int sub_1AAFB(Game &g);  // not decompiled
+int sub_1AAFB(Game &g);
 int sub_1B5CB(Game &g, Word a0, Word a1);
 int sub_1C2EA(Game &g, Word a0, Word a1, Word a2);
 int sub_1C4ED(Game &g, Word a0, Word a1, Word a2, Word a3);
