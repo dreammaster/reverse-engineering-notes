@@ -79,6 +79,9 @@ PORT(enterLocationMove) { r.cf = enterLocationMove(m, r.a.b.l); }               
 
 PORT(loadLocationMap) { loadLocationMap(m); }
 
+PORT(characterKey) { characterKey(m, r.a.b.l); }                                             // 12760
+PORT(useMember) { useMember(m, r.a.b.l); }                                                // 13AAF
+PORT(useButton) { useButton(m); }                                                     // 13A80
 PORT(explorationLoop) { explorationLoop(m); }                                            // 16B3C
 
 } // namespace rc

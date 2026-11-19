@@ -1,5 +1,9 @@
 #include "wasteland1/mainloop.h"
 #include "wasteland1/character.h"
+#include "wasteland1/charscreen.h"
+#include "wasteland1/interact.h"
+#include "wasteland1/menu.h"
+#include "wasteland1/roster.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
 #include "wasteland1/party.h"
@@ -27,6 +31,66 @@ bool currentDown(Machine &m) {   // 172BE: the current character is dead or unco
 	if (high & 0x80) return true;
 	return (high | m.d8(uint16_t(c + 29))) == 0;
 }
+}
+
+void characterKey(Machine &m, uint8_t key) {   // 12760: digit keys open the character screen of that party member
+	(void)key;
+	const uint8_t member = m.d8(g::lastKey) & 0x0F;   // the original reads the last key, not al
+	if (member > m.d8(uint16_t(g::saved2 + g::s2::membersInGroup))) return;
+	characterInfo(m, member);
+	call(m, 0x63C4);
+	call(m, 0x63A0);
+}
+
+void useMember(Machine &m, uint8_t member) {   // 13AAF: asks what member `member` should use and on what
+	for (;;) {
+		m.d8(0xA5E5) = member;
+		if (isMemberUnconscious(m, member)) {
+			selectWriterForRoster(m);   // 19720
+			printMessage(m, 3);
+			call(m, 0x63C4);
+			return;
+		}
+		uint8_t mode = 0, target = 0, what = 0;
+		if (chooseUseAction(m, member, mode, target, what)) {
+			m.d8(0x4661) = member;
+			uint8_t result = 0;
+			if (useSkillOnObject(m, mode, target, what, result)) {
+				if (result == 0) call(m, 0x63C4);
+				else call(m, 0x63CA);
+			} else {
+				call(m, 0x63A0);
+			}
+			return;
+		}
+		// 13A9E: cancelled
+		if (m.d8(uint16_t(g::saved2 + g::s2::membersInGroup)) == 1) {
+			call(m, 0x63C4);
+			return;
+		}
+		drawRosterFrame(m);   // 16F70
+		printMessage(m, 2);
+		member = pickGroupMember(m, false);
+		if (member == 0) {
+			call(m, 0x63C4);
+			return;
+		}
+	}
+}
+
+void useButton(Machine &m) {   // 13A80: the USE button
+	call(m, 0x9727);
+	drawRosterHeadersAndMembers(m);
+	uint8_t member = m.d8(uint16_t(g::saved2 + g::s2::membersInGroup));
+	if (member != 1) {
+		printMessage(m, 2);
+		member = pickGroupMember(m, false);
+		if (member == 0) {
+			call(m, 0x63C4);
+			return;
+		}
+	}
+	useMember(m, member);
 }
 
 void explorationLoop(Machine &m) {
@@ -74,13 +138,13 @@ void explorationLoop(Machine &m) {
 		} else if (key == 0xD1) {
 			call(m, 0x7A4D);
 		} else if (key >= '1' && key < '8') {
-			call(m, 0x2760, key);
+			characterKey(m, key);
 		} else {
 			uint8_t member = D(g::saved2 + g::s2::membersInGroup);
 			const uint8_t pressed = D(g::lastKey);
 			for (; member != 0; --member)
 				if (pressed == D(uint16_t(arrayKeys + member))) break;
-			if (member != 0) call(m, 0x3AAF, member);   // a party member's hot key
+			if (member != 0) useMember(m, member);   // a party member's hot key
 			else call(m, 0x7574);                         // the buttons row
 		}
 		call(m, 0xCB30);
