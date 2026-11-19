@@ -28,8 +28,8 @@ class MdMusic : public SampleSource {
 public:
 	MdMusic();
 
-	/** Reads the driver, the timbres and the songs of the game's directory. */
-	bool load(const std::string &dir);
+	/** Reads the driver, the timbres and the songs of the game's directory: the front end's songs (MDD_MUS.LZC, the default) or the game's own (MUSIC.LZC). */
+	bool load(const std::string &dir, const char *songFile = "MDD_MUS.LZC");
 	bool ok() const {
 		return _ok;
 	}
@@ -39,6 +39,15 @@ public:
 
 	/** Starts song n (0-11: the files of MDD_MUS.LZC in order), as sub_21EB8 does: the one playing is stopped first. */
 	void play(int song);
+	/** sub_38C3D: the volume the songs play at (0x100: as the file says); the game gives each song its own. */
+	void setBaseVolume(int volume);
+	/** sub_38B8E: the song playing fades out over `ticks` timer ticks and `song` starts in its place. */
+	void crossfade(int song, int ticks);
+	/**
+	 * What the game does every turn (sub_2FC44, sub_2FD45): `song` is the one that goes with the place and time (-1: none, a fade out over 60 ticks). A new song is faded in over the old one, the
+	 * same song starts again when it has ended, each song has its own volume (ds:189E of GAME.EXE).
+	 */
+	void follow(int song);
 	/** sub_218FC: stops the song, over `fadeTicks` timer ticks if that is not 0. */
 	void stop(int fadeTicks = 0);
 	/** True from play() until the song has ended or been stopped. */
@@ -95,13 +104,14 @@ private:
 	int _loop = 0;                // word_28BFC
 	int _queued = -1;             // word_28BFE: a song to start when this one ends
 	int _marker = 0, _expect = 0; // word_28BEA, word_28BEC
-	int _ended = 1;               // word_28EBB
+	std::atomic<int> _ended;      // word_28EBB
 	int _flags = 0;               // word_28EBD
 	uint8_t _program[17], _sent[17], _volume[17], _pan[17], _active[17];
 	int8_t _held[17];
 
 	double _sampleDebt = 0;
-	std::atomic<int> _requestPlay, _requestStop;
+	std::atomic<int> _requestPlay, _requestStop, _requestBase, _requestCross;
+	int _gameSong = -1;           // word_4118A of GAME.EXE: the song the game last asked for
 };
 
 } // namespace Ultima6

@@ -153,6 +153,16 @@ void Game::chooseMusic() {
 	_music = track;
 }
 
+int Game::mdSong() const {
+	if (z == 2 || z == 3)
+		return 3;
+	if (z > 0)
+		return 2;
+	if (_combatMode)
+		return 8;
+	return gameClock.hour > 5 && gameClock.hour < 18 ? 0 : 1;
+}
+
 // sub_2A86A: the Avatar has died: darkness, a voice, and the Help spell (sub_1890C) brings the party back to Lord British's court
 void Game::avatarDied() {
 	message("\nAn unending darkness engulfs thee...\n");

@@ -228,6 +228,18 @@ int main(int argc, char **argv) {
 	}
 	if (mdCreated) // the character of Martian Dreams' questions is put into the saved game as the original's creation does
 		mdCharacter.applyTo(world.actors);
+	Ultima6::Ultima6::MdMusic mdGameMusic; // the game's own songs (MUSIC.LZC) with the AdLib driver, GAME.EXE's sub_2FD45 each turn
+	bool mdPlaying = false;
+	if (id == Ultima6::GameId::MartianDreams && !std::getenv("U6_NO_MUSIC") && mdGameMusic.load(argv[1], "MUSIC.LZC")) {
+		backend->setMusicSource(&mdGameMusic);
+		mdPlaying = true;
+	}
+	struct DetachGame { // (declared after the synthesiser: the audio thread lets go of it first)
+		Ultima6::Backend &b;
+		~DetachGame() {
+			b.setMusicSource(nullptr);
+		}
+	} detachGame{*backend};
 	Ultima6::Ultima6::Game game(world);
 	game.saveDir = saveDir;
 	Ultima6::BorlandRandom sfxRandom(7);
@@ -241,6 +253,8 @@ int main(int argc, char **argv) {
 	unsigned lastTick = backend->ticks();
 	while (running) {
 		music.set(game.music());
+		if (mdPlaying)
+			mdGameMusic.follow(game.mdSong());
 		game.render(screen);
 		backend->present(screen);
 		int key;
@@ -251,6 +265,8 @@ int main(int argc, char **argv) {
 					lastTick = now;
 					game.animate();
 					music.set(game.music());
+					if (mdPlaying)
+						mdGameMusic.follow(game.mdSong());
 					game.render(screen);
 					backend->present(screen);
 				} else {

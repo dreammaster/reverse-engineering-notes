@@ -82,6 +82,11 @@ public:
 	/** The music that goes with the place (sub_377C8): a track number for the list in MusicTrack names, 0 for none. */
 	/** Set by the host: plays sound effect `effect` of sub_36E85 with its first argument `param`. */
 	std::function<void(int, int)> sound;
+	/**
+	 * Martian Dreams' music for the place and time (GAME.EXE sub_2FD00): level 2 or 3 song 3, any other level above the surface 2, combat 8, otherwise the day (hours 6 to 17) song 0 and the
+	 * night song 1 (the numbers are the items of MUSIC.LZC).
+	 */
+	int mdSong() const;
 	int music() const {
 		return _music;
 	}

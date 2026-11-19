@@ -30,7 +30,8 @@ const double TICKS_PER_SECOND = 60.0;
 
 } // namespace
 
-MdMusic::MdMusic() : _requestPlay(-1), _requestStop(-1) {
+MdMusic::MdMusic() : _requestPlay(-1), _requestStop(-1), _requestBase(-1), _requestCross(-1) {
+	_ended = 1;
 	std::memcpy(_sent, SENT_INIT, sizeof _sent);
 	std::memcpy(_volume, VOLUME_INIT, sizeof _volume);
 	std::memcpy(_pan, PAN_INIT, sizeof _pan);
@@ -39,13 +40,13 @@ MdMusic::MdMusic() : _requestPlay(-1), _requestStop(-1) {
 	std::memset(_held, 0, sizeof _held);
 }
 
-bool MdMusic::load(const std::string &dir) {
+bool MdMusic::load(const std::string &dir, const char *songFile) {
 	_ok = false;
 	if (!_adlib.load(dir))
 		return false;
 	Bytes raw;
 	LibN lib;
-	if (!readFile(joinPath(dir, "MDD_MUS.LZC"), raw) || !lib.load(raw, false))
+	if (!readFile(joinPath(dir, songFile), raw) || !lib.load(raw, false))
 		return false;
 	_songs.clear();
 	for (size_t i = 1; i < lib.count(); ++i) {
@@ -68,6 +69,38 @@ void MdMusic::play(int song) {
 
 void MdMusic::stop(int fadeTicks) {
 	_requestStop = fadeTicks;
+}
+
+void MdMusic::setBaseVolume(int volume) {
+	_requestBase = volume;
+}
+
+void MdMusic::crossfade(int song, int ticks) {
+	_requestCross = (song << 16) | (ticks & 0xFFFF);
+}
+
+// GAME.EXE's sub_2FC44, with the volumes of its table at ds:189E (songs 0-12; the others are not played)
+void MdMusic::follow(int song) {
+	static const uint8_t VOLUME[16] = {215, 215, 225, 225, 230, 165, 165, 165, 165, 165, 165, 165, 165, 0, 0, 0};
+	if (song < 0) {
+		if (_gameSong >= 0)
+			stop(60);
+		_gameSong = -1;
+		return;
+	}
+	if (song >= (int)_songs.size())
+		return;
+	if (_gameSong < 0) { // nothing was playing: the song starts at once
+		setBaseVolume(VOLUME[song & 15]);
+		play(song);
+	} else if (_gameSong != song) { // a change: the old song fades out as the new one comes
+		setBaseVolume(VOLUME[song & 15]);
+		crossfade(song, 60);
+	} else if (_ended != 0 && _requestPlay < 0 && _requestCross < 0) { // the same song is over: it starts again
+		setBaseVolume(VOLUME[song & 15]);
+		play(song);
+	}
+	_gameSong = song;
 }
 
 // sub_216C3: the song is over, every voice is silenced
@@ -370,7 +403,17 @@ void MdMusic::tick() {
 }
 
 void MdMusic::render(int16_t *out, int count) {
+	int base = _requestBase.exchange(-1);
+	if (base >= 0) { // sub_38C3D (and the function at seg048:1F9A)
+		_base = base;
+		if (_fade == 0)
+			_master = base;
+		for (int c = 2; c <= 10; ++c)
+			if (_active[c] == 1)
+				_adlib.controller(c, 7, (int)(int16_t)(_volume[c] * base) >> 8);
+	}
 	int p = _requestPlay.exchange(-1);
+	int cross = _requestCross.exchange(-1);
 	int s = _requestStop.exchange(-1);
 	if (s >= 0) {
 		if (s == 0) {
@@ -384,6 +427,20 @@ void MdMusic::render(int16_t *out, int count) {
 	}
 	if (p >= 0)
 		start(p);
+	if (cross >= 0) { // sub_38B8E
+		int ticks = cross & 0xFFFF, song = cross >> 16;
+		if (ticks != 0) {
+			if (_fade == 0)
+				_level = 0x7FFF;
+			_fade = -(0x8000 / ticks);
+			_queued = song;
+			_keep = 0;
+		} else {
+			_fade = 0;
+			_queued = -1;
+			start(song);
+		}
+	}
 	int done = 0;
 	const double perTick = Opl2::SAMPLE_RATE / TICKS_PER_SECOND;
 	while (done < count) {

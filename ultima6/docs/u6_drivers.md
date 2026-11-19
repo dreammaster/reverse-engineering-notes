@@ -75,3 +75,7 @@ events go to the driver after the channel is set up on its first use (`ds:1B26-1
 control (type 0 and 2: jump back by the 16-bit offset in its data if the game has enabled looping; 1: end; 3: store a marker; 4 and 5: jump back unless or if the byte equals `word_28BEC`). `sub_218FC(n)`
 stops the song, over n ticks if n is not 0 (the volume falls by 0x8000 / n a tick). C++: `src/ultima6/md_adlib.cpp` runs the driver on `Cpu8086` and `src/ultima6/md_music.cpp` is the sequencer
 (the songs' lengths agree with their tempo maps to a tenth of a second, `tests/test_md_music.cpp`); `tools/md_strax_gt.py` is the Unicorn check of the driver.
+
+GAME.EXE carries the same sequencer (`sub_37CE2` is `sub_21038` with other data addresses) and plays the 16 songs of `MUSIC.LZC` (read by `sub_2FB2D` into the handles at ds:EA90): every turn of the main loop `sub_2FD45` asks
+`sub_2FD00` which one goes with the place (level 2 or 3: song 3; any other level above the surface: 2; combat, `globals[0x34]`: 8; else the day, hours 6-17: 0, the night: 1) and `sub_2FC44` starts it (volume
+from ds:189E: 215, 215, 225, 225, 230, then 165), fades the old one out over 60 ticks when the song changes, and starts the same song again when it has ended; `sub_2FD5E` plays the story scenes' songs.
