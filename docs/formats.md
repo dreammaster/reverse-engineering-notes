@@ -562,6 +562,8 @@ Not done: use of held things (the held-item window), the read, switch and press 
 
 **Diagonals.** Both axis bits may be set (`ds:773`: Insert 05, Delete 06, PgUp 09, PgDn 0A in the default INI, or two arrow keys): the player moves one unit along both axes per step with one combined collision test. In the emulator a diagonal run into an obstacle stops both coordinates at once (no sliding). The port does the same (`walker_tick`; note PgUp/PgDn also change the room in the demo scenes `room`/`walk`, they are read as movement keys only through the keyboard state).
 
+**Jumping (emulator trace, level 1 room 0).** Holding End (fire) with nothing touched makes the player jump: after 3 steps of holding, the player's z (`[ds:5C]+2`) follows the per-step deltas **+5 5 4 4 4 4 3 3 2 1, −1 −2 −3 −3 −4 −4 −4 −4 −5 −5** (peak 35, back on the ground after 20 steps), stays 2 more steps on the ground and jumps again while End is held; a held direction keeps moving one unit per step in the air. The port (`walker_tick`) reproduces the z sequence exactly for a flat room; landing on objects / hitting ceilings use the collision test at the new z, and walking off an object makes the player fall by 1, 2, … 5 per step (assumed). Not decoded: the jump frames of the sprite.
+
 ### 6.8 Input
 
 The game installs its own INT 9 handler (`keyboard_isr`, `1000:11E9`) and keeps

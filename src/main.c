@@ -435,6 +435,7 @@ typedef struct {
 	int x1, y1, z;       /* far corner of the player's 7x7x30 box, 1/8 cell units */
 	int dir, moving, anim, tick;
 	int world_key, placed;
+	int jumping, jstep, jhold, jcool, fall;   /* jump (fire held, nothing touched): z profile below */
 	ColWorld world;
 	ColBox objs[ROOMOBJS_MAX];
 	ColBox exits[ROOM_MAX_EXITS];
@@ -1171,6 +1172,35 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 			rv->menu_open = 1; rv->menu_sel = 0; rv->menu_delay = 0; rv->menu_released = 0;
 			return;
 		}
+	}
+	{
+		/* Jump (emulator, level 1 room 0, End held): after 3 steps z follows +5 5 4 4 4 4 3 3 2 1 then -1 2 3 3 4 4 4 4 5 5 (peak 35, 20 steps), then 2 steps on the ground and
+		 * the next jump while End is still held; the horizontal move continues at one unit per step. Landing / ceilings: the collision test at the new z. */
+		static const int8_t zprof[20] = {5, 5, 4, 4, 4, 4, 3, 3, 2, 1, -1, -2, -3, -3, -4, -4, -4, -4, -5, -5};
+		ColResult jc;
+		int end = (keys & 0x80) != 0;
+		wk->jhold = end ? wk->jhold + 1 : 0;
+		int below_free = 0;
+		if (wk->z > 0) { collision_test(&wk->world, wk->x1, wk->y1, wk->z - 1, PL_XS, PL_YS, PL_ZS, -1, 1, &jc); below_free = jc.zf; }
+		if (!wk->jumping) {
+			if (wk->jcool > 0) wk->jcool--;
+			else if (end && wk->jhold >= 3 && !below_free) { wk->jumping = 1; wk->jstep = 0; wk->fall = 0; }
+		}
+		if (wk->jumping) {
+			int nz = wk->z + zprof[wk->jstep];
+			if (nz < 0) nz = 0;
+			collision_test(&wk->world, wk->x1, wk->y1, nz, PL_XS, PL_YS, PL_ZS, -1, 1, &jc);
+			if (jc.zf) { wk->z = nz; wk->jstep++; }
+			else if (wk->jstep < 10) wk->jstep = 10;                  /* hit a ceiling: start falling */
+			else { wk->jumping = 0; wk->jcool = 2; }                  /* landed on something */
+			if (wk->jstep >= 20) { wk->jumping = 0; wk->jcool = 2; }
+		} else if (below_free) {                                       /* walked off an object: fall */
+			int d = 1 + wk->fall++; if (d > 5) d = 5;
+			int nz = wk->z - d; if (nz < 0) nz = 0;
+			collision_test(&wk->world, wk->x1, wk->y1, nz, PL_XS, PL_YS, PL_ZS, -1, 1, &jc);
+			if (jc.zf) wk->z = nz; else wk->fall = 0;
+		} else wk->fall = 0;
+		if (g_snd_log && (wk->jumping || wk->z)) fprintf(stderr, "Z %d\n", wk->z);
 	}
 	int dx = 0, dy = 0, dir = -1;
 	if (keys & 8) { dir = DIR_RIGHT; dx = 1; }          /* both axes may be held (diagonals): one combined move, no sliding (emulator: both stop together) */
