@@ -41,7 +41,7 @@ HAND = {"object_list_append", "object_has_attr", "object_set_attr", "object_clea
         "object_is_at", "object_is_within", "print_obj", "ResourceText_GetStr", "Font_WriteMessage", "show_text_box", "wputchar", "wait_ticks_or_click", "realsound_play",
         "Font_WriteString", "_sprintf", "_rand", "random_percent", "run_command", "call_object_handler", "exec_word_handler", "advance_time", "schedule_event",
         "cancel_event", "event_pending", "add_score", "RoomItem_Draw", "set_room_music", "sub_1DBB7", "sub_1B877", "sub_1B8C5", "sub_1FB15", "run_event", "sub_1AC45", "conversation_set_enabled", "Conversation_GetEntry", "show_compendium", "Conversation_Show"}
-HANDWRITTEN = {"cmdWait", "objh_390", "sub_44130", "loc_4E632", "sub_312E3", "sub_312ED"}        # generated functions that are written by hand in src/xanth/logic_hand.cpp (the decompiler gets their control flow wrong)
+HANDWRITTEN = {"cmdWait", "objh_390", "sub_44130", "loc_4E632", "sub_312E3", "sub_312ED", "number_to_words"}        # generated functions that are written by hand in src/xanth/logic_hand.cpp (the decompiler gets their control flow wrong)
 CLIB = {"strcpy", "strcat", "memcpy", "strlen", "_strlwr", "_strupr"}
 STUBS = {"show_text_box_stub": "show_text_box", "conversation_set_enabled_stub": "conversation_set_enabled", "lock_combination_correct_stub": "lock_combination_correct",
          "random_percent_stub": "random_percent", "number_to_words_stub": "number_to_words", "clear_text_area_stub": "clear_text_area", "sub_2F50B": "update_room_light",

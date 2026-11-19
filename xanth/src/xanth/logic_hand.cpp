@@ -96,4 +96,47 @@ int sub_312ED(Game &g) {
 	return g.object_has_attr(0xCA, 0xE);
 }
 
+// number_to_words: "three hundred and forty two". The words are those of the table the original keeps next to its direction names (1-19, then the tens); " thousand",
+// " hundred" and " and " join them, tens and units are separated by a space.
+static const char *numberWord(int v) {
+	static const char *const small[20] = {"", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen",
+	                                      "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"};
+	static const char *const tens[10] = {"", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
+	if (v >= 1 && v <= 19)
+		return small[v];
+	if (v >= 20 && v <= 90 && v % 10 == 0)
+		return tens[v / 10];
+	return nullptr;
+}
+
+TextRef number_to_words(Game &g, Word arg0) {
+	int n = (int16)arg0;
+	std::string out;
+	if (n == 0) {
+		out = "zero";
+	} else if (numberWord(n) && n <= 255) {
+		out = numberWord(n);
+	} else {
+		int th = n / 1000, h = (n - 1000 * th) / 100, rem = n - 100 * (h + 10 * th);
+		if (th != 0 && numberWord(th))
+			out += std::string(numberWord(th)) + " thousand";
+		if (h != 0 && numberWord(h))
+			out += std::string(th ? " " : "") + numberWord(h) + " hundred";
+		if (rem != 0) {
+			if (h != 0 || th != 0)
+				out += " and ";
+			if (numberWord(rem)) {
+				out += numberWord(rem);
+			} else {
+				int ten = (rem / 10) * 10, one = rem % 10;
+				if (ten != 0 && numberWord(ten))
+					out += numberWord(ten);
+				if (one != 0 && numberWord(one))
+					out += std::string(ten ? " " : "") + numberWord(one);
+			}
+		}
+	}
+	return TextRef(g.keepText(out));
+}
+
 } // namespace Xanth

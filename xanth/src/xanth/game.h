@@ -153,6 +153,8 @@ public:
 	char *ResourceText_GetStr(uint32 id);
 	/** A far pointer (segment, offset) as the logic builds it: a message id (segment 0xF0BB, offset = index) or an address in the original's data. */
 	char *farPtr(int seg, int off);
+	/** A string kept for the logic to point at (valid for the next few calls). */
+	char *keepText(const std::string &s) { return keep(s); }
 	char *farPtr(intptr_t seg, char *off) { (void)seg; return off; }     // (a pointer the logic already has)
 	char *ResourceText_GetStr(TextRef t) { return t.isMessage() ? ResourceText_GetStr(t.id) : const_cast<char *>(t.text ? t.text : ""); }
 	/** Prints a message or a format string with arguments (Font_WriteMessage). */

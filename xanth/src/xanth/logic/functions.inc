@@ -460,7 +460,7 @@ int loc_7B8F0(Game &g);
 int loc_7B908(Game &g);
 int lock_combination_correct(Game &g);
 int move_to_current_room(Game &g, Word a0);
-TextRef number_to_words(Game &g, Word a0);  // not decompiled
+TextRef number_to_words(Game &g, Word a0);
 TextRef object_get_list_slot(Game &g, Word a0);
 int object_get_prop_dword(Game &g, Word a0);
 int objh_001(Game &g, Word a0);
