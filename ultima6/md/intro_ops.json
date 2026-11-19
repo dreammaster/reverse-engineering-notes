@@ -65,6 +65,28 @@
 "call": "fadein"
 },
 {
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+0
+],
+"names": [
+"ax"
+]
+},
+{
+"call": "music",
+"fn": "sub_21EB8",
+"args": [
+0,
+0
+],
+"names": [
+"word_2B4B2",
+"word_2B4B0"
+]
+},
+{
 "call": "wait",
 "ms": 3000
 },
@@ -5821,6 +5843,16 @@
 "ms": 50
 },
 {
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+120
+],
+"names": [
+"ax"
+]
+},
+{
 "call": "fadeout"
 },
 {
@@ -5915,6 +5947,18 @@
 },
 {
 "call": "fadein"
+},
+{
+"call": "music",
+"fn": "sub_21EB8",
+"args": [
+0,
+0
+],
+"names": [
+"word_2B4B6",
+"word_2B4B4"
+]
 },
 {
 "call": "wait",
@@ -17377,6 +17421,16 @@
 "ms": 50
 },
 {
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+120
+],
+"names": [
+"ax"
+]
+},
+{
 "call": "fadeout"
 },
 {
@@ -17486,6 +17540,18 @@
 },
 {
 "call": "fadein"
+},
+{
+"call": "music",
+"fn": "sub_21EB8",
+"args": [
+0,
+0
+],
+"names": [
+"word_2B4BA",
+"word_2B4B8"
+]
 },
 {
 "call": "wait",
@@ -33810,6 +33876,16 @@
 {
 "call": "wait",
 "ms": 4000
+},
+{
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+120
+],
+"names": [
+"ax"
+]
 },
 {
 "call": "fadeout"

@@ -17,6 +17,28 @@
 "x": 0
 },
 {
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+0
+],
+"names": [
+"ax"
+]
+},
+{
+"call": "music",
+"fn": "sub_21EB8",
+"args": [
+0,
+0
+],
+"names": [
+"word_29666",
+"word_29664"
+]
+},
+{
 "call": "fadein"
 },
 {
@@ -74,6 +96,35 @@
 "handle": 16387,
 "y": 0,
 "x": 15
+},
+{
+"call": "other",
+"fn": "sub_21F74",
+"args": [
+1
+]
+},
+{
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+0
+],
+"names": [
+"ax"
+]
+},
+{
+"call": "music",
+"fn": "sub_21EB8",
+"args": [
+0,
+0
+],
+"names": [
+"word_2966A",
+"word_29668"
+]
 },
 {
 "call": "other",
@@ -7100,6 +7151,35 @@
 },
 {
 "call": "other",
+"fn": "sub_21F74",
+"args": [
+1
+]
+},
+{
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+0
+],
+"names": [
+"ax"
+]
+},
+{
+"call": "music",
+"fn": "sub_21EB8",
+"args": [
+0,
+0
+],
+"names": [
+"word_2966E",
+"word_2966C"
+]
+},
+{
+"call": "other",
 "fn": "sub_1CB71",
 "args": []
 },
@@ -8010,6 +8090,35 @@
 "handle": 16402,
 "y": 24,
 "x": 80
+},
+{
+"call": "other",
+"fn": "sub_21F74",
+"args": [
+1
+]
+},
+{
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+0
+],
+"names": [
+"ax"
+]
+},
+{
+"call": "music",
+"fn": "sub_21EB8",
+"args": [
+0,
+0
+],
+"names": [
+"word_29672",
+"word_29670"
+]
 },
 {
 "call": "other",
@@ -9219,6 +9328,35 @@
 },
 {
 "call": "other",
+"fn": "sub_21F74",
+"args": [
+1
+]
+},
+{
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+0
+],
+"names": [
+"ax"
+]
+},
+{
+"call": "music",
+"fn": "sub_21EB8",
+"args": [
+0,
+0
+],
+"names": [
+"word_29676",
+"word_29674"
+]
+},
+{
+"call": "other",
 "fn": "sub_1CB71",
 "args": []
 },
@@ -9767,6 +9905,35 @@
 50,
 0,
 9092
+]
+},
+{
+"call": "other",
+"fn": "sub_21F74",
+"args": [
+1
+]
+},
+{
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+0
+],
+"names": [
+"ax"
+]
+},
+{
+"call": "music",
+"fn": "sub_21EB8",
+"args": [
+0,
+0
+],
+"names": [
+"word_2967A",
+"word_29678"
 ]
 },
 {
@@ -12948,6 +13115,35 @@
 },
 {
 "call": "other",
+"fn": "sub_21F74",
+"args": [
+1
+]
+},
+{
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+0
+],
+"names": [
+"ax"
+]
+},
+{
+"call": "music",
+"fn": "sub_21EB8",
+"args": [
+0,
+0
+],
+"names": [
+"word_2967E",
+"word_2967C"
+]
+},
+{
+"call": "other",
 "fn": "sub_1CB71",
 "args": []
 },
@@ -14089,6 +14285,23 @@
 {
 "call": "wait",
 "ms": 3000
+},
+{
+"call": "other",
+"fn": "sub_21F74",
+"args": [
+1
+]
+},
+{
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+0
+],
+"names": [
+"ax"
+]
 },
 {
 "call": "fadeout"

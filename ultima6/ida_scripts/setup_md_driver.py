@@ -15,6 +15,7 @@ import ida_segment
 TM = {2: 'word_287A4', 4: 'word_2879C', 6: 'word_287A0', 8: 'dword_2812E', 10: 'dword_28132', 12: 'dword_28136', 14: 'dword_2813A_draw_shape', 16: 'dword_2813E', 18: 'dword_28142',
       20: 'word_28146', 22: 'dword_2814A_present', 24: 'dword_2814E_clear', 26: 'dword_28152', 28: 'dword_28156', 30: 'word_2815A', 32: 'word_2815E', 34: 'word_28162', 36: 'dword_28166',
       38: 'word_2816A', 40: 'word_2816E', 42: 'dword_28172_circle', 44: 'word_2818A', 50: 'word_28176'}
+STRAX = {2: 'init', 4: 'load_timbres', 6: 'reset', 8: 'timer_isr', 10: 'note', 12: 'controller', 14: 'pitch_bend', 16: 'program', 18: 'entry_12', 20: 'entry_14'}
 SUPERTM = {2: 'dword_2817A_draw_rotated', 4: 'word_2817E', 6: 'dword_28182', 8: 'word_28186', 10: 'word_2818E'}
 
 seg = ida_segment.get_first_seg()
@@ -24,7 +25,8 @@ seg.bitness = 0                       # 16-bit
 ida_segment.update_segm(seg)
 idc.set_segm_attr(start, idc.SEGATTR_BITNESS, 0)
 
-names = SUPERTM if (end - start) > 25000 else TM  # (SUPERTM_0 is 30053 bytes, TM_0 19935)
+size = end - start
+names = STRAX if size < 5000 else SUPERTM if size > 25000 else TM  # (STRAX blocks are 1.2-3.8 KB, SUPERTM_0 is 30053 bytes, TM_0 19935)
 entries = []
 for off, name in sorted(names.items()):
     target = ida_bytes.get_word(start + off)

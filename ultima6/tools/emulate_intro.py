@@ -206,6 +206,7 @@ def setf(res, a=None, b=None, sub=False, width=16):
 
 
 randn = [0]
+pushed_names = {}
 ARITY = {'sub_1E59F': 2, 'sub_151F3': 3, 'sub_15177': 2, 'sub_15610': 1, 'dword_2814E': 2, 'dword_2813A': 6, 'dword_2814A': 2, 'sub_152B5': 7, 'sub_234C5': 2, 'sub_155DB': 0, 'sub_155A5': 0,
          'sub_218FC': 1, 'sub_21EB8': 2, 'dword_2817A': 9, 'dword_28172': 6, 'sub_20951': 6, 'sub_20D32': 3, 'sub_132A6': 0, 'sub_1313C': 0}
 NAMES = {}
@@ -246,6 +247,7 @@ while ip < len(instrs) and steps < 2000000:
             push(0)
         else:
             push(get(args[0]))
+            pushed_names[regs['sp']] = args[0]  # (the name of a global that was pushed, for the songs)
     elif op == 'pop':
         put(args[0], pop())
     elif op == 'mov':
@@ -415,7 +417,8 @@ while ip < len(instrs) and steps < 2000000:
         elif target == 'sub_155A5':
             ops.append({'call': 'fadeout'})
         elif target in ('sub_218FC', 'sub_21EB8'):
-            ops.append({'call': 'music', 'fn': target, 'args': [s16(v) for v in raw]})
+            names = [pushed_names.get(regs['sp'] + 2 * k) for k in range(n)][::-1]
+            ops.append({'call': 'music', 'fn': target, 'args': [s16(v) for v in raw], 'names': names})
         elif target in ('dword_2817A', 'dword_28172', 'sub_20951', 'sub_20D32'):
             ops.append({'call': target, 'args': [s16(v) for v in raw]})
         elif target == 'sub_1E59F':

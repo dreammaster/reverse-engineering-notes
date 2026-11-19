@@ -36,6 +36,10 @@ public:
 	}
 
 	explicit MdFrontEnd(const std::string &dir);
+	/** The synthesiser the introduction, the credits and the creation play their songs on (may be null; the caller keeps it alive). */
+	void setMusic(MdMusic *music) {
+		_music = music;
+	}
 
 	bool ok() const {
 		return _ok;
@@ -65,6 +69,8 @@ public:
 
 private:
 	bool nested(const Bytes &item, size_t k, Shape &out) const;
+	void backToMenu();
+	MdMusic *_music = nullptr;
 	std::unique_ptr<MdIntro> _intro;
 	std::unique_ptr<MdCreation> _create;
 	bool _hasCharacter = false, _asked = false;

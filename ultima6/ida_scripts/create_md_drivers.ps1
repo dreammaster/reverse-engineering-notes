@@ -17,7 +17,9 @@ $Runner = Join-Path $ScriptsDir "run_ida_script.ps1"
 python (Join-Path $RootDir "tools\extract_md_drivers.py") (Join-Path $RootDir "md\game\MARTIAN") (Join-Path $RootDir "md\game\drv") | Out-Null
 $Targets = @(
     @("md\md_drv_tm_vga",      "TM_0.bin"),
-    @("md\md_drv_supertm_vga", "SUPERTM_0.bin")
+    @("md\md_drv_supertm_vga", "SUPERTM_0.bin"),
+    @("md\md_drv_strax_mpu",    "STRAX_0.bin"),
+    @("md\md_drv_strax_adlib",  "STRAX_1.bin")
 )
 foreach ($t in $Targets) {
     $idb = Join-Path $RootDir ($t[0] + ".idb")

@@ -29,6 +29,13 @@ enum Key {
 	KEY_QUIT // window closed
 };
 
+/** A synthesiser that makes the music itself: render() is called from the audio thread for mono 16-bit samples at Opl2::SAMPLE_RATE. */
+class SampleSource {
+public:
+	virtual ~SampleSource() {}
+	virtual void render(int16_t *out, int count) = 0;
+};
+
 /** Screen, keyboard and gameClock of the machine the game runs on. */
 class Backend {
 public:
@@ -48,6 +55,8 @@ public:
 	virtual void playMusic(const std::vector<uint8_t> &) {}
 	/** snd_stop. */
 	virtual void stopMusic() {}
+	/** The music comes from this synthesiser instead (nullptr: from playMusic again); the caller keeps the object alive while it is set. */
+	virtual void setMusicSource(SampleSource *) {}
 	/** A sound effect (Sfx::render) is mixed in over the music. */
 	virtual void playSound(const std::vector<int16_t> &) {}
 

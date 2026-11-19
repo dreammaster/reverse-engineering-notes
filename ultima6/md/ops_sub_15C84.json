@@ -37,6 +37,28 @@
 "tag": 16385
 },
 {
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+0
+],
+"names": [
+"ax"
+]
+},
+{
+"call": "music",
+"fn": "sub_21EB8",
+"args": [
+0,
+0
+],
+"names": [
+"word_2B4BE",
+"word_2B4BC"
+]
+},
+{
 "call": "clear"
 },
 {
@@ -12573,6 +12595,16 @@
 {
 "call": "wait",
 "ms": 6000
+},
+{
+"call": "music",
+"fn": "sub_218FC",
+"args": [
+120
+],
+"names": [
+"ax"
+]
 },
 {
 "call": "fadeout"

@@ -56,3 +56,22 @@ draw at 0x71BE. A shape is a row list (`u16 count` of the bytes in the run, 0 en
 loops walk its rows in step with 8-bit accumulators. The game scenes (the photograph on the book, the ship, the cabin that turns, the Mars that grows) use it.
 
 `src/engine/cpu8086.cpp` runs the entry (see approximation 92); `tests/test_md_driver.cpp` compares it with the checksums of the same calls on the Unicorn emulator.
+
+## Martian Dreams: the sound driver `STRAX.DRV` and the music
+
+`STRAX.DRV` ("Origin Sound System!") is a LibN with a size header like TM and SUPERTM: item 0 (1192 bytes) is the MPU-401 (Roland) block, item 1 (3838 bytes) the AdLib block, item 2 the third card's. MARTIAN.EXE
+chooses by the letters of CONFIG.MD (`sub_156A6`: A = AdLib, `word_28BE6` = 2 and the music flag `word_2B4CA` = 1; R = Roland, 1; N = none) and `sub_21956` loads the block of item `word_28BE6 - 1` and the timbres of `MD.TIM`
+(item `word_28BE6 - 1`, 5713 bytes for the AdLib: a byte 0x77 and the OPL patches). The block begins with the table of ten entry offsets (words 1-10: init, load the timbres, reset, timer interrupt, note
+(velocity, note, channel), controller (value, controller, channel), pitch bend (second, first, channel), program (program, channel), set the card's port, one more); the game copies them to its far pointers
+(`dword_2965E`, `dword_29792`, `dword_2B490`, `word_2B49A`, `dword_2968A`, `dword_2B4A8`, `dword_2B4AC`, `dword_29606`, `word_2B49E`, `word_2961C`); the callee takes its arguments off the stack. The
+timer interrupt (offset 0xD49 of the AdLib block, hooked on INT 8 at 60 a second by `sub_21ABC` through `sub_1E2BD(0x3C)`) slides the pitches and ends by calling the vector it replaced (`dword_16`, which the
+game's installer `sub_1E226` fills). The driver reads the timer chip's counter (port 0x40) to wait between two writes to the chip (ports 0x388 and 0x389). The channel is the MIDI channel + 1; the drums
+are voices 10-26, each with a program of its own (`sub_21ABC` sets them: 0x80, 0x72, 0x83, ...).
+
+The songs are Standard MIDI files (`MDD_MUS.LZC`, 12 for the AdLib, started by `sub_21EB8`; `MUSIC.LZC`, 16, belongs to the other card and is not named by MARTIAN.EXE) read by a sequencer in MARTIAN.EXE's
+segment 48: `sub_21CB2` parses the header ("MThd", format 0-2, up to 32 tracks, the division), `sub_21858` starts the tracks, `sub_21038` runs from the timer interrupt (`seg048:12D7`) and plays the events that are
+due (`sub_20F94` takes the track whose next event is first and adds the time to a 16.16 count of timer ticks: a tempo of T microseconds and division D makes one MIDI tick T / D * 0x1317 / 1243 of them), channel
+events go to the driver after the channel is set up on its first use (`ds:1B26-1B6C`), notes of channel 10 are sent to the drum voices through `ds:1B81` and `ds:1BCE`, and the event 0xFE is Origin's own
+control (type 0 and 2: jump back by the 16-bit offset in its data if the game has enabled looping; 1: end; 3: store a marker; 4 and 5: jump back unless or if the byte equals `word_28BEC`). `sub_218FC(n)`
+stops the song, over n ticks if n is not 0 (the volume falls by 0x8000 / n a tick). C++: `src/ultima6/md_adlib.cpp` runs the driver on `Cpu8086` and `src/ultima6/md_music.cpp` is the sequencer
+(the songs' lengths agree with their tempo maps to a tenth of a second, `tests/test_md_music.cpp`); `tools/md_strax_gt.py` is the Unicorn check of the driver.

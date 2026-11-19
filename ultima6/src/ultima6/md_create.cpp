@@ -63,7 +63,7 @@ void MdNewCharacter::applyTo(ObjList &al) const {
 	al.baseObjFrame[0] = al.baseObjFrame[1] = al.objFrame[1];
 }
 
-MdCreation::MdCreation(const std::string &dir, uint32_t seed) : _dir(dir), _rng(seed) {
+MdCreation::MdCreation(const std::string &dir, uint32_t seed, MdMusic *music) : _dir(dir), _music(music), _rng(seed) {
 	std::memset(_font.glyph, 0, sizeof _font.glyph);
 	Bytes iff;
 	if (!readFile(joinPath(dir, "MD_TITLE.PAL"), iff))
@@ -109,6 +109,8 @@ MdCreation::MdCreation(const std::string &dir, uint32_t seed) : _dir(dir), _rng(
 	_random[2] = random(0x16, 0x12);
 	_stat[0] = _stat[1] = _stat[2] = _random[2];
 	_ok = true;
+	if (_music)
+		_music->play(7); // sub_21EB8(word_29680): the song of the study
 	runProgram();
 }
 

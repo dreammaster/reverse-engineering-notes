@@ -71,6 +71,12 @@ public:
 		LeaveCriticalSection(&_lock);
 	}
 
+	void source(SampleSource *s) {
+		EnterCriticalSection(&_lock);
+		_source = s;
+		LeaveCriticalSection(&_lock);
+	}
+
 	void effect(const std::vector<int16_t> &samples) {
 		EnterCriticalSection(&_lock);
 		_effect = samples;
@@ -83,7 +89,10 @@ private:
 
 	void fill(int i) {
 		EnterCriticalSection(&_lock);
-		_player.render(_pcm[i], SAMPLES);
+		if (_source)
+			_source->render(_pcm[i], SAMPLES);
+		else
+			_player.render(_pcm[i], SAMPLES);
 		for (int n = 0; n < SAMPLES && _effectPos < _effect.size(); ++n, ++_effectPos) {
 			int v = _pcm[i][n] + _effect[_effectPos];
 			_pcm[i][n] = (int16_t)(v > 32767 ? 32767 : v < -32768 ? -32768 : v);
@@ -110,6 +119,7 @@ private:
 	WAVEHDR _hdr[BUFFERS];
 	int16_t _pcm[BUFFERS][SAMPLES];
 	MusicPlayer _player;
+	SampleSource *_source = nullptr;
 	std::vector<int16_t> _effect;
 	size_t _effectPos = 0;
 };
@@ -176,6 +186,12 @@ public:
 		if (!_music)
 			_music.reset(new MusicOutput);
 		_music->play(track);
+	}
+
+	void setMusicSource(SampleSource *s) override {
+		if (!_music)
+			_music.reset(new MusicOutput);
+		_music->source(s);
 	}
 
 	void stopMusic() override {

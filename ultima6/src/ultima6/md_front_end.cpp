@@ -52,11 +52,18 @@ MdFrontEnd::MdFrontEnd(const std::string &dir) : _dir(dir) {
 		_font.loadWou(fontData);
 }
 
+// back in the menu: the original stops the music of the scene that was shown (loc_15C3B: sub_218FC(0))
+void MdFrontEnd::backToMenu() {
+	_state = MENU;
+	if (_music)
+		_music->stop(0);
+}
+
 void MdFrontEnd::tick(unsigned ms) {
 	if (_state == INTRO && _intro) {
 		_intro->tick(ms);
 		if (_intro->finished())
-			_state = MENU;
+			backToMenu();
 	} else if (_state == CREATE && _create) {
 		_create->tick(ms);
 		if (_create->finished()) {
@@ -64,9 +71,9 @@ void MdFrontEnd::tick(unsigned ms) {
 			_character = _create->result();
 			_hasCharacter = true;
 			_asked = true;
-			_state = MENU;
+			backToMenu();
 		} else if (_create->cancelled()) {
-			_state = MENU;
+			backToMenu();
 		}
 	}
 }
@@ -101,13 +108,13 @@ bool MdFrontEnd::handleKey(int key) {
 	}
 	if (_state == INTRO) {
 		_intro->stop(); // any key ends it, as in the original
-		_state = MENU;
+		backToMenu();
 		return true;
 	}
 	if (_state == CREATE) { // the keys of the scenes (Escape leaves, as nothing in the original does)
 		_create->key(key);
 		if (_create->cancelled())
-			_state = MENU;
+			backToMenu();
 		return true;
 	}
 	_message.clear();
@@ -126,7 +133,7 @@ bool MdFrontEnd::handleKey(int key) {
 	}
 	switch (choice) {
 	case 0:
-		_intro.reset(new MdIntro(_dir));
+		_intro.reset(new MdIntro(_dir, MdIntro::INTRODUCTION, _music));
 		if (_intro->ok()) {
 			_state = INTRO;
 		} else {
@@ -137,7 +144,7 @@ bool MdFrontEnd::handleKey(int key) {
 		if (_asked) {
 			_message = "Run INSTALL to remove your existing character before creating another.";
 		} else {
-			_create.reset(new MdCreation(_dir, (uint32_t)std::time(nullptr)));
+			_create.reset(new MdCreation(_dir, (uint32_t)std::time(nullptr), _music));
 			if (_create->ok()) {
 				_state = CREATE;
 			} else {
@@ -149,7 +156,7 @@ bool MdFrontEnd::handleKey(int key) {
 		_state = DONE;
 		return false;
 	case 3: // the credits: the logos, the fair, the people, the flight to Mars
-		_intro.reset(new MdIntro(_dir, MdIntro::CREDITS));
+		_intro.reset(new MdIntro(_dir, MdIntro::CREDITS, _music));
 		if (_intro->ok())
 			_state = INTRO;
 		else

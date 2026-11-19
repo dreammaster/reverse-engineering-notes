@@ -2,6 +2,7 @@
 #define ULTIMA6_ENGINE_CPU8086_H
 
 #include <cstdint>
+#include <functional>
 #include <vector>
 
 namespace Ultima6 {
@@ -38,6 +39,13 @@ public:
 	uint16_t ax = 0, cx = 0, dx = 0, bx = 0, sp = 0, bp = 0, si = 0, di = 0;
 	uint16_t es = 0, cs = 0, ss = 0, ds = 0, ip = 0;
 	bool cf = false, pf = false, af = false, zf = false, sf = false, df = false, of = false;
+
+	/** The ports: what an IN reads and what an OUT writes (the default reads 0 and ignores the write). */
+	std::function<uint16_t(uint16_t port, bool wide)> onIn;
+	std::function<void(uint16_t port, uint16_t value, bool wide)> onOut;
+
+	/** Called before each instruction (for tracing). */
+	std::function<void(const Cpu8086 &)> onStep;
 
 	void push16(uint16_t v);
 	uint16_t pop16();

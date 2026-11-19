@@ -8,6 +8,7 @@
 #include "ultima6/md_front_end.h"
 #include "ultima6/md_create.h"
 #include "ultima6/md_intro.h"
+#include "ultima6/md_music.h"
 #include "ultima6/session.h"
 #include "ultima6/world.h"
 
@@ -97,6 +98,13 @@ int main(int argc, char **argv) {
 	}
 	Ultima6::Framebuffer screen;
 	MusicSwitch music(*backend, argv[1]);
+	Ultima6::Ultima6::MdMusic mdMusic;
+	struct Detach { // the audio thread must not call the synthesiser once it is gone
+		Ultima6::Backend &b;
+		~Detach() {
+			b.setMusicSource(nullptr);
+		}
+	} detach{*backend};
 
 	// --ending: the ending alone, for a game of one year, two months and three days
 	if (endingOnly && id == Ultima6::GameId::MartianDreams) { // Martian Dreams' ending: the script of MARTIAN.EXE's routine sub_15C84
@@ -147,6 +155,10 @@ int main(int argc, char **argv) {
 	bool mdCreated = false;
 	if (!play && id == Ultima6::GameId::MartianDreams) {
 		Ultima6::Ultima6::MdFrontEnd front(argv[1]);
+		if (mdMusic.load(argv[1]) && !std::getenv("U6_NO_MUSIC")) { // the AdLib songs of MDD_MUS.LZC through the driver of STRAX.DRV
+			backend->setMusicSource(&mdMusic);
+			front.setMusic(&mdMusic);
+		}
 		if (!front.ok()) {
 			std::fprintf(stderr, "cannot load the menu files\n");
 			return 1;

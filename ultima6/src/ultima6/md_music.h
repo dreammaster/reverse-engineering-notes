@@ -1,0 +1,110 @@
+#ifndef ULTIMA6_ULTIMA6_MD_MUSIC_H
+#define ULTIMA6_ULTIMA6_MD_MUSIC_H
+
+#include "engine/backend.h"
+#include "ultima6/md_adlib.h"
+
+#include <atomic>
+#include <memory>
+#include <string>
+#include <vector>
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+/**
+ * The music of Martian Dreams for the AdLib card: the twelve MIDI files of MDD_MUS.LZC played by the sequencer MARTIAN.EXE keeps in its segment seg048 (sub_21CB2 starts a file, the timer interrupt at
+ * seg048:12D7 and sub_21038 read its tracks, sub_218FC stops or fades it out), which hands the events to the sound driver (MdAdlib). The timer runs 60 times a second; the chip's samples are made
+ * between the ticks, so the object is a SampleSource for the audio thread. play() and stop() may be called from another thread: they leave a request that the next render() carries out.
+ *
+ * The sequencer's own variables are the original's (word_28BF0 ...): the file's tracks with their times and running status, the tempo (the number of timer ticks a MIDI tick takes, in 16.16),
+ * the volume and the fade, the channels' programs, volumes and pans (the tables at ds:1B26-1B6C), the percussion tables (ds:1B81, 1BCE, which send each drum note of channel 10 to a voice of its own
+ * with a note of its own) and the Origin loop events (0xFE: the song jumps back, to the loop points the composer marked, until the game says it has had enough).
+ *
+ * APPROX(94): the sound effects' use of the same voices (sub_20496, sub_207F4 and the tables at ds:1967) is not done, so the music always has every voice; the AdLib driver is run, not ported (md_adlib.h);
+ * the chip is the floating-point model of engine/opl2; the loops of the Origin events play for ever (the original's word_28BFC is set by the callers that want a song to end, which are not ported).
+ */
+class MdMusic : public SampleSource {
+public:
+	MdMusic();
+
+	/** Reads the driver, the timbres and the songs of the game's directory. */
+	bool load(const std::string &dir);
+	bool ok() const {
+		return _ok;
+	}
+	int songs() const {
+		return (int)_songs.size();
+	}
+
+	/** Starts song n (0-11: the files of MDD_MUS.LZC in order), as sub_21EB8 does: the one playing is stopped first. */
+	void play(int song);
+	/** sub_218FC: stops the song, over `fadeTicks` timer ticks if that is not 0. */
+	void stop(int fadeTicks = 0);
+	/** True from play() until the song has ended or been stopped. */
+	bool playing() const {
+		return _playing;
+	}
+
+	void render(int16_t *out, int count) override;
+
+	// for tests: the timer interrupt by hand, and the driver's writes to the chip
+	void tick();
+	MdAdlib &driver() {
+		return _adlib;
+	}
+	/** The file being played, or -1. */
+	int current() const {
+		return _current;
+	}
+
+private:
+	struct Track {
+		size_t pos = 0;
+		int32_t wait = 0; // ticks to the next event
+		uint8_t status = 0;
+		bool done = true;
+	};
+
+	bool start(int song);
+	void parse();
+	int sequence();
+	int pickTrack();
+	uint32_t varLength(int t);
+	uint8_t next(int t);
+	void notesOff(int channel);
+	void allNotesOff();
+	void setVolume(int volume);
+	void endSong();
+	void tempo(int track, int type, int length);
+	void initChannel(int di);
+	void percussionOrNote(int di, int note, int velocity);
+
+	MdAdlib _adlib;
+	bool _ok = false, _playing = false;
+	std::vector<Bytes> _songs;
+	Bytes _file;
+	int _current = -1;
+	std::vector<Track> _tracks;
+	int _format = 0, _division = 96;
+	uint32_t _factor = 10000;     // word_28E19: timer ticks (16.16) a MIDI tick takes
+	int32_t _elapsed = 0;         // word_28E1D: the time that is owed to the timer (16.16)
+	int _enabled = 1;             // word_28BF0
+	int _master = 0x100, _base = 0x100; // word_28BF2, word_28BF4
+	int _fade = 0, _level = 0, _keep = 0; // word_28BF6, 28BF8, 28BFA
+	int _loop = 0;                // word_28BFC
+	int _queued = -1;             // word_28BFE: a song to start when this one ends
+	int _marker = 0, _expect = 0; // word_28BEA, word_28BEC
+	int _ended = 1;               // word_28EBB
+	int _flags = 0;               // word_28EBD
+	uint8_t _program[17], _sent[17], _volume[17], _pan[17], _active[17];
+	int8_t _held[17];
+
+	double _sampleDebt = 0;
+	std::atomic<int> _requestPlay, _requestStop;
+};
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+#endif

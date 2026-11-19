@@ -5,6 +5,7 @@
 #include "engine/framebuffer.h"
 #include "files/shape.h"
 #include "files/tile_data.h"
+#include "ultima6/md_music.h"
 #include "ultima6/ui.h"
 
 #include <deque>
@@ -39,11 +40,12 @@ struct MdNewCharacter {
  *
  * APPROX(93): the colours of the lines (the original passes 4 and 6) are the gold of the introduction (#90); the original's random generator starts from the clock, this one from the seed given;
  * a scene looks at the keyboard and the clock about a thousand times a second here, as fast as the original's loop must run; the name is drawn over the scene as it is, without the
- * background the original leaves; Escape leaves the creation (the original has no way out); the music is left out.
+ * background the original leaves; Escape leaves the creation (the original has no way out); the song is MDD_MUS.LZC's 8th, started once the files are read.
  */
 class MdCreation {
 public:
-	MdCreation(const std::string &dir, uint32_t seed);
+	/** `music` (may be null) is the synthesiser that plays the song of the scene (song 7, faded out over 120 ticks at the end). */
+	MdCreation(const std::string &dir, uint32_t seed, MdMusic *music = nullptr);
 
 	bool ok() const {
 		return _ok;
@@ -90,6 +92,7 @@ private:
 	uint32_t now() const;
 
 	std::string _dir;
+	MdMusic *_music;
 	bool _ok = false;
 	State _state = RUN;
 	double _ms = 0;

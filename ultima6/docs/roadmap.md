@@ -55,8 +55,8 @@ parts that Nuvie moved into Lua/C++ (usecode, conversations, intro, character cr
 - [x] LZC archives decoded (`LibN::get`), tile sets, palettes, frames and WOU fonts load; the shared `World` / `Game` draw both games' maps with their message windows (`build/u6.exe md/game/MARTIAN`).
 - [x] Martian Dreams' front end: menu, animated introduction, credits, ending (scripts of the original's routines replayed by `MdIntro`), the creation of a character (Freud's questions, `MdCreation`), the rotate-and-scale
       video driver run on an 8086 interpreter (`MdDriver`, approximations 89-93, `u6_drivers.md`).
-- [ ] Martian Dreams' music: the tracks are Standard MIDI files (`MDD_MUS.LZC` AdLib set, `MUSIC.LZC` Roland set, timbres `MD.TIM`) played by a sequencer inside MARTIAN.EXE (`sub_21CB2`, `sub_21700`, `sub_21956`;
-      `word_28BE6` is the kind of card) through `STRAX.DRV` ("Origin Sound System": item 1 is probably the AdLib block; entries called as `dword_29606` and neighbours). Not analysed yet; `tools/extract_md_drivers.py` unpacks the blocks.
+- [x] Martian Dreams' music for the AdLib: the songs of `MDD_MUS.LZC` through the game's sequencer and the driver of `STRAX.DRV` (approximation 94). Still to do: the music of the game itself (GAME.EXE), sound effects
+      (`sub_20951`, the same voices), Roland.
 - [ ] Per-game tables from each executable (movement classes, creatures, usable objects, spells, texts), `TALK.LZC` scripts, portraits (`MDFACES.LZC`, `FACES.LZC`), party panel layout and graphics, menus, intros,
       character creation, endings, Martian Dreams' own mechanics (oxygen, flight) and Savage Empire's (tribal rules), the LZC items whose use is still unknown.
 

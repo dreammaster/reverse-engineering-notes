@@ -704,6 +704,50 @@ bool Cpu8086::step() {
 			ip = (uint16_t)(ip + d);
 		return true;
 	}
+	case 0xE4:
+	case 0xE5: {
+		uint16_t port = fetch8();
+		uint16_t v = onIn ? onIn(port, op & 1) : 0;
+		if (op & 1)
+			ax = v;
+		else
+			reg8(0) = (uint8_t)v;
+		return true;
+	}
+	case 0xE6:
+	case 0xE7: {
+		uint16_t port = fetch8();
+		if (onOut)
+			onOut(port, (op & 1) ? ax : (uint8_t)ax, op & 1);
+		return true;
+	}
+	case 0xEC:
+	case 0xED: {
+		uint16_t v = onIn ? onIn(dx, op & 1) : 0;
+		if (op & 1)
+			ax = v;
+		else
+			reg8(0) = (uint8_t)v;
+		return true;
+	}
+	case 0xEE:
+	case 0xEF:
+		if (onOut)
+			onOut(dx, (op & 1) ? ax : (uint8_t)ax, op & 1);
+		return true;
+	case 0xCF: { // iret
+		ip = pop16();
+		cs = pop16();
+		uint16_t f = pop16();
+		cf = f & 0x0001;
+		pf = f & 0x0004;
+		af = f & 0x0010;
+		zf = f & 0x0040;
+		sf = f & 0x0080;
+		df = f & 0x0400;
+		of = f & 0x0800;
+		return true;
+	}
 	case 0xE8: {
 		int16_t d = (int16_t)fetch16();
 		push16(ip);
@@ -911,6 +955,8 @@ bool Cpu8086::run(uint32_t stopAt, uint64_t maxSteps) {
 			_error = "step limit";
 			return false;
 		}
+		if (onStep)
+			onStep(*this);
 		if (!step())
 			return false;
 	}

@@ -5,6 +5,7 @@
 #include "files/shape.h"
 #include "files/tile_data.h"
 #include "ultima6/md_driver.h"
+#include "ultima6/md_music.h"
 
 #include <string>
 #include <vector>
@@ -23,12 +24,13 @@ namespace Ultima6 {
  * The shapes that turn and grow (the driver entry 0x2817A of SUPERTM.DRV) are drawn by the driver's own code on Cpu8086 (MdDriver); a plain shape is put with its hot spot at the place given, as the
  * driver does, and the dots of the thrown orb (0x28172, a filled circle of radius 1: five pixels) are drawn by hand; everything is clipped to the whole screen, as the screen the game gives them.
  *
- * APPROX(90): the other drawing routines of TM.DRV are not run; the music and sound effects are left out; the lines are centred and broken at a space when wider than the picture.
+ * APPROX(90): the other drawing routines of TM.DRV are not run; the sound effects are left out; the lines are centred and broken at a space when wider than the picture.
  */
 class MdIntro {
 public:
 	enum Script { INTRODUCTION = 0, ENDING = 1, CREDITS = 2 };
-	explicit MdIntro(const std::string &dir, Script script = INTRODUCTION);
+	/** `music` (may be null) is the synthesiser the script's songs are sent to; the caller keeps it alive. */
+	explicit MdIntro(const std::string &dir, Script script = INTRODUCTION, MdMusic *music = nullptr);
 
 	bool ok() const {
 		return _ok;
@@ -74,6 +76,7 @@ private:
 	void shapeAt(int handle, int frame, int x, int y);
 
 	std::string _dir;
+	MdMusic *_music;
 	bool _ok = false, _finished = false;
 	size_t _pc = 0, _end = 0;
 	int _wait = 0;

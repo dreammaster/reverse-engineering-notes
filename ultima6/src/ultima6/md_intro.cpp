@@ -31,7 +31,7 @@ bool nestedShape(const Bytes &item, size_t k, Shape &out) {
 
 } // namespace
 
-MdIntro::MdIntro(const std::string &dir, Script script) : _dir(dir) {
+MdIntro::MdIntro(const std::string &dir, Script script, MdMusic *music) : _dir(dir), _music(music) {
 	_pc = MD_SCRIPT_START[script];
 	_end = MD_SCRIPT_START[script + 1];
 	std::memset(_font.glyph, 0, sizeof _font.glyph);
@@ -253,6 +253,14 @@ void MdIntro::run() {
 			break;
 		case 10:
 			_draws.push_back({2, 0, 0, o.a, o.b, o.c, 0});
+			break;
+		case 12: // sub_21EB8
+			if (_music)
+				_music->play(o.a);
+			break;
+		case 13: // sub_218FC
+			if (_music)
+				_music->stop(o.a);
 			break;
 		case 11:
 			_draws.push_back({3, o.a, o.b, o.c, o.d, o.e, o.f});
