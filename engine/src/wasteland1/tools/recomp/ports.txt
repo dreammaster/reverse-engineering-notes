@@ -418,7 +418,7 @@ C61F creationRowPort junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=D
 272E textSpeedOff junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
 2955 loadA4AE junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
 3EC0 loadA5D7 junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
-3C52 markMemberRow junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
+3C52 markMemberRow junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf,dl,dh scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
 3E32 npcOfCurrent junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,cf
 3435 selectNewCharacter junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
 4B93 monsterStepIndex junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
@@ -438,8 +438,8 @@ C61F creationRowPort junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=D
 6837 loadAA3E junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
 6880 loadAA3C junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
 69A8 loadAA38 junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
-69B1 changeCellAtParty junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
-5DC4 selectActiveGroupLeaves junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
+69B1 changeCellAtParty junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf,dl,dh scratch=4661-4664,BA00-BA11,AA30-AA50,A410-A470,B240-B243,CD40-CD50,465C-4660,B1D0-B1E0
+5DC4 selectActiveGroupLeaves junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf,dl,dh
 6B09 setPendingFlags junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
 6CBD textTableAB3E junk=ah,al,bl,bp,ch,cl,di,es,pf,sf,si,zf,cf
 9579 writeMemberAttribute junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,4690-4690,467F-4681,466B-466D,71C0-7200,8D00-8F00
@@ -467,3 +467,4 @@ BE50 generalStore junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=DCE0-DC
 8C62 hotspotMap junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf
 8CE7 hotspotList junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf
 8D16 hotspotInfo junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf
+6B3C explorationLoop junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf

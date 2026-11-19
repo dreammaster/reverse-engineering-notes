@@ -128,7 +128,7 @@ HotspotResult hotspotMap(Machine &m) {   // 18C62: the map view; the cursor is a
 
 HotspotResult hotspotList(Machine &m) {   // 18CE7: the list rows of a window (one byte per text row at ds:8DDC)
 	m.setD16(cursorNumVar, 0);
-	const uint16_t row = uint16_t((m.d16(mouseY) - 5) >> 3);
+	const uint16_t row = uint16_t(uint16_t(m.d16(mouseY) - 5) >> 3);
 	if (m.d8(uint16_t(0x8DDC + row)) == 0) return {false, 0};
 	m.setD16(cursorNumVar, 1);
 	if (!leftPressed(m)) return {false, 0};

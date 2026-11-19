@@ -1,5 +1,6 @@
 // Register adapters: map cell access.
 #include "wasteland1/ports/port.h"
+#include "wasteland1/mainloop.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/mapcells.h"
 #include "wasteland1/movement.h"
@@ -77,6 +78,8 @@ PORT(randomEncounter) { randomEncounter(m); }                                   
 PORT(enterLocationMove) { r.cf = enterLocationMove(m, r.a.b.l); }                          // 16A13
 
 PORT(loadLocationMap) { loadLocationMap(m); }
+
+PORT(explorationLoop) { explorationLoop(m); }                                            // 16B3C
 
 } // namespace rc
 } // namespace wl
