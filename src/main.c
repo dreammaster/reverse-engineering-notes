@@ -120,6 +120,7 @@ typedef struct RoomView_ {
 	int room_snd[8], nroom_snd, snd_key; /* sounds of the room's creatures (stopped when the room changes) */
 	int ruck_target;           /* thing touched when the rucksack was opened (insert / give target), -1 = none */
 	int look_pic;              /* thing+1 whose picture is shown next to the look message (rucksack look), 0 = none */
+	int map_open, map_ox, map_oy, map_zoom, map_prev;   /* F1: the map of the rooms entered so far (1000:369F) */
 	int held;                  /* thing held (verb 13), 0 = none */
 	int ruck_open, ruck_sel, ruck_delay, last_item, space_prev, ret_prev;   /* rucksack view (Space / Return while carrying things) */
 	int push_snd;              /* looping sound of the object being pushed (0 = none) */
@@ -213,6 +214,7 @@ static void panel_ensure(const GameFiles *g) {
 static const ObjSprite *thing_sprite(const RoomView *rv, int t);
 static void ruck_picture(uint8_t *px, const ObjSprite *sp);
 static void look_picture(uint8_t *px, const ObjSprite *sp);
+static void map_draw(uint8_t *px, const RoomView *rv);
 static int msg_rnd(void *u) { (void)u; return 3; }
 /* wings + the status text ("DAY n" and the room name) */
 static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
@@ -259,6 +261,7 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 		}
 	}
 	if (rv->ruck_open) ruck_picture(scr->pixels, thing_sprite(rv, rv->touch_thing));
+	if (rv->map_open) map_draw(scr->pixels, rv);
 }
 
 /* while the walk demo runs, objects in front of the player are drawn after it (see walk_draw) */
@@ -900,6 +903,57 @@ static void look_picture(uint8_t *px, const ObjSprite *sp) {
 		}
 }
 
+/* ---- the map (F1, 1000:369F / 3806 / 38C3): a scroll at (96, 30) (14 fill columns, 9 rows); every room entered is an outline of its record's size (bytes 4, 5) times the zoom
+ * at ((byte 1 - ox) * zoom + 6Bh, (byte 3 - oy) * zoom + 29h), colour 4, the current room colour 10, clipped to the window (6Bh..D5h, 29h..73h); the centre is the current room ---- */
+static void map_centre(RoomView *rv) {
+	const uint8_t *rec = rv->room >= 0 && rv->room < rv->mp2.sec[0].count ? rv->mp2.sec[0].rec[rv->room] : NULL;
+	if (!rec || rv->mp2.sec[0].len[rv->room] < 6) return;
+	rv->map_ox = rec[1] - 0x35 / rv->map_zoom + rec[4] / 2;
+	rv->map_oy = rec[3] - 0x25 / rv->map_zoom + rec[5] / 2;
+}
+static void map_open_view(RoomView *rv) {
+	if (!rv->ok) return;
+	if (rv->map_zoom < 1) rv->map_zoom = 2;
+	map_centre(rv);
+	rv->map_open = 1;
+}
+static void map_draw(uint8_t *px, const RoomView *rv) {
+	if (!g_tiles || !g_font3) return;
+	message_box(px, 96, 30, 14, 9, g_tiles, g_tiles_len, msg_rnd, NULL);
+	int vis = 0;
+	for (int i = 0; i < 128; i++) vis += rv->visited[i];
+	char tx[64];
+	snprintf(tx, sizeof(tx), "%s%d", rv->names.count > 42 ? rv->names.strings[42] : "ROOMS ENTERED ", vis);
+	message_text(px, 0x6B, 0x74, tx, g_font3, g_font3_len);
+	for (int r = 0; r < rv->mp2.sec[0].count && r < 128; r++) {
+		const uint8_t *rec = rv->mp2.sec[0].rec[r];
+		if (!rec || rv->mp2.sec[0].len[r] < 6 || !rv->visited[r]) continue;
+		int z = rv->map_zoom, w = rec[4] * z, h = rec[5] * z;
+		int x = (rec[1] - rv->map_ox) * z + 0x6B, y = (rec[3] - rv->map_oy) * z + 0x29;
+		int col = r == rv->room ? 10 : 4;
+		for (int i = 0; i <= w; i++)
+			for (int j = 0; j <= h; j++) {
+				if (i && i != w && j && j != h) continue;
+				int xx = x + i, yy = y + j;
+				if (xx > 0x6B && xx <= 0xD5 && yy > 0x29 && yy <= 0x73) px[yy * SCREEN_W + xx] = (uint8_t)col;
+			}
+	}
+}
+/* one frame of the map: arrows scroll, Return zooms in, '-' out, F2 re-centres, End leaves */
+static void map_step(RoomView *rv, int keys) {
+	int ret = (keys & 0x20) != 0, rte = ret && !rv->ret_prev;
+	rv->ret_prev = ret;
+	int minus = (keys & 0x40) != 0, me = minus && !rv->map_prev;
+	rv->map_prev = minus;
+	if (keys & 0x80) { rv->map_open = 0; return; }
+	if (keys & 4) rv->map_ox--;
+	if (keys & 8) rv->map_ox++;
+	if (keys & 1) rv->map_oy--;
+	if (keys & 2) rv->map_oy++;
+	if (rte && rv->map_zoom < 10) { rv->map_zoom++; rv->map_ox += 0x1A / rv->map_zoom; rv->map_oy += 0x12 / rv->map_zoom; }
+	if (me && rv->map_zoom > 1) { rv->map_zoom--; rv->map_ox -= 0x1A / rv->map_zoom; rv->map_oy -= 0x12 / rv->map_zoom; }
+}
+
 /* run the chosen verb (handler table 1000:2E0B): 11 = look (event 16 when the thing has flag 0x20, else message 3), 4 and 7 = event 5, 2 = event 0;
  * the other verbs (take, drop, use ...) are not decoded yet */
 static void menu_choose(RoomView *rv, int verb) {
@@ -1100,6 +1154,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		}
 		return;
 	}
+	if (rv->map_open) { if ((wk->tick & 1) == 0) map_step(rv, keys); return; }
 	if (wk->tick & 1)
 		return;
 	{
@@ -1388,6 +1443,7 @@ int main(int argc, char **argv) {
 					if (scene == SCENE_INTRO) { scene = SCENE_WALK; g_room.level = 1; g_room.room = 0; g_room.use_tata = 0; }
 					else changed = 0;
 				}
+				else if (scene == SCENE_WALK && k == SDLK_F1) { map_open_view(&g_room); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_i) { g_room.show_status ^= 1; changed = 0; }
 				else if (k == SDLK_SPACE || k == SDLK_RETURN)
 					scene = (Scene)((scene + 1) % SCENE_COUNT);
@@ -1426,7 +1482,7 @@ int main(int argc, char **argv) {
 			if (!last_ms) last_ms = now;
 			const Uint8 *ks = SDL_GetKeyboardState(NULL);
 			int keys = (ks[SDL_SCANCODE_UP] ? 1 : 0) | (ks[SDL_SCANCODE_DOWN] ? 2 : 0) | (ks[SDL_SCANCODE_LEFT] ? 4 : 0) |
-			           (ks[SDL_SCANCODE_RIGHT] ? 8 : 0) | (ks[SDL_SCANCODE_END] ? 0x80 : 0) | (ks[SDL_SCANCODE_SPACE] ? 0x10 : 0) | (ks[SDL_SCANCODE_RETURN] ? 0x20 : 0);
+			           (ks[SDL_SCANCODE_RIGHT] ? 8 : 0) | (ks[SDL_SCANCODE_END] ? 0x80 : 0) | (ks[SDL_SCANCODE_SPACE] ? 0x10 : 0) | (ks[SDL_SCANCODE_RETURN] ? 0x20 : 0) | (ks[SDL_SCANCODE_MINUS] ? 0x40 : 0);
 			while (now - last_ms >= 20) {            /* the game runs at ~50 Hz */
 				walker_tick(&g_walk, &g_room, keys);
 				last_ms += 20;
@@ -1437,6 +1493,7 @@ int main(int argc, char **argv) {
 					const char *colon = strchr(c, ':');
 					if (!colon) break;
 					if (!strncmp(c, "info", 4)) g_room.show_status ^= 1;
+					if (!strncmp(c, "map", 3)) map_open_view(&g_room);
 					for (int n = atoi(colon + 1); n > 0; n--)
 						walker_tick(&g_walk, &g_room, bits);
 					c = strchr(colon, ',');
