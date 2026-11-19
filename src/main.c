@@ -1173,10 +1173,10 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		}
 	}
 	int dx = 0, dy = 0, dir = -1;
-	if (keys & 8) { dir = DIR_RIGHT; dx = 1; }
+	if (keys & 8) { dir = DIR_RIGHT; dx = 1; }          /* both axes may be held (diagonals): one combined move, no sliding (emulator: both stop together) */
 	else if (keys & 4) { dir = DIR_LEFT; dx = -1; }
-	else if (keys & 2) { dir = DIR_DOWN; dy = 1; }
-	else if (keys & 1) { dir = DIR_UP; dy = -1; }
+	if (keys & 2) { dy = 1; if (dir < 0) dir = DIR_DOWN; }
+	else if (keys & 1) { dy = -1; if (dir < 0) dir = DIR_UP; }
 	if (dir < 0) {
 		wk->moving = 0; wk->anim = 0;
 		if (rv->push_snd) { snd_stop(rv->push_snd); rv->push_snd = 0; }
@@ -1482,14 +1482,14 @@ int main(int argc, char **argv) {
 			if (!last_ms) last_ms = now;
 			const Uint8 *ks = SDL_GetKeyboardState(NULL);
 			int keys = (ks[SDL_SCANCODE_UP] ? 1 : 0) | (ks[SDL_SCANCODE_DOWN] ? 2 : 0) | (ks[SDL_SCANCODE_LEFT] ? 4 : 0) |
-			           (ks[SDL_SCANCODE_RIGHT] ? 8 : 0) | (ks[SDL_SCANCODE_END] ? 0x80 : 0) | (ks[SDL_SCANCODE_SPACE] ? 0x10 : 0) | (ks[SDL_SCANCODE_RETURN] ? 0x20 : 0) | (ks[SDL_SCANCODE_MINUS] ? 0x40 : 0);
+			           (ks[SDL_SCANCODE_RIGHT] ? 8 : 0) | (ks[SDL_SCANCODE_INSERT] ? 5 : 0) | (ks[SDL_SCANCODE_DELETE] ? 6 : 0) | (ks[SDL_SCANCODE_PAGEUP] ? 9 : 0) | (ks[SDL_SCANCODE_PAGEDOWN] ? 10 : 0) | (ks[SDL_SCANCODE_END] ? 0x80 : 0) | (ks[SDL_SCANCODE_SPACE] ? 0x10 : 0) | (ks[SDL_SCANCODE_RETURN] ? 0x20 : 0) | (ks[SDL_SCANCODE_MINUS] ? 0x40 : 0);
 			while (now - last_ms >= 20) {            /* the game runs at ~50 Hz */
 				walker_tick(&g_walk, &g_room, keys);
 				last_ms += 20;
 			}
 			if (sim && frames == 0) {                 /* headless: --sim right:30,down:10 */
 				for (const char *c = sim; *c;) {
-					int bits = !strncmp(c, "rend", 4) ? 0x88 : !strncmp(c, "right", 5) ? 8 : !strncmp(c, "left", 4) ? 4 : !strncmp(c, "down", 4) ? 2 : !strncmp(c, "up", 2) ? 1 : !strncmp(c, "end", 3) ? 0x80 : !strncmp(c, "space", 5) ? 0x10 : !strncmp(c, "ret", 3) ? 0x20 : 0;
+					int bits = !strncmp(c, "rend", 4) ? 0x88 : !strncmp(c, "rdown", 5) ? 0x0A : !strncmp(c, "ldown", 5) ? 0x06 : !strncmp(c, "rup", 3) ? 0x09 : !strncmp(c, "lup", 3) ? 0x05 : !strncmp(c, "right", 5) ? 8 : !strncmp(c, "left", 4) ? 4 : !strncmp(c, "down", 4) ? 2 : !strncmp(c, "up", 2) ? 1 : !strncmp(c, "end", 3) ? 0x80 : !strncmp(c, "space", 5) ? 0x10 : !strncmp(c, "ret", 3) ? 0x20 : 0;
 					const char *colon = strchr(c, ':');
 					if (!colon) break;
 					if (!strncmp(c, "info", 4)) g_room.show_status ^= 1;
