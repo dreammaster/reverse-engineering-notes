@@ -158,14 +158,23 @@ bool waitSpaceOrEnter(Machine &m) {   // 18EAD
 
 namespace {
 
+void hideMouseCursor(Machine &m) {   // 1003F (j_start_9): takes the cursor off the screen before the window is drawn on
+	if (m.d8(g::mousePresent) == 0) return;
+	X86Regs x;
+	legacy::call(m, 0x003F, x);
+}
+
 void eraseSpeedSlider(Machine &m) {   // 18B1B
 	m.setD16(g::mouseCursorOn, 0);
+	hideMouseCursor(m);
 	m.d8(g::stringXPos) = 0x17;
 	m.d8(g::stringYPos) = 0x0D;
 	for (int i = 0; i < 8; ++i) writeColorCharacter(m, 0x12);
 }
 
 void drawHotspot(Machine &m, uint8_t index, bool erase) {   // 18B78
+	m.setD16(g::mouseCursorOn, 0);
+	hideMouseCursor(m);
 	const uint16_t entry = uint16_t(g::hotspotLabels + (index - 4) * 6);
 	m.d8(g::stringXPos) = m.d8(entry);
 	m.d8(g::stringYPos) = m.d8(uint16_t(entry + 1));
@@ -230,8 +239,23 @@ void hintPass(Machine &m) {   // 18A4F
 
 } // namespace
 
+void selectHotspot(Machine &m, uint8_t index) {   // 18B4C: highlights the label of hot spot `index` (the pointer is over it)
+	m.d8(g::hotLabelCurrent) = index;
+	m.d8(uint16_t(g::saved + 0xFE)) = 1;
+	drawHotspot(m, index, false);
+	m.d8(uint16_t(g::saved + 0xFE)) = 0;
+}
+
+void releaseHotspot(Machine &m) {   // 18B60: draws the highlighted label normally again
+	const uint8_t index = m.d8(g::hotLabelCurrent);
+	m.d8(g::hotLabelCurrent) = 0;
+	if (index == 0) m.d8(g::hotLabelCurrent) = 0;   // 18B6D: the comparison with the cleared selection
+	drawHotspot(m, index, false);
+}
+
 void drawSpeedSlider(Machine &m) {   // 18AC4: the text speed bar between the SLOW and FAST labels
 	m.setD16(g::mouseCursorOn, 0);
+	hideMouseCursor(m);
 	m.d8(g::stringXPos) = 0x17;
 	m.d8(g::stringYPos) = 0x0D;
 	const uint8_t start = m.d8(g::stringXPos);

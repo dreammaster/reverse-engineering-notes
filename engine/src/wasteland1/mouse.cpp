@@ -1,6 +1,7 @@
 #include "wasteland1/mouse.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
+#include "wasteland1/text.h"
 #include <algorithm>
 #include <cstdlib>
 
@@ -18,10 +19,7 @@ void drawCursor(Machine &m) {   // 10042 (j_start_10): redraws the mouse cursor
 	X86Regs x;
 	legacy::call(m, 0x0042, x);
 }
-void releaseSelected(Machine &m) {   // 18B60: un-highlights the selected button
-	X86Regs x;
-	legacy::call(m, 0x8B60, x);
-}
+void releaseSelected(Machine &m) { releaseHotspot(m); }   // 18B60: un-highlights the selected button
 }
 
 bool mouseChanged(Machine &m) {
@@ -94,11 +92,7 @@ bool leftPressed(Machine &m) { return (m.d16(stateVar) & 0x1000) != 0; }   // th
 
 HotspotResult hotspotButton(Machine &m, uint8_t index) {   // 18BFF: a button of the bottom row; al = its key
 	m.setD16(cursorNumVar, 1);
-	if (index != m.d8(selectedVar)) {   // 18B4C: selects (highlights) the button
-		X86Regs x;
-		x.bl = index;
-		legacy::call(m, 0x8B4C, x);
-	}
+	if (index != m.d8(selectedVar)) selectHotspot(m, index);   // 18B4C
 	if (!leftPressed(m)) return {false, 0};
 	return {true, m.d8(uint16_t(0xCBBD + uint16_t(index - 4) * 6 + 3))};
 }

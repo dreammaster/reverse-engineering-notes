@@ -14,7 +14,9 @@ uint8_t checkKeypress(Machine &m, uint8_t caseDelta = 0x20);   // 18EFE / 18EF9:
 bool waitForKeypress(Machine &m);                 // 18E90: waits for a key; true if it was ESC (carry set)
 bool waitSpaceOrEnter(Machine &m);                // 18EAD: wait for SPACE (carry clear on ENTER, set on ESC/SPACE)
 void hintOverlay(Machine &m);                     // 189B1: redraws the hot key hint labels for buttonMask1/2
-void pollSpeedKeys(Machine &m);                   // 19004
+void pollSpeedKeys(Machine &m);
+void selectHotspot(Machine &m, uint8_t index);   // 18B4C: highlights hot spot label `index` (mouse over it)
+void releaseHotspot(Machine &m);                  // 18B60: draws the highlighted label normally again                   // 19004
 
 // ---- numbers -----------------------------------------------------------------------------------------------------
 void convertNumberToBcd(Machine &m);              // 18DCE: numberValue (24 bit) -> 8 digit packed BCD at numberBcd
