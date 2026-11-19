@@ -1430,8 +1430,8 @@ int main(int argc, char **argv) {
 				int changed = 1;
 				if (k == SDLK_ESCAPE)
 					running = 0;
-				else if ((scene == SCENE_ROOM || scene == SCENE_WALK) && k == SDLK_PAGEDOWN) { g_room.room++; g_room.scroll_x = g_room.scroll_y = 0; }
-				else if ((scene == SCENE_ROOM || scene == SCENE_WALK) && k == SDLK_PAGEUP) { g_room.room--; g_room.scroll_x = g_room.scroll_y = 0; }
+				else if ((scene == SCENE_ROOM || (scene == SCENE_WALK && !game_mode)) && k == SDLK_PAGEDOWN) { g_room.room++; g_room.scroll_x = g_room.scroll_y = 0; }
+				else if ((scene == SCENE_ROOM || (scene == SCENE_WALK && !game_mode)) && k == SDLK_PAGEUP) { g_room.room--; g_room.scroll_x = g_room.scroll_y = 0; }
 				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK || scene == SCENE_OBJECTS) && k == SDLK_RIGHTBRACKET) { g_room.level = g_room.level % (g_room.use_tata ? 4 : 5) + 1; g_room.room = 0; }
 				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK || scene == SCENE_OBJECTS) && k == SDLK_LEFTBRACKET) { g_room.level = (g_room.level + (g_room.use_tata ? 2 : 3)) % (g_room.use_tata ? 4 : 5) + 1; g_room.room = 0; }
 				else if ((scene == SCENE_ROOM || scene == SCENE_TILES || scene == SCENE_WALK || scene == SCENE_OBJECTS) && k == SDLK_t && g.id == GAME_PAYOFF) { g_room.use_tata ^= 1; g_room.level = 1; g_room.room = 0; }
