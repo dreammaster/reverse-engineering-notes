@@ -113,6 +113,8 @@ public:
 
 	/** sub_1C4ED: visits an object and, depth first, everything inside it (every slot, or only the slots whose contents can be seen if `visibleOnly`); `visit` returns true to stop. */
 	void walkContents(int root, bool visibleOnly, const std::function<bool(int)> &visit);
+	/** The same with what the original passes its callback: the nesting depth below the root and the kind of container the thing is in (-1 for the root). */
+	void walkContentsEx(int root, bool visibleOnly, const std::function<bool(int, int, int)> &visit);
 
 	// ---- conversations
 	/** The enabled flag (bit 0) of a conversation line, menu option (subId = option number) or menu (subId < 0) - Conversation_GetEntry; null for an invalid id. */
@@ -155,6 +157,9 @@ public:
 	char *farPtr(int seg, int off);
 	/** A string kept for the logic to point at (valid for the next few calls). */
 	char *keepText(const std::string &s) { return keep(s); }
+	/** The seed of the random number generator (the oracle comparison starts every command at a known one). */
+	void setSeed(unsigned seed) { _seed = seed; }
+	unsigned seed() const { return _seed; }
 	char *farPtr(intptr_t seg, char *off) { (void)seg; return off; }     // (a pointer the logic already has)
 	char *ResourceText_GetStr(TextRef t) { return t.isMessage() ? ResourceText_GetStr(t.id) : const_cast<char *>(t.text ? t.text : ""); }
 	/** Prints a message or a format string with arguments (Font_WriteMessage). */
@@ -176,7 +181,8 @@ public:
 	}
 	int RoomItem_Draw(int what) { return other("RoomItem_Draw", what); }
 	int set_room_music(int room) { return other("set_room_music", room); }
-	int sub_1DBB7(int a) { return other("sub_1DBB7", a); }
+	/** The game clock: adds minutes to the time of day and carries whole days (1440 minutes) into the day count. */
+	int sub_1DBB7(int minutes);
 	/** sprintf into one of the original's static buffers (the C runtime's, with %s / %d / %u / %c). */
 	template <class... A> int _sprintf(char *dest, const char *fmt, A... args) {
 		FmtArg a[] = {FmtArg(args)..., FmtArg()};

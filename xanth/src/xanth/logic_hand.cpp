@@ -152,4 +152,16 @@ int loc_5F4C9(Game &g) { return mazeBit(g, 3); }
 int loc_5F4E5(Game &g) { return mazeBit(g, 4); }
 int loc_5F501(Game &g) { return mazeBit(g, 5); }
 
+// sub_1C4ED(root, callback, visibleOnly): walks a thing and everything inside it, calling callback(object, depth, kind) until it returns non-zero (the program's own container walk;
+// the decompiler cannot follow its local stack frame).
+int sub_1C4ED(Game &g, Word root, Word callback, Word callbackSegment, Word visibleOnly) {
+	typedef int (*WalkFn)(Game &, Word, Word, Word);
+	(void)callbackSegment;
+	WalkFn fn = (WalkFn)callback.v;
+	if (!fn || !(int)root)
+		return 0;
+	g.walkContentsEx(root, (int)visibleOnly != 0, [&](int obj, int depth, int kind) { return fn(g, obj, depth, kind) != 0; });
+	return 0;
+}
+
 } // namespace Xanth

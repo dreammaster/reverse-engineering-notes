@@ -71,6 +71,8 @@ endif()
 
 add_executable(xanth_play tools/playcli.cpp)
 target_link_libraries(xanth_play xanth_engine)
+add_executable(xanth_playlog tools/playlog.cpp)
+target_link_libraries(xanth_playlog xanth_engine)
 
 add_executable(test_screen tests/test_screen.cpp)
 target_link_libraries(test_screen xanth_engine)

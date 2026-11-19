@@ -276,6 +276,24 @@ void Machine::timerTick(Cpu &c) {
 		Reg ax = c.ax, bx = c.bx, cx = c.cx, dx = c.dx;
 		bool cf = c.CF, zf = c.ZF, sf = c.SF, of = c.OF;
 		std::vector<uint16_t> a = cs.args;
+		if (getenv("PLAYLOG_VARS")) fprintf(stderr, "inject %s sp=%04x ss=%04x ds=%04x steps=%ld\n", cs.name.c_str(), c.sp, c.ss, c.ds, (long)c.steps);
+		c.ds = SEG_dseg_para;                                     // (the program may be in the middle of a function that has DS pointing elsewhere)
+		uint16_t old3[3] = {0, 0, 0};
+		bool playcmd = cs.name == "playcmd" && a.size() >= 3;
+		if (playcmd) {                                            // a whole turn: the command goes where the main loop leaves it, then execute_command runs
+			static int commandNo = 0;                              // the random number generator starts each command at a known seed (the standalone does the same)
+			unsigned seed = 12345u + (unsigned)++commandNo * 7919u;
+			c.wr16(SEG_dseg_para, 0x5812, (uint16_t)(seed & 0xFFFF));
+			c.wr16(SEG_dseg_para, 0x5814, (uint16_t)(seed >> 16));
+			old3[0] = c.rd16(SEG_dseg_para, D_word_8B9BA);
+			old3[1] = c.rd16(SEG_dseg_para, D_unk_8B9CA);
+			old3[2] = c.rd16(SEG_dseg_para, D_unk_8B9C8);
+			c.wr16(SEG_dseg_para, D_word_8B9BA, a[0]);
+			c.wr16(SEG_dseg_para, D_unk_8B9CA, a[1]);
+			c.wr16(SEG_dseg_para, D_unk_8B9C8, a[2]);
+			cs.name = "execute_command";
+			a.clear();
+		}
 		for (size_t i = a.size(); i-- > 0;)
 			c.push(a[i]);
 		int rw = c.retWords;
@@ -286,6 +304,13 @@ void Machine::timerTick(Cpu &c) {
 		if (it != host().liftedByName.end())
 			it->second(c);
 		c.retWords = rw;
+		if (afterCall && (cs.name == "execute_command" || cs.name == "playpre"))
+			afterCall(cs);
+		if (playcmd) {                                            // (the main loop must not find the command and run it again)
+			c.wr16(SEG_dseg_para, D_word_8B9BA, old3[0]);
+			c.wr16(SEG_dseg_para, D_unk_8B9CA, old3[1]);
+			c.wr16(SEG_dseg_para, D_unk_8B9C8, old3[2]);
+		}
 		c.sp = sp0; c.ss = ss; c.ds = ds; c.es = es; c.bp = bp; c.si = si; c.di = di;
 		c.ax = ax; c.bx = bx; c.cx = cx; c.dx = dx;
 		c.CF = cf; c.ZF = zf; c.SF = sf; c.OF = of;

@@ -1,4 +1,3 @@
 conv_text_77	di read before it is set (string function) (scasb)
 event_fn_25	use of bp (push    [bp+si+var_22])
 sub_1AAFB	instruction stosw (stosw)
-sub_1C4ED	use of bp (lea     ax, [bp+si+var_4E])

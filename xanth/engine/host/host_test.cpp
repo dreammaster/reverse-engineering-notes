@@ -298,6 +298,135 @@ static int testScanLog(Host &h, const char *outPath) {
 	return 0;
 }
 
+// playlog: the commands of a script ("verb dobj iobj" per line) go through execute_command (a whole turn: handlers, events, time, exits) in the game as the program leaves it after
+// start-up (HOST_PLAYLOG=<script> on `init`, with the usual HOST_MAIN / HOST_INPUT / HOST_TICKMASK of play.sh and HOST_PLAYLOG_OUT=<log>; HOST_PLAYSTART = label count of the first
+// command, default 45 million, HOST_PLAYGAP = labels between commands, default 3 million). After each command one line is logged: step and command, the room, a hash of the saved
+// state, a hash of the event queue, the event count and the text printed; the standalone game's xanth_playlog writes the same lines.
+struct PlayLog {
+	FILE *out = nullptr, *detail = nullptr;
+	int step = 0;
+	size_t firstCall = 0;
+	struct Region { uint32_t addr; unsigned size; bool skip; };
+	std::vector<Region> regions;
+};
+static PlayLog g_playLog;
+
+// bytes of object records that the program changes while it loads (pointers it fixes up: not game state): object, first byte, last byte
+static const int kPlayMask[][3] = {{49, 15, 17}, {103, 11, 13}};
+static std::vector<uint8_t> playMaskedRecord(Host &h, int id, uint32_t rec, unsigned size) {
+	std::vector<uint8_t> r(&h.mem[rec], &h.mem[rec] + size);
+	for (auto &m : kPlayMask) if (m[0] == id) for (int k = m[1]; k <= m[2] && k < (int)size; k++) r[k] = 0;
+	return r;
+}
+
+static bool playLogOpen(const char *outPath) {
+	FILE *rf = fopen("reversing/analysis/xanth_save_regions.tsv", "rb");
+	if (!rf) { fprintf(stderr, "run from xanth/: reversing/analysis/xanth_save_regions.tsv not found\n"); return false; }
+	char line[256];
+	fgets(line, sizeof(line), rf);
+	while (fgets(line, sizeof(line), rf)) {
+		unsigned idx, size; unsigned addr; char name[96] = "";
+		if (sscanf(line, "%u %x %u %95s", &idx, &addr, &size, name) >= 3) g_playLog.regions.push_back({addr, size, !strcmp(name, "show_text_with_voice") || !strcmp(name, "voice_on")});     // (the player's voice options: not state)
+	}
+	fclose(rf);
+	g_playLog.out = fopen(outPath, "wb");
+	if (getenv("PLAYLOG_DETAIL")) g_playLog.detail = fopen((std::string(outPath) + ".detail").c_str(), "wb");
+	return g_playLog.out != nullptr;
+}
+
+// the line for the command that just ran (its words are still where the main loop put them)
+static void playLogLine(Host &h, bool pre) {
+	static const unsigned recSize[] = {0, 18, 28, 32, 14, 32};
+	int verb = pre ? 0 : h.w(D_word_8B9BA), dobj = pre ? 0 : h.w(D_unk_8B9CA), iobj = pre ? 0 : h.w(D_unk_8B9C8);
+	uint64_t hs = 1469598103934665603ull;
+	uint32_t objSeg = (uint32_t)h.w(D_seg_8A9E4) * 16;
+	for (int id = 1; id <= g_count; id++) {
+		uint32_t p = objSeg + (uint32_t)id * 6;
+		uint32_t rec = (uint32_t)(h.mem[p + 0x6A] | (h.mem[p + 0x6B] << 8)) * 16 + (h.mem[p + 0x68] | (h.mem[p + 0x69] << 8));
+		std::vector<uint8_t> r = playMaskedRecord(h, id, rec, recSize[objs[id].type]);
+		hs = fnv(hs, r.data(), r.size());
+		if (g_playLog.detail) fprintf(g_playLog.detail, "%08x ", (unsigned)fnv(1469598103934665603ull, r.data(), r.size()));
+	}
+	for (const PlayLog::Region &rg : g_playLog.regions) {
+		if (rg.skip) { if (g_playLog.detail) fprintf(g_playLog.detail, "00000000 "); continue; }
+		hs = fnv(hs, &h.mem[rg.addr], rg.size);
+		if (g_playLog.detail) fprintf(g_playLog.detail, "%08x ", (unsigned)fnv(1469598103934665603ull, &h.mem[rg.addr], rg.size));
+	}
+	if (g_playLog.detail) fprintf(g_playLog.detail, "\n");
+	uint64_t he = 1469598103934665603ull;
+	unsigned count = h.w(D_event_count);
+	uint32_t evSeg = (uint32_t)h.w(D_seg_8A9E2) * 16;
+	he = fnv(he, &h.mem[evSeg + 0x32], count * 4);
+	std::string ev;
+	for (auto &e : h.events) {
+		if (pre) break;
+		if (e.name != "Font_WriteMessage" && e.name != "wputchar?" && e.name != "show_text_box" && e.name != "Font_WriteString") continue;
+		ev += (e.name == "wputchar?" ? "wputchar" : e.name) + "|" + e.text + "\x1f";
+	}
+	if (pre && getenv("PLAYLOG_RECS")) {          // the records of some objects and the variable regions (to see what differs)
+		for (const char *q = getenv("PLAYLOG_RECS"); *q; ) {
+			int id = atoi(q);
+			uint32_t p = objSeg + (uint32_t)id * 6;
+			uint32_t rec = (uint32_t)(h.mem[p + 0x6A] | (h.mem[p + 0x6B] << 8)) * 16 + (h.mem[p + 0x68] | (h.mem[p + 0x69] << 8));
+			fprintf(stderr, "obj %d:", id);
+			for (unsigned k = 0; k < recSize[objs[id].type]; k++) fprintf(stderr, " %02x", h.mem[rec + k]);
+			fprintf(stderr, "\n");
+			while (*q && *q != 44) q++;
+			if (*q) q++;
+		}
+		for (const PlayLog::Region &rg : g_playLog.regions) if (rg.size <= 4) { fprintf(stderr, "region %x:", rg.addr); for (unsigned k = 0; k < rg.size; k++) fprintf(stderr, " %02x", h.mem[rg.addr + k]); fprintf(stderr, "\n"); }
+	}
+	if (getenv("PLAYLOG_STEP") && atoi(getenv("PLAYLOG_STEP")) == g_playLog.step) {   // what the original called during one command
+		for (size_t k = g_playLog.firstCall; k < h.calls.size() && k < g_playLog.firstCall + 200; k++) fprintf(stderr, "%s ", h.calls[k].name.c_str());
+		fprintf(stderr, "\nsteps %ld calls %zu\n", (long)h.cpu.steps, h.calls.size());
+	}
+	h.events.clear();
+	fprintf(g_playLog.out, "%d %d %d %d\t%u\t%016llx\t%016llx\t%u\t%s\n", g_playLog.step++, verb, dobj, iobj, (unsigned)h.w(D_current_room), (unsigned long long)hs, (unsigned long long)he, count, ev.c_str());
+	if (getenv("PLAYLOG_VARS")) fprintf(stderr, "step %d: word_85222=%04x byte_850AB=%02x event_index=%04x event_count=%04x light_room=%04x room=%04x steps=%ld\n", g_playLog.step - 1, h.w(D_word_85222), h.w(D_byte_850AB) & 0xFF, h.w(D_event_index), h.w(D_event_count), h.w(0x6A0E), h.w(D_current_room), (long)h.cpu.steps);
+	if (getenv("PLAYLOG_VARS")) fprintf(stderr, "  seed=%u\n", (unsigned)h.w(0x5812) | ((unsigned)h.w(0x5814) << 16));
+	if (getenv("PLAYLOG_VARS")) { unsigned n = h.w(D_event_count); uint32_t es = (uint32_t)h.w(D_seg_8A9E2) * 16; fprintf(stderr, "  events:"); for (unsigned k = 0; k < n; k++) fprintf(stderr, " [%u in %d]", h.mem[es + 0x32 + 4 * k], (int16_t)(h.mem[es + 0x34 + 4 * k] | (h.mem[es + 0x35 + 4 * k] << 8))); fprintf(stderr, "\n"); }
+	if (getenv("PLAYLOG_FIND") && g_playLog.step - 1 == atoi(getenv("PLAYLOG_STEP") ? getenv("PLAYLOG_STEP") : "2")) {   // the calls before the first call of a name in this command
+		for (size_t k = g_playLog.firstCall; k < h.calls.size(); k++)
+			if (h.calls[k].name == getenv("PLAYLOG_FIND")) {
+				for (size_t q = k > 70 ? k - 70 : 0; q < k + 4 && q < h.calls.size(); q++) fprintf(stderr, "%s(%x,%x) ", h.calls[q].name.c_str(), h.calls[q].w[0], h.calls[q].w[1]);
+				fprintf(stderr, "\n");
+				break;
+			}
+	}
+	fflush(g_playLog.out);
+	g_playLog.firstCall = h.calls.size();
+}
+
+// sets up the scripted commands of HOST_PLAYLOG (called by testInit before the program runs)
+static void playLogSetup(Host &h) {
+	const char *scriptPath = getenv("HOST_PLAYLOG");
+	if (!scriptPath || !playLogOpen(getenv("HOST_PLAYLOG_OUT") ? getenv("HOST_PLAYLOG_OUT") : "playlog.tsv")) return;
+	g_count = h.w(D_object_count);
+	long at = getenv("HOST_PLAYSTART") ? atol(getenv("HOST_PLAYSTART")) : 45000000, gap = getenv("HOST_PLAYGAP") ? atol(getenv("HOST_PLAYGAP")) : 3000000;
+	FILE *in = fopen(scriptPath, "rb");
+	if (!in) return;
+	{
+		Machine::CallStep pre;
+		pre.steps = at - gap / 2;
+		pre.name = "playpre";
+		h.machine.callScript.push_back(pre);
+	}
+	char buf[256];
+	while (fgets(buf, sizeof(buf), in)) {
+		int verb, dobj, iobj;
+		if (sscanf(buf, "%d %d %d", &verb, &dobj, &iobj) != 3) continue;
+		Machine::CallStep cs;
+		cs.steps = at;
+		cs.name = "playcmd";
+		cs.args = {(uint16_t)verb, (uint16_t)dobj, (uint16_t)iobj};
+		h.machine.callScript.push_back(cs);
+		at += gap;
+	}
+	fclose(in);
+	h.tracing = true;
+	h.machine.afterCall = [&h](const Machine::CallStep &cs) { playLogLine(h, cs.name == "playpre"); };
+}
+
 static int testLook(Host &h, int room) {
 	h.reset();
 	g_count = h.w(D_object_count);
@@ -699,6 +828,7 @@ static int testInit(Host &h) {
 			if (p < s.size() && s[p] == ',') p++;
 		}
 	}
+	playLogSetup(h);
 	h.draw = getenv("HOST_DRAW") != nullptr;
 	if (getenv("HOST_INPUT")) {           // "6000000:316E,60000000:1C0D"
 		std::string s = getenv("HOST_INPUT");

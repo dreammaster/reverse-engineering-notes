@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <deque>
+#include <functional>
 #include <initializer_list>
 #include <map>
 #include <string>
@@ -44,6 +45,7 @@ struct Machine {
 	std::deque<std::pair<long, std::string>> dumpScript;     // data segment dumps at given label counts (HOST_DUMP)
 	struct CallStep { long steps; std::string name; std::vector<uint16_t> args; };
 	std::deque<CallStep> callScript;                        // lifted functions to run at a given label count (HOST_CALL)
+	std::function<void(const CallStep &)> afterCall;        // run after a scripted "playcmd" call (HOST_PLAYLOG logs the turn)
 	struct MouseStep { long steps; int x, y, buttons; };
 	std::deque<MouseStep> mouseTimeline;                    // pointer position / buttons from a given label count on (HOST_MOUSE="steps:x,y,buttons,...")
 	std::deque<std::pair<long, uint16_t>> inputScript;     // (label count, BIOS key word): queued when the program reaches that many labels

@@ -174,6 +174,14 @@ int Game::object_list_append(int obj) {
 	return 0;
 }
 
+int Game::sub_1DBB7(int minutes) {
+	Vars &v = state.v;
+	unsigned t = (unsigned)(uint16)(v.time_of_day_minutes + minutes);
+	v.day_count = (uint16)(v.day_count + t / 0x5A0);
+	v.time_of_day_minutes = (uint16)(t % 0x5A0);
+	return 0;
+}
+
 int Game::exec_word_handler(int verb) {
 	for (unsigned i = 0; i < kVerbHandlerCount; i++)
 		if (kVerbHandlers[i].verb == verb)
@@ -281,6 +289,7 @@ void Game::executeCommand(int verb, int dobj, int iobj) {
 	v.turn_counter++;
 	rt.byte_850AB = 0;
 	RoomItem_Draw(0x20);
+	ui.putChar(0x0B);                            // (marks the end of the turn's text)
 }
 
 int Game::go_to_room(int room) {
@@ -517,13 +526,17 @@ uint8 &Game::exe8(int seg, int off) {
 }
 
 void Game::walkContents(int root, bool visibleOnly, const std::function<bool(int)> &visit) {
+	walkContentsEx(root, visibleOnly, [&](int obj, int, int) { return visit(obj); });
+}
+
+void Game::walkContentsEx(int root, bool visibleOnly, const std::function<bool(int, int, int)> &visit) {
 	struct Frame {
 		int obj, slot, kind;
 	};
 	std::vector<Frame> stack;
 	int cur = root, slot = 0, kind = -1, childKind = 0;
 	while (cur != 0) {
-		if (visit(cur))
+		if (visit(cur, (int)stack.size(), kind))
 			return;
 		for (;;) {
 			int head = 0;

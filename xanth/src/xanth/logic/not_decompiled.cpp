@@ -7,6 +7,5 @@ namespace Xanth {
 TextRef conv_text_77(Game &) { return TextRef(); }  // di read before it is set (string function) (scasb)
 int event_fn_25(Game &) { return 0; }  // use of bp (push    [bp+si+var_22])
 int sub_1AAFB(Game &) { return 0; }  // instruction stosw (stosw)
-int sub_1C4ED(Game &, Word, Word, Word, Word) { return 0; }  // use of bp (lea     ax, [bp+si+var_4E])
 
 } // namespace Xanth
