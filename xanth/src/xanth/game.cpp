@@ -442,6 +442,7 @@ private:
 char *Game::print_obj(int style, int obj, const char *verb) {
 	if (!state.objects.valid(obj))
 		return nullptr;
+	objectName(obj);                  // (the name callback of a thing sets its "proper name" attribute, which the article depends on)
 	GameNames names(*this);
 	GrammarContext ctx(state.objects, names, rt.player_obj, rt.player_obj);
 	std::string s = formatObject(ctx, (unsigned)style, obj, verb ? verb : "");
@@ -466,6 +467,8 @@ char *Game::farPtr(int seg, int off) {
 }
 
 char *Game::ResourceText_GetStr(uint32 id) {
+	if ((id >> 24) != 0xF0)             // not a message id but a far pointer: text of the original's data segment, or memory that is not modelled (empty)
+		return farPtr((int)(id >> 16), (int)(id & 0xFFFF));
 	return keep(messages.string(id));
 }
 
@@ -482,7 +485,7 @@ std::string Game::format(const std::string &fmt, const FmtArg *args) {
 			if (args[n].text)
 				out += args[n].text;
 			else if (args[n].id)
-				out += messages.string(args[n].id);
+				out += (args[n].id >> 24) == 0xF0 ? messages.string(args[n].id) : std::string(farPtr((int)(args[n].id >> 16), (int)(args[n].id & 0xFFFF)));
 			n++;
 		} else if (k == 'd') {
 			out += std::to_string((int)(int16)args[n++].number);

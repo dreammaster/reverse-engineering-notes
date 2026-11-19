@@ -23,7 +23,7 @@ static int cb_conv_cb_17(Game &g, Word convId, Word option) { (void)convId; (voi
 static int cb_conv_cb_18(Game &g, Word convId, Word option) { (void)convId; (void)option; return conv_cb_18(g, convId, option); }
 static int cb_conv_cb_19(Game &g, Word convId, Word option) { (void)convId; (void)option; return conv_cb_19(g, convId, option); }
 static int cb_conv_cb_20(Game &g, Word convId, Word option) { (void)convId; (void)option; return conv_cb_20(g, convId, option); }
-static int cb_conv_cb_21(Game &g, Word convId, Word option) { (void)convId; (void)option; return conv_cb_21(g, convId); }
+static int cb_conv_cb_21(Game &g, Word convId, Word option) { (void)convId; (void)option; return conv_cb_21(g, convId, option); }
 static int cb_conv_cb_22(Game &g, Word convId, Word option) { (void)convId; (void)option; return conv_cb_22(g, convId, option); }
 static int cb_conv_cb_23(Game &g, Word convId, Word option) { (void)convId; (void)option; return conv_cb_23(g, convId, option); }
 static int cb_conv_cb_24(Game &g, Word convId, Word option) { (void)convId; (void)option; return conv_cb_24(g, convId, option); }

@@ -389,6 +389,34 @@ int conv_cb_20(Game &g, Word arg0, Word arg1) {
 	return 0;
 }
 
+// conv_cb_21
+int conv_cb_21(Game &g, Word arg0, Word arg1) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	intptr_t r6_3;
+	if ((int16)arg1 < 0) {
+		return arg1;
+	}
+	if ((int16)(arg1 - 1) <= 0) {
+		if (arg1 == 0) {
+			v.flag_85258_conv21 = 1;
+		} else {
+			v.flag_85259_conv21 = 1;
+		}
+		v.flag_85254_conv21 = v.current_room;
+		v.flag_85256_conv21 = v.companion_obj;
+		memcpy(FAR(rt.seg_8AA4C, rt.word_81A26), &rt.event_list, 0x40);
+		v.flag_8524C_conv21 = rt.event_count;
+		sub_1AAFB(g);
+		r6_3 = g.schedule_event(0x17, 0);
+		rt.byte_86CC0 = 0;
+		return r6_3;
+	} else {
+		return arg1 - 1;
+	}
+	return 0;
+}
+
 // conv_cb_22
 int conv_cb_22(Game &g, Word arg0, Word arg1) {
 	Vars &v = g.state.v;

@@ -875,7 +875,7 @@ def render_function(ctx, name, names=None, void=None):
         for b in f.blocks.values():
             if b.term and b.term[0] == "ret" and not getattr(b, "dead", False) and b.term[1] is not None and b.term[2] is not None:
                 p2 = pack_args([b.term[1], b.term[2]])
-                if len(p2) == 1 and p2[0][0] in ("str", "kstr", "far", "textvar", "null", "memptr"):
+                if len(p2) == 1 and (p2[0][0] in ("str", "kstr", "far", "textvar", "null", "memptr") or (p2[0][0] == "loc" and len(p2[0]) > 3 and p2[0][3] == 4)):
                     em.far_return = True
                     names.farfns.add(re.sub(r"[^A-Za-z0-9_]", "_", re.sub(r"^j_", "", name.rstrip("?"))))
                     break
@@ -984,6 +984,11 @@ def function_text(ctx, name, names=None, void=None):
     head = ["// " + name, names.header(name, params) + " {"] + [TAB + l for l in names.prolog()]
     lines, pairvars = pair_text_locals(lines, [(names.loc(name, h, 0, 2), names.loc(name, l, 0, 2)) for h, l in PAIR_HI.items()])
     lines, txtvars = pair_text_phis(lines)
+    lines = [re.sub(r"(memcpy[(].*), [(]intptr_t[)]&(rt\.\w+),", r"\1, &\2,", ln) for ln in lines]
+    # a far pointer's segment half kept in a variable (vC = SEG(...)) and passed after the offset: the pointer is one argument here
+    segvars = set(re.findall(r"^\s*(\w+) = SEG\(\w+\);$", chr(10).join(lines), re.M))
+    if segvars:
+        lines = [ln if re.match(r"^\s*\w+ = SEG\(", ln) else re.sub(r",\s*(?:%s)(?=[,)])" % "|".join(sorted(segvars)), "", ln) for ln in lines]
     phis = phis + txtvars
     vars_ = decl + ["t%d" % t for t in tmps] + phis
     text = chr(10).join(lines)
@@ -1028,7 +1033,7 @@ def function_text(ctx, name, names=None, void=None):
         if m and m.group(2) in allv and "?" not in m.group(3):
             rhs = m.group(3)
             is_ptr = bool(ptr_like.match(rhs))
-            if m.group(2) not in strs and m.group(2) not in pairvars and is_ptr:
+            if m.group(2) not in strs and m.group(2) not in pairvars and m.group(2) not in txts and is_ptr:
                 ln = "%s%s = (intptr_t)(%s);" % (m.group(1), m.group(2), rhs)
         fixed.append(ln)
     lines = fixed

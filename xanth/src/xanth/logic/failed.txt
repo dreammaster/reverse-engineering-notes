@@ -1,10 +1,6 @@
-Screen_RestoreSubPalettes	does not compile yet: invalid conversion from 'intptr_t' {aka 'long long int'} to 'const void*' [-fpermissive]
-conv_cb_21	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 conv_text_16	instruction movsw (movsw)
 conv_text_77	di read before it is set (string function) (scasb)
-conv_text_83	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 event_fn_25	use of bp (push    [bp+si+var_22])
-loc_4E632	does not compile yet: too many arguments to function 'int Xanth::sub_4E621(Game&)'
 loc_5F405	write to ah (mov     ah, [bx+2C91h])
 loc_5F421	write to ah (mov     ah, [bx+2C91h])
 loc_5F4AD	write to ah (mov     ah, [bx+2C91h])
@@ -14,6 +10,3 @@ loc_5F501	write to ah (mov     ah, [bx+2C91h])
 number_to_words	instruction movsw (movsw)
 sub_1AAFB	instruction stosw (stosw)
 sub_1C4ED	use of bp (lea     ax, [bp+si+var_4E])
-sub_312E3	does not compile yet: too few arguments to function 'int Xanth::sub_5E2D0(Game&, Word)'
-sub_312ED	does not compile yet: too few arguments to function 'int Xanth::sub_5EC63(Game&, Word)'
-sub_60460	does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]

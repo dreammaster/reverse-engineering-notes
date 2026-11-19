@@ -21,7 +21,7 @@ int cmdWait(Game &g) {
 	if (turns == 0)
 		turns = 1;
 	if (!g.event_pending(5))
-		g.Font_WriteMessage("Time passes.");
+		g.Font_WriteMessage("Time passes. ");
 	g.advance_time(1, turns);
 	return 1;
 }
@@ -81,6 +81,19 @@ int objh_390(Game &g, Word phase) {
 		break;
 	}
 	return 0;
+}
+
+// Visibility callbacks of overlay records (the decompiler cannot tell how many arguments these small thunks take).
+int loc_4E632(Game &g) {
+	return g.object_has_attr(0x34, 0xE) == 0;
+}
+
+int sub_312E3(Game &g) {
+	return g.object_has_attr(0xCA, 0xE);
+}
+
+int sub_312ED(Game &g) {
+	return g.object_has_attr(0xCA, 0xE);
 }
 
 } // namespace Xanth

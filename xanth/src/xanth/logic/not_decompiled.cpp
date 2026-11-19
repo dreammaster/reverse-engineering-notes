@@ -4,13 +4,9 @@
 namespace Xanth {
 
 // Functions the decompiler could not translate yet; until a hand-written replacement exists they do nothing.
-int Screen_RestoreSubPalettes(Game &) { return 0; }  // does not compile yet: invalid conversion from 'intptr_t' {aka 'long long int'} to 'const void*' [-fpermissive]
-int conv_cb_21(Game &, Word) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 TextRef conv_text_16(Game &) { return TextRef(); }  // instruction movsw (movsw)
 TextRef conv_text_77(Game &) { return TextRef(); }  // di read before it is set (string function) (scasb)
-TextRef conv_text_83(Game &) { return TextRef(); }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 int event_fn_25(Game &) { return 0; }  // use of bp (push    [bp+si+var_22])
-int loc_4E632(Game &) { return 0; }  // does not compile yet: too many arguments to function 'int Xanth::sub_4E621(Game&)'
 int loc_5F405(Game &) { return 0; }  // write to ah (mov     ah, [bx+2C91h])
 int loc_5F421(Game &) { return 0; }  // write to ah (mov     ah, [bx+2C91h])
 int loc_5F4AD(Game &) { return 0; }  // write to ah (mov     ah, [bx+2C91h])
@@ -20,8 +16,5 @@ int loc_5F501(Game &) { return 0; }  // write to ah (mov     ah, [bx+2C91h])
 TextRef number_to_words(Game &, Word) { return TextRef(); }  // instruction movsw (movsw)
 int sub_1AAFB(Game &) { return 0; }  // instruction stosw (stosw)
 int sub_1C4ED(Game &, Word, Word, Word, Word) { return 0; }  // use of bp (lea     ax, [bp+si+var_4E])
-int sub_312E3(Game &) { return 0; }  // does not compile yet: too few arguments to function 'int Xanth::sub_5E2D0(Game&, Word)'
-int sub_312ED(Game &) { return 0; }  // does not compile yet: too few arguments to function 'int Xanth::sub_5EC63(Game&, Word)'
-int sub_60460(Game &) { return 0; }  // does not compile yet: invalid conversion from 'char*' to 'int' [-fpermissive]
 
 } // namespace Xanth

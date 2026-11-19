@@ -1,7 +1,0 @@
-Screen_RestoreSubPalettes	invalid conversion from 'intptr_t' {aka 'long long int'} to 'const void*' [-fpermissive]
-conv_cb_21	invalid conversion from 'char*' to 'int' [-fpermissive]
-conv_text_83	invalid conversion from 'char*' to 'int' [-fpermissive]
-loc_4E632	too many arguments to function 'int Xanth::sub_4E621(Game&)'
-sub_312E3	too few arguments to function 'int Xanth::sub_5E2D0(Game&, Word)'
-sub_312ED	too few arguments to function 'int Xanth::sub_5EC63(Game&, Word)'
-sub_60460	invalid conversion from 'char*' to 'int' [-fpermissive]
