@@ -139,4 +139,17 @@ TextRef number_to_words(Game &g, Word arg0) {
 	return TextRef(g.keepText(out));
 }
 
+// The visibility callbacks of the maze pictures (overlay records): whether the cell the player is in (flag_852AA / flag_852AC) has a wall bit set in the table at DS:2C91.
+static int mazeBit(Game &g, int bit) {
+	int cell = ((g.state.v.flag_852AA_exit_fn_12 * 5 * 2) + g.state.v.flag_852AC_exit_fn_12) * 2;
+	return (g.exe8(0x84FC, 0x2C91 + cell) & (1 << bit)) ? (0x100 << bit) : 0;
+}
+
+int loc_5F405(Game &g) { return mazeBit(g, 0); }
+int loc_5F421(Game &g) { return mazeBit(g, 1); }
+int loc_5F4AD(Game &g) { return mazeBit(g, 2); }
+int loc_5F4C9(Game &g) { return mazeBit(g, 3); }
+int loc_5F4E5(Game &g) { return mazeBit(g, 4); }
+int loc_5F501(Game &g) { return mazeBit(g, 5); }
+
 } // namespace Xanth

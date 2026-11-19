@@ -188,7 +188,7 @@ TextRef conv_text_12(Game &g);
 TextRef conv_text_13(Game &g);
 TextRef conv_text_14(Game &g);
 TextRef conv_text_15(Game &g);
-TextRef conv_text_16(Game &g);  // not decompiled
+TextRef conv_text_16(Game &g);
 TextRef conv_text_17(Game &g);
 TextRef conv_text_18(Game &g);
 TextRef conv_text_19(Game &g);
@@ -399,16 +399,16 @@ int loc_5F2DF(Game &g);
 int loc_5F36A(Game &g);
 int loc_5F389(Game &g, Word a0);
 int loc_5F3C7(Game &g, Word a0);
-int loc_5F405(Game &g);  // not decompiled
-int loc_5F421(Game &g);  // not decompiled
+int loc_5F405(Game &g);
+int loc_5F421(Game &g);
 int loc_5F43D(Game &g);
 int loc_5F459(Game &g);
 int loc_5F475(Game &g);
 int loc_5F491(Game &g);
-int loc_5F4AD(Game &g);  // not decompiled
-int loc_5F4C9(Game &g);  // not decompiled
-int loc_5F4E5(Game &g);  // not decompiled
-int loc_5F501(Game &g);  // not decompiled
+int loc_5F4AD(Game &g);
+int loc_5F4C9(Game &g);
+int loc_5F4E5(Game &g);
+int loc_5F501(Game &g);
 int loc_62326(Game &g);
 int loc_62330(Game &g);
 int loc_632C0(Game &g);

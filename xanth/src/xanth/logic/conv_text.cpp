@@ -201,6 +201,19 @@ TextRef conv_text_15(Game &g) {
 	return v4;
 }
 
+// conv_text_16
+TextRef conv_text_16(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	char *r0_2, *v4;
+	memcpy(rt.word_81A66, ES(32), 5);
+	r0_2 = g.print_obj(0x11, v.word_85252);
+	v4 = rt.word_81A66;
+	strcat(rt.word_81A66, r0_2);
+	strcat(v4, g.ResourceText_GetStr(MSG(52, 24)));
+	return v4;
+}
+
 // conv_text_17
 TextRef conv_text_17(Game &g) {
 	Vars &v = g.state.v;
@@ -259,7 +272,7 @@ TextRef conv_text_22(Game &g) {
 	r0_1 = g.ResourceText_GetStr(MSG(53, 31));
 	v4 = rt.word_81A66;
 	strcpy(rt.word_81A66, r0_1);
-	p3_ax = (g.object_parent_is(0xBD, 1) ? ES(32) : ES(33));
+	p3_ax = (g.object_parent_is(0xBD, 1) ? ES(33) : ES(34));
 	strcat(v4, p3_ax);
 	strcat(v4, g.ResourceText_GetStr(MSG(53, 32)));
 	rt.voice_track = (g.object_parent_is(0xBD, 1) ? 0x52C : 0x52B);
@@ -292,7 +305,7 @@ TextRef conv_text_24(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	v.flag_852DA_conv_text_24 = 1;
-	return ES(34);
+	return ES(35);
 }
 
 // conv_text_25
@@ -866,14 +879,14 @@ TextRef conv_text_44(Game &g) {
 		v8 = rt.word_81A66;
 		strcpy(rt.word_81A66, r2_1);
 		if (v.can_climb != 0) {
-			p5_ax = ES(35);
+			p5_ax = ES(36);
 			p5_dx = DS;
 		} else {
-			p5_ax = g.ResourceText_GetStr(ES(36));
+			p5_ax = g.ResourceText_GetStr(ES(37));
 		}
 		v4 = p5_ax;
 		strcat(v8, v4);
-		strcat(v8, ES(37));
+		strcat(v8, ES(38));
 		rt.voice_track = 0x47A;
 		return v8;
 	}
@@ -889,9 +902,9 @@ TextRef conv_text_45(Game &g) {
 	v4 = rt.word_81A66;
 	strcpy(rt.word_81A66, r0_1);
 	if (g.object_has_attr(0xE, 0xA)) {
-		strcat(v4, g.ResourceText_GetStr(ES(38)));
+		strcat(v4, g.ResourceText_GetStr(ES(39)));
 	}
-	strcat(v4, g.ResourceText_GetStr(ES(39)));
+	strcat(v4, g.ResourceText_GetStr(ES(40)));
 	g.object_set_attr(0xE, 0xA);
 	return v4;
 }
@@ -961,7 +974,7 @@ TextRef conv_text_53(Game &g) {
 	r0_1 = g.ResourceText_GetStr(MSG(54, 9));
 	v4 = rt.word_81A66;
 	strcpy(rt.word_81A66, r0_1);
-	p3_ax = (v.flag_852C3_conv39 == 0 ? ES(40) : ES(41));
+	p3_ax = (v.flag_852C3_conv39 == 0 ? ES(41) : ES(42));
 	strcat(v4, g.ResourceText_GetStr(p3_ax));
 	return v4;
 }
@@ -985,7 +998,7 @@ TextRef conv_text_55(Game &g) {
 	if (v.flag_852C4_conv_text_55 != 0) {
 		p4_ax = g.ResourceText_GetStr(MSG(54, 5));
 	} else {
-		p4_ax = g.ResourceText_GetStr(ES(42));
+		p4_ax = g.ResourceText_GetStr(ES(43));
 	}
 	v4 = p4_ax;
 	strcpy(v8, v4);
@@ -1020,7 +1033,7 @@ TextRef conv_text_57(Game &g) {
 		}
 	}
 	v4 = rt.word_81A66;
-	strcat(rt.word_81A66, ES(37));
+	strcat(rt.word_81A66, ES(38));
 	return v4;
 }
 
@@ -1285,7 +1298,7 @@ TextRef conv_text_73(Game &g) {
 	if (v.flag_852D8_conv_text_73 == 0) {
 		v.flag_852D8_conv_text_73 = 1;
 	} else {
-		strcat(v4, ES(43));
+		strcat(v4, ES(44));
 	}
 	strcat(v4, g.ResourceText_GetStr(MSG(54, 26)));
 	return v4;
@@ -1336,7 +1349,7 @@ TextRef conv_text_75(Game &g) {
 	if (v2 != 0) {
 		strcat(v6, g.ResourceText_GetStr(MSG(55, 14)));
 	}
-	strcat(v6, ES(44));
+	strcat(v6, ES(45));
 	return v6;
 }
 
@@ -1395,11 +1408,11 @@ TextRef conv_text_82(Game &g) {
 	p3_ax = (v.word_85290 != 1 ? 5 : 0);
 	v2 = p3_ax + v.word_85292;
 	rt.voice_track = (p3_ax + v.word_85292) + 0x480;
-	r3_1 = g.ResourceText_GetStr(ES(45));
+	r3_1 = g.ResourceText_GetStr(ES(46));
 	v6 = rt.word_81A66;
 	strcpy(rt.word_81A66, r3_1);
 	strcat(v6, number_to_words(g, v2 + 1));
-	strcat(v6, g.ResourceText_GetStr(ES(46)));
+	strcat(v6, g.ResourceText_GetStr(ES(47)));
 	strcat(v6, g.ResourceText_GetStr(g.exeText(rt.seg_8AA52, (v2 * 0x10) + 0x604)));
 	strcat(v6, g.ResourceText_GetStr(MSG(56, 1)));
 	strcat(v6, g.ResourceText_GetStr(g.exeText(rt.seg_8AA52, (v2 * 0x10) + 0x60C)));
@@ -1425,15 +1438,15 @@ TextRef conv_text_83(Game &g) {
 		p9_dx = hi(r6_6);
 		p9_ax = r6_6;
 	} else {
-		r10_5 = g.ResourceText_GetStr(ES(47));
+		r10_5 = g.ResourceText_GetStr(ES(48));
 		p9_dx = hi(r10_5);
 		p9_ax = r10_5;
 	}
 	strcat(v6, FAR(p9_dx, p9_ax));
 	if (v.word_85292 != 4) {
-		strcat(v6, g.ResourceText_GetStr(ES(48)));
+		strcat(v6, g.ResourceText_GetStr(ES(49)));
 	}
-	strcat(v6, ES(49));
+	strcat(v6, ES(50));
 	return _strupr(v6);
 }
 
@@ -1482,7 +1495,7 @@ TextRef conv_text_86(Game &g) {
 	v6 = rt.word_81A66;
 	strcpy(rt.word_81A66, r0_1);
 	strcat(v6, g.ResourceText_GetStr(g.exeText(rt.seg_8AA54, (v.guardian_riddle_count * 0xA) + 0x6A4)));
-	strcat(v6, g.ResourceText_GetStr(ES(37)));
+	strcat(v6, g.ResourceText_GetStr(ES(38)));
 	v2 = mem16(rt.seg_8AA54, (v.guardian_riddle_count * 0xA) + 0x6A8);
 	if ((int16)((mem16(rt.seg_8AA54, (v.guardian_riddle_count * 0xA) + 0x6A8)) + (mem16(rt.seg_8AA54, (v.guardian_riddle_count * 0xA) + 0x6AA))) > (mem16(rt.seg_8AA54, (v.guardian_riddle_count * 0xA) + 0x6A8))) {
 		do {
@@ -1518,7 +1531,7 @@ TextRef conv_text_87(Game &g) {
 	vA = rt.word_81A66;
 	strcpy(rt.word_81A66, r4_2);
 	if (v.guardian_riddle_count == 9) {
-		strcat(vA, g.ResourceText_GetStr(ES(50)));
+		strcat(vA, g.ResourceText_GetStr(ES(51)));
 	}
 	v.guardian_riddle_count++;
 	strcat(vA, number_to_words(g, v.guardian_riddle_count));
@@ -1547,9 +1560,9 @@ TextRef conv_text_88(Game &g) {
 	v4 = rt.word_81A66;
 	strcpy(rt.word_81A66, r0_1);
 	if (v.guardian_riddle_count != 0) {
-		strcat(v4, g.ResourceText_GetStr(ES(51)));
+		strcat(v4, g.ResourceText_GetStr(ES(52)));
 	}
-	strcat(v4, g.ResourceText_GetStr(ES(52)));
+	strcat(v4, g.ResourceText_GetStr(ES(53)));
 	return v4;
 }
 

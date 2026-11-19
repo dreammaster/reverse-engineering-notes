@@ -411,6 +411,24 @@ class Evaluator:
             st.regs["cx"] = K(0)
             st.shadow.pop("di", None)
             st.shadow.pop("si", None)
+        elif mn in ("movsw", "movsb") and not x.pfx:
+            # a short constant copied without a loop: movsw / movsw / movsb is strcpy of a four character string
+            run = [x]
+            for nx in self.insns[x.idx + 1:x.idx + 8]:
+                if nx.mn in ("movsw", "movsb") and not nx.pfx:
+                    run.append(nx)
+                else:
+                    break
+            total = sum(2 if r.mn == "movsw" else 1 for r in run)
+            es = st.regs.get("es", ("in", "es", blk))
+            ds = st.regs.get("ds", ("dseg",))
+            di = self.reg_get16(st, "di", blk)
+            si = self.reg_get16(st, "si", blk)
+            self.ncall += 1
+            stmts.append(("call", (blk, 1000 + self.ncall), "memcpy", [self.ptr(es, di), self.ptr(ds, si), K(total)]))
+            self.skip.update(r.idx for r in run)
+            st.shadow["di"] = simp(("add", di, K(total)))
+            st.shadow["si"] = simp(("add", si, K(total)))
         elif mn == "scasb":
             self.scasb(st, x, blk)
         elif mn in ("shl", "sal", "shr", "sar"):
