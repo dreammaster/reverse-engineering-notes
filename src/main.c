@@ -912,6 +912,11 @@ static void menu_choose(RoomView *rv, int verb) {
 	} else if (verb == 4 || verb == 7) {      /* 1000:3159 / 3163: sound 30h / 3Dh, then event 5 */
 		snd_play(verb == 4 ? 0x30 : 0x3D);
 		acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
+	} else if (verb == 8) {           /* 1000:2FD4: on a thing with header byte 16h = 7 (the diary) the status dialog, otherwise event 5 (3183) */
+		const RoomObj *o = NULL;
+		for (int i = 0; i < rv->ro.n; i++) if (rv->ro.o[i].thing == t) { o = &rv->ro.o[i]; break; }
+		if (o && o->sp->header[0x16] == 7) rv->show_status = 1;
+		else acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
 	} else if (verb == 13) {          /* 1000:340D: hold / unhold; holding queues event 27 (1Bh) */
 		if (rv->held == t) rv->held = 0;
 		else { rv->held = t; acl_thing_event(&rv->vm, &rv->mp2, t, 27, 0); }
@@ -1103,6 +1108,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		if (rv->touch_age < 1000) rv->touch_age++;
 		int sp = (keys & 0x10) != 0, spe = sp && !rv->space_prev, rt = (keys & 0x20) != 0, rte = rt && !rv->ret_prev;
 		rv->space_prev = sp; rv->ret_prev = rt;
+		if (rv->show_status && (edge || spe || rte) ) { rv->show_status = 0; return; }
 		if (rv->ruck_open) { ruck_step(wk, rv, keys, edge || rte, spe); return; }
 		if ((spe || rte) && !rv->menu_open) { ruck_open(rv); if (rv->ruck_open) return; }
 		if (rv->menu_open) { menu_step(rv, keys, edge); return; }
