@@ -7,6 +7,7 @@
 #include "wasteland1/combatmenu.h"
 #include "wasteland1/listmenu.h"
 #include "wasteland1/menu.h"
+#include "wasteland1/mouse.h"
 #include "wasteland1/roster.h"
 #include "wasteland1/shop.h"
 
@@ -86,6 +87,11 @@ PORT(findButton) { r.cf = !findButton(m); }                                     
 PORT(drawButtonPlain) { drawButton(m, false); }                                         // 17451
 PORT(drawButtonHighlighted) { drawButton(m, true); }                                    // 1744C
 PORT(drawButtonsRow) { drawButtonsRow(m); }                                             // 173D2
+PORT(hotspotButton) { const HotspotResult h = hotspotButton(m, r.b.b.l); r.cf = h.cf; if (h.cf) r.a.b.l = h.al; }   // 18BFF
+PORT(hotspotRoster) { const HotspotResult h = hotspotRoster(m); r.cf = h.cf; if (h.cf) r.a.b.l = h.al; }          // 18C2E
+PORT(hotspotMap) { const HotspotResult h = hotspotMap(m); r.cf = h.cf; if (h.cf) r.a.b.l = h.al; }                // 18C62
+PORT(hotspotList) { const HotspotResult h = hotspotList(m); r.cf = h.cf; if (h.cf) r.a.b.l = h.al; }              // 18CE7
+PORT(hotspotInfo) { const HotspotResult h = hotspotInfo(m); r.cf = h.cf; if (h.cf) r.a.b.l = h.al; }              // 18D16
 PORT(buttonKey) { buttonKey(m); }                                                       // 17574
 
 PORT(textInput) { r.a.b.l = textInput(m, false); }                                          // 17748

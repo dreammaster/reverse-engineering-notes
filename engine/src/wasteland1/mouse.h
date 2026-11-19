@@ -11,4 +11,11 @@ bool mouseChanged(Machine &m);
 // 18860 without its leading pollSpeedKeys: true (CF) with `al` set when a click on a hot spot produced a key code
 bool pollMouse(Machine &m, uint8_t &al);
 
+struct HotspotResult { bool cf; uint8_t al; };   // carry set: `al` is the key the click stands for
+HotspotResult hotspotButton(Machine &m, uint8_t index);   // 18BFF
+HotspotResult hotspotRoster(Machine &m);                  // 18C2E
+HotspotResult hotspotMap(Machine &m);                     // 18C62
+HotspotResult hotspotList(Machine &m);                    // 18CE7
+HotspotResult hotspotInfo(Machine &m);                    // 18D16
+
 } // namespace wl

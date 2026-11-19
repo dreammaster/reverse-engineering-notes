@@ -86,4 +86,66 @@ bool pollMouse(Machine &m, uint8_t &al) {
 	return false;
 }
 
+
+namespace {
+constexpr uint16_t cursorNumVar = 0x8DCD, selectedVar = 0x8DD6, stateVar = 0x7DF7, mouseX = 0x7DF9, mouseY = 0x7DFB;
+bool leftPressed(Machine &m) { return (m.d16(stateVar) & 0x1000) != 0; }   // the left button went down since the last poll
+}
+
+HotspotResult hotspotButton(Machine &m, uint8_t index) {   // 18BFF: a button of the bottom row; al = its key
+	m.setD16(cursorNumVar, 1);
+	if (index != m.d8(selectedVar)) {   // 18B4C: selects (highlights) the button
+		X86Regs x;
+		x.bl = index;
+		legacy::call(m, 0x8B4C, x);
+	}
+	if (!leftPressed(m)) return {false, 0};
+	return {true, m.d8(uint16_t(0xCBBD + uint16_t(index - 4) * 6 + 3))};
+}
+
+HotspotResult hotspotRoster(Machine &m) {   // 18C2E: the roster rows; a click answers the digit of the member
+	m.setD16(cursorNumVar, 0);
+	const int row = int(m.d16(mouseY)) - 0x7D;
+	if (row < 0) return {false, 0};
+	const uint8_t member = uint8_t((row >> 3) + 1);
+	if (member > m.d8(0x4653)) return {false, 0};
+	m.setD16(cursorNumVar, 1);
+	if (!leftPressed(m)) return {false, 0};
+	return {true, uint8_t(member + '0')};
+}
+
+HotspotResult hotspotMap(Machine &m) {   // 18C62: the map view; the cursor is an arrow towards the pointer, a click is a direction key
+	const uint16_t cx = m.d16(mouseX), dx = m.d16(mouseY);
+	const bool clicked = (m.d16(stateVar) & 1) != 0;
+	if (dx >= 0x38 && cx >= 0x88 && int16_t(dx) < 0x48 && int16_t(cx) < 0x98) {   // the centre: wait / look
+		m.setD16(cursorNumVar, 6);
+		if (!clicked) return {false, 0};
+		return {true, 0x1B};
+	}
+	uint16_t bx;
+	if (cx < uint16_t(dx + 0x50)) bx = cx < uint16_t(0xE0 - dx) ? 4 : 3;   // the two diagonals divide the view into four sectors
+	else bx = cx < uint16_t(0xD0 - dx) ? 2 : 5;
+	m.setD16(cursorNumVar, bx);
+	if (!clicked) return {false, 0};
+	uint8_t al = m.d8(uint16_t(0xC05D + uint16_t(bx - 2)));
+	if (m.d8(0x8DDA) != 0 && al == 0x1B) al = 0x20;
+	return {true, al};
+}
+
+HotspotResult hotspotList(Machine &m) {   // 18CE7: the list rows of a window (one byte per text row at ds:8DDC)
+	m.setD16(cursorNumVar, 0);
+	const uint16_t row = uint16_t((m.d16(mouseY) - 5) >> 3);
+	if (m.d8(uint16_t(0x8DDC + row)) == 0) return {false, 0};
+	m.setD16(cursorNumVar, 1);
+	if (!leftPressed(m)) return {false, 0};
+	return {true, m.d8(uint16_t(0x8DDC + row))};
+}
+
+HotspotResult hotspotInfo(Machine &m) {   // 18D16: runs 174B7 (the info window) and answers RETURN on a click
+	X86Regs x;
+	legacy::call(m, 0x74B7, x);
+	if (!leftPressed(m)) return {false, 0};
+	return {true, 0x0D};
+}
+
 } // namespace wl
