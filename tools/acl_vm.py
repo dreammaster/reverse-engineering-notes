@@ -53,6 +53,8 @@ class VM:
             r[3] &= 0x7F
             if had and r[10] != (self.room & 255):
                 r[3] |= 0x08
+        elif op == 0 and r is not None:             # remove the thing with this id (78D5; modelled as flag 0x80 like op 2)
+            r[3] |= 0x80
         elif op == 26 and r is not None:            # hide
             r[3] |= 0x80
         elif op in (15, 16):                        # test flag bit0
