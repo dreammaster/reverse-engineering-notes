@@ -1,4 +1,6 @@
 #include "acl.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -190,12 +192,15 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		acl_energy_change(vm, (int16_t)w);
 		break;
 	}
+	case 8:                                             /* 7A82: take the thing out of the active (moving) list unless it is already inactive (A[5] bit 7, 5F2F); modelled as setting that bit */
+		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) vm->tail[tid][5] |= 0x80;
+		break;
 	case 28: if (vm->msg_n < 16) vm->msg[vm->msg_n++] = w; break;
 	case 72:                      /* 48h describe: a string id word; the original shows it as a message next to the thing's picture */
 		if (vm->msg_n < 16) vm->msg[vm->msg_n++] = w | 0x8000;        /* bit 15: the original ends a description with a full stop */
 		vm->describe = vm->cur + 1;
 		break;
-	default: vm->skipped++; break;
+	default: vm->skipped++; if (getenv("CAD_OPS")) fprintf(stderr, "SKIPOP %d\n", op); break;
 	}
 }
 
