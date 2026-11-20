@@ -606,7 +606,7 @@ static void walker_world(Walker *wk, RoomView *rv) {
 		for (int k = 0; k < nw; k++) {
 			int have = 0;
 			for (int i = 0; i < nk; i++) if (keep_t[i] == want_t[k]) have = 1;
-			if (!have) { snd_play(want_s[k]); keep_t[nk] = want_t[k]; keep_s[nk++] = want_s[k]; }
+			if (!have) { if (g_snd_log) fprintf(stderr, "SNDTHING %d room %d\n", want_t[k], rv->room); snd_play(want_s[k]); keep_t[nk] = want_t[k]; keep_s[nk++] = want_s[k]; }
 		}
 		for (int i = 0; i < nk; i++) { rv->room_snd_thing[i] = keep_t[i]; rv->room_snd[i] = keep_s[i]; }
 		rv->nroom_snd = nk;
