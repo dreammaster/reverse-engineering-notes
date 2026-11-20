@@ -1,4 +1,6 @@
 #include "tad.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -159,9 +161,12 @@ int tad_run_behaviour(TadRt *t, AclVM *vm, int b, int cx, int cy, int px, int py
 	x86_ww(c, SSG, 0xFF00 - 2, SENT);
 	c->ip = t->beh_entry[b];
 	c->hook_cs = HKG; c->hook_ip = SENT; c->hook = svc_hook; c->hook_user = t;
+	uint8_t before[0x40];
+	memcpy(before, ds + CREAT_REC, 0x40);
 	int n = x86_run(c, TADG, SENT, 200000);
 	if (n < 0)
 		return -1;
+	if (getenv("CAD_TADDIFF")) for (int i = 0; i < 0x40; i++) if (before[i] != ds[CREAT_REC + i]) fprintf(stderr, "BEH%d rec[%02x] %02x -> %02x\n", b, i, before[i], ds[CREAT_REC + i]);
 	*vx = (int8_t)ds[CREAT_REC + 0x10 + 3];
 	*vy = (int8_t)ds[CREAT_REC + 0x10 + 4];
 	return 0;

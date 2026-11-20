@@ -184,6 +184,7 @@ static void roomview_game_step(RoomView *rv);
 static void walk_refresh_world(RoomView *rv);
 static void roomview_ensure_objs(RoomView *rv, int gx, int gy);
 static void roomview_flush_messages(RoomView *rv);
+static int rv_changed(const RoomView *rv);
 static void roomview_tick(RoomView *rv) {
 	if (rv->ok && ++rv->clock_ticks % (50u * 60u * 30u) == 0) {      /* the timer interrupt: 50 ticks = 1 s, 60 s = 1 min, 30 min = a day -> message 28 "A DAY PASSES ..." */
 		rv->day++;
@@ -191,6 +192,20 @@ static void roomview_tick(RoomView *rv) {
 	}
 	if (rv->ok && rv->ro_key && (++rv->ro_ticks & 1) == 0) {
 		roomobjs_step(&rv->ro);
+		for (int i = 0; i < rv->ro.n; i++) {                       /* animation command F8 n: event 13 (argument n) for the thing (1000:3CE7) */
+			RoomObj *o = &rv->ro.o[i];
+			while (o->an.nev > 0) {
+				int arg = o->an.ev[0];
+				memmove(o->an.ev, o->an.ev + 1, (size_t)(o->an.nev - 1));
+				o->an.nev--;
+				rv->vm.queue_n = 0;
+				acl_thing_event(&rv->vm, &rv->mp2, o->thing, 13, arg);
+				for (int q = 0; q < rv->vm.queue_n; q++)
+					acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+				rv->pending_rebuild |= rv_changed(rv);
+				roomview_flush_messages(rv);
+			}
+		}
 		roomview_game_step(rv);
 	}
 }
@@ -1191,7 +1206,7 @@ static void game_load_apply(RoomView *rv) {
 	const SaveHead *h = (const SaveHead *)g_sav;
 	AclVM keep = rv->vm;
 	memcpy(&rv->vm, g_sav + sizeof(SaveHead), sizeof(AclVM));
-	rv->vm.rand_range = keep.rand_range; rv->vm.sound = keep.sound; rv->vm.user = keep.user;
+	rv->vm.mp2 = keep.mp2; rv->vm.rand_range = keep.rand_range; rv->vm.sound = keep.sound; rv->vm.user = keep.user;
 	rv->vm.msg_n = 0; rv->vm.queue_n = 0; rv->vm.tev_n = 0; rv->vm.go.pending = 0; rv->vm.next_level = 0;
 	memcpy(rv->visited, h->visited, sizeof(rv->visited));
 	rv->day = h->day; rv->clock_ticks = h->clock_ticks; rv->held = h->held; rv->last_item = h->last_item;
@@ -1203,6 +1218,8 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (rv->restarting) return;
 	roomview_tick(rv);
 	wk->tick++;
+	if (getenv("CAD_VARS")) { static uint8_t pg[0x190]; for (int i = 0; i < 0x190; i++) if (pg[i] != rv->vm.g[i]) { fprintf(stderr, "G tick %d g[%02x] %02x -> %02x\n", wk->tick, i, pg[i], rv->vm.g[i]); pg[i] = rv->vm.g[i]; } }
+	if (g_snd_log) { static int pf = -1, pr = -1; if (rv->vm.flags[467] != pf || rv->vm.room[467] != pr) { fprintf(stderr, "T467 unsup %d last %02x tick %d flags %02x room %d pos %d,%d,%d\n", rv->tad.unsupported, rv->tad.last_unsupported, wk->tick, rv->vm.flags[467], rv->vm.room[467], rv->vm.pos[3*467], rv->vm.pos[3*467+1], rv->vm.pos[3*467+2]); pf = rv->vm.flags[467]; pr = rv->vm.room[467]; } }
 	if (rv->look_pic) { int any = 0; for (int i = 0; i < 4; i++) any |= rv->msgs[i].active; if (!any) rv->look_pic = 0; }
 	if (rv->pending_rebuild && wk->world_key == room_key(rv)) walker_world(wk, rv);   /* things changed: rebuild objects and collision world now, not at the next draw */
 	if ((wk->tick & 1) == 0 && wk->world_key == room_key(rv) && !rv->menu_open && rv->dead_timer == 0)

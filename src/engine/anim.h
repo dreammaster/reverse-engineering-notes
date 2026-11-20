@@ -13,6 +13,8 @@ typedef struct {
 	int pos;            /* position in the script */
 	int cnt, cad;       /* cadence: the position advances every cad+1 steps */
 	int dx, dy;         /* pixel offset of the current frame */
+	int nev;            /* F8 commands run since the caller last looked: event 13 (1000:3CE7) with these arguments */
+	uint8_t ev[4];
 } AnimState;
 
 /* Script words of an animated block: (command, argument) pairs. Returns the number of words (0 = static block). */

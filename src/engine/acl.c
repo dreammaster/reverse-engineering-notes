@@ -17,30 +17,35 @@ static int cond_len(int type) {
 	}
 }
 
+/* (re)load a thing's state from its record: what a spawned copy starts with */
+static void reset_thing(AclVM *vm, const Mp2 *mp2, int t) {
+	int len;
+	const uint8_t *r = mp2_thing(mp2, t, &len);
+	if (r && len >= 16) {
+		vm->present[t] = 1;
+		vm->flags[t] = r[3];
+		vm->room[t] = r[10];
+		if (r[12] >= 16 && (size_t)r[12] + 6 <= (size_t)len) memcpy(vm->tail[t], r + r[12], 6);
+		if (r[13] >= 16 && (size_t)r[13] + 10 <= (size_t)len) memcpy(vm->mstate[t], r + r[13], 10);
+		if (r[13] >= 16 && r[14] > r[13] + 14 && (size_t)r[14] <= (size_t)len) {
+			size_t tl = (size_t)r[14] - r[13] - 14;
+			if (tl > 48) tl = 48;
+			memcpy(vm->mtab[t], r + r[13] + 14, tl);
+			vm->mtab_len[t] = (uint8_t)tl;
+		}
+		vm->pos[3 * t] = r[0]; vm->pos[3 * t + 1] = r[1]; vm->pos[3 * t + 2] = r[2];
+		vm->flags2[t] = r[15];
+	}
+}
+
 void acl_init(AclVM *vm, const Mp2 *mp2) {
 	memset(vm, 0, sizeof(*vm));
+	vm->mp2 = mp2;
 	vm->timer_delay = -1;
 	vm->energy = vm->energy_max = 100;
 	vm->cap = 0x20;
-	for (int t = 0; t < ACL_THINGS; t++) {
-		int len;
-		const uint8_t *r = mp2_thing(mp2, t, &len);
-		if (r && len >= 16) {
-			vm->present[t] = 1;
-			vm->flags[t] = r[3];
-			vm->room[t] = r[10];
-			if (r[12] >= 16 && (size_t)r[12] + 6 <= (size_t)len) memcpy(vm->tail[t], r + r[12], 6);
-			if (r[13] >= 16 && (size_t)r[13] + 10 <= (size_t)len) memcpy(vm->mstate[t], r + r[13], 10);
-			if (r[13] >= 16 && r[14] > r[13] + 14 && (size_t)r[14] <= (size_t)len) {
-				size_t tl = (size_t)r[14] - r[13] - 14;
-				if (tl > 48) tl = 48;
-				memcpy(vm->mtab[t], r + r[13] + 14, tl);
-				vm->mtab_len[t] = (uint8_t)tl;
-			}
-			vm->pos[3 * t] = r[0]; vm->pos[3 * t + 1] = r[1]; vm->pos[3 * t + 2] = r[2];
-			vm->flags2[t] = r[15];
-		}
-	}
+	for (int t = 0; t < ACL_THINGS; t++)
+		reset_thing(vm, mp2, t);
 }
 
 static void test_res(AclVM *vm, int ok) { vm->c605 = ok ? ((vm->c605 + 1) & 255) : 0; }
@@ -165,6 +170,7 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		break;
 	case 36:                                            /* spawn [id16] x y z room: the original copies the thing record and queues a spawn request; here the thing is placed */
 		if (f && n >= 6 && tid >= 0 && tid < ACL_THINGS) {
+			if (vm->mp2) { reset_thing(vm, vm->mp2, tid); memset(vm->armed[128 + tid], 0, sizeof(vm->armed[0])); }   /* a fresh copy of the record: visible again, handlers armed */
 			vm->pos[3 * tid] = a[2]; vm->pos[3 * tid + 1] = a[3]; vm->pos[3 * tid + 2] = a[4];
 			vm->room[tid] = a[5] == 0xFE ? (uint8_t)vm->room_no : a[5];
 		}

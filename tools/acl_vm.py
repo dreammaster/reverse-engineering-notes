@@ -11,6 +11,7 @@ import acl
 class VM:
     def __init__(self, things, cur=0, room=0):
         self.things = things           # id -> bytearray(16)
+        self.pristine = {k: bytes(v) for k, v in things.items()}   # the records as loaded (spawn copies them)
         self.cur = cur                 # id of the current object (ds:9C)
         self.room = room               # ds:232
         self.vars = bytearray(0x40)
@@ -118,6 +119,7 @@ class VM:
             self.tqueue.append((self.cur if w == 0xFFFF else w, 23))
         elif op == 36 and r is not None:            # spawn: [id16] x y z room (FE = current): modelled as placing the thing there (the original copies the record)
             room = self.room if a[5] == 0xFE else a[5]
+            r[:] = self.pristine.get(w, bytes(r))               # a fresh copy of the record (flags, room, position) ...
             r[0], r[1], r[2] = a[2], a[3], a[4]
             r[10] = room
         elif op == 41 and r is not None:            # move a thing: [id16] room x y z (room 0xFE = current); another room: position + flag 0x08 (pending)

@@ -375,12 +375,12 @@ static const StatusVector sd_vectors[] = {
 };
 typedef struct { const char *dir; int rooms; unsigned hash; } AclVector;
 static const AclVector acl_vectors[] = {
-	{"cadaver1/DATA/1", 24, 0xABFAC6D1U},
+	{"cadaver1/DATA/1", 24, 0x97B87C86U},
 	{"cadaver1/DATA/2", 39, 0xF62E8A6DU},
 	{"cadaver1/DATA/3", 35, 0x0FFB6544U},
 	{"cadaver1/DATA/4", 27, 0xAFF08AD7U},
 	{"cadaver1/DATA/5", 15, 0xA6D0FAD7U},
-	{"cadaver2/DATA/1", 24, 0xABFAC6D1U},
+	{"cadaver2/DATA/1", 24, 0x97B87C86U},
 	{"cadaver2/DATA/2", 39, 0xF62E8A6DU},
 	{"cadaver2/DATA/3", 35, 0x0FFB6544U},
 	{"cadaver2/DATA/4", 27, 0xAFF08AD7U},

@@ -35,6 +35,7 @@ typedef struct {
 	int reg;                        /* ds:704 */
 	int disarm;
 	int skipped;                    /* number of unsupported opcodes skipped so far */
+	const Mp2 *mp2;                 /* the level's records (spawn copies a thing's record) */
 	int (*rand_range)(int lo, int hi, void *user);
 	void (*sound)(int id, void *user);        /* 1000:164E: start sound `id` (NULL = silent) */
 	void *user;
