@@ -9,7 +9,7 @@ level = int(sys.argv[1]) if len(sys.argv) > 1 else 4
 N = int(sys.argv[2]) if len(sys.argv) > 2 else 8
 o = Oracle(level)
 ids = list(o.recptr)
-IMPL = [1, 26, 15, 16, 17, 24, 18, 19, 20, 25, 21, 54, 55, 68, 67, 30, 31, 32, 33, 5, 38, 39, 40, 43]
+IMPL = [91, 1, 26, 15, 16, 17, 24, 18, 19, 20, 25, 21, 54, 55, 68, 67, 30, 31, 32, 33, 5, 38, 39, 40, 43]
 random.seed(3)
 bad = 0
 for op in IMPL:
@@ -21,6 +21,8 @@ for op in IMPL:
         elif op in (38, 39): a = bytes([random.randrange(0, 8), random.randrange(0, 200)])
         elif op == 40: a = bytes([random.randrange(0, 8), random.randrange(0, 4), random.randrange(0, 10)])
         elif op == 43: a = struct.pack('>H', t) + bytes([random.choice([0xFE, o.e.rd(0x1F17, o.recptr[t] + 10, 1)[0], 3])])
+        elif op == 91: a = bytes([random.choice([o.e.rd(0x1F17, o.recptr[cur] + 6, 1)[0], random.randrange(256)])])
+        elif op == 73: a = struct.pack('>HH', t, random.choice(ids))
         elif n == 0: a = b''
         else: a = struct.pack('>H', t)
         ds_pokes = [(o.recptr[t] + 3, random.randrange(256)), (o.recptr[t] + 15, random.randrange(256)), (o.recptr[cur] + 3, random.randrange(256))]

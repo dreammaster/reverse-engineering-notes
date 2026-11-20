@@ -572,6 +572,8 @@ Not done: use of held things (the held-item window), the read, switch and press 
 
 `56h` (86, `7A56`): money += word with sound 03h (op 06 with a word); `59h` (89, `7AC7`): A[6] bit 0 cleared (not modelled); `5Bh` (91, `8448`): condition byte 6 of the current thing's record == operand; `5Ch` (92, `845A`): the chest content word A[0..1] := 0. Not ported: `52h` (82, `8404`: removes the carried things whose list entry word matches), `4Ch` (76, `825A`: tests a bit of `ds:6AB`), `3Ch` (60, `8312`: `5CDC` condition), `42h` (66, `8353`: queues an entry like F7), `23h` (35, `7DB6`: give), `07h`/`59h` activation helpers (`5F18`).
 
+`tools/verify_acl_ops.py` now also fuzzes op 5Bh (91) against the original: no mismatches on levels 1 and 4. Ops 00h/73 cannot be checked that way: op 00 (like 02) deletes the thing from the engine's lists rather than changing `rec[3]` (the port's flag 80h is a model), and op 73 moves records around (`3F25`), which shifts the emulator's packed record array.
+
 ### 6.8 Input
 
 The game installs its own INT 9 handler (`keyboard_isr`, `1000:11E9`) and keeps
