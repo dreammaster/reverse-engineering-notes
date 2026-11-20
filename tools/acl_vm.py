@@ -62,6 +62,9 @@ class VM:
                 x, y, z = s8(r[0]), s8(r[1]), s8(r[2])
                 ok = x >= s8(a[3]) and y >= s8(a[5]) and z <= s8(a[8]) and x < s8(a[4]) and y < s8(a[6]) and z >= s8(a[7])
             self.c605 = (self.c605 + 1) & 255 if ok else 0
+        elif op == 91:                              # byte 6 of the current thing's record == a[0]
+            c = self.things.get(self.cur)
+            self.c605 = (self.c605 + 1) & 255 if c is not None and c[6] == a[0] else 0
         elif op == 34:                              # the player carries thing w (room byte FFh, not deleted)
             ok = r is not None and r[10] == 0xFF and not r[3] & 0x80
             self.c605 = (self.c605 + 1) & 255 if ok else 0

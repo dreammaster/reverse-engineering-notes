@@ -228,6 +228,15 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		test_res(vm, ok);
 		break;
 	}
+	case 86: if (vm->sound) vm->sound(3, vm->user); vm->money += w; vm->score += w >> 2; break;   /* 7A56: like op 06 with a word */
+	case 89: break;                                     /* 7AC7: A[6] bit 0 cleared (A[6] is not kept in the port) */
+	case 91: {                                          /* 8448: condition: byte 6 of the current thing's record == a[0] */
+		int len;
+		const uint8_t *r = vm->mp2 && vm->cur >= 0 ? mp2_thing(vm->mp2, vm->cur, &len) : NULL;
+		test_res(vm, r && len > 6 && r[6] == a[0]);
+		break;
+	}
+	case 92: if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) vm->tail[tid][0] = vm->tail[tid][1] = 0; break;   /* 845A: the chest content word := 0 */
 	case 65:                                            /* 832F: A[1] of the thing (its strength / damage byte) += signed a[2], clamped to 0..F5h */
 		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) {
 			int v = vm->tail[tid][1] + (int8_t)a[2];
