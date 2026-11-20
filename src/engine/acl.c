@@ -179,6 +179,22 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 			vm->room[tid] = a[5] == 0xFE ? (uint8_t)vm->room_no : a[5];
 		}
 		break;
+	case 44: case 84: {                                 /* 7E1C / 7E7F: spawn thing B (a fresh copy of its record) at the place of thing A: op 44 [A16][B16] dir room (the direction byte only steers the new object), op 84 [A16][B16] dx dy z room (A's x, y + dx, dy; z absolute) */
+		int A = w == 0xFFFF ? vm->cur : w, B = (a[2] << 8) | a[3];
+		if (B == 0xFFFF) B = vm->cur;
+		if (A >= 0 && A < ACL_THINGS && B >= 0 && B < ACL_THINGS && vm->present[A] && vm->present[B]) {
+			int x, y, z, room;
+			if (vm->room[A] >= 0x80) { x = vm->px; y = vm->py; z = vm->pz; room = vm->room_no; }
+			else { x = vm->pos[3 * A]; y = vm->pos[3 * A + 1]; z = vm->pos[3 * A + 2]; room = vm->room[A]; }
+			int rb = a[5];
+			if (op == 84) { x = (x + a[4]) & 0xFF; y = (y + a[5]) & 0xFF; z = a[6]; rb = a[7]; }
+			if (rb != 0xFE) room = rb;
+			if (vm->mp2) { reset_thing(vm, vm->mp2, B); memset(vm->armed[128 + B], 0, sizeof(vm->armed[0])); }
+			vm->pos[3 * B] = (uint8_t)x; vm->pos[3 * B + 1] = (uint8_t)y; vm->pos[3 * B + 2] = (uint8_t)z;
+			vm->room[B] = (uint8_t)(room == 0xFE ? vm->room_no : room);
+		}
+		break;
+	}
 	case 41:                                            /* move a thing: [id16] room x y z (0xFE = current room); another room: flag 0x08 */
 		if (f && n >= 6 && tid >= 0 && tid < ACL_THINGS) {
 			int room = a[2] == 0xFE ? vm->room_no : a[2];

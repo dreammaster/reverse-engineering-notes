@@ -149,6 +149,23 @@ class VM:
             r[:] = self.pristine.get(w, bytes(r))               # a fresh copy of the record (flags, room, position) ...
             r[0], r[1], r[2] = a[2], a[3], a[4]
             r[10] = room
+        elif op in (44, 84):                        # spawn thing B (a fresh copy of its record) at the place of thing A (7E1C / 7E7F)
+            bw = a[2] << 8 | a[3]
+            B = self.things.get(self.cur if bw == 0xFFFF else bw)
+            if r is not None and B is not None:
+                if r[10] >= 0x80:
+                    x, y, z, room = 0, 0, 0, self.room
+                else:
+                    x, y, z, room = r[0], r[1], r[2], r[10]
+                rb = a[5]
+                if op == 84:
+                    x, y, z, rb = (x + a[4]) & 0xFF, (y + a[5]) & 0xFF, a[6], a[7]
+                if rb != 0xFE:
+                    room = rb
+                key = self.cur if bw == 0xFFFF else bw
+                B[:] = self.pristine.get(key, bytes(B))
+                B[0], B[1], B[2] = x, y, z
+                B[10] = self.room if room == 0xFE else room
         elif op == 41 and r is not None:            # move a thing: [id16] room x y z (room 0xFE = current); another room: position + flag 0x08 (pending)
             room = self.room if a[2] == 0xFE else a[2]
             r[0], r[1], r[2] = a[3], a[4], a[5]
