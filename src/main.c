@@ -1561,7 +1561,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	SDL_Window *win = SDL_CreateWindow(gamefiles_name(g.id), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-	                                   SCREEN_W * 3, SCREEN_H * 3, SDL_WINDOW_RESIZABLE);
+	                                   960, 720, SDL_WINDOW_RESIZABLE);
 	SDL_Renderer *ren = win ? SDL_CreateRenderer(win, -1, 0) : NULL;
 	SDL_Texture *tex = ren ? SDL_CreateTexture(ren, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
 	                                           SCREEN_W, SCREEN_H) : NULL;
@@ -1569,7 +1569,7 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "SDL: %s\n", SDL_GetError());
 		return 1;
 	}
-	SDL_RenderSetLogicalSize(ren, SCREEN_W, SCREEN_H);
+	/* the original's 320x200 picture was shown on a 4:3 screen (non-square pixels, x1.2 taller): the window keeps 4:3 */
 	if (g_snd_ok && SDL_WasInit(SDL_INIT_AUDIO)) {
 		SDL_AudioSpec want;
 		SDL_zero(want);
@@ -1610,6 +1610,7 @@ int main(int argc, char **argv) {
 					if (scene == SCENE_INTRO) { scene = SCENE_WALK; g_room.level = 1; g_room.room = 0; g_room.use_tata = (k == SDLK_p) || start_tata; }
 					else changed = 0;
 				}
+				else if (k == SDLK_F11) { SDL_SetWindowFullscreen(win, (SDL_GetWindowFlags(win) & SDL_WINDOW_FULLSCREEN_DESKTOP) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_F5) { game_save(&g_walk, &g_room); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_F9) { game_load(&g_room); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_F1) { map_open_view(&g_room); changed = 0; }
@@ -1677,7 +1678,14 @@ int main(int argc, char **argv) {
 		screen_to_rgb32(&scr, rgb);
 		SDL_UpdateTexture(tex, NULL, rgb, SCREEN_W * 4);
 		SDL_RenderClear(ren);
-		SDL_RenderCopy(ren, tex, NULL, NULL);
+		{
+			int ww, wh;
+			SDL_GetRendererOutputSize(ren, &ww, &wh);
+			SDL_Rect dst = {0, 0, ww, wh};
+			if (ww * 3 > wh * 4) { dst.w = wh * 4 / 3; dst.x = (ww - dst.w) / 2; }
+			else { dst.h = ww * 3 / 4; dst.y = (wh - dst.h) / 2; }
+			SDL_RenderCopy(ren, tex, NULL, &dst);
+		}
 		SDL_RenderPresent(ren);
 		if (shot && ++frames == 2) {
 			SDL_Surface *s = SDL_CreateRGBSurfaceWithFormatFrom(rgb, SCREEN_W, SCREEN_H, 32, SCREEN_W * 4,

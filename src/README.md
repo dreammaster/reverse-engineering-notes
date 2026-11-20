@@ -46,3 +46,5 @@ See `docs/roadmap.md` for what is missing.
 Arrows (and Insert/Delete/PgUp/PgDn for diagonals) move, End = fire (take the touched object's verb menu / jump), Space or Return = rucksack, F1 = map (arrows scroll, Return zooms in, `-` out, End leaves), `I` = status dialog, F5 = quick save, F9 = quick load (`cadaver.sav` in the working directory: the whole script VM plus the player's place and the clock; the original's `data\\mike_save` format is not decoded). `--sim` tokens: `right left up down rdown ldown rup lup end rend space ret wait info map save load`.
 
 With Cadaver 2 installed, `--scene game` starts Cadaver (DATA) with Space/Return and The Payoff (TATA) with `P` (or `--tata`); finishing Cadaver's last level continues into The Payoff's first.
+
+The window keeps the original's 4:3 shape (the 320×200 picture was shown on a 4:3 monitor); F11 toggles full screen.
