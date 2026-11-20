@@ -146,6 +146,7 @@ typedef struct RoomView_ {
 static int room_key(const RoomView *rv) { return 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata; }
 /* ---- sound: BEEPER.BIN on the interpreter (engine/beeper.c); ids as the game's 1000:156C / 1000:1613 take them ---- */
 static const char *g_lang = "eng";     /* --lang eng|fre|ger: the language file ENGn.LNG / FREn.LNG / GERn.LNG */
+static int g_paused;                  /* Pause key in the walk scene */
 static int g_payoff;                  /* Cadaver 2 is installed (The Payoff follows Cadaver's last level) */
 static Beeper g_snd;
 static int g_snd_ok, g_snd_log;
@@ -1617,6 +1618,7 @@ int main(int argc, char **argv) {
 					if (scene == SCENE_INTRO) { scene = SCENE_WALK; g_room.level = 1; g_room.room = 0; g_room.use_tata = (k == SDLK_p) || start_tata; }
 					else changed = 0;
 				}
+				else if (scene == SCENE_WALK && k == SDLK_PAUSE) { g_paused ^= 1; snd_silence(); changed = 0; }
 				else if (k == SDLK_F11) { SDL_SetWindowFullscreen(win, (SDL_GetWindowFlags(win) & SDL_WINDOW_FULLSCREEN_DESKTOP) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_F5) { game_save(&g_walk, &g_room); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_F9) { game_load(&g_room); changed = 0; }
@@ -1660,6 +1662,7 @@ int main(int argc, char **argv) {
 			const Uint8 *ks = SDL_GetKeyboardState(NULL);
 			int keys = (ks[SDL_SCANCODE_UP] ? 1 : 0) | (ks[SDL_SCANCODE_DOWN] ? 2 : 0) | (ks[SDL_SCANCODE_LEFT] ? 4 : 0) |
 			           (ks[SDL_SCANCODE_RIGHT] ? 8 : 0) | (ks[SDL_SCANCODE_INSERT] ? 5 : 0) | (ks[SDL_SCANCODE_DELETE] ? 6 : 0) | (ks[SDL_SCANCODE_PAGEUP] ? 9 : 0) | (ks[SDL_SCANCODE_PAGEDOWN] ? 10 : 0) | (ks[SDL_SCANCODE_END] ? 0x80 : 0) | (ks[SDL_SCANCODE_SPACE] ? 0x10 : 0) | (ks[SDL_SCANCODE_RETURN] ? 0x20 : 0) | (ks[SDL_SCANCODE_MINUS] ? 0x40 : 0);
+			if (g_paused) last_ms = now;
 			while (now - last_ms >= 20) {            /* the game runs at ~50 Hz */
 				walker_tick(&g_walk, &g_room, keys);
 				last_ms += 20;
