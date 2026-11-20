@@ -2,7 +2,7 @@
 // objects at places of the maps, set flags of the actors, move the party or leave an exit code (word_41F2A) for the conversation that called them).
 //
 // APPROX(88): only the events whose effect is read out of the executable and can be done with the engine's parts are here (1, 6-11, 0x33, 0x34, 0x36, 0x65-0x68, 0x6A-0x6F, 0xFE); the dream scenes
-// (sub_3F615 / sub_3F61A end a dream), the scenes that raise a battle or plant a crop (0x35, 0x37-0x39), the schedule bits of the actors 0x18 and 0x1E (events 4 and 5), the guards (2) and the
+// (the dream ends, sub_3F615, are in md_dream.cpp), the scenes that raise a battle or plant a crop (0x35, 0x37-0x39), the schedule bits of the actors 0x18 and 0x1E (events 4 and 5), the guards (2) and the
 // end of the game (0xFF) are not, and what the original does with the exit codes once the conversation is over (Talk's ten cases, sub_55F77) is not either.
 
 #include "ultima6/describe.h"
@@ -94,10 +94,12 @@ void Game::mdEvent(int n) {
 			setFrame(a, 1);
 		break;
 	}
-	case 0x34: // (a dream ends, sub_3F615(0x5C): not done)
+	case 0x34: // a dream scene ends (sub_3F615(0x5C): the person 0x5C goes and 0x53 takes the place)
+		mdDreamEnd(0x5C);
 		exitCode(0x34);
 		break;
-	case 0x36: // (a dream ends, sub_3F615(0x52): not done)
+	case 0x36: // a dream scene ends (sub_3F615(0x52))
+		mdDreamEnd(0x52);
 		exitCode(0x36);
 		break;
 	case 0x65:

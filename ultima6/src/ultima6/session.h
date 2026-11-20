@@ -132,8 +132,34 @@ public:
 	int _mdRestX = 0, _mdRestY = 0, _mdRestHours = 0, _mdRestStep = 0, _mdTent[5] = {0, 0, 0, 0, 0};
 	int mdReach() const;
 	bool mdInReach(int tx, int ty);
+	// Martian Dreams' dream machines and dreams (md_dream.cpp)
+	void mdDreamMachine(int cabinet);              // sub_5BC53
+	void mdDreamStart(int quality, int sitter);    // sub_4FB90
+	void mdDreamStartLevel3();                     // sub_4FE5E
+	void mdDreamWake();                            // sub_50007
+	void mdDreamEnd(int actor);                    // sub_50651
+	void mdDreamFinish(int actor);                 // sub_3F615 + sub_3F61A
+	void mdDreamTouch(int obj);                    // sub_50218
+	void mdExitCode(int code);                     // sub_55F77: what the exit code of a conversation does
+	void mdStepOn();                               // sub_27EE6's part for the squares of the dream
+	bool mdDreaming() const {
+		return _mdDreaming;
+	}
+	/** True once after a dream or a sleep until dawn: the host plays the morning song (sub_2FD5E(1)). */
+	bool mdTakeMorning() {
+		bool m = _mdMorning;
+		_mdMorning = false;
+		return m;
+	}
 
 private:
+	void mdDreamBody(int bx, int by, int bz, int id);
+	void mdDreamGo(int frame, int qual, int qty);
+	bool _mdDreaming = false;      // word_4115A bit 4
+	int _mdDreamId = 0;            // word_41184
+	int _mdDreamFlag = 0;          // byte_41153
+	int _mdWake[3] = {1, 1, 1};    // byte_41180 / 41181 / word_41182: the day, month and year the dreamer wakes on
+	bool _mdMorning = false;
 	World &_world;
 	MapRenderer _renderer;
 	Movement _movement;

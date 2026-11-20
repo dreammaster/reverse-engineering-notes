@@ -286,6 +286,8 @@ int main(int argc, char **argv) {
 		if (key == Ultima6::KEY_MOUSE_LEFT || key == Ultima6::KEY_MOUSE_RIGHT)
 			key = game.mouseKey(backend->mouseX, backend->mouseY, key == Ultima6::KEY_MOUSE_RIGHT);
 		running = game.handleKey(key);
+		if (mdPlaying && game.mdTakeMorning()) // after a dream or a sleep until dawn (GAME.EXE's sub_2FD5E(1))
+			mdGameMusic.morning();
 	}
 
 	if (game.endingStarted()) {

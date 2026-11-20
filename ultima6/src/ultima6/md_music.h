@@ -50,7 +50,7 @@ public:
 	void follow(int song);
 	/**
 	 * sub_2FD5E(1): the morning song after a dream or a faint: song 4 (a short one) at its volume, and the day's song 0 is queued to start when it ends (sub_38BFA); the game's current song
-	 * is then 0. The dream scenes that call it are not ported.
+	 * is then 0. The dreams call it (Game::mdTakeMorning).
 	 */
 	void morning();
 	/** sub_218FC: stops the song, over `fadeTicks` timer ticks if that is not 0. */

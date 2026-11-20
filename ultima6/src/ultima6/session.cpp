@@ -376,6 +376,8 @@ bool Game::step(int dir) {
 	_world.spendMoves(1, cost); // sub_28F67, counted on the square that was left
 	_creatures.checkEggs(x, y, z, gameClock.hour);
 	enterMoongate(x, y);
+	if (_world.game == GameId::MartianDreams)
+		mdStepOn();
 	return true;
 }
 
@@ -487,6 +489,9 @@ void Game::startTalk(int actor) {
 
 // What a Martian Dreams scene does when its conversation is over (the original starts it with sub_3F864 and goes on afterwards)
 void Game::talkEnded() {
+	if (_world.game == GameId::MartianDreams && _mdExit >= 0) {
+		mdExitCode(_mdExit); // (the code stays for the caller; the next conversation clears it)
+	}
 	std::function<void()> then;
 	then.swap(_talkEnd);
 	if (then)

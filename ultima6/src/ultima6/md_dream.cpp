@@ -1,0 +1,454 @@
+// Martian Dreams' dream machines and the dreams (GAME.EXE overlay seg057: sub_5BC53 the machines' use, sub_4FB90 / sub_4FE5E the start of a dream, sub_50007 the waking, sub_50651 the end of a
+// scene, sub_50218 the squares of the dream with their flags, sub_27EE6 the step onto them).
+//
+// A dream is the Avatar's body (actor 0, parked at 6,4 of level 6 while nobody dreams) put on level 2 (or 3) of the map; the party stays where it sat, the roster gets a place for the body
+// (the one after the last member, which the party size does not count) and the player walks it alone (the original's word_4165C = 0x92, `_solo`). The squares of the dream have objects of type
+// 0x1CD, whose quantity and quality are the place they lead to (y and x) and whose status says what else they do (the bits 0xE5): 0x24 wakes the dreamer, 1 forgets the dream, 0xC4, 0xC5, 0xE0
+// and the like finish a scene. Waking puts the body back, sets the clock to eight in the morning of the next day and calls the morning song.
+//
+// APPROX(95): the scenes of the dreams themselves (the routines sub_3F6A0 .. sub_3F6D7 = sub_5189D .. sub_52B0C that the flags 4, 0x40, 0x85, 0xA1 and the dream numbers 5, 0x20, 0x44 and
+// 0xA0 call), the dream picture panels (MDREAM.LZC), the fades and the shapes of the transitions (sub_258D9), the creatures the dream clears (sub_2CAAD), the stray flags (the array ds:6EC6,
+// byte_41153, 41134, 41154) and the state of a dream that is saved are not done.
+
+#include "ultima6/session.h"
+#include "ultima6/stats_view.h"
+
+#include <cstring>
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// The dream body, actor 0: the Avatar's looks for the sex the game keeps (the original's byte_41158), whole, and put on the dream's square. sub_4FB90 / sub_4FE5E from the dream machine's
+// chair on: the roster gets the body after the last member and the player controls it alone.
+void Game::mdDreamBody(int bx, int by, int bz, int id) {
+	ObjList &al = _world.actors;
+	int k = _world.actorObject(0);
+	if (k < 0)
+		return;
+	World::Obj &body = _world.objects[k];
+	body.frame = 1;
+	body.status &= 0x18;
+	al.status[0] = 0xC0;
+	al.hp[0] = (uint8_t)ActorStats::maxHealth(_world, 1);
+	al.worktype[0] = 2;
+	body.type = mdMale(1) ? 0x157 : 0x158;
+	mdPlace(k, bx, by, bz);
+	for (int w = 0; w < 3; ++w)
+		mdSetPsychic(0, w, 0);
+	if (al.globals.size() > 0x16)
+		al.globals[0x16] = 0; // byte_41136: no dizziness
+	int slot = al.partySize;
+	if (slot < ObjList::PARTY_MAX) {
+		al.partyRoster[slot] = 0;
+		std::memcpy(al.partyNames[slot], al.partyNames[0], ObjList::NAME_SIZE);
+		_solo = slot;
+		_member = slot;
+		_selected = 0;
+		_leaderObject = k;
+	}
+	x = body.x;
+	y = body.y;
+	z = body.z;
+	_mdDreaming = true;
+	_mdDreamId = id;
+	chooseMusic();
+}
+
+// sub_4FB90(quality, sitter): the date the dreamer wakes on is kept (this day if it is before eight in the morning, else the next); the Avatar dreams for real (the body goes to the place of
+// the machine's quality: 0 and 1 to x 100, y 59 of level 2, the others to 147, 52), another member of the party sleeps until dawn while the party waits.
+void Game::mdDreamStart(int quality, int sitter) {
+	_mdWake[0] = gameClock.day;
+	_mdWake[1] = gameClock.month;
+	_mdWake[2] = gameClock.year;
+	if (gameClock.hour >= 8) {
+		if (++_mdWake[0] > 0x1C) {
+			_mdWake[0] = 1;
+			if (++_mdWake[1] > 0xC) {
+				_mdWake[1] = 1;
+				++_mdWake[2];
+			}
+		}
+	}
+	if (sitter == 1) {
+		if (quality <= 1)
+			mdDreamBody(0x64, 0x3B, 2, 0);
+		else
+			mdDreamBody(0x93, 0x34, 2, 0);
+		return;
+	}
+	ObjList &al = _world.actors;
+	al.status[sitter] |= 4;
+	_solo = -1;
+	message(mdMemberName(sitter) + " dreams until dawn while the party waits.\n");
+	advanceTime(60 - gameClock.minute);
+	while (!_dead && !(gameClock.year >= _mdWake[2] && gameClock.month >= _mdWake[1] && gameClock.day >= _mdWake[0] && gameClock.hour >= 8))
+		advanceTime(20);
+	al.status[sitter] &= 0xFB;
+	_mdMorning = true;
+}
+
+// sub_4FE5E: the dream of the machine that has a story flag (the machine of quality 3 when talkFlags[0x46] has bit 1): the body goes to 0x35, 0x26 of level 3, and the dream is number 0xE1
+void Game::mdDreamStartLevel3() {
+	_mdWake[0] = gameClock.day;
+	_mdWake[1] = gameClock.month;
+	_mdWake[2] = gameClock.year;
+	if (gameClock.hour >= 8 && ++_mdWake[0] > 0x1C) {
+		_mdWake[0] = 1;
+		if (++_mdWake[1] > 0xC) {
+			_mdWake[1] = 1;
+			++_mdWake[2];
+		}
+	}
+	mdDreamBody(0x35, 0x26, 3, 0xE1);
+}
+
+// sub_50007: the dreamer wakes. The body goes back to its place at level 6, the members' psychic numbers are lost and the poisoned ones are left nearly dead (more than 30 hit points lose 24-30,
+// more than 10 get 1-10, else 1), the clock reads eight in the morning of the day kept, the view goes back to the Avatar and the morning song plays.
+void Game::mdDreamWake() {
+	if (!_mdDreaming)
+		return;
+	ObjList &al = _world.actors;
+	// sub_50218(0): the dream's last kind of square says what is left to do (not done: APPROX(95)); the body takes the Avatar's looks again after a transformation
+	if (_mdDreamId == 0x40) {
+		int k = _world.actorObject(0), a1 = _world.actorObject(1);
+		if (k >= 0 && a1 >= 0) {
+			_world.objects[k].type = _world.objects[a1].type;
+			_world.objects[k].frame = 9;
+		}
+	}
+	for (int w = 0; w < 3; ++w)
+		mdSetPsychic(0, w, 0);
+	al.status[0] &= 0x7F;
+	gameClock.hour = 8;
+	gameClock.minute = 0;
+	gameClock.day = _mdWake[0];
+	gameClock.month = _mdWake[1];
+	gameClock.year = _mdWake[2];
+	for (int m = 0; m < al.partySize; ++m) {
+		int s = al.partyRoster[m];
+		for (int w = 0; w < 3; ++w)
+			mdSetPsychic(s, w, 0);
+		if (!(al.status[s] & 8))
+			continue;
+		if (al.hp[s] > 0x1E)
+			al.hp[s] = (uint8_t)(al.hp[s] - seRoll(0x18, 0x1E));
+		else if (al.hp[s] > 0x0A)
+			al.hp[s] = (uint8_t)seRoll(1, 0x0A);
+		else
+			al.hp[s] = 1;
+	}
+	int k = _world.actorObject(0);
+	if (k >= 0)
+		mdPlace(k, _world.objects[_world.actorObject(1)].x, _world.objects[_world.actorObject(1)].y, 6); // parked at level 6 (the camera's square, sub_2CFE2(6, x, y, 0))
+	al.worktype[0] = 0;
+	al.worktype[1] = 2;
+	_mdDreaming = false;
+	_mdDreamId = 0;
+	_solo = -1;
+	if (al.partySize < ObjList::PARTY_MAX)
+		al.partyRoster[al.partySize] = 0;
+	setControl(0);
+	message("You wake up.\n");
+	_mdMorning = true;
+	chooseMusic();
+}
+
+// sub_50651(actor): a scene of the dream is over. Actor 0x5C goes away (to level 6, hidden) and 0x53 takes its place; the actor is put on the square where its schedule starts and the things of
+// the scene there (a 0x1CD, a 0x124 on the square above) are taken away; the actor's mark 0x80 is set (the array ds:6EC6, not done), and when the marks of the four (0x52, 0x54, 0x55, 0x56) or
+// the eight (0x50-0x57) scenes are all set, a story flag of actor 0x60 / 0x20 is.
+void Game::mdDreamEnd(int actor) {
+	if (!_mdDreaming)
+		return;
+	ObjList &al = _world.actors;
+	if (actor == 0x5C) {
+		int k = _world.actorObject(0x5C);
+		if (k >= 0) {
+			mdPlace(k, 0x5C, 0x5C, 6);
+			_world.objects[k].status |= 0x80;
+		}
+		al.worktype[0x5C] = 0;
+		actor = 0x53;
+	}
+	Schedule::Entry e = _world.schedule.entry(_world.schedule.index[actor]);
+	int px = e.x & 0x3FF, py = e.y & 0x3FF;
+	int ak = _world.actorObject(actor);
+	if (ak >= 0)
+		mdPlace(ak, px, py, z);
+	int a = seFind(0x1CD, px, py);
+	if (a >= 0)
+		_world.deleteObject(a);
+	else
+		message("Aargh!\n");
+	int b = seFind(0x124, px, (py - 1) & 0x3FF);
+	if (b >= 0)
+		_world.deleteObject(b);
+	else
+		message("Aargh!\n");
+	auto &t = al.talkFlags;
+	if ((t[0x56] & 0x80) && (t[0x54] & 0x80) && (t[0x52] & 0x80) && (t[0x55] & 0x80))
+		t[0x60] |= 0x10;
+	if ((t[0x50] & 0x80) && (t[0x57] & 0x80) && (t[0x56] & 0x80) && (t[0x54] & 0x80) && (t[0x55] & 0x80) && (t[0x52] & 0x80) && (t[0x51] & 0x80) && (t[0x53] & 0x80))
+		t[0x20] |= 0x10;
+}
+
+// sub_3F615 and sub_3F61A: the scene of the actor is over and the dreamer wakes
+void Game::mdDreamFinish(int actor) {
+	if (!_mdDreaming)
+		return;
+	mdDreamEnd(actor);
+	mdDreamWake();
+}
+
+// sub_55F77's switch over the exit code a conversation left (word_41F2A): the codes 0x34 and 0x36 (a scene of the dream is over) wake the dreamer after the end of actor 0x55's scene, 0x38 does it
+// when its flags say the scene has been played (bit 8 set, bit 4 not); the other codes (9, 0xA, 0x65-0x69: the scenes that put things on the maps) are not done.
+void Game::mdExitCode(int code) {
+	ObjList &al = _world.actors;
+	if (code == 0x34 || code == 0x36 || (code == 0x38 && (al.talkFlags[0x55] & 0x0C) == 8))
+		mdDreamFinish(0x55);
+}
+
+// sub_25C46 with the dream's own flavour: the body goes to the square (qual, qty) of the same level (the quality is x and the quantity y), with the sound 0x33 for the frame 1. Not dreaming,
+// the whole party goes (sub_25B56)
+void Game::mdDreamGo(int frame, int qual, int qty) {
+	if (frame == 1)
+		mdSfx(0x33);
+	if (_mdDreaming) {
+		if (_leaderObject >= 0) {
+			_world.moveObject(_leaderObject, qual, qty, z);
+			x = qual;
+			y = qty;
+		}
+	} else {
+		changeLevel(qual, qty, z);
+	}
+}
+
+// sub_50218(object): the dreamer stepped on a square with a 0x1CD that has flags
+void Game::mdDreamTouch(int obj) {
+	ObjList &al = _world.actors;
+	World::Obj o = _world.objects[obj];
+	int kind = o.status & 0xE5, qual = o.quality, qty = o.quantity, frame = o.frame;
+	auto &t = al.talkFlags;
+	if (_mdDreamId && kind != 0xA5 && kind != 0xE5 && _mdDreamId == 0x40) { // the dream number table at cs:0AAD
+		int a1 = _world.actorObject(1), a0 = _world.actorObject(0);
+		if (a1 >= 0 && a0 >= 0) {
+			_world.objects[a0].type = _world.objects[a1].type;
+			_world.objects[a0].frame = 9;
+		}
+	}
+	auto removeScene = [&]() { // the picture above and the square itself go
+		int p = seFind(0x124, o.x, (o.y - 1) & 0x3FF);
+		if (p >= 0)
+			_world.deleteObject(p);
+		_world.deleteObject(obj);
+	};
+	switch (kind) {
+	case 0:
+		break;
+	case 1:
+		_mdDreamId = 0;
+		return;
+	case 0x24:
+		mdDreamWake();
+		return;
+	case 0xA4: { // actor 0x56 appears at 0x19, 0x6F of level 2 as a plain person
+		t[0x56] &= 1;
+		int k = _world.actorObject(0x56);
+		if (k >= 0) {
+			mdPlace(k, 0x19, 0x6F, 2);
+			_world.objects[k].frame = 1;
+			_world.objects[k].status |= 0x80;
+		}
+		al.worktype[0x56] = 0;
+		al.status[0x56] &= 0x9F;
+		break;
+	}
+	case 0xC1: { // the scene is done: half the time the persons 0x6D and 0x67 trade places and looks
+		t[0x6B] |= 4;
+		removeScene();
+		if (seRoll(1, 100) <= 50) {
+			int a = _world.actorObject(0x67), b = _world.actorObject(0x6D);
+			if (a >= 0 && b >= 0) {
+				int ax = _world.objects[a].x, ay = _world.objects[a].y, bx = _world.objects[b].x, by = _world.objects[b].y;
+				mdPlace(b, ax, ay, z);
+				mdPlace(a, bx, by, z);
+				std::swap(_world.objects[a].frame, _world.objects[b].frame);
+			}
+		}
+		break;
+	}
+	case 0xC4:
+		break;
+	case 0xC5:
+		t[0x6A] |= 4;
+		removeScene();
+		break;
+	case 0xE0:
+		t[0x6C] |= 4;
+		removeScene();
+		break;
+	case 0xC0:
+		al.hp[0] = (uint8_t)ActorStats::maxHealth(_world, 1);
+		break;
+	default: // 4, 0x40, 0x85, 0xA1: the scenes of sub_52491, sub_5189D, sub_52B0C, sub_51C96 (APPROX(95)); the square only leads on
+		break;
+	}
+	if (kind != 0xA5)
+		_mdDreamFlag = 0;
+	for (int w = 0; w < 3; ++w)
+		mdSetPsychic(0, w, 0);
+	mdDreamGo(frame, qual, qty);
+	switch (kind) {
+	case 0xC5:
+		t[0x68] = 0;
+		break;
+	case 0xC0:
+		al.hp[0] = (uint8_t)ActorStats::maxHealth(_world, 1);
+		break;
+	case 0xE5:
+		if (!(t[0x66] & 8))
+			_mdDreamFlag = 6;
+		return; // (the dream number is not changed)
+	default:
+		break;
+	}
+	_mdDreamId = kind;
+}
+
+// sub_27EE6, the part for the squares of the dream: the first 0x1CD on the square the body entered leads on (to y = quantity, x = quality) and does what its flags say
+void Game::mdStepOn() {
+	std::vector<int> here;
+	_world.objectsAt(x, y, z, here);
+	for (int i : here) {
+		const World::Obj &o = _world.objects[i];
+		if (o.deleted || o.type != 0x1CD || i == _leaderObject)
+			continue;
+		int kind = o.status & 0xE5;
+		if (kind == 0xA5 && _world.actors.hp[0] <= 4)
+			return;
+		if (kind)
+			mdDreamTouch(i);
+		else
+			mdDreamGo(o.frame, o.quality, o.quantity);
+		return;
+	}
+}
+
+// sub_5BC53(cabinet): the dream machine of the room (the 0x1C9 cabinet's panel works it). The things of the room within five squares: the chair 0x122 with frame 1, the pod 0x121 (the square
+// where the sitter is), the control 0x120 (its quality is the machine's), the 0x64. Without them "The machine does not work."; a thing 0x123 on the pod starts the scene of actor 0x21 and a
+// 0x11F that of actor 6; with nobody on the pod "There is nobody sitting in the machine."; when the dreamer is in the dream (level 2 or 3 is the camera's, not the surface) the machine wakes
+// it, else it starts the dream of the sitter.
+void Game::mdDreamMachine(int cabinet) {
+	ObjList &al = _world.actors;
+	if (al.talkFlags[0x46] & 8) {
+		message("The dream machines seem to have ceased functioning.\n");
+		return;
+	}
+	const World::Obj &c = _world.objects[cabinet];
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	int chair = -1, other = -1, quality = -1, podX = -1, podY = -1;
+	for (size_t i = 0; i < _world.objects.size(); ++i) {
+		const World::Obj &o = _world.objects[i];
+		if (o.deleted || !o.onMap() || o.z != z)
+			continue;
+		if (((o.x - c.x + 5) & mask) > 10 || ((o.y - c.y + 5) & mask) > 10)
+			continue;
+		if (o.type == 0x122) {
+			if (o.frame == 1)
+				chair = (int)i;
+		} else if (o.type == 0x121) {
+			podX = o.x;
+			podY = o.y;
+		} else if (o.type == 0x64) {
+			other = (int)i;
+		} else if (o.type == 0x120) {
+			quality = o.quality;
+		}
+	}
+	// sub_2C111(1, x, y): the first living actor on the pod's square
+	int sitter = -1;
+	for (int a = 1; a < ObjList::ACTORS && podX >= 0; ++a) {
+		int k = _world.actorObject(a);
+		if (k < 0 || _world.objects[k].type == 0 || _world.objects[k].deleted || (al.status[a] & 0x10))
+			continue;
+		const World::Obj &o = _world.objects[k];
+		if (o.x == podX && o.y == podY && o.z == z) {
+			sitter = a;
+			break;
+		}
+	}
+	if (chair < 0 || quality < 0 || other < 0) {
+		message("The machine does not work.\n");
+		return;
+	}
+	int thing = seFind(0x123, podX, podY);
+	if (thing >= 0) { // the scene of actor 0x21
+		if ((al.talkFlags[0x21] & 4) || !(al.talkFlags[0x61] & 0x10)) {
+			message("It has no effect.\n");
+			return;
+		}
+		startTalk(0x21);
+		_talkEnd = [this, thing, podX, podY]() {
+			ObjList &a = _world.actors;
+			a.talkFlags[0x21] |= 4;
+			int k = _world.actorObject(0x61);
+			if (k >= 0)
+				mdPlace(k, 0x61, 0x61, 6);
+			a.worktype[0x61] = 0;
+			if (k >= 0)
+				_world.objects[k].status |= 0xCB;
+			int h = _world.actorObject(0x21);
+			if (h >= 0)
+				mdPlace(h, podX, (podY + 1) & 0x3FF, z);
+			// sub_19300(0x21) (the actor is killed: its death is APPROX(95): it is left dead where it stands)
+			a.hp[0x21] = 0;
+			a.status[0x21] |= 0x10;
+			_world.deleteObject(thing);
+		};
+		return;
+	}
+	thing = seFind(0x11F, podX, podY);
+	if (thing >= 0) { // the scene of actor 6
+		if (!_world.objects[thing].quality) {
+			message("It has no effect.\n");
+			return;
+		}
+		startTalk(6);
+		_talkEnd = [this, thing, podX, podY]() {
+			ObjList &a = _world.actors;
+			int h = _world.actorObject(6);
+			if (h >= 0)
+				mdPlace(h, podX, (podY + 1) & 0x3FF, z);
+			int k = _world.actorObject(0x63);
+			if (k >= 0)
+				mdPlace(k, 0x63, 0x63, 6);
+			a.worktype[0x63] = 0;
+			if (k >= 0)
+				_world.objects[k].status |= 0xCB;
+			_world.deleteObject(thing);
+		};
+		return;
+	}
+	if (sitter < 0) {
+		message("There is nobody sitting in the machine.\n");
+		return;
+	}
+	if (z != 0) { // (the camera is in the dream: the machine wakes the dreamer)
+		mdDreamWake();
+		return;
+	}
+	if (quality < 2)
+		al.talkFlags[0x60] |= 8;
+	if (quality != 3) {
+		mdDreamStart(quality, sitter);
+		return;
+	}
+	if (al.talkFlags[0x46] & 1) {
+		mdDreamStartLevel3();
+		return;
+	}
+	message("The machine does not work.\n");
+}
+
+} // namespace Ultima6
+} // namespace Ultima6

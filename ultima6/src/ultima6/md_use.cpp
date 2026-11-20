@@ -1302,9 +1302,9 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		break;
 	}
 	case 68: // sub_5ED76: the manuscript (item, 0x58) on 0x54: the scene of actor 0x57 (his flag 0x40 is set and he talks)
-		// APPROX(76): the end of the dream scene (sub_3F615 / sub_3F61A) is left out
 		_world.actors.talkFlags[0x57] |= 0x40;
 		startTalk(0x57);
+		_talkEnd = [this]() { mdDreamFinish(0x57); }; // sub_3F615 / sub_3F61A: the dream scene ends
 		break;
 	case 43: { // sub_5EFB0 / sub_53C8D: a map (item, 0x96): the picture of MDMAP.LZC that its quality names fills the middle of the screen until a key is pressed ("Press any key...")
 		Bytes pic;
@@ -1335,7 +1335,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		break;
 	}
 	case 45: { // sub_5C2E3: a panel (item, 0x1CA) works the cabinet (0x1C9) on its square by the cabinet's quality: 0-3 only say what happened, 4-6 are the scenes of sub_5BC53, sub_5BFBF and sub_5C183, 7 the valve; a broken (quality bit 2) or loose (bit 1) panel does nothing
-		// APPROX(76): the scenes 4-6 are not done
+		// APPROX(76): the scenes 5 and 6 are not done (4 is the dream machine, md_dream.cpp)
 		int q = o.quality;
 		if (q & 2) {
 			message("The panel is broken.\n");
@@ -1367,6 +1367,8 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			mdAction(72, item, first, second);
 			break;
 		case 4:
+			mdDreamMachine(cabinet);
+			break;
 		case 5:
 		case 6:
 			break;
@@ -1985,10 +1987,10 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		break;
 	}
 	case 69: // sub_5EDA3: the mirror (0x93): only at one place (x 0x76-0x78, y 0xCA-0xCC, level 2) does it show somebody (flag 0x40 of actor 0x50, who talks); elsewhere "You see yourself."
-		// APPROX(76): the end of the dream scene (sub_3F615 / sub_3F61A) is left out
 		if (x >= 0x76 && x <= 0x78 && y >= 0xCA && y <= 0xCC && z == 2) {
 			_world.actors.talkFlags[0x50] |= 0x40;
 			startTalk(0x50);
+			_talkEnd = [this]() { mdDreamFinish(0x50); };
 		} else {
 			message("You see yourself.\n");
 		}
@@ -2062,7 +2064,6 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		break;
 	}
 	case 20: { // sub_5A01D: a knife (item) on a covered Martian seed (first, 0xFB): only a ripe one (frame 3) opens, and then (frame 4) an unconscious Martian (0x123) falls out and the seed is temporary; "It is not fully grown." / "The pod is already open." otherwise
-		// APPROX(76): the branch while dreaming (word_4115A bit 4: the dream scene 0x56, sub_3F615) is not there: the engine has no dreams yet
 		World::Obj &pod = _world.objects[first];
 		if (pod.frame != 3) {
 			message(pod.frame < 3 ? "It is not fully grown.\n" : "The pod is already open.\n");
@@ -2070,6 +2071,16 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		pod.frame = 4;
 		int px = pod.x, py = pod.y, pz = pod.z;
+		if (_mdDreaming) { // in a dream the pod holds the person of the scene 0x56, who talks, and the dream is over
+			int person = _world.actorObject(0x56);
+			if (person >= 0)
+				mdPlace(person, px, py, pz);
+			mdSfx(3);
+			_world.actors.talkFlags[0x56] |= 0x88;
+			startTalk(0x56);
+			_talkEnd = [this]() { mdDreamFinish(0x56); };
+			break;
+		}
 		int martian = seMake(0x123, px, py, pz, 1, 0);
 		(void)martian;
 		message("An unconscious Martian falls out of the pod.\n");
@@ -2310,9 +2321,11 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		if (first < 0) {
 			int mask = z == 0 ? 0x3FF : 0xFF;
-			if (_world.map.tile(z, _mdSqX[1] & mask, _mdSqY[1] & mask) == 8)
+			if (_world.map.tile(z, _mdSqX[1] & mask, _mdSqY[1] & mask) == 8) {
 				_world.actors.talkFlags[0x51] |= 0x40;
-			else
+				startTalk(0x51);
+				_talkEnd = [this]() { mdDreamFinish(0x51); };
+			} else
 				message("It has no effect.\n");
 			break;
 		}
