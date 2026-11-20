@@ -192,6 +192,7 @@ static void roomview_tick(RoomView *rv) {
 	}
 	if (rv->ok && rv->ro_key && (++rv->ro_ticks & 1) == 0) {
 		roomobjs_step(&rv->ro);
+		if (g_snd_log) for (int i = 0; i < rv->ro.n; i++) if (rv->ro.o[i].thing == 467) { static int pp = -9, pd = -9, pf = -9; const AnimState *a = &rv->ro.o[i].an; if (a->pos != pp || a->delay != pd || a->frame != pf) { fprintf(stderr, "A467 tick %u pos %d delay %d frame %d cnt %d cad %d\n", rv->clock_ticks, a->pos, a->delay, a->frame, a->cnt, a->cad); pp = a->pos; pd = a->delay; pf = a->frame; } }
 		for (int i = 0; i < rv->ro.n; i++) {                       /* animation command F8 n: event 13 (argument n) for the thing (1000:3CE7) */
 			RoomObj *o = &rv->ro.o[i];
 			while (o->an.nev > 0) {
