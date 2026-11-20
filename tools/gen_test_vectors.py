@@ -370,6 +370,7 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver*', '*', '[0-9]'))):
             continue
         things_ = {t: bytearray(r[:16]) for t, r in enumerate(thr) if len(r) >= 16 and secs[3]['present'][t] and t < 1000}
         vm = acl_vm.VM(things_, cur=0, room=n)
+        vm.doors = {i: r[2] << 8 | r[3] for i, r in enumerate(secs[1]['records']) if len(r) >= 4}
         arm = [True] * len(hs)
         for t in (28, 6, 14, 14):
             acl_vm.fire_event(vm, hs, t, 0, arm)
@@ -398,6 +399,7 @@ for d in sorted(glob.glob(os.path.join(root, 'cadaver1', 'DATA', '[1-5]')) + glo
             continue
         things_ = {k: bytearray(r[:16]) for k, r in enumerate(thr) if len(r) >= 16 and secs[3]['present'][k] and k < 1000}
         vm = acl_vm.VM(things_, cur=t, room=0)
+        vm.doors = {i: r[2] << 8 | r[3] for i, r in enumerate(secs[1]['records']) if len(r) >= 4}
         arm = [True] * len(hs)
         for ty in (7, 9):
             acl_vm.fire_event(vm, hs, ty, 0, arm, cur=t, follow=False)

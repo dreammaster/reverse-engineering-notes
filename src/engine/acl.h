@@ -30,6 +30,8 @@ typedef struct {
 	};
 	int c605;                       /* condition counter */
 	int cur;                        /* current object (thing id) */
+	uint16_t doorw[400];            /* word at +2 of every door record (section 1): script-visible lock state (ops 0Ah / 1Bh set it, op 3Dh tests it) */
+	int held;                       /* ds:27A: the thing held (op 39h tests it) */
 	int describe;                   /* op 48h (look): thing+1 whose picture goes with the message just queued (0 = none) */
 	int room_no;                    /* ds:232 */
 	int reg;                        /* ds:704 */

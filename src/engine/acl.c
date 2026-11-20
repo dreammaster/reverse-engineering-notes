@@ -48,6 +48,8 @@ void acl_init(AclVM *vm, const Mp2 *mp2) {
 	vm->cap = 0x20;
 	for (int t = 0; t < ACL_THINGS; t++)
 		reset_thing(vm, mp2, t);
+	for (int d = 0; d < 400 && d < mp2->sec[1].count; d++)
+		if (mp2->sec[1].rec[d] && mp2->sec[1].len[d] >= 4) vm->doorw[d] = (uint16_t)((mp2->sec[1].rec[d][2] << 8) | mp2->sec[1].rec[d][3]);
 }
 
 static void test_res(AclVM *vm, int ok) { vm->c605 = ok ? ((vm->c605 + 1) & 255) : 0; }
@@ -193,6 +195,30 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		acl_energy_change(vm, (int16_t)w);
 		break;
 	}
+	case 10: {                                          /* 7B8B: unlock door a[0] (word at +2 := 0); sound 12h when the door belongs to the current room, else 2Ah */
+		int id = a[0];
+		if (vm->doorw[id]) {
+			vm->doorw[id] = 0;
+			int here = 0;
+			if (vm->mp2 && vm->room_no >= 0 && vm->room_no < vm->mp2->sec[0].count && vm->mp2->sec[0].rec[vm->room_no] && vm->mp2->sec[0].len[vm->room_no] >= 22)
+				for (int i = 0; i < 7; i++) if (((vm->mp2->sec[0].rec[vm->room_no][6 + 2 * i] << 8) | vm->mp2->sec[0].rec[vm->room_no][7 + 2 * i]) == id) here = 1;
+			if (vm->sound) vm->sound(here ? 0x12 : 0x2A, vm->user);
+		}
+		break;
+	}
+	case 27: {                                          /* 7BC6: set the word of door a[0] (lock it); sounds as above when it changes */
+		int id = a[0], val = (a[1] << 8) | a[2];
+		if (vm->doorw[id] != val) {
+			vm->doorw[id] = (uint16_t)val;
+			int here = 0;
+			if (vm->mp2 && vm->room_no >= 0 && vm->room_no < vm->mp2->sec[0].count && vm->mp2->sec[0].rec[vm->room_no] && vm->mp2->sec[0].len[vm->room_no] >= 22)
+				for (int i = 0; i < 7; i++) if (((vm->mp2->sec[0].rec[vm->room_no][6 + 2 * i] << 8) | vm->mp2->sec[0].rec[vm->room_no][7 + 2 * i]) == id) here = 1;
+			if (vm->sound) vm->sound(here ? 0x12 : 0x2A, vm->user);
+		}
+		break;
+	}
+	case 57: test_res(vm, w == vm->held); break;        /* 82F4: the held thing is w */
+	case 61: test_res(vm, vm->doorw[a[0]] != 0); break;   /* 82FF: door a[0] is locked */
 	case 8:                                             /* 7A82: take the thing out of the active (moving) list unless it is already inactive (A[5] bit 7, 5F2F); modelled as setting that bit */
 		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) vm->tail[tid][5] |= 0x80;
 		break;

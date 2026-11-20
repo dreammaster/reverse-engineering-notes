@@ -11,6 +11,8 @@ import acl
 class VM:
     def __init__(self, things, cur=0, room=0):
         self.things = things           # id -> bytearray(16)
+        self.doors = {}                # door id -> word at +2 of the door record (lock state); set by the caller
+        self.held = 0                  # ds:27A
         self.pristine = {k: bytes(v) for k, v in things.items()}   # the records as loaded (spawn copies them)
         self.cur = cur                 # id of the current object (ds:9C)
         self.room = room               # ds:232
@@ -53,6 +55,14 @@ class VM:
             r[3] &= 0x7F
             if had and r[10] != (self.room & 255):
                 r[3] |= 0x08
+        elif op == 10:                              # unlock door a[0]
+            self.doors[a[0]] = 0
+        elif op == 27:                              # set the word of door a[0]
+            self.doors[a[0]] = a[1] << 8 | a[2]
+        elif op == 57:                              # the held thing is w
+            self.c605 = (self.c605 + 1) & 255 if w == self.held else 0
+        elif op == 61:                              # door a[0] is locked
+            self.c605 = (self.c605 + 1) & 255 if self.doors.get(a[0], 0) else 0
         elif op == 0 and r is not None:             # remove the thing with this id (78D5; modelled as flag 0x80 like op 2)
             r[3] |= 0x80
         elif op == 26 and r is not None:            # hide

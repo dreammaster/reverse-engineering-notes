@@ -1228,6 +1228,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (rv->restarting) return;
 	roomview_tick(rv);
 	wk->tick++;
+	rv->vm.held = rv->held;
 	if (getenv("CAD_VARS")) { static uint8_t pg[0x190]; for (int i = 0; i < 0x190; i++) if (pg[i] != rv->vm.g[i]) { fprintf(stderr, "G tick %d g[%02x] %02x -> %02x\n", wk->tick, i, pg[i], rv->vm.g[i]); pg[i] = rv->vm.g[i]; } }
 	if (g_snd_log) { static int pf = -1, pr = -1; if (rv->vm.flags[467] != pf || rv->vm.room[467] != pr) { fprintf(stderr, "T467 unsup %d last %02x tick %d flags %02x room %d pos %d,%d,%d\n", rv->tad.unsupported, rv->tad.last_unsupported, wk->tick, rv->vm.flags[467], rv->vm.room[467], rv->vm.pos[3*467], rv->vm.pos[3*467+1], rv->vm.pos[3*467+2]); pf = rv->vm.flags[467]; pr = rv->vm.room[467]; } }
 	if (rv->look_pic) { int any = 0; for (int i = 0; i < 4; i++) any |= rv->msgs[i].active; if (!any) rv->look_pic = 0; }
