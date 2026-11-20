@@ -145,6 +145,7 @@ typedef struct RoomView_ {
 /* one 50 Hz timer tick: the game loop (and with it the object animation) steps every 2 ticks */
 static int room_key(const RoomView *rv) { return 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata; }
 /* ---- sound: BEEPER.BIN on the interpreter (engine/beeper.c); ids as the game's 1000:156C / 1000:1613 take them ---- */
+static const char *g_lang = "eng";     /* --lang eng|fre|ger: the language file ENGn.LNG / FREn.LNG / GERn.LNG */
 static int g_payoff;                  /* Cadaver 2 is installed (The Payoff follows Cadaver's last level) */
 static Beeper g_snd;
 static int g_snd_ok, g_snd_log;
@@ -328,7 +329,9 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	if (rv->names_ok) { lng_free(&rv->names); rv->names_ok = 0; }
 	if (rc == 0 && status_name_table(f[0], fl[0], rv->name_tbl) == 0) {
 		uint8_t *lg; size_t ll;
-		if (gamefiles_read_mjm(g, rv->use_tata ? "tata\\?\\eng?.lng" : "data\\?\\eng?.lng", rv->level, &lg, &ll) == 0) {
+		char lp[64];
+		snprintf(lp, sizeof(lp), "%s\\?\\%s?.lng", rv->use_tata ? "tata" : "data", g_lang);
+		if (gamefiles_read_mjm(g, lp, rv->level, &lg, &ll) == 0) {
 			rv->names_ok = lng_parse(lg, ll, &rv->names) == 0;
 			free(lg);
 		}
@@ -1515,6 +1518,7 @@ int main(int argc, char **argv) {
 			g_room.level = atoi(argv[++i]);
 		else if (!strcmp(argv[i], "--room") && i + 1 < argc)
 			g_room.room = atoi(argv[++i]);
+		else if (!strcmp(argv[i], "--lang") && i + 1 < argc) g_lang = argv[++i];
 		else if (!strcmp(argv[i], "--tata"))
 			start_tata = g_room.use_tata = 1;
 		else if (!strcmp(argv[i], "--sim") && i + 1 < argc)

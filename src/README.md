@@ -48,3 +48,5 @@ Arrows (and Insert/Delete/PgUp/PgDn for diagonals) move, End = fire (take the to
 With Cadaver 2 installed, `--scene game` starts Cadaver (DATA) with Space/Return and The Payoff (TATA) with `P` (or `--tata`); finishing Cadaver's last level continues into The Payoff's first.
 
 The window keeps the original's 4:3 shape (the 320×200 picture was shown on a 4:3 monitor); F11 toggles full screen.
+
+`--lang eng|fre|ger` picks the language file (default English); accented letters may be drawn with the wrong glyph (the status font table for them is not checked).
