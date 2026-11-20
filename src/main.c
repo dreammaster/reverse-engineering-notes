@@ -1618,7 +1618,7 @@ int main(int argc, char **argv) {
 					if (scene == SCENE_INTRO) { scene = SCENE_WALK; g_room.level = 1; g_room.room = 0; g_room.use_tata = (k == SDLK_p) || start_tata; }
 					else changed = 0;
 				}
-				else if (scene == SCENE_WALK && k == SDLK_PAUSE) { g_paused ^= 1; snd_silence(); changed = 0; }
+				else if (scene == SCENE_WALK && k == SDLK_PAUSE) { g_paused ^= 1; snd_silence(); if (!g_paused) { g_room.snd_key = 0; g_room.nroom_snd = 0; g_room.push_snd = 0; g_room.pending_rebuild = 1; } changed = 0; }
 				else if (k == SDLK_F11) { SDL_SetWindowFullscreen(win, (SDL_GetWindowFlags(win) & SDL_WINDOW_FULLSCREEN_DESKTOP) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_F5) { game_save(&g_walk, &g_room); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_F9) { game_load(&g_room); changed = 0; }
