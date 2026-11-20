@@ -17,8 +17,8 @@ The game data in `cadaver1/` and `cadaver2/` is copyrighted and only present so 
 ```bash
 cmake -S src -B build && cmake --build build
 ctest --test-dir build --output-on-failure          # needs the retail data next to the sources
-./build/cadaver -g cadaver1 --scene game            # title scroll, Space starts level 1
-./build/cadaver -g cadaver2 --scene game            # Space = Cadaver, P = The Payoff
+./build/cadaver -g cadaver1                         # title scroll, Space starts level 1 (= --scene game)
+./build/cadaver -g cadaver2                         # Space = Cadaver, P = The Payoff
 ```
 
 Keys: arrows (+ Insert/Delete/PgUp/PgDn diagonals) move, End = fire (verb menu / jump), Space or Return = rucksack, F1 = map, `I` = status, F5/F9 = quick save / load.

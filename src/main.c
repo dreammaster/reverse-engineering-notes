@@ -1506,6 +1506,7 @@ int main(int argc, char **argv) {
 	const char *sim = NULL;  /* headless walk simulation: right:30,down:10 */
 	Scene scene = SCENE_LOGO;
 	int start_tata = 0;          /* --tata with --scene game: Space starts The Payoff directly */
+	int scene_given = 0;
 	int game_mode = 0;           /* --scene game: title scroll, then Space/Return starts level 1 in the walk scene */
 	for (int i = 1; i < argc; i++) {
 		if (!strcmp(argv[i], "-g") && i + 1 < argc)
@@ -1523,6 +1524,7 @@ int main(int argc, char **argv) {
 		else if (!strcmp(argv[i], "--screenshot") && i + 1 < argc)
 			shot = argv[++i];
 		else if (!strcmp(argv[i], "--scene") && i + 1 < argc) {
+			scene_given = 1;
 			++i;
 			if (!strcmp(argv[i], "game")) game_mode = 1;
 			scene = game_mode ? SCENE_INTRO : !strcmp(argv[i], "objects") ? SCENE_OBJECTS : !strcmp(argv[i], "intro") ? SCENE_INTRO : !strcmp(argv[i], "walk") ? SCENE_WALK : !strcmp(argv[i], "tiles") ? SCENE_TILES : !strcmp(argv[i], "room") ? SCENE_ROOM : !strcmp(argv[i], "loading") ? SCENE_LOADING : !strcmp(argv[i], "sprites") ? SCENE_SPRITES
@@ -1543,6 +1545,7 @@ int main(int argc, char **argv) {
 
 	static Screen scr;
 	static uint32_t rgb[SCREEN_W * SCREEN_H];
+	if (!scene_given && !sim && !shot) { game_mode = 1; scene = SCENE_INTRO; }      /* plain `cadaver -g dir` plays the game */
 	if (load_scene(&g, scene, &scr) != 0)
 		return 1;
 
