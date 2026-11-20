@@ -203,8 +203,13 @@ private:
 	bool _combatMode = false;
 	int _music = 0;
 	void sfx(int effect, int param = 0) {
-		if (sound)
+		if (sound && _world.game != GameId::MartianDreams) // (the numbers of Ultima VI's effects mean nothing to Martian Dreams)
 			sound(effect, param);
+	}
+	/** Martian Dreams' sound effect n (GAME.EXE sub_303A9). */
+	void mdSfx(int effect) {
+		if (sound && _world.game == GameId::MartianDreams)
+			sound(effect, 0);
 	} // the track that should be playing: 1 to 12 in the order of the list at ds:2955 (ULTIMA, BOOTUP, INTRO, CREATE, FOREST, HORNPIPE, ENGAGE, STONES, DUNGEON, BRIT, GARGOYLE, END), 0 none
 	void chooseMusic();
 	void drawGem(Framebuffer &screen) const;

@@ -55,8 +55,10 @@ MdFrontEnd::MdFrontEnd(const std::string &dir) : _dir(dir) {
 // back in the menu: the original stops the music of the scene that was shown (loc_15C3B: sub_218FC(0))
 void MdFrontEnd::backToMenu() {
 	_state = MENU;
-	if (_music)
+	if (_music) {
 		_music->stop(0);
+		_music->stopEffects(0);
+	}
 }
 
 void MdFrontEnd::tick(unsigned ms) {

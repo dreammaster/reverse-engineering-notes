@@ -55,7 +55,7 @@ std::string Game::mdMemberName(int actor) const {
 void Game::mdTent(int idx) {
 	if (_solo >= 0) {
 		message("Not while in solo mode!\n");
-		sfx(5);
+		mdSfx(5);
 		return;
 	}
 	const World::Obj &t = _world.objects[idx];
@@ -78,7 +78,7 @@ void Game::mdTent(int idx) {
 				if (_world.flags.flags3[tile & (TileFlags::TILES - 1)] & 0x10)
 					continue;
 				message("The " + bare(Describe::object(_world, o)) + " is in the way.\n");
-				sfx(5);
+				mdSfx(5);
 				return;
 			}
 		}
@@ -86,7 +86,7 @@ void Game::mdTent(int idx) {
 		for (int sy = ty - 2; sy <= ty; ++sy)
 			if (_world.flags.flags1[_world.map.tile(z, sx & mask, sy & mask) & (TileFlags::TILES - 1)] & 2) {
 				message("The ground is not flat enough.\n");
-				sfx(5);
+				mdSfx(5);
 				return;
 			}
 	mdRestStart(tx, ty);
@@ -98,7 +98,7 @@ void Game::mdRestStart(int tx, int ty) {
 	message("Rest");
 	auto refuse = [&](const std::string &text) {
 		message(text);
-		sfx(5);
+		mdSfx(5);
 	};
 	if (al.globals.size() > 0x34 && al.globals[0x34]) {
 		message(" - ");
@@ -128,7 +128,7 @@ void Game::mdRestStart(int tx, int ty) {
 		if (_world.flags.flags3[tile & (TileFlags::TILES - 1)] & 0x10)
 			continue;
 		message(" - " + Describe::object(_world, o) + " is too near to set up camp.\n");
-		sfx(5);
+		mdSfx(5);
 		return;
 	}
 	if (_solo >= 0) {
@@ -181,7 +181,7 @@ bool Game::mdRestCamp() {
 	}
 	if (cannot) {
 		message(al.partySize > 1 ? "\nNobody can sleep.\n" : "\nYou can't sleep.\n");
-		sfx(5);
+		mdSfx(5);
 		return true;
 	}
 	// the tent: five pieces (type 0x86, frames 3, 5, 6, 9 and 8), the last one with its flap open while the party sleeps

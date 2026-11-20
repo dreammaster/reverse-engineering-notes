@@ -59,7 +59,7 @@ void Game::mdGet(int tx, int ty) {
 	if (a >= 0 && (std::abs(tx - (int)_world.objects[a].x) > 1 || std::abs(ty - (int)_world.objects[a].y) > 1)) {
 		if (!mdPsychic(actor, 0) || mdReach() < mdDistance(_world.objects[a].x, _world.objects[a].y, tx, ty)) {
 			message("Out of range!\n");
-			sfx(5);
+			mdSfx(5);
 			end();
 			return;
 		}
@@ -75,18 +75,18 @@ void Game::mdGet(int tx, int ty) {
 		tenth |= t == type;
 	if ((total == 0 && !tenth) || single >= 10000) {
 		message("That is not possible.\n");
-		sfx(5);
+		mdSfx(5);
 		end();
 		return;
 	}
 	if (_world.actors.strength[actor] * 20 < total + _world.carriedWeight(actor)) {
 		message("\nThe total is too heavy.\n");
-		sfx(5);
+		mdSfx(5);
 		end();
 		return;
 	}
 	if (dist > 1)
-		sfx(0x32);
+		mdSfx(0x32);
 	_world.spendMoves(actor, 3);
 	// radium (0x1C0, 0x1C1) is hot: without telekinesis, tongs (0x88) in a hand, or being the mechanical man it poisons
 	if (type == 0x1C0 || type == 0x1C1) {
@@ -130,7 +130,7 @@ void Game::mdGet(int tx, int ty) {
 			mdTake(pick, actor, ObjRecord::IN_INVENTORY);
 		} else {
 			message("Won't budge !\n");
-			sfx(0);
+			mdSfx(0);
 		}
 	} else if (type == 0x6E || type == 0x70 || type == 0x72 || type == 0x74 || type == 0x76) { // a lit lamp goes into a hand
 		Equipment::Slots slots = Equipment::of(_world, actor);

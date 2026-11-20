@@ -208,7 +208,7 @@ bool Game::mdInReach(int tx, int ty) {
 		return false;
 	}
 	if (dist > 1)
-		sfx(0x32);
+		mdSfx(0x32);
 	return true;
 }
 
@@ -238,7 +238,7 @@ void Game::mdChosen(int tx, int ty) {
 	if (pick < 0) { // the ground (sub_35972 returns -1 and leaves the square): its name, and it must be within reach
 		message(mdGroundName(tx, ty) + ".\n");
 		if (!mdInReach(tx, ty)) {
-			sfx(5);
+			mdSfx(5);
 			mdContinue(_mdStage, -2);
 			return;
 		}
@@ -248,7 +248,7 @@ void Game::mdChosen(int tx, int ty) {
 	message(Describe::object(_world, _world.objects[pick]) + ".\n");
 	_mdDist = 1;
 	if (!carriedObject(_world.objects[pick]) && !mdInReach(tx, ty)) {
-		sfx(5);
+		mdSfx(5);
 		mdContinue(_mdStage, -2);
 		return;
 	}
@@ -277,7 +277,7 @@ void Game::mdPlant(int tx, int ty) {
 	bool ground = (tile >= 0x20 && tile <= 0x24) || tile == 0x0C || tile == 0x0D || (tile >= 0x28 && tile <= 0x3F) || tile == 0x7C || tile == 0x7D || tile == 0x7F;
 	if (!ground) {
 		message("Won't grow there!\n");
-		sfx(5);
+		mdSfx(5);
 		mdFinish();
 		return;
 	}
@@ -485,24 +485,24 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		switch (t) {
 		case 0x11A:
 			message("Thump! Thump!\n");
-			sfx(0x34);
-			sfx(0x34);
+			mdSfx(0x34);
+			mdSfx(0x34);
 			break;
 		case 0x118:
 			message("Ching!\n");
-			sfx(0x36);
+			mdSfx(0x36);
 			break;
 		case 0x119:
 			message("Shing!\n");
-			sfx(0x35);
+			mdSfx(0x35);
 			break;
 		case 0x11B:
 			message("Wheeeeze\n");
-			sfx(0x37);
+			mdSfx(0x37);
 			break;
 		case 0x12A:
 			message("GONG!!!!\n");
-			sfx(0xF);
+			mdSfx(0xF);
 			break;
 		default:
 			message("You play the " + Describe::object(_world, _world.objects[inst]) + ".\n");
@@ -518,16 +518,16 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			int base = seFind(0x19D, sw.x - 1, sw.y - 1);
 			if (base < 0) {
 				message("This switch cannot be fixed.\n");
-				sfx(5);
+				mdSfx(5);
 				break;
 			}
 			sw.frame = _world.objects[base].frame;
 			sw.quality = 0;
-			sfx(0x1F);
+			mdSfx(0x1F);
 			message("The switch is fastened.\n");
 		} else {
 			sw.quality = 1;
-			sfx(0x1F);
+			mdSfx(0x1F);
 			message("The switch is loose.\n");
 		}
 		break;
@@ -545,7 +545,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		_world.objects[n].frame = 1;
 		_world.deleteObject(first);
 		_world.deleteObject(cart);
-		sfx(0x1F);
+		mdSfx(0x1F);
 		message("The drill's power is connected.\n");
 		break;
 	}
@@ -560,19 +560,19 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		int q = pn.quality, kind = pn.quantity;
 		if (q == 0) {
 			pn.quality = 1;
-			sfx(0x1F);
+			mdSfx(0x1F);
 			message("The panel is loose.\n");
 			break;
 		}
 		if (q & 2) {
 			message("It must be repaired first.\n");
-			sfx(5);
+			mdSfx(5);
 			break;
 		}
 		int cab = seFind(0x1C9, pn.x, pn.y);
 		if (cab < 0) {
 			message("Panels are only installed onto cabinets.\n");
-			sfx(5);
+			mdSfx(5);
 			break;
 		}
 		int cq = _world.objects[cab].quality;
@@ -585,11 +585,11 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			fits = cq == kind;
 		if (!fits) {
 			message("This cabinet requires a different type of panel.\n");
-			sfx(5);
+			mdSfx(5);
 			break;
 		}
 		pn.quality = (uint8_t)(pn.quality - 1);
-		sfx(0x1F);
+		mdSfx(0x1F);
 		message("The panel is fastened.\n");
 		if (pn.quality == 4) { // (the original tests the quality it has just left)
 			_world.actors.talkFlags[0x74] |= 8;
@@ -599,7 +599,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		break;
 	}
 	case 7: // sub_59CC9: a sledge hammer (item) on a track: the first partner is used up and the second becomes the mended rail (0x19E)
-		sfx(0x20);
+		mdSfx(0x20);
 		message("Which section of rail needs fixing -\n");
 		if (first >= 0)
 			_world.deleteObject(first);
@@ -681,7 +681,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			message("It has no effect.\n");
 			break;
 		}
-		sfx(0x20);
+		mdSfx(0x20);
 		geode.frame = 1;
 		int n = seRoll(1, 50) + seRoll(1, 50);
 		bool held = carriedObject(geode);
@@ -699,13 +699,13 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 	case 27: { // sub_5EC84: the battle frenzy elixir: only in combat; the member gets the flag 0x80 (wild) and the elixir is used up
 		if (_world.actors.globals.size() <= 0x34 || !_world.actors.globals[0x34]) {
 			message("That would be a waste outside of combat.\n");
-			sfx(5);
+			mdSfx(5);
 			break;
 		}
 		int me = _world.actorObject(actingActor());
 		if (me >= 0 && !(_world.objects[me].status & 0x80)) {
 			message(_combat.nameOf(actingActor()) + " enters a battle frenzy!\n");
-			sfx(0x32);
+			mdSfx(0x32);
 		}
 		if (me >= 0)
 			_world.objects[me].status |= 0x80;
@@ -719,7 +719,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		int t = lamp.type, q = lamp.quality;
 		if (((t == 0x75 || t == 0x76) && q >= 0x7E) || ((t == 0x73 || t == 0x74) && q >= 0xB2)) {
 			message("\nIt's already full.\n");
-			sfx(5);
+			mdSfx(5);
 			break;
 		}
 		consumeOne(item);
@@ -753,7 +753,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			break;
 		if (a == b) {
 			message("\n\nAn item can't be placed inside itself!\n");
-			sfx(5);
+			mdSfx(5);
 			break;
 		}
 		int fa = _world.objects[a].frame, fb = _world.objects[b].frame;
@@ -763,12 +763,12 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		if (fb > 0) {
 			message("There is already something in the bucket.\n");
-			sfx(5);
+			mdSfx(5);
 			break;
 		}
 		if (fa == 0) {
 			message("There is nothing in the bucket.\n");
-			sfx(5);
+			mdSfx(5);
 			break;
 		}
 		_world.objects[b].frame = (uint8_t)fa;
@@ -812,7 +812,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			break;
 		}
 		seMake(cls, nx, ny, z, 1);
-		sfx(0x1B);
+		mdSfx(0x1B);
 		break;
 	}
 	case 12: { // sub_5A9C5: a shovel moves a pile (first: rocks, iron ore, coal) onto an empty, passable square (the second partner's): what was under it is let go
@@ -824,11 +824,11 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		_world.objectsAt(tx, ty, z, there);
 		if ((_world.flags.flags1[_world.map.tile(z, tx, ty) & (TileFlags::TILES - 1)] & 2) || !there.empty()) {
 			message("That is not possible.\n");
-			sfx(5);
+			mdSfx(5);
 			_mdFail = -1;
 			break;
 		}
-		sfx(0x1B);
+		mdSfx(0x1B);
 		int ox = _world.objects[first].x, oy = _world.objects[first].y;
 		_world.moveObject(first, tx, ty, z);
 		_world.objects[first].frame = 0;
@@ -851,8 +851,8 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		mdSpill(px, py);
 		_world.deleteObject(first);
 		_world.deleteObject(second);
-		sfx(0x1B);
-		sfx(0x1B);
+		mdSfx(0x1B);
+		mdSfx(0x1B);
 		message("You filled in the hole.\n");
 		break;
 	}
@@ -860,7 +860,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		if (first < 0 || second < 0)
 			break;
 		int t = _world.objects[first].type, fr = _world.objects[second].frame;
-		sfx(0x1B);
+		mdSfx(0x1B);
 		_world.deleteObject(first);
 		if (t != 0x1BC) {
 			message("It has no effect.\n");
@@ -883,11 +883,11 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		if (box.type == 0x10C) {
 			if (box.quantity == 1) {
 				message("There is no more room.\n");
-				sfx(5);
+				mdSfx(5);
 				_mdFail = 1;
 				break;
 			}
-			sfx(0x1B);
+			mdSfx(0x1B);
 			box.quantity = 1;
 			box.quality = (uint8_t)k;
 			message("You put the " + what + " into the wheelbarrow.\n");
@@ -896,13 +896,13 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			int n = box.quantity;
 			if (n == 7) {
 				message("There is no more room.\n");
-				sfx(5);
+				mdSfx(5);
 				_mdFail = 1;
 				break;
 			}
 			if (n != 0 && k != box.quality) {
 				message("You can't mix different things in the same load!\n");
-				sfx(5);
+				mdSfx(5);
 				_mdFail = 1;
 				break;
 			}
@@ -910,7 +910,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			box.quality = (uint8_t)k;
 			box.frame = (uint8_t)((box.frame & 1) + (n == 7 ? 4 : 2));
 			box.quantity = (uint8_t)n;
-			sfx(0x1B);
+			mdSfx(0x1B);
 			message("You put the " + what + " into the rail car.\n");
 			_world.deleteObject(first);
 		}
@@ -953,7 +953,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		int cx = _world.objects[first].x, cy = _world.objects[first].y, cq = _world.objects[first].quality;
 		if (_world.objects[first].quantity == 0) {
 			message("There is nothing to unload.\n");
-			sfx(5);
+			mdSfx(5);
 			break;
 		}
 		int pile = seMake(cq == 2 ? 0x1BA : cq == 3 ? 0x1BB : cq == 4 ? 0x1BC : 0x102, cx, cy, _world.objects[first].z, 1);
@@ -992,7 +992,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		if (base < 0) {
 			message("It has no effect.\n");
-			sfx(5);
+			mdSfx(5);
 			break;
 		}
 		int next = o.frame == 0 ? 1 : 0;
@@ -1128,7 +1128,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			World::Obj copy = _world.objects[idx];
 			if (_world.carriedWeight(actor) + _world.weightOfType(copy.type, copy.quantity) > _world.actors.strength[actor] * 20) {
 				message("You are carrying too much already.\n");
-				sfx(5);
+				mdSfx(5);
 				break;
 			}
 			idx = _world.addToInventory(actor, copy.type, copy.quality, copy.quantity);
@@ -1219,7 +1219,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		if (fill == 0) {
 			message("There is nothing in the bucket.\n");
-			sfx(5);
+			mdSfx(5);
 			break;
 		}
 		if (first < 0) {
@@ -1243,7 +1243,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			} else {
 				int q = _world.objects[first].quality | 8;
 				_world.objects[first].quality = (uint8_t)q;
-				sfx(4);
+				mdSfx(4);
 				message("You pour the water onto the seed.\n");
 				if (q == 0xF && _world.objects[seed].frame == 0 && al.globals.size() > 7) {
 					_world.objects[seed].quality = al.globals[6];
@@ -1254,7 +1254,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			int t2 = _world.map.tile(z, sx, sy);
 			bool soil = (t2 >= 0x20 && t2 <= 0x24) || t2 == 0x0C || t2 == 0x0D || (t2 >= 0x28 && t2 <= 0x3F) || t2 == 0x7C || t2 == 0x7D || t2 == 0x7F;
 			if (!carriedObject(_world.objects[first]) && soil) {
-				sfx(4);
+				mdSfx(4);
 				_world.objects[first].type = 0x9D;
 				_world.objects[first].frame = 0;
 				_world.objects[first].quality = (uint8_t)seRoll(10, 15);
@@ -1263,7 +1263,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			}
 		} else if (type == 0x9D) {
 			if (_world.objects[first].frame == 0) {
-				sfx(4);
+				mdSfx(4);
 				_world.objects[first].frame = 1;
 				_world.objects[first].quality = (uint8_t)seRoll(10, 15);
 			} else {
@@ -1289,7 +1289,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		message("Push lever to ");
 		mdAskKey([this, lever](int key) {
 			int dir = key == KEY_UP ? 0 : key == KEY_PGUP ? 1 : key == KEY_RIGHT ? 2 : key == KEY_PGDN ? 3 : key == KEY_DOWN ? 4 : key == KEY_END ? 5 : key == KEY_LEFT ? 6 : key == KEY_HOME ? 7 : -1;
-			sfx(0x11);
+			mdSfx(0x11);
 			if (dir < 0) {
 				message("center.\n");
 				_world.objects[lever].frame = 4;
@@ -1453,14 +1453,14 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		for (int l : levers)
 			_world.objects[l].frame = (uint8_t)state;
-		sfx(0x11);
+		mdSfx(0x11);
 		break;
 	}
 	case 39: { // sub_5DB79: the drill (item, 0x1B9) bores the square its frame faces (frame 1 west, 3 north, 4 east, else south): an iron vein (0x1BD) gives iron ore (0x1BB), a coal vein (0x1BE) coal (0x1BC), the rock terrain 0xF0-0xFB rocks (0x1BA); somebody there is hurt (1-40); else "There is nothing to drill into." The ore lies on the first free square round the drill, starting by where it points ("There is no room left for the ore."), and a vein is used up by its quality
 		static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
 		int mask = z == 0 ? 0x3FF : 0xFF;
 		int actor = actingActor(), fr = o.frame, ix = o.x, iy = o.y;
-		sfx(0x10);
+		mdSfx(0x10);
 		int fx = fr == 1 ? ix - 1 : fr == 4 ? ix + 1 : ix, fy = fr == 3 ? iy - 1 : fr == 1 || fr == 4 ? iy : iy + 1;
 		fx &= mask;
 		fy &= mask;
@@ -1489,7 +1489,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 					_combat.applyDamage(actor, victim, seRoll(1, 40));
 				else {
 					message("There is nothing to drill into.\n");
-					sfx(5);
+					mdSfx(5);
 				}
 				break;
 			}
@@ -1530,7 +1530,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 	}
 	case 53: { // sub_5D046: dreamstuff (item, 0x14B, a container) is imagined into what it holds: "You imagine nothing!" when empty; a thing (type below 0x156) is named and laid where the dreamstuff lay, or put in the pack of whoever has it, and the dreamstuff is used up
 		// APPROX(76): a creature in the dreamstuff (a type from 0x156, brought to life by sub_2652C beside the party with the side that the quality names) is not done
-		sfx(0x32);
+		mdSfx(0x32);
 		message("You imagine ");
 		int inside = -1;
 		for (size_t i = 0; i < _world.objects.size() && inside < 0; ++i)
@@ -1596,8 +1596,8 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			dex = 1;
 		for (int n = 0; n < 1000; ++n) {
 			if (n)
-				sfx(0x1C + seRoll(0, 2));
-			sfx(0x1C + seRoll(0, 2));
+				mdSfx(0x1C + seRoll(0, 2));
+			mdSfx(0x1C + seRoll(0, 2));
 			_world.objects[b1].frame = (uint8_t)seRoll(0, frames);
 			_world.objects[b2].frame = (uint8_t)seRoll(0, frames);
 			if (seRoll(0, 40) >= dex)
@@ -1650,7 +1650,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 				break;
 			}
 			_world.deleteObject(item);
-			sfx(4);
+			mdSfx(4);
 			message("The radium has been installed.\n");
 			_world.objects[other].frame = 1;
 			_world.actors.talkFlags[0x74] |= 4;
@@ -1687,7 +1687,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		auto fail = [&](const std::string &text) {
 			message(text);
-			sfx(5);
+			mdSfx(5);
 			_mdFail = 1;
 		};
 		const World::Obj target = _world.objects[second];
@@ -1710,7 +1710,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			_mdFail = 1;
 			break;
 		}
-		sfx(0x1B);
+		mdSfx(0x1B);
 		std::vector<int> here, above;
 		_world.objectsAt(tx, ty, z, here);
 		int newType = 0x102, count = 0, seeds = 0;
@@ -1750,7 +1750,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		mdPlace(pile, tx, ty, z);
 		_world.objects[pile].frame = 0;
 		_world.objects[pile].status &= 0xDF;
-		sfx(0x1B);
+		mdSfx(0x1B);
 		if (newType == 0xFB) {
 			_world.objects[pile].type = 0xFB;
 			message("You planted the Martian seed.\n");
@@ -1804,7 +1804,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		if (_world.objects[plant].frame > 0)
 			message("You uprooted the pod plant.\n");
-		sfx(0x1B);
+		mdSfx(0x1B);
 		_world.deleteObject(plant);
 		break;
 	}
@@ -1844,7 +1844,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			pour(1, "You pour the nitrogen compound onto the mound.\n");
 		} else if (kind == 2) {
 			message("The seed is destroyed by acid.\n");
-			sfx(5);
+			mdSfx(5);
 			_world.deleteObject(seed);
 			_world.objects[mound].type = 0x102;
 			_world.objects[mound].quantity = 0;
@@ -1875,25 +1875,25 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		};
 		if (t.type != 0x155 && !member) {
 			message("The " + bare(t) + " doesn't need oxygenated air.\n");
-			sfx(5);
+			mdSfx(5);
 			break;
 		}
 		if (t.type == 0x155) {
 			int dead = t.quality;
 			if (dead >= 0x10 || !_world.resurrect(dead)) {
 				message("The " + bare(t) + " is beyond help.\n");
-				sfx(5);
+				mdSfx(5);
 				if (dead >= 0x10)
 					_world.deleteObject(first);
 			} else {
 				_world.actors.status[dead] = (uint8_t)((_world.actors.status[dead] & 0x9F & 0xF7) | 0x40);
 				int k = _world.actorObject(dead);
 				message(Describe::object(_world, _world.objects[k]) + " is revived!\n");
-				sfx(4);
+				mdSfx(4);
 			}
 		} else {
 			message(Describe::object(_world, t) + " is revived!\n");
-			sfx(4);
+			mdSfx(4);
 			_world.actors.hp[t.actor] = (uint8_t)ActorStats::maxHealth(_world, t.actor);
 		}
 		consumeOne(item);
@@ -1976,11 +1976,11 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 					break;
 				}
 			message("\nYou incinerated the " + s + ".\n");
-			sfx(9);
+			mdSfx(9);
 			_world.deleteObject(first);
 		} else {
 			message("It has no effect.\n");
-			sfx(5);
+			mdSfx(5);
 		}
 		break;
 	}
@@ -2029,7 +2029,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			}
 			break;
 		}
-		sfx(0x1F);
+		mdSfx(0x1F);
 		consumeOne(first);
 		al.talkFlags[0x73] |= 0x10;
 		break;
@@ -2097,7 +2097,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			break;
 		}
 		int actor = actingActor(), kind = o.type - 0x49, sensed = 0;
-		sfx(0x32);
+		mdSfx(0x32);
 		if (kind == 0)
 			sensed = mdPsychic(actor, 0) ? _world.actors.level[actor] : 0;
 		else if (kind == 1 || kind == 2)
@@ -2221,7 +2221,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		message("Press keys 1-0 to play -");
 		mdAskKey([this](int key) {
 			if (key >= '0' && key <= '9') {
-				sfx(key - 10);
+				mdSfx(key - 10);
 				return false;
 			}
 			return true;
@@ -2235,7 +2235,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		int mask = z == 0 ? 0x3FF : 0xFF;
 		int dir = (o.frame & 3) * 2, cannon = item;
 		message("\nFire!\n");
-		sfx(0x30);
+		mdSfx(0x30);
 		int ex = (o.x + DX[dir]) & mask, ey = (o.y + DY[dir]) & mask;
 		auto personAt = [&](int sx, int sy) {
 			std::vector<int> here;
@@ -2269,7 +2269,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			ex = (ex + DX[(dir + 4) & 7]) & mask;
 			ey = (ey + DY[(dir + 4) & 7]) & mask;
 		}
-		sfx(0xB);
+		mdSfx(0xB);
 		for (int dx = -1; dx <= 1; ++dx)
 			for (int dy = -1; dy <= 1; ++dy) {
 				std::vector<int> around;
@@ -2295,10 +2295,10 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			}
 		if (door > 0) {
 			message("Splat! There is no effect.\n");
-			sfx(5);
+			mdSfx(5);
 		} else if (door < 0) {
 			message("Kaboom! You blew the door down!\n");
-			sfx(4);
+			mdSfx(4);
 			_world.actors.talkFlags[0x41] |= 4;
 		}
 		break;
@@ -2329,7 +2329,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		}
 		door.quality = (uint8_t)(q + 0x80);
 		message("The door is unstuck.\n");
-		sfx(4);
+		mdSfx(4);
 		consumeOne(item);
 		break;
 	}

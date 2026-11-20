@@ -232,6 +232,7 @@ int main(int argc, char **argv) {
 	bool mdPlaying = false;
 	if (id == Ultima6::GameId::MartianDreams && !std::getenv("U6_NO_MUSIC") && mdGameMusic.load(argv[1], "MUSIC.LZC")) {
 		backend->setMusicSource(&mdGameMusic);
+		mdGameMusic.useEffects(Ultima6::Ultima6::MdMusic::GAME);
 		mdPlaying = true;
 	}
 	struct DetachGame { // (declared after the synthesiser: the audio thread lets go of it first)
@@ -244,7 +245,9 @@ int main(int argc, char **argv) {
 	game.saveDir = saveDir;
 	Ultima6::BorlandRandom sfxRandom(7);
 	game.sound = [&](int effect, int param) {
-		if (!std::getenv("U6_NO_MUSIC"))
+		if (mdPlaying) // Martian Dreams: the effects are notes of the AdLib's timbres (GAME.EXE's sub_303A9), played by the same synthesiser as the music
+			mdGameMusic.soundEffect(effect);
+		else if (!std::getenv("U6_NO_MUSIC"))
 			backend->playSound(Ultima6::Sfx::render(effect, param, sfxRandom));
 	};
 

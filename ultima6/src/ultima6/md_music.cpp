@@ -8,6 +8,8 @@
 namespace Ultima6 {
 namespace Ultima6 {
 
+#include "ultima6/md_sfx_data.inc"
+
 namespace {
 
 // The channels' tables of MARTIAN.EXE's data segment at the start (ds:1B26, 1B31, 1B3C, 1B47, 1B5F, 1B6C), index 0-16 (the MIDI channel + 1)
@@ -38,6 +40,7 @@ MdMusic::MdMusic() : _requestPlay(-1), _requestStop(-1), _requestBase(-1), _requ
 	std::memcpy(_program, PROGRAM_INIT, sizeof _program);
 	std::memcpy(_active, ACTIVE_INIT, sizeof _active);
 	std::memset(_held, 0, sizeof _held);
+	useEffects(FRONT_END);
 }
 
 bool MdMusic::load(const std::string &dir, const char *songFile) {
@@ -335,6 +338,8 @@ int MdMusic::sequence() {
 			int di = (tr.status & 0x0F) + 1;
 			if (_active[di] == 0 || _held[di] < 0)
 				initChannel(di);
+			if (_active[di] == 1)
+				claim(di); // sub_20496: the music has the voice back
 			int kind = tr.status & 0xF0;
 			if (kind == 0x80 || kind == 0x90) {
 				int vel = next(t);
@@ -399,10 +404,233 @@ void MdMusic::tick() {
 		_queued = -1;
 		start(q);
 	}
+	effectsTick();
 	_adlib.tick();
 }
 
+void MdMusic::lockRequests() {
+	while (_requestLock.test_and_set(std::memory_order_acquire)) {
+	}
+}
+
+void MdMusic::unlockRequests() {
+	_requestLock.clear(std::memory_order_release);
+}
+
+void MdMusic::useEffects(EffectTable table) {
+	if (table == GAME) {
+		_steps = MD_GAME_EFFECTS;
+		_stepCount = 56;
+	} else {
+		_steps = MD_FRONT_EFFECTS;
+		_stepCount = 2;
+	}
+}
+
+void MdMusic::effect(int index, int flags, int volume, int pan, int id, int priority) {
+	lockRequests();
+	_requests.push_back({0, index, flags, volume, pan, id, priority});
+	unlockRequests();
+}
+
+void MdMusic::stopEffects(int id) {
+	lockRequests();
+	_requests.push_back({1, id, 0, 0, 0, 0, 0});
+	unlockRequests();
+}
+
+// sub_20496 (for the voice the effect takes: priority; for the music: 0): the voice's priority, and any other effect that has the voice is over
+void MdMusic::claim(int channel) {
+	if (channel < 2 || channel > 9)
+		return;
+	for (Slot &sl : _slot)
+		if (sl.channel == channel)
+			sl.channel = 0;
+}
+
+// sub_20591: the voice an effect gets (the data of the original leave it always the voice 2: byte_28DFD)
+int MdMusic::allocateChannel(int priority) {
+	const int channel = 2;
+	for (Slot &sl : _slot)
+		if (sl.channel == channel)
+			sl.channel = 0;
+	_held[channel] = (int8_t)priority;
+	return channel;
+}
+
+// sub_2052F: the effect lets go of its voice, the music will set it up again at its next event
+void MdMusic::releaseChannel(int channel) {
+	if (channel < 2 || channel > 9)
+		return;
+	_adlib.controller(channel, 0x7B, 0);
+	_active[channel] = 0;
+}
+
+// sub_20C52: the voice is the music's again at once
+void MdMusic::restoreChannel(int channel) {
+	if (_active[channel] != 2)
+		return;
+	releaseChannel(channel);
+	_adlib.controller(channel, 0x7B, 0);
+	_adlib.program(channel, _program[channel]);
+	_sent[channel] = _program[channel];
+	_adlib.controller(channel, 7, (int)(int16_t)(_volume[channel] * _master) >> 8);
+	_adlib.controller(channel, 0x0A, _pan[channel]);
+	_active[channel] = 1;
+}
+
+// sub_205D9: the slot's step is played
+void MdMusic::startStep(int n) {
+	Slot &sl = _slot[n];
+	if (!sl.step)
+		return;
+	const uint8_t *rec = sl.step;
+	int timbre = rec[1];
+	if (timbre == 0 || sl.channel == 0) { // the effect is over
+		releaseChannel(sl.channel);
+		if (sl.flags & 1)
+			releaseChannel(sl.channel2);
+		if (!(sl.flags & 2))
+			sl.channel = 0;
+		return;
+	}
+	const int note = rec[2], velocity = rec[3], duration = rec[4] | (rec[5] << 8);
+	int volumeLeft, volumeRight, panLeft, panRight;
+	if (sl.flags & 1) { // stereo: the two voices are panned apart
+		panLeft = 0;
+		panRight = 0x7F;
+		volumeLeft = ((sl.pan < 0x20 ? 0x7F : 0x9F - sl.pan) * sl.volume) >> 7;
+		volumeRight = ((sl.pan > 0x5F ? 0x7F : sl.pan + 0x20) * sl.volume) >> 7;
+	} else {
+		volumeLeft = volumeRight = sl.volume;
+		panLeft = panRight = sl.pan;
+	}
+	auto play = [&](int channel, int volume, int pan) {
+		if (_active[channel] != 2) {
+			_adlib.controller(channel, 0x7B, 0);
+			_active[channel] = 2;
+		}
+		_adlib.program(channel, timbre - 1);
+		_sent[channel] = (uint8_t)(timbre - 1);
+		_adlib.controller(channel, 7, volume);
+		_adlib.controller(channel, 0x0A, pan);
+		_adlib.note(channel, note, velocity);
+	};
+	play(sl.channel, volumeLeft, panLeft);
+	if ((sl.flags & 1) && sl.channel2)
+		play(sl.channel2, volumeRight, panRight);
+	sl.note = note;
+	sl.timer = duration;
+}
+
+// sub_20951
+void MdMusic::doEffect(int index, int flags, int volume, int pan, int id, int priority) {
+	if (!_steps || index < 0 || index >= _stepCount)
+		return;
+	int channel = 0, channel2 = 0, free = -1, found = -1;
+	for (int i = 0; i < 32; ++i) {
+		if (_slot[i].channel != 0) {
+			if (_slot[i].id == id) { // the same effect again: the old one stops, its voice is the new one's
+				channel = _slot[i].channel;
+				channel2 = _slot[i].channel2;
+				_adlib.note(channel, _slot[i].note, 0);
+				if (_slot[i].flags & 1)
+					_adlib.note(channel2, _slot[i].note, 0);
+				_slot[i].channel = 0;
+				found = i;
+				break;
+			}
+		} else {
+			free = i;
+		}
+	}
+	int slot = found;
+	if (channel == 0 && free >= 0) {
+		slot = free;
+		channel = allocateChannel(priority);
+		if (channel != 0 && (flags & 1))
+			channel2 = allocateChannel(priority);
+	}
+	if (slot < 0 || channel == 0 || (channel2 == 0 && (flags & 1)))
+		return;
+	Slot &sl = _slot[slot];
+	sl.flags = flags;
+	sl.channel = channel;
+	sl.channel2 = channel2;
+	sl.volume = volume;
+	sl.pan = pan;
+	sl.id = id;
+	sl.step = _steps[index];
+	startStep(slot);
+}
+
+// sub_20D32 / sub_20CC0 with no step: every effect named `id` (or all) stops and its voice goes back to the music
+void MdMusic::doStop(int id) {
+	for (Slot &sl : _slot) {
+		if (sl.step && (id == 0 || sl.id == id) && sl.channel != 0) {
+			restoreChannel(sl.channel);
+			if (sl.flags & 1)
+				restoreChannel(sl.channel2);
+			sl.channel = 0;
+		}
+	}
+}
+
+// sub_207F4: the effects' timers, one tick
+void MdMusic::effectsTick() {
+	for (int i = 0; i < 32; ++i) {
+		Slot &sl = _slot[i];
+		if (!sl.step || sl.channel == 0)
+			continue;
+		const int flags = sl.step[0];
+		if (flags & 4)
+			continue;
+		if (--sl.timer != 0)
+			continue;
+		_adlib.note(sl.channel, sl.note, 0);
+		if (sl.flags & 1)
+			_adlib.note(sl.channel2, sl.note, 0);
+		bool changed = false;
+		if (flags & 2) {
+			if (sl.step[6] > sl.note) {
+				++sl.note;
+				changed = true;
+			} else if (sl.step[6] < sl.note) {
+				--sl.note;
+				changed = true;
+			} else {
+				sl.note = sl.step[2];
+			}
+		}
+		if (flags & 8)
+			changed = true;
+		if (changed) {
+			_adlib.note(sl.channel, sl.note, sl.step[3]);
+			sl.timer = sl.step[4] | (sl.step[5] << 8);
+		} else if (flags & 1) {
+			sl.step += 8;
+			startStep(i);
+		} else {
+			releaseChannel(sl.channel);
+			if (sl.flags & 1)
+				releaseChannel(sl.channel2);
+			if (!(sl.flags & 2))
+				sl.channel = 0;
+		}
+	}
+}
+
 void MdMusic::render(int16_t *out, int count) {
+	lockRequests();
+	std::vector<Request> requests;
+	requests.swap(_requests);
+	unlockRequests();
+	for (const Request &r : requests) {
+		if (r.kind == 0)
+			doEffect(r.a, r.b, r.c, r.d, r.e, r.f);
+		else
+			doStop(r.a);
+	}
 	int base = _requestBase.exchange(-1);
 	if (base >= 0) { // sub_38C3D (and the function at seg048:1F9A)
 		_base = base;

@@ -258,6 +258,14 @@ void MdIntro::run() {
 			if (_music)
 				_music->play(o.a);
 			break;
+		case 14: // sub_20951
+			if (_music)
+				_music->effect(o.a, o.b, o.c, o.d, o.e, o.f);
+			break;
+		case 15: // sub_20D32
+			if (_music)
+				_music->stopEffects(o.a);
+			break;
 		case 13: // sub_218FC
 			if (_music)
 				_music->stop(o.a);

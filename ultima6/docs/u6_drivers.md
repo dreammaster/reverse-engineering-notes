@@ -79,3 +79,10 @@ stops the song, over n ticks if n is not 0 (the volume falls by 0x8000 / n a tic
 GAME.EXE carries the same sequencer (`sub_37CE2` is `sub_21038` with other data addresses) and plays the 16 songs of `MUSIC.LZC` (read by `sub_2FB2D` into the handles at ds:EA90): every turn of the main loop `sub_2FD45` asks
 `sub_2FD00` which one goes with the place (level 2 or 3: song 3; any other level above the surface: 2; combat, `globals[0x34]`: 8; else the day, hours 6-17: 0, the night: 1) and `sub_2FC44` starts it (volume
 from ds:189E: 215, 215, 225, 225, 230, then 165), fades the old one out over 60 ticks when the song changes, and starts the same song again when it has ended; `sub_2FD5E` plays the story scenes' songs.
+
+Sound effects (`sub_20951` in MARTIAN.EXE, `sub_375FB` in GAME.EXE; `sub_303A9(n)` plays effect n): an effect is a run of 8-byte steps (flags, timbre + 1, note, velocity, duration in 60 Hz ticks as a word, second note, 0;
+GAME.EXE's 56 at ds:16DC, MARTIAN.EXE's two at ds:04CB). The slots at ds:1966 (32 of 14 bytes: flags, voice, second voice, note, volume, pan, id, ticks left, step pointer) are filled by `sub_20951(step, flags, volume, pan, id, priority)`: an
+effect with the id of a playing one replaces it; the voice is the one `sub_20591` gives (always voice 2 here, `byte_28DFD`), which the music loses (`ds:1B6C` = 2) until the effect ends (`sub_2052F`: all notes off, the music
+sets it up again at its next event). `sub_205D9` plays a step (the program is timbre - 1, the volume and pan controllers, the note), `sub_207F4` (after the music, each tick) counts down: at 0 the note is released and
+the flags decide: 1 the next step follows, 2 the pitch slides a semitone toward the second note each time, 4 the step holds (the effect goes on until `sub_20D32` stops it), 8 the note is played again. C++: `MdMusic::effect`,
+`MdMusic::soundEffect`, `tools/gen_md_sfx.py` for the tables.

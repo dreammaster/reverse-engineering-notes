@@ -55,6 +55,22 @@ public:
 		return _playing;
 	}
 
+	/**
+	 * The sound effects (sub_20951, sub_20D32, sub_207F4): a step (8 bytes: flags, timbre + 1, note, velocity, duration in ticks, second note) plays a note of a timbre of its own on a voice that the
+	 * effect takes from the music (the voice 2); the flags say to go on to the next step (1), slide the pitch to the second note (2), hold (4) or play the note again each tick (8). The
+	 * requests may come from another thread.
+	 */
+	enum EffectTable { FRONT_END, GAME };
+	void useEffects(EffectTable table);
+	/** sub_20951: effect `index` of the table with the entry's flags (1: stereo), volume, pan, the number that names it (the same number replaces the effect) and priority. */
+	void effect(int index, int flags, int volume, int pan, int id, int priority);
+	/** sub_303A9: effect n of GAME.EXE as the game plays it. */
+	void soundEffect(int n) {
+		effect(n, 0, 0xFF, 0x3F, 1, 0xC);
+	}
+	/** sub_20D32 with no step: the effects named `id` (0: all) stop. */
+	void stopEffects(int id = 0);
+
 	void render(int16_t *out, int count) override;
 
 	// for tests: the timer interrupt by hand, and the driver's writes to the chip
@@ -74,6 +90,24 @@ private:
 		uint8_t status = 0;
 		bool done = true;
 	};
+
+	struct Slot { // ds:1966 + 14 n of the original
+		int flags = 0, channel = 0, channel2 = 0, note = 0, volume = 0, pan = 0, id = 0, timer = 0;
+		const uint8_t *step = nullptr;
+	};
+	struct Request {
+		int kind, a, b, c, d, e, f; // 0 effect (index, flags, volume, pan, id, priority), 1 stop (id)
+	};
+	void doEffect(int index, int flags, int volume, int pan, int id, int priority);
+	void doStop(int id);
+	void startStep(int s);
+	void releaseChannel(int channel);
+	void restoreChannel(int channel);
+	int allocateChannel(int priority);
+	void claim(int channel);
+	void effectsTick();
+	void lockRequests();
+	void unlockRequests();
 
 	bool start(int song);
 	void parse();
@@ -109,6 +143,11 @@ private:
 	uint8_t _program[17], _sent[17], _volume[17], _pan[17], _active[17];
 	int8_t _held[17];
 
+	Slot _slot[32];
+	const uint8_t (*_steps)[8] = nullptr;
+	int _stepCount = 0;
+	std::vector<Request> _requests;
+	std::atomic_flag _requestLock = ATOMIC_FLAG_INIT;
 	double _sampleDebt = 0;
 	std::atomic<int> _requestPlay, _requestStop, _requestBase, _requestCross;
 	int _gameSong = -1;           // word_4118A of GAME.EXE: the song the game last asked for

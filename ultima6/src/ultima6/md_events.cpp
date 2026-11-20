@@ -28,7 +28,7 @@ void Game::mdEvent(int n) {
 			for (int i : inv)
 				if (_world.objects[i].type == 0x1CA) {
 					++count;
-					sfx(4);
+					mdSfx(4);
 					_world.objects[i].quality &= 0xFD;
 					_world.objects[i].quantity = 4;
 				}
@@ -111,7 +111,7 @@ void Game::mdEvent(int n) {
 			changeLevel(al.globals[0x14], al.globals[0x15], z);
 		break;
 	case 0x6B: // to 0x6A,0x2C, which is kept as the place to come back to
-		sfx(4);
+		mdSfx(4);
 		changeLevel(0x6A, 0x2C, z);
 		if (al.globals.size() > 0x15) {
 			al.globals[0x14] = 0x6A;
