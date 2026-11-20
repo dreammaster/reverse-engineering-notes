@@ -346,6 +346,12 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	}
 	acl_init(&rv->vm, &rv->mp2);
 	rv->vm.rand_range = game_rand;
+	for (int t = 0; t < ACL_THINGS; t++) {                    /* sprite box sizes for op 38h */
+		int len;
+		const uint8_t *r = mp2_thing(&rv->mp2, t, &len);
+		const ObjSprite *sp = r && len >= 8 ? objsprites_find(&rv->objs, (r[6] << 8) | r[7]) : NULL;
+		if (sp) { rv->vm.size[t][0] = sp->header[17]; rv->vm.size[t][1] = sp->header[19]; rv->vm.size[t][2] = sp->header[21]; }
+	}
 	rv->vm.sound = game_sound;
 	rv->vm.sound_stop = game_sound_stop;
 	if (rv->tad.loaded) tad_free(&rv->tad);

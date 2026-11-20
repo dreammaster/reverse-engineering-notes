@@ -55,6 +55,13 @@ class VM:
             r[3] &= 0x7F
             if had and r[10] != (self.room & 255):
                 r[3] |= 0x08
+        elif op == 56:                              # the thing is in room a[2] and its box overlaps a region (8294); box sizes are 0 here (the front end supplies them)
+            def s8(v): return v - 256 if v >= 128 else v
+            ok = False
+            if r is not None and r[10] == a[2]:
+                x, y, z = s8(r[0]), s8(r[1]), s8(r[2])
+                ok = x >= s8(a[3]) and y >= s8(a[5]) and z <= s8(a[8]) and x < s8(a[4]) and y < s8(a[6]) and z >= s8(a[7])
+            self.c605 = (self.c605 + 1) & 255 if ok else 0
         elif op == 34:                              # the player carries thing w (room byte FFh, not deleted)
             ok = r is not None and r[10] == 0xFF and not r[3] & 0x80
             self.c605 = (self.c605 + 1) & 255 if ok else 0

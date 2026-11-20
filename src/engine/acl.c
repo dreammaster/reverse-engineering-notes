@@ -218,6 +218,16 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) { if (vm->mstate[tid][0] == 4) vm->mstate[tid][1]++; vm->mstate[tid][0] = 0; }
 		break;
 	case 34: test_res(vm, tid >= 0 && tid < ACL_THINGS && vm->present[tid] && vm->room[tid] == 0xFF && !(vm->flags[tid] & 0x80)); break;   /* 7D88: the player carries thing w (86D1) */
+	case 56: {                                          /* 8294: the thing is in room a[2] and its box overlaps the region x a[3]..a[4], y a[5]..a[6], z a[7]..a[8] (signed byte compares) */
+		int ok = 0;
+		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid] && vm->room[tid] == a[2]) {
+			int x = (int8_t)vm->pos[3 * tid], y = (int8_t)vm->pos[3 * tid + 1], z = (int8_t)vm->pos[3 * tid + 2];
+			int xl = (int8_t)(x - vm->size[tid][0]), yl = (int8_t)(y - vm->size[tid][1]), zt = (int8_t)(z + vm->size[tid][2]);
+			ok = x >= (int8_t)a[3] && y >= (int8_t)a[5] && z <= (int8_t)a[8] && xl < (int8_t)a[4] && yl < (int8_t)a[6] && zt >= (int8_t)a[7];
+		}
+		test_res(vm, ok);
+		break;
+	}
 	case 65:                                            /* 832F: A[1] of the thing (its strength / damage byte) += signed a[2], clamped to 0..F5h */
 		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) {
 			int v = vm->tail[tid][1] + (int8_t)a[2];
