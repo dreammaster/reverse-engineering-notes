@@ -117,7 +117,7 @@ typedef struct RoomView_ {
 	int energy_max_cfg;        /* from LEVn.MP1 */
 	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
 	int carry_pending, carry_energy; uint32_t carry_money, carry_score;   /* stats carried into the next level */
-	int room_snd[8], nroom_snd, snd_key; /* sounds of the room's creatures (stopped when the room changes) */
+	int room_snd[8], room_snd_thing[8], nroom_snd, snd_key; /* sounds of the room's creatures (stopped when the room changes) */
 	int ruck_target;           /* thing touched when the rucksack was opened (insert / give target), -1 = none */
 	int look_pic;              /* thing+1 whose picture is shown next to the look message (rucksack look), 0 = none */
 	int map_open, map_ox, map_oy, map_zoom, map_prev;   /* F1: the map of the rooms entered so far (1000:369F) */
@@ -581,19 +581,35 @@ static void walker_world(Walker *wk, RoomView *rv) {
 		return;
 	roomview_ensure_objs(rv, gx, gy);
 	/* 1000:51E2 / 5114: an active object (creature) of the room plays the sound in its sprite header byte 1Eh (FFh and 3Bh = none) while it is in the room */
-	if (rv->snd_key != room_key(rv)) {
-	for (int i = 0; i < rv->nroom_snd; i++) snd_stop(rv->room_snd[i]);
-	rv->nroom_snd = 0;
-	rv->snd_key = room_key(rv);
-	for (int i = 0, active = 0; i < rv->ro.n && active < 6; i++) {
-		const RoomObj *o = &rv->ro.o[i];
-		if (o->sp->header[0x16] != 3 || (rv->vm.tail[o->thing][5] & 0x80) || (rv->vm.flags[o->thing] & 0x80)) continue;
-		active++;
-		int id = o->sp->header[0x1E];
-		if (id == 0xFF || id == 0x3B) continue;
-		snd_play(id);
-		if (rv->nroom_snd < 8) rv->room_snd[rv->nroom_snd++] = id;
+	if (rv->snd_key != room_key(rv)) {                               /* a new room: the old room's sounds stop */
+		for (int i = 0; i < rv->nroom_snd; i++) snd_stop(rv->room_snd[i]);
+		rv->nroom_snd = 0;
+		rv->snd_key = room_key(rv);
 	}
+	{                                                                /* things appearing / disappearing (flag 80h) start / stop their sound (the water creature of level 1 surfaces and sinks) */
+		int want_t[8], want_s[8], nw = 0;
+		for (int i = 0, active = 0; i < rv->ro.n && active < 6; i++) {
+			const RoomObj *o = &rv->ro.o[i];
+			if (o->sp->header[0x16] != 3 || (rv->vm.tail[o->thing][5] & 0x80) || (rv->vm.flags[o->thing] & 0x80)) continue;
+			active++;
+			int id = o->sp->header[0x1E];
+			if (id == 0xFF || id == 0x3B || nw >= 8) continue;
+			want_t[nw] = o->thing; want_s[nw++] = id;
+		}
+		int keep_t[8], keep_s[8], nk = 0;
+		for (int i = 0; i < rv->nroom_snd; i++) {
+			int still = 0;
+			for (int k = 0; k < nw; k++) if (want_t[k] == rv->room_snd_thing[i]) still = 1;
+			if (still) { keep_t[nk] = rv->room_snd_thing[i]; keep_s[nk++] = rv->room_snd[i]; }
+			else snd_stop(rv->room_snd[i]);
+		}
+		for (int k = 0; k < nw; k++) {
+			int have = 0;
+			for (int i = 0; i < nk; i++) if (keep_t[i] == want_t[k]) have = 1;
+			if (!have) { snd_play(want_s[k]); keep_t[nk] = want_t[k]; keep_s[nk++] = want_s[k]; }
+		}
+		for (int i = 0; i < nk; i++) { rv->room_snd_thing[i] = keep_t[i]; rv->room_snd[i] = keep_s[i]; }
+		rv->nroom_snd = nk;
 	}
 	const uint8_t *rec = rv->mp2.sec[0].rec[rv->room];
 	ColWorld *cw = &wk->world;
