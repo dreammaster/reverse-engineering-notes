@@ -57,8 +57,7 @@ void tad_free(TadRt *t) {
 }
 
 static void energy_change(AclVM *vm, int delta) {
-	int e = vm->energy + delta;
-	vm->energy = e <= 0 ? 0 : e > vm->energy_max ? vm->energy_max : e;
+	acl_energy_change(vm, delta);
 }
 
 static void svc_hook(X86 *c, void *user) {

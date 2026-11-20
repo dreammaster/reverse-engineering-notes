@@ -53,6 +53,18 @@ static uint8_t *tflag(AclVM *vm, int id, int second) {
 	return second ? &vm->flags2[id] : &vm->flags[id];
 }
 
+/* 1000:81C8: change the energy by `delta`: sound 1Bh (damage) / 19h (healing), clamped to the maximum; at 0 sound 1Ch (the death routine follows) */
+void acl_energy_change(AclVM *vm, int delta) {
+	if (vm->sound) vm->sound(delta < 0 ? 0x1B : 0x19, vm->user);
+	int e = vm->energy + delta;
+	if (e <= 0) {
+		if (vm->sound) vm->sound(0x1C, vm->user);
+		vm->energy = 0;
+		return;
+	}
+	vm->energy = e > vm->energy_max ? vm->energy_max : e;
+}
+
 static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 	int w = n >= 2 ? (a[0] << 8) | a[1] : 0;
 	uint8_t *f = n >= 2 ? tflag(vm, w, 0) : NULL, *f2 = n >= 2 ? tflag(vm, w, 1) : NULL;
@@ -169,8 +181,7 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 	case 6: if (vm->sound) vm->sound(3, vm->user); vm->money += a[0]; vm->score += a[0] >> 2; break;       /* verified: ds:248 += a, ds:24C += a >> 2 */
 	case 2: if (cur) *cur |= 0x80; break;                           /* the current object is removed (its effect on the engine's entries is not modelled) */
 	case 45: {
-		int e = vm->energy + (int16_t)w;
-		vm->energy = e <= 0 ? 0 : e > vm->energy_max ? vm->energy_max : e;
+		acl_energy_change(vm, (int16_t)w);
 		break;
 	}
 	case 28: if (vm->msg_n < 16) vm->msg[vm->msg_n++] = w; break;
@@ -350,8 +361,7 @@ int acl_chest_toggle(AclVM *vm, const Mp2 *mp2, int thing, int *content) {
 	uint8_t *tl = vm->tail[thing];
 	if (!(tl[4] & 1)) {                                  /* closed: trap, key, content */
 		if (tl[5]) {
-			int e = vm->energy - tl[5];
-			vm->energy = e <= 0 ? 0 : e;
+			acl_energy_change(vm, -tl[5]);
 			if (vm->msg_n < 16) vm->msg[vm->msg_n++] = 0x32;
 			return 0;
 		}

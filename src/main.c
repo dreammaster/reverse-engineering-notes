@@ -637,8 +637,7 @@ static void creature_move(Walker *wk, RoomView *rv, RoomObj *o, int ddx, int ddy
 	if (wk->x1 >= ox0 && wk->x1 - PL_XS <= tx && wk->y1 >= oy0 && wk->y1 - PL_YS <= ty) {
 		if (!*hit) {                                   /* one hit per creature and step */
 			*hit = 1;
-			int e = rv->vm.energy - rv->vm.tail[o->thing][1];
-			rv->vm.energy = e < 0 ? 0 : e;
+			acl_energy_change(&rv->vm, -rv->vm.tail[o->thing][1]);
 			rv->vm.queue_n = 0;
 			acl_thing_event(&rv->vm, &rv->mp2, o->thing, 9, 0);
 			for (int q = 0; q < rv->vm.queue_n; q++)
@@ -1220,7 +1219,6 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	}
 	if (rv->dead_timer == 0 && rv->vm.energy <= 0 && rv->ok && rv->vm.energy_max > 0) {   /* death (1000:81C8): the gods' message, then the game starts over */
 		rv->dead_timer = 150;
-		snd_play(0x1C);
 		if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 60;
 		roomview_flush_messages(rv);
 	}

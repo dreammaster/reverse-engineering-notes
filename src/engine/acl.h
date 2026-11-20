@@ -54,6 +54,8 @@ typedef struct {
 } AclVM;
 
 void acl_init(AclVM *vm, const Mp2 *mp2);
+/* 1000:81C8 with its sounds */
+void acl_energy_change(AclVM *vm, int delta);
 /* run all armed handlers of `event` in the handler list of a room record (kind 0) */
 void acl_fire_room(AclVM *vm, const Mp2 *mp2, int room, int event);
 /* deliver one room event (type 6 enter, 14 timer, 19/20/24 with a byte argument, 28 first visit ...) to the room's handler list and everything the
