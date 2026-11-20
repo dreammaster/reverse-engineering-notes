@@ -171,6 +171,7 @@ static void snd_silence(void) {
 }
 static void snd_callback(void *u, Uint8 *stream, int len) { (void)u; beeper_render(&g_snd, (int16_t *)stream, len / 2); }
 static void game_sound(int id, void *u) { (void)u; snd_play(id); }
+static void game_sound_stop(int id, void *u) { (void)u; snd_stop(id); }
 /* ds:FED9: sound class of a pushed object (sprite header byte 1Dh) -> looping sound id */
 static const uint8_t push_sound[19] = {0x39, 0x10, 0x39, 0x33, 0x34, 0x39, 0x33, 0x39, 0x39, 0x39, 0x33, 0x39, 0x33, 0x39, 0x39, 0x34, 0x34, 0x34, 0x39};
 
@@ -192,6 +193,10 @@ static void roomview_tick(RoomView *rv) {
 	}
 	if (rv->ok && rv->ro_key && (++rv->ro_ticks & 1) == 0) {
 		roomobjs_step(&rv->ro);
+		for (int k = 0; k < rv->vm.nresume; k++)                    /* op 03h */
+			for (int i = 0; i < rv->ro.n; i++)
+				if (rv->ro.o[i].thing == rv->vm.resume[k] && rv->ro.o[i].an.delay == 0xFE) { rv->ro.o[i].an.delay = 0; rv->ro.o[i].an.pos++; }
+		rv->vm.nresume = 0;
 		if (g_snd_log) for (int i = 0; i < rv->ro.n; i++) if (rv->ro.o[i].thing == 467) { static int pp = -9, pd = -9, pf = -9; const AnimState *a = &rv->ro.o[i].an; if (a->pos != pp || a->delay != pd || a->frame != pf) { fprintf(stderr, "A467 tick %u pos %d delay %d frame %d cnt %d cad %d\n", rv->clock_ticks, a->pos, a->delay, a->frame, a->cnt, a->cad); pp = a->pos; pd = a->delay; pf = a->frame; } }
 		for (int i = 0; i < rv->ro.n; i++) {                       /* animation command F8 n: event 13 (argument n) for the thing (1000:3CE7) */
 			RoomObj *o = &rv->ro.o[i];
@@ -342,6 +347,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	acl_init(&rv->vm, &rv->mp2);
 	rv->vm.rand_range = game_rand;
 	rv->vm.sound = game_sound;
+	rv->vm.sound_stop = game_sound_stop;
 	if (rv->tad.loaded) tad_free(&rv->tad);
 	{
 		uint8_t *tb; size_t tl;
@@ -1216,7 +1222,7 @@ static void game_load_apply(RoomView *rv) {
 	const SaveHead *h = (const SaveHead *)g_sav;
 	AclVM keep = rv->vm;
 	memcpy(&rv->vm, g_sav + sizeof(SaveHead), sizeof(AclVM));
-	rv->vm.mp2 = keep.mp2; rv->vm.rand_range = keep.rand_range; rv->vm.sound = keep.sound; rv->vm.user = keep.user;
+	rv->vm.mp2 = keep.mp2; rv->vm.sound_stop = keep.sound_stop; rv->vm.rand_range = keep.rand_range; rv->vm.sound = keep.sound; rv->vm.user = keep.user;
 	rv->vm.msg_n = 0; rv->vm.queue_n = 0; rv->vm.tev_n = 0; rv->vm.go.pending = 0; rv->vm.next_level = 0;
 	memcpy(rv->visited, h->visited, sizeof(rv->visited));
 	rv->day = h->day; rv->clock_ticks = h->clock_ticks; rv->held = h->held; rv->last_item = h->last_item;
@@ -1229,6 +1235,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	roomview_tick(rv);
 	wk->tick++;
 	rv->vm.held = rv->held;
+	rv->vm.px = wk->x1; rv->vm.py = wk->y1; rv->vm.pz = wk->z;
 	if (getenv("CAD_VARS")) { static uint8_t pg[0x190]; for (int i = 0; i < 0x190; i++) if (pg[i] != rv->vm.g[i]) { fprintf(stderr, "G tick %d g[%02x] %02x -> %02x\n", wk->tick, i, pg[i], rv->vm.g[i]); pg[i] = rv->vm.g[i]; } }
 	if (g_snd_log) { static int pf = -1, pr = -1; if (rv->vm.flags[467] != pf || rv->vm.room[467] != pr) { fprintf(stderr, "T467 unsup %d last %02x tick %d flags %02x room %d pos %d,%d,%d\n", rv->tad.unsupported, rv->tad.last_unsupported, wk->tick, rv->vm.flags[467], rv->vm.room[467], rv->vm.pos[3*467], rv->vm.pos[3*467+1], rv->vm.pos[3*467+2]); pf = rv->vm.flags[467]; pr = rv->vm.room[467]; } }
 	if (rv->look_pic) { int any = 0; for (int i = 0; i < 4; i++) any |= rv->msgs[i].active; if (!any) rv->look_pic = 0; }

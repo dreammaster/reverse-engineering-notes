@@ -195,6 +195,28 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		acl_energy_change(vm, (int16_t)w);
 		break;
 	}
+	case 3:                                             /* 79BB: resume the thing's frozen animation (delay FEh -> 0, position + 1) */
+		if (vm->nresume < 16 && tid >= 0 && tid < ACL_THINGS) vm->resume[vm->nresume++] = tid;
+		break;
+	case 11:                                            /* 7BE3: movement mode 4 (stopped) -> 0 with its counter + 1, any mode -> 0 */
+		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) { if (vm->mstate[tid][0] == 4) vm->mstate[tid][1]++; vm->mstate[tid][0] = 0; }
+		break;
+	case 34: test_res(vm, tid >= 0 && tid < ACL_THINGS && vm->present[tid] && vm->room[tid] == 0xFF && !(vm->flags[tid] & 0x80)); break;   /* 7D88: the player carries thing w (86D1) */
+	case 70: if (vm->sound) vm->sound(a[0], vm->user); break;                  /* 83BA: play sound a[0] */
+	case 87: if (vm->sound_stop) vm->sound_stop(a[0], vm->user); break;        /* 83C2: stop sound a[0] */
+	case 73: {                                          /* 8003: move thing B to where thing A is (a carried / negative room: the player's place in the current room), like op 41 */
+		int A = w == 0xFFFF ? vm->cur : w, B = (a[2] << 8) | a[3];
+		if (B == 0xFFFF) B = vm->cur;
+		if (A < ACL_THINGS && B < ACL_THINGS && vm->present[A] && vm->present[B]) {
+			int room, x, y, z;
+			if (vm->room[A] >= 0x80) { room = vm->room_no; x = vm->px; y = vm->py; z = vm->pz; }
+			else { room = vm->room[A]; x = vm->pos[3 * A]; y = vm->pos[3 * A + 1]; z = vm->pos[3 * A + 2]; }
+			vm->pos[3 * B] = (uint8_t)x; vm->pos[3 * B + 1] = (uint8_t)y; vm->pos[3 * B + 2] = (uint8_t)z;
+			if (room != vm->room_no) vm->flags[B] |= 8;
+			vm->room[B] = (uint8_t)room;
+		}
+		break;
+	}
 	case 10: {                                          /* 7B8B: unlock door a[0] (word at +2 := 0); sound 12h when the door belongs to the current room, else 2Ah */
 		int id = a[0];
 		if (vm->doorw[id]) {

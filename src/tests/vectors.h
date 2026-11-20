@@ -305,7 +305,7 @@ static const StatusVector aclt_vectors[] = {
 	{"cadaver2/DATA/4", 39, 0xA1A10326U},
 	{"cadaver2/DATA/5", 30, 0x4E59283AU},
 	{"cadaver2/TATA/1", 46, 0xEDA300DEU},
-	{"cadaver2/TATA/2", 50, 0xFD00B518U},
+	{"cadaver2/TATA/2", 50, 0x25E44458U},
 	{"cadaver2/TATA/3", 25, 0xF5052224U},
 	{"cadaver2/TATA/4", 32, 0x09E26638U},
 };

@@ -55,6 +55,21 @@ class VM:
             r[3] &= 0x7F
             if had and r[10] != (self.room & 255):
                 r[3] |= 0x08
+        elif op == 34:                              # the player carries thing w (room byte FFh, not deleted)
+            ok = r is not None and r[10] == 0xFF and not r[3] & 0x80
+            self.c605 = (self.c605 + 1) & 255 if ok else 0
+        elif op == 73:                              # move thing B to where thing A is (a carried A: the player's place, here (0, 0, 0))
+            bw = a[2] << 8 | a[3]
+            B = self.things.get(self.cur if bw == 0xFFFF else bw)
+            if r is not None and B is not None:
+                if r[10] >= 0x80:
+                    room, pos = self.room, (0, 0, 0)
+                else:
+                    room, pos = r[10], (r[0], r[1], r[2])
+                B[0], B[1], B[2] = pos
+                if room != self.room:
+                    B[3] |= 8
+                B[10] = room
         elif op == 10:                              # unlock door a[0]
             self.doors[a[0]] = 0
         elif op == 27:                              # set the word of door a[0]
