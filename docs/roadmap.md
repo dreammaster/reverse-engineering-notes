@@ -14,7 +14,7 @@ building oracles so later work can be *verified* rather than guessed.
 | `mjm` container, PKWARE DCL, RNC1 | **Done** — Python + C, identical output for all 101 decodable files, unit-tested |
 | `.PC1` pictures | **Done** — Python + C, matches DOSBox pixel-for-pixel (visually) |
 | Game detection / path resolution (Cadaver 1 vs Payoff, `DATA`/`TATA`, `?` disk placeholder, case-insensitivity) | **Done** (`src/engine/gamefiles.c`) |
-| SDL2 front end | Shows the title and scroll pictures of either game. **No gameplay.** |
+| SDL2 front end | Title scroll and the **walk scene with most of the gameplay** (`--scene game`): see the rows below and `src/README.md` for keys. Not a complete game yet: combat, held items/spells, the original's save format, some verbs |
 | Emulator harness + DOSBox capture | **Done** — runs the real game to the level-1 screen (see `docs/tools.md`) |
 | `FONT2.SPR`, `FLAME.DAT`, title scroll | **Done** — pixel-exact against the running intro; animated scene in the SDL app (`--scene intro`). The story/credits pages of the intro are not sequenced yet |
 | `*.LNG` text | **Done** — 6-bit packed text, Python + C, all 41 files verified, in-game strings confirmed in the emulator |

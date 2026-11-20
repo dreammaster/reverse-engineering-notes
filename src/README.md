@@ -1,8 +1,8 @@
 # Cadaver C reimplementation
 
 Work in progress: the data decoders, the full room picture (floor, walls, objects, animations, screen frame) and an exploration
-prototype (walk around, collide with objects, leave through the doors into the next room) work; scripts (ACL events, timers), the native TAD routines (timers), messages, labels, verb icons and the energy bar run; creatures,
-inventory and combat are not implemented; sound (PC speaker, `BEEPER.BIN` on the interpreter) works for the triggers decoded so far. Currently:
+prototype (walk around, collide with objects, leave through the doors into the next room) work; scripts (ACL events, timers), the native TAD routines (timers), messages, labels, verb icons and the energy bar run; creatures, verbs, chests, the rucksack, the map, jumping and
+level progression work; combat, held items and the Payoff-specific features are not implemented; sound (PC speaker, `BEEPER.BIN` on the interpreter) works for the triggers decoded so far. Currently:
 
 | File | |
 |---|---|

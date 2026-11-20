@@ -3,8 +3,8 @@
  *
  *   cadaver [-g <game dir>] [--scene game|logo|loading|sprites|sprites2|room|tiles|walk|intro|objects] [--level N --room R --tata --scroll Y --sim dir:ticks,...] [--screenshot out.bmp]
  *
- * Current state: asset pipeline + title/loading scenes. Gameplay is not
- * implemented yet (see docs/roadmap.md).
+ * Current state: `--scene game` plays levels of either game in the walk scene: movement, jumping, pushing, scripts and timers, creatures (TAD routines),
+ * verbs, chests, rucksack, map, status dialog, level progression, death, quick save/load and PC-speaker sound. Not done: see docs/roadmap.md.
  */
 #include "engine/gamefiles.h"
 #include "engine/pc1.h"
