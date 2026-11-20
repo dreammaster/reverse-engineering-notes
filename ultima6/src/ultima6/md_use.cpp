@@ -2455,6 +2455,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		lon = 180 - std::abs(lon);
 		lat = std::abs(lat);
 		message("You are somewhere near " + std::string(1, 10) + "Lat:" + std::to_string(lat) + " " + std::string(1, ns) + std::string(1, 10) + "Long:" + std::to_string(lon) + " " + std::string(1, ew) + std::string(1, 10));
+		mdSfx(4);
 		break;
 	}
 	case 66: // sub_5CE18: the spittoon, by what the member can still spit (the status flag 0x40 of the person)

@@ -106,6 +106,10 @@ void Game::mdEvent(int n) {
 	case 0x68:
 		exitCode(n);
 		break;
+	case 0x69: // (the scene it starts is not done: word_49842 gets the type of the thing at word_47493, a story variable)
+		mdSfx(0x32);
+		exitCode(n);
+		break;
 	case 0x6A: // back to where the dream began (the place kept in globals 0x14 and 0x15)
 		if (al.globals.size() > 0x15)
 			changeLevel(al.globals[0x14], al.globals[0x15], z);
