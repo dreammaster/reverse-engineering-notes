@@ -202,6 +202,15 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) { if (vm->mstate[tid][0] == 4) vm->mstate[tid][1]++; vm->mstate[tid][0] = 0; }
 		break;
 	case 34: test_res(vm, tid >= 0 && tid < ACL_THINGS && vm->present[tid] && vm->room[tid] == 0xFF && !(vm->flags[tid] & 0x80)); break;   /* 7D88: the player carries thing w (86D1) */
+	case 65:                                            /* 832F: A[1] of the thing (its strength / damage byte) += signed a[2], clamped to 0..F5h */
+		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) {
+			int v = vm->tail[tid][1] + (int8_t)a[2];
+			vm->tail[tid][1] = (uint8_t)(v < 0 ? 0 : v > 0xF5 ? 0xF5 : v);
+		}
+		break;
+	case 69:                                            /* 839D: movement state B[3..5] := a[2..4] (velocity / step counters of the thing) */
+		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) { vm->mstate[tid][3] = a[2]; vm->mstate[tid][4] = a[3]; vm->mstate[tid][5] = a[4]; }
+		break;
 	case 70: if (vm->sound) vm->sound(a[0], vm->user); break;                  /* 83BA: play sound a[0] */
 	case 87: if (vm->sound_stop) vm->sound_stop(a[0], vm->user); break;        /* 83C2: stop sound a[0] */
 	case 73: {                                          /* 8003: move thing B to where thing A is (a carried / negative room: the player's place in the current room), like op 41 */
