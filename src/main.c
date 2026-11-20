@@ -1069,14 +1069,23 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 		else if (verb == 1 && t >= 0 && t < ACL_THINGS) {               /* drop: back into the room at the player's position */
 			const ObjSprite *sp = thing_sprite(rv, t);
 			int xs = sp ? (sp->header[16] << 8 | sp->header[17]) : 7, ys = sp ? (sp->header[18] << 8 | sp->header[19]) : 7, zs = sp ? (sp->header[20] << 8 | sp->header[21]) : 7;
-			int z = wk->z;
-			for (; z < 0x2C; z++) {
-				ColResult cr;
-				collision_test(&wk->world, wk->x1, wk->y1, z, xs, ys, zs, t, 0, &cr);
-				if (cr.zf) break;
+			/* 1000:6C72: the spot in front of the player: right (x1 + 2 + xs, y1), left (x0 - 3, y1), down (x1, y1 + 2 + ys), up (x1, y0 - 3), with the player's z; a blocked spot refuses the drop */
+			int dxp = wk->x1, dyp = wk->y1, z = wk->z;
+			switch (wk->dir) {
+			case DIR_RIGHT: dxp = wk->x1 + 2 + xs; break;
+			case DIR_LEFT: dxp = wk->x1 - (PL_XS - 1) - 3; break;
+			case DIR_DOWN: dyp = wk->y1 + 2 + ys; break;
+			default: dyp = wk->y1 - (PL_YS - 1) - 3; break;
 			}
-			if (g_snd_log) fprintf(stderr, "DROP %d at %d,%d z %d (player %d,%d,%d)\n", t, wk->x1, wk->y1, z, wk->x1, wk->y1, wk->z);
-			rv->vm.pos[3 * t] = (uint8_t)wk->x1; rv->vm.pos[3 * t + 1] = (uint8_t)wk->y1; rv->vm.pos[3 * t + 2] = (uint8_t)z;
+			ColResult cr;
+			collision_test(&wk->world, dxp, dyp, z, xs, ys, zs, t, 0, &cr);
+			if (!cr.zf) {
+				if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 27;     /* THERE IS NO ROOM TO PUT THIS OBJECT IN */
+				roomview_flush_messages(rv);
+				return;
+			}
+			if (g_snd_log) fprintf(stderr, "DROP %d at %d,%d z %d (player %d,%d,%d)\n", t, dxp, dyp, z, wk->x1, wk->y1, wk->z);
+			rv->vm.pos[3 * t] = (uint8_t)dxp; rv->vm.pos[3 * t + 1] = (uint8_t)dyp; rv->vm.pos[3 * t + 2] = (uint8_t)z;
 			rv->vm.room[t] = (uint8_t)rv->room;
 			rv->pending_rebuild = 1;
 			if (rv->held == t) rv->held = 0;
