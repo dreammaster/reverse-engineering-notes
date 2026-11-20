@@ -682,6 +682,22 @@ void Game::command(int key) {
 		_dropPending = true;
 		_selected = 0;
 		break;
+	case 1: // ctrl-A (sub_23C1A): the music on or off (Martian Dreams)
+		if (_world.game == GameId::MartianDreams) {
+			_mdMusicOn = !_mdMusicOn;
+			message(_mdMusicOn ? "Music on\n" : "Music off\n");
+			prompt();
+		}
+		break;
+	case 26: // ctrl-Z: the sound effects on or off; off stops the ones playing (sub_30762)
+		if (_world.game == GameId::MartianDreams) {
+			_mdSoundOn = !_mdSoundOn;
+			if (!_mdSoundOn && sound)
+				sound(-1, 0);
+			message(_mdSoundOn ? "Sound on\n" : "Sound off\n");
+			prompt();
+		}
+		break;
 	case 19: // ctrl-S
 		message("Save game? ");
 		_confirmSave = true;

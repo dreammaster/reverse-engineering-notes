@@ -87,6 +87,10 @@ public:
 	 * night song 1 (the numbers are the items of MUSIC.LZC).
 	 */
 	int mdSong() const;
+	/** The music is on (Ctrl-A switches it, as GAME.EXE's sub_23C1A does): the song of mdSong() plays, else none. */
+	bool mdMusicOn() const {
+		return _mdMusicOn;
+	}
 	int music() const {
 		return _music;
 	}
@@ -208,9 +212,10 @@ private:
 	}
 	/** Martian Dreams' sound effect n (GAME.EXE sub_303A9). */
 	void mdSfx(int effect) {
-		if (sound && _world.game == GameId::MartianDreams)
+		if (sound && _world.game == GameId::MartianDreams && _mdSoundOn)
 			sound(effect, 0);
-	} // the track that should be playing: 1 to 12 in the order of the list at ds:2955 (ULTIMA, BOOTUP, INTRO, CREATE, FOREST, HORNPIPE, ENGAGE, STONES, DUNGEON, BRIT, GARGOYLE, END), 0 none
+	}
+	bool _mdSoundOn = true, _mdMusicOn = true; // word_41137 and word_3FB86 of GAME.EXE: the sound effects and the music are on // the track that should be playing: 1 to 12 in the order of the list at ds:2955 (ULTIMA, BOOTUP, INTRO, CREATE, FOREST, HORNPIPE, ENGAGE, STONES, DUNGEON, BRIT, GARGOYLE, END), 0 none
 	void chooseMusic();
 	void drawGem(Framebuffer &screen) const;
 	bool _gem = false; // the overhead map of a gem is on the screen until a key is pressed

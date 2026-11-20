@@ -32,7 +32,7 @@ const double TICKS_PER_SECOND = 60.0;
 
 } // namespace
 
-MdMusic::MdMusic() : _requestPlay(-1), _requestStop(-1), _requestBase(-1), _requestCross(-1) {
+MdMusic::MdMusic() : _requestPlay(-1), _requestStop(-1), _requestBase(-1), _requestCross(-1), _requestQueue(-1) {
 	_ended = 1;
 	std::memcpy(_sent, SENT_INIT, sizeof _sent);
 	std::memcpy(_volume, VOLUME_INIT, sizeof _volume);
@@ -80,6 +80,15 @@ void MdMusic::setBaseVolume(int volume) {
 
 void MdMusic::crossfade(int song, int ticks) {
 	_requestCross = (song << 16) | (ticks & 0xFFFF);
+}
+
+void MdMusic::morning() {
+	if (_songs.size() < 5)
+		return;
+	setBaseVolume(230);
+	play(4);
+	_requestQueue = 0;
+	_gameSong = 0;
 }
 
 // GAME.EXE's sub_2FC44, with the volumes of its table at ds:189E (songs 0-12; the others are not played)
@@ -655,6 +664,11 @@ void MdMusic::render(int16_t *out, int count) {
 	}
 	if (p >= 0)
 		start(p);
+	int queue = _requestQueue.exchange(-1);
+	if (queue >= 0) { // sub_38BFA: the song to come when this one has ended
+		_queued = queue;
+		_loop = 1;
+	}
 	if (cross >= 0) { // sub_38B8E
 		int ticks = cross & 0xFFFF, song = cross >> 16;
 		if (ticks != 0) {

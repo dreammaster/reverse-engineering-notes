@@ -245,8 +245,12 @@ int main(int argc, char **argv) {
 	game.saveDir = saveDir;
 	Ultima6::BorlandRandom sfxRandom(7);
 	game.sound = [&](int effect, int param) {
-		if (mdPlaying) // Martian Dreams: the effects are notes of the AdLib's timbres (GAME.EXE's sub_303A9), played by the same synthesiser as the music
-			mdGameMusic.soundEffect(effect);
+		if (mdPlaying) { // Martian Dreams: the effects are notes of the AdLib's timbres (GAME.EXE's sub_303A9), played by the same synthesiser as the music
+			if (effect < 0)
+				mdGameMusic.stopEffects(0);
+			else
+				mdGameMusic.soundEffect(effect);
+		}
 		else if (!std::getenv("U6_NO_MUSIC"))
 			backend->playSound(Ultima6::Sfx::render(effect, param, sfxRandom));
 	};
@@ -257,7 +261,7 @@ int main(int argc, char **argv) {
 	while (running) {
 		music.set(game.music());
 		if (mdPlaying)
-			mdGameMusic.follow(game.mdSong());
+			mdGameMusic.follow(game.mdMusicOn() ? game.mdSong() : -1);
 		game.render(screen);
 		backend->present(screen);
 		int key;
@@ -269,7 +273,7 @@ int main(int argc, char **argv) {
 					game.animate();
 					music.set(game.music());
 					if (mdPlaying)
-						mdGameMusic.follow(game.mdSong());
+						mdGameMusic.follow(game.mdMusicOn() ? game.mdSong() : -1);
 					game.render(screen);
 					backend->present(screen);
 				} else {

@@ -31,6 +31,7 @@ The game files are only ever read; saves go to `u6save`, `mdsave`, `sesave` (or 
 | `0` | party mode (everyone must be within eight squares) |
 | space | pass a turn |
 | ctrl-S | save (asks `Save game?`) |
+| ctrl-A / ctrl-Z | Martian Dreams: the music / the sound effects on or off |
 | Enter / Esc | confirm / give up in cursors and prompts |
 
 The mouse clicks the command icons under the map, steps towards a clicked square and (right button) gives a question up.
