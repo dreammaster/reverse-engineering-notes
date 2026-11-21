@@ -13,6 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "x86.h"
+#include "opl.h"
 
 typedef struct Beeper {
 	X86 cpu;
@@ -22,6 +23,8 @@ typedef struct Beeper {
 	int npit;
 	unsigned divisor;
 	uint8_t flags[0x80];        /* ds:40F0: effect number of the looping sounds that are on (0 = off) */
+	int adlib;                  /* ADLIB.BIN: the driver writes OPL registers (ports 388h/389h) instead of programming the speaker */
+	Opl opl;
 	/* synthesis state */
 	int rate;
 	int left;                   /* samples left in the current tick */
@@ -31,6 +34,8 @@ typedef struct Beeper {
 
 /* `bin` = BEEPER.BIN (already unpacked).  Returns 0 on success. */
 int beeper_init(Beeper *b, const uint8_t *bin, size_t len, int sample_rate);
+/* the same for ADLIB.BIN (adlib = 1) */
+int beeper_init_kind(Beeper *b, const uint8_t *bin, size_t len, int sample_rate, int adlib);
 void beeper_free(Beeper *b);
 /* One 50 Hz driver tick; returns the sounding PIT divisor (0 = silent). */
 unsigned beeper_tick(Beeper *b);

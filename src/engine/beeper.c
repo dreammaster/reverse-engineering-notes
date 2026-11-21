@@ -19,6 +19,8 @@ static const uint8_t sndtab[0x8C] = {
 static void io_out(void *user, unsigned port, unsigned v, int w) {
 	Beeper *b = user;
 	(void)w;
+	if (port == 0x388) { opl_write_index(&b->opl, (uint8_t)v); return; }
+	if (port == 0x389) { opl_write_data(&b->opl, (uint8_t)v); return; }
 	if (port == 0x61) b->port61 = (uint8_t)v;
 	else if (port == 0x43) b->npit = 0;
 	else if (port == 0x42) {
@@ -30,6 +32,7 @@ static void io_out(void *user, unsigned port, unsigned v, int w) {
 static unsigned io_in(void *user, unsigned port, int w) {
 	Beeper *b = user;
 	(void)w;
+	if (port == 0x388) return opl_read_status(&b->opl);
 	return port == 0x61 ? b->port61 : 0;
 }
 
@@ -45,8 +48,11 @@ static int call_far(Beeper *b, unsigned off) {
 	return x86_run(c, RET_CS, 0, 200000);
 }
 
-int beeper_init(Beeper *b, const uint8_t *bin, size_t len, int rate) {
+int beeper_init(Beeper *b, const uint8_t *bin, size_t len, int rate) { return beeper_init_kind(b, bin, len, rate, 0); }
+
+int beeper_init_kind(Beeper *b, const uint8_t *bin, size_t len, int rate, int adlib) {
 	memset(b, 0, sizeof(*b));
+	b->adlib = adlib;
 	if (len < 8 || len > 0x10000) return -1;
 	b->mem = calloc(1, X86_MEM);
 	if (!b->mem) return -1;
@@ -56,6 +62,7 @@ int beeper_init(Beeper *b, const uint8_t *bin, size_t len, int rate) {
 	b->cpu.io_in = io_in;
 	b->cpu.io_user = b;
 	b->rate = rate > 0 ? rate : 44100;
+	opl_init(&b->opl, b->rate);
 	if (call_far(b, 4) < 0 || (b->cpu.ax & 0xFF) == 0) { beeper_free(b); return -1; }
 	return 0;
 }
@@ -79,7 +86,7 @@ void beeper_play(Beeper *b, int id) {
 	if (e & 0x80) {
 		e &= 0x7F;
 		b->flags[e] = (uint8_t)e;
-	} else if (rdw(b, CMD_REQ) != 0) {
+	} else if (!b->adlib && rdw(b, CMD_REQ) != 0) {
 		return;
 	}
 	b->mem[(BSEG << 4) + CMD_REQ] = (uint8_t)e;
@@ -89,8 +96,8 @@ void beeper_stop(Beeper *b, int id) {
 	unsigned e = ((unsigned)id + 1) & 0xFF;
 	b->flags[e & 0x7F] = 0;
 	b->mem[(BSEG << 4) + CMD_STOP] = (uint8_t)e;
-	/* 1000:1685: re-issue every looping sound that is still on */
-	for (int i = 0; i < 0x80; i++)
+	/* 1000:1685: re-issue every looping sound that is still on (Beeper / Tandy path only) */
+	if (!b->adlib) for (int i = 0; i < 0x80; i++)
 		if (b->flags[i]) beeper_play(b, b->flags[i] - 1);
 }
 
@@ -106,6 +113,16 @@ void beeper_silence(Beeper *b) {
 }
 
 void beeper_render(Beeper *b, int16_t *out, int n) {
+	if (b->adlib) {
+		int i = 0;
+		while (i < n) {
+			if (b->left <= 0) { beeper_tick(b); b->left = b->rate / 50; }
+			int k = b->left < n - i ? b->left : n - i;
+			opl_render(&b->opl, out + i, k);
+			b->left -= k; i += k;
+		}
+		return;
+	}
 	for (int i = 0; i < n; i++) {
 		if (b->left <= 0) {
 			b->cur_div = beeper_tick(b);

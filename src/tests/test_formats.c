@@ -1066,6 +1066,27 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	{ /* AdLib driver: init handshake (timer detection), music produces samples */
+		snprintf(path, sizeof(path), "%s/cadaver1/ADLIB.BIN", root);
+		size_t n;
+		uint8_t *in = slurp(path, &n);
+		if (in) {
+			static Beeper b;
+			static int16_t pcm[22050];
+			if (beeper_init_kind(&b, in, n, 22050, 1) != 0) { printf("FAIL adlib init\n"); failed++; }
+			else {
+				beeper_music(&b, 1);
+				beeper_render(&b, pcm, 22050);
+				int nz = 0;
+				for (int i = 0; i < 22050; i++) nz += pcm[i] != 0;
+				if (nz < 5000) { printf("FAIL adlib music: %d non-zero samples\n", nz); failed++; }
+				beeper_free(&b);
+			}
+			checked++;
+			free(in);
+		}
+	}
+
 	{
 		int x, y;
 		if (floor_origin(10, 10, &x, &y) != 0 || x != 144 || y != 29 || floor_origin(3, 3, &x, &y) != 0 || x != 144 || y != 80 ||

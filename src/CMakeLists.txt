@@ -25,14 +25,19 @@ add_library(cadaver_engine STATIC
   engine/x86.c
   engine/tad.c
   engine/beeper.c
+  engine/opl.c
   engine/push.c
   engine/acl.c
   engine/gamefiles.c)
 target_include_directories(cadaver_engine PUBLIC engine)
 target_compile_options(cadaver_engine PRIVATE -Wall -Wextra)
+target_link_libraries(cadaver_engine PUBLIC m)
 
 add_executable(cadaver_unpack tools/cadaver_unpack.c)
 target_link_libraries(cadaver_unpack cadaver_engine)
+
+add_executable(cadaver_sound tools/cadaver_sound.c)
+target_link_libraries(cadaver_sound cadaver_engine)
 
 add_executable(test_formats tests/test_formats.c)
 target_link_libraries(test_formats cadaver_engine)
