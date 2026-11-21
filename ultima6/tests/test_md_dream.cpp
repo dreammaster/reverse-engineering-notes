@@ -366,6 +366,47 @@ int main() {
 	CHECK(g.mdTakeMorning());
 	CHECK(al.worktype[0] == 0 && al.worktype[1] == 2);
 
+	// the dream body dies (sub_30093): with a place kept by a square 0xC4 it is made whole there, without one the dreamer wakes
+	{
+		g.mdDreamMachine(cabinet);
+		CHECK(g.mdDreaming());
+		int sq = put(w, 0x1CD, 0, 103, 59, 2);
+		w.objects[sq].status = 0xC4;
+		w.objects[sq].quantity = 25;
+		w.objects[sq].quality = 26;
+		w.moveObject(body, 103, 59, 2);
+		g.x = 103;
+		g.y = 59;
+		g.mdStepOn();
+		CHECK(g.x == 26 && g.y == 25);
+		w.moveObject(body, 40, 40, 2);
+		g.x = 40;
+		g.y = 40;
+		al.hp[0] = 0;
+		al.status[0] |= 0x10;
+		g.log.clear();
+		g.mdKilled(0);
+		CHECK(logText(g).find("You feel your dream consciousness returning.") != std::string::npos);
+		CHECK(g.mdDreaming() && g.x == 26 && g.y == 25 && !(al.status[0] & 0x10) && al.hp[0] > 0);
+		g.mdDreamFinish(0x51); // wakes
+		CHECK(!g.mdDreaming());
+		g.mdDreamMachine(cabinet);
+		CHECK(g.mdDreaming());
+		g.log.clear();
+		g.mdKilled(0);
+		CHECK(logText(g).find("You shake yourself awake from the nightmare.") != std::string::npos);
+		CHECK(!g.mdDreaming());
+	}
+
+	// the person 0x66 dies in a dream (sub_1DCFF): the dreamer wakes and the machines cease to work
+	{
+		g.mdDreamMachine(cabinet);
+		CHECK(g.mdDreaming());
+		g.mdKilled(0x66);
+		CHECK(!g.mdDreaming() && (al.talkFlags[0x46] & 8));
+		al.talkFlags[0x46] &= 0xF7;
+	}
+
 	// the end of a scene and the waking in one (the mirror, the manuscript ...): only while dreaming
 	g.mdDreamFinish(0x51);
 	CHECK(!g.mdDreaming());

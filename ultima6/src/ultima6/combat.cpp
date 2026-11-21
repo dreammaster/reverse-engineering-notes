@@ -203,8 +203,8 @@ void Combat::dieInner(int actor) {
 	_world.actors.hp[actor] = 0;
 	_world.actors.worktype[actor] = 0;
 	_world.actors.status[actor] |= 0x10; // dead
-	if (actor == 1)
-		return; // the Avatar's death is handled by the game
+	if (actor == 1 || (actor == 0 && _world.game == GameId::MartianDreams))
+		return; // the Avatar's death (and the dream body's) is handled by the game
 	// what the dead become (sub_2B5A4): people turn into a body (type 0x153, its frame by race, table ds:1A29); creatures flagged 0x800 or 0x1000 vanish; the rest stay as they are
 	// APPROX(16): the original changes the actor's own object (its carried things stay with the actor); here a body object stands in its place and takes the things (or they are laid on the square for those that vanish)
 	static const uint16_t BODY[][2] = {{0x16F, 0x153}, {0x16B, 0x153}, {0x173, 0x153}, {0x172, 0x553}, {0x1A8, 0xD54}, {0x17C, 0x953}, {0x17B, 0x953}, {0x183, 0xD53}, {0x17A, 0xD53},

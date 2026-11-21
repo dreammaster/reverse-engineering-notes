@@ -22,7 +22,7 @@ namespace Ultima6 {
 
 // The dream body, actor 0: the Avatar's looks for the sex the game keeps (the original's byte_41158), whole, and put on the dream's square. sub_4FB90 / sub_4FE5E from the dream machine's
 // chair on: the roster gets the body after the last member and the player controls it alone.
-void Game::mdDreamBody(int bx, int by, int bz, int id) {
+void Game::mdDreamBody(int bx, int by, int bz, int id, bool checkpoint) {
 	ObjList &al = _world.actors;
 	int k = _world.actorObject(0);
 	if (k < 0)
@@ -53,6 +53,8 @@ void Game::mdDreamBody(int bx, int by, int bz, int id) {
 	z = body.z;
 	_mdDreaming = true;
 	_mdDreamId = id;
+	_mdCheck[0] = checkpoint ? bx : 0;
+	_mdCheck[1] = checkpoint ? by : 0;
 	chooseMusic();
 }
 
@@ -101,7 +103,7 @@ void Game::mdDreamStartLevel3() {
 			++_mdWake[2];
 		}
 	}
-	mdDreamBody(0x35, 0x26, 3, 0xE1);
+	mdDreamBody(0x35, 0x26, 3, 0xE1, true);
 }
 
 // The squares of a rectangle of the level (sub_2BF6E, sub_2BE67): the objects in the order of the list, the first for which `f` says true stops the walk
@@ -572,9 +574,45 @@ void Game::mdSceneAmmo() {
 		}
 }
 
+// sub_30093 (sub_2A851 from sub_19300 for actor 0), the death of the dream body: the body is not dead for long. With a place to come back to (the squares 0xC4 and 0xC0 keep one, byte_41134 /
+// 41135) it is made whole there, combat ends and "You feel your dream consciousness returning."; without one "You shake yourself awake from the nightmare." and the dreamer wakes.
+// APPROX(95): the special case of the dream 0xC0 (the conversation of actor 0x66, the removal of the 0x175 creatures near 0x17, 0x87) is not done.
+void Game::mdDreamDied() {
+	ObjList &al = _world.actors;
+	al.status[0] &= 0xEF;
+	_mdDreamFlag = 0;
+	if (_combatMode)
+		toggleCombat();
+	if (_mdCheck[0]) {
+		al.hp[0] = (uint8_t)ActorStats::maxHealth(_world, 1);
+		al.status[0] &= 0xF7;
+		int k = _world.actorObject(0);
+		if (k >= 0) {
+			mdPlace(k, _mdCheck[0], _mdCheck[1], z);
+			x = _mdCheck[0];
+			y = _mdCheck[1];
+		}
+		message("You feel your dream consciousness returning.\n");
+		return;
+	}
+	message("You shake yourself awake from the nightmare.\n");
+	mdDreamWake();
+}
+
 // sub_19300, the part that counts the deaths of a dream: while the dream has a number and the counter (byte_41153, set by the battle of the square 0x20 to the number of foes) is not 0, each
 // death but that of a 0x16A or 0x180 takes one off it; at 0 the dream 0x20 ends in the faint (sub_50836) and the dream 0xA1 sets bit 2 of actor 0x52's flags.
 void Game::mdKilled(int actor) {
+	if (_world.game == GameId::MartianDreams && _mdDreaming && actor == 0) {
+		mdDreamDied();
+		return;
+	}
+	if (_world.game == GameId::MartianDreams && _mdDreaming && actor == 0x66) {
+		// sub_1DCFF (the ranged attack): the person 0x66 hit by a missile dies, the dreamer wakes and the machines cease to work (bit 8 of actor 0x46's flags).
+		// APPROX(95): any death of 0x66 in a dream does this here, not only that by a missile
+		_world.actors.talkFlags[0x46] |= 8;
+		mdDreamWake();
+		return;
+	}
 	if (_world.game != GameId::MartianDreams || !_mdDreaming || !_mdDreamId || !_mdDreamFlag)
 		return;
 	int k = _world.actorObject(actor);
@@ -908,11 +946,17 @@ void Game::mdDreamTouch(int obj) {
 		mdSetPsychic(0, w, 0);
 	mdDreamGo(frame, qual, qty);
 	switch (kind) {
+	case 0xC4:
+		_mdCheck[0] = qual;
+		_mdCheck[1] = qty;
+		break;
 	case 0xC5:
 		t[0x68] = 0;
 		break;
 	case 0xC0:
 		al.hp[0] = (uint8_t)ActorStats::maxHealth(_world, 1);
+		_mdCheck[0] = qual;
+		_mdCheck[1] = qty;
 		break;
 	case 5:
 		mdSceneFive();

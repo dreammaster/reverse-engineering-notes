@@ -156,7 +156,9 @@ public:
 	}
 
 private:
-	void mdDreamBody(int bx, int by, int bz, int id);
+	void mdDreamBody(int bx, int by, int bz, int id, bool checkpoint = false);
+	void mdDreamDied();
+	int _mdCheck[2] = {0, 0}; // byte_41134 / 41135: the square the body comes back to when it dies in a dream
 	void mdDreamGo(int frame, int qual, int qty);
 	void mdDreamLeave();
 	int mdMakeThing(int type, int word, int mx, int my);
