@@ -503,11 +503,15 @@ int main() {
 		int lens = put(w, 0xD2, 0, 0x13C, 0x117, 0);
 		g.mdLensScene();
 		CHECK(w.objects[lens].deleted);
+		auto count = [&]() {
+			int n = 0;
+			for (const World::Obj &o : w.objects)
+				n += !o.deleted && o.type == 0x1CC && o.x == 0x243 && o.y == 0x27A;
+			return n;
+		};
+		int before = count();
 		g.mdCanalScene();
-		int found = 0;
-		for (const World::Obj &o : w.objects)
-			found += !o.deleted && o.type == 0x1CC && o.x == 0x243 && o.y == 0x27A;
-		CHECK(found == 1);
+		CHECK(count() == before + 1);
 		g.mdChsheketScene();
 		CHECK(w.actors.status[0x41] & 0x10);
 		int k = w.actorObject(0x42);
