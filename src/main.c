@@ -123,6 +123,7 @@ typedef struct RoomView_ {
 	int map_open, map_ox, map_oy, map_zoom, map_prev;   /* F1: the map of the rooms entered so far (1000:369F) */
 	struct { int thing, zi, hi, dirbits, fall; } fly[8];   /* thrown things in flight (1000:16D3A: per-step z and horizontal path tables) */
 	int nfly;
+	int h_prev;
 	int held;                  /* thing held (verb 13), 0 = none */
 	int ruck_open, ruck_sel, ruck_delay, last_item, space_prev, ret_prev;   /* rucksack view (Space / Return while carrying things) */
 	int push_snd;              /* looping sound of the object being pushed (0 = none) */
@@ -1419,6 +1420,19 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		if (rv->touch_age < 1000) rv->touch_age++;
 		int sp = (keys & 0x10) != 0, spe = sp && !rv->space_prev, rt = (keys & 0x20) != 0, rte = rt && !rv->ret_prev;
 		rv->space_prev = sp; rv->ret_prev = rt;
+		{                                                                 /* H: hold / put away the last handled carried thing (1000:03CD) */
+			int h = (keys & 0x100) != 0, he = h && !rv->h_prev;
+			rv->h_prev = h;
+			if (he && !rv->ruck_open && !rv->menu_open) {
+				if (rv->held) rv->held = 0;
+				else if (rv->last_item > 0 && rv->last_item < ACL_THINGS && rv->vm.room[rv->last_item] == 0xFF && !(rv->vm.flags[rv->last_item] & 0x80)) {
+					rv->held = rv->last_item;
+					rv->vm.queue_n = 0;
+					acl_thing_event(&rv->vm, &rv->mp2, rv->held, 27, 0);
+					for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+				}
+			}
+		}
 		if (rv->show_status && (edge || spe || rte) ) { rv->show_status = 0; return; }
 		if (rv->ruck_open) { ruck_step(wk, rv, keys, edge || rte, spe); return; }
 		if ((spe || rte) && !rv->menu_open) { ruck_open(rv); if (rv->ruck_open) return; }
@@ -1779,7 +1793,7 @@ int main(int argc, char **argv) {
 			if (!last_ms) last_ms = now;
 			const Uint8 *ks = SDL_GetKeyboardState(NULL);
 			int keys = (ks[SDL_SCANCODE_UP] ? 1 : 0) | (ks[SDL_SCANCODE_DOWN] ? 2 : 0) | (ks[SDL_SCANCODE_LEFT] ? 4 : 0) |
-			           (ks[SDL_SCANCODE_RIGHT] ? 8 : 0) | (ks[SDL_SCANCODE_INSERT] ? 5 : 0) | (ks[SDL_SCANCODE_DELETE] ? 6 : 0) | (ks[SDL_SCANCODE_PAGEUP] ? 9 : 0) | (ks[SDL_SCANCODE_PAGEDOWN] ? 10 : 0) | (ks[SDL_SCANCODE_END] ? 0x80 : 0) | (ks[SDL_SCANCODE_SPACE] ? 0x10 : 0) | (ks[SDL_SCANCODE_RETURN] ? 0x20 : 0) | (ks[SDL_SCANCODE_MINUS] ? 0x40 : 0);
+			           (ks[SDL_SCANCODE_RIGHT] ? 8 : 0) | (ks[SDL_SCANCODE_INSERT] ? 5 : 0) | (ks[SDL_SCANCODE_DELETE] ? 6 : 0) | (ks[SDL_SCANCODE_PAGEUP] ? 9 : 0) | (ks[SDL_SCANCODE_PAGEDOWN] ? 10 : 0) | (ks[SDL_SCANCODE_END] ? 0x80 : 0) | (ks[SDL_SCANCODE_SPACE] ? 0x10 : 0) | (ks[SDL_SCANCODE_RETURN] ? 0x20 : 0) | (ks[SDL_SCANCODE_MINUS] ? 0x40 : 0) | (ks[SDL_SCANCODE_H] ? 0x100 : 0);
 			if (g_paused) last_ms = now;
 			while (now - last_ms >= 20) {            /* the game runs at ~50 Hz */
 				walker_tick(&g_walk, &g_room, keys);
@@ -1787,7 +1801,7 @@ int main(int argc, char **argv) {
 			}
 			if (sim && frames == 0) {                 /* headless: --sim right:30,down:10 */
 				for (const char *c = sim; *c;) {
-					int bits = !strncmp(c, "rend", 4) ? 0x88 : !strncmp(c, "rdown", 5) ? 0x0A : !strncmp(c, "ldown", 5) ? 0x06 : !strncmp(c, "rup", 3) ? 0x09 : !strncmp(c, "lup", 3) ? 0x05 : !strncmp(c, "right", 5) ? 8 : !strncmp(c, "left", 4) ? 4 : !strncmp(c, "down", 4) ? 2 : !strncmp(c, "up", 2) ? 1 : !strncmp(c, "end", 3) ? 0x80 : !strncmp(c, "space", 5) ? 0x10 : !strncmp(c, "ret", 3) ? 0x20 : 0;
+					int bits = !strncmp(c, "rend", 4) ? 0x88 : !strncmp(c, "rdown", 5) ? 0x0A : !strncmp(c, "ldown", 5) ? 0x06 : !strncmp(c, "rup", 3) ? 0x09 : !strncmp(c, "lup", 3) ? 0x05 : !strncmp(c, "right", 5) ? 8 : !strncmp(c, "left", 4) ? 4 : !strncmp(c, "down", 4) ? 2 : !strncmp(c, "up", 2) ? 1 : !strncmp(c, "end", 3) ? 0x80 : !strncmp(c, "space", 5) ? 0x10 : !strncmp(c, "ret", 3) ? 0x20 : !strncmp(c, "hold", 4) ? 0x100 : 0;
 					const char *colon = strchr(c, ':');
 					if (!colon) break;
 					if (!strncmp(c, "info", 4)) g_room.show_status ^= 1;
