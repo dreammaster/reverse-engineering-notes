@@ -44,6 +44,7 @@ typedef struct {
 	void (*sound_stop)(int id, void *user);   /* 1000:1613 */
 	void *user;
 	int px, py, pz;                 /* the player's place (ds:5C record): op 49h with a carried source uses it */
+	int act_thing[8], act_arg[8], nact;   /* op 42h: TAD action routines to run (thing, argument) */
 	int resume[16], nresume;        /* op 03h: things whose frozen animation (delay FEh) continues */
 	int queue_n;                    /* room events queued by ops (op 9 -> type 19) */
 	struct { int type, arg; } queue[16];

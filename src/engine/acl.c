@@ -237,6 +237,9 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		break;
 	}
 	case 92: if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) vm->tail[tid][0] = vm->tail[tid][1] = 0; break;   /* 845A: the chest content word := 0 */
+	case 66:                                            /* 8353: queue the thing's TAD action routine a[2] (like animation command F7) */
+		if (vm->nact < 8 && tid >= 0 && tid < ACL_THINGS) { vm->act_thing[vm->nact] = tid; vm->act_arg[vm->nact++] = a[2]; }
+		break;
 	case 65:                                            /* 832F: A[1] of the thing (its strength / damage byte) += signed a[2], clamped to 0..F5h */
 		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) {
 			int v = vm->tail[tid][1] + (int8_t)a[2];
