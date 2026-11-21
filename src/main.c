@@ -121,6 +121,8 @@ typedef struct RoomView_ {
 	int ruck_target;           /* thing touched when the rucksack was opened (insert / give target), -1 = none */
 	int look_pic;              /* thing+1 whose picture is shown next to the look message (rucksack look), 0 = none */
 	int map_open, map_ox, map_oy, map_zoom, map_prev;   /* F1: the map of the rooms entered so far (1000:369F) */
+	struct { int thing, zi, hi, dirbits, fall; } fly[8];   /* thrown things in flight (1000:16D3A: per-step z and horizontal path tables) */
+	int nfly;
 	int held;                  /* thing held (verb 13), 0 = none */
 	int ruck_open, ruck_sel, ruck_delay, last_item, space_prev, ret_prev;   /* rucksack view (Space / Return while carrying things) */
 	int push_snd;              /* looping sound of the object being pushed (0 = none) */
@@ -319,6 +321,7 @@ static struct { int on, x1, y1, z0, z1; } g_plbox;
 static void roomview_unload(RoomView *rv) {
 	rv->ro_key = 0;
 	rv->push_snd = 0;
+	rv->nfly = 0;
 	rv->nroom_snd = 0;
 	rv->snd_key = 0;
 	snd_silence();
@@ -1105,6 +1108,82 @@ static void menu_choose(RoomView *rv, int verb) {
 	roomview_flush_messages(rv);
 }
 
+/* ---- thrown things (docs/formats.md, "Throwing"): the z path FBA5 (rise, then fall; after its end the fall path FB8E, speed up to -8 per step) and the horizontal path by direction (steps of
+ * 4 4 3 3 3 2 2 2 2 2 1 1 1 1 1 1 1 1 along the facing axes), one entry per game step; a blocked horizontal step ends the horizontal path, a blocked fall lands the thing ---- */
+static const int8_t zthrow[17] = {6, 6, 6, 4, 4, 2, 1, 0, 0, -1, -2, -4, -4, -6, -6, -6, -7};
+static const int8_t zfall[20] = {-1, -1, -2, -2, -3, -3, -3, -4, -4, -5, -5, -5, -6, -6, -6, -7, -7, -7, -7, -8};
+static const int8_t hmag[18] = {4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1};
+static void thing_box(const RoomView *rv, int t, int *xs, int *ys, int *zs) {
+	const ObjSprite *sp = thing_sprite(rv, t);
+	*xs = sp ? (sp->header[16] << 8 | sp->header[17]) : 7;
+	*ys = sp ? (sp->header[18] << 8 | sp->header[19]) : 7;
+	*zs = sp ? (sp->header[20] << 8 | sp->header[21]) : 7;
+}
+/* the spot in front of the player for thing t (1000:6C72); returns 0 when it is blocked */
+static int front_spot(Walker *wk, RoomView *rv, int t, int *ox, int *oy, int *oz) {
+	int xs, ys, zs;
+	thing_box(rv, t, &xs, &ys, &zs);
+	int dxp = wk->x1, dyp = wk->y1;
+	switch (wk->dir) {
+	case DIR_RIGHT: dxp = wk->x1 + 2 + xs; break;
+	case DIR_LEFT: dxp = wk->x1 - (PL_XS - 1) - 3; break;
+	case DIR_DOWN: dyp = wk->y1 + 2 + ys; break;
+	default: dyp = wk->y1 - (PL_YS - 1) - 3; break;
+	}
+	ColResult cr;
+	collision_test(&wk->world, dxp, dyp, wk->z, xs, ys, zs, t, 0, &cr);
+	*ox = dxp; *oy = dyp; *oz = wk->z;
+	return cr.zf;
+}
+/* fire with a held thing: sound 0Eh, the thing is placed in front of the player (event 21) and starts to fly */
+static void throw_held(Walker *wk, RoomView *rv) {
+	int t = rv->held, x, y, z;
+	if (t <= 0 || t >= ACL_THINGS || rv->vm.room[t] != 0xFF || rv->nfly >= 8) return;
+	snd_play(0x0E);
+	if (!front_spot(wk, rv, t, &x, &y, &z)) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 27; roomview_flush_messages(rv); return; }
+	rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; rv->vm.pos[3 * t + 2] = (uint8_t)z;
+	rv->vm.room[t] = (uint8_t)rv->room;
+	rv->held = 0;
+	int db = wk->dir == DIR_RIGHT ? 8 : wk->dir == DIR_LEFT ? 4 : wk->dir == DIR_DOWN ? 2 : 1;
+	rv->fly[rv->nfly].thing = t; rv->fly[rv->nfly].zi = 0; rv->fly[rv->nfly].hi = 0; rv->fly[rv->nfly].dirbits = db; rv->fly[rv->nfly++].fall = 0;
+	rv->vm.queue_n = 0;
+	acl_thing_event(&rv->vm, &rv->mp2, t, 21, 0);
+	for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+	rv->pending_rebuild = 1;
+	roomview_flush_messages(rv);
+}
+static void fly_step(Walker *wk, RoomView *rv) {
+	for (int k = 0; k < rv->nfly; k++) {
+		int t = rv->fly[k].thing, xs, ys, zs;
+		thing_box(rv, t, &xs, &ys, &zs);
+		int x = rv->vm.pos[3 * t], y = rv->vm.pos[3 * t + 1], z = (int8_t)rv->vm.pos[3 * t + 2];
+		int dz = rv->fly[k].fall ? zfall[rv->fly[k].zi < 20 ? rv->fly[k].zi : 19] : rv->fly[k].zi < 17 ? zthrow[rv->fly[k].zi] : -8;
+		int m = rv->fly[k].hi < 18 ? hmag[rv->fly[k].hi] : 0;
+		int dx = (rv->fly[k].dirbits & 8 ? m : rv->fly[k].dirbits & 4 ? -m : 0), dy = (rv->fly[k].dirbits & 2 ? m : rv->fly[k].dirbits & 1 ? -m : 0);
+		int nz = z + dz;
+		if (nz < 0) nz = 0;
+		ColResult cr;
+		int done = 0;
+		collision_test(&wk->world, x + dx, y + dy, nz, xs, ys, zs, t, 0, &cr);
+		if (cr.zf) { x += dx; y += dy; z = nz; }
+		else {
+			rv->fly[k].hi = 18;                                          /* blocked: the horizontal path ends */
+			collision_test(&wk->world, x, y, nz, xs, ys, zs, t, 0, &cr);
+			if (cr.zf) z = nz;
+			else if (dz < 0) done = 1;                                    /* landed on something */
+			else { rv->fly[k].fall = 1; rv->fly[k].zi = 0; }               /* hit a ceiling: start to fall */
+		}
+		if (nz == 0 && dz < 0) done = 1;
+		rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; rv->vm.pos[3 * t + 2] = (uint8_t)z;
+		if (g_snd_log) fprintf(stderr, "FLY %d at %d,%d,%d dz %d%s\n", t, x, y, z, dz, done ? " landed" : "");
+		if (rv->fly[k].hi < 18) rv->fly[k].hi++;
+		if (rv->fly[k].zi < 40) rv->fly[k].zi++;
+		if (!rv->fly[k].fall && rv->fly[k].zi >= 17) { rv->fly[k].fall = 1; rv->fly[k].zi = 0; }
+		rv->pending_rebuild = 1;
+		if (done) { rv->fly[k] = rv->fly[--rv->nfly]; k--; }
+	}
+}
+
 /* one game step in the rucksack view: Left/Right move the highlight (past the ends: the previous / next carried thing), End or Return runs the verb, Space leaves */
 static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int space_edge) {
 	if (!(keys & 0x80)) rv->menu_released = 1;
@@ -1288,6 +1367,8 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (rv->pending_rebuild && wk->world_key == room_key(rv)) walker_world(wk, rv);   /* things changed: rebuild objects and collision world now, not at the next draw */
 	if ((wk->tick & 1) == 0 && wk->world_key == room_key(rv) && !rv->menu_open && rv->dead_timer == 0)
 		creatures_step(wk, rv);
+	if ((wk->tick & 1) == 0 && rv->nfly && wk->world_key == room_key(rv) && !rv->menu_open && rv->dead_timer == 0)
+		fly_step(wk, rv);
 	if (wk->world_key != room_key(rv)) {
 		walker_world(wk, rv);
 		walker_place_default(wk, rv);
@@ -1346,6 +1427,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 			rv->menu_open = 1; rv->menu_sel = 0; rv->menu_delay = 0; rv->menu_released = 0;
 			return;
 		}
+		if (edge && rv->held && rv->dead_timer == 0) throw_held(wk, rv);      /* fire with a held thing: throw it instead of jumping */
 	}
 	{
 		/* Jump (emulator, level 1 room 0, End held): after 3 steps z follows +5 5 4 4 4 4 3 3 2 1 then -1 2 3 3 4 4 4 4 5 5 (peak 35, 20 steps), then 2 steps on the ground and
@@ -1358,7 +1440,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		if (wk->z > 0) { collision_test(&wk->world, wk->x1, wk->y1, wk->z - 1, PL_XS, PL_YS, PL_ZS, -1, 1, &jc); below_free = jc.zf; }
 		if (!wk->jumping) {
 			if (wk->jcool > 0) wk->jcool--;
-			else if (end && wk->jhold >= 3 && !below_free) { wk->jumping = 1; wk->jstep = 0; wk->fall = 0; snd_play(0x0E); }          /* 1000:2DF1 */
+			else if (end && wk->jhold >= 3 && !below_free && !rv->held) { wk->jumping = 1; wk->jstep = 0; wk->fall = 0; snd_play(0x0E); }          /* 1000:2DF1 */
 		}
 		if (wk->jumping) {
 			int nz = wk->z + zprof[wk->jstep];
