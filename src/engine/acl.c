@@ -52,6 +52,15 @@ void acl_init(AclVM *vm, const Mp2 *mp2) {
 		if (mp2->sec[1].rec[d] && mp2->sec[1].len[d] >= 4) vm->doorw[d] = (uint16_t)((mp2->sec[1].rec[d][2] << 8) | mp2->sec[1].rec[d][3]);
 }
 
+void acl_spawn_shot(AclVM *vm, int id, int from, int vx, int vy) {
+	if (id < 0 || id >= ACL_THINGS || from < 0 || from >= ACL_THINGS || !vm->present[id] || !vm->present[from] || !vm->mp2) return;
+	reset_thing(vm, vm->mp2, id);
+	memset(vm->armed[128 + id], 0, sizeof(vm->armed[0]));
+	vm->pos[3 * id] = vm->pos[3 * from]; vm->pos[3 * id + 1] = vm->pos[3 * from + 1]; vm->pos[3 * id + 2] = vm->pos[3 * from + 2];
+	vm->room[id] = vm->room[from];
+	vm->mstate[id][3] = (uint8_t)vx; vm->mstate[id][4] = (uint8_t)vy;
+}
+
 static void test_res(AclVM *vm, int ok) { vm->c605 = ok ? ((vm->c605 + 1) & 255) : 0; }
 
 static uint8_t *tflag(AclVM *vm, int id, int second) {

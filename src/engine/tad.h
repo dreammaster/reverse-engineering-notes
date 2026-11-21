@@ -28,6 +28,8 @@ typedef struct {
 	int unsupported;              /* service calls that were skipped */
 	uint16_t last_unsupported;
 	AclVM *vm;                    /* state the services act on while a routine runs */
+	int cur_thing;                /* the thing whose action routine runs (-1: none) */
+	int proj_thing;               /* thing whose record service 04 put at PROJ_REC (written back after the run), -1: none */
 } TadRt;
 
 /* `raw` = unpacked ROUTINEn.TAD. Returns 0 on success. */

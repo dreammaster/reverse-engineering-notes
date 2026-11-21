@@ -578,6 +578,8 @@ Not done: use of held things (the held-item window), the read, switch and press 
 
 Animation commands **F6 / F5 n** (`3D61` / `3D4B`) decrement / increment the byte `A[8 + n]` of the thing (the counters the action routines read, e.g. `[bp+8]` of the lake creature's routine 0); the port applies them to the VM's A struct. F4 / F3 (set flags) and F9 (freeze + mark finished) are still only counted.
 
+**Services used by the TAD routines (from the service table `ss:[ds:B6]`, 16-bit words in order: `410E 7E1C 407F 81C8 8706 D8BC 890A D912 7F3C 7DE1 D900 369F 8275 40A9 31A3 78DE 8840 6A44 164E 3DB8 799F 7903 5F18 9D8E 1043 D4C6 2FE3 D8BB 5DAA 1187`; the index in the hook is twice the position).** `04` = `407F`: `dx` = thing id → `di` = its record (FFFF: the current thing), ZF set if none; `22h` = `6A44` "**fire a shot in direction `cl`**": sets the projectile's movement velocity `B[3], B[4]` from the table at `ds:FE1F` (pairs of ±127 / 0 for the direction bits 1 up, 2 down, 4 left, 8 right) when `[bx+4] = 0`, then (`6A9B`) builds a spawn request for the thing in `ds:57E` (the id the routine read from the shooter's A struct, big-endian at A[2..3]) at the shooter via `7E1C`. Level 3's Royal Armoury turrets (things 762, 808: action routines `0150`/`015A` → `016C`) fire thing 776 to the right this way. The port (`TadRt.cur_thing/proj_thing`, `build_rec/commit_rec`, `AclVM.spawn`, `acl_spawn_shot`) does it for action routines: one live copy of the shot thing; the shot's movement is left to the creature engine.
+
 ### 6.8 Input
 
 The game installs its own INT 9 handler (`keyboard_isr`, `1000:11E9`) and keeps

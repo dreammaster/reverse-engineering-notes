@@ -11,6 +11,8 @@
 #define QBASE 0xF000
 #define SVC_BASE 0xE000          /* fake near addresses stored in the service table: SVC_BASE + byte index */
 #define SENT 1
+#define ACT_REC 0x3200
+#define PROJ_REC 0x3400
 
 int tad_load(TadRt *t, const uint8_t *raw, size_t len) {
 	memset(t, 0, sizeof(*t));
@@ -49,6 +51,7 @@ int tad_load(TadRt *t, const uint8_t *raw, size_t len) {
 		t->mem[SSG * 16 + 0x100 + 2 * i] = (uint8_t)v;
 		t->mem[SSG * 16 + 0x101 + 2 * i] = (uint8_t)(v >> 8);
 	}
+	t->cur_thing = t->proj_thing = -1;
 	t->loaded = 1;
 	return 0;
 }
@@ -62,6 +65,7 @@ static void energy_change(AclVM *vm, int delta) {
 	acl_energy_change(vm, delta);
 }
 
+static void build_rec(TadRt *t, AclVM *vm, int thing, unsigned addr, const AnimState *an);
 static void svc_hook(X86 *c, void *user) {
 	TadRt *t = (TadRt *)user;
 	unsigned addr = x86_rw(c, DSG, 0x792);
@@ -75,12 +79,39 @@ static void svc_hook(X86 *c, void *user) {
 		c->ax = (uint16_t)(t->vm->rand_range ? t->vm->rand_range(lo, hi, t->vm->user) : lo);
 		break;
 	}
+	case 0x04: {                                 /* 407F: dx = thing id -> di = its record in the image (FFFF: the current thing); ZF set when there is none */
+		unsigned id = c->dx & 0xFFFF;
+		int th = id == 0xFFFF ? t->cur_thing : (int)id;
+		if (th >= 0 && th < ACL_THINGS && t->vm && t->vm->present[th]) {
+			if (th == t->cur_thing) c->di = ACT_REC;
+			else { build_rec(t, t->vm, th, PROJ_REC, NULL); t->proj_thing = th; c->di = PROJ_REC; }
+			c->fl = (uint16_t)(c->fl & ~64);
+		} else c->fl = (uint16_t)(c->fl | 64);
+		break;
+	}
+	case 0x22: {                                 /* 6A44 (first part): set the creature's velocity B[3], B[4] from the direction code cl (table ds:FE1F: pairs of +-127 / 0 per direction bits 1 up, 2 down, 4 left, 8 right) */
+		static const uint8_t dirv[32] = {0x00, 0x00, 0x00, 0x81, 0x00, 0x7f, 0x00, 0x00, 0x81, 0x00, 0x81, 0x81, 0x81, 0x7f, 0x00, 0x00,
+		                                 0x7f, 0x00, 0x7f, 0x81, 0x7f, 0x7f, 0x00, 0x0b, 0x01, 0x8f, 0x00, 0xca, 0x00, 0xba, 0x00, 0x14};
+		uint8_t *dsm = t->mem + DSG * 16;
+		int cl = c->cx & 0xFF;
+		if (cl < 11 && dsm[(c->bx + 4) & 0xFFFF] == 0) {
+			unsigned boff = (c->di + dsm[(c->di + 0xD) & 0xFFFF]) & 0xFFFF;
+			dsm[(boff + 3) & 0xFFFF] = dirv[2 * cl];
+			dsm[(boff + 4) & 0xFFFF] = dirv[2 * cl + 1];
+			if (t->vm && t->cur_thing >= 0 && t->vm->nspawn < 4) {      /* 6A9B..: queue the shot (thing ds:57E) at the shooter */
+				int id = dsm[0x57E] | (dsm[0x57F] << 8);
+				if (id < ACL_THINGS) { t->vm->spawn[t->vm->nspawn].id = id; t->vm->spawn[t->vm->nspawn].from = t->cur_thing; t->vm->spawn[t->vm->nspawn].vx = (int8_t)dirv[2 * cl]; t->vm->spawn[t->vm->nspawn].vy = (int8_t)dirv[2 * cl + 1]; t->vm->spawn[t->vm->nspawn++].dir = cl; }
+			}
+		}
+		break;
+	}
 	case 0x24:                                   /* 164E: start a sound (al = id) */
 		if (t->vm && t->vm->sound) t->vm->sound(c->ax & 0xFF, t->vm->user);
 		break;
 	default:
 		t->unsupported++;
 		t->last_unsupported = (uint16_t)idx;
+		if (getenv("CAD_OPS")) fprintf(stderr, "SKIPSVC %02x ret %04x dx %04x\n", idx, x86_rw(c, c->ss, c->sp), c->dx);
 		break;
 	}
 	c->ip = (uint16_t)x86_pop(c);                /* retf */
@@ -97,6 +128,7 @@ int tad_run_timer(TadRt *t, AclVM *vm, int idx) {
 	ds[0x226] = ds[0x227] = 0;
 	ds[0x232] = (uint8_t)vm->room_no; ds[0x233] = 0;
 	t->vm = vm;
+	t->cur_thing = -1; t->proj_thing = -1;
 	X86 *c = &t->cpu;
 	x86_init(c, t->mem);
 	c->ax = (uint16_t)idx;
@@ -152,6 +184,7 @@ int tad_run_behaviour(TadRt *t, AclVM *vm, int b, int cx, int cy, int px, int py
 	ds[0x226] = ds[0x227] = 0;
 	ds[0x84] = QBASE & 0xFF; ds[0x85] = QBASE >> 8;
 	t->vm = vm;
+	t->cur_thing = -1; t->proj_thing = -1;
 	X86 *c = &t->cpu;
 	x86_init(c, t->mem);
 	c->ax = (uint16_t)(b + 9);
@@ -172,7 +205,27 @@ int tad_run_behaviour(TadRt *t, AclVM *vm, int b, int cx, int cy, int px, int py
 	return 0;
 }
 
-#define ACT_REC 0x3200
+/* the thing's record laid out in the data image at `addr` (header 16, A at +20h, B at +30h (+ its table at +3Eh), C at +80h) */
+static void build_rec(TadRt *t, AclVM *vm, int thing, unsigned addr, const AnimState *an) {
+	uint8_t *rec = t->mem + DSG * 16 + addr;
+	memset(rec, 0, 0xA0);
+	rec[0] = vm->pos[3 * thing]; rec[1] = vm->pos[3 * thing + 1]; rec[2] = vm->pos[3 * thing + 2];
+	rec[3] = vm->flags[thing]; rec[10] = vm->room[thing]; rec[15] = vm->flags2[thing];
+	rec[4] = (uint8_t)(thing >> 8); rec[5] = (uint8_t)thing;
+	rec[12] = 0x20; rec[13] = 0x30; rec[14] = 0x80;
+	memcpy(rec + 0x20, vm->tail[thing], 16);
+	memcpy(rec + 0x30, vm->mstate[thing], 10);
+	memcpy(rec + 0x3E, vm->mtab[thing], 48);
+	if (an) { rec[0x80] = (uint8_t)an->delay; rec[0x81] = (uint8_t)an->frame; rec[0x82] = (uint8_t)an->dir; rec[0x83] = (uint8_t)an->pos; rec[0x88] = (uint8_t)an->cnt; rec[0x89] = (uint8_t)an->cad; }
+}
+static void commit_rec(TadRt *t, AclVM *vm, int thing, unsigned addr, AnimState *an) {
+	const uint8_t *rec = t->mem + DSG * 16 + addr;
+	vm->pos[3 * thing] = rec[0]; vm->pos[3 * thing + 1] = rec[1]; vm->pos[3 * thing + 2] = rec[2];
+	vm->flags[thing] = rec[3]; vm->flags2[thing] = rec[15];
+	memcpy(vm->tail[thing], rec + 0x20, 16);
+	memcpy(vm->mstate[thing], rec + 0x30, 10);
+	if (an) { an->delay = rec[0x80]; an->frame = rec[0x81]; an->dir = rec[0x82]; an->pos = rec[0x83]; an->cnt = rec[0x88]; an->cad = rec[0x89]; }
+}
 int tad_run_action(TadRt *t, AclVM *vm, int thing, int arg, AnimState *an) {
 	if (!t->loaded || thing < 0 || thing >= ACL_THINGS || !vm->present[thing] || arg < 0 || arg > 15)
 		return -1;
@@ -190,15 +243,8 @@ int tad_run_action(TadRt *t, AclVM *vm, int thing, int arg, AnimState *an) {
 	memset(ds + PLAYER_REC, 0, 0x40);
 	ds[PLAYER_REC] = (uint8_t)vm->px; ds[PLAYER_REC + 1] = (uint8_t)vm->py; ds[PLAYER_REC + 2] = (uint8_t)vm->pz;
 	uint8_t *rec = ds + ACT_REC;
-	memset(rec, 0, 0xA0);
-	rec[0] = vm->pos[3 * thing]; rec[1] = vm->pos[3 * thing + 1]; rec[2] = vm->pos[3 * thing + 2];
-	rec[3] = vm->flags[thing]; rec[10] = vm->room[thing]; rec[15] = vm->flags2[thing];
-	rec[4] = (uint8_t)(thing >> 8); rec[5] = (uint8_t)thing;
-	rec[12] = 0x20; rec[13] = 0x30; rec[14] = 0x80;
-	memcpy(rec + 0x20, vm->tail[thing], 16);
-	memcpy(rec + 0x30, vm->mstate[thing], 10);
-	memcpy(rec + 0x3E, vm->mtab[thing], 48);
-	if (an) { rec[0x80] = (uint8_t)an->delay; rec[0x81] = (uint8_t)an->frame; rec[0x82] = (uint8_t)an->dir; rec[0x83] = (uint8_t)an->pos; rec[0x88] = (uint8_t)an->cnt; rec[0x89] = (uint8_t)an->cad; }
+	build_rec(t, vm, thing, ACT_REC, an);
+	t->cur_thing = thing; t->proj_thing = -1;
 	uint8_t before[0xA0];
 	memcpy(before, rec, 0xA0);
 	ds[0x226] = ds[0x227] = 0;
@@ -218,10 +264,8 @@ int tad_run_action(TadRt *t, AclVM *vm, int thing, int arg, AnimState *an) {
 	if (n < 0) return -1;
 	if (getenv("CAD_TADDIFF")) for (int i = 0; i < 0xA0; i++) if (before[i] != rec[i]) fprintf(stderr, "ACT b%d a%d thing %d rec[%02x] %02x -> %02x\n", b, arg, thing, i, before[i], rec[i]);
 	memcpy(vm->g, ds + 0x590, sizeof(vm->g));
-	vm->pos[3 * thing] = rec[0]; vm->pos[3 * thing + 1] = rec[1]; vm->pos[3 * thing + 2] = rec[2];
-	vm->flags[thing] = rec[3]; vm->flags2[thing] = rec[15];
-	memcpy(vm->tail[thing], rec + 0x20, 16);
-	memcpy(vm->mstate[thing], rec + 0x30, 10);
-	if (an) { an->delay = rec[0x80]; an->frame = rec[0x81]; an->dir = rec[0x82]; an->pos = rec[0x83]; an->cnt = rec[0x88]; an->cad = rec[0x89]; }
+	commit_rec(t, vm, thing, ACT_REC, an);
+	if (t->proj_thing >= 0) commit_rec(t, vm, t->proj_thing, PROJ_REC, NULL);
+	t->cur_thing = -1; t->proj_thing = -1;
 	return 0;
 }

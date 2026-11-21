@@ -207,6 +207,12 @@ static void roomview_tick(RoomView *rv) {
 				if (rv->tad.loaded) tad_run_action(&rv->tad, &rv->vm, o->thing, o->an.act[k], &o->an);
 			o->an.nact = 0;
 		}
+		for (int k = 0; k < rv->vm.nspawn; k++) {                  /* shots fired by TAD routines (service 22h) */
+			acl_spawn_shot(&rv->vm, rv->vm.spawn[k].id, rv->vm.spawn[k].from, rv->vm.spawn[k].vx, rv->vm.spawn[k].vy);
+			if (g_snd_log) fprintf(stderr, "SHOT thing %d from %d dir %d\n", rv->vm.spawn[k].id, rv->vm.spawn[k].from, rv->vm.spawn[k].dir);
+		}
+		if (rv->vm.nspawn) rv->pending_rebuild = 1;
+		rv->vm.nspawn = 0;
 		for (int k = 0; k < rv->vm.nact; k++)                       /* op 42h */
 			if (rv->tad.loaded) {
 				AnimState *an = NULL;

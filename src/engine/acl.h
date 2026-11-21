@@ -44,6 +44,8 @@ typedef struct {
 	void (*sound_stop)(int id, void *user);   /* 1000:1613 */
 	void *user;
 	int px, py, pz;                 /* the player's place (ds:5C record): op 49h with a carried source uses it */
+	struct { int id, from, vx, vy, dir; } spawn[4];   /* projectiles fired by TAD routines (service 22h): thing id, the shooter, velocity bytes, direction code */
+	int nspawn;
 	int act_thing[8], act_arg[8], nact;   /* op 42h: TAD action routines to run (thing, argument) */
 	int resume[16], nresume;        /* op 03h: things whose frozen animation (delay FEh) continues */
 	int queue_n;                    /* room events queued by ops (op 9 -> type 19) */
@@ -62,6 +64,8 @@ typedef struct {
 } AclVM;
 
 void acl_init(AclVM *vm, const Mp2 *mp2);
+/* put a fresh copy of thing `id` at the place of thing `from` (a shot fired by a TAD routine) with the velocity bytes vx, vy */
+void acl_spawn_shot(AclVM *vm, int id, int from, int vx, int vy);
 /* 1000:81C8 with its sounds */
 void acl_energy_change(AclVM *vm, int delta);
 /* run all armed handlers of `event` in the handler list of a room record (kind 0) */
