@@ -112,7 +112,7 @@ static void svc_hook(X86 *c, void *user) {
 	default:
 		t->unsupported++;
 		t->last_unsupported = (uint16_t)idx;
-		if (getenv("CAD_OPS")) fprintf(stderr, "SKIPSVC %02x ret %04x dx %04x\n", idx, x86_rw(c, c->ss, c->sp), c->dx);
+		if (getenv("CAD_OPS")) fprintf(stderr, "SKIPSVC %02x ret %04x ax %04x dx %04x cx %04x bx %04x\n", idx, x86_rw(c, c->ss, c->sp), c->ax, c->dx, c->cx, c->bx);
 		break;
 	}
 	c->ip = (uint16_t)x86_pop(c);                /* retf */
