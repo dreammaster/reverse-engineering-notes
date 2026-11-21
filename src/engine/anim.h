@@ -17,6 +17,8 @@ typedef struct {
 	uint8_t ev[4];
 	int nact;           /* F7 commands: run the thing's TAD action routine n (1000:3D17) */
 	uint8_t act[4];
+	int ncnt;           /* F6 / F5: A[8 + n] -= 1 / += 1 (1000:3D61 / 3D4B): (n, delta) pairs for the caller */
+	int8_t cntn[4], cntd[4];
 } AnimState;
 
 /* Script words of an animated block: (command, argument) pairs. Returns the number of words (0 = static block). */
