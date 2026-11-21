@@ -124,6 +124,7 @@ typedef struct RoomView_ {
 	struct { int thing, zi, hi, dirbits, fall; } fly[8];   /* thrown things in flight (1000:16D3A: per-step z and horizontal path tables) */
 	int nfly;
 	int h_prev;
+	uint8_t loose[ACL_THINGS];  /* things dropped or thrown by the player: gravity applies */
 	int held;                  /* thing held (verb 13), 0 = none */
 	int ruck_open, ruck_sel, ruck_delay, last_item, space_prev, ret_prev;   /* rucksack view (Space / Return while carrying things) */
 	int push_snd;              /* looping sound of the object being pushed (0 = none) */
@@ -1144,6 +1145,7 @@ static void throw_held(Walker *wk, RoomView *rv) {
 	if (!front_spot(wk, rv, t, &x, &y, &z)) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 27; roomview_flush_messages(rv); return; }
 	rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; rv->vm.pos[3 * t + 2] = (uint8_t)z;
 	rv->vm.room[t] = (uint8_t)rv->room;
+	rv->loose[t] = 1;
 	rv->held = 0;
 	int db = wk->dir == DIR_RIGHT ? 8 : wk->dir == DIR_LEFT ? 4 : wk->dir == DIR_DOWN ? 2 : 1;
 	rv->fly[rv->nfly].thing = t; rv->fly[rv->nfly].zi = 0; rv->fly[rv->nfly].hi = 0; rv->fly[rv->nfly].dirbits = db; rv->fly[rv->nfly++].fall = 0;
@@ -1152,6 +1154,23 @@ static void throw_held(Walker *wk, RoomView *rv) {
 	for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
 	rv->pending_rebuild = 1;
 	roomview_flush_messages(rv);
+}
+/* gravity (1000:1572B / 6BFC): a loose thing (sprite header weight byte 0Dh != 0, record flags2 bits 4 and 8 clear) that stands above the floor with nothing under it starts to fall */
+static void gravity_scan(Walker *wk, RoomView *rv) {
+	for (int i = 0; i < rv->ro.n && rv->nfly < 8; i++) {
+		const RoomObj *o = &rv->ro.o[i];
+		int t = o->thing, z = (int8_t)rv->vm.pos[3 * t + 2];
+		if (z <= 0 || o->sp->header[0x0D] == 0 || (rv->vm.flags2[t] & 0x0C) || (rv->vm.flags[t] & 0x80) || t == 0 || !rv->loose[t]) continue;      /* only things the player dropped or threw: the original's selection of the things that fall (entry flag 27h bit 0) is not decoded and hanging lamps etc. must stay */
+		int busy = 0;
+		for (int k = 0; k < rv->nfly; k++) if (rv->fly[k].thing == t) busy = 1;
+		if (busy) continue;
+		int xs, ys, zs;
+		thing_box(rv, t, &xs, &ys, &zs);
+		ColResult cr;
+		collision_test(&wk->world, rv->vm.pos[3 * t], rv->vm.pos[3 * t + 1], z - 1, xs, ys, zs, t, 0, &cr);
+		if (!cr.zf) continue;
+		rv->fly[rv->nfly].thing = t; rv->fly[rv->nfly].zi = 0; rv->fly[rv->nfly].hi = 18; rv->fly[rv->nfly].dirbits = 0; rv->fly[rv->nfly++].fall = 1;
+	}
 }
 static void fly_step(Walker *wk, RoomView *rv) {
 	for (int k = 0; k < rv->nfly; k++) {
@@ -1216,6 +1235,7 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 			if (g_snd_log) fprintf(stderr, "DROP %d at %d,%d z %d (player %d,%d,%d)\n", t, dxp, dyp, z, wk->x1, wk->y1, wk->z);
 			rv->vm.pos[3 * t] = (uint8_t)dxp; rv->vm.pos[3 * t + 1] = (uint8_t)dyp; rv->vm.pos[3 * t + 2] = (uint8_t)z;
 			rv->vm.room[t] = (uint8_t)rv->room;
+			rv->loose[t] = 1;
 			rv->pending_rebuild = 1;
 			if (rv->held == t) rv->held = 0;
 			rv->vm.queue_n = 0;                                          /* 1000:2F0E: event 21 (15h) for the dropped thing */
@@ -1368,6 +1388,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (rv->pending_rebuild && wk->world_key == room_key(rv)) walker_world(wk, rv);   /* things changed: rebuild objects and collision world now, not at the next draw */
 	if ((wk->tick & 1) == 0 && wk->world_key == room_key(rv) && !rv->menu_open && rv->dead_timer == 0)
 		creatures_step(wk, rv);
+	if ((wk->tick & 7) == 0 && wk->world_key == room_key(rv) && !rv->menu_open && rv->dead_timer == 0) gravity_scan(wk, rv);
 	if ((wk->tick & 1) == 0 && rv->nfly && wk->world_key == room_key(rv) && !rv->menu_open && rv->dead_timer == 0)
 		fly_step(wk, rv);
 	if (wk->world_key != room_key(rv)) {
