@@ -35,7 +35,7 @@ building oracles so later work can be *verified* rather than guessed.
 | Verbs, chests, level progression, death, game clock | Verbs 2/3/4/7/11/14 act (valuables → money/score, chests open, events 0/5/16); op 37 changes room, op 51 the level (money/score/energy carry over); death restarts the level; the day counter follows the real-time clock; `--scene game` starts from the title |
 | Inventory (carried things) | **Partly** — take sets `rec[10] = 0xFF`; Space/Return show the carried thing (picture, name, look/drop/leave, cycling); hold/use/insert/give and the 16-slot grid not done |
 | Sound (PC speaker) | **Runs** — `BEEPER.BIN` on the interpreter (`engine/beeper.c`), SDL square-wave output; walking, pushing, chest, eating, death, creature ambient, TAD sound service, intro tune. Other triggers not yet |
-| Cadaver 2 (Payoff) code differences | Not analysed (data differs only in `TATA/` and RNC-packed copies) |
+| Cadaver 2 (Payoff) code differences | **Analysed** (listing diff with labels normalised): 243 of 352 functions are identical and `game_step` (`1000:0247`, 907 instructions) and the whole gameplay code are identical to `CAD.EXE`; the rest differ only in a few instructions — the loader / file I/O / driver loading (`1B…`–`1D…`: `sub_1C7D1` ↔ `sub_1CEC6` is the largest, 40 changed lines), the sound call `1156C` ↔ `115B1` (table address `ds:406E` instead of `4064`) and data addresses. So the one engine plays both games; what differs is the data (`TATA` levels, other routines) |
 
 ## What was learned about the engine (for the next steps)
 
