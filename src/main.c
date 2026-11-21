@@ -1138,9 +1138,42 @@ static int front_spot(Walker *wk, RoomView *rv, int t, int *ox, int *oy, int *oz
 	*ox = dxp; *oy = dyp; *oz = wk->z;
 	return cr.zf;
 }
+/* spell 0 / weapon strike (TAD routine 085C, level 1): the first creature in the line of fire loses the item's power A[1] from its hit points A[0]; at underflow event 23 (its death) */
+static void cast_strike(Walker *wk, RoomView *rv, int item) {
+	uint8_t *a = rv->vm.tail[item];
+	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
+	if (a[7] == 0) { snd_play(0x11); return; }
+	snd_play(0x06);
+	a[7]--;
+	int best = -1, bd = 1 << 30;
+	int fx = wk->dir == DIR_RIGHT ? 1 : wk->dir == DIR_LEFT ? -1 : 0, fy = wk->dir == DIR_DOWN ? 1 : wk->dir == DIR_UP ? -1 : 0;
+	for (int i = 0; i < rv->ro.n; i++) {
+		const RoomObj *o = &rv->ro.o[i];
+		if (o->sp->header[0x16] != 3 || (rv->vm.flags[o->thing] & 0x80) || (rv->vm.tail[o->thing][5] & 0x80)) continue;
+		int ox = rv->vm.pos[3 * o->thing] - wk->x1, oy = rv->vm.pos[3 * o->thing + 1] - wk->y1;
+		int along = ox * fx + oy * fy, across = fx ? oy : ox;
+		if (along <= 0 || abs(across) > 7 || along >= bd) continue;
+		best = o->thing; bd = along;
+	}
+	if (best < 0) return;
+	uint8_t *hp = &rv->vm.tail[best][0];
+	if (*hp < a[1]) {                                              /* underflow: the creature dies (event 23) */
+		*hp = 0;
+		rv->vm.queue_n = 0;
+		acl_thing_event(&rv->vm, &rv->mp2, best, 23, 0);
+		for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+		rv->pending_rebuild |= rv_changed(rv);
+	} else *hp = (uint8_t)(*hp - a[1]);
+	roomview_flush_messages(rv);
+}
 /* fire with a held thing: sound 0Eh, the thing is placed in front of the player (event 21) and starts to fly */
 static void throw_held(Walker *wk, RoomView *rv) {
 	int t = rv->held, x, y, z;
+	{
+		const ObjSprite *hs = t > 0 && t < ACL_THINGS ? thing_sprite(rv, t) : NULL;
+		if (hs && hs->header[0x16] == 1 && rv->vm.tail[t][0] == 0) { cast_strike(wk, rv, t); return; }     /* a spell item of spell 0 */
+		if (hs && hs->header[0x16] == 1) return;                                                         /* other spells: not ported */
+	}
 	if (t <= 0 || t >= ACL_THINGS || rv->vm.room[t] != 0xFF || rv->nfly >= 8) return;
 	snd_play(0x0E);
 	if (!front_spot(wk, rv, t, &x, &y, &z)) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 27; roomview_flush_messages(rv); return; }
