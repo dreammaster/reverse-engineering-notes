@@ -166,6 +166,158 @@ void Game::mdDreamLeave() {
 	}
 }
 
+// sub_514B0(qty, qual), the scene of the square 0x20 once the body has come to (qual, qty): actor 0x5B is put right (hit points made whole, a plain person, at 13, 29 of level 2) unless it is
+// already there as the person 0x15B; the story flags and the sides of the actors 0x59-0x5D are reset (worktype 0x8F for 0x5B); the 0x4F at 9, 31 loses its frame; the things 0x10, 0x38, 0x14B,
+// 0x14E and 0x155 within x 8-0x1F, y 0x10-0x37 are taken away; the body is given a 0x14B with a 0x38 in it; and as many foes (0x16C, with the offsets of ds:00AE and ds:00B6, as the party has
+// members besides the Avatar, or four) as that appear round the body, with the combat they start; the number of them is kept for the death routine (byte_41153).
+void Game::mdSceneBattle(int qty, int qual) {
+	ObjList &al = _world.actors;
+	int b = _world.actorObject(0x5B);
+	if (b >= 0 && !(_world.objects[b].type == 0x15B && _world.objects[b].z == 2)) {
+		al.status[0x5B] &= 0xEF;
+		al.hp[0x5B] = (uint8_t)ActorStats::maxHealth(_world, 0x5B);
+		al.status[0x5B] &= 0xF7;
+		_world.objects[b].type = al.baseObjFrame[0x5B] & 0x3FF;
+		_world.objects[b].frame = (uint8_t)(al.baseObjFrame[0x5B] >> 10);
+		mdPlace(b, 0x0D, 0x1D, 2);
+	}
+	al.talkFlags[0x5D] &= 0xA7;
+	al.talkFlags[0x5C] &= 0xE6;
+	al.talkFlags[0x5B] = al.talkFlags[0x5A] = al.talkFlags[0x59] = 0;
+	for (int a = 0x59; a <= 0x5D; ++a)
+		al.status[a] &= 0x9F;
+	al.worktype[0x5B] = 0x8F;
+	al.worktype[0x5A] = al.worktype[0x5D] = al.worktype[0x5C] = al.worktype[0x59] = 0;
+	int f = seFind(0x4F, 9, 0x1F);
+	if (f >= 0)
+		_world.objects[f].frame = 0;
+	else
+		message("Aargh!\n");
+	for (size_t i = 0x101; i < _world.objects.size(); ++i) {
+		const World::Obj &o = _world.objects[i];
+		if (o.deleted || !o.onMap() || o.z != z || o.x < 8 || o.x > 0x1F || o.y < 0x10 || o.y > 0x37)
+			continue;
+		if (o.type == 0x10 || o.type == 0x38 || o.type == 0x14B || o.type == 0x14E || o.type == 0x155)
+			_world.deleteObject((int)i);
+	}
+	int vial = _world.addToInventory(0, 0x14B, 0, 1);
+	if (vial < 0) {
+		message("Aargh!\n");
+	} else {
+		_world.objects[vial].status &= 0xDF;
+		seFill(vial, 0x38, 1);
+	}
+	int n = al.partySize - 1;
+	if (n < 1)
+		n = 4;
+	_mdDreamFlag = n;
+	// the offsets of the foes: the bytes of ds:00AE + 2 i and ds:00B6 + 2 i of GAME.EXE (i = 4 reads past the table: -1, -23)
+	static const int DX[5] = {0, 1, 0, -1, -1}, DY[5] = {0, 0, 1, 0, -23};
+	for (int i = n; i > 0; --i)
+		mdMakeCreature(0x16C, qual + DX[i < 5 ? i : 4], qty + DY[i < 5 ? i : 4], 8);
+	if (!_combatMode)
+		toggleCombat();
+}
+
+// sub_507B0 (sub_3F664): a thing of the type (the quantity in the low byte of `word`, the quality in the high byte) made at x, y of level 2, not "temporary" (its bit 0x20 is cleared)
+int Game::mdMakeThing(int type, int word, int mx, int my) {
+	int o = seMake(type & 0x3FF, mx, my, 2, word & 0xFF, word >> 8);
+	_world.objects[o].frame = (uint8_t)(type >> 10);
+	_world.objects[o].status &= 0xDF;
+	return o;
+}
+
+// sub_2652C as the scenes use it: a creature of the type (the frame in the high bits of the word) at the square with the default worktype 8, not temporary
+int Game::mdMakeCreature(int word, int mx, int my, int worktype) {
+	int a = _creatures.spawn(word & 0x3FF, worktype, mx, my, z);
+	if (a < 0) {
+		message("Aargh!\n");
+		return -1;
+	}
+	int k = _world.actorObject(a);
+	if (k >= 0) {
+		_world.objects[k].frame = (uint8_t)(word >> 10);
+		_world.objects[k].status &= 0xDF;
+	}
+	return a;
+}
+
+// sub_52159(), the scene of the square 5: actor 0x50 is put at 0xA5, 0xA4 of level 2 as a person with frame 9 and its flags reset; the 0x92 at 0xC9, 0x9B and the things 0xF, 0x28, 0x93, 0x96, 0x97,
+// 0x14E-0x150 of the region x 0x76-0xCE, y 0x98-0xCC are taken away and put there anew (0x93, 0x28, 0xF, 0x96 and 0x97 with the qualities 1 and 8); the body's first psychic number is 2 and two
+// creatures (0x193 at 0xB0, 0xA2 and a 0x17B with frame 15 at 0xA0, 0xA3) appear.
+void Game::mdSceneFive() {
+	ObjList &al = _world.actors;
+	al.talkFlags[0x50] &= 0xDE;
+	int p = _world.actorObject(0x50);
+	if (p >= 0) {
+		mdPlace(p, 0xA5, 0xA4, 2);
+		_world.objects[p].frame = 9;
+		_world.objects[p].status |= 0x80;
+	}
+	al.worktype[0x50] = 0;
+	al.status[0x50] &= 0x9F;
+	int d = seFind(0x92, 0xC9, 0x9B);
+	if (d >= 0)
+		_world.deleteObject(d);
+	static const int GONE[8] = {0xF, 0x28, 0x93, 0x96, 0x97, 0x14E, 0x14F, 0x150};
+	for (size_t i = 0x101; i < _world.objects.size(); ++i) {
+		const World::Obj &o = _world.objects[i];
+		if (o.deleted || !o.onMap() || o.z != z || o.x < 0x76 || o.x > 0xCE || o.y < 0x98 || o.y > 0xCC)
+			continue;
+		for (int t : GONE)
+			if (o.type == t) {
+				_world.deleteObject((int)i);
+				break;
+			}
+	}
+	mdMakeThing(0x93, 0, 0xC1, 0x9C);
+	mdMakeThing(0x28, 0, 0xC1, 0x9B);
+	mdMakeThing(0x0F, 0, 0xC7, 0x9A);
+	mdMakeThing(0x96, 0x100, 0xC1, 0xA1);
+	mdMakeThing(0x97, 0x800, 0xC1, 0xA1);
+	mdSetPsychic(0, 0, 2);
+	mdMakeCreature(0x193, 0xB0, 0xA2, 8);
+	mdMakeCreature(0x3D7B, 0xA0, 0xA3, 8);
+}
+
+// sub_51944(), the scene of the square 0x44: actor 0x54 is put at 0x37, 0x3D of level 2 as a person with frame 9 and its flags reset; the things 0xA1, 0xA2, 0xD9, 0xDA and 0x18E of the
+// region x 0x21-0x3D, y 0x33-0x43 are taken away; the maze is made anew: a 0xA1 at 0x24, 0x36, the hedges 0xD9 (quantity 3, a frame of 0-2 by a roll of 0-5 halved) in the columns 0x37, 0x39 and
+// 0x3B of the rows 0x39-0x41 (not 0x37 in row 0x3E, 0x39 only in the rows 0x3B-0x41 but 0x40) and at 0x38 and 0x3A in the rows 0x39 and 0x41, and a creature 0x18E (worktype 0x16) at 0x3B, 0x41.
+void Game::mdSceneMaze() {
+	ObjList &al = _world.actors;
+	al.talkFlags[0x54] &= 0xBE;
+	int p = _world.actorObject(0x54);
+	if (p >= 0) {
+		mdPlace(p, 0x37, 0x3D, 2);
+		_world.objects[p].frame = 9;
+		_world.objects[p].status |= 0x80;
+	}
+	al.worktype[0x54] = 0;
+	al.status[0x54] &= 0x9F;
+	for (size_t i = 0x101; i < _world.objects.size(); ++i) {
+		const World::Obj &o = _world.objects[i];
+		if (o.deleted || !o.onMap() || o.z != z || o.x < 0x21 || o.x > 0x3D || o.y < 0x33 || o.y > 0x43)
+			continue;
+		if (o.type == 0xA1 || o.type == 0xA2 || o.type == 0xD9 || o.type == 0xDA || o.type == 0x18E)
+			_world.deleteObject((int)i);
+	}
+	mdMakeThing(0xA1, 0, 0x24, 0x36);
+	auto hedge = [&](int hx, int hy) { mdMakeThing(0xD9 | ((seRoll(0, 5) >> 1) << 10), 3, hx, hy); };
+	for (int r = 0x39; r <= 0x41; ++r) {
+		if (r != 0x3E)
+			hedge(0x37, r);
+		if (r > 0x3A && r != 0x40)
+			hedge(0x39, r);
+		hedge(0x3B, r);
+	}
+	hedge(0x38, 0x39);
+	hedge(0x38, 0x41);
+	hedge(0x3A, 0x39);
+	hedge(0x3A, 0x41);
+	int c = mdMakeCreature(0x18E, 0x3B, 0x41, 0x16);
+	(void)c;
+}
+
 // sub_50007: the dreamer wakes. The body goes back to its place at level 6, the members' psychic numbers are lost and the poisoned ones are left nearly dead (more than 30 hit points lose 24-30,
 // more than 10 get 1-10, else 1), the clock reads eight in the morning of the day kept, the view goes back to the Avatar and the morning song plays.
 void Game::mdDreamWake() {
@@ -373,9 +525,17 @@ void Game::mdDreamTouch(int obj) {
 	case 0xC0:
 		al.hp[0] = (uint8_t)ActorStats::maxHealth(_world, 1);
 		break;
+	case 5:
+		mdSceneFive();
+		break;
+	case 0x44:
+		mdSceneMaze();
+		break;
+	case 0x20:
+		mdSceneBattle(qty, qual);
+		break;
 	case 0x25: // sub_5182E: a child (0x187) stands on the square north of the one the body came to, as a person on the move (worktype 0x15)
-		if (_creatures.spawn(0x187, 0x15, qual, qty - 1, z, true) < 0)
-			message("Aargh!\n");
+		mdMakeCreature(0x187, qual, qty - 1, 0x15);
 		break;
 	case 0xE5:
 		if (!(t[0x66] & 8))

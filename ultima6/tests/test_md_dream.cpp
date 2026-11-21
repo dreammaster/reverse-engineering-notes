@@ -147,6 +147,80 @@ int main() {
 	int person = w.actorObject(0x50);
 	CHECK(person >= 0 && w.objects[person].x == e.x && w.objects[person].y == e.y && w.objects[person].z == 2);
 
+	// a square with flags 5 (sub_52159): the things of the scene are made anew (the 0x93 at 0xC1, 0x9C), actor 0x50 stands at 0xA5, 0xA4 with frame 9, the first psychic number is 2
+	{
+		int sq = put(w, 0x1CD, 0, 34, 20, 2);
+		w.objects[sq].status = 5;
+		w.objects[sq].quantity = 21;
+		w.objects[sq].quality = 21;
+		w.moveObject(body, 34, 20, 2);
+		g.x = 34;
+		g.y = 20;
+		g.mdStepOn();
+		CHECK(g.mdPsychic(0, 0) == 2);
+		int p = w.actorObject(0x50);
+		CHECK(w.objects[p].x == 0xA5 && w.objects[p].y == 0xA4 && w.objects[p].frame == 9);
+		std::vector<int> here;
+		w.objectsAt(0xC1, 0x9C, 2, here);
+		bool made = false;
+		for (int i : here)
+			made |= w.objects[i].type == 0x93;
+		CHECK(made);
+	}
+
+	// a square with flags 0x44 (sub_51944): the maze is made anew (a 0xA1 at 0x24, 0x36, hedges 0xD9), actor 0x54 stands at 0x37, 0x3D
+	{
+		int sq = put(w, 0x1CD, 0, 35, 20, 2);
+		w.objects[sq].status = 0x44;
+		w.objects[sq].quantity = 22;
+		w.objects[sq].quality = 22;
+		w.moveObject(body, 35, 20, 2);
+		g.x = 35;
+		g.y = 20;
+		g.mdStepOn();
+		std::vector<int> here;
+		w.objectsAt(0x24, 0x36, 2, here);
+		bool made = false;
+		for (int i : here)
+			made |= w.objects[i].type == 0xA1;
+		CHECK(made);
+		int hedges = 0;
+		for (const World::Obj &o : w.objects)
+			hedges += !o.deleted && o.type == 0xD9 && o.z == 2 && o.x >= 0x37 && o.x <= 0x3B && o.y >= 0x39 && o.y <= 0x41;
+		CHECK(hedges >= 20);
+		int p = w.actorObject(0x54);
+		CHECK(w.objects[p].x == 0x37 && w.objects[p].y == 0x3D && w.objects[p].frame == 9);
+	}
+
+	// a square with flags 0x20 (sub_514B0): the body is given a vial (0x14B) with a 0x38, the foes (0x16C) appear round it, a thing of the list in the region goes, and combat begins
+	{
+		int junk = put(w, 0x38, 0, 10, 20, 2);
+		int sq = put(w, 0x1CD, 0, 33, 20, 2);
+		w.objects[sq].status = 0x20;
+		w.objects[sq].quantity = 40;
+		w.objects[sq].quality = 20;
+		w.moveObject(body, 33, 20, 2);
+		g.x = 33;
+		g.y = 20;
+		auto foes = [&]() {
+			int n = 0;
+			for (const World::Obj &o : w.objects)
+				n += !o.deleted && o.type == 0x16C;
+			return n;
+		};
+		int before = foes();
+		g.mdStepOn();
+		CHECK(g.x == 20 && g.y == 40);
+		CHECK(w.objects[junk].deleted);
+		CHECK(foes() >= before + 1);
+		std::vector<int> inv;
+		w.inventory(0, inv, true);
+		bool vial = false;
+		for (int i : inv)
+			vial |= w.objects[i].type == 0x14B;
+		CHECK(vial);
+	}
+
 	// a square with flags 0x40 (sub_5189D): the Avatar falls off the cliff, the body lies there; the dream number is 0x40
 	int cliff = put(w, 0x1CD, 0, 32, 20, 2);
 	w.objects[cliff].status = 0x40;
