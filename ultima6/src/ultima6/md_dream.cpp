@@ -10,6 +10,8 @@
 // 0xA0 call), the dream picture panels (MDREAM.LZC), the fades and the shapes of the transitions (sub_258D9), the creatures the dream clears (sub_2CAAD), the stray flags (the array ds:6EC6,
 // byte_41153, 41134, 41154) and the state of a dream that is saved are not done.
 
+#include "ultima6/describe.h"
+#include "ultima6/equipment.h"
 #include "ultima6/session.h"
 #include "ultima6/stats_view.h"
 
@@ -568,6 +570,132 @@ void Game::mdSceneAmmo() {
 			int box = mdMakeThing(0x14B, 0, b[0], b[1]);
 			seFill(box, b[2], b[3]);
 		}
+}
+
+// sub_19300, the part that counts the deaths of a dream: while the dream has a number and the counter (byte_41153, set by the battle of the square 0x20 to the number of foes) is not 0, each
+// death but that of a 0x16A or 0x180 takes one off it; at 0 the dream 0x20 ends in the faint (sub_50836) and the dream 0xA1 sets bit 2 of actor 0x52's flags.
+void Game::mdKilled(int actor) {
+	if (_world.game != GameId::MartianDreams || !_mdDreaming || !_mdDreamId || !_mdDreamFlag)
+		return;
+	int k = _world.actorObject(actor);
+	int type = k >= 0 ? _world.objects[k].type : 0;
+	if (type == 0x16A || type == 0x180)
+		return;
+	if (--_mdDreamFlag != 0)
+		return;
+	if (_mdDreamId == 0x20) {
+		_world.actors.worktype[actor] = 0;
+		mdFaint();
+	} else if (_mdDreamId == 0xA1) {
+		_world.actors.talkFlags[0x52] |= 2;
+	}
+}
+
+// sub_50836, the faint after the battle of the dream 0x20 (all the foes are dead): "Overcome by fatigue, you pass out."; combat ends; in the room x 0x21-0x27, y 0x19-0x1F every thing that is not
+// carried is taken to the new room (19 squares west and 24 north... that is x - 0x13, y + 0x18): a 0x151 becomes a 0x155 (its frame is the race of a member of the party) made there holding
+// some money (0x18: 0x34 shared by the members, or 13), a 0x150 becomes a 0x14E there, a 0x38 becomes a 0x10 there, a 0x14E is moved, a 0x14B and a 0x1CD stay, and anything else that is
+// temporary is moved with "Moving %s to new room."; then the body's things go but the 0x38 (which becomes a 0x10); the body is put where the Avatar is and given a copy of all the Avatar
+// carries (what is readied stays readied, unless a 0x38 was readied: then no weapon or armour of the classes 2 and 8); it wakes in a room at 0x10, 0x33 of level 2 with the Avatar's looks and
+// frame 11, "You wake up!", the morning song, the dream number is 0xA0 and "All your friends have been killed!".
+void Game::mdFaint() {
+	ObjList &al = _world.actors;
+	message("Overcome by fatigue, you pass out.\n");
+	if (_combatMode)
+		toggleCombat();
+	int n = al.partySize, index = n > 1 ? 1 : 2, share = n > 1 ? 0x34 / (n - 1) : 0xD;
+	std::vector<int> found;
+	mdEach(0x21, 0x19, 0x27, 0x1F, [&](int i) {
+		found.push_back(i);
+		return false;
+	});
+	for (int i : found) {
+		World::Obj &o = _world.objects[i];
+		if (o.deleted || i < 0x101)
+			continue;
+		int nx = o.x - 0x13, ny = o.y + 0x18;
+		switch (o.type) {
+		case 0x151: {
+			int member = n > 1 ? (index < ObjList::PARTY_MAX ? al.partyRoster[index] : 0) : index;
+			int frame = (al.baseObjFrame[member] & 0x3FF) - 0x156;
+			int bag = mdMakeThing(0x155 | ((frame & 0x3F) << 10), 0, nx, ny);
+			int amount = share + seRoll(0, 3);
+			while (amount > 0xF0) {
+				seFill(bag, 0x18, 0xF0);
+				amount -= 0xF0;
+			}
+			seFill(bag, 0x18, amount);
+			_world.deleteObject(i);
+			++index;
+			break;
+		}
+		case 0x150:
+			mdPlace(i, nx, ny, z);
+			_world.objects[i].type = 0x14E;
+			_world.objects[i].status &= 0xDF;
+			break;
+		case 0x38:
+			_world.objects[i].type = 0x10;
+			mdPlace(i, nx, ny, z);
+			break;
+		case 0x14E:
+			mdPlace(i, nx, ny, z);
+			break;
+		case 0x14B:
+		case 0x1CD:
+			break;
+		default:
+			if (o.status & 0x20) {
+				message("Moving " + (o.actor >= 0 ? mdMemberName(o.actor) : Describe::object(_world, o)) + " to new room.\n");
+				mdPlace(i, nx, ny, z);
+			}
+			break;
+		}
+	}
+	// the body's own things: all go but a 0x38, which becomes a 0x10
+	bool readied = false;
+	std::vector<int> mine;
+	_world.inventory(0, mine, true);
+	for (int i : mine) {
+		if (_world.objects[i].type == 0x38) {
+			_world.objects[i].type = 0x10;
+			readied = (_world.objects[i].status & 0x18) == 0x18;
+		} else {
+			_world.deleteObject(i);
+		}
+	}
+	int body = _world.actorObject(0), a1 = _world.actorObject(1);
+	if (body < 0 || a1 < 0)
+		return;
+	mdPlace(body, _world.objects[a1].x, _world.objects[a1].y, _world.objects[a1].z);
+	_solo = -1;
+	// the Avatar's things are copied to the body
+	std::vector<int> his;
+	_world.inventory(1, his, true);
+	for (size_t j = his.size(); j-- > 0;) {
+		const World::Obj src = _world.objects[his[j]];
+		bool worn = (src.status & 0x18) == 0x18;
+		if (worn) {
+			int cls = Equipment::slotClassOf(_world, his[j]);
+			if (readied && (cls == 2 || cls == 8))
+				continue;
+		}
+		int got = _world.addToInventory(0, src.type, src.quality, _world.quantityOf(src));
+		if (got >= 0 && worn)
+			_world.objects[got].status = (uint8_t)((_world.objects[got].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+	}
+	mdPlace(body, 0x10, 0x33, 2);
+	_world.objects[body].type = _world.objects[a1].type;
+	_world.objects[body].frame = 0xB;
+	_solo = al.partySize < ObjList::PARTY_MAX ? al.partySize : -1;
+	if (_solo >= 0)
+		setControl(_solo);
+	x = 0x10;
+	y = 0x33;
+	z = 2;
+	message("You wake up!\n");
+	_mdMorning = true;
+	_mdDreamId = 0xA0;
+	message("All your friends have been killed!\n");
 }
 
 // sub_50007: the dreamer wakes. The body goes back to its place at level 6, the members' psychic numbers are lost and the poisoned ones are left nearly dead (more than 30 hit points lose 24-30,

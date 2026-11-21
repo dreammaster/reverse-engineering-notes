@@ -312,6 +312,29 @@ int main() {
 		CHECK(vial);
 	}
 
+	// the battle's foes die (sub_19300 counts them, the last one is the faint, sub_50836): the things of the room x 0x21-0x27, y 0x19-0x1F go to the new room, the body wakes at 0x10, 0x33
+	{
+		int bed = put(w, 0x151, 0, 0x22, 0x1A, 2);
+		int sword = put(w, 0x38, 0, 0x23, 0x1A, 2);
+		int pile = put(w, 0x14E, 0, 0x24, 0x1B, 2);
+		int n = al.partySize > 1 ? al.partySize - 1 : 4;
+		g.log.clear();
+		for (int i = 0; i < n; ++i)
+			g.mdKilled(2);
+		CHECK(logText(g).find("Overcome by fatigue, you pass out.") != std::string::npos);
+		CHECK(logText(g).find("All your friends have been killed!") != std::string::npos);
+		CHECK(w.objects[bed].deleted);
+		bool bag = false;
+		for (const World::Obj &o : w.objects)
+			bag |= !o.deleted && o.type == 0x155 && o.x == 0x22 - 0x13 && o.y == 0x1A + 0x18 && o.z == 2;
+		CHECK(bag);
+		CHECK(w.objects[sword].type == 0x10 && w.objects[sword].x == 0x23 - 0x13 && w.objects[sword].y == 0x1A + 0x18);
+		CHECK(w.objects[pile].x == 0x24 - 0x13 && w.objects[pile].y == 0x1B + 0x18);
+		CHECK(w.objects[body].x == 0x10 && w.objects[body].y == 0x33 && w.objects[body].z == 2 && w.objects[body].frame == 0xB);
+		CHECK(g.x == 0x10 && g.y == 0x33 && g.mdDreaming());
+		CHECK(g.mdTakeMorning());
+	}
+
 	// a square with flags 0x40 (sub_5189D): the Avatar falls off the cliff, the body lies there; the dream number is 0x40
 	int cliff = put(w, 0x1CD, 0, 32, 20, 2);
 	w.objects[cliff].status = 0x40;

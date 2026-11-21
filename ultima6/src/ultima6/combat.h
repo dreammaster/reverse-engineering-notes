@@ -44,6 +44,8 @@ public:
 	std::function<void(int, int)> onSfx;
 	/** Called when a blow is struck with a weapon that is not a missile (perform_attack 2D63A), with the one it is struck at. */
 	std::function<void(int)> onSwing;
+	/** Called once an actor has died (the dream scenes of Martian Dreams count the deaths, sub_19300). */
+	std::function<void(int)> onDeath;
 
 	static const CreatureStats *stats(int type);
 	static int weaponDamageOf(int type); // -1 if the object type is no weapon
@@ -90,6 +92,7 @@ public:
 private:
 	bool hitCheck(int attacker, int defender, int weapon);
 	void die(int actor);
+	void dieInner(int actor);
 	int roll(int lo, int hi) {
 		return lo + _rng.next() % (hi - lo + 1);
 	}

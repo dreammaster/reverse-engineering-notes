@@ -140,6 +140,8 @@ public:
 	void mdDreamEnd(int actor);                    // sub_50651
 	void mdDreamFinish(int actor);                 // sub_3F615 + sub_3F61A
 	void mdDreamTouch(int obj);                    // sub_50218
+	void mdKilled(int actor);                      // sub_19300's count of the deaths of a dream; the last of the battle is the faint (sub_50836)
+	void mdFaint();
 	void mdExitCode(int code);                     // sub_55F77: what the exit code of a conversation does
 	std::vector<int> mdContents(int box) const;    // the things inside a container
 	void mdStepOn();                               // sub_27EE6's part for the squares of the dream
