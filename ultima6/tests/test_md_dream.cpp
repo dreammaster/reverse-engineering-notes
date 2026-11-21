@@ -5,6 +5,7 @@
 #include "ultima6/stats_view.h"
 
 #include <cstdio>
+#include <cstring>
 #include <string>
 #include <vector>
 
@@ -166,6 +167,26 @@ int main() {
 	g.mdDreamFinish(0x51);
 	CHECK(!g.mdDreaming());
 	(void)control;
+
+	// Look at a picture of a dream (0x124, quality 3): MDREAM.LZC's picture fills the right panel until a key, then the prompt comes back
+	{
+		w.moveObject(w.actorObject(1), px, py, 0);
+		g.x = px;
+		g.y = py;
+		g.z = 0;
+		int pic = put(w, 0x124, 3, px + 1, py, 0);
+		w.objects[pic].quality = 3;
+		Framebuffer before, shown;
+		g.render(before);
+		g.handleKey('l');
+		g.handleKey(KEY_RIGHT);
+		g.render(shown);
+		CHECK(std::memcmp(before.pixels(), shown.pixels(), Framebuffer::WIDTH * Framebuffer::HEIGHT) != 0);
+		g.handleKey(' ');
+		Framebuffer after;
+		g.render(after);
+		CHECK(std::memcmp(after.pixels(), shown.pixels(), Framebuffer::WIDTH * Framebuffer::HEIGHT) != 0);
+	}
 
 	std::printf(failures ? "FAILED\n" : "ok\n");
 	return failures ? 1 : 0;

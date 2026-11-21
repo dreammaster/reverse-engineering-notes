@@ -198,6 +198,8 @@ private:
 	std::unique_ptr<Talk> _talk; // a conversation in progress
 	std::function<void()> _talkEnd; // what to do when it is over (a Martian Dreams scene)
 	void talkEnded();
+	bool _dreamShow = false; // a picture of a dream (MDREAM.LZC, 128 x 118) is in the right panel until a key is pressed
+	std::vector<uint8_t> _dreamPixels;
 	bool _mapShow = false; // a map picture of Martian Dreams is on the screen
 	std::vector<uint8_t> _mapPixels;
 	int _mapW = 0, _mapH = 0;

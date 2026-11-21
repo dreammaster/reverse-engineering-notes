@@ -1,5 +1,6 @@
 #include "ultima6/session.h"
 
+#include "files/shape.h"
 #include "ultima6/describe.h"
 #include "ultima6/stats_view.h"
 #include "ultima6/ui.h"
@@ -532,6 +533,15 @@ void Game::look(int tx, int ty) {
 		}
 		if (o.actor < 0 && _world.game == GameId::MartianDreams) { // MD's own look: the name and what the thing tells of its state
 			message(text + ".\n" + mdLookExtra(o));
+			if (o.type == 0x124) { // sub_14ED4: the picture of the dream that its quality names (sub_1F771) is shown until a key
+				Bytes pic;
+				Shape shape;
+				if (_world.mdDreamItem(o.quality, pic) && pic.size() > 4 && shape.load(&pic[4], pic.size() - 4) && shape.width == 128 && shape.height == 118) {
+					_dreamPixels = shape.pixels;
+					_dreamShow = true;
+					return;
+				}
+			}
 			if (o.type == 0x1CC) { // sub_14ED4: a thing that starts a scene (flag 0x40 of actor 2 and his talk)
 				_world.actors.talkFlags[2] |= 0x40;
 				startTalk(2);
@@ -819,6 +829,11 @@ bool Game::handleKeyInner(int key) {
 	}
 	if (_actorView >= 0 && key != KEY_NONE) { // sub_2F969 waits for a key
 		_actorView = -1;
+		prompt();
+		return true;
+	}
+	if (_dreamShow && key != KEY_NONE) {
+		_dreamShow = false;
 		prompt();
 		return true;
 	}
@@ -1134,6 +1149,8 @@ void Game::render(Framebuffer &screen) {
 		drawInventoryView(screen, _world, _stealing >= 0 ? 100 + _stealing : _member, _selected, _items, _packScroll);
 	else
 		drawStatsView(screen, _world, _member);
+	if (_dreamShow) // a picture of a dream (sub_1F771): MDREAM.LZC's 128 x 118 shape in the right panel
+		screen.blit(0xB8, 2, &_dreamPixels[0], 128, 118, 128, 255);
 	if (_mapShow) // a map of Martian Dreams (sub_53C8D): a 160 x 144 picture of MDMAP.LZC in the middle of the screen
 		screen.blit(80, 28, &_mapPixels[0], _mapW, _mapH, _mapW, 255);
 	if (_gem)

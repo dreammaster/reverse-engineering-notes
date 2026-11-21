@@ -142,8 +142,10 @@ bool World::load(const std::string &dir, const NewCharacter *newGame, const std:
 		readFile(joinPath(dir, "TALK.LZC"), talk);
 		if (game == GameId::MartianDreams)
 			readFile(joinPath(dir, "MDTEXT.LZC"), mdText);
-		if (game == GameId::MartianDreams)
+		if (game == GameId::MartianDreams) {
 			readFile(joinPath(dir, "MDMAP.LZC"), mdMap);
+			readFile(joinPath(dir, "MDREAM.LZC"), mdDream);
+		}
 		readFile(joinPath(dir, game == GameId::MartianDreams ? "MDFACES.LZC" : "FACES.LZC"), faces);
 	}
 
@@ -338,6 +340,11 @@ bool World::script(int actor, ConverseScript &out) const {
 bool World::mdMapItem(int n, Bytes &out) const {
 	LibN lib;
 	return n >= 0 && !mdMap.empty() && lib.load(mdMap, true) && lib.present((size_t)n) && lib.get((size_t)n, out);
+}
+
+bool World::mdDreamItem(int n, Bytes &out) const {
+	LibN lib;
+	return n >= 0 && !mdDream.empty() && lib.load(mdDream, true) && lib.present((size_t)n) && lib.get((size_t)n, out);
 }
 
 std::string World::mdTextItem(int n) const {
