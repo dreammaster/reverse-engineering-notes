@@ -1193,6 +1193,40 @@ static void cast_smite(Walker *wk, RoomView *rv, int item) {
 	rv->pending_rebuild |= rv_changed(rv);
 	roomview_flush_messages(rv);
 }
+static void menu_choose_thing(RoomView *rv, int t, int verb) { int save = rv->touch_thing; rv->touch_thing = t; menu_choose(rv, verb); rv->touch_thing = save; }
+
+/* the nearest room thing in the facing line (within the player's width, up to `reach` units) that satisfies the sprite class test (-1: any) */
+static int line_target(Walker *wk, RoomView *rv, int h16, int reach) {
+	int best = -1, bd = 1 << 30;
+	int fx = wk->dir == DIR_RIGHT ? 1 : wk->dir == DIR_LEFT ? -1 : 0, fy = wk->dir == DIR_DOWN ? 1 : wk->dir == DIR_UP ? -1 : 0;
+	for (int i = 0; i < rv->ro.n; i++) {
+		const RoomObj *o = &rv->ro.o[i];
+		int t = o->thing;
+		if (t == 0 || (rv->vm.flags[t] & 0x80) || (h16 >= 0 && o->sp->header[0x16] != h16)) continue;
+		int ox = rv->vm.pos[3 * t] - wk->x1, oy = rv->vm.pos[3 * t + 1] - wk->y1;
+		int along = ox * fx + oy * fy, across = fx ? oy : ox;
+		if (along <= -(fx ? o->xs : o->ys) || along > reach || abs(across) > 8 + (fx ? o->ys : o->xs) / 2) continue;
+		if (along < 0) along = 0;
+		if (along < bd) { bd = along; best = t; }
+	}
+	return best;
+}
+/* spells 7 / 8 (TAD routines 09F5 / 0A48): 7 opens a closed, unlocked-or-lockable CHEST in front (the lock word A[2..3] := 0, then verb 3), 8 clears the lock of a thing (A[2..3] := 0, A[7] bit 6 cleared) */
+static void cast_unlock(Walker *wk, RoomView *rv, int item, int spell) {
+	uint8_t *a = rv->vm.tail[item];
+	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
+	if (a[7] == 0) { snd_play(0x11); return; }
+	snd_play(0x06);
+	a[7]--;
+	int t = line_target(wk, rv, spell == 7 ? 8 : -1, 24);
+	uint8_t *ta = t > 0 ? rv->vm.tail[t] : NULL;
+	int bad = !ta || (spell == 7 ? ((ta[4] & 1) || (ta[4] & 0x40)) : (ta[7] & 0x20));
+	if (bad) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x2F; roomview_flush_messages(rv); return; }
+	ta[2] = ta[3] = 0;
+	if (spell == 8) { ta[7] &= (uint8_t)~0x40; if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 1; roomview_flush_messages(rv); return; }
+	ta[4] &= (uint8_t)~2;
+	menu_choose_thing(rv, t, 3);                                       /* verb 3 on the chest */
+}
 /* fire with a held thing: sound 0Eh, the thing is placed in front of the player (event 21) and starts to fly */
 static void throw_held(Walker *wk, RoomView *rv) {
 	int t = rv->held, x, y, z;
@@ -1200,6 +1234,7 @@ static void throw_held(Walker *wk, RoomView *rv) {
 		const ObjSprite *hs = t > 0 && t < ACL_THINGS ? thing_sprite(rv, t) : NULL;
 		if (hs && hs->header[0x16] == 1 && rv->vm.tail[t][0] == 0) { cast_strike(wk, rv, t); return; }     /* a spell item of spell 0 */
 		if (hs && hs->header[0x16] == 1 && rv->vm.tail[t][0] == 1) { cast_smite(wk, rv, t); return; }     /* spell 1 */
+		if (hs && hs->header[0x16] == 1 && (rv->vm.tail[t][0] == 7 || rv->vm.tail[t][0] == 8)) { cast_unlock(wk, rv, t, rv->vm.tail[t][0]); return; }
 		if (hs && hs->header[0x16] == 1 && rv->vm.tail[t][0] == 4 && rv->vm.tail[t][7] > 0 && !(rv->vm.tail[t][3] & 0x80)) { rv->vm.tail[t][7]--; snd_play(0x06); map_open_magic(rv); return; }   /* spell 4: the magic map */
 		if (hs && hs->header[0x16] == 1) return;                                                         /* other spells: not ported */
 	}
