@@ -22,7 +22,7 @@ ctest --test-dir build --output-on-failure          # needs the retail data next
 ```
 
 Keys: arrows (+ Insert/Delete/PgUp/PgDn diagonals) move, End = fire (verb menu / jump), Space or Return = rucksack, F1 = map, `I` = status, F5/F9 = quick save / load.
-Headless runs (`--sim`, `--screenshot`) are described in `src/README.md`; `python3 tools/smoke_walk.py build/cadaver` runs every level.
+Headless runs (`--sim`, `--screenshot`) are described in `src/README.md`; `sh tools/check_all.sh` builds, runs the tests, the smoke run over every level and the rename-table checks.
 
 ## State in one paragraph
 
