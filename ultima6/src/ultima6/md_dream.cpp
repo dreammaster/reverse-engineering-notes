@@ -84,9 +84,11 @@ void Game::mdDreamStart(int quality, int sitter) {
 	al.status[sitter] |= 4;
 	_solo = -1;
 	message(mdMemberName(sitter) + " dreams until dawn while the party waits.\n");
+	_mdSleeping = true;
 	advanceTime(60 - gameClock.minute);
 	while (!_dead && !(gameClock.year >= _mdWake[2] && gameClock.month >= _mdWake[1] && gameClock.day >= _mdWake[0] && gameClock.hour >= 8))
 		advanceTime(20);
+	_mdSleeping = false;
 	al.status[sitter] &= 0xFB;
 	_mdMorning = true;
 }

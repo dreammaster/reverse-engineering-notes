@@ -226,6 +226,7 @@ bool Game::mdRestCamp() {
 // first of which each member whose experience asks for it has a dream. True when it is over.
 bool Game::mdRestSleep() {
 	ObjList &al = _world.actors;
+	_mdSleeping = true; // byte_41BEE: the camp is warm and its air is breathed (sub_553F7)
 	if (_restCooldown == 0 && _mdRestHours > 4) {
 		for (int m = 0; m < al.partySize; ++m) {
 			int actor = al.partyRoster[m];
@@ -263,6 +264,7 @@ bool Game::mdRestRun() {
 		}
 	}
 	// the tent comes down
+	_mdSleeping = false;
 	_world.objects[_mdTent[4]].frame = 8;
 	for (int p = 0; p < 5; ++p)
 		_world.deleteObject(_mdTent[p]);

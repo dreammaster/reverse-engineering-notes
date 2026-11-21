@@ -141,6 +141,13 @@ public:
 	void mdChsheketScene();                        // sub_543C4
 	void mdLamps();                                // sub_538EE
 	void mdCoalBelt();                             // sub_4F323
+	int mdWarmth(int type) const;                  // sub_2020C
+	bool mdInView(int actor) const;                // sub_270D2 == 0
+	int mdFindCarried(int actor, int type) const;  // sub_2BC7E
+	void mdGasp(int actor, bool gasping);
+	int mdLight() const;                           // byte_4112B
+	void mdMinute();                               // sub_22B27(1)
+	void mdHour();                                 // its hour loop
 	void mdLeverBridge(int lever);                 // sub_4F5A0
 	void mdLeverPanel(int lever);                  // sub_5328B
 	void mdLeverWorld(int lever);                  // sub_53496
@@ -187,6 +194,7 @@ private:
 	int _mdDreamFlag = 0;          // byte_41153
 	int _mdWake[3] = {1, 1, 1};    // byte_41180 / 41181 / word_41182: the day, month and year the dreamer wakes on
 	bool _mdMorning = false;
+	bool _mdSleeping = false;      // byte_41BEE: a member dreams until dawn
 	int _mdTurn = 0;               // word_4115E: the turn of the world (eighths) the lever of sub_53496 asks for
 	World &_world;
 	MapRenderer _renderer;

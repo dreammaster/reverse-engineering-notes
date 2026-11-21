@@ -199,14 +199,14 @@ void Game::mdPowerReset() {
 	}
 }
 
-// sub_538EE: by night (before six and after 17 o'clock) every street lamp (0xE4) goes seven frames on
+// sub_538EE: by night (before six and after 17 o'clock) every street lamp (0xE4) is lit (frame 7)
 void Game::mdLamps() {
 	bool night = gameClock.hour < 6 || gameClock.hour > 0x11;
 	if (!night)
 		return;
 	for (size_t i = 0x101; i < _world.objects.size(); ++i)
 		if (!_world.objects[i].deleted && _world.objects[i].type == 0xE4)
-			_world.objects[i].frame += 7;
+			_world.objects[i].frame = 7;
 }
 
 // sub_4F323: "The coal begins moving down the belt.", the power underground is on (the flags of actors 0x73 bit 4 and 0x71 bit 8)

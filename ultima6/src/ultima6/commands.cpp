@@ -490,7 +490,7 @@ void Game::partyHazards() {
 			continue;
 		const World::Obj &o = _world.objects[k];
 		const CreatureStats *cs = Combat::stats(o.type);
-		if ((a.status[actor] & 0x08) && !(a.status[actor] & 0x01) && _rng.next() % 8 == 0) // poisoned and not protected: 1 hp now and then (sub_13305 13716)
+		if (_world.game != GameId::MartianDreams && (a.status[actor] & 0x08) && !(a.status[actor] & 0x01) && _rng.next() % 8 == 0) // poisoned and not protected: 1 hp now and then (sub_13305 13716)
 			_combat.applyDamage(actor, actor, 1);
 		// the tiles on the square
 		int mask = o.z == 0 ? 0x3FF : 0xFF;

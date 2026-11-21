@@ -94,6 +94,11 @@ void Game::minutePassed() {
 	}
 	_timeStop = 0;
 	gameClock.advance(1);
+	if (_world.game == GameId::MartianDreams) { // sub_22B27: the hazards of Mars, the clock's hour loop
+		mdMinute();
+		if (gameClock.minute == 0)
+			mdHour();
+	}
 	if (gameClock.minute == 0) {
 		_actors.hourChanged(gameClock);
 		updateMoons();
@@ -1119,6 +1124,8 @@ void Game::render(Framebuffer &screen) {
 		light = (59 - gameClock.minute) / 10 + 1;
 	else
 		light = 7;
+	if (_world.game == GameId::MartianDreams)
+		light = mdLight(); // byte_4112B: Mars's own day and the lamps in hand
 	bool lit = al.globals[0x12 + Magic::TIMER_LIGHT] != 0;
 	for (int m = 0; m < al.partySize && !lit; ++m) {
 		std::vector<int> inv;
