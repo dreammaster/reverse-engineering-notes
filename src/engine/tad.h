@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "acl.h"
+#include "anim.h"
 #include "x86.h"
 
 #define TAD_TIMERS 16
@@ -39,6 +40,10 @@ int tad_run_timer(TadRt *t, AclVM *vm, int idx);
  * player record, a creature record and its movement state (RAM layout, tools/verify_x86.py); the routine writes the velocity into state bytes 3 and 4.
  * Returns 0 and the signed velocity, or -1. `flags` = ds:650/651/6D7 style switches (0 = deterministic chase). */
 int tad_run_behaviour(TadRt *t, AclVM *vm, int b, int cx, int cy, int px, int py, int *vx, int *vy);
+/* Run action routine `arg` of the thing's behaviour (A[1]; animation command F7, 1000:5F6E): the routine table is the second word of the behaviour's 4-byte entry. The thing's
+ * record is built in the data image from the VM (position, flags, A, movement state B) and its animation state C = (delay, frame, dir, pos, ..., cnt, cad); what the routine
+ * wrote is copied back (A, B, C, position). Returns 0, or -1 when there is no such routine. */
+int tad_run_action(TadRt *t, AclVM *vm, int thing, int arg, AnimState *an);
 /* One 17-step timer unit of 1000:11EB5: counts the active countdowns (vars[0x1A + i], count in vars[0x19]) down and runs the routines of those that reach 0. */
 void tad_timer_unit(TadRt *t, AclVM *vm);
 

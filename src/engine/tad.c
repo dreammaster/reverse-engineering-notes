@@ -171,3 +171,57 @@ int tad_run_behaviour(TadRt *t, AclVM *vm, int b, int cx, int cy, int px, int py
 	*vy = (int8_t)ds[CREAT_REC + 0x10 + 4];
 	return 0;
 }
+
+#define ACT_REC 0x3200
+int tad_run_action(TadRt *t, AclVM *vm, int thing, int arg, AnimState *an) {
+	if (!t->loaded || thing < 0 || thing >= ACL_THINGS || !vm->present[thing] || arg < 0 || arg > 15)
+		return -1;
+	int b = vm->tail[thing][1];
+	unsigned eoff = t->base + 4u * (unsigned)(b + 9) + 2;
+	if (eoff + 2 > t->len) return -1;
+	uint8_t *blob = t->mem + TADG * 16;
+	unsigned sub = (unsigned)(blob[eoff] | (blob[eoff + 1] << 8));
+	if (sub == 0 || sub + 2u * (unsigned)(arg + 1) > t->len) return -1;
+	unsigned routine = (unsigned)(blob[sub + 2 * arg] | (blob[sub + 2 * arg + 1] << 8));
+	if (routine == 0 || routine >= t->len) return -1;
+	uint8_t *ds = t->mem + DSG * 16;
+	memcpy(ds + 0x590, vm->g, sizeof(vm->g));
+	ds[0x5C] = PLAYER_REC & 0xFF; ds[0x5D] = PLAYER_REC >> 8;
+	memset(ds + PLAYER_REC, 0, 0x40);
+	ds[PLAYER_REC] = (uint8_t)vm->px; ds[PLAYER_REC + 1] = (uint8_t)vm->py; ds[PLAYER_REC + 2] = (uint8_t)vm->pz;
+	uint8_t *rec = ds + ACT_REC;
+	memset(rec, 0, 0xA0);
+	rec[0] = vm->pos[3 * thing]; rec[1] = vm->pos[3 * thing + 1]; rec[2] = vm->pos[3 * thing + 2];
+	rec[3] = vm->flags[thing]; rec[10] = vm->room[thing]; rec[15] = vm->flags2[thing];
+	rec[4] = (uint8_t)(thing >> 8); rec[5] = (uint8_t)thing;
+	rec[12] = 0x20; rec[13] = 0x30; rec[14] = 0x80;
+	memcpy(rec + 0x20, vm->tail[thing], 16);
+	memcpy(rec + 0x30, vm->mstate[thing], 10);
+	memcpy(rec + 0x3E, vm->mtab[thing], 48);
+	if (an) { rec[0x80] = (uint8_t)an->delay; rec[0x81] = (uint8_t)an->frame; rec[0x82] = (uint8_t)an->dir; rec[0x83] = (uint8_t)an->pos; rec[0x88] = (uint8_t)an->cnt; rec[0x89] = (uint8_t)an->cad; }
+	uint8_t before[0xA0];
+	memcpy(before, rec, 0xA0);
+	ds[0x226] = ds[0x227] = 0;
+	ds[0x84] = QBASE & 0xFF; ds[0x85] = QBASE >> 8;
+	ds[0x232] = (uint8_t)vm->room_no; ds[0x233] = 0;
+	t->vm = vm;
+	X86 *c = &t->cpu;
+	x86_init(c, t->mem);
+	c->ax = (uint16_t)arg; c->dx = (uint16_t)thing;
+	c->di = ACT_REC; c->bp = ACT_REC + 0x20; c->bx = ACT_REC + 0x30; c->si = 0; c->cx = (uint16_t)routine;
+	c->sp = 0xFF00 - 2;
+	c->ds = DSG; c->es = DSG; c->ss = SSG; c->cs = TADG;
+	x86_ww(c, SSG, 0xFF00 - 2, SENT);
+	c->ip = (uint16_t)routine;
+	c->hook_cs = HKG; c->hook_ip = SENT; c->hook = svc_hook; c->hook_user = t;
+	int n = x86_run(c, TADG, SENT, 200000);
+	if (n < 0) return -1;
+	if (getenv("CAD_TADDIFF")) for (int i = 0; i < 0xA0; i++) if (before[i] != rec[i]) fprintf(stderr, "ACT b%d a%d thing %d rec[%02x] %02x -> %02x\n", b, arg, thing, i, before[i], rec[i]);
+	memcpy(vm->g, ds + 0x590, sizeof(vm->g));
+	vm->pos[3 * thing] = rec[0]; vm->pos[3 * thing + 1] = rec[1]; vm->pos[3 * thing + 2] = rec[2];
+	vm->flags[thing] = rec[3]; vm->flags2[thing] = rec[15];
+	memcpy(vm->tail[thing], rec + 0x20, 16);
+	memcpy(vm->mstate[thing], rec + 0x30, 10);
+	if (an) { an->delay = rec[0x80]; an->frame = rec[0x81]; an->dir = rec[0x82]; an->pos = rec[0x83]; an->cnt = rec[0x88]; an->cad = rec[0x89]; }
+	return 0;
+}

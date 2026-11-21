@@ -37,7 +37,8 @@ void anim_step(AnimState *st, const ObjSprite *sp, int *events) {
 		case 5: if (st->dir) pos++; pos++; st->dir = 0; break;           /* FA turn round */
 		case 6: st->delay = 0xFE; if (events) (*events)++; stop = 1; break; /* F9 freeze + trigger */
 		case 7: if (st->nev < 4) st->ev[st->nev++] = (uint8_t)arg; if (events) (*events)++; pos++; break;   /* F8 n: queue event 13 with argument n for the object */
-		default: if (events) (*events)++; pos++; break;                  /* F7.. events / counters */
+		case 8: if (st->nact < 4) st->act[st->nact++] = (uint8_t)arg; if (events) (*events)++; pos++; break;   /* F7 n: queue the TAD action routine n */
+		default: if (events) (*events)++; pos++; break;                  /* F6.. counters */
 		}
 		pos &= 0xFF;
 		st->pos = pos;

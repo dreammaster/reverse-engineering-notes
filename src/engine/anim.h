@@ -15,6 +15,8 @@ typedef struct {
 	int dx, dy;         /* pixel offset of the current frame */
 	int nev;            /* F8 commands run since the caller last looked: event 13 (1000:3CE7) with these arguments */
 	uint8_t ev[4];
+	int nact;           /* F7 commands: run the thing's TAD action routine n (1000:3D17) */
+	uint8_t act[4];
 } AnimState;
 
 /* Script words of an animated block: (command, argument) pairs. Returns the number of words (0 = static block). */

@@ -27,7 +27,7 @@ static void reset_thing(AclVM *vm, const Mp2 *mp2, int t) {
 		vm->present[t] = 1;
 		vm->flags[t] = r[3];
 		vm->room[t] = r[10];
-		if (r[12] >= 16 && (size_t)r[12] + 6 <= (size_t)len) memcpy(vm->tail[t], r + r[12], 6);
+		if (r[12] >= 16 && (size_t)r[12] + 6 <= (size_t)len) memcpy(vm->tail[t], r + r[12], (size_t)r[12] + 16 <= (size_t)len ? 16 : 6);
 		if (r[13] >= 16 && (size_t)r[13] + 10 <= (size_t)len) memcpy(vm->mstate[t], r + r[13], 10);
 		if (r[13] >= 16 && r[14] > r[13] + 14 && (size_t)r[14] <= (size_t)len) {
 			size_t tl = (size_t)r[14] - r[13] - 14;

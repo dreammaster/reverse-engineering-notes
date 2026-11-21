@@ -195,6 +195,12 @@ static void roomview_tick(RoomView *rv) {
 	}
 	if (rv->ok && rv->ro_key && (++rv->ro_ticks & 1) == 0) {
 		roomobjs_step(&rv->ro);
+		for (int i = 0; i < rv->ro.n; i++) {                       /* animation command F7 n: the thing's TAD action routine n (1000:3D17 queues, 5F6E runs) */
+			RoomObj *o = &rv->ro.o[i];
+			for (int k = 0; k < o->an.nact; k++)
+				if (rv->tad.loaded) tad_run_action(&rv->tad, &rv->vm, o->thing, o->an.act[k], &o->an);
+			o->an.nact = 0;
+		}
 		for (int k = 0; k < rv->vm.nresume; k++)                    /* op 03h */
 			for (int i = 0; i < rv->ro.n; i++)
 				if (rv->ro.o[i].thing == rv->vm.resume[k] && rv->ro.o[i].an.delay == 0xFE) { rv->ro.o[i].an.delay = 0; rv->ro.o[i].an.pos++; }
