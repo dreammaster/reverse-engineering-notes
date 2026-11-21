@@ -52,6 +52,7 @@ int tad_load(TadRt *t, const uint8_t *raw, size_t len) {
 		t->mem[SSG * 16 + 0x101 + 2 * i] = (uint8_t)(v >> 8);
 	}
 	t->cur_thing = t->proj_thing = -1;
+	t->beh_thing = -1;
 	t->loaded = 1;
 	return 0;
 }
@@ -180,6 +181,7 @@ int tad_run_behaviour(TadRt *t, AclVM *vm, int b, int cx, int cy, int px, int py
 	memset(ds + CREAT_REC, 0, 0x40);
 	ds[CREAT_REC] = (uint8_t)cx; ds[CREAT_REC + 1] = (uint8_t)cy;
 	ds[CREAT_REC + 0xD] = 0x10;                                               /* movement state at +0x10 */
+	if (t->beh_thing > 0 && t->beh_thing < ACL_THINGS) memcpy(ds + CREAT_REC + 0x10, vm->mstate[t->beh_thing], 10);
 	ds[CREAT_REC + 0xE] = 0x20;                                               /* tail at +0x20 */
 	ds[0x226] = ds[0x227] = 0;
 	ds[0x84] = QBASE & 0xFF; ds[0x85] = QBASE >> 8;

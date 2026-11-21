@@ -743,7 +743,8 @@ static void creatures_step(Walker *wk, RoomView *rv) {
 		return;
 	for (int i = 0; i < rv->ro.n && active < 6; i++) {
 		RoomObj *o = &rv->ro.o[i];
-		if (o->sp->header[0x16] != 3 || (rv->vm.tail[o->thing][5] & 0x80) || (rv->vm.flags[o->thing] & 0x80))
+		int h16 = o->sp->header[0x16], shot = (h16 & 0x80) != 0 && rv->vm.mstate[o->thing][0] == 3;       /* header bit 7 + velocity mode: a shot (thing 776 of level 3) */
+		if ((h16 != 3 && !shot) || (rv->vm.tail[o->thing][5] & 0x80) || (rv->vm.flags[o->thing] & 0x80))
 			continue;
 		active++;
 		uint8_t *ms = rv->vm.mstate[o->thing];
@@ -755,11 +756,17 @@ static void creatures_step(Walker *wk, RoomView *rv) {
 		}
 		if (ms[0] == 3) {
 			int vx, vy;
-			if (go && tad_run_behaviour(&rv->tad, &rv->vm, rv->vm.tail[o->thing][1], o->x1, o->y1, wk->x1, wk->y1, &vx, &vy) == 0) {
+			rv->tad.beh_thing = o->thing;
+			int have = go && tad_run_behaviour(&rv->tad, &rv->vm, rv->vm.tail[o->thing][1], o->x1, o->y1, wk->x1, wk->y1, &vx, &vy) == 0;
+			if (go && !have && shot) { vx = (int8_t)ms[3]; vy = (int8_t)ms[4]; have = 1; }      /* no behaviour routine: the velocity the shooter set */
+			if (have) {
+				int mv0 = moved;
 				int dx = vx > 0 ? ms[6] : vx < 0 ? -ms[6] : 0, dy = vy > 0 ? ms[7] : vy < 0 ? -ms[7] : 0;
 				if (dx) creature_move(wk, rv, o, dx, 0, gx, gy, &moved, &hit);
 				if (dy) creature_move(wk, rv, o, 0, dy, gx, gy, &moved, &hit);
+				if (shot && (vx || vy) && (hit || moved == mv0)) rv->vm.flags[o->thing] |= 0x80;   /* a shot that hits something or is blocked is gone */
 			}
+			rv->tad.beh_thing = -1;
 		} else if (ms[0] == 0 || ms[0] == 2) {                   /* scripted: 00 = move by counters, 01 = jump, 02 = wait */
 			if (ms[0] == 2) {
 				if (ms[2] > 0 && --ms[2] == 0) ms[0] = 0;
@@ -1271,6 +1278,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	wk->tick++;
 	rv->vm.held = rv->held;
 	rv->vm.px = wk->x1; rv->vm.py = wk->y1; rv->vm.pz = wk->z;
+	if (getenv("CAD_SHOT") && (wk->tick % 4) == 0 && rv->vm.room[776] == rv->room) fprintf(stderr, "S776 tick %d pos %d,%d,%d flags %02x mode %d vel %d,%d\n", wk->tick, rv->vm.pos[3*776], rv->vm.pos[3*776+1], rv->vm.pos[3*776+2], rv->vm.flags[776], rv->vm.mstate[776][0], (int8_t)rv->vm.mstate[776][3], (int8_t)rv->vm.mstate[776][4]);
 	if (getenv("CAD_VARS")) { static uint8_t pg[0x190]; for (int i = 0; i < 0x190; i++) if (pg[i] != rv->vm.g[i]) { fprintf(stderr, "G tick %d g[%02x] %02x -> %02x\n", wk->tick, i, pg[i], rv->vm.g[i]); pg[i] = rv->vm.g[i]; } }
 	if (g_snd_log) { static int pf = -1, pr = -1; if (rv->vm.flags[467] != pf || rv->vm.room[467] != pr) { fprintf(stderr, "T467 unsup %d last %02x tick %d flags %02x room %d pos %d,%d,%d\n", rv->tad.unsupported, rv->tad.last_unsupported, wk->tick, rv->vm.flags[467], rv->vm.room[467], rv->vm.pos[3*467], rv->vm.pos[3*467+1], rv->vm.pos[3*467+2]); pf = rv->vm.flags[467]; pr = rv->vm.room[467]; } }
 	if (rv->look_pic) { int any = 0; for (int i = 0; i < 4; i++) any |= rv->msgs[i].active; if (!any) rv->look_pic = 0; }
