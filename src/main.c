@@ -1155,12 +1155,12 @@ static void throw_held(Walker *wk, RoomView *rv) {
 	rv->pending_rebuild = 1;
 	roomview_flush_messages(rv);
 }
-/* gravity (1000:1572B / 6BFC): a loose thing (sprite header weight byte 0Dh != 0, record flags2 bits 4 and 8 clear) that stands above the floor with nothing under it starts to fall */
+/* gravity (1000:1572B / 6BFC): a loose thing (sprite header byte 0Ch bit 0 set = non-solid, weight byte 0Dh != 0, record flags2 bits 4 and 8 clear) that stands above the floor with nothing under it starts to fall */
 static void gravity_scan(Walker *wk, RoomView *rv) {
 	for (int i = 0; i < rv->ro.n && rv->nfly < 8; i++) {
 		const RoomObj *o = &rv->ro.o[i];
 		int t = o->thing, z = (int8_t)rv->vm.pos[3 * t + 2];
-		if (z <= 0 || o->sp->header[0x0D] == 0 || (rv->vm.flags2[t] & 0x0C) || (rv->vm.flags[t] & 0x80) || t == 0 || !rv->loose[t]) continue;      /* only things the player dropped or threw: the original's selection of the things that fall (entry flag 27h bit 0) is not decoded and hanging lamps etc. must stay */
+		if (z <= 0 || !(o->sp->header[12] & 1) || o->sp->header[0x0D] == 0 || (rv->vm.flags2[t] & 0x0C) || (rv->vm.flags[t] & 0x80) || t == 0) continue;   /* entry flag 27h bit 0 = sprite header byte 0Ch bit 0 (the non-solid things: items) */
 		int busy = 0;
 		for (int k = 0; k < rv->nfly; k++) if (rv->fly[k].thing == t) busy = 1;
 		if (busy) continue;
