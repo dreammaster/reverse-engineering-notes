@@ -418,6 +418,158 @@ void Game::mdSceneFour(int qty, int qual) {
 	}
 }
 
+// sub_52B0C(first, qual, qty), the scene of the square 0x85. The first time (the dream number is not 0x85): the story flags of actor 0x51 are cleared; the actors 0x51 (0x39, 0x65), 0xA
+// (0x3D, 0x66), 0xB (0x34, 0x66), 0xC (0x3C, 0x5E), 0xD (0x34, 0x5E), 0xE (0x3C, 0x56) and 0xF (0x34, 0x56) of level 2 stand there as people with frame 9 and their flags reset; the 0x14B and
+// 0xEB things of x 0x30-0x3F, y 0x50-0x67 are taken away and a 0x14B holding an 0xEB (frame 4) is made at 0x34, 0x50. After that (the body comes back to the square): the first 0x14B or 0xEB in
+// the 8 x 8 block of (qual, qty) is taken away and the first one in the body's block is moved to the first block's x + 5 (x + 1 at 0x38, 0x60 and x + 4 else; + 5 beyond x 0x3A, y 0x60), qty.
+void Game::mdSceneStore(bool first, int qual, int qty) {
+	ObjList &al = _world.actors;
+	if (first) {
+		al.talkFlags[0x51] = 0;
+		static const int PLACES[7][3] = {{0x51, 0x39, 0x65}, {0x0A, 0x3D, 0x66}, {0x0B, 0x34, 0x66}, {0x0C, 0x3C, 0x5E}, {0x0D, 0x34, 0x5E}, {0x0E, 0x3C, 0x56}, {0x0F, 0x34, 0x56}};
+		for (const auto &pl : PLACES) {
+			int k = _world.actorObject(pl[0]);
+			if (k >= 0) {
+				mdPlace(k, pl[1], pl[2], 2);
+				_world.objects[k].frame = 9;
+				_world.objects[k].status |= 0x80;
+			}
+			al.worktype[pl[0]] = 0;
+			al.status[pl[0]] &= 0x9F;
+		}
+		for (size_t i = 0x101; i < _world.objects.size(); ++i) {
+			const World::Obj &o = _world.objects[i];
+			if (o.deleted || !o.onMap() || o.z != z || o.x < 0x30 || o.x > 0x3F || o.y < 0x50 || o.y > 0x67)
+				continue;
+			if (o.type == 0x14B || o.type == 0xEB)
+				_world.deleteObject((int)i);
+		}
+		int box = mdMakeThing(0x14B, 0, 0x34, 0x50);
+		seFill(box, 0xEB, 1);
+		for (size_t i = 0; i < _world.objects.size(); ++i)
+			if (!_world.objects[i].deleted && _world.objects[i].parent == box && _world.objects[i].type == 0xEB)
+				_world.objects[i].frame = 4;
+		return;
+	}
+	int k = _world.actorObject(0);
+	if (k < 0)
+		return;
+	int bx = _world.objects[k].x & 0xF8, by = _world.objects[k].y & 0xF8;
+	bool far = qual > 0x3A && qty >= 0x60;
+	int tx = qual & 0xF8, ty = qty & 0xF8;
+	auto box = [](const World::Obj &o) { return o.type == 0x14B || o.type == 0xEB; };
+	mdEach(tx, ty, tx + 7, ty + 7, [&](int i) {
+		if (!box(_world.objects[i]))
+			return false;
+		_world.deleteObject(i);
+		return true;
+	});
+	mdEach(bx, by, bx + 7, by + 7, [&](int i) {
+		if (!box(_world.objects[i]))
+			return false;
+		mdPlace(i, far ? tx + 5 : (tx == 0x38 && ty == 0x60) ? tx + 1 : tx + 4, ty, z);
+		return true;
+	});
+}
+
+// The things inside a container, in the order of the list (sub_2BBAD, sub_2BC06)
+std::vector<int> Game::mdContents(int box) const {
+	std::vector<int> r;
+	for (size_t i = 0; i < _world.objects.size(); ++i) {
+		const World::Obj &o = _world.objects[i];
+		if (!o.deleted && o.parent == box && o.location() == ObjRecord::IN_CONTAINER)
+			r.push_back((int)i);
+	}
+	return r;
+}
+
+// sub_51C96(), the scene of the square 0xA1: actor 0x52 stands at 0x5F, 0x10 of level 2 as a person with frame 9 and its flags cleared; in the region x 0x58-0x7F, y 8-0x2E: a 0x59 keeps
+// only a 0x2E (made if there is none), a 0x68 gets the next frame and keeps only 16 of a 0x3C (made if there is none), a 0x77 not at 0x7E, 0x21 and a 0x49 not at 0x75, 0x21 go, a 0x14B
+// whose first thing is a 0x2A, 0x39 or 0x81 goes with it; a 0x59 (holding a 0x2E) and a 0x68 (holding 16 of 0x3C) are made at 0x58, 0x20 when there was none; a 0x77, a 0x49, and 0x14B holding a
+// 0x81 at 0x73, 0x21, a 0x2A at 0x75, 0x29, 24 of 0x39 at 0x76, 0x2A are made where there are none.
+void Game::mdSceneAmmo() {
+	ObjList &al = _world.actors;
+	bool had59 = false, had68 = false;
+	al.talkFlags[0x52] = 0;
+	int p = _world.actorObject(0x52);
+	if (p >= 0) {
+		mdPlace(p, 0x5F, 0x10, 2);
+		_world.objects[p].frame = 9;
+		_world.objects[p].status |= 0x80;
+	}
+	al.worktype[0x52] = 0;
+	al.status[0x52] &= 0x9F;
+	std::vector<int> found;
+	mdEach(0x58, 8, 0x7F, 0x2E, [&](int i) {
+		found.push_back(i);
+		return false;
+	});
+	for (int i : found) {
+		World::Obj &o = _world.objects[i];
+		if (o.deleted)
+			continue;
+		switch (o.type) {
+		case 0x59:
+		case 0x68: {
+			bool is59 = o.type == 0x59;
+			int keep = is59 ? 0x2E : 0x3C;
+			(is59 ? had59 : had68) = true;
+			if (!is59)
+				++o.frame;
+			bool kept = false;
+			for (int c : mdContents(i)) {
+				if (_world.objects[c].type == keep)
+					kept = true;
+				else
+					_world.deleteObject(c);
+			}
+			if (!kept)
+				seFill(i, keep, is59 ? 1 : 0x10);
+			break;
+		}
+		case 0x77:
+			if (!(o.x == 0x7E && o.y == 0x21))
+				_world.deleteObject(i);
+			break;
+		case 0x49:
+			if (!(o.x == 0x75 && o.y == 0x21))
+				_world.deleteObject(i);
+			break;
+		case 0x14B: {
+			std::vector<int> in = mdContents(i);
+			if (!in.empty()) {
+				int t = _world.objects[in[0]].type;
+				if (t == 0x2A || t == 0x39 || t == 0x81) {
+					_world.deleteObject(in[0]);
+					_world.deleteObject(i);
+				}
+			}
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	if (!had59) {
+		int a = mdMakeThing(0x59, 0, 0x58, 0x20);
+		seFill(a, 0x2E, 1);
+	}
+	if (!had68) {
+		int a = mdMakeThing(0x68, 0, 0x58, 0x20);
+		seFill(a, 0x3C, 0x10);
+	}
+	if (seFind(0x77, 0x7E, 0x21) < 0)
+		mdMakeThing(0x77, 0, 0x7E, 0x21);
+	if (seFind(0x49, 0x75, 0x21) < 0)
+		mdMakeThing(0x49, 0, 0x75, 0x21);
+	static const int BOXES[3][4] = {{0x73, 0x21, 0x81, 1}, {0x75, 0x29, 0x2A, 1}, {0x76, 0x2A, 0x39, 0x18}};
+	for (const auto &b : BOXES)
+		if (seFind(0x14B, b[0], b[1]) < 0) {
+			int box = mdMakeThing(0x14B, 0, b[0], b[1]);
+			seFill(box, b[2], b[3]);
+		}
+}
+
 // sub_50007: the dreamer wakes. The body goes back to its place at level 6, the members' psychic numbers are lost and the poisoned ones are left nearly dead (more than 30 hit points lose 24-30,
 // more than 10 get 1-10, else 1), the clock reads eight in the morning of the day kept, the view goes back to the Avatar and the morning song plays.
 void Game::mdDreamWake() {
@@ -555,6 +707,12 @@ void Game::mdDreamTouch(int obj) {
 	case 0x24:
 		mdDreamWake();
 		return;
+	case 0xA1: // sub_51C96, before the body goes on
+		mdSceneAmmo();
+		break;
+	case 0x85: // sub_52B0C(the first time, qual, qty), before the body goes on
+		mdSceneStore(_mdDreamId != 0x85, qual, qty);
+		break;
 	case 4: // sub_52491, before the body goes on
 		mdSceneFour(qty, qual);
 		break;
@@ -613,7 +771,7 @@ void Game::mdDreamTouch(int obj) {
 	case 0xC0:
 		al.hp[0] = (uint8_t)ActorStats::maxHealth(_world, 1);
 		break;
-	default: // 0x85, 0xA1: the scenes of sub_52B0C, sub_51C96 (APPROX(95)); the square only leads on
+	default: // (the others only lead on)
 		break;
 	}
 	if (kind != 0xA5)

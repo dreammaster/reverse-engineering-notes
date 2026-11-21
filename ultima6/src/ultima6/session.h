@@ -141,6 +141,7 @@ public:
 	void mdDreamFinish(int actor);                 // sub_3F615 + sub_3F61A
 	void mdDreamTouch(int obj);                    // sub_50218
 	void mdExitCode(int code);                     // sub_55F77: what the exit code of a conversation does
+	std::vector<int> mdContents(int box) const;    // the things inside a container
 	void mdStepOn();                               // sub_27EE6's part for the squares of the dream
 	bool mdDreaming() const {
 		return _mdDreaming;
@@ -159,6 +160,8 @@ private:
 	int mdMakeThing(int type, int word, int mx, int my);
 	int mdMakeCreature(int word, int mx, int my, int worktype);
 	void mdSceneFour(int qty, int qual);
+	void mdSceneStore(bool first, int qual, int qty);
+	void mdSceneAmmo();
 	void mdSceneFive();
 	void mdSceneMaze();
 	void mdSceneSix();

@@ -235,6 +235,54 @@ int main() {
 		CHECK(w.objects[store].invisible());
 	}
 
+	// the flags 0x85 (sub_52B0C): the first time the people 0x51 and 0xA-0xF stand in the room (frame 9) and a 0x14B holding a 0xEB is made at 0x34, 0x50
+	{
+		int sq = put(w, 0x1CD, 0, 38, 20, 2);
+		w.objects[sq].status = 0x85;
+		w.objects[sq].quantity = 0x66;
+		w.objects[sq].quality = 0x39;
+		w.moveObject(body, 38, 20, 2);
+		g.x = 38;
+		g.y = 20;
+		g.mdStepOn();
+		int p = w.actorObject(0x0C);
+		CHECK(w.objects[p].x == 0x3C && w.objects[p].y == 0x5E && w.objects[p].frame == 9);
+		int box = -1;
+		for (size_t i = 0; i < w.objects.size(); ++i)
+			if (!w.objects[i].deleted && w.objects[i].type == 0x14B && w.objects[i].x == 0x34 && w.objects[i].y == 0x50 && w.objects[i].z == 2)
+				box = (int)i;
+		CHECK(box >= 0);
+		bool oil = false;
+		for (const World::Obj &o : w.objects)
+			oil |= !o.deleted && o.type == 0xEB && o.parent == box && o.frame == 4;
+		CHECK(oil);
+	}
+
+	// the flags 0xA1 (sub_51C96): a 0x77 at 0x7E, 0x21 and a 0x49 at 0x75, 0x21 are made, the box (0x14B) at 0x73, 0x21 holds a 0x81, actor 0x52 stands at 0x5F, 0x10 with frame 9
+	{
+		int sq = put(w, 0x1CD, 0, 39, 20, 2);
+		w.objects[sq].status = 0xA1;
+		w.objects[sq].quantity = 21;
+		w.objects[sq].quality = 21;
+		w.moveObject(body, 39, 20, 2);
+		g.x = 39;
+		g.y = 20;
+		g.mdStepOn();
+		int p = w.actorObject(0x52);
+		CHECK(w.objects[p].x == 0x5F && w.objects[p].y == 0x10 && w.objects[p].frame == 9);
+		int n77 = 0, n49 = 0;
+		for (const World::Obj &o : w.objects) {
+			n77 += !o.deleted && o.type == 0x77 && o.x == 0x7E && o.y == 0x21;
+			n49 += !o.deleted && o.type == 0x49 && o.x == 0x75 && o.y == 0x21;
+		}
+		CHECK(n77 == 1 && n49 == 1);
+		int box = -1;
+		for (size_t i = 0; i < w.objects.size(); ++i)
+			if (!w.objects[i].deleted && w.objects[i].type == 0x14B && w.objects[i].x == 0x73 && w.objects[i].y == 0x21 && w.objects[i].z == 2)
+				box = (int)i;
+		CHECK(box >= 0 && g.mdContents(box).size() == 1 && w.objects[g.mdContents(box)[0]].type == 0x81);
+	}
+
 	// a square with flags 0x20 (sub_514B0): the body is given a vial (0x14B) with a 0x38, the foes (0x16C) appear round it, a thing of the list in the region goes, and combat begins
 	{
 		int junk = put(w, 0x38, 0, 10, 20, 2);
