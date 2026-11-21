@@ -133,6 +133,9 @@ public:
 	int mdReach() const;
 	bool mdInReach(int tx, int ty);
 	// Martian Dreams' dream machines and dreams (md_dream.cpp)
+	void mdLeverBridge(int lever);                 // sub_4F5A0
+	void mdLeverPanel(int lever);                  // sub_5328B
+	void mdLeverWorld(int lever);                  // sub_53496
 	void mdDreamMachine(int cabinet);              // sub_5BC53
 	void mdDreamStart(int quality, int sitter);    // sub_4FB90
 	void mdDreamStartLevel3();                     // sub_4FE5E
@@ -176,6 +179,7 @@ private:
 	int _mdDreamFlag = 0;          // byte_41153
 	int _mdWake[3] = {1, 1, 1};    // byte_41180 / 41181 / word_41182: the day, month and year the dreamer wakes on
 	bool _mdMorning = false;
+	int _mdTurn = 0;               // word_4115E: the turn of the world (eighths) the lever of sub_53496 asks for
 	World &_world;
 	MapRenderer _renderer;
 	Movement _movement;

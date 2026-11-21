@@ -407,6 +407,70 @@ int main() {
 		al.talkFlags[0x46] &= 0xF7;
 	}
 
+	// the drawbridge (sub_4F5A0): without the surface power it will not move; with it the span of three squares is made, the levers' frames are 1, the next pull takes it in
+	{
+		g.x = px;
+		g.y = py;
+		g.z = 0;
+		w.moveObject(w.actorObject(1), px, py, 0);
+		int bx = -1, by = -1;
+		for (int tryY = py + 10; tryY < py + 40 && bx < 0; ++tryY)
+			for (int tryX = px + 6; tryX < px + 30 && bx < 0; ++tryX) {
+				bool free = true;
+				for (int dx = -3; dx <= 0; ++dx) {
+					std::vector<int> here;
+					w.objectsAt(tryX + dx, tryY, 0, here);
+					free &= here.empty();
+				}
+				if (free) {
+					bx = tryX;
+					by = tryY;
+				}
+			}
+		CHECK(bx >= 0);
+		int l1 = put(w, 0xC4, 0, px + 1, py + 1, 0), l2 = put(w, 0xC4, 0, px + 2, py + 1, 0);
+		int anchor = put(w, 0xC3, 0, bx, by, 0);
+		for (int l : {l1, l2}) {
+			w.objects[l].quality = 0xA;
+			w.objects[l].quantity = 0x55;
+		}
+		w.objects[anchor].quality = 0x55;
+		w.objects[anchor].quantity = 3;
+		al.talkFlags[0x73] &= 0xEF;
+		g.log.clear();
+		g.mdLeverBridge(l1);
+		CHECK(logText(g).find("any power for the machinery") != std::string::npos);
+		al.talkFlags[0x73] |= 0x10;
+		g.log.clear();
+		g.mdLeverBridge(l1);
+		CHECK(logText(g).find("slides out") != std::string::npos);
+		int pieces = 0;
+		for (const World::Obj &o : w.objects)
+			pieces += !o.deleted && o.type == 0xC3 && o.frame == 2 && o.quality == 0x55 && o.y == by && o.x >= bx - 3 && o.x <= bx - 1;
+		CHECK(pieces == 3 && w.objects[l1].frame == 1 && w.objects[l2].frame == 1);
+		g.log.clear();
+		g.mdLeverBridge(l1);
+		CHECK(logText(g).find("retracts") != std::string::npos);
+		CHECK(w.objects[l1].frame == 0);
+	}
+
+	// the panel lever (sub_5328B): number 4 needs the lenses; number 3 aligns them; then the canals work
+	{
+		int lev = put(w, 0xC4, 0, px + 3, py + 1, 0);
+		w.objects[lev].quality = 0x14;
+		w.objects[lev].quantity = 4;
+		al.talkFlags[0x76] &= 0x9F;
+		g.log.clear();
+		g.mdLeverPanel(lev);
+		CHECK(logText(g).find("no water pressure") != std::string::npos);
+		w.objects[lev].quantity = 3;
+		g.mdLeverPanel(lev);
+		CHECK(al.talkFlags[0x76] & 0x20);
+		w.objects[lev].quantity = 4;
+		g.mdLeverPanel(lev);
+		CHECK(al.talkFlags[0x76] & 0x40);
+	}
+
 	// the end of a scene and the waking in one (the mirror, the manuscript ...): only while dreaming
 	g.mdDreamFinish(0x51);
 	CHECK(!g.mdDreaming());

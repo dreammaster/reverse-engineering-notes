@@ -1400,11 +1400,21 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		mdAskKey([](int key) { return key == 'y' || key == 'Y' || key == 'n' || key == 'N'; });
 		break;
 	}
-	case 24: { // sub_52F40: a lever or switch (0xC4, 0x137, 0x138): its quality says what it does (the table at cs:0062), its quantity is the number it shares with what it works. Quality 1 locks / unlocks the door (0xB3 or 0xE3 with that number in the low 7 bits of its quality) and sets the levers' frames; 2 opens / closes it (if the story has come to that: flag 0x73 bit 4 for the 0xE3, bit 0x10 for the 0xB3, else "the lever seems stuck.") and sets the levers' frames; 0xA, 0x14 and 0x15 are scenes (sub_3F5A0, sub_5328B, sub_53496); another is "What an odd lever!"
-		// APPROX(76): the three scenes and the part of quality 2 that is for a dream is done (the maze dream, 0x44); the scenes 0xA, 0x14 and 0x15 are not; the sound of the door (sub_3058D) is left out
+	case 24: { // sub_52F40: a lever or switch (0xC4, 0x137, 0x138): its quality says what it does (the table at cs:0062), its quantity is the number it shares with what it works. Quality 1 locks / unlocks the door (0xB3 or 0xE3 with that number in the low 7 bits of its quality) and sets the levers' frames; 2 opens / closes it (if the story has come to that: flag 0x73 bit 4 for the 0xE3, bit 0x10 for the 0xB3, else "the lever seems stuck.") and sets the levers' frames; 0xA, 0x14 and 0x15 are scenes (sub_3F5A0, sub_5328B, sub_53496; md_levers.cpp); another is "What an odd lever!"
+		// APPROX(76): the three scenes and the part of quality 2 that is for a dream is done (the maze dream, 0x44); the scenes 0xA, 0x14 and 0x15 are in md_levers.cpp; the sound of the door (sub_3058D) is left out
 		int q = o.quality, id = o.quantity;
-		if (q == 0xA || q == 0x14 || q == 0x15)
+		if (q == 0xA) {
+			mdLeverBridge(item);
 			break;
+		}
+		if (q == 0x14) {
+			mdLeverPanel(item);
+			break;
+		}
+		if (q == 0x15) {
+			mdLeverWorld(item);
+			break;
+		}
 		if (q != 1 && q != 2) {
 			message("What an odd lever!\n");
 			break;
