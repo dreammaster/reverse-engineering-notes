@@ -33,6 +33,8 @@ typedef struct {
 	uint16_t doorw[400];            /* word at +2 of every door record (section 1): script-visible lock state (ops 0Ah / 1Bh set it, op 3Dh tests it) */
 	int held;                       /* ds:27A: the thing held (op 39h tests it) */
 	uint8_t size[ACL_THINGS][3];    /* sprite box size (header words 8..10) of every thing, filled by the front end (op 38h needs it) */
+	int clone_ok;                   /* the front end lets spawns of a live thing allocate a copy with its own id (900..999) */
+	uint16_t clone_src[ACL_THINGS]; /* for such copies: the template whose record they share (0 = not a copy) */
 	int describe;                   /* op 48h (look): thing+1 whose picture goes with the message just queued (0 = none) */
 	int room_no;                    /* ds:232 */
 	int reg;                        /* ds:704 */
@@ -64,6 +66,8 @@ typedef struct {
 } AclVM;
 
 void acl_init(AclVM *vm, const Mp2 *mp2);
+/* re-point the record slots of the copies after the level (and its Mp2) was reloaded */
+void acl_restore_clones(AclVM *vm);
 /* put a fresh copy of thing `id` at the place of thing `from` (a shot fired by a TAD routine) with the velocity bytes vx, vy */
 void acl_spawn_shot(AclVM *vm, int id, int from, int vx, int vy);
 /* 1000:81C8 with its sounds */

@@ -375,6 +375,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	}
 	acl_init(&rv->vm, &rv->mp2);
 	rv->vm.rand_range = game_rand;
+	rv->vm.clone_ok = 1;
 	for (int t = 0; t < ACL_THINGS; t++) {                    /* sprite box sizes for op 38h */
 		int len;
 		const uint8_t *r = mp2_thing(&rv->mp2, t, &len);
@@ -1264,8 +1265,10 @@ static void game_load_apply(RoomView *rv) {
 	const SaveHead *h = (const SaveHead *)g_sav;
 	AclVM keep = rv->vm;
 	memcpy(&rv->vm, g_sav + sizeof(SaveHead), sizeof(AclVM));
+	rv->vm.clone_ok = 1;
 	rv->vm.mp2 = keep.mp2; rv->vm.sound_stop = keep.sound_stop; rv->vm.rand_range = keep.rand_range; rv->vm.sound = keep.sound; rv->vm.user = keep.user;
 	rv->vm.msg_n = 0; rv->vm.queue_n = 0; rv->vm.tev_n = 0; rv->vm.go.pending = 0; rv->vm.next_level = 0;
+	acl_restore_clones(&rv->vm);
 	memcpy(rv->visited, h->visited, sizeof(rv->visited));
 	rv->day = h->day; rv->clock_ticks = h->clock_ticks; rv->held = h->held; rv->last_item = h->last_item;
 	rv->room = h->room;
@@ -1278,7 +1281,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	wk->tick++;
 	rv->vm.held = rv->held;
 	rv->vm.px = wk->x1; rv->vm.py = wk->y1; rv->vm.pz = wk->z;
-	if (getenv("CAD_SHOT") && (wk->tick % 4) == 0 && rv->vm.room[776] == rv->room) fprintf(stderr, "S776 tick %d pos %d,%d,%d flags %02x mode %d vel %d,%d\n", wk->tick, rv->vm.pos[3*776], rv->vm.pos[3*776+1], rv->vm.pos[3*776+2], rv->vm.flags[776], rv->vm.mstate[776][0], (int8_t)rv->vm.mstate[776][3], (int8_t)rv->vm.mstate[776][4]);
+	if (getenv("CAD_SHOT") && (wk->tick % 4) == 0 && 1) fprintf(stderr, "S776 tick %d pos %d,%d,%d flags %02x mode %d vel %d,%d\n", wk->tick, rv->vm.pos[3*776], rv->vm.pos[3*776+1], rv->vm.pos[3*776+2], rv->vm.flags[776], rv->vm.mstate[776][0], (int8_t)rv->vm.mstate[776][3], (int8_t)rv->vm.mstate[776][4]);
 	if (getenv("CAD_VARS")) { static uint8_t pg[0x190]; for (int i = 0; i < 0x190; i++) if (pg[i] != rv->vm.g[i]) { fprintf(stderr, "G tick %d g[%02x] %02x -> %02x\n", wk->tick, i, pg[i], rv->vm.g[i]); pg[i] = rv->vm.g[i]; } }
 	if (g_snd_log) { static int pf = -1, pr = -1; if (rv->vm.flags[467] != pf || rv->vm.room[467] != pr) { fprintf(stderr, "T467 unsup %d last %02x tick %d flags %02x room %d pos %d,%d,%d\n", rv->tad.unsupported, rv->tad.last_unsupported, wk->tick, rv->vm.flags[467], rv->vm.room[467], rv->vm.pos[3*467], rv->vm.pos[3*467+1], rv->vm.pos[3*467+2]); pf = rv->vm.flags[467]; pr = rv->vm.room[467]; } }
 	if (rv->look_pic) { int any = 0; for (int i = 0; i < 4; i++) any |= rv->msgs[i].active; if (!any) rv->look_pic = 0; }

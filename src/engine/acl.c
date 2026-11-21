@@ -19,6 +19,31 @@ static int cond_len(int type) {
 	}
 }
 
+/* a spawn of thing `id` into `room`: when it is already there and visible (a second dart of the same turret) it needs a copy with its own id; the copy's slot in the
+ * Mp2 table shares the template's record (ids 900..999 are free in every level) */
+static int spawn_id(AclVM *vm, int id, int room) {
+	if (!vm->clone_ok || !vm->mp2 || vm->clone_src[id]) return id;
+	if (!(vm->present[id] && vm->room[id] == room && !(vm->flags[id] & 0x80))) return id;
+	Mp2 *m = (Mp2 *)vm->mp2;
+	for (int c = 900; c < 1000 && c < m->sec[3].count; c++) {
+		if (vm->present[c] && !(vm->flags[c] & 0x80)) continue;
+		if (m->sec[3].rec[c] && !vm->clone_src[c]) continue;
+		m->sec[3].rec[c] = m->sec[3].rec[id];
+		m->sec[3].len[c] = m->sec[3].len[id];
+		vm->clone_src[c] = (uint16_t)id;
+		vm->present[c] = 1;
+		return c;
+	}
+	return id;
+}
+
+void acl_restore_clones(AclVM *vm) {
+	Mp2 *m = (Mp2 *)vm->mp2;
+	if (!m) return;
+	for (int c = 900; c < 1000 && c < m->sec[3].count; c++)
+		if (vm->clone_src[c]) { m->sec[3].rec[c] = m->sec[3].rec[vm->clone_src[c]]; m->sec[3].len[c] = m->sec[3].len[vm->clone_src[c]]; }
+}
+
 /* (re)load a thing's state from its record: what a spawned copy starts with */
 static void reset_thing(AclVM *vm, const Mp2 *mp2, int t) {
 	int len;
@@ -54,6 +79,7 @@ void acl_init(AclVM *vm, const Mp2 *mp2) {
 
 void acl_spawn_shot(AclVM *vm, int id, int from, int vx, int vy) {
 	if (id < 0 || id >= ACL_THINGS || from < 0 || from >= ACL_THINGS || !vm->present[id] || !vm->present[from] || !vm->mp2) return;
+	id = spawn_id(vm, id, vm->room[from]);
 	reset_thing(vm, vm->mp2, id);
 	memset(vm->armed[128 + id], 0, sizeof(vm->armed[0]));
 	vm->pos[3 * id] = vm->pos[3 * from]; vm->pos[3 * id + 1] = vm->pos[3 * from + 1]; vm->pos[3 * id + 2] = vm->pos[3 * from + 2];
@@ -183,6 +209,7 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 		break;
 	case 36:                                            /* spawn [id16] x y z room: the original copies the thing record and queues a spawn request; here the thing is placed */
 		if (f && n >= 6 && tid >= 0 && tid < ACL_THINGS) {
+			tid = spawn_id(vm, tid, a[5] == 0xFE ? vm->room_no : a[5]);
 			if (vm->mp2) { reset_thing(vm, vm->mp2, tid); memset(vm->armed[128 + tid], 0, sizeof(vm->armed[0])); }   /* a fresh copy of the record: visible again, handlers armed */
 			vm->pos[3 * tid] = a[2]; vm->pos[3 * tid + 1] = a[3]; vm->pos[3 * tid + 2] = a[4];
 			vm->room[tid] = a[5] == 0xFE ? (uint8_t)vm->room_no : a[5];
@@ -198,6 +225,7 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 			int rb = a[5];
 			if (op == 84) { x = (x + a[4]) & 0xFF; y = (y + a[5]) & 0xFF; z = a[6]; rb = a[7]; }
 			if (rb != 0xFE) room = rb;
+			B = spawn_id(vm, B, room == 0xFE ? vm->room_no : room);
 			if (vm->mp2) { reset_thing(vm, vm->mp2, B); memset(vm->armed[128 + B], 0, sizeof(vm->armed[0])); }
 			vm->pos[3 * B] = (uint8_t)x; vm->pos[3 * B + 1] = (uint8_t)y; vm->pos[3 * B + 2] = (uint8_t)z;
 			vm->room[B] = (uint8_t)(room == 0xFE ? vm->room_no : room);
