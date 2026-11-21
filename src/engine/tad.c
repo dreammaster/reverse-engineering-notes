@@ -13,6 +13,8 @@
 #define SENT 1
 #define ACT_REC 0x3200
 #define PROJ_REC 0x3400
+#define ROOMLIST 0x3600
+#define ROOMREC 0x3800
 
 int tad_load(TadRt *t, const uint8_t *raw, size_t len) {
 	memset(t, 0, sizeof(*t));
@@ -67,6 +69,16 @@ static void energy_change(AclVM *vm, int delta) {
 }
 
 static void build_rec(TadRt *t, AclVM *vm, int thing, unsigned addr, const AnimState *an);
+/* the current room's thing list (ROOMLIST) and the room record ds:5E (byte 1Dh = its length) as the Payoff's routines expect them */
+static void prep_room(TadRt *t, AclVM *vm) {
+	uint8_t *dsm = t->mem + DSG * 16;
+	int n = 0;
+	for (int th = 1; th < ACL_THINGS && n < 0x70; th++)
+		if (vm->present[th] && vm->room[th] == (uint8_t)vm->room_no) { dsm[ROOMLIST + 2 * n] = (uint8_t)th; dsm[ROOMLIST + 2 * n + 1] = (uint8_t)(th >> 8); n++; }
+	memset(dsm + ROOMREC, 0, 0x40);
+	dsm[ROOMREC + 0x1D] = (uint8_t)n;
+	dsm[0x5E] = ROOMREC & 0xFF; dsm[0x5F] = ROOMREC >> 8;
+}
 static void svc_hook(X86 *c, void *user) {
 	TadRt *t = (TadRt *)user;
 	unsigned addr = x86_rw(c, DSG, 0x792);
@@ -80,6 +92,9 @@ static void svc_hook(X86 *c, void *user) {
 		c->ax = (uint16_t)(t->vm->rand_range ? t->vm->rand_range(lo, hi, t->vm->user) : lo);
 		break;
 	}
+	case 0x00:                                   /* 410E: ax = table, dx = id -> di = record. Only type 5 (the thing list of the current room, prepared by prep_room) is provided */
+		if ((c->ax & 0xFF) == 5) { c->di = ROOMLIST; c->fl = (uint16_t)(c->fl & ~64); }
+		break;
 	case 0x04: {                                 /* 407F: dx = thing id -> di = its record in the image (FFFF: the current thing); ZF set when there is none */
 		unsigned id = c->dx & 0xFFFF;
 		int th = id == 0xFFFF ? t->cur_thing : (int)id;
@@ -129,6 +144,7 @@ int tad_run_timer(TadRt *t, AclVM *vm, int idx) {
 	ds[0x226] = ds[0x227] = 0;
 	ds[0x232] = (uint8_t)vm->room_no; ds[0x233] = 0;
 	t->vm = vm;
+	prep_room(t, vm);
 	t->cur_thing = -1; t->proj_thing = -1;
 	X86 *c = &t->cpu;
 	x86_init(c, t->mem);
@@ -213,7 +229,12 @@ static void build_rec(TadRt *t, AclVM *vm, int thing, unsigned addr, const AnimS
 	memset(rec, 0, 0xA0);
 	rec[0] = vm->pos[3 * thing]; rec[1] = vm->pos[3 * thing + 1]; rec[2] = vm->pos[3 * thing + 2];
 	rec[3] = vm->flags[thing]; rec[10] = vm->room[thing]; rec[15] = vm->flags2[thing];
-	rec[4] = (uint8_t)(thing >> 8); rec[5] = (uint8_t)thing;
+	rec[4] = (uint8_t)thing; rec[5] = (uint8_t)(thing >> 8);                  /* words are native (little endian) in RAM */
+	if (vm->mp2) {
+		int len;
+		const uint8_t *r = mp2_thing(vm->mp2, thing, &len);
+		if (r && len >= 16) { rec[6] = r[7]; rec[7] = r[6]; rec[8] = r[9]; rec[9] = r[8]; rec[11] = r[11]; }   /* sprite block, ... */
+	}
 	rec[12] = 0x20; rec[13] = 0x30; rec[14] = 0x80;
 	memcpy(rec + 0x20, vm->tail[thing], 16);
 	memcpy(rec + 0x30, vm->mstate[thing], 10);
@@ -247,6 +268,7 @@ int tad_run_action(TadRt *t, AclVM *vm, int thing, int arg, AnimState *an) {
 	uint8_t *rec = ds + ACT_REC;
 	build_rec(t, vm, thing, ACT_REC, an);
 	t->cur_thing = thing; t->proj_thing = -1;
+	prep_room(t, vm);
 	uint8_t before[0xA0];
 	memcpy(before, rec, 0xA0);
 	ds[0x226] = ds[0x227] = 0;
