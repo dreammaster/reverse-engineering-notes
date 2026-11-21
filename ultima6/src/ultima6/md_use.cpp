@@ -1401,7 +1401,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		break;
 	}
 	case 24: { // sub_52F40: a lever or switch (0xC4, 0x137, 0x138): its quality says what it does (the table at cs:0062), its quantity is the number it shares with what it works. Quality 1 locks / unlocks the door (0xB3 or 0xE3 with that number in the low 7 bits of its quality) and sets the levers' frames; 2 opens / closes it (if the story has come to that: flag 0x73 bit 4 for the 0xE3, bit 0x10 for the 0xB3, else "the lever seems stuck.") and sets the levers' frames; 0xA, 0x14 and 0x15 are scenes (sub_3F5A0, sub_5328B, sub_53496); another is "What an odd lever!"
-		// APPROX(76): the three scenes and the part of quality 2 that is for a dream (sub_3F615) are not done; the sound of the door (sub_3058D) is left out
+		// APPROX(76): the three scenes and the part of quality 2 that is for a dream is done (the maze dream, 0x44); the scenes 0xA, 0x14 and 0x15 are not; the sound of the door (sub_3058D) is left out
 		int q = o.quality, id = o.quantity;
 		if (q == 0xA || q == 0x14 || q == 0x15)
 			break;
@@ -1451,6 +1451,22 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 				state = 1;
 			} else {
 				d.frame = (uint8_t)((f & 2) + 1);
+				if (_mdDreaming && _mdDreamId == 0x44) { // sub_52FB6: in the maze dream the first 0x18E decides: when it is at x 0x37 or more and y 0x37 or less (and the scene is not done) the scene of actor 0x54 ends the dream
+					for (int a = 0xC0; a < ObjList::ACTORS; ++a) {
+						int k = _world.actorObject(a);
+						if (k < 0 || _world.objects[k].type != 0x18E)
+							continue;
+						const World::Obj &c = _world.objects[k];
+						if (!(_world.actors.talkFlags[0x54] & 0x40) && c.z == z && c.x >= 0x37 && c.y <= 0x37) {
+							mdDreamEnd(0x54);
+							_world.actors.talkFlags[0x54] |= 2;
+							startTalk(0x54);
+							_talkEnd = [this]() { mdDreamWake(); };
+							return;
+						}
+						break;
+					}
+				}
 			}
 		}
 		for (int l : levers)
