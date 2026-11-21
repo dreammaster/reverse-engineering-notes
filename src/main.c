@@ -1166,12 +1166,36 @@ static void cast_strike(Walker *wk, RoomView *rv, int item) {
 	} else *hp = (uint8_t)(*hp - a[1]);
 	roomview_flush_messages(rv);
 }
+/* spell 1 (TAD routine 08C5): up to A[1] active creatures that are not immune (A[6] bit 0 clear) die (event 23) */
+static void cast_smite(Walker *wk, RoomView *rv, int item) {
+	(void)wk;
+	uint8_t *a = rv->vm.tail[item];
+	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
+	if (a[7] == 0) { snd_play(0x11); return; }
+	snd_play(0x06);
+	a[7]--;
+	int left = a[1];
+	for (int i = 0, active = 0; i < rv->ro.n && active < 6 && left > 0; i++) {
+		const RoomObj *o = &rv->ro.o[i];
+		int t = o->thing;
+		if (o->sp->header[0x16] != 3 || (rv->vm.flags[t] & 0x80) || (rv->vm.tail[t][5] & 0x80)) continue;
+		active++;
+		left--;
+		if (rv->vm.tail[t][6] & 1) continue;
+		rv->vm.queue_n = 0;
+		acl_thing_event(&rv->vm, &rv->mp2, t, 23, 0);
+		for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+	}
+	rv->pending_rebuild |= rv_changed(rv);
+	roomview_flush_messages(rv);
+}
 /* fire with a held thing: sound 0Eh, the thing is placed in front of the player (event 21) and starts to fly */
 static void throw_held(Walker *wk, RoomView *rv) {
 	int t = rv->held, x, y, z;
 	{
 		const ObjSprite *hs = t > 0 && t < ACL_THINGS ? thing_sprite(rv, t) : NULL;
 		if (hs && hs->header[0x16] == 1 && rv->vm.tail[t][0] == 0) { cast_strike(wk, rv, t); return; }     /* a spell item of spell 0 */
+		if (hs && hs->header[0x16] == 1 && rv->vm.tail[t][0] == 1) { cast_smite(wk, rv, t); return; }     /* spell 1 */
 		if (hs && hs->header[0x16] == 1) return;                                                         /* other spells: not ported */
 	}
 	if (t <= 0 || t >= ACL_THINGS || rv->vm.room[t] != 0xFF || rv->nfly >= 8) return;
