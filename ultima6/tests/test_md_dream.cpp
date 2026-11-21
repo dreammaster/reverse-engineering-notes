@@ -147,6 +147,20 @@ int main() {
 	int person = w.actorObject(0x50);
 	CHECK(person >= 0 && w.objects[person].x == e.x && w.objects[person].y == e.y && w.objects[person].z == 2);
 
+	// a square with flags 0x40 (sub_5189D): the Avatar falls off the cliff, the body lies there; the dream number is 0x40
+	int cliff = put(w, 0x1CD, 0, 32, 20, 2);
+	w.objects[cliff].status = 0x40;
+	w.objects[cliff].quantity = 22;
+	w.objects[cliff].quality = 33;
+	w.moveObject(body, 32, 20, 2);
+	g.x = 32;
+	g.y = 20;
+	g.log.clear();
+	g.mdStepOn();
+	CHECK(logText(g).find("You fall off the cliff!") != std::string::npos);
+	CHECK(w.objects[body].type == 0x126 || w.objects[body].type == 0x127);
+	CHECK(g.x == 33 && g.y == 22);
+
 	// a wake square (flags 0x24): the clock reads eight in the morning, the body goes back to level 6, the view to the Avatar on the chair
 	int wake = put(w, 0x1CD, 0, 31, 20, 2);
 	w.objects[wake].status = 0x24;
@@ -159,6 +173,7 @@ int main() {
 	CHECK(g.gameClock.hour == 8 && g.gameClock.minute == 0);
 	CHECK(g.x == podX && g.y == podY && g.z == 0);
 	CHECK(w.objects[body].z == 6);
+	CHECK(w.objects[body].type == w.objects[w.actorObject(1)].type && w.objects[body].frame == 9); // the number 0x40: the looks come back
 	CHECK(logText(g).find("You wake up.") != std::string::npos);
 	CHECK(g.mdTakeMorning());
 	CHECK(al.worktype[0] == 0 && al.worktype[1] == 2);

@@ -102,20 +102,77 @@ void Game::mdDreamStartLevel3() {
 	mdDreamBody(0x35, 0x26, 3, 0xE1);
 }
 
+// The squares of a rectangle of the level (sub_2BF6E, sub_2BE67): the objects in the order of the list, the first for which `f` says true stops the walk
+void Game::mdEach(int x1, int y1, int x2, int y2, const std::function<bool(int)> &f) {
+	for (size_t i = 0; i < _world.objects.size(); ++i) {
+		const World::Obj &o = _world.objects[i];
+		if (o.deleted || !o.onMap() || o.z != z || o.x < x1 || o.x > x2 || o.y < y1 || o.y > y2)
+			continue;
+		if (f((int)i))
+			return;
+	}
+}
+
+// The cleaning up that goes with the number of the dream (the table at cs:0AAD of sub_50218, run when a flagged square is touched and when the dreamer wakes): 5 (sub_523D0) takes the
+// people 0x17B and 0x193 of the region x 0x76-0xCE, y 0x98-0xCC away; 0x40 (sub_5189D's cliff) gives the body its looks again; 0x44 (sub_51C35) takes the things 0x18E of the region 0x33-0x43,
+// 0x21-0x3D away and marks the scene in the flags of actor 0x54; 0xA0 (sub_51759) takes everything the body carries but the things 0x18 away. The number 0x20 does nothing here.
+void Game::mdDreamLeave() {
+	ObjList &al = _world.actors;
+	switch (_mdDreamId) {
+	case 5:
+		for (int a = 2; a < ObjList::ACTORS; ++a) {
+			int k = _world.actorObject(a);
+			if (k < 0)
+				continue;
+			const World::Obj &o = _world.objects[k];
+			if (o.deleted || !o.onMap() || o.z != z || o.x < 0x76 || o.x > 0xCE || o.y < 0x98 || o.y > 0xCC)
+				continue;
+			if (o.type == 0x17B || o.type == 0x193)
+				_world.deleteObject(k);
+		}
+		break;
+	case 0x40: {
+		int k = _world.actorObject(0), a1 = _world.actorObject(1);
+		if (k >= 0 && a1 >= 0) {
+			_world.objects[k].type = _world.objects[a1].type;
+			_world.objects[k].frame = 9;
+		}
+		break;
+	}
+	case 0x44: {
+		uint8_t &f = al.talkFlags[0x54];
+		if (!(f & 0x80))
+			f |= (f & 8) ? 0x10 : 8;
+		mdEach(0x21, 0x33, 0x3D, 0x43, [this](int i) {
+			if (_world.objects[i].type != 0x18E)
+				return false;
+			_world.deleteObject(i);
+			return true;
+		});
+		break;
+	}
+	case 0xA0: {
+		std::vector<int> inv;
+		int k = _world.actorObject(0);
+		if (k >= 0)
+			_world.inventory(0, inv, true);
+		for (int i : inv)
+			if (_world.objects[i].type != 0x18)
+				_world.deleteObject(i);
+		break;
+	}
+	default:
+		break;
+	}
+}
+
 // sub_50007: the dreamer wakes. The body goes back to its place at level 6, the members' psychic numbers are lost and the poisoned ones are left nearly dead (more than 30 hit points lose 24-30,
 // more than 10 get 1-10, else 1), the clock reads eight in the morning of the day kept, the view goes back to the Avatar and the morning song plays.
 void Game::mdDreamWake() {
 	if (!_mdDreaming)
 		return;
 	ObjList &al = _world.actors;
-	// sub_50218(0): the dream's last kind of square says what is left to do (not done: APPROX(95)); the body takes the Avatar's looks again after a transformation
-	if (_mdDreamId == 0x40) {
-		int k = _world.actorObject(0), a1 = _world.actorObject(1);
-		if (k >= 0 && a1 >= 0) {
-			_world.objects[k].type = _world.objects[a1].type;
-			_world.objects[k].frame = 9;
-		}
-	}
+	mdDreamLeave(); // sub_50218(0): what the dream's last kind of square leaves to clean up
 	for (int w = 0; w < 3; ++w)
 		mdSetPsychic(0, w, 0);
 	al.status[0] &= 0x7F;
@@ -229,13 +286,8 @@ void Game::mdDreamTouch(int obj) {
 	World::Obj o = _world.objects[obj];
 	int kind = o.status & 0xE5, qual = o.quality, qty = o.quantity, frame = o.frame;
 	auto &t = al.talkFlags;
-	if (_mdDreamId && kind != 0xA5 && kind != 0xE5 && _mdDreamId == 0x40) { // the dream number table at cs:0AAD
-		int a1 = _world.actorObject(1), a0 = _world.actorObject(0);
-		if (a1 >= 0 && a0 >= 0) {
-			_world.objects[a0].type = _world.objects[a1].type;
-			_world.objects[a0].frame = 9;
-		}
-	}
+	if (_mdDreamId && kind != 0xA5 && kind != 0xE5)
+		mdDreamLeave();
 	auto removeScene = [&]() { // the picture above and the square itself go
 		int p = seFind(0x124, o.x, (o.y - 1) & 0x3FF);
 		if (p >= 0)
@@ -277,6 +329,22 @@ void Game::mdDreamTouch(int obj) {
 		}
 		break;
 	}
+	case 0x40: { // sub_5189D: "You fall off the cliff!", the body lies there (type 0x126, or 0x127 for a woman) and the first child (0x187) of the rectangle x-1..x+1, y-8..y-4 is killed
+		message("You fall off the cliff!\n");
+		int k = _world.actorObject(0);
+		if (k >= 0)
+			_world.objects[k].type = mdMale(1) ? 0x126 : 0x127;
+		mdEach(x - 1, y - 8, x + 1, y - 4, [this](int i) {
+			if (_world.objects[i].type != 0x187)
+				return false;
+			int a = _world.objects[i].actor;
+			if (a >= 0)
+				_world.actors.status[a] |= 0x10;
+			_world.deleteObject(i);
+			return true;
+		});
+		break;
+	}
 	case 0xC4:
 		break;
 	case 0xC5:
@@ -304,6 +372,10 @@ void Game::mdDreamTouch(int obj) {
 		break;
 	case 0xC0:
 		al.hp[0] = (uint8_t)ActorStats::maxHealth(_world, 1);
+		break;
+	case 0x25: // sub_5182E: a child (0x187) stands on the square north of the one the body came to, as a person on the move (worktype 0x15)
+		if (_creatures.spawn(0x187, 0x15, qual, qty - 1, z, true) < 0)
+			message("Aargh!\n");
 		break;
 	case 0xE5:
 		if (!(t[0x66] & 8))

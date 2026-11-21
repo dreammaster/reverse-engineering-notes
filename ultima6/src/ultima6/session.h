@@ -155,6 +155,8 @@ public:
 private:
 	void mdDreamBody(int bx, int by, int bz, int id);
 	void mdDreamGo(int frame, int qual, int qty);
+	void mdDreamLeave();
+	void mdEach(int x1, int y1, int x2, int y2, const std::function<bool(int)> &f);
 	bool _mdDreaming = false;      // word_4115A bit 4
 	int _mdDreamId = 0;            // word_41184
 	int _mdDreamFlag = 0;          // byte_41153
