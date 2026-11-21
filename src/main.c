@@ -120,6 +120,7 @@ typedef struct RoomView_ {
 	int room_snd[8], room_snd_thing[8], nroom_snd, snd_key; /* sounds of the room's creatures (stopped when the room changes) */
 	int ruck_target;           /* thing touched when the rucksack was opened (insert / give target), -1 = none */
 	int look_pic;              /* thing+1 whose picture is shown next to the look message (rucksack look), 0 = none */
+	int map_magic;             /* spell 4 (TAD routine 0974, ds:6C9 = 81h): the map shows every room not flagged 80h in its record byte 17h */
 	int map_open, map_ox, map_oy, map_zoom, map_prev;   /* F1: the map of the rooms entered so far (1000:369F) */
 	struct { int thing, zi, hi, dirbits, fall; } fly[8];   /* thrown things in flight (1000:16D3A: per-step z and horizontal path tables) */
 	int nfly;
@@ -269,6 +270,7 @@ static const ObjSprite *thing_sprite(const RoomView *rv, int t);
 static void ruck_picture(uint8_t *px, const ObjSprite *sp);
 static void look_picture(uint8_t *px, const ObjSprite *sp);
 static void map_draw(uint8_t *px, const RoomView *rv);
+static void map_open_magic(RoomView *rv);
 static int msg_rnd(void *u) { (void)u; return 3; }
 /* wings + the status text ("DAY n" and the room name) */
 static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
@@ -1007,6 +1009,7 @@ static void map_open_view(RoomView *rv) {
 	map_centre(rv);
 	rv->map_open = 1;
 }
+static void map_open_magic(RoomView *rv) { rv->map_magic = 1; map_open_view(rv); }
 static void map_draw(uint8_t *px, const RoomView *rv) {
 	if (!g_tiles || !g_font3) return;
 	message_box(px, 96, 30, 14, 9, g_tiles, g_tiles_len, msg_rnd, NULL);
@@ -1017,7 +1020,8 @@ static void map_draw(uint8_t *px, const RoomView *rv) {
 	message_text(px, 0x6B, 0x74, tx, g_font3, g_font3_len);
 	for (int r = 0; r < rv->mp2.sec[0].count && r < 128; r++) {
 		const uint8_t *rec = rv->mp2.sec[0].rec[r];
-		if (!rec || rv->mp2.sec[0].len[r] < 6 || !rv->visited[r]) continue;
+		if (!rec || rv->mp2.sec[0].len[r] < 6) continue;
+		if (rv->map_magic ? (rv->mp2.sec[0].len[r] > 0x17 && (rec[0x17] & 0x80)) : !rv->visited[r]) continue;
 		int z = rv->map_zoom, w = rec[4] * z, h = rec[5] * z;
 		int x = (rec[1] - rv->map_ox) * z + 0x6B, y = (rec[3] - rv->map_oy) * z + 0x29;
 		int col = r == rv->room ? 10 : 4;
@@ -1035,7 +1039,7 @@ static void map_step(RoomView *rv, int keys) {
 	rv->ret_prev = ret;
 	int minus = (keys & 0x40) != 0, me = minus && !rv->map_prev;
 	rv->map_prev = minus;
-	if (keys & 0x80) { rv->map_open = 0; return; }
+	if (keys & 0x80) { rv->map_open = 0; rv->map_magic = 0; return; }
 	if (keys & 4) rv->map_ox--;
 	if (keys & 8) rv->map_ox++;
 	if (keys & 1) rv->map_oy--;
@@ -1196,6 +1200,7 @@ static void throw_held(Walker *wk, RoomView *rv) {
 		const ObjSprite *hs = t > 0 && t < ACL_THINGS ? thing_sprite(rv, t) : NULL;
 		if (hs && hs->header[0x16] == 1 && rv->vm.tail[t][0] == 0) { cast_strike(wk, rv, t); return; }     /* a spell item of spell 0 */
 		if (hs && hs->header[0x16] == 1 && rv->vm.tail[t][0] == 1) { cast_smite(wk, rv, t); return; }     /* spell 1 */
+		if (hs && hs->header[0x16] == 1 && rv->vm.tail[t][0] == 4 && rv->vm.tail[t][7] > 0 && !(rv->vm.tail[t][3] & 0x80)) { rv->vm.tail[t][7]--; snd_play(0x06); map_open_magic(rv); return; }   /* spell 4: the magic map */
 		if (hs && hs->header[0x16] == 1) return;                                                         /* other spells: not ported */
 	}
 	if (t <= 0 || t >= ACL_THINGS || rv->vm.room[t] != 0xFF || rv->nfly >= 8) return;
@@ -1886,7 +1891,8 @@ int main(int argc, char **argv) {
 					const char *colon = strchr(c, ':');
 					if (!colon) break;
 					if (!strncmp(c, "info", 4)) g_room.show_status ^= 1;
-					if (!strncmp(c, "map", 3)) map_open_view(&g_room);
+					if (!strncmp(c, "magicmap", 8)) map_open_magic(&g_room);
+					else if (!strncmp(c, "map", 3)) map_open_view(&g_room);
 					if (!strncmp(c, "save", 4)) game_save(&g_walk, &g_room);
 					if (!strncmp(c, "load", 4)) { game_load(&g_room); load_scene(&g, scene, &scr); }
 					for (int n = atoi(colon + 1); n > 0; n--)
