@@ -150,6 +150,7 @@ typedef struct RoomView_ {
 static int room_key(const RoomView *rv) { return 1 + rv->room + 100 * rv->level + 10000 * rv->use_tata; }
 /* ---- sound: BEEPER.BIN on the interpreter (engine/beeper.c); ids as the game's 1000:156C / 1000:1613 take them ---- */
 static const char *g_lang = "eng";     /* --lang eng|fre|ger: the language file ENGn.LNG / FREn.LNG / GERn.LNG */
+static int g_four_dir;                /* F4: four-direction movement (diagonals ignored) */
 static int g_paused;                  /* Pause key in the walk scene */
 static int g_payoff;                  /* Cadaver 2 is installed (The Payoff follows Cadaver's last level) */
 static Beeper g_snd;
@@ -1494,6 +1495,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		if (g_snd_log && (wk->jumping || wk->z)) fprintf(stderr, "Z %d\n", wk->z);
 	}
 	int dx = 0, dy = 0, dir = -1;
+	if (g_four_dir && (keys & 12) && (keys & 3)) keys &= ~3;
 	if (keys & 8) { dir = DIR_RIGHT; dx = 1; }          /* both axes may be held (diagonals): one combined move, no sliding (emulator: both stop together) */
 	else if (keys & 4) { dir = DIR_LEFT; dx = -1; }
 	if (keys & 2) { dy = 1; if (dir < 0) dir = DIR_DOWN; }
@@ -1772,6 +1774,7 @@ int main(int argc, char **argv) {
 					else changed = 0;
 				}
 				else if (scene == SCENE_WALK && k == SDLK_PAUSE) { g_paused ^= 1; snd_silence(); if (!g_paused) { g_room.snd_key = 0; g_room.nroom_snd = 0; g_room.push_snd = 0; g_room.pending_rebuild = 1; } changed = 0; }
+				else if (scene == SCENE_WALK && k == SDLK_F4) { g_four_dir ^= 1; changed = 0; }
 				else if (k == SDLK_F11) { SDL_SetWindowFullscreen(win, (SDL_GetWindowFlags(win) & SDL_WINDOW_FULLSCREEN_DESKTOP) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_F5) { game_save(&g_walk, &g_room); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_F9) { game_load(&g_room); changed = 0; }
