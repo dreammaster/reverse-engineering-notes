@@ -192,6 +192,49 @@ int main() {
 		CHECK(w.objects[p].x == 0x37 && w.objects[p].y == 0x3D && w.objects[p].frame == 9);
 	}
 
+	// a square with flags 0x60 (sub_52843): the stones 0x84 and the four 0x70 corners are made anew, actor 0x55 stands at 0x4E, 0x4D
+	{
+		int sq = put(w, 0x1CD, 0, 36, 20, 2);
+		w.objects[sq].status = 0x60;
+		w.objects[sq].quantity = 23;
+		w.objects[sq].quality = 23;
+		w.moveObject(body, 36, 20, 2);
+		g.x = 36;
+		g.y = 20;
+		g.mdStepOn();
+		int stones = 0, corners = 0;
+		for (const World::Obj &o : w.objects) {
+			stones += !o.deleted && o.type == 0x84 && o.z == 2 && o.x >= 0x49 && o.x <= 0x57 && o.y >= 0x4A && o.y <= 0x51;
+			corners += !o.deleted && o.type == 0x70 && o.z == 2 && o.quality == 0xFF;
+		}
+		CHECK(stones == 1 + 12 + 8 + 4 && corners >= 4);
+		int p = w.actorObject(0x55);
+		CHECK(w.objects[p].x == 0x4E && w.objects[p].y == 0x4D && w.objects[p].frame == 1);
+	}
+
+	// the flags 4 (sub_52491): the little room is made at x = quality, y = quantity (nine things 0x1A1 / 0x1A2), actor 0x57 stands at the square 2 north, a stored thing (0x78, quality 1) holds a 0x7A
+	{
+		int store = put(w, 0x78, 0, 100, 60, 2);
+		w.objects[store].quality = 1;
+		int sq = put(w, 0x1CD, 0, 37, 20, 2);
+		w.objects[sq].status = 4;
+		w.objects[sq].quantity = 60;
+		w.objects[sq].quality = 100;
+		w.moveObject(body, 37, 20, 2);
+		g.x = 37;
+		g.y = 20;
+		g.mdStepOn();
+		int room = 0, made7a = 0;
+		for (const World::Obj &o : w.objects) {
+			room += !o.deleted && (o.type == 0x1A1 || o.type == 0x1A2) && o.z == 2 && o.x >= 100 && o.x <= 102 && o.y >= 58 && o.y <= 60;
+			made7a += !o.deleted && o.type == 0x7A && o.x == 100 && o.y == 60;
+		}
+		CHECK(room == 9 && made7a == 1);
+		int p = w.actorObject(0x57);
+		CHECK(w.objects[p].x == 100 && w.objects[p].y == 58 && w.objects[p].frame == 9);
+		CHECK(w.objects[store].invisible());
+	}
+
 	// a square with flags 0x20 (sub_514B0): the body is given a vial (0x14B) with a 0x38, the foes (0x16C) appear round it, a thing of the list in the region goes, and combat begins
 	{
 		int junk = put(w, 0x38, 0, 10, 20, 2);

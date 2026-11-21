@@ -318,6 +318,106 @@ void Game::mdSceneMaze() {
 	(void)c;
 }
 
+// sub_52843(), the scene of the square 0x60: the flags of actor 0x55 are cleared and it is put at 0x4E, 0x4D of level 2 as a person with frame 1; the things 0x6F, 0x70, 0x84, 0x1A9 and 0x1AA of
+// the region x 0x49-0x57, y 0x4A-0x51 are taken away and the room is made anew: a 0x70 (quality 0xFF) in each corner, a 0x1A9 and a 0x84 (quantity 9) at 0x4D, 0x50, and the 0x84 stones whose
+// quantities number them (di + v + 2 in the even columns 0x49-0x51 but 0x4D, 0xA in the odd ones 0x4A-0x50, and 0xB at the four squares 0x4A / 0x50 by 0x4B / 0x4D).
+void Game::mdSceneSix() {
+	ObjList &al = _world.actors;
+	al.talkFlags[0x55] = 0;
+	int p = _world.actorObject(0x55);
+	if (p >= 0) {
+		mdPlace(p, 0x4E, 0x4D, 2);
+		_world.objects[p].frame = 1;
+		_world.objects[p].status |= 0x80;
+	}
+	al.worktype[0x55] = 0;
+	al.status[0x55] &= 0x9F;
+	for (size_t i = 0x101; i < _world.objects.size(); ++i) {
+		const World::Obj &o = _world.objects[i];
+		if (o.deleted || !o.onMap() || o.z != z || o.x < 0x49 || o.x > 0x57 || o.y < 0x4A || o.y > 0x51)
+			continue;
+		if (o.type == 0x6F || o.type == 0x70 || o.type == 0x84 || o.type == 0x1A9 || o.type == 0x1AA)
+			_world.deleteObject((int)i);
+	}
+	mdMakeThing(0x70, 0xFF00, 0x49, 0x4A);
+	mdMakeThing(0x70, 0xFF00, 0x51, 0x4A);
+	mdMakeThing(0x70, 0xFF00, 0x49, 0x51);
+	mdMakeThing(0x70, 0xFF00, 0x51, 0x51);
+	mdMakeThing(0x1A9, 0, 0x4D, 0x50);
+	mdMakeThing(0x84, 9, 0x4D, 0x50);
+	for (int di = 0; di <= 8; di += 2) {
+		if (di == 4)
+			continue;
+		for (int v = 2; v <= 6; v += 2)
+			mdMakeThing(0x84, di + v + 2, di + 0x49, v + 0x4A);
+	}
+	for (int di = 1; di <= 7; di += 2)
+		for (int v = 5; v <= 7; v += 2)
+			mdMakeThing(0x84, 0x0A, di + 0x49, v + 0x4A);
+	mdMakeThing(0x84, 0x0B, 0x4A, 0x4B);
+	mdMakeThing(0x84, 0x0B, 0x4A, 0x4D);
+	mdMakeThing(0x84, 0x0B, 0x50, 0x4B);
+	mdMakeThing(0x84, 0x0B, 0x50, 0x4D);
+}
+
+// sub_52491(qty, qual), the scene of the square 4 (the room at x = qual, y = qty): in the region x qual-3 .. qual+0x5C, y qty-8 .. qty+0x37 the things 0x78 are made invisible and the things
+// 1, 3, 7, 0x2C, 0x4B, 0x58, 0x65, 0x7A, 0xB8, 0x100, 0x116, 0x12D, 0x14B, 0x181, 0x1A1 and 0x1A2 are taken away; nine things (0x1A1 and 0x1A2 with frames) make the little room at the square,
+// actor 0x57 stands at qual, qty-2 as a person with frame 9 and its flags reset; and each 0x78 of the region holds what the table at ds:1F02 names for its quality: a 0x7A is made at its
+// place, anything else (not 0) goes into a 0x14B made there (four of a 0x4B).
+void Game::mdSceneFour(int qty, int qual) {
+	ObjList &al = _world.actors;
+	int x1 = qual - 3, y1 = qty - 8, x2 = x1 + 0x5F, y2 = y1 + 0x3F;
+	static const int GONE[16] = {1, 3, 7, 0x2C, 0x4B, 0x58, 0x65, 0x7A, 0xB8, 0x100, 0x116, 0x12D, 0x14B, 0x181, 0x1A1, 0x1A2};
+	for (size_t i = 0x101; i < _world.objects.size(); ++i) {
+		const World::Obj &o = _world.objects[i];
+		if (o.deleted || !o.onMap() || o.z != z || o.x < x1 || o.x >= x1 + 0x60 || o.y < y1 || o.y > y1 + 0x3F)
+			continue;
+		if (o.type == 0x78) {
+			_world.objects[i].status |= 2;
+			continue;
+		}
+		for (int t : GONE)
+			if (o.type == t) {
+				_world.deleteObject((int)i);
+				break;
+			}
+	}
+	(void)x2;
+	(void)y2;
+	mdMakeThing(0x1A1, 0x102, qual, qty - 2);
+	mdMakeThing(0x5A1, 0x100, qual + 1, qty - 2);
+	mdMakeThing(0x9A1, 0x100, qual + 2, qty - 2);
+	mdMakeThing(0xDA1, 0x100, qual, qty - 1);
+	mdMakeThing(0x15A1, 0x100, qual + 2, qty - 1);
+	mdMakeThing(0x19A1, 0x101, qual, qty);
+	mdMakeThing(0x1DA1, 0x100, qual + 1, qty);
+	mdMakeThing(0x21A1, 0x100, qual + 2, qty);
+	mdMakeThing(0x11A2, 0x109, qual + 1, qty - 1);
+	al.talkFlags[0x57] = 0;
+	int p = _world.actorObject(0x57);
+	if (p >= 0) {
+		mdPlace(p, qual, qty - 2, z);
+		_world.objects[p].frame = 9;
+		_world.objects[p].status |= 0x80;
+	}
+	al.worktype[0x57] = 0;
+	al.status[0x57] &= 0x9F;
+	// what the stored things hold: ds:1F02 + quality of GAME.EXE
+	static const uint8_t HOLDS[16] = {0x00, 0x7A, 0x4B, 0x03, 0x07, 0xB8, 0x2C, 0x65, 0x2D, 0x16, 0x81, 0x00, 0x59, 0x6F, 0x75, 0x20};
+	for (size_t i = 0x101; i < _world.objects.size(); ++i) {
+		const World::Obj o = _world.objects[i];
+		if (o.deleted || !o.onMap() || o.z != z || o.type != 0x78 || o.x < x1 || o.x >= x1 + 0x60 || o.y < y1 || o.y > y1 + 0x3F)
+			continue;
+		int held = HOLDS[o.quality & 15];
+		if (held == 0x7A) {
+			mdMakeThing(0x7A, 1, o.x, o.y);
+		} else if (held) {
+			int box = mdMakeThing(0x14B, 0, o.x, o.y);
+			seFill(box, held, held == 0x4B ? 4 : 1);
+		}
+	}
+}
+
 // sub_50007: the dreamer wakes. The body goes back to its place at level 6, the members' psychic numbers are lost and the poisoned ones are left nearly dead (more than 30 hit points lose 24-30,
 // more than 10 get 1-10, else 1), the clock reads eight in the morning of the day kept, the view goes back to the Avatar and the morning song plays.
 void Game::mdDreamWake() {
@@ -455,6 +555,9 @@ void Game::mdDreamTouch(int obj) {
 	case 0x24:
 		mdDreamWake();
 		return;
+	case 4: // sub_52491, before the body goes on
+		mdSceneFour(qty, qual);
+		break;
 	case 0xA4: { // actor 0x56 appears at 0x19, 0x6F of level 2 as a plain person
 		t[0x56] &= 1;
 		int k = _world.actorObject(0x56);
@@ -510,7 +613,7 @@ void Game::mdDreamTouch(int obj) {
 	case 0xC0:
 		al.hp[0] = (uint8_t)ActorStats::maxHealth(_world, 1);
 		break;
-	default: // 4, 0x40, 0x85, 0xA1: the scenes of sub_52491, sub_5189D, sub_52B0C, sub_51C96 (APPROX(95)); the square only leads on
+	default: // 0x85, 0xA1: the scenes of sub_52B0C, sub_51C96 (APPROX(95)); the square only leads on
 		break;
 	}
 	if (kind != 0xA5)
@@ -530,6 +633,9 @@ void Game::mdDreamTouch(int obj) {
 		break;
 	case 0x44:
 		mdSceneMaze();
+		break;
+	case 0x60:
+		mdSceneSix();
 		break;
 	case 0x20:
 		mdSceneBattle(qty, qual);
