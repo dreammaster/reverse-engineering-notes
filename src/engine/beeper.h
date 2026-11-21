@@ -25,6 +25,7 @@ typedef struct Beeper {
 	uint8_t flags[0x80];        /* ds:40F0: effect number of the looping sounds that are on (0 = off) */
 	int adlib;                  /* ADLIB.BIN: the driver writes OPL registers (ports 388h/389h) instead of programming the speaker */
 	Opl opl;
+	int dsp_reset, dsp_q[8], dsp_n;     /* Sound Blaster DSP: reset handshake and a small read queue (digital output is not synthesised) */
 	/* synthesis state */
 	int rate;
 	int left;                   /* samples left in the current tick */

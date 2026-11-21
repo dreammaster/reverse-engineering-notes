@@ -163,10 +163,13 @@ static void shift(X86 *c, int kind, const Loc *l, int w, unsigned cnt) {
 		case 7: setf(c, CF, v & 1); v = (v >> 1) | (v & (1u << (bits - 1))); break;
 		case 0: { unsigned cc = v >> (bits - 1); v = ((v << 1) | cc) & mask; setf(c, CF, cc); break; }
 		case 1: { unsigned cc = v & 1; v = (v >> 1) | (cc << (bits - 1)); setf(c, CF, cc); break; }
+		case 2: { unsigned cc = v >> (bits - 1), old = (c->fl & CF) ? 1 : 0; v = ((v << 1) | old) & mask; setf(c, CF, cc); break; }
+		case 3: { unsigned cc = v & 1, old = (c->fl & CF) ? 1 : 0; v = (v >> 1) | (old << (bits - 1)); setf(c, CF, cc); break; }
+		case 6: setf(c, CF, v >> (bits - 1)); v = (v << 1) & mask; break;
 		default: fail(c, 0xD0 + kind); return;
 		}
 	}
-	if (cnt && (kind == 4 || kind == 5 || kind == 7)) {
+	if (cnt && (kind == 4 || kind == 5 || kind == 6 || kind == 7)) {
 		szp(c, v, w);
 		setf(c, OFL, 0);
 	}
@@ -310,6 +313,10 @@ void x86_step(X86 *c) {
 		int w = op & 1;
 		unsigned port = op < 0xE8 ? fetch8(c) : c->dx;
 		if (c->io_out) c->io_out(c->io_user, port, reg(c, 0, w), w);
+	} else if (op == 0xCD) {
+		unsigned n = fetch8(c);
+		if (c->int_cb) c->int_cb(c->io_user, c, n);
+		else { fail(c, op); return; }
 	} else if (op >= 0x50 && op < 0x58) {
 		x86_push(c, (op & 7) != 4 ? *R16(c, op & 7) : (uint16_t)(c->sp - 2));
 	} else if (op >= 0x58 && op < 0x60) {

@@ -51,4 +51,4 @@ The window keeps the original's 4:3 shape (the 320×200 picture was shown on a 4
 
 `--lang eng|fre|ger` picks the language file (default English); accented letters may be drawn with the wrong glyph (the status font table for them is not checked).
 
-`--sound adlib|beeper` chooses the sound driver (default: the first letter of `CADAVER.INI`); AdLib uses a small approximate OPL2 synthesiser (`engine/opl.c`). `cadaver_sound GAMEDIR beeper|adlib ID|music out.wav [seconds]` renders a sound to a WAV file.
+`--sound adlib|sblaster|beeper` chooses the sound driver (default: the first letter of `CADAVER.INI`); AdLib uses a small approximate OPL2 synthesiser (`engine/opl.c`). `cadaver_sound GAMEDIR beeper|adlib ID|music out.wav [seconds]` renders a sound to a WAV file.

@@ -1,4 +1,5 @@
 #include "beeper.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -19,8 +20,17 @@ static const uint8_t sndtab[0x8C] = {
 static void io_out(void *user, unsigned port, unsigned v, int w) {
 	Beeper *b = user;
 	(void)w;
-	if (port == 0x388) { opl_write_index(&b->opl, (uint8_t)v); return; }
-	if (port == 0x389) { opl_write_data(&b->opl, (uint8_t)v); return; }
+	if (port == 0x226) {                                      /* DSP reset: 1 then 0 -> AAh can be read */
+		if (v == 1) b->dsp_reset = 1;
+		else if (v == 0 && b->dsp_reset) { b->dsp_reset = 0; b->dsp_q[0] = 0xAA; b->dsp_n = 1; }
+		return;
+	}
+	if (port == 0x22C) {                                      /* DSP command: E1h = version (3.1) */
+		if (v == 0xE1) { b->dsp_q[0] = 3; b->dsp_q[1] = 1; b->dsp_n = 2; }
+		return;
+	}
+	if (port == 0x388 || port == 0x228) { opl_write_index(&b->opl, (uint8_t)v); return; }
+	if (port == 0x389 || port == 0x229) { opl_write_data(&b->opl, (uint8_t)v); return; }
 	if (port == 0x61) b->port61 = (uint8_t)v;
 	else if (port == 0x43) b->npit = 0;
 	else if (port == 0x42) {
@@ -32,8 +42,21 @@ static void io_out(void *user, unsigned port, unsigned v, int w) {
 static unsigned io_in(void *user, unsigned port, int w) {
 	Beeper *b = user;
 	(void)w;
-	if (port == 0x388) return opl_read_status(&b->opl);
+	if (port == 0x22A) {
+		int v = b->dsp_n ? b->dsp_q[0] : 0;
+		if (b->dsp_n) { for (int i = 1; i < b->dsp_n; i++) b->dsp_q[i - 1] = b->dsp_q[i]; b->dsp_n--; }
+		return (unsigned)v;
+	}
+	if (port == 0x22E) return b->dsp_n ? 0x80 : 0;
+	if (port == 0x22C) return 0;
+	if (port == 0x388 || port == 0x228) return opl_read_status(&b->opl);
 	return port == 0x61 ? b->port61 : 0;
+}
+
+static void int_cb(void *user, X86 *c, unsigned n) {
+	(void)user;
+	if (n == 0x21 && (c->ax >> 8) == 0x35) { c->es = 0; c->bx = 0; }          /* get vector: none installed */
+	/* set vector (25h) and anything else: ignored */
 }
 
 static int call_far(Beeper *b, unsigned off) {
@@ -61,9 +84,15 @@ int beeper_init_kind(Beeper *b, const uint8_t *bin, size_t len, int rate, int ad
 	b->cpu.io_out = io_out;
 	b->cpu.io_in = io_in;
 	b->cpu.io_user = b;
+	b->cpu.int_cb = int_cb;
 	b->rate = rate > 0 ? rate : 44100;
 	opl_init(&b->opl, b->rate);
-	if (call_far(b, 4) < 0 || (b->cpu.ax & 0xFF) == 0) { beeper_free(b); return -1; }
+	int ir = call_far(b, 4);
+	if (ir < 0 || (b->cpu.ax & 0xFF) == 0) {
+		if (getenv("CAD_SNDLOG")) fprintf(stderr, "driver init: run %d err %d op %02x al %02x\n", ir, b->cpu.err, b->cpu.err_op, b->cpu.ax & 0xFF);
+		beeper_free(b);
+		return -1;
+	}
 	return 0;
 }
 

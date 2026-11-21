@@ -27,6 +27,7 @@ struct X86 {
 	void (*io_out)(void *user, unsigned port, unsigned v, int w);
 	unsigned (*io_in)(void *user, unsigned port, int w);
 	void *io_user;
+	void (*int_cb)(void *user, X86 *c, unsigned n);   /* INT n (sound drivers talk to DOS: vectors) */
 };
 
 void x86_init(X86 *c, uint8_t *mem);

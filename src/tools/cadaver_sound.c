@@ -10,9 +10,9 @@ int main(int argc, char **argv) {
 	if (argc < 5) { fprintf(stderr, "usage: %s gamedir beeper|adlib id|music out.wav [seconds]\n", argv[0]); return 2; }
 	GameFiles g;
 	if (gamefiles_open(&g, argv[1]) != 0) { fprintf(stderr, "no game in %s\n", argv[1]); return 1; }
-	int adlib = !strcmp(argv[2], "adlib");
+	int sb = !strcmp(argv[2], "sblaster"), adlib = !strcmp(argv[2], "adlib") || sb;
 	uint8_t *bin; size_t bl;
-	if (gamefiles_read(&g, adlib ? "adlib.bin" : "beeper.bin", -1, &bin, &bl) != 0) { fprintf(stderr, "driver not found\n"); return 1; }
+	if (gamefiles_read(&g, sb ? "sblaster.bin" : adlib ? "adlib.bin" : "beeper.bin", -1, &bin, &bl) != 0) { fprintf(stderr, "driver not found\n"); return 1; }
 	uint8_t *un = NULL; size_t ul = 0;
 	if (bl > 4 && !memcmp(bin, "RNC\1", 4) && rnc1_unpack(bin, bl, &un, &ul) == 0) { free(bin); bin = un; bl = ul; }
 	static Beeper b;
