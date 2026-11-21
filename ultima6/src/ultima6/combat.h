@@ -47,6 +47,10 @@ public:
 	/** Called once an actor has died (the dream scenes of Martian Dreams count the deaths, sub_19300). */
 	std::function<void(int)> onDeath;
 
+	/** The death routine (sub_19300) for an actor the game kills outright. */
+	void kill(int actor) {
+		die(actor);
+	}
 	static const CreatureStats *stats(int type);
 	static int weaponDamageOf(int type); // -1 if the object type is no weapon
 	static int armourOf(int type);

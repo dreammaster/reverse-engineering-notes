@@ -107,10 +107,12 @@ void Game::mdDreamStartLevel3() {
 }
 
 // The squares of a rectangle of the level (sub_2BF6E, sub_2BE67): the objects in the order of the list, the first for which `f` says true stops the walk
-void Game::mdEach(int x1, int y1, int x2, int y2, const std::function<bool(int)> &f) {
+void Game::mdEach(int x1, int y1, int x2, int y2, const std::function<bool(int)> &f, int level) {
+	if (level < 0)
+		level = z;
 	for (size_t i = 0; i < _world.objects.size(); ++i) {
 		const World::Obj &o = _world.objects[i];
-		if (o.deleted || !o.onMap() || o.z != z || o.x < x1 || o.x > x2 || o.y < y1 || o.y > y2)
+		if (o.deleted || !o.onMap() || o.z != level || o.x < x1 || o.x > x2 || o.y < y1 || o.y > y2)
 			continue;
 		if (f((int)i))
 			return;

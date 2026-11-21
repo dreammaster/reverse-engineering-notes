@@ -471,6 +471,49 @@ int main() {
 		CHECK(al.talkFlags[0x76] & 0x40);
 	}
 
+	// the power lever number 1 (sub_5328B, sub_53550): the machines change (a 0x9A goes a frame on, a 0xC9 gets the bit 4, a 0xD6 becomes 0xD7); the cut (5) puts them back
+	{
+		int lev = put(w, 0xC4, 0, px + 3, py + 2, 0);
+		w.objects[lev].quality = 0x14;
+		w.objects[lev].quantity = 1;
+		int m1 = put(w, 0x9A, 0, 5, 5, 1), m2 = put(w, 0xC9, 0, 6, 5, 1), m3 = put(w, 0xD6, 0, 7, 5, 1);
+		al.talkFlags[0x73] &= 0xEB;
+		al.talkFlags[0x71] &= 0xF7;
+		g.mdLeverPanel(lev);
+		CHECK((al.talkFlags[0x73] & 4) && w.objects[m1].frame == 1 && (w.objects[m2].frame & 4) && w.objects[m3].type == 0xD7);
+		al.talkFlags[0x71] |= 8;
+		w.objects[lev].quantity = 5;
+		g.log.clear();
+		g.mdLeverPanel(lev);
+		CHECK(logText(g).find("Power prematurely cut off.") != std::string::npos);
+		CHECK(!(al.talkFlags[0x73] & 4) && w.objects[m1].frame == 0 && !(w.objects[m2].frame & 4) && w.objects[m3].type == 0xD6);
+		// the surface power by night lights the lamps (0xE4)
+		int lamp = put(w, 0xE4, 0, 8, 5, 0);
+		g.gameClock.hour = 22;
+		al.talkFlags[0x73] |= 4;
+		al.talkFlags[0x71] &= 0xF7;
+		al.talkFlags[0x73] &= 0xEF;
+		w.objects[lev].quantity = 2;
+		g.mdLeverPanel(lev);
+		CHECK((al.talkFlags[0x73] & 0x10) && w.objects[lamp].frame == 7);
+	}
+
+	// the lenses (sub_5415A) take the 0xD2 of frame 0 away, the canals (sub_542B1) make a 0x1CC at 0x243, 0x27A, Chsheket's treatment (sub_543C4) kills 0x41 and puts 0x42 at 0x394, 0x284
+	{
+		int lens = put(w, 0xD2, 0, 0x13C, 0x117, 0);
+		g.mdLensScene();
+		CHECK(w.objects[lens].deleted);
+		g.mdCanalScene();
+		int found = 0;
+		for (const World::Obj &o : w.objects)
+			found += !o.deleted && o.type == 0x1CC && o.x == 0x243 && o.y == 0x27A;
+		CHECK(found == 1);
+		g.mdChsheketScene();
+		CHECK(w.actors.status[0x41] & 0x10);
+		int k = w.actorObject(0x42);
+		CHECK(w.objects[k].x == 0x394 && w.objects[k].y == 0x284);
+	}
+
 	// the end of a scene and the waking in one (the mirror, the manuscript ...): only while dreaming
 	g.mdDreamFinish(0x51);
 	CHECK(!g.mdDreaming());

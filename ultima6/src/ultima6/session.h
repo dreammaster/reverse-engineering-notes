@@ -133,6 +133,14 @@ public:
 	int mdReach() const;
 	bool mdInReach(int tx, int ty);
 	// Martian Dreams' dream machines and dreams (md_dream.cpp)
+	void mdPowerUnderground(bool on);               // sub_53550 / sub_53760
+	void mdPowerSurface();                         // sub_53D8D
+	void mdPowerReset();                           // sub_53E92
+	void mdLensScene();                            // sub_5415A
+	void mdCanalScene();                           // sub_542B1
+	void mdChsheketScene();                        // sub_543C4
+	void mdLamps();                                // sub_538EE
+	void mdCoalBelt();                             // sub_4F323
 	void mdLeverBridge(int lever);                 // sub_4F5A0
 	void mdLeverPanel(int lever);                  // sub_5328B
 	void mdLeverWorld(int lever);                  // sub_53496
@@ -173,7 +181,7 @@ private:
 	void mdSceneMaze();
 	void mdSceneSix();
 	void mdSceneBattle(int qty, int qual);
-	void mdEach(int x1, int y1, int x2, int y2, const std::function<bool(int)> &f);
+	void mdEach(int x1, int y1, int x2, int y2, const std::function<bool(int)> &f, int level = -1);
 	bool _mdDreaming = false;      // word_4115A bit 4
 	int _mdDreamId = 0;            // word_41184
 	int _mdDreamFlag = 0;          // byte_41153
