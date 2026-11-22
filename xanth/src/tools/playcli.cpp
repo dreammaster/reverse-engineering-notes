@@ -91,6 +91,8 @@ int main(int argc, char **argv) {
 	Xanth::Game game(display, messages, names);
 	display.attach(&game);
 	game.newGame();
+	if (getenv("XANTH_SEED"))
+		game.setSeed((unsigned)atol(getenv("XANTH_SEED")));
 	Xanth::Interface ui(game, display);
 	Stepper stepper;
 	stepper.display = &display;
