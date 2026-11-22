@@ -41,6 +41,12 @@ struct Stepper : Xanth::InputSource {
 			e.y = y;
 			return e;
 		}
+		if (budget < 0 && getenv("XANTH_PLAY_FREEZE")) {          // the script is over and the game waits for something (a conversation, "- MORE -"): this is the screen to compare
+			Legend::Surface shown;
+			display->render(shown);
+			shown.savePpm(out);
+			exit(0);
+		}
 		if (budget < 0) {
 			Xanth::InputEvent e;
 			e.type = Xanth::InputEvent::Quit;

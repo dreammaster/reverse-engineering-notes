@@ -219,7 +219,7 @@ static const uint16 kSmallArrow[32] = {
 
 void Display::render(Surface &out) const {
 	out = _screen;
-	if (!_hover.empty() && _frameDrawn) {
+	if (!_hover.empty() && _frameDrawn && !_convPicH) {         // (no name under the pointer while a conversation is shown)
 		// the name of the object under the pointer: outline font 1, centred in the picture window, just above its bottom edge
 		int w = _ms.font1().textWidthOutlined(_hover);
 		_ms.font1().drawTextOutlined(out, 181 - w / 2, 114, _hover, 15, 0);   // (centre found from the oracle: 151 for "computer")
@@ -321,7 +321,7 @@ int Display::conversationMenu(const std::vector<std::string> &options, int initi
 		probe.setup(4, 0, 4 + maxW, 4000, &font, 15, -1);
 		probe.print(nothing, options[i]);
 		top[i] = h;
-		h += probe.penY() + font.lineHeight() - font.yCenter() - font.yCenter() + (int)0;
+		h += ((probe.penOffsetY() - font.yCenter()) / font.lineHeight() + 1) * font.lineHeight();      // (every line of the option takes a line)
 	}
 	top[options.size()] = h;
 	int y2 = y1 + h + font.yCenter();
