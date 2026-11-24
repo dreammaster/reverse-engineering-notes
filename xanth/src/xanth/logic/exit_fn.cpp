@@ -24,7 +24,7 @@ int exit_fn_01(Game &g, Word arg0) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	if (arg0 == 0xF) {
-		return (g.object_has_attr(0x5D, 0xE) ? 0 : 0x63);
+		return (g.object_has_attr(0x5D, 0xE) ? 0x63 : 0);
 	} else {
 		return (g.object_has_attr(0x5D, 0xE) ? 0 : 0xFF9C) + 0x63;
 	}
@@ -282,7 +282,7 @@ int exit_fn_12(Game &g, Word arg0) {
 						continue;
 					}
 				}
-				return (((mem8(DS, (v2 * 6) + 0x2D5B)) & (mem16(DS, ((v.flag_852AA_exit_fn_12 * 0x14) + (v.flag_852AC_exit_fn_12 * 2)) + 0x2C90))) == 0 ? 0xCD : 0);
+				return (((mem8(DS, (v2 * 6) + 0x2D5B)) & (mem16(DS, ((v.flag_852AA_exit_fn_12 * 0x14) + (v.flag_852AC_exit_fn_12 * 2)) + 0x2C90))) != 0 ? 0xCD : 0);
 			} else {
 				v6 = 0x2D5A;
 				while ((mem8(DS, v6)) != rt.byte_8BE1C || ((mem16(DS, ((v.flag_852AA_exit_fn_12 * 0x14) + (v.flag_852AC_exit_fn_12 * 2)) + 0x2C90)) & (mem8(DS, v6 + 1))) != 0) {
@@ -402,7 +402,7 @@ int exit_fn_16(Game &g, Word arg0) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	if (arg0 != 0xF) {
-		return (v.byte_852E9 == 0 ? 0x105 : 0);
+		return (v.byte_852E9 != 0 ? 0x105 : 0);
 	} else {
 		return (v.byte_852E9 == 0 ? 0xFEFA : 0) + 0x105;
 	}
@@ -415,7 +415,7 @@ int exit_fn_17(Game &g, Word arg0) {
 	Runtime &rt = g.rt;
 	intptr_t p8_ax;
 	if (arg0 != 0xF) {
-		return (g.object_parent_is(0x90, 0x105) ? 0 : 0x107);
+		return (g.object_parent_is(0x90, 0x105) ? 0x107 : 0);
 	}
 	if (!(g.object_parent_is(0x90, 0x105))) {
 		g.Font_WriteMessage(MSG(35, 13));
@@ -506,7 +506,7 @@ int exit_fn_22(Game &g, Word arg0) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	if (arg0 != 0xF) {
-		return (g.object_parent_is(0x12E, 0x126) ? 0 : 0x125);
+		return (g.object_parent_is(0x12E, 0x126) ? 0x125 : 0);
 	}
 	if (!(g.object_parent_is(0x12E, 0x126))) {
 		g.Font_WriteMessage(MSG(38, 80));
@@ -615,7 +615,7 @@ int exit_fn_28(Game &g, Word arg0) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	if (arg0 != 0xF) {
-		return (g.object_parent_is(0x15F, 8) ? 0 : 0x178);
+		return (g.object_parent_is(0x15F, 8) ? 0x178 : 0);
 	} else {
 		return (g.object_parent_is(0x15F, 8) ? 0 : 0xFE87) + 0x178;
 	}

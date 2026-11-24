@@ -3774,7 +3774,7 @@ int objh_061(Game &g, Word arg0) {
 			}
 		} else {
 			g.cancel_event(3);
-			g.show_compendium((v.letter_read == 0 ? 3 : 0), 0x5A0A);
+			g.show_compendium((v.letter_read != 0 ? 3 : 0), 0x5A0A);
 			g.Font_WriteMessage(MSG(5, 86));
 			if (v.byte_852B5 != 0) {
 				g.Font_WriteMessage(MSG(5, 87));

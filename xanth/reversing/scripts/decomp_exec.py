@@ -271,6 +271,12 @@ class Evaluator:
         f = st.flags
         if f is None:
             raise Unsupported("carry flag from an unknown instruction")
+        if f[0] == "ncf":
+            st.flags = f[1]
+            try:
+                return negate_cond(self.carry(st))
+            finally:
+                st.flags = f
         if f[0] == "cmp":
             if is_k(f[2]) and f[2][1] == 1:
                 return cmp_expr("eq", f[1], K(0))
@@ -284,6 +290,16 @@ class Evaluator:
         f = st.flags
         if f is None:
             raise Unsupported("conditional jump without flags")
+        if f[0] == "ncf":
+            # (after cmc) a jump on the carry is the opposite jump on the flags before it; the other conditions do not look at the carry
+            swap = {"jb": "jae", "jc": "jae", "jnae": "jae", "jae": "jb", "jnb": "jb", "jnc": "jb"}
+            if mn in ("jbe", "jna", "ja", "jnbe"):
+                raise Unsupported("a jump on carry and zero after cmc")
+            st.flags = f[1]
+            try:
+                return self.jump_cond(st, swap.get(mn, mn))
+            finally:
+                st.flags = f
         if f[0] == "cmp":
             a, bb = f[1], f[2]
             if cc == "ult" and is_k(bb) and bb[1] == 1:
@@ -511,7 +527,12 @@ class Evaluator:
                 st.regs["ax"] = ("sdiv" if signed else "udiv", ax, den)
                 st.regs["dx"] = ("smod" if signed else "umod", ax, den)
                 st.flags = None
-        elif mn in ("cmc", "cld", "std", "cli", "sti", "nop", "clc", "stc"):
+        elif mn == "cmc":
+            # the carry flag complemented: the flags are the same with their carry inverted
+            if st.flags is None:
+                raise Unsupported("cmc without flags")
+            st.flags = ("ncf", st.flags)
+        elif mn in ("cld", "std", "cli", "sti", "nop", "clc", "stc"):
             return
         elif mn == "call":
             self.call(st, stmts, x, blk)
