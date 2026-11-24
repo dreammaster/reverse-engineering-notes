@@ -36,4 +36,11 @@ void titleButtons(Machine &m);
 void titleWait(Machine &m, uint8_t ticks);
 void titleDelay(Machine &m, uint8_t seconds);
 
+// 1C570: the game over screen (the program restarts after a key)
+void gameOver(Machine &m);
+// 16B31: enters the exploration loop; `sp` is remembered for the routines that restart it
+void beginExploration(Machine &m, uint16_t sp);
+// 16330: START on the title screen: loads the game and begins the exploration
+void loadGameData(Machine &m, uint16_t sp);
+
 } // namespace wl

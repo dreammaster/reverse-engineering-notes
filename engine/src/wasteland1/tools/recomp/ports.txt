@@ -483,3 +483,5 @@ CB30 checkEnteredTime junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=
 630C titleButtons junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
 62E1 titleWait junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
 62CF titleDelay junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
+C570 gameOver junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
+6330 loadGameData junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf

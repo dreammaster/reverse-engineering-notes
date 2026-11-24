@@ -7,6 +7,7 @@
 #include "wasteland1/roster.h"
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
+#include "wasteland1/movement.h"
 #include "wasteland1/party.h"
 #include "wasteland1/recomp_rt.h"
 #include "wasteland1/text.h"
@@ -335,6 +336,39 @@ void explorationLoop(Machine &m) {
 		}
 		if (countConsciousMembers(m) == 0) call(m, 0x60A8);   // 160A8: the active group is out: another group takes over
 	}
+}
+
+
+void gameOver(Machine &m) {   // 1C570 (+ 1C590): the Grim Reaper screen; any key restarts the program
+	for (uint8_t i = 0; i != 13; ++i) m.d8(uint16_t(0x7201 + i)) = m.d8(uint16_t(0xDE60 + i));
+	call(m, 0x90A6, 59);
+	call(m, 0x728C);
+	call(m, 0x9727);
+	m.setD16(g::textString, 0xDE6D);
+	call(m, 0xC590);
+}
+
+void beginExploration(Machine &m, uint16_t sp) {   // 16B31: remembers the stack for restarts and enters the exploration loop
+	m.setD16(0xCE10, sp);
+	call(m, 0x6C7C);   // gameButtons
+	loadLocationMap(m);
+	explorationLoop(m);
+}
+
+void loadGameData(Machine &m, uint16_t sp) {   // 16330: START pressed: the saved game is loaded and the exploration begins
+	m.d8(0xA6E1) = m.d8(0x46FB);
+	call(m, 0x73D2);
+	call(m, 0x62C7);   // 16356
+	m.d8(0x46E1) = 1;
+	m.d8(0xAA1D) = 1;
+	m.d8(0x4708) = 0;
+	m.d8(0x46FB) = 0;
+	m.d8(0x4715) = 0;
+	m.d8(0x46C5) = 0xFF;
+	call(m, 0x85E6);
+	call(m, 0x8744);
+	m.d8(0x46E0) = 0xFF;
+	beginExploration(m, sp);
 }
 
 } // namespace wl

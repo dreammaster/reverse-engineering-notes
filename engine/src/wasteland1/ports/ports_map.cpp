@@ -94,6 +94,8 @@ PORT(titleView) { titleView(m); }                                               
 PORT(titleButtons) { titleButtons(m); }                                              // 1630C
 PORT(titleWait) { titleWait(m, r.d.b.l); }                                         // 162E1
 PORT(titleDelay) { titleDelay(m, r.d.b.l); }                                       // 162CF
+PORT(gameOver) { gameOver(m); }                                                      // 1C570
+PORT(loadGameData) { loadGameData(m, r.sp); }                                         // 16330
 PORT(explorationLoop) { explorationLoop(m); }                                            // 16B3C
 
 } // namespace rc
