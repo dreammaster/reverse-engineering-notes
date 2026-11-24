@@ -139,3 +139,15 @@ Debugging aid: `WL_SCRAMBLE_RANGE=lo-hi` (hex code offsets) restricts the junk s
 Known issue: scrambling ports in 6000-7FFF together still gives differences in the combat/menus scripts although each sub-range
 alone is clean, i.e. some junk lists are wider than the original's behaviour (callers pass dx through); the ports themselves
 match the oracle.
+
+## Fight replay harness
+
+`tools/fightcheck.sh` replays whole fights (`runCombat`, 11D39) on the oracle and the native code and compares memory, screen and
+registers at the end. The entry state is produced by wlemu (key script up to the breakpoint at 11D39, saved as tmp_out/s_fight.bin);
+`wlrctest` is run with `WLTICKPOLL=1` so both sides get the same deterministic clock (every keyboard poll advances ds:D150 and the BIOS
+tick) and with long key queues (`011b*100000` ends the fight by cancelling every order menu). Related switches of `wlrctest`:
+`WLPOLLS=<n>` stops both sides at the n-th keyboard poll and compares there (bisect a divergence with it), `WLSHOT=<prefix>` writes
+the oracle and native screens, `VDUMP=1` lists every differing byte, `HITDBG=1` prints the hit calculation. The harness found two
+real bugs: the generator stir of every key poll used the wrong `al` (it is the low byte of ds:7DF5, not the portrait tick) and
+hitMonster had the "ignores armor" flag inverted (weapon types 8 and 9 ignore armor). Replayed so far: attack, evade, mixed and
+two-round scripts (bit identical); the item / reload / skill menus do not finish within the step budget yet.

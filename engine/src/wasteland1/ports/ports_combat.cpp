@@ -1,3 +1,5 @@
+#include <cstdio>
+#include <cstdlib>
 // Register adapters: combat and encounter helpers.
 #include "wasteland1/ports/port.h"
 #include "wasteland1/combat.h"
@@ -115,6 +117,7 @@ PORT(monsterExperience) { monsterExperience(m, r.a.b.l); }                      
 PORT(defenseRoll) { setDlAl(r, defenseRoll(m, r.a.b.l, r.d.b.l)); }                      // 15755: al = party member, dl = threshold
 PORT(attackStrength) { setDlAl(r, attackStrength(m, r.a.b.l, r.d.b.l)); }                // 15738
 PORT(hitMonster) {                                                                      // 15500: al = party member, bl = combatant -> al, CF
+	if (std::getenv("HITDBG")) std::fprintf(stderr, "hit al=%d bl=%d polls=%llu before=%04X\n", r.a.b.l, r.b.b.l, (unsigned long long)m.polls, m.d16(0xAAEE));
 	const HitResult h = hitMonster(m, r.a.b.l, r.b.b.l);
 	r.cf = h.alreadyDead;
 	r.a.b.l = h.alreadyDead ? r.a.b.l : (h.killed ? 0 : 0xFF);

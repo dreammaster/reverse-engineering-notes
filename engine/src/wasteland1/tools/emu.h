@@ -24,6 +24,8 @@ struct Machine {
 	std::deque<uint16_t> keys;
 	bool needKey = false, exited = false;
 	int keyDelay = 0, emptyPolls = 0;   // keyDelay: queued keys show up only after that many polls found nothing
+	uint64_t pollLimit = 0, polls = 0;            // replay: stop (like a key wait) at the pollLimit-th keyboard poll (wlrctest WLPOLLS)
+	bool tickOnPoll = false;                      // every keyboard poll advances the game timer word ds:D150 (deterministic replay, see wlrctest)
 	bool detectIdle = false;                      // stop run() when the game only polls an empty keyboard buffer
 	int idlePolls = 0;                            // consecutive empty keyboard polls: the game is waiting for input
 	long watchVideo = -1;                         // video memory offset to report writes to (debugging)
@@ -143,7 +145,7 @@ struct Machine {
 				c.ax = keys.front(); keys.pop_front();
 				return true;
 			}
-			if (ah == 1) { if (std::getenv("KEYDBG")) std::fprintf(stderr, "int16/1 keys=%zu\n", keys.size());
+			if (ah == 1) { if (pollLimit && ++polls >= pollLimit) needKey = true; if (tickOnPoll) { c.ww(0x1CE2, 0xD150, uint16_t(c.rw(0x1CE2, 0xD150) + 1)); c.ww(0x40, 0x6C, uint16_t(c.rw(0x40, 0x6C) + 1)); } if (std::getenv("KEYDBG")) std::fprintf(stderr, "int16/1 keys=%zu\n", keys.size());
 				if (keys.empty()) { c.setFlag(x86::ZF, true); if (detectIdle && ++idlePolls > 30) needKey = true; }
 				else if (keyDelay && ++emptyPolls <= keyDelay) c.setFlag(x86::ZF, true);   // a keyboard flush sees nothing, the wait loop that follows does
 				else { idlePolls = 0; emptyPolls = 0; c.setFlag(x86::ZF, false); c.ax = keys.front(); }

@@ -234,6 +234,8 @@ void intr(Machine &m, Regs &r, int n) {
 			return;
 		}
 		if (ah == 1) {
+			if (m.tickOnPoll) { m.setD16(0xD150, uint16_t(m.d16(0xD150) + 1)); (m.mem[0x46C] = uint8_t(m.mem[0x46C] + 1), m.mem[0x46D] = uint8_t(m.mem[0x46D] + (m.mem[0x46C] == 0))); }
+			if (m.pollLimit && ++m.polls >= m.pollLimit) throw WaitForInput{};
 			if (std::getenv("KEYDBG")) std::fprintf(stderr, "port int16/1 keys=%zu\n", m.keys.size());
 			if (m.keys.empty()) {
 				r.zf = true;

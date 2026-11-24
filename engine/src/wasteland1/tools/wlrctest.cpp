@@ -17,6 +17,18 @@
 
 using namespace wl;
 
+static shared::Image shotOf(const Ega &ega) {   // the visible page as an image (WLSHOT=<prefix> writes <prefix>_oracle.png / _native.png)
+	static const uint32_t pal[16] = {0x000000, 0x0000aa, 0x00aa00, 0x00aaaa, 0xaa0000, 0xaa00aa, 0xaa5500, 0xaaaaaa,
+	                                 0x555555, 0x5555ff, 0x55ff55, 0x55ffff, 0xff5555, 0xff55ff, 0xffff55, 0xffffff};
+	shared::Image img(320, 200);
+	for (int y = 0; y < 200; ++y)
+		for (int x = 0; x < 320; ++x) {
+			const uint32_t c = pal[ega.pixel(x, y)];
+			img.set(x, y, {uint8_t(c >> 16), uint8_t(c >> 8), uint8_t(c)});
+		}
+	return img;
+}
+
 namespace {
 
 uint32_t rng(uint32_t &s) { s = s * 1664525u + 1013904223u; return s >> 8; }
@@ -81,6 +93,9 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 	if (gKeys.empty()) if (auto it = gFuncKeys.find(entry); it != gFuncKeys.end()) { funcKeys = parseKeys(it->second); keyList = &funcKeys; }
 	for (uint16_t k : *keyList) { o.keys.push_back(k); n.keys.push_back(k); }
 	o.detectIdle = true;
+	const bool pollMode = std::getenv("WLPOLLS") != nullptr;   // WLPOLLS=<n>: both sides stop at the n-th keyboard poll and the states are compared there
+	if (pollMode) { o.pollLimit = n.pollLimit = std::strtoull(std::getenv("WLPOLLS"), nullptr, 10); o.tickOnPoll = n.tickOnPoll = true; }
+	if (std::getenv("WLTICKPOLL")) { o.tickOnPoll = true; n.tickOnPoll = true; }   // WLTICKPOLL=1: keyboard polls drive the game timer on both sides (fights wait for ticks)
 	o.nextTick = ~0ull / 2;   // no timer interrupts on the oracle either: the native side has none, and the interrupt handler animates the portrait and stirs the generator
 	// register inputs: the state's own values with a few random small ones
 	uint32_t s = seed;
@@ -113,17 +128,17 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 	const uint64_t stepLimit = std::getenv("WLSTEPS") ? std::strtoull(std::getenv("WLSTEPS"), nullptr, 10) : 3000000;   // WLSTEPS=<n>: oracle step limit (picture loads need 30M)
 	n.sys->maxEdges = std::max<uint64_t>(n.sys->maxEdges, stepLimit);
 	const std::string why = o.callNear(entry, stepLimit);
-	if (why != "bp") { res.kind = Result::Skip; res.note = why; return res; }
+	if (why != "bp" && !(pollMode && why == "key")) { res.kind = Result::Skip; res.note = why; return res; }
 
 	try {
 		rc::push(n, r, 0x0000);
 		rc::dispatch(n, r, entry);
 	} catch (const rc::WaitForInput &) {
-		res.kind = Result::Skip; res.note = "native: waits for input"; return res;
+		if (!pollMode) { res.kind = Result::Skip; res.note = "native: waits for input"; return res; }
 	} catch (const rc::Fault &f) {
 		res.kind = Result::Skip; res.note = std::string("native fault: ") + f.what(); return res;
 	}
-	if (!n.sys->unknownTargets.empty()) { res.kind = Result::Skip; res.note = "native: indirect jump to an unknown target"; return res; }
+	if (!n.sys->unknownTargets.empty()) { { std::string t = "native: indirect jump to an unknown target"; for (uint16_t u : n.sys->unknownTargets) { char buf[16]; std::snprintf(buf, sizeof buf, " %04X", u); t += buf; } res.kind = Result::Skip; res.note = t; } return res; }
 	uint32_t junk = 0;
 	const uint16_t *scratch = nullptr;
 	for (const rc::PortInfo *p = rc::kPortInfo; p->name; ++p)
@@ -149,12 +164,13 @@ Result testFunction(emu::Machine &o, Machine &n, const std::string &state, const
 	reg("cf", o.cpu.flag(x86::CF), r.cf, rc::j_cf); reg("zf", o.cpu.flag(x86::ZF), r.zf, rc::j_zf); reg("sf", o.cpu.flag(x86::SF), r.sf, rc::j_sf);
 	reg("pf", o.cpu.flag(x86::PF), r.pf, rc::j_pf); reg("df", o.cpu.flag(x86::DF), r.df, rc::j_df);
 	(void)sp0;
+	if (const char *shotPrefix = std::getenv("WLSHOT")) { shotOf(o.ega).writePng(std::string(shotPrefix) + "_oracle.png"); shotOf(n.ega).writePng(std::string(shotPrefix) + "_native.png"); }
 	size_t bad = 0;
 	std::ostringstream md;
 	for (uint32_t a = 0; a < 0xA0000; ++a)
-		if (o.cpu.mem[a] != n.mem[a] && !isScratch(a) && !(a >= 0x10000 && a < kDsLinear)) { if (bad++ < 4) md << " mem[" << std::hex << a << "]=" << unsigned(o.cpu.mem[a]) << "/" << unsigned(n.mem[a]); }
+		if (o.cpu.mem[a] != n.mem[a] && !isScratch(a) && !(a >= 0x10000 && a < kDsLinear)) { if (bad++ < (std::getenv("VDUMP") ? 400u : 4u)) md << " mem[" << std::hex << a << "]=" << unsigned(o.cpu.mem[a]) << "/" << unsigned(n.mem[a]); }
 	for (uint32_t a = 0xB0000; a < 0x100000; ++a)
-		if (o.cpu.mem[a] != n.mem[a] && !isScratch(a)) { if (bad++ < 4) md << " mem[" << std::hex << a << "]=" << unsigned(o.cpu.mem[a]) << "/" << unsigned(n.mem[a]); }
+		if (o.cpu.mem[a] != n.mem[a] && !isScratch(a)) { if (bad++ < (std::getenv("VDUMP") ? 400u : 4u)) md << " mem[" << std::hex << a << "]=" << unsigned(o.cpu.mem[a]) << "/" << unsigned(n.mem[a]); }
 	size_t vbad = 0;
 	for (int p = 0; p < 4; ++p)
 		for (size_t i = 0; i < 65536; ++i)

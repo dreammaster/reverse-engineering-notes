@@ -1,3 +1,5 @@
+#include <cstdio>
+#include <cstdlib>
 #include "wasteland1/combat.h"
 #include "wasteland1/mapcells.h"
 #include "wasteland1/movement.h"
@@ -286,6 +288,7 @@ uint16_t attackStrength(Machine &m, uint8_t partyNum, uint8_t threshold) {
 }
 
 HitResult hitMonster(Machine &m, uint8_t partyNum, uint8_t index) {
+	if (std::getenv("HITDBG")) std::fprintf(stderr, "hit al=%d bl=%d polls=%llu before=%04X\n", partyNum, index, (unsigned long long)m.polls, m.d16(0xAAEE));
 	const CombatantId id = splitCombatantIndex(index);
 	selectMember(m, id.group, id.slot, id.member);
 	const uint8_t target = randomDigit(m);   // which of the ten monsters
@@ -302,8 +305,10 @@ HitResult hitMonster(Machine &m, uint8_t partyNum, uint8_t index) {
 	selectMonsterType(m, id.group, id.slot, id.member);
 	const uint8_t toughness = itemClipSizeNibble(m);
 	uint16_t damage = attackStrength(m, partyNum, toughness);
-	m.d8(g::hitIgnoresArmor) = isTypeGroupC(m.d8(g::weaponType)) ? 0 : 1;
+	m.d8(g::hitIgnoresArmor) = isTypeGroupC(m.d8(g::weaponType)) ? 1 : 0;
+	if (std::getenv("HITDBG")) std::fprintf(stderr, "strength=%04X toughness=%d\n", damage, toughness);
 	damage = reduceByMonsterArmor(m, damage, index);
+	if (std::getenv("HITDBG")) std::fprintf(stderr, "damage=%04X\n", damage);
 	const uint16_t totalAddr = uint16_t(g::hitDamage + entry * 2);
 	const unsigned total = m.d16(totalAddr) + damage;
 	m.setD16(totalAddr, total > 0xFFFF ? 0xFFFF : uint16_t(total));

@@ -4,6 +4,7 @@
 #include "wasteland1/globals.h"
 #include "wasteland1/legacy.h"
 #include "wasteland1/mouse.h"
+#include "wasteland1/recomp_rt.h"
 #include "wasteland1/rules.h"
 #include "wasteland1/ui.h"
 #include <algorithm>
@@ -32,6 +33,8 @@ void setLine(Machine &m, int x, uint8_t v) { m.d8(uint16_t(g::lineBuffer + x)) =
 // keyboard
 
 bool biosKeyPending(Machine &m, uint16_t &key) {
+	if (m.tickOnPoll) { m.setD16(0xD150, uint16_t(m.d16(0xD150) + 1)); (m.mem[0x46C] = uint8_t(m.mem[0x46C] + 1), m.mem[0x46D] = uint8_t(m.mem[0x46D] + (m.mem[0x46C] == 0))); }
+	if (m.pollLimit && ++m.polls >= m.pollLimit) throw rc::WaitForInput{};
 	if (std::getenv("KEYDBG")) std::fprintf(stderr, "port poll keys=%zu\n", m.keys.size());
 	if (m.keys.empty()) {
 		if (m.onIdle) m.onIdle();   // like int 16h AH=1 in the recompiled runtime: an empty poll lets the host run
@@ -67,9 +70,9 @@ void pollSpeedKeys(Machine &m) {   // 19004
 
 uint8_t checkKeypress(Machine &m, uint8_t caseDelta) {   // 18EFE
 	m.d8(g::keyCaseDelta) = caseDelta;
-	const uint8_t tick = m.onPortraitTick ? m.onPortraitTick() : 0;   // 190F8
+	if (m.onPortraitTick) m.onPortraitTick();   // 190F8
 	hintOverlay(m);
-	Rules(m).rngByte(tick);                              // the generator is stirred on every poll with whatever 190F8 leaves in al
+	Rules(m).rngByte(uint8_t(m.d16(g::buttonMask2)));   // 18E6B: the generator is stirred on every poll with the al that 189B1 leaves: the low byte of ds:7DF5
 	uint8_t al = 0;
 	bool haveKey = false;
 	if (m.d8(g::macroPlaySlot) != 0) {   // playing back a recorded macro
@@ -762,7 +765,7 @@ void scrollLine(Machine &m) {   // 1A0C5: moves to the next text row, scrolling 
 			if (m.onPortraitTick) m.onPortraitTick();
 			pollSpeedKeys(m);
 			if (uint8_t(biosTick(m) - m.d8(g::scrollSaveTick)) >= m.d8(g::scrollDelay)) break;
-			if (m.onIdle) m.onIdle(); else break;
+			if (m.onIdle) m.onIdle(); else if (!m.tickOnPoll) break;   // replays: every poll advances the BIOS tick
 		}
 	};
 	if (lastRow == m.d8(g::rectTextY)) {
