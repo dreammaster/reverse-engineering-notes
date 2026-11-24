@@ -85,6 +85,9 @@ PORT(useButton) { useButton(m); }                                               
 PORT(showMessageLines) { showMessageLines(m, r.a.b.l); r.b.x = 0; }                         // 179B7
 PORT(scrollMessagesUp) { scrollMessagesUp(m); r.b.x = 0; }                                  // 17A35
 PORT(scrollMessagesDown) { scrollMessagesDown(m); r.b.x = 0; }                                // 17A4D
+PORT(refreshMapAndStatus) { refreshMapAndStatus(m); }                                    // 163CA
+PORT(refreshMessagesAndMap) { refreshMessagesAndMap(m); }                                // 163C4
+PORT(refreshAfterMove) { refreshAfterMove(m); }                                          // 163A0
 PORT(explorationLoop) { explorationLoop(m); }                                            // 16B3C
 
 } // namespace rc

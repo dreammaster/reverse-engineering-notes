@@ -21,4 +21,9 @@ void showMessageLines(Machine &m, uint8_t last);
 void scrollMessagesUp(Machine &m);
 void scrollMessagesDown(Machine &m);
 
+// 163CA / 163C4 / 163A0: the redraw sequences after something changed on the map
+void refreshMapAndStatus(Machine &m);
+void refreshMessagesAndMap(Machine &m);
+void refreshAfterMove(Machine &m);
+
 } // namespace wl

@@ -70,13 +70,47 @@ void scrollMessagesDown(Machine &m) {   // 17A4D: PgDn
 	showMessageLines(m, line);
 }
 
+void refreshMapAndStatus(Machine &m) {   // 163CA: redraws the map view, the monsters and the party markers
+	const uint16_t keepDetails = m.d16(g::locationDetailsPtr);
+	call(m, 0x7DBB);
+	call(m, 0x6675);
+	call(m, 0x67CE);
+	const uint8_t keepFlag = m.d8(0x46DC);
+	m.d8(0x46DC) = m.d8(0x4655);
+	call(m, 0x4664);   // scanForMonsters
+	m.d8(0x46DC) = keepFlag;
+	call(m, 0x6428);
+	call(m, 0x6716);
+	call(m, 0x7DF1);
+	m.setD16(g::locationDetailsPtr, keepDetails);
+}
+
+void refreshMessagesAndMap(Machine &m) {   // 163C4: redraws the message window, then the map
+	showMessageLines(m, m.d8(0x8DF7));
+	refreshMapAndStatus(m);
+}
+
+void refreshAfterMove(Machine &m) {   // 163A0
+	call(m, 0x7DBB);
+	call(m, 0x67CE);
+	call(m, 0x6428);
+	call(m, 0x6716);
+	call(m, 0x7DF1);
+	call(m, 0x5DAF);   // mergeGroupsAtSamePosition
+	if (countConsciousMembers(m) == 0) return;
+	call(m, 0x63F6);
+	call(m, 0x69BC);
+	call(m, 0x6716);
+	call(m, 0x63C1);
+}
+
 void characterKey(Machine &m, uint8_t key) {   // 12760: digit keys open the character screen of that party member
 	(void)key;
 	const uint8_t member = m.d8(g::lastKey) & 0x0F;   // the original reads the last key, not al
 	if (member > m.d8(uint16_t(g::saved2 + g::s2::membersInGroup))) return;
 	characterInfo(m, member);
-	call(m, 0x63C4);
-	call(m, 0x63A0);
+	refreshMessagesAndMap(m);
+	refreshAfterMove(m);
 }
 
 void useMember(Machine &m, uint8_t member) {   // 13AAF: asks what member `member` should use and on what
@@ -85,7 +119,7 @@ void useMember(Machine &m, uint8_t member) {   // 13AAF: asks what member `membe
 		if (isMemberUnconscious(m, member)) {
 			selectWriterForRoster(m);   // 19720
 			printMessage(m, 3);
-			call(m, 0x63C4);
+			refreshMessagesAndMap(m);
 			return;
 		}
 		uint8_t mode = 0, target = 0, what = 0;
@@ -93,23 +127,23 @@ void useMember(Machine &m, uint8_t member) {   // 13AAF: asks what member `membe
 			m.d8(0x4661) = member;
 			uint8_t result = 0;
 			if (useSkillOnObject(m, mode, target, what, result)) {
-				if (result == 0) call(m, 0x63C4);
-				else call(m, 0x63CA);
+				if (result == 0) refreshMessagesAndMap(m);
+				else refreshMapAndStatus(m);
 			} else {
-				call(m, 0x63A0);
+				refreshAfterMove(m);
 			}
 			return;
 		}
 		// 13A9E: cancelled
 		if (m.d8(uint16_t(g::saved2 + g::s2::membersInGroup)) == 1) {
-			call(m, 0x63C4);
+			refreshMessagesAndMap(m);
 			return;
 		}
 		drawRosterFrame(m);   // 16F70
 		printMessage(m, 2);
 		member = pickGroupMember(m, false);
 		if (member == 0) {
-			call(m, 0x63C4);
+			refreshMessagesAndMap(m);
 			return;
 		}
 	}
@@ -123,7 +157,7 @@ void useButton(Machine &m) {   // 13A80: the USE button
 		printMessage(m, 2);
 		member = pickGroupMember(m, false);
 		if (member == 0) {
-			call(m, 0x63C4);
+			refreshMessagesAndMap(m);
 			return;
 		}
 	}
@@ -133,7 +167,7 @@ void useButton(Machine &m) {   // 13A80: the USE button
 void explorationLoop(Machine &m) {
 	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
 	if (std::getenv("MAINLOOPDBG")) std::fprintf(stderr, "exploration loop entered\n");
-	call(m, 0x63C4);
+	refreshMessagesAndMap(m);
 	if (D(viewActive) != 0) call(m, 0x656D);
 	for (;;) {   // 16B49
 		if (rc::Regs *r = m.sys ? m.sys->current : nullptr) rc::backedge(m, *r, 0x6C6C);   // the timer interrupt is driven by the loops
@@ -156,7 +190,7 @@ void explorationLoop(Machine &m) {
 			if ((m.d16(encounterCounter) & 0x3FF) == 0) {
 				call(m, 0x651A, 4);
 				call(m, 0x6890);
-				call(m, 0x63CA);
+				refreshMapAndStatus(m);
 				call(m, 0x63C1);
 			}
 		}
