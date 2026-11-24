@@ -293,14 +293,14 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 	}
 	if (g_icons && rv->nverbs) {
 		verbs_draw(scr->pixels, rv->verbs, rv->nverbs, g_icons, g_icons_len);
-		if (rv->menu_open)
+		if (rv->menu_open && !rv->grid_open)
 			verbs_highlight(scr->pixels, rv->menu_sel);
 	}
 	if (g_font && rv->names_ok && rv->room >= 0 && rv->room < rv->mp2.sec[0].count && rv->mp2.sec[0].rec[rv->room]) {
 		char nm[48];
 		status_room_name(rv->mp2.sec[0].rec[rv->room], (size_t)rv->mp2.sec[0].len[rv->room], rv->name_tbl, rv->names.strings,
 		                 rv->names.count, nm, sizeof(nm));
-		if (!rv->ruck_open) status_draw(scr->pixels, g_font, g_font_len, nm, rv->day + 1);
+		if (!(rv->ruck_open && !rv->grid_open)) status_draw(scr->pixels, g_font, g_font_len, nm, rv->day + 1);
 		int pic = 0;
 		for (int sl = 0; sl < 4; sl++) pic |= rv->msgs[sl].active;
 		pic = (pic && rv->look_pic) || rv->grid_open;
@@ -314,7 +314,7 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 				if (pic) message_draw_at(scr->pixels, tx, 208, 20 + 16 * sl, g_tiles, g_tiles_len, g_font3, g_font3_len, msg_rnd, NULL);
 				else message_draw(scr->pixels, tx, sl, g_tiles, g_tiles_len, g_font3, g_font3_len, msg_rnd, NULL);
 			}
-		if (rv->ruck_open && rv->label_id > 0 && rv->label_id < rv->names.count)       /* the item's name replaces the room name */
+		if (rv->ruck_open && !rv->grid_open && rv->label_id > 0 && rv->label_id < rv->names.count)       /* the item's name replaces the room name */
 			status_draw_centred(scr->pixels, 202, 186, 108, rv->names.strings[rv->label_id], g_font, g_font_len);
 		else if (rv->label_id > 0 && rv->label_id < rv->names.count) {
 			char lb[16];
@@ -322,7 +322,7 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 			status_draw_centred(scr->pixels, 229, 172, 84, lb, g_font, g_font_len);
 		}
 	}
-	if (rv->ruck_open) ruck_picture(scr->pixels, thing_sprite(rv, rv->touch_thing));
+	if (rv->ruck_open && !rv->grid_open) ruck_picture(scr->pixels, thing_sprite(rv, rv->touch_thing));
 	if (rv->map_open) map_draw(scr->pixels, rv);
 }
 
@@ -949,14 +949,13 @@ static void ruck_show(RoomView *rv, int t) {
 	rv->last_item = t;
 	if (!sp) return;
 	int h16 = sp->header[0x16], h17 = sp->header[0x17];
-	(void)h16;
-	rv->verbs[rv->nverbs++] = 0x0B;                                   /* look is always offered for carried things (emulator: the diary has it, the floor list does not) */
-	if ((sp->header[12] & 1) && !(rv->vm.flags2[t] & 4)) rv->verbs[rv->nverbs++] = 0x0D;   /* the touched list's 0Ah (icon 10) shows as icon 13 when carried */
+	if (h17 != 6 && !(h16 & 0x80)) rv->verbs[rv->nverbs++] = 0x0B;      /* look (emulator: the pickaxe has it; the diary, class 6, shows its class verb 8 first and no look) */
 	if (h17 && !(rv->vm.flags2[t] & 0x40)) {
 		static const uint8_t cv[10] = {0x00, 0x04, 0x09, 0xFF, 0x07, 0x03, 0x08, 0xFF, 0xFF, 0xFF};
 		int c = h17 < 10 ? cv[h17] : 0xFF;
 		if (!(c & 0x80)) rv->verbs[rv->nverbs++] = (uint8_t)c;
 	}
+	if ((sp->header[12] & 1) && !(rv->vm.flags2[t] & 4)) rv->verbs[rv->nverbs++] = 0x0D;   /* the touched list's 0Ah (icon 10) shows as icon 13 when carried */
 	if (rv->ruck_target >= 0 && rv->ruck_target != t) rv->verbs[rv->nverbs++] = 15;   /* insert / give into what is touched */
 	rv->verbs[rv->nverbs++] = 1;
 	rv->verbs[rv->nverbs++] = 6;
@@ -974,6 +973,12 @@ static void ruck_open(RoomView *rv) {
 	rv->ruck_delay = 0;
 	rv->menu_open = 1; rv->menu_released = 0;
 	ruck_show(rv, t);
+}
+/* while the strip is shown the verb slots show the list of what was touched before the rucksack was opened (emulator), else nothing */
+static void grid_verbs(RoomView *rv) {
+	rv->nverbs = 0;
+	const ObjSprite *ts = rv->ruck_target >= 0 ? thing_sprite(rv, rv->ruck_target) : NULL;
+	if (ts) rv->nverbs = verbs_list(ts->header, rv->vm.flags2[rv->ruck_target], 0, rv->verbs);
 }
 static void ruck_close(RoomView *rv) {
 	rv->grid_open = 0;
@@ -1424,6 +1429,13 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 			rv->pending_rebuild |= rv_changed(rv);
 			roomview_flush_messages(rv);
 			ruck_close(rv);
+		} else if (verb == 8) {                                           /* the diary's class verb while carried: the strip with "THIS IS A DIARY" (emulator) */
+			const ObjSprite *dsp = thing_sprite(rv, t);
+			int nm = dsp ? (dsp->header[10] << 8) | dsp->header[11] : 0;
+			char tx[200];
+			snprintf(tx, sizeof(tx), "%s%s", lng_str(rv, 5), nm < 0x8000 ? lng_str(rv, nm) : "");
+			msg_show_text(rv, tx);
+			rv->grid_open = 1; rv->touch_thing = t; grid_verbs(rv);
 		} else if (verb == 15 && rv->ruck_target >= 0) {                  /* 1000:344D: event 26 (1Ah) for the touched thing, argument = the carried thing */
 			rv->vm.queue_n = 0;
 			acl_thing_event(&rv->vm, &rv->mp2, rv->ruck_target, 26, t);
@@ -1434,7 +1446,7 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 			ruck_close(rv);
 		} else if (verb == 11 || verb == 13 || verb == 4 || verb == 7 || verb == 16) {
 			menu_choose(rv, verb);
-			if (verb == 11) { rv->grid_open = 1; rv->touch_thing = t; }
+			if (verb == 11) { rv->grid_open = 1; rv->touch_thing = t; grid_verbs(rv); }
 		}
 		return;
 	}
