@@ -364,8 +364,10 @@ void restoreRectBounds(Machine &m) {   // 19060
 }
 
 // 19812: single line frame from (stringXPos, stringYPos) to column `right` / row `bottom`
-void drawBox(Machine &m, uint8_t right, uint8_t bottom) {
-	m.d8(0xCCDB) = 0;              // IDB byte_29AFB
+void drawBox(Machine &m, uint8_t right, uint8_t bottom) { drawBoxMode(m, 0, right, bottom); }
+
+void drawBoxMode(Machine &m, uint8_t mode, uint8_t right, uint8_t bottom) {   // 19814: entry with al = mode (stored in byte_29AFB)
+	m.d8(0xCCDB) = mode;              // IDB byte_29AFB
 	m.d8(g::rectRightCol) = 0x27;
 	m.d8(g::rectBottomLine) = 0x70;
 	m.d8(0xCCDD) = right;

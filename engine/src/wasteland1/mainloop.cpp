@@ -12,6 +12,7 @@
 #include "wasteland1/recomp_rt.h"
 #include "wasteland1/text.h"
 #include "wasteland1/ui.h"
+#include "wasteland1/mapview.h"
 #include <cstdio>
 #include <cstdlib>
 
@@ -201,6 +202,72 @@ void titleView(Machine &m) {   // 161C0: the title screen: the credit pages repe
 		clear();
 		page(13); page(14); page(15); page(16); page(17); titleDelay(m, 10);
 	}
+}
+
+void drawGameFrame(Machine &m, uint8_t right, uint8_t bottom) {   // 197BB: the border around the game windows
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	m.setD16(0x8DD2, uint16_t(m.d16(0x8DD2) & 0x8F3F));
+	D(g::hintsDrawn) = 1;
+	drawBoxMode(m, 1, right, bottom);
+	D(g::stringYPos) = 17;
+	D(g::stringXPos) = 0;
+	writeColorCharacter(m, 94);
+	D(g::stringXPos) = 37;
+	writeColorCharacter(m, 95);
+	writeColorCharacter(m, 18);
+	writeColorCharacter(m, 15);
+	++D(g::stringYPos);
+	do {
+		D(g::stringXPos) = 0;
+		writeColorCharacter(m, 13);
+		D(g::stringXPos) = 39;
+		writeColorCharacter(m, 19);
+		++D(g::stringYPos);
+	} while (D(g::stringYPos) != 24);
+}
+
+void drawCompass(Machine &m) {   // 166D3: the compass letters in the top right corner of the map window
+	if (m.d8(g::graphicsBusy) != 0) return;
+	m.setD16(g::textString, 0xAA4D);
+	m.d8(g::stringXPos) = 38;
+	m.d8(g::stringYPos) = 0;
+	for (;;) {
+		uint16_t p = m.d16(g::textString);
+		const uint8_t c = m.d8(p);
+		if (c == 0) return;
+		m.setD16(g::textString, uint16_t(p + 1));
+		writeColorCharacter(m, c);
+		p = m.d16(g::textString);
+		const uint8_t c2 = m.d8(p);
+		m.setD16(g::textString, uint16_t(p + 1));
+		writeColorCharacter(m, c2);
+		m.d8(g::stringXPos) = 0x26;
+		++m.d8(g::stringYPos);
+	}
+}
+
+void redrawMapView(Machine &m) {   // 16675: draws the whole map window
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	saveRectBounds(m);
+	D(0x46B9) = 0;
+	D(0x4707) = D(g::graphicsBusy);
+	m.setD16(0x8DD2, 0);
+	m.setD16(0x8DD4, 0);
+	D(0x4708) = D(g::graphicsBusy);
+	D(0x4685) = 0;
+	D(0xAA40) = 0;
+	for (;;) {
+		D(0x4685) = D(0xAA40);
+		call(m, 0x6619);   // redrawViewColumn
+		D(0xAA40) = uint8_t(D(0xAA40) + 2);
+		if (uint8_t(D(0x46A3) << 1) == D(0xAA40)) break;
+	}
+	D(0x4674) = 0;
+	D(g::stringXPos) = 0;
+	D(g::stringYPos) = 0;
+	drawGameFrame(m, 37, 17);
+	drawCompass(m);
+	restoreRectBounds(m);
 }
 
 void characterKey(Machine &m, uint8_t key) {   // 12760: digit keys open the character screen of that party member

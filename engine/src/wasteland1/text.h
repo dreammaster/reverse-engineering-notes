@@ -58,6 +58,7 @@ void writeMemberName(Machine &m);                 // 171B9
 void saveRectBounds(Machine &m);                  // 19083
 void restoreRectBounds(Machine &m);               // 19060
 void drawBox(Machine &m, uint8_t right, uint8_t bottom);   // 19812
+void drawBoxMode(Machine &m, uint8_t mode, uint8_t right, uint8_t bottom);   // 19814
 void drawInfoWindow(Machine &m);                  // 19727
 void drawRosterWindow(Machine &m);                // 19770
 void clearTextArea(Machine &m);                   // 197AE

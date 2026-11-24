@@ -485,3 +485,6 @@ CB30 checkEnteredTime junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=
 62CF titleDelay junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
 C570 gameOver junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
 6330 loadGameData junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
+97BB drawGameFrame junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=8DD2-8DD5,B240-B243,8D00-8F00,4661-4666,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,A410-A470,A100-A200,B1D0-B1E0,CD40-CD50,B250-B251,CCD0-CCE0,4672-4677,4685-4685,4707-4708,46B9-46B9
+66D3 drawCompass junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=8DD2-8DD5,B240-B243,8D00-8F00,4661-4666,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,A410-A470,A100-A200,B1D0-B1E0,CD40-CD50,B250-B251,CCD0-CCE0,4672-4677,4685-4685,4707-4708,46B9-46B9
+6675 redrawMapView junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=8DD2-8DD5,B240-B243,8D00-8F00,4661-4666,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,A410-A470,A100-A200,B1D0-B1E0,CD40-CD50,B250-B251,CCD0-CCE0,4672-4677,4685-4685,4707-4708,46B9-46B9

@@ -43,4 +43,9 @@ void beginExploration(Machine &m, uint16_t sp);
 // 16330: START on the title screen: loads the game and begins the exploration
 void loadGameData(Machine &m, uint16_t sp);
 
+// 197BB / 166D3 / 16675: the game window border, the compass letters and the whole map window
+void drawGameFrame(Machine &m, uint8_t right, uint8_t bottom);
+void drawCompass(Machine &m);
+void redrawMapView(Machine &m);
+
 } // namespace wl
