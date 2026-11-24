@@ -30,4 +30,10 @@ void refreshAfterMove(Machine &m);
 void checkEnteredTime(Machine &m);
 void startIdleEvent(Machine &m);
 
+// 161C0 (+ 1630C, 162CF, 162E1): the title screen with its credit pages; never returns (START runs the game)
+void titleView(Machine &m);
+void titleButtons(Machine &m);
+void titleWait(Machine &m, uint8_t ticks);
+void titleDelay(Machine &m, uint8_t seconds);
+
 } // namespace wl

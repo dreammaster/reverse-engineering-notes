@@ -90,6 +90,10 @@ PORT(refreshMessagesAndMap) { refreshMessagesAndMap(m); }                       
 PORT(refreshAfterMove) { refreshAfterMove(m); }                                          // 163A0
 PORT(checkEnteredTime) { checkEnteredTime(m); }                                        // 1CB30
 PORT(startIdleEvent) { startIdleEvent(m); }                                            // 1656D
+PORT(titleView) { titleView(m); }                                                    // 161C0
+PORT(titleButtons) { titleButtons(m); }                                              // 1630C
+PORT(titleWait) { titleWait(m, r.d.b.l); }                                         // 162E1
+PORT(titleDelay) { titleDelay(m, r.d.b.l); }                                       // 162CF
 PORT(explorationLoop) { explorationLoop(m); }                                            // 16B3C
 
 } // namespace rc

@@ -479,3 +479,7 @@ BE50 generalStore junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf scratch=DCE0-DC
 63A0 refreshAfterMove junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=8DF7-8DF7,46FE-46FE,B240-B243,8D00-8F00,4661-4666,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,A410-A470,A100-A200,B1D0-B1E0,CD40-CD50,B250-B251,46DC-46DC
 CB30 checkEnteredTime junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=8DF7-8DF7,46FE-46FE,B240-B243,8D00-8F00,4661-4666,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,A410-A470,A100-A200,B1D0-B1E0,CD40-CD50,B250-B251,46DC-46DC,A630-A640,4660-4662,C059-C059,46B3-46B4,A634-A63F
 656D startIdleEvent junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf scratch=8DF7-8DF7,46FE-46FE,B240-B243,8D00-8F00,4661-4666,CDC0-CE00,465C-4660,BA00-BA11,AA30-AA50,A410-A470,A100-A200,B1D0-B1E0,CD40-CD50,B250-B251,46DC-46DC,A630-A640,4660-4662,C059-C059,46B3-46B4,A634-A63F
+61C0 titleView junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
+630C titleButtons junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
+62E1 titleWait junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf
+62CF titleDelay junk=ah,al,bl,bp,ch,cl,di,dl,dh,es,pf,sf,si,zf,cf

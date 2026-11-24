@@ -123,6 +123,85 @@ void startIdleEvent(Machine &m) {   // 1656D
 	call(m, 0x63A0);
 }
 
+void titleButtons(Machine &m) {   // 1630C: the START button row of the title screen
+	m.setD16(0x468D, 0xA6FF);
+	m.setD16(0x468F, 0xA701);
+	m.d8(0x468A) = 0;
+	m.d8(0x4688) = 0;
+	m.d8(0x468C) = 24;
+	m.d8(0x4689) = 1;
+	call(m, 0x73D2);   // drawButtonsRow
+}
+
+void titleWait(Machine &m, uint8_t ticks) {   // 162E1: waits `ticks` timer ticks while the START button can be pressed
+	do {
+		m.d8(0xA6E2) = ticks;
+		m.setD16(g::buttonMask1, 8);
+		m.setD16(g::buttonMask2, 0);
+		checkKeypress(m);
+		call(m, 0x7574);   // buttonKey: START starts the game and does not come back
+		while (m.d16(0xD150) == m.d16(0xA6E6))
+			if (rc::Regs *r = m.sys ? m.sys->current : nullptr) rc::backedge(m, *r, 0x62FE);
+		m.setD16(0xA6E6, m.d16(0xD150));
+		ticks = uint8_t(m.d8(0xA6E2) - 1);
+	} while (ticks != 0);
+}
+
+void titleDelay(Machine &m, uint8_t seconds) {   // 162CF
+	do {
+		m.d8(0xA6E3) = seconds;
+		titleWait(m, 255);
+		seconds = uint8_t(m.d8(0xA6E3) - 1);
+	} while (seconds != 0);
+}
+
+void titleView(Machine &m) {   // 161C0: the title screen: the credit pages repeat until START is pressed
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	for (uint8_t i = 0; i != 8; ++i) D(uint16_t(0xA9C4 + i)) = D(uint16_t(0xA9B4 + i));
+	D(0x4674) = 0; D(0x4676) = 0; D(0x4675) = 39; D(0x4677) = 199;
+	call(m, 0x001B);   // clearRect
+	D(0x4674) = 1; D(0x4675) = 39; D(0x4676) = 8; D(0x4677) = 112;
+	D(0x46B9) = 1;
+	titleButtons(m);
+	call(m, 0x73D2);
+	call(m, 0x66D3);
+	D(0x4675) = 38;
+	D(0x8DD0) = 0; D(0x4674) = 0; D(0x8DD1) = 0;
+	{
+		X86Regs x;
+		x.dl = 37; x.bl = 17;
+		legacy::call(m, 0x97BB, x);
+	}
+	call(m, 0x73D2, 0xFF);
+	{
+		X86Regs x;
+		x.bp = 0;
+		legacy::call(m, 0x0045, x);   // displayTitlePic
+	}
+	D(0x46EE) = 0;
+	call(m, 0x7E42);
+	call(m, 0x89B0);
+	auto frames = [&](uint8_t n) { X86Regs x; x.dl = n; legacy::call(m, 0x8DB4, x); };
+	auto page = [&](uint8_t p) { call(m, 0x6385, p); };
+	auto clear = [&]() { call(m, 0x62C7); };
+	for (;;) {   // 1623F
+		clear();
+		page(1); titleDelay(m, 3);
+		clear();
+		page(2); titleDelay(m, 3);
+		clear();
+		page(3); titleDelay(m, 3);
+		clear();
+		page(5); frames(10);
+		page(6); frames(10);
+		page(7); titleDelay(m, 3);
+		clear();
+		page(9); page(10); page(11); page(12); titleDelay(m, 3);
+		clear();
+		page(13); page(14); page(15); page(16); page(17); titleDelay(m, 10);
+	}
+}
+
 void characterKey(Machine &m, uint8_t key) {   // 12760: digit keys open the character screen of that party member
 	(void)key;
 	const uint8_t member = m.d8(g::lastKey) & 0x0F;   // the original reads the last key, not al
