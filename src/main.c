@@ -111,7 +111,7 @@ typedef struct RoomView_ {
 	uint8_t room_seen[ACL_THINGS];   /* ... and their rooms / positions */
 	uint8_t pos_seen[ACL_THINGS * 3];
 	int pending_rebuild;
-	struct { int active, id, timer, dot; } msgs[4];   /* message scrolls (slots 0..3) */
+	struct { int active, id, timer, dot; char txt[200]; } msgs[4];   /* txt: a composed text (id = -2) */   /* message scrolls (slots 0..3) */
 	uint8_t verbs[VERB_SLOTS];  /* verb icons of the touched object (slots) */
 	int nverbs;
 	int energy_max_cfg;        /* from LEVn.MP1 */
@@ -119,6 +119,7 @@ typedef struct RoomView_ {
 	int carry_pending, carry_energy; uint32_t carry_money, carry_score;   /* stats carried into the next level */
 	int room_snd[8], room_snd_thing[8], nroom_snd, snd_key; /* sounds of the room's creatures (stopped when the room changes) */
 	int ruck_target;           /* thing touched when the rucksack was opened (insert / give target), -1 = none */
+	int grid_open;             /* the rucksack strip shown with a look at a carried thing: all carried things, the current one framed in green (emulator, 2 things) */
 	int look_pic;              /* thing+1 whose picture is shown next to the look message (rucksack look), 0 = none */
 	int map_magic;             /* spell 4 (TAD routine 0974, ds:6C9 = 81h): the map shows every room not flagged 80h in its record byte 17h */
 	int map_open, map_ox, map_oy, map_zoom, map_prev;   /* F1: the map of the rooms entered so far (1000:369F) */
@@ -270,6 +271,8 @@ static void panel_ensure(const GameFiles *g) {
 static const ObjSprite *thing_sprite(const RoomView *rv, int t);
 static void ruck_picture(uint8_t *px, const ObjSprite *sp);
 static void look_picture(uint8_t *px, const ObjSprite *sp);
+static void grid_draw(uint8_t *px, const RoomView *rv);
+static int ruck_list(const RoomView *rv, int *out, int max);
 static void map_draw(uint8_t *px, const RoomView *rv);
 static void map_open_magic(RoomView *rv);
 static int msg_rnd(void *u) { (void)u; return 3; }
@@ -300,12 +303,14 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 		if (!rv->ruck_open) status_draw(scr->pixels, g_font, g_font_len, nm, rv->day + 1);
 		int pic = 0;
 		for (int sl = 0; sl < 4; sl++) pic |= rv->msgs[sl].active;
-		pic = pic && rv->look_pic;
-		if (pic && g_tiles) look_picture(scr->pixels, thing_sprite(rv, rv->look_pic - 1));
+		pic = (pic && rv->look_pic) || rv->grid_open;
+		if (rv->grid_open && g_tiles) grid_draw(scr->pixels, rv);
+		else if (pic && g_tiles) look_picture(scr->pixels, thing_sprite(rv, rv->look_pic - 1));
 		for (int sl = 0; sl < 4 && g_tiles && g_font3; sl++)
-			if (rv->msgs[sl].active && rv->msgs[sl].id >= 0 && rv->msgs[sl].id < rv->names.count) {
+			if (rv->msgs[sl].active && ((rv->msgs[sl].id >= 0 && rv->msgs[sl].id < rv->names.count) || rv->msgs[sl].id == -2)) {
 				char tx[256];
-				snprintf(tx, sizeof(tx), "%s%s", rv->names.strings[rv->msgs[sl].id], rv->msgs[sl].dot ? "." : "");
+				if (rv->msgs[sl].id == -2) snprintf(tx, sizeof(tx), "%s", rv->msgs[sl].txt);
+				else snprintf(tx, sizeof(tx), "%s%s", rv->names.strings[rv->msgs[sl].id], rv->msgs[sl].dot ? "." : "");
 				if (pic) message_draw_at(scr->pixels, tx, 208, 20 + 16 * sl, g_tiles, g_tiles_len, g_font3, g_font3_len, msg_rnd, NULL);
 				else message_draw(scr->pixels, tx, sl, g_tiles, g_tiles_len, g_font3, g_font3_len, msg_rnd, NULL);
 			}
@@ -570,6 +575,18 @@ static void roomview_flush_messages(RoomView *rv) {
 	}
 	rv->vm.msg_n = 0;
 }
+
+/* show a composed text as a message scroll (the look descriptions of 1000:84D9) */
+static void msg_show_text(RoomView *rv, const char *text) {
+	int sl = -1, best = 1 << 30;
+	for (int i = 0; i < 4; i++) {
+		if (!rv->msgs[i].active) { sl = i; break; }
+		if (rv->msgs[i].timer < best) { best = rv->msgs[i].timer; sl = i; }
+	}
+	rv->msgs[sl].active = 1; rv->msgs[sl].id = -2; rv->msgs[sl].dot = 0; rv->msgs[sl].timer = MSG_STEPS;
+	snprintf(rv->msgs[sl].txt, sizeof(rv->msgs[sl].txt), "%s", text);
+}
+static const char *lng_str(const RoomView *rv, int id) { return id >= 0 && id < rv->names.count ? rv->names.strings[id] : ""; }
 
 /* the script flags changed (things hidden / placed): rebuild the objects, keeping the positions and animations of those that stay */
 static void roomview_rebuild_objs(RoomView *rv, int gx, int gy) {
@@ -932,7 +949,8 @@ static void ruck_show(RoomView *rv, int t) {
 	rv->last_item = t;
 	if (!sp) return;
 	int h16 = sp->header[0x16], h17 = sp->header[0x17];
-	if (h17 != 6 && !(h16 & 0x80)) rv->verbs[rv->nverbs++] = 0x0B;
+	(void)h16;
+	rv->verbs[rv->nverbs++] = 0x0B;                                   /* look is always offered for carried things (emulator: the diary has it, the floor list does not) */
 	if ((sp->header[12] & 1) && !(rv->vm.flags2[t] & 4)) rv->verbs[rv->nverbs++] = 0x0D;   /* the touched list's 0Ah (icon 10) shows as icon 13 when carried */
 	if (h17 && !(rv->vm.flags2[t] & 0x40)) {
 		static const uint8_t cv[10] = {0x00, 0x04, 0x09, 0xFF, 0x07, 0x03, 0x08, 0xFF, 0xFF, 0xFF};
@@ -958,6 +976,7 @@ static void ruck_open(RoomView *rv) {
 	ruck_show(rv, t);
 }
 static void ruck_close(RoomView *rv) {
+	rv->grid_open = 0;
 	rv->ruck_open = rv->menu_open = 0;
 	rv->nverbs = 0;
 	rv->label_id = -1;
@@ -979,6 +998,30 @@ static void ruck_picture(uint8_t *px, const ObjSprite *sp) {
 
 /* the picture scroll shown at the top left while a carried thing is looked at: a text-less box at (16, 10) (5 fill columns, 4 rows) with a green double frame around the
  * thing's picture (outer ring colour 1 at (23,25)-(57,59), inner ring 3, brown interior; sprite origin = window (24, 26) + (5, 10), as in the panel window) */
+static void grid_draw(uint8_t *px, const RoomView *rv) {
+	int l[64], n = ruck_list(rv, l, 64);
+	if (n > 16) n = 16;
+	if (n < 1 || !g_tiles) return;
+	int cols = n < 4 ? n : 4, rows = (n + 3) / 4;
+	message_box(px, 16, 10, 5 * cols, 5 * rows - 1, g_tiles, g_tiles_len, msg_rnd, NULL);
+	for (int k = 0; k < n; k++) {
+		int cx = 23 + 40 * (k % 4), cy = 25 + 40 * (k / 4), sel = l[k] == rv->touch_thing;
+		for (int y = cy; y <= cy + 34; y++)
+			for (int x = cx; x <= cx + 34; x++) {
+				int edge = (x == cx || x == cx + 34 || y == cy || y == cy + 34), edge2 = (x == cx + 1 || x == cx + 33 || y == cy + 1 || y == cy + 33);
+				px[y * SCREEN_W + x] = (uint8_t)(sel ? (edge ? 1 : edge2 ? 3 : 14) : (edge ? 4 : 14));
+			}
+		const ObjSprite *sp = thing_sprite(rv, l[k]);
+		if (!sp || sp->nframes < 1) continue;
+		const ObjFrame *f = &sp->frames[0];
+		int ox = cx + 1 + 5 + (32 - f->w) / 2, oy = cy + 1 + (32 - f->h) / 2;
+		for (int j = 0; j < f->h; j++)
+			for (int i = 0; i < f->w; i++) {
+				int x = ox + i, y = oy + j;
+				if (f->pixels[j * f->w + i] && x >= cx + 2 && x <= cx + 32 && y >= cy + 2 && y <= cy + 32) px[y * SCREEN_W + x] = f->pixels[j * f->w + i];
+			}
+	}
+}
 static void look_picture(uint8_t *px, const ObjSprite *sp) {
 	message_box(px, 16, 10, 5, 4, g_tiles, g_tiles_len, msg_rnd, NULL);
 	for (int y = 25; y <= 59; y++)
@@ -1057,7 +1100,25 @@ static void menu_choose(RoomView *rv, int verb) {
 	rv->vm.queue_n = 0;
 	if (verb == 11) {
 		if (t >= 0 && t < ACL_THINGS && (rv->vm.flags[t] & 0x20)) acl_thing_event(&rv->vm, &rv->mp2, t, 16, 0);
-		else if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 3;
+		else {
+			const RoomObj *lo = NULL;
+			for (int i = 0; i < rv->ro.n; i++) if (rv->ro.o[i].thing == t) { lo = &rv->ro.o[i]; break; }
+			const ObjSprite *lsp = lo ? lo->sp : thing_sprite(rv, t);
+			int hc = lsp ? lsp->header[0x16] : -1;
+			if (hc == 8 && t >= 0 && t < ACL_THINGS) {                      /* 1000:8615: "THIS IS OPEN" / "THIS IS CLOSED AND LOCKED." + the trap notice */
+				const uint8_t *ta = rv->vm.tail[t];
+				char tx[200];
+				if (ta[4] & 1) snprintf(tx, sizeof(tx), "%s", lng_str(rv, 22));
+				else snprintf(tx, sizeof(tx), "%s%s", lng_str(rv, 23), lng_str(rv, (ta[2] || ta[3]) ? 24 : 25));
+				if (ta[5]) { size_t l = strlen(tx); snprintf(tx + l, sizeof(tx) - l, " %s", lng_str(rv, 0x33)); }
+				msg_show_text(rv, tx);
+			} else if (rv->ruck_open && lsp) {                              /* a carried thing: "THIS IS A <name>" (emulator: the diary) */
+				int nm = (lsp->header[10] << 8) | lsp->header[11];
+				char tx[200];
+				snprintf(tx, sizeof(tx), "%s%s", lng_str(rv, 5), nm < 0x8000 ? lng_str(rv, nm) : "");
+				msg_show_text(rv, tx);
+			} else if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 3;
+		}
 	} else if (verb == 4 || verb == 7) {      /* 1000:3159 / 3163: sound 30h / 3Dh, then event 5 */
 		snd_play(verb == 4 ? 0x30 : 0x3D);
 		acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
@@ -1307,7 +1368,26 @@ static void fly_step(Walker *wk, RoomView *rv) {
 static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int space_edge) {
 	if (!(keys & 0x80)) rv->menu_released = 1;
 	if (rv->ruck_delay > 0) rv->ruck_delay--;
-	if (space_edge) { ruck_close(rv); return; }
+	if (space_edge) { rv->grid_open = 0; ruck_close(rv); return; }
+	if (rv->grid_open) {                                              /* the strip of carried things: Left / Right move the frame, fire selects the thing and returns to its verbs */
+		if (fire_edge) {
+			int sel = rv->touch_thing;
+			rv->grid_open = 0;
+			for (int i = 0; i < 4; i++) rv->msgs[i].active = 0;
+			rv->look_pic = 0;
+			ruck_show(rv, sel);
+			snd_play(0x37);
+			return;
+		}
+		if (rv->ruck_delay == 0 && (keys & 12)) {
+			int l[64], n = ruck_list(rv, l, 64), k = 0;
+			for (int i = 0; i < n; i++) if (l[i] == rv->touch_thing) k = i;
+			if (n > 0) rv->touch_thing = (keys & 8) ? l[(k + 1) % n] : l[(k + n - 1) % n];
+			rv->ruck_delay = 13;
+			snd_play(2);
+		}
+		return;
+	}
 	if (fire_edge && rv->menu_released && rv->nverbs > 0) {
 		int verb = rv->verbs[rv->menu_sel], t = rv->touch_thing;
 		snd_play(0x37);
@@ -1354,6 +1434,7 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 			ruck_close(rv);
 		} else if (verb == 11 || verb == 13 || verb == 4 || verb == 7 || verb == 16) {
 			menu_choose(rv, verb);
+			if (verb == 11) { rv->grid_open = 1; rv->touch_thing = t; }
 		}
 		return;
 	}
