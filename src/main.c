@@ -1330,18 +1330,40 @@ static void cast_unlock(Walker *wk, RoomView *rv, int item, int spell) {
 	ta[4] &= (uint8_t)~2;
 	menu_choose_thing(rv, t, 3);                                       /* verb 3 on the chest */
 }
+/* spell 5 (TAD routine 097A, mind blast): every creature on the room's creature list (at most 6 active ones, as for spell 1) that is not immune
+   (A[6] bit 0 clear) loses the item's power A[1] from its hit points A[0]; at underflow event 23 (its death) */
+static void cast_blast(Walker *wk, RoomView *rv, int item) {
+	(void)wk;
+	int power = rv->vm.tail[item][1];
+	for (int i = 0, active = 0; i < rv->ro.n && active < 6; i++) {
+		const RoomObj *o = &rv->ro.o[i];
+		int t = o->thing;
+		if (o->sp->header[0x16] != 3 || (rv->vm.flags[t] & 0x80) || (rv->vm.tail[t][5] & 0x80)) continue;
+		active++;
+		if (rv->vm.tail[t][6] & 1) continue;
+		uint8_t *hp = &rv->vm.tail[t][0];
+		if (*hp >= power) { *hp = (uint8_t)(*hp - power); continue; }
+		*hp = (uint8_t)(*hp - power);
+		rv->vm.queue_n = 0;
+		acl_thing_event(&rv->vm, &rv->mp2, t, 23, 0);
+		for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+	}
+	rv->pending_rebuild |= rv_changed(rv);
+	roomview_flush_messages(rv);
+}
 /* fire with a held spell item (1000:6896): refused with message 25h while A[3] bit 7 is set; sound 11h (A[7] = 0, the projectile mode) or 06h,
    the spell's effect, then the charge count A[2] drops (16AC9: FFh = unlimited; at 0 the item is gone: message 0Fh and it leaves the hand).
-   Only the spells 0, 1, 4, 7 and 8 have an effect in the port; the others are ignored (no charge used) */
+   Only the spells 0, 1, 4, 5, 7 and 8 have an effect in the port; the others are ignored (no charge used) */
 static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 	uint8_t *a = rv->vm.tail[item];
 	int sp = a[0];
-	if (sp != 0 && sp != 1 && sp != 4 && sp != 7 && sp != 8) return;
+	if (sp != 0 && sp != 1 && sp != 4 && sp != 5 && sp != 7 && sp != 8) return;
 	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
 	snd_play(a[7] == 0 ? 0x11 : 0x06);
 	if (sp == 0) cast_strike(wk, rv, item);
 	else if (sp == 1) cast_smite(wk, rv, item);
 	else if (sp == 4) map_open_magic(rv);
+	else if (sp == 5) cast_blast(wk, rv, item);
 	else cast_unlock(wk, rv, item, sp);
 	if (a[2] != 0xFF && --a[2] == 0) {
 		rv->vm.flags[item] |= 0x80;
