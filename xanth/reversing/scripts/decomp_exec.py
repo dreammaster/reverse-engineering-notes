@@ -54,7 +54,7 @@ class Evaluator:
         self.entry_insn = entry_insn
         self.ncall = 0
         self.skip = set()       # `add sp, N` instructions that belong to a call
-        self.strfn = any(insns[i].mn in ("scasb", "movsw", "movsb") for i in L.reachable(insns, labels, tables, entry_insn))
+        self.strfn = any(insns[i].mn in ("scasb", "movsw", "movsb", "stosw", "stosb") for i in L.reachable(insns, labels, tables, entry_insn))
 
     # ---- helpers
     def tmp(self, stmts, e):
@@ -429,6 +429,20 @@ class Evaluator:
             self.skip.update(r.idx for r in run)
             st.shadow["di"] = simp(("add", di, K(total)))
             st.shadow["si"] = simp(("add", si, K(total)))
+        elif mn in ("stosw", "stosb") and x.pfx == "rep":
+            # rep stosw with ax = 0: a block cleared (memset)
+            unit = 2 if mn == "stosw" else 1
+            value = self.reg_get16(st, "ax", blk) if unit == 2 else self.reg_get8(st, "al", blk)
+            if value != K(0):
+                raise Unsupported("rep %s of something other than zero" % mn)
+            count = self.reg_get16(st, "cx", blk)
+            es = st.regs.get("es", ("in", "es", blk))
+            dst = self.ptr(es, self.reg_get16(st, "di", blk))
+            self.ncall += 1
+            nbytes = simp(("mul", count, K(unit))) if unit != 1 else count
+            stmts.append(("call", (blk, 1000 + self.ncall), "memset", [dst, K(0), nbytes]))
+            st.regs["cx"] = K(0)
+            st.shadow.pop("di", None)
         elif mn == "scasb":
             self.scasb(st, x, blk)
         elif mn in ("shl", "sal", "shr", "sar"):

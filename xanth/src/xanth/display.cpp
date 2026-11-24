@@ -423,12 +423,22 @@ int Display::popupMenu(const std::vector<std::string> &labels) {
 	int w = 0;
 	for (size_t i = 0; i < labels.size(); i++)
 		w = std::max(w, font.textWidth(labels[i]));
-	int bw = w + 16, step = 16;
-	int ww = bw + 10, wh = (int)labels.size() * step + 8;
-	int x1 = 160 - ww / 2, y1 = 100 - wh / 2;
+	int bw = w + 8, step = 16;                         // (the buttons are as wide as the widest label plus four pixels on each side)
+	int ww = bw + 11, wh = (int)labels.size() * step + 5;
+	int x1 = 160 - ww / 2, y1 = 97 - wh / 2;
 	Surface saved = _screen;
-	_ms.restoreMarble(_screen, x1, y1, x1 + ww, y1 + wh);
-	bevelFrame(_screen, x1 - 1, y1 - 1, x1 + ww + 1, y1 + wh + 1);
+	_ms.restoreMarble(_screen, x1, y1, x1 + ww - 1, y1 + wh - 1);
+	// the panel is a piece of the marble with its left and top edges lit and its right and bottom edges dark, two pixels wide
+	for (int i = 0; i < 2; i++) {
+		for (int y = y1; y < y1 + wh; y++) {
+			lightenPixel(_screen, x1 + i, y);
+			darkenPixel(_screen, x1 + ww - 1 - i, y);
+		}
+		for (int x = x1; x < x1 + ww; x++) {
+			lightenPixel(_screen, x, y1 + i);
+			darkenPixel(_screen, x, y1 + wh - 1 - i);
+		}
+	}
 	std::vector<int> top(labels.size());
 	auto draw = [&](size_t i, bool lit) {
 		int bx = x1 + 5, by = y1 + 4 + (int)i * step;
