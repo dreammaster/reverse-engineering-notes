@@ -410,6 +410,8 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 			}
 	}
 	rv->vm.energy = rv->vm.energy_max = rv->energy_max_cfg;
+	if (getenv("CAD_SPELLS")) for (int t = 0; t < ACL_THINGS; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!sp || (sp->header[0x16] != 1 && sp->header[0x16] != 4)) continue; const uint8_t *a = rv->vm.tail[t];
+		fprintf(stderr, "SPELLTHING %d class %d A %02x %02x %02x %02x %02x %02x %02x %02x %02x\n", t, sp->header[0x16], a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]); }
 	if (getenv("CAD_LOOKTEXT")) { int t = atoi(getenv("CAD_LOOKTEXT")); char tx[200] = ""; const ObjSprite *sp = thing_sprite(rv, t);   /* debugging aid: print the class-specific description of a thing */
 		fprintf(stderr, "LOOK %d class %d: %s\n", t, sp ? sp->header[0x16] : -1, sp && thing_description(rv, t, sp, tx, sizeof(tx)) ? tx : "(none)"); }
 	if (getenv("CAD_ENERGY")) rv->vm.energy = atoi(getenv("CAD_ENERGY"));     /* debugging aid: start with this energy */
@@ -1258,10 +1260,6 @@ static int front_spot(Walker *wk, RoomView *rv, int t, int *ox, int *oy, int *oz
 /* spell 0 / weapon strike (TAD routine 085C, level 1): the first creature in the line of fire loses the item's power A[1] from its hit points A[0]; at underflow event 23 (its death) */
 static void cast_strike(Walker *wk, RoomView *rv, int item) {
 	uint8_t *a = rv->vm.tail[item];
-	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
-	if (a[7] == 0) { snd_play(0x11); return; }
-	snd_play(0x06);
-	a[7]--;
 	int best = -1, bd = 1 << 30;
 	int fx = wk->dir == DIR_RIGHT ? 1 : wk->dir == DIR_LEFT ? -1 : 0, fy = wk->dir == DIR_DOWN ? 1 : wk->dir == DIR_UP ? -1 : 0;
 	for (int i = 0; i < rv->ro.n; i++) {
@@ -1287,10 +1285,6 @@ static void cast_strike(Walker *wk, RoomView *rv, int item) {
 static void cast_smite(Walker *wk, RoomView *rv, int item) {
 	(void)wk;
 	uint8_t *a = rv->vm.tail[item];
-	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
-	if (a[7] == 0) { snd_play(0x11); return; }
-	snd_play(0x06);
-	a[7]--;
 	int left = a[1];
 	for (int i = 0, active = 0; i < rv->ro.n && active < 6 && left > 0; i++) {
 		const RoomObj *o = &rv->ro.o[i];
@@ -1327,10 +1321,6 @@ static int line_target(Walker *wk, RoomView *rv, int h16, int reach) {
 /* spells 7 / 8 (TAD routines 09F5 / 0A48): 7 opens a closed, unlocked-or-lockable CHEST in front (the lock word A[2..3] := 0, then verb 3), 8 clears the lock of a thing (A[2..3] := 0, A[7] bit 6 cleared) */
 static void cast_unlock(Walker *wk, RoomView *rv, int item, int spell) {
 	uint8_t *a = rv->vm.tail[item];
-	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
-	if (a[7] == 0) { snd_play(0x11); return; }
-	snd_play(0x06);
-	a[7]--;
 	int t = line_target(wk, rv, spell == 7 ? 8 : -1, 24);
 	uint8_t *ta = t > 0 ? rv->vm.tail[t] : NULL;
 	int bad = !ta || (spell == 7 ? ((ta[4] & 1) || (ta[4] & 0x40)) : (ta[7] & 0x20));
@@ -1340,16 +1330,33 @@ static void cast_unlock(Walker *wk, RoomView *rv, int item, int spell) {
 	ta[4] &= (uint8_t)~2;
 	menu_choose_thing(rv, t, 3);                                       /* verb 3 on the chest */
 }
+/* fire with a held spell item (1000:6896): refused with message 25h while A[3] bit 7 is set; sound 11h (A[7] = 0, the projectile mode) or 06h,
+   the spell's effect, then the charge count A[2] drops (16AC9: FFh = unlimited; at 0 the item is gone: message 0Fh and it leaves the hand).
+   Only the spells 0, 1, 4, 7 and 8 have an effect in the port; the others are ignored (no charge used) */
+static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
+	uint8_t *a = rv->vm.tail[item];
+	int sp = a[0];
+	if (sp != 0 && sp != 1 && sp != 4 && sp != 7 && sp != 8) return;
+	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
+	snd_play(a[7] == 0 ? 0x11 : 0x06);
+	if (sp == 0) cast_strike(wk, rv, item);
+	else if (sp == 1) cast_smite(wk, rv, item);
+	else if (sp == 4) map_open_magic(rv);
+	else cast_unlock(wk, rv, item, sp);
+	if (a[2] != 0xFF && --a[2] == 0) {
+		rv->vm.flags[item] |= 0x80;
+		if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x0F;
+		if (rv->held == item) rv->held = 0;
+		rv->pending_rebuild |= rv_changed(rv);
+		roomview_flush_messages(rv);
+	}
+}
 /* fire with a held thing: sound 0Eh, the thing is placed in front of the player (event 21) and starts to fly */
 static void throw_held(Walker *wk, RoomView *rv) {
 	int t = rv->held, x, y, z;
 	{
 		const ObjSprite *hs = t > 0 && t < ACL_THINGS ? thing_sprite(rv, t) : NULL;
-		if (hs && hs->header[0x16] == 1 && rv->vm.tail[t][0] == 0) { cast_strike(wk, rv, t); return; }     /* a spell item of spell 0 */
-		if (hs && hs->header[0x16] == 1 && rv->vm.tail[t][0] == 1) { cast_smite(wk, rv, t); return; }     /* spell 1 */
-		if (hs && hs->header[0x16] == 1 && (rv->vm.tail[t][0] == 7 || rv->vm.tail[t][0] == 8)) { cast_unlock(wk, rv, t, rv->vm.tail[t][0]); return; }
-		if (hs && hs->header[0x16] == 1 && rv->vm.tail[t][0] == 4 && rv->vm.tail[t][7] > 0 && !(rv->vm.tail[t][3] & 0x80)) { rv->vm.tail[t][7]--; snd_play(0x06); map_open_magic(rv); return; }   /* spell 4: the magic map */
-		if (hs && hs->header[0x16] == 1) return;                                                         /* other spells: not ported */
+		if (hs && hs->header[0x16] == 1) { cast_spell_item(wk, rv, t); return; }                            /* a spell item (1000:6896) */
 	}
 	if (t <= 0 || t >= ACL_THINGS || rv->vm.room[t] != 0xFF || rv->nfly >= 8) return;
 	snd_play(0x0E);

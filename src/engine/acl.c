@@ -52,7 +52,13 @@ static void reset_thing(AclVM *vm, const Mp2 *mp2, int t) {
 		vm->present[t] = 1;
 		vm->flags[t] = r[3];
 		vm->room[t] = r[10];
-		if (r[12] >= 16 && (size_t)r[12] + 6 <= (size_t)len) memcpy(vm->tail[t], r + r[12], (size_t)r[12] + 16 <= (size_t)len ? 16 : 6);
+		if (r[12] >= 16 && (size_t)r[12] + 6 <= (size_t)len) {              /* the A struct runs from rec[12] to the B struct at rec[13] (bytes beyond 6 are real: A[6] = cooldown, A[7] = spell mode) */
+			size_t avail = (size_t)len - r[12], n = r[13] > r[12] ? (size_t)r[13] - r[12] : 16;
+			if (n > 16) n = 16;
+			if (n > avail) n = avail;
+			if (n < 6) n = 6;
+			memcpy(vm->tail[t], r + r[12], n);
+		}
 		if (r[13] >= 16 && (size_t)r[13] + 10 <= (size_t)len) memcpy(vm->mstate[t], r + r[13], 10);
 		if (r[13] >= 16 && r[14] > r[13] + 14 && (size_t)r[14] <= (size_t)len) {
 			size_t tl = (size_t)r[14] - r[13] - 14;
