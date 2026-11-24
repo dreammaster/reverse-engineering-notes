@@ -26,4 +26,8 @@ void refreshMapAndStatus(Machine &m);
 void refreshMessagesAndMap(Machine &m);
 void refreshAfterMove(Machine &m);
 
+// 1CB30: reloads the area when 4 minutes of game time have passed since entering it; 1656D: starts the idle event of the view
+void checkEnteredTime(Machine &m);
+void startIdleEvent(Machine &m);
+
 } // namespace wl

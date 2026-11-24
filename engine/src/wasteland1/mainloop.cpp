@@ -104,6 +104,25 @@ void refreshAfterMove(Machine &m) {   // 163A0
 	call(m, 0x63C1);
 }
 
+void checkEnteredTime(Machine &m) {   // 1CB30: after 4 minutes of game time on the map the area data is reloaded and the view message shown
+	if (m.d8(uint16_t(g::saved + 0xF9)) == 0) return;
+	auto s2 = [&](uint8_t i) { return m.d8(uint16_t(g::saved2 + i)); };
+	const uint32_t now = uint32_t(s2(2)) | (uint32_t(s2(3)) << 8) | (uint32_t(s2(4)) << 16);
+	const uint32_t then = uint32_t(m.d8(uint16_t(g::saved + 0xFA))) | (uint32_t(m.d8(uint16_t(g::saved + 0xFB))) << 8) | (uint32_t(m.d8(uint16_t(g::saved + 0xFC))) << 16);
+	if (((now - then) & 0xFFFFFF) < 0xF0) return;
+	call(m, 0x83B1);
+	call(m, 0x2C80, 0x84);   // showView
+}
+
+void startIdleEvent(Machine &m) {   // 1656D
+	call(m, 0x651A, 4);
+	X86Regs x;
+	x.setAx(1);
+	legacy::call(m, 0xCBD3, x);
+	call(m, 0x6890);   // randomEncounter
+	call(m, 0x63A0);
+}
+
 void characterKey(Machine &m, uint8_t key) {   // 12760: digit keys open the character screen of that party member
 	(void)key;
 	const uint8_t member = m.d8(g::lastKey) & 0x0F;   // the original reads the last key, not al
@@ -168,7 +187,7 @@ void explorationLoop(Machine &m) {
 	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
 	if (std::getenv("MAINLOOPDBG")) std::fprintf(stderr, "exploration loop entered\n");
 	refreshMessagesAndMap(m);
-	if (D(viewActive) != 0) call(m, 0x656D);
+	if (D(viewActive) != 0) startIdleEvent(m);
 	for (;;) {   // 16B49
 		if (rc::Regs *r = m.sys ? m.sys->current : nullptr) rc::backedge(m, *r, 0x6C6C);   // the timer interrupt is driven by the loops
 		if (D(idleLimit) != 0xFF) {   // the party stands still: count down to the idle event
@@ -218,7 +237,7 @@ void explorationLoop(Machine &m) {
 			if (member != 0) useMember(m, member);   // a party member's hot key
 			else call(m, 0x7574);                         // the buttons row
 		}
-		call(m, 0xCB30);
+		checkEnteredTime(m);
 		const uint8_t total = D(uint16_t(g::saved2 + g::s2::field8));
 		bool alive = false;
 		if (total != 0) {

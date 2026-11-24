@@ -88,6 +88,8 @@ PORT(scrollMessagesDown) { scrollMessagesDown(m); r.b.x = 0; }                  
 PORT(refreshMapAndStatus) { refreshMapAndStatus(m); }                                    // 163CA
 PORT(refreshMessagesAndMap) { refreshMessagesAndMap(m); }                                // 163C4
 PORT(refreshAfterMove) { refreshAfterMove(m); }                                          // 163A0
+PORT(checkEnteredTime) { checkEnteredTime(m); }                                        // 1CB30
+PORT(startIdleEvent) { startIdleEvent(m); }                                            // 1656D
 PORT(explorationLoop) { explorationLoop(m); }                                            // 16B3C
 
 } // namespace rc
