@@ -303,6 +303,7 @@ void Machine::timerTick(Cpu &c) {
 		auto it = host().liftedByName.find(cs.name);
 		if (it != host().liftedByName.end())
 			it->second(c);
+		if (getenv("HOST_CALL_PRINT")) fprintf(stderr, "call %s -> ax=%u dx=%u es=%04x\n", cs.name.c_str(), c.ax.x, c.dx.x, c.es);
 		c.retWords = rw;
 		if (afterCall && (cs.name == "execute_command" || cs.name == "playpre"))
 			afterCall(cs);

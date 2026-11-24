@@ -197,6 +197,7 @@ int main(int argc, char **argv) {
 			return 1;
 		char buf[256];
 		int step = 1;
+		FILE *cmdOut = fopen((std::string(argv[3]) + ".cmd").c_str(), "wb");   // the commands as numbers, for the oracle to replay (HOST_PLAYLOG)
 		auto lower = [](std::string t) {
 			for (size_t i = 0; i < t.size(); i++)
 				t[i] = (char)tolower((unsigned char)t[i]);
@@ -274,6 +275,8 @@ int main(int argc, char **argv) {
 				auto find = [&](const std::string &phrase) {
 					if (phrase.empty())
 						return 0;
+					if (phrase[0] == 35)                  // "#49": an object by number
+						return atoi(phrase.c_str() + 1);
 					std::string ph = phrase.compare(0, 4, "the ") == 0 ? phrase.substr(4) : phrase;
 					int found = 0;
 					for (size_t i = 0; i < things.size() && !found; i++)
@@ -290,6 +293,11 @@ int main(int argc, char **argv) {
 				iobj = find(second);
 				if (bi->objects == 0)
 					dobj = 0;
+			}
+			if (cmdOut) {
+				fprintf(cmdOut, "%d %d %d", verb, dobj, iobj);
+				fputc(10, cmdOut);
+				fflush(cmdOut);
 			}
 			g.setSeed(12345u + (unsigned)step * 7919u);
 			bool conversation = false;

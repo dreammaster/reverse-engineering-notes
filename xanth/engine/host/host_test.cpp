@@ -363,6 +363,13 @@ static void playLogLine(Host &h, bool pre) {
 		if (e.name != "Font_WriteMessage" && e.name != "wputchar?" && e.name != "show_text_box" && e.name != "Font_WriteString") continue;
 		ev += (e.name == "wputchar?" ? "wputchar" : e.name) + "|" + e.text + "\x1f";
 	}
+	if (pre && getenv("PLAYLOG_MEM")) {          // PLAYLOG_MEM=seg:off:words (hex seg and off): memory words of the booted game
+		unsigned sg = 0, of = 0, n = 0;
+		sscanf(getenv("PLAYLOG_MEM"), "%x:%x:%u", &sg, &of, &n);
+		fprintf(stderr, "mem %04x:%04x:", sg, of);
+		for (unsigned k = 0; k < n; k++) fprintf(stderr, " %u", (unsigned)h.cpu.rd16((uint16_t)sg, (uint16_t)(of + 2 * k)));
+		fprintf(stderr, "\n");
+	}
 	if (pre && getenv("PLAYLOG_RECS")) {          // the records of some objects and the variable regions (to see what differs)
 		for (const char *q = getenv("PLAYLOG_RECS"); *q; ) {
 			int id = atoi(q);
