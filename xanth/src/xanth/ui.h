@@ -51,6 +51,7 @@ class RecordingUi : public Ui {
 public:
 	std::vector<std::string> log;
 	std::vector<std::string> others;       // names of the routines reached through other(), in call order
+	std::vector<int> picks;                // the options (counted from 0) the player chooses in the next conversation menus; the first one is chosen when none is left
 
 	virtual int printText(const std::string &text) { log.push_back("Font_WriteMessage|" + text); return 0; }
 	virtual int putChar(int ch) {
@@ -70,6 +71,11 @@ public:
 	virtual int conversationMenu(const std::vector<std::string> &options, int initial) {
 		for (size_t i = 0; i < options.size(); i++)
 			log.push_back("conversation_option|" + options[i]);
+		if (!picks.empty()) {
+			int c = picks.front();
+			picks.erase(picks.begin());
+			return c >= 0 && c < (int)options.size() ? c : 0;
+		}
 		return initial < 0 ? 0 : initial;
 	}
 };

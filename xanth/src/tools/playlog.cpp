@@ -190,6 +190,124 @@ int main(int argc, char **argv) {
 		std::string first = runCommand(g, ui, 0, -1, 0, 0, &c0);
 		fprintf(log, "%s\n", first.c_str());
 	}
+	if (argc >= 5 && !strcmp(argv[4], "names")) {
+		// a script in words ("Look at envelope", "Put envelope in disk drive", "go 8", "wait"): every line is resolved among the things in the room and the inventory, run, and printed
+		FILE *script = fopen(argv[2], "rb");
+		if (!script)
+			return 1;
+		char buf[256];
+		int step = 1;
+		auto lower = [](std::string t) {
+			for (size_t i = 0; i < t.size(); i++)
+				t[i] = (char)tolower((unsigned char)t[i]);
+			return t;
+		};
+		while (fgets(buf, sizeof(buf), script)) {
+			std::string line = buf;
+			while (!line.empty() && (line[line.size() - 1] == 10 || line[line.size() - 1] == 13 || line[line.size() - 1] == 32))
+				line.erase(line.size() - 1);
+			if (line.empty() || line[0] == '#')
+				continue;
+			std::string l = lower(line);
+			int verb = 0, dobj = 0, iobj = 0;
+			std::string rest;
+			if (l.compare(0, 3, "go ") == 0) {
+				verb = 0x51;
+				dobj = atoi(l.c_str() + 3);
+			} else if (l == "?") {                      // what is here: the things of the room and the inventory
+				printf("   here (room %u):", (unsigned)g.state.v.current_room);
+				for (int root = 0; root < 2; root++)
+					g.walkContents(root ? 1 : g.state.v.current_room, false, [&](int o) {
+						if (o != 1 && g.state.objects.type(o) != 1)
+							printf(" %s%d=%s", root ? "inv:" : "", o, names.name(g.state.objects.nameOffset(o)).c_str());
+						return false;
+					});
+				fputc(10, stdout);
+				continue;
+			} else if (l.compare(0, 5, "pick ") == 0) {        // "pick 2 0 1": the replies chosen in the next conversation menus
+				ui.picks.clear();
+				for (const char *q = l.c_str() + 5; *q;) {
+					ui.picks.push_back(atoi(q));
+					while (*q && *q != 32)
+						q++;
+					while (*q == 32)
+						q++;
+				}
+				continue;
+			} else if (l == "wait") {
+				verb = 80;
+			} else {
+				size_t best = 0;
+				const Xanth::VerbInfo *bi = NULL;
+				for (int id = 1; id < 100; id++) {
+					const Xanth::VerbInfo *vi = Xanth::findVerb(id);
+					if (!vi)
+						continue;
+					std::string n = lower(vi->name);
+					if (n.size() > best && (l.compare(0, n.size(), n) == 0) && (l.size() == n.size() || l[n.size()] == ' ')) {
+						best = n.size();
+						bi = vi;
+					}
+				}
+				if (!bi) {
+					printf("%d: ? no verb in \"%s\"\n", step, line.c_str());
+					continue;
+				}
+				verb = bi->id;
+				rest = best < l.size() ? l.substr(best + 1) : "";
+				std::string second;
+				if (bi->objects == 2 && bi->preposition) {
+					std::string prep = std::string(" ") + lower(bi->preposition) + " ";
+					size_t at = rest.find(prep);
+					if (at != std::string::npos) {
+						second = rest.substr(at + prep.size());
+						rest = rest.substr(0, at);
+					}
+				}
+				std::vector<int> things;
+				for (int root = 0; root < 2; root++)
+					g.walkContents(root ? 1 : g.state.v.current_room, false, [&](int o) {
+						if (o != 1 && g.state.objects.type(o) != 1)
+							things.push_back(o);
+						return false;
+					});
+				auto find = [&](const std::string &phrase) {
+					if (phrase.empty())
+						return 0;
+					std::string ph = phrase.compare(0, 4, "the ") == 0 ? phrase.substr(4) : phrase;
+					int found = 0;
+					for (size_t i = 0; i < things.size() && !found; i++)
+						if (lower(names.name(g.state.objects.nameOffset(things[i]))) == ph || lower(names.name(g.state.objects.altNameOffset(things[i]))) == ph)
+							found = things[i];
+					for (size_t i = 0; i < things.size() && !found; i++)
+						if (lower(names.name(g.state.objects.nameOffset(things[i]))).find(ph) != std::string::npos)
+							found = things[i];
+					if (!found)
+						printf("%d: ? no thing \"%s\" here\n", step, ph.c_str());
+					return found;
+				};
+				dobj = find(rest);
+				iobj = find(second);
+				if (bi->objects == 0)
+					dobj = 0;
+			}
+			g.setSeed(12345u + (unsigned)step * 7919u);
+			bool conversation = false;
+			std::string r = runCommand(g, ui, step, verb, dobj, iobj, &conversation);
+			size_t at = 0;
+			for (int t = 0; t < 5 && at != std::string::npos; t++)
+				at = r.find(9, t ? at + 1 : 0);
+			std::string text = at == std::string::npos ? "" : r.substr(at + 1);
+			for (size_t k = 0; k < text.size(); k++)
+				if (text[k] == 31)
+					text[k] = ' ';
+			printf("%d [room %u] %s -> %s%s%s\n", step, (unsigned)g.state.v.current_room, line.c_str(), text.c_str(), conversation ? " (CONVERSATION)" : "", "");
+			step++;
+		}
+		fclose(script);
+		fclose(log);
+		return 0;
+	}
 	if (generate) {
 		count = atoi(argv[5]);
 		g_seed = (unsigned)atoi(argv[6]) * 2654435761u + 1;
@@ -224,13 +342,13 @@ int main(int argc, char **argv) {
 			bool conversation = false;
 			std::string l = runCommand(g, ui, step, verb, dobj, iobj, &conversation);
 			fprintf(log, "%s\n", l.c_str());
-			if (conversation)
+			if (conversation && !getenv("PLAYLOG_NOSTOP"))
 				break;
 			// a text of three lines or more grows the text window, and the oracle (which runs the turns without the player) then hangs in its next word wrap: stop after it
 			size_t textAt = 0;
 			for (int t = 0; t < 5 && textAt != std::string::npos; t++)
 				textAt = l.find(9, textAt == 0 && t == 0 ? 0 : textAt + 1);
-			if (textAt != std::string::npos && l.size() - textAt > 140)
+			if (textAt != std::string::npos && l.size() - textAt > 140 && !getenv("PLAYLOG_NOSTOP"))
 				break;
 		}
 		fclose(script);
