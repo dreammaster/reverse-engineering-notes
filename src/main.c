@@ -269,6 +269,7 @@ static void panel_ensure(const GameFiles *g) {
 	}
 }
 static const ObjSprite *thing_sprite(const RoomView *rv, int t);
+static int thing_description(const RoomView *rv, int t, const ObjSprite *lsp, char *tx, size_t cap);
 static void ruck_picture(uint8_t *px, const ObjSprite *sp);
 static void look_picture(uint8_t *px, const ObjSprite *sp);
 static void grid_draw(uint8_t *px, const RoomView *rv);
@@ -409,6 +410,8 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 			}
 	}
 	rv->vm.energy = rv->vm.energy_max = rv->energy_max_cfg;
+	if (getenv("CAD_LOOKTEXT")) { int t = atoi(getenv("CAD_LOOKTEXT")); char tx[200] = ""; const ObjSprite *sp = thing_sprite(rv, t);   /* debugging aid: print the class-specific description of a thing */
+		fprintf(stderr, "LOOK %d class %d: %s\n", t, sp ? sp->header[0x16] : -1, sp && thing_description(rv, t, sp, tx, sizeof(tx)) ? tx : "(none)"); }
 	if (getenv("CAD_ENERGY")) rv->vm.energy = atoi(getenv("CAD_ENERGY"));     /* debugging aid: start with this energy */
 	memset(rv->visited, 0, sizeof(rv->visited));
 	if (rv->carry_pending) {
@@ -587,6 +590,46 @@ static void msg_show_text(RoomView *rv, const char *text) {
 	snprintf(rv->msgs[sl].txt, sizeof(rv->msgs[sl].txt), "%s", text);
 }
 static const char *lng_str(const RoomView *rv, int id) { return id >= 0 && id < rv->names.count ? rv->names.strings[id] : ""; }
+
+/* 1000:84D9: the class-specific part of a look text (emulator-verified with the real routine on level 1's records:
+   spell items, potions, weapons and ammunition); returns 0 when the class has none */
+static int spell_name_id(int n) { return n <= 9 ? 84 + n : n == 10 ? 32 : n <= 26 ? 94 + (n - 11) : -1; }
+static int potion_name_id(int n) { return n == 0 ? 31 : n <= 3 ? 109 + n : n == 4 ? 30 : n <= 17 ? 113 + (n - 5) : -1; }
+static int thing_description(const RoomView *rv, int t, const ObjSprite *lsp, char *tx, size_t cap) {
+	if (!lsp || t < 0 || t >= ACL_THINGS) return 0;
+	const uint8_t *a = rv->vm.tail[t];
+	int cls = lsp->header[0x16];
+	size_t l = 0;
+#define ADD(...) do { if (l < cap) l += (size_t)snprintf(tx + l, cap - l, __VA_ARGS__); } while (0)
+	if (cls == 1 || cls == 2) {
+		int nid = cls == 1 ? spell_name_id(a[0]) : potion_name_id(a[0]);
+		ADD("%s", lng_str(rv, 5));
+		ADD("%s", (a[3] & 1) ? lng_str(rv, 39) : nid >= 0 ? lng_str(rv, nid) : "");
+		ADD("%s%d%s%d", lng_str(rv, cls == 1 ? 9 : 11), a[2], lng_str(rv, cls == 1 ? 10 : 12), a[1]);
+		if (a[3] & 4) ADD("  %s", lng_str(rv, 34));
+		return 1;
+	}
+	if (cls == 4 || (cls & 0x80)) {
+		const uint8_t *w = a;
+		if (cls == 4) {
+			int ammo = (a[0] << 8) | a[1];
+			const ObjSprite *asp = ammo < ACL_THINGS ? thing_sprite(rv, ammo) : NULL;
+			if (a[2] != 0) {                                              /* needs ammunition: string 19 + its name + 20 */
+				int nm = asp ? (asp->header[10] << 8) | asp->header[11] : 0;
+				ADD("%s%s%s", lng_str(rv, 19), nm < 0x8000 ? lng_str(rv, nm) : "", lng_str(rv, 20));
+				return 1;
+			}
+			ADD("%s ", lng_str(rv, 21));
+			if (ammo < ACL_THINGS) w = rv->vm.tail[ammo];                  /* the shots are those of the ammunition thing */
+		}
+		ADD("%s", lng_str(rv, 16));
+		if (w[2] == 0xFF) ADD("%s", lng_str(rv, 18)); else ADD("%d", w[2]);
+		ADD("%s%d", lng_str(rv, 17), w[1]);
+		return 1;
+	}
+#undef ADD
+	return 0;
+}
 
 /* the script flags changed (things hidden / placed): rebuild the objects, keeping the positions and animations of those that stay */
 static void roomview_rebuild_objs(RoomView *rv, int gx, int gy) {
@@ -1117,6 +1160,9 @@ static void menu_choose(RoomView *rv, int verb) {
 				else snprintf(tx, sizeof(tx), "%s%s", lng_str(rv, 23), lng_str(rv, (ta[2] || ta[3]) ? 24 : 25));
 				if (ta[5]) { size_t l = strlen(tx); snprintf(tx + l, sizeof(tx) - l, " %s", lng_str(rv, 0x33)); }
 				msg_show_text(rv, tx);
+			} else if (hc >= 0 && (hc == 1 || hc == 2 || hc == 4 || (hc & 0x80))) {   /* spell / potion / weapon descriptions (1000:84D9) */
+				char tx[200];
+				if (thing_description(rv, t, lsp, tx, sizeof(tx))) msg_show_text(rv, tx);
 			} else if (rv->ruck_open && lsp) {                              /* a carried thing: "THIS IS A <name>" (emulator: the diary) */
 				int nm = (lsp->header[10] << 8) | lsp->header[11];
 				char tx[200];
