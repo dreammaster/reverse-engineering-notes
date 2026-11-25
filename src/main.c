@@ -116,6 +116,7 @@ typedef struct RoomView_ {
 	int nverbs;
 	int energy_max_cfg;        /* from LEVn.MP1 */
 	int slow_phase;
+	uint16_t spell_str[100], potion_str[100]; int spell_tbl_ok;   /* LEVn.MP1: LNG string ids of the spell / potion names (the tables ds:44 / ds:46) */
 	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
 	int carry_pending, carry_energy; uint32_t carry_money, carry_score;   /* stats carried into the next level */
 	int room_snd[8], room_snd_thing[8], nroom_snd, snd_key; /* sounds of the room's creatures (stopped when the room changes) */
@@ -269,6 +270,7 @@ static void panel_ensure(const GameFiles *g) {
 		andata_block(g_andata, len, 0, &g_icons, &g_icons_len);
 	}
 }
+static int spell_sem(const RoomView *rv, int n);
 static const ObjSprite *thing_sprite(const RoomView *rv, int t);
 static int thing_description(const RoomView *rv, int t, const ObjSprite *lsp, char *tx, size_t cap);
 static void ruck_picture(uint8_t *px, const ObjSprite *sp);
@@ -384,6 +386,15 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	if (rc == 0) { rc = walltiles_load(f[2], fl[2], &rv->walls); if (rc) tiles_free(&rv->tiles); }
 	if (rc == 0) rc = mp1_palette(f[0], fl[0], rv->palette);
 	if (rc == 0) rc = objsprites_load(f[0], fl[0], &rv->objs);
+	if (rc == 0) {                                            /* the spell and potion name tables: 100 + 100 entries of 8 bytes, the first starting 00 54 20 20 ... (string 84) */
+		static const uint8_t pat[8] = {0x00, 0x54, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
+		rv->spell_tbl_ok = 0;
+		for (size_t o = 0; o + 0x640 <= fl[0]; o++) if (!memcmp(f[0] + o, pat, 8)) {
+			for (int k = 0; k < 100; k++) { rv->spell_str[k] = (uint16_t)((f[0][o + 8 * k] << 8) | f[0][o + 8 * k + 1]); rv->potion_str[k] = (uint16_t)((f[0][o + 0x320 + 8 * k] << 8) | f[0][o + 0x320 + 8 * k + 1]); }
+			rv->spell_tbl_ok = 1;
+			break;
+		}
+	}
 	for (int i = 0; i < 3; i++) free(f[i]);
 	if (rc != 0) {
 		fprintf(stderr, "level %d: decode error %d\n", rv->level, rc);
@@ -608,7 +619,7 @@ static int thing_description(const RoomView *rv, int t, const ObjSprite *lsp, ch
 	size_t l = 0;
 #define ADD(...) do { if (l < cap) l += (size_t)snprintf(tx + l, cap - l, __VA_ARGS__); } while (0)
 	if (cls == 1 || cls == 2) {
-		int nid = cls == 1 ? spell_name_id(a[0]) : potion_name_id(a[0]);
+		int nid = rv->spell_tbl_ok && a[0] < 100 ? (cls == 1 ? rv->spell_str[a[0]] : rv->potion_str[a[0]]) : cls == 1 ? spell_name_id(a[0]) : potion_name_id(a[0]);
 		ADD("%s", lng_str(rv, 5));
 		ADD("%s", (a[3] & 1) ? lng_str(rv, 39) : nid >= 0 ? lng_str(rv, nid) : "");
 		ADD("%s%d%s%d", lng_str(rv, cls == 1 ? 9 : 11), a[2], lng_str(rv, cls == 1 ? 10 : 12), a[1]);
@@ -1425,7 +1436,7 @@ static void fire_weapon(Walker *wk, RoomView *rv, int item) {
    a spell that does not fit the target's class is "wasted" (message 47). */
 static void cast_on_target(RoomView *rv, int item, int t) {
 	uint8_t *a = rv->vm.tail[item];
-	int sp = a[0], p = a[1];
+	int sp = spell_sem(rv, a[0]), p = a[1];
 	const ObjSprite *ts = thing_sprite(rv, t);
 	int cls = ts ? ts->header[0x16] : -1;
 	uint8_t *ta = rv->vm.tail[t];
@@ -1455,24 +1466,30 @@ static void cast_on_target(RoomView *rv, int item, int t) {
 	if (msg >= 0 && rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = msg;
 	roomview_flush_messages(rv);
 }
-static int spell_is_targeted(const uint8_t *a) { int sp = a[0]; return a[7] == 2 && (sp == 10 || sp == 13 || sp == 14 || sp == 15 || sp == 19 || sp == 20 || sp == 21); }
+/* spell numbers of the two games' TAD tables, reduced to Cadaver 1's numbering (the Payoff inserted TRANSLATE / TELEPORT / REVEAL ... and moved MAP to 30; its routines match by name, see formats.md) */
+static int spell_sem(const RoomView *rv, int n) {
+	if (!rv->use_tata) return n;
+	static const int8_t pay[31] = {0, 1, 2, -1, 5, -1, 7, 8, -1, 10, 11, -1, 13, 14, 15, -1, -1, -1, 19, 20, 21, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4};
+	return n >= 0 && n < 31 ? pay[n] : -1;
+}
+static int spell_is_targeted(const RoomView *rv, const uint8_t *a) { int sp = spell_sem(rv, a[0]); return a[7] == 2 && (sp == 10 || sp == 13 || sp == 14 || sp == 15 || sp == 19 || sp == 20 || sp == 21); }
 /* fire with a held spell item (1000:6896): refused with message 25h while A[3] bit 7 is set; sound 11h (A[7] = 0, the projectile mode) or 06h,
    the spell's effect, then the charge count A[2] drops (16AC9: FFh = unlimited; at 0 the item is gone: message 0Fh and it leaves the hand).
    Only the spells 0, 1, 2, 4, 5, 7 and 8 have an effect in the port; the others are ignored (no charge used) */
 static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 	uint8_t *a = rv->vm.tail[item];
-	int sp = a[0];
-	if (sp != 0 && sp != 1 && sp != 2 && sp != 4 && sp != 5 && sp != 7 && sp != 8 && sp != 11 && !spell_is_targeted(a)) return;
+	int sp = spell_sem(rv, a[0]);
+	if (sp != 0 && sp != 1 && sp != 2 && sp != 4 && sp != 5 && sp != 7 && sp != 8 && sp != 11 && !spell_is_targeted(rv, a)) return;
 	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
 	snd_play(a[7] == 0 ? 0x11 : 0x06);
 	int proj = (a[4] << 8) | a[5];
-	if (spell_is_targeted(a)) {
+	if (spell_is_targeted(rv, a)) {
 		int tt = (rv->touch_age < 12 && rv->nverbs && rv->touch_thing > 0) ? rv->touch_thing : -1;
 		if (tt < 0 || tt >= ACL_THINGS) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x29; roomview_flush_messages(rv); return; }
 		cast_on_target(rv, item, tt);
 	} else if (sp == 11) acl_set_timer(&rv->vm, 0x24, a[1]);            /* SLOW CREATURE (0AE9): ds:6CA = 1 and effect timer 24h */
 	else if (sp == 0 && a[7] == 0 && proj > 0 && proj < ACL_THINGS && rv->vm.present[proj]) {   /* the projectile thing flies and strikes on contact (1000:6896 / 17250) */
-		rv->vm.tail[proj][0] = (uint8_t)(sp | 0x80); rv->vm.tail[proj][1] = a[1]; rv->vm.tail[proj][5] = a[8];
+		rv->vm.tail[proj][0] = (uint8_t)(a[0] | 0x80); rv->vm.tail[proj][1] = a[1]; rv->vm.tail[proj][5] = a[8];
 		launch_shot(wk, rv, proj);
 	} else if (sp == 0) cast_strike(wk, rv, item);
 	else if (sp == 1) cast_smite(wk, rv, item);
@@ -1880,7 +1897,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		if (rv->ruck_open) { ruck_step(wk, rv, keys, edge || rte, spe); return; }
 		if ((spe || rte) && !rv->menu_open) { ruck_open(rv); if (rv->ruck_open) return; }
 		if (rv->menu_open) { menu_step(rv, keys, edge); return; }
-		if (edge && rv->nverbs && rv->touch_age < 12 && !(keys & 15) && !(rv->held && rv->held < ACL_THINGS && spell_is_targeted(rv->vm.tail[rv->held]))) {   /* End tapped right after touching an object (menu2 trace); a held spell that is cast on the touched object takes the key */
+		if (edge && rv->nverbs && rv->touch_age < 12 && !(keys & 15) && !(rv->held && rv->held < ACL_THINGS && spell_is_targeted(rv, rv->vm.tail[rv->held]))) {   /* End tapped right after touching an object (menu2 trace); a held spell that is cast on the touched object takes the key */
 			rv->menu_open = 1; rv->menu_sel = 0; rv->menu_delay = 0; rv->menu_released = 0;
 			return;
 		}
