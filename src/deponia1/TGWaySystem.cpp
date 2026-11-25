@@ -121,8 +121,14 @@ bool TGWaySystem::GetNextPosition(wxRealPoint &position, int *angle, float speed
 	else
 		target = _path[_pathIndex];
 
-	// the target has been reached exactly: on to the next point of the way
+	// the target has been reached exactly: on to the next point of the way, and the direction of that leg is worked out (the
+	// original does it on this path whatever the flag says, asm 586618-586670; with the flag alone a character kept the direction
+	// of the first leg of a way along several points)
+	bool legStarts = false;
+
 	if ((int)position.x == target.x && (int)position.y == target.y) {
+		legStarts = true;
+
 		if (_pathIndex < (int)_path.size() - 1) {
 			_pathIndex++;
 			target = _path[_pathIndex];
@@ -134,7 +140,7 @@ bool TGWaySystem::GetNextPosition(wxRealPoint &position, int *angle, float speed
 	float dx = targetX - position.x;
 	float dy = targetY - position.y;
 
-	if (!_angleKnown)
+	if (legStarts || !_angleKnown)
 		*angle = GetAngle(dx, dy);
 
 	float length = std::sqrt(dx * dx + dy * dy);
