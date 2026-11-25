@@ -13,7 +13,7 @@
 #include "anim.h"
 #include "x86.h"
 
-#define TAD_TIMERS 16
+#define TAD_TIMERS 48
 
 typedef struct {
 	uint8_t *mem;                 /* 1 MB */

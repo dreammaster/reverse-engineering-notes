@@ -72,6 +72,9 @@ void acl_restore_clones(AclVM *vm);
 void acl_spawn_shot(AclVM *vm, int id, int from, int vx, int vy);
 /* 1000:81C8 with its sounds */
 void acl_energy_change(AclVM *vm, int delta);
+/* effect timers (ds:62B + effect, counted down every 17 game steps by tad_timer_unit): 20h alcohol, 21h giant jump, 22h freeze, 23h super fast ... (1000:8275) */
+void acl_set_timer(AclVM *vm, int effect, int value);
+int acl_timer_active(const AclVM *vm, int effect);
 /* run all armed handlers of `event` in the handler list of a room record (kind 0) */
 void acl_fire_room(AclVM *vm, const Mp2 *mp2, int room, int event);
 /* deliver one room event (type 6 enter, 14 timer, 19/20/24 with a byte argument, 28 first visit ...) to the room's handler list and everything the

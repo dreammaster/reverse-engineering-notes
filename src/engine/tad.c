@@ -29,13 +29,15 @@ int tad_load(TadRt *t, const uint8_t *raw, size_t len) {
 	memcpy(t->mem + TADG * 16, raw, len);
 	t->len = len;
 	unsigned p = (unsigned)(raw[base + 6] | (raw[base + 7] << 8));
-	while (p + 2 <= len && t->ntimers < TAD_TIMERS) {
+	while (p + 2 <= len && t->ntimers < TAD_TIMERS) {           /* one entry per effect number; 0 = none (the potions' effects 20h.. follow a gap) */
 		unsigned w = (unsigned)(raw[p] | (raw[p + 1] << 8));
-		if (w == 0 || w > 0x1000)
-			break;
+		if (w > 0x1000)
+			w = 0;
 		t->timer_entry[t->ntimers++] = (uint16_t)w;
 		p += 2;
 	}
+	while (t->ntimers > 0 && t->timer_entry[t->ntimers - 1] == 0)
+		t->ntimers--;
 	t->base = base;
 	for (int k = 9; k < 25 && t->nbeh < 16; k++) {
 		unsigned off = base + 4u * (unsigned)k;
@@ -87,6 +89,9 @@ static void svc_hook(X86 *c, void *user) {
 	case 0x06:                                   /* 81C8: change energy by ax (signed) */
 		energy_change(t->vm, (int16_t)c->ax);
 		break;
+	case 0x18:                                   /* 8275: effect timer bx := al (acl_set_timer) */
+		acl_set_timer(t->vm, c->bx & 0xFF, c->ax & 0xFF);
+		break;
 	case 0x20: {                                 /* 8840: random(ax .. dx) */
 		int lo = (int16_t)c->ax, hi = (int16_t)c->dx;
 		c->ax = (uint16_t)(t->vm->rand_range ? t->vm->rand_range(lo, hi, t->vm->user) : lo);
@@ -135,7 +140,7 @@ static void svc_hook(X86 *c, void *user) {
 }
 
 int tad_run_timer(TadRt *t, AclVM *vm, int idx) {
-	if (!t->loaded || idx < 0 || idx >= t->ntimers)
+	if (!t->loaded || idx < 0 || idx >= t->ntimers || !t->timer_entry[idx])
 		return -1;
 	uint8_t *ds = t->mem + DSG * 16;
 	memcpy(ds + 0x590, vm->g, sizeof(vm->g));

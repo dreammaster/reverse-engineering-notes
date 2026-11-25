@@ -410,7 +410,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 			}
 	}
 	rv->vm.energy = rv->vm.energy_max = rv->energy_max_cfg;
-	if (getenv("CAD_CARRY")) { int t = atoi(getenv("CAD_CARRY")); if (t > 0 && t < ACL_THINGS) { rv->vm.present[t] = 1; rv->vm.room[t] = 0xFF; } }   /* debugging aid: carry this thing from the start */
+	if (getenv("CAD_CARRY")) { int t = 0, a0 = -1, a1 = -1; sscanf(getenv("CAD_CARRY"), "%d:%d:%d", &t, &a0, &a1); if (t > 0 && t < ACL_THINGS) { rv->vm.present[t] = 1; rv->vm.room[t] = 0xFF; if (a0 >= 0) rv->vm.tail[t][0] = (uint8_t)a0; if (a1 >= 0) rv->vm.tail[t][1] = (uint8_t)a1; } }   /* debugging aid: carry this thing from the start (optionally with A[0], A[1]) */
 	if (getenv("CAD_SPELLS")) for (int t = 0; t < ACL_THINGS; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!sp || !rv->vm.present[t] || (sp->header[0x16] != 1 && sp->header[0x16] != 2 && sp->header[0x16] != 4)) continue; const uint8_t *a = rv->vm.tail[t];
 		fprintf(stderr, "SPELLTHING %d class %d A %02x %02x %02x %02x %02x %02x %02x %02x %02x\n", t, sp->header[0x16], a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]); }
 	if (getenv("CAD_LOOKTEXT")) { int t = atoi(getenv("CAD_LOOKTEXT")); char tx[200] = ""; const ObjSprite *sp = thing_sprite(rv, t);   /* debugging aid: print the class-specific description of a thing */
@@ -516,7 +516,7 @@ typedef struct {
 	int x1, y1, z;       /* far corner of the player's 7x7x30 box, 1/8 cell units */
 	int dir, moving, anim, tick;
 	int world_key, placed;
-	int jumping, jstep, jhold, jcool, fall;   /* jump (fire held, nothing touched): z profile below */
+	int jumping, jstep, jhold, jcool, fall, giant;   /* jump (fire held, nothing touched): z profile below */
 	ColWorld world;
 	ColBox objs[ROOMOBJS_MAX];
 	ColBox exits[ROOM_MAX_EXITS];
@@ -820,6 +820,7 @@ static void creatures_step(Walker *wk, RoomView *rv) {
 		if ((h16 != 3 && !shot) || (rv->vm.tail[o->thing][5] & 0x80) || (rv->vm.flags[o->thing] & 0x80))
 			continue;
 		active++;
+		if (h16 == 3 && acl_timer_active(&rv->vm, 0x22)) continue;        /* freeze (effect 22h, ds:64D): creatures stand still (1000:171DD) */
 		uint8_t *ms = rv->vm.mstate[o->thing];
 		int hit = 0;
 		int go = 1;
@@ -1355,16 +1356,17 @@ static void cast_blast(Walker *wk, RoomView *rv, int item) {
 }
 /* fire with a held spell item (1000:6896): refused with message 25h while A[3] bit 7 is set; sound 11h (A[7] = 0, the projectile mode) or 06h,
    the spell's effect, then the charge count A[2] drops (16AC9: FFh = unlimited; at 0 the item is gone: message 0Fh and it leaves the hand).
-   Only the spells 0, 1, 4, 5, 7 and 8 have an effect in the port; the others are ignored (no charge used) */
+   Only the spells 0, 1, 2, 4, 5, 7 and 8 have an effect in the port; the others are ignored (no charge used) */
 static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 	uint8_t *a = rv->vm.tail[item];
 	int sp = a[0];
-	if (sp != 0 && sp != 1 && sp != 4 && sp != 5 && sp != 7 && sp != 8) return;
+	if (sp != 0 && sp != 1 && sp != 2 && sp != 4 && sp != 5 && sp != 7 && sp != 8) return;
 	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
 	snd_play(a[7] == 0 ? 0x11 : 0x06);
 	if (sp == 0) cast_strike(wk, rv, item);
 	else if (sp == 1) cast_smite(wk, rv, item);
 	else if (sp == 4) map_open_magic(rv);
+	else if (sp == 2) acl_set_timer(&rv->vm, 0x22, a[1]);               /* freeze (TAD 093E): effect timer 22h for A[1] units */
 	else if (sp == 5) cast_blast(wk, rv, item);
 	else cast_unlock(wk, rv, item, sp);
 	if (a[2] != 0xFF && --a[2] == 0) {
@@ -1449,13 +1451,13 @@ static void fly_step(Walker *wk, RoomView *rv) {
 /* one game step in the rucksack view: Left/Right move the highlight (past the ends: the previous / next carried thing), End or Return runs the verb, Space leaves */
 /* verb 9, drink (1000:32B5): event 5 for the potion, sound 0Ah, the identified flag A[3] bit 0 is cleared (unless bit 1), the doses A[2] drop
    (at 0 the potion is gone and leaves the hand); a bad potion (A[3] bit 4) costs A[1] energy with message 34, otherwise the TAD routine
-   table[A[0]] acts: potion 0 (STAMINA, routine 0710) restores A[1] energy through service 3 (181C8). Other potions are not ported (nothing consumed). */
+   table[A[0]] acts: potions 0 (STAMINA), 1 (SUPER FAST), 2 (GIANT JUMP) and 3 (ALCOHOL) are ported (effect timers 23h / 21h / 20h); the others are not (nothing consumed). */
 static void drink_potion(RoomView *rv, int t) {
 	const ObjSprite *sp = thing_sprite(rv, t);
 	if (!sp || sp->header[0x16] != 2) return;
 	uint8_t *a = rv->vm.tail[t];
 	int bad = (a[3] & 4) != 0;
-	if (!bad && a[0] != 0) return;
+	if (!bad && a[0] > 3) return;
 	rv->vm.queue_n = 0;
 	acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
 	for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
@@ -1467,7 +1469,8 @@ static void drink_potion(RoomView *rv, int t) {
 		if (rv->held == t) rv->held = 0;
 	}
 	if (bad) { acl_energy_change(&rv->vm, -(int)a[1]); if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x22; }
-	else acl_energy_change(&rv->vm, a[1]);
+	else if (a[0] == 0) acl_energy_change(&rv->vm, a[1]);
+	else acl_set_timer(&rv->vm, a[0] == 1 ? 0x23 : a[0] == 2 ? 0x21 : 0x20, a[1]);   /* super fast / giant jump / alcohol: effect timers 23h / 21h / 20h for A[1] units of 17 steps */
 	rv->pending_rebuild |= rv_changed(rv);
 	roomview_flush_messages(rv);
 }
@@ -1763,7 +1766,9 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	{
 		/* Jump (emulator, level 1 room 0, End held): after 3 steps z follows +5 5 4 4 4 4 3 3 2 1 then -1 2 3 3 4 4 4 4 5 5 (peak 35, 20 steps), then 2 steps on the ground and
 		 * the next jump while End is still held; the horizontal move continues at one unit per step. Landing / ceilings: the collision test at the new z. */
-		static const int8_t zprof[20] = {5, 5, 4, 4, 4, 4, 3, 3, 2, 1, -1, -2, -3, -3, -4, -4, -4, -4, -5, -5};
+		static const int8_t zprof_n[20] = {5, 5, 4, 4, 4, 4, 3, 3, 2, 1, -1, -2, -3, -3, -4, -4, -4, -4, -5, -5};
+		static const int8_t zprof_g[20] = {8, 8, 6, 6, 6, 6, 4, 4, 2, 1, -1, -2, -4, -4, -6, -6, -6, -6, -8, -8};   /* giant jump (effect 21h): the table at ds:D8 + 1Ch */
+		const int8_t *zprof = (wk->jumping ? wk->giant : acl_timer_active(&rv->vm, 0x21)) ? zprof_g : zprof_n;
 		ColResult jc;
 		int end = (keys & 0x80) != 0;
 		wk->jhold = end ? wk->jhold + 1 : 0;
@@ -1771,7 +1776,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		if (wk->z > 0) { collision_test(&wk->world, wk->x1, wk->y1, wk->z - 1, PL_XS, PL_YS, PL_ZS, -1, 1, &jc); below_free = jc.zf; }
 		if (!wk->jumping) {
 			if (wk->jcool > 0) wk->jcool--;
-			else if (end && wk->jhold >= 3 && !below_free && !rv->held) { wk->jumping = 1; wk->jstep = 0; wk->fall = 0; snd_play(0x0E); }          /* 1000:2DF1 */
+			else if (end && wk->jhold >= 3 && !below_free && !rv->held) { wk->jumping = 1; wk->jstep = 0; wk->fall = 0; wk->giant = acl_timer_active(&rv->vm, 0x21); snd_play(0x0E); }          /* 1000:2DF1 */
 		}
 		if (wk->jumping) {
 			int nz = wk->z + zprof[wk->jstep];
@@ -1800,6 +1805,8 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		if (rv->push_snd) { snd_stop(rv->push_snd); rv->push_snd = 0; }
 		return;
 	}
+	if (acl_timer_active(&rv->vm, 0x23)) { dx *= 2; dy *= 2; }          /* super fast (effect 23h: ds:60E = ds:60F = 2) */
+	if (acl_timer_active(&rv->vm, 0x20)) { dx = -dx; dy = -dy; }         /* alcohol (effect 20h, ds:64B): the move is reversed (1000:10AF6) */
 	wk->dir = dir;
 	wk->moving = 1;
 	wk->world.dirbits = (keys & 3) ? 1 : 0;
