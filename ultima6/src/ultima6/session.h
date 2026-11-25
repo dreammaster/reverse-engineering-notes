@@ -143,6 +143,8 @@ public:
 	void mdCoalBelt();                             // sub_4F323
 	int mdWarmth(int type) const;                  // sub_2020C
 	bool mdInViewAt(int ox, int oy, int oz) const;
+	void mdJet(int jet);                           // sub_55BA0
+	void mdJets(int jet);                          // sub_55D62
 	void mdThings();                               // sub_22B27's loop over the things in view
 	bool mdInView(int actor) const;                // sub_270D2 == 0
 	int mdFindCarried(int actor, int type) const;  // sub_2BC7E

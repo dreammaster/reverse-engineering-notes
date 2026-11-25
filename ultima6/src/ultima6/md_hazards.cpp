@@ -270,12 +270,16 @@ void Game::mdMinute() {
 // sub_22B27's loop over the things in view (the types of the table at cs:18A4): a seed mound (0xFB with quality 0xF and a frame below 3) grows: the seed (0xFC) in the hole (0x101) under it
 // keeps the day (quality) and month (quantity) it was planted; four days on (the month's 28 days; or when the month has come round) the mound takes its next frame, the seed's stamp is made
 // anew, and at frame 3 the mound's quality is 0x10 (ripe); in a dream it grows by a roll of 1-2 on the stamp's quantity, a step above 12. A flame (0x9D) counts its quality down, takes the
-// next lower frame with a quality of 10-15 when it is out and is gone at frame 0. APPROX(97): the steam jets (0x1D0, sub_55D62) and the rendering list of the 0x1A2 are not done.
+// next lower frame with a quality of 10-15 when it is out and is gone at frame 0. The jets (0x1D0) are in mdJets.
 void Game::mdThings() {
 	for (size_t i = 0x101; i < _world.objects.size(); ++i) {
 		World::Obj &o = _world.objects[i];
-		if (o.deleted || !o.onMap() || (o.type != 0xFB && o.type != 0x9D) || !mdInViewAt(o.x, o.y, o.z))
+		if (o.deleted || !o.onMap() || (o.type != 0xFB && o.type != 0x9D && o.type != 0x1D0) || !mdInViewAt(o.x, o.y, o.z))
 			continue;
+		if (o.type == 0x1D0) {
+			mdJets((int)i);
+			continue;
+		}
 		if (o.type == 0x9D) {
 			if (o.quality > 1) {
 				--o.quality;
@@ -326,6 +330,54 @@ void Game::mdThings() {
 			sd.quality = (uint8_t)gameClock.day;
 			sd.quantity = (uint8_t)gameClock.month;
 		}
+	}
+}
+
+// sub_55BA0 (trigger_jet): a steam jet (0x1D0) puts out a jet of steam as long as the high half of its quality, in the direction of the bits 5-7 of its quantity (the eight directions, north first,
+// clockwise), and whoever stands in it is hurt for 10-50. The low half of the quality is the period: a jet with a period and a counter in the low half of the quantity "Nothing comes out.";
+// else the counter is set to the period. APPROX(97): the things the jet hurts besides people (the types 0xB3, 0x184, 0x133, 0x12C, 0xD9 of sub_2043E) are not hurt, the animation is not drawn
+void Game::mdJet(int jet) {
+	World::Obj &o = _world.objects[jet];
+	if (o.type != 0x1D0)
+		return;
+	int length = o.quality >> 4, period = o.quality & 0xF, counter = o.quantity & 0xF, dir = (o.quantity & 0xE0) >> 5;
+	if (period > 0 && counter > 0) {
+		message("Nothing comes out.\n");
+		return;
+	}
+	if (period > 0)
+		o.quantity = (uint8_t)((dir << 5) | period);
+	static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+	int px = o.x, py = o.y, mask = o.z == 0 ? 0x3FF : 0xFF;
+	mdSfx(0x19);
+	for (int i = 0; i < length; ++i) {
+		px = (px + DX[dir]) & mask;
+		py = (py + DY[dir]) & mask;
+		std::vector<int> here;
+		_world.objectsAt(px, py, o.z, here);
+		for (int h : here) {
+			int a = _world.objects[h].actor;
+			if (a >= 0 && !_world.objects[h].deleted && _world.actors.hp[a] > 0)
+				_combat.applyDamage(a, a, seRoll(10, 50));
+		}
+	}
+}
+
+// sub_55D62: the jets (0x1D0) fire while the power underground is on: a jet with a period does so when its quantity is 0 (else the counter is cleared), one without a period every minute
+// it has a quantity
+void Game::mdJets(int jet) {
+	World::Obj &o = _world.objects[jet];
+	if (!(_world.actors.talkFlags[0x73] & 4) || o.type != 0x1D0)
+		return;
+	int period = o.quality & 0xF;
+	int v = o.quantity != 0 ? 1 : 0;
+	if (period) {
+		if (v)
+			o.quantity = (uint8_t)(o.quantity & 0xF0);
+		else
+			mdJet(jet);
+	} else if (v) {
+		mdJet(jet);
 	}
 }
 

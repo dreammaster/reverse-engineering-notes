@@ -160,6 +160,34 @@ int main() {
 		CHECK(w.objects[flame].frame == 1 && w.objects[flame].quality >= 10 && w.objects[flame].quality <= 15);
 	}
 
+	// a steam jet (0x1D0: length 4, no period, direction east) with the power on burns whoever is in its path (10-50); with the power off nobody is hurt
+	{
+		World::Obj o;
+		o.status = 0;
+		o.x = (uint16_t)(g.x + 3);
+		o.y = (uint16_t)g.y;
+		o.z = 0;
+		o.type = 0x1D0;
+		o.frame = 0;
+		o.quantity = 2 << 5;
+		o.quality = 4 << 4;
+		o.actor = -1;
+		o.parent = -1;
+		w.objects.push_back(o);
+		w.addToMap((int)w.objects.size() - 1);
+		int victim = al.partyRoster[0];
+		int vk = w.actorObject(victim);
+		w.moveObject(vk, g.x + 5, g.y, 0);
+		al.hp[victim] = 200;
+		g.gameClock.hour = 12;
+		al.talkFlags[0x73] &= 0xFB;
+		g.advanceTime(1);
+		CHECK(al.hp[victim] == 200);
+		al.talkFlags[0x73] |= 4;
+		g.advanceTime(1);
+		CHECK(al.hp[victim] < 200 && al.hp[victim] >= 150);
+	}
+
 	std::printf(failures ? "FAILED\n" : "ok\n");
 	return failures ? 1 : 0;
 }
