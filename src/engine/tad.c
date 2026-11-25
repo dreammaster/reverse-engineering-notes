@@ -174,17 +174,18 @@ int tad_run_timer(TadRt *t, AclVM *vm, int idx) {
 void tad_timer_unit(TadRt *t, AclVM *vm) {
 	if (!vm->vars[0x19])
 		return;
-	for (int i = 0; i < 0x26; i++) {
-		if (!vm->vars[0x1A + i])
+	for (int i = 0; i < 0x2A; i++) {
+		uint8_t *c = &vm->g[0x81 + 0x1A + i];
+		if (!*c)
 			continue;
-		if (--vm->vars[0x1A + i] != 0)
+		if (--*c != 0)
 			continue;
 		if (t && t->loaded)
 			tad_run_timer(t, vm, i);
-		if (vm->vars[0x1A + i] == 0)
+		if (*c == 0)
 			vm->vars[0x19]--;                                 /* done: leave the list */
 		else
-			vm->vars[0x1A + i] = vm->g[0x81 + 0x1A + 0x34 + i];   /* the routine re-armed it: reload */
+			*c = vm->g[0x81 + 0x1A + 0x34 + i];               /* the routine re-armed it: reload */
 	}
 }
 

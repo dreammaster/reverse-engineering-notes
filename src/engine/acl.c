@@ -116,14 +116,16 @@ static uint8_t *tflag(AclVM *vm, int id, int second) {
 
 /* 1000:81C8: change the energy by `delta`: sound 1Bh (damage) / 19h (healing), clamped to the maximum; at 0 sound 1Ch (the death routine follows) */
 void acl_set_timer(AclVM *vm, int effect, int value) {
-	if (effect < 0 || effect >= 0x26) return;
-	if (!vm->vars[0x1A + effect]) vm->vars[0x19]++;
-	vm->vars[0x1A + effect] = (uint8_t)value;
+	if (effect < 0 || effect >= 0x34) return;
+	uint8_t *c = &vm->g[0x81 + 0x1A + effect];
+	if (!*c) vm->vars[0x19]++;
+	*c = (uint8_t)value;
 	vm->g[0x81 + 0x1A + 0x34 + effect] = (uint8_t)value;
 }
-int acl_timer_active(const AclVM *vm, int effect) { return effect >= 0 && effect < 0x26 && vm->vars[0x1A + effect] != 0; }
+int acl_timer_active(const AclVM *vm, int effect) { return effect >= 0 && effect < 0x34 && vm->g[0x81 + 0x1A + effect] != 0; }
 
 void acl_energy_change(AclVM *vm, int delta) {
+	if (acl_timer_active(vm, 0x27)) return;                 /* immortal (ds:652 ≠ 0, 1000:181C8): the energy does not change */
 	if (vm->sound) vm->sound(delta < 0 ? 0x1B : 0x19, vm->user);
 	int e = vm->energy + delta;
 	if (e <= 0) {

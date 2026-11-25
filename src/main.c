@@ -1570,7 +1570,7 @@ static void drink_potion(RoomView *rv, int t) {
 	uint8_t *a = rv->vm.tail[t];
 	int bad = (a[3] & 4) != 0;
 	int shield = a[0] == 6 ? 0 : a[0] == 8 ? 1 : a[0] == 11 ? 2 : a[0] == 12 ? 3 : -1;
-	if (!bad && a[0] > 3 && shield < 0 && a[0] != 4 && a[0] != 5 && a[0] != 7 && a[0] != 9 && a[0] != 10 && a[0] != 13 && a[0] != 17) return;
+	if (!bad && a[0] > 3 && shield < 0 && a[0] != 14 && a[0] != 15 && a[0] != 16 && a[0] != 4 && a[0] != 5 && a[0] != 7 && a[0] != 9 && a[0] != 10 && a[0] != 13 && a[0] != 17) return;
 	rv->vm.queue_n = 0;
 	acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
 	for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
@@ -1589,6 +1589,9 @@ static void drink_potion(RoomView *rv, int t) {
 	else if (a[0] == 9) { int d = rv->vm.energy_max / 2 - rv->vm.energy; if (d >= 0) acl_energy_change(&rv->vm, d); }       /* CURE (0700): up to half of the maximum energy */
 	else if (a[0] == 13) { if (rv->vm.g[0x119]) { rv->vm.g[0x119] = 0; if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x2D; } }   /* CURE POISON (07A2 -> 0CAE) */
 	else if (a[0] == 17) acl_energy_change(&rv->vm, -32000);                                                                /* SUICIDE (07C4): energy -0x8300 */
+	else if (a[0] == 14) { rv->vm.g[0x11B] = 0x7F; acl_set_timer(&rv->vm, 0x27, a[1]); }                                      /* TOTAL SHIELD (07AF): every shield bit, then as IMMORTAL */
+	else if (a[0] == 15) acl_set_timer(&rv->vm, 0x27, a[1]);                                                                /* IMMORTAL (07B4): effect 27h: the energy does not change */
+	else if (a[0] == 16) acl_set_timer(&rv->vm, 0x28, a[1]);                                                                /* STRENGTH (07B9): ds:59C = 0C7h (the push strength) for effect 28h */
 	else if (a[0] == 5 || a[0] == 10) { }                                                                                   /* the blank potion and SLOW: empty routines */
 	else acl_set_timer(&rv->vm, a[0] == 1 ? 0x23 : a[0] == 2 ? 0x21 : 0x20, a[1]);   /* super fast / giant jump / alcohol: effect timers 23h / 21h / 20h for A[1] units of 17 steps */
 	rv->pending_rebuild |= rv_changed(rv);
@@ -1949,7 +1952,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		po[i].xs = o->xs; po[i].ys = o->ys; po[i].zs = o->zs; po[i].weight = o->weight;
 	}
 	int moved[PUSH_MAX], nm;
-	int st = push_move(&wk->world, po, wk->x1, wk->y1, wk->z, PL_XS, PL_YS, PL_ZS, -1, dx, dy, 50, moved, &nm);
+	int st = push_move(&wk->world, po, wk->x1, wk->y1, wk->z, PL_XS, PL_YS, PL_ZS, -1, dx, dy, acl_timer_active(&rv->vm, 0x28) ? 0xC7 : 50, moved, &nm);
 	if (st == PUSH_MOVED || st == PUSH_FREE) {
 		wk->x1 += dx; wk->y1 += dy;
 		for (int k = 0; k < nm; k++) {
