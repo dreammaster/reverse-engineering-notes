@@ -82,7 +82,7 @@ public:
 	TManagedObject() = default;
 	explicit TManagedObject(const TVisObjRef &objRef) : _objRef(objRef) {
 	}
-	virtual ~TManagedObject() = default;
+	virtual ~TManagedObject();
 
 	// Confirmed (asm lines 190278-190309): clears _text if it's the one
 	// finishing.

@@ -20,6 +20,29 @@
 
 std::string TManagedObject::HookFunctionRender;
 
+// Confirmed (asm lines 192299-192394): the object lets go of what refers to it: it stops using its animation (hiding it when
+// nobody else does), tells the object manager it is gone, leaves the other animations' lists of owners and the text's owner.
+// (Without it an animation that outlives the object, such as one a loaded savegame brings back, tells the freed object that
+// it stopped.)
+TManagedObject::~TManagedObject() {
+	if (_currentAnimation) {
+		TGAnimation::HideAnimation(_currentAnimation, this);
+		_currentAnimation = nullptr;
+	}
+
+	if (g_pGameControl)
+		static_cast<TGameControl *>(g_pGameControl)->GetObjectManager()->NotifyObjectRemoved(_objRef);
+
+	for (TGAnimation *animation : _animations)
+		animation->DetachOwner(this);
+	_animations.clear();
+
+	if (_text) {
+		_text->DetachOwner(this);
+		_text = nullptr;
+	}
+}
+
 // Confirmed (asm lines 1376052-1376134): the direction of (dx, dy) in degrees, 0 to
 // 359, counted anticlockwise from the positive x axis with y pointing up (so y is
 // negated: the screen's y points down).
