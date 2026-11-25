@@ -410,7 +410,8 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 			}
 	}
 	rv->vm.energy = rv->vm.energy_max = rv->energy_max_cfg;
-	if (getenv("CAD_SPELLS")) for (int t = 0; t < ACL_THINGS; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!sp || (sp->header[0x16] != 1 && sp->header[0x16] != 4)) continue; const uint8_t *a = rv->vm.tail[t];
+	if (getenv("CAD_CARRY")) { int t = atoi(getenv("CAD_CARRY")); if (t > 0 && t < ACL_THINGS) { rv->vm.present[t] = 1; rv->vm.room[t] = 0xFF; } }   /* debugging aid: carry this thing from the start */
+	if (getenv("CAD_SPELLS")) for (int t = 0; t < ACL_THINGS; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!sp || !rv->vm.present[t] || (sp->header[0x16] != 1 && sp->header[0x16] != 2 && sp->header[0x16] != 4)) continue; const uint8_t *a = rv->vm.tail[t];
 		fprintf(stderr, "SPELLTHING %d class %d A %02x %02x %02x %02x %02x %02x %02x %02x %02x\n", t, sp->header[0x16], a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]); }
 	if (getenv("CAD_LOOKTEXT")) { int t = atoi(getenv("CAD_LOOKTEXT")); char tx[200] = ""; const ObjSprite *sp = thing_sprite(rv, t);   /* debugging aid: print the class-specific description of a thing */
 		fprintf(stderr, "LOOK %d class %d: %s\n", t, sp ? sp->header[0x16] : -1, sp && thing_description(rv, t, sp, tx, sizeof(tx)) ? tx : "(none)"); }
@@ -1007,6 +1008,7 @@ static void ruck_show(RoomView *rv, int t) {
 	int nm = (sp->header[10] << 8) | sp->header[11];
 	rv->label_id = nm < 0x8000 ? nm : -1;
 	rv->menu_sel = 0;
+	if (getenv("CAD_SNDLOG")) { fprintf(stderr, "RUCK %d verbs", t); for (int i = 0; i < rv->nverbs; i++) fprintf(stderr, " %d", rv->verbs[i]); fprintf(stderr, "\n"); }
 }
 static void ruck_open(RoomView *rv) {
 	int l[64], n = ruck_list(rv, l, 64);
@@ -1445,6 +1447,30 @@ static void fly_step(Walker *wk, RoomView *rv) {
 }
 
 /* one game step in the rucksack view: Left/Right move the highlight (past the ends: the previous / next carried thing), End or Return runs the verb, Space leaves */
+/* verb 9, drink (1000:32B5): event 5 for the potion, sound 0Ah, the identified flag A[3] bit 0 is cleared (unless bit 1), the doses A[2] drop
+   (at 0 the potion is gone and leaves the hand); a bad potion (A[3] bit 4) costs A[1] energy with message 34, otherwise the TAD routine
+   table[A[0]] acts: potion 0 (STAMINA, routine 0710) restores A[1] energy through service 3 (181C8). Other potions are not ported (nothing consumed). */
+static void drink_potion(RoomView *rv, int t) {
+	const ObjSprite *sp = thing_sprite(rv, t);
+	if (!sp || sp->header[0x16] != 2) return;
+	uint8_t *a = rv->vm.tail[t];
+	int bad = (a[3] & 4) != 0;
+	if (!bad && a[0] != 0) return;
+	rv->vm.queue_n = 0;
+	acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
+	for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+	snd_play(0x0A);
+	if (!(a[3] & 2)) a[3] &= (uint8_t)~1;
+	a[2]--;
+	if ((int8_t)a[2] <= 0) {
+		rv->vm.flags[t] |= 0x80;
+		if (rv->held == t) rv->held = 0;
+	}
+	if (bad) { acl_energy_change(&rv->vm, -(int)a[1]); if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x22; }
+	else acl_energy_change(&rv->vm, a[1]);
+	rv->pending_rebuild |= rv_changed(rv);
+	roomview_flush_messages(rv);
+}
 static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int space_edge) {
 	if (!(keys & 0x80)) rv->menu_released = 1;
 	if (rv->ruck_delay > 0) rv->ruck_delay--;
@@ -1519,6 +1545,9 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 			rv->pending_rebuild |= rv_changed(rv);
 			roomview_flush_messages(rv);
 			ruck_close(rv);
+		} else if (verb == 9) {
+			drink_potion(rv, t);
+			if (rv->vm.flags[t] & 0x80) ruck_close(rv);
 		} else if (verb == 11 || verb == 13 || verb == 4 || verb == 7 || verb == 16) {
 			menu_choose(rv, verb);
 			if (verb == 11) { rv->grid_open = 1; rv->touch_thing = t; grid_verbs(rv); }
