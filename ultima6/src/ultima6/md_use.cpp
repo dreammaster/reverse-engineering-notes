@@ -1397,7 +1397,14 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		message("You may use the ruby slippers to go home. If you choose to, you may now view the Grand Finale.\n\n");
 		message("Afterwards, you will exit to DOS. You will be able to resume play from your last saved game.\n\n");
 		message("Would you like to see the Grand Finale now? If so, press Y. To resume play now, hit N: (Y N)\n");
-		mdAskKey([](int key) { return key == 'y' || key == 'Y' || key == 'n' || key == 'N'; });
+		mdAskKey([this](int key) {
+			if (key != 'y' && key != 'Y' && key != 'n' && key != 'N')
+				return false;
+			if (key == 'y' || key == 'Y')
+				_ending = 1; // sub_3F789: the Grand Finale (MARTIAN.EXE's ending), after which the game is over
+			message(std::string(1, (char)key) + "\n");
+			return true;
+		});
 		break;
 	}
 	case 24: { // sub_52F40: a lever or switch (0xC4, 0x137, 0x138): its quality says what it does (the table at cs:0062), its quantity is the number it shares with what it works. Quality 1 locks / unlocks the door (0xB3 or 0xE3 with that number in the low 7 bits of its quality) and sets the levers' frames; 2 opens / closes it (if the story has come to that: flag 0x73 bit 4 for the 0xE3, bit 0x10 for the 0xB3, else "the lever seems stuck.") and sets the levers' frames; 0xA, 0x14 and 0x15 are scenes (sub_3F5A0, sub_5328B, sub_53496; md_levers.cpp); another is "What an odd lever!"
