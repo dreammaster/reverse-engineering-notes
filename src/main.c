@@ -530,6 +530,7 @@ enum { DIR_RIGHT, DIR_LEFT, DIR_DOWN, DIR_UP };
 typedef struct {
 	int x1, y1, z;       /* far corner of the player's 7x7x30 box, 1/8 cell units */
 	int dir, moving, anim, tick;
+	int face;                  /* ds:608: the movement key bits (1 up 2 down 4 left 8 right) of the last move, diagonals included */
 	int world_key, placed;
 	int jumping, jstep, jhold, jcool, fall, giant;   /* jump (fire held, nothing touched): z profile below */
 	ColWorld world;
@@ -1304,11 +1305,19 @@ static int front_spot(Walker *wk, RoomView *rv, int t, int *ox, int *oy, int *oz
 	int xs, ys, zs;
 	thing_box(rv, t, &xs, &ys, &zs);
 	int dxp = wk->x1, dyp = wk->y1;
-	switch (wk->dir) {
-	case DIR_RIGHT: dxp = wk->x1 + 2 + xs; break;
-	case DIR_LEFT: dxp = wk->x1 - (PL_XS - 1) - 3; break;
-	case DIR_DOWN: dyp = wk->y1 + 2 + ys; break;
-	default: dyp = wk->y1 - (PL_YS - 1) - 3; break;
+	int x0 = wk->x1 - (PL_XS - 1), y0 = wk->y1 - (PL_YS - 1);
+	int face = wk->face;
+	if (face != 1 && face != 2 && face != 4 && face != 8 && face != 5 && face != 6 && face != 9 && face != 10)   /* no move seen yet: the facing */
+		face = wk->dir == DIR_RIGHT ? 8 : wk->dir == DIR_LEFT ? 4 : wk->dir == DIR_DOWN ? 2 : 1;
+	switch (face) {                                                   /* 1000:6C72 (table cs:6C54): the eight cases */
+	case 8: dxp = wk->x1 + 2 + xs; break;
+	case 4: dxp = x0 - 3; break;
+	case 2: dyp = wk->y1 + 2 + ys; break;
+	case 1: dyp = y0 - 3; break;
+	case 9: dxp = wk->x1 + 1 + xs; dyp = y0 - 1; break;
+	case 5: dxp = x0 - 2; dyp = y0 - 2; break;
+	case 6: dxp = x0 - 2; dyp = wk->y1 + 1 + ys; break;
+	default: dxp = wk->x1 + 1 + xs; dyp = wk->y1 + 1 + ys; break;      /* 10: down-right */
 	}
 	ColResult cr;
 	collision_test(&wk->world, dxp, dyp, wk->z, xs, ys, zs, t, 0, &cr);
@@ -1411,7 +1420,8 @@ static void cast_blast(Walker *wk, RoomView *rv, int item) {
 }
 /* the player's projectile leaves in the facing direction (1000:16A37: the thing is placed at the shooter, B[3], B[4] = +-127 from the facing) */
 static void launch_shot(Walker *wk, RoomView *rv, int id) {
-	int fx = wk->dir == DIR_RIGHT ? 1 : wk->dir == DIR_LEFT ? -1 : 0, fy = wk->dir == DIR_DOWN ? 1 : wk->dir == DIR_UP ? -1 : 0;
+	int fx = (wk->face & 8) ? 1 : (wk->face & 4) ? -1 : 0, fy = (wk->face & 2) ? 1 : (wk->face & 1) ? -1 : 0;
+	if (!fx && !fy) { fx = wk->dir == DIR_RIGHT ? 1 : wk->dir == DIR_LEFT ? -1 : 0; fy = wk->dir == DIR_DOWN ? 1 : wk->dir == DIR_UP ? -1 : 0; }
 	acl_place_shot(&rv->vm, id, rv->room, wk->x1 + 2 * fx, wk->y1 + 2 * fy, wk->z, 127 * fx, 127 * fy);
 	rv->pending_rebuild = 1;
 }
@@ -1968,6 +1978,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (acl_timer_active(&rv->vm, 0x23)) { dx *= 2; dy *= 2; }          /* super fast (effect 23h: ds:60E = ds:60F = 2) */
 	if (acl_timer_active(&rv->vm, 0x20)) { dx = -dx; dy = -dy; }         /* alcohol (effect 20h, ds:64B): the move is reversed (1000:10AF6) */
 	wk->dir = dir;
+	wk->face = keys & 15;
 	wk->moving = 1;
 	wk->world.dirbits = (keys & 3) ? 1 : 0;
 	int gw, gh, gx, gy;
