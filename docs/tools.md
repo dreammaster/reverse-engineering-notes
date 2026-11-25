@@ -75,3 +75,13 @@ cmake -S src -B build && cmake --build build
 ctest --test-dir build --output-on-failure   # skips if retail data absent
 ./build/cadaver -g cadaver1                   # or cadaver2
 ```
+
+## Fuzzing the port (sanitizer build)
+
+```bash
+cmake -S src -B /tmp/asan -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS='-fsanitize=address,undefined' && make -C /tmp/asan
+python3 tools/fuzz_sim.py SEED COUNT      # random --sim key sequences over both games and all levels
+python3 tools/fuzz_items.py SEED COUNT    # the same with a carried spell / potion / weapon (CAD_CARRY, CAD_SPELLS lists them), held, fired, cast, drunk and S / L prompts
+```
+
+Debug environment variables of the port: `CAD_CARRY=thing[:A0[:A1]]`, `CAD_SPELLS`, `CAD_LOOKTEXT=thing`, `CAD_CLASS=thing`, `CAD_MOVE=thing:x:y`, `CAD_SHOT=thing`, `CAD_CREAT=thing|-1`, `CAD_ENERGY=n`, `CAD_SNDLOG`, `CAD_OPS`, `CAD_TADDIFF`, `CAD_VARS`.
