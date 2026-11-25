@@ -580,7 +580,6 @@ void Game::mdSceneAmmo() {
 
 // sub_30093 (sub_2A851 from sub_19300 for actor 0), the death of the dream body: the body is not dead for long. With a place to come back to (the squares 0xC4 and 0xC0 keep one, byte_41134 /
 // 41135) it is made whole there, combat ends and "You feel your dream consciousness returning."; without one "You shake yourself awake from the nightmare." and the dreamer wakes.
-// APPROX(95): the special case of the dream 0xC0 (the conversation of actor 0x66, the removal of the 0x175 creatures near 0x17, 0x87) is not done.
 void Game::mdDreamDied() {
 	ObjList &al = _world.actors;
 	al.status[0] &= 0xEF;
@@ -597,6 +596,24 @@ void Game::mdDreamDied() {
 			y = _mdCheck[1];
 		}
 		message("You feel your dream consciousness returning.\n");
+		if (_mdDreamId == 0xC0) { // the dream of the person 0x66: with the bits 8 and 0x10 of his story flags (and not 4, 0x20) the 0x175 on the move (worktype 0x12) at 0x87, 0x17 are done away with and a 0xE0 (frame 3) stands at 0x7F, 0x18; then he talks
+			uint8_t &f = al.talkFlags[0x66];
+			if ((f & 0x3C) == 0x18) {
+				for (int a = 0xC0; a < ObjList::ACTORS; ++a) {
+					int ak = _world.actorObject(a);
+					if (ak < 0 || _world.objects[ak].deleted || _world.objects[ak].type != 0x175 || al.worktype[a] != 0x12)
+						continue;
+					if (_world.objects[ak].x != 0x87 || _world.objects[ak].y != 0x17 || _world.objects[ak].z != z)
+						continue;
+					al.status[a] |= 0x10;
+					_world.deleteObject(ak);
+				}
+				if (seFind(0xE0, 0x7F, 0x18) < 0)
+					mdMakeThing(0xE0 | (3 << 10), 0, 0x7F, 0x18, z);
+			}
+			f |= 0x80;
+			startTalk(0x66);
+		}
 		return;
 	}
 	message("You shake yourself awake from the nightmare.\n");

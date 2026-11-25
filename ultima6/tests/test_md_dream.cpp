@@ -388,6 +388,27 @@ int main() {
 		g.mdKilled(0);
 		CHECK(logText(g).find("You feel your dream consciousness returning.") != std::string::npos);
 		CHECK(g.mdDreaming() && g.x == 26 && g.y == 25 && !(al.status[0] & 0x10) && al.hp[0] > 0);
+		// the dream 0xC0: a square 0xC0 keeps the place and sets the number; the body's death then starts the talk of 0x66 and sets his flag 0x80
+		{
+			int sq2 = put(w, 0x1CD, 0, 104, 59, 2);
+			w.objects[sq2].status = 0xC0;
+			w.objects[sq2].quantity = 25;
+			w.objects[sq2].quality = 26;
+			w.moveObject(body, 104, 59, 2);
+			g.x = 104;
+			g.y = 59;
+			g.mdStepOn();
+			al.talkFlags[0x66] &= 0x7F;
+			g.mdKilled(0);
+			CHECK(al.talkFlags[0x66] & 0x80);
+			for (int guard = 0; guard < 60 && g.talking(); ++guard) { // (the talk is ended with the word that ends one)
+				for (char c : std::string("bye"))
+					g.handleKey(c);
+				g.handleKey(13);
+				g.handleKey(' ');
+			}
+			CHECK(!g.talking());
+		}
 		g.mdDreamFinish(0x51); // wakes
 		CHECK(!g.mdDreaming());
 		g.mdDreamMachine(cabinet);
