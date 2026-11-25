@@ -290,7 +290,22 @@ int main(int argc, char **argv) {
 			mdGameMusic.morning();
 	}
 
-	if (game.endingStarted()) {
+	if (game.endingStarted() && id == Ultima6::GameId::MartianDreams) { // Martian Dreams' ending (the script of MARTIAN.EXE's sub_15C84)
+		Ultima6::Ultima6::MdIntro ending(argv[1], Ultima6::Ultima6::MdIntro::ENDING);
+		if (ending.ok()) {
+			unsigned last = backend->ticks();
+			while (!ending.finished()) {
+				ending.render(screen);
+				backend->present(screen);
+				if (backend->pollKey() != Ultima6::KEY_NONE)
+					break;
+				unsigned now = backend->ticks();
+				ending.tick(now - last);
+				last = now;
+				backend->delay(15);
+			}
+		}
+	} else if (game.endingStarted()) {
 		int years, months, days;
 		game.timePlayed(years, months, days);
 		Ultima6::Ultima6::Ending ending(argv[1], years, months, days);

@@ -1,7 +1,7 @@
 // Martian Dreams' story events: the script command 0xD1 of the conversations (sub_3F869 = sub_56B3A, a switch over the numbers 1-11, 0x33-0x39, 0x65-0x6F, 0xFE and 0xFF, whose blocks change
 // objects at places of the maps, set flags of the actors, move the party or leave an exit code (word_41F2A) for the conversation that called them).
 //
-// APPROX(88): only the events whose effect is read out of the executable and can be done with the engine's parts are here (1, 6-11, 0x33, 0x34, 0x36, 0x65-0x68, 0x6A-0x6F, 0xFE); the dream scenes
+// APPROX(88): only the events whose effect is read out of the executable and can be done with the engine's parts are here (1, 2, 4-11, 0x33-0x36, 0xFF, 0x65-0x68, 0x6A-0x6F, 0xFE); the dream scenes
 // (the dream ends, sub_3F615, are in md_dream.cpp), the scenes that raise a battle or plant a crop (0x35, 0x37-0x39), the schedule bits of the actors 0x18 and 0x1E (events 4 and 5), the guards (2) and the
 // end of the game (0xFF) are not, and what the original does with the exit codes once the conversation is over (Talk's ten cases, sub_55F77) is not either.
 
@@ -39,6 +39,38 @@ void Game::mdEvent(int n) {
 			al.talkFlags[0x39] &= 0xF7;
 		break;
 	}
+	case 2: // sub_19300(0x3C): actor 0x3C dies
+		_world.actors.hp[0x3C] = 0;
+		_combat.kill(0x3C);
+		break;
+	case 4: // the people 0x1E and 0x18 are no longer held back (the bit 0x80 of their object status goes)
+		for (int a : {0x1E, 0x18}) {
+			int k = _world.actorObject(a);
+			if (k >= 0)
+				_world.objects[k].status &= 0x7F;
+		}
+		break;
+	case 5: { // actor 0x18 is hidden (bit 0x80), stops, and goes to 0x18, 0x18 of level 6
+		int k = _world.actorObject(0x18);
+		if (k >= 0) {
+			_world.objects[k].status |= 0x80;
+			mdPlace(k, 0x18, 0x18, 6);
+		}
+		al.worktype[0x18] = 0;
+		break;
+	}
+	case 0x35: { // a swarm: six of the creature 0x91 are made round the party (sub_2652C, sub_18126), the number that found a place is the counter of the dream's deaths (byte_41153)
+		_mdDreamFlag = 0;
+		for (int i = 0; i < 6; ++i)
+			if (_creatures.spawn(0x91, 8, x, y, z) >= 0)
+				++_mdDreamFlag;
+		if (!_mdDreamFlag)
+			aargh();
+		break;
+	}
+	case 0xFF: // the end of the game: the last key ends play and the ending (MARTIAN.EXE's sub_15C84) follows
+		_ending = 1;
+		break;
 	case 6: { // the two things 0xB5 at 0x2C3,0x1F3 and 0x2C4,0x1F3: the first (frame 3) moves to 0x2C2,0x1F3, the second gets frame 7
 		int a = find(0xB5, 0x2C3, 0x1F3);
 		if (a < 0) {

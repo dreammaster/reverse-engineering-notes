@@ -518,6 +518,27 @@ int main() {
 		CHECK(w.objects[k].x == 0x394 && w.objects[k].y == 0x284);
 	}
 
+	// the story events 2, 4, 5, 0x35 and 0xFF (sub_56B3A)
+	{
+		g.mdEvent(5);
+		int k18 = w.actorObject(0x18);
+		CHECK(w.objects[k18].z == 6 && (w.objects[k18].status & 0x80) && al.worktype[0x18] == 0);
+		g.mdEvent(4);
+		CHECK(!(w.objects[k18].status & 0x80));
+		g.mdEvent(2);
+		CHECK(al.hp[0x3C] == 0 && (al.status[0x3C] & 0x10));
+		int before = 0, after = 0;
+		for (const World::Obj &o : w.objects)
+			before += !o.deleted && o.type == 0x91;
+		g.mdEvent(0x35);
+		for (const World::Obj &o : w.objects)
+			after += !o.deleted && o.type == 0x91;
+		CHECK(after >= before + 1 && after <= before + 6);
+		CHECK(!g.endingStarted());
+		g.mdEvent(0xFF);
+		CHECK(!g.handleKey(' ') && g.endingStarted());
+	}
+
 	// the end of a scene and the waking in one (the mirror, the manuscript ...): only while dreaming
 	g.mdDreamFinish(0x51);
 	CHECK(!g.mdDreaming());
