@@ -43,6 +43,10 @@ bool Game::mdInView(int actor) const {
 	if (k < 0)
 		return false;
 	const World::Obj &o = _world.objects[k];
+	return mdInViewAt(o.x, o.y, o.z);
+}
+
+bool Game::mdInViewAt(int ox, int oy, int oz) const {
 	int mask = z == 0 ? 0x3FF : 0xFF;
 	auto gap = [mask](int d) {
 		d &= mask;
@@ -50,7 +54,7 @@ bool Game::mdInView(int actor) const {
 			d -= mask + 1;
 		return std::abs(d);
 	};
-	return o.z == z && gap(o.x - x) <= 20 && gap(o.y - y) <= 20;
+	return oz == z && gap(ox - x) <= 20 && gap(oy - y) <= 20;
 }
 
 // sub_2BC7E: the first thing of the type among what the person carries, -1 if there is none
@@ -112,6 +116,7 @@ int Game::mdLight() const {
 // sub_22B27(1): one minute of the hazards (the clock itself is the engine's)
 void Game::mdMinute() {
 	ObjList &al = _world.actors;
+	mdThings();
 	const bool airless = (al.talkFlags[0x10] & 0x20) != 0;
 	auto bare = [&](const World::Obj &t) { // the name without its article
 		std::string n = Describe::object(_world, t);
@@ -258,6 +263,68 @@ void Game::mdMinute() {
 					break;
 				}
 			}
+		}
+	}
+}
+
+// sub_22B27's loop over the things in view (the types of the table at cs:18A4): a seed mound (0xFB with quality 0xF and a frame below 3) grows: the seed (0xFC) in the hole (0x101) under it
+// keeps the day (quality) and month (quantity) it was planted; four days on (the month's 28 days; or when the month has come round) the mound takes its next frame, the seed's stamp is made
+// anew, and at frame 3 the mound's quality is 0x10 (ripe); in a dream it grows by a roll of 1-2 on the stamp's quantity, a step above 12. A flame (0x9D) counts its quality down, takes the
+// next lower frame with a quality of 10-15 when it is out and is gone at frame 0. APPROX(97): the steam jets (0x1D0, sub_55D62) and the rendering list of the 0x1A2 are not done.
+void Game::mdThings() {
+	for (size_t i = 0x101; i < _world.objects.size(); ++i) {
+		World::Obj &o = _world.objects[i];
+		if (o.deleted || !o.onMap() || (o.type != 0xFB && o.type != 0x9D) || !mdInViewAt(o.x, o.y, o.z))
+			continue;
+		if (o.type == 0x9D) {
+			if (o.quality > 1) {
+				--o.quality;
+			} else if (o.frame != 0) {
+				--o.frame;
+				o.quality = (uint8_t)seRoll(10, 15);
+			} else {
+				_world.deleteObject((int)i);
+			}
+			continue;
+		}
+		if (o.quality != 0x0F || o.frame >= 3)
+			continue;
+		std::vector<int> here;
+		_world.objectsAt(o.x, o.y, o.z, here);
+		int hole = -1;
+		for (int h : here)
+			if (_world.objects[h].type == 0x101 && !_world.objects[h].deleted)
+				hole = h;
+		int seed = -1;
+		for (size_t c = 0; c < _world.objects.size() && hole >= 0; ++c)
+			if (!_world.objects[c].deleted && _world.objects[c].location() == ObjRecord::IN_CONTAINER && _world.objects[c].parent == hole && _world.objects[c].type == 0xFC)
+				seed = (int)c;
+		if (seed < 0)
+			continue;
+		World::Obj &sd = _world.objects[seed];
+		int day = sd.quality, month = sd.quantity;
+		auto grow = [&]() {
+			++o.frame;
+			if (o.frame >= 3)
+				o.quality = 0x10;
+		};
+		if (_mdDreaming) {
+			month += seRoll(1, 2);
+			if (month > 0x0C) {
+				grow();
+				sd.quantity = 0;
+			} else {
+				sd.quantity = (uint8_t)month;
+			}
+			continue;
+		}
+		if (month == 0 || day == 0)
+			continue;
+		int now = gameClock.month * 28 + gameClock.day, planted = month * 28 + day + 3;
+		if (now > planted || gameClock.month < month) {
+			grow();
+			sd.quality = (uint8_t)gameClock.day;
+			sd.quantity = (uint8_t)gameClock.month;
 		}
 	}
 }

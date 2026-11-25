@@ -121,6 +121,45 @@ int main() {
 		w.deleteObject(radium);
 	}
 
+	// a seed mound (0xFB, quality 0xF) over a hole (0x101) holding a seed (0xFC) stamped with a day and a month four days old grows a frame; a flame (0x9D) of quality 1 takes the next lower frame
+	{
+		auto put = [&](int type, int frame) {
+			World::Obj o;
+			o.status = 0;
+			o.x = (uint16_t)(g.x + 1);
+			o.y = (uint16_t)g.y;
+			o.z = 0;
+			o.type = (uint16_t)type;
+			o.frame = (uint8_t)frame;
+			o.quantity = 1;
+			o.quality = 0;
+			o.actor = -1;
+			o.parent = -1;
+			w.objects.push_back(o);
+			w.addToMap((int)w.objects.size() - 1);
+			return (int)w.objects.size() - 1;
+		};
+		int mound = put(0xFB, 0), hole = put(0x101, 0);
+		w.objects[mound].quality = 0x0F;
+		World::Obj seed = w.objects[hole];
+		seed.status = ObjRecord::IN_CONTAINER;
+		seed.type = 0xFC;
+		seed.parent = hole;
+		seed.quality = 1;  // the day
+		seed.quantity = 5; // the month
+		w.objects.push_back(seed);
+		g.gameClock.month = 5;
+		g.gameClock.day = 10;
+		g.gameClock.hour = 12;
+		g.gameClock.minute = 0;
+		g.advanceTime(1);
+		CHECK(w.objects[mound].frame == 1);
+		int flame = put(0x9D, 2);
+		w.objects[flame].quality = 1;
+		g.advanceTime(1);
+		CHECK(w.objects[flame].frame == 1 && w.objects[flame].quality >= 10 && w.objects[flame].quality <= 15);
+	}
+
 	std::printf(failures ? "FAILED\n" : "ok\n");
 	return failures ? 1 : 0;
 }
