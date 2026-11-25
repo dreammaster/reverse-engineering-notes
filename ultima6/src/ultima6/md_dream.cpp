@@ -228,8 +228,8 @@ void Game::mdSceneBattle(int qty, int qual) {
 }
 
 // sub_507B0 (sub_3F664): a thing of the type (the quantity in the low byte of `word`, the quality in the high byte) made at x, y of level 2, not "temporary" (its bit 0x20 is cleared)
-int Game::mdMakeThing(int type, int word, int mx, int my) {
-	int o = seMake(type & 0x3FF, mx, my, 2, word & 0xFF, word >> 8);
+int Game::mdMakeThing(int type, int word, int mx, int my, int level) {
+	int o = seMake(type & 0x3FF, mx, my, level, word & 0xFF, word >> 8);
 	_world.objects[o].frame = (uint8_t)(type >> 10);
 	_world.objects[o].status &= 0xDF;
 	return o;
@@ -834,8 +834,109 @@ void Game::mdDreamFinish(int actor) {
 // when its flags say the scene has been played (bit 8 set, bit 4 not); the other codes (9, 0xA, 0x65-0x69: the scenes that put things on the maps) are not done.
 void Game::mdExitCode(int code) {
 	ObjList &al = _world.actors;
-	if (code == 0x34 || code == 0x36 || (code == 0x38 && (al.talkFlags[0x55] & 0x0C) == 8))
+	if (code == 0x34 || code == 0x36 || (code == 0x38 && (al.talkFlags[0x55] & 0x0C) == 8)) {
 		mdDreamFinish(0x55);
+		return;
+	}
+	// the first living actor on a square, from actor `from` on (sub_2C111)
+	auto actorAt = [&](int from, int ax, int ay) {
+		for (int a = from; a < ObjList::ACTORS; ++a) {
+			int k = _world.actorObject(a);
+			if (k < 0 || _world.objects[k].deleted || (al.status[a] & 0x10))
+				continue;
+			const World::Obj &o = _world.objects[k];
+			if (o.x == ax && o.y == ay && o.z == z)
+				return a;
+		}
+		return -1;
+	};
+	// a picture of a dream (0x124, frame 3) with the number as its quality, and the square (0x1CD, frame 1) that leads on, made; the body, if it stands on the picture, steps to (bx, by)
+	auto scene = [&](int px, int py, int number, int squareWord, int squareStatus, int bx, int by) {
+		int pic = mdMakeThing(0x124 | (3 << 10), number << 8, px, py, z);
+		int sq = mdMakeThing(0x1CD | (1 << 10), squareWord, px, py + 1, z);
+		_world.objects[sq].status = (uint8_t)squareStatus;
+		(void)pic;
+		if (actorAt(0, px, py) == 0) {
+			int k = _world.actorObject(0);
+			if (k >= 0) {
+				mdPlace(k, bx, by, z);
+				x = bx;
+				y = by;
+			}
+		}
+	};
+	switch (code) {
+	case 0x65: // the picture 14 at 0x34, 0x20 and the square 0x34, 0x21 (to y 0x0B, x 0x34)
+		scene(0x34, 0x20, 0x0E, 0x340B, 0xC1, 0x34, 0x22);
+		break;
+	case 0x66: { // the picture 15 at 0x12, 0x22 and the square 0x12, 0x23 (to y 0x1A, x 0x1B); the flags of actor 0x68 keep only bit 1; the bodies (0x155) at 0x14, 0x16 and 0x18, 0x0B turn into people 0x189 of frames 0, 1 and 2
+		scene(0x12, 0x22, 0x0F, 0x1B1A, 0xC5, 0x13, 0x23);
+		al.talkFlags[0x68] &= 1;
+		static const int BAGS[3][2] = {{0x14, 0x189}, {0x16, 0x589}, {0x18, 0x989}};
+		for (const auto &b : BAGS) {
+			int bag = seFind(0x155, b[0], 0x0B);
+			if (bag < 0)
+				continue;
+			_world.objects[bag].type = b[1] & 0x3FF;
+			_world.objects[bag].frame = (uint8_t)(b[1] >> 10);
+		}
+		break;
+	}
+	case 0x67: { // the execution: actor 0x68 shoots a member in turn (the flags of 0x68: bit 4 the first, 8 the second, 0x10 the third, then the Avatar): "`%s heavily wounded." (the first) or "critical!", "`%s killed!"; the dead member's person (0x189) becomes a body (0x155 of a frame by its kind); the Avatar's death sends the body back to the place the dream kept
+		uint8_t &f = al.talkFlags[0x68];
+		int victim, vx, vy;
+		if (!(f & 4)) {
+			f |= 4;
+			vx = 0x14;
+			vy = 0x0B;
+			victim = 4;
+		} else if (!(f & 8)) {
+			f |= 8;
+			vx = 0x16;
+			vy = 0x0B;
+			victim = 3;
+		} else if (!(f & 0x10)) {
+			f |= 0x10;
+			vx = 0x18;
+			vy = 0x0B;
+			victim = 5;
+		} else {
+			int k = _world.actorObject(0);
+			vx = k >= 0 ? _world.objects[k].x : x;
+			vy = k >= 0 ? _world.objects[k].y : y;
+			victim = 1;
+		}
+		mdSfx(2);
+		message("`" + mdMemberName(0x68) + " " + ((f & 8) ? "critical!\n" : "heavily wounded.\n"));
+		mdSfx(0x0A);
+		mdSfx(1);
+		message("`" + mdMemberName(victim) + " killed!\n");
+		if (victim == 1) {
+			int k = _world.actorObject(0);
+			if (k >= 0 && _mdCheck[0]) {
+				mdPlace(k, _mdCheck[0], _mdCheck[1], z);
+				x = _mdCheck[0];
+				y = _mdCheck[1];
+			}
+		} else {
+			int person = seFind(0x189, vx, vy);
+			int vk = _world.actorObject(victim);
+			if (person < 0 || vk < 0) {
+				message("Aargh!\n");
+			} else {
+				_world.objects[person].type = 0x155;
+				_world.objects[person].frame = (uint8_t)((_world.objects[vk].type - 0x156) & 0x3F);
+			}
+		}
+		break;
+	}
+	case 0x68: // the picture 16 at 0x6A, 0x2A and the square 0x6A, 0x2B (to y 0x28, x 0x53); the story flag 1 of actor 0x69
+		scene(0x6A, 0x2A, 0x10, 0x5328, 0xE0, 0x6B, 0x2B);
+		al.talkFlags[0x69] |= 1;
+		break;
+	default:
+		break;
+	}
 }
 
 // sub_25C46 with the dream's own flavour: the body goes to the square (qual, qty) of the same level (the quality is x and the quantity y), with the sound 0x33 for the frame 1. Not dreaming,

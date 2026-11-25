@@ -566,6 +566,20 @@ int main() {
 			foes += !o.deleted && o.type == 0x16E;
 		CHECK(foes >= foes0 + 6);
 		g.z = savedZ;
+		// the exit codes of a conversation (sub_55F77): 0x65 makes the picture 14 at 0x34, 0x20 and the square above it; 0x67 shoots the members one by one
+		int pics0 = 0, pics1 = 0;
+		for (const World::Obj &o : w.objects)
+			pics0 += !o.deleted && o.type == 0x124 && o.quality == 0x0E && o.x == 0x34 && o.y == 0x20;
+		g.mdExitCode(0x65);
+		for (const World::Obj &o : w.objects)
+			pics1 += !o.deleted && o.type == 0x124 && o.quality == 0x0E && o.x == 0x34 && o.y == 0x20;
+		CHECK(pics1 == pics0 + 1);
+		al.talkFlags[0x68] = 0;
+		g.log.clear();
+		g.mdExitCode(0x67);
+		CHECK(logText(g).find("heavily wounded.") != std::string::npos && (al.talkFlags[0x68] & 4));
+		g.mdExitCode(0x67);
+		CHECK(logText(g).find("critical!") != std::string::npos && (al.talkFlags[0x68] & 8));
 		CHECK(!g.endingStarted());
 		g.mdEvent(0xFF);
 		CHECK(!g.handleKey(' ') && g.endingStarted());

@@ -48,7 +48,7 @@ std::string Game::mdMemberName(int actor) const {
 	for (int m = 0; m < a.partySize; ++m)
 		if (a.partyRoster[m] == actor)
 			return (const char *)a.partyNames[m];
-	return "";
+	return _combat.nameOf(actor);
 }
 
 // sub_59480: the tent. Not in solo mode; the ground round it (the three squares north of the place and the one to the west) must be clear of things in the way and flat; then the camp.

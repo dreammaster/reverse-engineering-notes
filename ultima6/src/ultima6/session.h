@@ -183,7 +183,7 @@ private:
 	int _mdCheck[2] = {0, 0}; // byte_41134 / 41135: the square the body comes back to when it dies in a dream
 	void mdDreamGo(int frame, int qual, int qty);
 	void mdDreamLeave();
-	int mdMakeThing(int type, int word, int mx, int my);
+	int mdMakeThing(int type, int word, int mx, int my, int level = 2);
 	int mdMakeCreature(int word, int mx, int my, int worktype);
 	void mdSceneFour(int qty, int qual);
 	void mdSceneStore(bool first, int qual, int qty);
