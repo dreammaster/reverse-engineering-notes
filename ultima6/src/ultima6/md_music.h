@@ -53,6 +53,8 @@ public:
 	 * is then 0. The dreams call it (Game::mdTakeMorning).
 	 */
 	void morning();
+	/** sub_2FF7D: the song `song` (the jingle of a fight) plays at its volume and `then`, the song of the place, is queued to start when it ends. */
+	void sting(int song, int then);
 	/** sub_218FC: stops the song, over `fadeTicks` timer ticks if that is not 0. */
 	void stop(int fadeTicks = 0);
 	/** True from play() until the song has ended or been stopped. */

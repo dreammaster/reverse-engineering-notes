@@ -59,7 +59,8 @@ void Game::mdEvent(int n) {
 		al.worktype[0x18] = 0;
 		break;
 	}
-	case 0x35: { // a swarm: six of the creature 0x91 are made round the party (sub_2652C, sub_18126), the number that found a place is the counter of the dream's deaths (byte_41153)
+	case 0x35: { // (the combat jingle first, sub_2FF7D) a swarm: six of the creature 0x91 are made round the party (sub_2652C, sub_18126), the number that found a place is the counter of the dream's deaths (byte_41153)
+		mdSting();
 		_mdDreamFlag = 0;
 		for (int i = 0; i < 6; ++i)
 			if (_creatures.spawn(0x91, 8, x, y, z) >= 0)
@@ -136,8 +137,11 @@ void Game::mdEvent(int n) {
 		break;
 	case 0x65:
 	case 0x66:
-	case 0x67:
 	case 0x68:
+		mdSting(); // sub_2FF7D: the combat jingle
+		exitCode(n);
+		break;
+	case 0x67:
 		exitCode(n);
 		break;
 	case 0x69: { // the sound 0x32; by where actor 0x67 stands (x 0x2C or not) the thing 0xDB at 0x3B, 0xC (frame 3) or at 0x2B, 0xF (frame 7) is changed; actor 0x69 becomes a 0x171
@@ -170,6 +174,7 @@ void Game::mdEvent(int n) {
 		int mound = seMake(0xFB, 0x6F, 0x19, z, 0, 0x0F);
 		_world.objects[mound].status &= 0xDF;
 		seFill(hole, 0xFC, 1);
+		mdSting();
 		static const int SPOTS[3][2] = {{0x0A, 0x6F}, {0x19, 0x60}, {0x28, 0x6F}};
 		for (const auto &sp : SPOTS)
 			for (int i = 0; i < 4; ++i) {

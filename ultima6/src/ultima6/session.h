@@ -173,6 +173,16 @@ public:
 	bool mdDreaming() const {
 		return _mdDreaming;
 	}
+	/** sub_2FF7D: the jingle of a fight that begins (song 5 on the surface, 15 below) unless the music is off or a fight is on; the host plays it with `MdMusic::sting`, -1 for none. */
+	void mdSting() {
+		if (_mdMusicOn && !_combatMode)
+			_mdStingPending = z == 0 ? 5 : 15;
+	}
+	int mdTakeSting() {
+		int s = _mdStingPending;
+		_mdStingPending = -1;
+		return s;
+	}
 	/** True once after a dream or a sleep until dawn: the host plays the morning song (sub_2FD5E(1)). */
 	bool mdTakeMorning() {
 		bool m = _mdMorning;
@@ -201,6 +211,7 @@ private:
 	int _mdDreamFlag = 0;          // byte_41153
 	int _mdWake[3] = {1, 1, 1};    // byte_41180 / 41181 / word_41182: the day, month and year the dreamer wakes on
 	bool _mdMorning = false;
+	int _mdStingPending = -1;
 	bool _mdSleeping = false;      // byte_41BEE: a member dreams until dawn
 	int _mdTurn = 0;               // word_4115E: the turn of the world (eighths) the lever of sub_53496 asks for
 	World &_world;

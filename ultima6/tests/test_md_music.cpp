@@ -79,6 +79,16 @@ int main() {
 	m.stop(0);
 	m.render(buf, 10);
 	CHECK(!m.playing());
+	// the jingle of a fight (sub_2FF7D): the game's own songs (MUSIC.LZC, 16): song 5 plays and the song of the place is queued
+	{
+		MdMusic g;
+		if (g.load(dir, "MUSIC.LZC") && g.songs() >= 16) {
+			g.sting(5, 0);
+			int16_t out[512];
+			g.render(out, 10);
+			CHECK(g.playing() && g.current() == 5);
+		}
+	}
 	if (failures == 0)
 		std::printf("ok\n");
 	return failures ? 1 : 0;

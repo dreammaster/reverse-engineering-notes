@@ -91,6 +91,16 @@ void MdMusic::morning() {
 	_gameSong = 0;
 }
 
+void MdMusic::sting(int song, int then) {
+	static const uint8_t VOLUME[16] = {215, 215, 225, 225, 230, 165, 165, 165, 165, 165, 165, 165, 165, 0, 0, 0};
+	if (song < 0 || song >= (int)_songs.size())
+		return;
+	setBaseVolume(VOLUME[song & 15] ? VOLUME[song & 15] : 165);
+	play(song);
+	_requestQueue = then;
+	_gameSong = then;
+}
+
 // GAME.EXE's sub_2FC44, with the volumes of its table at ds:189E (songs 0-12; the others are not played)
 void MdMusic::follow(int song) {
 	static const uint8_t VOLUME[16] = {215, 215, 225, 225, 230, 165, 165, 165, 165, 165, 165, 165, 165, 0, 0, 0};

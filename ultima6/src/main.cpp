@@ -288,6 +288,11 @@ int main(int argc, char **argv) {
 		running = game.handleKey(key);
 		if (mdPlaying && game.mdTakeMorning()) // after a dream or a sleep until dawn (GAME.EXE's sub_2FD5E(1))
 			mdGameMusic.morning();
+		if (mdPlaying) {
+			int sting = game.mdTakeSting(); // GAME.EXE's sub_2FF7D: the jingle of a fight that begins
+			if (sting >= 0)
+				mdGameMusic.sting(sting, game.mdSong());
+		}
 	}
 
 	if (game.endingStarted() && id == Ultima6::GameId::MartianDreams) { // Martian Dreams' ending (the script of MARTIAN.EXE's sub_15C84)
