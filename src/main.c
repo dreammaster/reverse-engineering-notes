@@ -116,6 +116,7 @@ typedef struct RoomView_ {
 	int nverbs;
 	int energy_max_cfg;        /* from LEVn.MP1 */
 	int slow_phase, tick_dbg;
+	int save_price;                       /* ds:246: the price of the next saved position */
 	uint16_t spell_str[100], potion_str[100]; int spell_tbl_ok;   /* LEVn.MP1: LNG string ids of the spell / potion names (the tables ds:44 / ds:46) */
 	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
 	int carry_pending, carry_energy; uint32_t carry_money, carry_score;   /* stats carried into the next level */
@@ -1767,21 +1768,23 @@ typedef struct {
 	char magic[4];
 	int32_t version, level, room, tata, x1, y1, z, dir, day;
 	uint32_t clock_ticks;
-	int32_t held, last_item;
+	int32_t held, last_item, save_price;
 	uint8_t visited[128];
 	int32_t vm_size;
 } SaveHead;
 static uint8_t *g_sav;               /* loaded save waiting for the level to be (re)loaded */
 static size_t g_sav_len;
 static int g_sav_place;              /* ... and for the player to be placed */
-static int game_save(const Walker *wk, const RoomView *rv) {
+static int game_save(const Walker *wk, const RoomView *rv, int slot) {
 	if (!rv->ok) return -1;
-	FILE *f = fopen("cadaver.sav", "wb");
+	char fn[32];
+	if (slot < 0) snprintf(fn, sizeof(fn), "cadaver.sav"); else snprintf(fn, sizeof(fn), "cadaver%d.sav", slot);
+	FILE *f = fopen(fn, "wb");
 	if (!f) return -1;
 	SaveHead h;
 	memset(&h, 0, sizeof(h));
 	memcpy(h.magic, "CSAV", 4);
-	h.version = 1; h.level = rv->level; h.room = rv->room; h.tata = rv->use_tata;
+	h.version = 2; h.save_price = rv->save_price; h.level = rv->level; h.room = rv->room; h.tata = rv->use_tata;
 	h.x1 = wk->x1; h.y1 = wk->y1; h.z = wk->z; h.dir = wk->dir; h.day = rv->day; h.clock_ticks = rv->clock_ticks;
 	h.held = rv->held; h.last_item = rv->last_item;
 	memcpy(h.visited, rv->visited, sizeof(h.visited));
@@ -1792,14 +1795,16 @@ static int game_save(const Walker *wk, const RoomView *rv) {
 	return 0;
 }
 /* reads the file, tears the level down and lets the next draw reload it; the VM is restored by roomview_load_level */
-static int game_load(RoomView *rv) {
-	FILE *f = fopen("cadaver.sav", "rb");
+static int game_load(RoomView *rv, int slot) {
+	char fn[32];
+	if (slot < 0) snprintf(fn, sizeof(fn), "cadaver.sav"); else snprintf(fn, sizeof(fn), "cadaver%d.sav", slot);
+	FILE *f = fopen(fn, "rb");
 	if (!f) return -1;
 	fseek(f, 0, SEEK_END);
 	long n = ftell(f);
 	fseek(f, 0, SEEK_SET);
 	SaveHead h;
-	if (n < (long)sizeof(h) || fread(&h, sizeof(h), 1, f) != 1 || memcmp(h.magic, "CSAV", 4) || h.version != 1 || h.vm_size != (int32_t)sizeof(AclVM) || n != (long)(sizeof(h) + sizeof(AclVM))) { fclose(f); return -1; }
+	if (n < (long)sizeof(h) || fread(&h, sizeof(h), 1, f) != 1 || memcmp(h.magic, "CSAV", 4) || h.version != 2 || h.vm_size != (int32_t)sizeof(AclVM) || n != (long)(sizeof(h) + sizeof(AclVM))) { fclose(f); return -1; }
 	free(g_sav);
 	g_sav = malloc((size_t)n);
 	fseek(f, 0, SEEK_SET);
@@ -1824,7 +1829,7 @@ static void game_load_apply(RoomView *rv) {
 	rv->vm.msg_n = 0; rv->vm.queue_n = 0; rv->vm.tev_n = 0; rv->vm.go.pending = 0; rv->vm.next_level = 0;
 	acl_restore_clones(&rv->vm);
 	memcpy(rv->visited, h->visited, sizeof(rv->visited));
-	rv->day = h->day; rv->clock_ticks = h->clock_ticks; rv->held = h->held; rv->last_item = h->last_item;
+	rv->day = h->day; rv->clock_ticks = h->clock_ticks; rv->held = h->held; rv->last_item = h->last_item; rv->save_price = h->save_price;
 	rv->room = h->room;
 	g_sav_place = 1;
 }
@@ -2100,6 +2105,34 @@ static int objects_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	return 0;
 }
 
+/* The S / L keys (PAYOFF.DOC; 1000:BF92): S asks the price of a saved position (the larger of ds:246 and 50 * level - 45 gold; string 60 + the price, 62 "DO YOU WANT TO PAY. PRESS Y OR N.",
+ * 61 when there is not enough money), Y pays (the next price rises by 6 * level) and asks for a slot 0-9; L asks for a slot and loads (free). The game stands still meanwhile.
+ * The slots are the files cadaver0.sav ... cadaver9.sav (the original's disk format is not decoded). */
+static int g_savemode;               /* 0 none, 1 waiting for Y / N, 2 slot to save, 3 slot to load */
+static int g_save_pay;
+static void savemode_text(const char *a, int n, const char *b) {
+	char tx[200];
+	if (n >= 0) snprintf(tx, sizeof(tx), "%s%d %s", a, n, b); else snprintf(tx, sizeof(tx), "%s", a);
+	msg_show_text(&g_room, tx);
+}
+static void savemode_start(int save) {
+	if (!save) { g_savemode = 3; g_paused = 1; snd_silence(); savemode_text("LOAD POSITION. PRESS 0 TO 9.", -1, ""); return; }
+	int lv = g_room.level;
+	int price = 50 * lv - 45;
+	if (price < g_room.save_price) price = g_room.save_price;
+	if ((int)g_room.vm.money < price) { savemode_text(lng_str(&g_room, 61), -1, ""); return; }
+	g_save_pay = price; g_savemode = 1; g_paused = 1; snd_silence();
+	savemode_text(lng_str(&g_room, 60), price, lng_str(&g_room, 62));
+}
+static void savemode_end(void) { g_savemode = 0; g_paused = 0; g_room.snd_key = 0; g_room.nroom_snd = 0; g_room.push_snd = 0; g_room.pending_rebuild = 1; for (int i = 0; i < 4; i++) g_room.msgs[i].active = 0; }
+static void savemode_key(SDL_Keycode k) {
+	if (k == SDLK_ESCAPE || (g_savemode == 1 && k == SDLK_n)) { savemode_end(); return; }
+	if (g_savemode == 1 && k == SDLK_y) { g_room.vm.money -= (uint32_t)g_save_pay; g_room.save_price = g_save_pay + 6 * g_room.level; g_savemode = 2; savemode_text("SAVE POSITION. PRESS 0 TO 9.", -1, ""); return; }
+	int d = k >= SDLK_0 && k <= SDLK_9 ? (int)(k - SDLK_0) : k >= SDLK_KP_1 && k <= SDLK_KP_9 ? (int)(k - SDLK_KP_1 + 1) : k == SDLK_KP_0 ? 0 : -1;
+	if (d < 0) return;
+	if (g_savemode == 2) { game_save(&g_walk, &g_room, d); savemode_end(); }
+	else if (g_savemode == 3) { savemode_end(); game_load(&g_room, d); }
+}
 static int load_scene(const GameFiles *g, Scene s, Screen *scr) {
 	if (s == SCENE_OBJECTS)
 		return objects_draw(&g_room, g, scr);
@@ -2239,10 +2272,13 @@ int main(int argc, char **argv) {
 					else changed = 0;
 				}
 				else if (scene == SCENE_WALK && k == SDLK_PAUSE) { g_paused ^= 1; snd_silence(); if (!g_paused) { g_room.snd_key = 0; g_room.nroom_snd = 0; g_room.push_snd = 0; g_room.pending_rebuild = 1; } changed = 0; }
+				else if (scene == SCENE_WALK && g_savemode) { savemode_key(k); changed = 0; }
+				else if (scene == SCENE_WALK && (k == SDLK_s || k == SDLK_l) && g_room.ok && g_room.dead_timer == 0) { savemode_start(k == SDLK_s); changed = 0; }
+				else if (scene == SCENE_WALK && k == SDLK_c) { for (int i = 0; i < 4; i++) g_room.msgs[i].active = 0; changed = 0; }   /* C: clear all game messages */
 				else if (scene == SCENE_WALK && k == SDLK_F4) { g_four_dir ^= 1; changed = 0; }
 				else if (k == SDLK_F11) { SDL_SetWindowFullscreen(win, (SDL_GetWindowFlags(win) & SDL_WINDOW_FULLSCREEN_DESKTOP) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP); changed = 0; }
-				else if (scene == SCENE_WALK && k == SDLK_F5) { game_save(&g_walk, &g_room); changed = 0; }
-				else if (scene == SCENE_WALK && k == SDLK_F9) { game_load(&g_room); changed = 0; }
+				else if (scene == SCENE_WALK && k == SDLK_F5) { game_save(&g_walk, &g_room, -1); changed = 0; }
+				else if (scene == SCENE_WALK && k == SDLK_F9) { game_load(&g_room, -1); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_F1) { map_open_view(&g_room); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_i) { g_room.show_status ^= 1; changed = 0; }
 				else if (k == SDLK_SPACE || k == SDLK_RETURN)
@@ -2296,8 +2332,13 @@ int main(int argc, char **argv) {
 					if (!strncmp(c, "info", 4)) g_room.show_status ^= 1;
 					if (!strncmp(c, "magicmap", 8)) map_open_magic(&g_room);
 					else if (!strncmp(c, "map", 3)) map_open_view(&g_room);
-					if (!strncmp(c, "save", 4)) game_save(&g_walk, &g_room);
-					if (!strncmp(c, "load", 4)) { game_load(&g_room); load_scene(&g, scene, &scr); }
+					if (!strncmp(c, "key:", 4) && c[4]) {                 /* a typed key for the S / L prompts: key:s key:y key:3 ... */
+						SDL_Keycode kc = (SDL_Keycode)c[4];
+						if (g_savemode) savemode_key(kc); else if (kc == SDLK_s || kc == SDLK_l) savemode_start(kc == SDLK_s);
+					}
+					if (!strncmp(c, "money:", 6)) g_room.vm.money = (uint32_t)atoi(c + 6);
+					if (!strncmp(c, "save", 4)) game_save(&g_walk, &g_room, -1);
+					if (!strncmp(c, "load", 4)) { game_load(&g_room, -1); load_scene(&g, scene, &scr); }
 					for (int n = atoi(colon + 1); n > 0; n--)
 						walker_tick(&g_walk, &g_room, bits);
 					c = strchr(colon, ',');
