@@ -188,6 +188,36 @@ int main() {
 		CHECK(al.hp[victim] < 200 && al.hp[victim] >= 150);
 	}
 
+	// a thing whose tile has the hazard flag (flag 8 of the first set) hurts the person who stands on it each minute (0xA8: 1-20): the types are found in the data
+	{
+		int type = -1;
+		for (int t : {0xA8, 0xD1, 0x17D, 0xD7})
+			if (w.flags.flags1[(w.baseTile.firstTile[t]) & (TileFlags::TILES - 1)] & 8)
+				type = t;
+		std::printf("hazard type %x\n", type);
+		if (type >= 0 && !(w.flags.flags3[(w.baseTile.firstTile[type]) & (TileFlags::TILES - 1)] & 4)) {
+			World::Obj o;
+			o.status = 0;
+			o.x = (uint16_t)(g.x + 7);
+			o.y = (uint16_t)g.y;
+			o.z = 0;
+			o.type = (uint16_t)type;
+			o.frame = 0;
+			o.quantity = 1;
+			o.quality = 0;
+			o.actor = -1;
+			o.parent = -1;
+			w.objects.push_back(o);
+			w.addToMap((int)w.objects.size() - 1);
+			int victim = al.partyRoster[0];
+			w.moveObject(w.actorObject(victim), g.x + 7, g.y, 0);
+			al.hp[victim] = 250;
+			g.gameClock.hour = 12;
+			g.advanceTime(1);
+			CHECK(al.hp[victim] < 250 || victim == 6);
+		}
+	}
+
 	std::printf(failures ? "FAILED\n" : "ok\n");
 	return failures ? 1 : 0;
 }

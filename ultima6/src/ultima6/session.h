@@ -150,6 +150,7 @@ public:
 	int mdFindCarried(int actor, int type) const;  // sub_2BC7E
 	void mdGasp(int actor, bool gasping);
 	int mdLight() const;                           // byte_4112B
+	void mdHazard(int actor);                      // sub_22780 / sub_22382
 	void mdMinute();                               // sub_22B27(1)
 	void mdHour();                                 // its hour loop
 	void mdLeverBridge(int lever);                 // sub_4F5A0

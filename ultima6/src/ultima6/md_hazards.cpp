@@ -104,13 +104,80 @@ int Game::mdLight() const {
 				const World::Obj &o = _world.objects[i];
 				if ((o.status & 0x18) != 0x18 || (o.type != 0x6E && o.type != 0x70 && o.type != 0x72 && o.type != 0x74 && o.type != 0x76))
 					continue;
-				lamp = std::max<int>(lamp, _world.flags.flags1[_world.baseTile.firstTile[o.type] + o.frame] & 3);
+				lamp = std::max<int>(lamp, _world.flags.flags2[(_world.baseTile.firstTile[o.type] + o.frame) & (TileFlags::TILES - 1)] & 3);
 			}
 		}
 		if (lamp)
 			light = lamp;
 	}
 	return light;
+}
+
+// sub_22382 (a thing hurts a person) and sub_22780 (what is on the square of a person): the first thing on the person's square that is not the person has its tile's flag 8 of the first
+// set of flags (a hazard) unless a thing before it has the flag 4 of the third (a cover); the types do what the table at cs:068C says: 0xD1 hurts from half the person's hit points to half the
+// most (fire, not the mechanical man), 0x17D 1-10 twice, 0xD7 (the sound 0x15) 1-20 twice, 0xA8 1-20 and 0x1CF a trap of the quality's kind (20 "It's hot here!" 1-20, 1 "Fire!", 2 "Frost!",
+// 3 "Fire bomb!", 4 "Fragmentation bomb!", 5 "Steam jet!", 6 "Heat Ray!", 7 "Freeze Ray!", 8 "Acid!": 1 to the hit points less two; not at all when the body has fewer than 2). The creature that
+// has the bits 8 and 10 of its flags is not hurt. APPROX(97): the bombs and rays are not drawn (sub_1F08A, sub_1E453), the kind of damage (fire, cold) is not kept, sub_17D85 is not read.
+void Game::mdHazard(int actor) {
+	ObjList &al = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0 || _world.objects[k].deleted || (al.status[actor] & 0x10) || !mdInViewAt(_world.objects[k].x, _world.objects[k].y, _world.objects[k].z))
+		return;
+	const World::Obj &me = _world.objects[k];
+	const CreatureStats *cs = Combat::stats(me.type);
+	if (cs && (cs->flags & (1 << 8)) && (cs->flags & (1 << 10)))
+		return;
+	std::vector<int> here;
+	_world.objectsAt(me.x, me.y, me.z, here);
+	for (int h : here) {
+		const World::Obj &o = _world.objects[h];
+		if (h == k || o.deleted)
+			continue;
+		int tile = (_world.baseTile.firstTile[o.type] + o.frame) & (TileFlags::TILES - 1);
+		if (_world.flags.flags3[tile] & 4)
+			return;
+		if (!(_world.flags.flags1[tile] & 8))
+			continue;
+		int hp = al.hp[actor], most = ActorStats::maxHealth(_world, actor), di = 0;
+		switch (o.type) {
+		case 0xD1:
+			di = actor == 6 ? 0 : seRoll(hp / 2, most / 2);
+			break;
+		case 0x17D:
+			di = seRoll(1, 10) + seRoll(1, 10);
+			break;
+		case 0xD7:
+			mdSfx(0x15);
+			di = seRoll(1, 0x14) + seRoll(1, 0x14);
+			break;
+		case 0xA8:
+			di = seRoll(1, 0x14);
+			break;
+		case 0x1CF: {
+			int q = o.quality ? o.quality : seRoll(1, 8);
+			if (q == 0x14) {
+				message("It's hot here!\n");
+				di = seRoll(1, 0x14);
+				break;
+			}
+			if (al.hp[0] < 2)
+				break;
+			static const char *const NAMES[8] = {"Fire!", "Frost!", "Fire bomb!", "Fragmentation bomb!", "Steam jet!", "Heat Ray!", "Freeze Ray!", "Acid!"};
+			static const int SOUNDS[8] = {9, 0x0A, 0x0B, 0x0B, 0x19, 0x0A, 0x0A, 0x1A};
+			if (q >= 1 && q <= 8) {
+				mdSfx(SOUNDS[q - 1]);
+				message(std::string(NAMES[q - 1]) + "\n");
+			}
+			di = seRoll(1, std::max(1, hp - 2));
+			break;
+		}
+		default:
+			break;
+		}
+		if (di > 0)
+			_combat.applyDamage(actor, actor, di);
+		return;
+	}
 }
 
 // sub_22B27(1): one minute of the hazards (the clock itself is the engine's)
@@ -192,6 +259,7 @@ void Game::mdMinute() {
 			}
 		}
 		// what happens to everybody each minute
+		mdHazard(s);
 		if ((me.status & 0x80) && !_combatMode)
 			me.status &= 0x7F;
 		if ((al.status[s] & 8) && seRoll(0, 0x19) == 0)

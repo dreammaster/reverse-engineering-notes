@@ -482,6 +482,8 @@ void Game::stealItem(int idx) {
 // force fields burn, and the lit torch that is carried burns down.
 // APPROX(9): not the original's exact behaviour, see docs/approximations.md
 void Game::partyHazards() {
+	if (_world.game == GameId::MartianDreams)
+		return; // sub_22B27 does it (md_hazards.cpp): the tiles are those of Mars
 	ObjList &a = _world.actors;
 	for (int m = 0; m < a.partySize; ++m) {
 		int actor = a.partyRoster[m];
