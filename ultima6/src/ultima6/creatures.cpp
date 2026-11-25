@@ -340,6 +340,8 @@ void Creatures::act(int actor, int px, int py, int pz) {
 }
 
 void Creatures::turn(int actor, int px, int py) {
+	if (ownTurn && ownTurn(actor))
+		return;
 	ObjList &a = _world.actors;
 	const World::Obj o = _world.objects[_world.actorObject(actor)];
 	int wt = a.worktype[actor];

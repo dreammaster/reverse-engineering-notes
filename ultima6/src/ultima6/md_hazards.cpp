@@ -518,6 +518,69 @@ void Game::mdRayShot(int attacker, int weapon, int tx, int ty) {
 	}
 }
 
+// sub_29CE2, the worktypes of Martian Dreams that have a routine of their own: 0x13 (sub_1C622) a thing that drifts (5 moves; in the maze dream 0x44 the creature 0x18E does it only half the turns)
+// one step in a random direction and hurts whatever shares its square for 1-10 twice; 0x15 (sub_1D819, the child): walks up to the nearest member and hits one next to it for 6; 0x1A
+// (sub_2AF67) turns the person into a plain thing of the same looks (its hit points the quantity, its quality kept) where it stands. APPROX(97): the others (0xD Stoker, 0x11, 0x12, 0x14,
+// 0x16 - 0x19: sub_1D230, sub_1D7E6, sub_1C91A, sub_1CDC2, sub_1C710, sub_1D89E, sub_50FEC, sub_1CB44) act as the engine's plain fighters do.
+bool Game::mdWorktype(int actor) {
+	ObjList &al = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
+		return false;
+	int wt = al.worktype[actor];
+	if (wt != 0x13 && wt != 0x15 && wt != 0x1A)
+		return false;
+	World::Obj &o = _world.objects[k];
+	if (wt == 0x1A) {
+		int made = seMake(o.type, o.x, o.y, o.z, al.hp[actor], al.objQuantity[actor] >> 8);
+		_world.objects[made].frame = o.frame;
+		_world.spendMoves(actor, 5);
+		_world.deleteObject(k);
+		return true;
+	}
+	if (wt == 0x15) {
+		int best = -1, bestD = 99;
+		for (int m = 0; m < al.partySize; ++m) {
+			int a = al.partyRoster[m], mk = _world.actorObject(a);
+			if (mk < 0 || (al.status[a] & 0x10) || a == actor)
+				continue;
+			int d = std::max(std::abs(_world.objects[mk].x - o.x), std::abs(_world.objects[mk].y - o.y));
+			if (d < bestD) {
+				bestD = d;
+				best = a;
+			}
+		}
+		if (best >= 0) {
+			int mk = _world.actorObject(best);
+			if (bestD < 2)
+				_combat.applyDamage(actor, best, 6);
+			else
+				_creatures.walkTo(actor, _world.objects[mk].x, _world.objects[mk].y);
+		}
+		_world.spendMoves(actor, 3);
+		return true;
+	}
+	// 0x13
+	_world.spendMoves(actor, 5);
+	if (o.type == 0x18E && _mdDreamId == 0x44 && seRoll(0, 1) != 0)
+		return true;
+	static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+	int dir = seRoll(0, 7), mask = o.z == 0 ? 0x3FF : 0xFF;
+	MoveRules rules;
+	int nx = (o.x + DX[dir]) & mask, ny = (o.y + DY[dir]) & mask;
+	if (_movement.check(nx, ny, o.z, k, rules).passable)
+		_world.moveObject(k, nx, ny, o.z);
+	std::vector<int> here;
+	_world.objectsAt(_world.objects[k].x, _world.objects[k].y, _world.objects[k].z, here);
+	for (int h : here) {
+		int a = _world.objects[h].actor;
+		if (h == k || a < 0 || al.hp[a] == 0 || (al.status[a] & 0x10))
+			continue;
+		_combat.applyDamage(actor, a, seRoll(1, 10) + seRoll(1, 10));
+	}
+	return true;
+}
+
 // What the hour changing does (sub_22B27's hour loop): in thin air (while not asleep-until-dawn or dreaming) each member but the mechanical man (6) breathes a charge of the oxygen tank 0x83
 // (the quantity; the last charge uses the tank up and the next tank is looked for), without one he gasps; the street lamps (0xE4) are on (frame 7) by night and off (3) by day when the power of the
 // surface is on

@@ -1,6 +1,7 @@
 #ifndef ULTIMA6_ULTIMA6_CREATURES_H
 #define ULTIMA6_ULTIMA6_CREATURES_H
 
+#include <functional>
 #include "engine/random.h"
 #include "ultima6/actors.h"
 #include "ultima6/combat.h"
@@ -50,6 +51,8 @@ public:
 
 	int count() const; // living temporary actors
 
+	/** The worktypes of Martian Dreams that its own code acts on (actor_worktype_act, sub_29CE2): called first, true when it did the turn. */
+	std::function<bool(int)> ownTurn;
 	int spawn(int type, int worktype, int x, int y, int z, bool exact = false);
 	/** One step of an actor towards a square (sub_29317); true if it moved. */
 	bool walkTo(int actor, int x, int y) {

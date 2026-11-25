@@ -248,6 +248,30 @@ int main() {
 		CHECK(w.objects[water].frame == 3);
 	}
 
+	// the worktypes of Martian Dreams' own: 0x15 (the child) hits a member next to it for 6, 0x1A turns a person into a plain thing, 0x13 drifts and hurts what shares its square
+	{
+		int victim = al.partyRoster[0], vk = w.actorObject(victim);
+		w.moveObject(vk, g.x, g.y, 0);
+		int kid = w.actorObject(0x44);
+		w.moveObject(kid, g.x + 1, g.y, 0);
+		al.hp[victim] = 200;
+		al.worktype[0x44] = 0x15;
+		CHECK(g.mdWorktype(0x44));
+		CHECK(al.hp[victim] == 194);
+		al.worktype[0x44] = 0x1A;
+		int type = w.objects[kid].type, count0 = 0, count1 = 0;
+		for (const World::Obj &o : w.objects)
+			count0 += !o.deleted && o.actor < 0 && o.type == type && o.x == g.x + 1 && o.y == g.y;
+		CHECK(g.mdWorktype(0x44));
+		for (const World::Obj &o : w.objects)
+			count1 += !o.deleted && o.actor < 0 && o.type == type && o.x == g.x + 1 && o.y == g.y;
+		CHECK(w.objects[kid].deleted && count1 == count0 + 1);
+		int drifter = w.actorObject(0x45);
+		w.moveObject(drifter, g.x, g.y, 0);
+		al.worktype[0x45] = 0x13;
+		CHECK(g.mdWorktype(0x45));
+	}
+
 	std::printf(failures ? "FAILED\n" : "ok\n");
 	return failures ? 1 : 0;
 }

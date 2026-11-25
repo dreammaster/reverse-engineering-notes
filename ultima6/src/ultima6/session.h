@@ -152,6 +152,7 @@ public:
 	int mdLight() const;                           // byte_4112B
 	int mdDefence(int actor) const;                // sub_18286
 	void mdRayShot(int attacker, int weapon, int tx, int ty); // sub_18A64
+	bool mdWorktype(int actor);                    // sub_29CE2's own worktypes
 	void mdHazard(int actor);                      // sub_22780 / sub_22382
 	void mdMinute();                               // sub_22B27(1)
 	void mdHour();                                 // its hour loop
