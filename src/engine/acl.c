@@ -83,6 +83,17 @@ void acl_init(AclVM *vm, const Mp2 *mp2) {
 		if (mp2->sec[1].rec[d] && mp2->sec[1].len[d] >= 4) vm->doorw[d] = (uint16_t)((mp2->sec[1].rec[d][2] << 8) | mp2->sec[1].rec[d][3]);
 }
 
+/* a thing of the player's (a weapon's ammunition or a spell's projectile, 1000:16A37) starts to fly from (x, y, z) in the current room; its own state (charges) is kept */
+void acl_place_shot(AclVM *vm, int id, int room, int x, int y, int z, int vx, int vy) {
+	if (id <= 0 || id >= ACL_THINGS || !vm->present[id]) return;
+	vm->flags[id] &= (uint8_t)~0x80;
+	vm->tail[id][5] &= (uint8_t)~0x80;
+	vm->pos[3 * id] = (uint8_t)x; vm->pos[3 * id + 1] = (uint8_t)y; vm->pos[3 * id + 2] = (uint8_t)z;
+	vm->room[id] = (uint8_t)room;
+	vm->mstate[id][0] = 3;
+	vm->mstate[id][3] = (uint8_t)vx; vm->mstate[id][4] = (uint8_t)vy;
+}
+
 void acl_spawn_shot(AclVM *vm, int id, int from, int vx, int vy) {
 	if (id < 0 || id >= ACL_THINGS || from < 0 || from >= ACL_THINGS || !vm->present[id] || !vm->present[from] || !vm->mp2) return;
 	id = spawn_id(vm, id, vm->room[from]);

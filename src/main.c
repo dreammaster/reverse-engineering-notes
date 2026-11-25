@@ -410,9 +410,11 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 			}
 	}
 	rv->vm.energy = rv->vm.energy_max = rv->energy_max_cfg;
-	if (getenv("CAD_CARRY")) { int t = 0, a0 = -1, a1 = -1; sscanf(getenv("CAD_CARRY"), "%d:%d:%d", &t, &a0, &a1); if (t > 0 && t < ACL_THINGS) { rv->vm.present[t] = 1; rv->vm.room[t] = 0xFF; if (a0 >= 0) rv->vm.tail[t][0] = (uint8_t)a0; if (a1 >= 0) rv->vm.tail[t][1] = (uint8_t)a1; } }   /* debugging aid: carry this thing from the start (optionally with A[0], A[1]) */
+	if (getenv("CAD_CARRY")) { int t = 0, a0 = -1, a1 = -1; sscanf(getenv("CAD_CARRY"), "%d:%d:%d", &t, &a0, &a1); if (t > 0 && t < ACL_THINGS) { rv->vm.present[t] = 1; rv->vm.room[t] = 0xFF; rv->last_item = t; if (a0 >= 0) rv->vm.tail[t][0] = (uint8_t)a0; if (a1 >= 0) rv->vm.tail[t][1] = (uint8_t)a1; } }   /* debugging aid: carry this thing from the start (optionally with A[0], A[1]) */
 	if (getenv("CAD_SPELLS")) for (int t = 0; t < ACL_THINGS; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!sp || !rv->vm.present[t] || (sp->header[0x16] != 1 && sp->header[0x16] != 2 && sp->header[0x16] != 4)) continue; const uint8_t *a = rv->vm.tail[t];
 		fprintf(stderr, "SPELLTHING %d class %d A %02x %02x %02x %02x %02x %02x %02x %02x %02x\n", t, sp->header[0x16], a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]); }
+	if (getenv("CAD_MOVE")) { int t = 0, x = 0, y = 0; if (sscanf(getenv("CAD_MOVE"), "%d:%d:%d", &t, &x, &y) == 3 && t > 0 && t < ACL_THINGS) { rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; } }   /* debugging aid: put a thing at x, y */
+	if (getenv("CAD_CLASS")) { int t = atoi(getenv("CAD_CLASS")); const ObjSprite *sp = thing_sprite(rv, t); fprintf(stderr, "CLASS %d: %d mode %d A %02x %02x %02x %02x %02x %02x %02x %02x flags %02x room %d\n", t, sp ? sp->header[0x16] : -1, rv->vm.mstate[t][0], rv->vm.tail[t][0], rv->vm.tail[t][1], rv->vm.tail[t][2], rv->vm.tail[t][3], rv->vm.tail[t][4], rv->vm.tail[t][5], rv->vm.tail[t][6], rv->vm.tail[t][7], rv->vm.flags[t], rv->vm.room[t]); fprintf(stderr, "  B"); for (int i = 0; i < 10; i++) fprintf(stderr, " %02x", rv->vm.mstate[t][i]); fprintf(stderr, " pos %d,%d,%d\n", rv->vm.pos[3*t], rv->vm.pos[3*t+1], rv->vm.pos[3*t+2]); }
 	if (getenv("CAD_LOOKTEXT")) { int t = atoi(getenv("CAD_LOOKTEXT")); char tx[200] = ""; const ObjSprite *sp = thing_sprite(rv, t);   /* debugging aid: print the class-specific description of a thing */
 		fprintf(stderr, "LOOK %d class %d: %s\n", t, sp ? sp->header[0x16] : -1, sp && thing_description(rv, t, sp, tx, sizeof(tx)) ? tx : "(none)"); }
 	if (getenv("CAD_ENERGY")) rv->vm.energy = atoi(getenv("CAD_ENERGY"));     /* debugging aid: start with this energy */
@@ -775,12 +777,41 @@ static void walker_sync_boxes(Walker *wk, RoomView *rv) {
 	}
 }
 
+/* A thing of the player's (class 81h / 84h weapon ammunition, 82h spell projectile) flies into a creature (1000:6F62 loc_17327 / loc_17250). Weapon shots: the creature
+ * is spared when its A[5] has the bit of the shot's damage type A[5] or A[6] bit 0 is set, otherwise A[1] of the shot is subtracted from its hit points A[0]; at 0 or
+ * below event 23 (death). Spell projectiles run the spell's routine with the creature as the target: spell 0 (085C) subtracts A[1] and kills on underflow. */
+static void shot_hits(RoomView *rv, int shot, int victim) {
+	if (victim <= 0 || victim >= ACL_THINGS || victim == shot) return;
+	const ObjSprite *vs = thing_sprite(rv, victim), *ss = thing_sprite(rv, shot);
+	if (!vs || !ss || vs->header[0x16] != 3 || (rv->vm.flags[victim] & 0x80) || (rv->vm.tail[victim][5] & 0x80)) return;
+	const uint8_t *sa = rv->vm.tail[shot];
+	uint8_t *ca = rv->vm.tail[victim];
+	int dead = 0;
+	if (ss->header[0x16] == 0x82) {
+		if ((sa[0] & 0x7F) != 0) return;
+		if (ca[0] < sa[1]) { ca[0] = 0; dead = 1; } else ca[0] = (uint8_t)(ca[0] - sa[1]);
+	} else {
+		int type = sa[5];
+		if ((type < 8 && (ca[5] & (1 << type))) || (ca[6] & 1)) return;
+		int hp = ca[0] - sa[1];
+		if (hp > 0) ca[0] = (uint8_t)hp; else { ca[0] = 0; dead = 1; }
+	}
+	if (dead) {
+		rv->vm.queue_n = 0;
+		acl_thing_event(&rv->vm, &rv->mp2, victim, 23, 0);
+		for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+		rv->pending_rebuild |= rv_changed(rv);
+		roomview_flush_messages(rv);
+	}
+}
+
 /* One move attempt of a creature (1000:6F62 -> 1000:116E0): if the target box overlaps the player the creature stays and the player is hit — energy -= A[1] (the
  * creature's tail byte 1, 1000:72EC -> 81C8) and event 9 (argument 0) is raised for the creature; otherwise the game's collision test decides. */
 static void creature_move(Walker *wk, RoomView *rv, RoomObj *o, int ddx, int ddy, int gx, int gy, int *moved, int *hit) {
 	int tx = o->x1 + ddx, ty = o->y1 + ddy;
 	int ox0 = tx - o->xs, oy0 = ty - o->ys;
-	if (wk->x1 >= ox0 && wk->x1 - PL_XS <= tx && wk->y1 >= oy0 && wk->y1 - PL_YS <= ty) {
+	int mcls = o->sp->header[0x16];
+	if ((mcls == 3 || mcls == 0x80) && wk->x1 >= ox0 && wk->x1 - PL_XS <= tx && wk->y1 >= oy0 && wk->y1 - PL_YS <= ty) {
 		if (!*hit) {                                   /* one hit per creature and step */
 			*hit = 1;
 			{                                                  /* 1000:172EC: a shield (ds:6AB bit = the creature's damage type A[5], power ds:6AC) swallows the hit when -damage - power is still negative as a byte */
@@ -806,6 +837,8 @@ static void creature_move(Walker *wk, RoomView *rv, RoomObj *o, int ddx, int ddy
 		rv->pos_seen[3 * o->thing] = rv->vm.pos[3 * o->thing]; rv->pos_seen[3 * o->thing + 1] = rv->vm.pos[3 * o->thing + 1];
 		roomobj_moved(o, gx, gy);
 		*moved = 1;
+	} else if ((mcls == 0x81 || mcls == 0x82 || mcls == 0x84) && cr.count != 0xFF && cr.count != 0xFE) {
+		for (int k = 0; k < cr.n; k++) { shot_hits(rv, o->thing, cr.ids[k]); *hit = 1; }
 	}
 }
 
@@ -819,12 +852,13 @@ static void creatures_step(Walker *wk, RoomView *rv) {
 	int active = 0, moved = 0, gw, gh, gx, gy;
 	if (!roomview_geom(rv, &gw, &gh, &gx, &gy))
 		return;
-	for (int i = 0; i < rv->ro.n && active < 6; i++) {
+	for (int i = 0; i < rv->ro.n; i++) {
 		RoomObj *o = &rv->ro.o[i];
 		int h16 = o->sp->header[0x16], shot = (h16 & 0x80) != 0 && rv->vm.mstate[o->thing][0] == 3;       /* header bit 7 + velocity mode: a shot (thing 776 of level 3) */
 		if ((h16 != 3 && !shot) || (rv->vm.tail[o->thing][5] & 0x80) || (rv->vm.flags[o->thing] & 0x80))
 			continue;
-		active++;
+		if (h16 == 3 && active >= 6) continue;                 /* at most 6 active creatures; shots are not counted */
+		if (h16 == 3) active++;
 		if (h16 == 3 && acl_timer_active(&rv->vm, 0x22)) continue;        /* freeze (effect 22h, ds:64D): creatures stand still (1000:171DD) */
 		uint8_t *ms = rv->vm.mstate[o->thing];
 		int hit = 0;
@@ -1359,6 +1393,31 @@ static void cast_blast(Walker *wk, RoomView *rv, int item) {
 	rv->pending_rebuild |= rv_changed(rv);
 	roomview_flush_messages(rv);
 }
+/* the player's projectile leaves in the facing direction (1000:16A37: the thing is placed at the shooter, B[3], B[4] = +-127 from the facing) */
+static void launch_shot(Walker *wk, RoomView *rv, int id) {
+	int fx = wk->dir == DIR_RIGHT ? 1 : wk->dir == DIR_LEFT ? -1 : 0, fy = wk->dir == DIR_DOWN ? 1 : wk->dir == DIR_UP ? -1 : 0;
+	acl_place_shot(&rv->vm, id, rv->room, wk->x1 + 2 * fx, wk->y1 + 2 * fy, wk->z, 127 * fx, 127 * fy);
+	rv->pending_rebuild = 1;
+}
+/* fire with a held throwing weapon (class 4, 1000:69CF): A[0..1] = the ammunition thing flown (the weapon needs no ammunition in the rucksack when A[2] = 0), sound 14h,
+   the shots A[2] of the ammunition drop (FFh = unlimited): at 0 message 15, and a weapon with A[4] bit 0 is used up too */
+static void fire_weapon(Walker *wk, RoomView *rv, int item) {
+	uint8_t *a = rv->vm.tail[item];
+	int ammo = (a[0] << 8) | a[1];
+	if (a[2] != 0 || ammo <= 0 || ammo >= ACL_THINGS || !rv->vm.present[ammo] || rv->vm.tail[ammo][2] == 0) {
+		if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 14;
+		roomview_flush_messages(rv);
+		return;
+	}
+	snd_play(0x14);
+	launch_shot(wk, rv, ammo);
+	uint8_t *sh = &rv->vm.tail[ammo][2];
+	if (*sh != 0xFF && --*sh == 0) {
+		if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 15;
+		if (a[4] & 1) { rv->vm.flags[item] |= 0x80; if (rv->held == item) rv->held = 0; }
+		roomview_flush_messages(rv);
+	}
+}
 /* fire with a held spell item (1000:6896): refused with message 25h while A[3] bit 7 is set; sound 11h (A[7] = 0, the projectile mode) or 06h,
    the spell's effect, then the charge count A[2] drops (16AC9: FFh = unlimited; at 0 the item is gone: message 0Fh and it leaves the hand).
    Only the spells 0, 1, 2, 4, 5, 7 and 8 have an effect in the port; the others are ignored (no charge used) */
@@ -1368,7 +1427,11 @@ static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 	if (sp != 0 && sp != 1 && sp != 2 && sp != 4 && sp != 5 && sp != 7 && sp != 8) return;
 	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
 	snd_play(a[7] == 0 ? 0x11 : 0x06);
-	if (sp == 0) cast_strike(wk, rv, item);
+	int proj = (a[4] << 8) | a[5];
+	if (sp == 0 && a[7] == 0 && proj > 0 && proj < ACL_THINGS && rv->vm.present[proj]) {   /* the projectile thing flies and strikes on contact (1000:6896 / 17250) */
+		rv->vm.tail[proj][0] = (uint8_t)(sp | 0x80); rv->vm.tail[proj][1] = a[1]; rv->vm.tail[proj][5] = a[8];
+		launch_shot(wk, rv, proj);
+	} else if (sp == 0) cast_strike(wk, rv, item);
 	else if (sp == 1) cast_smite(wk, rv, item);
 	else if (sp == 4) map_open_magic(rv);
 	else if (sp == 2) acl_set_timer(&rv->vm, 0x22, a[1]);               /* freeze (TAD 093E): effect timer 22h for A[1] units */
@@ -1387,7 +1450,8 @@ static void throw_held(Walker *wk, RoomView *rv) {
 	int t = rv->held, x, y, z;
 	{
 		const ObjSprite *hs = t > 0 && t < ACL_THINGS ? thing_sprite(rv, t) : NULL;
-		if (hs && hs->header[0x16] == 1) { cast_spell_item(wk, rv, t); return; }                            /* a spell item (1000:6896) */
+		if (hs && hs->header[0x16] == 1) { cast_spell_item(wk, rv, t); return; }
+		if (hs && hs->header[0x16] == 4) { fire_weapon(wk, rv, t); return; }                                 /* a throwing weapon (1000:69CF) */                            /* a spell item (1000:6896) */
 	}
 	if (t <= 0 || t >= ACL_THINGS || rv->vm.room[t] != 0xFF || rv->nfly >= 8) return;
 	snd_play(0x0E);
@@ -1687,7 +1751,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	wk->tick++;
 	rv->vm.held = rv->held;
 	rv->vm.px = wk->x1; rv->vm.py = wk->y1; rv->vm.pz = wk->z;
-	if (getenv("CAD_SHOT") && (wk->tick % 4) == 0 && 1) fprintf(stderr, "S776 tick %d pos %d,%d,%d flags %02x mode %d vel %d,%d\n", wk->tick, rv->vm.pos[3*776], rv->vm.pos[3*776+1], rv->vm.pos[3*776+2], rv->vm.flags[776], rv->vm.mstate[776][0], (int8_t)rv->vm.mstate[776][3], (int8_t)rv->vm.mstate[776][4]);
+	if (getenv("CAD_SHOT") && (wk->tick % 4) == 0) { int st = atoi(getenv("CAD_SHOT")); fprintf(stderr, "S%d tick %d pos %d,%d,%d flags %02x room %d mode %d vel %d,%d A2 %d A0 %d player %d,%d dir %d\n", st, wk->tick, rv->vm.pos[3*st], rv->vm.pos[3*st+1], rv->vm.pos[3*st+2], rv->vm.flags[st], rv->vm.room[st], rv->vm.mstate[st][0], (int8_t)rv->vm.mstate[st][3], (int8_t)rv->vm.mstate[st][4], rv->vm.tail[st][2], rv->vm.tail[st][0], wk->x1, wk->y1, wk->dir); }
 	if (getenv("CAD_VARS")) { static uint8_t pg[0x190]; for (int i = 0; i < 0x190; i++) if (pg[i] != rv->vm.g[i]) { fprintf(stderr, "G tick %d g[%02x] %02x -> %02x\n", wk->tick, i, pg[i], rv->vm.g[i]); pg[i] = rv->vm.g[i]; } }
 	if (g_snd_log) { static int pf = -1, pr = -1; if (rv->vm.flags[467] != pf || rv->vm.room[467] != pr) { fprintf(stderr, "T467 unsup %d last %02x tick %d flags %02x room %d pos %d,%d,%d\n", rv->tad.unsupported, rv->tad.last_unsupported, wk->tick, rv->vm.flags[467], rv->vm.room[467], rv->vm.pos[3*467], rv->vm.pos[3*467+1], rv->vm.pos[3*467+2]); pf = rv->vm.flags[467]; pr = rv->vm.room[467]; } }
 	if (rv->look_pic) { int any = 0; for (int i = 0; i < 4; i++) any |= rv->msgs[i].active; if (!any) rv->look_pic = 0; }

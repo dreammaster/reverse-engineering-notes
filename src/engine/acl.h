@@ -70,6 +70,7 @@ void acl_init(AclVM *vm, const Mp2 *mp2);
 void acl_restore_clones(AclVM *vm);
 /* put a fresh copy of thing `id` at the place of thing `from` (a shot fired by a TAD routine) with the velocity bytes vx, vy */
 void acl_spawn_shot(AclVM *vm, int id, int from, int vx, int vy);
+void acl_place_shot(AclVM *vm, int id, int room, int x, int y, int z, int vx, int vy);
 /* 1000:81C8 with its sounds */
 void acl_energy_change(AclVM *vm, int delta);
 /* effect timers (ds:62B + effect, counted down every 17 game steps by tad_timer_unit): 20h alcohol, 21h giant jump, 22h freeze, 23h super fast ... (1000:8275) */
