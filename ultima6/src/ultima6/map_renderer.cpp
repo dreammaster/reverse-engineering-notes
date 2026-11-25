@@ -136,10 +136,22 @@ void MapRenderer::composite(Framebuffer &screen, int x, int y, int z, const View
 	int left = x - CELLS / 2, top = y - CELLS / 2;
 	int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
 	buildRemap();
+	// Martian Dreams' turn of the world (word_4115E, sub_33E5C / sub_3442D): the cell at (dx, dy) from the middle is shown at (dx cos + dy sin, dy cos - dx sin) of the eight-step tables at ds:1BB8 /
+	// ds:1BC0; only the quarter turns (2, 4, 6) are drawn (the tiles themselves are not turned)
+	static const int COS[8] = {1, 1, 0, -1, -1, -1, 0, 1}, SIN[8] = {0, 1, 1, 1, 0, -1, -1, -1};
+	const int turn = (_turn & 1) ? 0 : (_turn & 7), tc = COS[turn], ts = SIN[turn], mid = CELLS / 2;
+	auto screenCell = [&](int cx, int cy, int &sx, int &sy) {
+		int dx = cx - mid, dy = cy - mid;
+		sx = mid + dx * tc + dy * ts;
+		sy = mid + dy * tc - dx * ts;
+	};
 
 	for (int cy = 0; cy < CELLS; ++cy)
-		for (int cx = 0; cx < CELLS; ++cx)
-			drawTile(view ? view->tile[cy][cx] : _world.map.tile(z, (left + cx) & mask, (top + cy) & mask), cx * CELL_SIZE, cy * CELL_SIZE);
+		for (int cx = 0; cx < CELLS; ++cx) {
+			int sx, sy;
+			screenCell(cx, cy, sx, sy);
+			drawTile(view ? view->tile[cy][cx] : _world.map.tile(z, (left + cx) & mask, (top + cy) & mask), sx * CELL_SIZE, sy * CELL_SIZE);
+		}
 
 	// objects: rows from the top so that taller pieces overlap the cell above correctly; the ring one
 	// cell outside the view is included because of the double-size tiles
@@ -168,8 +180,11 @@ void MapRenderer::composite(Framebuffer &screen, int x, int y, int z, const View
 							continue;
 					}
 					bool topTile = _world.flags.flags2[tile & (TileSet::COUNT - 1)] & 0x10;
-					if ((pass == 1) == topTile)
-						drawObject(o, cx, cy);
+					if ((pass == 1) == topTile) {
+						int sx, sy;
+						screenCell(cx, cy, sx, sy);
+						drawObject(o, sx, sy);
+					}
 				}
 			}
 		}
@@ -180,8 +195,11 @@ void MapRenderer::composite(Framebuffer &screen, int x, int y, int z, const View
 		for (int cy = 0; cy < CELLS; ++cy)
 			for (int cx = 0; cx < CELLS; ++cx) {
 				int l = view->light[cy][cx];
-				if (l > 0 && l < 4 && view->tile[cy][cx] != ViewGrid::UNSEEN && view->tile[cy][cx] != ViewGrid::DARK)
-					drawTile(ViewGrid::DARK + l, cx * CELL_SIZE, cy * CELL_SIZE);
+				if (l > 0 && l < 4 && view->tile[cy][cx] != ViewGrid::UNSEEN && view->tile[cy][cx] != ViewGrid::DARK) {
+					int sx, sy;
+					screenCell(cx, cy, sx, sy);
+					drawTile(ViewGrid::DARK + l, sx * CELL_SIZE, sy * CELL_SIZE);
+				}
 			}
 	}
 	if (darkness) {
@@ -190,10 +208,12 @@ void MapRenderer::composite(Framebuffer &screen, int x, int y, int z, const View
 				int d = darkness[cy * CELLS + cx];
 				if (!d)
 					continue;
+				int sx, sy;
+				screenCell(cx, cy, sx, sy);
 				for (int j = 0; j < CELL_SIZE; ++j)
 					for (int i = 0; i < CELL_SIZE; ++i)
 						if (d == 2 || ((i + j) & 1))
-							_buffer[(cy * CELL_SIZE + j) * BUFFER_SIZE + cx * CELL_SIZE + i] = 0;
+							_buffer[(sy * CELL_SIZE + j) * BUFFER_SIZE + sx * CELL_SIZE + i] = 0;
 			}
 	}
 	screen.blit(SCREEN_X, SCREEN_Y, &_buffer[SCREEN_Y * BUFFER_SIZE + SCREEN_X], VIEW_SIZE, VIEW_SIZE, BUFFER_SIZE);

@@ -43,6 +43,11 @@ public:
 	 */
 	void draw(Framebuffer &screen, int x, int y, int z, const ViewGrid &view, bool infravision);
 
+	/** Martian Dreams' turn of the world in eighths of a turn (word_4115E): the quarter turns 2, 4 and 6 turn the cells of the view round the middle. */
+	void setTurn(int turn) {
+		_turn = turn;
+	}
+
 	/**
 	 * How dark each of the 11 x 11 cells is for a party at (x, y, z) at an hour (0 lit, 1 dim, 2 black): the surface is dark at night, dungeons always;
 	 * what the party carries (a lit torch, the Light spell) lights a few squares around it and lit lamps, torches, candles and campfires on the
@@ -60,6 +65,7 @@ private:
 	const World &_world;
 	std::vector<uint8_t> _buffer;
 	unsigned _frame = 0;
+	int _turn = 0;
 	uint16_t _remap[TileSet::COUNT];
 };
 

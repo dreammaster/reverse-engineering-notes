@@ -610,6 +610,34 @@ int main() {
 		CHECK(!g.handleKey(' ') && g.endingStarted());
 	}
 
+	// the lever of the turned world (sub_53496 number 1, word_4115E = 4): the map is drawn half a turn round and a click above the middle leads the party the other way (sub_33E5C)
+	{
+		g.x = px;
+		g.y = py;
+		g.z = 0;
+		int lever = put(w, 0xC4, 0, px + 3, py + 3, 0);
+		w.objects[lever].quality = 0x15;
+		w.objects[lever].quantity = 1;
+		Framebuffer plain, turned;
+		g.render(plain);
+		g.mdLeverWorld(lever);
+		g.render(turned);
+		CHECK(std::memcmp(plain.pixels(), turned.pixels(), Framebuffer::WIDTH * Framebuffer::HEIGHT) != 0);
+		CHECK(g.mouseKey(8 + 5 * 16 + 4, 8 + 2 * 16 + 4, false) == KEY_DOWN);
+		// a square 0x1D1 of quality 6 turns the world three quarters
+		int dz = put(w, 0x1D1, 0, g.x, g.y, 0);
+		w.objects[dz].quality = 6;
+		g.log.clear();
+		g.mdStepOn();
+		CHECK(logText(g).find("You feel dizzy...") != std::string::npos);
+		CHECK(g.mouseKey(8 + 5 * 16 + 4, 8 + 2 * 16 + 4, false) == KEY_RIGHT || g.mouseKey(8 + 5 * 16 + 4, 8 + 2 * 16 + 4, false) == KEY_LEFT);
+		w.deleteObject(dz);
+		g.mdLeverWorld(lever); // (the lever turns it to normal again when it is turned)
+		g.mdLeverWorld(lever);
+		g.mdLeverWorld(lever); // back to normal
+		CHECK(g.mouseKey(8 + 5 * 16 + 4, 8 + 2 * 16 + 4, false) == KEY_UP);
+	}
+
 	// the end of a scene and the waking in one (the mirror, the manuscript ...): only while dreaming
 	g.mdDreamFinish(0x51);
 	CHECK(!g.mdDreaming());

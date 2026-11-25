@@ -767,6 +767,7 @@ void Game::mdDreamWake() {
 	for (int w = 0; w < 3; ++w)
 		mdSetPsychic(0, w, 0);
 	al.status[0] &= 0x7F;
+	_mdTurn = 0; // word_4115E: the world is as it was
 	gameClock.hour = 8;
 	gameClock.minute = 0;
 	gameClock.day = _mdWake[0];
@@ -1138,6 +1139,14 @@ void Game::mdStepOn() {
 	_world.objectsAt(x, y, z, here);
 	for (int i : here) {
 		const World::Obj &o = _world.objects[i];
+		if (!o.deleted && o.type == 0x1D1 && i != _leaderObject) { // sub_27EE6: a square that turns the world (the quality, 0-7, is the turn): "You feel dizzy..."
+			if (o.quality != _mdTurn) {
+				_mdTurn = o.quality & 7;
+				mdSfx(0x32);
+				message("You feel dizzy...\n");
+			}
+			continue;
+		}
 		if (o.deleted || o.type != 0x1CD || i == _leaderObject)
 			continue;
 		int kind = o.status & 0xE5;

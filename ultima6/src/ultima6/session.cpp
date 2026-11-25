@@ -781,6 +781,12 @@ int Game::mouseKey(int mx, int my, bool right) {
 		if (_pending || _talk || _inventory || _textActive)
 			return 0;
 		int dx = cx - 5, dy = cy - 5;
+		if (_world.game == GameId::MartianDreams && _mdTurn && !(_mdTurn & 1)) { // sub_33E5C: the click is turned as the world is
+			static const int COS[8] = {1, 1, 0, -1, -1, -1, 0, 1}, SIN[8] = {0, 1, 1, 1, 0, -1, -1, -1};
+			int c = COS[_mdTurn & 7], sn = SIN[_mdTurn & 7], nx = dx * c - dy * sn, ny = dx * sn + dy * c;
+			dx = nx;
+			dy = ny;
+		}
 		if (!dx && !dy)
 			return 0;
 		int ax = std::abs(dx), ay = std::abs(dy);
@@ -1124,6 +1130,7 @@ void Game::render(Framebuffer &screen) {
 		light = (59 - gameClock.minute) / 10 + 1;
 	else
 		light = 7;
+	_renderer.setTurn(_world.game == GameId::MartianDreams ? _mdTurn : 0);
 	if (_world.game == GameId::MartianDreams)
 		light = mdLight(); // byte_4112B: Mars's own day and the lamps in hand
 	bool lit = al.globals[0x12 + Magic::TIMER_LIGHT] != 0;
