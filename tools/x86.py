@@ -341,6 +341,12 @@ class CPU:
             self.r['cx'] = (self.r['cx'] - 1) & M16
             if self.r['cx']:
                 self.ip = (self.ip + (d - 256 if d >= 128 else d)) & M16
+        elif op in (0xE0, 0xE1):                      # LOOPNE / LOOPE
+            d = self.fetch8()
+            self.r['cx'] = (self.r['cx'] - 1) & M16
+            zf = bool(self.fl & ZF)
+            if self.r['cx'] and (zf if op == 0xE1 else not zf):
+                self.ip = (self.ip + (d - 256 if d >= 128 else d)) & M16
         elif op == 0xE3:
             d = self.fetch8()
             if not self.r['cx']:

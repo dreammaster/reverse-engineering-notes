@@ -423,6 +423,11 @@ void x86_step(X86 *c) {
 		int d = (int8_t)fetch8(c);
 		c->cx--;
 		if (c->cx) c->ip = (uint16_t)(c->ip + d);
+	} else if (op == 0xE0 || op == 0xE1) {                       /* LOOPNE / LOOPE */
+		int d = (int8_t)fetch8(c);
+		c->cx--;
+		int zf = !!(c->fl & ZF);
+		if (c->cx && (op == 0xE1 ? zf : !zf)) c->ip = (uint16_t)(c->ip + d);
 	} else if (op == 0xE3) {
 		int d = (int8_t)fetch8(c);
 		if (!c->cx) c->ip = (uint16_t)(c->ip + d);

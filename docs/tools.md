@@ -85,3 +85,5 @@ python3 tools/fuzz_items.py SEED COUNT    # the same with a carried spell / poti
 ```
 
 Debug environment variables of the port: `CAD_CARRY=thing[:A0[:A1]]`, `CAD_SPELLS`, `CAD_LOOKTEXT=thing`, `CAD_CLASS=thing`, `CAD_MOVE=thing:x:y`, `CAD_SHOT=thing`, `CAD_CREAT=thing|-1`, `CAD_ENERGY=n`, `CAD_SNDLOG`, `CAD_OPS`, `CAD_TADDIFF`, `CAD_VARS`.
+
+`tools/roland_midi.py` runs `ROLAND.BIN` on the Python 8086 interpreter and writes the driver's MPU-401 output as a Standard MIDI file (`python3 tools/roland_midi.py music 1 tune.mid 60`; effects 1-8 with `effect N`).
