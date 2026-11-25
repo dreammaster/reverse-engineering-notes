@@ -266,6 +266,32 @@ int main() {
 		for (const World::Obj &o : w.objects)
 			count1 += !o.deleted && o.actor < 0 && o.type == type && o.x == g.x + 1 && o.y == g.y;
 		CHECK(w.objects[kid].deleted && count1 == count0 + 1);
+		// 0x16 (the maze creature): it walks to the 0xA2 lying in the view and eats it
+		{
+			int mk = w.actorObject(0x46);
+			w.moveObject(mk, g.x + 9, g.y + 9, 0);
+			World::Obj bait;
+			bait.status = 0;
+			bait.x = (uint16_t)(g.x + 6);
+			bait.y = (uint16_t)(g.y + 9);
+			bait.z = 0;
+			bait.type = 0xA2;
+			bait.frame = 0;
+			bait.quantity = 1;
+			bait.quality = 0;
+			bait.actor = -1;
+			bait.parent = -1;
+			w.objects.push_back(bait);
+			w.addToMap((int)w.objects.size() - 1);
+			int lure = (int)w.objects.size() - 1;
+			al.worktype[0x46] = 0x16;
+			al.hp[0x46] = 50;
+			int d0 = 9;
+			for (int i = 0; i < 12 && !w.objects[lure].deleted; ++i)
+				g.mdWorktype(0x46);
+			(void)d0;
+			CHECK(w.objects[lure].deleted);
+		}
 		int drifter = w.actorObject(0x45);
 		w.moveObject(drifter, g.x, g.y, 0);
 		al.worktype[0x45] = 0x13;

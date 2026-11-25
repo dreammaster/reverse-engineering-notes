@@ -528,7 +528,7 @@ bool Game::mdWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
-	if (wt != 0x13 && wt != 0x15 && wt != 0x1A)
+	if (wt != 0x13 && wt != 0x15 && wt != 0x16 && wt != 0x1A)
 		return false;
 	World::Obj &o = _world.objects[k];
 	if (wt == 0x1A) {
@@ -560,11 +560,73 @@ bool Game::mdWorktype(int actor) {
 		_world.spendMoves(actor, 3);
 		return true;
 	}
+	static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+	auto hurtSquare = [&]() { // whatever shares the square of the creature is hurt for 1-10 twice
+		std::vector<int> here;
+		_world.objectsAt(_world.objects[k].x, _world.objects[k].y, _world.objects[k].z, here);
+		for (int h : here) {
+			int a = _world.objects[h].actor;
+			if (h == k || a < 0 || al.hp[a] == 0 || (al.status[a] & 0x10))
+				continue;
+			_combat.applyDamage(actor, a, seRoll(1, 10) + seRoll(1, 10));
+		}
+	};
+	if (wt == 0x16) { // sub_1C710 (the creature of the maze, 0x18E): it goes for the 0xA2 the body carries, else the one lying in the view; next to the body it strikes, next to the thing it eats it, which in the
+		// maze dream's last room (x 0x37 or more, y 0x37 or less; not while the flag 0x40 of actor 0x54 is set) ends the dream scene of actor 0x54
+		if (_mdDreamId == 0x60) {
+			_world.deleteObject(k);
+			return true;
+		}
+		int tx = -1, ty = -1, lure = -1;
+		bool body = mdFindCarried(0, 0xA2) >= 0;
+		int bk = _world.actorObject(0);
+		if (body && bk >= 0) {
+			tx = _world.objects[bk].x;
+			ty = _world.objects[bk].y;
+		} else {
+			for (size_t i = 0x101; i < _world.objects.size() && lure < 0; ++i) {
+				const World::Obj &t = _world.objects[i];
+				if (!t.deleted && t.onMap() && t.type == 0xA2 && mdInViewAt(t.x, t.y, t.z)) {
+					lure = (int)i;
+					tx = t.x;
+					ty = t.y;
+				}
+			}
+		}
+		if (tx < 0) { // nothing to go for: it drifts and hurts (sub_1C622)
+			_world.spendMoves(actor, 5);
+			int dir = seRoll(0, 7), mask = o.z == 0 ? 0x3FF : 0xFF;
+			MoveRules rules;
+			if (_movement.check((o.x + DX[dir]) & mask, (o.y + DY[dir]) & mask, o.z, k, rules).passable)
+				_world.moveObject(k, (o.x + DX[dir]) & mask, (o.y + DY[dir]) & mask, o.z);
+			hurtSquare();
+			return true;
+		}
+		if (std::max(std::abs(tx - o.x), std::abs(ty - o.y)) <= 1) {
+			if (body) {
+				_combat.attackWith(actor, 0, o.type, false);
+				_world.spendMoves(actor, 10);
+				return true;
+			}
+			_world.deleteObject(lure);
+			ObjList &al2 = _world.actors;
+			if (!(al2.talkFlags[0x54] & 0x40) && o.x >= 0x37 && o.y <= 0x37) {
+				mdDreamEnd(0x54);
+				al2.talkFlags[0x54] |= 2;
+				startTalk(0x54);
+				_talkEnd = [this]() { mdDreamWake(); };
+				return true;
+			}
+		}
+		_creatures.walkTo(actor, tx, ty);
+		hurtSquare();
+		_world.spendMoves(actor, 5);
+		return true;
+	}
 	// 0x13
 	_world.spendMoves(actor, 5);
 	if (o.type == 0x18E && _mdDreamId == 0x44 && seRoll(0, 1) != 0)
 		return true;
-	static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
 	int dir = seRoll(0, 7), mask = o.z == 0 ? 0x3FF : 0xFF;
 	MoveRules rules;
 	int nx = (o.x + DX[dir]) & mask, ny = (o.y + DY[dir]) & mask;
