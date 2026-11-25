@@ -115,7 +115,7 @@ typedef struct RoomView_ {
 	uint8_t verbs[VERB_SLOTS];  /* verb icons of the touched object (slots) */
 	int nverbs;
 	int energy_max_cfg;        /* from LEVn.MP1 */
-	int slow_phase;
+	int slow_phase, tick_dbg;
 	uint16_t spell_str[100], potion_str[100]; int spell_tbl_ok;   /* LEVn.MP1: LNG string ids of the spell / potion names (the tables ds:44 / ds:46) */
 	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
 	int carry_pending, carry_energy; uint32_t carry_money, carry_score;   /* stats carried into the next level */
@@ -884,6 +884,7 @@ static void creatures_step(Walker *wk, RoomView *rv) {
 		if (ms[0] == 3) {
 			int vx, vy;
 			rv->tad.beh_thing = o->thing;
+			if (getenv("CAD_CREAT") && (atoi(getenv("CAD_CREAT")) < 0 || o->thing == atoi(getenv("CAD_CREAT"))) && rv->tick_dbg++ % 10 == 0) fprintf(stderr, "CREAT %d go %d beh %d at %d,%d player %d,%d\n", o->thing, go, rv->vm.tail[o->thing][1], o->x1, o->y1, wk->x1, wk->y1);
 			int have = go && tad_run_behaviour(&rv->tad, &rv->vm, rv->vm.tail[o->thing][1], o->x1, o->y1, wk->x1, wk->y1, &vx, &vy) == 0;
 			if (go && !have && shot) { vx = (int8_t)ms[3]; vy = (int8_t)ms[4]; have = 1; }      /* no behaviour routine: the velocity the shooter set */
 			if (have) {
@@ -1478,7 +1479,7 @@ static void cast_on_target(RoomView *rv, int item, int t) {
 /* spell numbers of the two games' TAD tables, reduced to Cadaver 1's numbering (the Payoff inserted TRANSLATE / TELEPORT / REVEAL ... and moved MAP to 30; its routines match by name, see formats.md) */
 static int spell_sem(const RoomView *rv, int n) {
 	if (!rv->use_tata) return n;
-	static const int8_t pay[31] = {0, 1, 2, -1, 5, -1, 7, 8, -1, 10, 11, -1, 13, 14, 15, -1, -1, -1, 19, 20, 21, -1, 0, -1, -1, -1, -1, 28, -1, -1, 4};
+	static const int8_t pay[31] = {0, 1, 2, -1, 5, -1, 7, 8, -1, 10, 11, -1, 13, 14, 15, -1, -1, 18, 19, 20, 21, 22, 0, -1, -1, -1, -1, 28, -1, -1, 4};
 	return n >= 0 && n < 31 ? pay[n] : -1;
 }
 static int spell_is_targeted(const RoomView *rv, const uint8_t *a) { int sp = spell_sem(rv, a[0]); return a[7] == 2 && (sp == 10 || sp == 13 || sp == 14 || sp == 15 || sp == 19 || sp == 20 || sp == 21 || sp == 28); }
@@ -1488,7 +1489,7 @@ static int spell_is_targeted(const RoomView *rv, const uint8_t *a) { int sp = sp
 static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 	uint8_t *a = rv->vm.tail[item];
 	int sp = spell_sem(rv, a[0]);
-	if (sp != 0 && sp != 1 && sp != 2 && sp != 4 && sp != 5 && sp != 7 && sp != 8 && sp != 11 && !spell_is_targeted(rv, a)) return;
+	if (sp != 0 && sp != 1 && sp != 2 && sp != 4 && sp != 5 && sp != 7 && sp != 8 && sp != 11 && sp != 18 && sp != 22 && !spell_is_targeted(rv, a)) return;
 	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
 	snd_play(a[7] == 0 ? 0x11 : 0x06);
 	int proj = (a[4] << 8) | a[5];
@@ -1496,7 +1497,8 @@ static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 		int tt = (rv->touch_age < 12 && rv->nverbs && rv->touch_thing > 0) ? rv->touch_thing : -1;
 		if (tt < 0 || tt >= ACL_THINGS) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x29; roomview_flush_messages(rv); return; }
 		cast_on_target(rv, item, tt);
-	} else if (sp == 11) acl_set_timer(&rv->vm, 0x24, a[1]);            /* SLOW CREATURE (0AE9): ds:6CA = 1 and effect timer 24h */
+	} else if (sp == 18 || sp == 22) acl_set_timer(&rv->vm, sp == 18 ? 0x25 : 0x26, a[1]);   /* CONFUSION / TURN MONSTER (0B6E / 0BF7): effect timer 25h / 26h; the creature behaviours test ds:650 (random direction) / ds:651 (flee: the direction + 4) */
+	else if (sp == 11) acl_set_timer(&rv->vm, 0x24, a[1]);            /* SLOW CREATURE (0AE9): ds:6CA = 1 and effect timer 24h */
 	else if (sp == 0 && a[7] == 0 && proj > 0 && proj < ACL_THINGS && rv->vm.present[proj]) {   /* the projectile thing flies and strikes on contact (1000:6896 / 17250) */
 		rv->vm.tail[proj][0] = (uint8_t)(a[0] | 0x80); rv->vm.tail[proj][1] = a[1]; rv->vm.tail[proj][5] = a[8];
 		launch_shot(wk, rv, proj);
