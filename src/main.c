@@ -122,6 +122,7 @@ typedef struct RoomView_ {
 	int carry_pending, carry_energy; uint32_t carry_money, carry_score;   /* stats carried into the next level */
 	int room_snd[8], room_snd_thing[8], nroom_snd, snd_key; /* sounds of the room's creatures (stopped when the room changes) */
 	int ruck_target;           /* thing touched when the rucksack was opened (insert / give target), -1 = none */
+	int gx, grow, gvis, gscroll;   /* the grid cursor of 1000:125CF: column ds:6AF, absolute row ds:6B0, visible row ds:6B1, first visible row ds:6B6 */
 	int grid_open;             /* the rucksack strip shown with a look at a carried thing: all carried things, the current one framed in green (emulator, 2 things) */
 	int look_pic;              /* thing+1 whose picture is shown next to the look message (rucksack look), 0 = none */
 	int map_magic;             /* spell 4 (TAD routine 0974, ds:6C9 = 81h): the map shows every room not flagged 80h in its record byte 17h */
@@ -426,6 +427,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	if (getenv("CAD_CARRY")) { int t = 0, a0 = -1, a1 = -1; sscanf(getenv("CAD_CARRY"), "%d:%d:%d", &t, &a0, &a1); if (t > 0 && t < ACL_THINGS) { rv->vm.present[t] = 1; rv->vm.room[t] = 0xFF; rv->vm.flags[t] &= (uint8_t)~0x80; rv->last_item = t; if (a0 >= 0) rv->vm.tail[t][0] = (uint8_t)a0; if (a1 >= 0) rv->vm.tail[t][1] = (uint8_t)a1; } }   /* debugging aid: carry this thing from the start (optionally with A[0], A[1]) */
 	if (getenv("CAD_SPELLS")) for (int t = 0; t < ACL_THINGS; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!sp || !rv->vm.present[t] || (sp->header[0x16] != 1 && sp->header[0x16] != 2 && sp->header[0x16] != 4)) continue; const uint8_t *a = rv->vm.tail[t];
 		fprintf(stderr, "SPELLTHING %d class %d A %02x %02x %02x %02x %02x %02x %02x %02x %02x\n", t, sp->header[0x16], a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]); }
+	if (getenv("CAD_CARRYN")) { int n = atoi(getenv("CAD_CARRYN")); for (int t = 1; t < ACL_THINGS && n > 0; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!rv->vm.present[t] || !sp || !(sp->header[0x17] || sp->header[0x16] == 1 || sp->header[0x16] == 2) || sp->nframes < 1) continue; rv->vm.room[t] = 0xFF; rv->vm.flags[t] &= (uint8_t)~0x80; rv->last_item = t; n--; } }   /* debugging aid: carry this many things from the start */
 	if (getenv("CAD_MOVE")) { int t = 0, x = 0, y = 0; if (sscanf(getenv("CAD_MOVE"), "%d:%d:%d", &t, &x, &y) == 3 && t > 0 && t < ACL_THINGS) { rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; } }   /* debugging aid: put a thing at x, y */
 	if (getenv("CAD_CLASS")) { int t = atoi(getenv("CAD_CLASS")); const ObjSprite *sp = thing_sprite(rv, t); fprintf(stderr, "CLASS %d: %d mode %d A %02x %02x %02x %02x %02x %02x %02x %02x flags %02x room %d\n", t, sp ? sp->header[0x16] : -1, rv->vm.mstate[t][0], rv->vm.tail[t][0], rv->vm.tail[t][1], rv->vm.tail[t][2], rv->vm.tail[t][3], rv->vm.tail[t][4], rv->vm.tail[t][5], rv->vm.tail[t][6], rv->vm.tail[t][7], rv->vm.flags[t], rv->vm.room[t]); fprintf(stderr, "  B"); for (int i = 0; i < 10; i++) fprintf(stderr, " %02x", rv->vm.mstate[t][i]); fprintf(stderr, " pos %d,%d,%d\n", rv->vm.pos[3*t], rv->vm.pos[3*t+1], rv->vm.pos[3*t+2]); }
 	if (getenv("CAD_LOOKTEXT")) { int t = atoi(getenv("CAD_LOOKTEXT")); char tx[200] = ""; const ObjSprite *sp = thing_sprite(rv, t);   /* debugging aid: print the class-specific description of a thing */
@@ -1109,27 +1111,30 @@ static void ruck_picture(uint8_t *px, const ObjSprite *sp) {
  * thing's picture (outer ring colour 1 at (23,25)-(57,59), inner ring 3, brown interior; sprite origin = window (24, 26) + (5, 10), as in the panel window) */
 static void grid_draw(uint8_t *px, const RoomView *rv) {
 	int l[64], n = ruck_list(rv, l, 64);
-	if (n > 16) n = 16;
 	if (n < 1 || !g_tiles) return;
-	int cols = n < 4 ? n : 4, rows = (n + 3) / 4;
-	message_box(px, 16, 10, 5 * cols, 5 * rows - 1, g_tiles, g_tiles_len, msg_rnd, NULL);
-	for (int k = 0; k < n; k++) {
-		int cx = 23 + 40 * (k % 4), cy = 25 + 40 * (k / 4), sel = l[k] == rv->touch_thing;
-		for (int y = cy; y <= cy + 34; y++)
-			for (int x = cx; x <= cx + 34; x++) {
-				int edge = (x == cx || x == cx + 34 || y == cy || y == cy + 34), edge2 = (x == cx + 1 || x == cx + 33 || y == cy + 1 || y == cy + 33);
-				px[y * SCREEN_W + x] = (uint8_t)(sel ? (edge ? 1 : edge2 ? 3 : 14) : (edge ? 4 : 14));
-			}
-		const ObjSprite *sp = thing_sprite(rv, l[k]);
-		if (!sp || sp->nframes < 1) continue;
-		const ObjFrame *f = &sp->frames[0];
-		int ox = cx + 1 + 5 + (32 - f->w) / 2, oy = cy + 1 + (32 - f->h) / 2;
-		for (int j = 0; j < f->h; j++)
-			for (int i = 0; i < f->w; i++) {
-				int x = ox + i, y = oy + j;
-				if (f->pixels[j * f->w + i] && x >= cx + 2 && x <= cx + 32 && y >= cy + 2 && y <= cy + 32) px[y * SCREEN_W + x] = f->pixels[j * f->w + i];
-			}
-	}
+	int R = (n - 1) / 4, vis = (R < 3 ? R : 3) + 1;                      /* rows shown (at most 4) */
+	int cols = n < 4 ? n : 4;
+	message_box(px, 16, 10, 5 * cols, 5 * vis - 1, g_tiles, g_tiles_len, msg_rnd, NULL);
+	for (int r = 0; r < vis; r++)
+		for (int c = 0; c < 4; c++) {
+			int k = (rv->gscroll + r) * 4 + c;
+			if (k >= n) break;
+			int cx = 23 + 40 * c, cy = 25 + 40 * r, sel = (c == rv->gx && r == rv->gvis);
+			for (int y = cy; y <= cy + 34; y++)
+				for (int x = cx; x <= cx + 34; x++) {
+					int edge = (x == cx || x == cx + 34 || y == cy || y == cy + 34), edge2 = (x == cx + 1 || x == cx + 33 || y == cy + 1 || y == cy + 33);
+					px[y * SCREEN_W + x] = (uint8_t)(sel ? (edge ? 1 : edge2 ? 3 : 14) : (edge ? 4 : 14));
+				}
+			const ObjSprite *sp = thing_sprite(rv, l[k]);
+			if (!sp || sp->nframes < 1) continue;
+			const ObjFrame *f = &sp->frames[0];
+			int ox = cx + 1 + 5 + (32 - f->w) / 2, oy = cy + 1 + (32 - f->h) / 2;
+			for (int j = 0; j < f->h; j++)
+				for (int i = 0; i < f->w; i++) {
+					int x = ox + i, y = oy + j;
+					if (f->pixels[j * f->w + i] && x >= cx + 2 && x <= cx + 32 && y >= cy + 2 && y <= cy + 32) px[y * SCREEN_W + x] = f->pixels[j * f->w + i];
+				}
+		}
 }
 static void look_picture(uint8_t *px, const ObjSprite *sp) {
 	message_box(px, 16, 10, 5, 4, g_tiles, g_tiles_len, msg_rnd, NULL);
@@ -1640,6 +1645,49 @@ static void drink_potion(RoomView *rv, int t) {
 	rv->pending_rebuild |= rv_changed(rv);
 	roomview_flush_messages(rv);
 }
+/* the whole-rucksack grid (1000:125CF): 4 items per row, at most 4 rows visible; the cursor starts at the thing being looked at */
+static void grid_begin(RoomView *rv) {
+	int l[64], n = ruck_list(rv, l, 64), k = 0;
+	for (int i = 0; i < n; i++) if (l[i] == rv->touch_thing) k = i;
+	rv->gx = k % 4; rv->grow = k / 4;
+	int last = n > 0 ? (n - 1) / 4 : 0;
+	rv->gscroll = last > 3 && rv->grow > 3 ? rv->grow - 3 : 0;
+	rv->gvis = rv->grow - rv->gscroll;
+}
+/* one cursor move of 125CF (key bits 1 up, 2 down, 4 left, 8 right); transcribed from the code, including its wrap-around quirks: Up / Down past the ends of a grid of more than
+   16 things leave the visible row and the absolute row out of step, and a wrap to the first row also clamps the column to the last row's width */
+static void grid_nav(RoomView *rv, int key, int n) {
+	int R = n > 1 ? (n - 1) / 4 : 0, C = n > 0 ? (n - 1) % 4 : 0;
+	int dl = rv->gx, dh = rv->grow, cl = rv->gvis, bh = rv->gscroll, clamp = 0;
+	if (key & 1) {                                                    /* up (loc_12790) */
+		int skip = 0;
+		if (--cl < 0) {
+			if (R <= 3) { cl = R; dh = R; clamp = 1; skip = 1; }
+			else { cl = 0; if (--bh < 0) bh = R; }
+		}
+		if (!skip) { if (--dh < 0) { dh = R; clamp = 1; } }
+	} else if (key & 2) {                                             /* down (loc_127B7) */
+		int wrap = 0;
+		if (++cl == 4) {
+			if (R == 3) wrap = 1;
+			else { cl = 3; if (++bh > R) bh = 0; }
+		}
+		if (!wrap && R >= cl) {
+			if (++dh == R) clamp = 1;
+			else if (dh > R) dh = 0;
+		} else { dh = 0; cl = 0; clamp = 1; }                          /* loc_127DA */
+	} else if (key & 4) {                                             /* left (loc_127F8) */
+		if (--dl < 0) dl = dh == R ? C : 3;
+	} else if (key & 8) {                                             /* right (loc_1280C) */
+		dl++;
+		if (dh == R) { if (dl > C) dl = 0; }
+		else if (dl >= 4) dl = 0;
+	}
+	if (clamp && dl >= C) dl = C;
+	rv->gx = dl; rv->grow = dh; rv->gvis = cl; rv->gscroll = bh;
+	int l[64], m = ruck_list(rv, l, 64), idx = dh * 4 + dl;
+	if (idx >= 0 && idx < m) rv->touch_thing = l[idx];
+}
 static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int space_edge) {
 	if (!(keys & 0x80)) rv->menu_released = 1;
 	if (rv->ruck_delay > 0) rv->ruck_delay--;
@@ -1654,10 +1702,9 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 			snd_play(0x37);
 			return;
 		}
-		if (rv->ruck_delay == 0 && (keys & 12)) {
-			int l[64], n = ruck_list(rv, l, 64), k = 0;
-			for (int i = 0; i < n; i++) if (l[i] == rv->touch_thing) k = i;
-			if (n > 0) rv->touch_thing = (keys & 8) ? l[(k + 1) % n] : l[(k + n - 1) % n];
+		if (rv->ruck_delay == 0 && (keys & 15)) {
+			int l[64], n = ruck_list(rv, l, 64);
+			if (n > 0) grid_nav(rv, keys & 15, n);
 			rv->ruck_delay = 13;
 			snd_play(2);
 		}
@@ -1705,7 +1752,7 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 			char tx[200];
 			snprintf(tx, sizeof(tx), "%s%s", lng_str(rv, 5), nm < 0x8000 ? lng_str(rv, nm) : "");
 			msg_show_text(rv, tx);
-			rv->grid_open = 1; rv->touch_thing = t; grid_verbs(rv);
+			rv->grid_open = 1; rv->touch_thing = t; grid_begin(rv); grid_verbs(rv);
 		} else if (verb == 15 && rv->ruck_target >= 0) {                  /* 1000:344D: event 26 (1Ah) for the touched thing, argument = the carried thing */
 			rv->vm.queue_n = 0;
 			acl_thing_event(&rv->vm, &rv->mp2, rv->ruck_target, 26, t);
@@ -1719,7 +1766,7 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 			if (rv->vm.flags[t] & 0x80) ruck_close(rv);
 		} else if (verb == 11 || verb == 13 || verb == 4 || verb == 7 || verb == 16) {
 			menu_choose(rv, verb);
-			if (verb == 11) { rv->grid_open = 1; rv->touch_thing = t; grid_verbs(rv); }
+			if (verb == 11) { rv->grid_open = 1; rv->touch_thing = t; grid_begin(rv); grid_verbs(rv); }
 		}
 		return;
 	}
