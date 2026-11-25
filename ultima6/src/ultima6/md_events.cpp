@@ -140,10 +140,109 @@ void Game::mdEvent(int n) {
 	case 0x68:
 		exitCode(n);
 		break;
-	case 0x69: // (the scene it starts is not done: word_49842 gets the type of the thing at word_47493, a story variable)
+	case 0x69: { // the sound 0x32; by where actor 0x67 stands (x 0x2C or not) the thing 0xDB at 0x3B, 0xC (frame 3) or at 0x2B, 0xF (frame 7) is changed; actor 0x69 becomes a 0x171
 		mdSfx(0x32);
+		int k67 = _world.actorObject(0x67);
+		bool first = k67 >= 0 && (_world.objects[k67].x & 0x3FF) == 0x2C;
+		int d = find(0xDB, first ? 0x3B : 0x2B, first ? 0x0C : 0x0F);
+		if (d < 0) {
+			aargh();
+			break;
+		}
+		setFrame(d, first ? 3 : 7);
+		int k69 = _world.actorObject(0x69);
+		if (k69 >= 0)
+			_world.objects[k69].type = 0x171;
 		exitCode(n);
 		break;
+	}
+	case 0x37: { // the planting battle: actor 0x56 goes to level 6; the body (actor 0) is given 4 of 0x9E, a 0xF2 and a 0xA0 of frame 1; a hole (0x101) with a seed (0xFC) in it and a mound (0xFB, quality 15) are made at 0x6F, 0x19; four of the creature 0x16E (frame 1, worktype 0x18) stand at each of 0xA, 0x6F; 0x19, 0x60 and 0x28, 0x6F
+		int k56 = _world.actorObject(0x56);
+		if (k56 >= 0)
+			mdPlace(k56, 0x56, 0x56, 6);
+		_world.addToInventory(0, 0x9E, 0, 4);
+		_world.addToInventory(0, 0xF2, 0, 1);
+		int ice = _world.addToInventory(0, 0xA0, 0, 1);
+		if (ice >= 0)
+			_world.objects[ice].frame = 1;
+		int hole = seMake(0x101, 0x6F, 0x19, z, 1, 0);
+		_world.objects[hole].status &= 0xDF;
+		int mound = seMake(0xFB, 0x6F, 0x19, z, 0, 0x0F);
+		_world.objects[mound].status &= 0xDF;
+		seFill(hole, 0xFC, 1);
+		static const int SPOTS[3][2] = {{0x0A, 0x6F}, {0x19, 0x60}, {0x28, 0x6F}};
+		for (const auto &sp : SPOTS)
+			for (int i = 0; i < 4; ++i) {
+				int a = _creatures.spawn(0x16E, 0x18, sp[0], sp[1], z);
+				if (a < 0) {
+					aargh();
+				} else {
+					int k = _world.actorObject(a);
+					if (k >= 0)
+						_world.objects[k].frame = 1;
+				}
+			}
+		break;
+	}
+	case 0x38: { // the stone puzzle: the flags of actor 0x55 (0x10: no stones, 8: all the stones alike and 25 of them with the number 10, 4: the lens (0x1A9, 0x1AA) is there, 0x20: a stone in the body's hands) are worked out from the stones (0x84) of x 0x49-0x57, y 0x30-0x51 and what the body carries
+		uint8_t &f = al.talkFlags[0x55];
+		f = (uint8_t)((f | 0x18) & 0xFB);
+		int stones = 0, same = 0;
+		mdEach(0x49, 0x30, 0x57, 0x51, [&](int i) {
+			const World::Obj &o = _world.objects[i];
+			if (o.type == 0x84) {
+				++stones;
+				f &= 0xEF;
+				if (same != 0 && o.quantity != same) {
+					f &= 0xF7;
+					same = -1;
+				} else if (same == 0) {
+					same = o.quantity;
+				}
+			} else if (o.type == 0x1A9 || o.type == 0x1AA) {
+				f |= 4;
+			}
+			return false;
+		});
+		std::vector<int> mine;
+		_world.inventory(0, mine, false);
+		for (int i : mine) {
+			int t = _world.objects[i].type;
+			if (t == 0x84)
+				f = (uint8_t)((f & 0xE7) | 0x20);
+			else if (t == 0x1A9 || t == 0x1AA)
+				f |= 4;
+		}
+		if (stones != 0 && stones != 0x19)
+			f &= 0xF7;
+		if (same != 0 && same != 0x0A)
+			f &= 0xF7;
+		exitCode(0x38);
+		break;
+	}
+	case 0x39: { // the body bag (0x155, quality 0x5B) in x 8-0x16, y 0x18-0x39 is taken away and actor 0x5B gets up whole as a plain person (flag 0x10 of its story byte goes)
+		int bag = -1;
+		for (size_t i = 0; i < _world.objects.size() && bag < 0; ++i) {
+			const World::Obj &o = _world.objects[i];
+			if (!o.deleted && o.onMap() && o.z == z && o.type == 0x155 && o.quality == 0x5B && o.x >= 8 && o.x <= 0x16 && o.y >= 0x18 && o.y <= 0x39)
+				bag = (int)i;
+		}
+		if (bag < 0) {
+			aargh();
+			break;
+		}
+		_world.deleteObject(bag);
+		al.status[0x5B] &= 0xEF;
+		al.hp[0x5B] = (uint8_t)ActorStats::maxHealth(_world, 0x5B);
+		al.status[0x5B] &= 0x9F;
+		int k = _world.actorObject(0x5B);
+		if (k >= 0) {
+			_world.objects[k].type = al.baseObjFrame[0x5B] & 0x3FF;
+			_world.objects[k].frame = (uint8_t)(al.baseObjFrame[0x5B] >> 10);
+		}
+		al.talkFlags[0x5B] &= 0xEF;
+		break;
+	}
 	case 0x6A: // back to where the dream began (the place kept in globals 0x14 and 0x15)
 		if (al.globals.size() > 0x15)
 			changeLevel(al.globals[0x14], al.globals[0x15], z);

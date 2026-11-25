@@ -534,6 +534,38 @@ int main() {
 		for (const World::Obj &o : w.objects)
 			after += !o.deleted && o.type == 0x91;
 		CHECK(after >= before + 1 && after <= before + 6);
+		int gz = g.z;
+		w.moveObject(w.actorObject(0x67), 5, 5, gz);
+		int dd = put(w, 0xDB, 0, 0x2B, 0x0F, gz);
+		g.mdEvent(0x69);
+		CHECK(w.objects[dd].frame == 7 && w.objects[w.actorObject(0x69)].type == 0x171 && g.mdExit() == 0x69);
+		int bag = put(w, 0x155, 0, 10, 0x20, gz);
+		w.objects[bag].quality = 0x5B;
+		al.status[0x5B] |= 0x10;
+		al.hp[0x5B] = 0;
+		g.mdEvent(0x39);
+		CHECK(w.objects[bag].deleted && !(al.status[0x5B] & 0x10) && al.hp[0x5B] > 0);
+		// the stone puzzle (0x38): 25 stones with the number 10 on level 4 set the flag 8 and clear 0x10
+		int savedZ = g.z;
+		g.z = 4;
+		for (int i = 0; i < 25; ++i) {
+			int st = put(w, 0x84, 0, 0x49 + i % 5, 0x31 + i / 5, 4);
+			w.objects[st].quantity = 10;
+		}
+		g.mdEvent(0x38);
+		CHECK((al.talkFlags[0x55] & 8) && !(al.talkFlags[0x55] & 0x10) && g.mdExit() == 0x38);
+		w.objects[w.objects.size() - 1].quantity = 9;
+		g.mdEvent(0x38);
+		CHECK(!(al.talkFlags[0x55] & 8));
+		// the planting battle (0x37): the foes (0x16E) stand about
+		int foes = 0, foes0 = 0;
+		for (const World::Obj &o : w.objects)
+			foes0 += !o.deleted && o.type == 0x16E;
+		g.mdEvent(0x37);
+		for (const World::Obj &o : w.objects)
+			foes += !o.deleted && o.type == 0x16E;
+		CHECK(foes >= foes0 + 6);
+		g.z = savedZ;
 		CHECK(!g.endingStarted());
 		g.mdEvent(0xFF);
 		CHECK(!g.handleKey(' ') && g.endingStarted());
