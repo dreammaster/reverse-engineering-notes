@@ -1570,7 +1570,7 @@ static void drink_potion(RoomView *rv, int t) {
 	uint8_t *a = rv->vm.tail[t];
 	int bad = (a[3] & 4) != 0;
 	int shield = a[0] == 6 ? 0 : a[0] == 8 ? 1 : a[0] == 11 ? 2 : a[0] == 12 ? 3 : -1;
-	if (!bad && a[0] > 3 && shield < 0) return;
+	if (!bad && a[0] > 3 && shield < 0 && a[0] != 4 && a[0] != 5 && a[0] != 7 && a[0] != 9 && a[0] != 10 && a[0] != 13 && a[0] != 17) return;
 	rv->vm.queue_n = 0;
 	acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
 	for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
@@ -1584,6 +1584,12 @@ static void drink_potion(RoomView *rv, int t) {
 	if (bad) { acl_energy_change(&rv->vm, -(int)a[1]); if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x22; }
 	else if (shield >= 0) { rv->vm.g[0x11B] |= (uint8_t)(1 << shield); rv->vm.g[0x11C] = a[1]; if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x2C; }   /* shot / fire / ice / magic shield: ds:6AB bit, power ds:6AC, "THE GODS PROTECT YOU" */
 	else if (a[0] == 0) acl_energy_change(&rv->vm, a[1]);
+	else if (a[0] == 4) { rv->vm.g[0x119] = a[1]; if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x1E; }                 /* POISON (0753): ds:6A9 = power, message 30; nothing ticks it without the timers of op 5Ah */
+	else if (a[0] == 7) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x2B; }                                     /* WATER (076A): "YOU FEEL REFRESHED" */
+	else if (a[0] == 9) { int d = rv->vm.energy_max / 2 - rv->vm.energy; if (d >= 0) acl_energy_change(&rv->vm, d); }       /* CURE (0700): up to half of the maximum energy */
+	else if (a[0] == 13) { if (rv->vm.g[0x119]) { rv->vm.g[0x119] = 0; if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x2D; } }   /* CURE POISON (07A2 -> 0CAE) */
+	else if (a[0] == 17) acl_energy_change(&rv->vm, -32000);                                                                /* SUICIDE (07C4): energy -0x8300 */
+	else if (a[0] == 5 || a[0] == 10) { }                                                                                   /* the blank potion and SLOW: empty routines */
 	else acl_set_timer(&rv->vm, a[0] == 1 ? 0x23 : a[0] == 2 ? 0x21 : 0x20, a[1]);   /* super fast / giant jump / alcohol: effect timers 23h / 21h / 20h for A[1] units of 17 steps */
 	rv->pending_rebuild |= rv_changed(rv);
 	roomview_flush_messages(rv);
