@@ -783,7 +783,12 @@ static void creature_move(Walker *wk, RoomView *rv, RoomObj *o, int ddx, int ddy
 	if (wk->x1 >= ox0 && wk->x1 - PL_XS <= tx && wk->y1 >= oy0 && wk->y1 - PL_YS <= ty) {
 		if (!*hit) {                                   /* one hit per creature and step */
 			*hit = 1;
-			acl_energy_change(&rv->vm, -rv->vm.tail[o->thing][1]);
+			{                                                  /* 1000:172EC: a shield (ds:6AB bit = the creature's damage type A[5], power ds:6AC) swallows the hit when -damage - power is still negative as a byte */
+				const uint8_t *ca = rv->vm.tail[o->thing];
+				int type = ca[5], blocked = 0;
+				if (rv->vm.g[0x11B] && !(type & 0x80) && type < 8 && (rv->vm.g[0x11B] & (1 << type)) && (int8_t)(-(int)ca[1] - rv->vm.g[0x11C]) < 0) blocked = 1;
+				if (!blocked) acl_energy_change(&rv->vm, -ca[1]);
+			}
 			rv->vm.queue_n = 0;
 			acl_thing_event(&rv->vm, &rv->mp2, o->thing, 9, 0);
 			for (int q = 0; q < rv->vm.queue_n; q++)
@@ -1451,13 +1456,14 @@ static void fly_step(Walker *wk, RoomView *rv) {
 /* one game step in the rucksack view: Left/Right move the highlight (past the ends: the previous / next carried thing), End or Return runs the verb, Space leaves */
 /* verb 9, drink (1000:32B5): event 5 for the potion, sound 0Ah, the identified flag A[3] bit 0 is cleared (unless bit 1), the doses A[2] drop
    (at 0 the potion is gone and leaves the hand); a bad potion (A[3] bit 4) costs A[1] energy with message 34, otherwise the TAD routine
-   table[A[0]] acts: potions 0 (STAMINA), 1 (SUPER FAST), 2 (GIANT JUMP) and 3 (ALCOHOL) are ported (effect timers 23h / 21h / 20h); the others are not (nothing consumed). */
+   table[A[0]] acts: potions 0 (STAMINA), 1 (SUPER FAST), 2 (GIANT JUMP), 3 (ALCOHOL) and the shields 6 / 8 / 11 / 12 are ported (effect timers 23h / 21h / 20h); the others are not (nothing consumed). */
 static void drink_potion(RoomView *rv, int t) {
 	const ObjSprite *sp = thing_sprite(rv, t);
 	if (!sp || sp->header[0x16] != 2) return;
 	uint8_t *a = rv->vm.tail[t];
 	int bad = (a[3] & 4) != 0;
-	if (!bad && a[0] > 3) return;
+	int shield = a[0] == 6 ? 0 : a[0] == 8 ? 1 : a[0] == 11 ? 2 : a[0] == 12 ? 3 : -1;
+	if (!bad && a[0] > 3 && shield < 0) return;
 	rv->vm.queue_n = 0;
 	acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
 	for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
@@ -1469,6 +1475,7 @@ static void drink_potion(RoomView *rv, int t) {
 		if (rv->held == t) rv->held = 0;
 	}
 	if (bad) { acl_energy_change(&rv->vm, -(int)a[1]); if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x22; }
+	else if (shield >= 0) { rv->vm.g[0x11B] |= (uint8_t)(1 << shield); rv->vm.g[0x11C] = a[1]; if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x2C; }   /* shot / fire / ice / magic shield: ds:6AB bit, power ds:6AC, "THE GODS PROTECT YOU" */
 	else if (a[0] == 0) acl_energy_change(&rv->vm, a[1]);
 	else acl_set_timer(&rv->vm, a[0] == 1 ? 0x23 : a[0] == 2 ? 0x21 : 0x20, a[1]);   /* super fast / giant jump / alcohol: effect timers 23h / 21h / 20h for A[1] units of 17 steps */
 	rv->pending_rebuild |= rv_changed(rv);
