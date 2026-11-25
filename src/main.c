@@ -1460,6 +1460,15 @@ static void cast_on_target(RoomView *rv, int item, int t) {
 	case 20: case 21:                                                 /* READ MAGIC / LEARN POTION (0BA3 / 0BDF): the name of the item becomes known */
 		if (cls == (sp == 20 ? 1 : 2) && (ta[3] & 1)) { ta[3] &= (uint8_t)~0x83; ok = 1; }
 		break;
+	case 28:                                                          /* 0BFD (Payoff 27 BANISH): a creature loses the power from its hit points, event 23 at underflow */
+		if (cls == 3) {
+			ok = 1;
+			if (ta[0] < p) { ta[0] = (uint8_t)(ta[0] - p); rv->vm.queue_n = 0; acl_thing_event(&rv->vm, &rv->mp2, t, 23, 0);
+				for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+				rv->pending_rebuild |= rv_changed(rv); }
+			else ta[0] = (uint8_t)(ta[0] - p);
+		}
+		break;
 	default: return;
 	}
 	if (!ok) msg = 0x2F;
@@ -1469,10 +1478,10 @@ static void cast_on_target(RoomView *rv, int item, int t) {
 /* spell numbers of the two games' TAD tables, reduced to Cadaver 1's numbering (the Payoff inserted TRANSLATE / TELEPORT / REVEAL ... and moved MAP to 30; its routines match by name, see formats.md) */
 static int spell_sem(const RoomView *rv, int n) {
 	if (!rv->use_tata) return n;
-	static const int8_t pay[31] = {0, 1, 2, -1, 5, -1, 7, 8, -1, 10, 11, -1, 13, 14, 15, -1, -1, -1, 19, 20, 21, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4};
+	static const int8_t pay[31] = {0, 1, 2, -1, 5, -1, 7, 8, -1, 10, 11, -1, 13, 14, 15, -1, -1, -1, 19, 20, 21, -1, 0, -1, -1, -1, -1, 28, -1, -1, 4};
 	return n >= 0 && n < 31 ? pay[n] : -1;
 }
-static int spell_is_targeted(const RoomView *rv, const uint8_t *a) { int sp = spell_sem(rv, a[0]); return a[7] == 2 && (sp == 10 || sp == 13 || sp == 14 || sp == 15 || sp == 19 || sp == 20 || sp == 21); }
+static int spell_is_targeted(const RoomView *rv, const uint8_t *a) { int sp = spell_sem(rv, a[0]); return a[7] == 2 && (sp == 10 || sp == 13 || sp == 14 || sp == 15 || sp == 19 || sp == 20 || sp == 21 || sp == 28); }
 /* fire with a held spell item (1000:6896): refused with message 25h while A[3] bit 7 is set; sound 11h (A[7] = 0, the projectile mode) or 06h,
    the spell's effect, then the charge count A[2] drops (16AC9: FFh = unlimited; at 0 the item is gone: message 0Fh and it leaves the hand).
    Only the spells 0, 1, 2, 4, 5, 7 and 8 have an effect in the port; the others are ignored (no charge used) */
@@ -1587,7 +1596,7 @@ static void drink_potion(RoomView *rv, int t) {
 	uint8_t *a = rv->vm.tail[t];
 	int bad = (a[3] & 4) != 0;
 	int shield = a[0] == 6 ? 0 : a[0] == 8 ? 1 : a[0] == 11 ? 2 : a[0] == 12 ? 3 : -1;
-	if (!bad && a[0] > 3 && shield < 0 && a[0] != 14 && a[0] != 15 && a[0] != 16 && a[0] != 4 && a[0] != 5 && a[0] != 7 && a[0] != 9 && a[0] != 10 && a[0] != 13 && a[0] != 17) return;
+	if (!bad && a[0] > 3 && shield < 0 && a[0] != 14 && a[0] != 15 && a[0] != 16 && a[0] != 4 && a[0] != 5 && a[0] != 7 && a[0] != 9 && a[0] != 10 && a[0] != 13 && a[0] != 17 && !(rv->use_tata && (a[0] == 18 || a[0] == 19 || a[0] == 20 || a[0] == 22))) return;
 	rv->vm.queue_n = 0;
 	acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
 	for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
@@ -1609,6 +1618,10 @@ static void drink_potion(RoomView *rv, int t) {
 	else if (a[0] == 14) { rv->vm.g[0x11B] = 0x7F; acl_set_timer(&rv->vm, 0x27, a[1]); }                                      /* TOTAL SHIELD (07AF): every shield bit, then as IMMORTAL */
 	else if (a[0] == 15) acl_set_timer(&rv->vm, 0x27, a[1]);                                                                /* IMMORTAL (07B4): effect 27h: the energy does not change */
 	else if (a[0] == 16) acl_set_timer(&rv->vm, 0x28, a[1]);                                                                /* STRENGTH (07B9): ds:59C = 0C7h (the push strength) for effect 28h */
+	else if (rv->use_tata && a[0] == 19) rv->vm.score += 10u * a[1];                                                       /* WISDOM (Payoff 07C3): the experience ds:24C += 10 * power */
+	else if (rv->use_tata && a[0] == 20) { uint32_t d = 10u * a[1]; rv->vm.score = rv->vm.score > d ? rv->vm.score - d : 0; }   /* STUPIDITY: -= 10 * power, not below 0 */
+	else if (rv->use_tata && a[0] == 22) acl_set_timer(&rv->vm, 0x29, a[1]);                                                /* WEAKEN (Payoff): ds:59C = 0Ah (push strength) for effect 29h */
+	else if (rv->use_tata && a[0] == 18) { }                                                                                /* OIL: an empty routine (the scripts use it) */
 	else if (a[0] == 5 || a[0] == 10) { }                                                                                   /* the blank potion and SLOW: empty routines */
 	else acl_set_timer(&rv->vm, a[0] == 1 ? 0x23 : a[0] == 2 ? 0x21 : 0x20, a[1]);   /* super fast / giant jump / alcohol: effect timers 23h / 21h / 20h for A[1] units of 17 steps */
 	rv->pending_rebuild |= rv_changed(rv);
@@ -1969,7 +1982,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		po[i].xs = o->xs; po[i].ys = o->ys; po[i].zs = o->zs; po[i].weight = o->weight;
 	}
 	int moved[PUSH_MAX], nm;
-	int st = push_move(&wk->world, po, wk->x1, wk->y1, wk->z, PL_XS, PL_YS, PL_ZS, -1, dx, dy, acl_timer_active(&rv->vm, 0x28) ? 0xC7 : 50, moved, &nm);
+	int st = push_move(&wk->world, po, wk->x1, wk->y1, wk->z, PL_XS, PL_YS, PL_ZS, -1, dx, dy, acl_timer_active(&rv->vm, 0x28) ? 0xC7 : acl_timer_active(&rv->vm, 0x29) ? 10 : 50, moved, &nm);
 	if (st == PUSH_MOVED || st == PUSH_FREE) {
 		wk->x1 += dx; wk->y1 += dy;
 		for (int k = 0; k < nm; k++) {
