@@ -449,6 +449,75 @@ void Game::mdJets(int jet) {
 	}
 }
 
+// sub_18286: how hard a person is to hit: the dexterity, 3 less if he gasps (not below 1), 3 more with the bit 0x80 of his object status (not above 30), 1 if he sleeps
+int Game::mdDefence(int actor) const {
+	int k = _world.actorObject(actor);
+	int d = _world.actors.dexterity[actor];
+	int st = k >= 0 ? _world.objects[k].status : 0;
+	if (st & 0x40)
+		d = std::max(1, d - 3);
+	if (st & 0x80)
+		d = std::min(0x1E, d + 3);
+	if (_world.actors.status[actor] & 4)
+		d = 1;
+	return d;
+}
+
+// sub_18A64 (the ray guns 0x2B, 0x2D, 0xF0, 0xF1; the effect numbers at ds:0705 ff.): the shot goes along the line to the target and whoever is on it is hit: a roll of 1-60 (1-45 for the
+// freeze ray 0xF1) above his defence hits (else "%s dodges!" and the sound 3), a hit does the gun's damage (20, 20, 25, 10); the freeze ray freezes water (a 0xA0 of frame 1 goes to frame 3,
+// "The water freezes.") and paralyses (the bit 2 of the status, "`%s paralyzed!") the kinds of creature that the bits 7 and 14 of the flags name ("It has no effect." on the others).
+// APPROX(97): the flight is not drawn; sub_1A45C's damage routine (the armour) and sub_19088 are not read, the damage is `Combat::applyDamage`; the charges are not used.
+void Game::mdRayShot(int attacker, int weapon, int tx, int ty) {
+	static const int GUNS[4] = {0x2B, 0x2D, 0xF0, 0xF1}, DAMAGE[4] = {20, 20, 25, 10}, SOUND[4] = {8, 8, 10, 10};
+	int idx = 0;
+	for (int i = 0; i < 4; ++i)
+		if (GUNS[i] == weapon)
+			idx = i;
+	int ka = _world.actorObject(attacker);
+	if (ka < 0)
+		return;
+	mdSfx(SOUND[idx]);
+	std::vector<std::pair<int, int>> path;
+	_world.boltPath(z, _world.objects[ka].x, _world.objects[ka].y, tx, ty, 8, path);
+	if (path.empty() || path.back() != std::make_pair(tx, ty))
+		path.push_back(std::make_pair(tx, ty)); // (the target's own body blocks the line: the shot ends in it)
+	for (const auto &sq : path) {
+		std::vector<int> here;
+		_world.objectsAt(sq.first, sq.second, z, here);
+		for (int h : here) {
+			World::Obj &o = _world.objects[h];
+			if (o.deleted)
+				continue;
+			if (weapon == 0xF1 && o.actor < 0 && o.type == 0xA0 && o.frame == 1) {
+				o.frame = 3;
+				message("The water freezes.\n");
+				continue;
+			}
+			int a = o.actor;
+			if (a < 0 || a == attacker || _world.actors.hp[a] == 0)
+				continue;
+			if (seRoll(1, weapon == 0xF1 ? 0x2D : 0x3C) <= mdDefence(a)) {
+				message(mdMemberName(a) + " dodges!\n");
+				mdSfx(3);
+				continue;
+			}
+			if (weapon == 0xF1) {
+				const CreatureStats *cs = Combat::stats(o.type);
+				if (!cs || !(cs->flags & ((1 << 14) | (1 << 7)))) {
+					message("It has no effect.\n");
+					continue;
+				}
+				_world.actors.status[a] |= 2;
+				message("`" + mdMemberName(a) + " paralyzed!\n");
+				if ((cs->flags & (1 << 7)) && !(cs->flags & (1 << 14)))
+					_combat.applyDamage(attacker, a, DAMAGE[idx]);
+				continue;
+			}
+			_combat.applyDamage(attacker, a, DAMAGE[idx]);
+		}
+	}
+}
+
 // What the hour changing does (sub_22B27's hour loop): in thin air (while not asleep-until-dawn or dreaming) each member but the mechanical man (6) breathes a charge of the oxygen tank 0x83
 // (the quantity; the last charge uses the tank up and the next tank is looked for), without one he gasps; the street lamps (0xE4) are on (frame 7) by night and off (3) by day when the power of the
 // surface is on

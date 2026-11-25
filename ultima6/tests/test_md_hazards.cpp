@@ -194,7 +194,6 @@ int main() {
 		for (int t : {0xA8, 0xD1, 0x17D, 0xD7})
 			if (w.flags.flags1[(w.baseTile.firstTile[t]) & (TileFlags::TILES - 1)] & 8)
 				type = t;
-		std::printf("hazard type %x\n", type);
 		if (type >= 0 && !(w.flags.flags3[(w.baseTile.firstTile[type]) & (TileFlags::TILES - 1)] & 4)) {
 			World::Obj o;
 			o.status = 0;
@@ -216,6 +215,37 @@ int main() {
 			g.advanceTime(1);
 			CHECK(al.hp[victim] < 250 || victim == 6);
 		}
+	}
+
+	// the ray guns (sub_18A64): a shot along the line hurts the first person in it for the gun's damage (20 for the 0x2D) unless he dodges; the freeze ray (0xF1) freezes water (0xA0, frame 1)
+	{
+		int shooter = al.partyRoster[0], victim = al.partyRoster[al.partySize > 1 ? 1 : 0];
+		int sk = w.actorObject(shooter);
+		w.moveObject(sk, g.x, g.y, 0);
+		if (victim != shooter) {
+			int vk = w.actorObject(victim);
+			w.moveObject(vk, g.x + 3, g.y, 0);
+			int before = al.hp[victim] = 250;
+			for (int shot = 0; shot < 40 && al.hp[victim] == before; ++shot)
+				g.mdRayShot(shooter, 0x2D, g.x + 3, g.y);
+			CHECK(al.hp[victim] == before - 20);
+		}
+		World::Obj o;
+		o.status = 0;
+		o.x = (uint16_t)(g.x + 2);
+		o.y = (uint16_t)g.y;
+		o.z = 0;
+		o.type = 0xA0;
+		o.frame = 1;
+		o.quantity = 1;
+		o.quality = 0;
+		o.actor = -1;
+		o.parent = -1;
+		w.objects.push_back(o);
+		w.addToMap((int)w.objects.size() - 1);
+		int water = (int)w.objects.size() - 1;
+		g.mdRayShot(shooter, 0xF1, g.x + 3, g.y);
+		CHECK(w.objects[water].frame == 3);
 	}
 
 	std::printf(failures ? "FAILED\n" : "ok\n");

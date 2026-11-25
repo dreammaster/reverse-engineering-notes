@@ -202,6 +202,8 @@ void Game::attackAt(int tx, int ty) {
 			if (opp >= 0) { // perform_attack 2D248 and sub_2D865 2D9B2: somebody next to the shooter, who struck it, stops the shot
 				sfx(0xC);
 				message(_combat.nameOf(opp) + " interferes!\n");
+			} else if (_world.game == GameId::MartianDreams && (weapon == 0x2B || weapon == 0x2D || weapon == 0xF0 || weapon == 0xF1)) {
+				mdRayShot(attacker, weapon, tx, ty); // sub_18A64: the ray guns
 			} else {
 				_combat.attackWith(attacker, target, weapon, true);
 			}
