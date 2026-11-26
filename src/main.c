@@ -2079,7 +2079,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 			if (((nz - wk->z) & 0xFF) < 0x14) {
 				ColResult c2;
 				collision_test(&wk->world, wk->x1 + dx, wk->y1 + dy, nz, PL_XS, PL_YS, PL_ZS, -1, 1, &c2);
-				if (c2.zf) { if (g_snd_log) fprintf(stderr, "CLIMB onto %d: z %d -> %d at %d,%d\n", co->thing, wk->z, nz, wk->x1 + dx, wk->y1 + dy); wk->x1 += dx; wk->y1 += dy; wk->z = nz; wk->fall = 0; return; }
+				if (c2.zf) { if (g_snd_log) fprintf(stderr, "CLIMB onto %d: z %d -> %d at %d,%d by %d,%d\n", co->thing, wk->z, nz, wk->x1 + dx, wk->y1 + dy, dx, dy); wk->x1 += dx; wk->y1 += dy; wk->z = nz; wk->fall = 0; return; }
 			}
 		} else if (acl_timer_active(&rv->vm, 0x23) && !(dx & 1) && !(dy & 1) && (dx || dy)) {   /* 063B: the doubled step (super fast) is retried halved */
 			dx /= 2; dy /= 2;
