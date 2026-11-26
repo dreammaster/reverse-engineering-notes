@@ -216,6 +216,12 @@ public:
 	// (virtual, vtable slot 0x60; TGCharacter overrides it)
 	virtual void ClickedWithoutReach(TGCharacter *character, TMouseEventEnum event);
 
+	/** Makes the object count as reached whatever the position of the character (see _bypassReachCheck). Used by the
+	 *  workaround of the door of the mayor's office (TGObjectManager::ObjectReached). */
+	void SetReachBypass(bool bypass) {
+		_bypassReachCheck = bypass;
+	}
+
 	// Confirmed (asm lines 190861-190890): the given target's own stored
 	// screen position matches this object's GetPosition(). Virtual (vtable slot
 	// 0x50; TGCharacter overrides it).

@@ -1,5 +1,7 @@
 #include "TGObjectManager.h"
 
+#include <cstdlib>
+
 #include "AppGlobals.h"
 #include "TGAction.h"
 #include "TGCharacter.h"
@@ -101,6 +103,28 @@ void TGObjectManager::ObjectReached(TManagedObject *object) {
 	object->ExecuteEvent(info);
 }
 
+// Deponia 1's own data, for the workaround in ObjectReached(): the name of the game, the door of the mayor's office (object
+// `e1014-|27|`) in the scene `1011 - Rathaus`, and the way system that is made the scene's while Wenzel is in front of it.
+static bool isMayorsDoorBlockedByWenzel(const TGCharacter &character, const TVisObjRef &target) {
+	TVisObjRef game = gameControl()->GetVisionaire()->GetGame();
+
+	if (game.GetStr(kGameGameName).Cmp(wxString(L"Deponia")) != 0)
+		return false;
+
+	TVisObjRef scene = target.GetParent();
+
+	if (!(target.GetName() == TCharHolder(L"e1014-|27|")) || !(scene.GetName() == TCharHolder(L"1011 - Rathaus")))
+		return false;
+
+	if (!(scene.GetLink(kSceneCurrentWaySystem).GetName() == TCharHolder(L"wegsystem_wenzel")))
+		return false;
+
+	wxPoint doorPosition = *target.GetPoint(kObjectPosition) + *target.GetPoint(kObjectOffset);
+	wxPoint position = *character.GetRef().GetPoint(kCharacterPosition);
+
+	return std::abs(position.x - doorPosition.x) + std::abs(position.y - doorPosition.y) <= 80;
+}
+
 void TGObjectManager::ObjectReached(TGCharacter &character, TVisObjRef &target) {
 	TGCharacter *currentCharacter = gameControl()->GetCurrentCharacter();
 	if (!currentCharacter)
@@ -110,6 +134,20 @@ void TGObjectManager::ObjectReached(TGCharacter &character, TVisObjRef &target) 
 	if (!(character.GetRef() == currentCharacter->GetRef()))
 		return;
 	TManagedObject *object = gameControl()->GetScene()->GetObject(target);
+
+	// WORKAROUND: a bug of the original game that is known and has stayed (Deponia 1, the Rathaus). While Wenzel stands in front of
+	// the door of the mayor's office the way system is `wegsystem_wenzel`, whose outline leaves out the place in front of the
+	// door: a click on the door ends the walk at the way point next to it, the position of the door is never reached, and the
+	// action of the door (which waits for that) never runs - only a double click gets in. Here the walk that ends at that way
+	// point is taken as having reached the door. Nothing else is touched: the game is Deponia 1, the object the door of the
+	// office in the Rathaus, the way system the one of Wenzel, and the character within 80 steps of the door.
+	if (object && isMayorsDoorBlockedByWenzel(character, target)) {
+		object->SetReachBypass(true);
+		ObjectReached(object);
+		object->SetReachBypass(false);
+		return;
+	}
+
 	ObjectReached(object);
 }
 
