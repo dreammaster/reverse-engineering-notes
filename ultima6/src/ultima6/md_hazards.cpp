@@ -555,6 +555,11 @@ void Game::mdJet(int jet) {
 			if (a >= 0 && !_world.objects[h].deleted && _world.actors.hp[a] > 0)
 				_combat.applyDamage(a, a, seRoll(10, 50));
 		}
+		for (int h : here) { // the things that can be struck (sub_2043E) take 10-50 as well
+			const World::Obj &b = _world.objects[h];
+			if (!b.deleted && b.actor < 0 && b.quantity != 0 && (b.type == 0xB3 || b.type == 0x184 || b.type == 0x133 || b.type == 0x12C || b.type == 0xD9))
+				mdHitThing(0, h, 0, seRoll(10, 50));
+		}
 	}
 }
 
@@ -1325,10 +1330,13 @@ int Game::mdBreakableAt(int tx, int ty) const {
 // out; a 0x184 (frame 0, quality 11-18, the sound 0x22) goes down by the blow; a window 0xD9 that has no hit points left (the sound 0x1A) becomes a broken one 0xDA, and in the dream 0x44 the last of
 // them (none left in x 0x37-0x47, y 0x37-0x47) sets bit 0x40 of actor 0x54's flags; the rest are gone (the sound 0).
 // APPROX(97): the kinds of damage (fire, cold: sub_204C0, sub_202F7) and the thawing and freezing of the ice are not done here
-void Game::mdHitThing(int attacker, int thing, int weapon) {
+void Game::mdHitThing(int attacker, int thing, int weapon, int damage) {
 	(void)attacker;
-	int dmg = Combat::weaponDamageOf(weapon);
-	dmg = dmg <= 1 ? 1 : seRoll(1, dmg);
+	int dmg = damage;
+	if (dmg < 0) {
+		dmg = Combat::weaponDamageOf(weapon);
+		dmg = dmg <= 1 ? 1 : seRoll(1, dmg);
+	}
 	World::Obj &o = _world.objects[thing];
 	int type = o.type;
 	if (o.quantity > dmg) {
