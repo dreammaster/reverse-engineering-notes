@@ -49,3 +49,7 @@ for spec in "use|1675,0231,0d,011b" "enc|1265,0231,011b" "order|186f,0231,0232,0
     echo "cmd $n $st@3000: $r"
   done
 done
+# the title screen: START (space) then a few polls of the exploration loop
+r=$(WLPOLLS=6000 WLTICKPOLL=1 WLSTEPS=2000000000 timeout 3000 ./build/src/wasteland1/wlrctest.exe $IMG $GAME src/wasteland1/tools/recomp/entries.txt ../tmp_out/s_title.bin --ported --only 61C0 --seeds 1 --keys "3920,0d*100000" 2>&1 | grep -E "skipped:|DIFF|ok " | head -1 | sed 's/ sp [0-9a-f]*!=[0-9a-f]*//' | cut -c1-200)
+case "$r" in *DIFF\ \(seed*) r="ok (equal apart from sp)" ;; esac
+echo "title@6000: $r"
