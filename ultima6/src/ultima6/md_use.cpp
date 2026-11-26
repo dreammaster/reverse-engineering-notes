@@ -160,6 +160,27 @@ void Game::mdAskKey(std::function<bool(int)> hook) {
 	_keyHook = hook;
 }
 
+// A line typed after a question (sub_34E71): the digits and letters are echoed, Enter gives the line to `done`, Escape drops it
+void Game::mdAskText(std::function<void(const std::string &)> done) {
+	auto line = std::make_shared<std::string>();
+	mdAskKey([this, line, done](int key) {
+		if (key == KEY_ESC) {
+			message("\n");
+			return true;
+		}
+		if (key == KEY_ENTER) {
+			message("\n");
+			done(*line);
+			return true;
+		}
+		if (key >= ' ' && key < 127 && line->size() < 9) {
+			line->push_back((char)key);
+			message(std::string(1, (char)key));
+		}
+		return false;
+	});
+}
+
 // The psychic powers of a member (Martian Dreams): three numbers of 0-10 in the globals from ds:16B0 on, two bytes a member (the low and the high half of the first byte, the low half of the second):
 // 0 is raised by the berry 0x49, 1 by 0x4A (and is the power over the dreamstuff hoard), 2 by 0x4B; sub_22B27 keeps them within 10
 int Game::mdPsychic(int actor, int which) const {
@@ -1336,7 +1357,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		break;
 	}
 	case 45: { // sub_5C2E3: a panel (item, 0x1CA) works the cabinet (0x1C9) on its square by the cabinet's quality: 0-3 only say what happened, 4-6 are the scenes of sub_5BC53, sub_5BFBF and sub_5C183, 7 the valve; a broken (quality bit 2) or loose (bit 1) panel does nothing
-		// APPROX(76): the scenes 5 and 6 are not done (4 is the dream machine, md_dream.cpp)
+		// APPROX(76): the scenes 5 and 6 are done (4 is the dream machine, md_dream.cpp); the midgame puzzle sub_53960 is not
 		int q = o.quality;
 		if (q & 2) {
 			message("The panel is broken.\n");
@@ -1370,9 +1391,87 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		case 4:
 			mdDreamMachine(cabinet);
 			break;
-		case 5:
-		case 6:
+		case 5: // sub_5BFBF: the sprayer system (0x114 within five squares of the cabinet) treats Chsheket
+		case 6: { // sub_5C183: the ruby lenses are aligned by typing the time
+			if (_world.objects[cabinet].quality == 5) {
+				int sp = -1;
+				mdEach(o.x - 5, o.y - 5, o.x + 5, o.y + 5, [&](int i) {
+					if (_world.objects[i].type == 0x114)
+						sp = i;
+					return false;
+				});
+				ObjList &al = _world.actors;
+				if (sp < 0) {
+					message("Funny, no sprayer near sprayer controls!\n");
+					break;
+				}
+				int sq = _world.objects[sp].quality;
+				if (!(sq & 1)) {
+					message("There is no rubber in the sprayer system.\n");
+				} else if (!(sq & 2)) {
+					if (al.talkFlags[0x3E] & 0x10) {
+						message("The rubber in the sprayer system is not flesh-colored.\n");
+					} else {
+						al.talkFlags[6] |= 4;
+						startTalk(6);
+					}
+				} else {
+					int who = -1;
+					std::vector<int> here;
+					_world.objectsAt(_world.objects[sp].x, _world.objects[sp].y, _world.objects[sp].z, here);
+					for (int h : here)
+						if (!_world.objects[h].deleted && _world.objects[h].actor >= 0)
+							who = _world.objects[h].actor;
+					int ck = _world.actorObject(6);
+					if (who < 0) {
+						message("Nobody is standing under the sprayer.\n");
+					} else if (who != 6) {
+						message("You don't think it would be safe to coat an animal or plant with rubber.\n");
+					} else if (ck < 0 || _world.objects[ck].type != 0x165) {
+						message("Chsheket has already been treated.\n");
+					} else {
+						_world.objects[ck].type = 0x162;
+						al.talkFlags[6] |= 0x22;
+						mdChsheketScene();
+						startTalk(6);
+						_talkEnd = [this]() { _world.actors.talkFlags[6] &= 0xDF; };
+					}
+				}
+				break;
+			}
+			ObjList &al = _world.actors;
+			if (al.talkFlags[0x76] & 0x20) {
+				message("The ruby lenses are already aligned.\n");
+			} else if (!((al.talkFlags[0x2E] & 0x80) && (al.talkFlags[0x39] & 0x80) && (al.talkFlags[0x30] & 0x80))) {
+				message("Some of the lenses are not responding.\n");
+			} else {
+				message("Alignment coordinate:\n");
+				mdAskText([this](const std::string &text) {
+					ObjList &t = _world.actors;
+					int value = std::atoi(text.c_str()), now = gameClock.hour * 100 + gameClock.minute;
+					if (!(now - 5 < value && now + 5 > value)) {
+						message("It has no effect.\n");
+						return;
+					}
+					if (gameClock.hour >= 0x12 || gameClock.hour <= 5) {
+						message("You wait until dawn...*\n");
+						_mdSleeping = true;
+						int minutes = (0x1C - gameClock.hour) * 60 + (60 - gameClock.minute);
+						advanceTime(minutes);
+						_mdSleeping = false;
+					}
+					t.talkFlags[0x2E] |= 0x80;
+					t.talkFlags[0x39] |= 0x80;
+					t.talkFlags[0x30] |= 0x80;
+					t.talkFlags[0x76] |= 0x20;
+					mdLensScene();
+					t.talkFlags[5] |= 0x10;
+					startTalk(5);
+					_talkEnd = [this]() { _world.actors.talkFlags[5] &= 0xEF; };
+				});
+			}
 			break;
+		}
 		default:
 			message("It has no effect.\n");
 			break;

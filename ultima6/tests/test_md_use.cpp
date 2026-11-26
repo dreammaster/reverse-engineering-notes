@@ -336,6 +336,7 @@ int main() {
 					w.deleteObject(i);
 		}
 		w.actors.talkFlags[0x2E] &= 0x7F;
+		w.actors.talkFlags[0x76] = 0;
 		int lens = put(w, 0xCE, 0, px + 1, py, 0);
 		int socket = put(w, 0xCA, 0, px, py + 1, 0);
 		w.objects[lens].quality = 2;
@@ -360,6 +361,7 @@ int main() {
 		g.handleKey(KEY_ENTER);
 		CHECK(logText(g).find("It has no effect") != std::string::npos);
 		w.actors.talkFlags[0x2E] &= 0x7F;
+		w.actors.talkFlags[0x76] = 0;
 		w.deleteObject(lens);
 		w.deleteObject(socket);
 	}
@@ -1349,6 +1351,16 @@ int main() {
 		g.log.clear();
 		useEast(w, g, px, py);
 		CHECK(logText(g).find("Status lights change but you see no other effect") != std::string::npos);
+		w.objects[cabinet].quality = 5;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Funny, no sprayer near sprayer controls!") != std::string::npos);
+		w.objects[cabinet].quality = 6;
+		w.actors.talkFlags[0x2E] &= 0x7F;
+		w.actors.talkFlags[0x76] = 0;
+		g.log.clear();
+		useEast(w, g, px, py);
+		CHECK(logText(g).find("Some of the lenses are not responding.") != std::string::npos);
 		w.objects[panel].quality = 2;
 		g.log.clear();
 		useEast(w, g, px, py);

@@ -464,6 +464,7 @@ private:
 	int _mdFail = 0; // word_4EB7A: set by the loading and unloading recipes when the thing was not done
 	std::function<bool(int)> _keyHook; // a recipe waiting for keys: called with each key, true when it is done (then mdFinish)
 	void mdAskKey(std::function<bool(int)> hook);
+	void mdAskText(std::function<void(const std::string &)> done);
 	void mdFinish();                    // the end of a Use that waited: five moves and the prompt
 	void mdPlant(int tx, int ty);       // sub_5CC45 after the location is chosen
 	int _mdSqX[4] = {0, 0, 0, 0}, _mdSqY[4] = {0, 0, 0, 0}; // word_4E6A6 / word_4E6A8: the square chosen as the first (1) and as the second (2) partner; the object-less ones are the ground
