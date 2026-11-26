@@ -429,7 +429,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	if (getenv("CAD_SPELLS")) for (int t = 0; t < ACL_THINGS; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!sp || !rv->vm.present[t] || (sp->header[0x16] != 1 && sp->header[0x16] != 2 && sp->header[0x16] != 4)) continue; const uint8_t *a = rv->vm.tail[t];
 		fprintf(stderr, "SPELLTHING %d class %d A %02x %02x %02x %02x %02x %02x %02x %02x %02x\n", t, sp->header[0x16], a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]); }
 	if (getenv("CAD_CARRYN")) { int n = atoi(getenv("CAD_CARRYN")); for (int t = 1; t < ACL_THINGS && n > 0; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!rv->vm.present[t] || !sp || !(sp->header[0x17] || sp->header[0x16] == 1 || sp->header[0x16] == 2) || sp->nframes < 1) continue; rv->vm.room[t] = 0xFF; rv->vm.flags[t] &= (uint8_t)~0x80; rv->last_item = t; n--; } }   /* debugging aid: carry this many things from the start */
-	if (getenv("CAD_MOVE")) { int t = 0, x = 0, y = 0; if (sscanf(getenv("CAD_MOVE"), "%d:%d:%d", &t, &x, &y) == 3 && t > 0 && t < ACL_THINGS) { rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; } }   /* debugging aid: put a thing at x, y */
+	if (getenv("CAD_MOVE")) { int t = 0, x = 0, y = 0, rm = -1; if (sscanf(getenv("CAD_MOVE"), "%d:%d:%d:%d", &t, &x, &y, &rm) >= 3 && t > 0 && t < ACL_THINGS) { rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; if (rm >= 0) rv->vm.room[t] = (uint8_t)rm; } }   /* debugging aid: put a thing at x, y (and into a room) */
 	if (getenv("CAD_CLASS")) { int t = atoi(getenv("CAD_CLASS")); const ObjSprite *sp = thing_sprite(rv, t); fprintf(stderr, "CLASS %d: %d mode %d A %02x %02x %02x %02x %02x %02x %02x %02x flags %02x room %d\n", t, sp ? sp->header[0x16] : -1, rv->vm.mstate[t][0], rv->vm.tail[t][0], rv->vm.tail[t][1], rv->vm.tail[t][2], rv->vm.tail[t][3], rv->vm.tail[t][4], rv->vm.tail[t][5], rv->vm.tail[t][6], rv->vm.tail[t][7], rv->vm.flags[t], rv->vm.room[t]); fprintf(stderr, "  B"); for (int i = 0; i < 10; i++) fprintf(stderr, " %02x", rv->vm.mstate[t][i]); fprintf(stderr, " pos %d,%d,%d\n", rv->vm.pos[3*t], rv->vm.pos[3*t+1], rv->vm.pos[3*t+2]); }
 	if (getenv("CAD_LOOKTEXT")) { int t = atoi(getenv("CAD_LOOKTEXT")); char tx[200] = ""; const ObjSprite *sp = thing_sprite(rv, t);   /* debugging aid: print the class-specific description of a thing */
 		fprintf(stderr, "LOOK %d class %d: %s\n", t, sp ? sp->header[0x16] : -1, sp && thing_description(rv, t, sp, tx, sizeof(tx)) ? tx : "(none)"); }
@@ -672,6 +672,36 @@ static void roomview_rebuild_objs(RoomView *rv, int gx, int gy) {
 	walk_refresh_world(rv);          /* collision world must be rebuilt (the player keeps its position) */
 }
 
+/* Room zones (1000:11EB5 -> 1000:2018 .. 2108): a room record whose byte 17h has bit 1 set carries, at rec[rec[0]], a box count n and then n boxes (x0, y0, x1, y1, z0, z1 as signed bytes).
+ * Every 17 game steps each object of the room is tested against the boxes n .. 1 with the collision box it keeps (x1, y1, x0, y0, zt, zb); an overlap raises event 10 (0Ah) for the
+ * thing with the box number as argument (level 3 / 4 puzzles: things pushed onto plates; the handlers test room + box). The original tests the things whose collision entry has
+ * flag bit 0 and (bit 2 or the room flag 10h); the port uses the thing's record flag 04h (all level 3 puzzle things have it) or the room flag. */
+static void roomview_zone_events(RoomView *rv) {
+	if (rv->room < 0 || rv->room >= 128 || !rv->ro_key) return;
+	const uint8_t *r = rv->mp2.sec[0].rec[rv->room];
+	int len = rv->mp2.sec[0].len[rv->room];
+	if (!r || len <= 0x20 || !(r[0x17] & 2) || r[0] + 2 >= len) return;
+	int n = r[r[0]];
+	if (n < 1 || n > 4 || r[0] + 2 + 6 * n > len) return;
+	const int8_t *boxes = (const int8_t *)(r + r[0] + 2);
+	for (int i = 0; i < rv->ro.n && i < ROOMOBJS_MAX; i++) {
+		const RoomObj *o = &rv->ro.o[i];
+		int t = o->thing;
+		if (t <= 0 || t >= ACL_THINGS || (rv->vm.flags[t] & 0x80) || !((rv->vm.flags[t] & 4) || (r[0x17] & 0x10))) continue;   /* tracked things: record flag 04h, or every thing when the room has bit 10h */
+		int dl = (int8_t)o->cx1, dh = (int8_t)o->cy1, cl = (int8_t)o->cx0, bl = (int8_t)o->cy0, bh = (int8_t)o->czt, ch = (int8_t)o->czb;
+		for (int b = n; b >= 1; b--) {
+			const int8_t *bx = boxes + 6 * (b - 1);
+			int x = dl >= bx[2] ? cl <= bx[2] : dl >= bx[0];
+			int y = dh >= bx[3] ? bl <= bx[3] : dh >= bx[1];
+			int z = bh >= bx[5] ? ch <= bx[5] : bh >= bx[4];
+			if (!(x && y && z)) continue;
+			if (getenv("CAD_ZONES")) fprintf(stderr, "ZONE thing %d box %d (x %d..%d y %d..%d z %d..%d) room %d\n", t, b, cl, dl, bl, dh, ch, bh, rv->room);
+			rv->vm.queue_n = 0;
+			acl_thing_event(&rv->vm, &rv->mp2, t, 10, b);
+			for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+		}
+	}
+}
 /* one game step (25 Hz): the room timers of 1000:11EB5 (units of 17 steps) -> events 14 and 20 */
 static void roomview_game_step(RoomView *rv) {
 	if (rv->vm.msg_n) roomview_flush_messages(rv);
@@ -682,6 +712,7 @@ static void roomview_game_step(RoomView *rv) {
 		return;
 	rv->tm_div = 17;
 	tad_timer_unit(&rv->tad, &rv->vm);
+	roomview_zone_events(rv);
 	if (rv->tm_period && --rv->tm_cnt <= 0) {
 		rv->tm_cnt = rv->tm_period;
 		acl_room_event(&rv->vm, &rv->mp2, rv->room, 14, 0);

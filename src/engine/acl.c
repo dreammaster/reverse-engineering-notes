@@ -409,7 +409,7 @@ static size_t exec_ops(AclVM *vm, const uint8_t *b, size_t len, size_t p, int en
 	return p;
 }
 
-static int cond_match(int type, const uint8_t *cond, int arg) {
+static int cond_match(const AclVM *vm, int type, const uint8_t *cond, int arg) {
 	switch (type) {
 	case 2: return 0;
 	case 4: return ((cond[0] << 8) | cond[1]) == (arg & 0xFFFF);
@@ -417,7 +417,7 @@ static int cond_match(int type, const uint8_t *cond, int arg) {
 		int w = (cond[0] << 8) | cond[1];
 		return w >= 0x8000 || w == (arg & 0xFFFF);
 	}
-	case 10: return cond[1] == (arg & 0xFF);
+	case 10: return cond[0] == (vm->room_no & 0xFF) && cond[1] == (arg & 0xFF);   /* operand byte = the current room, next byte = the zone number */
 	case 12: case 13: case 15: case 17: case 19: case 20: case 24: return cond[0] == (arg & 0xFF);
 	default: return 1;
 	}
@@ -456,7 +456,7 @@ void acl_room_event(AclVM *vm, const Mp2 *mp2, int room, int type, int arg) {
 			if (ln < 2)
 				break;
 			if (ty == t && !(vm->armed[room][i / 8] & (1 << (i % 8))) && p + 2 + (size_t)cl <= (size_t)len &&
-			    cond_match(ty, r + p + 2, a)) {
+			    cond_match(vm, ty, r + p + 2, a)) {
 				vm->disarm = 0;
 				vm->c605 = 0;
 				vm->queue_n = 0;
@@ -486,7 +486,7 @@ void acl_thing_event(AclVM *vm, const Mp2 *mp2, int thing, int type, int arg) {
 		uint8_t *arm = &vm->armed[128 + thing][i / 8];
 		if (ln < 2)
 			break;
-		if (ty == type && !(*arm & (1 << (i % 8))) && p + 2 + (size_t)cl <= (size_t)len && cond_match(ty, r + p + 2, arg)) {
+		if (ty == type && !(*arm & (1 << (i % 8))) && p + 2 + (size_t)cl <= (size_t)len && cond_match(vm, ty, r + p + 2, arg)) {
 			vm->disarm = 0;
 			vm->c605 = 0;
 			vm->queue_n = 0;
