@@ -129,7 +129,8 @@ TGAnimation *TGAction::ShowAnimation(TVisObjRef &animation, bool reverse) {
 
 	if (owner.GetId()[3] == 0x11) {
 		// the animation of a character's outfit
-		TGCharacter *character = gameControl()->GetCharacter(owner.GetParent().GetParent());
+		// (animation -> outfit -> character: one step less than a first reading of this lookup had)
+		TGCharacter *character = gameControl()->GetCharacter(owner.GetParent());
 
 		if (character->IsCharacterAnimRunning())
 			return nullptr;

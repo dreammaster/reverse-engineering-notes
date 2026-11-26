@@ -129,7 +129,9 @@ TGAnimation *TGAction::ShowAnimation(TVisObjRef &animation, bool reverse) {
 
 	if (owner.GetId()[3] == 0x11) {
 		// the animation of a character's outfit
-		TGCharacter *character = gameControl()->GetCharacter(owner.GetParent().GetParent());
+		// (the character is the outfit's parent: animation -> outfit -> character, asm 560610; one more step up found another
+		// character, the one the lookup falls back on, and Rufus did not play the animations of his own outfit)
+		TGCharacter *character = gameControl()->GetCharacter(owner.GetParent());
 
 		if (character->IsCharacterAnimRunning())
 			return nullptr;

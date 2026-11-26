@@ -10,6 +10,8 @@
 #include "AppGlobals.h"
 #include "TStandardPaths.h"
 #include "THGameControl.h"
+#include "TGAction.h"
+#include "TGCharacter.h"
 #include "TMSavegame.h"
 #include "graphicslib/graphics.h"
 #include "vstables/fieldIds.h"
@@ -58,6 +60,76 @@ int main(int argc, char **argv) {
 	std::printf("loading %s %d\n", bookmark ? "bookmark" : "savegame", slot);
 	bool result = control->LoadGame(&save);
 	std::printf("result: %d\n", result ? 1 : 0);
+
+	if (argc > 3 && std::string(argv[3]) == "act") {
+		// action: slotload <b|s> <slot> act <id>: the action with that id (table 7) is started and the game runs for 8 seconds; what the
+		// current character does is printed every 100 ms
+		TGCharacter *rufus = control->GetCurrentCharacter();
+		int id = argc > 4 ? atoi(argv[4]) : 0;
+
+		g_traceFlags |= 2;
+		wxLog::loglevel = 3;
+		TVList actions;
+
+		control->GetVisionaire()->GetList(7, actions, false);
+
+		for (TVisionaireObject *action : actions) {
+			if (action->GetId24() != id)
+				continue;
+
+			TVisObjRef ref(action);
+
+			std::printf("starting action %d\n", id);
+			TGAction::AddRunningAction(ref);
+		}
+
+		TVisObjRef combine;
+		TVList animationList;
+
+		control->GetVisionaire()->GetList(9, animationList, false);
+		for (TVisionaireObject *animation : animationList) {
+			if (animation->GetId24() == 6272)
+				combine.Set(animation);
+		}
+
+		std::printf("current character %p\n", (void *)rufus);
+
+		for (TGCharacter *character : control->GetAllCharacters())
+			std::printf("character %p '%ls' id %d scene '%ls'\n", (void *)character, character->_objRef.GetName().c_str().c_str(),
+			            PackVisId(character->_objRef.GetId()), character->_objRef.GetLink(kCharacterScene).GetName().c_str().c_str());
+		std::printf("combine parent type %d\n", (int)combine.GetParent().GetId()[3]);
+
+		for (int step = 0; step < 400; step++) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			control->Update();
+
+			if (step % 5 == 0) {
+				std::printf("step %d combineRunning %d state %d animState %d anim %s runningActions %d\n", step,
+				            TGAnimation::AnimationIsRunning(combine) ? 1 : 0, rufus->_state,
+				            rufus->_objRef.GetInt(kCharacterAnimState), rufus->_currentAnimation ? "yes" : "none",
+				            (int)TGAction::GetRunningActions().size());
+
+				if (rufus->_currentAnimation) {
+					TGAnimation *animation = rufus->_currentAnimation;
+					TPictureIO *sprite = animation->GetCurrentSprite();
+
+					std::printf("   anim data %d frames %d index %d sprite %s", PackVisId(animation->GetDataObject().GetId()),
+					            animation->GetFrameCount(), animation->GetCurrentSpriteIndex(), sprite ? "yes" : "none");
+
+					if (sprite) {
+						wxRect rect = sprite->GetDestRect();
+
+						std::printf(" rect %d,%d %dx%d", rect.x, rect.y, rect.width, rect.height);
+					}
+
+					wxPoint position = animation->GetCurrentSpritePosition();
+
+					std::printf(" at %d,%d\n", position.x, position.y);
+				}
+			}
+		}
+		return 0;
+	}
 
 	if (argc > 4) {
 		// walk: slotload <b|s> <slot> <x> <y>: the current character walks to (x, y); the direction is printed at each step

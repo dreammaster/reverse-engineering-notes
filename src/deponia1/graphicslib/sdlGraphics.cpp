@@ -9,7 +9,11 @@
 #include <cstring>
 
 #include "AppGlobals.h"
+#include "TGAction.h"
 #include "TSpriteHandle.h"
+#include "datastruct/vlist.h"
+#include "vsplayer/control/gameControl.h"
+#include "vstables/visionaireGame.h"
 #include "soundengine/audioMixer.h"
 
 TSdlGraphics::TSdlGraphics(const TGraphicsStartup &startup) : _startup(startup) {
@@ -38,6 +42,27 @@ TSdlGraphics::TSdlGraphics(const TGraphicsStartup &startup) : _startup(startup) 
 
 			if (std::sscanf(item.c_str(), "%d:%d:%d:%d", &click.frame, &click.x, &click.y, &click.button) >= 3)
 				_clicks.push_back(click);
+
+			if (end == std::string::npos)
+				break;
+
+			at = end + 1;
+		}
+	}
+
+	// DEPONIA_ACTIONS=<frame>:<id of the action (table 7)>;...
+	if (const char *actions = std::getenv("DEPONIA_ACTIONS")) {
+		std::string text(actions);
+		size_t at = 0;
+
+		while (at < text.size()) {
+			size_t end = text.find(';', at);
+			std::string item = text.substr(at, end == std::string::npos ? std::string::npos : end - at);
+			int frame = 0;
+			int id = 0;
+
+			if (std::sscanf(item.c_str(), "%d:%d", &frame, &id) == 2)
+				_actions.push_back(std::make_pair(frame, id));
 
 			if (end == std::string::npos)
 				break;
@@ -477,6 +502,24 @@ void TSdlGraphics::Swap() {
 
 // The mouse of a test: a move, the button down and the button up, at the place of the window that the game's place has.
 void TSdlGraphics::PushClicks() {
+	for (const std::pair<int, int> &action : _actions) {
+		if (action.first != _shown)
+			continue;
+
+		TVList actions;
+
+		g_traceFlags |= 0xFF;
+		static_cast<TGameControl *>(g_pGameControl)->GetVisionaire()->GetList(7, actions, false);
+
+		for (TVisionaireObject *object : actions) {
+			if (object->GetId24() == action.second) {
+				TVisObjRef ref(object);
+
+				TGAction::AddRunningAction(ref);
+			}
+		}
+	}
+
 	for (const Click &click : _clicks) {
 		if (click.frame != _shown)
 			continue;

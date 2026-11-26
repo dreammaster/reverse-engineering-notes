@@ -15,6 +15,7 @@
 #include <map>
 #include <mutex>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "SdlStub.h"
@@ -97,6 +98,7 @@ private:
 		int button;
 	};
 	std::vector<Click> _clicks;   // DEPONIA_CLICKS
+	std::vector<std::pair<int, int>> _actions;  // DEPONIA_ACTIONS=<frame>:<id of the action>;...: a test starts the action at that frame
 
 	std::mutex _spritesLock;
 	std::map<TSpriteHandle *, Sprite> _sprites;
