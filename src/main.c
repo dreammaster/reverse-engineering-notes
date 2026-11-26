@@ -1342,6 +1342,7 @@ static int front_spot_h(Walker *wk, RoomView *rv, int t, int *ox, int *oy, int *
 	ColResult cr;
 	collision_test(&wk->world, dxp, dyp, wk->z + zadd, xs, ys, zs, t, 0, &cr);
 	*ox = dxp; *oy = dyp; *oz = wk->z + zadd;
+	if (g_snd_log) fprintf(stderr, "SPOT thing %d at %d,%d z %d size %d,%d,%d: zf %d count %02x flag %02x n %d ids %d\n", t, dxp, dyp, wk->z + zadd, xs, ys, zs, cr.zf, cr.count, cr.flag, cr.n, cr.n ? cr.ids[0] : -1);
 	return cr.zf;
 }
 /* spell 0 / weapon strike (TAD routine 085C, level 1): the first creature in the line of fire loses the item's power A[1] from its hit points A[0]; at underflow event 23 (its death) */
@@ -1748,7 +1749,7 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 		else if (verb == 1 && t >= 0 && t < ACL_THINGS) {               /* drop: back into the room at the player's position */
 			/* 1000:6C72: the spot in front of the player in the eight facings (front_spot); a blocked spot refuses the drop */
 			int dxp, dyp, z;
-			if (!front_spot(wk, rv, t, &dxp, &dyp, &z)) {
+			if (!front_spot_h(wk, rv, t, &dxp, &dyp, &z, 21)) {                 /* 16C72 with cl = 0: z = the player's z + 21 (= 29/2 + 29/4: checked by calling the routine in the emulator for cl = 0, 1, 2, 3, E2h) */
 				if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 27;     /* THERE IS NO ROOM TO PUT THIS OBJECT IN */
 				roomview_flush_messages(rv);
 				return;
