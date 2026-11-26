@@ -3,11 +3,12 @@
 #include <string.h>
 #include "rules.h"
 
-static unsigned rd16(const Mm3Game *g, unsigned off) { return g->dg[off] | (g->dg[off + 1] << 8); }
+/* data segment accesses wrap at 64 KB like the original's 16-bit offsets */
+static unsigned rd16(const Mm3Game *g, unsigned off) { return g->dg[(uint16_t)off] | (g->dg[(uint16_t)(off + 1)] << 8); }
 static void wr16(uint8_t *dg, unsigned off, unsigned v) { dg[off] = (uint8_t)v; dg[off + 1] = (uint8_t)(v >> 8); }
 
 Mm3Character *mm3_party_member(const Mm3Game *g, unsigned index) {
-	return (Mm3Character *)(g->dg + MM3_DG_PARTY_CHARS + index * sizeof(Mm3Character));
+	return (Mm3Character *)(g->dg + (uint16_t)(MM3_DG_PARTY_CHARS + index * sizeof(Mm3Character)));
 }
 
 /* Experience needed for level `level`: levels 2..11 grow by a class-dependent base doubling each level (base << (level - 2)), from level 12 on

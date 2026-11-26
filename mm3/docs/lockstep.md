@@ -72,6 +72,9 @@ re-running the routine with `--labels` (below) and look at what differs:
   recompiled game's does not): `F_LUDIV@` arguments differing in one byte, for example;
 * **garbage pointers** into low memory or the emulator's own scratch memory;
 * **host results with fake state** (`pickSaveSlot` with a made-up file handle).
+Three cases looked at in detail and found to be noise: `giveExperience` after the fix below differs in one byte only when a garbage
+party index makes the character record straddle the 64 KB wrap; `Spell_49_DragonBreath` is a prompt loop cut off by the recorder's
+watchdog; `changeTime` / `giveCharDamage` run with a party size / saving-throw kind outside the game's range.
 A divergence on a routine called with *valid* arguments is a real finding.  Real ones found this way so far: the tail-jump-to-host
 bug (below), `sprintf("%s", NULL)`, `stricmp`.
 
