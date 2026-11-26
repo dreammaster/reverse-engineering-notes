@@ -1305,3 +1305,64 @@ void Game::mdHour() {
 
 } // namespace Ultima6
 } // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_2043E: the things that can be struck (ds:0E5C: 0xB3, 0x184, 0x133 the pod, 0x12C, 0xD9 the window) with hit points left in their quantity; -1 if there is none on the square
+int Game::mdBreakableAt(int tx, int ty) const {
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	for (int i : here) {
+		const World::Obj &o = _world.objects[i];
+		if (!o.deleted && o.actor < 0 && o.quantity != 0 && (o.type == 0xB3 || o.type == 0x184 || o.type == 0x133 || o.type == 0x12C || o.type == 0xD9))
+			return i;
+	}
+	return -1;
+}
+
+// sub_19A74, the branch of the things: a blow of the weapon (rolled from 1 to its damage) takes hit points off the quantity. A pod (0x133) that is struck "splits open!" and a creature 0x180 comes
+// out; a 0x184 (frame 0, quality 11-18, the sound 0x22) goes down by the blow; a window 0xD9 that has no hit points left (the sound 0x1A) becomes a broken one 0xDA, and in the dream 0x44 the last of
+// them (none left in x 0x37-0x47, y 0x37-0x47) sets bit 0x40 of actor 0x54's flags; the rest are gone (the sound 0).
+// APPROX(97): the kinds of damage (fire, cold: sub_204C0, sub_202F7) and the thawing and freezing of the ice are not done here
+void Game::mdHitThing(int attacker, int thing, int weapon) {
+	(void)attacker;
+	int dmg = Combat::weaponDamageOf(weapon);
+	dmg = dmg <= 1 ? 1 : seRoll(1, dmg);
+	World::Obj &o = _world.objects[thing];
+	int type = o.type;
+	if (o.quantity > dmg) {
+		if (type == 0x133) {
+			message("The pod splits open!\n");
+			_creatures.spawn(0x180, 8, o.x, o.y, o.z);
+			_world.deleteObject(thing);
+		} else if (type == 0x184) {
+			o.frame = 0;
+			o.quality = (uint8_t)seRoll(0x0B, 0x12);
+			mdSfx(0x22);
+			o.quantity = (uint8_t)(o.quantity - dmg);
+		} else {
+			o.quantity = (uint8_t)(o.quantity - dmg);
+		}
+		return;
+	}
+	if (type == 0xD9) {
+		mdSfx(0x1A);
+		o.type = 0xDA;
+		if (_mdDreaming && _mdDreamId == 0x44) {
+			bool more = false;
+			mdEach(0x37, 0x37, 0x47, 0x47, [&](int i) {
+				more |= _world.objects[i].type == 0xD9;
+				return more;
+			});
+			if (!more)
+				_world.actors.talkFlags[0x54] |= 0x40;
+		}
+		return;
+	}
+	mdSfx(0);
+	_world.deleteObject(thing);
+}
+
+} // namespace Ultima6
+} // namespace Ultima6

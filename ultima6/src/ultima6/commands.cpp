@@ -189,6 +189,16 @@ void Game::attackAt(int tx, int ty) {
 			done = true;
 		} else if (target >= 0) {
 			message(_combat.nameOf(target) + ".\n");
+		} else if (mdGame && mdBreakableAt(tx, ty) >= 0) { // sub_1A45C's thing branch: a pod, a window ... is struck
+			int thing = mdBreakableAt(tx, ty);
+			message(Describe::object(_world, _world.objects[thing]) + ".\n");
+			const World::Obj &me = _world.objects[_world.actorObject(attacker)];
+			if (std::max(std::abs(tx - me.x), std::abs(ty - me.y)) > Combat::rangeOf(weapon)) {
+				message("Out of range!\n");
+				sfx(0xC);
+			} else {
+				mdHitThing(attacker, thing, weapon);
+			}
 		} else {
 			message("nothing!\n");
 		}

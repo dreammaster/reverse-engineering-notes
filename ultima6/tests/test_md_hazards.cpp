@@ -510,6 +510,34 @@ int main() {
 		CHECK(w.objects[coal].x == bx - 1 && w.objects[coal2].x == bx + 6);
 	}
 
+	// things that are struck: a pod splits open, a window with no hit points left breaks
+	{
+		auto make = [&](int type, int x, int y, int qty) {
+			World::Obj o;
+			o.status = 0;
+			o.x = (uint16_t)x;
+			o.y = (uint16_t)y;
+			o.z = 0;
+			o.type = (uint16_t)type;
+			o.frame = 0;
+			o.quantity = (uint8_t)qty;
+			o.quality = 0;
+			o.actor = -1;
+			o.parent = -1;
+			w.objects.push_back(o);
+			w.addToMap((int)w.objects.size() - 1);
+			return (int)w.objects.size() - 1;
+		};
+		int px = g.x + 2, py = g.y + 3;
+		int pod = make(0x133, px, py, 200), glass = make(0xD9, px + 1, py, 1);
+		CHECK(g.mdBreakableAt(px, py) == pod);
+		g.log.clear();
+		g.mdHitThing(1, pod, 0x1C);
+		CHECK(logText(g).find("The pod splits open!") != std::string::npos && w.objects[pod].deleted);
+		g.mdHitThing(1, glass, 0x1C);
+		CHECK(w.objects[glass].type == 0xDA);
+	}
+
 	// a teleporting pad takes the party to the place of its quality
 	{
 		g.x = 0x2B2 - 5;
