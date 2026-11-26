@@ -1628,14 +1628,14 @@ static void fly_step(Walker *wk, RoomView *rv) {
 		int nz = z + dz;
 		if (nz < 0) nz = 0;
 		ColResult cr;
-		int done = 0;
+		int done = 0, nland = 0, land[COL_MAX];
 		collision_test(&wk->world, x + dx, y + dy, nz, xs, ys, zs, t, 0, &cr);
 		if (cr.zf) { x += dx; y += dy; z = nz; }
 		else {
 			rv->fly[k].hi = 18;                                          /* blocked: the horizontal path ends */
 			collision_test(&wk->world, x, y, nz, xs, ys, zs, t, 0, &cr);
 			if (cr.zf) z = nz;
-			else if (dz < 0) done = 1;                                    /* landed on something */
+			else if (dz < 0) { done = 1; nland = cr.n; for (int q = 0; q < cr.n; q++) land[q] = cr.ids[q]; }   /* landed on something: event 4 for what it lands on (1000:16B02) */
 			else { rv->fly[k].fall = 1; rv->fly[k].zi = 0; }               /* hit a ceiling: start to fall */
 		}
 		if (nz == 0 && dz < 0) done = 1;
@@ -1646,6 +1646,14 @@ static void fly_step(Walker *wk, RoomView *rv) {
 		if (!rv->fly[k].fall && rv->fly[k].zi >= 17) { rv->fly[k].fall = 1; rv->fly[k].zi = 0; }
 		rv->pending_rebuild = 1;
 		if (done) { rv->fly[k] = rv->fly[--rv->nfly]; k--; }
+		for (int q = 0; q < nland; q++) {                                /* event 4 (04h) for each thing it came to rest on, argument = the landed thing (level 1's keyholes: handler operand = the key's id) */
+			if (land[q] <= 0 || land[q] >= ACL_THINGS || land[q] == t) continue;
+			rv->vm.queue_n = 0;
+			acl_thing_event(&rv->vm, &rv->mp2, land[q], 4, t);
+			for (int w = 0; w < rv->vm.queue_n; w++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[w].type, rv->vm.queue[w].arg);
+			rv->pending_rebuild |= rv_changed(rv);
+			roomview_flush_messages(rv);
+		}
 	}
 }
 
@@ -1761,19 +1769,9 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 		if (g_snd_log) fprintf(stderr, "RUCK verb %d sel %d of %d\n", verb, rv->menu_sel, rv->nverbs);
 		if (verb == 6) ruck_close(rv);
 		else if (verb == 1 && t >= 0 && t < ACL_THINGS) {               /* drop: back into the room at the player's position */
-			const ObjSprite *sp = thing_sprite(rv, t);
-			int xs = sp ? (sp->header[16] << 8 | sp->header[17]) : 7, ys = sp ? (sp->header[18] << 8 | sp->header[19]) : 7, zs = sp ? (sp->header[20] << 8 | sp->header[21]) : 7;
-			/* 1000:6C72: the spot in front of the player: right (x1 + 2 + xs, y1), left (x0 - 3, y1), down (x1, y1 + 2 + ys), up (x1, y0 - 3), with the player's z; a blocked spot refuses the drop */
-			int dxp = wk->x1, dyp = wk->y1, z = wk->z;
-			switch (wk->dir) {
-			case DIR_RIGHT: dxp = wk->x1 + 2 + xs; break;
-			case DIR_LEFT: dxp = wk->x1 - (PL_XS - 1) - 3; break;
-			case DIR_DOWN: dyp = wk->y1 + 2 + ys; break;
-			default: dyp = wk->y1 - (PL_YS - 1) - 3; break;
-			}
-			ColResult cr;
-			collision_test(&wk->world, dxp, dyp, z, xs, ys, zs, t, 0, &cr);
-			if (!cr.zf) {
+			/* 1000:6C72: the spot in front of the player in the eight facings (front_spot); a blocked spot refuses the drop */
+			int dxp, dyp, z;
+			if (!front_spot(wk, rv, t, &dxp, &dyp, &z)) {
 				if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 27;     /* THERE IS NO ROOM TO PUT THIS OBJECT IN */
 				roomview_flush_messages(rv);
 				return;
