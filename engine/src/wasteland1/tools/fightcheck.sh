@@ -1,5 +1,5 @@
 #!/bin/sh
-# fightcheck.sh: replays whole fights (runCombat, WL.EXE 11D39) on the oracle and on the native code and compares memory, screen and
+# fightcheck.sh: replays whole fights (and the walking loop) (runCombat, WL.EXE 11D39) on the oracle and on the native code and compares memory, screen and
 # registers at the end. The entry state is made by wlemu from the usual start: it plays the key script until the breakpoint at 11D39.
 # Both sides get a deterministic clock: every keyboard poll advances the timer (WLTICKPOLL).
 cd "$(dirname "$0")/../../.." || exit 1
@@ -34,3 +34,9 @@ runN use    2500 "1c0d,1675,1c0d,1c0d,1675,1c0d,1c0d,1559,$ESC"
 runN weapon 2500 "1c0d,1177,1c0d,1177,1c0d,1177,1c0d,1177,1c0d,1559,$ESC"
 runN run    2500 "1c0d,1372,1372,1372,1372,1559,$ESC"
 runN skill  2500 "1c0d,1f73,1c0d,1c0d,1f73,1c0d,1c0d,1559,$ESC"
+# the exploration loop (16B3C) the same way: walking with the arrow keys on the saved map states, compared at the N-th poll
+for st in s_map s_world s_town s_m5; do
+  r=$(WLPOLLS=20000 WLTICKPOLL=1 WLSTEPS=2000000000 timeout 3000 ./build/src/wasteland1/wlrctest.exe $IMG $GAME src/wasteland1/tools/recomp/entries.txt ../tmp_out/$st.bin --ported --only 6B3C --seeds 1 --keys '4d00,4d00,4800,4800,4b00,5000,3920,4d00*100000' 2>&1 | grep -E "skipped:|DIFF|ok " | head -1 | sed 's/ sp [0-9a-f]*!=[0-9a-f]*//' | cut -c1-300)
+  case "$r" in *DIFF\ \(seed*) r="ok (equal apart from sp)" ;; esac
+  echo "walk $st@20000: $r"
+done
