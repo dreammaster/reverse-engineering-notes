@@ -897,7 +897,9 @@ void Game::mdExitCode(int code) {
 	case 9: // sub_3F789: the Grand Finale: the ending plays and the game is over
 		_ending = 1;
 		break;
-	case 0xA: { // sub_54D89: the people 0x20-0x29 (but 0x21) and 0x50-0x57 are hidden and parked at level 6; 0x2A-0x31 are shown and stand where their schedules put them
+	case 0xA: { // sub_54D89 (sub_3F770): the intermission of MIDGAMEB.LZC (2 pages), then the people 0x20-0x29 (but 0x21) and 0x50-0x57 are hidden and parked at level 6; 0x2A-0x31 are shown and stand where their schedules put them
+		mdMidgame(10, 2, [this]() {
+		ObjList &al = _world.actors;
 		auto park = [&](int a) {
 			int k = _world.actorObject(a);
 			if (k < 0)
@@ -919,6 +921,7 @@ void Game::mdExitCode(int code) {
 		}
 		for (int a = 0x50; a <= 0x57; ++a)
 			park(a);
+		});
 		break;
 	}
 	case 0x65: // the picture 14 at 0x34, 0x20 and the square 0x34, 0x21 (to y 0x0B, x 0x34)

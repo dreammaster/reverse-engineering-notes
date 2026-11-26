@@ -640,6 +640,7 @@ int main() {
 		CHECK(logText(g).find("critical!") != std::string::npos && (al.talkFlags[0x68] & 8));
 		// exit code 0xA (sub_54D89): the dream people 0x50-0x57 are hidden and parked at level 6, 0x2A-0x31 are shown
 		g.mdExitCode(0xA);
+		skipMidgame(g); // the intermission of MIDGAMEB.LZC
 		CHECK((w.objects[w.actorObject(0x52)].status & 0x80) && w.objects[w.actorObject(0x52)].z == 6);
 		CHECK(!(w.objects[w.actorObject(0x2B)].status & 0x80));
 		CHECK(!g.endingStarted());
