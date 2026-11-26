@@ -1654,7 +1654,7 @@ static void drink_potion(RoomView *rv, int t) {
 	uint8_t *a = rv->vm.tail[t];
 	int bad = (a[3] & 4) != 0;
 	int shield = a[0] == 6 ? 0 : a[0] == 8 ? 1 : a[0] == 11 ? 2 : a[0] == 12 ? 3 : -1;
-	if (!bad && a[0] > 3 && shield < 0 && a[0] != 14 && a[0] != 15 && a[0] != 16 && a[0] != 4 && a[0] != 5 && a[0] != 7 && a[0] != 9 && a[0] != 10 && a[0] != 13 && a[0] != 17 && !(rv->use_tata && (a[0] == 18 || a[0] == 19 || a[0] == 20 || a[0] == 22))) return;
+	if (!bad && a[0] > 3 && shield < 0 && a[0] != 14 && a[0] != 15 && a[0] != 16 && a[0] != 4 && a[0] != 5 && a[0] != 7 && a[0] != 9 && a[0] != 10 && a[0] != 13 && a[0] != 17 && !(rv->use_tata && (a[0] == 18 || a[0] == 19 || a[0] == 20 || a[0] == 21 || a[0] == 22))) return;
 	rv->vm.queue_n = 0;
 	acl_thing_event(&rv->vm, &rv->mp2, t, 5, 0);
 	for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
@@ -1683,6 +1683,7 @@ static void drink_potion(RoomView *rv, int t) {
 	else if (rv->use_tata && a[0] == 19) rv->vm.score += 10u * a[1];                                                       /* WISDOM (Payoff 07C3): the experience ds:24C += 10 * power */
 	else if (rv->use_tata && a[0] == 20) { uint32_t d = 10u * a[1]; rv->vm.score = rv->vm.score > d ? rv->vm.score - d : 0; }   /* STUPIDITY: -= 10 * power, not below 0 */
 	else if (rv->use_tata && a[0] == 22) acl_set_timer(&rv->vm, 0x29, a[1]);                                                /* WEAKEN (Payoff): ds:59C = 0Ah (push strength) for effect 29h */
+	else if (rv->use_tata && a[0] == 21) acl_set_timer(&rv->vm, 7, a[1]);                                                /* LEAPFROG (Payoff 0807): the routine's flag and timer 7 := A[1]; the timer routine 0DB6 only writes ds:6DC, which nothing reads (the forced jump is never wired up in the shipped game) */
 	else if (rv->use_tata && a[0] == 18) { }                                                                                /* OIL: an empty routine (the scripts use it) */
 	else if (a[0] == 5 || a[0] == 10) { }                                                                                   /* the blank potion and SLOW: empty routines */
 	else acl_set_timer(&rv->vm, a[0] == 1 ? 0x23 : a[0] == 2 ? 0x21 : 0x20, a[1]);   /* super fast / giant jump / alcohol: effect timers 23h / 21h / 20h for A[1] units of 17 steps */
