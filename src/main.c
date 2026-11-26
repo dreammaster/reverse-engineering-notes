@@ -2485,6 +2485,7 @@ int main(int argc, char **argv) {
 						if (g_savemode) savemode_key(kc); else if (kc == SDLK_s || kc == SDLK_l) savemode_start(kc == SDLK_s);
 					}
 					if (!strncmp(c, "money:", 6)) g_room.vm.money = (uint32_t)atoi(c + 6);
+					if (!strncmp(c, "tp:", 3)) { int tx = 0, ty = 0, tz = 0; if (sscanf(c + 3, "%d:%d:%d", &tx, &ty, &tz) >= 2) { g_walk.x1 = tx; g_walk.y1 = ty; g_walk.z = tz; } }   /* debugging aid: put the player at x, y (z) */
 					if (!strncmp(c, "save", 4)) game_save(&g_walk, &g_room, -1);
 					if (!strncmp(c, "load", 4)) { game_load(&g_room, -1); load_scene(&g, scene, &scr); }
 					for (int n = atoi(colon + 1); n > 0; n--)
