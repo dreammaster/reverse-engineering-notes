@@ -846,9 +846,12 @@ static void creature_move(Walker *wk, RoomView *rv, RoomObj *o, int ddx, int ddy
 			*hit = 1;
 			{                                                  /* 1000:172EC: a shield (ds:6AB bit = the creature's damage type A[5], power ds:6AC) swallows the hit when -damage - power is still negative as a byte */
 				const uint8_t *ca = rv->vm.tail[o->thing];
-				int type = ca[5], blocked = 0;
-				if (rv->vm.g[0x11B] && !(type & 0x80) && type < 8 && (rv->vm.g[0x11B] & (1 << type)) && (int8_t)(-(int)ca[1] - rv->vm.g[0x11C]) < 0) blocked = 1;
-				if (!blocked) acl_energy_change(&rv->vm, -ca[1]);
+				int type = ca[5], dmg = ca[1];
+				if (rv->vm.g[0x11B] && !(type & 0x80) && type < 8 && (rv->vm.g[0x11B] & (1 << type))) {   /* 172EC: only the low byte of -damage is reduced by the power: a negative byte = blocked, else the hit costs 256 - byte (damage + power when that is below 256; verified with 600 cases) */
+					uint8_t r = (uint8_t)(-dmg - rv->vm.g[0x11C]);
+					dmg = (int8_t)r < 0 ? 0 : 256 - r;
+				}
+				if (dmg) acl_energy_change(&rv->vm, -dmg);
 			}
 			rv->vm.queue_n = 0;
 			acl_thing_event(&rv->vm, &rv->mp2, o->thing, 9, 0);
