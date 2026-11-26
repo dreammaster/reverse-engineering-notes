@@ -1451,7 +1451,7 @@ static int line_target(Walker *wk, RoomView *rv, int h16, int reach) {
 }
 /* spells 7 / 8 (TAD routines 09F5 / 0A48): 7 opens a closed, unlocked-or-lockable CHEST in front (the lock word A[2..3] := 0, then verb 3), 8 clears the lock of a thing (A[2..3] := 0, A[7] bit 6 cleared) */
 static void cast_unlock(Walker *wk, RoomView *rv, int item, int spell) {
-	uint8_t *a = rv->vm.tail[item];
+	(void)item;
 	int t = line_target(wk, rv, spell == 7 ? 8 : -1, 24);
 	uint8_t *ta = t > 0 ? rv->vm.tail[t] : NULL;
 	int bad = !ta || (spell == 7 ? ((ta[4] & 1) || (ta[4] & 0x40)) : (ta[7] & 0x20));
