@@ -144,7 +144,7 @@ int roomobjs_build_ex(RoomObjs *ro, const Mp2 *mp2, const ObjSprites *objs, int 
 			o->cx1 = tb[0]; o->cy1 = tb[1]; o->cx0 = tb[2]; o->cy0 = tb[3]; o->czt = tb[4]; o->czb = tb[5];
 		}
 		o->solid = !(sp->header[12] & 1);
-		o->weight = sp->header[13];
+		o->weight = sp->header[13] ? sp->header[13] : 10;          /* 14A2E / 151E2 patch a zero weight byte of the shared header to 0Ah when an object entry is made */
 		o->xs = hw(sp->header, 8); o->ys = hw(sp->header, 9); o->zs = hw(sp->header, 10);
 		o->animated = anim_script_len(sp) > 0;
 		o->first = objsprite_initial_frame(sp);

@@ -131,9 +131,10 @@ typedef struct RoomView_ {
 	int look_pic;              /* thing+1 whose picture is shown next to the look message (rucksack look), 0 = none */
 	int map_magic;             /* spell 4 (TAD routine 0974, ds:6C9 = 81h): the map shows every room not flagged 80h in its record byte 17h */
 	int map_open, map_ox, map_oy, map_zoom, map_prev;   /* F1: the map of the rooms entered so far (1000:369F) */
-	struct { int thing, zi, hi, dirbits, fall; } fly[8];   /* thrown things in flight (1000:16D3A: per-step z and horizontal path tables) */
+	struct { int thing, zi, hi, dirbits, fall, weightless; } fly[8];   /* thrown things in flight (1000:16D3A: per-step z and horizontal path tables) */
 	int nfly;
 	int h_prev;
+	int h_item;                 /* ds:58A: the thing H put away last (the only thing H can hold again; 0 until H has put something away) */
 	uint8_t loose[ACL_THINGS];  /* things dropped or thrown by the player: gravity applies */
 	int held;                  /* thing held (verb 13), 0 = none */
 	int ruck_open, ruck_sel, ruck_delay, last_item, space_prev, ret_prev;   /* rucksack view (Space / Return while carrying things) */
@@ -422,12 +423,12 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 			}
 	}
 	rv->vm.energy = rv->vm.energy_max = rv->energy_max_cfg;
-	if (getenv("CAD_CARRY")) { int t = 0, a0 = -1, a1 = -1; sscanf(getenv("CAD_CARRY"), "%d:%d:%d", &t, &a0, &a1); if (t > 0 && t < ACL_THINGS) { rv->vm.present[t] = 1; rv->vm.room[t] = 0xFF; rv->vm.flags[t] &= (uint8_t)~0x80; rv->last_item = t; if (a0 >= 0) rv->vm.tail[t][0] = (uint8_t)a0; if (a1 >= 0) rv->vm.tail[t][1] = (uint8_t)a1; } }   /* debugging aid: carry this thing from the start (optionally with A[0], A[1]) */
+	if (getenv("CAD_CARRY")) { int t = 0, a0 = -1, a1 = -1; sscanf(getenv("CAD_CARRY"), "%d:%d:%d", &t, &a0, &a1); if (t > 0 && t < ACL_THINGS) { rv->vm.present[t] = 1; rv->vm.room[t] = 0xFF; rv->vm.flags[t] &= (uint8_t)~0x80; rv->last_item = t; rv->h_item = t; if (a0 >= 0) rv->vm.tail[t][0] = (uint8_t)a0; if (a1 >= 0) rv->vm.tail[t][1] = (uint8_t)a1; } }   /* debugging aid: carry this thing from the start (optionally with A[0], A[1]) */
 	if (getenv("CAD_SPELLS")) for (int t = 0; t < ACL_THINGS; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!sp || !rv->vm.present[t] || (sp->header[0x16] != 1 && sp->header[0x16] != 2 && sp->header[0x16] != 4)) continue; const uint8_t *a = rv->vm.tail[t];
 		fprintf(stderr, "SPELLTHING %d class %d A %02x %02x %02x %02x %02x %02x %02x %02x %02x\n", t, sp->header[0x16], a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]); }
-	if (getenv("CAD_CARRYN")) { int n = atoi(getenv("CAD_CARRYN")); for (int t = 1; t < ACL_THINGS && n > 0; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!rv->vm.present[t] || !sp || !(sp->header[0x17] || sp->header[0x16] == 1 || sp->header[0x16] == 2) || sp->nframes < 1) continue; rv->vm.room[t] = 0xFF; rv->vm.flags[t] &= (uint8_t)~0x80; rv->last_item = t; n--; } }   /* debugging aid: carry this many things from the start */
+	if (getenv("CAD_CARRYN")) { int n = atoi(getenv("CAD_CARRYN")); for (int t = 1; t < ACL_THINGS && n > 0; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!rv->vm.present[t] || !sp || !(sp->header[0x17] || sp->header[0x16] == 1 || sp->header[0x16] == 2) || sp->nframes < 1) continue; rv->vm.room[t] = 0xFF; rv->vm.flags[t] &= (uint8_t)~0x80; rv->last_item = t; rv->h_item = t; n--; } }   /* debugging aid: carry this many things from the start */
 	if (getenv("CAD_MOVE")) { int t = 0, x = 0, y = 0, rm = -1; if (sscanf(getenv("CAD_MOVE"), "%d:%d:%d:%d", &t, &x, &y, &rm) >= 3 && t > 0 && t < ACL_THINGS) { rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; if (rm >= 0) rv->vm.room[t] = (uint8_t)rm; } }   /* debugging aid: put a thing at x, y (and into a room) */
-	if (getenv("CAD_CLASS")) { int t = atoi(getenv("CAD_CLASS")); const ObjSprite *sp = thing_sprite(rv, t); fprintf(stderr, "CLASS %d: %d mode %d A %02x %02x %02x %02x %02x %02x %02x %02x flags %02x room %d\n", t, sp ? sp->header[0x16] : -1, rv->vm.mstate[t][0], rv->vm.tail[t][0], rv->vm.tail[t][1], rv->vm.tail[t][2], rv->vm.tail[t][3], rv->vm.tail[t][4], rv->vm.tail[t][5], rv->vm.tail[t][6], rv->vm.tail[t][7], rv->vm.flags[t], rv->vm.room[t]); fprintf(stderr, "  B"); for (int i = 0; i < 10; i++) fprintf(stderr, " %02x", rv->vm.mstate[t][i]); fprintf(stderr, " pos %d,%d,%d\n", rv->vm.pos[3*t], rv->vm.pos[3*t+1], rv->vm.pos[3*t+2]); }
+	if (getenv("CAD_CLASS")) { int t = atoi(getenv("CAD_CLASS")); const ObjSprite *sp = thing_sprite(rv, t); if (sp) { fprintf(stderr, "CLASS header:"); for (int q = 0; q < 32; q++) fprintf(stderr, " %02x", sp->header[q]); fprintf(stderr, "\n"); } fprintf(stderr, "CLASS %d: %d mode %d A %02x %02x %02x %02x %02x %02x %02x %02x flags %02x room %d\n", t, sp ? sp->header[0x16] : -1, rv->vm.mstate[t][0], rv->vm.tail[t][0], rv->vm.tail[t][1], rv->vm.tail[t][2], rv->vm.tail[t][3], rv->vm.tail[t][4], rv->vm.tail[t][5], rv->vm.tail[t][6], rv->vm.tail[t][7], rv->vm.flags[t], rv->vm.room[t]); fprintf(stderr, "  B"); for (int i = 0; i < 10; i++) fprintf(stderr, " %02x", rv->vm.mstate[t][i]); fprintf(stderr, " pos %d,%d,%d\n", rv->vm.pos[3*t], rv->vm.pos[3*t+1], rv->vm.pos[3*t+2]); }
 	if (getenv("CAD_LOOKTEXT")) { int t = atoi(getenv("CAD_LOOKTEXT")); char tx[200] = ""; const ObjSprite *sp = thing_sprite(rv, t);   /* debugging aid: print the class-specific description of a thing */
 		fprintf(stderr, "LOOK %d class %d: %s\n", t, sp ? sp->header[0x16] : -1, sp && thing_description(rv, t, sp, tx, sizeof(tx)) ? tx : "(none)"); }
 	if (getenv("CAD_ENERGY")) rv->vm.energy = atoi(getenv("CAD_ENERGY"));     /* debugging aid: start with this energy */
@@ -791,6 +792,7 @@ static void walker_world(Walker *wk, RoomView *rv) {
 		b->id = o->thing;
 	}
 	cw->objs = wk->objs; cw->nobjs = rv->ro.n;
+	if (getenv("CAD_HDRS")) for (int i = 0; i < rv->ro.n; i++) { const ObjSprite *q = rv->ro.o[i].sp; fprintf(stderr, "HDR thing %d h12 %02x w13 %02x size %d,%d,%d class %02x\n", rv->ro.o[i].thing, q->header[12], q->header[13], q->header[17], q->header[19], q->header[21], q->header[22]); }
 	if (getenv("CAD_BOXES")) for (int i = 0; i < rv->ro.n; i++) fprintf(stderr, "BOX %d thing %d x %d..%d y %d..%d z %d..%d solid %d\n", i, wk->objs[i].id, wk->objs[i].x0, wk->objs[i].x1, wk->objs[i].y0, wk->objs[i].y1, wk->objs[i].zb, wk->objs[i].zt, wk->objs[i].solid);
 	cw->nexits = room_build_exits(&rv->mp2, &rv->objs, rv->room, wk->exits);
 	cw->exits = wk->exits;
@@ -1327,7 +1329,9 @@ static void thing_box(const RoomView *rv, int t, int *xs, int *ys, int *zs) {
 	*zs = sp ? (sp->header[20] << 8 | sp->header[21]) : 7;
 }
 /* the spot in front of the player for thing t (1000:6C72); returns 0 when it is blocked */
-static int front_spot(Walker *wk, RoomView *rv, int t, int *ox, int *oy, int *oz) {
+static int front_spot_h(Walker *wk, RoomView *rv, int t, int *ox, int *oy, int *oz, int zadd);
+static int front_spot(Walker *wk, RoomView *rv, int t, int *ox, int *oy, int *oz) { return front_spot_h(wk, rv, t, ox, oy, oz, 0); }
+static int front_spot_h(Walker *wk, RoomView *rv, int t, int *ox, int *oy, int *oz, int zadd) {
 	int xs, ys, zs;
 	thing_box(rv, t, &xs, &ys, &zs);
 	int dxp = wk->x1, dyp = wk->y1;
@@ -1336,8 +1340,8 @@ static int front_spot(Walker *wk, RoomView *rv, int t, int *ox, int *oy, int *oz
 		face = wk->dir == DIR_RIGHT ? 8 : wk->dir == DIR_LEFT ? 4 : wk->dir == DIR_DOWN ? 2 : 1;
 	place_spot(face, wk->x1, wk->y1, wk->x1 - (PL_XS - 1), wk->y1 - (PL_YS - 1), xs, ys, &dxp, &dyp);   /* 1000:6C72, the eight cases */
 	ColResult cr;
-	collision_test(&wk->world, dxp, dyp, wk->z, xs, ys, zs, t, 0, &cr);
-	*ox = dxp; *oy = dyp; *oz = wk->z;
+	collision_test(&wk->world, dxp, dyp, wk->z + zadd, xs, ys, zs, t, 0, &cr);
+	*ox = dxp; *oy = dyp; *oz = wk->z + zadd;
 	return cr.zf;
 }
 /* spell 0 / weapon strike (TAD routine 085C, level 1): the first creature in the line of fire loses the item's power A[1] from its hit points A[0]; at underflow event 23 (its death) */
@@ -1567,12 +1571,13 @@ static void throw_held(Walker *wk, RoomView *rv) {
 	}
 	if (t <= 0 || t >= ACL_THINGS || rv->vm.room[t] != 0xFF || rv->nfly >= 8) return;
 	snd_play(0x0E);
-	if (!front_spot(wk, rv, t, &x, &y, &z)) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 27; roomview_flush_messages(rv); return; }
+	if (!front_spot_h(wk, rv, t, &x, &y, &z, PL_ZS - 1)) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 27; roomview_flush_messages(rv); return; }      /* 16C72 with cl = E2h: the spot at the player's z + the full height of its box (zt - zb = 29) */
 	rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; rv->vm.pos[3 * t + 2] = (uint8_t)z;
 	rv->vm.room[t] = (uint8_t)rv->room;
 	rv->loose[t] = 1;
 	rv->held = 0;
 	int db = wk->dir == DIR_RIGHT ? 8 : wk->dir == DIR_LEFT ? 4 : wk->dir == DIR_DOWN ? 2 : 1;
+	{ const ObjSprite *ws = thing_sprite(rv, t); rv->fly[rv->nfly].weightless = ws && ws->header[13] == 0 && 0; }       /* 12F1C: weight byte 0Dh = 0 -> the vertical path FBA3 (a bare 00) instead of FBA5; never the case for an object that has had an entry, because 14A2E / 151E2 patch a zero weight to 0Ah (the sprite header is shared) */
 	rv->fly[rv->nfly].thing = t; rv->fly[rv->nfly].zi = 0; rv->fly[rv->nfly].hi = 0; rv->fly[rv->nfly].dirbits = db; rv->fly[rv->nfly++].fall = 0;
 	rv->vm.queue_n = 0;
 	acl_thing_event(&rv->vm, &rv->mp2, t, 21, 0);
@@ -1580,12 +1585,12 @@ static void throw_held(Walker *wk, RoomView *rv) {
 	rv->pending_rebuild = 1;
 	roomview_flush_messages(rv);
 }
-/* gravity (1000:1572B / 6BFC): a loose thing (sprite header byte 0Ch bit 0 set = non-solid, weight byte 0Dh != 0, record flags2 bits 4 and 8 clear) that stands above the floor with nothing under it starts to fall */
+/* gravity (1000:1572B / 6BFC): a loose thing (sprite header byte 0Ch bit 0 set = non-solid, record flags2 bits 4 and 8 clear) that stands above the floor with nothing under it starts to fall */
 static void gravity_scan(Walker *wk, RoomView *rv) {
 	for (int i = 0; i < rv->ro.n && rv->nfly < 8; i++) {
 		const RoomObj *o = &rv->ro.o[i];
 		int t = o->thing, z = (int8_t)rv->vm.pos[3 * t + 2];
-		if (z <= 0 || !(o->sp->header[12] & 1) || o->sp->header[0x0D] == 0 || (rv->vm.flags2[t] & 0x0C) || (rv->vm.flags[t] & 0x80) || t == 0) continue;   /* entry flag 27h bit 0 = sprite header byte 0Ch bit 0 (the non-solid things: items) */
+		if (z <= 0 || !(o->sp->header[12] & 1) || (rv->vm.flags2[t] & 0x0C) || (rv->vm.flags[t] & 0x80) || t == 0) continue;   /* entry flag 27h bit 0 = sprite header byte 0Ch bit 0 (the non-solid things: items) */
 		int busy = 0;
 		for (int k = 0; k < rv->nfly; k++) if (rv->fly[k].thing == t) busy = 1;
 		if (busy) continue;
@@ -1594,7 +1599,7 @@ static void gravity_scan(Walker *wk, RoomView *rv) {
 		ColResult cr;
 		collision_test(&wk->world, rv->vm.pos[3 * t], rv->vm.pos[3 * t + 1], z - 1, xs, ys, zs, t, 0, &cr);
 		if (!cr.zf) continue;
-		rv->fly[rv->nfly].thing = t; rv->fly[rv->nfly].zi = 0; rv->fly[rv->nfly].hi = 18; rv->fly[rv->nfly].dirbits = 0; rv->fly[rv->nfly++].fall = 1;
+		rv->fly[rv->nfly].thing = t; rv->fly[rv->nfly].zi = 0; rv->fly[rv->nfly].hi = 18; rv->fly[rv->nfly].dirbits = 0; rv->fly[rv->nfly].weightless = 0; rv->fly[rv->nfly++].fall = 1;
 	}
 }
 static void fly_step(Walker *wk, RoomView *rv) {
@@ -1602,28 +1607,35 @@ static void fly_step(Walker *wk, RoomView *rv) {
 		int t = rv->fly[k].thing, xs, ys, zs;
 		thing_box(rv, t, &xs, &ys, &zs);
 		int x = rv->vm.pos[3 * t], y = rv->vm.pos[3 * t + 1], z = (int8_t)rv->vm.pos[3 * t + 2];
-		int dz = rv->fly[k].fall ? zfall[rv->fly[k].zi < 20 ? rv->fly[k].zi : 19] : rv->fly[k].zi < 17 ? zthrow[rv->fly[k].zi] : -8;
+		/* 1000:16D3A: the vertical path (FBA5: 06 06 06 04 04 02 01 00 00 FF FE FC FC FA FA FA F9, FBA3 for a weightless thing: 00; FB8E for a fall) holds its last value
+		   while the byte after it is 50h; the horizontal path (4 4 3 3 3 2 2 2 2 2 1 ...) ends in 00 00 (no more horizontal move). The combined step is tested with 116E0: when it is free
+		   it is applied (16E85); when it is blocked the horizontal path is dropped and the vertical path restarts as the fall FB8E, the same step is tried again with that (16E5D); a
+		   second blocked step while falling ends the flight (16E74 -> 16F53); a step that brings z to exactly 0 downwards is the landing on the floor (16E91) */
+		int dz = rv->fly[k].fall ? zfall[rv->fly[k].zi < 20 ? rv->fly[k].zi : 19] : rv->fly[k].weightless ? 0 : zthrow[rv->fly[k].zi < 17 ? rv->fly[k].zi : 16];
 		int m = rv->fly[k].hi < 18 ? hmag[rv->fly[k].hi] : 0;
 		int dx = (rv->fly[k].dirbits & 8 ? m : rv->fly[k].dirbits & 4 ? -m : 0), dy = (rv->fly[k].dirbits & 2 ? m : rv->fly[k].dirbits & 1 ? -m : 0);
 		int nz = z + dz;
-		if (nz < 0) nz = 0;
 		ColResult cr;
 		int done = 0, nland = 0, land[COL_MAX];
-		collision_test(&wk->world, x + dx, y + dy, nz, xs, ys, zs, t, 0, &cr);
-		if (cr.zf) { x += dx; y += dy; z = nz; }
-		else {
-			rv->fly[k].hi = 18;                                          /* blocked: the horizontal path ends */
-			collision_test(&wk->world, x, y, nz, xs, ys, zs, t, 0, &cr);
-			if (cr.zf) z = nz;
-			else if (dz < 0) { done = 1; nland = cr.n; for (int q = 0; q < cr.n; q++) land[q] = cr.ids[q]; }   /* landed on something: event 4 for what it lands on (1000:16B02) */
-			else { rv->fly[k].fall = 1; rv->fly[k].zi = 0; }               /* hit a ceiling: start to fall */
+		if (nz < 0) cr.zf = 0; else collision_test(&wk->world, x + dx, y + dy, nz, xs, ys, zs, t, 0, &cr);
+		if (cr.zf) {
+			x += dx; y += dy; z = nz;
+			if (rv->fly[k].hi < 18) rv->fly[k].hi++;
+			if (rv->fly[k].zi < 40) rv->fly[k].zi++;
+			if (nz == 0 && dz < 0) done = 1;
+		} else {
+			if (nz >= 0) { nland = cr.n; for (int q = 0; q < cr.n; q++) land[q] = cr.ids[q]; }
+			if (rv->fly[k].fall && rv->fly[k].zi == 0) done = 1;             /* blocked at the very first entry of the fall path (the pointer equals FB8E): it rests here (16E74) */
+			else {
+				rv->fly[k].fall = 1; rv->fly[k].zi = 0; rv->fly[k].hi = 18;     /* 16E5D: the horizontal path is dropped and FB8E restarts */
+				dz = zfall[0]; nz = z + dz;
+				if (nz < 0) cr.zf = 0; else collision_test(&wk->world, x, y, nz, xs, ys, zs, t, 0, &cr);
+				if (cr.zf) { z = nz; rv->fly[k].zi = 1; if (nz == 0) done = 1; }
+				else done = 1;
+			}
 		}
-		if (nz == 0 && dz < 0) done = 1;
 		rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; rv->vm.pos[3 * t + 2] = (uint8_t)z;
 		if (g_snd_log) fprintf(stderr, "FLY %d at %d,%d,%d dz %d%s\n", t, x, y, z, dz, done ? " landed" : "");
-		if (rv->fly[k].hi < 18) rv->fly[k].hi++;
-		if (rv->fly[k].zi < 40) rv->fly[k].zi++;
-		if (!rv->fly[k].fall && rv->fly[k].zi >= 17) { rv->fly[k].fall = 1; rv->fly[k].zi = 0; }
 		rv->pending_rebuild = 1;
 		if (done && z == 0) {                                            /* 1000:16E5D..16EB1: the fall reaches the floor (z becomes 0): event 11 (0Bh) for the thing (level 1 room 53's falling things, level 2 room 86's) */
 			rv->vm.queue_n = 0;
@@ -1989,10 +2001,10 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		{                                                                 /* H: hold / put away the last handled carried thing (1000:03CD) */
 			int h = (keys & 0x100) != 0, he = h && !rv->h_prev;
 			rv->h_prev = h;
-			if (he && !rv->ruck_open && !rv->menu_open) {
-				if (rv->held) rv->held = 0;
-				else if (rv->last_item > 0 && rv->last_item < ACL_THINGS && rv->vm.room[rv->last_item] == 0xFF && !(rv->vm.flags[rv->last_item] & 0x80)) {
-					rv->held = rv->last_item;
+			if (he && !rv->ruck_open && !rv->menu_open) {              /* 1000:03CD: with a held thing H puts it away and remembers it in ds:58A; with none it holds ds:58A again when that is still carried (a thing taken or held through the rucksack is not remembered: checked in the emulator, 58A stays 0 after a pickup and H does nothing) */
+				if (rv->held) { rv->h_item = rv->held; rv->held = 0; }
+				else if (rv->h_item > 0 && rv->h_item < ACL_THINGS && rv->vm.room[rv->h_item] == 0xFF && !(rv->vm.flags[rv->h_item] & 0x80)) {
+					rv->held = rv->h_item;
 					rv->vm.queue_n = 0;
 					acl_thing_event(&rv->vm, &rv->mp2, rv->held, 27, 0);
 					for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
