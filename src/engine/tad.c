@@ -90,7 +90,14 @@ static void svc_hook(X86 *c, void *user) {
 	case 0x06:                                   /* 81C8: change energy by ax (signed) */
 		energy_change(t->vm, (int16_t)c->ax);
 		break;
-	case 0x3A:                                   /* 1187: the game ends (level 5's ending loop `032F`: wait for a key, call this, repeat): the routine stops here */
+	case 0x38:                                   /* 5DAA: a message scroll with string id di (level 5's ending: 77 NOW THAT YOU HAVE FINISHED YOUR TASK ...) */
+		if (t->vm && t->vm->msg_n < 16) t->vm->msg[t->vm->msg_n++] = (int)c->di;
+		break;
+	case 0x34:                                   /* 2FE3: the status box (health / gold / XP / level / complete / rank) at ax, dx: shown by the front end at the end of the game */
+		break;
+	case 0x3A:
+		if (t->vm) t->vm->game_end = 1;
+		if (getenv("CAD_SNDLOG")) fprintf(stderr, "GAME ENDS (service 3Ah)\n");                                   /* 1187: the game ends (level 5's ending loop `032F`: wait for a key, call this, repeat): the routine stops here */
 		x86_ww(c, c->ss, c->sp, SENT);                   /* the far return of the service goes to the run's sentinel */
 		x86_ww(c, c->ss, c->sp + 2, TADG);
 		break;

@@ -143,6 +143,7 @@ typedef struct RoomView_ {
 	int dead_timer;            /* > 0: the player died (energy 0), counts game steps until the level restarts */
 	RankTable ranks; int ranks_ok; unsigned six_fa;   /* status dialog data (MP1) */
 	int show_status;           /* 'I': the character status dialog */
+	int ending;                /* the game is over (TAD service 3Ah): the status box stays up and a key leaves */
 	int creature_tick;
 	unsigned clock_ticks; int day;   /* the game clock: 50 Hz ticks; one day = 30 minutes (1000:1514: ds:5B7/5B5/5B4/5B2) */
 	int label_id;              /* name shown above the room name: string id of the last touched object (-1 none) */
@@ -164,6 +165,7 @@ static const char *g_lang = "eng";     /* --lang eng|fre|ger: the language file 
 static int g_four_dir;                /* F4: four-direction movement (diagonals ignored) */
 static const char *g_dbg_zones, *g_dbg_creat, *g_dbg_shot, *g_dbg_vars;   /* debug environment, read once in main (getenv per step is slow) */
 static int g_paused;                  /* Pause key in the walk scene */
+static int g_quit_req;                /* the game ended and a key was pressed: leave the main loop */
 static const char *g_sound_opt;       /* --sound adlib|beeper|sblaster|roland */
 static int g_payoff;                  /* Cadaver 2 is installed (The Payoff follows Cadaver's last level) */
 static Beeper g_snd;
@@ -299,7 +301,7 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 		for (int i = 0; i < 128; i++) vis += rv->visited[i];
 		unsigned w5 = rv->tad.loaded ? (unsigned)(rv->tad.mem[0x30000 + 0x36] | (rv->tad.mem[0x30000 + 0x37] << 8)) : 2;
 		int rid = rank_string_id(&rv->ranks, rv->vm.score);
-		status_dialog_draw(scr->pixels, g_tiles, g_tiles_len, g_font3, g_font3_len, rv->names.count > 13 ? rv->names.strings[13] : "",
+		status_dialog_draw_at(scr->pixels, rv->ending ? 130 : 64, rv->ending ? 108 : 10, g_tiles, g_tiles_len, g_font3, g_font3_len, rv->names.count > 13 ? rv->names.strings[13] : "",
 		                   rv->vm.energy, rv->vm.energy_max, rv->vm.money, rv->vm.score, rv->level, complete_percent(vis, rv->six_fa, w5),
 		                   rid < rv->names.count ? rv->names.strings[rid] : "", msg_rnd, NULL);
 	}
@@ -1938,6 +1940,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (rv->restarting) return;
 	roomview_tick(rv);
 	wk->tick++;
+	if (wk->tick == 8 && getenv("CAD_ENDING")) { rv->vm.game_end = 1; if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 77; }       /* debugging aid: the ending of level 5 (message 77, then the status box) without playing to it */
 	rv->vm.held = rv->held;
 	rv->vm.px = wk->x1; rv->vm.py = wk->y1; rv->vm.pz = wk->z;
 	if (g_dbg_shot && (wk->tick % 4) == 0) { int st = atoi(getenv("CAD_SHOT")); fprintf(stderr, "S%d tick %d pos %d,%d,%d flags %02x room %d mode %d vel %d,%d A2 %d A0 %d player %d,%d dir %d\n", st, wk->tick, rv->vm.pos[3*st], rv->vm.pos[3*st+1], rv->vm.pos[3*st+2], rv->vm.flags[st], rv->vm.room[st], rv->vm.mstate[st][0], (int8_t)rv->vm.mstate[st][3], (int8_t)rv->vm.mstate[st][4], rv->vm.tail[st][2], rv->vm.tail[st][0], wk->x1, wk->y1, wk->dir); }
@@ -2013,6 +2016,9 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 				}
 			}
 		}
+		if (rv->vm.game_end && !rv->ending) { rv->ending = 1; rv->show_status = 1; }                  /* level 5's ending routine reached service 3Ah: the original shows the message scroll and the status box and waits for a key before it exits to DOS */
+		if (rv->ending && (edge || spe || rte)) { g_quit_req = 1; return; }
+		if (rv->ending) return;
 		if (rv->show_status && (edge || spe || rte) ) { rv->show_status = 0; return; }
 		if (rv->ruck_open) { ruck_step(wk, rv, keys, edge || rte, spe); return; }
 		if ((spe || rte) && !rv->menu_open) { ruck_open(rv); if (rv->ruck_open) return; }
@@ -2400,6 +2406,7 @@ int main(int argc, char **argv) {
 			prev_scene = scene;
 		}
 		if (scene == SCENE_INTRO) snd_music(1);
+		if (g_quit_req) running = 0;
 		SDL_Event ev;
 		while (SDL_PollEvent(&ev)) {
 			if (ev.type == SDL_QUIT)

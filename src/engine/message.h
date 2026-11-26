@@ -42,6 +42,8 @@ typedef struct { uint16_t id[20]; uint32_t thr[20]; } RankTable;
 int rank_table_load(const uint8_t *mp1, size_t len, RankTable *rt);
 int rank_string_id(const RankTable *rt, uint32_t score);
 int complete_percent(unsigned rooms_visited, unsigned six_fa, unsigned tad_w5);
+void status_dialog_draw_at(uint8_t *canvas, int bx, int by, const uint8_t *tiles, size_t tiles_len, const uint8_t *font, size_t font_len, const char *labels, int energy, int energy_max,
+                           uint32_t money, uint32_t score, int level, int percent, const char *rank_title, int (*rnd)(void *), void *user);
 void status_dialog_draw(uint8_t *canvas, const uint8_t *tiles, size_t tiles_len, const uint8_t *font, size_t font_len, const char *labels, int energy, int energy_max,
                         uint32_t money, uint32_t score, int level, int percent, const char *rank_title, int (*rnd)(void *), void *user);
 

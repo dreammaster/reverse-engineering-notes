@@ -181,10 +181,10 @@ int complete_percent(unsigned rooms_visited, unsigned six_fa, unsigned tad_w5) {
 	return d > 0 ? (int)(((0x6400u / (unsigned)d) * rooms_visited) >> 8) : 0;
 }
 
-void status_dialog_draw(uint8_t *canvas, const uint8_t *tiles, size_t tiles_len, const uint8_t *font, size_t font_len, const char *labels, int energy, int energy_max,
-                        uint32_t money, uint32_t score, int level, int percent, const char *rank_title, int (*rnd)(void *), void *user) {
-	/* box: 16 fill columns, 4 middle rows at (64,10) */
-	int x = 64, y = 10, fill = 16, rows = 4, yy = y;
+void status_dialog_draw_at(uint8_t *canvas, int bx, int by, const uint8_t *tiles, size_t tiles_len, const uint8_t *font, size_t font_len, const char *labels, int energy, int energy_max,
+                           uint32_t money, uint32_t score, int level, int percent, const char *rank_title, int (*rnd)(void *), void *user) {
+	/* box: 16 fill columns, 4 middle rows at (bx, by); the status key puts it at (64, 10), the end of the game (service 34h, ax = 130, dx = 108) at (130, 108) */
+	int x = bx, y = by, fill = 16, rows = 4, yy = y;
 	for (int s2 = 0; s2 < 2; s2++) {
 		tile_blit(canvas, x, yy, tiles, tiles_len, TOP[s2][0]);
 		for (int i = 0; i < fill; i++) tile_blit(canvas, x + 8 + 8 * i, yy, tiles, tiles_len, TOP[s2][1]);
@@ -210,7 +210,7 @@ void status_dialog_draw(uint8_t *canvas, const uint8_t *tiles, size_t tiles_len,
 		size_t n = 0;
 		while (p[n] && p[n] != '\r' && n < sizeof(line) - 1) { line[n] = p[n]; n++; }
 		line[n] = 0;
-		message_text(canvas, 78, ty, line, font, font_len);
+		message_text(canvas, x + 14, ty, line, font, font_len);
 		ty += 6;
 		p += n;
 		if (*p == '\r') p++;
@@ -225,7 +225,12 @@ void status_dialog_draw(uint8_t *canvas, const uint8_t *tiles, size_t tiles_len,
 	snprintf(v[5], 40, "%s", rank_title);
 	ty = y + 13;
 	for (int i = 0; i < 6; i++, ty += 6)
-		message_text(canvas, 134, ty, v[i], font, font_len);
+		message_text(canvas, x + 70, ty, v[i], font, font_len);
+}
+
+void status_dialog_draw(uint8_t *canvas, const uint8_t *tiles, size_t tiles_len, const uint8_t *font, size_t font_len, const char *labels, int energy, int energy_max,
+                        uint32_t money, uint32_t score, int level, int percent, const char *rank_title, int (*rnd)(void *), void *user) {
+	status_dialog_draw_at(canvas, 64, 10, tiles, tiles_len, font, font_len, labels, energy, energy_max, money, score, level, percent, rank_title, rnd, user);
 }
 
 void message_box(uint8_t *canvas, int x, int y, int fill, int rows, const uint8_t *tiles, size_t tiles_len, int (*rnd)(void *), void *user) {
