@@ -95,3 +95,5 @@ Debug environment variables of the port: `CAD_CARRY=thing[:A0[:A1]]`, `CAD_SPELL
 `tools/gen_zone_vectors.py` does the same for the room zone overlap test (`1000:2022`): 400 random cases into `src/tests/vectors_zone.h`, checked against `engine/collision.c zone_overlap`.
 
 `tools/gen_grid_vectors.py`: 2080 cursor moves of the whole-rucksack grid (every size 1-32, the four keys, many states) through the original key handler into `src/tests/vectors_grid.h`; `engine/ruckgrid.c` must reproduce them.
+
+`tools/gen_describe_vectors.py`: 300 random spell / potion / weapon / ammunition structs through the original description routine (`1000:84D9`, level 1 English) into `src/tests/vectors_describe.h`; `engine/describe.c item_description` must reproduce the texts.

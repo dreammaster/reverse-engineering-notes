@@ -20,6 +20,7 @@ add_library(cadaver_engine STATIC
   engine/anim.c
   engine/collision.c
   engine/ruckgrid.c
+  engine/describe.c
   engine/roomexits.c
   engine/panel.c
   engine/message.c

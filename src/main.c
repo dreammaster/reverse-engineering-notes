@@ -18,6 +18,7 @@
 #include "engine/roomobjs.h"
 #include "engine/collision.h"
 #include "engine/ruckgrid.h"
+#include "engine/describe.h"
 #include "engine/roomexits.h"
 #include "engine/panel.h"
 #include "engine/push.h"
@@ -390,15 +391,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	if (rc == 0) { rc = walltiles_load(f[2], fl[2], &rv->walls); if (rc) tiles_free(&rv->tiles); }
 	if (rc == 0) rc = mp1_palette(f[0], fl[0], rv->palette);
 	if (rc == 0) rc = objsprites_load(f[0], fl[0], &rv->objs);
-	if (rc == 0) {                                            /* the spell and potion name tables: 100 + 100 entries of 8 bytes, the first starting 00 54 20 20 ... (string 84) */
-		static const uint8_t pat[8] = {0x00, 0x54, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
-		rv->spell_tbl_ok = 0;
-		for (size_t o = 0; o + 0x640 <= fl[0]; o++) if (!memcmp(f[0] + o, pat, 8)) {
-			for (int k = 0; k < 100; k++) { rv->spell_str[k] = (uint16_t)((f[0][o + 8 * k] << 8) | f[0][o + 8 * k + 1]); rv->potion_str[k] = (uint16_t)((f[0][o + 0x320 + 8 * k] << 8) | f[0][o + 0x320 + 8 * k + 1]); }
-			rv->spell_tbl_ok = 1;
-			break;
-		}
-	}
+	if (rc == 0) rv->spell_tbl_ok = describe_load_tables(f[0], fl[0], rv->spell_str, rv->potion_str);   /* the spell and potion name tables of the level's MP1 */
 	for (int i = 0; i < 3; i++) free(f[i]);
 	if (rc != 0) {
 		fprintf(stderr, "level %d: decode error %d\n", rv->level, rc);
@@ -616,42 +609,17 @@ static const char *lng_str(const RoomView *rv, int id) { return id >= 0 && id < 
 
 /* 1000:84D9: the class-specific part of a look text (emulator-verified with the real routine on level 1's records:
    spell items, potions, weapons and ammunition); returns 0 when the class has none */
-static int spell_name_id(int n) { return n <= 9 ? 84 + n : n == 10 ? 32 : n <= 26 ? 94 + (n - 11) : -1; }
-static int potion_name_id(int n) { return n == 0 ? 31 : n <= 3 ? 109 + n : n == 4 ? 30 : n <= 17 ? 113 + (n - 5) : -1; }
 static int thing_description(const RoomView *rv, int t, const ObjSprite *lsp, char *tx, size_t cap) {
-	if (!lsp || t < 0 || t >= ACL_THINGS) return 0;
+	if (!lsp || t < 0 || t >= ACL_THINGS || !rv->spell_tbl_ok) return 0;
 	const uint8_t *a = rv->vm.tail[t];
-	int cls = lsp->header[0x16];
-	size_t l = 0;
-#define ADD(...) do { if (l < cap) l += (size_t)snprintf(tx + l, cap - l, __VA_ARGS__); } while (0)
-	if (cls == 1 || cls == 2) {
-		int nid = rv->spell_tbl_ok && a[0] < 100 ? (cls == 1 ? rv->spell_str[a[0]] : rv->potion_str[a[0]]) : cls == 1 ? spell_name_id(a[0]) : potion_name_id(a[0]);
-		ADD("%s", lng_str(rv, 5));
-		ADD("%s", (a[3] & 1) ? lng_str(rv, 39) : nid >= 0 ? lng_str(rv, nid) : "");
-		ADD("%s%d%s%d", lng_str(rv, cls == 1 ? 9 : 11), a[2], lng_str(rv, cls == 1 ? 10 : 12), a[1]);
-		if (a[3] & 4) ADD("  %s", lng_str(rv, 34));
-		return 1;
+	int cls = lsp->header[0x16], ammo = (a[0] << 8) | a[1], ammo_name = 0;
+	const uint8_t *ammo_a = NULL;
+	if (cls == 4 && ammo < ACL_THINGS) {
+		ammo_a = rv->vm.tail[ammo];
+		const ObjSprite *asp = thing_sprite(rv, ammo);
+		ammo_name = asp ? (asp->header[10] << 8) | asp->header[11] : 0;
 	}
-	if (cls == 4 || (cls & 0x80)) {
-		const uint8_t *w = a;
-		if (cls == 4) {
-			int ammo = (a[0] << 8) | a[1];
-			const ObjSprite *asp = ammo < ACL_THINGS ? thing_sprite(rv, ammo) : NULL;
-			if (a[2] != 0) {                                              /* needs ammunition: string 19 + its name + 20 */
-				int nm = asp ? (asp->header[10] << 8) | asp->header[11] : 0;
-				ADD("%s%s%s", lng_str(rv, 19), nm < 0x8000 ? lng_str(rv, nm) : "", lng_str(rv, 20));
-				return 1;
-			}
-			ADD("%s ", lng_str(rv, 21));
-			if (ammo < ACL_THINGS) w = rv->vm.tail[ammo];                  /* the shots are those of the ammunition thing */
-		}
-		ADD("%s", lng_str(rv, 16));
-		if (w[2] == 0xFF) ADD("%s", lng_str(rv, 18)); else ADD("%d", w[2]);
-		ADD("%s%d", lng_str(rv, 17), w[1]);
-		return 1;
-	}
-#undef ADD
-	return 0;
+	return item_description(&rv->names, rv->spell_str, rv->potion_str, cls, a, ammo_a, ammo_name, tx, cap);   /* engine/describe.c, verified against 1000:84D9 */
 }
 
 /* the script flags changed (things hidden / placed): rebuild the objects, keeping the positions and animations of those that stay */

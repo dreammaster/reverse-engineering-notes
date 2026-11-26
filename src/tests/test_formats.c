@@ -29,6 +29,8 @@
 #include "vectors_place.h"
 #include "vectors_zone.h"
 #include "vectors_grid.h"
+#include "../engine/describe.h"
+#include "vectors_describe.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -185,6 +187,26 @@ int main(int argc, char **argv) {
 			failed++;
 		}
 		checked++;
+	}
+	{                                                                /* the class-specific look texts, vectors from the original 1000:84D9 (level 1, English) */
+		char p1[1024], p2[1024];
+		snprintf(p1, sizeof(p1), "%s/cadaver1/DATA/1/ENG1.LNG", root);
+		snprintf(p2, sizeof(p2), "%s/cadaver1/DATA/1/LEV1.MP1", root);
+		size_t n1, n2, u1 = 0, u2 = 0;
+		uint8_t *f1 = slurp(p1, &n1), *f2 = slurp(p2, &n2), *l1 = NULL, *m1 = NULL;
+		LngTable lng;
+		uint16_t sp[100], po[100];
+		if (f1 && f2 && mjm_unpack(f1, n1, &l1, &u1) == 0 && mjm_unpack(f2, n2, &m1, &u2) == 0 && lng_parse(l1, u1, &lng) == 0 && describe_load_tables(m1, u2, sp, po)) {
+			for (int i = 0; i < N_DESCRIBE_VECTORS; i++) {
+				const DescribeVector *v = &describe_vectors[i];
+				char out[300] = "";
+				int nm = 0;                                              /* the ammunition's name is not needed while A[2] == 0 */
+				item_description(&lng, sp, po, v->cls, v->a, v->ammo, nm, out, sizeof(out));
+				if (strcmp(out, v->text)) { printf("FAIL item_description %d (class %d): got '%s' want '%s'\n", i, v->cls, out, v->text); failed++; }
+				checked++;
+			}
+		}
+		free(f1); free(f2); free(l1); free(m1);
 	}
 	for (size_t i = 0; i < sizeof(mjm_vectors) / sizeof(mjm_vectors[0]); i++) {
 		const MjmVector *v = &mjm_vectors[i];
