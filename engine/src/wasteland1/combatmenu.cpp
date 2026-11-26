@@ -339,6 +339,81 @@ bool drawTargetRow(Machine &m, uint8_t al) {   // 12284: the row of a target lis
 	return false;
 }
 
+bool pickNearestTarget(Machine &m, uint8_t count, uint8_t first) {   // 126D7: the combatant among `count` candidates (from first+1) with the smallest value; CF when none
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	constexpr uint16_t counter = 0xA468, best = 0xA422, candidate = 0xA421, bestIndex = 0xA420;   // ds:27288, 27242, 27241, 27240
+	D(counter) = count;
+	D(best) = 0xFF;
+	uint8_t current = uint8_t(first + 1);
+	for (;;) {
+		D(candidate) = current;
+		X86Regs x;
+		x.al = current;
+		legacy::call(m, 0x271F, x);   // drawTargetRow
+		if (!x.cf) {
+			const uint8_t value = D(uint16_t(m.d16(g::monsterPtr) + 3));
+			if (value < D(best)) {
+				D(best) = value;
+				D(bestIndex) = D(candidate);
+			}
+		}
+		current = uint8_t(D(candidate) + 1);
+		if (--D(counter) == 0) break;
+	}
+	if (D(best) == 0xFF) return true;
+	X86Regs x;
+	x.al = D(bestIndex);
+	legacy::call(m, 0x271F, x);
+	return x.cf;
+}
+
+void listEncounterTargets(Machine &m) {   // 12636: shows the target list of the encounter and the name of the nearest monster
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	D(0x46CC) = 0xFF;
+	D(0x46F0) = 1;
+	X86Regs x;
+	x.al = D(0x4654);
+	x.dl = 0;
+	x.bl = 0;
+	legacy::call(m, 0x3A37, x);   // combatantIndex
+	const uint8_t index = x.al;
+	uint8_t keepAl;
+	bool skipPrompt = false;
+	if (pickNearestTarget(m, 0x0C, index)) {
+		if (pickNearestTarget(m, 0x30, 0)) {
+			--D(0x46F0);
+			printMessage(m, 0x60);
+			keepAl = 8;
+			skipPrompt = true;
+		}
+	}
+	if (!skipPrompt) {
+		--D(0x46F0);
+		setWriteCharacterFn(m);
+		X86Regs y;
+		y.bl = uint8_t(D(0xA420) - 1);
+		y.al = y.bl;
+		legacy::call(m, 0x3A56, y);
+		D(0xA420) = y.bl;
+		y.al = y.bl;
+		y.dl = y.al;
+		legacy::call(m, 0x29E9, y);   // writeMonsterName
+		y.dl = D(0xA420);
+		legacy::call(m, 0x2A40, y);   // selectMonsterDetails
+		legacy::call(m, 0x2A9D, y);   // itemAmmunitionType
+		keepAl = y.al;
+	}
+	for (int i = 11; i >= 0; --i) D(uint16_t(0x7201 + i)) = ' ';
+	D(0x720D) = 0;
+	uint8_t at = 0;
+	const uint8_t before = uint8_t(D(g::rectTextX) - 1);
+	if (before < 12) at = uint8_t(6 - (before >> 1));
+	for (uint8_t dl = 1; at != 12; ++dl, ++at) D(uint16_t(0x7201 + at)) = uint8_t(D(uint16_t(0x71CD + dl)) + 0x20);
+	X86Regs z;
+	z.al = keepAl;
+	legacy::call(m, 0x90A8, z);   // drawRosterLocation
+}
+
 void drawMemberNumbers(Machine &m) {   // 17357: the numbers "1>" .. "n>" in front of the roster rows (combat order mode)
 	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
 	if (D(0x46B9) == 0) return;

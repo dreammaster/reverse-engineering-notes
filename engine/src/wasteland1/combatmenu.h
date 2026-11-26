@@ -44,4 +44,8 @@ void drawMemberNumbers(Machine &m);
 // 12284: draws the row of combatant `al` in a target list; true (CF) when there is nothing to show
 bool drawTargetRow(Machine &m, uint8_t al);
 
+// 126D7: among `count` combatants after `first` the one with the smallest value is shown; CF when none. 12636: the target list of an encounter
+bool pickNearestTarget(Machine &m, uint8_t count, uint8_t first);
+void listEncounterTargets(Machine &m);
+
 } // namespace wl

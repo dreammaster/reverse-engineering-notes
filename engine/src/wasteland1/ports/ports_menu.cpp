@@ -80,6 +80,8 @@ PORT(forEachFightGroup) { r.a.b.l = forEachFightGroup(m); }                     
 PORT(roundHeader) { roundHeader(m); r.a.b.l = 1; }                                       // 12551
 PORT(drawMemberNumbers) { drawMemberNumbers(m); }                                         // 17357
 PORT(drawTargetRow) { r.cf = drawTargetRow(m, r.a.b.l); }                                   // 12284
+PORT(pickNearestTarget) { r.cf = pickNearestTarget(m, r.a.b.l, r.d.b.l); }                  // 126D7: al = count, dl = first
+PORT(listEncounterTargets) { listEncounterTargets(m); }                                 // 12636
 PORT(runCombat) { runCombat(m); }                                                       // 11D39
 
 PORT(regroupParty) { regroupParty(m); r.cf = true; }                                                 // 130C8
