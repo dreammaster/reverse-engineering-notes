@@ -528,9 +528,202 @@ bool Game::mdWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
-	if (wt != 0x13 && wt != 0x15 && wt != 0x16 && wt != 0x1A)
+	if (wt != 0x0E && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
 		return false;
 	World::Obj &o = _world.objects[k];
+	// sub_1B69D: the nearest member of the party that can be seen (alive, on the level of the creature), with its distance; -1 if there is none
+	auto nearest = [&](int &dist) {
+		int best = -1;
+		dist = 99;
+		for (int m = 0; m < al.partySize; ++m) {
+			int a = al.partyRoster[m], mk = _world.actorObject(a);
+			if (mk < 0 || _world.objects[mk].deleted || (al.status[a] & 0x10) || a == actor || _world.objects[mk].z != o.z)
+				continue;
+			int d = std::max(std::abs(_world.objects[mk].x - o.x), std::abs(_world.objects[mk].y - o.y));
+			if (d < dist) {
+				dist = d;
+				best = a;
+			}
+		}
+		return best;
+	};
+	auto remove = [&]() { // sub_2C902: the creature is taken out of the world
+		al.status[actor] |= 0x10;
+		_world.deleteObject(k);
+	};
+	auto facing = [&]() { o.frame = seRoll(0, 1) ? 3 : 7; }; // the random look of a 0x175, 0x16A or 0x182 (the bits above the type in its word)
+	if (wt == 0x0E) { // sub_1C4E8, the part that matters: a 0x175 or 0x182 more than seven squares from the nearest member burrows (invisible, worktype 0x12); the fight itself is the engine's
+		if (o.type != 0x175 && o.type != 0x182 && o.type != 0x16A)
+			return false;
+		facing();
+		int d;
+		if (nearest(d) >= 0 && d >= 8 && o.type != 0x16A) {
+			o.status |= 2;
+			al.worktype[actor] = 0x12;
+			al.unknown12f1[actor] = 0x12;
+			_world.spendMoves(actor, 5);
+			return true;
+		}
+		return false;
+	}
+	if (wt == 0x12) { // sub_1C91A (the thing under the sand, 0x175 and others): it waits (2 moves) until a member of the party stands next to it; then "Suddenly, something bursts up through the sand!",
+		// it comes up (the invisible bit goes) as a stationary fighter (worktype 0xE) and, if it is a 0x175, ten to thirty 0x16A (worktype 0x19, their quality the number of their parent)
+		// rise at random places within six squares
+		int d;
+		if (nearest(d) < 0 || d > 1) {
+			_world.spendMoves(actor, 2);
+			return true;
+		}
+		message("Suddenly, something bursts up through the sand!\n");
+		al.worktype[actor] = 0x0E;
+		al.unknown12f1[actor] = 0x0E;
+		o.status &= 0xFD;
+		if (o.type == 0x175) {
+			int n = seRoll(0, 10) + seRoll(0, 10) + 10;
+			for (int i = 0; i < n; ++i)
+				for (int t = 0; t < 8; ++t) {
+					int nx = o.x + seRoll(0, 12) - 6, ny = o.y + seRoll(0, 12) - 6;
+					// APPROX(97): the square is any free one for a creature (the original also lets one stand on another 0x16A)
+					int c = _creatures.spawn(0x16A, 0x19, nx, ny, o.z, true);
+					if (c >= 0) {
+						int ck = _world.actorObject(c);
+						if (ck >= 0) {
+							_world.objects[ck].frame = 3;
+							_world.objects[ck].quality = (uint8_t)actor;
+						}
+						break;
+					}
+				}
+		}
+		return false;
+	}
+	if (wt == 0x19) { // sub_1CB44 (the worm that burrows, 0x16A, shown as 0xFE under the sand): in reach it comes up and strikes; out of reach, unhurt, it burrows now and then; a wounded one
+		// (under a quarter of its strength) always, and goes; under the sand it creeps to the member and surfaces by chance, and when it is more than eight squares from its parent it is gone
+		int d, m = nearest(d);
+		if (m < 0)
+			return false;
+		int mk = _world.actorObject(m);
+		const CreatureStats *cs = Combat::stats(0x16A);
+		int range = Combat::rangeOf(_combat.weaponType(actor));
+		bool burrowed = (o.status & 2) != 0;
+		auto surface = [&]() {
+			o.status &= 0xFD;
+			o.type = 0x16A;
+			facing();
+		};
+		if (d <= range) {
+			if (burrowed)
+				surface();
+			if (d > 1 && !_creatures.lineOfFire(actor, _world.objects[mk].x, _world.objects[mk].y, range)) {
+				_world.spendMoves(actor, 5);
+				return true;
+			}
+			_combat.attack(actor, m);
+			_world.spendMoves(actor, 10);
+			return true;
+		}
+		if (!burrowed) {
+			_world.spendMoves(actor, 5);
+			bool wounded = al.hp[actor] < (cs ? cs->hp : 30) / 4;
+			if (!wounded && seRoll(1, 100) > 50)
+				return true;
+			o.type = 0xFE;
+			o.frame = 0;
+			if (wounded)
+				remove();
+			else
+				o.status |= 2;
+			return true;
+		}
+		int parent = o.quality;
+		if (parent != 0) {
+			int pk = _world.actorObject(parent);
+			if (pk >= 0 && std::max(std::abs(_world.objects[pk].x - o.x), std::abs(_world.objects[pk].y - o.y)) > 8) {
+				remove();
+				return true;
+			}
+		}
+		_creatures.walkTo(actor, _world.objects[mk].x, _world.objects[mk].y);
+		if (seRoll(0, d * 2) <= 1)
+			surface();
+		return true;
+	}
+	if (wt == 0x14) { // sub_1CDC2 (the thief of oxium): it goes to the nearest member; next to a party member that carries oxium (0x83) it takes the stack (what it keeps is a random part of it): "Oxium stolen!",
+		// 10 moves (afterwards, if a number from 0 to 50 is not above that part, it is quick: worktype 0x1B); a member without goes unrobbed: another next to it with oxium is robbed, else the first is struck
+		int d, m = nearest(d);
+		if (m < 0) {
+			_world.spendMoves(actor, 5);
+			return true;
+		}
+		int mk = _world.actorObject(m);
+		if (d > 1) {
+			_creatures.walkTo(actor, _world.objects[mk].x, _world.objects[mk].y);
+			_world.spendMoves(actor, 5);
+			return true;
+		}
+		int victim = m;
+		if (mdFindCarried(m, 0x83) < 0) {
+			for (int i = 0; i < al.partySize; ++i) {
+				int a = al.partyRoster[i], ak = _world.actorObject(a);
+				if (a == m || a == actor || ak < 0 || (al.status[a] & 0x10))
+					continue;
+				if (std::max(std::abs(_world.objects[ak].x - o.x), std::abs(_world.objects[ak].y - o.y)) <= 1 && mdFindCarried(a, 0x83) >= 0) {
+					victim = a;
+					break;
+				}
+			}
+		}
+		int item = mdFindCarried(victim, 0x83);
+		if (item < 0) {
+			_combat.attack(actor, m);
+			_world.spendMoves(actor, 10);
+			return true;
+		}
+		int had = _world.quantityOf(_world.objects[item]);
+		_world.removeFromInventory(victim, 0x83, 0, had);
+		int kept = seRoll(0, had);
+		if (kept > 0)
+			_world.addToInventory(actor, 0x83, 0, kept);
+		message("Oxium stolen!\n");
+		_world.spendMoves(actor, 10);
+		if (seRoll(0, 0x32) <= kept) {
+			al.worktype[actor] = 0x1B;
+			al.unknown12f1[actor] = 0x1B;
+		}
+		return true;
+	}
+	if (wt == 0x11) { // sub_1D7E6: a 0x172 does nothing at all (its moves are spent); the others are the worm of sub_1CFF6
+		if (o.type != 0x172)
+			return false;
+		_world.spendMoves(actor, al.moves[actor] ? al.moves[actor] : 1);
+		return true;
+	}
+	if (wt == 0x17) { // sub_1D89E: a 0x198 with a 0x1A8 where it stands is taken out of the world; without one it turns into a 0x1A8. A 0x1A8 makes sure a 0x198 (frame 3) lies where it stands, steps one way
+		// at random and takes the 0x198 along; 5 moves
+		if (o.type == 0x198) {
+			if (seFind(0x1A8, o.x, o.y) >= 0) {
+				_world.spendMoves(actor, al.moves[actor] ? al.moves[actor] : 1);
+				remove();
+				return true;
+			}
+			o.type = 0x1A8;
+			o.frame = 0;
+		}
+		if (o.type != 0x1A8)
+			return false;
+		int piece = seFind(0x198, o.x, o.y);
+		if (piece < 0)
+			piece = seMake(0x198, o.x, o.y, o.z, 0, 0);
+		if (piece >= 0)
+			_world.objects[piece].frame = 3;
+		static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+		int dir = seRoll(0, 7);
+		_creatures.walkTo(actor, o.x + DX[dir], o.y + DY[dir]);
+		if (piece >= 0)
+			_world.moveObject(piece, _world.objects[k].x, _world.objects[k].y, _world.objects[k].z);
+		_world.spendMoves(actor, 5);
+		return true;
+	}
 	if (wt == 0x1A) {
 		int made = seMake(o.type, o.x, o.y, o.z, al.hp[actor], al.objQuantity[actor] >> 8);
 		_world.objects[made].frame = o.frame;

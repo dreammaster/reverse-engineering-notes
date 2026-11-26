@@ -59,6 +59,7 @@ public:
 		return stepToward(actor, x, y);
 	}
 	bool ambush(int px, int py, int pz);
+	bool lineOfFire(int actor, int tx, int ty, int range) const;
 
 private:
 	bool stepDir(int actor, int dir);
@@ -77,7 +78,6 @@ private:
 	bool formationWalk(int actor, int px, int py);
 	int actorAt(int x, int y) const;
 	bool validTarget(int actor, int target) const;
-	bool lineOfFire(int actor, int tx, int ty, int range) const;
 	void scan();
 	void hatch(int egg, int hour);
 

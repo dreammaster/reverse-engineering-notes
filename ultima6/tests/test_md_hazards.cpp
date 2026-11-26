@@ -292,6 +292,60 @@ int main() {
 			(void)d0;
 			CHECK(w.objects[lure].deleted);
 		}
+		// 0x12 (the thing under the sand): it waits until a member is next to it, then comes up and a swarm of 0x16A with it
+		{
+			int sk = w.actorObject(0x47);
+			w.objects[sk].type = 0x175;
+			w.objects[sk].status |= 2;
+			w.moveObject(sk, g.x + 12, g.y + 12, 0);
+			al.worktype[0x47] = 0x12;
+			CHECK(g.mdWorktype(0x47) && (w.objects[sk].status & 2));
+			auto swarm = [&]() {
+				int n = 0;
+				for (const World::Obj &o : w.objects)
+					n += !o.deleted && o.actor >= 0 && o.type == 0x16A;
+				return n;
+			};
+			int before = swarm();
+			w.moveObject(sk, g.x + 1, g.y, 0);
+			CHECK(!g.mdWorktype(0x47));
+			CHECK(!(w.objects[sk].status & 2));
+			CHECK(swarm() >= before + 5);
+		}
+		CHECK(al.worktype[0x47] == 0x0E);
+		// 0x14 (the thief of oxium): next to a member with oxium it takes the stack (and keeps a random part), else it strikes
+		{
+			int victim = al.partyRoster[0], vk = w.actorObject(victim), tk = w.actorObject(0x48);
+			w.moveObject(vk, g.x, g.y, 0);
+			w.moveObject(tk, g.x + 1, g.y, 0);
+			w.addToInventory(victim, 0x83, 0, 40);
+			al.worktype[0x48] = 0x14;
+			CHECK(g.mdWorktype(0x48));
+			CHECK(g.mdFindCarried(victim, 0x83) < 0);
+		}
+		// 0x17: a 0x198 with no 0x1A8 beneath it becomes a 0x1A8 and takes a 0x198 piece along
+		{
+			int tk = w.actorObject(0x49);
+			w.objects[tk].type = 0x198;
+			w.moveObject(tk, g.x + 8, g.y + 8, 0);
+			al.worktype[0x49] = 0x17;
+			CHECK(g.mdWorktype(0x49));
+			CHECK(w.objects[tk].type == 0x1A8);
+			bool piece = false;
+			for (const World::Obj &o : w.objects)
+				piece |= !o.deleted && o.actor < 0 && o.type == 0x198 && o.x == w.objects[tk].x && o.y == w.objects[tk].y;
+			CHECK(piece);
+		}
+		// 0x19 (the worm): in reach of a member it strikes; far away it burrows (0xFE) now and then
+		{
+			int tk = w.actorObject(0x4A);
+			w.objects[tk].type = 0x16A;
+			w.moveObject(tk, g.x + 15, g.y + 15, 0);
+			al.worktype[0x4A] = 0x19;
+			al.hp[0x4A] = 3;
+			CHECK(g.mdWorktype(0x4A));
+			CHECK(w.objects[tk].deleted); // a wounded one goes
+		}
 		int drifter = w.actorObject(0x45);
 		w.moveObject(drifter, g.x, g.y, 0);
 		al.worktype[0x45] = 0x13;
