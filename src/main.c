@@ -116,6 +116,7 @@ typedef struct RoomView_ {
 	int nverbs;
 	int energy_max_cfg;        /* from LEVn.MP1 */
 	int slow_phase, tick_dbg;
+	int cast_target;                      /* ds:6A8 / ds:DA..E0: the touched thing a spell is cast on through verb 15 (0 = none) */
 	int save_price;                       /* ds:246: the price of the next saved position */
 	uint16_t spell_str[100], potion_str[100]; int spell_tbl_ok;   /* LEVn.MP1: LNG string ids of the spell / potion names (the tables ds:44 / ds:46) */
 	int touch_age, menu_open, menu_sel, menu_delay, menu_released, touch_thing, end_prev;   /* verb menu (End held / pressed while touching an object) */
@@ -1510,7 +1511,7 @@ static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 	snd_play(a[7] == 0 ? 0x11 : 0x06);
 	int proj = (a[4] << 8) | a[5];
 	if (spell_is_targeted(rv, a)) {
-		int tt = (rv->touch_age < 12 && rv->nverbs && rv->touch_thing > 0) ? rv->touch_thing : -1;
+		int tt = rv->cast_target > 0 ? rv->cast_target : -1;
 		if (tt < 0 || tt >= ACL_THINGS) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x29; roomview_flush_messages(rv); return; }
 		cast_on_target(rv, item, tt);
 	} else if (sp == 18 || sp == 22) acl_set_timer(&rv->vm, sp == 18 ? 0x25 : 0x26, a[1]);   /* CONFUSION / TURN MONSTER (0B6E / 0BF7): effect timer 25h / 26h; the creature behaviours test ds:650 (random direction) / ds:651 (flee: the direction + 4) */
@@ -1760,6 +1761,10 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 				acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
 			rv->pending_rebuild |= rv_changed(rv);
 			roomview_flush_messages(rv);
+			{                                                           /* 1000:344D goes on with the spell routine 1689C, ds:6A8 = 1: the touched thing is the target of a spell cast on an object */
+				const ObjSprite *cs = thing_sprite(rv, t);
+				if (cs && cs->header[0x16] == 1 && !(rv->vm.flags[t] & 0x80)) { rv->cast_target = rv->ruck_target; cast_spell_item(wk, rv, t); rv->cast_target = 0; }
+			}
 			ruck_close(rv);
 		} else if (verb == 9) {
 			drink_potion(rv, t);
@@ -1974,7 +1979,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		if (rv->ruck_open) { ruck_step(wk, rv, keys, edge || rte, spe); return; }
 		if ((spe || rte) && !rv->menu_open) { ruck_open(rv); if (rv->ruck_open) return; }
 		if (rv->menu_open) { menu_step(rv, keys, edge); return; }
-		if (edge && rv->nverbs && rv->touch_age < 12 && !(keys & 15) && !(rv->held && rv->held < ACL_THINGS && spell_is_targeted(rv, rv->vm.tail[rv->held]))) {   /* End tapped right after touching an object (menu2 trace); a held spell that is cast on the touched object takes the key */
+		if (edge && rv->nverbs && rv->touch_age < 12 && !(keys & 15) ) {   /* End tapped right after touching an object (menu2 trace) */
 			rv->menu_open = 1; rv->menu_sel = 0; rv->menu_delay = 0; rv->menu_released = 0;
 			return;
 		}
