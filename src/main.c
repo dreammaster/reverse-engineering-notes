@@ -2117,7 +2117,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	wk->grab_rev = wk->grab != 0;
 	if (wk->grab) { static const int opp[4] = {DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN}; wk->dir = opp[dir]; }   /* the player keeps facing the thing */
 	if (st == PUSH_MOVED || st == PUSH_FREE) {
-		wk->x1 += dx; wk->y1 += dy;
+		if (g_snd_log && getenv("CAD_POSLOG")) fprintf(stderr, "POS tick %d %d,%d -> +%d,%d\n", wk->tick, wk->x1, wk->y1, dx, dy); wk->x1 += dx; wk->y1 += dy;
 		for (int k = 0; k < nm; k++) {
 			RoomObj *o = &rv->ro.o[moved[k]];
 			o->x1 += dx; o->y1 += dy;
