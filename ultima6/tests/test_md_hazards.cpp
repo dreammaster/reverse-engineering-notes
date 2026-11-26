@@ -401,6 +401,58 @@ int main() {
 		CHECK(g.mdWorktype(0x45));
 	}
 
+	// the barges: a lever (0x1A2, frame 1 = east) with two pieces (0x1A1) on a strip of canal water moves them one square a minute and stops at the shore
+	{
+		int bx = -1, by = -1;
+		for (int yy = 0; yy < 1024 && bx < 0; ++yy)
+			for (int xx = 0; xx < 1000 && bx < 0; ++xx) {
+				bool ok = true;
+				for (int i = 0; i < 6 && ok; ++i) {
+					int t = w.map.tile(0, xx + i, yy) & 0xFF;
+					std::vector<int> here;
+					w.objectsAt(xx + i, yy, 0, here);
+					ok = ((t >= 0x10 && t <= 0x17) || (t >= 0xC0 && t <= 0xC3)) && here.empty();
+				}
+				if (ok) {
+					bx = xx;
+					by = yy;
+				}
+			}
+		CHECK(bx >= 0); // a strip of six free canal squares is in the map
+		if (bx >= 0) {
+			auto make = [&](int type, int x, int q, int quantity, int frame) {
+				World::Obj o;
+				o.status = 0;
+				o.x = (uint16_t)x;
+				o.y = (uint16_t)by;
+				o.z = 0;
+				o.type = (uint16_t)type;
+				o.frame = (uint8_t)frame;
+				o.quantity = (uint8_t)quantity;
+				o.quality = (uint8_t)q;
+				o.actor = -1;
+				o.parent = -1;
+				w.objects.push_back(o);
+				w.addToMap((int)w.objects.size() - 1);
+				return (int)w.objects.size() - 1;
+			};
+			int lever = make(0x1A2, bx, 77, 3, 1), p1 = make(0x1A1, bx + 1, 77, 0, 0), p2 = make(0x1A1, bx + 2, 77, 0, 0);
+			g.x = bx + 1;
+			g.y = by;
+			for (int i = 0; i < al.partySize; ++i)
+				w.moveObject(w.actorObject(al.partyRoster[i]), 0, 0, 6);
+			al.talkFlags[0x76] |= 0x60;
+			g.mdMinute();
+			CHECK(w.objects[lever].x == bx + 1 && w.objects[p1].x == bx + 2 && w.objects[p2].x == bx + 3);
+			g.mdMinute();
+			g.mdMinute();
+			CHECK(w.objects[p2].x == bx + 5 && w.objects[lever].frame == 1);
+			g.mdMinute(); // the next square is not water, or the strip is over
+			g.mdMinute();
+			CHECK(w.objects[lever].frame >= 4 || w.objects[p2].x >= bx + 6);
+		}
+	}
+
 	std::printf(failures ? "FAILED\n" : "ok\n");
 	return failures ? 1 : 0;
 }

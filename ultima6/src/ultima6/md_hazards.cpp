@@ -184,6 +184,7 @@ void Game::mdHazard(int actor) {
 void Game::mdMinute() {
 	ObjList &al = _world.actors;
 	mdThings();
+	mdBarges();
 	const bool airless = (al.talkFlags[0x10] & 0x20) != 0;
 	auto bare = [&](const World::Obj &t) { // the name without its article
 		std::string n = Describe::object(_world, t);
@@ -332,6 +333,132 @@ void Game::mdMinute() {
 				}
 			}
 		}
+	}
+}
+
+// The barges of the canals (sub_13EDC, sub_13F41, sub_140F9, sub_141C7, sub_14378, sub_1449B), run once a minute after the things in view: once the story has come to the barge (flags 0x76 bits 0x20
+// and 0x40; or in a dream) the lever (0x1A2, a frame below 4 saying north, east, south or west; 4 and more is "center") of each barge in view (16 at most) pulls its barge one square that way: the barge
+// is the lever, whose quantity is the number of its pieces with itself, and the pieces (0x1A1) of the same number (quality) within 6 squares in view. It stops (the lever goes to "center") when a piece
+// would leave the water (terrain 0x10-0x17, 0xC0-0xC3) or meet anything but a piece of itself; it waits when some but not all of the party are aboard (not in solo mode); with 412 things aboard "The barge
+// is riding low in the water.", with 512 "The barge is scraping the bottom of the canal." and it does not move. Everything on the squares of the pieces (what is not hung, a thing of type below 0x1CD)
+// goes along, and the view follows the leader.
+void Game::mdBarges() {
+	ObjList &al = _world.actors;
+	if (!(((al.talkFlags[0x76] & 0x60) == 0x60) || _mdDreaming))
+		return;
+	std::vector<int> helms;
+	for (size_t i = 0x101; i < _world.objects.size() && helms.size() < 16; ++i) {
+		const World::Obj &o = _world.objects[i];
+		if (!o.deleted && o.onMap() && o.type == 0x1A2 && o.frame < 4 && mdInViewAt(o.x, o.y, o.z))
+			helms.push_back((int)i);
+	}
+	static const int DX[4] = {0, 1, 0, -1}, DY[4] = {-1, 0, 1, 0};
+	bool leaderMoved = false;
+	for (size_t h = helms.size(); h-- > 0;) {
+		int hk = helms[h];
+		int number = _world.objects[hk].quality, hz = _world.objects[hk].z;
+		std::vector<int> parts{hk};
+		mdEach(_world.objects[hk].x - 6, _world.objects[hk].y - 6, _world.objects[hk].x + 6, _world.objects[hk].y + 6, [&](int i) {
+			const World::Obj &o = _world.objects[i];
+			if (o.type == 0x1A1 && o.quality == number && mdInViewAt(o.x, o.y, o.z) && parts.size() < 0x20)
+				parts.push_back(i);
+			return false;
+		}, hz);
+		int expected = _world.objects[hk].quantity;
+		if (expected != (int)parts.size()) {
+			if (expected < (int)parts.size())
+				message("Found " + std::to_string(parts.size()) + " barge pieces when expecting " + std::to_string(expected) + "!\n");
+			continue;
+		}
+		int dx = DX[_world.objects[hk].frame], dy = DY[_world.objects[hk].frame];
+		auto stop = [&]() { _world.objects[hk].frame += 4; };
+		// sub_141C7: may the barge go?
+		int aboard = 0;
+		bool go = true;
+		for (int p : parts) {
+			std::vector<int> here;
+			_world.objectsAt(_world.objects[p].x, _world.objects[p].y, hz, here);
+			for (int q : here) {
+				int a = _world.objects[q].actor;
+				if (!_world.objects[q].deleted && a >= 0 && a < 0x100 && (al.status[a] & 0x80))
+					++aboard;
+			}
+		}
+		for (int p : parts) {
+			int tx = (_world.objects[p].x + dx) & 0x3FF, ty = (_world.objects[p].y + dy) & 0x3FF;
+			if (!mdInViewAt(tx, ty, hz)) {
+				go = false;
+				break;
+			}
+			int tile = _world.map.tile(hz, tx & (hz == 0 ? 0x3FF : 0xFF), ty & (hz == 0 ? 0x3FF : 0xFF)) & 0xFF;
+			if (!((tile >= 0x10 && tile <= 0x17) || (tile >= 0xC0 && tile <= 0xC3))) {
+				stop();
+				go = false;
+				break;
+			}
+			bool own = false, other = false, blocked = false;
+			std::vector<int> there;
+			_world.objectsAt(tx, ty, hz, there);
+			for (int q : there) {
+				const World::Obj &o = _world.objects[q];
+				if (o.deleted)
+					continue;
+				if (o.type == 0x1A1 || o.type == 0x1A2) {
+					if (o.quality == number)
+						own = true;
+					else
+						blocked = true;
+				} else if (o.type < 0x1CD) {
+					other = true;
+				}
+			}
+			if (blocked || (other && !own)) {
+				stop();
+				go = false;
+				break;
+			}
+		}
+		if (go && !_solo && aboard > 0 && al.partySize > aboard)
+			go = false;
+		if (!go)
+			continue;
+		// sub_14378: the load
+		std::vector<int> cargo;
+		for (int p : parts) {
+			std::vector<int> here;
+			_world.objectsAt(_world.objects[p].x, _world.objects[p].y, hz, here);
+			for (int q : here) {
+				const World::Obj &o = _world.objects[q];
+				int tile = (_world.baseTile.firstTile[o.type] + o.frame) & (TileFlags::TILES - 1);
+				if (!o.deleted && cargo.size() < 0x200 && !(_world.flags.flags3[tile] & 4) && !(_world.flags.flags2[tile] & 0x10) && o.type < 0x1CD)
+					cargo.push_back(q);
+			}
+		}
+		if (cargo.size() >= 0x19C) {
+			if (cargo.size() >= 0x200) {
+				message("The barge is scraping the bottom of the canal.\n");
+				continue;
+			}
+			message("The barge is riding low in the water.\n");
+		}
+		// sub_1449B: the pieces, then what is aboard, go one square
+		for (int p : parts)
+			_world.moveObject(p, (_world.objects[p].x + dx) & 0x3FF, (_world.objects[p].y + dy) & 0x3FF, hz);
+		for (size_t c = cargo.size(); c-- > 0;) {
+			int q = cargo[c];
+			if (_world.objects[q].type == 0x1A1 || _world.objects[q].type == 0x1A2) {
+				message("The barge shudders!\n");
+				mdSfx(0xC);
+			} else {
+				_world.moveObject(q, (_world.objects[q].x + dx) & 0x3FF, (_world.objects[q].y + dy) & 0x3FF, hz);
+			}
+			if (q == _leaderObject)
+				leaderMoved = true;
+		}
+	}
+	if (leaderMoved && _leaderObject >= 0) {
+		x = _world.objects[_leaderObject].x;
+		y = _world.objects[_leaderObject].y;
 	}
 }
 
