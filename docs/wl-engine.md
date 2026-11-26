@@ -151,3 +151,9 @@ the oracle and native screens, `VDUMP=1` lists every differing byte, `HITDBG=1` 
 real bugs: the generator stir of every key poll used the wrong `al` (it is the low byte of ds:7DF5, not the portrait tick) and
 hitMonster had the "ignores armor" flag inverted (weapon types 8 and 9 ignore armor). Replayed so far: attack, evade, mixed and
 two-round scripts (bit identical); the item / reload / skill menus do not finish within the step budget yet.
+
+Replays of the exploration loop and the title screen use the same switches (`--only 6B3C` / `--only 61C0` on the saved map and title
+states with `WLPOLLS=<n>`, long key queues and `WLTICKPOLL=1`); `fightcheck.sh` runs them as well: walking on four map states for
+20000 polls, the USE/ENC/ORDER/VIEW/RADIO commands and character screens, START on the title screen, and the fight scripts (attack,
+evade, mixed, two rounds bit identical; reload, use, weapon, run and skill menus compared at the 2500th poll). In poll-limited runs
+"DIFF (seed ...)" without memdiff/vramdiff means equal: only sp differs because the native side stops inside the keyboard poll.
