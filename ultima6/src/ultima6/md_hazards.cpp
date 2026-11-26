@@ -673,7 +673,7 @@ bool Game::mdWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
-	if (wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
+	if ((wt < 0x99 || wt > 0x9D) && wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
 		return false;
 	_world.objects.reserve(_world.objects.size() + 128); // the things made below must not move the object that `o` stands for
 	World::Obj &o = _world.objects[k];
@@ -1027,6 +1027,76 @@ bool Game::mdWorktype(int actor) {
 			backed();
 			spend(5);
 			return true;
+		}
+	}
+	if (wt >= 0x99 && wt <= 0x9D) { // the stoker of the coal (sub_29CE2's chain of five worktypes): 0x99 walks north until a 0x1BE (the shovel's rack) is two squares ahead (the sound 0x10 if in view),
+		// 0x9A looks south for the belt 0xBC (a coal 0x1BF is made on the square below) or the furnace 0xC0 and goes on to 0x9B, else walks south; 0x9B waits while the coal lies there and begins
+		// again (0x99) when it is gone and no furnace stands there; 0x9C walks south until a 0xBF is two squares ahead (0x9D) and, hemmed in, says "Stoker's path is blocked!" when in view; 0x9D walks
+		// north to the switch 0xE9 (north of him or north-east), starts the coal belt when the furnace's flag (bit 4 of actor 0x72) is not set, and goes back to 0x9C
+		// APPROX(97): the lamps and the switch's frame (sub_3F540, sub_3F74A, sub_3F793) are not done, the walk is the engine's `step`
+		auto setWt = [&](int n) {
+			al.worktype[actor] = (uint8_t)n;
+			al.unknown12f1[actor] = (uint8_t)n;
+		};
+		auto blocked = [&]() {
+			if (mdInView(actor)) {
+				message("Stoker's path is blocked!\n");
+				mdSfx(0);
+			}
+		};
+		int ox = o.x, oy = o.y;
+		switch (wt) {
+		case 0x99:
+			if (_creatures.step(actor, 0))
+				return true;
+			if (seFind(0x1BE, ox, (oy - 2) & 0x3FF) < 0)
+				return true;
+			if (mdInView(actor))
+				mdSfx(0x10);
+			setWt(0x9A);
+			return true;
+		case 0x9A:
+			if (seFind(0xBC, ox, (oy + 1) & 0x3FF) >= 0) {
+				int coal = seMake(0x1BF, ox, (oy + 1) & 0x3FF, o.z, 0, 0);
+				if (coal >= 0)
+					_world.objects[coal].status &= 0xDF;
+				setWt(0x9B);
+			} else if (seFind(0xC0, ox, (oy + 1) & 0x3FF) >= 0) {
+				setWt(0x9B);
+			} else {
+				_creatures.step(actor, 4);
+			}
+			return true;
+		case 0x9B:
+			if (seFind(0x1BF, ox, (oy + 1) & 0x3FF) >= 0)
+				return true;
+			if (seFind(0xC0, ox, (oy + 1) & 0x3FF) < 0)
+				setWt(0x99);
+			return true;
+		case 0x9C:
+			if (seFind(0xBF, ox, (oy + 2) & 0x3FF) >= 0) {
+				setWt(0x9D);
+				return true;
+			}
+			if (_creatures.step(actor, 4))
+				return true;
+			blocked();
+			return true;
+		default: { // 0x9D
+			if (_creatures.step(actor, 0))
+				return true;
+			int sw = seFind(0xE9, ox, (oy - 1) & 0x3FF);
+			if (sw < 0)
+				sw = seFind(0xE9, (ox + 1) & 0x3FF, (oy - 1) & 0x3FF);
+			if (sw < 0) {
+				blocked();
+				return true;
+			}
+			if (!(al.talkFlags[0x72] & 4))
+				mdCoalBelt();
+			setWt(0x9C);
+			return true;
+		}
 		}
 	}
 	if (wt == 0x18) { // sub_50FEC (the cave worm): it makes for the first seed mound 0xFB within ten squares, else for the party; next to a mound it eats it ("The cave worm eats the pod plant!", 10 moves);

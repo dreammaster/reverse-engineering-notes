@@ -59,6 +59,10 @@ public:
 		return stepToward(actor, x, y);
 	}
 	bool ambush(int px, int py, int pz);
+	/** sub_29301: one step in a direction (0 north .. 7 north-west); true if it moved. */
+	bool step(int actor, int dir) {
+		return stepDir(actor, dir);
+	}
 	bool lineOfFire(int actor, int tx, int ty, int range) const;
 
 private:
