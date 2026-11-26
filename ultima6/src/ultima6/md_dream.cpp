@@ -1164,8 +1164,10 @@ void Game::mdStepOn() {
 			return;
 		if (kind)
 			mdDreamTouch(i);
-		else
+		else {
+			mdClearTemp();
 			mdDreamGo(o.frame, o.quality, o.quantity);
+		}
 		return;
 	}
 }
@@ -1566,6 +1568,40 @@ void Game::mdTeleport(int pad) {
 	}
 	changeLevel(dx, dy, dz);
 	_leaderObject = _world.actorObject(1);
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_2CAAD(-1, -1, -1), run before a plain dream portal sends the body on: the temporary creatures (the actors 0xC0 and up, with the vine's pieces 0x172 / 0x173 that belong to a 0x174) and the
+// temporary things (the object status 0x20 of the body, for the creatures too; but the squares 0x1CD and the trail 0x173 of a living 0x174) are taken out of the world.
+// APPROX(97): the version that spares what is within 20 squares of a place and level (the other calls) is not ported; every actor from 0xC0 on counts as temporary
+void Game::mdClearTemp() {
+	ObjList &al = _world.actors;
+	for (int a = 0xC0; a < ObjList::ACTORS && a < 0x100; ++a) {
+		int k = _world.actorObject(a);
+		if (k < 0 || _world.objects[k].deleted || !(_world.objects[k].status & 0x20))
+			continue;
+		if (_world.objects[k].type == 0x174) {
+			for (size_t i = 0; i < _world.objects.size(); ++i) {
+				World::Obj &p = _world.objects[i];
+				if (!p.deleted && (p.type == 0x173 || p.type == 0x172) && p.quality == a)
+					_world.deleteObject((int)i);
+			}
+		}
+		al.hp[a] = 0;
+		al.status[a] |= 0x10;
+		_world.deleteObject(k);
+	}
+	for (size_t i = 0x101; i < _world.objects.size(); ++i) {
+		const World::Obj &o = _world.objects[i];
+		if (o.deleted || !o.onMap() || !(o.status & 0x20) || o.type == 0x1CD || o.actor >= 0)
+			continue;
+		_world.deleteObject((int)i);
+	}
 }
 
 } // namespace Ultima6

@@ -170,6 +170,7 @@ public:
 	void mdDreamFinish(int actor);                 // sub_3F615 + sub_3F61A
 	void mdDreamTouch(int obj);                    // sub_50218
 	bool mdProtected(int attacker, int victim);    // sub_19A74 + sub_17D85: the people the story keeps alive
+	void mdClearTemp();                            // sub_2CAAD(-1, -1, -1)
 	void mdBelt(bool pass);                        // sub_4EEB0: the conveyor belt of the factory
 	void mdTeleport(int pad);                      // sub_25CAC: the teleporting pads
 	void mdAwaken();                               // sub_30093: the Avatar is dead outside a dream
