@@ -86,6 +86,35 @@ int main(int argc, char **argv) {
 	for (int i = 1; i < argc; i++) {
 		int id = std::atoi(argv[i]);
 
+		// `link:<n>[:<command>]` lists the parts that have the object with the id n as the link (or the other link), with their
+		// action, the owner of it and the command and the integer of the part
+		if (std::strncmp(argv[i], "link:", 5) == 0) {
+			int wanted = std::atoi(argv[i] + 5);
+			const char *colon = std::strchr(argv[i] + 5, ':');
+			int command = colon ? std::atoi(colon + 1) : -1;
+
+			for (TVisionaireObject *action : actions) {
+				TVList parts;
+
+				TVisObjRef(action).GetList(kActionActionParts, parts);
+
+				for (TVisionaireObject *part : parts) {
+					TVisObjRef partRef(part);
+
+					if ((command >= 0 && part->GetInt(kActionPartCommand) != command) ||
+					        (PackVisId(partRef.GetLink(kActionPartLink).GetId()) != wanted && PackVisId(partRef.GetLink(kActionPartAltLink).GetId()) != wanted))
+						continue;
+
+					TVisObjRef owner = TVisObjRef(action).GetParent();
+
+					std::printf("action '%ls' id %d (of %ls): part %d command %d int %d alt %d\n", action->GetName().c_str().c_str(),
+					            action->GetId24(), owner.IsEmpty() ? L"-" : owner.GetName().c_str().c_str(), part->GetId24(),
+					            part->GetInt(kActionPartCommand), part->GetInt(kActionPartInt), part->GetInt(kActionPartAltInt));
+				}
+			}
+			continue;
+		}
+
 		// `cmd:<n>` lists the parts that have the command n, with their action and the owner of it
 		if (std::strncmp(argv[i], "cmd:", 4) == 0) {
 			int command = std::atoi(argv[i] + 4);

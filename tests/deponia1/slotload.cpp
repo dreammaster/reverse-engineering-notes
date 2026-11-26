@@ -11,6 +11,8 @@
 #include "TStandardPaths.h"
 #include "THGameControl.h"
 #include "TGAction.h"
+#include "TGScene.h"
+#include "vsplayer/control/masterControl.h"
 #include "TGCharacter.h"
 #include "TMSavegame.h"
 #include "graphicslib/graphics.h"
@@ -60,6 +62,181 @@ int main(int argc, char **argv) {
 	std::printf("loading %s %d\n", bookmark ? "bookmark" : "savegame", slot);
 	bool result = control->LoadGame(&save);
 	std::printf("result: %d\n", result ? 1 : 0);
+
+	if (argc > 3 && std::string(argv[3]) == "cond") {
+		// cond: slotload <b|s> <slot> cond <part of a name>...: the conditions (table 10) and values (table 20) of the loaded game
+		// whose name has one of the texts, with what they are
+		for (int table : {10, 20}) {
+			TVList list;
+
+			control->GetVisionaire()->GetList(table, list, false);
+
+			for (TVisionaireObject *object : list) {
+				std::wstring name = object->GetName().c_str().c_str();
+
+				for (int i = 4; i < argc; i++) {
+					if (name.find(wxString(argv[i]).ToStdWstring()) == std::wstring::npos)
+						continue;
+
+					if (table == 10)
+						std::printf("condition '%ls' = %d\n", name.c_str(), object->GetBool(kConditionValue) ? 1 : 0);
+					else
+						std::printf("value '%ls' = %d\n", name.c_str(), object->GetInt(kValueInt));
+					break;
+				}
+			}
+		}
+		return 0;
+	}
+
+	if (argc > 3 && std::string(argv[3]) == "click") {
+		// click: slotload <b|s> <slot> click <part of an object's name> [double]: the objects of the shown scene whose name has the text
+		// are listed, the first is clicked (a double click with `double`) and the game runs for 12 seconds, the character printed
+		TGCharacter *rufus = control->GetCurrentCharacter();
+		std::wstring wanted = argc > 4 ? wxString(argv[4]).ToStdWstring() : std::wstring();
+		bool doubleClick = argc > 5 && std::string(argv[5]) == "double";
+		TGScene *scene = control->GetScene();
+		const FloatPoint &scroll = scene->GetFloatScrollPos();
+		TManagedObject *target = nullptr;
+
+		g_traceFlags |= 2;
+		wxLog::loglevel = 3;
+
+		// `way:<id>` as the fifth argument: the way system (table 29) with that id is made the scene's before the click
+		if (argc > 5 && std::string(argv[5]).compare(0, 4, "way:") == 0) {
+			int wayId = atoi(argv[5] + 4);
+			TVList ways;
+
+			control->GetVisionaire()->GetList(29, ways, false);
+
+			for (TVisionaireObject *way : ways) {
+				if (way->GetId24() == wayId) {
+					TVisObjRef sceneRef = scene->GetRef();
+					sceneRef.SetLink(kSceneCurrentWaySystem, TVisObjRef(way), true);
+					std::printf("way system set to '%ls'\n", way->GetName().c_str().c_str());
+				}
+			}
+		}
+
+		for (TGCharacter *character : control->GetAllCharacters()) {
+			if (character->_objRef.GetLink(kCharacterScene) == scene->GetRef())
+				std::printf("character '%ls' at %d,%d active %d state %d\n", character->_objRef.GetName().c_str().c_str(),
+				            character->_position.x, character->_position.y, character->_active ? 1 : 0, character->_state);
+		}
+
+		std::printf("scene '%ls' scroll %.0f,%.0f character at %d,%d dir %d\n", scene->GetRef().GetName().c_str().c_str(), scroll.x, scroll.y,
+		            rufus->_position.x, rufus->_position.y, rufus->_objRef.GetInt(kCharacterDirection));
+
+		for (TManagedObject *object : scene->_objects) {
+			std::wstring name = object->GetRef().GetName().c_str().c_str();
+
+			if (wanted.empty() || name.find(wanted) == std::wstring::npos)
+				continue;
+
+			wxRect rect = object->GetBoundingRect();
+
+			std::printf("object '%ls' rect %d,%d %dx%d walkable %d\n", name.c_str(), rect.x, rect.y, rect.width, rect.height,
+			            object->GetRef().GetBool(kObjectIsWalkable) ? 1 : 0);
+
+			if (!target) {
+				target = object;
+
+				TVList candidates;
+
+				object->GetActionList(candidates);
+
+				for (TVisionaireObject *candidate : candidates)
+					std::printf("   action '%ls' type %d\n", candidate->GetName().c_str().c_str(), candidate->GetInt(kActionExecutionType));
+			}
+		}
+
+		// `@x,y` instead of a name: a click at that place of the scene (a character, for instance)
+		bool atPoint = !wanted.empty() && wanted[0] == L'@';
+		int pointX = 0;
+		int pointY = 0;
+
+		if (atPoint)
+			std::swscanf(wanted.c_str() + 1, L"%d,%d", &pointX, &pointY);
+
+		if (target || atPoint) {
+			wxRect rect = atPoint ? wxRect() : target->GetBoundingRect();
+
+			if (atPoint) {
+				rect.x = pointX;
+				rect.y = pointY;
+				rect.width = 0;
+				rect.height = 0;
+			}
+
+			wxPoint screen{(int)(rect.x + rect.width / 2 - scroll.x), (int)(rect.y + rect.height / 2 - scroll.y)};
+
+			if (atPoint)
+				target = nullptr;
+
+			TVisObjRef waySystemRef = scene->GetRef().GetLink(kSceneCurrentWaySystem);
+
+			std::printf("way system '%ls' (id %d) has way system %d, points %d\n", waySystemRef.GetName().c_str().c_str(),
+			            PackVisId(waySystemRef.GetId()), rufus->_hasWaySystem ? 1 : 0, (int)rufus->_waySystem._wayPoints.size());
+
+			for (TVisionaireObject *point : rufus->_waySystem._wayPoints)
+				std::printf("   way point '%ls' at %d,%d\n", point->GetName().c_str().c_str(), point->GetPoint(kPointPosition)->x,
+				            point->GetPoint(kPointPosition)->y);
+
+			for (size_t polygon = 0; target && polygon < rufus->_waySystem._borders.size(); polygon++) {
+				std::vector<wxPoint> &points = *rufus->_waySystem._borders[polygon];
+
+				std::printf("   polygon %d (%d points):", (int)polygon, (int)points.size());
+				for (const wxPoint &point : points)
+					std::printf(" %d,%d", point.x, point.y);
+				std::printf("\n");
+
+				wxPoint door = target->GetPosition();
+
+				std::printf("   door inside polygon %d: %d, Rufus inside: %d, Rufus->door cuts polygon: %d\n", (int)polygon,
+				            PointInPolygon(door.x, door.y, points) ? 1 : 0, PointInPolygon(rufus->_position.x, rufus->_position.y, points) ? 1 : 0,
+				            LineCuts(rufus->_position, door, points) ? 1 : 0);
+			}
+
+			if (target) {
+				wxPoint objectPosition = target->GetPosition();
+
+				std::printf("object position %d,%d offset %d,%d\n", objectPosition.x, objectPosition.y,
+				            target->GetRef().GetPoint(kObjectOffset)->x, target->GetRef().GetPoint(kObjectOffset)->y);
+			}
+			std::printf("clicking at scene %d,%d (screen %d,%d)\n", rect.x + rect.width / 2, rect.y + rect.height / 2, screen.x, screen.y);
+			control->HandleMouseMove(screen, false);
+
+			// (the mouse stays over the object for a while: the actions of the hover run, as for a player)
+			for (int hover = 0; hover < 30; hover++) {
+				std::this_thread::sleep_for(std::chrono::milliseconds(20));
+				control->Update();
+			}
+
+			TVisObjRef gameRef = control->GetVisionaire()->GetGame();
+
+			std::printf("before the click: active command '%ls' destination command '%ls' event %d\n",
+			            gameRef.GetLink(kGameActiveCommand).GetName().c_str().c_str(),
+			            gameRef.GetLink(kGameDestinationCommand).GetName().c_str().c_str(), gameRef.GetInt(kGameDestinationEvent));
+			control->HandleMouseUp(screen, doubleClick ? TMouseMessageEnum::kLeftDoubleClick : TMouseMessageEnum::kLeftUp);
+			std::printf("after the click: active command '%ls' destination command '%ls' event %d\n",
+			            gameRef.GetLink(kGameActiveCommand).GetName().c_str().c_str(),
+			            gameRef.GetLink(kGameDestinationCommand).GetName().c_str().c_str(), gameRef.GetInt(kGameDestinationEvent));
+		}
+
+		for (int step = 0; step < 600; step++) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			control->Update();
+			rufus = control->GetCurrentCharacter();
+
+			if (step % 10 == 0)
+				std::printf("step %d scene '%ls' char %d,%d state %d dir %d dest %d,%d destObject %s\n", step,
+				            control->GetScene()->GetRef().GetName().c_str().c_str(), rufus->_position.x, rufus->_position.y, rufus->_state,
+				            rufus->_objRef.GetInt(kCharacterDirection), rufus->_objRef.GetPoint(kCharacterDestination)->x,
+				            rufus->_objRef.GetPoint(kCharacterDestination)->y,
+				            rufus->_objRef.GetLink(kCharacterDestinationObject).IsEmpty() ? "none" : "set");
+		}
+		return 0;
+	}
 
 	if (argc > 3 && std::string(argv[3]) == "act") {
 		// action: slotload <b|s> <slot> act <id>: the action with that id (table 7) is started and the game runs for 8 seconds; what the
