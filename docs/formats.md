@@ -110,8 +110,7 @@ advances by 2 or 3 (mod 6) per tick (about 2.28), the right flame shows frame `(
 `    the bitmap brothers` / `          -------` / `  published by imageworks`
 (Cadaver 1) or `   published by renagade` (The Payoff). The story ("chapter thirteen — the story so
 far …") and the credits are further plain-text strings in `INTRO.EXE` (padded with spaces for
-centring); how those pages are sequenced is not yet analysed, and their text is not copied into
-this repository.
+centring; their text is not copied into this repository). **Sequencing (read from `INTRO.EXE`, `sub_101D0` / `10274` / `102A2`):** after the title page (the text interpreter runs on the string block at `ds:0182`, characters drawn one by one with the 6×6 font from x = 68, the first line at y = 160 of the text window) it runs the same interpreter on the story block at `ds:10DE`: a line ends with CR (0Dh) and every CR scrolls the text window — 192 pixels wide (24 bytes) from x = 64, 120 rows from y = 40, copied with EGA write mode 1 from an off-screen copy — up by 6 pixels, one pixel per step with the candle flames animated each step (`10304`); `!` starts a scroll of a whole page, `#` ends the text, a space advances 6 pixels, bit 7 of `ds:1166` (set by the key / tune handler) ends the interpreter. The story therefore rolls up the parchment like the credits; the port has only the static title page (the text lives in the packed `INTRO.EXE`, which would need a PKLITE decompressor at run time).
 
 ## 5. Language files `*.LNG` — *verified*
 

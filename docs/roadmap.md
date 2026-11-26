@@ -16,7 +16,7 @@ building oracles so later work can be *verified* rather than guessed.
 | Game detection / path resolution (Cadaver 1 vs Payoff, `DATA`/`TATA`, `?` disk placeholder, case-insensitivity) | **Done** (`src/engine/gamefiles.c`) |
 | SDL2 front end | Title scroll and the **walk scene with most of the gameplay** (`--scene game`): movement and jumping, pushing, doors and level changes, the verb menu, the rucksack (small view, 4 × 4 grid with scrolling, drop in eight directions), spells, potions, throwing weapons with projectiles, the message scrolls, the map (F1), pay-to-save slots (S / L), quick save (F5 / F9). See `src/README.md` for the keys. Not complete: F2 / F3, leapfrog, the original's save format, the intro's story pages |
 | Emulator harness + DOSBox capture | **Done** — runs the real game to the level-1 screen (see `docs/tools.md`) |
-| `FONT2.SPR`, `FLAME.DAT`, title scroll | **Done** — pixel-exact against the running intro; animated scene in the SDL app (`--scene intro`). The story/credits pages of the intro are not sequenced yet |
+| `FONT2.SPR`, `FLAME.DAT`, title scroll | **Done** — pixel-exact against the running intro; animated scene in the SDL app (`--scene intro`). The story / credits roll of the intro is analysed (docs/formats.md section 4) but not ported: its text is in the PKLITE-packed `INTRO.EXE` |
 | `*.LNG` text | **Done** — 6-bit packed text, Python + C, all 41 files verified, in-game strings confirmed in the emulator |
 | `PCMAN.DAT` (player sprites) | **Done** — directory + 5-plane records, Python + C, all 48 frames, viewer in the SDL app |
 | Palette | **Done** — 16 ST words, per level in `MP1` (all 9 levels) |
