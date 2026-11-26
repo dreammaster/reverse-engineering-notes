@@ -45,6 +45,7 @@ public:
 	/** Called when a blow is struck with a weapon that is not a missile (perform_attack 2D63A), with the one it is struck at. */
 	std::function<void(int)> onSwing;
 	/** Called once an actor has died (the dream scenes of Martian Dreams count the deaths, sub_19300). */
+	std::function<bool(int, int)> beforeHurt; // (attacker, defender): true when the blow is taken by the game (a person the story keeps alive)
 	std::function<void(int)> onDying; // called as an actor is about to die (its body is still as it was)
 	std::function<void(int)> onDeath;
 

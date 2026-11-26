@@ -44,6 +44,7 @@ Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(worl
 		_creatures.divide(actor);
 	};
 	_combat.onSfx = [this](int effect, int param) { sfx(effect, param); };
+	_combat.beforeHurt = [this](int attacker, int defender) { return mdProtected(attacker, defender); };
 	_combat.onDying = [this](int actor) { mdDying(actor); };
 	_combat.onDeath = [this](int actor) { mdKilled(actor); };
 	if (_world.game == GameId::MartianDreams)

@@ -1442,3 +1442,58 @@ void Game::mdAwaken() {
 
 } // namespace Ultima6
 } // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_17D85 and the first half of sub_19A74: some people cannot be hurt (the kinds 0x17D, 0x187, 0x186, 0x166, 0x17E and the actors 0x3C, 0x40, 0x52, 0x54, 0x59, 0x5A, 0x5C, 0x5D, 0x67-0x69, 0x6D,
+// 0x77, 0x78): the blow does nothing and their hit points are set to 255. What it says: the actors 0x69 and 0x3C "critical!", 0x52 "heavily wounded.", 0x68 the same (then, with bit 0x20 of his flags,
+// "critical!" and a talk with him), the rest "It has no effect."; a 0x187 answers "How dare you, young %sman!" with three blows of 45 on the body (actor 0); 0x6D and 0x67 (bit 8 of actor 0x6B's
+// flags) throw the party back to the place of the last checkpoint; 0x40 starts his talk (bit 8 of its flags).
+// APPROX(97): the name of the actor 0x69's line is his own (the original names actor 0x19), and the rest of sub_1E03C (the moving of the party) is left out
+bool Game::mdProtected(int attacker, int victim) {
+	if (_world.game != GameId::MartianDreams || victim <= 0 || victim >= 0x100)
+		return false;
+	ObjList &al = _world.actors;
+	int k = _world.actorObject(victim);
+	if (k < 0)
+		return false;
+	int type = _world.objects[k].type;
+	static const int ACTORS[] = {0x5C, 0x5D, 0x59, 0x5A, 0x54, 0x52, 0x6D, 0x68, 0x67, 0x69, 0x77, 0x78, 0x40, 0x3C};
+	bool safe = type == 0x17D || type == 0x187 || type == 0x186 || type == 0x166 || type == 0x17E;
+	for (int a : ACTORS)
+		safe |= a == victim;
+	if (!safe)
+		return false;
+	std::string name = mdMemberName(victim);
+	if (victim == 0x69 || victim == 0x3C) {
+		message("`" + name + " critical!\n");
+	} else if (victim == 0x52) {
+		message("`" + name + " heavily wounded.\n");
+	} else if (victim == 0x68) {
+		bool again = (al.talkFlags[0x68] & 4) != 0;
+		message("`" + name + (again ? " critical!\n" : " heavily wounded.\n"));
+		al.talkFlags[0x68] |= 0x20;
+		startTalk(0x68);
+	} else {
+		message("It has no effect.\n");
+	}
+	al.hp[victim] = 0xFF;
+	if (type == 0x187) {
+		bool woman = _leaderObject >= 0 && _world.objects[_leaderObject].type == 0x158;
+		message(std::string("How dare you, young ") + (woman ? "wo" : "") + "man!\n");
+		for (int i = 0; i < 3; ++i)
+			mdStrike(victim, 0, 0x2D);
+	} else if (victim == 0x6D || victim == 0x67) {
+		al.talkFlags[0x6B] |= 8;
+		mdSfx(0x33);
+		changeLevel(_mdCheck[0], _mdCheck[1], z);
+	} else if (victim == 0x40) {
+		al.talkFlags[0x40] |= 8;
+		startTalk(0x40);
+	}
+	return true;
+}
+
+} // namespace Ultima6
+} // namespace Ultima6

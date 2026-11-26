@@ -646,6 +646,8 @@ void Combat::alertTownspeople() {
 
 // APPROX(16): not the original's exact behaviour, see docs/approximations.md (sub_2C2E5: ships and doors take no damage)
 bool Combat::applyDamage(int attacker, int defender, int damage) {
+	if (beforeHurt && beforeHurt(attacker, defender))
+		return false;
 	int kd = _world.actorObject(defender);
 	if (kd < 0)
 		return false;

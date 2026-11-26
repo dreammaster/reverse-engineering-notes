@@ -169,6 +169,7 @@ public:
 	void mdDreamEnd(int actor);                    // sub_50651
 	void mdDreamFinish(int actor);                 // sub_3F615 + sub_3F61A
 	void mdDreamTouch(int obj);                    // sub_50218
+	bool mdProtected(int attacker, int victim);    // sub_19A74 + sub_17D85: the people the story keeps alive
 	void mdAwaken();                               // sub_30093: the Avatar is dead outside a dream
 	void mdDying(int actor);                       // sub_19300 before the body falls: the story of the dead (the people the game needs, the sand creature's brood, the vine's ends)
 	void mdKilled(int actor);                      // sub_19300's count of the deaths of a dream; the last of the battle is the faint (sub_50836)

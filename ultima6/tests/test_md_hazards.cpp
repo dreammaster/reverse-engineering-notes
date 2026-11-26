@@ -453,6 +453,18 @@ int main() {
 		}
 	}
 
+	// the people the story keeps alive take no blow
+	{
+		int victim = 0x59, vk = w.actorObject(victim);
+		if (vk >= 0 && !w.objects[vk].deleted) {
+			al.hp[victim] = 20;
+			g.log.clear();
+			g.mdStrike(1, victim, 15);
+			CHECK(al.hp[victim] == 0xFF);
+			CHECK(logText(g).find("It has no effect.") != std::string::npos);
+		}
+	}
+
 	// the Avatar dead outside a dream: the party is raised and healed and wakes in the space capsule a week on
 	{
 		al.talkFlags[0x46] &= 0xF7;
