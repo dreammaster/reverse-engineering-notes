@@ -268,7 +268,7 @@ bool collectOrders(Machine &m) {
 			bool again;
 			do {   // 11FFC
 				again = false;
-				call(m, 0x7357);   // sub_17357
+				drawMemberNumbers(m);   // 17357
 				redrawRosterRow(m, D(memberVar), 0xFF);
 				drawInfoWindow(m);
 				writeMemberName(m);
@@ -310,6 +310,29 @@ bool collectOrders(Machine &m) {
 	}
 }
 
+
+void drawMemberNumbers(Machine &m) {   // 17357: the numbers "1>" .. "n>" in front of the roster rows (combat order mode)
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	if (D(0x46B9) == 0) return;
+	X86Regs x;
+	legacy::call(m, 0x9E30, x);   // clearInverseText
+	D(0x471F) = x.al;
+	saveRectBounds(m);
+	uint8_t n = 1;
+	for (;;) {
+		D(0xB23D) = n;
+		D(g::rectTextY) = uint8_t(n + 0x0F);   // 1738A
+		D(g::rectTextX) = 1;
+		setWriteCharacterFn2(m);               // 17395
+		D(g::tempTextX) = 1;
+		writeNumberShort(m, n);
+		writeCharacter2(m, '>');
+		n = uint8_t(D(0xB23D) + 1);
+		if (n > D(uint16_t(g::saved2 + g::s2::membersInGroup))) break;
+	}
+	restoreRectBounds(m);
+	setWriteCharacterFn(m);
+}
 
 uint8_t forEachFightGroup(Machine &m) {   // 12CFE: runs the handler in ds:46DD for every party group that is in this fight
 	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
@@ -402,7 +425,7 @@ orderRound:   // 11DBB
 			drawRosterHeadersAndMembers(m);
 			drawInfoWindow(m);
 			if (collectOrders(m)) goto orderRound;
-			call(m, 0x7357);   // sub_17357
+			drawMemberNumbers(m);   // 17357
 			for (uint8_t bl = D(members); bl != 0; --bl)
 				if (D(uint16_t(m.d16(g::partyStatusPtr) + bl)) != 0) { ++D(ordered); break; }
 		}

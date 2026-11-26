@@ -78,6 +78,7 @@ PORT(pickFirstTarget) { setResult(r, pickFirstTarget(m)); }                     
 
 PORT(forEachFightGroup) { r.a.b.l = forEachFightGroup(m); }                               // 12CFE
 PORT(roundHeader) { roundHeader(m); r.a.b.l = 1; }                                       // 12551
+PORT(drawMemberNumbers) { drawMemberNumbers(m); }                                         // 17357
 PORT(runCombat) { runCombat(m); }                                                       // 11D39
 
 PORT(regroupParty) { regroupParty(m); r.cf = true; }                                                 // 130C8

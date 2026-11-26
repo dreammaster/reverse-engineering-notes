@@ -38,4 +38,7 @@ bool recruitMonster(Machine &m, uint8_t member);
 uint8_t forEachFightGroup(Machine &m);
 void roundHeader(Machine &m);
 
+// 17357: the member numbers in front of the roster rows
+void drawMemberNumbers(Machine &m);
+
 } // namespace wl
