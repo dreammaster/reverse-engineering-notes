@@ -2135,7 +2135,6 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		mdTent(item);
 		break;
 	case 8: { // sub_59D15: pliers (item) on a cable spool (first, used up) to a tower top or a power cable (second): needs the story to be at the right point (flags 0x73 bit 4 and 0x71 bit 8), and rubber gloves (0x26) worn by the Avatar, else a shock; the others in the party only comment
-		// APPROX(76): the lamps of the hour (sub_3F745) and the reset of the scene (sub_3F798, which removes the machine-gun things round the towers) are left out
 		ObjList &al = _world.actors;
 		if (_mdDist > 1) {
 			message("The work is too precise to perform telekinetically.\n");
@@ -2170,6 +2169,8 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		mdSfx(0x1F);
 		consumeOne(first);
 		al.talkFlags[0x73] |= 0x10;
+		mdLamps(); // sub_3F745
+		mdSceneReset(); // sub_3F798
 		break;
 	}
 	case 18: { // sub_59EE7: a tool (item) on the hatch (first, 0x1AB): only the Avatar is strong enough; the first time (flag 0x10 of actor 0x10 not yet set) the people nearby talk (flag 4), the next time the hatch breaks (0x1AC), another scene talks (actor 0x12, flags 0x48) and a minute goes by

@@ -541,3 +541,34 @@ void Game::mdMidgame(int file, int pages, std::function<void()> then) {
 
 } // namespace Ultima6
 } // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_53E92 (sub_3F798): the scene is reset after the intermission of MIDGAME4.LZC: the 0xD7 of the region x 0x3D0-0x3F0, y 0x1D0-0x1E7 of the surface become 0xD6 (their frames kept) and the
+// 0x13B (the machine guns round the towers) in four squares of the surface (x 0xC8-0xD7, y 0x290-0x2A0; x 0x348-0x357, y 0x290-0x2A0; x 0x138-0x147, y 0x178-0x187; x 0x2C8-0x2D7, y 0x1F8-0x207) go
+void Game::mdSceneReset() {
+	mdMidgame(3, 2, [this]() {
+		mdEach(0x3D0, 0x1D0, 0x3F0, 0x1E7, [this](int i) {
+			if (_world.objects[i].type == 0xD7)
+				_world.objects[i].type = 0xD6;
+			return false;
+		}, 0);
+		struct R {
+			int x1, y1, x2, y2;
+		};
+		for (const R &r : {R{0xC8, 0x290, 0xD7, 0x2A0}, R{0x348, 0x290, 0x357, 0x2A0}, R{0x138, 0x178, 0x147, 0x187}, R{0x2C8, 0x1F8, 0x2D7, 0x207}}) {
+			std::vector<int> gone;
+			mdEach(r.x1, r.y1, r.x2, r.y2, [&](int i) {
+				if (_world.objects[i].type == 0x13B)
+					gone.push_back(i);
+				return false;
+			}, 0);
+			for (int i : gone)
+				_world.deleteObject(i);
+		}
+	});
+}
+
+} // namespace Ultima6
+} // namespace Ultima6

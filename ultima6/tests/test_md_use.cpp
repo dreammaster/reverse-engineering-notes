@@ -699,6 +699,8 @@ int main() {
 		w.actors.hp[1] = 200;
 		fix();
 		CHECK(w.actors.hp[1] == 200 && w.objects[spool].deleted && (w.actors.talkFlags[0x73] & 0x10));
+		for (int i = 0; i < 12; ++i)
+			g.handleKey(KEY_ENTER); // the intermission of MIDGAME4.LZC (the reset of the scene) waits for keys
 		w.actors.hp[1] = (uint8_t)hp;
 		w.actors.talkFlags[0x73] = 0;
 		w.deleteObject(gloves);
