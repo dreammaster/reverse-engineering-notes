@@ -1,8 +1,6 @@
 # Cadaver C reimplementation
 
-Work in progress: the data decoders, the full room picture (floor, walls, objects, animations, screen frame) and an exploration
-prototype (walk around, collide with objects, leave through the doors into the next room) work; scripts (ACL events, timers), the native TAD routines (timers), messages, labels, verb icons and the energy bar run; creatures, verbs, chests, the rucksack, the map, jumping and
-level progression work; combat, held items and the Payoff-specific features are not implemented; sound (PC speaker, `BEEPER.BIN` on the interpreter) works for the triggers decoded so far. Currently:
+Work in progress, but largely playable: both games' levels run in the SDL front end (`--scene game`) with the room pictures, the player, the original's collision and pushing rules, doors and level changes, the ACL scripts and timers, the creatures (their TAD behaviour routines run on the 8086 interpreter), messages, labels, the verb menu and the rucksack (small view and scrolling grid), chests, held / thrown things, spells, potions and throwing weapons with flying projectiles, death and restart, the map, pay-to-save slots, and sound for all three PC drivers (speaker, AdLib, Sound Blaster) with the decoded triggers. Not done: the intro's story pages, some verbs and a few spell / potion effects (see `docs/roadmap.md`), the original's own save format, Roland music (exportable as MIDI with `tools/roland_midi.py`). Currently:
 
 | File | |
 |---|---|
@@ -13,11 +11,11 @@ level progression work; combat, held items and the Payoff-specific features are 
 | `engine/anim.[ch]` | sprite animation scripts (the game's step + command table) |
 | `engine/collision.[ch]` | the game's box collision test (verified against the original routine) |
 | `engine/roomexits.[ch]` | door boxes / exits of a room (verified for all rooms of levels 1-5) |
-| `engine/acl.[ch]` | ACL script interpreter (subset: thing flags, variables, conditions, IF blocks; room-start events) |
+| `engine/acl.[ch]` | ACL script interpreter (about 80 of the 94 ops, event dispatch with conditions, timers, spawn / shot helpers, effect timers) |
 | `engine/push.[ch]` | pushing objects |
 | `engine/x86.[ch]` | 8086 interpreter for the native routines of `ROUTINEn.TAD` / `.PAK` |
-| `engine/tad.[ch]` | TAD runtime: data-segment image, service table (energy, random, sound), countdown timers |
-| `engine/beeper.[ch]` | PC-speaker sound driver: `BEEPER.BIN` run on the interpreter (50 Hz tick), play/stop protocol of `1000:156C/1613`, square-wave synthesis |
+| `engine/tad.[ch]` | TAD runtime: data-segment image, service table (energy, random, sound, timers, thing lookup, shots), countdown timers, behaviour and action routines |
+| `engine/beeper.[ch]`, `engine/opl.[ch]` | sound drivers (`BEEPER` / `ADLIB` / `SBLASTER.BIN`) run on the interpreter (50 Hz tick), the play / stop protocol of `1000:156C/1613`, square-wave synthesis, an approximate OPL2, the Sound Blaster DSP / DMA samples |
 | `engine/message.[ch]` | message scrolls: wrapped text in a parchment box (ANDATA blocks 2 and 3) |
 | `engine/panel.[ch]` | `ANDATA.DAT` block 1 (the frame around the room view) and block 4 (status text: "DAY n", room name) |
 | `engine/intro.[ch]` | title scroll: `FONT2.SPR` text, `FLAME.DAT` flames over `LOADING2.PC1` |
