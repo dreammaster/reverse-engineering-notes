@@ -31,6 +31,7 @@
 #include "vectors_grid.h"
 #include "../engine/describe.h"
 #include "vectors_describe.h"
+#include "vectors_verbs.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -207,6 +208,15 @@ int main(int argc, char **argv) {
 			}
 		}
 		free(f1); free(f2); free(l1); free(m1);
+	}
+	for (int i = 0; i < N_CARRIED_VERB_VECTORS; i++) {                       /* the carried-thing verb list, vectors from the original 1000:12C72 */
+		const int *v = carried_verb_vectors[i];
+		uint8_t out[VERB_MAX];
+		int n = carried_verbs_list(v[0], v[1], v[2], v[3], v[4], v[5], v[6], out);
+		int bad = n != v[7];
+		for (int k = 0; k < n && !bad; k++) bad = out[k] != v[8 + k];
+		if (bad) { printf("FAIL carried_verbs_list vector %d: %d verbs (first %d) want %d (first %d)\n", i, n, out[0], v[7], v[8]); failed++; }
+		checked++;
 	}
 	for (size_t i = 0; i < sizeof(mjm_vectors) / sizeof(mjm_vectors[0]); i++) {
 		const MjmVector *v = &mjm_vectors[i];

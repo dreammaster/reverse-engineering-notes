@@ -97,3 +97,5 @@ Debug environment variables of the port: `CAD_CARRY=thing[:A0[:A1]]`, `CAD_SPELL
 `tools/gen_grid_vectors.py`: 2080 cursor moves of the whole-rucksack grid (every size 1-32, the four keys, many states) through the original key handler into `src/tests/vectors_grid.h`; `engine/ruckgrid.c` must reproduce them.
 
 `tools/gen_describe_vectors.py`: 300 random spell / potion / weapon / ammunition structs through the original description routine (`1000:84D9`, level 1 English) into `src/tests/vectors_describe.h`; `engine/describe.c item_description` must reproduce the texts.
+
+`tools/gen_verb_vectors.py`: 600 (carried thing, touched thing) pairs from levels 1-3 through the original carried-verb builder (`1000:12C72`) into `src/tests/vectors_verbs.h`; `engine/panel.c carried_verbs_list` must give the same lists (up to 8 verbs: the port shows them in two pages of six).

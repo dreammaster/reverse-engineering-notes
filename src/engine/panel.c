@@ -216,3 +216,23 @@ void verbs_highlight(uint8_t *canvas, int slot) {
 			else if (inner) canvas[(y0 + r) * 320 + x0 + c] = 0xE;
 		}
 }
+
+int carried_verbs_list(int h16, int h17, int h1d, int flags2_40, int a7, int tclass, int ta4, uint8_t out[VERB_MAX]) {
+	int n = 0;
+	if (tclass >= 0) {
+		if (h16 == 1 && a7 == 2) out[n++] = 16;                                  /* cast on the touched thing */
+		if (tclass == 8) { if ((ta4 & 0x10) && (ta4 & 1)) out[n++] = 12; }       /* an open container that takes things */
+		else if (tclass == 0x0B) out[n++] = 12;
+		else if (tclass == 0x0C) out[n++] = 15;
+	}
+	if (h17 && !flags2_40) {
+		int c = h17 < 10 ? class_verb[h17] : 0xFF;
+		if (!(c & 0x80) && c != 3) out[n++] = (uint8_t)c;
+	}
+	if (h17 != 6 && !(h16 & 0x80)) out[n++] = 0x0B;
+	out[n++] = 0x0D;
+	out[n++] = 1;
+	if (h1d == 0x12) out[n++] = 0x0E;
+	out[n++] = 6;
+	return n;
+}

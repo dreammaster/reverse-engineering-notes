@@ -41,6 +41,10 @@ void status_draw(uint8_t *canvas, const uint8_t *font, size_t font_len, const ch
 /* hdr = 32-byte sprite block header (file order), flags2 = rec[15] of the touched thing, ds703 = game flag word (bit 0x20: no "look" verb).
  * Fills out[] (at most 6) and returns the count (the last verb is always 6). */
 int verbs_list(const uint8_t hdr[32], int flags2, int ds703, uint8_t out[VERB_SLOTS]);
+#define VERB_MAX 12                          /* a carried thing can have up to 8 verbs: two pages of six */
+/* the verb list of a carried thing (1000:12C72, verified against the original, tests/vectors_verbs.h): h16 / h17 / h1d = sprite header bytes 16h / 17h / 1Dh, flags2_40 = record byte 15 bit 6,
+ * a7 = the item's A[7], tclass = the class of the thing touched ahead (-1 = none) and ta4 = its A[4]. Returns the count. */
+int carried_verbs_list(int h16, int h17, int h1d, int flags2_40, int a7, int tclass, int ta4, uint8_t out[VERB_MAX]);
 /* Draw the n verb icons (the rest of the six slots get the empty icon 0). icons = ANDATA block 0 (17 icons of 112 bytes). */
 void verbs_draw(uint8_t *canvas, const uint8_t *verbs, int n, const uint8_t *icons, size_t icons_len);
 

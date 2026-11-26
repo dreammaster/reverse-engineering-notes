@@ -114,7 +114,7 @@ typedef struct RoomView_ {
 	uint8_t pos_seen[ACL_THINGS * 3];
 	int pending_rebuild;
 	struct { int active, id, timer, dot; char txt[200]; } msgs[4];   /* txt: a composed text (id = -2) */   /* message scrolls (slots 0..3) */
-	uint8_t verbs[VERB_SLOTS];  /* verb icons of the touched object (slots) */
+	uint8_t verbs[VERB_MAX];    /* verb icons of the touched / carried object (two pages of six) */
 	int nverbs;
 	int energy_max_cfg;        /* from LEVn.MP1 */
 	int slow_phase, tick_dbg;
@@ -301,9 +301,10 @@ static void panel_draw(const GameFiles *g, Screen *scr, const RoomView *rv) {
 		                   rid < rv->names.count ? rv->names.strings[rid] : "", msg_rnd, NULL);
 	}
 	if (g_icons && rv->nverbs) {
-		verbs_draw(scr->pixels, rv->verbs, rv->nverbs, g_icons, g_icons_len);
+		int pg = (rv->menu_open || rv->ruck_open) ? rv->menu_sel / VERB_SLOTS : 0, cnt = rv->nverbs - pg * VERB_SLOTS;   /* the second page of six */
+		verbs_draw(scr->pixels, rv->verbs + pg * VERB_SLOTS, cnt > VERB_SLOTS ? VERB_SLOTS : cnt, g_icons, g_icons_len);
 		if (rv->menu_open && !rv->grid_open)
-			verbs_highlight(scr->pixels, rv->menu_sel);
+			verbs_highlight(scr->pixels, rv->menu_sel % VERB_SLOTS);
 	}
 	if (g_font && rv->names_ok && rv->room >= 0 && rv->room < rv->mp2.sec[0].count && rv->mp2.sec[0].rec[rv->room]) {
 		char nm[48];
@@ -1065,27 +1066,13 @@ static void ruck_show(RoomView *rv, int t) {
 	rv->touch_thing = t;
 	rv->last_item = t;
 	if (!sp) return;
-	int h16 = sp->header[0x16], h17 = sp->header[0x17];
-	/* 1000:12C72, in the original's order: [16 cast on the touched thing] [12 / 15 depending on the touched thing's class] class verb (not 3) / look / hold / drop / [14] / joystick */
-	int tg = rv->ruck_target;
+	int tg = rv->ruck_target, tc = -1, ta4 = 0;
 	if (tg > 0 && tg != t && tg < ACL_THINGS) {
 		const ObjSprite *ts = thing_sprite(rv, tg);
-		int tc = ts ? ts->header[0x16] : -1;
-		if (h16 == 1 && rv->vm.tail[t][7] == 2) rv->verbs[rv->nverbs++] = 16;
-		if (tc == 8) { const uint8_t *ta = rv->vm.tail[tg]; if ((ta[4] & 0x10) && (ta[4] & 1)) rv->verbs[rv->nverbs++] = 12; }   /* an open container that takes things */
-		else if (tc == 0x0B) rv->verbs[rv->nverbs++] = 12;
-		else if (tc == 0x0C) rv->verbs[rv->nverbs++] = 15;
+		tc = ts ? ts->header[0x16] : -1;
+		ta4 = rv->vm.tail[tg][4];
 	}
-	if (h17 && !(rv->vm.flags2[t] & 0x40)) {
-		static const uint8_t cv[10] = {0x00, 0x04, 0x09, 0xFF, 0x07, 0x03, 0x08, 0xFF, 0xFF, 0xFF};
-		int c = h17 < 10 ? cv[h17] : 0xFF;
-		if (!(c & 0x80) && c != 3) rv->verbs[rv->nverbs++] = (uint8_t)c;
-	}
-	if (h17 != 6 && !(h16 & 0x80)) rv->verbs[rv->nverbs++] = 0x0B;      /* look (emulator: the pickaxe has it; the diary, class 6, shows its class verb 8 first and no look) */
-	rv->verbs[rv->nverbs++] = 0x0D;                                      /* hold */
-	rv->verbs[rv->nverbs++] = 1;
-	if (sp->header[0x1D] == 0x12) rv->verbs[rv->nverbs++] = 0x0E;
-	rv->verbs[rv->nverbs++] = 6;
+	rv->nverbs = carried_verbs_list(sp->header[0x16], sp->header[0x17], sp->header[0x1D], (rv->vm.flags2[t] & 0x40) != 0, rv->vm.tail[t][7], tc, ta4, rv->verbs);   /* 1000:12C72, verified */
 	int nm = (sp->header[10] << 8) | sp->header[11];
 	rv->label_id = nm < 0x8000 ? nm : -1;
 	rv->menu_sel = 0;
