@@ -5,6 +5,7 @@
 #include "ultima6/stats_view.h"
 
 #include <cstdio>
+#include <filesystem>
 #include <cstring>
 #include <string>
 #include <vector>
@@ -116,6 +117,18 @@ int main() {
 	CHECK(w.objects[body].type == 0x157 || w.objects[body].type == 0x158);
 	CHECK(al.hp[0] == ::Ultima6::Ultima6::ActorStats::maxHealth(w, 1));
 	CHECK(w.objects[w.actorObject(1)].x == podX && w.objects[w.actorObject(1)].z == 0); // the Avatar stays on the chair
+
+	// the dream is kept beside the save and comes back with it
+	{
+		std::filesystem::create_directories("build/mdstate_test");
+		g.saveDir = "build/mdstate_test";
+		g.mdSaveState();
+		Game g2(w);
+		g2.saveDir = "build/mdstate_test";
+		CHECK(!g2.mdDreaming());
+		g2.mdLoadState();
+		CHECK(g2.mdDreaming());
+	}
 
 	// a square of type 0x1CD without flags leads to y = quantity, x = quality
 	int portal = put(w, 0x1CD, 0, 101, 59, 2);

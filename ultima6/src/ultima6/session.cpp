@@ -83,6 +83,8 @@ bool Game::save() {
 	g[5] = (uint8_t)gameClock.month;
 	g[6] = (uint8_t)(gameClock.year & 0xFF);
 	g[7] = (uint8_t)(gameClock.year >> 8);
+	if (_world.game == GameId::MartianDreams && !saveDir.empty())
+		mdSaveState();
 	return !saveDir.empty() && _world.save(saveDir);
 }
 

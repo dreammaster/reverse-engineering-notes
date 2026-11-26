@@ -1278,3 +1278,33 @@ void Game::mdDreamMachine(int cabinet) {
 
 } // namespace Ultima6
 } // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// What the original keeps in its own variables and our save lacks: the dream the party is in (word_4115A bit 4, word_41184, byte_41153), the day the dreamer wakes (byte_41180 / 41181 /
+// word_41182), the square the body comes back to (byte_41134 / 41135) and the turn of the world (word_4115E). It goes into the file MDSTATE of the save directory (APPROX(95)).
+void Game::mdSaveState() const {
+	Bytes b = {(uint8_t)_mdDreaming, (uint8_t)_mdDreamId, (uint8_t)_mdDreamFlag, (uint8_t)_mdWake[0], (uint8_t)_mdWake[1], (uint8_t)(_mdWake[2] & 0xFF), (uint8_t)(_mdWake[2] >> 8),
+			   (uint8_t)_mdCheck[0], (uint8_t)(_mdCheck[0] >> 8), (uint8_t)_mdCheck[1], (uint8_t)(_mdCheck[1] >> 8), (uint8_t)_mdTurn};
+	writeFile(joinPath(saveDir, "MDSTATE"), b);
+}
+
+void Game::mdLoadState() {
+	Bytes b;
+	if (saveDir.empty() || !readFile(joinPath(saveDir, "MDSTATE"), b) || b.size() < 12)
+		return;
+	_mdDreaming = b[0] != 0;
+	_mdDreamId = b[1];
+	_mdDreamFlag = b[2];
+	_mdWake[0] = b[3];
+	_mdWake[1] = b[4];
+	_mdWake[2] = b[5] | (b[6] << 8);
+	_mdCheck[0] = b[7] | (b[8] << 8);
+	_mdCheck[1] = b[9] | (b[10] << 8);
+	_mdTurn = b[11];
+	_renderer.setTurn(_mdTurn);
+}
+
+} // namespace Ultima6
+} // namespace Ultima6

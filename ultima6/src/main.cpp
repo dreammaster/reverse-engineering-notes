@@ -243,6 +243,8 @@ int main(int argc, char **argv) {
 	} detachGame{*backend};
 	Ultima6::Ultima6::Game game(world);
 	game.saveDir = saveDir;
+	if (id == Ultima6::GameId::MartianDreams && !created && haveSave)
+		game.mdLoadState();
 	Ultima6::BorlandRandom sfxRandom(7);
 	game.sound = [&](int effect, int param) {
 		if (mdPlaying) { // Martian Dreams: the effects are notes of the AdLib's timbres (GAME.EXE's sub_303A9), played by the same synthesiser as the music

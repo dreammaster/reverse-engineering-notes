@@ -145,6 +145,7 @@ public:
 	bool mdInViewAt(int ox, int oy, int oz) const;
 	void mdJet(int jet);                           // sub_55BA0
 	void mdJets(int jet);                          // sub_55D62
+	void mdSaveState() const;                      // our own file beside the save: the dream the party is in (the original keeps it in its own variables)
 	void mdBarges();                               // sub_13F41: the barges of the canals
 	void mdThings();                               // sub_22B27's loop over the things in view
 	bool mdInView(int actor) const;                // sub_270D2 == 0
@@ -172,6 +173,7 @@ public:
 	void mdFaint();
 	void mdExitCode(int code);                     // sub_55F77: what the exit code of a conversation does
 	std::vector<int> mdContents(int box) const;    // the things inside a container
+	void mdLoadState();                            // reads it back (main, after the save directory is set)
 	void mdStepOn();                               // sub_27EE6's part for the squares of the dream
 	bool mdDreaming() const {
 		return _mdDreaming;
