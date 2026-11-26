@@ -44,6 +44,7 @@ Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(worl
 		_creatures.divide(actor);
 	};
 	_combat.onSfx = [this](int effect, int param) { sfx(effect, param); };
+	_combat.onDying = [this](int actor) { mdDying(actor); };
 	_combat.onDeath = [this](int actor) { mdKilled(actor); };
 	if (_world.game == GameId::MartianDreams)
 		_creatures.ownTurn = [this](int actor) { return mdWorktype(actor); };
@@ -724,6 +725,16 @@ void Game::command(int key) {
 		}
 		break;
 	case 19: // ctrl-S
+		if (_world.game == GameId::MartianDreams && _mdNoSave) { // byte_409C5: somebody the story needs is dead (sub_23C1A)
+			message(_mdNoSave == 1 ? "You have killed someone whose help you need to win the game!\n" : "One of the important historical figures you were here to rescue is dead!\n");
+			prompt();
+			break;
+		}
+		if (_world.game == GameId::MartianDreams && _combatMode) {
+			message("Not while in combat mode!\n");
+			prompt();
+			break;
+		}
 		message("Save game? ");
 		_confirmSave = true;
 		break;

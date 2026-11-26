@@ -188,6 +188,8 @@ bool Combat::hitCheck(int attacker, int defender, int weapon) {
 }
 
 void Combat::die(int actor) {
+	if (onDying)
+		onDying(actor);
 	dieInner(actor);
 	if (onDeath)
 		onDeath(actor);

@@ -1308,3 +1308,83 @@ void Game::mdLoadState() {
 
 } // namespace Ultima6
 } // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_19300, what it does of the story when somebody dies (hit points 0): the people the game needs (actors 0x12 and 0x1A: "You have killed someone whose help you need to win the game!", 0x20, 0x36
+// and 0x3B: the actors 0x33-0x3E turn hostile and fight, bit 2 of their talk flags) forbid saving (byte_409C5 = 1), the important figures (actors 0xA-0xF, 0x10-0x1C, 0x22-0x34, 0x37-0x3A, 0x3D,
+// 0x3E, 0x42, 0x46) too (2: "One of the important historical figures you were here to rescue is dead!"); actor 0x5B sets bit 0x10 of its flags. A 0x175 (the brood mother) takes its
+// 0x16A / 0xFE brood of actors 0xC0 and up, whose quality is its number, with it, and on level 3 (the dream of the person 0x66) the 0x1D2 at 0x87, 0x17 is taken away, a 0xE0 (frame 3) stands at
+// 0x7F, 0x18 and the person 0x66 talks (his flags 0x22 set). A 0x172 and a 0x174 (the ends of a vine) take each other with them.
+// APPROX(97): the experience of the brood (the sum of the kinds' numbers, shifted right by 4) is not given to the killer; the other half of sub_19300 (the words "falls!", "destroyed!") is the engine's
+void Game::mdDying(int actor) {
+	if (_world.game != GameId::MartianDreams || actor <= 0 || actor >= 0x100)
+		return;
+	ObjList &al = _world.actors;
+	int k = _world.actorObject(actor);
+	int type = k >= 0 ? _world.objects[k].type : 0;
+	auto vanish = [&](int a) {
+		int ak = _world.actorObject(a);
+		al.hp[a] = 0;
+		al.status[a] |= 0x10;
+		al.worktype[a] = 0;
+		if (ak >= 0) {
+			_world.objects[ak].quality = 0;
+			_world.deleteObject(ak);
+		}
+	};
+	if (actor == 0x3B || actor == 0x36) {
+		al.talkFlags[0x3B] |= 2;
+		_mdNoSave = 1;
+		for (int a = 0x33; a <= 0x3E; ++a) {
+			al.status[a] |= 0x20;
+			al.worktype[a] = 8;
+		}
+	} else if (actor == 0x12 || actor == 0x1A) {
+		_mdNoSave = 1;
+		message("You have killed someone whose help you need to win the game!\n");
+	} else if (actor == 0x20) {
+		_mdNoSave = 1;
+	} else if ((actor >= 0x10 && actor < 0x1D) || (actor >= 0xA && actor <= 0xF) || (actor >= 0x22 && actor <= 0x34) || (actor >= 0x37 && actor <= 0x3A) || actor == 0x3D || actor == 0x3E || actor == 0x42 ||
+			   actor == 0x46) {
+		_mdNoSave = 2;
+	}
+	if (actor == 0x5B)
+		al.talkFlags[0x5B] |= 0x10;
+	if (type == 0x175) {
+		for (int a = 0xC0; a < 0x100; ++a) {
+			int ak = _world.actorObject(a);
+			if (ak < 0 || _world.objects[ak].deleted || (al.status[a] & 0x10))
+				continue;
+			if ((_world.objects[ak].type == 0x16A || _world.objects[ak].type == 0xFE) && _world.objects[ak].quality == actor)
+				vanish(a);
+		}
+		if (z == 3) {
+			int gate = seFind(0x1D2, 0x87, 0x17);
+			if (gate >= 0)
+				_world.deleteObject(gate);
+			if (seFind(0xE0, 0x7F, 0x18) < 0) {
+				int e = mdMakeThing(0xE0 | (3 << 10), 0, 0x7F, 0x18, z);
+				if (e >= 0)
+					_world.objects[e].status &= 0xDF;
+			}
+			al.talkFlags[0x66] |= 0x22;
+			startTalk(0x66);
+		}
+	} else if (type == 0x172 || type == 0x174) {
+		int partner = k >= 0 ? _world.objects[k].quality : 0;
+		int pk = partner ? _world.actorObject(partner) : -1;
+		if (pk >= 0 && !_world.objects[pk].deleted && !(al.status[partner] & 0x10) && _world.objects[pk].type == (type == 0x174 ? 0x172 : 0x174)) {
+			if (type == 0x172)
+				mdDying(partner), _combat.kill(partner);
+			else
+				vanish(partner);
+		}
+		if (k >= 0)
+			_world.objects[k].quality = 0;
+	}
+}
+
+} // namespace Ultima6
+} // namespace Ultima6

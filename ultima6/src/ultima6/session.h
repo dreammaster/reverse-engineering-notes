@@ -169,6 +169,7 @@ public:
 	void mdDreamEnd(int actor);                    // sub_50651
 	void mdDreamFinish(int actor);                 // sub_3F615 + sub_3F61A
 	void mdDreamTouch(int obj);                    // sub_50218
+	void mdDying(int actor);                       // sub_19300 before the body falls: the story of the dead (the people the game needs, the sand creature's brood, the vine's ends)
 	void mdKilled(int actor);                      // sub_19300's count of the deaths of a dream; the last of the battle is the faint (sub_50836)
 	void mdFaint();
 	void mdExitCode(int code);                     // sub_55F77: what the exit code of a conversation does
@@ -211,6 +212,7 @@ private:
 	void mdSceneSix();
 	void mdSceneBattle(int qty, int qual);
 	void mdEach(int x1, int y1, int x2, int y2, const std::function<bool(int)> &f, int level = -1);
+	int _mdNoSave = 0;             // byte_409C5: 1 somebody the game needs is dead, 2 an important figure is
 	bool _mdDreaming = false;      // word_4115A bit 4
 	int _mdDreamId = 0;            // word_41184
 	int _mdDreamFlag = 0;          // byte_41153
