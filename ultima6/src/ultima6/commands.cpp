@@ -221,7 +221,26 @@ void Game::attackAt(int tx, int ty) {
 				sfx(0xC);
 				message(_combat.nameOf(opp) + " interferes!\n");
 			} else if (_world.game == GameId::MartianDreams && (weapon == 0x2B || weapon == 0x2D || weapon == 0xF0 || weapon == 0xF1)) {
-				mdRayShot(attacker, weapon, tx, ty); // sub_18A64: the ray guns
+				// sub_1A6F2: the setting (the quality of the gun) of a 0x2D or a ray gun chooses the bolt (below 2) and the ray (not 1); the bolt of a 0x2D takes a cartridge 0x3B, its ray and a 0x2B's a
+				// cartridge 0x3A, a ray gun's ray 4 charges (it fires only with that many left)
+				int q = weaponIdx >= 0 ? _world.objects[weaponIdx].quality : 0;
+				bool bolt = weapon == 0x2D && q < 2, ray = weapon == 0x2B || q != 1 || weapon == 0xF0 || weapon == 0xF1; // APPROX(97): a ray gun at setting 1 fires its ray free
+				if (weapon == 0x2D && bolt && _world.removeFromInventory(attacker, 0x3B, 0, 1) == 0)
+					bolt = false;
+				if ((weapon == 0x2B || weapon == 0x2D) && ray && _world.removeFromInventory(attacker, 0x3A, 0, 1) == 0)
+					ray = false;
+				if ((weapon == 0xF0 || weapon == 0xF1) && weaponIdx >= 0) {
+					if (q != 1 && _world.objects[weaponIdx].quantity < 4)
+						ray = false;
+					else if (q != 1)
+						_world.objects[weaponIdx].quantity = (uint8_t)(_world.objects[weaponIdx].quantity - 4);
+				}
+				if (bolt)
+					_combat.attackWith(attacker, target, weapon, true);
+				if (ray)
+					mdRayShot(attacker, weapon, tx, ty); // sub_18A64: the ray guns
+				if (!bolt && !ray)
+					message("Out of ammunition!\n");
 			} else {
 				_combat.attackWith(attacker, target, weapon, true);
 			}
