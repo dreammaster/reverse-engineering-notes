@@ -58,6 +58,8 @@ public:
 	static int armourOf(int type);
 	/** sub_2AFFB: the distance between two squares that are dx and dy apart (a table; 8 and over for squares that are far). */
 	static int distance(int dx, int dy);
+	/** Martian Dreams' weapons that spend ammunition (sub_1ADCA): the type of the ammunition, 0 for the others. */
+	static int mdAmmo(int weapon);
 	static int rangeOf(int type); // 1 for the weapons that are not in the range table
 
 	/** The weapon an actor fights with: the best readied weapon's type, or its own type when unarmed. */

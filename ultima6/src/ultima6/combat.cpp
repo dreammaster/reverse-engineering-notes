@@ -76,6 +76,26 @@ int Combat::rangeOf(int type) {
 	return 1;
 }
 
+int Combat::mdAmmo(int weapon) {
+	switch (weapon) {
+	case 0x30:
+		return 0x40;
+	case 0x2F:
+		return 0x3F;
+	case 0x29:
+	case 0x2A:
+		return 0x39;
+	case 0x2E:
+		return 0x3C;
+	case 0x2C:
+		return 0x3B;
+	case 0x2B:
+		return 0x3A;
+	default:
+		return 0;
+	}
+}
+
 int Combat::armourOf(int type) {
 	for (const TypeValue &a : activeTables().armour)
 		if (a.type == type)
@@ -401,9 +421,9 @@ bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) 
 					found = i;
 			return found;
 		};
-		int ammo = (weapon == 0x29 || weapon == 0x36) ? 0x37 : (weapon == 0x2A || weapon == 0x32) ? 0x38 : 0;
+		int ammo = _world.game == GameId::MartianDreams ? mdAmmo(weapon) : (weapon == 0x29 || weapon == 0x36) ? 0x37 : (weapon == 0x2A || weapon == 0x32) ? 0x38 : 0;
 		if (ammo)
-			_world.removeFromInventory(attacker, ammo, 0, weapon == 0x32 ? 3 : 1);
+			_world.removeFromInventory(attacker, ammo, 0, _world.game != GameId::MartianDreams && weapon == 0x32 ? 3 : 1);
 		if (weapon == 0x24 || weapon == 0x25 || weapon == 0x26) {
 			if (std::abs(tx - ax) > 1 || std::abs(ty - ay) > 1) {
 				int thrown = find(weapon, true);

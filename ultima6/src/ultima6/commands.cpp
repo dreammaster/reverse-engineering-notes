@@ -155,8 +155,16 @@ void Game::attackAt(int tx, int ty) {
 	int weapon = weaponIdx >= 0 ? _world.objects[weaponIdx].type : _aboard && _world.objects[_leaderObject].type == 0x19C ? 0x19C : _world.objects[_world.actorObject(attacker)].type; // a ship fires its cannons
 	message("\n");
 	// the arrows and bolts
-	int ammo = (weapon == 0x29 || weapon == 0x36) ? 0x37 : (weapon == 0x2A || weapon == 0x32) ? 0x38 : 0;
+	const bool mdGame = _world.game == GameId::MartianDreams;
+	int ammo = mdGame ? Combat::mdAmmo(weapon) : (weapon == 0x29 || weapon == 0x36) ? 0x37 : (weapon == 0x2A || weapon == 0x32) ? 0x38 : 0;
 	bool done = false;
+	if (mdGame && weaponIdx >= 0) { // sub_1ADCA: a thrown stack that is gone, a ray gun without charges (or, set to 2, with fewer than 4)
+		const World::Obj &wo = _world.objects[weaponIdx];
+		if (((weapon == 0x81 || weapon == 0x105) && wo.quantity == 0) || ((weapon == 0xF0 || weapon == 0xF1) && (wo.quantity == 0 || (wo.quality == 2 && wo.quantity < 4)))) {
+			message("Out of ammunition!\n");
+			done = true;
+		}
+	}
 	int have = 0;
 	if (ammo) {
 		std::vector<int> inv;
@@ -166,7 +174,7 @@ void Game::attackAt(int tx, int ty) {
 				have += _world.quantityOf(_world.objects[i]);
 	}
 	if (ammo && have == 0) { // none to be had: the weapon is skipped
-		message(ammo == 0x37 ? "Out of arrows!\n" : "Out of bolts!\n");
+		message(mdGame ? (weapon == 0x30 ? "Out of arrows!\n" : "Out of ammunition!\n") : ammo == 0x37 ? "Out of arrows!\n" : "Out of bolts!\n");
 		done = true;
 	}
 	int target = -1;
