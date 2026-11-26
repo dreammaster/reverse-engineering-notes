@@ -2186,7 +2186,9 @@ static int walk_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 static Pc1Image g_intro_bg;
 static Font g_intro_font;
 static Flames g_intro_flames;
-static int g_intro_ok, g_intro_acc;   /* acc = flame phase in 1/100 frames */
+static int g_intro_ok;
+static IntroScript *g_intro_script;   /* the story roll cut out of INTRO.EXE (NULL when it cannot be read: only the static title page is shown) */
+static double g_intro_t;             /* seconds since the roll started */
 
 static int intro_draw(const GameFiles *g, Screen *scr) {
 	if (!g_intro_ok) {
@@ -2202,7 +2204,14 @@ static int intro_draw(const GameFiles *g, Screen *scr) {
 		if (rc) return -1;
 		g_intro_ok = 1;
 	}
-	intro_render_title(scr, &g_intro_bg, &g_intro_font, &g_intro_flames, g->id == GAME_PAYOFF, (g_intro_acc / 100) % 6);
+	if (!g_intro_script && getenv("CAD_INTRO_T")) g_intro_t = atof(getenv("CAD_INTRO_T"));      /* debugging aid: start the roll this many seconds in */
+	if (!g_intro_script) {
+		uint8_t *x; size_t lx;
+		if (gamefiles_read(g, "intro.exe", -1, &x, &lx) == 0) { g_intro_script = introscript_load(x, lx); free(x); }
+		if (!g_intro_script) g_intro_script = (IntroScript *)(uintptr_t)1;      /* tried: none */
+	}
+	if (g_intro_script != (IntroScript *)(uintptr_t)1) intro_render_roll(scr, &g_intro_bg, &g_intro_font, &g_intro_flames, g_intro_script, g_intro_t);
+	else intro_render_title(scr, &g_intro_bg, &g_intro_font, &g_intro_flames, g->id == GAME_PAYOFF, ((int)(g_intro_t * 70.086)) % 6);
 	return 0;
 }
 
@@ -2429,7 +2438,7 @@ int main(int argc, char **argv) {
 			Uint32 now = SDL_GetTicks();
 			if (!last_ms) last_ms = now;
 			while (now - last_ms >= 20) {            /* ~50 Hz; the original advances the left flame by 2 or 3 frames per tick */
-				g_intro_acc += 228;
+				g_intro_t += 0.020;
 				last_ms += 20;
 			}
 			load_scene(&g, scene, &scr);

@@ -38,6 +38,12 @@ int flames_load(const uint8_t *data, size_t len, Flames *fl) {
 	return 0;
 }
 
+const uint8_t *font_glyph(const Font *f, char ch) {
+	if (ch >= 'a' && ch <= 'z') ch = (char)(ch - 'a' + 'A');
+	const char *p = ch ? strchr(glyph_chars, ch) : NULL;
+	return p ? f->glyph[p - glyph_chars] : NULL;
+}
+
 void font_draw_text(Screen *scr, const Font *f, int x, int y, const char *text) {
 	for (int i = 0; text[i]; i++) {
 		char ch = text[i];
@@ -56,7 +62,7 @@ void font_draw_text(Screen *scr, const Font *f, int x, int y, const char *text) 
 	}
 }
 
-static void draw_flame(Screen *scr, const uint8_t *fr, int x, int y) {
+void intro_draw_flame(Screen *scr, const uint8_t *fr, int x, int y) {
 	for (int fy = 0; fy < 24; fy++)
 		for (int fx = 0; fx < 16; fx++)
 			scr->pixels[(y + fy) * SCREEN_W + x + fx] = fr[fy * 16 + fx];
@@ -74,6 +80,6 @@ void intro_render_title(Screen *scr, const Pc1Image *bg, const Font *f, const Fl
 	font_draw_text(scr, f, 68, 118, "          -------");
 	font_draw_text(scr, f, 68, 130, payoff ? "   published by renagade" : "  published by imageworks");
 	int l = ((left_flame % 6) + 6) % 6;
-	draw_flame(scr, fl->frame[l], 14, 20);
-	draw_flame(scr, fl->frame[(l + 2) % 6], 296, 20);
+	intro_draw_flame(scr, fl->frame[l], 14, 20);
+	intro_draw_flame(scr, fl->frame[(l + 2) % 6], 296, 20);
 }

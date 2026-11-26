@@ -18,7 +18,8 @@ Work in progress, but largely playable: both games' levels run in the SDL front 
 | `engine/beeper.[ch]`, `engine/opl.[ch]` | sound drivers (`BEEPER` / `ADLIB` / `SBLASTER.BIN`) run on the interpreter (50 Hz tick), the play / stop protocol of `1000:156C/1613`, square-wave synthesis, an approximate OPL2, the Sound Blaster DSP / DMA samples |
 | `engine/message.[ch]` | message scrolls: wrapped text in a parchment box (ANDATA blocks 2 and 3) |
 | `engine/panel.[ch]` | `ANDATA.DAT` block 1 (the frame around the room view) and block 4 (status text: "DAY n", room name) |
-| `engine/intro.[ch]` | title scroll: `FONT2.SPR` text, `FLAME.DAT` flames over `LOADING2.PC1` |
+| `engine/intro.[ch]`, `introroll.c` | title scroll and the rolling story / credits of `INTRO.EXE`: `FONT2.SPR` text, `FLAME.DAT` flames over `LOADING2.PC1`; the text is read from the packed `INTRO.EXE` at run time |
+| `engine/exeimg.[ch]` | memory image of a self-extracting DOS executable (PKLITE, Pro-Pack): the stub runs on `x86.c` |
 | `engine/rooms.[ch]` | floor tiles + wall tiles (`MP3`), floor maps, wall records + palette (`MP1`), room shell (floor + walls) renderer |
 | `engine/sprites.[ch]` | `PCMAN.DAT` player sprites (48 frames) and the game palette |
 | `engine/mp2.[ch]` | `LEVn.MP2` section tables: script records, room lists, things |
