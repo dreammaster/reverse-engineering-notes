@@ -4,6 +4,7 @@
 #include "ultima6/describe.h"
 #include "ultima6/equipment.h"
 #include "ultima6/session.h"
+#include "ultima6/stats_view.h"
 
 #include <cstdlib>
 
@@ -2103,6 +2104,44 @@ void Game::seSearch(int idx) {
 		_world.addToMap(contents[n]);
 	}
 	message(".\n");
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_37566 / sub_19923: the Avatar is dead. "Overcome by your wounds, you fall unconscious....." The dead of the party are raised, all are cured and healed, the party wakes in Intanya's hut
+// (x 0x19C, y 0x123 of the surface): "....You awaken in Intanya's hut, feeling restored."; a week has gone (the day goes up by 7, the hour is as it was).
+// APPROX(80): the fades, the picture of the hut (the dword_4E770 calls) and the members' moves are left out
+void Game::seAwaken() {
+	ObjList &al = _world.actors;
+	message("\nOvercome by your wounds, you fall unconscious..... \n");
+	if (_combatMode)
+		toggleCombat();
+	for (int a = 1; a < 0xC0; ++a)
+		if ((al.status[a] & 0x80) && (al.status[a] & 0x10))
+			_world.resurrect(a);
+	for (int m = 0; m < al.partySize; ++m) {
+		int a = al.partyRoster[m], k = _world.actorObject(a);
+		if (k < 0)
+			continue;
+		al.status[a] = (uint8_t)(((al.status[a] & 0x9F) | 0x40) & 0xE1);
+		_world.objects[k].status &= 0xB9;
+		al.hp[a] = (uint8_t)ActorStats::maxHealth(_world, a);
+	}
+	changeLevel(0x19C, 0x123, 0);
+	_leaderObject = _world.actorObject(1);
+	message("\n....You awaken in Intanya's hut, feeling restored.\n");
+	gameClock.day += 7;
+	if (gameClock.day > 28) {
+		gameClock.day -= 28;
+		if (++gameClock.month > 12) {
+			gameClock.month = 1;
+			++gameClock.year;
+		}
+	}
 }
 
 } // namespace Ultima6

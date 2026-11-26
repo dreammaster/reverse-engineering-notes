@@ -825,6 +825,20 @@ int main() {
 		w.moveObject(w.actorObject(1), px, py, 0);
 	}
 
+	// the Avatar dead: the party is raised and wakes in Intanya's hut a week on
+	{
+		ObjList &al = w.actors;
+		al.status[1] |= 0x10;
+		al.hp[1] = 0;
+		int day = g.gameClock.day;
+		g.log.clear();
+		g.seAwaken();
+		CHECK(!(al.status[1] & 0x10) && al.hp[1] > 0);
+		CHECK(g.x == 0x19C && g.y == 0x123 && g.z == 0);
+		CHECK(g.gameClock.day == (day + 7 > 28 ? day + 7 - 28 : day + 7));
+		CHECK(logText(g).find("awaken in Intanya's hut") != std::string::npos);
+	}
+
 	if (failures == 0)
 		std::printf("ok\n");
 	return failures ? 1 : 0;
