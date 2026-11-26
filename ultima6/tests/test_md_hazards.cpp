@@ -346,6 +346,27 @@ int main() {
 			CHECK(g.mdWorktype(0x4A));
 			CHECK(w.objects[tk].deleted); // a wounded one goes
 		}
+		// 0x0D (the creeping vine): a root 0x172 grows a tip 0x174 next to it towards the member; the tip leaves a trail 0x173 behind it as it creeps and draws it in when it is hemmed in
+		{
+			int victim = al.partyRoster[0], vk = w.actorObject(victim), rk = w.actorObject(0x4B);
+			w.moveObject(vk, g.x + 2, g.y + 9, 0);
+			w.objects[rk].type = 0x172;
+			w.moveObject(rk, g.x + 9, g.y + 9, 0);
+			al.worktype[0x4B] = 0x0D;
+			CHECK(g.mdWorktype(0x4B));
+			int tip = w.objects[rk].quality;
+			CHECK(tip != 0 && w.objects[w.actorObject(tip)].type == 0x174 && w.objects[w.actorObject(tip)].quality == 0x4B);
+			int tk = w.actorObject(tip), trail = 0;
+			for (int i = 0; i < 6; ++i)
+				g.mdWorktype(tip);
+			for (const World::Obj &o : w.objects)
+				trail += !o.deleted && o.type == 0x173 && o.quality == tip;
+			CHECK(trail >= 1);
+			CHECK(!w.objects[tk].deleted);
+			// without its root the tip is gone
+			w.deleteObject(rk);
+			CHECK(g.mdWorktype(tip) && w.objects[tk].deleted);
+		}
 		int drifter = w.actorObject(0x45);
 		w.moveObject(drifter, g.x, g.y, 0);
 		al.worktype[0x45] = 0x13;

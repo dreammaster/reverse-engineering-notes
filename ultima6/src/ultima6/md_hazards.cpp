@@ -528,8 +528,9 @@ bool Game::mdWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
-	if (wt != 0x0E && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
+	if (wt != 0x0D && wt != 0x0E && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
 		return false;
+	_world.objects.reserve(_world.objects.size() + 128); // the things made below must not move the object that `o` stands for
 	World::Obj &o = _world.objects[k];
 	// sub_1B69D: the nearest member of the party that can be seen (alive, on the level of the creature), with its distance; -1 if there is none
 	auto nearest = [&](int &dist) {
@@ -723,6 +724,165 @@ bool Game::mdWorktype(int actor) {
 			_world.moveObject(piece, _world.objects[k].x, _world.objects[k].y, _world.objects[k].z);
 		_world.spendMoves(actor, 5);
 		return true;
+	}
+	if (wt == 0x0D) { // sub_1D230 (the creeping vine: the root 0x172 and the tip 0x174, each the quality of the other's actor; the tip leaves its trail 0x173 behind and, when it goes more than eight squares
+		// from the root or is hemmed in, draws it in again; sub_1CFF6). A root without a tip grows one next to it, towards the nearest member, when that member is not next to it; the tip strikes a member
+		// next to it (10 moves), or steps along the way to the member (its look: the facing in the movement flags, the frame of the trail the shape of its bend)
+		if (o.type != 0x172 && o.type != 0x174)
+			return false;
+		static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+		MoveRules rules;
+		rules.partyMayShuffle = false;
+		int type = o.type, z = o.z, link = o.quality;
+		auto setFlags = [&](int dir) { al.movementFlags[actor] = (uint8_t)((al.movementFlags[actor] & 0xF8) | dir); };
+		auto spend = [&](int n) { _world.spendMoves(actor, n); };
+		auto gone = [&]() { // the end of a vine whose other end is gone
+			al.hp[actor] = 0;
+			al.status[actor] |= 0x10;
+			_world.deleteObject(k);
+		};
+		// sub_1CFF6 (flag 0): the tip draws in the trail behind it; the direction it faced is given back (+1 in its quantity), -1 if there was no trail to draw in
+		auto retract = [&]() {
+			int oldFacing = o.frame & 6, behind = (o.frame + 4) & 6;
+			int sx = (o.x + DX[behind]) & 0x3FF, sy = (o.y + DY[behind]) & 0x3FF;
+			int seg = -1;
+			std::vector<int> here;
+			_world.objectsAt(sx, sy, o.z, here);
+			for (int h : here)
+				if (!_world.objects[h].deleted && _world.objects[h].type == 0x173 && _world.objects[h].quality == actor) {
+					seg = h;
+					break;
+				}
+			if (seg < 0) {
+				spend(5);
+				return -1;
+			}
+			if (!mdInViewAt(_world.objects[seg].x, _world.objects[seg].y, _world.objects[seg].z))
+				return -1;
+			int sf = _world.objects[seg].frame, f = o.frame, nd;
+			if (sf > 1) {
+				int v = (sf - 1) * 3 - (1 << (f >> 1)), n = 0;
+				while ((v >>= 1) != 0)
+					n += 2;
+				nd = (n + 4) & 6;
+			} else {
+				nd = f & 6;
+			}
+			_world.deleteObject(seg);
+			_world.moveObject(k, sx, sy, o.z);
+			o.frame = (uint8_t)(nd + ((f & 1) ? 0 : 1));
+			setFlags(nd);
+			return oldFacing;
+		};
+		auto backed = [&]() { // what the tip does after drawing in the trail: remembers the way it came (quantity = direction + 1, 0xFF when there was none)
+			int d = retract();
+			o.quantity = d >= 0 ? (uint8_t)(d + 1) : 0xFF;
+		};
+		if (link != 0) { // the other end is gone: so is this
+			int lk = _world.actorObject(link);
+			if ((al.status[link] & 0x10) || lk < 0 || _world.objects[lk].deleted) {
+				gone();
+				return true;
+			}
+		}
+		if (!mdInView(actor) && type != 0x172) {
+			spend(5);
+			return true;
+		}
+		if (type == 0x174 && link != 0) {
+			int lk = _world.actorObject(link);
+			if (!mdInView(link) || std::abs(_world.objects[lk].x - o.x) > 8 || std::abs(_world.objects[lk].y - o.y) > 8) {
+				backed();
+				spend(5);
+				return true;
+			}
+		}
+		int d, m = nearest(d);
+		if (m < 0) {
+			spend(5);
+			return true;
+		}
+		int mk = _world.actorObject(m), mx = _world.objects[mk].x, my = _world.objects[mk].y;
+		int sx = (mx > o.x) - (mx < o.x), sy = (my > o.y) - (my < o.y); // sub_17D1D
+		int dir = sx < 0 ? (sy < 0 ? 7 : sy > 0 ? 5 : 6) : sx > 0 ? (sy < 0 ? 1 : sy > 0 ? 3 : 2) : (sy < 0 ? 0 : 4);
+		bool diagonal = dir & 1;
+		dir &= ~1;
+		int frame0 = o.frame;
+		auto canEnter = [&](int cx, int cy) { return _movement.check(cx & 0x3FF, cy & 0x3FF, z, k, rules).passable; };
+		if (type == 0x172) {
+			if (link == 0 && d > 1) {
+				int made = -1, use = dir;
+				for (int t = 0; t < 4 && made < 0; ++t) {
+					use = (dir + 2 * t) & 7;
+					made = _creatures.spawn(0x174, 0x0D, o.x + DX[use], o.y + DY[use], z, true);
+				}
+				if (made >= 0) {
+					int ck = _world.actorObject(made);
+					al.unknown12f1[made] = 0x0D;
+					o.frame = (uint8_t)(use >> 1);
+					_world.objects[ck].frame = (uint8_t)(use + seRoll(0, 1));
+					_world.spendMoves(made, 5);
+					_world.objects[ck].quality = (uint8_t)actor;
+					o.quality = (uint8_t)made;
+				} else {
+					if (_mdDreamFlag)
+						--_mdDreamFlag;
+					al.status[actor] |= 0x10;
+					_world.deleteObject(k);
+					return true;
+				}
+			}
+			spend(al.moves[actor] ? al.moves[actor] : 1);
+			return true;
+		}
+		if (d < 2) {
+			_combat.attack(actor, m);
+			spend(10);
+			return true;
+		}
+		for (;;) {
+			int nx = (o.x + DX[dir]) & 0x3FF, ny = (o.y + DY[dir]) & 0x3FF, trail = -1;
+			std::vector<int> here;
+			_world.objectsAt(nx, ny, z, here);
+			for (int h : here)
+				if (!_world.objects[h].deleted && _world.objects[h].type == 0x173 && _world.objects[h].quality == actor) {
+					trail = h;
+					break;
+				}
+			if (trail >= 0) { // it would run into its own trail: draw it in
+				backed();
+				return true;
+			}
+			if (o.quantity - 1 != dir && canEnter(nx, ny) && mdInViewAt(nx, ny, z)) {
+				int opp = (frame0 + 4) & 6, shape;
+				if (dir == opp || (frame0 & 6) == dir)
+					shape = (dir == 0 || dir == 4) ? 1 : 0;
+				else
+					shape = ((1 << (dir >> 1)) + (1 << (opp >> 1))) / 3 + 1;
+				int px = o.x, py = o.y;
+				int piece = seMake(0x173, px, py, z, 0, actor);
+				if (piece >= 0) {
+					_world.objects[piece].frame = (uint8_t)shape;
+					_world.moveObject(k, nx, ny, z);
+					setFlags(dir);
+					o.quantity = 0xFF;
+				}
+				spend(5);
+				return true;
+			}
+			if (diagonal) {
+				diagonal = false;
+				dir = (dir + 2) & 6;
+				continue;
+			}
+			if (seRoll(0, 1) == 0) {
+				spend(5);
+				return true;
+			}
+			backed();
+			spend(5);
+			return true;
+		}
 	}
 	if (wt == 0x1A) {
 		int made = seMake(o.type, o.x, o.y, o.z, al.hp[actor], al.objQuantity[actor] >> 8);
