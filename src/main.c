@@ -2066,6 +2066,21 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	}
 	if (!cr.zf && cr.count != 0xFF && cr.count != 0xFE)
 		walker_touch(wk, rv, &cr, keys);
+	if (!cr.zf && cr.count != 0xFF && cr.flag == 0xFD && cr.n >= 1 && cr.n <= 2) {      /* 1000:05F1: blocked by at most two objects, a solid one among them: the first one, when its sprite header byte 0Ch has bit 3, can be climbed if its top + 1 is less than 20 above the player and the spot is free there */
+		const RoomObj *co = NULL;
+		for (int i = 0; i < rv->ro.n; i++) if (rv->ro.o[i].thing == cr.ids[0]) { co = &rv->ro.o[i]; break; }
+		if (co && (co->sp->header[12] & 8)) {
+			int nz = (int8_t)co->czt + 1;
+			if (((nz - wk->z) & 0xFF) < 0x14) {
+				ColResult c2;
+				collision_test(&wk->world, wk->x1 + dx, wk->y1 + dy, nz, PL_XS, PL_YS, PL_ZS, -1, 1, &c2);
+				if (c2.zf) { if (g_snd_log) fprintf(stderr, "CLIMB onto %d: z %d -> %d at %d,%d\n", co->thing, wk->z, nz, wk->x1 + dx, wk->y1 + dy); wk->x1 += dx; wk->y1 += dy; wk->z = nz; wk->fall = 0; return; }
+			}
+		} else if (acl_timer_active(&rv->vm, 0x23) && !(dx & 1) && !(dy & 1) && (dx || dy)) {   /* 063B: the doubled step (super fast) is retried halved */
+			dx /= 2; dy /= 2;
+			collision_test(&wk->world, wk->x1 + dx, wk->y1 + dy, wk->z, PL_XS, PL_YS, PL_ZS, -1, 1, &cr);
+		}
+	}
 	static PushObj po[ROOMOBJS_MAX];
 	for (int i = 0; i < rv->ro.n; i++) {
 		const RoomObj *o = &rv->ro.o[i];
