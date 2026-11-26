@@ -680,23 +680,17 @@ bool Game::mdWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
-	if ((wt < 0x99 || wt > 0x9E) && wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
+	if ((wt < 0x99 || wt > 0x9E) && wt != 8 && wt != 0xA0 && wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
 		return false;
 	_world.objects.reserve(_world.objects.size() + 128); // the things made below must not move the object that `o` stands for
 	World::Obj &o = _world.objects[k];
-	// sub_1B69D: the nearest member of the party that can be seen (alive, on the level of the creature), with its distance; -1 if there is none
+	// sub_1B69D: whom the creature goes for (mdTarget), with its distance; -1 if there is none
 	auto nearest = [&](int &dist) {
-		int best = -1;
+		int best = mdTarget(actor);
 		dist = 99;
-		for (int m = 0; m < al.partySize; ++m) {
-			int a = al.partyRoster[m], mk = _world.actorObject(a);
-			if (mk < 0 || _world.objects[mk].deleted || (al.status[a] & 0x10) || a == actor || _world.objects[mk].z != o.z)
-				continue;
-			int d = std::max(std::abs(_world.objects[mk].x - o.x), std::abs(_world.objects[mk].y - o.y));
-			if (d < dist) {
-				dist = d;
-				best = a;
-			}
+		if (best >= 0) {
+			int bk = _world.actorObject(best);
+			dist = std::max(std::abs(_world.objects[bk].x - o.x), std::abs(_world.objects[bk].y - o.y));
 		}
 		return best;
 	};
@@ -705,6 +699,28 @@ bool Game::mdWorktype(int actor) {
 		_world.deleteObject(k);
 	};
 	auto facing = [&]() { o.frame = seRoll(0, 1) ? 3 : 7; }; // the random look of a 0x175, 0x16A or 0x182 (the bits above the type in its word)
+	if (wt == 8 || wt == 0xA0) { // sub_1B936, the fighter: it goes for whom `mdTarget` names; in reach of its weapon (the engine's choice of the best) it strikes (10 moves) when next to the target or
+		// when there is a line, else it steps to one side (by chance to the square level with the target on either axis); out of reach it walks up; with no target it wanders (the engine's)
+		int d, t = nearest(d);
+		if (t < 0)
+			return false;
+		int tk = _world.actorObject(t), tx = _world.objects[tk].x, ty = _world.objects[tk].y;
+		int weapon = _combat.weaponType(actor), range = Combat::rangeOf(weapon);
+		if (Combat::distance(std::abs(tx - o.x), std::abs(ty - o.y)) <= range && d < 8) {
+			if (d <= 1 || _creatures.lineOfFire(actor, tx, ty, range)) {
+				_combat.attack(actor, t);
+				_world.spendMoves(actor, 10);
+				return true;
+			}
+			if (seRoll(0, 1))
+				_creatures.walkTo(actor, o.x, ty);
+			else
+				_creatures.walkTo(actor, tx, o.y);
+			return true;
+		}
+		_creatures.walkTo(actor, tx, ty);
+		return true;
+	}
 	if (wt == 0x0E) { // sub_1C4E8, the part that matters: a 0x175 or 0x182 more than seven squares from the nearest member burrows (invisible, worktype 0x12); the fight itself is the engine's
 		if (o.type != 0x175 && o.type != 0x182 && o.type != 0x16A)
 			return false;
@@ -1432,6 +1448,77 @@ void Game::mdSegments() {
 			}
 		o.frame = (uint8_t)mask;
 	}
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_1B69D (with sub_1883A, sub_17E0B): who a fighter goes for. Any actor on the level that has a body, is not dead, is not the fighter itself and is seen (not invisible, not swallowed, not of a kind the
+// tiles hide; a party member sees an invisible party member), is not a 0x17D, within eleven squares, and of the other side: a fighter of no side goes for anyone that has one; side 0x60 for anyone but its
+// own kind (a vine's parts, the brood of a 0x175 are one kind); side 0x40 for those of side 0x20 and the other way round; a sleeper (worktype 7) only within five squares of the party. The nearest
+// (the square of the distance) wins, between equals the one whose kind hits harder. -1 if there is none.
+int Game::mdTarget(int actor) const {
+	const ObjList &al = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0 || _world.objects[k].z != z)
+		return -1;
+	const World::Obj &me = _world.objects[k];
+	const int side = al.status[actor] & 0x60, mine = me.type;
+	int best = -1, bestScore = 0x7FFF;
+	auto gap = [&](int a, int b) {
+		int d = std::abs(a - b) & 0x3FF;
+		return d > 0x200 ? 0x400 - d : d;
+	};
+	auto power = [&](int type) {
+		const CreatureStats *cs = Combat::stats(type);
+		return cs ? cs->dmg : 0;
+	};
+	for (int t = 0; t < ObjList::ACTORS; ++t) {
+		int tk = _world.actorObject(t);
+		if (tk < 0 || t == actor || _world.objects[tk].deleted || (al.status[t] & 0x10) || _world.objects[tk].z != z)
+			continue;
+		const World::Obj &o = _world.objects[tk];
+		bool seen = !(o.status & 2);
+		if (!seen && (al.status[actor] & 0x80) && (al.status[t] & 0x80))
+			seen = true;
+		if (al.movementFlags[t] & 0x10)
+			seen = false;
+		if (_world.flags.flags3[(_world.baseTile.firstTile[o.type] + o.frame) & (TileFlags::TILES - 1)] & 0x10)
+			seen = false;
+		if (!seen || o.type == 0x17D)
+			continue;
+		int ts = al.status[t] & 0x60;
+		if (side == 0 && ts == 0)
+			continue;
+		if (side == 0x60) {
+			int tt = o.type;
+			if (tt == mine)
+				continue;
+			if (mine == 0x174 && (tt == 0x172 || tt == 0x173))
+				continue;
+			auto brood = [](int ty) { return ty == 0x16A || ty == 0x175 || ty == 0xFE; };
+			if (brood(mine) && brood(tt))
+				continue;
+		}
+		if (side == 0x40 && !(ts & 0x20))
+			continue;
+		if (side == 0x20 && !(ts & 0x40))
+			continue;
+		int dx = gap(o.x, me.x), dy = gap(o.y, me.y);
+		if (std::max(dx, dy) > 0xB)
+			continue;
+		if (al.worktype[t] == 7 && !(gap(o.x, x) <= 5 && gap(o.y, y) <= 5))
+			continue;
+		int score = dx * dx + dy * dy;
+		if (score < bestScore || (score == bestScore && best >= 0 && power(o.type) > power(_world.objects[_world.actorObject(best)].type))) {
+			bestScore = score;
+			best = t;
+		}
+	}
+	return best;
 }
 
 } // namespace Ultima6

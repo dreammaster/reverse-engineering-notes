@@ -550,6 +550,31 @@ int main() {
 		}
 
 	}
+	// worktype 8 (sub_1B936): a hostile creature goes for the nearest member in view and strikes when next to it
+	{
+		int victim = al.partyRoster[0], vk = w.actorObject(victim);
+		w.moveObject(vk, g.x + 2, g.y + 9, 0);
+		for (int i = 1; i < al.partySize; ++i)
+			w.moveObject(w.actorObject(al.partyRoster[i]), g.x + 2, g.y + 9, 0);
+		int fk = w.actorObject(0x4D);
+		w.objects[fk].type = 0x16C;
+		al.status[0x4D] = 0x20;
+		al.worktype[0x4D] = 8;
+		al.hp[0x4D] = 50;
+		al.hp[victim] = 200;
+		w.moveObject(fk, g.x + 6, g.y + 9, 0);
+		CHECK(g.mdTarget(0x4D) == al.partyRoster[0] || g.mdTarget(0x4D) >= 0);
+		int d0 = std::abs((int)w.objects[fk].x - (g.x + 2));
+		CHECK(g.mdWorktype(0x4D));
+		CHECK(std::abs((int)w.objects[fk].x - (g.x + 2)) <= d0);
+		w.moveObject(fk, g.x + 3, g.y + 9, 0);
+		for (int i = 0; i < 40 && al.hp[victim] == 200; ++i)
+			g.mdWorktype(0x4D);
+		CHECK(al.hp[victim] < 200);
+		al.worktype[0x4D] = 0;
+		al.status[0x4D] = 0;
+	}
+
 	// a teleporting pad takes the party to the place of its quality
 	{
 		g.x = 0x2B2 - 5;

@@ -9,7 +9,8 @@ import sys
 EXE = 'md/game/MARTIAN/GAME.EXE'
 SEG057 = 0x2EF40
 DSBASE = 0x3FAB0 - 0xCC00
-asm = open('md/md_game.asm', encoding='utf-8', errors='replace').read().split('\n')
+import os
+asm = open(os.environ.get('MD_ASM', 'md/md_game.asm'), encoding='utf-8', errors='replace').read().split('\n')
 exe = open(EXE, 'rb').read()
 
 
