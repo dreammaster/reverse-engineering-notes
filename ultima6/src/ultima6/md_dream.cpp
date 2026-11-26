@@ -641,8 +641,7 @@ void Game::mdKilled(int actor) {
 	if (_world.game == GameId::MartianDreams && _mdDreaming && actor == 0x66) {
 		// sub_1DCFF (the ranged attack): the person 0x66 hit by a missile dies, the dreamer wakes and the machines cease to work (bit 8 of actor 0x46's flags).
 		// APPROX(95): any death of 0x66 in a dream does this here, not only that by a missile
-		_world.actors.talkFlags[0x46] |= 8;
-		mdDreamWake();
+		mdRaxachkScene();
 		return;
 	}
 	if (_world.game != GameId::MartianDreams || !_mdDreaming || !_mdDreamId || !_mdDreamFlag)
@@ -1617,6 +1616,49 @@ void Game::mdClearTemp() {
 			continue;
 		_world.deleteObject((int)i);
 	}
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_544F0 (sub_3F7B6, the end of sub_1DCFF's blow at the person 0x66): the intermission of MIDGAMEA.LZC (2 pages); three 0xEF are made beside the Avatar's sleeping body (x - 2, y - 2 to y);
+// the rescued are put to sleep in the Olympus mine (level 4, y 0xC4 or 0xC2 in a row from x 0xA3, actor 0x33 at 0xA1, 0xBD): the actors 5, 0x10-0x16, 0x19-0x1C, 0x1E, 0x2A-0x2C, 0x2D-0x31, 0x34-0x39,
+// 0x3B, 0x3D, 0x3E, 0x42, 0x46 get the object status 0x80, worktype 0 and frame 9 (actor 5 only if he is not with the party); then the dream is over and the machines cease to work (bit 8 of actor
+// 0x46's flags).
+void Game::mdRaxachkScene() {
+	mdMidgame(9, 2, [this]() {
+		ObjList &al = _world.actors;
+		int av = _world.actorObject(1);
+		if (av >= 0) {
+			int ax = _world.objects[av].x, ay = _world.objects[av].y;
+			for (int dy : {-2, -1, 0}) {
+				int o = seMake(0xEF, ax - 2, ay + dy, 0, 0, 0);
+				if (o >= 0)
+					_world.objects[o].status &= 0xDF;
+			}
+		}
+		static const int PLACES[33][3] = {{5, 0xA3, 0xC4},  {0x10, 0xA4, 0xC4}, {0x11, 0xA5, 0xC4}, {0x12, 0xA6, 0xC4}, {0x13, 0xA7, 0xC4}, {0x14, 0xA8, 0xC4}, {0x15, 0xA9, 0xC4}, {0x16, 0xAA, 0xC4},
+										  {0x19, 0xAB, 0xC4}, {0x1A, 0xAC, 0xC4}, {0x1B, 0xAD, 0xC4}, {0x1C, 0xAE, 0xC4}, {0x1E, 0xAF, 0xC4}, {0x2A, 0xB0, 0xC4}, {0x2B, 0xB1, 0xC4}, {0x2C, 0xB2, 0xC4},
+										  {0x2D, 0xA3, 0xC2}, {0x2E, 0xA4, 0xC2}, {0x2F, 0xA5, 0xC2}, {0x30, 0xA6, 0xC2}, {0x31, 0xA7, 0xC2}, {0x34, 0xA9, 0xC2}, {0x35, 0xAA, 0xC2}, {0x36, 0xAB, 0xC2},
+										  {0x37, 0xAC, 0xC2}, {0x38, 0xAD, 0xC2}, {0x39, 0xAE, 0xC2}, {0x3B, 0xAF, 0xC2}, {0x3D, 0xB0, 0xC2}, {0x3E, 0xB1, 0xC2}, {0x42, 0xB2, 0xC2}, {0x46, 0xA8, 0xC2},
+										  {0x33, 0xA1, 0xBD}};
+		for (const auto &p : PLACES) {
+			int a = p[0], k = _world.actorObject(a);
+			if (a == 5 && (al.status[5] & 0x80))
+				continue;
+			if (k < 0)
+				continue;
+			_world.objects[k].status |= 0x80;
+			al.worktype[a] = 0;
+			_world.objects[k].frame = 9;
+			mdPlace(k, p[1], p[2], 4);
+		}
+		al.talkFlags[0x46] |= 8;
+		mdDreamWake();
+	});
 }
 
 } // namespace Ultima6

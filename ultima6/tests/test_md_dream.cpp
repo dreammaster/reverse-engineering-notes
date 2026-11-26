@@ -451,7 +451,10 @@ int main() {
 	skipMidgame(g);
 		CHECK(g.mdDreaming());
 		g.mdKilled(0x66);
+		skipMidgame(g); // the intermission of MIDGAMEA.LZC
 		CHECK(!g.mdDreaming() && (al.talkFlags[0x46] & 8));
+		int sleeper = w.actorObject(0x10);
+		CHECK(sleeper >= 0 && w.objects[sleeper].x == 0xA4 && w.objects[sleeper].y == 0xC4 && w.objects[sleeper].z == 4 && w.objects[sleeper].frame == 9);
 		al.talkFlags[0x46] &= 0xF7;
 	}
 

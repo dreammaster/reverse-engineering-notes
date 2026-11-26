@@ -181,6 +181,7 @@ public:
 	void mdClearTemp();                            // sub_2CAAD(-1, -1, -1)
 	void mdBelt(bool pass);                        // sub_4EEB0: the conveyor belt of the factory
 	void mdTeleport(int pad);                      // sub_25CAC: the teleporting pads
+	void mdRaxachkScene();                         // sub_544F0: the person 0x66 is struck
 	void mdAwaken();                               // sub_30093: the Avatar is dead outside a dream
 	void mdDying(int actor);                       // sub_19300 before the body falls: the story of the dead (the people the game needs, the sand creature's brood, the vine's ends)
 	void mdKilled(int actor);                      // sub_19300's count of the deaths of a dream; the last of the battle is the faint (sub_50836)
