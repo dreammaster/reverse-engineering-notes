@@ -1267,7 +1267,7 @@ static void menu_choose(RoomView *rv, int verb) {
 		acl_thing_event(&rv->vm, &rv->mp2, t, 1, 0);
 	} else if (verb == 2) {
 		int l[64];
-		if (ruck_list(rv, l, 64) >= 0x20) {                      /* 1000:2EA9: the capacity ds:5A0 is reached -> message 35h */
+		if (ruck_list(rv, l, 64) >= rv->vm.cap) {                /* 1000:2EA9: the capacity ds:5A0 (20h, 28h after level 4's op 3Eh) is reached -> message 35h */
 			if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x35;
 		} else if (t >= 0 && t < ACL_THINGS) {
 			acl_thing_event(&rv->vm, &rv->mp2, t, 0, 0);          /* event 0 first (the handlers of coins delete the thing) */
