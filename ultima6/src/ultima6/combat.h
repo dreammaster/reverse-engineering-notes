@@ -60,6 +60,8 @@ public:
 	static int distance(int dx, int dy);
 	/** Martian Dreams' weapons that spend ammunition (sub_1ADCA): the type of the ammunition, 0 for the others. */
 	static int mdAmmo(int weapon);
+	/** Savage Empire's weapons that spend ammunition (sub_2B9E7): the type of the ammunition (0 for the others). */
+	static int seAmmo(int weapon);
 	static int rangeOf(int type); // 1 for the weapons that are not in the range table
 
 	/** The weapon an actor fights with: the best readied weapon's type, or its own type when unarmed. */

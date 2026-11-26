@@ -156,8 +156,13 @@ void Game::attackAt(int tx, int ty) {
 	message("\n");
 	// the arrows and bolts
 	const bool mdGame = _world.game == GameId::MartianDreams;
-	int ammo = mdGame ? Combat::mdAmmo(weapon) : (weapon == 0x29 || weapon == 0x36) ? 0x37 : (weapon == 0x2A || weapon == 0x32) ? 0x38 : 0;
+	const bool seGame = _world.game == GameId::SavageEmpire;
+	int ammo = mdGame ? Combat::mdAmmo(weapon) : seGame ? Combat::seAmmo(weapon) : (weapon == 0x29 || weapon == 0x36) ? 0x37 : (weapon == 0x2A || weapon == 0x32) ? 0x38 : 0;
 	bool done = false;
+	if (seGame && weapon == 0x32 && weaponIdx >= 0 && _world.objects[weaponIdx].frame == 0) { // sub_2B9E7: a flintlock must be loaded (frame 1); a shot empties it
+		message("Flintlock not loaded!\n");
+		done = true;
+	}
 	if (mdGame && weaponIdx >= 0) { // sub_1ADCA: a thrown stack that is gone, a ray gun without charges (or, set to 2, with fewer than 4)
 		const World::Obj &wo = _world.objects[weaponIdx];
 		if (((weapon == 0x81 || weapon == 0x105) && wo.quantity == 0) || ((weapon == 0xF0 || weapon == 0xF1) && (wo.quantity == 0 || (wo.quality == 2 && wo.quantity < 4)))) {
@@ -174,7 +179,10 @@ void Game::attackAt(int tx, int ty) {
 				have += _world.quantityOf(_world.objects[i]);
 	}
 	if (ammo && have == 0) { // none to be had: the weapon is skipped
-		message(mdGame ? (weapon == 0x30 ? "Out of arrows!\n" : "Out of ammunition!\n") : ammo == 0x37 ? "Out of arrows!\n" : "Out of bolts!\n");
+		if (seGame) // sub_2B9E7
+			message(weapon == 0x1F ? "Out of arrows!\n" : weapon == 0x20 ? "Out of darts!\n" : weapon == 0x25 ? "Out of spears!\n" : "Out of ammunition!\n");
+		else
+			message(mdGame ? (weapon == 0x30 ? "Out of arrows!\n" : "Out of ammunition!\n") : ammo == 0x37 ? "Out of arrows!\n" : "Out of bolts!\n");
 		done = true;
 	}
 	int target = -1;
@@ -243,6 +251,8 @@ void Game::attackAt(int tx, int ty) {
 					message("Out of ammunition!\n");
 			} else {
 				_combat.attackWith(attacker, target, weapon, true);
+				if (seGame && weapon == 0x32 && weaponIdx >= 0)
+					_world.objects[weaponIdx].frame = 0; // the flintlock is empty
 			}
 		}
 	}
