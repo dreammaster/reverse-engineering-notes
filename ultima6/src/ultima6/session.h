@@ -140,7 +140,8 @@ public:
 	void mdCanalScene();                           // sub_542B1
 	void mdChsheketScene(std::function<void()> then = nullptr);
 	void mdChsheketPlace();
-	void mdSceneReset();                           // sub_53E92                        // sub_543C4
+	void mdSceneReset();                           // sub_3F798
+	void mdScenePower();                           // sub_3F793                        // sub_543C4
 	void mdLamps();                                // sub_538EE
 	void mdCoalBelt();                             // sub_4F323
 	int mdWarmth(int type) const;                  // sub_2020C

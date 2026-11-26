@@ -2174,7 +2174,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		break;
 	}
 	case 18: { // sub_59EE7: a tool (item) on the hatch (first, 0x1AB): only the Avatar is strong enough; the first time (flag 0x10 of actor 0x10 not yet set) the people nearby talk (flag 4), the next time the hatch breaks (0x1AC), another scene talks (actor 0x12, flags 0x48) and a minute goes by
-		// APPROX(76): sub_3F78E (the scene's redraw) is left out; the broken hatch moves one square down and right (sub_2CFE2) as the original does
+		// APPROX(76): the broken hatch moves one square down and right (sub_2CFE2) as the original does
 		ObjList &al = _world.actors;
 		int actor = actingActor();
 		if (actor != 1) {
@@ -2196,6 +2196,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			int mask = z == 0 ? 0x3FF : 0xFF;
 			mdPlace(hatch, (h.x + 1) & mask, (h.y + 1) & mask, h.z);
 			advanceTime(1);
+			mdMidgame(1, 2, nullptr); // sub_3F78E: the intermission of MIDGAME2.LZC
 		};
 		startTalk(0x12);
 		break;
