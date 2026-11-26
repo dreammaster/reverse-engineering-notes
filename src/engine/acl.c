@@ -352,9 +352,11 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 	}
 	case 57: test_res(vm, w == vm->held); break;        /* 82F4: the held thing is w */
 	case 61: test_res(vm, vm->doorw[a[0]] != 0); break;   /* 82FF: door a[0] is locked */
+	case 75:                                            /* 7AF7: sets A[5] bit 7 and takes the thing out of the active list (15F2F): the checked form of op 8 */
 	case 8:                                             /* 7A82: take the thing out of the active (moving) list unless it is already inactive (A[5] bit 7, 5F2F); modelled as setting that bit */
 		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) vm->tail[tid][5] |= 0x80;
 		break;
+	case 74:                                            /* 7ADF: clears A[5] bit 7 and puts the thing on the active list (15F18): the checked form of op 7 */
 	case 7:                                             /* 7A77: put the thing on the active (moving) list ds:B8 (15F18): the inverse of op 8 */
 		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) vm->tail[tid][5] &= (uint8_t)~0x80;
 		break;
