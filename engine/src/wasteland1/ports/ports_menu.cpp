@@ -76,6 +76,8 @@ PORT(commandUseSkill) { setResult(r, commandUseSkill(m, r.a.b.l)); }            
 PORT(commandAttack) { setResult(r, commandAttack(m, r.a.b.l)); }                        // 120C1
 PORT(pickFirstTarget) { setResult(r, pickFirstTarget(m)); }                             // 121A8
 
+PORT(forEachFightGroup) { r.a.b.l = forEachFightGroup(m); }                               // 12CFE
+PORT(roundHeader) { roundHeader(m); r.a.b.l = 1; }                                       // 12551
 PORT(runCombat) { runCombat(m); }                                                       // 11D39
 
 PORT(regroupParty) { regroupParty(m); r.cf = true; }                                                 // 130C8

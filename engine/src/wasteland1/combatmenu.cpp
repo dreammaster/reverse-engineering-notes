@@ -311,6 +311,51 @@ bool collectOrders(Machine &m) {
 }
 
 
+uint8_t forEachFightGroup(Machine &m) {   // 12CFE: runs the handler in ds:46DD for every party group that is in this fight
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	constexpr uint16_t group = 0xA565, counted = 0xA566;
+	D(group) = 0;
+	D(counted) = 0;
+	do {
+		setPartyIndexesPtr(m, D(group));
+		if (D(uint16_t(m.d16(g::partyIndexesPtr) + 10)) == D(0x46DC)) {
+			setActivePartyGroup(m, D(group));
+			X86Regs x;
+			legacy::call(m, m.d16(0x46DD), x);
+			++D(counted);
+		}
+		++D(group);
+	} while (D(group) <= D(uint16_t(g::saved2 + g::s2::totalPartyGroups)));
+	return D(counted);
+}
+
+void roundHeader(Machine &m) {   // 12551: the heading of a combat round: every group's handlers run (movement, then the three phases)
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	drawInfoWindow(m);
+	D(g::rectTextY) = 12;
+	printMessage(m, 0x1E);
+	D(g::textSpeedFlag) = 1;
+	m.setD16(0x46DD, 0x2D3C);
+	if (forEachFightGroup(m) != 0) {
+		for (uint16_t handler : {0x2780, 0xAD70, 0x2CC0}) {
+			m.setD16(0x46DD, handler);
+			forEachFightGroup(m);
+		}
+	}
+	D(g::rosterLocOn) = 0;
+	regroupParty(m);
+	for (uint8_t n = 0;;) {
+		D(0xA563) = n;
+		setActivePartyGroup(m, n);
+		mergeGroupsAtSamePosition(m);
+		n = uint8_t(D(0xA563) + 1);
+		if (n > D(uint16_t(g::saved2 + g::s2::totalPartyGroups))) break;
+	}
+	D(g::textSpeedFlag) = 0;
+	drawRosterHeadersAndMembers(m);
+	D(g::rosterLocOn) = 1;   // falls into 125B1
+}
+
 void runCombat(Machine &m) {
 	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
 	constexpr uint16_t trackedMaps = 0xA9B0, visited = 0x720E, groupVar = 0xA435, acted = 0xA436, ordered = 0xA437, loopGroup = 0xA438;
@@ -371,7 +416,7 @@ orderRound:   // 11DBB
 	if (!askYesNo(m)) goto orderRound;
 	D(acted) = 1;
 	setActivePartyGroup(m, D(groupVar));
-	call(m, 0x2551);   // sub_12551: header of the round
+	roundHeader(m);   // 12551
 	{
 		const uint8_t keep = D(0x4655);
 		D(0x4655) = D(0x46DC);

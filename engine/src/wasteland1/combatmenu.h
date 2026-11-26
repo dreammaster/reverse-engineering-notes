@@ -34,4 +34,8 @@ void regroupParty(Machine &m);
 // talk to
 bool recruitMonster(Machine &m, uint8_t member);
 
+// 12CFE: runs the handler ds:46DD for every group in the fight, returns how many; 12551: the round header that runs the phases
+uint8_t forEachFightGroup(Machine &m);
+void roundHeader(Machine &m);
+
 } // namespace wl
