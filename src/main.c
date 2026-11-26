@@ -791,6 +791,7 @@ static void walker_world(Walker *wk, RoomView *rv) {
 		b->id = o->thing;
 	}
 	cw->objs = wk->objs; cw->nobjs = rv->ro.n;
+	if (getenv("CAD_BOXES")) for (int i = 0; i < rv->ro.n; i++) fprintf(stderr, "BOX %d thing %d x %d..%d y %d..%d z %d..%d solid %d\n", i, wk->objs[i].id, wk->objs[i].x0, wk->objs[i].x1, wk->objs[i].y0, wk->objs[i].y1, wk->objs[i].zb, wk->objs[i].zt, wk->objs[i].solid);
 	cw->nexits = room_build_exits(&rv->mp2, &rv->objs, rv->room, wk->exits);
 	cw->exits = wk->exits;
 	wk->world_key = room_key(rv);
@@ -2466,6 +2467,7 @@ int main(int argc, char **argv) {
 						SDL_Keycode kc = (SDL_Keycode)c[4];
 						if (g_savemode) savemode_key(kc); else if (kc == SDLK_s || kc == SDLK_l) savemode_start(kc == SDLK_s);
 					}
+					if (!strncmp(c, "dump:", 5)) fprintf(stderr, "DUMP %d %d %d %d\n", g_walk.x1, g_walk.y1, g_walk.z, g_room.room);   /* debugging aid: print the player position */
 					if (!strncmp(c, "money:", 6)) g_room.vm.money = (uint32_t)atoi(c + 6);
 					if (!strncmp(c, "tp:", 3)) { int tx = 0, ty = 0, tz = 0; if (sscanf(c + 3, "%d:%d:%d", &tx, &ty, &tz) >= 2) { g_walk.x1 = tx; g_walk.y1 = ty; g_walk.z = tz; } }   /* debugging aid: put the player at x, y (z) */
 					if (!strncmp(c, "save", 4)) game_save(&g_walk, &g_room, -1);
