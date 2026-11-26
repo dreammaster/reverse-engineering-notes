@@ -168,6 +168,7 @@ public:
 	void mdDreamMachine(int cabinet);              // sub_5BC53
 	void mdDreamStartNow(int quality, int sitter);
 	void mdDreamStart(int quality, int sitter);    // sub_4FB90
+	void mdDreamStartLevel3Now();
 	void mdDreamStartLevel3();                     // sub_4FE5E
 	void mdDreamWake();                            // sub_50007
 	void mdDreamEnd(int actor);                    // sub_50651

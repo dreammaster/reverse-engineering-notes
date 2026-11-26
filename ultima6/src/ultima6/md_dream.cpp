@@ -102,6 +102,10 @@ void Game::mdDreamStartNow(int quality, int sitter) {
 
 // sub_4FE5E: the dream of the machine that has a story flag (the machine of quality 3 when talkFlags[0x46] has bit 1): the body goes to 0x35, 0x26 of level 3, and the dream is number 0xE1
 void Game::mdDreamStartLevel3() {
+	mdMidgame(11, 1, [this]() { mdDreamStartLevel3Now(); }); // sub_3F775: the intermission of MIDGAMEC.LZC first
+}
+
+void Game::mdDreamStartLevel3Now() {
 	_mdWake[0] = gameClock.day;
 	_mdWake[1] = gameClock.month;
 	_mdWake[2] = gameClock.year;
@@ -1260,6 +1264,7 @@ void Game::mdDreamMachine(int cabinet) {
 			message("It has no effect.\n");
 			return;
 		}
+		mdMidgame(12, 3, [this, thing, podX, podY]() { // sub_3F77A: the intermission of MIDGAMED.LZC, then the talk
 		startTalk(6);
 		_talkEnd = [this, thing, podX, podY]() {
 			ObjList &a = _world.actors;
@@ -1274,6 +1279,7 @@ void Game::mdDreamMachine(int cabinet) {
 				_world.objects[k].status |= 0xCB;
 			_world.deleteObject(thing);
 		};
+		});
 		return;
 	}
 	if (sitter < 0) {

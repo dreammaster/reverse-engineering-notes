@@ -1482,7 +1482,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 		break;
 	}
 	case 67: { // sub_5CE4D: the ruby slippers (item, 0xC): on the ground they are picked up; in the pack each use (quality 0, 1) says "Click."; the third offers the Grand Finale
-		// APPROX(76): picking up is not sub_3F8F0 (the Get command's weight and ownership checks); the Grand Finale (sub_3F789) and the way back to play (sub_3F77F) are not done: either key ends the question
+		// APPROX(76): picking up is not sub_3F8F0 (the Get command's weight and ownership checks); the Grand Finale (sub_3F789) is MARTIAN.EXE's ending, the way back to play (sub_3F77F) is its intermission
 		World::Obj &s = _world.objects[item];
 		if (!carriedObject(s)) {
 			int holder = actingActor();
@@ -1505,6 +1505,8 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 				return false;
 			if (key == 'y' || key == 'Y')
 				_ending = 1; // sub_3F789: the Grand Finale (MARTIAN.EXE's ending), after which the game is over
+			else
+				_keyAfter = [this]() { mdMidgame(13, 1, nullptr); }; // sub_3F77F: the intermission of MIDGAMEE.LZC, then play goes on
 			message(std::string(1, (char)key) + "\n");
 			return true;
 		});
