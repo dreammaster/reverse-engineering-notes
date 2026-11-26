@@ -696,7 +696,10 @@ bool Combat::applyDamage(int attacker, int defender, int damage) {
 			a.exp[attacker] = (uint16_t)(a.exp[attacker] + gain);
 		}
 		die(defender);
-		_scroll.print(name + " killed!\n");
+		const char *word = " killed!\n";
+		if (_world.game == GameId::MartianDreams) // sub_19300: the people "fall", the living are "killed", the machines are "destroyed"
+			word = defender < 0x10 ? " falls!\n" : (foe && (foe->flags & (0x4000 | 0x80))) ? " killed!\n" : " destroyed!\n";
+		_scroll.print(name + word);
 		return true;
 	}
 	a.hp[defender] = (uint8_t)(a.hp[defender] - damage);
