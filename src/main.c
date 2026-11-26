@@ -648,8 +648,8 @@ static void roomview_rebuild_objs(RoomView *rv, int gx, int gy) {
 
 /* Room zones (1000:11EB5 -> 1000:2022 .. 2108): a room record whose byte 17h has bit 1 set carries, at rec[rec[0]], a box count n and then n boxes (x0, y0, x1, y1, z0, z1 as signed bytes).
  * Every 17 game steps each object of the room is tested against the boxes n .. 1 with the collision box it keeps (x1, y1, x0, y0, zt, zb); an overlap raises event 10 (0Ah) for the
- * thing with the box number as argument (level 3 / 4 puzzles: things pushed onto plates; the handlers test room + box). The original tests the things whose collision entry has
- * flag bit 0 and (bit 2 or the room flag 10h); the port uses the thing's record flag 04h (all level 3 puzzle things have it) or the room flag. */
+ * thing with the box number as argument (level 3 / 4 puzzles: things pushed onto plates; the handlers test room + box). The original tests the things whose engine entry flag byte
+ * 27h (= sprite header byte 0Ch, checked in the emulator for every slot of level 1 room 0) has bit 0 (non-solid) and, unless the room has bit 10h, bit 2 (11FDF .. 11FFD). */
 static void roomview_zone_events(RoomView *rv) {
 	if (rv->room < 0 || rv->room >= 128 || !rv->ro_key) return;
 	const uint8_t *r = rv->mp2.sec[0].rec[rv->room];
@@ -672,7 +672,8 @@ static void roomview_zone_events(RoomView *rv) {
 	for (int i = 0; i < rv->ro.n && i < ROOMOBJS_MAX; i++) {
 		const RoomObj *o = &rv->ro.o[i];
 		int t = o->thing;
-		if (t <= 0 || t >= ACL_THINGS || (rv->vm.flags[t] & 0x80) || !(all || (rv->vm.flags[t] & 4))) continue;   /* tracked things: record flag 04h, or every thing when the room has bit 10h */
+		if (t <= 0 || t >= ACL_THINGS || (rv->vm.flags[t] & 0x80)) continue;
+		if (!(o->sp->header[12] & 1) || !(all || (o->sp->header[12] & 4))) continue;      /* 11FDF: the engine entry's flag byte 27h (= sprite header byte 0Ch) needs bit 0 (non-solid) and, unless the room has bit 10h, bit 2 */
 		int dl = (int8_t)o->cx1, dh = (int8_t)o->cy1, cl = (int8_t)o->cx0, bl = (int8_t)o->cy0, bh = (int8_t)o->czt, ch = (int8_t)o->czb;
 		for (int b = n; b >= 1; b--) {
 			if (!zone_overlap(boxes + 6 * (b - 1), dl, dh, cl, bl, bh, ch)) continue;
@@ -2490,7 +2491,7 @@ int main(int argc, char **argv) {
 						SDL_Keycode kc = (SDL_Keycode)c[4];
 						if (g_savemode) savemode_key(kc); else if (kc == SDLK_s || kc == SDLK_l) savemode_start(kc == SDLK_s);
 					}
-					if (!strncmp(c, "dump:", 5)) fprintf(stderr, "DUMP %d %d %d %d\n", g_walk.x1, g_walk.y1, g_walk.z, g_room.room);   /* debugging aid: print the player position */
+					if (!strncmp(c, "dump:", 5)) { fprintf(stderr, "DUMP %d %d %d %d\n", g_walk.x1, g_walk.y1, g_walk.z, g_room.room); if (getenv("CAD_DUMPBOX")) for (int bi = 0; bi < g_room.ro.n; bi++) { const RoomObj *bo = &g_room.ro.o[bi]; fprintf(stderr, "OBJ %d %d %d %d %d %d %d %d\n", bo->thing, bo->cx1, bo->cy1, bo->cx0, bo->cy0, bo->czt, bo->czb, bo->sp->header[22]); }   /* debugging aid: print the player position */ }
 					if (!strncmp(c, "money:", 6)) g_room.vm.money = (uint32_t)atoi(c + 6);
 					if (!strncmp(c, "tp:", 3)) { int tx = 0, ty = 0, tz = 0; if (sscanf(c + 3, "%d:%d:%d", &tx, &ty, &tz) >= 2) { g_walk.x1 = tx; g_walk.y1 = ty; g_walk.z = tz; } }   /* debugging aid: put the player at x, y (z) */
 					if (!strncmp(c, "save", 4)) game_save(&g_walk, &g_room, -1);
