@@ -40,3 +40,12 @@ for st in s_map s_world s_town s_m5; do
   case "$r" in *DIFF\ \(seed*) r="ok (equal apart from sp)" ;; esac
   echo "walk $st@20000: $r"
 done
+# the commands of the exploration screen (USE, ENC, ORDER, DISBAND, VIEW, RADIO, character screens), compared at the 3000th poll
+for spec in "use|1675,0231,0d,011b" "enc|1265,0231,011b" "order|186f,0231,0232,011b" "view|2f76,0231,011b" "char1|0231,011b" "char2|0332,011b,0433,011b" "radio|1372,0231,011b" "pgup|4900,5100,011b"; do
+  n=${spec%%|*}; k=${spec#*|}
+  for st in s_map s_town; do
+    r=$(WLPOLLS=3000 WLTICKPOLL=1 WLSTEPS=900000000 timeout 2400 ./build/src/wasteland1/wlrctest.exe $IMG $GAME src/wasteland1/tools/recomp/entries.txt ../tmp_out/$st.bin --ported --only 6B3C --seeds 1 --keys "$k,$ESC" 2>&1 | grep -E "skipped:|DIFF|ok " | head -1 | sed 's/ sp [0-9a-f]*!=[0-9a-f]*//' | cut -c1-200)
+    case "$r" in *DIFF\ \(seed*) r="ok (equal apart from sp)" ;; esac
+    echo "cmd $n $st@3000: $r"
+  done
+done
