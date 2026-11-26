@@ -393,6 +393,81 @@ and the `--scene tiles` viewer show them.
 
 ### 6.7 `ROUTINEn.TAD` and the script language
 
+<details><summary>Paragraphs of this section (69)</summary>
+
+- The rest of the blob is x86 code and data
+- The ACL interpreter (found, structure verified by reading the code; opcodes not decoded yet)
+- event queue
+- ACL virtual machine, first working subset (`tools/acl_vm.py`, verified)
+- Script format (parsed and checked on 2453 records of all levels, `tools/acl.py`)
+- Event sources and condition tests (read from the code and the emulator)
+- 14
+- Touching objects (`1000:22C4`, verified by hooks in the emulator)
+- Message scrolls (op `1Ch` = say; `tools/message.py`, `src/engine/message.c`, verified against the emulator's screen)
+- Verb icons (`tools/verbs.py`, `src/engine/panel.c`, pixel-exact against the emulator)
+- the verb menu
+- Energy (`ds:23A`, maximum `ds:700`)
+- `ROUTINEn.TAD` decoded enough to run it (`tools/x86.py`, `tools/verify_x86.py`, `src/engine/x86.c`, `src/engine/tad.c`)
+- Behaviour routines — how the engine reaches them (read from `1000:5F4C…601E` and the emulator, not ported)
+- More ops
+- Choosing verb 2 in the original (emulator trace, level 1 silver coin)
+- Verb 14 (`0Eh`, shown for sprites with header byte `0x1D == 0x12`: leg of meat, loaf, chicken)
+- Ops 41 and 85 (verified against the original, 60 random cases)
+- Op 25h (37, change room), decoded and verified
+- Death
+- The character status dialog (`1000:2FD4`, verb 8 on class-7 objects; `tools/statuspanel.py`, `engine/message.c`; pixel-exact against the emulator except the random edge tiles)
+- Level progression (op `33h` = 51)
+- Taking things (emulator, `1000:2EA9` called on the level-1 sword, helmet and breastplate things)
+- `rec[10]` to `0xFF` ("carried")
+- Chest tails (verb 3, `1000:31A3`; sprite header `0x16 == 8`: CHEST, STRONG BOX, CASKET; `0x16 == 8` jars use another path)
+- Where the level-1 lake creature comes from
+- Op 36 (spawn) as seen in the emulator, and the chase behaviour
+- Creature sheets
+- Active creatures (read from `1000:6041`; movement approximated in `src/main.c` `creatures_step`)
+- The engine's movement routine `1000:6F62` (read from the code; creature step in `src/main.c`)
+- Scripted creature movement (mode 0, `1000:6F62` `loc_17149` …; ported in `creatures_step`)
+- Creature hits (`1000:6F62` → `116E0` → `172EC`)
+- Ops `3Eh/3Fh/40h` (62/63/64) are not raw memory writes (corrects the earlier note)
+- The game clock and the day counter (timer interrupt `1000:14F0…1549`)
+- Sound: the PC-speaker driver — *verified* (`tools/beeper.py`, `tools/verify_beeper.py`, `src/engine/beeper.c`)
+- The rucksack (observed in the emulator, not ported)
+- Look / describe (op 48h = 72)
+- The map (F1, `1000:369F`; drawing `3806`, `38C3`, `389F`; emulator screen compared)
+- Diagonals
+- Jumping (emulator trace, level 1 room 0)
+- The lake creature (level 1 thing 467) — why it surfaces and sinks
+- Ops 08h and 1Bh (read from the code)
+- More ops read from the code (all in the port; ops 22h, 49h mirrored in `tools/acl_vm.py`)
+- Animation command F7 n = run the thing's TAD action routine n (verified on the lake creature)
+- Services used by the TAD routines (from the service table `ss:[ds:B6]`, 16-bit words in order: `410E 7E1C 407F 81C8 8706 D8BC 890A D912 7F3C 7DE1 D900 369F 8275 40A9 31A3 78DE 8840 6A44 164E 3DB8 799F 7903 5F18 9D8E 1043 D4C6 2FE3 D8BB 5DAA 1187`; the index in the hook is twice the position)
+- Throwing (read from the code, not ported)
+- Held items that act: spells and weapons (read, not ported)
+- Spell and potion name tables, and how `84D9` composes a description (read from the disassembly, name tables dumped from the emulator; not ported)
+- More spell routines (disassembled from `ROUTINE1.TAD`, level 1 table `081E`)
+- Drinking (verb 9, `1000:32B5`; potions are the carried things whose header byte 17h is 2)
+- The effect timers (`1000:11EB5`, `8275`; ported as `acl_set_timer` / `tad_timer_unit`)
+- Shield potions (TAD `0765 / 0774 / 077A / 077F` = potions 6 SHOT, 8 FIRE, 11 ICE, 12 MAGIC SHIELD; 14 TOTAL SHIELD `07AF` sets `ds:6AB = 7Fh`)
+- Player shots (`1000:69CF` weapons, `16896` mode 0 spells, `16A37` launch, `6F62` hits; ported as `fire_weapon`, `launch_shot`, `shot_hits`)
+- Spells cast on an object (A[7] = 2, `1000:169AB`; TAD entries of the spell table `081E`, level 1)
+- More potions and the timer routines of level 1's table (`0C3F`)
+- The spell / potion name tables are in `LEVn.MP1` (both games), and the Payoff renumbered its spells
+- Payoff routines for its new spells and potions (`ROUTINEn.PAK`, level 1 table `06B5` / `085D`)
+- CONFUSION and TURN MONSTER (effect timers 25h / 26h) act inside the creature behaviour routines
+- Saving a position (`1000:BF92`; the keys are F5 / F6, the manual's S / L are not in the code)
+- Placing a dropped or thrown thing, all eight facings (`1000:6C72`, table `cs:6C54`; verified by calling the original with a fake header of box 3 × 2 and the player record `x1, y1, x0, y0 = 24, 23, 18, 17`)
+- The whole-rucksack grid navigation (`1000:125CF`, transcribed; ported as `grid_begin` / `grid_nav` / `grid_draw`)
+- The Roland driver `ROLAND.BIN` (Cadaver 2, RNC-packed on disk, 3258 bytes unpacked; `tools/roland_midi.py`)
+- Sound Blaster digital samples (`SBLASTER.BIN`, 11136 bytes; `beeper.c`, `cadaver_sound sblaster digital:N`)
+- Event 25 (19h) of a cast spell item
+- Three more ACL ops (read from `CAD.EXE`)
+- Room zones and event 10 (`1000:11EB5` → `2018 … 2108`; ported as `roomview_zone_events`)
+- The carried-thing verb list and the verbs 12, 15, 16 (`1000:12C72`, `3381`, `344D`, `2E40`; corrects the earlier reading of verb 15)
+- Event 4: a thing comes to rest on another (`1000:16B02`, read from the code; ported in `fly_step`, not verified in play)
+- The rucksack strip and the look descriptions (emulator with two carried things, `1000:125CF`, `84D9`, `30FE`)
+
+</details>
+
+
 `ROUTINEn.TAD` (after the `mjm0` header; 16 zero bytes, then a small x86 stub
 at offset `0x10`, then data): the stub is
 `nop nop; push ds; mov ax,cs; mov ds,ax; mov si,0E5Dh; mov cx,10h; rep movsw;
