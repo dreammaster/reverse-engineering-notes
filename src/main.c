@@ -1651,7 +1651,11 @@ static void drink_potion(RoomView *rv, int t) {
 		rv->vm.flags[t] |= 0x80;
 		if (rv->held == t) rv->held = 0;
 	}
-	if (bad) { acl_energy_change(&rv->vm, -(int)a[1]); if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x22; }
+	if (bad) {                                                        /* 13352: `neg dx; call 181C8` takes ax, which still holds the thing's A-struct offset rec[0Ch] (the dispatcher's `mov al, [si+0Ch]`): a bad potion HEALS by that many points (an original bug, seen in the emulator: 100 -> 122) */
+		int len; const uint8_t *rec = mp2_thing(&rv->mp2, t, &len);
+		acl_energy_change(&rv->vm, rec && len > 12 ? rec[12] : 0);
+		if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x22;
+	}
 	else if (shield >= 0) { rv->vm.g[0x11B] |= (uint8_t)(1 << shield); rv->vm.g[0x11C] = a[1]; if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x2C; }   /* shot / fire / ice / magic shield: ds:6AB bit, power ds:6AC, "THE GODS PROTECT YOU" */
 	else if (a[0] == 0) acl_energy_change(&rv->vm, a[1]);
 	else if (a[0] == 4) { rv->vm.g[0x119] = a[1]; if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x1E; }                 /* POISON (0753): ds:6A9 = power, message 30; nothing ticks it without the timers of op 5Ah */
