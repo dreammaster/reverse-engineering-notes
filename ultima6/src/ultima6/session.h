@@ -138,7 +138,8 @@ public:
 	void mdPowerReset();                           // sub_53E92
 	void mdLensScene();                            // sub_5415A
 	void mdCanalScene();                           // sub_542B1
-	void mdChsheketScene();                        // sub_543C4
+	void mdChsheketScene(std::function<void()> then = nullptr);
+	void mdChsheketPlace();                        // sub_543C4
 	void mdLamps();                                // sub_538EE
 	void mdCoalBelt();                             // sub_4F323
 	int mdWarmth(int type) const;                  // sub_2020C
@@ -462,9 +463,11 @@ private:
 	bool _mdAsync = false;
 	int _mdItem = -1, _mdFirst = -1, _mdSecond = -1, _mdStage = 0;
 	int _mdFail = 0; // word_4EB7A: set by the loading and unloading recipes when the thing was not done
+	std::function<void()> _keyAfter;   // run when the waiting for keys has ended
 	std::function<bool(int)> _keyHook; // a recipe waiting for keys: called with each key, true when it is done (then mdFinish)
 	void mdAskKey(std::function<bool(int)> hook);
 	void mdAskText(std::function<void(const std::string &)> done);
+	void mdMidgame(int file, int pages, std::function<void()> then); // sub_53960: the pictures and texts of an intermission, a key after each line
 	void mdFinish();                    // the end of a Use that waited: five moves and the prompt
 	void mdPlant(int tx, int ty);       // sub_5CC45 after the location is chosen
 	int _mdSqX[4] = {0, 0, 0, 0}, _mdSqY[4] = {0, 0, 0, 0}; // word_4E6A6 / word_4E6A8: the square chosen as the first (1) and as the second (2) partner; the object-less ones are the ground

@@ -2,6 +2,7 @@
 // of type 0x1CD lead on and wake the dreamer (skipped without data).
 
 #include "ultima6/session.h"
+#include "files/shape.h"
 #include "ultima6/stats_view.h"
 
 #include <cstdio>
@@ -546,8 +547,15 @@ int main() {
 		int before = count();
 		g.mdCanalScene();
 		CHECK(count() == before + 1);
+		g.log.clear();
 		g.mdChsheketScene();
+		for (int i = 0; i < 20 && !(w.actors.status[0x41] & 0x10); ++i)
+			g.handleKey(KEY_ENTER); // the intermission of MIDGAME9.LZC waits for a key after each line
 		CHECK(w.actors.status[0x41] & 0x10);
+		CHECK(logText(g).find("inert form of Raxachk") != std::string::npos);
+		Bytes pic;
+		Shape shape;
+		CHECK(w.mdMidgameItem(8, 4, pic) && pic.size() > 4 && shape.load(&pic[4], pic.size() - 4) && shape.width > 100);
 		int k = w.actorObject(0x42);
 		CHECK(w.objects[k].x == 0x394 && w.objects[k].y == 0x284);
 	}

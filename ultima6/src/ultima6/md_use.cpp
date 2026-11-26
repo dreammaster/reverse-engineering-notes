@@ -1432,9 +1432,10 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 					} else {
 						_world.objects[ck].type = 0x162;
 						al.talkFlags[6] |= 0x22;
-						mdChsheketScene();
-						startTalk(6);
-						_talkEnd = [this]() { _world.actors.talkFlags[6] &= 0xDF; };
+						mdChsheketScene([this]() {
+							startTalk(6);
+							_talkEnd = [this]() { _world.actors.talkFlags[6] &= 0xDF; };
+						});
 					}
 				}
 				break;
@@ -1464,10 +1465,12 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 					t.talkFlags[0x39] |= 0x80;
 					t.talkFlags[0x30] |= 0x80;
 					t.talkFlags[0x76] |= 0x20;
-					mdLensScene();
-					t.talkFlags[5] |= 0x10;
-					startTalk(5);
-					_talkEnd = [this]() { _world.actors.talkFlags[5] &= 0xEF; };
+					mdMidgame(6, 3, [this]() {
+						mdLensScene();
+						_world.actors.talkFlags[5] |= 0x10;
+						startTalk(5);
+						_talkEnd = [this]() { _world.actors.talkFlags[5] &= 0xEF; };
+					});
 				});
 			}
 			break;

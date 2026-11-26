@@ -883,6 +883,11 @@ bool Game::handleKeyInner(int key) {
 		if (_keyHook(key)) {
 			_keyHook = nullptr;
 			mdFinish();
+			if (_keyAfter) { // what goes on once the question is over (a midgame's end)
+				std::function<void()> f = _keyAfter;
+				_keyAfter = nullptr;
+				f();
+			}
 		}
 		return true;
 	}

@@ -6,6 +6,7 @@
 // the map by that many eighths of a turn that the map drawing and the steps use) is kept as a number but the map is not turned.
 
 #include "ultima6/session.h"
+#include "files/shape.h"
 
 #include <algorithm>
 
@@ -244,7 +245,15 @@ void Game::mdCanalScene() {
 
 // sub_543C4 (Chsheket treated): the actors 0x41, 0x43, 0x44 and 0x45 die, 0x42 stands at 0x394, 0x284 and 0x46 at 0x393, 0x282 of the surface, 0x40 goes to level 6; all are people the story
 // has hidden (the bit 0x80 of their status, worktype 0)
-void Game::mdChsheketScene() {
+void Game::mdChsheketScene(std::function<void()> then) {
+	mdMidgame(8, 3, [this, then]() { // the intermission of MIDGAME9.LZC first
+		mdChsheketPlace();
+		if (then)
+			then();
+	});
+}
+
+void Game::mdChsheketPlace() {
 	ObjList &al = _world.actors;
 	for (int a : {0x41, 0x43, 0x44, 0x45}) {
 		al.hp[a] = 0;
@@ -312,7 +321,7 @@ void Game::mdLeverPanel(int lever) {
 			t[0x39] |= 0x80;
 			t[0x30] |= 0x80;
 			t[0x76] |= 0x20;
-			mdLensScene();
+			mdMidgame(6, 3, [this]() { mdLensScene(); });
 		}
 		break;
 	case 4:
@@ -322,7 +331,7 @@ void Game::mdLeverPanel(int lever) {
 			message("There is no water pressure in the valve system.\n");
 		else {
 			t[0x76] |= 0x40;
-			mdCanalScene();
+			mdMidgame(7, 3, [this]() { mdCanalScene(); });
 		}
 		break;
 	case 5:
@@ -462,6 +471,71 @@ void Game::mdBelt(bool pass) {
 		message("The conveyor belt stops.\n");
 		al.talkFlags[0x73] &= 0xFB;
 		al.talkFlags[0x71] &= 0xF7;
+	}
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_53960(pages, file): an intermission. MIDGAME<file>.LZC has five items a page: three texts (items 5p+1 to 5p+3; a text that begins "*E" is the end mark and is skipped), a picture (5p+4) and the
+// sprite laid over it (5p+5). The picture is shown, each text is printed and waited out with a key, then the next page; when the picture is missing it is over. `then` goes on from there.
+// APPROX(97): the sprite over the picture, the music and the fades are left out; the picture is drawn as the maps are (`_mapShow`)
+void Game::mdMidgame(int file, int pages, std::function<void()> then) {
+	struct State {
+		int page = 0, line = 0;
+	};
+	auto st = std::make_shared<State>();
+	auto step = std::make_shared<std::function<bool()>>();
+	// returns true when it is over, else has asked for a key
+	*step = [this, st, file, pages, then, step]() -> bool {
+		for (;;) {
+			if (st->line == 0) {
+				Bytes pic;
+				if (st->page >= pages) {
+					_mapShow = false;
+					_keyAfter = then;
+					return true;
+				}
+				Shape shape;
+				if (!_world.mdMidgameItem(file, st->page * 5 + 4, pic) || pic.size() <= 4 || !shape.load(&pic[4], pic.size() - 4)) {
+					_mapShow = false;
+					_keyAfter = then;
+					return true;
+				}
+				_mapPixels = shape.pixels;
+				_mapW = shape.width;
+				_mapH = shape.height;
+				_mapShow = true;
+			}
+			if (st->line >= 3) {
+				st->line = 0;
+				++st->page;
+				continue;
+			}
+			Bytes text;
+			if (!_world.mdMidgameItem(file, st->page * 5 + 1 + st->line, text)) {
+				++st->line;
+				continue;
+			}
+			++st->line;
+			std::string line(text.begin(), text.end());
+			while (!line.empty() && line.back() == '\0')
+				line.pop_back();
+			if (line.size() >= 2 && line[0] == '*' && line[1] == 'E')
+				continue;
+			message(line + "\n");
+			mdAskKey([step](int) { return (*step)(); });
+			return false;
+		}
+	};
+	if ((*step)()) { // nothing to show
+		std::function<void()> f = _keyAfter;
+		_keyAfter = nullptr;
+		if (f)
+			f();
 	}
 }
 
