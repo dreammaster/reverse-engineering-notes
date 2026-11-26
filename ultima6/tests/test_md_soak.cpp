@@ -17,12 +17,12 @@ int main() {
 	}
 	Game g(w);
 	ObjList &al = w.actors;
-	int seen[0xA0] = {};
+	int seen[0xA1] = {};
 	int total = 0;
 	for (int a = 1; a < 0x100; ++a) {
 		int k = w.actorObject(a);
 		int wt = al.worktype[a];
-		if (k < 0 || w.objects[k].deleted || ((wt < 0x0D || wt > 0x1A) && (wt < 0x99 || wt > 0x9E)) || (al.status[a] & 0x10))
+		if (k < 0 || w.objects[k].deleted || ((wt < 0x04 || wt > 0x1B) && (wt < 0x99 || wt > 0x9E) && wt != 0x9F && wt != 0xA0) || (al.status[a] & 0x10))
 			continue;
 		if (seen[wt] >= 3)
 			continue;
@@ -43,7 +43,7 @@ int main() {
 		}
 	}
 	std::printf("%d actors of own worktypes run; ", total);
-	for (int wt = 0x0D; wt <= 0x9E; ++wt)
+	for (int wt = 0x04; wt <= 0xA0; ++wt)
 		if (seen[wt])
 			std::printf("%02X:%d ", wt, seen[wt]);
 	std::printf("\nok\n");

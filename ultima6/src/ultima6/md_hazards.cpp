@@ -680,7 +680,7 @@ bool Game::mdWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
-	if ((wt < 0x99 || wt > 0x9E) && wt != 8 && wt != 0xA0 && wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
+	if ((wt < 0x99 || wt > 0x9E) && wt != 8 && wt != 0xA0 && wt != 7 && wt != 9 && wt != 0x1B && wt != 0x9F && wt != 0x0A && wt != 0x0B && wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
 		return false;
 	_world.objects.reserve(_world.objects.size() + 128); // the things made below must not move the object that `o` stands for
 	World::Obj &o = _world.objects[k];
@@ -699,8 +699,9 @@ bool Game::mdWorktype(int actor) {
 		_world.deleteObject(k);
 	};
 	auto facing = [&]() { o.frame = seRoll(0, 1) ? 3 : 7; }; // the random look of a 0x175, 0x16A or 0x182 (the bits above the type in its word)
-	if (wt == 8 || wt == 0xA0) { // sub_1B936, the fighter: it goes for whom `mdTarget` names; in reach of its weapon (the engine's choice of the best) it strikes (10 moves) when next to the target or
-		// when there is a line, else it steps to one side (by chance to the square level with the target on either axis); out of reach it walks up; with no target it wanders (the engine's)
+	// sub_1B936, the fighter: it goes for whom `mdTarget` names; in reach of its weapon (the engine's choice of the best) it strikes (10 moves) when next to the target or when there is a line, else it
+	// steps to one side (by chance to the square level with the target on either axis); out of reach it walks up; with no target it wanders (the engine's: false)
+	auto fight = [&]() -> bool {
 		int d, t = nearest(d);
 		if (t < 0)
 			return false;
@@ -719,6 +720,93 @@ bool Game::mdWorktype(int actor) {
 			return true;
 		}
 		_creatures.walkTo(actor, tx, ty);
+		return true;
+	};
+	if (wt == 8 || wt == 0xA0)
+		return fight();
+	// sub_26441 and sub_26469: the square distance on the wrapped map
+	auto gapOf = [&](int a, int b) {
+		int d = (a - b) & 0x3FF;
+		return d > 0x200 ? d - 0x400 : d;
+	};
+	auto memberNear = [&](int r) { // some member of the party with both distances below r
+		for (int m = 0; m < al.partySize; ++m) {
+			int mk = _world.actorObject(al.partyRoster[m]);
+			if (mk >= 0 && std::abs(gapOf(_world.objects[mk].x, o.x)) < r && std::abs(gapOf(_world.objects[mk].y, o.y)) < r)
+				return true;
+		}
+		return false;
+	};
+	// the aimless walk of sub_1C1E8 and sub_1C322: one time in two a step towards a square ten along one axis (x or y at random: x is 10, or 1014 when x + a roll of 0-1 is 0, the other
+	// coordinate is the creature's own; the original's sum is taken as it is: the goal is an absolute square, not ten squares off)
+	auto drift = [&]() {
+		int gx = o.x, gy = o.y;
+		if (seRoll(0, 1)) {
+			gx = (((o.x + seRoll(0, 1)) == 0) ? -10 : 10) & 0x3FF;
+		} else {
+			gy = (((o.y + seRoll(0, 1)) == 0) ? -10 : 10) & 0x3FF;
+		}
+		_creatures.walkTo(actor, gx, gy);
+	};
+	if (wt == 7 || wt == 9 || wt == 0x1B || wt == 0x9F) { // sub_1C062, the one that runs away: more than seven squares from the party it does nothing (its moves are gone); with a target in view it makes
+		// for the square as far from it as it is near (the walk costs nothing when it fails), without (and not of side 0x40) it wanders, of side 0x40 it comes to the party; one turn in four, if it
+		// is not of the party, it gets a hit point back and, once it has a quarter of its strength, its own worktype again
+		if (std::max(std::abs(gapOf(o.x, x)), std::abs(gapOf(o.y, y))) > 7) {
+			_world.spendMoves(actor, al.moves[actor] ? al.moves[actor] : 1);
+			return true;
+		}
+		int t = mdTarget(actor);
+		if (t < 0)
+			return false;
+		int tk = _world.actorObject(t), dx = gapOf(_world.objects[tk].x, o.x), dy = gapOf(_world.objects[tk].y, o.y);
+		if (std::abs(dx) < 8 && std::abs(dy) < 8) {
+			int saved = al.moves[actor];
+			if (!_creatures.walkTo(actor, (o.x - dx) & 0x3FF, (o.y - dy) & 0x3FF))
+				al.moves[actor] = (uint8_t)saved;
+		} else if ((al.status[actor] & 0x60) == 0x40) {
+			_creatures.walkTo(actor, x, y);
+		} else {
+			return false;
+		}
+		if (!(al.status[actor] & 0x80) && seRoll(0, 3) == 0) {
+			int most = ActorStats::maxHealth(_world, actor);
+			if (al.hp[actor] < most)
+				++al.hp[actor];
+			if (most > 0 && al.hp[actor] * 4 / most > 0 && al.unknown12f1[actor])
+				al.worktype[actor] = al.unknown12f1[actor];
+		}
+		return true;
+	}
+	if (wt == 0x0A) { // sub_1C1E8: with a member within three squares, one time in two it comes to the party; else it drifts or rests
+		if (memberNear(3) && seRoll(0, 1) == 0) {
+			_creatures.walkTo(actor, x, y);
+			return true;
+		}
+		if (seRoll(0, 1))
+			drift();
+		else
+			_world.spendMoves(actor, 5);
+		return true;
+	}
+	if (wt == 0x0B) { // sub_1C322: with a member within three squares, one time in six it turns on the party (worktype 8, side 0x20; a 0x17A becomes the 0x17C with 5 more strength, 5 less dexterity,
+		// moves and 7 less intelligence and 20 more hit points) and fights; else it drifts or rests
+		if (memberNear(3) && seRoll(0, 5) == 0) {
+			al.worktype[actor] = 8;
+			al.status[actor] |= 0x20;
+			if (o.type == 0x17A) {
+				o.type = 0x17C;
+				al.strength[actor] = (uint8_t)(al.strength[actor] + 5);
+				al.dexterity[actor] = (uint8_t)(al.dexterity[actor] - 5);
+				al.moves[actor] = (uint8_t)(al.moves[actor] - 5);
+				al.intelligence[actor] = (uint8_t)(al.intelligence[actor] - 7);
+				al.hp[actor] = (uint8_t)(al.hp[actor] + 0x14);
+			}
+			return fight();
+		}
+		if (seRoll(0, 1))
+			drift();
+		else
+			_world.spendMoves(actor, 5);
 		return true;
 	}
 	if (wt == 0x0E) { // sub_1C4E8, the part that matters: a 0x175 or 0x182 more than seven squares from the nearest member burrows (invisible, worktype 0x12); the fight itself is the engine's

@@ -575,6 +575,28 @@ int main() {
 		al.status[0x4D] = 0;
 	}
 
+	// worktype 0xB (sub_1C322): with a member within three squares it turns on the party sooner or later (worktype 8, side 0x20); worktype 7 (sub_1C062) far from the party does nothing
+	{
+		int victim = al.partyRoster[0];
+		for (int i = 0; i < al.partySize; ++i)
+			w.moveObject(w.actorObject(al.partyRoster[i]), g.x + 2, g.y + 9, 0);
+		int fk = w.actorObject(0x4D);
+		al.status[0x4D] = 0;
+		al.worktype[0x4D] = 0x0B;
+		al.hp[0x4D] = 50;
+		w.moveObject(fk, g.x + 3, g.y + 9, 0);
+		for (int i = 0; i < 80 && al.worktype[0x4D] == 0x0B; ++i)
+			g.mdWorktype(0x4D);
+		CHECK(al.worktype[0x4D] == 8 && (al.status[0x4D] & 0x20));
+		(void)victim;
+		al.worktype[0x4D] = 7;
+		w.moveObject(fk, g.x + 30, g.y + 9, 0);
+		al.moves[0x4D] = 12;
+		CHECK(g.mdWorktype(0x4D));
+		al.worktype[0x4D] = 0;
+		al.status[0x4D] = 0;
+	}
+
 	// a teleporting pad takes the party to the place of its quality
 	{
 		g.x = 0x2B2 - 5;
