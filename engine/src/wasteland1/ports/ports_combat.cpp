@@ -192,6 +192,10 @@ PORT(unjam) { unjam(m, r.a.b.l, r.b.b.l); }                                     
 PORT(equipOrder) { equipOrder(m, r.a.b.l); }                                            // 130B1
 PORT(printMessage52) { printMessage(m, 0x52); }                                         // 13223
 PORT(reloadOrder) { reloadOrder(m, r.a.b.l); }                                          // 13228
+PORT(partyAttackRoundHere) { partyAttackRound(m, m.d8(0x4654)); }                          // 12D3C: the same for the active group
+PORT(ambushHere) { ambush(m, m.d8(0x4654)); }                                          // 12780
+PORT(combatRoundHere) { combatRound(m, m.d8(0x4654)); }                                // 1AD70
+PORT(executeOrdersHere) { executeOrders(m, m.d8(0x4654)); }                            // 12CC0
 PORT(executeOrders) { executeOrders(m, r.a.b.l); }                                      // 12CC3: al = party group
 PORT(forgetTrackedGroup) { forgetTrackedGroup(m); r.a.b.l = 1; }                        // 14AAA
 PORT(recordTrackedGroup) { recordTrackedGroup(m, r.b.b.l); r.a.b.l = 1; }               // 14A88: bl = entry offset
