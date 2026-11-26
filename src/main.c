@@ -1369,20 +1369,10 @@ static int front_spot(Walker *wk, RoomView *rv, int t, int *ox, int *oy, int *oz
 	int xs, ys, zs;
 	thing_box(rv, t, &xs, &ys, &zs);
 	int dxp = wk->x1, dyp = wk->y1;
-	int x0 = wk->x1 - (PL_XS - 1), y0 = wk->y1 - (PL_YS - 1);
 	int face = wk->face;
 	if (face != 1 && face != 2 && face != 4 && face != 8 && face != 5 && face != 6 && face != 9 && face != 10)   /* no move seen yet: the facing */
 		face = wk->dir == DIR_RIGHT ? 8 : wk->dir == DIR_LEFT ? 4 : wk->dir == DIR_DOWN ? 2 : 1;
-	switch (face) {                                                   /* 1000:6C72 (table cs:6C54): the eight cases */
-	case 8: dxp = wk->x1 + 2 + xs; break;
-	case 4: dxp = x0 - 3; break;
-	case 2: dyp = wk->y1 + 2 + ys; break;
-	case 1: dyp = y0 - 3; break;
-	case 9: dxp = wk->x1 + 1 + xs; dyp = y0 - 1; break;
-	case 5: dxp = x0 - 2; dyp = y0 - 2; break;
-	case 6: dxp = x0 - 2; dyp = wk->y1 + 1 + ys; break;
-	default: dxp = wk->x1 + 1 + xs; dyp = wk->y1 + 1 + ys; break;      /* 10: down-right */
-	}
+	place_spot(face, wk->x1, wk->y1, wk->x1 - (PL_XS - 1), wk->y1 - (PL_YS - 1), xs, ys, &dxp, &dyp);   /* 1000:6C72, the eight cases */
 	ColResult cr;
 	collision_test(&wk->world, dxp, dyp, wk->z, xs, ys, zs, t, 0, &cr);
 	*ox = dxp; *oy = dyp; *oz = wk->z;

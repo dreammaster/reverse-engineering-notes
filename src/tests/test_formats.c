@@ -25,6 +25,7 @@
 #include "../engine/beeper.h"
 #include "vectors.h"
 #include "vectors_beeper.h"
+#include "vectors_place.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -154,6 +155,15 @@ int main(int argc, char **argv) {
 	int checked = 0, failed = 0;
 	char path[1024];
 
+	for (int i = 0; i < N_PLACE_VECTORS; i++) {                      /* the drop / throw spot of 1000:6C72, vectors from the original routine */
+		const int *v = place_vectors[i];
+		int ox = -1, oy = -1;
+		if (!place_spot(v[0], v[1], v[2], v[3], v[4], v[5], v[6], &ox, &oy) || ox != v[7] || oy != v[8]) {
+			printf("FAIL place_spot face %d rec %d,%d,%d,%d box %d,%d: got %d,%d want %d,%d\n", v[0], v[1], v[2], v[3], v[4], v[5], v[6], ox, oy, v[7], v[8]);
+			failed++;
+		}
+		checked++;
+	}
 	for (size_t i = 0; i < sizeof(mjm_vectors) / sizeof(mjm_vectors[0]); i++) {
 		const MjmVector *v = &mjm_vectors[i];
 		snprintf(path, sizeof(path), "%s/%s", root, v->path);

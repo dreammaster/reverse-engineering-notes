@@ -46,4 +46,8 @@ typedef struct {
  * entry (skipped), is_player = the mover's position record has [+4] == 0 (enables the direction rule for exits). */
 void collision_test(const ColWorld *w, int x1, int y1, int z, int xs, int ys, int zs, int self, int is_player, ColResult *r);
 
+/* 1000:6C72 (table cs:6C54): the spot in front of the player for a dropped / thrown thing of box (xs, ys). The player record is (x1, y1, x0, y0); `face` is the movement key mask of
+ * the last move (1 up, 2 down, 4 left, 8 right, diagonals the sums). Returns 0 (and sets nothing) for the impossible masks. Verified against the original (tests/vectors_place.h). */
+int place_spot(int face, int x1, int y1, int x0, int y0, int xs, int ys, int *ox, int *oy);
+
 #endif

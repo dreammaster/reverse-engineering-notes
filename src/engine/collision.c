@@ -70,3 +70,20 @@ void collision_test(const ColWorld *w, int x1, int y1, int z, int xs, int ys, in
 	r->count = r->n;
 	r->zf = r->n == 0;
 }
+
+int place_spot(int face, int x1, int y1, int x0, int y0, int xs, int ys, int *ox, int *oy) {
+	int x, y;
+	switch (face) {
+	case 1: x = x1; y = y0 - 3; break;
+	case 2: x = x1; y = y1 + 2 + ys; break;
+	case 4: x = x0 - 3; y = y1; break;
+	case 8: x = x1 + 2 + xs; y = y1; break;
+	case 9: x = x1 + 1 + xs; y = y0 - 1; break;
+	case 5: x = x0 - 2; y = y0 - 2; break;
+	case 6: x = x0 - 2; y = y1 + 1 + ys; break;
+	case 10: x = x1 + 1 + xs; y = y1 + 1 + ys; break;
+	default: return 0;
+	}
+	*ox = x & 0xFF; *oy = y & 0xFF;
+	return 1;
+}

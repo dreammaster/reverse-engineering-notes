@@ -89,3 +89,5 @@ Debug environment variables of the port: `CAD_CARRY=thing[:A0[:A1]]`, `CAD_SPELL
 `tools/roland_midi.py` runs `ROLAND.BIN` on the Python 8086 interpreter and writes the driver's MPU-401 output as a Standard MIDI file (`python3 tools/roland_midi.py music 1 tune.mid 60`; effects 1-8 with `effect N`).
 
 `tools/scan_tad_errors.sh` runs every room of both games headless and lists failures of the native routines (`CAD_TADERR`); `CAD_X86TRACE=1` traces every instruction and `CAD_X86WATCH=<hex offset>` reports writes to a byte of the TAD image (this found the Payoff stack / code overlap).
+
+`tools/gen_place_vectors.py` runs the original drop-spot routine (`1000:6C72`) in the emulator for 480 random cases and writes `src/tests/vectors_place.h`; `test_formats` checks `engine/collision.c place_spot` against them.
