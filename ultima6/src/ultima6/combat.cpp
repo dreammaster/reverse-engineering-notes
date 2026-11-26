@@ -227,7 +227,7 @@ bool Combat::hitCheck(int attacker, int defender, int weapon) {
 		return true;
 	const CreatureStats *own = stats(_world.objects[ka].type);
 	bool useStrength = weapon == 4 || weapon == 34 || weapon == 39 || weapon == 44; // spiked helm, club, mace, two-handed hammer
-	if (own && weapon == _world.objects[ka].type && (own->flags & (_world.game == GameId::MartianDreams ? 0x20 : CreatureStats::STRENGTH_BASED))) // Martian Dreams' class flag 0x20 (sub_1A0E5)
+	if (own && weapon == _world.objects[ka].type && (_world.game == GameId::MartianDreams ? (MovementClasses::flags(MovementClasses::classOf(weapon)) & 0x20) != 0 : (own->flags & CreatureStats::STRENGTH_BASED))) // Martian Dreams' class flag 0x20 (sub_1A0E5)
 		useStrength = true;
 	int atk = useStrength ? adjustedStrength(attacker) : adjustedDexterity(attacker);
 	int foeDex = adjustedDexterity(defender);
@@ -725,7 +725,7 @@ bool Combat::applyDamage(int attacker, int defender, int damage) {
 		die(defender);
 		const char *word = " killed!\n";
 		if (_world.game == GameId::MartianDreams) // sub_19300: the people "fall", the living are "killed", the machines are "destroyed"
-			word = defender < 0x10 ? " falls!\n" : (foe && (foe->flags & (0x4000 | 0x80))) ? " killed!\n" : " destroyed!\n";
+			word = defender < 0x10 ? " falls!\n" : (MovementClasses::flags(MovementClasses::classOf(type)) & (0x4000 | 0x80)) ? " killed!\n" : " destroyed!\n";
 		_scroll.print(name + word);
 		return true;
 	}

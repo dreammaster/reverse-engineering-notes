@@ -124,8 +124,8 @@ void Game::mdHazard(int actor) {
 	if (k < 0 || _world.objects[k].deleted || (al.status[actor] & 0x10) || !mdInViewAt(_world.objects[k].x, _world.objects[k].y, _world.objects[k].z))
 		return;
 	const World::Obj &me = _world.objects[k];
-	const CreatureStats *cs = Combat::stats(me.type);
-	if (cs && (cs->flags & (1 << 8)) && (cs->flags & (1 << 10)))
+	const int cls = MovementClasses::flags(MovementClasses::classOf(me.type)); // the class flags (seg058:01C6): 0x100 and 0x400 together make a creature proof against the squares
+	if ((cls & 0x100) && (cls & 0x400))
 		return;
 	std::vector<int> here;
 	_world.objectsAt(me.x, me.y, me.z, here);
@@ -636,13 +636,14 @@ void Game::mdRayShot(int attacker, int weapon, int tx, int ty) {
 			}
 			if (weapon == 0xF1) {
 				const CreatureStats *cs = Combat::stats(o.type);
-				if (!cs || !(cs->flags & ((1 << 14) | (1 << 7)))) {
+				const int cls = MovementClasses::flags(MovementClasses::classOf(o.type)); // the class flags (seg058:01C6)
+				if (!cs || !(cls & ((1 << 14) | (1 << 7)))) {
 					message("It has no effect.\n");
 					continue;
 				}
 				_world.actors.status[a] |= 2;
 				message("`" + mdMemberName(a) + " paralyzed!\n");
-				if ((cs->flags & (1 << 7)) && !(cs->flags & (1 << 14)))
+				if ((cls & (1 << 7)) && !(cls & (1 << 14)))
 					mdStrike(attacker, a, DAMAGE[idx]);
 				continue;
 			}

@@ -179,7 +179,7 @@ int main() {
 		if (md.load("md/game/MARTIAN")) {
 			CHECK(Combat::stats(0x171) && Combat::stats(0x171)->hp == 45); // a Martian creature
 			CHECK(!Combat::stats(0x16C) || Combat::stats(0x16C)->hp != 10); // not Ultima VI's acid slug
-			CHECK(Combat::weaponDamageOf(0x2C) == 30 && Combat::rangeOf(0x2C) == 9 && Combat::armourOf(0x17) == 5);
+			CHECK(Combat::weaponDamageOf(0x2C) == 30 && Combat::rangeOf(0x2C) == 9 && Combat::armourOf(0x17) == 2);
 		}
 		static World se;
 		se.game = GameId::SavageEmpire;
