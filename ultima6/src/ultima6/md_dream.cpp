@@ -1388,3 +1388,57 @@ void Game::mdDying(int actor) {
 
 } // namespace Ultima6
 } // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_30093 / sub_25F91 outside a dream: the Avatar is dead. "Overcome by your wounds, you fall unconscious....." The dead of the party are raised, all are cured and healed, and the party
+// wakes in the space capsule (x 0x19D, y 0x278 of the surface) or, once actor 0x46's flag 8 is set, in the Olympus mine (x 0xA4, y 0xC3 of level 4): "....You awaken back at %s, feeling
+// restored."; a week (seven days) and a random time of the morning (7:00 plus 0-59 minutes) have gone, and the person 0x12 talks (his flag 0x20 set).
+// APPROX(97): the fades, the music and the moves of the members (`sub_18286`) are left out
+void Game::mdAwaken() {
+	ObjList &al = _world.actors;
+	message("\nOvercome by your wounds, you fall unconscious..... \n");
+	if (_combatMode)
+		toggleCombat();
+	for (int a = 1; a < 0xC0; ++a)
+		if ((al.status[a] & 0x80) && (al.status[a] & 0x10))
+			_world.resurrect(a);
+	for (int m = 0; m < al.partySize; ++m) {
+		int a = al.partyRoster[m], k = _world.actorObject(a);
+		if (k < 0)
+			continue;
+		al.status[a] = (uint8_t)(((al.status[a] & 0x9F) | 0x40) & 0xE1);
+		_world.objects[k].status &= 0xB9;
+		al.hp[a] = (uint8_t)ActorStats::maxHealth(_world, a);
+	}
+	bool mine = (al.talkFlags[0x46] & 8) != 0;
+	int nx = mine ? 0xA4 : 0x19D, ny = mine ? 0xC3 : 0x278, nz = mine ? 4 : 0;
+	changeLevel(nx, ny, nz);
+	for (int m = 0; m < al.partySize; ++m) {
+		int k = _world.actorObject(al.partyRoster[m]);
+		if (k >= 0)
+			_world.moveObject(k, nx, ny, nz);
+	}
+	x = nx;
+	y = ny;
+	z = nz;
+	_leaderObject = _world.actorObject(1);
+	message(std::string("\n....You awaken back at ") + (mine ? "the Olympus mine" : "the space capsule") + ", feeling restored.\n");
+	gameClock.day += 7;
+	if (gameClock.day > 28) {
+		gameClock.day -= 28;
+		if (++gameClock.month > 12) {
+			gameClock.month = 1;
+			++gameClock.year;
+		}
+	}
+	gameClock.hour = 7;
+	gameClock.minute = seRoll(0, 0x3B);
+	al.talkFlags[0x12] |= 0x20;
+	_mdMorning = true;
+	startTalk(0x12);
+}
+
+} // namespace Ultima6
+} // namespace Ultima6

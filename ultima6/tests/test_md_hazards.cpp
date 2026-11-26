@@ -453,6 +453,20 @@ int main() {
 		}
 	}
 
+	// the Avatar dead outside a dream: the party is raised and healed and wakes in the space capsule a week on
+	{
+		al.talkFlags[0x46] &= 0xF7;
+		al.status[1] |= 0x10;
+		al.hp[1] = 0;
+		g.gameClock.day = 3;
+		g.log.clear();
+		g.mdAwaken();
+		CHECK(!(al.status[1] & 0x10) && al.hp[1] > 0);
+		CHECK(g.x == 0x19D && g.y == 0x278 && g.z == 0);
+		CHECK(g.gameClock.day == 10 && g.gameClock.hour == 7);
+		CHECK(logText(g).find("awaken back at the space capsule") != std::string::npos);
+	}
+
 	std::printf(failures ? "FAILED\n" : "ok\n");
 	return failures ? 1 : 0;
 }

@@ -177,6 +177,10 @@ int Game::mdSong() const {
 
 // sub_2A86A: the Avatar has died: darkness, a voice, and the Help spell (sub_1890C) brings the party back to Lord British's court
 void Game::avatarDied() {
+	if (_world.game == GameId::MartianDreams && !_mdDreaming) {
+		mdAwaken();
+		return;
+	}
 	message("\nAn unending darkness engulfs thee...\n");
 	message("\nA voice in the darkness intones, \"KAL LOR!\"\n");
 	helpParty();
