@@ -1565,6 +1565,10 @@ static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 	int sp = spell_sem(rv, a[0]);
 	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
 	snd_play(a[7] == 0 ? 0x11 : 0x06);
+	rv->vm.queue_n = 0;                                                 /* 1000:168F0: room event 24 (0x4018), argument = the spell number (23 room handlers: magic doors / altars) */
+	acl_room_event(&rv->vm, &rv->mp2, rv->room, 24, a[0]);
+	rv->pending_rebuild |= rv_changed(rv);
+	roomview_flush_messages(rv);
 	int proj = (a[4] << 8) | a[5];
 	if (a[7] == 2) {                                                    /* the mode 'cast on an object' (169AB) */
 		int tt = rv->cast_target > 0 ? rv->cast_target : -1;
