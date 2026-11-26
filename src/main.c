@@ -818,12 +818,13 @@ static void shot_hits(RoomView *rv, int shot, int victim) {
 	int dead = 0;
 	if (ss->header[0x16] == 0x82) {
 		if ((sa[0] & 0x7F) != 0) return;
-		if (ca[0] < sa[1]) { ca[0] = 0; dead = 1; } else ca[0] = (uint8_t)(ca[0] - sa[1]);
+		if (ca[0] < sa[1]) dead = 1;                                  /* 085C: sub [si], al; jae -> the byte wraps, event 17h on the borrow */
+		ca[0] = (uint8_t)(ca[0] - sa[1]);
 	} else {
 		int type = sa[5];
 		if ((type < 8 && (ca[5] & (1 << type))) || (ca[6] & 1)) return;
-		int hp = ca[0] - sa[1];
-		if (hp > 0) ca[0] = (uint8_t)hp; else { ca[0] = 0; dead = 1; }
+		if ((int8_t)ca[0] > (int8_t)sa[1]) ca[0] = (uint8_t)(ca[0] - sa[1]);   /* 17367: sub dh, al; jg (signed bytes: a power above 127 wraps; verified with the original) */
+		else dead = 1;                                                       /* the hit points stay, event 17h */
 	}
 	if (dead) {
 		rv->vm.queue_n = 0;
@@ -1343,8 +1344,8 @@ static void cast_strike(Walker *wk, RoomView *rv, int item) {
 	}
 	if (best < 0) return;
 	uint8_t *hp = &rv->vm.tail[best][0];
-	if (*hp < a[1]) {                                              /* underflow: the creature dies (event 23) */
-		*hp = 0;
+	if (*hp < a[1]) {                                              /* underflow: the byte wraps and the creature dies (event 23) */
+		*hp = (uint8_t)(*hp - a[1]);
 		rv->vm.queue_n = 0;
 		acl_thing_event(&rv->vm, &rv->mp2, best, 23, 0);
 		for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
