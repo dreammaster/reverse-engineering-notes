@@ -695,7 +695,7 @@ bool Game::mdWorktypeInner(int actor) {
 		wt = 6;
 	if (wt == 0x0F || wt == 0x10 || (wt >= 0x8B && wt <= 0x8E)) // the table of sub_29CE2 does nothing for these (the exit then spends ten moves)
 		return true;
-	if ((wt < 0x99 || wt > 0x9E) && wt != 8 && wt != 0xA0 && wt != 4 && wt != 6 && wt != 7 && wt != 9 && wt != 0x1B && wt != 0x9F && wt != 0x0A && wt != 0x0B && wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
+	if ((wt < 0x99 || wt > 0x9E) && wt != 8 && wt != 0xA0 && wt != 0x95 && wt != 0x98 && wt != 4 && wt != 6 && wt != 7 && wt != 9 && wt != 0x1B && wt != 0x9F && wt != 0x0A && wt != 0x0B && wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
 		return false;
 	_world.objects.reserve(_world.objects.size() + 128); // the things made below must not move the object that `o` stands for
 	World::Obj &o = _world.objects[k];
@@ -822,6 +822,32 @@ bool Game::mdWorktypeInner(int actor) {
 			drift();
 		else
 			_world.spendMoves(actor, 5);
+		return true;
+	}
+	if (wt == 0x95) { // sub_2B00E: a person in view on the Avatar's level waits (5 moves) until the Avatar is within two squares, then asks to speak (sub_29C22)
+		if (mdInView(actor) && o.z == z) {
+			int av = _world.actorObject(1);
+			if (av >= 0 && std::max(std::abs(gapOf(_world.objects[av].x, o.x)), std::abs(gapOf(_world.objects[av].y, o.y))) > 2)
+				_world.spendMoves(actor, 5);
+			else
+				_creatures.requestTalk(actor);
+		}
+		return true;
+	}
+	if (wt == 0x98) { // sub_29DBA: one turn in four, when somebody (mdTarget) is within five squares of its place it goes for him; next to him it makes him flinch (a flash: sub_18F7D) and goes back
+		// to its place; otherwise it works (sub_29508)
+		const Schedule &sc = _world.schedule;
+		Schedule::Entry e = sc.entry(sc.index[actor] + al.scheduleIndex[actor]);
+		int t = seRoll(0, 3) == 0 ? mdTarget(actor) : -1;
+		int tk = t >= 0 ? _world.actorObject(t) : -1;
+		if (tk < 0 || std::max(std::abs(gapOf(_world.objects[tk].x, e.x)), std::abs(gapOf(_world.objects[tk].y, e.y))) >= 5) {
+			_creatures.workTurn(actor);
+			return true;
+		}
+		if (std::max(std::abs(gapOf(_world.objects[tk].x, o.x)), std::abs(gapOf(_world.objects[tk].y, o.y))) < 2)
+			_creatures.walkTo(actor, e.x & 0x3FF, e.y & 0x3FF);
+		else
+			_creatures.walkTo(actor, _world.objects[tk].x, _world.objects[tk].y);
 		return true;
 	}
 	if (wt == 4) { // sub_1BB87, the ranged fighter: with a target within two squares it runs, the original's goal being the small square (x - his x, y - his y) of the map (a slip: it heads for the

@@ -621,6 +621,20 @@ int main() {
 		al.status[0x4D] = 0;
 	}
 
+	// worktype 0x95 (sub_2B00E): a person waits until the Avatar is within two squares, then asks to speak
+	{
+		for (int i = 0; i < al.partySize; ++i)
+			w.moveObject(w.actorObject(al.partyRoster[i]), g.x + 2, g.y + 9, 0);
+		int av = w.actorObject(1);
+		int fk = w.actorObject(0x4D);
+		al.worktype[0x4D] = 0x95;
+		w.moveObject(fk, w.objects[av].x + 6, w.objects[av].y, 0);
+		CHECK(g.mdWorktype(0x4D));
+		w.moveObject(fk, w.objects[av].x + 1, w.objects[av].y, 0);
+		CHECK(g.mdWorktype(0x4D));
+		al.worktype[0x4D] = 0;
+	}
+
 	// a teleporting pad takes the party to the place of its quality
 	{
 		g.x = 0x2B2 - 5;

@@ -49,6 +49,15 @@ public:
 		return r;
 	}
 
+	/** sub_29C22: a person asks to speak to the party (asked for with takeTalkRequest). */
+	void requestTalk(int actor) {
+		_talkRequest = actor;
+	}
+	/** wt_work (sub_29508): one turn in eight a step towards the place of its schedule, else 5 moves passed. */
+	void workTurn(int actor) {
+		work(actor);
+	}
+
 	int count() const; // living temporary actors
 
 	/** The worktypes of Martian Dreams that its own code acts on (actor_worktype_act, sub_29CE2): called first, true when it did the turn. */
