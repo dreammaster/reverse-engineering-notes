@@ -5,7 +5,7 @@
 #include <string.h>
 
 #define DSG 0x1000
-#define SSG 0x2100
+#define SSG 0x2000         /* the stack segment: its top (0x2000:FFFF) must stay below the TAD segment at 0x3000, whose code reaches 0xFCC in the Payoff */
 #define TADG 0x3000
 #define HKG 0x4000
 #define QBASE 0xF000
@@ -43,7 +43,7 @@ int tad_load(TadRt *t, const uint8_t *raw, size_t len) {
 		unsigned off = base + 4u * (unsigned)k;
 		if (off + 2 > len) break;
 		unsigned w = (unsigned)(raw[off] | (raw[off + 1] << 8));
-		if (w == 0xFFFF || w == 0 || w >= 0x1000) { t->beh_entry[t->nbeh++] = 0; continue; }
+		if (w == 0xFFFF || w < 0x40 || w >= 0x1000) { t->beh_entry[t->nbeh++] = 0; continue; }   /* unused slots hold 0 / FFFF or a pointer into the header stub (Payoff level 3: 000Fh) */
 		t->beh_entry[t->nbeh++] = (uint16_t)(w + 2);
 	}
 	/* far pointer ds:78E -> hook, service table at ss:[ds:B6] */
@@ -88,6 +88,11 @@ static void svc_hook(X86 *c, void *user) {
 	switch (idx) {
 	case 0x06:                                   /* 81C8: change energy by ax (signed) */
 		energy_change(t->vm, (int16_t)c->ax);
+		break;
+	case 0x2E:                                   /* 9D8E: flush the keyboard / redraw: nothing to do here */
+		break;
+	case 0x30:                                   /* 1043: poll the input: routines that wait for a key (level 5's ending `072D`) see one at once, so they cannot hang the port */
+		x86_wb(c, DSG, 0x715, 1);
 		break;
 	case 0x18:                                   /* 8275: effect timer bx := al (acl_set_timer) */
 		acl_set_timer(t->vm, c->bx & 0xFF, c->ax & 0xFF);
@@ -160,6 +165,7 @@ int tad_run_timer(TadRt *t, AclVM *vm, int idx) {
 	c->ip = t->timer_entry[idx];
 	c->hook_cs = HKG; c->hook_ip = SENT; c->hook = svc_hook; c->hook_user = t;
 	int n = x86_run(c, TADG, SENT, 200000);
+	if (n < 0 && getenv("CAD_TADERR")) fprintf(stderr, "TADERR timer %d entry %04x run %d err %d op %02x at %04x:%04x\n", idx, t->timer_entry[idx], n, c->err, c->err_op, c->cs, c->ip);
 	memcpy(vm->g, ds + 0x590, sizeof(vm->g));
 	/* queued events: 6-byte entries (type, object/argument, argument) from QBASE to ds:84 */
 	unsigned q = (unsigned)(ds[0x84] | (ds[0x85] << 8));
@@ -221,6 +227,7 @@ int tad_run_behaviour(TadRt *t, AclVM *vm, int b, int cx, int cy, int px, int py
 	uint8_t before[0x40];
 	memcpy(before, ds + CREAT_REC, 0x40);
 	int n = x86_run(c, TADG, SENT, 200000);
+	if (n < 0 && getenv("CAD_TADERR")) fprintf(stderr, "TADERR beh %d run %d err %d op %02x at %04x:%04x\n", b, n, c->err, c->err_op, c->cs, c->ip);
 	if (n < 0)
 		return -1;
 	if (getenv("CAD_TADDIFF")) for (int i = 0; i < 0x40; i++) if (before[i] != ds[CREAT_REC + i]) fprintf(stderr, "BEH%d rec[%02x] %02x -> %02x\n", b, i, before[i], ds[CREAT_REC + i]);
@@ -291,6 +298,7 @@ int tad_run_action(TadRt *t, AclVM *vm, int thing, int arg, AnimState *an) {
 	c->ip = (uint16_t)routine;
 	c->hook_cs = HKG; c->hook_ip = SENT; c->hook = svc_hook; c->hook_user = t;
 	int n = x86_run(c, TADG, SENT, 200000);
+	if (n < 0 && getenv("CAD_TADERR")) fprintf(stderr, "TADERR action thing %d b %d arg %d routine %04x run %d err %d op %02x at %04x:%04x\n", thing, b, arg, routine, n, c->err, c->err_op, c->cs, c->ip);
 	if (n < 0) return -1;
 	if (getenv("CAD_TADDIFF")) for (int i = 0; i < 0xA0; i++) if (before[i] != rec[i]) fprintf(stderr, "ACT b%d a%d thing %d rec[%02x] %02x -> %02x\n", b, arg, thing, i, before[i], rec[i]);
 	memcpy(vm->g, ds + 0x590, sizeof(vm->g));
