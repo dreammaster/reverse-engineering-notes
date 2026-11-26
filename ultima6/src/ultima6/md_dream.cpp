@@ -1147,6 +1147,16 @@ void Game::mdStepOn() {
 			}
 			continue;
 		}
+		if (!o.deleted && i != _leaderObject) { // the teleporting pads (sub_27EE6)
+			int ft = o.type, fr = o.frame;
+			if (ft == 0xAF || ft == 0xA3 || ft == 0xD2 || (ft == 0xB2 && fr < 2) || (ft == 0xB4 && fr <= 1) || (ft == 0xC5 && fr == 3)) {
+				if (_solo >= 0)
+					message(std::string("You must be in party mode to ") + (ft == 0xA3 || ft == 0xB2 ? "leave" : "enter") + ".\n");
+				else
+					mdTeleport(i);
+				return;
+			}
+		}
 		if (o.deleted || o.type != 0x1CD || i == _leaderObject)
 			continue;
 		int kind = o.status & 0xE5;
@@ -1493,6 +1503,69 @@ bool Game::mdProtected(int attacker, int victim) {
 		startTalk(0x40);
 	}
 	return true;
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_25CAC (sub_27EE6, the step on a square): the teleporting pads of Mars (types 0xAF, 0xA3, 0xD2, 0xB2 with a frame below 2, 0xB4 of frame 0 or 1, and the alien device 0xC5 of frame 3) take
+// the party to the place the pad's quality names: the table of 24 places at ds:133E (x, y, level), for the alien device the four of ds:13D0 (on the surface, once actor 0x73's flag 0x10 says it
+// works; quality 0 "Nothing appears to happen."); a quality not in the table says "Aargh!". What stands on the square north of a 0xAF or 0xD2 (south of a 0xA3, two squares on) goes along.
+// In solo mode: "You must be in party mode to leave / enter." (sub_27EE6).
+// APPROX(97): the fades (sub_258D9), the sounds, the arrival's flourish (sub_25B56) and the dream level's creatures (level 3, quality 3: sub_2CAAD) are left out
+void Game::mdTeleport(int pad) {
+	static const int PLACES[25][3] = {{0, 0, 0},         {0x43, 0x51, 1},   {0x80, 0x8D, 0},   {0x76, 0xF2, 3},   {0x7A, 0x0C, 3},   {0x9A, 0x40, 4},   {0x2B2, 0x1CC, 0},
+									  {0x73, 0x40, 4},   {0x29D, 0x1CE, 0}, {0xB3, 0xE1, 4},   {0x27B, 0x1F1, 0}, {0xC3, 0x70, 1},   {0xCB, 0x1D1, 0},   {0x24, 0xF1, 1},   {0x31A, 0x232, 0},
+									  {0x5C, 0xF1, 1},   {0x34C, 0x25A, 0}, {0x7C, 0x28, 4},   {0x13E, 0x118, 0}, {0x0A, 0x60, 5},   {0x3B7, 0x1C4, 0}, {0x5C, 0xB0, 5},   {0x3DC, 0x1DD, 0},
+									  {0x5E, 0x29, 4},   {0x227, 0x1AB, 0}};
+	static const int DEVICE[5][2] = {{0x1AB, 0}, {0xCA, 0x295}, {0x34D, 0x295}, {0x13A, 0x17A}, {0x2CD, 0x1FA}};
+	ObjList &al = _world.actors;
+	int type = _world.objects[pad].type, q = _world.objects[pad].quality;
+	int dx, dy, dz;
+	if (type == 0xC5) {
+		if (!(al.talkFlags[0x73] & 0x10)) {
+			message("The alien device doesn't seem to be functioning.\n");
+			return;
+		}
+		if (q == 0) {
+			message("Nothing appears to happen.\n");
+			return;
+		}
+		if (q > 4) {
+			message("Aargh!\n");
+			return;
+		}
+		dx = DEVICE[q][0];
+		dy = DEVICE[q][1];
+		dz = 0;
+	} else if (q < 1 || q > 0x18) {
+		message("Aargh!\n");
+		return;
+	} else {
+		dx = PLACES[q][0];
+		dy = PLACES[q][1];
+		dz = PLACES[q][2];
+	}
+	if (_combatMode)
+		toggleCombat();
+	int mask = z == 0 ? 0x3FF : 0xFF;
+	if (type == 0xAF || type == 0xD2 || type == 0xA3) {
+		int oy = type == 0xA3 ? 1 : -1, ny = type == 0xA3 ? dy + 2 : dy - 1;
+		std::vector<int> along;
+		_world.objectsAt(x, (y + oy) & mask, z, along);
+		for (int i : along) {
+			if (_world.objects[i].deleted || _world.objects[i].actor >= 0)
+				continue;
+			_world.moveObject(i, dx, ny & (dz == 0 ? 0x3FF : 0xFF), dz);
+			if (_world.objects[i].type == 0x1B9)
+				_world.objects[i].frame = 3;
+		}
+	}
+	changeLevel(dx, dy, dz);
+	_leaderObject = _world.actorObject(1);
 }
 
 } // namespace Ultima6

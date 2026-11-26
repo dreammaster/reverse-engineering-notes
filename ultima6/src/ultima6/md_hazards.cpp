@@ -418,7 +418,7 @@ void Game::mdBarges() {
 				break;
 			}
 		}
-		if (go && !_solo && aboard > 0 && al.partySize > aboard)
+		if (go && _solo < 0 && aboard > 0 && al.partySize > aboard)
 			go = false;
 		if (!go)
 			continue;

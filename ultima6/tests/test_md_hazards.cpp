@@ -479,6 +479,29 @@ int main() {
 		CHECK(logText(g).find("awaken back at the space capsule") != std::string::npos);
 	}
 
+	// a teleporting pad takes the party to the place of its quality
+	{
+		g.x = 0x2B2 - 5;
+		g.y = 0x1CC;
+		g.z = 0;
+		World::Obj pad;
+		pad.status = 0;
+		pad.x = (uint16_t)g.x;
+		pad.y = (uint16_t)g.y;
+		pad.z = 0;
+		pad.type = 0xAF;
+		pad.frame = 0;
+		pad.quantity = 1;
+		pad.quality = 2;
+		pad.actor = -1;
+		pad.parent = -1;
+		w.objects.push_back(pad);
+		w.addToMap((int)w.objects.size() - 1);
+		g.log.clear();
+		g.mdStepOn();
+		CHECK(g.x == 0x80 && g.y == 0x8D && g.z == 0);
+	}
+
 	std::printf(failures ? "FAILED\n" : "ok\n");
 	return failures ? 1 : 0;
 }
