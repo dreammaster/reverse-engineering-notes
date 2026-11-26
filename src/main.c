@@ -1645,6 +1645,13 @@ static void fly_step(Walker *wk, RoomView *rv) {
 		if (rv->fly[k].zi < 40) rv->fly[k].zi++;
 		if (!rv->fly[k].fall && rv->fly[k].zi >= 17) { rv->fly[k].fall = 1; rv->fly[k].zi = 0; }
 		rv->pending_rebuild = 1;
+		if (done && z == 0) {                                            /* 1000:16E5D..16EB1: the fall reaches the floor (z becomes 0): event 11 (0Bh) for the thing (level 1 room 53's falling things, level 2 room 86's) */
+			rv->vm.queue_n = 0;
+			acl_thing_event(&rv->vm, &rv->mp2, t, 11, 0);
+			for (int w = 0; w < rv->vm.queue_n; w++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[w].type, rv->vm.queue[w].arg);
+			rv->pending_rebuild |= rv_changed(rv);
+			roomview_flush_messages(rv);
+		}
 		if (done) { rv->fly[k] = rv->fly[--rv->nfly]; k--; }
 		for (int q = 0; q < nland; q++) {                                /* event 4 (04h) for each thing it came to rest on, argument = the landed thing (level 1's keyholes: handler operand = the key's id) */
 			if (land[q] <= 0 || land[q] >= ACL_THINGS || land[q] == t) continue;
