@@ -1064,7 +1064,7 @@ void Game::seAction(uint32_t sub, int idx) {
 		} else if (f == 5) {
 			_world.moveObject(idx, (ox - 1) & mask, oy, z);
 			_world.objects[idx].frame = 1;
-			// the door at 184,235 on the surface lets actor 4, if in view and not yet met, join: APPROX(82): the conversation that follows is left out
+			// the door at 184,235 on the surface lets actor 4, if in view and not yet met, join and talk (sub_1F870)
 			if (ox == 0x184 && oy == 0x235 && z == 0 && !(_world.actors.talkFlags[4] & 0x10) && seInView(4)) {
 				_world.actors.status[4] &= 0xFB;
 				_world.actors.talkFlags[4] |= 0x10;
