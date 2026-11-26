@@ -458,12 +458,17 @@ void x86_step(X86 *c) {
 }
 
 int x86_run(X86 *c, unsigned stop_cs, unsigned stop_ip, int max_steps) {
+	static int dbg = -1;                                           /* the debug environment is read once (getenv per instruction is slow) */
+	static const char *watch, *trace;
+	if (dbg < 0) { watch = getenv("CAD_X86WATCH"); trace = getenv("CAD_X86TRACE"); dbg = watch || trace; }
 	int n = 0;
 	while (n < max_steps) {
 		if (c->cs == stop_cs && c->ip == stop_ip)
 			return n;
-		if (getenv("CAD_X86WATCH")) { static int last = -1; unsigned a = (unsigned)strtoul(getenv("CAD_X86WATCH"), NULL, 16); int v = c->mem[(0x3000u << 4) + a]; if (v != last) { fprintf(stderr, "WATCH %04x: %02x -> %02x (next ip %04x:%04x)\n", a, last, v, c->cs, c->ip); last = v; } }
-		if (getenv("CAD_X86TRACE")) fprintf(stderr, "X86 %04x:%04x op %02x ax %04x bx %04x sp %04x\n", c->cs, c->ip, c->mem[((unsigned)c->cs << 4) + c->ip], c->ax, c->bx, c->sp);
+		if (dbg) {
+			if (watch) { static int last = -1; unsigned a = (unsigned)strtoul(watch, NULL, 16); int v = c->mem[(0x3000u << 4) + a]; if (v != last) { fprintf(stderr, "WATCH %04x: %02x -> %02x (next ip %04x:%04x)\n", a, last, v, c->cs, c->ip); last = v; } }
+			if (trace) fprintf(stderr, "X86 %04x:%04x op %02x ax %04x bx %04x sp %04x\n", c->cs, c->ip, c->mem[((unsigned)c->cs << 4) + c->ip], c->ax, c->bx, c->sp);
+		}
 		x86_step(c);
 		if (c->err)
 			return -1;

@@ -11,6 +11,7 @@
 #define QBASE 0xF000
 #define SVC_BASE 0xE000          /* fake near addresses stored in the service table: SVC_BASE + byte index */
 #define SENT 1
+static int taddiff(void) { static int v = -1; if (v < 0) v = getenv("CAD_TADDIFF") != NULL; return v; }
 #define ACT_REC 0x3200
 #define PROJ_REC 0x3400
 #define ROOMLIST 0x3600
@@ -234,7 +235,7 @@ int tad_run_behaviour(TadRt *t, AclVM *vm, int b, int cx, int cy, int px, int py
 	if (n < 0 && getenv("CAD_TADERR")) fprintf(stderr, "TADERR beh %d run %d err %d op %02x at %04x:%04x\n", b, n, c->err, c->err_op, c->cs, c->ip);
 	if (n < 0)
 		return -1;
-	if (getenv("CAD_TADDIFF")) for (int i = 0; i < 0x40; i++) if (before[i] != ds[CREAT_REC + i]) fprintf(stderr, "BEH%d rec[%02x] %02x -> %02x\n", b, i, before[i], ds[CREAT_REC + i]);
+	if (taddiff()) for (int i = 0; i < 0x40; i++) if (before[i] != ds[CREAT_REC + i]) fprintf(stderr, "BEH%d rec[%02x] %02x -> %02x\n", b, i, before[i], ds[CREAT_REC + i]);
 	*vx = (int8_t)ds[CREAT_REC + 0x10 + 3];
 	*vy = (int8_t)ds[CREAT_REC + 0x10 + 4];
 	return 0;
@@ -304,7 +305,7 @@ int tad_run_action(TadRt *t, AclVM *vm, int thing, int arg, AnimState *an) {
 	int n = x86_run(c, TADG, SENT, 200000);
 	if (n < 0 && getenv("CAD_TADERR")) fprintf(stderr, "TADERR action thing %d b %d arg %d routine %04x run %d err %d op %02x at %04x:%04x\n", thing, b, arg, routine, n, c->err, c->err_op, c->cs, c->ip);
 	if (n < 0) return -1;
-	if (getenv("CAD_TADDIFF")) for (int i = 0; i < 0xA0; i++) if (before[i] != rec[i]) fprintf(stderr, "ACT b%d a%d thing %d rec[%02x] %02x -> %02x\n", b, arg, thing, i, before[i], rec[i]);
+	if (taddiff()) for (int i = 0; i < 0xA0; i++) if (before[i] != rec[i]) fprintf(stderr, "ACT b%d a%d thing %d rec[%02x] %02x -> %02x\n", b, arg, thing, i, before[i], rec[i]);
 	memcpy(vm->g, ds + 0x590, sizeof(vm->g));
 	commit_rec(t, vm, thing, ACT_REC, an);
 	if (t->proj_thing >= 0) commit_rec(t, vm, t->proj_thing, PROJ_REC, NULL);

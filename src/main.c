@@ -160,6 +160,7 @@ static int room_key(const RoomView *rv) { return 1 + rv->room + 100 * rv->level 
 /* ---- sound: BEEPER.BIN on the interpreter (engine/beeper.c); ids as the game's 1000:156C / 1000:1613 take them ---- */
 static const char *g_lang = "eng";     /* --lang eng|fre|ger: the language file ENGn.LNG / FREn.LNG / GERn.LNG */
 static int g_four_dir;                /* F4: four-direction movement (diagonals ignored) */
+static const char *g_dbg_zones, *g_dbg_creat, *g_dbg_shot, *g_dbg_vars;   /* debug environment, read once in main (getenv per step is slow) */
 static int g_paused;                  /* Pause key in the walk scene */
 static const char *g_sound_opt;       /* --sound adlib|beeper */
 static int g_payoff;                  /* Cadaver 2 is installed (The Payoff follows Cadaver's last level) */
@@ -660,7 +661,7 @@ static void roomview_zone_events(RoomView *rv) {
 		const int8_t *bx = boxes + 6 * (b - 1);
 		int dl = wk->x1, dh = wk->y1, cl = wk->x1 - PL_XS + 1, bl = wk->y1 - PL_YS + 1, ch = wk->z, bh = wk->z + PL_ZS - 1;
 		if (!zone_overlap(bx, (int8_t)dl, (int8_t)dh, (int8_t)cl, (int8_t)bl, (int8_t)bh, (int8_t)ch)) continue;
-		if (getenv("CAD_ZONES")) fprintf(stderr, "ZONE player box %d room %d\n", b, rv->room);
+		if (g_dbg_zones) fprintf(stderr, "ZONE player box %d room %d\n", b, rv->room);
 		int keep = rv->vm.cur; rv->vm.cur = 0;
 		acl_room_event(&rv->vm, &rv->mp2, rv->room, 15, b);
 		rv->vm.cur = keep;
@@ -672,7 +673,7 @@ static void roomview_zone_events(RoomView *rv) {
 		int dl = (int8_t)o->cx1, dh = (int8_t)o->cy1, cl = (int8_t)o->cx0, bl = (int8_t)o->cy0, bh = (int8_t)o->czt, ch = (int8_t)o->czb;
 		for (int b = n; b >= 1; b--) {
 			if (!zone_overlap(boxes + 6 * (b - 1), dl, dh, cl, bl, bh, ch)) continue;
-			if (getenv("CAD_ZONES")) fprintf(stderr, "ZONE thing %d box %d (x %d..%d y %d..%d z %d..%d) room %d\n", t, b, cl, dl, bl, dh, ch, bh, rv->room);
+			if (g_dbg_zones) fprintf(stderr, "ZONE thing %d box %d (x %d..%d y %d..%d z %d..%d) room %d\n", t, b, cl, dl, bl, dh, ch, bh, rv->room);
 			rv->vm.queue_n = 0;
 			acl_thing_event(&rv->vm, &rv->mp2, t, 10, b);
 			for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
@@ -905,7 +906,7 @@ static void creatures_step(Walker *wk, RoomView *rv) {
 		if (ms[0] == 3) {
 			int vx, vy;
 			rv->tad.beh_thing = o->thing;
-			if (getenv("CAD_CREAT") && (atoi(getenv("CAD_CREAT")) < 0 || o->thing == atoi(getenv("CAD_CREAT"))) && rv->tick_dbg++ % 10 == 0) fprintf(stderr, "CREAT %d go %d beh %d at %d,%d player %d,%d\n", o->thing, go, rv->vm.tail[o->thing][1], o->x1, o->y1, wk->x1, wk->y1);
+			if (g_dbg_creat && (atoi(getenv("CAD_CREAT")) < 0 || o->thing == atoi(getenv("CAD_CREAT"))) && rv->tick_dbg++ % 10 == 0) fprintf(stderr, "CREAT %d go %d beh %d at %d,%d player %d,%d\n", o->thing, go, rv->vm.tail[o->thing][1], o->x1, o->y1, wk->x1, wk->y1);
 			int have = go && tad_run_behaviour(&rv->tad, &rv->vm, rv->vm.tail[o->thing][1], o->x1, o->y1, wk->x1, wk->y1, &vx, &vy) == 0;
 			if (go && !have && shot) { vx = (int8_t)ms[3]; vy = (int8_t)ms[4]; have = 1; }      /* no behaviour routine: the velocity the shooter set */
 			if (have) {
@@ -1905,8 +1906,8 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	wk->tick++;
 	rv->vm.held = rv->held;
 	rv->vm.px = wk->x1; rv->vm.py = wk->y1; rv->vm.pz = wk->z;
-	if (getenv("CAD_SHOT") && (wk->tick % 4) == 0) { int st = atoi(getenv("CAD_SHOT")); fprintf(stderr, "S%d tick %d pos %d,%d,%d flags %02x room %d mode %d vel %d,%d A2 %d A0 %d player %d,%d dir %d\n", st, wk->tick, rv->vm.pos[3*st], rv->vm.pos[3*st+1], rv->vm.pos[3*st+2], rv->vm.flags[st], rv->vm.room[st], rv->vm.mstate[st][0], (int8_t)rv->vm.mstate[st][3], (int8_t)rv->vm.mstate[st][4], rv->vm.tail[st][2], rv->vm.tail[st][0], wk->x1, wk->y1, wk->dir); }
-	if (getenv("CAD_VARS")) { static uint8_t pg[0x190]; for (int i = 0; i < 0x190; i++) if (pg[i] != rv->vm.g[i]) { fprintf(stderr, "G tick %d g[%02x] %02x -> %02x\n", wk->tick, i, pg[i], rv->vm.g[i]); pg[i] = rv->vm.g[i]; } }
+	if (g_dbg_shot && (wk->tick % 4) == 0) { int st = atoi(getenv("CAD_SHOT")); fprintf(stderr, "S%d tick %d pos %d,%d,%d flags %02x room %d mode %d vel %d,%d A2 %d A0 %d player %d,%d dir %d\n", st, wk->tick, rv->vm.pos[3*st], rv->vm.pos[3*st+1], rv->vm.pos[3*st+2], rv->vm.flags[st], rv->vm.room[st], rv->vm.mstate[st][0], (int8_t)rv->vm.mstate[st][3], (int8_t)rv->vm.mstate[st][4], rv->vm.tail[st][2], rv->vm.tail[st][0], wk->x1, wk->y1, wk->dir); }
+	if (g_dbg_vars) { static uint8_t pg[0x190]; for (int i = 0; i < 0x190; i++) if (pg[i] != rv->vm.g[i]) { fprintf(stderr, "G tick %d g[%02x] %02x -> %02x\n", wk->tick, i, pg[i], rv->vm.g[i]); pg[i] = rv->vm.g[i]; } }
 	if (g_snd_log) { static int pf = -1, pr = -1; if (rv->vm.flags[467] != pf || rv->vm.room[467] != pr) { fprintf(stderr, "T467 unsup %d last %02x tick %d flags %02x room %d pos %d,%d,%d\n", rv->tad.unsupported, rv->tad.last_unsupported, wk->tick, rv->vm.flags[467], rv->vm.room[467], rv->vm.pos[3*467], rv->vm.pos[3*467+1], rv->vm.pos[3*467+2]); pf = rv->vm.flags[467]; pr = rv->vm.room[467]; } }
 	if (rv->look_pic) { int any = 0; for (int i = 0; i < 4; i++) any |= rv->msgs[i].active; if (!any) rv->look_pic = 0; }
 	if (rv->pending_rebuild && wk->world_key == room_key(rv)) walker_world(wk, rv);   /* things changed: rebuild objects and collision world now, not at the next draw */
@@ -2267,6 +2268,7 @@ int main(int argc, char **argv) {
 		return 1;
 
 	g_snd_log = getenv("CAD_SNDLOG") != NULL;
+	g_dbg_zones = getenv("CAD_ZONES"); g_dbg_creat = getenv("CAD_CREAT"); g_dbg_shot = getenv("CAD_SHOT"); g_dbg_vars = getenv("CAD_VARS");
 	{
 		uint8_t *bin; size_t bl;
 		int adlib = 0;                                     /* --sound adlib|beeper, else the first letter of CADAVER.INI's sound line */
