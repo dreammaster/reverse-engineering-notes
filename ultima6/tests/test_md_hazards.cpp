@@ -538,6 +538,21 @@ int main() {
 		CHECK(w.objects[glass].type == 0xDA);
 	}
 
+	// the pieces of a long body (0x17F) take the frame of their neighbours
+	{
+		int a1 = w.actorObject(0xC1), a2 = w.actorObject(0xC2);
+		if (a1 >= 0 && a2 >= 0) {
+			w.objects[a1].type = 0x17F;
+			w.objects[a2].type = 0x17F;
+			al.status[0xC1] &= ~0x10;
+			al.status[0xC2] &= ~0x10;
+			w.moveObject(a1, g.x + 6, g.y + 6, 0);
+			w.moveObject(a2, g.x + 7, g.y + 6, 0);
+			g.mdSegments();
+			CHECK(w.objects[a1].frame == 2 && w.objects[a2].frame == 8);
+		}
+	}
+
 	// a teleporting pad takes the party to the place of its quality
 	{
 		g.x = 0x2B2 - 5;

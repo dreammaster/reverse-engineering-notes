@@ -185,6 +185,7 @@ void Game::mdMinute() {
 	ObjList &al = _world.actors;
 	mdThings();
 	mdBarges();
+	mdSegments();
 	const bool airless = (al.talkFlags[0x10] & 0x20) != 0;
 	auto bare = [&](const World::Obj &t) { // the name without its article
 		std::string n = Describe::object(_world, t);
@@ -1370,6 +1371,40 @@ void Game::mdHitThing(int attacker, int thing, int weapon, int damage) {
 	}
 	mdSfx(0);
 	_world.deleteObject(thing);
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_2F8F8 (run by sub_2CFE2 when a 0x17F is put down): the creatures of type 0x17F (the actors 0xC0 and up) are the pieces of a long body; the frame of each is the sum of 1, 2, 4 and 8 for the
+// north, east, south and west neighbours that are 0x17F too
+void Game::mdSegments() {
+	ObjList &al = _world.actors;
+	static const int DX[4] = {0, 1, 0, -1}, DY[4] = {-1, 0, 1, 0};
+	auto isPiece = [&](int a) {
+		int k = _world.actorObject(a);
+		return k >= 0 && !_world.objects[k].deleted && _world.objects[k].type == 0x17F && !(al.status[a] & 0x10);
+	};
+	for (int a = 0xC0; a < 0x100; ++a) {
+		if (!isPiece(a))
+			continue;
+		World::Obj &o = _world.objects[_world.actorObject(a)];
+		int mask = 0;
+		for (int d = 0; d < 4; ++d)
+			for (int b = 0xC0; b < 0x100; ++b) {
+				if (!isPiece(b))
+					continue;
+				const World::Obj &n = _world.objects[_world.actorObject(b)];
+				if (n.x == ((o.x + DX[d]) & 0x3FF) && n.y == ((o.y + DY[d]) & 0x3FF) && n.z == o.z) {
+					mask |= 1 << d;
+					break;
+				}
+			}
+		o.frame = (uint8_t)mask;
+	}
 }
 
 } // namespace Ultima6

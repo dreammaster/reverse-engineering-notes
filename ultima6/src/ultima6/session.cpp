@@ -393,8 +393,10 @@ bool Game::step(int dir) {
 	_world.spendMoves(1, cost); // sub_28F67, counted on the square that was left
 	_creatures.checkEggs(x, y, z, gameClock.hour);
 	enterMoongate(x, y);
-	if (_world.game == GameId::MartianDreams)
+	if (_world.game == GameId::MartianDreams) {
 		mdStepOn();
+		mdSegments();
+	}
 	return true;
 }
 
