@@ -187,6 +187,8 @@ int Combat::adjustedDexterity(int actor) const {
 	int v = _world.actors.dexterity[actor];
 	if (k >= 0 && (_world.objects[k].status & 0x40))
 		v = v - 3 < 1 ? 1 : v - 3;
+	if (_world.game == GameId::MartianDreams && k >= 0 && (_world.objects[k].status & 0x80)) // sub_18286: 3 more with the bit 0x80 of the object status, not above 30
+		v = v + 3 > 0x1E ? 0x1E : v + 3;
 	if (_world.actors.status[actor] & 0x04) // asleep
 		v = 1;
 	return v;
