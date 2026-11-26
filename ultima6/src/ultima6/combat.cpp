@@ -227,7 +227,7 @@ bool Combat::hitCheck(int attacker, int defender, int weapon) {
 		return true;
 	const CreatureStats *own = stats(_world.objects[ka].type);
 	bool useStrength = weapon == 4 || weapon == 34 || weapon == 39 || weapon == 44; // spiked helm, club, mace, two-handed hammer
-	if (own && weapon == _world.objects[ka].type && (_world.game == GameId::MartianDreams ? (MovementClasses::flags(MovementClasses::classOf(weapon)) & 0x20) != 0 : (own->flags & CreatureStats::STRENGTH_BASED))) // Martian Dreams' class flag 0x20 (sub_1A0E5)
+	if (own && weapon == _world.objects[ka].type && (_world.game != GameId::Ultima6 ? (MovementClasses::flags(MovementClasses::classOf(weapon)) & 0x20) != 0 : (own->flags & CreatureStats::STRENGTH_BASED))) // Martian Dreams' class flag 0x20 (sub_1A0E5)
 		useStrength = true;
 	int atk = useStrength ? adjustedStrength(attacker) : adjustedDexterity(attacker);
 	int foeDex = adjustedDexterity(defender);
