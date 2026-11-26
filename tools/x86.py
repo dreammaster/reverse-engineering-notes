@@ -324,6 +324,10 @@ class CPU:
         elif op == 0xCB:
             self.ip = self.pop()
             self.s['cs'] = self.pop()
+        elif op == 0xCF:                                  # IRET
+            self.ip = self.pop()
+            self.s['cs'] = self.pop()
+            self.fl = self.pop() | 2
         elif op in (0xC6, 0xC7):
             w = op & 1
             reg, loc = self.modrm(seg)

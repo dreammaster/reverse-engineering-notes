@@ -407,6 +407,10 @@ void x86_step(X86 *c) {
 	} else if (op == 0xCB) {
 		c->ip = (uint16_t)x86_pop(c);
 		c->cs = (uint16_t)x86_pop(c);
+	} else if (op == 0xCF) {                                   /* IRET */
+		c->ip = (uint16_t)x86_pop(c);
+		c->cs = (uint16_t)x86_pop(c);
+		c->fl = (uint16_t)(x86_pop(c) | 2);
 	} else if (op == 0xC6 || op == 0xC7) {
 		int w = op & 1;
 		modrm(c, seg, &l);

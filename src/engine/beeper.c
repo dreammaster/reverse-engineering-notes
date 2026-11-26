@@ -25,10 +25,30 @@ static void io_out(void *user, unsigned port, unsigned v, int w) {
 		else if (v == 0 && b->dsp_reset) { b->dsp_reset = 0; b->dsp_q[0] = 0xAA; b->dsp_n = 1; }
 		return;
 	}
-	if (port == 0x22C) {                                      /* DSP command: E1h = version (3.1) */
+	if (port == 0x22C) {                                      /* DSP command: E1h = version (3.1), 40h = time constant, 14h = 8-bit digital output */
+		if (b->dsp_need > 0) {
+			b->dsp_arg[b->dsp_nargs++] = (int)v;
+			if (--b->dsp_need == 0) {
+				if (b->dsp_cmd == 0x40) b->dsp_tc = (int)v;
+				else if (b->dsp_cmd == 0x14) {
+					int len = (b->dsp_arg[0] | (b->dsp_arg[1] << 8)) + 1;
+					b->dig_pos = ((b->dma_page & 0xF) << 16) | (b->dma_addr & 0xFFFF);
+					b->dig_left = len; b->dig_frac = 0;
+					b->dig_step = (1000000.0 / (256 - b->dsp_tc)) / b->rate;
+					if (getenv("CAD_SNDLOG")) fprintf(stderr, "SB digital: %d bytes from %05x, time constant %d (%.0f Hz)\n", len, b->dig_pos, b->dsp_tc, 1000000.0 / (256 - b->dsp_tc));
+				}
+			}
+			return;
+		}
+		b->dsp_cmd = (int)v; b->dsp_nargs = 0;
 		if (v == 0xE1) { b->dsp_q[0] = 3; b->dsp_q[1] = 1; b->dsp_n = 2; }
+		else if (v == 0x40) b->dsp_need = 1;
+		else if (v == 0x14) b->dsp_need = 2;
 		return;
 	}
+	if (port == 0x0C) { b->dma_ff = 0; return; }
+	if (port == 0x02) { if (b->dma_ff == 0) b->dma_addr = (b->dma_addr & 0xFF00) | (v & 0xFF); else b->dma_addr = (b->dma_addr & 0xFF) | ((v & 0xFF) << 8); b->dma_ff ^= 1; return; }
+	if (port == 0x83) { b->dma_page = v & 0xFF; return; }
 	if (port == 0x388 || port == 0x228) { opl_write_index(&b->opl, (uint8_t)v); return; }
 	if (port == 0x389 || port == 0x229) { opl_write_data(&b->opl, (uint8_t)v); return; }
 	if (port == 0x61) b->port61 = (uint8_t)v;
@@ -141,6 +161,16 @@ void beeper_silence(Beeper *b) {
 	b->mem[(BSEG << 4) + CMD_REQ + 1] = 0;
 }
 
+/* the DSP interrupt at the end of a digital sample: the driver's handler (common entry 073Ch, ends with IRET) clears its 'playing' flag [538] */
+static void sb_irq(Beeper *b) {
+	X86 *c = &b->cpu;
+	c->cs = BSEG; c->ss = 0x0200; c->ds = 0x1F17; c->sp = 0xF000;
+	x86_push(c, 0x0202);                                      /* flags */
+	x86_push(c, RET_CS);
+	x86_push(c, 0);
+	c->ip = 0x073C;
+	x86_run(c, RET_CS, 0, 20000);
+}
 void beeper_render(Beeper *b, int16_t *out, int n) {
 	if (b->adlib) {
 		int i = 0;
@@ -148,6 +178,13 @@ void beeper_render(Beeper *b, int16_t *out, int n) {
 			if (b->left <= 0) { beeper_tick(b); b->left = b->rate / 50; }
 			int k = b->left < n - i ? b->left : n - i;
 			opl_render(&b->opl, out + i, k);
+			for (int j = 0; j < k && b->dig_left > 0; j++) {            /* a digital sample (Sound Blaster): unsigned 8-bit, nearest neighbour */
+				int v = (b->mem[b->dig_pos & (X86_MEM - 1)] - 128) * 60 + out[i + j];
+				out[i + j] = (int16_t)(v > 32767 ? 32767 : v < -32768 ? -32768 : v);
+				b->dig_frac += b->dig_step;
+				while (b->dig_frac >= 1 && b->dig_left > 0) { b->dig_frac -= 1; b->dig_pos++; b->dig_left--; }
+				if (b->dig_left == 0) sb_irq(b);
+			}
 			b->left -= k; i += k;
 		}
 		return;
