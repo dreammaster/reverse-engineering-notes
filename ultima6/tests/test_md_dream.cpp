@@ -49,6 +49,12 @@ static int put(World &w, int type, int frame, int x, int y, int z) {
 	return (int)w.objects.size() - 1;
 }
 
+// the intermission of MIDGAME5.LZC that opens the Avatar's dream waits for a key after each line
+static void skipMidgame(Game &g) {
+	for (int i = 0; i < 12; ++i)
+		g.handleKey(KEY_ENTER);
+}
+
 int main() {
 	static World w;
 	w.game = GameId::MartianDreams;
@@ -76,6 +82,7 @@ int main() {
 	// nobody sits in it
 	g.log.clear();
 	g.mdDreamMachine(cabinet);
+	skipMidgame(g);
 	CHECK(logText(g).find("There is nobody sitting in the machine.") != std::string::npos);
 	CHECK(!g.mdDreaming());
 
@@ -83,6 +90,7 @@ int main() {
 	al.talkFlags[0x46] |= 8;
 	g.log.clear();
 	g.mdDreamMachine(cabinet);
+	skipMidgame(g);
 	CHECK(logText(g).find("ceased functioning") != std::string::npos);
 	al.talkFlags[0x46] &= 0xF7;
 
@@ -93,6 +101,7 @@ int main() {
 	w.moveObject(w.actorObject(2), podX, podY, 0);
 	g.log.clear();
 	g.mdDreamMachine(cabinet);
+	skipMidgame(g);
 	CHECK(logText(g).find("dreams until dawn while the party waits.") != std::string::npos);
 	CHECK(!g.mdDreaming());
 	CHECK(g.gameClock.hour >= 8 && g.gameClock.day == (day % 28) + 1);
@@ -110,6 +119,7 @@ int main() {
 	g.y = podY;
 	g.log.clear();
 	g.mdDreamMachine(cabinet);
+	skipMidgame(g);
 	CHECK(g.mdDreaming());
 	CHECK(g.x == 100 && g.y == 59 && g.z == 2);
 	CHECK(al.partySize == partySize && al.partyRoster[partySize] == 0);
@@ -383,6 +393,7 @@ int main() {
 	// the dream body dies (sub_30093): with a place kept by a square 0xC4 it is made whole there, without one the dreamer wakes
 	{
 		g.mdDreamMachine(cabinet);
+	skipMidgame(g);
 		CHECK(g.mdDreaming());
 		int sq = put(w, 0x1CD, 0, 103, 59, 2);
 		w.objects[sq].status = 0xC4;
@@ -426,6 +437,7 @@ int main() {
 		g.mdDreamFinish(0x51); // wakes
 		CHECK(!g.mdDreaming());
 		g.mdDreamMachine(cabinet);
+	skipMidgame(g);
 		CHECK(g.mdDreaming());
 		g.log.clear();
 		g.mdKilled(0);
@@ -436,6 +448,7 @@ int main() {
 	// the person 0x66 dies in a dream (sub_1DCFF): the dreamer wakes and the machines cease to work
 	{
 		g.mdDreamMachine(cabinet);
+	skipMidgame(g);
 		CHECK(g.mdDreaming());
 		g.mdKilled(0x66);
 		CHECK(!g.mdDreaming() && (al.talkFlags[0x46] & 8));

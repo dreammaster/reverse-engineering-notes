@@ -61,6 +61,13 @@ void Game::mdDreamBody(int bx, int by, int bz, int id, bool checkpoint) {
 // sub_4FB90(quality, sitter): the date the dreamer wakes on is kept (this day if it is before eight in the morning, else the next); the Avatar dreams for real (the body goes to the place of
 // the machine's quality: 0 and 1 to x 100, y 59 of level 2, the others to 147, 52), another member of the party sleeps until dawn while the party waits.
 void Game::mdDreamStart(int quality, int sitter) {
+	if (sitter == 1) // sub_3F79D: the intermission of MIDGAME5.LZC comes first
+		mdMidgame(4, 2, [this, quality, sitter]() { mdDreamStartNow(quality, sitter); });
+	else
+		mdDreamStartNow(quality, sitter);
+}
+
+void Game::mdDreamStartNow(int quality, int sitter) {
 	_mdWake[0] = gameClock.day;
 	_mdWake[1] = gameClock.month;
 	_mdWake[2] = gameClock.year;
@@ -1225,6 +1232,7 @@ void Game::mdDreamMachine(int cabinet) {
 			message("It has no effect.\n");
 			return;
 		}
+		mdMidgame(5, 3, [this, thing, podX, podY]() { // sub_3F7A2: the intermission of MIDGAME6.LZC, then the talk
 		startTalk(0x21);
 		_talkEnd = [this, thing, podX, podY]() {
 			ObjList &a = _world.actors;
@@ -1243,6 +1251,7 @@ void Game::mdDreamMachine(int cabinet) {
 			a.status[0x21] |= 0x10;
 			_world.deleteObject(thing);
 		};
+		});
 		return;
 	}
 	thing = seFind(0x11F, podX, podY);

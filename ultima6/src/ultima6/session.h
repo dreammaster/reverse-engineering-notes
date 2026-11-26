@@ -166,6 +166,7 @@ public:
 	void mdLeverPanel(int lever);                  // sub_5328B
 	void mdLeverWorld(int lever);                  // sub_53496
 	void mdDreamMachine(int cabinet);              // sub_5BC53
+	void mdDreamStartNow(int quality, int sitter);
 	void mdDreamStart(int quality, int sitter);    // sub_4FB90
 	void mdDreamStartLevel3();                     // sub_4FE5E
 	void mdDreamWake();                            // sub_50007
