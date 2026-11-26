@@ -118,6 +118,7 @@ typedef struct RoomView_ {
 	int nverbs;
 	int energy_max_cfg;        /* from LEVn.MP1 */
 	int slow_phase, tick_dbg;
+	int fire_cool;                        /* ds:629: the cooldown after a spell / weapon shot (A[6] / A[3]), counted down once per game step (1000:02BD) */
 	int cast_target;                      /* ds:6A8 / ds:DA..E0: the touched thing a spell is cast on through verb 15 (0 = none) */
 	int save_price;                       /* ds:246: the price of the next saved position */
 	uint16_t spell_str[100], potion_str[100]; int spell_tbl_ok;   /* LEVn.MP1: LNG string ids of the spell / potion names (the tables ds:44 / ds:46) */
@@ -686,6 +687,7 @@ static void roomview_zone_events(RoomView *rv) {
 
 /* one game step (25 Hz): the room timers of 1000:11EB5 (units of 17 steps) -> events 14 and 20 */
 static void roomview_game_step(RoomView *rv) {
+	if (rv->fire_cool > 0) rv->fire_cool--;
 	if (rv->vm.msg_n) roomview_flush_messages(rv);
 	for (int i = 0; i < 4; i++)
 		if (rv->msgs[i].active && --rv->msgs[i].timer <= 0)
@@ -1448,6 +1450,7 @@ static void fire_weapon(Walker *wk, RoomView *rv, int item) {
 		return;
 	}
 	snd_play(0x14);
+	rv->fire_cool = a[3];                                              /* 169CF: ds:629 := A[3] */
 	launch_shot(wk, rv, ammo);
 	uint8_t *sh = &rv->vm.tail[ammo][2];
 	if (*sh != 0xFF && --*sh == 0) {
@@ -1513,6 +1516,7 @@ static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 	int sp = spell_sem(rv, a[0]);
 	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
 	snd_play(a[7] == 0 ? 0x11 : 0x06);
+	rv->fire_cool = a[6];                                               /* 16AC9 / 169A1: ds:629 := A[6] */
 	if (a[7] == 1) {                                                    /* 1000:168F0: mode 1 only: room event 24 (0x4018), argument = the spell number (23 room handlers: magic doors / altars); checked by running 6896 in the emulator */
 		rv->vm.queue_n = 0;
 		acl_room_event(&rv->vm, &rv->mp2, rv->room, 24, a[0]);
@@ -1996,7 +2000,11 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 			rv->menu_open = 1; rv->menu_sel = 0; rv->menu_delay = 0; rv->menu_released = 0;
 			return;
 		}
-		if (edge && rv->held && rv->dead_timer == 0) throw_held(wk, rv);      /* fire with a held thing: throw it instead of jumping */
+		if (rv->held && rv->held < ACL_THINGS && rv->dead_timer == 0) {      /* fire with a held thing: throw it instead of jumping; a held spell / weapon fires while End stays down, once the cooldown ds:629 is 0 (1000:0687 .. 0701) */
+			const ObjSprite *hs = thing_sprite(rv, rv->held);
+			int hc = hs ? hs->header[0x16] : -1;
+			if ((hc == 1 || hc == 4) ? ((keys & 0x80) && rv->fire_cool == 0) : edge) throw_held(wk, rv);
+		}
 	}
 	{
 		/* Jump (emulator, level 1 room 0, End held): after 3 steps z follows +5 5 4 4 4 4 3 3 2 1 then -1 2 3 3 4 4 4 4 5 5 (peak 35, 20 steps), then 2 steps on the ground and
