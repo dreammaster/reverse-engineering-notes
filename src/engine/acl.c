@@ -355,6 +355,13 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 	case 8:                                             /* 7A82: take the thing out of the active (moving) list unless it is already inactive (A[5] bit 7, 5F2F); modelled as setting that bit */
 		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) vm->tail[tid][5] |= 0x80;
 		break;
+	case 7:                                             /* 7A77: put the thing on the active (moving) list ds:B8 (15F18): the inverse of op 8 */
+		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) vm->tail[tid][5] &= (uint8_t)~0x80;
+		break;
+	case 76: test_res(vm, a[0] < 8 && (vm->g[0x11B] & (1 << a[0])) != 0); break;   /* 825A: the shield bit a[0] of ds:6AB is set */
+	case 93:                                            /* 8469: set bit 2 of the thing's A[3] (a bad potion, ...) */
+		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) vm->tail[tid][3] |= 4;
+		break;
 	case 28: if (vm->msg_n < 16) vm->msg[vm->msg_n++] = w; break;
 	case 72:                      /* 48h describe: a string id word; the original shows it as a message next to the thing's picture */
 		if (vm->msg_n < 16) vm->msg[vm->msg_n++] = w | 0x8000;        /* bit 15: the original ends a description with a full stop */
