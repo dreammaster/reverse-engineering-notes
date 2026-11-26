@@ -1919,7 +1919,7 @@ int objh_031(Game &g, Word arg0) {
 		if (g.object_parent_is(0x24, 0x23)) {
 			g.Font_WriteMessage(MSG(3, 7), MSG(3, 8), p9_ax, r6_49, p6_ax);
 		} else {
-			g.Font_WriteMessage(MSG(3, 7), 0, 0, p9_ax, r6_49, p6_ax);
+			g.Font_WriteMessage(MSG(3, 7), 0, p9_ax, r6_49, p6_ax);
 		}
 		if (!(g.object_has_attr(0x29, 0xA))) {
 			g.Font_WriteMessage(ES(112));

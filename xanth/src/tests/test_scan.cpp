@@ -91,7 +91,9 @@ int main() {
 	for (int o = 1; o <= g.state.objects.count(); o++) {
 		if (!g.state.objects.handlerIndex(o))
 			continue;
-		for (int phase = 1; phase <= 6; phase++)
+		if (getenv("XANTH_SCANONLY") && atoi(getenv("XANTH_SCANONLY")) != o)          // XANTH_SCANONLY=<object>: only that object (to debug it)
+			continue;
+		for (int phase = 1; phase <= (getenv("XANTH_PHASES") ? atoi(getenv("XANTH_PHASES")) : 6); phase++)
 			for (size_t vi = 0; vi < g_verbs.size(); vi++) {
 				int verb = g_verbs[vi];
 				g.newGame();

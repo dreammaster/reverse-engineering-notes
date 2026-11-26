@@ -75,7 +75,9 @@ class Evaluator:
     def reg_get16(self, st, r, blk):
         if r in ("si", "di"):
             if self.strfn and r not in st.shadow:
-                raise Unsupported("%s read before it is set (string function)" % r)
+                if blk is None:
+                    raise Unsupported("%s read before it is set (string function)" % r)
+                return ("in", r, blk)         # (the value of a join: a phi variable, assigned at the end of every predecessor)
             return st.shadow.get(r, ("loc", r, 0, 2))
         if r in ("bp", "sp"):
             raise Unsupported("use of " + r)

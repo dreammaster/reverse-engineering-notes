@@ -3918,7 +3918,7 @@ int objh_380(Game &g, Word arg0) {
 			v8 = ES(379);
 		}
 		strcpy(rt.word_81A66, v8);
-		mem8(SEG(seg193), 0x1396) = (mem8(SEG(seg193), 0x1396)) - 0x20;
+		rt.word_81A66[0] -= 0x20;            // (capital letter at the start of the number word)
 		g.Font_WriteMessage(MSG(71, 42), rt.word_81A66, g.print_obj(1, 0x1A7));
 		goto L25;
 	case 9:

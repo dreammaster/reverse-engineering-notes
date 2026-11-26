@@ -238,7 +238,7 @@ def resolve_phis(f):
                             if reg.startswith("s"):
                                 v = pb.exit.stack[int(reg[1:])]
                             else:
-                                v = pb.exit.regs.get(reg)
+                                v = pb.exit.shadow.get(reg) if reg in ("si", "di") else pb.exit.regs.get(reg)
                                 if v is None:
                                     v = ("in", reg, p)
                             pb.stmts.append(("set", ("phi", reg, J), v))

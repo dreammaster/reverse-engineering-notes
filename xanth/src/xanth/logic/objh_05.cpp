@@ -1206,7 +1206,7 @@ int objh_422(Game &g, Word arg0) {
 			p6_dx = DS;
 		}
 		if (g.object_parent_is(0x1D4, 0x1CE)) {
-			g.Font_WriteMessage(MSG(74, 1), 0, 0, p6_ax);
+			g.Font_WriteMessage(MSG(74, 1), 0, p6_ax);
 		} else {
 			g.Font_WriteMessage(MSG(74, 1), ES(388), p6_ax);
 		}

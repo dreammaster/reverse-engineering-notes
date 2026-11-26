@@ -48,5 +48,4 @@ int sub_3F6D0(Word a0 = 0) { return other("sub_3F6D0", a0); }
 int sub_3F731(Word a0 = 0) { return other("sub_3F731", a0); }
 int sub_3F96D(Word a0 = 0) { return other("sub_3F96D", a0); }
 int sub_58F87(Word a0 = 0) { return other("sub_58F87", a0); }
-int sub_5F96C(Word a0 = 0) { return other("sub_5F96C", a0); }
 int write_game_state(Word a0 = 0) { return other("write_game_state", a0); }

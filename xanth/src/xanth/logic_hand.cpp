@@ -192,4 +192,53 @@ int sub_1AAFB(Game &g) {
 	return 0;
 }
 
+// sub_5F96C: the description of what is around in the barrow maze (printed after the room's own text): a sentence chosen by where the player is, built in a text buffer and
+// shown at the end. (The decompiler loses the segments of the text pointers where the paths join.)
+int sub_5F96C(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	char *msg = rt.word_81A66;
+	memcpy(msg, FAR(DS, 0x2DB2), 3);
+	auto add = [&](TextRef id) { strcat(msg, g.ResourceText_GetStr(id)); };
+	if (sub_5F1A7(g, 0)) {
+		if (sub_5F212(g, 0)) {
+			add(MSG(29, 12));
+		} else if (v.flag_852D1_agony_moss != 0) {
+			add(MSG(29, 15));
+		} else {
+			add(MSG(29, 13));
+			if (g.object_parent_is(0xCE, 0xCD))
+				add(MSG(29, 14));
+			strcat(msg, FAR(DS, 0x2DB5));
+		}
+	} else if (sub_5F275(g, 0) && g.object_parent_is(0xD9, 0xCD)) {
+		add(MSG(29, 16));
+	} else if (sub_5F28C(g, 0) && g.object_parent_is(0xDA, 0xCD)) {
+		add(MSG(29, 17));
+	} else if (sub_5F2A3(g, 0)) {
+		add(MSG(29, 18));
+	} else if (sub_5F2C8(g, 0)) {
+		add(MSG(29, 19));
+		if (g.object_parent_is(0x58, 0xD4))
+			add(MSG(29, 20));
+	} else if (sub_5F2FE(g, 0)) {
+		add(MSG(29, 21));
+	} else if (!sub_5F315(g, 0)) {
+		strcat(msg, g.ResourceText_GetStr(g.exeText(0x32FE, (((uint16)(g._rand()) % (uint16)5) * 4) + 0x504)));
+	} else if (sub_5F32C(g, 0)) {
+		int n = 0;
+		for (int off = 0x5E4; off < 0x604; off += 2)
+			if (g.object_has_attr(g.exe16(0x3263, off), 0xA))
+				n++;
+		add(n == 0 ? MSG(29, 23) : MSG(29, 22));
+		add(MSG(29, 24));
+	} else if (sub_5F34B(g, 0)) {
+		add(MSG(29, 25));
+		if (g.object_has_attr(0xD7, 0xE))
+			add(MSG(29, 26));
+	}
+	g.Font_WriteMessage(msg);
+	return 0;
+}
+
 } // namespace Xanth

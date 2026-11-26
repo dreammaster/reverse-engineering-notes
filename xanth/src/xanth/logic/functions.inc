@@ -995,6 +995,7 @@ int sub_5F2FE(Game &g, Word a0);
 int sub_5F315(Game &g, Word a0);
 int sub_5F32C(Game &g, Word a0);
 int sub_5F34B(Game &g, Word a0);
+int sub_5F96C(Game &g);
 int sub_5FCD2(Game &g);
 TextRef sub_60460(Game &g);
 TextRef sub_61792(Game &g, Word a0, Word a1);

@@ -92,7 +92,7 @@ int Game::show_compendium(int convNum, int picNum) {
 	ui.conversationBegin(picNum);
 	unsigned convId = (unsigned)convNum & 0xFFFF;
 	int lastMenu = -1, nextChoice = -1;                 // var_8C / var_8E: the menu shown last and the entry after the one chosen there
-	for (int steps = 0; convId != 0xFFFF && steps < 100000; steps++) {
+	for (int steps = 0; convId != 0xFFFF && steps < 60; steps++) {
 		if (getenv("XANTH_TRACE_CONV"))
 			fprintf(stderr, "conv %X\n", convId);
 		if (convId >= 0x8000) {
@@ -417,6 +417,10 @@ int Game::add_score(int points, int quiet, int silent) {
 
 // ------------------------------------------------------------------------------------------------------------------------------ text
 char *Game::keep(const std::string &s) {
+	if (s.size() > (1u << 20)) {                      // (a text of the original is never this long: something is reading past the end of its string)
+		fprintf(stderr, "keep: a text of %zu bytes\n", s.size());
+		abort();
+	}
 	std::vector<char> &slot = _text[_textNext++ & 7];
 	slot.assign(s.begin(), s.end());
 	slot.push_back(0);

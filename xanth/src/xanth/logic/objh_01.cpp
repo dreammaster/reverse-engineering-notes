@@ -291,23 +291,17 @@ int objh_085(Game &g, Word arg0) {
 		if (v.byte_8524E == 0) {
 			v2 = g.object_get_list_head(1, 0);
 			if (v2 != 0) {
-				do {
+				do {                                        // (what the player carries and is not allowed to take along - the words at DS:235A - goes to storage)
 					v4 = g.object_get_next_sibling(v2);
 					v6 = 0;
-					vE = 0x235A;
-					while ((mem16(DS, vE)) != v2) {
-						vE += 2;
-						if (vE < 0x2366) {
-							continue;
+					for (vE = 0x235A; vE < 0x2366; vE += 2)
+						if (mem16(DS, vE) == v2) {
+							v6 = 1;
+							break;
 						}
-	L17:;
-						if (v6 == 0) {
-							g.object_move(v2, 0x2E, 1);
-						}
-						v2 = v4;
-					}
-					v6 = 1;
-					goto L17;
+					if (v6 == 0)
+						g.object_move(v2, 0x2E, 1);
+					v2 = v4;
 				} while (v4 != 0);
 			}
 			v.byte_8524E = 1;
@@ -446,11 +440,7 @@ int objh_085(Game &g, Word arg0) {
 								goto L75;
 							}
 						}
-						for (;;) {
-	L77:;
-							g.show_compendium(0x58, 0x5A00);
-						}
-						goto L77;
+						g.show_compendium(0x58, 0x5A00);            // (the decompiler made a loop of the last scene of the story)
 					}
 				}
 			}

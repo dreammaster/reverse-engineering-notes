@@ -86,7 +86,6 @@ sub_3F6D0	0
 sub_3F731	0
 sub_3F96D	0
 sub_58F87	0
-sub_5F96C	0
 wait_ticks_or_click	1
 wputchar	1
 write_game_state	1

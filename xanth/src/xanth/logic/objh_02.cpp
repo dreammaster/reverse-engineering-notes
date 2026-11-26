@@ -1917,11 +1917,11 @@ int objh_197(Game &g, Word arg0) {
 		} while (v12 < 0x2D73);
 		if ((int16)v2 > 1) {
 			g.Font_WriteMessage(ES(263), ES(36));
-			g.sub_5F96C();
+			sub_5F96C(g);
 			goto L66;
 		} else {
 			g.Font_WriteMessage(ES(263), (intptr_t)&rt.unk_87D68);
-			g.sub_5F96C();
+			sub_5F96C(g);
 			return 0;
 		}
 		break;
@@ -1929,7 +1929,7 @@ int objh_197(Game &g, Word arg0) {
 	case 10:
 	case 11:
 		g.Font_WriteMessage(MSG(29, 3));
-		g.sub_5F96C();
+		sub_5F96C(g);
 		return 0;
 	case 12:
 	case 13:

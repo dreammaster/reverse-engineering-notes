@@ -2924,6 +2924,21 @@ int sub_70120(Game &g, Word arg0) {
 	return ((v.word_85290 & 0xFF00) | (mem8(rt.seg_8AAE6, ((v.word_85290 * 0x50) + (v2 * 0x10)) + 0x5C0) & 0xFF));
 }
 
+// sub_5F315
+int sub_5F315(Game &g, Word arg0) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	if (v.flag_852AA_exit_fn_12 != 4) {
+		return 0;
+	}
+	if (v.flag_852AC_exit_fn_12 == 1) {
+		return 1;
+	} else {
+		return 0;
+	}
+	return 0;
+}
+
 // sub_1DB4E
 int sub_1DB4E(Game &g, Word arg0) {
 	Vars &v = g.state.v;
@@ -3015,21 +3030,6 @@ TextRef sub_60460(Game &g) {
 	strcat(v6, ES(292));
 	strcat(v6, g.ResourceText_GetStr(g.exeText(rt.word_8AA92, (((g._rand()) & 0xF) * 4) + 0x72)));
 	return v6;
-}
-
-// sub_5F315
-int sub_5F315(Game &g, Word arg0) {
-	Vars &v = g.state.v;
-	Runtime &rt = g.rt;
-	if (v.flag_852AA_exit_fn_12 != 4) {
-		return 0;
-	}
-	if (v.flag_852AC_exit_fn_12 == 1) {
-		return 1;
-	} else {
-		return 0;
-	}
-	return 0;
 }
 
 // Screen_RestoreSubPalettes

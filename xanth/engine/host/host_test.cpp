@@ -263,7 +263,7 @@ static int testScanLog(Host &h, const char *outPath) {
 	long scenarios = 0;
 	for (int o = 1; o <= g_count && o < (int)objs.size(); o++) {
 		if (!objs[o].handler) continue;
-		for (int phase = 1; phase <= 6; phase++)
+		for (int phase = 1; phase <= (getenv("XANTH_PHASES") ? atoi(getenv("XANTH_PHASES")) : 6); phase++)
 			for (int v : verbs) {
 				h.reset();
 				h.tracing = true;
