@@ -87,3 +87,5 @@ python3 tools/fuzz_items.py SEED COUNT    # the same with a carried spell / poti
 Debug environment variables of the port: `CAD_CARRY=thing[:A0[:A1]]`, `CAD_SPELLS`, `CAD_LOOKTEXT=thing`, `CAD_CLASS=thing`, `CAD_MOVE=thing:x:y`, `CAD_SHOT=thing`, `CAD_CREAT=thing|-1`, `CAD_ENERGY=n`, `CAD_SNDLOG`, `CAD_OPS`, `CAD_TADDIFF`, `CAD_VARS`.
 
 `tools/roland_midi.py` runs `ROLAND.BIN` on the Python 8086 interpreter and writes the driver's MPU-401 output as a Standard MIDI file (`python3 tools/roland_midi.py music 1 tune.mid 60`; effects 1-8 with `effect N`).
+
+`tools/scan_tad_errors.sh` runs every room of both games headless and lists failures of the native routines (`CAD_TADERR`); `CAD_X86TRACE=1` traces every instruction and `CAD_X86WATCH=<hex offset>` reports writes to a byte of the TAD image (this found the Payoff stack / code overlap).
