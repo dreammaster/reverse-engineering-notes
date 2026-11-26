@@ -175,6 +175,16 @@ int Combat::adjustedStrength(int actor) const {
 		return 1;
 	int k = _world.actorObject(actor);
 	int v = _world.actors.strength[actor];
+	if (_world.game == GameId::MartianDreams) { // sub_18231: 3 less when gasping (0x40), 3 less for a member (0-15) with the first psychic power, 3 more with the bit 0x80; 1 to 30
+		if (k >= 0 && (_world.objects[k].status & 0x40))
+			v -= 3;
+		size_t at = 0x40 + 2 * (size_t)actor;
+		if (actor <= 0x0F && at < _world.actors.globals.size() && (_world.actors.globals[at] & 0x0F))
+			v -= 3;
+		if (k >= 0 && (_world.objects[k].status & 0x80))
+			v += 3;
+		return v < 1 ? 1 : v > 0x1E ? 0x1E : v;
+	}
 	if (k >= 0 && (_world.objects[k].status & 0x40)) // cursed
 		v = v - 3 < 1 ? 1 : v - 3;
 	return v;
