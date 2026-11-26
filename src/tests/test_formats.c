@@ -15,6 +15,7 @@
 #include "../engine/roomobjs.h"
 #include "../engine/anim.h"
 #include "../engine/collision.h"
+#include "../engine/ruckgrid.h"
 #include "../engine/roomexits.h"
 #include "../engine/panel.h"
 #include "../engine/message.h"
@@ -27,6 +28,7 @@
 #include "vectors_beeper.h"
 #include "vectors_place.h"
 #include "vectors_zone.h"
+#include "vectors_grid.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -172,6 +174,16 @@ int main(int argc, char **argv) {
 		int mask = 0;
 		for (int b = 1; b <= 4; b++) if (zone_overlap(boxes + 6 * (b - 1), (int8_t)v[0], (int8_t)v[1], (int8_t)v[2], (int8_t)v[3], (int8_t)v[4], (int8_t)v[5])) mask |= 1 << (b - 1);
 		if (mask != v[6]) { printf("FAIL zone_overlap vector %d: mask %d want %d\n", i, mask, v[6]); failed++; }
+		checked++;
+	}
+	for (int i = 0; i < N_GRID_VECTORS; i++) {                       /* one cursor move of the rucksack grid, vectors from the original */
+		const int *v = grid_vectors[i];
+		int gx = v[2], grow = v[3], gvis = v[4], gscroll = v[5];
+		ruckgrid_nav(v[1], v[0], &gx, &grow, &gvis, &gscroll);
+		if (gx != v[6] || grow != v[7] || gvis != v[8] || gscroll != v[9]) {
+			printf("FAIL ruckgrid_nav n=%d key %d from %d,%d,%d,%d: got %d,%d,%d,%d want %d,%d,%d,%d\n", v[0], v[1], v[2], v[3], v[4], v[5], gx, grow, gvis, gscroll, v[6], v[7], v[8], v[9]);
+			failed++;
+		}
 		checked++;
 	}
 	for (size_t i = 0; i < sizeof(mjm_vectors) / sizeof(mjm_vectors[0]); i++) {

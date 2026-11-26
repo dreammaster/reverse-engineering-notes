@@ -17,6 +17,7 @@
 #include "engine/objsprites.h"
 #include "engine/roomobjs.h"
 #include "engine/collision.h"
+#include "engine/ruckgrid.h"
 #include "engine/roomexits.h"
 #include "engine/panel.h"
 #include "engine/push.h"
@@ -1722,35 +1723,8 @@ static void grid_begin(RoomView *rv) {
 /* one cursor move of 125CF (key bits 1 up, 2 down, 4 left, 8 right); transcribed from the code, including its wrap-around quirks: Up / Down past the ends of a grid of more than
    16 things leave the visible row and the absolute row out of step, and a wrap to the first row also clamps the column to the last row's width */
 static void grid_nav(RoomView *rv, int key, int n) {
-	int R = n > 1 ? (n - 1) / 4 : 0, C = n > 0 ? (n - 1) % 4 : 0;
-	int dl = rv->gx, dh = rv->grow, cl = rv->gvis, bh = rv->gscroll, clamp = 0;
-	if (key & 1) {                                                    /* up (loc_12790) */
-		int skip = 0;
-		if (--cl < 0) {
-			if (R <= 3) { cl = R; dh = R; clamp = 1; skip = 1; }
-			else { cl = 0; if (--bh < 0) bh = R; }
-		}
-		if (!skip) { if (--dh < 0) { dh = R; clamp = 1; } }
-	} else if (key & 2) {                                             /* down (loc_127B7) */
-		int wrap = 0;
-		if (++cl == 4) {
-			if (R == 3) wrap = 1;
-			else { cl = 3; if (++bh > R) bh = 0; }
-		}
-		if (!wrap && R >= cl) {
-			if (++dh == R) clamp = 1;
-			else if (dh > R) dh = 0;
-		} else { dh = 0; cl = 0; clamp = 1; }                          /* loc_127DA */
-	} else if (key & 4) {                                             /* left (loc_127F8) */
-		if (--dl < 0) dl = dh == R ? C : 3;
-	} else if (key & 8) {                                             /* right (loc_1280C) */
-		dl++;
-		if (dh == R) { if (dl > C) dl = 0; }
-		else if (dl >= 4) dl = 0;
-	}
-	if (clamp && dl >= C) dl = C;
-	rv->gx = dl; rv->grow = dh; rv->gvis = cl; rv->gscroll = bh;
-	int l[64], m = ruck_list(rv, l, 64), idx = dh * 4 + dl;
+	ruckgrid_nav(key, n, &rv->gx, &rv->grow, &rv->gvis, &rv->gscroll);
+	int l[64], m = ruck_list(rv, l, 64), idx = rv->grow * 4 + rv->gx;
 	if (idx >= 0 && idx < m) rv->touch_thing = l[idx];
 }
 static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int space_edge) {

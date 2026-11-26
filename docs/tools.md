@@ -93,3 +93,5 @@ Debug environment variables of the port: `CAD_CARRY=thing[:A0[:A1]]`, `CAD_SPELL
 `tools/gen_place_vectors.py` runs the original drop-spot routine (`1000:6C72`) in the emulator for 480 random cases and writes `src/tests/vectors_place.h`; `test_formats` checks `engine/collision.c place_spot` against them.
 
 `tools/gen_zone_vectors.py` does the same for the room zone overlap test (`1000:2022`): 400 random cases into `src/tests/vectors_zone.h`, checked against `engine/collision.c zone_overlap`.
+
+`tools/gen_grid_vectors.py`: 2080 cursor moves of the whole-rucksack grid (every size 1-32, the four keys, many states) through the original key handler into `src/tests/vectors_grid.h`; `engine/ruckgrid.c` must reproduce them.
