@@ -746,6 +746,8 @@ void Game::command(int key) {
 	case ' ':
 		message("Pass!\n");
 		_world.actors.moves[_world.actors.partyRoster[_member]] = 0; // loc_14395: the leader's moves are set to 0
+		if (_world.game == GameId::MartianDreams)
+			mdBelt(true); // sub_3F545
 		prompt();
 		break;
 	default:

@@ -868,6 +868,7 @@ void Game::mdAction(int recipe, int item, int first, int second) {
 			message("The coal begins moving down the belt.\n");
 			_world.actors.talkFlags[0x73] |= 4;
 			_world.actors.talkFlags[0x71] |= 8;
+			mdBelt(false);
 		}
 		break;
 	}

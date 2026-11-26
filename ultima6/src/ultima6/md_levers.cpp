@@ -215,6 +215,7 @@ void Game::mdCoalBelt() {
 	_world.actors.talkFlags[0x73] |= 4;
 	_world.actors.talkFlags[0x71] |= 8;
 	mdPowerUnderground(true);
+	mdBelt(false);
 }
 
 // sub_5415A (the lenses aligned): the 0xD2 of frame 0 and 1 in the region x 0x13B-0x140, y 0x116-0x11A of the surface go
@@ -386,6 +387,81 @@ void Game::mdLeverWorld(int lever) {
 	default:
 		message("Strangely, the lever does nothing at all!\n");
 		break;
+	}
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_4EEB0 (the thunk sub_3F545, run when the player passes a turn with the space key, and once by sub_4F323): while the belt runs (flag 4 of actor 0x73) every belt piece 0xBC in the view
+// that has bit 1 of its quality set carries what lies on its square one square west, the others one square east. A piece of frame 2 (west) or 0 (east) makes a roller 0xBD under it every
+// fourth time (its quantity counts 4 down); a piece of frame 0 (west) or 2 (east) takes the roller away; a roller on the square goes along. What is carried: people, and things with a weight
+// (or the coal 0x1BF). The leader carried takes the view with it. When the pass is the player's (`pass`), with the flag 8 of actor 0x71 set, one pass in six "The conveyor belt stops.".
+// APPROX(97): the view is the 20 squares round the party (mdInViewAt); the order of the pieces is the object list's
+void Game::mdBelt(bool pass) {
+	ObjList &al = _world.actors;
+	if (!(al.talkFlags[0x73] & 4))
+		return;
+	std::vector<int> east;
+	auto carry = [&](int belt, int dir) {
+		int bx = _world.objects[belt].x, by = _world.objects[belt].y, bz = _world.objects[belt].z, fr = _world.objects[belt].frame;
+		int spawnFrame = dir < 0 ? 2 : 0, takeFrame = dir < 0 ? 0 : 2;
+		if (fr == spawnFrame) {
+			if (_world.objects[belt].quantity == 0) {
+				int r = seMake(0xBD, bx, by, bz, 0, 0);
+				if (r >= 0)
+					_world.objects[r].status &= 0xDF;
+				_world.objects[belt].quantity = 4;
+			}
+			--_world.objects[belt].quantity;
+		} else if (fr == takeFrame) {
+			int r = seFind(0xBD, bx, by);
+			if (r >= 0)
+				_world.deleteObject(r);
+		}
+		int nx = (bx + dir) & 0x3FF;
+		int roller = seFind(0xBD, bx, by);
+		if (roller >= 0)
+			_world.moveObject(roller, nx, by, bz);
+		std::vector<int> here;
+		_world.objectsAt(bx, by, bz, here);
+		for (int h : here) {
+			const World::Obj &o = _world.objects[h];
+			if (o.deleted || h == belt)
+				continue;
+			bool person = o.actor >= 0 && o.actor < 0x100;
+			if (!person && o.type != 0x1BF && _world.weightOfType(o.type, 1) <= 0)
+				continue;
+			_world.moveObject(h, nx, by, bz);
+			if (h == _leaderObject) {
+				x = nx;
+				y = by;
+			}
+		}
+	};
+	for (size_t i = 0; i < _world.objects.size(); ++i) {
+		const World::Obj &o = _world.objects[i];
+		if (o.deleted || !o.onMap() || o.type != 0xBC || !mdInViewAt(o.x, o.y, o.z))
+			continue;
+		if (o.quality & 1) {
+			int bi = (int)i;
+			carry(bi, -1);
+		} else if (east.size() < 0x200) {
+			east.push_back((int)i);
+		}
+	}
+	while (!east.empty()) {
+		int bi = east.back();
+		east.pop_back();
+		carry(bi, 1);
+	}
+	if (pass && (al.talkFlags[0x71] & 8) && seRoll(0, 5) == 0) {
+		message("The conveyor belt stops.\n");
+		al.talkFlags[0x73] &= 0xFB;
+		al.talkFlags[0x71] &= 0xF7;
 	}
 }
 

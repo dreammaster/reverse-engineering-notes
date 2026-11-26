@@ -479,6 +479,37 @@ int main() {
 		CHECK(logText(g).find("awaken back at the space capsule") != std::string::npos);
 	}
 
+	// the conveyor belt carries the coal one square west (bit 1 of the quality) or east
+	{
+		auto make = [&](int type, int x, int y, int q, int frame) {
+			World::Obj o;
+			o.status = 0;
+			o.x = (uint16_t)x;
+			o.y = (uint16_t)y;
+			o.z = 0;
+			o.type = (uint16_t)type;
+			o.frame = (uint8_t)frame;
+			o.quantity = 1;
+			o.quality = (uint8_t)q;
+			o.actor = -1;
+			o.parent = -1;
+			w.objects.push_back(o);
+			w.addToMap((int)w.objects.size() - 1);
+			return (int)w.objects.size() - 1;
+		};
+		int bx = g.x + 4, by = g.y + 2;
+		make(0xBC, bx, by, 1, 1);
+		int coal = make(0x1BF, bx, by, 0, 0);
+		make(0xBC, bx + 5, by, 0, 1);
+		int coal2 = make(0x1BF, bx + 5, by, 0, 0);
+		al.talkFlags[0x73] &= 0xFB;
+		g.mdBelt(false);
+		CHECK(w.objects[coal].x == bx); // the belt is not running
+		al.talkFlags[0x73] |= 4;
+		g.mdBelt(false);
+		CHECK(w.objects[coal].x == bx - 1 && w.objects[coal2].x == bx + 6);
+	}
+
 	// a teleporting pad takes the party to the place of its quality
 	{
 		g.x = 0x2B2 - 5;
