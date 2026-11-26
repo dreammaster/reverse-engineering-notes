@@ -49,6 +49,7 @@ static void io_out(void *user, unsigned port, unsigned v, int w) {
 	if (port == 0x0C) { b->dma_ff = 0; return; }
 	if (port == 0x02) { if (b->dma_ff == 0) b->dma_addr = (b->dma_addr & 0xFF00) | (v & 0xFF); else b->dma_addr = (b->dma_addr & 0xFF) | ((v & 0xFF) << 8); b->dma_ff ^= 1; return; }
 	if (port == 0x83) { b->dma_page = v & 0xFF; return; }
+	if (b->roland && port == 0x330) { midiopl_byte(&b->midi, (int)v); return; }
 	if (port == 0x388 || port == 0x228) { opl_write_index(&b->opl, (uint8_t)v); return; }
 	if (port == 0x389 || port == 0x229) { opl_write_data(&b->opl, (uint8_t)v); return; }
 	if (port == 0x61) b->port61 = (uint8_t)v;
@@ -69,6 +70,7 @@ static unsigned io_in(void *user, unsigned port, int w) {
 	}
 	if (port == 0x22E) return b->dsp_n ? 0x80 : 0;
 	if (port == 0x22C) return 0;
+	if (b->roland && port == 0x330) return 0xFE;                      /* MPU-401: data port reads ACK */
 	if (port == 0x388 || port == 0x228) return opl_read_status(&b->opl);
 	return port == 0x61 ? b->port61 : 0;
 }
@@ -88,14 +90,18 @@ static int call_far(Beeper *b, unsigned off) {
 	x86_push(c, RET_CS);
 	x86_push(c, 0);
 	c->ip = (uint16_t)off;
-	return x86_run(c, RET_CS, 0, 200000);
+	return x86_run(c, RET_CS, 0, 3000000);
 }
 
 int beeper_init(Beeper *b, const uint8_t *bin, size_t len, int rate) { return beeper_init_kind(b, bin, len, rate, 0); }
 
-int beeper_init_kind(Beeper *b, const uint8_t *bin, size_t len, int rate, int adlib) {
+static int init_common(Beeper *b, const uint8_t *bin, size_t len, int rate, int adlib, int roland);
+int beeper_init_kind(Beeper *b, const uint8_t *bin, size_t len, int rate, int adlib) { return init_common(b, bin, len, rate, adlib, 0); }
+int beeper_init_roland(Beeper *b, const uint8_t *bin, size_t len, int rate) { return init_common(b, bin, len, rate, 1, 1); }
+static int init_common(Beeper *b, const uint8_t *bin, size_t len, int rate, int adlib, int roland) {
 	memset(b, 0, sizeof(*b));
 	b->adlib = adlib;
+	b->roland = roland;
 	if (len < 8 || len > 0x10000) return -1;
 	b->mem = calloc(1, X86_MEM);
 	if (!b->mem) return -1;
@@ -107,6 +113,7 @@ int beeper_init_kind(Beeper *b, const uint8_t *bin, size_t len, int rate, int ad
 	b->cpu.int_cb = int_cb;
 	b->rate = rate > 0 ? rate : 44100;
 	opl_init(&b->opl, b->rate);
+	midiopl_init(&b->midi, &b->opl);
 	int ir = call_far(b, 4);
 	if (ir < 0 || (b->cpu.ax & 0xFF) == 0) {
 		if (getenv("CAD_SNDLOG")) fprintf(stderr, "driver init: run %d err %d op %02x al %02x\n", ir, b->cpu.err, b->cpu.err_op, b->cpu.ax & 0xFF);

@@ -30,4 +30,4 @@ All file formats are decoded and verified against the original running in an emu
 creatures (the original TAD routines on an 8086 interpreter), verbs, chests, the rucksack (small view and scrolling grid), held and thrown things, spells,
 potions and throwing weapons with projectiles, map, jumping, level progression, death, save slots and sound from all three PC drivers (the original
 `BEEPER.BIN`, `ADLIB.BIN` and `SBLASTER.BIN` on the interpreter, with a small OPL2 synthesiser). Open items: a few spell / potion effects, the intro's story pages,
-the original save format, Roland music (exported as MIDI by `tools/roland_midi.py`, not played) — see `docs/roadmap.md`.
+the original save format (documented, not read) — see `docs/roadmap.md`.

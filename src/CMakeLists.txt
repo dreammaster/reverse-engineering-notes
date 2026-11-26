@@ -30,6 +30,7 @@ add_library(cadaver_engine STATIC
   engine/tad.c
   engine/beeper.c
   engine/opl.c
+  engine/midiopl.c
   engine/push.c
   engine/acl.c
   engine/gamefiles.c)

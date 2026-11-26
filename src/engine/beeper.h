@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include "x86.h"
 #include "opl.h"
+#include "midiopl.h"
 
 typedef struct Beeper {
 	X86 cpu;
@@ -25,6 +26,8 @@ typedef struct Beeper {
 	uint8_t flags[0x80];        /* ds:40F0: effect number of the looping sounds that are on (0 = off) */
 	int adlib;                  /* ADLIB.BIN: the driver writes OPL registers (ports 388h/389h) instead of programming the speaker */
 	Opl opl;
+	int roland;                 /* ROLAND.BIN: the driver writes MIDI bytes to the MPU-401 (port 330h); they are played on the OPL synthesiser (engine/midiopl.c) */
+	MidiOpl midi;
 	int dsp_reset, dsp_q[8], dsp_n;     /* Sound Blaster DSP: reset handshake and a small read queue */
 	int dsp_cmd, dsp_need, dsp_nargs, dsp_arg[2], dsp_tc;   /* DSP command being collected: 40h (time constant), 14h (8-bit single-cycle output: length - 1) */
 	unsigned dma_addr, dma_page; int dma_ff;                /* the 8237 channel 1 registers the driver programs (ports 02h, 83h; 0Ch clears the flip-flop) */
@@ -40,6 +43,8 @@ typedef struct Beeper {
 int beeper_init(Beeper *b, const uint8_t *bin, size_t len, int sample_rate);
 /* the same for ADLIB.BIN (adlib = 1) */
 int beeper_init_kind(Beeper *b, const uint8_t *bin, size_t len, int sample_rate, int adlib);
+/* kind: 0 beeper, 1 adlib, 2 roland (ROLAND.BIN) */
+int beeper_init_roland(Beeper *b, const uint8_t *bin, size_t len, int sample_rate);
 void beeper_free(Beeper *b);
 /* One 50 Hz driver tick; returns the sounding PIT divisor (0 = silent). */
 unsigned beeper_tick(Beeper *b);

@@ -163,7 +163,7 @@ static const char *g_lang = "eng";     /* --lang eng|fre|ger: the language file 
 static int g_four_dir;                /* F4: four-direction movement (diagonals ignored) */
 static const char *g_dbg_zones, *g_dbg_creat, *g_dbg_shot, *g_dbg_vars;   /* debug environment, read once in main (getenv per step is slow) */
 static int g_paused;                  /* Pause key in the walk scene */
-static const char *g_sound_opt;       /* --sound adlib|beeper */
+static const char *g_sound_opt;       /* --sound adlib|beeper|sblaster|roland */
 static int g_payoff;                  /* Cadaver 2 is installed (The Payoff follows Cadaver's last level) */
 static Beeper g_snd;
 static int g_snd_ok, g_snd_log;
@@ -2342,16 +2342,16 @@ int main(int argc, char **argv) {
 	{
 		uint8_t *bin; size_t bl;
 		int adlib = 0;                                     /* --sound adlib|beeper, else the first letter of CADAVER.INI's sound line */
-		int sb = 0;
-		if (g_sound_opt) { adlib = !strcmp(g_sound_opt, "adlib"); sb = !strcmp(g_sound_opt, "sblaster"); }
+		int sb = 0, rol = 0;
+		if (g_sound_opt) { adlib = !strcmp(g_sound_opt, "adlib"); sb = !strcmp(g_sound_opt, "sblaster"); rol = !strcmp(g_sound_opt, "roland"); }
 		else {
 			uint8_t *ini; size_t il;
-			if (gamefiles_read(&g, "cadaver.ini", -1, &ini, &il) == 0) { adlib = il > 0 && (ini[0] == 'A' || ini[0] == 'a'); sb = il > 0 && (ini[0] == 'S' || ini[0] == 's'); free(ini); }
+			if (gamefiles_read(&g, "cadaver.ini", -1, &ini, &il) == 0) { adlib = il > 0 && (ini[0] == 'A' || ini[0] == 'a'); sb = il > 0 && (ini[0] == 'S' || ini[0] == 's'); rol = il > 0 && (ini[0] == 'R' || ini[0] == 'r'); free(ini); }
 		}
-		if (gamefiles_read(&g, sb ? "sblaster.bin" : adlib ? "adlib.bin" : "beeper.bin", -1, &bin, &bl) == 0) {
+		if (gamefiles_read(&g, rol ? "roland.bin" : sb ? "sblaster.bin" : adlib ? "adlib.bin" : "beeper.bin", -1, &bin, &bl) == 0) {
 			uint8_t *un = NULL; size_t ul = 0;
 			if (bl > 4 && !memcmp(bin, "RNC\1", 4) && rnc1_unpack(bin, bl, &un, &ul) == 0) { free(bin); bin = un; bl = ul; }
-			g_snd_ok = beeper_init_kind(&g_snd, bin, bl, 44100, adlib || sb) == 0;
+			g_snd_ok = (rol ? beeper_init_roland(&g_snd, bin, bl, 44100) : beeper_init_kind(&g_snd, bin, bl, 44100, adlib || sb)) == 0;
 			free(bin);
 		}
 	}

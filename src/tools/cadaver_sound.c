@@ -8,16 +8,16 @@
 #include <string.h>
 
 int main(int argc, char **argv) {
-	if (argc < 5) { fprintf(stderr, "usage: %s gamedir beeper|adlib id|music out.wav [seconds]\n", argv[0]); return 2; }
+	if (argc < 5) { fprintf(stderr, "usage: %s gamedir beeper|adlib|sblaster|roland id|music out.wav [seconds]\n", argv[0]); return 2; }
 	GameFiles g;
 	if (gamefiles_open(&g, argv[1]) != 0) { fprintf(stderr, "no game in %s\n", argv[1]); return 1; }
-	int sb = !strcmp(argv[2], "sblaster"), adlib = !strcmp(argv[2], "adlib") || sb;
+	int sb = !strcmp(argv[2], "sblaster"), rol = !strcmp(argv[2], "roland"), adlib = !strcmp(argv[2], "adlib") || sb || rol;
 	uint8_t *bin; size_t bl;
-	if (gamefiles_read(&g, sb ? "sblaster.bin" : adlib ? "adlib.bin" : "beeper.bin", -1, &bin, &bl) != 0) { fprintf(stderr, "driver not found\n"); return 1; }
+	if (gamefiles_read(&g, rol ? "roland.bin" : sb ? "sblaster.bin" : adlib ? "adlib.bin" : "beeper.bin", -1, &bin, &bl) != 0) { fprintf(stderr, "driver not found\n"); return 1; }
 	uint8_t *un = NULL; size_t ul = 0;
 	if (bl > 4 && !memcmp(bin, "RNC\1", 4) && rnc1_unpack(bin, bl, &un, &ul) == 0) { free(bin); bin = un; bl = ul; }
 	static Beeper b;
-	if (beeper_init_kind(&b, bin, bl, 22050, adlib) != 0) { fprintf(stderr, "driver init failed\n"); return 1; }
+	if ((rol ? beeper_init_roland(&b, bin, bl, 22050) : beeper_init_kind(&b, bin, bl, 22050, adlib)) != 0) { fprintf(stderr, "driver init failed\n"); return 1; }
 	int music = !strncmp(argv[3], "music", 5), tune = music && argv[3][5] == ':' ? atoi(argv[3] + 6) : 1, dig = !strncmp(argv[3], "digital:", 8);
 	double secs = argc > 5 ? atof(argv[5]) : 10;
 	if (dig) b.mem[(0x3000 << 4) + 0xA] = (uint8_t)(0x80 | atoi(argv[3] + 8));
