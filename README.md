@@ -21,7 +21,7 @@ ctest --test-dir build --output-on-failure          # needs the retail data next
 ./build/cadaver -g cadaver2                         # Space = Cadaver, P = The Payoff
 ```
 
-Keys: arrows (+ Insert/Delete/PgUp/PgDn diagonals) move, End = fire (verb menu / jump / cast / throw), Space or Return = rucksack, H = hold, F1 = map, `I` = status, S / L = pay-to-save / load slots 0-9, F5/F9 = quick save / load.
+Keys: arrows (+ Insert/Delete/PgUp/PgDn diagonals) move, End = fire (verb menu / jump / cast / throw), Space or Return = rucksack, H = hold, F1 = map, `I` = status, F5 / F6 = pay-to-save / load slots 0-9 (S / L too), F9 / F10 = quick load / save.
 Headless runs (`--sim`, `--screenshot`) are described in `src/README.md`; `sh tools/check_all.sh` builds, runs the tests, the smoke run over every level and the rename-table checks.
 
 ## State in one paragraph

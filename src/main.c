@@ -2343,7 +2343,10 @@ int main(int argc, char **argv) {
 				else if (scene == SCENE_WALK && k == SDLK_c) { for (int i = 0; i < 4; i++) g_room.msgs[i].active = 0; changed = 0; }   /* C: clear all game messages */
 				else if (scene == SCENE_WALK && k == SDLK_F4) { g_four_dir ^= 1; changed = 0; }
 				else if (k == SDLK_F11) { SDL_SetWindowFullscreen(win, (SDL_GetWindowFlags(win) & SDL_WINDOW_FULLSCREEN_DESKTOP) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP); changed = 0; }
-				else if (scene == SCENE_WALK && k == SDLK_F5) { game_save(&g_walk, &g_room, -1); changed = 0; }
+				else if (scene == SCENE_WALK && (k == SDLK_F5 || k == SDLK_F6) && g_room.ok && g_room.dead_timer == 0) { savemode_start(k == SDLK_F5); changed = 0; }   /* the original's keys (1000:0247: scancodes 3Fh / 40h -> 10F68: save / load) */
+				else if (scene == SCENE_WALK && k == SDLK_F7) { g_paused ^= 1; snd_silence(); if (!g_paused) { g_room.snd_key = 0; g_room.nroom_snd = 0; g_room.push_snd = 0; g_room.pending_rebuild = 1; } changed = 0; }   /* 41h: pause */
+				else if (scene == SCENE_WALK && k == SDLK_F8) { for (int i = 0; i < 4; i++) g_room.msgs[i].active = 0; changed = 0; }   /* 42h: clear the messages (13514) */
+				else if (scene == SCENE_WALK && k == SDLK_F10) { game_save(&g_walk, &g_room, -1); changed = 0; }   /* a quick save without the price (not in the original) */
 				else if (scene == SCENE_WALK && k == SDLK_F9) { game_load(&g_room, -1); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_F1) { map_open_view(&g_room); changed = 0; }
 				else if (scene == SCENE_WALK && k == SDLK_i) { g_room.show_status ^= 1; changed = 0; }
