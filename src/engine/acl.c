@@ -386,6 +386,8 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 	}
 }
 
+static int op_trace(void) { static int v = -1; if (v < 0) v = getenv("CAD_OPTRACE") != NULL; return v; }
+
 /* Execute (execute != 0) or just skip an op sequence up to the terminator `end`; returns the position after it. */
 static size_t exec_ops(AclVM *vm, const uint8_t *b, size_t len, size_t p, int end, int execute, int *bad) {
 	while (p < len) {
@@ -394,7 +396,9 @@ static size_t exec_ops(AclVM *vm, const uint8_t *b, size_t len, size_t p, int en
 			return p;
 		if (op >= 94 && bad)
 			*bad = 1;
+		if (op >= 94 && execute) return p;                /* no handler: the original indexes past its table (Payoff level 2 thing 500's contact script has no 17h terminator and runs on into the A structure: `2D FF FA`, then op 80h); stop here */
 		int n = op < 94 ? OPLEN[op] : 0;
+		if (execute && op_trace()) { fprintf(stderr, "  op %d @%zu:", op, p - 1); for (int q = 0; q < 8 && p + q < len; q++) fprintf(stderr, " %02x", b[p + q]); fprintf(stderr, "\n"); }
 		if (n < 0) {                                  /* IF-like block */
 			int extra = (op == 58 || op == 59) ? 1 : 0;
 			uint8_t hdr = extra && p < len ? b[p] : 0;
@@ -475,6 +479,7 @@ void acl_room_event(AclVM *vm, const Mp2 *mp2, int room, int type, int arg) {
 				vm->disarm = 0;
 				vm->c605 = 0;
 				vm->queue_n = 0;
+				if (op_trace()) { fprintf(stderr, "ROOM %d event type %d ln %d @%zu cl %d:", room, ty, ln, p, cl); for (int q = 0; q < ln; q++) fprintf(stderr, " %02x", r[p + q]); fprintf(stderr, "\n"); }
 				exec_ops(vm, r, (size_t)len, p + 2 + (size_t)cl, 0x17, 1, NULL);
 				for (int q = 0; q < vm->queue_n && tail < 64; q++) {
 					pend[tail].type = vm->queue[q].type;
@@ -505,6 +510,7 @@ void acl_thing_event(AclVM *vm, const Mp2 *mp2, int thing, int type, int arg) {
 			vm->disarm = 0;
 			vm->c605 = 0;
 			vm->queue_n = 0;
+			if (op_trace()) { fprintf(stderr, "THING %d (len %d, events %d) event type %d ln %d @%zu cl %d:", thing, len, r[11], ty, ln, p, cl); for (int q = 0; q < len; q++) fprintf(stderr, " %02x", r[q]); fprintf(stderr, "\n"); }
 			exec_ops(vm, r, (size_t)len, p + 2 + (size_t)cl, 0x17, 1, NULL);
 			if (!keep || vm->disarm)
 				*arm |= (uint8_t)(1 << (i % 8));
