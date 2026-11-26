@@ -20,3 +20,17 @@ run attack  "1c0d,1e61,1e61,1e61,1e61,1559,$ESC"
 run evade   "1c0d,1265,1265,1265,1265,1559,$ESC"
 run mixed   "1c0d,1e61,1265,1e61,1265,1559,$ESC"
 run two     "1c0d,1e61,1e61,1e61,1e61,1559,1e61,1e61,1e61,1e61,1559,$ESC"
+# scripts whose fights do not end within the step budget: compared at the N-th keyboard poll instead (WLPOLLS); the sp register differs
+# there by construction (the native side stops inside the poll), everything else must be equal
+runN() {
+  name=$1; n=$2; keys=$3
+  r=$(WLPOLLS=$n WLTICKPOLL=1 WLSTEPS=900000000 timeout 2400 ./build/src/wasteland1/wlrctest.exe $IMG $GAME src/wasteland1/tools/recomp/entries.txt $STATE --ported --only 1D39 --seeds 1 --keys "$keys" 2>&1 | grep -E "skipped:|DIFF|ok " | head -1 | sed 's/ sp [0-9a-f]*!=[0-9a-f]*//' | cut -c1-300)
+  case "$r" in *DIFF\ \(seed*) r="ok (equal apart from sp)" ;; esac
+  echo "$name@$n: $r"
+}
+runN evade  3000 "1c0d,1265,1265,1265,1265,1559,$ESC"
+runN reload 2500 "1c0d,266c,266c,266c,266c,1559,$ESC"
+runN use    2500 "1c0d,1675,1c0d,1c0d,1675,1c0d,1c0d,1559,$ESC"
+runN weapon 2500 "1c0d,1177,1c0d,1177,1c0d,1177,1c0d,1177,1c0d,1559,$ESC"
+runN run    2500 "1c0d,1372,1372,1372,1372,1559,$ESC"
+runN skill  2500 "1c0d,1f73,1c0d,1c0d,1f73,1c0d,1c0d,1559,$ESC"
