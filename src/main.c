@@ -1086,15 +1086,25 @@ static void ruck_show(RoomView *rv, int t) {
 	rv->last_item = t;
 	if (!sp) return;
 	int h16 = sp->header[0x16], h17 = sp->header[0x17];
-	if (h17 != 6 && !(h16 & 0x80)) rv->verbs[rv->nverbs++] = 0x0B;      /* look (emulator: the pickaxe has it; the diary, class 6, shows its class verb 8 first and no look) */
+	/* 1000:12C72, in the original's order: [16 cast on the touched thing] [12 / 15 depending on the touched thing's class] class verb (not 3) / look / hold / drop / [14] / joystick */
+	int tg = rv->ruck_target;
+	if (tg > 0 && tg != t && tg < ACL_THINGS) {
+		const ObjSprite *ts = thing_sprite(rv, tg);
+		int tc = ts ? ts->header[0x16] : -1;
+		if (h16 == 1 && rv->vm.tail[t][7] == 2) rv->verbs[rv->nverbs++] = 16;
+		if (tc == 8) { const uint8_t *ta = rv->vm.tail[tg]; if ((ta[4] & 0x10) && (ta[4] & 1)) rv->verbs[rv->nverbs++] = 12; }   /* an open container that takes things */
+		else if (tc == 0x0B) rv->verbs[rv->nverbs++] = 12;
+		else if (tc == 0x0C) rv->verbs[rv->nverbs++] = 15;
+	}
 	if (h17 && !(rv->vm.flags2[t] & 0x40)) {
 		static const uint8_t cv[10] = {0x00, 0x04, 0x09, 0xFF, 0x07, 0x03, 0x08, 0xFF, 0xFF, 0xFF};
 		int c = h17 < 10 ? cv[h17] : 0xFF;
-		if (!(c & 0x80)) rv->verbs[rv->nverbs++] = (uint8_t)c;
+		if (!(c & 0x80) && c != 3) rv->verbs[rv->nverbs++] = (uint8_t)c;
 	}
-	if ((sp->header[12] & 1) && !(rv->vm.flags2[t] & 4)) rv->verbs[rv->nverbs++] = 0x0D;   /* the touched list's 0Ah (icon 10) shows as icon 13 when carried */
-	if (rv->ruck_target >= 0 && rv->ruck_target != t) rv->verbs[rv->nverbs++] = 15;   /* insert / give into what is touched */
+	if (h17 != 6 && !(h16 & 0x80)) rv->verbs[rv->nverbs++] = 0x0B;      /* look (emulator: the pickaxe has it; the diary, class 6, shows its class verb 8 first and no look) */
+	rv->verbs[rv->nverbs++] = 0x0D;                                      /* hold */
 	rv->verbs[rv->nverbs++] = 1;
+	if (sp->header[0x1D] == 0x12) rv->verbs[rv->nverbs++] = 0x0E;
 	rv->verbs[rv->nverbs++] = 6;
 	int nm = (sp->header[10] << 8) | sp->header[11];
 	rv->label_id = nm < 0x8000 ? nm : -1;
@@ -1788,22 +1798,38 @@ static void ruck_step(Walker *wk, RoomView *rv, int keys, int fire_edge, int spa
 			snprintf(tx, sizeof(tx), "%s%s", lng_str(rv, 5), nm < 0x8000 ? lng_str(rv, nm) : "");
 			msg_show_text(rv, tx);
 			rv->grid_open = 1; rv->touch_thing = t; grid_begin(rv); grid_verbs(rv);
-		} else if (verb == 15 && rv->ruck_target >= 0) {                  /* 1000:344D: event 26 (1Ah) for the touched thing, argument = the carried thing */
+		} else if ((verb == 15 || verb == 12 || verb == 16) && rv->ruck_target > 0) {
+			int tg = rv->ruck_target;
+			const ObjSprite *ts = thing_sprite(rv, tg);
+			int tc = ts ? ts->header[0x16] : -1;
 			rv->vm.queue_n = 0;
-			acl_thing_event(&rv->vm, &rv->mp2, rv->ruck_target, 26, t);
+			if (verb == 15) {                                           /* 1000:344D: event 26 (1Ah) for the touched thing, argument = the carried thing; the carried thing leaves the rucksack (13509) */
+				acl_thing_event(&rv->vm, &rv->mp2, tg, 26, t);
+				rv->vm.flags[t] |= 0x80; if (rv->held == t) rv->held = 0;
+			} else if (verb == 12) {                                    /* 1000:3381: put into a container (class 8: its content word A[0..1] must be empty; the lid closes) or hand over to a class 0Bh thing; sound 1Eh, event 18 (12h) with the carried thing */
+				uint8_t *ta = rv->vm.tail[tg];
+				if (tc == 8 && (ta[0] || ta[1])) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x1B; }
+				else {
+					if (tc == 8) { ta[0] = (uint8_t)(t >> 8); ta[1] = (uint8_t)t; rv->vm.flags[t] |= 0x80; if (rv->held == t) rv->held = 0; ta[4] &= (uint8_t)~1; }
+					snd_play(0x1E);
+					acl_thing_event(&rv->vm, &rv->mp2, tg, 18, t);
+				}
+			} else {                                                    /* 1000:2E40: event 1 for the touched thing, then the spell routine with ds:6A8 = 1 (the touched thing is the target) */
+				acl_thing_event(&rv->vm, &rv->mp2, tg, 1, t);
+				for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+				rv->vm.queue_n = 0;
+				const ObjSprite *cs = thing_sprite(rv, t);
+				if (cs && cs->header[0x16] == 1 && !(rv->vm.flags[t] & 0x80)) { rv->cast_target = tg; cast_spell_item(wk, rv, t); rv->cast_target = 0; }
+			}
 			for (int q = 0; q < rv->vm.queue_n; q++)
 				acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
 			rv->pending_rebuild |= rv_changed(rv);
 			roomview_flush_messages(rv);
-			{                                                           /* 1000:344D goes on with the spell routine 1689C, ds:6A8 = 1: the touched thing is the target of a spell cast on an object */
-				const ObjSprite *cs = thing_sprite(rv, t);
-				if (cs && cs->header[0x16] == 1 && !(rv->vm.flags[t] & 0x80)) { rv->cast_target = rv->ruck_target; cast_spell_item(wk, rv, t); rv->cast_target = 0; }
-			}
 			ruck_close(rv);
 		} else if (verb == 9) {
 			drink_potion(rv, t);
 			if (rv->vm.flags[t] & 0x80) ruck_close(rv);
-		} else if (verb == 11 || verb == 13 || verb == 4 || verb == 7 || verb == 16) {
+		} else if (verb == 11 || verb == 13 || verb == 4 || verb == 7) {
 			menu_choose(rv, verb);
 			if (verb == 11) { rv->grid_open = 1; rv->touch_thing = t; grid_begin(rv); grid_verbs(rv); }
 		}
