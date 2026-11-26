@@ -680,7 +680,7 @@ bool Game::mdWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
-	if ((wt < 0x99 || wt > 0x9D) && wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
+	if ((wt < 0x99 || wt > 0x9E) && wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
 		return false;
 	_world.objects.reserve(_world.objects.size() + 128); // the things made below must not move the object that `o` stands for
 	World::Obj &o = _world.objects[k];
@@ -1036,10 +1036,11 @@ bool Game::mdWorktype(int actor) {
 			return true;
 		}
 	}
-	if (wt >= 0x99 && wt <= 0x9D) { // the stoker of the coal (sub_29CE2's chain of five worktypes): 0x99 walks north until a 0x1BE (the shovel's rack) is two squares ahead (the sound 0x10 if in view),
+	if (wt >= 0x99 && wt <= 0x9E) { // the stoker of the coal (sub_29CE2's chain of six worktypes: 29F0E, 29F7B, 2A053, 2A0D6, 2A154, 2A1DA): 0x99 walks north until a 0x1BE (the shovel's rack) is two squares ahead (the sound 0x10 if in view),
 		// 0x9A looks south for the belt 0xBC (a coal 0x1BF is made on the square below) or the furnace 0xC0 and goes on to 0x9B, else walks south; 0x9B waits while the coal lies there and begins
-		// again (0x99) when it is gone and no furnace stands there; 0x9C walks south until a 0xBF is two squares ahead (0x9D) and, hemmed in, says "Stoker's path is blocked!" when in view; 0x9D walks
-		// north to the switch 0xE9 (north of him or north-east), starts the coal belt when the furnace's flag (bit 4 of actor 0x72) is not set, and goes back to 0x9C
+		// again (0x99) when it is gone and no furnace stands there; 0x9C walks south until a 0xBF is two squares ahead (0x9D) and, hemmed in, says "Stoker's path is blocked!" when in view; 0x9D throws
+		// the coal on the square below away (0x9E; waits while there is none); 0x9E walks north to the switch 0xE9 (north of him or north-east): when the furnace's flag (bit 4 of actor 0x72) is not set the
+		// belt starts and the switch turns, else the power underground is put on again (cut off first when the belt had been started by hand); then 0x9C
 		// APPROX(97): the lamps and the switch's frame (sub_3F540, sub_3F74A, sub_3F793) are not done, the walk is the engine's `step`
 		auto setWt = [&](int n) {
 			al.worktype[actor] = (uint8_t)n;
@@ -1089,7 +1090,18 @@ bool Game::mdWorktype(int actor) {
 				return true;
 			blocked();
 			return true;
-		default: { // 0x9D
+		case 0x9D: {
+			int coal = seFind(0x1BF, ox, (oy + 1) & 0x3FF);
+			if (coal < 0)
+				return true;
+			while (coal >= 0) {
+				_world.deleteObject(coal);
+				coal = seFind(0x1BF, ox, (oy + 1) & 0x3FF);
+			}
+			setWt(0x9E);
+			return true;
+		}
+		default: { // 0x9E
 			if (_creatures.step(actor, 0))
 				return true;
 			int sw = seFind(0xE9, ox, (oy - 1) & 0x3FF);
@@ -1099,8 +1111,22 @@ bool Game::mdWorktype(int actor) {
 				blocked();
 				return true;
 			}
-			if (!(al.talkFlags[0x72] & 4))
+			auto &t = al.talkFlags;
+			if (t[0x72] & 4) {
+				if (!((t[0x73] & 4) && !(t[0x71] & 8))) {
+					if (t[0x71] & 8) {
+						t[0x73] &= 0xFB;
+						t[0x71] &= 0xF7;
+						mdPowerUnderground(false);
+					}
+					t[0x73] |= 4;
+					mdPowerUnderground(true);
+					mdScenePower();
+				}
+			} else {
 				mdCoalBelt();
+				_world.objects[sw].frame |= 4; // APPROX(97): the original sets the switch's word from the object numbered (sw | 4), which looks like a slip
+			}
 			setWt(0x9C);
 			return true;
 		}

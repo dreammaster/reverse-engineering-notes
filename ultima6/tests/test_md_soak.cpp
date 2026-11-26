@@ -22,7 +22,7 @@ int main() {
 	for (int a = 1; a < 0x100; ++a) {
 		int k = w.actorObject(a);
 		int wt = al.worktype[a];
-		if (k < 0 || w.objects[k].deleted || ((wt < 0x0D || wt > 0x1A) && (wt < 0x99 || wt > 0x9D)) || (al.status[a] & 0x10))
+		if (k < 0 || w.objects[k].deleted || ((wt < 0x0D || wt > 0x1A) && (wt < 0x99 || wt > 0x9E)) || (al.status[a] & 0x10))
 			continue;
 		if (seen[wt] >= 3)
 			continue;
@@ -43,7 +43,7 @@ int main() {
 		}
 	}
 	std::printf("%d actors of own worktypes run; ", total);
-	for (int wt = 0x0D; wt <= 0x9D; ++wt)
+	for (int wt = 0x0D; wt <= 0x9E; ++wt)
 		if (seen[wt])
 			std::printf("%02X:%d ", wt, seen[wt]);
 	std::printf("\nok\n");
