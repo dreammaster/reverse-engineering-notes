@@ -358,6 +358,19 @@ static void do_op(AclVM *vm, int op, const uint8_t *a, int n) {
 	case 7:                                             /* 7A77: put the thing on the active (moving) list ds:B8 (15F18): the inverse of op 8 */
 		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) vm->tail[tid][5] &= (uint8_t)~0x80;
 		break;
+	case 82:                                            /* 8404: removes every carried thing whose record word +6 (the sprite / object id, the word 13F35 stores beside the thing id in the carried list) equals the byte a[0] (13EFD: the held thing is let go first) */
+		if (getenv("CAD_OPS")) fprintf(stderr, "OP82 n=%d\n", a[0]);
+		if (vm->mp2)
+			for (int t = 0; t < ACL_THINGS; t++) {
+				int len; const uint8_t *rec;
+				if (!vm->present[t] || vm->room[t] != 0xFF || (vm->flags[t] & 0x80)) continue;
+				rec = mp2_thing(vm->mp2, t, &len);
+				if (!rec || len < 8 || ((rec[6] << 8) | rec[7]) != a[0]) continue;
+				vm->flags[t] |= 0x80;
+				if (vm->held == t) vm->held = 0;
+				if (getenv("CAD_OPS")) fprintf(stderr, "OP82 removed thing %d\n", t);
+			}
+		break;
 	case 76: test_res(vm, a[0] < 8 && (vm->g[0x11B] & (1 << a[0])) != 0); break;   /* 825A: the shield bit a[0] of ds:6AB is set */
 	case 93:                                            /* 8469: set bit 2 of the thing's A[3] (a bad potion, ...) */
 		if (tid >= 0 && tid < ACL_THINGS && vm->present[tid]) vm->tail[tid][3] |= 4;
