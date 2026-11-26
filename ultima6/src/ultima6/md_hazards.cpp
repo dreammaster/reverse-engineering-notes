@@ -680,6 +680,8 @@ bool Game::mdWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
+	if (wt != 0 && (_world.objects[k].status & 0x80) && actor != 0 && !(al.status[actor] & 0x80)) // sub_29CE2 starts with it: whatever the worktype, a creature with the bit 0x80 of its object status fights as the berserk one (not a member of the party)
+		wt = 6;
 	if ((wt < 0x99 || wt > 0x9E) && wt != 8 && wt != 0xA0 && wt != 4 && wt != 6 && wt != 7 && wt != 9 && wt != 0x1B && wt != 0x9F && wt != 0x0A && wt != 0x0B && wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
 		return false;
 	_world.objects.reserve(_world.objects.size() + 128); // the things made below must not move the object that `o` stands for
