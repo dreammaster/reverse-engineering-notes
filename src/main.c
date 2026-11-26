@@ -676,6 +676,12 @@ static void roomview_rebuild_objs(RoomView *rv, int gx, int gy) {
  * Every 17 game steps each object of the room is tested against the boxes n .. 1 with the collision box it keeps (x1, y1, x0, y0, zt, zb); an overlap raises event 10 (0Ah) for the
  * thing with the box number as argument (level 3 / 4 puzzles: things pushed onto plates; the handlers test room + box). The original tests the things whose collision entry has
  * flag bit 0 and (bit 2 or the room flag 10h); the port uses the thing's record flag 04h (all level 3 puzzle things have it) or the room flag. */
+static int zone_overlap(const int8_t *bx, int dl, int dh, int cl, int bl, int bh, int ch) {
+	int x = dl >= bx[2] ? cl <= bx[2] : dl >= bx[0];
+	int y = dh >= bx[3] ? bl <= bx[3] : dh >= bx[1];
+	int z = bh >= bx[5] ? ch <= bx[5] : bh >= bx[4];
+	return x && y && z;
+}
 static void roomview_zone_events(RoomView *rv) {
 	if (rv->room < 0 || rv->room >= 128 || !rv->ro_key) return;
 	const uint8_t *r = rv->mp2.sec[0].rec[rv->room];
@@ -684,24 +690,35 @@ static void roomview_zone_events(RoomView *rv) {
 	int n = r[r[0]];
 	if (n < 1 || n > 4 || r[0] + 2 + 6 * n > len) return;
 	const int8_t *boxes = (const int8_t *)(r + r[0] + 2);
+	int all = (r[0x17] & 0x10) != 0;                                  /* room flag 10h: every thing is tracked and the room's own events 15 / 17 are raised */
+	const Walker *wk = &g_walk;
+	for (int b = n; b >= 1 && all && wk->world_key == room_key(rv); b--) {          /* the player (thing 0): room event 15 (0xC00F), argument = the box number */
+		const int8_t *bx = boxes + 6 * (b - 1);
+		int dl = wk->x1, dh = wk->y1, cl = wk->x1 - PL_XS + 1, bl = wk->y1 - PL_YS + 1, ch = wk->z, bh = wk->z + PL_ZS - 1;
+		if (!zone_overlap(bx, (int8_t)dl, (int8_t)dh, (int8_t)cl, (int8_t)bl, (int8_t)bh, (int8_t)ch)) continue;
+		if (getenv("CAD_ZONES")) fprintf(stderr, "ZONE player box %d room %d\n", b, rv->room);
+		int keep = rv->vm.cur; rv->vm.cur = 0;
+		acl_room_event(&rv->vm, &rv->mp2, rv->room, 15, b);
+		rv->vm.cur = keep;
+	}
 	for (int i = 0; i < rv->ro.n && i < ROOMOBJS_MAX; i++) {
 		const RoomObj *o = &rv->ro.o[i];
 		int t = o->thing;
-		if (t <= 0 || t >= ACL_THINGS || (rv->vm.flags[t] & 0x80) || !((rv->vm.flags[t] & 4) || (r[0x17] & 0x10))) continue;   /* tracked things: record flag 04h, or every thing when the room has bit 10h */
+		if (t <= 0 || t >= ACL_THINGS || (rv->vm.flags[t] & 0x80) || !(all || (rv->vm.flags[t] & 4))) continue;   /* tracked things: record flag 04h, or every thing when the room has bit 10h */
 		int dl = (int8_t)o->cx1, dh = (int8_t)o->cy1, cl = (int8_t)o->cx0, bl = (int8_t)o->cy0, bh = (int8_t)o->czt, ch = (int8_t)o->czb;
 		for (int b = n; b >= 1; b--) {
-			const int8_t *bx = boxes + 6 * (b - 1);
-			int x = dl >= bx[2] ? cl <= bx[2] : dl >= bx[0];
-			int y = dh >= bx[3] ? bl <= bx[3] : dh >= bx[1];
-			int z = bh >= bx[5] ? ch <= bx[5] : bh >= bx[4];
-			if (!(x && y && z)) continue;
+			if (!zone_overlap(boxes + 6 * (b - 1), dl, dh, cl, bl, bh, ch)) continue;
 			if (getenv("CAD_ZONES")) fprintf(stderr, "ZONE thing %d box %d (x %d..%d y %d..%d z %d..%d) room %d\n", t, b, cl, dl, bl, dh, ch, bh, rv->room);
 			rv->vm.queue_n = 0;
 			acl_thing_event(&rv->vm, &rv->mp2, t, 10, b);
 			for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+			if (all) { int keep = rv->vm.cur; rv->vm.cur = t; acl_room_event(&rv->vm, &rv->mp2, rv->room, 17, b); rv->vm.cur = keep; }   /* another thing: room event 17 (0xC011) */
 		}
 	}
+	rv->pending_rebuild |= rv_changed(rv);
+	roomview_flush_messages(rv);
 }
+
 /* one game step (25 Hz): the room timers of 1000:11EB5 (units of 17 steps) -> events 14 and 20 */
 static void roomview_game_step(RoomView *rv) {
 	if (rv->vm.msg_n) roomview_flush_messages(rv);
