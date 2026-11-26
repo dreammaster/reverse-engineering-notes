@@ -41,4 +41,7 @@ void roundHeader(Machine &m);
 // 17357: the member numbers in front of the roster rows
 void drawMemberNumbers(Machine &m);
 
+// 12284: draws the row of combatant `al` in a target list; true (CF) when there is nothing to show
+bool drawTargetRow(Machine &m, uint8_t al);
+
 } // namespace wl

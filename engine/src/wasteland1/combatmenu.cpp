@@ -311,6 +311,34 @@ bool collectOrders(Machine &m) {
 }
 
 
+bool drawTargetRow(Machine &m, uint8_t al) {   // 12284: the row of a target list for the combatant `al` (1 based); true (CF) when there is nothing to show
+	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
+	X86Regs x;
+	x.al = uint8_t(al - 1);
+	legacy::call(m, 0x3A56, x);   // splitCombatantIndex
+	D(0xA42C) = x.al;
+	D(0xA42A) = x.bl;
+	legacy::call(m, 0x37F4, x);   // selectGroup
+	legacy::call(m, 0x22E9, x);   // slotTargetable
+	if (x.cf) return true;
+	D(0xA42B) = x.al;
+	const uint8_t entry = D(uint16_t(0xA5AE + D(0xA42A)));
+	if (D(uint16_t(m.d16(g::savedLocationDetailsPtr) + entry)) == 0) return true;
+	X86Regs y;
+	legacy::call(m, 0x9E30, y);   // clearInverseText
+	if (D(0x4654) == D(0xA42C)) legacy::call(m, 0x9E2A, y);   // setInverseText
+	legacy::call(m, 0x6EE8, y);
+	legacy::call(m, 0x9E30, y);
+	y.al = D(0xA42A);
+	legacy::call(m, 0x3697, y);   // writeEncounterGroup
+	D(g::rectTextX) = uint8_t(D(g::rectRightCol) - 3);
+	legacy::call(m, 0x7852, y);   // setWriteCharacterFn2 variant
+	D(g::tempTextX) = 2;
+	writeNumberShort(m, D(0xA42B));
+	writeCharacter2(m, 39);   // the apostrophe
+	return false;
+}
+
 void drawMemberNumbers(Machine &m) {   // 17357: the numbers "1>" .. "n>" in front of the roster rows (combat order mode)
 	auto D = [&](uint16_t a) -> uint8_t & { return m.d8(a); };
 	if (D(0x46B9) == 0) return;
