@@ -1069,6 +1069,7 @@ void Game::seAction(uint32_t sub, int idx) {
 				_world.actors.status[4] &= 0xFB;
 				_world.actors.talkFlags[4] |= 0x10;
 				_world.joinParty(4);
+				startTalk(4); // sub_1F870(1, 4, leader)
 			}
 		} else if (f == 7) {
 			_world.moveObject(idx, ox, (oy - 1) & mask, z);
