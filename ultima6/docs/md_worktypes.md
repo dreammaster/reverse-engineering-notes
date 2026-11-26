@@ -5,7 +5,7 @@ From the IDA listing (seg015): 45 worktype numbers at `cs:32C9`, 45 handler offs
 
 | worktype | handler | what it calls |
 |---|---|---|
-| 4 | `loc_29D88` | `sub_1BB87` (the ranged fighter: keeps three squares from the nearest member, "has no ranged weapons!") |
+| 4 | `loc_29D88` | `sub_1BB87` (ported; the ranged fighter: keeps three squares from the nearest member, "has no ranged weapons!") |
 | 6 | `loc_29D90` | `sub_1BDB5` |
 | 8, 0xA0 | `loc_29D92` | `sub_1B936` (the fighter: nearest member in view, best weapon, steps aside when there is no line) |
 | 7, 9, 0x1B, 0x9F | `loc_29DA2` | `sub_1C062` |

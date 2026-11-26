@@ -680,7 +680,7 @@ bool Game::mdWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
-	if ((wt < 0x99 || wt > 0x9E) && wt != 8 && wt != 0xA0 && wt != 7 && wt != 9 && wt != 0x1B && wt != 0x9F && wt != 0x0A && wt != 0x0B && wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
+	if ((wt < 0x99 || wt > 0x9E) && wt != 8 && wt != 0xA0 && wt != 4 && wt != 6 && wt != 7 && wt != 9 && wt != 0x1B && wt != 0x9F && wt != 0x0A && wt != 0x0B && wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
 		return false;
 	_world.objects.reserve(_world.objects.size() + 128); // the things made below must not move the object that `o` stands for
 	World::Obj &o = _world.objects[k];
@@ -807,6 +807,98 @@ bool Game::mdWorktype(int actor) {
 			drift();
 		else
 			_world.spendMoves(actor, 5);
+		return true;
+	}
+	if (wt == 4) { // sub_1BB87, the ranged fighter: with a target within two squares it runs, the original's goal being the small square (x - his x, y - his y) of the map (a slip: it heads for the
+		// north-west corner); without a ranged weapon (readied, range 3 or more: sub_1BA72 takes the one that reaches the target, else the one that hurts most) "has no ranged weapons!"; more than five
+		// squares from the party it comes to it; else it shoots when in reach with a line, goes to one side when there is none and walks up when out of reach; without a target it wanders (the engine's)
+		int d, t = nearest(d);
+		int tx = 0, ty = 0;
+		if (t >= 0) {
+			int tk = _world.actorObject(t);
+			tx = _world.objects[tk].x;
+			ty = _world.objects[tk].y;
+		}
+		int best = -1, bestRange = 0, bestDamage = 0;
+		std::vector<int> inv;
+		_world.inventory(actor, inv, false);
+		for (int i : inv) {
+			const World::Obj &it = _world.objects[i];
+			int range = Combat::rangeOf(it.type), dmg = std::max(0, Combat::weaponDamageOf(it.type));
+			if (range < 3 || (it.status & 0x18) != 0x18)
+				continue;
+			if (bestRange < d) {
+				if (range > bestRange) {
+					bestRange = range;
+					bestDamage = dmg;
+					best = i;
+				}
+			} else if (dmg > bestDamage) {
+				bestRange = range;
+				bestDamage = dmg;
+				best = i;
+			}
+		}
+		if (t >= 0 && std::abs(gapOf(tx, o.x)) < 3 && std::abs(gapOf(ty, o.y)) < 3) {
+			_creatures.walkTo(actor, (o.x - tx) & 0x3FF, (o.y - ty) & 0x3FF);
+			return true;
+		}
+		if (best < 0) {
+			message("\n" + _combat.nameOf(actor) + " has no ranged weapons!\n");
+			_world.spendMoves(actor, 5);
+			return true;
+		}
+		if (std::abs(gapOf(o.x, x)) > 5 || std::abs(gapOf(o.y, y)) > 4) {
+			_creatures.walkTo(actor, x, y);
+			return true;
+		}
+		if (t < 0)
+			return false;
+		if (d <= bestRange) {
+			if (d <= 1 || _creatures.lineOfFire(actor, tx, ty, bestRange)) {
+				_combat.attackWith(actor, t, _world.objects[best].type, false);
+				_world.spendMoves(actor, 10);
+				return true;
+			}
+			if (seRoll(0, 1))
+				_creatures.walkTo(actor, o.x, ty);
+			else
+				_creatures.walkTo(actor, tx, o.y);
+			return true;
+		}
+		_creatures.walkTo(actor, tx, ty);
+		return true;
+	}
+	if (wt == 6) { // sub_1BDB5, the berserk fighter: it goes for the strongest within eight squares (mdTargetStrongest); in reach it strikes (10 moves) when next to it or with a line; otherwise it
+		// walks up (or to one side when there is no line) and, when the step fails, fights as sub_1B936; 5 moves more
+		int t = mdTargetStrongest(actor);
+		if (t < 0) {
+			if (!fight())
+				return false;
+			_world.spendMoves(actor, 5);
+			return true;
+		}
+		int tk = _world.actorObject(t), tx = _world.objects[tk].x, ty = _world.objects[tk].y;
+		int weapon = _combat.weaponType(actor), range = Combat::rangeOf(weapon);
+		int d = std::max(std::abs(tx - o.x), std::abs(ty - o.y));
+		int gx = tx, gy = ty;
+		if (d < 8 && Combat::distance(std::abs(tx - o.x), std::abs(ty - o.y)) <= range) {
+			if (d <= 1 || _creatures.lineOfFire(actor, tx, ty, range)) {
+				_combat.attack(actor, t);
+				_world.spendMoves(actor, 10);
+				return true;
+			}
+			if (seRoll(0, 1))
+				gx = o.x, gy = ty;
+			else
+				gx = tx, gy = o.y;
+		}
+		int saved = al.moves[actor];
+		if (!_creatures.walkTo(actor, gx, gy)) {
+			al.moves[actor] = (uint8_t)saved;
+			fight();
+		}
+		_world.spendMoves(actor, 5);
 		return true;
 	}
 	if (wt == 0x0E) { // sub_1C4E8, the part that matters: a 0x175 or 0x182 more than seven squares from the nearest member burrows (invisible, worktype 0x12); the fight itself is the engine's
@@ -1602,6 +1694,63 @@ int Game::mdTarget(int actor) const {
 			continue;
 		int score = dx * dx + dy * dy;
 		if (score < bestScore || (score == bestScore && best >= 0 && power(o.type) > power(_world.objects[_world.actorObject(best)].type))) {
+			bestScore = score;
+			best = t;
+		}
+	}
+	return best;
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_1BDB5, the choice of the berserk fighter: of those within eight squares that it sees and that are of the other side (side 0x40 against exactly 0x20 and the other way round, a fighter of no
+// side against anyone, side 0x60 against anyone but its own kind), the one with most of strength + defence + intelligence (the first when equal); -1 if there is none.
+int Game::mdTargetStrongest(int actor) const {
+	const ObjList &al = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0)
+		return -1;
+	const World::Obj &me = _world.objects[k];
+	const int side = al.status[actor] & 0x60;
+	int best = -1, bestScore = 0;
+	auto gap = [&](int a, int b) {
+		int d = std::abs(a - b) & 0x3FF;
+		return d > 0x200 ? 0x400 - d : d;
+	};
+	for (int t = 0; t < ObjList::ACTORS; ++t) {
+		int tk = _world.actorObject(t);
+		if (tk < 0 || t == actor || _world.objects[tk].deleted || (al.status[t] & 0x10))
+			continue;
+		const World::Obj &o = _world.objects[tk];
+		if (std::max(gap(o.x, me.x), gap(o.y, me.y)) > 8)
+			continue;
+		bool seen = !(o.status & 2);
+		if (!seen && (al.status[actor] & 0x80) && (al.status[t] & 0x80))
+			seen = true;
+		if (al.movementFlags[t] & 0x10)
+			seen = false;
+		if (!seen || o.z != me.z)
+			continue;
+		int ts = al.status[t] & 0x60;
+		if (side == 0x40 && ts != 0x20)
+			continue;
+		if (side == 0x20 && ts != 0x40)
+			continue;
+		if (side == 0x60) {
+			if (o.type == me.type)
+				continue;
+			if (me.type == 0x174 && (o.type == 0x172 || o.type == 0x173))
+				continue;
+			auto brood = [](int ty) { return ty == 0x16A || ty == 0x175 || ty == 0xFE; };
+			if (brood(me.type) && brood(o.type))
+				continue;
+		}
+		int score = _combat.adjustedStrength(t) + mdDefence(t) + _combat.adjustedIntelligence(t);
+		if (score > bestScore) {
 			bestScore = score;
 			best = t;
 		}

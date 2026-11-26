@@ -597,6 +597,30 @@ int main() {
 		al.status[0x4D] = 0;
 	}
 
+	// worktype 4 (sub_1BB87): without a ranged weapon "has no ranged weapons!"; worktype 6 (sub_1BDB5), the berserk fighter, strikes the strongest next to it
+	{
+		int victim = al.partyRoster[0];
+		for (int i = 0; i < al.partySize; ++i)
+			w.moveObject(w.actorObject(al.partyRoster[i]), g.x + 2, g.y + 9, 0);
+		int fk = w.actorObject(0x4D);
+		w.objects[fk].type = 0x16C;
+		al.status[0x4D] = 0x20;
+		al.hp[0x4D] = 50;
+		al.worktype[0x4D] = 4;
+		w.moveObject(fk, g.x + 6, g.y + 9, 0);
+		g.log.clear();
+		CHECK(g.mdWorktype(0x4D));
+		CHECK(logText(g).find("has no ranged weapons!") != std::string::npos);
+		al.worktype[0x4D] = 6;
+		al.hp[victim] = 200;
+		w.moveObject(fk, g.x + 3, g.y + 9, 0);
+		for (int i = 0; i < 60 && al.hp[victim] == 200; ++i)
+			g.mdWorktype(0x4D);
+		CHECK(al.hp[victim] < 200 || al.partySize > 1);
+		al.worktype[0x4D] = 0;
+		al.status[0x4D] = 0;
+	}
+
 	// a teleporting pad takes the party to the place of its quality
 	{
 		g.x = 0x2B2 - 5;
