@@ -466,7 +466,7 @@ int Game::mdDefence(int actor) const {
 // sub_18A64 (the ray guns 0x2B, 0x2D, 0xF0, 0xF1; the effect numbers at ds:0705 ff.): the shot goes along the line to the target and whoever is on it is hit: a roll of 1-60 (1-45 for the
 // freeze ray 0xF1) above his defence hits (else "%s dodges!" and the sound 3), a hit does the gun's damage (20, 20, 25, 10); the freeze ray freezes water (a 0xA0 of frame 1 goes to frame 3,
 // "The water freezes.") and paralyses (the bit 2 of the status, "`%s paralyzed!") the kinds of creature that the bits 7 and 14 of the flags name ("It has no effect." on the others).
-// APPROX(97): the flight is not drawn; sub_1A45C's damage routine (the armour) and sub_19088 are not read, the damage is `Combat::applyDamage`; the charges are not used.
+// APPROX(97): the flight is not drawn; sub_19088 is not read; the charges are not used.
 void Game::mdRayShot(int attacker, int weapon, int tx, int ty) {
 	static const int GUNS[4] = {0x2B, 0x2D, 0xF0, 0xF1}, DAMAGE[4] = {20, 20, 25, 10}, SOUND[4] = {8, 8, 10, 10};
 	int idx = 0;
@@ -510,10 +510,10 @@ void Game::mdRayShot(int attacker, int weapon, int tx, int ty) {
 				_world.actors.status[a] |= 2;
 				message("`" + mdMemberName(a) + " paralyzed!\n");
 				if ((cs->flags & (1 << 7)) && !(cs->flags & (1 << 14)))
-					_combat.applyDamage(attacker, a, DAMAGE[idx]);
+					mdStrike(attacker, a, DAMAGE[idx]);
 				continue;
 			}
-			_combat.applyDamage(attacker, a, DAMAGE[idx]);
+			mdStrike(attacker, a, DAMAGE[idx]);
 		}
 	}
 }
@@ -522,6 +522,24 @@ void Game::mdRayShot(int attacker, int weapon, int tx, int ty) {
 // one step in a random direction and hurts whatever shares its square for 1-10 twice; 0x15 (sub_1D819, the child): walks up to the nearest member and hits one next to it for 6; 0x1A
 // (sub_2AF67) turns the person into a plain thing of the same looks (its hit points the quantity, its quality kept) where it stands. APPROX(97): the others (0xD Stoker, 0x11, 0x12, 0x14,
 // 0x16 - 0x19: sub_1D230, sub_1D7E6, sub_1C91A, sub_1CDC2, sub_1C710, sub_1D89E, sub_50FEC, sub_1CB44) act as the engine's plain fighters do.
+// sub_1A45C, the part that matters: the damage of a blow (1 and 255 are as they are, else rolled from 1 to the damage) is cut by a roll from 1 to the armour worn (sub_189D2); nothing left
+// and the victim is "grazed" (it wakes: sub_18F7D); else the hurt is the engine's `Combat::applyDamage`
+bool Game::mdStrike(int attacker, int victim, int damage) {
+	if (damage > 1 && damage < 0xFF)
+		damage = seRoll(1, damage);
+	if (victim >= 0 && victim < 0x100 && damage > 0 && damage < 0xFF) {
+		int ac = _combat.armourClass(victim);
+		if (ac > 0)
+			damage -= seRoll(1, ac);
+	}
+	if (damage <= 0) {
+		_world.actors.status[victim] &= 0xFD;
+		message("`" + mdMemberName(victim) + " grazed.\n");
+		return false;
+	}
+	return _combat.applyDamage(attacker, victim, damage);
+}
+
 bool Game::mdWorktype(int actor) {
 	ObjList &al = _world.actors;
 	int k = _world.actorObject(actor);

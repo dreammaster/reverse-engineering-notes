@@ -228,7 +228,7 @@ int main() {
 			int before = al.hp[victim] = 250;
 			for (int shot = 0; shot < 40 && al.hp[victim] == before; ++shot)
 				g.mdRayShot(shooter, 0x2D, g.x + 3, g.y);
-			CHECK(al.hp[victim] == before - 20);
+			CHECK(al.hp[victim] <= before && al.hp[victim] >= before - 20); // rolled from 1 to 20, less the armour
 		}
 		World::Obj o;
 		o.status = 0;
