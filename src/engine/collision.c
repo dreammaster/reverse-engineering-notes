@@ -87,3 +87,10 @@ int place_spot(int face, int x1, int y1, int x0, int y0, int xs, int ys, int *ox
 	*ox = x & 0xFF; *oy = y & 0xFF;
 	return 1;
 }
+
+int zone_overlap(const int8_t *bx, int dl, int dh, int cl, int bl, int bh, int ch) {
+	int x = dl >= bx[2] ? cl <= bx[2] : dl >= bx[0];
+	int y = dh >= bx[3] ? bl <= bx[3] : dh >= bx[1];
+	int z = bh >= bx[5] ? ch <= bx[5] : bh >= bx[4];
+	return x && y && z;
+}

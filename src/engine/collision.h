@@ -50,4 +50,8 @@ void collision_test(const ColWorld *w, int x1, int y1, int z, int xs, int ys, in
  * the last move (1 up, 2 down, 4 left, 8 right, diagonals the sums). Returns 0 (and sets nothing) for the impossible masks. Verified against the original (tests/vectors_place.h). */
 int place_spot(int face, int x1, int y1, int x0, int y0, int xs, int ys, int *ox, int *oy);
 
+/* A thing's box (x1, y1, x0, y0, zt, zb: maxima first) against a zone box (x0, y0, x1, y1, z0, z1 as signed bytes): the overlap rule of the room zone test
+ * (1000:2022 .. 2108; verified against the original, tests/vectors_zone.h). */
+int zone_overlap(const int8_t *box, int tx1, int ty1, int tx0, int ty0, int tzt, int tzb);
+
 #endif

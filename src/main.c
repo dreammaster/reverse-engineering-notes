@@ -672,16 +672,10 @@ static void roomview_rebuild_objs(RoomView *rv, int gx, int gy) {
 	walk_refresh_world(rv);          /* collision world must be rebuilt (the player keeps its position) */
 }
 
-/* Room zones (1000:11EB5 -> 1000:2018 .. 2108): a room record whose byte 17h has bit 1 set carries, at rec[rec[0]], a box count n and then n boxes (x0, y0, x1, y1, z0, z1 as signed bytes).
+/* Room zones (1000:11EB5 -> 1000:2022 .. 2108): a room record whose byte 17h has bit 1 set carries, at rec[rec[0]], a box count n and then n boxes (x0, y0, x1, y1, z0, z1 as signed bytes).
  * Every 17 game steps each object of the room is tested against the boxes n .. 1 with the collision box it keeps (x1, y1, x0, y0, zt, zb); an overlap raises event 10 (0Ah) for the
  * thing with the box number as argument (level 3 / 4 puzzles: things pushed onto plates; the handlers test room + box). The original tests the things whose collision entry has
  * flag bit 0 and (bit 2 or the room flag 10h); the port uses the thing's record flag 04h (all level 3 puzzle things have it) or the room flag. */
-static int zone_overlap(const int8_t *bx, int dl, int dh, int cl, int bl, int bh, int ch) {
-	int x = dl >= bx[2] ? cl <= bx[2] : dl >= bx[0];
-	int y = dh >= bx[3] ? bl <= bx[3] : dh >= bx[1];
-	int z = bh >= bx[5] ? ch <= bx[5] : bh >= bx[4];
-	return x && y && z;
-}
 static void roomview_zone_events(RoomView *rv) {
 	if (rv->room < 0 || rv->room >= 128 || !rv->ro_key) return;
 	const uint8_t *r = rv->mp2.sec[0].rec[rv->room];

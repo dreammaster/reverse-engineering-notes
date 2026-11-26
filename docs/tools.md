@@ -91,3 +91,5 @@ Debug environment variables of the port: `CAD_CARRY=thing[:A0[:A1]]`, `CAD_SPELL
 `tools/scan_tad_errors.sh` runs every room of both games headless and lists failures of the native routines (`CAD_TADERR`); `CAD_X86TRACE=1` traces every instruction and `CAD_X86WATCH=<hex offset>` reports writes to a byte of the TAD image (this found the Payoff stack / code overlap).
 
 `tools/gen_place_vectors.py` runs the original drop-spot routine (`1000:6C72`) in the emulator for 480 random cases and writes `src/tests/vectors_place.h`; `test_formats` checks `engine/collision.c place_spot` against them.
+
+`tools/gen_zone_vectors.py` does the same for the room zone overlap test (`1000:2022`): 400 random cases into `src/tests/vectors_zone.h`, checked against `engine/collision.c zone_overlap`.

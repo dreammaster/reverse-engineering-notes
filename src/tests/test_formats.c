@@ -26,6 +26,7 @@
 #include "vectors.h"
 #include "vectors_beeper.h"
 #include "vectors_place.h"
+#include "vectors_zone.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -162,6 +163,15 @@ int main(int argc, char **argv) {
 			printf("FAIL place_spot face %d rec %d,%d,%d,%d box %d,%d: got %d,%d want %d,%d\n", v[0], v[1], v[2], v[3], v[4], v[5], v[6], ox, oy, v[7], v[8]);
 			failed++;
 		}
+		checked++;
+	}
+	for (int i = 0; i < N_ZONE_VECTORS; i++) {                       /* the zone overlap rule (event 10), vectors from the original routine */
+		const int *v = zone_vectors[i];
+		int8_t boxes[24];
+		for (int k = 0; k < 24; k++) boxes[k] = (int8_t)v[7 + k];
+		int mask = 0;
+		for (int b = 1; b <= 4; b++) if (zone_overlap(boxes + 6 * (b - 1), (int8_t)v[0], (int8_t)v[1], (int8_t)v[2], (int8_t)v[3], (int8_t)v[4], (int8_t)v[5])) mask |= 1 << (b - 1);
+		if (mask != v[6]) { printf("FAIL zone_overlap vector %d: mask %d want %d\n", i, mask, v[6]); failed++; }
 		checked++;
 	}
 	for (size_t i = 0; i < sizeof(mjm_vectors) / sizeof(mjm_vectors[0]); i++) {
