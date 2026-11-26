@@ -528,7 +528,7 @@ bool Game::mdWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
-	if (wt != 0x0D && wt != 0x0E && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
+	if (wt != 0x0D && wt != 0x0E && wt != 0x18 && wt != 0x11 && wt != 0x12 && wt != 0x13 && wt != 0x14 && wt != 0x15 && wt != 0x16 && wt != 0x17 && wt != 0x19 && wt != 0x1A)
 		return false;
 	_world.objects.reserve(_world.objects.size() + 128); // the things made below must not move the object that `o` stands for
 	World::Obj &o = _world.objects[k];
@@ -883,6 +883,66 @@ bool Game::mdWorktype(int actor) {
 			spend(5);
 			return true;
 		}
+	}
+	if (wt == 0x18) { // sub_50FEC (the cave worm): it makes for the first seed mound 0xFB within ten squares, else for the party; next to a mound it eats it ("The cave worm eats the pod plant!", 10 moves);
+		// otherwise it takes the one of the eight steps that scores best (sub_50ED6: 200 less 15 for each square from the goal, 50 more next to it, less 50-100 for a square it cannot enter, a flame
+		// 0x9D of frame 1 or more or a wall or water making it -1000) and, if nothing scores above 0, a step at random
+		int tx = x, ty = y, pod = -1;
+		mdEach(o.x - 10, o.y - 10, o.x + 10, o.y + 10, [&](int i) {
+			if (_world.objects[i].type != 0xFB)
+				return false;
+			pod = i;
+			tx = _world.objects[i].x;
+			ty = _world.objects[i].y;
+			return true;
+		}, o.z);
+		if (pod >= 0 && std::abs(o.x - tx) <= 1 && std::abs(o.y - ty) <= 1) {
+			message("The cave worm eats the pod plant!\n");
+			_world.deleteObject(pod);
+			_world.spendMoves(actor, 10);
+			return true;
+		}
+		MoveRules rules;
+		rules.partyMayShuffle = false;
+		auto score = [&](int sx, int sy) {
+			int dist = std::max(std::abs(tx - sx), std::abs(ty - sy));
+			int s = 200 - dist * 15 + (dist <= 1 ? 50 : 0);
+			if (!_movement.check(sx & 0x3FF, sy & 0x3FF, o.z, k, rules).passable) {
+				int f = _world.flags.flags1[_world.map.tile(o.z, sx & (o.z == 0 ? 0x3FF : 0xFF), sy & (o.z == 0 ? 0x3FF : 0xFF)) & (TileFlags::TILES - 1)];
+				if (f & 6)
+					return -1000;
+				s -= (f & 8) ? 100 : 50;
+			}
+			bool deadly = false;
+			mdEach(sx - 1, sy - 1, sx + 1, sy + 1, [&](int i) {
+				const World::Obj &b = _world.objects[i];
+				if (b.type == 0x9D) {
+					if (b.frame > 0)
+						deadly = true;
+					else
+						s -= 5;
+				} else if (b.type == 0x9E) {
+					--s;
+				}
+				return deadly;
+			}, o.z);
+			return deadly ? -1000 : s;
+		};
+		static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1}, DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+		int best = score(o.x, o.y), dir = -1;
+		for (int d = 0; d < 8; ++d) {
+			int s = score(o.x + DX[d], o.y + DY[d]);
+			if (s > best || (s == best && seRoll(0, 1))) {
+				best = s;
+				dir = d;
+			}
+		}
+		if (best < 0)
+			dir = seRoll(0, 7);
+		if (dir >= 0 && _movement.check((o.x + DX[dir]) & 0x3FF, (o.y + DY[dir]) & 0x3FF, o.z, k, rules).passable)
+			_world.moveObject(k, (o.x + DX[dir]) & 0x3FF, (o.y + DY[dir]) & 0x3FF, o.z);
+		_world.spendMoves(actor, 5);
+		return true;
 	}
 	if (wt == 0x1A) {
 		int made = seMake(o.type, o.x, o.y, o.z, al.hp[actor], al.objQuantity[actor] >> 8);

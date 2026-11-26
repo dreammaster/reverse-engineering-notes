@@ -367,6 +367,34 @@ int main() {
 			w.deleteObject(rk);
 			CHECK(g.mdWorktype(tip) && w.objects[tk].deleted);
 		}
+		// 0x18 (the cave worm): it creeps towards a seed mound and eats it when next to it
+		{
+			int wk = w.actorObject(0x4C);
+			w.moveObject(wk, g.x + 9, g.y + 9, 0);
+			for (size_t i = 0; i < w.objects.size(); ++i)
+				if (!w.objects[i].deleted && w.objects[i].type == 0xFB)
+					w.deleteObject((int)i);
+			World::Obj pod;
+			pod.status = 0;
+			pod.x = (uint16_t)(g.x + 7);
+			pod.y = (uint16_t)(g.y + 8);
+			pod.z = 0;
+			pod.type = 0xFB;
+			pod.frame = 0;
+			pod.quantity = 1;
+			pod.quality = 0;
+			pod.actor = -1;
+			pod.parent = -1;
+			w.objects.push_back(pod);
+			w.addToMap((int)w.objects.size() - 1);
+			int pk = (int)w.objects.size() - 1;
+			al.worktype[0x4C] = 0x18;
+			int d0 = 3;
+			for (int i = 0; i < 12 && !w.objects[pk].deleted; ++i)
+					g.mdWorktype(0x4C);
+			(void)d0;
+			CHECK(w.objects[pk].deleted);
+		}
 		int drifter = w.actorObject(0x45);
 		w.moveObject(drifter, g.x, g.y, 0);
 		al.worktype[0x45] = 0x13;
