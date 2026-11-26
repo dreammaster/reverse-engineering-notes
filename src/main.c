@@ -1411,6 +1411,9 @@ static void cast_unlock(Walker *wk, RoomView *rv, int item, int spell) {
 static void cast_blast(Walker *wk, RoomView *rv, int item) {
 	(void)wk;
 	int power = rv->vm.tail[item][1];
+	int any = 0;
+	for (int i = 0; i < rv->ro.n; i++) { const RoomObj *o = &rv->ro.o[i]; if (o->sp->header[0x16] == 3 && !(rv->vm.flags[o->thing] & 0x80) && !(rv->vm.tail[o->thing][5] & 0x80)) any = 1; }
+	if (!any) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x2F; roomview_flush_messages(rv); return; }   /* 097A: an empty creature list = "YOU WASTED THAT SPELL" (emulator) */
 	for (int i = 0, active = 0; i < rv->ro.n && active < 6; i++) {
 		const RoomObj *o = &rv->ro.o[i];
 		int t = o->thing;
@@ -1510,10 +1513,12 @@ static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 	int sp = spell_sem(rv, a[0]);
 	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
 	snd_play(a[7] == 0 ? 0x11 : 0x06);
-	rv->vm.queue_n = 0;                                                 /* 1000:168F0: room event 24 (0x4018), argument = the spell number (23 room handlers: magic doors / altars) */
-	acl_room_event(&rv->vm, &rv->mp2, rv->room, 24, a[0]);
-	rv->pending_rebuild |= rv_changed(rv);
-	roomview_flush_messages(rv);
+	if (a[7] == 1) {                                                    /* 1000:168F0: mode 1 only: room event 24 (0x4018), argument = the spell number (23 room handlers: magic doors / altars); checked by running 6896 in the emulator */
+		rv->vm.queue_n = 0;
+		acl_room_event(&rv->vm, &rv->mp2, rv->room, 24, a[0]);
+		rv->pending_rebuild |= rv_changed(rv);
+		roomview_flush_messages(rv);
+	}
 	int proj = (a[4] << 8) | a[5];
 	if (a[7] == 2) {                                                    /* the mode 'cast on an object' (169AB) */
 		int tt = rv->cast_target > 0 ? rv->cast_target : -1;
@@ -1530,8 +1535,8 @@ static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 	else if (sp == 2) acl_set_timer(&rv->vm, 0x22, a[1]);               /* freeze (TAD 093E): effect timer 22h for A[1] units */
 	else if (sp == 5) cast_blast(wk, rv, item);
 	else if (sp == 7 || sp == 8) cast_unlock(wk, rv, item, sp);
-	rv->vm.queue_n = 0;                                                 /* 1000:1691B: event 25 (19h) for the spell item itself: scripted spells (level 3's thing 805, Payoff thing 279) */
-	acl_thing_event(&rv->vm, &rv->mp2, item, 25, 0);
+	rv->vm.queue_n = 0;                                                 /* 1000:1691B (modes 1 and 2, not the projectile mode 0): event 25 (19h) for the spell item itself: scripted spells (level 3's thing 805, Payoff thing 279) */
+	if (a[7] != 0) acl_thing_event(&rv->vm, &rv->mp2, item, 25, 0);
 	for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
 	rv->pending_rebuild |= rv_changed(rv);
 	roomview_flush_messages(rv);
