@@ -89,6 +89,10 @@ static void svc_hook(X86 *c, void *user) {
 	case 0x06:                                   /* 81C8: change energy by ax (signed) */
 		energy_change(t->vm, (int16_t)c->ax);
 		break;
+	case 0x3A:                                   /* 1187: the game ends (level 5's ending loop `032F`: wait for a key, call this, repeat): the routine stops here */
+		x86_ww(c, c->ss, c->sp, SENT);                   /* the far return of the service goes to the run's sentinel */
+		x86_ww(c, c->ss, c->sp + 2, TADG);
+		break;
 	case 0x2E:                                   /* 9D8E: flush the keyboard / redraw: nothing to do here */
 		break;
 	case 0x30:                                   /* 1043: poll the input: routines that wait for a key (level 5's ending `072D`) see one at once, so they cannot hang the port */
