@@ -533,6 +533,7 @@ typedef struct {
 	int face;                  /* ds:608: the movement key bits (1 up 2 down 4 left 8 right) of the last move, diagonals included */
 	int world_key, placed;
 	int jumping, jstep, jhold, jcool, fall, giant;   /* jump (fire held, nothing touched): z profile below */
+	int grab, grab_rev;        /* verb 10 (1000:336A, ds:74): the grabbed thing + 1 (0 = none); grab_rev: the walking frames are those of the opposite facing played backwards (script table ds:FA93) */
 	ColWorld world;
 	ColBox objs[ROOMOBJS_MAX];
 	ColBox exits[ROOM_MAX_EXITS];
@@ -1004,6 +1005,7 @@ static int door_target(const RoomView *rv, int d) {
 }
 
 static void walker_enter(Walker *wk, RoomView *rv, int room, int door) {
+	wk->grab = 0;
 	rv->room = room;
 	wk->world_key = 0;
 	walker_world(wk, rv);
@@ -1263,6 +1265,8 @@ static void menu_choose(RoomView *rv, int verb) {
 	} else if (verb == 13) {          /* 1000:340D: hold / unhold; holding queues event 27 (1Bh) */
 		if (rv->held == t) rv->held = 0;
 		else { rv->held = t; acl_thing_event(&rv->vm, &rv->mp2, t, 27, 0); }
+	} else if (verb == 10) {          /* 1000:336A: grab - ds:74 = the touched thing; walking straight away from it drags it along (walker_step, 1000:10732) */
+		if (t >= 0 && t < ACL_THINGS) g_walk.grab = t + 1;
 	} else if (verb == 16) {          /* 1000:2E40: event 1 */
 		acl_thing_event(&rv->vm, &rv->mp2, t, 1, 0);
 	} else if (verb == 2) {
@@ -1826,6 +1830,7 @@ static void menu_step(RoomView *rv, int keys, int end_edge) {
 
 /* op 37: put the player into `room` at (x + rec[1], y + rec[3], z) like 1000:7F3C; z grows until the spot is free */
 static void walker_teleport(Walker *wk, RoomView *rv, int room, int x, int y, int z) {
+	wk->grab = 0;
 	const uint8_t *rec = room >= 0 && room < rv->mp2.sec[0].count ? rv->mp2.sec[0].rec[room] : NULL;
 	if (!rec || rv->mp2.sec[0].len[room] < 6)
 		return;
@@ -2087,8 +2092,30 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 		po[i].x1 = o->x1; po[i].y1 = o->y1; po[i].z0 = o->z0;
 		po[i].xs = o->xs; po[i].ys = o->ys; po[i].zs = o->zs; po[i].weight = o->weight;
 	}
-	int moved[PUSH_MAX], nm;
-	int st = push_move(&wk->world, po, wk->x1, wk->y1, wk->z, PL_XS, PL_YS, PL_ZS, -1, dx, dy, acl_timer_active(&rv->vm, 0x28) ? 0xC7 : acl_timer_active(&rv->vm, 0x29) ? 10 : 50, moved, &nm);
+	int moved[PUSH_MAX], nm = 0;
+	int strength = acl_timer_active(&rv->vm, 0x28) ? 0xC7 : acl_timer_active(&rv->vm, 0x29) ? 10 : 50;
+	int st = PUSH_FREE, pulled = 0;
+	if (keys & 0x80) wk->grab = 0;                                       /* 1000:10687: the fire key lets go */
+	if (wk->grab) {
+		/* 1000:10732: only when the step ahead is free; the player's box one step *behind* must touch the grabbed thing (116E0 + 16C3F, first entry not a wall) and the group that
+		   blocks it (16570) moves by the step too, with the pushing strength; any failure drops the grab (1084E) */
+		if (cr.zf) {
+			ColResult pr;
+			collision_test(&wk->world, wk->x1 - dx, wk->y1 - dy, wk->z, PL_XS, PL_YS, PL_ZS, -1, 1, &pr);
+			int has = 0;
+			if (!pr.zf && pr.count != 0xFF && pr.count != 0xFE && !(pr.flag & 0x80))
+				for (int k = 0; k < pr.n; k++) if (pr.ids[k] == wk->grab - 1) has = 1;
+			if (has) {
+				st = push_move(&wk->world, po, wk->x1 - 2 * dx, wk->y1 - 2 * dy, wk->z, PL_XS, PL_YS, PL_ZS, -1, dx, dy, strength, moved, &nm);
+				pulled = st == PUSH_MOVED && nm > 0;
+				if (g_snd_log && pulled) fprintf(stderr, "PULL thing %d + %d more: player %d,%d by %d,%d\n", rv->ro.o[moved[0]].thing, nm - 1, wk->x1, wk->y1, dx, dy);
+			}
+		}
+		if (!pulled) { wk->grab = 0; nm = 0; st = PUSH_FREE; }
+	}
+	if (!pulled) st = push_move(&wk->world, po, wk->x1, wk->y1, wk->z, PL_XS, PL_YS, PL_ZS, -1, dx, dy, strength, moved, &nm);
+	wk->grab_rev = wk->grab != 0;
+	if (wk->grab) { static const int opp[4] = {DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN}; wk->dir = opp[dir]; }   /* the player keeps facing the thing */
 	if (st == PUSH_MOVED || st == PUSH_FREE) {
 		wk->x1 += dx; wk->y1 += dy;
 		for (int k = 0; k < nm; k++) {
@@ -2138,7 +2165,7 @@ static int walk_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	if (g_walk.world_key != room_key(rv)) { walker_world(&g_walk, rv); walker_place_default(&g_walk, rv); }
 	int px, py;
 	object_project(g_walk.x1, g_walk.y1, g_walk.z, g_walk.hdr8, gx, gy, &px, &py);
-	int f = g_walk.moving ? walk_frames[g_walk.dir][g_walk.anim] : idle_frame[g_walk.dir];
+	int f = g_walk.moving ? walk_frames[g_walk.dir][g_walk.grab_rev ? 3 - g_walk.anim : g_walk.anim] : idle_frame[g_walk.dir];
 	const Sprite *sp = &g_walk.set.sprites[f];
 	blit_sprite(scr, sp, px + sp->hot_x, py + sp->hot_y, 1);
 	static uint8_t front[VIEW_W * VIEW_H];
