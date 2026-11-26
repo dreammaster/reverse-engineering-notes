@@ -21,12 +21,13 @@ ctest --test-dir build --output-on-failure          # needs the retail data next
 ./build/cadaver -g cadaver2                         # Space = Cadaver, P = The Payoff
 ```
 
-Keys: arrows (+ Insert/Delete/PgUp/PgDn diagonals) move, End = fire (verb menu / jump), Space or Return = rucksack, F1 = map, `I` = status, F5/F9 = quick save / load.
+Keys: arrows (+ Insert/Delete/PgUp/PgDn diagonals) move, End = fire (verb menu / jump / cast / throw), Space or Return = rucksack, H = hold, F1 = map, `I` = status, S / L = pay-to-save / load slots 0-9, F5/F9 = quick save / load.
 Headless runs (`--sim`, `--screenshot`) are described in `src/README.md`; `sh tools/check_all.sh` builds, runs the tests, the smoke run over every level and the rename-table checks.
 
 ## State in one paragraph
 
 All file formats are decoded and verified against the original running in an emulator; the walk scene plays levels of both games with scripts, timers,
-creatures (the original TAD routines on an 8086 interpreter), verbs, chests, rucksack, map, jumping, level progression, death, save/load and PC-speaker
-sound (the original `BEEPER.BIN` on the interpreter). Open items: combat / held items, door locks, some verbs and ops, the original save format,
-AdLib / SoundBlaster / Roland music — see `docs/roadmap.md`.
+creatures (the original TAD routines on an 8086 interpreter), verbs, chests, the rucksack (small view and scrolling grid), held and thrown things, spells,
+potions and throwing weapons with projectiles, map, jumping, level progression, death, save slots and sound from all three PC drivers (the original
+`BEEPER.BIN`, `ADLIB.BIN` and `SBLASTER.BIN` on the interpreter, with a small OPL2 synthesiser). Open items: a few spell / potion effects, the intro's story pages,
+the original save format, Roland music (exported as MIDI by `tools/roland_midi.py`, not played) — see `docs/roadmap.md`.
