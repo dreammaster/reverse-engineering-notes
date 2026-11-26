@@ -1499,18 +1499,16 @@ static int spell_sem(const RoomView *rv, int n) {
 	static const int8_t pay[31] = {0, 1, 2, -1, 5, -1, 7, 8, -1, 10, 11, -1, 13, 14, 15, -1, -1, 18, 19, 20, 21, 22, 0, -1, -1, -1, -1, 28, -1, -1, 4};
 	return n >= 0 && n < 31 ? pay[n] : -1;
 }
-static int spell_is_targeted(const RoomView *rv, const uint8_t *a) { int sp = spell_sem(rv, a[0]); return a[7] == 2 && (sp == 10 || sp == 13 || sp == 14 || sp == 15 || sp == 19 || sp == 20 || sp == 21 || sp == 28); }
 /* fire with a held spell item (1000:6896): refused with message 25h while A[3] bit 7 is set; sound 11h (A[7] = 0, the projectile mode) or 06h,
    the spell's effect, then the charge count A[2] drops (16AC9: FFh = unlimited; at 0 the item is gone: message 0Fh and it leaves the hand).
    Only the spells 0, 1, 2, 4, 5, 7 and 8 have an effect in the port; the others are ignored (no charge used) */
 static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 	uint8_t *a = rv->vm.tail[item];
 	int sp = spell_sem(rv, a[0]);
-	if (sp != 0 && sp != 1 && sp != 2 && sp != 4 && sp != 5 && sp != 7 && sp != 8 && sp != 11 && sp != 18 && sp != 22 && !spell_is_targeted(rv, a)) return;
 	if (a[3] & 0x80) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x25; roomview_flush_messages(rv); return; }
 	snd_play(a[7] == 0 ? 0x11 : 0x06);
 	int proj = (a[4] << 8) | a[5];
-	if (spell_is_targeted(rv, a)) {
+	if (a[7] == 2) {                                                    /* the mode 'cast on an object' (169AB) */
 		int tt = rv->cast_target > 0 ? rv->cast_target : -1;
 		if (tt < 0 || tt >= ACL_THINGS) { if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x29; roomview_flush_messages(rv); return; }
 		cast_on_target(rv, item, tt);
@@ -1524,7 +1522,12 @@ static void cast_spell_item(Walker *wk, RoomView *rv, int item) {
 	else if (sp == 4) map_open_magic(rv);
 	else if (sp == 2) acl_set_timer(&rv->vm, 0x22, a[1]);               /* freeze (TAD 093E): effect timer 22h for A[1] units */
 	else if (sp == 5) cast_blast(wk, rv, item);
-	else cast_unlock(wk, rv, item, sp);
+	else if (sp == 7 || sp == 8) cast_unlock(wk, rv, item, sp);
+	rv->vm.queue_n = 0;                                                 /* 1000:1691B: event 25 (19h) for the spell item itself: scripted spells (level 3's thing 805, Payoff thing 279) */
+	acl_thing_event(&rv->vm, &rv->mp2, item, 25, 0);
+	for (int q = 0; q < rv->vm.queue_n; q++) acl_room_event(&rv->vm, &rv->mp2, rv->room, rv->vm.queue[q].type, rv->vm.queue[q].arg);
+	rv->pending_rebuild |= rv_changed(rv);
+	roomview_flush_messages(rv);
 	if (a[2] != 0xFF && --a[2] == 0) {
 		rv->vm.flags[item] |= 0x80;
 		if (rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x0F;
