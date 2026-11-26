@@ -11,7 +11,7 @@ random.seed(seed)
 DIRS = {'right': (0x4D,), 'left': (0x4B,), 'up': (0x48,), 'down': (0x50,), 'rdown': (0x4D, 0x50), 'ldown': (0x4B, 0x50), 'rup': (0x4D, 0x48), 'lup': (0x4B, 0x48)}
 NAMES = [d for d in DIRS if d not in ('up', 'lup')]
 segs = [(random.choice(NAMES), random.choice([60, 90, 120])) for _ in range(nseg)]
-sim = 'wait:2,' + ','.join('%s:%d,wait:6,dump:0' % (d, n) for d, n in segs)
+sim = 'wait:2,' + ','.join('%s:%d,wait:40,dump:0' % (d, n) for d, n in segs)
 env = dict(os.environ, SDL_VIDEODRIVER='dummy', SDL_AUDIODRIVER='dummy', CAD_DUMPBOX='1')
 out = subprocess.run([os.path.join(ROOT, 'build', 'cadaver'), '-g', os.path.join(ROOT, 'cadaver1'), '--scene', 'walk', '--level', '1', '--room', '0', '--sim', sim, '--screenshot', '/tmp/x.bmp'], env=env, capture_output=True).stderr.decode()
 blocks, cur = [], None
@@ -32,45 +32,49 @@ pr = rw(0x5c)
 def run(n):
     t = e.ticks
     while e.ticks - t < n: e.run(max_instr=20000)
+class Stalled(Exception): pass
 def run_steps(k):
-    t = nstep[0]
-    while nstep[0] - t < k: e.run(max_instr=2000, slice_instr=2000)
+    t, slices = nstep[0], 0
+    while nstep[0] - t < k:
+        e.run(max_instr=2000, slice_instr=2000)
+        slices += 1
+        if slices > 3000 * (k + 2): raise Stalled()          # no game steps any more: the original left the room (an exit) or sits in a modal screen
 bad = 0
 RESYNC = os.environ.get('NORESYNC') is None      # after a drift (a game step more or less in the emulator's segment) the original's player and object boxes are overwritten with the port's, so that one drift does not spoil the rest of the run
+def cls(sl, j):
+    b = bytes(e.uc.mem_read(DS + sl + 50 * j, 10)); hs, ho = struct.unpack('<H', b[6:8])[0], struct.unpack('<H', b[8:10])[0]
+    return e.uc.mem_read(hs * 16 + ho + 22, 1)[0]
+near = lambda a, b: all(abs(x - y) <= 2 for x, y in zip(a, b))
 for i, (d, n) in enumerate(segs):
-    run_steps(1)                                              # start on a game step boundary
-    for k in DIRS[d]: e.scan_queue.append(k)
-    run_steps(n // 2 + 1)                                    # the key is seen by the next step: n / 2 steps of movement like the port's n ticks
-    for k in DIRS[d]: e.scan_queue.append(k | 0x80)
-    run_steps(3)
+    try:
+        run_steps(1)                                              # start on a game step boundary
+        for k in DIRS[d]: e.scan_queue.append(k)
+        run_steps(n // 2 + 1)                                    # the key is seen by the next step: n / 2 steps of movement like the port's n ticks
+        for k in DIRS[d]: e.scan_queue.append(k | 0x80)
+        run(44)                                                   # let the 17-step room events of both programs run before comparing (ticks: the game step hook is not reached in every idle tick)
+    except Stalled:
+        e.save_frame('/tmp/push2_stall.png')
+        print('%-6s %2d original stalled (left the room or a modal screen); the port is at %s in room %d' % (d, n, blocks[i]['p'] if i < len(blocks) else '?', 0)); break
     if i >= len(blocks): break
     sl = rw(0x2a); cnt = rw(0x224)
-    def cls(j):
-        b = bytes(e.uc.mem_read(DS + sl + 50 * j, 10)); hs, ho = struct.unpack('<H', b[6:8])[0], struct.unpack('<H', b[8:10])[0]
-        return e.uc.mem_read(hs * 16 + ho + 22, 1)[0]
-    objs = sorted(tuple(e.uc.mem_read(DS + sl + 50 * j, 6)) for j in range(1, cnt) if cls(j) != 3)
+    objs = [tuple(e.uc.mem_read(DS + sl + 50 * j, 6)) for j in range(1, cnt) if cls(sl, j) != 3]
     objs = [tuple(o) for o in objs if o[0] != 0xFF]
     p = tuple(bytes(e.uc.mem_read(DS + pr, 3)))
     pb = sorted(blocks[i]['o'])
-    near = lambda a, b: all(abs(x - y) <= 2 for x, y in zip(a, b))
-    moved = sum(1 for o in pb if not any(near(o, q) for q in objs))
-    gone = sum(1 for q in objs if not any(near(o, q) for o in pb))
+    moved = [o for o in pb if not any(near(o, q) for q in objs)]
+    gone = [q for q in objs if not any(near(o, q) for o in pb)]
     dp = max(abs(a - b) for a, b in zip(p, blocks[i]['p']))
-    st = 'OK' if dp == 0 and moved == 0 and gone == 0 else ('drift' if dp <= 2 and moved == 0 and gone == 0 else 'DIFF')
-    if st == 'DIFF': bad += 1
-    if st != 'OK' and False: pass
-    print('%-6s %2d port %s original %s objects: port-only %d original-only %d  %s' % (d, n, blocks[i]['p'], p, moved, gone, st))
+    st = 'OK' if dp == 0 and not moved and not gone else ('drift' if dp <= 2 and not moved and not gone else 'DIFF')
+    print('%-6s %2d port %s original %s objects: port-only %d original-only %d  %s' % (d, n, blocks[i]['p'], p, len(moved), len(gone), st))
+    if st == 'DIFF':
+        bad += 1
+        print('   port-only:', moved); print('   original-only:', gone)
+        print('   (the segments after the first difference are not comparable: the run is not re-synchronised)'); break
     if st == 'drift' and RESYNC:
         e.wr(0x1F17, pr, bytes(blocks[i]['p']))
         for j in range(1, cnt):
-            if cls(j) == 3: continue
+            if cls(sl, j) == 3: continue
             cur_b = tuple(e.uc.mem_read(DS + sl + 50 * j, 6))
             cand = [o for o in pb if near(o, cur_b)]
             if cand: e.wr(0x1F17, sl + 50 * j, bytes(min(cand, key=lambda o: sum(abs(a - b) for a, b in zip(o, cur_b)))))
-        continue
-    if st == 'DIFF':
-        print('   port-only:', [o for o in pb if not any(near(o, q) for q in objs)]); print('   original-only:', [o for o in objs if not any(near(o, q) for q in pb)])
-        print('   (the segments after the first difference are not comparable: the run is not re-synchronised)'); break
-    if st == 'DIFF':
-        print('   port-only:', [o for o in pb if not any(near(o, q) for q in objs)]); print('   original-only:', [o for o in objs if not any(near(o, q) for q in pb)])
 print('differences:', bad)
