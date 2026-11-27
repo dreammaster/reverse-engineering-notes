@@ -119,14 +119,27 @@ void Creatures::hatch(int egg, int hour) {
 	const World::Obj &e = _world.objects[egg];
 	int quality = e.quality;
 	bool daytime = hour >= 6 && hour < 19;
-	bool ok = quality < 10 || quality >= 30 || (quality < 20 && daytime) || (quality >= 20 && quality < 30 && !daytime);
-	if (!ok)
-		return;
-	if (e.status & 0x40) // an egg that has been used up (sub_366B0 36D3C)
-		return;
-	int chance = (_rng.next() % 100) + 1;
-	if (!(e.quantity == 100 || chance <= e.quantity))
-		return;
+	if (_world.game == GameId::MartianDreams) { // sub_2662B: an egg is looked at once (afterwards it is used up and unseen, the bits 0x40 and 2); the tens of its quality say when it hatches (0 always, 1 from
+		// 6 to 17 o'clock, 2 at night, more never, and so no quality of 100 or more), the roll of 1-100 must not be above its quantity
+		if (e.status & 0x40)
+			return;
+		_world.objects[egg].status |= 0x42;
+		int tens = quality / 10;
+		bool day = hour >= 6 && hour <= 17;
+		if (quality >= 100 || !(tens == 0 || (tens == 1 && day) || (tens == 2 && !day)))
+			return;
+		if ((int)(_rng.next() % 100) + 1 > e.quantity)
+			return;
+	} else {
+		bool ok = quality < 10 || quality >= 30 || (quality < 20 && daytime) || (quality >= 20 && quality < 30 && !daytime);
+		if (!ok)
+			return;
+		if (e.status & 0x40) // an egg that has been used up (sub_366B0 36D3C)
+			return;
+		int chance = (_rng.next() % 100) + 1;
+		if (!(e.quantity == 100 || chance <= e.quantity))
+			return;
+	}
 	for (size_t i = 0; i < _world.objects.size(); ++i) {
 		const World::Obj &o = _world.objects[i];
 		if (o.deleted || o.location() != ObjRecord::IN_CONTAINER || o.parent != egg)
