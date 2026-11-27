@@ -17,7 +17,7 @@ namespace Ultima6 {
 namespace {
 
 const int DISSOLVE_MS = 350; // how long the dissolve of the driver takes on the original's machine (it is as fast as the processor: APPROX 105)
-const int OPENING_WAIT1 = 8000, OPENING_WAIT2 = 5000; // (estimated from the original run with music; see buildOpening)
+const int OPENING_WAIT1 = 1500, OPENING_WAIT2 = 1500; // (sub_13B22(1000) of the original without music: three waits of 500 ms)
 const int FRAME_MS = 14; // a vertical retrace of the VGA (70.086 a second), 14.268 ms: the waits count them
 
 uint32_t get32(const Bytes &b, size_t o) {
@@ -44,6 +44,8 @@ void SeNewCharacter::applyTo(ObjList &al) const {
 		al.globals[0x125] = 1;
 		al.globals[0x126] = 0;
 		al.globals[0x127] = 0;
+		for (int k = 0; k < 6; ++k) // (the engine keeps the clock of every game at globals 2 to 7)
+			al.globals[2 + k] = al.globals[0x122 + k];
 		al.globals[0x180] = 0;
 		al.globals[0x181] = 1; // a character was made (sub_15CBC reads it)
 	}
