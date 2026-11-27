@@ -48,6 +48,10 @@ public:
 	 * same song starts again when it has ended, each song has its own volume (ds:189E of GAME.EXE).
 	 */
 	void follow(int song);
+	/** Martian Dreams gives each song its own volume (the table at ds:189E of its GAME.EXE); Savage Empire plays them as the files say (0x100): `false` for it. */
+	void useSongVolumes(bool on) {
+		_songVolumes = on;
+	}
 	/**
 	 * sub_2FD5E(1): the morning song after a dream or a faint: song 4 (a short one) at its volume, and the day's song 0 is queued to start when it ends (sub_38BFA); the game's current song
 	 * is then 0. The dreams call it (Game::mdTakeMorning).
@@ -144,6 +148,7 @@ private:
 	uint32_t _factor = 10000;     // word_28E19: timer ticks (16.16) a MIDI tick takes
 	int32_t _elapsed = 0;         // word_28E1D: the time that is owed to the timer (16.16)
 	int _enabled = 1;             // word_28BF0
+	bool _songVolumes = true;
 	int _master = 0x100, _base = 0x100; // word_28BF2, word_28BF4
 	int _fade = 0, _level = 0, _keep = 0; // word_28BF6, 28BF8, 28BFA
 	int _loop = 0;                // word_28BFC

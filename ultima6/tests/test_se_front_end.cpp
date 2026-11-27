@@ -244,6 +244,17 @@ int main() {
 			w.objects.push_back(o);
 			w.addToMap((int)w.objects.size() - 1);
 			int idx = (int)w.objects.size() - 1;
+			// the music (music_choose): song 0 or 1 on the ground, 2 below it, 3 on level 3, chosen again only when the level changes
+			CHECK(g.seSong() == 0 || g.seSong() == 1);
+			g.z = 2;
+			g.handleKey(' ');
+			CHECK(g.seSong() == 2);
+			g.z = 3;
+			g.handleKey(' ');
+			CHECK(g.seSong() == 3);
+			g.handleKey(' ');
+			CHECK(g.seSong() == 3);
+			g.z = 1;
 			g.seHurtThing(idx, 5);
 			CHECK(!g.endingStarted() && w.objects[idx].quantity == 15);
 			g.seHurtThing(idx, 30);

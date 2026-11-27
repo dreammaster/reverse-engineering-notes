@@ -88,10 +88,14 @@ public:
 	 */
 	int mdSong() const;
 	/**
-	 * Savage Empire's song (GAME.EXE music_choose (sub_37201)): level 3 song 3, any other level above the ground 2, combat 8, otherwise one of the day's songs 0 and 1 chosen at random (random_range (sub_3B58F)(1, 0)) each time the
-	 * place or the combat changes. APPROX(107): the songs' volumes are Martian Dreams' (ds:189E), the places that call music_choose (sub_37201) are taken as every change of level or combat.
+	 * Savage Empire's song: music_choose (sub_37201) picks it (level 3 song 3, any other level above the ground 2, combat 8, otherwise song 0 or 1 by chance, random_range (sub_3B58F)) and music_play
+	 * (sub_371A0) crossfades to it over 60 ticks. The original calls music_choose when a game starts or is loaded (sub_14FF5, sub_160A2), when the party changes level or place (climb_between_levels,
+	 * sub_1983B, sub_252BB, sub_25433) and at the end of the story scenes, so combat starts no song of its own. APPROX(107): a change of level is every place the original calls it from.
 	 */
-	int seSong();
+	int seSong() const {
+		return _seSong;
+	}
+	void seChooseSong();
 	/** The music is on (Ctrl-A switches it, as GAME.EXE's sub_23C1A does): the song of mdSong() plays, else none. */
 	bool mdMusicOn() const {
 		return _mdMusicOn;
@@ -325,7 +329,7 @@ private:
 	void helpParty();
 	void avatarDied();
 	bool _combatMode = false;
-	int _seSong = -1, _seSongKey = -1;
+	int _seSong = -1, _seZ = -1;
 	int _music = 0;
 	void sfx(int effect, int param = 0) {
 		if (sound && _world.game != GameId::MartianDreams) // (the numbers of Ultima VI's effects mean nothing to Martian Dreams)

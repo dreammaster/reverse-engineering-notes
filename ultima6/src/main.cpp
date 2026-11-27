@@ -329,6 +329,8 @@ int main(int argc, char **argv) {
 		backend->setMusicSource(&mdGameMusic);
 		if (!seMusic)
 			mdGameMusic.useEffects(Ultima6::Ultima6::MdMusic::GAME);
+		else
+			mdGameMusic.useSongVolumes(false);
 		mdPlaying = true;
 	}
 	struct DetachGame { // (declared after the synthesiser: the audio thread lets go of it first)

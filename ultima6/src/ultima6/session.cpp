@@ -66,6 +66,8 @@ Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(worl
 	world.avatarPosition(x, y, z);
 	_leaderObject = world.actorObject(1);
 	chooseMusic();
+	if (world.game == GameId::SavageEmpire)
+		seChooseSong(); // the game starts: music_choose
 	_rules.questFlag = !world.actors.globals.empty() && world.actors.globals[0] != 0;
 	prompt();
 	const std::vector<uint8_t> &g = world.actors.globals;
@@ -169,13 +171,10 @@ void Game::chooseMusic() {
 	_music = track;
 }
 
-int Game::seSong() {
-	int key = z * 2 + (_combatMode ? 1 : 0);
-	if (key != _seSongKey) {
-		_seSongKey = key;
-		_seSong = z == 3 ? 3 : z > 0 ? 2 : _combatMode ? 8 : seRoll(0, 1);
-	}
-	return _seSong;
+// music_choose (sub_37201)
+void Game::seChooseSong() {
+	_seZ = z;
+	_seSong = z == 3 ? 3 : z > 0 ? 2 : _combatMode ? 8 : seRoll(0, 1);
 }
 
 int Game::mdSong() const {
@@ -854,6 +853,8 @@ bool Game::handleKey(int key) {
 	bool more = handleKeyInner(key);
 	if (_ending == 2)
 		return false;
+	if (_world.game == GameId::SavageEmpire && z != _seZ)
+		seChooseSong(); // a change of level: climb_between_levels and the places call music_choose
 	// after every completed command the actors take their turns (command_loop 145FD)
 	if (more && !_pending && !_instrument && !_talk && !_confirmSave && !_inventory && !_dead && !_eye)
 		runTurns();

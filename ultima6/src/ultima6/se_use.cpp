@@ -2917,6 +2917,7 @@ void Game::seControlPanel() {
 	_world.actors.talkFlags[0x31] |= 0x20;
 	for (int m = 0; m < 24 * 60; ++m)
 		minutePassed();
+	seChooseSong(); // (the scene's song 0x10 plays while it lasts; at its end music_choose)
 	for (int a = 0; a < 256; ++a) {
 		int t = _world.actors.objType(a);
 		if ((t == 0x12D || t == 0x129) && !_world.actorFree(a))

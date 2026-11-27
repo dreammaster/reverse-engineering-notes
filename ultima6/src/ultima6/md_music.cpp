@@ -113,13 +113,13 @@ void MdMusic::follow(int song) {
 	if (song >= (int)_songs.size())
 		return;
 	if (_gameSong < 0) { // nothing was playing: the song starts at once
-		setBaseVolume(VOLUME[song & 15]);
+		setBaseVolume(_songVolumes ? VOLUME[song & 15] : 0x100);
 		play(song);
 	} else if (_gameSong != song) { // a change: the old song fades out as the new one comes
-		setBaseVolume(VOLUME[song & 15]);
+		setBaseVolume(_songVolumes ? VOLUME[song & 15] : 0x100);
 		crossfade(song, 60);
 	} else if (_ended != 0 && _requestPlay < 0 && _requestCross < 0) { // the same song is over: it starts again
-		setBaseVolume(VOLUME[song & 15]);
+		setBaseVolume(_songVolumes ? VOLUME[song & 15] : 0x100);
 		play(song);
 	}
 	_gameSong = song;
