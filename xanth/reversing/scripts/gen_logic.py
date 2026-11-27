@@ -469,6 +469,9 @@ def main():
             t = function_text(ctx, n, names)
             # a far null pointer as a message argument is pushed as two zero words: one argument (at the end of the list it does not matter, in the middle it shifts the rest)
             t = re.sub(r"(Font_WriteMessage\([^;\n]*?), 0, 0, ", r"\1, 0, ", t)
+            # the two halves of a text pointer that the program kept in registers (dx = segment): the segment of a text is not modelled, the pointer alone is the text
+            for m in set(re.findall(r"(p\d+)_dx = hi\(", t)):
+                t = t.replace("FAR(%s_dx, %s_ax)" % (m, m), "%s_ax" % m)
             for old, new in PATCHES.get(logic_name(n), []):
                 old = old.replace(chr(10), NL)
                 assert old in t, "patch for %s does not apply" % n

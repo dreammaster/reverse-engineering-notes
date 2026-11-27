@@ -1442,7 +1442,7 @@ TextRef conv_text_83(Game &g) {
 		p9_dx = hi(r10_5);
 		p9_ax = r10_5;
 	}
-	strcat(v6, FAR(p9_dx, p9_ax));
+	strcat(v6, p9_ax);
 	if (v.word_85292 != 4) {
 		strcat(v6, g.ResourceText_GetStr(ES(49)));
 	}
