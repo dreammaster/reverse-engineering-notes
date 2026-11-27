@@ -5,10 +5,14 @@
 
 Pushes of `mov ax, N / push ax` and `push [bp+var]` are collected until the next call; `add sp, N` ends the group. Labels and jumps are printed so that the loops stay visible.
 """
+import os
 import re
 import sys
 
-asm = open(sys.argv[1], encoding='utf-8', errors='replace').read().split('\n')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from idanames import read_asm  # the listing with the renamed routines and globals put back to IDA's own names
+
+asm = read_asm(sys.argv[1]).split('\n')
 name = sys.argv[2]
 start = next(i for i, l in enumerate(asm) if re.match(r'%s\s+proc' % name, l))
 end = next(i for i in range(start, len(asm)) if re.match(r'%s\s+endp' % name, l := asm[i]))

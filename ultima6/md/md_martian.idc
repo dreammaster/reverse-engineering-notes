@@ -4414,6 +4414,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X15170);
 	op_stkvar	(x,	1);
 	create_insn	(0X15177);
+	set_name	(0X15177,	"load_picture");
 	create_insn	(x=0X1517D);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15180);
@@ -4508,6 +4509,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X152AC);
 	op_stkvar	(x,	1);
 	create_insn	(0X152B5);
+	set_name	(0X152B5,	"draw_caption");
 	create_insn	(x=0X152B8);
 	op_hex		(x,	1);
 	create_insn	(x=0X152BD);
@@ -4587,6 +4589,7 @@ static Bytes_0(void) {
 	create_byte	(0X15403);
 	make_array	(0X15403,	0X6);
 	create_insn	(0X15409);
+	set_name	(0X15409,	"load_songs");
 	create_insn	(0X1541F);
 	create_insn	(0X15433);
 	create_insn	(x=0X1543E);
@@ -4627,6 +4630,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X15609);
 	op_hex		(x,	1);
 	create_insn	(0X15610);
+	set_name	(0X15610,	"wait_ticks");
 	create_insn	(x=0X15617);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15628);
@@ -4879,6 +4883,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	128,	0X14FE0);
 	set_name	(0X15C7C,	"jpt_15BC0");
 	create_insn	(0X15C84);
+	set_name	(0X15C84,	"ending_sequence");
 	create_insn	(x=0X15C87);
 	op_hex		(x,	1);
 	create_insn	(x=0X15C99);
@@ -5438,6 +5443,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X16752);
 	op_hex		(x,	1);
 	create_insn	(0X1675E);
+	set_name	(0X1675E,	"credits_sequence");
 	create_insn	(x=0X16761);
 	op_hex		(x,	1);
 	create_insn	(x=0X16771);
@@ -5529,6 +5535,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1694D);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X16950);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X16958);
@@ -5546,15 +5561,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X16986);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X16989);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X16998);
@@ -6696,6 +6702,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X17E6F);
 	op_hex		(x,	1);
 	create_insn	(0X17E7A);
+	set_name	(0X17E7A,	"creation_scene");
 	create_insn	(x=0X17E7D);
 	op_hex		(x,	1);
 	create_insn	(x=0X17E83);
@@ -7132,6 +7139,7 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	128,	0X14FE0);
 	set_name	(0X1854F,	"jpt_182C1");
 	create_insn	(0X18557);
+	set_name	(0X18557,	"creation_questions");
 	create_insn	(x=0X1855A);
 	op_hex		(x,	1);
 	create_insn	(x=0X18560);
@@ -8345,6 +8353,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X19244);
 	op_stkvar	(x,	0);
 	create_insn	(0X19266);
+	set_name	(0X19266,	"intro_sequence");
 	create_insn	(x=0X19269);
 	op_hex		(x,	1);
 	create_insn	(x=0X1926F);
@@ -11947,6 +11956,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1CB65);
 	op_hex		(x,	1);
 	create_insn	(0X1CB71);
+	set_name	(0X1CB71,	"fade_in_picture");
 	create_insn	(x=0X1CB74);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CB79);
@@ -12135,6 +12145,15 @@ static Bytes_1(void) {
 	create_insn	(0X1CF07);
 	create_insn	(x=0X1CF16);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1CF1F);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1CF22);
@@ -12166,15 +12185,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1CF76);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1CF7D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CF86);
@@ -13788,6 +13798,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1F29A);
 	create_insn	(0X1F2AE);
+	set_name	(0X1F2AE,	"wait_vsync");
 	create_insn	(x=0X1F2B3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F2B8);
@@ -14433,6 +14444,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2094B);
 	create_insn	(0X20951);
+	set_name	(0X20951,	"play_effect");
 	create_insn	(x=0X20954);
 	op_hex		(x,	1);
 	create_insn	(x=0X20959);
@@ -14542,6 +14554,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X20D22);
 	op_stkvar	(x,	1);
 	create_insn	(0X20D32);
+	set_name	(0X20D32,	"stop_effects");
 	create_insn	(x=0X20D37);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X20D41);
@@ -14718,6 +14731,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X2101E);
 	op_stkvar	(x,	1);
 	create_insn	(0X21038);
+	set_name	(0X21038,	"music_sequencer");
 	create_insn	(x=0X2103B);
 	op_hex		(x,	1);
 	create_insn	(x=0X21040);
@@ -15106,6 +15120,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X218E6);
 	op_hex		(x,	1);
 	create_insn	(0X218FC);
+	set_name	(0X218FC,	"stop_song");
 	create_insn	(x=0X218FF);
 	op_hex		(x,	1);
 	create_insn	(x=0X21925);
@@ -15265,6 +15280,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X21EAF);
 	op_stkvar	(x,	1);
 	create_insn	(0X21EB8);
+	set_name	(0X21EB8,	"start_song");
 	create_insn	(0X21EC6);
 	create_insn	(x=0X21ED5);
 	op_stkvar	(x,	0);
@@ -17988,6 +18004,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X24B28);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X24B2F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X24B32);
@@ -18029,15 +18054,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X24B95);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X24B98);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X24BA2);
@@ -19961,6 +19977,7 @@ static Bytes_3(void) {
 	create_word	(0X29658);
 	create_dword	(0X2965E);
 	create_word	(0X29662);
+	set_name	(0X29662,	"credits_flag");
 	create_word	(0X29664);
 	create_word	(0X29666);
 	create_word	(0X29668);
@@ -19985,6 +20002,7 @@ static Bytes_3(void) {
 	create_word	(0X29690);
 	create_dword	(0X29792);
 	create_word	(0X29B98);
+	set_name	(0X29B98,	"avatar_type");
 	create_byte	(0X2A097);
 	create_byte	(0X2A197);
 	create_byte	(0X2A297);
@@ -20019,6 +20037,7 @@ static Bytes_3(void) {
 	create_word	(0X2B4C4);
 	create_word	(0X2B4C6);
 	create_word	(0X2B4CA);
+	set_name	(0X2B4CA,	"music_flag");
 	create_word	(0X2B4CC);
 	create_word	(0X2B4CE);
 	create_word	(0X2B5D0);

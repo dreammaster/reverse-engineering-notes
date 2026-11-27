@@ -7,6 +7,7 @@ The routine is a straight script: it loads pictures (sub_15177: file name offset
 the few instructions it uses; the calls are not run but recorded with their arguments (handles of loaded pictures and the numbers of the caption lines are given as tagged values).
 """
 import json
+import os
 import re
 import sys
 
@@ -17,7 +18,10 @@ RET = {'sub_11AB3': 1, 'sub_11947': 1}  # file calls: a read gets its item, an o
 exe = open(EXE, 'rb').read()
 DS = 0x186A0
 
-lines = open(ASM, encoding='utf-8', errors='replace').read().split('\n')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from idanames import read_asm  # the listing with the renamed routines and globals put back to IDA's own names
+
+lines = read_asm(ASM).split('\n')
 start = next(i for i, l in enumerate(lines) if re.match(FUNC + r'\s+proc', l))
 end = next(i for i in range(start, len(lines)) if re.match(FUNC + r'\s+endp', lines[i]))
 

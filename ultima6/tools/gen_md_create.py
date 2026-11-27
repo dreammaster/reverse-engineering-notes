@@ -8,6 +8,7 @@
 - the questions as a program: sub_18557's code between the first question and loc_19166 only compares the answers, keeps them in registers and sets the three stats to one of the random numbers, so
   it is turned into small operations (0 ask scene a; 1 store the answer in register a; 2 compare register a with b; 3 jump if equal; 4 jump if not equal; 5 jump; 6 stat a = random number b; 7 end).
 """
+import os
 import re
 import struct
 import sys
@@ -15,7 +16,10 @@ import sys
 asm, exe_path, out_path = sys.argv[1:4]
 exe = open(exe_path, 'rb').read()
 DS = 0x186A0
-lines = open(asm, encoding='utf-8', errors='replace').read().split('\n')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from idanames import read_asm  # the listing with the renamed routines and globals put back to IDA's own names
+
+lines = read_asm(asm).split('\n')
 start = next(i for i, l in enumerate(lines) if re.match(r'sub_18557\s+proc', l))
 end = next(i for i in range(start, len(lines)) if re.match(r'sub_18557\s+endp', lines[i]))
 code = [l.split(';')[0].rstrip() for l in lines[start:end]]

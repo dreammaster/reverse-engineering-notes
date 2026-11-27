@@ -10,7 +10,10 @@ EXE = 'md/game/MARTIAN/GAME.EXE'
 SEG057 = 0x2EF40
 DSBASE = 0x3FAB0 - 0xCC00
 import os
-asm = open(os.environ.get('MD_ASM', 'md/md_game.asm'), encoding='utf-8', errors='replace').read().split('\n')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from idanames import read_asm  # the listing with the renamed routines and globals put back to IDA's own names
+
+asm = read_asm(os.environ.get('MD_ASM', 'md/md_game.asm')).split('\n')
 exe = open(EXE, 'rb').read()
 
 

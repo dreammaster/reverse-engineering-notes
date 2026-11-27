@@ -93,5 +93,16 @@ cd C:\dev\ultima\ultima6\ida_scripts
   mode is not reliable.
 * Convention (as in ultima1): one accumulating `apply_renames_<stem>.py` per database holds every confirmed name with a note;
   re-running it is idempotent, so the `.asm`/`.idc` can be regenerated at will.
+* **Standing rule: every routine and global the port identifies is renamed in its database** (a meaningful name and a note in the
+  matching `apply_renames_<stem>.py`: `u6_game`, `u6_u`, `u6_end`, `md_game`, `md_martian`, `se_game`, `se_savage`, the drivers),
+  `apply_all_renames.ps1` re-applies them all and re-exports the listings, and the result (scripts, `.asm`, `.idc`) is committed
+  with the code that needed the finding. A routine that is the same code in two executables gets the same name in both: carry it
+  over with `tools/match_functions.py` (signatures from `export_signatures.py`). New C++ comments quote the name first and the
+  `sub_` address second (`worktype_berserk (sub_2CE85)`); `tools/idanames.py sub_2CE85` / `idanames.py worktype_berserk` looks
+  either way up. IDA also names the thunks of the overlay stubs `j_<target>` and collapses them in the listing, so a listing
+  has fewer `proc` lines than before a rename.
+* The tools that parse a listing (`emulate_intro.py`, `gen_md_create.py`, `trace_calls.py`, `md_pretty.py`, `md_findstr.py`) read
+  it through `tools/idanames.py:read_asm`, which puts the automatic names back, so renaming never changes what they generate
+  (checked: the intro, ending, credits and creation data come out byte for byte the same).
 * Gotchas: `idat.exe` relaunches itself, so the runner pipes its output to wait for the real exit; heredocs lose backslashes, so
   write script and C++ files with an editor tool, not `cat <<EOF`.
