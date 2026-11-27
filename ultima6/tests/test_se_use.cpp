@@ -896,6 +896,13 @@ int main() {
 				CHECK(al.hp[victim] < 200);
 			}
 			w.objects[fk].status = 0;
+			// worktype 4 (sub_2CBA9): with a target within two squares it runs; with none within reach and no ranged weapon it says so
+			al.worktype[0xC1] = 4;
+			w.moveObject(fk, g.x + 4, g.y, g.z);
+			al.moves[0xC1] = 12;
+			g.log.clear();
+			g.seWorktype(0xC1);
+			CHECK(logText(g).find("has no ranged weapons!") != std::string::npos);
 			al.worktype[0xC1] = 0;
 			al.status[0xC1] = 0;
 		}

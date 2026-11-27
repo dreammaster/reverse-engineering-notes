@@ -2163,7 +2163,7 @@ bool Game::seWorktype(int actor) {
 	int wt = al.worktype[actor];
 	if (wt != 0 && (_world.objects[k].status & 0x80)) // sub_27211: whatever the worktype, an object with the bit 0x80 of its status fights as the berserk one
 		wt = 6;
-	if (wt != 7 && wt != 9 && wt != 19 && wt != 154 && wt != 10 && wt != 11 && wt != 14 && wt != 8 && wt != 155 && wt != 6)
+	if (wt != 7 && wt != 9 && wt != 19 && wt != 154 && wt != 10 && wt != 11 && wt != 14 && wt != 8 && wt != 155 && wt != 6 && wt != 4)
 		return false;
 	_world.objects.reserve(_world.objects.size() + 8);
 	World::Obj &o = _world.objects[k];
@@ -2219,6 +2219,68 @@ bool Game::seWorktype(int actor) {
 	};
 	if (wt == 8 || wt == 155)
 		return fight();
+	if (wt == 4) { // sub_2CBA9 (with the weapon choice of sub_2CA68), the ranged fighter: with a target within two squares it runs, the original's goal being the small square (x - his x, y - his y) of the map
+		// (a slip: it heads for the corner of the map); with no weapon of range 3 or more in hand it says so (5 moves); more than five squares from the party it comes to it; else it shoots when in reach
+		// with a line, sidesteps a quarter turn when there is none and walks up when out of reach; without a target it wanders (the engine's). The weapon is the one of range 3 or more with most
+		// reach while that is short of the target, else the one of most strength (sub_2A03D: the engine's damage). APPROX(100): the aiming of grenades, as the fighter's
+		int t = _creatures.targetFor(actor), tx = 0, ty = 0, d = 99;
+		if (t >= 0) {
+			int tk = _world.actorObject(t);
+			tx = _world.objects[tk].x;
+			ty = _world.objects[tk].y;
+			d = Combat::distance(std::abs(gapOf(tx, o.x)), std::abs(gapOf(ty, o.y)));
+		}
+		int best = -1, bestRange = 0, bestDamage = 0;
+		std::vector<int> inv;
+		_world.inventory(actor, inv, false);
+		for (int i : inv) {
+			const World::Obj &it = _world.objects[i];
+			int range = Combat::rangeOf(it.type), dmg = std::max(0, Combat::weaponDamageOf(it.type));
+			if (range < 3 || (it.status & 0x18) != 0x18)
+				continue;
+			if (bestRange < d) {
+				if (range > bestRange) {
+					bestRange = range;
+					bestDamage = dmg;
+					best = i;
+				}
+			} else if (dmg > bestDamage) {
+				bestRange = range;
+				bestDamage = dmg;
+				best = i;
+			}
+		}
+		if (t >= 0 && std::abs(gapOf(tx, o.x)) < 3 && std::abs(gapOf(ty, o.y)) < 3) {
+			_creatures.walkTo(actor, (o.x - tx) & 0x3FF, (o.y - ty) & 0x3FF);
+			return true;
+		}
+		if (best < 0) {
+			message("\n" + _combat.nameOf(actor) + " has no ranged weapons!\n");
+			_world.spendMoves(actor, 5);
+			return true;
+		}
+		if (std::abs(gapOf(o.x, x)) > 5 || std::abs(gapOf(o.y, y)) > 4) {
+			_creatures.walkTo(actor, x, y);
+			return true;
+		}
+		if (t < 0)
+			return false;
+		if (d > bestRange) {
+			_creatures.walkTo(actor, tx, ty);
+			return true;
+		}
+		if (d <= 1 || _creatures.lineOfFire(actor, tx, ty, bestRange)) {
+			_combat.attackWith(actor, t, _world.objects[best].type, false);
+			_world.spendMoves(actor, 10);
+			return true;
+		}
+		int dx = gapOf(tx, o.x), dy = gapOf(ty, o.y);
+		if (seRoll(0, 1))
+			_creatures.walkTo(actor, (o.x - dy) & 0x3FF, (o.y + dx) & 0x3FF);
+		else
+			_creatures.walkTo(actor, (o.x + dy) & 0x3FF, (o.y - dx) & 0x3FF);
+		return true;
+	}
 	if (wt == 6) { // sub_2CE85, the berserk fighter: of the people within eight squares that it sees (not invisible, not hidden, on its level) and that are of the other side (side 0x40 against 0x20 and the
 		// other way round, side 0x60 against any side but 0x60 and none, no side against anyone) it goes for the one with most of strength + dexterity + intelligence (the first when equal); in reach it strikes
 		// (10 moves) when next to it or with a line, else it walks up (or sidesteps as the fighter does); when the step fails it fights as sub_2C86D; 5 moves more at the end. Nobody: the fighter
