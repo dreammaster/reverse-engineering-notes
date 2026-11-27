@@ -1629,7 +1629,7 @@ void Game::seExplode(int ex, int ey, bool device) {
 }
 
 // sub_19505 for a rope (0x14) and a hole in the ceiling (0x16): the destinations are the table at ds:4D4 (x, y words by quality; the rope reads it from entry 9, where ds:4F8 begins).
-// APPROX(83): the ladders 0xA3 / 0xE3 / 0x103 / 0xA0 of the same routine read tables (ds:38C, 3DC) that hold other data in the file; they are not used here (Ultima VI's ladder code serves them).
+// APPROX(83): the item 0x15 message and the fade-out (sub_37694) of sub_19505 are left out; the ladders 0xA3 / 0xE3 / 0x103 / 0xA0 are Game::seStepOn (the tables at ds:038C / 3DC are indexed by the object's quality 101-120).
 void Game::seClimb(int idx) {
 	static const uint16_t WHERE[19][2] = {{0xFFFF, 0xFFFF}, {396, 68}, {600, 223}, {138, 457}, {139, 509}, {368, 336}, {633, 464}, {666, 689}, {234, 61}, {353, 633},
 										  {139, 11}, {218, 27}, {19, 83}, {11, 203}, {98, 83}, {235, 84}, {227, 179}, {243, 204}, {51, 243}};
@@ -2339,6 +2339,59 @@ void Game::seHazards() {
 			if (!protectedOne && me.type != 0x11A)
 				hurt(seRoll(1, 5));
 		}
+	}
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_254F4 (the party has stepped on a square) and sub_19505 for the ladders: a thing of type 0xA3 (the way down into the caves, level 0 to 2), 0xE3 (the way up, level 2 to 0), 0x103 (to 0xC0, 0x1CC
+// of the surface) or 0xA0 (to 0x9D, 0x89 of level 3) on the square takes the party to the place its quality names (the tables of ds:038C and ds:03DC, indexed by the quality, which is 101-120; the
+// stored base is 400 bytes before the first entry) when the party is together ("You must be in party mode to enter." when somebody walks alone). The 0x103, once actor 1's flag 4 is set (the
+// mechanism of the trap door), says that it fails as the party leaves the stairwell and seals the entrance, and the 0x1CC at 0xC0, 0xA0 goes.
+void Game::seStepOn() {
+	static const uint16_t UP[20][2] = {{291, 69}, {272, 69}, {497, 77}, {905, 749}, {821, 349}, {986, 413}, {140, 590}, {124, 598}, {108, 606}, {845, 654},
+									   {877, 654}, {861, 662}, {893, 662}, {685, 374}, {709, 397}, {725, 414}, {733, 414}, {701, 342}, {956, 236}, {929, 845}};
+	static const uint16_t DOWN[20][2] = {{45, 130}, {25, 131}, {81, 147}, {209, 91}, {149, 236}, {74, 195}, {244, 172}, {228, 180}, {212, 188}, {141, 60},
+										 {173, 60}, {157, 68}, {189, 68}, {13, 244}, {181, 228}, {197, 244}, {205, 244}, {237, 244}, {20, 218}, {177, 131}};
+	std::vector<int> here;
+	_world.objectsAt(x, y, z, here);
+	for (int i : here) {
+		const World::Obj o = _world.objects[i];
+		if (o.deleted || i == _leaderObject || (o.type != 0xA3 && o.type != 0xE3 && o.type != 0x103 && o.type != 0xA0))
+			continue;
+		if (_solo >= 0) {
+			message("You must be in party mode to enter.\n");
+			return;
+		}
+		int nx, ny, nz;
+		int q = o.quality - 101;
+		if (o.type == 0xE3 || o.type == 0xA3) {
+			if (q < 0 || q >= 20)
+				return;
+			nx = (o.type == 0xE3 ? UP : DOWN)[q][0];
+			ny = (o.type == 0xE3 ? UP : DOWN)[q][1];
+			nz = o.type == 0xE3 ? 0 : 2;
+		} else if (o.type == 0x103) {
+			nx = 0xC0;
+			ny = 0x1CC;
+			nz = 0;
+		} else {
+			nx = 0x9D;
+			ny = 0x89;
+			nz = 3;
+		}
+		changeLevel(nx, ny, nz);
+		if (o.type == 0x103 && (_world.actors.talkFlags[1] & 4)) {
+			message("\nThe mechanism supporting the trap door fails just as you and your companions leave the stairwell, sealing the entrance to the underground city.\n");
+			int seal = seFind(0x1CC, 0xC0, 0xA0);
+			if (seal >= 0)
+				_world.deleteObject(seal);
+		}
+		return;
 	}
 }
 

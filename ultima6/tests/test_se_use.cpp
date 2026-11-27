@@ -908,6 +908,52 @@ int main() {
 		}
 	}
 
+	// the ladders (sub_254F4 / sub_19505): a way down of quality 102 takes the party to (25,131) of level 2, a way up of quality 102 to (272,69) of level 0
+	{
+		int sx = g.x, sy = g.y, sz = g.z;
+		static const int DX[4] = {0, 1, 0, -1}, DY[4] = {-1, 0, 1, 0};
+		// somewhere in the neighbourhood with an open square beside it
+		int bx = -1, by = -1, dir = -1;
+		for (int r = 0; r < 200 && dir < 0; ++r) {
+			int cx = px + (r % 20) - 10, cy = py + (r / 20) - 5;
+			w.moveObject(w.actorObject(1), cx, cy, 0);
+			g.x = cx;
+			g.y = cy;
+			g.z = 0;
+			for (int d = 0; d < 4 && dir < 0; ++d) {
+				std::vector<int> here;
+				w.objectsAt(cx + DX[d], cy + DY[d], 0, here);
+				if (here.empty() && g.canWalk(cx + DX[d], cy + DY[d], 0)) {
+					bx = cx;
+					by = cy;
+					dir = d;
+				}
+			}
+		}
+		CHECK(dir >= 0);
+		if (dir >= 0) {
+			int lx = bx + DX[dir], ly = by + DY[dir];
+			int ladder = put(w, 0xA3, 3, lx, ly, 0); // frame 3 is the open way in
+			w.objects[ladder].quality = 102;
+			g.step(dir * 2);
+			CHECK(g.z == 2 && g.x == 25 && g.y == 131);
+			w.deleteObject(ladder);
+			w.moveObject(w.actorObject(1), bx, by, 0);
+			g.x = bx;
+			g.y = by;
+			g.z = 0;
+			int up = put(w, 0xE3, 0, lx, ly, 0);
+			w.objects[up].quality = 102;
+			g.step(dir * 2);
+			CHECK(g.z == 0 && g.x == 272 && g.y == 69);
+			w.deleteObject(up);
+		}
+		w.moveObject(w.actorObject(1), sx, sy, sz);
+		g.x = sx;
+		g.y = sy;
+		g.z = sz;
+	}
+
 	if (failures == 0)
 		std::printf("ok\n");
 	return failures ? 1 : 0;

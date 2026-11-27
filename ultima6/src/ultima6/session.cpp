@@ -404,6 +404,8 @@ bool Game::step(int dir) {
 		mdStepOn();
 		mdSegments();
 	}
+	if (_world.game == GameId::SavageEmpire)
+		seStepOn();
 	return true;
 }
 
