@@ -2852,13 +2852,14 @@ void Game::seTreeFalls(int x, int y) {
 namespace Ultima6 {
 namespace Ultima6 {
 
-// sub_2E34E: D = byte_4224C + 99 (the day of 1 to 31 less one), B = byte_4224D + 99 (the month less one), Y = word_4224E + 100 (the years); the clock starts at day 1, month 1, year 0. The letter
-// that says whom the story ended with (byte_4695E bit 0x20 'A' for Aiela, byte_4698F bit 0x20 'T' for Tristia) is a flag of the conversations that the engine does not keep: APPROX(105)
+// sub_2E34E: D = byte_4224C + 99 (the day of 1 to 31 less one), B = byte_4224D + 99 (the month less one), Y = word_4224E + 100 (the years); a new game starts at day 1, month 1, year 0. The letter
+// that says whom the story ended with is bit 0x20 of byte_4695E for 'A' (Aiela) and of byte_4698F for 'T' (Tristia): the talk flags of actors 2 and 0x33 (the array at ds:6EFC, loaded from the
+// objlist's talk flags, the flags the conversations set)
 void Game::seElapsed(int &days, int &months, int &years, char &who) const {
 	days = gameClock.day - 1;
 	months = gameClock.month - 1;
 	years = gameClock.year;
-	who = 0;
+	who = (_world.actors.talkFlags[2] & 0x20) ? 'A' : (_world.actors.talkFlags[0x33] & 0x20) ? 'T' : 0;
 }
 
 } // namespace Ultima6

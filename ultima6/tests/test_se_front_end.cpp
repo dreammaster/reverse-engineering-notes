@@ -207,7 +207,13 @@ int main() {
 			int d, b, y;
 			char who;
 			g.seElapsed(d, b, y, who);
-			CHECK(d >= 0 && b >= 0 && y >= 0);
+			CHECK(d >= 0 && b >= 0 && y >= 0 && who == 0);
+			w.actors.talkFlags[0x33] |= 0x20;
+			g.seElapsed(d, b, y, who);
+			CHECK(who == 'T');
+			w.actors.talkFlags[2] |= 0x20;
+			g.seElapsed(d, b, y, who);
+			CHECK(who == 'A');
 		}
 	}
 	if (failures)

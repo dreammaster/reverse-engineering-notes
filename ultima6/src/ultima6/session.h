@@ -97,7 +97,7 @@ public:
 	bool endingStarted() const {
 		return _ending == 2;
 	}
-	/** Savage Empire's ending (SAVAGE.EXE's D, B and Y arguments, built by GAME.EXE's sub_2E34E): the days, months and years that have gone since the start (day 1, month 1, year 0), and 'A' / 'T' (not told: 0). */
+	/** Savage Empire's ending (SAVAGE.EXE's D, B and Y arguments, built by GAME.EXE's sub_2E34E): the days, months and years that have gone since the start (day 1, month 1, year 0), and 'A' / 'T' (the talk flags of actors 2 and 0x33, bit 0x20: 0 when neither). */
 	void seElapsed(int &days, int &months, int &years, char &who) const;
 	/** Years, months and days of play since the new game's start (4/7/161), borrowing 28 days and 13 months. */
 	void timePlayed(int &years, int &months, int &days) const;
