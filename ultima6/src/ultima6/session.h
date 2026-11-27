@@ -192,6 +192,7 @@ public:
 	void seAwaken();                               // sub_37566: the Avatar is dead (Savage Empire)
 	void seHurtThing(int idx, int dmg);            // sub_2A99B for a thing that is not a person (a tree, the panel)
 	void seTreeFalls(int x, int y);                // sub_2A29F
+	void seControlPanel();                         // sub_2DED4: the scene of the destroyed control panel
 	void seExplode(int ex, int ey, bool device);   // sub_29A41 / sub_29AC1 with the chain of sub_318F5
 	void mdAwaken();                               // sub_30093: the Avatar is dead outside a dream
 	void mdDying(int actor);                       // sub_19300 before the body falls: the story of the dead (the people the game needs, the sand creature's brood, the vine's ends)

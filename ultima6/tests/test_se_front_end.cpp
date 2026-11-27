@@ -216,6 +216,38 @@ int main() {
 			CHECK(who == 'A');
 		}
 	}
+	// the control panel (0xDE): it stays, and its scene runs once: the flags, the dead (actor 0x0B), a day gone by, the things of type 0x100 turned into 0xDF
+	{
+		static World w;
+		w.game = GameId::SavageEmpire;
+		if (w.load("se/game/SAVAGE")) {
+			w.objects.reserve(w.objects.size() + 64);
+			Game g(w);
+			World::Obj o;
+			o.status = 0;
+			o.x = 0x60;
+			o.y = 0x60;
+			o.z = 1;
+			o.type = 0xDE;
+			o.frame = 0;
+			o.quantity = 3;
+			o.quality = 0;
+			o.actor = -1;
+			o.parent = -1;
+			w.objects.push_back(o);
+			w.addToMap((int)w.objects.size() - 1);
+			int idx = (int)w.objects.size() - 1;
+			int day = g.gameClock.day, hour = g.gameClock.hour;
+			bool alive = !w.actorFree(0x0B);
+			g.seHurtThing(idx, 1);
+			CHECK(w.objects[idx].quantity == 2 && !(w.actors.talkFlags[1] & 4));
+			g.seHurtThing(idx, 5);
+			CHECK(!w.objects[idx].deleted && w.objects[idx].quantity == 1 && (w.actors.talkFlags[1] & 4) && (w.actors.talkFlags[0x31] & 0x20) && (w.actors.talkFlags[0x28] & 0x80));
+			CHECK(!alive || w.actors.hp[0x0B] == 0);
+			CHECK(g.gameClock.day != day || g.gameClock.hour == hour); // a day later: the same hour
+			CHECK(!g.endingStarted());
+		}
+	}
 	if (failures)
 		std::printf("%d failures\n", failures);
 	else

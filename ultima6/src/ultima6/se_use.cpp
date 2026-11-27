@@ -2783,8 +2783,13 @@ void Game::seHurtThing(int idx, int dmg) {
 		_ending = 2;
 		return;
 	}
-	if (o.type == 0xDE) {
+	if (o.type == 0xDE) { // sub_2A99B: the panel stays, and the scene runs once (talk flags[1] bit 2, byte_4695D)
 		_world.objects[idx].quantity = 1;
+		for (size_t i = 0; i < _world.objects.size(); ++i) // (the things of type 0x100 become 0xDF)
+			if (_world.objects[i].actor < 0 && !_world.objects[i].deleted && _world.objects[i].type == 0x100)
+				_world.objects[i].type = 0xDF;
+		if (!(_world.actors.talkFlags[1] & 4))
+			seControlPanel();
 		return;
 	}
 	_world.objects.reserve(_world.objects.size() + 16);
@@ -2860,6 +2865,80 @@ void Game::seElapsed(int &days, int &months, int &years, char &who) const {
 	months = gameClock.month - 1;
 	years = gameClock.year;
 	who = (_world.actors.talkFlags[2] & 0x20) ? 'A' : (_world.actors.talkFlags[0x33] & 0x20) ? 'T' : 0;
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_2DED4: the scene of the destroyed control panel. Actor 0xB's pack falls to the ground where he stands and his body (the frame 11 of his type) is made there; the actors 0x2F, 0x1F, 0x37,
+// 0x23 and 0x0B die; actor 5 is moved to the place; actors 0x28 and 0x2C take the type 0x142; the flags (talk flags 0x28 bit 7, 1 bit 2, 0x31 bit 5) are set; a day goes by (24 times sub_14746(60));
+// every actor of type 0x12D or 0x129 dies, the things of type 0x44 become 0x26 and an egg (0xE6) that holds such a creature goes with it. APPROX(106): the screen effects (sub_371A0, sub_182AD, the driver's
+// fills), the unnamed calls sub_2872A, sub_1FB60, sub_24FB7, the flags byte_46755 and byte_46859, and the kill's own routine sub_2A6AD (here the damage that uses the hit points up) are left out
+void Game::seControlPanel() {
+	int box = _world.actorObject(0x0B);
+	int px = 0, py = 0, pz = 0;
+	if (box >= 0) {
+		px = _world.objects[box].x;
+		py = _world.objects[box].y;
+		pz = _world.objects[box].z;
+		std::vector<int> pack;
+		_world.inventory(0x0B, pack, false);
+		for (int i : pack) {
+			World::Obj &c = _world.objects[i];
+			c.status = (uint8_t)(c.status & ~ObjRecord::LOCATION_MASK);
+			c.parent = -1;
+			c.x = (uint16_t)px;
+			c.y = (uint16_t)py;
+			c.z = (uint8_t)pz;
+			_world.addToMap(i);
+		}
+		int type = _world.actors.objType(0x0B);
+		_world.objects.reserve(_world.objects.size() + 16);
+		int body = seMake(type, px, py, pz, 0);
+		_world.objects[body].frame = 11;
+	}
+	for (int a : {0x2F, 0x1F, 0x37, 0x23, 0x0B})
+		if (!_world.actorFree(a))
+			_combat.applyDamage(1, a, _world.actors.hp[a]);
+	int five = _world.actorObject(5);
+	if (five >= 0 && box >= 0)
+		_world.moveObject(five, px, py, pz);
+	for (int a : {0x28, 0x2C}) {
+		_world.actors.objFrame[a] = (uint16_t)((_world.actors.objFrame[a] & 0xFC00) | 0x142);
+		int k = _world.actorObject(a);
+		if (k >= 0)
+			_world.objects[k].type = 0x142;
+	}
+	_world.actors.talkFlags[0x28] |= 0x80;
+	_world.actors.talkFlags[1] |= 4;
+	_world.actors.talkFlags[0x31] |= 0x20;
+	for (int m = 0; m < 24 * 60; ++m)
+		minutePassed();
+	for (int a = 0; a < 256; ++a) {
+		int t = _world.actors.objType(a);
+		if ((t == 0x12D || t == 0x129) && !_world.actorFree(a))
+			_combat.applyDamage(1, a, _world.actors.hp[a]);
+	}
+	for (size_t i = 0; i < _world.objects.size(); ++i) {
+		World::Obj &o = _world.objects[i];
+		if (o.deleted || o.actor >= 0)
+			continue;
+		if (o.type == 0x44) {
+			o.type = 0x26;
+		} else if (o.type == 0xE6) {
+			for (size_t j = 0; j < _world.objects.size(); ++j) {
+				World::Obj &c = _world.objects[j];
+				if (!c.deleted && c.actor < 0 && c.location() == ObjRecord::IN_CONTAINER && c.parent == (int)i && (c.type == 0x129 || c.type == 0x12D)) {
+					_world.deleteObject((int)j);
+					_world.deleteObject((int)i);
+					break;
+				}
+			}
+		}
+	}
 }
 
 } // namespace Ultima6
