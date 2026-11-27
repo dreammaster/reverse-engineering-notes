@@ -3,8 +3,8 @@
 
     gen_se_front.py se/game/SAVAGE/SAVAGE.EXE src/ultima6/se_front_data.inc
 
-The strings are the ones the routines of se/se_savage.asm print: the ending sub_15E82 (the pointer table at ds:0637, the strings of the date), the pages of the Introduction sub_15D3B (ds:0623),
-the creation sub_150AC / sub_154BD / sub_155A0 (the hut, the question table at ds:0564, 12 bytes a row), the menu sub_14978 (the tables at ds:05DC and ds:05E4).
+The strings are the ones the routines of se/se_savage.asm print: the ending ending_sequence (sub_15E82) (the pointer table at ds:0637, the strings of the date), the pages of the Introduction intro_pages (sub_15D3B) (ds:0623),
+the creation creation_hut (sub_150AC) / creation_pages (sub_154BD) / creation_question (sub_155A0) (the hut, the question table at ds:0564, 12 bytes a row), the menu menu_draw (sub_14978) (the tables at ds:05DC and ds:05E4).
 """
 import struct
 import sys
@@ -48,7 +48,7 @@ with open(sys.argv[2], 'w') as f:
     for k in range(16):
         f.write('\t%s,\n' % c(s(w(0x637 + 2 * k))))
     f.write('};\n')
-    f.write('// The creation: sub_154BD\'s texts (ds:0D7C, 0DD3, 0E4F, 0EBC, 0EFE, 0F68, 0FC8), the refusals (ds:0CBD, 0D0F)\n')
+    f.write('// The creation: creation_pages (sub_154BD)\'s texts (ds:0D7C, 0DD3, 0E4F, 0EBC, 0EFE, 0F68, 0FC8), the refusals (ds:0CBD, 0D0F)\n')
     f.write('static const char *const SE_CREATE_TEXT[9] = {\n')
     for o in (0xD7C, 0xDD3, 0xE4F, 0xEBC, 0xEFE, 0xF68, 0xFC8, 0xCBD, 0xD0F):
         f.write('\t%s,\n' % c(s(o)))

@@ -85,6 +85,8 @@ FUNCTIONS = [
     (0x2D8F9, "worktype_vine", 'wt 13'),
     (0x2DD70, "scene_gem_on_stand", 'the gem placed on the stand'),
     (0x2DED4, "scene_control_panel", 'the scene of the destroyed control panel'),
+    (0x37201, "music_choose", 'the song of the place: level 3 song 3, above the ground 2, combat 8, else 0 or 1 by chance'),
+    (0x371A0, "music_play", '(song): crossfades to a song of MUSIC.LZC (-1 stops it)'),
     (0x2E34E, "ending_launch", 'the dark moonstone: starts the ending'),
     (0x2E5D2, "is_search_type", 'the table at ds:1122'),
     (0x2E693, "container_takes_item", 'whether a container takes an item'),

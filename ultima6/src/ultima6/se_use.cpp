@@ -2857,7 +2857,7 @@ void Game::seTreeFalls(int x, int y) {
 namespace Ultima6 {
 namespace Ultima6 {
 
-// sub_2E34E: D = byte_4224C + 99 (the day of 1 to 31 less one), B = byte_4224D + 99 (the month less one), Y = word_4224E + 100 (the years); a new game starts at day 1, month 1, year 0. The letter
+// ending_launch (sub_2E34E): D = byte_4224C + 99 (the day of 1 to 31 less one), B = byte_4224D + 99 (the month less one), Y = word_4224E + 100 (the years); a new game starts at day 1, month 1, year 0. The letter
 // that says whom the story ended with is bit 0x20 of byte_4695E for 'A' (Aiela) and of byte_4698F for 'T' (Tristia): the talk flags of actors 2 and 0x33 (the array at ds:6EFC, loaded from the
 // objlist's talk flags, the flags the conversations set)
 void Game::seElapsed(int &days, int &months, int &years, char &who) const {
@@ -2873,10 +2873,10 @@ void Game::seElapsed(int &days, int &months, int &years, char &who) const {
 namespace Ultima6 {
 namespace Ultima6 {
 
-// sub_2DED4: the scene of the destroyed control panel. Actor 0xB's pack falls to the ground where he stands and his body (the frame 11 of his type) is made there; the actors 0x2F, 0x1F, 0x37,
-// 0x23 and 0x0B die; actor 5 is moved to the place; actors 0x28 and 0x2C take the type 0x142; the flags (talk flags 0x28 bit 7, 1 bit 2, 0x31 bit 5) are set; a day goes by (24 times sub_14746(60));
-// every actor of type 0x12D or 0x129 dies, the things of type 0x44 become 0x26 and an egg (0xE6) that holds such a creature goes with it. APPROX(106): the screen effects (sub_371A0, sub_182AD, the driver's
-// fills), the unnamed calls sub_2872A, sub_1FB60, sub_24FB7, the flags byte_46755 and byte_46859, and the kill's own routine sub_2A6AD (here the damage that uses the hit points up) are left out
+// scene_control_panel (sub_2DED4): the scene of the destroyed control panel. Actor 0xB's pack falls to the ground where he stands and his body (the frame 11 of his type) is made there; the actors 0x2F, 0x1F, 0x37,
+// 0x23 and 0x0B die; actor 5 is moved to the place; actors 0x28 and 0x2C take the type 0x142; the flags (talk flags 0x28 bit 7, 1 bit 2, 0x31 bit 5) are set; a day goes by (24 times advance_time (sub_14746)(60));
+// every actor of type 0x12D or 0x129 dies, the things of type 0x44 become 0x26 and an egg (0xE6) that holds such a creature goes with it. APPROX(106): the screen effects (music_play (sub_371A0), sub_182AD, the driver's
+// fills), the unnamed calls max_hit_points (sub_2872A), sub_1FB60, sub_24FB7, the flags byte_46755 and byte_46859, and the kill's own routine kill_actor (sub_2A6AD) (here the damage that uses the hit points up) are left out
 void Game::seControlPanel() {
 	int box = _world.actorObject(0x0B);
 	int px = 0, py = 0, pz = 0;

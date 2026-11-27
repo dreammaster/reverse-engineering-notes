@@ -88,8 +88,8 @@ public:
 	 */
 	int mdSong() const;
 	/**
-	 * Savage Empire's song (GAME.EXE sub_37201): level 3 song 3, any other level above the ground 2, combat 8, otherwise one of the day's songs 0 and 1 chosen at random (sub_3B58F(1, 0)) each time the
-	 * place or the combat changes. APPROX(107): the songs' volumes are Martian Dreams' (ds:189E), the places that call sub_37201 are taken as every change of level or combat.
+	 * Savage Empire's song (GAME.EXE music_choose (sub_37201)): level 3 song 3, any other level above the ground 2, combat 8, otherwise one of the day's songs 0 and 1 chosen at random (random_range (sub_3B58F)(1, 0)) each time the
+	 * place or the combat changes. APPROX(107): the songs' volumes are Martian Dreams' (ds:189E), the places that call music_choose (sub_37201) are taken as every change of level or combat.
 	 */
 	int seSong();
 	/** The music is on (Ctrl-A switches it, as GAME.EXE's sub_23C1A does): the song of mdSong() plays, else none. */
@@ -102,7 +102,7 @@ public:
 	bool endingStarted() const {
 		return _ending == 2;
 	}
-	/** Savage Empire's ending (SAVAGE.EXE's D, B and Y arguments, built by GAME.EXE's sub_2E34E): the days, months and years that have gone since the start (day 1, month 1, year 0), and 'A' / 'T' (the talk flags of actors 2 and 0x33, bit 0x20: 0 when neither). */
+	/** Savage Empire's ending (SAVAGE.EXE's D, B and Y arguments, built by GAME.EXE's ending_launch (sub_2E34E)): the days, months and years that have gone since the start (day 1, month 1, year 0), and 'A' / 'T' (the talk flags of actors 2 and 0x33, bit 0x20: 0 when neither). */
 	void seElapsed(int &days, int &months, int &years, char &who) const;
 	/** Years, months and days of play since the new game's start (4/7/161), borrowing 28 days and 13 months. */
 	void timePlayed(int &years, int &months, int &days) const;

@@ -20,13 +20,13 @@ struct ObjList;
 
 namespace Ultima6 {
 
-/** What Savage Empire's "Create Character" decides: the name and the three stats (SAVAGE.EXE sub_15A7C writes them into the saved game). */
+/** What Savage Empire's "Create Character" decides: the name and the three stats (SAVAGE.EXE creation_write_savegame (sub_15A7C) writes them into the saved game). */
 struct SeNewCharacter {
 	std::string name;
 	int strength = 0, dexterity = 0, intelligence = 0;
 
 	/**
-	 * What sub_15A7C does to the objlist: the party's first name; actor 1: strength, dexterity, intelligence, hit points 2 * strength + intelligence; the globals it sets (0x22 to 0x27, 0x80, 0x81:
+	 * What creation_write_savegame (sub_15A7C) does to the objlist: the party's first name; actor 1: strength, dexterity, intelligence, hit points 2 * strength + intelligence; the globals it sets (0x22 to 0x27, 0x80, 0x81:
 	 * a character was made), the flags (bit 0 of the talk flags of actors 2, 4, 5, 7, 8, 9 and 0x17) and, as GAME.EXE's first start does, the clock set to day 1, month 1, year 0.
 	 */
 	void applyTo(ObjList &actors) const;
@@ -78,7 +78,7 @@ public:
 		return _character;
 	}
 
-	/** Starts at the menu as SAVAGE.EXE does after the opening: `first` is its argument of sub_14A37 (1 straight from the opening, 0 after a scene). */
+	/** Starts at the menu as SAVAGE.EXE does after the opening: `first` is its argument of menu_loop (sub_14A37) (1 straight from the opening, 0 after a scene). */
 	void showMenu(bool first);
 	/** Plays the opening (Lord British presents..., the savannah) and then the menu. */
 	void startOpening();

@@ -17,7 +17,7 @@ namespace Ultima6 {
 namespace {
 
 const int DISSOLVE_MS = 350; // how long the dissolve of the driver takes on the original's machine (it is as fast as the processor: APPROX 105)
-const int OPENING_WAIT1 = 1500, OPENING_WAIT2 = 1500; // (sub_13B22(1000) of the original without music: three waits of 500 ms)
+const int OPENING_WAIT1 = 1500, OPENING_WAIT2 = 1500; // (wait_ms (sub_13B22)(1000) of the original without music: three waits of 500 ms)
 const int OPENING_MUSIC_WAIT1 = 6300, OPENING_MUSIC_WAIT2 = 7000; // what the original's waits for the song's first two cues came to in a run with the AdLib (screenshots: APPROX 105)
 const int FRAME_MS = 14; // a vertical retrace of the VGA (70.086 a second), 14.268 ms: the waits count them
 
@@ -26,11 +26,11 @@ uint32_t get32(const Bytes &b, size_t o) {
 }
 
 // the ink of the glyphs of SAVAGE.FNT (value 0) and what is behind it (0x48) are mapped to the colours of the text object, as the driver's character routine does
-const int PROMPT_FG = 1; // the arrow of sub_14FB6 is drawn with the colour 1 (sub_14FB6 sets byte_2061C)
+const int PROMPT_FG = 1; // the arrow of wait_key_prompt (sub_14FB6) is drawn with the colour 1 (sub_14FB6 sets byte_2061C)
 
 } // namespace
 
-// The offsets of sub_15A7C are those of the file; the engine takes the spin-offs' extra array (0x14F1 to 0x15F0) out, so what lies behind it is 0x100 nearer: 0x18F3 ... is talkFlags[2] ...,
+// The offsets of creation_write_savegame (sub_15A7C) are those of the file; the engine takes the spin-offs' extra array (0x14F1 to 0x15F0) out, so what lies behind it is 0x100 nearer: 0x18F3 ... is talkFlags[2] ...,
 // 0x1D13 ... the globals from 0x22, 0x1D71 / 0x1D72 the globals 0x80 / 0x81. The clock (globals 2 to 7) is set to day 1, month 1, year 0 as GAME.EXE does when it first starts (sub_14746 at 0x1502D).
 void SeNewCharacter::applyTo(ObjList &al) const {
 	std::memset(al.partyNames[0], 0, sizeof al.partyNames[0]);
@@ -156,7 +156,7 @@ void SeFrontEnd::clearBuffer(std::vector<uint8_t> &buf, int colour) {
 	std::fill(buf.begin(), buf.end(), (uint8_t)colour);
 }
 
-// sub_13CE2's window and cursor (the rectangle is the one of the text object's bitmap: word_205E2 ...)
+// text_reset (sub_13CE2)'s window and cursor (the rectangle is the one of the text object's bitmap: word_205E2 ...)
 void SeFrontEnd::window(int l, int t, int r, int b) {
 	_wl = l;
 	_wt = t;
@@ -199,7 +199,7 @@ int SeFrontEnd::textWidth(const std::string &t) const {
 	return w;
 }
 
-// sub_178B9: the next line; a line that would not fit scrolls the window up (sub_17B9A)
+// text_newline (sub_178B9): the next line; a line that would not fit scrolls the window up (sub_17B9A)
 void SeFrontEnd::newline() {
 	_tx = _wl;
 	int h = _font.wouHeight;
@@ -224,7 +224,7 @@ void SeFrontEnd::scroll() {
 	_rows.swap(moved);
 }
 
-// sub_17856: a character: a carriage return or a line feed act, one that does not fit starts a new line, one below the window is not drawn
+// text_put_char (sub_17856): a character: a carriage return or a line feed act, one that does not fit starts a new line, one below the window is not drawn
 void SeFrontEnd::putChar(unsigned char c) {
 	if (c == 0x0D) {
 		_tx = _wl;
@@ -246,7 +246,7 @@ void SeFrontEnd::putChar(unsigned char c) {
 		_tx = _wr;
 }
 
-// sub_17575: the text of a paragraph is put line by line: a line ends at the last space that fits (a word that is too long is broken by characters), at a line feed, or at the end
+// text_paragraph (sub_17575): the text of a paragraph is put line by line: a line ends at the last space that fits (a word that is too long is broken by characters), at a line feed, or at the end
 void SeFrontEnd::printBuffer(const std::string &buf) {
 	size_t pos = 0, n = buf.size();
 	auto at = [&](size_t i) -> unsigned char { return i < n ? (unsigned char)buf[i] : 0; };
@@ -301,7 +301,7 @@ void SeFrontEnd::printBuffer(const std::string &buf) {
 	}
 }
 
-// sub_17B32: a printf of the text window: %s puts the argument in, %P prints what was collected (a paragraph), the rest is collected
+// text_printf (sub_17B32): a printf of the text window: %s puts the argument in, %P prints what was collected (a paragraph), the rest is collected
 void SeFrontEnd::say(const std::string &format, const std::string &arg) {
 	_buffer.clear();
 	for (size_t i = 0; i < format.size(); ++i) {
@@ -322,7 +322,7 @@ void SeFrontEnd::say(const std::string &format, const std::string &arg) {
 	}
 }
 
-// sub_17B10: the characters are put at once
+// text_print_direct (sub_17B10): the characters are put at once
 void SeFrontEnd::printDirect(const std::string &text) {
 	for (unsigned char c : text)
 		putChar(c);
@@ -335,7 +335,7 @@ std::vector<std::string> SeFrontEnd::textLines() const {
 	return out;
 }
 
-int SeFrontEnd::random(int lo, int hi) { // sub_1D257 (a multiplicative generator: x = 65539 * x, the high word)
+int SeFrontEnd::random(int lo, int hi) { // random_range (sub_1D257) (a multiplicative generator: x = 65539 * x, the high word)
 	if (lo > hi)
 		std::swap(lo, hi);
 	_rng *= 65539u;
@@ -412,7 +412,7 @@ void SeFrontEnd::pushBack(Op op) {
 	_ops.push_back(op);
 }
 
-// The colours that the picture uses fade to or from black in as many steps as the greatest of their values, one step for each retrace (sub_18CA6 in, sub_18964 out;
+// The colours that the picture uses fade to or from black in as many steps as the greatest of their values, one step for each retrace (sub_18CA6 in, fade_out (sub_18964) out;
 // the same accumulating rule as Martian Dreams' sub_1FF0B moves each component)
 void SeFrontEnd::startFade(bool in) {
 	if (in)
@@ -607,15 +607,15 @@ bool SeFrontEnd::handleKey(int key) {
 	return _state != QUIT;
 }
 
-// sub_13BFF(0): a key ends a scene that goes by itself: the picture fades out and the menu is begun again
+// abort_to_menu (sub_13BFF)(0): a key ends a scene that goes by itself: the picture fades out and the menu is begun again
 void SeFrontEnd::abort() {
 	_ops.clear();
 	if (_music)
-		_music->stop(200); // sub_13BFF: sub_1A2B8(200), the song fades out
+		_music->stop(200); // abort_to_menu (sub_13BFF): sub_1A2B8(200), the song fades out
 	quitToMenu(false);
 }
 
-// the menu as sub_14A37 begins it: `first` (its argument 1) leaves the screen and the palette as they are and puts the menu on at once; else it clears, sets palette 0 and fades in
+// the menu as menu_loop (sub_14A37) begins it: `first` (its argument 1) leaves the screen and the palette as they are and puts the menu on at once; else it clears, sets palette 0 and fades in
 void SeFrontEnd::quitToMenu(bool first) {
 	Seq s;
 	if (!first) {
@@ -705,7 +705,7 @@ void SeFrontEnd::menuChoose(int choice) {
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------
 // The scenes
 
-// sub_13C84: the screen fades out, is cleared and the palette set again
+// fade_out_clear (sub_13C84): the screen fades out, is cleared and the palette set again
 #define FADE_OUT_CLEAR(S)                      \
 	S.push_back(fade(false));                  \
 	S.push_back(call([this]() {                \
@@ -728,7 +728,7 @@ void SeFrontEnd::menuChoose(int choice) {
 		_scene = -1;                           \
 	}));
 
-// sub_15D3B: the Introduction: ten pages, each a picture (CREATE.LZC item 5, frame page + 1) at (120, 45) and its text in the box at the bottom
+// intro_pages (sub_15D3B): the Introduction: ten pages, each a picture (CREATE.LZC item 5, frame page + 1) at (120, 45) and its text in the box at the bottom
 void SeFrontEnd::buildIntroduction(Seq &s) {
 	FADE_OUT_CLEAR(s)
 	auto handle = std::make_shared<int>(-1);
@@ -757,7 +757,7 @@ void SeFrontEnd::buildIntroduction(Seq &s) {
 	BACK_TO_MENU(s, 1)
 }
 
-// sub_14CE9: the Acknowledgements: thirteen pictures of CREATE.LZC item 6 one under the other scroll up over the menu's picture inside a window (x 100 to 244, y 100 to 199), four rows a frame
+// acknowledgements (sub_14CE9): the Acknowledgements: thirteen pictures of CREATE.LZC item 6 one under the other scroll up over the menu's picture inside a window (x 100 to 244, y 100 to 199), four rows a frame
 void SeFrontEnd::buildAcknowledgements(Seq &s) {
 	auto handle = std::make_shared<int>(-1);
 	auto total = std::make_shared<int>(0);
@@ -896,7 +896,7 @@ void SeFrontEnd::leaveScene(int selection) {
 	run();
 }
 
-// sub_1539C: the name (up to 13 characters of letters, digits, space, '.', '-' and the apostrophe) is typed after the question; Enter ends it, Escape or an empty name leaves
+// creation_name (sub_1539C): the name (up to 13 characters of letters, digits, space, '.', '-' and the apostrophe) is typed after the question; Enter ends it, Escape or an empty name leaves
 void SeFrontEnd::beginName() {
 	_name.clear();
 	_typing = true;
@@ -923,7 +923,7 @@ void SeFrontEnd::beginName() {
 		}
 		if (key == KEY_BACKSPACE || key == KEY_LEFT) {
 			if (!_name.empty()) {
-				// sub_1539C: the line from the cursor to the right edge is cleared, the cursor goes back by the width of the last character
+				// creation_name (sub_1539C): the line from the cursor to the right edge is cleared, the cursor goes back by the width of the last character
 				for (int y = _nameY; y < _nameY + 8; ++y)
 					for (int x = _tx; x <= _wr; ++x)
 						_front[y * Framebuffer::WIDTH + x] = (uint8_t)_bg;
@@ -943,7 +943,7 @@ void SeFrontEnd::beginName() {
 				for (int y = _nameY; y < _nameY + 8; ++y)
 					for (int x = _tx; x < _tx + 8 && x <= _wr; ++x)
 						_front[y * Framebuffer::WIDTH + x] = (uint8_t)_bg;
-				drawGlyph((unsigned char)c, _tx, _nameY, PROMPT_FG, _bg); // (sub_14E44 draws what is typed with the colour 1: blue)
+				drawGlyph((unsigned char)c, _tx, _nameY, PROMPT_FG, _bg); // (get_key_cursor (sub_14E44) draws what is typed with the colour 1: blue)
 				_tx += _font.wouWidth[(unsigned char)c];
 				_name += c;
 			}
@@ -953,7 +953,7 @@ void SeFrontEnd::beginName() {
 	pushFront(s);
 }
 
-// sub_155A0: a question of the table, asked by the box: its lines, then A or B; the answer raises a stat and the card of it is shown
+// creation_question (sub_155A0): a question of the table, asked by the box: its lines, then A or B; the answer raises a stat and the card of it is shown
 void SeFrontEnd::askQuestion(int index, int number) {
 	_question = index;
 	const SeQuestion &q = SE_QUESTIONS[index];
@@ -1000,7 +1000,7 @@ void SeFrontEnd::askQuestion(int index, int number) {
 		drawGlyph((unsigned char)k, _tx, _ty, PROMPT_FG, _bg);
 		const SeQuestion &q = SE_QUESTIONS[index];
 		int effect = k == 'A' ? q.a : q.b;
-		// sub_157B5: the stat grows by 3 to 5; the card shown is 0 for intelligence, 2 for dexterity, 1 for strength
+		// creation_raise_stat (sub_157B5): the stat grows by 3 to 5; the card shown is 0 for intelligence, 2 for dexterity, 1 for strength
 		int card = 0;
 		if (effect == 0) {
 			_making.intelligence += random(0, 2) + 3;
@@ -1034,7 +1034,7 @@ void SeFrontEnd::askQuestion(int index, int number) {
 	run();
 }
 
-// sub_15A7C: the character is put into the saved game and the menu offers Journey Onward
+// creation_write_savegame (sub_15A7C): the character is put into the saved game and the menu offers Journey Onward
 void SeFrontEnd::finishCreation() {
 	_character = _making;
 	_hasCharacter = true;
@@ -1044,7 +1044,7 @@ void SeFrontEnd::finishCreation() {
 	leaveScene(1);
 }
 
-// sub_15818: the picture of the card: Intanya's potion (CREATE.LZC item 2, six frames), the card turning (item 3, frames 0 to 16) over the stat's card (frame 17 + card), the potion again backwards
+// creation_card (sub_15818): the picture of the card: Intanya's potion (CREATE.LZC item 2, six frames), the card turning (item 3, frames 0 to 16) over the stat's card (frame 17 + card), the potion again backwards
 void SeFrontEnd::cardAnimation(Seq &s, int card) {
 	auto compose = [this](int potion, int cardFrame, int overlay) {
 		draw(_back, _h1, 0, 8, 0x1C);
@@ -1197,7 +1197,7 @@ void SeFrontEnd::startOpening() {
 	start(s, OPENING);
 }
 
-// sub_141DE: "Lord British presents..." (INTRO.LZC item 0), the savannah (item 1) with the panel (item 2) that rises over it, and the scroll of the savannah's layers (each moves at its
+// opening_sequence (sub_141DE): "Lord British presents..." (INTRO.LZC item 0), the savannah (item 1) with the panel (item 2) that rises over it, and the scroll of the savannah's layers (each moves at its
 // own speed) with the figures of item 2 that flash by. The original waits for the cues of the music where this waits by the clock (the times are estimated from a run of the original: APPROX 105).
 void SeFrontEnd::buildOpening(Seq &s) {
 	auto h = std::make_shared<std::array<int, 3>>();
@@ -1228,7 +1228,7 @@ void SeFrontEnd::buildOpening(Seq &s) {
 		draw(_back, (*h)[1], 5, 0, 0);
 	}));
 	s.push_back(fade(true));
-	// sub_14724: the panel (item 2, frame 0) rises from below (four rows a frame), the thing of item 1's frames 8 to 12 turns on and off, then a pause of seven short waits
+	// opening_panel (sub_14724): the panel (item 2, frame 0) rises from below (four rows a frame), the thing of item 1's frames 8 to 12 turns on and off, then a pause of seven short waits
 	auto scene = [this, h](int panelY, int extra) {
 		return call([this, h, panelY, extra]() {
 			draw(_back, (*h)[1], 0, 0, 0);
@@ -1321,7 +1321,7 @@ void SeFrontEnd::render(Framebuffer &screen) const {
 	screen.setPalette(pal);
 	screen.clear(0);
 	screen.blit(0, 0, &_front[0], Framebuffer::WIDTH, Framebuffer::HEIGHT, Framebuffer::WIDTH);
-	// the blinking arrow of sub_14FB6 (every 100 ms) and the underscore of the name
+	// the blinking arrow of wait_key_prompt (sub_14FB6) (every 100 ms) and the underscore of the name
 	bool on = ((long long)(_blinkClock / 100) & 1) == 0;
 	if (_state == SCENE && !_ops.empty() && on) {
 		auto glyph = [&](unsigned char c, int x, int y, int fg) {

@@ -27456,6 +27456,7 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(0X37193);
 	create_insn	(0X371A0);
+	set_name	(0X371A0,	"music_play");
 	create_insn	(x=0X371A4);
 	op_stkvar	(x,	1);
 	create_insn	(0X371BF);
@@ -27471,6 +27472,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X371F9);
 	op_hex		(x,	1);
 	create_insn	(0X37201);
+	set_name	(0X37201,	"music_choose");
 	create_insn	(0X37218);
 	create_insn	(0X37224);
 	create_insn	(0X37230);
@@ -32137,12 +32139,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3DF44);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X3DF4F);
-	op_hex		(x,	1);
-	create_insn	(x=0X3DF53);
-	op_hex		(x,	1);
-	create_insn	(x=0X3DF5D);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -32152,6 +32148,12 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X3DF4F);
+	op_hex		(x,	1);
+	create_insn	(x=0X3DF53);
+	op_hex		(x,	1);
+	create_insn	(x=0X3DF5D);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X3DF60);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3DF63);

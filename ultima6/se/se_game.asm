@@ -8334,11 +8334,11 @@ loc_1354B:                              ; CODE XREF: sub_12E93+663↑j
                 call    sub_3AD2D
 
 loc_13557:                              ; CODE XREF: sub_12E93+6BD↑j
-                call    sub_37201
+                call    music_choose
                 call    sub_14FF5
                 xor     ax, ax
                 push    ax
-                call    sub_371A0
+                call    music_play
                 call    sub_1CB9C
                 mov     word ptr dword_4E770, 3
                 call    dword_4E770
@@ -12539,7 +12539,7 @@ loc_15699:                              ; CODE XREF: sub_14FF5+69F↑j
                 mov     word_42270, 0
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_371A0
+                call    music_play
                 call    fade_out
                 mov     ax, seg seg050
                 push    ax
@@ -12549,7 +12549,7 @@ loc_15699:                              ; CODE XREF: sub_14FF5+69F↑j
 
 loc_15733:                              ; CODE XREF: sub_14FF5+71E↑j
                 mov     word_42270, 1
-                call    sub_37201
+                call    music_choose
                 mov     ax, seg seg050
                 push    ax
                 mov     ax, 327h
@@ -12928,7 +12928,7 @@ loc_15A1B:                              ; CODE XREF: sub_14FF5+A1F↑j
                 xor     ax, ax
                 push    ax
                 call    sub_194AE
-                call    sub_37201
+                call    music_choose
                 jmp     loc_15BB4
 ; ---------------------------------------------------------------------------
                 mov     al, acting_member
@@ -12994,7 +12994,7 @@ loc_15A3E:                              ; CODE XREF: sub_14FF5+A44↑j
                 xor     ax, ax
                 push    ax
                 call    sub_194AE
-                call    sub_37201
+                call    music_choose
                 jmp     loc_15BB4
 ; ---------------------------------------------------------------------------
 
@@ -13847,7 +13847,7 @@ loc_160ED:                              ; CODE XREF: sub_160A2+3E↑j
 loc_16146:                              ; CODE XREF: sub_160A2+7B↑j
                 mov     word_41DC2, 0
                 call    sub_27FDF
-                call    sub_37201
+                call    music_choose
                 xor     ax, ax
                 push    ax
                 call    advance_time
@@ -21087,7 +21087,7 @@ loc_197CF:                              ; CODE XREF: climb_between_levels+2C5↑
 
 loc_1982E:                              ; CODE XREF: climb_between_levels+2D3↑j
                                         ; climb_between_levels+2DA↑j
-                call    sub_37201
+                call    music_choose
                 pop     di
                 pop     si
                 mov     sp, bp
@@ -21208,7 +21208,7 @@ loc_198EC:                              ; CODE XREF: sub_1983B+95↑j
                 push    ax
                 push    cs
                 call    near ptr place_party_at
-                call    sub_37201
+                call    music_choose
                 pop     di
                 pop     si
                 mov     sp, bp
@@ -46737,7 +46737,7 @@ loc_25416:                              ; CODE XREF: sub_252BB+144↑j
                 jl      short loc_25401
                 call    sub_1DB47
                 mov     word_407A5, 1
-                call    sub_37201
+                call    music_choose
 
 loc_2542B:                              ; CODE XREF: sub_252BB+14↑j
                 pop     di
@@ -46819,7 +46819,7 @@ loc_254AA:                              ; CODE XREF: sub_25433+49↑j
                 xor     ax, ax
                 push    ax
                 call    place_party_at
-                call    sub_37201
+                call    music_choose
                 mov     ax, si
                 pop     di
                 pop     si
@@ -65735,7 +65735,7 @@ var_2           = byte ptr -2
                 mov     byte_40499, 1
                 mov     ax, 0Eh
                 push    ax
-                call    sub_371A0
+                call    music_play
                 mov     ax, 1
                 push    ax
                 call    sub_39A7A
@@ -65847,7 +65847,7 @@ var_2           = byte ptr -2
                 mov     byte_40499, 0
                 inc     byte_3FC62
                 call    sub_14D96
-                call    sub_37201
+                call    music_choose
                 mov     sp, bp
                 pop     bp
                 retf
@@ -65873,7 +65873,7 @@ var_2           = byte ptr -2
                 mov     byte_3FE0E, 0
                 mov     ax, 0Fh
                 push    ax
-                call    sub_371A0
+                call    music_play
                 mov     ax, 1
                 push    ax
                 call    sub_39A7A
@@ -65995,7 +65995,7 @@ loc_2DE49:                              ; CODE XREF: scene_gem_on_stand+BA↑j
                 mov     byte_40499, 0
                 inc     byte_3FC62
                 call    sub_14D96
-                call    sub_37201
+                call    music_choose
                 pop     si
                 mov     sp, bp
                 pop     bp
@@ -66028,7 +66028,7 @@ var_1           = byte ptr -1
                 mov     byte_3FE0E, 0
                 mov     ax, 10h
                 push    ax
-                call    sub_371A0
+                call    music_play
                 mov     ax, 1
                 push    ax
                 call    sub_39A7A
@@ -66303,7 +66303,7 @@ loc_2E152:                              ; CODE XREF: scene_control_panel+224↑j
                 mov     ax, 11Dh
                 push    ax
                 call    dword_4E770
-                call    sub_37201
+                call    music_choose
                 pop     di
                 pop     si
                 mov     sp, bp
@@ -66331,7 +66331,7 @@ var_2           = byte ptr -2
                 mov     byte_3FE0E, 0
                 mov     ax, 11h
                 push    ax
-                call    sub_371A0
+                call    music_play
                 mov     ax, 1
                 push    ax
                 call    sub_39A7A
@@ -66470,7 +66470,7 @@ loc_2E31D:                              ; CODE XREF: sub_2E1AC+137↑j
                 mov     byte_40499, 0
                 inc     byte_3FC62
                 call    sub_14D96
-                call    sub_37201
+                call    music_choose
                 pop     di
                 pop     si
                 mov     sp, bp
@@ -66503,7 +66503,7 @@ var_2           = byte ptr -2
                 mov     byte_3FE0E, 0
                 mov     ax, 0Ch
                 push    ax
-                call    sub_371A0
+                call    music_play
                 mov     ax, 1
                 push    ax
                 call    sub_39A7A
@@ -85389,7 +85389,7 @@ sub_370AB       endp
 
 ; Attributes: bp-based frame
 
-sub_371A0       proc far                ; CODE XREF: sub_12E93+6D1↑P
+music_play      proc far                ; CODE XREF: sub_12E93+6D1↑P
                                         ; sub_14FF5+72A↑P ...
 
 arg_0           = word ptr  6
@@ -85409,7 +85409,7 @@ arg_0           = word ptr  6
                 jmp     short loc_371FC
 ; ---------------------------------------------------------------------------
 
-loc_371BF:                              ; CODE XREF: sub_371A0+11↑j
+loc_371BF:                              ; CODE XREF: music_play+11↑j
                 mov     ax, word_4264A
                 dec     ax
                 cmp     ax, 0FFFFh
@@ -85425,7 +85425,7 @@ loc_371BF:                              ; CODE XREF: sub_371A0+11↑j
                 jmp     short loc_371FC
 ; ---------------------------------------------------------------------------
 
-loc_371DF:                              ; CODE XREF: sub_371A0+26↑j
+loc_371DF:                              ; CODE XREF: music_play+26↑j
                 xor     ax, ax
                 push    ax
                 mov     ax, 3Ch ; '<'
@@ -85438,19 +85438,19 @@ loc_371DF:                              ; CODE XREF: sub_371A0+26↑j
                 call    sub_3CFE0
                 add     sp, 8
 
-loc_371FC:                              ; CODE XREF: sub_371A0+C↑j
-                                        ; sub_371A0+1D↑j ...
+loc_371FC:                              ; CODE XREF: music_play+C↑j
+                                        ; music_play+1D↑j ...
                 pop     si
                 pop     bp
                 retf    2
-sub_371A0       endp
+music_play      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_37201       proc far                ; CODE XREF: sub_12E93:loc_13557↑P
+music_choose    proc far                ; CODE XREF: sub_12E93:loc_13557↑P
                                         ; sub_14FF5+744↑P ...
                 push    bp
                 mov     bp, sp
@@ -85463,21 +85463,21 @@ sub_37201       proc far                ; CODE XREF: sub_12E93:loc_13557↑P
                 jmp     short loc_37247
 ; ---------------------------------------------------------------------------
 
-loc_37218:                              ; CODE XREF: sub_37201+10↑j
+loc_37218:                              ; CODE XREF: music_choose+10↑j
                 cmp     party_z, 0
                 jle     short loc_37224
                 mov     si, 2
                 jmp     short loc_37247
 ; ---------------------------------------------------------------------------
 
-loc_37224:                              ; CODE XREF: sub_37201+1C↑j
+loc_37224:                              ; CODE XREF: music_choose+1C↑j
                 cmp     byte_422C0, 0
                 jz      short loc_37230
                 mov     si, 8
                 jmp     short loc_37247
 ; ---------------------------------------------------------------------------
 
-loc_37230:                              ; CODE XREF: sub_37201+28↑j
+loc_37230:                              ; CODE XREF: music_choose+28↑j
                 xor     ax, ax
                 push    ax
                 mov     ax, 1
@@ -85489,20 +85489,20 @@ loc_37230:                              ; CODE XREF: sub_37201+28↑j
                 jmp     short loc_37247
 ; ---------------------------------------------------------------------------
 
-loc_37244:                              ; CODE XREF: sub_37201+3D↑j
+loc_37244:                              ; CODE XREF: music_choose+3D↑j
                 mov     si, 1
 
-loc_37247:                              ; CODE XREF: sub_37201+15↑j
-                                        ; sub_37201+21↑j ...
+loc_37247:                              ; CODE XREF: music_choose+15↑j
+                                        ; music_choose+21↑j ...
                 push    si
                 push    cs
-                call    near ptr sub_371A0
+                call    near ptr music_play
 
-loc_3724C:                              ; CODE XREF: sub_37201+9↑j
+loc_3724C:                              ; CODE XREF: music_choose+9↑j
                 pop     si
                 pop     bp
                 retf
-sub_37201       endp
+music_choose    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -97781,7 +97781,7 @@ sub_3C989       endp
 
 ; Attributes: bp-based frame
 
-sub_3CA2D       proc far                ; CODE XREF: sub_371A0+17↑P
+sub_3CA2D       proc far                ; CODE XREF: music_play+17↑P
                                         ; avatar_dead_wake+1C↑P ...
 
 arg_0           = word ptr  6
@@ -98457,7 +98457,7 @@ sub_3CDF5       endp
 
 ; Attributes: bp-based frame
 
-sub_3CFB4       proc far                ; CODE XREF: sub_371A0+36↑P
+sub_3CFB4       proc far                ; CODE XREF: music_play+36↑P
                                         ; avatar_dead_wake+66↑P ...
 
 arg_0           = word ptr  6
@@ -98495,7 +98495,7 @@ sub_3CFB4       endp
 
 ; Attributes: bp-based frame
 
-sub_3CFE0       proc far                ; CODE XREF: sub_371A0+54↑P
+sub_3CFE0       proc far                ; CODE XREF: music_play+54↑P
                                         ; sub_3724F+34↑P ...
 
 arg_0           = word ptr  6
@@ -113046,7 +113046,7 @@ word_42646      dw 0                    ; DATA XREF: sub_12DBD+64↑w
                                         ; sub_12DBD+78↑w ...
 word_42648      dw 0                    ; DATA XREF: sub_3B5F5:loc_3B647↑r
                                         ; sub_3B5F5+59↑w ...
-word_4264A      dw 0                    ; DATA XREF: sub_371A0:loc_371BF↑r
+word_4264A      dw 0                    ; DATA XREF: music_play:loc_371BF↑r
                                         ; sub_3724F:loc_372BF↑r ...
 word_4264C      dw 0                    ; DATA XREF: sub_3C175+4FA↑r
                                         ; sub_3C175+56D↑r

@@ -130,7 +130,7 @@ int main() {
 		CHECK(c.name == "Tesla");
 		CHECK(c.strength >= 16 && c.strength <= 33 && c.dexterity >= 16 && c.dexterity <= 33 && c.intelligence >= 16 && c.intelligence <= 33);
 		CHECK(c.strength + c.dexterity + c.intelligence >= 48 + 9);
-		// the character goes into the objlist as sub_15A7C does
+		// the character goes into the objlist as creation_write_savegame (sub_15A7C) does
 		ObjList list;
 		Bytes d;
 		CHECK(readFile("se/game/SAVAGE/SAVEGAME/OBJLIST", d) && list.load(d));

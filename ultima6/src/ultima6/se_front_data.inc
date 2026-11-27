@@ -31,7 +31,7 @@ static const char *const SE_END_TEXT[16] = {
 	"CONGRATULATIONS. You have completed THE SAVAGE EMPIRE in ",
 	"Communicate your success to Lord British at Origin!",
 };
-// The creation: sub_154BD's texts (ds:0D7C, 0DD3, 0E4F, 0EBC, 0EFE, 0F68, 0FC8), the refusals (ds:0CBD, 0D0F)
+// The creation: creation_pages (sub_154BD)'s texts (ds:0D7C, 0DD3, 0E4F, 0EBC, 0EFE, 0F68, 0FC8), the refusals (ds:0CBD, 0D0F)
 static const char *const SE_CREATE_TEXT[9] = {
 	"You are in a dirt-floored hut... and a tribesman with wise eyes stares down at you.\n%P",
 	"\nYou feel as though you are floating. You cannot move your limbs. It is like a dream... yet you sense it is not a dream.\n%P",
