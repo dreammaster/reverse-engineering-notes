@@ -2,7 +2,7 @@
 """Static check of the target room of a door: the original resolves it geometrically (1000:5C53 / 15C0E, called from the walk step after an exit hit: the door's map cell
 (record bytes 0, 1) is compared with the four sides of every room record -- cell = origin - 1 or origin + size, and the other coordinate inside the room's span -- and the
 first room other than the current one wins), the port takes the other room that lists the same door id (`door_target`).  Both rules give the same room for every door of
-levels 1-5 of both games and the four TATA levels (about 1,300 doors).
+levels 1-5 of both games and the four TATA levels (about 2,100 doors).
     python3 tools/verify_door_targets.py cadaver1/DATA/1 cadaver2/TATA/1 ..."""
 import sys,os
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
