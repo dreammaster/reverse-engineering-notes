@@ -528,7 +528,7 @@ void Game::talkEnded() {
 
 // APPROX(29): not the original's exact behaviour, see docs/approximations.md
 void Game::look(int tx, int ty) {
-	message("Thou dost see ");
+	message(_world.game == GameId::Ultima6 ? "Thou dost see " : "You see "); // the spin-offs' cmd_look says "You see " (ds:0AC8 of SE, MD's string table)
 	std::vector<int> here;
 	_world.objectsAt(tx, ty, z, here);
 	int top = -1;
@@ -542,7 +542,7 @@ void Game::look(int tx, int ty) {
 			text = "darkness.\n";
 		} else {
 			text = Describe::article(_world, tile) + Describe::tileName(_world, tile, false) + ".\n";
-			if (std::abs(tx - x) <= 1 && std::abs(ty - y) <= 1) // looking at nothing on a square next to the party
+			if (_world.game != GameId::SavageEmpire && std::abs(tx - x) <= 1 && std::abs(ty - y) <= 1) // looking at nothing on a square next to the party (SE's sub_2EE8D does not search the ground)
 				text += "\nSearching here, you find nothing.\n";
 		}
 	} else {
@@ -556,6 +556,11 @@ void Game::look(int tx, int ty) {
 				return;
 			}
 			prompt();
+			return;
+		}
+		if (o.actor < 0 && _world.game == GameId::SavageEmpire) { // sub_2EE8D, Savage Empire's own look: the name, what some things add (the notes found on the headless statue, what a bucket holds), the full stop,
+			// the time that a sundial shows by day, then the search of a container beside the member
+			seLook(top, text);
 			return;
 		}
 		if (o.actor < 0 && _world.game == GameId::MartianDreams) { // MD's own look: the name and what the thing tells of its state

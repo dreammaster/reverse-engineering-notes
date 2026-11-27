@@ -939,6 +939,51 @@ int main() {
 		}
 	}
 
+	// Savage Empire's look (sub_2EE8D): "You see ", the time on a sundial by day, what a bucket holds
+	{
+		w.moveObject(w.actorObject(1), px, py, 0);
+		g.x = px;
+		g.y = py;
+		g.z = 0;
+		clearEast(w, px, py);
+		int dial = put(w, 0x92, 0, px + 1, py, 0);
+		g.gameClock.hour = 9;
+		g.gameClock.minute = 5;
+		g.log.clear();
+		g.handleKey('l');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("You see ") != std::string::npos);
+		CHECK(logText(g).find("The time is 9:05 A.M.") != std::string::npos);
+		g.gameClock.hour = 22;
+		g.log.clear();
+		g.handleKey('l');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("The time is") == std::string::npos);
+		w.deleteObject(dial);
+		int pail = put(w, 0x88, 1, px + 1, py, 0);
+		World::Obj inside;
+		inside.status = ObjRecord::IN_CONTAINER;
+		inside.x = inside.y = 0;
+		inside.z = 0;
+		inside.type = 0x8B;
+		inside.frame = 0;
+		inside.quantity = 3;
+		inside.quality = 0;
+		inside.actor = -1;
+		inside.parent = pail;
+		w.objects.push_back(inside);
+		int tar = (int)w.objects.size() - 1;
+		g.log.clear();
+		g.handleKey('l');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("holding 3 pints of tar.") != std::string::npos);
+		w.deleteObject(tar);
+		w.deleteObject(pail);
+	}
+
 	// the ladders (sub_254F4 / sub_19505): a way down of quality 102 takes the party to (25,131) of level 2, a way up of quality 102 to (272,69) of level 0
 	{
 		int sx = g.x, sy = g.y, sz = g.z;

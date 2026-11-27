@@ -6,6 +6,7 @@
 #include "ultima6/session.h"
 #include "ultima6/stats_view.h"
 
+#include <cstdio>
 #include <cstdlib>
 
 namespace Ultima6 {
@@ -2551,6 +2552,46 @@ void Game::seStepOn() {
 		}
 		return;
 	}
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_2EE8D after the name has been found: the headless statue (0xF7) whose head has not been put back (quality 0) lets the finder read the note of a piece of paper (APPROX(101): the closing '&' of the
+// last line is printed as the closing quote); a bucket (0x88) with a frame says what it holds (frame 1 tar, 2 water, in pints); the full stop; a sundial (0x92) shows the time from five in the morning
+// until eight in the evening; the things of the table at ds:1122 and 0xF9 beside the member are searched (seSearch)
+void Game::seLook(int idx, const std::string &name) {
+	const World::Obj o = _world.objects[idx];
+	const std::string nl(1, (char)10);
+	std::string t = name;
+	if (o.type == 0xF7 && o.quality == 0)
+		t += nl + "Searching here, you find a piece of paper with notes written on it:" + nl + nl +
+			 "\"The statue is of the same materials and workmanship as that golden head Fritz found.  It appears to be a mechanism of some sort.  I will have to talk to Fritz about this...\"";
+	if (o.type == 0x88 && o.frame > 0) {
+		t += " holding ";
+		if (o.frame == 1 || o.frame == 2) {
+			int n = 0, kind = o.frame == 1 ? 0x8B : 0x8C;
+			for (size_t i = 0; i < _world.objects.size(); ++i) {
+				const World::Obj &c = _world.objects[i];
+				if (!c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == idx && c.type == kind)
+					n += c.quantity ? c.quantity : 1;
+			}
+			t += std::to_string(n) + " pint" + (n == 1 ? "" : "s") + (o.frame == 1 ? " of tar" : " of water");
+		}
+	}
+	t += "." + nl;
+	if (o.type == 0x92 && gameClock.hour >= 5 && gameClock.hour < 20) {
+		int h = gameClock.hour, m = gameClock.minute;
+		char buf[32];
+		std::snprintf(buf, sizeof buf, "%d:%02d %s", h == 12 ? 12 : h > 12 ? h - 12 : h, m, h < 12 ? "A.M." : "P.M.");
+		t += nl + nl + "The time is " + buf + nl;
+	}
+	message(t);
+	seSearch(idx);
+	prompt();
 }
 
 } // namespace Ultima6
