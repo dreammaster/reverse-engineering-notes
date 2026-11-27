@@ -899,6 +899,10 @@ void Game::castAt(int tx, int ty) {
 // Get: take the top object of a square that can be carried.
 // APPROX(26): not the original's exact behaviour, see docs/approximations.md
 void Game::getAt(int tx, int ty) {
+	if (_world.game == GameId::SavageEmpire) { // sub_2FBBA
+		seGetAt(tx, ty);
+		return;
+	}
 	std::vector<int> here;
 	_world.objectsAt(tx, ty, z, here);
 	// cmd_get: the top object of the square (anything but an actor); "nothing" if there is none

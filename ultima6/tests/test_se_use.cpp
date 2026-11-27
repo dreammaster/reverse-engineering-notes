@@ -984,6 +984,40 @@ int main() {
 		w.deleteObject(pail);
 	}
 
+	// Get (sub_2FBBA): a plain thing goes into the pack, a 0x6F gives a 0x6A, a stack goes into the pack, "nothing!" on an empty square
+	{
+		w.moveObject(w.actorObject(1), px, py, 0);
+		g.x = px;
+		g.y = py;
+		g.z = 0;
+		clearEast(w, px, py);
+		g.log.clear();
+		g.handleKey('g');
+		g.handleKey(KEY_RIGHT);
+		CHECK(logText(g).find("nothing!") != std::string::npos);
+		int hold = put(w, 0x6F, 0, px + 1, py, 0);
+		g.log.clear();
+		g.handleKey('g');
+		g.handleKey(KEY_RIGHT);
+		CHECK(w.objects[hold].deleted);
+		bool got = false;
+		std::vector<int> pack;
+		w.inventory(w.actors.partyRoster[0], pack, false);
+		for (int i : pack)
+			got |= w.objects[i].type == 0x6A;
+		CHECK(got);
+		int plain = put(w, 0x20, 0, px + 1, py, 0);
+		g.log.clear();
+		g.handleKey('g');
+		g.handleKey(KEY_RIGHT);
+		CHECK(w.objects[plain].deleted);
+		got = false;
+		w.inventory(w.actors.partyRoster[0], pack, false);
+		for (int i : pack)
+			got |= w.objects[i].type == 0x20;
+		CHECK(got);
+	}
+
 	// Drop (sub_2F530): a soft clay pot (0x84) thrown three squares goes squish and leaves a mess (0xC0); a thing that is not fragile lies there
 	{
 		int bx = -1, by = -1;

@@ -2596,3 +2596,159 @@ void Game::seLook(int idx, const std::string &name) {
 
 } // namespace Ultima6
 } // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_1C4AB: a thing, with what it holds, goes into the pack of an actor (a new object takes its place; what was inside is handed over)
+int Game::sePickUp(int idx, int actor) {
+	const World::Obj o = _world.objects[idx];
+	int n = _world.addToInventory(actor, o.type, o.quality, _world.quantityOf(o));
+	_world.objects[n].frame = o.frame;
+	for (World::Obj &c : _world.objects)
+		if (!c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == idx)
+			c.parent = n;
+	_world.deleteObject(idx);
+	return n;
+}
+
+// sub_2FBBA, Get: the top thing of the chosen square is named; further than a square away it is "Out of range!"; what weighs nothing (and is not on the list at ds:08DF), an actor or a thing that cannot
+// be carried is "Not possible."; more than twenty times the strength in all is "The total is too heavy."; a stack goes into the pack ("You are carrying too much already." if it does not fit);
+// a body (0xF9) gives up what it holds onto the square first ("Searching the body, you find ...") and is taken too; a burning torch (0xD1) needs a free hand ("Your hands are full."); picking
+// a 0x6F gives a 0x6A, a 0xF5 a 0x5C, a 0x47 3-11 of the 0x48 (as many as the load allows); a 0x4E (taken from a 0xE6 that holds a 0x124) takes the holder with it; the rest goes into the pack.
+// APPROX(103): the free hand of the torch is found by `Equipment` (the original keeps the two hands in ds:4E0BC / 4E0C2); the failures of sub_1C4AB ("You are carrying too much already.") cannot happen after the weight check
+void Game::seGetAt(int tx, int ty) {
+	static const uint16_t NO_WEIGHT_OK[17] = {0x29, 0x36, 0x37, 0x38, 0x47, 0x40, 0x49, 0x4A, 0x7B, 0x81, 0x82, 0x86, 0xBF, 0x45, 0x78, 0x48, 0x30};
+	const std::string nl(1, (char)10);
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	int pick = -1, person = -1;
+	for (size_t i = here.size(); i-- > 0 && pick < 0;) {
+		const World::Obj &o = _world.objects[here[i]];
+		if (o.invisible())
+			continue;
+		if (o.actor >= 0) {
+			if (person < 0)
+				person = here[i];
+			continue;
+		}
+		pick = here[i];
+	}
+	if (pick < 0 && person < 0) {
+		message("nothing!" + nl);
+		prompt();
+		return;
+	}
+	int member = _world.actors.partyRoster[_member];
+	int mk = _world.actorObject(member);
+	if (pick < 0) { // a person: "Not possible."
+		message(Describe::object(_world, _world.objects[person]) + nl + "Not possible." + nl);
+		prompt();
+		return;
+	}
+	const World::Obj o = _world.objects[pick];
+	message(Describe::object(_world, o) + nl);
+	if (mk < 0 || std::abs(tx - (int)_world.objects[mk].x) > 1 || std::abs(ty - (int)_world.objects[mk].y) > 1) {
+		message("Out of range!" + nl);
+		prompt();
+		return;
+	}
+	const int type = o.type;
+	int w = _world.weightOf(pick);
+	if (type != 0xF9)
+		w += _world.contentsWeight(pick);
+	bool zeroOk = false;
+	for (uint16_t t : NO_WEIGHT_OK)
+		zeroOk |= t == type;
+	if ((w == 0 && !zeroOk) || w >= 10000) {
+		message("Not possible." + nl);
+		prompt();
+		return;
+	}
+	if (_world.actors.strength[member] * 20 < w + _world.carriedWeight(member)) {
+		message(nl + "The total is too heavy." + nl);
+		prompt();
+		return;
+	}
+	_world.spendMoves(member, 3);
+	if (_world.isStackable(type)) {
+		int n = _world.addToInventory(member, type, o.quality, _world.quantityOf(o));
+		_world.objects[n].frame = o.frame;
+		_world.deleteObject(pick);
+		prompt();
+		return;
+	}
+	if (type == 0xF9) { // a body: what it holds lies on its square, named one by one
+		std::vector<int> held;
+		for (size_t i = 0; i < _world.objects.size(); ++i)
+			if (!_world.objects[i].deleted && _world.objects[i].location() == ObjRecord::IN_CONTAINER && _world.objects[i].parent == pick)
+				held.push_back((int)i);
+		if (held.empty()) {
+			message(nl + "Searching the body, you find nothing." + nl);
+		} else {
+			message(nl + "Searching the body, you find ");
+			for (size_t k = 0; k < held.size(); ++k) {
+				World::Obj &c = _world.objects[held[k]];
+				if (k > 0)
+					message(k + 1 < held.size() ? ", " : " and ");
+				if (_world.isStackable(c.type) && c.quantity == 0)
+					c.quantity = 1;
+				message(Describe::object(_world, c));
+				c.status = (uint8_t)(c.status & ~ObjRecord::LOCATION_MASK);
+				c.parent = -1;
+				c.x = o.x;
+				c.y = o.y;
+				c.z = o.z;
+				_world.addToMap(held[k]);
+			}
+			message("." + nl);
+		}
+		sePickUp(pick, member);
+		prompt();
+		return;
+	}
+	if (type == 0xD1) { // a burning torch goes into a free hand
+		Equipment::Slots slots = Equipment::of(_world, member);
+		if (slots.twoHanded || (slots.object[2] >= 0 && slots.object[5] >= 0)) {
+			message("Your hands are full." + nl);
+			prompt();
+			return;
+		}
+		int n = sePickUp(pick, member);
+		World::Obj &lit = _world.objects[n];
+		lit.status = (uint8_t)((lit.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+		lit.quality = 100;
+		prompt();
+		return;
+	}
+	if (type == 0x6F || type == 0xF5) { // the plant gives its fruit, the skin its cut
+		_world.addToInventory(member, type == 0x6F ? 0x6A : 0x5C, 0, 1);
+		_world.deleteObject(pick);
+		prompt();
+		return;
+	}
+	if (type == 0x47) { // 3-11 of the 0x48, as many as the load allows (sub_3B58F(3, 11))
+		int room = _world.actors.strength[member] * 20 - _world.carriedWeight(member);
+		int n = seRoll(3, 11);
+		if (room * 10 < n)
+			n = room * 10;
+		_world.addToInventory(member, 0x48, 0, n);
+		_world.deleteObject(pick);
+		prompt();
+		return;
+	}
+	int holder = type == 0x4E ? seFind(0xE6, o.x, o.y) : -1;
+	sePickUp(pick, member);
+	if (holder >= 0) {
+		for (size_t i = 0; i < _world.objects.size(); ++i)
+			if (!_world.objects[i].deleted && _world.objects[i].location() == ObjRecord::IN_CONTAINER && _world.objects[i].parent == holder && _world.objects[i].type == 0x124) {
+				_world.deleteObject((int)i);
+				_world.deleteObject(holder);
+				break;
+			}
+	}
+	prompt();
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
