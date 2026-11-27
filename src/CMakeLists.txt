@@ -16,6 +16,7 @@ add_library(cadaver_engine STATIC
   engine/rooms.c
   engine/intro.c
   engine/introroll.c
+  engine/origsave.c
   engine/exeimg.c
   engine/objsprites.c
   engine/roomobjs.c

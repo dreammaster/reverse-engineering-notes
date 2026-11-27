@@ -22,6 +22,7 @@
 #include "engine/roomexits.h"
 #include "engine/panel.h"
 #include "engine/push.h"
+#include "engine/origsave.h"
 #include "engine/acl.h"
 #include "engine/lng.h"
 #include "engine/message.h"
@@ -1969,6 +1970,7 @@ typedef struct {
 	uint8_t visited[128];
 	int32_t vm_size;
 } SaveHead;
+static OrigSave g_orig; static int g_orig_set, g_orig_place, g_orig_x, g_orig_y, g_orig_z, g_orig_dir;   /* a save of the original game waiting for the level to be (re)loaded */
 static uint8_t *g_sav;               /* loaded save waiting for the level to be (re)loaded */
 static size_t g_sav_len;
 static int g_sav_place;              /* ... and for the player to be placed */
@@ -2000,6 +2002,22 @@ static int game_load(RoomView *rv, int slot) {
 	fseek(f, 0, SEEK_END);
 	long n = ftell(f);
 	fseek(f, 0, SEEK_SET);
+	{                                                                  /* a save file written by the original game (docs/formats.md): the same records, a different container */
+		uint8_t *raw = malloc((size_t)n > 0 ? (size_t)n : 1);
+		OrigSave os;
+		if (raw && n >= 8 && fread(raw, 1, (size_t)n, f) == (size_t)n && !memcmp(raw, "mjm0DAC", 7) && origsave_parse(&os, raw, (size_t)n) == 0) {
+			fclose(f);
+			origsave_free(&g_orig); g_orig = os; g_orig_set = 1;
+			free(g_sav); g_sav = NULL;
+			roomview_unload(rv);
+			rv->level = os.level; rv->room = (int)origsave_w(&os, 0x232);
+			rv->restarting = 1; rv->dead_timer = 0;
+			g_walk.world_key = 0; g_walk.placed = 0;
+			return 0;
+		}
+		free(raw);
+		fseek(f, 0, SEEK_SET);
+	}
 	SaveHead h;
 	if (n < (long)sizeof(h) || fread(&h, sizeof(h), 1, f) != 1 || memcmp(h.magic, "CSAV", 4) || h.version != 2 || h.vm_size != (int32_t)sizeof(AclVM) || n != (long)(sizeof(h) + sizeof(AclVM))) { fclose(f); return -1; }
 	free(g_sav);
@@ -2017,6 +2035,49 @@ static int game_load(RoomView *rv, int slot) {
 }
 /* called by roomview_load_level after the level is loaded */
 static void game_load_apply(RoomView *rv) {
+	if (g_orig_set) {                                                 /* the original's save: its thing, door and room records replace the level's, then the data block */
+		const OrigSave *os = &g_orig;
+		/* the run-time thing records are the level's records after the loader's "expansion" (16-bit fields of the header and of the scripts byte-swapped in place, ds:+8 a run-time slot
+		   offset), so the port keeps its own (file form) record and takes the bytes that change while playing from the save: position and flags (+0..3), the room (+10), flags2 (+15) and
+		   the A / B state structs and the move table (+rec[12] .. rec[14]) */
+		static uint8_t *conv; free(conv); conv = NULL;
+		size_t need = 0;
+		for (int t = 0; t < ACL_THINGS && t < ORIGSAVE_THINGS; t++) need += (size_t)(rv->mp2.sec[3].len[t] > 0 ? rv->mp2.sec[3].len[t] : 0);
+		conv = malloc(need ? need : 1);
+		size_t cp = 0;
+		for (int t = 0; conv && t < ACL_THINGS && t < ORIGSAVE_THINGS; t++) {
+			const uint8_t *f = rv->mp2.sec[3].rec[t], *r = os->thing[t].p;
+			int fl = rv->mp2.sec[3].len[t];
+			if (!f || fl < 16 || !r || os->thing[t].len != fl) continue;
+			uint8_t *n = conv + cp; cp += (size_t)fl;
+			memcpy(n, f, (size_t)fl);
+			memcpy(n, r, 4); n[10] = r[10]; n[15] = r[15];
+			if (f[12] >= 16 && f[14] > f[12] && f[14] <= fl) memcpy(n + f[12], r + f[12], (size_t)(f[14] - f[12]));
+			rv->mp2.sec[3].rec[t] = n;
+		}
+		for (int d = 0; d < ORIGSAVE_DOORS && d < rv->mp2.sec[1].count; d++) if (os->door[d].p && os->door[d].len >= 4) { rv->mp2.sec[1].rec[d] = os->door[d].p; rv->mp2.sec[1].len[d] = os->door[d].len; }
+		AclVM keep = rv->vm;
+		acl_init(&rv->vm, &rv->mp2);
+		memcpy(rv->vm.size, keep.size, sizeof(keep.size));
+		rv->vm.rand_range = keep.rand_range; rv->vm.clone_ok = 1; rv->vm.sound = keep.sound; rv->vm.sound_stop = keep.sound_stop; rv->vm.user = keep.user;
+		rv->vm.energy_max = keep.energy_max;
+		memcpy(rv->vm.g, os->block + (0x590 - ORIGSAVE_BLOCK_BASE), 0x6F8 - 0x590);        /* the script globals ds:590 .. 6F7 (timers, shield mask, counters ...) */
+		rv->vm.money = origsave_d(os, 0x248); rv->vm.score = origsave_d(os, 0x24C);
+		rv->vm.energy = (int)origsave_w(os, 0x23A);
+		if (rv->vm.energy > rv->vm.energy_max) rv->vm.energy = rv->vm.energy_max;
+		rv->held = (int)origsave_w(os, 0x27A); rv->last_item = rv->held; rv->save_price = (int)origsave_w(os, 0x246);
+		rv->day = (int)origsave_b(os, 0x5B2);
+		rv->clock_ticks = (origsave_b(os, 0x5B4) * 60u + origsave_b(os, 0x5B5)) * 50u + (origsave_b(os, 0x5B8) - origsave_b(os, 0x5B7));
+		for (int r = 0; r < 128 && r < ORIGSAVE_ROOMS; r++) rv->visited[r] = os->room[r].p && os->room[r].len > 0x17 && (os->room[r].p[0x17] & 0x40) ? 1 : 0;
+		const uint8_t *pr = os->thing[0].p;                              /* thing 0: the player's record (position) */
+		g_orig_x = pr ? pr[0] : 0; g_orig_y = pr ? pr[1] : 0; g_orig_z = pr ? (int8_t)pr[2] : 0;
+		g_orig_dir = (int)origsave_b(os, 0x608);
+		g_orig_place = 1;
+		if (g_snd_log) fprintf(stderr, "ORIGSAVE level %d room %d player %d,%d,%d money %u energy %d\n", os->level, (int)origsave_w(os, 0x232), g_orig_x, g_orig_y, g_orig_z, rv->vm.money, rv->vm.energy);
+		rv->room = (int)origsave_w(os, 0x232);
+		g_orig_set = 0;                                                  /* the records stay alive in g_orig */
+		return;
+	}
 	if (!g_sav) return;
 	const SaveHead *h = (const SaveHead *)g_sav;
 	AclVM keep = rv->vm;
@@ -2052,6 +2113,12 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (wk->world_key != room_key(rv)) {
 		walker_world(wk, rv);
 		walker_place_default(wk, rv);
+		if (g_orig_place) {                                 /* a game loaded from the original's save: the player record's place, facing by the last move key */
+			g_orig_place = 0;
+			wk->x1 = g_orig_x; wk->y1 = g_orig_y; wk->z = g_orig_z;
+			wk->dir = (g_orig_dir & 8) ? DIR_RIGHT : (g_orig_dir & 4) ? DIR_LEFT : (g_orig_dir & 2) ? DIR_DOWN : DIR_UP;
+			walker_world(wk, rv);
+		}
 		if (g_sav_place && g_sav) {                         /* a loaded game: the saved place */
 			const SaveHead *h = (const SaveHead *)g_sav;
 			wk->x1 = h->x1; wk->y1 = h->y1; wk->z = h->z; wk->dir = h->dir;
