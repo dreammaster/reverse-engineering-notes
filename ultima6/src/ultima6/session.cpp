@@ -169,6 +169,15 @@ void Game::chooseMusic() {
 	_music = track;
 }
 
+int Game::seSong() {
+	int key = z * 2 + (_combatMode ? 1 : 0);
+	if (key != _seSongKey) {
+		_seSongKey = key;
+		_seSong = z == 3 ? 3 : z > 0 ? 2 : _combatMode ? 8 : seRoll(0, 1);
+	}
+	return _seSong;
+}
+
 int Game::mdSong() const {
 	if (z == 2 || z == 3)
 		return 3;

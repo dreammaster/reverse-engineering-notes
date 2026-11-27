@@ -87,6 +87,11 @@ public:
 	 * night song 1 (the numbers are the items of MUSIC.LZC).
 	 */
 	int mdSong() const;
+	/**
+	 * Savage Empire's song (GAME.EXE sub_37201): level 3 song 3, any other level above the ground 2, combat 8, otherwise one of the day's songs 0 and 1 chosen at random (sub_3B58F(1, 0)) each time the
+	 * place or the combat changes. APPROX(107): the songs' volumes are Martian Dreams' (ds:189E), the places that call sub_37201 are taken as every change of level or combat.
+	 */
+	int seSong();
 	/** The music is on (Ctrl-A switches it, as GAME.EXE's sub_23C1A does): the song of mdSong() plays, else none. */
 	bool mdMusicOn() const {
 		return _mdMusicOn;
@@ -320,6 +325,7 @@ private:
 	void helpParty();
 	void avatarDied();
 	bool _combatMode = false;
+	int _seSong = -1, _seSongKey = -1;
 	int _music = 0;
 	void sfx(int effect, int param = 0) {
 		if (sound && _world.game != GameId::MartianDreams) // (the numbers of Ultima VI's effects mean nothing to Martian Dreams)

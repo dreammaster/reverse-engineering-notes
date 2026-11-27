@@ -324,9 +324,11 @@ int main(int argc, char **argv) {
 		mdCharacter.applyTo(world.actors);
 	Ultima6::Ultima6::MdMusic mdGameMusic; // the game's own songs (MUSIC.LZC) with the AdLib driver, GAME.EXE's sub_2FD45 each turn
 	bool mdPlaying = false;
-	if (id == Ultima6::GameId::MartianDreams && !std::getenv("U6_NO_MUSIC") && mdGameMusic.load(argv[1], "MUSIC.LZC")) {
+	const bool seMusic = id == Ultima6::GameId::SavageEmpire; // Savage Empire: its songs on the same sequencer (the sound effects stay the PC speaker's)
+	if ((id == Ultima6::GameId::MartianDreams || seMusic) && !std::getenv("U6_NO_MUSIC") && mdGameMusic.load(argv[1], "MUSIC.LZC")) {
 		backend->setMusicSource(&mdGameMusic);
-		mdGameMusic.useEffects(Ultima6::Ultima6::MdMusic::GAME);
+		if (!seMusic)
+			mdGameMusic.useEffects(Ultima6::Ultima6::MdMusic::GAME);
 		mdPlaying = true;
 	}
 	struct DetachGame { // (declared after the synthesiser: the audio thread lets go of it first)
@@ -341,7 +343,7 @@ int main(int argc, char **argv) {
 		game.mdLoadState();
 	Ultima6::BorlandRandom sfxRandom(7);
 	game.sound = [&](int effect, int param) {
-		if (mdPlaying) { // Martian Dreams: the effects are notes of the AdLib's timbres (GAME.EXE's sub_303A9), played by the same synthesiser as the music
+		if (mdPlaying && !seMusic) { // Martian Dreams: the effects are notes of the AdLib's timbres (GAME.EXE's sub_303A9), played by the same synthesiser as the music
 			if (effect < 0)
 				mdGameMusic.stopEffects(0);
 			else
@@ -357,7 +359,7 @@ int main(int argc, char **argv) {
 	while (running) {
 		music.set(game.music());
 		if (mdPlaying)
-			mdGameMusic.follow(game.mdMusicOn() ? game.mdSong() : -1);
+			mdGameMusic.follow(game.mdMusicOn() ? (seMusic ? game.seSong() : game.mdSong()) : -1);
 		game.render(screen);
 		backend->present(screen);
 		int key;
@@ -369,7 +371,7 @@ int main(int argc, char **argv) {
 					game.animate();
 					music.set(game.music());
 					if (mdPlaying)
-						mdGameMusic.follow(game.mdMusicOn() ? game.mdSong() : -1);
+						mdGameMusic.follow(game.mdMusicOn() ? (seMusic ? game.seSong() : game.mdSong()) : -1);
 					game.render(screen);
 					backend->present(screen);
 				} else {
@@ -382,9 +384,9 @@ int main(int argc, char **argv) {
 		if (key == Ultima6::KEY_MOUSE_LEFT || key == Ultima6::KEY_MOUSE_RIGHT)
 			key = game.mouseKey(backend->mouseX, backend->mouseY, key == Ultima6::KEY_MOUSE_RIGHT);
 		running = game.handleKey(key);
-		if (mdPlaying && game.mdTakeMorning()) // after a dream or a sleep until dawn (GAME.EXE's sub_2FD5E(1))
+		if (mdPlaying && !seMusic && game.mdTakeMorning()) // after a dream or a sleep until dawn (GAME.EXE's sub_2FD5E(1))
 			mdGameMusic.morning();
-		if (mdPlaying) {
+		if (mdPlaying && !seMusic) {
 			int sting = game.mdTakeSting(); // GAME.EXE's sub_2FF7D: the jingle of a fight that begins
 			if (sting >= 0)
 				mdGameMusic.sting(sting, game.mdSong());
