@@ -883,6 +883,19 @@ int main() {
 			for (int i = 0; i < 400 && al.hp[victim] == 200; ++i)
 				g.seWorktype(0xC1);
 			CHECK(al.hp[victim] < 200);
+			// worktype 6 (sub_2CE85, the berserk fighter), and any worktype with the object status 0x80: it too walks up and strikes
+			for (int mode = 0; mode < 2; ++mode) {
+				al.worktype[0xC1] = mode ? 13 : 6;
+				w.objects[fk].status = (uint8_t)(mode ? 0x80 : 0);
+				al.hp[victim] = 200;
+				w.moveObject(fk, g.x + 2, g.y, g.z);
+				for (int i = 0; i < 400 && al.hp[victim] == 200; ++i) {
+					al.moves[0xC1] = 12;
+					g.seWorktype(0xC1);
+				}
+				CHECK(al.hp[victim] < 200);
+			}
+			w.objects[fk].status = 0;
 			al.worktype[0xC1] = 0;
 			al.status[0xC1] = 0;
 		}

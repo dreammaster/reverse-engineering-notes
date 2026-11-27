@@ -2161,7 +2161,9 @@ bool Game::seWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
-	if (wt != 7 && wt != 9 && wt != 19 && wt != 154 && wt != 10 && wt != 11 && wt != 14 && wt != 8 && wt != 155)
+	if (wt != 0 && (_world.objects[k].status & 0x80)) // sub_27211: whatever the worktype, an object with the bit 0x80 of its status fights as the berserk one
+		wt = 6;
+	if (wt != 7 && wt != 9 && wt != 19 && wt != 154 && wt != 10 && wt != 11 && wt != 14 && wt != 8 && wt != 155 && wt != 6)
 		return false;
 	_world.objects.reserve(_world.objects.size() + 8);
 	World::Obj &o = _world.objects[k];
@@ -2185,7 +2187,7 @@ bool Game::seWorktype(int actor) {
 			gy = (o.y + (seRoll(0, 1) ? 10 : -10)) & 0x3FF;
 		_creatures.walkTo(actor, gx, gy);
 	};
-	if (wt == 8 || wt == 155) { // sub_2C86D, the fighter: it goes for whom sub_2C491 names (targetFor), with the weapon of its pack that reaches and hurts most (sub_2C377); out of reach it walks up; in reach it strikes
+	auto fight = [&]() -> bool { // sub_2C86D, the fighter: it goes for whom sub_2C491 names (targetFor), with the weapon of its pack that reaches and hurts most (sub_2C377); out of reach it walks up; in reach it strikes
 		// (10 moves) when next to the target or when there is a line, else it sidesteps by a quarter turn about itself (to (x - dy, y + dx) or (x + dy, y - dx)) and, as the original does, walks to the
 		// same square again. APPROX(100): a grenade or a ray gun (0x89, 0x8A, 0xF0, 0xF1) is aimed by sub_2C661, the centre of the busiest 3 x 3 square within five squares of the party; here it goes at the target
 		int t = _creatures.targetFor(actor);
@@ -2213,6 +2215,70 @@ bool Game::seWorktype(int actor) {
 		}
 		_creatures.walkTo(actor, gx, gy);
 		_creatures.walkTo(actor, gx, gy);
+		return true;
+	};
+	if (wt == 8 || wt == 155)
+		return fight();
+	if (wt == 6) { // sub_2CE85, the berserk fighter: of the people within eight squares that it sees (not invisible, not hidden, on its level) and that are of the other side (side 0x40 against 0x20 and the
+		// other way round, side 0x60 against any side but 0x60 and none, no side against anyone) it goes for the one with most of strength + dexterity + intelligence (the first when equal); in reach it strikes
+		// (10 moves) when next to it or with a line, else it walks up (or sidesteps as the fighter does); when the step fails it fights as sub_2C86D; 5 moves more at the end. Nobody: the fighter
+		const int side = al.status[actor] & 0x60;
+		int best = -1, bestScore = 0;
+		for (int cand = 0; cand < ObjList::ACTORS; ++cand) {
+			int ck = _world.actorObject(cand);
+			if (ck < 0 || cand == actor || _world.objects[ck].deleted || (al.status[cand] & 0x10))
+				continue;
+			const World::Obj &c = _world.objects[ck];
+			if (std::max(std::abs((int)c.x - o.x), std::abs((int)c.y - o.y)) > 8)
+				continue;
+			bool seen = !(c.status & 2);
+			if (!seen && (al.status[actor] & 0x80) && (al.status[cand] & 0x80))
+				seen = true;
+			if ((al.movementFlags[cand] & 0x10) || (MovementClasses::flags(MovementClasses::classOf(c.type)) & 0x10) || c.z != o.z)
+				seen = false;
+			if (!seen)
+				continue;
+			int ts = al.status[cand] & 0x60;
+			if ((side == 0x40 && ts != 0x20) || (side == 0x20 && ts != 0x40) || (side == 0x60 && (ts == 0x60 || ts == 0)))
+				continue;
+			int score = al.strength[cand] + al.dexterity[cand] + al.intelligence[cand];
+			if (score > bestScore) {
+				bestScore = score;
+				best = cand;
+			}
+		}
+		if (best < 0) {
+			if (!fight())
+				return false;
+			_world.spendMoves(actor, 5);
+			return true;
+		}
+		int bk = _world.actorObject(best), tx = _world.objects[bk].x, ty = _world.objects[bk].y;
+		int d = Combat::distance(std::abs((int)tx - o.x), std::abs((int)ty - o.y));
+		int weapon = _combat.weaponType(actor, d), range = Combat::rangeOf(weapon);
+		int gx = tx, gy = ty;
+		bool move = true;
+		if (d <= range) {
+			if (d <= 1 || _creatures.lineOfFire(actor, tx, ty, range)) {
+				_combat.attackWith(actor, best, weapon, false);
+				_world.spendMoves(actor, 10);
+				move = false;
+			} else if (seRoll(0, 1)) {
+				gx = (o.x - (ty - o.y)) & 0x3FF;
+				gy = (o.y + (tx - o.x)) & 0x3FF;
+			} else {
+				gx = (o.x + (ty - o.y)) & 0x3FF;
+				gy = (o.y - (tx - o.x)) & 0x3FF;
+			}
+		}
+		if (move) {
+			int saved = al.moves[actor];
+			if (!_creatures.walkTo(actor, gx, gy)) {
+				al.moves[actor] = (uint8_t)saved;
+				fight();
+			}
+		}
+		_world.spendMoves(actor, 5);
 		return true;
 	}
 	if (wt == 14) { // sub_2D5A9, the one that shoots where it stands: with no side it rests; with a grenade or a ray gun (0x89, 0x8A, 0xF0, 0xF1) it fires at its target (the engine's choice);
