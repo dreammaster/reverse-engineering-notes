@@ -29,7 +29,7 @@ void TSAnimation::OnCreate(TVisionaireObject *object) {
 	object->SetValue(kAnimationPreloaded, false, TSendEventEnum::kNoEvent);
 	object->SetValue(kAnimationActive, false, TSendEventEnum::kNoEvent);
 	object->SetValue(kFrameCount, 0, TSendEventEnum::kNoEvent);
-	object->SetValue(kAnimationSize, 0.0f, TSendEventEnum::kNoEvent);
+	object->SetValue(kAnimationSize, -1.0f, TSendEventEnum::kNoEvent);
 	object->SetValue(kAnimationWaitingTime, 0, TSendEventEnum::kNoEvent);
 	object->SetValue(kAnimationStartedByUser, false, TSendEventEnum::kNoEvent);
 }
@@ -118,9 +118,9 @@ void TTButton::OnInit(TVisionaireObject *object) {
 	object->SetValue(kButtonRotation, 0.0f, TSendEventEnum::kSendEvent);
 	object->SetValue(kButtonRotationCenter, wxPoint{-1, -1}, TSendEventEnum::kSendEvent);
 	object->SetValue(kButtonShaderSet, -1, TSendEventEnum::kSendEvent);
-	object->SetValue(kButtonScale, 0.0f, TSendEventEnum::kSendEvent);
-	object->SetValue(kButtonScaleX, 0.0f, TSendEventEnum::kSendEvent);
-	object->SetValue(kButtonScaleY, 0.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kButtonScale, 1.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kButtonScaleX, 1.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kButtonScaleY, 1.0f, TSendEventEnum::kSendEvent);
 	object->SetValue(kButtonMatrixId, 1, TSendEventEnum::kSendEvent);
 }
 
@@ -133,7 +133,7 @@ void TTCharacter::OnInit(TVisionaireObject *object) {
 	object->SetValue(kCharacterDirection, 0, TSendEventEnum::kNoEvent);
 	object->SetValue(kCharacterFollowReachDistance, -1, TSendEventEnum::kNoEvent);
 	object->SetValue(kCharacterTint, -1, TSendEventEnum::kNoEvent);
-	object->SetValue(kCharacterSize, 0.0f, TSendEventEnum::kNoEvent);
+	object->SetValue(kCharacterSize, 100.0f, TSendEventEnum::kNoEvent);
 	object->SetValue(kCharacterMatrixId, 1, TSendEventEnum::kSendEvent);
 	object->SetValue(kCharacterShaderSet, -1, TSendEventEnum::kSendEvent);
 	object->SetValue(kCharacterLightmapActive, true, TSendEventEnum::kSendEvent);
@@ -343,9 +343,9 @@ void TTObject::OnInit(TVisionaireObject *object) {
 	object->SetValue(kObjectRotation, 0.0f, TSendEventEnum::kSendEvent);
 	object->SetValue(kObjectRotationCenter, wxPoint{-1, -1}, TSendEventEnum::kSendEvent);
 	object->SetValue(kObjectShaderSet, -1, TSendEventEnum::kSendEvent);
-	object->SetValue(kObjectScale, 0.0f, TSendEventEnum::kSendEvent);
-	object->SetValue(kObjectScaleX, 0.0f, TSendEventEnum::kSendEvent);
-	object->SetValue(kObjectScaleY, 0.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kObjectScale, 1.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kObjectScaleX, 1.0f, TSendEventEnum::kSendEvent);
+	object->SetValue(kObjectScaleY, 1.0f, TSendEventEnum::kSendEvent);
 	object->SetValue(kObjectMatrixId, 1, TSendEventEnum::kSendEvent);
 }
 

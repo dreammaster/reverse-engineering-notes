@@ -296,3 +296,6 @@ Reconstructed from the listing (the three games read the same): `SLoadingScreen`
 
 ### `TGWaySystem::GetNextPosition` and `~TManagedObject` (25 Nov 2026)
 Two fixes found in Deponia 1 were applied here (the originals have the same code, `-O0` in the first case): the direction of a leg is worked out whenever the character stands on the point it was heading for (`if (reachedTarget || !known)`, asm at `loc_7B9B0A`), and `~TManagedObject` lets go of animations, text and the object manager. Details in `src/deponia1/VERSIONS.md`. Not run with Deponia 4's data.
+
+### The defaults of `TTObject::OnInit`, `TTButton::OnInit`, `TSAnimation::OnCreate` and `TTCharacter::OnInit` (28 Nov 2026)
+The same fix as in Deponia 1 (see `src/deponia1/VERSIONS.md`): the object and button scales were 0.0 where the original loads 1.0, the animation size 0.0 for -1.0 and the character size 0.0 for 100.0. This build's original has the same values (checked in its listing). A savegame of this player written before the fix has objects of scale 0.

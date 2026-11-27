@@ -167,3 +167,6 @@ Reconstructed from the listing (the three games read the same): `SLoadingScreen`
 
 ### `TGWaySystem::GetNextPosition` and `~TManagedObject` (25 Nov 2026)
 The same two fixes as in Deponia 1 (leg direction at each point of a way; the destructor that detaches from animations, text and the object manager, which in this build also hides each secondary animation). Details in `src/deponia1/VERSIONS.md`. Not run with the Rabbit's data (the Rabbit's `plugintest` passes).
+
+### The defaults of `TTObject::OnInit`, `TTButton::OnInit`, `TSAnimation::OnCreate` and `TTCharacter::OnInit` (28 Nov 2026)
+The same fix as in Deponia 1 (see `src/deponia1/VERSIONS.md`): the object and button scales were 0.0 where the original loads 1.0, the animation size 0.0 for -1.0 and the character size 0.0 for 100.0. This build's original has the same values (checked in its listing). A savegame of this player written before the fix has objects of scale 0.

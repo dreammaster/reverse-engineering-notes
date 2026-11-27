@@ -57,18 +57,22 @@ int main(int argc, char **argv) {
 
 	saveFile.NormalizePath();
 
-	if (!TComposedFileManager::SetSavegameFile(saveFile, containerId)) {
-		std::printf("the savegame container did not open\n");
-		return 1;
-	}
+	// `none` as the savegame: the game data as they are after loading (what a new game would save)
+	if (std::string(argv[1]) != "none") {
+		if (!TComposedFileManager::SetSavegameFile(saveFile, containerId)) {
+			std::printf("the savegame container did not open\n");
+			return 1;
+		}
 
-	wxFileName saveDataFile;
+		wxFileName saveDataFile;
 
-	saveDataFile.SetFullName(L"vtp_savedata.xml#g#-01#00000#");
+		saveDataFile.SetFullName(L"vtp_savedata.xml#g#-01#00000#");
 
-	if (!game->LoadSaveGame(saveDataFile, containerId)) {
-		std::printf("the savegame did not load\n");
-		return 1;
+		if (!game->LoadSaveGame(saveDataFile, containerId)) {
+			std::printf("the savegame did not load\n");
+			return 1;
+		}
+
 	}
 
 	// the number of records of each table, and the records of the tables that only a savegame has (the running animations,
@@ -110,6 +114,26 @@ int main(int argc, char **argv) {
 				std::fwrite(resaved.GetBuffer().GetData(), 1, resaved.GetBuffer().GetLen(), again);
 				std::fclose(again);
 				std::printf("resaved %d bytes\n", (int)resaved.GetBuffer().GetLen());
+			}
+		}
+	}
+
+	// savedump <savegame> <output> <resaved> <savegame as xml>: the content of a savegame (what the savegame has, as text)
+	if (argc > 4) {
+		TXMLStringWriter xml;
+
+		xml.SetSaveGame(true);
+
+		if (game->SaveData(xml, nullptr, true)) {
+			xml.FinishWrite();
+			xml.GetBufferNonConst().AppendByte(0);
+
+			std::FILE *xmlOut = std::fopen(argv[4], "wb");
+
+			if (xmlOut) {
+				std::fwrite(xml.GetBuffer().GetData(), 1, xml.GetBuffer().GetLen() - 1, xmlOut);
+				std::fclose(xmlOut);
+				std::printf("savegame xml %d bytes\n", (int)xml.GetBuffer().GetLen());
 			}
 		}
 	}
