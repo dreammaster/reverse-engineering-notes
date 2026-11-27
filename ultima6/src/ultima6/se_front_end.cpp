@@ -18,6 +18,7 @@ namespace {
 
 const int DISSOLVE_MS = 350; // how long the dissolve of the driver takes on the original's machine (it is as fast as the processor: APPROX 105)
 const int OPENING_WAIT1 = 1500, OPENING_WAIT2 = 1500; // (sub_13B22(1000) of the original without music: three waits of 500 ms)
+const int OPENING_MUSIC_WAIT1 = 6300, OPENING_MUSIC_WAIT2 = 7000; // what the original's waits for the song's first two cues came to in a run with the AdLib (screenshots: APPROX 105)
 const int FRAME_MS = 14; // a vertical retrace of the VGA (70.086 a second), 14.268 ms: the waits count them
 
 uint32_t get32(const Bytes &b, size_t o) {
@@ -1213,11 +1214,11 @@ void SeFrontEnd::buildOpening(Seq &s) {
 	}));
 	s.push_back(fade(true));
 	s.push_back(call([this, h]() { draw(_back, (*h)[0], 1, 0, 0); }));
-	s.push_back(wait(OPENING_WAIT1));
+	s.push_back(wait(_music ? OPENING_MUSIC_WAIT1 : OPENING_WAIT1));
 	FADE_OUT_CLEAR(s)
 	s.push_back(call([this]() { setPalette(0); }));
 	s.push_back(fade(true));
-	s.push_back(wait(OPENING_WAIT2));
+	s.push_back(wait(_music ? OPENING_MUSIC_WAIT2 : OPENING_WAIT2));
 	FADE_OUT_CLEAR(s)
 	// the savannah: layers 0, 2 and 5 of item 1
 	s.push_back(call([this, h]() {
