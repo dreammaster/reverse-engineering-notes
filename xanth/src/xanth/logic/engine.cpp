@@ -1323,22 +1323,22 @@ int lock_combination_correct(Game &g) {
 	if (v.byte_8B9D2[0] != 2) {
 		return 0;
 	}
-	if (rt.byte_8B9D3 != 1) {
+	if (v.byte_8B9D2[1] != 1) {
 		return 0;
 	}
-	if (rt.byte_8B9D4 != 3) {
+	if (v.byte_8B9D2[2] != 3) {
 		return 0;
 	}
-	if (rt.byte_8B9D5 != 1) {
+	if (v.byte_8B9D2[3] != 1) {
 		return 0;
 	}
-	if (rt.byte_8B9D6 != 2) {
+	if (v.byte_8B9D2[4] != 2) {
 		return 0;
 	}
-	if (rt.byte_8B9D7 != 1) {
+	if (v.byte_8B9D2[5] != 1) {
 		return 0;
 	}
-	if (rt.byte_8B9D8 == 1) {
+	if (v.byte_8B9D2[6] == 1) {
 		return 1;
 	} else {
 		return 0;
@@ -3146,22 +3146,22 @@ int sub_58262(Game &g) {
 	if (v.byte_8B9D2[0] != 0) {
 		return 0;
 	}
-	if (rt.byte_8B9D3 != 0) {
+	if (v.byte_8B9D2[1] != 0) {
 		return 0;
 	}
-	if (rt.byte_8B9D4 != 0) {
+	if (v.byte_8B9D2[2] != 0) {
 		return 0;
 	}
-	if (rt.byte_8B9D5 != 0) {
+	if (v.byte_8B9D2[3] != 0) {
 		return 0;
 	}
-	if (rt.byte_8B9D6 != 0) {
+	if (v.byte_8B9D2[4] != 0) {
 		return 0;
 	}
-	if (rt.byte_8B9D7 != 0) {
+	if (v.byte_8B9D2[5] != 0) {
 		return 0;
 	}
-	if (rt.byte_8B9D8 == 0) {
+	if (v.byte_8B9D2[6] == 0) {
 		return 1;
 	} else {
 		return 0;

@@ -1,1 +1,0 @@
-conv_text_77	does not compile yet: incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'

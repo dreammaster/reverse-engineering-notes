@@ -92,7 +92,7 @@ PATCHES["objh_380"] = [(
 # data segments of overlays (the exe keeps overlay-loader placeholders in the segment words that point to them: see Game::newGame): linear start and length of the tables read
 OVERLAY_RANGES = [(0x7CF00, 0x70), (0x4F110, 0x98), (0x55B80, 0x110), (0x5E290, 0x40), (0x60444, 0x18), (0x61340, 0xC0), (0x630E0, 0x90), (0x64490, 0x98), (0x76340, 0xA0),
                   (0x79690, 0x160), (0x48F70, 0x300), (0x4AC00, 0x60), (0x66B90, 0x18), (0x44830, 0x20), (0x44880, 0x30)]
-HANDWRITTEN = {"cmdWait", "objh_390", "sub_44130", "loc_4E632", "sub_312E3", "sub_312ED", "number_to_words", "loc_5F405", "loc_5F421", "loc_5F4AD", "loc_5F4C9", "loc_5F4E5", "loc_5F501", "sub_1C4ED", "event_fn_25", "sub_1AAFB", "sub_5F96C"}        # generated functions that are written by hand in src/xanth/logic_hand.cpp (the decompiler gets their control flow wrong)
+HANDWRITTEN = {"cmdWait", "objh_390", "sub_44130", "loc_4E632", "sub_312E3", "sub_312ED", "number_to_words", "loc_5F405", "loc_5F421", "loc_5F4AD", "loc_5F4C9", "loc_5F4E5", "loc_5F501", "sub_1C4ED", "event_fn_25", "sub_1AAFB", "sub_5F96C", "conv_text_77"}        # generated functions that are written by hand in src/xanth/logic_hand.cpp (the decompiler gets their control flow wrong)
 CLIB = {"strcpy", "strcat", "memcpy", "strlen", "_strlwr", "_strupr"}
 STUBS = {"show_text_box_stub": "show_text_box", "conversation_set_enabled_stub": "conversation_set_enabled", "lock_combination_correct_stub": "lock_combination_correct",
          "random_percent_stub": "random_percent", "number_to_words_stub": "number_to_words", "clear_text_area_stub": "clear_text_area", "sub_2F50B": "update_room_light",
@@ -469,6 +469,9 @@ def main():
             t = function_text(ctx, n, names)
             # a far null pointer as a message argument is pushed as two zero words: one argument (at the end of the list it does not matter, in the middle it shifts the rest)
             t = re.sub(r"(Font_WriteMessage\([^;\n]*?), 0, 0, ", r"\1, 0, ", t)
+            # the lock's seven digits are one saved region (byte_8B9D2, 7 bytes); the program names the bytes after the first one separately
+            for k in range(3, 9):
+                t = t.replace("rt.byte_8B9D%d" % k, "v.byte_8B9D2[%d]" % (k - 2))
             # the two halves of a text pointer that the program kept in registers (dx = segment): the segment of a text is not modelled, the pointer alone is the text
             for m in set(re.findall(r"(p\d+)_dx = hi\(", t)):
                 t = t.replace("FAR(%s_dx, %s_ax)" % (m, m), "%s_ax" % m)

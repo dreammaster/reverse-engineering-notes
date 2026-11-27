@@ -241,4 +241,129 @@ int sub_5F96C(Game &g) {
 	return 0;
 }
 
+// conv_text_77: the hint for the recipe (the lock's seven digits are the ingredients): what the player has put in (the digits that are not 0), then what is wrong (the digits that
+// differ from the recipe at DS:1B8A). The decompiler nests the loops of this function; they follow each other. The words are those of the data segment.
+TextRef conv_text_77(Game &g) {
+	Vars &v = g.state.v;
+	Runtime &rt = g.rt;
+	const int kDs = 0x84FC;
+	uint16 guess[7], recipe[7];
+	for (int i = 0; i < 7; i++) {
+		guess[i] = v.byte_8B9D2[i];
+		g.exe16(kDs, 0x5DEC + 2 * i) = guess[i];
+		recipe[i] = g.exe16(kDs, 0x1B8A + 2 * i);
+	}
+	int firstWrong = -1, lastWrong = -1, firstSet = -1, lastSet = -1, right = 0, wrong = 0;
+	for (int i = 0; i < 7; i++) {
+		if (guess[i] != recipe[i]) {
+			if (firstWrong < 0)
+				firstWrong = i;
+			lastWrong = i;
+			wrong++;
+		} else {
+			right++;
+		}
+		if (guess[i] != 0) {
+			if (firstSet < 0)
+				firstSet = i;
+			lastSet = i;
+		}
+	}
+	char *msg = rt.word_81A66;
+	msg[0] = 0;
+	auto add = [&](const char *t) { strcat(msg, t); };
+	auto msgText = [&](int index) { return g.ResourceText_GetStr(TextRef::fromWords(index, 0xF037)); };
+	auto ds = [&](int off) { return (const char *)FAR(kDs, off); };
+	if (lock_combination_correct(g)) {
+		rt.voice_track = 0x529;
+		strcpy(msg, msgText(0));
+		return msg;
+	}
+	if (!g.object_parent_is(0x9B, 1)) {
+		rt.voice_track = 0x52A;
+		strcpy(msg, msgText(1));
+		return msg;
+	}
+	rt.voice_track = 0xFFFF;
+	strcpy(msg, msgText(2));
+	if (firstSet < 0) {
+		add(msgText(3));
+	} else {
+		for (int i = firstSet; i < 7; i++) {
+			if (guess[i] == 0)
+				continue;
+			if (i != firstSet)
+				add(ds(0x1B98));
+			if (i == lastSet && right > 1)
+				add(ds(0x1B9B));
+			switch (i) {
+			case 0:
+				add(ds(v.byte_8B9D2[0] == 1 ? 0x1BA0 : 0x1BA9));
+				add(ds(0x1BB4));
+				break;
+			case 1:
+				add(msgText(4));
+				break;
+			case 2:
+				add(v.byte_8B9D2[2] == 1 ? ds(0x1BC3) : v.byte_8B9D2[2] == 2 ? ds(0x1BCA) : v.byte_8B9D2[2] == 3 ? ds(0x1BD4) : msgText(5));
+				add(ds(0x1BE0));
+				break;
+			case 3:
+				add(ds(0x1BEA));
+				break;
+			case 4:
+				add(ds(v.byte_8B9D2[4] == 1 ? 0x1BF1 : 0x1C00));
+				break;
+			case 5:
+				add(msgText(6));
+				break;
+			case 6:
+				add(ds(0x1C10));
+				break;
+			}
+		}
+	}
+	add(msgText(7));
+	for (int i = firstWrong; i >= 0 && i < 7; i++) {
+		if (guess[i] == recipe[i])
+			continue;
+		if (i != firstWrong)
+			add(ds(0x1C1A));
+		if (i == lastWrong && wrong > 1)
+			add(ds(0x1C1D));
+		switch (i) {
+		case 0:
+			add(ds(v.byte_8B9D2[0] == 0 ? 0x1C22 : 0x1C2D));
+			add(ds(0x1C36));
+			break;
+		case 1:
+			add(msgText(4));
+			break;
+		case 2:
+			if (v.byte_8B9D2[2] == 0)
+				add(ds(0x1C45));
+			else if (v.byte_8B9D2[2] == 1)
+				add(ds(0x1C51));
+			else if (v.byte_8B9D2[2] == 2)
+				add(ds(0x1C5B));
+			add(ds(0x1C62));
+			break;
+		case 3:
+			add(ds(0x1C6C));
+			break;
+		case 4:
+			add(ds(v.byte_8B9D2[4] == 0 ? 0x1C73 : 0x1C83));
+			break;
+		case 5:
+			add(msgText(8));
+			break;
+		case 6:
+			add(ds(0x1C92));
+			break;
+		}
+	}
+	add(ds(0x1C9C));
+	return msg;
+}
+
 } // namespace Xanth

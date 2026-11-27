@@ -2182,7 +2182,7 @@ int objh_115(Game &g, Word arg0) {
 				v.byte_852D5 = 1;
 				p14_ax = 9;
 			} else {
-				p14_ax = (rt.byte_8B9D6 != 0 ? 0xB : 0xA);
+				p14_ax = (v.byte_8B9D2[4] != 0 ? 0xB : 0xA);
 			}
 			g.conversation_set_enabled(0x8026, p14_ax, 1);
 			g.conversation_set_enabled(0x8026, 0, 0);
@@ -5201,12 +5201,12 @@ int objh_147(Game &g, Word arg0) {
 					if ((rt.selectedCommand & 0xFF) == 0x13) {
 						g.Font_WriteMessage(ES(185), g.print_obj(0x52, rt.dobj, ES(226)));
 						rt.word_8ADBC = v.byte_8B9D2[0];
-						rt.word_8ADBE = rt.byte_8B9D3;
-						rt.word_8ADC0 = rt.byte_8B9D4;
-						rt.word_8ADC2 = rt.byte_8B9D5;
-						rt.word_8ADC4 = rt.byte_8B9D6;
-						rt.word_8ADC6 = rt.byte_8B9D7;
-						rt.word_8ADC8 = rt.byte_8B9D8;
+						rt.word_8ADBE = v.byte_8B9D2[1];
+						rt.word_8ADC0 = v.byte_8B9D2[2];
+						rt.word_8ADC2 = v.byte_8B9D2[3];
+						rt.word_8ADC4 = v.byte_8B9D2[4];
+						rt.word_8ADC6 = v.byte_8B9D2[5];
+						rt.word_8ADC8 = v.byte_8B9D2[6];
 						vA = 0xFFFF;
 						v8 = 0xFFFF;
 						vC = 0;
@@ -5272,15 +5272,15 @@ int objh_147(Game &g, Word arg0) {
 													p226_txt = TextRef(TextRef::fromWords(p223_ax, 0xF00F));
 													goto L226;
 												case 2:
-													if (rt.byte_8B9D4 == 1) {
+													if (v.byte_8B9D2[2] == 1) {
 														v4.setLo(0x281E);
 														goto L216;
 													}
-													if (rt.byte_8B9D4 == 2) {
+													if (v.byte_8B9D2[2] == 2) {
 														v4.setLo(0x2825);
 														goto L216;
 													}
-													if (rt.byte_8B9D4 != 3) {
+													if (v.byte_8B9D2[2] != 3) {
 														v4 = TextRef(MSG(15, 32));
 													} else {
 														v4 = ES(232);
@@ -5292,7 +5292,7 @@ int objh_147(Game &g, Word arg0) {
 													p225_ax = ES(234);
 													goto L225;
 												case 4:
-													p225_ax = (rt.byte_8B9D6 != 1 ? ES(235) : ES(236));
+													p225_ax = (v.byte_8B9D2[4] != 1 ? ES(235) : ES(236));
 													goto L225;
 												case 5:
 													p223_ax = 0x21;
@@ -5464,14 +5464,14 @@ int objh_147(Game &g, Word arg0) {
 						}
 						if (rt.dobj == 0x78) {
 	L115:;
-							if (rt.byte_8B9D8 != 0) {
+							if (v.byte_8B9D2[6] != 0) {
 								g.Font_WriteMessage(MSG(15, 72), g.print_obj(3, 0x78));
 	L270:;
 							} else {
 								g.Font_WriteMessage(MSG(15, 73), g.print_obj(0x22, rt.iobj));
 								g.object_move(0x78, 0, 0);
 								g.object_set_prop_a(0x75, 0x116);
-								rt.byte_8B9D8++;
+								v.byte_8B9D2[6]++;
 								p118_ax = ES(175);
 	L118:;
 								g.realsound_play(p118_ax);
@@ -5489,27 +5489,27 @@ int objh_147(Game &g, Word arg0) {
 								g.object_set_prop_a(0x9B, 0x121);
 								return 1;
 							}
-							if (rt.byte_8B9D3 != 0) {
+							if (v.byte_8B9D2[1] != 0) {
 								g.object_set_prop_a(0x9B, 0x121);
 								return 1;
 							}
-							if (rt.byte_8B9D4 != 0) {
+							if (v.byte_8B9D2[2] != 0) {
 								g.object_set_prop_a(0x9B, 0x121);
 								return 1;
 							}
-							if (rt.byte_8B9D5 != 0) {
+							if (v.byte_8B9D2[3] != 0) {
 								g.object_set_prop_a(0x9B, 0x121);
 								return 1;
 							}
-							if (rt.byte_8B9D6 != 0) {
+							if (v.byte_8B9D2[4] != 0) {
 								g.object_set_prop_a(0x9B, 0x121);
 								return 1;
 							}
-							if (rt.byte_8B9D7 != 0) {
+							if (v.byte_8B9D2[5] != 0) {
 								g.object_set_prop_a(0x9B, 0x121);
 								return 1;
 							}
-							if (rt.byte_8B9D8 == 0) {
+							if (v.byte_8B9D2[6] == 0) {
 								return 1;
 							} else {
 								g.object_set_prop_a(0x9B, 0x121);
@@ -5518,7 +5518,7 @@ int objh_147(Game &g, Word arg0) {
 						} else {
 							if ((int16)rt.dobj <= 0x78) {
 								if (rt.dobj == 0x77) {
-									if (rt.byte_8B9D8 != 0) {
+									if (v.byte_8B9D2[6] != 0) {
 										g.Font_WriteMessage(MSG(15, 70));
 										return 1;
 									}
@@ -5534,11 +5534,11 @@ int objh_147(Game &g, Word arg0) {
 									}
 									if ((int16)(rt.dobj & 0xFF) <= 0x6F) {
 										if ((int16)(rt.dobj & 0xFF) >= 0x6E) {
-											if ((int16)(rt.byte_8B9D4 + 1) <= 3) {
+											if ((int16)(v.byte_8B9D2[2] + 1) <= 3) {
 												r70_50 = g.print_obj(2, rt.dobj);
 												p73_ax = (rt.dobj != 0x6F ? ES(173) : ES(241));
 												g.Font_WriteMessage(MSG(15, 65), g.print_obj(2, rt.iobj), p73_ax, r70_50);
-												rt.byte_8B9D4++;
+												v.byte_8B9D2[2]++;
 												p118_ax = ES(175);
 												goto L118;
 											}
@@ -5571,7 +5571,7 @@ int objh_147(Game &g, Word arg0) {
 											}
 										} else {
 											if ((rt.dobj & 0xFF) == 0x76) {
-												if (rt.byte_8B9D3 != 0) {
+												if (v.byte_8B9D2[1] != 0) {
 													p109_ax = 0x3A;
 													goto L109;
 												}
@@ -5593,7 +5593,7 @@ int objh_147(Game &g, Word arg0) {
 													}
 													g.object_set_prop_a(0x76, 0x136);
 													v.flag_85286_buttercups = 0;
-													rt.byte_8B9D3++;
+													v.byte_8B9D2[1]++;
 													p118_ax = ES(175);
 													goto L118;
 												}
@@ -5621,9 +5621,9 @@ int objh_147(Game &g, Word arg0) {
 									}
 									if (rt.dobj == 0x7E) {
 										g.Font_WriteMessage(MSG(15, 67), g.print_obj(2, rt.dobj), g.print_obj(0x44, rt.dobj, ES(242)));
-										rt.byte_8B9D6++;
+										v.byte_8B9D2[4]++;
 										if ((g.object_get_prop_a(0x7E)) == 0x13D) {
-											rt.byte_8B9D6++;
+											v.byte_8B9D2[4]++;
 										}
 										g.object_move(0x7E, 0, 0);
 										p118_ax = ES(175);
@@ -5639,7 +5639,7 @@ int objh_147(Game &g, Word arg0) {
 									if (rt.dobj == 0x8F) {
 										g.Font_WriteMessage(MSG(15, 68), g.print_obj(2, rt.dobj), g.print_obj(0x22, rt.iobj));
 										g.object_move(0x8F, 0, 0);
-										rt.byte_8B9D7++;
+										v.byte_8B9D2[5]++;
 										p118_ax = ES(175);
 										goto L118;
 									}
@@ -5668,7 +5668,7 @@ int objh_147(Game &g, Word arg0) {
 									if (rt.dobj == 0xB1) {
 										g.Font_WriteMessage(MSG(15, 66), g.print_obj(2, rt.dobj), g.print_obj(2, rt.iobj));
 										g.object_move(0xB1, 0, 0);
-										rt.byte_8B9D5++;
+										v.byte_8B9D2[3]++;
 										p118_ax = ES(175);
 										goto L118;
 									} else {

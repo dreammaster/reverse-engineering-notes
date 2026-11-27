@@ -4,6 +4,5 @@
 namespace Xanth {
 
 // Functions the decompiler could not translate yet; until a hand-written replacement exists they do nothing.
-TextRef conv_text_77(Game &) { return TextRef(); }  // does not compile yet: incompatible types in assignment of 'uint8' {aka 'unsigned char'} to 'char [12]'
 
 } // namespace Xanth

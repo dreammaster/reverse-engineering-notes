@@ -245,7 +245,7 @@ TextRef conv_text_73(Game &g);
 TextRef conv_text_74(Game &g);
 TextRef conv_text_75(Game &g);
 TextRef conv_text_76(Game &g);
-TextRef conv_text_77(Game &g);  // not decompiled
+TextRef conv_text_77(Game &g);
 TextRef conv_text_78(Game &g);
 TextRef conv_text_79(Game &g);
 TextRef conv_text_81(Game &g);

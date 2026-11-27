@@ -1071,12 +1071,12 @@ int conv_cb_66(Game &g, Word arg0, Word arg1) {
 		g.object_move(0xBD, 1, 0);
 		g.object_set_attr(0xBD, 0xA);
 		v.byte_8B9D2[0] = 0;
-		rt.byte_8B9D3 = 0;
-		rt.byte_8B9D4 = 0;
-		rt.byte_8B9D5 = 0;
-		rt.byte_8B9D6 = 0;
-		rt.byte_8B9D7 = 0;
-		rt.byte_8B9D8 = 0;
+		v.byte_8B9D2[1] = 0;
+		v.byte_8B9D2[2] = 0;
+		v.byte_8B9D2[3] = 0;
+		v.byte_8B9D2[4] = 0;
+		v.byte_8B9D2[5] = 0;
+		v.byte_8B9D2[6] = 0;
 		return g.conversation_set_enabled(0x8026, 8, 1);
 	}
 	return 0;

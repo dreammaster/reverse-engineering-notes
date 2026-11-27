@@ -284,7 +284,7 @@ TextRef conv_text_23(Game &g) {
 	Vars &v = g.state.v;
 	Runtime &rt = g.rt;
 	intptr_t v2, p4_ax;
-	v2 = rt.byte_8B9D6;
+	v2 = v.byte_8B9D2[4];
 	if (g.object_parent_is(0x7E, 1)) {
 		p4_ax = ((g.object_get_prop_a(0x7E)) != 0x13E ? 2 : 1);
 		v2 = v2 + p4_ax;
