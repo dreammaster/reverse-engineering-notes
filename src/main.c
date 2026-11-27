@@ -698,7 +698,7 @@ static void roomview_game_step(RoomView *rv) {
 	if (rv->fire_cool > 0) rv->fire_cool--;
 	if (rv->vm.msg_n) roomview_flush_messages(rv);
 	for (int i = 0; i < 4; i++)
-		if (rv->msgs[i].active && --rv->msgs[i].timer <= 0)
+		if (rv->msgs[i].active && !rv->ending && --rv->msgs[i].timer <= 0)       /* the ending's scroll stays up until a key */
 			rv->msgs[i].active = 0;
 	if (rv->room < 0 || rv->room >= 128 || --rv->tm_div > 0)
 		return;
