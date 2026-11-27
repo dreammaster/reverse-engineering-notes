@@ -7356,8 +7356,8 @@ sub_12A30       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12A54       proc far                ; CODE XREF: title_scene_5+4D↓P
-                                        ; title_scene_5+73↓P ...
+sub_12A54       proc far                ; CODE XREF: title_logo_fly+4D↓P
+                                        ; title_logo_fly+73↓P ...
                 xor     cx, cx
                 jmp     short loc_12A6E
 sub_12A54       endp
@@ -9373,7 +9373,7 @@ loc_13586:                              ; CODE XREF: check_disk+164↓j
                 mov     byte_20622, 0
                 cmp     word_1E002, 0
                 jnz     short loc_135E7
-                cmp     word_20608, 0
+                cmp     video_mode, 0
                 jnz     short loc_135E7
                 mov     byte_2061D, 12h
 
@@ -10007,9 +10007,9 @@ launch_game     endp
 music_load      proc far                ; CODE XREF: main+250↓p
                 push    bp
                 mov     bp, sp
-                cmp     word_20FDE, 0
+                cmp     music_flag, 0
                 jz      short loc_13A63
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jnz     short loc_13A67
 
 loc_13A63:                              ; CODE XREF: music_load+8↑j
@@ -10230,7 +10230,7 @@ arg_0           = word ptr  6
                 push    si
                 push    di
                 mov     [bp+var_2], 0
-                cmp     word_20608, 0
+                cmp     video_mode, 0
                 jnz     short loc_13BBE
                 mov     ax, [bp+arg_0]
                 mov     dx, 300h
@@ -10278,7 +10278,7 @@ fatal_error     proc far                ; CODE XREF: launch_game+4B↑P
                 mov     ax, 3
                 push    ax
                 call    sub_17C35
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jz      short loc_13BDC
                 call    sub_1A5FE
 
@@ -10313,7 +10313,7 @@ arg_0           = word ptr  6
                 mov     bp, sp
                 push    cs
                 call    near ptr flush_keys
-                cmp     word_20FDE, 0
+                cmp     music_flag, 0
                 jz      short loc_13C18
                 mov     ax, 0C8h
                 push    ax
@@ -10378,7 +10378,7 @@ fade_out_clear  proc far                ; CODE XREF: exit_program+3↑P
                                         ; launch_game+3↑P ...
                 push    bp
                 mov     bp, sp
-                cmp     word_20608, 0
+                cmp     video_mode, 0
                 jnz     short loc_13C9E
                 mov     ax, 2B1Ah
                 push    ax
@@ -10413,7 +10413,7 @@ show_screen     proc far                ; CODE XREF: opening_sequence+C5↓p
                                         ; opening_sequence+154↓p ...
                 push    bp
                 mov     bp, sp
-                cmp     word_20608, 0
+                cmp     video_mode, 0
                 jnz     short loc_13CD1
                 mov     ax, 2B52h
                 push    ax
@@ -10513,19 +10513,19 @@ loc_13D4A:                              ; CODE XREF: parse_arguments+20↑j
 
 loc_13D51:                              ; CODE XREF: parse_arguments+27↑j
                                         ; DATA XREF: seg001:jpt_13D4C↓o
-                mov     word_20608, 0   ; jumptable 00013D4C case 86
+                mov     video_mode, 0   ; jumptable 00013D4C case 86
                 jmp     def_13D4C       ; jumptable 00013D4C default case, cases 67,70-74,79,81,83,85,87
 ; ---------------------------------------------------------------------------
 
 loc_13D5A:                              ; CODE XREF: parse_arguments+27↑j
                                         ; DATA XREF: seg001:jpt_13D4C↓o
-                mov     word_20608, 1   ; jumptable 00013D4C case 69
+                mov     video_mode, 1   ; jumptable 00013D4C case 69
                 jmp     def_13D4C       ; jumptable 00013D4C default case, cases 67,70-74,79,81,83,85,87
 ; ---------------------------------------------------------------------------
 
 loc_13D63:                              ; CODE XREF: parse_arguments+27↑j
                                         ; DATA XREF: seg001:jpt_13D4C↓o
-                mov     word_20608, 3   ; jumptable 00013D4C case 84
+                mov     video_mode, 3   ; jumptable 00013D4C case 84
                 jmp     def_13D4C       ; jumptable 00013D4C default case, cases 67,70-74,79,81,83,85,87
 ; ---------------------------------------------------------------------------
 
@@ -10543,22 +10543,22 @@ loc_13D75:                              ; CODE XREF: parse_arguments+27↑j
 
 loc_13D7E:                              ; CODE XREF: parse_arguments+27↑j
                                         ; DATA XREF: seg001:jpt_13D4C↓o
-                mov     word_20FDE, 0   ; jumptable 00013D4C cases 78,80
-                mov     word_1FB6A, 0
+                mov     music_flag, 0   ; jumptable 00013D4C cases 78,80
+                mov     sound_card, 0
                 jmp     def_13D4C       ; jumptable 00013D4C default case, cases 67,70-74,79,81,83,85,87
 ; ---------------------------------------------------------------------------
 
 loc_13D8D:                              ; CODE XREF: parse_arguments+27↑j
                                         ; DATA XREF: seg001:jpt_13D4C↓o
-                mov     word_20FDE, 1   ; jumptable 00013D4C case 65
-                mov     word_1FB6A, 2
+                mov     music_flag, 1   ; jumptable 00013D4C case 65
+                mov     sound_card, 2
                 jmp     def_13D4C       ; jumptable 00013D4C default case, cases 67,70-74,79,81,83,85,87
 ; ---------------------------------------------------------------------------
 
 loc_13D9C:                              ; CODE XREF: parse_arguments+27↑j
                                         ; DATA XREF: seg001:jpt_13D4C↓o
-                mov     word_20FDE, 1   ; jumptable 00013D4C case 82
-                mov     word_1FB6A, 1
+                mov     music_flag, 1   ; jumptable 00013D4C case 82
+                mov     sound_card, 1
                 jmp     def_13D4C       ; jumptable 00013D4C default case, cases 67,70-74,79,81,83,85,87
 ; ---------------------------------------------------------------------------
 
@@ -10786,12 +10786,12 @@ loc_13F0B:                              ; CODE XREF: main+45↑j
                 cmp     si, [bp+var_E]
                 jb      short loc_13EFE
                 mov     word_205D8, 182h
-                mov     word_20642, 2
-                mov     word_1FB6A, 3
+                mov     frame_skip, 2
+                mov     sound_card, 3
                 mov     word_20606, 1
                 mov     word_2067A, 1
                 mov     word_2064C, 0
-                mov     word_20FDE, 0
+                mov     music_flag, 0
                 mov     word_2063C, 0
                 mov     word_20638, 0
                 push    cs
@@ -10845,13 +10845,13 @@ loc_13F89:                              ; CODE XREF: main+E7↓j
 loc_13F9B:                              ; CODE XREF: main+D0↑j
                 cmp     si, [bp+argc]
                 jl      short loc_13F89
-                push    word_20608
+                push    video_mode
                 call    sub_1D60A
                 inc     sp
                 inc     sp
                 or      ax, ax
                 jnz     short loc_13FDC
-                cmp     word_20FDE, 0
+                cmp     music_flag, 0
                 jz      short loc_13FBB
                 call    sub_1A5FE
 
@@ -10901,7 +10901,7 @@ loc_14001:                              ; CODE XREF: main+143↑j
 ; ---------------------------------------------------------------------------
 
 loc_1400B:                              ; CODE XREF: main+148↑j
-                mov     ax, word_20608
+                mov     ax, video_mode
                 or      ax, ax
                 jz      short loc_1401E
                 cmp     ax, 1
@@ -11018,12 +11018,12 @@ loc_140F9:                              ; CODE XREF: main+236↑j
                 call    near ptr music_load
                 or      ax, ax
                 jnz     short loc_14116
-                mov     word_20FDE, 0
+                mov     music_flag, 0
                 jmp     short loc_1411C
 ; ---------------------------------------------------------------------------
 
 loc_14116:                              ; CODE XREF: main+255↑j
-                mov     word_20FDE, 1
+                mov     music_flag, 1
 
 loc_1411C:                              ; CODE XREF: main+25D↑j
                 call    sub_1CA2E
@@ -11051,7 +11051,7 @@ loc_14136:                              ; CODE XREF: main+278↑j
 loc_14148:                              ; CODE XREF: main+27D↑j
                 cmp     ax, 1
                 jz      short loc_14153
-                mov     word_20642, 0
+                mov     frame_skip, 0
 
 loc_14153:                              ; CODE XREF: main+294↑j
                 cmp     word_20638, 1
@@ -11076,7 +11076,7 @@ loc_14161:                              ; CODE XREF: main+2A1↑j
                 call    near ptr set_palette
                 inc     sp
                 inc     sp
-                cmp     word_20FDE, 0
+                cmp     music_flag, 0
                 jz      short loc_1418C
                 mov     dx, word_1DFDE
                 mov     ax, word_1DFDC
@@ -11090,7 +11090,7 @@ loc_1418C:                              ; CODE XREF: main+2CA↑j
 loc_14190:                              ; CODE XREF: main+2D3↑j
                 push    dx
                 push    ax
-                push    word_20608
+                push    video_mode
                 mov     ax, 2B1Ah
                 push    ax
                 mov     ax, 2B52h
@@ -11221,7 +11221,7 @@ loc_1426A:                              ; CODE XREF: opening_sequence+86↑j
                 push    ax
                 call    dword_20666
                 add     sp, 0Ch
-                cmp     word_20FDE, 0
+                cmp     music_flag, 0
                 jz      short loc_142A2
                 push    word_1DFCE
                 push    word_1DFCC
@@ -11271,7 +11271,7 @@ loc_142A2:                              ; CODE XREF: opening_sequence+B2↑j
 ; ---------------------------------------------------------------------------
 
 loc_142F6:                              ; CODE XREF: opening_sequence+112↑j
-                cmp     word_20FDE, 0
+                cmp     music_flag, 0
                 jz      short loc_1431A
                 jmp     short loc_14311
 ; ---------------------------------------------------------------------------
@@ -11289,7 +11289,7 @@ loc_142FF:                              ; CODE XREF: opening_sequence+138↓j
 
 loc_14311:                              ; CODE XREF: opening_sequence+11F↑j
                                         ; opening_sequence+128↑j
-                cmp     word_1FB6E, 1
+                cmp     song_cue, 1
                 jl      short loc_142FF
                 jmp     short loc_14324
 ; ---------------------------------------------------------------------------
@@ -11336,7 +11336,7 @@ loc_14324:                              ; CODE XREF: opening_sequence+13A↑j
 ; ---------------------------------------------------------------------------
 
 loc_14360:                              ; CODE XREF: opening_sequence+17C↑j
-                cmp     word_20FDE, 0
+                cmp     music_flag, 0
                 jz      short loc_14384
                 jmp     short loc_1437B
 ; ---------------------------------------------------------------------------
@@ -11354,7 +11354,7 @@ loc_14369:                              ; CODE XREF: opening_sequence+1A2↓j
 
 loc_1437B:                              ; CODE XREF: opening_sequence+189↑j
                                         ; opening_sequence+192↑j
-                cmp     word_1FB6E, 2
+                cmp     song_cue, 2
                 jl      short loc_14369
                 jmp     short loc_1438E
 ; ---------------------------------------------------------------------------
@@ -11456,9 +11456,9 @@ loc_1438E:                              ; CODE XREF: opening_sequence+1A4↑j
 ; ---------------------------------------------------------------------------
 
 loc_14457:                              ; CODE XREF: opening_sequence+3FD↓j
-                cmp     word_20642, 1
+                cmp     frame_skip, 1
                 jnz     short loc_14467
-                mov     word_20642, 0
+                mov     frame_skip, 0
                 jmp     loc_145B7
 ; ---------------------------------------------------------------------------
 
@@ -11597,9 +11597,9 @@ loc_14596:                              ; CODE XREF: opening_sequence+39C↑j
                 push    ax
                 call    dword_2065A
                 add     sp, 4
-                cmp     word_20642, 0
+                cmp     frame_skip, 0
                 jnz     short loc_145B7
-                mov     word_20642, 1
+                mov     frame_skip, 1
 
 loc_145B7:                              ; CODE XREF: opening_sequence+286↑j
                                         ; opening_sequence+3D1↑j
@@ -11777,9 +11777,9 @@ opening_panel   proc far                ; CODE XREF: opening_sequence+20F↑P
 ; ---------------------------------------------------------------------------
 
 loc_1472E:                              ; CODE XREF: opening_panel+BE↓j
-                cmp     word_20642, 1
+                cmp     frame_skip, 1
                 jnz     short loc_1473E
-                mov     word_20642, 0
+                mov     frame_skip, 0
                 jmp     loc_147DB
 ; ---------------------------------------------------------------------------
 
@@ -11833,9 +11833,9 @@ loc_1473E:                              ; CODE XREF: opening_panel+F↑j
                 push    ax
                 call    dword_2065A
                 add     sp, 4
-                cmp     word_20FDE, 0
+                cmp     music_flag, 0
                 jz      short loc_147C9
-                cmp     word_1FB6E, 3
+                cmp     song_cue, 3
                 jl      short loc_147C9
                 sub     si, 4
 
@@ -12039,9 +12039,9 @@ loc_14953:                              ; CODE XREF: opening_panel+22A↑j
 ; ---------------------------------------------------------------------------
 
 loc_14957:                              ; CODE XREF: opening_panel+24F↓j
-                cmp     word_20FDE, 0
+                cmp     music_flag, 0
                 jz      short loc_14965
-                cmp     word_1FB6E, 3
+                cmp     song_cue, 3
                 jge     short loc_14975
 
 loc_14965:                              ; CODE XREF: opening_panel+238↑j
@@ -12243,7 +12243,7 @@ arg_2           = word ptr  6
 ; ---------------------------------------------------------------------------
 
 loc_14A73:                              ; CODE XREF: menu_loop+36↑j
-                cmp     word_20FDE, 0FFFFh
+                cmp     music_flag, 0FFFFh
                 jnz     short loc_14A8A
                 push    word_1DFD2
                 push    word_1DFD0
@@ -15054,7 +15054,7 @@ ending_sequence proc far                ; CODE XREF: main+2A3↑P
 ; ---------------------------------------------------------------------------
 
 loc_15EB0:                              ; CODE XREF: ending_sequence+28↑j
-                cmp     word_20FDE, 0FFFFh
+                cmp     music_flag, 0FFFFh
                 jnz     short loc_15EC7
                 push    word_1DFD2
                 push    word_1DFD0
@@ -15603,8 +15603,8 @@ seg002          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_16363       proc far                ; CODE XREF: title_scene_2+8B↓p
-                                        ; title_scene_2+150↓p ...
+sub_16363       proc far                ; CODE XREF: title_conductor+8B↓p
+                                        ; title_conductor+150↓p ...
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -15626,8 +15626,8 @@ sub_16363       endp
 
 ; Attributes: bp-based frame
 
-title_backdrop  proc far                ; CODE XREF: title_scene_1+E↓p
-                                        ; title_scene_2+36↓p ...
+title_backdrop  proc far                ; CODE XREF: title_first_frame+E↓p
+                                        ; title_conductor+36↓p ...
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -15662,7 +15662,7 @@ title_backdrop  endp
 
 ; Attributes: bp-based frame
 
-title_scene_1   proc far                ; CODE XREF: title_sequence+9E↓p
+title_first_frame proc far              ; CODE XREF: title_sequence+9E↓p
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -15683,7 +15683,7 @@ arg_2           = word ptr  8
                 jmp     short loc_163FA
 ; ---------------------------------------------------------------------------
 
-loc_163C8:                              ; CODE XREF: title_scene_1+4C↓j
+loc_163C8:                              ; CODE XREF: title_first_frame+4C↓j
                 xor     ax, ax
                 push    ax
                 mov     bx, si
@@ -15706,7 +15706,7 @@ loc_163C8:                              ; CODE XREF: title_scene_1+4C↓j
                 add     sp, 0Ch
                 inc     si
 
-loc_163FA:                              ; CODE XREF: title_scene_1+15↑j
+loc_163FA:                              ; CODE XREF: title_first_frame+15↑j
                 cmp     si, 0Ah
                 jl      short loc_163C8
                 push    di
@@ -15716,14 +15716,14 @@ loc_163FA:                              ; CODE XREF: title_scene_1+15↑j
                 pop     si
                 pop     bp
                 retf
-title_scene_1   endp
+title_first_frame endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-title_scene_2   proc far                ; CODE XREF: title_sequence+BB↓p
+title_conductor proc far                ; CODE XREF: title_sequence+BB↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -15741,13 +15741,13 @@ arg_4           = word ptr  0Ah
                 mov     [bp+var_4], 0
                 mov     [bp+var_6], 1
 
-loc_16423:                              ; CODE XREF: title_scene_2+197↓j
-                                        ; title_scene_2+1A0↓j
+loc_16423:                              ; CODE XREF: title_conductor+197↓j
+                                        ; title_conductor+1A0↓j
                 mov     di, [bp+var_2]
                 jmp     loc_164CE
 ; ---------------------------------------------------------------------------
 
-loc_16429:                              ; CODE XREF: title_scene_2+C7↓j
+loc_16429:                              ; CODE XREF: title_conductor+C7↓j
                 dec     [bp+var_6]
                 mov     ax, [bp+var_6]
                 cmp     ax, 1
@@ -15765,7 +15765,7 @@ loc_16429:                              ; CODE XREF: title_scene_2+C7↓j
                 jmp     short loc_1648B
 ; ---------------------------------------------------------------------------
 
-loc_1644B:                              ; CODE XREF: title_scene_2+82↓j
+loc_1644B:                              ; CODE XREF: title_conductor+82↓j
                 mov     bx, si
                 shl     bx, 1
                 mov     bx, [bx+1E55h]
@@ -15793,7 +15793,7 @@ loc_1644B:                              ; CODE XREF: title_scene_2+82↓j
                 add     sp, 0Ch
                 inc     si
 
-loc_1648B:                              ; CODE XREF: title_scene_2+3D↑j
+loc_1648B:                              ; CODE XREF: title_conductor+3D↑j
                 cmp     si, 0Ah
                 jl      short loc_1644B
                 push    [bp+arg_2]
@@ -15803,7 +15803,7 @@ loc_1648B:                              ; CODE XREF: title_scene_2+3D↑j
                 pop     cx
                 pop     cx
 
-loc_1649C:                              ; CODE XREF: title_scene_2+26↑j
+loc_1649C:                              ; CODE XREF: title_conductor+26↑j
                 call    key_available
                 or      ax, ax
                 jz      short loc_164B0
@@ -15812,13 +15812,13 @@ loc_1649C:                              ; CODE XREF: title_scene_2+26↑j
                 assume es:seg024
                 mov     es:byte_17DB1, 0FFh
 
-loc_164B0:                              ; CODE XREF: title_scene_2+97↑j
-                cmp     word_1FB6E, 1
+loc_164B0:                              ; CODE XREF: title_conductor+97↑j
+                cmp     song_cue, 1
                 jl      short loc_164BA
                 jmp     loc_165AF
 ; ---------------------------------------------------------------------------
 
-loc_164BA:                              ; CODE XREF: title_scene_2+A9↑j
+loc_164BA:                              ; CODE XREF: title_conductor+A9↑j
                 mov     ax, seg seg024
                 mov     es, ax
                 cmp     es:byte_17DB1, 0
@@ -15826,17 +15826,17 @@ loc_164BA:                              ; CODE XREF: title_scene_2+A9↑j
                 jmp     loc_165AF
 ; ---------------------------------------------------------------------------
 
-loc_164CA:                              ; CODE XREF: title_scene_2+B9↑j
+loc_164CA:                              ; CODE XREF: title_conductor+B9↑j
                 inc     [bp+var_4]
                 inc     di
 
-loc_164CE:                              ; CODE XREF: title_scene_2+1A↑j
+loc_164CE:                              ; CODE XREF: title_conductor+1A↑j
                 cmp     di, 20h ; ' '
                 jge     short loc_164D6
                 jmp     loc_16429
 ; ---------------------------------------------------------------------------
 
-loc_164D6:                              ; CODE XREF: title_scene_2+C5↑j
+loc_164D6:                              ; CODE XREF: title_conductor+C5↑j
                 xor     ax, ax
                 push    ax
                 mov     ax, 0Dh
@@ -15848,7 +15848,7 @@ loc_164D6:                              ; CODE XREF: title_scene_2+C5↑j
                 jmp     loc_1658D
 ; ---------------------------------------------------------------------------
 
-loc_164EE:                              ; CODE XREF: title_scene_2+186↓j
+loc_164EE:                              ; CODE XREF: title_conductor+186↓j
                 dec     [bp+var_6]
                 mov     ax, [bp+var_6]
                 cmp     ax, 1
@@ -15866,7 +15866,7 @@ loc_164EE:                              ; CODE XREF: title_scene_2+186↓j
                 jmp     short loc_16550
 ; ---------------------------------------------------------------------------
 
-loc_16510:                              ; CODE XREF: title_scene_2+147↓j
+loc_16510:                              ; CODE XREF: title_conductor+147↓j
                 mov     bx, si
                 shl     bx, 1
                 mov     bx, [bx+1E55h]
@@ -15894,7 +15894,7 @@ loc_16510:                              ; CODE XREF: title_scene_2+147↓j
                 add     sp, 0Ch
                 inc     si
 
-loc_16550:                              ; CODE XREF: title_scene_2+102↑j
+loc_16550:                              ; CODE XREF: title_conductor+102↑j
                 cmp     si, 0Ah
                 jl      short loc_16510
                 push    [bp+arg_2]
@@ -15904,7 +15904,7 @@ loc_16550:                              ; CODE XREF: title_scene_2+102↑j
                 pop     cx
                 pop     cx
 
-loc_16561:                              ; CODE XREF: title_scene_2+EB↑j
+loc_16561:                              ; CODE XREF: title_conductor+EB↑j
                 call    key_available
                 or      ax, ax
                 jz      short loc_16575
@@ -15912,8 +15912,8 @@ loc_16561:                              ; CODE XREF: title_scene_2+EB↑j
                 mov     es, ax
                 mov     es:byte_17DB1, 0FFh
 
-loc_16575:                              ; CODE XREF: title_scene_2+15C↑j
-                cmp     word_1FB6E, 1
+loc_16575:                              ; CODE XREF: title_conductor+15C↑j
+                cmp     song_cue, 1
                 jge     short loc_165AF
                 mov     ax, seg seg024
                 mov     es, ax
@@ -15922,42 +15922,42 @@ loc_16575:                              ; CODE XREF: title_scene_2+15C↑j
                 inc     [bp+var_4]
                 dec     di
 
-loc_1658D:                              ; CODE XREF: title_scene_2+DF↑j
+loc_1658D:                              ; CODE XREF: title_conductor+DF↑j
                 cmp     di, [bp+var_2]
                 jl      short loc_16595
                 jmp     loc_164EE
 ; ---------------------------------------------------------------------------
 
-loc_16595:                              ; CODE XREF: title_scene_2+184↑j
-                cmp     word_20FDE, 0
+loc_16595:                              ; CODE XREF: title_conductor+184↑j
+                cmp     music_flag, 0
                 jz      short loc_165A6
-                cmp     word_1FB6A, 3
+                cmp     sound_card, 3
                 jz      short loc_165A6
                 jmp     loc_16423
 ; ---------------------------------------------------------------------------
 
-loc_165A6:                              ; CODE XREF: title_scene_2+18E↑j
-                                        ; title_scene_2+195↑j
+loc_165A6:                              ; CODE XREF: title_conductor+18E↑j
+                                        ; title_conductor+195↑j
                 cmp     [bp+var_4], 1Eh
                 jg      short loc_165AF
                 jmp     loc_16423
 ; ---------------------------------------------------------------------------
 
-loc_165AF:                              ; CODE XREF: title_scene_2+AB↑j
-                                        ; title_scene_2+BB↑j ...
+loc_165AF:                              ; CODE XREF: title_conductor+AB↑j
+                                        ; title_conductor+BB↑j ...
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-title_scene_2   endp
+title_conductor endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-title_scene_3   proc far                ; CODE XREF: title_sequence+D9↓p
+title_conductor_turns proc far          ; CODE XREF: title_sequence+D9↓p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -15976,10 +15976,10 @@ arg_4           = word ptr  0Ah
                 jmp     loc_16700
 ; ---------------------------------------------------------------------------
 
-loc_165CA:                              ; CODE XREF: title_scene_3+150↓j
+loc_165CA:                              ; CODE XREF: title_conductor_turns+150↓j
                 cmp     byte ptr [di+1E3Eh], 70h ; 'p'
                 jnz     short loc_1660D
-                cmp     word_1FB6A, 2
+                cmp     sound_card, 2
                 jnz     short loc_165EF
                 mov     [bp+var_4], 1
                 mov     ax, 12h
@@ -15992,8 +15992,8 @@ loc_165CA:                              ; CODE XREF: title_scene_3+150↓j
                 jmp     short loc_1663F
 ; ---------------------------------------------------------------------------
 
-loc_165EF:                              ; CODE XREF: title_scene_3+21↑j
-                cmp     word_1FB6A, 1
+loc_165EF:                              ; CODE XREF: title_conductor_turns+21↑j
+                cmp     sound_card, 1
                 jnz     short loc_1663F
                 mov     [bp+var_4], 1
                 mov     ax, 0Ah
@@ -16006,10 +16006,10 @@ loc_165EF:                              ; CODE XREF: title_scene_3+21↑j
                 jmp     short loc_1663F
 ; ---------------------------------------------------------------------------
 
-loc_1660D:                              ; CODE XREF: title_scene_3+1A↑j
+loc_1660D:                              ; CODE XREF: title_conductor_turns+1A↑j
                 cmp     byte ptr [di+1E3Eh], 71h ; 'q'
                 jnz     short loc_1663F
-                cmp     word_1FB6A, 2
+                cmp     sound_card, 2
                 jnz     short loc_16624
                 mov     ax, 12h
                 push    ax
@@ -16017,22 +16017,22 @@ loc_1660D:                              ; CODE XREF: title_scene_3+1A↑j
                 jmp     short loc_16632
 ; ---------------------------------------------------------------------------
 
-loc_16624:                              ; CODE XREF: title_scene_3+64↑j
-                cmp     word_1FB6A, 1
+loc_16624:                              ; CODE XREF: title_conductor_turns+64↑j
+                cmp     sound_card, 1
                 jnz     short loc_1663F
                 mov     ax, 0Ah
                 push    ax
                 mov     ax, 25h ; '%'
 
-loc_16632:                              ; CODE XREF: title_scene_3+6D↑j
+loc_16632:                              ; CODE XREF: title_conductor_turns+6D↑j
                 push    ax
                 xor     ax, ax
                 push    ax
                 call    dword_2063E
                 mov     [bp+var_4], 1
 
-loc_1663F:                              ; CODE XREF: title_scene_3+38↑j
-                                        ; title_scene_3+3F↑j ...
+loc_1663F:                              ; CODE XREF: title_conductor_turns+38↑j
+                                        ; title_conductor_turns+3F↑j ...
                 dec     [bp+var_4]
                 mov     ax, [bp+var_4]
                 cmp     ax, 1
@@ -16040,7 +16040,7 @@ loc_1663F:                              ; CODE XREF: title_scene_3+38↑j
                 jmp     loc_166DB
 ; ---------------------------------------------------------------------------
 
-loc_1664D:                              ; CODE XREF: title_scene_3+93↑j
+loc_1664D:                              ; CODE XREF: title_conductor_turns+93↑j
                 mov     ax, [bp+arg_4]
                 mov     [bp+var_4], ax
                 mov     ax, 18h
@@ -16054,7 +16054,7 @@ loc_1664D:                              ; CODE XREF: title_scene_3+93↑j
                 jmp     short loc_166AA
 ; ---------------------------------------------------------------------------
 
-loc_16665:                              ; CODE XREF: title_scene_3+F9↓j
+loc_16665:                              ; CODE XREF: title_conductor_turns+F9↓j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 mov     bx, [bx+1E55h]
@@ -16082,7 +16082,7 @@ loc_16665:                              ; CODE XREF: title_scene_3+F9↓j
                 add     sp, 0Ch
                 inc     [bp+var_2]
 
-loc_166AA:                              ; CODE XREF: title_scene_3+AE↑j
+loc_166AA:                              ; CODE XREF: title_conductor_turns+AE↑j
                 cmp     [bp+var_2], 9
                 jl      short loc_16665
                 mov     al, [di+1E3Eh]
@@ -16103,7 +16103,7 @@ loc_166AA:                              ; CODE XREF: title_scene_3+AE↑j
                 pop     cx
                 pop     cx
 
-loc_166DB:                              ; CODE XREF: title_scene_3+95↑j
+loc_166DB:                              ; CODE XREF: title_conductor_turns+95↑j
                 call    key_available
                 or      ax, ax
                 jz      short loc_166EF
@@ -16111,7 +16111,7 @@ loc_166DB:                              ; CODE XREF: title_scene_3+95↑j
                 mov     es, ax
                 mov     es:byte_17DB1, 0FFh
 
-loc_166EF:                              ; CODE XREF: title_scene_3+12D↑j
+loc_166EF:                              ; CODE XREF: title_conductor_turns+12D↑j
                 mov     ax, seg seg024
                 mov     es, ax
                 cmp     es:byte_17DB1, 0
@@ -16119,16 +16119,16 @@ loc_166EF:                              ; CODE XREF: title_scene_3+12D↑j
                 jmp     loc_168BE
 ; ---------------------------------------------------------------------------
 
-loc_166FF:                              ; CODE XREF: title_scene_3+145↑j
+loc_166FF:                              ; CODE XREF: title_conductor_turns+145↑j
                 inc     di
 
-loc_16700:                              ; CODE XREF: title_scene_3+12↑j
+loc_16700:                              ; CODE XREF: title_conductor_turns+12↑j
                 cmp     di, 14h
                 jge     short loc_16708
                 jmp     loc_165CA
 ; ---------------------------------------------------------------------------
 
-loc_16708:                              ; CODE XREF: title_scene_3+14E↑j
+loc_16708:                              ; CODE XREF: title_conductor_turns+14E↑j
                 mov     ax, 18h
                 push    ax
                 push    si
@@ -16255,15 +16255,15 @@ loc_16708:                              ; CODE XREF: title_scene_3+14E↑j
                 push    si
                 call    dword_20666
                 add     sp, 0Ch
-                cmp     word_20FDE, 0
+                cmp     music_flag, 0
                 jz      short loc_168BE
-                cmp     word_1FB6A, 2
+                cmp     sound_card, 2
                 jz      short loc_1688C
-                cmp     word_1FB6A, 1
+                cmp     sound_card, 1
                 jnz     short loc_168BE
 
-loc_1688C:                              ; CODE XREF: title_scene_3+2CE↑j
-                                        ; title_scene_3+2FD↓j
+loc_1688C:                              ; CODE XREF: title_conductor_turns+2CE↑j
+                                        ; title_conductor_turns+2FD↓j
                 call    key_available
                 or      ax, ax
                 jz      short loc_168A0
@@ -16271,15 +16271,15 @@ loc_1688C:                              ; CODE XREF: title_scene_3+2CE↑j
                 mov     es, ax
                 mov     es:byte_17DB1, 0FFh
 
-loc_168A0:                              ; CODE XREF: title_scene_3+2DE↑j
-                cmp     word_1FB6E, 2
+loc_168A0:                              ; CODE XREF: title_conductor_turns+2DE↑j
+                cmp     song_cue, 2
                 jge     short loc_168B4
                 mov     ax, seg seg024
                 mov     es, ax
                 cmp     es:byte_17DB1, 0
                 jz      short loc_1688C
 
-loc_168B4:                              ; CODE XREF: title_scene_3+2F0↑j
+loc_168B4:                              ; CODE XREF: title_conductor_turns+2F0↑j
                 push    [bp+arg_2]
                 push    si
                 push    cs
@@ -16287,22 +16287,22 @@ loc_168B4:                              ; CODE XREF: title_scene_3+2F0↑j
                 pop     cx
                 pop     cx
 
-loc_168BE:                              ; CODE XREF: title_scene_3+147↑j
-                                        ; title_scene_3+2C7↑j ...
+loc_168BE:                              ; CODE XREF: title_conductor_turns+147↑j
+                                        ; title_conductor_turns+2C7↑j ...
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-title_scene_3   endp
+title_conductor_turns endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-title_sparks    proc far                ; CODE XREF: title_scene_5+103↓p
-                                        ; title_scene_5+145↓p ...
+title_sparks    proc far                ; CODE XREF: title_logo_fly+103↓p
+                                        ; title_logo_fly+145↓p ...
 
 var_8           = word ptr -8
 var_4           = word ptr -4
@@ -16385,7 +16385,7 @@ title_sparks    endp
 
 ; Attributes: bp-based frame
 
-title_scene_4   proc far                ; CODE XREF: title_sequence+F7↓p
+title_logo_zoom proc far                ; CODE XREF: title_sequence+F7↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -16404,7 +16404,7 @@ arg_4           = word ptr  0Ah
                 jmp     loc_16AB6
 ; ---------------------------------------------------------------------------
 
-loc_1696D:                              ; CODE XREF: title_scene_4+161↓j
+loc_1696D:                              ; CODE XREF: title_logo_zoom+161↓j
                 dec     [bp+var_6]
                 mov     ax, [bp+var_6]
                 cmp     ax, 1
@@ -16412,7 +16412,7 @@ loc_1696D:                              ; CODE XREF: title_scene_4+161↓j
                 jmp     loc_16A86
 ; ---------------------------------------------------------------------------
 
-loc_1697B:                              ; CODE XREF: title_scene_4+1C↑j
+loc_1697B:                              ; CODE XREF: title_logo_zoom+1C↑j
                 mov     ax, [bp+arg_4]
                 mov     [bp+var_6], ax
                 mov     ax, 18h
@@ -16426,7 +16426,7 @@ loc_1697B:                              ; CODE XREF: title_scene_4+1C↑j
                 jmp     loc_16A20
 ; ---------------------------------------------------------------------------
 
-loc_16993:                              ; CODE XREF: title_scene_4+CB↓j
+loc_16993:                              ; CODE XREF: title_logo_zoom+CB↓j
                 mov     bx, si
                 shl     bx, 1
                 shl     bx, 1
@@ -16490,13 +16490,13 @@ loc_16993:                              ; CODE XREF: title_scene_4+CB↓j
                 add     sp, 12h
                 inc     si
 
-loc_16A20:                              ; CODE XREF: title_scene_4+36↑j
+loc_16A20:                              ; CODE XREF: title_logo_zoom+36↑j
                 cmp     si, 9
                 jge     short loc_16A28
                 jmp     loc_16993
 ; ---------------------------------------------------------------------------
 
-loc_16A28:                              ; CODE XREF: title_scene_4+C9↑j
+loc_16A28:                              ; CODE XREF: title_logo_zoom+C9↑j
                 mov     ax, di
                 imul    word_1F955
                 mov     dx, word_1F951
@@ -16535,7 +16535,7 @@ loc_16A28:                              ; CODE XREF: title_scene_4+C9↑j
                 pop     cx
                 pop     cx
 
-loc_16A86:                              ; CODE XREF: title_scene_4+1E↑j
+loc_16A86:                              ; CODE XREF: title_logo_zoom+1E↑j
                 call    key_available
                 or      ax, ax
                 jz      short loc_16A9A
@@ -16543,7 +16543,7 @@ loc_16A86:                              ; CODE XREF: title_scene_4+1E↑j
                 mov     es, ax
                 mov     es:byte_17DB1, 0FFh
 
-loc_16A9A:                              ; CODE XREF: title_scene_4+133↑j
+loc_16A9A:                              ; CODE XREF: title_logo_zoom+133↑j
                 mov     ax, seg seg024
                 mov     es, ax
                 cmp     es:byte_17DB1, 0
@@ -16557,27 +16557,27 @@ loc_16A9A:                              ; CODE XREF: title_scene_4+133↑j
                 inc     dx
                 mov     di, dx
 
-loc_16AB6:                              ; CODE XREF: title_scene_4+10↑j
+loc_16AB6:                              ; CODE XREF: title_logo_zoom+10↑j
                 cmp     di, 78h ; 'x'
                 jge     short loc_16ABE
                 jmp     loc_1696D
 ; ---------------------------------------------------------------------------
 
-loc_16ABE:                              ; CODE XREF: title_scene_4+14B↑j
-                                        ; title_scene_4+15F↑j
+loc_16ABE:                              ; CODE XREF: title_logo_zoom+14B↑j
+                                        ; title_logo_zoom+15F↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-title_scene_4   endp
+title_logo_zoom endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-title_scene_5   proc far                ; CODE XREF: title_sequence+112↓p
+title_logo_fly  proc far                ; CODE XREF: title_sequence+112↓p
 
 var_1A          = word ptr -1Ah
 var_18          = byte ptr -18h
@@ -16610,7 +16610,7 @@ arg_4           = word ptr  0Ah
                 jmp     loc_16C43
 ; ---------------------------------------------------------------------------
 
-loc_16AF3:                              ; CODE XREF: title_scene_5+186↓j
+loc_16AF3:                              ; CODE XREF: title_logo_fly+186↓j
                 mov     [bp+var_E], 0
                 cmp     [bp+var_A], 0
                 jnz     short loc_16B1E
@@ -16627,7 +16627,7 @@ loc_16AF3:                              ; CODE XREF: title_scene_5+186↓j
                 mov     [bp+var_6], ax
                 mov     [bp+var_A], 0C8h
 
-loc_16B1E:                              ; CODE XREF: title_scene_5+38↑j
+loc_16B1E:                              ; CODE XREF: title_logo_fly+38↑j
                 cmp     [bp+var_C], 0
                 jnz     short loc_16B58
                 mov     [bp+var_E], 1
@@ -16648,22 +16648,22 @@ loc_16B1E:                              ; CODE XREF: title_scene_5+38↑j
                 jmp     short loc_16B51
 ; ---------------------------------------------------------------------------
 
-loc_16B4D:                              ; CODE XREF: title_scene_5+80↑j
+loc_16B4D:                              ; CODE XREF: title_logo_fly+80↑j
                 mov     ax, si
                 inc     ax
                 inc     ax
 
-loc_16B51:                              ; CODE XREF: title_scene_5+87↑j
+loc_16B51:                              ; CODE XREF: title_logo_fly+87↑j
                 mov     si, ax
                 mov     [bp+var_C], 64h ; 'd'
 
-loc_16B58:                              ; CODE XREF: title_scene_5+5E↑j
+loc_16B58:                              ; CODE XREF: title_logo_fly+5E↑j
                 cmp     [bp+var_E], 0
                 jnz     short loc_16B61
                 jmp     loc_16C19
 ; ---------------------------------------------------------------------------
 
-loc_16B61:                              ; CODE XREF: title_scene_5+98↑j
+loc_16B61:                              ; CODE XREF: title_logo_fly+98↑j
                 dec     [bp+var_1A]
                 mov     ax, [bp+var_1A]
                 cmp     ax, 1
@@ -16671,7 +16671,7 @@ loc_16B61:                              ; CODE XREF: title_scene_5+98↑j
                 jmp     loc_16C19
 ; ---------------------------------------------------------------------------
 
-loc_16B6F:                              ; CODE XREF: title_scene_5+A6↑j
+loc_16B6F:                              ; CODE XREF: title_logo_fly+A6↑j
                 mov     ax, [bp+arg_4]
                 mov     [bp+var_1A], ax
                 xor     ax, ax
@@ -16704,7 +16704,7 @@ loc_16B6F:                              ; CODE XREF: title_scene_5+A6↑j
                 jge     short loc_16BBB
                 mov     [bp+var_10], 1
 
-loc_16BBB:                              ; CODE XREF: title_scene_5+F0↑j
+loc_16BBB:                              ; CODE XREF: title_logo_fly+F0↑j
                 cmp     [bp+var_10], 0
                 jnz     short loc_16BE9
                 push    [bp+var_4]
@@ -16726,7 +16726,7 @@ loc_16BBB:                              ; CODE XREF: title_scene_5+F0↑j
                 jmp     short loc_16C0F
 ; ---------------------------------------------------------------------------
 
-loc_16BE9:                              ; CODE XREF: title_scene_5+FB↑j
+loc_16BE9:                              ; CODE XREF: title_logo_fly+FB↑j
                 xor     ax, ax
                 push    ax
                 push    word_21012
@@ -16744,7 +16744,7 @@ loc_16BE9:                              ; CODE XREF: title_scene_5+FB↑j
                 call    near ptr title_sparks
                 add     sp, 6
 
-loc_16C0F:                              ; CODE XREF: title_scene_5+123↑j
+loc_16C0F:                              ; CODE XREF: title_logo_fly+123↑j
                 push    [bp+arg_2]
                 push    di
                 push    cs
@@ -16752,8 +16752,8 @@ loc_16C0F:                              ; CODE XREF: title_scene_5+123↑j
                 pop     cx
                 pop     cx
 
-loc_16C19:                              ; CODE XREF: title_scene_5+9A↑j
-                                        ; title_scene_5+A8↑j
+loc_16C19:                              ; CODE XREF: title_logo_fly+9A↑j
+                                        ; title_logo_fly+A8↑j
                 call    key_available
                 or      ax, ax
                 jz      short loc_16C2D
@@ -16761,7 +16761,7 @@ loc_16C19:                              ; CODE XREF: title_scene_5+9A↑j
                 mov     es, ax
                 mov     es:byte_17DB1, 0FFh
 
-loc_16C2D:                              ; CODE XREF: title_scene_5+15C↑j
+loc_16C2D:                              ; CODE XREF: title_logo_fly+15C↑j
                 mov     ax, seg seg024
                 mov     es, ax
                 cmp     es:byte_17DB1, 0
@@ -16770,13 +16770,13 @@ loc_16C2D:                              ; CODE XREF: title_scene_5+15C↑j
                 dec     [bp+var_A]
                 dec     [bp+var_C]
 
-loc_16C43:                              ; CODE XREF: title_scene_5+2C↑j
+loc_16C43:                              ; CODE XREF: title_logo_fly+2C↑j
                 cmp     [bp+var_8], 3E8h
                 jl      short loc_16C4D
                 jmp     loc_16AF3
 ; ---------------------------------------------------------------------------
 
-loc_16C4D:                              ; CODE XREF: title_scene_5+184↑j
+loc_16C4D:                              ; CODE XREF: title_logo_fly+184↑j
                 xor     ax, ax
                 push    ax
                 push    word_20FE2
@@ -16800,20 +16800,20 @@ loc_16C4D:                              ; CODE XREF: title_scene_5+184↑j
                 pop     cx
                 mov     ax, si
 
-loc_16C7A:                              ; CODE XREF: title_scene_5+174↑j
+loc_16C7A:                              ; CODE XREF: title_logo_fly+174↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-title_scene_5   endp
+title_logo_fly  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-title_scene_6   proc far                ; CODE XREF: title_sequence+16C↓p
+title_fireworks proc far                ; CODE XREF: title_sequence+16C↓p
 
 var_A           = word ptr -0Ah
 var_8           = word ptr -8
@@ -16835,18 +16835,18 @@ arg_4           = word ptr  0Ah
                 call    sub_19730
                 call    sub_171C6
 
-loc_16C9F:                              ; CODE XREF: title_scene_6+1AD↓j
+loc_16C9F:                              ; CODE XREF: title_fireworks+1AD↓j
                 cmp     [bp+var_6], 0
                 jnz     short loc_16D07
-                cmp     word_20FDE, 0
+                cmp     music_flag, 0
                 jz      short loc_16CF3
-                cmp     word_1FB6A, 2
+                cmp     sound_card, 2
                 jz      short loc_16CBA
-                cmp     word_1FB6A, 1
+                cmp     sound_card, 1
                 jnz     short loc_16CF3
 
-loc_16CBA:                              ; CODE XREF: title_scene_6+31↑j
-                cmp     word_1FB6E, 4
+loc_16CBA:                              ; CODE XREF: title_fireworks+31↑j
+                cmp     song_cue, 4
                 jl      short loc_16CD7
                 xor     ax, ax
                 push    ax
@@ -16855,18 +16855,18 @@ loc_16CBA:                              ; CODE XREF: title_scene_6+31↑j
                 or      ax, ax
                 jnz     short loc_16CD3
 
-loc_16CCE:                              ; CODE XREF: title_scene_6+80↓j
+loc_16CCE:                              ; CODE XREF: title_fireworks+80↓j
                 mov     ax, 1
                 jmp     short loc_16D04
 ; ---------------------------------------------------------------------------
 
-loc_16CD3:                              ; CODE XREF: title_scene_6+4C↑j
+loc_16CD3:                              ; CODE XREF: title_fireworks+4C↑j
                 jmp     short loc_16D02
 ; ---------------------------------------------------------------------------
                 jmp     short loc_16D04
 ; ---------------------------------------------------------------------------
 
-loc_16CD7:                              ; CODE XREF: title_scene_6+3F↑j
+loc_16CD7:                              ; CODE XREF: title_fireworks+3F↑j
                 xor     ax, ax
                 push    ax
                 mov     ax, 5
@@ -16878,16 +16878,16 @@ loc_16CD7:                              ; CODE XREF: title_scene_6+3F↑j
                 jmp     short loc_16CEE
 ; ---------------------------------------------------------------------------
 
-loc_16CEC:                              ; CODE XREF: title_scene_6+65↑j
+loc_16CEC:                              ; CODE XREF: title_fireworks+65↑j
                 xor     ax, ax
 
-loc_16CEE:                              ; CODE XREF: title_scene_6+6A↑j
+loc_16CEE:                              ; CODE XREF: title_fireworks+6A↑j
                 mov     [bp+var_8], ax
                 jmp     short loc_16D07
 ; ---------------------------------------------------------------------------
 
-loc_16CF3:                              ; CODE XREF: title_scene_6+2A↑j
-                                        ; title_scene_6+38↑j
+loc_16CF3:                              ; CODE XREF: title_fireworks+2A↑j
+                                        ; title_fireworks+38↑j
                 xor     ax, ax
                 push    ax
                 push    ax
@@ -16897,29 +16897,29 @@ loc_16CF3:                              ; CODE XREF: title_scene_6+2A↑j
                 jmp     short loc_16CCE
 ; ---------------------------------------------------------------------------
 
-loc_16D02:                              ; CODE XREF: title_scene_6:loc_16CD3↑j
-                                        ; title_scene_6+7E↑j
+loc_16D02:                              ; CODE XREF: title_fireworks:loc_16CD3↑j
+                                        ; title_fireworks+7E↑j
                 xor     ax, ax
 
-loc_16D04:                              ; CODE XREF: title_scene_6+51↑j
-                                        ; title_scene_6+55↑j
+loc_16D04:                              ; CODE XREF: title_fireworks+51↑j
+                                        ; title_fireworks+55↑j
                 mov     [bp+var_8], ax
 
-loc_16D07:                              ; CODE XREF: title_scene_6+23↑j
-                                        ; title_scene_6+71↑j
+loc_16D07:                              ; CODE XREF: title_fireworks+23↑j
+                                        ; title_fireworks+71↑j
                 cmp     [bp+var_8], 0
                 jnz     short loc_16D10
                 jmp     loc_16D92
 ; ---------------------------------------------------------------------------
 
-loc_16D10:                              ; CODE XREF: title_scene_6+8B↑j
+loc_16D10:                              ; CODE XREF: title_fireworks+8B↑j
                 cmp     [bp+var_6], 0
                 jnz     short loc_16D92
                 xor     si, si
                 jmp     short loc_16D8D
 ; ---------------------------------------------------------------------------
 
-loc_16D1A:                              ; CODE XREF: title_scene_6+110↓j
+loc_16D1A:                              ; CODE XREF: title_fireworks+110↓j
                 mov     ax, si
                 mov     dx, 0Ch
                 imul    dx
@@ -16970,15 +16970,15 @@ loc_16D1A:                              ; CODE XREF: title_scene_6+110↓j
                 jmp     short loc_16D92
 ; ---------------------------------------------------------------------------
 
-loc_16D8C:                              ; CODE XREF: title_scene_6+A8↑j
+loc_16D8C:                              ; CODE XREF: title_fireworks+A8↑j
                 inc     si
 
-loc_16D8D:                              ; CODE XREF: title_scene_6+98↑j
+loc_16D8D:                              ; CODE XREF: title_fireworks+98↑j
                 cmp     si, 5
                 jl      short loc_16D1A
 
-loc_16D92:                              ; CODE XREF: title_scene_6+8D↑j
-                                        ; title_scene_6+94↑j ...
+loc_16D92:                              ; CODE XREF: title_fireworks+8D↑j
+                                        ; title_fireworks+94↑j ...
                 xor     ax, ax
                 push    ax
                 push    word_20FE2
@@ -17014,29 +17014,29 @@ loc_16D92:                              ; CODE XREF: title_scene_6+8D↑j
                 cmp     [bp+var_4], 5
                 jz      short loc_16E33
 
-loc_16DDE:                              ; CODE XREF: title_scene_6+156↑j
-                cmp     word_20FDE, 0
+loc_16DDE:                              ; CODE XREF: title_fireworks+156↑j
+                cmp     music_flag, 0
                 jz      short loc_16E01
-                cmp     word_1FB6A, 2
+                cmp     sound_card, 2
                 jz      short loc_16DF3
-                cmp     word_1FB6A, 1
+                cmp     sound_card, 1
                 jnz     short loc_16E01
 
-loc_16DF3:                              ; CODE XREF: title_scene_6+16A↑j
-                cmp     word_1FB6E, 5
+loc_16DF3:                              ; CODE XREF: title_fireworks+16A↑j
+                cmp     song_cue, 5
                 jl      short loc_16E0C
                 mov     [bp+var_6], 1
                 jmp     short loc_16E0C
 ; ---------------------------------------------------------------------------
 
-loc_16E01:                              ; CODE XREF: title_scene_6+163↑j
-                                        ; title_scene_6+171↑j
+loc_16E01:                              ; CODE XREF: title_fireworks+163↑j
+                                        ; title_fireworks+171↑j
                 cmp     [bp+var_A], 0Ah
                 jle     short loc_16E0C
                 mov     [bp+var_6], 1
 
-loc_16E0C:                              ; CODE XREF: title_scene_6+178↑j
-                                        ; title_scene_6+17F↑j ...
+loc_16E0C:                              ; CODE XREF: title_fireworks+178↑j
+                                        ; title_fireworks+17F↑j ...
                 call    key_available
                 or      ax, ax
                 jz      short loc_16E20
@@ -17044,7 +17044,7 @@ loc_16E0C:                              ; CODE XREF: title_scene_6+178↑j
                 mov     es, ax
                 mov     es:byte_17DB1, 0FFh
 
-loc_16E20:                              ; CODE XREF: title_scene_6+193↑j
+loc_16E20:                              ; CODE XREF: title_fireworks+193↑j
                 mov     ax, seg seg024
                 mov     es, ax
                 cmp     es:byte_17DB1, 0
@@ -17052,16 +17052,16 @@ loc_16E20:                              ; CODE XREF: title_scene_6+193↑j
                 jmp     loc_16C9F
 ; ---------------------------------------------------------------------------
 
-loc_16E30:                              ; CODE XREF: title_scene_6+1AB↑j
+loc_16E30:                              ; CODE XREF: title_fireworks+1AB↑j
                 jmp     loc_16F83
 ; ---------------------------------------------------------------------------
 
-loc_16E33:                              ; CODE XREF: title_scene_6+15C↑j
+loc_16E33:                              ; CODE XREF: title_fireworks+15C↑j
                 xor     si, si
                 jmp     short loc_16E98
 ; ---------------------------------------------------------------------------
 
-loc_16E37:                              ; CODE XREF: title_scene_6+21B↓j
+loc_16E37:                              ; CODE XREF: title_fireworks+21B↓j
                 mov     ax, si
                 mov     dx, 0Ch
                 imul    dx
@@ -17105,7 +17105,7 @@ loc_16E37:                              ; CODE XREF: title_scene_6+21B↓j
                 mov     [bx+357Eh], ax
                 inc     si
 
-loc_16E98:                              ; CODE XREF: title_scene_6+1B5↑j
+loc_16E98:                              ; CODE XREF: title_fireworks+1B5↑j
                 cmp     si, 1Dh
                 jl      short loc_16E37
                 mov     [bp+var_4], 0
@@ -17113,7 +17113,7 @@ loc_16E98:                              ; CODE XREF: title_scene_6+1B5↑j
                 jmp     loc_16F46
 ; ---------------------------------------------------------------------------
 
-loc_16EAA:                              ; CODE XREF: title_scene_6+2CC↓j
+loc_16EAA:                              ; CODE XREF: title_fireworks+2CC↓j
                 inc     [bp+var_2]
                 mov     ax, [bp+var_2]
                 cmp     ax, 4
@@ -17138,7 +17138,7 @@ loc_16EAA:                              ; CODE XREF: title_scene_6+2CC↓j
                 call    random_range
                 mov     word_2117A, ax
 
-loc_16EE8:                              ; CODE XREF: title_scene_6+233↑j
+loc_16EE8:                              ; CODE XREF: title_fireworks+233↑j
                 xor     ax, ax
                 push    ax
                 push    word_20FE2
@@ -17175,24 +17175,24 @@ loc_16EE8:                              ; CODE XREF: title_scene_6+233↑j
                 mov     es, ax
                 mov     es:byte_17DB1, 0FFh
 
-loc_16F39:                              ; CODE XREF: title_scene_6+2AC↑j
+loc_16F39:                              ; CODE XREF: title_fireworks+2AC↑j
                 mov     ax, seg seg024
                 mov     es, ax
                 cmp     es:byte_17DB1, 0
                 jnz     short loc_16F83
 
-loc_16F46:                              ; CODE XREF: title_scene_6+227↑j
+loc_16F46:                              ; CODE XREF: title_fireworks+227↑j
                 cmp     [bp+var_4], 1Eh
                 jz      short loc_16F4F
                 jmp     loc_16EAA
 ; ---------------------------------------------------------------------------
 
-loc_16F4F:                              ; CODE XREF: title_scene_6+2CA↑j
+loc_16F4F:                              ; CODE XREF: title_fireworks+2CA↑j
                 mov     si, 1Dh
                 jmp     short loc_16F7F
 ; ---------------------------------------------------------------------------
 
-loc_16F54:                              ; CODE XREF: title_scene_6+301↓j
+loc_16F54:                              ; CODE XREF: title_fireworks+301↓j
                 mov     ax, si
                 mov     dx, 0Ch
                 imul    dx
@@ -17209,21 +17209,21 @@ loc_16F54:                              ; CODE XREF: title_scene_6+301↓j
                 call    sub_196E7
                 add     sp, 6
 
-loc_16F7E:                              ; CODE XREF: title_scene_6+2E2↑j
+loc_16F7E:                              ; CODE XREF: title_fireworks+2E2↑j
                 dec     si
 
-loc_16F7F:                              ; CODE XREF: title_scene_6+2D2↑j
+loc_16F7F:                              ; CODE XREF: title_fireworks+2D2↑j
                 or      si, si
                 jge     short loc_16F54
 
-loc_16F83:                              ; CODE XREF: title_scene_6:loc_16E30↑j
-                                        ; title_scene_6+2C4↑j
+loc_16F83:                              ; CODE XREF: title_fireworks:loc_16E30↑j
+                                        ; title_fireworks+2C4↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-title_scene_6   endp
+title_fireworks endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17376,7 +17376,7 @@ loc_17066:                              ; CODE XREF: title_sequence+8A↑j
                 push    di
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr title_scene_1
+                call    near ptr title_first_frame
                 pop     cx
                 pop     cx
                 mov     ax, seg seg024
@@ -17391,7 +17391,7 @@ loc_17080:                              ; CODE XREF: title_sequence+AE↑j
                 push    di
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr title_scene_2
+                call    near ptr title_conductor
                 add     sp, 6
                 mov     ax, seg seg024
                 mov     es, ax
@@ -17405,7 +17405,7 @@ loc_1709E:                              ; CODE XREF: title_sequence+CC↑j
                 push    di
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr title_scene_3
+                call    near ptr title_conductor_turns
                 add     sp, 6
                 mov     ax, seg seg024
                 mov     es, ax
@@ -17419,7 +17419,7 @@ loc_170BC:                              ; CODE XREF: title_sequence+EA↑j
                 push    di
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr title_scene_4
+                call    near ptr title_logo_zoom
                 add     sp, 6
                 mov     ax, seg seg024
                 mov     es, ax
@@ -17429,14 +17429,14 @@ loc_170BC:                              ; CODE XREF: title_sequence+EA↑j
                 push    di
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr title_scene_5
+                call    near ptr title_logo_fly
                 add     sp, 6
                 mov     si, ax
-                cmp     word_20FDE, 0
+                cmp     music_flag, 0
                 jz      short loc_17126
-                cmp     word_1FB6A, 2
+                cmp     sound_card, 2
                 jz      short loc_1711F
-                cmp     word_1FB6A, 1
+                cmp     sound_card, 1
                 jnz     short loc_17126
                 jmp     short loc_1711F
 ; ---------------------------------------------------------------------------
@@ -17457,7 +17457,7 @@ loc_17112:                              ; CODE XREF: title_sequence+138↑j
 
 loc_1711F:                              ; CODE XREF: title_sequence+126↑j
                                         ; title_sequence+12F↑j
-                cmp     word_1FB6E, 3
+                cmp     song_cue, 3
                 jl      short loc_170FE
 
 loc_17126:                              ; CODE XREF: title_sequence+11F↑j
@@ -17470,7 +17470,7 @@ loc_17126:                              ; CODE XREF: title_sequence+11F↑j
                 push    di
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr title_scene_6
+                call    near ptr title_fireworks
                 add     sp, 6
 
 loc_1713F:                              ; CODE XREF: title_sequence+B0↑j
@@ -17558,7 +17558,7 @@ seg003          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_171C6       proc far                ; CODE XREF: title_scene_6+1A↑P
+sub_171C6       proc far                ; CODE XREF: title_fireworks+1A↑P
                 push    bp
                 mov     bp, sp
                 push    si
@@ -17587,8 +17587,8 @@ sub_171C6       endp
 
 ; Attributes: bp-based frame
 
-sub_171E6       proc far                ; CODE XREF: title_scene_6+12C↑P
-                                        ; title_scene_6+282↑P
+sub_171E6       proc far                ; CODE XREF: title_fireworks+12C↑P
+                                        ; title_fireworks+282↑P
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -19464,7 +19464,7 @@ arg_0           = word ptr  6
                 cmp     [bp+arg_0], 7
                 jz      short loc_17C60
                 mov     ax, [bp+arg_0]
-                mov     word_1FAEA, ax
+                mov     bios_video_mode, ax
                 xor     si, si
                 jmp     short loc_17C5A
 ; ---------------------------------------------------------------------------
@@ -19779,8 +19779,8 @@ word_17DAE      dw 0                    ; DATA XREF: seg024:0136↓w
                                         ; sub_17F5B:loc_17F75↓w ...
 byte_17DB0      db 0                    ; DATA XREF: sub_1831C+19↓w
                                         ; sub_18537↓r ...
-byte_17DB1      db 0                    ; DATA XREF: title_scene_2+9E↑w
-                                        ; title_scene_2+B3↑r ...
+byte_17DB1      db 0                    ; DATA XREF: title_conductor+9E↑w
+                                        ; title_conductor+B3↑r ...
 byte_17DB2      db 0                    ; DATA XREF: seg024:0509↓r
                                         ; seg024:0518↓w ...
 byte_17DB3      db 0                    ; DATA XREF: sub_18024+7↓r
@@ -20037,7 +20037,7 @@ arg_4           = word ptr  0Ah
                 push    [bp+arg_4]
                 push    [bp+arg_2]
                 call    sub_173CC
-                cmp     word_1FAEA, 0Dh
+                cmp     bios_video_mode, 0Dh
                 jnz     short loc_17FD4
                 push    dx
                 push    ax
@@ -21518,7 +21518,7 @@ arg_4           = word ptr  0Ah
                 sub     sp, 0Ch
                 push    si
                 push    di
-                cmp     word_1FAEA, 13h
+                cmp     bios_video_mode, 13h
                 jz      short loc_18976
                 jmp     loc_18A93
 ; ---------------------------------------------------------------------------
@@ -22021,7 +22021,7 @@ seg036          segment byte public 'CODE' use16
 ; Attributes: bp-based frame
 
 fade_in         proc far                ; CODE XREF: show_screen+12↑P
-                                        ; title_scene_1+52↑P
+                                        ; title_first_frame+52↑P
 
 var_C           = byte ptr -0Ch
 var_6           = word ptr -6
@@ -22035,7 +22035,7 @@ arg_2           = word ptr  8
                 sub     sp, 0Ch
                 push    si
                 push    di
-                cmp     word_1FAEA, 13h
+                cmp     bios_video_mode, 13h
                 jz      short loc_18CB8
                 jmp     loc_18E14
 ; ---------------------------------------------------------------------------
@@ -22566,7 +22566,7 @@ arg_0           = word ptr  6
                 sub     sp, 12h
                 push    si
                 push    di
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jnz     short loc_18FCE
                 jmp     loc_191C4
 ; ---------------------------------------------------------------------------
@@ -22836,7 +22836,7 @@ var_2           = word ptr -2
                 sub     sp, 4
                 push    si
                 push    di
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jnz     short loc_191DC
                 jmp     loc_19314
 ; ---------------------------------------------------------------------------
@@ -23045,7 +23045,7 @@ arg_C           = word ptr  12h
                 mov     [bp+var_6], 0
                 mov     [bp+var_8], 0
                 mov     di, 0FFFFh
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jnz     short loc_19339
                 jmp     loc_19493
 ; ---------------------------------------------------------------------------
@@ -23234,7 +23234,7 @@ sub_1931A       endp
                 push    si
                 push    di
                 mov     si, [bp+0Ah]
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jnz     short loc_194B1
                 jmp     loc_19605
 ; ---------------------------------------------------------------------------
@@ -23431,7 +23431,7 @@ arg_0           = word ptr  6
                 mov     bp, sp
                 push    si
                 mov     si, [bp+arg_0]
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jz      short loc_19676
                 cmp     byte ptr [si+22F0h], 2
                 jnz     short loc_19676
@@ -23494,7 +23494,7 @@ arg_4           = word ptr  0Ah
 
                 push    bp
                 mov     bp, sp
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jz      short loc_196E5
                 cmp     word_1FB6C, 0
                 jz      short loc_196E5
@@ -23550,7 +23550,7 @@ sub_19679       endp
 
 ; Attributes: bp-based frame
 
-sub_196E7       proc far                ; CODE XREF: title_scene_6+2F6↑P
+sub_196E7       proc far                ; CODE XREF: title_fireworks+2F6↑P
                                         ; sub_171E6+AE↑P
 
 arg_0           = word ptr  6
@@ -23562,7 +23562,7 @@ arg_4           = word ptr  0Ah
                 push    si
                 push    di
                 mov     di, [bp+arg_4]
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jz      short loc_1972C
                 mov     ax, [bp+arg_0]
                 or      ax, [bp+arg_2]
@@ -23611,11 +23611,11 @@ sub_196E7       endp
 
 ; Attributes: bp-based frame
 
-sub_19730       proc far                ; CODE XREF: title_scene_6+15↑P
+sub_19730       proc far                ; CODE XREF: title_fireworks+15↑P
                 push    bp
                 mov     bp, sp
                 push    si
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jz      short loc_19778
                 cmp     word_1FB6C, 0
                 jz      short loc_19778
@@ -24273,7 +24273,7 @@ loc_19B7D:                              ; CODE XREF: sub_19A00+178↑j
 loc_19B87:                              ; CODE XREF: sub_19A00+182↑j
                 cmp     si, 0Ah
                 jnz     short loc_19BAE
-                cmp     word_1FB6A, 2
+                cmp     sound_card, 2
                 jnz     short loc_19BAE
                 mov     bx, [bp+var_6]
                 mov     al, [bx+2305h]
@@ -24328,7 +24328,7 @@ loc_19BE8:                              ; CODE XREF: sub_19A00+1E3↑j
 loc_19BF2:                              ; CODE XREF: sub_19A00+1ED↑j
                 cmp     si, 0Ah
                 jnz     short loc_19C19
-                cmp     word_1FB6A, 2
+                cmp     sound_card, 2
                 jnz     short loc_19C19
                 mov     bx, [bp+var_6]
                 mov     al, [bx+2305h]
@@ -24687,7 +24687,7 @@ loc_19EBC:                              ; CODE XREF: sub_19A00+45C↑j
                 les     bx, [bx+3F2Ah]
                 mov     al, es:[bx]
                 mov     ah, 0
-                mov     word_1FB6E, ax
+                mov     song_cue, ax
                 mov     bx, di
                 shl     bx, 1
                 shl     bx, 1
@@ -24994,7 +24994,7 @@ sub_1A0BC       endp
                 mov     ds, bp
                 mov     bp, sp
                 sub     sp, 4
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jnz     short loc_1A110
                 jmp     loc_1A203
 ; ---------------------------------------------------------------------------
@@ -25191,7 +25191,7 @@ loc_1A285:                              ; CODE XREF: sub_1A214+21↑j
                 cmp     si, word_21A84
                 jl      short loc_1A237
                 xor     ax, ax
-                mov     word_1FB6E, ax
+                mov     song_cue, ax
                 mov     word_1FB80, ax
                 mov     word_1FE3F, ax
                 mov     word_1FB72, 1
@@ -25218,7 +25218,7 @@ arg_0           = word ptr  6
                 push    bp
                 mov     bp, sp
                 and     word_1FE41, 0FFFDh
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jz      short loc_1A310
                 cmp     word_1FB7A, 0
                 jnz     short loc_1A2D5
@@ -25268,13 +25268,13 @@ arg_2           = word ptr  8
                 mov     bp, sp
                 push    si
                 push    di
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jnz     short loc_1A321
                 jmp     loc_1A484
 ; ---------------------------------------------------------------------------
 
 loc_1A321:                              ; CODE XREF: sub_1A312+A↑j
-                mov     ax, word_1FB6A
+                mov     ax, sound_card
                 dec     ax
                 mov     di, ax
                 push    ds
@@ -25311,7 +25311,7 @@ loc_1A321:                              ; CODE XREF: sub_1A312+A↑j
                 mov     ax, word_21A56
                 or      ax, dx
                 jnz     short loc_1A398
-                cmp     word_1FB6A, 1
+                cmp     sound_card, 1
                 jz      short loc_1A398
                 push    word ptr dword_20662+2
                 push    word ptr dword_20662
@@ -25319,7 +25319,7 @@ loc_1A321:                              ; CODE XREF: sub_1A312+A↑j
                 add     sp, 4
                 mov     word ptr dword_20662, 0
                 mov     word ptr dword_20662+2, 0
-                mov     word_1FB6A, 0
+                mov     sound_card, 0
 
 loc_1A398:                              ; CODE XREF: sub_1A312+5B↑j
                                         ; sub_1A312+62↑j
@@ -25421,7 +25421,7 @@ arg_2           = word ptr  8
 
                 push    bp
                 mov     bp, sp
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jnz     short loc_1A497
                 jmp     loc_1A5FC
 ; ---------------------------------------------------------------------------
@@ -25432,7 +25432,7 @@ loc_1A497:                              ; CODE XREF: sub_1A48A+8↑j
                 push    cs
                 call    near ptr sub_1A312
                 add     sp, 4
-                cmp     word_1FB6A, 2
+                cmp     sound_card, 2
                 jz      short loc_1A4AE
                 jmp     loc_1A57A
 ; ---------------------------------------------------------------------------
@@ -25525,7 +25525,7 @@ loc_1A4AE:                              ; CODE XREF: sub_1A48A+1F↑j
                 call    dword_202B4
 
 loc_1A57A:                              ; CODE XREF: sub_1A48A+21↑j
-                cmp     word_1FB6A, 3
+                cmp     sound_card, 3
                 jnz     short loc_1A586
                 mov     ax, 1E00h
                 jmp     short loc_1A589
@@ -25590,7 +25590,7 @@ sub_1A5FE       proc far                ; CODE XREF: exit_program+11↑P
                 push    bp
                 mov     bp, sp
                 push    si
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jz      short loc_1A678
                 mov     word_1FB6C, 0
                 mov     word_1FE3F, 1
@@ -25894,7 +25894,7 @@ arg_2           = word ptr  8
 
                 push    bp
                 mov     bp, sp
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jnz     short loc_1A84D
                 xor     ax, ax
                 jmp     short loc_1A869
@@ -25924,7 +25924,7 @@ sub_1A83F       endp
                 mov     bp, sp
                 mov     ax, [bp+0Ch]
                 mov     word_1FE41, ax
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jz      short loc_1A8D5
                 cmp     word_1FB7A, 0
                 jnz     short loc_1A888
@@ -25977,7 +25977,7 @@ loc_1A8D5:                              ; CODE XREF: seg038:1A39↑j
 ; ---------------------------------------------------------------------------
                 push    bp
                 mov     bp, sp
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jz      short loc_1A914
 
 loc_1A905:                              ; CODE XREF: seg038:1ACC↓j
@@ -25996,7 +25996,7 @@ loc_1A914:                              ; CODE XREF: seg038:1AC3↑j
                 push    si
                 push    di
                 mov     di, [bp+6]
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jz      short loc_1A95C
                 mov     word_1FB78, di
                 cmp     word_1FB7A, 0
@@ -26038,7 +26038,7 @@ loc_1A95C:                              ; CODE XREF: seg038:1AE3↑j
                 push    bp
                 mov     bp, sp
                 push    si
-                cmp     word_1FB6A, 0
+                cmp     sound_card, 0
                 jnz     short loc_1A96E
                 jmp     loc_1A9FE
 ; ---------------------------------------------------------------------------
@@ -32114,7 +32114,7 @@ arg_2           = word ptr  8
                 mov     word ptr [si+6], 0
                 mov     word ptr [si+8], 13Fh
                 mov     word ptr [si+0Ah], 0C7h
-                mov     bx, word_1FAEA
+                mov     bx, bios_video_mode
                 sub     bx, 4           ; switch 10 cases
                 cmp     bx, 9
                 jbe     short loc_1D2BF
@@ -32243,7 +32243,7 @@ loc_1D3D1:                              ; CODE XREF: sub_1D28B+12C↑j
 def_1D2C1:                              ; CODE XREF: sub_1D28B+31↑j
                                         ; sub_1D28B+36↑j
                                         ; DATA XREF: ...
-                cmp     word_1FAEA, 13h ; jumptable 0001D2C1 default case, cases 5,6,8,10-12
+                cmp     bios_video_mode, 13h ; jumptable 0001D2C1 default case, cases 5,6,8,10-12
                 jz      short loc_1D3E4
                 mov     di, 0FFFFh
 
@@ -32636,9 +32636,9 @@ seg067          segment byte public 'CODE' use16
                 sub     ax, [si+4]
                 inc     ax
                 mov     [bp-8], ax
-                cmp     word_1FAEA, 13h
+                cmp     bios_video_mode, 13h
                 jz      short def_1D6ED ; jumptable 0001D6ED default case, cases 5,6,8,10-12
-                mov     bx, word_1FAEA
+                mov     bx, bios_video_mode
                 sub     bx, 4           ; switch 10 cases
                 cmp     bx, 9
                 ja      short def_1D6ED ; jumptable 0001D6ED default case, cases 5,6,8,10-12
@@ -32684,7 +32684,7 @@ loc_1D71D:                              ; CODE XREF: seg067:0066↑j
 
 def_1D6ED:                              ; CODE XREF: seg067:002D↑j
                                         ; seg067:0039↑j ...
-                mov     bx, word_1FAEA  ; jumptable 0001D6ED default case, cases 5,6,8,10-12
+                mov     bx, bios_video_mode ; jumptable 0001D6ED default case, cases 5,6,8,10-12
                 sub     bx, 4           ; switch 16 cases
                 cmp     bx, 0Fh
                 ja      short def_1D72F ; jumptable 0001D72F default case, cases 5,6,8,10-12,14-18
@@ -32800,9 +32800,9 @@ arg_4           = word ptr  0Ah
                 mov     [bp+var_12], ax
                 mov     ax, [si+6]
                 mov     [bp+var_14], ax
-                cmp     word_1FAEA, 13h
+                cmp     bios_video_mode, 13h
                 jz      short def_1D7E9 ; jumptable 0001D7E9 default case, cases 5,6,8,10-12
-                mov     bx, word_1FAEA
+                mov     bx, bios_video_mode
                 sub     bx, 4           ; switch 10 cases
                 cmp     bx, 9
                 ja      short def_1D7E9 ; jumptable 0001D7E9 default case, cases 5,6,8,10-12
@@ -32847,7 +32847,7 @@ loc_1D81C:                              ; CODE XREF: sub_1D7A9+6C↑j
 
 def_1D7E9:                              ; CODE XREF: sub_1D7A9+30↑j
                                         ; sub_1D7A9+3C↑j ...
-                mov     bx, word_1FAEA  ; jumptable 0001D7E9 default case, cases 5,6,8,10-12
+                mov     bx, bios_video_mode ; jumptable 0001D7E9 default case, cases 5,6,8,10-12
                 sub     bx, 4           ; switch 10 cases
                 cmp     bx, 9
                 jbe     short loc_1D830
@@ -32976,7 +32976,7 @@ loc_1D921:                              ; CODE XREF: sub_1D7A9+D7↑j
                 mov     [si+2], ax
                 cmp     word ptr [si+2], 0
                 jnz     short loc_1D960
-                cmp     word_1FAEA, 13h
+                cmp     bios_video_mode, 13h
                 jz      short loc_1D95B
                 push    word ptr [si+0Eh]
                 push    word ptr [si+0Ch]
@@ -32994,7 +32994,7 @@ loc_1D960:                              ; CODE XREF: sub_1D7A9+19B↑j
 ; ---------------------------------------------------------------------------
 
 loc_1D968:                              ; CODE XREF: sub_1D7A9+26D↓j
-                mov     bx, word_1FAEA
+                mov     bx, bios_video_mode
                 sub     bx, 4           ; switch 10 cases
                 cmp     bx, 9
                 ja      short def_1D976 ; jumptable 0001D976 default case, cases 5,6,8,10-12
@@ -33062,7 +33062,7 @@ loc_1D9C3:                              ; CODE XREF: sub_1D7A9+1CD↑j
 def_1D976:                              ; CODE XREF: sub_1D7A9+1C9↑j
                                         ; sub_1D7A9+1CD↑j
                                         ; DATA XREF: ...
-                cmp     word_1FAEA, 13h ; jumptable 0001D976 default case, cases 5,6,8,10-12
+                cmp     bios_video_mode, 13h ; jumptable 0001D976 default case, cases 5,6,8,10-12
                 jz      short loc_1D9F0
                 mov     [bp+arg_2], 0FFFFh
 
@@ -34940,81 +34940,81 @@ aSP_23          db '%s%P',0
                 db  72h ; r
                 db  73h ; s
                 db  74h ; t
-byte_1F8F2      db 72h                  ; DATA XREF: title_scene_3+2A2↑r
-byte_1F8F3      db 71h                  ; DATA XREF: title_scene_4+100↑r
+byte_1F8F2      db 72h                  ; DATA XREF: title_conductor_turns+2A2↑r
+byte_1F8F3      db 71h                  ; DATA XREF: title_logo_zoom+100↑r
                 db    0
-word_1F8F5      dw 1EB9h                ; DATA XREF: title_scene_3+15E↑r
-word_1F8F7      dw 1EDAh                ; DATA XREF: title_scene_3+182↑r
-word_1F8F9      dw 1EFBh                ; DATA XREF: title_scene_3+1A6↑r
-word_1F8FB      dw 1F1Ch                ; DATA XREF: title_scene_3+1CA↑r
-word_1F8FD      dw 1F3Dh                ; DATA XREF: title_scene_3+1EE↑r
-word_1F8FF      dw 1F5Eh                ; DATA XREF: title_scene_3+212↑r
-word_1F901      dw 1F7Fh                ; DATA XREF: title_scene_3+236↑r
-word_1F903      dw 1FA0h                ; DATA XREF: title_scene_3+25A↑r
-word_1F905      dw 1FC1h                ; DATA XREF: title_scene_3+27E↑r
+word_1F8F5      dw 1EB9h                ; DATA XREF: title_conductor_turns+15E↑r
+word_1F8F7      dw 1EDAh                ; DATA XREF: title_conductor_turns+182↑r
+word_1F8F9      dw 1EFBh                ; DATA XREF: title_conductor_turns+1A6↑r
+word_1F8FB      dw 1F1Ch                ; DATA XREF: title_conductor_turns+1CA↑r
+word_1F8FD      dw 1F3Dh                ; DATA XREF: title_conductor_turns+1EE↑r
+word_1F8FF      dw 1F5Eh                ; DATA XREF: title_conductor_turns+212↑r
+word_1F901      dw 1F7Fh                ; DATA XREF: title_conductor_turns+236↑r
+word_1F903      dw 1FA0h                ; DATA XREF: title_conductor_turns+25A↑r
+word_1F905      dw 1FC1h                ; DATA XREF: title_conductor_turns+27E↑r
                 db 0E2h
                 db  1Fh
-word_1F909      dw 3Ah                  ; DATA XREF: title_scene_3+176↑r
-word_1F90B      dw 5Eh                  ; DATA XREF: title_scene_3+172↑r
+word_1F909      dw 3Ah                  ; DATA XREF: title_conductor_turns+176↑r
+word_1F90B      dw 5Eh                  ; DATA XREF: title_conductor_turns+172↑r
                 db 0FFh
                 db 0FFh
                 db    1
                 db    0
-word_1F911      dw 0BAh                 ; DATA XREF: title_scene_3+19A↑r
-word_1F913      dw 5Eh                  ; DATA XREF: title_scene_3+196↑r
+word_1F911      dw 0BAh                 ; DATA XREF: title_conductor_turns+19A↑r
+word_1F913      dw 5Eh                  ; DATA XREF: title_conductor_turns+196↑r
                 db    0
                 db    0
                 db    1
                 db    0
-word_1F919      dw 116h                 ; DATA XREF: title_scene_3+1BE↑r
-word_1F91B      dw 5Eh                  ; DATA XREF: title_scene_3+1BA↑r
+word_1F919      dw 116h                 ; DATA XREF: title_conductor_turns+1BE↑r
+word_1F91B      dw 5Eh                  ; DATA XREF: title_conductor_turns+1BA↑r
                 db    1
                 db    0
                 db    1
                 db    0
-word_1F921      dw 3Ah                  ; DATA XREF: title_scene_3+1E2↑r
-word_1F923      dw 66h                  ; DATA XREF: title_scene_3+1DE↑r
+word_1F921      dw 3Ah                  ; DATA XREF: title_conductor_turns+1E2↑r
+word_1F923      dw 66h                  ; DATA XREF: title_conductor_turns+1DE↑r
                 db 0FDh
                 db 0FFh
                 db    2
                 db    0
-word_1F929      dw 0BAh                 ; DATA XREF: title_scene_3+206↑r
-word_1F92B      dw 66h                  ; DATA XREF: title_scene_3+202↑r
+word_1F929      dw 0BAh                 ; DATA XREF: title_conductor_turns+206↑r
+word_1F92B      dw 66h                  ; DATA XREF: title_conductor_turns+202↑r
                 db    0
                 db    0
                 db    2
                 db    0
-word_1F931      dw 116h                 ; DATA XREF: title_scene_3+22A↑r
-word_1F933      dw 66h                  ; DATA XREF: title_scene_3+226↑r
+word_1F931      dw 116h                 ; DATA XREF: title_conductor_turns+22A↑r
+word_1F933      dw 66h                  ; DATA XREF: title_conductor_turns+226↑r
                 db    3
                 db    0
                 db    2
                 db    0
-word_1F939      dw 3Ah                  ; DATA XREF: title_scene_3+24E↑r
-word_1F93B      dw 6Eh                  ; DATA XREF: title_scene_3+24A↑r
+word_1F939      dw 3Ah                  ; DATA XREF: title_conductor_turns+24E↑r
+word_1F93B      dw 6Eh                  ; DATA XREF: title_conductor_turns+24A↑r
                 db 0FBh
                 db 0FFh
                 db    3
                 db    0
-word_1F941      dw 0BAh                 ; DATA XREF: title_scene_3+272↑r
-word_1F943      dw 6Eh                  ; DATA XREF: title_scene_3+26E↑r
+word_1F941      dw 0BAh                 ; DATA XREF: title_conductor_turns+272↑r
+word_1F943      dw 6Eh                  ; DATA XREF: title_conductor_turns+26E↑r
                 db    0
                 db    0
                 db    3
                 db    0
-word_1F949      dw 116h                 ; DATA XREF: title_scene_3+296↑r
-word_1F94B      dw 6Eh                  ; DATA XREF: title_scene_3+292↑r
+word_1F949      dw 116h                 ; DATA XREF: title_conductor_turns+296↑r
+word_1F94B      dw 6Eh                  ; DATA XREF: title_conductor_turns+292↑r
                 db    5
                 db    0
                 db    3
                 db    0
-word_1F951      dw 9Eh                  ; DATA XREF: title_scene_3+110↑r
-                                        ; title_scene_3+2B6↑r ...
-word_1F953      dw 4Ah                  ; DATA XREF: title_scene_3+10C↑r
-                                        ; title_scene_3+2B2↑r ...
-word_1F955      dw 0                    ; DATA XREF: title_scene_4+D0↑r
-word_1F957      dw 4                    ; DATA XREF: title_scene_4+DF↑r
-                                        ; title_scene_4+F5↑r
+word_1F951      dw 9Eh                  ; DATA XREF: title_conductor_turns+110↑r
+                                        ; title_conductor_turns+2B6↑r ...
+word_1F953      dw 4Ah                  ; DATA XREF: title_conductor_turns+10C↑r
+                                        ; title_conductor_turns+2B2↑r ...
+word_1F955      dw 0                    ; DATA XREF: title_logo_zoom+D0↑r
+word_1F957      dw 4                    ; DATA XREF: title_logo_zoom+DF↑r
+                                        ; title_logo_zoom+F5↑r
 aAbcdefghijkaak db 'abcdefghijkaakkkkaaaalllllllmmll',0
 aAaaaaaaabcddee db 'aaaaaaaabcddeeddccffgghhgghhiiih',0
 aAaaaaaaaaabbcc db 'aaaaaaaaaabbccbbaaccccccccccaccc',0
@@ -35082,7 +35082,7 @@ word_1FAE5      dw 0                    ; DATA XREF: text_paragraph+93↑w
 word_1FAE7      dw 0                    ; DATA XREF: text_paragraph:loc_1762F↑w
                                         ; sub_17694+A↑r ...
                 align 2
-word_1FAEA      dw 0FFFFh               ; DATA XREF: sub_17C35+13↑w
+bios_video_mode dw 0FFFFh               ; DATA XREF: sub_17C35+13↑w
                                         ; sub_17F99+1A↑r ...
                 db  25h ; %
                 db  63h ; c
@@ -35205,11 +35205,11 @@ byte_1FB66      db 0                    ; DATA XREF: sub_1816F↑w
                 align 2
 word_1FB68      dw 1                    ; DATA XREF: palette_step+5↑r
                                         ; palette_step+117↑w ...
-word_1FB6A      dw 0                    ; DATA XREF: music_load+A↑r
+sound_card      dw 0                    ; DATA XREF: music_load+A↑r
                                         ; fatal_error+C↑r ...
 word_1FB6C      dw 0                    ; DATA XREF: sub_18E80:loc_18ED2↑r
                                         ; sub_18E80+59↑w ...
-word_1FB6E      dw 0                    ; DATA XREF: opening_sequence:loc_14311↑r
+song_cue        dw 0                    ; DATA XREF: opening_sequence:loc_14311↑r
                                         ; opening_sequence:loc_1437B↑r ...
 word_1FB70      dw 0                    ; DATA XREF: sub_19A00+4FA↑r
                                         ; sub_19A00+56D↑r
@@ -37794,10 +37794,10 @@ word_205FC      dw 0                    ; DATA XREF: abort_to_menu+37↑w
 word_20602      dw 0                    ; DATA XREF: sub_1D46C+110↑w
 word_20604      dw 0                    ; DATA XREF: sub_1D46C+114↑w
 word_20606      dw 0                    ; DATA XREF: main+6B↑w
-word_20608      dw 0                    ; DATA XREF: check_disk+9E↑r
+video_mode      dw 0                    ; DATA XREF: check_disk+9E↑r
                                         ; set_palette+C↑r ...
 dword_2060A     dd 0                    ; DATA XREF: title_sparks+2B↑r
-                                        ; title_scene_5+E3↑r ...
+                                        ; title_logo_fly+E3↑r ...
 dword_2060E     dd 0                    ; DATA XREF: sub_1A312+A0↑w
                                         ; sub_1A312+11C↑r ...
 word_20612      dw 0                    ; DATA XREF: main:loc_14093↑w
@@ -37835,9 +37835,9 @@ word_2063A      dw 0                    ; DATA XREF: launch_game+36↑r
                                         ; main+B↑w
 word_2063C      dw 0                    ; DATA XREF: parse_arguments:loc_13DAB↑w
                                         ; main+83↑w ...
-dword_2063E     dd 0                    ; DATA XREF: title_scene_3+34↑r
-                                        ; title_scene_3+52↑r ...
-word_20642      dw 0                    ; DATA XREF: main+5F↑w
+dword_2063E     dd 0                    ; DATA XREF: title_conductor_turns+34↑r
+                                        ; title_conductor_turns+52↑r ...
+frame_skip      dw 0                    ; DATA XREF: main+5F↑w
                                         ; main+296↑w ...
 word_20644      dw 0                    ; DATA XREF: sub_1D60A+67↑w
 word_20646      dw 0                    ; DATA XREF: sub_1D60A+6B↑w
@@ -40255,40 +40255,40 @@ word_20FD8      dw 0                    ; DATA XREF: menu_loop:loc_14A8A↑r
                                         ; creation_hut+264↑w ...
 word_20FDA      dw 0                    ; DATA XREF: sub_1D46C+11E↑w
 word_20FDC      dw 0                    ; DATA XREF: sub_1D46C+122↑w
-word_20FDE      dw 0                    ; DATA XREF: music_load+3↑r
+music_flag      dw 0                    ; DATA XREF: music_load+3↑r
                                         ; abort_to_menu+7↑r ...
 word_20FE0      dw 0                    ; DATA XREF: title_backdrop+A↑r
                                         ; title_sparks+1F↑r ...
 word_20FE2      dw 0                    ; DATA XREF: title_backdrop+6↑r
                                         ; title_sparks+1B↑r ...
-word_20FE4      dw 0                    ; DATA XREF: title_scene_3+16E↑r
-word_20FE6      dw 0                    ; DATA XREF: title_scene_3+16A↑r
-word_20FE8      dw 0                    ; DATA XREF: title_scene_3+192↑r
-word_20FEA      dw 0                    ; DATA XREF: title_scene_3+18E↑r
-word_20FEC      dw 0                    ; DATA XREF: title_scene_3+1B6↑r
-word_20FEE      dw 0                    ; DATA XREF: title_scene_3+1B2↑r
-word_20FF0      dw 0                    ; DATA XREF: title_scene_3+1DA↑r
-word_20FF2      dw 0                    ; DATA XREF: title_scene_3+1D6↑r
-word_20FF4      dw 0                    ; DATA XREF: title_scene_3+1FE↑r
-word_20FF6      dw 0                    ; DATA XREF: title_scene_3+1FA↑r
-word_20FF8      dw 0                    ; DATA XREF: title_scene_3+222↑r
-word_20FFA      dw 0                    ; DATA XREF: title_scene_3+21E↑r
-word_20FFC      dw 0                    ; DATA XREF: title_scene_3+246↑r
-word_20FFE      dw 0                    ; DATA XREF: title_scene_3+242↑r
-word_21000      dw 0                    ; DATA XREF: title_scene_3+26A↑r
-word_21002      dw 0                    ; DATA XREF: title_scene_3+266↑r
-word_21004      dw 0                    ; DATA XREF: title_scene_3+28E↑r
-word_21006      dw 0                    ; DATA XREF: title_scene_3+28A↑r
-word_21008      dw 0                    ; DATA XREF: title_scene_3+108↑r
-                                        ; title_scene_3+2AE↑r ...
-word_2100A      dw 0                    ; DATA XREF: title_scene_3+104↑r
-                                        ; title_scene_3+2AA↑r ...
+word_20FE4      dw 0                    ; DATA XREF: title_conductor_turns+16E↑r
+word_20FE6      dw 0                    ; DATA XREF: title_conductor_turns+16A↑r
+word_20FE8      dw 0                    ; DATA XREF: title_conductor_turns+192↑r
+word_20FEA      dw 0                    ; DATA XREF: title_conductor_turns+18E↑r
+word_20FEC      dw 0                    ; DATA XREF: title_conductor_turns+1B6↑r
+word_20FEE      dw 0                    ; DATA XREF: title_conductor_turns+1B2↑r
+word_20FF0      dw 0                    ; DATA XREF: title_conductor_turns+1DA↑r
+word_20FF2      dw 0                    ; DATA XREF: title_conductor_turns+1D6↑r
+word_20FF4      dw 0                    ; DATA XREF: title_conductor_turns+1FE↑r
+word_20FF6      dw 0                    ; DATA XREF: title_conductor_turns+1FA↑r
+word_20FF8      dw 0                    ; DATA XREF: title_conductor_turns+222↑r
+word_20FFA      dw 0                    ; DATA XREF: title_conductor_turns+21E↑r
+word_20FFC      dw 0                    ; DATA XREF: title_conductor_turns+246↑r
+word_20FFE      dw 0                    ; DATA XREF: title_conductor_turns+242↑r
+word_21000      dw 0                    ; DATA XREF: title_conductor_turns+26A↑r
+word_21002      dw 0                    ; DATA XREF: title_conductor_turns+266↑r
+word_21004      dw 0                    ; DATA XREF: title_conductor_turns+28E↑r
+word_21006      dw 0                    ; DATA XREF: title_conductor_turns+28A↑r
+word_21008      dw 0                    ; DATA XREF: title_conductor_turns+108↑r
+                                        ; title_conductor_turns+2AE↑r ...
+word_2100A      dw 0                    ; DATA XREF: title_conductor_turns+104↑r
+                                        ; title_conductor_turns+2AA↑r ...
 word_2100C      dw 0                    ; DATA XREF: title_sequence+5E↑r
 word_2100E      dw 0                    ; DATA XREF: title_sequence+5B↑r
 word_21010      dw 0                    ; DATA XREF: title_backdrop+21↑r
-                                        ; title_scene_5+110↑r ...
+                                        ; title_logo_fly+110↑r ...
 word_21012      dw 0                    ; DATA XREF: title_backdrop+1D↑r
-                                        ; title_scene_5+10C↑r ...
+                                        ; title_logo_fly+10C↑r ...
 word_21014      dw 0                    ; DATA XREF: title_sequence+62↑w
                                         ; sub_171E6+4F↑r
 word_21016      dw 0                    ; DATA XREF: title_sequence+66↑w
@@ -40641,10 +40641,10 @@ word_21016      dw 0                    ; DATA XREF: title_sequence+66↑w
                 db    0
                 db    0
                 db    0
-word_21174      dw 0                    ; DATA XREF: title_scene_6+235↑w
-word_21176      dw 0                    ; DATA XREF: title_scene_6+247↑w
-word_21178      dw 0                    ; DATA XREF: title_scene_6+256↑w
-word_2117A      dw 0                    ; DATA XREF: title_scene_6+265↑w
+word_21174      dw 0                    ; DATA XREF: title_fireworks+235↑w
+word_21176      dw 0                    ; DATA XREF: title_fireworks+247↑w
+word_21178      dw 0                    ; DATA XREF: title_fireworks+256↑w
+word_2117A      dw 0                    ; DATA XREF: title_fireworks+265↑w
                 db    0
                 db    0
                 db    0

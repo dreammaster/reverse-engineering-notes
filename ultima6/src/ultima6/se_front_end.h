@@ -6,6 +6,7 @@
 #include "files/shape.h"
 #include "files/tile_data.h"
 #include "ultima6/md_music.h"
+#include "ultima6/se_title.h"
 
 #include <deque>
 #include <functional>
@@ -108,7 +109,7 @@ public:
 	}
 	/** True when a key does something now: a wait for a key, the name, or a wait that a key ends. */
 	bool acceptsKey() const {
-		return _state == SCENE && !_ops.empty() && (_ops.front().kind == Op::PROMPT || _ops.front().kind == Op::INPUT || ((_ops.front().kind == Op::WAIT_MS || _ops.front().kind == Op::WAIT_FRAMES) && _ops.front().interruptible));
+		return _state == SCENE && !_ops.empty() && (_ops.front().kind == Op::PROMPT || _ops.front().kind == Op::INPUT || _ops.front().kind == Op::TITLE || _ops.front().kind == Op::WAIT_COND || ((_ops.front().kind == Op::WAIT_MS || _ops.front().kind == Op::WAIT_FRAMES) && _ops.front().interruptible));
 	}
 	bool waitingForKey() const {
 		return _state == SCENE && !_ops.empty() && (_ops.front().kind == Op::PROMPT || _ops.front().kind == Op::INPUT);
@@ -125,9 +126,10 @@ private:
 		std::vector<Shape> shapes;
 	};
 	struct Op {
-		enum Kind { CALL, WAIT_MS, WAIT_FRAMES, FADE_IN, FADE_OUT, DISSOLVE, PROMPT, INPUT } kind = CALL;
+		enum Kind { CALL, WAIT_MS, WAIT_FRAMES, FADE_IN, FADE_OUT, DISSOLVE, TITLE, WAIT_COND, PROMPT, INPUT } kind = CALL;
 		int a = 0;
 		std::function<void()> fn;
+		std::function<bool()> until;    // WAIT_COND: the wait is over when it is true
 		std::function<bool(int)> keyFn; // INPUT: the key (true when it is taken and the operation is over)
 		bool interruptible = false;     // a key ends the scene (back to the menu) while it waits
 	};
@@ -166,6 +168,9 @@ private:
 	Op frames(int n, bool interruptible = true) const;
 	Op fade(bool in) const;
 	Op dissolve() const;
+	Op title() const;
+	Op waitFor(std::function<bool()> cond) const;
+	bool cueReached(int song, int cue) const;
 	Op prompt() const;
 	Op input(std::function<bool(int)> fn) const;
 
@@ -206,6 +211,7 @@ private:
 
 	// the fade and the waits
 	int _fade = 0, _fadeLeft = 0, _fadeTotal = 0, _fadeSteps = 0;
+	std::unique_ptr<SeTitle> _title; // the title sequence while it plays (the original's code on Cpu8086)
 	std::vector<uint32_t> _dissolveOrder; // the pixels of the picture in the order the driver's dissolve (TM.DRV 0x4BF6) copies them
 	int _dissolveDone = 0, _dissolveLeft = 0;
 	bool _black = false;

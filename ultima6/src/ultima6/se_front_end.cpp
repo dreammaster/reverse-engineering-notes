@@ -18,7 +18,6 @@ namespace {
 
 const int DISSOLVE_MS = 350; // how long the dissolve of the driver takes on the original's machine (it is as fast as the processor: APPROX 105)
 const int OPENING_WAIT1 = 1500, OPENING_WAIT2 = 1500; // (wait_ms (sub_13B22)(1000) of the original without music: three waits of 500 ms)
-const int OPENING_MUSIC_WAIT1 = 6300, OPENING_MUSIC_WAIT2 = 7000; // what the original's waits for the song's first two cues came to in a run with the AdLib (screenshots: APPROX 105)
 const int FRAME_MS = 14; // a vertical retrace of the VGA (70.086 a second), 14.268 ms: the waits count them
 
 uint32_t get32(const Bytes &b, size_t o) {
@@ -376,6 +375,25 @@ SeFrontEnd::Op SeFrontEnd::dissolve() const {
 	return o;
 }
 
+SeFrontEnd::Op SeFrontEnd::title() const {
+	Op o;
+	o.kind = Op::TITLE;
+	return o;
+}
+
+SeFrontEnd::Op SeFrontEnd::waitFor(std::function<bool()> cond) const {
+	Op o;
+	o.kind = Op::WAIT_COND;
+	o.until = cond;
+	o.interruptible = true;
+	return o;
+}
+
+// the song `song` has reached its cue `cue` (SAVAGE.EXE's word_1FB6E >= cue)
+bool SeFrontEnd::cueReached(int song, int cue) const {
+	return _music && _music->current() == song && _music->marker() >= cue;
+}
+
 SeFrontEnd::Op SeFrontEnd::prompt() const {
 	Op o;
 	o.kind = Op::PROMPT;
@@ -474,7 +492,7 @@ void SeFrontEnd::run() {
 		}
 		case Op::WAIT_MS:
 		case Op::WAIT_FRAMES:
-			if (o.a > 0)
+			if (o.a > 0 && !(o.until && o.until()))
 				return;
 			_ops.pop_front();
 			continue;
@@ -498,6 +516,23 @@ void SeFrontEnd::run() {
 				return;
 			_ops.pop_front();
 			continue;
+		case Op::WAIT_COND:
+			if (o.until && !o.until())
+				return;
+			_ops.pop_front();
+			continue;
+		case Op::TITLE:
+			if (o.a == 0) {
+				o.a = 1;
+				_title.reset(new SeTitle(_dir, _music != nullptr, _seed));
+				if (!_title->ok())
+					_title.reset();
+			}
+			if (_title && !_title->finished())
+				return;
+			_title.reset();
+			_ops.pop_front();
+			continue;
 		case Op::PROMPT:
 		case Op::INPUT:
 			return;
@@ -518,6 +553,20 @@ void SeFrontEnd::tick(unsigned ms) {
 				step = 1;
 			o.a -= step;
 			left -= step;
+		} else if (o.kind == Op::WAIT_COND) {
+			left = 0;
+		} else if (o.kind == Op::TITLE && _title) {
+			if (_music && _music->current() == 0x13)
+				_title->cue(_music->marker());
+			_title->tick((unsigned)left);
+			if (_music) {
+				if (_title->takeMusicStart())
+					_music->play(0x13); // the title's song (sub_1A83F)
+				int stop = _title->takeMusicStop();
+				if (stop >= 0)
+					_music->stop(stop);
+			}
+			left = 0;
 		} else if (o.kind == Op::DISSOLVE && _dissolveLeft > 0) {
 			int step = (int)std::min<double>(_dissolveLeft, left);
 			if (step <= 0)
@@ -596,6 +645,11 @@ bool SeFrontEnd::handleKey(int key) {
 		run();
 		break;
 	}
+	case Op::TITLE:
+		if (_title)
+			_title->key(); // a key ends the title and the opening goes on (SAVAGE.EXE's main)
+		break;
+	case Op::WAIT_COND:
 	case Op::WAIT_MS:
 	case Op::WAIT_FRAMES:
 		if (o.interruptible)
@@ -1200,6 +1254,7 @@ void SeFrontEnd::startOpening() {
 // opening_sequence (sub_141DE): "Lord British presents..." (INTRO.LZC item 0), the savannah (item 1) with the panel (item 2) that rises over it, and the scroll of the savannah's layers (each moves at its
 // own speed) with the figures of item 2 that flash by. The original waits for the cues of the music where this waits by the clock (the times are estimated from a run of the original: APPROX 105).
 void SeFrontEnd::buildOpening(Seq &s) {
+	s.push_back(title());
 	auto h = std::make_shared<std::array<int, 3>>();
 	s.push_back(call([this, h]() {
 		clearBuffer(_front, 0);
@@ -1214,11 +1269,17 @@ void SeFrontEnd::buildOpening(Seq &s) {
 	}));
 	s.push_back(fade(true));
 	s.push_back(call([this, h]() { draw(_back, (*h)[0], 1, 0, 0); }));
-	s.push_back(wait(_music ? OPENING_MUSIC_WAIT1 : OPENING_WAIT1));
+	if (_music)
+		s.push_back(waitFor([this]() { return cueReached(0x12, 1); })); // (word_1FB6E >= 1)
+	else
+		s.push_back(wait(OPENING_WAIT1));
 	FADE_OUT_CLEAR(s)
 	s.push_back(call([this]() { setPalette(0); }));
 	s.push_back(fade(true));
-	s.push_back(wait(_music ? OPENING_MUSIC_WAIT2 : OPENING_WAIT2));
+	if (_music)
+		s.push_back(waitFor([this]() { return cueReached(0x12, 2); }));
+	else
+		s.push_back(wait(OPENING_WAIT2));
 	FADE_OUT_CLEAR(s)
 	// the savannah: layers 0, 2 and 5 of item 1
 	s.push_back(call([this, h]() {
@@ -1252,8 +1313,11 @@ void SeFrontEnd::buildOpening(Seq &s) {
 		s.push_back(scene(0, i));
 		s.push_back(frames(1));
 	}
-	for (int i = 0; i < 7; ++i)
-		s.push_back(wait(300));
+	for (int i = 0; i < 7; ++i) { // (each wait is skipped once the song has reached its cue 3)
+		Op w = wait(300);
+		w.until = [this]() { return cueReached(0x12, 3); };
+		s.push_back(w);
+	}
 	s.push_back(call([this, h]() {
 		clearBuffer(_back, 0);
 		draw(_back, (*h)[1], 0, 0, 0);
@@ -1296,6 +1360,12 @@ void SeFrontEnd::buildOpening(Seq &s) {
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void SeFrontEnd::render(Framebuffer &screen) const {
+	if (_title && _state == SCENE && !_ops.empty() && _ops.front().kind == Op::TITLE) {
+		screen.setPalette(_title->palette());
+		screen.clear(0);
+		screen.blit(0, 0, _title->pixels(), Framebuffer::WIDTH, Framebuffer::HEIGHT, Framebuffer::WIDTH);
+		return;
+	}
 	uint8_t pal[256][3];
 	int step = 0;
 	if (_fade != 0)

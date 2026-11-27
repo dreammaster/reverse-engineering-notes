@@ -2,6 +2,7 @@
 
 #include "files/world_data.h"
 #include "ultima6/se_front_end.h"
+#include "ultima6/se_title.h"
 #include "ultima6/session.h"
 
 #include <cstdio>
@@ -10,6 +11,7 @@ using namespace Ultima6;
 using ::Ultima6::Ultima6::Game;
 using ::Ultima6::Ultima6::SeFrontEnd;
 using ::Ultima6::Ultima6::SeNewCharacter;
+using ::Ultima6::Ultima6::SeTitle;
 using ::Ultima6::Ultima6::World;
 
 static int failures = 0;
@@ -177,6 +179,48 @@ int main() {
 			n.handleKey(' ');
 		}
 		CHECK(!tristia && congrats);
+	}
+
+	// the title sequence: SAVAGE.EXE's own code on Cpu8086; without music it takes a few seconds (the conductor, the logo, a fade), a key ends it at once
+	{
+		SeTitle title("se/game/SAVAGE", false, 1);
+		CHECK(title.ok());
+		int lit = 0, ms = 0;
+		for (; ms < 20000 && !title.finished(); ms += 20) {
+			title.tick(20);
+			if (ms == 1300) { // the crowd and the planet
+				for (int i = 0; i < 320 * 200; ++i)
+					lit += title.pixels()[i] != 0;
+			}
+		}
+		CHECK(title.finished() && *title.error() == 0 && ms > 3000 && ms < 8000);
+		CHECK(lit > 5000);
+		SeTitle quick("se/game/SAVAGE", false, 1);
+		quick.tick(1000);
+		quick.key();
+		quick.tick(2500);
+		CHECK(quick.finished());
+		// the song's cues carry the sequence on (with music it waits for them: cue 1, 2, 3, 4 and 5)
+		SeTitle sung("se/game/SAVAGE", true, 1);
+		sung.tick(3000);
+		CHECK(sung.takeMusicStart() && !sung.finished());
+		sung.tick(10000);
+		CHECK(!sung.finished());
+		for (int cue = 1; cue <= 5; ++cue) {
+			sung.cue(cue);
+			sung.tick(2500);
+		}
+		sung.tick(3000);
+		CHECK(sung.finished() && sung.takeMusicStop() == 0 && *sung.error() == 0);
+		// the opening begins with it and ends at the menu
+		SeFrontEnd f("se/game/SAVAGE", 1);
+		f.startOpening();
+		settle(f, 3000);
+		CHECK(f.state() == SeFrontEnd::SCENE && f.scene() == SeFrontEnd::OPENING);
+		int guard = 0;
+		while (f.state() == SeFrontEnd::SCENE && guard++ < 1000)
+			settle(f, 100);
+		CHECK(f.state() == SeFrontEnd::MENU && guard > 60);
 	}
 
 	// the dark moonstone (0x93): destroyed, it ends the game with the time played

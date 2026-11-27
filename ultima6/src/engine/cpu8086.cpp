@@ -957,6 +957,10 @@ bool Cpu8086::run(uint32_t stopAt, uint64_t maxSteps) {
 		}
 		if (onStep)
 			onStep(*this);
+		if (stopRequested) {
+			stopRequested = false;
+			return true;
+		}
 		if (!step())
 			return false;
 	}

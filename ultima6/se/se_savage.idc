@@ -4234,7 +4234,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X163AC);
 	op_hex		(x,	1);
 	create_insn	(0X163B1);
-	set_name	(0X163B1,	"title_scene_1");
+	set_name	(0X163B1,	"title_first_frame");
 	create_insn	(x=0X163B6);
 	op_stkvar	(x,	1);
 	create_insn	(0X163C8);
@@ -4259,7 +4259,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X16400);
 	op_stkvar	(x,	0);
 	create_insn	(0X1640C);
-	set_name	(0X1640C,	"title_scene_2");
+	set_name	(0X1640C,	"title_conductor");
 	create_insn	(x=0X1640F);
 	op_hex		(x,	1);
 	create_insn	(x=0X16414);
@@ -4366,7 +4366,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X165AF);
 	create_insn	(0X165B5);
-	set_name	(0X165B5,	"title_scene_3");
+	set_name	(0X165B5,	"title_conductor_turns");
 	create_insn	(x=0X165B8);
 	op_hex		(x,	1);
 	create_insn	(x=0X165BD);
@@ -4492,7 +4492,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X16951);
 	op_hex		(x,	1);
 	create_insn	(0X1695A);
-	set_name	(0X1695A,	"title_scene_4");
+	set_name	(0X1695A,	"title_logo_zoom");
 	create_insn	(x=0X1695D);
 	op_hex		(x,	1);
 	create_insn	(x=0X16962);
@@ -4587,7 +4587,7 @@ static Bytes_0(void) {
 	op_seg		(x,	1);
 	create_insn	(0X16ABE);
 	create_insn	(0X16AC4);
-	set_name	(0X16AC4,	"title_scene_5");
+	set_name	(0X16AC4,	"title_logo_fly");
 	create_insn	(x=0X16AC7);
 	op_hex		(x,	1);
 	create_insn	(x=0X16ACC);
@@ -4696,7 +4696,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X16C6E);
 	op_stkvar	(x,	0);
 	create_insn	(0X16C80);
-	set_name	(0X16C80,	"title_scene_6");
+	set_name	(0X16C80,	"title_fireworks");
 	create_insn	(x=0X16C83);
 	op_hex		(x,	1);
 	create_insn	(x=0X16C88);
@@ -5794,7 +5794,6 @@ static Bytes_0(void) {
 	set_name	(0X18CA6,	"fade_in");
 	create_insn	(x=0X18CA9);
 	op_hex		(x,	1);
-	create_insn	(0X18CB8);
 }
 
 //------------------------------------------------------------------------
@@ -5804,6 +5803,7 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X18CB8);
 	create_insn	(x=0X18CC5);
 	op_hex		(x,	1);
 	create_insn	(x=0X18CD1);
@@ -10185,6 +10185,7 @@ static Bytes_1(void) {
 	create_word	(0X1FAE5);
 	create_word	(0X1FAE7);
 	create_word	(0X1FAEA);
+	set_name	(0X1FAEA,	"bios_video_mode");
 	create_word	(0X1FAFA);
 	create_word	(0X1FAFC);
 	create_byte	(0X1FAFE);
@@ -10236,8 +10237,10 @@ static Bytes_1(void) {
 	create_byte	(0X1FB66);
 	create_word	(0X1FB68);
 	create_word	(0X1FB6A);
+	set_name	(0X1FB6A,	"sound_card");
 	create_word	(0X1FB6C);
 	create_word	(0X1FB6E);
+	set_name	(0X1FB6E,	"song_cue");
 	create_word	(0X1FB70);
 	create_word	(0X1FB72);
 	create_word	(0X1FB74);
@@ -10412,6 +10415,7 @@ static Bytes_1(void) {
 	create_word	(0X20604);
 	create_word	(0X20606);
 	create_word	(0X20608);
+	set_name	(0X20608,	"video_mode");
 	create_dword	(0X2060A);
 	create_dword	(0X2060E);
 	create_word	(0X20612);
@@ -10435,6 +10439,7 @@ static Bytes_1(void) {
 	create_word	(0X2063C);
 	create_dword	(0X2063E);
 	create_word	(0X20642);
+	set_name	(0X20642,	"frame_skip");
 	create_word	(0X20644);
 	create_word	(0X20646);
 	create_word	(0X20648);
@@ -10481,6 +10486,7 @@ static Bytes_1(void) {
 	create_word	(0X20FDA);
 	create_word	(0X20FDC);
 	create_word	(0X20FDE);
+	set_name	(0X20FDE,	"music_flag");
 	create_word	(0X20FE0);
 	create_word	(0X20FE2);
 	create_word	(0X20FE4);

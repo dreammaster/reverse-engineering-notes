@@ -81,19 +81,26 @@ FUNCTIONS = [
     (0x16FCD, "title_sequence", "the title sequence (Origin FX)"),
     (0x16FBA, "title_load", "loads an item of TITLE.LZC"),
     (0x16379, "title_backdrop", "the planet and the crowd"),
-    (0x163B1, "title_scene_1", "the first scene of the title: the logo's pieces put in their places"),
-    (0x1640C, "title_scene_2", "the logo's pieces move"),
-    (0x165B5, "title_scene_3", "the logo's animation"),
-    (0x1695A, "title_scene_4", "the logo grows (scaled drawing)"),
-    (0x16AC4, "title_scene_5", "the logo and the sparks"),
-    (0x16C80, "title_scene_6", "the last scene of the title"),
+    (0x163B1, "title_first_frame", "the first frame of the title: the backdrop and the pieces put in their places, faded in"),
+    (0x1640C, "title_conductor", "the conductor waves (the frames of TITLE.LZC item 10) until the song reaches its cue 1"),
+    (0x165B5, "title_conductor_turns", "the conductor turns to the orchestra: twenty frames, then a wait for the song's cue 2"),
+    (0x1695A, "title_logo_zoom", "the pieces of the logo grow out of the planet (scaled drawing, dword_2067C)"),
+    (0x16AC4, "title_logo_fly", "the logo flies in and settles (dword_2060A asks where its pieces are), the sparks"),
+    (0x16C80, "title_fireworks", "the fireworks over the logo until the song's cue 5 (sound effects through the sound driver)"),
     (0x168C4, "title_sparks", "the sparks round the logo"),
     # the ending
     (0x15E82, "ending_sequence", "the ending: ENDGAME.LZC pictures and the 14 pages (pointer table at ds:0637)"),
     (0x15E52, "ending_count_text", "'one year' or '3 months'"),
 ]
 
-GLOBALS = []
+GLOBALS = [
+    (0x1FB6E, "song_cue", "the cue the song has reached (its Origin event 3 sets it; 0 at its start): the title and the opening wait for it"),
+    (0x20FDE, "music_flag", "0 no sound, 1 music, -1 the Tandy's"),
+    (0x1FB6A, "sound_card", "0 none, 1 Roland, 2 AdLib, 3 Tandy"),
+    (0x20608, "video_mode", "0 VGA, 1 EGA, 3 Tandy"),
+    (0x20642, "frame_skip", "2: every frame is drawn (set 0 on a slow machine)"),
+    (0x1FAEA, "bios_video_mode", "0x13 for the VGA"),
+]
 
 for ea, name, note in FUNCTIONS + GLOBALS:
     cur = idc.get_name(ea)

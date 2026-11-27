@@ -44,6 +44,9 @@ public:
 	std::function<uint16_t(uint16_t port, bool wide)> onIn;
 	std::function<void(uint16_t port, uint16_t value, bool wide)> onOut;
 
+	/** Set from onStep (a host function that the code called) to make run() return before the instruction at cs:ip is run; the next run() goes on from there. */
+	bool stopRequested = false;
+
 	/** Called before each instruction (for tracing). */
 	std::function<void(const Cpu8086 &)> onStep;
 

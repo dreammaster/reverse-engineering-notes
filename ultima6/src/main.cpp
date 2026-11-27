@@ -259,7 +259,7 @@ int main(int argc, char **argv) {
 		if (!Ultima6::readFile(Ultima6::joinPath(saveDir, "OBJLIST"), objlist))
 			Ultima6::readFile(Ultima6::joinPath(argv[1], "SAVEGAME/OBJLIST"), objlist);
 		front.setSaveState(objlist.size() > 0x1D72 && objlist[0x1D72] == 1, objlist.size() > 0x1912 && (objlist[0x1912] & 1));
-		if (mdMusic.load(argv[1], "MUSIC.LZC") && !std::getenv("U6_NO_MUSIC")) { // the AdLib songs of MUSIC.LZC through STRAX.DRV (the sequencer of Martian Dreams, the same driver)
+		if (!dynamic_cast<Ultima6::HeadlessBackend *>(backend.get()) && mdMusic.load(argv[1], "MUSIC.LZC") && !std::getenv("U6_NO_MUSIC")) { // (a script of keys has no audio and so no cues for the title and the opening to wait for) the AdLib songs of MUSIC.LZC through STRAX.DRV (the sequencer of Martian Dreams, the same driver)
 			backend->setMusicSource(&mdMusic);
 			front.setMusic(&mdMusic);
 		}

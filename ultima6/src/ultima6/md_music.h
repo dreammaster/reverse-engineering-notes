@@ -85,6 +85,10 @@ public:
 	MdAdlib &driver() {
 		return _adlib;
 	}
+	/** The cue the song has reached (word_28BEA: the value of its last Origin event 3; 0 at its start): SAVAGE.EXE waits for them (word_1FB6E). */
+	int marker() const {
+		return _marker;
+	}
 	/** The file being played, or -1. */
 	int current() const {
 		return _current;
