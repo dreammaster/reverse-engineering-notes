@@ -221,6 +221,13 @@ void Game::mdTalk(int tx, int ty) {
 	}
 	if (who <= 1) { // oneself
 		message("yourself\n");
+		if (_mdDreaming) { // sub_55F77: the dreamer talks to himself and wakes (not on level 3)
+			message("You try to wake yourself up.\n");
+			if (z != 3)
+				mdDreamWake(); // sub_3F61A = sub_50007
+			prompt();
+			return;
+		}
 		message(_solo >= 0 ? "Not while in solo mode!\n" : "You aren't yet that insane.\n");
 		prompt();
 		return;

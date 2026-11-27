@@ -900,6 +900,11 @@ bool Game::handleKeyInner(int key) {
 		return true;
 	}
 	if (key >= '0' && key <= '8' && !_talk && !_pending && !_confirmSave && !_moveTarget && (key == '0' || key - '1' < _world.actors.partySize)) {
+		if (_world.game == GameId::MartianDreams && _mdDreaming) { // sub_23C1A: the digit keys that choose a member
+			message("Not while dreaming!\n");
+			prompt();
+			return true;
+		}
 		if (_inventory) {
 			if (key != '0') {
 				_member = key - '1';
