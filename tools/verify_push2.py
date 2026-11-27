@@ -6,14 +6,18 @@ import os, random, re, struct, subprocess, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, 'tools'))
 from emu_call import *
+GAME = os.environ.get('GAME', 'cadaver1')           # cadaver2: the Payoff (GAME.EXE, language 1, then P at the restore prompt; TATA level 1)
+PAY = GAME == 'cadaver2'
+if PAY: DS = 0x1F1C0
 seed = int(sys.argv[1]); nseg = int(sys.argv[2]) if len(sys.argv) > 2 else 10
 random.seed(seed)
 DIRS = {'right': (0x4D,), 'left': (0x4B,), 'up': (0x48,), 'down': (0x50,), 'rdown': (0x4D, 0x50), 'ldown': (0x4B, 0x50), 'rup': (0x4D, 0x48), 'lup': (0x4B, 0x48)}
 NAMES = [d for d in DIRS if d not in ('up', 'lup')]
 segs = [(random.choice(NAMES), random.choice([60, 90, 120])) for _ in range(nseg)]
-sim = 'wait:2,' + ','.join('%s:%d,wait:40,dump:0' % (d, n) for d, n in segs)
+START = os.environ.get('START', '48:22' if PAY else '')      # where the original puts the player at the start (Payoff: 48, 22); the port's own default placement differs
+sim = 'wait:2,' + ('tp:%s,wait:2,' % START if START else '') + ','.join('%s:%d,wait:40,dump:0' % (d, n) for d, n in segs)
 env = dict(os.environ, SDL_VIDEODRIVER='dummy', SDL_AUDIODRIVER='dummy', CAD_DUMPBOX='1')
-out = subprocess.run([os.path.join(ROOT, 'build', 'cadaver'), '-g', os.path.join(ROOT, 'cadaver1'), '--scene', 'walk', '--level', '1', '--room', '0', '--sim', sim, '--screenshot', '/tmp/x.bmp'], env=env, capture_output=True).stderr.decode()
+out = subprocess.run([os.path.join(ROOT, 'build', 'cadaver'), '-g', os.path.join(ROOT, GAME), '--scene', 'walk', '--level', '1', '--room', '0', '--sim', sim, '--screenshot', '/tmp/x.bmp'] + (['--tata'] if PAY else []), env=env, capture_output=True).stderr.decode()
 blocks, cur = [], None
 for ln in out.splitlines():
     m = re.match(r'DUMP (-?\d+) (-?\d+) (-?\d+) (-?\d+)', ln)
@@ -21,12 +25,12 @@ for ln in out.splitlines():
     m = re.match(r'OBJ (\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (\d+)', ln)
     if m and cur is not None and int(m.group(8)) != 3: cur['o'].append(tuple(int(v) & 0xFF for v in m.groups()[1:7]))      # creatures (class 3) move on their own: left out
 from dosemu import Emu
-e = Emu(ROOT + '/unpacked/cadaver1/CAD.EXE', ROOT + '/cadaver1')
-e.pending_keys = [0x0231, 0x011b]
+e = Emu(ROOT + ('/unpacked/cadaver2/GAME.EXE' if PAY else '/unpacked/cadaver1/CAD.EXE'), ROOT + '/' + GAME)
+e.pending_keys = [0x0231, 0x1970] if PAY else [0x0231, 0x011b]
 nstep = [0]
 def _h(uc, addr, size, user): nstep[0] += 1
 e.uc.hook_add(UC_HOOK_CODE, _h, None, e.lin(0x1000, 0x247), e.lin(0x1000, 0x247))      # one game step per call: the segments are counted in steps (n / 2), not in emulator ticks
-while e.ticks < 900: e.run(max_instr=20000)
+while e.ticks < (3000 if PAY else 900): e.run(max_instr=20000)
 rw = lambda o: struct.unpack('<H', bytes(e.uc.mem_read(DS + o, 2)))[0]
 pr = rw(0x5c)
 def run(n):

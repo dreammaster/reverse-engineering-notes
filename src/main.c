@@ -2091,8 +2091,25 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	ColResult cr;
 	collision_test(&wk->world, wk->x1 + dx, wk->y1 + dy, wk->z, PL_XS, PL_YS, PL_ZS, -1, 1, &cr);
 	if (cr.count == 0xFE) {
-		int t = door_target(rv, cr.exit_id);
-		if (t >= 0) walker_enter(wk, rv, t, cr.exit_id);
+		int d = cr.exit_id;
+		int t = door_target(rv, d);
+		if (t < 0 || d < 0 || d >= 400) return;
+		/* 1000:089C..0963: the lock word of the door record (+2, `AclVM.doorw`): 0 = open; FFFF = shut for good (the message 30h when the flag byte +7 has bit 6); anything else is the id of a thing the player must carry
+		   (18726): without it nothing happens, with it the door opens (sound 12h) and the lock goes for good when byte +7 has bit 1 (the key is used up: removed and destroyed, 13F42 / 162F0) or bit 2 (the lock only) */
+		unsigned w = rv->vm.doorw[d];
+		if (w) {
+			const uint8_t *dr = rv->mp2.sec[1].rec[d];
+			int dfl = dr && rv->mp2.sec[1].len[d] > 7 ? dr[7] : 0;
+			if (w == 0xFFFF) {
+				if ((dfl & 0x40) && rv->vm.msg_n < 16) rv->vm.msg[rv->vm.msg_n++] = 0x30;
+				return;
+			}
+			if (w >= ACL_THINGS || !rv->vm.present[w] || rv->vm.room[w] != 0xFF || (rv->vm.flags[w] & 0x80)) return;
+			if (dfl & 2) { rv->vm.flags[w] |= 0x80; if (rv->held == (int)w) rv->held = 0; }
+			if (dfl & 6) rv->vm.doorw[d] = 0;
+			if (rv->vm.sound) rv->vm.sound(0x12, rv->vm.user);
+		}
+		walker_enter(wk, rv, t, d);
 		return;
 	}
 	if (!cr.zf && cr.count != 0xFF && cr.count != 0xFE)
