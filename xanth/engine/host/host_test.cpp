@@ -263,6 +263,7 @@ static int testScanLog(Host &h, const char *outPath) {
 	long scenarios = 0;
 	for (int o = 1; o <= g_count && o < (int)objs.size(); o++) {
 		if (!objs[o].handler) continue;
+		if (getenv("XANTH_SCANONLY") && atoi(getenv("XANTH_SCANONLY")) != o) continue;          // XANTH_SCANONLY=<object>: only that object
 		for (int phase = 1; phase <= (getenv("XANTH_PHASES") ? atoi(getenv("XANTH_PHASES")) : 6); phase++)
 			for (int v : verbs) {
 				h.reset();
@@ -274,12 +275,21 @@ static int testScanLog(Host &h, const char *outPath) {
 				uint32_t r = h.call("call_object_handler", {(uint16_t)o, (uint16_t)phase});
 				uint64_t hs = 1469598103934665603ull;
 				uint32_t objSeg = (uint32_t)h.w(D_seg_8A9E4) * 16;
+				if (getenv("XANTH_SCANCALLS")) for (auto &c : h.calls) fprintf(stderr, "C %d %d %d %s %x %x %x\n", o, phase, v, c.name.c_str(), c.w[0], c.w[1], c.w[2]);
+				bool detail = getenv("XANTH_SCANDETAIL") != nullptr;          // XANTH_SCANDETAIL=1 (with XANTH_SCANONLY): a hash per object record and per saved region on stderr
 				for (int id = 1; id <= g_count; id++) {
 					uint32_t p = objSeg + (uint32_t)id * 6;
 					uint32_t rec = (uint32_t)(h.mem[p + 0x6A] | (h.mem[p + 0x6B] << 8)) * 16 + (h.mem[p + 0x68] | (h.mem[p + 0x69] << 8));
 					hs = fnv(hs, &h.mem[rec], recSize[objs[id].type]);
+					if (detail) fprintf(stderr, "%d %d %d O%d %016llx\n", o, phase, v, id, (unsigned long long)fnv(1469598103934665603ull, &h.mem[rec], recSize[objs[id].type]));
 				}
-				for (const Region &rg : regions) hs = fnv(hs, &h.mem[rg.addr], rg.size);
+				int ri = 0;
+				for (const Region &rg : regions) {
+					hs = fnv(hs, &h.mem[rg.addr], rg.size);
+					if (detail) fprintf(stderr, "%d %d %d R%d %016llx\n", o, phase, v, ri, (unsigned long long)fnv(1469598103934665603ull, &h.mem[rg.addr], rg.size));
+					if (detail && getenv("XANTH_SCANDUMP") && atoi(getenv("XANTH_SCANDUMP")) == ri) { fprintf(stderr, "D %d %d %d R%d ", o, phase, v, ri); for (unsigned k = 0; k < rg.size; k++) fprintf(stderr, "%02x", h.mem[rg.addr + k]); fprintf(stderr, "\n"); }
+					ri++;
+				}
 				uint64_t he = 1469598103934665603ull;
 				unsigned count = h.w(D_event_count);
 				uint32_t evSeg = (uint32_t)h.w(D_seg_8A9E2) * 16;

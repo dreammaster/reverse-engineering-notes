@@ -49,15 +49,6 @@ void Game::newGame() {
 	rt.player_obj = 1;
 	rt.actor_obj = 1;
 	rt.word_85222 = 1;
-	_convLines.resize(kConvLineCount);
-	for (unsigned i = 0; i < kConvLineCount; i++)
-		_convLines[i] = kConvLines[i].enabled;
-	_convOptions.resize(kConvOptionCount);
-	for (unsigned i = 0; i < kConvOptionCount; i++)
-		_convOptions[i] = kConvOptions[i].enabled;
-	_convMenus.resize(kConvMenuCount);
-	for (unsigned i = 0; i < kConvMenuCount; i++)
-		_convMenus[i] = kConvMenus[i].flag;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------ conversations
@@ -68,12 +59,12 @@ uint8 *Game::Conversation_GetEntry(int convId, int subId) {
 		if (id >= kConvMenuCount)
 			return nullptr;
 		if ((int16)subId < 0)
-			return &_convMenus[id];
+			return &state.v.Conversation_ENTRIES3[id];
 		if ((int)kConvMenus[id].count > subId)
-			return &_convOptions[kConvMenus[id].first + subId];
-		return &_convMenus[id];
+			return &state.v.Conversation_ENTRIES2[kConvMenus[id].first + subId];
+		return &state.v.Conversation_ENTRIES3[id];
 	}
-	return id < kConvLineCount ? &_convLines[id] : nullptr;
+	return id < kConvLineCount ? &state.v.Conversation_ENTRIES1[id] : nullptr;
 }
 
 int Game::conversation_set_enabled(int convId, int subId, int on) {
@@ -179,6 +170,20 @@ int Game::sub_1DBB7(int minutes) {
 	unsigned t = (unsigned)(uint16)(v.time_of_day_minutes + minutes);
 	v.day_count = (uint16)(v.day_count + t / 0x5A0);
 	v.time_of_day_minutes = (uint16)(t % 0x5A0);
+	return 0;
+}
+
+// sub_1D99F: the sword's story goes one step on (word_8526A counts them): a pause, the property of the hilt (object 0x8B) from a table of the program, the hilt redrawn and the
+// text of the step (a table of far pointers to texts, one of them a message) shown.
+int Game::sub_1D99F() {
+	Vars &v = state.v;
+	wputchar(0x0B);
+	wait_ticks_or_click(0xFA0);
+	v.word_8526A++;
+	unsigned n = v.word_8526A;
+	object_set_prop_a(0x8B, exe16(0x84FC, (0x404 + 2 * n) & 0xFFFF));
+	RoomItem_Draw(0x20);
+	Font_WriteMessage(TextRef::fromWords(0x44, 0xF000), exeText(0x3263, (0x7AC + 4 * n) & 0xFFFF));
 	return 0;
 }
 
@@ -519,10 +524,31 @@ int Game::writeMessage(const std::string &fmt, const FmtArg *args) {
 }
 
 
+// the saved regions that lie in the data segment (offset -> index + 1 into kVarRegions): the logic reaches some of them by address, they are kept in the saved state
+static const std::vector<uint8> &dsegRegions() {
+	static std::vector<uint8> map;
+	if (map.empty()) {
+		map.assign(0x10000, 0);
+		for (unsigned i = 0; i < ARRAYSIZE(kVarRegions); i++)
+			if (kVarRegions[i].address >= 0x84FC0 && kVarRegions[i].address + kVarRegions[i].size <= 0x84FC0 + 0x10000)
+				for (unsigned k = 0; k < kVarRegions[i].size; k++)
+					map[kVarRegions[i].address - 0x84FC0 + k] = (uint8)(i + 1);
+	}
+	return map;
+}
+
 uint8 &Game::exe8(int seg, int off) {
 	unsigned lin = (unsigned)((seg & 0xFFFF) * 16 + (off & 0xFFFF));
-	if ((seg & 0xFFFF) == 0x84FC)
+	if ((seg & 0xFFFF) == 0x84FC) {
+		unsigned r = dsegRegions()[off & 0xFFFF];
+		if (r) {
+			const VarRegion &rg = kVarRegions[r - 1];
+			return reinterpret_cast<uint8 *>(&state.v)[rg.offset + (lin - rg.address)];
+		}
 		return _dseg[off & 0xFFFF];
+	}
+	if (lin >= 0x34628 && lin < 0x34628 + sizeof(state.v.unk_34628))          // (the verb lists of the objects: saved with the game)
+		return state.v.unk_34628[lin - 0x34628];
 	if (lin >= 0x31550 && lin + 1 < 0x35400)
 		return _tables[lin - 0x31550];
 	_scratch[0] = _scratch[1] = 0;

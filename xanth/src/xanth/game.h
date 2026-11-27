@@ -183,6 +183,7 @@ public:
 	int set_room_music(int room) { return other("set_room_music", room); }
 	/** The game clock: adds minutes to the time of day and carries whole days (1440 minutes) into the day count. */
 	int sub_1DBB7(int minutes);
+	int sub_1D99F();                            // the next step of the sword's story: the gem of the hilt (object 0x8B) changes
 	/** sprintf into one of the original's static buffers (the C runtime's, with %s / %d / %u / %c). */
 	template <class... A> int _sprintf(char *dest, const char *fmt, A... args) {
 		FmtArg a[] = {FmtArg(args)..., FmtArg()};
@@ -223,7 +224,6 @@ public:
 
 private:
 	std::string textOf(const struct ConvEntry &e);
-	std::vector<uint8> _convLines, _convOptions, _convMenus;     // the enabled flags (Conversation_ENTRIES1 / 2 / 3)
 	int exitField(int room, int offset, int size) const;
 	std::string format(const std::string &fmt, const FmtArg *args);
 	int writeMessage(const std::string &fmt, const FmtArg *args);

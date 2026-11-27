@@ -120,6 +120,30 @@ int main() {
 				g.state.save(saved);
 				size_t eventsAt = saved.size() - 4 * g.state.events.size();
 				s.state = fnv(1469598103934665603ull, saved.data() + 0x20, 13400 + 4522);
+					if (getenv("XANTH_SCANDETAIL")) {          // the hashes of the object records and the saved regions, as host_test's scanlog writes them with the same option
+						static const unsigned recSize[] = {0, 18, 28, 32, 14, 32};
+						size_t at = 0x20;
+						for (int id = 1; id <= g.state.objects.count(); id++) {
+							fprintf(stderr, "%d %d %d O%d %016" PRIx64 "\n", o, phase, verb, id, fnv(1469598103934665603ull, saved.data() + at, recSize[g.state.objects.type(id)]));
+							at += recSize[g.state.objects.type(id)];
+						}
+						std::ifstream rf(getenv("XANTH_REGIONS") ? getenv("XANTH_REGIONS") : "../reversing/analysis/xanth_save_regions.tsv");
+						std::string rl;
+						std::getline(rf, rl);
+						for (int ri = 0; std::getline(rf, rl); ri++) {
+							unsigned idx, addr, size;
+							if (sscanf(rl.c_str(), "%u %x %u", &idx, &addr, &size) != 3)
+								break;
+							fprintf(stderr, "%d %d %d R%d %016" PRIx64 "\n", o, phase, verb, ri, fnv(1469598103934665603ull, saved.data() + at, size));
+							if (getenv("XANTH_SCANDUMP") && atoi(getenv("XANTH_SCANDUMP")) == ri) {
+							fprintf(stderr, "D %d %d %d R%d ", o, phase, verb, ri);
+							for (unsigned k = 0; k < size; k++)
+								fprintf(stderr, "%02x", saved.data()[at + k]);
+							fprintf(stderr, "\n");
+						}
+						at += size;
+						}
+					}
 				s.events = fnv(1469598103934665603ull, saved.data() + eventsAt, 4 * g.state.events.size());
 				s.eventCount = (unsigned)g.state.events.size();
 				for (size_t k = 0; k < ui.log.size(); k++) {
