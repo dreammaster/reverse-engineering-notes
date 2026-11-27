@@ -877,6 +877,37 @@ int main() {
 		}
 	}
 
+	// a web (the tile 0x210-0x219 on the square) paralyses a member sooner or later (sub_14338)
+	{
+		ObjList &al = w.actors;
+		int webType = -1;
+		for (int t = 0; t < 0x200 && webType < 0; ++t)
+			if (w.baseTile.firstTile[t] == 0x210)
+				webType = t;
+		if (webType >= 0) {
+			int victim = al.partyRoster[0], vk = w.actorObject(victim);
+			World::Obj web;
+			web.status = 0;
+			web.x = w.objects[vk].x;
+			web.y = w.objects[vk].y;
+			web.z = w.objects[vk].z;
+			web.type = (uint16_t)webType;
+			web.frame = 0;
+			web.quantity = 1;
+			web.quality = 0;
+			web.actor = -1;
+			web.parent = -1;
+			w.objects.push_back(web);
+			w.addToMap((int)w.objects.size() - 1);
+			al.status[victim] &= 0xFC;
+			g.log.clear();
+			for (int i = 0; i < 80 && !(al.status[victim] & 2); ++i)
+				g.seHazards();
+			CHECK((al.status[victim] & 2) && logText(g).find("is stuck in a web!") != std::string::npos);
+			al.status[victim] &= 0xFD;
+		}
+	}
+
 	if (failures == 0)
 		std::printf("ok\n");
 	return failures ? 1 : 0;

@@ -2266,3 +2266,81 @@ bool Game::seWorktype(int actor) {
 
 } // namespace Ultima6
 } // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_145A4 and sub_14338: what the square an actor stands on does to it, each minute, to every actor in view that is not of a kind proof against it (class flags 0x100 and 0x400 both; the 0xE9). A thing on
+// the square whose tile has the hazard flag (flags 1, 8) or a 0x124 counts, else the terrain, and a thing with the flag 4 of the tile flags 3 on the square hides the hazard. The tile then does: the terrain
+// 0x10-0x1B, 0xAA and 0xAB 1-40 (double for a class with the flag 0x10; none for one with 8 or for the protected, status 1); a web (0x210-0x219) "is stuck in a web!" (paralysed, unless the strength, by
+// `sub_285A0`, is at least a roll of 1-30, or the protected, or a 0x150); the tile 0x3A7 1-7 to the kinds 0x143 and 0x148; the tiles 0x383, 0x406, 0x42B-0x42F and 0x434-0x437 1-15 (double the same way);
+// the tiles 0x54A-0x54F 1-5 (not to the protected or the 0x11A)
+// APPROX(84): the flash (`sub_1431D`) is left out and the damage is `Combat::applyDamage`
+void Game::seHazards() {
+	ObjList &al = _world.actors;
+	for (int actor = 1; actor < 0x100; ++actor) {
+		int k = _world.actorObject(actor);
+		if (k < 0 || _world.objects[k].deleted || (al.status[actor] & 0x10) || al.hp[actor] == 0)
+			continue;
+		const World::Obj me = _world.objects[k];
+		if (me.type == 0xE9 || !mdInViewAt(me.x, me.y, me.z))
+			continue;
+		int cls = MovementClasses::flags(MovementClasses::classOf(me.type));
+		if ((cls & 0x100) && (cls & 0x400))
+			continue;
+		int hazard = -1;
+		bool hidden = false;
+		std::vector<int> here;
+		_world.objectsAt(me.x, me.y, me.z, here);
+		for (int h : here) {
+			const World::Obj &o = _world.objects[h];
+			if (h == k || o.deleted)
+				continue;
+			int tile = (_world.baseTile.firstTile[o.type] + o.frame) & (TileFlags::TILES - 1);
+			if (_world.flags.flags3[tile] & 4) {
+				hidden = true;
+				break;
+			}
+			if ((_world.flags.flags1[tile] & 8) || o.type == 0x124) {
+				hazard = tile;
+				_world.objects[k].status &= 0xFD;
+				break;
+			}
+		}
+		if (hidden)
+			continue;
+		if (hazard < 0) {
+			int mask = me.z == 0 ? 0x3FF : 0xFF;
+			int tile = _world.map.tile(me.z, me.x & mask, me.y & mask) & (TileFlags::TILES - 1);
+			if (!(_world.flags.flags1[tile] & 8))
+				continue;
+			hazard = tile;
+		}
+		bool protectedOne = (al.status[actor] & 1) != 0;
+		auto hurt = [&](int dmg) { _combat.applyDamage(actor, actor, dmg); };
+		if ((hazard >= 0x10 && hazard <= 0x1B) || hazard == 0xAA || hazard == 0xAB) {
+			if (!protectedOne && !(cls & 8))
+				hurt(seRoll(1, 40) * ((cls & 0x10) ? 2 : 1));
+		}
+		if (hazard >= 0x210 && hazard <= 0x219) {
+			int str = al.strength[actor] - (me.status & 0x40 ? 3 : 0) + (me.status & 0x80 ? 3 : 0);
+			str = std::max(1, std::min(30, str));
+			if (!protectedOne && str < seRoll(1, 30) && me.type != 0x150) {
+				al.status[actor] |= 2;
+				message(_combat.nameOf(actor) + " is stuck in a web!\n");
+			}
+		} else if (hazard == 0x3A7) {
+			if (me.type == 0x143 || me.type == 0x148)
+				hurt(seRoll(1, 7));
+		} else if (hazard == 0x383 || hazard == 0x406 || (hazard >= 0x42B && hazard <= 0x42F) || (hazard >= 0x434 && hazard <= 0x437)) {
+			if (!protectedOne && !(cls & 8))
+				hurt(seRoll(1, 15) * ((cls & 0x10) ? 2 : 1));
+		} else if (hazard >= 0x54A && hazard <= 0x54F) {
+			if (!protectedOne && me.type != 0x11A)
+				hurt(seRoll(1, 5));
+		}
+	}
+}
+
+} // namespace Ultima6
+} // namespace Ultima6

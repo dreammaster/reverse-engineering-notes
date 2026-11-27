@@ -185,6 +185,7 @@ public:
 	void mdBelt(bool pass);                        // sub_4EEB0: the conveyor belt of the factory
 	void mdTeleport(int pad);                      // sub_25CAC: the teleporting pads
 	void mdRaxachkScene();                         // sub_544F0: the person 0x66 is struck
+	void seHazards();                              // sub_145A4 / sub_14338: the squares of Savage Empire
 	bool seWorktype(int actor);                    // sub_27211's own worktypes (7, 9, 10, 11, 19, 154)
 	void seAwaken();                               // sub_37566: the Avatar is dead (Savage Empire)
 	void mdAwaken();                               // sub_30093: the Avatar is dead outside a dream
