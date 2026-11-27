@@ -2769,8 +2769,8 @@ namespace Ultima6 {
 
 // sub_2A99B for a thing that is not a person (a thing that does not stack and whose quantity byte, the strength, is not zero): the damage is taken off the strength; when it is used up the thing goes:
 // a 0x7F (bamboo plant) leaves a 0x80 (pole); a tree (0x107, with its three other parts 0x108 at (x-2, y-1), 0x109 at (x, y-2) and 0x10A at (x-2, y-3)) falls northwards, leaving the stump 0x104
-// and the 0x105 / 0x106 parts of the trunk, and crushes whoever is under it (seTreeFalls); anything else is destroyed. APPROX(104): the control panel 0xDE and the dark moonstone 0x93, whose
-// destruction ends the game (sub_2DED4, sub_2E34E), are not destroyed (their strength stays at 1); the flash of the blow (sub_2A181) is not drawn
+// and the 0x105 / 0x106 parts of the trunk, and crushes whoever is under it (seTreeFalls); anything else is destroyed. APPROX(104): the control panel 0xDE, whose destruction is the scene of sub_2DED4, is not destroyed (its
+// strength stays at 1); the dark moonstone 0x93 ends the game at once (sub_2E34E; its screen effects are left out); the flash of the blow (sub_2A181) is not drawn
 void Game::seHurtThing(int idx, int dmg) {
 	World::Obj o = _world.objects[idx];
 	if (o.deleted || o.actor >= 0 || dmg < 0 || _world.isStackable(o.type) || o.quantity == 0)
@@ -2779,7 +2779,11 @@ void Game::seHurtThing(int idx, int dmg) {
 		_world.objects[idx].quantity = (uint8_t)(o.quantity - dmg);
 		return;
 	}
-	if (o.type == 0xDE || o.type == 0x93) {
+	if (o.type == 0x93) { // the dark moonstone: sub_2E34E starts SAVAGE.EXE with the time played, and the game is over
+		_ending = 2;
+		return;
+	}
+	if (o.type == 0xDE) {
 		_world.objects[idx].quantity = 1;
 		return;
 	}
@@ -2840,6 +2844,21 @@ void Game::seTreeFalls(int x, int y) {
 			}
 		}
 	}
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_2E34E: D = byte_4224C + 99 (the day of 1 to 31 less one), B = byte_4224D + 99 (the month less one), Y = word_4224E + 100 (the years); the clock starts at day 1, month 1, year 0. The letter
+// that says whom the story ended with (byte_4695E bit 0x20 'A' for Aiela, byte_4698F bit 0x20 'T' for Tristia) is a flag of the conversations that the engine does not keep: APPROX(105)
+void Game::seElapsed(int &days, int &months, int &years, char &who) const {
+	days = gameClock.day - 1;
+	months = gameClock.month - 1;
+	years = gameClock.year;
+	who = 0;
 }
 
 } // namespace Ultima6

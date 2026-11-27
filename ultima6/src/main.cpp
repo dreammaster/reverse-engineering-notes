@@ -9,6 +9,7 @@
 #include "ultima6/md_create.h"
 #include "ultima6/md_intro.h"
 #include "ultima6/md_music.h"
+#include "ultima6/se_front_end.h"
 #include "ultima6/session.h"
 #include "ultima6/world.h"
 
@@ -16,6 +17,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <cstring>
+#include <ctime>
 #include <memory>
 #include <string>
 
@@ -44,6 +46,40 @@ private:
 	int _playing;
 };
 
+// Plays a scene of Savage Empire's front end until it is over: the time goes by in steps of 15 ms and a key reaches it when it waits for one (a script of keys, `--keys`, gives its keys then
+// and, when they are used up, stops the scene where it waits: the screen is then the picture of the last key). False when that happened or the window was closed.
+static bool playScene(Ultima6::Ultima6::SeFrontEnd &front, Ultima6::Backend &backend, Ultima6::Framebuffer &screen) {
+	Ultima6::HeadlessBackend *headless = dynamic_cast<Ultima6::HeadlessBackend *>(&backend);
+	unsigned last = backend.ticks();
+	while (front.animating()) {
+		front.render(screen);
+		backend.present(screen);
+		if (headless && !front.acceptsKey()) {
+			unsigned now = backend.ticks();
+			front.tick(now - last);
+			last = now;
+			backend.delay(15);
+			continue;
+		}
+		if (headless && headless->exhausted())
+			return false;
+		int key = backend.pollKey();
+		if (key == Ultima6::KEY_NONE) {
+			unsigned now = backend.ticks();
+			front.tick(now - last);
+			last = now;
+			backend.delay(15);
+		} else {
+			if (!front.handleKey(key))
+				return false;
+			last = backend.ticks();
+		}
+	}
+	front.render(screen);
+	backend.present(screen);
+	return true;
+}
+
 static void usage(const char *prog) {
 	std::fprintf(stderr, "usage: %s <game directory> [--play] [--ending] [--save dir] [--keys <script>] [--shot file.png] [--scale n]\n", prog);
 	std::fprintf(stderr, "  --play   skip the main menu and start from the saved game\n");
@@ -61,12 +97,11 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	std::printf("%s\n", Ultima6::gameInfo(id).title);
-	// Martian Dreams and Savage Empire: only the world (map, objects, tiles) is shared with Ultima VI so far; there are no menus, no frame, no text and no conversations yet,
-	// the saved game is walked about in
 
 	const char *keys = nullptr, *shot = nullptr;
 	int scale = 3;
-	bool play = id == Ultima6::GameId::SavageEmpire, endingOnly = false; // Martian Dreams has its menu; Savage Empire's saved game is walked about in
+	bool play = false, endingOnly = false;
+	std::string elapsed = "5,3,1,A"; // Savage Empire's ending: SAVAGE.EXE's D, B, Y and L arguments
 	std::string saveDir = id == Ultima6::GameId::MartianDreams ? "mdsave" : id == Ultima6::GameId::SavageEmpire ? "sesave" : "u6save"; // our own save directory; the game's files are never written
 	for (int i = 2; i < argc; ++i) {
 		if (!std::strcmp(argv[i], "--keys") && i + 1 < argc)
@@ -79,6 +114,8 @@ int main(int argc, char **argv) {
 			play = true;
 		else if (!std::strcmp(argv[i], "--ending"))
 			endingOnly = true;
+		else if (!std::strcmp(argv[i], "--elapsed") && i + 1 < argc)
+			elapsed = argv[++i];
 		else if (!std::strcmp(argv[i], "--scale") && i + 1 < argc)
 			scale = std::atoi(argv[++i]);
 		else {
@@ -128,6 +165,21 @@ int main(int argc, char **argv) {
 			screen.savePng(shot, scale);
 		return 0;
 	}
+	if (endingOnly && id == Ultima6::GameId::SavageEmpire) { // Savage Empire's ending: the script of SAVAGE.EXE's routine sub_15E82
+		int d = 0, b = 0, y = 0;
+		char who = 0;
+		std::sscanf(elapsed.c_str(), "%d,%d,%d,%c", &d, &b, &y, &who);
+		Ultima6::Ultima6::SeFrontEnd ending(argv[1]);
+		if (!ending.ok()) {
+			std::fprintf(stderr, "cannot load the ending files\n");
+			return 1;
+		}
+		ending.startEnding(d, b, y, who);
+		playScene(ending, *backend, screen);
+		if (shot)
+			screen.savePng(shot, scale);
+		return 0;
+	}
 	if (endingOnly) {
 		Ultima6::Ultima6::Ending ending(argv[1], 1, 2, 3);
 		if (!ending.ok()) {
@@ -153,6 +205,8 @@ int main(int argc, char **argv) {
 	Ultima6::Ultima6::NewCharacter character;
 	Ultima6::Ultima6::MdNewCharacter mdCharacter; // Martian Dreams: the character made in its menu
 	bool mdCreated = false;
+	Ultima6::Ultima6::SeNewCharacter seCharacter; // Savage Empire: the character made in its menu
+	bool seCreated = false;
 	if (!play && id == Ultima6::GameId::MartianDreams) {
 		Ultima6::Ultima6::MdFrontEnd front(argv[1]);
 		if (mdMusic.load(argv[1]) && !std::getenv("U6_NO_MUSIC")) { // the AdLib songs of MDD_MUS.LZC through the driver of STRAX.DRV
@@ -194,6 +248,38 @@ int main(int argc, char **argv) {
 		}
 		mdCreated = front.hasNewCharacter();
 			mdCharacter = front.character();
+	} else if (!play && id == Ultima6::GameId::SavageEmpire) { // Savage Empire: SAVAGE.EXE's menu, introduction and creation of a character
+		Ultima6::Ultima6::SeFrontEnd front(argv[1], (uint32_t)std::time(nullptr));
+		if (!front.ok()) {
+			std::fprintf(stderr, "cannot load the menu files\n");
+			return 1;
+		}
+		// what the saved game holds: the byte at objlist 0x1D72 says that a character was made, bit 0 of 0x1912 that a game is in progress
+		Ultima6::Bytes objlist;
+		if (!Ultima6::readFile(Ultima6::joinPath(saveDir, "OBJLIST"), objlist))
+			Ultima6::readFile(Ultima6::joinPath(argv[1], "SAVEGAME/OBJLIST"), objlist);
+		front.setSaveState(objlist.size() > 0x1D72 && objlist[0x1D72] == 1, objlist.size() > 0x1912 && (objlist[0x1912] & 1));
+		front.startOpening();
+		bool running = true;
+		while (running) {
+			if (front.animating()) {
+				if (!playScene(front, *backend, screen))
+					break;
+				if (front.state() == Ultima6::Ultima6::SeFrontEnd::QUIT)
+					break;
+				continue;
+			}
+			front.render(screen);
+			backend->present(screen);
+			running = front.handleKey(backend->waitKey());
+		}
+		if (!front.wantsGame()) {
+			if (shot)
+				screen.savePng(shot, scale);
+			return 0;
+		}
+		seCreated = front.hasNewCharacter();
+		seCharacter = front.character();
 	} else if (!play) {
 		Ultima6::Ultima6::FrontEnd front(argv[1]);
 		if (!front.ok()) {
@@ -222,10 +308,12 @@ int main(int argc, char **argv) {
 
 	Ultima6::Bytes probe;
 	bool haveSave = Ultima6::readFile(Ultima6::joinPath(saveDir, "OBJLIST"), probe);
-	if (!world.load(argv[1], created ? &character : nullptr, !created && haveSave ? saveDir : std::string())) {
+	if (!world.load(argv[1], created ? &character : nullptr, !created && !seCreated && haveSave ? saveDir : std::string())) {
 		std::fprintf(stderr, "cannot load %s\n", world.error().c_str());
 		return 1;
 	}
+	if (seCreated) // the character of Savage Empire's Create Character goes into the new game as sub_15A7C does
+		seCharacter.applyTo(world.actors);
 	if (mdCreated) // the character of Martian Dreams' questions is put into the saved game as the original's creation does
 		mdCharacter.applyTo(world.actors);
 	Ultima6::Ultima6::MdMusic mdGameMusic; // the game's own songs (MUSIC.LZC) with the AdLib driver, GAME.EXE's sub_2FD45 each turn
@@ -311,6 +399,15 @@ int main(int argc, char **argv) {
 				last = now;
 				backend->delay(15);
 			}
+		}
+	} else if (game.endingStarted() && id == Ultima6::GameId::SavageEmpire) { // Savage Empire's ending (SAVAGE.EXE's routine sub_15E82)
+		int d, b, y;
+		char who;
+		game.seElapsed(d, b, y, who);
+		Ultima6::Ultima6::SeFrontEnd ending(argv[1]);
+		if (ending.ok()) {
+			ending.startEnding(d, b, y, who);
+			playScene(ending, *backend, screen);
 		}
 	} else if (game.endingStarted()) {
 		int years, months, days;

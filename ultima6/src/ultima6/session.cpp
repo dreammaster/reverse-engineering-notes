@@ -843,6 +843,8 @@ bool Game::handleKey(int key) {
 		return false;
 	}
 	bool more = handleKeyInner(key);
+	if (_ending == 2)
+		return false;
 	// after every completed command the actors take their turns (command_loop 145FD)
 	if (more && !_pending && !_instrument && !_talk && !_confirmSave && !_inventory && !_dead && !_eye)
 		runTurns();
