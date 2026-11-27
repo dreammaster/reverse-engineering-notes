@@ -49,6 +49,7 @@ Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(worl
 	_combat.onDeath = [this](int actor) { mdKilled(actor); };
 	if (_world.game == GameId::MartianDreams)
 		_creatures.ownTurn = [this](int actor) { return mdWorktype(actor); };
+		_creatures.dreaming = [this]() { return _mdDreaming; };
 	_combat.onSwing = [this](int defender) {
 		// perform_attack 2D63A: a blow that is not a missile makes its noise (effect 0x11) when it is struck within five squares of the party's place
 		int k = _world.actorObject(defender);

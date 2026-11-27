@@ -116,6 +116,7 @@ bool Creatures::ambush(int px, int py, int pz) {
 
 // APPROX(19): not the original's exact behaviour, see docs/approximations.md
 void Creatures::hatch(int egg, int hour) {
+	_world.objects.reserve(_world.objects.size() + 64); // the things made below must not move the objects this holds
 	const World::Obj &e = _world.objects[egg];
 	int quality = e.quality;
 	bool daytime = hour >= 6 && hour < 19;
@@ -140,6 +141,7 @@ void Creatures::hatch(int egg, int hour) {
 		if (!(e.quantity == 100 || chance <= e.quantity))
 			return;
 	}
+	bool heard = false;
 	for (size_t i = 0; i < _world.objects.size(); ++i) {
 		const World::Obj &o = _world.objects[i];
 		if (o.deleted || o.location() != ObjRecord::IN_CONTAINER || o.parent != egg)
@@ -156,6 +158,8 @@ void Creatures::hatch(int egg, int hour) {
 				// the egg's quality names the side of what hatches: quality % 10 - 1 is shifted into the status bits 0x60 (sub_366B0 36793-36941)
 				if (actor >= 0 && quality % 10 != 0)
 					_world.actors.status[actor] = (uint8_t)((_world.actors.status[actor] & 0x9F) | (((quality % 10) - 1) << 5));
+				if (actor >= 0 && (_world.actors.status[actor] & 0x20))
+					heard = true;
 			}
 			else {
 				// a plain object (reagents and the like grow where the egg is)
@@ -175,6 +179,19 @@ void Creatures::hatch(int egg, int hour) {
 			}
 		}
 	}
+	if (heard && _world.game == GameId::MartianDreams && !(dreaming && dreaming())) { // sub_2662B: a hostile one hatched: "You hear something to the <direction>!" (the egg's side of the party)
+		const World::Obj &eg = _world.objects[egg];
+		int dx = (int)eg.x - _eggPx, dy = (int)eg.y - _eggPy, ax = std::abs(dx), ay = std::abs(dy);
+		int dir;
+		if (ax >= 2 * ay)
+			dir = dx < 0 ? 6 : 2;
+		else if (ay >= 2 * ax)
+			dir = dy < 0 ? 0 : 4;
+		else
+			dir = dy < 0 ? (dx < 0 ? 7 : 1) : (dx < 0 ? 5 : 3);
+		static const char *const NAMES[8] = {"North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"};
+		_scroll.print(std::string("You hear something to the ") + NAMES[dir] + "!\n");
+	}
 }
 
 void Creatures::checkEggs(int px, int py, int pz, int hour) {
@@ -187,8 +204,11 @@ void Creatures::checkEggs(int px, int py, int pz, int hour) {
 			_active[n] = false;
 		if (dx < SPAWN_RANGE && dy < SPAWN_RANGE && e.z == pz && !_active[n]) {
 			_active[n] = true;
-			if (dx > 8 || dy > 8) // sub_36D4E: an egg within eight squares in both directions is left alone (creatures do not appear next to the party)
+			if (dx > 8 || dy > 8) { // sub_36D4E: an egg within eight squares in both directions is left alone (creatures do not appear next to the party)
+				_eggPx = px;
+				_eggPy = py;
 				hatch(_eggs[n], hour);
+			}
 		}
 	}
 }

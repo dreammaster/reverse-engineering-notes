@@ -62,6 +62,8 @@ public:
 
 	/** The worktypes of Martian Dreams that its own code acts on (actor_worktype_act, sub_29CE2): called first, true when it did the turn. */
 	std::function<bool(int)> ownTurn;
+	/** Martian Dreams: whether the party is in a dream (no "You hear something" there). */
+	std::function<bool()> dreaming;
 	int spawn(int type, int worktype, int x, int y, int z, bool exact = false);
 	/** One step of an actor towards a square (sub_29317); true if it moved. */
 	bool walkTo(int actor, int x, int y) {
@@ -109,6 +111,7 @@ private:
 	} _f;
 	int _winX = 0, _winY = 0, _fz = 0; // terrain_cache_x/y and the party's level
 	int _talkRequest = -1;
+	int _eggPx = 0, _eggPy = 0; // where the party stood when the eggs were looked at
 	bool _revealed = true; // word_3F1B8 (dw 1 to begin with)
 	bool _shuffle = false;             // word_3F002: party members may share a square while the line forms
 	std::vector<int> _eggs;
