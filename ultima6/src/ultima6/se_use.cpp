@@ -1601,8 +1601,13 @@ void Game::seExplode(int ex, int ey, bool device) {
 			std::vector<int> here;
 			_world.objectsAt((ex + dx) & mask, (ey + dy) & mask, z, here);
 			for (int i : here) {
-				if (_world.objects[i].deleted || _world.objects[i].actor < 0)
+				if (_world.objects[i].deleted)
 					continue;
+				if (_world.objects[i].actor < 0) { // sub_2A99B on a thing: the grenade's blast wears down whatever has strength (trees, the panel); the device's only the kinds 0x143 and 0x148
+					if (!device && !_world.isStackable(_world.objects[i].type))
+						seHurtThing(i, seRoll(1, 20));
+					continue;
+				}
 				int who = _world.objects[i].actor, type = _world.objects[i].type;
 				if (device) {
 					if (type == 0x143 || type == 0x148)
@@ -2748,6 +2753,87 @@ void Game::seGetAt(int tx, int ty) {
 			}
 	}
 	prompt();
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_2A99B for a thing that is not a person (a thing that does not stack and whose quantity byte, the strength, is not zero): the damage is taken off the strength; when it is used up the thing goes:
+// a 0x7F (bamboo plant) leaves a 0x80 (pole); a tree (0x107, with its three other parts 0x108 at (x-2, y-1), 0x109 at (x, y-2) and 0x10A at (x-2, y-3)) falls northwards, leaving the stump 0x104
+// and the 0x105 / 0x106 parts of the trunk, and crushes whoever is under it (seTreeFalls); anything else is destroyed. APPROX(104): the control panel 0xDE and the dark moonstone 0x93, whose
+// destruction ends the game (sub_2DED4, sub_2E34E), are not destroyed (their strength stays at 1); the flash of the blow (sub_2A181) is not drawn
+void Game::seHurtThing(int idx, int dmg) {
+	World::Obj o = _world.objects[idx];
+	if (o.deleted || o.actor >= 0 || dmg < 0 || _world.isStackable(o.type) || o.quantity == 0)
+		return;
+	if (o.quantity > dmg) {
+		_world.objects[idx].quantity = (uint8_t)(o.quantity - dmg);
+		return;
+	}
+	if (o.type == 0xDE || o.type == 0x93) {
+		_world.objects[idx].quantity = 1;
+		return;
+	}
+	_world.objects.reserve(_world.objects.size() + 16);
+	_world.deleteObject(idx);
+	if (o.type == 0x7F) {
+		seMake(0x80, o.x, o.y, o.z, 0);
+	} else if (o.type == 0x107) {
+		const int x = o.x, y = o.y;
+		const int parts[3][3] = {{0x108, x - 2, y - 1}, {0x109, x, y - 2}, {0x10A, x - 2, y - 3}};
+		for (const auto &part : parts) {
+			int p = seFind(part[0], part[1], part[2]);
+			if (p >= 0)
+				_world.deleteObject(p);
+		}
+		sfx(0x1F);
+		const int made[5][4] = {{0x104, 1, x, y}, {0x105, 1, x - 1, y - 2}, {0x105, 5, x + 1, y - 2}, {0x105, 9, x + 1, y - 4}, {0x106, 3, x + 1, y - 5}};
+		for (const auto &m : made) {
+			int n = seMake(m[0], m[2], m[3], o.z, 0);
+			_world.objects[n].frame = (uint8_t)m[1];
+		}
+		seTreeFalls(x, y);
+	}
+}
+
+// sub_2A29F: the squares a falling tree covers (x and x + 1, y - 6 to y - 3, and x + 1 at y - 2): a person there is moved to a free square next to the spot, hurt by two rolls of 1-10, or, with
+// no free square at hand, struck for all the strength he has
+void Game::seTreeFalls(int x, int y) {
+	static const uint8_t FOOT[5][2] = {{1, 1}, {1, 1}, {1, 1}, {1, 1}, {0, 1}};
+	for (int row = 0; row < 2; ++row) {
+		for (int col = 0; col < 5; ++col) {
+			if (!FOOT[col][row])
+				continue;
+			int sx = x + row, sy = y + col - 6;
+			std::vector<int> here;
+			_world.objectsAt(sx, sy, z, here);
+			for (int i : here) {
+				if (_world.objects[i].deleted || _world.objects[i].actor < 0)
+					continue;
+				int who = _world.objects[i].actor, found = 0, fx = 0, fy = 0;
+				for (int a = 0; a < 3 && !found; ++a)
+					for (int b = 0; b < 3 && !found; ++b) {
+						if (a == 1 && b == 1)
+							continue;
+						MoveRules rules;
+						if (_movement.check(sx + a - 1, sy + b - 1, z, i, rules).passable) {
+							found = 1;
+							fx = sx + a - 1;
+							fy = sy + b - 1;
+						}
+					}
+				if (!found) {
+					_combat.applyDamage(1, who, _world.actors.hp[who]);
+				} else {
+					_world.moveObject(i, fx, fy, z);
+					_combat.applyDamage(1, who, seRoll(1, 10) + seRoll(1, 10));
+				}
+			}
+		}
+	}
 }
 
 } // namespace Ultima6

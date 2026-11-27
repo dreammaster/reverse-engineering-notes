@@ -188,6 +188,9 @@ public:
 	void seHazards();                              // sub_145A4 / sub_14338: the squares of Savage Empire
 	bool seWorktype(int actor);                    // sub_27211's own worktypes (7, 9, 10, 11, 19, 154)
 	void seAwaken();                               // sub_37566: the Avatar is dead (Savage Empire)
+	void seHurtThing(int idx, int dmg);            // sub_2A99B for a thing that is not a person (a tree, the panel)
+	void seTreeFalls(int x, int y);                // sub_2A29F
+	void seExplode(int ex, int ey, bool device);   // sub_29A41 / sub_29AC1 with the chain of sub_318F5
 	void mdAwaken();                               // sub_30093: the Avatar is dead outside a dream
 	void mdDying(int actor);                       // sub_19300 before the body falls: the story of the dead (the people the game needs, the sand creature's brood, the vine's ends)
 	void mdKilled(int actor);                      // sub_19300's count of the deaths of a dream; the last of the battle is the faint (sub_50836)
@@ -463,7 +466,6 @@ private:
 	int seRoll(int lo, int hi);                                                 // sub_3B58F
 	int seStrength(int actor) const;                                            // sub_285A0: the strength, less 3 / plus 3 by the status bits
 	int seMaxHp(int actor) const;                                               // sub_2872A: twice the strength and four times the level, 1 to 255
-	void seExplode(int ex, int ey, bool device);                                // sub_29A41 / sub_29AC1 with the chain of sub_318F5
 	int seTimerLeft() const;
 	void seSetTimer(int minutes, int object);
 	void seTimerTick(int minutes);                                              // the device timer of sub_14746 (globals 0x5A / 0x5C)

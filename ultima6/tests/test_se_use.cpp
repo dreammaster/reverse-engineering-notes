@@ -984,6 +984,43 @@ int main() {
 		w.deleteObject(pail);
 	}
 
+	// a tree (0x107 with 5 strength) is felled by a blast: its parts go, the stump and the trunk lie where it fell; a person under it is crushed or thrown aside
+	{
+		int tx = -1, ty = -1;
+		for (int r = 0; r < 400 && tx < 0; ++r) {
+			int cx = px + (r % 20) - 10, cy = py + 8 + (r / 20);
+			bool open = true;
+			for (int dx = -3; dx <= 2 && open; ++dx)
+				for (int dy = -7; dy <= 1 && open; ++dy) {
+					std::vector<int> here;
+					w.objectsAt(cx + dx, cy + dy, 0, here);
+					open &= here.empty();
+				}
+			if (open) {
+				tx = cx;
+				ty = cy;
+			}
+		}
+		CHECK(tx >= 0);
+		if (tx >= 0) {
+			int tree = put(w, 0x107, 3, tx, ty, 0);
+			w.objects[tree].quantity = 5;
+			int p1 = put(w, 0x108, 3, tx - 2, ty - 1, 0);
+			int p2 = put(w, 0x109, 3, tx, ty - 2, 0);
+			int p3 = put(w, 0x10A, 1, tx - 2, ty - 3, 0);
+			g.seHurtThing(tree, 3);
+			CHECK(!w.objects[tree].deleted && w.objects[tree].quantity == 2);
+			g.seHurtThing(tree, 9);
+			CHECK(w.objects[tree].deleted && w.objects[p1].deleted && w.objects[p2].deleted && w.objects[p3].deleted);
+			int stump = 0;
+			std::vector<int> here;
+			w.objectsAt(tx, ty, 0, here);
+			for (int i : here)
+				stump += w.objects[i].type == 0x104 && w.objects[i].frame == 1;
+			CHECK(stump == 1);
+		}
+	}
+
 	// Get (sub_2FBBA): a plain thing goes into the pack, a 0x6F gives a 0x6A, a stack goes into the pack, "nothing!" on an empty square
 	{
 		w.moveObject(w.actorObject(1), px, py, 0);
