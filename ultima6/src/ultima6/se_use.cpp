@@ -2161,7 +2161,7 @@ bool Game::seWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
-	if (wt != 7 && wt != 9 && wt != 19 && wt != 154 && wt != 10 && wt != 11)
+	if (wt != 7 && wt != 9 && wt != 19 && wt != 154 && wt != 10 && wt != 11 && wt != 14)
 		return false;
 	_world.objects.reserve(_world.objects.size() + 8);
 	World::Obj &o = _world.objects[k];
@@ -2185,6 +2185,43 @@ bool Game::seWorktype(int actor) {
 			gy = (o.y + (seRoll(0, 1) ? 10 : -10)) & 0x3FF;
 		_creatures.walkTo(actor, gx, gy);
 	};
+	if (wt == 14) { // sub_2D5A9, the one that shoots where it stands: with no side it rests; with a grenade or a ray gun (0x89, 0x8A, 0xF0, 0xF1) it fires at its target (the engine's choice);
+		// else it tries sixteen squares round it (up to four off on each axis) and strikes the first that holds somebody it sees of another side (10 moves); 5 moves when nothing came of it
+		int side = al.status[actor] & 0x60;
+		if (!side) {
+			_world.spendMoves(actor, 5);
+			return true;
+		}
+		int weapon = _combat.weaponType(actor);
+		if (weapon == 0x89 || weapon == 0x8A || weapon == 0xF0 || weapon == 0xF1) {
+			int t = _creatures.targetFor(actor);
+			if (t >= 0) {
+				_combat.attackWith(actor, t, weapon, false);
+				_world.spendMoves(actor, 10);
+				return true;
+			}
+			_world.spendMoves(actor, 5);
+			return true;
+		}
+		for (int i = 0; i < 16; ++i) {
+			int tx = (o.x + seRoll(0, 8) - 4) & 0x3FF, ty = (o.y + seRoll(0, 8) - 4) & 0x3FF;
+			std::vector<int> here;
+			_world.objectsAt(tx, ty, o.z, here);
+			for (int h : here) {
+				int a = _world.objects[h].actor;
+				if (a < 0 || a == actor || _world.objects[h].deleted || (_world.objects[h].status & 2))
+					continue;
+				int ts = al.status[a] & 0x60;
+				if (ts == side || !ts)
+					continue;
+				_combat.attackWith(actor, a, weapon, false);
+				_world.spendMoves(actor, 10);
+				return true;
+			}
+		}
+		_world.spendMoves(actor, 5);
+		return true;
+	}
 	if (wt == 10 || wt == 11) {
 		if (memberNear() && (wt == 10 ? seRoll(0, 1) == 0 : seRoll(0, 7) == 0)) {
 			if (wt == 10) {

@@ -854,7 +854,26 @@ int main() {
 			w.moveObject(fk, g.x + 30, g.y, g.z);
 			al.moves[0xC1] = 12;
 			CHECK(g.seWorktype(0xC1));
+			// worktype 14 (sub_2D5A9): a shooter of a side that has somebody of another side next to it strikes in the end
+			int hitter = 0x182;
+			for (int ty = 0x100; ty < 0x200; ++ty) {
+				const ::Ultima6::Ultima6::CreatureStats *cs = ::Ultima6::Ultima6::Combat::stats(ty);
+				if (cs && cs->dmg >= 5 && cs->str > 10) {
+					hitter = ty;
+					break;
+				}
+			}
+			w.objects[fk].type = (uint16_t)hitter;
+			al.worktype[0xC1] = 14;
+			al.status[0xC1] = 0x20;
+			w.moveObject(fk, g.x + 1, g.y, g.z);
+			int victim = al.partyRoster[0];
+			al.hp[victim] = 200;
+			for (int i = 0; i < 400 && al.hp[victim] == 200; ++i)
+				g.seWorktype(0xC1);
+			CHECK(al.hp[victim] < 200);
 			al.worktype[0xC1] = 0;
+			al.status[0xC1] = 0;
 		}
 	}
 
