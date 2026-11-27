@@ -66,6 +66,8 @@ public:
 
 	/** The weapon an actor fights with: the best readied weapon's type, or its own type when unarmed. */
 	int weaponType(int actor) const;
+	/** sub_1B4BF: the readied weapon that does most of those that reach `distance` squares; the actor's own kind when none does. */
+	int weaponType(int actor, int distance) const;
 	int armourClass(int actor) const;
 	std::string nameOf(int actor) const;
 	int adjustedStrength(int actor) const;

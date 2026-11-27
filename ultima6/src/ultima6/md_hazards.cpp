@@ -721,10 +721,10 @@ bool Game::mdWorktypeInner(int actor) {
 		if (t < 0)
 			return false;
 		int tk = _world.actorObject(t), tx = _world.objects[tk].x, ty = _world.objects[tk].y;
-		int weapon = _combat.weaponType(actor), range = Combat::rangeOf(weapon);
+		int weapon = _combat.weaponType(actor, d), range = Combat::rangeOf(weapon);
 		if (Combat::distance(std::abs(tx - o.x), std::abs(ty - o.y)) <= range && d < 8) {
 			if (d <= 1 || _creatures.lineOfFire(actor, tx, ty, range)) {
-				_combat.attack(actor, t);
+				_combat.attackWith(actor, t, weapon, false);
 				_world.spendMoves(actor, 10);
 				return true;
 			}
@@ -920,12 +920,12 @@ bool Game::mdWorktypeInner(int actor) {
 			return true;
 		}
 		int tk = _world.actorObject(t), tx = _world.objects[tk].x, ty = _world.objects[tk].y;
-		int weapon = _combat.weaponType(actor), range = Combat::rangeOf(weapon);
 		int d = std::max(std::abs(tx - o.x), std::abs(ty - o.y));
+		int weapon = _combat.weaponType(actor, d), range = Combat::rangeOf(weapon);
 		int gx = tx, gy = ty;
 		if (d < 8 && Combat::distance(std::abs(tx - o.x), std::abs(ty - o.y)) <= range) {
 			if (d <= 1 || _creatures.lineOfFire(actor, tx, ty, range)) {
-				_combat.attack(actor, t);
+				_combat.attackWith(actor, t, weapon, false);
 				_world.spendMoves(actor, 10);
 				return true;
 			}

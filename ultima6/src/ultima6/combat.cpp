@@ -138,6 +138,26 @@ int Combat::weaponType(int actor) const {
 	return k >= 0 ? _world.objects[k].type : 0;
 }
 
+int Combat::weaponType(int actor, int distance) const {
+	std::vector<int> inv;
+	_world.inventory(actor, inv, false);
+	int best = -1, bestDamage = -1;
+	for (int i : inv) {
+		const World::Obj &o = _world.objects[i];
+		if (o.location() != ObjRecord::READIED || rangeOf(o.type) < distance)
+			continue;
+		int d = weaponDamageOf(o.type);
+		if (d > bestDamage) {
+			bestDamage = d;
+			best = o.type;
+		}
+	}
+	if (best >= 0)
+		return best;
+	int k = _world.actorObject(actor);
+	return k >= 0 ? _world.objects[k].type : 0;
+}
+
 int Combat::armourClass(int actor) const {
 	std::vector<int> inv;
 	_world.inventory(actor, inv, false);
