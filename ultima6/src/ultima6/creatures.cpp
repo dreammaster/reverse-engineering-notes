@@ -315,8 +315,18 @@ int Creatures::pickTarget(int actor, bool strongest) {
 		if (t == actor || tk < 0 || _world.objects[tk].deleted || (a.status[t] & 0x10) || _world.objects[tk].z != me.z)
 			continue;
 		int ts = a.status[t] & 0x60;
-		bool take = wt == 9 || wt == 0x9A || wt == 0x13 || wt == 7 || wt == 0x99;
-		if (!take) {
+		const bool se = _world.game == GameId::SavageEmpire; // sub_2C491: no worktype takes everyone; a fighter of no side goes for anyone that has one
+		bool take = !se && (wt == 9 || wt == 0x9A || wt == 0x13 || wt == 7 || wt == 0x99);
+		if (se) {
+			if (side == 0)
+				take = ts != 0;
+			else if (side == 0x60)
+				take = ts != 0 && ts != 0x60;
+			else if (side == 0x40)
+				take = (ts & 0x20) != 0;
+			else
+				take = (ts & 0x40) != 0;
+		} else if (!take) {
 			if (side == 0)
 				take = wt == 0x9B && ts == 0x40;
 			else if (side == 0x60 && ts == 0x60)
@@ -334,7 +344,9 @@ int Creatures::pickTarget(int actor, bool strongest) {
 			continue;
 		const World::Obj &o = _world.objects[tk];
 		int ddx = std::abs((int)o.x - (int)me.x), ddy = std::abs((int)o.y - (int)me.y);
-		if (std::max(ddx, ddy) > 8)
+		if (std::max(ddx, ddy) > (se ? 11 : 8))
+			continue;
+		if (se && a.worktype[t] == 7 && !(std::abs((int)o.x - _turnPx) <= 5 && std::abs((int)o.y - _turnPy) <= 5)) // a sleeper only within five squares of the party
 			continue;
 		int d = ddx * ddx + ddy * ddy;
 		if (strongest) {
@@ -372,9 +384,25 @@ void Creatures::act(int actor, int px, int py, int pz) {
 		_world.spendMoves(actor, 10);
 }
 
+// The turn of an actor. In the spin-offs the dispatcher (sub_29CE2, sub_27211) ends by spending ten moves when the routine it called has spent none
 void Creatures::turn(int actor, int px, int py) {
+	_turnPx = px;
+	_turnPy = py;
+	int before = (int8_t)_world.actors.moves[actor];
 	if (ownTurn && ownTurn(actor))
 		return;
+	turnInner(actor, px, py);
+	if (_world.game != GameId::Ultima6 && (int8_t)_world.actors.moves[actor] == before)
+		_world.spendMoves(actor, 10);
+}
+
+void Creatures::turnInner(int actor, int px, int py) {
+	// Savage Empire (cs:4433 of sub_27211): the worktypes 15, 16 and 139-142 do nothing
+	if (_world.game == GameId::SavageEmpire) {
+		int w0 = _world.actors.worktype[actor];
+		if (w0 == 0x0F || w0 == 0x10 || (w0 >= 0x8B && w0 <= 0x8E))
+			return;
+	}
 	ObjList &a = _world.actors;
 	const World::Obj o = _world.objects[_world.actorObject(actor)];
 	int wt = a.worktype[actor];

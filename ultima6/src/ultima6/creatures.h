@@ -82,6 +82,7 @@ private:
 	bool stepToward(int actor, int tx, int ty);
 	int pickTarget(int actor, bool strongest = false);
 	void turn(int actor, int px, int py);
+	void turnInner(int actor, int px, int py);
 	void assault(int actor, int px, int py);
 	void wander(int actor, int px, int py);
 	void work(int actor);
@@ -111,6 +112,7 @@ private:
 	} _f;
 	int _winX = 0, _winY = 0, _fz = 0; // terrain_cache_x/y and the party's level
 	int _talkRequest = -1;
+	int _turnPx = 0, _turnPy = 0; // the party's place during a turn
 	int _eggPx = 0, _eggPy = 0; // where the party stood when the eggs were looked at
 	bool _revealed = true; // word_3F1B8 (dw 1 to begin with)
 	bool _shuffle = false;             // word_3F002: party members may share a square while the line forms
