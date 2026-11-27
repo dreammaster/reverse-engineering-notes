@@ -1057,6 +1057,38 @@ void Game::dropAt(int tx, int ty) {
 		glass = type == 0x133;
 		near = !(d > 1 && reach < d);
 	}
+	if (_world.game == GameId::SavageEmpire) { // sub_2F530 / sub_2E77B: what breaks when thrown from further than one square is the list at ds:1170 (the unlit grenade 0x89 too)
+		static const uint16_t FRAGILE[13] = {0x3, 0x6, 0x19, 0x3B, 0x3C, 0x5F, 0x61, 0x84, 0x85, 0xB5, 0xB8, 0x89, 0x3F};
+		glass = false;
+		for (uint16_t f : FRAGILE)
+			glass |= type == f;
+	}
+	if (!near && glass && _world.game == GameId::SavageEmpire) { // the soft clay pot (0x84) leaves a mess (0xC0), the rest only "It broke!"
+		if (stack) {
+			int left = _world.quantityOf(o) - count;
+			if (left > 0)
+				_world.setQuantity(o, left);
+			else
+				_world.deleteObject(idx);
+		} else {
+			_world.deleteObject(idx);
+		}
+		if (type == 0x84) {
+			seMake(0xC0, tx, ty, z, 1);
+			message("\nThe soft clay pot went squish.\n");
+		} else {
+			message("\nIt broke!\n");
+		}
+		sfx(0xF);
+		prompt();
+		return;
+	}
+	if (_world.game == GameId::SavageEmpire && type == 0xF1 && !(target >= 0 && dropRecipient(target, idx) && !dropSurface(tx, ty))) { // an activated device goes off where it is put (sub_29AC1)
+		_world.deleteObject(idx);
+		seExplode(tx, ty, true);
+		prompt();
+		return;
+	}
 	if (!near && glass) {
 		if (stack) {
 			int left = _world.quantityOf(o) - count;

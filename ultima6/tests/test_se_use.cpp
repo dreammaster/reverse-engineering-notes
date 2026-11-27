@@ -984,6 +984,76 @@ int main() {
 		w.deleteObject(pail);
 	}
 
+	// Drop (sub_2F530): a soft clay pot (0x84) thrown three squares goes squish and leaves a mess (0xC0); a thing that is not fragile lies there
+	{
+		int bx = -1, by = -1;
+		for (int r = 0; r < 400 && bx < 0; ++r) {
+			int cx = px + (r % 20) - 10, cy = py + (r / 20) - 10;
+			w.moveObject(w.actorObject(1), cx, cy, 0);
+			g.x = cx;
+			g.y = cy;
+			g.z = 0;
+			bool open = true;
+			for (int k = 1; k <= 3; ++k) {
+				std::vector<int> here;
+				w.objectsAt(cx + k, cy, 0, here);
+				open &= here.empty() && g.canWalk(cx + k, cy, 0);
+			}
+			if (open) {
+				bx = cx;
+				by = cy;
+			}
+		}
+		CHECK(bx >= 0);
+		if (bx >= 0) {
+			int plain = 0x2D;
+			for (int t = 0x20; t < 0x80; ++t)
+				if (!w.isStackable(t) && t != 0x3B && t != 0x3C && t != 0x3F && t != 0x5F && t != 0x61 && t != 0x84 && t != 0x85 && t != 0x6E && t != 0x58 && w.baseTile.firstTile[t]) {
+					plain = t;
+					break;
+				}
+			for (int type : {0x84, plain}) {
+				std::vector<int> pack;
+				w.inventory(1, pack, false);
+				for (int i : pack)
+					w.deleteObject(i);
+				w.addToInventory(1, type, 0, 1);
+				w.inventory(1, pack, false);
+				int nth = 0;
+				for (size_t k = 0; k < pack.size(); ++k)
+					if (w.objects[pack[k]].type == type)
+						nth = (int)k;
+				g.log.clear();
+				g.handleKey('d');
+				for (int k = 0; k < nth; ++k)
+					g.handleKey(KEY_RIGHT);
+				g.handleKey(KEY_ENTER);
+				g.handleKey(KEY_RIGHT);
+				g.handleKey(KEY_RIGHT);
+				g.handleKey(KEY_RIGHT);
+				g.handleKey(KEY_ENTER);
+				std::vector<int> there;
+				w.objectsAt(bx + 3, by, 0, there);
+				int mess = 0, lying = 0;
+				for (int i : there) {
+					mess += w.objects[i].type == 0xC0;
+					lying += w.objects[i].type == plain;
+				}
+				if (type == 0x84) {
+					CHECK(logText(g).find("went squish") != std::string::npos && mess == 1);
+					for (int i : there)
+						if (w.objects[i].type == 0xC0)
+							w.deleteObject(i); // (the mess is a holder: the next thing would fall into it)
+				} else {
+					CHECK(logText(g).find("It broke!") == std::string::npos && lying == 1);
+				}
+			}
+		}
+		w.moveObject(w.actorObject(1), px, py, 0);
+		g.x = px;
+		g.y = py;
+	}
+
 	// the ladders (sub_254F4 / sub_19505): a way down of quality 102 takes the party to (25,131) of level 2, a way up of quality 102 to (272,69) of level 0
 	{
 		int sx = g.x, sy = g.y, sz = g.z;
