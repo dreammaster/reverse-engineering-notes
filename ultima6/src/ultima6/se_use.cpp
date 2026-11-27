@@ -1619,6 +1619,7 @@ void Game::seExplode(int ex, int ey, bool device) {
 		}
 	}
 	// sub_318F5: a grenade in the squares around goes off at once, a web goes
+	int lastTree = -1;
 	for (int dx = -1; dx <= 1; ++dx) {
 		for (int dy = -1; dy <= 1; ++dy) {
 			int sx = (ex + dx) & mask, sy = (ey + dy) & mask;
@@ -1626,6 +1627,11 @@ void Game::seExplode(int ex, int ey, bool device) {
 			if (nade >= 0) {
 				consumeOne(nade);
 				seExplode(sx, sy, false);
+			}
+			int tree = seFind(0x107, sx, sy); // sub_318F5: a tree in the squares around takes thirty at once (once each)
+			if (tree >= 0 && tree != lastTree) {
+				seHurtThing(tree, 30);
+				lastTree = tree;
 			}
 			int web = seFind(0x11, sx, sy);
 			if (web >= 0)

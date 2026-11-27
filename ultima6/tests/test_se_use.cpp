@@ -1018,6 +1018,14 @@ int main() {
 			for (int i : here)
 				stump += w.objects[i].type == 0x104 && w.objects[i].frame == 1;
 			CHECK(stump == 1);
+			// a grenade that goes off beside a tree fells it at once (sub_318F5: thirty)
+			for (int i : here)
+				if (w.objects[i].type == 0x104)
+					w.deleteObject(i);
+			int tree2 = put(w, 0x107, 3, tx, ty, 0);
+			w.objects[tree2].quantity = 5;
+			g.seExplode(tx - 1, ty, false);
+			CHECK(w.objects[tree2].deleted);
 		}
 	}
 
