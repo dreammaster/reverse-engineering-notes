@@ -2161,7 +2161,7 @@ bool Game::seWorktype(int actor) {
 	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
 		return false;
 	int wt = al.worktype[actor];
-	if (wt != 7 && wt != 9 && wt != 19 && wt != 154 && wt != 10 && wt != 11 && wt != 14)
+	if (wt != 7 && wt != 9 && wt != 19 && wt != 154 && wt != 10 && wt != 11 && wt != 14 && wt != 8 && wt != 155)
 		return false;
 	_world.objects.reserve(_world.objects.size() + 8);
 	World::Obj &o = _world.objects[k];
@@ -2185,6 +2185,36 @@ bool Game::seWorktype(int actor) {
 			gy = (o.y + (seRoll(0, 1) ? 10 : -10)) & 0x3FF;
 		_creatures.walkTo(actor, gx, gy);
 	};
+	if (wt == 8 || wt == 155) { // sub_2C86D, the fighter: it goes for whom sub_2C491 names (targetFor), with the weapon of its pack that reaches and hurts most (sub_2C377); out of reach it walks up; in reach it strikes
+		// (10 moves) when next to the target or when there is a line, else it sidesteps by a quarter turn about itself (to (x - dy, y + dx) or (x + dy, y - dx)) and, as the original does, walks to the
+		// same square again. APPROX(100): a grenade or a ray gun (0x89, 0x8A, 0xF0, 0xF1) is aimed by sub_2C661, the centre of the busiest 3 x 3 square within five squares of the party; here it goes at the target
+		int t = _creatures.targetFor(actor);
+		if (t < 0)
+			return false;
+		int tk = _world.actorObject(t), tx = _world.objects[tk].x, ty = _world.objects[tk].y;
+		int d = Combat::distance(std::abs(gapOf(tx, o.x)), std::abs(gapOf(ty, o.y)));
+		int weapon = _combat.weaponType(actor, d), range = Combat::rangeOf(weapon);
+		if (d > range) {
+			_creatures.walkTo(actor, tx, ty);
+			return true;
+		}
+		if (d <= 1 || _creatures.lineOfFire(actor, tx, ty, range)) {
+			_combat.attackWith(actor, t, weapon, false);
+			_world.spendMoves(actor, 10);
+			return true;
+		}
+		int dx = gapOf(tx, o.x), dy = gapOf(ty, o.y), sx = o.x, sy = o.y, gx, gy;
+		if (seRoll(0, 1)) {
+			gx = (sx - dy) & 0x3FF;
+			gy = (sy + dx) & 0x3FF;
+		} else {
+			gx = (sx + dy) & 0x3FF;
+			gy = (sy - dx) & 0x3FF;
+		}
+		_creatures.walkTo(actor, gx, gy);
+		_creatures.walkTo(actor, gx, gy);
+		return true;
+	}
 	if (wt == 14) { // sub_2D5A9, the one that shoots where it stands: with no side it rests; with a grenade or a ray gun (0x89, 0x8A, 0xF0, 0xF1) it fires at its target (the engine's choice);
 		// else it tries sixteen squares round it (up to four off on each axis) and strikes the first that holds somebody it sees of another side (10 moves); 5 moves when nothing came of it
 		int side = al.status[actor] & 0x60;

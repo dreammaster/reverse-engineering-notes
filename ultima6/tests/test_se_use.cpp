@@ -872,6 +872,17 @@ int main() {
 			for (int i = 0; i < 400 && al.hp[victim] == 200; ++i)
 				g.seWorktype(0xC1);
 			CHECK(al.hp[victim] < 200);
+			// worktype 8 (sub_2C86D): the fighter walks up to the party and strikes in the end
+			al.worktype[0xC1] = 8;
+			al.hp[victim] = 200;
+			w.moveObject(fk, g.x + 2, g.y, g.z);
+			int before = w.objects[fk].x;
+			al.moves[0xC1] = 12;
+			g.seWorktype(0xC1);
+			CHECK(w.objects[fk].x < before);
+			for (int i = 0; i < 400 && al.hp[victim] == 200; ++i)
+				g.seWorktype(0xC1);
+			CHECK(al.hp[victim] < 200);
 			al.worktype[0xC1] = 0;
 			al.status[0xC1] = 0;
 		}
