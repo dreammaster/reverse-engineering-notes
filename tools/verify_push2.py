@@ -73,6 +73,8 @@ for i, (d, n) in enumerate(segs):
     if st == 'DIFF':
         bad += 1
         print('   port-only:', moved); print('   original-only:', gone)
+        ex_p = [o for o in pb if o not in objs]; ex_o = [q for q in sorted(objs) if q not in pb]
+        print('   exact mismatches (the tolerance of 2 hides them in the comparison above): port', ex_p, 'original', ex_o)
         print('   (the segments after the first difference are not comparable: the run is not re-synchronised)'); break
     if st == 'drift' and RESYNC:
         e.wr(0x1F17, pr, bytes(blocks[i]['p']))
