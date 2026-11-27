@@ -53,6 +53,10 @@ public:
 	void requestTalk(int actor) {
 		_talkRequest = actor;
 	}
+	/** sub_1B69D / sub_2C491: whom the actor goes for (-1 if nobody). */
+	int targetFor(int actor) {
+		return pickTarget(actor, false);
+	}
 	/** wt_work (sub_29508): one turn in eight a step towards the place of its schedule, else 5 moves passed. */
 	void workTurn(int actor) {
 		work(actor);

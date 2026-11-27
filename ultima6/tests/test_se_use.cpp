@@ -839,6 +839,25 @@ int main() {
 		CHECK(logText(g).find("awaken in Intanya's hut") != std::string::npos);
 	}
 
+	// worktype 11 (sub_2D470): a creature with a member within three squares turns on the party sooner or later (worktype 8); worktype 7 far from the party does nothing
+	{
+		ObjList &al = w.actors;
+		int fk = w.actorFree(0xC1) ? w.addActor(0xC1, 0x182, g.x + 2, g.y, g.z) : -1;
+		if (fk >= 0) {
+			al.status[0xC1] = 0;
+			al.hp[0xC1] = 30;
+			al.worktype[0xC1] = 11;
+			for (int i = 0; i < 80 && al.worktype[0xC1] == 11; ++i)
+				g.seWorktype(0xC1);
+			CHECK(al.worktype[0xC1] == 8);
+			al.worktype[0xC1] = 7;
+			w.moveObject(fk, g.x + 30, g.y, g.z);
+			al.moves[0xC1] = 12;
+			CHECK(g.seWorktype(0xC1));
+			al.worktype[0xC1] = 0;
+		}
+	}
+
 	if (failures == 0)
 		std::printf("ok\n");
 	return failures ? 1 : 0;

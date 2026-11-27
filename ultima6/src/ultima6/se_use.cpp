@@ -2146,3 +2146,86 @@ void Game::seAwaken() {
 
 } // namespace Ultima6
 } // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// Savage Empire's own worktypes of sub_27211 that are not Ultima VI's: 7, 9, 19 and 154 (sub_2D1CA, the one that runs away: more than seven squares from the party it does nothing; with a target it makes
+// for the square as far from it as it is near, without one it wanders, of side 0x40 it comes to the party; one turn in four, if it is not of the party, it gets a hit point back and, once it has a
+// quarter of its strength, its own worktype again), 10 (sub_2D33E: with a member within three squares one time in two it comes to the party, else it drifts ten squares along one axis or rests) and 11
+// (sub_2D470: with a member within three squares one turn in eight it turns on the party, worktype 8, else it drifts or rests).
+// APPROX(80): the walks are the engine's `walkTo`, the wandering of the first is the engine's (false is returned)
+bool Game::seWorktype(int actor) {
+	ObjList &al = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0 || _world.objects[k].deleted || actor >= 0x100)
+		return false;
+	int wt = al.worktype[actor];
+	if (wt != 7 && wt != 9 && wt != 19 && wt != 154 && wt != 10 && wt != 11)
+		return false;
+	_world.objects.reserve(_world.objects.size() + 8);
+	World::Obj &o = _world.objects[k];
+	auto gapOf = [&](int a, int b) {
+		int d = (a - b) & 0x3FF;
+		return d > 0x200 ? d - 0x400 : d;
+	};
+	auto memberNear = [&]() {
+		for (int m = 0; m < al.partySize; ++m) {
+			int mk = _world.actorObject(al.partyRoster[m]);
+			if (mk >= 0 && std::abs(gapOf(_world.objects[mk].x, o.x)) < 3 && std::abs(gapOf(_world.objects[mk].y, o.y)) < 3)
+				return true;
+		}
+		return false;
+	};
+	auto drift = [&]() {
+		int gx = o.x, gy = o.y;
+		if (seRoll(0, 1))
+			gx = (o.x + (seRoll(0, 1) ? 10 : -10)) & 0x3FF;
+		else
+			gy = (o.y + (seRoll(0, 1) ? 10 : -10)) & 0x3FF;
+		_creatures.walkTo(actor, gx, gy);
+	};
+	if (wt == 10 || wt == 11) {
+		if (memberNear() && (wt == 10 ? seRoll(0, 1) == 0 : seRoll(0, 7) == 0)) {
+			if (wt == 10) {
+				_creatures.walkTo(actor, x, y);
+				return true;
+			}
+			al.worktype[actor] = 8; // it turns on the party; the fighter of the engine does the rest
+			return false;
+		}
+		if (seRoll(0, 1))
+			drift();
+		else
+			_world.spendMoves(actor, 5);
+		return true;
+	}
+	if (std::max(std::abs(gapOf(o.x, x)), std::abs(gapOf(o.y, y))) > 7) {
+		_world.spendMoves(actor, al.moves[actor] ? al.moves[actor] : 1);
+		return true;
+	}
+	int t = _creatures.targetFor(actor);
+	if (t < 0)
+		return false;
+	int tk = _world.actorObject(t), dx = gapOf(_world.objects[tk].x, o.x), dy = gapOf(_world.objects[tk].y, o.y);
+	if (std::abs(dx) < 8 && std::abs(dy) < 8) {
+		int saved = al.moves[actor];
+		if (!_creatures.walkTo(actor, (o.x - dx) & 0x3FF, (o.y - dy) & 0x3FF))
+			al.moves[actor] = (uint8_t)saved;
+	} else if ((al.status[actor] & 0x60) == 0x40) {
+		_creatures.walkTo(actor, x, y);
+	} else {
+		return false;
+	}
+	if (!(al.status[actor] & 0x80) && seRoll(0, 3) == 0) {
+		int most = ActorStats::maxHealth(_world, actor);
+		if (al.hp[actor] < most)
+			++al.hp[actor];
+		if (most > 0 && al.hp[actor] * 4 / most > 0 && al.unknown12f1[actor])
+			al.worktype[actor] = al.unknown12f1[actor];
+	}
+	return true;
+}
+
+} // namespace Ultima6
+} // namespace Ultima6

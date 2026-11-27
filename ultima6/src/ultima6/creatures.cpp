@@ -389,9 +389,8 @@ void Creatures::turn(int actor, int px, int py) {
 	_turnPx = px;
 	_turnPy = py;
 	int before = (int8_t)_world.actors.moves[actor];
-	if (ownTurn && ownTurn(actor))
-		return;
-	turnInner(actor, px, py);
+	if (!(ownTurn && ownTurn(actor)))
+		turnInner(actor, px, py);
 	if (_world.game != GameId::Ultima6 && (int8_t)_world.actors.moves[actor] == before)
 		_world.spendMoves(actor, 10);
 }
