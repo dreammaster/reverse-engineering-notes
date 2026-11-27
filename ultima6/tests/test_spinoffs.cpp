@@ -180,6 +180,9 @@ int main() {
 			CHECK(Combat::stats(0x171) && Combat::stats(0x171)->hp == 45); // a Martian creature
 			CHECK(!Combat::stats(0x16C) || Combat::stats(0x16C)->hp != 10); // not Ultima VI's acid slug
 			CHECK(Combat::weaponDamageOf(0x2C) == 30 && Combat::rangeOf(0x2C) == 9 && Combat::armourOf(0x17) == 2);
+			// the ammunition of the weapons (sub_1ADCA) and the whole armour list of the executable (sub_20174)
+			CHECK(Combat::mdAmmo(0x30) == 0x40 && Combat::mdAmmo(0x2F) == 0x3F && Combat::mdAmmo(0x29) == 0x39 && Combat::mdAmmo(0x2B) == 0x3A && Combat::mdAmmo(0x10) == 0);
+			CHECK(Combat::armourOf(3) == 1 && Combat::armourOf(14) == 3 && Combat::armourOf(39) == 3 && Combat::armourOf(1) == 0);
 		}
 		static World se;
 		se.game = GameId::SavageEmpire;
@@ -187,6 +190,7 @@ int main() {
 			{
 				CHECK(Combat::stats(317) && Combat::stats(317)->hp == 255);
 				CHECK(Combat::weaponDamageOf(0x28) == 35 && Combat::armourOf(0x43) == 7);
+				CHECK(Combat::seAmmo(0x1F) == 0x2D && Combat::seAmmo(0x20) == 0x24 && Combat::seAmmo(0x25) == 0x1A && Combat::seAmmo(0x32) == 0);
 			}
 		static World u6;
 		if (u6.load("u6/game"))
