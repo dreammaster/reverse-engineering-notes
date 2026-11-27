@@ -17,7 +17,9 @@ if LV != 1: e.uc.hook_add(UC_HOOK_CODE, lambda uc, a, sz, u: e.wr(0x1F17, 0x708,
 opened = []
 orig = e.on_open
 e.on_open = lambda h, dn, hp: (opened.append(hp), orig(h, dn, hp))
-def fake_prompt(uc, a, sz, u):                    # 1000:C1AB, the slot prompt: file name 'SAVE.SAV' + slot digit, slot 1, ZF clear
+armed = [False]                                   # 1000:C1AB is the restore prompt at start-up as well: only fake it for the save
+def fake_prompt(uc, a, sz, u):
+    if not armed[0]: return                    # 1000:C1AB, the slot prompt: file name 'SAVE.SAV' + slot digit, slot 1, ZF clear
     ss = e.r('ss') & 0xFFFF; sp = e.r('esp') & 0xFFFF
     ret = struct.unpack('<H', bytes(e.uc.mem_read(ss * 16 + sp, 2)))[0]
     e.wr(ss, 0x4D09, b'SAVE.SAV\0'); e.w('esp', sp + 2); e.w('eip', ret)
@@ -38,10 +40,13 @@ e.wr(0x1F17, 0x248, struct.pack('<H', 1000))
 rw = lambda o: struct.unpack('<H', bytes(e.uc.mem_read(DS + o, 2)))[0]
 pr = rw(0x5c); sl = rw(0x2a)
 state = {'room': rw(0x232), 'player': list(e.uc.mem_read(DS + pr, 3)), 'ents': [list(e.uc.mem_read(DS + sl + 50 * j, 6)) for j in range(1, rw(0x224))]}
+armed[0] = True
 e.scan_queue.append(0x3F); run(4); e.scan_queue.append(0xBF); run(40)
 e.keys.append(0x1579); run(300)                  # Y: pay
-if not opened:
-    e.save_frame('/tmp/mos_fail.png'); sys.exit('the game did not write a save file (frame in /tmp/mos_fail.png)')
-shutil.copy(opened[0], out)
+if not any(os.path.basename(o).upper().startswith('SAVE.SAV') for o in opened):
+    e.save_frame('/tmp/mos_fail.png'); sys.exit('the game did not write a save file (frame in /tmp/mos_fail.png; opened: %s)' % opened[-4:])
+saves = [o for o in opened if os.path.basename(o).upper().startswith('SAVE.SAV')]      # SAVE.SAV or SAVE.SAV1
+if not saves: sys.exit('no save file among the opened files: %s' % opened[-3:])
+shutil.copy(saves[-1], out)
 shutil.rmtree(tmp, ignore_errors=True)
 print('STATE', json.dumps(state))
