@@ -168,6 +168,28 @@ void Creatures::hatch(int egg, int hour) {
 				t.x = e.x;
 				t.y = e.y;
 				t.z = e.z;
+				if (_world.game == GameId::MartianDreams) { // sub_2662B: a thing is put on a square within three of the egg (three tries): not impassable terrain (flags 2 and 4), none of its kind there
+					bool put = false;
+					int mask = e.z == 0 ? 0x3FF : 0xFF;
+					for (int tr = 0; tr < 3 && !put; ++tr) {
+						int nx = (e.x + (int)(_rng.next() % 7) - 3) & mask, ny = (e.y + (int)(_rng.next() % 7) - 3) & mask;
+						int terrain = _world.flags.flags1[_world.map.tile(e.z, nx, ny) & (TileFlags::TILES - 1)];
+						if (terrain & 6)
+							continue;
+						std::vector<int> there;
+						_world.objectsAt(nx, ny, e.z, there);
+						bool same = false;
+						for (int h : there)
+							same |= !_world.objects[h].deleted && (_world.objects[h].type == o.type || _world.objects[h].type == 0x14B);
+						if (same)
+							continue;
+						t.x = (uint16_t)nx;
+						t.y = (uint16_t)ny;
+						put = true;
+					}
+					if (!put)
+						continue;
+				}
 				t.type = o.type;
 				t.frame = o.frame;
 				t.quantity = 1;
