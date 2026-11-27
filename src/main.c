@@ -1013,21 +1013,113 @@ static int door_target(const RoomView *rv, int d) {
 	return -1;
 }
 
+/* 1000:11D06 (the Payoff: DAB1's helper), the search for a free spot for an object that stands where the player arrives: the object keeps its size (header words 8..10) and is shifted
+   by the table of direction masks (bit 1 up, 2 down, 4 left, 8 right, 10h z up, 20h z down; the unshifted spot only when all four horizontal bits are allowed) in steps of 4, 8, 12 ...
+   (x and y shifts are per try, z shifts add up); a shifted spot is refused when it leaves the room (every violated edge clears its direction bit for good) or overlaps any other box
+   (the engine entries: all other things and the player). Returns 1 with the new x1, y1, z, 0 when no spot is left (or the mask runs empty). */
+static int arrival_search(const RoomView *rv, const Walker *wk, int self, int xs, int ys, int zs, int allowed, int *ox, int *oy, int *oz) {
+	static const struct { int mask, dx, dy, dz; } tab[] = {
+		{0x0F, 0, 0, 0}, {0x40, 0, 0, 0}, {0x01, 0, -1, 0}, {0x09, 1, -1, 0}, {0x08, 1, 0, 0}, {0x0A, 1, 1, 0}, {0x02, 0, 1, 0}, {0x06, -1, 1, 0}, {0x04, -1, 0, 0}, {0x05, -1, -1, 0},
+		{0x20, 0, 0, -1}, {0x10, 0, 0, 1}};
+	const int ntab = (int)(sizeof(tab) / sizeof(tab[0]));
+	int w8 = rv->mp2.sec[0].rec[rv->room][4] * 8, h8 = rv->mp2.sec[0].rec[rv->room][5] * 8;
+	int wy = rv->mp2.sec[0].rec[rv->room][20], wx = rv->mp2.sec[0].rec[rv->room][21];       /* 5D1 / 5D2: the wall thickness */
+	int mask = allowed, step = 4, idx = 0, z = *oz;
+	for (int guard = 0; guard < 4000; guard++) {
+		if (idx >= ntab) { step += 4; idx = 2; }
+		int m = tab[idx].mask, dx = tab[idx].dx, dy = tab[idx].dy, dz = tab[idx].dz;
+		idx++;
+		if ((mask & m) != m || m == 0x40) continue;
+		z += dz;                                                    /* z changes stay when the spot is refused */
+		int x1 = *ox + dx * step, y1 = *oy + dy * step, x0 = x1 - xs + 1, y0 = y1 - ys + 1, zt = z + zs - 1, bad = 0;
+		if (z < 0) { mask &= ~0x20; bad = 1; }
+		if (zt >= 0xF0) { mask &= ~0x10; bad = 1; }
+		if ((int8_t)x1 >= w8) { mask &= ~0x08; bad = 1; }
+		if ((int8_t)y1 >= h8) { mask &= ~0x02; bad = 1; }
+		if ((int8_t)x0 < wx) { mask &= ~0x04; bad = 1; }
+		if ((int8_t)y0 < wy) { mask &= ~0x01; bad = 1; }
+		int hit = bad;
+		for (int i = 0; i < rv->ro.n && !hit; i++) {
+			const RoomObj *o = &rv->ro.o[i];
+			if (o->thing == self) continue;
+			if (!(x1 >= o->cx1 ? x0 <= o->cx1 : x1 >= o->cx0)) continue;
+			if (!(y1 >= o->cy1 ? y0 <= o->cy1 : y1 >= o->cy0)) continue;
+			if (zt >= o->czt ? z <= o->czt : zt >= o->czb) hit = 1;
+		}
+		if (!hit) {                                                 /* the player's own entry */
+			int px1 = wk->x1, py1 = wk->y1, px0 = px1 - PL_XS + 1, py0 = py1 - PL_YS + 1, pzt = wk->z + PL_ZS - 1;
+			if ((x1 >= px1 ? x0 <= px1 : x1 >= px0) && (y1 >= py1 ? y0 <= py1 : y1 >= py0) && (zt >= pzt ? z <= pzt : zt >= wk->z)) hit = 1;
+		}
+		if (!hit) {
+			if (!mask) return 0;
+			*ox = x1; *oy = y1; *oz = z;
+			return 1;
+		}
+		if (!mask) return 0;
+	}
+	return 0;
+}
+
+/* the room-entry routine 1000:DAB1 (CAD.EXE DA60) after the room was built: the player is put on the landing spot (room_landing) and tested; objects overlapping it are moved away one at a time
+   (11D06 above: first with the horizontal directions except the one back towards the door, then with all directions and z) and the test is repeated; a wall, an exit or a solid object
+   on the spot, or an object that cannot be placed, refuses the crossing (the caller puts the player back in the old room). Returns 0 when refused. */
+static int walker_arrive(Walker *wk, RoomView *rv, int door, int lx, int ly, int lz) {
+	int ori = rv->mp2.sec[1].rec[door] && rv->mp2.sec[1].len[door] > 5 ? rv->mp2.sec[1].rec[door][5] : 0;
+	int gw, gh, gx, gy;
+	if (!roomview_geom(rv, &gw, &gh, &gx, &gy)) { gx = gy = 0; }
+	wk->x1 = lx; wk->y1 = ly; wk->z = lz;
+	for (int iter = 0; iter < 64; iter++) {
+		ColResult cr;
+		collision_test(&wk->world, lx, ly, lz, PL_XS, PL_YS, PL_ZS, -1, 1, &cr);
+		if (cr.zf) { if (g_snd_log) fprintf(stderr, "ARRIVE ok at %d,%d,%d\n", lx, ly, lz); return 1; }
+		if (cr.count == 0xFF || cr.count == 0xFE || cr.flag == 0xFD || cr.n < 1) { if (g_snd_log) fprintf(stderr, "ARRIVE refused at %d,%d: count %d flag %d n %d first %d\n", lx, ly, cr.count, cr.flag, cr.n, cr.n ? cr.ids[0] : -1); return 0; }
+		RoomObj *o = NULL;
+		for (int i = 0; i < rv->ro.n; i++) if (rv->ro.o[i].thing == cr.ids[0]) { o = &rv->ro.o[i]; break; }
+		if (!o) return 0;
+		int allowed = 0x0F, ox = lx, oy = ly, oz = lz;
+		if (ori) { if (wk->face & 1) { allowed ^= 2; oy = ly - PL_YS + 1; } else allowed ^= 1; }
+		else { if (wk->face & 8) allowed ^= 4; else { allowed ^= 8; ox = lx - PL_XS + 1; } }
+		int sx = ox, sy = oy, sz = oz;                              /* both passes start from the same spot (60Bh..60Dh) */
+		if (!arrival_search(rv, wk, o->thing, o->xs, o->ys, o->zs, allowed, &ox, &oy, &oz)) {
+			ox = sx; oy = sy; oz = sz;
+			if (!arrival_search(rv, wk, o->thing, o->xs, o->ys, o->zs, 0x3F, &ox, &oy, &oz)) { if (g_snd_log) fprintf(stderr, "ARRIVE thing %d cannot be placed (from %d,%d)\n", o->thing, lx, ly); return 0; }
+		}
+		if (g_snd_log) fprintf(stderr, "ARRIVE thing %d moved %d,%d,%d -> %d,%d,%d\n", o->thing, o->x1, o->y1, o->z0, ox, oy, oz);
+		o->x1 = ox; o->y1 = oy; o->z0 = oz;
+		roomobj_moved(o, gx, gy);
+		rv->vm.pos[3 * o->thing] = (uint8_t)ox; rv->vm.pos[3 * o->thing + 1] = (uint8_t)oy; rv->vm.pos[3 * o->thing + 2] = (uint8_t)oz;
+		rv->pos_seen[3 * o->thing] = rv->vm.pos[3 * o->thing]; rv->pos_seen[3 * o->thing + 1] = rv->vm.pos[3 * o->thing + 1]; rv->pos_seen[3 * o->thing + 2] = rv->vm.pos[3 * o->thing + 2];
+		walker_sync_boxes(wk, rv);
+	}
+	return 0;
+}
+
 static void walker_enter(Walker *wk, RoomView *rv, int room, int door) {
+	int old_room = rv->room, old_x = wk->x1, old_y = wk->y1, old_z = wk->z;
 	wk->grab = 0;
 	rv->room = room;
 	wk->world_key = 0;
 	walker_world(wk, rv);
-	int placed = 0;
-	for (int i = 0; i < wk->world.nexits && !placed; i++)
+	int placed = 0, refused = 0;
+	for (int i = 0; i < wk->world.nexits && !placed && !refused; i++)
 		if (wk->exits[i].id == door) {
 			int lx, ly;
 			room_landing(&rv->mp2, room, &wk->exits[i], &lx, &ly);
-			ColResult cr;
-			collision_test(&wk->world, lx, ly, 0, PL_XS, PL_YS, PL_ZS, -1, 1, &cr);
-			if (cr.zf) { wk->x1 = lx; wk->y1 = ly; wk->z = 0; placed = 1; }
-			else placed = walker_find_free(wk, lx, ly);
+			/* 1000:09C8 / DB77: the player's height above the floor level is kept, the level itself (room record byte 1Eh) is translated: z' = ((z >> 4) + base_old - base_new) * 16 + (z & 15) */
+			const uint8_t *orec = rv->mp2.sec[0].rec[old_room], *nrec = rv->mp2.sec[0].rec[room];
+			int ob = orec && rv->mp2.sec[0].len[old_room] > 0x1E ? orec[0x1E] : 0, nb = nrec && rv->mp2.sec[0].len[room] > 0x1E ? nrec[0x1E] : 0;
+			int lz = (int8_t)((((((old_z >> 4) + ob) & 0xFF) - nb) << 4) + (old_z & 15));
+			if (walker_arrive(wk, rv, door, lx, ly, lz)) placed = 1;
+			else if (getenv("CAD_ARRIVE_OLD")) placed = walker_find_free(wk, lx, ly);      /* the port's earlier rule: the player takes the nearest free spot */
+			else refused = 1;
 		}
+	if (refused) {                                                 /* 1000:0A35: the player is back in the old room at the old place */
+		rv->room = old_room;
+		wk->world_key = 0;
+		walker_world(wk, rv);
+		wk->x1 = old_x; wk->y1 = old_y; wk->z = old_z;
+		return;
+	}
 	if (!placed)
 		walker_find_free(wk, wk->world.w8 / 2, wk->world.h8 / 2);
 }
@@ -2522,7 +2614,7 @@ int main(int argc, char **argv) {
 					if (!strncmp(c, "dump:", 5)) { fprintf(stderr, "DUMP %d %d %d %d\n", g_walk.x1, g_walk.y1, g_walk.z, g_room.room); if (getenv("CAD_DUMPBOX")) for (int bi = 0; bi < g_room.ro.n; bi++) { const RoomObj *bo = &g_room.ro.o[bi]; fprintf(stderr, "OBJ %d %d %d %d %d %d %d %d\n", bo->thing, bo->cx1, bo->cy1, bo->cx0, bo->cy0, bo->czt, bo->czb, bo->sp->header[22]); }   /* debugging aid: print the player position */ }
 					if (!strncmp(c, "money:", 6)) g_room.vm.money = (uint32_t)atoi(c + 6);
 					if (!strncmp(c, "tp:", 3)) { int tx = 0, ty = 0, tz = 0; if (sscanf(c + 3, "%d:%d:%d", &tx, &ty, &tz) >= 2) { g_walk.x1 = tx; g_walk.y1 = ty; g_walk.z = tz; } }   /* debugging aid: put the player at x, y (z) */
-					if (!strncmp(c, "unlock:", 7)) { int d = atoi(c + 7); if (d >= 0 && d < 400) g_room.vm.doorw[d] = 0; }   /* debugging aid: clear the lock word of door d */
+					if (!strncmp(c, "unlock:", 7)) { int d = atoi(c + 7); if (d >= 0 && d < 400) g_room.vm.doorw[d] = 0; else if (d < 0) memset(g_room.vm.doorw, 0, sizeof(g_room.vm.doorw)); }   /* debugging aid: clear the lock word of door d */
 					if (!strncmp(c, "save", 4)) game_save(&g_walk, &g_room, -1);
 					if (!strncmp(c, "load", 4)) { game_load(&g_room, -1); load_scene(&g, scene, &scr); }
 					for (int n = atoi(colon + 1); n > 0; n--)
