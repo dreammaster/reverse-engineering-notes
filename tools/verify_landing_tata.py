@@ -62,6 +62,7 @@ for room in range(first, last):
         door = ex[0x16]
         if res is None: skipped += 1; print(room, k, 'door', door, dd, 'no crossing'); continue
         nr, (x, y, z) = res
+        if os.environ.get('DBG'): print('  crossing', room, k, 'exit box', tuple(ex[:6]), 'door', door, 'from', (px, py), dd, '->', res)
         nrec = rec[nr]
         mp1 = mjm.mjm_unpack(open(d + '/LEV%d.MP1' % LV, 'rb').read()); B = objsprites.blocks(mp1)
         hd = lambda i: struct.unpack('>16H', B[i][1][:32])[8:11]
