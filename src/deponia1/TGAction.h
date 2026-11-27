@@ -81,6 +81,10 @@ public:
 
 	/** The action that is run (its data object). */
 	TVisObjRef GetDataObject() const;
+	/** Whether the action is over (it is deleted by DeleteFinishedActions()). */
+	bool IsFinished() const {
+		return _finished;
+	}
 	/** The record of the running state (the "active action" that the scripts get). */
 	const TVisObjRef &GetActive() const {
 		return _active;

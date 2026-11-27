@@ -687,6 +687,36 @@ static void runAreaActions(TSceneActionArea &area, const TVisObjRef &character, 
 	}
 }
 
+// WORKAROUND: a known bug of the original game (Deponia 1, the Viaduct). The exit `e2007-|23|` ("To the Outer Turn") has Rufus walk
+// to `pos_rufus_nach_2007`, into the dark tunnel, say that he tries to find his way by sound and walk back. That place is in the
+// action area `steg` (the walkway), whose action on entering sets the condition `2004_Rufus_auf_Steg`; the object
+// `bg_Aufgang_zum_Licht_dahinter` that hides him in the tunnel is not shown while the condition is true, so Rufus appears in front
+// of everything for as long as he speaks, and is hidden again when he leaves the area. The entering of that area by this scripted
+// walk, and nothing else, is taken as not having happened: the game is Deponia 1, the area `steg` of the scene `2004 - Viaduct`,
+// the character Rufus, and the action of that exit running.
+static bool isScriptedWalkIntoTheTunnel(const TSceneActionArea &area, const TVisObjRef &character) {
+	TVisObjRef game = gameControl()->GetVisionaire()->GetGame();
+
+	if (game.GetStr(kGameGameName).Cmp(wxString(L"Deponia")) != 0)
+		return false;
+
+	if (!(area.GetName() == TCharHolder(L"steg")) || !(character.GetName() == TCharHolder(L"Rufus")) ||
+	        !(character.GetLink(kCharacterScene).GetName() == TCharHolder(L"2004 - Viaduct")))
+		return false;
+
+	for (TGAction *action : TGAction::GetRunningActions()) {
+		if (action->IsFinished())
+			continue;
+
+		TVisObjRef data = action->GetDataObject();
+
+		if (data.GetName() == TCharHolder(L"'com_walk' angewandt") && data.GetParent().GetName() == TCharHolder(L"e2007-|23|"))
+			return true;
+	}
+
+	return false;
+}
+
 // Confirmed (asm lines 178540-178990): the actions of the action areas of the scene that
 // the character enters or leaves by walking run.
 void TGCharacter::UpdateActionAreas() {
@@ -717,7 +747,8 @@ void TGCharacter::UpdateActionAreas() {
 
 	// the ones it has entered
 	for (TSceneActionArea *area : inside) {
-		runAreaActions(*area, _objRef, kExecuteEnterArea);
+		if (!isScriptedWalkIntoTheTunnel(*area, _objRef))
+			runAreaActions(*area, _objRef, kExecuteEnterArea);
 		_activeAreas.push_back(area);
 	}
 }

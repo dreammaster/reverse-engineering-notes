@@ -12,6 +12,7 @@
 #include "THGameControl.h"
 #include "TGAction.h"
 #include "TGScene.h"
+#include "TSceneActionArea.h"
 #include "vsplayer/control/masterControl.h"
 #include "TGCharacter.h"
 #include "TMSavegame.h"
@@ -127,16 +128,33 @@ int main(int argc, char **argv) {
 		std::printf("scene '%ls' scroll %.0f,%.0f character at %d,%d dir %d\n", scene->GetRef().GetName().c_str().c_str(), scroll.x, scroll.y,
 		            rufus->_position.x, rufus->_position.y, rufus->_objRef.GetInt(kCharacterDirection));
 
+		// the action areas of the scene, and whether Rufus and the places of the tunnel are in them
+		if (std::getenv("SHOWAREAS")) {
+			std::list<TSceneActionArea *> *areas = TGScene::GetActionAreas(scene->GetRef());
+
+			if (areas) {
+				for (TSceneActionArea *area : *areas)
+					std::printf("area '%ls' (id %d): Rufus %d, 1361,672 %d, 1073,686 %d, 1176,686 %d\n", area->GetName().c_str().c_str(),
+					            PackVisId(area->GetId()), area->IsInside(rufus->_position) ? 1 : 0, area->IsInside(wxPoint{1361, 672}) ? 1 : 0,
+					            area->IsInside(wxPoint{1073, 686}) ? 1 : 0, area->IsInside(wxPoint{1176, 686}) ? 1 : 0);
+			}
+		}
+
 		for (TManagedObject *object : scene->_objects) {
 			std::wstring name = object->GetRef().GetName().c_str().c_str();
 
-			if (wanted.empty() || name.find(wanted) == std::wstring::npos)
+			if (wanted.empty() || (wanted != L"ALL" && name.find(wanted) == std::wstring::npos))
 				continue;
 
 			wxRect rect = object->GetBoundingRect();
 
-			std::printf("object '%ls' rect %d,%d %dx%d walkable %d\n", name.c_str(), rect.x, rect.y, rect.width, rect.height,
-			            object->GetRef().GetBool(kObjectIsWalkable) ? 1 : 0);
+			std::printf("object '%ls' rect %d,%d %dx%d walkable %d center %d position %d,%d active %d\n", name.c_str(), rect.x, rect.y,
+			            rect.width, rect.height, object->GetRef().GetBool(kObjectIsWalkable) ? 1 : 0, object->GetCenter(),
+			            object->GetRef().GetPoint(kObjectPosition)->x, object->GetRef().GetPoint(kObjectPosition)->y,
+			            object->IsActive() ? 1 : 0);
+			std::printf("   condition '%ls' negate %d value %d\n", object->GetRef().GetLink(kObjectCondition).GetName().c_str().c_str(),
+			            object->GetRef().GetBool(kObjectConditionNegate) ? 1 : 0,
+			            object->GetRef().GetLink(kObjectCondition).IsEmpty() ? -1 : (object->GetRef().GetLink(kObjectCondition).GetBool(kConditionValue) ? 1 : 0));
 
 			if (!target) {
 				target = object;
@@ -169,6 +187,21 @@ int main(int argc, char **argv) {
 			}
 
 			wxPoint screen{(int)(rect.x + rect.width / 2 - scroll.x), (int)(rect.y + rect.height / 2 - scroll.y)};
+
+			// the middle of the bounding rectangle may not be on the object: the first place of the rectangle that is, as the
+			// scene finds the object at a place
+			if (target && scene->GetObject(wxPoint{(int)(screen.x + scroll.x), (int)(screen.y + scroll.y)}) != target) {
+				bool found = false;
+
+				for (int y = rect.y; y < rect.y + rect.height && !found; y += 8) {
+					for (int x = rect.x; x < rect.x + rect.width && !found; x += 8) {
+						if (scene->GetObject(wxPoint{x, y}) == target) {
+							screen = wxPoint{(int)(x - scroll.x), (int)(y - scroll.y)};
+							found = true;
+						}
+					}
+				}
+			}
 
 			if (atPoint)
 				target = nullptr;
@@ -223,10 +256,14 @@ int main(int argc, char **argv) {
 			            gameRef.GetLink(kGameDestinationCommand).GetName().c_str().c_str(), gameRef.GetInt(kGameDestinationEvent));
 		}
 
-		for (int step = 0; step < 600; step++) {
+		for (int step = 0; step < 1500; step++) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			control->Update();
 			rufus = control->GetCurrentCharacter();
+
+			// a click now and then, as a player does to go on with a text (SKIPCLICKS in the environment)
+			if (std::getenv("SKIPCLICKS") && step > 100 && step % 50 == 0)
+				control->HandleMouseUp(wxPoint{300, 900}, TMouseMessageEnum::kLeftUp);
 
 			if (step % 10 == 0)
 				std::printf("step %d scene '%ls' char %d,%d state %d dir %d dest %d,%d destObject %s\n", step,
@@ -234,6 +271,35 @@ int main(int argc, char **argv) {
 				            rufus->_objRef.GetInt(kCharacterDirection), rufus->_objRef.GetPoint(kCharacterDestination)->x,
 				            rufus->_objRef.GetPoint(kCharacterDestination)->y,
 				            rufus->_objRef.GetLink(kCharacterDestinationObject).IsEmpty() ? "none" : "set");
+
+			// where the character is in the draw list: the objects drawn just before and after it, and its alpha
+			if (step % 10 == 0 || (std::getenv("EVERYSTEP") && step >= 60 && step <= 500)) {
+				std::vector<TManagedObject *> &list = control->GetScene()->_drawList;
+				int at = -1;
+
+				for (size_t i = 0; i < list.size(); i++) {
+					if (list[i] == rufus)
+						at = (int)i;
+				}
+
+				std::printf("      draw index %d of %d (center %d, visibility %d, active %d, anim state %d)", at, (int)list.size(),
+				            rufus->GetCenter(), rufus->_objRef.GetInt(kCharacterVisibility), rufus->_active ? 1 : 0,
+				            rufus->_objRef.GetInt(kCharacterAnimState));
+
+				// (the objects of the tunnel: where they are in the draw list and whether they are shown)
+				for (size_t i = 0; i < list.size(); i++) {
+					std::wstring objectName = list[i]->GetRef().GetName().c_str().c_str();
+
+					if (objectName.find(L"Aufgang") != std::wstring::npos || objectName.find(L"Vordergrund") != std::wstring::npos)
+						std::printf(" [%ls #%d active %d]", objectName.c_str(), (int)i, list[i]->IsActive() ? 1 : 0);
+				}
+
+				if (at > 0)
+					std::printf(" after '%ls' (center %d)", list[at - 1]->GetRef().GetName().c_str().c_str(), list[at - 1]->GetCenter());
+				if (at >= 0 && at + 1 < (int)list.size())
+					std::printf(" before '%ls' (center %d)", list[at + 1]->GetRef().GetName().c_str().c_str(), list[at + 1]->GetCenter());
+				std::printf("\n");
+			}
 		}
 		return 0;
 	}
