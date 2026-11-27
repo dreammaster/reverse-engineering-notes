@@ -135,8 +135,9 @@ int main() {
 		Bytes d;
 		CHECK(readFile("se/game/SAVAGE/SAVEGAME/OBJLIST", d) && list.load(d));
 		c.applyTo(list);
-		CHECK(list.strength[1] == c.strength && list.hp[1] == (uint8_t)(2 * c.strength + c.intelligence) && list.globals[0x181] == 1);
-		CHECK(std::string((const char *)list.partyNames[0]) == "Tesla" && (list.unknown18f1[2] & 1));
+		CHECK(list.globals[4] == 1 && list.globals[5] == 1 && list.globals[6] == 0 && list.globals[0x23] == 8);
+		CHECK(list.strength[1] == c.strength && list.hp[1] == (uint8_t)(2 * c.strength + c.intelligence) && list.globals[0x81] == 1);
+		CHECK(std::string((const char *)list.partyNames[0]) == "Tesla" && (list.talkFlags[2] & 1));
 		// a game in progress refuses a second character
 		SeFrontEnd g("se/game/SAVAGE", 3);
 		g.setSaveState(true, true);

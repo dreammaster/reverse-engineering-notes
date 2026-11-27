@@ -29,28 +29,28 @@ const int PROMPT_FG = 1; // the arrow of sub_14FB6 is drawn with the colour 1 (s
 
 } // namespace
 
+// The offsets of sub_15A7C are those of the file; the engine takes the spin-offs' extra array (0x14F1 to 0x15F0) out, so what lies behind it is 0x100 nearer: 0x18F3 ... is talkFlags[2] ...,
+// 0x1D13 ... the globals from 0x22, 0x1D71 / 0x1D72 the globals 0x80 / 0x81. The clock (globals 2 to 7) is set to day 1, month 1, year 0 as GAME.EXE does when it first starts (sub_14746 at 0x1502D).
 void SeNewCharacter::applyTo(ObjList &al) const {
 	std::memset(al.partyNames[0], 0, sizeof al.partyNames[0]);
 	std::memcpy(al.partyNames[0], name.c_str(), std::min<size_t>(name.size(), 13));
 	al.strength[1] = (uint8_t)strength;
 	al.dexterity[1] = (uint8_t)dexterity;
 	al.intelligence[1] = (uint8_t)intelligence;
-	al.moves[1] = (uint8_t)dexterity;
 	al.hp[1] = (uint8_t)(strength * 2 + intelligence);
-	if (al.globals.size() >= 0x182) {
-		al.globals[0x122] = 0; // the clock: minute 0, hour 8, day 1, month 1, year 0
-		al.globals[0x123] = 8;
-		al.globals[0x124] = 1;
-		al.globals[0x125] = 1;
-		al.globals[0x126] = 0;
-		al.globals[0x127] = 0;
-		for (int k = 0; k < 6; ++k) // (the engine keeps the clock of every game at globals 2 to 7)
-			al.globals[2 + k] = al.globals[0x122 + k];
-		al.globals[0x180] = 0;
-		al.globals[0x181] = 1; // a character was made (sub_15CBC reads it)
+	if (al.globals.size() >= 0x82) {
+		static const uint8_t TIME[6] = {0, 8, 1, 1, 0, 0};
+		for (int k = 0; k < 6; ++k)
+			al.globals[0x22 + k] = TIME[k];
+		al.globals[4] = 1;
+		al.globals[5] = 1;
+		al.globals[6] = 0;
+		al.globals[7] = 0;
+		al.globals[0x80] = 0;
+		al.globals[0x81] = 1; // a character was made (sub_15CBC reads it)
 	}
 	for (int a : {2, 4, 5, 7, 8, 9, 0x17})
-		al.unknown18f1[a] |= 1;
+		al.talkFlags[a] |= 1;
 }
 
 SeFrontEnd::SeFrontEnd(const std::string &dir, uint32_t seed) : _dir(dir), _seed(seed), _rng((seed * 2654435761u) | 1) {

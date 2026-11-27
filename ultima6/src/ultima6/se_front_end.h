@@ -25,8 +25,8 @@ struct SeNewCharacter {
 	int strength = 0, dexterity = 0, intelligence = 0;
 
 	/**
-	 * What sub_15A7C does to the objlist: the party's first name; actor 1: strength, dexterity (also its moves), intelligence, hit points 2 * strength + intelligence; the clock of the game
-	 * (8:00, day 1, month 1, year 0, also at globals 2 to 7 where the engine keeps it), the flags the party's members start with (bit 0 of actors 2, 4, 5, 7, 8, 9 and 0x17), and the byte at globals 0x181 that says a character was made.
+	 * What sub_15A7C does to the objlist: the party's first name; actor 1: strength, dexterity, intelligence, hit points 2 * strength + intelligence; the globals it sets (0x22 to 0x27, 0x80, 0x81:
+	 * a character was made), the flags (bit 0 of the talk flags of actors 2, 4, 5, 7, 8, 9 and 0x17) and, as GAME.EXE's first start does, the clock set to day 1, month 1, year 0.
 	 */
 	void applyTo(ObjList &actors) const;
 };
