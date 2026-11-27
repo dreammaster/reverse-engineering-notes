@@ -89,6 +89,9 @@ PATCHES["objh_085"] = PATCHES["objh_085"] + [(
 PATCHES["objh_380"] = [(
     "mem8(SEG(seg193), 0x1396) = (mem8(SEG(seg193), 0x1396)) - 0x20;",
     "rt.word_81A66[0] -= 0x20;            // (capital letter at the start of the number word)")]
+# data segments of overlays (the exe keeps overlay-loader placeholders in the segment words that point to them: see Game::newGame): linear start and length of the tables read
+OVERLAY_RANGES = [(0x7CF00, 0x70), (0x4F110, 0x98), (0x55B80, 0x110), (0x5E290, 0x40), (0x60444, 0x18), (0x61340, 0xC0), (0x630E0, 0x90), (0x64490, 0x98), (0x76340, 0xA0),
+                  (0x79690, 0x160), (0x48F70, 0x300), (0x4AC00, 0x60), (0x66B90, 0x18), (0x44830, 0x20), (0x44880, 0x30)]
 HANDWRITTEN = {"cmdWait", "objh_390", "sub_44130", "loc_4E632", "sub_312E3", "sub_312ED", "number_to_words", "loc_5F405", "loc_5F421", "loc_5F4AD", "loc_5F4C9", "loc_5F4E5", "loc_5F501", "sub_1C4ED", "event_fn_25", "sub_1AAFB", "sub_5F96C"}        # generated functions that are written by hand in src/xanth/logic_hand.cpp (the decompiler gets their control flow wrong)
 CLIB = {"strcpy", "strcat", "memcpy", "strlen", "_strlwr", "_strupr"}
 STUBS = {"show_text_box_stub": "show_text_box", "conversation_set_enabled_stub": "conversation_set_enabled", "lock_combination_correct_stub": "lock_combination_correct",
@@ -553,6 +556,17 @@ def main():
         for i in range(0, len(data), 24):
             rows.append(",".join("0x%02X" % c for c in data[i:i + 24]) + ",")
         write(os.path.join(out_dir, "exe_tables.inc"), NL.join(rows) + NL)
+    # the data segments of the overlays that the logic reads tables from (linear start, length): pointer and id tables, no text
+    if ctx.image:
+        blob, rows = [], [HDR.replace("Game", "game") + " Tables in the data segments of the overlays: {linear start, length, offset in kExeOverlayBytes}."]
+        for lin, n in OVERLAY_RANGES:
+            rows.append("{0x%05X, %d, %d}," % (lin, n, len(blob)))
+            blob.extend(ctx.image[lin:lin + n])
+        write(os.path.join(out_dir, "exe_overlay_ranges.inc"), NL.join(rows) + NL)
+        brows = [HDR.replace("Game", "game") + " The bytes of the tables in exe_overlay_ranges.inc."]
+        for i in range(0, len(blob), 24):
+            brows.append(",".join("0x%02X" % c for c in blob[i:i + 24]) + ",")
+        write(os.path.join(out_dir, "exe_overlay.inc"), NL.join(brows) + NL)
     # the verb table (seg045: 8-byte records {name, preposition, argument count, verb id}) and the list of verbs the interface starts with
     if ctx.image:
         import struct

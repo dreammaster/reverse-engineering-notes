@@ -235,6 +235,7 @@ private:
 	unsigned _seed;
 	uint8 _dseg[0x10000];
 	uint8 _tables[0x35400 - 0x31550];
+	uint8 _overlay[16384];                  // the tables of the overlays' data segments (exe_overlay.inc)
 	uint8 _scratch[2];
 };
 

@@ -192,7 +192,7 @@ int sub_1AAFB(Game &g) {
 	return 0;
 }
 
-// sub_5F96C: the description of what is around in the barrow maze (printed after the room's own text): a sentence chosen by where the player is, built in a text buffer and
+// sub_5F96C (the random message of the end is in the data segment 0x5FF4 of its overlay): the description of what is around in the barrow maze (printed after the room's own text): a sentence chosen by where the player is, built in a text buffer and
 // shown at the end. (The decompiler loses the segments of the text pointers where the paths join.)
 int sub_5F96C(Game &g) {
 	Vars &v = g.state.v;
@@ -224,7 +224,7 @@ int sub_5F96C(Game &g) {
 	} else if (sub_5F2FE(g, 0)) {
 		add(MSG(29, 21));
 	} else if (!sub_5F315(g, 0)) {
-		strcat(msg, g.ResourceText_GetStr(g.exeText(0x32FE, (((uint16)(g._rand()) % (uint16)5) * 4) + 0x504)));
+		strcat(msg, g.ResourceText_GetStr(g.exeText(0x5FF4, (((uint16)(g._rand()) % (uint16)5) * 4) + 0x504)));
 	} else if (sub_5F32C(g, 0)) {
 		int n = 0;
 		for (int off = 0x5E4; off < 0x604; off += 2)

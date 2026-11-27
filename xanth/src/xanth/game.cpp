@@ -33,6 +33,16 @@ static const uint8 kExeTables[] = {
 #include "xanth/logic/exe_tables.inc"
 };
 
+static const uint8 kExeOverlay[] = {
+#include "xanth/logic/exe_overlay.inc"
+};
+
+static const struct {
+	unsigned lin, size, at;
+} kExeOverlayRanges[] = {
+#include "xanth/logic/exe_overlay_ranges.inc"
+};
+
 Game::Game(Ui &ui_, const Legend::MessageFile &messages_, const ObjectNames &names)
     : ui(ui_), messages(messages_), objectNames(names), _textNext(0), _seed(1) {
 	newGame();
@@ -44,11 +54,28 @@ void Game::newGame() {
 	memcpy(_dseg, kExeDseg, sizeof(kExeDseg));
 	_seed = kExeDseg[0x5812] | (kExeDseg[0x5813] << 8) | ((unsigned)kExeDseg[0x5814] << 16) | ((unsigned)kExeDseg[0x5815] << 24);   // the C runtime's seed (word_8A7D2/4)
 	memcpy(_tables, kExeTables, sizeof(_tables));
+	memcpy(_overlay, kExeOverlay, sizeof(_overlay));
 	rt = Runtime();
 	rt.object_count = (uint16)state.objects.count();
 	rt.player_obj = 1;
 	rt.actor_obj = 1;
 	rt.word_85222 = 1;
+	// the segment words of the overlay data (data segments of the overlays that the logic reads tables from): the exe keeps the overlay loader's placeholder values here, the
+	// tables lie where the flat image has them (found by their contents; the oracle does not know them either)
+	rt.word_8AA64 = rt.word_8AA66 = 0x48F7;       // conversation texts
+	rt.word_8AA44 = 0x4483;                       // the weekday names
+	rt.word_8AA46 = 0x4488;
+	rt.word_8AA76 = 0x4AC0;
+	rt.word_8AA7C = 0x4F11;
+	rt.word_8AA9C = 0x66B9;
+	rt.word_8AA86 = 0x55B8;
+	rt.word_8AA8A = 0x5E29;
+	rt.word_8AA90 = rt.word_8AA92 = 0x6134;
+	rt.word_8AA98 = 0x630E;
+	rt.word_8AA9A = 0x6449;
+	rt.word_8AAEA = 0x7634;
+	rt.word_8AAEE = 0x7969;
+	rt.word_8AAF4 = 0x7CF0;                       // the books of the mantle
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------ conversations
@@ -547,6 +574,10 @@ uint8 &Game::exe8(int seg, int off) {
 		}
 		return _dseg[off & 0xFFFF];
 	}
+	for (unsigned i = 0; i < ARRAYSIZE(kExeOverlayRanges); i++)                    // (the tables of the overlays' data segments: read only)
+		if (lin >= kExeOverlayRanges[i].lin && lin < kExeOverlayRanges[i].lin + kExeOverlayRanges[i].size) {
+			return _overlay[kExeOverlayRanges[i].at + (lin - kExeOverlayRanges[i].lin)];
+		}
 	if (lin >= 0x34628 && lin < 0x34628 + sizeof(state.v.unk_34628))          // (the verb lists of the objects: saved with the game)
 		return state.v.unk_34628[lin - 0x34628];
 	if (lin >= 0x31550 && lin + 1 < 0x35400)
