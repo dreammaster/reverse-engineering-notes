@@ -609,6 +609,8 @@ bool SeFrontEnd::handleKey(int key) {
 // sub_13BFF(0): a key ends a scene that goes by itself: the picture fades out and the menu is begun again
 void SeFrontEnd::abort() {
 	_ops.clear();
+	if (_music)
+		_music->stop(200); // sub_13BFF: sub_1A2B8(200), the song fades out
 	quitToMenu(false);
 }
 
@@ -800,6 +802,8 @@ void SeFrontEnd::buildAcknowledgements(Seq &s) {
 	}));
 	s.push_back(dissolve());
 	s.push_back(call([this]() {
+		if (_music)
+			_music->stop(60);
 		_state = MENU;
 		_scene = -1;
 	}));
@@ -1204,6 +1208,8 @@ void SeFrontEnd::buildOpening(Seq &s) {
 		(*h)[2] = load("INTRO.LZC", 2);
 		setPalette(0);
 		draw(_back, (*h)[0], 0, 0, 0);
+		if (_music)
+			_music->play(0x12); // sub_1A83F: the song of the opening
 	}));
 	s.push_back(fade(true));
 	s.push_back(call([this, h]() { draw(_back, (*h)[0], 1, 0, 0); }));

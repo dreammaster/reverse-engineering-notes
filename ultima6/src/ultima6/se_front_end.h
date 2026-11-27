@@ -5,6 +5,7 @@
 #include "engine/framebuffer.h"
 #include "files/shape.h"
 #include "files/tile_data.h"
+#include "ultima6/md_music.h"
 
 #include <deque>
 #include <functional>
@@ -48,6 +49,10 @@ public:
 
 	bool ok() const {
 		return _ok;
+	}
+	/** The synthesiser the opening's song (MUSIC.LZC item 0x12, started at "Lord British presents...") is sent to (may be null; the caller keeps it alive). */
+	void setMusic(MdMusic *music) {
+		_music = music;
 	}
 	State state() const {
 		return _state;
@@ -181,6 +186,7 @@ private:
 	int random(int lo, int hi);
 
 	std::string _dir;
+	MdMusic *_music = nullptr;
 	uint32_t _seed;
 	bool _ok = false;
 	State _state = MENU;

@@ -26,7 +26,8 @@ bool MdAdlib::load(const std::string &dir) {
 	LibN lib, timLib;
 	if (!readFile(joinPath(dir, "STRAX.DRV"), raw) || !lib.load(raw, true) || !lib.get(1, block) || block.size() < 0x30 || block.size() > 0xF000)
 		return false;
-	if (!readFile(joinPath(dir, "MD.TIM"), tim) || !timLib.load(tim, true) || !timLib.get(1, timbres) || timbres.size() > 0xF000)
+	// the timbres: MD.TIM of Martian Dreams, SAVAGE.TIM of Savage Empire (the same driver, STRAX.DRV, and the same layout)
+	if ((!readFile(joinPath(dir, "MD.TIM"), tim) && !readFile(joinPath(dir, "SAVAGE.TIM"), tim)) || !timLib.load(tim, true) || !timLib.get(1, timbres) || timbres.size() > 0xF000)
 		return false;
 	Cpu8086 &c = *_cpu;
 	std::memcpy(c.memory() + Cpu8086::linear(CODE_SEG, 0), block.data(), block.size());
