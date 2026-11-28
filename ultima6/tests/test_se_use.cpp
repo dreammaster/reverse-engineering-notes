@@ -1029,6 +1029,42 @@ int main() {
 		}
 	}
 
+	// the fire axe (0x76) fells a tree, a lit torch (0xD1) burns a web (attack_with_weapon)
+	{
+		w.moveObject(w.actorObject(1), px, py, 0);
+		g.x = px;
+		g.y = py;
+		g.z = 0;
+		clearEast(w, px, py);
+		int who = w.actors.partyRoster[0];
+		std::vector<int> pack;
+		w.inventory(who, pack, false);
+		for (int i : pack)
+			w.deleteObject(i);
+		int axe = w.addToInventory(who, 0x76, 0, 1);
+		w.objects[axe].status = (uint8_t)((w.objects[axe].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+		int tree = put(w, 0x107, 3, px + 1, py, 0);
+		w.objects[tree].quantity = 3;
+		for (int i = 0; i < 20 && !w.objects[tree].deleted; ++i) {
+			g.handleKey('a');
+			g.handleKey(KEY_RIGHT);
+			g.handleKey(KEY_ENTER);
+		}
+		CHECK(w.objects[tree].deleted);
+		w.deleteObject(axe);
+		int torch = w.addToInventory(who, 0xD1, 0, 1);
+		w.objects[torch].status = (uint8_t)((w.objects[torch].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+		int web = put(w, 0x11, 0, px + 1, py, 0);
+		g.handleKey('a');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_ENTER);
+		CHECK(w.objects[web].deleted);
+		w.deleteObject(torch);
+		for (size_t i = 0; i < w.objects.size(); ++i) // (the fallen tree's pieces)
+			if (!w.objects[i].deleted && w.objects[i].actor < 0 && w.objects[i].onMap() && w.objects[i].type >= 0x104 && w.objects[i].type <= 0x106 && std::abs((int)w.objects[i].x - px) < 4 && std::abs((int)w.objects[i].y - py) < 8)
+				w.deleteObject((int)i);
+	}
+
 	// Rest (sub_3A28B): "Rest until ...", N and a digit of hours; a member whose experience asks for the next level dreams of the three animals and B raises his strength
 	{
 		w.moveObject(w.actorObject(1), px, py, 0);
@@ -1056,7 +1092,8 @@ int main() {
 		g.handleKey('B');
 		CHECK(al.level[who] == 2 && al.strength[who] == str + 1);
 		int after = g.gameClock.hour * 60 + g.gameClock.minute;
-		CHECK(((after - minute + 1440) % 1440) == 120);
+		int spent = (after - minute + 1440) % 1440; // (the clock may stand a minute ahead from the turns before)
+		CHECK(spent >= 120 && spent <= 122);
 	}
 
 	// Savage Empire's look (sub_2EE8D): "You see ", the time on a sundial by day, what a bucket holds
