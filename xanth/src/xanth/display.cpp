@@ -416,7 +416,29 @@ bool Display::scrollInventory(int x, int y) {
 	return true;
 }
 
-int Display::popupMenu(const std::vector<std::string> &labels) {
+void Display::statusBox(const std::string &text) {
+	// show_status_dialog: the window (84, 49)-(281, 71) with the same marble edges as the menu panel, the text in the font of the text window
+	const int x1 = 84, y1 = 49, x2 = 281, y2 = 71;
+	Surface saved = _screen;
+	_ms.restoreMarble(_screen, x1, y1, x2, y2);
+	raisedBevel(_screen, x1, y1, x2, y2);
+	raisedBevel(_screen, x1 + 1, y1 + 1, x2 - 1, y2 - 1);
+	TextWindow w;
+	w.setup(x1, y1, x2, y2, &_ms.font10(), 15, -1);
+	w.print(_screen, text);
+	if (_input) {
+		for (;;) {
+			InputEvent e = _input->wait();
+			if (e.type == InputEvent::Click || e.type == InputEvent::Key || e.type == InputEvent::Quit)
+				break;
+			_mouseX = e.x;
+			_mouseY = e.y;
+		}
+	}
+	_screen = saved;
+}
+
+int Display::popupMenu(const std::vector<std::string> &labels, const std::function<void(int)> &onChoose) {
 	if (labels.empty())
 		return -1;
 	const Font &font = _ms.font1();
@@ -464,6 +486,8 @@ int Display::popupMenu(const std::vector<std::string> &labels) {
 				break;
 			if (e.type == InputEvent::Click) {
 				result = hit;
+				if (hit >= 0 && onChoose)
+					onChoose(hit);          // (with the menu still on the screen)
 				break;
 			}
 			if (hit != (int)lit && e.type == InputEvent::Move) {

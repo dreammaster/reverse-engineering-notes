@@ -23,6 +23,9 @@ void lightenPixel(Surface &s, int x, int y);
 /** Gfx_FrameRect flag 0x10: an inset bevel made by darkening the pixels on the left and top edge and lightening those on the right and bottom edge along the grey ramp 0x11..0x1F. (With flags 0x14 the original does the opposite with slightly different edge ranges; not needed yet.) */
 void bevelFrame(Surface &s, int x1, int y1, int x2, int y2);
 
+/** Gfx_FrameRect with flags 0x14: the opposite of bevelFrame (left and top lightened, right and bottom darkened) with slightly different edge ranges. */
+void raisedBevel(Surface &s, int x1, int y1, int x2, int y2);
+
 /** Gfx_FrameRect flag 4 (raised) or 8 (sunken) without 0x10: colour 10 fill and a line edge (draw_button). */
 void buttonFrame(Surface &s, int x1, int y1, int x2, int y2, bool raised);
 

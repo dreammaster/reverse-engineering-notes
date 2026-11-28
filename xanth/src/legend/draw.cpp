@@ -41,6 +41,19 @@ void bevelFrame(Surface &s, int x1, int y1, int x2, int y2) {
 		lighten(s, x, y2);
 }
 
+void raisedBevel(Surface &s, int x1, int y1, int x2, int y2) {
+	// flags 0x14: the left edge (upwards from the bottom, not the top corner) and the top edge are lightened, the right edge (not the corners) and the bottom edge (not the
+	// bottom left corner) darkened
+	for (int y = y2; y > y1; y--)
+		lighten(s, x1, y);
+	for (int x = x1; x <= x2; x++)
+		lighten(s, x, y1);
+	for (int y = y1 + 1; y < y2; y++)
+		darken(s, x2, y);
+	for (int x = x2; x > x1; x--)
+		darken(s, x, y2);
+}
+
 void buttonFrame(Surface &s, int x1, int y1, int x2, int y2, bool raised) {
 	fillArea(s, x1, y1, x2, y2, kFrameFill);
 	byte topLeft = raised ? 15 : 6, bottomRight = raised ? 6 : 15;

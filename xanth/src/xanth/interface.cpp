@@ -271,7 +271,15 @@ void Interface::doubleClick(int x, int y) {
 
 void Interface::diskMenu() {
 	static const char *kItems[] = {"Help", "Save", "Restore", "Restart", "Music/Voice", "Status/Score", "Quit", "Cancel"};
-	int choice = _display.popupMenu(std::vector<std::string>(kItems, kItems + 8));
+	// the ranks of the Status/Score box, one per hundred points
+	static const char *kRanks[] = {"Rank Amateur", "Never Done Nothin", "Nearly Neophyte", "Daring Dabbler", "Master of None", "Master Mundane", "Puzzle Master", "Adventuring Brute",
+	                               "Dragon Wrangler", "True Believer", "Hintbook Reader"};
+	int choice = _display.popupMenu(std::vector<std::string>(kItems, kItems + 8), [&](int item) {
+		if (item == 5) {
+			int score = (int)_game.state.v.score;
+			_display.statusBox(" You have amassed " + std::to_string(score) + " of 1000 points,\n giving you the rank of " + kRanks[std::min(10, std::max(0, score / 100))] + ".");
+		}
+	});
 	if (getenv("XANTH_TRACE"))
 		fprintf(stderr, "disk menu: %d\n", choice);
 	switch (choice) {
@@ -284,10 +292,6 @@ void Interface::diskMenu() {
 	case 3:
 		_game.newGame();
 		start();
-		break;
-	case 5:
-		_display.beginCommand();
-		_game.Font_WriteMessage(" You have amassed %d of 1000 points,\n giving you the rank of .",(int)_game.state.v.score);
 		break;
 	case 6:
 		_quit = true;
