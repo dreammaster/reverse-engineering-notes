@@ -3132,3 +3132,195 @@ void Game::seMoveItemTo(int tx, int ty) {
 
 } // namespace Ultima6
 } // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_3A28B (Savage Empire's Rest, run by the command loop's R key): "Rest" and then the things that forbid it, each with its own words: combat mode, somebody of the evil side (status 0x20)
+// within 39 squares (sub_39E42), somebody awake, not of the party and seen within five squares (sub_39ECB: "It's too noisy to sleep here!"), solo mode, aboard a ship, a member on a turtle (0x133).
+// "Rest until sunrise? " (before seven and after five in the evening) or "sunset? " (hours 7-17), "N" asking "How many hours? " for a digit 1-9 (anything else is "0" and ends it), any other key "Y".
+// More than four hours: each member (but actor 0x0B, who "does not eat") eats one thing of the list at ds:286C from his pack or any other member's (" has food.") or has none (" has no food.");
+// when the rest has not been taken for twelve hours the fed gain 5 hit points (the cooldown byte_42249). The sleep is hours x 3 steps of twenty minutes; when there are more steps than members,
+// in the step of each member (the first of them) he whose experience has come to the level's number (ds:28A4) goes up a level and dreams of a bear, a jaguar and a monkey: B, J or M raise
+// strength, dexterity or intelligence by one (to 30), anything else the highest of the three.
+// APPROX(109): the party does not walk to its camp places (the tables at ds:28B6 / 28BE / 28C6), the members are not drawn asleep (the 0xF6 of frame 1 and `sub_28764`), the night's watch
+// of sub_39F78 is only the dream, the dream's answer is one key (the original reads a line and takes its first letter), the cursor and the view are not redrawn
+void Game::seRest() {
+	ObjList &al = _world.actors;
+	const std::string nl(1, (char)10);
+	message("Rest");
+	auto refuse = [&](const std::string &text) {
+		message(text);
+		sfx(5);
+		prompt();
+	};
+	if (_combatMode) {
+		refuse(nl + "Not in combat mode!" + nl);
+		return;
+	}
+	for (int a = 0x10; a < 0x100; ++a) { // sub_39E42
+		int k = _world.actorObject(a);
+		if (k < 0 || _world.objects[k].deleted || !(al.status[a] & 0x20))
+			continue;
+		const World::Obj &o = _world.objects[k];
+		if (std::abs((int)o.x - x) <= 0x27 && std::abs((int)o.y - y) <= 0x27 && o.z == z) {
+			refuse(nl + "Not while foes are near!" + nl);
+			return;
+		}
+	}
+	for (int a = 1; a < 0x100; ++a) { // sub_39ECB
+		int k = _world.actorObject(a);
+		if (k < 0 || _world.objects[k].deleted || (al.status[a] & 0x94))
+			continue;
+		const World::Obj &o = _world.objects[k];
+		if (std::abs((int)o.x - x) > 5 || std::abs((int)o.y - y) > 5 || o.z != z || o.invisible())
+			continue;
+		refuse(nl + "It's too noisy to sleep here!" + nl);
+		return;
+	}
+	if (_solo >= 0) {
+		refuse(nl + "Not in solo mode!" + nl);
+		return;
+	}
+	if (_aboard) {
+		refuse(nl + "Not while aboard ship!" + nl);
+		return;
+	}
+	for (int m = 0; m < al.partySize; ++m) {
+		int k = _world.actorObject(al.partyRoster[m]);
+		if (k >= 0 && _world.objects[k].type == 0x133) {
+			refuse("-Not on a turtle!" + nl);
+			return;
+		}
+	}
+	int hour = gameClock.hour;
+	message(nl + "Rest until ");
+	if (hour < 7 || hour > 17) {
+		message("sunrise? ");
+		_mdRestHours = hour < 7 ? 7 - hour : 24 - hour + 7;
+	} else {
+		message("sunset? ");
+		_mdRestHours = 18 - hour;
+	}
+	mdAskKey([this, nl](int key) {
+		if (key == 'N' || key == 'n') {
+			message("N" + nl + "How many hours? ");
+			mdAskKey([this, nl](int digit) {
+				if (digit < '1' || digit > '9') {
+					message("0" + nl);
+					return true;
+				}
+				message(std::string(1, (char)digit) + nl);
+				_mdRestHours = digit - '0';
+				return seRestSleep();
+			});
+			return false;
+		}
+		message("Y" + nl);
+		return seRestSleep();
+	});
+}
+
+// the food and the sleep of the rest (see seRest); true when it is over, false while a dream waits for its key
+bool Game::seRestSleep() {
+	ObjList &al = _world.actors;
+	const std::string nl(1, (char)10);
+	static const uint16_t FOOD[19] = {0x3D, 0x3E, 0x5D, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x71, 0x72, 0x78, 0xC5, 0xD5, 0xD6};
+	auto eatFrom = [&](int actor) { // sub_39DA7: one of the first food in the pack is used up
+		std::vector<int> pack;
+		_world.inventory(actor, pack, false);
+		for (int i : pack) {
+			bool food = false;
+			for (uint16_t f : FOOD)
+				food |= _world.objects[i].type == f;
+			if (food) {
+				consumeOne(i);
+				return true;
+			}
+		}
+		return false;
+	};
+	if (_mdRestHours > 4) {
+		bool healed = false;
+		for (int m = 0; m < al.partySize; ++m) {
+			int actor = al.partyRoster[m];
+			message(std::string((const char *)al.partyNames[m]));
+			if (actor == 0x0B) {
+				message(" does not eat." + nl);
+				continue;
+			}
+			bool fed = eatFrom(actor);
+			for (int o = 0; o < al.partySize && !fed; ++o)
+				fed = eatFrom(al.partyRoster[o]);
+			if (!fed) {
+				message(" has no food." + nl);
+				continue;
+			}
+			message(" has food." + nl);
+			int most = ActorStats::maxHealth(_world, actor);
+			if (_restCooldown == 0 && most >= al.hp[actor] + 5) {
+				al.hp[actor] = (uint8_t)(al.hp[actor] + 5);
+				healed = true;
+			}
+		}
+		if (healed)
+			_restCooldown = 12;
+	}
+	_mdRestStep = 0;
+	return seRestRun();
+}
+
+bool Game::seRestRun() {
+	ObjList &al = _world.actors;
+	int steps = _mdRestHours * 3;
+	bool dreams = steps > al.partySize;
+	while (_mdRestStep < steps) {
+		int s = _mdRestStep++;
+		advanceTime(20);
+		if (dreams && s < al.partySize && seDream(al.partyRoster[s]))
+			return false;
+	}
+	return true;
+}
+
+// sub_39F78: a member whose experience has come to the number the level asks for goes up a level and dreams of the three animals; true while the dream waits for its answer
+bool Game::seDream(int actor) {
+	ObjList &al = _world.actors;
+	static const uint16_t NEED[9] = {0, 100, 200, 400, 800, 1600, 3200, 6400, 32767};
+	if (actor < 0 || actor >= 0x100 || al.level[actor] >= 9 || NEED[al.level[actor]] > al.exp[actor])
+		return false;
+	++al.level[actor];
+	const std::string nl(1, (char)10);
+	std::string name = mdMemberName(actor), he = actor == 2 ? "She" : "He";
+	message(name + " has a dream..." + nl + nl);
+	message(he + " chases three animals through the jungle: a bear, a jaguar and a monkey." + nl + nl);
+	message("The path branches, each animal going a separate way." + nl + nl);
+	message("Does " + name + " follow the bear, the jaguar or the monkey?" + nl);
+	message("Your choice:");
+	mdAskKey([this, actor, nl](int key) {
+		ObjList &a = _world.actors;
+		message(nl);
+		uint8_t &str = a.strength[actor], &dex = a.dexterity[actor], &intel = a.intelligence[actor];
+		auto raise = [](uint8_t &v) {
+			if (v < 0x1E)
+				++v;
+		};
+		int c = key >= 'a' && key <= 'z' ? key - 32 : key;
+		if (c == 'B') {
+			raise(str);
+		} else if (c == 'J') {
+			raise(dex);
+		} else if (c == 'M') {
+			raise(intel);
+		} else if (str > dex) { // anything else: the highest of the three (a tie goes to the intelligence)
+			raise(str > intel ? str : intel);
+		} else {
+			raise(dex > intel ? dex : intel);
+		}
+		return seRestRun();
+	});
+	return true;
+}
+
+} // namespace Ultima6
+} // namespace Ultima6

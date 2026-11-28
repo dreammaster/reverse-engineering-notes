@@ -29441,6 +29441,7 @@ static Bytes_4(void) {
 	create_insn	(0X39D6C);
 	create_insn	(0X39D77);
 	create_insn	(0X39D80);
+	set_name	(0X39D80,	"is_food");
 	create_insn	(0X39D88);
 	create_insn	(x=0X39D8A);
 	op_hex		(x,	1);
@@ -29448,6 +29449,7 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X39D9A);
 	create_insn	(0X39DA7);
+	set_name	(0X39DA7,	"eat_from_pack");
 	create_insn	(x=0X39DAC);
 	op_stkvar	(x,	1);
 	create_insn	(0X39DB1);
@@ -29465,12 +29467,14 @@ static Bytes_4(void) {
 	create_insn	(x=0X39DED);
 	op_stkvar	(x,	0);
 	create_insn	(0X39E01);
+	set_name	(0X39E01,	"party_has_food");
 	create_insn	(x=0X39E05);
 	op_stkvar	(x,	1);
 	create_insn	(0X39E1C);
 	create_insn	(0X39E20);
 	create_insn	(0X39E31);
 	create_insn	(0X39E42);
+	set_name	(0X39E42,	"evil_side_within_39");
 	create_insn	(0X39E4B);
 	create_insn	(x=0X39E4D);
 	op_hex		(x,	1);
@@ -29486,6 +29490,7 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(0X39EBF);
 	create_insn	(0X39ECB);
+	set_name	(0X39ECB,	"awake_nonparty_in_view");
 	create_insn	(0X39ED5);
 	create_insn	(x=0X39EDB);
 	op_hex		(x,	1);
@@ -29505,6 +29510,7 @@ static Bytes_4(void) {
 	create_insn	(0X39F69);
 	create_insn	(0X39F73);
 	create_insn	(0X39F78);
+	set_name	(0X39F78,	"level_dream");
 	create_insn	(x=0X39F7B);
 	op_hex		(x,	1);
 	create_insn	(x=0X39F80);
@@ -29586,6 +29592,7 @@ static Bytes_4(void) {
 	create_byte	(0X3A273);
 	make_array	(0X3A273,	0X18);
 	create_insn	(0X3A28B);
+	set_name	(0X3A28B,	"cmd_rest");
 	create_insn	(x=0X3A28E);
 	op_hex		(x,	1);
 	create_insn	(x=0X3A293);
@@ -32111,6 +32118,15 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3DEEF);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3DEF4);
 	op_hex		(x,	1);
 	create_insn	(x=0X3DEFA);
@@ -32131,15 +32147,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3DF21);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3DF29);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3DF2C);

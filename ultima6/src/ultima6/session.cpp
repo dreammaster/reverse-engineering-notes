@@ -708,6 +708,10 @@ void Game::command(int key) {
 		prompt();
 		break;
 	case 'R':
+		if (_world.game == GameId::SavageEmpire) { // sub_3A28B
+			seRest();
+			break;
+		}
 		message("Rest");
 		{
 			std::string why = restCheck();

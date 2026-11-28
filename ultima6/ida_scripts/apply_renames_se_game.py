@@ -118,6 +118,13 @@ FUNCTIONS = [
     (0x1B5A6, "container_count", 'how many things a container or pack holds'),
     (0x2F2FC, "ask_quantity", 'asks "How many?" for a stack, returns the count (0: cancelled)'),
     (0x1FA29, "actor_near_party", 'whether a person is near enough (the party)'),
+    (0x3A28B, "cmd_rest", 'Rest: the refusals, "Rest until sunrise?", the food, the sleep in steps of twenty minutes and the dreams'),
+    (0x39E42, "evil_side_within_39", 'somebody of the evil side (status 0x20) within 39 squares'),
+    (0x39ECB, "awake_nonparty_in_view", 'somebody awake, not in the party, seen within 5 squares'),
+    (0x39F78, "level_dream", 'a member whose experience asks for the next level goes up and dreams of the bear, jaguar and monkey'),
+    (0x39E01, "party_has_food", 'a member, or any member, has something to eat (and eats one)'),
+    (0x39DA7, "eat_from_pack", 'uses up one food of the pack of an actor'),
+    (0x39D80, "is_food", 'the list at ds:286C'),
     # -- the same routine as in the other spin-off, matched by instruction signature (tools/match_functions.py) --
     (0x18194, "read_line", '= Martian Dreams 34E71 (matched by instruction signature)'),
     (0x1F9EC, "party_member_name", '= Martian Dreams 56762 (matched by instruction signature)'),

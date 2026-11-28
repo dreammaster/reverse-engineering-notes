@@ -468,6 +468,10 @@ private:
 	void seGroup(int code);                                                     // sub_229F8
 	void seAid(int member);                                                     // sub_2259E
 	void seLook(int idx, const std::string &name);                              // sub_2EE8D: what the look at a thing says in Savage Empire
+	void seRest();                                                             // sub_3A28B: Savage Empire's Rest
+	bool seRestSleep();
+	bool seRestRun();
+	bool seDream(int actor);                                                   // sub_39F78
 	void seGemScene();                                                         // sub_2DD70
 	void seMoveItemTo(int tx, int ty);                                         // sub_302B8 (cmd_move): where a thing of the pack is moved to
 	void seGetAt(int tx, int ty);                                             // sub_2FBBA: Get in Savage Empire

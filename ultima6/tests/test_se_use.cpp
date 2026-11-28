@@ -951,6 +951,36 @@ int main() {
 		w.deleteObject(door);
 	}
 
+	// Rest (sub_3A28B): "Rest until ...", N and a digit of hours; a member whose experience asks for the next level dreams of the three animals and B raises his strength
+	{
+		w.moveObject(w.actorObject(1), px, py, 0);
+		g.x = px;
+		g.y = py;
+		g.z = 0;
+		ObjList &al = w.actors;
+		for (int a = 0x10; a < 0x100; ++a) { // (nobody near)
+			int k = w.actorObject(a);
+			if (k >= 0 && !w.objects[k].deleted && std::abs((int)w.objects[k].x - px) < 40 && std::abs((int)w.objects[k].y - py) < 40)
+				w.moveObject(k, (px + 100) & 0x3FF, (py + 100) & 0x3FF, 0);
+		}
+		int who = al.partyRoster[0];
+		al.level[who] = 1;
+		al.exp[who] = 150;
+		int str = al.strength[who] < 29 ? al.strength[who] : 20;
+		al.strength[who] = (uint8_t)str;
+		int minute = g.gameClock.hour * 60 + g.gameClock.minute;
+		g.log.clear();
+		g.handleKey('R');
+		CHECK(logText(g).find("Rest until ") != std::string::npos);
+		g.handleKey('N');
+		g.handleKey('2');
+		CHECK(logText(g).find("has a dream...") != std::string::npos);
+		g.handleKey('B');
+		CHECK(al.level[who] == 2 && al.strength[who] == str + 1);
+		int after = g.gameClock.hour * 60 + g.gameClock.minute;
+		CHECK(((after - minute + 1440) % 1440) == 120);
+	}
+
 	// Savage Empire's look (sub_2EE8D): "You see ", the time on a sundial by day, what a bucket holds
 	{
 		w.moveObject(w.actorObject(1), px, py, 0);
