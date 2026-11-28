@@ -1841,6 +1841,16 @@ void Game::moveTo(int key) {
 			prompt();
 			return;
 		}
+	} else if (_world.game == GameId::SavageEmpire) { // sub_302B8: a thing whose weight in the table at ds:4709C is 0 is "Not possible." (the types that may weigh 0 are the list at ds:08DF)
+		static const uint16_t ZERO_OK[17] = {0x29, 0x36, 0x37, 0x38, 0x47, 0x40, 0x49, 0x4A, 0x7B, 0x81, 0x82, 0x86, 0xBF, 0x45, 0x78, 0x48, 0x30};
+		reduced = false;
+		for (uint16_t t : ZERO_OK)
+			reduced |= o.type == t;
+		if (w == 0 && !reduced) {
+			message("Not possible.\n");
+			prompt();
+			return;
+		}
 	} else if ((w == 0 && !reduced) || o.type == 0x19B) {
 		message("\nNot possible\n");
 		prompt();
@@ -1851,7 +1861,7 @@ void Game::moveTo(int key) {
 		int chance = (_combat.adjustedStrength(o.actor) / 2 + 30 - _combat.adjustedStrength(member)) / 2;
 		bool fails = chance > 1 + (int)(_rng.next() % 30) || o.actor == member || ((o.frame & 3) == 3 && o.type != 0x153);
 		if (fails) {
-			message(_world.game == GameId::MartianDreams ? "Failed.\n" : "\nFailed\n");
+			message(_world.game != GameId::Ultima6 ? "Failed.\n" : "\nFailed\n");
 			if (_world.game == GameId::MartianDreams)
 				sfx(5);
 			prompt();
@@ -1892,7 +1902,7 @@ void Game::moveTo(int key) {
 	}
 	bool turns = o.type == 0xDD && o.frame != (dir >> 1); // a cannon
 	if (moveBlocked(idx, ox, oy, dir)) {
-		message(_world.game == GameId::MartianDreams ? "Blocked!\n" : "\nBlocked\n");
+		message(_world.game != GameId::Ultima6 ? "Blocked!\n" : "\nBlocked\n");
 		if (_world.game == GameId::MartianDreams)
 			sfx(5);
 		if (turns)

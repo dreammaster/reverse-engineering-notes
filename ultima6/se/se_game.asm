@@ -10239,7 +10239,7 @@ loc_1442F:                              ; DATA XREF: seg002:0FDC↓o
 
 loc_1443D:                              ; CODE XREF: hazard_square_effect+100↑j
                 push    si
-                call    status_hp_modifier
+                call    adjusted_strength
                 push    ax
                 mov     ax, 1
                 push    ax
@@ -10841,7 +10841,7 @@ loc_1492D:                              ; CODE XREF: advance_time+1CF↑j
                 or      ax, ax
                 jnz     short loc_14967
                 push    si
-                call    status_hp_modifier
+                call    adjusted_strength
                 push    ax
                 mov     ax, 1
                 push    ax
@@ -53298,7 +53298,7 @@ sub_28494       endp
 
 ; Attributes: bp-based frame
 
-status_hp_modifier proc far             ; CODE XREF: hazard_square_effect+106↑P
+adjusted_strength proc far              ; CODE XREF: hazard_square_effect+106↑P
                                         ; advance_time+1FF↑P ...
 
 arg_0           = word ptr  6
@@ -53319,7 +53319,7 @@ arg_0           = word ptr  6
                 jge     short loc_285C4
                 mov     si, 1
 
-loc_285C4:                              ; CODE XREF: status_hp_modifier+1F↑j
+loc_285C4:                              ; CODE XREF: adjusted_strength+1F↑j
                 test    byte ptr [di+329Ch], 80h
                 jz      short loc_285D8
                 add     si, 3
@@ -53328,14 +53328,14 @@ loc_285C4:                              ; CODE XREF: status_hp_modifier+1F↑j
                 jle     short loc_285D8
                 mov     si, 1Eh
 
-loc_285D8:                              ; CODE XREF: status_hp_modifier+15↑j
-                                        ; status_hp_modifier+29↑j ...
+loc_285D8:                              ; CODE XREF: adjusted_strength+15↑j
+                                        ; adjusted_strength+29↑j ...
                 mov     ax, si
                 pop     di
                 pop     si
                 pop     bp
                 retf    2
-status_hp_modifier endp
+adjusted_strength endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -53589,7 +53589,7 @@ arg_0           = word ptr  6
                 push    si
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr status_hp_modifier
+                call    near ptr adjusted_strength
                 shl     ax, 1
                 les     bx, dword_4494C
                 add     bx, [bp+arg_0]
@@ -59181,7 +59181,7 @@ loc_2AFDA:                              ; CODE XREF: sub_2AF13+9B↑j
                 jz      short loc_2AFEC
                 push    [bp+arg_4]
                 push    cs
-                call    near ptr status_hp_modifier
+                call    near ptr adjusted_strength
                 jmp     short loc_2AFF3
 ; ---------------------------------------------------------------------------
 
@@ -66806,14 +66806,14 @@ arg_2           = word ptr  8
                 push    bp
                 mov     bp, sp
                 push    [bp+arg_0]
-                call    status_hp_modifier
+                call    adjusted_strength
                 mov     bx, 2
                 cwd
                 idiv    bx
                 add     ax, 1Eh
                 push    ax
                 push    [bp+arg_2]
-                call    status_hp_modifier
+                call    adjusted_strength
                 mov     dx, ax
                 pop     ax
                 sub     ax, dx
@@ -73170,7 +73170,7 @@ loc_31511:                              ; CODE XREF: sub_31436+AB↑j
                 cmp     [bp+var_4], 0ACh
                 jnz     short loc_31579
                 push    di
-                call    status_hp_modifier
+                call    adjusted_strength
                 push    ax
                 push    cs
                 call    near ptr sub_30E72
@@ -73240,7 +73240,7 @@ loc_31598:                              ; CODE XREF: sub_31436+15D↑j
                 mov     ax, 1
                 push    ax
                 push    di
-                call    status_hp_modifier
+                call    adjusted_strength
                 push    ax
                 call    random_range
                 mov     [bp+var_9], al

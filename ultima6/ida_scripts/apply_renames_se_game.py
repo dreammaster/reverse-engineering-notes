@@ -55,7 +55,7 @@ FUNCTIONS = [
     (0x26DE6, "idle_wander", 'idle or wander'),
     (0x27211, "actor_worktype_act", 'the worktype dispatcher'),
     (0x28168, "distance_to_square", 'the larger of the two distances'),
-    (0x285A0, "status_hp_modifier", 'the status bits of the maximum hit points'),
+    (0x285A0, "adjusted_strength", 'the strength, 3 less when the object status bit 0x40 is set, 3 more with 0x80 (1 to 30)'),
     (0x2872A, "max_hit_points", '2 x the strength less or plus 3, plus 4 x the level'),
     (0x28DA4, "actor_sees", 'whether an actor sees another'),
     (0x28FC7, "weapon_range", 'the range of a weapon object'),

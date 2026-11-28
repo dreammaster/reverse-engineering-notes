@@ -17241,7 +17241,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X28596);
 	create_insn	(0X285A0);
-	set_name	(0X285A0,	"status_hp_modifier");
+	set_name	(0X285A0,	"adjusted_strength");
 	create_insn	(x=0X285A5);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X285B0);
