@@ -1025,7 +1025,22 @@ int main() {
 				poisoned = (w.actors.status[0xC2] & 8) != 0;
 			}
 			CHECK(poisoned);
-			w.deleteObject(fk);
+			// what the dead become (sub_28764): a person 0x137 a body 0xF9 of frame 1, holding what he carried
+			w.objects[fk].type = 0x137;
+			w.actors.hp[0xC2] = 5;
+			w.actors.status[0xC2] = 0;
+			c.applyDamage(who, 0xC2, 50);
+			bool body = false;
+			std::vector<int> there;
+			w.objectsAt(px + 1, py, 0, there);
+			for (int i : there)
+				body |= w.objects[i].type == 0xF9 && w.objects[i].frame == 1;
+			CHECK(body);
+			for (int i : there)
+				if (w.objects[i].actor < 0)
+					w.deleteObject(i);
+			if (!w.objects[fk].deleted)
+				w.deleteObject(fk);
 		}
 	}
 
