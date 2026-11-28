@@ -52683,7 +52683,7 @@ seg012          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_2810D       proc far                ; CODE XREF: hurt_target+F3↓p
+is_invulnerable proc far                ; CODE XREF: hurt_target+F3↓p
                                         ; strike+17F↓p ...
 
 arg_0           = word ptr  6
@@ -52707,13 +52707,13 @@ arg_0           = word ptr  6
                 cmp     ax, 11Eh
                 jnz     short loc_2813B
 
-loc_28136:                              ; CODE XREF: sub_2810D+1D↑j
-                                        ; sub_2810D+22↑j ...
+loc_28136:                              ; CODE XREF: is_invulnerable+1D↑j
+                                        ; is_invulnerable+22↑j ...
                 mov     ax, 1
                 jmp     short loc_28162
 ; ---------------------------------------------------------------------------
 
-loc_2813B:                              ; CODE XREF: sub_2810D+27↑j
+loc_2813B:                              ; CODE XREF: is_invulnerable+27↑j
                 cmp     si, 1Fh
                 jz      short loc_2815E
                 cmp     si, 2Fh ; '/'
@@ -52729,20 +52729,20 @@ loc_2813B:                              ; CODE XREF: sub_2810D+27↑j
                 cmp     si, 23h ; '#'
                 jnz     short loc_28160
 
-loc_2815E:                              ; CODE XREF: sub_2810D+31↑j
-                                        ; sub_2810D+36↑j ...
+loc_2815E:                              ; CODE XREF: is_invulnerable+31↑j
+                                        ; is_invulnerable+36↑j ...
                 jmp     short loc_28136
 ; ---------------------------------------------------------------------------
 
-loc_28160:                              ; CODE XREF: sub_2810D+4F↑j
+loc_28160:                              ; CODE XREF: is_invulnerable+4F↑j
                 xor     ax, ax
 
-loc_28162:                              ; CODE XREF: sub_2810D+2C↑j
+loc_28162:                              ; CODE XREF: is_invulnerable+2C↑j
                 pop     di
                 pop     si
                 pop     bp
                 retf    2
-sub_2810D       endp
+is_invulnerable endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -58512,7 +58512,7 @@ loc_2AA78:                              ; CODE XREF: hurt_target+C1↑j
 loc_2AA8C:                              ; CODE XREF: hurt_target+B2↑j
                 push    si
                 push    cs
-                call    near ptr sub_2810D
+                call    near ptr is_invulnerable
                 or      ax, ax
                 jz      short loc_2AA9D
                 mov     byte ptr [si+6DF4h], 0FFh
@@ -59724,7 +59724,7 @@ loc_2B37F:                              ; CODE XREF: strike+146↑j
                 jnz     short loc_2B3FF
                 push    si
                 push    cs
-                call    near ptr sub_2810D
+                call    near ptr is_invulnerable
                 or      ax, ax
                 jnz     short loc_2B3FF
                 push    [bp+var_2]
@@ -60283,7 +60283,7 @@ loc_2B7CA:                              ; CODE XREF: attack_with_weapon+348↑j
                 jnz     short loc_2B84A
                 push    si
                 push    cs
-                call    near ptr sub_2810D
+                call    near ptr is_invulnerable
                 or      ax, ax
                 jnz     short loc_2B84A
                 push    si

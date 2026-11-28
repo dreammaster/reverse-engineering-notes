@@ -888,13 +888,20 @@ int main() {
 			for (int mode = 0; mode < 2; ++mode) {
 				al.worktype[0xC1] = mode ? 13 : 6;
 				w.objects[fk].status = (uint8_t)(mode ? 0x80 : 0);
-				al.hp[victim] = 200;
+				auto anyHurt = [&]() { // (actor 0x0B cannot be hurt: the one the berserk goes for may be he)
+					for (int m = 0; m < al.partySize; ++m)
+						if (al.hp[al.partyRoster[m]] != 200)
+							return true;
+					return false;
+				};
+				for (int m = 0; m < al.partySize; ++m)
+					al.hp[al.partyRoster[m]] = 200;
 				w.moveObject(fk, g.x + 2, g.y, g.z);
-				for (int i = 0; i < 400 && al.hp[victim] == 200; ++i) {
+				for (int i = 0; i < 400 && !anyHurt(); ++i) {
 					al.moves[0xC1] = 12;
 					g.seWorktype(0xC1);
 				}
-				CHECK(al.hp[victim] < 200);
+				CHECK(anyHurt());
 			}
 			w.objects[fk].status = 0;
 			// worktype 4 (sub_2CBA9): with a target within two squares it runs; with none within reach and no ranged weapon it says so
@@ -1243,6 +1250,16 @@ int main() {
 		g.x = px;
 		g.y = py;
 		g.z = 0;
+		for (size_t i = 0; i < w.objects.size(); ++i) // (no web of the tests before is left near)
+			if (!w.objects[i].deleted && w.objects[i].actor < 0 && w.objects[i].onMap() && w.objects[i].type == 0x11 && std::abs((int)w.objects[i].x - px) < 6 && std::abs((int)w.objects[i].y - py) < 6)
+				w.deleteObject((int)i);
+		for (int m = 0; m < w.actors.partySize; ++m) // (nobody is still held by a web of the tests before)
+			w.actors.status[w.actors.partyRoster[m]] &= (uint8_t)~0x02;
+		for (int a : {0xC1, 0xC2}) { // (the creatures of the tests before stand elsewhere)
+			int ck = w.actorObject(a);
+			if (ck >= 0 && !w.objects[ck].deleted)
+				w.moveObject(ck, px + 50, py, 0);
+		}
 		clearEast(w, px, py);
 		std::vector<int> pack;
 		w.inventory(1, pack, false);

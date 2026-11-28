@@ -2898,7 +2898,7 @@ void Game::seControlPanel() {
 	}
 	for (int a : {0x2F, 0x1F, 0x37, 0x23, 0x0B})
 		if (!_world.actorFree(a))
-			_combat.applyDamage(1, a, _world.actors.hp[a]);
+			_combat.die(a); // kill_actor (sub_2A6AD) itself: these cannot be hurt
 	int five = _world.actorObject(5);
 	if (five >= 0 && box >= 0)
 		_world.moveObject(five, px, py, pz);
@@ -2917,7 +2917,7 @@ void Game::seControlPanel() {
 	for (int a = 0; a < 256; ++a) {
 		int t = _world.actors.objType(a);
 		if ((t == 0x12D || t == 0x129) && !_world.actorFree(a))
-			_combat.applyDamage(1, a, _world.actors.hp[a]);
+			_combat.die(a);
 	}
 	for (size_t i = 0; i < _world.objects.size(); ++i) {
 		World::Obj &o = _world.objects[i];

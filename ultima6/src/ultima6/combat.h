@@ -101,9 +101,11 @@ public:
 	/** sub_2CAFE: a person yells for help: karma falls by 5, the guards come and the others nearby fight or run. */
 	void alertTownspeople();
 
+	/** sub_2A6AD (Savage Empire's kill_actor) and the like: the actor dies, whatever may protect it from blows. */
+	void die(int actor);
+
 private:
 	bool hitCheck(int attacker, int defender, int weapon);
-	void die(int actor);
 	void dieInner(int actor);
 	int roll(int lo, int hi) {
 		return lo + _rng.next() % (hi - lo + 1);

@@ -460,6 +460,14 @@ int Combat::targetAt(int attacker, int x, int y) const {
 // the ground is impassable, a spear, axe or dagger thrown from afar is lost in whoever it hits and else lies where it landed (lost in water or lava), a wand burns out one time in a
 // hundred. A hit goes through `strike` unless the weapon is the 0x5B; the half damage and the glass sword are as in perform_attack 2D6EC-2D75D.
 // APPROX(18): the triple crossbow's three bolts, the Zu Ylem's effect (sub_21B90), the boomerang's flight and the spell charges are not done
+// sub_2810D (Savage Empire): the kinds 0x126, 0x11F and 0x11E (by the shape the actor was given) and the story's people 0x1F, 0x2F, 0x37, 0x21, 0x0B, 0x19 and 0x23 cannot be hurt
+static bool seInvulnerable(const World &w, int actor) {
+	int base = w.actors.baseObjFrame[actor] & 0x3FF;
+	if (base == 0x126 || base == 0x11F || base == 0x11E)
+		return true;
+	return actor == 0x1F || actor == 0x2F || actor == 0x37 || actor == 0x21 || actor == 0x0B || actor == 0x19 || actor == 0x23;
+}
+
 bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) {
 	int ka = _world.actorObject(attacker), kd = _world.actorObject(defender);
 	if (ka < 0 || kd < 0)
@@ -596,7 +604,7 @@ bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) 
 			}
 			return applyDamage(attacker, victim, _world.actors.hp[victim]);
 		}
-		if (_world.game == GameId::SavageEmpire && weapon == 0x20 && roll(0, 1) != 0 && !(_world.actors.status[victim] & 1)) { // the blowgun's poisoned dart: it poisons one time in two (not the protected)
+		if (_world.game == GameId::SavageEmpire && weapon == 0x20 && roll(0, 1) != 0 && !(_world.actors.status[victim] & 1) && !seInvulnerable(_world, victim)) { // the blowgun's poisoned dart: it poisons one time in two (not the protected)
 			_scroll.print(nameOf(victim) + " poisoned!\n");
 			_world.actors.status[victim] |= 0x08;
 			return false;
@@ -774,6 +782,10 @@ bool Combat::applyDamage(int attacker, int defender, int damage) {
 		return false;
 	ObjList &a = _world.actors;
 	std::string name = nameOf(defender);
+	if (_world.game == GameId::SavageEmpire && defender < 0x100 && seInvulnerable(_world, defender)) {
+		a.hp[defender] = 255; // hurt_target: sub_2810D keeps these whole
+		return false;
+	}
 	if (_world.objects[kd].type == OBJ_LORD_BRITISH) {
 		a.hp[defender] = 255; // he cannot be hurt
 		return false;
