@@ -1700,7 +1700,7 @@ static void gravity_scan(Walker *wk, RoomView *rv) {
 		ColResult cr;
 		collision_test(&wk->world, rv->vm.pos[3 * t], rv->vm.pos[3 * t + 1], z - 1, xs, ys, zs, t, 0, &cr);
 		if (!cr.zf) continue;
-		rv->fly[rv->nfly].thing = t; rv->fly[rv->nfly].zi = 0; rv->fly[rv->nfly].hi = 18; rv->fly[rv->nfly].dirbits = 0; rv->fly[rv->nfly].weightless = 0; rv->fly[rv->nfly++].fall = 1;
+		rv->fly[rv->nfly].thing = t; rv->fly[rv->nfly].zi = (rv->vm.flags2[t] & 0x10) ? 12 : 0; rv->fly[rv->nfly].hi = 18;       /* 16BFC: record flags2 bit 10h = the path FB9A, the fall table from its 13th entry (-6 at once), else FB8E */ rv->fly[rv->nfly].dirbits = 0; rv->fly[rv->nfly].weightless = 0; rv->fly[rv->nfly++].fall = 1;
 	}
 }
 static void fly_step(Walker *wk, RoomView *rv) {
@@ -2739,6 +2739,7 @@ int main(int argc, char **argv) {
 					if (!strncmp(c, "money:", 6)) g_room.vm.money = (uint32_t)atoi(c + 6);
 					if (!strncmp(c, "tp:", 3)) { int tx = 0, ty = 0, tz = 0; if (sscanf(c + 3, "%d:%d:%d", &tx, &ty, &tz) >= 2) { g_walk.x1 = tx; g_walk.y1 = ty; g_walk.z = tz; } }   /* debugging aid: put the player at x, y (z) */
 					if (!strncmp(c, "unlock:", 7)) { int d = atoi(c + 7); if (d >= 0 && d < 400) g_room.vm.doorw[d] = 0; else if (d < 0) memset(g_room.vm.doorw, 0, sizeof(g_room.vm.doorw)); }   /* debugging aid: clear the lock word of door d */
+					if (!strncmp(c, "flags2:", 7)) { int ft = 0, fv = 0; if (sscanf(c + 7, "%d:%d", &ft, &fv) == 2 && ft > 0 && ft < ACL_THINGS) g_room.vm.flags2[ft] = (uint8_t)fv; }      /* debugging aid: set a thing's record flags2 byte (rec[15]) */
 					if (!strncmp(c, "place:", 6)) {                              /* debugging aid: put thing T at x, y, z in the room now (place:T:x:y:z) */
 						int pt = 0, px = 0, py = 0, pz = 0, gw, gh, gx, gy;
 						if (sscanf(c + 6, "%d:%d:%d:%d", &pt, &px, &py, &pz) == 4 && roomview_geom(&g_room, &gw, &gh, &gx, &gy))
