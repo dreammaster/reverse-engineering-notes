@@ -24,6 +24,7 @@
 #include "../engine/x86.h"
 #include "../engine/tad.h"
 #include "../engine/beeper.h"
+#include "../engine/origsave.h"
 #include "vectors.h"
 #include "vectors_beeper.h"
 #include "vectors_place.h"
@@ -1148,6 +1149,31 @@ int main(int argc, char **argv) {
 			}
 			checked++;
 			free(in);
+		}
+	}
+
+	{                                                                /* a save file written by the original game (level 1 after walking to the diary and taking it, made by tools/make_orig_save.py) */
+		snprintf(path, sizeof(path), "%s/src/tests/data/orig_c1_moved.sav", root);
+		size_t n;
+		uint8_t *f = slurp(path, &n);
+		if (f) {
+			OrigSave o;
+			uint8_t *cp = malloc(n);
+			memcpy(cp, f, n);
+			int rc = origsave_parse(&o, cp, n);
+			if (rc != 0 || o.level != 1 || o.tata || o.thing[0].len != 32 || o.thing[0].p[0] != 59 || o.thing[0].p[1] != 34 || o.thing[5].p[10] != 0xFF ||
+			    o.door[59].p[2] != 0x00 || o.door[59].p[3] != 0x49 || origsave_d(&o, 0x248) != 95 || origsave_w(&o, 0x23A) != 100 || o.room[0].len != 104) {
+				printf("FAIL origsave_parse: rc %d level %d\n", rc, o.level);
+				failed++;
+			} else origsave_free(&o);
+			for (size_t cut = 8; cut < n; cut += 997) {                  /* truncated files are refused, never read out of bounds */
+				uint8_t *t2 = malloc(cut);
+				memcpy(t2, f, cut);
+				OrigSave q;
+				if (origsave_parse(&q, t2, cut) == 0) { printf("FAIL origsave_parse accepted a file cut at %zu\n", cut); failed++; origsave_free(&q); } else free(t2);
+			}
+			checked++;
+			free(f);
 		}
 	}
 
