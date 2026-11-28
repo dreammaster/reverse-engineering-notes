@@ -790,11 +790,17 @@ bool Combat::applyDamage(int attacker, int defender, int damage) {
 	if (damage >= a.hp[defender]) {
 		const CreatureStats *foe = stats(type);
 		// sub_2C2E5 2C3FC-2C490: killing somebody who is on no side costs 5 karma; killing one of the evil side (status 0x20) earns a quarter of the sum of the creature's numbers
-		if (!(a.status[defender] & 0x60) && a.globals.size() > 8)
+		const bool se = _world.game == GameId::SavageEmpire;
+		if (!se && !(a.status[defender] & 0x60) && a.globals.size() > 8)
 			a.globals[8] = (uint8_t)(a.globals[8] > 5 ? a.globals[8] - 5 : 0);
 		if ((a.status[defender] & 0x20) && foe) {
 			int gain = (foe->str + foe->dex + foe->intel + foe->hp + foe->dmg + foe->exp) / 4;
-			a.exp[attacker] = (uint16_t)(a.exp[attacker] + gain);
+			if (se) { // kill_actor (sub_2A6AD): (the strength for a class of flag 0x20, else the dexterity) x the damage, plus (the hit points + the experience) x the dexterity, a sixteenth; the sum stops at 9999
+				int base = (MovementClasses::flags(MovementClasses::classOf(type)) & 0x20) ? foe->str : foe->dex;
+				gain = (base * foe->dmg + (foe->hp + foe->exp) * foe->dex) >> 4;
+			}
+			int sum = a.exp[attacker] + gain;
+			a.exp[attacker] = (uint16_t)(se && sum > 9999 ? 9999 : sum);
 		}
 		die(defender);
 		const char *word = " killed!\n";

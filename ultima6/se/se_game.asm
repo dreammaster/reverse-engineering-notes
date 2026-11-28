@@ -10045,7 +10045,7 @@ sub_14264       endp
 
 ; Attributes: bp-based frame
 
-sub_142E8       proc far                ; CODE XREF: sub_28764+570↓P
+sub_142E8       proc far                ; CODE XREF: become_corpse+570↓P
                                         ; sub_29B5A+20E↓P ...
 
 arg_0           = word ptr  6
@@ -38262,7 +38262,7 @@ loc_21504:                              ; CODE XREF: sub_21173+38C↑j
                 or      al, 4
                 mov     [si+6CF0h], al
                 push    si
-                call    sub_28764
+                call    become_corpse
                 jmp     loc_2172A       ; jumptable 0002118F cases 156,158,162,167,190,207
 ; ---------------------------------------------------------------------------
 
@@ -47565,7 +47565,7 @@ loc_25A97:                              ; CODE XREF: sub_259AD+E5↑j
 
 loc_25AB2:                              ; CODE XREF: sub_259AD+100↑j
                 push    si
-                call    sub_28764
+                call    become_corpse
                 mov     ax, si
                 mov     dx, 3
                 imul    dx
@@ -53541,7 +53541,7 @@ loc_286EA:                              ; CODE XREF: seg012:05E5↑j
 
 ; Attributes: bp-based frame
 
-sub_286F7       proc far                ; CODE XREF: strike+D3↓p
+add_experience  proc far                ; CODE XREF: strike+D3↓p
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -53563,16 +53563,16 @@ arg_2           = word ptr  8
                 jmp     short loc_28725
 ; ---------------------------------------------------------------------------
 
-loc_2871B:                              ; CODE XREF: sub_286F7+15↑j
+loc_2871B:                              ; CODE XREF: add_experience+15↑j
                 mov     bx, si
                 shl     bx, 1
                 mov     word ptr [bx+51E4h], 270Fh
 
-loc_28725:                              ; CODE XREF: sub_286F7+22↑j
+loc_28725:                              ; CODE XREF: add_experience+22↑j
                 pop     si
                 pop     bp
                 retf    4
-sub_286F7       endp
+add_experience  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -53624,7 +53624,7 @@ max_hit_points  endp
 
 ; Attributes: bp-based frame
 
-sub_28764       proc far                ; CODE XREF: sub_21173+39C↑P
+become_corpse   proc far                ; CODE XREF: sub_21173+39C↑P
                                         ; sub_259AD+106↑P ...
 
 var_1C          = word ptr -1Ch
@@ -53666,13 +53666,13 @@ arg_0           = word ptr  6
                 cmp     [bp+var_4], 118h
                 jnz     short loc_287A6
 
-loc_287A0:                              ; CODE XREF: sub_28764+33↑j
+loc_287A0:                              ; CODE XREF: become_corpse+33↑j
                 mov     ax, 1
                 jmp     loc_28D84
 ; ---------------------------------------------------------------------------
 
-loc_287A6:                              ; CODE XREF: sub_28764+2C↑j
-                                        ; sub_28764+3A↑j
+loc_287A6:                              ; CODE XREF: become_corpse+2C↑j
+                                        ; become_corpse+3A↑j
                 cmp     [bp+var_A], 0
                 jz      short loc_287C7
                 cmp     [bp+var_4], 133h
@@ -53685,8 +53685,8 @@ loc_287A6:                              ; CODE XREF: sub_28764+2C↑j
                 and     ax, 3FFh
                 mov     [bp+var_4], ax
 
-loc_287C7:                              ; CODE XREF: sub_28764+46↑j
-                                        ; sub_28764+4D↑j
+loc_287C7:                              ; CODE XREF: become_corpse+46↑j
+                                        ; become_corpse+4D↑j
                 push    di
                 call    sub_231BA
                 or      ax, ax
@@ -53696,7 +53696,7 @@ loc_287C7:                              ; CODE XREF: sub_28764+46↑j
                 or      ax, ax
                 jz      short loc_287F0
 
-loc_287DB:                              ; CODE XREF: sub_28764+6B↑j
+loc_287DB:                              ; CODE XREF: become_corpse+6B↑j
                 mov     bx, di
                 shl     bx, 1
                 mov     ax, [bx-6306h]
@@ -53706,7 +53706,7 @@ loc_287DB:                              ; CODE XREF: sub_28764+6B↑j
                 add     bx, dx
                 mov     es:[bx], ax
 
-loc_287F0:                              ; CODE XREF: sub_28764+75↑j
+loc_287F0:                              ; CODE XREF: become_corpse+75↑j
                 cmp     di, 1Fh
                 jz      short loc_28804
                 cmp     di, 2Fh ; '/'
@@ -53716,17 +53716,17 @@ loc_287F0:                              ; CODE XREF: sub_28764+75↑j
                 cmp     di, 0Bh
                 jnz     short loc_28814
 
-loc_28804:                              ; CODE XREF: sub_28764+8F↑j
-                                        ; sub_28764+94↑j ...
+loc_28804:                              ; CODE XREF: become_corpse+8F↑j
+                                        ; become_corpse+94↑j ...
                 mov     [bp+var_1A], 0
                 mov     [bp+var_6], 0FFFFh
                 jmp     short loc_28845
 ; ---------------------------------------------------------------------------
 
-loc_28810:                              ; CODE XREF: sub_28764+C8↓j
+loc_28810:                              ; CODE XREF: become_corpse+C8↓j
                 add     [bp+var_18], 2
 
-loc_28814:                              ; CODE XREF: sub_28764+9E↑j
+loc_28814:                              ; CODE XREF: become_corpse+9E↑j
                 mov     bx, [bp+var_18]
                 shl     bx, 1
                 cmp     word ptr [bx+0EA3h], 0
@@ -53737,7 +53737,7 @@ loc_28814:                              ; CODE XREF: sub_28764+9E↑j
                 cmp     ax, [bp+var_4]
                 jnz     short loc_28810
 
-loc_2882E:                              ; CODE XREF: sub_28764+BA↑j
+loc_2882E:                              ; CODE XREF: become_corpse+BA↑j
                 mov     bx, [bp+var_18]
                 shl     bx, 1
                 mov     ax, [bx+0EA5h]
@@ -53746,13 +53746,13 @@ loc_2882E:                              ; CODE XREF: sub_28764+BA↑j
                 call    sub_366BF
                 mov     [bp+var_6], ax
 
-loc_28845:                              ; CODE XREF: sub_28764+AA↑j
+loc_28845:                              ; CODE XREF: become_corpse+AA↑j
                 cmp     [bp+var_1A], 0
                 jnz     short loc_2884E
                 jmp     loc_28C3F
 ; ---------------------------------------------------------------------------
 
-loc_2884E:                              ; CODE XREF: sub_28764+E5↑j
+loc_2884E:                              ; CODE XREF: become_corpse+E5↑j
                 mov     bx, [bp+var_6]
                 shl     bx, 1
                 mov     ax, seg seg049
@@ -53763,7 +53763,7 @@ loc_2884E:                              ; CODE XREF: sub_28764+E5↑j
                 jmp     loc_28C3F
 ; ---------------------------------------------------------------------------
 
-loc_28864:                              ; CODE XREF: sub_28764+FB↑j
+loc_28864:                              ; CODE XREF: become_corpse+FB↑j
                 mov     bx, [bp+var_6]
                 shl     bx, 1
                 mov     es, ax
@@ -53772,7 +53772,7 @@ loc_28864:                              ; CODE XREF: sub_28764+FB↑j
                 jmp     loc_28C3F
 ; ---------------------------------------------------------------------------
 
-loc_28877:                              ; CODE XREF: sub_28764+10E↑j
+loc_28877:                              ; CODE XREF: become_corpse+10E↑j
                 push    di
                 call    sub_231BA
                 or      ax, ax
@@ -53788,8 +53788,8 @@ loc_28877:                              ; CODE XREF: sub_28764+10E↑j
                 jmp     loc_28C3F
 ; ---------------------------------------------------------------------------
 
-loc_28899:                              ; CODE XREF: sub_28764+11B↑j
-                                        ; sub_28764+125↑j
+loc_28899:                              ; CODE XREF: become_corpse+11B↑j
+                                        ; become_corpse+125↑j
                 mov     ax, 1Fh
                 push    ax
                 call    sub_37658
@@ -53833,13 +53833,13 @@ loc_28899:                              ; CODE XREF: sub_28764+11B↑j
                 jmp     loc_289E5
 ; ---------------------------------------------------------------------------
 
-loc_28906:                              ; CODE XREF: sub_28764+287↓j
+loc_28906:                              ; CODE XREF: become_corpse+287↓j
                 test    [bp+var_2], 1
                 jz      short loc_28910
                 jmp     loc_289E2
 ; ---------------------------------------------------------------------------
 
-loc_28910:                              ; CODE XREF: sub_28764+1A7↑j
+loc_28910:                              ; CODE XREF: become_corpse+1A7↑j
                 mov     bx, [bp+var_2]
                 mov     al, [bx+0F37h]
                 mov     ah, 0
@@ -53848,7 +53848,7 @@ loc_28910:                              ; CODE XREF: sub_28764+1A7↑j
                 jmp     loc_289E2
 ; ---------------------------------------------------------------------------
 
-loc_28921:                              ; CODE XREF: sub_28764+1B8↑j
+loc_28921:                              ; CODE XREF: become_corpse+1B8↑j
                 mov     bx, [bp+var_2]
                 mov     al, [bx+0ACh]
                 cbw
@@ -53865,7 +53865,7 @@ loc_28921:                              ; CODE XREF: sub_28764+1B8↑j
                 jmp     loc_289C8
 ; ---------------------------------------------------------------------------
 
-loc_28946:                              ; CODE XREF: sub_28764+26D↓j
+loc_28946:                              ; CODE XREF: become_corpse+26D↓j
                 mov     bx, [bp+var_8]
                 shl     bx, 1
                 mov     ax, [bx-6306h]
@@ -53890,7 +53890,7 @@ loc_28946:                              ; CODE XREF: sub_28764+26D↓j
                 cmp     [bp+var_8], 0
                 jge     short loc_289C3
 
-loc_28987:                              ; CODE XREF: sub_28764+21B↑j
+loc_28987:                              ; CODE XREF: become_corpse+21B↑j
                 mov     bx, [bp+var_8]
                 shl     bx, 1
                 mov     al, [bx+54F1h]
@@ -53914,35 +53914,35 @@ loc_28987:                              ; CODE XREF: sub_28764+21B↑j
                 test    [bp+var_16], ax
                 jnz     short loc_289D4
 
-loc_289C3:                              ; CODE XREF: sub_28764+221↑j
-                                        ; sub_28764+230↑j ...
+loc_289C3:                              ; CODE XREF: become_corpse+221↑j
+                                        ; become_corpse+230↑j ...
                 call    sub_1A96A
 
-loc_289C8:                              ; CODE XREF: sub_28764+1DF↑j
+loc_289C8:                              ; CODE XREF: become_corpse+1DF↑j
                 mov     [bp+var_8], ax
                 cmp     [bp+var_8], 0
                 jl      short loc_289D4
                 jmp     loc_28946
 ; ---------------------------------------------------------------------------
 
-loc_289D4:                              ; CODE XREF: sub_28764+25D↑j
-                                        ; sub_28764+26B↑j
+loc_289D4:                              ; CODE XREF: become_corpse+25D↑j
+                                        ; become_corpse+26B↑j
                 cmp     [bp+var_8], 0
                 jl      short loc_289E2
                 push    [bp+var_8]
                 call    delete_object
 
-loc_289E2:                              ; CODE XREF: sub_28764+1A9↑j
-                                        ; sub_28764+1BA↑j ...
+loc_289E2:                              ; CODE XREF: become_corpse+1A9↑j
+                                        ; become_corpse+1BA↑j ...
                 inc     [bp+var_2]
 
-loc_289E5:                              ; CODE XREF: sub_28764+19F↑j
+loc_289E5:                              ; CODE XREF: become_corpse+19F↑j
                 cmp     [bp+var_2], 8
                 jge     short loc_289EE
                 jmp     loc_28906
 ; ---------------------------------------------------------------------------
 
-loc_289EE:                              ; CODE XREF: sub_28764+285↑j
+loc_289EE:                              ; CODE XREF: become_corpse+285↑j
                 mov     bx, di
                 shl     bx, 1
                 mov     ax, [bp+var_1A]
@@ -53952,7 +53952,7 @@ loc_289EE:                              ; CODE XREF: sub_28764+285↑j
                 mov     cx, 6
                 mov     bx, 0C8Ch
 
-loc_28A05:                              ; CODE XREF: sub_28764+2AB↓j
+loc_28A05:                              ; CODE XREF: become_corpse+2AB↓j
                 mov     ax, cs:[bx]
                 cmp     ax, [bp+var_1C]
                 jz      short loc_28A14
@@ -53962,7 +53962,7 @@ loc_28A05:                              ; CODE XREF: sub_28764+2AB↓j
                 jmp     loc_28C3F
 ; ---------------------------------------------------------------------------
 
-loc_28A14:                              ; CODE XREF: sub_28764+2A7↑j
+loc_28A14:                              ; CODE XREF: become_corpse+2A7↑j
                 jmp     word ptr cs:[bx+0Ch]
 ; ---------------------------------------------------------------------------
                 mov     ax, 4518h
@@ -53990,23 +53990,23 @@ loc_28A14:                              ; CODE XREF: sub_28764+2A7↑j
                 jmp     short loc_28A52
 ; ---------------------------------------------------------------------------
 
-loc_28A4C:                              ; CODE XREF: sub_28764+2D8↑j
-                                        ; sub_28764+2DE↑j
+loc_28A4C:                              ; CODE XREF: become_corpse+2D8↑j
+                                        ; become_corpse+2DE↑j
                 mov     al, [si+329Ch]
                 or      al, 20h
 
-loc_28A52:                              ; CODE XREF: sub_28764+2E6↑j
+loc_28A52:                              ; CODE XREF: become_corpse+2E6↑j
                 mov     [si+329Ch], al
                 mov     [bp+var_10], 0
                 jmp     short loc_28ABC
 ; ---------------------------------------------------------------------------
 
-loc_28A5D:                              ; CODE XREF: sub_28764+35C↓j
+loc_28A5D:                              ; CODE XREF: become_corpse+35C↓j
                 mov     [bp+var_12], 0
                 jmp     short loc_28AB3
 ; ---------------------------------------------------------------------------
 
-loc_28A64:                              ; CODE XREF: sub_28764+353↓j
+loc_28A64:                              ; CODE XREF: become_corpse+353↓j
                 xor     ax, ax
                 push    ax
                 mov     ax, 1
@@ -54041,16 +54041,16 @@ loc_28A64:                              ; CODE XREF: sub_28764+353↓j
                 push    party_z
                 call    make_object
 
-loc_28AB0:                              ; CODE XREF: sub_28764+30E↑j
-                                        ; sub_28764+314↑j
+loc_28AB0:                              ; CODE XREF: become_corpse+30E↑j
+                                        ; become_corpse+314↑j
                 inc     [bp+var_12]
 
-loc_28AB3:                              ; CODE XREF: sub_28764+2FE↑j
+loc_28AB3:                              ; CODE XREF: become_corpse+2FE↑j
                 cmp     [bp+var_12], 4
                 jl      short loc_28A64
                 inc     [bp+var_10]
 
-loc_28ABC:                              ; CODE XREF: sub_28764+2F7↑j
+loc_28ABC:                              ; CODE XREF: become_corpse+2F7↑j
                 cmp     [bp+var_10], 2
                 jl      short loc_28A5D
                 jmp     loc_28C3F
@@ -54080,18 +54080,18 @@ loc_28ABC:                              ; CODE XREF: sub_28764+2F7↑j
                 jmp     short loc_28B02
 ; ---------------------------------------------------------------------------
 
-loc_28AFC:                              ; CODE XREF: sub_28764+388↑j
-                                        ; sub_28764+38E↑j
+loc_28AFC:                              ; CODE XREF: become_corpse+388↑j
+                                        ; become_corpse+38E↑j
                 mov     al, [si+329Ch]
                 or      al, 20h
 
-loc_28B02:                              ; CODE XREF: sub_28764+396↑j
+loc_28B02:                              ; CODE XREF: become_corpse+396↑j
                 mov     [si+329Ch], al
                 mov     [bp+var_10], 0
                 jmp     short loc_28B57
 ; ---------------------------------------------------------------------------
 
-loc_28B0D:                              ; CODE XREF: sub_28764+3F7↓j
+loc_28B0D:                              ; CODE XREF: become_corpse+3F7↓j
                 xor     ax, ax
                 push    ax
                 mov     ax, 1
@@ -54123,11 +54123,11 @@ loc_28B0D:                              ; CODE XREF: sub_28764+3F7↓j
                 push    party_z
                 call    make_object
 
-loc_28B54:                              ; CODE XREF: sub_28764+3B7↑j
-                                        ; sub_28764+3BD↑j
+loc_28B54:                              ; CODE XREF: become_corpse+3B7↑j
+                                        ; become_corpse+3BD↑j
                 inc     [bp+var_10]
 
-loc_28B57:                              ; CODE XREF: sub_28764+3A7↑j
+loc_28B57:                              ; CODE XREF: become_corpse+3A7↑j
                 cmp     [bp+var_10], 3
                 jl      short loc_28B0D
                 jmp     loc_28C3F
@@ -54157,18 +54157,18 @@ loc_28B57:                              ; CODE XREF: sub_28764+3A7↑j
                 jmp     short loc_28B9D
 ; ---------------------------------------------------------------------------
 
-loc_28B97:                              ; CODE XREF: sub_28764+423↑j
-                                        ; sub_28764+429↑j
+loc_28B97:                              ; CODE XREF: become_corpse+423↑j
+                                        ; become_corpse+429↑j
                 mov     al, [si+329Ch]
                 or      al, 20h
 
-loc_28B9D:                              ; CODE XREF: sub_28764+431↑j
+loc_28B9D:                              ; CODE XREF: become_corpse+431↑j
                 mov     [si+329Ch], al
                 mov     [bp+var_12], 0
                 jmp     short loc_28BF2
 ; ---------------------------------------------------------------------------
 
-loc_28BA8:                              ; CODE XREF: sub_28764+492↓j
+loc_28BA8:                              ; CODE XREF: become_corpse+492↓j
                 xor     ax, ax
                 push    ax
                 mov     ax, 1
@@ -54200,11 +54200,11 @@ loc_28BA8:                              ; CODE XREF: sub_28764+492↓j
                 push    party_z
                 call    make_object
 
-loc_28BEF:                              ; CODE XREF: sub_28764+452↑j
-                                        ; sub_28764+458↑j
+loc_28BEF:                              ; CODE XREF: become_corpse+452↑j
+                                        ; become_corpse+458↑j
                 inc     [bp+var_12]
 
-loc_28BF2:                              ; CODE XREF: sub_28764+442↑j
+loc_28BF2:                              ; CODE XREF: become_corpse+442↑j
                 cmp     [bp+var_12], 3
                 jl      short loc_28BA8
                 jmp     short loc_28C3F
@@ -54235,26 +54235,26 @@ loc_28BF2:                              ; CODE XREF: sub_28764+442↑j
                 jmp     short loc_28C3F
 ; ---------------------------------------------------------------------------
 
-loc_28C35:                              ; CODE XREF: sub_28764+4BD↑j
-                                        ; sub_28764+4C3↑j
+loc_28C35:                              ; CODE XREF: become_corpse+4BD↑j
+                                        ; become_corpse+4C3↑j
                 mov     al, [si+329Ch]
                 or      al, 20h
                 mov     [si+329Ch], al
 
-loc_28C3F:                              ; CODE XREF: sub_28764+E7↑j
-                                        ; sub_28764+FD↑j ...
+loc_28C3F:                              ; CODE XREF: become_corpse+E7↑j
+                                        ; become_corpse+FD↑j ...
                 cmp     [bp+var_A], 0
                 jnz     short loc_28C48
                 jmp     loc_28D71
 ; ---------------------------------------------------------------------------
 
-loc_28C48:                              ; CODE XREF: sub_28764+4DF↑j
+loc_28C48:                              ; CODE XREF: become_corpse+4DF↑j
                 cmp     [bp+var_6], 0
                 jge     short loc_28C51
                 jmp     loc_28D71
 ; ---------------------------------------------------------------------------
 
-loc_28C51:                              ; CODE XREF: sub_28764+4E8↑j
+loc_28C51:                              ; CODE XREF: become_corpse+4E8↑j
                 mov     bx, [bp+var_6]
                 shl     bx, 1
                 mov     ax, seg seg049
@@ -54268,7 +54268,7 @@ loc_28C51:                              ; CODE XREF: sub_28764+4E8↑j
                 test    word ptr es:[bx+1B4h], 1000h
                 jz      short loc_28CD9
 
-loc_28C74:                              ; CODE XREF: sub_28764+4FE↑j
+loc_28C74:                              ; CODE XREF: become_corpse+4FE↑j
                 mov     [bp+var_1A], 0
                 mov     bx, [bp+var_6]
                 shl     bx, 1
@@ -54306,8 +54306,8 @@ loc_28C74:                              ; CODE XREF: sub_28764+4FE↑j
                 push    ax
                 call    sub_142E8
 
-loc_28CD9:                              ; CODE XREF: sub_28764+50E↑j
-                                        ; sub_28764+526↑j ...
+loc_28CD9:                              ; CODE XREF: become_corpse+50E↑j
+                                        ; become_corpse+526↑j ...
                 mov     bx, [bp+var_6]
                 shl     bx, 1
                 mov     ax, seg seg049
@@ -54317,7 +54317,7 @@ loc_28CD9:                              ; CODE XREF: sub_28764+50E↑j
                 jmp     loc_28D71
 ; ---------------------------------------------------------------------------
 
-loc_28CEF:                              ; CODE XREF: sub_28764+586↑j
+loc_28CEF:                              ; CODE XREF: become_corpse+586↑j
                 cmp     di, 10h
                 jl      short loc_28D71
                 push    di
@@ -54371,8 +54371,8 @@ loc_28CEF:                              ; CODE XREF: sub_28764+586↑j
                 shl     bx, 1
                 mov     [bx-6306h], dx
 
-loc_28D71:                              ; CODE XREF: sub_28764+4E1↑j
-                                        ; sub_28764+4EA↑j ...
+loc_28D71:                              ; CODE XREF: become_corpse+4E1↑j
+                                        ; become_corpse+4EA↑j ...
                 mov     word_407A5, 1
                 cmp     [bp+var_1A], 0
                 jz      short loc_28D82
@@ -54380,17 +54380,17 @@ loc_28D71:                              ; CODE XREF: sub_28764+4E1↑j
                 jmp     short loc_28D84
 ; ---------------------------------------------------------------------------
 
-loc_28D82:                              ; CODE XREF: sub_28764+617↑j
+loc_28D82:                              ; CODE XREF: become_corpse+617↑j
                 xor     ax, ax
 
-loc_28D84:                              ; CODE XREF: sub_28764+3F↑j
-                                        ; sub_28764+61C↑j
+loc_28D84:                              ; CODE XREF: become_corpse+3F↑j
+                                        ; become_corpse+61C↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf    2
-sub_28764       endp
+become_corpse   endp
 
 ; ---------------------------------------------------------------------------
                 sbb     al, 1
@@ -58208,7 +58208,7 @@ loc_2A85C:                              ; CODE XREF: kill_actor+178↑j
                                         ; kill_actor+181↑j
                 push    si
                 push    cs
-                call    near ptr sub_28764
+                call    near ptr become_corpse
                 neg     ax
                 sbb     ax, ax
                 inc     ax
@@ -59639,7 +59639,7 @@ loc_2B2FC:                              ; CODE XREF: strike+AB↑j
                 call    near ptr hurt_target
                 push    ax
                 push    cs
-                call    near ptr sub_286F7
+                call    near ptr add_experience
 
 loc_2B30A:                              ; CODE XREF: strike+A1↑j
                 cmp     si, 100h
@@ -60236,7 +60236,7 @@ loc_2B789:                              ; CODE XREF: attack_with_weapon+2E7↑j
                 mov     [si+6CF0h], al
                 push    si
                 push    cs
-                call    near ptr sub_28764
+                call    near ptr become_corpse
 
 loc_2B79D:                              ; CODE XREF: attack_with_weapon+2FF↑j
                                         ; attack_with_weapon+30A↑j
@@ -80215,7 +80215,7 @@ sub_34965       endp
 
 ; Attributes: bp-based frame
 
-sub_349A9       proc far                ; CODE XREF: sub_28764+50↑P
+sub_349A9       proc far                ; CODE XREF: become_corpse+50↑P
                                         ; cmd_use+6AB↓p
 
 var_12          = word ptr -12h
@@ -92360,7 +92360,7 @@ loc_3A5E5:                              ; CODE XREF: cmd_rest+3E8↓j
                 mov     al, [si+4EDAh]
                 mov     ah, 0
                 push    ax
-                call    sub_28764
+                call    become_corpse
                 mov     ax, 0F6h
                 push    ax
                 mov     ax, 20h ; ' '

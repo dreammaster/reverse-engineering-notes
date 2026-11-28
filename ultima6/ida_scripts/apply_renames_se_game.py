@@ -134,6 +134,8 @@ FUNCTIONS = [
     (0x2AF13, "hit_roll", 'the hit test: a roll of 1-30 against half the difference of the defender and the attacker'),
     (0x2B234, "strike", 'a blow lands: the damage rolled, the armour, grazed, hurt_target, poison'),
     (0x2B042, "target_answers", 'what a person that was struck does in answer'),
+    (0x28764, "become_corpse", 'what a dead (or sleeping) creature turns into, by the table at ds:0EA3'),
+    (0x286F7, "add_experience", 'adds experience to an actor, up to 9999'),
     # -- matched by instruction signature (tools/match_functions.py) --
     (0x27169, "request_talk", '= Martian Dreams 29C22 (matched by instruction signature)'),
     (0x101AF, "__restorezero", '= Ultima VI 101B0 (matched by instruction signature)'),

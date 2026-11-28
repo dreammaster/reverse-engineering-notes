@@ -1028,8 +1028,10 @@ int main() {
 			// what the dead become (sub_28764): a person 0x137 a body 0xF9 of frame 1, holding what he carried
 			w.objects[fk].type = 0x137;
 			w.actors.hp[0xC2] = 5;
-			w.actors.status[0xC2] = 0;
+			w.actors.status[0xC2] = 0x20;
+			int expBefore = w.actors.exp[who];
 			c.applyDamage(who, 0xC2, 50);
+			CHECK(w.actors.exp[who] > expBefore); // kill_actor: the kill of one of the evil side earns experience
 			bool body = false;
 			std::vector<int> there;
 			w.objectsAt(px + 1, py, 0, there);
